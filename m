@@ -1,34 +1,34 @@
-Received: from smtp-bc0b.mail.infomaniak.ch (smtp-bc0b.mail.infomaniak.ch [45.157.188.11])
+Received: from smtp-42ac.mail.infomaniak.ch (smtp-42ac.mail.infomaniak.ch [84.16.66.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1097C17995E
-	for <linux-security-module@vger.kernel.org>; Fri, 20 Sep 2024 13:39:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77A8C17A5A7
+	for <linux-security-module@vger.kernel.org>; Fri, 20 Sep 2024 13:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726839548; cv=none; b=SSxUYIfw1N+L8yKmEIFzELEqjJ8z13AxU3riBVyhB2rnu0R6i6dmEUxaQ9rl591dyUzpwtFmlsQoGEtnzeFi2S69Fxk8eF9HGy6wrtfaDGIVzDmyARzN4Ai+3EHFiOqyw+1vtShqXRDOP6DgYE+Ssu5YsaA6p+RdaEwfAFXxhaU=
+	t=1726839913; cv=none; b=jIXGZ2YgXKgFBVWMHp15OziFgBzFNhRpdE0E7JezbEgq7yxEUJvQaCC0ysYwpo8W2EekZslC1VuyV0cdTxOuQ4MPgfhKdPVw3B7AYV3r2MBwJWPw5WO1jCYG4OYDDNAFESfcqZD2+2kldXhacVixo0e79eDdGmwxtL0JrwFuGzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726839548; c=relaxed/simple;
-	bh=DLsKJr4YlzNLQtdFz2zsoC2MN60e2CxbzndUkkTCHMo=;
+	s=arc-20240116; t=1726839913; c=relaxed/simple;
+	bh=fPDSelq1zxnLLqtV4shJ+E+iQsItEMSqurwY6B8OgZU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dcXYHPl7UmDpvKJd1QrkXpWu/ruL7sknCazpU0ChxRSYAU5dLqyndZg3+zUgbwGNpLeHfkCrhZdgiSPe+MlONUpoxUXFUfdy559L74K9VG40zA2jeHbAooI+RWCCSbM6LgiM7j6TvlkAqgVK4JQFadyn3W6ioR9oHWCEb4Zpcms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=tqzNXDLl; arc=none smtp.client-ip=45.157.188.11
+	 Content-Type:Content-Disposition:In-Reply-To; b=PGhOiuwq6o5v7swXzd9pg9Gn7GBfrieKXuxbp0u62IoA7LzVZi7oia0iQ10TSymmv7nolglMuYmgOI/0cj3SJBFWThOP7e8Ia7qaH+kKKDEghncFDPvUQk5SGJ3HkglkofyGpiV1OsE48nuhtzmUwJhYcZuRqOtJrxFOcghWvbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=plXYD0uO; arc=none smtp.client-ip=84.16.66.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="tqzNXDLl"
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4X9D4c3WNCzQvl;
-	Fri, 20 Sep 2024 15:38:56 +0200 (CEST)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="plXYD0uO"
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4X9D5B0Z1lztGl;
+	Fri, 20 Sep 2024 15:39:26 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1726839536;
-	bh=NJyQwUoR2L8COyJ47NkNMntwL6UmlIg6/7AE1B3kW4Q=;
+	s=20191114; t=1726839565;
+	bh=dr5nU5SlKLcmYNUhEmWx1GhyOTVcH7v2oOWucrZayZ8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tqzNXDLlK+Pl8ft5KtxZ19Bu13/1pr5OplCGVxr2Oc1PWDcsJJYRa5z84wt7SnYA7
-	 gIhR/sGXTRt4TiOuVPT/XVnhndDoVhdEDP2eundgsp71egkTwK3cythUyv0b1bEPcQ
-	 /4jXXUXAMonTqJlvtLOzYaN0qKHqrq4xGTuVdFzM=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4X9D4b6S7mzZ1Y;
-	Fri, 20 Sep 2024 15:38:55 +0200 (CEST)
-Date: Fri, 20 Sep 2024 15:38:47 +0200
+	b=plXYD0uO14RitumnKe9wVcc2UmZvU+vtIoq8BHSOXK4+Kv3zZ5vOOhOjVdpTvdcbL
+	 AXfCgPNYRiwMpTIXlF/EeyMLjlSxhcqV/v/l4hZwhHVo/ZG891BUOX1n5Pu6Gt8YpZ
+	 Mjano6zo/E+dCyiZnUCiRKJI4ZN/IqEbfJ6qlNIE=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4X9D591f76zYxC;
+	Fri, 20 Sep 2024 15:39:25 +0200 (CEST)
+Date: Fri, 20 Sep 2024 15:39:17 +0200
 From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
 To: Matthieu Buffet <matthieu@buffet.re>
 Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
@@ -36,11 +36,10 @@ Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>,
 	"Serge E . Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org, 
 	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
 	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>
-Subject: Re: [RFC PATCH v1 2/7] samples/landlock: Clarify option parsing
- behaviour
-Message-ID: <20240920.xaeBeed4Ge6o@digikod.net>
+Subject: Re: [RFC PATCH v1 3/7] landlock: Add UDP bind+connect access control
+Message-ID: <20240920.choPhoa8ahp8@digikod.net>
 References: <20240916122230.114800-1-matthieu@buffet.re>
- <20240916122230.114800-3-matthieu@buffet.re>
+ <20240916122230.114800-4-matthieu@buffet.re>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -49,130 +48,65 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240916122230.114800-3-matthieu@buffet.re>
+In-Reply-To: <20240916122230.114800-4-matthieu@buffet.re>
 X-Infomaniak-Routing: alpha
 
-On Mon, Sep 16, 2024 at 02:22:25PM +0200, Matthieu Buffet wrote:
-> - Clarify which environment variables are optional, which ones are
->   mandatory
-> - Clarify the difference between unset variables and empty ones
-> - Move the (larger) help message to a helper function
+On Mon, Sep 16, 2024 at 02:22:26PM +0200, Matthieu Buffet wrote:
+> Add support for two more access rights:
 > 
+> - LANDLOCK_ACCESS_NET_CONNECT_UDP, to gate the possibility to connect()
+>   an inet SOCK_DGRAM socket. This will be used by some client applications
+>   (those who want to avoid specifying a destination for each datagram in
+>   sendmsg), and for a few servers (those creating a socket per-client, who
+>   want to only receive traffic from each client on these sockets)
+> 
+> - LANDLOCK_ACCESS_NET_BIND_UDP, to gate the possibility to bind() an
+>   inet SOCK_DGRAM socket. This will be required for most server
+>   applications (to start listening for datagrams on a non-ephemeral
+>   port) and can be useful for some client applications (to set the
+>   source port of future datagrams)
+> 
+> Also bump the ABI version from 5 to 6 so that userland can detect
+> whether these rights are supported and actually use them.
+> 
+
+Closes: https://github.com/landlock-lsm/linux/issues/10
+
 > Signed-off-by: Matthieu Buffet <matthieu@buffet.re>
 > ---
->  samples/landlock/sandboxer.c | 86 ++++++++++++++++++++----------------
->  1 file changed, 48 insertions(+), 38 deletions(-)
+>  include/uapi/linux/landlock.h | 48 +++++++++++++++++++++++--------
+>  security/landlock/limits.h    |  2 +-
+>  security/landlock/net.c       | 54 ++++++++++++++++++++++++++---------
+>  security/landlock/syscalls.c  |  2 +-
+>  4 files changed, 79 insertions(+), 27 deletions(-)
 > 
-> diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
-> index a84ae3a15482..08704504dc51 100644
-> --- a/samples/landlock/sandboxer.c
-> +++ b/samples/landlock/sandboxer.c
-> @@ -221,6 +221,53 @@ static int populate_ruleset_net(const char *const env_var, const int ruleset_fd,
->  
->  #define LANDLOCK_ABI_LAST 5
->  
-> +static void print_help(const char *prog)
-> +{
-> +	fprintf(stderr,
-> +		"usage: %s=\"...\" %s=\"...\" [other environment variables] %s "
-> +		"<cmd> [args]...\n\n",
-> +		ENV_FS_RO_NAME, ENV_FS_RW_NAME, prog);
-> +	fprintf(stderr,
-> +		"Execute a command in a restricted environment.\n\n");
-> +	fprintf(stderr,
-> +		"Environment variables containing paths and ports "
-> +		"can be multi-valued, with a colon delimiter.\n"
-> +		"\n"
-> +		"Mandatory settings:\n");
-> +	fprintf(stderr,
-> +		"* %s: list of paths allowed to be used in a read-only way.\n",
-> +		ENV_FS_RO_NAME);
-> +	fprintf(stderr,
-> +		"* %s: list of paths allowed to be used in a read-write way.\n",
-> +		ENV_FS_RW_NAME);
-> +	fprintf(stderr,
-> +		"\n"
-> +		"Optional settings (when not set, their associated access "
-> +		"check is always allowed) (for lists, an empty string means "
-> +		"to allow nothing, e.g. %s=\"\"):\n",
-> +		ENV_TCP_BIND_NAME);
-> +	fprintf(stderr,
-> +		"* %s: list of ports allowed to bind (server).\n",
-> +		ENV_TCP_BIND_NAME);
-> +	fprintf(stderr,
-> +		"* %s: list of ports allowed to connect (client).\n",
-> +		ENV_TCP_CONNECT_NAME);
-> +	fprintf(stderr,
-> +		"\n"
-> +		"Example:\n"
-> +		"%s=\"${PATH}:/lib:/usr:/proc:/etc:/dev/urandom\" "
-> +		"%s=\"/dev/null:/dev/full:/dev/zero:/dev/pts:/tmp\" "
-> +		"%s=\"9418\" "
-> +		"%s=\"80:443\" "
-> +		"%s bash -i\n\n",
-> +		ENV_FS_RO_NAME, ENV_FS_RW_NAME, ENV_TCP_BIND_NAME,
-> +		ENV_TCP_CONNECT_NAME, prog);
-> +	fprintf(stderr,
-> +		"This sandboxer can use Landlock features "
-> +		"up to ABI version %d.\n",
-> +		LANDLOCK_ABI_LAST);
-> +}
-> +
->  int main(const int argc, char *const argv[], char *const *const envp)
->  {
->  	const char *cmd_path;
-> @@ -237,44 +284,7 @@ int main(const int argc, char *const argv[], char *const *const envp)
->  	};
->  
->  	if (argc < 2) {
-> -		fprintf(stderr,
-> -			"usage: %s=\"...\" %s=\"...\" %s=\"...\" %s=\"...\"%s "
-> -			"<cmd> [args]...\n\n",
-> -			ENV_FS_RO_NAME, ENV_FS_RW_NAME, ENV_TCP_BIND_NAME,
-> -			ENV_TCP_CONNECT_NAME, argv[0]);
-> -		fprintf(stderr,
-> -			"Execute a command in a restricted environment.\n\n");
-> -		fprintf(stderr,
-> -			"Environment variables containing paths and ports "
-> -			"each separated by a colon:\n");
-> -		fprintf(stderr,
-> -			"* %s: list of paths allowed to be used in a read-only way.\n",
-> -			ENV_FS_RO_NAME);
-> -		fprintf(stderr,
-> -			"* %s: list of paths allowed to be used in a read-write way.\n\n",
-> -			ENV_FS_RW_NAME);
-> -		fprintf(stderr,
-> -			"Environment variables containing ports are optional "
-> -			"and could be skipped.\n");
-> -		fprintf(stderr,
-> -			"* %s: list of ports allowed to bind (server).\n",
-> -			ENV_TCP_BIND_NAME);
-> -		fprintf(stderr,
-> -			"* %s: list of ports allowed to connect (client).\n",
-> -			ENV_TCP_CONNECT_NAME);
-> -		fprintf(stderr,
-> -			"\nexample:\n"
-> -			"%s=\"${PATH}:/lib:/usr:/proc:/etc:/dev/urandom\" "
-> -			"%s=\"/dev/null:/dev/full:/dev/zero:/dev/pts:/tmp\" "
-> -			"%s=\"9418\" "
-> -			"%s=\"80:443\" "
-> -			"%s bash -i\n\n",
-> -			ENV_FS_RO_NAME, ENV_FS_RW_NAME, ENV_TCP_BIND_NAME,
-> -			ENV_TCP_CONNECT_NAME, argv[0]);
-> -		fprintf(stderr,
-> -			"This sandboxer can use Landlock features "
-> -			"up to ABI version %d.\n",
-> -			LANDLOCK_ABI_LAST);
-> +		print_help(argv[0]);
+> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+> index 2c8dbc74b955..7f9aa1cd2912 100644
+> --- a/include/uapi/linux/landlock.h
+> +++ b/include/uapi/linux/landlock.h
+> @@ -113,12 +113,15 @@ struct landlock_net_port_attr {
+>  	 *
+>  	 * It should be noted that port 0 passed to :manpage:`bind(2)` will bind
+>  	 * to an available port from the ephemeral port range.  This can be
+> -	 * configured with the ``/proc/sys/net/ipv4/ip_local_port_range`` sysctl
+> -	 * (also used for IPv6).
+> +	 * configured globally with the
+> +	 * ``/proc/sys/net/ipv4/ip_local_port_range`` sysctl (also used for
+> +	 * IPv6), and on a per-socket basis using
+> +	 * ``setsockopt(IP_LOCAL_PORT_RANGE)``.
 
-Looks good, please rebase on my "next" branch with the new LL_SCOPED
-variable and send it in a new series along with the previous fix:
-https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/log/?h=next
+Interesting... setsockopt(IP_LOCAL_PORT_RANGE) can always be set
+independant of the sysctl, but fortunately it is only taken into account
+if it fits into the sysctl range (see inet_sk_get_local_port_range),
+which makes sense.
 
->  		return 1;
->  	}
->  
-> -- 
-> 2.39.5
-> 
-> 
+>  	 *
+>  	 * A Landlock rule with port 0 and the ``LANDLOCK_ACCESS_NET_BIND_TCP``
+> -	 * right means that requesting to bind on port 0 is allowed and it will
+> -	 * automatically translate to binding on the related port range.
+> +	 * or ``LANDLOCK_ACCESS_NET_BIND_UDP`` right means that requesting to
+> +	 * bind on port 0 is allowed and it will automatically translate to
+> +	 * binding on the related port range.
+>  	 */
+>  	__u64 port;
+>  };
