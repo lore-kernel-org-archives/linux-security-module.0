@@ -1,109 +1,112 @@
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0573D4D8D0
-	for <linux-security-module@vger.kernel.org>; Fri, 20 Sep 2024 09:11:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FD6C154425
+	for <linux-security-module@vger.kernel.org>; Fri, 20 Sep 2024 13:02:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726823519; cv=none; b=toy9Uo21ULRgAZioor6jQpN0LgF8ihWOh7PTi036BcgXYpxrR78C7sO1K9CfYumK7+2HX9usgOrasktgPuXDxIMs/Vzh3rCF3UrqJUmIkta7la/e2SNwnzBtVCTQFa0UtCpRlECxGxvjMT48vDjHej/HhDGji84F2oBa/z8mf5I=
+	t=1726837336; cv=none; b=pliQ+F/hp4MjyUXkz9MV76wfyEPLyapu6cLZz0LfeZP2574P4FOOnniTOZr9gNkJ3WJ57aU1gQheAJgfxL/gEhq15+pf7wipw14BpBl1BkLshpmC4u0K0LmLyOtFKU3KK6WLfRhsVyFPx4YmYdq9yC3WoYk97xyqIMlOQe9VA1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726823519; c=relaxed/simple;
-	bh=BfdACjiwpH6jpQQYgFCRbsgqVxTshC9Z8Pf7EkLzUcE=;
-	h=Date:Message-ID:From:To:Cc:Subject; b=LzjuQQP8BVPMB1ICXJeKrGYC0aitIb1SPQO19FoW9QPj3AQoUmuUrocT20I+ufMTW9F0ST4F7jot1V3lossc6LhmvbP0/VFMelvqrc9wLB+4sAx48YKej4ty2BszPrqPyKPhQ/FH5WBsLO34srT1eOr+tP75SDj0g5TrVURAFGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ZfRXV+h+; arc=none smtp.client-ip=209.85.222.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ZfRXV+h+"
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7a9acc6f22dso162958985a.0
-        for <linux-security-module@vger.kernel.org>; Fri, 20 Sep 2024 02:11:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1726823517; x=1727428317; darn=vger.kernel.org;
-        h=subject:cc:to:from:message-id:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kvReCFSCf9aQipym48DyE8HCr0WcsMysWCFlAr+/F5k=;
-        b=ZfRXV+h+L6xLp9CWaHVnIhfgIubyG8ASZlROMhNNPoh1jkY7MbEJfhA3mDf0XPhOQk
-         XaZsuo6IRd+haKLLFUNWHEvaH7V1YUVe9YRUqlohDxF53NItQX5W4p7rnpQe6x5naGD8
-         13rjtQftzDxtz1f/2vl628zkwLC3qfYSy4AptM9CzMAIVWDQ6t0X8cUX7MWj982DeWYC
-         sSCJWOUE/zHyPaJdMNdLn86O7fPrCjpZ3M/AhLCoOtTM562GHIJBLMWwLXI1YObFtSF9
-         qpIYCcKfbn4IHkrJrqmSoBxFBc44A2uhivV4DAD49lq+OesUVP/J//g5LXi9xnmXowVd
-         maFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1726823517; x=1727428317;
-        h=subject:cc:to:from:message-id:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kvReCFSCf9aQipym48DyE8HCr0WcsMysWCFlAr+/F5k=;
-        b=Um9vMEHKHrB/aOmckSdYpr03ym5paoy618KNhCXORycdI90bpi9qNM+TQZGUScjEmB
-         ZZJyKkBgwjeO7bTpgPqDx009tmNOfkWAHmJq8lwUdR445tT3GzgW3SVNKXjTvVukduNJ
-         qeNXqOTjgJdoIdKIkw9chUJKM4oAvvHu6Eth6og8xnX6hOy7WV906O/efHYJd4K1/nte
-         2i/b8lSN+Xgs9UT5iIYKi6b/ea3QBztIB8SC5HtxNqvgGxwcRz1wvdSE9d0cegrMso2g
-         5VqvqmNRstHcXZ1QljGwRTtyGfW7luf9P46wNnUwDs7EDk0ozRPSUs2IUEoCXIb+hH5q
-         xM1Q==
-X-Gm-Message-State: AOJu0Yyjq19/O1cI7+A3nv1f8ZPF+LYQ+pJSS5p2Sj8YxABXkQsGp4vB
-	wdBUcNCa3WERkd3Cux9rUluziVeYOOCqIUQAeWwQEnGSdqeYGujV7aaXuE9k2WRryhhXwPbiU3M
-	uYw==
-X-Google-Smtp-Source: AGHT+IFNrKfjhSJKxp2/e/sc/Hs1+8MWeOQBVm7lcA/utzHJSTmA1zTL0FZRN/qGdLlY4sqTuArC6g==
-X-Received: by 2002:a05:620a:198a:b0:7a9:be2f:651a with SMTP id af79cd13be357-7acb809e802mr378354885a.2.1726823516879;
-        Fri, 20 Sep 2024 02:11:56 -0700 (PDT)
-Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7acb07dfec5sm154857085a.12.2024.09.20.02.11.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Sep 2024 02:11:56 -0700 (PDT)
-Date: Fri, 20 Sep 2024 05:11:53 -0400
-Message-ID: <f8a48215c742da6510f5c1898b4c8335@paul-moore.com>
-From: Paul Moore <paul@paul-moore.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] lsm/lsm-pr-20240920
+	s=arc-20240116; t=1726837336; c=relaxed/simple;
+	bh=VNs2/LV5lSJa91PWHSWfZ1yY6E/bluzT/vlfcXMsZMc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TEfW7eHrrMtsL9hdtopQZMwtnRMknBVKASN99i/Y0jH7lYAdy3JH7rKA2CqwLzMd36RDDA5FBAh5ZUcLlvh/sfvlMUs8+CZZLdV2gsKFHdTaIOfcB4ccGRv0vpJBxDbq6jWKIJDNMiCEULMysXWBj/UVhREYO4ZW/ksP/pGjMBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id 9112F7E6; Fri, 20 Sep 2024 08:02:05 -0500 (CDT)
+Date: Fri, 20 Sep 2024 08:02:05 -0500
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Luca Boccassi <luca.boccassi@gmail.com>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>,
+	linux-security-module@vger.kernel.org, wufan@linux.microsoft.com,
+	paul@paul-moore.com
+Subject: Re: [PATCH v2] ipe: allow secondary and platform keyrings to
+ install/update policies
+Message-ID: <20240920130205.GB532438@mail.hallyn.com>
+References: <20240913234840.1318655-1-luca.boccassi@gmail.com>
+ <20240915091119.1916049-1-luca.boccassi@gmail.com>
+ <20240920020217.GA528455@mail.hallyn.com>
+ <CAMw=ZnTWHkOnz5ZHg69WAfygkvpiHkSsUyHVu2fbqJ_E9inNUw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMw=ZnTWHkOnz5ZHg69WAfygkvpiHkSsUyHVu2fbqJ_E9inNUw@mail.gmail.com>
 
-Linus,
+On Fri, Sep 20, 2024 at 09:54:06AM +0200, Luca Boccassi wrote:
+> On Fri, 20 Sept 2024 at 04:02, Serge E. Hallyn <serge@hallyn.com> wrote:
+> >
+> > On Sun, Sep 15, 2024 at 11:11:19AM +0200, luca.boccassi@gmail.com wrote:
+> > > From: Luca Boccassi <bluca@debian.org>
+> > >
+> > > The current policy management makes it impossible to use IPE
+> > > in a general purpose distribution. In such cases the users are not
+> > > building the kernel, the distribution is, and access to the private
+> > > key included in the trusted keyring is, for obvious reason, not
+> > > available.
+> > > This means that users have no way to enable IPE, since there will
+> > > be no built-in generic policy, and no access to the key to sign
+> > > updates validated by the trusted keyring.
+> > >
+> > > Just as we do for dm-verity, kernel modules and more, allow the
+> > > secondary and platform keyrings to also validate policies. This
+> > > allows users enrolling their own keys in UEFI db or MOK to also
+> > > sign policies, and enroll them. This makes it sensible to enable
+> > > IPE in general purpose distributions, as it becomes usable by
+> > > any user wishing to do so. Keys in these keyrings can already
+> > > load kernels and kernel modules, so there is no security
+> > > downgrade.
+> > >
+> > > Add a kconfig each, like dm-verity does, but default to enabled if
+> > > the dependencies are available.
+> > >
+> > > Signed-off-by: Luca Boccassi <bluca@debian.org>
+> > > ---
+> > > v2: add Kconfig entries following the dm-verity model
+> > >     update documentation
+> > >
+> > >  Documentation/admin-guide/LSM/ipe.rst |  5 ++++-
+> > >  security/ipe/Kconfig                  | 19 +++++++++++++++++++
+> > >  security/ipe/policy.c                 | 14 +++++++++++++-
+> > >  3 files changed, 36 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/security/ipe/policy.c b/security/ipe/policy.c
+> > > index d8e7db857a2e..bf5aa97911e1 100644
+> > > --- a/security/ipe/policy.c
+> > > +++ b/security/ipe/policy.c
+> > > @@ -169,9 +169,21 @@ struct ipe_policy *ipe_new_policy(const char *text, size_t textlen,
+> > >                       goto err;
+> > >               }
+> > >
+> > > -             rc = verify_pkcs7_signature(NULL, 0, new->pkcs7, pkcs7len, NULL,
+> > > +             rc = verify_pkcs7_signature(NULL, 0, new->pkcs7, pkcs7len,
+> > > +#ifdef CONFIG_IPE_POLICY_SIG_SECONDARY_KEYRING
+> > > +                                         VERIFY_USE_SECONDARY_KEYRING,
+> > > +#else
+> > > +                                         NULL,
+> > > +#endif
+> > >                                           VERIFYING_UNSPECIFIED_SIGNATURE,
+> > >                                           set_pkcs7_data, new);
+> > > +#ifdef CONFIG_IPE_POLICY_SIG_PLATFORM_KEYRING
+> > > +             if (rc == -ENOKEY)
+> >
+> > If the secondary key *is* there, but returns -EKEYREJECTED,
+> > do you want to fall back to trying the platform keyring, or not?
+> 
+> I like the idea in principle, however for ease of use personally I'd
+> prefer if the behaviour was the same as dm-verity, given the close
+> relationship - maybe we can start with this version, then I can
+> propose the same change in a single series for both components later,
+> so that we either change it in both or neither. Would that work?
 
-Two important LSM fixes for v6.12-rcX:
+Sounds good, thanks.
 
-- Add a missing security_mmap_file() check to the remap_file_pages()
-syscall.
+Reviewed-by: Serge Hallyn <serge@hallyn.com>
 
-- Properly reference the SELinux and Smack LSM blobs in the
-security_watch_key() LSM hook.
-
--Paul
-
---
-The following changes since commit 19c9d55d72a9040cf9dc8de62633e6217381106b:
-
-  security: Update file_set_fowner documentation
-    (2024-09-09 12:30:51 -0400)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git
-    tags/lsm-pr-20240920
-
-for you to fetch changes up to 8a23c9e1ba4642b60420e8caa75859883a509c24:
-
-  selinux,smack: properly reference the LSM blob in security_watch_key()
-    (2024-09-19 16:37:01 -0400)
-
-----------------------------------------------------------------
-lsm/stable-6.12 PR 20240920
-----------------------------------------------------------------
-
-Paul Moore (1):
-      selinux,smack: properly reference the LSM blob in
-         security_watch_key()
-
-Shu Han (1):
-      mm: call the security_mmap_file() LSM hook in remap_file_pages()
-
- mm/mmap.c                  |    4 ++++
- security/selinux/hooks.c   |    2 +-
- security/smack/smack_lsm.c |   13 +++----------
- 3 files changed, 8 insertions(+), 11 deletions(-)
-
---
-paul-moore.com
+-serge
