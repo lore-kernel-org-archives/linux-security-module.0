@@ -1,366 +1,464 @@
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+Received: from smtp-190b.mail.infomaniak.ch (smtp-190b.mail.infomaniak.ch [185.125.25.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 131995D915;
-	Fri, 20 Sep 2024 23:55:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A409B15383D
+	for <linux-security-module@vger.kernel.org>; Sat, 21 Sep 2024 10:40:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1726876532; cv=none; b=UA33kXoKajmKcMkpjJhhzA2IRzgNr+5N+e9zOzVsDcK6EAeUJTXxIogVbqXAJZILen9Yww5Zq9PxFKvBbMH/d8nh+3S+2RX4IUlNhwunoXE4rxIUMA2M1k3yxYOIO4fkY2L8t/ZzcILI0PAiO8YVpO8RwYxSoJNzbp/dH+PRM74=
+	t=1726915217; cv=none; b=jYTZ4q9yg7kwUsy//uBYLcpv1LxvM4lX0Y5kgwe55/1sg0LmHM5Q7WxTKrbqaVbisQ+q0TMaYoLmP2rGf0gCzVVMSCcbevzfaGUkjVcEFjeHNRKfyCRVh+TUcqU9gCnylWudhEC0yu+wQlGaqkykzcgotjWL990Tl/zS2ecd0NY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1726876532; c=relaxed/simple;
-	bh=ijrbY3ZZ7HoBDDhAhtuhLWl0QOxopBz+m40Hi/DkfPE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LCwK6bGupEVckzhKaQvQPLz0E8s6bVoQVApf+7ndk+m50XT41XUiDNMp34KUeixetFS1DmqueElXmgSOYv7e908AOZmDd4To78Mbjl0aau/KTb+Qj1BVCjtfyAoorWpRdsXvZLdvIpuCxHajYPYVDBbaZs2xC6R8m9/yVkAoNhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=M10M5avL; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+	s=arc-20240116; t=1726915217; c=relaxed/simple;
+	bh=VvG/JRhYD+YgwYNiBZbB03QIasBYS3NIaLOyfWg3Yr8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GDw3O8rfhkY45KYlziRZvv3pAAJ/UKqCL6ycuBidXraM4bkkKt4TAC0q2qJQ5q76IUOaludNnqVMlnhdZdnoDTj4zWXwBhfduouEROhH3W3kHSXrlZgVXUpzWmtdyXey2Nv4X+fTYMlq7bLj4qurUC6lX+nzHBIxVFqH5tHQ1N4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=anjPekdZ; arc=none smtp.client-ip=185.125.25.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="M10M5avL"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=RVpptJYwvyg0fb6+nU4iNmMhoQWwZ5J0eYvDJ7HEuD0=; b=M10M5avLZBngZGup
-	5/2gLhZ7FHOuMj1sp8pB8h3R4SkOE4wP5VDi9xpAo9cYgZimDEX0jJVUffjv5EfLL8OUe1RO/rant
-	j3uR3fS3iJD/ELJ8WiPNs1Puy7lU4stGsbgHu2BhFt7QnFvXqyaSY3a23B9fb3/s7Q17CI8QsAHTn
-	d7MGEC/KdKUWfPXJY/0DF3Ox4XaqRFF8upCL8jLhPCHvYaXONuEVfTOXsa8M/mmSoQo5wTRJ75yxR
-	UCFcNiKDXHQ36FOoXxM64LRmQ1fmA6fVK3liqgm7Mb8f2ADXNbopnKG06VVofIBtXRZcqV/n7mRXt
-	wKGEcrHEMCB/kqD39g==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1srnT4-006btn-0i;
-	Fri, 20 Sep 2024 23:55:18 +0000
-From: linux@treblig.org
-To: john.johansen@canonical.com,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com
-Cc: apparmor@lists.ubuntu.com,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] apparmor: Remove deadcode
-Date: Sat, 21 Sep 2024 00:55:17 +0100
-Message-ID: <20240920235517.615309-1-linux@treblig.org>
-X-Mailer: git-send-email 2.46.1
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="anjPekdZ"
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4X9lhm3PK8zld2;
+	Sat, 21 Sep 2024 12:23:36 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1726914216;
+	bh=YwcGMU98XB5r3e3xk8Pb31K7iMPEMOYw4NZzCKRMdrE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=anjPekdZsMQ78Xcf8WkBjOTrA63uZKWDiAx8Pl0ldNY/xBwuJ5fs7d9ruxvdUXvQi
+	 u1z4/4fQCINYqFiAkevZtlr6ylt/anwzCeKmDXbcc5m1+oV6O3WEe4zg8V9F2rsAmR
+	 mt+3YiM5fLiViTkmhcZtVy63awKzB06GsptgHmTs=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4X9lhk2lqsz8Q1;
+	Sat, 21 Sep 2024 12:23:34 +0200 (CEST)
+Date: Sat, 21 Sep 2024 12:23:22 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Matthieu Buffet <matthieu@buffet.re>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E . Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>
+Subject: Re: [RFC PATCH v1 4/7] landlock: Add UDP send+recv access control
+Message-ID: <20240921.ohCheQuoh1eu@digikod.net>
+References: <20240916122230.114800-1-matthieu@buffet.re>
+ <20240916122230.114800-5-matthieu@buffet.re>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240916122230.114800-5-matthieu@buffet.re>
+X-Infomaniak-Routing: alpha
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Mon, Sep 16, 2024 at 02:22:27PM +0200, Matthieu Buffet wrote:
+> Add support for two UDP access rights, complementing the two previous
+> LANDLOCK_ACCESS_NET_CONNECT_UDP and LANDLOCK_ACCESS_NET_BIND_UDP:
+> 
+> - LANDLOCK_ACCESS_NET_RECVMSG_UDP: to prevent a process from receiving
 
-aa_label_audit, aa_label_find, aa_label_seq_print and aa_update_label_name
-were added by commit
-f1bd904175e8 ("apparmor: add the base fns() for domain labels")
-but never used.
+I'm wondering what would make the most sense between NET_RECVMSG_UDP and
+NET_RECVFROM_UDP.  Is one more known or understood than the other?  Same
+for sendmsg vs. sendto.
 
-aa_profile_label_perm was added by commit
-637f688dc3dc ("apparmor: switch from profiles to using labels on contexts")
-but never used.
+>   datagrams. Just removing LANDLOCK_ACCESS_NET_BIND_UDP is not enough:
+>   it can just send a first datagram or call connect() and get an
+>   ephemeral port assigned, without ever calling bind(). This access right
+>   allows blocking a process from receiving UDP datagrams, without
+>   preventing them to bind() (which may be required to set source ports);
+> 
+> - LANDLOCK_ACCESS_NET_SENDMSG_UDP: to prevent a process from sending
+>   datagrams. Just removing LANDLOCK_ACCESS_NET_CONNECT_UDP is not enough:
+>   the process can call sendmsg() with an unconnected socket and an
+>   arbitrary destination address.
+> 
+> Signed-off-by: Matthieu Buffet <matthieu@buffet.re>
+> ---
+>  include/uapi/linux/landlock.h |  18 ++-
+>  security/landlock/limits.h    |   2 +-
+>  security/landlock/net.c       | 205 +++++++++++++++++++++++++++++-----
+>  3 files changed, 193 insertions(+), 32 deletions(-)
+> 
+> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+> index 7f9aa1cd2912..7ea3d1adb8c3 100644
+> --- a/include/uapi/linux/landlock.h
+> +++ b/include/uapi/linux/landlock.h
+> @@ -287,15 +287,25 @@ struct landlock_net_port_attr {
+>   *   receive datagrams from (if you create a client-specific socket for a
+>   *   client-specific process, e.g. using the established-over-unconnected
+>   *   method)
+> - *
+> - * Note that ``bind(0)`` means binding to an ephemeral kernel-assigned port,
+> - * in the range configured in ``/proc/sys/net/ipv4/ip_local_port_range``
+> - * globally (or on a per-socket basis with ``setsockopt(IP_LOCAL_PORT_RANGE)``).
+> + * - %LANDLOCK_ACCESS_NET_RECVMSG_UDP: receive datagrams on the given local port
+> + *   (this is a distinct right from %LANDLOCK_ACCESS_NET_BIND_UDP, because you
+> + *   may want to allow a process to set its datagrams source port using bind()
+> + *   but not be able to receive datagrams)
+> + * - %LANDLOCK_ACCESS_NET_SENDMSG_UDP: send datagrams to the given remote port
+> + *   (this is a distinct right from %LANDLOCK_ACCESS_NET_CONNECT_UDP, because
+> + *   you may want to allow a process to set which client it wants to receive
+> + *   datagrams from using connect(), and not be able to send datagrams)
+> + *
+> + * Note that ``bind(0)`` has special semantics, meaning bind on any port in the
+> + * range configured in ``/proc/sys/net/ipv4/ip_local_port_range`` globally (or
+> + * on a per-socket basis with ``setsockopt(IP_LOCAL_PORT_RANGE)``).
+>   */
+>  /* clang-format off */
+>  #define LANDLOCK_ACCESS_NET_BIND_TCP			(1ULL << 0)
+>  #define LANDLOCK_ACCESS_NET_CONNECT_TCP			(1ULL << 1)
+>  #define LANDLOCK_ACCESS_NET_BIND_UDP			(1ULL << 2)
+>  #define LANDLOCK_ACCESS_NET_CONNECT_UDP			(1ULL << 3)
+> +#define LANDLOCK_ACCESS_NET_RECVMSG_UDP			(1ULL << 4)
+> +#define LANDLOCK_ACCESS_NET_SENDMSG_UDP			(1ULL << 5)
+>  /* clang-format on */
+>  #endif /* _UAPI_LINUX_LANDLOCK_H */
+> diff --git a/security/landlock/limits.h b/security/landlock/limits.h
+> index 182b6a8d2976..e2697348310c 100644
+> --- a/security/landlock/limits.h
+> +++ b/security/landlock/limits.h
+> @@ -22,7 +22,7 @@
+>  #define LANDLOCK_MASK_ACCESS_FS		((LANDLOCK_LAST_ACCESS_FS << 1) - 1)
+>  #define LANDLOCK_NUM_ACCESS_FS		__const_hweight64(LANDLOCK_MASK_ACCESS_FS)
+>  
+> -#define LANDLOCK_LAST_ACCESS_NET	LANDLOCK_ACCESS_NET_CONNECT_UDP
+> +#define LANDLOCK_LAST_ACCESS_NET	LANDLOCK_ACCESS_NET_SENDMSG_UDP
+>  #define LANDLOCK_MASK_ACCESS_NET	((LANDLOCK_LAST_ACCESS_NET << 1) - 1)
+>  #define LANDLOCK_NUM_ACCESS_NET		__const_hweight64(LANDLOCK_MASK_ACCESS_NET)
+>  
+> diff --git a/security/landlock/net.c b/security/landlock/net.c
+> index becc62c02cc9..9a3c44ad3f26 100644
+> --- a/security/landlock/net.c
+> +++ b/security/landlock/net.c
+> @@ -10,6 +10,8 @@
+>  #include <linux/net.h>
+>  #include <linux/socket.h>
+>  #include <net/ipv6.h>
+> +#include <net/transp_v6.h>
+> +#include <net/ip.h>
+>  
+>  #include "common.h"
+>  #include "cred.h"
+> @@ -61,6 +63,45 @@ static const struct landlock_ruleset *get_current_net_domain(void)
+>  	return dom;
+>  }
+>  
+> +static int get_addr_port(const struct sockaddr *address, int addrlen,
+> +			 bool in_udpv6_sendmsg_ctx, __be16 *port)
+> +{
+> +	/* Checks for minimal header length to safely read sa_family. */
+> +	if (addrlen < offsetofend(typeof(*address), sa_family))
+> +		return -EINVAL;
+> +
+> +	switch (address->sa_family) {
+> +	case AF_UNSPEC:
 
-aa_secid_update was added by commit
-c092921219d2 ("apparmor: add support for mapping secids and using secctxes")
-but never used.
+Please create a simple patch refactoring this code, but without any
+semantic change, and then include the UDP specific part in the patch
+adding support for UDP control.  This helps verify (and test) what is
+the code refactoring and what is the actual change, and it could also
+help for backports.  Moving this code to a standalone helper should then
+be the first patch of this series.
 
-aa_split_fqname has been unused since commit
-3664268f19ea ("apparmor: add namespace lookup fns()")
+> +		/*
+> +		 * Backward compatibility games: AF_UNSPEC is mapped to AF_INET
+> +		 * by `bind` (v4+v6), `connect` (v4) and `sendmsg` (v4), but
 
-aa_lookup_profile has been unused since commit
-93c98a484c49 ("apparmor: move exec domain mediation to using labels")
+Instead of backticks, just name these syscalls as functions: bind(),
+connect()...
 
-aa_audit_perms_cb was only used by aa_profile_label_perm (see above).
+> +		 * interpreted as "no address" by `sendmsg` (v6). In that case
+> +		 * this call must succeed (even if `address` is shorter than a
+> +		 * `struct sockaddr_in`), and caller must check for this
+> +		 * condition.
 
-All of these commits are from around 2017.
+Weird dance, but good catch.
 
-Remove them.
+> +		 */
+> +		if (in_udpv6_sendmsg_ctx) {
+> +			*port = 0;
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- security/apparmor/include/label.h  |  4 --
- security/apparmor/include/lib.h    |  1 -
- security/apparmor/include/perms.h  |  3 --
- security/apparmor/include/policy.h |  1 -
- security/apparmor/include/secid.h  |  1 -
- security/apparmor/label.c          | 33 ------------
- security/apparmor/lib.c            | 84 ------------------------------
- security/apparmor/policy.c         |  5 --
- security/apparmor/secid.c          | 14 -----
- 9 files changed, 146 deletions(-)
+Why set the port to zero?  In udp_sendmsg(), it looks like such a port
+would return -EINVAL right?
 
-diff --git a/security/apparmor/include/label.h b/security/apparmor/include/label.h
-index 2a72e6b17d68..83a840d935bc 100644
---- a/security/apparmor/include/label.h
-+++ b/security/apparmor/include/label.h
-@@ -291,8 +291,6 @@ bool aa_label_replace(struct aa_label *old, struct aa_label *new);
- bool aa_label_make_newest(struct aa_labelset *ls, struct aa_label *old,
- 			  struct aa_label *new);
- 
--struct aa_label *aa_label_find(struct aa_label *l);
--
- struct aa_profile *aa_label_next_in_merge(struct label_it *I,
- 					  struct aa_label *a,
- 					  struct aa_label *b);
-@@ -320,8 +318,6 @@ void aa_label_seq_xprint(struct seq_file *f, struct aa_ns *ns,
- 			 struct aa_label *label, int flags, gfp_t gfp);
- void aa_label_xprintk(struct aa_ns *ns, struct aa_label *label, int flags,
- 		      gfp_t gfp);
--void aa_label_audit(struct audit_buffer *ab, struct aa_label *label, gfp_t gfp);
--void aa_label_seq_print(struct seq_file *f, struct aa_label *label, gfp_t gfp);
- void aa_label_printk(struct aa_label *label, gfp_t gfp);
- 
- struct aa_label *aa_label_strn_parse(struct aa_label *base, const char *str,
-diff --git a/security/apparmor/include/lib.h b/security/apparmor/include/lib.h
-index d7a894b1031f..f11a0db7f51d 100644
---- a/security/apparmor/include/lib.h
-+++ b/security/apparmor/include/lib.h
-@@ -59,7 +59,6 @@ extern int apparmor_initialized;
- 
- /* fn's in lib */
- const char *skipn_spaces(const char *str, size_t n);
--char *aa_split_fqname(char *args, char **ns_name);
- const char *aa_splitn_fqname(const char *fqname, size_t n, const char **ns_name,
- 			     size_t *ns_len);
- void aa_info_message(const char *str);
-diff --git a/security/apparmor/include/perms.h b/security/apparmor/include/perms.h
-index 0f7e913c3fc2..bbaa7d39a39a 100644
---- a/security/apparmor/include/perms.h
-+++ b/security/apparmor/include/perms.h
-@@ -213,9 +213,6 @@ void aa_perms_accum_raw(struct aa_perms *accum, struct aa_perms *addend);
- void aa_profile_match_label(struct aa_profile *profile,
- 			    struct aa_ruleset *rules, struct aa_label *label,
- 			    int type, u32 request, struct aa_perms *perms);
--int aa_profile_label_perm(struct aa_profile *profile, struct aa_profile *target,
--			  u32 request, int type, u32 *deny,
--			  struct apparmor_audit_data *ad);
- int aa_check_perms(struct aa_profile *profile, struct aa_perms *perms,
- 		   u32 request, struct apparmor_audit_data *ad,
- 		   void (*cb)(struct audit_buffer *, void *));
-diff --git a/security/apparmor/include/policy.h b/security/apparmor/include/policy.h
-index 75088cc310b6..757e3c232c57 100644
---- a/security/apparmor/include/policy.h
-+++ b/security/apparmor/include/policy.h
-@@ -264,7 +264,6 @@ void aa_free_profile(struct aa_profile *profile);
- struct aa_profile *aa_find_child(struct aa_profile *parent, const char *name);
- struct aa_profile *aa_lookupn_profile(struct aa_ns *ns, const char *hname,
- 				      size_t n);
--struct aa_profile *aa_lookup_profile(struct aa_ns *ns, const char *name);
- struct aa_profile *aa_fqlookupn_profile(struct aa_label *base,
- 					const char *fqname, size_t n);
- 
-diff --git a/security/apparmor/include/secid.h b/security/apparmor/include/secid.h
-index a912a5d5d04f..b49dd0253118 100644
---- a/security/apparmor/include/secid.h
-+++ b/security/apparmor/include/secid.h
-@@ -32,6 +32,5 @@ void apparmor_release_secctx(char *secdata, u32 seclen);
- 
- int aa_alloc_secid(struct aa_label *label, gfp_t gfp);
- void aa_free_secid(u32 secid);
--void aa_secid_update(u32 secid, struct aa_label *label);
- 
- #endif /* __AA_SECID_H */
-diff --git a/security/apparmor/label.c b/security/apparmor/label.c
-index c71e4615dd46..91483ecacc16 100644
---- a/security/apparmor/label.c
-+++ b/security/apparmor/label.c
-@@ -899,23 +899,6 @@ struct aa_label *aa_vec_find_or_create_label(struct aa_profile **vec, int len,
- 	return vec_create_and_insert_label(vec, len, gfp);
- }
- 
--/**
-- * aa_label_find - find label @label in label set
-- * @label: label to find (NOT NULL)
-- *
-- * Requires: caller to hold a valid ref on l
-- *
-- * Returns: refcounted @label if @label is in tree
-- *          refcounted label that is equiv to @label in tree
-- *     else NULL if @label or equiv is not in tree
-- */
--struct aa_label *aa_label_find(struct aa_label *label)
--{
--	AA_BUG(!label);
--
--	return vec_find(label->vec, label->size);
--}
--
- 
- /**
-  * aa_label_insert - insert label @label into @ls or return existing label
-@@ -1811,22 +1794,6 @@ void aa_label_xprintk(struct aa_ns *ns, struct aa_label *label, int flags,
- 		pr_info("%s", label->hname);
- }
- 
--void aa_label_audit(struct audit_buffer *ab, struct aa_label *label, gfp_t gfp)
--{
--	struct aa_ns *ns = aa_get_current_ns();
--
--	aa_label_xaudit(ab, ns, label, FLAG_VIEW_SUBNS, gfp);
--	aa_put_ns(ns);
--}
--
--void aa_label_seq_print(struct seq_file *f, struct aa_label *label, gfp_t gfp)
--{
--	struct aa_ns *ns = aa_get_current_ns();
--
--	aa_label_seq_xprint(f, ns, label, FLAG_VIEW_SUBNS, gfp);
--	aa_put_ns(ns);
--}
--
- void aa_label_printk(struct aa_label *label, gfp_t gfp)
- {
- 	struct aa_ns *ns = aa_get_current_ns();
-diff --git a/security/apparmor/lib.c b/security/apparmor/lib.c
-index cd569fbbfe36..7db62213e352 100644
---- a/security/apparmor/lib.c
-+++ b/security/apparmor/lib.c
-@@ -45,44 +45,6 @@ void aa_free_str_table(struct aa_str_table *t)
- 	}
- }
- 
--/**
-- * aa_split_fqname - split a fqname into a profile and namespace name
-- * @fqname: a full qualified name in namespace profile format (NOT NULL)
-- * @ns_name: pointer to portion of the string containing the ns name (NOT NULL)
-- *
-- * Returns: profile name or NULL if one is not specified
-- *
-- * Split a namespace name from a profile name (see policy.c for naming
-- * description).  If a portion of the name is missing it returns NULL for
-- * that portion.
-- *
-- * NOTE: may modify the @fqname string.  The pointers returned point
-- *       into the @fqname string.
-- */
--char *aa_split_fqname(char *fqname, char **ns_name)
--{
--	char *name = strim(fqname);
--
--	*ns_name = NULL;
--	if (name[0] == ':') {
--		char *split = strchr(&name[1], ':');
--		*ns_name = skip_spaces(&name[1]);
--		if (split) {
--			/* overwrite ':' with \0 */
--			*split++ = 0;
--			if (strncmp(split, "//", 2) == 0)
--				split += 2;
--			name = skip_spaces(split);
--		} else
--			/* a ns name without a following profile is allowed */
--			name = NULL;
--	}
--	if (name && *name == 0)
--		name = NULL;
--
--	return name;
--}
--
- /**
-  * skipn_spaces - Removes leading whitespace from @str.
-  * @str: The string to be stripped.
-@@ -275,33 +237,6 @@ void aa_audit_perm_mask(struct audit_buffer *ab, u32 mask, const char *chrs,
- 	audit_log_format(ab, "\"");
- }
- 
--/**
-- * aa_audit_perms_cb - generic callback fn for auditing perms
-- * @ab: audit buffer (NOT NULL)
-- * @va: audit struct to audit values of (NOT NULL)
-- */
--static void aa_audit_perms_cb(struct audit_buffer *ab, void *va)
--{
--	struct common_audit_data *sa = va;
--	struct apparmor_audit_data *ad = aad(sa);
--
--	if (ad->request) {
--		audit_log_format(ab, " requested_mask=");
--		aa_audit_perm_mask(ab, ad->request, aa_file_perm_chrs,
--				   PERMS_CHRS_MASK, aa_file_perm_names,
--				   PERMS_NAMES_MASK);
--	}
--	if (ad->denied) {
--		audit_log_format(ab, "denied_mask=");
--		aa_audit_perm_mask(ab, ad->denied, aa_file_perm_chrs,
--				   PERMS_CHRS_MASK, aa_file_perm_names,
--				   PERMS_NAMES_MASK);
--	}
--	audit_log_format(ab, " peer=");
--	aa_label_xaudit(ab, labels_ns(ad->subj_label), ad->peer,
--				      FLAGS_NONE, GFP_ATOMIC);
--}
--
- /**
-  * aa_apply_modes_to_perms - apply namespace and profile flags to perms
-  * @profile: that perms where computed from
-@@ -349,25 +284,6 @@ void aa_profile_match_label(struct aa_profile *profile,
- }
- 
- 
--/* currently unused */
--int aa_profile_label_perm(struct aa_profile *profile, struct aa_profile *target,
--			  u32 request, int type, u32 *deny,
--			  struct apparmor_audit_data *ad)
--{
--	struct aa_ruleset *rules = list_first_entry(&profile->rules,
--						    typeof(*rules), list);
--	struct aa_perms perms;
--
--	ad->peer = &target->label;
--	ad->request = request;
--
--	aa_profile_match_label(profile, rules, &target->label, type, request,
--			       &perms);
--	aa_apply_modes_to_perms(profile, &perms);
--	*deny |= request & perms.deny;
--	return aa_check_perms(profile, &perms, request, ad, aa_audit_perms_cb);
--}
--
- /**
-  * aa_check_perms - do audit mode selection based on perms set
-  * @profile: profile being checked
-diff --git a/security/apparmor/policy.c b/security/apparmor/policy.c
-index 14df15e35695..74c854e8889f 100644
---- a/security/apparmor/policy.c
-+++ b/security/apparmor/policy.c
-@@ -580,11 +580,6 @@ struct aa_profile *aa_lookupn_profile(struct aa_ns *ns, const char *hname,
- 	return profile;
- }
- 
--struct aa_profile *aa_lookup_profile(struct aa_ns *ns, const char *hname)
--{
--	return aa_lookupn_profile(ns, hname, strlen(hname));
--}
--
- struct aa_profile *aa_fqlookupn_profile(struct aa_label *base,
- 					const char *fqname, size_t n)
- {
-diff --git a/security/apparmor/secid.c b/security/apparmor/secid.c
-index 83d3d1e6d9dc..a52c789d4f18 100644
---- a/security/apparmor/secid.c
-+++ b/security/apparmor/secid.c
-@@ -39,20 +39,6 @@ int apparmor_display_secid_mode;
-  * TODO: use secid_update in label replace
-  */
- 
--/**
-- * aa_secid_update - update a secid mapping to a new label
-- * @secid: secid to update
-- * @label: label the secid will now map to
-- */
--void aa_secid_update(u32 secid, struct aa_label *label)
--{
--	unsigned long flags;
--
--	xa_lock_irqsave(&aa_secids, flags);
--	__xa_store(&aa_secids, secid, label, 0);
--	xa_unlock_irqrestore(&aa_secids, flags);
--}
--
- /*
-  * see label for inverse aa_label_to_secid
-  */
--- 
-2.46.1
+And in this case, why ignoring the following addrlen check?
 
+Couldn't we just remove this in_udpv6_sendmsg_ctx argument, extract the
+port as long as we can, and only deal with the in_udpv6_sendmsg case in
+hook_socket_sendmsg()
+
+> +			return 0;
+> +		}
+> +		fallthrough;
+> +	case AF_INET:
+> +		if (addrlen < sizeof(struct sockaddr_in))
+> +			return -EINVAL;
+> +		*port = ((struct sockaddr_in *)address)->sin_port;
+> +		return 0;
+> +#if IS_ENABLED(CONFIG_IPV6)
+> +	case AF_INET6:
+> +		if (addrlen < SIN6_LEN_RFC2133)
+> +			return -EINVAL;
+> +		*port = ((struct sockaddr_in6 *)address)->sin6_port;
+> +		return 0;
+> +#endif /* IS_ENABLED(CONFIG_IPV6) */
+> +	}
+> +
+> +	return -EAFNOSUPPORT;
+> +}
+> +
+>  static int current_check_access_socket(struct socket *const sock,
+>  				       struct sockaddr *const address,
+>  				       const int addrlen,
+> @@ -73,39 +114,18 @@ static int current_check_access_socket(struct socket *const sock,
+>  		.type = LANDLOCK_KEY_NET_PORT,
+>  	};
+>  	const struct landlock_ruleset *const dom = get_current_net_domain();
+> +	int err;
+>  
+>  	if (!dom)
+>  		return 0;
+>  	if (WARN_ON_ONCE(dom->num_layers < 1))
+>  		return -EACCES;
+>  
+> -	/* Checks if it's a (potential) UDP or TCP socket. */
+> -	if (sock->type != SOCK_STREAM && sock->type != SOCK_DGRAM)
+> -		return 0;
+> -
+> -	/* Checks for minimal header length to safely read sa_family. */
+> -	if (addrlen < offsetofend(typeof(*address), sa_family))
+> -		return -EINVAL;
+> -
+> -	switch (address->sa_family) {
+> -	case AF_UNSPEC:
+> -	case AF_INET:
+> -		if (addrlen < sizeof(struct sockaddr_in))
+> -			return -EINVAL;
+> -		port = ((struct sockaddr_in *)address)->sin_port;
+> -		break;
+> -
+> -#if IS_ENABLED(CONFIG_IPV6)
+> -	case AF_INET6:
+> -		if (addrlen < SIN6_LEN_RFC2133)
+> -			return -EINVAL;
+> -		port = ((struct sockaddr_in6 *)address)->sin6_port;
+> -		break;
+> -#endif /* IS_ENABLED(CONFIG_IPV6) */
+> -
+> -	default:
+> -		return 0;
+> -	}
+> +	err = get_addr_port(address, addrlen, false, &port);
+> +	if (err == -EAFNOSUPPORT)
+> +		return 0; // restrictions are not applicable to this socket family
+
+Comments need to be /* Like this and before the commented code. */
+See https://docs.kernel.org/process/maintainer-tip.html#comment-style
+
+> +	else if (err != 0)
+> +		return err;
+>  
+>  	/* Specific AF_UNSPEC handling. */
+>  	if (address->sa_family == AF_UNSPEC) {
+> @@ -174,6 +194,27 @@ static int current_check_access_socket(struct socket *const sock,
+>  	return -EACCES;
+>  }
+>  
+> +static int check_access_port(const struct landlock_ruleset *const dom,
+> +			     access_mask_t access_request, __be16 port)
+> +{
+> +	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_NET] = {};
+> +	const struct landlock_rule *rule;
+> +	const struct landlock_id id = {
+> +		.key.data = (__force uintptr_t)port,
+> +		.type = LANDLOCK_KEY_NET_PORT,
+> +	};
+> +	BUILD_BUG_ON(sizeof(port) > sizeof(id.key.data));
+> +
+> +	rule = landlock_find_rule(dom, id);
+> +	access_request = landlock_init_layer_masks(
+> +		dom, access_request, &layer_masks, LANDLOCK_KEY_NET_PORT);
+> +	if (landlock_unmask_layers(rule, access_request, &layer_masks,
+> +				   ARRAY_SIZE(layer_masks)))
+> +		return 0;
+> +
+> +	return -EACCES;
+> +}
+> +
+>  static int hook_socket_bind(struct socket *const sock,
+>  			    struct sockaddr *const address, const int addrlen)
+>  {
+> @@ -215,9 +256,119 @@ static int hook_socket_connect(struct socket *const sock,
+>  					   access_request);
+>  }
+>  
+> +static int hook_socket_sendmsg(struct socket *const sock,
+> +			       struct msghdr *const msg, const int size)
+
+We can probably constify these references.
+
+> +{
+> +	const struct landlock_ruleset *const dom = get_current_net_domain();
+> +	const struct sockaddr *address = (const struct sockaddr *)msg->msg_name;
+> +	int err;
+> +	__be16 port;
+> +
+> +	if (sock->type != SOCK_DGRAM)
+> +		return 0;
+> +	if (sock->sk->sk_protocol != IPPROTO_UDP)
+> +		return 0;
+> +	if (!dom)
+> +		return 0;
+
+I'd prefer this !dom check to be the first (like for most other hooks)
+because it makes it clear that Landlock doesn't mess with not sandboxed
+tasks.  Moreover in this case it would avoid two pointer dereferences.
+
+> +	if (WARN_ON_ONCE(dom->num_layers < 1))
+> +		return -EACCES;
+
+This num_layers check can stay just after to the dom check though.
+
+> +
+> +	/*
+> +	 * Don't mimic all checks udp_sendmsg() and udpv6_sendmsg() do. Just
+> +	 * read what we need for access control, and fail if we can't (e.g.
+> +	 * because the input buffer is too short) with the same error codes as
+> +	 * they do. Selftests enforce that these error codes do not diverge
+> +	 * with the actual implementation's ones.
+> +	 */
+> +
+> +	/*
+> +	 * If there is a more specific address in the message, it will take
+> +	 * precedence over any connect()ed address. Base our access check on it.
+> +	 */
+> +	if (address) {
+> +		const bool in_udpv6_sendmsg =
+> +			(sock->sk->sk_prot == &udpv6_prot);
+> +
+> +		err = get_addr_port(address, msg->msg_namelen, in_udpv6_sendmsg,
+> +				    &port);
+> +		if (err != 0)
+> +			return err;
+> +
+> +		/*
+> +		 * In `udpv6_sendmsg`, AF_UNSPEC is interpreted as "no address".
+> +		 * In that case, the call above will succeed but without
+> +		 * returning a port.
+> +		 */
+> +		if (in_udpv6_sendmsg && address->sa_family == AF_UNSPEC)
+> +			address = NULL;
+> +	}
+> +
+> +	/*
+> +	 * Without a message-specific destination address, the socket must be
+> +	 * connect()ed to an address, base our access check on that one.
+> +	 */
+> +	if (!address) {
+
+If the address is not specified, I think we should just allow the
+request and let the network stack handle the rest.  The advantage of
+this approach would be that if the socket was previously allowed to be
+connected, the check is only done once and they will be almost no
+performance impact when calling sendto/write/recvfrom/read on this
+"connected" socket.
+
+> +		/*
+> +		 * We could let this through and count on `udp_sendmsg` and
+> +		 * `udpv6_sendmsg` to error out, but they could change in the
+> +		 * future and open a hole here without knowing. Enforce an
+> +		 * error, and enforce in selftests that we don't diverge in
+> +		 * behaviours compared to them.
+
+This is a good approach for this patch, but if we allow connected
+sockets to be freely used when the address is not specified, this check
+should not be required because we would allow such action anyway and the
+network stack would handle the other error cases.
+
+> +		 */
+> +		if (sock->sk->sk_state != TCP_ESTABLISHED)
+> +			return -EDESTADDRREQ;
+> +
+> +		port = inet_sk(sock->sk)->inet_dport;
+> +	}
+> +
+> +	return check_access_port(dom, LANDLOCK_ACCESS_NET_SENDMSG_UDP, port);
+
+
+What about something like this (with the appropriate comments)?
+
+if (!address)
+	return 0;
+
+if (address->sa_family == AF_UNSPEC && sock->sk->sk_prot == &udpv6_prot)
+	return 0;
+
+err = get_addr_port(address, msg->msg_namelen, &port);
+if (err)
+	return err;
+
+return check_access_port(dom, LANDLOCK_ACCESS_NET_SENDMSG_UDP, port);
+
+> +}
+> +
+> +static int hook_socket_recvmsg(struct socket *const sock,
+> +			       struct msghdr *const msg, const int size,
+> +			       const int flags)
+> +{
+> +	const struct landlock_ruleset *const dom = get_current_net_domain();
+> +	struct sock *sk = sock->sk;
+> +	int err;
+> +	__be16 port_bigendian;
+> +	int ephemeral_low;
+> +	int ephemeral_high;
+> +	__u16 port_hostendian;
+> +
+> +	if (sk->sk_protocol != IPPROTO_UDP)
+> +		return 0;
+
+ditto
+
+> +	if (!dom)
+> +		return 0;
+> +	if (WARN_ON_ONCE(dom->num_layers < 1))
+> +		return -EACCES;
+> +
+> +	/* "fast" path: socket is bound to an explicitly allowed port */
+> +	port_bigendian = inet_sk(sk)->inet_sport;
+> +	err = check_access_port(dom, LANDLOCK_ACCESS_NET_RECVMSG_UDP,
+> +				port_bigendian);
+> +	if (err != -EACCES)
+> +		return err;
+
+We should be able to follow the same policy for "connected" sockets.
+
+> +
+> +	/*
+> +	 * Slow path: socket is bound to an ephemeral port. Need a second check
+> +	 * on port 0 with different semantics ("any ephemeral port").
+> +	 */
+> +	inet_sk_get_local_port_range(sk, &ephemeral_low, &ephemeral_high);
+
+Is it to handle recvmsg(with port 0)?
+
+> +	port_hostendian = ntohs(port_bigendian);
+> +	if (ephemeral_low <= port_hostendian &&
+> +	    port_hostendian <= ephemeral_high)
+> +		return check_access_port(dom, LANDLOCK_ACCESS_NET_RECVMSG_UDP,
+> +					 0);
+> +
+> +	return -EACCES;
+> +}
+> +
+>  static struct security_hook_list landlock_hooks[] __ro_after_init = {
+>  	LSM_HOOK_INIT(socket_bind, hook_socket_bind),
+>  	LSM_HOOK_INIT(socket_connect, hook_socket_connect),
+> +	LSM_HOOK_INIT(socket_sendmsg, hook_socket_sendmsg),
+> +	LSM_HOOK_INIT(socket_recvmsg, hook_socket_recvmsg),
+>  };
+>  
+>  __init void landlock_add_net_hooks(void)
+> -- 
+> 2.39.5
+> 
+> 
