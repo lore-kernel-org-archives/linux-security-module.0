@@ -1,83 +1,128 @@
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1076244C8C
-	for <linux-security-module@vger.kernel.org>; Mon, 23 Sep 2024 09:02:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FD4719415E
+	for <linux-security-module@vger.kernel.org>; Mon, 23 Sep 2024 09:10:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727082144; cv=none; b=epjgHDnNEJ7uYmV0zxF0ZciZTaZyHq1V/oSpOwKKZuLuPLkePt5F0gXNcy614pMf2gRRDJJl4CHlwQATIOFVy+aS0wKaXiNcjkfyFIezTCDGAoHWH9caXvJBWBqMwFJoSXP2WlnH/oYrTNnhMQGXN4hV8MQstKe9df+gDa/u+zg=
+	t=1727082635; cv=none; b=BL7dQ6xsniAl2jWy18xlz/7J45T1Z78sHtKvro07FGgC/zZw5rErExL99NhPftPzYUUadXZgY7YlC3wCDyQ3OvnnEzVBjUgI+EmgaW6hTM+Fol0M/srJSeffo7OF4oy3pVZBMVbPIJ+gPyhaGREsuxCLak6n6/KP0ws37AR+rk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727082144; c=relaxed/simple;
-	bh=zjYN+6XNObuuD6Fgeuukf6MO590AzBoG+ZyBDnAYjHQ=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=XsMn7lDQJkokqVh6sFKaDQDpp+s3Mr9keQiEWFzjYmTa9BWO2KpQoT+dqYzjle0hwuw9haDc0JVjjEpVlVHIL0aUy2g5DwIO2nXH4Ibmb3BKFzldObe8LZLNGwyA++XF/ZinuFlPoD569jVdV/X69QsbyQK61NRlUoqCeir3abI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a19534ac2fso24655495ab.2
-        for <linux-security-module@vger.kernel.org>; Mon, 23 Sep 2024 02:02:22 -0700 (PDT)
+	s=arc-20240116; t=1727082635; c=relaxed/simple;
+	bh=uPgZlCyKgHfBNlGgGtBBy44h+xASjg0WLpo+j35SnPA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jUNvMUc5qycRYoOHQYHutsYwfEqBKNQ2jWtwM0pjv6Tu27xekE/rPwFd5Cp3HDZAIyLweGiRM5cq4irARp+4BvVgN3KTZHk/1oLXAQIVjQPbqL6mCj8gYTjMJjENsfYPYhZvSMCvLwzp8EzC0APnkDjKELrgDVNG3BkUnp8F9fM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UHm69EB+; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UHm69EB+"
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2f77fe7ccc4so37243471fa.2
+        for <linux-security-module@vger.kernel.org>; Mon, 23 Sep 2024 02:10:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727082632; x=1727687432; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pTh3TINkxBJWpdvT07eZ7FGsjAZzFnLti1KSAZnm+A0=;
+        b=UHm69EB+GGCnZOwV3aue1IKtlkedL+Vqb5Ikziy+O3XhoYtWpzl42F/OQCziYnhXG+
+         3//7FNsK8Pr6R6qxIn6ofwBa2U9zUjxFI1QLPNnkGn3dm+Mz8Rk/8DDdraw3YuOC0eQE
+         PUQPvO5OVJIPBKgQj0VWVAdnToUZ3DluQvQGAKjdpm/OzkhTStxsbAfKFZ5a9blfxowT
+         amAv7qhFZ+K5B8QPCrB58tXOqTnzN+ClMAnpiBUocl2QWzlZGb8NrjpimW9lcYofpSyp
+         Uwom+R/gHgbVWzKSAnoHB2c7eZJRV20IpGkfFMPkd1gZtoOq4hxpV1dXz72BAgWrzYPb
+         ybrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727082142; x=1727686942;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cWuOSJPdiAi2bYO8+Uv3jbCSpy3BYawpRw6/d3ft83A=;
-        b=lwrcVrLLzEiC+onEyYwo5GXBjFkH/DFmfemQmw+ky5j8TyxWk1vzAU45+1BGoxpMGy
-         RUIwotVUZnL8DTY89IgniHzqUh2nv7F/d8acO1LU0pLntUJ6uzlKwD5CZ91F5GYxh1dA
-         RmHXLEXQTySbT1JJgPOnv2JYQzbqy0K8rZH2L2GcHJ7GtMmDXJQHthlrZ+wyuYRxg1AJ
-         TICNYKX1yXW3NLc82DqA+seOYIH7TCjK7nJQbjqsoln+tqPqP1AuHphKDeC+bselj7eS
-         LTkKWRlGjoU0fdBmS4zo4BiUXer18BXoCgoaGLPZKoJfpLzRLdAVGzk4kBsKmpfjrg0A
-         N5Xg==
-X-Forwarded-Encrypted: i=1; AJvYcCUfUfIBTacfokgCkj5xOPVfhk/z0avMFXT+Pu8J/gQI3zm7djeT1Ztnkzpva23PN+s4nNDC9xxFdEZCEzqtYQJMwhtFm/k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJp/dJxp9ZoagF5jM7xXnwWjCSgxGe+lz5zbeHDg6R8LkQjgbz
-	bCRczC1cJ2bK0bd7z8RRf0KXiJKlmyUH3yeZI7bYMEPJuqiZYlYXGIROYvetWKNsVi6IY18emuZ
-	iZAR8qWKnPK3htEixpLZHSTMxOSgttnYaVECurSvBYkbC+zUkHno62dw=
-X-Google-Smtp-Source: AGHT+IGpY1JfcOhf7M78o2gWPkVjnHWZjnOfDvV7XM6hmxug7L/cN8DTFKoD6Y275/LyHBWILVfa4UaPIsxt/qYK07JEGZKtd7fa
+        d=1e100.net; s=20230601; t=1727082632; x=1727687432;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pTh3TINkxBJWpdvT07eZ7FGsjAZzFnLti1KSAZnm+A0=;
+        b=aN4WGO17sXM3J59g/U5C9zxPG5IMgWI2VxX2QflitvKGaPFF161s7qR0BOWiGdyf1V
+         THd6JSkrC4jQFUtRFB+zTBoiJuZxXhHqghUywhLQDQgr13lKI4J67/vcu28zKrA/Fyrr
+         kRwKVznCBm2tiRK1dH+0o314D8EMb3MuPYN/0x2z81JUG0SYwJj1dXn3NN/l30yOmxOE
+         lxQizdBkgXa8p4iD/GmEr9MZj5DYB28mqm6wubn6FxiWWXIEnueMRpnzPCdAzuTWtn3b
+         /vPoeer0xDAYD4o9mH6jH2I5lPBq++ZP7D7a1+3aePSQnsxUeAAbHmeW4kJO7TRXxVOJ
+         CIRw==
+X-Forwarded-Encrypted: i=1; AJvYcCUEDv73hKfGxEN4dp9d+FnUEYIx5HhzIYSZVi1TwmGuFHaP3Iw9dIHISIA0eLov/e1Z6ZYqnVi7j9Wxif/eEwwu6iXCDuQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyqx6wze94wriB/xr1c2KK+q6CRESOf19K+5KbPiOwIBHcxUDo3
+	hANTGi7pBKYCMsG1FtkBg05v2cZ+ERhZCA7JUcvYXwhKMaLftwWDz3xoCLsrNUEDw1LJ20Vmwmm
+	Jgxb8tHcRbU6TPLNDySeXLZUKv47lyTsucxz4
+X-Google-Smtp-Source: AGHT+IFkDo4/xXo1toU5UNTrEq3g4zN2D09rl3Vkx1QeLDwzQPemWQJHswibNjBrREPKHVC790lBmLUeOANVqIdHn3Y=
+X-Received: by 2002:a2e:3302:0:b0:2f7:611c:a643 with SMTP id
+ 38308e7fff4ca-2f7cb342ec0mr44724231fa.33.1727082631501; Mon, 23 Sep 2024
+ 02:10:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b26:b0:3a0:9026:3b65 with SMTP id
- e9e14a558f8ab-3a0c8d3d77cmr82137435ab.25.1727082142225; Mon, 23 Sep 2024
- 02:02:22 -0700 (PDT)
-Date: Mon, 23 Sep 2024 02:02:22 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66f12e9e.050a0220.3eed3.0009.GAE@google.com>
-Subject: [syzbot] Monthly lsm report (Sep 2024)
-From: syzbot <syzbot+listfc277c7cb94932601d96@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20240915-alice-file-v10-0-88484f7a3dcf@google.com>
+ <20240915-alice-file-v10-8-88484f7a3dcf@google.com> <20240915232403.58466ba7.gary@garyguo.net>
+In-Reply-To: <20240915232403.58466ba7.gary@garyguo.net>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 23 Sep 2024 11:10:19 +0200
+Message-ID: <CAH5fLghE1RTGgnY=y=T0k62XfW6oqE-mQLSJEEc15YyZwdYU6Q@mail.gmail.com>
+Subject: Re: [PATCH v10 8/8] rust: file: add abstraction for `poll_table`
+To: Gary Guo <gary@garyguo.net>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Christian Brauner <brauner@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
+	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, 
+	Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, 
+	Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Kees Cook <kees@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello lsm maintainers/developers,
+On Mon, Sep 16, 2024 at 12:24=E2=80=AFAM Gary Guo <gary@garyguo.net> wrote:
+>
+> On Sun, 15 Sep 2024 14:31:34 +0000
+> Alice Ryhl <aliceryhl@google.com> wrote:
+> > +    /// Register this [`PollTable`] with the provided [`PollCondVar`],=
+ so that it can be notified
+> > +    /// using the condition variable.
+> > +    pub fn register_wait(&mut self, file: &File, cv: &PollCondVar) {
+> > +        if let Some(qproc) =3D self.get_qproc() {
+> > +            // SAFETY: The pointers to `file` and `self` need to be va=
+lid for the duration of this
+> > +            // call to `qproc`, which they are because they are refere=
+nces.
+> > +            //
+> > +            // The `cv.wait_queue_head` pointer must be valid until an=
+ rcu grace period after the
+> > +            // waiter is removed. The `PollCondVar` is pinned, so befo=
+re `cv.wait_queue_head` can
+> > +            // be destroyed, the destructor must run. That destructor =
+first removes all waiters,
+> > +            // and then waits for an rcu grace period. Therefore, `cv.=
+wait_queue_head` is valid for
+> > +            // long enough.
+> > +            unsafe { qproc(file.as_ptr() as _, cv.wait_queue_head.get(=
+), self.0.get()) };
+> > +        }
+>
+> Should this be calling `poll_wait` instead?
+>
+> > +#[pinned_drop]
+> > +impl PinnedDrop for PollCondVar {
+> > +    fn drop(self: Pin<&mut Self>) {
+> > +        // Clear anything registered using `register_wait`.
+> > +        //
+> > +        // SAFETY: The pointer points at a valid `wait_queue_head`.
+> > +        unsafe { bindings::__wake_up_pollfree(self.inner.wait_queue_he=
+ad.get()) };
+>
+> Should this use `wake_up_pollfree` (without the leading __)?
 
-This is a 31-day syzbot report for the lsm subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/lsm
+For both cases, that would require a Rust helper. But I suppose we could do=
+ it.
 
-During the period, 0 new issues were detected and 0 were fixed.
-In total, 4 issues are still open and 27 have been fixed so far.
-
-Some of the still happening issues:
-
-Ref Crashes Repro Title
-<1> 306     No    INFO: task hung in process_measurement (2)
-                  https://syzkaller.appspot.com/bug?extid=1de5a37cb85a2d536330
-<2> 9       No    general protection fault in smack_inode_permission
-                  https://syzkaller.appspot.com/bug?extid=4ac565a7081cc43bb185
-<3> 3       Yes   WARNING in current_check_refer_path
-                  https://syzkaller.appspot.com/bug?extid=34b68f850391452207df
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
+Alice
