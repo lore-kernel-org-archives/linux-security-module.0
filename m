@@ -1,143 +1,90 @@
-Received: from smtp-bc0b.mail.infomaniak.ch (smtp-bc0b.mail.infomaniak.ch [45.157.188.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D2691FA5
-	for <linux-security-module@vger.kernel.org>; Mon, 23 Sep 2024 18:50:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0806579CC
+	for <linux-security-module@vger.kernel.org>; Mon, 23 Sep 2024 19:53:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727117424; cv=none; b=BlmNJj6Hzboa78xu6Ihx0Tu6krWLduq7mVZZm3l4Djt03O6iMlfc3C7vhOkmE6bRqbG2dBO0WDnE20csxU2nF3RrhUTGAG53WduaP2zDUy2UvewCcDCriUjiFDAc7kSCUzN+59JHB4Za1XcIf6Bz8Yhs2GSKTcfESOwgJ88SxEg=
+	t=1727121219; cv=none; b=RBsxeAKjh/fmyMfxHQCViY7p5B/fYWj8od3Jxsj3xNgY8Y6fJHqxBAzZOiqOcARRG75qiA6YuHBIKmUGDxYgbC6RBgSreyXlSp9jNizObTMWW94xga+2jpf1Ur5q9JxomhPe49fVnupJZovhVS9ndQE0DYWVAoA1YEg3wvK7/Ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727117424; c=relaxed/simple;
-	bh=+Ba9EUL9kS773t5YpyTYbOZvhba7LDJb7g6NTE0uZVA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=A/M1IBUmQglRBbVvxyQPcCDdiiIL7eDdAbT5OzMyxKRuFm/yk1/NneOU9y2m+iy+rogSzSQ41O9itdo9JZ435cFvGhFcBk2LCoiYfn5DboGspw8xx6Hl+tW41OMKvEDvGQiY8dribG4Fe6segOdlQi3QeGELdtITsDyalWisMRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=JGwiIuBO; arc=none smtp.client-ip=45.157.188.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1727121219; c=relaxed/simple;
+	bh=deZIlRwr9MjW6pszPZG0mminhXw8RdDxiI4OqxAaV/I=;
+	h=Date:Message-ID:MIME-Version:Content-Type:Content-Disposition:
+	 From:To:Cc:Subject:References:In-Reply-To; b=dJwHD6EqM9V1y521BArmrcLZaRONBkQCxTDu/gPysH8qAfbG2Nd+0fd4s4y33DNAaZp71c3RYe5SHcGuEPqZ21kiNgsbptdic7PgGRUeVOO0GHOSF8TVBtv8AGltMGHPGd5dRE4eq2nbfHA9Rgw288Fa8ae6r2vBTnS579/oO6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=TCOra/PQ; arc=none smtp.client-ip=209.85.219.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="JGwiIuBO"
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XCBjN0MDWz2mR;
-	Mon, 23 Sep 2024 20:44:08 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1727117047;
-	bh=dG8p22DhWVuLVas0YarMUDwAkOaPh/p1GYeaN06+mqw=;
-	h=From:To:Cc:Subject:Date:From;
-	b=JGwiIuBOpcs1ebRGPNKVHLoRjo7cBDvfGI1Ag1MLtyf4pPqVs+tYqvIKUDj4ioK5r
-	 jzVGh0tRGCIpH9sqJ/DFfkuaRYY4NucKFLejfbUDyoqD/BlIe/vwVxAYtIW1uqIaFC
-	 7KEsaiyl1ECYwLunbx2J3HdVgkRDN3xRGGYRMT/c=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4XCBjM2QDJz5d4;
-	Mon, 23 Sep 2024 20:44:07 +0200 (CEST)
-From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	Jann Horn <jannh@google.com>,
-	Paul Moore <paul@paul-moore.com>,
-	Tahera Fahimi <fahimitahera@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	outreachy@lists.linux.dev
-Subject: [GIT PULL] Landlock updates for v6.12
-Date: Mon, 23 Sep 2024 20:42:51 +0200
-Message-ID: <20240923184251.153123-1-mic@digikod.net>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="TCOra/PQ"
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6c51d1df755so39012826d6.1
+        for <linux-security-module@vger.kernel.org>; Mon, 23 Sep 2024 12:53:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1727121217; x=1727726017; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-disposition:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=MH/lfr64odg7IIk5zQ7fDXQq/NRQz0Gg/qhKBjs5LKY=;
+        b=TCOra/PQhC/9eYKxw753y8/o6IYBUr/5af9/aZnK8xYgglX9DM653Qx+WxM0Ph8FgL
+         v0u4dfW+lUUGpZT51HhQwFF/FiSX95mKj90GQozvWg+ZypX5269OIdUocsEPXRbjPjHz
+         8hF4tnHFQyVNPFnEXDG7Dofa4t+76aXi4JePIGe1Kaur8M/D8i5p2qd+hry3qVAgLGl5
+         cgBwxK+8x7RkxCPDAWbnwzo7/EaiuNuUALkV9RAmrNIYQf0gi4RQz0lgwuTrGGsC3AZh
+         3+yp4ghBpyQEJqmYSPvKth5mjvsbaumz8JuNZ+11pL4lnwnbyRSyYWhLqdc7tCNzREQU
+         rEBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727121217; x=1727726017;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :content-disposition:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MH/lfr64odg7IIk5zQ7fDXQq/NRQz0Gg/qhKBjs5LKY=;
+        b=rXtaw7OC0yIl7GvMaPem64NvEr3fZjA8G4Ra4m7aaHbXqcyC+pF9Es6/53cjCekXkE
+         DrL9BTqU76HKOXK2sDEVleCQKT6qtCK6Kiklhqj8zPc2vqONcCW9otroTi9tcrObIoGU
+         liOXnU9cVt7o/MLisajtqAPPEld7etHTGm/pxu5dDDt1xYpluRZN+Rj64FeQfklmVIHr
+         Vnt5lQUJQFpO/b1VoD4kY/B6nyVAX1zwH87x9M+AddZU2o/3gdL3hz0KoQwBDscQ5lf/
+         uDnxFls9XYz+IzMaNEQXoNvUI7KGFlPDDYJ4PP2tFsZy2gLDV6FMR/qWlcrvJpAVWZnp
+         zh8g==
+X-Gm-Message-State: AOJu0YzNud6EQJc046fE0wTa00eFXbAvTnjgKw4kSfUcXpi3QUfzXBxM
+	uVvS9HEG2uLnGYtfNd1ujVprbea4ioyw+6JD3vNfirwYnWxsqwHhVjp8idnZ/A==
+X-Google-Smtp-Source: AGHT+IHFW9xNBvbhiH5cDVb1FY/rbkAnvM+MZRpocjHqsvJoehxzGmbLycvHKjogmurwT6GvBm1Bew==
+X-Received: by 2002:a05:6214:5f0c:b0:6c5:b886:ebe8 with SMTP id 6a1803df08f44-6c7bd59d816mr179462856d6.38.1727121216850;
+        Mon, 23 Sep 2024 12:53:36 -0700 (PDT)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6c75e586b42sm50380286d6.138.2024.09.23.12.53.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 23 Sep 2024 12:53:36 -0700 (PDT)
+Date: Mon, 23 Sep 2024 15:53:35 -0400
+Message-ID: <9ea74820c1d8524319692483583546d3@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=utf-8 
+Content-Disposition: inline 
 Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+From: Paul Moore <paul@paul-moore.com>
+To: Guenter Roeck <linux@roeck-us.net>, "Serge E . Hallyn" <serge@hallyn.com>
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, Deven Bowers <deven.desai@linux.microsoft.com>, Fan Wu <wufan@linux.microsoft.com>
+Subject: Re: [PATCH] ipe: Add missing terminator to list of unit tests
+References: <20240922145226.491815-1-linux@roeck-us.net>
+In-Reply-To: <20240922145226.491815-1-linux@roeck-us.net>
 
-Hi Linus,
+On Sep 22, 2024 Guenter Roeck <linux@roeck-us.net> wrote:
+> 
+> Add missing terminator to list of unit tests to avoid random crashes seen
+> when running the test.
+> 
+> Fixes: 10ca05a76065 ("ipe: kunit test for parser")
+> Cc: Deven Bowers <deven.desai@linux.microsoft.com>
+> Cc: Paul Moore <paul@paul-moore.com>
+> Cc: Fan Wu <wufan@linux.microsoft.com>
+> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> Acked-by: Fan Wu <wufan@linux.microsoft.com>
+> ---
+>  security/ipe/policy_tests.c | 1 +
+>  1 file changed, 1 insertion(+)
 
-This PR brings signal and abstract UNIX socket control to Landlock, contributed
-by Tahera Fahimi during her Outreachy internship [1].  These features are
-useful to better isolate processes.
-
-Please pull these changes for v6.12-rc1.  These commits merge cleanly with your
-master branch.  The kernel code has been tested in the latest linux-next
-releases for a few weeks, but I rebased it on your master branch last week
-because of VFS and LSM tree dependencies.
-
-We can now scope a Landlock domain thanks to a new "scoped" field that can deny
-interactions with resources outside of this domain.  The
-LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET flag denies connections to an abstract UNIX
-socket created outside of the current scoped domain [2], and the
-LANDLOCK_SCOPE_SIGNAL flag denies sending a signal to processes outside of the
-current scoped domain [3].  These restrictions also apply to nested domains
-according to their scope.  The related changes will also be useful to support
-other kind of IPC isolations.
-
-Test coverage for security/landlock is 92.2% of 1046 lines according to
-gcc/gcov-14, and it was 91.7% of 961 lines before this series.
-
-Regards,
- Mickaël
-
-Link: https://sched.co/1ej1w [1]
-Link: https://lore.kernel.org/r/cover.1725494372.git.fahimitahera@gmail.com [2]
-Link: https://lore.kernel.org/r/cover.1725657727.git.fahimitahera@gmail.com [3]
+Thanks, merged into lsm/stable-6.12.
 
 --
-The following changes since commit a430d95c5efa2b545d26a094eb5f624e36732af0:
-
-  Merge tag 'lsm-pr-20240911' of git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm (2024-09-16 18:19:47 +0200)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-6.12-rc1
-
-for you to fetch changes up to 1ca980815e1f284dddcb5e678c91bbd3e3f3a6a6:
-
-  landlock: Document LANDLOCK_SCOPE_SIGNAL (2024-09-16 23:50:55 +0200)
-
-----------------------------------------------------------------
-Landlock updates for v6.12-rc1
-
-----------------------------------------------------------------
-Tahera Fahimi (14):
-      landlock: Add abstract UNIX socket scoping
-      selftests/landlock: Test handling of unknown scope
-      selftests/landlock: Test abstract UNIX socket scoping
-      selftests/landlock: Test UNIX sockets with any address formats
-      selftests/landlock: Test connected and unconnected datagram UNIX socket
-      selftests/landlock: Test inherited restriction of abstract UNIX socket
-      samples/landlock: Add support for abstract UNIX socket scoping
-      landlock: Document LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET
-      landlock: Add signal scoping
-      selftests/landlock: Test signal scoping
-      selftests/landlock: Test signal scoping for threads
-      selftests/landlock: Test signal created by out-of-bound message
-      samples/landlock: Add support for signal scoping
-      landlock: Document LANDLOCK_SCOPE_SIGNAL
-
- Documentation/userspace-api/landlock.rst           |   58 +-
- include/uapi/linux/landlock.h                      |   30 +
- samples/landlock/sandboxer.c                       |   73 +-
- security/landlock/cred.h                           |    2 +-
- security/landlock/fs.c                             |   25 +
- security/landlock/fs.h                             |    7 +
- security/landlock/limits.h                         |    3 +
- security/landlock/ruleset.c                        |    7 +-
- security/landlock/ruleset.h                        |   24 +-
- security/landlock/syscalls.c                       |   17 +-
- security/landlock/task.c                           |  193 ++++
- tools/testing/selftests/landlock/base_test.c       |    2 +-
- tools/testing/selftests/landlock/common.h          |   39 +
- tools/testing/selftests/landlock/fs_test.c         |    1 -
- tools/testing/selftests/landlock/net_test.c        |   31 +-
- .../selftests/landlock/scoped_abstract_unix_test.c | 1041 ++++++++++++++++++++
- .../selftests/landlock/scoped_base_variants.h      |  156 +++
- tools/testing/selftests/landlock/scoped_common.h   |   28 +
- .../landlock/scoped_multiple_domain_variants.h     |  152 +++
- .../selftests/landlock/scoped_signal_test.c        |  484 +++++++++
- tools/testing/selftests/landlock/scoped_test.c     |   33 +
- 21 files changed, 2359 insertions(+), 47 deletions(-)
- create mode 100644 tools/testing/selftests/landlock/scoped_abstract_unix_test.c
- create mode 100644 tools/testing/selftests/landlock/scoped_base_variants.h
- create mode 100644 tools/testing/selftests/landlock/scoped_common.h
- create mode 100644 tools/testing/selftests/landlock/scoped_multiple_domain_variants.h
- create mode 100644 tools/testing/selftests/landlock/scoped_signal_test.c
- create mode 100644 tools/testing/selftests/landlock/scoped_test.c
+paul-moore.com
