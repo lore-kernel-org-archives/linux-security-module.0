@@ -1,108 +1,122 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4354519C568
-	for <linux-security-module@vger.kernel.org>; Tue, 24 Sep 2024 10:43:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A68A217BBF;
+	Tue, 24 Sep 2024 11:53:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727174618; cv=none; b=bdGXSsTzQCjb4NEmg99j6l8NRsKki5skxMnXOj4GQo9AK5sWlocdqUQ0v5XkcI+ZMXq6/NxNWJiBVDiTxG7aYUnnhH3NHsDwyie/TgOqswXnLbB13B1lY37LkG/IlqENeE8MybZJLk8s6LXy9Rp0GB4WpaWh4FNwXyhcTbeTw7Y=
+	t=1727178838; cv=none; b=BYvm4An4ehmm1mAXeOcvdE2sQkmWk+whT0ikFkR/IsCRGObBxYjwQfoSKFkZnFS4t5LR3OBZIrAZ7U8Wv0I2fLopClMxRtUwMq1mDimdS2Xzwaa0TpE4JdqSYoLQ4lA4US6Sbtii6ZU/taQ2HNLR1zUHoG97VgUs93tY81S6tTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727174618; c=relaxed/simple;
-	bh=pS0OnUnMHt3x+dQfCCd9DYG82rNOAah6rAoIW93soDY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GgAsdiQ0Gg0eemp/yeolk7cnmxY7yssLyBu/BhdG8H+VNPdG1CGLDKxw4Wio8ND7lMkf+blGh16A7liQE0qaCTbhZj5m0MWo48BxxtezoR2GAtcbjyPhZVjK9SXCY0p2mXlNYkEcUGHk7y85AP22sHHJgIn3isytLD1aPvJSz7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iUHEyvQT; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iUHEyvQT"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1727174615;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VNkidy8tP2V0t8BDHsPRxDHfoz+Gz1VvYutaJSQeq0A=;
-	b=iUHEyvQTk/yDm5C+DISNvP6D61b/pv75EjnEWfLa/1FN7KAZX4MdCk1d71JqSFgMkwsQL/
-	rH0tBdUjLvw9FBKJ+1xcqa+8M+N3pXWAmsT0cU0nf/1o1fVsp1h5GLYFbng3qKUxm/Kx1C
-	xveS9ieW0nzcvz355ZQece42A5WKiKc=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-353-j6gxG7_YNi2Ke0G7KZg-wg-1; Tue, 24 Sep 2024 06:43:33 -0400
-X-MC-Unique: j6gxG7_YNi2Ke0G7KZg-wg-1
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-374bfc57e2aso2787607f8f.3
-        for <linux-security-module@vger.kernel.org>; Tue, 24 Sep 2024 03:43:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727174612; x=1727779412;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VNkidy8tP2V0t8BDHsPRxDHfoz+Gz1VvYutaJSQeq0A=;
-        b=vVcLlXPFOBq9zJ1MygPNqAYXTUS7zbJRgsbY3pWtFQFb8wG6W8oxEXxeXT2zeoMZXl
-         0vLZXDuVIo+dVrJ9psBXXeUpMMjwqf0zaEC/Pzcu23iDC+Pu/fSvc3D5re6TgahzuMxb
-         veHDljXeMnrw0I4ZPerGfqvtDiv73FLBDsUDY/b6gM4+fKmsfvZ7L+0nzmxJasM8UM4y
-         1QClGzmEbjuOUkUxNNXmAqVO/cdv/8JyA2f2wKtaJVMtAbO6UEs17/nNlEoHqRHW3yg3
-         gKOQcjtxLQr7tpPIdvuPiBSa0F0AadJXLTz37jkW/znKwASf9SwZyXpS0pX0J/Esi2h9
-         0xKg==
-X-Forwarded-Encrypted: i=1; AJvYcCVDEJC/E5G/k3G79My5KODGgUahtzPxo4H37wpQyrIlggmLYi97K08sWiy8MUzXJ6LpjZcFL7N+UQaz3RwiwU3KB9JTyhk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvXynnuj24qlRtDaGh0t6NuJlNisnGRIJvCNoanA/UKKisdpVQ
-	QcYVUvjiMft3UHR/WdShrCIlYkpwHxr9haca6GcghjpRukMdN8+bRxKR1PQPEs4hMTkjeidZh5p
-	9h5SlGEKhAnuBX/A0WoSLnNUbIpdIPLiWowTGcN2ywebSt5xekMumBH4+R9xICj1XgMd+M5Zr1A
-	==
-X-Received: by 2002:a5d:58e2:0:b0:374:c5e9:623e with SMTP id ffacd0b85a97d-37a42354020mr8608148f8f.43.1727174612669;
-        Tue, 24 Sep 2024 03:43:32 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF0dKgHWPlUM08f7dDvngustiUt9pe6+/LWynepDnxeXHhHsyb0kH/Zt/TQc3YFg2cXenoicg==
-X-Received: by 2002:a5d:58e2:0:b0:374:c5e9:623e with SMTP id ffacd0b85a97d-37a42354020mr8608130f8f.43.1727174612216;
-        Tue, 24 Sep 2024 03:43:32 -0700 (PDT)
-Received: from ?IPV6:2a0d:3341:b089:3810:f39e:a72d:6cbc:c72b? ([2a0d:3341:b089:3810:f39e:a72d:6cbc:c72b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37cbc2a8c37sm1230316f8f.23.2024.09.24.03.43.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 24 Sep 2024 03:43:31 -0700 (PDT)
-Message-ID: <0667f18b-2228-4201-9da7-0e3536bae321@redhat.com>
-Date: Tue, 24 Sep 2024 12:43:30 +0200
+	s=arc-20240116; t=1727178838; c=relaxed/simple;
+	bh=IhWAF2DxdL1FoJXN5Saft/aN9JCzs0Ol8JkHJhbnmeo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=E384lI2FsQzTf1aPDdjCwOhLZizgiE1trNWy53EuxRWOloT1kKVi8ginR9zwZ9DKyAg6NCzwWjFby13YygeHiB0xFmsPgBeZd7rAPYJJvf8JMP6sJQcrkj77+BEtXTsdz0OzNDQe3akPuHqxAHcuXzXnxMB2UDkQd8rqdTN0H1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4XCczw5Rvfz9v7JT;
+	Tue, 24 Sep 2024 19:28:12 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id B6254140419;
+	Tue, 24 Sep 2024 19:53:46 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP2 (Coremail) with SMTP id GxC2BwCHNsc_qPJmnqKOAQ--.26997S2;
+	Tue, 24 Sep 2024 12:53:45 +0100 (CET)
+Message-ID: <03c3a47ca225050d37dca6a9249c1f978f1fc56b.camel@huaweicloud.com>
+Subject: Re: [syzbot] Monthly lsm report (Sep 2024)
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Paul Moore <paul@paul-moore.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+ Roberto Sassu <roberto.sassu@huawei.com>, Casey Schaufler
+ <casey@schaufler-ca.com>, syzbot
+ <syzbot+listfc277c7cb94932601d96@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Date: Tue, 24 Sep 2024 13:53:32 +0200
+In-Reply-To: <CAHC9VhTxCzWvM+j8=J08JVs=1cwk9rtBSS7qFBkdm-_neAwkJQ@mail.gmail.com>
+References: <66f12e9e.050a0220.3eed3.0009.GAE@google.com>
+	 <CAHC9VhTxCzWvM+j8=J08JVs=1cwk9rtBSS7qFBkdm-_neAwkJQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] netlabel: Add missing comment to struct field
-To: George Guo <dongtai.guo@linux.dev>, paul@paul-moore.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org
-Cc: netdev@vger.kernel.org, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org, George Guo <guodongtai@kylinos.cn>
-References: <20240923080733.2914087-1-dongtai.guo@linux.dev>
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20240923080733.2914087-1-dongtai.guo@linux.dev>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: redhat.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:GxC2BwCHNsc_qPJmnqKOAQ--.26997S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7CF43WF1ftr4kXr1xtry8AFb_yoW8CFy7pF
+	W0krs0krs5KF4xtayvgr1UXw10q3yrCFWUJ34qgr17u3Z3ZFn3JrZ29F45ZFZ0kr1xAF90
+	vFnIv3sYv3W8ZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUymb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vI
+	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
+	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0
+	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
+	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
+	14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UK2NtUUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAQBGbyIHwF4wAAs4
 
-On 9/23/24 10:07, George Guo wrote:
-> From: George Guo <guodongtai@kylinos.cn>
-> 
-> add a comment to doi_remove in struct netlbl_calipso_ops.
-> 
-> Flagged by ./scripts/kernel-doc -none.
-> 
-> Signed-off-by: George Guo <guodongtai@kylinos.cn>
+On Mon, 2024-09-23 at 08:06 -0400, Paul Moore wrote:
+> On Mon, Sep 23, 2024 at 5:02=E2=80=AFAM syzbot
+> <syzbot+listfc277c7cb94932601d96@syzkaller.appspotmail.com> wrote:
+> >=20
+> > Hello lsm maintainers/developers,
+> >=20
+> > This is a 31-day syzbot report for the lsm subsystem.
+> > All related reports/information can be found at:
+> > https://syzkaller.appspot.com/upstream/s/lsm
+> >=20
+> > During the period, 0 new issues were detected and 0 were fixed.
+> > In total, 4 issues are still open and 27 have been fixed so far.
+> >=20
+> > Some of the still happening issues:
+> >=20
+> > Ref Crashes Repro Title
+> > <1> 306     No    INFO: task hung in process_measurement (2)
+> >                   https://syzkaller.appspot.com/bug?extid=3D1de5a37cb85=
+a2d536330
+>=20
+> Mimi, Roberto,
+>=20
+> Any chance this is this related in any way to this report:
+>=20
+> https://lore.kernel.org/linux-security-module/CALAgD-4hkHVcCq2ycdwnA2hYDB=
+MqijLUOfZgvf1WfFpU-8+42w@mail.gmail.com/
 
-## Form letter - net-next-closed
+I reproduced the last, but I got a different result (the kernel crashed
+in a different place).
 
-The merge window for v6.12 and therefore net-next is closed for new
-drivers, features, code refactoring and optimizations. We are currently
-accepting bug fixes only.
+It seems a corruption case, while the former looks more a lock
+inversion issue. Will check more.
 
-Please repost when net-next reopens after Sept 30th.
+Roberto
 
-RFC patches sent for review only are obviously welcome at any time.
-
-See:
-https://www.kernel.org/doc/html/next/process/maintainer-netdev.html#development-cycle
--- 
-pw-bot: defer
+> Looking at the syzkaller dashboard for this issue, it looks like it
+> may have been present for some time, just difficult to reproduce
+> reliably (although it does appear to be occurring more often
+> recently).  Any ideas about a root cause?
+>=20
+> > <2> 9       No    general protection fault in smack_inode_permission
+> >                   https://syzkaller.appspot.com/bug?extid=3D4ac565a7081=
+cc43bb185
+>=20
+> Casey?
+>=20
+> > <3> 3       Yes   WARNING in current_check_refer_path
+> >                   https://syzkaller.appspot.com/bug?extid=3D34b68f85039=
+1452207df
+>=20
+> Based on the discussion over the summer I believe the consensus was
+> that this is a bcachefs/VFS bug, reassigning to bcachefs (or trying to
+> anyway).
+>=20
+> https://lore.kernel.org/all/000000000000a65b35061cffca61@google.com/
+>=20
 
