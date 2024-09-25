@@ -1,117 +1,148 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56C09126BFE
-	for <linux-security-module@vger.kernel.org>; Wed, 25 Sep 2024 11:06:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B83BE175D37;
+	Wed, 25 Sep 2024 11:37:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727262385; cv=none; b=KzFJPcdDTmQkecudwbr4C5D/eu8m76qZTI53bPybYihfJCbMfm2nMKmse+dae7nKDogQqVA2X5hYxSriVD/AQSq3UvjpoI/OE0EGWDijKtSkDaPaz0UNYoiyTqrzmyGvUtnzU0bPx9qsOWPQ3OT9y0eG1i1EbqkqXipw99y73+k=
+	t=1727264234; cv=none; b=iI5Y1y8WjD1AwjhREIJ6ND11zgrDKHE+4D0yMKHL5+H5ptltlBrLCzhFyKuJdo0CqYW62MQEPMXIfJtTl7SxPVTfmp9dpg5UevWd2ZbI60dCMgzKx0w0YgLh0gPgyE3V6i15SlXYJYDXnkGrnoH10VPm87aVZw5T04C7GBrij9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727262385; c=relaxed/simple;
-	bh=v9SOENpp+GEqMEfpbzjHUOzd9Uxz8a8eI7GUtlWQs+g=;
+	s=arc-20240116; t=1727264234; c=relaxed/simple;
+	bh=7Dve7AlWC4FeBvaR1mefkGri4yYyskMUqoxhoVI9PZo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IkRvbvxAapCFnQJsKaELwHPrhgbDyqvY6DH4ouYwH2SPJ6Y8y/aYSlgOG/TafVlz0/rMHL/5DKuHoM/Fxvf4PMQDEBb/mGVRUcA+VSFjUjdmL69igOQW5p0mNMfe1f2yK0zHxyh6druOEIigkwQ3oIrnDhEyY2EiSCH2jP58aBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Y0qoZkaG; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	 To:Cc:Content-Type; b=M1W1Xvk3BwFYf+SYTzemVvNSzgJf0Bv7FTP7lIUpQZHuyd6Jqch60Eo4O3LEpnRiSu4kxSlqJ8A8DeQVIk2R69BitD8lx1dkUcWZ1vuIV19ss3Eexli4J+gCTSN7VAlzinj6NAiiroQ2GJp2LC9tQlUYJ2HFnfDr39GWlNzOfNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jifn3Vh/; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Y0qoZkaG"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-42cb57f8b41so84336255e9.0
-        for <linux-security-module@vger.kernel.org>; Wed, 25 Sep 2024 04:06:24 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jifn3Vh/"
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-537a399e06dso4136836e87.1;
+        Wed, 25 Sep 2024 04:37:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727262382; x=1727867182; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JhQ4TPCHuI58LZ38MBixhcUn27fdFhOzEs54JQFmEu4=;
-        b=Y0qoZkaGAi7LcUT3oJb4NisLSJU/jQJH27zodADr2z0dvPpCGPDg5u7nQ4RIsCYMak
-         le/mIhlmqZ8X6+GmN3PP2QMCKp6vbmxzotaBm1Yuw0RXmtw32VA+G7yMyWtf4xmzAhKM
-         UcGaIYxfzd8JowKxx+i3zJ6nNRBJXXxEklTgZMxjg+YgF1Z3ofeLDp/41kfNnENqDcCI
-         luE4FdlQEo4BAdOUU66phuSQdN3pka/+v/NSGPGVtV4o41NqrBDjLgAdZqbjZXl89pIh
-         tYk0Dth2KHO+fllaG9Qs7ETkDZAIAD0pLvwMM632vU9VIipk2b6BElfMGUO2065bcTEx
-         X8cw==
+        d=gmail.com; s=20230601; t=1727264231; x=1727869031; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=M2c4QkqUSunQnHqhEYmc9PBGDMAL9urYEXHH5gg9oUE=;
+        b=jifn3Vh//p3T0L5e4osZpVPMwKeK0u24ztLc4sfEpP894i5eYiN9D/zhOSKFeVfQYP
+         iXdklKlIAwzeDgQknGmxroUPwQKJhRSsdY2+Iv4Wm9wj7R6/zZMhJ7ufygW8LzOH40dV
+         OpyDw/NbayHyECxt02LY0hiD/+I8cUbXQ1QmHn9Yfy6NugY5YlDU6FiGOQlX26lslzEu
+         IcEEHBmem4IDTPqIquqzCgqjtW6/45dxCV474aidsaJwUDYOJQcTkTR0e1kNVIIznQF4
+         5YilsOtDENiyMLcyShofBj5gcnzwE34t9f2hQwG2QipGCxMtsN1Sz7N3YzTTKWaZF4zk
+         hZWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727262382; x=1727867182;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JhQ4TPCHuI58LZ38MBixhcUn27fdFhOzEs54JQFmEu4=;
-        b=gRAYsWZD7qL4rYGfJWE6pGRFkkM46LNckJc85xKX9CfSa0W83Xf0646nx2OKHQ4aGg
-         tIR50J62ZzNIZg5lQoF5r6LQ6j5Yx8ieeuHhr/I2TFHD993kx+AIaolwIo2d+4uRzr43
-         bn5+W59BSHoLpxfvTonN06/5AmPBQ0/GByrIyoa0KAUsAHZpqyiqiKRMTmfmH7y2bOzx
-         1X/JHQI2Vh+LcCRkEUGnOFgDSWwaGvcJMnw5qB0JckaugBG3vR92BEfZQpybsEvf2/hJ
-         M2Uj2qxboipSwpzc1TTqO8DnPRsJ6YHl3ogqkLGH604fE7TzvvmfIPcjpBuACwkzf9iv
-         YkBg==
-X-Forwarded-Encrypted: i=1; AJvYcCWTTsQ2XB+BEIacNdb2UBGNGuo7geLk7O2lhYa0l9Ex0xPq715XosmdedBinu2lqYQUE1BxmvQWDWma+S1LqwIUaoPHE4U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDw0Ew17k+yMIKEgw0xSh1wt62I75XJUlPmUN6UJXN8R+gX9pU
-	qL5lxRLQEWwZ8QS+NigHo5QscgF7IUYJV2EteOaCSiCuStT/yrqSX10nBL0aRtZmaP/0UZG5XJr
-	sC/mSZLEm6f3zDKsoWsYIzvNKQXWlFoE9ewbO
-X-Google-Smtp-Source: AGHT+IGFAj+j04oaHOFqsP7FAM4DEPPjCdbCbDCCKy/XEfJz3JFRtsBnFMPeIPy5+2A+yRs/huLSjBw7dGu97fMWSko=
-X-Received: by 2002:a5d:5d86:0:b0:37c:c51b:8d9c with SMTP id
- ffacd0b85a97d-37cc51b8ee6mr1224327f8f.38.1727262382323; Wed, 25 Sep 2024
- 04:06:22 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727264231; x=1727869031;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=M2c4QkqUSunQnHqhEYmc9PBGDMAL9urYEXHH5gg9oUE=;
+        b=uYJYtUyaxLofDieA5IKZQF6F7vTR5PCYjUadp42n8JkCGbXF1LF7wgrqIkAU5/3+bW
+         M6+9KvE3JM4ZqbQTqckypZ3sUtAXllOwPuzBwF5F9toHchh01bEef+HFPjFV+B5GZU+V
+         t0cJhZahgNkzZO2X5I8zvkO5fI5zcz8/0NwWvvwinlYgqACPQmhIhGr25/y185d8RAPl
+         OcOqSGiK8P0+qfKf/GG1lUVNRKYtDJeKA3QFYtdf3iDwmQBJuLaWZ7uSyo9FEu4N9+Zw
+         RCfjHav+MI9aLvs+JRRCiOzS410rYr+zHj2IYh+xCQSej8rZ/VNiBEQYB6qXk9mC14pM
+         KXNg==
+X-Forwarded-Encrypted: i=1; AJvYcCWQggSNxofWONQa0dPWDqDO6NnDYNpHAIxt0aIruTv+l9fuXEdVl39cBKG90s0WgrzAp0wdBjtlmwTjrAc=@vger.kernel.org, AJvYcCX/xZLYffODbb2W/3x3tAsYDT9U+rAHjoIt1iZLAVc1jPX/i3TYFUTuJTrwMP0ACZqTH/K6Rw3M66M7Bif8UHVs9RUrTeRO@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEToJX3ANRPMZHfDOfKlJiok6xhVP6vas0cMa44lZDKQeQALSn
+	f0teljqL5AEoMUZt9g1kE+pat+sRC6SgnBndpIj04g4ZqLIC1nxCDmLvkHio2YXtYaCtgFqynFR
+	FkTCULMmEw15jICypLF13fkC4IYg=
+X-Google-Smtp-Source: AGHT+IHYrPcfkliD+Hijl1J7liKGDqIM1On5CGTajvpqJdM+yKtElYu1h+7Y/NbqHMu3+t5CBuXW2otvJhFl3+q/9Mk=
+X-Received: by 2002:a05:6512:68c:b0:535:6965:be30 with SMTP id
+ 2adb3069b0e04-5387756722fmr1303526e87.50.1727264230308; Wed, 25 Sep 2024
+ 04:37:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240915-alice-file-v10-0-88484f7a3dcf@google.com>
- <20240915-alice-file-v10-1-88484f7a3dcf@google.com> <20240924194540.GA636453@mail.hallyn.com>
-In-Reply-To: <20240924194540.GA636453@mail.hallyn.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 25 Sep 2024 13:06:10 +0200
-Message-ID: <CAH5fLgggtjNAAotBzwRQ4RYQ9+WDom0MRyYFMnQ+E5UXgOc3RQ@mail.gmail.com>
-Subject: Re: [PATCH v10 1/8] rust: types: add `NotThreadSafe`
-To: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Christian Brauner <brauner@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>, 
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, 
-	Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, 
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, Kees Cook <kees@kernel.org>
+References: <20240925063034.169-1-ebpqwerty472123@gmail.com>
+ <72050879-4546-4bc7-9983-79ad437594d4@lucifer.local> <CAHQche8ijvNfKHBLV8BWWq85rjKQbjO+0w2s6kj4V3OpBANcuA@mail.gmail.com>
+ <78a854db-e8ea-475c-950d-2d9faf72f2b4@lucifer.local>
+In-Reply-To: <78a854db-e8ea-475c-950d-2d9faf72f2b4@lucifer.local>
+From: Shu Han <ebpqwerty472123@gmail.com>
+Date: Wed, 25 Sep 2024 19:36:59 +0800
+Message-ID: <CAHQche_92iaqxWK7WKDnEDkCRV-r2HXL2xuRa7b2NBaLhUg7-Q@mail.gmail.com>
+Subject: Re: [PATCH] mm: move the check of READ_IMPLIES_EXEC out of do_mmap()
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: akpm@linux-foundation.org, paul@paul-moore.com, jmorris@namei.org, 
+	serge@hallyn.com, Liam.Howlett@oracle.com, vbabka@suse.cz, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	Al Viro <viro@zeniv.linux.org.uk>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 24, 2024 at 9:45=E2=80=AFPM Serge E. Hallyn <serge@hallyn.com> =
-wrote:
->
-> On Sun, Sep 15, 2024 at 02:31:27PM +0000, Alice Ryhl wrote:
-> > This introduces a new marker type for types that shouldn't be thread
-> > safe. By adding a field of this type to a struct, it becomes non-Send
-> > and non-Sync, which means that it cannot be accessed in any way from
-> > threads other than the one it was created on.
-> >
-> > This is useful for APIs that require globals such as `current` to remai=
-n
-> > constant while the value exists.
-> >
-> > We update two existing users in the Kernel to use this helper:
-> >
-> >  * `Task::current()` - moving the return type of this value to a
-> >    different thread would not be safe as you can no longer be guarantee=
-d
-> >    that the `current` pointer remains valid.
-> >  * Lock guards. Mutexes and spinlocks should be unlocked on the same
-> >    thread as where they were locked, so we enforce this using the Send
-> >    trait.
->
-> Hi,
->
-> this sounds useful, however from kernel side when I think thread-safe,
-> I think must not be used across a sleep.  Would something like ThreadLock=
-ed
-> or LockedToThread make sense?
+> No need to be sorry! :) Sorry if I sound harsh here - it's more a case of
+> trying to be as clear as I can be as that is the best approach for everyone
+> I think.
 
-Hmm, those names seem pretty similar to the current name to me?
+> This code is sensitive, so we have to super careful!
 
-Alice
+Thanks a lot! :)
+
+> I would disagree it's down to taste, I noted on the move the check to
+> do_mmap() series a number of issues and concerns, to me that seems
+> unworkable in it's current form, the locking thing is fatal for instance.
+
+> What you link to there seems to be neither approach (I didn't read your
+> second series though as that needs an RFC tag)? I mean I think perhaps what
+> you are doing there is the best _first step_ - simply add the checks in
+> each of the callsites that you feel are missing them.
+
+> This is the least controversial way and then allows maintainers of the
+> callers to assess whether they intended for that.
+
+> If then you end up wtih _all_ callers doing this check, we can take another
+> look at possibly bringing it into do_mmap() but we would absolutely have to
+> ensure it was done correctly, however.
+
+> 1. (If you haven't already) Submit a series that adds patches to add checks
+>    at call sites that don't already check.
+
+> 2. If these are accepted at _all_ callsites, revisit the do_mmap() change,
+>    properly accounting for locks (I can help with this).
+
+In fact, "mm: move the check of READ_IMPLIES_EXEC out of do_mmap()" does
+not have the locking issue. These two patches are quite different. This is
+also the modification I recommended, while another modification was
+suggested by LSM maintainers(Perhaps I need to add suggested-by? But
+that was mentioned in a non-public security mailing list, and I'm not sure
+if it's appropriate.).
+
+The __core__ problem is "no LSM hook" +
+"have logic about READ_IMPLIES_EXEC". Removing one of them is OK.
+
+The "mm: move security_file_mmap() back into do_mmap()" fixes this by
+adding a LSM hook. The requirement to call LSM hooks comes from the
+LSM modules, _not these call sites_. The issue for locks also comes
+from the specific implementation of LSM modules. So I send patches
+to LSM maintainers at the same time.
+
+The "mm: move the check of READ_IMPLIES_EXEC out of do_mmap()" fixes this
+by removing the logic about READ_IMPLIES_EXEC that is not needed. So no
+locking issues there(no changes to LSM). This will result in some minor
+behavioral changes for call sites mentioned in the patch. Unfortunately,
+due to this logic being placed in a single function do_mmap now, it is
+impossible to confirm it through patches one by one before change the mm
+module. Fortunately, these changes should clearly be fine, and here are
+the reasons(more specific versions):
+
+fs/aio.c, mm/util.c, ipc/shm.c: no changes
+arch/x86/kernel/shstk.c: Shadow Stack is stack only store return
+addresses, adding execute permission to shadow stack is never
+required.
+mm/mmap.c: in the history, remap_file_pages won't care about the
+READ_IMPLIES_EXEC. this side effect is introduced in the emulated
+version, after the deprecated mark exists. The patch only removes the
+side effects introduced. And this(mm) is the module. :)
+
+BTW, The link is the _first step_ in required(if the check is missing in
+that call site, there will be a bug) call sites, which has been done.
+
+> I do feel we need to better document these functions, so I will add
+> comments. I see you did so as part of your other series, but think maybe we
+> need to expand this and possibly rename both and add some asserts... it's
+> on the todo list!
+
+Perhaps adding sufficient comments is also a completely appropriate method
+as another alternative.
+
+Thanks for your kind review!
