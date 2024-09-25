@@ -1,271 +1,254 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B89B156236;
-	Wed, 25 Sep 2024 12:13:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 483491D55AC;
+	Wed, 25 Sep 2024 12:18:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727266406; cv=none; b=A7t/GjGVO7jVA109+L2xaJBH2mqToWqKS2/45E9ilrCPGFv8d2fcbTzLeNVgk+Y0PdxQ16hGg6ApeCZPrTAKH9Ql3hcclICIT5QFfM7QaseM0tyspDlGMxXYMp6oyfiwDeoghtW7JEPLnqZFePMuLLrosSpN80eq9BuRwKGYUik=
+	t=1727266691; cv=none; b=Zb4Kpv84lgPO3Dzo3OKI3O1UMxjOtMaILvGCRRDVquux/TkTvtbxBE2PORjczLWXf/Rk4iIETCQXNZzQtvLs1+emB//YgwSWJRo6VkDFCqoZm8gdF91PL6wT92kczOrUVJkIhITFjKlM3Xe8OuOpMFoV9xNbzwZ3zEoGcACSq2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727266406; c=relaxed/simple;
-	bh=G7/+ReEWFxx7v5IvoprCkGqar5mOxyZHzDBImv9/pWM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mb4I/hQqwCSZ5TWxoNF4fIm8B1EGDv9owGCkbjlWP/3jklP+aDy3fYdRJ0d0PosUrd8aM+mbjgXiaP8QzKVekdbkrFe1r8bFstLtOjBxQW+MNIaL0OQlBi3y02fQpbAZWqQ97K2qyik9XPKQ4KcAyQVHjM934oHAyUGvBJpyjQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J0aPT+UV; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J0aPT+UV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A05FC4CEC3;
-	Wed, 25 Sep 2024 12:13:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727266405;
-	bh=G7/+ReEWFxx7v5IvoprCkGqar5mOxyZHzDBImv9/pWM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=J0aPT+UV9Rfc1rRuBLKQRtg9TFAt3KOCznF+jO6NKp5VAzB8UCbdVLTa8UL4dkiue
-	 D4FiHCl5WxEUHMSmtlUubzz8FjxZOSNsw7i5UDNhNRMArM2InuB0v54a1U86o4Qvp2
-	 nUgIgdfQ+0seJBxGrg1OCWTmgMRICUl+c/DLAYMe98LJkJVWOG/fNhcny9RgfQYOFO
-	 xvaShYa7WjbYp2rNvWQ9QAc6OjsovTmjuyPLsdlEW2JmMHbXSE9TlgSRC6XO2uaegn
-	 0Exg4kGSLx3DWwUTNuzNcOWeJZ89wSE2towo9yXyeWQCjdiI3BsWBiQUFRB4Hyo+dR
-	 oposf7XWYL+kg==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Adrian Ratiu <adrian.ratiu@collabora.com>,
-	Doug Anderson <dianders@chromium.org>,
-	Jeff Xu <jeffxu@google.com>,
-	Jann Horn <jannh@google.com>,
-	Kees Cook <kees@kernel.org>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Sasha Levin <sashal@kernel.org>,
-	corbet@lwn.net,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	thuth@redhat.com,
-	bp@alien8.de,
-	tglx@linutronix.de,
-	jpoimboe@kernel.org,
-	paulmck@kernel.org,
-	tony@atomide.com,
-	xiongwei.song@windriver.com,
-	akpm@linux-foundation.org,
-	oleg@redhat.com,
-	adobriyan@gmail.com,
-	casey@schaufler-ca.com,
-	viro@zeniv.linux.org.uk,
-	linux-doc@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 048/139] proc: add config & param to block forcing mem writes
-Date: Wed, 25 Sep 2024 08:07:48 -0400
-Message-ID: <20240925121137.1307574-48-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240925121137.1307574-1-sashal@kernel.org>
-References: <20240925121137.1307574-1-sashal@kernel.org>
+	s=arc-20240116; t=1727266691; c=relaxed/simple;
+	bh=KIWi6UV11qdsj/3jICtJLwq2sT3rLbBlGrQYqqzSqgA=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=ut1kLsEDaszWT5z5KJpCmdHOZElDU3eE2/WwwyAgAv3C7UujAY6E8lgk207LxnpOUoH2uWGLW9QoU4X2TniD8jh+zYRSlkJwUGYywC40uM9584xIJmiJcy1j4DyjhAJNTE9yQdrKSouU8q2DUzg7z6XCylGgJTQmVWcAvtjDflU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XDG1F1bjPzyRsP;
+	Wed, 25 Sep 2024 20:16:33 +0800 (CST)
+Received: from kwepemj200016.china.huawei.com (unknown [7.202.194.28])
+	by mail.maildlp.com (Postfix) with ESMTPS id 899CC140392;
+	Wed, 25 Sep 2024 20:17:58 +0800 (CST)
+Received: from [10.123.123.159] (10.123.123.159) by
+ kwepemj200016.china.huawei.com (7.202.194.28) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 25 Sep 2024 20:17:54 +0800
+Message-ID: <45ab87a3-beba-b5f6-ef25-8b19a4b1dcee@huawei-partners.com>
+Date: Wed, 25 Sep 2024 15:17:50 +0300
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.6.52
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v3 14/19] selftests/landlock: Test socketpair(2)
+ restriction
+Content-Language: ru
+From: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>
+CC: <mic@digikod.net>, <willemdebruijn.kernel@gmail.com>,
+	<gnoack3000@gmail.com>, <linux-security-module@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <netfilter-devel@vger.kernel.org>,
+	<yusongping@huawei.com>, <artem.kuzin@huawei.com>,
+	<konstantin.meskhidze@huawei.com>
+References: <20240904104824.1844082-1-ivanov.mikhail1@huawei-partners.com>
+ <20240904104824.1844082-15-ivanov.mikhail1@huawei-partners.com>
+ <ZurZ7nuRRl0Zf2iM@google.com>
+ <220a19f6-f73c-54ef-1c4d-ce498942f106@huawei-partners.com>
+In-Reply-To: <220a19f6-f73c-54ef-1c4d-ce498942f106@huawei-partners.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
+ kwepemj200016.china.huawei.com (7.202.194.28)
 
-From: Adrian Ratiu <adrian.ratiu@collabora.com>
+On 9/23/2024 3:57 PM, Mikhail Ivanov wrote:
+> On 9/18/2024 4:47 PM, Günther Noack wrote:
+>> On Wed, Sep 04, 2024 at 06:48:19PM +0800, Mikhail Ivanov wrote:
+>>> Add test that checks the restriction on socket creation using
+>>> socketpair(2).
+>>>
+>>> Add `socket_creation` fixture to configure sandboxing in tests in
+>>> which different socket creation actions are tested.
+>>>
+>>> Signed-off-by: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+>>> ---
+>>>   .../testing/selftests/landlock/socket_test.c  | 101 ++++++++++++++++++
+>>>   1 file changed, 101 insertions(+)
+>>>
+>>> diff --git a/tools/testing/selftests/landlock/socket_test.c 
+>>> b/tools/testing/selftests/landlock/socket_test.c
+>>> index 8fc507bf902a..67db0e1c1121 100644
+>>> --- a/tools/testing/selftests/landlock/socket_test.c
+>>> +++ b/tools/testing/selftests/landlock/socket_test.c
+>>> @@ -738,4 +738,105 @@ TEST_F(packet_protocol, alias_restriction)
+>>>       EXPECT_EQ(0, test_socket_variant(&self->prot_tested));
+>>>   }
+>>> +static int test_socketpair(int family, int type, int protocol)
+>>> +{
+>>> +    int fds[2];
+>>> +    int err;
+>>> +
+>>> +    err = socketpair(family, type | SOCK_CLOEXEC, protocol, fds);
+>>> +    if (err)
+>>> +        return errno;
+>>> +    /*
+>>> +     * Mixing error codes from close(2) and socketpair(2) should not 
+>>> lead to
+>>> +     * any (access type) confusion for this test.
+>>> +     */
+>>> +    if (close(fds[0]) != 0)
+>>> +        return errno;
+>>> +    if (close(fds[1]) != 0)
+>>> +        return errno;
+>>> +    return 0;
+>>> +}
+>>> +
+>>> +FIXTURE(socket_creation)
+>>> +{
+>>> +    bool sandboxed;
+>>> +    bool allowed;
+>>> +};
+>>> +
+>>> +FIXTURE_VARIANT(socket_creation)
+>>> +{
+>>> +    bool sandboxed;
+>>> +    bool allowed;
+>>> +};
+>>> +
+>>> +FIXTURE_SETUP(socket_creation)
+>>> +{
+>>> +    self->sandboxed = variant->sandboxed;
+>>> +    self->allowed = variant->allowed;
+>>> +
+>>> +    setup_loopback(_metadata);
+>>> +};
+>>> +
+>>> +FIXTURE_TEARDOWN(socket_creation)
+>>> +{
+>>> +}
+>>> +
+>>> +/* clang-format off */
+>>> +FIXTURE_VARIANT_ADD(socket_creation, no_sandbox) {
+>>> +    /* clang-format on */
+>>> +    .sandboxed = false,
+>>> +};
+>>> +
+>>> +/* clang-format off */
+>>> +FIXTURE_VARIANT_ADD(socket_creation, sandbox_allow) {
+>>> +    /* clang-format on */
+>>> +    .sandboxed = true,
+>>> +    .allowed = true,
+>>> +};
+>>> +
+>>> +/* clang-format off */
+>>> +FIXTURE_VARIANT_ADD(socket_creation, sandbox_deny) {
+>>> +    /* clang-format on */
+>>> +    .sandboxed = true,
+>>> +    .allowed = false,
+>>> +};
+>>> +
+>>> +TEST_F(socket_creation, socketpair)
+>>> +{
+>>> +    const struct landlock_ruleset_attr ruleset_attr = {
+>>> +        .handled_access_socket = LANDLOCK_ACCESS_SOCKET_CREATE,
+>>> +    };
+>>> +    struct landlock_socket_attr unix_socket_create = {
+>>> +        .allowed_access = LANDLOCK_ACCESS_SOCKET_CREATE,
+>>> +        .family = AF_UNIX,
+>>> +        .type = SOCK_STREAM,
+>>> +    };
+>>> +    int ruleset_fd;
+>>> +
+>>> +    if (self->sandboxed) {
+>>> +        ruleset_fd = landlock_create_ruleset(&ruleset_attr,
+>>> +                             sizeof(ruleset_attr), 0);
+>>> +        ASSERT_LE(0, ruleset_fd);
+>>> +
+>>> +        if (self->allowed) {
+>>> +            ASSERT_EQ(0, landlock_add_rule(ruleset_fd,
+>>> +                               LANDLOCK_RULE_SOCKET,
+>>> +                               &unix_socket_create, 0));
+>>> +        }
+>>> +        enforce_ruleset(_metadata, ruleset_fd);
+>>> +        ASSERT_EQ(0, close(ruleset_fd));
+>>> +    }
+>>> +
+>>> +    if (!self->sandboxed || self->allowed) {
+>>> +        /*
+>>> +         * Tries to create sockets when ruleset is not established
+>>> +         * or protocol is allowed.
+>>> +         */
+>>> +        EXPECT_EQ(0, test_socketpair(AF_UNIX, SOCK_STREAM, 0));
+>>> +    } else {
+>>> +        /* Tries to create sockets when protocol is restricted. */
+>>> +        EXPECT_EQ(EACCES, test_socketpair(AF_UNIX, SOCK_STREAM, 0));
+>>> +    }
+>>
+>> I am torn on whether socketpair() should be denied at all --
+>>
+>>    * on one hand, the created sockets are connected to each other
+>>      and the creating process can only talk to itself (or pass one of 
+>> them on),
+>>      which seems legitimate and harmless.
+>>
+>>    * on the other hand, it *does* create two sockets, and
+>>      if they are datagram sockets, it it probably currently possible
+>>      to disassociate them with connect(AF_UNSPEC). >
+>> What are your thoughts on that?
+> 
+> Good catch! According to the discussion that you've mentioned [1] (I
+> believe I found correct one), you've already discussed socketpair(2)
+> control with Mickaël and came to the conclusion that socketpair(2) and
+> unnamed pipes do not give access to new resources to the process,
+> therefore should not be restricted.
+> 
+> [1] 
+> https://lore.kernel.org/all/e7e24682-5da7-3b09-323e-a4f784f10158@digikod.net/
+> 
+> Therefore, this is more like connect(AF_UNSPEC)-related issue. On
+> security summit you've mentioned that it will be useful to implement
+> restriction of connection dissociation for sockets. This feature will
+> solve the problem of reusage of UNIX sockets that were created with
+> socketpair(2).
 
-[ Upstream commit 41e8149c8892ed1962bd15350b3c3e6e90cba7f4 ]
+Btw, I can suggest one more scenario, where restriction of
+disassociation can be useful.
 
-This adds a Kconfig option and boot param to allow removing
-the FOLL_FORCE flag from /proc/pid/mem write calls because
-it can be abused.
+SMC sockets (AF_SMC+SOCK_STREAM) can fall back to TCP during the
+connection (cf. smc_connect_decline_fallback). Then user can call
+connect(AF_UNSPEC) to eventually get a TCP socket in the initial
+(TCP_CLOSE) state which can be used to establish another connection.
 
-The traditional forcing behavior is kept as default because
-it can break GDB and some other use cases.
+This can be considered as an issue for the current patchset, because
+there is a way to "create" a TCP socket while TCP is restricted by
+Landlock (if ruleset allows SMC).
 
-Previously we tried a more sophisticated approach allowing
-distributions to fine-tune /proc/pid/mem behavior, however
-that got NAK-ed by Linus [1], who prefers this simpler
-approach with semantics also easier to understand for users.
+Besides it, there is another issue with SMC restriction that I'm going
+to fix in the next RFC: recently has been applied patchset that
+allows to create SMC sockets via AF_INET [1]. Such creation should be
+denied if Landlock restricts SMC.
 
-Link: https://lore.kernel.org/lkml/CAHk-=wiGWLChxYmUA5HrT5aopZrB7_2VTa0NLZcxORgkUe5tEQ@mail.gmail.com/ [1]
-Cc: Doug Anderson <dianders@chromium.org>
-Cc: Jeff Xu <jeffxu@google.com>
-Cc: Jann Horn <jannh@google.com>
-Cc: Kees Cook <kees@kernel.org>
-Cc: Ard Biesheuvel <ardb@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Adrian Ratiu <adrian.ratiu@collabora.com>
-Link: https://lore.kernel.org/r/20240802080225.89408-1-adrian.ratiu@collabora.com
-Signed-off-by: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- .../admin-guide/kernel-parameters.txt         | 10 +++
- fs/proc/base.c                                | 61 ++++++++++++++++++-
- security/Kconfig                              | 32 ++++++++++
- 3 files changed, 102 insertions(+), 1 deletion(-)
+[1] 
+https://lore.kernel.org/all/1718301630-63692-1-git-send-email-alibuda@linux.alibaba.com/
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index a7fe113897361..d83a3f47e2007 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -4639,6 +4639,16 @@
- 	printk.time=	Show timing data prefixed to each printk message line
- 			Format: <bool>  (1/Y/y=enable, 0/N/n=disable)
- 
-+	proc_mem.force_override= [KNL]
-+			Format: {always | ptrace | never}
-+			Traditionally /proc/pid/mem allows memory permissions to be
-+			overridden without restrictions. This option may be set to
-+			restrict that. Can be one of:
-+			- 'always': traditional behavior always allows mem overrides.
-+			- 'ptrace': only allow mem overrides for active ptracers.
-+			- 'never':  never allow mem overrides.
-+			If not specified, default is the CONFIG_PROC_MEM_* choice.
-+
- 	processor.max_cstate=	[HW,ACPI]
- 			Limit processor to maximum C-state
- 			max_cstate=9 overrides any DMI blacklist limit.
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 6e61d93ffa552..699f085d4de7d 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -85,6 +85,7 @@
- #include <linux/elf.h>
- #include <linux/pid_namespace.h>
- #include <linux/user_namespace.h>
-+#include <linux/fs_parser.h>
- #include <linux/fs_struct.h>
- #include <linux/slab.h>
- #include <linux/sched/autogroup.h>
-@@ -116,6 +117,40 @@
- static u8 nlink_tid __ro_after_init;
- static u8 nlink_tgid __ro_after_init;
- 
-+enum proc_mem_force {
-+	PROC_MEM_FORCE_ALWAYS,
-+	PROC_MEM_FORCE_PTRACE,
-+	PROC_MEM_FORCE_NEVER
-+};
-+
-+static enum proc_mem_force proc_mem_force_override __ro_after_init =
-+	IS_ENABLED(CONFIG_PROC_MEM_NO_FORCE) ? PROC_MEM_FORCE_NEVER :
-+	IS_ENABLED(CONFIG_PROC_MEM_FORCE_PTRACE) ? PROC_MEM_FORCE_PTRACE :
-+	PROC_MEM_FORCE_ALWAYS;
-+
-+static const struct constant_table proc_mem_force_table[] __initconst = {
-+	{ "always", PROC_MEM_FORCE_ALWAYS },
-+	{ "ptrace", PROC_MEM_FORCE_PTRACE },
-+	{ "never", PROC_MEM_FORCE_NEVER },
-+	{ }
-+};
-+
-+static int __init early_proc_mem_force_override(char *buf)
-+{
-+	if (!buf)
-+		return -EINVAL;
-+
-+	/*
-+	 * lookup_constant() defaults to proc_mem_force_override to preseve
-+	 * the initial Kconfig choice in case an invalid param gets passed.
-+	 */
-+	proc_mem_force_override = lookup_constant(proc_mem_force_table,
-+						  buf, proc_mem_force_override);
-+
-+	return 0;
-+}
-+early_param("proc_mem.force_override", early_proc_mem_force_override);
-+
- struct pid_entry {
- 	const char *name;
- 	unsigned int len;
-@@ -834,6 +869,28 @@ static int mem_open(struct inode *inode, struct file *file)
- 	return ret;
- }
- 
-+static bool proc_mem_foll_force(struct file *file, struct mm_struct *mm)
-+{
-+	struct task_struct *task;
-+	bool ptrace_active = false;
-+
-+	switch (proc_mem_force_override) {
-+	case PROC_MEM_FORCE_NEVER:
-+		return false;
-+	case PROC_MEM_FORCE_PTRACE:
-+		task = get_proc_task(file_inode(file));
-+		if (task) {
-+			ptrace_active =	READ_ONCE(task->ptrace) &&
-+					READ_ONCE(task->mm) == mm &&
-+					READ_ONCE(task->parent) == current;
-+			put_task_struct(task);
-+		}
-+		return ptrace_active;
-+	default:
-+		return true;
-+	}
-+}
-+
- static ssize_t mem_rw(struct file *file, char __user *buf,
- 			size_t count, loff_t *ppos, int write)
- {
-@@ -854,7 +911,9 @@ static ssize_t mem_rw(struct file *file, char __user *buf,
- 	if (!mmget_not_zero(mm))
- 		goto free;
- 
--	flags = FOLL_FORCE | (write ? FOLL_WRITE : 0);
-+	flags = write ? FOLL_WRITE : 0;
-+	if (proc_mem_foll_force(file, mm))
-+		flags |= FOLL_FORCE;
- 
- 	while (count > 0) {
- 		size_t this_len = min_t(size_t, count, PAGE_SIZE);
-diff --git a/security/Kconfig b/security/Kconfig
-index 52c9af08ad35d..39af8b8696efb 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -19,6 +19,38 @@ config SECURITY_DMESG_RESTRICT
- 
- 	  If you are unsure how to answer this question, answer N.
- 
-+choice
-+	prompt "Allow /proc/pid/mem access override"
-+	default PROC_MEM_ALWAYS_FORCE
-+	help
-+	  Traditionally /proc/pid/mem allows users to override memory
-+	  permissions for users like ptrace, assuming they have ptrace
-+	  capability.
-+
-+	  This allows people to limit that - either never override, or
-+	  require actual active ptrace attachment.
-+
-+	  Defaults to the traditional behavior (for now)
-+
-+config PROC_MEM_ALWAYS_FORCE
-+	bool "Traditional /proc/pid/mem behavior"
-+	help
-+	  This allows /proc/pid/mem accesses to override memory mapping
-+	  permissions if you have ptrace access rights.
-+
-+config PROC_MEM_FORCE_PTRACE
-+	bool "Require active ptrace() use for access override"
-+	help
-+	  This allows /proc/pid/mem accesses to override memory mapping
-+	  permissions for active ptracers like gdb.
-+
-+config PROC_MEM_NO_FORCE
-+	bool "Never"
-+	help
-+	  Never override memory mapping permissions
-+
-+endchoice
-+
- config SECURITY
- 	bool "Enable different security models"
- 	depends on SYSFS
--- 
-2.43.0
-
+> 
+> If we want such feature to be implemented, I suggest leaving current
+> implementation as it is (to prevent vulnerable creation of UNIX dgram
+> sockets) and enable socketpair(2) in the patchset dedicated to
+> connect(AF_UNSPEC) restriction. Also it will be useful to create a
+> dedicated issue on github. WDYT?
+> 
+> (Btw I think that disassociation control can be really useful. If
+> it were possible to restrict this action for each protocol, we would
+> have stricter control over the protocols used.)
+> 
+>>
+>> Mickaël, I believe we have also discussed similar questions for 
+>> pipe(2) in the
+>> past, and you had opinions on that?
+>>
+>>
+>> (On a much more technical note; consider replacing self->allowed with
+>> self->socketpair_error to directly indicate the expected error? It 
+>> feels that
+>> this could be more straightforward?)
+> 
+> I've considered this approach and decided that this would
+> * negatively affect the readability of conditional for adding Landlock
+>    rule,
+> * make checking the test_socketpair() error code less explicit.
+> 
+>>
+>> —Günther
