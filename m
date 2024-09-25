@@ -1,169 +1,104 @@
-Received: from smtp-8fab.mail.infomaniak.ch (smtp-8fab.mail.infomaniak.ch [83.166.143.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE571D5ADD
-	for <linux-security-module@vger.kernel.org>; Wed, 25 Sep 2024 18:40:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA6F284037
+	for <linux-security-module@vger.kernel.org>; Wed, 25 Sep 2024 19:20:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727289620; cv=none; b=luTas1HqjIQWPt6Y5hE8h++si83VpGiUQO9/wVU436ZdEjGyA7MMQ6fmMSkKkSKCBlZzK5bBmyXavx2onx/PDgAtu7GGf7llCiORkQ4X/sCihwaydNU74UfbGUp8Y29axoZI9dPb6VBlJ0OrxNtvX+ZjJs8uJyiSGxnoFwLK8ww=
+	t=1727292032; cv=none; b=FTmyulOlJ4EsvJE789Dr8upWhRTrwquL+HMRS0VwNkWUYar19d5WQZwDsfIvQvMMiMO0KuIlhj7QoiQY9n8ES6T5doNTp9YwoNZy8VLHzjN1RcqDRx76UBBpKHm9nQjOEmkghqAOUFD6HPH0fFyBlrbKcNf4YV2qWDY93/ePtaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727289620; c=relaxed/simple;
-	bh=O8iYvYw3zsv7+xeHawxeg0kYWliGnBVpbxH7QFAnDPg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=E+dYWg7eyJHdeq1ZxYx5P4WeqxpOXbN6ifZHws272E86y4PTUJKXJOdoY8ug3wDHQLE1eJE7nnCngspMOLTVSIvas1SdvhT4rWVzKqMQShDIEwAoeYd4orC2ABmF+W/+x1XdmHlL4ldqfwXjfvOXAMlCAoTLdzhNMW/pObJmXR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=MZShkSLm; arc=none smtp.client-ip=83.166.143.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1727292032; c=relaxed/simple;
+	bh=bUwyJE+2HB4BFiaxFSQQ5eh7au+JrhTrHh6hJ2Ml5f0=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=Hn2eJRBNd6/oqJHrmmQ60Y2J1kxEKmH09UjspINbECRrIJCjv/F7tGhngqXetDlEAjrcuVW9Jx/6IZmGjtmWhCfeQRfO8AhGTcBgnf2maLqZfydo5w9kkkx/idtEdahefaCna8eF2//Zz9tPChnuWLqrM1xXPsLudKVjPAnlnI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=XXtraLGD; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="MZShkSLm"
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XDQKh3PNszK8F;
-	Wed, 25 Sep 2024 20:31:20 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1727289080;
-	bh=mkpu7cuq+yO3FRbUc5w7sH1IMCpOtL6ugJfjenJnpAs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MZShkSLmGqawVT7d/guPX4Gu1I+Wa5LPMZSFX6eq7Au/iiGV2zm6Ksvfs2GIBqeg3
-	 QAn5gtO8iCLtjxAS/T981JutmUopRoY+5rHbYs+ao1y85lxNN4b9dioYtjEpu1nNA5
-	 u7djLgh+AVVJ1gAgz4/Wm/xM7LHQVNDQu9iPdWas=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4XDQKg53NVzNL0;
-	Wed, 25 Sep 2024 20:31:19 +0200 (CEST)
-Date: Wed, 25 Sep 2024 20:31:15 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com, linux-security-module@vger.kernel.org, 
-	netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, yusongping@huawei.com, 
-	artem.kuzin@huawei.com, konstantin.meskhidze@huawei.com, 
-	Matthieu Buffet <matthieu@buffet.re>
-Subject: Re: [RFC PATCH v2 02/12] landlock: Add hook on socket creation
-Message-ID: <20240925.jah8aibekaH3@digikod.net>
-References: <20240524093015.2402952-1-ivanov.mikhail1@huawei-partners.com>
- <20240524093015.2402952-3-ivanov.mikhail1@huawei-partners.com>
- <ZlRI-gqDNkYOV_Th@google.com>
- <3cd4fad8-d72e-87cd-3cf9-2648a770f13c@huawei-partners.com>
- <ZmCf9JVIXmRZrCWk@google.com>
- <3433b163-2371-e679-cc8a-e540a0218bca@huawei-partners.com>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="XXtraLGD"
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7a9a7bea3cfso14948585a.1
+        for <linux-security-module@vger.kernel.org>; Wed, 25 Sep 2024 12:20:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1727292029; x=1727896829; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=glGirgm+F5nwQC3LNIKP0kswh+8E+08E5znnFLU+t4Y=;
+        b=XXtraLGDpT9V0pnRdCP5XA2bjK7Zyc650c6kGRBSXcMXPBzcQ+kvThWz9KnDQLeZOM
+         1OM+Nu1q3DwP6c2VlwvXVFJhxUBtde5XNM2Z2Bm6JAG6MidlKOLu6ui3rWRi7f81PaRQ
+         Zpg1PgMrErKylmOjcB57979CksSuQPlTtKFC/zIwLnuhwgGhsfopNyke/QZHJg69X1/L
+         +xOqyg19enJVYvsF9q5h0OCzQ+EdEULDsh1ZISLM6yMrae/k/R/3DlQWXBq6tPlWvrDq
+         ID3LFJ/7DK8imKx5Zpwly+I0nNEKGcrL5j4w41RSXACOcprO8YrYktXruPfpPRWzn4rb
+         2/mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727292029; x=1727896829;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=glGirgm+F5nwQC3LNIKP0kswh+8E+08E5znnFLU+t4Y=;
+        b=kZxpdgOv10Gr6ctCGUjDS9ZR4rR6iPowzRlpYmbcFpmoNKMv6eEf9Qw0d4Y3btYbYC
+         q2cVKTgfh88Atrxc8ePzba62ULdi4rQ9JNTJgHpmxuL5TbsoiCrr/kmgqxzkJO8w6GDk
+         0N9AZTSwfgQ/wYXVvk1yO8MGZs1BsfA/yynihqeLs7Cm9FHr29w9yWcAOiJkn+DNh5/g
+         A2c/08pCV7RZxgk4SuzZVZGkcXnWt1+kMXH7dVkVBX792V+mnCn8DhtUvPlRC0/H3fyJ
+         EX7QorgJ6gziWHxmq2opAbto2V8v/0601JA0ZZra9L2DFJMB2EJcKYyhccomwYV7Yxxa
+         bdUA==
+X-Gm-Message-State: AOJu0Yw0Djccc8Mrz0gXFdwajUF3Yd9Jj9uY+7k4aAvyeZiEkWZ6+5Uz
+	NJunkOKMISTEFnnHEwk6wClR77AIxJr3I+L34+rMHBdjfbT7KRxDJbFsRgmyYdEct9Nglz3oJ24
+	=
+X-Google-Smtp-Source: AGHT+IEt5Vc4efcFyhe1HCk8ez5tzWlppLeI8khusQahmyiae2qGVRjhKhTEnz7BvGtG/ToLXjZZAA==
+X-Received: by 2002:a05:620a:1a27:b0:7ac:9aa5:c5bc with SMTP id af79cd13be357-7ace744d90amr555821785a.47.1727292029469;
+        Wed, 25 Sep 2024 12:20:29 -0700 (PDT)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7acde5fcc98sm200134085a.117.2024.09.25.12.20.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2024 12:20:29 -0700 (PDT)
+From: Paul Moore <paul@paul-moore.com>
+To: linux-security-module@vger.kernel.org,
+	serge@hallyn.com
+Subject: [RFC PATCH] capabilities: remove cap_mmap_file()
+Date: Wed, 25 Sep 2024 15:20:19 -0400
+Message-ID: <20240925192018.15290-2-paul@paul-moore.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1174; i=paul@paul-moore.com; h=from:subject; bh=bUwyJE+2HB4BFiaxFSQQ5eh7au+JrhTrHh6hJ2Ml5f0=; b=owEBbQKS/ZANAwAIAeog8tqXN4lzAcsmYgBm9GJzVIDZ5kZv4QV5FHQdvRtatIJitq217QS3n 1VOWZY+C9KJAjMEAAEIAB0WIQRLQqjPB/KZ1VSXfu/qIPLalzeJcwUCZvRicwAKCRDqIPLalzeJ c3Z/EAClFziXUbIcLj3qVdEB66thzEz+Tb+DIvvlGzp0RtERwa952Dl4b7qJrqFcPdgmiJhs+37 e3CCDb0+a9iNqKITB5v7J06gu6bqgmevXm/b3iBZNjsLdMY7OqD+bNaDPhnFCUmHBjO18UHOr4A WZs3HyXHW3TVIvvUwwbF5jRy6dHwj302+ihjHy6CFqqwl/D4Vaz2mbRlczx76n5UDbDf2K4WbIM jJfqRFNN/ztVvOXZ4x26sJpfP9Q677jPEu6N1Hok8uPcHvVN1OkAdFqVMBAMWOso769Uyry2Are xWD+gMTX6ppX9TRl+mKo4o2nGf7HOBtsjpcV6Suxqb6dvz8uML9K4l4zXfsS7cOcplXqvj/ezSt yDjf58SPfVFhqFgGDU6mQYhvrNTLbQc7fx4cm+kq0oxnnWDYlFs6J4GuBoJQaRiu+dlZb8j5N3F HRSa7WdKXvJR8pNqnp6zmBi4K1ekgyYhcJJ+xxvHlC8eoeScaEA032lh05GbpA//a8J7sIovZ2t D5cyodsG8Oi0v0dc+GujmT1MYWbPa0vo2Y6BMmmuA2Ws72X5RXBC4Cm4CbbU8i8R7AsNfYkHiU0 fhd7it8P/ywLubk70cXTfg4zRgzOXNeT1etOuz7da/H85Tseha4eJ4UbgP9kSVbv7q7xlriD1Xq ovWSTsKw4KVXv8A==
+X-Developer-Key: i=paul@paul-moore.com; a=openpgp; fpr=7100AADFAE6E6E940D2E0AD655E45A5AE8CA7C8A
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <3433b163-2371-e679-cc8a-e540a0218bca@huawei-partners.com>
-X-Infomaniak-Routing: alpha
 
-On Fri, Jun 07, 2024 at 05:45:46PM +0300, Mikhail Ivanov wrote:
-> 6/5/2024 8:27 PM, Günther Noack wrote:
-> > Hello!
-> > 
-> > On Thu, May 30, 2024 at 03:20:21PM +0300, Mikhail Ivanov wrote:
-> > > 5/27/2024 11:48 AM, Günther Noack wrote:
-> > > > On Fri, May 24, 2024 at 05:30:05PM +0800, Mikhail Ivanov wrote:
-> > > > > Add hook to security_socket_post_create(), which checks whether the socket
-> > > > > type and family are allowed by domain. Hook is called after initializing
-> > > > > the socket in the network stack to not wrongfully return EACCES for a
-> > > > > family-type pair, which is considered invalid by the protocol.
-> > > > > 
-> > > > > Signed-off-by: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-> > > > 
-> > > > ## Some observations that *do not* need to be addressed in this commit, IMHO:
-> > > > 
-> > > > get_raw_handled_socket_accesses, get_current_socket_domain and
-> > > > current_check_access_socket are based on the similarly-named functions from
-> > > > net.c (and fs.c), and it makes sense to stay consistent with these.
-> > > > 
-> > > > There are some possible refactorings that could maybe be applied to that code,
-> > > > but given that the same ones would apply to net.c as well, it's probably best to
-> > > > address these separately.
-> > > > 
-> > > >     * Should get_raw_handled_socket_accesses be inlined
-> > > It's a fairly simple and compact function, so compiler should inline it
-> > > without any problems. Mickaël was against optional inlines [1].
-> > > 
-> > > [1] https://lore.kernel.org/linux-security-module/5c6c99f7-4218-1f79-477e-5d943c9809fd@digikod.net/
-> > 
-> > Sorry for the confusion -- what I meant was not "should we add the inline
-> > keyword", but I meant "should we remove that function and place its
-> > implementation in the place where we are currently calling it"?
-> 
-> Oh, I got it, thanks!
-> It will be great to find a way how to generalize this helpers. But if
-> we won't come up with some good design, it will be really better to
-> simply inline them. I added a mark about this in code refactoring issue
-> [1].
+The cap_mmap_file() LSM callback returns the default value for the
+security_mmap_file() LSM hook and can be safely removed.
 
-Making such simple helper more generic might not be worth it.  Landlock
-doesn't handle a lot of different "objects".
+Signed-off-by: Paul Moore <paul@paul-moore.com>
+---
+ security/commoncap.c | 7 -------
+ 1 file changed, 7 deletions(-)
 
-> 
-> [1] https://github.com/landlock-lsm/linux/issues/34
-> 
-> > 
-> > 
-> > > >     * Does the WARN_ON_ONCE(dom->num_layers < 1) check have the right return code?
-> > > 
-> > > Looks like a rudimental check. `dom` is always NULL when `num_layers`< 1
-> > > (see get_*_domain functions).
-> > 
-> > What I found irritating about it is that with 0 layers (= no Landlock policy was
-> > ever enabled), you would logically assume that we return a success?  But then I
-> > realized that this code was copied verbatim from other places in fs.c and net.c,
-> > and it is actually checking for an internal inconsistency that is never supposed
-> > to happen.  If we were to actually hit that case at some point, we have probably
-> > stumbled over our own feet and it might be better to not permit anything.
-> 
-> This check is probably really useful for validating code changes.
+diff --git a/security/commoncap.c b/security/commoncap.c
+index cefad323a0b1..3d103069903b 100644
+--- a/security/commoncap.c
++++ b/security/commoncap.c
+@@ -1428,12 +1428,6 @@ int cap_mmap_addr(unsigned long addr)
+ 	return ret;
+ }
+ 
+-int cap_mmap_file(struct file *file, unsigned long reqprot,
+-		  unsigned long prot, unsigned long flags)
+-{
+-	return 0;
+-}
+-
+ #ifdef CONFIG_SECURITY
+ 
+ static const struct lsm_id capability_lsmid = {
+@@ -1453,7 +1447,6 @@ static struct security_hook_list capability_hooks[] __ro_after_init = {
+ 	LSM_HOOK_INIT(inode_killpriv, cap_inode_killpriv),
+ 	LSM_HOOK_INIT(inode_getsecurity, cap_inode_getsecurity),
+ 	LSM_HOOK_INIT(mmap_addr, cap_mmap_addr),
+-	LSM_HOOK_INIT(mmap_file, cap_mmap_file),
+ 	LSM_HOOK_INIT(task_fix_setuid, cap_task_fix_setuid),
+ 	LSM_HOOK_INIT(task_prctl, cap_task_prctl),
+ 	LSM_HOOK_INIT(task_setscheduler, cap_task_setscheduler),
+-- 
+2.46.1
 
-Correct, this is mostly useful for developers when changing the kernel
-code.  We'll remove this kind of check when we'll have a proper struct
-landlock_domain. ;)
-
-> 
-> > 
-> > 
-> > > >     * Can we refactor out commonalities (probably not worth it right now though)?
-> > > 
-> > > I had a few ideas about refactoring commonalities, as currently landlock
-> > > has several repetitive patterns in the code. But solution requires a
-> > > good design and a separate patch. Probably it's worth opening an issue
-> > > on github. WDYT?
-> > 
-> > Absolutely, please do open one.  In my mind, patches in C which might not get
-> > accepted are an expensive way to iterate on such ideas, and it might make sense
-> > to collect some refactoring approaches on a bug or the mailing list before
-> > jumping into the implementation.
-> > 
-> > (You might want to keep an eye on https://github.com/landlock-lsm/linux/issues/1
-> > as well, which is about some ideas to refactor Landlock's internal data
-> > structures.)
-> 
-> Thank you! Discussing refactoring ideas before actually implementing
-> them sounds really great. We can collect multiple ideas, discuss them
-> and implement a single dedicated patchlist.
-> 
-> Issue: https://github.com/landlock-lsm/linux/issues/34.
-
-Yes, we are continuing the discussion there.
-
-> 
-> > 
-> > 
-> > > > ## The only actionable feedback that I have that is specific to this commit is:
-> > > > 
-> > > > In the past, we have introduced new (non-test) Landlock functionality in a
-> > > > single commit -- that way, we have no "loose ends" in the code between these two
-> > > > commits, and that simplifies it for people who want to patch your feature onto
-> > > > other kernel trees.  (e.g. I think we should maybe merge commit 01/12 and 02/12
-> > > > into a single commit.)  WDYT?
-> > > 
-> > > Yeah, this two should be merged and tests commits as well. I just wanted
-> > > to do this in one of the latest patch versions to simplify code review.
-> > 
-> > That sounds good, thanks!
-> > 
-> > —Günther
-> 
