@@ -1,148 +1,273 @@
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B83BE175D37;
-	Wed, 25 Sep 2024 11:37:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADAA9172BA8;
+	Wed, 25 Sep 2024 11:39:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727264234; cv=none; b=iI5Y1y8WjD1AwjhREIJ6ND11zgrDKHE+4D0yMKHL5+H5ptltlBrLCzhFyKuJdo0CqYW62MQEPMXIfJtTl7SxPVTfmp9dpg5UevWd2ZbI60dCMgzKx0w0YgLh0gPgyE3V6i15SlXYJYDXnkGrnoH10VPm87aVZw5T04C7GBrij9Y=
+	t=1727264355; cv=none; b=qo6xm2Ob/293yZlRlH2A+4iZf3wACbRA2p6XbQ2EtW/5cojAbZBqEcHHTsxZNFrtiKC7amlOVUifIIf+MUEp3IzWizg6G0G49Af8HVcxE3guGg2QLF0LV5KE/is9fLhoN9hAjdYukH99dpIX3Eo61u60nrSi3Whls2qO6dfpcgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727264234; c=relaxed/simple;
-	bh=7Dve7AlWC4FeBvaR1mefkGri4yYyskMUqoxhoVI9PZo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M1W1Xvk3BwFYf+SYTzemVvNSzgJf0Bv7FTP7lIUpQZHuyd6Jqch60Eo4O3LEpnRiSu4kxSlqJ8A8DeQVIk2R69BitD8lx1dkUcWZ1vuIV19ss3Eexli4J+gCTSN7VAlzinj6NAiiroQ2GJp2LC9tQlUYJ2HFnfDr39GWlNzOfNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jifn3Vh/; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1727264355; c=relaxed/simple;
+	bh=vTXufl0h3C6la4/6PIaX/ckU/WVPy9StrNvAw7Nq+fY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=VKJIUaHvhVM+vSHkV35AJY+sP0rajkXdNcmUORPSZIXLXJmWD7YIj7REFkHJ44qQQ1IY+3MpWOjclc70tnN+Igh1YeFOTkoTRFZ/P17kbOuYZLsiGbFE8SKFKmDsDXw9B8cw7iuVeKcYN4DANgshXK7YdMwK2fIY3yqZ9HiMlVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nNeESjoZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jifn3Vh/"
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-537a399e06dso4136836e87.1;
-        Wed, 25 Sep 2024 04:37:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727264231; x=1727869031; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=M2c4QkqUSunQnHqhEYmc9PBGDMAL9urYEXHH5gg9oUE=;
-        b=jifn3Vh//p3T0L5e4osZpVPMwKeK0u24ztLc4sfEpP894i5eYiN9D/zhOSKFeVfQYP
-         iXdklKlIAwzeDgQknGmxroUPwQKJhRSsdY2+Iv4Wm9wj7R6/zZMhJ7ufygW8LzOH40dV
-         OpyDw/NbayHyECxt02LY0hiD/+I8cUbXQ1QmHn9Yfy6NugY5YlDU6FiGOQlX26lslzEu
-         IcEEHBmem4IDTPqIquqzCgqjtW6/45dxCV474aidsaJwUDYOJQcTkTR0e1kNVIIznQF4
-         5YilsOtDENiyMLcyShofBj5gcnzwE34t9f2hQwG2QipGCxMtsN1Sz7N3YzTTKWaZF4zk
-         hZWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727264231; x=1727869031;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=M2c4QkqUSunQnHqhEYmc9PBGDMAL9urYEXHH5gg9oUE=;
-        b=uYJYtUyaxLofDieA5IKZQF6F7vTR5PCYjUadp42n8JkCGbXF1LF7wgrqIkAU5/3+bW
-         M6+9KvE3JM4ZqbQTqckypZ3sUtAXllOwPuzBwF5F9toHchh01bEef+HFPjFV+B5GZU+V
-         t0cJhZahgNkzZO2X5I8zvkO5fI5zcz8/0NwWvvwinlYgqACPQmhIhGr25/y185d8RAPl
-         OcOqSGiK8P0+qfKf/GG1lUVNRKYtDJeKA3QFYtdf3iDwmQBJuLaWZ7uSyo9FEu4N9+Zw
-         RCfjHav+MI9aLvs+JRRCiOzS410rYr+zHj2IYh+xCQSej8rZ/VNiBEQYB6qXk9mC14pM
-         KXNg==
-X-Forwarded-Encrypted: i=1; AJvYcCWQggSNxofWONQa0dPWDqDO6NnDYNpHAIxt0aIruTv+l9fuXEdVl39cBKG90s0WgrzAp0wdBjtlmwTjrAc=@vger.kernel.org, AJvYcCX/xZLYffODbb2W/3x3tAsYDT9U+rAHjoIt1iZLAVc1jPX/i3TYFUTuJTrwMP0ACZqTH/K6Rw3M66M7Bif8UHVs9RUrTeRO@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEToJX3ANRPMZHfDOfKlJiok6xhVP6vas0cMa44lZDKQeQALSn
-	f0teljqL5AEoMUZt9g1kE+pat+sRC6SgnBndpIj04g4ZqLIC1nxCDmLvkHio2YXtYaCtgFqynFR
-	FkTCULMmEw15jICypLF13fkC4IYg=
-X-Google-Smtp-Source: AGHT+IHYrPcfkliD+Hijl1J7liKGDqIM1On5CGTajvpqJdM+yKtElYu1h+7Y/NbqHMu3+t5CBuXW2otvJhFl3+q/9Mk=
-X-Received: by 2002:a05:6512:68c:b0:535:6965:be30 with SMTP id
- 2adb3069b0e04-5387756722fmr1303526e87.50.1727264230308; Wed, 25 Sep 2024
- 04:37:10 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nNeESjoZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02648C4CEC3;
+	Wed, 25 Sep 2024 11:39:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727264355;
+	bh=vTXufl0h3C6la4/6PIaX/ckU/WVPy9StrNvAw7Nq+fY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=nNeESjoZH+NXCi2aMo3VHDD+aIVZahKGTjmYEjZIz5Wc5TU2mi9SeUiaU+DQ58c17
+	 sq6ioEATGqQtHFwLEU4gTLXXGwFwskvllKwwBW+oV9Gb2lMlGC1y+8PvcvK5seaUgS
+	 vZb2Jvr6uBWDdomgApp0BtkqhLAbiXlgjcmczylNvudm8njDQxVoolPsMjB8tpv6ew
+	 6MIaU1pfpQrWq4pkIVfPJkMWCZUuvVjVj0tnHJ2sKmdnpVFTQ2kmBfu2U3RE7Eh5d2
+	 eIZjObSYQQPT5ScLwubRYOnRYQoXvtdNVl7+/eXNTOvrfsf6PZ5COVmgscnlHChZmA
+	 WPGAH7S7+T51Q==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Adrian Ratiu <adrian.ratiu@collabora.com>,
+	Doug Anderson <dianders@chromium.org>,
+	Jeff Xu <jeffxu@google.com>,
+	Jann Horn <jannh@google.com>,
+	Kees Cook <kees@kernel.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Sasha Levin <sashal@kernel.org>,
+	corbet@lwn.net,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	thuth@redhat.com,
+	bp@alien8.de,
+	jpoimboe@kernel.org,
+	tglx@linutronix.de,
+	paulmck@kernel.org,
+	tony@atomide.com,
+	xiongwei.song@windriver.com,
+	akpm@linux-foundation.org,
+	oleg@redhat.com,
+	mic@digikod.net,
+	jlayton@kernel.org,
+	casey@schaufler-ca.com,
+	viro@zeniv.linux.org.uk,
+	adobriyan@gmail.com,
+	linux-doc@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.11 064/244] proc: add config & param to block forcing mem writes
+Date: Wed, 25 Sep 2024 07:24:45 -0400
+Message-ID: <20240925113641.1297102-64-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240925113641.1297102-1-sashal@kernel.org>
+References: <20240925113641.1297102-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240925063034.169-1-ebpqwerty472123@gmail.com>
- <72050879-4546-4bc7-9983-79ad437594d4@lucifer.local> <CAHQche8ijvNfKHBLV8BWWq85rjKQbjO+0w2s6kj4V3OpBANcuA@mail.gmail.com>
- <78a854db-e8ea-475c-950d-2d9faf72f2b4@lucifer.local>
-In-Reply-To: <78a854db-e8ea-475c-950d-2d9faf72f2b4@lucifer.local>
-From: Shu Han <ebpqwerty472123@gmail.com>
-Date: Wed, 25 Sep 2024 19:36:59 +0800
-Message-ID: <CAHQche_92iaqxWK7WKDnEDkCRV-r2HXL2xuRa7b2NBaLhUg7-Q@mail.gmail.com>
-Subject: Re: [PATCH] mm: move the check of READ_IMPLIES_EXEC out of do_mmap()
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: akpm@linux-foundation.org, paul@paul-moore.com, jmorris@namei.org, 
-	serge@hallyn.com, Liam.Howlett@oracle.com, vbabka@suse.cz, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.11
+Content-Transfer-Encoding: 8bit
 
-> No need to be sorry! :) Sorry if I sound harsh here - it's more a case of
-> trying to be as clear as I can be as that is the best approach for everyone
-> I think.
+From: Adrian Ratiu <adrian.ratiu@collabora.com>
 
-> This code is sensitive, so we have to super careful!
+[ Upstream commit 41e8149c8892ed1962bd15350b3c3e6e90cba7f4 ]
 
-Thanks a lot! :)
+This adds a Kconfig option and boot param to allow removing
+the FOLL_FORCE flag from /proc/pid/mem write calls because
+it can be abused.
 
-> I would disagree it's down to taste, I noted on the move the check to
-> do_mmap() series a number of issues and concerns, to me that seems
-> unworkable in it's current form, the locking thing is fatal for instance.
+The traditional forcing behavior is kept as default because
+it can break GDB and some other use cases.
 
-> What you link to there seems to be neither approach (I didn't read your
-> second series though as that needs an RFC tag)? I mean I think perhaps what
-> you are doing there is the best _first step_ - simply add the checks in
-> each of the callsites that you feel are missing them.
+Previously we tried a more sophisticated approach allowing
+distributions to fine-tune /proc/pid/mem behavior, however
+that got NAK-ed by Linus [1], who prefers this simpler
+approach with semantics also easier to understand for users.
 
-> This is the least controversial way and then allows maintainers of the
-> callers to assess whether they intended for that.
+Link: https://lore.kernel.org/lkml/CAHk-=wiGWLChxYmUA5HrT5aopZrB7_2VTa0NLZcxORgkUe5tEQ@mail.gmail.com/ [1]
+Cc: Doug Anderson <dianders@chromium.org>
+Cc: Jeff Xu <jeffxu@google.com>
+Cc: Jann Horn <jannh@google.com>
+Cc: Kees Cook <kees@kernel.org>
+Cc: Ard Biesheuvel <ardb@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>
+Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Adrian Ratiu <adrian.ratiu@collabora.com>
+Link: https://lore.kernel.org/r/20240802080225.89408-1-adrian.ratiu@collabora.com
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ .../admin-guide/kernel-parameters.txt         | 10 +++
+ fs/proc/base.c                                | 61 ++++++++++++++++++-
+ security/Kconfig                              | 32 ++++++++++
+ 3 files changed, 102 insertions(+), 1 deletion(-)
 
-> If then you end up wtih _all_ callers doing this check, we can take another
-> look at possibly bringing it into do_mmap() but we would absolutely have to
-> ensure it was done correctly, however.
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 09126bb8cc9ff..be010fec76541 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -4788,6 +4788,16 @@
+ 	printk.time=	Show timing data prefixed to each printk message line
+ 			Format: <bool>  (1/Y/y=enable, 0/N/n=disable)
+ 
++	proc_mem.force_override= [KNL]
++			Format: {always | ptrace | never}
++			Traditionally /proc/pid/mem allows memory permissions to be
++			overridden without restrictions. This option may be set to
++			restrict that. Can be one of:
++			- 'always': traditional behavior always allows mem overrides.
++			- 'ptrace': only allow mem overrides for active ptracers.
++			- 'never':  never allow mem overrides.
++			If not specified, default is the CONFIG_PROC_MEM_* choice.
++
+ 	processor.max_cstate=	[HW,ACPI]
+ 			Limit processor to maximum C-state
+ 			max_cstate=9 overrides any DMI blacklist limit.
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index 72a1acd03675c..f389c69767fa5 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -85,6 +85,7 @@
+ #include <linux/elf.h>
+ #include <linux/pid_namespace.h>
+ #include <linux/user_namespace.h>
++#include <linux/fs_parser.h>
+ #include <linux/fs_struct.h>
+ #include <linux/slab.h>
+ #include <linux/sched/autogroup.h>
+@@ -117,6 +118,40 @@
+ static u8 nlink_tid __ro_after_init;
+ static u8 nlink_tgid __ro_after_init;
+ 
++enum proc_mem_force {
++	PROC_MEM_FORCE_ALWAYS,
++	PROC_MEM_FORCE_PTRACE,
++	PROC_MEM_FORCE_NEVER
++};
++
++static enum proc_mem_force proc_mem_force_override __ro_after_init =
++	IS_ENABLED(CONFIG_PROC_MEM_NO_FORCE) ? PROC_MEM_FORCE_NEVER :
++	IS_ENABLED(CONFIG_PROC_MEM_FORCE_PTRACE) ? PROC_MEM_FORCE_PTRACE :
++	PROC_MEM_FORCE_ALWAYS;
++
++static const struct constant_table proc_mem_force_table[] __initconst = {
++	{ "always", PROC_MEM_FORCE_ALWAYS },
++	{ "ptrace", PROC_MEM_FORCE_PTRACE },
++	{ "never", PROC_MEM_FORCE_NEVER },
++	{ }
++};
++
++static int __init early_proc_mem_force_override(char *buf)
++{
++	if (!buf)
++		return -EINVAL;
++
++	/*
++	 * lookup_constant() defaults to proc_mem_force_override to preseve
++	 * the initial Kconfig choice in case an invalid param gets passed.
++	 */
++	proc_mem_force_override = lookup_constant(proc_mem_force_table,
++						  buf, proc_mem_force_override);
++
++	return 0;
++}
++early_param("proc_mem.force_override", early_proc_mem_force_override);
++
+ struct pid_entry {
+ 	const char *name;
+ 	unsigned int len;
+@@ -835,6 +870,28 @@ static int mem_open(struct inode *inode, struct file *file)
+ 	return ret;
+ }
+ 
++static bool proc_mem_foll_force(struct file *file, struct mm_struct *mm)
++{
++	struct task_struct *task;
++	bool ptrace_active = false;
++
++	switch (proc_mem_force_override) {
++	case PROC_MEM_FORCE_NEVER:
++		return false;
++	case PROC_MEM_FORCE_PTRACE:
++		task = get_proc_task(file_inode(file));
++		if (task) {
++			ptrace_active =	READ_ONCE(task->ptrace) &&
++					READ_ONCE(task->mm) == mm &&
++					READ_ONCE(task->parent) == current;
++			put_task_struct(task);
++		}
++		return ptrace_active;
++	default:
++		return true;
++	}
++}
++
+ static ssize_t mem_rw(struct file *file, char __user *buf,
+ 			size_t count, loff_t *ppos, int write)
+ {
+@@ -855,7 +912,9 @@ static ssize_t mem_rw(struct file *file, char __user *buf,
+ 	if (!mmget_not_zero(mm))
+ 		goto free;
+ 
+-	flags = FOLL_FORCE | (write ? FOLL_WRITE : 0);
++	flags = write ? FOLL_WRITE : 0;
++	if (proc_mem_foll_force(file, mm))
++		flags |= FOLL_FORCE;
+ 
+ 	while (count > 0) {
+ 		size_t this_len = min_t(size_t, count, PAGE_SIZE);
+diff --git a/security/Kconfig b/security/Kconfig
+index 412e76f1575d0..a93c1a9b7c283 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -19,6 +19,38 @@ config SECURITY_DMESG_RESTRICT
+ 
+ 	  If you are unsure how to answer this question, answer N.
+ 
++choice
++	prompt "Allow /proc/pid/mem access override"
++	default PROC_MEM_ALWAYS_FORCE
++	help
++	  Traditionally /proc/pid/mem allows users to override memory
++	  permissions for users like ptrace, assuming they have ptrace
++	  capability.
++
++	  This allows people to limit that - either never override, or
++	  require actual active ptrace attachment.
++
++	  Defaults to the traditional behavior (for now)
++
++config PROC_MEM_ALWAYS_FORCE
++	bool "Traditional /proc/pid/mem behavior"
++	help
++	  This allows /proc/pid/mem accesses to override memory mapping
++	  permissions if you have ptrace access rights.
++
++config PROC_MEM_FORCE_PTRACE
++	bool "Require active ptrace() use for access override"
++	help
++	  This allows /proc/pid/mem accesses to override memory mapping
++	  permissions for active ptracers like gdb.
++
++config PROC_MEM_NO_FORCE
++	bool "Never"
++	help
++	  Never override memory mapping permissions
++
++endchoice
++
+ config SECURITY
+ 	bool "Enable different security models"
+ 	depends on SYSFS
+-- 
+2.43.0
 
-> 1. (If you haven't already) Submit a series that adds patches to add checks
->    at call sites that don't already check.
-
-> 2. If these are accepted at _all_ callsites, revisit the do_mmap() change,
->    properly accounting for locks (I can help with this).
-
-In fact, "mm: move the check of READ_IMPLIES_EXEC out of do_mmap()" does
-not have the locking issue. These two patches are quite different. This is
-also the modification I recommended, while another modification was
-suggested by LSM maintainers(Perhaps I need to add suggested-by? But
-that was mentioned in a non-public security mailing list, and I'm not sure
-if it's appropriate.).
-
-The __core__ problem is "no LSM hook" +
-"have logic about READ_IMPLIES_EXEC". Removing one of them is OK.
-
-The "mm: move security_file_mmap() back into do_mmap()" fixes this by
-adding a LSM hook. The requirement to call LSM hooks comes from the
-LSM modules, _not these call sites_. The issue for locks also comes
-from the specific implementation of LSM modules. So I send patches
-to LSM maintainers at the same time.
-
-The "mm: move the check of READ_IMPLIES_EXEC out of do_mmap()" fixes this
-by removing the logic about READ_IMPLIES_EXEC that is not needed. So no
-locking issues there(no changes to LSM). This will result in some minor
-behavioral changes for call sites mentioned in the patch. Unfortunately,
-due to this logic being placed in a single function do_mmap now, it is
-impossible to confirm it through patches one by one before change the mm
-module. Fortunately, these changes should clearly be fine, and here are
-the reasons(more specific versions):
-
-fs/aio.c, mm/util.c, ipc/shm.c: no changes
-arch/x86/kernel/shstk.c: Shadow Stack is stack only store return
-addresses, adding execute permission to shadow stack is never
-required.
-mm/mmap.c: in the history, remap_file_pages won't care about the
-READ_IMPLIES_EXEC. this side effect is introduced in the emulated
-version, after the deprecated mark exists. The patch only removes the
-side effects introduced. And this(mm) is the module. :)
-
-BTW, The link is the _first step_ in required(if the check is missing in
-that call site, there will be a bug) call sites, which has been done.
-
-> I do feel we need to better document these functions, so I will add
-> comments. I see you did so as part of your other series, but think maybe we
-> need to expand this and possibly rename both and add some asserts... it's
-> on the todo list!
-
-Perhaps adding sufficient comments is also a completely appropriate method
-as another alternative.
-
-Thanks for your kind review!
