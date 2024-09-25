@@ -1,62 +1,66 @@
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D83C1BC2A
-	for <linux-security-module@vger.kernel.org>; Wed, 25 Sep 2024 20:42:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57D6E14AD29
+	for <linux-security-module@vger.kernel.org>; Wed, 25 Sep 2024 20:42:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727296960; cv=none; b=u8vy8yev8DqOOBLl1huCd+XZIkwXJr7oh8P7kKTgvm+X8M0IIakvpEvoMeyX+9gU7UMUI8ZBOwm6l5eAjfHaDJGFhCyUIw2R2CoTImeiZivuxHzdrqU4b+GFklKPdOGhojiJZAvwH6NpubaRDdCF135nk316qqdvg6kG+DfNg3g=
+	t=1727296962; cv=none; b=COa8Nja5u3vivxG6LSLLBlq792q/gKx5FW1kJUHpAPVdvUTQBZZAhFrIl0BeECbTpEF66n517AseAvon2vtEzhYiYt9Q7KZGRh6jkxRo9mPuqKWnJNpxrihK3eKR23fSvpP4s6Xrk2ymG5FHdIxAAnNc8kkCb6uVNFeNrPywUQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727296960; c=relaxed/simple;
-	bh=TP3xycn/jtxRx4y0XaZ+Q/R60ToumjjVVl5vwHMdOac=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=F5c0nS38zOoxEN1w9HBQNw4jiAj9m8cgCbScrujrmU8VnB9ROa3kP+3NCi3Q17aqfk01UWTk+qfu5Sq10YpU8953zIX9hSXXSXBNYXb9zHltbmUAn6IstR6NBAcSVitb9/BRHabQ6cg7fr2BHVTnj98+dvfhwCnb+Vew4TPnShM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=II4PJFUK; arc=none smtp.client-ip=209.85.218.50
+	s=arc-20240116; t=1727296962; c=relaxed/simple;
+	bh=qHTmJur0aH3BILO261qBRgBIVaL9SJWh4MEeT+Ftjco=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=jZMVZVFkVudrAuBa4Rhco/lM/nVdKj7elN1k91bjlD3HBo/78F3CTxHIn65w+Th84QIHbXj/R8RW8ipcfrBv/Fb46ZVy57ckaAELjdwrqm19/PValvZdME74L6APqn08ZxHgl+Nucv9HyqcsKC3hZzAZcDoyK1f0ObdsKOSIvEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MlPm21FR; arc=none smtp.client-ip=209.85.208.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="II4PJFUK"
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a83562f9be9so27964266b.0
-        for <linux-security-module@vger.kernel.org>; Wed, 25 Sep 2024 13:42:38 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MlPm21FR"
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5c26311c6f0so215592a12.3
+        for <linux-security-module@vger.kernel.org>; Wed, 25 Sep 2024 13:42:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727296957; x=1727901757; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ISZAdzoG0y/GX0yVQekQg7QOpnYZdyWYnClzV1p1R8Y=;
-        b=II4PJFUK+WGTFHB91Wt5uCMN4CRKCzXu2R9gQU9K5niaWonyLwcS4Sdlzj3v58H1S9
-         rQtv3YKu6YemLPj4FfCkHZ79F0KnZnmWM/Vvw6jQE2QXn87r9wxQTofHOqT43z6MYxXz
-         eW5VgA1WyyAIIIM+VmDIVqagTVJb/kAcbcJZkn4wEb34cKhj8He3QbLC4Ywhb9skC3XZ
-         52dT1qssvZkfokGisk+R2iZUn4y/+wj+L/jjPHWbjt6RgfJhTbCjJM2cLxjzbTt9MUa7
-         9NqECA/XnLax/CaxvMqFdCjxPqKV4cKjXSo12AWI/SVMwCipdscA71SyM4MyLqIOdk+O
-         WNSA==
+        d=gmail.com; s=20230601; t=1727296958; x=1727901758; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AhgNgFnfjQvcm7pT9pBO59PaHiN4rDwtaX0ooDFw3Xk=;
+        b=MlPm21FRtmS8jgEJTsp6XaqT3fElWywKOWbIbXagex0cjmAwMMsiZPnRWqFrt5hIDN
+         TAk0sdYcqlbIyM0DoVz5mZgsS2PDtb1KtIiQPhwIHF7FSjIpaPkDv7VnqnhK23X6EJRh
+         EXlfTG+debP05esslwqHe1nkS/4bEQyMRWhoaQL3iMPUXbdRE9qwQUBjnuTPh1XFgamX
+         k/ANG3NmsCOxT8kowdghzhxo753MUuu/PCxlJUo0sn0fdB5tcde2+PzmWD/v+LXWHz4L
+         /qu2VJywRgNQebP8IOzUnTOy+E8Uujih3A2vq8nBuVmebS5vAmVoZezLPNvGYQ6WjukR
+         HDEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727296957; x=1727901757;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ISZAdzoG0y/GX0yVQekQg7QOpnYZdyWYnClzV1p1R8Y=;
-        b=Tefv9MUk4uMOYgaDQR3succEwD2fHlcLCypbdl/qgGKYZorhigksKUUCtRixZNVQ3K
-         2R7Ye4CCDPtmBiK5RPTZglxgtkRhRgtvCrhufqjzMURKZ43SvcKHmLWb9GhWUPKK2RfM
-         3T4rrZOo7uSsEFan7TOOSldn6oYByJAyYZaCzWBGFgD7AaiRPGWPb5BKBfUDWCY74glg
-         n9Q3zp/DVpyaInWyHXadLVMrI6n+mYzim5xRy+kKuaPKp7X5HBiGs/Nqm4/1Fq3XzNfG
-         NB3rbztZ1wLDihvaOXF3TOINsM60B4W/JT4Qcd2tIQBp+nnFiZG4PIKHTUyi7fbX2hOy
-         EO6Q==
-X-Gm-Message-State: AOJu0YwE9d7tVcExpMrWDA7d3fsv1Bj0dDSWmEboCnpppXVXK7v0BbrF
-	bAVPSbJkiFE/FgsodhaFxsczGs1G0I4+T8Zgb2pDMMpA12o5yklupO2ahgAPgUw=
-X-Google-Smtp-Source: AGHT+IGUP7E+EJMVuJWso+bNhDFaNZgpK5Y9n235+aG4fhxDL2PIxcJHPDT2ELjwGtRlN8siwhoIxQ==
-X-Received: by 2002:a17:907:7e91:b0:a8d:fa3:bb24 with SMTP id a640c23a62f3a-a93a0383db3mr347405866b.23.1727296956773;
-        Wed, 25 Sep 2024 13:42:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1727296958; x=1727901758;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AhgNgFnfjQvcm7pT9pBO59PaHiN4rDwtaX0ooDFw3Xk=;
+        b=Khgt4xMiUe+PIKYM5AnublyhXLbL4mNAneY3NAU4GMc2rnabGKrcYsRVO9/ACVH+Zu
+         odbIrTQpRDyZXrMk7JrHV1PChu4eWl9sYg+Qntuz7yCKeOhjhyNXYV7SsSOQYbC9y7wV
+         5M3O/s0cNYIH2GeI09jRlfWBsBztFUMVFtWgZ49hUWXzVE8FezcVSG7sMIeGXWQIr+7V
+         yYYLndt71MneGUwpshvnljUw6pTifK53M+rcwfZZYxLEJxL3pi7qfNo8dqFu1fmvZtsi
+         4Vw0j17oqvYfK/tuAubmFG70jhdpk5kAQ6/UxtiBIYb3dJ9VIuoh6inKStpV0rL/gPNe
+         pJEQ==
+X-Gm-Message-State: AOJu0YwPFGcF28sVX0EMwhjXZTCpdr8/hK5HheZzfVWOSfbK7pwsp2mU
+	Avn66d8KBWjvzN1IyHYtgOfqX5BLIF6PRH3+QESJAzUqZQdojOJ1QC2V6Kzl81w=
+X-Google-Smtp-Source: AGHT+IECj72ApvBTZddGa6dvauu+thaK2N13KmMmUxs5K2sTxfHPwcBtZOwWQsK3aZXuAxpy0hhviw==
+X-Received: by 2002:a05:6402:440d:b0:5c5:bebb:544b with SMTP id 4fb4d7f45d1cf-5c72060ac03mr2672932a12.6.1727296958180;
+        Wed, 25 Sep 2024 13:42:38 -0700 (PDT)
 Received: from localhost ([82.144.39.243])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9392f54171sm257080566b.82.2024.09.25.13.42.36
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c5cf497429sm2366335a12.37.2024.09.25.13.42.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 25 Sep 2024 13:42:36 -0700 (PDT)
+        Wed, 25 Sep 2024 13:42:37 -0700 (PDT)
 From: luca.boccassi@gmail.com
 To: linux-security-module@vger.kernel.org
 Cc: wufan@linux.microsoft.com,
 	paul@paul-moore.com
-Subject: [PATCH v2 1/2] ipe: return -ESTALE instead of -EINVAL on update when new policy has a lower version
-Date: Wed, 25 Sep 2024 22:42:26 +0200
-Message-Id: <20240925204227.528624-1-luca.boccassi@gmail.com>
+Subject: [PATCH v2 2/2] ipe: also reject policy updates with the same version
+Date: Wed, 25 Sep 2024 22:42:27 +0200
+Message-Id: <20240925204227.528624-2-luca.boccassi@gmail.com>
 X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20240925204227.528624-1-luca.boccassi@gmail.com>
+References: <20240925204227.528624-1-luca.boccassi@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -67,30 +71,49 @@ Content-Transfer-Encoding: 8bit
 
 From: Luca Boccassi <bluca@debian.org>
 
-When loading policies in userspace we want a recognizable error when an
-update attempts to use an old policy, as that is an error that needs
-to be treated differently from an invalid policy. Use -ESTALE as it is
-clear enough for an update mechanism.
+Currently IPE accepts an update that has the same version as the policy
+being updated, but it doesn't make it a no-op nor it checks that the
+old and new policyes are the same. So it is possible to change the
+content of a policy, without changing its version. This is very
+confusing from userspace when managing policies.
+Instead change the update logic to reject updates that have the same
+version with ESTALE, as that is much clearer and intuitive behaviour.
 
 Signed-off-by: Luca Boccassi <bluca@debian.org>
 Reviewed-by: Serge Hallyn <serge@hallyn.com>
 ---
- security/ipe/policy.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v2: also update documentation
 
+ Documentation/admin-guide/LSM/ipe.rst | 2 +-
+ security/ipe/policy.c                 | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/admin-guide/LSM/ipe.rst b/Documentation/admin-guide/LSM/ipe.rst
+index 47323494d119..7cd04d3261ad 100644
+--- a/Documentation/admin-guide/LSM/ipe.rst
++++ b/Documentation/admin-guide/LSM/ipe.rst
+@@ -269,7 +269,7 @@ in the kernel. This file is write-only and accepts a PKCS#7 signed
+ policy. Two checks will always be performed on this policy: First, the
+ ``policy_names`` must match with the updated version and the existing
+ version. Second the updated policy must have a policy version greater than
+-or equal to the currently-running version. This is to prevent rollback attacks.
++to the currently-running version. This is to prevent rollback attacks.
+ 
+ The ``delete`` file is used to remove a policy that is no longer needed.
+ This file is write-only and accepts a value of ``1`` to delete the policy.
 diff --git a/security/ipe/policy.c b/security/ipe/policy.c
-index bf5aa97911e1..3a0069c6d5af 100644
+index 3a0069c6d5af..45f7d6a0ed23 100644
 --- a/security/ipe/policy.c
 +++ b/security/ipe/policy.c
-@@ -107,7 +107,7 @@ int ipe_update_policy(struct inode *root, const char *text, size_t textlen,
- 	}
- 
- 	if (ver_to_u64(old) > ver_to_u64(new)) {
--		rc = -EINVAL;
-+		rc = -ESTALE;
+@@ -106,7 +106,7 @@ int ipe_update_policy(struct inode *root, const char *text, size_t textlen,
  		goto err;
  	}
  
+-	if (ver_to_u64(old) > ver_to_u64(new)) {
++	if (ver_to_u64(old) >= ver_to_u64(new)) {
+ 		rc = -ESTALE;
+ 		goto err;
+ 	}
 -- 
 2.39.5
 
