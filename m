@@ -1,344 +1,303 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72A4A154C14;
-	Thu, 26 Sep 2024 16:36:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE8B815445E;
+	Thu, 26 Sep 2024 17:08:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727368568; cv=none; b=YQgWfb4Y6yoxhiJhR5PdQPOVNkSW2rm21ycTAEurAZ+hdvioyO/O8iRx1H2Z+lSv1vjd/T6NzrH6hcjmOkkV+cybQDcHkO/cB9yjdvOkGOGb8V/KFz16tNlW/ejxJU62iUv1UttWVx1lzAK3HC30pDqKCu0syG+rd8VOsfdsugY=
+	t=1727370531; cv=none; b=AB+ulPtYFprQ1u4l81nOwgiWk/O7XWNKDRaV1xsxXKAHDhISPFPDeNB8qgupFI+14VAHtk/e3WQfx4Xvhgf7UWa061BCoOQC396UtNvLv3shSi8Ys84SrsxlWHVV7l/+jtJSy8CfY0tQNnzH28MJidRhB9/AGLkpkQLwbYn3l1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727368568; c=relaxed/simple;
-	bh=bgL1UW3o45G8aDELRgZ59CG7YYPVVb7KJWKR5UI9FQU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OAp0jNxVuBgbj7ESvk/XTRrsZ7xIRIt8UvzeY1LUnsb6V4lSwmy3mXqLDUaEfH8fvUlhsHdTXQm9IEugeeTvurkFASHP4tx+g+OauRoHMHWALdh9lCOen923ReoGNotpOFCXPSLc5cY9cYDErLZGmWcUvgZfxxNp1YQi2NjSJ1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h2ZvPxxO; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1727370531; c=relaxed/simple;
+	bh=BUvuluVezPbn/MBlm5xbTYmQB89T/XuMMnn+HpgcRJw=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=KYkmv7fhCTszs1dmhwJEgS+PwlIoru3xRZVXfE9WbDiy53UnlSTcqYrD3SRA5Jh6r58dexzLa2xBryYmeUV11pY1fH/hFo3oFvuomLIlqLqzJ2hT+HBqUmLOFZqUrzPmMP8sa0+nNysNqijf9xZrmGrguFW3UgCRUHpafCTXw7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jxibUDhB; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h2ZvPxxO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A36AC4CEC5;
-	Thu, 26 Sep 2024 16:36:01 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jxibUDhB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 137BAC4CEC5;
+	Thu, 26 Sep 2024 17:08:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727368568;
-	bh=bgL1UW3o45G8aDELRgZ59CG7YYPVVb7KJWKR5UI9FQU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=h2ZvPxxOMW2lwQsRi3HyYDuaujztR38zEZHctTfnmJQi8gIE1Lh9DH6QW1BPXmrLl
-	 cCu7RfFO49/s7GLVe2UpvUvprvhQR++LX4VbT0OjFZq4DWLe4qv9EMrYtpM38pLUuF
-	 PffTP0c9izmNKcrW2BxkvjVSkM+RLkx6FoCVIojjcweKj5REw0IAQOR3fE8V+JnE55
-	 trvCXWO+xVUi2ze+4qHoMLKRZPe2qwFlcpybh9eivSmkdSR3LdXCNOSQV27bfuUHHj
-	 uDVHxsgHssvSZc8kc0l7fOfzKeJqDwdwYOnb4KppR55dwwlbj7VSbOzK8+oPWLAj6s
-	 8y2fowQxne9kw==
-From: Christian Brauner <brauner@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Bjoern Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arve Hjonnevag <arve@android.com>,
-	Todd Kjos <tkjos@android.com>,
-	Martijn Coenen <maco@android.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Carlos Llamas <cmllamas@google.com>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Daniel Xu <dxu@dxuuu.xyz>,
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	rust-for-linux@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Kees Cook <kees@kernel.org>
-Subject: [PATCH] [RFC] rust: add PidNamespace wrapper
-Date: Thu, 26 Sep 2024 18:35:46 +0200
-Message-ID: <20240926-pocht-sittlich-87108178c093@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240926-bewundere-beseitigen-59808f199f82@brauner>
-References: <20240926-bewundere-beseitigen-59808f199f82@brauner> <CAH5fLgixve=E5=ghc3maXVC+JdqkrPSDqKgJiYEJ9j_MD4GAzg@mail.gmail.com>
+	s=k20201202; t=1727370531;
+	bh=BUvuluVezPbn/MBlm5xbTYmQB89T/XuMMnn+HpgcRJw=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=jxibUDhB/wWdwirx6SI4flsPSnT36vR9P6aAZHBiIOEVyX2rT6qLcnyeLEI+0zgbW
+	 fY+4/UbkLF18bsiiFfpbhSyBDxqhJk5cdDGcs2k9/RDuXyYBSYQb4GsSyVznFB/0YZ
+	 5Iw3rn8f9BbT5+fHSqj1ucR3DF8CU5eviFufy/RXfMMJMLVQGYgu6BC7QRm1biDRIz
+	 xcuWxjHnKtx/KHAyMYc1W0Vh+UEWlVOCGm75r/J76Ez2RywHOGk4n913Peun5JfAZq
+	 FkeVsqce4+QzxFVYd0mE/38JxEgZAm7+imCfq+DwHyqCKpe8pqidZRPHBjClJ3hc8e
+	 Ma4Op03jUAOlQ==
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=10481; i=brauner@kernel.org; h=from:subject:message-id; bh=bgL1UW3o45G8aDELRgZ59CG7YYPVVb7KJWKR5UI9FQU=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaR97U3Jvz/zw8lTc9b9/SG01nS6xIqHbRdsphsd1rn5K 1lu72zv2I5SFgYxLgZZMUUWh3aTcLnlPBWbjTI1YOawMoEMYeDiFICJHNnE8D/Vai4bc9cJw+cu jP9qjf1Xd/GUOHMnynQ/ObPcgvmzwTZGhr1rc9Q59b9yeM9KXqyjuFw80ny9ooG91Celvt/fBLd e4AcA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 26 Sep 2024 20:08:47 +0300
+Message-Id: <D4GDQXEN0RKN.L4Q48E96DC8H@kernel.org>
+Cc: <keyrings@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <James.Bottomley@HansenPartnership.com>,
+ <roberto.sassu@huaweicloud.com>
+Subject: Re: [PATCH] security/keys: fix slab-out-of-bounds in
+ key_task_permission
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "chenridong" <chenridong@huawei.com>, "Chen Ridong"
+ <chenridong@huaweicloud.com>, <dhowells@redhat.com>, <paul@paul-moore.com>,
+ <jmorris@namei.org>, <serge@hallyn.com>
+X-Mailer: aerc 0.18.2
+References: <20240913070928.1670785-1-chenridong@huawei.com>
+ <D45Z3J2E2MPX.4SDWNGAP3D41@kernel.org>
+ <4079d020-edcc-4e27-9815-580f83a6c0ca@huaweicloud.com>
+ <D46WU24OP9O4.1Y7EGDV8ZN7NR@kernel.org>
+ <1cfa878e-8c7b-4570-8606-21daf5e13ce7@huaweicloud.com>
+ <D49PLU7VOREK.3UZFD499C96FB@kernel.org>
+ <fbe97a9c-0899-403a-840a-8d86e8730934@huaweicloud.com>
+ <D4G37UXT3VYV.1F8Z50TNGYYBW@kernel.org>
+ <D4G39938DC0V.8PCWJQ73GOK3@kernel.org>
+ <D4G4I4V56OJ3.1AUR56F77OOHU@kernel.org>
+ <eef47f37-6d96-4c60-a00b-e96e6025ef43@huawei.com>
+In-Reply-To: <eef47f37-6d96-4c60-a00b-e96e6025ef43@huawei.com>
 
-Ok, so here's my feeble attempt at getting something going for wrapping
-struct pid_namespace as struct pid_namespace indirectly came up in the
-file abstraction thread.
+On Thu Sep 26, 2024 at 2:20 PM EEST, chenridong wrote:
+>
+>
+> On 2024/9/26 17:54, Jarkko Sakkinen wrote:
+> > On Thu Sep 26, 2024 at 11:55 AM EEST, Jarkko Sakkinen wrote:
+> >> On Thu Sep 26, 2024 at 11:53 AM EEST, Jarkko Sakkinen wrote:
+> >>> On Thu Sep 26, 2024 at 6:48 AM EEST, Chen Ridong wrote:
+> >>>>
+> >>>> On 2024/9/19 4:57, Jarkko Sakkinen wrote:
+> >>>>> On Wed Sep 18, 2024 at 10:30 AM EEST, Chen Ridong wrote:
+> >>>>>>
+> >>>>>>
+> >>>>>> On 2024/9/15 21:59, Jarkko Sakkinen wrote:
+> >>>>>>> On Sun Sep 15, 2024 at 3:55 AM EEST, Chen Ridong wrote:
+> >>>>>>>>
+> >>>>>>>>
+> >>>>>>>> On 2024/9/14 19:33, Jarkko Sakkinen wrote:
+> >>>>>>>>> On Fri Sep 13, 2024 at 10:09 AM EEST, Chen Ridong wrote:
+> >>>>>>>>>> We meet the same issue with the LINK, which reads memory out o=
+f bounds:
+> >>>>>>>>>
+> >>>>>>>>> Nit: don't use "we" anywhere".
+> >>>>>>>>>
+> >>>>>>>>> Tbh, I really don't understand the sentence above. I don't what
+> >>>>>>>>> "the same issue with the LINK" really is.
+> >>>>>>>>>
+> >>>>>>>>
+> >>>>>>>> Hello, Jarkko.
+> >>>>>>>> I apologize for any confusion caused.
+> >>>>>>>>
+> >>>>>>>> I've encountered a bug reported by syzkaller. I also found the s=
+ame bug
+> >>>>>>>> reported at this LINK:
+> >>>>>>>> https://syzkaller.appspot.com/bug?id=3D68a5e206c2a8e08d317eb83f0=
+5610c0484ad10b9.
+> >>>>>>>>
+> >>>>>>>>>> BUG: KASAN: slab-out-of-bounds in __kuid_val include/linux/uid=
+gid.h:36
+> >>>>>>>>>> BUG: KASAN: slab-out-of-bounds in uid_eq include/linux/uidgid.=
+h:63 [inline]
+> >>>>>>>>>> BUG: KASAN: slab-out-of-bounds in key_task_permission+0x394/0x=
+410
+> >>>>>>>>>> security/keys/permission.c:54
+> >>>>>>>>>> Read of size 4 at addr ffff88813c3ab618 by task stress-ng/4362
+> >>>>>>>>>>
+> >>>>>>>>>> CPU: 2 PID: 4362 Comm: stress-ng Not tainted 5.10.0-14930-gafb=
+ffd6c3ede #15
+> >>>>>>>>>> Call Trace:
+> >>>>>>>>>>      __dump_stack lib/dump_stack.c:82 [inline]
+> >>>>>>>>>>      dump_stack+0x107/0x167 lib/dump_stack.c:123
+> >>>>>>>>>>      print_address_description.constprop.0+0x19/0x170 mm/kasan=
+/report.c:400
+> >>>>>>>>>>      __kasan_report.cold+0x6c/0x84 mm/kasan/report.c:560
+> >>>>>>>>>>      kasan_report+0x3a/0x50 mm/kasan/report.c:585
+> >>>>>>>>>>      __kuid_val include/linux/uidgid.h:36 [inline]
+> >>>>>>>>>>      uid_eq include/linux/uidgid.h:63 [inline]
+> >>>>>>>>>>      key_task_permission+0x394/0x410 security/keys/permission.=
+c:54
+> >>>>>>>>>>      search_nested_keyrings+0x90e/0xe90 security/keys/keyring.=
+c:793
+> >>>>>>>>>>      keyring_search_rcu+0x1b6/0x310 security/keys/keyring.c:92=
+2
+> >>>>>>>>>>      search_cred_keyrings_rcu+0x111/0x2e0 security/keys/proces=
+s_keys.c:459
+> >>>>>>>>>>      search_process_keyrings_rcu+0x1d/0x310 security/keys/proc=
+ess_keys.c:544
+> >>>>>>>>>>      lookup_user_key+0x782/0x12e0 security/keys/process_keys.c=
+:762
+> >>>>>>>>>>      keyctl_invalidate_key+0x20/0x190 security/keys/keyctl.c:4=
+34
+> >>>>>>>>>>      __do_sys_keyctl security/keys/keyctl.c:1978 [inline]
+> >>>>>>>>>>      __se_sys_keyctl+0x1de/0x5b0 security/keys/keyctl.c:1880
+> >>>>>>>>>>      do_syscall_64+0x30/0x40 arch/x86/entry/common.c:46
+> >>>>>>>>>>      entry_SYSCALL_64_after_hwframe+0x67/0xd1
+> >>>>>>>>>>
+> >>>>>>>>>> However, we can't reproduce this issue.
+> >>>>>>>>>
+> >>>>>>>>> "The issue cannot be easily reproduced but by analyzing the cod=
+e
+> >>>>>>>>> it can be broken into following steps:"
+> >>>>>>>>
+> >>>>>>>> Thank you for your correction.
+> >>>>>>>> Does this patch address the issue correctly? Is this patch accep=
+table?
+> >>>>>>>
+> >>>>>>> I only comment new patch versions so not giving any promises but =
+I can
+> >>>>>>> say that it is I think definitely in the correct direction :-)
+> >>>>>>>
+> >>>>>>> BR, Jarkko
+> >>>>>>
+> >>>>>> Hello, Jarkko. I have reproduced this issue. It can be reproduced =
+by
+> >>>>>> following these steps:
+> >>>>>>
+> >>>>>> 1. Add the helper patch.
+> >>>>>>
+> >>>>>> @@ -205,6 +205,9 @@ static void hash_key_type_and_desc(struct
+> >>>>>> keyring_index_key *index_key)
+> >>>>>>            else if (index_key->type =3D=3D &key_type_keyring && (h=
+ash &
+> >>>>>> fan_mask) !=3D 0)
+> >>>>>>                    hash =3D (hash + (hash << level_shift)) & ~fan_=
+mask;
+> >>>>>>            index_key->hash =3D hash;
+> >>>>>> +       if ((index_key->hash & 0xff) =3D=3D 0xe6) {
+> >>>>>> +                       pr_err("hash_key_type_and_desc: type %s %s
+> >>>>>> 0x%x\n",  index_key->type->name, index_key->description, index_key=
+->hash);
+> >>>>>> +       }
+> >>>>>>     }
+> >>>>>>
+> >>>>>> 2. Pick up the inputs whose hash is xxe6 using the following cmd. =
+If a
+> >>>>>> key's hash is xxe6, it will be printed.
+> >>>>>>
+> >>>>>> for ((i=3D0; i<=3D10000; i++)); do ./test_key user user$i "Some pa=
+yload"; done
+> >>>>>>
+> >>>>>> You have complile test_key whith following code.
+> >>>>>>
+> >>>>>> #include <sys/types.h>
+> >>>>>> #include <keyutils.h>
+> >>>>>> #include <stdint.h>
+> >>>>>> #include <stdio.h>
+> >>>>>> #include <stdlib.h>
+> >>>>>> #include <string.h>
+> >>>>>>
+> >>>>>> int
+> >>>>>> main(int argc, char *argv[])
+> >>>>>> {
+> >>>>>>       key_serial_t key;
+> >>>>>>
+> >>>>>>       if (argc !=3D 4) {
+> >>>>>> 	   fprintf(stderr, "Usage: %s type description payload\n",
+> >>>>>> 			   argv[0]);
+> >>>>>> 	   exit(EXIT_FAILURE);
+> >>>>>>       }
+> >>>>>>
+> >>>>>>       key =3D add_key(argv[1], argv[2], argv[3], strlen(argv[3]),
+> >>>>>> 			   KEY_SPEC_SESSION_KEYRING);
+> >>>>>>       if (key =3D=3D -1) {
+> >>>>>> 	   perror("add_key");
+> >>>>>> 	   exit(EXIT_FAILURE);
+> >>>>>>       }
+> >>>>>>
+> >>>>>>       printf("Key ID is %jx\n", (uintmax_t) key);
+> >>>>>>
+> >>>>>>       exit(EXIT_SUCCESS);
+> >>>>>> }
+> >>>>>>
+> >>>>>>
+> >>>>>> 3. Have more than 32 inputs now. their hashes are xxe6.
+> >>>>>> eg.
+> >>>>>> hash_key_type_and_desc: type user user438 0xe3033fe6
+> >>>>>> hash_key_type_and_desc: type user user526 0xeb7eade6
+> >>>>>> ...
+> >>>>>> hash_key_type_and_desc: type user user9955 0x44bc99e6
+> >>>>>>
+> >>>>>> 4. Reboot and add the keys obtained from step 3.
+> >>>>>> When adding keys to the ROOT that their hashes are all xxe6, and u=
+p to
+> >>>>>> 16, the ROOT has keys with hashes that are not xxe6 (e.g., slot 0)=
+, so
+> >>>>>> the keys are dissimilar. The ROOT will then split NODE A without u=
+sing a
+> >>>>>> shortcut. When NODE A is filled with keys that have hashes of xxe6=
+, the
+> >>>>>> keys are similar. NODE A will split with a shortcut.
+> >>>>>>
+> >>>>>> As my analysis, if a slot of the root is a shortcut(slot 6), it ma=
+y be
+> >>>>>> mistakenly be transferred to a key*, leading to an read out-of-bou=
+nds read.
+> >>>>>>
+> >>>>>>                          NODE A
+> >>>>>>                  +------>+---+
+> >>>>>>          ROOT    |       | 0 | xxe6
+> >>>>>>          +---+   |       +---+
+> >>>>>>     xxxx | 0 | shortcut  :   : xxe6
+> >>>>>>          +---+   |       +---+
+> >>>>>>     xxe6 :   :   |       |   | xxe6
+> >>>>>>          +---+   |       +---+
+> >>>>>>          | 6 |---+       :   : xxe6
+> >>>>>>          +---+           +---+
+> >>>>>>     xxe6 :   :           | f | xxe6
+> >>>>>>          +---+           +---+
+> >>>>>>     xxe6 | f |
+> >>>>>>          +---+
+> >>>>>>
+> >>>>>> 5. cat /proc/keys. and the issue is reproduced.
+> >>>>>
+> >>>>> Hi, I'll try to run through your procedure next week and give my co=
+mments.
+> >>>>> Thanks for doing this.
+> >>>>>
+> >>>>> BR, Jarkko
+> >>>>
+> >>>> Hi, Jarkko, have you run these procedure?
+> >>>> I have tested this patch with LTP and a pressure test(stress-ng --ke=
+y),
+> >>>> and this patch have fixed this issue. Additionally, no new bugs have
+> >>>> been found so far.
+> >>>>
+> >>>> I am looking forward to your reply.
+> >>>>
+> >>>> Best regards,
+> >>>> Ridong
+> >>>
+> >>> Nope because we are apparently stuck with release critical bug:
+> >>>
+> >>> https://lore.kernel.org/linux-integrity/D4EPMF7G3E05.1VHS9CVG3DZDE@ke=
+rnel.org/T/#t
+> >>>
+> >>> Might take several weeks before I look into this.
+> >>
+> >> I was expecting to send a PR early this week since the patch set
+> >> addresses the issue so thus wrong estimation.
+> >=20
+> > I asked David if he could look into this.
+> >=20
+> > BR, Jarkko
+>
+> Thank you very much.
 
-The lifetime of a pid namespace is intimately tied to the lifetime of
-task. The pid namespace of a task doesn't ever change. A
-unshare(CLONE_NEWPID) or setns(fd_pidns/pidfd, CLONE_NEWPID) will not
-change the task's pid namespace only the pid namespace of children
-spawned by the task. This invariant is important to keep in mind.
+Further, I'm switching jobs. Tomorrow is my last day in the current
+job and next week starting a new job so given all these circumastances
+I rather look into this properly hopefully latest after my rc2 PR is
+out, rather than rushing.
 
-After a task is reaped it will be detached from its associated struct
-pids via __unhash_process(). This will also set task->thread_pid to
-NULL.
+In a normal status quo situation this would not be such a huge issue.
 
-In order to retrieve the pid namespace of a task task_active_pid_ns()
-can be used. The helper works on both current and non-current taks but
-the requirements are slightly different in both cases and it depends on
-where the helper is called.
+Similarly, for the performance bug I want to review James' comments
+etc with time and bake v6 that hopefully satisfies all the
+stateholders.
 
-The rules for this are simple but difficult for me to translate into
-Rust. If task_active_pid_ns() is called on current then no RCU locking
-is needed as current is obviously alive. On the other hand calling
-task_active_pid_ns() after release_task() would work but it would mean
-task_active_pid_ns() will return NULL.
+So thank you for understanding, and I appreciate the work you've done
+on this. I.e. not ignoring this :-)
 
-Calling task_active_pid_ns() on a non-current task, while valid, must be
-under RCU or other protection mechanism as the task might be
-release_task() and thus in __unhash_process().
+BR, Jarkko
 
-Handling that in a single impl seemed cumbersome but that may just be
-my lack of kernel Rust experience.
-
-It would of course be possible to add an always refcounted PidNamespace
-impl to Task but that would be pointless refcount bumping for the usual
-case where the caller retrieves the pid namespace of current.
-
-Instead I added a macro that gets the active pid namespace of current
-and a task_get_pid_ns() impl that returns an Option<ARef<PidNamespace>>.
-Returning an Option<ARef<PidNamespace>> forces the caller to make a
-conscious decision instead of just silently translating a NULL to
-current pid namespace when passed to e.g., task_tgid_nr_ns().
-
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- rust/helpers/helpers.c       |  1 +
- rust/helpers/pid_namespace.c | 26 ++++++++++++++
- rust/kernel/lib.rs           |  1 +
- rust/kernel/pid_namespace.rs | 68 ++++++++++++++++++++++++++++++++++++
- rust/kernel/task.rs          | 56 +++++++++++++++++++++++++----
- 5 files changed, 146 insertions(+), 6 deletions(-)
- create mode 100644 rust/helpers/pid_namespace.c
- create mode 100644 rust/kernel/pid_namespace.rs
-
-diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
-index 62022b18caf5..d553ad9361ce 100644
---- a/rust/helpers/helpers.c
-+++ b/rust/helpers/helpers.c
-@@ -17,6 +17,7 @@
- #include "kunit.c"
- #include "mutex.c"
- #include "page.c"
-+#include "pid_namespace.c"
- #include "rbtree.c"
- #include "refcount.c"
- #include "security.c"
-diff --git a/rust/helpers/pid_namespace.c b/rust/helpers/pid_namespace.c
-new file mode 100644
-index 000000000000..f41482bdec9a
---- /dev/null
-+++ b/rust/helpers/pid_namespace.c
-@@ -0,0 +1,26 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <linux/pid_namespace.h>
-+#include <linux/cleanup.h>
-+
-+struct pid_namespace *rust_helper_get_pid_ns(struct pid_namespace *ns)
-+{
-+	return get_pid_ns(ns);
-+}
-+
-+void rust_helper_put_pid_ns(struct pid_namespace *ns)
-+{
-+	put_pid_ns(ns);
-+}
-+
-+/* Get a reference on a task's pid namespace. */
-+struct pid_namespace *rust_helper_task_get_pid_ns(struct task_struct *task)
-+{
-+	struct pid_namespace *pid_ns;
-+
-+	guard(rcu)();
-+	pid_ns = task_active_pid_ns(task);
-+	if (pid_ns)
-+		get_pid_ns(pid_ns);
-+	return pid_ns;
-+}
-diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index ff7d88022c57..0e78ec9d06e0 100644
---- a/rust/kernel/lib.rs
-+++ b/rust/kernel/lib.rs
-@@ -44,6 +44,7 @@
- #[cfg(CONFIG_NET)]
- pub mod net;
- pub mod page;
-+pub mod pid_namespace;
- pub mod prelude;
- pub mod print;
- pub mod sizes;
-diff --git a/rust/kernel/pid_namespace.rs b/rust/kernel/pid_namespace.rs
-new file mode 100644
-index 000000000000..cd12c21a68cb
---- /dev/null
-+++ b/rust/kernel/pid_namespace.rs
-@@ -0,0 +1,68 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+//! Pid namespaces.
-+//!
-+//! C header: [`include/linux/pid_namespace.h`](srctree/include/linux/pid_namespace.h) and
-+//! [`include/linux/pid.h`](srctree/include/linux/pid.h)
-+
-+use crate::{
-+    bindings,
-+    types::{AlwaysRefCounted, Opaque},
-+};
-+use core::{
-+    ptr,
-+};
-+
-+/// Wraps the kernel's `struct pid_namespace`. Thread safe.
-+///
-+/// This structure represents the Rust abstraction for a C `struct pid_namespace`. This
-+/// implementation abstracts the usage of an already existing C `struct pid_namespace` within Rust
-+/// code that we get passed from the C side.
-+#[repr(transparent)]
-+pub struct PidNamespace {
-+    inner: Opaque<bindings::pid_namespace>,
-+}
-+
-+impl PidNamespace {
-+    /// Returns a raw pointer to the inner C struct.
-+    #[inline]
-+    pub fn as_ptr(&self) -> *mut bindings::pid_namespace {
-+        self.inner.get()
-+    }
-+
-+    /// Creates a reference to a [`PidNamespace`] from a valid pointer.
-+    ///
-+    /// # Safety
-+    ///
-+    /// The caller must ensure that `ptr` is valid and remains valid for the lifetime of the
-+    /// returned [`PidNamespace`] reference.
-+    pub unsafe fn from_ptr<'a>(ptr: *const bindings::pid_namespace) -> &'a Self {
-+        // SAFETY: The safety requirements guarantee the validity of the dereference, while the
-+        // `PidNamespace` type being transparent makes the cast ok.
-+        unsafe { &*ptr.cast() }
-+    }
-+}
-+
-+// SAFETY: Instances of `PidNamespace` are always reference-counted.
-+unsafe impl AlwaysRefCounted for PidNamespace {
-+    #[inline]
-+    fn inc_ref(&self) {
-+        // SAFETY: The existence of a shared reference means that the refcount is nonzero.
-+        unsafe { bindings::get_pid_ns(self.as_ptr()) };
-+    }
-+
-+    #[inline]
-+    unsafe fn dec_ref(obj: ptr::NonNull<PidNamespace>) {
-+        // SAFETY: The safety requirements guarantee that the refcount is non-zero.
-+        unsafe { bindings::put_pid_ns(obj.cast().as_ptr()) }
-+    }
-+}
-+
-+// SAFETY:
-+// - `PidNamespace::dec_ref` can be called from any thread.
-+// - It is okay to send ownership of `PidNamespace` across thread boundaries.
-+unsafe impl Send for PidNamespace {}
-+
-+// SAFETY: It's OK to access `PidNamespace` through shared references from other threads because
-+// we're either accessing properties that don't change or that are properly synchronised by C code.
-+unsafe impl Sync for PidNamespace {}
-diff --git a/rust/kernel/task.rs b/rust/kernel/task.rs
-index 1a36a9f19368..89a431dfac5d 100644
---- a/rust/kernel/task.rs
-+++ b/rust/kernel/task.rs
-@@ -6,7 +6,8 @@
- 
- use crate::{
-     bindings,
--    types::{NotThreadSafe, Opaque},
-+    pid_namespace::PidNamespace,
-+    types::{ARef, NotThreadSafe, Opaque},
- };
- use core::{
-     cmp::{Eq, PartialEq},
-@@ -36,6 +37,37 @@ macro_rules! current {
-     };
- }
- 
-+/// Returns the currently running task's pid namespace.
-+///
-+/// The lifetime of `PidNamespace` is intimately tied to the lifetime of `Task`. The pid namespace
-+/// of a `Task` doesn't ever change. A `unshare(CLONE_NEWPID)` or `setns(fd_pidns/pidfd,
-+/// CLONE_NEWPID)` will not change the task's pid namespace. This invariant is important to keep in
-+/// mind.
-+///
-+/// After a task is reaped it will be detached from its associated `struct pid`s via
-+/// __unhash_process(). This will specifically set `task->thread_pid` to `NULL`.
-+///
-+/// In order to retrieve the pid namespace of a task `task_active_pid_ns()` can be used. The rules
-+/// for this are simple but difficult for me to translate into Rust. If `task_active_pid_ns()` is
-+/// called from `current` then no RCU locking is needed as current is obviously alive. However,
-+/// calling `task_active_pid_ns()` on a non-`current` task, while valid, must be under RCU or other
-+/// protection as the task might be in __unhash_process().
-+///
-+/// We could add an always refcounted `PidNamespace` impl to `Task` but that would be pointless
-+/// refcount bumping for the usual case where the caller retrieves the pid namespace of `current`.
-+///
-+/// So I added a macro that gets the active pid namespace of `current` and a `task_get_pid_ns()`
-+/// impl that returns an `ARef<PidNamespace>` or `None` if the pid namespace is `NULL`. Returning
-+/// an `Option<ARef<PidNamespace>>` forces the caller to make a conscious decision what instead of
-+/// just silently translating a `NULL` to `current`'s pid namespace.
-+#[macro_export]
-+macro_rules! current_pid_ns {
-+    () => {
-+        let ptr = current()
-+        unsafe { PidNamespace::from_ptr(bindings::task_active_pid_ns(ptr)) }
-+    };
-+}
-+
- /// Wraps the kernel's `struct task_struct`.
- ///
- /// # Invariants
-@@ -182,11 +214,23 @@ pub fn signal_pending(&self) -> bool {
-         unsafe { bindings::signal_pending(self.0.get()) != 0 }
-     }
- 
--    /// Returns the given task's pid in the current pid namespace.
--    pub fn pid_in_current_ns(&self) -> Pid {
--        // SAFETY: We know that `self.0.get()` is valid by the type invariant, and passing a null
--        // pointer as the namespace is correct for using the current namespace.
--        unsafe { bindings::task_tgid_nr_ns(self.0.get(), ptr::null_mut()) }
-+    /// Returns task's pid namespace with elevated reference count
-+    pub fn task_get_pid_ns(&self) -> Option<ARef<PidNamespace>> {
-+        let ptr = unsafe { bindings::task_get_pid_ns(self.0.get()) };
-+        if ptr.is_null() {
-+            None
-+        } else {
-+            // SAFETY: `ptr` is valid by the safety requirements of this function. And we own a
-+            // reference count via `task_get_pid_ns()`.
-+            // CAST: `Self` is a `repr(transparent)` wrapper around `bindings::pid_namespace`.
-+            Some(unsafe { ARef::from_raw(ptr::NonNull::new_unchecked(ptr.cast::<PidNamespace>())) })
-+        }
-+    }
-+
-+    /// Returns the given task's pid in the provided pid namespace.
-+    pub fn task_tgid_nr_ns(&self, pidns: &PidNamespace) -> Pid {
-+        // SAFETY: We know that `self.0.get()` is valid by the type invariant.
-+        unsafe { bindings::task_tgid_nr_ns(self.0.get(), pidns.as_ptr()) }
-     }
- 
-     /// Wakes up the task.
--- 
-2.45.2
-
+BR, Jarkko
