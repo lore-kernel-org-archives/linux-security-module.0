@@ -1,303 +1,77 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE8B815445E;
-	Thu, 26 Sep 2024 17:08:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FD13136337;
+	Thu, 26 Sep 2024 17:29:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727370531; cv=none; b=AB+ulPtYFprQ1u4l81nOwgiWk/O7XWNKDRaV1xsxXKAHDhISPFPDeNB8qgupFI+14VAHtk/e3WQfx4Xvhgf7UWa061BCoOQC396UtNvLv3shSi8Ys84SrsxlWHVV7l/+jtJSy8CfY0tQNnzH28MJidRhB9/AGLkpkQLwbYn3l1M=
+	t=1727371791; cv=none; b=QrfnR7ZyW1mgtEqyWERGp/BZkm2DIs3Lqxc+cF6EaBFQ2NSRJYRP1ZFUTcG3Jhk9kiEgbSHQ79AzhGLnb1uphXEG1hgzZ3XmiUNgUIdgpZnNhoF5tF+ZtZChXyH4ddt0+eJDu6w3Ej7VdfAE2oLnylhVhQlhH18TTlxyMvKSZ+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727370531; c=relaxed/simple;
-	bh=BUvuluVezPbn/MBlm5xbTYmQB89T/XuMMnn+HpgcRJw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=KYkmv7fhCTszs1dmhwJEgS+PwlIoru3xRZVXfE9WbDiy53UnlSTcqYrD3SRA5Jh6r58dexzLa2xBryYmeUV11pY1fH/hFo3oFvuomLIlqLqzJ2hT+HBqUmLOFZqUrzPmMP8sa0+nNysNqijf9xZrmGrguFW3UgCRUHpafCTXw7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jxibUDhB; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jxibUDhB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 137BAC4CEC5;
-	Thu, 26 Sep 2024 17:08:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727370531;
-	bh=BUvuluVezPbn/MBlm5xbTYmQB89T/XuMMnn+HpgcRJw=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=jxibUDhB/wWdwirx6SI4flsPSnT36vR9P6aAZHBiIOEVyX2rT6qLcnyeLEI+0zgbW
-	 fY+4/UbkLF18bsiiFfpbhSyBDxqhJk5cdDGcs2k9/RDuXyYBSYQb4GsSyVznFB/0YZ
-	 5Iw3rn8f9BbT5+fHSqj1ucR3DF8CU5eviFufy/RXfMMJMLVQGYgu6BC7QRm1biDRIz
-	 xcuWxjHnKtx/KHAyMYc1W0Vh+UEWlVOCGm75r/J76Ez2RywHOGk4n913Peun5JfAZq
-	 FkeVsqce4+QzxFVYd0mE/38JxEgZAm7+imCfq+DwHyqCKpe8pqidZRPHBjClJ3hc8e
-	 Ma4Op03jUAOlQ==
+	s=arc-20240116; t=1727371791; c=relaxed/simple;
+	bh=4afPFV6dbcYoMxauCprHFhl/iT5djV7VSu1CLYr4mu4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pM8zJkkqpwoIlZNvG+2oBIaHEUcl4smA3nHlL0vHLjyG4ryKvJ3Nx/0+SPRdHt20gsmYiQ7ZDjL1+BbsrmDEeOV/C7A5zwa9857+wnNVu7EM5/Ml5S36K4rSTVT+VhEEBeJMelZ4v1kveBhQgdAofZ+wVpc5sWIGl5RoDtv9hhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c876ed9c93so1297396a12.2;
+        Thu, 26 Sep 2024 10:29:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727371788; x=1727976588;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4afPFV6dbcYoMxauCprHFhl/iT5djV7VSu1CLYr4mu4=;
+        b=kQ7hOg6UlYyXf49fR+VpnEJGZ1NfcFtUhSE34fww26RqlYVQ9cjisHAdvwhcM+0YtQ
+         ZCPdXkbjmPlp/3J0DVuaVmdiOOAgrArLUYKv0JC8U/CX258k2w+JOaZV7YZtIv29UBz2
+         qFeMU8hN0AJOUbkQSsh+rTG/1NJocWxL3tj65jIqRtB2WYh7ltLZaAXeONFmeFxED+KV
+         7wLXmJPpiafLCgGBeexiOgvLkwAGVUdMdW6x/44DxclKKeBaunbIvRLMPFH5Dl77EJaO
+         I7pDQUGNSz5PykbTwdcRZjhu2RBeUch1E7diORbC4rLeNGKZmPpzSMwHX9RFhCN4lvxS
+         jMcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU7cWEFlEd8hsZgPLX5DpOuKYXFzdoQEvcPyAc9ZiodPkRo+wrekfWg0SvGr2WB+U+xgeGqp0no/kmCM7vi@vger.kernel.org, AJvYcCVbryu4tmpQEIYgaqYv1KwUfwa8oYw73D2m2eHfneF4Lkg8ZWuFiN/voICRdq93tKelVEeoYYycMD3dftKOrg==@vger.kernel.org, AJvYcCW+IoOdsVrVXatsVVa2iW4Yxf2oMsKyg/Bk7hPuZpJBs93TyDcSDqIyxaf/Pt+J5bFkuMzX2fBN2XEiM5qGvw==@vger.kernel.org, AJvYcCW27FyPhUuXvLpF6vbylHKA3BYyu7EUChDyVPfZk5JwUSXZE5nShAVOv3xm8XljICdIuT5Br5uiBUvauAMk+ClEc+pKhvep@vger.kernel.org
+X-Gm-Message-State: AOJu0YyapNt1aL5+Ax7zNxhKA9DGxyY0gH2CG4vuvRtebV/2JPlnwDdy
+	zw4Nm1AqZuNAl5Jz4UPxgS0wDB0gmnSPUNFl8S27ARtNz9bBS5NY
+X-Google-Smtp-Source: AGHT+IG0A5dujC3CjHvj9UIpzlSW1clgtQTDw6ZAJgzcvSavTZk1wMdg2ScfHyrsjW3CMML4CP+HRA==
+X-Received: by 2002:a05:6402:2552:b0:5c2:609d:397e with SMTP id 4fb4d7f45d1cf-5c8825fe1eemr373033a12.15.1727371788365;
+        Thu, 26 Sep 2024 10:29:48 -0700 (PDT)
+Received: from localhost.localdomain (109-81-81-255.rct.o2.cz. [109.81.81.255])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c88245eb15sm145336a12.49.2024.09.26.10.29.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Sep 2024 10:29:47 -0700 (PDT)
+From: Michal Hocko <mhocko@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Christoph Hellwig <hch@lst.de>,
+	Yafang Shao <laoar.shao@gmail.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	jack@suse.cz,
+	Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-bcachefs@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2 v3] remove PF_MEMALLOC_NORECLAIM
+Date: Thu, 26 Sep 2024 19:11:49 +0200
+Message-ID: <20240926172940.167084-1-mhocko@kernel.org>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 26 Sep 2024 20:08:47 +0300
-Message-Id: <D4GDQXEN0RKN.L4Q48E96DC8H@kernel.org>
-Cc: <keyrings@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <James.Bottomley@HansenPartnership.com>,
- <roberto.sassu@huaweicloud.com>
-Subject: Re: [PATCH] security/keys: fix slab-out-of-bounds in
- key_task_permission
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "chenridong" <chenridong@huawei.com>, "Chen Ridong"
- <chenridong@huaweicloud.com>, <dhowells@redhat.com>, <paul@paul-moore.com>,
- <jmorris@namei.org>, <serge@hallyn.com>
-X-Mailer: aerc 0.18.2
-References: <20240913070928.1670785-1-chenridong@huawei.com>
- <D45Z3J2E2MPX.4SDWNGAP3D41@kernel.org>
- <4079d020-edcc-4e27-9815-580f83a6c0ca@huaweicloud.com>
- <D46WU24OP9O4.1Y7EGDV8ZN7NR@kernel.org>
- <1cfa878e-8c7b-4570-8606-21daf5e13ce7@huaweicloud.com>
- <D49PLU7VOREK.3UZFD499C96FB@kernel.org>
- <fbe97a9c-0899-403a-840a-8d86e8730934@huaweicloud.com>
- <D4G37UXT3VYV.1F8Z50TNGYYBW@kernel.org>
- <D4G39938DC0V.8PCWJQ73GOK3@kernel.org>
- <D4G4I4V56OJ3.1AUR56F77OOHU@kernel.org>
- <eef47f37-6d96-4c60-a00b-e96e6025ef43@huawei.com>
-In-Reply-To: <eef47f37-6d96-4c60-a00b-e96e6025ef43@huawei.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu Sep 26, 2024 at 2:20 PM EEST, chenridong wrote:
->
->
-> On 2024/9/26 17:54, Jarkko Sakkinen wrote:
-> > On Thu Sep 26, 2024 at 11:55 AM EEST, Jarkko Sakkinen wrote:
-> >> On Thu Sep 26, 2024 at 11:53 AM EEST, Jarkko Sakkinen wrote:
-> >>> On Thu Sep 26, 2024 at 6:48 AM EEST, Chen Ridong wrote:
-> >>>>
-> >>>> On 2024/9/19 4:57, Jarkko Sakkinen wrote:
-> >>>>> On Wed Sep 18, 2024 at 10:30 AM EEST, Chen Ridong wrote:
-> >>>>>>
-> >>>>>>
-> >>>>>> On 2024/9/15 21:59, Jarkko Sakkinen wrote:
-> >>>>>>> On Sun Sep 15, 2024 at 3:55 AM EEST, Chen Ridong wrote:
-> >>>>>>>>
-> >>>>>>>>
-> >>>>>>>> On 2024/9/14 19:33, Jarkko Sakkinen wrote:
-> >>>>>>>>> On Fri Sep 13, 2024 at 10:09 AM EEST, Chen Ridong wrote:
-> >>>>>>>>>> We meet the same issue with the LINK, which reads memory out o=
-f bounds:
-> >>>>>>>>>
-> >>>>>>>>> Nit: don't use "we" anywhere".
-> >>>>>>>>>
-> >>>>>>>>> Tbh, I really don't understand the sentence above. I don't what
-> >>>>>>>>> "the same issue with the LINK" really is.
-> >>>>>>>>>
-> >>>>>>>>
-> >>>>>>>> Hello, Jarkko.
-> >>>>>>>> I apologize for any confusion caused.
-> >>>>>>>>
-> >>>>>>>> I've encountered a bug reported by syzkaller. I also found the s=
-ame bug
-> >>>>>>>> reported at this LINK:
-> >>>>>>>> https://syzkaller.appspot.com/bug?id=3D68a5e206c2a8e08d317eb83f0=
-5610c0484ad10b9.
-> >>>>>>>>
-> >>>>>>>>>> BUG: KASAN: slab-out-of-bounds in __kuid_val include/linux/uid=
-gid.h:36
-> >>>>>>>>>> BUG: KASAN: slab-out-of-bounds in uid_eq include/linux/uidgid.=
-h:63 [inline]
-> >>>>>>>>>> BUG: KASAN: slab-out-of-bounds in key_task_permission+0x394/0x=
-410
-> >>>>>>>>>> security/keys/permission.c:54
-> >>>>>>>>>> Read of size 4 at addr ffff88813c3ab618 by task stress-ng/4362
-> >>>>>>>>>>
-> >>>>>>>>>> CPU: 2 PID: 4362 Comm: stress-ng Not tainted 5.10.0-14930-gafb=
-ffd6c3ede #15
-> >>>>>>>>>> Call Trace:
-> >>>>>>>>>>      __dump_stack lib/dump_stack.c:82 [inline]
-> >>>>>>>>>>      dump_stack+0x107/0x167 lib/dump_stack.c:123
-> >>>>>>>>>>      print_address_description.constprop.0+0x19/0x170 mm/kasan=
-/report.c:400
-> >>>>>>>>>>      __kasan_report.cold+0x6c/0x84 mm/kasan/report.c:560
-> >>>>>>>>>>      kasan_report+0x3a/0x50 mm/kasan/report.c:585
-> >>>>>>>>>>      __kuid_val include/linux/uidgid.h:36 [inline]
-> >>>>>>>>>>      uid_eq include/linux/uidgid.h:63 [inline]
-> >>>>>>>>>>      key_task_permission+0x394/0x410 security/keys/permission.=
-c:54
-> >>>>>>>>>>      search_nested_keyrings+0x90e/0xe90 security/keys/keyring.=
-c:793
-> >>>>>>>>>>      keyring_search_rcu+0x1b6/0x310 security/keys/keyring.c:92=
-2
-> >>>>>>>>>>      search_cred_keyrings_rcu+0x111/0x2e0 security/keys/proces=
-s_keys.c:459
-> >>>>>>>>>>      search_process_keyrings_rcu+0x1d/0x310 security/keys/proc=
-ess_keys.c:544
-> >>>>>>>>>>      lookup_user_key+0x782/0x12e0 security/keys/process_keys.c=
-:762
-> >>>>>>>>>>      keyctl_invalidate_key+0x20/0x190 security/keys/keyctl.c:4=
-34
-> >>>>>>>>>>      __do_sys_keyctl security/keys/keyctl.c:1978 [inline]
-> >>>>>>>>>>      __se_sys_keyctl+0x1de/0x5b0 security/keys/keyctl.c:1880
-> >>>>>>>>>>      do_syscall_64+0x30/0x40 arch/x86/entry/common.c:46
-> >>>>>>>>>>      entry_SYSCALL_64_after_hwframe+0x67/0xd1
-> >>>>>>>>>>
-> >>>>>>>>>> However, we can't reproduce this issue.
-> >>>>>>>>>
-> >>>>>>>>> "The issue cannot be easily reproduced but by analyzing the cod=
-e
-> >>>>>>>>> it can be broken into following steps:"
-> >>>>>>>>
-> >>>>>>>> Thank you for your correction.
-> >>>>>>>> Does this patch address the issue correctly? Is this patch accep=
-table?
-> >>>>>>>
-> >>>>>>> I only comment new patch versions so not giving any promises but =
-I can
-> >>>>>>> say that it is I think definitely in the correct direction :-)
-> >>>>>>>
-> >>>>>>> BR, Jarkko
-> >>>>>>
-> >>>>>> Hello, Jarkko. I have reproduced this issue. It can be reproduced =
-by
-> >>>>>> following these steps:
-> >>>>>>
-> >>>>>> 1. Add the helper patch.
-> >>>>>>
-> >>>>>> @@ -205,6 +205,9 @@ static void hash_key_type_and_desc(struct
-> >>>>>> keyring_index_key *index_key)
-> >>>>>>            else if (index_key->type =3D=3D &key_type_keyring && (h=
-ash &
-> >>>>>> fan_mask) !=3D 0)
-> >>>>>>                    hash =3D (hash + (hash << level_shift)) & ~fan_=
-mask;
-> >>>>>>            index_key->hash =3D hash;
-> >>>>>> +       if ((index_key->hash & 0xff) =3D=3D 0xe6) {
-> >>>>>> +                       pr_err("hash_key_type_and_desc: type %s %s
-> >>>>>> 0x%x\n",  index_key->type->name, index_key->description, index_key=
-->hash);
-> >>>>>> +       }
-> >>>>>>     }
-> >>>>>>
-> >>>>>> 2. Pick up the inputs whose hash is xxe6 using the following cmd. =
-If a
-> >>>>>> key's hash is xxe6, it will be printed.
-> >>>>>>
-> >>>>>> for ((i=3D0; i<=3D10000; i++)); do ./test_key user user$i "Some pa=
-yload"; done
-> >>>>>>
-> >>>>>> You have complile test_key whith following code.
-> >>>>>>
-> >>>>>> #include <sys/types.h>
-> >>>>>> #include <keyutils.h>
-> >>>>>> #include <stdint.h>
-> >>>>>> #include <stdio.h>
-> >>>>>> #include <stdlib.h>
-> >>>>>> #include <string.h>
-> >>>>>>
-> >>>>>> int
-> >>>>>> main(int argc, char *argv[])
-> >>>>>> {
-> >>>>>>       key_serial_t key;
-> >>>>>>
-> >>>>>>       if (argc !=3D 4) {
-> >>>>>> 	   fprintf(stderr, "Usage: %s type description payload\n",
-> >>>>>> 			   argv[0]);
-> >>>>>> 	   exit(EXIT_FAILURE);
-> >>>>>>       }
-> >>>>>>
-> >>>>>>       key =3D add_key(argv[1], argv[2], argv[3], strlen(argv[3]),
-> >>>>>> 			   KEY_SPEC_SESSION_KEYRING);
-> >>>>>>       if (key =3D=3D -1) {
-> >>>>>> 	   perror("add_key");
-> >>>>>> 	   exit(EXIT_FAILURE);
-> >>>>>>       }
-> >>>>>>
-> >>>>>>       printf("Key ID is %jx\n", (uintmax_t) key);
-> >>>>>>
-> >>>>>>       exit(EXIT_SUCCESS);
-> >>>>>> }
-> >>>>>>
-> >>>>>>
-> >>>>>> 3. Have more than 32 inputs now. their hashes are xxe6.
-> >>>>>> eg.
-> >>>>>> hash_key_type_and_desc: type user user438 0xe3033fe6
-> >>>>>> hash_key_type_and_desc: type user user526 0xeb7eade6
-> >>>>>> ...
-> >>>>>> hash_key_type_and_desc: type user user9955 0x44bc99e6
-> >>>>>>
-> >>>>>> 4. Reboot and add the keys obtained from step 3.
-> >>>>>> When adding keys to the ROOT that their hashes are all xxe6, and u=
-p to
-> >>>>>> 16, the ROOT has keys with hashes that are not xxe6 (e.g., slot 0)=
-, so
-> >>>>>> the keys are dissimilar. The ROOT will then split NODE A without u=
-sing a
-> >>>>>> shortcut. When NODE A is filled with keys that have hashes of xxe6=
-, the
-> >>>>>> keys are similar. NODE A will split with a shortcut.
-> >>>>>>
-> >>>>>> As my analysis, if a slot of the root is a shortcut(slot 6), it ma=
-y be
-> >>>>>> mistakenly be transferred to a key*, leading to an read out-of-bou=
-nds read.
-> >>>>>>
-> >>>>>>                          NODE A
-> >>>>>>                  +------>+---+
-> >>>>>>          ROOT    |       | 0 | xxe6
-> >>>>>>          +---+   |       +---+
-> >>>>>>     xxxx | 0 | shortcut  :   : xxe6
-> >>>>>>          +---+   |       +---+
-> >>>>>>     xxe6 :   :   |       |   | xxe6
-> >>>>>>          +---+   |       +---+
-> >>>>>>          | 6 |---+       :   : xxe6
-> >>>>>>          +---+           +---+
-> >>>>>>     xxe6 :   :           | f | xxe6
-> >>>>>>          +---+           +---+
-> >>>>>>     xxe6 | f |
-> >>>>>>          +---+
-> >>>>>>
-> >>>>>> 5. cat /proc/keys. and the issue is reproduced.
-> >>>>>
-> >>>>> Hi, I'll try to run through your procedure next week and give my co=
-mments.
-> >>>>> Thanks for doing this.
-> >>>>>
-> >>>>> BR, Jarkko
-> >>>>
-> >>>> Hi, Jarkko, have you run these procedure?
-> >>>> I have tested this patch with LTP and a pressure test(stress-ng --ke=
-y),
-> >>>> and this patch have fixed this issue. Additionally, no new bugs have
-> >>>> been found so far.
-> >>>>
-> >>>> I am looking forward to your reply.
-> >>>>
-> >>>> Best regards,
-> >>>> Ridong
-> >>>
-> >>> Nope because we are apparently stuck with release critical bug:
-> >>>
-> >>> https://lore.kernel.org/linux-integrity/D4EPMF7G3E05.1VHS9CVG3DZDE@ke=
-rnel.org/T/#t
-> >>>
-> >>> Might take several weeks before I look into this.
-> >>
-> >> I was expecting to send a PR early this week since the patch set
-> >> addresses the issue so thus wrong estimation.
-> >=20
-> > I asked David if he could look into this.
-> >=20
-> > BR, Jarkko
->
-> Thank you very much.
+Hi,
+I am reposting these patches after rebasing them on top of the current
+Linus tree 11a299a7933e which should contain PRs from trees which
+confliced with these patches previously (LSM and bcachefs). The previous
+version was posted https://lore.kernel.org/all/20240902095203.1559361-1-mhocko@kernel.org/T/#u
+and there are no functional changes since then. I have folded in a doc
+fix which has triggered a warning.
 
-Further, I'm switching jobs. Tomorrow is my last day in the current
-job and next week starting a new job so given all these circumastances
-I rather look into this properly hopefully latest after my rc2 PR is
-out, rather than rushing.
+I have preserved all the acks, please let me know if I should drop any.
 
-In a normal status quo situation this would not be such a huge issue.
-
-Similarly, for the performance bug I want to review James' comments
-etc with time and bake v6 that hopefully satisfies all the
-stateholders.
-
-So thank you for understanding, and I appreciate the work you've done
-on this. I.e. not ignoring this :-)
-
-BR, Jarkko
-
-BR, Jarkko
