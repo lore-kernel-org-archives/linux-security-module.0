@@ -1,184 +1,122 @@
-Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA4E9189505;
-	Fri, 27 Sep 2024 08:59:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4F241BA29B;
+	Fri, 27 Sep 2024 09:28:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727427559; cv=none; b=t2djYCJ0aUwoPxOAoIhBHLskxoAEmPPzGlvGkkrvkmUL2nOyhsDJb+tsEubJnFgvgjO/+JHbhc2Vo09GuCFvmZAbIizYKgZxbkUp0+39Hj6NS15kyp4V7bVhtGz4uB4SpS0Oir255kVUj30p53L9m8gxOxHPC9LN/qKlcWwrUHA=
+	t=1727429335; cv=none; b=LqcxbijW7aADSVD+RG4W0Oc44xmBqkJcquXpImkFlYiD81qBn2mppNu1qHLHEhejBYZ4pvDf1+uL2WdQ8ouUaCmIGuPovfg3EBzQuMf+Fex97+0s4TQ6ZXLs/EHANRLZSMXY8/qPgb76CZ9bEqssFbiMyefq5ow5KwiLOLboWD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727427559; c=relaxed/simple;
-	bh=VFt1mI2XEH7xYVDuen7V7h+Man2pR0Jpk0S1LJM+qW8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ML0Jc4QWo+kmPyupY3OC3p7NTc1346DjveKEOl92gg9FBOEBuSDkcapHLhTYlOGnF3Ucw+yDq89BX7+/Whpq1j9EK4/a2Xvo0lK/UejSxh1mRjSNaj8cfU6/F/qrwghBmJTNlayuFEye4cUKTsrfvQzdxP6Pj28+rNsk6IEuRYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 48R8wgDv003841;
-	Fri, 27 Sep 2024 03:58:42 -0500
-Received: (from greg@localhost)
-	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 48R8wgWb003840;
-	Fri, 27 Sep 2024 03:58:42 -0500
-Date: Fri, 27 Sep 2024 03:58:42 -0500
-From: "Dr. Greg" <greg@enjellic.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] lsm/lsm-pr-20240911
-Message-ID: <20240927085841.GA3642@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <d15ee1ccfb91bda67d248b3ec70f0475@paul-moore.com> <960e740f-e5d9-409b-bb2a-8bdceffaae95@I-love.SAKURA.ne.jp> <69e4014e-0a34-4fde-8080-4850a52b0a94@I-love.SAKURA.ne.jp> <CAHC9VhQq0-D=p9Kicx2UsDrK2NJQDyn9psL-PWojAA+Y17WiFQ@mail.gmail.com>
+	s=arc-20240116; t=1727429335; c=relaxed/simple;
+	bh=sKt8/7JHzE8MsBKuh6blTXHEQ9ZK2ZOA5ITusQ2b34A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kVS3DS75ifYnI9cB8npw1JHUeNLKK4kcIcJ0FesSkX/rNvN39ZabT+YJYZQ3BRDVXO2qNZYw5terSqfvkxvb+TnfyVyxZ04mzHK7phWYh+qevXII1E53m9AWWj2czoOc5tz2nOBEN4NZ+9QP6BykDR2o7Tc5VTLQPtlcBhpyD3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XIERjt0I; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XIERjt0I"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 840D9C4CECF;
+	Fri, 27 Sep 2024 09:28:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727429335;
+	bh=sKt8/7JHzE8MsBKuh6blTXHEQ9ZK2ZOA5ITusQ2b34A=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=XIERjt0IDuxY6m4h5IPyGGlGQabYhSaYp/Hc+uC04n6GPcJhF0ld9iaV/yY7Nw3Lc
+	 rIVREsf4iV6yxmfFbtF0ELn46T5RQ5vjqiSSQflhm2UM2e8Jkx4WlJleOUeHVAH07F
+	 xqzEyzpECi8dDMudQ3+kez//lTcFAypUvgWlPcUDdc1dZrQPp+3T66GoNedNRmAR+2
+	 LZONBILhvibMfeTs11NwlHKGZUrrtkPWne3uAIMRhst/Eyr4Q9nqmIoWPR4Pt527o3
+	 qnhiroQziVj/CJik1a7wx9AKYqneZyvAz2Wqi4QRUCuBeFGBaajgJYojcitTaFW9aP
+	 nwTxTo/0sIRTg==
+From: Christian Brauner <brauner@kernel.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	=?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
+	Todd Kjos <tkjos@android.com>,
+	Martijn Coenen <maco@android.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Carlos Llamas <cmllamas@google.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Daniel Xu <dxu@dxuuu.xyz>,
+	Martin Rodriguez Reboredo <yakoyoku@gmail.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	rust-for-linux@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Kees Cook <kees@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Miguel Ojeda <ojeda@kernel.org>
+Subject: Re: [PATCH v10 0/8] File abstractions needed by Rust Binder
+Date: Fri, 27 Sep 2024 11:28:42 +0200
+Message-ID: <20240927-kicken-minigolf-de3ebd20f6ec@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240915-alice-file-v10-0-88484f7a3dcf@google.com>
+References: <20240915-alice-file-v10-0-88484f7a3dcf@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhQq0-D=p9Kicx2UsDrK2NJQDyn9psL-PWojAA+Y17WiFQ@mail.gmail.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Fri, 27 Sep 2024 03:58:43 -0500 (CDT)
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1936; i=brauner@kernel.org; h=from:subject:message-id; bh=sKt8/7JHzE8MsBKuh6blTXHEQ9ZK2ZOA5ITusQ2b34A=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaR9qzq19sr6j49iFAK1mwN7HfOd7oiJNPh/WTRnLcM/r 1CZC6dfdpSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzkTTjD/+oP0xMuXPkqaj+T OXRDe2qA9Swrhvm81vP9K/kNLn+8vZ6R4crmW8vk/6TL+9T9LGrdd/7Dot2K79nM8tfv518h+i8 8hhkA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Mon, Sep 16, 2024 at 04:08:11AM -0400, Paul Moore wrote:
+On Sun, 15 Sep 2024 14:31:26 +0000, Alice Ryhl wrote:
+> This patchset contains the file abstractions needed by the Rust
+> implementation of the Binder driver.
+> 
+> Please see the Rust Binder RFC for usage examples:
+> https://lore.kernel.org/rust-for-linux/20231101-rust-binder-v1-0-08ba9197f637@google.com/
+> 
+> Users of "rust: types: add `NotThreadSafe`":
+> 	[PATCH 5/9] rust: file: add `FileDescriptorReservation`
+> 
+> [...]
 
-Good morning, I hope the end of the week is going well for everyone.
+Applied to the vfs.rust.file.v6.13 branch of the vfs/vfs.git tree.
+Patches in the vfs.rust.file.v6.13 branch should appear in linux-next soon.
 
-> On Sun, Sep 15, 2024 at 8:38???PM Tetsuo Handa
-> <penguin-kernel@i-love.sakura.ne.jp> wrote:
-> > On 2024/09/14 0:28, Paul Moore wrote:
-> > > I find it somewhat amusing that you are complaining about the LSM
-> > > framework not accepting new LSMs in the same pull request where we are
-> > > adding a new LSM (IPE).  As a reminder, we have documented guidelines
-> > > regarding the addition of new LSMs:
-> > >
-> > > https://github.com/LinuxSecurityModule/kernel/blob/main/README.md
-> > (...snipped...)
-> > > While I have no intention to negatively impact out-of-tree LSMs,
-> >
-> > What I call "patent examination" is "New LSM Guidelines" section within
-> > that link. That section includes "here are a list of requirements for
-> > new LSM submissions:" and "The new LSM must be sufficiently unique", and
-> > out-of-tree LSMs which cannot satisfy it won't be able to become in-tree.
-> > If we apply this requirement to userspace program, this requirement means
-> > you are declaring that "postfix" (or anything except "sendmail") cannot
-> > become in-tree because "sendmail" is already in-tree. This is a clear
-> > intention of negatively impact out-of-tree LSMs. People have the right to
-> > use whatever subsets/alternatives. Even if a new LSM has were completely a
-> > subset of existing in-tree LSMs, people have the right to use such LSM.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-> Comparing userspace applications to kernel code isn't a fair
-> comparison as a userspace application can generally be added without
-> impacting the other applications on the system.
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-Tetsuo's comparison may be a bit strained, but it remains relevant.
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-Linux was founded on a concept of choice, the current LSM architecture
-struggles with the ability to facilitate generalized choice and
-flexibility.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.rust.file.v6.13
 
-> > While I consider that some of out-of-tree LSMs being unable to
-> > become in-tree is inevitable, the requirement that any LSM has to
-> > be built-in is a barrier for LSMs which cannot be built-in.
-
-> Anyone is always free to build their own kernel with whatever code
-> changes they like, this is the beauty of the kernel source being
-> available and licensed as Open Source.  You are free to build a
-> kernel with whatever LSM you like included and enabled.  You have
-> been shown examples on how to do this in previous threads.
-
-> > People have the right to install whatever userspace software /
-> > kernel modules they need.
-
-> Anyone is free to build their own kernel with whatever LSMs they want,
-> either in-tree or out-of-tree; the static call changes do not prevent
-> that.
-
-This line of reasoning represents a bit of an indulgence in a false
-binary logic fallacy.
-
-Anyone reading this forum is certainly capable of building a kernel in
-any configuration they want to.  That being said, the general Linux
-technical community now represents a cohort far larger than
-individuals who have the ability to build and platform a kernel of
-their choosing.
-
-From a security perspective, Linux will benefit from providing a
-better means to serve a middle ground where alternate security models
-and architectures can be implemented without building a kernel from
-scratch.
-
-> > > My focus is on the upstream Linux kernel and ensuring that the upstream,
-> > > in-tree LSMs have the best framework possible to ensure their proper
-> > > operation and ease of development/maintenance.  While I have no
-> > > intention to negatively impact out-of-tree LSMs, I will not harm the
-> > > upstream code base solely to support out-of-tree LSMs.  Further, if
-> > > improvements to the upstream LSM framework are determined to harm
-> > > out-of-tree LSMs, that shall be no reason to reject the upstream
-> > > improvements.
-> >
-> > I have been asking you for a solution for "in-tree but not built-in" LSM
-> > (namely TOMOYO). You are refusing to provide a solution for the sake of
-> > "in-tree and built-in" LSMs. The "static call" changes fails to ensure that
-> > the upstream, in-tree TOMOYO to have the best framework. The "static call"
-> > changes makes the upstream, in-tree TOMOYO to have a worse framework than
-> > now.
-
-> As mentioned so many times before, the "in-tree but not built-in"
-> LSM problem is entirely a distribution/binary-kernel problem.  The
-> upstream kernel community is not responsible for the choices and
-> individual build configurations of the different Linux distros.
-> Support for mechanisms which allow for dynamic LSMs in pre-built
-> distro kernels is something we could consider, but so far everything
-> that has been proposed has had a negative impact on the upstream
-> kernel sources and has been rejected as a result.
-
-Not everything.
-
-As of the TSEM V4 release, which is now a month old, we have proposed
-a middle ground that provides multiple mechanisms for the mainsteam
-kernel to support alternate security models in an orthogonal manner,
-but it has struggled to receive any significant review.
-
-The V4 release now includes the ability to use loadable modules to
-implement customized security models.  The premise for this support is
-to replace the need for a dynamic LSM with an LSM that has dynamic
-configurability.
-
-Bandwidth is always in short supply, but some internal investigation
-by our team has demonstrated that the TSEM architecture can implement
-Tomoyo as a loadable security model.
-
-TSEM also provides a framework for servicing the needs of Endpoint
-Detection and Response systems without having to write any kernel code
-at all.  This same mechanism also facilitates the ability to apply
-machine learning detection and intervention models, a capability that
-is notably absent from any of the existing LSM's.
-
-For the record and everyone reading along at home, here are the links
-to the four releases:
-
-V1:
-https://lore.kernel.org/linux-security-module/20230204050954.11583-1-greg@enjellic.com/T/#t
-
-V2:
-https://lore.kernel.org/linux-security-module/20230710102319.19716-1-greg@enjellic.com/T/#t
-
-V3:
-https://lore.kernel.org/linux-security-module/20240401105015.27614-1-greg@enjellic.com/T/#t
-
-V4:
-https://lore.kernel.org/linux-security-module/20240826103728.3378-1-greg@enjellic.com/T/#t
-
-We believe that making some forward progress with review and inclusion
-of TSEM would positively impact the issues under discussion.
-
-> paul-moore.com
-
-Have a good weekend.
-
-As always,
-Dr. Greg
-
-The Quixote Project - Flailing at the Travails of Cybersecurity
-              https://github.com/Quixote-Project
+[1/8] rust: types: add `NotThreadSafe`
+      https://git.kernel.org/vfs/vfs/c/cf9139a8a2ff
+[2/8] rust: task: add `Task::current_raw`
+      https://git.kernel.org/vfs/vfs/c/16c7a0430f3a
+[3/8] rust: file: add Rust abstraction for `struct file`
+      https://git.kernel.org/vfs/vfs/c/d403edaaee09
+[4/8] rust: cred: add Rust abstraction for `struct cred`
+      https://git.kernel.org/vfs/vfs/c/fa4912bed836
+[5/8] rust: security: add abstraction for secctx
+      https://git.kernel.org/vfs/vfs/c/34f391deba6d
+[6/8] rust: file: add `FileDescriptorReservation`
+      https://git.kernel.org/vfs/vfs/c/054e1b6a797e
+[7/8] rust: file: add `Kuid` wrapper
+      https://git.kernel.org/vfs/vfs/c/a78b176bfdc2
+[8/8] rust: file: add abstraction for `poll_table`
+      https://git.kernel.org/vfs/vfs/c/e0cdb09b7100
