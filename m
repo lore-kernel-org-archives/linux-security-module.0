@@ -1,155 +1,273 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A92E2191;
-	Fri, 27 Sep 2024 14:21:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 869BB14D435
+	for <linux-security-module@vger.kernel.org>; Fri, 27 Sep 2024 14:35:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727446869; cv=none; b=cAeCIalv0bMvM+Gqtz+i7SMSI4qfPw38S0lIJ9GJV+fUmMMOy7+9cyqZGcBYBptvCNIdkC1mzarwzIsUYy8ZcWdyExsJQ1npvY+NzMO+V57J1JKAs7y/x1+QynH52dLPy4KEuPuenULUrRxEC5xO7JrBJsHYuSWsZn3wELO5QZY=
+	t=1727447751; cv=none; b=VVZu8QKHZD8egR3FeSUs+2kNsnIP1XwbgHvNsg4TPg1Wck3qhXq5K+rks9JAoRWG2XsxQxFdDfccV9npVqWBuecvrRGFO5bTWk3tWoJdWJpRi5ret8W7bYEmYgOCUEe8rK2EqOmUUjYNAPs4J0lqRFd7AD1xcKRotLkcgfErD3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727446869; c=relaxed/simple;
-	bh=gfF8BLW/H49a8nGE/ZR/uoAaquOYmKRnzvMeUzAWyX0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CQu2H2XEEviXK6GR8eeTAACVaKk7WL+XFQ+PWZ9cEf0K+adTKOQ5kDN35/E1sGY7yEJ1u3UwLqxsJ+dpe1N4fr+JTY7zJ7DDgUfjsl7bq9h0AmUhdLAfxtxfPFKOIoXERG319WmI6Nc6w9xreNDtTEZVHgAg85flkoZcgC/o9f8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V/YqMEnw; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1727447751; c=relaxed/simple;
+	bh=sMSnstDuarZo/fLAE7dnvT8Ixh1W5YCJOfqHsgzAyGc=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Bk+GmsWfjxUsUrYo0i29jXVClM/mk5RbkPHnAITzeVYcRJbadwMZVGqItJ4nfS31+M5Lwae1JIh9i02gsOQH/3eYlFzv9DlOWAuwF8R+h0hm3DmSDCV9PFnIK3E+GbAIfwK5gNaGpKWfY3Z0LZkCfeiQSk9+ck8XF0JG5p7wjcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fBEOitx8; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V/YqMEnw"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E25E3C4CEC4;
-	Fri, 27 Sep 2024 14:21:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727446869;
-	bh=gfF8BLW/H49a8nGE/ZR/uoAaquOYmKRnzvMeUzAWyX0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=V/YqMEnwi59r3EJQyMrx6JDqdvPO9uApn971oz+NC9UX6j8Gc7A5dTOuCWTNqgIUG
-	 KQOEtI6YjfKl7qCqdzZeD/oHKobc9U+JZmPzMOGKZjSlK6P/RCPSRFP0vAD8SEVrGr
-	 LwkWjpSmCx8sIcbM0mRWsGQudR6bDwQa3jPzlXGeWvSvCv+4E1C1JX9IxLpFtVqCET
-	 8i8cSMKjj4odwcOD/JN6B4ofXTYRVUC64ars7F1G8xGNYO1UtWHpBgunynNV3HFnLG
-	 +cv1APqiLEhLhj/Gg+Qlj1tc9ajHNG1Q+V/j2VUb1S3kdXpE/L4w3/dyAsXGOYpd5h
-	 BlSIPtpnG+DCA==
-Date: Fri, 27 Sep 2024 16:21:00 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Bjoern Roy Baron <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arve Hjonnevag <arve@android.com>, Todd Kjos <tkjos@android.com>, 
-	Martijn Coenen <maco@android.com>, Joel Fernandes <joel@joelfernandes.org>, 
-	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, 
-	Dan Williams <dan.j.williams@intel.com>, Matthew Wilcox <willy@infradead.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, 
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH] [RFC] rust: add PidNamespace wrapper
-Message-ID: <20240927-anreden-unwirklich-c98c1d9ac3a5@brauner>
-References: <CAH5fLgixve=E5=ghc3maXVC+JdqkrPSDqKgJiYEJ9j_MD4GAzg@mail.gmail.com>
- <20240926-bewundere-beseitigen-59808f199f82@brauner>
- <20240926-pocht-sittlich-87108178c093@brauner>
- <CAH5fLghUj3-8eZMOVhhk0c9x29B7uMj=9dHWsRJYC1ghxqUdxg@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fBEOitx8"
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e230808455so25376507b3.0
+        for <linux-security-module@vger.kernel.org>; Fri, 27 Sep 2024 07:35:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727447748; x=1728052548; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AR9xFIzxbK4MT6syD+Hm8ktqytTgjsmedmobgAO+DzM=;
+        b=fBEOitx8O84ovwqnsmcBcihKZYzdbruGb67Wfl4IH3C20viasP6erbtUuUAK2VLZdp
+         Cw7kd8cfyKWnm7gBLR8CUkkZYZ6WtMDlLG1fJ+SUcuI/iQ5AFPuzq1I+Smh0LqkTrNIa
+         KA8jAW4h/B1NW8lUxMLNCbMM0f/0xUlFJ3LUqInWJgTLJs/HYfJ1xoIGC3mggCZcwQ4J
+         izIxmNaMplgV7Yh0m19mQxmiopazDgyrBV93ynQe+UOMZQLE3llwZn6bWM6nZsC1qfKe
+         kK8dK7PnFeN6sivFdiosT5y2Ii40oTGSTyRSfAw6jDS4GIQITcc4UchD8skcoAklj8nQ
+         VTtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727447748; x=1728052548;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=AR9xFIzxbK4MT6syD+Hm8ktqytTgjsmedmobgAO+DzM=;
+        b=sCuD6GB0CKaaKzRNrCy13HStf686POZ1OMXgE5mdm6cU7zeaI078qoNgtqgEe/G6c0
+         sZoi+HKCalTRAdg+ABEHDjEHXRvjCPWLbIOY8arvSCkhLEgWzGZ79DgBFlz45cDhlSH/
+         eIjoHDlhmBecPgtR+ltUG+hnJTBUNht1lYWpRS5YDK7r7ew2QTcGknakrznuJ/dpgdoI
+         A7Lt8agL3L4JJQnIRb6eqCQzitqiXIAxfVPM4+0eg3ho0cedXenkFKRwaw7zQrPvZOgo
+         7ZOrQEHT6JVxGNUXGJy1+x+PyHFVMeHBh1W6bxA+jE2JuLyJ/9vB3cFs2CIufFZXWc7U
+         b3qQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWmZQMhIElSy0gh0Yymm1lnzSVas8AQsoUcdvXkZ38cJfdi2DX23/O1BApVuU/Qs08DBJWSJRrHJtcgXfjUhIJjTCuXeU8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxhzdvHyva41zjrjmn/zKIH3a1brhGwipm3INXUyPKzWs9Suj2
+	mqJl2kArBZHsBuqYCUwJQpKMlDF3A3FJRwv2BdtrXwOWnbQ9g6Gyk2jamdGs0uzl3DWcyzwUnKa
+	afg==
+X-Google-Smtp-Source: AGHT+IGMGxg1nP7iD/zXdernlW+jMECrmoQpIGHVaArH90qRv2xQFC0KpuRHNW6ZQGB6T5MI8oMQi7yx7y4=
+X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
+ (user=gnoack job=sendgmr) by 2002:a25:b19b:0:b0:e25:fcb:3205 with SMTP id
+ 3f1490d57ef6-e2604b7f408mr11889276.8.1727447748413; Fri, 27 Sep 2024 07:35:48
+ -0700 (PDT)
+Date: Fri, 27 Sep 2024 16:35:46 +0200
+In-Reply-To: <20240904104824.1844082-16-ivanov.mikhail1@huawei-partners.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH5fLghUj3-8eZMOVhhk0c9x29B7uMj=9dHWsRJYC1ghxqUdxg@mail.gmail.com>
+Mime-Version: 1.0
+References: <20240904104824.1844082-1-ivanov.mikhail1@huawei-partners.com> <20240904104824.1844082-16-ivanov.mikhail1@huawei-partners.com>
+Message-ID: <ZvbCwtkXDakYDVD_@google.com>
+Subject: Re: [RFC PATCH v3 15/19] selftests/landlock: Test SCTP peeloff restriction
+From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
+To: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+Cc: mic@digikod.net, willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com, 
+	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
+	netfilter-devel@vger.kernel.org, yusongping@huawei.com, 
+	artem.kuzin@huawei.com, konstantin.meskhidze@huawei.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 27, 2024 at 02:04:13PM GMT, Alice Ryhl wrote:
-> On Thu, Sep 26, 2024 at 6:36 PM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > Ok, so here's my feeble attempt at getting something going for wrapping
-> > struct pid_namespace as struct pid_namespace indirectly came up in the
-> > file abstraction thread.
-> 
-> This looks great!
+On Wed, Sep 04, 2024 at 06:48:20PM +0800, Mikhail Ivanov wrote:
+> It is possible to branch off an SCTP UDP association into a separate
+> user space UDP socket. Add test validating that such scenario is not
+> restricted by Landlock.
+>=20
+> Move setup_loopback() helper from net_test to common.h to use it to
+> enable connection in this test.
+>=20
+> Signed-off-by: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+> ---
+>  tools/testing/selftests/landlock/common.h     |  12 +++
+>  tools/testing/selftests/landlock/net_test.c   |  11 --
+>  .../testing/selftests/landlock/socket_test.c  | 102 +++++++++++++++++-
+>  3 files changed, 113 insertions(+), 12 deletions(-)
+>=20
+> diff --git a/tools/testing/selftests/landlock/common.h b/tools/testing/se=
+lftests/landlock/common.h
+> index 28df49fa22d5..07d959a8ac7b 100644
+> --- a/tools/testing/selftests/landlock/common.h
+> +++ b/tools/testing/selftests/landlock/common.h
+> @@ -16,6 +16,7 @@
+>  #include <sys/types.h>
+>  #include <sys/wait.h>
+>  #include <unistd.h>
+> +#include <sched.h>
+> =20
+>  #include "../kselftest_harness.h"
+> =20
+> @@ -227,3 +228,14 @@ enforce_ruleset(struct __test_metadata *const _metad=
+ata, const int ruleset_fd)
+>  		TH_LOG("Failed to enforce ruleset: %s", strerror(errno));
+>  	}
+>  }
+> +
+> +static void setup_loopback(struct __test_metadata *const _metadata)
+> +{
+> +	set_cap(_metadata, CAP_SYS_ADMIN);
+> +	ASSERT_EQ(0, unshare(CLONE_NEWNET));
+> +	clear_cap(_metadata, CAP_SYS_ADMIN);
+> +
+> +	set_ambient_cap(_metadata, CAP_NET_ADMIN);
+> +	ASSERT_EQ(0, system("ip link set dev lo up"));
+> +	clear_ambient_cap(_metadata, CAP_NET_ADMIN);
+> +}
+> diff --git a/tools/testing/selftests/landlock/net_test.c b/tools/testing/=
+selftests/landlock/net_test.c
+> index f21cfbbc3638..0b8386657c72 100644
+> --- a/tools/testing/selftests/landlock/net_test.c
+> +++ b/tools/testing/selftests/landlock/net_test.c
+> @@ -103,17 +103,6 @@ static int set_service(struct service_fixture *const=
+ srv,
+>  	return 1;
+>  }
+> =20
+> -static void setup_loopback(struct __test_metadata *const _metadata)
+> -{
+> -	set_cap(_metadata, CAP_SYS_ADMIN);
+> -	ASSERT_EQ(0, unshare(CLONE_NEWNET));
+> -	clear_cap(_metadata, CAP_SYS_ADMIN);
+> -
+> -	set_ambient_cap(_metadata, CAP_NET_ADMIN);
+> -	ASSERT_EQ(0, system("ip link set dev lo up"));
+> -	clear_ambient_cap(_metadata, CAP_NET_ADMIN);
+> -}
+> -
+>  static bool is_restricted(const struct protocol_variant *const prot,
+>  			  const enum sandbox_type sandbox)
+>  {
+> diff --git a/tools/testing/selftests/landlock/socket_test.c b/tools/testi=
+ng/selftests/landlock/socket_test.c
+> index 67db0e1c1121..2ab27196fa3d 100644
+> --- a/tools/testing/selftests/landlock/socket_test.c
+> +++ b/tools/testing/selftests/landlock/socket_test.c
+> @@ -11,8 +11,11 @@
+>  #include <linux/pfkeyv2.h>
+>  #include <linux/kcm.h>
+>  #include <linux/can.h>
+> -#include <linux/in.h>
+> +#include <sys/socket.h>
+> +#include <stdint.h>
+> +#include <linux/sctp.h>
+>  #include <sys/prctl.h>
+> +#include <arpa/inet.h>
+> =20
+>  #include "common.h"
+> =20
+> @@ -839,4 +842,101 @@ TEST_F(socket_creation, socketpair)
+>  	}
+>  }
+> =20
+> +static const char loopback_ipv4[] =3D "127.0.0.1";
+> +static const int backlog =3D 10;
+> +static const int loopback_port =3D 1024;
+> +
+> +TEST_F(socket_creation, sctp_peeloff)
+> +{
+> +	int status, ret;
+> +	pid_t child;
+> +	struct sockaddr_in addr;
+> +	int server_fd;
+> +
+> +	server_fd =3D
+> +		socket(AF_INET, SOCK_SEQPACKET | SOCK_CLOEXEC, IPPROTO_SCTP);
+> +	ASSERT_LE(0, server_fd);
+> +
+> +	addr.sin_family =3D AF_INET;
+> +	addr.sin_port =3D htons(loopback_port);
+> +	addr.sin_addr.s_addr =3D inet_addr(loopback_ipv4);
+> +
+> +	ASSERT_EQ(0, bind(server_fd, &addr, sizeof(addr)));
+> +	ASSERT_EQ(0, listen(server_fd, backlog));
+> +
+> +	child =3D fork();
+> +	ASSERT_LE(0, child);
+> +	if (child =3D=3D 0) {
+> +		int client_fd;
+> +		sctp_peeloff_flags_arg_t peeloff;
+> +		socklen_t peeloff_size =3D sizeof(peeloff);
+> +		const struct landlock_ruleset_attr ruleset_attr =3D {
+> +			.handled_access_socket =3D LANDLOCK_ACCESS_SOCKET_CREATE,
+> +		};
+> +		struct landlock_socket_attr sctp_socket_create =3D {
+> +			.allowed_access =3D LANDLOCK_ACCESS_SOCKET_CREATE,
+> +			.family =3D AF_INET,
+> +			.type =3D SOCK_SEQPACKET,
+> +		};
+> +
+> +		/* Closes listening socket for the child. */
+> +		ASSERT_EQ(0, close(server_fd));
+> +
+> +		client_fd =3D socket(AF_INET, SOCK_SEQPACKET | SOCK_CLOEXEC,
+> +				   IPPROTO_SCTP);
+> +		ASSERT_LE(0, client_fd);
+> +
+> +		/*
+> +		 * Establishes connection between sockets and
+> +		 * gets SCTP association id.
+> +		 */
+> +		ret =3D setsockopt(client_fd, IPPROTO_SCTP, SCTP_SOCKOPT_CONNECTX,
+> +				 &addr, sizeof(addr));
+> +		ASSERT_LE(0, ret);
+> +
+> +		if (self->sandboxed) {
+> +			/* Denies creation of SCTP sockets. */
+> +			int ruleset_fd =3D landlock_create_ruleset(
+> +				&ruleset_attr, sizeof(ruleset_attr), 0);
+> +			ASSERT_LE(0, ruleset_fd);
+> +
+> +			if (self->allowed) {
+> +				ASSERT_EQ(0, landlock_add_rule(
+> +						     ruleset_fd,
+> +						     LANDLOCK_RULE_SOCKET,
+> +						     &sctp_socket_create, 0));
+> +			}
+> +			enforce_ruleset(_metadata, ruleset_fd);
+> +			ASSERT_EQ(0, close(ruleset_fd));
+> +		}
+> +		/*
+> +		 * Branches off current SCTP association into a separate socket
+> +		 * and returns it to user space.
+> +		 */
+> +		peeloff.p_arg.associd =3D ret;
+> +		ret =3D getsockopt(client_fd, IPPROTO_SCTP, SCTP_SOCKOPT_PEELOFF,
+> +				 &peeloff, &peeloff_size);
+> +
+> +		/*
+> +		 * Creation of SCTP socket by branching off existing SCTP association
+> +		 * should not be restricted by Landlock.
+> +		 */
+> +		EXPECT_LE(0, ret);
+> +
+> +		/* Closes peeloff socket if such was created. */
+> +		if (!ret) {
+> +			ASSERT_EQ(0, close(peeloff.p_arg.sd));
+> +		}
 
-Thanks!
+Nit: Should this check for (ret >=3D 0) instead?
 
-> 
-> > The lifetime of a pid namespace is intimately tied to the lifetime of
-> > task. The pid namespace of a task doesn't ever change. A
-> > unshare(CLONE_NEWPID) or setns(fd_pidns/pidfd, CLONE_NEWPID) will not
-> > change the task's pid namespace only the pid namespace of children
-> > spawned by the task. This invariant is important to keep in mind.
-> >
-> > After a task is reaped it will be detached from its associated struct
-> > pids via __unhash_process(). This will also set task->thread_pid to
-> > NULL.
-> >
-> > In order to retrieve the pid namespace of a task task_active_pid_ns()
-> > can be used. The helper works on both current and non-current taks but
-> > the requirements are slightly different in both cases and it depends on
-> > where the helper is called.
-> >
-> > The rules for this are simple but difficult for me to translate into
-> > Rust. If task_active_pid_ns() is called on current then no RCU locking
-> > is needed as current is obviously alive. On the other hand calling
-> > task_active_pid_ns() after release_task() would work but it would mean
-> > task_active_pid_ns() will return NULL.
-> >
-> > Calling task_active_pid_ns() on a non-current task, while valid, must be
-> > under RCU or other protection mechanism as the task might be
-> > release_task() and thus in __unhash_process().
-> 
-> Just to confirm, calling task_active_pid_ns() on a non-current task
-> requires the rcu lock even if you own a refcont on the task?
+I imagine that getsockopt returns -1 on error, normally,
+and that would make it past the EXPECT_LE (even if it logs a failure).
 
-Interesting question. Afaik, yes. task_active_pid_ns() goes via
-task->thread_pid which is a shorthand for task->pid_links[PIDTYPE_PID].
 
-This will be NULLed when the task exits and is dead (so usually when
-someone has waited on it - ignoring ptrace for sanity reasons and
-autoreaping the latter amounts to the same thing just in-kernel):
+> +		ASSERT_EQ(0, close(client_fd));
+> +		_exit(_metadata->exit_code);
+> +		return;
+> +	}
+> +
+> +	ASSERT_EQ(child, waitpid(child, &status, 0));
+> +	ASSERT_EQ(1, WIFEXITED(status));
+> +	ASSERT_EQ(EXIT_SUCCESS, WEXITSTATUS(status));
+> +
+> +	ASSERT_EQ(0, close(server_fd));
+> +}
+> +
+>  TEST_HARNESS_MAIN
+> --=20
+> 2.34.1
+>=20
 
-T1                      T2                                                   T3
-exit(0);
-                        wait(T1)
-                        -> wait_task_zombie()
-                           -> release_task()
-                              -> __exit_signals()
-                                 -> __unash_process()
-                                    // sets task->thread_pid == NULL         task_active_pid_ns(T1)
-                                    // task->pid_links[PIDTYPE_PID] == NULL
-
-So having a reference to struct task_struct doesn't prevent
-task->thread_pid becoming NULL.
-
-And you touch upon a very interesting point. The lifetime of struct
-pid_namespace is actually tied to struct pid much tighter than it is to
-struct task_struct. So when a task is released (transitions from zombie
-to dead in the common case) the following happens:
-
-release_task()
--> __exit_signals()
-   -> thread_pid = get_pid(task->thread_pid)
-      -> __unhash_process()
-         -> detach_pid(PIDTYPE_PID)
-            -> __change_pid()
-               {
-                       task->thread_pid = NULL;
-                       task->pid_links[PIDTYPE_PID] = NULL;
-                       free_pid(thread_pid)
-               }
-         put_pid(thread_pid)
-
-And the free_pid() in __change_pid() does a delayed_put_pid() via
-call_rcu().
-
-So afaiu, taking the rcu_read_lock() synchronizes against that
-delayed_put_pid() in __change_pid() so the call_rcu() will wait until
-everyone who does
-
-rcu_read_lock()
-task_active_pid_ns(task)
-rcu_read_unlock()
-
-and sees task->thread_pid non-NULL, is done. This way no additional
-reference count on struct task_struct or struct pid is needed before
-plucking the pid namespace from there. Does that make sense or have I
-gotten it all wrong?
+Reviewed-by: G=C3=BCnther Noack <gnoack@google.com>
