@@ -1,304 +1,236 @@
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from CWXP265CU009.outbound.protection.outlook.com (mail-ukwestazon11021132.outbound.protection.outlook.com [52.101.100.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB12185B72
-	for <linux-security-module@vger.kernel.org>; Fri, 27 Sep 2024 09:48:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727430507; cv=none; b=sVb+F+9xcgvaWAacTSUC8VKhNglWRgcwQB3bkjaRYckdQmIDb+4yYijeUMcGpWsym4QiQdLG3GyL5cdMiFUKqlS2uv3a6f0MF2q4o/IF3fvIFhfzSTARmGh7AxVJs9roJoJcxPJ/oXXlr8d6yE742SJsI58fRJE7uNlR0T9EwLw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727430507; c=relaxed/simple;
-	bh=Kj3N4NdfD+U4vW9zdDukR5wNBF39mqc/ADvtUSwhlMs=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=nyRFAWQpIzkA8hJ8gtfMsipyFcMtLZNR5P3pSfyZt4oxuHRoX09bN2tss5cZYXtCwJbo7erYjiGDq+TO4dzyCKN2T4TOK+kpoLuyWRTU2RodMcWgG5seZSLqGdg50kgfqCPQCzSqhhd9QZQ+HtX80NAJqioGLt0Kznhf/uJjOz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2GQeQr7s; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A0B4482E9;
+	Fri, 27 Sep 2024 10:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.100.132
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1727432429; cv=fail; b=WGDZQk7uPsHNo0HWntqIX+D3/qY3aa2yfPdmeCOuJLZqJmfgqe8zhX8j+Cxjy/eTGtcDsskgE50V5br2PCbXl9gJGtAs4b6X+zz84QDwUukhb+ixv8deVSEY55TPX8xEfLMOc6F806fhlDJ3s5rQe55gwry+ju8OdU3xlvsPS/c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1727432429; c=relaxed/simple;
+	bh=Fwu787qUw5ijadhzrbvyynMAwKBuylutKSj3Lj8vnrI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=oAD0CAOv+uvoMN+AFxr0JRN+v8sRT39f8p/jsrGKUsd8lLkcKKZSazzG9EYwUQqJ0CA83UT8iX1GKP+1Up3EfOdVdg0JWtxhH0RFpJSfLfn+klKJOv4mxEjums56pvAoudboyl9Wg1abYGAk90694GMDWL6y3RQhKQVw/ZBA4/s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=SnyHwP52; arc=fail smtp.client-ip=52.101.100.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2GQeQr7s"
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6d7124939beso34731947b3.2
-        for <linux-security-module@vger.kernel.org>; Fri, 27 Sep 2024 02:48:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727430505; x=1728035305; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BiWFpC/CfeVPjn63DCS8iK5skeienOgQd5K0dKU7AfA=;
-        b=2GQeQr7s/86UWi+8s31HEAAn8+twebYGg3QHn5Hc7Qb8sID+nN2bO+i+OzJXHhRtP0
-         R6sTH7Z5rJI3FAoVEu++WOg9Pcm0FuSF6+JlYu3hwyHrH+fOLvQGYLWv5OWEUpiec6TB
-         i/9I4auvNPph9ZtklHWdrP3A2f3Zzc/fVPLtFmqi+BGJ1y1FglzFZS1+KK0klm/8/MBc
-         F0KzpmQeO7AAGga2jIsnfcySpEWtP+iOEhHa84kiEXKVFIKwIepyvszbaKSO6Rzgd+NP
-         E5XCM9sp+U4+bzGShJlAbq/stxMBLCMpC9o7o08aZHJSbSH17P9Yoi7/AK++x6Sceqjo
-         ob/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727430505; x=1728035305;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=BiWFpC/CfeVPjn63DCS8iK5skeienOgQd5K0dKU7AfA=;
-        b=hqiUNKFisA/1bXM1l7/HzvorokVM4hu+RrM1nYcJbcja+84G/dj2SNJL9q5W/dg4jI
-         Xsn79qssbSDNiVNYHXnsV8UDj4NNjZZ6H2/74g2oFT4XPcYCTMZKSk0Jt6HFiUHM5FJ7
-         OqtoQ0Yt4ocz+rW/nlweCkE/GMe0wtJ6NE+r8i1dV/KQctkAozvCKAWoocdQ1RFQZ/p5
-         KTsg8jw+cUEWUwWByNSJBRA8x2nwy4HzEwXGt9+VgMELovdCz1yI+fG6GOep1lldF+Ym
-         MMrp+xcIgLbuyqgquB0EqjfrGg48VK68kkyyG5l5q/Kn8zVpL5NOypn+Ow3G7ZAImZmS
-         moUA==
-X-Forwarded-Encrypted: i=1; AJvYcCUZIQlN+JRHHGO+YapwOuLW/XemyBsw0272cXgHE+ZHmmfzTizhaakPJNrgTtrBWt56CQkNaNHES91iEXo/SH6glIq4Pl8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPJlZ058nyhHPfFxKlPXx9+IwwAY0MMpLEzR66lt3Vi+p4qvDw
-	NPXYATOZmqLlcu/EBO4bEqPxUn+Ld/xZmhqCSjPq+Br21Hj/L9cVKGLuP1UKN0ahQYtk9gDz/2m
-	aoQ==
-X-Google-Smtp-Source: AGHT+IGmbkot20nT1NsSVAeyRJSauWT1lwWnzBH3fMLGruuszCigxyqzTw9CjGTA/e92egjzT9R4tONJBRw=
-X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
- (user=gnoack job=sendgmr) by 2002:a05:690c:d8c:b0:663:ddc1:eab8 with SMTP id
- 00721157ae682-6e2475a8a5cmr295817b3.4.1727430504978; Fri, 27 Sep 2024
- 02:48:24 -0700 (PDT)
-Date: Fri, 27 Sep 2024 11:48:22 +0200
-In-Reply-To: <220a19f6-f73c-54ef-1c4d-ce498942f106@huawei-partners.com>
+	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="SnyHwP52"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=BixxjOkHR0A8TClZnjsVL/GpIcwfaEDWyOhenrHHjCU00pVZkhAoizlokkY+zkqWWy6eKvfTbXdI4lh8SiKSzj8lmi/lptD+iqc+WVRzu7py11j1xnEtpSt9YTvk7iO6b6EvaOnGd0HWFtL47EqDdWeRofZ/NYIk83NmIRTKWbLhPXEme1YUbHpIILyLgxYAfdfyRNn7G9fog3P984e8G2CVrq5530QA48rMWk+i7Sn3U+JwuCSR/zlA05CY6O8gDFHwJMBMM4FihlqXkuLt7rOpVe4SLzNXRvZBBP5WXF4gUIp6BPJjCMaXyr1R7b+jfk8dfPfRou0Hlj8dI8h3Mw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=AQxFLM+ls/Fgt8a2aA5DmA3o3rvSiDnUSSoLi9JRqck=;
+ b=R/Pcpo8Ff84lkShidxFHFeUdJ7/I1cyQqcQX13cR4rwlmhTXchvvbL98G0MVRNsXIF4d88KK90ODqp0Uqh6LrX3qGIZqp5mzR37t9fcXP50KElWz+9Zjwz7a6o6n1uUqwdndBz9b1lmgO49J5V+IsJiooxpOCu0m3j0yrlrh+PoT0RCjSazUks5T5aWcwqaGfOqPhFjCirmQtzxpfWpu1JmhxowQBrH4XEhwBOBy1qGgMK5RGWlMf+IPi6MPu4sSRxxu8aMRqu5JzVXTxopf6Ukhb8bxKwUtrh+sJ/j39laPphp7dL07MXsI7VlCTmRNHRa/d4tn//+R1O4uRqubvw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
+ dkim=pass header.d=garyguo.net; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AQxFLM+ls/Fgt8a2aA5DmA3o3rvSiDnUSSoLi9JRqck=;
+ b=SnyHwP52cUBkTw+fhSwkTnPRuz62HMNC26a35QEzzlrd1u64CZRexwgm5S7gJHy6AKIWFIUCyflLfjA7s5nOys92L6Bi8UL0BluUN1xK17Gp4bc5QYY5cyJBSTk/kUhdMX3Q0CspR1SEqU2+neOgrdfdkePw0owExJbXoHG3Zog=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=garyguo.net;
+Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:253::10)
+ by LO0P265MB2794.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:149::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8005.20; Fri, 27 Sep
+ 2024 10:20:24 +0000
+Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1818:a2bf:38a7:a1e7]) by LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1818:a2bf:38a7:a1e7%3]) with mapi id 15.20.8005.020; Fri, 27 Sep 2024
+ 10:20:24 +0000
+Date: Fri, 27 Sep 2024 11:20:21 +0100
+From: Gary Guo <gary@garyguo.net>
+To: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: Alice Ryhl <aliceryhl@google.com>, Paul Moore <paul@paul-moore.com>,
+ James Morris <jmorris@namei.org>, Miguel Ojeda <ojeda@kernel.org>,
+ Christian Brauner <brauner@kernel.org>, Alex Gaynor
+ <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun
+ Feng <boqun.feng@gmail.com>, =?UTF-8?B?QmrDtnJu?= Roy Baron
+ <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas
+ Hindborg <a.hindborg@samsung.com>, Peter Zijlstra <peterz@infradead.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Arve =?UTF-8?B?SGrDuG5uZXbDpWc=?=
+ <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen
+ <maco@android.com>, Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas
+ <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, Dan Williams
+ <dan.j.williams@intel.com>, Matthew Wilcox <willy@infradead.org>, Thomas
+ Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, Martin Rodriguez
+ Reboredo <yakoyoku@gmail.com>, Trevor Gross <tmgross@umich.edu>,
+ linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, Kees Cook
+ <kees@kernel.org>
+Subject: Re: [PATCH v10 1/8] rust: types: add `NotThreadSafe`
+Message-ID: <20240927112021.051bcc6a@eugeo>
+In-Reply-To: <20240925135904.GA654417@mail.hallyn.com>
+References: <20240915-alice-file-v10-0-88484f7a3dcf@google.com>
+	<20240915-alice-file-v10-1-88484f7a3dcf@google.com>
+	<20240924194540.GA636453@mail.hallyn.com>
+	<CAH5fLgggtjNAAotBzwRQ4RYQ9+WDom0MRyYFMnQ+E5UXgOc3RQ@mail.gmail.com>
+	<20240925135904.GA654417@mail.hallyn.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: LO4P123CA0616.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:314::16) To LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:253::10)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240904104824.1844082-1-ivanov.mikhail1@huawei-partners.com>
- <20240904104824.1844082-15-ivanov.mikhail1@huawei-partners.com>
- <ZurZ7nuRRl0Zf2iM@google.com> <220a19f6-f73c-54ef-1c4d-ce498942f106@huawei-partners.com>
-Message-ID: <ZvZ_ZjcKJPm5B3_Z@google.com>
-Subject: Re: [RFC PATCH v3 14/19] selftests/landlock: Test socketpair(2) restriction
-From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
-To: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-Cc: mic@digikod.net, willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com, 
-	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
-	netfilter-devel@vger.kernel.org, yusongping@huawei.com, 
-	artem.kuzin@huawei.com, konstantin.meskhidze@huawei.com
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LO2P265MB5183:EE_|LO0P265MB2794:EE_
+X-MS-Office365-Filtering-Correlation-Id: e935ac02-2b5a-495c-dd81-08dcdeddffc2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|10070799003|376014|1800799024|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?S202dnlHZlRDci82OGZyV2E3R0dXLzdKSkkrY3UwdW9HRDlyT2FJMU9qRTBG?=
+ =?utf-8?B?TldXUDQwcUVYTEI1ZGQxb2ZBYlNYS3h6NWRUZlhlZzJzSGRmYVhiMStSclJ6?=
+ =?utf-8?B?eUw2aUJ2dWdGcmdPeENEekxQYjZsQ1lJRTRuM3llUDR0RVd5c01kSjRlMkZF?=
+ =?utf-8?B?UE5CYytuWTNURVBWRkJXeE9TUVBEL3lxQUNwRU1scWxweU5hdHpVWk5YNjVQ?=
+ =?utf-8?B?bGlmZ25YSFZDVk4zWWRSWE9yc29VanNHdnd3K0FDOUFjTWtQS1pVN2ZsK2k3?=
+ =?utf-8?B?NjFqajR1ZHhvSDhsRWt6SlZIdmRjS2Z5dlgwQ2ZHem1wQ1JGa0IwWGM3TC9q?=
+ =?utf-8?B?UHQwMU9FL1ExMnFiZmhTK3d4VGlUdG9rU2V0MlBYQjU5K0FQQmNlbFJGb1pW?=
+ =?utf-8?B?b2srWXRZN2tWNEMyb2s5TG9BTGpVN0dveElldnNLOEUwNWVkZXlpOS9MRER2?=
+ =?utf-8?B?Q29lOTcvSGt5cEhhMDdYbThnUjIwYitBT3A4NTFUK3RNWDZiVGRiZlhZeGVY?=
+ =?utf-8?B?aElUUCtTYmN4VmtoUlYvZUpkaUNzOENJb1ppUng5RU56VWtCY083Ykw3TXND?=
+ =?utf-8?B?TFVEaW96eDBMSFp0U21CNXVyNENreGU5aXRpQmJHYU1helRJOEY2N1Nhb3Va?=
+ =?utf-8?B?VEdxcG5sSGtUMUwraE9Sclljdyt2RWV6ckJZRTVPdlZsMzJQeXd3Q1Y1VWFO?=
+ =?utf-8?B?QjlHakNqcGI2MkpIMjNVNzVsZzJXaXNDSzg0TnBzaFVqMEhEbXY2QnhXSDFG?=
+ =?utf-8?B?UDFMc1NiT2luaTNBdU5lWGE4RGdwYVRhdS9PcDQvT2l5WUZTTUI3ZHcwenRv?=
+ =?utf-8?B?c0U1RkVtOG1oMHQ0NHJ2Q1dOcWFJcWFWRFh2KytZRjhycHgrMGpORUpUYllX?=
+ =?utf-8?B?QVQ2eDZ3dXVadlc2V0I4WlVvM0FybERIS1E4WkpMdzUrUHlRR2R5MG56dHdI?=
+ =?utf-8?B?NE5XYUVoNzIvWVhCWUVGeXNDMHFaT2pDZ2M2WVFqRGxna0RzUzloUDFtVDAr?=
+ =?utf-8?B?dE9SMDVJbjNXMEdwS1ZJRWxJOVN5N2szQ0FVZWJxOExoS3F3Z0NuZG51NEJM?=
+ =?utf-8?B?ZjU1cnFBM1RYMllNWnB6dVJpbW1nOXdSS3RnT0QwZ2lEd1FoNjNvd3huaFI0?=
+ =?utf-8?B?S1FuQUtzYXYzR29nL2tlV2VmYTU4M2hhbVhNZjVFTWRvQXNMdFV6QllUVnNa?=
+ =?utf-8?B?QmowRlAzZWZOM3JhcjRTcjFyWTZpQkd3MDB2U0VKMmhuWGFkV3lYMjJQd1Rs?=
+ =?utf-8?B?Zm5CQjY0cmZvbjE5OU1HdWxVUmgzNnlWNzlvOG00V0dPb2crYmJXSkRiSzhr?=
+ =?utf-8?B?b1JjaTRhZVloZjhMZE5JeXdwK3NKallIYXJQWWg4b2c0M2h3NHBSbkJrcnFG?=
+ =?utf-8?B?d09uMGJHdHd2QUM1U1hqZnAwTkhWQ29sdWMzc1hKVXdDSnhSRXduZ2RWUVJi?=
+ =?utf-8?B?ZWRHeGJDbnRrTkJHVUE0enB5RFVGVHJoVnBOcVR3cE4rbGlGMzFJampNT0hH?=
+ =?utf-8?B?Vm1ZUEkwbVJZaStoYTM1Y0E2eVRKS2NwaWFNUzhpMVJuUzB4TEZaOHhaZ2Y0?=
+ =?utf-8?B?UTR2MGZRc0dTNkhBRzFwNi9tcGo0SXFkVVJGd1BudHBxK0FTalpqTkdpSFpa?=
+ =?utf-8?B?ZHNsUVdPRE9JSnVORlFwVnUzUllxdmVCdDc1eTBaRlE5c2l2YkMvVkdHWTNM?=
+ =?utf-8?B?VWp1c2JsYzFoNDg2N1dIQ002dDZGQ1l3N2ZCdkNNZ240cVpyNlMxd1dEZi9U?=
+ =?utf-8?B?Y3lpWnpuaWI0VjZNWmdjeHdaRVpyeUNQRG9aWUk2ZTV0S2QvSTFlNENzTXRv?=
+ =?utf-8?B?RzNaYlkya2paVGdCQUVhUT09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(376014)(1800799024)(7416014)(366016);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?d3U2eEY1U2c4WVVOTXpEMHFoZ2VZUTZtVnNrU2xsbmJmTC94MUFjOWJHQkNQ?=
+ =?utf-8?B?SmRXbzNrb25BbnRGMFRmNEF2QzNOVDBKT29Fb2VCeEdIQ1U2OHdJVDJEY1hq?=
+ =?utf-8?B?NCtrNlZybzN6cHcwTXlseW4rdURHU1J5Z2UxUkFITTN0eHI3TU4ySFF3Y0Q2?=
+ =?utf-8?B?SlJ5di9pbGNMWHpxWk9pS0ZnOWpveEo0U1orVUNwdkZRYWxhOWF1ODhQaHhs?=
+ =?utf-8?B?RzhPdlJ6YmxETFhmcUdJSmsvTkdKSFBoUll2cmFZWnBRQzM2c1FSdDgyMkFR?=
+ =?utf-8?B?amkrcURLdmEwa3JEaFVSY0xFUzlyZlJZNWZxdjJKMi91NVNTSWV6SWlVT3R3?=
+ =?utf-8?B?Vi9CUmFUWWRtYUpIY0ZPSDlQUk4rV1dCYTliS0tkVnFYNmtkSnZ4dzl0Snlq?=
+ =?utf-8?B?LzVKcTdVSHlHeXk5VCs5dDRlMGMrMWxDNSt2QVBDS0hlRFpiTW9VL0ZGajMz?=
+ =?utf-8?B?endGQ0xyeE1LUVNvUzdiZnhkNjhjVGxHUkRteFZCQmJrenorRlo5dTdrOUVH?=
+ =?utf-8?B?cGpSSWE5MmFkNEJaQlNVd3BnL1MzbGxJUmZMNWZUS0tKR2tLMkk1MWpZMmh5?=
+ =?utf-8?B?SiswQkNkMFZOSjNoazZsMnJxTGkvKzRoTHBLVTcwdmExSkNtR0s5QlRjeUto?=
+ =?utf-8?B?SlgvY3FjV1lkK256UUNxNW9Bd2JhWE5yMkdpaWI4UE5sa1dVYS85YW9UQ3I4?=
+ =?utf-8?B?eXE1WTBjd3ZxWXdaUkpMQk96UHdvYzdXM0crMVpoM2RETnRpSEhEbjAzck03?=
+ =?utf-8?B?R21BOXR5Ukdsam1HbEU0d0FuMEZwbWhmMXNGeDMxU3JtMzM4aW13YkgvZW4w?=
+ =?utf-8?B?UFlDMjNjVUxMYmFZVVE5RXB6NGhhSk9TMkxEUHNabW81ZDMySFA5TGMzWFF5?=
+ =?utf-8?B?RTBMOXh4aU9HazNKNXN5STRjQ2pkQ2VYVmU4TU9VUk9nQndOR3lZYmVMVllm?=
+ =?utf-8?B?cmdlQ3pnYWhxdkRqdFNEUmQvWWpSUEQwV21oZDlrTXk4bmxWbmttaDRQT3Nt?=
+ =?utf-8?B?Z0ljUUlZT0I1VnkzQUhCTytYUHFqREgyWVMwVFpEdCsvVm5ZSDV1aFdFeXNk?=
+ =?utf-8?B?Y2pmeUl0VHU0Wk1mckVCU3RxVmFWTk00SERBWUFyaUJUR09jUkhyTW1WaTRq?=
+ =?utf-8?B?Q2pPSm5SZ2JTYUtMa1cwRmYvUnhnMW5OUXE3cm1ZMk5lMXJuYiszZllCZzNK?=
+ =?utf-8?B?YU8wL0NoT25PbzB1Z1JkMWRmNS85Wi90dmJ2b3lqdzQwcndKN3VYLyt5V3gx?=
+ =?utf-8?B?a1pmU1dIb0ExdzRxUGZsaFZiczZmK1d0Y0cweU1sQXg0Rmp0dytzdFRrdUJ0?=
+ =?utf-8?B?M0I0cDI3b2M0UkNPaytHanV3MlhEQlJvbXB4QTdZUlcrZ1ROc09PeXdta2ly?=
+ =?utf-8?B?VXpZcmN2SXZuaW4zSXlOekt0OGRtN3ZiUFIrQWVJQzRRTlMvWHZmelozSThT?=
+ =?utf-8?B?eUhyM3hqdk8wTXhRVWNtcVRmc3A3ZGdzMkZYbHlhVVhoK0ZGNlRsVU5nZ3Aw?=
+ =?utf-8?B?YXJYb05kZlJnbUx5ZHQ2M0FFVVhXM3VVdXpxd1k0MmRTelVCV1ZET3BnTklO?=
+ =?utf-8?B?RWFVaXlJZWJoUGVSZEdlQmZlRzdiTmxDUXBEM2tWV2FCVG0xLytzSXRnakp1?=
+ =?utf-8?B?VEV1MndPbWY3MTd3NXFVV1dKS2poaWtzNEF6SmlqbmQ0ZjFJMVJGZ2E2SEVn?=
+ =?utf-8?B?VGFJVVZYSllMWnlEU1dxUXpEbS9tMnlaak5CTmI3TUR5TGdXVDVIek1NN0Rz?=
+ =?utf-8?B?TnRUbi9sdXdIdytXZEtDaUlyWkJ1WVpHM0xqRXJoNkEvd1dncllvTUlCR1VV?=
+ =?utf-8?B?T3Z2WlNqNmNhRVBjS3dwZitwWklCdEV6LzR5bTdaYzFYZ2pqT1M2Zkp3UWha?=
+ =?utf-8?B?eUNaRmpmVlpMbFhWYlRJa0VIeDhmbkpNdEJYYmFHYjY2RTNjTk1aWVJPaDJq?=
+ =?utf-8?B?MmJ6TDN5dkZVRDVHckYwTndJdXhmVGltSDk1a2RlUDh5MnlTWm9Oa0E4dGR0?=
+ =?utf-8?B?OHVpUDgrMWdnMktQdWNoYkN4d3hLS3NYQjRnN3ZXTEhteHdIWkQrb3pwV2pC?=
+ =?utf-8?B?QXJnN1FwZVpRT2tjcGF0OGxNdTdYK25QZUxIY3lrMGxIQjNLK1liYUNMYzlJ?=
+ =?utf-8?B?Mk1mRVpBaXBUd0RFbm5KNlhnbkVvRUJmUnRGbnYzNU5MWnB3ZFhaa2pETzZT?=
+ =?utf-8?Q?VF2YCMuucPMNgI0jcc+/6MmLBsNzsSFby/NPW6lWFROe?=
+X-OriginatorOrg: garyguo.net
+X-MS-Exchange-CrossTenant-Network-Message-Id: e935ac02-2b5a-495c-dd81-08dcdeddffc2
+X-MS-Exchange-CrossTenant-AuthSource: LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Sep 2024 10:20:24.1314
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /L6BJ1ZfKfTd0BovxnxXKI69fewqS/+lQ8VFANLuST+nyZXJYr4jyK0bzPW1mdsq8SMv2oBxy8bSPyRzrTIYDQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO0P265MB2794
 
-On Mon, Sep 23, 2024 at 03:57:47PM +0300, Mikhail Ivanov wrote:
-> On 9/18/2024 4:47 PM, G=C3=BCnther Noack wrote:
-> > On Wed, Sep 04, 2024 at 06:48:19PM +0800, Mikhail Ivanov wrote:
-> > > Add test that checks the restriction on socket creation using
-> > > socketpair(2).
-> > >=20
-> > > Add `socket_creation` fixture to configure sandboxing in tests in
-> > > which different socket creation actions are tested.
-> > >=20
-> > > Signed-off-by: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-> > > ---
-> > >   .../testing/selftests/landlock/socket_test.c  | 101 +++++++++++++++=
-+++
-> > >   1 file changed, 101 insertions(+)
-> > >=20
-> > > diff --git a/tools/testing/selftests/landlock/socket_test.c b/tools/t=
-esting/selftests/landlock/socket_test.c
-> > > index 8fc507bf902a..67db0e1c1121 100644
-> > > --- a/tools/testing/selftests/landlock/socket_test.c
-> > > +++ b/tools/testing/selftests/landlock/socket_test.c
-> > > @@ -738,4 +738,105 @@ TEST_F(packet_protocol, alias_restriction)
-> > >   	EXPECT_EQ(0, test_socket_variant(&self->prot_tested));
-> > >   }
-> > > +static int test_socketpair(int family, int type, int protocol)
-> > > +{
-> > > +	int fds[2];
-> > > +	int err;
-> > > +
-> > > +	err =3D socketpair(family, type | SOCK_CLOEXEC, protocol, fds);
-> > > +	if (err)
-> > > +		return errno;
-> > > +	/*
-> > > +	 * Mixing error codes from close(2) and socketpair(2) should not le=
-ad to
-> > > +	 * any (access type) confusion for this test.
-> > > +	 */
-> > > +	if (close(fds[0]) !=3D 0)
-> > > +		return errno;
-> > > +	if (close(fds[1]) !=3D 0)
-> > > +		return errno;
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +FIXTURE(socket_creation)
-> > > +{
-> > > +	bool sandboxed;
-> > > +	bool allowed;
-> > > +};
-> > > +
-> > > +FIXTURE_VARIANT(socket_creation)
-> > > +{
-> > > +	bool sandboxed;
-> > > +	bool allowed;
-> > > +};
-> > > +
-> > > +FIXTURE_SETUP(socket_creation)
-> > > +{
-> > > +	self->sandboxed =3D variant->sandboxed;
-> > > +	self->allowed =3D variant->allowed;
-> > > +
-> > > +	setup_loopback(_metadata);
-> > > +};
-> > > +
-> > > +FIXTURE_TEARDOWN(socket_creation)
-> > > +{
-> > > +}
-> > > +
-> > > +/* clang-format off */
-> > > +FIXTURE_VARIANT_ADD(socket_creation, no_sandbox) {
-> > > +	/* clang-format on */
-> > > +	.sandboxed =3D false,
-> > > +};
-> > > +
-> > > +/* clang-format off */
-> > > +FIXTURE_VARIANT_ADD(socket_creation, sandbox_allow) {
-> > > +	/* clang-format on */
-> > > +	.sandboxed =3D true,
-> > > +	.allowed =3D true,
-> > > +};
-> > > +
-> > > +/* clang-format off */
-> > > +FIXTURE_VARIANT_ADD(socket_creation, sandbox_deny) {
-> > > +	/* clang-format on */
-> > > +	.sandboxed =3D true,
-> > > +	.allowed =3D false,
-> > > +};
-> > > +
-> > > +TEST_F(socket_creation, socketpair)
-> > > +{
-> > > +	const struct landlock_ruleset_attr ruleset_attr =3D {
-> > > +		.handled_access_socket =3D LANDLOCK_ACCESS_SOCKET_CREATE,
-> > > +	};
-> > > +	struct landlock_socket_attr unix_socket_create =3D {
-> > > +		.allowed_access =3D LANDLOCK_ACCESS_SOCKET_CREATE,
-> > > +		.family =3D AF_UNIX,
-> > > +		.type =3D SOCK_STREAM,
-> > > +	};
-> > > +	int ruleset_fd;
-> > > +
-> > > +	if (self->sandboxed) {
-> > > +		ruleset_fd =3D landlock_create_ruleset(&ruleset_attr,
-> > > +						     sizeof(ruleset_attr), 0);
-> > > +		ASSERT_LE(0, ruleset_fd);
-> > > +
-> > > +		if (self->allowed) {
-> > > +			ASSERT_EQ(0, landlock_add_rule(ruleset_fd,
-> > > +						       LANDLOCK_RULE_SOCKET,
-> > > +						       &unix_socket_create, 0));
-> > > +		}
-> > > +		enforce_ruleset(_metadata, ruleset_fd);
-> > > +		ASSERT_EQ(0, close(ruleset_fd));
-> > > +	}
-> > > +
-> > > +	if (!self->sandboxed || self->allowed) {
-> > > +		/*
-> > > +		 * Tries to create sockets when ruleset is not established
-> > > +		 * or protocol is allowed.
-> > > +		 */
-> > > +		EXPECT_EQ(0, test_socketpair(AF_UNIX, SOCK_STREAM, 0));
-> > > +	} else {
-> > > +		/* Tries to create sockets when protocol is restricted. */
-> > > +		EXPECT_EQ(EACCES, test_socketpair(AF_UNIX, SOCK_STREAM, 0));
-> > > +	}
-> >=20
-> > I am torn on whether socketpair() should be denied at all --
-> >=20
-> >    * on one hand, the created sockets are connected to each other
-> >      and the creating process can only talk to itself (or pass one of t=
-hem on),
-> >      which seems legitimate and harmless.
-> >=20
-> >    * on the other hand, it *does* create two sockets, and
-> >      if they are datagram sockets, it it probably currently possible
-> >      to disassociate them with connect(AF_UNSPEC). >
-> > What are your thoughts on that?
->=20
-> Good catch! According to the discussion that you've mentioned [1] (I
-> believe I found correct one), you've already discussed socketpair(2)
-> control with Micka=C3=ABl and came to the conclusion that socketpair(2) a=
+On Wed, 25 Sep 2024 08:59:04 -0500
+"Serge E. Hallyn" <serge@hallyn.com> wrote:
+
+> On Wed, Sep 25, 2024 at 01:06:10PM +0200, Alice Ryhl wrote:
+> > On Tue, Sep 24, 2024 at 9:45=E2=80=AFPM Serge E. Hallyn <serge@hallyn.c=
+om> wrote: =20
+> > >
+> > > On Sun, Sep 15, 2024 at 02:31:27PM +0000, Alice Ryhl wrote: =20
+> > > > This introduces a new marker type for types that shouldn't be threa=
+d
+> > > > safe. By adding a field of this type to a struct, it becomes non-Se=
 nd
-> unnamed pipes do not give access to new resources to the process,
-> therefore should not be restricted.
+> > > > and non-Sync, which means that it cannot be accessed in any way fro=
+m
+> > > > threads other than the one it was created on.
+> > > >
+> > > > This is useful for APIs that require globals such as `current` to r=
+emain
+> > > > constant while the value exists.
+> > > >
+> > > > We update two existing users in the Kernel to use this helper:
+> > > >
+> > > >  * `Task::current()` - moving the return type of this value to a
+> > > >    different thread would not be safe as you can no longer be guara=
+nteed
+> > > >    that the `current` pointer remains valid.
+> > > >  * Lock guards. Mutexes and spinlocks should be unlocked on the sam=
+e
+> > > >    thread as where they were locked, so we enforce this using the S=
+end
+> > > >    trait. =20
+> > >
+> > > Hi,
+> > >
+> > > this sounds useful, however from kernel side when I think thread-safe=
+,
+> > > I think must not be used across a sleep.  Would something like Thread=
+Locked
+> > > or LockedToThread make sense? =20
+> >=20
+> > Hmm, those names seem pretty similar to the current name to me? =20
 >=20
-> [1]
-> https://lore.kernel.org/all/e7e24682-5da7-3b09-323e-a4f784f10158@digikod.=
-net/
+> Seems very different to me:
 >=20
-> Therefore, this is more like connect(AF_UNSPEC)-related issue. On
-> security summit you've mentioned that it will be useful to implement
-> restriction of connection dissociation for sockets. This feature will
-> solve the problem of reusage of UNIX sockets that were created with
-> socketpair(2).
+> If @foo is not threadsafe, it may be global or be usable by many
+> threads, but must be locked to one thread during access.
 >=20
-> If we want such feature to be implemented, I suggest leaving current
-> implementation as it is (to prevent vulnerable creation of UNIX dgram
-> sockets) and enable socketpair(2) in the patchset dedicated to
-> connect(AF_UNSPEC) restriction. Also it will be useful to create a
-> dedicated issue on github. WDYT?
+> What you're describing here is (iiuc) that @foo must only be used
+> by one particular thread.
 
-Thanks for digging up that discussion, that's exactly the one I meant.
+"locked to one thread during access" means it might be `Send` but not
+`!Sync`.
 
-I have a feeling that this may result in compatibility issues later on?  If=
- we
-leave the current implementation as it is, then we are *blocking* the creat=
-ion
-of sockets through socketpair(2).  And then we would have users who add it =
-as a
-restricted ("handled") operation in their ruleset, and who would expect tha=
-t
-socketpair(2) can not be used.  When that API is already fixed, how do you
-imagine that people should in the future allow socketpair(2), but disallow =
-the
-"normal" creation of sockets?
+What Alice has here is something is neither `Send` nor `Sync`, so I
+think the `NotThreadSafe` is a good name here because it cancels both
+guarantees.
 
-In my mind, I would have imagined that the LANDLOCK_ACCESS_SOCKET_CREATE ri=
-ght
-only restricts socket(2) invocations and leaves socketpair(2) working, and =
-then
-we could introduce a LANDLOCK_ACCESS_SOCKETPAIR_CREATE right in the future =
-to
-restrict socketpair(2) as well?
-
-If we wanted to permit socketpair(2), but allow socket(2), would we have to
-change the LSM hook interface?  How would that implementation look?
-
-
-> (Btw I think that disassociation control can be really useful. If
-> it were possible to restrict this action for each protocol, we would
-> have stricter control over the protocols used.)
-
-In my understanding, the disassociation support is closely intertwined with=
- the
-transport layer - the last paragraph of DESCRIPTION in connect(2) is listin=
-g
-TCP, UDP and Unix Domain sockets in datagram mode. -- The relevant code in =
-in
-net/ipv4/af_inet.c in inet_dgram_connect() and __inet_stream_connect(), whe=
-re
-AF_UNSPEC is handled.
-
-I would love to find a way to restrict this independent of the specific
-transport protocol as well.
-
-Remark on the side - in af_inet.c in inet_shutdown(), I also found a worryi=
-ng
-scenario where the same sk->sk_prot->disconnect() function is called and
-sock->state also gets reset to SS_UNCONNECTED.  I have done a naive attempt=
- to
-hit that code path by calling shutdown() on a passive TCP socket, but was n=
-ot
-able to reuse the socket for new connections afterwards. (Have not debugged=
- it
-further though.)  I wonder whether this is a scnenario that we also need to
-cover?
-
-
-> > (On a much more technical note; consider replacing self->allowed with
-> > self->socketpair_error to directly indicate the expected error? It feel=
-s that
-> > this could be more straightforward?)
->=20
-> I've considered this approach and decided that this would
-> * negatively affect the readability of conditional for adding Landlock
->   rule,
-> * make checking the test_socketpair() error code less explicit.
-
-Fair enough, OK.
-
-=E2=80=94G=C3=BCnther
+Best,
+Gary
