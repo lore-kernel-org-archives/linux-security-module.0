@@ -1,132 +1,169 @@
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B76844C79;
-	Thu, 26 Sep 2024 17:35:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34E3ED53C;
+	Fri, 27 Sep 2024 01:36:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727372147; cv=none; b=Sll4TQMiAh0z4Ogss6WrulZivrRvvXNYz2Qv3K+bzGywJM3VZySp92GAH//kOjzJYYUBHGK3bXdUaIpWM8FK/yX1AFEMYH75tkF6LVTwU4vccp76aSrCe0OtAt5C1dUbNVyEjpLbFVAN1gEAcTGr0iNQplEuGpj5aJhyZeBN22k=
+	t=1727401002; cv=none; b=avIHuV+TsxMMR0lT4N8LjW9nRNuGJYSE/xiSkUMHYRTTXIuK5afhT+ibhl0PO0w/5Fw7On7wP8pSOqRdulfpScBeTTizJkaLV6aUYLcA6V4Xheu3vOuOGSKEnNAqxegpZBhZo1ITQvBl9KmlzbGsjwFMG2UA81CIUepHNALT1Yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727372147; c=relaxed/simple;
-	bh=U7kLN438v59+Z6AGiLMsMxCLMWGxpOJ5pYyQL7QdSjk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Tu1q+HdLYa8LYz4ETt9JZTPaaQAn7x+LjoF2e4fvuAq2hL4wRoM9rqysecdwMkzhJFDeJOyOrpibwZAZOflL9xLNNAj19uW3R2ALwwaPmn6+oBXKKGZjDCr7ihBEKvu0lweh5wKVoYZZhR27uTjpuWHH8pum2jRKUnizf52oph0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DX1OnYmF; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DX1OnYmF"
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5367ae52a01so1601127e87.3;
-        Thu, 26 Sep 2024 10:35:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727372144; x=1727976944; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xtR89bH5Z//239xnT5kCrki/umqFGhowZSxev9N5vn4=;
-        b=DX1OnYmFwLAAXrch0nD8zY1dtr22TL5cJWbSyZdXxPRBkmPyVhdBugbdbbLqWEcyK6
-         aKlhuThAhl896s6DFtIObCKMpp6OiCvgckK86H4bqPnkrIOGha7TET0NBNrBp5qkBfdJ
-         R+73lIa8qL4in+GX3vdT3MWO5F++s1wWQtEbKooH0mQ9A8mlW/+JQBwi72vITrvyNvbv
-         tqUpDz2M4Rl1Jr7PSQTu9v3NIVGFhSg9fYcKQB62QZWWwXNzqg4Io6mBUsV8H4uYUXcN
-         /eqr1gpznWIRI2eLiUkYZAky80Gp4rCJMcLuM4FtHymLpXCb+kdhJj45JHPJY6HcATSy
-         vWWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727372144; x=1727976944;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xtR89bH5Z//239xnT5kCrki/umqFGhowZSxev9N5vn4=;
-        b=PsQpW7GyofaGsG7Mz3FpD64YZuKGcjeH+Kv4Kv9QKf0AM4MPBhqwqIkLNRGvJ/jm+F
-         4dn+1DMkr9dGD4PXrqjyKcDRSYWTusTZcc0AfIpBrDsnw0cj6wO+UTwhvkjmUhI0ZIGh
-         GIWPLmDAXXd7eH38FUBjBqZE+nw/Hga9dbEJPP9c74ChqrJwqcj5Ci0cNvQb51aNtYOn
-         2LUmgdzjMiLrIqC2NCIeOCAJS47z7SuyBcqPcDCHmP6YEe3jrSKhY8xsDIONWxFRbJz9
-         4nWBYPg46+bqHkbWUYzU5d3r1FE5LuIg/zzPBFyYxblWo7h7S05udGhR585BiCvRdZ2c
-         7MjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU3fpgDS787ZLbsfEaoRtJH+BJJlM4FMluV1HGdIK2ma+z301pmMwivwqYGnwiuRInqv3IVwQ==@vger.kernel.org, AJvYcCUrZi7Oeiv1vZiXMokJYaT7QAHMydX7bB6pspRwXSK0pR8Vq/i77omSPq0N/dewqac9ELIjTebIU5R+aiiLtxqdKufs@vger.kernel.org, AJvYcCV7FTW4WLS8HGiKpa5mQRfQlAqYOenoiUcFlSjYJlSnBTKdXBu6QETICM8VnsoWA+kqipfZhuq4@vger.kernel.org, AJvYcCVDAj4AtlAHFM7sd4jAtuuos4B+TEubXf32H0pgQ/MziYzTYywIVZt0q9xdsan3LMsItWxPFQTS4A==@vger.kernel.org, AJvYcCVManuayS0CKeBQf7+DEuiNXlnFOHGQd3uiPXG6/yKWhcvwKbW9ejM22pHRgtNBNSEbOonpdUnIEcSXZbOigvRZ6KEwtgSo@vger.kernel.org, AJvYcCVbt5jf6ZQEAPt0CHCKQwa7KNcIsKtsDRxHxTh4W3pNIXly1Ygv2AeHLTCqDKpBHMR4oLk77/ghpulJJSR4BQ==@vger.kernel.org, AJvYcCWDPWcSzMk8u+hCo0VG8JFsgwdHuiRBg2oHK/S/Vc8fcgjDkJXgVls/TzMYl8WQigkoCFOh@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOYMyNRnubNHDPe6ODjKeYsOZy1CqYp46ND91Gh6TYpK/013rT
-	ZZZwXzFSTNzLy2GT6KAwaJAox8fpJk7bUi/2YY67toy33fE8hlCyTdbnq91OBtErgYzR136TdRL
-	6SZSKF53aoUR8TsYNofduktW10kA=
-X-Google-Smtp-Source: AGHT+IHf75DxkntTvBkZGDev4x95K+giFUe8FZhnZLvsyGMJj8v524+ofSRAoRSBODfKCXI8yelsxdzzM7LxitSB/UQ=
-X-Received: by 2002:a05:6512:2310:b0:536:536a:3854 with SMTP id
- 2adb3069b0e04-5389fc70f56mr217205e87.60.1727372143545; Thu, 26 Sep 2024
- 10:35:43 -0700 (PDT)
+	s=arc-20240116; t=1727401002; c=relaxed/simple;
+	bh=hFdP5aaaibBZ8KCNQ8ZKquKbDyruQ6qDPnUlk8g7+Cw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ylji0gj8tJ00SXnTfxhWvuJ3HGLYx0weTngXTjbVdoeUBBAWWvImRGNtV3QzkvgjDKRGGJGBnxy5B/CU3r41k9ZDve0AlHZleWIXvT1MAHLRgcWuscOV1HvRN2Y6Tcb6E7R0o1qyXfkvOtpi7JTb6yMSfFcZWiCH+b4O7xa3jKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 48R1PxJ1000683;
+	Thu, 26 Sep 2024 20:25:59 -0500
+Received: (from greg@localhost)
+	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 48R1PvPj000682;
+	Thu, 26 Sep 2024 20:25:57 -0500
+Date: Thu, 26 Sep 2024 20:25:57 -0500
+From: "Dr. Greg" <greg@enjellic.com>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>, dhowells@redhat.com,
+        dwmw2@infradead.org, davem@davemloft.net, linux-kernel@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+        zohar@linux.ibm.com, linux-integrity@vger.kernel.org,
+        roberto.sassu@huawei.com, linux-security-module@vger.kernel.org,
+        Ard Biesheuvel <ardb@kernel.org>
+Subject: Re: [PATCH v3 00/14] KEYS: Add support for PGP keys and signatures
+Message-ID: <20240927012557.GA634@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <ZuPDZL_EIoS60L1a@gondor.apana.org.au> <b4a3e55650a9e9f2302cf093e5cc8e739b4ac98f.camel@huaweicloud.com> <CAHk-=wiU24MGO7LZ1ZZYpQJr1+CSFG9VnB0Nyy4xZSSc_Zu0rg@mail.gmail.com> <ZuaVzQqkwwjbUHSh@gondor.apana.org.au> <CAHk-=wgnG+C3fVB+dwZYi_ZEErnd_jFbrkN+xc__om3d=7optQ@mail.gmail.com> <a991cf4187bced19485e28a5542ac446b92f864e.camel@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240817025624.13157-1-laoar.shao@gmail.com> <20240817025624.13157-6-laoar.shao@gmail.com>
-In-Reply-To: <20240817025624.13157-6-laoar.shao@gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 26 Sep 2024 20:35:06 +0300
-Message-ID: <CAHp75VdpG=yQVaJLR3J5puwj4FYWtXzaHkC1TdmiqfJu1s9PpA@mail.gmail.com>
-Subject: Re: [PATCH v7 5/8] mm/util: Fix possible race condition in kstrdup()
-To: Yafang Shao <laoar.shao@gmail.com>
-Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org, alx@kernel.org, 
-	justinstitt@google.com, ebiederm@xmission.com, alexei.starovoitov@gmail.com, 
-	rostedt@goodmis.org, catalin.marinas@arm.com, 
-	penguin-kernel@i-love.sakura.ne.jp, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a991cf4187bced19485e28a5542ac446b92f864e.camel@huaweicloud.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Thu, 26 Sep 2024 20:26:00 -0500 (CDT)
 
-On Thu, Sep 26, 2024 at 7:44=E2=80=AFPM Yafang Shao <laoar.shao@gmail.com> =
-wrote:
->
-> In kstrdup(), it is critical to ensure that the dest string is always
-> NUL-terminated. However, potential race condidtion can occur between a
+On Thu, Sep 26, 2024 at 11:41:51AM +0200, Roberto Sassu wrote:
 
-condition
+Good evening, I hope the week has gone well for everyone.
 
-> writer and a reader.
->
-> Consider the following scenario involving task->comm:
->
->     reader                    writer
->
->   len =3D strlen(s) + 1;
->                              strlcpy(tsk->comm, buf, sizeof(tsk->comm));
->   memcpy(buf, s, len);
->
-> In this case, there is a race condition between the reader and the
-> writer. The reader calculate the length of the string `s` based on the
+> On Sun, 2024-09-15 at 10:40 +0200, Linus Torvalds wrote:
+> > On Sun, 15 Sept 2024 at 10:08, Herbert Xu <herbert@gondor.apana.org.au> wrote:
+> > > 
+> > > If the aformentioned EFI use-case is bogus, then distro package
+> > > verification is going to be the only application for PGP keys in
+> > > the kernel.
+> > 
+> > So I haven't actually seen _that_ series, but as mentioned it does
+> > smell pretty conceptually broken to me.
+> > 
+> > But hey, code talks, bullshit walks. People can most certainly try to
+> > convince me.
 
-calculates
+> The solution has three parts.
+> 
+> 1. The kernel verifies the RPM header with a PGP key embedded in the
+> kernel, and provided by the Linux distribution vendor.
+> 
+> 2. The Integrity Digest Cache parses the verified RPM header in the
+> kernel and feeds one of the existing LSMs (IMA, IPE and BPF LSM) with
+> the digests extracted from the RPM header.
+> 
+> 3. The LSMs compare the fsverity digest they find in the filesystem
+> with the authenticated ones from the RPM header, and might deny access
+> to the file if the digests don't match.
+> 
+> At this point, RPM headers don't contain fsverity digests, only file
+> content digests, but this is an orthogonal problem.
 
-> old value of task->comm. However, during the memcpy(), the string `s`
-> might be updated by the writer to a new value of task->comm.
->
-> If the new task->comm is larger than the old one, the `buf` might not be
-> NUL-terminated. This can lead to undefined behavior and potential
-> security vulnerabilities.
->
-> Let's fix it by explicitly adding a NUL-terminator.
+So from the above, can it be assumed that the RPM parsing code isn't
+useful until the RPM packages contain fsverity root hashes?
 
-memcpy() is not atomic AFAIK, meaning that the new string can be also
-shorter and when memcpy() already copied past the new NUL. I would
-amend the explanation to include this as well.
+In addition, and we mentioned this previously in this thread, it seems
+that one needs to 'eat' a full read of a file, at least once, in order
+to generate an fsverity digest that is consistent with the actual
+on-disk contents of the file.
 
-...
+So, once again, the notion of the implementation of a generic digest
+cache would seem to be orthogonal to the issue of verifying that the
+digest values in the cache are from a 'known good' source.
 
-> +               /* During memcpy(), the string might be updated to a new =
-value,
-> +                * which could be longer than the string when strlen() is
-> +                * called. Therefore, we need to add a null termimator.
+> I had a look at previous threads on similar topics, to find your
+> position on the matter.
+> 
+> I got that you would not be probably against (1), and maybe not (3).
+> 
+> However, we still need a source telling whether the fsverity digest in
+> the filesystem is the same of one calculated by Linux distributions
+> during build. That is what the Integrity Digest Cache provides.
+> 
+> Regarding (2), maybe I'm missing something fundamental, but isn't
+> parsing the ELF format of kernel modules from the kernel similar?
+> 
+> Cannot really go to user space at this point, since the authenticated
+> fsverity digests are directly consumed by LSMs. Also, as David pointed
+> out in this thread [1], there is no obligation for user space to call
+> any signature verification function before executing a file, this task
+> must be done by an LSM.
+> 
+> I'm aware that we should not run unnecessary code in the kernel. I
+> tried to mitigate this issue by striping the parsing functionality to
+> the minimum (220 LOC), and formally verifying it with the Frama-C
+> static analyzer. The parser is available here [2].
+> 
+> I'm also aware that this is not the long term solution, but I didn't
+> find much support on the alternatives, like a trustworthy user mode
+> driver [3][4] (isolated from other root processes) and signed eBPF
+> programs [5].
 
-/*
- * The wrong comment style. Besides that a typo
- * in the word 'terminator'. Please, run codespell on your changes.
- * Also use the same form: NUL-terminator when you are talking
- * about '\0' and not NULL.
- */
+We mentioned this previously in the related threads you cite, our TSEM
+LSM implementation allows the kernel to determine whether or not a
+userspace process or the entirety of userspace should be 'trusted' at
+any point in time.
 
-> +                */
+The security footprint/model of a digest 'priming' workload is going
+to be extremely small.  If the priming workload is invoked early in
+the boot process the kernel can have assurance that neither the
+priming workload or the surrounding userspace has commited any actions
+that would be considered to make the system untrusted.
 
+> What it would be the right way to proceed, in your opinion?
 
---=20
-With Best Regards,
-Andy Shevchenko
+Alternatively, we had suggested previously that the RPM parsing code
+may be a good candidate for implementation with a separate kernel
+loadable module.  That places the parsing code in the kernel to meet
+your security requirement and there is standardized infrastructure for
+module signing that would ensure the integrity of the parser.
+
+The module surfaces a pseudo-file through securityfs that userspace
+can use to feed the RPM header into the kernel to drive the population
+of the digest cache.  The parser only needs to be resident and
+operative long enough to initialize the digest cache of a trusted
+system and a kernel loadable module would seem to be consistent with
+that model.
+
+Once again, priming the digest cache with known good digests seems to
+be an issue orthogonal to the implementation of the digest cache
+itself.
+
+We would be interested in knowing if we are misunderstanding the model
+you are trying to achieve.
+
+> Thanks
+> 
+> Roberto
+> 
+> [1] https://lore.kernel.org/linux-kernel/32081.1171560770@redhat.com/
+> [2] https://lore.kernel.org/linux-integrity/20240905150543.3766895-9-roberto.sassu@huaweicloud.com/
+> [3] https://lore.kernel.org/lkml/20230317145240.363908-1-roberto.sassu@huaweicloud.com/#t
+> [4] https://lore.kernel.org/linux-integrity/eb31920bd00e2c921b0aa6ebed8745cb0130b0e1.camel@huaweicloud.com/
+> [5] https://lwn.net/Articles/853489/
+
+Have a good weekend.
+
+As always,
+Dr. Greg
+
+The Quixote Project - Flailing at the Travails of Cybersecurity
+              https://github.com/Quixote-Project
