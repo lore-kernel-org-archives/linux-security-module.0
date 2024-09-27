@@ -1,139 +1,155 @@
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4C8318BBBA;
-	Fri, 27 Sep 2024 12:18:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A92E2191;
+	Fri, 27 Sep 2024 14:21:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727439515; cv=none; b=NE1feotD+2C539JBX1mewHKhxuybQSLfcnwKWB7juaK7uunB2Ib4m+tlCmmaGTYMHdYe4n4MjPh5UGemCYR4n82DZkV9C8BwuN7WqbvuH4tsaYoge45Ajl1Bl4UtU+/26KGWXRlbDpQtJkY0QRFkwk/sN0m/0Y/qB1c/zKcuXF4=
+	t=1727446869; cv=none; b=cAeCIalv0bMvM+Gqtz+i7SMSI4qfPw38S0lIJ9GJV+fUmMMOy7+9cyqZGcBYBptvCNIdkC1mzarwzIsUYy8ZcWdyExsJQ1npvY+NzMO+V57J1JKAs7y/x1+QynH52dLPy4KEuPuenULUrRxEC5xO7JrBJsHYuSWsZn3wELO5QZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727439515; c=relaxed/simple;
-	bh=edvQBv5AUfoNTOsFmR3z05KBgHJ+rA2bfOcdUdEwcKY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ODkF3xn4gK94aufZuWWQD/X4PWN2p5MkvTyo/SlJd1S96tu711S/buOzEloQ28mZNDiEKpOCXtUQZhs02ojvt3nT4Gu4M1H/YsAUhhNdkVUta6vjktOeMLanN4eu0JKY1tgamyHVCPui4kalkCx+mGNwNNnZICMejcDnmSOMeeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4XFTWf26Hmz9v7J8;
-	Fri, 27 Sep 2024 19:58:38 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id D6740140391;
-	Fri, 27 Sep 2024 20:18:24 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwBnFseFovZmRBTBAQ--.50193S2;
-	Fri, 27 Sep 2024 13:18:23 +0100 (CET)
-Message-ID: <734977390eeecba39789df939a00904e87367e5e.camel@huaweicloud.com>
-Subject: Re: [syzbot] Monthly lsm report (Sep 2024)
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Paul Moore <paul@paul-moore.com>, Mimi Zohar <zohar@linux.ibm.com>, 
- Roberto Sassu <roberto.sassu@huawei.com>, Casey Schaufler
- <casey@schaufler-ca.com>, syzbot
- <syzbot+listfc277c7cb94932601d96@syzkaller.appspotmail.com>, Kent
- Overstreet <kent.overstreet@linux.dev>
-Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Date: Fri, 27 Sep 2024 14:18:10 +0200
-In-Reply-To: <03c3a47ca225050d37dca6a9249c1f978f1fc56b.camel@huaweicloud.com>
-References: <66f12e9e.050a0220.3eed3.0009.GAE@google.com>
-	 <CAHC9VhTxCzWvM+j8=J08JVs=1cwk9rtBSS7qFBkdm-_neAwkJQ@mail.gmail.com>
-	 <03c3a47ca225050d37dca6a9249c1f978f1fc56b.camel@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1727446869; c=relaxed/simple;
+	bh=gfF8BLW/H49a8nGE/ZR/uoAaquOYmKRnzvMeUzAWyX0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CQu2H2XEEviXK6GR8eeTAACVaKk7WL+XFQ+PWZ9cEf0K+adTKOQ5kDN35/E1sGY7yEJ1u3UwLqxsJ+dpe1N4fr+JTY7zJ7DDgUfjsl7bq9h0AmUhdLAfxtxfPFKOIoXERG319WmI6Nc6w9xreNDtTEZVHgAg85flkoZcgC/o9f8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V/YqMEnw; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V/YqMEnw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E25E3C4CEC4;
+	Fri, 27 Sep 2024 14:21:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727446869;
+	bh=gfF8BLW/H49a8nGE/ZR/uoAaquOYmKRnzvMeUzAWyX0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V/YqMEnwi59r3EJQyMrx6JDqdvPO9uApn971oz+NC9UX6j8Gc7A5dTOuCWTNqgIUG
+	 KQOEtI6YjfKl7qCqdzZeD/oHKobc9U+JZmPzMOGKZjSlK6P/RCPSRFP0vAD8SEVrGr
+	 LwkWjpSmCx8sIcbM0mRWsGQudR6bDwQa3jPzlXGeWvSvCv+4E1C1JX9IxLpFtVqCET
+	 8i8cSMKjj4odwcOD/JN6B4ofXTYRVUC64ars7F1G8xGNYO1UtWHpBgunynNV3HFnLG
+	 +cv1APqiLEhLhj/Gg+Qlj1tc9ajHNG1Q+V/j2VUb1S3kdXpE/L4w3/dyAsXGOYpd5h
+	 BlSIPtpnG+DCA==
+Date: Fri, 27 Sep 2024 16:21:00 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Bjoern Roy Baron <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arve Hjonnevag <arve@android.com>, Todd Kjos <tkjos@android.com>, 
+	Martijn Coenen <maco@android.com>, Joel Fernandes <joel@joelfernandes.org>, 
+	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, 
+	Dan Williams <dan.j.williams@intel.com>, Matthew Wilcox <willy@infradead.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, 
+	Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Kees Cook <kees@kernel.org>
+Subject: Re: [PATCH] [RFC] rust: add PidNamespace wrapper
+Message-ID: <20240927-anreden-unwirklich-c98c1d9ac3a5@brauner>
+References: <CAH5fLgixve=E5=ghc3maXVC+JdqkrPSDqKgJiYEJ9j_MD4GAzg@mail.gmail.com>
+ <20240926-bewundere-beseitigen-59808f199f82@brauner>
+ <20240926-pocht-sittlich-87108178c093@brauner>
+ <CAH5fLghUj3-8eZMOVhhk0c9x29B7uMj=9dHWsRJYC1ghxqUdxg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:GxC2BwBnFseFovZmRBTBAQ--.50193S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxurW5Zw4fKw1kJw4xCw1ftFb_yoW5Xr4xpF
-	WjyF4FyrsYqr1UtayvvF4UGw4rt395GFWUJrWDWr1xA3ZIyryxCryIkF4F9r4DCrn3A34a
-	qr1Yv3Z3A34kZa7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUk2b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vI
-	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
-	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYY7kG6xAYrwCIc40Y0x0EwIxG
-	rwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8Jw
-	CI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2
-	z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUgZ2-UUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgATBGb2FP0JIgAAsH
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH5fLghUj3-8eZMOVhhk0c9x29B7uMj=9dHWsRJYC1ghxqUdxg@mail.gmail.com>
 
-On Tue, 2024-09-24 at 13:53 +0200, Roberto Sassu wrote:
-> On Mon, 2024-09-23 at 08:06 -0400, Paul Moore wrote:
-> > On Mon, Sep 23, 2024 at 5:02=E2=80=AFAM syzbot
-> > <syzbot+listfc277c7cb94932601d96@syzkaller.appspotmail.com> wrote:
-> > >=20
-> > > Hello lsm maintainers/developers,
-> > >=20
-> > > This is a 31-day syzbot report for the lsm subsystem.
-> > > All related reports/information can be found at:
-> > > https://syzkaller.appspot.com/upstream/s/lsm
-> > >=20
-> > > During the period, 0 new issues were detected and 0 were fixed.
-> > > In total, 4 issues are still open and 27 have been fixed so far.
-> > >=20
-> > > Some of the still happening issues:
-> > >=20
-> > > Ref Crashes Repro Title
-> > > <1> 306     No    INFO: task hung in process_measurement (2)
-> > >                   https://syzkaller.appspot.com/bug?extid=3D1de5a37cb=
-85a2d536330
-> >=20
-> > Mimi, Roberto,
-> >=20
-> > Any chance this is this related in any way to this report:
-> >=20
-> > https://lore.kernel.org/linux-security-module/CALAgD-4hkHVcCq2ycdwnA2hY=
-DBMqijLUOfZgvf1WfFpU-8+42w@mail.gmail.com/
->=20
-> I reproduced the last, but I got a different result (the kernel crashed
-> in a different place).
->=20
-> It seems a corruption case, while the former looks more a lock
-> inversion issue. Will check more.
-
-+ Kent Overstreet
-
-https://syzkaller.appspot.com/bug?extid=3D1de5a37cb85a2d536330
-
-It happens few times per day, since commit 4a39ac5b7d62 (which is
-followed by a lot of merges). The bug has been likely introduced there.
-
-In all recent reports, I noticed that there is always the following
-lock sequence:
-
-[  291.584319][   T30] 5 locks held by syz.0.75/5970:
-[  291.594487][   T30]  #0: ffff888064066420 (sb_writers#25){.+.+}-{0:0}, a=
-t: mnt_want_write+0x3f/0x90
-[  291.603984][   T30]  #1: ffff88805d8b0148 (&sb->s_type->i_mutex_key#30){=
-++++}-{3:3}, at: do_truncate+0x20c/0x310
-[  291.614497][   T30]  #2: ffff888054700a38 (&c->snapshot_create_lock){.+.=
-+}-{3:3}, at: bch2_truncate+0x16d/0x2c0
-[  291.624871][   T30]  #3: ffff888054704398 (&c->btree_trans_barrier){.+.+=
-}-{0:0}, at: __bch2_trans_get+0x7de/0xd20
-[  291.635446][   T30]  #4: ffff8880547266d0 (&c->gc_lock){.+.+}-{3:3}, at:=
- bch2_btree_update_start+0x682/0x14e0
-
-IMA is stuck too, since it is waiting for the inode lock to be released:
-
-[  291.645689][   T30] 1 lock held by syz.0.75/6010:
-[  291.650622][   T30]  #0: ffff88805d8b0148 (&sb->s_type->i_mutex_key#30){=
-++++}-{3:3}, at: process_measurement+0x439/0x1fb0
-
-It seems that the super block is locked by someone else, which is not
-able to unlock. Maybe, it is related to bch2_journal_reclaim_thread(),
-but I don't know for sure.
-
-Kent, do you have time to look at this report?
+On Fri, Sep 27, 2024 at 02:04:13PM GMT, Alice Ryhl wrote:
+> On Thu, Sep 26, 2024 at 6:36 PM Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > Ok, so here's my feeble attempt at getting something going for wrapping
+> > struct pid_namespace as struct pid_namespace indirectly came up in the
+> > file abstraction thread.
+> 
+> This looks great!
 
 Thanks!
 
-Roberto
+> 
+> > The lifetime of a pid namespace is intimately tied to the lifetime of
+> > task. The pid namespace of a task doesn't ever change. A
+> > unshare(CLONE_NEWPID) or setns(fd_pidns/pidfd, CLONE_NEWPID) will not
+> > change the task's pid namespace only the pid namespace of children
+> > spawned by the task. This invariant is important to keep in mind.
+> >
+> > After a task is reaped it will be detached from its associated struct
+> > pids via __unhash_process(). This will also set task->thread_pid to
+> > NULL.
+> >
+> > In order to retrieve the pid namespace of a task task_active_pid_ns()
+> > can be used. The helper works on both current and non-current taks but
+> > the requirements are slightly different in both cases and it depends on
+> > where the helper is called.
+> >
+> > The rules for this are simple but difficult for me to translate into
+> > Rust. If task_active_pid_ns() is called on current then no RCU locking
+> > is needed as current is obviously alive. On the other hand calling
+> > task_active_pid_ns() after release_task() would work but it would mean
+> > task_active_pid_ns() will return NULL.
+> >
+> > Calling task_active_pid_ns() on a non-current task, while valid, must be
+> > under RCU or other protection mechanism as the task might be
+> > release_task() and thus in __unhash_process().
+> 
+> Just to confirm, calling task_active_pid_ns() on a non-current task
+> requires the rcu lock even if you own a refcont on the task?
 
+Interesting question. Afaik, yes. task_active_pid_ns() goes via
+task->thread_pid which is a shorthand for task->pid_links[PIDTYPE_PID].
+
+This will be NULLed when the task exits and is dead (so usually when
+someone has waited on it - ignoring ptrace for sanity reasons and
+autoreaping the latter amounts to the same thing just in-kernel):
+
+T1                      T2                                                   T3
+exit(0);
+                        wait(T1)
+                        -> wait_task_zombie()
+                           -> release_task()
+                              -> __exit_signals()
+                                 -> __unash_process()
+                                    // sets task->thread_pid == NULL         task_active_pid_ns(T1)
+                                    // task->pid_links[PIDTYPE_PID] == NULL
+
+So having a reference to struct task_struct doesn't prevent
+task->thread_pid becoming NULL.
+
+And you touch upon a very interesting point. The lifetime of struct
+pid_namespace is actually tied to struct pid much tighter than it is to
+struct task_struct. So when a task is released (transitions from zombie
+to dead in the common case) the following happens:
+
+release_task()
+-> __exit_signals()
+   -> thread_pid = get_pid(task->thread_pid)
+      -> __unhash_process()
+         -> detach_pid(PIDTYPE_PID)
+            -> __change_pid()
+               {
+                       task->thread_pid = NULL;
+                       task->pid_links[PIDTYPE_PID] = NULL;
+                       free_pid(thread_pid)
+               }
+         put_pid(thread_pid)
+
+And the free_pid() in __change_pid() does a delayed_put_pid() via
+call_rcu().
+
+So afaiu, taking the rcu_read_lock() synchronizes against that
+delayed_put_pid() in __change_pid() so the call_rcu() will wait until
+everyone who does
+
+rcu_read_lock()
+task_active_pid_ns(task)
+rcu_read_unlock()
+
+and sees task->thread_pid non-NULL, is done. This way no additional
+reference count on struct task_struct or struct pid is needed before
+plucking the pid namespace from there. Does that make sense or have I
+gotten it all wrong?
