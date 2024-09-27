@@ -1,140 +1,184 @@
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D19EC18C1F;
-	Fri, 27 Sep 2024 08:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
+Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA4E9189505;
+	Fri, 27 Sep 2024 08:59:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727427485; cv=none; b=RSaQfqPiL6gEx7MR+stae+M7VlfB1BaZaZnRHeGMAd20771EAkWBwyaJK0kCRZKswDKPPhhFLYN6G/Cv87DckLqkbHY6P2JKwtEpqnzcPQtxKNQYN0U56emsdwCC4kzKsb1Ud6TX5jD3zLHFTzlr3oQ2ODesnvlFTI0Xl+NWcUE=
+	t=1727427559; cv=none; b=t2djYCJ0aUwoPxOAoIhBHLskxoAEmPPzGlvGkkrvkmUL2nOyhsDJb+tsEubJnFgvgjO/+JHbhc2Vo09GuCFvmZAbIizYKgZxbkUp0+39Hj6NS15kyp4V7bVhtGz4uB4SpS0Oir255kVUj30p53L9m8gxOxHPC9LN/qKlcWwrUHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727427485; c=relaxed/simple;
-	bh=pEp5gXfIjEbg1ta4gdp8fy84aFsgcENp6aqfPlh6iqM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hJZWOmteWdSYbFZE6Uohme4xxBsSm/nNpu/lBbKBfNsdem1U4CeHDRWdQDqMAMd+I0Ea/HjOMtu5mtrI84atwtvSmJZq0qDz6/T++9q7RAm4n/mFpwRLK43TEYfFlOXh6gZLsWM6s9y/g09caFpc3VBIreyCFYurWfFQyLbNCXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gqAazClv; arc=none smtp.client-ip=209.85.217.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gqAazClv"
-Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-4a3075662b6so344760137.1;
-        Fri, 27 Sep 2024 01:58:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727427483; x=1728032283; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Eg8VUnCWU6xpmCG+ce1Tu7r95og6PEk5nWNUF8PLnD0=;
-        b=gqAazClv8s0ANTY895QSRiOBzehxWHAxTajzp8+L4oMVqITx1Rc1ZRR9N9zO3Vk1iS
-         0E0oCx/nlNg97ah1qOH5riadZAAUmcSvNTYO5+8cO82PLUIPlS/cfntRZC9yPsZp5BNq
-         HZigxvF8s1kAqeM4oah+T9Tu7K/saEbRk9nxIw4DIvRuG/wE2jmZ+lLUJ0nSO9Dx2xMF
-         0I10U74DdkKzjVpgTDGlNKXooe+uatFavOqUsEAAcqBFLrRAjiPMFMCrJtoLD3RBJ5An
-         kmon8czuYyTN9mFTIFXEn+V4NwEhigt5kZsoBpPbFRmrglYrNA4EqqQsJbKRRvYNpG4I
-         noGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727427483; x=1728032283;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Eg8VUnCWU6xpmCG+ce1Tu7r95og6PEk5nWNUF8PLnD0=;
-        b=gv9fLOBopnpIo0Vc3onAwq98+o1AmwfsGOzUyG8gbGravcS6kGattnVwcEWUJUJe40
-         +0OOaYz2ANAIKW0RBypiVzAdT1I3PPoxhOlVSraoYfh2Bvxgo0knFVqOXuiZGWQJ/0uI
-         wNEBBqoz2gsSku0wksBpFcUDb4BUZnjJQ5uzKu3fioSEbsV0pTWGrFkuQ01jqemwx+0B
-         Lti5Sm19C0rU2s/Z1M0gTtzA1hyMkguLjTvVPMb3XU/fyRpveYS6rj1uJ0AiB2JqyjVk
-         qom0D4uTvulcKDDjVr8ygshXwLmd/7QDhYBW9C/c/49306qMxXO6s7s0LoNKBHccM8yq
-         ZzlA==
-X-Forwarded-Encrypted: i=1; AJvYcCU2kNwiVal/pbxQT4WCA9SZmuyu4dEISqslPuFr2sq3fPC9fh4lTuNtOeMwBn7eFImzsyFFI6xRhuhFf81Yz1wZL1wQ@vger.kernel.org, AJvYcCV2d0D0BsiKzXbQwL2TqwG+DY84lebb4Cux4G3ododFoAY6h2IDdKJbj2Rirj5VI/GV5D4wQlxe+CgYaZXOIQ==@vger.kernel.org, AJvYcCVBl/qvinXfWiUkGDVSQEEFr34DlHiFhgvil23df4xrDTJaQwe8+RbTWWC7NSxrKM2HLeN0@vger.kernel.org, AJvYcCWv54scAvVjhxJ7pezM8EjvxB7WchzIL10MLmaFUD5N0HnHJDuhrh3OttX2qEFrQFjslKvAbekh@vger.kernel.org, AJvYcCX9euyxmhyykrVUsgOdHzuNKV/u6O+k37wODRkiEsSzy6g1Zc4McDVPNUsKwU5fVqUshNJjLg==@vger.kernel.org, AJvYcCXd2/Cf5XF8BV7pfNUiXvazo1DtVaAEBfxUYPzvDHrcZrXX9wPyDY7dwNKWJ6jM7wdBSmSTZMDWtvu24YZf0jTXd+AvdPDG@vger.kernel.org, AJvYcCXuBnXWcCYL00ekJ2MlOU2kOwc6+ENoSoMdNGRjknOmTeVb81bBrChPPP9VJ0o7LFuwo9fkrerckw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlZYuYIBAqeuADDiwDH4QGdEkax+KYdlNITZDIn6qmDW0w1eWE
-	ziTAFLcqCrTmyw7kYJrLRlLAjg2pJLbz0YY1FjnOza6HmFweOxsxMhgfO6ZnU2yzL/YdMhgEvO0
-	CMEi91DmBjgQJjf1VLr4BwrAZDmk=
-X-Google-Smtp-Source: AGHT+IHlhccJP6o8YVDcpGsoOKh73nleQWjN6gMlntdM8azrnOLgCbN569DWouWNGBJF/Vf+8gknJS6h6du5PlKNbYc=
-X-Received: by 2002:a05:6102:2ac4:b0:49b:e9fc:14d2 with SMTP id
- ada2fe7eead31-4a2d7ff9815mr2856108137.23.1727427482685; Fri, 27 Sep 2024
- 01:58:02 -0700 (PDT)
+	s=arc-20240116; t=1727427559; c=relaxed/simple;
+	bh=VFt1mI2XEH7xYVDuen7V7h+Man2pR0Jpk0S1LJM+qW8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ML0Jc4QWo+kmPyupY3OC3p7NTc1346DjveKEOl92gg9FBOEBuSDkcapHLhTYlOGnF3Ucw+yDq89BX7+/Whpq1j9EK4/a2Xvo0lK/UejSxh1mRjSNaj8cfU6/F/qrwghBmJTNlayuFEye4cUKTsrfvQzdxP6Pj28+rNsk6IEuRYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 48R8wgDv003841;
+	Fri, 27 Sep 2024 03:58:42 -0500
+Received: (from greg@localhost)
+	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 48R8wgWb003840;
+	Fri, 27 Sep 2024 03:58:42 -0500
+Date: Fri, 27 Sep 2024 03:58:42 -0500
+From: "Dr. Greg" <greg@enjellic.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] lsm/lsm-pr-20240911
+Message-ID: <20240927085841.GA3642@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <d15ee1ccfb91bda67d248b3ec70f0475@paul-moore.com> <960e740f-e5d9-409b-bb2a-8bdceffaae95@I-love.SAKURA.ne.jp> <69e4014e-0a34-4fde-8080-4850a52b0a94@I-love.SAKURA.ne.jp> <CAHC9VhQq0-D=p9Kicx2UsDrK2NJQDyn9psL-PWojAA+Y17WiFQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240817025624.13157-1-laoar.shao@gmail.com> <20240817025624.13157-6-laoar.shao@gmail.com>
- <CAHp75VdpG=yQVaJLR3J5puwj4FYWtXzaHkC1TdmiqfJu1s9PpA@mail.gmail.com>
-In-Reply-To: <CAHp75VdpG=yQVaJLR3J5puwj4FYWtXzaHkC1TdmiqfJu1s9PpA@mail.gmail.com>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Fri, 27 Sep 2024 16:57:26 +0800
-Message-ID: <CALOAHbBHV_xB88AD8azVXZQzdowLtU6EHewFGUtPHQE9K6GQ_Q@mail.gmail.com>
-Subject: Re: [PATCH v7 5/8] mm/util: Fix possible race condition in kstrdup()
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org, alx@kernel.org, 
-	justinstitt@google.com, ebiederm@xmission.com, alexei.starovoitov@gmail.com, 
-	rostedt@goodmis.org, catalin.marinas@arm.com, 
-	penguin-kernel@i-love.sakura.ne.jp, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	audit@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, bpf@vger.kernel.org, netdev@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhQq0-D=p9Kicx2UsDrK2NJQDyn9psL-PWojAA+Y17WiFQ@mail.gmail.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Fri, 27 Sep 2024 03:58:43 -0500 (CDT)
 
-On Fri, Sep 27, 2024 at 1:35=E2=80=AFAM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
->
-> On Thu, Sep 26, 2024 at 7:44=E2=80=AFPM Yafang Shao <laoar.shao@gmail.com=
-> wrote:
-> >
-> > In kstrdup(), it is critical to ensure that the dest string is always
-> > NUL-terminated. However, potential race condidtion can occur between a
->
-> condition
->
-> > writer and a reader.
-> >
-> > Consider the following scenario involving task->comm:
-> >
-> >     reader                    writer
-> >
-> >   len =3D strlen(s) + 1;
-> >                              strlcpy(tsk->comm, buf, sizeof(tsk->comm))=
-;
-> >   memcpy(buf, s, len);
-> >
-> > In this case, there is a race condition between the reader and the
-> > writer. The reader calculate the length of the string `s` based on the
->
-> calculates
->
-> > old value of task->comm. However, during the memcpy(), the string `s`
-> > might be updated by the writer to a new value of task->comm.
-> >
-> > If the new task->comm is larger than the old one, the `buf` might not b=
-e
-> > NUL-terminated. This can lead to undefined behavior and potential
-> > security vulnerabilities.
-> >
-> > Let's fix it by explicitly adding a NUL-terminator.
->
-> memcpy() is not atomic AFAIK, meaning that the new string can be also
-> shorter and when memcpy() already copied past the new NUL. I would
-> amend the explanation to include this as well.
->
-> ...
->
-> > +               /* During memcpy(), the string might be updated to a ne=
-w value,
-> > +                * which could be longer than the string when strlen() =
-is
-> > +                * called. Therefore, we need to add a null termimator.
->
-> /*
->  * The wrong comment style. Besides that a typo
->  * in the word 'terminator'. Please, run codespell on your changes.
->  * Also use the same form: NUL-terminator when you are talking
->  * about '\0' and not NULL.
->  */
+On Mon, Sep 16, 2024 at 04:08:11AM -0400, Paul Moore wrote:
 
-Thank you for pointing out these errors and for recommending the use
-of codespell.
-Will fix them in the next version.
+Good morning, I hope the end of the week is going well for everyone.
 
---=20
-Regards
-Yafang
+> On Sun, Sep 15, 2024 at 8:38???PM Tetsuo Handa
+> <penguin-kernel@i-love.sakura.ne.jp> wrote:
+> > On 2024/09/14 0:28, Paul Moore wrote:
+> > > I find it somewhat amusing that you are complaining about the LSM
+> > > framework not accepting new LSMs in the same pull request where we are
+> > > adding a new LSM (IPE).  As a reminder, we have documented guidelines
+> > > regarding the addition of new LSMs:
+> > >
+> > > https://github.com/LinuxSecurityModule/kernel/blob/main/README.md
+> > (...snipped...)
+> > > While I have no intention to negatively impact out-of-tree LSMs,
+> >
+> > What I call "patent examination" is "New LSM Guidelines" section within
+> > that link. That section includes "here are a list of requirements for
+> > new LSM submissions:" and "The new LSM must be sufficiently unique", and
+> > out-of-tree LSMs which cannot satisfy it won't be able to become in-tree.
+> > If we apply this requirement to userspace program, this requirement means
+> > you are declaring that "postfix" (or anything except "sendmail") cannot
+> > become in-tree because "sendmail" is already in-tree. This is a clear
+> > intention of negatively impact out-of-tree LSMs. People have the right to
+> > use whatever subsets/alternatives. Even if a new LSM has were completely a
+> > subset of existing in-tree LSMs, people have the right to use such LSM.
+
+> Comparing userspace applications to kernel code isn't a fair
+> comparison as a userspace application can generally be added without
+> impacting the other applications on the system.
+
+Tetsuo's comparison may be a bit strained, but it remains relevant.
+
+Linux was founded on a concept of choice, the current LSM architecture
+struggles with the ability to facilitate generalized choice and
+flexibility.
+
+> > While I consider that some of out-of-tree LSMs being unable to
+> > become in-tree is inevitable, the requirement that any LSM has to
+> > be built-in is a barrier for LSMs which cannot be built-in.
+
+> Anyone is always free to build their own kernel with whatever code
+> changes they like, this is the beauty of the kernel source being
+> available and licensed as Open Source.  You are free to build a
+> kernel with whatever LSM you like included and enabled.  You have
+> been shown examples on how to do this in previous threads.
+
+> > People have the right to install whatever userspace software /
+> > kernel modules they need.
+
+> Anyone is free to build their own kernel with whatever LSMs they want,
+> either in-tree or out-of-tree; the static call changes do not prevent
+> that.
+
+This line of reasoning represents a bit of an indulgence in a false
+binary logic fallacy.
+
+Anyone reading this forum is certainly capable of building a kernel in
+any configuration they want to.  That being said, the general Linux
+technical community now represents a cohort far larger than
+individuals who have the ability to build and platform a kernel of
+their choosing.
+
+From a security perspective, Linux will benefit from providing a
+better means to serve a middle ground where alternate security models
+and architectures can be implemented without building a kernel from
+scratch.
+
+> > > My focus is on the upstream Linux kernel and ensuring that the upstream,
+> > > in-tree LSMs have the best framework possible to ensure their proper
+> > > operation and ease of development/maintenance.  While I have no
+> > > intention to negatively impact out-of-tree LSMs, I will not harm the
+> > > upstream code base solely to support out-of-tree LSMs.  Further, if
+> > > improvements to the upstream LSM framework are determined to harm
+> > > out-of-tree LSMs, that shall be no reason to reject the upstream
+> > > improvements.
+> >
+> > I have been asking you for a solution for "in-tree but not built-in" LSM
+> > (namely TOMOYO). You are refusing to provide a solution for the sake of
+> > "in-tree and built-in" LSMs. The "static call" changes fails to ensure that
+> > the upstream, in-tree TOMOYO to have the best framework. The "static call"
+> > changes makes the upstream, in-tree TOMOYO to have a worse framework than
+> > now.
+
+> As mentioned so many times before, the "in-tree but not built-in"
+> LSM problem is entirely a distribution/binary-kernel problem.  The
+> upstream kernel community is not responsible for the choices and
+> individual build configurations of the different Linux distros.
+> Support for mechanisms which allow for dynamic LSMs in pre-built
+> distro kernels is something we could consider, but so far everything
+> that has been proposed has had a negative impact on the upstream
+> kernel sources and has been rejected as a result.
+
+Not everything.
+
+As of the TSEM V4 release, which is now a month old, we have proposed
+a middle ground that provides multiple mechanisms for the mainsteam
+kernel to support alternate security models in an orthogonal manner,
+but it has struggled to receive any significant review.
+
+The V4 release now includes the ability to use loadable modules to
+implement customized security models.  The premise for this support is
+to replace the need for a dynamic LSM with an LSM that has dynamic
+configurability.
+
+Bandwidth is always in short supply, but some internal investigation
+by our team has demonstrated that the TSEM architecture can implement
+Tomoyo as a loadable security model.
+
+TSEM also provides a framework for servicing the needs of Endpoint
+Detection and Response systems without having to write any kernel code
+at all.  This same mechanism also facilitates the ability to apply
+machine learning detection and intervention models, a capability that
+is notably absent from any of the existing LSM's.
+
+For the record and everyone reading along at home, here are the links
+to the four releases:
+
+V1:
+https://lore.kernel.org/linux-security-module/20230204050954.11583-1-greg@enjellic.com/T/#t
+
+V2:
+https://lore.kernel.org/linux-security-module/20230710102319.19716-1-greg@enjellic.com/T/#t
+
+V3:
+https://lore.kernel.org/linux-security-module/20240401105015.27614-1-greg@enjellic.com/T/#t
+
+V4:
+https://lore.kernel.org/linux-security-module/20240826103728.3378-1-greg@enjellic.com/T/#t
+
+We believe that making some forward progress with review and inclusion
+of TSEM would positively impact the issues under discussion.
+
+> paul-moore.com
+
+Have a good weekend.
+
+As always,
+Dr. Greg
+
+The Quixote Project - Flailing at the Travails of Cybersecurity
+              https://github.com/Quixote-Project
