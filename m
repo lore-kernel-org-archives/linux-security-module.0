@@ -1,87 +1,102 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0F4A125DE;
-	Sat, 28 Sep 2024 13:56:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFF10225DA
+	for <linux-security-module@vger.kernel.org>; Sat, 28 Sep 2024 17:40:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727531782; cv=none; b=KJMyxtB//0j6vcWOJnkxQ1/mzt/R/zFnG4Pw2NwRo+YSD3hTARs5mu4ENUi8LEly5n8txLfck0rAHqrGMPRSfmG/kn5jZ5hHHyY/nKOLm9meK/2cNmuyBhAU98fjvw1MQur926++yOmtYjHT4dEkSb2cUyHds2HycLKFQ3u0z1M=
+	t=1727545250; cv=none; b=sbdO6x0K5RZBHmmQ1jxdmm26F0ZZmafCS6v17dqeiAIe4US2AGbPGlVME+/ZBgg7eGh+LXdkT5+sDkAlTO+q+DBo2tcCNfb8JShihzoGy+8YVsaz/3tMrNrg3tfJrWmZTuGHZhRyrLlHy5Rsa0ziHRgCIINvx37bIpReZyhG4AQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727531782; c=relaxed/simple;
-	bh=V0bC7nOSX6cbrcwlTI9Og+ymNfrAjTZQ4KChMguz4Xg=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=DAmf1F3lZnDCQd6JHNgJXYX/Mq0b7bMJqOnGZorj9D5yg/o3vzDVNvm/oLktcASNG5QkN0zzXZgDWxlO3xYNP5erAjjLOLs2sFjbg9fls2zL+eKNJbZUg/+Aa6jUkJ33Jjft2yozZcTRPSeQ7p7EPXkE/Y8WAwcj0SgiS9Eg+es=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=kzEGu3Gn; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1727545250; c=relaxed/simple;
+	bh=7cSxZan5VJJanBjU9FgW+bT2c3OOVf4g9f4UDy02JAA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ff6445riFnXSAKtwL52pcJbSGhlWmKGQ7OQ3oCDd+EKhnffCMVwW3aorkCK2BdpCzwvl9Lv2NK7iIYl1cZ9OItv/XPFG+2e1bUTSIOUNVWdJod9N7nW65+cGRb9rm12FA0TtdEvBZnaLcSwnfsOGsh3WBh3aqguCrp7rN5Sx2HM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tc/fKp5U; arc=none smtp.client-ip=91.218.175.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="kzEGu3Gn"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0BB5C4CEC3;
-	Sat, 28 Sep 2024 13:56:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1727531781;
-	bh=V0bC7nOSX6cbrcwlTI9Og+ymNfrAjTZQ4KChMguz4Xg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=kzEGu3GndeI7HhP/4+w3f8WhO9zIibC2nDGGxqHpGYgQpITxyhAX8E4+FYF5ywplQ
-	 TKGM4CAIFsHFs3ybovgU9nGj0/lMuMxT6e8j27OK26RBvVZNzgYGCR6theqj7iQMAE
-	 OaHkR78sw1jmTmQTttJ11vJEzUXPiTII/olsG0Tg=
-Date: Sat, 28 Sep 2024 06:56:20 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: syzbot <syzbot+1cd571a672400ef3a930@syzkaller.appspotmail.com>
-Cc: dmitry.kasatkin@gmail.com, ebpqwerty472123@gmail.com,
- eric.snowberg@oracle.com, hughd@google.com, jmorris@namei.org,
- linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, linux-security-module@vger.kernel.org,
- paul@paul-moore.com, roberto.sassu@huawei.com, serge@hallyn.com,
- stephen.smalley.work@gmail.com, syzkaller-bugs@googlegroups.com,
- zohar@linux.ibm.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- stable@kernel.org
-Subject: Re: [syzbot] [integrity?] [lsm?] possible deadlock in
- process_measurement (4)
-Message-Id: <20240928065620.7abadb2d8552f03d785c77c9@linux-foundation.org>
-In-Reply-To: <66f7b10e.050a0220.46d20.0036.GAE@google.com>
-References: <66f7b10e.050a0220.46d20.0036.GAE@google.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tc/fKp5U"
+Date: Sat, 28 Sep 2024 13:40:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1727545245;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yHOTQNCADZnKsuE9lSzG+7fMe7LaXb0o/Rvu27/vHKQ=;
+	b=tc/fKp5UrPYEpRWoVOTK6KHpaOWVe3O0r9IsHUPrFD61yM46clpeE630s1hUMbcHr81ui3
+	CcsWmiRXXesP1AqKybsgg58UUCFwAdlDewip+kyOU3OwcpryG4ZWbowkoPF6u+8elO68hc
+	m2tHkVYIWi21W6o+JQK8TcuruwgzffU=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Roberto Sassu <roberto.sassu@huaweicloud.com>, 
+	Paul Moore <paul@paul-moore.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Roberto Sassu <roberto.sassu@huawei.com>, Casey Schaufler <casey@schaufler-ca.com>, 
+	syzbot <syzbot+listfc277c7cb94932601d96@syzkaller.appspotmail.com>, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] Monthly lsm report (Sep 2024)
+Message-ID: <y6vqh3zrzcfsq3ngocrcyjo4tn3y3sgarnbcc25kmur3ucp4va@tt5t5rwblvta>
+References: <66f12e9e.050a0220.3eed3.0009.GAE@google.com>
+ <CAHC9VhTxCzWvM+j8=J08JVs=1cwk9rtBSS7qFBkdm-_neAwkJQ@mail.gmail.com>
+ <03c3a47ca225050d37dca6a9249c1f978f1fc56b.camel@huaweicloud.com>
+ <734977390eeecba39789df939a00904e87367e5e.camel@huaweicloud.com>
+ <nqxo5tqcwbwksibg45spssrnhxw7tabfithgnqnmpl2egmbfb7@gyczfn7hivvu>
+ <owdoubzm3jqf4cuhawaavver5mzko32ijuh2nrm5vhzegmjbmf@az3mweawrni6>
+ <ceb762ee-2518-44d1-b73c-fd165da7fbbb@I-love.SAKURA.ne.jp>
+ <pdghzlvw6ypcju6ldsngka44cjp6g56bjjsmxm3sd7dqev4g6y@x72zm7vurxyz>
+ <deff904e-5c56-42ae-b8b0-7b55580b023a@I-love.SAKURA.ne.jp>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <deff904e-5c56-42ae-b8b0-7b55580b023a@I-love.SAKURA.ne.jp>
+X-Migadu-Flow: FLOW_OUT
 
-On Sat, 28 Sep 2024 00:32:30 -0700 syzbot <syzbot+1cd571a672400ef3a930@syzkaller.appspotmail.com> wrote:
-
-> Hello,
+On Sat, Sep 28, 2024 at 06:23:53PM GMT, Tetsuo Handa wrote:
+> On 2024/09/28 17:57, Kent Overstreet wrote:
+> > On Sat, Sep 28, 2024 at 03:49:27PM GMT, Tetsuo Handa wrote:
+> >> On 2024/09/28 10:25, Kent Overstreet wrote:
+> >>> And looking further, I don't see anyhting in the console log from when
+> >>> bcachefs actually mounted (???), which means I don't think I have enough
+> >>> to go on. It's clearly an upgrade path issue - we didn't run
+> >>> check_allocations as is required when upgrading to 1.11 - but it's not
+> >>> reproducing for me when I run tests with old tools.
+> >>>
+> >>> Can we get some more information about the syzbot reproducer? Exact
+> >>> tools version, format command and mount command.
+> >>
+> >> Reproducer for this bug is not yet found. But syzbot does not use userspace
+> >> tools. That is, testing with old (or new) tools will not help. Please note
+> >> that syzbot uses crafted (intentionally corrupted) filesystem images. If the
+> >> kernel side depends on sanity checks / validations done by the userspace
+> >> side, syzbot will find oversights on the kernel side. Please don't make any
+> >> assumptions made by the userspace tools.
+> >>
+> > 
+> > You seem to be confused; how do you expect sysbot to test a filesystem
+> > without the format comand?
 > 
-> syzbot found the following issue on:
-
-Thanks.
-
-> HEAD commit:    97d8894b6f4c Merge tag 'riscv-for-linus-6.12-mw1' of git:/..
-> git tree:       upstream
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=14138a80580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=bc30a30374b0753
-> dashboard link: https://syzkaller.appspot.com/bug?extid=1cd571a672400ef3a930
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=118fd2a9980000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1038299f980000
+> Please find syz_mount_image$bcachefs from e.g.
+> https://syzkaller.appspot.com/text?tag=CrashLog&x=17441e80580000 .
 > 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/f181c147328d/disk-97d8894b.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/b8b0160d9b09/vmlinux-97d8894b.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/c5dab0d4f811/bzImage-97d8894b.xz
+> syzbot creates in-memory filesystem image using memfd and mount it
+> using loopback devices. For example,
+> https://syzkaller.appspot.com/text?tag=ReproC&x=102e0907980000 is
+> a C reproducer for an ext4 bug; check how setup_loop_device() and
+> syz_mount_image() are used for mounting filesystems.
 > 
-> The issue was bisected to:
-> 
-> commit ea7e2d5e49c05e5db1922387b09ca74aa40f46e2
-> Author: Shu Han <ebpqwerty472123@gmail.com>
-> Date:   Tue Sep 17 09:41:04 2024 +0000
-> 
->     mm: call the security_mmap_file() LSM hook in remap_file_pages()
+> Again, syzbot does not use userspace tools for managing filesystems.
 
-That commit has cc:stable.
+Well, they must have started with /something/, I very much doubt they
+wrote their own code for writing a bcachefs superblock.
 
-Can I suggest that you change sysbot so it includes a cc:stable if the
-faulty commit had cc:stable?  If Greg agrees that would be useful?
+And if they were using the standard format command I would've gotten the
+full contents of the superblock in a nice text format, so I could piece
+together what happened.
 
-
+Since I don't have that, and the part of the dmesg log where bcachefs
+mounted doesn't even seem to be there, I don't have anything to go on.
