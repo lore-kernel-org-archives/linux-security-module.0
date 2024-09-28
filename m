@@ -1,183 +1,119 @@
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 791BE2628C
-	for <linux-security-module@vger.kernel.org>; Sat, 28 Sep 2024 20:06:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB4FC18454E;
+	Sat, 28 Sep 2024 21:14:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727554017; cv=none; b=OauG43tanIqdmFHXCXDYYvIW6PURzYiwor/2GbAnyorpl36ltR0QSsskov0DmPR0HFNtniXEIrQfmhpJoT+NNLQCGwWZTupUDhbCvuXL364WhPGN2wdWALn+ZD34/EOyOD+oZYTvP7HplqAnNbeAT2GUpr5GlwMW8WhkXkEc8oA=
+	t=1727558068; cv=none; b=ZUU5QgHo4I/1dUkA6x4z7dy/0vU7IHZo8CNH2TlC5J5RP7uIckxthaYpBo8KMls1jZt9CMVqlRjVNGp6l/HxC+oOXEwPR4aCydQTSnfMsAGJyB3iZoqxGapXxzHMDx8e0r2ls1FnMMz22p0sRFOeWdsF7iuswoHozPepnkij/Ds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727554017; c=relaxed/simple;
-	bh=h0sNuBxsvoK2YChegc9QSYuEMp8d+DJBKteN7IMj0A4=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Wg6rvzU8tBASsv1Zm5cMEJRJ9aRTghz350lJgqIOF4RszKZQ6Ry8D7hLCPuxyPj8MQg6iC7GFNq7xMDuAnH5gqnmG6eYRQ3PhW0WVm37bUMAgciwCCSJ1CB7XlWoHT89tiLrnVFrLF0WGlJ8hBmLlSOP9nCleRmnFcd2RtC6JLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mswEaIxt; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
+	s=arc-20240116; t=1727558068; c=relaxed/simple;
+	bh=jktDOh0pQJ6Jkqsq+yKW1qQ5mo20RTE6ds51doxTD2g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bK9BJ5hpGNTo4Y9ie7e2MM+45cK5udPexRhlLkOcyLv5Bfn/doZA6Cs5lxIQaYs8QSbPuNZkoSDrewTnaaTqeuYA4fz4utizlFn4Jf9Q60KqEX2kw+43AmaQ0y5zsb64yUOsSEx46ZGeyuV6a54VcGcl8FzTIrMVsq1rnZYUXB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g9tqavMY; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mswEaIxt"
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e253a8b95aso16034337b3.0
-        for <linux-security-module@vger.kernel.org>; Sat, 28 Sep 2024 13:06:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727554014; x=1728158814; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=y1SqGaOAQOPzAn14KPrnOehT0qxEpBZk7h3tAfBnOmM=;
-        b=mswEaIxtkZm5hRXLc/zPHoCM0SG07iYCduhZD+5ni+YVOtM2UZt7VYcFgig69nR6pg
-         cYMxUZzP2cOiLfavE58L6eJf/i+XgKALYxWAa0hNU4OOILB2lqy93fwli5fcNAu//Frc
-         eri1PUqHONpU30k1Kh+X2GZ2hx4TlTSHsDvHv5XNA3ySYkvppnYyWMTBjtZyxej9mLc2
-         sp0o+E7jS1STRlnCZnNupnTqmLVZ3Xk11mYXCvqqz61rG5oiGHYH8KHco5CDl8Kti+jE
-         3YRBmUvOjDNDVcsgUwUkQ7vL0Dwz/7GgrzGZ5UAEMu5G8wrB7TODn+UUHmUTCvDEXzpP
-         bs3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727554014; x=1728158814;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=y1SqGaOAQOPzAn14KPrnOehT0qxEpBZk7h3tAfBnOmM=;
-        b=l/UKz8r1yGkrd/HBb6YOVcelPjM7YtEOmxt0TR20YVBgr1RQfTvPK+iT5xN1OM9DUN
-         LIsDSE66ilmKmufQk9dANXJmka3aH6KObl+KzY5iC+wL1PWeTGjcULI4IhLKBd9pW9G5
-         S6PA78o8TxJa8fBd8NkzjDBDf2GIcqMTc6o7NCAvYe2JWJhzIYfg2C2+umJEs8Q6DAjx
-         9GEOf5u4zQvHYSrQusZzLoLszycDZz7uOUI/YyS+IQfRhapyRz4cBYeDhxfM4/u9PtbO
-         h7jynBc+xGpSBZL5sZKHIjcHwwIe/i0jvkgCpiyrNO6V35kxvTo+Fqwr3E47jzKVgncF
-         K+Jw==
-X-Forwarded-Encrypted: i=1; AJvYcCU/YaXwjI2RnntSJLWxthWRQ0Fx4EKX5b3H7qFOf1ht3zQ67Ad8k7Vkgy12j8DfVxg3rwzlfc9lQWirFHTGWbbEh8t5GIg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzB/XIIRLIro1ENAIzoyv9JoRACIzKMAJJAGQ69oN/rgrIhtNSc
-	7ezNMCyHeRM3xtNtnlpR7+IJHNQlzUZIqvEOcGWsjmDnXDfeFcHppE9sR25exhRDjgCrXHAtnai
-	exA==
-X-Google-Smtp-Source: AGHT+IE80aZhCT4JHwgHwsEdaDWdBP8dNZdVjFPvbHZ/3cczSejefNhUNjkgqyWFX+K6tqTYQ9YkfEFTh9M=
-X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
- (user=gnoack job=sendgmr) by 2002:a05:690c:4b92:b0:6dd:bb6e:ec89 with SMTP id
- 00721157ae682-6e245317e48mr935707b3.2.1727554014549; Sat, 28 Sep 2024
- 13:06:54 -0700 (PDT)
-Date: Sat, 28 Sep 2024 22:06:52 +0200
-In-Reply-To: <ZvZ_ZjcKJPm5B3_Z@google.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g9tqavMY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F384C4CEC3;
+	Sat, 28 Sep 2024 21:14:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727558067;
+	bh=jktDOh0pQJ6Jkqsq+yKW1qQ5mo20RTE6ds51doxTD2g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=g9tqavMYyNMNsLQ90Hv8A7KbaPkFXwEzrTr5sUcx3Go75HmSrEM5AGbS3oGkbdlel
+	 B6eeA9RvWWVqPZh9Wyg+F2ooAJEJP2A9vmlOpz3KGgnUCCaozlOpVXmu34F4CSTbVW
+	 VYi3AeJ+So0qIkRNXn0E4ZMxj7wF4lRw5UT4Z9kANXoElsoElSAq/nMKw4C30aQ1eq
+	 FyUyaqsM2A7JG0XC1b589UzBaWfIb8SBg8crnH5eMbtpFnuBXzJZorS5YemcfRe1yg
+	 2gYtwluBB821Xd++PBJbJ5ISoXfK7xESIT3aL16deLWzsV9vCOeNQKEJ+OF0s25yqT
+	 cS+Ic0n7Zt0/Q==
+Date: Sat, 28 Sep 2024 14:14:27 -0700
+From: Kees Cook <kees@kernel.org>
+To: Yafang Shao <laoar.shao@gmail.com>
+Cc: akpm@linux-foundation.org, torvalds@linux-foundation.org,
+	alx@kernel.org, justinstitt@google.com, ebiederm@xmission.com,
+	alexei.starovoitov@gmail.com, rostedt@goodmis.org,
+	catalin.marinas@arm.com, penguin-kernel@i-love.sakura.ne.jp,
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, audit@vger.kernel.org,
+	linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
+	bpf@vger.kernel.org, netdev@vger.kernel.org,
+	dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH v7 5/8] mm/util: Fix possible race condition in kstrdup()
+Message-ID: <202409281411.3C42A3703C@keescook>
+References: <20240817025624.13157-1-laoar.shao@gmail.com>
+ <20240817025624.13157-6-laoar.shao@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240904104824.1844082-1-ivanov.mikhail1@huawei-partners.com>
- <20240904104824.1844082-15-ivanov.mikhail1@huawei-partners.com>
- <ZurZ7nuRRl0Zf2iM@google.com> <220a19f6-f73c-54ef-1c4d-ce498942f106@huawei-partners.com>
- <ZvZ_ZjcKJPm5B3_Z@google.com>
-Message-ID: <Zvhh3CRj9T7_KIhC@google.com>
-Subject: Re: [RFC PATCH v3 14/19] selftests/landlock: Test socketpair(2) restriction
-From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
-To: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-Cc: mic@digikod.net, willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com, 
-	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
-	netfilter-devel@vger.kernel.org, yusongping@huawei.com, 
-	artem.kuzin@huawei.com, konstantin.meskhidze@huawei.com
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240817025624.13157-6-laoar.shao@gmail.com>
 
-On Fri, Sep 27, 2024 at 11:48:22AM +0200, G=C3=BCnther Noack wrote:
-> On Mon, Sep 23, 2024 at 03:57:47PM +0300, Mikhail Ivanov wrote:
-> > (Btw I think that disassociation control can be really useful. If
-> > it were possible to restrict this action for each protocol, we would
-> > have stricter control over the protocols used.)
->=20
-> In my understanding, the disassociation support is closely intertwined wi=
-th the
-> transport layer - the last paragraph of DESCRIPTION in connect(2) is list=
-ing
-> TCP, UDP and Unix Domain sockets in datagram mode. -- The relevant code i=
-n in
-> net/ipv4/af_inet.c in inet_dgram_connect() and __inet_stream_connect(), w=
-here
-> AF_UNSPEC is handled.
->=20
-> I would love to find a way to restrict this independent of the specific
-> transport protocol as well.
->=20
-> Remark on the side - in af_inet.c in inet_shutdown(), I also found a worr=
-ying
-> scenario where the same sk->sk_prot->disconnect() function is called and
-> sock->state also gets reset to SS_UNCONNECTED.  I have done a naive attem=
-pt to
-> hit that code path by calling shutdown() on a passive TCP socket, but was=
- not
-> able to reuse the socket for new connections afterwards. (Have not debugg=
-ed it
-> further though.)  I wonder whether this is a scnenario that we also need =
-to
-> cover?
+On Sat, Aug 17, 2024 at 10:56:21AM +0800, Yafang Shao wrote:
+> In kstrdup(), it is critical to ensure that the dest string is always
+> NUL-terminated. However, potential race condidtion can occur between a
+> writer and a reader.
+> 
+> Consider the following scenario involving task->comm:
+> 
+>     reader                    writer
+> 
+>   len = strlen(s) + 1;
+>                              strlcpy(tsk->comm, buf, sizeof(tsk->comm));
+>   memcpy(buf, s, len);
+> 
+> In this case, there is a race condition between the reader and the
+> writer. The reader calculate the length of the string `s` based on the
+> old value of task->comm. However, during the memcpy(), the string `s`
+> might be updated by the writer to a new value of task->comm.
+> 
+> If the new task->comm is larger than the old one, the `buf` might not be
+> NUL-terminated. This can lead to undefined behavior and potential
+> security vulnerabilities.
+> 
+> Let's fix it by explicitly adding a NUL-terminator.
 
-FYI, **this does turn out to work** (I just fumbled in my first experiment)=
-. --
-It is possible to reset a listening socket with shutdown() into a state whe=
-re it
-can be used for at least a new connect(2), and maybe also for new listen(2)=
-s.
+So, I'm fine with adding this generally, but I'm not sure we can
+construct these helpers to be universally safe against the strings
+changing out from under them. This situation is distinct to the 'comm'
+member, so I'd like to focus on helpers around 'comm' access behaving in
+a reliable fashion.
 
-The same might also be possible if a socket is in the TCP_SYN_SENT state at=
- the
-time of shutdown() (although that is a bit trickier to try out).
+-Kees
 
-So a complete disassociation control for TCP/IP might not only need to have
-LANDLOCK_ACCESS_SOCKET_CONNECT_UNSPEC (or however we'd call it), but also
-LANDLOCK_ACCESS_SOCKET_PASSIVE_SHUTDOWN and maybe even another one for the
-TCP_SYN_SENT case...? *
+> 
+> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> ---
+>  mm/util.c | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/mm/util.c b/mm/util.c
+> index 983baf2bd675..4542d8a800d9 100644
+> --- a/mm/util.c
+> +++ b/mm/util.c
+> @@ -62,8 +62,14 @@ char *kstrdup(const char *s, gfp_t gfp)
+>  
+>  	len = strlen(s) + 1;
+>  	buf = kmalloc_track_caller(len, gfp);
+> -	if (buf)
+> +	if (buf) {
+>  		memcpy(buf, s, len);
+> +		/* During memcpy(), the string might be updated to a new value,
+> +		 * which could be longer than the string when strlen() is
+> +		 * called. Therefore, we need to add a null termimator.
+> +		 */
+> +		buf[len - 1] = '\0';
+> +	}
+>  	return buf;
+>  }
+>  EXPORT_SYMBOL(kstrdup);
+> -- 
+> 2.43.5
+> 
 
-It makes me uneasy to think that I only looked at AF_INET{,6} and TCP so fa=
-r,
-and that other protocols would need a similarly close look.  It will be
-difficult to cover all the "disassociation" cases in all the different
-protocols, and even more difficult to detect new ones when they pop up.  If=
- we
-discover new ones and they'd need new Landlock access rights, it would also
-potentially mean that existing Landlock users would have to update their ru=
-les
-to spell that out.
-
-It might be easier after all to not rely on "disassociation" control too mu=
-ch
-and instead to design the network-related access rights in a way so that we=
- can
-provide the desired sandboxing guarantees by restricting the "constructive"
-operations (the ones that initiate new network connections or that listen o=
-n the
-network).
-
-Mikhail, in your email I am quoting above, you are saying that "disassociat=
-ion
-control can be really useful"; do you know of any cases where a restriction=
- of
-connect/listen is *not* enough and where you'd still want the disassociatio=
-n
-control?
-
-(In my mind, the disassociation control would have mainly been needed if we=
- had
-gone with Micka=C3=ABl's "Use socket's Landlock domain" RFC [1]?  Micka=C3=
-=ABl and me have
-discussed this patch set at LSS and I am also now coming around to the
-realization that this would have introduced more complication.  - It might =
-have
-been a more "pure" approach, but comes at the expense of complicating Landl=
-ock
-usage.)
-
-=E2=80=94G=C3=BCnther
-
-[1] https://lore.kernel.org/all/20240719150618.197991-1-mic@digikod.net/
-
-* for later reference, my reasoning in the code is: net/ipv4/af_inet.c
-  implements the entry points for connect() and listen() at the address fam=
-ily
-  layer.  Both operations require that the sock->state is SS_UNCONNECTED.  =
-So
-  the rest is going through the other occurrences of SS_UNCONNECTED in that=
- same
-  file to see if there are any places where the socket can get back into th=
-at
-  state.  The places I found where it is set to that state are:
- =20
-  1. inet_create (right after creation, expected)
-  2. __inet_stream_connect in the AF_UNSPEC case (known issue)
-  3. __inet_stream_connect in the case of a failed connect (expected)
-  4. inet_shutdown in the case of TCP_LISTEN or TCP_SYN_SENT (mentioned abo=
-ve)
+-- 
+Kees Cook
