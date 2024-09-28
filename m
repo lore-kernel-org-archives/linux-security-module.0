@@ -1,123 +1,183 @@
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 981863C0C;
-	Sat, 28 Sep 2024 18:08:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 791BE2628C
+	for <linux-security-module@vger.kernel.org>; Sat, 28 Sep 2024 20:06:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727546883; cv=none; b=cuIWrh3Vm2ZVP+zUro/bo4WuuY8dbqTX6cZoLACbW1wC/wO1xmkjXYeselxOQn/M6pBNDo4QVfC6kZLixg7gWsUy1o0An2MJYOlmbsBP3A2P07bC/QitIJ7OZbc9PgSQEhXNziucd8fQrdxepZR+tGJ+YT8B2eRq3uJg+CyvPRU=
+	t=1727554017; cv=none; b=OauG43tanIqdmFHXCXDYYvIW6PURzYiwor/2GbAnyorpl36ltR0QSsskov0DmPR0HFNtniXEIrQfmhpJoT+NNLQCGwWZTupUDhbCvuXL364WhPGN2wdWALn+ZD34/EOyOD+oZYTvP7HplqAnNbeAT2GUpr5GlwMW8WhkXkEc8oA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727546883; c=relaxed/simple;
-	bh=4rqWLjYuai7cfKpnkWeDQNh9AmqL1eAP/dgFhclyNuo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Blw8hEkIHkkdCI/mcLe3GZ/U/S4XId5ok7ef0Os98Xa8QrkXOPTrNTe9ybVuwu44TO5B1D7BxMJaCU741m6nKBgyqqYSDzFTMgkB4WxxOgC4GYolx9Ssjq8cC3Ryos0+edBwT8LVCeDDruPKtDQP6meg8S9PHehoHy71BMAlTHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PNeyrAbW; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1727554017; c=relaxed/simple;
+	bh=h0sNuBxsvoK2YChegc9QSYuEMp8d+DJBKteN7IMj0A4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Wg6rvzU8tBASsv1Zm5cMEJRJ9aRTghz350lJgqIOF4RszKZQ6Ry8D7hLCPuxyPj8MQg6iC7GFNq7xMDuAnH5gqnmG6eYRQ3PhW0WVm37bUMAgciwCCSJ1CB7XlWoHT89tiLrnVFrLF0WGlJ8hBmLlSOP9nCleRmnFcd2RtC6JLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mswEaIxt; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PNeyrAbW"
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2fabb837ddbso21322931fa.1;
-        Sat, 28 Sep 2024 11:08:01 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mswEaIxt"
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e253a8b95aso16034337b3.0
+        for <linux-security-module@vger.kernel.org>; Sat, 28 Sep 2024 13:06:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727546880; x=1728151680; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=CKzeRt3cZsRqbJmwfzDXtTwI6KtcqI0hnC8kaq1Fnag=;
-        b=PNeyrAbWFB7UibjsQRzP99XFI1tttqHthop3UtaTSpBdpck2GbdyYwyk+FD8wu2NgZ
-         20qHMOGq+/yB8Y0776kTJy7SljZRtHaliRjG4LQ6mD43XXFkvSw9VQWMnj1hPclFsVTe
-         pwix55YgkfwXMjM07ZKGqavzv6l6A5mMKH8XdigSzOPOnZsAqQRuIPGALjk95Fm5ZmIg
-         8ltt8q3etD8kuC66naa829kSyaYfqokhgeese54+MG7EXxQEVcsyFHO0vRqUvbvioJQO
-         pERiZtsi4wTnkBH6FFIew4hxKqJpKDYMARIR6IpCzeXphWbqrfXAt7D7wf0irGbWPJWn
-         mTsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727546880; x=1728151680;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=google.com; s=20230601; t=1727554014; x=1728158814; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=CKzeRt3cZsRqbJmwfzDXtTwI6KtcqI0hnC8kaq1Fnag=;
-        b=fKFXBrCMT8ZPOtKzlvddenBT9tmYcSnNZeJ1KMrfh1UK30A0Dw51s45KOAiMw0jYpP
-         P7LyqvMVLqSbWIv8kjdhLZvvy2GSZ/Beoigq0oOJW3GjtfQLb3/UIKSDOGIi8ObTqhy8
-         0sXQiInH0PcKMTCbWSPYZ8oC3jgbRyKh6bMTW1gNMxhfH/jxI0En6qBDgBlL06uvjXAV
-         zEtREbAjssNPI9LfgoYlIUIkIvqJlLDiw/IkKgMUN8kqErihbEuF4uU7+pWtYNi4aHd6
-         93BQ7tAsAkmJlOmZ3MjoGX58lX9Q0yokGNuYks7lLMP62lcEQRot8foxPSG6zjs49feg
-         YCaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVvnLasvO3DTIX5C1DsPYfJcUgCav6I5J4cxrwQIZqKoWx+sXmXf2kJjREYJDtN8kLuR23Uv0Vz0leohWlL@vger.kernel.org, AJvYcCW4dywiUFm4GRXU/SV4hhQf4CzC7Iumd9xAI5EA+q0HTkU0gQpTXcsiZ2ikjrvghVuINQz8bpEGPQxwQ0fqVQY=@vger.kernel.org, AJvYcCXKa1GU+olX3eyPMXLC2wK/hFyBUn0adSBc0TlI8s1RD6xMGrpHm2cyIMae6y4JjWqkIFsLNCIMT3n/REPcS/iq/viZHcE9@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbX+OHTpdjBdywgRkdEFt2cH9LS2v3FTPwRUfGajlppzsaLRtw
-	fGhJ9yYLSSsxaKKIpyXvqfphAfoDggJk46ZuZ3i/DXSrmOJ8xwm7PwFW2Zh0kJbR4DDMK7dUFL7
-	rV8TfNQOGBMEu/ckWvgnzZNq+RYU=
-X-Google-Smtp-Source: AGHT+IEHtJbAYaY5EIQkY1zTXt6zA874QpVFjKS1zKSC/F3APB4uGQGUuz33Th8SwOiUeFGc8eDxsTfTsTynmonlvGA=
-X-Received: by 2002:a05:6512:3e05:b0:52c:cd77:fe03 with SMTP id
- 2adb3069b0e04-5389fc3bd31mr4795623e87.14.1727546879336; Sat, 28 Sep 2024
- 11:07:59 -0700 (PDT)
+        bh=y1SqGaOAQOPzAn14KPrnOehT0qxEpBZk7h3tAfBnOmM=;
+        b=mswEaIxtkZm5hRXLc/zPHoCM0SG07iYCduhZD+5ni+YVOtM2UZt7VYcFgig69nR6pg
+         cYMxUZzP2cOiLfavE58L6eJf/i+XgKALYxWAa0hNU4OOILB2lqy93fwli5fcNAu//Frc
+         eri1PUqHONpU30k1Kh+X2GZ2hx4TlTSHsDvHv5XNA3ySYkvppnYyWMTBjtZyxej9mLc2
+         sp0o+E7jS1STRlnCZnNupnTqmLVZ3Xk11mYXCvqqz61rG5oiGHYH8KHco5CDl8Kti+jE
+         3YRBmUvOjDNDVcsgUwUkQ7vL0Dwz/7GgrzGZ5UAEMu5G8wrB7TODn+UUHmUTCvDEXzpP
+         bs3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727554014; x=1728158814;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=y1SqGaOAQOPzAn14KPrnOehT0qxEpBZk7h3tAfBnOmM=;
+        b=l/UKz8r1yGkrd/HBb6YOVcelPjM7YtEOmxt0TR20YVBgr1RQfTvPK+iT5xN1OM9DUN
+         LIsDSE66ilmKmufQk9dANXJmka3aH6KObl+KzY5iC+wL1PWeTGjcULI4IhLKBd9pW9G5
+         S6PA78o8TxJa8fBd8NkzjDBDf2GIcqMTc6o7NCAvYe2JWJhzIYfg2C2+umJEs8Q6DAjx
+         9GEOf5u4zQvHYSrQusZzLoLszycDZz7uOUI/YyS+IQfRhapyRz4cBYeDhxfM4/u9PtbO
+         h7jynBc+xGpSBZL5sZKHIjcHwwIe/i0jvkgCpiyrNO6V35kxvTo+Fqwr3E47jzKVgncF
+         K+Jw==
+X-Forwarded-Encrypted: i=1; AJvYcCU/YaXwjI2RnntSJLWxthWRQ0Fx4EKX5b3H7qFOf1ht3zQ67Ad8k7Vkgy12j8DfVxg3rwzlfc9lQWirFHTGWbbEh8t5GIg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzB/XIIRLIro1ENAIzoyv9JoRACIzKMAJJAGQ69oN/rgrIhtNSc
+	7ezNMCyHeRM3xtNtnlpR7+IJHNQlzUZIqvEOcGWsjmDnXDfeFcHppE9sR25exhRDjgCrXHAtnai
+	exA==
+X-Google-Smtp-Source: AGHT+IE80aZhCT4JHwgHwsEdaDWdBP8dNZdVjFPvbHZ/3cczSejefNhUNjkgqyWFX+K6tqTYQ9YkfEFTh9M=
+X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
+ (user=gnoack job=sendgmr) by 2002:a05:690c:4b92:b0:6dd:bb6e:ec89 with SMTP id
+ 00721157ae682-6e245317e48mr935707b3.2.1727554014549; Sat, 28 Sep 2024
+ 13:06:54 -0700 (PDT)
+Date: Sat, 28 Sep 2024 22:06:52 +0200
+In-Reply-To: <ZvZ_ZjcKJPm5B3_Z@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <66f7b10e.050a0220.46d20.0036.GAE@google.com>
-In-Reply-To: <66f7b10e.050a0220.46d20.0036.GAE@google.com>
-From: Shu Han <ebpqwerty472123@gmail.com>
-Date: Sun, 29 Sep 2024 02:07:47 +0800
-Message-ID: <CAHQche-Gsy4=UT6+znKyPRDEHQm9y-MQ+zacoqfywKaz7VA2kg@mail.gmail.com>
-Subject: Re: [syzbot] [integrity?] [lsm?] possible deadlock in
- process_measurement (4)
-To: syzbot <syzbot+1cd571a672400ef3a930@syzkaller.appspotmail.com>
-Cc: akpm@linux-foundation.org, dmitry.kasatkin@gmail.com, 
-	eric.snowberg@oracle.com, hughd@google.com, jmorris@namei.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
-	paul@paul-moore.com, roberto.sassu@huawei.com, serge@hallyn.com, 
-	stephen.smalley.work@gmail.com, syzkaller-bugs@googlegroups.com, 
-	zohar@linux.ibm.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <20240904104824.1844082-1-ivanov.mikhail1@huawei-partners.com>
+ <20240904104824.1844082-15-ivanov.mikhail1@huawei-partners.com>
+ <ZurZ7nuRRl0Zf2iM@google.com> <220a19f6-f73c-54ef-1c4d-ce498942f106@huawei-partners.com>
+ <ZvZ_ZjcKJPm5B3_Z@google.com>
+Message-ID: <Zvhh3CRj9T7_KIhC@google.com>
+Subject: Re: [RFC PATCH v3 14/19] selftests/landlock: Test socketpair(2) restriction
+From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
+To: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+Cc: mic@digikod.net, willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com, 
+	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
+	netfilter-devel@vger.kernel.org, yusongping@huawei.com, 
+	artem.kuzin@huawei.com, konstantin.meskhidze@huawei.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-> ======================================================
-> WARNING: possible circular locking dependency detected
-> 6.11.0-syzkaller-10045-g97d8894b6f4c #0 Not tainted
-> ------------------------------------------------------
-> syz-executor369/5231 is trying to acquire lock:
-> ffff888072852370 (&sb->s_type->i_mutex_key#12){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:815 [inline]
-> ffff888072852370 (&sb->s_type->i_mutex_key#12){+.+.}-{3:3}, at: process_measurement+0x439/0x1fb0 security/integrity/ima/ima_main.c:250
->
-> but task is already holding lock:
-> ffff88807ac9a798 (&mm->mmap_lock){++++}-{3:3}, at: mmap_write_lock_killable include/linux/mmap_lock.h:122 [inline]
-> ffff88807ac9a798 (&mm->mmap_lock){++++}-{3:3}, at: __do_sys_remap_file_pages mm/mmap.c:1649 [inline]
-> ffff88807ac9a798 (&mm->mmap_lock){++++}-{3:3}, at: __se_sys_remap_file_pages+0x22d/0xa50 mm/mmap.c:1624
->
-> which lock already depends on the new lock.
+On Fri, Sep 27, 2024 at 11:48:22AM +0200, G=C3=BCnther Noack wrote:
+> On Mon, Sep 23, 2024 at 03:57:47PM +0300, Mikhail Ivanov wrote:
+> > (Btw I think that disassociation control can be really useful. If
+> > it were possible to restrict this action for each protocol, we would
+> > have stricter control over the protocols used.)
+>=20
+> In my understanding, the disassociation support is closely intertwined wi=
+th the
+> transport layer - the last paragraph of DESCRIPTION in connect(2) is list=
+ing
+> TCP, UDP and Unix Domain sockets in datagram mode. -- The relevant code i=
+n in
+> net/ipv4/af_inet.c in inet_dgram_connect() and __inet_stream_connect(), w=
+here
+> AF_UNSPEC is handled.
+>=20
+> I would love to find a way to restrict this independent of the specific
+> transport protocol as well.
+>=20
+> Remark on the side - in af_inet.c in inet_shutdown(), I also found a worr=
+ying
+> scenario where the same sk->sk_prot->disconnect() function is called and
+> sock->state also gets reset to SS_UNCONNECTED.  I have done a naive attem=
+pt to
+> hit that code path by calling shutdown() on a passive TCP socket, but was=
+ not
+> able to reuse the socket for new connections afterwards. (Have not debugg=
+ed it
+> further though.)  I wonder whether this is a scnenario that we also need =
+to
+> cover?
 
-This issue (if not a false positive?) is due to the possible `prot`
-change caused by the processing logic for READ_IMPLIES_EXEC in do_mmap(),
-so the remap_file_pages() must perform LSM check before calling do_mmap(),
-this is what the previous commit want to do.
+FYI, **this does turn out to work** (I just fumbled in my first experiment)=
+. --
+It is possible to reset a listening socket with shutdown() into a state whe=
+re it
+can be used for at least a new connect(2), and maybe also for new listen(2)=
+s.
 
-The LSM check is required to know what the `prot` is, but `prot` must be
-obtained after holding the `mmap_write_lock`.
+The same might also be possible if a socket is in the TCP_SYN_SENT state at=
+ the
+time of shutdown() (although that is a bit trickier to try out).
 
-If the `mmap_write_lock` is released after getting the `prot` and before
-the LSM call in remap_file_pages(), it may cause TOCTOU.
+So a complete disassociation control for TCP/IP might not only need to have
+LANDLOCK_ACCESS_SOCKET_CONNECT_UNSPEC (or however we'd call it), but also
+LANDLOCK_ACCESS_SOCKET_PASSIVE_SHUTDOWN and maybe even another one for the
+TCP_SYN_SENT case...? *
 
-So, possible solutions may include:
-1. Remove the security check by removing the the possibility of the `prot`
-   change:
-1.1. move the the processing logic for READ_IMPLIES_EXEC out of the
-     do_mmap(). This also ensures that such missing checks which the
-     previous commit fixes will not occur again(suggested).
-     See the RFC PATCH
-     https://lore.kernel.org/all/20240928180044.50-1-ebpqwerty472123@gmail.com/
-1.2. Replace do_mmap() in remap_file_pages() to mmap_region(), which do
-     the actually memory mapping without the respect to READ_IMPLIES_EXEC.
-     But this requires other checks in do_mmap() is performed in
-     remap_file_pages(), such as the `file_mmap_ok`(may complex).
-2. Perform operations similar to updating a value by CAS(may slow):
-for (;;) {
-    mmap_write_lock();
-    prot = get_prot();
-    mmap_write_unlock();
-    if (!call_lsm(prot)) return;
-    mmap_write_lock();
-    if (prot != get_prot()) continue;
-    do_mmap();
-    mmap_write_unlock();
-}
+It makes me uneasy to think that I only looked at AF_INET{,6} and TCP so fa=
+r,
+and that other protocols would need a similarly close look.  It will be
+difficult to cover all the "disassociation" cases in all the different
+protocols, and even more difficult to detect new ones when they pop up.  If=
+ we
+discover new ones and they'd need new Landlock access rights, it would also
+potentially mean that existing Landlock users would have to update their ru=
+les
+to spell that out.
+
+It might be easier after all to not rely on "disassociation" control too mu=
+ch
+and instead to design the network-related access rights in a way so that we=
+ can
+provide the desired sandboxing guarantees by restricting the "constructive"
+operations (the ones that initiate new network connections or that listen o=
+n the
+network).
+
+Mikhail, in your email I am quoting above, you are saying that "disassociat=
+ion
+control can be really useful"; do you know of any cases where a restriction=
+ of
+connect/listen is *not* enough and where you'd still want the disassociatio=
+n
+control?
+
+(In my mind, the disassociation control would have mainly been needed if we=
+ had
+gone with Micka=C3=ABl's "Use socket's Landlock domain" RFC [1]?  Micka=C3=
+=ABl and me have
+discussed this patch set at LSS and I am also now coming around to the
+realization that this would have introduced more complication.  - It might =
+have
+been a more "pure" approach, but comes at the expense of complicating Landl=
+ock
+usage.)
+
+=E2=80=94G=C3=BCnther
+
+[1] https://lore.kernel.org/all/20240719150618.197991-1-mic@digikod.net/
+
+* for later reference, my reasoning in the code is: net/ipv4/af_inet.c
+  implements the entry points for connect() and listen() at the address fam=
+ily
+  layer.  Both operations require that the sock->state is SS_UNCONNECTED.  =
+So
+  the rest is going through the other occurrences of SS_UNCONNECTED in that=
+ same
+  file to see if there are any places where the socket can get back into th=
+at
+  state.  The places I found where it is set to that state are:
+ =20
+  1. inet_create (right after creation, expected)
+  2. __inet_stream_connect in the AF_UNSPEC case (known issue)
+  3. __inet_stream_connect in the case of a failed connect (expected)
+  4. inet_shutdown in the case of TCP_LISTEN or TCP_SYN_SENT (mentioned abo=
+ve)
