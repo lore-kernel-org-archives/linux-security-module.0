@@ -1,176 +1,129 @@
-Received: from out-175.mta1.migadu.com (out-175.mta1.migadu.com [95.215.58.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic306-27.consmr.mail.ne1.yahoo.com (sonic306-27.consmr.mail.ne1.yahoo.com [66.163.189.89])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12E1C179AE
-	for <linux-security-module@vger.kernel.org>; Sat, 28 Sep 2024 00:08:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70790FC0C
+	for <linux-security-module@vger.kernel.org>; Sat, 28 Sep 2024 00:28:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.189.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727482133; cv=none; b=qhFU3x1ssNmXO9l1sICOnO7jR1+GMYm6wcyaRKj6czdS3aTGWfG1teTbVTvr4HXWnObBfJTLQ6WA7MHWH/eqCclGYaswRBGYtk7csQCXYDa9v/dnVhJ/M53Af3DTDvyiyEPbH2g98q7X5/Q1lVzeWRRW7lepdyutyWnfPWw1Qhc=
+	t=1727483315; cv=none; b=S5y4fNWDATS39pZ93XWmnEXnHRuM9JsT5gNxtUrFmcglcSGvnDHbShmNxb1Ae0PF/iaHNUAhSt9M/ltmN3K2rAnjbaohcmd2ln/fvTY9p4wJfaxfzg5VWDUY9cf2J1bykGukb1ecXSSnHABVxfpEhyxS+9CuVa3yarfbBogLLpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727482133; c=relaxed/simple;
-	bh=1uk2nj3SjJlPU4G6bSna+i8tS3BCzJi1tY+KYLnigfQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HehmZ50uGLpKcWRenq0UPisDgNWrvlQaCrgbL/+px3WKWLS4zQvigEq56+65rpjKSzQW1AEcwd/MfbmOKATj1tWj+I2q+HXgbPiPrEuesqDbETWXI78sO5b/eyXzDg6ffBX2eZkDviC/81xRm4NnBW1s8Vv6ntQVUoLYudHRt0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=TU9Yg1Jk; arc=none smtp.client-ip=95.215.58.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1727483315; c=relaxed/simple;
+	bh=9h0tqDT99isRIdjfPg8yZJ6E0kiKx1ikTQgEqGB4kLw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BmhGCDYHMcEJ7RoWutj1SVt07RQvWMcl3HL1S43FBXt5imLN09dcAjSAaaTCjgnUmUAbdUlO0Dk7I6mNtt5xC7FtHkUAuVB5LZugsXhbjssmwuN7SQwK5d907TWl3LjUpM5t7wDZSXT1ZCjudyUrZetVvG9BtbfzPlkkjqVlMis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=HiC6mJjt; arc=none smtp.client-ip=66.163.189.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="TU9Yg1Jk"
-Date: Fri, 27 Sep 2024 20:08:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1727482128;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=q+cBLewr3vgCQVCw15c8TGoFbceTArrPnpe0UwP5rvw=;
-	b=TU9Yg1JkYLiyp0NJ+I/zfKI3PVpb+JshIZZf+1n5A8jJpOcrEB4+ZcCGTU4ZDS7kXP/XfW
-	6cJ2bak4R+/j5nvLcUfdZVb20GhOZr9svd1tqyq7f8JpqZfMAA6vD68cCb7Dug8KFhvO0E
-	LACgYBz0Y+oAAYTMhV9VMfVHgV4KjlQ=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: Paul Moore <paul@paul-moore.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Casey Schaufler <casey@schaufler-ca.com>, 
-	syzbot <syzbot+listfc277c7cb94932601d96@syzkaller.appspotmail.com>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] Monthly lsm report (Sep 2024)
-Message-ID: <nqxo5tqcwbwksibg45spssrnhxw7tabfithgnqnmpl2egmbfb7@gyczfn7hivvu>
-References: <66f12e9e.050a0220.3eed3.0009.GAE@google.com>
- <CAHC9VhTxCzWvM+j8=J08JVs=1cwk9rtBSS7qFBkdm-_neAwkJQ@mail.gmail.com>
- <03c3a47ca225050d37dca6a9249c1f978f1fc56b.camel@huaweicloud.com>
- <734977390eeecba39789df939a00904e87367e5e.camel@huaweicloud.com>
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="HiC6mJjt"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1727483312; bh=OB6FzDzFiQOcm8twiCpfgUJ8TuUwAyP31fPrEm7k3tA=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=HiC6mJjtQdmuHYPAKjXT4wXwMZh9Lm2LcocEItIbCoTw1jm5d00hcKBnT5jWDAyKSOGQFFHdoNSuiZSUKlOxo5/HLclSpzjlSP4+aa0ytZXoZB8WDboCSl3X7uaTZbzsFbtDHaIRCEdxoYguT7CMghmd7upRYY5DGKp7uyutDqNVwkVWZMVjPIfLn+NIYEYBvkYFMBkGaNy8vVzlHXmx7d3u2DdT3zg1OXE5XttojWR1vzFtGcEXuY+nSJw2H58+RdPCZeqO2cIjJXhyERV6jO4Sa7rE3/5vK+oDTwWMbhvD64fvbSTNHY/NDuSML08sxBxau/4xnz9CV6it/uir1Q==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1727483312; bh=9fdH3MpCxTT9USnhPKahXZIxhta6x4SQ1xjWVedFm9z=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=kwZa1PVCU90PRl8301KN0cLPstk3Lb/ZIccWu0a/40aKVlSrTGwf14ZJ4VUCytR6DV50yBRlox8fMItzudyHd1NXatFkMrFS7grhgT5KHsjKvsLqoSr2Dk3ZaHXVk8CuhpWJouS831IVqRj1ExJ+Nwt4jlYC/HPoWIse9aqmUCGjuq8KVpJQa3GHIb5Nri0CxMgTdj9oJAefUsirNvU3BVA9w1x4FCswM84OcFZRUHFaHlBDLRysityRal+cq5ZZuNpDfnYTkjZYPvyfNO77qklcHpXuCRG6CfRQbGafWbRdJCUyBZmvfNLh9iPWz6ELhqzwRUUWrF081MPKMrliYQ==
+X-YMail-OSG: RovtmDUVM1nZogDJFuQNqannt5lkxe29f.m2L3PRZF84dui2.uJYAU22aedj8zP
+ ssXyqfVtbvCiq9J_bVqAH8G03X23NvyWPEWAbmqhYYcs6piqHurwSC3S3RG326rrvnuHSGm22FlO
+ Qnkxl6OjToK8TRuTxdZNPHpuEZDgatFvZUhPA4SVMDE4DTocqlrIYa5Yq5co5o..gFhLiYpkxcCm
+ ipJoieUXHtcQj9g.6fqxkoZBM3mmX2uEK9QtcODkrdSC0VH2uSqMgn1KXf1MNBez_5P03_WWTPnd
+ cEJO1X12RPL4cctEicL1gn5umLIUgCITu0kQdaF0SzO4EiKP53OIclh41qcHjaqxim_d24r7AQ_6
+ tBilpV6XQ1go2NvhfmsU8fxQmn2dpZz1KpMnN129c7EIWxJJm96Flpd_h_39m_8kbCJatwReZ6xx
+ VLS4sYbcWl6TcaUJrE0rfIosAjwU9fAhLSjQ4XMCs_gEqGr_3Tm507MJx_YaHp6YMHGnIHD0VngQ
+ g4aYEEADtRdqiYrFBeYuPxNcmVLXmZc87XMSkDM_Q78aVdXTIEcqEbutGTuw8bQbPdFvQUqVBZsn
+ 7vZ1n6r2XSeQJ7B5jylGK15veAW3AzHrEI3h4SSwiYG.ycEtLU_X8KkowXevqVLrHhA9J4txYw96
+ l.Vhh82SiF2VIz6UznYQ0JslxMHu7v4w_o7k6lq3U_7_dTwZYR..xboK.TFgQAOEuuaPedJBSv.N
+ eFh7yJtjFEhF1HSsyn2aKnqY8ayyXBWfVtPu7I7xXClUJlqOp1wxWNO2jH7pJ0VLxg.MBX7..y.4
+ 0zAxho3dRoTQfXwKHxEZLOFIupBmFbRqdKSi8bCPK8XCu3K1IrR65HjVm6Fe1mgn2YJl9PN7L1AB
+ AFUkCM4TXQ2JlAHbQxl9yatjD3XHYRbkzDna23AWWSgk1t0DWQIjd7S5dH7yO.hOh6LJ4pSMrrxc
+ loH8WAEnZr3LTANygI_C.J81_jXMu3aOlX_zV0TXC9VWct71_txmf23LYE45_zj1oMqHrpjO4zBN
+ nii0vnKnqW.41.9KgIVch7qvPIKF5yKM1Im35Nd97vgYi60tCpi20HzHDA8ZNPkJGlJx658kwAVX
+ 9qe_ap7L8lGvd3LuY1iL67BgeDYXWBlAB1j5I.U_5uTzy0M6eHPmvwmAy6tp1T4ryTpWRbhN_sWp
+ uPnwV3ljEzFc0SbrMFfv8SN6SUWgCmFTkoVj7QXrFUoa5zoDKdjzyIYNEp.CzK4hChr.UYhQn2Hz
+ JZPaommchxxKbtDLN3IVeKQilxwRKSqxtpi94vSUlihgdf2dBc6ETqfjLysUgttOacxR9QJ.e_cq
+ 7IN3mCh5tIyXVwyNjn9VWKY2S675HIn5diJhvdl26d6oaWqxg0pgCRqBmxFuH42.1oQZuA9sZlSz
+ SFFRxtXGilz8rSs808VWRkbsqwIfPYIG06tFwqpySVweAikDBLvpYcvywYEG2kiGxwm8QWYlepz4
+ wQyclA384YvQrXcxHe6yYvbzUrLPlL5jjJloOGZpbd_Q0A4nVgXogdZohZb9UpzEf5YwdQZBGwho
+ H_WxHxsJgdkZUEFqrKvSBfNGEcD16d74DXfHpuU5iOWuRdfihhC3cHpwfuzpKZLwSKrUvzSU6qy9
+ sdgAiyXqNdMziOaK_bbJBe.Eq87cmIR6hwPHhQL8bHwVGYHkuxcy68Lmv86dIap4Qook8OnTQiee
+ lPE5WrBrdWK87ARfJqHBbOdondblAvmqAwZRUQ7suTGezv1XpWyWj7.glC2xw1irdYDRhZFwQN02
+ LyCIQws4hKH9fJKi5okgiiOjiUgcF_GAJOC1Lqtrebshy46K4joBmq1Pchn9Zz7rbBn.hYW8Tnq3
+ qfpmq6NFUZ.6OyZHoWhCOFWVBENi3wRLNLjBkhvPIY0cHj1cAzIniJdLK.xrHu_da.PMuYyA8TNf
+ AcQ.neowvv5QuuUXbWmuRXDiKKnEuzqK26xXI5r.s.r5UTus57MJ_QuuyVenOlrunGPkAI0Zb7oF
+ AwDWrk_qPpZh7IShAENt9WhH7OzVwZrjZiVQZ40WvhDajoY.FTiRi2tcNoxG4JnGqWGdSDHYTRh2
+ VnsQc9uqbdM2.g1v2W7NKxznXQFZ2cfggoAW2mRCX1qZqb6aERdXbGbBw6kvvkAaVlZr1eryQ6nJ
+ kCXoqlp3LPaCqWNzNSOdWu.N0uZlyJlBfROE81s.BUkWRorQa7HW2sDzYP1HVx.UVExpCiJwblRo
+ P2a_cE1s3g4hSXLXHyTaNmC8cK0zP9nZUB8T1d.RbevUAqLDb64QmfZiKCiB3HeX5Dy2L4jeQ.WS
+ uxo8UCqHq3EuPofcb8_BKuXFirEZNRA--
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 7842d67b-c5b7-42b8-b432-b8b880acff22
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.ne1.yahoo.com with HTTP; Sat, 28 Sep 2024 00:28:32 +0000
+Received: by hermes--production-gq1-5d95dc458-7jxgc (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 509cb58d9dad00d249880876ac0f8bb8;
+          Sat, 28 Sep 2024 00:18:21 +0000 (UTC)
+Message-ID: <d477ba9b-8a95-4e95-8fc6-4e6d77141fb4@schaufler-ca.com>
+Date: Fri, 27 Sep 2024 17:18:19 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] Monthly lsm report (Sep 2024)
+To: Paul Moore <paul@paul-moore.com>, Mimi Zohar <zohar@linux.ibm.com>,
+ Roberto Sassu <roberto.sassu@huawei.com>,
+ syzbot <syzbot+listfc277c7cb94932601d96@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com, Casey Schaufler <casey@schaufler-ca.com>
+References: <66f12e9e.050a0220.3eed3.0009.GAE@google.com>
+ <CAHC9VhTxCzWvM+j8=J08JVs=1cwk9rtBSS7qFBkdm-_neAwkJQ@mail.gmail.com>
+ <b79caa6f-41b9-4169-bb8e-9417611db455@schaufler-ca.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <b79caa6f-41b9-4169-bb8e-9417611db455@schaufler-ca.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <734977390eeecba39789df939a00904e87367e5e.camel@huaweicloud.com>
-X-Migadu-Flow: FLOW_OUT
+X-Mailer: WebService/1.1.22645 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Fri, Sep 27, 2024 at 02:18:10PM GMT, Roberto Sassu wrote:
-> On Tue, 2024-09-24 at 13:53 +0200, Roberto Sassu wrote:
-> > On Mon, 2024-09-23 at 08:06 -0400, Paul Moore wrote:
-> > > On Mon, Sep 23, 2024 at 5:02 AM syzbot
-> > > <syzbot+listfc277c7cb94932601d96@syzkaller.appspotmail.com> wrote:
-> > > > 
-> > > > Hello lsm maintainers/developers,
-> > > > 
-> > > > This is a 31-day syzbot report for the lsm subsystem.
-> > > > All related reports/information can be found at:
-> > > > https://syzkaller.appspot.com/upstream/s/lsm
-> > > > 
-> > > > During the period, 0 new issues were detected and 0 were fixed.
-> > > > In total, 4 issues are still open and 27 have been fixed so far.
-> > > > 
-> > > > Some of the still happening issues:
-> > > > 
-> > > > Ref Crashes Repro Title
-> > > > <1> 306     No    INFO: task hung in process_measurement (2)
-> > > >                   https://syzkaller.appspot.com/bug?extid=1de5a37cb85a2d536330
-> > > 
-> > > Mimi, Roberto,
-> > > 
-> > > Any chance this is this related in any way to this report:
-> > > 
-> > > https://lore.kernel.org/linux-security-module/CALAgD-4hkHVcCq2ycdwnA2hYDBMqijLUOfZgvf1WfFpU-8+42w@mail.gmail.com/
-> > 
-> > I reproduced the last, but I got a different result (the kernel crashed
-> > in a different place).
-> > 
-> > It seems a corruption case, while the former looks more a lock
-> > inversion issue. Will check more.
-> 
-> + Kent Overstreet
-> 
-> https://syzkaller.appspot.com/bug?extid=1de5a37cb85a2d536330
-> 
-> It happens few times per day, since commit 4a39ac5b7d62 (which is
-> followed by a lot of merges). The bug has been likely introduced there.
-> 
-> In all recent reports, I noticed that there is always the following
-> lock sequence:
-> 
-> [  291.584319][   T30] 5 locks held by syz.0.75/5970:
-> [  291.594487][   T30]  #0: ffff888064066420 (sb_writers#25){.+.+}-{0:0}, at: mnt_want_write+0x3f/0x90
-> [  291.603984][   T30]  #1: ffff88805d8b0148 (&sb->s_type->i_mutex_key#30){++++}-{3:3}, at: do_truncate+0x20c/0x310
-> [  291.614497][   T30]  #2: ffff888054700a38 (&c->snapshot_create_lock){.+.+}-{3:3}, at: bch2_truncate+0x16d/0x2c0
-> [  291.624871][   T30]  #3: ffff888054704398 (&c->btree_trans_barrier){.+.+}-{0:0}, at: __bch2_trans_get+0x7de/0xd20
-> [  291.635446][   T30]  #4: ffff8880547266d0 (&c->gc_lock){.+.+}-{3:3}, at: bch2_btree_update_start+0x682/0x14e0
-> 
-> IMA is stuck too, since it is waiting for the inode lock to be released:
-> 
-> [  291.645689][   T30] 1 lock held by syz.0.75/6010:
-> [  291.650622][   T30]  #0: ffff88805d8b0148 (&sb->s_type->i_mutex_key#30){++++}-{3:3}, at: process_measurement+0x439/0x1fb0
-> 
-> It seems that the super block is locked by someone else, which is not
-> able to unlock. Maybe, it is related to bch2_journal_reclaim_thread(),
-> but I don't know for sure.
-> 
-> Kent, do you have time to look at this report?
+On 9/23/2024 9:15 AM, Casey Schaufler wrote:
+> On 9/23/2024 5:06 AM, Paul Moore wrote:
+>> On Mon, Sep 23, 2024 at 5:02 AM syzbot
+>> <syzbot+listfc277c7cb94932601d96@syzkaller.appspotmail.com> wrote:
+>>> Hello lsm maintainers/developers,
+>>>
+>>> This is a 31-day syzbot report for the lsm subsystem.
+>>> All related reports/information can be found at:
+>>> https://syzkaller.appspot.com/upstream/s/lsm
+>>>
+>>> During the period, 0 new issues were detected and 0 were fixed.
+>>> In total, 4 issues are still open and 27 have been fixed so far.
+>>>
+>>> Some of the still happening issues:
+>>>
+>>> Ref Crashes Repro Title
+>>> <1> 306     No    INFO: task hung in process_measurement (2)
+>>>                   https://syzkaller.appspot.com/bug?extid=1de5a37cb85a2d536330
+>> Mimi, Roberto,
+>>
+>> Any chance this is this related in any way to this report:
+>>
+>> https://lore.kernel.org/linux-security-module/CALAgD-4hkHVcCq2ycdwnA2hYDBMqijLUOfZgvf1WfFpU-8+42w@mail.gmail.com/
+>>
+>> Looking at the syzkaller dashboard for this issue, it looks like it
+>> may have been present for some time, just difficult to reproduce
+>> reliably (although it does appear to be occurring more often
+>> recently).  Any ideas about a root cause?
+>>
+>>> <2> 9       No    general protection fault in smack_inode_permission
+>>>                   https://syzkaller.appspot.com/bug?extid=4ac565a7081cc43bb185
+>> Casey?
+> Looks like an xattr or mount problem in JFS. I will have a look at it.
 
-If you scroll back in the console log, you see this:
+There's a private inode check in SELinux that didn't make it into Smack.
+Looks like that should be in the infrastructure instead of the individual
+modules. I have a patch in process.
 
-[  230.372988][ T6772] Allocator stuck? Waited for 30 seconds
-[  230.373025][ T6772] Allocator debug:
-[  230.373039][ T6772]   capacity1536
-[  230.373051][ T6772]   reserved             31232
-[  230.373064][ T6772]   hidden               0
-[  230.373077][ T6772]   btree                0
-[  230.373090][ T6772]   data                 0
-[  230.373102][ T6772]   cached               0
-[  230.373114][ T6772]   reserved             0
-[  230.373127][ T6772]   online_reserved      768
-[  230.373140][ T6772]   nr_inodes            0
-[  230.373152][ T6772]   
-[  230.373164][ T6772]   freelist_wait        waiting
-[  230.373176][ T6772]   open buckets allocated1
-[  230.373189][ T6772]   open buckets total   1024
-[  230.373202][ T6772]   open_buckets_wait    empty
-[  230.373214][ T6772]   open_buckets_btree   0
-[  230.373227][ T6772]   open_buckets_user    0
-[  230.373239][ T6772]   btree reserve cache  0
-[  230.373251][ T6772] 
-[  230.373262][ T6772] Dev 0:
-[  230.373274][ T6772]                      buckets         sectors      fragmented
-[  230.373288][ T6772]   free                     0               0               0
-[  230.373303][ T6772]   sb                       0               0               0
-[  230.373318][ T6772]   journal                  0               0               0
-[  230.373332][ T6772]   btree                    0               0               0
-[  230.373347][ T6772]   user                     0               0               0
-[  230.373361][ T6772]   cached                   0               0               0
-[  230.373375][ T6772]   parity                   0               0               0
-[  230.373390][ T6772]   stripe                   0               0               0
-[  230.373404][ T6772]   need_gc_gens             0               0               0
-[  230.373418][ T6772]   need_discard             0               0               0
-[  230.373432][ T6772]   unstriped                0               0               0
-[  230.373446][ T6772]   capacity               128
-[  230.373459][ T6772]   
-[  230.373470][ T6772]   reserves:
-[  230.373481][ T6772]   stripe                  60
-[  230.373494][ T6772]   normal                  58
-[  230.373506][ T6772]   copygc                  56
-[  230.373519][ T6772]   btree                   28
-[  230.373531][ T6772]   btree_copygc             0
-[  230.373543][ T6772]   reclaim                  0
-[  230.373556][ T6772]   interior_updates         0
-[  230.373569][ T6772]   
-[  230.373580][ T6772]   open buckets             0
-[  230.373592][ T6772]   buckets to invalidate    0
-[  230.373605][ T6772] 
-[  230.373616][ T6772] Copygc debug:
-[  230.373627][ T6772]   running: 1
-[  230.373656][ T6772]   copygc_wait:0
-[  230.373675][ T6772]   copygc_wait_at:0
-[  230.373694][ T6772]   Currently waiting for:0 B
-[  230.373708][ T6772]   Currently waiting since:644 KiB
-[  230.373722][ T6772]   Currently calculated wait:0 B
-[  230.373735][ T6772]
-
-this looks like a bug in bcachefs where alloc counters didn't get
-initialized correctly, which makes sense given that 6.11 landed the disk
-accounting rewrite. Will dig more as I have time.
+>
+>>> <3> 3       Yes   WARNING in current_check_refer_path
+>>>                   https://syzkaller.appspot.com/bug?extid=34b68f850391452207df
+>> Based on the discussion over the summer I believe the consensus was
+>> that this is a bcachefs/VFS bug, reassigning to bcachefs (or trying to
+>> anyway).
+>>
+>> https://lore.kernel.org/all/000000000000a65b35061cffca61@google.com/
+>>
