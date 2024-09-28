@@ -1,52 +1,52 @@
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FD8A5381A
-	for <linux-security-module@vger.kernel.org>; Sat, 28 Sep 2024 02:34:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8494D19066B
+	for <linux-security-module@vger.kernel.org>; Sat, 28 Sep 2024 02:35:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727490850; cv=none; b=I2iVzDImiUPbjBIWCp9E+vQOKia85DyJrzxq2PAXkItMJEOhJdBks7zb1OuM6SD3FIQnV3DGqu1IiyeeuHgT974m4pFKNhK/lMBGF3wxMQWlHo4YVQWXeNiJZlMif1uzvHi8YYy1BOllBXuQF/R/9n6WhZxo/tHJK2a8JBt3uTc=
+	t=1727490960; cv=none; b=b1xUHeCVr6h9cnEZJ3aRbT5egX68qDZ6GV7dUFvOUPPqkZq0Tu2geII2W9n8qc6cA+0j1Sx5nQ4qDJJm4mRiqQ8HzDhy2moW2NbFmpDLP50tPRJUdWl72IwONwymnW3z/wnqlV+PU8ovmEyB0yLrNDN09HgSJxzrH5QaeRUfFGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727490850; c=relaxed/simple;
-	bh=7JETgzVlPniE2th61i/1NTROAETK/T9gFI7yNKCepTI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qMwejyWQHpoD34J8VEjiLZ+nEOv9jy0D/7XnQfzpTh6sccorbRaqmAUqFiad2E6hwocmR3diZfhrn8tMSFyckTrud9owESR7SZsPNLPQF3RXG3moSYGR2xr6T/ZCn5l3nV1qt1CVs9A3V6XyMwkH9iIi035VPWygmjS1eYch4vo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=aMFx2ycW; arc=none smtp.client-ip=209.85.210.170
+	s=arc-20240116; t=1727490960; c=relaxed/simple;
+	bh=4Fc1hGyR0IRQlVv9FqxTFemD9hR1cFALNCE3KE8kINU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XWD6s/n5Z4QlWyLvIl4LIy7o/55enCWNYXu7XlfSsWmA5aQoZl45ooZpnF+/gH5VggFCrUg0QvVEFhPYIv9xz5RlXqnQp+0Rui65XNsHHaSW03PxV+Tz56i5MJRFbw07InsZKdWeyej2Z3SssH6JM3WTeilmMT7mzIT6HMPynxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=YyrWJUyG; arc=none smtp.client-ip=209.85.214.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="aMFx2ycW"
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7178df70f28so2295448b3a.2
-        for <linux-security-module@vger.kernel.org>; Fri, 27 Sep 2024 19:34:07 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="YyrWJUyG"
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20b1335e4e4so25543715ad.0
+        for <linux-security-module@vger.kernel.org>; Fri, 27 Sep 2024 19:35:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1727490847; x=1728095647; darn=vger.kernel.org;
+        d=broadcom.com; s=google; t=1727490958; x=1728095758; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=MI/YrD/lCyZQfuqc6LhwT8YNbgbBZkfv6QDOo41ZKyI=;
-        b=aMFx2ycWAK8bsubMRJIBZ/EjAwqN8pWRyjzUTnJxWPL49P/SyS0iwhHlpFKGYK5R7f
-         ZQjEOyHznmAeoWZVm2DFrbo45q84o6QqSFNJ2js/hkFx5kKYVPfYy9/tvxvd3z7+KVGf
-         xYsvbI2HKiBWNJjObn8HQV3Cvlug3VLhFUF80=
+        bh=s7QUo2UfHBHwtULhyXyrPoM+oTcN1a6xkeuEWkxttYA=;
+        b=YyrWJUyG1RQZ6dJK+YZKEyWxTm2N7LvyNgBPKXqm7XDtgZn5oiQjjYdsZN2eU2ErsG
+         6mE9l7FzX2t+OqABKd22lwgO4gRH6Yqtwi3y4OSVMO+k+N8v0VtyWTlHldmdtMZPF7Xm
+         R5OkydOIjNzjWURUGeiX6Zhzc0zFnmv36ae1Q=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727490847; x=1728095647;
+        d=1e100.net; s=20230601; t=1727490958; x=1728095758;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=MI/YrD/lCyZQfuqc6LhwT8YNbgbBZkfv6QDOo41ZKyI=;
-        b=DLkuT1DMVntCl9UzHbpaZa+DtDzY5apikUSJlZKOLnIV1prJFD+PZOQAFyONVWGvGy
-         x+CAkNa6Nr9YVRaOZukDwqEoMhDy/uKCDKcEti0+G2HtAqfEsMCH3kTMM7DeokteFVwq
-         gDwRypjDC1/GCgU5t948aBBYxeOWte778ljGXGPaCndbRNpuAI8Jr0VFeL0aJ5bIEL2r
-         eLHeays2cRT2VH+FIv+FCg2hh+jQ57WTqal+gKOfPXYyAg3nLtWihtpea3FRJzk64wNH
-         MaaedoAWqfrncyekQMmpBjmPbMvm0FhLvkTY+Sl0aKwQjW819v8wPUYkXscq8ZTPV96H
-         ctzg==
-X-Forwarded-Encrypted: i=1; AJvYcCXSefgkzJHhmrRE1E7G//A8r97QYZLiGOdwjfYI2MZg5+awnhVRKecLu8GbKbvL1eucWGvs2Blod613K3SbskM3uEKBUlo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPnDtaeBsida7A5tmvWYqzRRJSgSXhVJJIxC984+MyJU0nVSRA
-	vU64lF1X+7Re2fXPWo0llOihl0ophqRzMopBirNZKrijwWCizJvBVhuEnaYgSw==
-X-Google-Smtp-Source: AGHT+IGTfEyKEUJ1bOxW3m6LmtiOzTr6iqhwVfVJE+TgVQjvrt/Sp9jAPDeJvlAOlFnzYfv9q/kc+A==
-X-Received: by 2002:a05:6a00:3cce:b0:718:cabe:aa8 with SMTP id d2e1a72fcca58-71b26059666mr8670611b3a.18.1727490846779;
-        Fri, 27 Sep 2024 19:34:06 -0700 (PDT)
+        bh=s7QUo2UfHBHwtULhyXyrPoM+oTcN1a6xkeuEWkxttYA=;
+        b=LdRCr8QwXRIqEtBYv2YUwuyw88C56Zv8Xtj5hTAps0kXZSSc2+Zdr2SjcVZBVaZGRz
+         qOHqb6cjIX9NyyyyHiGhg98x+LnD3q5Z0ckQaxLL+Dxlx/O3gOI8UXvCxm5tYZsYcCpU
+         26fXCIeY80hQEEoxWggZs3C2qJTtHj2stDy+r/8noSpeEUlbuuhjIrb7I40PRIxUvaOt
+         2v/fir772u4kvTmyNf7YST/UpVleFnjF705F+n2Qd3QTW7cjEhu7sfXV9dAh6heRPBbv
+         FnhqZZ9x1GgmI/y+9aAwzMmnW56WHcVNsR5ju9PjkXfD0f2A8kHI7tbq0V/zbpMYnf9f
+         iAmg==
+X-Forwarded-Encrypted: i=1; AJvYcCWWrLeQoQsl5x93FUa2oT8Wj1cgb671OTxZD+0+0+bTh9OYCVorIC/UvkODLGnyH1p2l+hnx+nK66mjXIT+YFWhr5/MyGE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0gTKZ1LyO/xQyiEP2PeAs3VER4SVwIgEQSETVwracrAsx1uSQ
+	LxX2RSZom9+fSg+TiKYL3BtX1LCWtkPO8QgZJ6F1dsJ4w5cRXQSiUZh49NhBmw==
+X-Google-Smtp-Source: AGHT+IEkKY1YGoCfGu4Ncyj/3NdBz6hGCG665Sn2uoO+GBceaQxUzDzjVTAs0hxPtoAI7Q2Zg1kpYA==
+X-Received: by 2002:a17:902:e80a:b0:20b:59be:77b with SMTP id d9443c01a7336-20b59be09c4mr12977595ad.6.1727490957732;
+        Fri, 27 Sep 2024 19:35:57 -0700 (PDT)
 Received: from shivania.eng.vmware.com ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71b26516223sm2254154b3a.112.2024.09.27.19.33.59
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20b37e0d64asm19386165ad.178.2024.09.27.19.35.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Sep 2024 19:34:06 -0700 (PDT)
+        Fri, 27 Sep 2024 19:35:56 -0700 (PDT)
 From: Shivani Agarwal <shivani.agarwal@broadcom.com>
 To: stable@vger.kernel.org,
 	gregkh@linuxfoundation.org
@@ -68,9 +68,9 @@ Cc: paul@paul-moore.com,
 	Chuck Lever <chuck.lever@oracle.com>,
 	Jeff Layton <jlayton@kernel.org>,
 	Shivani Agarwal <shivani.agarwal@broadcom.com>
-Subject: [PATCH v5.10] selinux,smack: don't bypass permissions check in  inode_setsecctx hook
-Date: Fri, 27 Sep 2024 19:33:49 -0700
-Message-Id: <20240928023349.154389-1-shivani.agarwal@broadcom.com>
+Subject: [PATCH v5.15-v6.1] selinux,smack: don't bypass permissions check in  inode_setsecctx hook
+Date: Fri, 27 Sep 2024 19:35:39 -0700
+Message-Id: <20240928023539.154580-1-shivani.agarwal@broadcom.com>
 X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
@@ -116,38 +116,40 @@ Reviewed-by: Jeff Layton <jlayton@kernel.org>
 Acked-by: Casey Schaufler <casey@schaufler-ca.com>
 Signed-off-by: Paul Moore <paul@paul-moore.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-[Shivani: Modified to apply on v5.10.y]
+[Shivani: Modified to apply on v5.15.y-v6.1.y]
 Signed-off-by: Shivani Agarwal <shivani.agarwal@broadcom.com>
 ---
- security/selinux/hooks.c   | 3 ++-
- security/smack/smack_lsm.c | 3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ security/selinux/hooks.c   | 4 ++--
+ security/smack/smack_lsm.c | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 46c00a68bb4b..90935ed3d8d8 100644
+index 78f3da39b031..626d397c2f86 100644
 --- a/security/selinux/hooks.c
 +++ b/security/selinux/hooks.c
-@@ -6570,7 +6570,8 @@ static int selinux_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen
+@@ -6631,8 +6631,8 @@ static int selinux_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen
   */
  static int selinux_inode_setsecctx(struct dentry *dentry, void *ctx, u32 ctxlen)
  {
--	return __vfs_setxattr_noperm(dentry, XATTR_NAME_SELINUX, ctx, ctxlen, 0);
-+	return __vfs_setxattr_locked(dentry, XATTR_NAME_SELINUX, ctx, ctxlen, 0,
-+				     NULL);
+-	return __vfs_setxattr_noperm(&init_user_ns, dentry, XATTR_NAME_SELINUX,
+-				     ctx, ctxlen, 0);
++	return __vfs_setxattr_locked(&init_user_ns, dentry, XATTR_NAME_SELINUX,
++				       ctx, ctxlen, 0, NULL);
  }
  
  static int selinux_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen)
 diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 92bc6c9d793d..cb4801fcf9a8 100644
+index c18366dbbfed..25995df15e82 100644
 --- a/security/smack/smack_lsm.c
 +++ b/security/smack/smack_lsm.c
-@@ -4651,7 +4651,8 @@ static int smack_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen)
+@@ -4714,8 +4714,8 @@ static int smack_inode_notifysecctx(struct inode *inode, void *ctx, u32 ctxlen)
  
  static int smack_inode_setsecctx(struct dentry *dentry, void *ctx, u32 ctxlen)
  {
--	return __vfs_setxattr_noperm(dentry, XATTR_NAME_SMACK, ctx, ctxlen, 0);
-+	return __vfs_setxattr_locked(dentry, XATTR_NAME_SMACK, ctx, ctxlen, 0,
-+				     NULL);
+-	return __vfs_setxattr_noperm(&init_user_ns, dentry, XATTR_NAME_SMACK,
+-				     ctx, ctxlen, 0);
++	return __vfs_setxattr_locked(&init_user_ns, dentry, XATTR_NAME_SMACK,
++				     ctx, ctxlen, 0, NULL);
  }
  
  static int smack_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen)
