@@ -1,226 +1,77 @@
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A015519B3C3
-	for <linux-security-module@vger.kernel.org>; Sat, 28 Sep 2024 07:32:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80218125B9
+	for <linux-security-module@vger.kernel.org>; Sat, 28 Sep 2024 08:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727508753; cv=none; b=tvE/bq9e3y5Hi2a0Ju/Nx3jDy/MR6G5847y7wu4rl5vSn8MievOybgpAgmPq0TMSevo/y7tfgZvJlbU49Dh3hbRFO56GdjRdikNBONUdbysaJ1B2K1mAOsmtAD/GAa7yx15jxeN+R3Vaf6UfB641Xke6zShDRBLp4xBtARBnfqo=
+	t=1727513865; cv=none; b=rQ6+NQCr9LznRxSQnw11tVsa+GnP2a1NbKk8iy/9iQHF1ZRY2MX++MKKbR5RcHZA27Prxzcjml76m2I5G/19TN0KW/t2lrEp9DjnUnXOadl3ETcVMuBC0n6Jcjnfenk0nlcADFVdV428VhrYtCAoCFFZPHuJCfKVbukIAk60cb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727508753; c=relaxed/simple;
-	bh=iQebi6bqL+RS9rmDEgTYJqxT5c1eYcHyxFktxIpbyD8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=pstoe7+W/1uZY4YtBDHOGkyQafBHnuDoEpzVIUszuCaiVaA4chou2Ka6Cl/OEw5w6uYlXWLNfsveobyuOWfJP3GxDY1Eekk3+JZeamJqOIhNGE5H8OC5tA+14Q7xhcFlAxphPau3fpX9YeOOABMAbRk5vwmowdHRh1Y1U8dSWSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a343860e72so23939705ab.0
-        for <linux-security-module@vger.kernel.org>; Sat, 28 Sep 2024 00:32:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727508750; x=1728113550;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=RVN6FnbwA3huhnKDHIz/m0xr8FOP4DiYHAdGNcqkPlA=;
-        b=hUAe51JIiQwX8tdEszdiME/+WMpsB/PezD4UuwusZclI4spZ06yOFL3pL3ql8w3izX
-         DDlGu+sBepkSRhTKMGYvujkIR5MD4mPPsLJwevG+qniVh3Z6M0kQ2A+/R2xXkcEwcYcu
-         ROXxL0rVDJdZTpWs+mB/reqI58NRQ2Oe+j7Kc+tcHXfhMQ46Zytj+yCWfDEck49vbavT
-         5kO82KAv6PA3I6WlE8X2GsiBfP+kJamct5Psrzk8zz3PHGOo2NOzqgaRuW1UaOD+FiHV
-         rEFk47mwzgXBHt9hq9HTVulor4C3qItNBSV/PldE2dDNdszbM/yvsg490N77xJ8nywZ6
-         RB9g==
-X-Forwarded-Encrypted: i=1; AJvYcCWSfsITDx4y7hrFUW2f6MCF2aEGFb/Fhp4AHBkED0L2loIhNS5wiLdTRljSQIyWwRmFCmYcAT8B2/fSrXu1Bg8qEFoxLok=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzj2ZTiM1j5ZV3T0OafsV3uHu9R+MZ19+HDNKyIYa/mZmXaf14i
-	8HqEzwqPPRW1ag9KAoA+Sj8sERHwXR5+0V0L57AGcOGrRYdD8KFNHMeQJVOhO7uWU3X7p+oIqGu
-	nikgcfHPEymk8IP8TUDhYYIf6XEfT9ZUOYkicT1EEd+PFnlCOm78odyo=
-X-Google-Smtp-Source: AGHT+IG/P8TK6Ao3MnAVao5QTuroLVb8UQZwIBOkPmvz82x3Kh9XyB2oGcdfho2jN8qhqMzByu4nqqsPn39+zfjkEh6i0bc2dVMl
+	s=arc-20240116; t=1727513865; c=relaxed/simple;
+	bh=8Z9JCi4yhlBV0WO699VWsRmVMtZb78fwfRNgqBbs2MQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kzipPCjP3RUSUEUap/BPyb5IAsvVmX6g3FXim1O50EuJrDC0glB8BKVoQf3jZKnbdxQ8AV1/Nx1M8B4xiSRDGI4olXe2AHCvLwZVD8uLI9zuwicEtiF8nvOIz3tEszg1BLY4FKBwXODasP+BDTrvxbVoXreZI2n7qJWeWe+1YeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cqx6RdVZ; arc=none smtp.client-ip=91.218.175.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cqx6RdVZ"
+Date: Sat, 28 Sep 2024 04:57:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1727513860;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+G/Act2+rDOGPVSEZItb2sOKKvrD8MFc52o7wVlkE5w=;
+	b=cqx6RdVZMVJWaEwzKw0oNdvg6g9wv2YV8PE44kFtbduvxrrx8WfvtJdu0NaM72BJhu0IRi
+	WFIKgb8MtDg8d5Ff7tg/S5Q7ikzRuRRnoCAku5DOKLVBYwOfxgpWj0YTQ5wk425t48TmYx
+	CbBW2SwBuawYiuUcLDaAG571yf/IOk0=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Roberto Sassu <roberto.sassu@huaweicloud.com>, 
+	Paul Moore <paul@paul-moore.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Roberto Sassu <roberto.sassu@huawei.com>, Casey Schaufler <casey@schaufler-ca.com>, 
+	syzbot <syzbot+listfc277c7cb94932601d96@syzkaller.appspotmail.com>, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] Monthly lsm report (Sep 2024)
+Message-ID: <pdghzlvw6ypcju6ldsngka44cjp6g56bjjsmxm3sd7dqev4g6y@x72zm7vurxyz>
+References: <66f12e9e.050a0220.3eed3.0009.GAE@google.com>
+ <CAHC9VhTxCzWvM+j8=J08JVs=1cwk9rtBSS7qFBkdm-_neAwkJQ@mail.gmail.com>
+ <03c3a47ca225050d37dca6a9249c1f978f1fc56b.camel@huaweicloud.com>
+ <734977390eeecba39789df939a00904e87367e5e.camel@huaweicloud.com>
+ <nqxo5tqcwbwksibg45spssrnhxw7tabfithgnqnmpl2egmbfb7@gyczfn7hivvu>
+ <owdoubzm3jqf4cuhawaavver5mzko32ijuh2nrm5vhzegmjbmf@az3mweawrni6>
+ <ceb762ee-2518-44d1-b73c-fd165da7fbbb@I-love.SAKURA.ne.jp>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a46:b0:3a0:8d60:8b7d with SMTP id
- e9e14a558f8ab-3a34516903fmr48946585ab.11.1727508750578; Sat, 28 Sep 2024
- 00:32:30 -0700 (PDT)
-Date: Sat, 28 Sep 2024 00:32:30 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <66f7b10e.050a0220.46d20.0036.GAE@google.com>
-Subject: [syzbot] [integrity?] [lsm?] possible deadlock in process_measurement (4)
-From: syzbot <syzbot+1cd571a672400ef3a930@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, dmitry.kasatkin@gmail.com, 
-	ebpqwerty472123@gmail.com, eric.snowberg@oracle.com, hughd@google.com, 
-	jmorris@namei.org, linux-integrity@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-security-module@vger.kernel.org, paul@paul-moore.com, 
-	roberto.sassu@huawei.com, serge@hallyn.com, stephen.smalley.work@gmail.com, 
-	syzkaller-bugs@googlegroups.com, zohar@linux.ibm.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ceb762ee-2518-44d1-b73c-fd165da7fbbb@I-love.SAKURA.ne.jp>
+X-Migadu-Flow: FLOW_OUT
 
-Hello,
+On Sat, Sep 28, 2024 at 03:49:27PM GMT, Tetsuo Handa wrote:
+> On 2024/09/28 10:25, Kent Overstreet wrote:
+> > And looking further, I don't see anyhting in the console log from when
+> > bcachefs actually mounted (???), which means I don't think I have enough
+> > to go on. It's clearly an upgrade path issue - we didn't run
+> > check_allocations as is required when upgrading to 1.11 - but it's not
+> > reproducing for me when I run tests with old tools.
+> > 
+> > Can we get some more information about the syzbot reproducer? Exact
+> > tools version, format command and mount command.
+> 
+> Reproducer for this bug is not yet found. But syzbot does not use userspace
+> tools. That is, testing with old (or new) tools will not help. Please note
+> that syzbot uses crafted (intentionally corrupted) filesystem images. If the
+> kernel side depends on sanity checks / validations done by the userspace
+> side, syzbot will find oversights on the kernel side. Please don't make any
+> assumptions made by the userspace tools.
+> 
 
-syzbot found the following issue on:
-
-HEAD commit:    97d8894b6f4c Merge tag 'riscv-for-linus-6.12-mw1' of git:/..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=14138a80580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bc30a30374b0753
-dashboard link: https://syzkaller.appspot.com/bug?extid=1cd571a672400ef3a930
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=118fd2a9980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1038299f980000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/f181c147328d/disk-97d8894b.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/b8b0160d9b09/vmlinux-97d8894b.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/c5dab0d4f811/bzImage-97d8894b.xz
-
-The issue was bisected to:
-
-commit ea7e2d5e49c05e5db1922387b09ca74aa40f46e2
-Author: Shu Han <ebpqwerty472123@gmail.com>
-Date:   Tue Sep 17 09:41:04 2024 +0000
-
-    mm: call the security_mmap_file() LSM hook in remap_file_pages()
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1554a99f980000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=1754a99f980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1354a99f980000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+1cd571a672400ef3a930@syzkaller.appspotmail.com
-Fixes: ea7e2d5e49c0 ("mm: call the security_mmap_file() LSM hook in remap_file_pages()")
-
-mmap: syz-executor369 (5231) uses deprecated remap_file_pages() syscall. See Documentation/mm/remap_file_pages.rst.
-======================================================
-WARNING: possible circular locking dependency detected
-6.11.0-syzkaller-10045-g97d8894b6f4c #0 Not tainted
-------------------------------------------------------
-syz-executor369/5231 is trying to acquire lock:
-ffff888072852370 (&sb->s_type->i_mutex_key#12){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:815 [inline]
-ffff888072852370 (&sb->s_type->i_mutex_key#12){+.+.}-{3:3}, at: process_measurement+0x439/0x1fb0 security/integrity/ima/ima_main.c:250
-
-but task is already holding lock:
-ffff88807ac9a798 (&mm->mmap_lock){++++}-{3:3}, at: mmap_write_lock_killable include/linux/mmap_lock.h:122 [inline]
-ffff88807ac9a798 (&mm->mmap_lock){++++}-{3:3}, at: __do_sys_remap_file_pages mm/mmap.c:1649 [inline]
-ffff88807ac9a798 (&mm->mmap_lock){++++}-{3:3}, at: __se_sys_remap_file_pages+0x22d/0xa50 mm/mmap.c:1624
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #1 (&mm->mmap_lock){++++}-{3:3}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
-       down_read_killable+0xca/0xd30 kernel/locking/rwsem.c:1549
-       mmap_read_lock_killable+0x1d/0x70 include/linux/mmap_lock.h:153
-       get_mmap_lock_carefully mm/memory.c:6108 [inline]
-       lock_mm_and_find_vma+0x29c/0x2f0 mm/memory.c:6159
-       do_user_addr_fault arch/x86/mm/fault.c:1361 [inline]
-       handle_page_fault arch/x86/mm/fault.c:1481 [inline]
-       exc_page_fault+0x1bf/0x8c0 arch/x86/mm/fault.c:1539
-       asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
-       fault_in_readable+0x108/0x2b0 mm/gup.c:2227
-       fault_in_iov_iter_readable+0x229/0x280 lib/iov_iter.c:94
-       generic_perform_write+0x259/0x6d0 mm/filemap.c:4040
-       shmem_file_write_iter+0xf9/0x120 mm/shmem.c:3221
-       new_sync_write fs/read_write.c:590 [inline]
-       vfs_write+0xa6d/0xc90 fs/read_write.c:683
-       ksys_write+0x183/0x2b0 fs/read_write.c:736
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (&sb->s_type->i_mutex_key#12){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3158 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3277 [inline]
-       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3901
-       __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5199
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
-       down_write+0x99/0x220 kernel/locking/rwsem.c:1579
-       inode_lock include/linux/fs.h:815 [inline]
-       process_measurement+0x439/0x1fb0 security/integrity/ima/ima_main.c:250
-       ima_file_mmap+0x13d/0x2b0 security/integrity/ima/ima_main.c:455
-       security_mmap_file+0x7e7/0xa40 security/security.c:2977
-       __do_sys_remap_file_pages mm/mmap.c:1692 [inline]
-       __se_sys_remap_file_pages+0x6e6/0xa50 mm/mmap.c:1624
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&mm->mmap_lock);
-                               lock(&sb->s_type->i_mutex_key#12);
-                               lock(&mm->mmap_lock);
-  lock(&sb->s_type->i_mutex_key#12);
-
- *** DEADLOCK ***
-
-1 lock held by syz-executor369/5231:
- #0: ffff88807ac9a798 (&mm->mmap_lock){++++}-{3:3}, at: mmap_write_lock_killable include/linux/mmap_lock.h:122 [inline]
- #0: ffff88807ac9a798 (&mm->mmap_lock){++++}-{3:3}, at: __do_sys_remap_file_pages mm/mmap.c:1649 [inline]
- #0: ffff88807ac9a798 (&mm->mmap_lock){++++}-{3:3}, at: __se_sys_remap_file_pages+0x22d/0xa50 mm/mmap.c:1624
-
-stack backtrace:
-CPU: 1 UID: 0 PID: 5231 Comm: syz-executor369 Not tainted 6.11.0-syzkaller-10045-g97d8894b6f4c #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 08/06/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2074
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2203
- check_prev_add kernel/locking/lockdep.c:3158 [inline]
- check_prevs_add kernel/locking/lockdep.c:3277 [inline]
- validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3901
- __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5199
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5822
- down_write+0x99/0x220 kernel/locking/rwsem.c:1579
- inode_lock include/linux/fs.h:815 [inline]
- process_measurement+0x439/0x1fb0 security/integrity/ima/ima_main.c:250
- ima_file_mmap+0x13d/0x2b0 security/integrity/ima/ima_main.c:455
- security_mmap_file+0x7e7/0xa40 security/security.c:2977
- __do_sys_remap_file_pages mm/mmap.c:1692 [inline]
- __se_sys_remap_file_pages+0x6e6/0xa50 mm/mmap.c:1624
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7ff317efa919
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ff317e94238 EFLAGS: 00000246 ORIG_RAX: 00000000000000d8
-RAX: ffffffffffffffda RBX: 00007ff317f85318 RCX: 00007ff317efa919
-RDX: 0000000000000000 RSI: 0000000000800000 RDI: 0000000020800000
-RBP: 00007ff317f85310 R08: 0000000000010000 R09: 00007ff317e946c0
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007ff317f8531c
-R13: 000000000000006e R14: 00007ffd154a5180 R15: 00007ffd154a5268
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+You seem to be confused; how do you expect sysbot to test a filesystem
+without the format comand?
