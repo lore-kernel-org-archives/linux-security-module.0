@@ -1,169 +1,190 @@
-Received: from smtp-8fae.mail.infomaniak.ch (smtp-8fae.mail.infomaniak.ch [83.166.143.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94BAA3D9E;
-	Sun, 29 Sep 2024 17:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.174
+Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E165B65C;
+	Mon, 30 Sep 2024 10:54:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727631137; cv=none; b=DZ6HYU7or3mO1hZ5BymVVasG/4nsdgCvqvKkitAk88NKgl68E6RwMwOUH9mXqvogPsJP/9KonwEG1T3s9N/E01r9w7MIAVIl/cCqwscKCeJt4FhezIGqA4k/aw1KJ0IkCUFNnAU31BBDI67+cmD3s2gz1+wPLvw1OTzs/ghkp6A=
+	t=1727693655; cv=none; b=lFvuR57T/WC0wa8XrJhDOZz6v56aComXl73exLkrtjpb0OYObBBQGurT97e6KRTJEvP16sYhFq2CoZe9he9eEwVj408vo8QPf9dOT04SgT94wvN4bDNRr8Cg4Z6GGOe4yq/m+a+N+NVeRlzJ5OnAoQry4dYF+FpcFXmm+ZDqaBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727631137; c=relaxed/simple;
-	bh=1Q00rePAyFfAo3avVDnteWAYzPkEEWSICDfpstp89mE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BHWZO9etwnAyHWjSSI/8/kP1lRHXJe6KMlr89gtJNtazv+OQmiKH90/uNQfXR1QJgFdE4+h0GghI6hyWkwxShyns0tFcXdJCWxSpQoqlvEO2zwk9mA8LFSYcTi5+Dwlecedvf3sdqe8HzyLDerKQHFNhRwNKs227mfqpfDL8SBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=cqXIMzg9; arc=none smtp.client-ip=83.166.143.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="cqXIMzg9"
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XGrqP2r1wzQmQ;
-	Sun, 29 Sep 2024 19:32:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1727631121;
-	bh=U3PkyRoQ7rdPQAeVu0I06DBylGmJ6f/VayaDJ+KK9DE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cqXIMzg95A6dDvttEsMDdx5wnprTsNQpVP9KeZYzRXPljPG8OrAhhCHSZNb9rjbH8
-	 HAuik39KfsUJwGP2lvnqhB5pBHdJA2DQ0Cy/Euk26S56aL4DMfIVRHerqI9d/7+IMs
-	 SdMZl7DHdH2/FCBIhQbWCMu6P8X2yBaJ4G2z+gdU=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4XGrqN1wm0zv4h;
-	Sun, 29 Sep 2024 19:32:00 +0200 (CEST)
-Date: Sun, 29 Sep 2024 19:31:58 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Cc: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
-	willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com, linux-security-module@vger.kernel.org, 
-	netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, yusongping@huawei.com, 
-	artem.kuzin@huawei.com, konstantin.meskhidze@huawei.com, 
-	Matthieu Buffet <matthieu@buffet.re>
-Subject: Re: [RFC PATCH v3 14/19] selftests/landlock: Test socketpair(2)
- restriction
-Message-ID: <20240929.Noovae0izai8@digikod.net>
-References: <20240904104824.1844082-1-ivanov.mikhail1@huawei-partners.com>
- <20240904104824.1844082-15-ivanov.mikhail1@huawei-partners.com>
- <ZurZ7nuRRl0Zf2iM@google.com>
- <220a19f6-f73c-54ef-1c4d-ce498942f106@huawei-partners.com>
- <ZvZ_ZjcKJPm5B3_Z@google.com>
- <Zvhh3CRj9T7_KIhC@google.com>
+	s=arc-20240116; t=1727693655; c=relaxed/simple;
+	bh=O5nRE9hhVdbt60KS+UAuLQZ/+3pxiQO4oKFXq/b1Hok=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QAn3gAh1STqNwvyspzn3t0yjnaNRGNVpkBrLybXsCkiUwCKmuaCke8r83XjEyrDdIoJupPW4CUtTq4gcLmisRKDt9dImrYi7GAY5HYJGg/sossA65mREisytS5jSawNyIiOtFo4leWPQTwpRnAX5asqkuQyEEbUIOQc3tdH1dCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 48UArWPe027811;
+	Mon, 30 Sep 2024 05:53:32 -0500
+Received: (from greg@localhost)
+	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 48UArUVj027810;
+	Mon, 30 Sep 2024 05:53:30 -0500
+Date: Mon, 30 Sep 2024 05:53:30 -0500
+From: "Dr. Greg" <greg@enjellic.com>
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Paul Moore <paul@paul-moore.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] lsm/lsm-pr-20240911
+Message-ID: <20240930105330.GA27787@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <d15ee1ccfb91bda67d248b3ec70f0475@paul-moore.com> <960e740f-e5d9-409b-bb2a-8bdceffaae95@I-love.SAKURA.ne.jp> <69e4014e-0a34-4fde-8080-4850a52b0a94@I-love.SAKURA.ne.jp> <CAHC9VhQq0-D=p9Kicx2UsDrK2NJQDyn9psL-PWojAA+Y17WiFQ@mail.gmail.com> <20240927085841.GA3642@wind.enjellic.com> <2ea23569-6fb2-4a4e-acc1-e3927dd5615d@schaufler-ca.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Zvhh3CRj9T7_KIhC@google.com>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <2ea23569-6fb2-4a4e-acc1-e3927dd5615d@schaufler-ca.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Mon, 30 Sep 2024 05:53:32 -0500 (CDT)
 
-On Sat, Sep 28, 2024 at 10:06:52PM +0200, Günther Noack wrote:
-> On Fri, Sep 27, 2024 at 11:48:22AM +0200, Günther Noack wrote:
-> > On Mon, Sep 23, 2024 at 03:57:47PM +0300, Mikhail Ivanov wrote:
-> > > (Btw I think that disassociation control can be really useful. If
-> > > it were possible to restrict this action for each protocol, we would
-> > > have stricter control over the protocols used.)
-> > 
-> > In my understanding, the disassociation support is closely intertwined with the
-> > transport layer - the last paragraph of DESCRIPTION in connect(2) is listing
-> > TCP, UDP and Unix Domain sockets in datagram mode. -- The relevant code in in
-> > net/ipv4/af_inet.c in inet_dgram_connect() and __inet_stream_connect(), where
-> > AF_UNSPEC is handled.
-> > 
-> > I would love to find a way to restrict this independent of the specific
-> > transport protocol as well.
-> > 
-> > Remark on the side - in af_inet.c in inet_shutdown(), I also found a worrying
-> > scenario where the same sk->sk_prot->disconnect() function is called and
-> > sock->state also gets reset to SS_UNCONNECTED.  I have done a naive attempt to
-> > hit that code path by calling shutdown() on a passive TCP socket, but was not
-> > able to reuse the socket for new connections afterwards. (Have not debugged it
-> > further though.)  I wonder whether this is a scnenario that we also need to
-> > cover?
-> 
-> FYI, **this does turn out to work** (I just fumbled in my first experiment). --
-> It is possible to reset a listening socket with shutdown() into a state where it
-> can be used for at least a new connect(2), and maybe also for new listen(2)s.
+On Fri, Sep 27, 2024 at 09:33:19AM -0700, Casey Schaufler wrote:
 
-Interesting syscall...
+Good morning Casey, always good to get your reflections, we hope your
+week is starting well.
 
-> 
-> The same might also be possible if a socket is in the TCP_SYN_SENT state at the
-> time of shutdown() (although that is a bit trickier to try out).
-> 
-> So a complete disassociation control for TCP/IP might not only need to have
-> LANDLOCK_ACCESS_SOCKET_CONNECT_UNSPEC (or however we'd call it), but also
-> LANDLOCK_ACCESS_SOCKET_PASSIVE_SHUTDOWN and maybe even another one for the
-> TCP_SYN_SENT case...? *
+> On 9/27/2024 1:58 AM, Dr. Greg wrote:
+> > On Mon, Sep 16, 2024 at 04:08:11AM -0400, Paul Moore wrote:
+> >
+> > Good morning, I hope the end of the week is going well for everyone.
+> >
+> >> On Sun, Sep 15, 2024 at 8:38???PM Tetsuo Handa
+> >> <penguin-kernel@i-love.sakura.ne.jp> wrote:
+> >>> On 2024/09/14 0:28, Paul Moore wrote:
+> >>>> I find it somewhat amusing that you are complaining about the LSM
+> >>>> framework not accepting new LSMs in the same pull request where we are
+> >>>> adding a new LSM (IPE).  As a reminder, we have documented guidelines
+> >>>> regarding the addition of new LSMs:
+> >>>>
+> >>>> https://github.com/LinuxSecurityModule/kernel/blob/main/README.md
+> >>> (...snipped...)
+> >>>> While I have no intention to negatively impact out-of-tree LSMs,
 
-That would make the Landlock interface too complex, we would need a more
-generic approach instead e.g. with a single flag.
+> >>> What I call "patent examination" is "New LSM Guidelines" section
+> >>> within that link. That section includes "here are a list of
+> >>> requirements for new LSM submissions:" and "The new LSM must be
+> >>> sufficiently unique", and out-of-tree LSMs which cannot satisfy
+> >>> it won't be able to become in-tree.  If we apply this
+> >>> requirement to userspace program, this requirement means you are
+> >>> declaring that "postfix" (or anything except "sendmail") cannot
+> >>> become in-tree because "sendmail" is already in-tree. This is a
+> >>> clear intention of negatively impact out-of-tree LSMs. People
+> >>> have the right to use whatever subsets/alternatives. Even if a
+> >>> new LSM has were completely a subset of existing in-tree LSMs,
+> >>> people have the right to use such LSM.
 
-> 
-> It makes me uneasy to think that I only looked at AF_INET{,6} and TCP so far,
-> and that other protocols would need a similarly close look.  It will be
-> difficult to cover all the "disassociation" cases in all the different
-> protocols, and even more difficult to detect new ones when they pop up.  If we
-> discover new ones and they'd need new Landlock access rights, it would also
-> potentially mean that existing Landlock users would have to update their rules
-> to spell that out.
-> 
-> It might be easier after all to not rely on "disassociation" control too much
-> and instead to design the network-related access rights in a way so that we can
-> provide the desired sandboxing guarantees by restricting the "constructive"
-> operations (the ones that initiate new network connections or that listen on the
-> network).
+> >> Comparing userspace applications to kernel code isn't a fair
+> >> comparison as a userspace application can generally be added without
+> >> impacting the other applications on the system.
 
-I agree.  So, with the ability to control socket creation and to also
-control listen/bind/connect (and sendmsg/recvmsg for datagram protocols)
-we should be good right?
+> > Tetsuo's comparison may be a bit strained, but it remains relevant.
+> >
+> > Linux was founded on a concept of choice, the current LSM architecture
+> > struggles with the ability to facilitate generalized choice and
+> > flexibility.
 
-> 
-> Mikhail, in your email I am quoting above, you are saying that "disassociation
-> control can be really useful"; do you know of any cases where a restriction of
-> connect/listen is *not* enough and where you'd still want the disassociation
-> control?
-> 
-> (In my mind, the disassociation control would have mainly been needed if we had
-> gone with Mickaël's "Use socket's Landlock domain" RFC [1]?  Mickaël and me have
-> discussed this patch set at LSS and I am also now coming around to the
-> realization that this would have introduced more complication.  - It might have
-> been a more "pure" approach, but comes at the expense of complicating Landlock
-> usage.)
+> >>> While I consider that some of out-of-tree LSMs being unable to
+> >>> become in-tree is inevitable, the requirement that any LSM has to
+> >>> be built-in is a barrier for LSMs which cannot be built-in.
 
-Indeed, and this RFC will not be continued.  We should not think of a
-socket as a security object (i.e. a real capability), whereas sockets
-are kernel objects used to configure and exchange data, a bit like a
-command multiplexer for network actions that can also be used to
-identify peers.
+> >> Anyone is always free to build their own kernel with whatever code
+> >> changes they like, this is the beauty of the kernel source being
+> >> available and licensed as Open Source.  You are free to build a
+> >> kernel with whatever LSM you like included and enabled.  You have
+> >> been shown examples on how to do this in previous threads.
 
-Because Landlock is a sandboxing mechanism, the security policy tied to
-a task may change during its execution, which is not the case for other
-access control systems such as SELinux.  That's why we should not
-blindly follow other security models.  In the case of socket control,
-Landlock uses the calling task's credential to check if the call should
-be allowed.  In the case of abstract UNIX socket control (with Linux
-5.12), the check is done on the domain that created the peer's socket,
-not the domain that will received the packet.  In this case Landlock can
-rely on the peer socket's domain because it is a consistent and
-race-free way to identify a peer, and this peer socket is not the one
-doing the action.  It's a bit different with non-UNIX sockets because
-peers may not be local to the system.
+> >>> People have the right to install whatever userspace software /
+> >>> kernel modules they need.
 
-> 
-> —Günther
-> 
-> [1] https://lore.kernel.org/all/20240719150618.197991-1-mic@digikod.net/
-> 
-> * for later reference, my reasoning in the code is: net/ipv4/af_inet.c
->   implements the entry points for connect() and listen() at the address family
->   layer.  Both operations require that the sock->state is SS_UNCONNECTED.  So
->   the rest is going through the other occurrences of SS_UNCONNECTED in that same
->   file to see if there are any places where the socket can get back into that
->   state.  The places I found where it is set to that state are:
->   
->   1. inet_create (right after creation, expected)
->   2. __inet_stream_connect in the AF_UNSPEC case (known issue)
->   3. __inet_stream_connect in the case of a failed connect (expected)
->   4. inet_shutdown in the case of TCP_LISTEN or TCP_SYN_SENT (mentioned above)
-> 
+> >> Anyone is free to build their own kernel with whatever LSMs they want,
+> >> either in-tree or out-of-tree; the static call changes do not prevent
+> >> that.
+
+> > This line of reasoning represents a bit of an indulgence in a false
+> > binary logic fallacy.
+> >
+> > Anyone reading this forum is certainly capable of building a kernel in
+> > any configuration they want to.  That being said, the general Linux
+> > technical community now represents a cohort far larger than
+> > individuals who have the ability to build and platform a kernel of
+> > their choosing.
+> >
+> > From a security perspective, Linux will benefit from providing a
+> > better means to serve a middle ground where alternate security models
+> > and architectures can be implemented without building a kernel from
+> > scratch.
+
+> Ye Gads.
+
+That certainly dates both of us, the last time I heard that phrase it
+was from Thurston Howell the III....
+
+> One can create SELinux policy to support just about any security
+> model you can think of, although I was the first to decry its
+> complexity.  Smack access rules can be configured to support a wide
+> variety of models, including Bell & LaPadula, Biba and rings of
+> trust. AppArmor is very useful for targeted application security
+> model enforcement. And then there's BPF.
+>
+> It seems to me that the problem isn't with the facilities provided
+> to support the implementation of new security models, it is with the
+> definition of those security modules. Or rather, the lack
+> thereof. The ancient Bell & LaPadula sensitivity model can be
+> implemented using Smack rules because it is sufficiently well
+> defined. If the end user can define their policy as clearly as B&P
+> does, its a slam dunk for any of the aforementioned LSMs.
+
+We certainly wouldn't choose to argue with any of this, given your
+repertoire in the field of mandatory access controls and security
+models.
+
+But therein lies the rub with respect to the implementation of system
+security.
+
+There are what, maybe 5-6 people in the world like yourself, that have
+the technical chops to translate the theoretical expressiveness you
+describe above into functional, let alone maintainable, security
+implementations?
+
+If there was the ability to practically implement just about any
+security model with SeLinux there would be no need for the LSM, yet
+its existence has arisen, given the desire to support multiple
+security schemes.  That alone would seem to suggest the lack of
+technical prowess that is required to translate theoretical
+expressiveness into practical implementations.
+
+A primary challenge to security is scale of skill.
+
+In the face of limited advanced security skills, we have hundreds of
+thousands of people around the world creating and modifying millions
+of workloads, on a daily basis.
+
+I mentioned just recently, in a meeting with technical influencers
+here in the Great State of North Dakota, that we are never going to
+train our way out of this security problem.
+
+Cisco recognized this with network security and this fact was central
+to the concept of it's Application Centric Infrastructure (ACI).  With
+respect to scale, ACI is based on the premise that the manageability
+of network security has to be an artifact of the development process.
+
+One of the motivations behind TSEM is to deliver that same concept to
+system security.  The notion of allowing development teams to create a
+customized, bounded and mandatorily enforced security behavior,
+specific to a workload, as an extension of the development process.
+
+Another tool in the 'Secure By Design' toolbox.  A concept that
+entities like NIST, DHS/CISA and particularly the insurance companies
+are going to force the industry to translate into practice,
+particularly in critical infrastructure systems.
+
+Have a good week.
+
+As always,
+Dr. Greg
+
+The Quixote Project - Flailing at the Travails of Cybersecurity
+              https://github.com/Quixote-Project
