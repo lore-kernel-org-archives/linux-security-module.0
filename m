@@ -1,170 +1,99 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76F071CC16D;
-	Tue,  1 Oct 2024 18:10:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F0311CCB2F
+	for <linux-security-module@vger.kernel.org>; Tue,  1 Oct 2024 18:22:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727806229; cv=none; b=li5m9bmJUqMU3R2dikz1f3iJglcwK5Q0YPI1UiN47+U9MgV4s8BwiMrjoNfEqVhNGZ0dWyyGUPPtgQGIkNrxHAeES9jASKYshLsYNQB/Sy+FSamuoyPrpvVO4DVOaB8yNeLKVzI8O+VTM6xrLgPKVBWYoakw+1vBf6vO5InixQ8=
+	t=1727806964; cv=none; b=oD7kKOD8Iy27+bd45HiZqHsTHjsSAo1Xjuyr9At/ZlJM/kKHMnQm3UI53apMOEaLYLiu2IVP5OabUde8mv496yMMHbhwLx2tk3zKxNdJYH1c4KpNCV6uLKWpIY2JpUURkI4cAhGylf5n+u/HyaMsTejjgox5pYIlItZLyY1o1IU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727806229; c=relaxed/simple;
-	bh=HL2E3QMrC4FldlfCN6NH6Ig5eHF5SQWPoluFh8RdjgQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=VQ+uRfq3FepktSqJZw6cpvzsB1m8RM+GFc/ds37i9CTjyrPf3U/+0h78EEwZHsIOM9t/r3gwumygHlb+DuhI1MJo9pSWDbOycsL0kTJs97luWdvZ1UDJBBHTNR9lA+FscWSA7sleS9YlfMVraAU+m8Xn+zA9edw//3P5HgLSTS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=X1VQXYdk; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1727806964; c=relaxed/simple;
+	bh=vAvOy79PwjXzUDgojljwRNNgFvmSyzKgpOjj12PG6p4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ojs3Ih+GKLTi1V+68nge+BWMMt++w+8qKNlIYrpfVi0qktwCqdyAfd3adVDoRt4c9Mb2xSetB20A+KzdO9Kw+oDVqsZyfHq6zqHzeHGilsJn8GxT2Wkv3T10xq/QVoO49HlUSpW6/TNifqGQLmstoRGwF/mLXJbqjcWcM3whENQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=dm1TY/wm; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="X1VQXYdk"
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 491Howx7001081;
-	Tue, 1 Oct 2024 18:10:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:subject:from:to:cc:date:in-reply-to:references
-	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
-	4iPy/miIDfWox6jCNp/OmEeJAi43UdG2oJnaBzafbRE=; b=X1VQXYdkWdSj385l
-	X+mngF02odJ/uH+xasipOCRbuCBjwwQZ7E3s1oMC9NiSGXrxwvJb4CIN+3aRsW6c
-	FNKtD3rERbztKIchungvGp7hnVCgfZSNU8nox2z4qbv//MADwkIi/LrxBM+qr6Pu
-	zJJfC90OFj1gUQCx5SeOyBVv2qifGDM/DqS/GtjDsUrABJOWGGdKNWqbhOQd6RlP
-	ZzYIXhLBqx9ofgEFlp0Z1JEJn2MlyomI1skdIuTuUBIpuswhAX/IlqDy9zyewz6R
-	tMliPC64y63R8aVNswQgZyFI97cGxMQqUx9RXNOnI1puiYQUZ2OpjC4EtUnE8oFT
-	6GThBw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 420nu102nt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 01 Oct 2024 18:10:06 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 491IA5Rc010808;
-	Tue, 1 Oct 2024 18:10:05 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 420nu102nm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 01 Oct 2024 18:10:05 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 491I4s1o008026;
-	Tue, 1 Oct 2024 18:10:04 GMT
-Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41xvgxx3ma-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 01 Oct 2024 18:10:04 +0000
-Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
-	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 491IA41F28967550
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 1 Oct 2024 18:10:04 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5F99058056;
-	Tue,  1 Oct 2024 18:10:04 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 173F758045;
-	Tue,  1 Oct 2024 18:10:03 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.187.29])
-	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  1 Oct 2024 18:10:02 +0000 (GMT)
-Message-ID: <3fed38bc5c9de9e1a16fd5c1413ba8a965d26dac.camel@linux.ibm.com>
-Subject: Re: [PATCH v5 0/5] Lazy flush for the auth session
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>, linux-integrity@vger.kernel.org
-Cc: James.Bottomley@HansenPartnership.com, roberto.sassu@huawei.com,
-        mapengyu@gmail.com, David Howells <dhowells@redhat.com>,
-        Paul Moore
- <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn"
- <serge@hallyn.com>, Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe
- <jgg@ziepe.ca>, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Tue, 01 Oct 2024 14:10:02 -0400
-In-Reply-To: <D4D05FKB9VSG.33COYTJHUX6EM@kernel.org>
-References: <20240921120811.1264985-1-jarkko@kernel.org>
-	 <D4D05FKB9VSG.33COYTJHUX6EM@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: IJLTXFMuREwjxEudd-VPtXiTR7PBTX-5
-X-Proofpoint-ORIG-GUID: DOAhx2zVjTwcOAWOiSc8KR0E8tYZqdMf
-Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="dm1TY/wm"
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e25ccd64be9so5225288276.2
+        for <linux-security-module@vger.kernel.org>; Tue, 01 Oct 2024 11:22:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1727806961; x=1728411761; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KgwPyT2bLxkRGazo5VUANjf0pT4h7FhmCc+e+AU2d3E=;
+        b=dm1TY/wmAfeFLpiDCWn2kPXeEKm2XwguwYPnT7zcNgDz++v3w1a8tGuDdmFo6MA41R
+         +hS+ZKe2/dnELrtzx//HN74ms/o9LfGPrY6p/bsT1qUt/1/hUDJobMKDxFpAS0RTIXMf
+         0VnoJrKfYP81VU59C7YZkNudYHSfIecY9lyo8MOKy24UugdkhMJks6nLac6koHIsDr1v
+         rwPu5eAZqchzbW8AVI7wq3X68rsJ8sSnIwNMRaXiu39N13i6gSXcXO0qQRaK07wT8mFu
+         ZS/I3srgoDl6rEq1IUhXjquvAmZeRPbxIguRTO5c/uVpCS9/2dHP7hhHBf7DAAStH5mD
+         kJvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727806961; x=1728411761;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KgwPyT2bLxkRGazo5VUANjf0pT4h7FhmCc+e+AU2d3E=;
+        b=pdtI35ud5l1Nx5Qmksv3GfRaiwp/AIHZttd48AH+7sd/1z2FfzQ7YE/oRYyOm7H1KM
+         iiqFjimqsSZsDrNb0f7dyyxV9vUC0QmGVju/46Ja0UZJ+hjNlHh/x3iMS2MCEYkUpOhQ
+         hJgKyV+BGzyARNPuZ95SVDgYi2iIhsaRehjQKWPcznLmuRtq1Ogz8DwW8VxwxgijDyiu
+         8sxWeo5FgD6vxyqVFGkQoKhtIshD8/DGSYwhwULISoCZEa4Yewm3ZcMFI/e12VQ5Yl0a
+         EgPom51dpmtofzsKKYJjI1MVIaa8fj8IvKVIAbUL7jAuXhRW/+JsRA6kXkvT1hk4K1D1
+         FChg==
+X-Forwarded-Encrypted: i=1; AJvYcCXTLJaU489fl+BiiVrMvq3j0dMyYRG5K2P8KzSdcgxmMmqM+LmtopU5bYG/qnT09nYmjcU7QZT9lPg57NJZfU7mnjL1M6k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWYZAjeLAygcW81ENcbvzBQhMdgShJn6yNiJdEKB3rkaPTvOlV
+	m1OmKasHqOOoXvJcN8v2cNCQU0EQ6sUVDZ6p96c4Q7/W5aHtvQiEIrB4GdhEtNwtSGydHBxJZgK
+	HAzHZqYS6HXZm41P4h4s9zLAKjOgOHRh8EDac
+X-Google-Smtp-Source: AGHT+IGn5lBdfsR9vUYXzY++ASocNA9FMyxmhX5+ojztxwdpZR7OQ9w9sLPT+fbgQmkUUT/x55IiipDee7WgjeC91DM=
+X-Received: by 2002:a05:6902:a81:b0:e25:c97d:8565 with SMTP id
+ 3f1490d57ef6-e2638399076mr523264276.5.1727806961387; Tue, 01 Oct 2024
+ 11:22:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-01_13,2024-09-30_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
- adultscore=0 spamscore=0 impostorscore=0 suspectscore=0 mlxscore=0
- malwarescore=0 priorityscore=1501 clxscore=1011 lowpriorityscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2408220000 definitions=main-2410010116
+References: <0c4b443a-9c72-4800-97e8-a3816b6a9ae2@I-love.SAKURA.ne.jp>
+ <877cavdgsu.fsf@trenco.lwn.net> <CAHC9VhRnTrjP3kNXMmzsK4oZL7WD+uH0OuXszEPgTc5YoT5dew@mail.gmail.com>
+ <CAHk-=wjLdoBcY-r64oBbKXo3hSEr5AawrP_5GSFQ4NEbCNt4Kg@mail.gmail.com>
+In-Reply-To: <CAHk-=wjLdoBcY-r64oBbKXo3hSEr5AawrP_5GSFQ4NEbCNt4Kg@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 1 Oct 2024 14:22:30 -0400
+Message-ID: <CAHC9VhS_8JtU0KQyy3rEGt0CQ_XMQFt2Kic-bz-Qd=SMjeWe4Q@mail.gmail.com>
+Subject: Re: [GIT PULL] tomoyo update for v6.12
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 2024-09-22 at 20:51 +0300, Jarkko Sakkinen wrote:
-> On Sat Sep 21, 2024 at 3:08 PM EEST, Jarkko Sakkinen wrote:
-> > This patch set aims to fix:
-> > https://bugzilla.kernel.org/show_bug.cgi?id=3D219229.
-> >=20
-> > The baseline for the series is the v6.11 tag.
-> >=20
-> > v4:
-> > https://lore.kernel.org/linux-integrity/20240918203559.192605-1-jarkko@=
-kernel.org/
-> > v3:
-> > https://lore.kernel.org/linux-integrity/20240917154444.702370-1-jarkko@=
-kernel.org/
-> > v2:
-> > https://lore.kernel.org/linux-integrity/20240916110714.1396407-1-jarkko=
-@kernel.org/
-> > v1:
-> > https://lore.kernel.org/linux-integrity/20240915180448.2030115-1-jarkko=
-@kernel.org/
-> >=20
-> > Jarkko Sakkinen (5):
-> >   tpm: Return on tpm2_create_null_primary() failure
-> >   tpm: Implement tpm2_load_null() rollback
-> >   tpm: flush the null key only when /dev/tpm0 is accessed
-> >   tpm: Allocate chip->auth in tpm2_start_auth_session()
-> >   tpm: flush the auth session only when /dev/tpm0 is open
-> >=20
-> >  drivers/char/tpm/tpm-chip.c       |  14 ++++
-> >  drivers/char/tpm/tpm-dev-common.c |   8 +++
-> >  drivers/char/tpm/tpm-interface.c  |  10 ++-
-> >  drivers/char/tpm/tpm2-cmd.c       |   3 +
-> >  drivers/char/tpm/tpm2-sessions.c  | 109 ++++++++++++++++++------------
-> >  include/linux/tpm.h               |   2 +
-> >  6 files changed, 102 insertions(+), 44 deletions(-)
->=20
->=20
-> Roberto, James, speaking of digest cache. This patch set has no aim to
-> fix those issues but I do believe that it should improve also that=20
-> feature.
->=20
-> If I don't get soon patch reviews for the patch set, I'll pick the 2nd
-> best option: disable bus encryption on all architectures including x86
-> and ARM64 (being by default on).
->=20
-> It's a force majeure situation. I know this would sort out the issue
-> but I really cannot send these as a pull request with zero reviewe-by's.
->=20
-> I expect this to be closed by tomorrow.
+On Tue, Oct 1, 2024 at 12:36=E2=80=AFPM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Tue, 1 Oct 2024 at 07:00, Paul Moore <paul@paul-moore.com> wrote:
+> >
+> > Linus, it's unclear if you're still following this thread after the
+> > pull, but can you provide a little insight on your thoughts here?
 
-Jarkko, sorry to be so late to this discussion.  The bus HMAC/encryption re=
-ally
-impacts IMA as well.  Even with this patch set, it's slow.  My preference w=
-ould
-be to disable bus encryption on all architectures until there is a boot/run=
-time
-option allowing it to be disabled for IMA as discussed in the other thread.
+...
 
-In the other thread, I also mentioned that the Kconfig is incorrectly worde=
-d.=20
-The performance degradation is not limited to encryption, but the HMAC itse=
-lf.=20
-Please change "Saying Y here adds some encryption overhead to all kernel to=
- TPM
-transactions." to "Saying Y here adds overhead to all kernel to TPM
-transactions."
+> If the consensus is that we should revert, I'll happily revert.
 
-thanks,
+Starting tomorrow when I'm reliably back in front of computer I'll
+sort this out with the rest of the LSM folks.  Unless something
+unexpected comes up in the discussion I'll send you a revert later
+this week.
 
-Mimi
+> This
+> was all inside of the tomoyo subdirectory, so I didn't see it as some
+> kind of sidestepping, and treated the pull request as a regular
+> "another odd security subsystem update".
+
+Yes, that's fair, I think you would need a deeper understanding of the
+LSM framework as well as an understanding of recent discussions on the
+list to appreciate all of the details.
+
+--=20
+paul-moore.com
