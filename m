@@ -1,71 +1,262 @@
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f74.google.com (mail-ej1-f74.google.com [209.85.218.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC42D19DF4F
-	for <linux-security-module@vger.kernel.org>; Mon, 30 Sep 2024 21:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 265CC1BC9F4
+	for <linux-security-module@vger.kernel.org>; Tue,  1 Oct 2024 07:09:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727730493; cv=none; b=rfv6asF55zL+N5Iwh0Q7Rdvjsq7X/ZCSOlbMhHyFpy0fG0GgPvSh/+rgfoUMviNdnjEodBNvcTjtg9yMQ7rohoWH0DyzkNqBPwyP86zrg5t1iisCqmFkb/CrvEMLREVoCVG/+dRR3uUQjqSh/FLkXZsQupQSRie/H44RIVQ/36M=
+	t=1727766592; cv=none; b=DFWAABjSy/p6q2WYiUOsRwuBqCkkqvUii7Bm16By9UWpV+jXqJahFhB8F+jwnDwvJztKA+Ai9q2NJiR9NuosPKpWyFdG7QiQOC61eCVvF7HpI0LpcCQ4W/89/e1oJrSNgw7bK7ISWSn4156EASl27TPUcpwJrssV6r8EbyV+90Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727730493; c=relaxed/simple;
-	bh=3VDtNdtnzpBKoOJECrRjXc9HY/aedLoQpBUyg7df6io=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pRxcHwVIJ8w3UDP3Tiarzc0bnC49hCdFmQdnmEyXs1PbkSL/JdYRWGWA55ZIUQEvbzihZMOkwXIjGNbARz8mXemIcsAWhZLytthHwneClWElg+DHa1aDAzE5hOSWLZ9tRAe6ySdx2jfL43n2SS065m5Ikj71vPnT0iiGFLU10B0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id EE55F81E; Mon, 30 Sep 2024 16:08:01 -0500 (CDT)
-Date: Mon, 30 Sep 2024 16:08:01 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH] capabilities: remove cap_mmap_file()
-Message-ID: <20240930210801.GA778168@mail.hallyn.com>
-References: <20240925192018.15290-2-paul@paul-moore.com>
- <dd386a1f-9245-45ae-b0fe-d07d1dec5100@schaufler-ca.com>
- <20240926131157.GA683524@mail.hallyn.com>
- <CAHC9VhSyYkq=AxiVkwkuk1jsTTCqt9xypdto5yaX3jdLXy+Xxg@mail.gmail.com>
- <20240926132251.GB683524@mail.hallyn.com>
- <CAHC9VhRj5BvBBir3_sWo5whbpRVmpppYEqrvgRf17mR2-xHdAQ@mail.gmail.com>
+	s=arc-20240116; t=1727766592; c=relaxed/simple;
+	bh=EEfUkg12zVayrkF97+wBeybXQSiAExWRBd2BS7YcViM=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=oIcCc6/8hC0HaP15429SuoHNdCkcvX/dxm4aobDNC3JCid02gPW+UeTrqSKb4j3TElOYxEz3lbz8wVBTqdDp7JqgrRIL3qGEJeTTg4lfFsNRqXXkV7fFk2QsuUiLAZ94ls/bMZwHFWB/dX/PMi27DlNSCX+ummL29kSSgOWRve4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bk2QhsSH; arc=none smtp.client-ip=209.85.218.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bk2QhsSH"
+Received: by mail-ej1-f74.google.com with SMTP id a640c23a62f3a-a8a877c1d22so419878766b.1
+        for <linux-security-module@vger.kernel.org>; Tue, 01 Oct 2024 00:09:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727766588; x=1728371388; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=G98NvXM62YT0B0WJqga1aEPWf2fMI/P8gKqX00JsaWE=;
+        b=bk2QhsSH38N4UAxhEtUB72e65ixpvjBwARbkieNPWVAY6MIRTaE/RZxoQ9i+ZXtwkW
+         6aMioBa3IuCSh1LxCsz+PArTk0iAcBS1Lb4e5r7D183qW+NkvyPhotyQoRwmTjnSc9am
+         QfL5Vubi85A9ze2RM5c9Gec4D13OsOdY80qe8CoTNP1vh4u+XXuX4lIZyH+4Jc9sE9Oj
+         bFZTN5U2TTfYdM+U4VN9iua2GEthNBOKqDs9VXNBoid3dqgQKZtN3dqVhqKhZS8K4Jme
+         oK/zL141fxftRZTomiuF/jq/uUlY/8KHclR/C6LzV3qMtrnfj1uHwOVZRoEMss06R2Es
+         gjOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727766588; x=1728371388;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=G98NvXM62YT0B0WJqga1aEPWf2fMI/P8gKqX00JsaWE=;
+        b=BpzexK2wcFuzNVNYO6pm2JnguCW3mJxW4Tt1mH8+UmFrKa2Qt8j7AT77k/3XfjG4Qq
+         +BqzCVpXTUriP2EV7dKDVUmH7jJm3/AQtF31Bg5oX4rmzJaoy/qqn6+ubpp6wDqy/uqQ
+         U3AMWFg6hMAokUyFvRy81NT+567BbvFVTOUaRLuO98wiKuBBimQaUrnxRjc6DVf0hdzM
+         XhRWvx3xVd3ht+gnweIYiQNW2ltK6P9EN1C6cY6OmBBxEem+FMUj0iqFWWtew4i5kmqM
+         dm0t7rd5oJmV7PVMR8Un2cRBUidChhc9P6LrZV+1ubzSdabBZCjgD7/9gn9cwxW9sgzi
+         IvBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU1ob0Ta+nVCMpHkibdq4tPl3SkVFEtanXix98mGMfiD/+vPwqXn8d3WWyxlWwLwdc+rAXkOI4exv+pKo1iC83HzqyRnZ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzebPZdTncxtShJUnQagEAN0LdJxr/Vvh+n/ygnd32Smid04l5
+	L21+6LPgsJLFOzEVVOIb60fHMbkP8cyGYOYqF6HoC4DonUvJ0TR131p47BW/l49rjpOa5BZ4bpX
+	68Q==
+X-Google-Smtp-Source: AGHT+IEFa2kdnyeozPEZpXPOZxvw+akB2zSXUlpMW74Sj1ivjTUlFPXTAwMlPI6ebFhigkPVCITJN5sj1kw=
+X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
+ (user=gnoack job=sendgmr) by 2002:a17:906:d214:b0:a8a:7d59:346d with SMTP id
+ a640c23a62f3a-a93c4aab81dmr660266b.10.1727766588055; Tue, 01 Oct 2024
+ 00:09:48 -0700 (PDT)
+Date: Tue, 1 Oct 2024 09:09:46 +0200
+In-Reply-To: <20240904104824.1844082-20-ivanov.mikhail1@huawei-partners.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhRj5BvBBir3_sWo5whbpRVmpppYEqrvgRf17mR2-xHdAQ@mail.gmail.com>
+Mime-Version: 1.0
+References: <20240904104824.1844082-1-ivanov.mikhail1@huawei-partners.com> <20240904104824.1844082-20-ivanov.mikhail1@huawei-partners.com>
+Message-ID: <ZvufroAFgLp_vZcF@google.com>
+Subject: Re: [RFC PATCH v3 19/19] landlock: Document socket rule type support
+From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
+To: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+Cc: mic@digikod.net, willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com, 
+	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
+	netfilter-devel@vger.kernel.org, yusongping@huawei.com, 
+	artem.kuzin@huawei.com, konstantin.meskhidze@huawei.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Sep 26, 2024 at 09:24:06AM -0400, Paul Moore wrote:
-> On Thu, Sep 26, 2024 at 9:22 AM Serge E. Hallyn <serge@hallyn.com> wrote:
-> > On Thu, Sep 26, 2024 at 09:16:04AM -0400, Paul Moore wrote:
-> > > On Thu, Sep 26, 2024 at 9:11 AM Serge E. Hallyn <serge@hallyn.com> wrote:
-> > > > On Wed, Sep 25, 2024 at 12:45:20PM -0700, Casey Schaufler wrote:
-> > > > > On 9/25/2024 12:20 PM, Paul Moore wrote:
-> > > > > > The cap_mmap_file() LSM callback returns the default value for the
-> > > > > > security_mmap_file() LSM hook and can be safely removed.
-> > > > > >
-> > > > > > Signed-off-by: Paul Moore <paul@paul-moore.com>
-> > > > >
-> > > > > Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
-> > > >
-> > > > Reviewed-by: Serge Hallyn <serge@hallyn.com>
-> > >
-> > > Thanks Serge.  Any interest in pulling this via the capabilities tree
-> > > or would you prefer I take this via the LSM tree?
-> >
-> > Oh, jinkeys - I guess should take it through the capabilities tree if
-> > only to check that it still works!
-> 
->  :)
-> 
-> Sounds good, if you change your mind let me know and I'll pick this up.
+Hello!
 
-Just got access back to my kernel.org account.  Too late for 6.12 cycle, so
-I'll keep it ready for 6.13 window.  I suppose I should see about hooking
-back into the -next kernel for testing.
+On Wed, Sep 04, 2024 at 06:48:24PM +0800, Mikhail Ivanov wrote:
+> Extend documentation with socket rule type description.
+>
+> Signed-off-by: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+> ---
+>  Documentation/userspace-api/landlock.rst | 46 ++++++++++++++++++++----
+>  1 file changed, 40 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/use=
+rspace-api/landlock.rst
+> index 37dafce8038b..4bf45064faa1 100644
+> --- a/Documentation/userspace-api/landlock.rst
+> +++ b/Documentation/userspace-api/landlock.rst
+> @@ -33,7 +33,7 @@ A Landlock rule describes an action on an object which =
+the process intends to
+>  perform.  A set of rules is aggregated in a ruleset, which can then rest=
+rict
+>  the thread enforcing it, and its future children.
+> =20
+> -The two existing types of rules are:
+> +The three existing types of rules are:
+> =20
+>  Filesystem rules
+>      For these rules, the object is a file hierarchy,
+> @@ -44,14 +44,19 @@ Network rules (since ABI v4)
+>      For these rules, the object is a TCP port,
+>      and the related actions are defined with `network access rights`.
+> =20
+> +Socket rules (since ABI v6)
+> +    For these rules, the object is a pair of an address family and a soc=
+ket type,
+> +    and the related actions are defined with `socket access rights`.
+> +
+>  Defining and enforcing a security policy
+>  ----------------------------------------
+> =20
+>  We first need to define the ruleset that will contain our rules.
+> =20
+>  For this example, the ruleset will contain rules that only allow filesys=
+tem
+> -read actions and establish a specific TCP connection. Filesystem write
+> -actions and other TCP actions will be denied.
+> +read actions, create TCP sockets and establish a specific TCP connection=
+.
+> +Filesystem write actions, creating non-TCP sockets and other TCP
+> +actions will be denied.
+> =20
+>  The ruleset then needs to handle both these kinds of actions.  This is
+>  required for backward and forward compatibility (i.e. the kernel and use=
+r
+> @@ -81,6 +86,8 @@ to be explicit about the denied-by-default access right=
+s.
+>          .handled_access_net =3D
+>              LANDLOCK_ACCESS_NET_BIND_TCP |
+>              LANDLOCK_ACCESS_NET_CONNECT_TCP,
+> +        .handled_access_socket =3D
+> +            LANDLOCK_ACCESS_SOCKET_CREATE,
+>      };
+> =20
+>  Because we may not know on which kernel version an application will be
+> @@ -119,6 +126,11 @@ version, and only use the available subset of access=
+ rights:
+>      case 4:
+>          /* Removes LANDLOCK_ACCESS_FS_IOCTL_DEV for ABI < 5 */
+>          ruleset_attr.handled_access_fs &=3D ~LANDLOCK_ACCESS_FS_IOCTL_DE=
+V;
+> +        __attribute__((fallthrough));
+> +	case 5:
+> +		/* Removes socket support for ABI < 6 */
+> +		ruleset_attr.handled_access_socket &=3D
+> +			~LANDLOCK_ACCESS_SOCKET_CREATE;
+
+When I patched this in, the indentation of this "case" was off, compared to=
+ the
+rest of the code example.  (The code example uses spaces for indentation, n=
+ot
+tabs.)
+
+>      }
+> =20
+>  This enables to create an inclusive ruleset that will contain our rules.
+> @@ -170,6 +182,20 @@ for the ruleset creation, by filtering access rights=
+ according to the Landlock
+>  ABI version.  In this example, this is not required because all of the r=
+equested
+>  ``allowed_access`` rights are already available in ABI 1.
+> =20
+> +For socket access-control, we can add a rule to allow TCP sockets creati=
+on. UNIX,
+> +UDP IP and other protocols will be denied by the ruleset.
+> +
+> +.. code-block:: c
+> +
+> +    struct landlock_net_port_attr tcp_socket =3D {
+> +        .allowed_access =3D LANDLOCK_ACCESS_SOCKET_CREATE,
+> +        .family =3D AF_INET,
+> +        .type =3D SOCK_STREAM,
+> +    };
+> +
+> +    err =3D landlock_add_rule(ruleset_fd, LANDLOCK_RULE_SOCKET,
+> +                            &tcp_socket, 0);
+> +
+
+IMHO, the length of the "Defining and enforcing a security policy" section =
+is
+slowly getting out of hand.  This was easier to follow when it was only fil=
+e
+system rules. -- I wonder whether we should split this up in subsections fo=
+r the
+individual steps to give this a more logical outline, e.g.
+
+* Creating a ruleset
+* Adding rules to the ruleset
+  * Adding a file system rule
+  * Adding a network rule
+  * Adding a socket rule
+* Enforcing the ruleset
+
+>  For network access-control, we can add a set of rules that allow to use =
+a port
+>  number for a specific action: HTTPS connections.
+> =20
+> @@ -186,7 +212,8 @@ number for a specific action: HTTPS connections.
+>  The next step is to restrict the current thread from gaining more privil=
+eges
+>  (e.g. through a SUID binary).  We now have a ruleset with the first rule
+>  allowing read access to ``/usr`` while denying all other handled accesse=
+s for
+> -the filesystem, and a second rule allowing HTTPS connections.
+> +the filesystem, a second rule allowing TCP sockets and a third rule allo=
+wing
+> +HTTPS connections.
+> =20
+>  .. code-block:: c
+> =20
+> @@ -404,7 +431,7 @@ Access rights
+>  -------------
+> =20
+>  .. kernel-doc:: include/uapi/linux/landlock.h
+> -    :identifiers: fs_access net_access
+> +    :identifiers: fs_access net_access socket_access
+> =20
+>  Creating a new ruleset
+>  ----------------------
+> @@ -423,7 +450,7 @@ Extending a ruleset
+> =20
+>  .. kernel-doc:: include/uapi/linux/landlock.h
+>      :identifiers: landlock_rule_type landlock_path_beneath_attr
+> -                  landlock_net_port_attr
+> +                  landlock_net_port_attr landlock_socket_attr
+> =20
+>  Enforcing a ruleset
+>  -------------------
+> @@ -541,6 +568,13 @@ earlier ABI.
+>  Starting with the Landlock ABI version 5, it is possible to restrict the=
+ use of
+>  :manpage:`ioctl(2)` using the new ``LANDLOCK_ACCESS_FS_IOCTL_DEV`` right=
+.
+> =20
+> +Socket support (ABI < 6)
+> +-------------------------
+> +
+> +Starting with the Landlock ABI version 6, it is now possible to restrict
+> +creation of user space sockets to only a set of allowed protocols thanks
+> +to the new ``LANDLOCK_ACCESS_SOCKET_CREATE`` access right.
+> +
+>  .. _kernel_support:
+> =20
+>  Kernel support
+> --=20
+> 2.34.1
+>=20
+
+There is a section further below called "Network support" that talks about =
+the
+need for CONFIG_INET in order to add a network rule.  Do similar restrictio=
+ns
+apply to the socket rules as well?  Maybe this should be added to the secti=
+on.
+
+Please don't forget -- Tahera Fahimi's "scoped" patches have landed in
+linux-next by now, so we will need to rebase and bump the ABI version one h=
+igher
+than before.
+
+Thanks,
+=E2=80=94G=C3=BCnther
