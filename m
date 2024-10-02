@@ -1,84 +1,144 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 484871E493F;
-	Wed,  2 Oct 2024 10:14:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 540F41E7646;
+	Wed,  2 Oct 2024 10:39:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727864082; cv=none; b=f3CcZ/45u1rFYp8mILvGA/FLP/Soo7gj73m8QtsTcBjyS1LdPwIACbfN86/cDmJYBRyOo7RWeji5J/5xQq2D514v3ZgS/z3i09i+tkecOyNfQpQw7lfe6z+FSn6OA8GiSmKolBIezpgH+nwK1eiqGET1LjX85P2ojZMfwRFB4R4=
+	t=1727865560; cv=none; b=Z+udHcqZFPAx3Tnh8tf0zUeCaLpyBuUF9FH8pMyiriKr+gamQJekJIl/cC757rQdBi6ZMyWWxlQCPRDUiZZVfp64BM4zXp4/hljLu6F8Mwos3+dVkIDeNZOLH2irLjiCs4K3a77knVqJhCPna07GVP5zF1Vnsuc6ITNVI//Cot8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727864082; c=relaxed/simple;
-	bh=xPtbTLmwEY0tdPID7jhVlQ/pbxn+Qy6JsyG8jCuXdik=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FLwrxQR90zxWBXTRXArFaD3+T0ExsBfX745uWBhJ8e4Qnso23Xenht+BiC/vTEcuVlnKFU0TUJWLjVvIuTAYV1IqeoWYVkvh9TXmsNYLoLV80xH/e27RBHBZObdCYAxuez2VrdtO6IUt8qAuSPM6Wvxyk5RmIKuLbkIQVjMynZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=He6XG6D1; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="He6XG6D1"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E535C4CEC5;
-	Wed,  2 Oct 2024 10:14:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1727864081;
-	bh=xPtbTLmwEY0tdPID7jhVlQ/pbxn+Qy6JsyG8jCuXdik=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=He6XG6D1RRg0x6k9lqwKv70AsE67W+ycsfVAC0iO8bsY0cre5fSbzqzr99KwGdY+e
-	 Ru0zNLrd38YBZU4b1iqqEKEun4E18mxEFSUUcUc98y8Kw5DbmBEYWvzu7wLd1i95l9
-	 3+bcD4ujDW2bT7nYBM2u0WlM90LQxHu/uvGJ+IWeJDyyzHK7kMBS6919xq5DJjsNn+
-	 2GY2S71qTYfK90bZ4UOjvCh0P1bKgxoe+7Kp9o6rtUxmPuflP5ilIVBdrTZgmX6FR+
-	 dl4vZGDasze+xdoFGnhYnd0/5HouDhraJNkxgvJbr9uKQGqok2HcQA+QVyC542gLxo
-	 p7+g4VIXc8cjQ==
-Date: Wed, 2 Oct 2024 12:14:32 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Bjoern Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arve Hjonnevag <arve@android.com>, Todd Kjos <tkjos@android.com>, 
-	Martijn Coenen <maco@android.com>, Joel Fernandes <joel@joelfernandes.org>, 
-	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, 
-	Dan Williams <dan.j.williams@intel.com>, Matthew Wilcox <willy@infradead.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, 
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, Kees Cook <kees@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>
-Subject: Re: [PATCH v2] rust: add PidNamespace
-Message-ID: <20241002-dehnen-beklagen-f7f6ca460b5b@brauner>
-References: <20240926-pocht-sittlich-87108178c093@brauner>
- <20241001-brauner-rust-pid_namespace-v2-1-37eac8d93e75@kernel.org>
- <CAH5fLghaj+mjL63vw7DKCMg3NSaqU3qwd0byXKksG65mdOA2bA@mail.gmail.com>
- <20241001-sowie-zufall-d1e1421ba00f@brauner>
- <CANiq72nJbmhicsNqZHV9=j_imXPPZWxuHiqr=N4wTDxwGaMW5g@mail.gmail.com>
+	s=arc-20240116; t=1727865560; c=relaxed/simple;
+	bh=rofNQ84XsOHW0/tMwuBE9hUL/Se3Xra/SlgPwJFnwPI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fJaQQyFEpiw8/klh7UlU3LY/HLfLNa4+4Xe6Cod4M62yWvLXIdXBjg0bDdstiOPsDTXxahjcWaHUMimsl1CqEquxSxl4Lm9fvQTK/WogqqrksXdx1H9Rg+mYs3rD9oTJkWRbIexIng7jJYyzKzrORKIvwc32I7lHtt53MBtLp1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 492AcX2m022298;
+	Wed, 2 Oct 2024 05:38:33 -0500
+Received: (from greg@localhost)
+	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 492AcVPU022297;
+	Wed, 2 Oct 2024 05:38:31 -0500
+Date: Wed, 2 Oct 2024 05:38:31 -0500
+From: "Dr. Greg" <greg@enjellic.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Paul Moore <paul@paul-moore.com>, Jonathan Corbet <corbet@lwn.net>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org
+Subject: Re: [GIT PULL] tomoyo update for v6.12
+Message-ID: <20241002103830.GA22253@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <0c4b443a-9c72-4800-97e8-a3816b6a9ae2@I-love.SAKURA.ne.jp> <877cavdgsu.fsf@trenco.lwn.net> <CAHC9VhRnTrjP3kNXMmzsK4oZL7WD+uH0OuXszEPgTc5YoT5dew@mail.gmail.com> <CAHk-=wjLdoBcY-r64oBbKXo3hSEr5AawrP_5GSFQ4NEbCNt4Kg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiq72nJbmhicsNqZHV9=j_imXPPZWxuHiqr=N4wTDxwGaMW5g@mail.gmail.com>
+In-Reply-To: <CAHk-=wjLdoBcY-r64oBbKXo3hSEr5AawrP_5GSFQ4NEbCNt4Kg@mail.gmail.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Wed, 02 Oct 2024 05:38:34 -0500 (CDT)
 
-On Tue, Oct 01, 2024 at 05:45:15PM GMT, Miguel Ojeda wrote:
-> On Tue, Oct 1, 2024 at 4:17 PM Christian Brauner <brauner@kernel.org> wrote:
+On Tue, Oct 01, 2024 at 09:36:16AM -0700, Linus Torvalds wrote:
+
+Good morning Linus, I hope the week is going well for you.
+
+Some reflections, for the record, on this issue.
+
+> On Tue, 1 Oct 2024 at 07:00, Paul Moore <paul@paul-moore.com> wrote:
 > >
-> > Ok. Why does it pass the build then? Seems like it should just fail the build.
-> 
-> It is part of `make rustfmt` / `make rustfmtcheck`.
-> 
-> I would be happy to make it part of the normal build if people agree
-> -- though it could be annoying in some cases, e.g. iterating small
-> changes while developing.
+> > Linus, it's unclear if you're still following this thread after the
+> > pull, but can you provide a little insight on your thoughts here?
 
-You could consider adding a way to turn it off then instead of turning
-it on.
+> I absolutely hate the whole "security people keep arguing", and I
+> cannot personally find it in myself to care about tomoyo.  I don't
+> even know where it is used - certainly not in Fedora, which is the
+> only distro I can check quickly.
+>
+> If the consensus is that we should revert, I'll happily revert. This
+> was all inside of the tomoyo subdirectory, so I didn't see it as
+> some kind of sidestepping, and treated the pull request as a regular
+> "another odd security subsystem update".
 
-> 
-> If we do that, it would be nice if -next does it too, but I think
-> Stephen is already building Rust for x86_64 allmodconfig (Cc'd).
+I see that Paul Moore has further responded with commentary about the
+'LSM community' responding to this issue.  I wanted, on behalf of our
+project and in support of Tetsuo's concerns, to register directly with
+you a sense of jaded skepticism about the notion of a community
+response.
 
-Imho, since Rust enforces code formatting style I see no point in not
-immediately failing the build because of formatting issues.
+Fixing Tetsuo's issue, at least to the extent it can be fixed,
+requires technical improvements in the Linux security architecture.
+Currently, potential technical improvements in this venue are
+struggling to receive any kind of acknowledgement or review, to the
+ultimate detriment of enhancements that Linux should be bringing
+forward to address, not only this issue, but the security industry
+writ-large.
+
+We have made multiple submissions of technology, that can at least
+positively impact Tetsuo's concerns, and in the process perhaps
+improve the opportunity for security innovation in Linux.  After 20
+months of doing so we have yet to receive anything that would resemble
+substantive technical review [1].
+
+The following are links to the four submissions.  We believe an
+unbiased observer would conclude that they provide ample evidence of
+very little interest in reviewing submissions for enhancements to the
+Linux security eco-system, outside of perhaps certain constituencies:
+
+V1:
+https://lore.kernel.org/linux-security-module/20230204050954.11583-1-greg@enjellic.com/T/#t
+
+V2:
+https://lore.kernel.org/linux-security-module/20230710102319.19716-1-greg@enjellic.com/T/#t
+
+V3:
+https://lore.kernel.org/linux-security-module/20240401105015.27614-1-greg@enjellic.com/T/#t
+
+V4:
+https://lore.kernel.org/linux-security-module/20240826103728.3378-1-greg@enjellic.com/T/#t
+
+As of the V4 release, we have added support for an approach that may
+positively impact Tetsuo's concerns.  We do that without touching any
+infrastructure outside of our proposed LSM.
+
+We can speak, at great length, as to why we feel that Linux would
+benefit from structural improvements to its security infrastructure.
+We will refrain from doing so in this thread, given your stated
+sentiments on these types of discussions.
+
+However, your mantra, recently expressed on security infrastucture
+issues, has always been:
+
+"Code talks, bullshit walks."
+
+For all of this to work, and the Linux community to remain healthy,
+the code needs to be listened to and that is not effectively happening
+in the security arena.
+
+I started my involvement with Linux in late 1991.  All of what I see
+is giving me a great deal of pause about the health of our community
+moving forward and the potential negative impact these issues have on
+the opportunity for security innovation to emerge
+
+>                   Linus
+
+Have a good remainder of the week.
+
+Apologies in advance for extending conversations you find tiresome.
+
+As always,
+Dr. Greg
+
+The Quixote Project - Flailing at the Travails of Cybersecurity
+              https://github.com/Quixote-Project
+
+
+[1]: A thank you to Casey Schaufler, despite our lively disagreement
+about some issues, who has offered specific review comments and
+dialogue about security modeling.  To Greg Kroah Hartman for
+recommending the most important change we have implemented with
+respect to JSON encoding of security events and a handful of other
+individuals who have provided helpful procedural and technical point
+suggestions.
