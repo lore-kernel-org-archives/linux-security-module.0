@@ -1,97 +1,97 @@
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8F951CCECE
-	for <linux-security-module@vger.kernel.org>; Tue,  1 Oct 2024 21:20:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C4DB1372;
+	Wed,  2 Oct 2024 03:32:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727817623; cv=none; b=KEX3rM2gW8xVFzRPFIUw0sEvfc8qm9Kw9T8tMpYTta6sGRS+6aI01K/YrgNXkh86U4Q7sTqPd+nBiMJSayEFVe6F+RuqhOD2r4NmjJR3VFNd8gAAvLF6XKfZY6/cUmq1U2VCsSSPZMFk3S2g9iK53pRgblol9y/HvAJXAPi/txY=
+	t=1727839945; cv=none; b=Rg+Xzu03pq6qUaIw4MICo4/mOZDti2Wl7BDy3US3MM1iUsXCqnyH8lkEuc5jZBepylC6428motbFQE/RSXGulA/QHVI/TUa/6Qz+BLpzKuulAoR+yqnYfQj1WWYR/LUbvmC/C1yHcxpiFplFitqI6APHgV+aAIk46a49f47A9Wk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727817623; c=relaxed/simple;
-	bh=xWtunizu7sprcSmUlqssyJWt3mWCr9fUw4ZmXM89Ioc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pOTX+tlhuGUzeEa3GXIQt5ju5VwN+UcQ5tzVcJWhIC5P8aBc6C71TI7M0NLt6zRURfO+Yh3LURkk2lz/x4dSaTziBL9vwLLQXHMQoAageUlC5SyOCqVOF87mQLJbggv699dsr9Bdzwo5VOEeg2BRFhyEur1ShLKwSMZtJlT96Uo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id 7C8C8677; Tue,  1 Oct 2024 16:20:13 -0500 (CDT)
-Date: Tue, 1 Oct 2024 16:20:13 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH] capabilities: remove cap_mmap_file()
-Message-ID: <20241001212013.GA801783@mail.hallyn.com>
-References: <20240925192018.15290-2-paul@paul-moore.com>
- <dd386a1f-9245-45ae-b0fe-d07d1dec5100@schaufler-ca.com>
- <20240926131157.GA683524@mail.hallyn.com>
- <CAHC9VhSyYkq=AxiVkwkuk1jsTTCqt9xypdto5yaX3jdLXy+Xxg@mail.gmail.com>
- <20240926132251.GB683524@mail.hallyn.com>
- <CAHC9VhRj5BvBBir3_sWo5whbpRVmpppYEqrvgRf17mR2-xHdAQ@mail.gmail.com>
- <20240930210801.GA778168@mail.hallyn.com>
- <CAHC9VhQZ1wM-pYW5sPEcP9=uKi4sAFR1nEiEXu-tYypy7feHqA@mail.gmail.com>
+	s=arc-20240116; t=1727839945; c=relaxed/simple;
+	bh=GrshfNrdBEhbre/HkSZmIqVi0NqnliVcnKoyd5hLewQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sQEIHPEAAuFrjzrCisbKiyG5eGECflb6ziSwuJUJssogSolij+9wrcRxxLyOXWlpOTOlwvkvVv8ZRnh3lk+z8Z9SPTqJcN6LBiyrxgdTNghp2/VNz+adDKNQdsQBTMEO1RQnscLxnVzY8QsEk4XthNvAo2Nl40SjSMBVqhOQooc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 4923VsnQ071604;
+	Wed, 2 Oct 2024 12:31:54 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 4923VsvN071595
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Wed, 2 Oct 2024 12:31:54 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <19e29693-718c-4667-ab40-948718bcc6f5@I-love.SAKURA.ne.jp>
+Date: Wed, 2 Oct 2024 12:31:54 +0900
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhQZ1wM-pYW5sPEcP9=uKi4sAFR1nEiEXu-tYypy7feHqA@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [GIT PULL] tomoyo update for v6.12
+To: Paul Moore <paul@paul-moore.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, LKML <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org
+References: <0c4b443a-9c72-4800-97e8-a3816b6a9ae2@I-love.SAKURA.ne.jp>
+ <877cavdgsu.fsf@trenco.lwn.net>
+ <CAHC9VhRnTrjP3kNXMmzsK4oZL7WD+uH0OuXszEPgTc5YoT5dew@mail.gmail.com>
+ <CAHk-=wjLdoBcY-r64oBbKXo3hSEr5AawrP_5GSFQ4NEbCNt4Kg@mail.gmail.com>
+ <CAHC9VhS_8JtU0KQyy3rEGt0CQ_XMQFt2Kic-bz-Qd=SMjeWe4Q@mail.gmail.com>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <CAHC9VhS_8JtU0KQyy3rEGt0CQ_XMQFt2Kic-bz-Qd=SMjeWe4Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Anti-Virus-Server: fsav404.rs.sakura.ne.jp
+X-Virus-Status: clean
 
-On Tue, Oct 01, 2024 at 10:08:04AM -0400, Paul Moore wrote:
-> On Mon, Sep 30, 2024 at 5:08 PM Serge E. Hallyn <serge@hallyn.com> wrote:
-> > On Thu, Sep 26, 2024 at 09:24:06AM -0400, Paul Moore wrote:
-> > > On Thu, Sep 26, 2024 at 9:22 AM Serge E. Hallyn <serge@hallyn.com> wrote:
-> > > > On Thu, Sep 26, 2024 at 09:16:04AM -0400, Paul Moore wrote:
-> > > > > On Thu, Sep 26, 2024 at 9:11 AM Serge E. Hallyn <serge@hallyn.com> wrote:
-> > > > > > On Wed, Sep 25, 2024 at 12:45:20PM -0700, Casey Schaufler wrote:
-> > > > > > > On 9/25/2024 12:20 PM, Paul Moore wrote:
-> > > > > > > > The cap_mmap_file() LSM callback returns the default value for the
-> > > > > > > > security_mmap_file() LSM hook and can be safely removed.
-> > > > > > > >
-> > > > > > > > Signed-off-by: Paul Moore <paul@paul-moore.com>
-> > > > > > >
-> > > > > > > Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
-> > > > > >
-> > > > > > Reviewed-by: Serge Hallyn <serge@hallyn.com>
-> > > > >
-> > > > > Thanks Serge.  Any interest in pulling this via the capabilities tree
-> > > > > or would you prefer I take this via the LSM tree?
-> > > >
-> > > > Oh, jinkeys - I guess should take it through the capabilities tree if
-> > > > only to check that it still works!
-> > >
-> > >  :)
-> > >
-> > > Sounds good, if you change your mind let me know and I'll pick this up.
-> >
-> > Just got access back to my kernel.org account.  Too late for 6.12 cycle, so
-> > I'll keep it ready for 6.13 window.  I suppose I should see about hooking
-> > back into the -next kernel for testing.
-> 
-> Sorry for the delay, network access was spotty over the past few days,
-> and what little I did have was just my phone.
-> 
-> Anyway, yes, this was intended for v6.13 anyway so no harm there.
-> Glad you're setup again on kernel.org.
-> 
-> Hooking up to linux-next is pretty easy, basically just send some
-> mail, but if I can offer a suggestion you might want to make your
-> linux-next branch a automatically generated "composite" branch so you
-> are better able to get both linux-stable and linux-next patches tested
-> via the normal linux-next mechanisms.  I'm sure you've seen this
-> already, but here is the approach I take with the LSM tree:
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git/tree/README.md#n94
+On 2024/10/02 1:36, Linus Torvalds wrote:
+>> Linus, it's unclear if you're still following this thread after the
+>> pull, but can you provide a little insight on your thoughts here?
 
-Thanks!  I thought in the past there had been "how to best work with
-linux-next" guides out there, but I spent some time looking through
-linux.git/Documentation, linux-next/, lore.kernel.org, and kernelnewbies
-and google and came up with nothing.
+Yes, I want to hear what Linus thinks.
 
--serge
+> I absolutely hate the whole "security people keep arguing", and I
+> cannot personally find it in myself to care about tomoyo.  I don't
+> even know where it is used - certainly not in Fedora, which is the
+> only distro I can check quickly.
+
+As far as I am aware, TOMOYO is enabled in Ubuntu, Debian and openSUSE kernels.
+CentOS plus (which provides additional functionality over RHEL, but was killed
+by CentOS Stream) kernels also enabled TOMOYO. But not yet in Fedora kernels.
+
+> If the consensus is that we should revert, I'll happily revert. This
+> was all inside of the tomoyo subdirectory, so I didn't see it as some
+> kind of sidestepping, and treated the pull request as a regular
+> "another odd security subsystem update".
+
+I will revert TOMOYO changes if Paul succeeds in getting rid of
+CONFIG_MODULES=y support from the upstream kernel. ;-)
+
+
+
+On 2024/10/02 3:22, Paul Moore wrote:
+> Starting tomorrow when I'm reliably back in front of computer I'll
+> sort this out with the rest of the LSM folks.  Unless something
+> unexpected comes up in the discussion I'll send you a revert later
+> this week.
+
+What I am asking LSM framework is as simple as
+https://lkml.kernel.org/r/caafb609-8bef-4840-a080-81537356fc60@I-love.SAKURA.ne.jp .
+
+Now that built-in LSM modules started using __ro_after_init static calls, !built-in
+LSM modules can start using !__ro_after_init linked list without affecting built-in
+LSM modules. I can't understand why Paul does not like it.
+
+> Yes, that's fair, I think you would need a deeper understanding of the
+> LSM framework as well as an understanding of recent discussions on the
+> list to appreciate all of the details.
+
+Yes, please. How strange recent discussions about LSM framework is. :-(
+
