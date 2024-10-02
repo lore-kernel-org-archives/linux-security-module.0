@@ -1,104 +1,78 @@
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4002219D07D;
-	Wed,  2 Oct 2024 11:12:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB27912E1EE;
+	Wed,  2 Oct 2024 11:30:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727867542; cv=none; b=KpU44n3rBrBTS2s4ZRaiayM38f/JCEAueUIFdMR94/nuXlydKoOlN1cFr0iSnopW9ckdilsuvRySpt3779Se00tkgd1LyOhkLcL5fva1Ij7qDm0+CDjOKwSm3MCayQnLXlgkxbNGtm5OhtKAo3BmMROgUL13/SfPtd8ij4Ndr8c=
+	t=1727868659; cv=none; b=kQfnRlK7oGANitNCzS/7V881Du7olv7YPuihbDffrftk8pAAYFafaRq8/A4A3IZKg4S4YeFBiCRHg87wnQI4qPuE/c3euAiOsl0bhXZtQUHr+uvkYHNRIK6iGvSHm0dpTulIfbq71/4aRzk5AG+XR0L9FUkywcJwFgemrBHt9MY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727867542; c=relaxed/simple;
-	bh=5vN0FKCJY7Bs5943KeAecQOYX6VBY2Bk/nhQqeDuA88=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mMAtuDh/RayDsChLyWiE/3Gjcs7qV1ZYshkJP7HCjpLx0AQmINq1lueQU9/CAqEy8e4HcoT100khLUWHAvPxfu8x280DCeRrCwiGupl/CNlhtIO/HpaAHAEuVA2EbP5F/HIttn0Lw7MtUiJPcofsRHx7TT3El6dcPsACzxYjg7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h9gygmqK; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1727868659; c=relaxed/simple;
+	bh=xo+Bne4sKMbrVBoeYhb5KBZhjW7/mVg/usF9sSoJXOI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tNMFVWdP4wrnUinoWJKRYCv6KN87XvpCGrBYYCl3jr7iU1W7EmrRXEzoGMkdFwrvEDX4a9Dj8UgImsyym/Qa2Ys0SxgMHq4at2EaT1aymJfXJYNR0kZYf9hM1SM/6JP1E1nXuhR62uL6Gh9Az7R2I0Z5NGIsuMDNBvRQW9Wmz88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vJhDFvwW; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h9gygmqK"
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7e9cbd25337so15696a12.3;
-        Wed, 02 Oct 2024 04:12:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727867540; x=1728472340; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qB+nsD2+9MJf31TGlfwMYkDJKpDgVU8UBg71/5sugvU=;
-        b=h9gygmqKJPSn7e3H1gcgzPN7xqBci0zaXKhmOkQWa521wFYzuNWX6N45HuBFg694MT
-         IRmHhAae7mUE/xQb4ZkSTQDymTIpFtNWpZzmLI48sivQth+BV5Q4HJuIyTtzmzrKgO3u
-         qWX7UPi7NlgrO/gSL7WWWjOy7pYkagVoGLeM71i054wMEEttmxZRimng2RxoH2zDAgCT
-         Gf307HH3RBYfiC3DJoXCNIdm3+3rkn2IxqCd8Nuld7VlYcssEaZmsFfPvXyisen+PP5r
-         VUo+EAYnoybrp7Teg1fDAYccPAaWSRrCagGzMJ6+nWxk0HZtHwb35rehTSdNVBqz/0Kj
-         Twlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727867540; x=1728472340;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qB+nsD2+9MJf31TGlfwMYkDJKpDgVU8UBg71/5sugvU=;
-        b=KdpKGnqcZShGHgKR6uaM1IiNMgvcsPJ5J9vmCodwRjPQKRExr0sXm3dalZhm0XcRl1
-         ieBd6kaQlR1MzIZAyCWZosLL6L3WhYzR61S0LUTWM3S6mik6A1HLKJQ0t7BSbZ2ULUEs
-         7eqcSedF5lt/ilMwuGM2gV8v8fM9K3tV/CwM3hYlEry+9yVo6fByNdVXOe6YMzyS/Cd4
-         yuGKe98OFe/nlf/G2p2v6EKdpZu/SgoGI2rWX9KbuPO1gCM/ZfOGf1n8voQZ3MpVUEU/
-         ounZVWM726vw5e5Ia4eMCr2CwAF0POZcY5omLvDkmqF6+wYM8CdUWiLSuXj+C9SIU1Xl
-         0I6A==
-X-Forwarded-Encrypted: i=1; AJvYcCUYtQ5a6x+mik6/yHe+aZL9l0DfeUVTpAW1rc3f9yZk6jovHyFDP9eomuzDVUXpjjaXf3c3r06KTR/XnuuJ@vger.kernel.org, AJvYcCUkGgKeYv2XoNI9NwTMQ1si6QGYu4cvo19GbzZJ4zQoTykvsumMnr4CG2i3WYx1Nw9+CZnBhuv6ttrqZFcMFWTroNiWggDr@vger.kernel.org, AJvYcCW3vaOxP1czwoxF7R9CxWTuISJ+m7zmxxbuhX1Sk9rdAt8es0yXqOOOGkUP5j3MHwaUyICjOw3DxZnFgv8t@vger.kernel.org, AJvYcCWjgMJuBFxV1M+RTZmHasHWn8q8FDA9IRXM7X+wsrvkVRaMBgMv5wVdpzgr9Eq5YAq5o+AwkxNJYf5IrmFQ0S0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAdfLb+lQCJOqZ7aj51C9H0qaYBHK7lzPS5HpqjEDHtDntkaQq
-	HicHi+yZSJDAs6cibqRHJAIxtTUN6ImxQqNPDLGWiZvCnkFCZtcme6Iq8Fs02WBZLYy7oSyyAmD
-	wyRfsvxfbyaM8tadBd1Er9ImE9c8=
-X-Google-Smtp-Source: AGHT+IEXKjcRQAr6yvtLLxnWNOyfOQZWq0d5nh/tpvciPGIRYgaJQmd5wkvF2MSAYinYB41YBd77uXdWcoKxZKTZRjM=
-X-Received: by 2002:a05:6a00:3920:b0:710:5243:4161 with SMTP id
- d2e1a72fcca58-71dc5d6026amr1827408b3a.5.1727867540474; Wed, 02 Oct 2024
- 04:12:20 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vJhDFvwW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0105FC4CEC5;
+	Wed,  2 Oct 2024 11:30:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1727868659;
+	bh=xo+Bne4sKMbrVBoeYhb5KBZhjW7/mVg/usF9sSoJXOI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vJhDFvwWgTzoieYft47lOcydJQR/qnbgmpFt8IrEmLzHVnAeokEAJmc8kwau0Jql3
+	 5Kldy3E4SSg8TS8FQSf5vmyIGAbAEJO2gnTsh8kJVYHs2U10JRV4AV7ohzBHVoyePi
+	 YoUxguxCBQaskThPWegy/iUaUPpOQj+LAnrhUjRQb3uFq8OFD7Wkj7LklS2cE0YbL3
+	 6v9BmgnAAGeSNGgW+uYYCxesRFK/eE7UCCSLxFxO8HFtpQdwZoVywjhLeeYnENNaz/
+	 CCZYdnu4USrn8rSMU5PxuGGnLUWe6qIxJLaDPj6ygIZCZkFHTUQHNYR2yZMpGyq/9W
+	 kXFQkKd097puA==
+Date: Wed, 2 Oct 2024 13:30:50 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Bjoern Roy Baron <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Peter Zijlstra <peterz@infradead.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Arve Hjonnevag <arve@android.com>, Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
+	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, 
+	Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, 
+	Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, Kees Cook <kees@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>
+Subject: Re: [PATCH v4] rust: add PidNamespace
+Message-ID: <20241002-wappnen-kartoffeln-deea146780ef@brauner>
+References: <20241002-brauner-rust-pid_namespace-v4-1-d28045dc7348@kernel.org>
+ <CANiq72my2N41wRWGFpPhJk_zTTaLJcuvYFekWFyoWrhQRLEfDQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241002-brauner-rust-pid_namespace-v4-1-d28045dc7348@kernel.org>
-In-Reply-To: <20241002-brauner-rust-pid_namespace-v4-1-d28045dc7348@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 2 Oct 2024 13:12:08 +0200
-Message-ID: <CANiq72my2N41wRWGFpPhJk_zTTaLJcuvYFekWFyoWrhQRLEfDQ@mail.gmail.com>
-Subject: Re: [PATCH v4] rust: add PidNamespace
-To: Christian Brauner <brauner@kernel.org>
-Cc: Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Bjoern Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arve Hjonnevag <arve@android.com>, 
-	Todd Kjos <tkjos@android.com>, Martijn Coenen <maco@android.com>, 
-	Joel Fernandes <joel@joelfernandes.org>, Carlos Llamas <cmllamas@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Dan Williams <dan.j.williams@intel.com>, 
-	Matthew Wilcox <willy@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, 
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Kees Cook <kees@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANiq72my2N41wRWGFpPhJk_zTTaLJcuvYFekWFyoWrhQRLEfDQ@mail.gmail.com>
 
-On Wed, Oct 2, 2024 at 1:00=E2=80=AFPM Christian Brauner <brauner@kernel.or=
-g> wrote:
->
-> +        let pidns =3D unsafe { bindings::task_active_pid_ns(Task::curren=
-t_raw()) };
+On Wed, Oct 02, 2024 at 01:12:08PM GMT, Miguel Ojeda wrote:
+> On Wed, Oct 2, 2024 at 1:00 PM Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > +        let pidns = unsafe { bindings::task_active_pid_ns(Task::current_raw()) };
+> 
+> Missing `// SAFETY` -- I mention it since this will be a warning (thus
+> error in `WERROR`) soon.
+> 
+> > +        let ptr = unsafe { bindings::task_get_pid_ns(self.0.get()) };
+> 
+> Ditto.
+> 
+> > +            Some(pidns) => unsafe { bindings::task_tgid_nr_ns(self.0.get(), pidns.as_ptr()) },
+> > +            None => unsafe { bindings::task_tgid_nr_ns(self.0.get(), ptr::null_mut()) },
+> 
+> Ditto.
 
-Missing `// SAFETY` -- I mention it since this will be a warning (thus
-error in `WERROR`) soon.
-
-> +        let ptr =3D unsafe { bindings::task_get_pid_ns(self.0.get()) };
-
-Ditto.
-
-> +            Some(pidns) =3D> unsafe { bindings::task_tgid_nr_ns(self.0.g=
-et(), pidns.as_ptr()) },
-> +            None =3D> unsafe { bindings::task_tgid_nr_ns(self.0.get(), p=
-tr::null_mut()) },
-
-Ditto.
-
-Cheers,
-Miguel
+Ah, good to know.
