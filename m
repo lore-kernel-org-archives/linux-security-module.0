@@ -1,98 +1,120 @@
-Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1510A145B24
-	for <linux-security-module@vger.kernel.org>; Thu,  3 Oct 2024 16:21:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2CE3196D80
+	for <linux-security-module@vger.kernel.org>; Thu,  3 Oct 2024 16:29:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727972466; cv=none; b=k7Er0JQYnR32tEgA1mcimfes6CWiXxv47pbiIgOBBsYvjBErA/ofK4P50CrBhc0H2OjPlQz46eCGzrnQ2yMdFZUt+J5ZpwCV5lHKJqbnG8Dw6O/gU2tEFN6T4/j+OKJ/3r+/OjYbQnarLLFk5xIVZOk/VjlBUVTksdYgjzQLCus=
+	t=1727972985; cv=none; b=jqJOgPiCwZkY+5xPwFnsimqX7P/z1tuhJYk5HeE5JZozyT51PTLVNQzBf+kG2BjkIanvGiqBFawuJ8jPL451aWARfcDGDTGUyuR7y/5irQRBfS5Sl+GoOLzKExDXDWICc/kn8AA2LlxfcRuGzSfWlYcJpXrCUTUdmUV0z9NiJ2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727972466; c=relaxed/simple;
-	bh=phcUqo3xH2uEzOt4nWimJ90S6LJAldcVwztGX186zGM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ZAFXSa8zX5BaiF9Xr/wMbd64+RwvJRwWwmDZ5pvo064XYlKQSQYYF8gFw7+w1PnAmM6JacfPPmfezq+hMN+UCAhT5l5+FL4GtBHgsLzfY61I4uGrxzD1JiubyhiMhVVSBO8eCcXKn2v2+p01rQN8BxP67VTJHv5dxaLvsBvbXa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ymAdctxy; arc=none smtp.client-ip=209.85.221.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ymAdctxy"
-Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-37ce6262705so481775f8f.1
-        for <linux-security-module@vger.kernel.org>; Thu, 03 Oct 2024 09:21:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727972463; x=1728577263; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=v4AMHyota3tkdFmoOCaUrSl8aqZ2USc7/BC5yJtpHMg=;
-        b=ymAdctxyyCtLE8+h2eSkAigJ8RS+pkClpSFa/JS4e1idjBJVci3c28spBCuZ7pp1X2
-         TaRgRD6rTZ2mZWVlIeVXmqq3IgqJItVe5uE2Ksp3+GdL//71iPyU7uLtip30VfIdiLo+
-         U5TjY4sN14ekpC3HUtAZQZwTYsmDexP9zFhqWoGKRQabGPbl0AMf3GXeipGZu4Apcka8
-         K7wH2t2oy2WLUgkW8RvoFDfPFG06ThPz2+orEX9rm4lIaPFCMSJ51z/XnqXrx4s+2tMq
-         GVZk11q1z/Wy+YCY1XBhY1lQx7dpDKspAHknx68rbdpcFrJ3bvc0zX/4IYSfQ4HHK3mD
-         T39A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727972463; x=1728577263;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=v4AMHyota3tkdFmoOCaUrSl8aqZ2USc7/BC5yJtpHMg=;
-        b=FTiQZfeWzj8ToMr6sYjo/DiyTgBSObXBuX1V4c9EeKWlv3wsKq3geF2PgEIDpOLxla
-         WZqipM6QjsvlaXaJ1rhTtunv2W4FL8NFV3G6VnpN/yNWzt5lwVsNxduCA3AJnFiW4GMn
-         tFS+Lnlycv0ewkQ6b0Z4PtJRjfQZtDaMxYAGiq7S3bI/nw99DgiuwbWP2zbIBTjbiYYp
-         oeXxjEZrVq+H2EbIxJkhilsEvDMtnmv+y5SLfuiZGfxLIR2odd4yvMcnEL9T8gOI232S
-         Xbd38ylogW0Aq8njoXNSTAq9GpybFr1Yr5KQD7wBu+VJcyG9YQFdLFHTOETKD+jXPlYC
-         fCBA==
-X-Forwarded-Encrypted: i=1; AJvYcCW2v+JQtFw5qSK/0H3q4Fw98/hfQQ7beVJQRvZoEgYxKnQ9xwbWjarFpJw/FPUln5zhke7mmLJsMC1drrKdEO+aMHq41+Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxDye14J3g5mChWa5FmeW8yCLM5cnbPDtoYKvKHgjs1orWrI2h
-	EcE4iy0CiEKvutaPVq/bZxnUsIYeW6rCLoGqFuprXDEEd4/Qx5Ap2QnR9pgISibDcQv2K6RB+1f
-	pVA==
-X-Google-Smtp-Source: AGHT+IEOdSyWAmORFapKSEpH7G6R0n6gyVWbE/o2evQEGmgpcdbF9DaA5iglc2Nvw06fJUx28bAaePlI4hY=
-X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
- (user=gnoack job=sendgmr) by 2002:a5d:648d:0:b0:37c:cdb2:9767 with SMTP id
- ffacd0b85a97d-37cfba3fe9bmr3840f8f.10.1727972463162; Thu, 03 Oct 2024
- 09:21:03 -0700 (PDT)
-Date: Thu, 3 Oct 2024 18:21:01 +0200
-In-Reply-To: <db38b163-ceb9-c74b-bcd5-402c646abea7@huawei-partners.com>
+	s=arc-20240116; t=1727972985; c=relaxed/simple;
+	bh=jA9+acBlRLa/fTbFCQHpymgCMWPp/DJVfJ5MWRtJh+A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CxdaKrPQ+nmVerNpyjxeNVU63o0QrC0sd0FtIxJ1cIzcCXq4sgwkcStyZEAcK2SiTpn/h4SUJex0N0IczrQjE7CFq+A9KoR5YkWOIDL/Gy2Bohq0NFZMTzb+iNphnC8H0W2yJleTlXktvJj42CeoWibojDU0uylpwTY4CsPJ97I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id 940CA9DA; Thu,  3 Oct 2024 11:29:40 -0500 (CDT)
+Date: Thu, 3 Oct 2024 11:29:40 -0500
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>,
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+	Fan Wu <wufan@linux.microsoft.com>,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	Micah Morton <mortonm@chromium.org>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	John Johansen <john.johansen@canonical.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	KP Singh <kpsingh@kernel.org>, Kees Cook <keescook@chromium.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-security-module@vger.kernel.org
+Subject: Re: TOMOYO's pull request for v6.12
+Message-ID: <20241003162940.GA848724@mail.hallyn.com>
+References: <CAHC9VhR=QjdoHG3wJgHFJkKYBg7vkQH2MpffgVzQ0tAByo_wRg@mail.gmail.com>
+ <20241003024307.GA833999@mail.hallyn.com>
+ <CAHC9VhSa-Jpqmej=3WsLFvSKWamZjFDwUpLHrJOyxaPPujM6ww@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240904104824.1844082-1-ivanov.mikhail1@huawei-partners.com>
- <20240904104824.1844082-20-ivanov.mikhail1@huawei-partners.com>
- <ZvufroAFgLp_vZcF@google.com> <db38b163-ceb9-c74b-bcd5-402c646abea7@huawei-partners.com>
-Message-ID: <Zv7EbY2v6aElb5BI@google.com>
-Subject: Re: [RFC PATCH v3 19/19] landlock: Document socket rule type support
-From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
-To: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-Cc: mic@digikod.net, willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com, 
-	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
-	netfilter-devel@vger.kernel.org, yusongping@huawei.com, 
-	artem.kuzin@huawei.com, konstantin.meskhidze@huawei.com
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhSa-Jpqmej=3WsLFvSKWamZjFDwUpLHrJOyxaPPujM6ww@mail.gmail.com>
 
-On Thu, Oct 03, 2024 at 05:00:14PM +0300, Mikhail Ivanov wrote:
-> On 10/1/2024 10:09 AM, G=C3=BCnther Noack wrote:
-> > IMHO, the length of the "Defining and enforcing a security policy" sect=
-ion is
-> > slowly getting out of hand.  This was easier to follow when it was only=
- file
-> > system rules. -- I wonder whether we should split this up in subsection=
-s for the
-> > individual steps to give this a more logical outline, e.g.
-> >=20
-> > * Creating a ruleset
-> > * Adding rules to the ruleset
-> >    * Adding a file system rule
-> >    * Adding a network rule
-> >    * Adding a socket rule
-> > * Enforcing the ruleset
->=20
-> I agree, it's important to keep usage usage description as simple as it
-> possible. Should I include related commit in current patchset?
+On Thu, Oct 03, 2024 at 11:32:39AM -0400, Paul Moore wrote:
+> On Wed, Oct 2, 2024 at 10:43 PM Serge E. Hallyn <serge@hallyn.com> wrote:
+> > On Wed, Oct 02, 2024 at 04:12:50PM -0400, Paul Moore wrote:
+> > > Hi all,
+> > >
+> > > Hopefully by now you've at least seen the TOMOYO v6.12 pull request
+> > > thread; if you haven't read it yet, I suggest you do so before reading
+> > > the rest of this mail:
+> > >
+> > > https://lore.kernel.org/all/0c4b443a-9c72-4800-97e8-a3816b6a9ae2@I-love.SAKURA.ne.jp
+> > >
+> > > Of the three commits in the pull request, the commit which concerns me
+> > > the most is 8b985bbfabbe ("tomoyo: allow building as a loadable LSM
+> > > module").  The commit worries me as it brings management of the TOMOYO
+> > > LSM callbacks into TOMOYO itself, overriding the LSM framework.
+> > > Jonathan raises a similar point, although his issue is more focused on
+> > > the symbol export approach itself, rather than conceptual issues
+> > > relating to the LSM framework.  I will admit there are some high level
+> > > similarities to this approach and the BPF LSM, but I believe we can
+> > > say that the BPF LSM exception is necessary due to the nature of BPF,
+> > > and not something we want to see duplicated outside of that one
+> > > special case.
+> > >
+> > > As I wrote in my original response to this pull request, this is not
+> > > something I would accept in a new LSM submission and thus I feel
+> > > compelled to speak out against this change and submit a revert to
+> > > Linus.  However, as the LSM framework exists to satisfy the needs of
+> > > the individual LSMs, I've tried to ensure that significant changes
+> > > like these are done with support of the majority of LSMs.  I
+> > > understand that in a case like this, reverting LSM-specific commits,
+> > > individual LSM maintainers may not want to speak up on the issue so
+> > > I'm going to let this message sit on-list until Friday morning, unless
+> > > I see the majority of the LSMs voicing support *against* reverting the
+> > > TOMOYO commit above (and the other related commit) I will proceed with
+> > > submitting the revert to Linus on Friday.  I would prefer if all
+> > > responses are sent on-list, but you can also mail me privately with
+> > > your objection to the revert and I will include it in the count.
+> > >
+> > > Thanks.
+> >
+> > Huh!  Honestly, when I read the thread, especially Jon's comments, I was
+> > worried.  But getting a chance to look at the patch now, it actually
+> > seems good to me.  No one is getting affected unless they enable
+> > CONFIG_TOMOYO_LKM.  Even those distros which have been enabling TOMOYO
+> > won't be exporting new hooks without a config change, iiuc.
+> 
+> I don't want to set a precedent of individual LSMs managing how they
+> plug into the rest of the kernel; at best it results in a lot of code
+> duplication between the individual LSM and the framework, at worst it
+> opens the door for buggy interactions and difficult to predict
+> behavior.  Look at all the work we've done over the past couple of
+> years to cleanup how the LSM framework manages the individual LSM
+> callbacks both to reduce the chances of error and improve performance.
 
-Sure, sounds good to me. =F0=9F=91=8D
+That's reasonable.  And I agree with John that, because of the way this
+was "snuck in", if I were a distro building a tomoyo-enabled kernel, I
+would now have trust issues.  But I don't think anyone else will come
+to Tetsuo's defense, so I just wanted to point out that, while the
+process was very much done wrongly, I think code-wise he's done the most
+responsible thing he could - given his end goals.  Even so,
 
-=E2=80=94G=C3=BCnther
+> Sidestepping this by allowing individual LSMs to implement their own
+> layer of callback management is a big step backwards and not something
+> I want to see supported.
+
+Well, this didn't occur to me last night, but what I'd be curious to
+hear is whether Tetsuo has discussed this with RedHat.  Because unless
+this makes them say "ok we'll enable that", it still doesn't help him.
+And I don't imagine them agreeing to enable the CONFIG_TOMOYO_LKM.
+
+-serge
