@@ -1,253 +1,155 @@
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F0F1824AF;
-	Thu,  3 Oct 2024 12:15:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07E701547FB;
+	Thu,  3 Oct 2024 12:27:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727957747; cv=none; b=clu0QcllxB7F9XUayy9aw7tVAFWmexqQHiaP8FX+odKuMPqvd4thxXHHyn1twONiXhPFF3XMt9k3wOyFwH0fFj9Sn9Qu9nkirn0v09r8UVeM6818bkE2qmzTVfidW2BbHAIgjvBrZZvfnSCSKF+iSjGDX5QkH3nkhpy/Yzr/tVI=
+	t=1727958429; cv=none; b=XfwsUofYZ1DINLT1WtONduHeRw4qN4xSrRydowIfke7kNcQZ64OjtLDaH4+3+b0CfUa/p/40qBh01y3hP6lBjXCWnFKcAfRFFBu5m5mr3H+ypbYl5TKQirG7uSVxMI24UTllN+O/ocY8Y/SqDKCTREd3CaTXGVi/eFY/np02eXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727957747; c=relaxed/simple;
-	bh=eAWxCpuJbqrIU+nlFL+n0ajIMO5A3y476oaILQNkAIk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=GpWk2UktTWjq0zAzPW7rvgkB2DvxQ9DvU5FXOHcOp8urkbrOIY2WSTsG03oja71SiYGPZhHUds4WDqA6iD31B9VJVFJ5wE9TN6YhfgGfP38pVeFFw5Ex7/pns5seOJTyQqXUOz5oxaoiPVVmidhMWrbAJ2K/Wt2iJu05CtAv6bc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XK9bJ246Yz2QTxt;
-	Thu,  3 Oct 2024 20:14:36 +0800 (CST)
-Received: from kwepemj200016.china.huawei.com (unknown [7.202.194.28])
-	by mail.maildlp.com (Postfix) with ESMTPS id C1018140361;
-	Thu,  3 Oct 2024 20:15:33 +0800 (CST)
-Received: from [10.123.123.159] (10.123.123.159) by
- kwepemj200016.china.huawei.com (7.202.194.28) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 3 Oct 2024 20:15:29 +0800
-Message-ID: <2f2c5e5c-a9aa-233e-e8f9-720c8a6ff1a2@huawei-partners.com>
-Date: Thu, 3 Oct 2024 15:15:25 +0300
+	s=arc-20240116; t=1727958429; c=relaxed/simple;
+	bh=of1CAKCU6m9a9bvJwztLsc71cdCwNBtGNn5TVrUVLy0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ahlXsJBgCI84c2Qbn4tR6/cckXEisdnP5X9vSZ6JJrFe4XfF6dcbqZB4gc6o3ETR+lCXS+DnDA8sDosLd8Pd/HrAcciwrYNSk8j0ivdVv/6UhFQLhfV09DMiGoD/YQ4GbLU6YSbNzCKtXLd9pPfHJExTiFSnehPeeHLA4C+TUfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=wSDE+nck; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=XzPm7e1h; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Czuoq9RD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=GBhlf2ke; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="wSDE+nck";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="XzPm7e1h";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Czuoq9RD";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="GBhlf2ke"
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id D01081FB54;
+	Thu,  3 Oct 2024 12:27:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1727958426; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YP2qHtU0N9ZMwK7TTCsywKX9IUV7LXQfmN/RlPXssq4=;
+	b=wSDE+nckiQxEwJWyrwhKyakcRibw+09AZx57kl+/z5ZsECSo/4QxXXE/kNq1oTMEU/novI
+	lqJNBYKWM4wrUnADknyqiBB8M/+92BR4EUwZ9xnes8iHQ7Tocf5/lrgrynPV/Pwo+LByGG
+	T15tcTxQuz93aIEmmquuTLCJAPEOTlQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1727958426;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YP2qHtU0N9ZMwK7TTCsywKX9IUV7LXQfmN/RlPXssq4=;
+	b=XzPm7e1h720vpqyDp9SSyXLoxp0VsLFUwhqKPuAMEW2B1s2eioTkdwLoSlEbLvA8Yvvc9g
+	ersku83qF1zIUzDA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=Czuoq9RD;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=GBhlf2ke
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1727958425; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YP2qHtU0N9ZMwK7TTCsywKX9IUV7LXQfmN/RlPXssq4=;
+	b=Czuoq9RDD0BGxrl20YCDm1MYWiyDLswqg2kh1VH/P52WKZFX8Oii1zQPfEdzoV8v1zI6Sz
+	Q3+2LWapWH+L7dWtybW+BsqJISD8b9BmlHcbSvGVXxif0omWvk40fJOOjlWIgeoNSIRPYX
+	XBvn1wGfaKGEvv0NP3wkbcPp0syiDTU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1727958425;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YP2qHtU0N9ZMwK7TTCsywKX9IUV7LXQfmN/RlPXssq4=;
+	b=GBhlf2keqrTgcraiG1FApHP1oNCrOB4uD4P4BxHXAAAkhl8k+/bEm1bbkUWVTmCdjjf/8s
+	WLWbiHOHLdtr6bAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BEA1C13882;
+	Thu,  3 Oct 2024 12:27:05 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id fzBJLpmN/mbKJgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 03 Oct 2024 12:27:05 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 7DA99A086F; Thu,  3 Oct 2024 14:26:57 +0200 (CEST)
+Date: Thu, 3 Oct 2024 14:26:57 +0200
+From: Jan Kara <jack@suse.cz>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>,
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-bcachefs@vger.kernel.org, kent.overstreet@linux.dev,
+	torvalds@linux-foundation.org,
+	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@linux.microsoft.com>,
+	Jann Horn <jannh@google.com>, Serge Hallyn <serge@hallyn.com>,
+	Kees Cook <keescook@chromium.org>,
+	linux-security-module@vger.kernel.org,
+	Amir Goldstein <amir73il@gmail.com>
+Subject: Re: lsm sb_delete hook, was Re: [PATCH 4/7] vfs: Convert
+ sb->s_inodes iteration to super_iter_inodes()
+Message-ID: <20241003122657.mrqwyc5tzeggrzbt@quack3>
+References: <20241002014017.3801899-1-david@fromorbit.com>
+ <20241002014017.3801899-5-david@fromorbit.com>
+ <Zv5GfY1WS_aaczZM@infradead.org>
+ <Zv5J3VTGqdjUAu1J@infradead.org>
+ <20241003115721.kg2caqgj2xxinnth@quack3>
+ <Zv6J34fwj3vNOrIH@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v3 15/19] selftests/landlock: Test SCTP peeloff
- restriction
-Content-Language: ru
-To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>
-CC: <mic@digikod.net>, <willemdebruijn.kernel@gmail.com>,
-	<gnoack3000@gmail.com>, <linux-security-module@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <netfilter-devel@vger.kernel.org>,
-	<yusongping@huawei.com>, <artem.kuzin@huawei.com>,
-	<konstantin.meskhidze@huawei.com>
-References: <20240904104824.1844082-1-ivanov.mikhail1@huawei-partners.com>
- <20240904104824.1844082-16-ivanov.mikhail1@huawei-partners.com>
- <ZvbCwtkXDakYDVD_@google.com>
-From: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-In-Reply-To: <ZvbCwtkXDakYDVD_@google.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
- kwepemj200016.china.huawei.com (7.202.194.28)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zv6J34fwj3vNOrIH@infradead.org>
+X-Rspamd-Queue-Id: D01081FB54
+X-Spam-Score: -4.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[suse.cz,fromorbit.com,vger.kernel.org,linux.dev,linux-foundation.org,linux.microsoft.com,google.com,hallyn.com,chromium.org,gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 9/27/2024 5:35 PM, Günther Noack wrote:
-> On Wed, Sep 04, 2024 at 06:48:20PM +0800, Mikhail Ivanov wrote:
->> It is possible to branch off an SCTP UDP association into a separate
->> user space UDP socket. Add test validating that such scenario is not
->> restricted by Landlock.
->>
->> Move setup_loopback() helper from net_test to common.h to use it to
->> enable connection in this test.
->>
->> Signed-off-by: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
->> ---
->>   tools/testing/selftests/landlock/common.h     |  12 +++
->>   tools/testing/selftests/landlock/net_test.c   |  11 --
->>   .../testing/selftests/landlock/socket_test.c  | 102 +++++++++++++++++-
->>   3 files changed, 113 insertions(+), 12 deletions(-)
->>
->> diff --git a/tools/testing/selftests/landlock/common.h b/tools/testing/selftests/landlock/common.h
->> index 28df49fa22d5..07d959a8ac7b 100644
->> --- a/tools/testing/selftests/landlock/common.h
->> +++ b/tools/testing/selftests/landlock/common.h
->> @@ -16,6 +16,7 @@
->>   #include <sys/types.h>
->>   #include <sys/wait.h>
->>   #include <unistd.h>
->> +#include <sched.h>
->>   
->>   #include "../kselftest_harness.h"
->>   
->> @@ -227,3 +228,14 @@ enforce_ruleset(struct __test_metadata *const _metadata, const int ruleset_fd)
->>   		TH_LOG("Failed to enforce ruleset: %s", strerror(errno));
->>   	}
->>   }
->> +
->> +static void setup_loopback(struct __test_metadata *const _metadata)
->> +{
->> +	set_cap(_metadata, CAP_SYS_ADMIN);
->> +	ASSERT_EQ(0, unshare(CLONE_NEWNET));
->> +	clear_cap(_metadata, CAP_SYS_ADMIN);
->> +
->> +	set_ambient_cap(_metadata, CAP_NET_ADMIN);
->> +	ASSERT_EQ(0, system("ip link set dev lo up"));
->> +	clear_ambient_cap(_metadata, CAP_NET_ADMIN);
->> +}
->> diff --git a/tools/testing/selftests/landlock/net_test.c b/tools/testing/selftests/landlock/net_test.c
->> index f21cfbbc3638..0b8386657c72 100644
->> --- a/tools/testing/selftests/landlock/net_test.c
->> +++ b/tools/testing/selftests/landlock/net_test.c
->> @@ -103,17 +103,6 @@ static int set_service(struct service_fixture *const srv,
->>   	return 1;
->>   }
->>   
->> -static void setup_loopback(struct __test_metadata *const _metadata)
->> -{
->> -	set_cap(_metadata, CAP_SYS_ADMIN);
->> -	ASSERT_EQ(0, unshare(CLONE_NEWNET));
->> -	clear_cap(_metadata, CAP_SYS_ADMIN);
->> -
->> -	set_ambient_cap(_metadata, CAP_NET_ADMIN);
->> -	ASSERT_EQ(0, system("ip link set dev lo up"));
->> -	clear_ambient_cap(_metadata, CAP_NET_ADMIN);
->> -}
->> -
->>   static bool is_restricted(const struct protocol_variant *const prot,
->>   			  const enum sandbox_type sandbox)
->>   {
->> diff --git a/tools/testing/selftests/landlock/socket_test.c b/tools/testing/selftests/landlock/socket_test.c
->> index 67db0e1c1121..2ab27196fa3d 100644
->> --- a/tools/testing/selftests/landlock/socket_test.c
->> +++ b/tools/testing/selftests/landlock/socket_test.c
->> @@ -11,8 +11,11 @@
->>   #include <linux/pfkeyv2.h>
->>   #include <linux/kcm.h>
->>   #include <linux/can.h>
->> -#include <linux/in.h>
->> +#include <sys/socket.h>
->> +#include <stdint.h>
->> +#include <linux/sctp.h>
->>   #include <sys/prctl.h>
->> +#include <arpa/inet.h>
->>   
->>   #include "common.h"
->>   
->> @@ -839,4 +842,101 @@ TEST_F(socket_creation, socketpair)
->>   	}
->>   }
->>   
->> +static const char loopback_ipv4[] = "127.0.0.1";
->> +static const int backlog = 10;
->> +static const int loopback_port = 1024;
->> +
->> +TEST_F(socket_creation, sctp_peeloff)
->> +{
->> +	int status, ret;
->> +	pid_t child;
->> +	struct sockaddr_in addr;
->> +	int server_fd;
->> +
->> +	server_fd =
->> +		socket(AF_INET, SOCK_SEQPACKET | SOCK_CLOEXEC, IPPROTO_SCTP);
->> +	ASSERT_LE(0, server_fd);
->> +
->> +	addr.sin_family = AF_INET;
->> +	addr.sin_port = htons(loopback_port);
->> +	addr.sin_addr.s_addr = inet_addr(loopback_ipv4);
->> +
->> +	ASSERT_EQ(0, bind(server_fd, &addr, sizeof(addr)));
->> +	ASSERT_EQ(0, listen(server_fd, backlog));
->> +
->> +	child = fork();
->> +	ASSERT_LE(0, child);
->> +	if (child == 0) {
->> +		int client_fd;
->> +		sctp_peeloff_flags_arg_t peeloff;
->> +		socklen_t peeloff_size = sizeof(peeloff);
->> +		const struct landlock_ruleset_attr ruleset_attr = {
->> +			.handled_access_socket = LANDLOCK_ACCESS_SOCKET_CREATE,
->> +		};
->> +		struct landlock_socket_attr sctp_socket_create = {
->> +			.allowed_access = LANDLOCK_ACCESS_SOCKET_CREATE,
->> +			.family = AF_INET,
->> +			.type = SOCK_SEQPACKET,
->> +		};
->> +
->> +		/* Closes listening socket for the child. */
->> +		ASSERT_EQ(0, close(server_fd));
->> +
->> +		client_fd = socket(AF_INET, SOCK_SEQPACKET | SOCK_CLOEXEC,
->> +				   IPPROTO_SCTP);
->> +		ASSERT_LE(0, client_fd);
->> +
->> +		/*
->> +		 * Establishes connection between sockets and
->> +		 * gets SCTP association id.
->> +		 */
->> +		ret = setsockopt(client_fd, IPPROTO_SCTP, SCTP_SOCKOPT_CONNECTX,
->> +				 &addr, sizeof(addr));
->> +		ASSERT_LE(0, ret);
->> +
->> +		if (self->sandboxed) {
->> +			/* Denies creation of SCTP sockets. */
->> +			int ruleset_fd = landlock_create_ruleset(
->> +				&ruleset_attr, sizeof(ruleset_attr), 0);
->> +			ASSERT_LE(0, ruleset_fd);
->> +
->> +			if (self->allowed) {
->> +				ASSERT_EQ(0, landlock_add_rule(
->> +						     ruleset_fd,
->> +						     LANDLOCK_RULE_SOCKET,
->> +						     &sctp_socket_create, 0));
->> +			}
->> +			enforce_ruleset(_metadata, ruleset_fd);
->> +			ASSERT_EQ(0, close(ruleset_fd));
->> +		}
->> +		/*
->> +		 * Branches off current SCTP association into a separate socket
->> +		 * and returns it to user space.
->> +		 */
->> +		peeloff.p_arg.associd = ret;
->> +		ret = getsockopt(client_fd, IPPROTO_SCTP, SCTP_SOCKOPT_PEELOFF,
->> +				 &peeloff, &peeloff_size);
->> +
->> +		/*
->> +		 * Creation of SCTP socket by branching off existing SCTP association
->> +		 * should not be restricted by Landlock.
->> +		 */
->> +		EXPECT_LE(0, ret);
->> +
->> +		/* Closes peeloff socket if such was created. */
->> +		if (!ret) {
->> +			ASSERT_EQ(0, close(peeloff.p_arg.sd));
->> +		}
+On Thu 03-10-24 05:11:11, Christoph Hellwig wrote:
+> On Thu, Oct 03, 2024 at 01:57:21PM +0200, Jan Kara wrote:
+> > Fair enough. If we go with the iterator variant I've suggested to Dave in
+> > [1], we could combine the evict_inodes(), fsnotify_unmount_inodes() and
+> > Landlocks hook_sb_delete() into a single iteration relatively easily. But
+> > I'd wait with that convertion until this series lands.
 > 
-> Nit: Should this check for (ret >= 0) instead?
+> I don't see how that has anything to do with iterators or not.
 
-Ofc, thank you
+Well, the patches would obviously conflict which seems pointless if we
+could live with three iterations for a few years until somebody noticed :).
+And with current Dave's version of iterators it will not be possible to
+integrate evict_inodes() iteration with the other two without a layering
+violation. Still we could go from 3 to 2 iterations.
 
-> 
-> I imagine that getsockopt returns -1 on error, normally,
-> and that would make it past the EXPECT_LE (even if it logs a failure).
-> 
-> 
->> +		ASSERT_EQ(0, close(client_fd));
->> +		_exit(_metadata->exit_code);
->> +		return;
->> +	}
->> +
->> +	ASSERT_EQ(child, waitpid(child, &status, 0));
->> +	ASSERT_EQ(1, WIFEXITED(status));
->> +	ASSERT_EQ(EXIT_SUCCESS, WEXITSTATUS(status));
->> +
->> +	ASSERT_EQ(0, close(server_fd));
->> +}
->> +
->>   TEST_HARNESS_MAIN
->> -- 
->> 2.34.1
->>
-> 
-> Reviewed-by: Günther Noack <gnoack@google.com>
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
