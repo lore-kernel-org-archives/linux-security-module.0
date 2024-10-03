@@ -1,476 +1,226 @@
-Received: from mail-ej1-f73.google.com (mail-ej1-f73.google.com [209.85.218.73])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B1671DFFB
-	for <linux-security-module@vger.kernel.org>; Thu,  3 Oct 2024 15:59:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F4A519D077;
+	Thu,  3 Oct 2024 16:17:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727971166; cv=none; b=Bou7GpqB+IxG1gvUSz/t/wJ22zFgf4IhLvVa2+M6pwercqpYYPOVhkIA23Q6sPbHDbvLzqVY7oU9co1ZEbPmMMn0Pkq5lGD60evSLOOLx4aJOZGo37zJ4DD+04GQtM7AZa/BTFtdqGLcIIVR9URYJ+nbrCihy7B/oqsZtW3kyDg=
+	t=1727972258; cv=none; b=WpdyoZqacEuSLCvyd4fo0gGWxW8iLzobMasOCoqGkDMK6F1IbySK0zD1Eb4dqVOY/gDoUaiDGx5zROEFEavQOsS6wGiT4ty3pmjJn/Qg2n5NYS4eDZS7f+eayAb/+FaCIdsror1dJxzW2/opklM/KWM2ULJ+VO3nbP1LmXcqQd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727971166; c=relaxed/simple;
-	bh=KxHO2XCKrP/rWiF2GVnhzdTXLhhc+5GMYqHrpmS1UOE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=BnvsvQGZc0VXM3Z+/ijPxaMCccO7kIOV28fERtsSiiSfu/XDeOvbnslEn+SS529Ck8/lHpmjCR0TF9AhdTr2vpkYuHAVspTlJdvtNeXVYsTWHvhWvLmftrIpCKwvhREiKlUmSyPNaJ+Ndb7zZGL888Vx/S/fGo4uDVFaJcbBG8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WjYBpxtC; arc=none smtp.client-ip=209.85.218.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
+	s=arc-20240116; t=1727972258; c=relaxed/simple;
+	bh=2c8c8dyaaznI0fOEDaxMu6U2YcdGwR4Lgr+JksfC2cE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YU7r9EhN8KJOtfm4QgbG8ZoZGl44vtyoxPLQYdG6lnCZH3KB5rlD+Sy85xchKzbELSfA2UqgIo6fomnJaAPL6CP97GZpEXv1k8gUKcfFW7FUS6l/mZzYyYTzMhZ2Iaw5o27X2KifhQmNZ5mDtTa58jQYadhgnwMp3wOT7WWAB6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ceaws/fq; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=PfWjCOhE; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ceaws/fq; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=PfWjCOhE; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WjYBpxtC"
-Received: by mail-ej1-f73.google.com with SMTP id a640c23a62f3a-a8a92ab4dd0so64707166b.1
-        for <linux-security-module@vger.kernel.org>; Thu, 03 Oct 2024 08:59:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1727971163; x=1728575963; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=A9TgHWHQLia5GRsXkWuEDP827SlaTWaSQAx/yquFKgA=;
-        b=WjYBpxtCwBIi9EwMXv3wYOQdRh2Vzkp//2yTiisR34nEsJM4vk40vI0dquf5RH97YA
-         lyIOssoaKv+7LT5IZwkViFEP65J3B21tcgRgeYZXrYeJUT6xYf6LifVihvcGmD3xg3aX
-         H1dddaKq+zJ5kmeMzeAzrSa32zrAs65hVpl0KGUJ/Am+wLBkoS4S7wVxSKvTLANf5N/X
-         Ih2on15THwcqvFvPCDk75qLRApxoxv3t+XBKzQAbXi2LgXvKgnVvNSnOHbqK1Z03I/om
-         d93yl3rDT1RDH8aVY5hI2u4jYjbI1nSY3GSKvEQnuY6F8+RwjERo8rUiVkmfM1zjKktz
-         62Dw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727971163; x=1728575963;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=A9TgHWHQLia5GRsXkWuEDP827SlaTWaSQAx/yquFKgA=;
-        b=kLd5wggBPZcgNfpYvQW4tPcIQNkuGueyzfkzp/tfn+oR+Bxu6kN/4WPNvNA2nxVidm
-         Xoql0TlxBf3m6erPa+MGvcpVfZJ82kuE1Vw1C4dvqRvNj62vdCVT9pTh8rIUrxRzet9o
-         Bp4gVBRS5tj/9uhO8GbzFiZpvpJJdRGebDQK8G1+MTOLEPmy4KCJhZ53CWgNlZBjrmSW
-         UUsnx8GImYkV6NfjrrfNKkmrLgTRemxDIjR12gJ/XJ4PL0ZDVURINcbWuXEVwYUsxMtP
-         pMlLZd0rzM1siGHFFM3D3KoDqxA338y0FbneAUw1jNTLqE/fLDlyRXwSkeILkOV0dQxu
-         afyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUXHQRUrjGhNuw4XYH6eouf+PYhIvKwFSQ0BTGYA7A7b++ZJyxM6wXkpJY2+pEzU9xv6rcvqm5dF+9j4XCG2GRI1JNV9LA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFljCtnQlzG6S7INE0rfryqwnRMylzvvAyw47ZqXeMoEIIgsr/
-	PgYPUxWr7cxB82t8JsJIWrzLVrqE0ui81dGJv3KucNN87Qx73DF4O4XLxqfrz04e0cnfYcuwQQM
-	1vQ==
-X-Google-Smtp-Source: AGHT+IGGImLedCWhoatJh7Lpnh+FYmKsi+kl7jwvqwXwtJA6Nyjs9rQuy2+ezLZ8cy32FZfF7VNW834Ygb4=
-X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
- (user=gnoack job=sendgmr) by 2002:a17:906:f842:b0:a8a:7c56:554c with SMTP id
- a640c23a62f3a-a98f821b538mr297966b.5.1727971156437; Thu, 03 Oct 2024 08:59:16
- -0700 (PDT)
-Date: Thu, 3 Oct 2024 17:59:14 +0200
-In-Reply-To: <20241003143932.2431249-3-ivanov.mikhail1@huawei-partners.com>
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ceaws/fq";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="PfWjCOhE";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ceaws/fq";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="PfWjCOhE"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 4EE501FE04;
+	Thu,  3 Oct 2024 16:17:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1727972252; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1SkCvgbyLtxw38crET3p5i3VwsvsmrMyJ5rZxKdl8Zg=;
+	b=Ceaws/fq+jiDpwm4FLn6tTlN0PXv2FUN27+FBweb7SKeaqSMMFlSwraRoKCDYCqFdU0pkC
+	RAYdHI27lqMemSvAjYgN0amiLlf/OuHo+M4NsogLDIK/rkVLFHVZmzxiSpR+xDJ8h62BdY
+	dReuz9PlbL/8y6KW0azdgNv2P+uREYA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1727972252;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1SkCvgbyLtxw38crET3p5i3VwsvsmrMyJ5rZxKdl8Zg=;
+	b=PfWjCOhERqJD0aQm+oUPI2PhCck2lsA4gf+J4EpiYNtEKMIqr8hLLp5yD8iEiLAzvtAJC1
+	JcJ7d02hlmxJ7qBg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1727972252; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1SkCvgbyLtxw38crET3p5i3VwsvsmrMyJ5rZxKdl8Zg=;
+	b=Ceaws/fq+jiDpwm4FLn6tTlN0PXv2FUN27+FBweb7SKeaqSMMFlSwraRoKCDYCqFdU0pkC
+	RAYdHI27lqMemSvAjYgN0amiLlf/OuHo+M4NsogLDIK/rkVLFHVZmzxiSpR+xDJ8h62BdY
+	dReuz9PlbL/8y6KW0azdgNv2P+uREYA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1727972252;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1SkCvgbyLtxw38crET3p5i3VwsvsmrMyJ5rZxKdl8Zg=;
+	b=PfWjCOhERqJD0aQm+oUPI2PhCck2lsA4gf+J4EpiYNtEKMIqr8hLLp5yD8iEiLAzvtAJC1
+	JcJ7d02hlmxJ7qBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 420C313882;
+	Thu,  3 Oct 2024 16:17:32 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 80kbEJzD/mZcbwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 03 Oct 2024 16:17:32 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id CD33AA086F; Thu,  3 Oct 2024 18:17:31 +0200 (CEST)
+Date: Thu, 3 Oct 2024 18:17:31 +0200
+From: Jan Kara <jack@suse.cz>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>,
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-bcachefs@vger.kernel.org, kent.overstreet@linux.dev,
+	torvalds@linux-foundation.org,
+	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@linux.microsoft.com>,
+	Jann Horn <jannh@google.com>, Serge Hallyn <serge@hallyn.com>,
+	Kees Cook <keescook@chromium.org>,
+	linux-security-module@vger.kernel.org,
+	Amir Goldstein <amir73il@gmail.com>
+Subject: Re: lsm sb_delete hook, was Re: [PATCH 4/7] vfs: Convert
+ sb->s_inodes iteration to super_iter_inodes()
+Message-ID: <20241003161731.kwveypqzu4bivesv@quack3>
+References: <20241002014017.3801899-1-david@fromorbit.com>
+ <20241002014017.3801899-5-david@fromorbit.com>
+ <Zv5GfY1WS_aaczZM@infradead.org>
+ <Zv5J3VTGqdjUAu1J@infradead.org>
+ <20241003115721.kg2caqgj2xxinnth@quack3>
+ <Zv6J34fwj3vNOrIH@infradead.org>
+ <20241003122657.mrqwyc5tzeggrzbt@quack3>
+ <Zv6Qe-9O44g6qnSu@infradead.org>
+ <20241003125650.jtkqezmtnzfoysb2@quack3>
+ <Zv6jV40xKIJYuePA@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241003143932.2431249-1-ivanov.mikhail1@huawei-partners.com> <20241003143932.2431249-3-ivanov.mikhail1@huawei-partners.com>
-Message-ID: <Zv6_Uitud0OzxKTn@google.com>
-Subject: Re: [RFC PATCH v1 2/2] selftests/landlock: Test non-TCP INET
- connection-based protocols
-From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
-To: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-Cc: mic@digikod.net, willemdebruijn.kernel@gmail.com, 
-	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
-	netfilter-devel@vger.kernel.org, yusongping@huawei.com, 
-	artem.kuzin@huawei.com, konstantin.meskhidze@huawei.com
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zv6jV40xKIJYuePA@dread.disaster.area>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[suse.cz,infradead.org,vger.kernel.org,linux.dev,linux-foundation.org,linux.microsoft.com,google.com,hallyn.com,chromium.org,gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -3.80
+X-Spam-Flag: NO
 
-On Thu, Oct 03, 2024 at 10:39:32PM +0800, Mikhail Ivanov wrote:
-> Extend protocol fixture with test suits for MPTCP, SCTP and SMC protocols=
-.
-> Add all options required by this protocols in config.
->=20
-> Extend protocol_variant structure with protocol field (Cf. socket(2)).
->=20
-> Refactor is_restricted() helper and add few helpers to check struct
-> protocol_variant on specific protocols.
->=20
-> Signed-off-by: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-> ---
->  tools/testing/selftests/landlock/common.h   |   1 +
->  tools/testing/selftests/landlock/config     |   5 +
->  tools/testing/selftests/landlock/net_test.c | 212 ++++++++++++++++++--
->  3 files changed, 198 insertions(+), 20 deletions(-)
->=20
-> diff --git a/tools/testing/selftests/landlock/common.h b/tools/testing/se=
-lftests/landlock/common.h
-> index 61056fa074bb..40a2def50b83 100644
-> --- a/tools/testing/selftests/landlock/common.h
-> +++ b/tools/testing/selftests/landlock/common.h
-> @@ -234,6 +234,7 @@ enforce_ruleset(struct __test_metadata *const _metada=
-ta, const int ruleset_fd)
->  struct protocol_variant {
->  	int domain;
->  	int type;
-> +	int protocol;
->  };
-> =20
->  struct service_fixture {
-> diff --git a/tools/testing/selftests/landlock/config b/tools/testing/self=
-tests/landlock/config
-> index 29af19c4e9f9..73b01d7d0881 100644
-> --- a/tools/testing/selftests/landlock/config
-> +++ b/tools/testing/selftests/landlock/config
-> @@ -1,8 +1,12 @@
->  CONFIG_CGROUPS=3Dy
->  CONFIG_CGROUP_SCHED=3Dy
->  CONFIG_INET=3Dy
-> +CONFIG_INFINIBAND=3Dy
-> +CONFIG_IP_SCTP=3Dy
->  CONFIG_IPV6=3Dy
->  CONFIG_KEYS=3Dy
-> +CONFIG_MPTCP=3Dy
-> +CONFIG_MPTCP_IPV6=3Dy
->  CONFIG_NET=3Dy
->  CONFIG_NET_NS=3Dy
->  CONFIG_OVERLAY_FS=3Dy
-> @@ -10,6 +14,7 @@ CONFIG_PROC_FS=3Dy
->  CONFIG_SECURITY=3Dy
->  CONFIG_SECURITY_LANDLOCK=3Dy
->  CONFIG_SHMEM=3Dy
-> +CONFIG_SMC=3Dy
->  CONFIG_SYSFS=3Dy
->  CONFIG_TMPFS=3Dy
->  CONFIG_TMPFS_XATTR=3Dy
-> diff --git a/tools/testing/selftests/landlock/net_test.c b/tools/testing/=
-selftests/landlock/net_test.c
-> index 4e0aeb53b225..dbe77d436281 100644
-> --- a/tools/testing/selftests/landlock/net_test.c
-> +++ b/tools/testing/selftests/landlock/net_test.c
-> @@ -36,6 +36,17 @@ enum sandbox_type {
->  	TCP_SANDBOX,
->  };
-> =20
-> +/* Checks if IPPROTO_SMC is present for compatibility reasons. */
-> +#if !defined(__alpha__) && defined(IPPROTO_SMC)
-> +#define SMC_SUPPORTED 1
-> +#else
-> +#define SMC_SUPPORTED 0
-> +#endif
-> +
-> +#ifndef IPPROTO_SMC
-> +#define IPPROTO_SMC 256
-> +#endif
-> +
->  static int set_service(struct service_fixture *const srv,
->  		       const struct protocol_variant prot,
->  		       const unsigned short index)
-> @@ -85,19 +96,37 @@ static void setup_loopback(struct __test_metadata *co=
-nst _metadata)
->  	clear_ambient_cap(_metadata, CAP_NET_ADMIN);
->  }
-> =20
-> +static bool prot_is_inet_stream(const struct protocol_variant *const pro=
-t)
-> +{
-> +	return (prot->domain =3D=3D AF_INET || prot->domain =3D=3D AF_INET6) &&
-> +	       prot->type =3D=3D SOCK_STREAM;
-> +}
-> +
-> +static bool prot_is_tcp(const struct protocol_variant *const prot)
-> +{
-> +	return prot_is_inet_stream(prot) &&
-> +	       (prot->protocol =3D=3D IPPROTO_TCP || prot->protocol =3D=3D IPPR=
-OTO_IP);
-> +}
-> +
-> +static bool prot_is_sctp(const struct protocol_variant *const prot)
-> +{
-> +	return prot_is_inet_stream(prot) && prot->protocol =3D=3D IPPROTO_SCTP;
-> +}
-> +
-> +static bool prot_is_smc(const struct protocol_variant *const prot)
-> +{
-> +	return prot_is_inet_stream(prot) && prot->protocol =3D=3D IPPROTO_SMC;
-> +}
-> +
-> +static bool prot_is_unix_stream(const struct protocol_variant *const pro=
-t)
-> +{
-> +	return prot->domain =3D=3D AF_UNIX && prot->type =3D=3D SOCK_STREAM;
-> +}
-> +
->  static bool is_restricted(const struct protocol_variant *const prot,
->  			  const enum sandbox_type sandbox)
->  {
-> -	switch (prot->domain) {
-> -	case AF_INET:
-> -	case AF_INET6:
-> -		switch (prot->type) {
-> -		case SOCK_STREAM:
-> -			return sandbox =3D=3D TCP_SANDBOX;
-> -		}
-> -		break;
-> -	}
-> -	return false;
-> +	return prot_is_tcp(prot) && sandbox =3D=3D TCP_SANDBOX;
->  }
-> =20
->  static int socket_variant(const struct service_fixture *const srv)
-> @@ -105,7 +134,7 @@ static int socket_variant(const struct service_fixtur=
-e *const srv)
->  	int ret;
-> =20
->  	ret =3D socket(srv->protocol.domain, srv->protocol.type | SOCK_CLOEXEC,
-> -		     0);
-> +		     srv->protocol.protocol);
->  	if (ret < 0)
->  		return -errno;
->  	return ret;
-> @@ -124,7 +153,7 @@ static socklen_t get_addrlen(const struct service_fix=
-ture *const srv,
->  		return sizeof(srv->ipv4_addr);
-> =20
->  	case AF_INET6:
-> -		if (minimal)
-> +		if (minimal && !prot_is_sctp(&srv->protocol))
->  			return SIN6_LEN_RFC2133;
->  		return sizeof(srv->ipv6_addr);
-> =20
-> @@ -271,6 +300,11 @@ FIXTURE_SETUP(protocol)
->  		.type =3D SOCK_STREAM,
->  	};
-> =20
-> +#if !SMC_SUPPORTED
-> +	if (prot_is_smc(&variant->prot))
-> +		SKIP(return, "SMC protocol is not supported.");
-> +#endif
-> +
->  	disable_caps(_metadata);
-> =20
->  	ASSERT_EQ(0, set_service(&self->srv0, variant->prot, 0));
-> @@ -299,6 +333,39 @@ FIXTURE_VARIANT_ADD(protocol, no_sandbox_with_ipv4_t=
-cp) {
->  	},
->  };
-> =20
-> +/* clang-format off */
-> +FIXTURE_VARIANT_ADD(protocol, no_sandbox_with_ipv4_mptcp) {
-> +	/* clang-format on */
-> +	.sandbox =3D NO_SANDBOX,
-> +	.prot =3D {
-> +		.domain =3D AF_INET,
-> +		.type =3D SOCK_STREAM,
-> +		.protocol =3D IPPROTO_MPTCP,
-> +	},
-> +};
-> +
-> +/* clang-format off */
-> +FIXTURE_VARIANT_ADD(protocol, no_sandbox_with_ipv4_sctp) {
-> +	/* clang-format on */
-> +	.sandbox =3D NO_SANDBOX,
-> +	.prot =3D {
-> +		.domain =3D AF_INET,
-> +		.type =3D SOCK_STREAM,
-> +		.protocol =3D IPPROTO_SCTP,
-> +	},
-> +};
-> +
-> +/* clang-format off */
-> +FIXTURE_VARIANT_ADD(protocol, no_sandbox_with_ipv4_smc) {
-> +	/* clang-format on */
-> +	.sandbox =3D NO_SANDBOX,
-> +	.prot =3D {
-> +		.domain =3D AF_INET,
-> +		.type =3D SOCK_STREAM,
-> +		.protocol =3D IPPROTO_SMC,
-> +	},
-> +};
-> +
->  /* clang-format off */
->  FIXTURE_VARIANT_ADD(protocol, no_sandbox_with_ipv6_tcp) {
->  	/* clang-format on */
-> @@ -309,6 +376,39 @@ FIXTURE_VARIANT_ADD(protocol, no_sandbox_with_ipv6_t=
-cp) {
->  	},
->  };
-> =20
-> +/* clang-format off */
-> +FIXTURE_VARIANT_ADD(protocol, no_sandbox_with_ipv6_mptcp) {
-> +	/* clang-format on */
-> +	.sandbox =3D NO_SANDBOX,
-> +	.prot =3D {
-> +		.domain =3D AF_INET6,
-> +		.type =3D SOCK_STREAM,
-> +		.protocol =3D IPPROTO_MPTCP,
-> +	},
-> +};
-> +
-> +/* clang-format off */
-> +FIXTURE_VARIANT_ADD(protocol, no_sandbox_with_ipv6_sctp) {
-> +	/* clang-format on */
-> +	.sandbox =3D NO_SANDBOX,
-> +	.prot =3D {
-> +		.domain =3D AF_INET6,
-> +		.type =3D SOCK_STREAM,
-> +		.protocol =3D IPPROTO_SCTP,
-> +	},
-> +};
-> +
-> +/* clang-format off */
-> +FIXTURE_VARIANT_ADD(protocol, no_sandbox_with_ipv6_smc) {
-> +	/* clang-format on */
-> +	.sandbox =3D NO_SANDBOX,
-> +	.prot =3D {
-> +		.domain =3D AF_INET6,
-> +		.type =3D SOCK_STREAM,
-> +		.protocol =3D IPPROTO_SMC,
-> +	},
-> +};
-> +
->  /* clang-format off */
->  FIXTURE_VARIANT_ADD(protocol, no_sandbox_with_ipv4_udp) {
->  	/* clang-format on */
-> @@ -359,6 +459,39 @@ FIXTURE_VARIANT_ADD(protocol, tcp_sandbox_with_ipv4_=
-tcp) {
->  	},
->  };
-> =20
-> +/* clang-format off */
-> +FIXTURE_VARIANT_ADD(protocol, tcp_sandbox_with_ipv4_mptcp) {
-> +	/* clang-format on */
-> +	.sandbox =3D TCP_SANDBOX,
-> +	.prot =3D {
-> +		.domain =3D AF_INET,
-> +		.type =3D SOCK_STREAM,
-> +		.protocol =3D IPPROTO_MPTCP,
-> +	},
-> +};
-> +
-> +/* clang-format off */
-> +FIXTURE_VARIANT_ADD(protocol, tcp_sandbox_with_ipv4_sctp) {
-> +	/* clang-format on */
-> +	.sandbox =3D TCP_SANDBOX,
-> +	.prot =3D {
-> +		.domain =3D AF_INET,
-> +		.type =3D SOCK_STREAM,
-> +		.protocol =3D IPPROTO_SCTP,
-> +	},
-> +};
-> +
-> +/* clang-format off */
-> +FIXTURE_VARIANT_ADD(protocol, tcp_sandbox_with_ipv4_smc) {
-> +	/* clang-format on */
-> +	.sandbox =3D TCP_SANDBOX,
-> +	.prot =3D {
-> +		.domain =3D AF_INET,
-> +		.type =3D SOCK_STREAM,
-> +		.protocol =3D IPPROTO_SMC,
-> +	},
-> +};
-> +
->  /* clang-format off */
->  FIXTURE_VARIANT_ADD(protocol, tcp_sandbox_with_ipv6_tcp) {
->  	/* clang-format on */
-> @@ -369,6 +502,39 @@ FIXTURE_VARIANT_ADD(protocol, tcp_sandbox_with_ipv6_=
-tcp) {
->  	},
->  };
-> =20
-> +/* clang-format off */
-> +FIXTURE_VARIANT_ADD(protocol, tcp_sandbox_with_ipv6_mptcp) {
-> +	/* clang-format on */
-> +	.sandbox =3D TCP_SANDBOX,
-> +	.prot =3D {
-> +		.domain =3D AF_INET6,
-> +		.type =3D SOCK_STREAM,
-> +		.protocol =3D IPPROTO_MPTCP,
-> +	},
-> +};
-> +
-> +/* clang-format off */
-> +FIXTURE_VARIANT_ADD(protocol, tcp_sandbox_with_ipv6_sctp) {
-> +	/* clang-format on */
-> +	.sandbox =3D TCP_SANDBOX,
-> +	.prot =3D {
-> +		.domain =3D AF_INET6,
-> +		.type =3D SOCK_STREAM,
-> +		.protocol =3D IPPROTO_SCTP,
-> +	},
-> +};
-> +
-> +/* clang-format off */
-> +FIXTURE_VARIANT_ADD(protocol, tcp_sandbox_with_ipv6_smc) {
-> +	/* clang-format on */
-> +	.sandbox =3D TCP_SANDBOX,
-> +	.prot =3D {
-> +		.domain =3D AF_INET6,
-> +		.type =3D SOCK_STREAM,
-> +		.protocol =3D IPPROTO_SMC,
-> +	},
-> +};
-> +
->  /* clang-format off */
->  FIXTURE_VARIANT_ADD(protocol, tcp_sandbox_with_ipv4_udp) {
->  	/* clang-format on */
-> @@ -663,7 +829,7 @@ TEST_F(protocol, bind_unspec)
-> =20
->  	/* Allowed bind on AF_UNSPEC/INADDR_ANY. */
->  	ret =3D bind_variant(bind_fd, &self->unspec_any0);
-> -	if (variant->prot.domain =3D=3D AF_INET) {
-> +	if (variant->prot.domain =3D=3D AF_INET && !prot_is_sctp(&variant->prot=
-)) {
->  		EXPECT_EQ(0, ret)
->  		{
->  			TH_LOG("Failed to bind to unspec/any socket: %s",
-> @@ -689,7 +855,7 @@ TEST_F(protocol, bind_unspec)
-> =20
->  	/* Denied bind on AF_UNSPEC/INADDR_ANY. */
->  	ret =3D bind_variant(bind_fd, &self->unspec_any0);
-> -	if (variant->prot.domain =3D=3D AF_INET) {
-> +	if (variant->prot.domain =3D=3D AF_INET && !prot_is_sctp(&variant->prot=
-)) {
->  		if (is_restricted(&variant->prot, variant->sandbox)) {
->  			EXPECT_EQ(-EACCES, ret);
->  		} else {
-> @@ -727,6 +893,10 @@ TEST_F(protocol, connect_unspec)
->  	int bind_fd, client_fd, status;
->  	pid_t child;
-> =20
-> +	if (prot_is_smc(&variant->prot))
-> +		SKIP(return, "SMC does not properly handles disconnect "
-> +			     "in the case of fallback to TCP");
-> +
->  	/* Specific connection tests. */
->  	bind_fd =3D socket_variant(&self->srv0);
->  	ASSERT_LE(0, bind_fd);
-> @@ -769,17 +939,18 @@ TEST_F(protocol, connect_unspec)
-> =20
->  		/* Disconnects already connected socket, or set peer. */
->  		ret =3D connect_variant(connect_fd, &self->unspec_any0);
-> -		if (self->srv0.protocol.domain =3D=3D AF_UNIX &&
-> -		    self->srv0.protocol.type =3D=3D SOCK_STREAM) {
-> +		if (prot_is_unix_stream(&variant->prot)) {
->  			EXPECT_EQ(-EINVAL, ret);
-> +		} else if (prot_is_sctp(&variant->prot)) {
-> +			EXPECT_EQ(-EOPNOTSUPP, ret);
->  		} else {
->  			EXPECT_EQ(0, ret);
->  		}
-> =20
->  		/* Tries to reconnect, or set peer. */
->  		ret =3D connect_variant(connect_fd, &self->srv0);
-> -		if (self->srv0.protocol.domain =3D=3D AF_UNIX &&
-> -		    self->srv0.protocol.type =3D=3D SOCK_STREAM) {
-> +		if (prot_is_unix_stream(&variant->prot) ||
-> +		    prot_is_sctp(&variant->prot)) {
->  			EXPECT_EQ(-EISCONN, ret);
->  		} else {
->  			EXPECT_EQ(0, ret);
-> @@ -796,9 +967,10 @@ TEST_F(protocol, connect_unspec)
->  		}
-> =20
->  		ret =3D connect_variant(connect_fd, &self->unspec_any0);
-> -		if (self->srv0.protocol.domain =3D=3D AF_UNIX &&
-> -		    self->srv0.protocol.type =3D=3D SOCK_STREAM) {
-> +		if (prot_is_unix_stream(&variant->prot)) {
->  			EXPECT_EQ(-EINVAL, ret);
-> +		} else if (prot_is_sctp(&variant->prot)) {
-> +			EXPECT_EQ(-EOPNOTSUPP, ret);
->  		} else {
->  			/* Always allowed to disconnect. */
->  			EXPECT_EQ(0, ret);
-> --=20
-> 2.34.1
->=20
+On Thu 03-10-24 23:59:51, Dave Chinner wrote:
+> On Thu, Oct 03, 2024 at 02:56:50PM +0200, Jan Kara wrote:
+> > On Thu 03-10-24 05:39:23, Christoph Hellwig wrote:
+> > > @@ -789,11 +789,23 @@ static bool dispose_list(struct list_head *head)
+> > >   */
+> > >  static int evict_inode_fn(struct inode *inode, void *data)
+> > >  {
+> > > +	struct super_block *sb = inode->i_sb;
+> > >  	struct list_head *dispose = data;
+> > > +	bool post_unmount = !(sb->s_flags & SB_ACTIVE);
+> > >  
+> > >  	spin_lock(&inode->i_lock);
+> > > -	if (atomic_read(&inode->i_count) ||
+> > > -	    (inode->i_state & (I_NEW | I_FREEING | I_WILL_FREE))) {
+> > > +	if (atomic_read(&inode->i_count)) {
+> > > +		spin_unlock(&inode->i_lock);
+> > > +
+> > > +		/* for each watch, send FS_UNMOUNT and then remove it */
+> > > +		if (post_unmount && fsnotify_sb_info(sb)) {
+> > > +			fsnotify_inode(inode, FS_UNMOUNT);
+> > > +			fsnotify_inode_delete(inode);
+> > > +		}
+> > 
+> > This will not work because you are in unsafe iterator holding
+> > sb->s_inode_list_lock. To be able to call into fsnotify, you need to do the
+> > iget / iput dance and releasing of s_inode_list_lock which does not work
+> > when a filesystem has its own inodes iterator AFAICT... That's why I've
+> > called it a layering violation.
+> 
+> The whole point of the iget/iput dance is to stabilise the
+> s_inodes list iteration whilst it is unlocked - the actual fsnotify
+> calls don't need an inode reference to work correctly.
+> 
+> IOWs, we don't need to run the fsnotify stuff right here - we can
+> defer that like we do with the dispose list for all the inodes we
+> mark as I_FREEING here.
+> 
+> So if we pass a structure:
+> 
+> struct evict_inode_args {
+> 	struct list_head	dispose;
+> 	struct list_head	fsnotify;
+> };
+> 
+> If we use __iget() instead of requiring an inode state flag to keep
+> the inode off the LRU for the fsnotify cleanup, then the code
+> fragment above becomes:
+> 
+> 	if (atomic_read(&inode->i_count)) {
+> 		if (post_unmount && fsnotify_sb_info(sb)) {
+> 			__iget(inode);
+> 			inode_lru_list_del(inode);
+> 			spin_unlock(&inode->i_lock);
+> 			list_add(&inode->i_lru, &args->fsnotify);
+> 		}
 
-Looks good.
+Nit: Need to release i_lock in else branch here.  Otherwise interesting
+idea. Yes, something like this could work even in unsafe iterator.
 
-Reviewed-by: G=C3=BCnther Noack <gnoack@google.com>
+> 		return INO_ITER_DONE;
+> 	}
+> And then once we return to evict_inodes(), we do this:
+> 
+> 	while (!list_empty(args->fsnotify)) {
+> 		struct inode *inode
+> 
+> 		inode = list_first_entry(head, struct inode, i_lru);
+>                 list_del_init(&inode->i_lru);
+> 
+> 		fsnotify_inode(inode, FS_UNMOUNT);
+> 		fsnotify_inode_delete(inode);
+> 		iput(inode);
+> 		cond_resched();
+> 	}
+> 
+> And so now all the fsnotify cleanup is done outside the traversal in
+> one large batch from evict_inodes().
+
+Yup.
+
+> As for the landlock code, I think it needs to have it's own internal
+> tracking mechanism and not search the sb inode list for inodes that
+> it holds references to. LSM cleanup should be run before before we
+> get to tearing down the inode cache, not after....
+
+Well, I think LSM cleanup could in principle be handled together with the
+fsnotify cleanup but I didn't check the details.
+
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
