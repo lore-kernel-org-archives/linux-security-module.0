@@ -1,226 +1,98 @@
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F4A519D077;
-	Thu,  3 Oct 2024 16:17:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1510A145B24
+	for <linux-security-module@vger.kernel.org>; Thu,  3 Oct 2024 16:21:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727972258; cv=none; b=WpdyoZqacEuSLCvyd4fo0gGWxW8iLzobMasOCoqGkDMK6F1IbySK0zD1Eb4dqVOY/gDoUaiDGx5zROEFEavQOsS6wGiT4ty3pmjJn/Qg2n5NYS4eDZS7f+eayAb/+FaCIdsror1dJxzW2/opklM/KWM2ULJ+VO3nbP1LmXcqQd8=
+	t=1727972466; cv=none; b=k7Er0JQYnR32tEgA1mcimfes6CWiXxv47pbiIgOBBsYvjBErA/ofK4P50CrBhc0H2OjPlQz46eCGzrnQ2yMdFZUt+J5ZpwCV5lHKJqbnG8Dw6O/gU2tEFN6T4/j+OKJ/3r+/OjYbQnarLLFk5xIVZOk/VjlBUVTksdYgjzQLCus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727972258; c=relaxed/simple;
-	bh=2c8c8dyaaznI0fOEDaxMu6U2YcdGwR4Lgr+JksfC2cE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YU7r9EhN8KJOtfm4QgbG8ZoZGl44vtyoxPLQYdG6lnCZH3KB5rlD+Sy85xchKzbELSfA2UqgIo6fomnJaAPL6CP97GZpEXv1k8gUKcfFW7FUS6l/mZzYyYTzMhZ2Iaw5o27X2KifhQmNZ5mDtTa58jQYadhgnwMp3wOT7WWAB6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ceaws/fq; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=PfWjCOhE; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ceaws/fq; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=PfWjCOhE; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+	s=arc-20240116; t=1727972466; c=relaxed/simple;
+	bh=phcUqo3xH2uEzOt4nWimJ90S6LJAldcVwztGX186zGM=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=ZAFXSa8zX5BaiF9Xr/wMbd64+RwvJRwWwmDZ5pvo064XYlKQSQYYF8gFw7+w1PnAmM6JacfPPmfezq+hMN+UCAhT5l5+FL4GtBHgsLzfY61I4uGrxzD1JiubyhiMhVVSBO8eCcXKn2v2+p01rQN8BxP67VTJHv5dxaLvsBvbXa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ymAdctxy; arc=none smtp.client-ip=209.85.221.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ceaws/fq";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="PfWjCOhE";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ceaws/fq";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="PfWjCOhE"
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 4EE501FE04;
-	Thu,  3 Oct 2024 16:17:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727972252; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1SkCvgbyLtxw38crET3p5i3VwsvsmrMyJ5rZxKdl8Zg=;
-	b=Ceaws/fq+jiDpwm4FLn6tTlN0PXv2FUN27+FBweb7SKeaqSMMFlSwraRoKCDYCqFdU0pkC
-	RAYdHI27lqMemSvAjYgN0amiLlf/OuHo+M4NsogLDIK/rkVLFHVZmzxiSpR+xDJ8h62BdY
-	dReuz9PlbL/8y6KW0azdgNv2P+uREYA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727972252;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1SkCvgbyLtxw38crET3p5i3VwsvsmrMyJ5rZxKdl8Zg=;
-	b=PfWjCOhERqJD0aQm+oUPI2PhCck2lsA4gf+J4EpiYNtEKMIqr8hLLp5yD8iEiLAzvtAJC1
-	JcJ7d02hlmxJ7qBg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1727972252; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1SkCvgbyLtxw38crET3p5i3VwsvsmrMyJ5rZxKdl8Zg=;
-	b=Ceaws/fq+jiDpwm4FLn6tTlN0PXv2FUN27+FBweb7SKeaqSMMFlSwraRoKCDYCqFdU0pkC
-	RAYdHI27lqMemSvAjYgN0amiLlf/OuHo+M4NsogLDIK/rkVLFHVZmzxiSpR+xDJ8h62BdY
-	dReuz9PlbL/8y6KW0azdgNv2P+uREYA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1727972252;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1SkCvgbyLtxw38crET3p5i3VwsvsmrMyJ5rZxKdl8Zg=;
-	b=PfWjCOhERqJD0aQm+oUPI2PhCck2lsA4gf+J4EpiYNtEKMIqr8hLLp5yD8iEiLAzvtAJC1
-	JcJ7d02hlmxJ7qBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 420C313882;
-	Thu,  3 Oct 2024 16:17:32 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 80kbEJzD/mZcbwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 03 Oct 2024 16:17:32 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id CD33AA086F; Thu,  3 Oct 2024 18:17:31 +0200 (CEST)
-Date: Thu, 3 Oct 2024 18:17:31 +0200
-From: Jan Kara <jack@suse.cz>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>,
-	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-bcachefs@vger.kernel.org, kent.overstreet@linux.dev,
-	torvalds@linux-foundation.org,
-	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@linux.microsoft.com>,
-	Jann Horn <jannh@google.com>, Serge Hallyn <serge@hallyn.com>,
-	Kees Cook <keescook@chromium.org>,
-	linux-security-module@vger.kernel.org,
-	Amir Goldstein <amir73il@gmail.com>
-Subject: Re: lsm sb_delete hook, was Re: [PATCH 4/7] vfs: Convert
- sb->s_inodes iteration to super_iter_inodes()
-Message-ID: <20241003161731.kwveypqzu4bivesv@quack3>
-References: <20241002014017.3801899-1-david@fromorbit.com>
- <20241002014017.3801899-5-david@fromorbit.com>
- <Zv5GfY1WS_aaczZM@infradead.org>
- <Zv5J3VTGqdjUAu1J@infradead.org>
- <20241003115721.kg2caqgj2xxinnth@quack3>
- <Zv6J34fwj3vNOrIH@infradead.org>
- <20241003122657.mrqwyc5tzeggrzbt@quack3>
- <Zv6Qe-9O44g6qnSu@infradead.org>
- <20241003125650.jtkqezmtnzfoysb2@quack3>
- <Zv6jV40xKIJYuePA@dread.disaster.area>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ymAdctxy"
+Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-37ce6262705so481775f8f.1
+        for <linux-security-module@vger.kernel.org>; Thu, 03 Oct 2024 09:21:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1727972463; x=1728577263; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=v4AMHyota3tkdFmoOCaUrSl8aqZ2USc7/BC5yJtpHMg=;
+        b=ymAdctxyyCtLE8+h2eSkAigJ8RS+pkClpSFa/JS4e1idjBJVci3c28spBCuZ7pp1X2
+         TaRgRD6rTZ2mZWVlIeVXmqq3IgqJItVe5uE2Ksp3+GdL//71iPyU7uLtip30VfIdiLo+
+         U5TjY4sN14ekpC3HUtAZQZwTYsmDexP9zFhqWoGKRQabGPbl0AMf3GXeipGZu4Apcka8
+         K7wH2t2oy2WLUgkW8RvoFDfPFG06ThPz2+orEX9rm4lIaPFCMSJ51z/XnqXrx4s+2tMq
+         GVZk11q1z/Wy+YCY1XBhY1lQx7dpDKspAHknx68rbdpcFrJ3bvc0zX/4IYSfQ4HHK3mD
+         T39A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727972463; x=1728577263;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=v4AMHyota3tkdFmoOCaUrSl8aqZ2USc7/BC5yJtpHMg=;
+        b=FTiQZfeWzj8ToMr6sYjo/DiyTgBSObXBuX1V4c9EeKWlv3wsKq3geF2PgEIDpOLxla
+         WZqipM6QjsvlaXaJ1rhTtunv2W4FL8NFV3G6VnpN/yNWzt5lwVsNxduCA3AJnFiW4GMn
+         tFS+Lnlycv0ewkQ6b0Z4PtJRjfQZtDaMxYAGiq7S3bI/nw99DgiuwbWP2zbIBTjbiYYp
+         oeXxjEZrVq+H2EbIxJkhilsEvDMtnmv+y5SLfuiZGfxLIR2odd4yvMcnEL9T8gOI232S
+         Xbd38ylogW0Aq8njoXNSTAq9GpybFr1Yr5KQD7wBu+VJcyG9YQFdLFHTOETKD+jXPlYC
+         fCBA==
+X-Forwarded-Encrypted: i=1; AJvYcCW2v+JQtFw5qSK/0H3q4Fw98/hfQQ7beVJQRvZoEgYxKnQ9xwbWjarFpJw/FPUln5zhke7mmLJsMC1drrKdEO+aMHq41+Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxDye14J3g5mChWa5FmeW8yCLM5cnbPDtoYKvKHgjs1orWrI2h
+	EcE4iy0CiEKvutaPVq/bZxnUsIYeW6rCLoGqFuprXDEEd4/Qx5Ap2QnR9pgISibDcQv2K6RB+1f
+	pVA==
+X-Google-Smtp-Source: AGHT+IEOdSyWAmORFapKSEpH7G6R0n6gyVWbE/o2evQEGmgpcdbF9DaA5iglc2Nvw06fJUx28bAaePlI4hY=
+X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
+ (user=gnoack job=sendgmr) by 2002:a5d:648d:0:b0:37c:cdb2:9767 with SMTP id
+ ffacd0b85a97d-37cfba3fe9bmr3840f8f.10.1727972463162; Thu, 03 Oct 2024
+ 09:21:03 -0700 (PDT)
+Date: Thu, 3 Oct 2024 18:21:01 +0200
+In-Reply-To: <db38b163-ceb9-c74b-bcd5-402c646abea7@huawei-partners.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zv6jV40xKIJYuePA@dread.disaster.area>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[suse.cz,infradead.org,vger.kernel.org,linux.dev,linux-foundation.org,linux.microsoft.com,google.com,hallyn.com,chromium.org,gmail.com];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
+Mime-Version: 1.0
+References: <20240904104824.1844082-1-ivanov.mikhail1@huawei-partners.com>
+ <20240904104824.1844082-20-ivanov.mikhail1@huawei-partners.com>
+ <ZvufroAFgLp_vZcF@google.com> <db38b163-ceb9-c74b-bcd5-402c646abea7@huawei-partners.com>
+Message-ID: <Zv7EbY2v6aElb5BI@google.com>
+Subject: Re: [RFC PATCH v3 19/19] landlock: Document socket rule type support
+From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
+To: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+Cc: mic@digikod.net, willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com, 
+	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
+	netfilter-devel@vger.kernel.org, yusongping@huawei.com, 
+	artem.kuzin@huawei.com, konstantin.meskhidze@huawei.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu 03-10-24 23:59:51, Dave Chinner wrote:
-> On Thu, Oct 03, 2024 at 02:56:50PM +0200, Jan Kara wrote:
-> > On Thu 03-10-24 05:39:23, Christoph Hellwig wrote:
-> > > @@ -789,11 +789,23 @@ static bool dispose_list(struct list_head *head)
-> > >   */
-> > >  static int evict_inode_fn(struct inode *inode, void *data)
-> > >  {
-> > > +	struct super_block *sb = inode->i_sb;
-> > >  	struct list_head *dispose = data;
-> > > +	bool post_unmount = !(sb->s_flags & SB_ACTIVE);
-> > >  
-> > >  	spin_lock(&inode->i_lock);
-> > > -	if (atomic_read(&inode->i_count) ||
-> > > -	    (inode->i_state & (I_NEW | I_FREEING | I_WILL_FREE))) {
-> > > +	if (atomic_read(&inode->i_count)) {
-> > > +		spin_unlock(&inode->i_lock);
-> > > +
-> > > +		/* for each watch, send FS_UNMOUNT and then remove it */
-> > > +		if (post_unmount && fsnotify_sb_info(sb)) {
-> > > +			fsnotify_inode(inode, FS_UNMOUNT);
-> > > +			fsnotify_inode_delete(inode);
-> > > +		}
-> > 
-> > This will not work because you are in unsafe iterator holding
-> > sb->s_inode_list_lock. To be able to call into fsnotify, you need to do the
-> > iget / iput dance and releasing of s_inode_list_lock which does not work
-> > when a filesystem has its own inodes iterator AFAICT... That's why I've
-> > called it a layering violation.
-> 
-> The whole point of the iget/iput dance is to stabilise the
-> s_inodes list iteration whilst it is unlocked - the actual fsnotify
-> calls don't need an inode reference to work correctly.
-> 
-> IOWs, we don't need to run the fsnotify stuff right here - we can
-> defer that like we do with the dispose list for all the inodes we
-> mark as I_FREEING here.
-> 
-> So if we pass a structure:
-> 
-> struct evict_inode_args {
-> 	struct list_head	dispose;
-> 	struct list_head	fsnotify;
-> };
-> 
-> If we use __iget() instead of requiring an inode state flag to keep
-> the inode off the LRU for the fsnotify cleanup, then the code
-> fragment above becomes:
-> 
-> 	if (atomic_read(&inode->i_count)) {
-> 		if (post_unmount && fsnotify_sb_info(sb)) {
-> 			__iget(inode);
-> 			inode_lru_list_del(inode);
-> 			spin_unlock(&inode->i_lock);
-> 			list_add(&inode->i_lru, &args->fsnotify);
-> 		}
+On Thu, Oct 03, 2024 at 05:00:14PM +0300, Mikhail Ivanov wrote:
+> On 10/1/2024 10:09 AM, G=C3=BCnther Noack wrote:
+> > IMHO, the length of the "Defining and enforcing a security policy" sect=
+ion is
+> > slowly getting out of hand.  This was easier to follow when it was only=
+ file
+> > system rules. -- I wonder whether we should split this up in subsection=
+s for the
+> > individual steps to give this a more logical outline, e.g.
+> >=20
+> > * Creating a ruleset
+> > * Adding rules to the ruleset
+> >    * Adding a file system rule
+> >    * Adding a network rule
+> >    * Adding a socket rule
+> > * Enforcing the ruleset
+>=20
+> I agree, it's important to keep usage usage description as simple as it
+> possible. Should I include related commit in current patchset?
 
-Nit: Need to release i_lock in else branch here.  Otherwise interesting
-idea. Yes, something like this could work even in unsafe iterator.
+Sure, sounds good to me. =F0=9F=91=8D
 
-> 		return INO_ITER_DONE;
-> 	}
-> And then once we return to evict_inodes(), we do this:
-> 
-> 	while (!list_empty(args->fsnotify)) {
-> 		struct inode *inode
-> 
-> 		inode = list_first_entry(head, struct inode, i_lru);
->                 list_del_init(&inode->i_lru);
-> 
-> 		fsnotify_inode(inode, FS_UNMOUNT);
-> 		fsnotify_inode_delete(inode);
-> 		iput(inode);
-> 		cond_resched();
-> 	}
-> 
-> And so now all the fsnotify cleanup is done outside the traversal in
-> one large batch from evict_inodes().
-
-Yup.
-
-> As for the landlock code, I think it needs to have it's own internal
-> tracking mechanism and not search the sb inode list for inodes that
-> it holds references to. LSM cleanup should be run before before we
-> get to tearing down the inode cache, not after....
-
-Well, I think LSM cleanup could in principle be handled together with the
-fsnotify cleanup but I didn't check the details.
-
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+=E2=80=94G=C3=BCnther
