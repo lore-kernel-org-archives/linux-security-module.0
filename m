@@ -1,76 +1,77 @@
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+Received: from mx1.buffet.re (mx1.buffet.re [51.83.41.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDE02196DA2;
-	Wed,  2 Oct 2024 23:51:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FD5023DE;
+	Thu,  3 Oct 2024 00:46:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.83.41.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727913063; cv=none; b=T9cjSUoISn+m5OvPoYlxMrbOlxS+62gyNKEDz4HUAz5s0XA3GA/L9xXTiT5uDXrOeUNTwnLCqBcZy7deZs+NZrF3SFyGdLNoA+odMuAKhOAHi56RQ8lusaosyzR7DSGCL/nJFZKDff4gPx+nu8+Ise8eSzBMxqUSXcnqFQlXKLg=
+	t=1727916400; cv=none; b=bA/z7ymUg/bw+EZC8xcAuAQ2XA1XX2ae7Bb8TgKOAwgFbO+zSwyhqH6oZqIAnMEeqKi+oGPkzRBkjpU1saMx7LGRRZhHFyMlvbxyJXluefBekZ5unaGdsu5Onpc4Yo6vifSXudsDIVN4ipnkcIFkzGLfn96gTHEAykRR/8nmpSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727913063; c=relaxed/simple;
-	bh=ILXs43+w/CiIKRwyNeDQh+sUP8t10jgJm4isqpvrfyA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=suj4R6rvqM+wbFLNQH3n+v657HkTkFaJTQdS+4V9GQdCxJ1/sgdh/mBoaSdf4SGk3e/+gX+IhFuIFtH7kwZIbe2T7NljkSR4f6I9DVcr5yTpmZTdmAa8Ua3n+3nyfgKD7u7aoGmDxbU9lEn/Taw4ql9GeaI+S9N/JdNmUm7byuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 492NonQb082062;
-	Thu, 3 Oct 2024 08:50:49 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 492Nonk7082059
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Thu, 3 Oct 2024 08:50:49 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <b4d6f4b8-2ee5-4aa9-8356-b3af89eaa9b3@I-love.SAKURA.ne.jp>
-Date: Thu, 3 Oct 2024 08:50:46 +0900
+	s=arc-20240116; t=1727916400; c=relaxed/simple;
+	bh=+6fNRHwAMI0XLMcrvjqdzO544i3KmFEbtisOAFQSioA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=enn2/Pjt3qWDW+yVK6ISWkWtEN0YJcDf4QtfY4sBML7+ClsIL9Dz6Ln7zLzn/2MBV2jhm1snk2B2tMQOvN+Mn44Ymri77lxVR7PPJB1jXz6/8Xx/9cucvAM59e6TFJFOi9uV/cjSsYBfxb3cWhJIFKwbNXqmifFmvRdnoE5fs+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buffet.re; spf=pass smtp.mailfrom=buffet.re; dkim=pass (2048-bit key) header.d=buffet.re header.i=@buffet.re header.b=ao32vf3g; arc=none smtp.client-ip=51.83.41.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buffet.re
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=buffet.re
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=buffet.re header.i=@buffet.re header.b="ao32vf3g"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=buffet.re; s=mx1;
+	t=1727916285; bh=+6fNRHwAMI0XLMcrvjqdzO544i3KmFEbtisOAFQSioA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ao32vf3g9yaNF0J4fJKQHG0Ywk6TuQxAMvK2d4b9UxQvjOducMfVnH94YNC5fIpY6
+	 zAxS6KyQqlSGcAwlHZlWqYlXgwszz8Y9p1398acx3+nywH+kYoNvu+LvbQMIpCP2mc
+	 fF4wgSDDWwVNf+NrPoFbCT+wuQXqWgCgXRC+N/MJ0Wetm9vxf8Qx+LL+/w6S7E2WZa
+	 exUHFkuuAtjvgckk89hyvycjI9PF9g3zFRyW+DVPBwDJKA4oSPz+g9u1nrB0UqoqFp
+	 Dh5YpHBZA2QDIt6E5sHIBL5JWk4tpBH+NBaWiwoPPE9L2L3jvFulL9LC8UMoKUpC5O
+	 sCxIQ35RQKrQw==
+Received: from localhost.localdomain (unknown [10.0.1.3])
+	by mx1.buffet.re (Postfix) with ESMTPA id CD3AD1231F1;
+	Thu,  3 Oct 2024 02:44:44 +0200 (CEST)
+From: Matthieu Buffet <matthieu@buffet.re>
+To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+Cc: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+	Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Matthieu Buffet <matthieu@buffet.re>
+Subject: [PATCH v2 0/3] samples/landlock: Fix port parsing behaviour
+Date: Thu,  3 Oct 2024 02:47:09 +0200
+Message-Id: <20241003004712.255126-1-matthieu@buffet.re>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] tomoyo update for v6.12
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>, LKML <linux-kernel@vger.kernel.org>,
-        linux-security-module@vger.kernel.org
-References: <0c4b443a-9c72-4800-97e8-a3816b6a9ae2@I-love.SAKURA.ne.jp>
- <877cavdgsu.fsf@trenco.lwn.net>
- <CAHC9VhRnTrjP3kNXMmzsK4oZL7WD+uH0OuXszEPgTc5YoT5dew@mail.gmail.com>
- <CAHk-=wjLdoBcY-r64oBbKXo3hSEr5AawrP_5GSFQ4NEbCNt4Kg@mail.gmail.com>
- <CAHC9VhS_8JtU0KQyy3rEGt0CQ_XMQFt2Kic-bz-Qd=SMjeWe4Q@mail.gmail.com>
- <19e29693-718c-4667-ab40-948718bcc6f5@I-love.SAKURA.ne.jp>
- <CAHC9VhT3yfahvwSVqGHyQq5SDpf8QRjDoEttoyD0zSau41Sb4Q@mail.gmail.com>
- <9387e6bb-484a-443d-ad87-24cf6e976e61@I-love.SAKURA.ne.jp>
-Content-Language: en-US
-In-Reply-To: <9387e6bb-484a-443d-ad87-24cf6e976e61@I-love.SAKURA.ne.jp>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Anti-Virus-Server: fsav102.rs.sakura.ne.jp
-X-Virus-Status: clean
+Content-Transfer-Encoding: 8bit
 
-On 2024/10/03 8:09, Tetsuo Handa wrote:
-> The vmlinux cannot be rebuilt without forcing penalties (i.e. having a
-> negative impact on the user side, which cannot be a viable solution).
+Hi Mickaël, Mikhail,
 
-For example, some out-of-tree device driver supports RHEL but does not
-support CentOS, despite there is effectively no difference between RHEL
-kernel and CentOS kernel.
+Thanks for your feedback on my v1. This is the extracted fix for the
+port parsing part, along with the help message clarification to make
+the sandboxer sample more user-friendly. I'll apply your suggestions
+on the rest and send it asap.
 
-Also, for debuginfo packages, one has to share/distribute debuginfo packages
-when vmcore is captured while using a rebuilt vmlinux. (Well, debuginfo
-might not be limited for analyzing vmcore...) That makes troubleshooting more
-difficult; one who captured vmcore cannot directly contact the original kernel
-provider, due to discarding the baseline provided by the original kernel
-provider.
+v2: no semantic change, just selected a subset of diffs and refactored a
+str2num helper based on your patch, Mikhail.
 
-What Paul is saying is effectively "Do not use RHEL if you want to use TOMOYO".
-Just rebuilding RHEL kernels impacts negatively on the user side. Who can
-force users to rebuild RHEL kernels, due to the burden caused by giving up
-utilizing existing eco-system? That cannot be a viable solution.
+Link: https://lore.kernel.org/lkml/20240916122230.114800-1-matthieu@buffet.re/
+Signed-off-by: Matthieu Buffet <matthieu@buffet.re>
+
+
+Matthieu Buffet (3):
+  samples/landlock: Fix port parsing in sandboxer
+  samples/landlock: Refactor --help message in function
+  samples/landlock: Clarify option parsing behaviour
+
+ samples/landlock/sandboxer.c | 128 +++++++++++++++++++++++------------
+ 1 file changed, 85 insertions(+), 43 deletions(-)
+
+
+base-commit: af3319b445a28d51bf936cf4fe350f9c8eda5a3a
+-- 
+2.39.2
 
