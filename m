@@ -1,40 +1,40 @@
 Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E770D168DC;
-	Thu,  3 Oct 2024 02:27:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D5111946B;
+	Thu,  3 Oct 2024 02:30:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727922476; cv=none; b=uAsmmcmLf/BmfbVd1Z96EhjQwbWUy04xT0QtH2z3UO9fkwMWZdNxqaIXRhcCetLgYFC026lrCJwoR8qd9fsDEmw2t05jj8qvZ/zrXhJ6oTNv8MvQDznKO92r6XG4SHKgaQhbE7g032ugQVkD2UCVqdaR7a60oVDt7OCKFDg0D6U=
+	t=1727922606; cv=none; b=DYfN4fP93SSzGQIVYxK/YaZeSQq30uJALiQ2qAGRU7tHkqRkwF7SLw0GubadGNtIajZS26MxUz5XxT8ALy4SFNhrvG+WfmdNKlSwL7IBrJMEK/SCXVCPCPAHToc9p3ziqeJ7S7mojzgjMjPixsUVYo1FYwZVmGuljpx2P9p8om8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727922476; c=relaxed/simple;
-	bh=3OPAftrtMV+qIp4Qz8NWHzz2E0fBiQnLd7zeRbcYWmU=;
+	s=arc-20240116; t=1727922606; c=relaxed/simple;
+	bh=OBVD0SdSnenE0cYFBAHj7O5jQZCxW1uQC1fX2O1dsx0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZyeIPCgO+ASVggpfH8I/nsVPY/9LNd8JFCFMJ0EklPopwiCKjmxvKN5YxFdT8S7aItaz8m3woyO3vGlDOscH8L3159H8JFf6llP9vyVDFN3VR3zZuahxdzFKlw4jc4LmWPhrEvAcGp+zjs2HgbR+Pc5Fuyv/wN2hFgHzZ2BLi8o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=rSn00OHO; arc=none smtp.client-ip=185.125.188.120
+	 In-Reply-To:Content-Type; b=V4b+Ssm0k0Z5cPQ5aLIfK9xiPFT5whIeqicH4SFdr3zeEeEf07N73JjSDMv1X7F6fc+XnnDY5NWfbVJRsO1KVcRIHh8xKm6h0NhadGGll+ZLObqPoq7sMaccSPEAsplZo7sJyhsrP4bJxBz2Ehtgx05EIiLz51Al+vFlaojvFBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=HHpQEyhe; arc=none smtp.client-ip=185.125.188.120
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="rSn00OHO"
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="HHpQEyhe"
 Received: from [192.168.192.84] (unknown [50.39.103.33])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id AD9F23F24D;
-	Thu,  3 Oct 2024 02:27:49 +0000 (UTC)
+	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 1E59B3F0A2;
+	Thu,  3 Oct 2024 02:24:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1727922470;
-	bh=RN31JBI6bHBo+rutpHLe7KMAvry1bQmwrXCcjkow2zY=;
+	s=20210705; t=1727922273;
+	bh=mtyQjOvT8/r8gFzn/EvPMn1Xb4KwpJCT08Zknko2doc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
 	 In-Reply-To:Content-Type;
-	b=rSn00OHOGcx/Sa+PnHbQZzOaC3CmQKvdnvnEWwV5PHQg91Qwc96tkqsBo8G8LqBJd
-	 fB1eSCg5u3X1zSX963q7a1Rli7mNmXnFjq+WTgYYhufKPCYFUoj4iNrzj8mGJsY2qq
-	 WNpNST0AL5HFMAuMJqXzljA9bYn3nRP12nLP2hrY4szf8ndUEjp7AyAQ0dRpDvC/xG
-	 aukVdl1O4fDpzZXZXBWAbvrigPiOd/VHQRElJBg8brTiYHDkAbUa76pamFJrFDnLba
-	 e41s7pSQqnMUSTwyf0vlGxcVmtgD+N0zJQTxG54na6bhgBz6WGG1bG+aig5GxGpoKA
-	 h/1SAmTnA6PJw==
-Message-ID: <033eb4d9-482b-4b70-a251-dc8bcc738f40@canonical.com>
-Date: Wed, 2 Oct 2024 19:27:47 -0700
+	b=HHpQEyheO8GJXMx+am6bgd9e4ThJcGILN/4//A1OTwjzXrF2Hm15NddIW0bFGRNpH
+	 vtOC7gbU8RAcW0AG2pN/uRnVZq0xqvMC4U/Eth3QTG5q9kSvj5mAlo0tNuXKrjKkDK
+	 u3UBA1MfC9RPkN6b1uxl31mV1nmSxf9YO0KIimPqyLOakyW8kwqjhG+GjoOC4onsMg
+	 OPxAJb3Z7oew4sfex7cGIKVaRv8ZMsXlR3E2bapP/BrpD9Q68xVKnbYkmDBVleaOQh
+	 NADUcKhWr2uWQ9P6FiTGlblN447HNavsmpgPo0Syyz6GVKgvfOegPILoCdShUqZZwZ
+	 CQTLRUzMM4Xnw==
+Message-ID: <8c04f325-4a5b-4187-a108-791a2a2939eb@canonical.com>
+Date: Wed, 2 Oct 2024 19:24:28 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -43,9 +43,9 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [GIT PULL] tomoyo update for v6.12
-To: "Dr. Greg" <greg@enjellic.com>,
- Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Paul Moore <paul@paul-moore.com>, Jonathan Corbet <corbet@lwn.net>,
+To: Paul Moore <paul@paul-moore.com>, "Dr. Greg" <greg@enjellic.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ Jonathan Corbet <corbet@lwn.net>,
  Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
  LKML <linux-kernel@vger.kernel.org>, linux-security-module@vger.kernel.org
 References: <0c4b443a-9c72-4800-97e8-a3816b6a9ae2@I-love.SAKURA.ne.jp>
@@ -53,6 +53,7 @@ References: <0c4b443a-9c72-4800-97e8-a3816b6a9ae2@I-love.SAKURA.ne.jp>
  <CAHC9VhRnTrjP3kNXMmzsK4oZL7WD+uH0OuXszEPgTc5YoT5dew@mail.gmail.com>
  <CAHk-=wjLdoBcY-r64oBbKXo3hSEr5AawrP_5GSFQ4NEbCNt4Kg@mail.gmail.com>
  <20241002103830.GA22253@wind.enjellic.com>
+ <CAHC9VhRjq4B4Ub7kbD8uLZxL_CKSm=z+poCXBMmcfs=8ETHj3Q@mail.gmail.com>
 Content-Language: en-US
 From: John Johansen <john.johansen@canonical.com>
 Autocrypt: addr=john.johansen@canonical.com; keydata=
@@ -98,120 +99,115 @@ Autocrypt: addr=john.johansen@canonical.com; keydata=
  +T7sv9+iY+e0Y+SolyJgTxMYeRnDWE6S77g6gzYYHmcQOWP7ZMX+MtD4SKlf0+Q8li/F9GUL
  p0rw8op9f0p1+YAhyAd+dXWNKf7zIfZ2ME+0qKpbQnr1oizLHuJX/Telo8KMmHter28DPJ03 lT9Q
 Organization: Canonical
-In-Reply-To: <20241002103830.GA22253@wind.enjellic.com>
+In-Reply-To: <CAHC9VhRjq4B4Ub7kbD8uLZxL_CKSm=z+poCXBMmcfs=8ETHj3Q@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/2/24 03:38, Dr. Greg wrote:
-> On Tue, Oct 01, 2024 at 09:36:16AM -0700, Linus Torvalds wrote:
-> 
-> Good morning Linus, I hope the week is going well for you.
-> 
-> Some reflections, for the record, on this issue.
-> 
->> On Tue, 1 Oct 2024 at 07:00, Paul Moore <paul@paul-moore.com> wrote:
->>>
->>> Linus, it's unclear if you're still following this thread after the
->>> pull, but can you provide a little insight on your thoughts here?
-> 
->> I absolutely hate the whole "security people keep arguing", and I
->> cannot personally find it in myself to care about tomoyo.  I don't
->> even know where it is used - certainly not in Fedora, which is the
->> only distro I can check quickly.
+On 10/2/24 07:35, Paul Moore wrote:
+> On Wed, Oct 2, 2024 at 6:38 AM Dr. Greg <greg@enjellic.com> wrote:
+>> On Tue, Oct 01, 2024 at 09:36:16AM -0700, Linus Torvalds wrote:
+>>> On Tue, 1 Oct 2024 at 07:00, Paul Moore <paul@paul-moore.com> wrote:
+>>>>
+>>>> Linus, it's unclear if you're still following this thread after the
+>>>> pull, but can you provide a little insight on your thoughts here?
 >>
->> If the consensus is that we should revert, I'll happily revert. This
->> was all inside of the tomoyo subdirectory, so I didn't see it as
->> some kind of sidestepping, and treated the pull request as a regular
->> "another odd security subsystem update".
+>>> I absolutely hate the whole "security people keep arguing", and I
+>>> cannot personally find it in myself to care about tomoyo.  I don't
+>>> even know where it is used - certainly not in Fedora, which is the
+>>> only distro I can check quickly.
+>>>
+>>> If the consensus is that we should revert, I'll happily revert. This
+>>> was all inside of the tomoyo subdirectory, so I didn't see it as
+>>> some kind of sidestepping, and treated the pull request as a regular
+>>> "another odd security subsystem update".
+>>
+>> I see that Paul Moore has further responded with commentary about the
+>> 'LSM community' responding to this issue.  I wanted, on behalf of our
+>> project and in support of Tetsuo's concerns, to register directly with
+>> you a sense of jaded skepticism about the notion of a community
+>> response.
+>>
+>> Fixing Tetsuo's issue, at least to the extent it can be fixed,
+>> requires technical improvements in the Linux security architecture.
+>> Currently, potential technical improvements in this venue are
+>> struggling to receive any kind of acknowledgement or review, to the
+>> ultimate detriment of enhancements that Linux should be bringing
+>> forward to address, not only this issue, but the security industry
+>> writ-large.
 > 
-> I see that Paul Moore has further responded with commentary about the
-> 'LSM community' responding to this issue.  I wanted, on behalf of our
-> project and in support of Tetsuo's concerns, to register directly with
-> you a sense of jaded skepticism about the notion of a community
-> response.
+> I've believe the LSM developer community is interesting in that it is
+> much smaller than many other kernel subsystems, despite the
+> substantial technical scope when one considers the LSM's reach within
+> the kernel.  This brings about a number of challenges, the largest
+> being that reviewing ideas, documents, and code changes takes time.
+> Everyone always wants their personal patchset to land "right now!",
+> but it's important that the changes are given the proper review and
+> testing.  You don't have to look any further than the recent static
+> call changes to see a perfect example of how overly aggressive
+> attitudes toward merging would have resulted in a number of real world
+> failures.  I agree that a quicker pace would be nice, but I'm not
+> willing to trade off reliability or correctness so people's favorite
+> feature can land in Linus' tree a bit quicker.
 > 
-> Fixing Tetsuo's issue, at least to the extent it can be fixed,
-> requires technical improvements in the Linux security architecture.
+> Independent of everything above, it is important to note that the pace
+> of changes in the LSM framework over the past two years has increased
+> significantly.  Even ignoring some of the administrative improvements,
+> e.g. process documentation, since 2022 the LSM community has been
+> merging code at a pace much higher than we've seen during the entirety
+> of the "git age":
+> 
+> [NOTE: using 'security/security.c' to be representative of LSM
+> framework specific changes seems reasonable for a quick metric]
+> 
+> # previous two years (reference)
+> % git log --after="2022" --before="2024" \
+>    --oneline security/security.c | wc -l
+> 141
+> 
+> % git log --after="2020" --before="2022" ...
+> 50
+> % git log --after="2018" --before="2020" ...
+> 82
+> % git log --after="2016" --before="2018" ...
+> 43
+> % git log --after="2014" --before="2016" ...
+> 47
+> % git log --after="2012" --before="2014" ...
+> 25
+> % git log --after="2010" --before="2012" ...
+> 62
+> % git log --after="2008" --before="2010" ...
+> 56
+> % git log --after="2006" --before="2008" ...
+> 36
+> % git log --after="2004" --before="2006" ...
+> 4
+> % git log --after="2002" --before="2004" ...
+> 0
+> 
+>> We have made multiple submissions of technology, that can at least
+>> positively impact Tetsuo's concerns, and in the process perhaps
+>> improve the opportunity for security innovation in Linux.  After 20
+>> months of doing so we have yet to receive anything that would resemble
+>> substantive technical review [1].
+> 
+> I disagree.  I've personally reviewed two of your LSM revisions,
+> providing feedback on both.  Unfortunately both times I've not made it
+> past the documentation as there have been rather significant issues
+> which I didn't believe were properly addressed from one revision to
+> the next.  From what I've seen on the mailing list, others have
+> identified similarly serious concerns which in my opinion have not
+> received adequate responses.
+> 
+> The TSEM LSM is still queued for review, but based on prior reviews it
+> currently sits at a lower priority.  I realize this is frustrating,
+> but I have to prioritize work based on impact and perceived quality.
+> 
+Bandwidth is a very real issue. TSEM is also on my to review list, but
+finding making the time to make it through the full set has so far
+been impossible.
 
-yes and that is correct place to do it. Doing it within a single
-LSM is very much the wrong approach
+Heck I am weeks behind on the apparmor list, and I have apparmor patches
+to send that I haven't been able to get time to do.
 
-> Currently, potential technical improvements in this venue are
-> struggling to receive any kind of acknowledgement or review, to the
-> ultimate detriment of enhancements that Linux should be bringing
-> forward to address, not only this issue, but the security industry
-> writ-large.
-> 
-
-everyone in the LSM community is struggling with available time, and
-yes there are disagreements around how this should be done so it
-moves slow.
-
-> We have made multiple submissions of technology, that can at least
-> positively impact Tetsuo's concerns, and in the process perhaps
-> improve the opportunity for security innovation in Linux.  After 20
-> months of doing so we have yet to receive anything that would resemble
-> substantive technical review [1].
-> 
-> The following are links to the four submissions.  We believe an
-> unbiased observer would conclude that they provide ample evidence of
-> very little interest in reviewing submissions for enhancements to the
-> Linux security eco-system, outside of perhaps certain constituencies:
-> 
-> V1:
-> https://lore.kernel.org/linux-security-module/20230204050954.11583-1-greg@enjellic.com/T/#t
-> 
-> V2:
-> https://lore.kernel.org/linux-security-module/20230710102319.19716-1-greg@enjellic.com/T/#t
-> 
-> V3:
-> https://lore.kernel.org/linux-security-module/20240401105015.27614-1-greg@enjellic.com/T/#t
-> 
-> V4:
-> https://lore.kernel.org/linux-security-module/20240826103728.3378-1-greg@enjellic.com/T/#t
-> 
-> As of the V4 release, we have added support for an approach that may
-> positively impact Tetsuo's concerns.  We do that without touching any
-> infrastructure outside of our proposed LSM.
-> 
-> We can speak, at great length, as to why we feel that Linux would
-> benefit from structural improvements to its security infrastructure.
-> We will refrain from doing so in this thread, given your stated
-> sentiments on these types of discussions.
-> 
-> However, your mantra, recently expressed on security infrastucture
-> issues, has always been:
-> 
-> "Code talks, bullshit walks."
-> 
-> For all of this to work, and the Linux community to remain healthy,
-> the code needs to be listened to and that is not effectively happening
-> in the security arena.
-> 
-> I started my involvement with Linux in late 1991.  All of what I see
-> is giving me a great deal of pause about the health of our community
-> moving forward and the potential negative impact these issues have on
-> the opportunity for security innovation to emerge
-> 
->>                    Linus
-> 
-> Have a good remainder of the week.
-> 
-> Apologies in advance for extending conversations you find tiresome.
-> 
-> As always,
-> Dr. Greg
-> 
-> The Quixote Project - Flailing at the Travails of Cybersecurity
->                https://github.com/Quixote-Project
-> 
-> 
-> [1]: A thank you to Casey Schaufler, despite our lively disagreement
-> about some issues, who has offered specific review comments and
-> dialogue about security modeling.  To Greg Kroah Hartman for
-> recommending the most important change we have implemented with
-> respect to JSON encoding of security events and a handful of other
-> individuals who have provided helpful procedural and technical point
-> suggestions.
-> 
 
