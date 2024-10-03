@@ -1,339 +1,173 @@
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E5681487D5;
-	Thu,  3 Oct 2024 13:15:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 267CA199936
+	for <linux-security-module@vger.kernel.org>; Thu,  3 Oct 2024 13:59:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727961359; cv=none; b=mWXaUU7xc8+NXMexT3uz/PKm8M/fh/p4E4pZLueZzydb65oNhPNsI+9bXjN6WoE7QdXqtYxrdT/R/HeuwYF++MR7v1b5/QnTL7Ii1Fzk9oOYPH0Af6CxpGSXXPHRblwDvo3vyDtwEfP920rkVaAelMCB8RXuA/YbjNWCB0hQpWY=
+	t=1727963997; cv=none; b=mhSp++JkCLzDQbA1tdVzzRramdWknFiSp2/tTEXNz2Ol5lvN/MvH4JIcNeLUMavE2J/Gun0HQ4x6g22Gn4ohMRIitT4wZLlRbsLafdpnNv6EZh8HPIjkZNfRp0nAuMWMeUYfgWJLQ5B5OtAYVw0QJN8gyQTnUz9HWurMpD4sqSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727961359; c=relaxed/simple;
-	bh=Lb/jmmLcdOMfQ3rBwe66UbluL9ta63gDiK7pr28v90Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=AW6FO0/RqMaWKCikCstdV8QeVdyiZkRrg778mv5Db6EKED4CAFiy89rNET1sCkdjiZj8QMciO+p/m4AjN8uPosyr+s/jWQW0eDcXaIoGJPxkG9nz3wZGXZfglj+QG6W5CK+yrQ9x62FmEw5PBlVIiPCFLr0qBK7lKuKjdK3bR7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XKBwp2D5Xz2Dcyy;
-	Thu,  3 Oct 2024 21:14:50 +0800 (CST)
-Received: from kwepemj200016.china.huawei.com (unknown [7.202.194.28])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0C4A614010C;
-	Thu,  3 Oct 2024 21:15:48 +0800 (CST)
-Received: from [10.123.123.159] (10.123.123.159) by
- kwepemj200016.china.huawei.com (7.202.194.28) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 3 Oct 2024 21:15:44 +0800
-Message-ID: <1d58533e-f6c4-29bb-800e-0638e9660051@huawei-partners.com>
-Date: Thu, 3 Oct 2024 16:15:39 +0300
+	s=arc-20240116; t=1727963997; c=relaxed/simple;
+	bh=/GY97la4i2PwIWy0iIsbya23bsPGem6iIVV4si/yakE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pZ7WMT2mtXHe1FoRk1KphdiFUej9zn9DHwiFzAqWAVeNz7AGupPRGvSPwcqyJIfZRujACl6KL1ykzd4gWKgUz77ncWhtpFCufppJKjDVKRDXSN3rTq705E8Hk3hYek2N08s/ubmte+VwHU04ZFMJedt6TIMOl4vdItdM52w0Okg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=AnXCVhWQ; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="AnXCVhWQ"
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20b8be13cb1so10037505ad.1
+        for <linux-security-module@vger.kernel.org>; Thu, 03 Oct 2024 06:59:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1727963994; x=1728568794; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RmRpFtIEUnAPcCvGtolN/zuYY1/DXFySJU38BvrsdOA=;
+        b=AnXCVhWQViPu07BTXNW+aCpCFQWc5qVtAdvebzu1n4jSZIKrFSjf0tDODz76CX50Bs
+         wTmhfakk1tjxJ30cclmXhG903qWnPndlJ+bVe5w+cSGx3DmiUPrCEjNdIrKR8gVDkUYz
+         ItPKvXkstKaZpCOefZ7IVwHI0NljP+U1M6KN3Z4qxzcgy0zJd1tnZUrQ6gfkzt9k7ayU
+         z/HBPlza0GMZH+KqLuDIbdTdtj9eKTGe1Tje1JDKtgEIHzanwBczMKEyj/pftvBVvvfY
+         sybe3J+BmJftlZN4ooHLVCT/cr84aJDx3nfFG5C4yQXuIOtX9f7qrFLpMzsym2n+sHJr
+         xhBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727963994; x=1728568794;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RmRpFtIEUnAPcCvGtolN/zuYY1/DXFySJU38BvrsdOA=;
+        b=QfXOnZgZG3evZlxIHZHzj6sQKTV0XO9eiRHrnABIOdicHtqEIVQaeTH4a5suiDKZpu
+         qXeTkFSXXn86V5789TAy40fMrxBLYmZtlBVjA6NMAP3lI4XNlYTPL6Uw+9Qdf4D7lWrF
+         YbqVWdDrtSoK7zN8FJDBh0tgNnlmbOxk8W09tmxWDha2PYc0iBIN7sWITohPr44D5noH
+         re2QrY1Gt4KRz8Yq3m9OYmgAfM8ZRMI5bc+tQW3KY5R2q8OrsemUhCD8xfrC90O9JbdZ
+         nj6yj96KdbI0GgUgy54B5eopqTn2RYTV0tPdixWWe21xy7Fl9e28/kgY1GShPIeOz+7F
+         D8VA==
+X-Forwarded-Encrypted: i=1; AJvYcCVpKzjXJ9oAAUAVQVK3/pTooDWn/y28qnibAgqYxYQ5Km1yR/v6emXQrVcvQ94dfkPK4gqrSee8ICn4c84w3Z8wEfskS0A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBgoDnexNtf4Ok6HPX2xDNG+DWgwxFfPIGCbQLuskRGFRTrDVw
+	+sGPfhkF/x+aM2aupHQqpYNfPvdtPOZoe6lRYYz4NX025ABH8ZNQnB0DvH3+C0E=
+X-Google-Smtp-Source: AGHT+IG8lHaZybqgl6le6NzHHM4A1D/zJK9kM3E8fOqfXDDRiBLohY8zPhDvnGuyUfyPs9j8ungW0Q==
+X-Received: by 2002:a17:902:d50d:b0:20b:9c7d:fe0c with SMTP id d9443c01a7336-20bc59c38fbmr106591155ad.7.1727963994363;
+        Thu, 03 Oct 2024 06:59:54 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20bef70712esm9210965ad.265.2024.10.03.06.59.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Oct 2024 06:59:54 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1swMMx-00DPdE-1F;
+	Thu, 03 Oct 2024 23:59:51 +1000
+Date: Thu, 3 Oct 2024 23:59:51 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Jan Kara <jack@suse.cz>
+Cc: Christoph Hellwig <hch@infradead.org>, linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-bcachefs@vger.kernel.org,
+	kent.overstreet@linux.dev, torvalds@linux-foundation.org,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@linux.microsoft.com>,
+	Jann Horn <jannh@google.com>, Serge Hallyn <serge@hallyn.com>,
+	Kees Cook <keescook@chromium.org>,
+	linux-security-module@vger.kernel.org,
+	Amir Goldstein <amir73il@gmail.com>
+Subject: Re: lsm sb_delete hook, was Re: [PATCH 4/7] vfs: Convert
+ sb->s_inodes iteration to super_iter_inodes()
+Message-ID: <Zv6jV40xKIJYuePA@dread.disaster.area>
+References: <20241002014017.3801899-1-david@fromorbit.com>
+ <20241002014017.3801899-5-david@fromorbit.com>
+ <Zv5GfY1WS_aaczZM@infradead.org>
+ <Zv5J3VTGqdjUAu1J@infradead.org>
+ <20241003115721.kg2caqgj2xxinnth@quack3>
+ <Zv6J34fwj3vNOrIH@infradead.org>
+ <20241003122657.mrqwyc5tzeggrzbt@quack3>
+ <Zv6Qe-9O44g6qnSu@infradead.org>
+ <20241003125650.jtkqezmtnzfoysb2@quack3>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v3 18/19] samples/landlock: Support socket protocol
- restrictions
-Content-Language: ru
-To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>
-CC: <mic@digikod.net>, <willemdebruijn.kernel@gmail.com>,
-	<gnoack3000@gmail.com>, <linux-security-module@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <netfilter-devel@vger.kernel.org>,
-	<yusongping@huawei.com>, <artem.kuzin@huawei.com>,
-	<konstantin.meskhidze@huawei.com>
-References: <20240904104824.1844082-1-ivanov.mikhail1@huawei-partners.com>
- <20240904104824.1844082-19-ivanov.mikhail1@huawei-partners.com>
- <ZvurRJ4mGsRufmEl@google.com>
-From: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-In-Reply-To: <ZvurRJ4mGsRufmEl@google.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
- kwepemj200016.china.huawei.com (7.202.194.28)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241003125650.jtkqezmtnzfoysb2@quack3>
 
-On 10/1/2024 10:56 AM, Günther Noack wrote:
-> On Wed, Sep 04, 2024 at 06:48:23PM +0800, Mikhail Ivanov wrote:
->> Add socket protocol control support in sandboxer demo. It's possible
->> to allow a sandboxer to create sockets with specified family and type
->> values. This is controlled with the new LL_SOCKET_CREATE environment
->> variable. Single token in this variable looks like this:
->> 'FAMILY.TYPE', where FAMILY and TYPE are integers corresponding to the
->> number of address family and socket type.
->>
->> Add parse_socket_protocol() method to parse socket family and type
->> strings into integers.
->>
->> Change LANDLOCK_ABI_LAST to 6.
->>
->> Signed-off-by: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
->> ---
->> Changes since v2:
->> * Changes representation of socket protocol in LL_SOCKET_CREATE into
->>    pair of integer values.
->> * Changes commit message.
->> * Minor fixes.
->>
->> Changes since v1:
->> * Refactors get_socket_protocol(). Rename it to parse_socket_protocol().
->> * Changes LANDLOCK_ABI_LAST to 6 since ioctl patchlist updated it to 5.
->> * Refactors commit message.
->> * Formats with clang-format.
->> * Minor changes.
->> ---
->>   samples/landlock/sandboxer.c | 108 ++++++++++++++++++++++++++++++-----
->>   1 file changed, 95 insertions(+), 13 deletions(-)
->>
->> diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
->> index d4dba9e4ce89..1669095f9373 100644
->> --- a/samples/landlock/sandboxer.c
->> +++ b/samples/landlock/sandboxer.c
->> @@ -14,6 +14,7 @@
->>   #include <fcntl.h>
->>   #include <linux/landlock.h>
->>   #include <linux/prctl.h>
->> +#include <linux/socket.h>
->>   #include <stddef.h>
->>   #include <stdio.h>
->>   #include <stdlib.h>
->> @@ -55,8 +56,11 @@ static inline int landlock_restrict_self(const int ruleset_fd,
->>   #define ENV_FS_RW_NAME "LL_FS_RW"
->>   #define ENV_TCP_BIND_NAME "LL_TCP_BIND"
->>   #define ENV_TCP_CONNECT_NAME "LL_TCP_CONNECT"
->> +#define ENV_SOCKET_CREATE_NAME "LL_SOCKET_CREATE"
->>   #define ENV_DELIMITER ":"
->>   
->> +#define ENV_TOKEN_INTERNAL_DELIMITER "."
->> +
->>   static int parse_path(char *env_path, const char ***const path_list)
->>   {
->>   	int i, num_paths = 0;
->> @@ -209,6 +213,65 @@ static int populate_ruleset_net(const char *const env_var, const int ruleset_fd,
->>   	return ret;
->>   }
->>   
->> +static int populate_ruleset_socket(const char *const env_var,
->> +				   const int ruleset_fd,
->> +				   const __u64 allowed_access)
->> +{
->> +	int ret = 1;
->> +	char *env_protocol_name, *strprotocol, *strfamily, *strtype;
->> +	unsigned long long family_ull, type_ull;
->> +	struct landlock_socket_attr protocol = {
->> +		.allowed_access = allowed_access,
->> +	};
->> +
->> +	env_protocol_name = getenv(env_var);
->> +	if (!env_protocol_name)
->> +		return 0;
->> +	env_protocol_name = strdup(env_protocol_name);
->> +	unsetenv(env_var);
->> +
->> +	while ((strprotocol = strsep(&env_protocol_name, ENV_DELIMITER))) {
->> +		strfamily = strsep(&strprotocol, ENV_TOKEN_INTERNAL_DELIMITER);
->> +		strtype = strsep(&strprotocol, ENV_TOKEN_INTERNAL_DELIMITER);
+On Thu, Oct 03, 2024 at 02:56:50PM +0200, Jan Kara wrote:
+> On Thu 03-10-24 05:39:23, Christoph Hellwig wrote:
+> > @@ -789,11 +789,23 @@ static bool dispose_list(struct list_head *head)
+> >   */
+> >  static int evict_inode_fn(struct inode *inode, void *data)
+> >  {
+> > +	struct super_block *sb = inode->i_sb;
+> >  	struct list_head *dispose = data;
+> > +	bool post_unmount = !(sb->s_flags & SB_ACTIVE);
+> >  
+> >  	spin_lock(&inode->i_lock);
+> > -	if (atomic_read(&inode->i_count) ||
+> > -	    (inode->i_state & (I_NEW | I_FREEING | I_WILL_FREE))) {
+> > +	if (atomic_read(&inode->i_count)) {
+> > +		spin_unlock(&inode->i_lock);
+> > +
+> > +		/* for each watch, send FS_UNMOUNT and then remove it */
+> > +		if (post_unmount && fsnotify_sb_info(sb)) {
+> > +			fsnotify_inode(inode, FS_UNMOUNT);
+> > +			fsnotify_inode_delete(inode);
+> > +		}
 > 
-> This works with strings such as "123:456:foobar", because you are using strsep()
-> twice on strprotocol; this looks unintentional?
+> This will not work because you are in unsafe iterator holding
+> sb->s_inode_list_lock. To be able to call into fsnotify, you need to do the
+> iget / iput dance and releasing of s_inode_list_lock which does not work
+> when a filesystem has its own inodes iterator AFAICT... That's why I've
+> called it a layering violation.
 
-Thanks, strsep should be called only once.
+The whole point of the iget/iput dance is to stabilise the
+s_inodes list iteration whilst it is unlocked - the actual fsnotify
+calls don't need an inode reference to work correctly.
 
-> 
-> 
->> +
->> +		if (!strtype) {
->> +			fprintf(stderr,
->> +				"Failed to extract socket protocol with "
->> +				"unspecified type value\n");
->> +			goto out_free_name;
->> +		}
->> +
->> +		if (str2num(strfamily, &family_ull)) {
->> +			fprintf(stderr,
->> +				"Failed to convert \"%s\" into a number\n",
->> +				strfamily);
->> +			goto out_free_name;
->> +		}
->> +		if (str2num(strtype, &type_ull)) {
->> +			fprintf(stderr,
->> +				"Failed to convert \"%s\" into a number\n",
->> +				strtype);
->> +			goto out_free_name;
->> +		}
->> +		protocol.family = (int)family_ull;
->> +		protocol.type = (int)type_ull;
->> +
->> +		if (landlock_add_rule(ruleset_fd, LANDLOCK_RULE_SOCKET,
->> +				      &protocol, 0)) {
->> +			fprintf(stderr,
->> +				"Failed to update the ruleset with "
->> +				"family \"%s\" and type \"%s\": %s\n",
->> +				strfamily, strtype, strerror(errno));
->> +			goto out_free_name;
->> +		}
->> +	}
->> +	ret = 0;
->> +
->> +out_free_name:
->> +	free(env_protocol_name);
->> +	return ret;
->> +}
->> +
->>   /* clang-format off */
->>   
->>   #define ACCESS_FS_ROUGHLY_READ ( \
->> @@ -233,14 +296,14 @@ static int populate_ruleset_net(const char *const env_var, const int ruleset_fd,
->>   
->>   /* clang-format on */
->>   
->> -#define LANDLOCK_ABI_LAST 5
->> +#define LANDLOCK_ABI_LAST 6
->>   
->>   int main(const int argc, char *const argv[], char *const *const envp)
->>   {
->>   	const char *cmd_path;
->>   	char *const *cmd_argv;
->>   	int ruleset_fd, abi;
->> -	char *env_port_name;
->> +	char *env_optional_name;
->>   	__u64 access_fs_ro = ACCESS_FS_ROUGHLY_READ,
->>   	      access_fs_rw = ACCESS_FS_ROUGHLY_READ | ACCESS_FS_ROUGHLY_WRITE;
->>   
->> @@ -248,18 +311,19 @@ int main(const int argc, char *const argv[], char *const *const envp)
->>   		.handled_access_fs = access_fs_rw,
->>   		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
->>   				      LANDLOCK_ACCESS_NET_CONNECT_TCP,
->> +		.handled_access_socket = LANDLOCK_ACCESS_SOCKET_CREATE,
->>   	};
->>   
->>   	if (argc < 2) {
->>   		fprintf(stderr,
->> -			"usage: %s=\"...\" %s=\"...\" %s=\"...\" %s=\"...\"%s "
->> +			"usage: %s=\"...\" %s=\"...\" %s=\"...\" %s=\"...\" %s=\"...\"%s "
->>   			"<cmd> [args]...\n\n",
->>   			ENV_FS_RO_NAME, ENV_FS_RW_NAME, ENV_TCP_BIND_NAME,
->> -			ENV_TCP_CONNECT_NAME, argv[0]);
->> +			ENV_TCP_CONNECT_NAME, ENV_SOCKET_CREATE_NAME, argv[0]);
->>   		fprintf(stderr,
->>   			"Execute a command in a restricted environment.\n\n");
->>   		fprintf(stderr,
->> -			"Environment variables containing paths and ports "
->> +			"Environment variables containing paths, ports and protocols "
->>   			"each separated by a colon:\n");
->>   		fprintf(stderr,
->>   			"* %s: list of paths allowed to be used in a read-only way.\n",
->> @@ -268,7 +332,7 @@ int main(const int argc, char *const argv[], char *const *const envp)
->>   			"* %s: list of paths allowed to be used in a read-write way.\n\n",
->>   			ENV_FS_RW_NAME);
->>   		fprintf(stderr,
->> -			"Environment variables containing ports are optional "
->> +			"Environment variables containing ports or protocols are optional "
->>   			"and could be skipped.\n");
->>   		fprintf(stderr,
->>   			"* %s: list of ports allowed to bind (server).\n",
->> @@ -276,15 +340,19 @@ int main(const int argc, char *const argv[], char *const *const envp)
->>   		fprintf(stderr,
->>   			"* %s: list of ports allowed to connect (client).\n",
->>   			ENV_TCP_CONNECT_NAME);
->> +		fprintf(stderr,
->> +			"* %s: list of socket protocols allowed to be created.\n",
->> +			ENV_SOCKET_CREATE_NAME);
-> 
-> Might be worth listing some example values for this parameter, e.g. for TCP/IP
-> and UDP/IP?  This is also needed to make it clear that these can't be given by
-> name, but only by number.
+IOWs, we don't need to run the fsnotify stuff right here - we can
+defer that like we do with the dispose list for all the inodes we
+mark as I_FREEING here.
 
-Ofc, it would be really useful for the user (since not everyone keeps
-the adress family table in their head :)).
+So if we pass a structure:
 
-> 
-> 
->>   		fprintf(stderr,
->>   			"\nexample:\n"
->>   			"%s=\"${PATH}:/lib:/usr:/proc:/etc:/dev/urandom\" "
->>   			"%s=\"/dev/null:/dev/full:/dev/zero:/dev/pts:/tmp\" "
->>   			"%s=\"9418\" "
->>   			"%s=\"80:443\" "
->> +			"%s=\"10.2:1.1\" "
->>   			"%s bash -i\n\n",
->>   			ENV_FS_RO_NAME, ENV_FS_RW_NAME, ENV_TCP_BIND_NAME,
->> -			ENV_TCP_CONNECT_NAME, argv[0]);
->> +			ENV_TCP_CONNECT_NAME, ENV_SOCKET_CREATE_NAME, argv[0]);
->>   		fprintf(stderr,
->>   			"This sandboxer can use Landlock features "
->>   			"up to ABI version %d.\n",
->> @@ -351,7 +419,11 @@ int main(const int argc, char *const argv[], char *const *const envp)
->>   	case 4:
->>   		/* Removes LANDLOCK_ACCESS_FS_IOCTL_DEV for ABI < 5 */
->>   		ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_IOCTL_DEV;
->> -
->> +		__attribute__((fallthrough));
->> +	case 5:
->> +		/* Removes socket support for ABI < 6 */
->> +		ruleset_attr.handled_access_socket &=
->> +			~LANDLOCK_ACCESS_SOCKET_CREATE;
->>   		fprintf(stderr,
->>   			"Hint: You should update the running kernel "
->>   			"to leverage Landlock features "
->> @@ -371,18 +443,23 @@ int main(const int argc, char *const argv[], char *const *const envp)
->>   	access_fs_rw &= ruleset_attr.handled_access_fs;
->>   
->>   	/* Removes bind access attribute if not supported by a user. */
->> -	env_port_name = getenv(ENV_TCP_BIND_NAME);
->> -	if (!env_port_name) {
->> +	env_optional_name = getenv(ENV_TCP_BIND_NAME);
->> +	if (!env_optional_name) {
->>   		ruleset_attr.handled_access_net &=
->>   			~LANDLOCK_ACCESS_NET_BIND_TCP;
->>   	}
->>   	/* Removes connect access attribute if not supported by a user. */
->> -	env_port_name = getenv(ENV_TCP_CONNECT_NAME);
->> -	if (!env_port_name) {
->> +	env_optional_name = getenv(ENV_TCP_CONNECT_NAME);
->> +	if (!env_optional_name) {
->>   		ruleset_attr.handled_access_net &=
->>   			~LANDLOCK_ACCESS_NET_CONNECT_TCP;
->>   	}
->> -
->> +	/* Removes socket create access attribute if not supported by a user. */
-> 
-> Phrasing nit: I would say "requested by a user"?
-> 
-> (And maybe also in the two cases above)
+struct evict_inode_args {
+	struct list_head	dispose;
+	struct list_head	fsnotify;
+};
 
-Yeap, I'll fix this each case.
+If we use __iget() instead of requiring an inode state flag to keep
+the inode off the LRU for the fsnotify cleanup, then the code
+fragment above becomes:
 
-> 
-> 
->> +	env_optional_name = getenv(ENV_SOCKET_CREATE_NAME);
->> +	if (!env_optional_name) {
->> +		ruleset_attr.handled_access_socket &=
->> +			~LANDLOCK_ACCESS_SOCKET_CREATE;
->> +	}
->>   	ruleset_fd =
->>   		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
->>   	if (ruleset_fd < 0) {
->> @@ -406,6 +483,11 @@ int main(const int argc, char *const argv[], char *const *const envp)
->>   		goto err_close_ruleset;
->>   	}
->>   
->> +	if (populate_ruleset_socket(ENV_SOCKET_CREATE_NAME, ruleset_fd,
->> +				    LANDLOCK_ACCESS_SOCKET_CREATE)) {
->> +		goto err_close_ruleset;
->> +	}
->> +
->>   	if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0)) {
->>   		perror("Failed to restrict privileges");
->>   		goto err_close_ruleset;
->> -- 
->> 2.34.1
->>
-> 
-> As I also said on the Documentation patch, please remember to double check the
-> places where the ABI number is mentioned, after rebasing on Tahera's "scoped"
-> patches.
+	if (atomic_read(&inode->i_count)) {
+		if (post_unmount && fsnotify_sb_info(sb)) {
+			__iget(inode);
+			inode_lru_list_del(inode);
+			spin_unlock(&inode->i_lock);
+			list_add(&inode->i_lru, &args->fsnotify);
+		}
+		return INO_ITER_DONE;
+	}
 
-Ofc, thanks for the reminder!
+And then once we return to evict_inodes(), we do this:
 
-> 
-> —Günther
+	while (!list_empty(args->fsnotify)) {
+		struct inode *inode
+
+		inode = list_first_entry(head, struct inode, i_lru);
+                list_del_init(&inode->i_lru);
+
+		fsnotify_inode(inode, FS_UNMOUNT);
+		fsnotify_inode_delete(inode);
+		iput(inode);
+		cond_resched();
+	}
+
+And so now all the fsnotify cleanup is done outside the traversal in
+one large batch from evict_inodes().
+
+As for the landlock code, I think it needs to have it's own internal
+tracking mechanism and not search the sb inode list for inodes that
+it holds references to. LSM cleanup should be run before before we
+get to tearing down the inode cache, not after....
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
