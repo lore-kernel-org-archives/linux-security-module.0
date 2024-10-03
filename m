@@ -1,429 +1,160 @@
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9420E19E971;
-	Thu,  3 Oct 2024 14:40:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2996E26ACD;
+	Thu,  3 Oct 2024 14:58:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727966428; cv=none; b=oCcCcnAh/jauqCaPs0QxFq+3vqIAL9YAdeUtSorI62tFQrZFQKVfi4KOdvoL7zMDXvMwNuDHnMhrtQUd4Fcc0lg4aT9J6moE4KJRWcHjWJWN4NuIzcUUFvYM8a1bMdHOkBaE9uhKiAPp1fpyepq+IOPIjMl6s2vaqoNkmw3jT/4=
+	t=1727967506; cv=none; b=pKDgf/wAY36pbw17SvXW0eU2Xk3IO14SGTnA2ymYdyUv5hSRVIWLpxhum+7qjn5R50kUlB+iEewbAzlWRABrTTwyjOO6jG27Yl8qRkL50g0y2yYVLeN2C7lOdtYAsHX3E9pORgArEIEvoGs48ZoPhiz4orHkHGY+bv5Dj965bN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727966428; c=relaxed/simple;
-	bh=IYK4s5n5Ksrvo/LH1b9vIh8zeM+5rSVKAGAEzWC+7os=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QF/AdBE6QW+KGUeNwFvZuWOpi5kMxzW7Y5hkmY0ySObS4kV1R48QO+ZbIdPvSEH9JnT3SjcbhwYLteJdZM8smy/5550GzZqQaU7/NxoFocngJJBKjzVyQHON7RpE94kfeFkt3XiQqz+UwOWtYL09fRW14vraXi/GPozZl0oTyC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XKDp33QZnzyScv;
-	Thu,  3 Oct 2024 22:39:07 +0800 (CST)
-Received: from kwepemj200016.china.huawei.com (unknown [7.202.194.28])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6D5351400CA;
-	Thu,  3 Oct 2024 22:40:17 +0800 (CST)
-Received: from mscphis02103.huawei.com (10.123.65.215) by
- kwepemj200016.china.huawei.com (7.202.194.28) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 3 Oct 2024 22:40:15 +0800
-From: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-To: <mic@digikod.net>, <gnoack@google.com>
-CC: <willemdebruijn.kernel@gmail.com>,
-	<linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
-	<artem.kuzin@huawei.com>, <konstantin.meskhidze@huawei.com>
-Subject: [RFC PATCH v1 2/2] selftests/landlock: Test non-TCP INET connection-based protocols
-Date: Thu, 3 Oct 2024 22:39:32 +0800
-Message-ID: <20241003143932.2431249-3-ivanov.mikhail1@huawei-partners.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241003143932.2431249-1-ivanov.mikhail1@huawei-partners.com>
-References: <20241003143932.2431249-1-ivanov.mikhail1@huawei-partners.com>
+	s=arc-20240116; t=1727967506; c=relaxed/simple;
+	bh=qlXMXW2vFLKrkpMebmH/XKuu9Q6WXuTRK03cSoPBfUU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hii1jyvrhNaeBjHB0S+jqgUqmINc6Fxs/ceSqnweuaVSLf8LFcOF/aUSGbvI04/Gpip4g+RKD5w/q+pFtjLdkdT+bnDJ9tonCY8sNHaaUsjEo7d4Nn9Lo4Z5xUpixT1SNOeNAp+qrge0XHBi5keGQ828WgkgeLgKKYKX664/PPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=T1TcT3Mb; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="T1TcT3Mb"
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 493EiURE009626;
+	Thu, 3 Oct 2024 14:57:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=/
+	etH9hm0berpHXbq1eIePIo22X3OIjzd6weouRDdhQg=; b=T1TcT3MbpMfe/IjTi
+	GlbMFK3C5nXnP4LKFMtkCH/hxn57h8uwxsDlUDKJnq89RRc00bGBgDVzmcvztjMj
+	eK+p9QKhsjAfqlY+bAFsvOYd9RlZtWTJkhd8yax6NvuizBbY3NJ3mNviWdpNmjdd
+	TleFF9vFqB66rT4pnVtt0LnZ60TOcB0f/sN5NAnQ7Lf7AgSxVWTD2OCTDxEikzua
+	FQtlhp+QkSEwREMMSBy2NYi4hxdJzaKxF5jRAeCCfT2S0/REVbDVER4C7mw4om0R
+	63cJ/TA4E/Rwqnq3GXeuWJd7MpC3Dj9mMZsv9XHBwKjn6TiKME33ved51D0C1sbe
+	w5/xA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 421vvd85th-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 03 Oct 2024 14:57:57 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 493EtnVf005425;
+	Thu, 3 Oct 2024 14:57:56 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 421vvd85tf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 03 Oct 2024 14:57:56 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 493BhuSS007923;
+	Thu, 3 Oct 2024 14:57:56 GMT
+Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 41xvgy8fp8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 03 Oct 2024 14:57:56 +0000
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 493Evt1645416948
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 3 Oct 2024 14:57:55 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6DF0058051;
+	Thu,  3 Oct 2024 14:57:55 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 61B295805A;
+	Thu,  3 Oct 2024 14:57:54 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  3 Oct 2024 14:57:54 +0000 (GMT)
+Message-ID: <69c893e7-6b87-4daa-80db-44d1120e80fe@linux.ibm.com>
+Date: Thu, 3 Oct 2024 10:57:53 -0400
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: mscpeml100004.china.huawei.com (7.188.51.133) To
- kwepemj200016.china.huawei.com (7.202.194.28)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/5] tpm: Return on tpm2_create_null_primary() failure
+To: Jarkko Sakkinen <jarkko@kernel.org>, linux-integrity@vger.kernel.org
+Cc: James.Bottomley@HansenPartnership.com, roberto.sassu@huawei.com,
+        mapengyu@gmail.com, stable@vger.kernel.org,
+        Mimi Zohar
+ <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>,
+        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240921120811.1264985-1-jarkko@kernel.org>
+ <20240921120811.1264985-2-jarkko@kernel.org>
+Content-Language: en-US
+From: Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <20240921120811.1264985-2-jarkko@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 5EFp1r8e1EzEFn9PkcBzzuGPMZjq4zHA
+X-Proofpoint-GUID: ZIlKVpXqsoC0O4SLuVxiv0Zt8P8eHBaV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-03_06,2024-10-03_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ adultscore=0 lowpriorityscore=0 spamscore=0 mlxscore=0 bulkscore=0
+ clxscore=1011 impostorscore=0 suspectscore=0 malwarescore=0
+ mlxlogscore=999 phishscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2408220000 definitions=main-2410030107
 
-Extend protocol fixture with test suits for MPTCP, SCTP and SMC protocols.
-Add all options required by this protocols in config.
 
-Extend protocol_variant structure with protocol field (Cf. socket(2)).
 
-Refactor is_restricted() helper and add few helpers to check struct
-protocol_variant on specific protocols.
+On 9/21/24 8:08 AM, Jarkko Sakkinen wrote:
+> tpm2_sessions_init() does not ignores the result of
 
-Signed-off-by: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
----
- tools/testing/selftests/landlock/common.h   |   1 +
- tools/testing/selftests/landlock/config     |   5 +
- tools/testing/selftests/landlock/net_test.c | 212 ++++++++++++++++++--
- 3 files changed, 198 insertions(+), 20 deletions(-)
+s/ignores/ignore
 
-diff --git a/tools/testing/selftests/landlock/common.h b/tools/testing/selftests/landlock/common.h
-index 61056fa074bb..40a2def50b83 100644
---- a/tools/testing/selftests/landlock/common.h
-+++ b/tools/testing/selftests/landlock/common.h
-@@ -234,6 +234,7 @@ enforce_ruleset(struct __test_metadata *const _metadata, const int ruleset_fd)
- struct protocol_variant {
- 	int domain;
- 	int type;
-+	int protocol;
- };
- 
- struct service_fixture {
-diff --git a/tools/testing/selftests/landlock/config b/tools/testing/selftests/landlock/config
-index 29af19c4e9f9..73b01d7d0881 100644
---- a/tools/testing/selftests/landlock/config
-+++ b/tools/testing/selftests/landlock/config
-@@ -1,8 +1,12 @@
- CONFIG_CGROUPS=y
- CONFIG_CGROUP_SCHED=y
- CONFIG_INET=y
-+CONFIG_INFINIBAND=y
-+CONFIG_IP_SCTP=y
- CONFIG_IPV6=y
- CONFIG_KEYS=y
-+CONFIG_MPTCP=y
-+CONFIG_MPTCP_IPV6=y
- CONFIG_NET=y
- CONFIG_NET_NS=y
- CONFIG_OVERLAY_FS=y
-@@ -10,6 +14,7 @@ CONFIG_PROC_FS=y
- CONFIG_SECURITY=y
- CONFIG_SECURITY_LANDLOCK=y
- CONFIG_SHMEM=y
-+CONFIG_SMC=y
- CONFIG_SYSFS=y
- CONFIG_TMPFS=y
- CONFIG_TMPFS_XATTR=y
-diff --git a/tools/testing/selftests/landlock/net_test.c b/tools/testing/selftests/landlock/net_test.c
-index 4e0aeb53b225..dbe77d436281 100644
---- a/tools/testing/selftests/landlock/net_test.c
-+++ b/tools/testing/selftests/landlock/net_test.c
-@@ -36,6 +36,17 @@ enum sandbox_type {
- 	TCP_SANDBOX,
- };
- 
-+/* Checks if IPPROTO_SMC is present for compatibility reasons. */
-+#if !defined(__alpha__) && defined(IPPROTO_SMC)
-+#define SMC_SUPPORTED 1
-+#else
-+#define SMC_SUPPORTED 0
-+#endif
-+
-+#ifndef IPPROTO_SMC
-+#define IPPROTO_SMC 256
-+#endif
-+
- static int set_service(struct service_fixture *const srv,
- 		       const struct protocol_variant prot,
- 		       const unsigned short index)
-@@ -85,19 +96,37 @@ static void setup_loopback(struct __test_metadata *const _metadata)
- 	clear_ambient_cap(_metadata, CAP_NET_ADMIN);
- }
- 
-+static bool prot_is_inet_stream(const struct protocol_variant *const prot)
-+{
-+	return (prot->domain == AF_INET || prot->domain == AF_INET6) &&
-+	       prot->type == SOCK_STREAM;
-+}
-+
-+static bool prot_is_tcp(const struct protocol_variant *const prot)
-+{
-+	return prot_is_inet_stream(prot) &&
-+	       (prot->protocol == IPPROTO_TCP || prot->protocol == IPPROTO_IP);
-+}
-+
-+static bool prot_is_sctp(const struct protocol_variant *const prot)
-+{
-+	return prot_is_inet_stream(prot) && prot->protocol == IPPROTO_SCTP;
-+}
-+
-+static bool prot_is_smc(const struct protocol_variant *const prot)
-+{
-+	return prot_is_inet_stream(prot) && prot->protocol == IPPROTO_SMC;
-+}
-+
-+static bool prot_is_unix_stream(const struct protocol_variant *const prot)
-+{
-+	return prot->domain == AF_UNIX && prot->type == SOCK_STREAM;
-+}
-+
- static bool is_restricted(const struct protocol_variant *const prot,
- 			  const enum sandbox_type sandbox)
- {
--	switch (prot->domain) {
--	case AF_INET:
--	case AF_INET6:
--		switch (prot->type) {
--		case SOCK_STREAM:
--			return sandbox == TCP_SANDBOX;
--		}
--		break;
--	}
--	return false;
-+	return prot_is_tcp(prot) && sandbox == TCP_SANDBOX;
- }
- 
- static int socket_variant(const struct service_fixture *const srv)
-@@ -105,7 +134,7 @@ static int socket_variant(const struct service_fixture *const srv)
- 	int ret;
- 
- 	ret = socket(srv->protocol.domain, srv->protocol.type | SOCK_CLOEXEC,
--		     0);
-+		     srv->protocol.protocol);
- 	if (ret < 0)
- 		return -errno;
- 	return ret;
-@@ -124,7 +153,7 @@ static socklen_t get_addrlen(const struct service_fixture *const srv,
- 		return sizeof(srv->ipv4_addr);
- 
- 	case AF_INET6:
--		if (minimal)
-+		if (minimal && !prot_is_sctp(&srv->protocol))
- 			return SIN6_LEN_RFC2133;
- 		return sizeof(srv->ipv6_addr);
- 
-@@ -271,6 +300,11 @@ FIXTURE_SETUP(protocol)
- 		.type = SOCK_STREAM,
- 	};
- 
-+#if !SMC_SUPPORTED
-+	if (prot_is_smc(&variant->prot))
-+		SKIP(return, "SMC protocol is not supported.");
-+#endif
-+
- 	disable_caps(_metadata);
- 
- 	ASSERT_EQ(0, set_service(&self->srv0, variant->prot, 0));
-@@ -299,6 +333,39 @@ FIXTURE_VARIANT_ADD(protocol, no_sandbox_with_ipv4_tcp) {
- 	},
- };
- 
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(protocol, no_sandbox_with_ipv4_mptcp) {
-+	/* clang-format on */
-+	.sandbox = NO_SANDBOX,
-+	.prot = {
-+		.domain = AF_INET,
-+		.type = SOCK_STREAM,
-+		.protocol = IPPROTO_MPTCP,
-+	},
-+};
-+
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(protocol, no_sandbox_with_ipv4_sctp) {
-+	/* clang-format on */
-+	.sandbox = NO_SANDBOX,
-+	.prot = {
-+		.domain = AF_INET,
-+		.type = SOCK_STREAM,
-+		.protocol = IPPROTO_SCTP,
-+	},
-+};
-+
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(protocol, no_sandbox_with_ipv4_smc) {
-+	/* clang-format on */
-+	.sandbox = NO_SANDBOX,
-+	.prot = {
-+		.domain = AF_INET,
-+		.type = SOCK_STREAM,
-+		.protocol = IPPROTO_SMC,
-+	},
-+};
-+
- /* clang-format off */
- FIXTURE_VARIANT_ADD(protocol, no_sandbox_with_ipv6_tcp) {
- 	/* clang-format on */
-@@ -309,6 +376,39 @@ FIXTURE_VARIANT_ADD(protocol, no_sandbox_with_ipv6_tcp) {
- 	},
- };
- 
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(protocol, no_sandbox_with_ipv6_mptcp) {
-+	/* clang-format on */
-+	.sandbox = NO_SANDBOX,
-+	.prot = {
-+		.domain = AF_INET6,
-+		.type = SOCK_STREAM,
-+		.protocol = IPPROTO_MPTCP,
-+	},
-+};
-+
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(protocol, no_sandbox_with_ipv6_sctp) {
-+	/* clang-format on */
-+	.sandbox = NO_SANDBOX,
-+	.prot = {
-+		.domain = AF_INET6,
-+		.type = SOCK_STREAM,
-+		.protocol = IPPROTO_SCTP,
-+	},
-+};
-+
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(protocol, no_sandbox_with_ipv6_smc) {
-+	/* clang-format on */
-+	.sandbox = NO_SANDBOX,
-+	.prot = {
-+		.domain = AF_INET6,
-+		.type = SOCK_STREAM,
-+		.protocol = IPPROTO_SMC,
-+	},
-+};
-+
- /* clang-format off */
- FIXTURE_VARIANT_ADD(protocol, no_sandbox_with_ipv4_udp) {
- 	/* clang-format on */
-@@ -359,6 +459,39 @@ FIXTURE_VARIANT_ADD(protocol, tcp_sandbox_with_ipv4_tcp) {
- 	},
- };
- 
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(protocol, tcp_sandbox_with_ipv4_mptcp) {
-+	/* clang-format on */
-+	.sandbox = TCP_SANDBOX,
-+	.prot = {
-+		.domain = AF_INET,
-+		.type = SOCK_STREAM,
-+		.protocol = IPPROTO_MPTCP,
-+	},
-+};
-+
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(protocol, tcp_sandbox_with_ipv4_sctp) {
-+	/* clang-format on */
-+	.sandbox = TCP_SANDBOX,
-+	.prot = {
-+		.domain = AF_INET,
-+		.type = SOCK_STREAM,
-+		.protocol = IPPROTO_SCTP,
-+	},
-+};
-+
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(protocol, tcp_sandbox_with_ipv4_smc) {
-+	/* clang-format on */
-+	.sandbox = TCP_SANDBOX,
-+	.prot = {
-+		.domain = AF_INET,
-+		.type = SOCK_STREAM,
-+		.protocol = IPPROTO_SMC,
-+	},
-+};
-+
- /* clang-format off */
- FIXTURE_VARIANT_ADD(protocol, tcp_sandbox_with_ipv6_tcp) {
- 	/* clang-format on */
-@@ -369,6 +502,39 @@ FIXTURE_VARIANT_ADD(protocol, tcp_sandbox_with_ipv6_tcp) {
- 	},
- };
- 
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(protocol, tcp_sandbox_with_ipv6_mptcp) {
-+	/* clang-format on */
-+	.sandbox = TCP_SANDBOX,
-+	.prot = {
-+		.domain = AF_INET6,
-+		.type = SOCK_STREAM,
-+		.protocol = IPPROTO_MPTCP,
-+	},
-+};
-+
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(protocol, tcp_sandbox_with_ipv6_sctp) {
-+	/* clang-format on */
-+	.sandbox = TCP_SANDBOX,
-+	.prot = {
-+		.domain = AF_INET6,
-+		.type = SOCK_STREAM,
-+		.protocol = IPPROTO_SCTP,
-+	},
-+};
-+
-+/* clang-format off */
-+FIXTURE_VARIANT_ADD(protocol, tcp_sandbox_with_ipv6_smc) {
-+	/* clang-format on */
-+	.sandbox = TCP_SANDBOX,
-+	.prot = {
-+		.domain = AF_INET6,
-+		.type = SOCK_STREAM,
-+		.protocol = IPPROTO_SMC,
-+	},
-+};
-+
- /* clang-format off */
- FIXTURE_VARIANT_ADD(protocol, tcp_sandbox_with_ipv4_udp) {
- 	/* clang-format on */
-@@ -663,7 +829,7 @@ TEST_F(protocol, bind_unspec)
- 
- 	/* Allowed bind on AF_UNSPEC/INADDR_ANY. */
- 	ret = bind_variant(bind_fd, &self->unspec_any0);
--	if (variant->prot.domain == AF_INET) {
-+	if (variant->prot.domain == AF_INET && !prot_is_sctp(&variant->prot)) {
- 		EXPECT_EQ(0, ret)
- 		{
- 			TH_LOG("Failed to bind to unspec/any socket: %s",
-@@ -689,7 +855,7 @@ TEST_F(protocol, bind_unspec)
- 
- 	/* Denied bind on AF_UNSPEC/INADDR_ANY. */
- 	ret = bind_variant(bind_fd, &self->unspec_any0);
--	if (variant->prot.domain == AF_INET) {
-+	if (variant->prot.domain == AF_INET && !prot_is_sctp(&variant->prot)) {
- 		if (is_restricted(&variant->prot, variant->sandbox)) {
- 			EXPECT_EQ(-EACCES, ret);
- 		} else {
-@@ -727,6 +893,10 @@ TEST_F(protocol, connect_unspec)
- 	int bind_fd, client_fd, status;
- 	pid_t child;
- 
-+	if (prot_is_smc(&variant->prot))
-+		SKIP(return, "SMC does not properly handles disconnect "
-+			     "in the case of fallback to TCP");
-+
- 	/* Specific connection tests. */
- 	bind_fd = socket_variant(&self->srv0);
- 	ASSERT_LE(0, bind_fd);
-@@ -769,17 +939,18 @@ TEST_F(protocol, connect_unspec)
- 
- 		/* Disconnects already connected socket, or set peer. */
- 		ret = connect_variant(connect_fd, &self->unspec_any0);
--		if (self->srv0.protocol.domain == AF_UNIX &&
--		    self->srv0.protocol.type == SOCK_STREAM) {
-+		if (prot_is_unix_stream(&variant->prot)) {
- 			EXPECT_EQ(-EINVAL, ret);
-+		} else if (prot_is_sctp(&variant->prot)) {
-+			EXPECT_EQ(-EOPNOTSUPP, ret);
- 		} else {
- 			EXPECT_EQ(0, ret);
- 		}
- 
- 		/* Tries to reconnect, or set peer. */
- 		ret = connect_variant(connect_fd, &self->srv0);
--		if (self->srv0.protocol.domain == AF_UNIX &&
--		    self->srv0.protocol.type == SOCK_STREAM) {
-+		if (prot_is_unix_stream(&variant->prot) ||
-+		    prot_is_sctp(&variant->prot)) {
- 			EXPECT_EQ(-EISCONN, ret);
- 		} else {
- 			EXPECT_EQ(0, ret);
-@@ -796,9 +967,10 @@ TEST_F(protocol, connect_unspec)
- 		}
- 
- 		ret = connect_variant(connect_fd, &self->unspec_any0);
--		if (self->srv0.protocol.domain == AF_UNIX &&
--		    self->srv0.protocol.type == SOCK_STREAM) {
-+		if (prot_is_unix_stream(&variant->prot)) {
- 			EXPECT_EQ(-EINVAL, ret);
-+		} else if (prot_is_sctp(&variant->prot)) {
-+			EXPECT_EQ(-EOPNOTSUPP, ret);
- 		} else {
- 			/* Always allowed to disconnect. */
- 			EXPECT_EQ(0, ret);
--- 
-2.34.1
+> tpm2_create_null_primary(). Address this by returning -ENODEV to the
+> caller.
 
+I am not sure why mapping all errors to -ENODEV resolves the fact that 
+tpm2_sessions_init() does not ignore the result of 
+tpm2_create_null_primary(). I think what you want is to return -ENODEV 
+from tpm2_auto_startup.
+
+> 
+> Cc: stable@vger.kernel.org # v6.10+
+> Fixes: d2add27cf2b8 ("tpm: Add NULL primary creation")
+> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+> ---
+> v5:
+> - Do not print klog messages on error, as tpm2_save_context() already
+>    takes care of this.
+> v4:
+> - Fixed up stable version.
+> v3:
+> - Handle TPM and POSIX error separately and return -ENODEV always back
+>    to the caller.
+> v2:
+> - Refined the commit message.
+> ---
+>   drivers/char/tpm/tpm2-sessions.c | 5 +++--
+>   1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-sessions.c
+> index d3521aadd43e..0f09ac33ae99 100644
+> --- a/drivers/char/tpm/tpm2-sessions.c
+> +++ b/drivers/char/tpm/tpm2-sessions.c
+> @@ -1338,7 +1338,8 @@ static int tpm2_create_null_primary(struct tpm_chip *chip)
+>   		tpm2_flush_context(chip, null_key);
+>   	}
+>   
+> -	return rc;
+> +	/* Map all errors to -ENODEV: */
+> +	return rc ? -ENODEV : rc;
+
+return rc ? -ENODEV : 0;
+
+>   }
+>   
+>   /**
+> @@ -1354,7 +1355,7 @@ int tpm2_sessions_init(struct tpm_chip *chip)
+>   
+>   	rc = tpm2_create_null_primary(chip);
+>   	if (rc)
+> -		dev_err(&chip->dev, "TPM: security failed (NULL seed derivation): %d\n", rc);
+> +		return rc;
+>   
+>   	chip->auth = kmalloc(sizeof(*chip->auth), GFP_KERNEL);
+>   	if (!chip->auth)
