@@ -1,90 +1,93 @@
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1FA0186E3D
-	for <linux-security-module@vger.kernel.org>; Thu,  3 Oct 2024 16:42:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 216A81527B4
+	for <linux-security-module@vger.kernel.org>; Thu,  3 Oct 2024 16:49:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727973736; cv=none; b=DEh60zN0/Un0DBzrahf+xTmq72R9B2DuGFAVQ3FAs3a8c57zJq1JM+6qc1HaFw881m445bij6uicIXAbUG3yLJfh99EOugACF06j2PjOJOhY6qS75GDfuEpHckPM+KS0b56KScSMIKsi+PoDJvgk8/xK0iFhKrqsCENEtiiwMj4=
+	t=1727974161; cv=none; b=BBLsklOzXV1mRbh7InQ3j0d0SqNFSvXqco22WegqZWHJAwuJs2jJ7ddJXPEJ4TfFSq2NSW1Q6YpdD2Icy6PMJLtTrW+WaDDYsoQnks68nIfJM8WSxb74clOmhEnCF2O8dkjU3uDWXZqg5PoeM//SB1gZp5GmCmwhvJvMeg9TPJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727973736; c=relaxed/simple;
-	bh=Ay6RWFq08CJyJLqo2BZoaMR2MOg0DT3tCYulgsHLicI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TGxKf97pOb7EinmkgcsIXzD5/XsO3xA2Z4VCLUOVUCkz2ZP72iYAFaRjQGUn+SwCp4f+dBs6t28Ziow8wIZTQs2KAq5gcxxB/0DKn70/Tl4UEaAUEOwhq8UUm1+Fb4lcZ1UxnZixsNalIxcUAcnrLuRRXzfY8wEmpng3TB2Ez+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id DDDAA9DA; Thu,  3 Oct 2024 11:42:11 -0500 (CDT)
-Date: Thu, 3 Oct 2024 11:42:11 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Paul Moore <paul@paul-moore.com>,
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-	Fan Wu <wufan@linux.microsoft.com>,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	Micah Morton <mortonm@chromium.org>,
-	John Johansen <john.johansen@canonical.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	KP Singh <kpsingh@kernel.org>, Kees Cook <keescook@chromium.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-security-module@vger.kernel.org
-Subject: Re: TOMOYO's pull request for v6.12
-Message-ID: <20241003164211.GA849107@mail.hallyn.com>
-References: <CAHC9VhR=QjdoHG3wJgHFJkKYBg7vkQH2MpffgVzQ0tAByo_wRg@mail.gmail.com>
- <f0fc9923-c91a-48b2-ae61-30dd7287ecc2@schaufler-ca.com>
+	s=arc-20240116; t=1727974161; c=relaxed/simple;
+	bh=e8Rci+PRgCkOoqI4HQmvQmJccf/y2s2K/ZTx7fy2Kcw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uSl5FDdOWBeZEM1TudbEAU1YpVmRnuKJiYt8XUXjreUyHQ/z8ufZQ+Dza6qhO+wWztCIdqtOIMpRMZVSKv4rEKeEAHmI1NZAREWmh+Ieh3QYPffSxvAhdJkBoSGrWgBL4SH4Hot1a18pONsHKKM0j1k4lZdYS+UVXMg7XvaJx7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=aqkrLKvk; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="aqkrLKvk"
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6db836c6bd7so11428097b3.3
+        for <linux-security-module@vger.kernel.org>; Thu, 03 Oct 2024 09:49:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1727974159; x=1728578959; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m8WIrEzq9NW9CgoC1X+T7GSQjclVBzZwaFrQViUkPw4=;
+        b=aqkrLKvkv22UjrUHU8jEblW9pkamuANl+3MTSqeX4tIfFkiVZfJ0XlvXR8NpVlsko8
+         SFuDQfrKCylcP5+D/lnEwJdPiHB4L5qa1JMbEfgYQRWvVc6EB6zOaDgveRkG3tysPVMf
+         8NcGcRqAIBMD/A+L2UV2LFLtyBwWqCPvVHBQsrvNGKhktrY1LcLkef78e6MXbIMpJVf2
+         5xgKVprn6B1T/LLPjtRNPFpTfu2nLmGf12C7CXm0lHec15iVpGGizSDmxAcqv3NfVjNZ
+         yaIKHgyaJXGNu76BmleepZg0lS5oxg/sgdti6CKPGxf5fqJ8OKr0CK1G2Exhx8KTtlf6
+         k2qQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1727974159; x=1728578959;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=m8WIrEzq9NW9CgoC1X+T7GSQjclVBzZwaFrQViUkPw4=;
+        b=jlzu00i0i5iTAn51XUBhl4kSk398UzsXLpYnOwEUD8oax9PPywHyQnDYHtYUaUwUHD
+         /KDv8zbwjC89KmDJ0BbpJsgcWg6ztHA+/5yaffk8E+8m1gwzcdHTIa39ZqUExuV4r6kB
+         dyvB7qEub73MwtLOWgKBzQv+TBcDg1qQequT4anNsOq3+GHt5nSxxymMfGU2nNKRbiAA
+         xdfGQkS+hEal+3+tRBcuD21oiBZBusAxgn9R/ET4iE4wfYH+sqdf5NdZYvIA+pikONLY
+         +RGeKNVGYf4bxXfpVnPOlkNygfGRH3UBmw/XqIcPJ8yupFtO3Mlm5LgsAXf3gsQzKBl6
+         v6Bg==
+X-Forwarded-Encrypted: i=1; AJvYcCVPx0V3UWyo9vRSnuwWTLqL3mqP8xIAV1kmGukobGuJZ+gVF1n43qoAj7CgvX7Wnf9keg+T5yRFsFkkXj6rDI61R2HXd8o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyq1Av61kfRjBfrJduXsfIdJN0gYXpaw9XSxgb7/bthc4AvQywi
+	z+5QeoCMI1NIbDYlNRn+k9tbjbqCaM2czh3ZmIjO8M3yNBxaxjfQ14kOoCQl9u3nZjTyd00bLdP
+	eesJtC4bugy9RAfXoKHvG2Fwtou7g0T9g/HP/
+X-Google-Smtp-Source: AGHT+IEufIOsbLnVH8r8djp676QpZrm3qOEOHXZrf4Yz9RwwxNxZscePaCJz1ROpZu5TMNbmwpJ7mxl8R9auOOhC3BQ=
+X-Received: by 2002:a05:690c:10c:b0:6db:d5dd:af76 with SMTP id
+ 00721157ae682-6e2a30503cbmr69217257b3.32.1727974159139; Thu, 03 Oct 2024
+ 09:49:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f0fc9923-c91a-48b2-ae61-30dd7287ecc2@schaufler-ca.com>
+References: <CAHC9VhR=QjdoHG3wJgHFJkKYBg7vkQH2MpffgVzQ0tAByo_wRg@mail.gmail.com>
+ <f0fc9923-c91a-48b2-ae61-30dd7287ecc2@schaufler-ca.com> <20241003164211.GA849107@mail.hallyn.com>
+In-Reply-To: <20241003164211.GA849107@mail.hallyn.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 3 Oct 2024 12:49:08 -0400
+Message-ID: <CAHC9VhStVqH=4qyD2C_YCEAP6q97gNR=s6wto1YtpR5b-KE5Lg@mail.gmail.com>
+Subject: Re: TOMOYO's pull request for v6.12
+To: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: Casey Schaufler <casey@schaufler-ca.com>, 
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, Fan Wu <wufan@linux.microsoft.com>, 
+	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	Mimi Zohar <zohar@linux.ibm.com>, Micah Morton <mortonm@chromium.org>, 
+	John Johansen <john.johansen@canonical.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	KP Singh <kpsingh@kernel.org>, Kees Cook <keescook@chromium.org>, 
+	Jonathan Corbet <corbet@lwn.net>, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 03, 2024 at 09:36:00AM -0700, Casey Schaufler wrote:
-> On 10/2/2024 1:12 PM, Paul Moore wrote:
-> > Hi all,
-> >
-> > Hopefully by now you've at least seen the TOMOYO v6.12 pull request
-> > thread; if you haven't read it yet, I suggest you do so before reading
-> > the rest of this mail:
-> >
-> > https://lore.kernel.org/all/0c4b443a-9c72-4800-97e8-a3816b6a9ae2@I-love.SAKURA.ne.jp
-> >
-> > Of the three commits in the pull request, the commit which concerns me
-> > the most is 8b985bbfabbe ("tomoyo: allow building as a loadable LSM
-> > module").  The commit worries me as it brings management of the TOMOYO
-> > LSM callbacks into TOMOYO itself, overriding the LSM framework.
-> > Jonathan raises a similar point, although his issue is more focused on
-> > the symbol export approach itself, rather than conceptual issues
-> > relating to the LSM framework.  I will admit there are some high level
-> > similarities to this approach and the BPF LSM, but I believe we can
-> > say that the BPF LSM exception is necessary due to the nature of BPF,
-> > and not something we want to see duplicated outside of that one
-> > special case.
-> 
-> We wrangled with the BPF developers over a number of issues,
-> and in the end gave them something that's a lot more dangerous
-> than I'd like. With that in mind I can argue either of:
-> 
-> 	Let's not do that again, revert.
+On Thu, Oct 3, 2024 at 12:42=E2=80=AFPM Serge E. Hallyn <serge@hallyn.com> =
+wrote:
+>
+> Right, I think this is the biggest reason to request the revert, unless
+> Redhat or fedora tells us that they would actually enable it.
 
-Just checking - do you mean revert this, but not BPF LSM?  :)
+To be clear, my objection is independent of what RedHat thinks about
+this approach, although we have heard from at least one person with a
+distro "hat" that this approach is counter productive and would result
+in TOMOYO being disabled if not reverted.  This is simply the wrong
+approach to take upstream.
 
-> 	We need to trust our LSM developers in their own code, keep it.
-> 
-> What Tetsuo has implemented is a scheme that's been bouncing around for
-> some time. It is neither especially novel nor elegant. It is intended to
-> solve a particular issue, which is that Redhat distributions don't include
-> TOMOYO. [I should be corrected if that statement is not true] When we
-> talked about loadable modules in the past it was in the context of a
-> general mechanism, which I have always said I don't want to preclude.
-> 
-> I seriously doubt that this change would achieve the goal of getting
-> TOMOYO included in Redhat distributions. It seriously increases the
+If RedHat wants to enable TOMOYO they have that ability now, but as
+we've heard countless times they are not interested in doing so.
 
-Right, I think this is the biggest reason to request the revert, unless
-Redhat or fedora tells us that they would actually enable it.
+--=20
+paul-moore.com
