@@ -1,241 +1,187 @@
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63D1B1EB48;
-	Thu,  3 Oct 2024 12:39:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 391B210A1E;
+	Thu,  3 Oct 2024 12:42:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727959165; cv=none; b=I09qoI33A6lB+pk9OhRbPVMnnXf8eToAwbtaESS1DYVnUIO0J5ym8NkgIHPrIE57Q73b/UjZlPeyZ9giPiJ7vthODRE9PeJvZ4Od8kz4YI9dPebEgiveqFH4Szvc3UFXPpqx5yyXSxh3H2w8apdciLMIcx+ZFW2avNwAXJzZJYE=
+	t=1727959329; cv=none; b=qOrDYhIueecWcrp1m95u/AdSlJXQSt/dWnAJAHMvV2MlJ+v+iEkd9dSPubM9zofwxJhiK1XYphWu7uZWBkuLHbOHeqOiG6zN+XZVQzXcXz7u18j+NTOlb9CpeXAisP/SV6su554Mz0AznFIffRoRWV/dFQfTOlZW402anK1mjHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727959165; c=relaxed/simple;
-	bh=5emo6GNn5T3u+Erigf/h3xgnTZXxlGfabcYARaSSexY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VO3YQevFkEVtvX/PzpJvQs6P/aVoli368ELcZSusqCmyVbu0Yy33q1AS8KQDkDQIkyHzp7oiwNGX+MxsS1ax/L+sTjcKBxd3WBvu2jgR+jrEO7SOQB/dKYTT9rO3gqrP818q50iLHaMisI//Jk7A4/BYIhS95tYeZ9F0eqeiEB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=u2/IV37D; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="u2/IV37D"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=hsDe1nr8NAOzLkgvsUccvOHrTmnfX+aPFrJP4xKc2G8=; b=u2/IV37DynVoDQm2tdZoTXmZwg
-	lpZG37ipgUsPsDbwyA+uGmDsm740kFRKzurQ8udYY6TkifjzuGzckPC+xfz6yAQ1p4exgIG6aWzFL
-	xseVTy48EfXREoiUMhAO1YDvjofk+E9bCzneeKpqgIsvfOuulwaFET9Qw7MlQ/qtkuM56DjeGCmWQ
-	nez/zSeyV6Ao2A20Wv8eIv7ujwr4pH+A9hH63Zp2peglZh5U51jlol087dRefUum0DzlkntzuwlMj
-	9Fas9eOSlQ2VbRkDDSRtS5lIbzjzPGhkGhhGveBPCGbR4V36A8xr9PR5NOdODvPGb4g7tJNS7wD0o
-	fm4/sU+w==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1swL75-000000092H8-1SjF;
-	Thu, 03 Oct 2024 12:39:23 +0000
-Date: Thu, 3 Oct 2024 05:39:23 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Dave Chinner <david@fromorbit.com>, linux-fsdevel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-bcachefs@vger.kernel.org,
-	kent.overstreet@linux.dev, torvalds@linux-foundation.org,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@linux.microsoft.com>,
-	Jann Horn <jannh@google.com>, Serge Hallyn <serge@hallyn.com>,
-	Kees Cook <keescook@chromium.org>,
-	linux-security-module@vger.kernel.org,
-	Amir Goldstein <amir73il@gmail.com>
-Subject: Re: lsm sb_delete hook, was Re: [PATCH 4/7] vfs: Convert
- sb->s_inodes iteration to super_iter_inodes()
-Message-ID: <Zv6Qe-9O44g6qnSu@infradead.org>
-References: <20241002014017.3801899-1-david@fromorbit.com>
- <20241002014017.3801899-5-david@fromorbit.com>
- <Zv5GfY1WS_aaczZM@infradead.org>
- <Zv5J3VTGqdjUAu1J@infradead.org>
- <20241003115721.kg2caqgj2xxinnth@quack3>
- <Zv6J34fwj3vNOrIH@infradead.org>
- <20241003122657.mrqwyc5tzeggrzbt@quack3>
+	s=arc-20240116; t=1727959329; c=relaxed/simple;
+	bh=7vpf7dtlkmVcw67xiNILfntdKzVtAewtfIOaoErLmmE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=DmG1HJx5r96qBI9x+mSEOneOOxcY5VUIW1hnCYcC7iQ5oPSdpzW6odJWMR1l0lxStRcksAYKlhfMQPYnUsWQ2Yi1Kv1Qgw37cJ88BtWdS5IKxzYkQ9QKsTys8z5hjzFpDsY6pRPabX4TIytJES3h7PD6pB6799ISJ55JztkO6rc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4XKB9k4mSjz1SCBZ;
+	Thu,  3 Oct 2024 20:40:58 +0800 (CST)
+Received: from kwepemj200016.china.huawei.com (unknown [7.202.194.28])
+	by mail.maildlp.com (Postfix) with ESMTPS id EBD191A0188;
+	Thu,  3 Oct 2024 20:41:56 +0800 (CST)
+Received: from [10.123.123.159] (10.123.123.159) by
+ kwepemj200016.china.huawei.com (7.202.194.28) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 3 Oct 2024 20:41:53 +0800
+Message-ID: <cd8064ca-a5cd-15fd-8409-5a6a8d393591@huawei-partners.com>
+Date: Thu, 3 Oct 2024 15:41:48 +0300
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241003122657.mrqwyc5tzeggrzbt@quack3>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v3 16/19] selftests/landlock: Test that accept(2) is
+ not restricted
+Content-Language: ru
+To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>
+CC: <mic@digikod.net>, <willemdebruijn.kernel@gmail.com>,
+	<gnoack3000@gmail.com>, <linux-security-module@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <netfilter-devel@vger.kernel.org>,
+	<yusongping@huawei.com>, <artem.kuzin@huawei.com>,
+	<konstantin.meskhidze@huawei.com>
+References: <20240904104824.1844082-1-ivanov.mikhail1@huawei-partners.com>
+ <20240904104824.1844082-17-ivanov.mikhail1@huawei-partners.com>
+ <ZvbG_ym1PKmVY6Ts@google.com>
+From: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+In-Reply-To: <ZvbG_ym1PKmVY6Ts@google.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
+ kwepemj200016.china.huawei.com (7.202.194.28)
 
-On Thu, Oct 03, 2024 at 02:26:57PM +0200, Jan Kara wrote:
-> On Thu 03-10-24 05:11:11, Christoph Hellwig wrote:
-> > On Thu, Oct 03, 2024 at 01:57:21PM +0200, Jan Kara wrote:
-> > > Fair enough. If we go with the iterator variant I've suggested to Dave in
-> > > [1], we could combine the evict_inodes(), fsnotify_unmount_inodes() and
-> > > Landlocks hook_sb_delete() into a single iteration relatively easily. But
-> > > I'd wait with that convertion until this series lands.
-> > 
-> > I don't see how that has anything to do with iterators or not.
+On 9/27/2024 5:53 PM, Günther Noack wrote:
+> On Wed, Sep 04, 2024 at 06:48:21PM +0800, Mikhail Ivanov wrote:
+>> Add test validating that socket creation with accept(2) is not restricted
+>> by Landlock.
+>>
+>> Signed-off-by: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+>> ---
+>>   .../testing/selftests/landlock/socket_test.c  | 71 +++++++++++++++++++
+>>   1 file changed, 71 insertions(+)
+>>
+>> diff --git a/tools/testing/selftests/landlock/socket_test.c b/tools/testing/selftests/landlock/socket_test.c
+>> index 2ab27196fa3d..052dbe0d1227 100644
+>> --- a/tools/testing/selftests/landlock/socket_test.c
+>> +++ b/tools/testing/selftests/landlock/socket_test.c
+>> @@ -939,4 +939,75 @@ TEST_F(socket_creation, sctp_peeloff)
+>>   	ASSERT_EQ(0, close(server_fd));
+>>   }
+>>   
+>> +TEST_F(socket_creation, accept)
+>> +{
+>> +	int status;
+>> +	pid_t child;
+>> +	struct sockaddr_in addr;
+>> +	int server_fd, client_fd;
+>> +	char buf;
+>> +	const struct landlock_ruleset_attr ruleset_attr = {
+>> +		.handled_access_socket = LANDLOCK_ACCESS_SOCKET_CREATE,
+>> +	};
+>> +	struct landlock_socket_attr tcp_socket_create = {
+>          ^^^^^^
 > 
-> Well, the patches would obviously conflict
+> Could be const as well, just like the ruleset_attr?
+> 
+> (I probably overlooked this as well in some of the other tests.)
 
-Conflict with what?
+Yeap, I'll fix this for each test.
 
-> which seems pointless if we
-> could live with three iterations for a few years until somebody noticed :).
-> And with current Dave's version of iterators it will not be possible to
-> integrate evict_inodes() iteration with the other two without a layering
-> violation. Still we could go from 3 to 2 iterations.
+> 
+> 
+>> +		.allowed_access = LANDLOCK_ACCESS_SOCKET_CREATE,
+>> +		.family = AF_INET,
+>> +		.type = SOCK_STREAM,
+>> +	};
+>> +
+>> +	server_fd = socket(AF_INET, SOCK_STREAM | SOCK_CLOEXEC, 0);
+>> +	ASSERT_LE(0, server_fd);
+>> +
+>> +	addr.sin_family = AF_INET;
+>> +	addr.sin_port = htons(loopback_port);
+>> +	addr.sin_addr.s_addr = inet_addr(loopback_ipv4);
+>> +
+>> +	ASSERT_EQ(0, bind(server_fd, &addr, sizeof(addr)));
+>> +	ASSERT_EQ(0, listen(server_fd, backlog));
+>> +
+>> +	child = fork();
+>> +	ASSERT_LE(0, child);
+>> +	if (child == 0) {
+> 
+> Nit:
+> I feel like the child code would benefit from a higher level comment,
+> like "Connects to the server once and exits." or such.
 
-What layering violation?
+Agreed, I'll add this
 
-Below is quick compile tested part to do the fsnotify side and
-get rid of the fsnotify iteration, which looks easily worth it.
+> 
+>> +		/* Closes listening socket for the child. */
+>> +		ASSERT_EQ(0, close(server_fd));
+>> +
+>> +		client_fd = socket(AF_INET, SOCK_STREAM | SOCK_CLOEXEC, 0);
+>> +		ASSERT_LE(0, client_fd);
+>> +
+>> +		ASSERT_EQ(0, connect(client_fd, &addr, sizeof(addr)));
+>> +		EXPECT_EQ(1, write(client_fd, ".", 1));
+>> +
+>> +		ASSERT_EQ(0, close(client_fd));
+>> +		_exit(_metadata->exit_code);
+>> +		return;
+>> +	}
+>> +
+>> +	if (self->sandboxed) {
+>> +		int ruleset_fd = landlock_create_ruleset(
+>> +			&ruleset_attr, sizeof(ruleset_attr), 0);
+>> +		ASSERT_LE(0, ruleset_fd);
+>> +		if (self->allowed) {
+>> +			ASSERT_EQ(0, landlock_add_rule(ruleset_fd,
+>> +						       LANDLOCK_RULE_SOCKET,
+>> +						       &tcp_socket_create, 0));
+>> +		}
+>> +		enforce_ruleset(_metadata, ruleset_fd);
+>> +		ASSERT_EQ(0, close(ruleset_fd));
+>> +	}
+>> +
+>> +	client_fd = accept(server_fd, NULL, 0);
+>> +
+>> +	/* accept(2) should not be restricted by Landlock. */
+>> +	EXPECT_LE(0, client_fd);
+> 
+> Should be an ASSERT, IMHO.
+> If this fails, client_fd will be -1,
+> and a lot of the stuff afterwards will fail as well.
 
-landlock is a bit more complex because of lsm hooks, and the internal
-underobj abstraction inside of landlock.  But looking at the release
-inode data vs unomunt synchronization it has and the duplicate code I
-think doing it this way is worth the effort even more, it'll just need 
-someone who knows landlock and the lsm layering to help with the work.
+Agreed, thank you!
 
-diff --git a/fs/inode.c b/fs/inode.c
-index 3f335f78c5b228..7d5f8a09e4d29d 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -789,11 +789,23 @@ static bool dispose_list(struct list_head *head)
-  */
- static int evict_inode_fn(struct inode *inode, void *data)
- {
-+	struct super_block *sb = inode->i_sb;
- 	struct list_head *dispose = data;
-+	bool post_unmount = !(sb->s_flags & SB_ACTIVE);
- 
- 	spin_lock(&inode->i_lock);
--	if (atomic_read(&inode->i_count) ||
--	    (inode->i_state & (I_NEW | I_FREEING | I_WILL_FREE))) {
-+	if (atomic_read(&inode->i_count)) {
-+		spin_unlock(&inode->i_lock);
-+
-+		/* for each watch, send FS_UNMOUNT and then remove it */
-+		if (post_unmount && fsnotify_sb_info(sb)) {
-+			fsnotify_inode(inode, FS_UNMOUNT);
-+			fsnotify_inode_delete(inode);
-+		}
-+		return INO_ITER_DONE;
-+	}
-+
-+	if (inode->i_state & (I_NEW | I_FREEING | I_WILL_FREE)) {
- 		spin_unlock(&inode->i_lock);
- 		return INO_ITER_DONE;
- 	}
-diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
-index 68c34ed9427190..cf89aa69e82c8d 100644
---- a/fs/notify/fsnotify.c
-+++ b/fs/notify/fsnotify.c
-@@ -28,16 +28,6 @@ void __fsnotify_vfsmount_delete(struct vfsmount *mnt)
- 	fsnotify_clear_marks_by_mount(mnt);
- }
- 
--static int fsnotify_unmount_inode_fn(struct inode *inode, void *data)
--{
--	spin_unlock(&inode->i_lock);
--
--	/* for each watch, send FS_UNMOUNT and then remove it */
--	fsnotify_inode(inode, FS_UNMOUNT);
--	fsnotify_inode_delete(inode);
--	return INO_ITER_DONE;
--}
--
- void fsnotify_sb_delete(struct super_block *sb)
- {
- 	struct fsnotify_sb_info *sbinfo = fsnotify_sb_info(sb);
-@@ -46,19 +36,6 @@ void fsnotify_sb_delete(struct super_block *sb)
- 	if (!sbinfo)
- 		return;
- 
--	/*
--	 * If i_count is zero, the inode cannot have any watches and
--	 * doing an __iget/iput with SB_ACTIVE clear would actually
--	 * evict all inodes with zero i_count from icache which is
--	 * unnecessarily violent and may in fact be illegal to do.
--	 * However, we should have been called /after/ evict_inodes
--	 * removed all zero refcount inodes, in any case. Hence we use
--	 * INO_ITER_REFERENCED to ensure zero refcount inodes are filtered
--	 * properly.
--	 */
--	super_iter_inodes(sb, fsnotify_unmount_inode_fn, NULL,
--			INO_ITER_REFERENCED);
--
- 	fsnotify_clear_marks_by_sb(sb);
- 	/* Wait for outstanding object references from connectors */
- 	wait_var_event(fsnotify_sb_watched_objects(sb),
-diff --git a/fs/super.c b/fs/super.c
-index 971ad4e996e0ba..88dd1703fe73db 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -167,28 +167,17 @@ static void super_wake(struct super_block *sb, unsigned int flag)
- 	wake_up_var(&sb->s_flags);
- }
- 
--bool super_iter_iget(struct inode *inode, int flags)
-+bool super_iter_iget(struct inode *inode)
- {
--	bool	ret = false;
-+	bool ret = false;
- 
- 	spin_lock(&inode->i_lock);
--	if (inode->i_state & (I_NEW | I_FREEING | I_WILL_FREE))
--		goto out_unlock;
--
--	/*
--	 * Skip over zero refcount inode if the caller only wants
--	 * referenced inodes to be iterated.
--	 */
--	if ((flags & INO_ITER_REFERENCED) &&
--	    !atomic_read(&inode->i_count))
--		goto out_unlock;
--
--	__iget(inode);
--	ret = true;
--out_unlock:
-+	if (!(inode->i_state & (I_NEW | I_FREEING | I_WILL_FREE))) {
-+		__iget(inode);
-+		ret = true;
-+	}
- 	spin_unlock(&inode->i_lock);
- 	return ret;
--
- }
- EXPORT_SYMBOL_GPL(super_iter_iget);
- 
-@@ -216,7 +205,7 @@ int super_iter_inodes(struct super_block *sb, ino_iter_fn iter_fn,
- 
- 	spin_lock(&sb->s_inode_list_lock);
- 	list_for_each_entry(inode, &sb->s_inodes, i_sb_list) {
--		if (!super_iter_iget(inode, flags))
-+		if (!super_iter_iget(inode))
- 			continue;
- 		spin_unlock(&sb->s_inode_list_lock);
- 		iput(old_inode);
-diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
-index ee544556cee728..5a174e690424fb 100644
---- a/fs/xfs/xfs_icache.c
-+++ b/fs/xfs/xfs_icache.c
-@@ -1654,8 +1654,7 @@ xfs_iter_vfs_igrab(
- 	if (ip->i_flags & XFS_ITER_VFS_NOGRAB_IFLAGS)
- 		goto out_unlock_noent;
- 
--	if ((flags & INO_ITER_UNSAFE) ||
--	    super_iter_iget(inode, flags))
-+	if ((flags & INO_ITER_UNSAFE) || super_iter_iget(inode))
- 		ret = true;
- 
- out_unlock_noent:
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 2aa335228b84bf..a3c682f0d94c1b 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2224,7 +2224,7 @@ enum freeze_holder {
- typedef int (*ino_iter_fn)(struct inode *inode, void *priv);
- int super_iter_inodes(struct super_block *sb, ino_iter_fn iter_fn,
- 		void *private_data, int flags);
--bool super_iter_iget(struct inode *inode, int flags);
-+bool super_iter_iget(struct inode *inode);
- 
- struct super_operations {
-    	struct inode *(*alloc_inode)(struct super_block *sb);
+> 
+>> +
+>> +	EXPECT_EQ(1, read(client_fd, &buf, 1));
+>> +	EXPECT_EQ('.', buf);
+> 
+> I'm torn on whether the "." write and the check for it is very useful in this test.
+> It muddies the test's purpose a bit, and makes it harder to recognize the main use case.
+> Might make the test a bit simpler to drop it.
+
+Agreed, this check is really not that important.
+
+> 
+>> +
+>> +	ASSERT_EQ(child, waitpid(child, &status, 0));
+>> +	ASSERT_EQ(1, WIFEXITED(status));
+>> +	ASSERT_EQ(EXIT_SUCCESS, WEXITSTATUS(status));
+>> +
+>> +	ASSERT_EQ(0, close(server_fd));
+> 
+> You are missing to close client_fd.
+
+will be fixed
+
+> 
+>> +}
+>> +
+>>   TEST_HARNESS_MAIN
+>> -- 
+>> 2.34.1
+>>
