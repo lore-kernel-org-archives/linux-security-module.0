@@ -1,98 +1,83 @@
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9BA78F5C;
-	Thu,  3 Oct 2024 07:36:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1485613D8A3;
+	Thu,  3 Oct 2024 07:38:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1727940966; cv=none; b=gTIhyj4IZeKH4Qxl0yld1KaQzec0ufgFqf6+zSfidcFI77qNGXE42cMpWfTliRbkgXWoyNEByDdhtmx5JC1neY6J4xVIqsPtnXC3TuszLZjra8uEWBNSpvfMXRvUO1cL+KC9G9+Mofanb94F/B4td3OqhcPzxK7TskkfLyKGKjk=
+	t=1727941088; cv=none; b=QX7cjHS+3NPsw1XF8DdU13yXrvLHaFOzYzTl7fh4+aFuC3PKgXH1uZZllV1xiXA/sHCKf5AsZqrBlJAOsRW5oeIJ+k2a80s/nBxEi0uRbL2LsJMDvs4V3DFNUkE4jBXcWKkhouWCLQ/DMDiiT91mHGormpcBb61jA8EvfhBI6ag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1727940966; c=relaxed/simple;
-	bh=M7x3cWa977Oz9ozRtPmM2OrD4Iksba/Rz47mA4bO15A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DfsJOA1dWYyOItyCmuBhaHOv7rTmUE7IvxKrqQmKGO0YgIdGOkvCaxt67PgZmgKzRlklzU4y7XoL5NNVDL3q77CT17Zg8iUePclvr8b1DyLRa+bSHKnphiwKBVopZb5JqTqzxLqTt+yIZQVvHsxng9GVWlEMHghJOXoU8yc8uG4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=is1GJMqA; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1727941088; c=relaxed/simple;
+	bh=Z8vxIMP8M5qWA1eWQH4xk72EVHr7rDe+WWkK7RKFCKk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e2db529ixbUAuhNOhapE6jb+Z4W62mDgi5i2QUAbeF5BhUGatCovigvz/gARSKmQ1K0O+EAi6qqlKUVTl1FJL8G5Rjglw0emosBX62eg81pzor4BKxLfpc7loNkk2rsHHlyM7Z029KF3LhKgA0+01TgGTUKQRbaOp4Vhqp1w4H8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=gvZoT49b; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="is1GJMqA"
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5398df2c871so573298e87.1;
-        Thu, 03 Oct 2024 00:36:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1727940963; x=1728545763; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9oR8h0jcD+ASzHqwg5wRJecDB5ThsYQmaCFqLieUUys=;
-        b=is1GJMqAgkJ2TwFpQ+/oJ71vMz2nu/Uerlqfhxx55ipKam7/4NRvUa4uxhiYGtcoyW
-         R5IMBd4MU6G7m7/xCcfOtwD4xMt03isnk9+OfrIyBAGG7YsnDCNC45ayuDtSbu98HOh8
-         YnagPHX2MmvvVbrXrWNX9iarIm0oCK+Lg7+wbFl04L7wzWQ8uX10/SNkQXnF6gioWwvS
-         ME+UVodyH+8CumP9A+VamWclBoPra2JCRgnmzDuiuAP+z5Uv3SvhS4xTNOrwUqWep30J
-         5nLPUp77G1hhgME9qkKOSpacGEPgB0qjS8FkOd4zq75VCjR5HfjuOJpz5mV/dRW2ugmm
-         r/5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1727940963; x=1728545763;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9oR8h0jcD+ASzHqwg5wRJecDB5ThsYQmaCFqLieUUys=;
-        b=bbxXvepvXuWoUwj72n86QGxU6n5IjAhDR3yDe4B6j3OI0LtVgptmn9l8HcEfoOk+uU
-         5W3aEUIN3vMZ67s0whM9+TNsxBm1tYnkLboT5KzvejvwildHpIc2FIGRZVkG8r7qdq3Z
-         NFi8SqTp8PCJkoVs39AhY7P88mR3JSx+R5EU900dEb0mqPeftkYZub8mj46+XsoAMEEG
-         8WOGAszFifKoD4HP4BS6T4tisacUNB+XSYPLC0WCxdH/J1HSy4w2fq1NUOr63WXPttNT
-         RSUWhHP/nsTll0KPHR4ntBmJsuhengztJi5zJMeGRtHlVWCOnK6S45CsbOqIPNjfAz33
-         JgoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUjc1yBMl6SSVFgMuJ39E7c4/ySI+jxE8NShws/IucLjnVp+Ht1GXLV9ynypUlyL1JeqdVDt/kAlsR/y6SVDP8=@vger.kernel.org, AJvYcCXVg+kPLNb6NiimZ/PzsoD9RDUqi6uWteFw1iicTAZfhMSCCI4qiYHe3ybfAWWSdsLbKoJeF3FOMx5KOvUTtTCou9wccBDh@vger.kernel.org, AJvYcCXuOAgQi79LLPUuVWib3yxV+qBXwQj+oI5ep22ZxHlJANvzMRjO0vwQG86txgOy78ekDRVCVILblVsGCmoX@vger.kernel.org
-X-Gm-Message-State: AOJu0YwimYxnr7bW5wGKn8BGR4IyFQqLlWYu6nDghdApvzkJeyE06xV3
-	Ac3p3ThBT7nVAG/ct+RU/TD3aO9osZROy/8FTSFoxUIEXoFey5ySObhzsuwM4wvjvYAUVXHAm69
-	3aZpyU7rc/XyqqrA1Y34aSkwHRe0=
-X-Google-Smtp-Source: AGHT+IFv9AtG9mNjYdrEiVauqIlg0dzgZJCUwjpzJV+xaWeaunneTND2RuGD2CvAsi1FIHppDH85AjSwHwx2Tj0ajdk=
-X-Received: by 2002:ac2:4c48:0:b0:52c:cc2e:1c45 with SMTP id
- 2adb3069b0e04-539a0663300mr3041629e87.15.1727940962711; Thu, 03 Oct 2024
- 00:36:02 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gvZoT49b"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=8OnmhiQjCnWTVMeAh5YC42peUZpmpY/M4dDvvKxMHi4=; b=gvZoT49bQWyRtbkYqv0gR67IkY
+	lso8bhxu9Y17FdTd36poSIFeQYYQ4I/XQIv9Vu78yjP+9ZJvaUSQxqK8EEB31QrmBCwZC4THB+kKK
+	y7R+sQ2cGAfUNclQTeP7Hxy0pbJKjtW1KublKGmQaIsxZY5tyfG5csw67GTLqykHAFv+tB+Y6A0zP
+	xaT5nBf92OoESVvE+tSUCm11d38Lpn7kfp4XPruqVjd/sfO72t2jYe1nibEzQzqVTlaLrubEuAgvv
+	j5YWHJkJwXTGL0MZj5JAEEKbSg+Ln4QdTwjoqBZ33tj6fcrVmsMI9aZZNvvSRHUYVCq4eRAF7z+5B
+	uWGeBC3g==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1swGPV-00000008P6G-2Qbd;
+	Thu, 03 Oct 2024 07:38:05 +0000
+Date: Thu, 3 Oct 2024 00:38:05 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Dave Chinner <david@fromorbit.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-bcachefs@vger.kernel.org, kent.overstreet@linux.dev,
+	torvalds@linux-foundation.org,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@linux.microsoft.com>,
+	Jann Horn <jannh@google.com>, Serge Hallyn <serge@hallyn.com>,
+	Kees Cook <keescook@chromium.org>,
+	linux-security-module@vger.kernel.org, Jan Kara <jack@suse.cz>,
+	Amir Goldstein <amir73il@gmail.com>
+Subject: Re: lsm sb_delete hook, was Re: [PATCH 4/7] vfs: Convert
+ sb->s_inodes iteration to super_iter_inodes()
+Message-ID: <Zv5J3VTGqdjUAu1J@infradead.org>
+References: <20241002014017.3801899-1-david@fromorbit.com>
+ <20241002014017.3801899-5-david@fromorbit.com>
+ <Zv5GfY1WS_aaczZM@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <66f7b10e.050a0220.46d20.0036.GAE@google.com> <CAHQche-Gsy4=UT6+znKyPRDEHQm9y-MQ+zacoqfywKaz7VA2kg@mail.gmail.com>
- <CAHC9VhSHSD5QF8w2+n9f1DAEfQAwW5eA0skSuap2jdMWrLfGWQ@mail.gmail.com>
-In-Reply-To: <CAHC9VhSHSD5QF8w2+n9f1DAEfQAwW5eA0skSuap2jdMWrLfGWQ@mail.gmail.com>
-From: Shu Han <ebpqwerty472123@gmail.com>
-Date: Thu, 3 Oct 2024 15:35:51 +0800
-Message-ID: <CAHQche-HPzahcHea65f-caRBUSvr4WsRF5J8cqYGnjJvBNTX5g@mail.gmail.com>
-Subject: Re: [syzbot] [integrity?] [lsm?] possible deadlock in
- process_measurement (4)
-To: Paul Moore <paul@paul-moore.com>
-Cc: syzbot <syzbot+1cd571a672400ef3a930@syzkaller.appspotmail.com>, 
-	akpm@linux-foundation.org, dmitry.kasatkin@gmail.com, 
-	eric.snowberg@oracle.com, hughd@google.com, jmorris@namei.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
-	roberto.sassu@huawei.com, serge@hallyn.com, stephen.smalley.work@gmail.com, 
-	syzkaller-bugs@googlegroups.com, zohar@linux.ibm.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zv5GfY1WS_aaczZM@infradead.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-> My apologies for the delay on this, I was traveling for a bit and
-> missed this issue while away.
->
-> Looking quickly at the report, I don't believe this is a false positive.
+On Thu, Oct 03, 2024 at 12:23:41AM -0700, Christoph Hellwig wrote:
+> On Wed, Oct 02, 2024 at 11:33:21AM +1000, Dave Chinner wrote:
+> > --- a/security/landlock/fs.c
+> > +++ b/security/landlock/fs.c
+> > @@ -1223,109 +1223,60 @@ static void hook_inode_free_security_rcu(void *inode_security)
+> >  
+> >  /*
+> >   * Release the inodes used in a security policy.
+> > - *
+> > - * Cf. fsnotify_unmount_inodes() and invalidate_inodes()
+> >   */
+> > +static int release_inode_fn(struct inode *inode, void *data)
+> 
+> Looks like this is called from the sb_delete LSM hook, which
+> is only implemented by landlock, and only called from
+> generic_shutdown_super, separated from evict_inodes only by call
+> to fsnotify_sb_delete.  Why did LSM not hook into that and instead
 
-This is the mistake I made when I first watched the report.
+An the main thing that fsnotify_sb_delete does is yet another inode
+iteration..
 
-It should be a deadlock.
+Ay chance you all could get together an figure out how to get down
+to a single sb inode iteration per unmount?
 
-> Looking at the IMA code, specifically the process_measurement()
-> function which is called from the security_mmap_file() LSM hook, I'm
-> not sure why there is the inode_lock() protected region.  Mimi?
-> Roberto?  My best guess is that locking the inode may have been
-> necessary before we moved the IMA inode state into the inode's LSM
-> security blob, but I'm not certain.
->
-> Mimi and Roberto, can we safely remove the inode locking in
-> process_measurement()?
-
-It would be better if IMA could avoid acqurie inode_lock().
-
-If not, then we may need to consider solutions I mentioned in my
-previous reply.
