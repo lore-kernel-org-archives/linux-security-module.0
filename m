@@ -1,137 +1,154 @@
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8836B1E377A;
-	Fri,  4 Oct 2024 18:17:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB0611E573E;
+	Fri,  4 Oct 2024 18:41:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728065836; cv=none; b=W+joByGUxkLmnvPROyBP8+sSjfIZ9Puw9zZlKPLQSp8S6NLCnrFvLQIPRsomOW+gzBm9Zd9YaTUMb4ABx6VO5OwJhJi7EoxFJM3S02+43dS2VR7e6r5PKCvzVGlEjHaE8254DUN9gBmS41drn8XBiGJGGzf/XhceT9IZXEWjvRY=
+	t=1728067267; cv=none; b=jTrcki5p17LnPsHPBPyLN+tfH2uc/hXEirPZ7I1xPYxOxNRziLyZ1qp3vFskHrwZHFllqziYWJPFo18SqwbB+jV8+pyV/rOGwpEOFrGgkLgc8WA11Eh+J1sBalMwN1dayeWMWoJdvk7Nd4c3ZY799Gf+nVr3fhYJX+nqJ2Oqc9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728065836; c=relaxed/simple;
-	bh=+0QIs1lN858F6dyCNvNENg78JbK9LWa9tkRBTY11Skw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=R1uyiv/qyQvb9VQD//UeVNMVc5S+xVtyTzTAQVC0gnnfZTB6A+cPj1RJaPraLT0otvtJ+re68WqeeeHMqd3ZOqDkDhABh48l0krlIVjZwn4tfcYA9BoIOjDWfbFbWSw54GDQeDCcShKric0zAZJBLUwi2CWyazwVRFuWRm+puQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XKxYj5Gv2zySgr;
-	Sat,  5 Oct 2024 02:15:53 +0800 (CST)
-Received: from kwepemj200016.china.huawei.com (unknown [7.202.194.28])
-	by mail.maildlp.com (Postfix) with ESMTPS id E8A4618007C;
-	Sat,  5 Oct 2024 02:17:04 +0800 (CST)
-Received: from [10.123.123.159] (10.123.123.159) by
- kwepemj200016.china.huawei.com (7.202.194.28) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Sat, 5 Oct 2024 02:17:01 +0800
-Message-ID: <0774e9f1-994f-1131-17f9-7dd8eb96738f@huawei-partners.com>
-Date: Fri, 4 Oct 2024 21:16:56 +0300
+	s=arc-20240116; t=1728067267; c=relaxed/simple;
+	bh=augURPccsdIY9LZoN8gxtoUuNUyj6/brJ7N31RDwniE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AhWd18JlST1a8Jk01uo0tBi8KSQB61Clbm1euzKyl8lDIXR1xqnrWqcsvNqXHpjmCIzBJ33q9R7nSD8l+9SukQwnw10vslpeKy8VQMTIm20U/Pc+lxhqlafnv4m+OhNsioRsGA83Vo6HlKBMBUng9mkeyfImClJQHVbEsjHuZtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 494IeLVM016535;
+	Fri, 4 Oct 2024 13:40:21 -0500
+Received: (from greg@localhost)
+	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 494IeJhT016534;
+	Fri, 4 Oct 2024 13:40:19 -0500
+Date: Fri, 4 Oct 2024 13:40:19 -0500
+From: "Dr. Greg" <greg@enjellic.com>
+To: John Johansen <john.johansen@canonical.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        Paul Moore <paul@paul-moore.com>, Jonathan Corbet <corbet@lwn.net>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-security-module@vger.kernel.org
+Subject: Re: [GIT PULL] tomoyo update for v6.12
+Message-ID: <20241004184019.GA16388@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <0c4b443a-9c72-4800-97e8-a3816b6a9ae2@I-love.SAKURA.ne.jp> <877cavdgsu.fsf@trenco.lwn.net> <CAHC9VhRnTrjP3kNXMmzsK4oZL7WD+uH0OuXszEPgTc5YoT5dew@mail.gmail.com> <CAHk-=wjLdoBcY-r64oBbKXo3hSEr5AawrP_5GSFQ4NEbCNt4Kg@mail.gmail.com> <20241002103830.GA22253@wind.enjellic.com> <033eb4d9-482b-4b70-a251-dc8bcc738f40@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 1/2] landlock: Fix non-TCP sockets restriction
-Content-Language: ru
-To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-CC: <gnoack@google.com>, <willemdebruijn.kernel@gmail.com>,
-	<linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
-	<artem.kuzin@huawei.com>, <konstantin.meskhidze@huawei.com>, Matthieu Buffet
-	<matthieu@buffet.re>
-References: <20241003143932.2431249-1-ivanov.mikhail1@huawei-partners.com>
- <20241003143932.2431249-2-ivanov.mikhail1@huawei-partners.com>
- <20241003.wie1aiphaeCh@digikod.net>
- <8f023c51-bac1-251e-0f40-24dbe2bba729@huawei-partners.com>
- <20241004.rel9ja7IeDo4@digikod.net>
-From: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-In-Reply-To: <20241004.rel9ja7IeDo4@digikod.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: lhrpeml100004.china.huawei.com (7.191.162.219) To
- kwepemj200016.china.huawei.com (7.202.194.28)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <033eb4d9-482b-4b70-a251-dc8bcc738f40@canonical.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Fri, 04 Oct 2024 13:40:21 -0500 (CDT)
 
-On 10/4/2024 1:13 PM, Mickaël Salaün wrote:
-> On Fri, Oct 04, 2024 at 12:30:02AM +0300, Mikhail Ivanov wrote:
->> On 10/3/2024 8:45 PM, Mickaël Salaün wrote:
->>> Please also add Matthieu in Cc for the network patch series.
->>>
->>> On Thu, Oct 03, 2024 at 10:39:31PM +0800, Mikhail Ivanov wrote:
->>>> Do not check TCP access right if socket protocol is not IPPROTO_TCP.
->>>> LANDLOCK_ACCESS_NET_BIND_TCP and LANDLOCK_ACCESS_NET_CONNECT_TCP
->>>> should not restrict bind(2) and connect(2) for non-TCP protocols
->>>> (SCTP, MPTCP, SMC).
->>>>
->>>> Closes: https://github.com/landlock-lsm/linux/issues/40
->>>> Fixes: fff69fb03dde ("landlock: Support network rules with TCP bind and connect")
->>>> Signed-off-by: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
->>>> ---
->>>>    security/landlock/net.c | 2 +-
->>>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/security/landlock/net.c b/security/landlock/net.c
->>>> index bc3d943a7118..6f59dd98bb13 100644
->>>> --- a/security/landlock/net.c
->>>> +++ b/security/landlock/net.c
->>>> @@ -68,7 +68,7 @@ static int current_check_access_socket(struct socket *const sock,
->>>>    		return -EACCES;
->>>>    	/* Checks if it's a (potential) TCP socket. */
->>>
->>> We can extend this comment to explain that we don't use sk_is_tcp()
->>> because we need to handle the AF_UNSPEC case.
->>
->> Indeed, I'll do this.
+On Wed, Oct 02, 2024 at 07:27:47PM -0700, John Johansen wrote:
 
-I've noticed that we still should check sk->sk_family = AF_INET{,6}
-here (so sk_is_tcp() is suitable). AF_UNSPEC can be only related to
-addresses and we should not provide any checks (for address) if socket
-is unrestrictable (i.e. it's not TCP). It's not useful and might lead to
-error incosistency for non-TCP sockets.
+Hi, I hope the week has gone well for everyone.
 
-Btw, I suppose we can improve error consistency by bringing more checks
-from INET/TCP stack. For example it may be useful to return EISCONN
-instead of EACCES while connect(2) is called on a connected socket.
+> On 10/2/24 03:38, Dr. Greg wrote:
+> >On Tue, Oct 01, 2024 at 09:36:16AM -0700, Linus Torvalds wrote:
+> >
+> >Good morning Linus, I hope the week is going well for you.
+> >
+> >Some reflections, for the record, on this issue.
+> >
+> >>On Tue, 1 Oct 2024 at 07:00, Paul Moore <paul@paul-moore.com> wrote:
+> >>>
+> >>>Linus, it's unclear if you're still following this thread after the
+> >>>pull, but can you provide a little insight on your thoughts here?
+> >
+> >>I absolutely hate the whole "security people keep arguing", and I
+> >>cannot personally find it in myself to care about tomoyo.  I don't
+> >>even know where it is used - certainly not in Fedora, which is the
+> >>only distro I can check quickly.
+> >>
+> >>If the consensus is that we should revert, I'll happily revert. This
+> >>was all inside of the tomoyo subdirectory, so I didn't see it as
+> >>some kind of sidestepping, and treated the pull request as a regular
+> >>"another odd security subsystem update".
+> >
+> >I see that Paul Moore has further responded with commentary about the
+> >'LSM community' responding to this issue.  I wanted, on behalf of our
+> >project and in support of Tetsuo's concerns, to register directly with
+> >you a sense of jaded skepticism about the notion of a community
+> >response.
+> >
+> >Fixing Tetsuo's issue, at least to the extent it can be fixed,
+> >requires technical improvements in the Linux security architecture.
 
-This should be done really carefully and only for some useful cases.
-Anyway it's not related to the current patch (since it's not a bug).
+> yes and that is correct place to do it. Doing it within a single LSM
+> is very much the wrong approach
 
->>
->>>
->>>> -	if (sock->type != SOCK_STREAM)
->>>> +	if (sock->type != SOCK_STREAM || sock->sk->sk_protocol != IPPROTO_TCP)
->>>
->>> I think we should check sock->sk->sk_type instead of sock->type (even if
->>> it should be the same).  To make it simpler, we should only use sk in
->>> current_check_access_socket():
->>> struct sock *sk = sock->sk;
->>
->> Agreed.
->>
->>>
->>> Could you please also do s/__sk_common\.skc_/sk_/g ?
->>
->> Ofc
->>
->> Btw, there is probably incorrect read of skc_family in this function
->> [1]. I'll add READ_ONCE for sk->sk_family.
->>
->> [1] https://lore.kernel.org/all/20240202095404.183274-1-edumazet@google.com/
-> 
-> I think it should not be a bug with the current code (IPv6 -> IPV4, and
-> socket vs. sock) but we should indeed use READ_ONCE() (and add this link
-> to the commit message).
+I don't disagree and have publically stated that a number of times
+over the last 10 months or so that this issue has been raging,
+including in e-mail to Tetsuo himself.
 
-ok
+Our opinion or ACK doesn't matter much in the grand scheme of things,
+but Paul can feel free to take his black sharpie pen and place a mark
+in the column that indicates that it is in everyone's interest to have
+a standard framework for security event dispatch, on our behalf.
 
-> 
->>
->>>
->>>>    		return 0;
->>>>    	/* Checks for minimal header length to safely read sa_family. */
->>>> -- 
->>>> 2.34.1
->>>>
->>>>
->>
+That being said, if we are actually serious about responding properly
+to this event/crisis, we need to step back and have an intellectually
+honest engineering discussing surrounding the following question:
+
+Has the threat environment, its significance to society and industry
+and the scale and scope of the solutions needed to mount a response to
+it, changed since the inception of the LSM 22 years ago?
+
+Colleagues I have in the counseling industry tell me that the first
+step in resolving a problem is recognizing that there is a problem.
+
+> >Currently, potential technical improvements in this venue are
+> >struggling to receive any kind of acknowledgement or review, to the
+> >ultimate detriment of enhancements that Linux should be bringing
+> >forward to address, not only this issue, but the security industry
+> >writ-large.
+
+> everyone in the LSM community is struggling with available time, and
+> yes there are disagreements around how this should be done so it
+> moves slow.
+
+With respect to bandwidth there are two problems that need to addressed:
+
+1.) The amount of time and talent it takes for developers to implement
+security policies with mandatory enforcement capabilities.
+
+2.) The ability to implement security technology solutions on linux,
+based on a standardized infrastructure, in less than 4-5+ year
+timeframes.
+
+The third problem to be addressed, and you acknowledge it above, is
+that there needs to be a flexible pathway for security innovation on
+Linux that doesn't require broad based consensus and yet doesn't
+imperil the kernel.
+
+This latter issue is the most fundamental problem with security on
+Linux and something that Linus has publically complained about
+multiple times, as we all know.
+
+With TSEM we placed a design on the table, influenced by individuals
+with significant experience in the field and its challenges, that was
+a legitimate attempt to address these issues, including the problem
+that Tetuso has.  Unfortunately it sat on the cutting room floor for
+20 months without even a legitimate technical discussion as to its
+motivation and design and the fact that it could have provided a
+method to derail this current crisis/controversy.
+
+We fully recognize and respect the bandwidth crisis.  If it is as bad
+as everyone claims it is, and there is no reason to assume otherwise,
+then we need to acknowledge and address this issue as one of the two
+roots of our problem, if security innovation on Linux is to remain
+even remotely relevant and healthy.
+
+We appreciate your willingness to review TSEM sometime down the road
+and will look forward to your thoughts.
+
+Have a good weekend.
+
+As always,
+Dr. Greg
+
+The Quixote Project - Flailing at the Travails of Cybersecurity
+              https://github.com/Quixote-Project
