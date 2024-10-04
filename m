@@ -1,91 +1,118 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72CFC21BAF9
-	for <linux-security-module@vger.kernel.org>; Fri,  4 Oct 2024 18:06:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EF871D9A62
+	for <linux-security-module@vger.kernel.org>; Fri,  4 Oct 2024 18:15:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728065180; cv=none; b=d0CK1vptuYLwe1asPyN7KaC010mVpVu+00eM7ocoXKf6whZZibAkRKZ/KdatOodImamh/5ltSi7VGAbOQhHURz/zXZ37jpmhYSCobg8fkqofRX9epnzaNfbyHPkv1xTjBRsXaSJLrDNQO5bMnJVm2oAIlSyNc5tEeiHBB2YaPAo=
+	t=1728065729; cv=none; b=G6jtM0to+AkMZR2k5AqHE/PK0Nu8hrom8DJbZjYtKavzwkGdveCAhD3Iol8ObeOeYVlBpayrfuJOZu59A/ZIuMKGzFBRD5O7G0IvYP+m/KQOgWDAKAQMjVLg8g0LQ7awpTo1a0mtxe2PhvuQdkqSlkeCxML412mrgDEWHDqTjxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728065180; c=relaxed/simple;
-	bh=hRdZaT5GinwnU8qjZomu298iKt33CUjQLjpFL6FC3Co=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JCakv3tVBKmBaeTCzFkDeItzC9QH2wXd8qAQlA3gg6m61RehrTGds4ksVF6TpTqZOPCGgTYR+4L6pnL8E9ezb9hdzQDtjPCMuEm2E2XjViKQiYvKZWlNRVxz4ePOxqXeXTZnKsbn2BBDAJNBw/6k5XBIwslFkeyN8a0Gx2OqN1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DU1Qllp9; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1728065729; c=relaxed/simple;
+	bh=3UwQQ89w1jlQwkQNC6X6XZvFUhguEtIJjixGD+adfi8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=b4oHaLTf1S4Wo6EN5a8je4Lfpb22EOQDU84kDexojNCPuBcLyqD76952UctXJIwl7TK/aXq3oeYy0GIiAVZ6Fu5z1+KqG2z6kvR9tFqS7/4Yh3drJQvrkdSIlpOsJz3VShw2vh1xbxa2sFpTHjWpXAswt6Kig2P7ZpBCext0eDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=IMDRQgko; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DU1Qllp9"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42ca6ba750eso15166785e9.0
-        for <linux-security-module@vger.kernel.org>; Fri, 04 Oct 2024 11:06:18 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="IMDRQgko"
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6e2772f7df9so20199087b3.2
+        for <linux-security-module@vger.kernel.org>; Fri, 04 Oct 2024 11:15:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728065177; x=1728669977; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=gzwHMKR/E/uJ27BpGectV3Z/wuJHgFUfq0zSouTA1+8=;
-        b=DU1Qllp9ioMf3y0hiXX6sUAOb3jukjuDxFz35MpRKvHH9AcaJyN07IUIzKsvurGRiC
-         hJbbtrD5Jht91u2Bp0ymnV36AuooaBc/2hM3vIE8/fXkHiBDlzgqJnCdBMNedZFj1ki5
-         LcZJIv+544U5bx0zHpqXEwhblLWa/Jod4uO0vx9pUAqTRiM0FndpFkufPQQYDZ+LcKQT
-         eg/hE4E8N4iSgYrl/yMra/UyaWaEUrI++xs0cvtvujgfHzWTYQzv5Kx/HvycuEcH0vNo
-         F9zLxvtChYKgQcnxTZLImrvelcuqYegfqS+InnzNJWTkJ1ODpjpFIIJVMhziA9yAsABq
-         DLDw==
+        d=paul-moore.com; s=google; t=1728065727; x=1728670527; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0Nl/fJvLy1gro9c4j4uRqIzfbYchCvCeT1u6Esd2ozc=;
+        b=IMDRQgkou2yCbc5XK5x1Q65N6uV/y7mPX4Cc2DGY6JqSAVnGdH6YvmEoABMSUCW6Zk
+         d99pZExq9ISWyiB+XGS3g7rrPWltReiOGZRuS8FV5wPvT2R5x0cUsOB6QTRgNmLIcK8A
+         2IZotsdX4BvuAdUyOzvwsKE4eppjwUrmgJNETcyn+wHPqplgbDybXEaohLK/AF+14v48
+         jIxAQkfnMDTnrsZIiuTNL8MtN0Yf8la0+WN62UVuaTnTUgbftvy5pWx1WMmjEL6IyUhU
+         34qMnKEAxaOaWSdeKU+7S2ncmyDIPqdoH+V+gSfFwiyRXWvtmBAH748bRuUZ129j/bUK
+         lCLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728065177; x=1728669977;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gzwHMKR/E/uJ27BpGectV3Z/wuJHgFUfq0zSouTA1+8=;
-        b=XU0cY6g7OycP1EUv6jQBAhZFUigx2EmvDOixXSlR56oUR1l8TN+4mMUhrijrNWgV66
-         IKgtSiYE5xoQ24rD2FPIbUyaa5WqINIHLHx8+zslhnCevvUVgGUZY5gJ0TycY9oW9Dy6
-         x2CaTzGo1t+kz63Zre2ccls5eZOLYmx0nnhWfKumhsZsVjsZ0fe6E7xZOhXON2V2abx0
-         awYoFdlaFgfHb/Yf8YWtXH7rTPTZ4eS3BG8tLBLWgg/FI/klPvSkR2ywcjx4I/s2jpVv
-         tx/rXsSg2K9gJj16BV5X32ifuFTif6b2sVcTyTS3HLe9Nak0rirVhyFoIv1uwqC4N4s9
-         l+jQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVHUBVtT4xfxFHz/Y+JRbd0SIFWzXmuhZW45nhnssIM5e+hqbWWy35ZXQU39S1FcXZfUXphiErwrMbEIbbmYniP0ERS7xk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWTZvz6eRE+p0odyXLRF8BVmG/UUzG1bzQHCeuu0O5Wpnhky/h
-	CxRVUa47k89Xh0KxJ4nU53UC6cg8/OK8GaEtlqIXU3WNV8+xPivqax4+wA==
-X-Google-Smtp-Source: AGHT+IEwvjpUWUnSVkYbTIRBq1bs8Kl/gZpummeBEZ5eKKbxG0xcKogSyaeuK0v7wdfFYzI2wweYDA==
-X-Received: by 2002:a05:600c:4f02:b0:42c:b332:1619 with SMTP id 5b1f17b1804b1-42f7df113e9mr46809885e9.2.1728065176543;
-        Fri, 04 Oct 2024 11:06:16 -0700 (PDT)
-Received: from localhost ([2a02:168:59f0:1:b0ab:dd5e:5c82:86b0])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d1696f921sm157497f8f.91.2024.10.04.11.06.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 11:06:16 -0700 (PDT)
-Date: Fri, 4 Oct 2024 20:05:55 +0200
-From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	linux-security-module@vger.kernel.org,
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-	Tahera Fahimi <fahimitahera@gmail.com>
-Subject: Re: [PATCH v1] landlock: Improve documentation of previous
- limitations
-Message-ID: <20241004.9475ed3e46a5@gnoack.org>
-References: <20241004153122.501775-1-mic@digikod.net>
+        d=1e100.net; s=20230601; t=1728065727; x=1728670527;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0Nl/fJvLy1gro9c4j4uRqIzfbYchCvCeT1u6Esd2ozc=;
+        b=Gd3/5weTECZ8CIAuVErxoPtzNkAfPyrUN9d0gShugKNrysF8t4eTmzT9LgfaB3zlrj
+         QJ0P7tzuZKiS10TrRKcBTU9Jy6dErw7xeECA8y5IXtrP8qeByEr1TOyxXSoetisuLsPE
+         wp2GP/aZyM4B7+OVLEl+AsbG+stftzvIOE3fW5nQ50NyLujyP0SrHLSU98wJgr5lwRSf
+         7ZXbjzz/WpUwpXpT85KC/CCiRHlishTam8wxlEeAH8s2JP13zsF69dnmpTKi1r+mU9FQ
+         CiTYZq1U1oqbWf0cNaCv6mMx5FUC1bV0mcGl5lnczcCObX6m1r+r7xo1UYPUHcZIuktV
+         RyFA==
+X-Forwarded-Encrypted: i=1; AJvYcCXjjukxCrC4LEdNOVRa/z+Ma6L34HuuDVSHgm1h7HdN/ZNDX9pQKyIqke1Q8SJQ+ef9++KM0iSF90TH/YTY2D6gdtW68pQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxvfqzfa7qjtkbcfb/SJH4nYWmiWr8zm8KANTDQg42wzNAWPd7H
+	ShvnyPLrQENxWaFA5dKCXHFGPkQF8zB0TRvXA/dHG4HwKDVkMiWLZ+t82W+EclV7YJykYFdjSn+
+	CKNTzYbrOOtjK7l4uQttQiTLHp6cESjXa3eIa
+X-Google-Smtp-Source: AGHT+IFDL2U+AFA8xOQ6lEOVWIMhUrxcSrmU14/lMYge8EW53LmplCLcJ9I9tD7uE5WAzhWwU7Wbzwo1crIZnP2TEoo=
+X-Received: by 2002:a05:690c:60c2:b0:6e2:313a:a024 with SMTP id
+ 00721157ae682-6e2c7296844mr39778377b3.33.1728065726639; Fri, 04 Oct 2024
+ 11:15:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241004153122.501775-1-mic@digikod.net>
+References: <20241003115721.kg2caqgj2xxinnth@quack3> <Zv6J34fwj3vNOrIH@infradead.org>
+ <20241003122657.mrqwyc5tzeggrzbt@quack3> <Zv6Qe-9O44g6qnSu@infradead.org>
+ <20241003125650.jtkqezmtnzfoysb2@quack3> <Zv6jV40xKIJYuePA@dread.disaster.area>
+ <20241003161731.kwveypqzu4bivesv@quack3> <Zv8648YMT10TMXSL@dread.disaster.area>
+ <20241004-abgemacht-amortisieren-9d54cca35cab@brauner> <Zv_cLNUpBxpLUe1Q@infradead.org>
+ <20241004134906.3yrg5y3hritusmel@quack3>
+In-Reply-To: <20241004134906.3yrg5y3hritusmel@quack3>
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 4 Oct 2024 14:15:15 -0400
+Message-ID: <CAHC9VhQCQaybkmUy7u6xbAhR1HEOWWV_TA5LYPQY6WBct49umQ@mail.gmail.com>
+Subject: Re: lsm sb_delete hook, was Re: [PATCH 4/7] vfs: Convert sb->s_inodes
+ iteration to super_iter_inodes()
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>
+Cc: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>, 
+	Christian Brauner <brauner@kernel.org>, Dave Chinner <david@fromorbit.com>, linux-fsdevel@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, linux-bcachefs@vger.kernel.org, 
+	kent.overstreet@linux.dev, torvalds@linux-foundation.org, 
+	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@linux.microsoft.com>, 
+	Jann Horn <jannh@google.com>, Serge Hallyn <serge@hallyn.com>, Kees Cook <keescook@chromium.org>, 
+	linux-security-module@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 04, 2024 at 05:31:20PM +0200, Mickaël Salaün wrote:
-> Improve consistency of previous limitations' subsection titles, and
-> expand a bit the IOCTL section.
-> 
-> This changes some HTML anchors and may break some external links though.
-> 
-> Cc: Günther Noack <gnoack@google.com>
-> Cc: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-> Cc: Tahera Fahimi <fahimitahera@gmail.com>
-> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+On Fri, Oct 4, 2024 at 9:49=E2=80=AFAM Jan Kara <jack@suse.cz> wrote:
+> On Fri 04-10-24 05:14:36, Christoph Hellwig wrote:
+> > On Fri, Oct 04, 2024 at 09:21:19AM +0200, Christian Brauner wrote:
+> > > > But screwing with LSM instructure looks ....  obnoxiously complex
+> > > > from the outside...
+> > >
+> > > Imho, please just focus on the immediate feedback and ignore all the
+> > > extra bells and whistles that we could or should do. I prefer all of
+> > > that to be done after this series lands.
+> >
+> > For the LSM mess: absolutely.  For fsnotify it seems like Dave has
+> > a good idea to integrate it, and it removes the somewhat awkward
+> > need for the reffed flag.  So if that delayed notify idea works out
+> > I'd prefer to see that in over the flag.
+>
+> As I wrote in one of the emails in this (now huge) thread, I'm fine with
+> completely dropping that inode->i_refcount check from the
+> fsnotify_unmount_inodes(). It made sense when it was called before
+> evict_inodes() but after 1edc8eb2e931 ("fs: call fsnotify_sb_delete after
+> evict_inodes") the usefulness of this check is rather doubtful. So we can
+> drop the awkward flag regardless whether we unify evict_inodes() with
+> fsnotify_unmount_inodes() or not. I have no strong preference whether the
+> unification happens as part of this patch set or later on so it's up to
+> Dave as far as I'm concerned.
 
-Thanks, good improvements!
+I didn't get a chance to look at this thread until just now and I'm
+noticing that the email used for Micka=C3=ABl is likely not the best, I'm
+adding the email he uses in MAINTAINERS as well as that of G=C3=BCnther
+Noack, a designated Landlock reviewer.
 
-Reviewed-by: Günther Noack <gnoack3000@gmail.com>
+Micka=C3=ABl, G=C3=BCnther, the lore link for the full discussion is below:
+
+https://lore.kernel.org/all/Zv5GfY1WS_aaczZM@infradead.org
+
+--=20
+paul-moore.com
