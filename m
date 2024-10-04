@@ -1,53 +1,46 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-8fae.mail.infomaniak.ch (smtp-8fae.mail.infomaniak.ch [83.166.143.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E1958C1A;
-	Fri,  4 Oct 2024 07:21:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B00314AD3D
+	for <linux-security-module@vger.kernel.org>; Fri,  4 Oct 2024 10:13:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728026485; cv=none; b=ozgFo1+V9y5VEOJwPQK6xtcxvxO1R3VR88xb63Y/CmYpfVd6++/rWSPAWwJlYmG1M8xy6R8og+FUiD9m3zza4kpS8LEzLWVC1El85eZyFoKTccX4fW42+HzCbNBgcdrtylYlqfUojaE4TFsa6z+zNt8z8Xv40YPeIfpRtNBK90A=
+	t=1728036820; cv=none; b=MgU8s/IWlgRjll9PNFJviHPMJXcPO1Fkiee7AYg8tjp9a8GWNajKgGm2rfVHQohMvM8UpHqOjCYjPzBTqNei0pgWkfmPB4Vf0yTmq2MSBS8EBmP8D0oDTHrUN8URmpB66/aKFQ86o0vxtwTZIOEbj08PL5Lzt7PQvUxNLG4ZBPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728026485; c=relaxed/simple;
-	bh=n/54bgSIzo01R4ZrkXvfkm2/9pgFHNkd2Tqp8OzR28Q=;
+	s=arc-20240116; t=1728036820; c=relaxed/simple;
+	bh=bUFKWpGhuHRDtfCZqSYM/ze1RxFi/q9nGlZp5xS3B50=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B9ycqhWgG7t3KcOrCXj9aKLgHYajUYVEaTGv0jGHDhstMI1Wxb2pqX/wYnwfJWkgZ+TgaGVQ3iCSsYW1O3fer50ehFg8+WNRMx634QGkeZx9y+11FQPMxnH/ESIqXAYnzBNAnhZ2Hx4lJj1FxH2KtkDQDzSUlrsaq2n4cCt8Bxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R4jeFEId; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=N0GT6vhg8BeAPq/vbusQiRHmXFLfl912xYyvjfkP/CGxac+VyrFEBXJ7cSivg26PdRUAgS+sywFHSZxKTXW61LKY7yQ1ANOizvU1lvO/HmJMQpE4PTw0pilTB6vKTA09zZT+jCQqvImmM7HNLlsH7wuo6Qq71Fa89dCdFE0f1Pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=bdKx133V; arc=none smtp.client-ip=83.166.143.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R4jeFEId"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 652EDC4CEC6;
-	Fri,  4 Oct 2024 07:21:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728026485;
-	bh=n/54bgSIzo01R4ZrkXvfkm2/9pgFHNkd2Tqp8OzR28Q=;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="bdKx133V"
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XKks740lFzJkK;
+	Fri,  4 Oct 2024 12:13:31 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1728036811;
+	bh=cqBQ9GK30wBQ0mr0f5EWQqndSVgF06uTkPIX5PaNsLs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R4jeFEIdbUdRnMhuPRZd+fY4uCZe5og7w9s0i9zphoCi2lo5KNMlDkvXKaZhdfEl3
-	 j090edszQIjuPEidbSwREM27YkZd2tGGMzEXkx8TIZWEzgZgtZI2j2YXeBMD/sr2ng
-	 ckOE4v8cvXQeLcHWOTTa3hbF8vARUk1R+WJZW73jk97C66AAqx0jcwisc5d72HGIWF
-	 SHE9JBt/g3/Tb3aaE977AbtQxExPSa3IGiDzq5foZALjvfGVqOnJIOqA5QtdrBBJlY
-	 QMtOuzLWZ3IOKjBuHVfULsfazmpK/ibw06PJwGrOzWxr1ktxli1YammjoR7t8cAo+c
-	 3NdftA9G/95Pw==
-Date: Fri, 4 Oct 2024 09:21:19 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>, 
-	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org, linux-bcachefs@vger.kernel.org, 
-	kent.overstreet@linux.dev, torvalds@linux-foundation.org, 
-	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@linux.microsoft.com>, Jann Horn <jannh@google.com>, Serge Hallyn <serge@hallyn.com>, 
-	Kees Cook <keescook@chromium.org>, linux-security-module@vger.kernel.org, 
-	Amir Goldstein <amir73il@gmail.com>
-Subject: Re: lsm sb_delete hook, was Re: [PATCH 4/7] vfs: Convert
- sb->s_inodes iteration to super_iter_inodes()
-Message-ID: <20241004-abgemacht-amortisieren-9d54cca35cab@brauner>
-References: <Zv5GfY1WS_aaczZM@infradead.org>
- <Zv5J3VTGqdjUAu1J@infradead.org>
- <20241003115721.kg2caqgj2xxinnth@quack3>
- <Zv6J34fwj3vNOrIH@infradead.org>
- <20241003122657.mrqwyc5tzeggrzbt@quack3>
- <Zv6Qe-9O44g6qnSu@infradead.org>
- <20241003125650.jtkqezmtnzfoysb2@quack3>
- <Zv6jV40xKIJYuePA@dread.disaster.area>
- <20241003161731.kwveypqzu4bivesv@quack3>
- <Zv8648YMT10TMXSL@dread.disaster.area>
+	b=bdKx133Vy6xqJ40PSAv+hx1dx30i9BPFY3RphqDoJPa4e9HYgxHHpc4GUz0cvXHKU
+	 I2HFhO08WqOavyPqNVcvjGdk0PHvXLOiP16v6en3RrPbZy7gyjIJvWm7lPQUOtAdbO
+	 Dt2n7HZx9XZ5weBPl0jKAm1LXV6+D7wZ6wZreG70=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4XKks66FGyzf58;
+	Fri,  4 Oct 2024 12:13:30 +0200 (CEST)
+Date: Fri, 4 Oct 2024 12:13:26 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+Cc: gnoack@google.com, willemdebruijn.kernel@gmail.com, 
+	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, 
+	yusongping@huawei.com, artem.kuzin@huawei.com, konstantin.meskhidze@huawei.com, 
+	Matthieu Buffet <matthieu@buffet.re>
+Subject: Re: [RFC PATCH v1 1/2] landlock: Fix non-TCP sockets restriction
+Message-ID: <20241004.rel9ja7IeDo4@digikod.net>
+References: <20241003143932.2431249-1-ivanov.mikhail1@huawei-partners.com>
+ <20241003143932.2431249-2-ivanov.mikhail1@huawei-partners.com>
+ <20241003.wie1aiphaeCh@digikod.net>
+ <8f023c51-bac1-251e-0f40-24dbe2bba729@huawei-partners.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -56,34 +49,71 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Zv8648YMT10TMXSL@dread.disaster.area>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8f023c51-bac1-251e-0f40-24dbe2bba729@huawei-partners.com>
+X-Infomaniak-Routing: alpha
 
-On Fri, Oct 04, 2024 at 10:46:27AM GMT, Dave Chinner wrote:
-> On Thu, Oct 03, 2024 at 06:17:31PM +0200, Jan Kara wrote:
-> > On Thu 03-10-24 23:59:51, Dave Chinner wrote:
-> > > As for the landlock code, I think it needs to have it's own internal
-> > > tracking mechanism and not search the sb inode list for inodes that
-> > > it holds references to. LSM cleanup should be run before before we
-> > > get to tearing down the inode cache, not after....
+On Fri, Oct 04, 2024 at 12:30:02AM +0300, Mikhail Ivanov wrote:
+> On 10/3/2024 8:45 PM, Mickaël Salaün wrote:
+> > Please also add Matthieu in Cc for the network patch series.
 > > 
-> > Well, I think LSM cleanup could in principle be handled together with the
-> > fsnotify cleanup but I didn't check the details.
+> > On Thu, Oct 03, 2024 at 10:39:31PM +0800, Mikhail Ivanov wrote:
+> > > Do not check TCP access right if socket protocol is not IPPROTO_TCP.
+> > > LANDLOCK_ACCESS_NET_BIND_TCP and LANDLOCK_ACCESS_NET_CONNECT_TCP
+> > > should not restrict bind(2) and connect(2) for non-TCP protocols
+> > > (SCTP, MPTCP, SMC).
+> > > 
+> > > Closes: https://github.com/landlock-lsm/linux/issues/40
+> > > Fixes: fff69fb03dde ("landlock: Support network rules with TCP bind and connect")
+> > > Signed-off-by: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+> > > ---
+> > >   security/landlock/net.c | 2 +-
+> > >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/security/landlock/net.c b/security/landlock/net.c
+> > > index bc3d943a7118..6f59dd98bb13 100644
+> > > --- a/security/landlock/net.c
+> > > +++ b/security/landlock/net.c
+> > > @@ -68,7 +68,7 @@ static int current_check_access_socket(struct socket *const sock,
+> > >   		return -EACCES;
+> > >   	/* Checks if it's a (potential) TCP socket. */
+> > 
+> > We can extend this comment to explain that we don't use sk_is_tcp()
+> > because we need to handle the AF_UNSPEC case.
 > 
-> I'm not sure how we tell if an inode potentially has a LSM related
-> reference hanging off it. The landlock code looks to make an
-> assumption in that the only referenced inodes it sees will have a
-> valid inode->i_security pointer if landlock is enabled. i.e. it
-> calls landlock_inode(inode) and dereferences the returned value
-> without ever checking if inode->i_security is NULL or not.
+> Indeed, I'll do this.
 > 
-> I mean, we could do a check for inode->i_security when the refcount
-> is elevated and replace the security_sb_delete hook with an
-> security_evict_inode hook similar to the proposed fsnotify eviction
-> from evict_inodes().
+> > 
+> > > -	if (sock->type != SOCK_STREAM)
+> > > +	if (sock->type != SOCK_STREAM || sock->sk->sk_protocol != IPPROTO_TCP)
+> > 
+> > I think we should check sock->sk->sk_type instead of sock->type (even if
+> > it should be the same).  To make it simpler, we should only use sk in
+> > current_check_access_socket():
+> > struct sock *sk = sock->sk;
 > 
-> But screwing with LSM instructure looks ....  obnoxiously complex
-> from the outside...
+> Agreed.
+> 
+> > 
+> > Could you please also do s/__sk_common\.skc_/sk_/g ?
+> 
+> Ofc
+> 
+> Btw, there is probably incorrect read of skc_family in this function
+> [1]. I'll add READ_ONCE for sk->sk_family.
+> 
+> [1] https://lore.kernel.org/all/20240202095404.183274-1-edumazet@google.com/
 
-Imho, please just focus on the immediate feedback and ignore all the
-extra bells and whistles that we could or should do. I prefer all of
-that to be done after this series lands.
+I think it should not be a bug with the current code (IPv6 -> IPV4, and
+socket vs. sock) but we should indeed use READ_ONCE() (and add this link
+to the commit message).
+
+> 
+> > 
+> > >   		return 0;
+> > >   	/* Checks for minimal header length to safely read sa_family. */
+> > > -- 
+> > > 2.34.1
+> > > 
+> > > 
+> 
