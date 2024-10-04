@@ -1,132 +1,111 @@
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FDB11E3781
-	for <linux-security-module@vger.kernel.org>; Fri,  4 Oct 2024 15:46:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA74D1CACC0
+	for <linux-security-module@vger.kernel.org>; Fri,  4 Oct 2024 17:04:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728056798; cv=none; b=GSY9QcvAc1ZRM1Gov73LxCTXirSFYPROm4+QF5a6QF1cb3gU9yRuYxkkAZfpLQrEPJxSt0DgQ5HBdRDXCFFwXsLJlh7HFDQyq8EuIiSMRVhrgSxu4YtvY4jqridBqGSnQjma8SRdF6wS0lLT57FSRuarUXLHqj6oFBYWAsU4/jw=
+	t=1728061466; cv=none; b=lPf8Mog8h/l2Q9PMsg8zJl2QMzolYVC1dR4tgrPO5iC23s1KI6spJSuJcaOjA2DhbEVv3v2nJWgRqYc5whBugVaix34eCfOw3cpFjFxHlTdLxASH41ygbOjaHuzprA71F993jptAtWuf6sdhPhkz5dIq3LwFwiJyw23/oqmJciI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728056798; c=relaxed/simple;
-	bh=PiHvLeAZ25LHw+3W/ZSamSrbH+RlzEy+yvSUSr+9frQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TErH3gUkSNFN2oyabtEoXLkkTxIm6jFDLDA3MihuWuIWbcozRm+SoZdYQweHAiziXGQa8nvOt/QEyuUej3RlJ9PlJcQA3b+tS1kmwWI2hezPvgs5vjR1Vv65C3CyldoPbR9k1uWjGqfUnP2GPnDwHn8YaNV2av1OYhasdl8y36I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=JPbn+AAZ; arc=none smtp.client-ip=209.85.128.179
+	s=arc-20240116; t=1728061466; c=relaxed/simple;
+	bh=/bPZOo5ftCUQCx1+u79k3npMjvV++5WUJXtH24xcfs8=;
+	h=Date:Message-ID:From:To:Cc:Subject; b=aZbSuFfLh4i6raBGUuANAXdrbrp40O6cpLW896Y5WJiugXdtH7KGyhMHG1utq5ZfVrcEOLpuWasChojzvkGNmn7kIGCrmYZsP4NyYLR/Vdrvu4w9UFxCh9ABsm+LXTB4feoCzz2Jc+QChfxLyP78+IAAHtHxifQla6vFq2Pwx4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=avpm4ird; arc=none smtp.client-ip=209.85.222.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="JPbn+AAZ"
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6e29c50ccbaso21077257b3.2
-        for <linux-security-module@vger.kernel.org>; Fri, 04 Oct 2024 08:46:36 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="avpm4ird"
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7acd7d9dbefso202531985a.3
+        for <linux-security-module@vger.kernel.org>; Fri, 04 Oct 2024 10:04:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1728056795; x=1728661595; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=paul-moore.com; s=google; t=1728061462; x=1728666262; darn=vger.kernel.org;
+        h=subject:cc:to:from:message-id:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=EbrLkU1Lpo6SakeS0wd5Gjuoh+k4+sarkAymZmH2Fqo=;
-        b=JPbn+AAZoSbD9Fmn+GMWd2iWGa0TElqHNGJ5Zq3FqcOxBIONwpHHa69UnKCAFUYIJh
-         qA3rOJvJCoDRvkk5VFCR7TjY3qW99zn+B7/QdsnPzXLfjTdTbr8L3oC8XJAmsOmkD/a6
-         vpouekJ4pbSYh/Z2h/jRSoS/SvuB/V6yzGvAeTvrdjGj6V0wWOphCIMTPJ47noBWcnJP
-         Dg7gpqMbKkwdjbCi3wlHjZmZPeKbURSOAQFucAEm1/koRzqr0ccaW5ovs6LIbNnxioSC
-         1S+ZqTtDee50ZVv0aXio6qDHqe/xEssaDh+6k29UUw1a8FpEVDcUREF9jdCdFyNDWaNE
-         V++w==
+        bh=pBY4ItyzwqG9KiWzbNSgXF5ZKCYULObRiMPoCiH0Wpo=;
+        b=avpm4irdkOz5wpUtrzm+jdmieMeRdxjbIWKzI1NI72dsvDdNa6kwDELJg6ty9fZdGP
+         W31CtkS84ubYiKpoO/Y343m/2itDgU6lCb9V9UdB98O1KWp/gHedcGDcCLvgKa0TYmO/
+         3etuR9hU9v14ARCMsGiwmFpVN+Q4qoys/2H1OVMmZnrDpXXAH1eAIxOSv1nKGxyiLGIT
+         6+W4xQTKuZtvXKS2u/brB5pK0oX3LKexVu1IIdba5Mddfv15AmO0Qj2+vSxFH6Jnr7/4
+         Q9lZZfhCot3iq9POBqGKp1lshZO4YcOrU03O+2S+A/hmYX+eL/We6+8zJbem33tneNdY
+         u/IA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728056795; x=1728661595;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1728061462; x=1728666262;
+        h=subject:cc:to:from:message-id:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EbrLkU1Lpo6SakeS0wd5Gjuoh+k4+sarkAymZmH2Fqo=;
-        b=IkR2xRgKqLS5Sc4R66m8c+O1SM0IXqTdHVUI+strJCeGCEgDPXRcV5v/s1viDuGMzz
-         X+/5On/1NdF0Oae78IvWfDt0aKIzqAhgqP+f+a/YT6KVny3PewYow6q1cXnP5xYvLOoS
-         XtnMQ64eNfCfCCXSHo1Ml4zDt0wEVKYfmW1wz0pkqDfpJkDzMX6BQXed2dL2Mr5JcXbi
-         YQEzHmRRhVLni+oEIjE1pCttdQ6PJ15j5hIdqQ4EphtvUkeST1Z5DE2quEah++hy4WwO
-         hnr1y8Cd++Cd7W0ap932+cTsquDPQmFQUEk4Jv15PnZ5yNIt2UOYFVsYKwl1RD/88IPI
-         Vpsw==
-X-Gm-Message-State: AOJu0YxHGQcFYdISdy8eOmJgPTTUpu6D9ChLIDgvUjdRkJX8XlJhL3Iv
-	NTVNPPA3CAVQ5fC4+oONxsZhxpvzDqR1AWSlmkOnYtuV4H6AIzqGokYdk0yKV9kC/gVc7eUnE1J
-	yRH+I/UU1jjtmy3NGwNVYAUDyigLxnY2+6/rlhG51u6e5WBA=
-X-Google-Smtp-Source: AGHT+IHyoR3WK5GUcUBMxg8QfS3SEqcaGeXTISKPRyYm5Ix/zXPTbJ71AatOry9tcLgKpIBJudHIh7rFFaufMlesOJM=
-X-Received: by 2002:a05:690c:87:b0:6e2:e22:12d9 with SMTP id
- 00721157ae682-6e2c72f6e1fmr33067777b3.35.1728056795367; Fri, 04 Oct 2024
- 08:46:35 -0700 (PDT)
+        bh=pBY4ItyzwqG9KiWzbNSgXF5ZKCYULObRiMPoCiH0Wpo=;
+        b=KcKMnLSCFcLnmdg/oMB7ghFqbE2bW5eHRyJyCE7x9e1Gfda+4CrJspKdQ46vbU9Rx3
+         uyob4mRRBj3PQ+tYPNmA4nbg99lXSJ4Ga1GK7Ieeiiev7v2CAApJMz3LJly92Z/A94in
+         UPpzngLCjluHC0xkpIZIDZivXoU6oiQYJMqrW5rwY2YsyEGawTsRphbAc5XMz2j4td7/
+         HYksugB7FOGMDXsXWORhxcojB06nh9v/vorVQg0nz5guounh8wRNRyAuRNToASfkUC/o
+         YHcaWov02lrfjgRNCWYhKNlAUtTQ4CV9qPAPySh0a2PYDBoLQtgWRCgQTkeADkBS7tmd
+         5rmQ==
+X-Gm-Message-State: AOJu0Yw4MBthZjOdTi57kZK8YQy8B7avnw/lXPBu7kcIfRsX1n/cX47p
+	16SGAJdgKEiCdXyMUlNwrO7T0UQHqmbOw07U+dgvZfW5uwSkATpEMn/Do/OAYUfCoKzhL1o6sZI
+	=
+X-Google-Smtp-Source: AGHT+IFD9IuPnccoZlSjhYqXrJlLB28tnWkEcno497ozIMsWIdkkP77e/SSc29k/nA3kcuxjgMtoHQ==
+X-Received: by 2002:a05:6214:5d0a:b0:6c5:a40c:52ee with SMTP id 6a1803df08f44-6cb9a49d087mr56730856d6.45.1728061462567;
+        Fri, 04 Oct 2024 10:04:22 -0700 (PDT)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cba46cad70sm914646d6.28.2024.10.04.10.04.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2024 10:04:22 -0700 (PDT)
+Date: Fri, 04 Oct 2024 13:04:21 -0400
+Message-ID: <a68d32deab61b1c4b1be66e5346ef547@paul-moore.com>
+From: Paul Moore <paul@paul-moore.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] lsm/lsm-pr-20241004
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241003210831.387261-2-paul@paul-moore.com> <CAHC9VhTpUsjbNr80MKW5mkg6c+bQXiFDQO3nkBqf_o=Xxb8iAA@mail.gmail.com>
-In-Reply-To: <CAHC9VhTpUsjbNr80MKW5mkg6c+bQXiFDQO3nkBqf_o=Xxb8iAA@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 4 Oct 2024 11:46:24 -0400
-Message-ID: <CAHC9VhTes1Rq=5UA5hju20pm3z_z_bQ36jiKze_xCaQHCE1-4Q@mail.gmail.com>
-Subject: Re: [PATCH] tomoyo: revert CONFIG_SECURITY_TOMOYO_LKM support
-To: linux-security-module@vger.kernel.org, tomoyo-dev-en@lists.osdn.me
-Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, 
-	John Johansen <john.johansen@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 3, 2024 at 5:12=E2=80=AFPM Paul Moore <paul@paul-moore.com> wro=
-te:
-> On Thu, Oct 3, 2024 at 5:08=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
-rote:
-> >
-> > This patch reverts two TOMOYO patches that were merged into Linus' tree
-> > during the v6.12 merge window:
-> >
-> > 8b985bbfabbe ("tomoyo: allow building as a loadable LSM module")
-> > 268225a1de1a ("tomoyo: preparation step for building as a loadable LSM =
-module")
-> >
-> > Together these two patches introduced the CONFIG_SECURITY_TOMOYO_LKM
-> > Kconfig build option which enabled a TOMOYO specific dynamic LSM loadin=
-g
-> > mechanism (see the original commits for more details).  Unfortunately,
-> > this approach was widely rejected by the LSM community as well as some
-> > members of the general kernel community.  Objections included concerns
-> > over setting a bad precedent regarding individual LSMs managing their
-> > LSM callback registrations as well as general kernel symbol exporting
-> > practices.  With little to no support for the CONFIG_SECURITY_TOMOYO_LK=
-M
-> > approach outside of Tetsuo, and multiple objections, we need to revert
-> > these changes.
-> >
-> > Link: https://lore.kernel.org/all/0c4b443a-9c72-4800-97e8-a3816b6a9ae2@=
-I-love.SAKURA.ne.jp
-> > Link: https://lore.kernel.org/all/CAHC9VhR=3DQjdoHG3wJgHFJkKYBg7vkQH2Mp=
-ffgVzQ0tAByo_wRg@mail.gmail.com
-> > Acked-by: John Johansen <john.johansen@canonical.com>
-> > Signed-off-by: Paul Moore <paul@paul-moore.com>
-> > ---
-> >  security/tomoyo/Kconfig               |  15 --
-> >  security/tomoyo/Makefile              |   8 +-
-> >  security/tomoyo/common.c              |  14 +-
-> >  security/tomoyo/common.h              |  72 -----
-> >  security/tomoyo/gc.c                  |   3 -
-> >  security/tomoyo/init.c                | 366 --------------------------
-> >  security/tomoyo/load_policy.c         |  12 -
-> >  security/tomoyo/proxy.c               |  82 ------
-> >  security/tomoyo/securityfs_if.c       |  10 +-
-> >  security/tomoyo/{hooks.h =3D> tomoyo.c} | 110 +++++++-
-> >  security/tomoyo/util.c                |   3 +
-> >  11 files changed, 118 insertions(+), 577 deletions(-)
-> >  delete mode 100644 security/tomoyo/init.c
-> >  delete mode 100644 security/tomoyo/proxy.c
-> >  rename security/tomoyo/{hooks.h =3D> tomoyo.c} (79%)
->
-> As promised, I'm going to wait until Friday (US time) to send this off
-> to Linus in case there are any additional objections to this revert,
-> but based on the conversation thus far it appears that support for
-> reverting CONFIG_SECURITY_TOMOYO_LKM is high.
->
-> John, I added your ACK from the earlier thread, if you would like it
-> removed please let me know.
->
-> If anyone else wants to add their ACK, Reviewed-by, etc. please let me
-> know soon; I'd like to send this up to Linus in time for v6.12-rc2.
+Linus,
 
-Merged into lsm/stable-6.12, I'll be sending this up to Linus soon.
+Here is the CONFIG_SECURITY_TOMOYO_LKM revert that we've been discussing
+this week.  With near unanimous agreement that the original TOMOYO
+patches were not the right way to solve the distro problem Tetsuo is
+trying the solve, reverting is our best option at this time.
 
---=20
+Please merge for v6.12-rc2.
+
+-Paul
+
+--
+The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
+
+  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git
+    tags/lsm-pr-20241004
+
+for you to fetch changes up to c5e3cdbf2afedef77b64229fd0aed693abf0a0c4:
+
+  tomoyo: revert CONFIG_SECURITY_TOMOYO_LKM support
+    (2024-10-04 11:41:22 -0400)
+
+----------------------------------------------------------------
+lsm/stable-6.12 PR 20241004
+----------------------------------------------------------------
+
+Paul Moore (1):
+      tomoyo: revert CONFIG_SECURITY_TOMOYO_LKM support
+
+ security/tomoyo/Kconfig         |   15 -
+ security/tomoyo/Makefile        |    8 
+ security/tomoyo/common.c        |   14 -
+ security/tomoyo/common.h        |   72 ------
+ security/tomoyo/gc.c            |    3 
+ security/tomoyo/init.c          |  366 --------------------------------
+ security/tomoyo/load_policy.c   |   12 -
+ security/tomoyo/proxy.c         |   82 -------
+ security/tomoyo/securityfs_if.c |   10 
+ security/tomoyo/tomoyo.c        |  110 +++++++++
+ security/tomoyo/util.c          |    3 
+ 11 files changed, 118 insertions(+), 577 deletions(-)
+
+--
 paul-moore.com
