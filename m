@@ -1,145 +1,96 @@
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A60F1474B7
-	for <linux-security-module@vger.kernel.org>; Fri,  4 Oct 2024 22:57:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4097153573
+	for <linux-security-module@vger.kernel.org>; Fri,  4 Oct 2024 23:41:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728082658; cv=none; b=Ijaf7oqV3QzXYuT8QKezut5s2YavnrYqEV/Aq1WvKjkbY3hgHutMzMIYE/M2e1B76wAh/GjeBxWbYG6pKL5ulKTcIqy28KOneJNaMCTVDE2MoUdXFzSLT2RER4tzjUV4+U7ntDRw9biOfc6+GnkvOZmM9sA+9CRhCcOUYovyqoM=
+	t=1728085271; cv=none; b=nBn4nfsJfj1/r7AXaGwvddhkwNkkkDt64d1h8mkd9yqmXTaTuJajLqVuc6ry2rL0HkqzU2uamek/ISqN7Sbva/WsMzOKVE3Xkn5VTe17j6N3ExSFccyve89jBP8WbZTryf6Rg5Lb7soRBnZ/+VHhJYia0KIyddYLuoRzMnLjKIM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728082658; c=relaxed/simple;
-	bh=0zNDYmKicdXkXJNZhkX3ch5ApN8NZLXNlezQ5lzQZXk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BGXN4Qeh/ZDWpbmNU3ltyxZz9b2rNwgyG8FMEvjyZkx1lTz8HoGvWOiU7WOyT6EVScvJ6bHtrNCcR64IqDpNO2Q/Xdjt3gmlRXE/97poI5jQGqK5LnEmUQS8XNq62Hm/f1Kqyu9/hOrkgo8yIojGR71F/RdRCPhs3GzPlwW01aY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=mYTaHYnA; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="mYTaHYnA"
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-71c702b2d50so1992515b3a.1
-        for <linux-security-module@vger.kernel.org>; Fri, 04 Oct 2024 15:57:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1728082657; x=1728687457; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9ciJ8IpZWFg047k9vJRJ/wYonk/gs8Fo22fg9xIOeVY=;
-        b=mYTaHYnAk5mq6ghe8XRyNhk/lkdX2LV46rV16iHHNMXCiK/wgPUEu5bgaJhybvk0wV
-         Ot/+RsQmC7oKttdkgeUIXTO6wfWJqPzSQqWrZtGLWuGvjmlQA9t2vYXL7jO3BnJeNfB9
-         ORdJjV7QGrGeaCkYaWg4wwezhtZzfn5XXVg0BLjpuwF22bXKJeCg2x8f4F3Jfxtytmd+
-         z7oWzeAV9r58HQr0av7JTEpZH6OGBuIFjLKxpdm6UENY+nxj4liSDV+H32WNZ3jbRBQc
-         vrl4a+Hfgb86MrVfmGiei0ruBAEQ65bHgBGlIGWznO/HL6cl+DnW4bWSmrDnF6XEl7On
-         e3Bg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728082657; x=1728687457;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9ciJ8IpZWFg047k9vJRJ/wYonk/gs8Fo22fg9xIOeVY=;
-        b=WTFTizgV460UQ6z+UFkIV92hBa/Qhgnuddf7ehOxf3j99KMxAblRiMiyYvc+UNWUm/
-         J3oeUD/LcYkhVSJWsQjDoTlfdIhsFZ9b+ss+i1xA8B5UoK0aEx9t0AvOpqNKP1k1NgAf
-         qkWvXZ16gOhtWCkuJyVdTa8MuTtDBi5pOgBXX4D5sBRKNtFjrCVpsryCYl0nmmWeO0iw
-         21QKUqdUIqtACbvy0/TDrb5fSY8dLH272O73Gx74zmyVgjbbzMjG1Ea0IfKB6ESO6B6g
-         QjKrwyndHR8A/gIRTyrjTX8AhFec2tpx2EjnQCzhRYStscZqNHB35avdH00L4MEoQrRn
-         LpWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUSE6hQSnV7PCWStplRLOzjjk1PW45PdzCu+1rMNEjHLtp9SYtQhRB8UydB7T6HWcQzoqlMwZfLlMNbnyjWJf7EqH364nM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMdJa2Ti+QLxRI1wyHag/hWaKrTIfNcMONtwMhwkFGAb6pGw/K
-	bb5s++CMYcpytCBUMwFwXWmvu3+rMNsdi1b72Vn9obbLKjtP8fUvHRsBSkkZXXz4t9Fd2TDzbET
-	e
-X-Google-Smtp-Source: AGHT+IGPlzugUs+ABOyd+HnqWXf/5t5CdbOUkyvMvvTCJY+6pBbJsYtT/6RKnJaNwbNyrnt128F94w==
-X-Received: by 2002:a05:6a00:8a03:b0:71d:ee1b:c854 with SMTP id d2e1a72fcca58-71dee1bcacamr2545565b3a.9.1728082656701;
-        Fri, 04 Oct 2024 15:57:36 -0700 (PDT)
-Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71df0d62400sm391612b3a.152.2024.10.04.15.57.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2024 15:57:36 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1swrEq-00E1Jj-0h;
-	Sat, 05 Oct 2024 08:57:32 +1000
-Date: Sat, 5 Oct 2024 08:57:32 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>,
-	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-bcachefs@vger.kernel.org, kent.overstreet@linux.dev,
-	torvalds@linux-foundation.org,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@linux.microsoft.com>,
-	Jann Horn <jannh@google.com>, Serge Hallyn <serge@hallyn.com>,
-	Kees Cook <keescook@chromium.org>,
-	linux-security-module@vger.kernel.org,
-	Amir Goldstein <amir73il@gmail.com>
-Subject: Re: lsm sb_delete hook, was Re: [PATCH 4/7] vfs: Convert
- sb->s_inodes iteration to super_iter_inodes()
-Message-ID: <ZwBy3H/nR626eXSL@dread.disaster.area>
-References: <Zv5J3VTGqdjUAu1J@infradead.org>
- <20241003115721.kg2caqgj2xxinnth@quack3>
- <Zv6J34fwj3vNOrIH@infradead.org>
- <20241003122657.mrqwyc5tzeggrzbt@quack3>
- <Zv6Qe-9O44g6qnSu@infradead.org>
- <20241003125650.jtkqezmtnzfoysb2@quack3>
- <Zv6jV40xKIJYuePA@dread.disaster.area>
- <20241003161731.kwveypqzu4bivesv@quack3>
- <Zv8648YMT10TMXSL@dread.disaster.area>
- <20241004-abgemacht-amortisieren-9d54cca35cab@brauner>
+	s=arc-20240116; t=1728085271; c=relaxed/simple;
+	bh=iujaYdwllFg3cG+JJcJMnKE3iL+dAomyKsil3KRn56k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mu3bOrxk3ePUhb0NyPPhDlnsLx68yxgINm71dk0YhGoWW+E+75JX8Py+ZtdAf8f2KobHBeBgO5YVcAAWxLHkOpbuWUkKXGg1bscly3Qvk2oR3NB5R27IyBYzS8/BmSXSEqPHhUQR99Q8LNc8/Wt1Q6Uz3Yqik5k9eon8kbJxRxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 494Nf620052680;
+	Sat, 5 Oct 2024 08:41:06 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 494Nf65x052667
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Sat, 5 Oct 2024 08:41:06 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <ece0c7bd-0d28-4562-8760-c54b0077583a@I-love.SAKURA.ne.jp>
+Date: Sat, 5 Oct 2024 08:41:06 +0900
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241004-abgemacht-amortisieren-9d54cca35cab@brauner>
+User-Agent: Mozilla Thunderbird
+Subject: Re: TOMOYO's pull request for v6.12
+To: Kees Cook <kees@kernel.org>, Paul Moore <paul@paul-moore.com>
+Cc: Fan Wu <wufan@linux.microsoft.com>,
+        =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?=
+ <mic@digikod.net>,
+        Mimi Zohar <zohar@linux.ibm.com>, Micah Morton <mortonm@chromium.org>,
+        Casey Schaufler
+ <casey@schaufler-ca.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        KP Singh <kpsingh@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+        linux-security-module@vger.kernel.org
+References: <CAHC9VhR=QjdoHG3wJgHFJkKYBg7vkQH2MpffgVzQ0tAByo_wRg@mail.gmail.com>
+ <202410041305.544EA7E4E@keescook>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <202410041305.544EA7E4E@keescook>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Virus-Status: clean
+X-Anti-Virus-Server: fsav103.rs.sakura.ne.jp
 
-On Fri, Oct 04, 2024 at 09:21:19AM +0200, Christian Brauner wrote:
-> On Fri, Oct 04, 2024 at 10:46:27AM GMT, Dave Chinner wrote:
-> > On Thu, Oct 03, 2024 at 06:17:31PM +0200, Jan Kara wrote:
-> > > On Thu 03-10-24 23:59:51, Dave Chinner wrote:
-> > > > As for the landlock code, I think it needs to have it's own internal
-> > > > tracking mechanism and not search the sb inode list for inodes that
-> > > > it holds references to. LSM cleanup should be run before before we
-> > > > get to tearing down the inode cache, not after....
-> > > 
-> > > Well, I think LSM cleanup could in principle be handled together with the
-> > > fsnotify cleanup but I didn't check the details.
-> > 
-> > I'm not sure how we tell if an inode potentially has a LSM related
-> > reference hanging off it. The landlock code looks to make an
-> > assumption in that the only referenced inodes it sees will have a
-> > valid inode->i_security pointer if landlock is enabled. i.e. it
-> > calls landlock_inode(inode) and dereferences the returned value
-> > without ever checking if inode->i_security is NULL or not.
-> > 
-> > I mean, we could do a check for inode->i_security when the refcount
-> > is elevated and replace the security_sb_delete hook with an
-> > security_evict_inode hook similar to the proposed fsnotify eviction
-> > from evict_inodes().
-> > 
-> > But screwing with LSM instructure looks ....  obnoxiously complex
-> > from the outside...
-> 
-> Imho, please just focus on the immediate feedback and ignore all the
-> extra bells and whistles that we could or should do. I prefer all of
-> that to be done after this series lands.
+On 2024/10/05 5:54, Kees Cook wrote:
+> - tomoyo_register_hooks() becomes an exploitation gadget that could be
+>   used to bypass the LSM as a whole.
 
-Actually, it's not as bad as I thought it was going to be. I've
-already moved both fsnotify and LSM inode eviction to
-evict_inodes() as preparatory patches...
+tomoyo_register_hooks() is enabled only if "CONFIG_SECURITY_TOMOYO_LKM is
+included while building the kernel" && "security=tomoyo is specified or
+tomoyo is included in the lsm= kernel command line options".
 
-Dave Chinner (2):
-      vfs: move fsnotify inode eviction to evict_inodes()
-      vfs, lsm: rework lsm inode eviction at unmount
+Therefore, those who are building kernels with CONFIG_SECURITY_TOMOYO_LKM=n are
+not affected.
 
- fs/inode.c                    |  52 +++++++++++++---
- fs/notify/fsnotify.c          |  60 -------------------
- fs/super.c                    |   8 +--
- include/linux/lsm_hook_defs.h |   2 +-
- include/linux/security.h      |   2 +-
- security/landlock/fs.c        | 134 ++++++++++--------------------------------
- security/security.c           |  31 ++++++----
-7 files changed, 99 insertions(+), 190 deletions(-)
+Even if kernels are built with CONFIG_SECURITY_TOMOYO_LKM=y, callbacks
+registered by tomoyo_register_hooks() won't be called unless "security=tomoyo
+is specified or tomoyo is included in the lsm= kernel command line options", for
+the proxy callbacks that use static call tables are not registered.
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Even if kernels are built with CONFIG_SECURITY_TOMOYO_LKM=y, and "security=tomoyo
+is specified or tomoyo is included in the lsm= kernel command line options",
+tomoyo_register_hooks() can be called only once. And tomoyo.ko is loaded by the
+time /sbin/init (nowadays /usr/lib/systemd/systemd) starts. That is, by the time
+an attacker can login from console or can start attacking via network,
+tomoyo_register_hooks() is no longer callable.
+
+If an attacker can control boot behavior before /sbin/init (nowadays
+/usr/lib/systemd/systemd) starts (e.g. by editing kernel boot command line, or
+loading malicious kernel module from initramfs before tomoyo.ko is loaded), that
+system was already compromised and is a different problem. (If kernel command line
+options were modified to enable only capability (i.e. "lsm=capability"), how can
+selinux/apparmor etc. can protect that system?)
+
+Therefore, the only problem with tomoyo.ko approach is that the static call tables
+for tomoyo_register_hooks() are currently not marked as __ro_after_init. But it will
+be possible to make the static call tables read-only if the static call tables
+are aligned in a page boundary and an architecture-dependent kernel API that changes
+given page's attribute to read-only is called. (This is why __ro_after_init can work,
+isn't it?)
+
+As a whole, I don't think tomoyo.ko approach is unacceptably dangerous.
+
