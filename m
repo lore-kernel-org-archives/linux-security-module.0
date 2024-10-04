@@ -1,92 +1,145 @@
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21BC9231CA4
-	for <linux-security-module@vger.kernel.org>; Fri,  4 Oct 2024 21:03:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A60F1474B7
+	for <linux-security-module@vger.kernel.org>; Fri,  4 Oct 2024 22:57:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728075824; cv=none; b=ttopSHKX2wBjwOA3rdUfrt2QrfugjRMWFd3XPq4rqOobQWGr480qwjZBTM46nZbUjPXD+Y4+NJ2gxAfWu0aswiGihylT9XbkY5rjx0lhyHiPPOQZHT+vuy1ngWOIBGsXmx6IIL6vopg3afomQhrxhecD8P0hblw1xtVyxHfWpT0=
+	t=1728082658; cv=none; b=Ijaf7oqV3QzXYuT8QKezut5s2YavnrYqEV/Aq1WvKjkbY3hgHutMzMIYE/M2e1B76wAh/GjeBxWbYG6pKL5ulKTcIqy28KOneJNaMCTVDE2MoUdXFzSLT2RER4tzjUV4+U7ntDRw9biOfc6+GnkvOZmM9sA+9CRhCcOUYovyqoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728075824; c=relaxed/simple;
-	bh=LUtF8OMZD6OhjTztSKVwiIymqMIIcBngOldnt8i1bzM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DwNtgvgSLr1kp8zJcDeDWxn6WOsa+8HbskbMC5xutlpLSlkpHiVvxvnJUitorBP0s13hd1xughtjtTXHuIlM5mQzHToVigGzVZLwGO44lQJPnCNfG04e6R/H8IlHF9gZ/z6UL1ZgCNs7mHCCpKDN22IxDVxNi8rtgbDwqv+CXpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=YqWHMmDL; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1728082658; c=relaxed/simple;
+	bh=0zNDYmKicdXkXJNZhkX3ch5ApN8NZLXNlezQ5lzQZXk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BGXN4Qeh/ZDWpbmNU3ltyxZz9b2rNwgyG8FMEvjyZkx1lTz8HoGvWOiU7WOyT6EVScvJ6bHtrNCcR64IqDpNO2Q/Xdjt3gmlRXE/97poI5jQGqK5LnEmUQS8XNq62Hm/f1Kqyu9/hOrkgo8yIojGR71F/RdRCPhs3GzPlwW01aY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=mYTaHYnA; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="YqWHMmDL"
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6dbb24ee2ebso27448947b3.1
-        for <linux-security-module@vger.kernel.org>; Fri, 04 Oct 2024 14:03:42 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="mYTaHYnA"
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-71c702b2d50so1992515b3a.1
+        for <linux-security-module@vger.kernel.org>; Fri, 04 Oct 2024 15:57:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1728075822; x=1728680622; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LUtF8OMZD6OhjTztSKVwiIymqMIIcBngOldnt8i1bzM=;
-        b=YqWHMmDL74EsBXaLAb9B8BPOP+9y/hO23il3KViASGyy9Mvy2I3gUPU32Fw6gphp0G
-         gGT7a22Do2NavsGDpj0Y7wnD3jJucm5x2tB38vxH6eJuoi5UI54KdMGjX587mH/Gb5ok
-         0T75YX0FzEJPxZGyCZnZB8cXQKHLjDf+jjEqNYI4JrdRT+Nolt76waJL3u2qnjDPTrBF
-         JoeMnL8xxjxviR9TgHToiKr2FcAIGwmg+ja1Ev+spV7CN4UF/g5nJWzBjNy/5moyPOCs
-         CghJvQigL4vD8VmgeSJeMlhrUBs4PnaFblF+37fjwa19xPRD33Ayd19dcflrCCN0UWvt
-         ax2g==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1728082657; x=1728687457; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=9ciJ8IpZWFg047k9vJRJ/wYonk/gs8Fo22fg9xIOeVY=;
+        b=mYTaHYnAk5mq6ghe8XRyNhk/lkdX2LV46rV16iHHNMXCiK/wgPUEu5bgaJhybvk0wV
+         Ot/+RsQmC7oKttdkgeUIXTO6wfWJqPzSQqWrZtGLWuGvjmlQA9t2vYXL7jO3BnJeNfB9
+         ORdJjV7QGrGeaCkYaWg4wwezhtZzfn5XXVg0BLjpuwF22bXKJeCg2x8f4F3Jfxtytmd+
+         z7oWzeAV9r58HQr0av7JTEpZH6OGBuIFjLKxpdm6UENY+nxj4liSDV+H32WNZ3jbRBQc
+         vrl4a+Hfgb86MrVfmGiei0ruBAEQ65bHgBGlIGWznO/HL6cl+DnW4bWSmrDnF6XEl7On
+         e3Bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728075822; x=1728680622;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LUtF8OMZD6OhjTztSKVwiIymqMIIcBngOldnt8i1bzM=;
-        b=Fn2J3eMlZaxzKgb3kQBrLTI/uS+jVw8WIcRhFsdjPdwcLyBRUE9oJlJqCOkz22EhR8
-         J7bkfBQSpNAJ961VivhaVz6IL8IBHYddiDhooWDPikFcOCnLN45h5F1rh0l3+Jy3CmPZ
-         IzPMZeTI4yW3rNh9wbRRcYHPFfALXZDOHlOh6DooVb7mPjp68v4VWyOdmJtYe/vLoEn7
-         buFmo6wjfNl5BlAtVO3+Cy4+QRmeOTqO1orXfAnOGhlDKVmU6kaVQB6UN5s9KNQP+Mfj
-         Bb9R06pEn5+RtdfqfrorlF63kaRha8RmmYIlK1qLU5b620HhYL+xWy23wwLnO/c5kqJ/
-         G64Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW1Vj8WsdudcGkiV6jXSYILRmOpQ+bFL1pehqucuypeFWqHtppxXa09HQN9Is+OufZB03/gjiLH2V9BByYy5Kl0TNW3W0w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5TQJ8qegY8/PXpK/uJs6tDpwGBMZ9ImzJ2xro9jrPk/R/WS9M
-	oVQDsNb6ngW9Gwjc5CprFtIFUX/dbQklqaJyZfVE6mKq3S4ObHERWVMnxrRNr3lp5/zIojW+d3Z
-	A69FavXXBw9Gre/nPlDG8h+ygKHC1npj1eeWy
-X-Google-Smtp-Source: AGHT+IGAr6opPG1Q4+oZSiu/GkMgXb2Y7rEkBWMwEnmKdYjyk+LS0K7/NwFoc1q4RRubDX2GI9V7Emnt08ErrdvnMJ4=
-X-Received: by 2002:a05:690c:3010:b0:6db:d7c9:c97b with SMTP id
- 00721157ae682-6e2c72b2c50mr32676227b3.40.1728075822062; Fri, 04 Oct 2024
- 14:03:42 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728082657; x=1728687457;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9ciJ8IpZWFg047k9vJRJ/wYonk/gs8Fo22fg9xIOeVY=;
+        b=WTFTizgV460UQ6z+UFkIV92hBa/Qhgnuddf7ehOxf3j99KMxAblRiMiyYvc+UNWUm/
+         J3oeUD/LcYkhVSJWsQjDoTlfdIhsFZ9b+ss+i1xA8B5UoK0aEx9t0AvOpqNKP1k1NgAf
+         qkWvXZ16gOhtWCkuJyVdTa8MuTtDBi5pOgBXX4D5sBRKNtFjrCVpsryCYl0nmmWeO0iw
+         21QKUqdUIqtACbvy0/TDrb5fSY8dLH272O73Gx74zmyVgjbbzMjG1Ea0IfKB6ESO6B6g
+         QjKrwyndHR8A/gIRTyrjTX8AhFec2tpx2EjnQCzhRYStscZqNHB35avdH00L4MEoQrRn
+         LpWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUSE6hQSnV7PCWStplRLOzjjk1PW45PdzCu+1rMNEjHLtp9SYtQhRB8UydB7T6HWcQzoqlMwZfLlMNbnyjWJf7EqH364nM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMdJa2Ti+QLxRI1wyHag/hWaKrTIfNcMONtwMhwkFGAb6pGw/K
+	bb5s++CMYcpytCBUMwFwXWmvu3+rMNsdi1b72Vn9obbLKjtP8fUvHRsBSkkZXXz4t9Fd2TDzbET
+	e
+X-Google-Smtp-Source: AGHT+IGPlzugUs+ABOyd+HnqWXf/5t5CdbOUkyvMvvTCJY+6pBbJsYtT/6RKnJaNwbNyrnt128F94w==
+X-Received: by 2002:a05:6a00:8a03:b0:71d:ee1b:c854 with SMTP id d2e1a72fcca58-71dee1bcacamr2545565b3a.9.1728082656701;
+        Fri, 04 Oct 2024 15:57:36 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71df0d62400sm391612b3a.152.2024.10.04.15.57.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Oct 2024 15:57:36 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1swrEq-00E1Jj-0h;
+	Sat, 05 Oct 2024 08:57:32 +1000
+Date: Sat, 5 Oct 2024 08:57:32 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>,
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-bcachefs@vger.kernel.org, kent.overstreet@linux.dev,
+	torvalds@linux-foundation.org,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@linux.microsoft.com>,
+	Jann Horn <jannh@google.com>, Serge Hallyn <serge@hallyn.com>,
+	Kees Cook <keescook@chromium.org>,
+	linux-security-module@vger.kernel.org,
+	Amir Goldstein <amir73il@gmail.com>
+Subject: Re: lsm sb_delete hook, was Re: [PATCH 4/7] vfs: Convert
+ sb->s_inodes iteration to super_iter_inodes()
+Message-ID: <ZwBy3H/nR626eXSL@dread.disaster.area>
+References: <Zv5J3VTGqdjUAu1J@infradead.org>
+ <20241003115721.kg2caqgj2xxinnth@quack3>
+ <Zv6J34fwj3vNOrIH@infradead.org>
+ <20241003122657.mrqwyc5tzeggrzbt@quack3>
+ <Zv6Qe-9O44g6qnSu@infradead.org>
+ <20241003125650.jtkqezmtnzfoysb2@quack3>
+ <Zv6jV40xKIJYuePA@dread.disaster.area>
+ <20241003161731.kwveypqzu4bivesv@quack3>
+ <Zv8648YMT10TMXSL@dread.disaster.area>
+ <20241004-abgemacht-amortisieren-9d54cca35cab@brauner>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHC9VhR=QjdoHG3wJgHFJkKYBg7vkQH2MpffgVzQ0tAByo_wRg@mail.gmail.com>
- <202410041305.544EA7E4E@keescook>
-In-Reply-To: <202410041305.544EA7E4E@keescook>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 4 Oct 2024 17:03:31 -0400
-Message-ID: <CAHC9VhRPHrzVNAp-krAt5RFA8_nN8hPyW3of7i2fhY9ioESogA@mail.gmail.com>
-Subject: Re: TOMOYO's pull request for v6.12
-To: Kees Cook <kees@kernel.org>
-Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, Fan Wu <wufan@linux.microsoft.com>, 
-	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	Mimi Zohar <zohar@linux.ibm.com>, Micah Morton <mortonm@chromium.org>, 
-	Casey Schaufler <casey@schaufler-ca.com>, John Johansen <john.johansen@canonical.com>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, KP Singh <kpsingh@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241004-abgemacht-amortisieren-9d54cca35cab@brauner>
 
-On Fri, Oct 4, 2024 at 4:54=E2=80=AFPM Kees Cook <kees@kernel.org> wrote:
->
-> On Wed, Oct 02, 2024 at 04:12:50PM -0400, Paul Moore wrote:
-> > As I wrote in my original response to this pull request, this is not
-> > something I would accept in a new LSM submission and thus I feel
-> > compelled to speak out against this change and submit a revert to
-> > Linus.
->
-> The patch should be reverted regardless of the LSM specifics ...
+On Fri, Oct 04, 2024 at 09:21:19AM +0200, Christian Brauner wrote:
+> On Fri, Oct 04, 2024 at 10:46:27AM GMT, Dave Chinner wrote:
+> > On Thu, Oct 03, 2024 at 06:17:31PM +0200, Jan Kara wrote:
+> > > On Thu 03-10-24 23:59:51, Dave Chinner wrote:
+> > > > As for the landlock code, I think it needs to have it's own internal
+> > > > tracking mechanism and not search the sb inode list for inodes that
+> > > > it holds references to. LSM cleanup should be run before before we
+> > > > get to tearing down the inode cache, not after....
+> > > 
+> > > Well, I think LSM cleanup could in principle be handled together with the
+> > > fsnotify cleanup but I didn't check the details.
+> > 
+> > I'm not sure how we tell if an inode potentially has a LSM related
+> > reference hanging off it. The landlock code looks to make an
+> > assumption in that the only referenced inodes it sees will have a
+> > valid inode->i_security pointer if landlock is enabled. i.e. it
+> > calls landlock_inode(inode) and dereferences the returned value
+> > without ever checking if inode->i_security is NULL or not.
+> > 
+> > I mean, we could do a check for inode->i_security when the refcount
+> > is elevated and replace the security_sb_delete hook with an
+> > security_evict_inode hook similar to the proposed fsnotify eviction
+> > from evict_inodes().
+> > 
+> > But screwing with LSM instructure looks ....  obnoxiously complex
+> > from the outside...
+> 
+> Imho, please just focus on the immediate feedback and ignore all the
+> extra bells and whistles that we could or should do. I prefer all of
+> that to be done after this series lands.
 
-Just in case people haven't seen this already:
+Actually, it's not as bad as I thought it was going to be. I've
+already moved both fsnotify and LSM inode eviction to
+evict_inodes() as preparatory patches...
 
-https://lore.kernel.org/linux-security-module/a68d32deab61b1c4b1be66e5346ef=
-547@paul-moore.com
+Dave Chinner (2):
+      vfs: move fsnotify inode eviction to evict_inodes()
+      vfs, lsm: rework lsm inode eviction at unmount
 
---=20
-paul-moore.com
+ fs/inode.c                    |  52 +++++++++++++---
+ fs/notify/fsnotify.c          |  60 -------------------
+ fs/super.c                    |   8 +--
+ include/linux/lsm_hook_defs.h |   2 +-
+ include/linux/security.h      |   2 +-
+ security/landlock/fs.c        | 134 ++++++++++--------------------------------
+ security/security.c           |  31 ++++++----
+7 files changed, 99 insertions(+), 190 deletions(-)
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
