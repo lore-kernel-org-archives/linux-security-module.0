@@ -1,115 +1,253 @@
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+Received: from smtp-8faa.mail.infomaniak.ch (smtp-8faa.mail.infomaniak.ch [83.166.143.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 428CA158214
-	for <linux-security-module@vger.kernel.org>; Fri,  4 Oct 2024 14:34:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8565C1D9A4F;
+	Fri,  4 Oct 2024 15:04:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728052474; cv=none; b=QLkGfNHeu+WwouBbJm3BTF8s+lZXOyJzHakkxfwCAZwS6UpsSXSx5d+yQV2Cz+wF/HXPjk4gyS+9DzJQWOVkLwA/TFJbr2ZwCN51JpbxgApkmd/hUo3FV5KoaKOO3mtGS88BgvI99F3zAB8O9eti8wYvGLrwV61unoAsD8iicOo=
+	t=1728054275; cv=none; b=U2fnmY1qvEgi76MRzeiDnyNdaWwLTtgj3HB0z08keKcMmz8g6vBMxVMJf+fr28EJWqnDNQlS96UzlA6gSeKLmIVyPzSPmWnyLEjJQ0osvSh+jEHyDkyLm98fUZ35ArEcOd4GvQpBvOiAi3UglBkuw+sl3l5cIRcSNpwulk9ioqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728052474; c=relaxed/simple;
-	bh=T8mzWlYRuYP+w4F7uAawXjIXRos0QfOqVheiUuWmxZc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ceFM+9h2zKb1PYhWAKwR9Fzgflw4VA4Nga2tQ8MK16YELnhLOUu1ZNMSly8QGtCv+YZBy0912LTg/xFGXBFWAuHO/r2yNwqyqOaj3Yp4OWlzju+as525zuAYm9LZ4uKcoCbu0ZpC1+BfJpBC269Tf9mfqg9D1mQ05RCEbq2ozno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 494EYTdD067393;
-	Fri, 4 Oct 2024 23:34:29 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 494EYTw1067386
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Fri, 4 Oct 2024 23:34:29 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <0bbd6f2f-6248-4fd4-bd95-7d974d3b7bba@I-love.SAKURA.ne.jp>
-Date: Fri, 4 Oct 2024 23:34:29 +0900
+	s=arc-20240116; t=1728054275; c=relaxed/simple;
+	bh=lT0XRAqjOTPeWuN8bb0XCVgCD/rTTCENAWcimJ8sjxo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CSMxSu3XZZhyVRIauV53GyE54XzzHEW5+UHio6zNBB3+Mr+q+kqZ2HqY/zdnydlHGyDZHuHRzpTRzyFqAk7wtbGqII9nQdo1cVlgFnoVSylRyO26+c7LxvGGi/CC/fJKef7KluK4K/jcvoMUhOjh9+L9DhLPendtvkQIFlV+GsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=XEXvz92t; arc=none smtp.client-ip=83.166.143.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="XEXvz92t"
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XKsJr2VQgzC1c;
+	Fri,  4 Oct 2024 17:04:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1728054268;
+	bh=iSe7t8jGuIY2A3QPYUnH1aJ3yZ/co8bw8960T0QeURI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XEXvz92t+oY93jUSeepGVYDlD/holMGvGGDjbGDW5VZv+z9SAYrcBpTC3rYL+th5w
+	 X/ugZKUtvxpYnwtguwP3ZXObApgh7o2ItwX0zxet5GQkmSQ1cr2nhw1py3NjnfjebZ
+	 OlvMuX3OfyebkK6f0qhT2MaGxffbfYuPod+4PNwk=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4XKsJp6q1hz630;
+	Fri,  4 Oct 2024 17:04:26 +0200 (CEST)
+Date: Fri, 4 Oct 2024 17:04:23 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Matthieu Buffet <matthieu@buffet.re>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E . Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+Subject: Re: [RFC PATCH v1 5/7] samples/landlock: Add sandboxer UDP access
+ control
+Message-ID: <20241004.ohc2aeYei1oo@digikod.net>
+References: <20240916122230.114800-1-matthieu@buffet.re>
+ <20240916122230.114800-6-matthieu@buffet.re>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: TOMOYO's pull request for v6.12
-To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>,
-        Fan Wu <wufan@linux.microsoft.com>, Mimi Zohar <zohar@linux.ibm.com>,
-        Micah Morton <mortonm@chromium.org>,
-        Casey Schaufler
- <casey@schaufler-ca.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        KP Singh <kpsingh@kernel.org>, Kees Cook <keescook@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        linux-security-module@vger.kernel.org
-References: <CAHC9VhR=QjdoHG3wJgHFJkKYBg7vkQH2MpffgVzQ0tAByo_wRg@mail.gmail.com>
- <20241003024307.GA833999@mail.hallyn.com>
- <CAHC9VhSa-Jpqmej=3WsLFvSKWamZjFDwUpLHrJOyxaPPujM6ww@mail.gmail.com>
- <20241003162940.GA848724@mail.hallyn.com>
- <bc8bd0d5-ce58-4146-8bfa-1042c6575290@I-love.SAKURA.ne.jp>
- <20241004.ohpie8Ing5bu@digikod.net>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <20241004.ohpie8Ing5bu@digikod.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Virus-Status: clean
-X-Anti-Virus-Server: fsav103.rs.sakura.ne.jp
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240916122230.114800-6-matthieu@buffet.re>
+X-Infomaniak-Routing: alpha
 
-On 2024/10/04 22:11, Mickaël Salaün wrote:
-> On Fri, Oct 04, 2024 at 07:50:05PM +0900, Tetsuo Handa wrote:
->> On 2024/10/04 1:29, Serge E. Hallyn wrote:
->>> Well, this didn't occur to me last night, but what I'd be curious to
->>> hear is whether Tetsuo has discussed this with RedHat.  Because unless
->>> this makes them say "ok we'll enable that", it still doesn't help him.
->>> And I don't imagine them agreeing to enable the CONFIG_TOMOYO_LKM.
->>
->> Majority of Linux users I work for are using Red Hat. But I have absolutely
+On Mon, Sep 16, 2024 at 02:22:28PM +0200, Matthieu Buffet wrote:
+> Add environment variables to control associated access rights:
+> (each one takes a list of ports separated by colons, like other
+> list options)
 > 
-> My understanding is that Red Hat's customers must ask for a feature for
-> it to be available (in a future version), so you should ask your users
-> to support the request.
-
-I myself is not a RHEL user. I use RockyLinux and Ubuntu for improving quality
-of the upstream kernels via fixing bugs syzbot finds. (Unfortunately, currently
-the "static call" change is preventing me from spending my resource for this
-activity, for "static call" broke AKARI.)
-
-My customers are RHEL users, and I'm working for their RHEL systems, with my
-feeling that how their projects becomes easy if I can profile their systems
-using TOMOYO. But my customers do not know about TOMOYO. I have no channel to
-introduce TOMOYO to relevant persons who are in a position of giving
-permissions for contacting Red Hat support using their RHEL subscriptions.
-
->> You might think that such LSM module is not a security. But TOMOYO is
->> also used as a sort of system-wide strace-like profiler. Understanding
->> what the users' systems are doing is useful/helpful for users.
+> - LL_UDP_BIND
+> - LL_UDP_CONNECT
+> - LL_UDP_RECVMSG
+> - LL_UDP_SENDMSG
 > 
-> I think an LSM is not the right tool for tracing because it only sees a
-> subset of the access requests: other security mechanisms may deny
-> requests before they reach an LSM.  Linux provides great tracing
-> mechanisms though.
-
-LSM is the best-fitting tool for my purpose.
-You can see an example at https://youtu.be/5cgqbQI9bEM .
-
-
-
->> If one of Red Hat's worries that refusing requests due to broken policy is
->> gone, the barrier for enabling such LSM module in Red Hat's kernels will be
->> lowered. If such LSM module becomes available in Red Hat kernels, I might be
->> able to find room/chance to help/involve with Red Hat community.
+> Signed-off-by: Matthieu Buffet <matthieu@buffet.re>
+> ---
+>  samples/landlock/sandboxer.c | 88 ++++++++++++++++++++++++++++++++----
+>  1 file changed, 80 insertions(+), 8 deletions(-)
 > 
-> The question is about potential maintenance cost vs. ROI, not only
-> security policy issues.  I guess Red Hat would not care about bugs in
-> non-default service configurations, eBPF programs, nor LSM policies, but
-> they will if additional code potentially impacts other parts of the
-> system and may increase the number of potential bugs, and then the
-> maintenance cost.  Open source is not free for everyone.
+> diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
+> index 08704504dc51..dadd30dad712 100644
+> --- a/samples/landlock/sandboxer.c
+> +++ b/samples/landlock/sandboxer.c
+> @@ -55,6 +55,10 @@ static inline int landlock_restrict_self(const int ruleset_fd,
+>  #define ENV_FS_RW_NAME "LL_FS_RW"
+>  #define ENV_TCP_BIND_NAME "LL_TCP_BIND"
+>  #define ENV_TCP_CONNECT_NAME "LL_TCP_CONNECT"
+> +#define ENV_UDP_BIND_NAME "LL_UDP_BIND"
+> +#define ENV_UDP_CONNECT_NAME "LL_UDP_CONNECT"
+> +#define ENV_UDP_RECVMSG_NAME "LL_UDP_RECVMSG"
+> +#define ENV_UDP_SENDMSG_NAME "LL_UDP_SENDMSG"
+>  #define ENV_DELIMITER ":"
+>  
+>  static int parse_path(char *env_path, const char ***const path_list)
+> @@ -219,7 +223,7 @@ static int populate_ruleset_net(const char *const env_var, const int ruleset_fd,
+>  
+>  /* clang-format on */
+>  
+> -#define LANDLOCK_ABI_LAST 5
+> +#define LANDLOCK_ABI_LAST 6
+>  
+>  static void print_help(const char *prog)
+>  {
+> @@ -247,11 +251,25 @@ static void print_help(const char *prog)
+>  		"to allow nothing, e.g. %s=\"\"):\n",
+>  		ENV_TCP_BIND_NAME);
+>  	fprintf(stderr,
+> -		"* %s: list of ports allowed to bind (server).\n",
+> +		"* %s: list of TCP ports allowed to bind (server)\n",
+>  		ENV_TCP_BIND_NAME);
+>  	fprintf(stderr,
+> -		"* %s: list of ports allowed to connect (client).\n",
+> +		"* %s: list of TCP ports allowed to connect (client)\n",
+>  		ENV_TCP_CONNECT_NAME);
+> +	fprintf(stderr,
+> +		"* %s: list of UDP ports allowed to bind (client: set as "
+> +		"source port/server: listen on port)\n",
+> +		ENV_UDP_BIND_NAME);
+> +	fprintf(stderr,
+> +		"* %s: list of UDP ports allowed to connect (client: set as "
+> +		"destination port/server: only receive from one client)\n",
+> +		ENV_UDP_CONNECT_NAME);
+> +	fprintf(stderr,
+> +		"* %s: list of UDP ports allowed to send to (client/server)\n",
+> +		ENV_UDP_SENDMSG_NAME);
+> +	fprintf(stderr,
+> +		"* %s: list of UDP ports allowed to recv from (client/server)\n",
+> +		ENV_UDP_RECVMSG_NAME);
+>  	fprintf(stderr,
+>  		"\n"
+>  		"Example:\n"
+> @@ -259,9 +277,12 @@ static void print_help(const char *prog)
+>  		"%s=\"/dev/null:/dev/full:/dev/zero:/dev/pts:/tmp\" "
+>  		"%s=\"9418\" "
+>  		"%s=\"80:443\" "
+> +		"%s=\"0\" "
+> +		"%s=\"53\" "
+>  		"%s bash -i\n\n",
+>  		ENV_FS_RO_NAME, ENV_FS_RW_NAME, ENV_TCP_BIND_NAME,
+> -		ENV_TCP_CONNECT_NAME, prog);
+> +		ENV_TCP_CONNECT_NAME, ENV_UDP_RECVMSG_NAME,
+> +		ENV_UDP_SENDMSG_NAME, prog);
+>  	fprintf(stderr,
+>  		"This sandboxer can use Landlock features "
+>  		"up to ABI version %d.\n",
+> @@ -280,7 +301,11 @@ int main(const int argc, char *const argv[], char *const *const envp)
+>  	struct landlock_ruleset_attr ruleset_attr = {
+>  		.handled_access_fs = access_fs_rw,
+>  		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
+> -				      LANDLOCK_ACCESS_NET_CONNECT_TCP,
+> +				      LANDLOCK_ACCESS_NET_CONNECT_TCP |
+> +				      LANDLOCK_ACCESS_NET_BIND_UDP |
+> +				      LANDLOCK_ACCESS_NET_CONNECT_UDP |
+> +				      LANDLOCK_ACCESS_NET_RECVMSG_UDP |
+> +				      LANDLOCK_ACCESS_NET_SENDMSG_UDP,
+>  	};
+>  
+>  	if (argc < 2) {
+> @@ -354,6 +379,14 @@ int main(const int argc, char *const argv[], char *const *const envp)
+>  			"provided by ABI version %d (instead of %d).\n",
+>  			LANDLOCK_ABI_LAST, abi);
+>  		__attribute__((fallthrough));
 
-Without ability to do conversations, potential maintenance cost vs. ROI
-cannot be evaluated. And I can't gain chances/ability to do conversations
-with relevant people...
+> +	case 5:
+> +		/* Removes UDP support for ABI < 6 */
+> +		ruleset_attr.handled_access_net &=
+> +			~(LANDLOCK_ACCESS_NET_BIND_UDP |
+> +			  LANDLOCK_ACCESS_NET_CONNECT_UDP |
+> +			  LANDLOCK_ACCESS_NET_RECVMSG_UDP |
+> +			  LANDLOCK_ACCESS_NET_SENDMSG_UDP);
+> +		__attribute__((fallthrough));
+
+This hunk should go just after the "scoped" field cleanup and before the
+hint.  This way the hint is always printed if the current ABI is not the
+last (known) one.  This hunk should then start with a fullthrough
+attribute.
+
+>  	case LANDLOCK_ABI_LAST:
+>  		break;
+>  	default:
+> @@ -366,18 +399,42 @@ int main(const int argc, char *const argv[], char *const *const envp)
+>  	access_fs_ro &= ruleset_attr.handled_access_fs;
+>  	access_fs_rw &= ruleset_attr.handled_access_fs;
+>  
+> -	/* Removes bind access attribute if not supported by a user. */
+> +	/* Removes TCP bind access attribute if not supported by a user. */
+
+You can send a separate patch with these comment fixes.
+
+>  	env_port_name = getenv(ENV_TCP_BIND_NAME);
+>  	if (!env_port_name) {
+>  		ruleset_attr.handled_access_net &=
+>  			~LANDLOCK_ACCESS_NET_BIND_TCP;
+>  	}
+> -	/* Removes connect access attribute if not supported by a user. */
+> +	/* Removes TCP connect access attribute if not supported by a user. */
+>  	env_port_name = getenv(ENV_TCP_CONNECT_NAME);
+>  	if (!env_port_name) {
+>  		ruleset_attr.handled_access_net &=
+>  			~LANDLOCK_ACCESS_NET_CONNECT_TCP;
+>  	}
+> +	/* Removes UDP bind access attribute if not supported by a user. */
+> +	env_port_name = getenv(ENV_UDP_BIND_NAME);
+> +	if (!env_port_name) {
+> +		ruleset_attr.handled_access_net &=
+> +			~LANDLOCK_ACCESS_NET_BIND_UDP;
+> +	}
+> +	/* Removes UDP bind access attribute if not supported by a user. */
+> +	env_port_name = getenv(ENV_UDP_CONNECT_NAME);
+> +	if (!env_port_name) {
+> +		ruleset_attr.handled_access_net &=
+> +			~LANDLOCK_ACCESS_NET_CONNECT_UDP;
+> +	}
+> +	/* Removes UDP recv access attribute if not supported by a user. */
+> +	env_port_name = getenv(ENV_UDP_RECVMSG_NAME);
+> +	if (!env_port_name) {
+> +		ruleset_attr.handled_access_net &=
+> +			~LANDLOCK_ACCESS_NET_RECVMSG_UDP;
+> +	}
+> +	/* Removes UDP send access attribute if not supported by a user. */
+> +	env_port_name = getenv(ENV_UDP_SENDMSG_NAME);
+> +	if (!env_port_name) {
+> +		ruleset_attr.handled_access_net &=
+> +			~LANDLOCK_ACCESS_NET_SENDMSG_UDP;
+> +	}
+>  
+>  	ruleset_fd =
+>  		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
+> @@ -392,7 +449,6 @@ int main(const int argc, char *const argv[], char *const *const envp)
+>  	if (populate_ruleset_fs(ENV_FS_RW_NAME, ruleset_fd, access_fs_rw)) {
+>  		goto err_close_ruleset;
+>  	}
+> -
+>  	if (populate_ruleset_net(ENV_TCP_BIND_NAME, ruleset_fd,
+>  				 LANDLOCK_ACCESS_NET_BIND_TCP)) {
+>  		goto err_close_ruleset;
+> @@ -401,6 +457,22 @@ int main(const int argc, char *const argv[], char *const *const envp)
+>  				 LANDLOCK_ACCESS_NET_CONNECT_TCP)) {
+>  		goto err_close_ruleset;
+>  	}
+> +	if (populate_ruleset_net(ENV_UDP_BIND_NAME, ruleset_fd,
+> +				 LANDLOCK_ACCESS_NET_BIND_UDP)) {
+> +		goto err_close_ruleset;
+> +	}
+> +	if (populate_ruleset_net(ENV_UDP_CONNECT_NAME, ruleset_fd,
+> +				 LANDLOCK_ACCESS_NET_CONNECT_UDP)) {
+> +		goto err_close_ruleset;
+> +	}
+> +	if (populate_ruleset_net(ENV_UDP_RECVMSG_NAME, ruleset_fd,
+> +				 LANDLOCK_ACCESS_NET_RECVMSG_UDP)) {
+> +		goto err_close_ruleset;
+> +	}
+> +	if (populate_ruleset_net(ENV_UDP_SENDMSG_NAME, ruleset_fd,
+> +				 LANDLOCK_ACCESS_NET_SENDMSG_UDP)) {
+> +		goto err_close_ruleset;
+> +	}
+>  
+>  	if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0)) {
+>  		perror("Failed to restrict privileges");
+> -- 
+> 2.39.5
+> 
+> 
