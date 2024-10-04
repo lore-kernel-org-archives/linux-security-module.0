@@ -1,145 +1,103 @@
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D65501EF927;
-	Fri,  4 Oct 2024 18:48:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6934B1DD9D1
+	for <linux-security-module@vger.kernel.org>; Fri,  4 Oct 2024 18:59:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728067708; cv=none; b=YPGF2P30Xu+Nv0jGSvy6qU9W6w4a8ILD+y3lS5DZ/sjJAvkdIoBkylPDWobUYQDt12K89SRYKqGWmQB/isogcMR35vZ+gkN6SeoubH/nrssa/j8YRZ5/fDKjqpQc1F1Zkv8E4x3kUTNTbXfem/D6e9svBgGmbZ485srgwuHhm7g=
+	t=1728068351; cv=none; b=iv+8zmKmBudsa4WNA10ryc7ZmDSEplRgHDxBpbxXWiv7ZEEQyToCkqRWq7yS1EhkZ8bYogcPvxGoDI5TejFEsrkocP0kVGdceXXHwRtgo+Ep5Ru2N85hy6VLhNq9Y1y9DKNh+T28lzsZ+XsAy0TvRDfpUTmO3qog9pXia+ctyd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728067708; c=relaxed/simple;
-	bh=ji34y9m3JNoj4xmNOaRuHTmJoLzrL7XEtankYx1PobY=;
+	s=arc-20240116; t=1728068351; c=relaxed/simple;
+	bh=qmT6aXqXQD2xB8suxGcm1xpHdiZQm6HXjaP4ktWnw+k=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hvoG+AbpoqY8gBG709XlHwlVlDQhFjIAyeiCwUJ5qEt5Ro1UmAuOsdqQnv5qI6jda1eMXNKS8S0ZuMPt895n8ciSTGQlNOk3HCjcLyCKs7EE26S+OXrEkusvIwgmfsN/3CgQyLnWm+tBsT6xuLvO9AI5yqBn0RZXU7EOoWp/+I8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AWJL/Slo; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 To:Cc:Content-Type; b=cZ6f6zMlYYH0LwoP1nQwMNhrVNvq2G3lTtX74D8BTU27Aq1GymrDI6oIrrhKQ7KzBd4wHnApjHC0orc9NeXqlTorm2D8ShYgqDCT9WW+VKp0xNO4tXhkN9XNaDQ4+fkByCMmXB7T7gEiWYoAS6JaRCqkAjazCNQ9/eWB6DT0r0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ZExCjbWp; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AWJL/Slo"
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6dde476d3dfso18999667b3.3;
-        Fri, 04 Oct 2024 11:48:26 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ZExCjbWp"
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e262e36df27so2893125276.0
+        for <linux-security-module@vger.kernel.org>; Fri, 04 Oct 2024 11:59:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728067706; x=1728672506; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1728068348; x=1728673148; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mDJ7CzWS8BYgyEa+1aUfpxDHORBOxc/T4XVGwWZLO1A=;
-        b=AWJL/SloUVIWfImktLBR5jN7mAwS7HgE0iBBU0in3YUogNphnoTjqnwzi+8Y6w0zfT
-         VTwpT9bHRLl3BRBtGtEe5NrNBcXUcThXpYvKESl9P4AlhrThyDrOEjxCax/+WqIiGwWo
-         f0Xhlpw/Cq30lxxvXI/0bTfPz0AQbcbQ9FOrwvSqUM1RoEYV/p3554s0BK+jpXH5aLvU
-         bNNm+Xemg4nuK49ad53BdAAyWB5uupLoh9Rlg1/opVhWTajJNt20XVRP7i2x8l0poD74
-         vdIIQ6nFtxwPICKjleijF31s3H3RUO9YEQbENfcAWkW/BfS844f9MJliJxCB+oK6qsxK
-         prYA==
+        bh=qmT6aXqXQD2xB8suxGcm1xpHdiZQm6HXjaP4ktWnw+k=;
+        b=ZExCjbWpU/NmNl3celrmgJSfhTD5VkDxbrXlyIYqmOAwQ/fqji4qUMD3bmG2GUTBSj
+         fgWI5F0ehDiD4QcWE5K5v+FkZ0SKjZDWeizuzrm2xyzdVI5Ih/dWp9V/hpRy/BExZnZk
+         j1UVVgSMcADejUhieI2/qJTJfUNQK5jZsF35gvuO+2w2pDwkK9+qZWH1JFqym8qU++sT
+         V5rRFl5JMaoCh6ciVfm5YjVYvtkB0OY38HTBk9NnBGJyeXVGdf3zBCK5IA1HYy8nuhwI
+         Qmct3WTrcP+V0i8a+sGgKJVlzVtswLi9Lup3QuzVdT1BU4Lw9DrcXlPGt+proDuiDZOy
+         a1aA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728067706; x=1728672506;
+        d=1e100.net; s=20230601; t=1728068348; x=1728673148;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=mDJ7CzWS8BYgyEa+1aUfpxDHORBOxc/T4XVGwWZLO1A=;
-        b=NDsCV9cNEzbzJRmcTGIVmYv6SHHedmZAuNwGAm5zUtC238cSyeB8gnnZeyXGfsR44h
-         4IjaGOFVVi82jH/2IEBZxf9jsATfIUN6EV/24kU8WxjKjwIpUE6h18BZZRNi5TzCxOZz
-         TCzQ5Aed4yWmPWVH2/bltnliJw+Zc4WkWq483zdPVckw/YaIlp0wMkW0nE/de1Ka2oQ0
-         hkKcIZDCXCumXcIpaAeiCv5DbkJAkjZxLOHWquKSNUuuiqvfyj7300+JA03bAm3Fepgv
-         aE/7OTp3bGGRYNkbVjc2GOut9AtWaCN7eAwXpzs80i/GL43Snw/0Fjd8FrB1jSIM8VCW
-         j36Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXmVYLZoIAwgv89Kj14pH3e8xjVhqZQuzKcZE4GIt4R2rFvuyHNG0EdNu1J1jYn76iZU+WzZFZSBd50wMCEAIUccy06pcA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypToXyuBM/4jxNxaQBYx2PqvgP+BvrulUqP/9Orjt5+4smMCFN
-	u7CP2UFSk/WyT9FjKXYYgyvpMv37HkBIQvM7Ki1cRiaW3DBSxuMuxgXCZwc5QSz0VWyN/aqwEp2
-	kjVOJeyHuhSITTrnJaCA56NBqfxM=
-X-Google-Smtp-Source: AGHT+IF0vhRjP0YeWa9+wIWQR5A8z6QvYZRaSXc0grvJ5GXUz0S7FVxoOZ8diwZsoJ1meN9sgFxvlI0KwZLC2RCvTfI=
-X-Received: by 2002:a05:690c:2d11:b0:6e2:63e:f087 with SMTP id
- 00721157ae682-6e2c72b2c87mr28755247b3.42.1728067705863; Fri, 04 Oct 2024
- 11:48:25 -0700 (PDT)
+        bh=qmT6aXqXQD2xB8suxGcm1xpHdiZQm6HXjaP4ktWnw+k=;
+        b=LBeL53etrZvMAC4ErCIhF+Xwd6xwlVy46HguNvUy3IZaRtCHSPPCMwc6ykGTrntbcG
+         jwHMjCaEqa5cuMTvJny4N10TxAtL55ZUC8usv0TiofsfPpHGWZIUjSRijhxcF/8CfEYz
+         ZM01fYd22iuZ66HFdDHzKUXfqHZHvo7+oVJciFsMpMAmfAj0Niv/URySG5UADj0b+yK6
+         +ZJ2ic2YYPFccOJYFZIXM5vgg9CrQ3iKZSBvpCu7fbF4nC13GFw+qlMobHYtOLZk/TfB
+         OKEI145Wh9LZ2SlmKVENODQAg6Hlll2spX2jsEaTn8+15ACWmYgk/3Xy8g0x0vs3btG7
+         XJHA==
+X-Forwarded-Encrypted: i=1; AJvYcCX9aXx/vj9LGj6x4i6t6Vqq0x6otgGBWDlaurJbasK/pHbrXsF5e9YnpET57XJTiqWN+3IOXiC12ap56JBhHW1+xFhyIR8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/mIsPtIqJcuT7IRnO99tkClHRuF8OYjFx7T2bmDnNtXJEMGJu
+	g8D2qYv+RE8u0IErPeLNyMHsfFeLz2165F3lP9J6jzCjmXqb7tG+Y0tz0fNZqYK+MZosu/fegYT
+	V7AY6e4PA8kgzEQS3e/Q4gAlWE7OfD7iXtL4e
+X-Google-Smtp-Source: AGHT+IG0iCzD9AFrN7PsxPgtv+RjvyOcT6RejRFpSNsBCVIrW9RtC6f8zoVh6IJM8DdDUtvP4V6iHTCxKwNS0beEFq8=
+X-Received: by 2002:a5b:891:0:b0:e24:9e26:133 with SMTP id 3f1490d57ef6-e286f81947emr6696376276.14.1728068348374;
+ Fri, 04 Oct 2024 11:59:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241002142516.110567-1-luca.boccassi@gmail.com> <CAHC9VhRV3KcNGRw6_c-97G6w=HKNuEQoUGrfKhsQdWywzDDnBQ@mail.gmail.com>
-In-Reply-To: <CAHC9VhRV3KcNGRw6_c-97G6w=HKNuEQoUGrfKhsQdWywzDDnBQ@mail.gmail.com>
-From: Luca Boccassi <luca.boccassi@gmail.com>
-Date: Fri, 4 Oct 2024 19:48:14 +0100
-Message-ID: <CAMw=ZnSkm1U-gBEy9MBbjo2gP2+WHV2LyCsKmwYu2cUJqSUeXg@mail.gmail.com>
-Subject: Re: [PATCH] pidfd: add ioctl to retrieve pid info
-To: Paul Moore <paul@paul-moore.com>
-Cc: linux-kernel@vger.kernel.org, christian@brauner.io, 
+References: <0c4b443a-9c72-4800-97e8-a3816b6a9ae2@I-love.SAKURA.ne.jp>
+ <877cavdgsu.fsf@trenco.lwn.net> <CAHC9VhRnTrjP3kNXMmzsK4oZL7WD+uH0OuXszEPgTc5YoT5dew@mail.gmail.com>
+ <CAHk-=wjLdoBcY-r64oBbKXo3hSEr5AawrP_5GSFQ4NEbCNt4Kg@mail.gmail.com>
+ <20241002103830.GA22253@wind.enjellic.com> <033eb4d9-482b-4b70-a251-dc8bcc738f40@canonical.com>
+ <20241004184019.GA16388@wind.enjellic.com>
+In-Reply-To: <20241004184019.GA16388@wind.enjellic.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 4 Oct 2024 14:58:57 -0400
+Message-ID: <CAHC9VhS0aeDB2GzxJPHN8_LDk59gT_RuRKwb26K+3SzX7SQ=3g@mail.gmail.com>
+Subject: Re: [GIT PULL] tomoyo update for v6.12
+To: "Dr. Greg" <greg@enjellic.com>
+Cc: John Johansen <john.johansen@canonical.com>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, LKML <linux-kernel@vger.kernel.org>, 
 	linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, 2 Oct 2024 at 15:48, Paul Moore <paul@paul-moore.com> wrote:
->
-> On Wed, Oct 2, 2024 at 10:25=E2=80=AFAM <luca.boccassi@gmail.com> wrote:
-> >
-> > From: Luca Boccassi <bluca@debian.org>
-> >
-> > A common pattern when using pid fds is having to get information
-> > about the process, which currently requires /proc being mounted,
-> > resolving the fd to a pid, and then do manual string parsing of
-> > /proc/N/status and friends. This needs to be reimplemented over
-> > and over in all userspace projects (e.g.: I have reimplemented
-> > resolving in systemd, dbus, dbus-daemon, polkit so far), and
-> > requires additional care in checking that the fd is still valid
-> > after having parsed the data, to avoid races.
-> >
-> > Having a programmatic API that can be used directly removes all
-> > these requirements, including having /proc mounted.
-> >
-> > As discussed at LPC24, add an ioctl with an extensible struct
-> > so that more parameters can be added later if needed. Start with
-> > exposing: pid, uid, gid, groupid, security label (the latter was
-> > requested by the LSM maintainer).
-> >
-> > Signed-off-by: Luca Boccassi <bluca@debian.org>
-> > ---
-> >  fs/pidfs.c                                    | 61 ++++++++++++++++++-
-> >  include/uapi/linux/pidfd.h                    | 17 ++++++
-> >  .../testing/selftests/pidfd/pidfd_open_test.c | 50 ++++++++++++++-
-> >  3 files changed, 126 insertions(+), 2 deletions(-)
->
-> ...
->
-> > diff --git a/include/uapi/linux/pidfd.h b/include/uapi/linux/pidfd.h
-> > index 565fc0629fff..bfd0965e01f3 100644
-> > --- a/include/uapi/linux/pidfd.h
-> > +++ b/include/uapi/linux/pidfd.h
-> > @@ -16,6 +16,22 @@
-> >  #define PIDFD_SIGNAL_THREAD_GROUP      (1UL << 1)
-> >  #define PIDFD_SIGNAL_PROCESS_GROUP     (1UL << 2)
-> >
-> > +/* Flags for pidfd_info. */
-> > +#define PIDFD_INFO_PID                 (1UL << 0)
-> > +#define PIDFD_INFO_CREDS                   (1UL << 1)
-> > +#define PIDFD_INFO_CGROUPID                (1UL << 2)
-> > +#define PIDFD_INFO_SECURITY_CONTEXT        (1UL << 3)
-> > +
-> > +struct pidfd_info {
-> > +        __u64 request_mask;
-> > +        __u32 size;
-> > +        uint pid;
-> > +        uint uid;
-> > +        uint gid;
-> > +        __u64 cgroupid;
-> > +        char security_context[NAME_MAX];
->
-> [NOTE: please CC the LSM list on changes like this]
->
-> Thanks Luca :)
->
-> With the addition of the LSM syscalls we've created a lsm_ctx struct
-> (see include/uapi/linux/lsm.h) that properly supports multiple LSMs.
-> The original char ptr "secctx" approach worked back when only a single
-> LSM was supported at any given time, but now that multiple LSMs are
-> supported we need something richer, and it would be good to use this
-> new struct in any new userspace API.
->
-> See the lsm_get_self_attr(2) syscall for an example (defined in
-> security/lsm_syscalls.c but effectively implemented via
-> security_getselfattr() in security/security.c).
+On Fri, Oct 4, 2024 at 2:40=E2=80=AFPM Dr. Greg <greg@enjellic.com> wrote:
+> On Wed, Oct 02, 2024 at 07:27:47PM -0700, John Johansen wrote:
+> > On 10/2/24 03:38, Dr. Greg wrote:
+> > >On Tue, Oct 01, 2024 at 09:36:16AM -0700, Linus Torvalds wrote:
+> > >>On Tue, 1 Oct 2024 at 07:00, Paul Moore <paul@paul-moore.com> wrote:
 
-Thanks for the review, makes sense to me - I had a look at those
-examples but unfortunately it is getting a bit beyond my (very low)
-kernel skills, so I've dropped the string-based security_context from
-v2 but without adding something else, is there someone more familiar
-with the LSM world that could help implementing that side?
+...
+
+> The third problem to be addressed, and you acknowledge it above, is
+> that there needs to be a flexible pathway for security innovation on
+> Linux that doesn't require broad based consensus and yet doesn't
+> imperil the kernel.
+
+The new LSM guidelines are documented at the URL below (and available
+in the README.md file of any cloned LSM tree), the document is also
+linked from the MAINTAINERS file:
+
+https://github.com/LinuxSecurityModule/kernel/blob/main/README.md#new-lsm-g=
+uidelines
+
+The guidelines were developed last summer on the LSM mailing list with
+input and edits from a number of LSM developers.
+
+https://lore.kernel.org/linux-security-module/CAHC9VhRsxARUsFcJC-5zp9pX8LWb=
+KQLE4vW+S6n-PMG5XJZtDA@mail.gmail.com
+
+--=20
+paul-moore.com
