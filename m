@@ -1,110 +1,162 @@
-Received: from smtp-bc0e.mail.infomaniak.ch (smtp-bc0e.mail.infomaniak.ch [45.157.188.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB72879F3
-	for <linux-security-module@vger.kernel.org>; Fri,  4 Oct 2024 13:11:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB6AF149DF4;
+	Fri,  4 Oct 2024 13:49:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728047474; cv=none; b=E7DMDXnG+ZefaXSEf3AXDbENxo8RwIqjIPNj/0pvZO7LIDK5vrpmXqb7PU0KkVf3MuzbdFchnxmd5wkzdfR56dgFtHzNxVjXmARNQ2HWAspg9PEc7GPY1kp0IRT3BaXQQPI8uBwH/RDf+TalepSAX7+X8TeiSckRFfrwlS23Go4=
+	t=1728049761; cv=none; b=kr1ILWEreIMQp3RdlYzcQahhA4PhdSe2/ZJVlHLYtpFxvbAPCOe3g+GJ3uItUOZgOTbfHdLbSH/Htql2642MdtSqsHgKN6/gMzuHJGGQ69nLtkXPtm1gI/q0pdfYR0k+0xH92Mq/5SGV81aUHOPxBdBKJG7Qg+VE4khk1Luyv1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728047474; c=relaxed/simple;
-	bh=rdbep6rmGySaldTKD7PSnuCCcaargaRxFje/ATvnhJA=;
+	s=arc-20240116; t=1728049761; c=relaxed/simple;
+	bh=bdKOyQxOMlw5ZwF3KbxBUpE1MpOsXreC4z0dygBDgc4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pCPNsPi3/duhjDOKcGIo6iGO9Ml18DJJ+rOTlUSSy0gF2hYIa0R6wWdHyCdriQOMTUzCqgaark8sOhwEFoIW1EUbeTiVtLeHe2F/awYwW4AZTF7/ohU9B1nmI6lsKuANeb5UG7vwMf6Bmsi9zt1CBLZTPFWCduCSrZfO1I7Mtos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=nfddU1nB; arc=none smtp.client-ip=45.157.188.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	 Content-Type:Content-Disposition:In-Reply-To; b=r4JUPOpenkcc3+MDJrVgNZEnfOtIuf1kXCAmwOF0rfD0GTdzUNZl0Yf7iQgV/l1uspVgaoo/HcfJaTw1ffSp+YJQPXrfPIyVoMN2RP2SXSnijWtRcBjGUTJK9i+ND7+BO29GmmRrQr9lDxzvAJQobJAPchhSgzuSvu+rvz7PEIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=haK5nDLH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=TpTUMYOI; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hAZ+aiPi; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=0/ozA6Iv; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="nfddU1nB"
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XKpp30Cpkzwl6;
-	Fri,  4 Oct 2024 15:11:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1728047466;
-	bh=/iX1rGxw1N5zxUhhGnTQgFkwB+XMIkUOiRqn6BRhh64=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nfddU1nBLXnzQun3aj2MAN//+yL0oEtq/5pzWm7ezLRKyW5FXKuGwwiJ2xz7uDFRU
-	 QKyKdS/JyoQzDXCh1kRkwblkFHvnx0VPR8ZTpBpmTz2reOp4FkKGZu06IO2Iby4/nf
-	 +UkCIGuck7L9jTRAEtbY0Cref8hPdpWTm+e2HQto=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4XKpp10WXnzT9X;
-	Fri,  4 Oct 2024 15:11:04 +0200 (CEST)
-Date: Fri, 4 Oct 2024 15:11:01 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>, 
-	Fan Wu <wufan@linux.microsoft.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Micah Morton <mortonm@chromium.org>, Casey Schaufler <casey@schaufler-ca.com>, 
-	John Johansen <john.johansen@canonical.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	KP Singh <kpsingh@kernel.org>, Kees Cook <keescook@chromium.org>, 
-	Jonathan Corbet <corbet@lwn.net>, linux-security-module@vger.kernel.org
-Subject: Re: TOMOYO's pull request for v6.12
-Message-ID: <20241004.ohpie8Ing5bu@digikod.net>
-References: <CAHC9VhR=QjdoHG3wJgHFJkKYBg7vkQH2MpffgVzQ0tAByo_wRg@mail.gmail.com>
- <20241003024307.GA833999@mail.hallyn.com>
- <CAHC9VhSa-Jpqmej=3WsLFvSKWamZjFDwUpLHrJOyxaPPujM6ww@mail.gmail.com>
- <20241003162940.GA848724@mail.hallyn.com>
- <bc8bd0d5-ce58-4146-8bfa-1042c6575290@I-love.SAKURA.ne.jp>
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="haK5nDLH";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="TpTUMYOI";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hAZ+aiPi";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="0/ozA6Iv"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id F11F621A5C;
+	Fri,  4 Oct 2024 13:49:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1728049755; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KQ0mVd/8DvK/zSrxrLHtczEDUgVUMyy7i2d8GwYO9Vg=;
+	b=haK5nDLHJartsaRstvGzKUnXUb2VkBB2SY9TMx+GF8+VAozrrgPcgXbkfAT4KJAuwGiMzZ
+	J0zB6+U3K0mvTS8GuDESqQpqAc7djLXG1g2J6j2LSGYMBVxR899hd/PLK+aZFkj6HN5m1r
+	ZDNGeNhv0MkHkm3BAN9ucXsD+TxfpE4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1728049755;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KQ0mVd/8DvK/zSrxrLHtczEDUgVUMyy7i2d8GwYO9Vg=;
+	b=TpTUMYOIL8oVv8RhXN3AGAGwUHJXoW7MVa8TSiFlsdEsrT3+aW8K9jRWJUzSsGtgm+T3P2
+	yrrxe2TTqGZl6YCg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1728049754; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KQ0mVd/8DvK/zSrxrLHtczEDUgVUMyy7i2d8GwYO9Vg=;
+	b=hAZ+aiPiHJTEa/pDSKu/m6doOQKwyL3GrTnSHS0cwC60VVvHJ+pzTzcYxHKd2+K31ECLuv
+	78b2bjyO9ZxLKvaULpdfX2ZA30Q+UsyuW4oRvb0phSUV6QMwDEuSH+Ntf3sTA/rDybZ075
+	YbHbVSTyYDrsb3ueryRCSHvG+9YBcgU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1728049754;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KQ0mVd/8DvK/zSrxrLHtczEDUgVUMyy7i2d8GwYO9Vg=;
+	b=0/ozA6IvuL4XM0jzJZfI/f9/Wde6yB2+DywSoz5CyAml9K6jKFsmLdwqoSAMlX+Ew9I7RR
+	BAexoGJy31U/EBDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E08C213A6E;
+	Fri,  4 Oct 2024 13:49:14 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ReLMNlry/2bXWwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 04 Oct 2024 13:49:14 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 95C3CA0877; Fri,  4 Oct 2024 15:49:06 +0200 (CEST)
+Date: Fri, 4 Oct 2024 15:49:06 +0200
+From: Jan Kara <jack@suse.cz>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-bcachefs@vger.kernel.org, kent.overstreet@linux.dev,
+	torvalds@linux-foundation.org,
+	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@linux.microsoft.com>,
+	Jann Horn <jannh@google.com>, Serge Hallyn <serge@hallyn.com>,
+	Kees Cook <keescook@chromium.org>,
+	linux-security-module@vger.kernel.org,
+	Amir Goldstein <amir73il@gmail.com>
+Subject: Re: lsm sb_delete hook, was Re: [PATCH 4/7] vfs: Convert
+ sb->s_inodes iteration to super_iter_inodes()
+Message-ID: <20241004134906.3yrg5y3hritusmel@quack3>
+References: <20241003115721.kg2caqgj2xxinnth@quack3>
+ <Zv6J34fwj3vNOrIH@infradead.org>
+ <20241003122657.mrqwyc5tzeggrzbt@quack3>
+ <Zv6Qe-9O44g6qnSu@infradead.org>
+ <20241003125650.jtkqezmtnzfoysb2@quack3>
+ <Zv6jV40xKIJYuePA@dread.disaster.area>
+ <20241003161731.kwveypqzu4bivesv@quack3>
+ <Zv8648YMT10TMXSL@dread.disaster.area>
+ <20241004-abgemacht-amortisieren-9d54cca35cab@brauner>
+ <Zv_cLNUpBxpLUe1Q@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <bc8bd0d5-ce58-4146-8bfa-1042c6575290@I-love.SAKURA.ne.jp>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <Zv_cLNUpBxpLUe1Q@infradead.org>
+X-Spam-Score: -3.80
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[15];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,fromorbit.com,suse.cz,vger.kernel.org,linux.dev,linux-foundation.org,linux.microsoft.com,google.com,hallyn.com,chromium.org,gmail.com];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Fri, Oct 04, 2024 at 07:50:05PM +0900, Tetsuo Handa wrote:
-> On 2024/10/04 1:29, Serge E. Hallyn wrote:
-> > Well, this didn't occur to me last night, but what I'd be curious to
-> > hear is whether Tetsuo has discussed this with RedHat.  Because unless
-> > this makes them say "ok we'll enable that", it still doesn't help him.
-> > And I don't imagine them agreeing to enable the CONFIG_TOMOYO_LKM.
+On Fri 04-10-24 05:14:36, Christoph Hellwig wrote:
+> On Fri, Oct 04, 2024 at 09:21:19AM +0200, Christian Brauner wrote:
+> > > But screwing with LSM instructure looks ....  obnoxiously complex
+> > > from the outside...
+> > 
+> > Imho, please just focus on the immediate feedback and ignore all the
+> > extra bells and whistles that we could or should do. I prefer all of
+> > that to be done after this series lands.
 > 
-> Majority of Linux users I work for are using Red Hat. But I have absolutely
+> For the LSM mess: absolutely.  For fsnotify it seems like Dave has
+> a good idea to integrate it, and it removes the somewhat awkward
+> need for the reffed flag.  So if that delayed notify idea works out
+> I'd prefer to see that in over the flag.
 
-My understanding is that Red Hat's customers must ask for a feature for
-it to be available (in a future version), so you should ask your users
-to support the request.
+As I wrote in one of the emails in this (now huge) thread, I'm fine with
+completely dropping that inode->i_refcount check from the
+fsnotify_unmount_inodes(). It made sense when it was called before
+evict_inodes() but after 1edc8eb2e931 ("fs: call fsnotify_sb_delete after
+evict_inodes") the usefulness of this check is rather doubtful. So we can
+drop the awkward flag regardless whether we unify evict_inodes() with
+fsnotify_unmount_inodes() or not. I have no strong preference whether the
+unification happens as part of this patch set or later on so it's up to
+Dave as far as I'm concerned.
 
-I wish Landlock would be available everywhere too, but this requires
-some effort.  Even when an LSM is built-in, it may not be enabled by
-default and then not available to most users because of the "lsm="
-cmdline or CONFIG_LSM...  To protect as much users as possible
-(potentially without their knowledge), we have the burden of convincing
-distros and other parts of the Linux ecosystems that a security feature
-is worth it.
-
-> too little relationship with Red Hat people to involve somebody else into
-> this problem. Too little attention/interest to make progress.
-> https://bugzilla.redhat.com/show_bug.cgi?id=2303689
-> 
-> Chicken-and-egg problem here; since TOMOYO is not available in Red Hat
-> kernels, I have no room/chance to help/involve with Red Hat community.
-> 
-> If I implement a subset of TOMOYO that does not refuse requests (something
-> like SELinux without the "enforcing mode"), can such LSM module be accepted
-> by the upstream kernel? (The "patent examination" is a barrier for doing it.)
-> 
-> You might think that such LSM module is not a security. But TOMOYO is
-> also used as a sort of system-wide strace-like profiler. Understanding
-> what the users' systems are doing is useful/helpful for users.
-
-I think an LSM is not the right tool for tracing because it only sees a
-subset of the access requests: other security mechanisms may deny
-requests before they reach an LSM.  Linux provides great tracing
-mechanisms though.
-
-> 
-> If one of Red Hat's worries that refusing requests due to broken policy is
-> gone, the barrier for enabling such LSM module in Red Hat's kernels will be
-> lowered. If such LSM module becomes available in Red Hat kernels, I might be
-> able to find room/chance to help/involve with Red Hat community.
-
-The question is about potential maintenance cost vs. ROI, not only
-security policy issues.  I guess Red Hat would not care about bugs in
-non-default service configurations, eBPF programs, nor LSM policies, but
-they will if additional code potentially impacts other parts of the
-system and may increase the number of potential bugs, and then the
-maintenance cost.  Open source is not free for everyone.
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
