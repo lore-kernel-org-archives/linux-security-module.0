@@ -1,40 +1,40 @@
 Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E74F12B73;
-	Sat,  5 Oct 2024 04:37:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A12C117C8D
+	for <linux-security-module@vger.kernel.org>; Sat,  5 Oct 2024 04:39:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.121
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728103057; cv=none; b=maqIml41AQmt+O/uXY2edLwvbwlr+nqx4jTFYXVqBHFOFOomk2mXVVrcMLskHxPAV4D/xGz+OTMUIrsUV9saqv6c7hk27m3mY6S92rpD6+YCahU8xucBuPNaxA/BrvuJ9yG+LGeLWHrB2IgjH3Q89Z2adLUludzUEzhQ28omtn8=
+	t=1728103197; cv=none; b=oIdSgeY3IxDWDehV5e8Wxu+2/HJzT85sOURY9z6XDDCHmZQnhMaTe4Ke9fdyZhsfZQTZRIcS2vfVyuoIW/JLzbefdPYqaQSP23PeDBydfZ4niFn5Sq1j77kRczZhIClWNt1pURikxCqy42e4hAV6OWA98lnGkLhhJOLSTKYAfx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728103057; c=relaxed/simple;
-	bh=hc9qOl15neqqclLo6WFJcgxdepJlSNDq++eYDY+iDsk=;
+	s=arc-20240116; t=1728103197; c=relaxed/simple;
+	bh=GOSPyiEEn/4/3Leje/D8mIP3RNPB7sAFZgeEYGxGBkI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FhLhxW3Qy2w+DxLImjhRIS738CtBnV2htYZZQTIVsecSb1GUpIa8vdocPfSwMumKZTjZ6lI6DBCHcW/RriOtUX/zuR75xwWzTiIppYZI32hOZX2SeKyyAE2JyRp2AjGZ2gYNlFxo8tWatVM1jLCvzb1+CtSO4ExQ9DS33gE3HqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=ZMv59UFV; arc=none smtp.client-ip=185.125.188.121
+	 In-Reply-To:Content-Type; b=WZLGLTtTyK1ln956a7g1tQ1o/YKXqUPYRhT59UkNgD7nIuLshWVghNSVuKXcjoyacVBf0blRTdJzPS3fnNgCaZkowmo1quC4jDfcBLt+mwDDOzSH7e6B1CuOVC3C4aN87pf7sRfdv0L2rt6U70JqpE/gfXvBlq1Vtv1ew8e07Mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=f6GlQJd1; arc=none smtp.client-ip=185.125.188.121
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="ZMv59UFV"
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="f6GlQJd1"
 Received: from [192.168.192.84] (unknown [50.39.103.33])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id BACCA3F76A;
-	Sat,  5 Oct 2024 04:37:30 +0000 (UTC)
+	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 41B723F76A;
+	Sat,  5 Oct 2024 04:39:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1728103052;
-	bh=qYiPk7+hOLqDjJL5rh0Du53jcdgrTYwXqyoMUSj1tNY=;
+	s=20210705; t=1728103192;
+	bh=jNV6io2yLiu4j5YEJzphLk3h51A04sM63xo1F7CgGN0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
 	 In-Reply-To:Content-Type;
-	b=ZMv59UFVTZqN2EYrTNO5DNlCEo4CwY3i4Pq1X4/1DRzYNK7n3Ne7+5OnQZlIVtCRD
-	 vdgOxlSkUPSRSpUzRRpCO0rfBoFTigcyRxDhmFtMHP8U1sqJsnJ6LnSMCR0LBvl+0q
-	 o5mnX577yvEVXH2cZdYPX6RGmonSe5KuzG+6j4K4iwmIxhrLvieMrPA9JrDkAdGIge
-	 O3kwz6UmGs4PbW9ZKKZoQEQfqSTONdLBhNK0Kd8Hy+6pcFoyeztGGvLZojp/+q0oFN
-	 y+Tr1hlPpf7Vo49exdY9v7Wcy/zGzbvTiXDYmKMpODjq7eyWFoX8/lm5i2YANfcG2R
-	 YSkY5Cy+nwqug==
-Message-ID: <83a32e86-cdc2-4068-b830-b54aaea1e01a@canonical.com>
-Date: Fri, 4 Oct 2024 21:37:28 -0700
+	b=f6GlQJd1FV0FcIQncAxLKwlstFVxvtQnw6FB5budSHWVser4IvV9KUd1m5YJt8il6
+	 +Bm7lpViKBXDY9Y93xt6v5Ccys5RDRcGaLb0uRbFFIw+llQSVLHuXB4AZpToQR2JhT
+	 E+yupJTawc3OmZtZDCBciGUTi70Q4PPTOwW38BxrHLJchqvTIIf5Q5VfBpoNtUptW4
+	 bZTkqdyFgBEK4k80KblBjz6MrHh8TI/q6CsAFxvQf6gq3eBI5TazmTARhpHGwaeUCy
+	 qTo2EgV5CA5JY5dFtB7lUuHeF1JITLivk0EzOTfafaMtHDDYPdNZSulgH5a9nNUhNZ
+	 FZseI97qJC8+Q==
+Message-ID: <f5caecda-6afa-4338-8f8e-e1629b115b4f@canonical.com>
+Date: Fri, 4 Oct 2024 21:39:46 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -42,19 +42,19 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] tomoyo update for v6.12
-To: "Dr. Greg" <greg@enjellic.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- Paul Moore <paul@paul-moore.com>, Jonathan Corbet <corbet@lwn.net>,
- Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
- LKML <linux-kernel@vger.kernel.org>, linux-security-module@vger.kernel.org
-References: <0c4b443a-9c72-4800-97e8-a3816b6a9ae2@I-love.SAKURA.ne.jp>
- <877cavdgsu.fsf@trenco.lwn.net>
- <CAHC9VhRnTrjP3kNXMmzsK4oZL7WD+uH0OuXszEPgTc5YoT5dew@mail.gmail.com>
- <CAHk-=wjLdoBcY-r64oBbKXo3hSEr5AawrP_5GSFQ4NEbCNt4Kg@mail.gmail.com>
- <20241002103830.GA22253@wind.enjellic.com>
- <033eb4d9-482b-4b70-a251-dc8bcc738f40@canonical.com>
- <20241003154336.GB3267@wind.enjellic.com>
+Subject: Re: TOMOYO's pull request for v6.12
+To: "Serge E. Hallyn" <serge@hallyn.com>, Paul Moore <paul@paul-moore.com>
+Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+ Fan Wu <wufan@linux.microsoft.com>, =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?=
+ <mic@digikod.net>, Mimi Zohar <zohar@linux.ibm.com>,
+ Micah Morton <mortonm@chromium.org>, Casey Schaufler
+ <casey@schaufler-ca.com>, Roberto Sassu <roberto.sassu@huawei.com>,
+ KP Singh <kpsingh@kernel.org>, Kees Cook <keescook@chromium.org>,
+ Jonathan Corbet <corbet@lwn.net>, linux-security-module@vger.kernel.org
+References: <CAHC9VhR=QjdoHG3wJgHFJkKYBg7vkQH2MpffgVzQ0tAByo_wRg@mail.gmail.com>
+ <20241003024307.GA833999@mail.hallyn.com>
+ <CAHC9VhSa-Jpqmej=3WsLFvSKWamZjFDwUpLHrJOyxaPPujM6ww@mail.gmail.com>
+ <20241003162940.GA848724@mail.hallyn.com>
 Content-Language: en-US
 From: John Johansen <john.johansen@canonical.com>
 Autocrypt: addr=john.johansen@canonical.com; keydata=
@@ -100,85 +100,83 @@ Autocrypt: addr=john.johansen@canonical.com; keydata=
  +T7sv9+iY+e0Y+SolyJgTxMYeRnDWE6S77g6gzYYHmcQOWP7ZMX+MtD4SKlf0+Q8li/F9GUL
  p0rw8op9f0p1+YAhyAd+dXWNKf7zIfZ2ME+0qKpbQnr1oizLHuJX/Telo8KMmHter28DPJ03 lT9Q
 Organization: Canonical
-In-Reply-To: <20241003154336.GB3267@wind.enjellic.com>
+In-Reply-To: <20241003162940.GA848724@mail.hallyn.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/3/24 08:43, Dr. Greg wrote:
-> On Wed, Oct 02, 2024 at 07:27:47PM -0700, John Johansen wrote:
-> 
->> On 10/2/24 03:38, Dr. Greg wrote:
->>> On Tue, Oct 01, 2024 at 09:36:16AM -0700, Linus Torvalds wrote:
->>>
->>> Good morning Linus, I hope the week is going well for you.
->>>
->>> Some reflections, for the record, on this issue.
->>>
->>>> On Tue, 1 Oct 2024 at 07:00, Paul Moore <paul@paul-moore.com> wrote:
->>>>>
->>>>> Linus, it's unclear if you're still following this thread after the
->>>>> pull, but can you provide a little insight on your thoughts here?
->>>
->>>> I absolutely hate the whole "security people keep arguing", and I
->>>> cannot personally find it in myself to care about tomoyo.  I don't
->>>> even know where it is used - certainly not in Fedora, which is the
->>>> only distro I can check quickly.
+On 10/3/24 09:29, Serge E. Hallyn wrote:
+> On Thu, Oct 03, 2024 at 11:32:39AM -0400, Paul Moore wrote:
+>> On Wed, Oct 2, 2024 at 10:43 PM Serge E. Hallyn <serge@hallyn.com> wrote:
+>>> On Wed, Oct 02, 2024 at 04:12:50PM -0400, Paul Moore wrote:
+>>>> Hi all,
 >>>>
->>>> If the consensus is that we should revert, I'll happily revert. This
->>>> was all inside of the tomoyo subdirectory, so I didn't see it as
->>>> some kind of sidestepping, and treated the pull request as a regular
->>>> "another odd security subsystem update".
+>>>> Hopefully by now you've at least seen the TOMOYO v6.12 pull request
+>>>> thread; if you haven't read it yet, I suggest you do so before reading
+>>>> the rest of this mail:
+>>>>
+>>>> https://lore.kernel.org/all/0c4b443a-9c72-4800-97e8-a3816b6a9ae2@I-love.SAKURA.ne.jp
+>>>>
+>>>> Of the three commits in the pull request, the commit which concerns me
+>>>> the most is 8b985bbfabbe ("tomoyo: allow building as a loadable LSM
+>>>> module").  The commit worries me as it brings management of the TOMOYO
+>>>> LSM callbacks into TOMOYO itself, overriding the LSM framework.
+>>>> Jonathan raises a similar point, although his issue is more focused on
+>>>> the symbol export approach itself, rather than conceptual issues
+>>>> relating to the LSM framework.  I will admit there are some high level
+>>>> similarities to this approach and the BPF LSM, but I believe we can
+>>>> say that the BPF LSM exception is necessary due to the nature of BPF,
+>>>> and not something we want to see duplicated outside of that one
+>>>> special case.
+>>>>
+>>>> As I wrote in my original response to this pull request, this is not
+>>>> something I would accept in a new LSM submission and thus I feel
+>>>> compelled to speak out against this change and submit a revert to
+>>>> Linus.  However, as the LSM framework exists to satisfy the needs of
+>>>> the individual LSMs, I've tried to ensure that significant changes
+>>>> like these are done with support of the majority of LSMs.  I
+>>>> understand that in a case like this, reverting LSM-specific commits,
+>>>> individual LSM maintainers may not want to speak up on the issue so
+>>>> I'm going to let this message sit on-list until Friday morning, unless
+>>>> I see the majority of the LSMs voicing support *against* reverting the
+>>>> TOMOYO commit above (and the other related commit) I will proceed with
+>>>> submitting the revert to Linus on Friday.  I would prefer if all
+>>>> responses are sent on-list, but you can also mail me privately with
+>>>> your objection to the revert and I will include it in the count.
+>>>>
+>>>> Thanks.
 >>>
->>> I see that Paul Moore has further responded with commentary about the
->>> 'LSM community' responding to this issue.  I wanted, on behalf of our
->>> project and in support of Tetsuo's concerns, to register directly with
->>> you a sense of jaded skepticism about the notion of a community
->>> response.
->>>
->>> Fixing Tetsuo's issue, at least to the extent it can be fixed,
->>> requires technical improvements in the Linux security architecture.
+>>> Huh!  Honestly, when I read the thread, especially Jon's comments, I was
+>>> worried.  But getting a chance to look at the patch now, it actually
+>>> seems good to me.  No one is getting affected unless they enable
+>>> CONFIG_TOMOYO_LKM.  Even those distros which have been enabling TOMOYO
+>>> won't be exporting new hooks without a config change, iiuc.
+>>
+>> I don't want to set a precedent of individual LSMs managing how they
+>> plug into the rest of the kernel; at best it results in a lot of code
+>> duplication between the individual LSM and the framework, at worst it
+>> opens the door for buggy interactions and difficult to predict
+>> behavior.  Look at all the work we've done over the past couple of
+>> years to cleanup how the LSM framework manages the individual LSM
+>> callbacks both to reduce the chances of error and improve performance.
 > 
->> yes and that is correct place to do it. Doing it within a single
->> LSM is very much the wrong approach
+> That's reasonable.  And I agree with John that, because of the way this
+> was "snuck in", if I were a distro building a tomoyo-enabled kernel, I
+> would now have trust issues.  But I don't think anyone else will come
+> to Tetsuo's defense, so I just wanted to point out that, while the
+> process was very much done wrongly, I think code-wise he's done the most
+> responsible thing he could - given his end goals.  Even so,
 > 
-> Just going out the door and saw this e-mail
+its an interesting approach. Its something I am willing to discuss further
+as an extension module of the LSM, not in an individual LSM.
+
+>> Sidestepping this by allowing individual LSMs to implement their own
+>> layer of callback management is a big step backwards and not something
+>> I want to see supported.
 > 
-> Your e-mail crossed with one I just sent over in the kernel code
-> loading side of this thread/debate.
+> Well, this didn't occur to me last night, but what I'd be curious to
+> hear is whether Tetsuo has discussed this with RedHat.  Because unless
+> this makes them say "ok we'll enable that", it still doesn't help him.
+> And I don't imagine them agreeing to enable the CONFIG_TOMOYO_LKM.
 > 
-> Will look forward to seeing your thoughts there.
-> 
-This one is a hard problem. I don't have a good solution. We are
-pushing up against lots of constraints: performance (see KP's patch),
-the need to get rid of/reduce use of indirect branches because of
-spectre (again performance but also brittleness), the desire to
-make the LSM less of a target for kernel compromises (ro after init).
-The need for code signing and integrity. The need for common interfaces
-(LSM syscalls), to avoid the interface sins of the past.
-
-This makes loadable LSMs troublesome at best and I concede maybe
-impossible politically.
-
-I am not entirely opposed to the approach that Tetsuo took. Its
-interesting, and I wouldn't have minded it being explored more as a way
-to extend the LSM, but as part of the LSM, not in crammed into an
-individual LSM.
-
-The performance hit for its use I am willing to accept because,
-it only happens if it is enabled. So it would be easy to build it
-in and just not enable it by default.
-
-It would still have to show how to deal with ro of the hooks, make
-sure we aren't introducing new spectre gadgets, and also have a
-way to integrate with LSM syscalls, and probably a few other
-things I am missing.
-
-These are all things that would need to be discussed on list.
-
-
-> As always,
-> Dr. Greg
-> 
-> The Quixote Project - Flailing at the Travails of Cybersecurity
->                https://github.com/Quixote-Project
+> -serge
 
