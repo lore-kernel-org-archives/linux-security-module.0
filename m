@@ -1,56 +1,49 @@
-Received: from smtp-190d.mail.infomaniak.ch (smtp-190d.mail.infomaniak.ch [185.125.25.13])
+Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [185.125.25.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B2F31C6A3
-	for <linux-security-module@vger.kernel.org>; Sat,  5 Oct 2024 15:21:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA87153808
+	for <linux-security-module@vger.kernel.org>; Sat,  5 Oct 2024 15:50:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728141710; cv=none; b=c5Vr3a8p+Zom4eMypDhulZ3SCDf/+46HvVzSfQTcrB6lcbV2mKAevfb5hMYc4+LmOELOiwFAdeQtfIdeDW4XYvPI10yrUWa5xLHytzaG1hVlxDgdEtJ8+LcpoaYL4+ANHsNgyLPNsVl5aYNS71oagGkSVvERI7iW2/UGVERLhV8=
+	t=1728143412; cv=none; b=hmSBmtebfdVCl96/8nZhgSTuOF1FLAZtRiGRXVKsO3zbI/65WYMKZ44aKovGC63emc1qRw45zTKRIF1RSfRkcB6stKCxROfQEDMH/5oMIwgczH4L9XiWfvEkaHurhhkDLTtisBT3VwYC0bT6fC/hyrX/WSeP/uwLTszsmNj1kHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728141710; c=relaxed/simple;
-	bh=4SrFSSF687gJVku8Rtojdn3GUU4nta+vaSjYHgNmc+4=;
+	s=arc-20240116; t=1728143412; c=relaxed/simple;
+	bh=pFKcRB9zxsPWbtFDjflB/H+lmvRDsZY8/fzMq5a8meA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VkIFrW42ng/Wk1ArY+5MNZid3QsFB6xIZTOcPTI0a4HmanAPmLIuL/F/hwAdL7LvLTWBkD/DTmetsdPmABZTURKUNFCPKykw8AKOqYIXHb5H8h6jRsB1CloaAeMf2ryJqXl50M0vQA16GI/WBKQNDFTb+ZDH/OrcvDaKWaU8gWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=CZ6yMY04; arc=none smtp.client-ip=185.125.25.13
+	 Content-Type:Content-Disposition:In-Reply-To; b=nR0O8QpP+M/8oQYCaTYEmVAgrZmKdLEs7iF00XBpwiu6KckwQKd62N2ILah+a1H/LzihNa8kpMuQgomCTV3iGJzJAYY3D2HFmPCu3SkhSB8t0x6KQQLEl7ivtjinOjbQ2JNO0y/pBraVhQNn5QultwFT7RDfFh/1i95XNM3rnHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=ZGY3aoZ2; arc=none smtp.client-ip=185.125.25.8
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="CZ6yMY04"
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XLTf7420Rz88R;
-	Sat,  5 Oct 2024 17:21:35 +0200 (CEST)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="ZGY3aoZ2"
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XLVGw54vlzKgG;
+	Sat,  5 Oct 2024 17:50:00 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1728141695;
-	bh=TMmKMveFTVlLxU+hFC0f2OEpfMZOkNIAwt3exPPn9rA=;
+	s=20191114; t=1728143400;
+	bh=fEvnRaFE9+q3pKxb6HraPtzHUWsyP46VVEjoPYI/r24=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CZ6yMY04Dd5KWkDXa7rH9PMe3wawomnxfM97NRMOyhWqlvqduq/XHbJY0sUZTi3K9
-	 u+lU0gZcPIo5PQG1dqsQnCNid75MXGb/ckXr/Ul9f6wuezUJS4+JSmrWbItZAAwTbe
-	 LkuQpiqkhCu9s0YtHz9TdtXY7Klu9qGilyNHxXfQ=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4XLTf50tYZzSvN;
-	Sat,  5 Oct 2024 17:21:33 +0200 (CEST)
-Date: Sat, 5 Oct 2024 17:21:30 +0200
+	b=ZGY3aoZ2si2zzo9W8u0Cwl2O1H/GLlW2K9JsKmKtijHygTUvRUVzZyfMHzQsRVZX4
+	 oc64L0BvDHAY7gT0uNWhsHDRPSKan/EM3b/aXkqlM4J9CdCDvoO7UkTGhJKo7u5Gfn
+	 ESMghYiRTVo/4+dYZEyMYlayL8lM8C0XC9EdvnvM=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4XLVGv6xb5znb9;
+	Sat,  5 Oct 2024 17:49:59 +0200 (CEST)
+Date: Sat, 5 Oct 2024 17:49:57 +0200
 From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Christoph Hellwig <hch@infradead.org>, linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	linux-bcachefs@vger.kernel.org, kent.overstreet@linux.dev, torvalds@linux-foundation.org, 
-	Jann Horn <jannh@google.com>, Serge Hallyn <serge@hallyn.com>, 
-	Kees Cook <keescook@chromium.org>, linux-security-module@vger.kernel.org, 
-	Amir Goldstein <amir73il@gmail.com>, Paul Moore <paul@paul-moore.com>, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Subject: Re: lsm sb_delete hook, was Re: [PATCH 4/7] vfs: Convert
- sb->s_inodes iteration to super_iter_inodes()
-Message-ID: <20241005.phah4Yeiz4oo@digikod.net>
-References: <20241003115721.kg2caqgj2xxinnth@quack3>
- <Zv6J34fwj3vNOrIH@infradead.org>
- <20241003122657.mrqwyc5tzeggrzbt@quack3>
- <Zv6Qe-9O44g6qnSu@infradead.org>
- <20241003125650.jtkqezmtnzfoysb2@quack3>
- <Zv6jV40xKIJYuePA@dread.disaster.area>
- <20241003161731.kwveypqzu4bivesv@quack3>
- <Zv8648YMT10TMXSL@dread.disaster.area>
- <20241004-abgemacht-amortisieren-9d54cca35cab@brauner>
- <ZwBy3H/nR626eXSL@dread.disaster.area>
+To: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
+	Paul Moore <paul@paul-moore.com>
+Cc: gnoack@google.com, willemdebruijn.kernel@gmail.com, 
+	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, 
+	yusongping@huawei.com, artem.kuzin@huawei.com, konstantin.meskhidze@huawei.com, 
+	Matthieu Buffet <matthieu@buffet.re>
+Subject: Re: [RFC PATCH v1 1/2] landlock: Fix non-TCP sockets restriction
+Message-ID: <20241005.eeKoiweiwe8a@digikod.net>
+References: <20241003143932.2431249-1-ivanov.mikhail1@huawei-partners.com>
+ <20241003143932.2431249-2-ivanov.mikhail1@huawei-partners.com>
+ <20241003.wie1aiphaeCh@digikod.net>
+ <8f023c51-bac1-251e-0f40-24dbe2bba729@huawei-partners.com>
+ <20241004.rel9ja7IeDo4@digikod.net>
+ <0774e9f1-994f-1131-17f9-7dd8eb96738f@huawei-partners.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -60,74 +53,111 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZwBy3H/nR626eXSL@dread.disaster.area>
+In-Reply-To: <0774e9f1-994f-1131-17f9-7dd8eb96738f@huawei-partners.com>
 X-Infomaniak-Routing: alpha
 
-On Sat, Oct 05, 2024 at 08:57:32AM +1000, Dave Chinner wrote:
-> On Fri, Oct 04, 2024 at 09:21:19AM +0200, Christian Brauner wrote:
-> > On Fri, Oct 04, 2024 at 10:46:27AM GMT, Dave Chinner wrote:
-> > > On Thu, Oct 03, 2024 at 06:17:31PM +0200, Jan Kara wrote:
-> > > > On Thu 03-10-24 23:59:51, Dave Chinner wrote:
-> > > > > As for the landlock code, I think it needs to have it's own internal
-> > > > > tracking mechanism and not search the sb inode list for inodes that
-> > > > > it holds references to. LSM cleanup should be run before before we
-> > > > > get to tearing down the inode cache, not after....
+On Fri, Oct 04, 2024 at 09:16:56PM +0300, Mikhail Ivanov wrote:
+> On 10/4/2024 1:13 PM, Mickaël Salaün wrote:
+> > On Fri, Oct 04, 2024 at 12:30:02AM +0300, Mikhail Ivanov wrote:
+> > > On 10/3/2024 8:45 PM, Mickaël Salaün wrote:
+> > > > Please also add Matthieu in Cc for the network patch series.
 > > > > 
-> > > > Well, I think LSM cleanup could in principle be handled together with the
-> > > > fsnotify cleanup but I didn't check the details.
+> > > > On Thu, Oct 03, 2024 at 10:39:31PM +0800, Mikhail Ivanov wrote:
+> > > > > Do not check TCP access right if socket protocol is not IPPROTO_TCP.
+> > > > > LANDLOCK_ACCESS_NET_BIND_TCP and LANDLOCK_ACCESS_NET_CONNECT_TCP
+> > > > > should not restrict bind(2) and connect(2) for non-TCP protocols
+> > > > > (SCTP, MPTCP, SMC).
+> > > > > 
+> > > > > Closes: https://github.com/landlock-lsm/linux/issues/40
+> > > > > Fixes: fff69fb03dde ("landlock: Support network rules with TCP bind and connect")
+> > > > > Signed-off-by: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+> > > > > ---
+> > > > >    security/landlock/net.c | 2 +-
+> > > > >    1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > > 
+> > > > > diff --git a/security/landlock/net.c b/security/landlock/net.c
+> > > > > index bc3d943a7118..6f59dd98bb13 100644
+> > > > > --- a/security/landlock/net.c
+> > > > > +++ b/security/landlock/net.c
+> > > > > @@ -68,7 +68,7 @@ static int current_check_access_socket(struct socket *const sock,
+> > > > >    		return -EACCES;
+> > > > >    	/* Checks if it's a (potential) TCP socket. */
+> > > > 
+> > > > We can extend this comment to explain that we don't use sk_is_tcp()
+> > > > because we need to handle the AF_UNSPEC case.
 > > > 
-> > > I'm not sure how we tell if an inode potentially has a LSM related
-> > > reference hanging off it. The landlock code looks to make an
-> > > assumption in that the only referenced inodes it sees will have a
-> > > valid inode->i_security pointer if landlock is enabled. i.e. it
-> > > calls landlock_inode(inode) and dereferences the returned value
-> > > without ever checking if inode->i_security is NULL or not.
+> > > Indeed, I'll do this.
+> 
+> I've noticed that we still should check sk->sk_family = AF_INET{,6}
+> here (so sk_is_tcp() is suitable). AF_UNSPEC can be only related to
+> addresses and we should not provide any checks (for address) if socket
+> is unrestrictable (i.e. it's not TCP). It's not useful and might lead to
+> error incosistency for non-TCP sockets.
 
-Correct, i_security should always be valid when this hook is called
-because it means that at least Landlock is enabled and then i_security
-refers to a valid LSM blob.
+Good catch, let's use sk_is_tcp().
 
+> 
+> Btw, I suppose we can improve error consistency by bringing more checks
+> from INET/TCP stack. For example it may be useful to return EISCONN
+> instead of EACCES while connect(2) is called on a connected socket.
+
+Yes, that would be nice (with the related tests).
+
+> 
+> This should be done really carefully and only for some useful cases.
+> Anyway it's not related to the current patch (since it's not a bug).
+
+Sure.
+
+The following patch series could probably be extended for all LSM to
+benefit from these fixes:
+https://lore.kernel.org/all/20240327120036.233641-1-mic@digikod.net/
+
+Mikhail, according to your SCTP tests with SELinux, it looks like this
+patch series should be updated, but that should be simple.
+
+Paul, what is the status of this LSM patch series?  Could Mikhail
+integrate this LSM patch (with the SCTP fix) as part of the current
+Landlock patch series?  This would help fixing the Landlock tests (which
+check SCTP error consistency) when run with SELinux.
+
+> 
 > > > 
-> > > I mean, we could do a check for inode->i_security when the refcount
-> > > is elevated and replace the security_sb_delete hook with an
-> > > security_evict_inode hook similar to the proposed fsnotify eviction
-> > > from evict_inodes().
-
-That would be nice.
-
+> > > > 
+> > > > > -	if (sock->type != SOCK_STREAM)
+> > > > > +	if (sock->type != SOCK_STREAM || sock->sk->sk_protocol != IPPROTO_TCP)
+> > > > 
+> > > > I think we should check sock->sk->sk_type instead of sock->type (even if
+> > > > it should be the same).  To make it simpler, we should only use sk in
+> > > > current_check_access_socket():
+> > > > struct sock *sk = sock->sk;
 > > > 
-> > > But screwing with LSM instructure looks ....  obnoxiously complex
-> > > from the outside...
+> > > Agreed.
+> > > 
+> > > > 
+> > > > Could you please also do s/__sk_common\.skc_/sk_/g ?
+> > > 
+> > > Ofc
+> > > 
+> > > Btw, there is probably incorrect read of skc_family in this function
+> > > [1]. I'll add READ_ONCE for sk->sk_family.
+> > > 
+> > > [1] https://lore.kernel.org/all/20240202095404.183274-1-edumazet@google.com/
 > > 
-> > Imho, please just focus on the immediate feedback and ignore all the
-> > extra bells and whistles that we could or should do. I prefer all of
-> > that to be done after this series lands.
+> > I think it should not be a bug with the current code (IPv6 -> IPV4, and
+> > socket vs. sock) but we should indeed use READ_ONCE() (and add this link
+> > to the commit message).
 > 
-> Actually, it's not as bad as I thought it was going to be. I've
-> already moved both fsnotify and LSM inode eviction to
-> evict_inodes() as preparatory patches...
-
-Good, please Cc me and Günther on related patch series.
-
-FYI, we have the two release_inodes tests to check this hook in
-tools/testing/selftests/landlock/fs_test.c
-
+> ok
 > 
-> Dave Chinner (2):
->       vfs: move fsnotify inode eviction to evict_inodes()
->       vfs, lsm: rework lsm inode eviction at unmount
-> 
->  fs/inode.c                    |  52 +++++++++++++---
->  fs/notify/fsnotify.c          |  60 -------------------
->  fs/super.c                    |   8 +--
->  include/linux/lsm_hook_defs.h |   2 +-
->  include/linux/security.h      |   2 +-
->  security/landlock/fs.c        | 134 ++++++++++--------------------------------
->  security/security.c           |  31 ++++++----
-> 7 files changed, 99 insertions(+), 190 deletions(-)
-> 
-> -Dave.
-> -- 
-> Dave Chinner
-> david@fromorbit.com
+> > 
+> > > 
+> > > > 
+> > > > >    		return 0;
+> > > > >    	/* Checks for minimal header length to safely read sa_family. */
+> > > > > -- 
+> > > > > 2.34.1
+> > > > > 
+> > > > > 
+> > > 
 > 
