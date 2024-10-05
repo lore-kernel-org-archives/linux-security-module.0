@@ -1,300 +1,121 @@
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6509F288B1;
-	Sat,  5 Oct 2024 16:57:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99CA613C836
+	for <linux-security-module@vger.kernel.org>; Sat,  5 Oct 2024 17:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728147481; cv=none; b=LpL92Pw+r4teS4uPgT5Rs16R8RlZyQG1tweIeXcPVRP2WKKNtYcXLtyJR5u5SQ1xTcTcsmdwRt91GJqHCBaxiy0VkocyTCaTjy6Ibu5ENhyjHH9uP75ajfX6nchnVHCqLiT3nYKzI5ZmXLn5XUgnocdfo2fSxYIjhAZcxTTn0g0=
+	t=1728147846; cv=none; b=THAYemmK0k47cflO1TBmxo0nWtyIxV9PTHA/nCxD597Qb4NOYHCvJpJom7U34tGChXZEmV53WoAfUMLQcIKJHGl7fyqXUCAr8srXD9k6SdByUJmumBCru/i9YDoZqE4Wi6gCvsyG21l6LlbIzijhpj7/qOH+VFmZH1QweUUnVrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728147481; c=relaxed/simple;
-	bh=due5SQ2j6U3xIJr5gu+myfsTPiEqDeRAIQo/FDpWkgQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B8cYZSMatQZgjLwDqzLb32d/r4wi8fE12lRoT4lACDQzTPf2J8SLfXX6717e6fHbwwezCWyXW0bd61gOABislP5f+sz+LcZFBSMWF7RvDHre8r9kF4CFHqhzG2mHGZGdaGg/uv2Zi/0vFmm8XDmhBf6jpVRl7xKVqVZVNQBB7rY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L6yE633t; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L6yE633t"
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a7a843bef98so415852866b.2;
-        Sat, 05 Oct 2024 09:57:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728147478; x=1728752278; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ZDWWsz2khXbQTvMlHQeJanQS8tzrDuFeehA3yCCxqP4=;
-        b=L6yE633t3DAlvha+Ras0aY/f6HbuCtm5Kmt5WNbewvoSCTvKvt6MZzglhbarDUzd/+
-         H6lFMpE5bSFBZJpYWuQ2rLW5bnT3CA3rl98Q6LZTxgSj8adv6uzn6nP5ptAMNgwRfdO2
-         CHsM6UIPEaNtIZKKrx4ltw/qJIy25qOyuswNsOzvtPJR3irY8IJcrMDJ2Bt1zIc+hKiO
-         lFx9tdQob99hHa6BJsHmNmMdcY4bErLovVzE22+hqDLCbze9aueo9SLUX4rqzZ2eB9sT
-         GH6Kgx62x4rGTwDTvCI4sFnpUJTJzwITVuhLMaaHQEIuO00Qm+8xL4gEutvWaNwB3Sf+
-         90kQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728147478; x=1728752278;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZDWWsz2khXbQTvMlHQeJanQS8tzrDuFeehA3yCCxqP4=;
-        b=M0JkF0/xThAXzpQq0SK0ZhFwZzKi1O1zL/Ud6ubf8WfVezjM/xCHYhMCxM+CgKlGjw
-         PcSXEduyQtoRYHaDtG3BiHKw+e+xQ1KqHwT716T+GnvLfTW8BpTG48K8jpewQDt7TL8Q
-         ri35sAkTbpFKzZI8RHoU8UZpwvdK//OLm0o3QPR6ZPIpQmavoVrO5UGq3Tdzt0WLZm8R
-         gIdczGvgqCaxRq8m8pA328ekLxrUtrQG7D+NO9/pyW+bwsekX7qTEgRV2oB/iyj2fEhO
-         t9H9ER2mWhXFbroW/9qGutdbFI4xT5hs7VVwTTODJv++qu61iqKukb7HhgVPrQ4Y/vXr
-         0slw==
-X-Forwarded-Encrypted: i=1; AJvYcCUGIh0MqYEKViio45uHqSY+08X143d3aVhL0bmv4nWuUX8cTp0CBoiJwMVtM+pVfMV+K1peAQhyMhx86dxZIovLSliZpnm/@vger.kernel.org, AJvYcCVKbbL4KXG4GR2NKpnJH/5uOr6xGQ6iT7IziVAfDWEPC44L3j39NqliYFvef2nXUsEzacy3jqp7MgCo2Sk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAzq++pjYZ+vJTmdfKHsog43LSVStJUEaxTzKc0CaDd/0bmli5
-	jWEOyYuv3lpH/TNh9cD1kgDoi7o3cgHZN9lhoRAtaUB87FDN4O/O
-X-Google-Smtp-Source: AGHT+IGW/zx9bax+mOi4lhthATqYDogDuv9FTXKJKyL0jn92NMBEMULizYg9oTLYeVf2ITebAbF6yA==
-X-Received: by 2002:a17:907:f788:b0:a93:d5d1:e4d4 with SMTP id a640c23a62f3a-a991bd42f21mr619711766b.27.1728147477371;
-        Sat, 05 Oct 2024 09:57:57 -0700 (PDT)
-Received: from localhost ([2a02:168:59f0:1:b0ab:dd5e:5c82:86b0])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a992e5bbc74sm153185666b.31.2024.10.05.09.57.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 05 Oct 2024 09:57:57 -0700 (PDT)
-Date: Sat, 5 Oct 2024 18:57:55 +0200
-From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-	Paul Moore <paul@paul-moore.com>,
-	Tahera Fahimi <fahimitahera@gmail.com>,
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v1 1/3] landlock: Refactor filesystem access mask
- management
-Message-ID: <20241005.a69458234f74@gnoack.org>
-References: <20241001141234.397649-1-mic@digikod.net>
- <20241001141234.397649-2-mic@digikod.net>
+	s=arc-20240116; t=1728147846; c=relaxed/simple;
+	bh=xfBKd1Ewon7HWbo7J2W+BGsGSpP0B3g6NS+w11psddo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X4A1R3tyR5Lkg95VWf6KQtHVG7Zzckq+EB9r7kG/wAnPESNX08VCWSM3lKgzhVmhB8kt4siNTl5SBP5Nd038JWtw/X/hG5ckb8MM/NFnfojSEj5CG1qJU6T7RS3APStloauqiLK6a4kjfjBLfXkMOrcPraK43+yQ+Sc502eS1Gk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 495H2bgY024279;
+	Sat, 5 Oct 2024 12:02:37 -0500
+Received: (from greg@localhost)
+	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 495H2Z0c024278;
+	Sat, 5 Oct 2024 12:02:35 -0500
+Date: Sat, 5 Oct 2024 12:02:35 -0500
+From: "Dr. Greg" <greg@enjellic.com>
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Kees Cook <kees@kernel.org>, Paul Moore <paul@paul-moore.com>,
+        Fan Wu <wufan@linux.microsoft.com>, Micka??l Sala??n <mic@digikod.net>,
+        Mimi Zohar <zohar@linux.ibm.com>, Micah Morton <mortonm@chromium.org>,
+        John Johansen <john.johansen@canonical.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        KP Singh <kpsingh@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+        linux-security-module@vger.kernel.org
+Subject: Re: TOMOYO's pull request for v6.12
+Message-ID: <20241005170235.GA24016@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <CAHC9VhR=QjdoHG3wJgHFJkKYBg7vkQH2MpffgVzQ0tAByo_wRg@mail.gmail.com> <202410041305.544EA7E4E@keescook> <ece0c7bd-0d28-4562-8760-c54b0077583a@I-love.SAKURA.ne.jp> <202410041645.27A48DA@keescook> <5b09909b-fe43-4a9c-b9a7-2e1122b2cdb6@I-love.SAKURA.ne.jp> <4eaea237-d259-44bb-a546-26a0558a4453@schaufler-ca.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241001141234.397649-2-mic@digikod.net>
+In-Reply-To: <4eaea237-d259-44bb-a546-26a0558a4453@schaufler-ca.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Sat, 05 Oct 2024 12:02:37 -0500 (CDT)
 
-On Tue, Oct 01, 2024 at 04:12:32PM +0200, Mickaël Salaün wrote:
-> Replace get_raw_handled_fs_accesses() with a generic
-> landlock_merge_access_masks(), and replace the get_fs_domain()
-> implementation with a call to the new landlock_filter_access_masks()
-> helper.  These helpers will also be useful for other types of access.
-> 
-> Replace struct access_masks with union access_masks that includes a new
-> "all" field to simplify mask filtering.
-> 
-> Cc: Günther Noack <gnoack@google.com>
-> Cc: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-> Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> Link: https://lore.kernel.org/r/20241001141234.397649-2-mic@digikod.net
-> ---
->  security/landlock/fs.c       | 21 ++++-----------
->  security/landlock/ruleset.h  | 51 +++++++++++++++++++++++++++---------
->  security/landlock/syscalls.c |  2 +-
->  3 files changed, 44 insertions(+), 30 deletions(-)
-> 
-> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> index 7d79fc8abe21..a2ef7d151c81 100644
-> --- a/security/landlock/fs.c
-> +++ b/security/landlock/fs.c
-> @@ -388,33 +388,22 @@ static bool is_nouser_or_private(const struct dentry *dentry)
->  		unlikely(IS_PRIVATE(d_backing_inode(dentry))));
->  }
->  
-> -static access_mask_t
-> -get_raw_handled_fs_accesses(const struct landlock_ruleset *const domain)
-> -{
-> -	access_mask_t access_dom = 0;
-> -	size_t layer_level;
-> -
-> -	for (layer_level = 0; layer_level < domain->num_layers; layer_level++)
-> -		access_dom |=
-> -			landlock_get_raw_fs_access_mask(domain, layer_level);
-> -	return access_dom;
-> -}
-> -
->  static access_mask_t
->  get_handled_fs_accesses(const struct landlock_ruleset *const domain)
->  {
->  	/* Handles all initially denied by default access rights. */
-> -	return get_raw_handled_fs_accesses(domain) |
-> +	return landlock_merge_access_masks(domain).fs |
->  	       LANDLOCK_ACCESS_FS_INITIALLY_DENIED;
->  }
->  
->  static const struct landlock_ruleset *
->  get_fs_domain(const struct landlock_ruleset *const domain)
->  {
-> -	if (!domain || !get_raw_handled_fs_accesses(domain))
-> -		return NULL;
-> +	const union access_masks all_fs = {
-> +		.fs = ~0,
-> +	};
->  
-> -	return domain;
-> +	return landlock_filter_access_masks(domain, all_fs);
->  }
->  
->  static const struct landlock_ruleset *get_current_fs_domain(void)
-> diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
-> index 61bdbc550172..a816042ca8f3 100644
-> --- a/security/landlock/ruleset.h
-> +++ b/security/landlock/ruleset.h
-> @@ -41,12 +41,19 @@ static_assert(BITS_PER_TYPE(access_mask_t) >= LANDLOCK_NUM_SCOPE);
->  static_assert(sizeof(unsigned long) >= sizeof(access_mask_t));
->  
->  /* Ruleset access masks. */
-> -struct access_masks {
-> -	access_mask_t fs : LANDLOCK_NUM_ACCESS_FS;
-> -	access_mask_t net : LANDLOCK_NUM_ACCESS_NET;
-> -	access_mask_t scope : LANDLOCK_NUM_SCOPE;
-> +union access_masks {
-> +	struct {
-> +		access_mask_t fs : LANDLOCK_NUM_ACCESS_FS;
-> +		access_mask_t net : LANDLOCK_NUM_ACCESS_NET;
-> +		access_mask_t scope : LANDLOCK_NUM_SCOPE;
-> +	};
-> +	u32 all;
->  };
+On Sat, Oct 05, 2024 at 09:10:08AM -0700, Casey Schaufler wrote:
 
-More of a style remark:
+Good morning to everyone, I hope the weekend is going well.
 
-I wonder whether it is worth turning this into a union.
+I saw this go by while I was multi-tasking between draining the oil
+out of the lower unit on my boat motor and welding the boat lift
+canopy frame and wanted to make sure that Tetsuo's comment is
+interpreted in the correct context.
 
-If this is for performance, I do not think is buys you much.  With
-optimization enabled, it does not make much of a difference whether
-you are doing the & on .all or whether you are doing it on the
-individual fields.  (I tried it out with gcc.  The only difference is
-that the & on the individual fields will at the end mask only the bits
-that belong to these fields.)
+> On 10/5/2024 12:10 AM, Tetsuo Handa wrote:
+> > ... It is possible that an attempt to make it
+> > possible to use SELinux and Smack together is a wrong direction. Even if SELinux
+> > and TSEM conflicts about their security models (and cannot be used together), it
+> > might not be something we need to care...
 
-At the same time, in most places where struct access_masks is used,
-the union is not necessary and might add to the confusion.
+> In the past I have said that having SELinux and Smack on the same
+> system is the test case for module stacking, but that I didn't see
+> it having a practical application. I have since been presented with
+> a use case that seems reasonable. Because LSM is a mechanism for
+> additional restrictions it is impossible for two security models to
+> "conflict". LSMs *must* be written to allow for cases where access
+> is denied for other reasons. You never get to the MAC check if the
+> DAC check has already failed. If TSEM can't handle what SELinux or
+> TOMOYO decides it shouldn't be accepted.
 
+I believe that Tetsuo misinterpreted the discussions you and I have
+had about what represents a 'security model'.
 
->  
-> +/* Makes sure all fields are covered. */
-> +static_assert(sizeof(((union access_masks *)NULL)->all) ==
-> +	      sizeof(union access_masks));
-> +
->  typedef u16 layer_mask_t;
->  /* Makes sure all layers can be checked. */
->  static_assert(BITS_PER_TYPE(layer_mask_t) >= LANDLOCK_MAX_NUM_LAYERS);
-> @@ -229,7 +236,7 @@ struct landlock_ruleset {
->  			 * layers are set once and never changed for the
->  			 * lifetime of the ruleset.
->  			 */
-> -			struct access_masks access_masks[];
-> +			union access_masks access_masks[];
->  		};
->  	};
->  };
-> @@ -260,6 +267,31 @@ static inline void landlock_get_ruleset(struct landlock_ruleset *const ruleset)
->  		refcount_inc(&ruleset->usage);
->  }
->  
-> +static inline union access_masks
-> +landlock_merge_access_masks(const struct landlock_ruleset *const domain)
-> +{
-> +	size_t layer_level;
-> +	union access_masks matches = {};
-> +
-> +	for (layer_level = 0; layer_level < domain->num_layers; layer_level++)
-> +		matches.all |= domain->access_masks[layer_level].all;
-> +
-> +	return matches;
-> +}
-> +
-> +static inline const struct landlock_ruleset *
-> +landlock_filter_access_masks(const struct landlock_ruleset *const domain,
-> +			     const union access_masks masks)
+For the record, TSEM has no issue with handling whatever SeLinux,
+SMACK, Tomoyo, AppArmor et.al. decide to do, full stop.
 
-With this function name, the return type of this function is
-unintuitive to me.  Judging by the name, I would have expected a
-function that returns a "access_masks" value as well, similar to the
-function one above (the remaining access rights after filtering)?
+It functions like all of the rest of the LSM modules, it determines
+whether or not a security event is inconsistent with the 'model' that
+the process is running in, and if so denies it, otherwise it stands
+aside and lets the other LSM's have a run at it.
 
-In the places where the result of this function is returned directly,
-I find myself jumping back to the function implementation to
-understand what this means.
+If some other LSM in front of it decides to deny an event, well and
+good, the event is over with from TSEM's perspective, as well as
+anything else behind the denying LSM for that matter.
 
-As a constructive suggestion, how about calling this function
-differently, e.g.
+You raised the issue, I believe in V1, as to where we had positioned
+TSEM in the LSM call list.  After you expressed concern we moved it to
+the front of the call list because we don't care and everyone else
+seems to want to be later in the stack, particularly at the end, which
+would now seem to be be a privileged position held only by BPF.
 
-bool landlock_any_access_rights_handled(
-    const struct landlock_ruleset *const domain,
-    struct access_masks masks);
+To extend on this a bit for further clarification.
 
-Then the callers who previously did
+As we have evolved TSEM we realized that we actually want to be first,
+if that isn't also a coveted position.
 
-   return landlock_filter_access_masks(dom, masks);
+For example, internally, we have TSEM 'models' whose only function is
+to validate that the extended security attributes of an inode match
+what the workload was unit tested to, in order to thwart offline
+modification attacks.  In this case you want TSEM to be running ahead
+of the security attribute based models, since presumably, you would
+not want those models making a decision on extended attributes that
+have been modified.
 
-would now do
+Hopefully this clarifies the issue.
 
-   if (landlock_any_access_rights_handled(dom, masks))
-       return dom;
-   return NULL;
+We have a long standing question, that has never been answered,
+regarding module stacking and multiple MAC implementations on the same
+OS instance but we will leave that to another conversation.
 
-This is more verbose, but IMHO verbose code is not inherently bad,
-if it is also clearer.  And it's only two lines more.
+Now back to MIG welder.
 
-> +{
-> +	if (!domain)
-> +		return NULL;
-> +
-> +	if (landlock_merge_access_masks(domain).all & masks.all)
-> +		return domain;
-> +
-> +	return NULL;
-> +}
+Have a good weekend.
 
-Function documentation for both functions would be good :)
+As always,
+Dr. Greg
 
-> +
->  static inline void
->  landlock_add_fs_access_mask(struct landlock_ruleset *const ruleset,
->  			    const access_mask_t fs_access_mask,
-> @@ -295,19 +327,12 @@ landlock_add_scope_mask(struct landlock_ruleset *const ruleset,
->  	ruleset->access_masks[layer_level].scope |= mask;
->  }
->  
-> -static inline access_mask_t
-> -landlock_get_raw_fs_access_mask(const struct landlock_ruleset *const ruleset,
-> -				const u16 layer_level)
-> -{
-> -	return ruleset->access_masks[layer_level].fs;
-> -}
-> -
->  static inline access_mask_t
->  landlock_get_fs_access_mask(const struct landlock_ruleset *const ruleset,
->  			    const u16 layer_level)
->  {
->  	/* Handles all initially denied by default access rights. */
-> -	return landlock_get_raw_fs_access_mask(ruleset, layer_level) |
-> +	return ruleset->access_masks[layer_level].fs |
->  	       LANDLOCK_ACCESS_FS_INITIALLY_DENIED;
->  }
->  
-> diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
-> index f5a0e7182ec0..c097d356fa45 100644
-> --- a/security/landlock/syscalls.c
-> +++ b/security/landlock/syscalls.c
-> @@ -329,7 +329,7 @@ static int add_rule_path_beneath(struct landlock_ruleset *const ruleset,
->  		return -ENOMSG;
->  
->  	/* Checks that allowed_access matches the @ruleset constraints. */
-> -	mask = landlock_get_raw_fs_access_mask(ruleset, 0);
-> +	mask = ruleset->access_masks[0].fs;
->  	if ((path_beneath_attr.allowed_access | mask) != mask)
->  		return -EINVAL;
->  
-> -- 
-> 2.46.1
-> 
-
-Reviewed-by: Günther Noack <gnoack3000@gmail.com>
-
-–Günther
+The Quixote Project - Flailing at the Travails of Cybersecurity
+              https://github.com/Quixote-Project
