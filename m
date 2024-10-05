@@ -1,121 +1,120 @@
-Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99CA613C836
-	for <linux-security-module@vger.kernel.org>; Sat,  5 Oct 2024 17:03:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAA85158D81;
+	Sat,  5 Oct 2024 17:29:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728147846; cv=none; b=THAYemmK0k47cflO1TBmxo0nWtyIxV9PTHA/nCxD597Qb4NOYHCvJpJom7U34tGChXZEmV53WoAfUMLQcIKJHGl7fyqXUCAr8srXD9k6SdByUJmumBCru/i9YDoZqE4Wi6gCvsyG21l6LlbIzijhpj7/qOH+VFmZH1QweUUnVrU=
+	t=1728149394; cv=none; b=NaBBr2IyCqetDm09E6B8M5I+KQj2aPTGhGzj3GuZWX4mlo6P5xQdkqUl2poqF0srOEfnsvEztShRboDql3TlgTTPHRbSF5Jx5XsXNt8999pySBf5QZZ+YeHupraN5mYbC3QHCSl/9U1ooOQSdN5tbgLtflSL7og2JApfCitLMh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728147846; c=relaxed/simple;
-	bh=xfBKd1Ewon7HWbo7J2W+BGsGSpP0B3g6NS+w11psddo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X4A1R3tyR5Lkg95VWf6KQtHVG7Zzckq+EB9r7kG/wAnPESNX08VCWSM3lKgzhVmhB8kt4siNTl5SBP5Nd038JWtw/X/hG5ckb8MM/NFnfojSEj5CG1qJU6T7RS3APStloauqiLK6a4kjfjBLfXkMOrcPraK43+yQ+Sc502eS1Gk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 495H2bgY024279;
-	Sat, 5 Oct 2024 12:02:37 -0500
-Received: (from greg@localhost)
-	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 495H2Z0c024278;
-	Sat, 5 Oct 2024 12:02:35 -0500
-Date: Sat, 5 Oct 2024 12:02:35 -0500
-From: "Dr. Greg" <greg@enjellic.com>
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Kees Cook <kees@kernel.org>, Paul Moore <paul@paul-moore.com>,
-        Fan Wu <wufan@linux.microsoft.com>, Micka??l Sala??n <mic@digikod.net>,
-        Mimi Zohar <zohar@linux.ibm.com>, Micah Morton <mortonm@chromium.org>,
-        John Johansen <john.johansen@canonical.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        KP Singh <kpsingh@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-        linux-security-module@vger.kernel.org
-Subject: Re: TOMOYO's pull request for v6.12
-Message-ID: <20241005170235.GA24016@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <CAHC9VhR=QjdoHG3wJgHFJkKYBg7vkQH2MpffgVzQ0tAByo_wRg@mail.gmail.com> <202410041305.544EA7E4E@keescook> <ece0c7bd-0d28-4562-8760-c54b0077583a@I-love.SAKURA.ne.jp> <202410041645.27A48DA@keescook> <5b09909b-fe43-4a9c-b9a7-2e1122b2cdb6@I-love.SAKURA.ne.jp> <4eaea237-d259-44bb-a546-26a0558a4453@schaufler-ca.com>
+	s=arc-20240116; t=1728149394; c=relaxed/simple;
+	bh=yKuWImx5CLK6/jQfJwcJD4qFxtkCxjuZ5fJ1Vg6VeiU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qhZPb2b4ZyT9oW/LozkBWobKbj1cAG5UxYSbUqjMBZXrNBwRpZ7auSutY8t2TyhJnE1FeUlBjXIKfDxzHI5NlHTjtZtUQcP0FzSIkFRwklR1YdnDZs+AvFqtIvWt+eb5vBOnDiGhPS2Gti70zJUUHFLmCfowjwhPbCuJWHu62rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4XLXS35t4Nz1T8Bb;
+	Sun,  6 Oct 2024 01:28:03 +0800 (CST)
+Received: from kwepemj200016.china.huawei.com (unknown [7.202.194.28])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4393D180113;
+	Sun,  6 Oct 2024 01:29:42 +0800 (CST)
+Received: from [10.123.123.159] (10.123.123.159) by
+ kwepemj200016.china.huawei.com (7.202.194.28) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sun, 6 Oct 2024 01:29:38 +0800
+Message-ID: <70ae6422-4e8c-465f-9bbf-5ff4df52a057@huawei-partners.com>
+Date: Sat, 5 Oct 2024 20:29:34 +0300
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4eaea237-d259-44bb-a546-26a0558a4453@schaufler-ca.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Sat, 05 Oct 2024 12:02:37 -0500 (CDT)
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v2 8/9] selftests/landlock: Test changing socket
+ backlog with listen(2)
+Content-Language: ru
+To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>
+CC: <mic@digikod.net>, <willemdebruijn.kernel@gmail.com>,
+	<linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
+	<artem.kuzin@huawei.com>, <konstantin.meskhidze@huawei.com>
+References: <20240814030151.2380280-1-ivanov.mikhail1@huawei-partners.com>
+ <20240814030151.2380280-9-ivanov.mikhail1@huawei-partners.com>
+ <20241005.c0501f9d61a8@gnoack.org>
+From: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+In-Reply-To: <20241005.c0501f9d61a8@gnoack.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: lhrpeml100002.china.huawei.com (7.191.160.241) To
+ kwepemj200016.china.huawei.com (7.202.194.28)
 
-On Sat, Oct 05, 2024 at 09:10:08AM -0700, Casey Schaufler wrote:
+On 10/5/2024 7:57 PM, Günther Noack wrote:
+> On Wed, Aug 14, 2024 at 11:01:50AM +0800, Mikhail Ivanov wrote:
+>> listen(2) can be used to change length of the pending connections queue
+>> of the listening socket. Such scenario shouldn't be restricted by Landlock
+>> since socket doesn't change its state.
+> 
+> Yes, this behavior makes sense to me as well. 👍 __inet_listen_sk()
+> only changes sk->sk_max_ack_backlog when listen() gets called a second
+> time.
+> 
+>> * Implement test that validates this case.
+>>
+>> Signed-off-by: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+>> ---
+>>   tools/testing/selftests/landlock/net_test.c | 26 +++++++++++++++++++++
+>>   1 file changed, 26 insertions(+)
+>>
+>> diff --git a/tools/testing/selftests/landlock/net_test.c b/tools/testing/selftests/landlock/net_test.c
+>> index 6831d8a2e9aa..dafc433a0068 100644
+>> --- a/tools/testing/selftests/landlock/net_test.c
+>> +++ b/tools/testing/selftests/landlock/net_test.c
+>> @@ -1768,6 +1768,32 @@ TEST_F(ipv4_tcp, with_fs)
+>>   	EXPECT_EQ(-EACCES, bind_variant(bind_fd, &self->srv1));
+>>   }
+>>   
+>> +TEST_F(ipv4_tcp, double_listen)
+>> +{
+>> +	const struct landlock_ruleset_attr ruleset_attr = {
+>> +		.handled_access_net = LANDLOCK_ACCESS_NET_LISTEN_TCP,
+>> +	};
+>> +	int ruleset_fd;
+>> +	int listen_fd;
+>> +
+>> +	listen_fd = socket_variant(&self->srv0);
+>> +	ASSERT_LE(0, listen_fd);
+>> +
+>> +	EXPECT_EQ(0, bind_variant(listen_fd, &self->srv0));
+>> +	EXPECT_EQ(0, listen_variant(listen_fd, backlog));
+>> +
+>> +	ruleset_fd =
+>> +		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
+>> +	ASSERT_LE(0, ruleset_fd);
+>> +
+>> +	/* Denies listen. */
+>> +	enforce_ruleset(_metadata, ruleset_fd);
+>> +	EXPECT_EQ(0, close(ruleset_fd));
+>> +
+>> +	/* Tries to change backlog value of listening socket. */
+>> +	EXPECT_EQ(0, listen_variant(listen_fd, backlog + 1));
+> 
+> For test clarity: Without reading the commit message, I believe it
+> might not be obvious to the reader *why* the second listen() is
+> supposed to work.  This might be worth a comment.
 
-Good morning to everyone, I hope the weekend is going well.
+Ofc, thanks!
 
-I saw this go by while I was multi-tasking between draining the oil
-out of the lower unit on my boat motor and welding the boat lift
-canopy frame and wanted to make sure that Tetsuo's comment is
-interpreted in the correct context.
-
-> On 10/5/2024 12:10 AM, Tetsuo Handa wrote:
-> > ... It is possible that an attempt to make it
-> > possible to use SELinux and Smack together is a wrong direction. Even if SELinux
-> > and TSEM conflicts about their security models (and cannot be used together), it
-> > might not be something we need to care...
-
-> In the past I have said that having SELinux and Smack on the same
-> system is the test case for module stacking, but that I didn't see
-> it having a practical application. I have since been presented with
-> a use case that seems reasonable. Because LSM is a mechanism for
-> additional restrictions it is impossible for two security models to
-> "conflict". LSMs *must* be written to allow for cases where access
-> is denied for other reasons. You never get to the MAC check if the
-> DAC check has already failed. If TSEM can't handle what SELinux or
-> TOMOYO decides it shouldn't be accepted.
-
-I believe that Tetsuo misinterpreted the discussions you and I have
-had about what represents a 'security model'.
-
-For the record, TSEM has no issue with handling whatever SeLinux,
-SMACK, Tomoyo, AppArmor et.al. decide to do, full stop.
-
-It functions like all of the rest of the LSM modules, it determines
-whether or not a security event is inconsistent with the 'model' that
-the process is running in, and if so denies it, otherwise it stands
-aside and lets the other LSM's have a run at it.
-
-If some other LSM in front of it decides to deny an event, well and
-good, the event is over with from TSEM's perspective, as well as
-anything else behind the denying LSM for that matter.
-
-You raised the issue, I believe in V1, as to where we had positioned
-TSEM in the LSM call list.  After you expressed concern we moved it to
-the front of the call list because we don't care and everyone else
-seems to want to be later in the stack, particularly at the end, which
-would now seem to be be a privileged position held only by BPF.
-
-To extend on this a bit for further clarification.
-
-As we have evolved TSEM we realized that we actually want to be first,
-if that isn't also a coveted position.
-
-For example, internally, we have TSEM 'models' whose only function is
-to validate that the extended security attributes of an inode match
-what the workload was unit tested to, in order to thwart offline
-modification attacks.  In this case you want TSEM to be running ahead
-of the security attribute based models, since presumably, you would
-not want those models making a decision on extended attributes that
-have been modified.
-
-Hopefully this clarifies the issue.
-
-We have a long standing question, that has never been answered,
-regarding module stacking and multiple MAC implementations on the same
-OS instance but we will leave that to another conversation.
-
-Now back to MIG welder.
-
-Have a good weekend.
-
-As always,
-Dr. Greg
-
-The Quixote Project - Flailing at the Travails of Cybersecurity
-              https://github.com/Quixote-Project
+> 
+>> +}
+>> +
+>>   FIXTURE(port_specific)
+>>   {
+>>   	struct service_fixture srv0;
+>> -- 
+>> 2.34.1
+>>
+> 
+> Reviewed-by: Günther Noack <gnoack3000@gmail.com>
