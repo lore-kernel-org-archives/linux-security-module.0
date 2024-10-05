@@ -1,40 +1,40 @@
 Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31768200CB
-	for <linux-security-module@vger.kernel.org>; Sat,  5 Oct 2024 03:45:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E73F1C6B2;
+	Sat,  5 Oct 2024 03:59:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.121
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728099907; cv=none; b=VSdmoH6snqiq9GLzovFU29HjSbJ444GqzY2IYSYhic/62+PSVKmfb9JCLxVIDH4v8i0unL/jlTZ53toAVb7MA0k90OvSIo9TAk5xtAnAWXWQ8U4HC/UerV5eJ7eNNrZDXF5InA6dWXQdKqO0Obx4Vo8wTAHUTqEnqnSj8xQ/o3Q=
+	t=1728100758; cv=none; b=ECHfwn43NROc/wblSxJazSfCIZUStDnTQLURJeWvo2HiKXlP6supYSAZAzasp8bHaHVF4tuGpfvUb3g8Ee1sGGCTWCTnqYSLWR4m7qHoFNPlzwIDdcJ1TXEF6jYPq6Uj8PRjbOguE9ooHpJcFnpo89DjFjvz630qO8b7E323W7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728099907; c=relaxed/simple;
-	bh=5Qqc8SMoCcxwjjhJwa5OXSHXOcyt1VAc3XScoTF394M=;
+	s=arc-20240116; t=1728100758; c=relaxed/simple;
+	bh=3O1st7a2JUYhkREVq6zPbi+4RL7lqMmqLzPpnZ0q5k0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Iql1E2ne73njJMllIXO6aFwfl+8hYxC8gGVYRNLmq+Gz/O09F0dQK+AA8zKUr7yegjT54cbdBs7I4iOXR4fNld7o+osl5jrsfHpWmRlJn48yZaunAjYr7L7svOvYP+vlA7+/HHb5bYjIeJ+8EMyESpqDkCHhxJcsXOE05mLClgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=TRFksHUL; arc=none smtp.client-ip=185.125.188.121
+	 In-Reply-To:Content-Type; b=bmu0i6hzvaUFbf6lRX6LggEdJE0TVnD1LDDkCm5t25p9St3p7tyynU1If5/8NqoHfavfCnmhWtr36Kr5tPzvIEvCZ7McH+OlWl75p2Svu6rxQXfQy9kG2c2rRMDr000ju6i74eQzDTAbX8dNdbRvtSM+w8xRrEsWQ22O1+wOof0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=B+pqqyCt; arc=none smtp.client-ip=185.125.188.121
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="TRFksHUL"
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="B+pqqyCt"
 Received: from [192.168.192.84] (unknown [50.39.103.33])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id B80963F6D8;
-	Sat,  5 Oct 2024 03:38:58 +0000 (UTC)
+	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 399633F1E6;
+	Sat,  5 Oct 2024 03:59:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1728099541;
-	bh=BmyPOnKET4E0SGjrGt9Fo1ZkBq59WOKlGz2/WIxzrhk=;
+	s=20210705; t=1728100753;
+	bh=Vk3HsdhF+YB2WK8ojIePESCSq0zj2fOyJodL9lVyaxM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
 	 In-Reply-To:Content-Type;
-	b=TRFksHULMpYqIiKd7yUPCRk/Fdx+NaPFfuBOcBubN7f1YzjL5rnR5kbVmNYsc6zB1
-	 Iz6jVThwcLrqqLUZoUE2O1es/8qxGY9v37knJj3fE9qpuMrrnvi/DcT2kGOgCb92hf
-	 Pmt/8k1/UmupAYz8s6o8mSnLtwD8qOdGY3XcJEomHlO68BDBHNK+vCm0tU3OLrewnn
-	 a0oiR5J7O0+JRTJbAMSij5GbG80kTqKKjcGQfGBKRVfti2zDgpjKvxAklsd4FlIw2B
-	 zBQA6SUNZMM13T69+3m+Ag8DkbTMRTTGLcGcLCSaITFKu9BlOmRlGiiCs7iRrGV9py
-	 TEBrqtNwNeq/g==
-Message-ID: <2596b240-63a0-4daa-b048-a33fadd4f74f@canonical.com>
-Date: Fri, 4 Oct 2024 20:38:56 -0700
+	b=B+pqqyCtaCDN4f4UOgsoz2zt+e3bwRT826DNPsPSSlWQzPJTVcO4GpKmNNImo4NAz
+	 sRl3W9xwh4ml0SNb5tqQ3LMyiqaKjxGyprKbAT4R159dxfzz8O/1XwIcI8MIhLzyjt
+	 Oazd5DeIrfbscLKCn2S2Dnh4LMqkRx2hh0s46q8tfqG2KevupNVQmRam7Fw3S179gH
+	 kfPz+fPrfsNT6xRWonXDt4XGtMV9LM92sDvEKzyJs8Lp/8LgOKuPnWbi49v9DkOj7K
+	 MRtpowKrJWrDTAHridk06sySMXMKh37nflgtgbNcPop17KS1EyEwKkh/moVV34JZJg
+	 FFqV6QWfAD1JA==
+Message-ID: <a0de84de-8c20-46b9-ba61-44d35e7cdc58@canonical.com>
+Date: Fri, 4 Oct 2024 20:59:10 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -42,19 +42,24 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: TOMOYO's pull request for v6.12
-To: Kees Cook <kees@kernel.org>,
- Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: Paul Moore <paul@paul-moore.com>, Fan Wu <wufan@linux.microsoft.com>,
- =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- Mimi Zohar <zohar@linux.ibm.com>, Micah Morton <mortonm@chromium.org>,
- Casey Schaufler <casey@schaufler-ca.com>,
- Roberto Sassu <roberto.sassu@huawei.com>, KP Singh <kpsingh@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>, linux-security-module@vger.kernel.org
-References: <CAHC9VhR=QjdoHG3wJgHFJkKYBg7vkQH2MpffgVzQ0tAByo_wRg@mail.gmail.com>
- <202410041305.544EA7E4E@keescook>
- <ece0c7bd-0d28-4562-8760-c54b0077583a@I-love.SAKURA.ne.jp>
- <202410041645.27A48DA@keescook>
+Subject: Re: [GIT PULL] tomoyo update for v6.12
+To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+ Paul Moore <paul@paul-moore.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ Jonathan Corbet <corbet@lwn.net>, LKML <linux-kernel@vger.kernel.org>,
+ linux-security-module@vger.kernel.org
+References: <0c4b443a-9c72-4800-97e8-a3816b6a9ae2@I-love.SAKURA.ne.jp>
+ <877cavdgsu.fsf@trenco.lwn.net>
+ <CAHC9VhRnTrjP3kNXMmzsK4oZL7WD+uH0OuXszEPgTc5YoT5dew@mail.gmail.com>
+ <CAHk-=wjLdoBcY-r64oBbKXo3hSEr5AawrP_5GSFQ4NEbCNt4Kg@mail.gmail.com>
+ <CAHC9VhS_8JtU0KQyy3rEGt0CQ_XMQFt2Kic-bz-Qd=SMjeWe4Q@mail.gmail.com>
+ <19e29693-718c-4667-ab40-948718bcc6f5@I-love.SAKURA.ne.jp>
+ <CAHC9VhT3yfahvwSVqGHyQq5SDpf8QRjDoEttoyD0zSau41Sb4Q@mail.gmail.com>
+ <9387e6bb-484a-443d-ad87-24cf6e976e61@I-love.SAKURA.ne.jp>
+ <2e182814-9317-4de1-ab96-b3b1eeb89733@canonical.com>
+ <8114a37e-1306-47ee-b27e-a61c1c7bca94@I-love.SAKURA.ne.jp>
+ <393a1cd5-a212-4b04-9ff2-744772c21106@canonical.com>
+ <cd548445-777c-46d7-abe3-de8e06e509ee@I-love.SAKURA.ne.jp>
 Content-Language: en-US
 From: John Johansen <john.johansen@canonical.com>
 Autocrypt: addr=john.johansen@canonical.com; keydata=
@@ -100,92 +105,94 @@ Autocrypt: addr=john.johansen@canonical.com; keydata=
  +T7sv9+iY+e0Y+SolyJgTxMYeRnDWE6S77g6gzYYHmcQOWP7ZMX+MtD4SKlf0+Q8li/F9GUL
  p0rw8op9f0p1+YAhyAd+dXWNKf7zIfZ2ME+0qKpbQnr1oizLHuJX/Telo8KMmHter28DPJ03 lT9Q
 Organization: Canonical
-In-Reply-To: <202410041645.27A48DA@keescook>
+In-Reply-To: <cd548445-777c-46d7-abe3-de8e06e509ee@I-love.SAKURA.ne.jp>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 10/4/24 17:17, Kees Cook wrote:
-> On Sat, Oct 05, 2024 at 08:41:06AM +0900, Tetsuo Handa wrote:
->> On 2024/10/05 5:54, Kees Cook wrote:
->>> - tomoyo_register_hooks() becomes an exploitation gadget that could be
->>>    used to bypass the LSM as a whole.
+On 10/2/24 23:16, Tetsuo Handa wrote:
+> On 2024/10/03 14:35, John Johansen wrote:
+>> I do understand that. The problem is that out of tree doesn't do that.
+>>  From a distro perspective out of tree is more work, and is very problematic
+>> from a code signing perspective.
 >>
->> tomoyo_register_hooks() is enabled only if "CONFIG_SECURITY_TOMOYO_LKM is
->> included while building the kernel" && "security=tomoyo is specified or
->> tomoyo is included in the lsm= kernel command line options".
+>> Code signing isn't going away, if anything its become a requirement to
+>> support the majority of users. Loading unsigned modules, code, even
+>> bpf is a problem.
+> 
+> Confused. If use of BPF is a problem, use of BPF-LSM is also a problem?
+
+yes it is. Pressures being what they are, it is enabled for some of our
+kernels. Signed BPF would be required to get it available every where.
+
+> If one were able to implement security modules using BPF-LSM, such modules
+> are headache for distributors? If so, BPF based LSM modules can't be a
+> candidate for replacing C based LSM modules...
+> 
+
+I have never argued they were. But they are currently the only solution for
+out of tree LSM modules if you don't want to rebuild the kernel.
+
 >>
->> Therefore, those who are building kernels with CONFIG_SECURITY_TOMOYO_LKM=n are
->> not affected.
+>> Sure individual users can disable secure boot etc but at the distro
+>> level we need to support secure boot out of the box. Out of tree code
+>> really just isn't compatible with this.
 > 
-> Sure, but my point is that convincing RedHat that this is acceptable is
-> likely to be an uphill battle considering their effort to gain full
-> ro_after_init coverage for SELinux.
+> More we want to enforce protecting with module signing, more we need to make
+> whatever code built-in and run in the kernel space. Upstream-first pressure
+> will push whatever code for inclusion into the upstream kernel.
+> 
+> 
+> 
+>>> TOMOYO is one of in-tree modules that can be signed together when building
+>>> distribution kernels. Fedora can provide tomoyo.ko as a signed-but-unsupported
+>>> module (i.e. excluded from main kernel package that is supported by
+>>> distributors but provided as a separate package that is not supported by
+>>> distributors).
+>>>
+>> yes it can, it has chosen not to. As I have said before that is
+>> a choice/political reason, not technical. I wish I had a solution to this
+>> problem for you but I don't.
+> 
+> What does "it" referring to? Fedora has chosen not to build TOMOYO into Fedora's
+> vmlinux. But I haven't heard from Fedora that Fedora won't ship tomoyo.ko as a
+> separate package.
+> 
+yeah fedora/RHEL, they don't build apparmor either. And I do not believe that
+building tomoyo.ko will get them to ship it in a separate package. That separate
+package is more work than a builtin tomoyo and the kernel memory savings are
+minimal.
+
+With KP's performance patch the performance overhead of a builtin tomoyo is
+negligible.
+
+>>                               What I can say is Tomoyo adding the ability to
+>> load out of tree code that isn't signed is going to force Ubuntu to do
+>> the same and disable it. I really don't want to do that, I would rather
+>> leave the choice available to our users.
+> 
+> How is tomoyo.ko connected to loading of out-of-tree code? If the module signing
+> can prevent unsigned modules from loading, where is the possibility of loading
+> unsigned LSM modules even if LSM hooks are exported to loadable modules?
 > 
 
-I concur. From a disto pov modules can be worse than builtin. The size difference
-here really isn't worth the hassle of building tomoyo as a module.
+sorry was tired and in rush, and dumping in the other worries I have here. Exporting
+symbols itself has nothing to do with module signing. However as Kees pointed
+out in another email it does become an attack target.
 
->> Even if kernels are built with CONFIG_SECURITY_TOMOYO_LKM=y, callbacks
->> registered by tomoyo_register_hooks() won't be called unless "security=tomoyo
->> is specified or tomoyo is included in the lsm= kernel command line options", for
->> the proxy callbacks that use static call tables are not registered.
-> 
-> This part I overlooked. I forgot that Tomoyo is still not fully stackable,
-> so it isn't getting included in CONFIG_LSM= for the distros that do
-> build it.
-> 
->> Even if kernels are built with CONFIG_SECURITY_TOMOYO_LKM=y, and "security=tomoyo
->> is specified or tomoyo is included in the lsm= kernel command line options",
->> tomoyo_register_hooks() can be called only once.
-> 
-> An attacker with a read/write primitive would be able to locate and
-> write to "registered" (since it is not read-only), allowing them to call
-> tomoyo_register_hooks() multiple times.
-> 
->> And tomoyo.ko is loaded by the
->> time /sbin/init (nowadays /usr/lib/systemd/systemd) starts. That is, by the time
->> an attacker can login from console or can start attacking via network,
->> tomoyo_register_hooks() is no longer callable.
-> 
-> See above -- calling tomoyo_register_hooks() after boot is entirely
-> feasible given a read/write attack primitive.
-> 
->> Therefore, the only problem with tomoyo.ko approach is that the static call tables
->> for tomoyo_register_hooks() are currently not marked as __ro_after_init. But it will
->> be possible to make the static call tables read-only if the static call tables
-> 
-> The tables actually don't matter as much -- an attacker could construct
-> their own table anywhere in kernel memory and pass that as an argument
-> for their call to tomoyo_register_hooks().
-> 
-> (This is actually one of the reasons I have pushed to have sensitive
-> functions like that be able to check that their passed-in argument is
-> contained in a read-only area, but that didn't get much traction[1].)
-> 
-yep, its a real shame
+The other one is I don't believe tomoyo,ko is going to get built as part of
+the fedora/RH infrastructure. Which means module signing will block it. You went
+for a "technical" solution on the symbols export, by-passing the community.
+What is the next technical solution to get around module signing. Over the top,
+paranoid, maybe. Do I think its highly unlikely, yes, but it became a worry as
+soon as you pushed this patchset.
 
->> are aligned in a page boundary and an architecture-dependent kernel API that changes
->> given page's attribute to read-only is called. (This is why __ro_after_init can work,
->> isn't it?)
+>   From module signing perspective, there will be no difference between the LSM
+> framework exports LSM hooks and TOMOYO exports LSM hooks. And
+> https://lkml.kernel.org/r/caafb609-8bef-4840-a080-81537356fc60@I-love.SAKURA.ne.jp
+> leaves the choice available to distro users. Why not acceptable?
 > 
-> The __ro_after_init section is immediately neighboring the .rodata
-> section, so when .rodata is marked read-only (after __init has
-> finished), the kernel marks both sections read-only. (Except for, I
-> think, s390, which does two passes: .rodata is read-only before __init,
-> and then __ro_after_init is marked read-only after __init.)
+> By some chance..., can't module signing prevent any code (both in-tree and
+> out-of-tree) that is not signed from loading !?
 > 
->> As a whole, I don't think tomoyo.ko approach is unacceptably dangerous.
-> 
-> I agree, this implementation is safer than I initial assessed (due to the
-> LSM's view of the hooks being skipped due to lsm= not including tomoyo).
-> I still think how this patch ended up in Linus's tree was a big mistake,
-> though.
-> 
-> Regardless, my opinion is unchanged: I think it will be harder to convince
-> RedHat to build in _this_ version of tomoyo compared to the stock version.
-> 
-> (Out of curiosity, does RedHat build in AppArmor?)
-> 
-
-No they don't
+as long as it goes through the module infrastructure sure.
 
