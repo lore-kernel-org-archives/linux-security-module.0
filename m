@@ -1,40 +1,40 @@
 Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E73F1C6B2;
-	Sat,  5 Oct 2024 03:59:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF36C748D;
+	Sat,  5 Oct 2024 04:06:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.121
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728100758; cv=none; b=ECHfwn43NROc/wblSxJazSfCIZUStDnTQLURJeWvo2HiKXlP6supYSAZAzasp8bHaHVF4tuGpfvUb3g8Ee1sGGCTWCTnqYSLWR4m7qHoFNPlzwIDdcJ1TXEF6jYPq6Uj8PRjbOguE9ooHpJcFnpo89DjFjvz630qO8b7E323W7w=
+	t=1728101208; cv=none; b=dMJgvG6cvaw9tQkGoQ1IksVbFtO/HifZwiShhGoRMsqVu6l7/CTwUCtq6JUN264lXxqlEInO1w/co8IcEt7On34/u1b+eMZgDMoDffdC/dgD9m1iY4qKoEaYVf5Slop9+f6P/l1Il4pc6+4VwNE0U6q10B6nW8r0S2on8NF67JU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728100758; c=relaxed/simple;
-	bh=3O1st7a2JUYhkREVq6zPbi+4RL7lqMmqLzPpnZ0q5k0=;
+	s=arc-20240116; t=1728101208; c=relaxed/simple;
+	bh=6W95jvtG79ygKqTSujLlvpz+5CPGRBNi28Rh22HD9qw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bmu0i6hzvaUFbf6lRX6LggEdJE0TVnD1LDDkCm5t25p9St3p7tyynU1If5/8NqoHfavfCnmhWtr36Kr5tPzvIEvCZ7McH+OlWl75p2Svu6rxQXfQy9kG2c2rRMDr000ju6i74eQzDTAbX8dNdbRvtSM+w8xRrEsWQ22O1+wOof0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=B+pqqyCt; arc=none smtp.client-ip=185.125.188.121
+	 In-Reply-To:Content-Type; b=MaVH+iR8yf0CgJdli20qud+lnjB9TjeRX2MTKQO0sY6/9590phhlFNQTbKmD2R/AeRwGDiHnOQkY9Ok+HuNKE5lfYe++QFCDAoCXRJPSWrh/XXDOMH3nUcTMyetJNlONq35KYwuLpWm+L2kBhibc5Y3E145nw6gej34gZoNXFHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=l5ldq920; arc=none smtp.client-ip=185.125.188.121
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="B+pqqyCt"
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="l5ldq920"
 Received: from [192.168.192.84] (unknown [50.39.103.33])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 399633F1E6;
-	Sat,  5 Oct 2024 03:59:12 +0000 (UTC)
+	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 7B9304005D;
+	Sat,  5 Oct 2024 04:06:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1728100753;
-	bh=Vk3HsdhF+YB2WK8ojIePESCSq0zj2fOyJodL9lVyaxM=;
+	s=20210705; t=1728101204;
+	bh=WuBXXGtzA246CoYPmUbliP+N8JVBJ3B3vjqOZIdS8m8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
 	 In-Reply-To:Content-Type;
-	b=B+pqqyCtaCDN4f4UOgsoz2zt+e3bwRT826DNPsPSSlWQzPJTVcO4GpKmNNImo4NAz
-	 sRl3W9xwh4ml0SNb5tqQ3LMyiqaKjxGyprKbAT4R159dxfzz8O/1XwIcI8MIhLzyjt
-	 Oazd5DeIrfbscLKCn2S2Dnh4LMqkRx2hh0s46q8tfqG2KevupNVQmRam7Fw3S179gH
-	 kfPz+fPrfsNT6xRWonXDt4XGtMV9LM92sDvEKzyJs8Lp/8LgOKuPnWbi49v9DkOj7K
-	 MRtpowKrJWrDTAHridk06sySMXMKh37nflgtgbNcPop17KS1EyEwKkh/moVV34JZJg
-	 FFqV6QWfAD1JA==
-Message-ID: <a0de84de-8c20-46b9-ba61-44d35e7cdc58@canonical.com>
-Date: Fri, 4 Oct 2024 20:59:10 -0700
+	b=l5ldq920mQ233EDxzUWVvBHzCcTjKNL6CR4quNDpJLim+pwB4J133JBHC3rM1TQ6w
+	 qa0vEFop4XqNesUTR9ZhIMgcKP/5uFny7y4dLp9y1j1KwPs/8LK+3dLcZK0UDEmcJi
+	 SSO2outpuDw2BKnw1da1BWK/negMmVcTJpXKnwa7ONQXxPvuCw1hq31CdEsXbjYqCi
+	 MdbFpMDPGj67BbLLlRH5xVs+nPM1uaAVhtWmLrWhExapfm7PX7nYPNUNyoppliERb6
+	 gklf3LkRlfWhc2vLRyuU20c8HSneNvC/SH9hmWw/mjrdHr3BXX40p4N5RfxwxlUD7/
+	 6RV/svc8s4Wpw==
+Message-ID: <c32eea69-b822-49fc-a078-1f1b2dea124d@canonical.com>
+Date: Fri, 4 Oct 2024 21:06:39 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -60,6 +60,7 @@ References: <0c4b443a-9c72-4800-97e8-a3816b6a9ae2@I-love.SAKURA.ne.jp>
  <8114a37e-1306-47ee-b27e-a61c1c7bca94@I-love.SAKURA.ne.jp>
  <393a1cd5-a212-4b04-9ff2-744772c21106@canonical.com>
  <cd548445-777c-46d7-abe3-de8e06e509ee@I-love.SAKURA.ne.jp>
+ <e9676c43-7c80-4083-bbfd-1b490ab74622@I-love.SAKURA.ne.jp>
 Content-Language: en-US
 From: John Johansen <john.johansen@canonical.com>
 Autocrypt: addr=john.johansen@canonical.com; keydata=
@@ -105,94 +106,61 @@ Autocrypt: addr=john.johansen@canonical.com; keydata=
  +T7sv9+iY+e0Y+SolyJgTxMYeRnDWE6S77g6gzYYHmcQOWP7ZMX+MtD4SKlf0+Q8li/F9GUL
  p0rw8op9f0p1+YAhyAd+dXWNKf7zIfZ2ME+0qKpbQnr1oizLHuJX/Telo8KMmHter28DPJ03 lT9Q
 Organization: Canonical
-In-Reply-To: <cd548445-777c-46d7-abe3-de8e06e509ee@I-love.SAKURA.ne.jp>
+In-Reply-To: <e9676c43-7c80-4083-bbfd-1b490ab74622@I-love.SAKURA.ne.jp>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 10/2/24 23:16, Tetsuo Handa wrote:
-> On 2024/10/03 14:35, John Johansen wrote:
->> I do understand that. The problem is that out of tree doesn't do that.
->>  From a distro perspective out of tree is more work, and is very problematic
->> from a code signing perspective.
+On 10/3/24 05:59, Tetsuo Handa wrote:
+> On 2024/10/03 15:16, Tetsuo Handa wrote:
+>>>> TOMOYO is one of in-tree modules that can be signed together when building
+>>>> distribution kernels. Fedora can provide tomoyo.ko as a signed-but-unsupported
+>>>> module (i.e. excluded from main kernel package that is supported by
+>>>> distributors but provided as a separate package that is not supported by
+>>>> distributors).
+>>>>
+>>> yes it can, it has chosen not to. As I have said before that is
+>>> a choice/political reason, not technical. I wish I had a solution to this
+>>> problem for you but I don't.
 >>
->> Code signing isn't going away, if anything its become a requirement to
->> support the majority of users. Loading unsigned modules, code, even
->> bpf is a problem.
+>> What does "it" referring to? Fedora has chosen not to build TOMOYO into Fedora's
+>> vmlinux. But I haven't heard from Fedora that Fedora won't ship tomoyo.ko as a
+>> separate package.
 > 
-> Confused. If use of BPF is a problem, use of BPF-LSM is also a problem?
+> Currently, a Linux distributor is an entity that provides kernel program and
+> userspace program. But as the kernel code signing getting more important,
+> the role of a Linux distributor regarding the kernel program might change as
+> below?
+> 
+> Currently, people expect that "distributor takes care of handling all bugs
+> that happens with kernel code built by that distributor". Due to bandwidth
+> problem, distributor needs to disable kernel code which that distributor cannot
+> take care of bugs. My understanding is that some distributors started providing
+> separated kernel packages; the kernel package which that distributor can take
+> care of bugs and the kernel package which that distributor cannot take care of
+> bugs. The tomoyo.ko change is intended for being included in the latter package
+> if that distributor cannot include in the former package.
+> 
+honestly its easier to just build a separate kernel package with tomoyo builtin.
+Module packages can be done, but they are a pita.
 
-yes it is. Pressures being what they are, it is enabled for some of our
-kernels. Signed BPF would be required to get it available every where.
+> Since distributor needs to sign kernel code, I think this separation is becoming
+> more inevitable. That is, people might need to change their expectation to that
+> "distributor takes care of handling bugs that happens with kernel code in the
+> former package, and somebody takes care of handling bugs that happens with kernel
+> code in the latter package", and distributor's role is to compile as many kernel
+> code as possible and sign all compiled kernel code so that the kernel code is
+> compiled and shipped (and not tampered) by known entities; something like SSL
+> certificates providers.
+> 
+Sure. Distribution already tell users they aren't using supported stuff. Ubuntu
+builds in selinux, tomoyo, smack. We get a bug we tell them it is community
+supported.
 
-> If one were able to implement security modules using BPF-LSM, such modules
-> are headache for distributors? If so, BPF based LSM modules can't be a
-> candidate for replacing C based LSM modules...
-> 
+That has some overhead, but really not that much more than responding to the
+bugs where users ask for feature X to be enabled. Or how to build a kernel with
+feature X, ...
 
-I have never argued they were. But they are currently the only solution for
-out of tree LSM modules if you don't want to rebuild the kernel.
-
->>
->> Sure individual users can disable secure boot etc but at the distro
->> level we need to support secure boot out of the box. Out of tree code
->> really just isn't compatible with this.
-> 
-> More we want to enforce protecting with module signing, more we need to make
-> whatever code built-in and run in the kernel space. Upstream-first pressure
-> will push whatever code for inclusion into the upstream kernel.
-> 
-> 
-> 
->>> TOMOYO is one of in-tree modules that can be signed together when building
->>> distribution kernels. Fedora can provide tomoyo.ko as a signed-but-unsupported
->>> module (i.e. excluded from main kernel package that is supported by
->>> distributors but provided as a separate package that is not supported by
->>> distributors).
->>>
->> yes it can, it has chosen not to. As I have said before that is
->> a choice/political reason, not technical. I wish I had a solution to this
->> problem for you but I don't.
-> 
-> What does "it" referring to? Fedora has chosen not to build TOMOYO into Fedora's
-> vmlinux. But I haven't heard from Fedora that Fedora won't ship tomoyo.ko as a
-> separate package.
-> 
-yeah fedora/RHEL, they don't build apparmor either. And I do not believe that
-building tomoyo.ko will get them to ship it in a separate package. That separate
-package is more work than a builtin tomoyo and the kernel memory savings are
-minimal.
-
-With KP's performance patch the performance overhead of a builtin tomoyo is
-negligible.
-
->>                               What I can say is Tomoyo adding the ability to
->> load out of tree code that isn't signed is going to force Ubuntu to do
->> the same and disable it. I really don't want to do that, I would rather
->> leave the choice available to our users.
-> 
-> How is tomoyo.ko connected to loading of out-of-tree code? If the module signing
-> can prevent unsigned modules from loading, where is the possibility of loading
-> unsigned LSM modules even if LSM hooks are exported to loadable modules?
-> 
-
-sorry was tired and in rush, and dumping in the other worries I have here. Exporting
-symbols itself has nothing to do with module signing. However as Kees pointed
-out in another email it does become an attack target.
-
-The other one is I don't believe tomoyo,ko is going to get built as part of
-the fedora/RH infrastructure. Which means module signing will block it. You went
-for a "technical" solution on the symbols export, by-passing the community.
-What is the next technical solution to get around module signing. Over the top,
-paranoid, maybe. Do I think its highly unlikely, yes, but it became a worry as
-soon as you pushed this patchset.
-
->   From module signing perspective, there will be no difference between the LSM
-> framework exports LSM hooks and TOMOYO exports LSM hooks. And
-> https://lkml.kernel.org/r/caafb609-8bef-4840-a080-81537356fc60@I-love.SAKURA.ne.jp
-> leaves the choice available to distro users. Why not acceptable?
-> 
-> By some chance..., can't module signing prevent any code (both in-tree and
-> out-of-tree) that is not signed from loading !?
-> 
-as long as it goes through the module infrastructure sure.
+Ubuntu made a different decision than fedora around how best to support users.
+I am not going to argue its right or wrong, just different. Again getting a
+distro to change a config/stance is a political problem, not technical.
 
