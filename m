@@ -1,198 +1,300 @@
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C9241581E1;
-	Sat,  5 Oct 2024 16:57:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6509F288B1;
+	Sat,  5 Oct 2024 16:57:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728147448; cv=none; b=QL5x+Zx+FLNrpQh/XFRYRQOpFHvwVfa1gNA8m2/SW9P7Tu90WbUSb2wYl2nGCwheNT5h/yED6GoK93ZXxSpLoqnfRHeoyhKpZ+J9EQJkUkdyEGAChiinkbu1pD69h2teEE+AH04thGeKjyHBARoTSNtz3xKH4Ah98K4W3svEGLA=
+	t=1728147481; cv=none; b=LpL92Pw+r4teS4uPgT5Rs16R8RlZyQG1tweIeXcPVRP2WKKNtYcXLtyJR5u5SQ1xTcTcsmdwRt91GJqHCBaxiy0VkocyTCaTjy6Ibu5ENhyjHH9uP75ajfX6nchnVHCqLiT3nYKzI5ZmXLn5XUgnocdfo2fSxYIjhAZcxTTn0g0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728147448; c=relaxed/simple;
-	bh=wlcdioYOW2Kr4D89kdl4eY+lEskCFiz3bWWyUXcxslg=;
+	s=arc-20240116; t=1728147481; c=relaxed/simple;
+	bh=due5SQ2j6U3xIJr5gu+myfsTPiEqDeRAIQo/FDpWkgQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pbMMZy40SKtcyBsAfDhkRNIapgkNPKxv7tJMZRWJGgjA3mLRNuLI6jsybEcyj2WYanT0iF1UF8YPq8816NtvKl9Eu7mtSHGghcBjodgmR+2ccMmuZcha4lP+Gqn2gZ6yIRbjVbwSDNETepN3YGm0MnqVGWlgu5XLWqqzQsk01Sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jDjC2eJM; arc=none smtp.client-ip=209.85.218.45
+	 Content-Type:Content-Disposition:In-Reply-To; b=B8cYZSMatQZgjLwDqzLb32d/r4wi8fE12lRoT4lACDQzTPf2J8SLfXX6717e6fHbwwezCWyXW0bd61gOABislP5f+sz+LcZFBSMWF7RvDHre8r9kF4CFHqhzG2mHGZGdaGg/uv2Zi/0vFmm8XDmhBf6jpVRl7xKVqVZVNQBB7rY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L6yE633t; arc=none smtp.client-ip=209.85.218.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jDjC2eJM"
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a98f6f777f1so411451966b.2;
-        Sat, 05 Oct 2024 09:57:26 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L6yE633t"
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a7a843bef98so415852866b.2;
+        Sat, 05 Oct 2024 09:57:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728147445; x=1728752245; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1728147478; x=1728752278; darn=vger.kernel.org;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=MSeTJd9jkaOjgipXSkW43JYFmtYMXXveHmjg3KNv1DY=;
-        b=jDjC2eJMupfuQbTBydTJ5++iuXvSsejNYw52rsAXNdjCZU8hWkxDqNJtkZHDIgThio
-         zoxoYvdPr4n43bFM7h+8WX/Wju6x+8qjr2sS6Qldla+tVt9G1rQyjyiO4m5XvhaR7fKy
-         KMxUBQ8ZOhhWWRZFeewu9gFJY5iI3An1bZTaQgkeRktf2HyzmWKX1WpIXwXqcwFg9j2J
-         o+3TCgMuA5dZA+MUB5+4XaVtplZOBAmpL5AbS6GSzavP762VykxP/mtWXc4AddsZWlg4
-         GAse68YL8pHUPTvEI/m9Jn57xKE10cGQCYIOt9qbrEWL6g2FVvbO4t6Ec37W4FlbIpTw
-         7g8A==
+        bh=ZDWWsz2khXbQTvMlHQeJanQS8tzrDuFeehA3yCCxqP4=;
+        b=L6yE633t3DAlvha+Ras0aY/f6HbuCtm5Kmt5WNbewvoSCTvKvt6MZzglhbarDUzd/+
+         H6lFMpE5bSFBZJpYWuQ2rLW5bnT3CA3rl98Q6LZTxgSj8adv6uzn6nP5ptAMNgwRfdO2
+         CHsM6UIPEaNtIZKKrx4ltw/qJIy25qOyuswNsOzvtPJR3irY8IJcrMDJ2Bt1zIc+hKiO
+         lFx9tdQob99hHa6BJsHmNmMdcY4bErLovVzE22+hqDLCbze9aueo9SLUX4rqzZ2eB9sT
+         GH6Kgx62x4rGTwDTvCI4sFnpUJTJzwITVuhLMaaHQEIuO00Qm+8xL4gEutvWaNwB3Sf+
+         90kQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728147445; x=1728752245;
+        d=1e100.net; s=20230601; t=1728147478; x=1728752278;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MSeTJd9jkaOjgipXSkW43JYFmtYMXXveHmjg3KNv1DY=;
-        b=fmOvBalxh67sDT9QXC+iGb1NidtURBZEIR68eEJJG8492CmAJuoRQoPeY01ZeMvIxc
-         IurABy7eDPiOPlmNtuhbSdBvxdmk3Dx8FiHFLOccxym+QyrKdqR3i8IZ/WcIvgX/P0r9
-         pzHOXbJw0YIZnMAWLd1MMvme3zo5Ya84CXdVhcGBebORMHHwWBwPoGEk4OmB0+wkSWdD
-         qkqC0ErENZ62R+IdsJKqW6x03Owk/JCezV10WvfldncP4wYq1p/cdC0OaS/4FDYPfsWJ
-         I4EYm0VpDlScIICKZdJP+D+KVWdJsBDN+gkJVTJOVvAj102yZWzcNTNI9FwcTkc3WLFQ
-         HIAg==
-X-Forwarded-Encrypted: i=1; AJvYcCUWXSF0CM7kM5l3tPiGYC085Kr1yAbsyCSuYJShIpupO4vvFkbnINNokefip2H9EPjXjPOAm/fs6S18hCGuGqtB@vger.kernel.org, AJvYcCVQsndj46xcYMwR3aQEg8fksnyWmm7be7r18hK1KLEutyb4gxjH7nmYS76VKrw2HLcub/DFe5lW@vger.kernel.org, AJvYcCWjvFJWrVAhwtYkclwjgGvjs1z2U7POsJpI1HUkbGdDDzbS6j++DXau03YKDQWBrBvjzhCtXqsADp3cMoo2noGwEglQi70=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyk3VBQRe5QynqOmR39MSiGnlKKa0CLwo8eEH5WeveUtSbChk+J
-	HPSdJXe8z1EBmA5Q4y33XgLVWRcwagwTiJwQQTzhxExkKaHt59Mt
-X-Google-Smtp-Source: AGHT+IHSRdtSkX09+NIKnLFVTlBJ8EfB5bPMeacHe3SGg6lgAWnNOTlZunGTLAhyTEa/r5ZHE6wbDg==
-X-Received: by 2002:a17:907:608a:b0:a7d:a00a:aa02 with SMTP id a640c23a62f3a-a991bd05705mr655075966b.1.1728147445371;
-        Sat, 05 Oct 2024 09:57:25 -0700 (PDT)
+        bh=ZDWWsz2khXbQTvMlHQeJanQS8tzrDuFeehA3yCCxqP4=;
+        b=M0JkF0/xThAXzpQq0SK0ZhFwZzKi1O1zL/Ud6ubf8WfVezjM/xCHYhMCxM+CgKlGjw
+         PcSXEduyQtoRYHaDtG3BiHKw+e+xQ1KqHwT716T+GnvLfTW8BpTG48K8jpewQDt7TL8Q
+         ri35sAkTbpFKzZI8RHoU8UZpwvdK//OLm0o3QPR6ZPIpQmavoVrO5UGq3Tdzt0WLZm8R
+         gIdczGvgqCaxRq8m8pA328ekLxrUtrQG7D+NO9/pyW+bwsekX7qTEgRV2oB/iyj2fEhO
+         t9H9ER2mWhXFbroW/9qGutdbFI4xT5hs7VVwTTODJv++qu61iqKukb7HhgVPrQ4Y/vXr
+         0slw==
+X-Forwarded-Encrypted: i=1; AJvYcCUGIh0MqYEKViio45uHqSY+08X143d3aVhL0bmv4nWuUX8cTp0CBoiJwMVtM+pVfMV+K1peAQhyMhx86dxZIovLSliZpnm/@vger.kernel.org, AJvYcCVKbbL4KXG4GR2NKpnJH/5uOr6xGQ6iT7IziVAfDWEPC44L3j39NqliYFvef2nXUsEzacy3jqp7MgCo2Sk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAzq++pjYZ+vJTmdfKHsog43LSVStJUEaxTzKc0CaDd/0bmli5
+	jWEOyYuv3lpH/TNh9cD1kgDoi7o3cgHZN9lhoRAtaUB87FDN4O/O
+X-Google-Smtp-Source: AGHT+IGW/zx9bax+mOi4lhthATqYDogDuv9FTXKJKyL0jn92NMBEMULizYg9oTLYeVf2ITebAbF6yA==
+X-Received: by 2002:a17:907:f788:b0:a93:d5d1:e4d4 with SMTP id a640c23a62f3a-a991bd42f21mr619711766b.27.1728147477371;
+        Sat, 05 Oct 2024 09:57:57 -0700 (PDT)
 Received: from localhost ([2a02:168:59f0:1:b0ab:dd5e:5c82:86b0])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9937e58499sm114014266b.38.2024.10.05.09.57.25
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a992e5bbc74sm153185666b.31.2024.10.05.09.57.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 05 Oct 2024 09:57:25 -0700 (PDT)
-Date: Sat, 5 Oct 2024 18:57:24 +0200
+        Sat, 05 Oct 2024 09:57:57 -0700 (PDT)
+Date: Sat, 5 Oct 2024 18:57:55 +0200
 From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-Cc: mic@digikod.net, willemdebruijn.kernel@gmail.com,
-	linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-	netfilter-devel@vger.kernel.org, yusongping@huawei.com,
-	artem.kuzin@huawei.com, konstantin.meskhidze@huawei.com
-Subject: Re: [RFC PATCH v2 9/9] samples/landlock: Support
- LANDLOCK_ACCESS_NET_LISTEN
-Message-ID: <20241005.92cff495291f@gnoack.org>
-References: <20240814030151.2380280-1-ivanov.mikhail1@huawei-partners.com>
- <20240814030151.2380280-10-ivanov.mikhail1@huawei-partners.com>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+	Paul Moore <paul@paul-moore.com>,
+	Tahera Fahimi <fahimitahera@gmail.com>,
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v1 1/3] landlock: Refactor filesystem access mask
+ management
+Message-ID: <20241005.a69458234f74@gnoack.org>
+References: <20241001141234.397649-1-mic@digikod.net>
+ <20241001141234.397649-2-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240814030151.2380280-10-ivanov.mikhail1@huawei-partners.com>
+In-Reply-To: <20241001141234.397649-2-mic@digikod.net>
 
-On Wed, Aug 14, 2024 at 11:01:51AM +0800, Mikhail Ivanov wrote:
-> Extend sample with TCP listen control logic.
+On Tue, Oct 01, 2024 at 04:12:32PM +0200, Mickaël Salaün wrote:
+> Replace get_raw_handled_fs_accesses() with a generic
+> landlock_merge_access_masks(), and replace the get_fs_domain()
+> implementation with a call to the new landlock_filter_access_masks()
+> helper.  These helpers will also be useful for other types of access.
 > 
-> Signed-off-by: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+> Replace struct access_masks with union access_masks that includes a new
+> "all" field to simplify mask filtering.
+> 
+> Cc: Günther Noack <gnoack@google.com>
+> Cc: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> Link: https://lore.kernel.org/r/20241001141234.397649-2-mic@digikod.net
 > ---
->  samples/landlock/sandboxer.c | 31 ++++++++++++++++++++++++++-----
->  1 file changed, 26 insertions(+), 5 deletions(-)
+>  security/landlock/fs.c       | 21 ++++-----------
+>  security/landlock/ruleset.h  | 51 +++++++++++++++++++++++++++---------
+>  security/landlock/syscalls.c |  2 +-
+>  3 files changed, 44 insertions(+), 30 deletions(-)
 > 
-> diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
-> index e8223c3e781a..3f50cb3f8039 100644
-> --- a/samples/landlock/sandboxer.c
-> +++ b/samples/landlock/sandboxer.c
-> @@ -55,6 +55,7 @@ static inline int landlock_restrict_self(const int ruleset_fd,
->  #define ENV_FS_RW_NAME "LL_FS_RW"
->  #define ENV_TCP_BIND_NAME "LL_TCP_BIND"
->  #define ENV_TCP_CONNECT_NAME "LL_TCP_CONNECT"
-> +#define ENV_TCP_LISTEN_NAME "LL_TCP_LISTEN"
->  #define ENV_DELIMITER ":"
+> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+> index 7d79fc8abe21..a2ef7d151c81 100644
+> --- a/security/landlock/fs.c
+> +++ b/security/landlock/fs.c
+> @@ -388,33 +388,22 @@ static bool is_nouser_or_private(const struct dentry *dentry)
+>  		unlikely(IS_PRIVATE(d_backing_inode(dentry))));
+>  }
 >  
->  static int parse_path(char *env_path, const char ***const path_list)
-> @@ -208,7 +209,7 @@ static int populate_ruleset_net(const char *const env_var, const int ruleset_fd,
->  
->  /* clang-format on */
->  
-> -#define LANDLOCK_ABI_LAST 5
-> +#define LANDLOCK_ABI_LAST 6
->  
->  int main(const int argc, char *const argv[], char *const *const envp)
+> -static access_mask_t
+> -get_raw_handled_fs_accesses(const struct landlock_ruleset *const domain)
+> -{
+> -	access_mask_t access_dom = 0;
+> -	size_t layer_level;
+> -
+> -	for (layer_level = 0; layer_level < domain->num_layers; layer_level++)
+> -		access_dom |=
+> -			landlock_get_raw_fs_access_mask(domain, layer_level);
+> -	return access_dom;
+> -}
+> -
+>  static access_mask_t
+>  get_handled_fs_accesses(const struct landlock_ruleset *const domain)
 >  {
-> @@ -222,15 +223,16 @@ int main(const int argc, char *const argv[], char *const *const envp)
->  	struct landlock_ruleset_attr ruleset_attr = {
->  		.handled_access_fs = access_fs_rw,
->  		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
-> -				      LANDLOCK_ACCESS_NET_CONNECT_TCP,
-> +				      LANDLOCK_ACCESS_NET_CONNECT_TCP |
-> +				      LANDLOCK_ACCESS_NET_LISTEN_TCP,
+>  	/* Handles all initially denied by default access rights. */
+> -	return get_raw_handled_fs_accesses(domain) |
+> +	return landlock_merge_access_masks(domain).fs |
+>  	       LANDLOCK_ACCESS_FS_INITIALLY_DENIED;
+>  }
+>  
+>  static const struct landlock_ruleset *
+>  get_fs_domain(const struct landlock_ruleset *const domain)
+>  {
+> -	if (!domain || !get_raw_handled_fs_accesses(domain))
+> -		return NULL;
+> +	const union access_masks all_fs = {
+> +		.fs = ~0,
+> +	};
+>  
+> -	return domain;
+> +	return landlock_filter_access_masks(domain, all_fs);
+>  }
+>  
+>  static const struct landlock_ruleset *get_current_fs_domain(void)
+> diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
+> index 61bdbc550172..a816042ca8f3 100644
+> --- a/security/landlock/ruleset.h
+> +++ b/security/landlock/ruleset.h
+> @@ -41,12 +41,19 @@ static_assert(BITS_PER_TYPE(access_mask_t) >= LANDLOCK_NUM_SCOPE);
+>  static_assert(sizeof(unsigned long) >= sizeof(access_mask_t));
+>  
+>  /* Ruleset access masks. */
+> -struct access_masks {
+> -	access_mask_t fs : LANDLOCK_NUM_ACCESS_FS;
+> -	access_mask_t net : LANDLOCK_NUM_ACCESS_NET;
+> -	access_mask_t scope : LANDLOCK_NUM_SCOPE;
+> +union access_masks {
+> +	struct {
+> +		access_mask_t fs : LANDLOCK_NUM_ACCESS_FS;
+> +		access_mask_t net : LANDLOCK_NUM_ACCESS_NET;
+> +		access_mask_t scope : LANDLOCK_NUM_SCOPE;
+> +	};
+> +	u32 all;
+>  };
+
+More of a style remark:
+
+I wonder whether it is worth turning this into a union.
+
+If this is for performance, I do not think is buys you much.  With
+optimization enabled, it does not make much of a difference whether
+you are doing the & on .all or whether you are doing it on the
+individual fields.  (I tried it out with gcc.  The only difference is
+that the & on the individual fields will at the end mask only the bits
+that belong to these fields.)
+
+At the same time, in most places where struct access_masks is used,
+the union is not necessary and might add to the confusion.
+
+
+>  
+> +/* Makes sure all fields are covered. */
+> +static_assert(sizeof(((union access_masks *)NULL)->all) ==
+> +	      sizeof(union access_masks));
+> +
+>  typedef u16 layer_mask_t;
+>  /* Makes sure all layers can be checked. */
+>  static_assert(BITS_PER_TYPE(layer_mask_t) >= LANDLOCK_MAX_NUM_LAYERS);
+> @@ -229,7 +236,7 @@ struct landlock_ruleset {
+>  			 * layers are set once and never changed for the
+>  			 * lifetime of the ruleset.
+>  			 */
+> -			struct access_masks access_masks[];
+> +			union access_masks access_masks[];
+>  		};
 >  	};
+>  };
+> @@ -260,6 +267,31 @@ static inline void landlock_get_ruleset(struct landlock_ruleset *const ruleset)
+>  		refcount_inc(&ruleset->usage);
+>  }
 >  
->  	if (argc < 2) {
->  		fprintf(stderr,
-> -			"usage: %s=\"...\" %s=\"...\" %s=\"...\" %s=\"...\"%s "
-> +			"usage: %s=\"...\" %s=\"...\" %s=\"...\" %s=\"...\" %s=\"...\"%s "
->  			"<cmd> [args]...\n\n",
->  			ENV_FS_RO_NAME, ENV_FS_RW_NAME, ENV_TCP_BIND_NAME,
-> -			ENV_TCP_CONNECT_NAME, argv[0]);
-> +			ENV_TCP_CONNECT_NAME, ENV_TCP_LISTEN_NAME, argv[0]);
->  		fprintf(stderr,
->  			"Execute a command in a restricted environment.\n\n");
->  		fprintf(stderr,
-> @@ -251,15 +253,19 @@ int main(const int argc, char *const argv[], char *const *const envp)
->  		fprintf(stderr,
->  			"* %s: list of ports allowed to connect (client).\n",
->  			ENV_TCP_CONNECT_NAME);
-> +		fprintf(stderr,
-> +			"* %s: list of ports allowed to listen (server).\n",
-> +			ENV_TCP_LISTEN_NAME);
->  		fprintf(stderr,
->  			"\nexample:\n"
->  			"%s=\"${PATH}:/lib:/usr:/proc:/etc:/dev/urandom\" "
->  			"%s=\"/dev/null:/dev/full:/dev/zero:/dev/pts:/tmp\" "
->  			"%s=\"9418\" "
->  			"%s=\"80:443\" "
-> +			"%s=\"9418\" "
->  			"%s bash -i\n\n",
->  			ENV_FS_RO_NAME, ENV_FS_RW_NAME, ENV_TCP_BIND_NAME,
-> -			ENV_TCP_CONNECT_NAME, argv[0]);
-> +			ENV_TCP_CONNECT_NAME, ENV_TCP_LISTEN_NAME, argv[0]);
->  		fprintf(stderr,
->  			"This sandboxer can use Landlock features "
->  			"up to ABI version %d.\n",
-> @@ -326,6 +332,11 @@ int main(const int argc, char *const argv[], char *const *const envp)
->  	case 4:
->  		/* Removes LANDLOCK_ACCESS_FS_IOCTL_DEV for ABI < 5 */
->  		ruleset_attr.handled_access_fs &= ~LANDLOCK_ACCESS_FS_IOCTL_DEV;
-> +		__attribute__((fallthrough));
-> +	case 5:
-> +		/* Removes LANDLOCK_ACCESS_NET_LISTEN support for ABI < 6 */
-> +		ruleset_attr.handled_access_net &=
-> +			~(LANDLOCK_ACCESS_NET_LISTEN_TCP);
+> +static inline union access_masks
+> +landlock_merge_access_masks(const struct landlock_ruleset *const domain)
+> +{
+> +	size_t layer_level;
+> +	union access_masks matches = {};
+> +
+> +	for (layer_level = 0; layer_level < domain->num_layers; layer_level++)
+> +		matches.all |= domain->access_masks[layer_level].all;
+> +
+> +	return matches;
+> +}
+> +
+> +static inline const struct landlock_ruleset *
+> +landlock_filter_access_masks(const struct landlock_ruleset *const domain,
+> +			     const union access_masks masks)
 
-(same remark as on other patch set)
+With this function name, the return type of this function is
+unintuitive to me.  Judging by the name, I would have expected a
+function that returns a "access_masks" value as well, similar to the
+function one above (the remaining access rights after filtering)?
 
-ABI version has shifted by one in the meantime.
+In the places where the result of this function is returned directly,
+I find myself jumping back to the function implementation to
+understand what this means.
 
+As a constructive suggestion, how about calling this function
+differently, e.g.
+
+bool landlock_any_access_rights_handled(
+    const struct landlock_ruleset *const domain,
+    struct access_masks masks);
+
+Then the callers who previously did
+
+   return landlock_filter_access_masks(dom, masks);
+
+would now do
+
+   if (landlock_any_access_rights_handled(dom, masks))
+       return dom;
+   return NULL;
+
+This is more verbose, but IMHO verbose code is not inherently bad,
+if it is also clearer.  And it's only two lines more.
+
+> +{
+> +	if (!domain)
+> +		return NULL;
+> +
+> +	if (landlock_merge_access_masks(domain).all & masks.all)
+> +		return domain;
+> +
+> +	return NULL;
+> +}
+
+Function documentation for both functions would be good :)
+
+> +
+>  static inline void
+>  landlock_add_fs_access_mask(struct landlock_ruleset *const ruleset,
+>  			    const access_mask_t fs_access_mask,
+> @@ -295,19 +327,12 @@ landlock_add_scope_mask(struct landlock_ruleset *const ruleset,
+>  	ruleset->access_masks[layer_level].scope |= mask;
+>  }
 >  
->  		fprintf(stderr,
->  			"Hint: You should update the running kernel "
-> @@ -357,6 +368,12 @@ int main(const int argc, char *const argv[], char *const *const envp)
->  		ruleset_attr.handled_access_net &=
->  			~LANDLOCK_ACCESS_NET_CONNECT_TCP;
->  	}
-> +	/* Removes listen access attribute if not supported by a user. */
-
-(also same remark as on other patch set)
-
-Please s/supported/requested/, for consistency.
-
-> +	env_port_name = getenv(ENV_TCP_LISTEN_NAME);
-> +	if (!env_port_name) {
-> +		ruleset_attr.handled_access_net &=
-> +			~LANDLOCK_ACCESS_NET_LISTEN_TCP;
-> +	}
+> -static inline access_mask_t
+> -landlock_get_raw_fs_access_mask(const struct landlock_ruleset *const ruleset,
+> -				const u16 layer_level)
+> -{
+> -	return ruleset->access_masks[layer_level].fs;
+> -}
+> -
+>  static inline access_mask_t
+>  landlock_get_fs_access_mask(const struct landlock_ruleset *const ruleset,
+>  			    const u16 layer_level)
+>  {
+>  	/* Handles all initially denied by default access rights. */
+> -	return landlock_get_raw_fs_access_mask(ruleset, layer_level) |
+> +	return ruleset->access_masks[layer_level].fs |
+>  	       LANDLOCK_ACCESS_FS_INITIALLY_DENIED;
+>  }
 >  
->  	ruleset_fd =
->  		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
-> @@ -380,6 +397,10 @@ int main(const int argc, char *const argv[], char *const *const envp)
->  				 LANDLOCK_ACCESS_NET_CONNECT_TCP)) {
->  		goto err_close_ruleset;
->  	}
-> +	if (populate_ruleset_net(ENV_TCP_LISTEN_NAME, ruleset_fd,
-> +				 LANDLOCK_ACCESS_NET_LISTEN_TCP)) {
-> +		goto err_close_ruleset;
-> +	}
+> diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+> index f5a0e7182ec0..c097d356fa45 100644
+> --- a/security/landlock/syscalls.c
+> +++ b/security/landlock/syscalls.c
+> @@ -329,7 +329,7 @@ static int add_rule_path_beneath(struct landlock_ruleset *const ruleset,
+>  		return -ENOMSG;
 >  
->  	if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0)) {
->  		perror("Failed to restrict privileges");
+>  	/* Checks that allowed_access matches the @ruleset constraints. */
+> -	mask = landlock_get_raw_fs_access_mask(ruleset, 0);
+> +	mask = ruleset->access_masks[0].fs;
+>  	if ((path_beneath_attr.allowed_access | mask) != mask)
+>  		return -EINVAL;
+>  
 > -- 
-> 2.34.1
+> 2.46.1
 > 
 
-Reviewed-by: G�nther Noack <gnoack3000@gmail.com>
+Reviewed-by: Günther Noack <gnoack3000@gmail.com>
+
+–Günther
