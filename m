@@ -1,40 +1,40 @@
 Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF36C748D;
-	Sat,  5 Oct 2024 04:06:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73293200CB;
+	Sat,  5 Oct 2024 04:24:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.121
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728101208; cv=none; b=dMJgvG6cvaw9tQkGoQ1IksVbFtO/HifZwiShhGoRMsqVu6l7/CTwUCtq6JUN264lXxqlEInO1w/co8IcEt7On34/u1b+eMZgDMoDffdC/dgD9m1iY4qKoEaYVf5Slop9+f6P/l1Il4pc6+4VwNE0U6q10B6nW8r0S2on8NF67JU=
+	t=1728102255; cv=none; b=KY5P0AdD2gXeAyorm/iN8At886UqFjAbCbfOrLKfT00AK5ZNXPh2APRR3GX4B0+RoOFdaE7QSvSgnoBEOhZ4dCzqoscSNE+LcLL9WXhjlkhtNpd7tMJfWcoolaBuz2bSfzLL3x3oRAro99zhH+wTvXQoKGr+mIqOWFjE6T69n/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728101208; c=relaxed/simple;
-	bh=6W95jvtG79ygKqTSujLlvpz+5CPGRBNi28Rh22HD9qw=;
+	s=arc-20240116; t=1728102255; c=relaxed/simple;
+	bh=YsergRmHFQilCEI6qn2M3lnz58jtyPZPc5nniGgaSAw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MaVH+iR8yf0CgJdli20qud+lnjB9TjeRX2MTKQO0sY6/9590phhlFNQTbKmD2R/AeRwGDiHnOQkY9Ok+HuNKE5lfYe++QFCDAoCXRJPSWrh/XXDOMH3nUcTMyetJNlONq35KYwuLpWm+L2kBhibc5Y3E145nw6gej34gZoNXFHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=l5ldq920; arc=none smtp.client-ip=185.125.188.121
+	 In-Reply-To:Content-Type; b=p3LCOeououINBRiwyKKqRQPgnHniw7sS3uNpDd9kBby+Aioqjc1krZam0Vz6w06EI8DkebaqHv+nV+rSN3kZPQmXILbK0p4RMkqhYZ3mWRtREsLcPI7WKMqnBAyHSP49FhAHSH68FmI/NcyqsXQ8ZqqM0AaAwqUSsaUhhNuMlQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=vRYqRPVF; arc=none smtp.client-ip=185.125.188.121
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="l5ldq920"
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="vRYqRPVF"
 Received: from [192.168.192.84] (unknown [50.39.103.33])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 7B9304005D;
-	Sat,  5 Oct 2024 04:06:43 +0000 (UTC)
+	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id C84753F1FF;
+	Sat,  5 Oct 2024 04:24:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1728101204;
-	bh=WuBXXGtzA246CoYPmUbliP+N8JVBJ3B3vjqOZIdS8m8=;
+	s=20210705; t=1728102250;
+	bh=v/XuaxcWn4H85elN3kUtvxavOUtvjkThM6tHpaGInYA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
 	 In-Reply-To:Content-Type;
-	b=l5ldq920mQ233EDxzUWVvBHzCcTjKNL6CR4quNDpJLim+pwB4J133JBHC3rM1TQ6w
-	 qa0vEFop4XqNesUTR9ZhIMgcKP/5uFny7y4dLp9y1j1KwPs/8LK+3dLcZK0UDEmcJi
-	 SSO2outpuDw2BKnw1da1BWK/negMmVcTJpXKnwa7ONQXxPvuCw1hq31CdEsXbjYqCi
-	 MdbFpMDPGj67BbLLlRH5xVs+nPM1uaAVhtWmLrWhExapfm7PX7nYPNUNyoppliERb6
-	 gklf3LkRlfWhc2vLRyuU20c8HSneNvC/SH9hmWw/mjrdHr3BXX40p4N5RfxwxlUD7/
-	 6RV/svc8s4Wpw==
-Message-ID: <c32eea69-b822-49fc-a078-1f1b2dea124d@canonical.com>
-Date: Fri, 4 Oct 2024 21:06:39 -0700
+	b=vRYqRPVFzV6hDb66ctnAG2E5+cpzlmiDE0y18R3q36MjnlXitakJs56zNN2tJ71dk
+	 1QKGVkQTwgjFiMJIfiPABqmuHiDpWc5w8cE0bPXM/MuG6EbE2ydIgZK0/Q32H5mc44
+	 hKM33IE4XnMWoPJLR/8JPbqYtRkozJJLW99FQcgfrlK5QC97mlP1dyYXlB35El5MI/
+	 zgI1kcRnTgAi8NMPt2/siZVgCcCVcohianuVnFoCfFhVcOkFIQILOuyE3eCoyEteV5
+	 1topru8crEtovPttdCWProDCylvQkdL3FAasUUL4NV6J/nEAL9F564AAfV4CrIGs9B
+	 9QE90kf+DBFmA==
+Message-ID: <1c686d2b-6b24-46b9-a439-5b696108d88e@canonical.com>
+Date: Fri, 4 Oct 2024 21:24:06 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -43,13 +43,13 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [GIT PULL] tomoyo update for v6.12
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
- Paul Moore <paul@paul-moore.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+To: "Dr. Greg" <greg@enjellic.com>
+Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+ Paul Moore <paul@paul-moore.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
  Jonathan Corbet <corbet@lwn.net>, LKML <linux-kernel@vger.kernel.org>,
  linux-security-module@vger.kernel.org
-References: <0c4b443a-9c72-4800-97e8-a3816b6a9ae2@I-love.SAKURA.ne.jp>
- <877cavdgsu.fsf@trenco.lwn.net>
+References: <877cavdgsu.fsf@trenco.lwn.net>
  <CAHC9VhRnTrjP3kNXMmzsK4oZL7WD+uH0OuXszEPgTc5YoT5dew@mail.gmail.com>
  <CAHk-=wjLdoBcY-r64oBbKXo3hSEr5AawrP_5GSFQ4NEbCNt4Kg@mail.gmail.com>
  <CAHC9VhS_8JtU0KQyy3rEGt0CQ_XMQFt2Kic-bz-Qd=SMjeWe4Q@mail.gmail.com>
@@ -59,8 +59,7 @@ References: <0c4b443a-9c72-4800-97e8-a3816b6a9ae2@I-love.SAKURA.ne.jp>
  <2e182814-9317-4de1-ab96-b3b1eeb89733@canonical.com>
  <8114a37e-1306-47ee-b27e-a61c1c7bca94@I-love.SAKURA.ne.jp>
  <393a1cd5-a212-4b04-9ff2-744772c21106@canonical.com>
- <cd548445-777c-46d7-abe3-de8e06e509ee@I-love.SAKURA.ne.jp>
- <e9676c43-7c80-4083-bbfd-1b490ab74622@I-love.SAKURA.ne.jp>
+ <20241003153908.GA3267@wind.enjellic.com>
 Content-Language: en-US
 From: John Johansen <john.johansen@canonical.com>
 Autocrypt: addr=john.johansen@canonical.com; keydata=
@@ -106,61 +105,177 @@ Autocrypt: addr=john.johansen@canonical.com; keydata=
  +T7sv9+iY+e0Y+SolyJgTxMYeRnDWE6S77g6gzYYHmcQOWP7ZMX+MtD4SKlf0+Q8li/F9GUL
  p0rw8op9f0p1+YAhyAd+dXWNKf7zIfZ2ME+0qKpbQnr1oizLHuJX/Telo8KMmHter28DPJ03 lT9Q
 Organization: Canonical
-In-Reply-To: <e9676c43-7c80-4083-bbfd-1b490ab74622@I-love.SAKURA.ne.jp>
+In-Reply-To: <20241003153908.GA3267@wind.enjellic.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 10/3/24 05:59, Tetsuo Handa wrote:
-> On 2024/10/03 15:16, Tetsuo Handa wrote:
->>>> TOMOYO is one of in-tree modules that can be signed together when building
->>>> distribution kernels. Fedora can provide tomoyo.ko as a signed-but-unsupported
->>>> module (i.e. excluded from main kernel package that is supported by
->>>> distributors but provided as a separate package that is not supported by
->>>> distributors).
->>>>
->>> yes it can, it has chosen not to. As I have said before that is
->>> a choice/political reason, not technical. I wish I had a solution to this
->>> problem for you but I don't.
+On 10/3/24 08:39, Dr. Greg wrote:
+> On Wed, Oct 02, 2024 at 10:35:27PM -0700, John Johansen wrote:
+> 
+> Good morning, I hope the day is going well for everyone.
+> 
+>> On 10/2/24 21:26, Tetsuo Handa wrote:
+>>> On 2024/10/03 11:45, John Johansen wrote:
+>>>>> But due to above-mentioned realities, your assertion no longer stands.
+>>>>> Kernel source itself might be open, but private keys cannot be open.
+>>>>> The vmlinux cannot be rebuilt without forcing penalties (i.e. having a
+>>>>> negative impact on the user side, which cannot be a viable solution).
+>>>>>
+>>>>>
+>>>> Yes, and this is an intentional choice on the base of the distro about
+>>>> what they support and what is required to meet contractual obligations.
+>>>
+>>> The reason Fedora cannot enable TOMOYO is lack of bandwidth.
+> 
+>> which is sadly a very valid argument. Coming from the distro side of
+>> things it is a very real problem. I tend to advocate for giving the
+>> user choice where we can but there is more than one occasion where
+>> Ubuntu has had to declare bug bankruptcy on outstanding kernel bugs
+>> because the backlog was impossible to handle.
+> 
+> Understand the concept of lack of bandwidth.
+> 
+> Had a 40 hour week in as of 0800 yesterday morning and the end of the
+> week isn't even remotely in sight.
+
+yeah I know that one all too well, I hit 40 hours some time Wednesday
+morning.
+
+> 
+>>> You've just said "Bandwidth is a very real issue". Thus, I need a solution
+>>> that can solve the bandwidth problem. The question is how we can control
+>>> division of role (share the workload) in a secure manner.
+> 
+>> I do understand that. The problem is that out of tree doesn't do that.
+>>  From a distro perspective out of tree is more work, and is very problematic
+>> from a code signing perspective.
 >>
->> What does "it" referring to? Fedora has chosen not to build TOMOYO into Fedora's
->> vmlinux. But I haven't heard from Fedora that Fedora won't ship tomoyo.ko as a
->> separate package.
+>> Code signing isn't going away, if anything its become a requirement to
+>> support the majority of users. Loading unsigned modules, code, even
+>> bpf is a problem.
+>>
+>> Sure individual users can disable secure boot etc but at the distro
+>> level we need to support secure boot out of the box. Out of tree code
+>> really just isn't compatible with this.
 > 
-> Currently, a Linux distributor is an entity that provides kernel program and
-> userspace program. But as the kernel code signing getting more important,
-> the role of a Linux distributor regarding the kernel program might change as
-> below?
+> Not relevant right now but I do remember, personally at a conference,
+> Stallman railing on about the threat of signed code and what it
+> represents with respect to software and device freedom.
 > 
-> Currently, people expect that "distributor takes care of handling all bugs
-> that happens with kernel code built by that distributor". Due to bandwidth
-> problem, distributor needs to disable kernel code which that distributor cannot
-> take care of bugs. My understanding is that some distributors started providing
-> separated kernel packages; the kernel package which that distributor can take
-> care of bugs and the kernel package which that distributor cannot take care of
-> bugs. The tomoyo.ko change is intended for being included in the latter package
-> if that distributor cannot include in the former package.
+> And here we are....
 > 
-honestly its easier to just build a separate kernel package with tomoyo builtin.
-Module packages can be done, but they are a pita.
+>>>> Users are still free to build their own kernels they just don't get
+>>>> support or certification when using them.
+>>>
+>>> Nobody can provide bandwidth (or infrastructure) for supporting their
+>>> locally built kernels.
+> 
+>> right
+> 
+>>>>                                            Stopping the load of out of
+>>>> tree modules that aren't signed is in general good security policy.
+>>>
+>>> Yes, distributors can prevent load of out-of-tree modules that aren't
+>>> signed. That is good for security. But building kernels locally cannot
+>>> utilize signed modules functionality. Also,
+> 
+>> true. that is a limitation of the cryptography that is being used, and
+>> I don't see a way to fix that
+> 
+>>>> Let me be explicitly clear. If Tomoyo is by-passing module signing, and
+>>>> exporting the LSM interface to loadable modules Ubuntu will be forced
+>>>> to disable Tomoyo.
+>>>
+>>> TOMOYO is one of in-tree modules that can be signed together when building
+>>> distribution kernels. Fedora can provide tomoyo.ko as a
+>>> signed-but-unsupported
+>>> module (i.e. excluded from main kernel package that is supported by
+>>> distributors but provided as a separate package that is not supported by
+>>> distributors).
+> 
+>> yes it can, it has chosen not to. As I have said before that is a
+>> choice/political reason, not technical. I wish I had a solution to
+>> this problem for you but I don't. What I can say is Tomoyo adding
+>> the ability to load out of tree code that isn't signed is going to
+>> force Ubuntu to do the same and disable it. I really don't want to
+>> do that, I would rather leave the choice available to our users.
+>>
+>> It may be a trade-off worth making for you/Tomoyo if it fixed your
+>> problem with RHEL/Fedora but I don't see it fixing that problem
+>> either.
+> 
+> Not much bandwidth for the rest of the day but I wanted to get this
+> question/issue out to get some feedback for later tonight,
+> particularly from your perspective John.
+> 
+> We saw these issues coming about four years ago, which is why we
+> decided to take a deep breath and bring TSEM out of private use to a
+> wider audience, it isn't a 'pet project' as it has been referred to.
+> Not sure we would do that again but that is an issue for another day.
+> 
+> TSEM is based on the notion of having a generic modeling architecture
+> for the LSM.  I know that Casey bristles at the notion of us saying
+> 'model', but we can prosecute that argument in intimate detail at
+> another time.
+> 
+> We would best characterize TSEM as a 'swiss army knife' for
+> interpreting kernel security events.  You can run the event
+> interpretation in the kernel, in userspace, in a hardware device or up
+> in the cloud.
+> 
+> After watching Tetsuo's concerns over the last year we dropped the
+> loadable module support into TSEM for the V4 release:
+> 
+> https://lore.kernel.org/linux-security-module/20240826103728.3378-1-greg@enjellic.com/T/#t
+> 
+> This offers the ability to run the interpretation model via code
+> implemented in a loadable module.  BPF is also an option but we are
+> keeping things simple at this point.
+> 
+> So we use the standard loadable module architecture.  We offer the
+> ability to lock further model loads or unloads after a set of models
+> have been loaded and the option to completely disable any loadable
+> models at boot, independent of the general kernel loadable module
+> state.
+> 
+> It doesn't fully fix Tetsuo's problem, given that a distribution could
+> compile out TSEM, just like it compiles out Tomoyo, I think we all
+> agree there is no fix to that problem.  However, if the security bigs
+> like CrowdStrike, PaloAlto and others, understand that it allows EDR
+> telemetry and surveillance to be implemented on Linux without having
+> to install a high privilege or kernel based agent, it makes not having
+> it in the kernel less attractive.
+> 
+> Just for the sake of advancing these conversations, we are throwing
+> some bandwidth into implementing Tomoyo as a TSEM loadable module to
+> get some further insight on the tractability of something like this.
+> 
+> With your distributor hat on does an architecture like this offend
+> your security sensibilities?
+> 
+> Like it or agree with it, we seem to be standing at a reasonably
+> important inflection point for Linux, conversations probably suitable
+> for a 'Summit' type event.
+> 
+> Will look forward to your thoughts.
+> 
+honestly it worries me, but that is more a vague general worry about
+any generic architecture that you can build on top of. Take BPF, it
+has a whole host of issues, that make it very challenging, like
+spectre gadgets, and getting its verifier correct for everything.
+There is a lot of complexity there making it a challenge to evaluate.
 
-> Since distributor needs to sign kernel code, I think this separation is becoming
-> more inevitable. That is, people might need to change their expectation to that
-> "distributor takes care of handling bugs that happens with kernel code in the
-> former package, and somebody takes care of handling bugs that happens with kernel
-> code in the latter package", and distributor's role is to compile as many kernel
-> code as possible and sign all compiled kernel code so that the kernel code is
-> compiled and shipped (and not tampered) by known entities; something like SSL
-> certificates providers.
+I really need to dig into the details of TSEM before I can give a better
+response.
+
+
+
+
+> Have a good day.
 > 
-Sure. Distribution already tell users they aren't using supported stuff. Ubuntu
-builds in selinux, tomoyo, smack. We get a bug we tell them it is community
-supported.
-
-That has some overhead, but really not that much more than responding to the
-bugs where users ask for feature X to be enabled. Or how to build a kernel with
-feature X, ...
-
-Ubuntu made a different decision than fedora around how best to support users.
-I am not going to argue its right or wrong, just different. Again getting a
-distro to change a config/stance is a political problem, not technical.
+> As always,
+> Dr. Greg
+> 
+> The Quixote Project - Flailing at the Travails of Cybersecurity
+>                https://github.com/Quixote-Project
 
