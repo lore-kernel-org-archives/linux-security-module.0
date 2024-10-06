@@ -1,222 +1,208 @@
-Received: from mail.nightmared.fr (mail.nightmared.fr [51.158.148.24])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 384494C91
-	for <linux-security-module@vger.kernel.org>; Sun,  6 Oct 2024 11:14:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.158.148.24
+Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DB421F5F6
+	for <linux-security-module@vger.kernel.org>; Sun,  6 Oct 2024 16:20:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728213269; cv=none; b=M/jgMed6wX58Kd9OPXPQNSFhBZtXx8KFIZy2JMM8bQLeDLxP+MrrXMobUbp9EdexJgLwikIn1RJhG5AvWMlz5u8FT1xy2OkHHuTVz+wtPK/1EZEqae9W5mx7fYLtt5NBh2lAHll4BDSGZqkS0OQZtsrwZbg4ujmUuC3MnO6yon8=
+	t=1728231644; cv=none; b=J8TuhlyBsgArj3ZgGHSRF+2OrUoGdJpT+2WUNiv4pRhFpweQFqEkMeCzRccu8sxhGVy6oku9koF0elExvUciT5LUMsOMbHH+w/DGh4qEbX+I+OoS7cl2RKzgnpsSZfAXXYejmhktoGTCknO0F29yKXx94fUTtW+i4ZCJOrfy4b8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728213269; c=relaxed/simple;
-	bh=pbQ4V7UIHtfqV+fBHg9bkg8SUzjh26eJX5oaOGP/36g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iKwB24twyNu57Z1+fe7vAHoI7sryxUK2avgQ5GmNxXSIx21fgEvaAMIySvUrQXiD0WPeiG053CorQpjYIoG/iJA0w3IIYHAKhDXFqNKfmQt2L9FLVQZTDxzwAWizjh26MHrI6lFpsLb/vbI7jjnxrIuh4kD2ABM4DXk+XgZ1zRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nightmared.fr; spf=pass smtp.mailfrom=nightmared.fr; dkim=pass (2048-bit key) header.d=nightmared.fr header.i=@nightmared.fr header.b=Nl0FqEKB; arc=none smtp.client-ip=51.158.148.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nightmared.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nightmared.fr
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nightmared.fr header.i=@nightmared.fr header.b="Nl0FqEKB"
-Received: from [192.168.1.3] (alyon-657-1-781-204.w80-9.abo.wanadoo.fr [80.9.175.204])
-	by mail.nightmared.fr (Postfix) with ESMTPSA id E967E10E00A8;
-	Sun, 06 Oct 2024 11:14:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nightmared.fr;
-	s=docker; t=1728213264;
-	bh=pbQ4V7UIHtfqV+fBHg9bkg8SUzjh26eJX5oaOGP/36g=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=Nl0FqEKB6qdxUUL/6FoCbPECl5L7mlmuW38L+GishVxgiHUvRCX/umMjXs7+hxukZ
-	 v6JXrVXV0SjZAoQrXljF8rtEApm8JT6sVqq8z88U5LrFDmIZrp1gcBJeG52Im1zhsm
-	 YiNVxBdUUiFYVJ5mm4cLiPCwTgCoaXz7NOIjFd97gRmE7qQ1Dbl1fxICRZc4PthHVP
-	 zF/2kr81hKRj/4ZMYhq21pXqwz0BBcALyg04zX34wYs7txLyMnuJN8h2O0iRMsOA0J
-	 de/aLYjpKUEuC3HqjmYDcyLfUzUNmLqmLTus10fmV3I2ZwCCLKo9DCqWhsSku/565f
-	 U1c5VXoMf3PNQ==
-Message-ID: <3f43ee1c-b297-4a4d-bc3a-bdcaa1613039@nightmared.fr>
-Date: Sun, 6 Oct 2024 13:14:23 +0200
+	s=arc-20240116; t=1728231644; c=relaxed/simple;
+	bh=gY/FEf0C0HB6Ux4n5IDvEJw5lgJxHYiymIy2UG1uVnY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mWKLMWPPaGzHjV0PKMB8m7z3xaLaojbDH4Lp0NYDdAJlgbDzy8/hB4vGazv85Ev1t5c6ZfR/+z1XsIIaV2c1zNofORhr/rVp8PmMJdE62TwyZbWrJ9hekEG2ceAXh8GpkSINNMU44m8p1wVe8/CnRZP8iDJU6fVM597wsJOffAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 496GIc0E029340;
+	Sun, 6 Oct 2024 11:18:38 -0500
+Received: (from greg@localhost)
+	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 496GIZBB029339;
+	Sun, 6 Oct 2024 11:18:35 -0500
+Date: Sun, 6 Oct 2024 11:18:35 -0500
+From: "Dr. Greg" <greg@enjellic.com>
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Kees Cook <kees@kernel.org>, Paul Moore <paul@paul-moore.com>,
+        Fan Wu <wufan@linux.microsoft.com>, Micka??l Sala??n <mic@digikod.net>,
+        Mimi Zohar <zohar@linux.ibm.com>, Micah Morton <mortonm@chromium.org>,
+        John Johansen <john.johansen@canonical.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        KP Singh <kpsingh@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+        linux-security-module@vger.kernel.org
+Subject: Re: TOMOYO's pull request for v6.12
+Message-ID: <20241006161835.GA29292@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <CAHC9VhR=QjdoHG3wJgHFJkKYBg7vkQH2MpffgVzQ0tAByo_wRg@mail.gmail.com> <202410041305.544EA7E4E@keescook> <ece0c7bd-0d28-4562-8760-c54b0077583a@I-love.SAKURA.ne.jp> <202410041645.27A48DA@keescook> <5b09909b-fe43-4a9c-b9a7-2e1122b2cdb6@I-love.SAKURA.ne.jp> <4eaea237-d259-44bb-a546-26a0558a4453@schaufler-ca.com> <20241005170235.GA24016@wind.enjellic.com> <034409ae-5d36-49d6-8073-adbff2a4404c@schaufler-ca.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: TOMOYO's pull request for v6.12
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
- "Serge E. Hallyn" <serge@hallyn.com>
-Cc: Paul Moore <paul@paul-moore.com>, Kees Cook <kees@kernel.org>,
- Fan Wu <wufan@linux.microsoft.com>, =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?=
- <mic@digikod.net>, Mimi Zohar <zohar@linux.ibm.com>,
- Micah Morton <mortonm@chromium.org>, Casey Schaufler
- <casey@schaufler-ca.com>, John Johansen <john.johansen@canonical.com>,
- Roberto Sassu <roberto.sassu@huawei.com>, KP Singh <kpsingh@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>, linux-security-module@vger.kernel.org
-References: <CAHC9VhR=QjdoHG3wJgHFJkKYBg7vkQH2MpffgVzQ0tAByo_wRg@mail.gmail.com>
- <202410041305.544EA7E4E@keescook>
- <ece0c7bd-0d28-4562-8760-c54b0077583a@I-love.SAKURA.ne.jp>
- <202410041645.27A48DA@keescook>
- <5b09909b-fe43-4a9c-b9a7-2e1122b2cdb6@I-love.SAKURA.ne.jp>
- <CAHC9VhQLONjomYjs6pK2tibVfOaPY+TbDA2CYQ1YEGX7ENVkYw@mail.gmail.com>
- <ec8770e0-8f7c-42b7-b66b-7f830be7271a@nightmared.fr>
- <20241006000206.GA901131@mail.hallyn.com>
- <28dd6c35-c201-4367-b853-d637534d9d3f@I-love.SAKURA.ne.jp>
-Content-Language: en-US
-From: Simon Thoby <git@nightmared.fr>
-In-Reply-To: <28dd6c35-c201-4367-b853-d637534d9d3f@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <034409ae-5d36-49d6-8073-adbff2a4404c@schaufler-ca.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Sun, 06 Oct 2024 11:18:39 -0500 (CDT)
 
-On 10/6/24 12:02 PM, Tetsuo Handa wrote:
-> On 2024/10/06 9:02, Serge E. Hallyn wrote:
->> On Sat, Oct 05, 2024 at 07:28:35PM +0200, Simon Thoby wrote:
->> ...
->>> Perhaps you would be better served by providing your users with a snippet of documentation
->>> explaining how to configure MOK and to rebuild the RHEL kernel with TOMOYO enabled?
->>> To be fair, I know that your customers may find this a time-consuming ordeal compared to using
->>> the official kernel - especially as you want to keep up with the frequent updates.
->>
->> Tetsuo's problem, AIUI, is not that it's difficult to rebuild the kernel enabling
->> tomoyo, it's that once his customers do so, RedHat will not support/debug in case
->> of failures.
+On Sat, Oct 05, 2024 at 11:58:32AM -0700, Casey Schaufler wrote:
 
-You're probably right. In my email I said it could be "fine for occasional use" where users
-want to trace the system when a problem occurs.
-Of course this only works if the problem is reproducible (or frequent enough) that you can
-build a new kernel with TOMOYO enabled, boot on it, and wait for the problem to produce itself.
-If the goal is instead to have TOMOYO enabled at all time on the company systems, then I
-do not envy Tetsuo's position, because I believe this to be an impasse (regarding TOMOYO
-itself, not necessarily the tracing problem - more on that later).
+Hi, I hope the weekend is going well for everyone.
 
-> 
-> There are a lot of problems.
-> 
-> TOMOYO is a personal project (the company when I wrote TOMOYO is no longer
-> involved since 2012). Also, the company I currently belong to does not have
-> much involvement in OSS community. There are some Java programmers, but there
-> are little C programmers. Programmers who can understand the Linux kernel are
-> endangered species. And I'm working as a troubleshooting staff who can investigate
-> problems using C programmer's skill / Linux kernel developer's knowledge.
-> 
-> Because such a situation, talking with managers needs to be done at a level for
-> non-programmers, and communicating with developers/operators needs to be done
-> using almost copy-and-paste level procedure manual. In short, Linux systems are
-> black-box for them, and I want to use TOMOYO as one of tools for helping them to
-> escape from black-box.
-> 
-> Most of Linux systems are RHEL servers, but since TOMOYO is not included in RHEL
-> kernels, I can't use TOMOYO. I was using AKARI until now, but the "static calls"
-> change broke AKARI. Thus, I'm close to panic() condition.
-> 
-> As far as I'm involved in, all RHEL servers are running inside protected
-> environment (e.g. commercial WAF/IPS devices inspect traffics before forwarding,
-> commercial firewalls/LBs devices minimize possible networking communication
-> routes, SSO is enforced for users to login, AV/EDR are protecting individual
-> server). Because such a situation, there is little needs for updating packages
-> due to security bugs. It may not be a good practice, but even packages that
-> reached EOL might be used for years after EOL. For such environments, e.g.
-> TSC counter overflows after 208.5 days and freezes the system is more impacting
-> problem and is the reason to update kernel packages.
+> On 10/5/2024 10:02 AM, Dr. Greg wrote:
+> > On Sat, Oct 05, 2024 at 09:10:08AM -0700, Casey Schaufler wrote:
+> >
+> > Good morning to everyone, I hope the weekend is going well.
+> >
+> > I saw this go by while I was multi-tasking between draining the oil
+> > out of the lower unit on my boat motor and welding the boat lift
+> > canopy frame and wanted to make sure that Tetsuo's comment is
+> > interpreted in the correct context.
 
-I personally does not agree with the position that "there is little needs for updating
-packages due to security bugs", because I believe this does not account for one important
-source of attacks: the internal actor, working inside the company, and thus behind all
-your WAF/IPS/Firewalls and whatnot (I do not say this to belittle these tools, they help
-protect your company against external actors, but they do not protect against a malicious
-or angry employee). So updates (not just security updates, after all in the kernel it is
-very hard to know what update carries a security fix) are always a good thing in my book.
+> Playing with welders and petrochemicals at the same time is not
+> recommended. Boom! Ack!
 
-But fair enough, I have also seen the "If it ain’t broke, don’t fix it" quite a fair
-amount of time in a few years working with the industry. And when you cannot justify
-investing money into upgrades with your hierarchy, you have to compromise.
+Actually 80/90 VIS gear lube isn't all that exciting, but we did have
+some excitement.
 
-Anyway, I sidetracked myself again :/
+Given that the 40 MPH sustained wind coming across the lake was making
+MIG welding impossible [1], I drug the broken part of the lift into
+the garage with the electric winch on my pickup and started welding on
+it.  The MIG gun went dead and I flipped up my helmet to see what was
+going on and my 95 year old Dad was leaning on his walker after
+throwing the main breaker switch in the garage.
 
-> 
-> I could rebuild RHEL kernels with TOMOYO enabled. But I can't afford providing
-> infrastructure for distributing rebuilt kernels / packages relevant with the
-> rebuilt kernels (e.g. debuginfo packages) nor resource for acting as front-end
-> for receiving any problems that happens with the rebuilt kernels. How difficult
-> will it be to let my customers rebuild RHEL kernels with TOMOYO enabled and
-> let my customers prove Red Hat that the cause of their problem (bugs) is in
-> stock RHEL kernels? (Not limited to runtime bugs, but also questions etc. for
-> configuring kernel part that is not related to TOMOYO.) As with problems that
-> happen when using e.g. out-of-tree products, I need to rely on Linux distributor
-> as front-end. As a back-end, I will handle problems (bugs) in TOMOYO part.
-> 
-> It is AV / EDR companies who are most thinking empathetically and contributing
-> to security for my customer's individual RHEL servers. What the LSM community
-> considers as threats and what my customers consider as threats are different.
-> It is sad that the LSM community does not like e.g. loadable LSM modules despite
-> writable variables are not a practical attack vector for my customers...
->
+I told him he had ruined my bead and he said I had two five gallon
+cans of gas sitting behind me.  I told him I had checked to make sure
+the caps were on so we were good to go.
 
-The difficulty is that the LSM community need to think of what's best for all users,
-and that include users where the writable static calls may be an exploitable path.
-If RedHat were to enable TOMOYO_LKM, they would expose their users to that risk.
-Thus, I do not believe (as maybe have said already) that your patch would serve
-your objective of getting it added into RedHat, but rather the contrary: guaranteeing
-that RedHat will never enable it in Fedora/RHEL kernels.
+I haven't seen him that excited since Uncle Larry started welding on
+the broken tongue of our homemade trailer that had three pallets of
+gunpowder and a bunch of bee boxes on it that we had just hauled up
+from Iowa [2].
 
-While I sympathize with your position (between the anvil of not getting TOMOYO enabled
-in distributions and the hammer of your customers in need of solutions), I do not
-think this design of a LKM updating static calls that provide security functions
-holds a real chance of getting merged someday.
+> >> On 10/5/2024 12:10 AM, Tetsuo Handa wrote:
+> >>> ... It is possible that an attempt to make it
+> >>> possible to use SELinux and Smack together is a wrong direction. Even if SELinux
+> >>> and TSEM conflicts about their security models (and cannot be used together), it
+> >>> might not be something we need to care...
+> >> In the past I have said that having SELinux and Smack on the same
+> >> system is the test case for module stacking, but that I didn't see
+> >> it having a practical application. I have since been presented with
+> >> a use case that seems reasonable. Because LSM is a mechanism for
+> >> additional restrictions it is impossible for two security models to
+> >> "conflict". LSMs *must* be written to allow for cases where access
+> >> is denied for other reasons. You never get to the MAC check if the
+> >> DAC check has already failed. If TSEM can't handle what SELinux or
+> >> TOMOYO decides it shouldn't be accepted.
+> > I believe that Tetsuo misinterpreted the discussions you and I have
+> > had about what represents a 'security model'.
+> >
+> > For the record, TSEM has no issue with handling whatever SeLinux,
+> > SMACK, Tomoyo, AppArmor et.al. decide to do, full stop.
+> >
+> > It functions like all of the rest of the LSM modules, it determines
+> > whether or not a security event is inconsistent with the 'model' that
+> > the process is running in, and if so denies it, otherwise it stands
+> > aside and lets the other LSM's have a run at it.
+> >
+> > If some other LSM in front of it decides to deny an event, well and
+> > good, the event is over with from TSEM's perspective, as well as
+> > anything else behind the denying LSM for that matter.
+> >
+> > You raised the issue, I believe in V1, as to where we had positioned
+> > TSEM in the LSM call list.  After you expressed concern we moved it to
+> > the front of the call list because we don't care and everyone else
+> > seems to want to be later in the stack, particularly at the end, which
+> > would now seem to be be a privileged position held only by BPF.
+> >
+> > To extend on this a bit for further clarification.
+> >
+> > As we have evolved TSEM we realized that we actually want to be first,
+> > if that isn't also a coveted position.
 
+> The current thought is that we frown on an LSM desiring a specific
+> ordering and would probably reject one that required it.
 
-On another note, the way the patch was sent to Linus (very close to the end of the
-merge window, and without CC'ing the linux-security-module ML) may be seen as a way
-to bypass reviewers and get it merged "no matter what". While I do not attribute
-malice to that merge request, I understand that it may be somewhat ill perceived.
-Which again, may warp RedHat's (and others, like Canonical's) perception of TOMOYO
-negatively.
-Maintaining a piece of kernel functionality for over a decade in an impressive feat,
-and I commend you for that, but I know that losing trust is often far easier (and takes
-far less effort) than regaining it afterwards.
-And I think the "trust credit" may play an important role in the political aspects
-of enabling a kernel feature on a given distribution.
+As well we should.
 
+Which is why TSEM has no interest in whether it is first, last,
+fourth, sixth, ninth or somewhere else in between, we would embrace
+someone choosing for us.
 
-> 
-> 
-> Going back to tomoyo.ko seen from my customers point of view.
-> 
-> Advantage of building TOMOYO into vmlinux is that the procedure for
-> communicating with managers/developers/operators becomes simple.
-> 
-> Advantage of building TOMOYO as tomoyo.ko is that users can update only
-> tomoyo.ko (thanks to KABI in RHEL kernels) when a bug is found in TOMOYO.
-> Minimizing possible code changes helps minimizing cost for updating packages.
-> But secure boot / module signing (not a topic to consider for current
-> environment, but possibly becomes a topic to consider for future environment)
-> needs to be taken into account.
+Our preference, only internally, for going first is that when TSEM is
+in an infrastructure verification role, such as extended attribute
+verification, and since the last time we checked first fail terminates
+the LSM call chain, it seemed prudent with an eye on safety (we are
+big on safety out here in the Upper Midwest) to bail as fast as we can
+and issue a loud warning if there was evidence the LSM infrastructure
+or integrity status of the operating system had been tampered with.
 
-Finally, I must admit that I know nearly nothing of both TOMOYO and BPF-LSM.
-Nevertheless, for your tracing needs (this may not work well for enforcing a
-policy, but I kind of inferred from your emails that you were mostly interested
-in tracing/debugging capabilities), may you could reproduce the necessary functionalities
-of TOMOYO via BPF-LSM?
-I don't presume to know the complexity of that endeavor, nor how the limitations of
-the ePBF verifier may make that partial rewrite difficult (and it certainly would be).
-But it seems to me that you have three options:
-- Get TOMOYO LKM merged, and wait a few years for it to be enabled by distros, readily
-  available then deployed by your customers
-- Pressure distributions into enabling TOMOYO (without the LKM), and wait a few years too
-- Provide an eBPF program that can instrument LSM operations to extract the tracing information
-  you need to debug your customers. You may also have to wait a few years to get the full
-  feature set of TOMOYO working, or to get eventual missing features enabled in BPF-LSM, but
-  a limited version may work on many kernels (even existing ones), and updates would be
-  easier (not tied to a specific kernel version).
+Casey, this is a time for you to have legendary impact on Linux
+security, well beyond LSM stacking and SMACK, you choose for us... :-)
 
-I am not saying that BPF-LSM is THE solution - it has too many limitations for that - but if
-you desire to have a LSM for tracing needs (again, not for enforcement, where you cannot afford
-to have a userland process load the BPF program) that you can update at will without rebooting,
-that does not create new potential security issues (if we ignore speculative execution attacks
-in eBPF), there is some appeal to that idea.
+> > For example, internally, we have TSEM 'models' whose only function is
+> > to validate that the extended security attributes of an inode match
+> > what the workload was unit tested to, in order to thwart offline
+> > modification attacks.  In this case you want TSEM to be running ahead
+> > of the security attribute based models, since presumably, you would
+> > not want those models making a decision on extended attributes that
+> > have been modified.
+> >
+> > Hopefully this clarifies the issue.
+> >
+> > We have a long standing question, that has never been answered,
+> > regarding module stacking and multiple MAC implementations on the same
+> > OS instance but we will leave that to another conversation.
 
-Simon
+> I would be open to hearing which of the many open questions you're
+> referring to.
 
-> 
-> I'm not familiar with secure boot / module signing. I had a feeling that effectively
-> only distributors can sign tomoyo.ko . But it seems that I can also sign tomoyo.ko
-> if conditions are met. But I won't be able to provide infrastructure / support for
-> problems related to secure boot, for I need to prepare copy-and-paste level
-> procedure manual (not a snippet!) and support. tomoyo.ko being signed by
-> distributors is much appreciated.
-> 
-> 
+It is no doubt a question that is simply secondary to our novitiate
+status in all of this.
 
+There was an LSM list thread started by, I believe a Korean Linux
+integrator.  I believe they were on an Ubuntu OS base platform running
+AppArmor and running a containerized Fedora implementation to
+experiment with SeLinux, I don't remember all the details, the
+exchange would be on lore.  They were somewhat disconcerted by the
+fact that when they threw the switch on SeLinux in the Fedora
+implementation things pretty much collapsed around them.
+
+Paul replied back and said that the LSM doesn't know anything about
+namespaces, so the impact of enabling SeLinux was OS wide.  He
+commented further that the above scheme could be implemented but there
+would have to be very sophisticated mutual exception policies in place
+between the two modeling strategies and composing something like that
+would be the domain of experts in the field.
+
+I had replied back to Paul and indicated that it was our understanding
+that with LSM stacking you get the union of all the implemented
+security models.  We had posed the question, in this hypothetical, if
+an unconfined system wide SeLinux policy would be needed to disallow
+all action by SeLinux, except for subject/object interactions that
+would occur in the subordinate OS instance, but I don't remember
+seeing a response, we may have missed it.
+
+Are we missing something in our interpretation of how this needs to
+work?
+
+Now off to cook sunfish for breakfast.
+
+Have a good remainder of the weekend.
+
+As always,
+Dr. Greg
+
+The Quixote Project - Flailing at the Travails of Cybersecurity
+              https://github.com/Quixote-Project
+
+[1]: For those who pretty much only do computers.  I is largely
+impossible to aluminum MIG weld in a high wind.  It disrupts the argon
+shield gas flow and the molten aluminum reacts with the oxygen in the
+air and forms aluminum oxide that cold caps the weld since the melting
+point of aluminum oxide is higher than the melting point of the
+aluminum base metal.
+
+[2]: Yes, TSEM originates from a very rural part of America and we wear
+that on our sleeves.
