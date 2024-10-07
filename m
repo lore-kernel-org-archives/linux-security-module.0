@@ -1,164 +1,175 @@
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 312D85338D
-	for <linux-security-module@vger.kernel.org>; Mon,  7 Oct 2024 16:58:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30DB41DE8BC
+	for <linux-security-module@vger.kernel.org>; Mon,  7 Oct 2024 20:37:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728320293; cv=none; b=YbnyczcPFHSC0pL6X205Ign1HfOt2RWvhsyhOuh4SIHRcR7Pyu8zCqWZWcxAUqph21AQbr5VKQSOu8IcTx8xGyIotq2XUegwp7yVBdxgzk/9YpucIWN3TfKwbtBzEkSvFvD44HKsHlGCEUpshbdLKwB9X8QyXe/IgbjWI48B//I=
+	t=1728333467; cv=none; b=jt0/oZSUyPqGa0Xz4Cg/+PmXlcXyYIY+8SeCrdetm/PCoZiq0tdB+2PGKf9kmJIqZU2DRao56wHsHdClMpHMzaWoWolUnro2EsA8KL0KozdvjGhx/0Sprvvf/Gk47mll55c5f+zcX0NUuKt9iyDHQna7fUKqXJR/MtHkO/5j5zA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728320293; c=relaxed/simple;
-	bh=yzIwSmW9HtFRrrzylid8yhtEpl5lGIwiwFhhu3I22i4=;
+	s=arc-20240116; t=1728333467; c=relaxed/simple;
+	bh=Y3xYC+wz5DB+ioeLv98h6nPB0DXqGCfot1aJrQPSDA0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b59cf6qi+0NWpNL/KCBORtYWQ8VvWe6GDEZakeLtmoOIF/vHr/FMvkwG3K4e2MBka9eUBtVCet2pynyn4NmqMRdJla3yNLMF2OqWuclac4rdMAFrvqmMw6pU8svCAlUxIVypfstzGrXGS1mBBEHgUjhzyVo2dO81moPzj/Bk4T0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=DYIIOMBw; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	 To:Cc:Content-Type; b=Fk6B6LWuesRweo7a1lfKgfZGd2rOij0dLHExF3A7FuEcrp7tjIP26vE9/dTgiXf6xIZHBd+t/D+DufTkVh76/3q5Q155i4AAcd0BYm22jUX8nCmOkKeJdNdsLKzXUMx+3WjJdi6TwG6Y8JCWLn5npGbixCn4GUgCn2+nUPRUNIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Ccel2H8S; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="DYIIOMBw"
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6e2e508bd28so13599497b3.2
-        for <linux-security-module@vger.kernel.org>; Mon, 07 Oct 2024 09:58:11 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Ccel2H8S"
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a9941a48ac8so305494766b.3
+        for <linux-security-module@vger.kernel.org>; Mon, 07 Oct 2024 13:37:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1728320291; x=1728925091; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8FDLwYr0W0I2TyrqabkmE1dfXEL1zmhPVUq3NdPKOu8=;
-        b=DYIIOMBwvC9WJ0Tvxs31qZewYS5/GAjvSOlaxhK4lp4PRLcPprJVbFpVKmYYYpURAe
-         7P5uXGUt8OVhakz8wKUv4I2U+trUTvZIMbI7TiTEGsyxlU0q7EFpV8QxPZn3GeFEecPB
-         L+vg5o5yfRcNcG6kud+XoltFYsFACAVUw8tGvR5yhZ2NGDA50li3UIbvI3KMGaDbDN6n
-         S705jZmHpbEd3Q/dCzvGNWa377eGW3sIG7mwj2n2HObbZTFmPXBycuhEtRda16Z6aWyT
-         TfKe9ujirtuVZ3cEeF2DAuNIhl3r2zPzZKJAy7qapZiefc91q61t+851oI+WMn7cNMX9
-         MvUg==
+        d=linux-foundation.org; s=google; t=1728333462; x=1728938262; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=gxfIEmnywXXr2F4fJYOrFGHGu5IS2gv2EOSHZH1isPU=;
+        b=Ccel2H8S0Dy219pzvzwEotNeUYjQu93V6qRRkpNpk6ypR9spW66hUuVBd9V7m3GtHz
+         JuALBejMrR8Ot0eYI4C95/eleDubDU7LhtEwHwgWZ+4xD030USnBntxBnwwijHEEVoC7
+         zX7Qf/xVzi4evgZ0Xk4rO88J1qAswn7Ds8nBo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728320291; x=1728925091;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8FDLwYr0W0I2TyrqabkmE1dfXEL1zmhPVUq3NdPKOu8=;
-        b=onVTbRNYgL6WErEWbwsqcxKWFvmxJxrxdXM/ar6eqgA6zhkCyxsQorZyymVdJHJ8GJ
-         16Krb9ZtIJNEDT8R0X8OoPWsdWV9d5vIKn2Q0pUX1Emj+af5r1289qUsLnPegrx2060P
-         ai+YblT0GRrCZ9YFjrZD9FUg+TQCmEn5Mlh44EnorDKQGvei0936+B8fPO+ixpw4Ed2Y
-         SrNd7yPEr7tAg51cBuOYq8vz2Z17kJmVIWSwU9Q/KJzBW6/hEud3usIY0ZZmHvUcZbp9
-         S+PtUaYn1YrvE9iULLPKZGQdt4RB0wovbDhyVWFwO5CWjHQDPkYunWBpQV5hYVKpNAgQ
-         C5kA==
-X-Forwarded-Encrypted: i=1; AJvYcCWMqKV5iv0UPmZCO0sa9Z2+ZIBf+uEj1iyR022FKEsv5s8pH91YgwtVmTgGFPquUWey5bo6CxTlt2xYjITtgP9GQkc+3PM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQSB5FiS8huYP7aBE9UBr9zfT5ZpGZ36xmTs1AGenoa5G2+NSa
-	cGkecaIeU29XgKvHi2FEtZkjj1cAGmNZDWJu1lPVABBlqPb3E5ma4NAxqScjZVTn8oOW5f30hBv
-	yE16RqfhEvkP3YhaO5L7FypBe84eBGvA970Da
-X-Google-Smtp-Source: AGHT+IFNRdRw5/QfeWn+YZcg6EYhNUDISm5RwXNFrmhrBCU4JilAZjxQqSfb9m9kQ/pHzm2oJ8T1BPTDLI27V/5AAXQ=
-X-Received: by 2002:a05:6902:2408:b0:e25:c0b4:f364 with SMTP id
- 3f1490d57ef6-e28936dc8f5mr7574805276.17.1728320291200; Mon, 07 Oct 2024
- 09:58:11 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728333462; x=1728938262;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gxfIEmnywXXr2F4fJYOrFGHGu5IS2gv2EOSHZH1isPU=;
+        b=QNKVQ42UTJFhB/vsiwQ3UiAEEIvgJgmgf18UBMUwElhGYO6lNZQN2gmvfB3QDNM5sV
+         flQ/g0N4XKA1OhygWGqL/t6JP6j14cRlZH9hXHbK0lEHivSyH0weQyTBkgM/ah03SpZl
+         FMqyc9fyBebbhyhv6WZBM/PQRjHG+QCB+tq7R4nq8xSdgL1DHfx1ZRcPbmW3wAwEiqbX
+         rHJfHoqUm3AuwnvxakQhEZVCY5v69PVnxc6WmsUIeHubgBcZHWFALELLbJYdLuwhT0Jw
+         Oh6/ENeojV2Uw51YEt1ylm1GFimQKBmawJ6/c9+qNLyrflwkcQP3M254feIXIgX+mnQW
+         63jg==
+X-Forwarded-Encrypted: i=1; AJvYcCV21es6ni5rQ9Sq1HAFwo1JYif3WVOAGAeaZDoh6/sZehvE6+cLOryrn7EwGoRwu+ou6YEjgmNgc0MYu+C9fCo7coUgBKA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyEV0dtkrEZl2Z4GYyuW9VdJyQPIu2Upxa3YQqAp3TG/pH/GFS
+	QdrKcTTUesJZzl/HoyYaW2vAKXc2C+YN8vkzUkQmRPpGVJnCK2wLeyZ3emwyjSZqUoPJQ5aaxLC
+	yzTsgEA==
+X-Google-Smtp-Source: AGHT+IEBo39VRMEbNfI0ejP4CLTwsFgEEFJ/FAvUIahDnzuodPlURv5fqcPeGBmGaw4yaaSQoBI6qw==
+X-Received: by 2002:a17:906:eec2:b0:a99:4789:6ad3 with SMTP id a640c23a62f3a-a9947896b17mr599236966b.59.1728333456960;
+        Mon, 07 Oct 2024 13:37:36 -0700 (PDT)
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com. [209.85.218.47])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a995a54ddf3sm130522566b.216.2024.10.07.13.37.36
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Oct 2024 13:37:36 -0700 (PDT)
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a994cd82a3bso253409866b.2
+        for <linux-security-module@vger.kernel.org>; Mon, 07 Oct 2024 13:37:36 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUOi0L1XSfNZVpOP0lWkANhd/KF7/CbOBAYbnNcVLiIiwvuS4dXem+KGE6V4FTtyLG6U6+Jk4MZ7vVbq67fSnmHM8MIKEA=@vger.kernel.org
+X-Received: by 2002:a17:906:eec2:b0:a99:4789:6ad3 with SMTP id
+ a640c23a62f3a-a9947896b17mr599234166b.59.1728333455897; Mon, 07 Oct 2024
+ 13:37:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <66f7b10e.050a0220.46d20.0036.GAE@google.com> <CAHQche-Gsy4=UT6+znKyPRDEHQm9y-MQ+zacoqfywKaz7VA2kg@mail.gmail.com>
- <CAHC9VhSHSD5QF8w2+n9f1DAEfQAwW5eA0skSuap2jdMWrLfGWQ@mail.gmail.com>
- <05e893036fa8753e0177db99dd48eb9d2e33476a.camel@huaweicloud.com>
- <CAHC9VhSEMSwzxjXUHLCWXoGj3ds8pQJ-nH6WQuRDzBkx6Svotw@mail.gmail.com> <70f55efdba0e682907c895ea8ba537ea435bc3aa.camel@huaweicloud.com>
-In-Reply-To: <70f55efdba0e682907c895ea8ba537ea435bc3aa.camel@huaweicloud.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 7 Oct 2024 12:58:05 -0400
-Message-ID: <CAHC9VhRt1BA_U2cEDFjHK_bmfW0ejx2AtbwZKgE5FFRDbUYNOg@mail.gmail.com>
-Subject: Re: [syzbot] [integrity?] [lsm?] possible deadlock in
- process_measurement (4)
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: Shu Han <ebpqwerty472123@gmail.com>, 
-	syzbot <syzbot+1cd571a672400ef3a930@syzkaller.appspotmail.com>, 
-	akpm@linux-foundation.org, dmitry.kasatkin@gmail.com, 
-	eric.snowberg@oracle.com, hughd@google.com, jmorris@namei.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-security-module@vger.kernel.org, 
-	roberto.sassu@huawei.com, serge@hallyn.com, stephen.smalley.work@gmail.com, 
-	syzkaller-bugs@googlegroups.com, zohar@linux.ibm.com
+References: <20241002014017.3801899-1-david@fromorbit.com> <20241002014017.3801899-5-david@fromorbit.com>
+ <Zv5GfY1WS_aaczZM@infradead.org> <Zv5J3VTGqdjUAu1J@infradead.org> <20241003115721.kg2caqgj2xxinnth@quack3>
+In-Reply-To: <20241003115721.kg2caqgj2xxinnth@quack3>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 7 Oct 2024 13:37:19 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whg7HXYPV4wNO90j22VLKz4RJ2miCe=s0C8ZRc0RKv9Og@mail.gmail.com>
+Message-ID: <CAHk-=whg7HXYPV4wNO90j22VLKz4RJ2miCe=s0C8ZRc0RKv9Og@mail.gmail.com>
+Subject: Re: lsm sb_delete hook, was Re: [PATCH 4/7] vfs: Convert sb->s_inodes
+ iteration to super_iter_inodes()
+To: Jan Kara <jack@suse.cz>
+Cc: Christoph Hellwig <hch@infradead.org>, Dave Chinner <david@fromorbit.com>, 
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	linux-bcachefs@vger.kernel.org, kent.overstreet@linux.dev, 
+	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@linux.microsoft.com>, 
+	Jann Horn <jannh@google.com>, Serge Hallyn <serge@hallyn.com>, Kees Cook <keescook@chromium.org>, 
+	linux-security-module@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 7, 2024 at 12:49=E2=80=AFPM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
-> On Mon, 2024-10-07 at 12:35 -0400, Paul Moore wrote:
-> > On Mon, Oct 7, 2024 at 11:31=E2=80=AFAM Roberto Sassu
-> > <roberto.sassu@huaweicloud.com> wrote:
-> > > On Wed, 2024-10-02 at 23:09 -0400, Paul Moore wrote:
-> > > > On Sat, Sep 28, 2024 at 2:08=E2=80=AFPM Shu Han <ebpqwerty472123@gm=
-ail.com> wrote:
-> > > > >
-> > > > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D
-> > > > > > WARNING: possible circular locking dependency detected
-> > > > > > 6.11.0-syzkaller-10045-g97d8894b6f4c #0 Not tainted
-> > > > > > ------------------------------------------------------
-> > > > > > syz-executor369/5231 is trying to acquire lock:
-> > > > > > ffff888072852370 (&sb->s_type->i_mutex_key#12){+.+.}-{3:3}, at:=
- inode_lock include/linux/fs.h:815 [inline]
-> > > > > > ffff888072852370 (&sb->s_type->i_mutex_key#12){+.+.}-{3:3}, at:=
- process_measurement+0x439/0x1fb0 security/integrity/ima/ima_main.c:250
-> > > > > >
-> > > > > > but task is already holding lock:
-> > > > > > ffff88807ac9a798 (&mm->mmap_lock){++++}-{3:3}, at: mmap_write_l=
-ock_killable include/linux/mmap_lock.h:122 [inline]
-> > > > > > ffff88807ac9a798 (&mm->mmap_lock){++++}-{3:3}, at: __do_sys_rem=
-ap_file_pages mm/mmap.c:1649 [inline]
-> > > > > > ffff88807ac9a798 (&mm->mmap_lock){++++}-{3:3}, at: __se_sys_rem=
-ap_file_pages+0x22d/0xa50 mm/mmap.c:1624
-> > > > > >
-> > > > > > which lock already depends on the new lock.
-> > > > >
-> > > > > This issue (if not a false positive?) is due to the possible `pro=
-t`
-> > > > > change caused by the processing logic for READ_IMPLIES_EXEC in do=
-_mmap(),
-> > > > > so the remap_file_pages() must perform LSM check before calling d=
-o_mmap(),
-> > > > > this is what the previous commit want to do.
-> > > >
-> > > > My apologies for the delay on this, I was traveling for a bit and
-> > > > missed this issue while away.
-> > > >
-> > > > Looking quickly at the report, I don't believe this is a false posi=
-tive.
-> > > >
-> > > > > The LSM check is required to know what the `prot` is, but `prot` =
-must be
-> > > > > obtained after holding the `mmap_write_lock`.
-> > > > >
-> > > > > If the `mmap_write_lock` is released after getting the `prot` and=
- before
-> > > > > the LSM call in remap_file_pages(), it may cause TOCTOU.
-> > > >
-> > > > Looking at the IMA code, specifically the process_measurement()
-> > > > function which is called from the security_mmap_file() LSM hook, I'=
-m
-> > > > not sure why there is the inode_lock() protected region.  Mimi?
-> > > > Roberto?  My best guess is that locking the inode may have been
-> > > > necessary before we moved the IMA inode state into the inode's LSM
-> > > > security blob, but I'm not certain.
-> > > >
-> > > > Mimi and Roberto, can we safely remove the inode locking in
-> > > > process_measurement()?
-> > >
-> > > I discussed a bit with Mimi. Her concern was the duplicate iint
-> > > structure creation during concurrent file accesses. Now that inode
-> > > integrity metadata have been moved to the inode security blob, we can
-> > > take the iint->mutex out of the ima_iint_cache structure, and store i=
-t
-> > > directly in the security blob. In this way, we can remove the inode
-> > > lock.
-> > >
-> > > Will write a patch and see if it passes our tests.
-> >
-> > That's great, thanks Roberto.  Assuming all goes well we'll want to
-> > backport this everywhere we merged the remap_file_pages() patch.
+On Thu, 3 Oct 2024 at 04:57, Jan Kara <jack@suse.cz> wrote:
 >
-> Welcome. Probably it can go down only until the kernel where IMA and
-> EVM are LSMs.
+> Fair enough. If we go with the iterator variant I've suggested to Dave in
+> [1], we could combine the evict_inodes(), fsnotify_unmount_inodes() and
+> Landlocks hook_sb_delete() into a single iteration relatively easily. But
+> I'd wait with that convertion until this series lands.
 
-Yes, we'll need to look at that once we solve this in Linus' tree.
+Honza, I looked at this a bit more, particularly with an eye of "what
+happens if we just end up making the inode lifetimes subject to the
+dentry lifetimes" as suggested by Dave elsewhere.
 
---=20
-paul-moore.com
+And honestly, the whole inode list use by the fsnotify layer seems to
+kind of suck. But I may be entirely missing something, so maybe I'm
+very wrong for some reason.
+
+The reason I say it "seems to kind of suck" is that the whole final
+
+                /* for each watch, send FS_UNMOUNT and then remove it */
+                fsnotify_inode(inode, FS_UNMOUNT);
+
+                fsnotify_inode_delete(inode);
+
+sequence seems to be entirely timing-dependent, and largely pointless and wrong.
+
+Why?
+
+Because inodes with no users will get removed at completely arbitrary
+times under memory pressure in evict() -> destroy_inode(), and
+obviously with I_DONTCACHE that ends up happening even earlier when
+the dentry is removed.
+
+So the whole "send FS_UNMOUNT and then remove it " thing seems to be
+entirely bogus, and depending on memory pressure, lots of inodes will
+only see the fsnotify_inode_delete() at eviction time and never get
+the FS_UNMOUNT notification anyway.
+
+So I get the feeling that we'd be better off entirely removing the
+sb->s_inodes use from fsnotify, and replace this "get rid of them at
+umount" with something like this instead:
+
+  diff --git a/fs/dcache.c b/fs/dcache.c
+  index 0f6b16ba30d0..aa2558de8d1f 100644
+  --- a/fs/dcache.c
+  +++ b/fs/dcache.c
+  @@ -406,6 +406,7 @@ static void dentry_unlink_inode(struct dentry * dentry)
+        spin_unlock(&inode->i_lock);
+        if (!inode->i_nlink)
+                fsnotify_inoderemove(inode);
+  +     fsnotify_inode_delete(inode);
+        if (dentry->d_op && dentry->d_op->d_iput)
+                dentry->d_op->d_iput(dentry, inode);
+        else
+  diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
+  index 278620e063ab..ea91cc216028 100644
+  --- a/include/linux/fsnotify.h
+  +++ b/include/linux/fsnotify.h
+  @@ -261,7 +261,6 @@ static inline void
+fsnotify_vfsmount_delete(struct vfsmount *mnt)
+   static inline void fsnotify_inoderemove(struct inode *inode)
+   {
+        fsnotify_inode(inode, FS_DELETE_SELF);
+  -     __fsnotify_inode_delete(inode);
+   }
+
+   /*
+
+which makes the fsnotify_inode_delete() happen when the inode is
+removed from the dentry.
+
+Then at umount time, the dentry shrinking will deal with all live
+dentries, and at most the fsnotify layer would send the FS_UNMOUNT to
+just the root dentry inodes?
+
+Wouldn't that make things much cleaner, and remove at least *one* odd
+use of the nasty s_inodes list?
+
+I have this feeling that maybe we can just remove the other users too
+using similar models. I think the LSM layer use (in landlock) is bogus
+for exactly the same reason - there's really no reason to keep things
+around for a random cached inode without a dentry.
+
+And I wonder if the quota code (which uses the s_inodes list to enable
+quotas on already mounted filesystems) could for all the same reasons
+just walk the dentry tree instead (and remove_dquot_ref similarly
+could just remove it at dentry_unlink_inode() time)?
+
+It really feels like most (all?) of the s_inode list users are
+basically historical, and shouldn't use that list at all. And there
+aren't _that_ many of them. I think Dave was right in just saying that
+this list should go away entirely (or was it somebody else who made
+that comment?)
+
+                   Linus
