@@ -1,52 +1,46 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-8faa.mail.infomaniak.ch (smtp-8faa.mail.infomaniak.ch [83.166.143.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 799D21534E6;
-	Mon,  7 Oct 2024 12:00:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EDDB3A8F0
+	for <linux-security-module@vger.kernel.org>; Mon,  7 Oct 2024 13:00:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728302400; cv=none; b=OMf7JLlnc5K6xX+P/8W4w//RxLZUhvDIB7hGFxlz8vf1m5WeKwhuHvGXa4vjWn1/7VpeNgsSaM36hTG0pgvAHx+/PAID7JyWXDJEgIJIPUFUdtej/jVZlhO43XmBP2+8d5cM54sKFE9tgS4NyBasQvTc7io5m387HGf5SPoJOUM=
+	t=1728306052; cv=none; b=kejJL8oDKKbRkgcgkDANg7KHd6LWJiM5XWThYJgapCsCXyMfZbvwzUPr8nzL4nZnfkiH5ot+NX8ymlys14ZiYx22WqhQNRPwZP0BhQXphDbFGbpkAg0aU8Qx61PvWHWJ/Iu3iL2GHa4APJ5EvCe7RoxG8F51c6Ma/my0oFh9Ao8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728302400; c=relaxed/simple;
-	bh=oPVpPn6Ui2amjEQc2TDRdQ2H8AwUBwwc0vm+6qGGTcE=;
+	s=arc-20240116; t=1728306052; c=relaxed/simple;
+	bh=k0+pziDNX6eXtOo34L+v6rtvAEFQyPP3EG+1QkjpFs4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jea/hUsmjDuIUC0lsmDOfn39pB4H+zFr2Mszv+dqSHDWU+3Sc0h933fdnGaODW1+L00pdnmUqW6e1N+lAJfFLGHwA/vEczfjl1CAoq2CHIH9AQCoOQjEiMJNQvGr5FiKwn1hgVmIxDsICEd61hfMfH+poO+qBxnxxSxohf2nFp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jDFv16yy; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=FJ/cmcV1SrS777nYpNpf1TSrzg01TVWYe99oh/RcdAHwInfvZ6uI8jXIx4E75myuk4iD+UMnmDNLL5v6RW37MyCIs2r9CGAUSnLqX3kENE6brcwW8mi778WsnX3nd+zFHBcyBFaqoXwEWig+neKtM4tnO0huUcvspsLwCW5Q39M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=V9l1ixtn; arc=none smtp.client-ip=83.166.143.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jDFv16yy"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7C0AC4CEC6;
-	Mon,  7 Oct 2024 11:59:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728302400;
-	bh=oPVpPn6Ui2amjEQc2TDRdQ2H8AwUBwwc0vm+6qGGTcE=;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="V9l1ixtn"
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XMfQY2YD9z7TL;
+	Mon,  7 Oct 2024 15:00:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1728306037;
+	bh=LpmmhkhjgKt+nOtmCcl73/bF0bHGcmlqcn952FJz7DM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jDFv16yyK5Dyi0nUfKh/hHBE5xHw9LEqpgbnFwy5Wxy2s7WywkpzO8PDv+bozVRsR
-	 UVhs8JDUsZfXA2AVDv0u3sui1btanrgB92AIGuWaaww9ibp7ysoIDNIEJFQSEqYQny
-	 gtIK3ZkgT80f4NIDNtx6wYANdDnKR+5Wr5aaLMKue1zFVM8e3QllTDU/ZEwTAPoscj
-	 dof8xyEHybWP//Gv5m5LJI2FMh42N7HK8ok3NCWbQfHhLnNYHxmmpewYT8EslKelYw
-	 /XdfWZ93xp76dDTwmdfmROisYPlYV7WQE1UlVYSG52mAsnkDn6Sd9ck9OTgGQ3yjtW
-	 h6If/fyWytbBA==
-Date: Mon, 7 Oct 2024 13:59:51 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: rust-for-linux@vger.kernel.org, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Bjoern Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Peter Zijlstra <peterz@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Arve Hjonnevag <arve@android.com>, Todd Kjos <tkjos@android.com>, 
-	Martijn Coenen <maco@android.com>, Joel Fernandes <joel@joelfernandes.org>, 
-	Carlos Llamas <cmllamas@google.com>, Suren Baghdasaryan <surenb@google.com>, 
-	Dan Williams <dan.j.williams@intel.com>, Matthew Wilcox <willy@infradead.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Daniel Xu <dxu@dxuuu.xyz>, 
-	Martin Rodriguez Reboredo <yakoyoku@gmail.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, Kees Cook <kees@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>
-Subject: Re: [PATCH v5] rust: add PidNamespace
-Message-ID: <20241007-erfahrbar-bockig-43532f495bf4@brauner>
-References: <20241002-brauner-rust-pid_namespace-v5-1-a90e70d44fde@kernel.org>
- <CAH5fLgg+zsU4q5mrv19+0MhVvTZARsJJzw9aonj6g6tAo5av1g@mail.gmail.com>
+	b=V9l1ixtnjiOIe5wuNltz61QB+qmw/tCz8oI7RX/A76apmrStPWSPDqLrpLibxtLwL
+	 jwPtra2fb68umXHF6yXj+Ix5rqxDCor7mU1y5OW7JhnX1r5QPDyc/ta3lXkdhHtHE0
+	 ob6TEYqe5T+IPXuIvFd3UtKGdY4ypQ8nsjNQBioE=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4XMfQX1wcYzk6J;
+	Mon,  7 Oct 2024 15:00:36 +0200 (CEST)
+Date: Mon, 7 Oct 2024 15:00:32 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
+	Paul Moore <paul@paul-moore.com>, Tahera Fahimi <fahimitahera@gmail.com>, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v1 1/3] landlock: Refactor filesystem access mask
+ management
+Message-ID: <20241007.SheiFoom7Sei@digikod.net>
+References: <20241001141234.397649-1-mic@digikod.net>
+ <20241001141234.397649-2-mic@digikod.net>
+ <20241005.a69458234f74@gnoack.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -56,106 +50,262 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH5fLgg+zsU4q5mrv19+0MhVvTZARsJJzw9aonj6g6tAo5av1g@mail.gmail.com>
+In-Reply-To: <20241005.a69458234f74@gnoack.org>
+X-Infomaniak-Routing: alpha
 
-On Fri, Oct 04, 2024 at 02:01:36PM GMT, Alice Ryhl wrote:
-> On Wed, Oct 2, 2024 at 1:38 PM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > The lifetime of `PidNamespace` is bound to `Task` and `struct pid`.
-> >
-> > The `PidNamespace` of a `Task` doesn't ever change once the `Task` is
-> > alive. A `unshare(CLONE_NEWPID)` or `setns(fd_pidns/pidfd, CLONE_NEWPID)`
-> > will not have an effect on the calling `Task`'s pid namespace. It will
-> > only effect the pid namespace of children created by the calling `Task`.
-> > This invariant guarantees that after having acquired a reference to a
-> > `Task`'s pid namespace it will remain unchanged.
-> >
-> > When a task has exited and been reaped `release_task()` will be called.
-> > This will set the `PidNamespace` of the task to `NULL`. So retrieving
-> > the `PidNamespace` of a task that is dead will return `NULL`. Note, that
-> > neither holding the RCU lock nor holding a referencing count to the
-> > `Task` will prevent `release_task()` being called.
-> >
-> > In order to retrieve the `PidNamespace` of a `Task` the
-> > `task_active_pid_ns()` function can be used. There are two cases to
-> > consider:
-> >
-> > (1) retrieving the `PidNamespace` of the `current` task (2) retrieving
-> > the `PidNamespace` of a non-`current` task
-> >
-> > From system call context retrieving the `PidNamespace` for case (1) is
-> > always safe and requires neither RCU locking nor a reference count to be
-> > held. Retrieving the `PidNamespace` after `release_task()` for current
-> > will return `NULL` but no codepath like that is exposed to Rust.
-> >
-> > Retrieving the `PidNamespace` from system call context for (2) requires
-> > RCU protection. Accessing `PidNamespace` outside of RCU protection
-> > requires a reference count that must've been acquired while holding the
-> > RCU lock. Note that accessing a non-`current` task means `NULL` can be
-> > returned as the non-`current` task could have already passed through
-> > `release_task()`.
-> >
-> > To retrieve (1) the `current_pid_ns!()` macro should be used which
-> > ensure that the returned `PidNamespace` cannot outlive the calling
-> > scope. The associated `current_pid_ns()` function should not be called
-> > directly as it could be abused to created an unbounded lifetime for
-> > `PidNamespace`. The `current_pid_ns!()` macro allows Rust to handle the
-> > common case of accessing `current`'s `PidNamespace` without RCU
-> > protection and without having to acquire a reference count.
-> >
-> > For (2) the `task_get_pid_ns()` method must be used. This will always
-> > acquire a reference on `PidNamespace` and will return an `Option` to
-> > force the caller to explicitly handle the case where `PidNamespace` is
-> > `None`, something that tends to be forgotten when doing the equivalent
-> > operation in `C`. Missing RCU primitives make it difficult to perform
-> > operations that are otherwise safe without holding a reference count as
-> > long as RCU protection is guaranteed. But it is not important currently.
-> > But we do want it in the future.
-> >
-> > Note for (2) the required RCU protection around calling
-> > `task_active_pid_ns()` synchronizes against putting the last reference
-> > of the associated `struct pid` of `task->thread_pid`. The `struct pid`
-> > stored in that field is used to retrieve the `PidNamespace` of the
-> > caller. When `release_task()` is called `task->thread_pid` will be
-> > `NULL`ed and `put_pid()` on said `struct pid` will be delayed in
-> > `free_pid()` via `call_rcu()` allowing everyone with an RCU protected
-> > access to the `struct pid` acquired from `task->thread_pid` to finish.
-> >
-> > Signed-off-by: Christian Brauner <brauner@kernel.org>
+On Sat, Oct 05, 2024 at 06:57:55PM +0200, Günther Noack wrote:
+> On Tue, Oct 01, 2024 at 04:12:32PM +0200, Mickaël Salaün wrote:
+> > Replace get_raw_handled_fs_accesses() with a generic
+> > landlock_merge_access_masks(), and replace the get_fs_domain()
+> > implementation with a call to the new landlock_filter_access_masks()
+> > helper.  These helpers will also be useful for other types of access.
+> > 
+> > Replace struct access_masks with union access_masks that includes a new
+> > "all" field to simplify mask filtering.
+> > 
+> > Cc: Günther Noack <gnoack@google.com>
+> > Cc: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+> > Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> > Link: https://lore.kernel.org/r/20241001141234.397649-2-mic@digikod.net
+> > ---
+> >  security/landlock/fs.c       | 21 ++++-----------
+> >  security/landlock/ruleset.h  | 51 +++++++++++++++++++++++++++---------
+> >  security/landlock/syscalls.c |  2 +-
+> >  3 files changed, 44 insertions(+), 30 deletions(-)
+> > 
+> > diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+> > index 7d79fc8abe21..a2ef7d151c81 100644
+> > --- a/security/landlock/fs.c
+> > +++ b/security/landlock/fs.c
+> > @@ -388,33 +388,22 @@ static bool is_nouser_or_private(const struct dentry *dentry)
+> >  		unlikely(IS_PRIVATE(d_backing_inode(dentry))));
+> >  }
+> >  
+> > -static access_mask_t
+> > -get_raw_handled_fs_accesses(const struct landlock_ruleset *const domain)
+> > -{
+> > -	access_mask_t access_dom = 0;
+> > -	size_t layer_level;
+> > -
+> > -	for (layer_level = 0; layer_level < domain->num_layers; layer_level++)
+> > -		access_dom |=
+> > -			landlock_get_raw_fs_access_mask(domain, layer_level);
+> > -	return access_dom;
+> > -}
+> > -
+> >  static access_mask_t
+> >  get_handled_fs_accesses(const struct landlock_ruleset *const domain)
+> >  {
+> >  	/* Handles all initially denied by default access rights. */
+> > -	return get_raw_handled_fs_accesses(domain) |
+> > +	return landlock_merge_access_masks(domain).fs |
+> >  	       LANDLOCK_ACCESS_FS_INITIALLY_DENIED;
+> >  }
+> >  
+> >  static const struct landlock_ruleset *
+> >  get_fs_domain(const struct landlock_ruleset *const domain)
+> >  {
+> > -	if (!domain || !get_raw_handled_fs_accesses(domain))
+> > -		return NULL;
+> > +	const union access_masks all_fs = {
+> > +		.fs = ~0,
+> > +	};
+> >  
+> > -	return domain;
+> > +	return landlock_filter_access_masks(domain, all_fs);
+> >  }
+> >  
+> >  static const struct landlock_ruleset *get_current_fs_domain(void)
+> > diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
+> > index 61bdbc550172..a816042ca8f3 100644
+> > --- a/security/landlock/ruleset.h
+> > +++ b/security/landlock/ruleset.h
+> > @@ -41,12 +41,19 @@ static_assert(BITS_PER_TYPE(access_mask_t) >= LANDLOCK_NUM_SCOPE);
+> >  static_assert(sizeof(unsigned long) >= sizeof(access_mask_t));
+> >  
+> >  /* Ruleset access masks. */
+> > -struct access_masks {
+> > -	access_mask_t fs : LANDLOCK_NUM_ACCESS_FS;
+> > -	access_mask_t net : LANDLOCK_NUM_ACCESS_NET;
+> > -	access_mask_t scope : LANDLOCK_NUM_SCOPE;
+> > +union access_masks {
+> > +	struct {
+> > +		access_mask_t fs : LANDLOCK_NUM_ACCESS_FS;
+> > +		access_mask_t net : LANDLOCK_NUM_ACCESS_NET;
+> > +		access_mask_t scope : LANDLOCK_NUM_SCOPE;
+> > +	};
+> > +	u32 all;
+> >  };
 > 
-> Overall looks good! A few comments below.
+> More of a style remark:
 > 
-> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> I wonder whether it is worth turning this into a union.
 > 
-> > +            task: unsafe { &*PidNamespace::from_ptr(pidns) },
-> 
-> I think you can simplify this to:
-> task: unsafe { PidNamespace::from_ptr(pidns) },
+> If this is for performance, I do not think is buys you much.  With
+> optimization enabled, it does not make much of a difference whether
+> you are doing the & on .all or whether you are doing it on the
+> individual fields.  (I tried it out with gcc.  The only difference is
+> that the & on the individual fields will at the end mask only the bits
+> that belong to these fields.)
 
-Done.
+This is not about performance but about maintainability and simplicity
+(to avoid future changes/errors).  Indeed, with this "all" field we
+don't need to update (or forget to update) the
+landlock_merge_access_masks() helper.  This function can be simple and
+generic to be used in the fs.c, net.c, and scope.c files.
 
 > 
-> > +    /// Returns the given task's pid in the provided pid namespace.
-> > +    #[doc(alias = "task_tgid_nr_ns")]
-> > +    pub fn tgid_nr_ns(&self, pidns: Option<&PidNamespace>) -> Pid {
-> > +        match pidns {
-> > +            // SAFETY: By the type invariant, we know that `self.0` is valid. We received a valid
-> > +            // PidNamespace that we can use as a pointer.
-> > +            Some(pidns) => unsafe { bindings::task_tgid_nr_ns(self.0.get(), pidns.as_ptr()) },
-> > +            // SAFETY: By the type invariant, we know that `self.0` is valid. We received an empty
-> > +            // PidNamespace and thus pass a null pointer. The underlying C function is safe to be
-> > +            // used with NULL pointers.
-> > +            None => unsafe { bindings::task_tgid_nr_ns(self.0.get(), ptr::null_mut()) },
-> 
-> The compiler generates better code if you do this:
-> 
-> let pidns = match pidns {
->     Some(pidns) => pidns.as_ptr(),
->     None => core::ptr::null_mut(),
-> };
-> unsafe { bindings::task_tgid_nr_ns(self.0.get(), pidns) };
-> 
-> Here it should be able to compile the entire match statement down to a
-> no-op since None is represented as a null pointer.
+> At the same time, in most places where struct access_masks is used,
+> the union is not necessary and might add to the confusion.
 
-Ah, great. Thanks and done!
+I think it should not be an issue, and it leverages the advantages of
+the previous access_masks_t with the ones of struct access_masks.
+
+> 
+> 
+> >  
+> > +/* Makes sure all fields are covered. */
+> > +static_assert(sizeof(((union access_masks *)NULL)->all) ==
+> > +	      sizeof(union access_masks));
+> > +
+> >  typedef u16 layer_mask_t;
+> >  /* Makes sure all layers can be checked. */
+> >  static_assert(BITS_PER_TYPE(layer_mask_t) >= LANDLOCK_MAX_NUM_LAYERS);
+> > @@ -229,7 +236,7 @@ struct landlock_ruleset {
+> >  			 * layers are set once and never changed for the
+> >  			 * lifetime of the ruleset.
+> >  			 */
+> > -			struct access_masks access_masks[];
+> > +			union access_masks access_masks[];
+> >  		};
+> >  	};
+> >  };
+> > @@ -260,6 +267,31 @@ static inline void landlock_get_ruleset(struct landlock_ruleset *const ruleset)
+> >  		refcount_inc(&ruleset->usage);
+> >  }
+> >  
+> > +static inline union access_masks
+> > +landlock_merge_access_masks(const struct landlock_ruleset *const domain)
+> > +{
+> > +	size_t layer_level;
+> > +	union access_masks matches = {};
+> > +
+> > +	for (layer_level = 0; layer_level < domain->num_layers; layer_level++)
+> > +		matches.all |= domain->access_masks[layer_level].all;
+> > +
+> > +	return matches;
+> > +}
+> > +
+> > +static inline const struct landlock_ruleset *
+> > +landlock_filter_access_masks(const struct landlock_ruleset *const domain,
+> > +			     const union access_masks masks)
+> 
+> With this function name, the return type of this function is
+> unintuitive to me.  Judging by the name, I would have expected a
+> function that returns a "access_masks" value as well, similar to the
+> function one above (the remaining access rights after filtering)?
+
+Fair
+
+> 
+> In the places where the result of this function is returned directly,
+> I find myself jumping back to the function implementation to
+> understand what this means.
+> 
+> As a constructive suggestion, how about calling this function
+> differently, e.g.
+> 
+> bool landlock_any_access_rights_handled(
+>     const struct landlock_ruleset *const domain,
+>     struct access_masks masks);
+> 
+> Then the callers who previously did
+> 
+>    return landlock_filter_access_masks(dom, masks);
+> 
+> would now do
+> 
+>    if (landlock_any_access_rights_handled(dom, masks))
+>        return dom;
+>    return NULL;
+
+I'm not sure if you're suggesting to return an union access_masks or a
+landlock_ruleset pointer.  Returning a ruleset/domain simplifies the
+work of callers so I'd prefer to keep that.
+
+The "_any_access_rights_handled" doesn't have a verb, and it's not clear
+to me if it would return the handled access rights or something else.
+
+What about renaming it landlock_mask_ruleset(dom, access_masks) instead?
+
+For now, the variables named "domain" points to struct landlock_ruleset,
+but they will eventually point to a future struct landlock_domain.  So,
+I prefer to keep the name "ruleset" in helpers dealing with struct
+landlock_ruleset.  We'll need to change these helpers when we'll switch
+to landlock_domain anyway.
+
+> 
+> This is more verbose, but IMHO verbose code is not inherently bad,
+> if it is also clearer.  And it's only two lines more.
+> 
+> > +{
+> > +	if (!domain)
+> > +		return NULL;
+> > +
+> > +	if (landlock_merge_access_masks(domain).all & masks.all)
+> > +		return domain;
+> > +
+> > +	return NULL;
+> > +}
+> 
+> Function documentation for both functions would be good :)
+
+Indeed :)
+
+> 
+> > +
+> >  static inline void
+> >  landlock_add_fs_access_mask(struct landlock_ruleset *const ruleset,
+> >  			    const access_mask_t fs_access_mask,
+> > @@ -295,19 +327,12 @@ landlock_add_scope_mask(struct landlock_ruleset *const ruleset,
+> >  	ruleset->access_masks[layer_level].scope |= mask;
+> >  }
+> >  
+> > -static inline access_mask_t
+> > -landlock_get_raw_fs_access_mask(const struct landlock_ruleset *const ruleset,
+> > -				const u16 layer_level)
+> > -{
+> > -	return ruleset->access_masks[layer_level].fs;
+> > -}
+> > -
+> >  static inline access_mask_t
+> >  landlock_get_fs_access_mask(const struct landlock_ruleset *const ruleset,
+> >  			    const u16 layer_level)
+> >  {
+> >  	/* Handles all initially denied by default access rights. */
+> > -	return landlock_get_raw_fs_access_mask(ruleset, layer_level) |
+> > +	return ruleset->access_masks[layer_level].fs |
+> >  	       LANDLOCK_ACCESS_FS_INITIALLY_DENIED;
+> >  }
+> >  
+> > diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+> > index f5a0e7182ec0..c097d356fa45 100644
+> > --- a/security/landlock/syscalls.c
+> > +++ b/security/landlock/syscalls.c
+> > @@ -329,7 +329,7 @@ static int add_rule_path_beneath(struct landlock_ruleset *const ruleset,
+> >  		return -ENOMSG;
+> >  
+> >  	/* Checks that allowed_access matches the @ruleset constraints. */
+> > -	mask = landlock_get_raw_fs_access_mask(ruleset, 0);
+> > +	mask = ruleset->access_masks[0].fs;
+> >  	if ((path_beneath_attr.allowed_access | mask) != mask)
+> >  		return -EINVAL;
+> >  
+> > -- 
+> > 2.46.1
+> > 
+> 
+> Reviewed-by: Günther Noack <gnoack3000@gmail.com>
+> 
+> –Günther
+> 
