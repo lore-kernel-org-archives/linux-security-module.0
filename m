@@ -1,158 +1,138 @@
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69EFC1D88C2;
-	Mon,  7 Oct 2024 14:50:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E07A31D4344;
+	Mon,  7 Oct 2024 15:47:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728312655; cv=none; b=IpHl58Dv+U6xLP8qW7ilh6Y5stKl0S0FXt1k5q8RBN+zB0xWtBl08D4BAVeoMBFbwzyHhUmEXuQ2P6GjKWrRTYVEPAwED73sPkpzBHM4TznswAYpOmGeMlIYiZnSGbhCuOV2Ytod4Fn2PvvWBL4q/Pz8Cqc4pcaqx/72EHwPFhg=
+	t=1728316082; cv=none; b=pTkhIWs/MdQx6OQi2poEpztX+OYDFB289QPZOPrAF8fhvTV8C7Ozn/2EouP5gZ/rY0iigu+5ydcTw/dBHF9jBI3Tu8y4N/POsPDH/FBi1XfTd3oNulNrA81qRC0noXK4UlSoDghwffiEi6Z/om+MGGHjHL/Z/4LnuU9dZYUforM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728312655; c=relaxed/simple;
-	bh=OZEyX4n+Td0PTF363pltBKc8zrr6moif+9ekNUxMXtA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=lMpfJMhrpy8HKw08YoOOwk6IhkGvpV15owebjtep+64JhEmDZVmPQ4HYyIm2S29tYj4meRb5nlO402UL0k6KK60W/U98GbGleksOhZb8pqiauJoXIIN7L9b8hcsrm0+MIzceO+p3vTMdaDGIXdTxUTwbLxdkzLfyJjxmlqvoH+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MJQXWdP4; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MJQXWdP4"
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7cd8803fe0aso3101987a12.0;
-        Mon, 07 Oct 2024 07:50:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728312654; x=1728917454; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7VwBx3mFnKYzOzVHPezqvf6E6t3GSTY/lMuePwrb08s=;
-        b=MJQXWdP4MsNAqlLA0QbrgUBdjt08l3YS6AzWq5ETPtfLyKyne2WUcWiPLKAY3wAxav
-         HAQOPFUvrrz41lRTcWrzn/fEMzmZkwhghjIz7hkVm4V69mEfMXKmvpFeUUR1o4d3aYrX
-         DSUkWMUo63N+Cm9+5bcJBEZY6++m7nqznUBtMVnDQRJwnAbcYaaJpmdNLGcHzv0TYIdp
-         +DOqCF0CY6plmxbLNLDkpIaY8qO1nGBwmhla9R4HPiHKpG5EuDXKmNOrXl68mF/wSDL9
-         0SXYmBW2lIPb5LCzcy8cGBhhYbenskBZ0GqRQf/mNskrSq3koSGkwhHZ2PgJFYNhXJc6
-         80OA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728312654; x=1728917454;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7VwBx3mFnKYzOzVHPezqvf6E6t3GSTY/lMuePwrb08s=;
-        b=EiNWMT/7Mx3eEtSsqiNzOyNdXK4CGgMw1XlCLaLt3Gu41m0/v8dYBptOTpjk8/PnG3
-         AkRYzCi2H6OjbTYv7Bhg5XPylaBO5FI4nU9oaleVFmwc8ldTWeg9cGfpHRiaxkJqkq7D
-         9+Y9+nAPUvkhxkS1lYS1/UKz22AoTHPeF2CNb8rHwX74mQfdYGy1u8O9uZpHp5jdx69t
-         cwJ/nCCj0iFfZzBZQTJD/k52sV+Onhx5YaDgmnpDta3/sURismVZxAUgOoVKXI/lTZ9T
-         xGI1Tb4aEqc46mlmxyBOROhPCfAs8ndPWef28u9PK/CKZhPZ4k5lc2oyAKzYgy2RsM1B
-         kmrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUFcmtv0nPk/2kbzMZLdbCivUQYVDVu2Ism6CPLMhJFFj2YnsMNGhxlEuH1wvupT1qksq9y6y0PtT80UEeHwRusb1gx@vger.kernel.org, AJvYcCVNBL4YrxGfhiKiuS05hFFtHulQjI/KzAjTtAPuaHVcr7tzQpnfLfmAs1QMEVQ5CUqLxTiSBv7l4Q==@vger.kernel.org, AJvYcCW1v8eWRHzeY8mW1qLl4+ucpdAF6XTAm9EJiRMg6EaseZ7miH9euPhvOppCKkUjlZCbG8E9Yw==@vger.kernel.org, AJvYcCW9FBrv/mAQFSVgkZ+8z7TN8Swcu9eNF1tOlSw42VU/Lf7UqhKolHuR9dkkgVQ9GOyLsfTd@vger.kernel.org, AJvYcCWVG9XJrU5gHYsBwK7pUzElLVRkNKz3y9pkHtlvE0deoU2BrjExN91z6P9EOESh6uv8yI5Di2ax@vger.kernel.org, AJvYcCXRx7qJImsHnNmvO9nfwzvIDD8r5dINlCE2STez3GP9tFaA26FEylcG2JU+bMLxhfOunb/f1ZUbc3LgUR4xtQ==@vger.kernel.org, AJvYcCXloclypBpq5EwXkwttAFV/aGSXcqB2gGk3OD5PU5DUrV/drAPM1fGf/aLVB6GOi/W6Lc1D+dCXF7d2+CLMYIb0DHjO8wRi@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNQ3oDKDUJm0r57JyMgURZP60sBTnlmT9/hyj8/ZIPEj5C8E6I
-	AgSR8IZhrNe/AyfCrNz8Dsihv6VDBSr+5349ggO7eIRCZn8VBt1N
-X-Google-Smtp-Source: AGHT+IEwpXCzalPlyOY9Cdfli1GLzxvFvEupvvujLKDDOEy0H0EsRpGoLeoHLvpBbBHNCnkbeHqgcw==
-X-Received: by 2002:a05:6a20:9f8f:b0:1d2:eb9d:997d with SMTP id adf61e73a8af0-1d6dfa23bccmr18227823637.7.1728312653634;
-        Mon, 07 Oct 2024 07:50:53 -0700 (PDT)
-Received: from localhost.localdomain ([223.104.210.43])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71df0d7cf82sm4466432b3a.200.2024.10.07.07.50.41
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 07 Oct 2024 07:50:53 -0700 (PDT)
-From: Yafang Shao <laoar.shao@gmail.com>
-To: akpm@linux-foundation.org
-Cc: torvalds@linux-foundation.org,
-	keescook@chromium.org,
-	alx@kernel.org,
-	justinstitt@google.com,
-	ebiederm@xmission.com,
-	alexei.starovoitov@gmail.com,
-	rostedt@goodmis.org,
-	catalin.marinas@arm.com,
-	penguin-kernel@i-love.sakura.ne.jp,
-	linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	audit@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	selinux@vger.kernel.org,
-	bpf@vger.kernel.org,
-	netdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	Yafang Shao <laoar.shao@gmail.com>,
-	Daniel Vetter <daniel.vetter@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>
-Subject: [PATCH v9 7/7] drm: Replace strcpy() with strscpy()
-Date: Mon,  7 Oct 2024 22:49:11 +0800
-Message-Id: <20241007144911.27693-8-laoar.shao@gmail.com>
-X-Mailer: git-send-email 2.30.1 (Apple Git-130)
-In-Reply-To: <20241007144911.27693-1-laoar.shao@gmail.com>
-References: <20241007144911.27693-1-laoar.shao@gmail.com>
+	s=arc-20240116; t=1728316082; c=relaxed/simple;
+	bh=QbIFB83CPWNA2xWgzSI925rkM1meSV5IgKMJZZ1tlu8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=O/wNmW6gFZXr9jE/+PXyKYSzO1tbeK1+8p44sRU5kwQ1MSLbQUKu26CnXaLiFhU/ua1GKWH3apJrWmW2qXltZigzypCImpg+bYM5WxlmBjHuggkCuxasOXjL0e6Pgnf83/mfOktciDOcGntWKLSGK6Z5hCpmMkVqDn1l+IFFYRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4XMjL42fBsz9v7JS;
+	Mon,  7 Oct 2024 23:11:56 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 52010140360;
+	Mon,  7 Oct 2024 23:31:50 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP2 (Coremail) with SMTP id GxC2BwAHt8fb_gNno7hpAg--.56876S2;
+	Mon, 07 Oct 2024 16:31:49 +0100 (CET)
+Message-ID: <05e893036fa8753e0177db99dd48eb9d2e33476a.camel@huaweicloud.com>
+Subject: Re: [syzbot] [integrity?] [lsm?] possible deadlock in
+ process_measurement (4)
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Paul Moore <paul@paul-moore.com>, Shu Han <ebpqwerty472123@gmail.com>
+Cc: syzbot <syzbot+1cd571a672400ef3a930@syzkaller.appspotmail.com>, 
+ akpm@linux-foundation.org, dmitry.kasatkin@gmail.com,
+ eric.snowberg@oracle.com,  hughd@google.com, jmorris@namei.org,
+ linux-integrity@vger.kernel.org,  linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org,  linux-security-module@vger.kernel.org,
+ roberto.sassu@huawei.com,  serge@hallyn.com,
+ stephen.smalley.work@gmail.com,  syzkaller-bugs@googlegroups.com,
+ zohar@linux.ibm.com
+Date: Mon, 07 Oct 2024 17:31:35 +0200
+In-Reply-To: <CAHC9VhSHSD5QF8w2+n9f1DAEfQAwW5eA0skSuap2jdMWrLfGWQ@mail.gmail.com>
+References: <66f7b10e.050a0220.46d20.0036.GAE@google.com>
+	 <CAHQche-Gsy4=UT6+znKyPRDEHQm9y-MQ+zacoqfywKaz7VA2kg@mail.gmail.com>
+	 <CAHC9VhSHSD5QF8w2+n9f1DAEfQAwW5eA0skSuap2jdMWrLfGWQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:GxC2BwAHt8fb_gNno7hpAg--.56876S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxWw4DAF15ZF47Xw1DAr1fJFb_yoW5Wr45pF
+	9agayxCr4ktFy7Ar92yr1jg3W0k34jkrWUCrZ5Jr18J3Z0vF1vqr13Jr1furyUGrZ5uw1S
+	qr4DCr93A3WqyrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUIa
+	0PDUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAJBGcDQ-4NXwABsF
 
-To prevent errors from occurring when the src string is longer than the
-dst string in strcpy(), we should use strscpy() instead. This
-approach also facilitates future extensions to the task comm.
+On Wed, 2024-10-02 at 23:09 -0400, Paul Moore wrote:
+> On Sat, Sep 28, 2024 at 2:08=E2=80=AFPM Shu Han <ebpqwerty472123@gmail.co=
+m> wrote:
+> >=20
+> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D
+> > > WARNING: possible circular locking dependency detected
+> > > 6.11.0-syzkaller-10045-g97d8894b6f4c #0 Not tainted
+> > > ------------------------------------------------------
+> > > syz-executor369/5231 is trying to acquire lock:
+> > > ffff888072852370 (&sb->s_type->i_mutex_key#12){+.+.}-{3:3}, at: inode=
+_lock include/linux/fs.h:815 [inline]
+> > > ffff888072852370 (&sb->s_type->i_mutex_key#12){+.+.}-{3:3}, at: proce=
+ss_measurement+0x439/0x1fb0 security/integrity/ima/ima_main.c:250
+> > >=20
+> > > but task is already holding lock:
+> > > ffff88807ac9a798 (&mm->mmap_lock){++++}-{3:3}, at: mmap_write_lock_ki=
+llable include/linux/mmap_lock.h:122 [inline]
+> > > ffff88807ac9a798 (&mm->mmap_lock){++++}-{3:3}, at: __do_sys_remap_fil=
+e_pages mm/mmap.c:1649 [inline]
+> > > ffff88807ac9a798 (&mm->mmap_lock){++++}-{3:3}, at: __se_sys_remap_fil=
+e_pages+0x22d/0xa50 mm/mmap.c:1624
+> > >=20
+> > > which lock already depends on the new lock.
+> >=20
+> > This issue (if not a false positive?) is due to the possible `prot`
+> > change caused by the processing logic for READ_IMPLIES_EXEC in do_mmap(=
+),
+> > so the remap_file_pages() must perform LSM check before calling do_mmap=
+(),
+> > this is what the previous commit want to do.
+>=20
+> My apologies for the delay on this, I was traveling for a bit and
+> missed this issue while away.
+>=20
+> Looking quickly at the report, I don't believe this is a false positive.
+>=20
+> > The LSM check is required to know what the `prot` is, but `prot` must b=
+e
+> > obtained after holding the `mmap_write_lock`.
+> >=20
+> > If the `mmap_write_lock` is released after getting the `prot` and befor=
+e
+> > the LSM call in remap_file_pages(), it may cause TOCTOU.
+>=20
+> Looking at the IMA code, specifically the process_measurement()
+> function which is called from the security_mmap_file() LSM hook, I'm
+> not sure why there is the inode_lock() protected region.  Mimi?
+> Roberto?  My best guess is that locking the inode may have been
+> necessary before we moved the IMA inode state into the inode's LSM
+> security blob, but I'm not certain.
+>=20
+> Mimi and Roberto, can we safely remove the inode locking in
+> process_measurement()?
 
-Suggested-by: Justin Stitt <justinstitt@google.com>
-Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Reviewed-by: Justin Stitt <justinstitt@google.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Cc: Maxime Ripard <mripard@kernel.org>
-Cc: Thomas Zimmermann <tzimmermann@suse.de>
-Cc: David Airlie <airlied@gmail.com>
----
- drivers/gpu/drm/drm_framebuffer.c     | 2 +-
- drivers/gpu/drm/i915/i915_gpu_error.c | 6 +++---
- 2 files changed, 4 insertions(+), 4 deletions(-)
+I discussed a bit with Mimi. Her concern was the duplicate iint
+structure creation during concurrent file accesses. Now that inode
+integrity metadata have been moved to the inode security blob, we can
+take the iint->mutex out of the ima_iint_cache structure, and store it
+directly in the security blob. In this way, we can remove the inode
+lock.
 
-diff --git a/drivers/gpu/drm/drm_framebuffer.c b/drivers/gpu/drm/drm_framebuffer.c
-index 888aadb6a4ac..2d6993539474 100644
---- a/drivers/gpu/drm/drm_framebuffer.c
-+++ b/drivers/gpu/drm/drm_framebuffer.c
-@@ -868,7 +868,7 @@ int drm_framebuffer_init(struct drm_device *dev, struct drm_framebuffer *fb,
- 	INIT_LIST_HEAD(&fb->filp_head);
- 
- 	fb->funcs = funcs;
--	strcpy(fb->comm, current->comm);
-+	strscpy(fb->comm, current->comm);
- 
- 	ret = __drm_mode_object_add(dev, &fb->base, DRM_MODE_OBJECT_FB,
- 				    false, drm_framebuffer_free);
-diff --git a/drivers/gpu/drm/i915/i915_gpu_error.c b/drivers/gpu/drm/i915/i915_gpu_error.c
-index 6469b9bcf2ec..9d4b25b2cd39 100644
---- a/drivers/gpu/drm/i915/i915_gpu_error.c
-+++ b/drivers/gpu/drm/i915/i915_gpu_error.c
-@@ -1113,7 +1113,7 @@ i915_vma_coredump_create(const struct intel_gt *gt,
- 	}
- 
- 	INIT_LIST_HEAD(&dst->page_list);
--	strcpy(dst->name, name);
-+	strscpy(dst->name, name);
- 	dst->next = NULL;
- 
- 	dst->gtt_offset = vma_res->start;
-@@ -1413,7 +1413,7 @@ static bool record_context(struct i915_gem_context_coredump *e,
- 	rcu_read_lock();
- 	task = pid_task(ctx->pid, PIDTYPE_PID);
- 	if (task) {
--		strcpy(e->comm, task->comm);
-+		strscpy(e->comm, task->comm);
- 		e->pid = task->pid;
- 	}
- 	rcu_read_unlock();
-@@ -1459,7 +1459,7 @@ capture_vma_snapshot(struct intel_engine_capture_vma *next,
- 		return next;
- 	}
- 
--	strcpy(c->name, name);
-+	strscpy(c->name, name);
- 	c->vma_res = i915_vma_resource_get(vma_res);
- 
- 	c->next = next;
--- 
-2.43.5
+Will write a patch and see if it passes our tests.
+
+Roberto
 
