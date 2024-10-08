@@ -1,167 +1,157 @@
-Received: from smtp-190c.mail.infomaniak.ch (smtp-190c.mail.infomaniak.ch [185.125.25.12])
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3CED1DF275
-	for <linux-security-module@vger.kernel.org>; Tue,  8 Oct 2024 12:59:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ADEB1DEFDC;
+	Tue,  8 Oct 2024 16:57:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728392363; cv=none; b=lMhhBGVUEOi9xiHzNkxZZNtgOxZPQFbD2qSr78kycWa4nkFZOJkG6mDCYNZzSYAXvZRE5xEMKj6+DgQdNoY9jcEQSQHcDSxGd0xML8U8shdBVzKs9K82R07ozIFsfeTU7uddWK5XNRESB6nRxN+OtZmQOs+iVgdeLTRu1TZAbIU=
+	t=1728406681; cv=none; b=Wa7QQA270e+jRHj5CVVLjya/F50GvQppqIXROEcJrdMoV6SXKYpYFYGjoES5QatsW87UPG1wjw1e6qr36DXmevE3TcsfIPHyf+n3fhZF8y9rpK+bjbKDN4BxHANAjFzwpn0iKrQBII5kt4yChdqQKFrRJzleHqGc84EeuHczfkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728392363; c=relaxed/simple;
-	bh=XEQ84zSaVaFCcNhIzuJn6oUzj6Js6KHVuGb3P1chFyM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dnFDG25iSYYQV31ijdzYYF35srABIqD7DkM89okSZ8tygUeVABd6F5GSAOJTqaSJn5TAI7ODfQ7G4th4wmJBinhH46y5Q3jBvI3eKihn576C7/+rrsaLkItpQvrSCUrSi7KfFdTXCYt4gli33BvDbseUJrP9PVQ/jfnACjH2Nx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=pEre8go+; arc=none smtp.client-ip=185.125.25.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="pEre8go+"
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XNGLS0FSsz4X7;
-	Tue,  8 Oct 2024 14:59:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1728392351;
-	bh=lubKm596ajxruAowyOac0GqBl8F51f/htwsSzeT4WHY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pEre8go+mybnR8ts9txJRzOFe7SezCcGaT0Pca6Uro5RQz3NmFZstJNFsr1yAZiiD
-	 zdu4NDVN38vP5KFqwymW4L2skhrA9eQN1UkeP547Rfi34OyNw8IjMTzk9AU7SX3sMN
-	 p05+vrFJtJvzdlox7dQDOowI6oDXivNjkPFjhy7U=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4XNGLQ6mfKzMvr;
-	Tue,  8 Oct 2024 14:59:10 +0200 (CEST)
-Date: Tue, 8 Oct 2024 14:59:07 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>, 
-	Christoph Hellwig <hch@infradead.org>, linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	linux-bcachefs@vger.kernel.org, kent.overstreet@linux.dev, Jann Horn <jannh@google.com>, 
-	Serge Hallyn <serge@hallyn.com>, Kees Cook <keescook@chromium.org>, 
-	linux-security-module@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Subject: Re: lsm sb_delete hook, was Re: [PATCH 4/7] vfs: Convert
- sb->s_inodes iteration to super_iter_inodes()
-Message-ID: <20241008.Pohc0dixeiZ8@digikod.net>
-References: <20241002014017.3801899-1-david@fromorbit.com>
- <20241002014017.3801899-5-david@fromorbit.com>
- <Zv5GfY1WS_aaczZM@infradead.org>
- <Zv5J3VTGqdjUAu1J@infradead.org>
- <20241003115721.kg2caqgj2xxinnth@quack3>
- <CAHk-=whg7HXYPV4wNO90j22VLKz4RJ2miCe=s0C8ZRc0RKv9Og@mail.gmail.com>
- <ZwRvshM65rxXTwxd@dread.disaster.area>
- <CAHk-=wi5ZpW73nLn5h46Jxcng6wn_bCUxj6JjxyyEMAGzF5KZg@mail.gmail.com>
+	s=arc-20240116; t=1728406681; c=relaxed/simple;
+	bh=cABlkqAmSXMHna6jw/aL76yVMPEfA1rryVgcyRi5B6M=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=mxspwvVj+gnFCoVTpo/FcKf99RAd4LJ5he5l4MgxLJ3xKCziiKBmZq/b2uCSR97INymxxTkL8Bnr8pC0X6u8EB0u5YGQaYABeAUA6SIY9ZGqyVaeChJ8xjPFmS+s64UDIIjmW9pVC1SvrWbjM+c3MX68y1IoJXT62DVkSFsRm2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4XNMBn15J3z9v7Hm;
+	Wed,  9 Oct 2024 00:37:53 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id ABCEF1401EA;
+	Wed,  9 Oct 2024 00:57:50 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.204.63.22])
+	by APP2 (Coremail) with SMTP id GxC2BwDnlseAZAVng2B7Ag--.64194S3;
+	Tue, 08 Oct 2024 17:57:50 +0100 (CET)
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: zohar@linux.ibm.com,
+	dmitry.kasatkin@gmail.com,
+	eric.snowberg@oracle.com,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com
+Cc: linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	ebpqwerty472123@gmail.com,
+	Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH 2/3] ima: Ensure lock is held when setting iint pointer in inode security blob
+Date: Tue,  8 Oct 2024 18:57:31 +0200
+Message-Id: <20241008165732.2603647-2-roberto.sassu@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241008165732.2603647-1-roberto.sassu@huaweicloud.com>
+References: <20241008165732.2603647-1-roberto.sassu@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wi5ZpW73nLn5h46Jxcng6wn_bCUxj6JjxyyEMAGzF5KZg@mail.gmail.com>
-X-Infomaniak-Routing: alpha
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:GxC2BwDnlseAZAVng2B7Ag--.64194S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxZF48tryfJw4rtr4UJw47Jwb_yoW5GF17pa
+	1qga4UJ34UXFZ7Wrs5AasF9r4fK3yIgFy8Gw45Aw1qyFsrJr1jqr40yry7ury5Gr4rtwna
+	vr1UKws8ua1qyr7anT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUP2b4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUGw
+	A2048vs2IY020Ec7CjxVAFwI0_Gr0_Xr1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
+	w2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
+	WxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMc
+	Ij6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_
+	Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AFwI
+	0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG
+	67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MI
+	IYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E
+	14v26F4j6r4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr
+	0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0GY
+	LDUUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAKBGcElX4LAwAAsM
 
-On Mon, Oct 07, 2024 at 05:28:57PM -0700, Linus Torvalds wrote:
-> On Mon, 7 Oct 2024 at 16:33, Dave Chinner <david@fromorbit.com> wrote:
-> >
-> > There may be other inode references being held that make
-> > the inode live longer than the dentry cache. When should the
-> > fsnotify marks be removed from the inode in that case? Do they need
-> > to remain until, e.g, writeback completes?
-> 
-> Note that my idea is to just remove the fsnotify marks when the dentry
-> discards the inode.
-> 
-> That means that yes, the inode may still have a lifetime after the
-> dentry (because of other references, _or_ just because I_DONTCACHE
-> isn't set and we keep caching the inode).
-> 
-> BUT - fsnotify won't care. There won't be any fsnotify marks on that
-> inode any more, and without a dentry that points to it, there's no way
-> to add such marks.
-> 
-> (A new dentry may be re-attached to such an inode, and then fsnotify
-> could re-add new marks, but that doesn't change anything - the next
-> time the dentry is detached, the marks would go away again).
-> 
-> And yes, this changes the timing on when fsnotify events happen, but
-> what I'm actually hoping for is that Jan will agree that it doesn't
-> actually matter semantically.
-> 
-> > > Then at umount time, the dentry shrinking will deal with all live
-> > > dentries, and at most the fsnotify layer would send the FS_UNMOUNT to
-> > > just the root dentry inodes?
-> >
-> > I don't think even that is necessary, because
-> > shrink_dcache_for_umount() drops the sb->s_root dentry after
-> > trimming the dentry tree. Hence the dcache drop would cleanup all
-> > inode references, roots included.
-> 
-> Ahh - even better.
-> 
-> I didn't actually look very closely at the actual umount path, I was
-> looking just at the fsnotify_inoderemove() place in
-> dentry_unlink_inode() and went "couldn't we do _this_ instead?"
-> 
-> > > Wouldn't that make things much cleaner, and remove at least *one* odd
-> > > use of the nasty s_inodes list?
-> >
-> > Yes, it would, but someone who knows exactly when the fsnotify
-> > marks can be removed needs to chime in here...
-> 
-> Yup. Honza?
-> 
-> (Aside: I don't actually know if you prefer Jan or Honza, so I use
-> both randomly and interchangeably?)
-> 
-> > > I have this feeling that maybe we can just remove the other users too
-> > > using similar models. I think the LSM layer use (in landlock) is bogus
-> > > for exactly the same reason - there's really no reason to keep things
-> > > around for a random cached inode without a dentry.
-> >
-> > Perhaps, but I'm not sure what the landlock code is actually trying
-> > to do.
+From: Roberto Sassu <roberto.sassu@huawei.com>
 
-In Landlock, inodes (see landlock_object) may be referenced by several
-rulesets, either tied to a task's cred or a ruleset's file descriptor.
-A ruleset may outlive its referenced inodes, and this should not block
-related umounts.  security_sb_delete() is used to gracefully release
-such references.
+IMA stores a pointer of the ima_iint_cache structure, containing integrity
+metadata, in the inode security blob. However, check and assignment of this
+pointer is not atomic, and it might happen that two tasks both see that the
+iint pointer is NULL and try to set it, causing a memory leak.
 
-> 
-> Yeah, I wouldn't be surprised if it's just confused - it's very odd.
-> 
-> But I'd be perfectly happy just removing one use at a time - even if
-> we keep the s_inodes list around because of other users, it would
-> still be "one less thing".
-> 
-> > Hence, to me, the lifecycle and reference counting of inode related
-> > objects in landlock doesn't seem quite right, and the use of the
-> > security_sb_delete() callout appears to be papering over an internal
-> > lifecycle issue.
-> >
-> > I'd love to get rid of it altogether.
+Ensure that the iint check and assignment is guarded, by adding a lockdep
+assertion in ima_inode_get().
 
-I'm not sure to fully understand the implications for now, but it would
-definitely be good to simplify this lifetime management.  The only
-requirement for Landlock is that inodes references should live as long
-as the related inodes are accessible by user space or already in use.
-The sooner these references are removed from related ruleset, the
-better.
+Consequently, guard the remaining ima_inode_get() calls, in
+ima_post_create_tmpfile() and ima_post_path_mknod(), to avoid the lockdep
+warnings.
 
-> 
-> Yeah, I think the inode lifetime is just so random these days that
-> anything that depends on it is questionable.
-> 
-> The quota case is probably the only thing where the inode lifetime
-> *really* makes sense, and that's the one where I looked at the code
-> and went "I *hope* this can be converted to traversing the dentry
-> tree", but at the same time it did look sensible to make it be about
-> inodes.
-> 
-> If we can convert the quota side to be based on dentry lifetimes, it
-> will almost certainly then have to react to the places that do
-> "d_add()" when re-connecting an inode to a dentry at lookup time.
-> 
-> So yeah, the quota code looks worse, but even if we could just remove
-> fsnotify and landlock, I'd still be much happier.
-> 
->              Linus
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ security/integrity/ima/ima_iint.c |  5 +++++
+ security/integrity/ima/ima_main.c | 14 ++++++++++++--
+ 2 files changed, 17 insertions(+), 2 deletions(-)
+
+diff --git a/security/integrity/ima/ima_iint.c b/security/integrity/ima/ima_iint.c
+index c176fd0faae7..fe676ccec32f 100644
+--- a/security/integrity/ima/ima_iint.c
++++ b/security/integrity/ima/ima_iint.c
+@@ -87,8 +87,13 @@ static void ima_iint_free(struct ima_iint_cache *iint)
+  */
+ struct ima_iint_cache *ima_inode_get(struct inode *inode)
+ {
++	struct ima_iint_cache_lock *iint_lock;
+ 	struct ima_iint_cache *iint;
+ 
++	iint_lock = ima_inode_security(inode->i_security);
++	if (iint_lock)
++		lockdep_assert_held(&iint_lock->mutex);
++
+ 	iint = ima_iint_find(inode);
+ 	if (iint)
+ 		return iint;
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 7852212c43ce..2425067b887d 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -705,14 +705,19 @@ static void ima_post_create_tmpfile(struct mnt_idmap *idmap,
+ 	if (!must_appraise)
+ 		return;
+ 
++	ima_iint_lock(inode);
++
+ 	/* Nothing to do if we can't allocate memory */
+ 	iint = ima_inode_get(inode);
+-	if (!iint)
++	if (!iint) {
++		ima_iint_unlock(inode);
+ 		return;
++	}
+ 
+ 	/* needed for writing the security xattrs */
+ 	set_bit(IMA_UPDATE_XATTR, &iint->atomic_flags);
+ 	iint->ima_file_status = INTEGRITY_PASS;
++	ima_iint_unlock(inode);
+ }
+ 
+ /**
+@@ -737,13 +742,18 @@ static void ima_post_path_mknod(struct mnt_idmap *idmap, struct dentry *dentry)
+ 	if (!must_appraise)
+ 		return;
+ 
++	ima_iint_lock(inode);
++
+ 	/* Nothing to do if we can't allocate memory */
+ 	iint = ima_inode_get(inode);
+-	if (!iint)
++	if (!iint) {
++		ima_iint_unlock(inode);
+ 		return;
++	}
+ 
+ 	/* needed for re-opening empty files */
+ 	iint->flags |= IMA_NEW_FILE;
++	ima_iint_unlock(inode);
+ }
+ 
+ /**
+-- 
+2.34.1
+
