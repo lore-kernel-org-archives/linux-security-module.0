@@ -1,117 +1,320 @@
-Received: from sonic305-27.consmr.mail.ne1.yahoo.com (sonic305-27.consmr.mail.ne1.yahoo.com [66.163.185.153])
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB11A20CCDC
-	for <linux-security-module@vger.kernel.org>; Tue,  8 Oct 2024 18:35:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.185.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DCC3218D6D
+	for <linux-security-module@vger.kernel.org>; Tue,  8 Oct 2024 23:44:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728412531; cv=none; b=DT60g5P1ESmy6pOQuDZsiXrQIm4xA3J1OrKdgHq3c+PEDGTpH3vmPgRCd6iOaiO4K7Ix4KNjDmfK86K24T5yWoRObjppj37R0yuvN6m9DrMHs6J5+Si/a9GKrDBYzciT7A5e7frw9vAePnFHoLy2JewfvKTuuhqG5iKMZ6loRvU=
+	t=1728431059; cv=none; b=iKCcLF7s0QvVPgB13qrnvKo2lTXgQogf3BKu0VS51gw+Y4YibRBrBuGjj7/qNVr1zzegvFHLkoQdS9+R11aK0a/xgKDQjKkv66xBKIMs7Do+rOK3s4RKYQg+fDmy/L8VB+kBwLnfDCohwxiUYtG76S0Vi1IbaZuF2iB8SLKNmZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728412531; c=relaxed/simple;
-	bh=N1bztF2nEyn1H0E0epOkKEV8XHk6AdEef/+UQc4GkcE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dmQDLI3uuqOwRrxlyDHWXE0WGYPhGyAd++i0tPQBXVr4z+cjp1Sngght4EY7by4AyiStqZhpzet4TvE1/i8YSUjdX3YfUud3HtNQZGJtKEcg3Wx8FhiqHWBm+n88rKu9PcPo9hlITocx9uoz+kbsLn/7EVr6qv5LDMT7asBdHrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=cpGnH/5K; arc=none smtp.client-ip=66.163.185.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1728431059; c=relaxed/simple;
+	bh=gr6FKS/fgp3Bt3UvUPqDQm3Fvij7K+mg5ynIoHd60HM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gKKGFOljulfs4HWdMTi/GjawJdI4MoZktVbI6tTeRExvHDsm3UMa7CyA5bgY1wAB8GVR/47wozbsRgWNVDRgM0m66/hMEsrWAoyQhnwGmzzMRmRAL36A6cNGzu9Nz6qSebie0qhv+5I4mYPXFmQ7dltB0EGKF7sEoCTVtDCqaWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=t7frXyRq; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="cpGnH/5K"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1728412528; bh=HL5BOpcuVd9I44iQJAedgR9TxToL599NaIMxA9giEDo=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=cpGnH/5Kn6THxB+9ZyT6aAbzUKa2cOskhFyqMlVZPrbO+Ad53a3QaQfiwRzpaFzsUgMPW36O+Bg2eC3ZNF3FUe1sKJn5IOZmZVZSrhE37eQTLsEi62JYJw6Gch+DtJx8Pqr5qapQNgaJN/ogknr8WbLEGDKKe9jWrBp6DDPQUdT07q9QZR2UHLFFVgbj07PQlG7Vm5MZf0pjPA9thuo1RO5QYReqJrOM0QEhZwxrO5Wl1+35dLLYDoItWA7Qlgu4TjiiPzS1ORKD4VPNJBFaYuW3+OTexZt2WS32pTA+bNfSzJMQJhX30NSr4WxUU4XurTXWrSsvhz1V45k1hj2Hdw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1728412528; bh=lQtu0xXW2o470AzmFs/Fk/8c1nJ2JG2rwx00J+kLmPs=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=U3NAv2zYcQYwrNwTW90uD7pynQF2QdaYGBR9HnGarBYnmjVCRPZd5AD1tYbVirCBDBwAW2GhKllLPSnRmCyoVIrEFbweL0kpvWJZY9OtzI7b94PLfNAQbgxATbTvOIN3JTN6v46+ziaSyGzGCbOA7y3a0jYQfTDFNaL2+jPxciWFAxk7lxaJnGYp5VVWC6D06jXMVjdP3o9i2iUVyzumL6es1PS+iGsQONv4O3W6qXow0O9iWDNcRtijOxwMjCw7MRDkuoDpdWubOtfRxBLRMW3ZFnXi/9ZhY44V/KdhrWpu/KHfLuN1MC4ggcj/5Jv5uDoXiLymA9KPGw6tu6ptlQ==
-X-YMail-OSG: quio1GcVM1krtO9p4KkBRLaTqrm7b9HH9u67A7MBscU3ZPdjeTDdW8eELTrcm57
- 3SXK.VOC4RbDA2xQr1swvuZUgNdtCRvTAcp3MrKe9igNhid.ZcDFyRWHgIwikRlnChbypAoQkbvQ
- HdDeB3F9SJOY9I8SI5JMFehhucVzIwd44AOozlBj2i71WQf57KBPVp7RW9DtqEXfm.vl9a.KWwP6
- F_PVL.z1TY0PiuDsOSKS5QfRsP8Nm_njnCDUPW4bxcxWb.WOlY4CAN8TNwKeN8LGDDWBSHxvmjUH
- dGIBcbZRClTtUlTUgef_4lMWbi3kLmGl.KQeunzfdh7.aCrbV9ko9gNVixNym18w6Z5DL0WiSUU1
- gisI6XN_jgXVXJQFNpPqoOeSp3j.JSfTMrHW8NExXZSeGBy9SnLgZWBoTmTyxrD3bvfgf05C0.Pg
- yYsExE3uddj4BXCG2udiyZdAs1.4HPq4TWAPDuYScSeJ1MocztwAXPu_cOlPrmukPnt7CUORfwof
- qu10cc6RIa1TWr9EKBVk3wXBs2gMwqpl68BN6WwQb26DbuVC3Qr2LMF6tq6NN9FoxUC5667lyPTS
- 2VLj7hF_esBrwfzZqqMATBLQZmzJ6ZFdXDHn.m89H4IJcE2aX_wWKIVcIs7kFO2IVSbRa53t0w_e
- 5Sj0xm9.JIHnbXP0lx6O5IsjKrt_ATQhCtkXpO3Km_5nRaM4FmHs7lN_HGtkSZFzpHX5__wNXWt9
- KuXhpvSjO8kdm.zfi4OLcPaSHV3Tg4T9KNgBQtx5X0cQOdeLt0_tQon2QWwP3ZmmS7xuGoBrp0O3
- 34ezOJCGcbrbxkH1bElmAPpV96c_HLbWDqELX.4PPg0T_rVFfwya08MvrXQjnXCPS96ddMruKnAj
- LYCaeUkMO2REQpvjXx45pGsFP0HOCgOLC81PTD_TpSrbYG5yfaNd4tKVHUHacs41yo3miTewi.FV
- jgTZuNwM30UXbMiA_b5ZPsKFd09PBTBVlvcgP2Ks76juMdctJq6fB_PHqU1OJ3VzxJDwFv1jzdUV
- AES2_ma51xSDji7rYN0d7ilKQ1lHHr7vF58B8_QPounXKDy8_41Mfu34PtWvE8TQfCjlevcuDMxL
- 741uqOMJ.ymHiE2_n7TIdEH4ACBtzgBGF1xXsFetx3OcjoEP._z72rFT_ACzwm9h1rq0DGaxVQPi
- 02SyR63QgDOsGLQEM8bi0axT7JcnHI0btJvKa6xgV4_pfOsBocKDtoor0nQsh9znP_fj24q9_MRe
- AQD2RUzjYz7gIhgPe9JpV61MV6IgMUayTAKny6MwLhNhEbUiimVyOPhPkDKPR6WOIL8s2MkHS33D
- GoQzPfhbzTXpWX2T69nOG_lzQ1Jqx0KerT1ZpC3fWzBMGzMFeDBKzJZPPqCe9tingrTpnRjy.1iJ
- lvDO2eeBU.31D.l_uIimlggsI5K5VngvPN7sOMRzdXd5vOVsU7_vHooASzICwKlkxxNDcFQw1U5X
- 7vOUyFhtcha_Jdp.X964RMqZvifnxTwIBtolIiuoNmdL4lydezM_uWZqVyH9vPKKyzP4ho409sdZ
- cPWAUcZ_JLGTubXxeFWKNBMXPSuLaVLLQoZs3Dki.FvzoptW1dBGagMoTa5kO.ESYC4M_ozQ2zIM
- FZqk6q9fZVp_.cVOKRSYiuRg67SDLWng0H5jFMZHblj0vIMa_LJNNMD7mE4mPXmCRcEGjEbb9aBU
- 1X14FMRDmaJbnaqU2vAX3BjQMR9Z.6Wpky_PE.V26OUA5C3tsNXan0bnRKrlSMs0gmttODS.1NJN
- KJVSt1REPE1py4tSs9ELp3bZEZj4TJt9YLaAeA8HNeqXboA3gWzm5zxuyiD014Wc3EkhJPExCoQn
- TJHFvNrB8P5YKV4gw.ErzVRS1SIfKu5JW36NfCuq2YBtKg97rbwInWW7gkOngd9cmVZuCOFa4Z8P
- ax0UGz2KGdCqXb42uQmp.3ahJmmg7_8_FIhJO3_e3Oj0YbQDDuhkq9i3KniOTaoXfYSRl7359cXs
- ZCgyfNZ_lPCBAQIaTxPSgUih.dvnzg1Iccin8gAN3DHfvy69MHNROEbxOn0huZTksVaxzKvkqPvP
- 7WC9XQMLhJw1Zrsr8j1nnYA1HFzhr98mCJ8004mMOTi8pYqc2hibWymHtNIs1Siuwxv5dbONOIiZ
- bKfT0kSqaFoxWBa942Uuo7Z9zD9ii2PAA07DmIek_Rn4MU2ViNITsCYXkVq_GDC1x5mfAMznZu0v
- 91LVwKIJZ23adkvfNaokBAtNQ2p.UOgXS8gBMHVpA3QyHiUZDffDaT5eMpPS8JFw1fUCmNQVE8P_
- fXf7vpNXwKWzRbCsld6RL7dwW75F7N8RBLCo-
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 039f7a34-ab00-43a0-8ae5-12dac1431324
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.ne1.yahoo.com with HTTP; Tue, 8 Oct 2024 18:35:28 +0000
-Received: by hermes--production-gq1-5d95dc458-jflr5 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 60574d1afa6c8ee7d0e3cceaaabf2a2b;
-          Tue, 08 Oct 2024 18:25:18 +0000 (UTC)
-Message-ID: <88954576-5e62-4d95-bdf4-3913ffea68c2@schaufler-ca.com>
-Date: Tue, 8 Oct 2024 11:25:16 -0700
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="t7frXyRq"
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2e2993de292so506979a91.2
+        for <linux-security-module@vger.kernel.org>; Tue, 08 Oct 2024 16:44:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1728431056; x=1729035856; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=GiMT3+ioX4OJkgsUPnWfwXeHQkRJoDKEHMA1xTybSY0=;
+        b=t7frXyRq8Q4QfuwRNNVeSK3wkYjm+JEw2uWUsdYZkfDDea627JcYe580In6pH0RsVv
+         idwpJqvkIBtdKsdy79OUyE5bBcY8McdBqBL5VVu3AASxi+LXAvmZkU9P+xscmj2wb1iz
+         t9vxJyimjq3r4TfZTSMncaEgMNb3StGL9ceX0k5MY9XbJmy2smdfzKhiZFWSqtqjBp19
+         IHJfOZyb20NFe4jxvnLJhzCNyLoX9wnunt/v2d4iQmTr0hMbzOsfiyEoWfhIcVpwGyAu
+         aU89fiNPnmWaDP3xwpdnEGy7a2Bzu2ZxIKMeC+O+jgpQdYejv6wXYS2xG4+ixDdu/1tY
+         fLQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728431056; x=1729035856;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GiMT3+ioX4OJkgsUPnWfwXeHQkRJoDKEHMA1xTybSY0=;
+        b=lM8gZDpoGpEZP5NEeDFylalZUHBiCQoupif9Ow6Ad2hersKut7QKn9fq3v8Wz9NWAp
+         WQTG5QTT1vF1LGTZDyD7l44yl3lDCFe3iEcUIWXdbY4TczzsCI8HujoACg8kZLa5io0T
+         usCXpDAD5GHgfs974NfyiRF7ZGWd96k2iN8jSTNEu9a8FiFL27NUTTr0DEWQbW8UWx3e
+         gfI1vn/L0NCMVRUspaocU/6TvAwxmO/Spf2A6UtlD6BTxVQbQY1301utiftb0fw9tsTO
+         Ng6qR/f9fCUfq9YenST3xcCoWqe1TRF4gbFFX3fy7f1S/h2BcNd0dOXGxXJ9FgqGNMZU
+         HWPg==
+X-Forwarded-Encrypted: i=1; AJvYcCUrC0OfD6AYx09mSzPtnBP5jgiUPYfgvYuLFwqMTiLP9YkZZtIDEEPx3ZuvYAx57mm3uccEuqfEKalMxiOTmAkDxhadg0Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkfNX731YuOJ+CeCgOqzHnpfsNPx8N+RhhIabZf80FmeG/yyst
+	ZHwDCXdw8uiXkc6rbRv1QKhgdxC1hyiZVqaR9n5saC/IEIIZK8qPDQtglLmlhbY=
+X-Google-Smtp-Source: AGHT+IErL9DtnYrhJ81B8yQlr3pV9QWY0/ePlDYtB4l7BqgVYVn5E3S2vZ4yVD+4U/rbsNo6DJMwvg==
+X-Received: by 2002:a17:90a:d50e:b0:2cd:4593:2a8e with SMTP id 98e67ed59e1d1-2e2a2335d1cmr706669a91.15.1728431056406;
+        Tue, 08 Oct 2024 16:44:16 -0700 (PDT)
+Received: from dread.disaster.area (pa49-179-78-197.pa.nsw.optusnet.com.au. [49.179.78.197])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e2a5a7a7e3sm167059a91.52.2024.10.08.16.44.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 08 Oct 2024 16:44:15 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1syJsC-00Fnhp-04;
+	Wed, 09 Oct 2024 10:44:12 +1100
+Date: Wed, 9 Oct 2024 10:44:12 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Jan Kara <jack@suse.cz>
+Cc: Amir Goldstein <amir73il@gmail.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Christoph Hellwig <hch@infradead.org>,
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-bcachefs@vger.kernel.org, kent.overstreet@linux.dev,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@linux.microsoft.com>,
+	Jann Horn <jannh@google.com>, Serge Hallyn <serge@hallyn.com>,
+	Kees Cook <keescook@chromium.org>,
+	linux-security-module@vger.kernel.org
+Subject: Re: lsm sb_delete hook, was Re: [PATCH 4/7] vfs: Convert
+ sb->s_inodes iteration to super_iter_inodes()
+Message-ID: <ZwXDzKGj6Bp28kYe@dread.disaster.area>
+References: <20241002014017.3801899-1-david@fromorbit.com>
+ <20241002014017.3801899-5-david@fromorbit.com>
+ <Zv5GfY1WS_aaczZM@infradead.org>
+ <Zv5J3VTGqdjUAu1J@infradead.org>
+ <20241003115721.kg2caqgj2xxinnth@quack3>
+ <CAHk-=whg7HXYPV4wNO90j22VLKz4RJ2miCe=s0C8ZRc0RKv9Og@mail.gmail.com>
+ <ZwRvshM65rxXTwxd@dread.disaster.area>
+ <CAOQ4uxgzPM4e=Wc=UVe=rpuug=yaWwu5zEtLJmukJf6d7MUJow@mail.gmail.com>
+ <20241008112344.mzi2qjpaszrkrsxg@quack3>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] tomoyo update for v6.12
-To: "Dr. Greg" <greg@enjellic.com>, Paul Moore <paul@paul-moore.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- Jonathan Corbet <corbet@lwn.net>,
- Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
- LKML <linux-kernel@vger.kernel.org>, linux-security-module@vger.kernel.org,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <0c4b443a-9c72-4800-97e8-a3816b6a9ae2@I-love.SAKURA.ne.jp>
- <877cavdgsu.fsf@trenco.lwn.net>
- <CAHC9VhRnTrjP3kNXMmzsK4oZL7WD+uH0OuXszEPgTc5YoT5dew@mail.gmail.com>
- <CAHk-=wjLdoBcY-r64oBbKXo3hSEr5AawrP_5GSFQ4NEbCNt4Kg@mail.gmail.com>
- <20241002103830.GA22253@wind.enjellic.com>
- <CAHC9VhRjq4B4Ub7kbD8uLZxL_CKSm=z+poCXBMmcfs=8ETHj3Q@mail.gmail.com>
- <20241008111442.GA23889@wind.enjellic.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20241008111442.GA23889@wind.enjellic.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.22645 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241008112344.mzi2qjpaszrkrsxg@quack3>
 
-On 10/8/2024 4:14 AM, Dr. Greg wrote:
-> ...
->
-> Which we also believe justifies more attention than what it has been
-> able to receive in 20 months.
+On Tue, Oct 08, 2024 at 01:23:44PM +0200, Jan Kara wrote:
+> On Tue 08-10-24 10:57:22, Amir Goldstein wrote:
+> > On Tue, Oct 8, 2024 at 1:33 AM Dave Chinner <david@fromorbit.com> wrote:
+> > >
+> > > On Mon, Oct 07, 2024 at 01:37:19PM -0700, Linus Torvalds wrote:
+> > > > On Thu, 3 Oct 2024 at 04:57, Jan Kara <jack@suse.cz> wrote:
+> > > > >
+> > > > > Fair enough. If we go with the iterator variant I've suggested to Dave in
+> > > > > [1], we could combine the evict_inodes(), fsnotify_unmount_inodes() and
+> > > > > Landlocks hook_sb_delete() into a single iteration relatively easily. But
+> > > > > I'd wait with that convertion until this series lands.
+> > > >
+> > > > Honza, I looked at this a bit more, particularly with an eye of "what
+> > > > happens if we just end up making the inode lifetimes subject to the
+> > > > dentry lifetimes" as suggested by Dave elsewhere.
+> > >
+> > > ....
+> > >
+> > > > which makes the fsnotify_inode_delete() happen when the inode is
+> > > > removed from the dentry.
+> > >
+> > > There may be other inode references being held that make
+> > > the inode live longer than the dentry cache. When should the
+> > > fsnotify marks be removed from the inode in that case? Do they need
+> > > to remain until, e.g, writeback completes?
+> > >
+> > 
+> > fsnotify inode marks remain until explicitly removed or until sb
+> > is unmounted (*), so other inode references are irrelevant to
+> > inode mark removal.
+> > 
+> > (*) fanotify has "evictable" inode marks, which do not hold inode
+> > reference and go away on inode evict, but those mark evictions
+> > do not generate any event (i.e. there is no FAN_UNMOUNT).
+> 
+> Yes. Amir beat me with the response so let me just add that FS_UMOUNT event
+> is for inotify which guarantees that either you get an event about somebody
+> unlinking the inode (e.g. IN_DELETE_SELF) or event about filesystem being
+> unmounted (IN_UMOUNT) if you place mark on some inode. I also don't see how
+> we would maintain this behavior with what Linus proposes.
 
-You're right. You're also not alone. There are things that you can do
-that will help get the review you're looking for. Developers who attend
-to the needs and preferences of reviewers get a whole lot more attention
-than those who fuss and fume about not getting what they "deserve". My
-hopefully constructive recommendations are:
+Thanks. I didn't respond last night when I read Amir's decription
+because I wanted to think it over. Knowing where the unmount event
+requirement certainly helps.
 
-1.	Lead with code. Save the documentation for later.
-2.	Incremental implementation. Don't drop the whole mess on the
-	reviewers at once. A patch set should be a story, with each patch
-	introducing one new element.
-3.	Emphasize the similarities with existing implementations. No one
-	wants to deal with novel or clever code. If it is familiar, it is
-	easy to understand.
-4.	Thank your reviewers. Complaints about review latency typically
-	increase it.
-5.	Do some reviews yourself. That will get in the good graces of other
-	reviewers.
-6.	Be brief. The biggest single problem with reviewing TSEM has been that
-	doing anything takes so long. Multiple paragraph responses to an issue
-	don't help. Say it, say it once, say it in small words, and use as
-	few of those as possible.
+I am probably missing something important, but it really seems to me
+that the object reference counting model is the back to
+front.  Currently the mark is being attached to the inode and then
+the inode pinned by a reference count to make the mark attached
+to the inode persistent until unmount. This then requires the inodes
+to be swept by unmount because fsnotify has effectively leaked them
+as it isn't tracking such inodes itself.
 
+[ Keep in mind that I'm not saying this was a bad or wrong thing to
+do because the s_inodes list was there to be able to do this sort of
+lazy cleanup. But now that we want to remove the s_inodes list if at
+all possible, it is a problem we need to solve differently. ]
 
+AFAICT, inotify does not appear to require the inode to send events
+- it only requires access to the inode mark itself. Hence it does
+not the inode in cache to generate IN_UNMOUNT events, it just
+needs the mark itself to be findable at unmount.  Do any of the
+other backends that require unmount notifications that require
+special access to the inode itself?
 
+If not, and the fsnotify sb info is tracking these persistent marks,
+then we don't need to iterate inodes at unmount. This means we don't
+need to pin inodes when they have marks attached, and so the
+dependency on the s_inodes list goes away.
+
+With this inverted model, we need the first fsnotify event callout
+after the inode is instantiated to look for a persistent mark for
+the inode. We know how to do this efficiently - it's exactly the
+same caching model we use for ACLs. On the first lookup, we check
+the inode for ACL data and set the ACL pointer appropriately to
+indicate that a lookup has been done and there are no ACLs
+associated with the inode.
+
+At this point, the fsnotify inode marks can all be removed from the
+inode when it is being evicted and there's no need for fsnotify to
+pin inodes at all.
+
+> > > > Then at umount time, the dentry shrinking will deal with all live
+> > > > dentries, and at most the fsnotify layer would send the FS_UNMOUNT to
+> > > > just the root dentry inodes?
+> > >
+> > > I don't think even that is necessary, because
+> > > shrink_dcache_for_umount() drops the sb->s_root dentry after
+> > > trimming the dentry tree. Hence the dcache drop would cleanup all
+> > > inode references, roots included.
+> > >
+> > > > Wouldn't that make things much cleaner, and remove at least *one* odd
+> > > > use of the nasty s_inodes list?
+> > >
+> > > Yes, it would, but someone who knows exactly when the fsnotify
+> > > marks can be removed needs to chime in here...
+> 
+> So fsnotify needs a list of inodes for the superblock which have marks
+> attached and for which we hold inode reference. We can keep it inside
+> fsnotify code although it would practically mean another list_head for the
+> inode for this list (probably in our fsnotify_connector structure which
+> connects list of notification marks to the inode).
+
+I don't think that is necessary. We need to get rid of the inode
+reference, not move where we track inode references. The persistent
+object is the fsnotify mark, not the cached inode. It's the mark
+that needs to be persistent, and that's what the fsnotify code
+should be tracking.
+
+The fsnotify marks are much smaller than inodes, and there going to
+be fewer cached marks than inodes, especially once inode pinning is
+removed. Hence I think this will result in a net reduction in memory
+footprint for "marked-until-unmount" configurations as we won't pin
+nearly as many inodes in cache...
+
+> If we actually get rid
+> of i_sb_list in struct inode, this will be a win for the overall system,
+> otherwise it is a net loss IMHO. So if we can figure out how to change
+> other s_inodes owners we can certainly do this fsnotify change.
+
+Yes, I am exploring what it would take to get rid of i_sb_list
+altogether right now. That, I don't think this is a concern given
+the difference in memory footprint of the same number of persistent
+marks. i.e. "persistent mark, reclaimable inode" will always have a
+significantly lower memory footprint than "persistent inode and
+mark" under memory pressure....
+
+> > > > And I wonder if the quota code (which uses the s_inodes list
+> > > > to enable quotas on already mounted filesystems) could for
+> > > > all the same reasons just walk the dentry tree instead (and
+> > > > remove_dquot_ref similarly could just remove it at
+> > > > dentry_unlink_inode() time)?
+> > >
+> > > I don't think that will work because we have to be able to
+> > > modify quota in evict() processing. This is especially true
+> > > for unlinked inodes being evicted from cache, but also the
+> > > dquots need to stay attached until writeback completes.
+> > >
+> > > Hence I don't think we can remove the quota refs from the
+> > > inode before we call iput_final(), and so I think quotaoff (at
+> > > least) still needs to iterate inodes...
+> 
+> Yeah, I'm not sure how to get rid of the s_inodes use in quota
+> code. One of the things we need s_inodes list for is during
+> quotaoff on a mounted filesystem when we need to iterate all
+> inodes which are referencing quota structures and free them.  In
+> theory we could keep a list of inodes referencing quota structures
+> but that would require adding list_head to inode structure for
+> filesystems that support quotas.
+
+I don't think that's quite true. Quota is not modular, so we can
+lazily free quota objects even when quota is turned off. All we need
+to ensure is that code checks whether quota is enabled, not for the
+existence of quota objects attached to the inode.
+
+Hence quota-off simply turns off all the quota operations in memory,
+and normal inode eviction cleans up the stale quota objects
+naturally.
+
+My main question is why the quota-on add_dquot_ref() pass is
+required. AFAICT all of the filesystem operations that will modify
+quota call dquot_initialize() directly to attach the required dquots
+to the inode before the operation is started. If that's true, then
+why does quota-on need to do this for all the inodes that are
+already in cache?
+
+i.e. I'm not sure I understand why we need quota to do these
+iterations at all...
+
+> Now for the sake of
+> full context I'll also say that enabling / disabling quotas on a mounted
+> filesystem is a legacy feature because it is quite easy that quota
+> accounting goes wrong with it. So ext4 and f2fs support for quite a few
+> years a mode where quota tracking is enabled on mount and disabled on
+> unmount (if appropriate fs feature is enabled) and you can only enable /
+> disable enforcement of quota limits during runtime.
+
+Sure, this is how XFS works, too. But I think this behaviour is
+largely irrelevant because there are still filesystems out there
+that do stuff the old way...
+
+> So I could see us
+> deprecating this functionality altogether although jfs never adapted to
+> this new way we do quotas so we'd have to deal with that somehow.  But one
+> way or another it would take a significant amount of time before we can
+> completely remove this so it is out of question for this series.
+
+I'm not sure that matters, though it adds to the reasons why we
+should be removing old, unmaintained filesystems from the tree
+and old, outdated formats from maintained filesystems....
+
+> I see one problem with the idea "whoever has a need to iterate inodes needs
+> to keep track of inodes it needs to iterate through". It is fine
+> conceptually but with s_inodes list we pay the cost only once and multiple
+> users benefit. With each subsystem tracking inodes we pay the cost for each
+> user (both in terms of memory and CPU). So if you don't use any of the
+> subsystems that need iteration, you win, but if you use two or more of
+> these subsystems, in particular those which need to track significant
+> portion of all inodes, you are losing.
+
+AFAICT, most of the subsystems don't need to track inodes directly.
+
+We don't need s_inodes for evict_inodes() - we have the inode LRU
+tracking all unreferenced inodes on the superblock. The GFS2 use
+case can probably walk the inode LRU directly, too.
+
+It looks to me that we can avoid needing unmount iteration for
+fsnotify, and I suspect landlock can likely use the same persistence
+inversion as fsnotify (same persistent ruleset model).
+
+The bdev superblock can implement it's own internal list using
+inode->i_devices as this list_head is only used by chardev
+inodes.
+
+All that then remains is the page cache dropping code, and that's
+not really critical to have exacting behaviour. We certainly
+shouldn't be taking a runtime penalty just to optimise the rare
+case of dropping caches..
+
+IOWs, there aren't that many users, and I think there are ways to
+make all these iterations go away without adding new per-inode
+list heads to track inodes.
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
