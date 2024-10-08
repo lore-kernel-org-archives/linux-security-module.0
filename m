@@ -1,200 +1,198 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65B531F60A;
-	Tue,  8 Oct 2024 02:41:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521A014A82;
+	Tue,  8 Oct 2024 08:57:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728355316; cv=none; b=PFgH44t40/R/Iv5uWK7xIUuU2jPPKg1X1tR6Qu+CIo5FzI9NIQ9wx5ABv4IjZfXu651W2lubyR+thaZDwwXkc5yMKNYa2MDPoE8HvN2f6DO637z2RHbpAeQL63r6NwBQQkaRLrmOPHUy1pae8RCSKibc49Q2wDZqZqzChBSF6fk=
+	t=1728377857; cv=none; b=WcPbE0Eu/IjSBmE/djk1iuk1nfKglkm9yzPlWs9ToLRpshIJr5wD+dnHQU/9JmxKDfJ9jNEvFJM9b8t+5uByHCGdUAJRjpEFDetEjI0Gp6OhEs+see+GpMEXkr7lq7dELDisLcZ5FN9dCfjpDQlPdF00LtTZEmoHQvwxA+YIIBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728355316; c=relaxed/simple;
-	bh=9Y86n1LVdXrgfQTdqYuGrkCAIEQeam3XR7GvfmbbLec=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bZCYqyiQSJX7qFPZRpxEFCF4iLGeQB1Odf9lpL/NUrlieBcoYvT9I2/DOEZZ9nkoEQybWXeJ2h64pq3qWFiq1OUcE/5C2K7MIVl25ybtMBIivOdKn+SEkw60D7SQFIX4/dUizpm0weukaj8gBz6I6gUIYEC0/+nCBGGb4lJFMXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JbE8LFx0; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1728377857; c=relaxed/simple;
+	bh=zjSwpKSamL/oaVYFaBilZq7b5Csh6FwSM6IroSnQ7pY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=q9Eu/k2+f1pa6n0KdB8bcK39AGTKNpZQpFJelW2lLG5DnxAlmtYeu9dv2Ww5oH7yLYdOowV+ZTdZFYzlBwoeeyVqVlFo/emwRZ1PlYlwMA4OHHAtVOhkHKpRIxCuCMgnsEy6JEgqZaA0g8YsVJXw6xU5mDDzQe/cj7ONtCMjZ/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L29s8qM3; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JbE8LFx0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 860DFC4CEC6;
-	Tue,  8 Oct 2024 02:41:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728355316;
-	bh=9Y86n1LVdXrgfQTdqYuGrkCAIEQeam3XR7GvfmbbLec=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=JbE8LFx01WSZWq24SeWb/gTnuh8N0I60a6Fm7MVM/dm0+PgxFnYJ2AIgQXHCGYHpF
-	 mZ1W9WXA8j3PG91tFjIPQb9fWHqo4Sq+Mic7JIvqYuMiIaDM8HIYgE6thV11kPl/zA
-	 oiI9C8WUAOFRuGmKVDO5vEW5JuCxUHyDHr3yTR6gcuxeb+bt0Sq5d/+7PeYs3NxJ+r
-	 5CefSIZlOjdzuFINPYTnD4hcEJ+ZDRorlIXrbeURJbGhSD5H/DSlwKxkpZj/bGuMC5
-	 JCL+uYaAu1TXf9YyAPDB9d9SSg95Nd5qnMS+6s7bkCBS934z9T47xMkMt87BQfxBE+
-	 g+OcWiEkeh7og==
-Message-ID: <578d5b202782b3e4195b721bab11a811aa50d34e.camel@kernel.org>
-Subject: Re: [PATCH] security/keys: fix slab-out-of-bounds in
- key_task_permission
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: chenridong <chenridong@huawei.com>, dhowells@redhat.com, 
-	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
-Cc: keyrings@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, chenridong@huaweicloud.com
-Date: Tue, 08 Oct 2024 05:41:51 +0300
-In-Reply-To: <68b51392-0f93-405f-bcf4-94db22831058@huawei.com>
-References: <20240913070928.1670785-1-chenridong@huawei.com>
-	 <6286c177ee1393c64ed2014322074497730c9b33.camel@kernel.org>
-	 <68b51392-0f93-405f-bcf4-94db22831058@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L29s8qM3"
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7ae3e3db294so308048985a.2;
+        Tue, 08 Oct 2024 01:57:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728377854; x=1728982654; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oSiZA2g8NuCGsh8+CWZXtusESif7cpDAvfOKhygbhTs=;
+        b=L29s8qM37nSQ0BnF7hGJKa/dRBRnmTKbXiPdTRN+8TL5mEgqz2muTuaKxUG2C3AX7E
+         3WGK5q1zU5VrATMZMmhbwkz1WZEewAz5WULb84NFO42+BXpXWlV2yn5tJMbXNpe2zTVu
+         BReblqtyQ62ZaFC8QBtCcvclWfqbZmz7x/LBsw14YUAZIsMBTslTbcTAaaDL0S/ZnsfW
+         dQmR2V0mO/gnLXHzt2MqpTnKOavJhVosmd0VdV/YN54cikLRU0LrNqlA9NE63l+Q2xp7
+         WAjT9q/nq2rODi6cvM9Cz9aS5IAt5H8KJ1/3V79Erg0+uac9uxfXrGb/10wCk38eQrAW
+         3DYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728377854; x=1728982654;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oSiZA2g8NuCGsh8+CWZXtusESif7cpDAvfOKhygbhTs=;
+        b=DB8CN/PgPoEhMhBa/p/qcKdTKScU80gENKsH5gKc0BbDAAAjxUWB5dpQAB+RWWlliK
+         LFAFbsPShV2cfRxHdUVpqG/QcWt3sMdrGJWv+/t1BWu8pvQQXNkmgg7X0B8u/CHM13C9
+         usf6zDs7okAlhuQ1+nxckSuKky2twoMQfTPTUHX/mZgs/ipU4TzfTVy6ExZ5W2He7vCc
+         JwbAIb2sSgC5hzjJJGw90q0MlIZUK+vHzSEMEQ6PVpwj90VP5MkWnk1M7S3cfrksPiS+
+         uEbaDH4omWiN22LXp6J0kohrtgYCM+2dMU8C6Ujn9E74Fe9YqWpIxYClsWE19hxVyi6J
+         /Gkw==
+X-Forwarded-Encrypted: i=1; AJvYcCV2mQnObKI3siZi4ptvroCJp/JPS6Z4lva7dD3AVHGw8DExYZZxxNJZkopNQTO6gF04kg005moQAv71ND/Sww==@vger.kernel.org, AJvYcCWJwerMr1LTNeb9HsrztDOlCwIrIMWf1HVWH4dpNozwMfucotXPqXWs9gDYcRdx/tgzzCcY7AeqZWrT@vger.kernel.org, AJvYcCWiQcM/VUC7tU12z18VzfOtJWDIGYdI6dgQHi4TulakGaTRyOBiB7NnBQOIHJqpvYawDDkWn2OvdA3xL51gKZH6B3jQ2LyC@vger.kernel.org, AJvYcCXkYKD39+OvxILbpvPxJLAxUb5DmWAi9wVTHwLUYZ0nOMyk934lavJYQsHrv+ssKMKmkqW12PKkr+DyWlnPjw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/7wB3vhev0NM6QG8f983NX9aF/npFEQQljIuqQe3VpPB43iEW
+	7ckPC9YJdloodLnv2sJUpZCAMOFyswJADdG4Fv0Z8BC0OXHazZkJVzPL8ukt8FZqYqiJBo+g4xd
+	tuVVj2ou5GX5c9wNqmoSgtTsuts8=
+X-Google-Smtp-Source: AGHT+IGyUy4LRGOpbCvoasZRQSP2dmC4WlY6qXQ/VCE3WYJa800SCIs9IYs3KTeh7/Puyqv+pCrRSAP4UIBx9Xwdwpg=
+X-Received: by 2002:a05:620a:400d:b0:7ac:a0a5:9bf4 with SMTP id
+ af79cd13be357-7ae6f48604fmr2483131085a.40.1728377854081; Tue, 08 Oct 2024
+ 01:57:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20241002014017.3801899-1-david@fromorbit.com> <20241002014017.3801899-5-david@fromorbit.com>
+ <Zv5GfY1WS_aaczZM@infradead.org> <Zv5J3VTGqdjUAu1J@infradead.org>
+ <20241003115721.kg2caqgj2xxinnth@quack3> <CAHk-=whg7HXYPV4wNO90j22VLKz4RJ2miCe=s0C8ZRc0RKv9Og@mail.gmail.com>
+ <ZwRvshM65rxXTwxd@dread.disaster.area>
+In-Reply-To: <ZwRvshM65rxXTwxd@dread.disaster.area>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Tue, 8 Oct 2024 10:57:22 +0200
+Message-ID: <CAOQ4uxgzPM4e=Wc=UVe=rpuug=yaWwu5zEtLJmukJf6d7MUJow@mail.gmail.com>
+Subject: Re: lsm sb_delete hook, was Re: [PATCH 4/7] vfs: Convert sb->s_inodes
+ iteration to super_iter_inodes()
+To: Dave Chinner <david@fromorbit.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Jan Kara <jack@suse.cz>, 
+	Christoph Hellwig <hch@infradead.org>, linux-fsdevel@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, linux-bcachefs@vger.kernel.org, 
+	kent.overstreet@linux.dev, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@linux.microsoft.com>, 
+	Jann Horn <jannh@google.com>, Serge Hallyn <serge@hallyn.com>, Kees Cook <keescook@chromium.org>, 
+	linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2024-10-08 at 09:40 +0800, chenridong wrote:
->=20
->=20
-> On 2024/10/8 7:15, Jarkko Sakkinen wrote:
-> > Hi,
-> >=20
-> > Revisit...
-> >=20
-> > On Fri, 2024-09-13 at 07:09 +0000, Chen Ridong wrote:
-> > > We meet the same issue with the LINK, which reads memory out of
-> > > bounds:
-> >=20
-> > Never ever use pronoun "we" in a commit message in any possible
-> > sentence. Instead always use passive imperative.
-> >=20
-> > What you probably want to say is:
-> >=20
-> > "KASAN reports an out of bounds read:"
-> >=20
-> > Right?
-> >=20
->=20
-> Yes.
->=20
-> > > BUG: KASAN: slab-out-of-bounds in __kuid_val
-> > > include/linux/uidgid.h:36
-> > > BUG: KASAN: slab-out-of-bounds in uid_eq
-> > > include/linux/uidgid.h:63
-> > > [inline]
-> > > BUG: KASAN: slab-out-of-bounds in key_task_permission+0x394/0x410
-> > > security/keys/permission.c:54
-> > > Read of size 4 at addr ffff88813c3ab618 by task stress-ng/4362
-> > >=20
-> > > CPU: 2 PID: 4362 Comm: stress-ng Not tainted 5.10.0-14930-
-> > > gafbffd6c3ede #15
-> > > Call Trace:
-> > > =C2=A0 __dump_stack lib/dump_stack.c:82 [inline]
-> > > =C2=A0 dump_stack+0x107/0x167 lib/dump_stack.c:123
-> > > =C2=A0 print_address_description.constprop.0+0x19/0x170
-> > > mm/kasan/report.c:400
-> > > =C2=A0 __kasan_report.cold+0x6c/0x84 mm/kasan/report.c:560
-> > > =C2=A0 kasan_report+0x3a/0x50 mm/kasan/report.c:585
-> > > =C2=A0 __kuid_val include/linux/uidgid.h:36 [inline]
-> > > =C2=A0 uid_eq include/linux/uidgid.h:63 [inline]
-> > > =C2=A0 key_task_permission+0x394/0x410 security/keys/permission.c:54
-> > > =C2=A0 search_nested_keyrings+0x90e/0xe90 security/keys/keyring.c:793
-> >=20
-> > Snip all below away:
-> >=20
-> > > =C2=A0 keyring_search_rcu+0x1b6/0x310 security/keys/keyring.c:922
-> > > =C2=A0 search_cred_keyrings_rcu+0x111/0x2e0
-> > > security/keys/process_keys.c:459
-> > > =C2=A0 search_process_keyrings_rcu+0x1d/0x310
-> > > security/keys/process_keys.c:544
-> > > =C2=A0 lookup_user_key+0x782/0x12e0 security/keys/process_keys.c:762
-> > > =C2=A0 keyctl_invalidate_key+0x20/0x190 security/keys/keyctl.c:434
-> > > =C2=A0 __do_sys_keyctl security/keys/keyctl.c:1978 [inline]
-> > > =C2=A0 __se_sys_keyctl+0x1de/0x5b0 security/keys/keyctl.c:1880
-> > > =C2=A0 do_syscall_64+0x30/0x40 arch/x86/entry/common.c:46
-> > > =C2=A0 entry_SYSCALL_64_after_hwframe+0x67/0xd1
-> >=20
-> > Remember to cut only the relevant part of the stack trace to make
-> > this
-> > commit message more compact and readable.
-> >=20
-> Thank you, I will do that.
->=20
-> > >=20
-> > > However, we can't reproduce this issue.
-> > > After our analysis, it can make this issue by following steps.
-> > > 1.As syzkaller reported, the memory is allocated for struct
-> >=20
-> > "1."
-> >=20
-> > > =C2=A0=C2=A0 assoc_array_shortcut in the
-> > > assoc_array_insert_into_terminal_node
-> > > =C2=A0=C2=A0 functions.
-> > > 2.In the search_nested_keyrings, when we go through the slots in
-> > > a
-> > > node,
-> > > =C2=A0=C2=A0 (bellow tag ascend_to_node), and the slot ptr is meta an=
-d
-> > > =C2=A0=C2=A0 node->back_pointer !=3D NULL, we will proceed to=C2=A0
-> > > descend_to_node.
-> > > =C2=A0=C2=A0 However, there is an exception. If node is the root, and=
- one
-> > > of the
-> > > =C2=A0=C2=A0 slots points to a shortcut, it will be treated as a keyr=
-ing.
-> > > 3.Whether the ptr is keyring decided by keyring_ptr_is_keyring
-> > > function.
-> > > =C2=A0=C2=A0 However, KEYRING_PTR_SUBTYPE is 0x2UL, the same as
-> > > =C2=A0=C2=A0 ASSOC_ARRAY_PTR_SUBTYPE_MASK,
-> > > 4.As mentioned above, If a slot of the root is a shortcut, it may
-> > > be
-> > > =C2=A0=C2=A0 mistakenly be transferred to a key*, leading to an read =
-out-
-> > > of-
-> > > bounds
-> > > =C2=A0=C2=A0 read.
-> >=20
-> > Delete the whole list and write a description of the problem and
-> > why
-> > your change resolves it.
-> >=20
-> > As per code change, let's layout it something more readable first:
-> >=20
-> > /* Traverse branches into depth: */
-> > if (assoc_array_ptr_is_meta(ptr)) {
-> > 	if (node->back_pointer ||
-> > assoc_array_ptr_is_shortcut(ptr))
-> > 		goto descend_to_node;
-> > }
-> >=20
-> > So one thing that should be explained just to make the description
-> > rigid is why 'ptr' is passed to assoc_array_ptr_is_shortcut() and
-> > not 'node'. I'm actually 100% sure about that part, which kind
-> > of supports my view here, right? :-)
-> >=20
-> > The first part of the if-statement obviously filters out everything
-> > that is not root (when it comes to 'node'). Explain the second
-> > part.
-> > At that point it is know that node is a root node, so continue from
-> > there.
-> >=20
-> > BR, Jarkko
-> >=20
->=20
-> Thank you for your patience.
-> I will update soon.
+On Tue, Oct 8, 2024 at 1:33=E2=80=AFAM Dave Chinner <david@fromorbit.com> w=
+rote:
+>
+> On Mon, Oct 07, 2024 at 01:37:19PM -0700, Linus Torvalds wrote:
+> > On Thu, 3 Oct 2024 at 04:57, Jan Kara <jack@suse.cz> wrote:
+> > >
+> > > Fair enough. If we go with the iterator variant I've suggested to Dav=
+e in
+> > > [1], we could combine the evict_inodes(), fsnotify_unmount_inodes() a=
+nd
+> > > Landlocks hook_sb_delete() into a single iteration relatively easily.=
+ But
+> > > I'd wait with that convertion until this series lands.
+> >
+> > Honza, I looked at this a bit more, particularly with an eye of "what
+> > happens if we just end up making the inode lifetimes subject to the
+> > dentry lifetimes" as suggested by Dave elsewhere.
+>
+> ....
+>
+> > which makes the fsnotify_inode_delete() happen when the inode is
+> > removed from the dentry.
+>
+> There may be other inode references being held that make
+> the inode live longer than the dentry cache. When should the
+> fsnotify marks be removed from the inode in that case? Do they need
+> to remain until, e.g, writeback completes?
+>
 
-Yeah of course, and I did low quality job earlier no issues admitting
-that, so let's do this correct this time. I just try to describe
-what I'm seeing as accurately as I can :-)=20
+fsnotify inode marks remain until explicitly removed or until sb
+is unmounted (*), so other inode references are irrelevant to
+inode mark removal.
 
-Here it is just important to get the explanation and the code change
-in-sync so that it is easy to verify and compare them, given that it
-is quite sensitive functionality and somewhat obfuscated peace of code
-showing age.=20
+(*) fanotify has "evictable" inode marks, which do not hold inode
+reference and go away on inode evict, but those mark evictions
+do not generate any event (i.e. there is no FAN_UNMOUNT).
 
-Also I think a good is to make sure that every fix will leave it at
-least a bit cleaner state. From this basis I proposed a bit different
-layout for the code.
+> > Then at umount time, the dentry shrinking will deal with all live
+> > dentries, and at most the fsnotify layer would send the FS_UNMOUNT to
+> > just the root dentry inodes?
+>
+> I don't think even that is necessary, because
+> shrink_dcache_for_umount() drops the sb->s_root dentry after
+> trimming the dentry tree. Hence the dcache drop would cleanup all
+> inode references, roots included.
+>
+> > Wouldn't that make things much cleaner, and remove at least *one* odd
+> > use of the nasty s_inodes list?
+>
+> Yes, it would, but someone who knows exactly when the fsnotify
+> marks can be removed needs to chime in here...
+>
+> > I have this feeling that maybe we can just remove the other users too
+> > using similar models. I think the LSM layer use (in landlock) is bogus
+> > for exactly the same reason - there's really no reason to keep things
+> > around for a random cached inode without a dentry.
+>
+> Perhaps, but I'm not sure what the landlock code is actually trying
+> to do. It seems to be trying to avoid races between syscalls
+> releasing inode references and unmount calling security_sb_delete()
+> to clean up inode references that it has leaked. This implies that
+> it's not a) tracking inodes itself, and b) not cleaning up internal
+> state early enough in unmount.
+>
+> Hence, to me, the lifecycle and reference counting of inode related
+> objects in landlock doesn't seem quite right, and the use of the
+> security_sb_delete() callout appears to be papering over an internal
+> lifecycle issue.
+>
+> I'd love to get rid of it altogether.
+>
+> > And I wonder if the quota code (which uses the s_inodes list to enable
+> > quotas on already mounted filesystems) could for all the same reasons
+> > just walk the dentry tree instead (and remove_dquot_ref similarly
+> > could just remove it at dentry_unlink_inode() time)?
+>
+> I don't think that will work because we have to be able to modify
+> quota in evict() processing. This is especially true for unlinked
+> inodes being evicted from cache, but also the dquots need to stay
+> attached until writeback completes.
+>
+> Hence I don't think we can remove the quota refs from the inode
+> before we call iput_final(), and so I think quotaoff (at least)
+> still needs to iterate inodes...
+>
+> > It really feels like most (all?) of the s_inode list users are
+> > basically historical, and shouldn't use that list at all. And there
+> > aren't _that_ many of them. I think Dave was right in just saying that
+> > this list should go away entirely (or was it somebody else who made
+> > that comment?)
+>
+> Yeah, I said that it should go away entirely.
+>
+> My view of this whole s_inodes list is that subsystems that are
+> taking references to inodes *must* track or manage the references to
+> the inodes themselves.
+>
+> The canonical example is the VFS itself: evict_inodes() doesn't need
+> to iterate s_inodes at all. It can walk the inode LRU to purge all
+> the unreferenced cached inodes from memory. iput_final() guarantees
+> that all unreferenced inodes are either put on the LRU or torn down
+> immediately.
+>
+> Hence I think that it is a poor architectural decision to require
+> superblock teardown to clean up inode references random subsystems
+> have *leaked* to prevent UAFs.  It forces the sb to track all
+> inodes whether the VFS actually needs to track them or not.
+>
 
->=20
-> Best regards,
-> Ridong
+For fsnotify, I think we can/should maintain a list of marked inodes
+inside sb->s_fsnotify_info, we can iterate this private list in
+fsnotify_unmount_inodes() to remove the marks.
 
-BR,Jarkko
+TBH, I am not sure I understand the suggested change for inode
+lifetime. An inode can have a reference from dentry or from some
+subsystem (e.g. fsnotify) which is responsible for putting their held
+reference before unmount. What is the alternative?
+
+Thanks,
+Amir.
