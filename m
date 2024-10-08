@@ -1,161 +1,167 @@
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+Received: from smtp-190c.mail.infomaniak.ch (smtp-190c.mail.infomaniak.ch [185.125.25.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53F7E1D31A0;
-	Tue,  8 Oct 2024 12:54:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3CED1DF275
+	for <linux-security-module@vger.kernel.org>; Tue,  8 Oct 2024 12:59:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728392102; cv=none; b=K/jW7e/HM01hAX4nZc7tCXWKx0TNBrET0+h/2MvQ+oNeUQKLBwalknTsEG1e83RHOsUwmnfdcLqrR+hgwdBdpihGXPMQ0OcNf5m7G19K4uSG74tgX+iGsTMe4jtT6/GIHn5hLBsty91/Z2kkQ6ANae2eXw7fpmJrFme4bMPaZDw=
+	t=1728392363; cv=none; b=lMhhBGVUEOi9xiHzNkxZZNtgOxZPQFbD2qSr78kycWa4nkFZOJkG6mDCYNZzSYAXvZRE5xEMKj6+DgQdNoY9jcEQSQHcDSxGd0xML8U8shdBVzKs9K82R07ozIFsfeTU7uddWK5XNRESB6nRxN+OtZmQOs+iVgdeLTRu1TZAbIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728392102; c=relaxed/simple;
-	bh=mbL2L04DT/7upGeDcFNTeOwgtjMd7+dRAsBUcQanlCM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UkBBh5due2x9B+baHYwjIgoR+Pd9YL9QoQdabDu/31VPeZDxupbmwg+q9UVLmKeOoyauWRDARyxTM7PQN8QnlBLhAzbRzGjExqNf6AjFXb1ut4q/6S0J9KEdXJhHbgAsAmmi79ulFGg9Z8RwZo0tfQV8AYkgp7OEc3g1q0V7o60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XNGF90XTXz4f3jsT;
-	Tue,  8 Oct 2024 20:54:37 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id D88A01A058E;
-	Tue,  8 Oct 2024 20:54:53 +0800 (CST)
-Received: from hulk-vt.huawei.com (unknown [10.67.174.121])
-	by APP3 (Coremail) with SMTP id _Ch0CgCH24eUKwVn3q2iDQ--.54651S2;
-	Tue, 08 Oct 2024 20:54:52 +0800 (CST)
-From: Chen Ridong <chenridong@huaweicloud.com>
-To: dhowells@redhat.com,
-	jarkko@kernel.org,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com
-Cc: keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	chenridong@huawei.com
-Subject: [PATCH v2] security/keys: fix slab-out-of-bounds in key_task_permission
-Date: Tue,  8 Oct 2024 12:46:39 +0000
-Message-Id: <20241008124639.70000-1-chenridong@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1728392363; c=relaxed/simple;
+	bh=XEQ84zSaVaFCcNhIzuJn6oUzj6Js6KHVuGb3P1chFyM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dnFDG25iSYYQV31ijdzYYF35srABIqD7DkM89okSZ8tygUeVABd6F5GSAOJTqaSJn5TAI7ODfQ7G4th4wmJBinhH46y5Q3jBvI3eKihn576C7/+rrsaLkItpQvrSCUrSi7KfFdTXCYt4gli33BvDbseUJrP9PVQ/jfnACjH2Nx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=pEre8go+; arc=none smtp.client-ip=185.125.25.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="pEre8go+"
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XNGLS0FSsz4X7;
+	Tue,  8 Oct 2024 14:59:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1728392351;
+	bh=lubKm596ajxruAowyOac0GqBl8F51f/htwsSzeT4WHY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pEre8go+mybnR8ts9txJRzOFe7SezCcGaT0Pca6Uro5RQz3NmFZstJNFsr1yAZiiD
+	 zdu4NDVN38vP5KFqwymW4L2skhrA9eQN1UkeP547Rfi34OyNw8IjMTzk9AU7SX3sMN
+	 p05+vrFJtJvzdlox7dQDOowI6oDXivNjkPFjhy7U=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4XNGLQ6mfKzMvr;
+	Tue,  8 Oct 2024 14:59:10 +0200 (CEST)
+Date: Tue, 8 Oct 2024 14:59:07 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>, 
+	Christoph Hellwig <hch@infradead.org>, linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	linux-bcachefs@vger.kernel.org, kent.overstreet@linux.dev, Jann Horn <jannh@google.com>, 
+	Serge Hallyn <serge@hallyn.com>, Kees Cook <keescook@chromium.org>, 
+	linux-security-module@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Subject: Re: lsm sb_delete hook, was Re: [PATCH 4/7] vfs: Convert
+ sb->s_inodes iteration to super_iter_inodes()
+Message-ID: <20241008.Pohc0dixeiZ8@digikod.net>
+References: <20241002014017.3801899-1-david@fromorbit.com>
+ <20241002014017.3801899-5-david@fromorbit.com>
+ <Zv5GfY1WS_aaczZM@infradead.org>
+ <Zv5J3VTGqdjUAu1J@infradead.org>
+ <20241003115721.kg2caqgj2xxinnth@quack3>
+ <CAHk-=whg7HXYPV4wNO90j22VLKz4RJ2miCe=s0C8ZRc0RKv9Og@mail.gmail.com>
+ <ZwRvshM65rxXTwxd@dread.disaster.area>
+ <CAHk-=wi5ZpW73nLn5h46Jxcng6wn_bCUxj6JjxyyEMAGzF5KZg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgCH24eUKwVn3q2iDQ--.54651S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxXw4rZFyDCr4xGw1UWF4kZwb_yoWrGFWxpr
-	Z0gF4jyr40yF9aqr18Aa1UWw1rXFs0k3W7Gr4fW3y5Z3Z8Zr1kXF92kFyFgryfCr4IyFyY
-	yF43XwsavFn0v3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI
-	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY
-	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6x
-	AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
-	1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07UQ6p9UUUUU=
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wi5ZpW73nLn5h46Jxcng6wn_bCUxj6JjxyyEMAGzF5KZg@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-From: Chen Ridong <chenridong@huawei.com>
+On Mon, Oct 07, 2024 at 05:28:57PM -0700, Linus Torvalds wrote:
+> On Mon, 7 Oct 2024 at 16:33, Dave Chinner <david@fromorbit.com> wrote:
+> >
+> > There may be other inode references being held that make
+> > the inode live longer than the dentry cache. When should the
+> > fsnotify marks be removed from the inode in that case? Do they need
+> > to remain until, e.g, writeback completes?
+> 
+> Note that my idea is to just remove the fsnotify marks when the dentry
+> discards the inode.
+> 
+> That means that yes, the inode may still have a lifetime after the
+> dentry (because of other references, _or_ just because I_DONTCACHE
+> isn't set and we keep caching the inode).
+> 
+> BUT - fsnotify won't care. There won't be any fsnotify marks on that
+> inode any more, and without a dentry that points to it, there's no way
+> to add such marks.
+> 
+> (A new dentry may be re-attached to such an inode, and then fsnotify
+> could re-add new marks, but that doesn't change anything - the next
+> time the dentry is detached, the marks would go away again).
+> 
+> And yes, this changes the timing on when fsnotify events happen, but
+> what I'm actually hoping for is that Jan will agree that it doesn't
+> actually matter semantically.
+> 
+> > > Then at umount time, the dentry shrinking will deal with all live
+> > > dentries, and at most the fsnotify layer would send the FS_UNMOUNT to
+> > > just the root dentry inodes?
+> >
+> > I don't think even that is necessary, because
+> > shrink_dcache_for_umount() drops the sb->s_root dentry after
+> > trimming the dentry tree. Hence the dcache drop would cleanup all
+> > inode references, roots included.
+> 
+> Ahh - even better.
+> 
+> I didn't actually look very closely at the actual umount path, I was
+> looking just at the fsnotify_inoderemove() place in
+> dentry_unlink_inode() and went "couldn't we do _this_ instead?"
+> 
+> > > Wouldn't that make things much cleaner, and remove at least *one* odd
+> > > use of the nasty s_inodes list?
+> >
+> > Yes, it would, but someone who knows exactly when the fsnotify
+> > marks can be removed needs to chime in here...
+> 
+> Yup. Honza?
+> 
+> (Aside: I don't actually know if you prefer Jan or Honza, so I use
+> both randomly and interchangeably?)
+> 
+> > > I have this feeling that maybe we can just remove the other users too
+> > > using similar models. I think the LSM layer use (in landlock) is bogus
+> > > for exactly the same reason - there's really no reason to keep things
+> > > around for a random cached inode without a dentry.
+> >
+> > Perhaps, but I'm not sure what the landlock code is actually trying
+> > to do.
 
-KASAN reports an out of bounds read:
-BUG: KASAN: slab-out-of-bounds in __kuid_val include/linux/uidgid.h:36
-BUG: KASAN: slab-out-of-bounds in uid_eq include/linux/uidgid.h:63 [inline]
-BUG: KASAN: slab-out-of-bounds in key_task_permission+0x394/0x410
-security/keys/permission.c:54
-Read of size 4 at addr ffff88813c3ab618 by task stress-ng/4362
+In Landlock, inodes (see landlock_object) may be referenced by several
+rulesets, either tied to a task's cred or a ruleset's file descriptor.
+A ruleset may outlive its referenced inodes, and this should not block
+related umounts.  security_sb_delete() is used to gracefully release
+such references.
 
-CPU: 2 PID: 4362 Comm: stress-ng Not tainted 5.10.0-14930-gafbffd6c3ede #15
-Call Trace:
- __dump_stack lib/dump_stack.c:82 [inline]
- dump_stack+0x107/0x167 lib/dump_stack.c:123
- print_address_description.constprop.0+0x19/0x170 mm/kasan/report.c:400
- __kasan_report.cold+0x6c/0x84 mm/kasan/report.c:560
- kasan_report+0x3a/0x50 mm/kasan/report.c:585
- __kuid_val include/linux/uidgid.h:36 [inline]
- uid_eq include/linux/uidgid.h:63 [inline]
- key_task_permission+0x394/0x410 security/keys/permission.c:54
- search_nested_keyrings+0x90e/0xe90 security/keys/keyring.c:793
+> 
+> Yeah, I wouldn't be surprised if it's just confused - it's very odd.
+> 
+> But I'd be perfectly happy just removing one use at a time - even if
+> we keep the s_inodes list around because of other users, it would
+> still be "one less thing".
+> 
+> > Hence, to me, the lifecycle and reference counting of inode related
+> > objects in landlock doesn't seem quite right, and the use of the
+> > security_sb_delete() callout appears to be papering over an internal
+> > lifecycle issue.
+> >
+> > I'd love to get rid of it altogether.
 
-This issue was also reported by syzbot [1].
+I'm not sure to fully understand the implications for now, but it would
+definitely be good to simplify this lifetime management.  The only
+requirement for Landlock is that inodes references should live as long
+as the related inodes are accessible by user space or already in use.
+The sooner these references are removed from related ruleset, the
+better.
 
-It can be reproduced by following these steps(more details [2]):
-1. Obtain more than 32 inputs that have similar hashes, which ends with the
-   pattern '0xxxxxxxe6'.
-2. Reboot and add the keys obtained in step 1.
-
-The reproducer demonstrates how this issue happened:
-1. In the search_nested_keyrings function, when it iterates through the
-   slots in a node(below tag ascend_to_node), if the slot pointer is meta
-   and node->back_pointer != NULL(it means a root), it will proceed to
-   descend_to_node. However, there is an exception. If node is the root,
-   and one of the slots points to a shortcut, it will be treated as a
-   keyring.
-2. Whether the ptr is keyring decided by keyring_ptr_is_keyring function.
-   However, KEYRING_PTR_SUBTYPE is 0x2UL, the same as
-   ASSOC_ARRAY_PTR_SUBTYPE_MASK.
-3. When 32 keys with the similar hashes are added to the tree, the ROOT
-   has keys with hashes that are not similar (e.g. slot 0) and it splits
-   NODE A without using a shortcut. When NODE A is filled with keys that
-   all hashes are xxe6, the keys are similar, NODE A will split with a
-   shortcut. Finally, it forms the tree as shown below, where slot 6 points
-   to a shortcut.
-
-                      NODE A
-              +------>+---+
-      ROOT    |       | 0 | xxe6
-      +---+   |       +---+
- xxxx | 0 | shortcut  :   : xxe6
-      +---+   |       +---+
- xxe6 :   :   |       |   | xxe6
-      +---+   |       +---+
-      | 6 |---+       :   : xxe6
-      +---+           +---+
- xxe6 :   :           | f | xxe6
-      +---+           +---+
- xxe6 | f |
-      +---+
-
-4. As mentioned above, If a slot(slot 6) of the root points to a shortcut,
-   it may be mistakenly transferred to a key*, leading to a read
-   out-of-bounds read.
-
-To fix this issue, one should jump to descend_to_node if the ptr is a
-shortcut, regardless of whether the node is root or not.
-
-[1] https://lore.kernel.org/all/000000000000cbb7860611f61147@google.com/T/
-[2] https://lore.kernel.org/linux-kernel/1cfa878e-8c7b-4570-8606-21daf5e13ce7@huaweicloud.com/
-
-Fixes: b2a4df200d57 ("KEYS: Expand the capacity of a keyring")
-Reported-by: syzbot+5b415c07907a2990d1a3@syzkaller.appspotmail.com
-Signed-off-by: Chen Ridong <chenridong@huawei.com>
----
- security/keys/keyring.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
-
-diff --git a/security/keys/keyring.c b/security/keys/keyring.c
-index 4448758f643a..f331725d5a37 100644
---- a/security/keys/keyring.c
-+++ b/security/keys/keyring.c
-@@ -772,8 +772,11 @@ static bool search_nested_keyrings(struct key *keyring,
- 	for (; slot < ASSOC_ARRAY_FAN_OUT; slot++) {
- 		ptr = READ_ONCE(node->slots[slot]);
- 
--		if (assoc_array_ptr_is_meta(ptr) && node->back_pointer)
--			goto descend_to_node;
-+		if (assoc_array_ptr_is_meta(ptr)) {
-+			if (node->back_pointer ||
-+			    assoc_array_ptr_is_shortcut(ptr))
-+				goto descend_to_node;
-+		}
- 
- 		if (!keyring_ptr_is_keyring(ptr))
- 			continue;
--- 
-2.34.1
-
+> 
+> Yeah, I think the inode lifetime is just so random these days that
+> anything that depends on it is questionable.
+> 
+> The quota case is probably the only thing where the inode lifetime
+> *really* makes sense, and that's the one where I looked at the code
+> and went "I *hope* this can be converted to traversing the dentry
+> tree", but at the same time it did look sensible to make it be about
+> inodes.
+> 
+> If we can convert the quota side to be based on dentry lifetimes, it
+> will almost certainly then have to react to the places that do
+> "d_add()" when re-connecting an inode to a dentry at lookup time.
+> 
+> So yeah, the quota code looks worse, but even if we could just remove
+> fsnotify and landlock, I'd still be much happier.
+> 
+>              Linus
