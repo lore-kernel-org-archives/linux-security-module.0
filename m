@@ -1,99 +1,168 @@
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689C6F9EC
-	for <linux-security-module@vger.kernel.org>; Tue,  8 Oct 2024 00:54:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C89D81388;
+	Tue,  8 Oct 2024 01:40:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728348880; cv=none; b=jez1WdXytoPb0tX4P8ff1ZogoO0A2jH9HoB5Kae2TxNxNOx0XHo+hLlG5bgR5nnQOhBDsjOwFbpGo2Wj04RXXD4qb1KzW04UNDag9PFOS3hl1PkkPKb77IuTZqYbPveTIQiATAAiq4WD7IThscARTvYUsgVsifFg9yhYj3E08Xg=
+	t=1728351661; cv=none; b=YwBq3iLXJiC04VOAASr8XJzxRmQX4/aGzs0lkFkg487NFROEDy5Ein19GRgap9emnF+yj5kD8iKhe6RhhBChjaJJbJfcWISXU350m/K0bv13mBUL/eHs183jm+lRVFWexBmCi6++Edntsv+KpX2eeSqNzwm+NhqbGx8a+qRuBEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728348880; c=relaxed/simple;
-	bh=NqYO63ftG4Vh81Um6zsjfmC5SEgFzFYHUlSf+opM8ws=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Gbf6Rv6QheG0F4ixbu7TcORJeU/dCLsRkQhgtlJCWwEAggb0UXO6qW6on3btVQc1tTnLx6ihWov97O89BXQmHh/EftV9Utffm3PCP9p45+89/CZ8nszoDC+XkoORkwl/H2q23bg9AjxToavDKhvpWYEYTLIJSBMwmuGi4VJVGNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=F/snIffA; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="F/snIffA"
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5399041167cso7866146e87.0
-        for <linux-security-module@vger.kernel.org>; Mon, 07 Oct 2024 17:54:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1728348876; x=1728953676; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=tnmN82gruhjoauaDPVFxp6c7gOVhPQGFyw+79HJzqU8=;
-        b=F/snIffAnVCsDmGGEitWdaEzc3HdFLoomcyh7rivNJqdUlhwvHh3Q+6+zjeloqpH31
-         8lRmZPi4zcf9+sFp1NVqBK+1tXFpNhP8R2xqLdpznab5heNJNq49KfEc9PXIEiK1xWCM
-         X5jmu7t8z6X/IAhvXIAsdz/5SnOI+Wv4sNZj4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728348876; x=1728953676;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tnmN82gruhjoauaDPVFxp6c7gOVhPQGFyw+79HJzqU8=;
-        b=oeQIdoAlTPlKU3Jo1046wwZrymDI4fTPJBEEpWvux/PdynhDXA2KSpbZQJ/Ij3bhNq
-         5pjVZOG0T0BANGVNZmTRZgNrfsJP6mZqTLkypY8JQ5CDByxCY9XbxtIrh2+AE6aGwuhR
-         UPk2FxmPqLI30C+ufxl3PmDwUuA8BD/0SaEdM3M8IaNRsA20yyeZ6Rn8vOxrMlOarky+
-         cTFTfvMvDbU/7kx6rVKwwyz6EGUewDSWoxXLDQmaCL6QShsfz+pmmBg3CaYnDFZh2bLO
-         3GbznfKRBJlNE/hmAcrKPpnojynnqx1D6k51iIB+3l/TfJ3SdbxMaJrbSXU5QXJSYxyx
-         Qb5A==
-X-Forwarded-Encrypted: i=1; AJvYcCU2XLn4LJ7uMMPKILupNJeKx4o6ZjfSS5Z7Jh0Drc+PSMI8wB20T9niyZ5DAos3B995BbTE5EZOrlX8Hyq13VhWbi6xC44=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9jPtahsv85CCK0SMNiA+241F/BFDYtZJYpbwmgjNLvQD3eKCH
-	keN3HF10x3Zd2LSmP8KDEhf6Fp3KSMYngsyGzRWi5GYJ6CN1GR4XO61bi9WvcR8QCieEbtDxoNP
-	EmLJRkg==
-X-Google-Smtp-Source: AGHT+IEJB4JkyAzGqSE/oKs8vS08lOqhhSozuqDfpHS13N4OUOqUMKKvkfqV1iLH3LQb3NAX+Dssxw==
-X-Received: by 2002:a05:6512:3e1a:b0:536:54ff:51c8 with SMTP id 2adb3069b0e04-539ab8664d7mr8293621e87.17.1728348876195;
-        Mon, 07 Oct 2024 17:54:36 -0700 (PDT)
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539afec8247sm1020300e87.67.2024.10.07.17.54.32
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Oct 2024 17:54:33 -0700 (PDT)
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5398b589032so7584426e87.1
-        for <linux-security-module@vger.kernel.org>; Mon, 07 Oct 2024 17:54:32 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU8FMGqi/XdFNVv+VFK/lR7oH9g7lDAPxY8bDQ5RC9VkdSXtuyX90YKXzUo56NLowgEPg4A6xb6KZ/e9TFq//3j8j3Uh2w=@vger.kernel.org
-X-Received: by 2002:a05:6512:3d07:b0:52e:fa5f:b6a7 with SMTP id
- 2adb3069b0e04-539ab8659c5mr8118408e87.13.1728348872429; Mon, 07 Oct 2024
- 17:54:32 -0700 (PDT)
+	s=arc-20240116; t=1728351661; c=relaxed/simple;
+	bh=h5lJ0P06Cn7OUBUvyXHzRCji3AK93vlCWS0mhFiNtC8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Y0ssIEmmHvldkeHw8PevZrvI7scNlLErlE/YazgvZ2f0d5LNQNdRTv11b/m1MV0oi3nkF+jkiSSPZOYJlpGWCIuxFXQEQW65Wr1NpGG0fz09/H5dpzqhPbmKcXJBKohgFao328phinUfqCcKjoSh6PDmFWXo5Zgwy3T48oy5Yv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XMzGb1F4zz2Dd6s;
+	Tue,  8 Oct 2024 09:39:51 +0800 (CST)
+Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
+	by mail.maildlp.com (Postfix) with ESMTPS id A53521A016C;
+	Tue,  8 Oct 2024 09:40:54 +0800 (CST)
+Received: from [10.67.109.79] (10.67.109.79) by kwepemd100013.china.huawei.com
+ (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Tue, 8 Oct
+ 2024 09:40:54 +0800
+Message-ID: <68b51392-0f93-405f-bcf4-94db22831058@huawei.com>
+Date: Tue, 8 Oct 2024 09:40:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241002014017.3801899-1-david@fromorbit.com> <20241002014017.3801899-5-david@fromorbit.com>
- <Zv5GfY1WS_aaczZM@infradead.org> <Zv5J3VTGqdjUAu1J@infradead.org>
- <20241003115721.kg2caqgj2xxinnth@quack3> <CAHk-=whg7HXYPV4wNO90j22VLKz4RJ2miCe=s0C8ZRc0RKv9Og@mail.gmail.com>
- <ZwRvshM65rxXTwxd@dread.disaster.area> <CAHk-=wi5ZpW73nLn5h46Jxcng6wn_bCUxj6JjxyyEMAGzF5KZg@mail.gmail.com>
-In-Reply-To: <CAHk-=wi5ZpW73nLn5h46Jxcng6wn_bCUxj6JjxyyEMAGzF5KZg@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 7 Oct 2024 17:54:16 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgW0RspdggU630JYUe5CyzNi5MHT4UEfx2+yZKoeezawg@mail.gmail.com>
-Message-ID: <CAHk-=wgW0RspdggU630JYUe5CyzNi5MHT4UEfx2+yZKoeezawg@mail.gmail.com>
-Subject: Re: lsm sb_delete hook, was Re: [PATCH 4/7] vfs: Convert sb->s_inodes
- iteration to super_iter_inodes()
-To: Dave Chinner <david@fromorbit.com>
-Cc: Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@infradead.org>, linux-fsdevel@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, linux-bcachefs@vger.kernel.org, 
-	kent.overstreet@linux.dev, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@linux.microsoft.com>, 
-	Jann Horn <jannh@google.com>, Serge Hallyn <serge@hallyn.com>, Kees Cook <keescook@chromium.org>, 
-	linux-security-module@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] security/keys: fix slab-out-of-bounds in
+ key_task_permission
+To: Jarkko Sakkinen <jarkko@kernel.org>, <dhowells@redhat.com>,
+	<paul@paul-moore.com>, <jmorris@namei.org>, <serge@hallyn.com>
+CC: <keyrings@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <chenridong@huaweicloud.com>
+References: <20240913070928.1670785-1-chenridong@huawei.com>
+ <6286c177ee1393c64ed2014322074497730c9b33.camel@kernel.org>
+Content-Language: en-US
+From: chenridong <chenridong@huawei.com>
+In-Reply-To: <6286c177ee1393c64ed2014322074497730c9b33.camel@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemd100013.china.huawei.com (7.221.188.163)
 
-On Mon, 7 Oct 2024 at 17:28, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> And yes, this changes the timing on when fsnotify events happen, but
-> what I'm actually hoping for is that Jan will agree that it doesn't
-> actually matter semantically.
 
-.. and yes, I realize it might actually matter. fsnotify does do
-'ihold()' to hold an inode ref, and with this that would actually be
-more or less pointless, because the mark would be removed _despite_
-such a ref.
 
-So maybe it's not an option to do what I suggested. I don't know the
-users well enough.
+On 2024/10/8 7:15, Jarkko Sakkinen wrote:
+> Hi,
+> 
+> Revisit...
+> 
+> On Fri, 2024-09-13 at 07:09 +0000, Chen Ridong wrote:
+>> We meet the same issue with the LINK, which reads memory out of
+>> bounds:
+> 
+> Never ever use pronoun "we" in a commit message in any possible
+> sentence. Instead always use passive imperative.
+> 
+> What you probably want to say is:
+> 
+> "KASAN reports an out of bounds read:"
+> 
+> Right?
+> 
 
-         Linus
+Yes.
+
+>> BUG: KASAN: slab-out-of-bounds in __kuid_val
+>> include/linux/uidgid.h:36
+>> BUG: KASAN: slab-out-of-bounds in uid_eq include/linux/uidgid.h:63
+>> [inline]
+>> BUG: KASAN: slab-out-of-bounds in key_task_permission+0x394/0x410
+>> security/keys/permission.c:54
+>> Read of size 4 at addr ffff88813c3ab618 by task stress-ng/4362
+>>
+>> CPU: 2 PID: 4362 Comm: stress-ng Not tainted 5.10.0-14930-
+>> gafbffd6c3ede #15
+>> Call Trace:
+>>   __dump_stack lib/dump_stack.c:82 [inline]
+>>   dump_stack+0x107/0x167 lib/dump_stack.c:123
+>>   print_address_description.constprop.0+0x19/0x170
+>> mm/kasan/report.c:400
+>>   __kasan_report.cold+0x6c/0x84 mm/kasan/report.c:560
+>>   kasan_report+0x3a/0x50 mm/kasan/report.c:585
+>>   __kuid_val include/linux/uidgid.h:36 [inline]
+>>   uid_eq include/linux/uidgid.h:63 [inline]
+>>   key_task_permission+0x394/0x410 security/keys/permission.c:54
+>>   search_nested_keyrings+0x90e/0xe90 security/keys/keyring.c:793
+> 
+> Snip all below away:
+> 
+>>   keyring_search_rcu+0x1b6/0x310 security/keys/keyring.c:922
+>>   search_cred_keyrings_rcu+0x111/0x2e0
+>> security/keys/process_keys.c:459
+>>   search_process_keyrings_rcu+0x1d/0x310
+>> security/keys/process_keys.c:544
+>>   lookup_user_key+0x782/0x12e0 security/keys/process_keys.c:762
+>>   keyctl_invalidate_key+0x20/0x190 security/keys/keyctl.c:434
+>>   __do_sys_keyctl security/keys/keyctl.c:1978 [inline]
+>>   __se_sys_keyctl+0x1de/0x5b0 security/keys/keyctl.c:1880
+>>   do_syscall_64+0x30/0x40 arch/x86/entry/common.c:46
+>>   entry_SYSCALL_64_after_hwframe+0x67/0xd1
+> 
+> Remember to cut only the relevant part of the stack trace to make this
+> commit message more compact and readable.
+> 
+Thank you, I will do that.
+
+>>
+>> However, we can't reproduce this issue.
+>> After our analysis, it can make this issue by following steps.
+>> 1.As syzkaller reported, the memory is allocated for struct
+> 
+> "1."
+> 
+>>    assoc_array_shortcut in the assoc_array_insert_into_terminal_node
+>>    functions.
+>> 2.In the search_nested_keyrings, when we go through the slots in a
+>> node,
+>>    (bellow tag ascend_to_node), and the slot ptr is meta and
+>>    node->back_pointer != NULL, we will proceed to  descend_to_node.
+>>    However, there is an exception. If node is the root, and one of the
+>>    slots points to a shortcut, it will be treated as a keyring.
+>> 3.Whether the ptr is keyring decided by keyring_ptr_is_keyring
+>> function.
+>>    However, KEYRING_PTR_SUBTYPE is 0x2UL, the same as
+>>    ASSOC_ARRAY_PTR_SUBTYPE_MASK,
+>> 4.As mentioned above, If a slot of the root is a shortcut, it may be
+>>    mistakenly be transferred to a key*, leading to an read out-of-
+>> bounds
+>>    read.
+> 
+> Delete the whole list and write a description of the problem and why
+> your change resolves it.
+> 
+> As per code change, let's layout it something more readable first:
+> 
+> /* Traverse branches into depth: */
+> if (assoc_array_ptr_is_meta(ptr)) {
+> 	if (node->back_pointer || assoc_array_ptr_is_shortcut(ptr))
+> 		goto descend_to_node;
+> }
+> 
+> So one thing that should be explained just to make the description
+> rigid is why 'ptr' is passed to assoc_array_ptr_is_shortcut() and
+> not 'node'. I'm actually 100% sure about that part, which kind
+> of supports my view here, right? :-)
+> 
+> The first part of the if-statement obviously filters out everything
+> that is not root (when it comes to 'node'). Explain the second part.
+> At that point it is know that node is a root node, so continue from
+> there.
+> 
+> BR, Jarkko
+> 
+
+Thank you for your patience.
+I will update soon.
+
+Best regards,
+Ridong
