@@ -1,328 +1,225 @@
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic309-27.consmr.mail.ne1.yahoo.com (sonic309-27.consmr.mail.ne1.yahoo.com [66.163.184.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2A63199236;
-	Wed,  9 Oct 2024 16:44:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3457F1D3631
+	for <linux-security-module@vger.kernel.org>; Wed,  9 Oct 2024 17:34:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.184.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728492258; cv=none; b=OzE3+sdUX7LsWcDjZ0OjBoxanoNDJ8TYRjLc4exN/q6aW40Hm9r86+xx+8grZ3VUNLAWzi/K5JVzoOBwpYeQxdToz+wTtAreNFA5L3B0yR/O8Q17P9ZTyfJErF+xqlkb2rWFlpR4fQRUMUzEz/yialCYdfD5zmRsRNG0jFiJ3As=
+	t=1728495249; cv=none; b=TDDb/zJpRB3j2wVei2gm2eULFBhHVbLqVqsf9iSEQmCLIv8RlDjlws55MuXpVj9fexf81QN4PTn99ep8yyr3D3crq/vTjw51yCsMeHClRLT1q05qIcHCsSYHw5NBcoqV6RKLdk7kfWUpeP706QwJQs7aw/TgJ+hiPQ+QqWxvzv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728492258; c=relaxed/simple;
-	bh=yPnl9NMnY8uaNwMUlyQDXeuBmvS+9LgiYGFDqKoW9rI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=sCwSxnCBBC07gOpNkEW7b3hK5a1QsIxzYM3keCd6+T519eQv1j6mh07oHOF1q6IXm8aKLclomkyuQiVcKBzjfct781KZ5k4bcCf8AJ4RHD9RjwsuX/fwGmMYThTDB1jCTckYViMHyAIxe2Nt6GVT7ttCRrmStHteaNiyT2xoyJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4XNyjV6Vmbz9v7JW;
-	Thu, 10 Oct 2024 00:18:06 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 4A8C01400E3;
-	Thu, 10 Oct 2024 00:44:07 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwCnNi7NsgZnAiiGAg--.6761S2;
-	Wed, 09 Oct 2024 17:44:06 +0100 (CET)
-Message-ID: <593282dbc9f48673c8f3b8e0f28e100f34141115.camel@huaweicloud.com>
-Subject: Re: [PATCH 1/3] ima: Remove inode lock
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
- eric.snowberg@oracle.com,  jmorris@namei.org, serge@hallyn.com,
- linux-integrity@vger.kernel.org,  linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org,  bpf@vger.kernel.org,
- ebpqwerty472123@gmail.com, Roberto Sassu <roberto.sassu@huawei.com>
-Date: Wed, 09 Oct 2024 18:43:54 +0200
-In-Reply-To: <7358f12d852964d9209492e337d33b8880234b74.camel@huaweicloud.com>
-References: <20241008165732.2603647-1-roberto.sassu@huaweicloud.com>
-	 <CAHC9VhSyWNKqustrTjA1uUaZa_jA-KjtzpKdJ4ikSUKoi7iV0Q@mail.gmail.com>
-	 <CAHC9VhQR2JbB7ni2yX_U8TWE0PcQQkm_pBCuG3nYN7qO15nNjg@mail.gmail.com>
-	 <7358f12d852964d9209492e337d33b8880234b74.camel@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1728495249; c=relaxed/simple;
+	bh=FyZL+jVtpf/tYxhn0EH8VQfz1LJ7CjgK0uyii/nDry0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Ie/+DeAQUCdzaay2/YxHHJNKaqQP3KIHam3jeMUxagWMhFgCZCPE2+22P/bw4eaMx+X1pUIzoFV8InqutIKys9JWqix4EqKQDrL5U1LD4CmHLzsHX3biY+3GWgejFY+GvVPas70XycAmVLGAM8Vk6Qib8s/DBzzEb5Qnq1cl1x8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=LvonbgFw; arc=none smtp.client-ip=66.163.184.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="LvonbgFw"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1728495246; bh=VYsNlM7MDoh1w0refd1WTiBThNASgo71a3RwWgcl4/0=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=LvonbgFw2Rl2IS0tH08gK2X53SH40liToR8GRU/BVeFHW/2jZHPeLR3Z/7OM/fQM4Rv1ydbSBV9lDd7JPNgbHJqBPc2ge3phQa/GNMGyxWx6jon1q+lbBPLDKR+2NaE3sHSeuTkSBnTj7Y07zZQYJzv04CqQ6Fy3KWAiQjM7p6a1AFNhgm5j/AFOFNW8RhxIT0mp+n56TRtVBYUo8s/j/GRwpvkrXHHcAYbBovVS2Cwo+oYeovJOUQGRe5miwSomKYCKLyA4XTM9Zs2KQfzc28a/2SmST0FnpS8z3Rwf6Q81vXf+Z3Io3XwCyPz2F3l8pxNmZKHFGulFKp/XYt/Y4g==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1728495246; bh=F1NHCbXKJMETsP6fWTs1XGS+bnK5mUHVFJIHkOgDe6u=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=qjQe1ZDaHYIIQAQx0EnVwRxcYy36r4murrWvuRBJAiZv+UDU18jWmqCCIK4/ggyjzNqwzBkqvJL0YAo+pcHYHRkaRd0ah25JSpWVHw9ZkO4M3xroCIOv62cQ5ITaA7UzOEM6GpZ+fluZUr8nHNtvzqud9820aSf5qSbym3G1kS5VgGulmQZviqgG+06Qy1MTjTcmZp4ea3zWESK3DIEPzU+Aqy7AByONgF2b4TjBx+8o1uhSoyLo6cfNty9KoF3V4E+UN8dHwwqVJDdtvqgCx2ei+oM/cgF6l53wifQ6cwRkyeO1gHH0MjLNYYlyHPgLGzl8tH+WJxoK5iilxJPhwQ==
+X-YMail-OSG: iTph0FUVM1kN3HW.L4HLw84AhaHjg3jXRLplpeK83trgzaICP2sCyk1keOXVVnS
+ DG5C0gtMPu33AiXRoBfCOMe2UOFQEYrAUZhRa5mSVn49X4dLInohkoZzsS7ejrAeAd3_wRnoSvCo
+ SvnczOyFEayLtJXPlBM00i5vdl.8hu8XUqxC.8A3yqLjN1zg.tMCgnRxM2xmr8Ap_ObsOfAz7lqs
+ s7H969tIi10uMjqPFyyLgbmyV5BJi1P_bh7ef1jiE.Pck_CKXv78IscTkGjVBKZP3i.oKCMAAN2X
+ g9ABtl1E3BC8FwEKizDji6Kqo2TX3W.An.HdvZdwFgYSNjj9yQorwIV60oiHtWB2uBMmwu5yVXlw
+ DNuitCCYEOMKpT5GELlUEh8yfBMk5Rd_fOJb2Sq63VmM.c9BCAKObrdlOmFuzjs1bhImI_7CljDR
+ mhlhSFEJQwog5.fphVQWmKxARJ8FRYkez5Rt6OM4HqG.hWTz9Dowm1.OJlwSvYvRWcxUKsPHCBDQ
+ uCHNI9sE.idzvvbuINUbfo2PY6Jd8lEmBhDURXOCQHpbFg3MvAg_b_WqtyB3vFHWrqgjUgZbGmzz
+ jJve_HRl4SKgOWaFXSbJuCnDhM57VguVob7AvukQzqU3ZXWFHkagqsBFaduyLUM9vExGRRhq4SUv
+ eMuRL_ABwwCzmNxcLnzAeJ6jQEGPlzp2YLzKa7P9kQzD.DTGGoj_wbS5oe3dzzh4iIbf9nSglOaj
+ FlxHPGeqPN61R8lVm_b_sPSndQ7R1x1zERla.Y_rqEuM5lNvYYLf2lP2VwgtpyFV0YaGLHafHuX5
+ fW1_Umg4Jr2RPki1rWKuVBo.l4VjAWcgsReGxLZmlhNaY3nC0CJbdGgMY3RgSRSRivhXUiVsXyoq
+ dqYDdDP.pvnVe_BWuqQ5GP.40VE6RZzA6HgZ8AkDJ.gaFpsdYxv5BV3iOun4iQhiMEuGl_N4.n48
+ LR7YS8dvimuRchKlSkoCtk4qXzZyqM4cgkwDKNrwYSX_OsZvq5EgJq4Ic7C2mOl3VIyPedT.ZYwn
+ 1dESMJan5pl97sFGvgNRCJYLU_lCbJzJr2cpSJwkC6E9Dic.777jC0gbVsD6W3hy01JubAIZpryY
+ xCYqx8Z.A6fhGuk6pUhRLoFfPm7INP_g2p5T_SVLSdO099uR9HygvmoPCmJUHe4j17lbDbeOcGZZ
+ 9nZHWrVfgjudWlUVJY3jlyGkUx0GpatPM7t.mgjXCTOB5npJWOBW47l81of6UNn1_.Jd5hIg0d41
+ hrileDyNyLuuEly_c.7FSb89Gtg4PFx1qIQXLAgc2ZJyzwBCyTgYF4aK8BieKoxhpzX7ON6ktK4O
+ ef94hUH0uX.7pxcNxwJlQyxb95q01vITs9A32A2dmeJEgMho2IetKWG.nV4OR4qw_TM.5f_amaAe
+ v376YCRj2KysxZThrxaIVwQOwJftXDp5WE.Jfaxa2LtcOYXvHEbowmzLUhNyw8uEAYJ5kl6L4TGl
+ jRko.oUzcyYqpzaOwTVpTp6idZ35ZPBgsVHmt9tY5GdAdU05gDsMWmmHEfpbFGzmMM2LA2pou4QJ
+ IRhHLv_.aJLEL4e9ZDdkPE6Rcb6w5boOkR5s_GArrcP2hAdNqTsjLIRag2TzSSSrozhahW6Sbjny
+ 5a_zImP8_TGM7HUJ.vgyFWqxsl92M_fnlTS7IRewvSdvEfzhb2cpGpRZbhbwcU9u3MOe5qujqnuo
+ dtEhiv19GuH5NUDzRI5k9U5FFR2OumXeWUN8.LxyNZ4LlB43zrzRFr3HAVzIUnKzKEXYz5yyBUb_
+ zNqhdZHiZ7QaD7VGvAjtTTpH3oWOcg_1AClwxt8TGQwW18TFtR4oECkUsKUFJKefausHA1lLmTJx
+ 6YIZEC8y_qB52uhSJYxxn9fCWWEjBWk0jpdv93C.ZQYuwo3F2j01cS2jzjM6LEY9gUXOB70EMhHY
+ g4cnebk1M5rsYdRxkOjdQ.IbXAohshEmnBxgH2SdijM7tQt74g0CkdCkOZM_3diajNPpzhS5Ndj_
+ .GQQ7JoiUEZwnwqUkJskmq5T0DIiK3PRywCgLZ0jF6ZTQ5sD5RMVraQvFq4wac.Jw3K46qafcy6s
+ oobxx3lvGIaDMz.pEggQWMNBzKwVZS9wM22KSok.y_TZzZJTBEH0bjTbln87gPtNWeErM_D3sTFw
+ xqFRMCUjeK7dTQFKjXvUYmtiwR1l9SBZNuZioo8FO77QKLHo9MtbYdZaj2jpoFtjJN2rX37RuAsv
+ b65fEDadGxoheDtf1YVyNsp173g6S.a_EFgWab_RqRR5xTGqxB0pBhAovXBBFmvHoQC3f1vD9HTL
+ bJK8GAJgaTGq6_XIjV3TbGwz8xv4.WMtRdS_S
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 16617802-1c8b-43b6-9667-7bf386e0d09e
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Wed, 9 Oct 2024 17:34:06 +0000
+Received: by hermes--production-gq1-5d95dc458-6q8w6 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID a7e77129a0d9b2a8b8a48f1f6322a7dc;
+          Wed, 09 Oct 2024 17:34:04 +0000 (UTC)
+From: Casey Schaufler <casey@schaufler-ca.com>
+To: casey@schaufler-ca.com,
+	paul@paul-moore.com,
+	linux-security-module@vger.kernel.org
+Cc: jmorris@namei.org,
+	serge@hallyn.com,
+	keescook@chromium.org,
+	john.johansen@canonical.com,
+	penguin-kernel@i-love.sakura.ne.jp,
+	stephen.smalley.work@gmail.com,
+	linux-kernel@vger.kernel.org,
+	selinux@vger.kernel.org,
+	mic@digikod.net
+Subject: [PATCH v4 04/13] Audit: maintain an lsm_prop in audit_context
+Date: Wed,  9 Oct 2024 10:32:12 -0700
+Message-ID: <20241009173222.12219-5-casey@schaufler-ca.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <20241009173222.12219-1-casey@schaufler-ca.com>
+References: <20241009173222.12219-1-casey@schaufler-ca.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwCnNi7NsgZnAiiGAg--.6761S2
-X-Coremail-Antispam: 1UD129KBjvJXoWfGr1fuw1DtF1kJFyDCFWktFb_yoWkXr1fpF
-	13WFyjkws2v34DXr47t3WDWr4v939rWFZrXrs2kr4kZFnrZws8tryUJF10gFy5KrW7CF4x
-	tF17KF4Utr15AaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Fb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I
-	0E14v26r1Y6r17MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWl
-	x4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r
-	1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_
-	JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcS
-	sGvfC2KfnxnUUI43ZEXa7IUbmii3UUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgALBGcF5v4MkQAAsq
+Content-Transfer-Encoding: 8bit
 
-On Wed, 2024-10-09 at 18:25 +0200, Roberto Sassu wrote:
-> On Wed, 2024-10-09 at 11:37 -0400, Paul Moore wrote:
-> > On Wed, Oct 9, 2024 at 11:36=E2=80=AFAM Paul Moore <paul@paul-moore.com=
-> wrote:
-> > > On Tue, Oct 8, 2024 at 12:57=E2=80=AFPM Roberto Sassu
-> > > <roberto.sassu@huaweicloud.com> wrote:
-> > > >=20
-> > > > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > > >=20
-> > > > Move out the mutex in the ima_iint_cache structure to a new structu=
-re
-> > > > called ima_iint_cache_lock, so that a lock can be taken regardless =
-of
-> > > > whether or not inode integrity metadata are stored in the inode.
-> > > >=20
-> > > > Introduce ima_inode_security() to simplify accessing the new struct=
-ure in
-> > > > the inode security blob.
-> > > >=20
-> > > > Move the mutex initialization and annotation in the new function
-> > > > ima_inode_alloc_security() and introduce ima_iint_lock() and
-> > > > ima_iint_unlock() to respectively lock and unlock the mutex.
-> > > >=20
-> > > > Finally, expand the critical region in process_measurement() guarde=
-d by
-> > > > iint->mutex up to where the inode was locked, use only one iint loc=
-k in
-> > > > __ima_inode_hash(), since the mutex is now in the inode security bl=
-ob, and
-> > > > replace the inode_lock()/inode_unlock() calls in ima_check_last_wri=
-ter().
-> > > >=20
-> > > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > > ---
-> > > >  security/integrity/ima/ima.h      | 26 ++++++++---
-> > > >  security/integrity/ima/ima_api.c  |  4 +-
-> > > >  security/integrity/ima/ima_iint.c | 77 ++++++++++++++++++++++++++-=
-----
-> > > >  security/integrity/ima/ima_main.c | 39 +++++++---------
-> > > >  4 files changed, 104 insertions(+), 42 deletions(-)
-> > >=20
-> > > I'm not an IMA expert, but it looks reasonable to me, although
-> > > shouldn't this carry a stable CC in the patch metadata?
-> > >=20
-> > > Reviewed-by: Paul Moore <paul@paul-moore.com>
-> >=20
-> > Sorry, one more thing ... did you verify this patchset resolves the
-> > syzbot problem?  I saw at least one reproducer.
->=20
-> Uhm, could not reproduce the deadlock with the reproducer. However,
-> without the patch I have a lockdep warning, and with I don't.
->=20
-> I asked syzbot to try the patches. Let's see.
+Replace the secid value stored in struct audit_context with a struct
+lsm_prop. Change the code that uses this value to accommodate the
+change. security_audit_rule_match() expects a lsm_prop, so existing
+scaffolding can be removed. A call to security_secid_to_secctx()
+is changed to security_lsmprop_to_secctx().  The call to
+security_ipc_getsecid() is scaffolded.
 
-I actually got a different lockdep warning:
+A new function lsmprop_is_set() is introduced to identify whether
+an lsm_prop contains a non-zero value.
 
-[  904.603365] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[  904.604264] WARNING: possible circular locking dependency detected
-[  904.605141] 6.12.0-rc2+ #20 Not tainted
-[  904.605697] ------------------------------------------------------
-[  904.606577] systemd/1 is trying to acquire lock:
-[  904.607227] ffff88810e5c2580 (&p->lock){+.+.}-{4:4}, at: seq_read_iter+0=
-x62/0x6b0
-[  904.608290]=20
-[  904.608290] but task is already holding lock:
-[  904.609105] ffff88810f4abf20 (&ima_iint_lock_mutex_key[depth]){+.+.}-{4:=
-4}, at: ima_iint_lock+0x24/0x40
-[  904.610429]=20
-[  904.610429] which lock already depends on the new lock.
-[  904.610429]=20
-[  904.611574]=20
-[  904.611574] the existing dependency chain (in reverse order) is:
-[  904.612628]=20
-[  904.612628] -> #2 (&ima_iint_lock_mutex_key[depth]){+.+.}-{4:4}:
-[  904.613681]        __mutex_lock+0xaf/0x760
-[  904.614266]        mutex_lock_nested+0x27/0x40
-[  904.614897]        ima_iint_lock+0x24/0x40
-[  904.615490]        process_measurement+0x176/0xef0
-[  904.616168]        ima_file_mmap+0x98/0x120
-[  904.616767]        security_mmap_file+0x408/0x560
-[  904.617444]        __do_sys_remap_file_pages+0x2fa/0x4c0
-[  904.618194]        __x64_sys_remap_file_pages+0x29/0x40
-[  904.618937]        x64_sys_call+0x6e8/0x4550
-[  904.619546]        do_syscall_64+0x71/0x180
-[  904.620155]        entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[  904.620952]=20
-[  904.620952] -> #1 (&mm->mmap_lock){++++}-{4:4}:
-[  904.621813]        __might_fault+0x6f/0xb0
-[  904.622400]        _copy_to_iter+0x12e/0xa80
-[  904.623009]        seq_read_iter+0x593/0x6b0
-[  904.623629]        proc_reg_read_iter+0x31/0xe0
-[  904.624276]        vfs_read+0x256/0x3d0
-[  904.624822]        ksys_read+0x6d/0x160
-[  904.625372]        __x64_sys_read+0x1d/0x30
-[  904.625964]        x64_sys_call+0x1068/0x4550
-[  904.626594]        do_syscall_64+0x71/0x180
-[  904.627188]        entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[  904.627975]=20
-[  904.627975] -> #0 (&p->lock){+.+.}-{4:4}:
-[  904.628787]        __lock_acquire+0x17f3/0x2320
-[  904.629432]        lock_acquire+0xf2/0x420
-[  904.630013]        __mutex_lock+0xaf/0x760
-[  904.630596]        mutex_lock_nested+0x27/0x40
-[  904.631225]        seq_read_iter+0x62/0x6b0
-[  904.631831]        kernfs_fop_read_iter+0x1ef/0x2c0
-[  904.632599]        __kernel_read+0x113/0x350
-[  904.633206]        integrity_kernel_read+0x23/0x40
-[  904.633902]        ima_calc_file_hash_tfm+0x14e/0x230
-[  904.634621]        ima_calc_file_hash+0x97/0x250
-[  904.635281]        ima_collect_measurement+0x4be/0x530
-[  904.636008]        process_measurement+0x7c0/0xef0
-[  904.636689]        ima_file_check+0x65/0x80
-[  904.637295]        security_file_post_open+0xb1/0x1b0
-[  904.638008]        path_openat+0x216/0x1280
-[  904.638605]        do_filp_open+0xab/0x140
-[  904.639185]        do_sys_openat2+0xba/0x120
-[  904.639805]        do_sys_open+0x4c/0x80
-[  904.640366]        __x64_sys_openat+0x23/0x30
-[  904.640992]        x64_sys_call+0x2575/0x4550
-[  904.641616]        do_syscall_64+0x71/0x180
-[  904.642207]        entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[  904.643003]=20
-[  904.643003] other info that might help us debug this:
-[  904.643003]=20
-[  904.644149] Chain exists of:
-[  904.644149]   &p->lock --> &mm->mmap_lock --> &ima_iint_lock_mutex_key[d=
-epth]
-[  904.644149]=20
-[  904.645763]  Possible unsafe locking scenario:
-[  904.645763]=20
-[  904.646614]        CPU0                    CPU1
-[  904.647264]        ----                    ----
-[  904.647909]   lock(&ima_iint_lock_mutex_key[depth]);
-[  904.648617]                                lock(&mm->mmap_lock);
-[  904.649479]                                lock(&ima_iint_lock_mutex_key=
-[depth]);
-[  904.650543]   lock(&p->lock);
-[  904.650974]=20
-[  904.650974]  *** DEADLOCK ***
-[  904.650974]=20
-[  904.651826] 1 lock held by systemd/1:
-[  904.652376]  #0: ffff88810f4abf20 (&ima_iint_lock_mutex_key[depth]){+.+.=
-}-{4:4}, at: ima_iint_lock+0x24/0x40
-[  904.653759]=20
-[  904.653759] stack backtrace:
-[  904.654391] CPU: 2 UID: 0 PID: 1 Comm: systemd Not tainted 6.12.0-rc2+ #=
-20
-[  904.655360] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.1=
-5.0-1 04/01/2014
-[  904.656497] Call Trace:
-[  904.656856]  <TASK>
-[  904.657166]  dump_stack_lvl+0x134/0x1a0
-[  904.657728]  dump_stack+0x14/0x30
-[  904.658206]  print_circular_bug+0x38d/0x450
-[  904.658812]  check_noncircular+0xed/0x120
-[  904.659396]  ? srso_return_thunk+0x5/0x5f
-[  904.659972]  ? srso_return_thunk+0x5/0x5f
-[  904.660569]  __lock_acquire+0x17f3/0x2320
-[  904.661145]  lock_acquire+0xf2/0x420
-[  904.661664]  ? seq_read_iter+0x62/0x6b0
-[  904.662217]  ? srso_return_thunk+0x5/0x5f
-[  904.662886]  __mutex_lock+0xaf/0x760
-[  904.663408]  ? seq_read_iter+0x62/0x6b0
-[  904.663961]  ? seq_read_iter+0x62/0x6b0
-[  904.664525]  ? srso_return_thunk+0x5/0x5f
-[  904.665098]  ? mark_lock+0x4e/0x750
-[  904.665610]  ? mutex_lock_nested+0x27/0x40
-[  904.666194]  ? find_held_lock+0x3a/0x100
-[  904.666770]  mutex_lock_nested+0x27/0x40
-[  904.667337]  seq_read_iter+0x62/0x6b0
-[  904.667869]  kernfs_fop_read_iter+0x1ef/0x2c0
-[  904.668536]  __kernel_read+0x113/0x350
-[  904.669079]  integrity_kernel_read+0x23/0x40
-[  904.669698]  ima_calc_file_hash_tfm+0x14e/0x230
-[  904.670349]  ? __lock_acquire+0xc32/0x2320
-[  904.670937]  ? srso_return_thunk+0x5/0x5f
-[  904.671525]  ? __lock_acquire+0xfbb/0x2320
-[  904.672113]  ? srso_return_thunk+0x5/0x5f
-[  904.672693]  ? srso_return_thunk+0x5/0x5f
-[  904.673280]  ? lock_acquire+0xf2/0x420
-[  904.673818]  ? kernfs_iop_getattr+0x4a/0xb0
-[  904.674424]  ? srso_return_thunk+0x5/0x5f
-[  904.674997]  ? find_held_lock+0x3a/0x100
-[  904.675564]  ? srso_return_thunk+0x5/0x5f
-[  904.676156]  ? srso_return_thunk+0x5/0x5f
-[  904.676740]  ? srso_return_thunk+0x5/0x5f
-[  904.677322]  ? local_clock_noinstr+0x9/0xb0
-[  904.677923]  ? srso_return_thunk+0x5/0x5f
-[  904.678502]  ? srso_return_thunk+0x5/0x5f
-[  904.679075]  ? lock_release+0x4e2/0x570
-[  904.679639]  ima_calc_file_hash+0x97/0x250
-[  904.680227]  ima_collect_measurement+0x4be/0x530
-[  904.680901]  ? srso_return_thunk+0x5/0x5f
-[  904.681496]  ? srso_return_thunk+0x5/0x5f
-[  904.682070]  ? __kernfs_iattrs+0x4a/0x140
-[  904.682658]  ? srso_return_thunk+0x5/0x5f
-[  904.683242]  ? process_measurement+0x7c0/0xef0
-[  904.683876]  ? srso_return_thunk+0x5/0x5f
-[  904.684462]  process_measurement+0x7c0/0xef0
-[  904.685078]  ? srso_return_thunk+0x5/0x5f
-[  904.685654]  ? srso_return_thunk+0x5/0x5f
-[  904.686228]  ? _raw_spin_unlock_irqrestore+0x5d/0xd0
-[  904.686938]  ? srso_return_thunk+0x5/0x5f
-[  904.687523]  ? srso_return_thunk+0x5/0x5f
-[  904.688098]  ? srso_return_thunk+0x5/0x5f
-[  904.688672]  ? local_clock_noinstr+0x9/0xb0
-[  904.689273]  ? srso_return_thunk+0x5/0x5f
-[  904.689846]  ? srso_return_thunk+0x5/0x5f
-[  904.690430]  ? srso_return_thunk+0x5/0x5f
-[  904.691005]  ? srso_return_thunk+0x5/0x5f
-[  904.691583]  ? srso_return_thunk+0x5/0x5f
-[  904.692180]  ? local_clock_noinstr+0x9/0xb0
-[  904.692841]  ? srso_return_thunk+0x5/0x5f
-[  904.693419]  ? srso_return_thunk+0x5/0x5f
-[  904.693990]  ? lock_release+0x4e2/0x570
-[  904.694544]  ? srso_return_thunk+0x5/0x5f
-[  904.695115]  ? kernfs_put_active+0x5d/0xc0
-[  904.695708]  ? srso_return_thunk+0x5/0x5f
-[  904.696286]  ? kernfs_fop_open+0x376/0x6b0
-[  904.696872]  ima_file_check+0x65/0x80
-[  904.697409]  security_file_post_open+0xb1/0x1b0
-[  904.698058]  path_openat+0x216/0x1280
-[  904.698589]  do_filp_open+0xab/0x140
-[  904.699106]  ? srso_return_thunk+0x5/0x5f
-[  904.699693]  ? lock_release+0x554/0x570
-[  904.700264]  ? srso_return_thunk+0x5/0x5f
-[  904.700836]  ? do_raw_spin_unlock+0x76/0x140
-[  904.701450]  ? srso_return_thunk+0x5/0x5f
-[  904.702021]  ? _raw_spin_unlock+0x3f/0xa0
-[  904.702606]  ? srso_return_thunk+0x5/0x5f
-[  904.703178]  ? alloc_fd+0x1ca/0x3b0
-[  904.703685]  do_sys_openat2+0xba/0x120
-[  904.704223]  ? file_free+0x8d/0x110
-[  904.704729]  do_sys_open+0x4c/0x80
-[  904.705221]  __x64_sys_openat+0x23/0x30
-[  904.705784]  x64_sys_call+0x2575/0x4550
-[  904.706337]  do_syscall_64+0x71/0x180
-[  904.706863]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[  904.707587] RIP: 0033:0x7f3462123037
-[  904.708120] Code: 55 9c 48 89 75 a0 89 7d a8 44 89 55 ac e8 a1 7a f8 ff =
-44 8b 55 ac 8b 55 9c 41 89 c0 48 8b 75 a0 8b 7d a8 b8 01 01 00 00 0f 05 <48=
-> 3d 00 f0 ff ff 77 31 44 89 c7 89 45 ac e8 f6 7a f8 ff 8b 45 ac
-[  904.710744] RSP: 002b:00007ffdd1a79370 EFLAGS: 00000293 ORIG_RAX: 000000=
-0000000101
-[  904.711821] RAX: ffffffffffffffda RBX: ffffffffffffffff RCX: 00007f34621=
-23037
-[  904.712829] RDX: 0000000000080100 RSI: 00007ffdd1a79420 RDI: 00000000fff=
-fff9c
-[  904.713839] RBP: 00007ffdd1a793e0 R08: 0000000000000000 R09: 00000000000=
-00000
-[  904.714848] R10: 0000000000000000 R11: 0000000000000293 R12: 00007ffdd1a=
-794c8
-[  904.715855] R13: 00007ffdd1a794b8 R14: 00007ffdd1a79690 R15: 00007ffdd1a=
-79690
-[  904.716877]  </TASK>
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+---
+ include/linux/security.h | 24 ++++++++++++++++++++++++
+ kernel/audit.h           |  3 ++-
+ kernel/auditsc.c         | 19 ++++++++-----------
+ 3 files changed, 34 insertions(+), 12 deletions(-)
 
-Roberto
+diff --git a/include/linux/security.h b/include/linux/security.h
+index f1c68e38b15d..5652baa4ca3c 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -291,6 +291,19 @@ static inline const char *kernel_load_data_id_str(enum kernel_load_data_id id)
+ 
+ #ifdef CONFIG_SECURITY
+ 
++/**
++ * lsmprop_is_set - report if there is a value in the lsm_prop
++ * @prop: Pointer to the exported LSM data
++ *
++ * Returns true if there is a value set, false otherwise
++ */
++static inline bool lsm_prop_is_set(struct lsm_prop *prop)
++{
++	const struct lsm_prop empty = {};
++
++	return !!memcmp(prop, &empty, sizeof(*prop));
++}
++
+ int call_blocking_lsm_notifier(enum lsm_event event, void *data);
+ int register_blocking_lsm_notifier(struct notifier_block *nb);
+ int unregister_blocking_lsm_notifier(struct notifier_block *nb);
+@@ -552,6 +565,17 @@ int security_bdev_setintegrity(struct block_device *bdev,
+ 			       size_t size);
+ #else /* CONFIG_SECURITY */
+ 
++/**
++ * lsmprop_is_set - report if there is a value in the lsm_prop
++ * @prop: Pointer to the exported LSM data
++ *
++ * Returns true if there is a value set, false otherwise
++ */
++static inline bool lsm_prop_is_set(struct lsm_prop *prop)
++{
++	return false;
++}
++
+ static inline int call_blocking_lsm_notifier(enum lsm_event event, void *data)
+ {
+ 	return 0;
+diff --git a/kernel/audit.h b/kernel/audit.h
+index a60d2840559e..d14924a887c9 100644
+--- a/kernel/audit.h
++++ b/kernel/audit.h
+@@ -11,6 +11,7 @@
+ 
+ #include <linux/fs.h>
+ #include <linux/audit.h>
++#include <linux/security.h>
+ #include <linux/skbuff.h>
+ #include <uapi/linux/mqueue.h>
+ #include <linux/tty.h>
+@@ -160,7 +161,7 @@ struct audit_context {
+ 			kuid_t			uid;
+ 			kgid_t			gid;
+ 			umode_t			mode;
+-			u32			osid;
++			struct lsm_prop		oprop;
+ 			int			has_perm;
+ 			uid_t			perm_uid;
+ 			gid_t			perm_gid;
+diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+index aaf672a962d6..e89499819817 100644
+--- a/kernel/auditsc.c
++++ b/kernel/auditsc.c
+@@ -724,9 +724,7 @@ static int audit_filter_rules(struct task_struct *tsk,
+ 				/* Find ipc objects that match */
+ 				if (!ctx || ctx->type != AUDIT_IPC)
+ 					break;
+-				/* scaffolding */
+-				prop.scaffold.secid = ctx->ipc.osid;
+-				if (security_audit_rule_match(&prop,
++				if (security_audit_rule_match(&ctx->ipc.oprop,
+ 							      f->type, f->op,
+ 							      f->lsm_rule))
+ 					++result;
+@@ -1394,19 +1392,17 @@ static void show_special(struct audit_context *context, int *call_panic)
+ 			audit_log_format(ab, " a%d=%lx", i,
+ 				context->socketcall.args[i]);
+ 		break; }
+-	case AUDIT_IPC: {
+-		u32 osid = context->ipc.osid;
+-
++	case AUDIT_IPC:
+ 		audit_log_format(ab, "ouid=%u ogid=%u mode=%#ho",
+ 				 from_kuid(&init_user_ns, context->ipc.uid),
+ 				 from_kgid(&init_user_ns, context->ipc.gid),
+ 				 context->ipc.mode);
+-		if (osid) {
++		if (lsm_prop_is_set(&context->ipc.oprop)) {
+ 			char *ctx = NULL;
+ 			u32 len;
+ 
+-			if (security_secid_to_secctx(osid, &ctx, &len)) {
+-				audit_log_format(ab, " osid=%u", osid);
++			if (security_lsmprop_to_secctx(&context->ipc.oprop,
++						       &ctx, &len)) {
+ 				*call_panic = 1;
+ 			} else {
+ 				audit_log_format(ab, " obj=%s", ctx);
+@@ -1426,7 +1422,7 @@ static void show_special(struct audit_context *context, int *call_panic)
+ 				context->ipc.perm_gid,
+ 				context->ipc.perm_mode);
+ 		}
+-		break; }
++		break;
+ 	case AUDIT_MQ_OPEN:
+ 		audit_log_format(ab,
+ 			"oflag=0x%x mode=%#ho mq_flags=0x%lx mq_maxmsg=%ld "
+@@ -2642,7 +2638,8 @@ void __audit_ipc_obj(struct kern_ipc_perm *ipcp)
+ 	context->ipc.gid = ipcp->gid;
+ 	context->ipc.mode = ipcp->mode;
+ 	context->ipc.has_perm = 0;
+-	security_ipc_getsecid(ipcp, &context->ipc.osid);
++	/* scaffolding */
++	security_ipc_getsecid(ipcp, &context->ipc.oprop.scaffold.secid);
+ 	context->type = AUDIT_IPC;
+ }
+ 
+-- 
+2.46.0
 
