@@ -1,209 +1,106 @@
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C532191F81
-	for <linux-security-module@vger.kernel.org>; Thu, 10 Oct 2024 03:27:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A7E19EED2
+	for <linux-security-module@vger.kernel.org>; Thu, 10 Oct 2024 06:24:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728530847; cv=none; b=rshdQPezZqWjTXqeZwxCFK5OgQvyxhStrXhWuY3wSVC7uWrgc8EdYtomrLdiJAS88K92lXz2dX9CiFzO9v+chWtOvc5oJyjWxYUU3g9SZrYSD4K2w+0HZZYxb7KCsDlN8Orn7mLwlDjAqRTktXrTpKVfWvPTasu730ORiZAPpxA=
+	t=1728541474; cv=none; b=Ed+hhzsk7GJdEfD1FPZl2GtVLiL/NOVN8QEMqt5k3ZruhsPbY7NHTzAgj2XeJhBjpOikQsJSBukYOzY1FfGv8YG1/JL9BI5tJFckPoVFC/yjquOYVQ1FYyBPJLA1IekwAyb/61DWd3QKSNGFbGlV+dFNH4H43euObh033Qq73uk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728530847; c=relaxed/simple;
-	bh=bg6xUL/gNKEZakZm/RxdmPfMG8PVTpoL94aIYiN0u28=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=BMTRFbpacY5vXxWvjpxuHO5SC3A7RfrER9MHWRxpaL6ZRpBvk63FLlMCX4H9j7vimuGmY7D++RjVFjavBwmyG5voymyxTiG6tPawli/Yzo8AT6Ts2B7qjqFnizTDubO1oIz1Hq4uXyTzPqKJHL3Bi20idu0rJbEwH0XPMGQlBWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a342e7e49cso6867595ab.0
-        for <linux-security-module@vger.kernel.org>; Wed, 09 Oct 2024 20:27:25 -0700 (PDT)
+	s=arc-20240116; t=1728541474; c=relaxed/simple;
+	bh=06v5ByD0afjFJR2Gk//6r4sYzvL051t2rbG6jI+cafg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=edZtXBloFsY9Ashd2i4TELCiuvoNCMQ7luY0EGq2uATXC6EyJwOA6435YB5c6jtSKoHZyU9xCagAM2hZ+tHQ/W4hXH9K1+AB3ToFu8MtmsBHcMcBDW4wQTYJafrD2d7skPYJzHtd2cK24XcHJ6QxqNRSSLD3/iWfHlCrUDSDdu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at; spf=pass smtp.mailfrom=sigma-star.at; dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b=B3Kpe3aD; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigma-star.at
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b="B3Kpe3aD"
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-37d47eff9acso235571f8f.3
+        for <linux-security-module@vger.kernel.org>; Wed, 09 Oct 2024 23:24:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sigma-star.at; s=google; t=1728541470; x=1729146270; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=06v5ByD0afjFJR2Gk//6r4sYzvL051t2rbG6jI+cafg=;
+        b=B3Kpe3aDsmbhLLtHzo8VK9ZpJpX9MSQFynq5TpP5EuIR49OtIOPRJ/nGrPm95ikCCp
+         RR89gCfBX4c307B0Zsgj+IEXmtHG5nJKycwd1i/7EZI26k0sC706MGx1O39DnkL9Ujbc
+         k5kVkTnP1BTZIIwHEA/gnrp57IQVqb3cQc83JAdlllqaJuqW4Wu5Qkjk8E8SzljDurFw
+         4MzvtfPm3oeoWZjHlGEXyPCCxyRl+XyVHEhd72zkV+zoU6cBrMcP4pN6EAd29IAhfP7E
+         qSRMDbauUOLspb7O5yxGfMcYHsadvZYMkHlPF9zx5SgEtGknn/RrPGwdXjrVff94er9y
+         uPkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728530845; x=1729135645;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jEx9yKuMGxDRrUtWwPljPyF1GgQ0nu0DmQ9JAD07cSo=;
-        b=rz8gv13clAXdmU3Prunk4w6b3oTMDCS1+P1DXKdyyeLDqlfCwWRUN8RVk1KSevWumD
-         W6X81mW9+0vNPFBRsxvVqeYbj2v5V6u7tqmerqYUk27/XZvWk++XN8IJQ3VFVIHCP6+q
-         IV1S/H3sDsJ71jhuB7KxHGI5fK299PUzGIGOcaESa738hK0HEuXJnx3M6zXYuMKaJ4kx
-         QtlA/o/W2G6YIMMBaCh96GsxjSOV0snI1fXUuPDZUvVhm8O5csmW2SPk0f4Dg6+vNHoj
-         Z34ut2oj3toPB4mknaoTl9r2bUk1+nJiFbrSZIHqv9e09+WXUbnmzwPEcsNiSePIriq4
-         NXNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV5E9Z27hqwh44bF6Sqi2/rDMJQElQfm+UTkZsq2sJmY/bCC0hbGUPp7ov7jdhWy24r6urJmvNY+gUZX0EcE52yoXtZ0os=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1znz2hSDcTL+jzEkdu+qEbzyv1u6pEfKnrXAk9CxH507vlgnO
-	EP3+Ghq60qMkcU8OsAro9pPKJxrOn7NRb0rumNVevc5LzfFFzh+KiKxGemAhXGF8CRhoET3IWnY
-	XjeV7iw/RujO5cPIxdH3P2YcKXjFZgFcQJ9FPjUu2C0yZjPvvMABYKgo=
-X-Google-Smtp-Source: AGHT+IHDU82AOk2ZEpKb4SnDnZQy26i42yEs9sTRQ7eK3b6pH4bNbiHHLXseYYnp2CbhKX5Kbmc8+aaB9Elbmi5KDJAk94TM5CQE
+        d=1e100.net; s=20230601; t=1728541470; x=1729146270;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=06v5ByD0afjFJR2Gk//6r4sYzvL051t2rbG6jI+cafg=;
+        b=orRzac09S/xXTwLVaHcc5XRIMqBStD/blREkCo4MilXNoQnVbCRAzQqX4B2bAPS5tb
+         sxvlTaodhzSMjm6CXgVFKJtH4pjJ7v1mwjkS9PKrff3PXrzCE4RaMaJndIbBUju8TPkj
+         o3ZyN/LsQXXkpA/wXTAkNjvuWWa1KMMqfGu9wBx/lEetpDc5KA33qtdfVEFScjPq9fyw
+         0NqZWl38E6PbGjgwq9YalKin/ArEHMn00tQgeHOrPj3uXwcneaCFzVveM6LFByrANRIj
+         Mx2Buoz3xm5FwZLuLY1fOHYOPEncL/U9EfSLXnz+nrYCYqH53yVAGfKAWz8J/xLutidA
+         jyIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXzak1Xi6j6wd6xDDW/RZ1d9gZ0DOcduWT/V6Re+2QLgbFWFFUD+4IhdSh9dpxsOxVisXD+HVSCdGlyP4TwLRXTDMBg7YE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNcGNfeYuLRbuYWVB9zlpv+wuY5w2I/VYB2DPgj6Le2DVmnTfo
+	V4dMxqtsJXUp8HL0zISfaJ3P/2uBwP4xQ0TMCLCoS8N+SCq0TpnsHiEDCvK53/M=
+X-Google-Smtp-Source: AGHT+IFb4UsVqlsnmRzalMlOFhL03MP9RKPAZIFBzAhHFTnSb9JuNURPjg2Y03goJMWBnZPtgCszsA==
+X-Received: by 2002:a5d:5606:0:b0:37d:4937:c9eb with SMTP id ffacd0b85a97d-37d4937cbd4mr887313f8f.21.1728541470555;
+        Wed, 09 Oct 2024 23:24:30 -0700 (PDT)
+Received: from blindfold.localnet ([82.150.214.1])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b6bd127sm605077f8f.36.2024.10.09.23.24.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 09 Oct 2024 23:24:30 -0700 (PDT)
+From: Richard Weinberger <richard@sigma-star.at>
+To: Richard Weinberger <richard@nod.at>, upstream@sigma-star.at
+Cc: netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, pabeni@redhat.com, kuba@kernel.org, edumazet@google.com, davem@davemloft.net, kadlec@netfilter.org, pablo@netfilter.org, rgb@redhat.com, upstream+net@sigma-star.at, audit@vger.kernel.org, linux-security-module@vger.kernel.org, Paul Moore <paul@paul-moore.com>
+Subject: Re: [PATCH] netfilter: Record uid and gid in xt_AUDIT
+Date: Thu, 10 Oct 2024 08:24:28 +0200
+Message-ID: <4370155.VQJxnDRnGh@somecomputer>
+In-Reply-To: <CAHC9VhSbAM3iWxhO+rgJ0d0qOtrSouw0McrjstuP5xQw3=A35Q@mail.gmail.com>
+References: <20241009203218.26329-1-richard@nod.at> <CAHC9VhSbAM3iWxhO+rgJ0d0qOtrSouw0McrjstuP5xQw3=A35Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a83:b0:3a3:4122:b56e with SMTP id
- e9e14a558f8ab-3a397d1da78mr42417435ab.26.1728530844764; Wed, 09 Oct 2024
- 20:27:24 -0700 (PDT)
-Date: Wed, 09 Oct 2024 20:27:24 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6707499c.050a0220.1139e6.0017.GAE@google.com>
-Subject: [syzbot] [apparmor?] [ext4?] INFO: rcu detected stall in sys_getdents64
-From: syzbot <syzbot+17bc8c5157022e18da8b@syzkaller.appspotmail.com>
-To: apparmor@lists.ubuntu.com, jmorris@namei.org, john.johansen@canonical.com, 
-	john@apparmor.net, linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, paul@paul-moore.com, serge@hallyn.com, 
-	syzkaller-bugs@googlegroups.com
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+Am Donnerstag, 10. Oktober 2024, 00:02:44 CEST schrieb Paul Moore:
+> [CC'ing the audit and LSM lists for obvious reasons]
+>=20
+> If we're logging the subjective credentials of the skb's associated
+> socket, we really should also log the socket's LSM secctx similar to
+> what we do with audit_log_task() and audit_log_task_context().
+> Unfortunately, I don't believe we currently have a LSM interface that
+> return the secctx from a sock/socket, although we do have
+> security_inode_getsecctx() which *should* yield the same result using
+> SOCK_INODE(sk->sk_socket).
 
-syzbot found the following issue on:
+Hm, I thought about that but saw 2173c519d5e91 ("audit: normalize NETFILTER=
+_PKT").
+It removed usage of audit_log_secctx() and many other, IMHO, useful fields.
+What about skb->secctx?
 
-HEAD commit:    fc20a3e57247 Merge tag 'for-linus-6.12a-rc2-tag' of git://..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1083b380580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ba92623fdea824c9
-dashboard link: https://syzkaller.appspot.com/bug?extid=17bc8c5157022e18da8b
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=135f7d27980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1483b380580000
+>=20
+> I should also mention that I'm currently reviewing a patchset which is
+> going to add proper support for multiple LSMs in audit which will
+> likely impact this work.
+>=20
+> https://lore.kernel.org/linux-security-module/20241009173222.12219-1-case=
+y@schaufler-ca.com/
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/2ad9af7b84b4/disk-fc20a3e5.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/1afa462ca485/vmlinux-fc20a3e5.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/75c0900b4786/bzImage-fc20a3e5.xz
+Ok!
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+17bc8c5157022e18da8b@syzkaller.appspotmail.com
-
-bridge0: received packet on veth0_to_bridge with own address as source address (addr:aa:aa:aa:aa:aa:0c, vlan:0)
-rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-rcu: 	Tasks blocked on level-0 rcu_node (CPUs 0-1): P5244/1:b..l
-rcu: 	(detected by 1, t=10503 jiffies, g=5253, q=1466 ncpus=2)
-task:syz-executor116 state:R  running task     stack:18800 pid:5244  tgid:5244  ppid:5243   flags:0x00000002
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5315 [inline]
- __schedule+0x1895/0x4b30 kernel/sched/core.c:6675
- preempt_schedule_irq+0xfb/0x1c0 kernel/sched/core.c:6997
- irqentry_exit+0x5e/0x90 kernel/entry/common.c:354
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-RIP: 0010:lock_release+0x658/0xa30 kernel/locking/lockdep.c:5850
-Code: 3c 3b 00 74 08 4c 89 f7 e8 b5 15 8e 00 f6 84 24 91 00 00 00 02 75 77 41 f7 c5 00 02 00 00 74 01 fb 48 c7 44 24 60 0e 36 e0 45 <4b> c7 04 27 00 00 00 00 4b c7 44 27 08 00 00 00 00 65 48 8b 04 25
-RSP: 0018:ffffc90003da79e0 EFLAGS: 00000206
-RAX: 0000000000000001 RBX: 1ffff920007b4f4e RCX: ffffc90003da7a03
-RDX: 0000000000000001 RSI: ffffffff8c0adc40 RDI: ffffffff8c60f920
-RBP: ffffc90003da7b10 R08: ffffffff901ceaaf R09: 1ffffffff2039d55
-R10: dffffc0000000000 R11: fffffbfff2039d56 R12: 1ffff920007b4f48
-R13: 0000000000000246 R14: ffffc90003da7a70 R15: dffffc0000000000
- rcu_lock_release include/linux/rcupdate.h:347 [inline]
- rcu_read_unlock include/linux/rcupdate.h:880 [inline]
- aa_file_perm+0x3ea/0xf50 security/apparmor/file.c:599
- common_file_perm+0x19c/0x210 security/apparmor/lsm.c:533
- security_file_permission+0x90/0x280 security/security.c:2839
- iterate_dir+0xa9/0x800 fs/readdir.c:93
- __do_sys_getdents64 fs/readdir.c:407 [inline]
- __se_sys_getdents64+0x1d3/0x4a0 fs/readdir.c:392
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fe260ad3293
-RSP: 002b:00007fe260c3eb68 EFLAGS: 00000293 ORIG_RAX: 00000000000000d9
-RAX: ffffffffffffffda RBX: 000055557789b810 RCX: 00007fe260ad3293
-RDX: 0000000000008000 RSI: 000055557789b810 RDI: 0000000000000003
-RBP: 000055557789b7e4 R08: 0000000029585289 R09: 7fffffffffffffff
-R10: 0000000000001000 R11: 0000000000000293 R12: ffffffffffffffb8
-R13: 0000000000000016 R14: 000055557789b7e0 R15: 000000000000000e
- </TASK>
-rcu: rcu_preempt kthread starved for 6018 jiffies! g5253 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x0 ->cpu=1
-rcu: 	Unless rcu_preempt kthread gets sufficient CPU time, OOM is now expected behavior.
-rcu: RCU grace-period kthread stack dump:
-task:rcu_preempt     state:R  running task     stack:25816 pid:17    tgid:17    ppid:2      flags:0x00004000
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5315 [inline]
- __schedule+0x1895/0x4b30 kernel/sched/core.c:6675
- __schedule_loop kernel/sched/core.c:6752 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6767
- schedule_timeout+0x1be/0x310 kernel/time/timer.c:2615
- rcu_gp_fqs_loop+0x2df/0x1330 kernel/rcu/tree.c:2045
- rcu_gp_kthread+0xa7/0x3b0 kernel/rcu/tree.c:2247
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-rcu: Stack dump where RCU GP kthread last ran:
-CPU: 1 UID: 0 PID: 24 Comm: ksoftirqd/1 Not tainted 6.12.0-rc1-syzkaller-00330-gfc20a3e57247 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:preempt_count arch/x86/include/asm/preempt.h:26 [inline]
-RIP: 0010:check_kcov_mode kernel/kcov.c:183 [inline]
-RIP: 0010:__sanitizer_cov_trace_pc+0x11/0x70 kernel/kcov.c:217
-Code: 5b e9 f3 c8 5d 00 0f 1f 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 48 8b 04 24 65 48 8b 0c 25 c0 d7 03 00 <65> 8b 15 40 01 6f 7e 81 e2 00 01 ff 00 74 11 81 fa 00 01 00 00 75
-RSP: 0018:ffffc900001e7260 EFLAGS: 00000246
-RAX: ffffffff8a985383 RBX: 0000000000000001 RCX: ffff88801d2f0000
-RDX: 0000000000000100 RSI: 000000000000004a RDI: ffff88802d3a0000
-RBP: ffff88802d3a0000 R08: ffffffff8a984050 R09: 0000000000000000
-R10: ffffc900001e73b0 R11: ffffffff8a983ef0 R12: ffff8880904dc640
-R13: ffff8880904dc640 R14: 000000000000004a R15: dffffc0000000000
-FS:  0000000000000000(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005555778a3818 CR3: 000000002436c000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <IRQ>
- </IRQ>
- <TASK>
- net_generic+0x13/0x240 include/net/netns/generic.h:41
- br_nf_pre_routing+0x1ca/0x1470 net/bridge/br_netfilter_hooks.c:520
- nf_hook_entry_hookfn include/linux/netfilter.h:154 [inline]
- nf_hook_bridge_pre net/bridge/br_input.c:277 [inline]
- br_handle_frame+0x9fd/0x1530 net/bridge/br_input.c:424
- __netif_receive_skb_core+0x13e8/0x4570 net/core/dev.c:5560
- __netif_receive_skb_one_core net/core/dev.c:5664 [inline]
- __netif_receive_skb+0x12f/0x650 net/core/dev.c:5779
- process_backlog+0x662/0x15b0 net/core/dev.c:6111
- __napi_poll+0xcb/0x490 net/core/dev.c:6775
- napi_poll net/core/dev.c:6844 [inline]
- net_rx_action+0x89b/0x1240 net/core/dev.c:6966
- handle_softirqs+0x2c5/0x980 kernel/softirq.c:554
- run_ksoftirqd+0xca/0x130 kernel/softirq.c:927
- smpboot_thread_fn+0x544/0xa30 kernel/smpboot.c:164
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-net_ratelimit: 33488 callbacks suppressed
-bridge0: received packet on veth0_to_bridge with own address as source address (addr:aa:aa:aa:aa:aa:0c, vlan:0)
-bridge0: received packet on veth0_to_bridge with own address as source address (addr:aa:aa:aa:aa:aa:0c, vlan:0)
-bridge0: received packet on bridge_slave_0 with own address as source address (addr:aa:aa:aa:aa:aa:0c, vlan:0)
-bridge0: received packet on bridge_slave_0 with own address as source address (addr:aa:aa:aa:aa:aa:0c, vlan:0)
-bridge0: received packet on veth0_to_bridge with own address as source address (addr:aa:aa:aa:aa:aa:0c, vlan:0)
-bridge0: received packet on veth0_to_bridge with own address as source address (addr:aa:aa:aa:aa:aa:0c, vlan:0)
-bridge0: received packet on bridge_slave_0 with own address as source address (addr:aa:aa:aa:aa:aa:0c, vlan:0)
-bridge0: received packet on bridge_slave_0 with own address as source address (addr:aa:aa:aa:aa:aa:0c, vlan:0)
-bridge0: received packet on veth0_to_bridge with own address as source address (addr:aa:aa:aa:aa:aa:0c, vlan:0)
-bridge0: received packet on veth0_to_bridge with own address as source address (addr:aa:aa:aa:aa:aa:0c, vlan:0)
+Thanks,
+//richard
+=20
+=2D-=20
+=E2=80=8B=E2=80=8B=E2=80=8B=E2=80=8B=E2=80=8Bsigma star gmbh | Eduard-Bodem=
+=2DGasse 6, 6020 Innsbruck, AUT
+UID/VAT Nr: ATU 66964118 | FN: 374287y
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
