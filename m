@@ -1,237 +1,92 @@
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DAB4198E75;
-	Thu, 10 Oct 2024 19:28:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 986361E132F
+	for <linux-security-module@vger.kernel.org>; Thu, 10 Oct 2024 20:40:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728588527; cv=none; b=AjvmeGXF+rKQB9HN6zxilKhwgmzfxd9DoGQLWhITfSq018le06nUkjtz9g/YQ8IAc/hZj83pDDn7KnEPhdbokluXIl6CxO2+8GGmE13YHv+1R7ggIX8XnlELebX3RS03eeq/I5revTZ+87WAKDRpOtwBrKk12eF959RHyhPoxhA=
+	t=1728592829; cv=none; b=W0QhwhLTiy0JuhwZZWMdh6Vgx3CZpMAJ4+hC7BVjSvniUiOAwktfH8mtw18YjALluDABSkvzO7/MndfNu76xUgvmbMjuGnQmk9g5+P+asRy//p2KiWX0skAEFKJ84Gjo9Mqgxu3QmuTZitOI8CwQF92pNhwpnMkrw1m/lr2S42Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728588527; c=relaxed/simple;
-	bh=9f+uPORL3QH6MhLko8f+K1sxyN1ZmCusxqQ3u/NGhLg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=caW758n+NVLgnZt3XAZ54cXHprarFZlFTjdXEj+Iee/yX7gaEuvmXg3kbRP+ziNMEVyFTyIeIptgEceCLh+XLfG6IsmQo+oSEQw1OxyVul3R5gM5uHYz1pTYsGhheJ3yO1EgKQFZkSku2a2yB6uBEEoAAarFg3Mz1AdNpSmFFwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.166.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3a39cabb9faso4961875ab.3;
-        Thu, 10 Oct 2024 12:28:45 -0700 (PDT)
+	s=arc-20240116; t=1728592829; c=relaxed/simple;
+	bh=zkZ6yU7DAD7YlmNJhmdip7MiifrOdjdqdbURkrcZAYA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AjVyn1O+ntLoCHTTohj47evxZzpS4frnStw3nubUgmryRKp/F2aIIYZVb9NEYlQc9PxCXzf7msTmwte9xWbN5wnE8FDVRV/nlBxw88arL6OZjqm8R3+SjX6bCTB8IIPKJSmlB7S9USXCPxDtjAtyzzrNfj5rq8hTEsSs8BdUwgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at; spf=pass smtp.mailfrom=sigma-star.at; dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b=Vb26OtuE; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigma-star.at
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b="Vb26OtuE"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-37d39d9f782so810684f8f.1
+        for <linux-security-module@vger.kernel.org>; Thu, 10 Oct 2024 13:40:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sigma-star.at; s=google; t=1728592825; x=1729197625; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rO42RQZBShP/lWCFh96DLSqblFSQl/8nGpu3kPW9gUQ=;
+        b=Vb26OtuEA5psk8oKRqbL9ncjFN+fSdcc05gol3AShlW2GBEilMuCE6vjNCikA1j0av
+         eWCcEDeJpfgjg0IYatYWao+zQpeqOYdbX1rTPuNPto9IPiRQ1i71tx1Oy1eTbnFgTVZK
+         lCj63PU0FWQphuTL4NmojGHEjHrlBTCtzL0u/fkNzI7EoiDptj01HX4ejt5TpvtehKBH
+         4DnXHvkq3zpeSbAl3osmghVDT1OlCL4tRuzRcehauHhq/MudRbtdgsW6ilXKiHvwNFnp
+         aQsSHKcfMlRUxwQk9FOLyhUoMa2aIpkvni8hbR2vHTchk71lgYxig+asFofWr470cchd
+         P0zg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728588524; x=1729193324;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wbM2TvxpGTsKXfcUXNXSabUBNZW6OXcwsb89tZuKTqQ=;
-        b=Fk9UYIcIX8snOiLktjQY7iEAwEsJ2urv7d4FT14it9d/+7Kn8dMoASVPEZOvd334ch
-         j8SG0tbrICm6MEvT93QOHSze1DuadoohxlUVe/xIvIlvfHl78eX7DLo4ZewU22GeZj16
-         0TkogYfUaYvqswYMSGbAlJ4ys5lGu1T+ebdqnF8LzCP1VGCEbY4jGboXm6P+zO1DnbH5
-         N7/1/hnbSBPbyw0l1Dtv5w4YYZnP3jiJ+7o376WnvI/dOFcvv0CJfqLeFky1vMKNPiI8
-         i8d2R0VxUNZFiXWkZdWZDzfxEoxOKO45xf6qWlX5xBIzTFRLdmRdlGyI7X6H0EP7XcQ6
-         Qnuw==
-X-Forwarded-Encrypted: i=1; AJvYcCU7KV4bDYGGW0JNhrKW1VEfBHlud+bDeAGO+dYz6OlBJEzM+quNbtZkOdgAY0MCE91/8IyBeZmi5NqgCn2nYOZ2CIVD7zn1@vger.kernel.org, AJvYcCXXPJZWfSebtPZXb+1Ogm8xMLBQGRwr0idXVRoPfwwP5tDb0O7KwRd/ToARsqzTZIrzkwyyp8myrKhO@vger.kernel.org, AJvYcCXqEKxhs6XzE7b5axqZjh6oOZ4CV78pX6V9pWB9OOXrgKM65MUxFrBfL0IXF33CGWYoUavkjw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwduJz+DSiPrbbaCvG/LM08FaTxKm3AYZEfQzpPAZVyStCqC8mn
-	E7Yel2KnV4OqoKH1kOBraUFuqUHI96YzzOxrs7jvs6m5nifO3TE=
-X-Google-Smtp-Source: AGHT+IHwqSeYYNAJcLFr3vXgoAjvi8VpAQ68Ry5qAG/NHW5XsrSYOCBRL0q+478GeLbFRGJljw3mCg==
-X-Received: by 2002:a05:6e02:1986:b0:3a0:9a32:dedc with SMTP id e9e14a558f8ab-3a3b5f863fbmr329185ab.6.1728588524554;
-        Thu, 10 Oct 2024 12:28:44 -0700 (PDT)
-Received: from [192.168.75.138] (104-63-89-173.lightspeed.livnmi.sbcglobal.net. [104.63.89.173])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a3afde4667sm3837435ab.58.2024.10.10.12.28.43
+        d=1e100.net; s=20230601; t=1728592825; x=1729197625;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rO42RQZBShP/lWCFh96DLSqblFSQl/8nGpu3kPW9gUQ=;
+        b=DfxabUPAZ9xNH77B0HWuJ/5YogqDLAryD1KLcVZUaqxnI0LFAXCC33RI1WaHOip8u3
+         ym78YG8FqhdWZkNP0Uo8yo+/11eqkoukYAOURDf8hLHY68O393zvHaqBZSCFTEUDUcXP
+         eFJc8JzJUK8HvqBynnFX6xwtqa9CwTJ3YnH92+a/CrOjvu8liNaSQKvR1DGoT+duRZdW
+         UlBrNTUoqevII+PKj67qyjb/dwg7A3P2YUNBGyPSls/2gIcdNeQVUobg+X0aoDjGjqzJ
+         7iT6l4J4AqUOBmOTWOWy3k0Bq49XFl0nMJyBdVjBwxNRwppleMpY7nnxntBlbDhIXXVQ
+         2UuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUgDes93QMBKXw3KTjGnuQm+lQGiwjG90ey2cGymhvaFeUn4ZELygqeF5L6mePBGMpVV5duOYhDULIqIg71a+2wq9K7EUA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYvPNqXg23joc9mZHBOjC0wyH+mrvVZW3zW9KP1vPBRJnLPf6G
+	TW8a2wc2OwIFG9a1jCQmwVm7xqqPOcalyI3hEDSWK5uvq/gjBtKVKKQ5y3dDeio=
+X-Google-Smtp-Source: AGHT+IHxYd9hOLDOuUcfxARzg6HTs3XT+7x6QJejf/5EJIDnBLsxJtYDpjq4FC6Qz2lH63Rfd81qjQ==
+X-Received: by 2002:a5d:4591:0:b0:37d:498a:a233 with SMTP id ffacd0b85a97d-37d552ee198mr196344f8f.43.1728592824756;
+        Thu, 10 Oct 2024 13:40:24 -0700 (PDT)
+Received: from blindfold.localnet (84-115-238-31.cable.dynamic.surfer.at. [84.115.238.31])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b6a8928sm2339875f8f.7.2024.10.10.13.40.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 12:28:43 -0700 (PDT)
-Message-ID: <fd90d5d173a47732da87d31aed8a955f73ea086e.camel@kernel.org>
-Subject: Re: [RFC PATCH v1 1/7] fs: Add inode_get_ino() and implement
- get_ino() for NFS
-From: Trond Myklebust <trondmy@kernel.org>
-To: =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>, Christian Brauner
-	 <brauner@kernel.org>, Paul Moore <paul@paul-moore.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
- linux-security-module@vger.kernel.org, audit@vger.kernel.org, Anna
- Schumaker <anna@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan
- Kara <jack@suse.cz>
-Date: Thu, 10 Oct 2024 15:28:12 -0400
-In-Reply-To: <20241010152649.849254-1-mic@digikod.net>
-References: <20241010152649.849254-1-mic@digikod.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+        Thu, 10 Oct 2024 13:40:24 -0700 (PDT)
+From: Richard Weinberger <richard@sigma-star.at>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Richard Weinberger <richard@nod.at>, upstream@sigma-star.at, netfilter-devel@vger.kernel.org, coreteam@netfilter.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, pabeni@redhat.com, kuba@kernel.org, edumazet@google.com, davem@davemloft.net, kadlec@netfilter.org, pablo@netfilter.org, rgb@redhat.com, upstream+net@sigma-star.at, audit@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH] netfilter: Record uid and gid in xt_AUDIT
+Date: Thu, 10 Oct 2024 22:40:22 +0200
+Message-ID: <5924990.Vcsy2DjxtS@somecomputer>
+In-Reply-To: <CAHC9VhRDZVJbhCbVkfs8NC=vAx-QdQwX_jMq51xzoTxFuxSXLg@mail.gmail.com>
+References: <20241009203218.26329-1-richard@nod.at> <4370155.VQJxnDRnGh@somecomputer> <CAHC9VhRDZVJbhCbVkfs8NC=vAx-QdQwX_jMq51xzoTxFuxSXLg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 2024-10-10 at 17:26 +0200, Micka=C3=ABl Sala=C3=BCn wrote:
-> When a filesystem manages its own inode numbers, like NFS's fileid
-> shown
-> to user space with getattr(), other part of the kernel may still
-> expose
-> the private inode->ino through kernel logs and audit.
->=20
-> Another issue is on 32-bit architectures, on which ino_t is 32 bits,
-> whereas the user space's view of an inode number can still be 64
-> bits.
->=20
-> Add a new inode_get_ino() helper calling the new struct
-> inode_operations' get_ino() when set, to get the user space's view of
-> an
-> inode number.=C2=A0 inode_get_ino() is called by generic_fillattr().
->=20
-> Implement get_ino() for NFS.
->=20
-> Cc: Trond Myklebust <trondmy@kernel.org>
-> Cc: Anna Schumaker <anna@kernel.org>
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Jan Kara <jack@suse.cz>
-> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
-> ---
->=20
-> I'm not sure about nfs_namespace_getattr(), please review carefully.
->=20
-> I guess there are other filesystems exposing inode numbers different
-> than inode->i_ino, and they should be patched too.
-> ---
-> =C2=A0fs/nfs/inode.c=C2=A0=C2=A0=C2=A0=C2=A0 | 6 ++++--
-> =C2=A0fs/nfs/internal.h=C2=A0 | 1 +
-> =C2=A0fs/nfs/namespace.c | 2 ++
-> =C2=A0fs/stat.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 2=
- +-
-> =C2=A0include/linux/fs.h | 9 +++++++++
-> =C2=A05 files changed, 17 insertions(+), 3 deletions(-)
->=20
-> diff --git a/fs/nfs/inode.c b/fs/nfs/inode.c
-> index 542c7d97b235..5dfc176b6d92 100644
-> --- a/fs/nfs/inode.c
-> +++ b/fs/nfs/inode.c
-> @@ -83,18 +83,19 @@ EXPORT_SYMBOL_GPL(nfs_wait_bit_killable);
-> =C2=A0
-> =C2=A0/**
-> =C2=A0 * nfs_compat_user_ino64 - returns the user-visible inode number
-> - * @fileid: 64-bit fileid
-> + * @inode: inode pointer
-> =C2=A0 *
-> =C2=A0 * This function returns a 32-bit inode number if the boot paramete=
-r
-> =C2=A0 * nfs.enable_ino64 is zero.
-> =C2=A0 */
-> -u64 nfs_compat_user_ino64(u64 fileid)
-> +u64 nfs_compat_user_ino64(const struct *inode)
-> =C2=A0{
-> =C2=A0#ifdef CONFIG_COMPAT
-> =C2=A0	compat_ulong_t ino;
-> =C2=A0#else=09
-> =C2=A0	unsigned long ino;
-> =C2=A0#endif
-> +	u64 fileid =3D NFS_FILEID(inode);
-> =C2=A0
-> =C2=A0	if (enable_ino64)
-> =C2=A0		return fileid;
-> @@ -103,6 +104,7 @@ u64 nfs_compat_user_ino64(u64 fileid)
-> =C2=A0		ino ^=3D fileid >> (sizeof(fileid)-sizeof(ino)) * 8;
-> =C2=A0	return ino;
-> =C2=A0}
-> +EXPORT_SYMBOL_GPL(nfs_compat_user_ino64);
-> =C2=A0
-> =C2=A0int nfs_drop_inode(struct inode *inode)
-> =C2=A0{
-> diff --git a/fs/nfs/internal.h b/fs/nfs/internal.h
-> index 430733e3eff2..f5555a71a733 100644
-> --- a/fs/nfs/internal.h
-> +++ b/fs/nfs/internal.h
-> @@ -451,6 +451,7 @@ extern void nfs_zap_acl_cache(struct inode
-> *inode);
-> =C2=A0extern void nfs_set_cache_invalid(struct inode *inode, unsigned lon=
-g
-> flags);
-> =C2=A0extern bool nfs_check_cache_invalid(struct inode *, unsigned long);
-> =C2=A0extern int nfs_wait_bit_killable(struct wait_bit_key *key, int
-> mode);
-> +extern u64 nfs_compat_user_ino64(const struct *inode);
-> =C2=A0
-> =C2=A0#if IS_ENABLED(CONFIG_NFS_LOCALIO)
-> =C2=A0/* localio.c */
-> diff --git a/fs/nfs/namespace.c b/fs/nfs/namespace.c
-> index e7494cdd957e..d9b1e0606833 100644
-> --- a/fs/nfs/namespace.c
-> +++ b/fs/nfs/namespace.c
-> @@ -232,11 +232,13 @@ nfs_namespace_setattr(struct mnt_idmap *idmap,
-> struct dentry *dentry,
-> =C2=A0const struct inode_operations nfs_mountpoint_inode_operations =3D {
-> =C2=A0	.getattr	=3D nfs_getattr,
-> =C2=A0	.setattr	=3D nfs_setattr,
-> +	.get_ino	=3D nfs_compat_user_ino64,
-> =C2=A0};
-> =C2=A0
-> =C2=A0const struct inode_operations nfs_referral_inode_operations =3D {
-> =C2=A0	.getattr	=3D nfs_namespace_getattr,
-> =C2=A0	.setattr	=3D nfs_namespace_setattr,
-> +	.get_ino	=3D nfs_compat_user_ino64,
-> =C2=A0};
-> =C2=A0
-> =C2=A0static void nfs_expire_automounts(struct work_struct *work)
-> diff --git a/fs/stat.c b/fs/stat.c
-> index 41e598376d7e..05636919f94b 100644
-> --- a/fs/stat.c
-> +++ b/fs/stat.c
-> @@ -50,7 +50,7 @@ void generic_fillattr(struct mnt_idmap *idmap, u32
-> request_mask,
-> =C2=A0	vfsgid_t vfsgid =3D i_gid_into_vfsgid(idmap, inode);
-> =C2=A0
-> =C2=A0	stat->dev =3D inode->i_sb->s_dev;
-> -	stat->ino =3D inode->i_ino;
-> +	stat->ino =3D inode_get_ino(inode);
-> =C2=A0	stat->mode =3D inode->i_mode;
-> =C2=A0	stat->nlink =3D inode->i_nlink;
-> =C2=A0	stat->uid =3D vfsuid_into_kuid(vfsuid);
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index e3c603d01337..0eba09a21cf7 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -2165,6 +2165,7 @@ struct inode_operations {
-> =C2=A0			=C2=A0=C2=A0=C2=A0 struct dentry *dentry, struct fileattr
-> *fa);
-> =C2=A0	int (*fileattr_get)(struct dentry *dentry, struct fileattr
-> *fa);
-> =C2=A0	struct offset_ctx *(*get_offset_ctx)(struct inode *inode);
-> +	u64 (*get_ino)(const struct inode *inode);
-> =C2=A0} ____cacheline_aligned;
-> =C2=A0
-> =C2=A0static inline int call_mmap(struct file *file, struct vm_area_struc=
-t
-> *vma)
-> @@ -2172,6 +2173,14 @@ static inline int call_mmap(struct file *file,
-> struct vm_area_struct *vma)
-> =C2=A0	return file->f_op->mmap(file, vma);
-> =C2=A0}
-> =C2=A0
-> +static inline u64 inode_get_ino(struct inode *inode)
-> +{
-> +	if (unlikely(inode->i_op->get_ino))
-> +		return inode->i_op->get_ino(inode);
-> +
-> +	return inode->i_ino;
-> +}
-> +
-> =C2=A0extern ssize_t vfs_read(struct file *, char __user *, size_t, loff_=
-t
-> *);
-> =C2=A0extern ssize_t vfs_write(struct file *, const char __user *, size_t=
-,
-> loff_t *);
-> =C2=A0extern ssize_t vfs_copy_file_range(struct file *, loff_t , struct
-> file *,
+Am Donnerstag, 10. Oktober 2024, 21:09:31 CEST schrieb Paul Moore:
+> However, as part of that commit we also dropped a number of fields
+> because it wasn't clear that anyone cared about them and if we were
+> going to (re)normalize the NETFILTER_PKT record we figured it would be
+> best to start small and re-add fields as needed to satisfy user
+> requirements.  I'm working under the assumption that if you've taken
+> the time to draft a patch and test it, you have a legitimate need :)
 
-There should be no need to add this callback to generic_fillattr().
+I'm currently exploring ways to log reliable what users/containers
+create what network connections.
+So, netfilter+conntrack+xt_AUDIT seemed legit to me.
 
-generic_fillattr() is a helper function for use by the filesystems
-themselves. It should never be called from any outside functions, as
-the inode number would be far from the only attribute that will be
-incorrect.
+Thanks,
+//richard
 
---=20
-Trond Myklebust
-Linux NFS client maintainer, Hammerspace
-trond.myklebust@hammerspace.com
+=2D-=20
+=E2=80=8B=E2=80=8B=E2=80=8B=E2=80=8B=E2=80=8Bsigma star gmbh | Eduard-Bodem=
+=2DGasse 6, 6020 Innsbruck, AUT
+UID/VAT Nr: ATU 66964118 | FN: 374287y
 
 
