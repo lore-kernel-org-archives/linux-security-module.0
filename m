@@ -1,86 +1,113 @@
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 646995381E;
-	Fri, 11 Oct 2024 15:34:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56CEE194AF3;
+	Fri, 11 Oct 2024 15:40:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728660879; cv=none; b=JQPwObNRVNokL3VuvEd6a5EgnpNljFVCJoPktsYOz9cMj280VMS+bIrfwOvrdnouoForXpIz/eyM+np3PGvEF8TfjtMUYp0cbWcYPof7dyRqQXUGQwCvZ+Sz+fSzvQ3K4j6s/CRToCL2IH3oryCtlYDk+paXJ+TsqruA0z9BXNw=
+	t=1728661245; cv=none; b=ZbC3NJ+EnJeucQ6FCoLoqzzGIl6bqtCqx3oYS62w1azB+kuYBHwYlqSZMK+U8vz91NjOs4IRCs+zHNVwb6j75ah4pAcBQCw6lsarzsnMQOEr+bINvmnmXh0Li+Xuj4HAGWVHmxz+oftE2CSgoR6Lc90qktVLLEU6Ui+0nhDZLpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728660879; c=relaxed/simple;
-	bh=dtcs1yN4pz+Zbu8KHjgOTEMBUEC8VG9TJOw5rXp6cgg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ri+hM9AXqYevIV5mWZGvDG3U77vdhDxOpX6AnwzBvkJ/fmPeJDiqHAcSkwQa7IYL8rIZPyfFuYF+7asMIIZazF7iRvZnFtQQHBYUrt55bG5W7oZp4dkkHHcikL6tSfpkh44vhzi3UPkD1aF+6+7HNfR7iAkIEQYsa7VCLW3SjL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=lLgYVWvw; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+	s=arc-20240116; t=1728661245; c=relaxed/simple;
+	bh=tVxVy8f1eOdueuP+FRZklxG2ZKTkZh+csjblCJaNsNs=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=FaJEddwdq8ynvpbEevDvkPEqEe0m+AFTYU6kbl6NsHC6X00QhOTwwGvYWwSq5SuEMSpArRC7U4CAo4UU3GJfwqPoleABLxQeMXLp4Z2dDrLeFgfsk+pL4+ntHu8yolfsM4MELt4RXfOXf9pXwPBl+C59wv74XvXvdYASrNeWqq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=FYzyubZQ; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lLgYVWvw"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Transfer-Encoding
-	:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=V5IK78oxLAcUke4+8ve0ylm+nCiIdwlDSu6wnFwD3fQ=; b=lLgYVWvwIbQuKavphrC2s+Zo+a
-	yp6uiYGdPJKOvLMrF5lWNo1w3tIe8Tk1cy0z9jURe4qUe6LYYqYMqiIu/8bq6IdvqxXYSYC/5daPe
-	xdiYL44Y1hUfz2NRhrYeI0xR7J9mNvDd7hQFfdbJf03e/7xBay/CEwa1JgRysSJ2W/jnWYVzVDMSF
-	ptG2V3fl9oUNjfEn0piSuHpqk6j3821IdiKpc7xp71S+PQrkS6pzP6Ial1cHTLiT+ypVd1Fr7ksxh
-	Nk4hYnt3IanT0tE4DMGGkvynCqFwc37lQPI2sgfyZ51VciibVmrGbbGl57qrDup+/u0oCk78P31Jd
-	mvyCLsHg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1szHf1-0000000Goqs-2W9z;
-	Fri, 11 Oct 2024 15:34:35 +0000
-Date: Fri, 11 Oct 2024 08:34:35 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Paul Moore <paul@paul-moore.com>, linux-fsdevel@vger.kernel.org,
-	linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org,
-	audit@vger.kernel.org, Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
-Subject: Re: [RFC PATCH v1 1/7] fs: Add inode_get_ino() and implement
- get_ino() for NFS
-Message-ID: <ZwlFi5EI08LlJPSw@infradead.org>
-References: <20241010152649.849254-1-mic@digikod.net>
- <ZwkaVLOFElypvSDX@infradead.org>
- <20241011.ieghie3Aiye4@digikod.net>
- <ZwkgDd1JO2kZBobc@infradead.org>
- <20241011.yai6KiDa7ieg@digikod.net>
- <Zwkm5HADvc5743di@infradead.org>
- <20241011.aetou9haeCah@digikod.net>
- <Zwk4pYzkzydwLRV_@infradead.org>
- <20241011.uu1Bieghaiwu@digikod.net>
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="FYzyubZQ"
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49BEwFTt028640;
+	Fri, 11 Oct 2024 15:40:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:subject:to:cc:references:from:in-reply-to
+	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
+	M4Az6bc1Ta3OtXBrLaglWebxytc8ORkGCkixKqyzEjs=; b=FYzyubZQeWU7EPqP
+	7b9YMWQgJK8/cPr8q5RH40qJJi9hNgWIFt9XIvnVaSkl7yeXBeauCPAFsNXA7l9j
+	R7SQDBr9iXhqXbK/YksoMT8cPyEvpndygTHurYr2m1jbihBtL9vbW5Crf61R0GKS
+	5f/oxal/xVOz8L/JEPgPlLwGj09ZKQWyvTF27myPDIjbsxTJxpSVAA7Nc2/EyhXd
+	l26ryEZYtNasjgkZK6VAflfZbxIHx9DNzGjsKUSyfwahc721W7Pz1gamgVS/XwZY
+	dze4hvmFJQb0n7U2Wcgt2iLyyKPU7K+E/JBCfMnQYeJsdud07MJCMOnhWSFVgBsW
+	GDHqKA==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42763b88fx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Oct 2024 15:40:32 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49BEe5OP030187;
+	Fri, 11 Oct 2024 15:40:31 GMT
+Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 423gsn6c3a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Oct 2024 15:40:31 +0000
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49BFeV1U44892444
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 11 Oct 2024 15:40:31 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0995A5805C;
+	Fri, 11 Oct 2024 15:40:31 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9FF2858051;
+	Fri, 11 Oct 2024 15:40:30 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 11 Oct 2024 15:40:30 +0000 (GMT)
+Message-ID: <50e5cfff-94f8-4a45-a32d-9cce4f48d5b4@linux.ibm.com>
+Date: Fri, 11 Oct 2024 11:40:30 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ima: Suspend PCR extends and log appends when rebooting
+To: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, zohar@linux.ibm.com,
+        roberto.sassu@huawei.com,
+        Tushar Sugandhi <tusharsu@linux.microsoft.com>
+References: <20241011150522.2697216-1-stefanb@linux.ibm.com>
+Content-Language: en-US
+From: Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <20241011150522.2697216-1-stefanb@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: Aqs-gjm7SZmBCNEh50J4dKGImpJP_SGl
+X-Proofpoint-GUID: Aqs-gjm7SZmBCNEh50J4dKGImpJP_SGl
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241011.uu1Bieghaiwu@digikod.net>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-11_13,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ lowpriorityscore=0 suspectscore=0 mlxlogscore=792 impostorscore=0
+ adultscore=0 phishscore=0 spamscore=0 bulkscore=0 clxscore=1015
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410110107
 
-On Fri, Oct 11, 2024 at 05:30:59PM +0200, Mickaël Salaün wrote:
-> > It still is useless.  E.g. btrfs has duplicate inode numbers due to
-> > subvolumes.
+
+
+On 10/11/24 11:05 AM, Stefan Berger wrote:
+> To avoid the following types of error messages from the TPM driver, suspend
+> PCR extends once the reboot notifier has been called. This avoids trying to
+> use the TPM after the TPM subsystem has been shut down.
 > 
-> At least it reflects what users see.
-
-Users generally don't see inode numbers.
-
-> > If you want a better pretty but not useful value just work on making
-> > i_ino 64-bits wide, which is long overdue.
+> [111707.685315][    T1] ima: Error Communicating to TPM chip, result: -19
+> [111707.685960][    T1] ima: Error Communicating to TPM chip, result: -19
 > 
-> That would require too much work for me, and this would be a pain to
-> backport to all stable kernels.
+> This error could be observed on a ppc64 machine running SuSE Linux.
+> 
+> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
 
-Well, if doing the right thing is too hard we can easily do nothing.
+Some of the code is taken from Tushar's series: 
+https://lore.kernel.org/linux-integrity/20240214153827.1087657-1-tusharsu@linux.microsoft.com/T/#m2d5f23959510ea2ada534febe03beff4a3f97ac7
 
-In case it wan't clear, this thread has been a very explicit:
+See patch 6/8.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-
+Tushar's series is still needed for carrying the log across kexec 
+properly since without it it can still happen that the state of the PCR 
+10 does not match with the IMA log if a new measurements is taken after 
+the freezing of the log (currently at 'kexec load') and before the 
+'kexec exec'.
 
