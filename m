@@ -1,156 +1,128 @@
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A434F16F27E;
-	Fri, 11 Oct 2024 16:11:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B033C16F27E
+	for <linux-security-module@vger.kernel.org>; Fri, 11 Oct 2024 16:11:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728663068; cv=none; b=pWIB7vn5MH5xiqzTP+c1uIvA26ovswc9hgCNgNdo5E2kaYV52W7Uzdk7nJp6GdbVf8Y7eHTMqH8LrSUosrS4xWXLPjfzHMqmzEWZF5TAjpjuYcxNWg4iq3xnxygSexEs4s1BGI/4UKB4UesLBABxL0emCrPYG5AJDTIojAhZC9c=
+	t=1728663075; cv=none; b=bfW0hN+n0XPaBw05CrRr/Ov42vbnYvB8G86lmXKX/z1FFQMHMX3fOtAV3o4f2TLSdHNT+OrZbaTkU7NCJsKBHOHXy8XFcec6O/twmuV0cTFKp4rJJgRI7MuwtnS5oLghy1hLbru5SeOHRrfbUBMaUoI2QhLIJuHSNgMa76GzdyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728663068; c=relaxed/simple;
-	bh=TZDn0sUuy2tinNJpUTDRdXhwz/uKpIMSWwu6/1c8yw4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=XtbL7RjwqEhk55T0WmtpKJM8e3i4U2vUPoPFfHUXZ2vV46uIavavF3UE3tOgXId11kmtmKIk078y+RecKWrEcwKxDJuvJFIFufRUHlJxu0UkKMPjqK4PG7nSk/UZyvpCUEe/BVqwDZ4+Ocjd2kybn8E9A7J9nLZd8QyfAUyxWCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4XQB1C4TTyz9v7Hl;
-	Fri, 11 Oct 2024 23:50:55 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 200E11403D2;
-	Sat, 12 Oct 2024 00:10:52 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwB3JMX_TQlngtqsAg--.53302S2;
-	Fri, 11 Oct 2024 17:10:50 +0100 (CET)
-Message-ID: <21b46f4882f0b9b12304d7786bd88f33a7ad2b97.camel@huaweicloud.com>
-Subject: Re: [PATCH v5 0/5] Lazy flush for the auth session
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>, linux-integrity@vger.kernel.org
-Cc: James.Bottomley@HansenPartnership.com, roberto.sassu@huawei.com, 
- mapengyu@gmail.com, Mimi Zohar <zohar@linux.ibm.com>, David Howells
- <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>, James Morris
- <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Peter Huewe
- <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
- keyrings@vger.kernel.org,  linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Date: Fri, 11 Oct 2024 18:10:35 +0200
-In-Reply-To: <f69e08167d8354db31013018edf064a2876f8d1c.camel@kernel.org>
-References: <20240921120811.1264985-1-jarkko@kernel.org>
-	 <f69e08167d8354db31013018edf064a2876f8d1c.camel@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1728663075; c=relaxed/simple;
+	bh=l4RWFWAO/aVOL75wfpJ2dRIK6YuWibT61ePGGE9YXfU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I8rF4LX0UZpg0zlw2GqjOjNBo1ng2B5jVSSbn4wJHcqlmyIIMC0xQKTXE7UEQdfadBoKGG++C/11Xqr0MrHYdWTAWXlghtMpLnxU5f2zSgFfSzDvt3Ww593PhyA9kUKLIYx6S2Q4V6pEz5DNTXmg3F7NEmJ0SujpV980J5aaQI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=HUXHLunT; arc=none smtp.client-ip=209.85.219.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="HUXHLunT"
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e290d6d286eso1757340276.3
+        for <linux-security-module@vger.kernel.org>; Fri, 11 Oct 2024 09:11:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1728663072; x=1729267872; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=b/95GiLQzO/ms2Ix7Jkzwr/0YrEtOp3SFzqgMi8X4J4=;
+        b=HUXHLunTj3WxgbGEQSqHP08S/LFcNL5rPR8p+gjdh6aPY2L4AvWfn34+ypQJsFjntg
+         rRt7Rb4AziwFPdCP0XUGLM7xwGdwy3EpI9AQ+HefOnfJRPGG/dyJ5dJCpsAFAm7YvT5T
+         VfhwWiRSQCQjOA9Od+SLykKGY86mfZ6qyL5EPNxg/epcE45z8xBwk/a9O1RB1T8iYN0L
+         HxhA/mkIrU4/9n4IU1xpInOJgCDUs+rZqM544qYYD3ZnlmCsZBLCijtN0P8fjj4i6QXj
+         YFXpaKVhnUdgYHXqIa43vwJoifD7+vK12Y9akSrw+gbkD1Uj7NgAZ7g7lBaFVd7OF9eh
+         wKEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728663072; x=1729267872;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=b/95GiLQzO/ms2Ix7Jkzwr/0YrEtOp3SFzqgMi8X4J4=;
+        b=qsBL8ZNOb3D1Mo8cXbBHACSeberQ9aaFIEL6ommYsjJH8zspWLa1MuGfMJZdET0znf
+         cPe0iXJsK7KcYmsGaqo5/kTL2ovCJRG1ePSVs+yaGJ99cI0vOsqP+veyK5UshUdEy+WA
+         aet2C4jLaD624J63iuV6NBtZaGlZqVoaQZ36xY2lwEWDwY/MAb/1L/KyoA1TQJcBjY5G
+         5KCG+w7VnFCghzH2JBTAQPROuZGy+r5aD1yDRcSpNXH/bbPA3I33O3CDCMp9q4H++A5u
+         alKl7crPFMC8vPtqPCS9pxXkeK5cOgL8+PeB9+iZQKJpk07+/gQkAAwgN/lcGp8C87An
+         F/Vw==
+X-Gm-Message-State: AOJu0Yzc7rCoERwzf5OBrgnCSt+hGr1cLU4TeIuW6ufeTls7Jr3GWxCR
+	7ZnJh6aHhXacKDvQBTLv7OOg6HfbMIQpuo+VPojC39c1txcvRJbbVxbq5C4m3fQGrF2WlmbVk0A
+	QT0UGxyZKFKOoQC5bMSBkSz6WRYOcZiIJSvNf
+X-Google-Smtp-Source: AGHT+IFZHZ47lJ6yP1+B4chXm0/ct/9JuqorUcmLJwaiVv7U3z2eilQKYuDhW80tIHcjJS9Xct9UfBaiTyEEa9zobhg=
+X-Received: by 2002:a05:6902:1b8e:b0:e29:20ad:8281 with SMTP id
+ 3f1490d57ef6-e2920adff78mr2314361276.33.1728663071733; Fri, 11 Oct 2024
+ 09:11:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:GxC2BwB3JMX_TQlngtqsAg--.53302S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxJF4rCFyUZF4UJrWUKrykKrg_yoW5uF15pF
-	WxKa98CFyDWw1xJ397Aw4UAFyFq34rJ34UGrykJ3s3ArWYgF1Yv3yv9rySgryUWrZ7Gr4j
-	qFsFqr1v9Fyjy3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
-	v3UUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgANBGcIif8LAQABsZ
+References: <20241009173222.12219-5-casey@schaufler-ca.com>
+ <4e2669fc0be9b0f1ca15b17ca415a87d@paul-moore.com> <a4094e38-44c9-4ab2-9b37-c1eafee16d5e@schaufler-ca.com>
+In-Reply-To: <a4094e38-44c9-4ab2-9b37-c1eafee16d5e@schaufler-ca.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 11 Oct 2024 12:11:00 -0400
+Message-ID: <CAHC9VhSaCVvj-+U+WEBxvzXyi=FPNaL7HMt4Kg86Ugi1SNnCdg@mail.gmail.com>
+Subject: Re: [PATCH v4 4/13] Audit: maintain an lsm_prop in audit_context
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: linux-security-module@vger.kernel.org, jmorris@namei.org, serge@hallyn.com, 
+	keescook@chromium.org, john.johansen@canonical.com, 
+	penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com, 
+	linux-kernel@vger.kernel.org, selinux@vger.kernel.org, mic@digikod.net
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2024-10-11 at 17:06 +0300, Jarkko Sakkinen wrote:
-> On Sat, 2024-09-21 at 15:08 +0300, Jarkko Sakkinen wrote:
-> > This patch set aims to fix:
-> > https://bugzilla.kernel.org/show_bug.cgi?id=3D219229.
-> >=20
-> > The baseline for the series is the v6.11 tag.
-> >=20
-> > v4:
-> > https://lore.kernel.org/linux-integrity/20240918203559.192605-1-jarkko@=
-kernel.org/
-> > v3:
-> > https://lore.kernel.org/linux-integrity/20240917154444.702370-1-jarkko@=
-kernel.org/
-> > v2:
-> > https://lore.kernel.org/linux-integrity/20240916110714.1396407-1-jarkko=
-@kernel.org/
-> > v1:
-> > https://lore.kernel.org/linux-integrity/20240915180448.2030115-1-jarkko=
-@kernel.org/
-> >=20
-> > Jarkko Sakkinen (5):
-> > =C2=A0 tpm: Return on tpm2_create_null_primary() failure
-> > =C2=A0 tpm: Implement tpm2_load_null() rollback
-> > =C2=A0 tpm: flush the null key only when /dev/tpm0 is accessed
-> > =C2=A0 tpm: Allocate chip->auth in tpm2_start_auth_session()
-> > =C2=A0 tpm: flush the auth session only when /dev/tpm0 is open
-> >=20
-> > =C2=A0drivers/char/tpm/tpm-chip.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
-=C2=A0 14 ++++
-> > =C2=A0drivers/char/tpm/tpm-dev-common.c |=C2=A0=C2=A0 8 +++
-> > =C2=A0drivers/char/tpm/tpm-interface.c=C2=A0 |=C2=A0 10 ++-
-> > =C2=A0drivers/char/tpm/tpm2-cmd.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
-=C2=A0=C2=A0 3 +
-> > =C2=A0drivers/char/tpm/tpm2-sessions.c=C2=A0 | 109 ++++++++++++++++++--=
---------
-> > --
-> > =C2=A0include/linux/tpm.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 2 +
-> > =C2=A06 files changed, 102 insertions(+), 44 deletions(-)
->=20
-> The summarize some discussions:
->=20
-> 1. I'll address Stefan's remarks.
-> 2. We know that these patches address the desktop boot.
-> 3. IMA is too slow =3D> add a boot option for IMA default off. I.e.
->    IMA will not use the feature unless you specifically ask.
+On Fri, Oct 11, 2024 at 11:52=E2=80=AFAM Casey Schaufler <casey@schaufler-c=
+a.com> wrote:
+> On 10/10/2024 8:08 PM, Paul Moore wrote:
+> > On Oct  9, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
+> >> Replace the secid value stored in struct audit_context with a struct
+> >> lsm_prop. Change the code that uses this value to accommodate the
+> >> change. security_audit_rule_match() expects a lsm_prop, so existing
+> >> scaffolding can be removed. A call to security_secid_to_secctx()
+> >> is changed to security_lsmprop_to_secctx().  The call to
+> >> security_ipc_getsecid() is scaffolded.
+> >>
+> >> A new function lsmprop_is_set() is introduced to identify whether
+> >> an lsm_prop contains a non-zero value.
+> >>
+> >> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> >> ---
+> >>  include/linux/security.h | 24 ++++++++++++++++++++++++
+> >>  kernel/audit.h           |  3 ++-
+> >>  kernel/auditsc.c         | 19 ++++++++-----------
+> >>  3 files changed, 34 insertions(+), 12 deletions(-)
 
-Initially, I thought that maybe it would not be good to have an event
-log with unmodified and altered measurement entries. Then, I tried to
-think if we can really prevent an active interposer from injecting
-arbitrary PCR extends and pretending that those events actually
-happened.
+...
 
-If I understood James's cover letter correctly, the kernel can detect
-whether a TPM reset occurred, but not that a PCR extend occurred (maybe
-with a shadow PCR?).
+> >> +/**
+> >> + * lsmprop_is_set - report if there is a value in the lsm_prop
+> >> + * @prop: Pointer to the exported LSM data
+> >> + *
+> >> + * Returns true if there is a value set, false otherwise
+> >> + */
+> >> +static inline bool lsm_prop_is_set(struct lsm_prop *prop)
+> >> +{
+> >> +    return false;
+> >> +}
+> >
+> > If we're going to call this lsmprop_is_set() (see 5/13), we really shou=
+ld
+> > name it that way to start in this patch.
+>
+> Agreed. That's an unfortunate artifact of the lsmblob to lsm_prop name ch=
+ange.
+>
+> > Considering everything else in this patchset looks okay, if you want me
+> > to fix this up during the merge let me know.
+>
+> I can do a v5 if that makes life easier, but if you're OK with fixing it
+> during the merge I'm completely fine with that. Thank you.
 
-Second point, do we really want to take the responsibility to disable
-the protection on behalf of users? Maybe a better choice is to let them
-consciously disable HMAC protection.
+For trivial things like this where I've already reviewed the full
+patchset it's easier/quicker if I just make the change as I can do it
+and not have to re-review everything.  Otherwise it's another revision
+for you to post, me to review, etc.; granted in that case I'm really
+just diffing between v4 and v5, not really doing a full review unless
+something odd pops up in the diff, but I think you get the idea.
 
-So, maybe we should keep the HMAC protection enabled, and if the number
-of PCR extends is above a certain threshold, we can print a warning
-message in the kernel log.
-
-Roberto
-
-> 4. Random generation can be optimized a lot with or without
->    encryption. Not sure if  I have time to do ths right now
->    but I have already patch planned for this.
->=20
-> What is blocking me is the James' request to not include
-> functional fixes. The problem with that is that if comply
-> to that request I will have to postpone all the performacne
-> fixes and send a patch set with only functional fixes and
-> go all review rounds with that before moving forward.
->=20
-> This is just how priorities go in kernel and doing by the
-> book. Is that really necessary?
->=20
-> Since I've just started in a new job any patches can be
-> expected earliest next week. That's why I was rushing with
-> the patch set in the first place because I knew that there
-> will be otherwise a few week delay but we'll get there :-)
->=20
-> BR, Jarkko
->=20
-
+--=20
+paul-moore.com
