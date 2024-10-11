@@ -1,113 +1,122 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic305-27.consmr.mail.ne1.yahoo.com (sonic305-27.consmr.mail.ne1.yahoo.com [66.163.185.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56CEE194AF3;
-	Fri, 11 Oct 2024 15:40:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2672815445D
+	for <linux-security-module@vger.kernel.org>; Fri, 11 Oct 2024 15:45:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.185.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728661245; cv=none; b=ZbC3NJ+EnJeucQ6FCoLoqzzGIl6bqtCqx3oYS62w1azB+kuYBHwYlqSZMK+U8vz91NjOs4IRCs+zHNVwb6j75ah4pAcBQCw6lsarzsnMQOEr+bINvmnmXh0Li+Xuj4HAGWVHmxz+oftE2CSgoR6Lc90qktVLLEU6Ui+0nhDZLpw=
+	t=1728661534; cv=none; b=hG+wEfLGTFxmWKVlc/jN6xKboczyG2K6BjZGIdyzAa2gWasG3zD5TGqtYmK5lb1yYMojHH1QHJl75JrokLkXAPDrZxgD9YQ3tnGC/rqGCywH3oXBTPfeuTVtHhr30UM8qUg/tUFc0Fh4DfbH0KAJaId9xSlGsz15SoFzyddJQhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728661245; c=relaxed/simple;
-	bh=tVxVy8f1eOdueuP+FRZklxG2ZKTkZh+csjblCJaNsNs=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=FaJEddwdq8ynvpbEevDvkPEqEe0m+AFTYU6kbl6NsHC6X00QhOTwwGvYWwSq5SuEMSpArRC7U4CAo4UU3GJfwqPoleABLxQeMXLp4Z2dDrLeFgfsk+pL4+ntHu8yolfsM4MELt4RXfOXf9pXwPBl+C59wv74XvXvdYASrNeWqq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=FYzyubZQ; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1728661534; c=relaxed/simple;
+	bh=ZZ67WxIVnB76P4GfmunoWfIO+zyCFe8qhuB0nefs8Go=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PPPMKfq99h81IduXPZwJt56gP4S1/r4ZZgmHwMOXttD+HdmAAyKoktvSKLu+MaOB39IImRxX6rmLVOjRv0gtAab550nHxAq72AwckExT4wf2IQqEO5AVB3vekW6l7/Fs5Ede4tHtFQCW+jm0NKQZRNcMGtRYnrYY9wa4ZRCgv34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=D+aNsUu9; arc=none smtp.client-ip=66.163.185.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="FYzyubZQ"
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49BEwFTt028640;
-	Fri, 11 Oct 2024 15:40:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:subject:to:cc:references:from:in-reply-to
-	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
-	M4Az6bc1Ta3OtXBrLaglWebxytc8ORkGCkixKqyzEjs=; b=FYzyubZQeWU7EPqP
-	7b9YMWQgJK8/cPr8q5RH40qJJi9hNgWIFt9XIvnVaSkl7yeXBeauCPAFsNXA7l9j
-	R7SQDBr9iXhqXbK/YksoMT8cPyEvpndygTHurYr2m1jbihBtL9vbW5Crf61R0GKS
-	5f/oxal/xVOz8L/JEPgPlLwGj09ZKQWyvTF27myPDIjbsxTJxpSVAA7Nc2/EyhXd
-	l26ryEZYtNasjgkZK6VAflfZbxIHx9DNzGjsKUSyfwahc721W7Pz1gamgVS/XwZY
-	dze4hvmFJQb0n7U2Wcgt2iLyyKPU7K+E/JBCfMnQYeJsdud07MJCMOnhWSFVgBsW
-	GDHqKA==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42763b88fx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Oct 2024 15:40:32 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49BEe5OP030187;
-	Fri, 11 Oct 2024 15:40:31 GMT
-Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 423gsn6c3a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Oct 2024 15:40:31 +0000
-Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
-	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49BFeV1U44892444
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 11 Oct 2024 15:40:31 GMT
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0995A5805C;
-	Fri, 11 Oct 2024 15:40:31 +0000 (GMT)
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9FF2858051;
-	Fri, 11 Oct 2024 15:40:30 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 11 Oct 2024 15:40:30 +0000 (GMT)
-Message-ID: <50e5cfff-94f8-4a45-a32d-9cce4f48d5b4@linux.ibm.com>
-Date: Fri, 11 Oct 2024 11:40:30 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ima: Suspend PCR extends and log appends when rebooting
-To: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, zohar@linux.ibm.com,
-        roberto.sassu@huawei.com,
-        Tushar Sugandhi <tusharsu@linux.microsoft.com>
-References: <20241011150522.2697216-1-stefanb@linux.ibm.com>
-Content-Language: en-US
-From: Stefan Berger <stefanb@linux.ibm.com>
-In-Reply-To: <20241011150522.2697216-1-stefanb@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: Aqs-gjm7SZmBCNEh50J4dKGImpJP_SGl
-X-Proofpoint-GUID: Aqs-gjm7SZmBCNEh50J4dKGImpJP_SGl
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="D+aNsUu9"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1728661524; bh=Zl3/D+6y7HI3TEg3CIvo46/vvwEgBKmvavaGc3sU/r4=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=D+aNsUu9+LdQcKiQUSa8x1gKTuzbYoTsV7xzwhK6uq4tYwO0CM38gN60CmUCmfAKWBRW785DP8BAOdKB3LCG7ixRKKZWjvct+obPKFS3aKJx5PmAZ0WrNYNkFXDPnjCLY01gRG5uYgxYyD0nY4POLx6LAwr+4lDcZtNtjX4NJPQHSMM6U2mfHcqiNH67LfaExIQ1gzEFu/r+cOtJ60ztSbX9diy/rkF4XJCNUQpExDJgqhKnb29PozhBD2NRw2gfeWTri0Hz8amHT0S3W/ElNA2z9EKCXRNjqJKc8DFa2z1MPPpGrNmzoHaVl0GDeAdYgiMcDXTMTPCSlItWOVJ8cA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1728661524; bh=w9gCtYguL6n11vJQ4fVljGoD4rfigGM2plM52X///Q1=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=g+0yjnZA4pJNN9GYrAvMNfVsxE65pWTkQjy3qlL5+8hGeScm1/Fe/XboCcqH8vvcm0nmBuI8bW5FmUrmqWYoNFeuWmVBySu1VYd3HoI+6ypOfyvoVWjgBMqNZqbf40F8DiZJepSw+bZmgTErdCHANAxDHPFH6UsFJLzCo3WRu+PA1PLVOb11vMullXXHL6UiS0SE4kAGUAhCqobCueHS72JQGon9htW5rJpcYI1u3FL+G+OaHc6H8Kfjszkj8m55Bv2Nx+tNemkGwFxqgNEynwxD3nk0Ifg0kCOuCLhWj20pg0tzJdR7LC8x5thS0NsGFfXKhZ0xpZUTeCkcFy8UUQ==
+X-YMail-OSG: gU3cfakVM1mj7H_VcPpD_c8dGIS9CE5TsIQivt9C4nbWK7AXhTJg36J5FYn1Vdu
+ P.hVVsOBkNc5_F7d8T_wGuaKECgbK33F0HBo7qWIyJ_vTGdBjGRlp02EGRQPyzYgfDRC0sKkTt4y
+ xbKNngXtY5wXj4Xd9bZNHWXaJaMdoew206pAIbWKUAA0nm_.lAEFHMsz1RCPfMK4sCmk4NvX_gGJ
+ zxgWoipxtYOPZse1be6omXXKMaSTUWxknPRhDg.yhpkU1iOgHcy3hHDofFodmSZNq9qYiUkIj7OM
+ QIA1VdwnwpkWh8.j.GgBctj5bo8JZFDydm_P_W8A0Y.Hpf4llO8Zt4FGVa1_2QVnta0Ofidez.QF
+ gn_9ZQZQxCr97WLo4xCLgd2Hg6NQaUX0WIzvpjGNq_9fpG8vuHEUd0X7Psxh0vdDa_xAWRLn4t75
+ U9B.RyXfXUKwk03TLFsPAGhGKEqcqOB_IYE35mfSoNT6DYEazjVr_DNwJxnFWCDGNn8VeSroRQF0
+ Gf0jAWrGRShuRvVGHWmoAK_z3tz8M.hsbz5soABnYV5wEwNcT0Y5LhDABg.cuq9hzgmEPHq6ClqW
+ TDUp2cb63AkkyecIewznVtwSJ3t6gXzoB_gKsUX7n.rkQsCJZCLiHo.OV1wZ07ZFeEGrnuupWP1F
+ QbGTnA58Z1e7nzXuE1dhKg25mnTJEys_MIk7e2lC3ttzShX2TyH8nQSKthVhUO8glfD.FCIoMMEL
+ RxDW06HDYE4UVp3FSXSyrAZMnQdT8nNHNzWMYA_8zkDZg3ekhFLXpH1snvYyhdyk9prqK4xRNTUZ
+ yX9T1B7MdNZPc3CTHnUI0U7KU6mox8CGN4.LPOrEoELtEmaqUcJTqqWRE4whNVeVn1b9LppOF7Xk
+ giEJirxEbxfCi79ktYYYNViFdTkGR3at8yCEyY81b1owuse.rkAdL8D_Fz6VpN5V.j9vkaOVxrca
+ XbVDqwlhXBmXz8_9uFyoENLVidoVHj8allgTkiTLDaaEuNbL2WlKoL8jSpscYVJjr.adV2qZAzsm
+ 3ED5LhDQciz8QsPo1Ek.60d3bmSXv6pwIVsDRXEcuyX2YbYM49zUqyipJK16ZH7B7ip_bTVmwIWI
+ 6Uoa_rwfuhIYC9AXCIdN_yupv9VGor3GnKSaFXzLaBEHgDw41flALqNDwhT8L5RgnttKmDxkjiYl
+ Q1fYdkKJU2V4RVcjwVOkpDQsOjoMbUatFYxH4wdyBA_fDZSZVrUlxEPYZkMyXhY8JyxXyftpMXhM
+ _MV_HLZoWIG9AQG33ZeB6qArjKSJeKBw6diOc2kmpChfyrQ2S7qaZRyCiziL2_dDeQulmzpFI0Sn
+ smzaHjOoBr4hPXElr5bwvq6EC_IDg8uNmZb3P.y.sNmQ4Fxgrpd3Xhj3Qrxx5iQaoFn2SBrmi43P
+ T8rLztBXJeYIoAXz.MsLYpbUp3sN0NxyC3FSqmMYsVY5Ct7d7vY9p4OiwO4idsZ9SEdF5LZF22Hu
+ eLxRY6vu0qXsY.s1v_0Dj_q29CaD4SN2PUg2zwnVJHfMjgjX92Vi_TzcF.03_6LbiLPJernDKy.R
+ dMafeJ9AX.QSf._ANjf93VGQTaGGZLRLqnsg.UpNlMC5HcQG3LhV15vDaOSJzU8CCbpoXT8iaV4V
+ tGOMIoYPhLxP3EIX5tFYjAOiOyef_Z.FXZ4y1Eud6qhqyZBAcdQWJNc52bUfD6oL_9oargRVqzL4
+ _OaW6It50BYG03ppxJ3T7uU4GWvqxAg3LYMYxebgKens88T.mS9k5j0M0krCmS1E0pBFMXS1.PUi
+ iLGb.jmJ76DEwi87g1J6C1S1L.rWz2Fj.wSkQkOY60IenozZ8MgkYPBqXr2WBmVO3sgxQ1sVhHdO
+ Gko6wAvMuly7FpErQqpN8KddZoPDvHBKFJrOXsE0v5lvUizA46B.vpQfdh7b3IY1MPkgJ7_iaxr.
+ s0fMIxNnH5CL8AUR6mJm83DUB6qFkM6yyt61JPSfzBOndfkwYWzzyHWLp0G9eyfznUQHwraTjJX4
+ fLBNfNXEXAyDBcdLoqZk.5EUEuf_n3LXahb.4AnUYKC73Er34se.sgvBQRCsj0FlWRjfQ03cWEZZ
+ hKxsYOHPwifTLGacTRL7_lWKcncatdheN98TOzcoQCfYTRDn6gaRVpRxGaxG8GBFLvQaaqr.ANjp
+ xtgTZRKx8nsfb8krZVKW0RuEBHMZe5f4DejrWehv1xusc4tFEtLNpNSkmGAGQ1GP94pOnsLcMFzA
+ 6zVTkBGtaxUliA_jo0fXPlscOHyh8xVuGjvBpZgA1IKOuFyVSJgOI9x99l.dgoNdM3EKUXcRHxUO
+ UuvblGQ6vHp_4.dozVjKhGJ7oI2c0qBMFgI4-
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 7ffac3f6-d9b3-4c13-aa62-50fffeef9c53
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.ne1.yahoo.com with HTTP; Fri, 11 Oct 2024 15:45:24 +0000
+Received: by hermes--production-gq1-5d95dc458-24x88 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 8eeba5143bfa479ac5e23185bad5640a;
+          Fri, 11 Oct 2024 15:45:18 +0000 (UTC)
+Message-ID: <c346f1a8-8edb-4736-ba78-998316ef611d@schaufler-ca.com>
+Date: Fri, 11 Oct 2024 08:45:16 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-11_13,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
- lowpriorityscore=0 suspectscore=0 mlxlogscore=792 impostorscore=0
- adultscore=0 phishscore=0 spamscore=0 bulkscore=0 clxscore=1015
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410110107
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/13] LSM: Add the lsm_prop data structure.
+To: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org
+Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
+ john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+ stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+ selinux@vger.kernel.org, mic@digikod.net, apparmor@lists.ubuntu.com,
+ bpf@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
+References: <20241009173222.12219-2-casey@schaufler-ca.com>
+ <1e6f94db91f0df07373ec1e0c8f3eced@paul-moore.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <1e6f94db91f0df07373ec1e0c8f3eced@paul-moore.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.22806 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
+On 10/10/2024 8:08 PM, Paul Moore wrote:
+> On Oct  9, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> When more than one security module is exporting data to audit and
+>> networking sub-systems a single 32 bit integer is no longer
+>> sufficient to represent the data. Add a structure to be used instead.
+>>
+>> The lsm_prop structure definition is intended to keep the LSM
+>> specific information private to the individual security modules.
+>> The module specific information is included in a new set of
+>> header files under include/lsm. Each security module is allowed
+>> to define the information included for its use in the lsm_prop.
+>> SELinux includes a u32 secid. Smack includes a pointer into its
+>> global label list. The conditional compilation based on feature
+>> inclusion is contained in the include/lsm files.
+>>
+>> Suggested-by: Paul Moore <paul@paul-moore.com>
+>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+>> Cc: apparmor@lists.ubuntu.com
+>> Cc: bpf@vger.kernel.org
+>> Cc: selinux@vger.kernel.org
+>> Cc: linux-security-module@vger.kernel.org
+>> ---
+>>  include/linux/lsm/apparmor.h | 17 +++++++++++++++++
+>>  include/linux/lsm/bpf.h      | 16 ++++++++++++++++
+>>  include/linux/lsm/selinux.h  | 16 ++++++++++++++++
+>>  include/linux/lsm/smack.h    | 17 +++++++++++++++++
+>>  include/linux/security.h     | 20 ++++++++++++++++++++
+>>  5 files changed, 86 insertions(+)
+>>  create mode 100644 include/linux/lsm/apparmor.h
+>>  create mode 100644 include/linux/lsm/bpf.h
+>>  create mode 100644 include/linux/lsm/selinux.h
+>>  create mode 100644 include/linux/lsm/smack.h
+> Looks good to me, thanks for the lsm_prop rename.  As a FYI, I did add
+> a line to the MAINTAINERS entry for include/linux/lsm/.
 
+Thank you. 
 
-On 10/11/24 11:05 AM, Stefan Berger wrote:
-> To avoid the following types of error messages from the TPM driver, suspend
-> PCR extends once the reboot notifier has been called. This avoids trying to
-> use the TPM after the TPM subsystem has been shut down.
-> 
-> [111707.685315][    T1] ima: Error Communicating to TPM chip, result: -19
-> [111707.685960][    T1] ima: Error Communicating to TPM chip, result: -19
-> 
-> This error could be observed on a ppc64 machine running SuSE Linux.
-> 
-> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-
-Some of the code is taken from Tushar's series: 
-https://lore.kernel.org/linux-integrity/20240214153827.1087657-1-tusharsu@linux.microsoft.com/T/#m2d5f23959510ea2ada534febe03beff4a3f97ac7
-
-See patch 6/8.
-
-Tushar's series is still needed for carrying the log across kexec 
-properly since without it it can still happen that the state of the PCR 
-10 does not match with the IMA log if a new measurements is taken after 
-the freezing of the log (currently at 'kexec load') and before the 
-'kexec exec'.
-
+>
+> --
+> paul-moore.com
