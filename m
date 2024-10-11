@@ -1,95 +1,226 @@
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 322FDE56C
-	for <linux-security-module@vger.kernel.org>; Fri, 11 Oct 2024 01:38:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AE091E882D;
+	Fri, 11 Oct 2024 02:11:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728610737; cv=none; b=VMzQ0Pgd3p5JHE8ptjIsdetRHMIfL8s0OofhZLophQHqdVzktlvuU9MNwKzjT+8FivMZNzG0jtxd9QPD57x0wNk0cF25n33h3Q4g/zseNe/xJ1FS/Z9mhx5BE5M/E60UOnPo1Tz+Im0jQUMXqsycOTIYF0vZoQIka4qB0W++EBE=
+	t=1728612718; cv=none; b=WlOUhj01FELMtwTwLGuK8zxBPe+sAJwH3EVWeR9B9nJpAtznxB1pjg3yLxMe86Ul6r6LW+IT5MxEJRnjXGExlMjhgwlVGn5YTTjNnQgK/lNXelMYNPM4V+6QVBScFi9gR0CAMQcCH8ktGxuJuUkfV2PK1b3xy9DebLc6rQasYLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728610737; c=relaxed/simple;
-	bh=9tJXSsQ9fSvcpkQGEvBg2L68OGr0KwcdVp0VeMEtExA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Gl0gyUKt8bcLpSOk5lye/S3WxQWjUx4LeI0r6ThQH/zzTBQiqwMHL39bziFlsMtyVbVVKX2XR+fwUrxrmZ4d/mP5wU+rujd/NkdcJGlfDk5XXCfWaoDdiIpIAYJY9X0tq9w69s4L5EtL01MgV1Yrd+uan9gRJFq327EhQrSJIW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=JSCg7dbs; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="JSCg7dbs"
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e28fe3b02ffso1344954276.3
-        for <linux-security-module@vger.kernel.org>; Thu, 10 Oct 2024 18:38:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1728610735; x=1729215535; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VRcd9cwIZFh48Jk9iJ5FWFlPG9snV80qLzRLo6hXxJo=;
-        b=JSCg7dbsLrzz2Z4F7/4WhtnEh8Ni8l0mm6RCMLDgsI2tctqgNbvd5Gl4acrgKk7mtw
-         82HqGBD8uC8gf+svvHOMvucERy7YIRytPO1b14sAaDoCjXK4kgUqOi28GftMSHmvQEVx
-         HeflE8bxjuuADOiB8wnDYcwZy3JAC0fwyPj819EBeZBpnFFg3Jmc27yIeaikX7o5o4nD
-         3bQLiR7XNRBJSMQXJCaqlt0qCkf/B2R1DcErvCqPFedM2i2JoJf+AWSMNcceyPovU3uZ
-         kRLskDTU2vvEdO/MVMdQewQNhlpBXqy7PxkUey+1M9gf1as0jxayQ0CeUPG0U1ypTbA/
-         VTKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728610735; x=1729215535;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VRcd9cwIZFh48Jk9iJ5FWFlPG9snV80qLzRLo6hXxJo=;
-        b=j8/1qjashS1qeVyXUGBGdi9Yw1xjKeYXnRWOLuu++Osv8vD8I5Kdct0ngicF+0436K
-         4YdkV8dcvAot0NDitI2D3RVKTnYI/7WZqNw/iwOzCQzmO6Ngmg3nM0GYrfRxcu1RK4LL
-         BjmJ4QesSLYrhGJx2zKlmoNXvrWssONxnwDQa9qiSaFgQAo1efg8ojSbBpcZfG1744Vo
-         0NezRDBS+qOSxp94QvGz842rK1qyt+tqBFpRGgc6+fptyT2rCRAY7Tc7nPMVOb15JPa5
-         /bVr7BdT1mr3TZVjtOgnxPBrjBxkbl5ho0nJiubNOH8VztuVihjzY4nHbE+9TV2CtBX2
-         V58Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWRUNY7Rxqc57s2qXngIMWe0dhE2Nny632e4BZJgXgjycFZKgKkeuA495bYj4GY/1KB3BGseBTHVBK2+bIYrlvXAYWftEg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKKeWLlIxO50SVeVA0707e2y/ZgrAOfFh/2D76k1gmTNXxjPhm
-	L/85lwcqR2WNvswvijhye0ty4IIitRZhOOlR9oVfdwfJPpaJ5VbY+HKM3uI8C30hWBCX0W4AVYs
-	Ckc++4e+OXr57tfp5affHMzXu42Oc0on5exo8
-X-Google-Smtp-Source: AGHT+IFvoAiqQTsFIOJfK+l/01uP1b8r2mlIlEpP49rC76iACwSSk+CMcgg9Ira3XeXkyuN2zyckIivG5f2h/gWZomE=
-X-Received: by 2002:a05:6902:124f:b0:e29:6b8:af3 with SMTP id
- 3f1490d57ef6-e2919df898fmr992944276.44.1728610735214; Thu, 10 Oct 2024
- 18:38:55 -0700 (PDT)
+	s=arc-20240116; t=1728612718; c=relaxed/simple;
+	bh=TCYlr+Y7QDcrbkfAcLLSrwpGAdDWlmlEeU7ugUP5V0M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bnR6CUW6guentcDRXqFECzPZ4fAhJG1xxwWAY38ItKL/OphG2RgM4U3ytv6Tohk6uafAQ6wVhl2s9FVYtdwnte9FrGcxh0whxvhNfvUjzJXRSG3xuzFXV4H3X7aa1WdgzPEN/nbpOxqogrfV6Vm/Qg792pcZx/w1N6yPcsIGSWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XPqqw66rDz4f3jkM;
+	Fri, 11 Oct 2024 10:11:40 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id A6FB41A018D;
+	Fri, 11 Oct 2024 10:11:52 +0800 (CST)
+Received: from [10.67.109.79] (unknown [10.67.109.79])
+	by APP4 (Coremail) with SMTP id gCh0CgAXTclmiQhnOUEJDw--.58880S2;
+	Fri, 11 Oct 2024 10:11:51 +0800 (CST)
+Message-ID: <7ece4154-b7ef-4be4-926a-2f9d5c7311f6@huaweicloud.com>
+Date: Fri, 11 Oct 2024 10:11:49 +0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241010152649.849254-2-mic@digikod.net> <c4260a81d3c0ebe54c191b432ca33140@paul-moore.com>
-In-Reply-To: <c4260a81d3c0ebe54c191b432ca33140@paul-moore.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 10 Oct 2024 21:38:44 -0400
-Message-ID: <CAHC9VhSJOWD93H0nPTCdKpbM2dDnq65+JVF1khPmEbX_KhHxsQ@mail.gmail.com>
-Subject: Re: [PATCH RFC v1 2/7] audit: Fix inode numbers
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, audit@vger.kernel.org, 
-	Eric Paris <eparis@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] security/keys: fix slab-out-of-bounds in
+ key_task_permission
+To: Jarkko Sakkinen <jarkko@kernel.org>, chenridong <chenridong@huawei.com>,
+ dhowells@redhat.com, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
+Cc: keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240913070928.1670785-1-chenridong@huawei.com>
+ <6286c177ee1393c64ed2014322074497730c9b33.camel@kernel.org>
+ <68b51392-0f93-405f-bcf4-94db22831058@huawei.com>
+ <578d5b202782b3e4195b721bab11a811aa50d34e.camel@kernel.org>
+Content-Language: en-US
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <578d5b202782b3e4195b721bab11a811aa50d34e.camel@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAXTclmiQhnOUEJDw--.58880S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxtw4fWr17uw13Gw1kCFWDXFb_yoW7Cr13pF
+	WDKa4qyr15Kr9Iyr10ywnxWF1FvrW5Jw17Wr9IgryxAFsIqr1rKFZFkF1DuFy5ur4fCa4j
+	vF4Yq39xZ3Wjv3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUymb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vI
+	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
+	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0
+	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
+	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
+	14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UAwIDUUUUU=
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
-On Thu, Oct 10, 2024 at 9:20=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
-> On Oct 10, 2024 =3D?UTF-8?q?Micka=3DC3=3DABl=3D20Sala=3DC3=3DBCn?=3D <mic=
-@digikod.net> wrote:
-> >
-> > Use the new inode_get_ino() helper to log the user space's view of
-> > inode's numbers instead of the private kernel values.
-> >
-> > Cc: Paul Moore <paul@paul-moore.com>
-> > Cc: Eric Paris <eparis@redhat.com>
-> > Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
-> > ---
-> >  security/lsm_audit.c | 10 +++++-----
-> >  1 file changed, 5 insertions(+), 5 deletions(-)
->
-> Acked-by: Paul Moore <paul@paul-moore.com>
 
-It looks like patch 1/7 still needs some revisions, and an ACK from
-the NFS/VFS folks, but once that's sorted I can send the patchset up
-to Linus marked for stable.
 
---=20
-paul-moore.com
+On 2024/10/8 10:41, Jarkko Sakkinen wrote:
+> On Tue, 2024-10-08 at 09:40 +0800, chenridong wrote:
+>>
+>>
+>> On 2024/10/8 7:15, Jarkko Sakkinen wrote:
+>>> Hi,
+>>>
+>>> Revisit...
+>>>
+>>> On Fri, 2024-09-13 at 07:09 +0000, Chen Ridong wrote:
+>>>> We meet the same issue with the LINK, which reads memory out of
+>>>> bounds:
+>>>
+>>> Never ever use pronoun "we" in a commit message in any possible
+>>> sentence. Instead always use passive imperative.
+>>>
+>>> What you probably want to say is:
+>>>
+>>> "KASAN reports an out of bounds read:"
+>>>
+>>> Right?
+>>>
+>>
+>> Yes.
+>>
+>>>> BUG: KASAN: slab-out-of-bounds in __kuid_val
+>>>> include/linux/uidgid.h:36
+>>>> BUG: KASAN: slab-out-of-bounds in uid_eq
+>>>> include/linux/uidgid.h:63
+>>>> [inline]
+>>>> BUG: KASAN: slab-out-of-bounds in key_task_permission+0x394/0x410
+>>>> security/keys/permission.c:54
+>>>> Read of size 4 at addr ffff88813c3ab618 by task stress-ng/4362
+>>>>
+>>>> CPU: 2 PID: 4362 Comm: stress-ng Not tainted 5.10.0-14930-
+>>>> gafbffd6c3ede #15
+>>>> Call Trace:
+>>>>    __dump_stack lib/dump_stack.c:82 [inline]
+>>>>    dump_stack+0x107/0x167 lib/dump_stack.c:123
+>>>>    print_address_description.constprop.0+0x19/0x170
+>>>> mm/kasan/report.c:400
+>>>>    __kasan_report.cold+0x6c/0x84 mm/kasan/report.c:560
+>>>>    kasan_report+0x3a/0x50 mm/kasan/report.c:585
+>>>>    __kuid_val include/linux/uidgid.h:36 [inline]
+>>>>    uid_eq include/linux/uidgid.h:63 [inline]
+>>>>    key_task_permission+0x394/0x410 security/keys/permission.c:54
+>>>>    search_nested_keyrings+0x90e/0xe90 security/keys/keyring.c:793
+>>>
+>>> Snip all below away:
+>>>
+>>>>    keyring_search_rcu+0x1b6/0x310 security/keys/keyring.c:922
+>>>>    search_cred_keyrings_rcu+0x111/0x2e0
+>>>> security/keys/process_keys.c:459
+>>>>    search_process_keyrings_rcu+0x1d/0x310
+>>>> security/keys/process_keys.c:544
+>>>>    lookup_user_key+0x782/0x12e0 security/keys/process_keys.c:762
+>>>>    keyctl_invalidate_key+0x20/0x190 security/keys/keyctl.c:434
+>>>>    __do_sys_keyctl security/keys/keyctl.c:1978 [inline]
+>>>>    __se_sys_keyctl+0x1de/0x5b0 security/keys/keyctl.c:1880
+>>>>    do_syscall_64+0x30/0x40 arch/x86/entry/common.c:46
+>>>>    entry_SYSCALL_64_after_hwframe+0x67/0xd1
+>>>
+>>> Remember to cut only the relevant part of the stack trace to make
+>>> this
+>>> commit message more compact and readable.
+>>>
+>> Thank you, I will do that.
+>>
+>>>>
+>>>> However, we can't reproduce this issue.
+>>>> After our analysis, it can make this issue by following steps.
+>>>> 1.As syzkaller reported, the memory is allocated for struct
+>>>
+>>> "1."
+>>>
+>>>>     assoc_array_shortcut in the
+>>>> assoc_array_insert_into_terminal_node
+>>>>     functions.
+>>>> 2.In the search_nested_keyrings, when we go through the slots in
+>>>> a
+>>>> node,
+>>>>     (bellow tag ascend_to_node), and the slot ptr is meta and
+>>>>     node->back_pointer != NULL, we will proceed to
+>>>> descend_to_node.
+>>>>     However, there is an exception. If node is the root, and one
+>>>> of the
+>>>>     slots points to a shortcut, it will be treated as a keyring.
+>>>> 3.Whether the ptr is keyring decided by keyring_ptr_is_keyring
+>>>> function.
+>>>>     However, KEYRING_PTR_SUBTYPE is 0x2UL, the same as
+>>>>     ASSOC_ARRAY_PTR_SUBTYPE_MASK,
+>>>> 4.As mentioned above, If a slot of the root is a shortcut, it may
+>>>> be
+>>>>     mistakenly be transferred to a key*, leading to an read out-
+>>>> of-
+>>>> bounds
+>>>>     read.
+>>>
+>>> Delete the whole list and write a description of the problem and
+>>> why
+>>> your change resolves it.
+>>>
+>>> As per code change, let's layout it something more readable first:
+>>>
+>>> /* Traverse branches into depth: */
+>>> if (assoc_array_ptr_is_meta(ptr)) {
+>>> 	if (node->back_pointer ||
+>>> assoc_array_ptr_is_shortcut(ptr))
+>>> 		goto descend_to_node;
+>>> }
+>>>
+>>> So one thing that should be explained just to make the description
+>>> rigid is why 'ptr' is passed to assoc_array_ptr_is_shortcut() and
+>>> not 'node'. I'm actually 100% sure about that part, which kind
+>>> of supports my view here, right? :-)
+>>>
+>>> The first part of the if-statement obviously filters out everything
+>>> that is not root (when it comes to 'node'). Explain the second
+>>> part.
+>>> At that point it is know that node is a root node, so continue from
+>>> there.
+>>>
+>>> BR, Jarkko
+>>>
+>>
+>> Thank you for your patience.
+>> I will update soon.
+> 
+> Yeah of course, and I did low quality job earlier no issues admitting
+> that, so let's do this correct this time. I just try to describe
+> what I'm seeing as accurately as I can :-)
+> 
+> Here it is just important to get the explanation and the code change
+> in-sync so that it is easy to verify and compare them, given that it
+> is quite sensitive functionality and somewhat obfuscated peace of code
+> showing age.
+> 
+> Also I think a good is to make sure that every fix will leave it at
+> least a bit cleaner state. From this basis I proposed a bit different
+> layout for the code.
+> 
+>>
+>> Best regards,
+>> Ridong
+> 
+> BR,Jarkko
+
+Hi, Jarkko, I sent the v2 several days ago.
+I don't know whether you have received it. I hope you have time to look 
+into it, and I am still looking forward to your reply.
+
+v2: 
+https://lore.kernel.org/linux-kernel/20241008124639.70000-1-chenridong@huaweicloud.com/
+
+Best regards,
+Ridong
+
