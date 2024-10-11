@@ -1,183 +1,87 @@
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C9378F6A;
-	Thu, 10 Oct 2024 21:43:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25CDBD268
+	for <linux-security-module@vger.kernel.org>; Fri, 11 Oct 2024 01:20:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728596620; cv=none; b=TIO74AusEzuDDoB9u97YnsFW1JiO6eW4wbildsP1moZyOUAMQQwgodHkuTfwReX4OC/7v1lnVL6hkU1uvbd6O+r5LLMdNxlI2/uu7iD1S8dl+qNfSLJCSiZikQ8L4Mhn5VQw0AqJemI9EVDtugy2YIc+5wLj1FEAUrnb7yiLy50=
+	t=1728609653; cv=none; b=GTbCreR3Yke6JSqJCj6rMo8+ku4hKM7QUSvwK9oZY1h+1AfD6TnZ6oabAmiy6mLtxAATn58VFOCnh2eGrPW9SsGUDbNBQWtPArbMHDzh8LVnrYEghMcmyCewpOJ21w4F4ClaFwU0Ijjn0KvLZ5tL16RXwR71aL+bxW03cTkN4lY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728596620; c=relaxed/simple;
-	bh=Oec2XcEHnRVkA96bUDHw8C1REQbckjcVfS0072SQmrI=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=B5L7NnZ0dGNXTkEAEIOy3l2QfLlxrCq7f9sCGyJDlrJeixUq4ckeIAT8mBtf/LJPdWsHk7apwqT8a4uwHKAlmiEMq53r6aHBfWYMGCDRdh84eDOfQ5FHMMt4UeRY+RwTsIgww/A+D1EavEJxbou11IUqnz8Q6LgwkRGNexL9eW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=a5JJZfoF; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RVWaGtvm; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=a5JJZfoF; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=RVWaGtvm; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+	s=arc-20240116; t=1728609653; c=relaxed/simple;
+	bh=yslYLZ3UmvXQ3tXwi9DG46llkHldFxew638wc6nmTfk=;
+	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
+	 References:In-Reply-To; b=mh8/+odBsWzPjlvjPyY+vDmSRqYY2r1+smmJY5imaDcdA5pW1/DdUtLUGHMPtCVlXVg8ZWpOZzO80dGHNQAZQ+YdCcOPcuOjjJmG/AbTlbVR8It2Tt1/AKzS8Xo/+a0rvRrCxJIfLmUfDwdgE4vUd3LaRVaznsgtjF3hdQBCHH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=M/3NUOpU; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="a5JJZfoF";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RVWaGtvm";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="a5JJZfoF";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="RVWaGtvm"
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 9EE701FE77;
-	Thu, 10 Oct 2024 21:43:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1728596616; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2BLVaQNxwgGS4hs6TdXQIhC+xDJeoNKY0cDCGry5g1U=;
-	b=a5JJZfoFKe+RffAGjiKiKDWGT8xkOirsMEpsysJkAqadTXwun3xEaq+O1DDhmCym/ShUAr
-	bh6o8s+5amzjhUKHJnUM3MjSWDU96GIHeZ5JirpVokB7w49CHI6ce9E5XSIGInUQDMXvIs
-	bKwfMlBCqKX+9eQIEw5/w9q3lx/DeMs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1728596616;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2BLVaQNxwgGS4hs6TdXQIhC+xDJeoNKY0cDCGry5g1U=;
-	b=RVWaGtvmGJPTmtqJbLqdObnWbVcu3Y0VGtbW3Wku/80a//iKt2toqNptyvNguHWiO4MuUt
-	WI7rq9k5AOyVqwDQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1728596616; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2BLVaQNxwgGS4hs6TdXQIhC+xDJeoNKY0cDCGry5g1U=;
-	b=a5JJZfoFKe+RffAGjiKiKDWGT8xkOirsMEpsysJkAqadTXwun3xEaq+O1DDhmCym/ShUAr
-	bh6o8s+5amzjhUKHJnUM3MjSWDU96GIHeZ5JirpVokB7w49CHI6ce9E5XSIGInUQDMXvIs
-	bKwfMlBCqKX+9eQIEw5/w9q3lx/DeMs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1728596616;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2BLVaQNxwgGS4hs6TdXQIhC+xDJeoNKY0cDCGry5g1U=;
-	b=RVWaGtvmGJPTmtqJbLqdObnWbVcu3Y0VGtbW3Wku/80a//iKt2toqNptyvNguHWiO4MuUt
-	WI7rq9k5AOyVqwDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CE73113A6E;
-	Thu, 10 Oct 2024 21:43:18 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id IPoSIXZKCGeEZwAAD6G6ig
-	(envelope-from <neilb@suse.de>); Thu, 10 Oct 2024 21:43:18 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="M/3NUOpU"
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6cbcc2bd800so13924176d6.0
+        for <linux-security-module@vger.kernel.org>; Thu, 10 Oct 2024 18:20:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1728609651; x=1729214451; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DSYc5T3VWRhsmruLA3gY07A0OlNZL+RmUFs8WfbL2kA=;
+        b=M/3NUOpUqIoQ77RRYcYI/jJyZ/Xtik7haqQnRIc03MpHO+vtxDG2so4zK5yXMlOE70
+         esudG/z4yLG0d93IWpHOIDMhnwsPhvUSVQKzYI4U+RDv9nSGCIMc1aRQ8RgzC5/wTPO5
+         HmOyi5mXt6Ny+XHkhUuDcMaqWDk917J9DPurXoUOLSIDv4k2rMy8mK5O6tsbdHqgbNAt
+         qsWSihDuCmm2NYTlAhzp/Ysf1wkBA1JxdPenX97Qf67FGbBgF61TxwWWj1mK0F72B0OU
+         daZDc9DYyhJMId9SRHG1EcNLVI9r4z3RXRwF37OnDmv8CRz2LjSmJpk7hPPeAueeZqPG
+         M1Cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728609651; x=1729214451;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=DSYc5T3VWRhsmruLA3gY07A0OlNZL+RmUFs8WfbL2kA=;
+        b=H7Ac/J4xKurFD/BtQaZJR0ntjGJjERKtyrruQmomg7RL5DaH0c3xN7yZTwNhdd/ZNt
+         lU28zYZ9W9BCFnhbzGsDf4aiP/+IANEYYhpCPtjrNnJwvuP0Us2Yrat6Y6+BjRawc+7h
+         yvOjKWe6NNhprGa6LIDp5YFh13YsbfWGVgd9lp7WjK86jpgESthK4r9rC3vn8WEg9vBY
+         ayWmlisy5knoIGaMI5JzOH6Cn3ChwXSk6oARR0xXs/uzeAz816Eg8y96PlH1tEeNLTM2
+         yH+wl2vOSTi5lamTzmm2OGmqG4m2uuXfvQy9FMOEgELXqjdlf2xuCrMcIaEpVMT2rbZB
+         DXUA==
+X-Forwarded-Encrypted: i=1; AJvYcCX2kfwLboXCqTtR1sikTRqYne03FIMNFikN2lEAfeH7v8f5L2iTgrGRudzsldyrCkaWVlDBXnJmr48WPgJ7nv5gKLxI2IU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzxewFNm2fQbaBANO5ug8zPJaxLlnAZ5pqYMgkS2G//T0CcTZD
+	RPIebTbzF04cwagu15rt1nAhiMPQxNeBVjjqys5R4b1Fa0yV76p3Ur2BLGL3xQ==
+X-Google-Smtp-Source: AGHT+IEqJeWFt79nQGeuR3bq2NUHrSRVHy+WW2D2IxkX40eKx9WlSMBeeYzd4yPkBCBf4eMRVOJxdw==
+X-Received: by 2002:a05:6214:498b:b0:6cb:d3e2:ea0d with SMTP id 6a1803df08f44-6cbefabae20mr21350876d6.12.1728609651103;
+        Thu, 10 Oct 2024 18:20:51 -0700 (PDT)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cbe8608ebasm10941006d6.80.2024.10.10.18.20.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2024 18:20:50 -0700 (PDT)
+Date: Thu, 10 Oct 2024 21:20:50 -0400
+Message-ID: <c4260a81d3c0ebe54c191b432ca33140@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Jeff Layton" <jlayton@kernel.org>
-Cc: "Kaixiong Yu" <yukaixiong@huawei.com>, akpm@linux-foundation.org,
- mcgrof@kernel.org, ysato@users.sourceforge.jp, dalias@libc.org,
- glaubitz@physik.fu-berlin.de, luto@kernel.org, tglx@linutronix.de,
- mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
- viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, kees@kernel.org,
- j.granados@samsung.com, willy@infradead.org, Liam.Howlett@oracle.com,
- vbabka@suse.cz, lorenzo.stoakes@oracle.com, trondmy@kernel.org,
- anna@kernel.org, chuck.lever@oracle.com, okorniev@redhat.com,
- Dai.Ngo@oracle.com, tom@talpey.com, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, paul@paul-moore.com, jmorris@namei.org,
- linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-nfs@vger.kernel.org,
- netdev@vger.kernel.org, linux-security-module@vger.kernel.org,
- dhowells@redhat.com, haifeng.xu@shopee.com, baolin.wang@linux.alibaba.com,
- shikemeng@huaweicloud.com, dchinner@redhat.com, bfoster@redhat.com,
- souravpanda@google.com, hannes@cmpxchg.org, rientjes@google.com,
- pasha.tatashin@soleen.com, david@redhat.com, ryan.roberts@arm.com,
- ying.huang@intel.com, yang@os.amperecomputing.com, zev@bewilderbeest.net,
- serge@hallyn.com, vegard.nossum@oracle.com, wangkefeng.wang@huawei.com,
- sunnanyong@huawei.com
-Subject: Re: [PATCH v3 -next 11/15] sunrpc: use vfs_pressure_ratio() helper
-In-reply-to: <12ec5b63b17b360f2e249a4de0ac7b86e09851a3.camel@kernel.org>
-References: <>, <12ec5b63b17b360f2e249a4de0ac7b86e09851a3.camel@kernel.org>
-Date: Fri, 11 Oct 2024 08:43:15 +1100
-Message-id: <172859659591.444407.1507982523726708908@noble.neil.brown.name>
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	R_RATELIMIT(0.00)[from(RLewrxuus8mos16izbn)];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_GT_50(0.00)[60];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=UTF-8 
+Content-Transfer-Encoding: 8bit
+From: Paul Moore <paul@paul-moore.com>
+To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>, Christian Brauner <brauner@kernel.org>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>, linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org, audit@vger.kernel.org, Eric Paris <eparis@redhat.com>
+Subject: Re: [PATCH RFC v1 2/7] audit: Fix inode numbers
+References: <20241010152649.849254-2-mic@digikod.net>
+In-Reply-To: <20241010152649.849254-2-mic@digikod.net>
 
-On Fri, 11 Oct 2024, Jeff Layton wrote:
-> On Thu, 2024-10-10 at 23:22 +0800, Kaixiong Yu wrote:
-> > Use vfs_pressure_ratio() to simplify code.
-> >=20
-> > Signed-off-by: Kaixiong Yu <yukaixiong@huawei.com>
-> > Reviewed-by: Kees Cook <kees@kernel.org>
-> > Acked-by: Anna Schumaker <anna.schumaker@oracle.com>
-> > ---
-> >  net/sunrpc/auth.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >=20
-> > diff --git a/net/sunrpc/auth.c b/net/sunrpc/auth.c
-> > index 04534ea537c8..3d2b51d7e934 100644
-> > --- a/net/sunrpc/auth.c
-> > +++ b/net/sunrpc/auth.c
-> > @@ -489,7 +489,7 @@ static unsigned long
-> >  rpcauth_cache_shrink_count(struct shrinker *shrink, struct shrink_contro=
-l *sc)
-> > =20
-> >  {
-> > -	return number_cred_unused * sysctl_vfs_cache_pressure / 100;
-> > +	return vfs_pressure_ratio(number_cred_unused);
-> >  }
-> > =20
-> >  static void
->=20
-> Acked-by: Jeff Layton <jlayton@kernel.org>
->=20
+On Oct 10, 2024 =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net> wrote:
+> 
+> Use the new inode_get_ino() helper to log the user space's view of
+> inode's numbers instead of the private kernel values.
+> 
+> Cc: Paul Moore <paul@paul-moore.com>
+> Cc: Eric Paris <eparis@redhat.com>
+> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> ---
+>  security/lsm_audit.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 
-I realise this is a bit of a tangent, and I'm not objecting to this
-patch, but I wonder what the justification is for using
-vfs_cache_pressure here.  The sysctl is documented as
+Acked-by: Paul Moore <paul@paul-moore.com>
 
-   This percentage value controls the tendency of the kernel to reclaim
-   the memory which is used for caching of directory and inode objects.
-
-So it can sensibly be used for dentries and inode, and for anything
-directly related like the nfs access cache (which is attached to inodes)
-and the nfs xattr cache.
-
-But the sunrpc cred cache scales with the number of active users, not
-the number of inodes/dentries.
-
-So I think this should simply "return number_cred_unused;".
-
-What do others think?
-
-NeilBrown
-
+--
+paul-moore.com
