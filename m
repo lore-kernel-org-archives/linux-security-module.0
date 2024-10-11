@@ -1,73 +1,117 @@
-Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [185.125.25.8])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88DC11E501C
-	for <linux-security-module@vger.kernel.org>; Fri, 11 Oct 2024 13:52:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E995D517;
+	Fri, 11 Oct 2024 14:06:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728654771; cv=none; b=eHDypAJQZvxTpsJvCH0Rm/8i9BhTHQ4cG8IaFGxjxTSYybPEezpkyWB9eCrL6cMOls8Q734lfo8ouACFUN1hlk2pE4M1T3i55cE7SLOSTKdXRzSAcvb6meQHFnEPqJDnG0x3EN8ABT5yIpnDQsPmL3K62hKYXU4TIVTV+/fqQwc=
+	t=1728655617; cv=none; b=fif3VbSxriujuEM8zPmkjRB0Lu37+59wu7UyDEp/djx9g5BAng8ZqzLhg8nRtJO9vBr4iy3GTGsZAq16JiCPJXkUjyEjOXPnA9J5IdPl08Dsv4++ikR5a1QYyb1zr6/q46trFhgweuSFvoxs6aiTsrYHicj7yR74vMGkcem6b4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728654771; c=relaxed/simple;
-	bh=x99+3/mw2lgv5lakwyUu14a5PNiOuCdFUD8GeV8InSE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hSae5cOETauU4nk9uud4sXD25UQ/E2MqDHg67HIi9c1HIgibjmmYstVO/u/WSGEm6/IXAyGxtmn17FzQKT0/H+mXpRmbkd8X26Q3x3ialm0zND9phgmSyI2F5F+RdJuD850XxanA5L0+QJdWGYm5Gfh889sK0jTDm1nr9x54N+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Cp7JfDQA; arc=none smtp.client-ip=185.125.25.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1728655617; c=relaxed/simple;
+	bh=ncQFcfAlGgvWxjh5lD1Afh7FFx/abLXslVvenTx17aA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=sXyRb/xHfyUljEyyGelZSZ3O/wyoRHuIB9MaYOOs5Ep1waHDzi93eCVXS9g17j44AxXxJz3Oi0t5sEbp0wAm21uCSBLJQGmLM5+M8kv/3PU79e7HpPt4Pi4H/6WDUbBo2zDz9JgQO0CEhXSBBRIHgQG0RlkGOOaAEOWDTwP1Go4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bWgs/6cU; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Cp7JfDQA"
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246b])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XQ7Nt4TmDzFCR;
-	Fri, 11 Oct 2024 15:52:46 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1728654766;
-	bh=EXR9kR6WpROFOCjAWOYclHB+KbKDOQb2/klwm/tP+Rg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Cp7JfDQAbHtceZwYIeYdJw7ewG3T/g9q5fRgHAbaAXX03ryFznTr0O91CqH0k6VbV
-	 FvKO0ahCmOwlkpX7lvppqh+J927Z0RHZhPvx6yCNQrAb8yVI0UD2vaWuG66xLBaB/G
-	 HvSDTJXhFZyuzttHeBx0LnBQdysQBtrRcmtZtNS0=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4XQ7Ns5N3Kz77m;
-	Fri, 11 Oct 2024 15:52:45 +0200 (CEST)
-Date: Fri, 11 Oct 2024 15:52:42 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Christian Brauner <brauner@kernel.org>, 
-	Paul Moore <paul@paul-moore.com>, linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, audit@vger.kernel.org, Trond Myklebust <trondmy@kernel.org>, 
-	Anna Schumaker <anna@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Jan Kara <jack@suse.cz>
-Subject: Re: [RFC PATCH v1 1/7] fs: Add inode_get_ino() and implement
- get_ino() for NFS
-Message-ID: <20241011.aetou9haeCah@digikod.net>
-References: <20241010152649.849254-1-mic@digikod.net>
- <ZwkaVLOFElypvSDX@infradead.org>
- <20241011.ieghie3Aiye4@digikod.net>
- <ZwkgDd1JO2kZBobc@infradead.org>
- <20241011.yai6KiDa7ieg@digikod.net>
- <Zwkm5HADvc5743di@infradead.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bWgs/6cU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C162AC4CEC3;
+	Fri, 11 Oct 2024 14:06:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728655617;
+	bh=ncQFcfAlGgvWxjh5lD1Afh7FFx/abLXslVvenTx17aA=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=bWgs/6cUjeMqPRmlANu/UYQn00ttjfBmBmHXpxo9e7CekiOHot87xexizI1zN8Dwu
+	 npNVZZrYdGOAIrlnsrJJn1/6E5mPhGDrMCDt/2qVg4uZ27JF5h5Qu1a4FZJn91rBND
+	 jUmaWcZpPhpxtXsRlEG53X8ouGEYejBKDtxTOQAN/dZU4836iKtK/5jl9x7w8x7/ZO
+	 NhK1WrE8CdmR8qptn3vU+Udkovfr716T4FZ508S0ysZSU6hnfk+Cb0CjIOm6FYoWjC
+	 s3bTnZpCY0JQdRK0dWXLoRUM2cHHyhpFzUvIOZYVRr+ZoF+2dE0MLcoNb3FauT1Ft7
+	 P/QCkFx/Cdurg==
+Message-ID: <f69e08167d8354db31013018edf064a2876f8d1c.camel@kernel.org>
+Subject: Re: [PATCH v5 0/5] Lazy flush for the auth session
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: linux-integrity@vger.kernel.org
+Cc: James.Bottomley@HansenPartnership.com, roberto.sassu@huawei.com, 
+ mapengyu@gmail.com, Mimi Zohar <zohar@linux.ibm.com>, David Howells
+ <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>, James Morris
+ <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Peter Huewe
+ <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+ keyrings@vger.kernel.org,  linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Date: Fri, 11 Oct 2024 17:06:53 +0300
+In-Reply-To: <20240921120811.1264985-1-jarkko@kernel.org>
+References: <20240921120811.1264985-1-jarkko@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Zwkm5HADvc5743di@infradead.org>
-X-Infomaniak-Routing: alpha
 
-On Fri, Oct 11, 2024 at 06:23:48AM -0700, Christoph Hellwig wrote:
-> On Fri, Oct 11, 2024 at 03:20:30PM +0200, Mickaël Salaün wrote:
-> > On Fri, Oct 11, 2024 at 05:54:37AM -0700, Christoph Hellwig wrote:
-> > > On Fri, Oct 11, 2024 at 02:47:14PM +0200, Mickaël Salaün wrote:
-> > > > How to get the inode number with ->getattr and only a struct inode?
-> > > 
-> > > You get a struct kstat and extract it from that.
-> > 
-> > Yes, but how do you call getattr() without a path?
-> 
-> You don't because inode numbers are irrelevant without the path.
+On Sat, 2024-09-21 at 15:08 +0300, Jarkko Sakkinen wrote:
+> This patch set aims to fix:
+> https://bugzilla.kernel.org/show_bug.cgi?id=3D219229.
+>=20
+> The baseline for the series is the v6.11 tag.
+>=20
+> v4:
+> https://lore.kernel.org/linux-integrity/20240918203559.192605-1-jarkko@ke=
+rnel.org/
+> v3:
+> https://lore.kernel.org/linux-integrity/20240917154444.702370-1-jarkko@ke=
+rnel.org/
+> v2:
+> https://lore.kernel.org/linux-integrity/20240916110714.1396407-1-jarkko@k=
+ernel.org/
+> v1:
+> https://lore.kernel.org/linux-integrity/20240915180448.2030115-1-jarkko@k=
+ernel.org/
+>=20
+> Jarkko Sakkinen (5):
+> =C2=A0 tpm: Return on tpm2_create_null_primary() failure
+> =C2=A0 tpm: Implement tpm2_load_null() rollback
+> =C2=A0 tpm: flush the null key only when /dev/tpm0 is accessed
+> =C2=A0 tpm: Allocate chip->auth in tpm2_start_auth_session()
+> =C2=A0 tpm: flush the auth session only when /dev/tpm0 is open
+>=20
+> =C2=A0drivers/char/tpm/tpm-chip.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
+=C2=A0 14 ++++
+> =C2=A0drivers/char/tpm/tpm-dev-common.c |=C2=A0=C2=A0 8 +++
+> =C2=A0drivers/char/tpm/tpm-interface.c=C2=A0 |=C2=A0 10 ++-
+> =C2=A0drivers/char/tpm/tpm2-cmd.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
+=C2=A0=C2=A0 3 +
+> =C2=A0drivers/char/tpm/tpm2-sessions.c=C2=A0 | 109 ++++++++++++++++++----=
+------
+> --
+> =C2=A0include/linux/tpm.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 2 +
+> =C2=A06 files changed, 102 insertions(+), 44 deletions(-)
 
-They are for kernel messages and audit logs.  Please take a look at the
-use cases with the other patches.
+The summarize some discussions:
+
+1. I'll address Stefan's remarks.
+2. We know that these patches address the desktop boot.
+3. IMA is too slow =3D> add a boot option for IMA default off. I.e.
+   IMA will not use the feature unless you specifically ask.
+4. Random generation can be optimized a lot with or without
+   encryption. Not sure if  I have time to do ths right now
+   but I have already patch planned for this.
+
+What is blocking me is the James' request to not include
+functional fixes. The problem with that is that if comply
+to that request I will have to postpone all the performacne
+fixes and send a patch set with only functional fixes and
+go all review rounds with that before moving forward.
+
+This is just how priorities go in kernel and doing by the
+book. Is that really necessary?
+
+Since I've just started in a new job any patches can be
+expected earliest next week. That's why I was rushing with
+the patch set in the first place because I knew that there
+will be otherwise a few week delay but we'll get there :-)
+
+BR, Jarkko
+
