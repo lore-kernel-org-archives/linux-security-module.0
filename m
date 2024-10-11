@@ -1,116 +1,90 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05F841C3F0A;
-	Fri, 11 Oct 2024 20:37:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E8761D0F54
+	for <linux-security-module@vger.kernel.org>; Fri, 11 Oct 2024 21:34:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728679048; cv=none; b=KbpdVama0ONF5wVqel0SJSnH0htrIYgzsSEgef2eqyRTsUZ+r7FBAPyozhy8BQLOLe/qh5rRdnTLpCFu2bRW9TJZeEBx0aaHFD6nN3+VPtwz0TtiZfSbQhqKbweoq/MXkR/3oFZzSOL04siUBbTauEzg24nLGEIB+sOGIwn6ITo=
+	t=1728682474; cv=none; b=Ts/hHuVWuXR6m4vJvCF1hKuUX0WGiXGCuVIZt4c0tn1w2eFCnnYPddv93DUjHVxPzfMP+SivvL/vG7tSyZq2NcMCxwJ5SIIuRYnGRzBzpcz5wpSbdvpnaUSFketnWiWECTXhrJDvuMVBpJ+XpzAvG0GW0SY/XQRkkCOipahojA0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728679048; c=relaxed/simple;
-	bh=CWZGBnEJ80UiaDTPSuDUZ70kqMw3cxxu6gG4Z0pcQVE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=M5iLnQr7yGD6fnSGRXwEpejfQdLXQk+O4UJHXZnOz1DdfdT7j+WRYQJNWdxgDHy/VCnc4P8mXN+rDx6/fZKMTR3F4JJtWORhLkFY3RX3c6Yl71Rdns+194czOOQXIZSKKW5E/lGJyrxJZE9rXv2JMcU8NfeDQYO7T6+ioi5xVSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uYAbcrXK; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1728682474; c=relaxed/simple;
+	bh=yn68VGQgjuF57lFPHzPET93dI/gFBtZI+3oFtACRqdY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SiAK8goU5uob81aTUTm75BlkQPc/fmsApvcfHugJZjM57tYvqMFTBT5K0lo21hHpMszSpKJwICt+1iK2CwoYyF530kAWNUPN9A+ollpK25yB8AqpGCXci6mBJhyGedCSW6ug0ezn4WAkYoERDXgXF1Dgc2h9bG8m2oAXzwz+74Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=caijQmlS; arc=none smtp.client-ip=209.85.219.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uYAbcrXK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 831CEC4CEC3;
-	Fri, 11 Oct 2024 20:37:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728679047;
-	bh=CWZGBnEJ80UiaDTPSuDUZ70kqMw3cxxu6gG4Z0pcQVE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=uYAbcrXK8FLRoEkmirqKqE2T2BWanywm0TM90kzfEKK0nYuDxOhrIhDbmui+SrNt+
-	 1mjjpUvymCswoPAWZddBRZSI7fZe1o/evRZNqBo4Dx0xEuYkhxpBEJfDTd3GNxZ7x6
-	 EfQdm7CxvjmXuQiP/TXiDi+s7rhBX8ol2CN0MOjYzQ641N3+0xB/AMBZfdDW9fuMFx
-	 P22KWy+9B9G/KGvAJ+MhJiAwddKNcyTSZWStAhfBiaqRPqSU4L7Qo+fr2ai89iLO7+
-	 Hpf0G4myWZ4l50hTbL1Ymw49gXx1n5eI2ZVFY1+67nxeDf2gyZfuLV8Q+x3Tkzavr1
-	 H7vOx5CHPuwdg==
-From: Song Liu <song@kernel.org>
-To: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	kernel-team@fb.com,
-	song@kernel.org
-Subject: [PATCH] fsnotify, lsm: Separate fsnotify_open_perm() and security_file_open()
-Date: Fri, 11 Oct 2024 13:37:22 -0700
-Message-ID: <20241011203722.3749850-1-song@kernel.org>
-X-Mailer: git-send-email 2.43.5
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="caijQmlS"
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e28fa2807eeso2644262276.1
+        for <linux-security-module@vger.kernel.org>; Fri, 11 Oct 2024 14:34:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1728682471; x=1729287271; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GuJ38S9WNQES8UxG5Eg7yjwtIJRWC+46hl/pmxrvCWM=;
+        b=caijQmlSLH6Mn6V9Bh5OtPmtrih6HODYry4AeeeOsNhI2lrdPj2P8CJcgedFPsFYnN
+         9grM3LwYNldCHZawBfBC10tYjsH23tLkAMx86mX+dkgE/7e0mGpcGu+7U6E2HYBrdDqc
+         dCUzZ3/4GQ30K5F4OsU9m1jbcF9YnVModAx/RdB1tIaYXbyt8LZw/trWf196QbIMkTnU
+         +1hAWpqaXYsMBAw/4J1C3dOhLws2hKV12prYbtqY4ylJhHI4VlkhXU68mqDD57X/nicz
+         5MGJjVhgKTGNyRIYt9DQCOTQxOWlOG51E3SVBTY65E8s19rVFXbYAfSPcJ3MiO3PJW37
+         7lnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728682471; x=1729287271;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GuJ38S9WNQES8UxG5Eg7yjwtIJRWC+46hl/pmxrvCWM=;
+        b=f5iS/OGixoTiWDQ+xFk578VCjNEBXyYdMijW38/jom+o4A9GYzNssolYSmrhVUfMin
+         jngKdBql/Im9SeyPKRuW7vNb/olZVcoemHC+zPbPNi3Cyz7MrSnnJCEGGvavIQBAOuxa
+         GErdjYR0QdODQMvsAILxvhaii+/3cd0UafzlQzdE2duw5Cxsyg9kH6sTxj26SDBAxK2I
+         CqJ3+AqjnE3KzvVzZxarlglIOQ0GJ1vHv5XRcvUzyRaPOwU/JTl0xkuwgdZLb9pIaWa/
+         GalA3EyeJLnW0i4Jmp7PG8UcE4r4O/Woe7P+a1iB+LLI/nKUZq6cRo4G6mFtOsQVd4s1
+         L42Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUY7e8L2vfV+CXcwQni4Aspv7MoAdOCroD3ghC2ztFIfxT5G4BFMIqmSjPEcwOq1IFAQB5q10Eop3EkK3Lbayxd+0jca9Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2kOJRgp+fWw/agLAPh+ZBzpOs6qBMdzb7pcZdofbipsLbzksC
+	PDR/d0gaFPWqgRMwRHNLgAvjFgRi+Jni+1sFAL9d8U/pE+B/n5q3hF5NBAYCo+nasWZ2ZXibzML
+	6lR2A1U54M4iakyz9zF9A2pSscic6yvvVO6Jm
+X-Google-Smtp-Source: AGHT+IFrYhiJio4X4+ywyBra47qcZ6SUO4xvjf/kfaS0SLCEASRbGZElMMGFLK5PU9YPz4TciK+hv+7VEGUf5UKSZ1k=
+X-Received: by 2002:a05:6902:11ca:b0:e29:18e2:622c with SMTP id
+ 3f1490d57ef6-e2919ffb611mr3143224276.56.1728682471609; Fri, 11 Oct 2024
+ 14:34:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241010152649.849254-1-mic@digikod.net> <20241010152649.849254-2-mic@digikod.net>
+In-Reply-To: <20241010152649.849254-2-mic@digikod.net>
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 11 Oct 2024 17:34:21 -0400
+Message-ID: <CAHC9VhR8AFZN4tU1oAkaHb+CQDCe2_4T4X0oq7xekxCYkFYv6A@mail.gmail.com>
+Subject: Re: [RFC PATCH v1 2/7] audit: Fix inode numbers
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	audit@vger.kernel.org, Eric Paris <eparis@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Currently, fsnotify_open_perm() is called from security_file_open(). This
-is not right for CONFIG_SECURITY=n and CONFIG_FSNOTIFY=y case, as
-security_file_open() in this combination will be a no-op and not call
-fsnotify_open_perm(). Fix this by calling fsnotify_open_perm() directly.
+On Thu, Oct 10, 2024 at 11:26=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digi=
+kod.net> wrote:
+>
+> Use the new inode_get_ino() helper to log the user space's view of
+> inode's numbers instead of the private kernel values.
+>
+> Cc: Paul Moore <paul@paul-moore.com>
+> Cc: Eric Paris <eparis@redhat.com>
+> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+> ---
+>  security/lsm_audit.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
 
-Signed-off-by: Song Liu <song@kernel.org>
+While answering some off-list questions regarding audit, I realized
+we've got similar issues with audit_name->ino and audit_watch->ino.
+It would be nice if you could also fix that in this patchset.
 
----
-
-PS: I didn't included a Fixes tag. This issue was probably introduced 15
-years ago in [1]. If we want to back port this to stable, we will need
-another version for older kernel because of [2].
-
-[1] c4ec54b40d33 ("fsnotify: new fsnotify hooks and events types for access decisions")
-[2] 36e28c42187c ("fsnotify: split fsnotify_perm() into two hooks")
----
- fs/open.c           | 4 ++++
- security/security.c | 9 +--------
- 2 files changed, 5 insertions(+), 8 deletions(-)
-
-diff --git a/fs/open.c b/fs/open.c
-index acaeb3e25c88..6c4950f19cfb 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -946,6 +946,10 @@ static int do_dentry_open(struct file *f,
- 	if (error)
- 		goto cleanup_all;
- 
-+	error = fsnotify_open_perm(f);
-+	if (error)
-+		goto cleanup_all;
-+
- 	error = break_lease(file_inode(f), f->f_flags);
- 	if (error)
- 		goto cleanup_all;
-diff --git a/security/security.c b/security/security.c
-index 6875eb4a59fc..a72cc62c0a07 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -19,7 +19,6 @@
- #include <linux/kernel.h>
- #include <linux/kernel_read_file.h>
- #include <linux/lsm_hooks.h>
--#include <linux/fsnotify.h>
- #include <linux/mman.h>
- #include <linux/mount.h>
- #include <linux/personality.h>
-@@ -3102,13 +3101,7 @@ int security_file_receive(struct file *file)
-  */
- int security_file_open(struct file *file)
- {
--	int ret;
--
--	ret = call_int_hook(file_open, file);
--	if (ret)
--		return ret;
--
--	return fsnotify_open_perm(file);
-+	return call_int_hook(file_open, file);
- }
- 
- /**
--- 
-2.43.5
-
+--=20
+paul-moore.com
