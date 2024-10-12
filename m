@@ -1,155 +1,383 @@
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53D6C10940;
-	Sat, 12 Oct 2024 07:09:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19470130E57;
+	Sat, 12 Oct 2024 07:36:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728716961; cv=none; b=UnTvuJUKi2B0j4E2WDfsVFYWT63wVmmCkrqnEoJFtb02duB47V8MDHMpsEP6xNqd1j6TM3bpBK0BUAvu9bhKH1mX4OSyvECJy+CZb5nPt8cdjo3GR66vcGhfySjtcBHbjJofsv91Daq0uIv4AKOerV/2mgz061if2LP7fZohZ/Y=
+	t=1728718578; cv=none; b=D8qw36Z2UUuQQm4BDcoItaQx+XfWeEe8zOc4HN7OWeRXxbBbaYxl86XYyu3CVTX3aM8vsthygC2ipIGTZ3Gc7t6aFTpjZMqRMRWkEWxWvBERrNStCdjpYSeWXYqSkDTFdCif9lQfGBkf9OhTcpp3/FSy4jB/6PS2YEC3Edfvlqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728716961; c=relaxed/simple;
-	bh=n/+IHlvyrFv43hNppw6NeAufbfPHhTMVSRJ/cJt+RDM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hCpZlfr631AtRttvMNff6xDYTI5I1D/gx4Ijn+jbyeqGKPTTFfyr3JXy07c8jyXAm5zwidoPx3/j5mPlPCQHvW/PtLujBRck2g3h0kXDgxmGkwiIK7z+JVEHD3OIdwWLRxQY9RQL0/ZUintF7C5YD3wQj8+GoiKTaGsqwNzjRXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZgZ/g0tu; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZgZ/g0tu"
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7afc658810fso239994485a.3;
-        Sat, 12 Oct 2024 00:09:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728716959; x=1729321759; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ypi/Dg1wLPrnyeTGvBf3rX1Xz7l1FKvNt4NNG762eZI=;
-        b=ZgZ/g0tu77g5WRHpTPCKRb66xwdHw2F2GvDzVgEZL04j7el7KuZ9A0Goa6jNzbpobX
-         CpJTgca5RbBnnL1RrpMTa4wx5PRoklsEP3TkBNxUtCyD2Woe6JbmMdVVE0LGzB7CGWeQ
-         6nMTQ+T53Yhk/RuY8mkwLodMXrEm7FlGPAVBcXjeW60agmq66Mq8b5ZDaaZLMCxKSUbn
-         YjQ/FAtxDZsql3i7fdEH2xCJyYlNx7nZW+dOxGf9fLihikETE2tv4NfvtyoKGLfIFq3I
-         5/9MJbTH1SIyxCv7cQbfYRad1vyXXYWWcxlnq16fLAgih7/E50mgHLmFLYJBKaJVBA5S
-         EEYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728716959; x=1729321759;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ypi/Dg1wLPrnyeTGvBf3rX1Xz7l1FKvNt4NNG762eZI=;
-        b=UVkkGq3yMNpTSjo1/ethtjpPMwg1dQnnKAorEFO33WxKfznHwabn4xMRcYJ5XW8r5E
-         dig7Fjrm8HhUJyrRemHlzqwDx1Zzw0sbAa++c6QtQV9sDZOZ8cYSbSBw9+MIUlraDncj
-         WyMof8uyhcRBqRQHnqZTX7cWetZh8R9yI05GSla8295zxygkzSThL3Dd8MxMuU74KBAX
-         VEaszMOG0lELCKubA5PH1r3Ifpx47iZfQL/9NCH8ZceFsuZfln+8GXRlHhVv1Z+PY8r8
-         IeFY/W6PhEqGJNgDeCADEgPd3Z6+9WxgVT6/qlI8ImfYNVtWSkZxcgb3VzHJE/89E/Q6
-         mXYA==
-X-Forwarded-Encrypted: i=1; AJvYcCUu8voMtM+Fgj85ou+NLncZM8tnsVOtIngpGypi90tpNhWaXfEKepsF2/XAVAIvWhdGw9rBefS/6hrTnF+TTsMqBe7UR1bE@vger.kernel.org, AJvYcCWn/d8iZXhK5Z+RtxuGXoG9B4/rTMhuXNSf4YcsZr1M5MgJ/wj4PB0DXalnoKFxtPVXpo8qPWgL1BhcT3IG@vger.kernel.org, AJvYcCXCSvQ/9cA0M9SIa9P1zsViOXo/N08TTkSSwug8OeHZXKkwnRDjFwttQcuxbVo37t4J9n6Fh7GJAD1dTeDO@vger.kernel.org
-X-Gm-Message-State: AOJu0YymobmIFNjGTyjmtFVax9CAJTpu87zT/V1tJobZjO8RtIyFD0u4
-	KaJiUESenj25oy+Whn2cJ/awKMq/Y5t0FjwJYi0ii/EqQeAv1oObAwcWn29Ko0xeJncjvx3z66P
-	95GVrmdla2KtlVLOp3f1Szfaq2eY=
-X-Google-Smtp-Source: AGHT+IG3JYTfBGf9abnh5e61xwfLmIgrY2uMsu5WtatU44POcZFPBjqylFOv0aOl1OtG+HoQIFGV3gw18RWCfUcZMU8=
-X-Received: by 2002:a05:620a:2415:b0:7a9:b3a0:84a7 with SMTP id
- af79cd13be357-7b11a34309cmr831986985a.12.1728716959013; Sat, 12 Oct 2024
- 00:09:19 -0700 (PDT)
+	s=arc-20240116; t=1728718578; c=relaxed/simple;
+	bh=FJXM/cxAZr0TrFe6t9doNlbOtmOvU1RY8n/7zRg3FI4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L6/xoQiH/eW/17kV+feNb2+gkRbMNb5p5nSOThulQD5fPl51ZTZEkQRiq8S0y20BrUYNepZ+uEdIxaE27Wey1Eln6J0qmFSJdCfMY1HXGQfdsCK/R/1TE5MNezbHXM2IpyP0/K4BhxCSqkNJk9h1Cy28Gillyey4ieHPopXddxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 49C7ZubI012599;
+	Sat, 12 Oct 2024 16:35:56 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 49C7Zu8X012595
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Sat, 12 Oct 2024 16:35:56 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <ac5fc4b8-2e7e-4951-9ab4-499bf38bf2af@I-love.SAKURA.ne.jp>
+Date: Sat, 12 Oct 2024 16:35:54 +0900
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241011203722.3749850-1-song@kernel.org> <a083e273353d7bc5742ab0030e5ff1f5@paul-moore.com>
-In-Reply-To: <a083e273353d7bc5742ab0030e5ff1f5@paul-moore.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Sat, 12 Oct 2024 09:09:07 +0200
-Message-ID: <CAOQ4uxhg8zEZ4iOpUigv1paHMXvZNCFv_qTNfg-1CcehjE+7oA@mail.gmail.com>
-Subject: Re: [PATCH] fsnotify, lsm: Separate fsnotify_open_perm() and security_file_open()
-To: Paul Moore <paul@paul-moore.com>
-Cc: Song Liu <song@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, jmorris@namei.org, 
-	serge@hallyn.com, kernel-team@fb.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH] tomoyo: use u64 for handling numeric values
+To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+        Christian Brauner <brauner@kernel.org>,
+        Paul Moore <paul@paul-moore.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-security-module@vger.kernel.org, audit@vger.kernel.org,
+        Kentaro Takeda <takedakn@nttdata.co.jp>
+References: <20241010152649.849254-1-mic@digikod.net>
+ <20241010152649.849254-7-mic@digikod.net>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <20241010152649.849254-7-mic@digikod.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Anti-Virus-Server: fsav303.rs.sakura.ne.jp
+X-Virus-Status: clean
 
-On Fri, Oct 11, 2024 at 11:42=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
-rote:
->
-> On Oct 11, 2024 Song Liu <song@kernel.org> wrote:
-> >
-> > Currently, fsnotify_open_perm() is called from security_file_open(). Th=
-is
-> > is not right for CONFIG_SECURITY=3Dn and CONFIG_FSNOTIFY=3Dy case, as
-> > security_file_open() in this combination will be a no-op and not call
-> > fsnotify_open_perm(). Fix this by calling fsnotify_open_perm() directly=
-.
-> >
-> > Signed-off-by: Song Liu <song@kernel.org>
-> > ---
-> > PS: I didn't included a Fixes tag. This issue was probably introduced 1=
-5
-> > years ago in [1]. If we want to back port this to stable, we will need
-> > another version for older kernel because of [2].
-> >
-> > [1] c4ec54b40d33 ("fsnotify: new fsnotify hooks and events types for ac=
-cess decisions")
-> > [2] 36e28c42187c ("fsnotify: split fsnotify_perm() into two hooks")
-> > ---
-> >  fs/open.c           | 4 ++++
-> >  security/security.c | 9 +--------
-> >  2 files changed, 5 insertions(+), 8 deletions(-)
+TOMOYO was using "unsigned long" for handling numeric values because all
+possible value range fits in "unsigned long". Since Mickaël Salaün is
+about to replace "ino_t" with "u64", possible value range no longer fits
+in architecture-dependent "unsigned long". Therefore, replace "unsigned
+long" and "ino_t" with "u64".
 
-Nice cleanup, but please finish off the coupling of lsm/fsnotify altogether=
-.
-I would either change the title to "decouple fsnotify from lsm" or
-submit an additional patch with that title.
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+---
+Please include this patch before your patch.
 
-diff --git a/fs/notify/fanotify/Kconfig b/fs/notify/fanotify/Kconfig
-index a511f9d8677b..0e36aaf379b7 100644
---- a/fs/notify/fanotify/Kconfig
-+++ b/fs/notify/fanotify/Kconfig
-@@ -15,7 +15,6 @@ config FANOTIFY
- config FANOTIFY_ACCESS_PERMISSIONS
-        bool "fanotify permissions checking"
-        depends on FANOTIFY
--       depends on SECURITY
-        default n
-        help
-           Say Y here is you want fanotify listeners to be able to
-make permissions
-diff --git a/security/security.c b/security/security.c
-index 6875eb4a59fc..8d238ffdeb4a 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -19,7 +19,6 @@
- #include <linux/kernel.h>
- #include <linux/kernel_read_file.h>
- #include <linux/lsm_hooks.h>
--#include <linux/fsnotify.h>
- #include <linux/mman.h>
- #include <linux/mount.h>
- #include <linux/personality.h>
+ security/tomoyo/audit.c     | 10 ++++------
+ security/tomoyo/common.c    | 14 +++++++-------
+ security/tomoyo/common.h    | 17 ++++++++---------
+ security/tomoyo/condition.c |  8 ++++----
+ security/tomoyo/file.c      |  6 +++---
+ security/tomoyo/group.c     |  3 +--
+ security/tomoyo/util.c      | 28 ++++++++++++++--------------
+ 7 files changed, 41 insertions(+), 45 deletions(-)
 
->
-> This looks fine to me, if we can get an ACK from the VFS folks I can
-> merge this into the lsm/stable-6.12 tree and send it to Linus, or the
-> VFS folks can do it if they prefer (my ACK is below just in case).
+diff --git a/security/tomoyo/audit.c b/security/tomoyo/audit.c
+index 610c1536cf70..36c9e63651b5 100644
+--- a/security/tomoyo/audit.c
++++ b/security/tomoyo/audit.c
+@@ -195,21 +195,19 @@ static char *tomoyo_print_header(struct tomoyo_request_info *r)
+ 		if (i & 1) {
+ 			pos += snprintf(buffer + pos,
+ 					tomoyo_buffer_len - 1 - pos,
+-					" path%u.parent={ uid=%u gid=%u ino=%lu perm=0%o }",
++					" path%u.parent={ uid=%u gid=%u ino=%llu perm=0%o }",
+ 					(i >> 1) + 1,
+ 					from_kuid(&init_user_ns, stat->uid),
+ 					from_kgid(&init_user_ns, stat->gid),
+-					(unsigned long)stat->ino,
+-					stat->mode & S_IALLUGO);
++					stat->ino, stat->mode & S_IALLUGO);
+ 			continue;
+ 		}
+ 		pos += snprintf(buffer + pos, tomoyo_buffer_len - 1 - pos,
+-				" path%u={ uid=%u gid=%u ino=%lu major=%u minor=%u perm=0%o type=%s",
++				" path%u={ uid=%u gid=%u ino=%llu major=%u minor=%u perm=0%o type=%s",
+ 				(i >> 1) + 1,
+ 				from_kuid(&init_user_ns, stat->uid),
+ 				from_kgid(&init_user_ns, stat->gid),
+-				(unsigned long)stat->ino,
+-				MAJOR(dev), MINOR(dev),
++				stat->ino, MAJOR(dev), MINOR(dev),
+ 				mode & S_IALLUGO, tomoyo_filetype(mode));
+ 		if (S_ISCHR(mode) || S_ISBLK(mode)) {
+ 			dev = stat->rdev;
+diff --git a/security/tomoyo/common.c b/security/tomoyo/common.c
+index 5c7b059a332a..528b96c917e5 100644
+--- a/security/tomoyo/common.c
++++ b/security/tomoyo/common.c
+@@ -424,8 +424,8 @@ static void tomoyo_print_number_union_nospace
+ 		tomoyo_set_string(head, ptr->group->group_name->name);
+ 	} else {
+ 		int i;
+-		unsigned long min = ptr->values[0];
+-		const unsigned long max = ptr->values[1];
++		u64 min = ptr->values[0];
++		const u64 max = ptr->values[1];
+ 		u8 min_type = ptr->value_type[0];
+ 		const u8 max_type = ptr->value_type[1];
+ 		char buffer[128];
+@@ -435,15 +435,15 @@ static void tomoyo_print_number_union_nospace
+ 			switch (min_type) {
+ 			case TOMOYO_VALUE_TYPE_HEXADECIMAL:
+ 				tomoyo_addprintf(buffer, sizeof(buffer),
+-						 "0x%lX", min);
++						 "0x%llX", min);
+ 				break;
+ 			case TOMOYO_VALUE_TYPE_OCTAL:
+ 				tomoyo_addprintf(buffer, sizeof(buffer),
+-						 "0%lo", min);
++						 "0%llo", min);
+ 				break;
+ 			default:
+-				tomoyo_addprintf(buffer, sizeof(buffer), "%lu",
+-						 min);
++				tomoyo_addprintf(buffer, sizeof(buffer),
++						 "%llu", min);
+ 				break;
+ 			}
+ 			if (min == max && min_type == max_type)
+@@ -1287,7 +1287,7 @@ static bool tomoyo_print_condition(struct tomoyo_io_buffer *head,
+ 				switch (left) {
+ 				case TOMOYO_ARGV_ENTRY:
+ 					tomoyo_io_printf(head,
+-							 "exec.argv[%lu]%s=\"",
++							 "exec.argv[%llu]%s=\"",
+ 							 argv->index, argv->is_not ? "!" : "");
+ 					tomoyo_set_string(head,
+ 							  argv->value->name);
+diff --git a/security/tomoyo/common.h b/security/tomoyo/common.h
+index 0e8e2e959aef..bdbb4f0ae751 100644
+--- a/security/tomoyo/common.h
++++ b/security/tomoyo/common.h
+@@ -524,7 +524,7 @@ struct tomoyo_name_union {
+ 
+ /* Structure for holding a number. */
+ struct tomoyo_number_union {
+-	unsigned long values[2];
++	u64 values[2];
+ 	struct tomoyo_group *group; /* Maybe NULL. */
+ 	/* One of values in "enum tomoyo_value_type". */
+ 	u8 value_type[2];
+@@ -567,7 +567,7 @@ struct tomoyo_address_group {
+ struct tomoyo_mini_stat {
+ 	kuid_t uid;
+ 	kgid_t gid;
+-	ino_t ino;
++	u64 ino;
+ 	umode_t mode;
+ 	dev_t dev;
+ 	dev_t rdev;
+@@ -605,7 +605,7 @@ struct tomoyo_obj_info {
+ 
+ /* Structure for argv[]. */
+ struct tomoyo_argv {
+-	unsigned long index;
++	u64 index;
+ 	const struct tomoyo_path_info *value;
+ 	bool is_not;
+ };
+@@ -926,7 +926,7 @@ struct tomoyo_task {
+ 
+ bool tomoyo_address_matches_group(const bool is_ipv6, const __be32 *address,
+ 				  const struct tomoyo_group *group);
+-bool tomoyo_compare_number_union(const unsigned long value,
++bool tomoyo_compare_number_union(const u64 value,
+ 				 const struct tomoyo_number_union *ptr);
+ bool tomoyo_condition(struct tomoyo_request_info *r,
+ 		      const struct tomoyo_condition *cond);
+@@ -938,8 +938,7 @@ bool tomoyo_domain_quota_is_ok(struct tomoyo_request_info *r);
+ bool tomoyo_dump_page(struct linux_binprm *bprm, unsigned long pos,
+ 		      struct tomoyo_page_dump *dump);
+ bool tomoyo_memory_ok(void *ptr);
+-bool tomoyo_number_matches_group(const unsigned long min,
+-				 const unsigned long max,
++bool tomoyo_number_matches_group(const u64 min, const u64 max,
+ 				 const struct tomoyo_group *group);
+ bool tomoyo_parse_ipaddr_union(struct tomoyo_acl_param *param,
+ 			       struct tomoyo_ipaddr_union *ptr);
+@@ -1037,7 +1036,7 @@ struct tomoyo_policy_namespace *tomoyo_assign_namespace
+ (const char *domainname);
+ struct tomoyo_profile *tomoyo_profile(const struct tomoyo_policy_namespace *ns,
+ 				      const u8 profile);
+-u8 tomoyo_parse_ulong(unsigned long *result, char **str);
++u8 tomoyo_parse_u64(u64 *result, char **str);
+ void *tomoyo_commit_ok(void *data, const unsigned int size);
+ void __init tomoyo_load_builtin_policy(void);
+ void __init tomoyo_mm_init(void);
+@@ -1055,8 +1054,8 @@ void tomoyo_normalize_line(unsigned char *buffer);
+ void tomoyo_notify_gc(struct tomoyo_io_buffer *head, const bool is_register);
+ void tomoyo_print_ip(char *buf, const unsigned int size,
+ 		     const struct tomoyo_ipaddr_union *ptr);
+-void tomoyo_print_ulong(char *buffer, const int buffer_len,
+-			const unsigned long value, const u8 type);
++void tomoyo_print_u64(char *buffer, const int buffer_len,
++		      const u64 value, const u8 type);
+ void tomoyo_put_name_union(struct tomoyo_name_union *ptr);
+ void tomoyo_put_number_union(struct tomoyo_number_union *ptr);
+ void tomoyo_read_log(struct tomoyo_io_buffer *head);
+diff --git a/security/tomoyo/condition.c b/security/tomoyo/condition.c
+index f8bcc083bb0d..4a27fbf4588b 100644
+--- a/security/tomoyo/condition.c
++++ b/security/tomoyo/condition.c
+@@ -299,7 +299,7 @@ static bool tomoyo_parse_name_union_quoted(struct tomoyo_acl_param *param,
+ static bool tomoyo_parse_argv(char *left, char *right,
+ 			      struct tomoyo_argv *argv)
+ {
+-	if (tomoyo_parse_ulong(&argv->index, &left) !=
++	if (tomoyo_parse_u64(&argv->index, &left) !=
+ 	    TOMOYO_VALUE_TYPE_DECIMAL || *left++ != ']' || *left)
+ 		return false;
+ 	argv->value = tomoyo_get_dqword(right);
+@@ -766,8 +766,8 @@ bool tomoyo_condition(struct tomoyo_request_info *r,
+ 		      const struct tomoyo_condition *cond)
+ {
+ 	u32 i;
+-	unsigned long min_v[2] = { 0, 0 };
+-	unsigned long max_v[2] = { 0, 0 };
++	u64 min_v[2] = { 0, 0 };
++	u64 max_v[2] = { 0, 0 };
+ 	const struct tomoyo_condition_element *condp;
+ 	const struct tomoyo_number_union *numbers_p;
+ 	const struct tomoyo_name_union *names_p;
+@@ -834,7 +834,7 @@ bool tomoyo_condition(struct tomoyo_request_info *r,
+ 		/* Check numeric or bit-op expressions. */
+ 		for (j = 0; j < 2; j++) {
+ 			const u8 index = j ? right : left;
+-			unsigned long value = 0;
++			u64 value = 0;
+ 
+ 			switch (index) {
+ 			case TOMOYO_TASK_UID:
+diff --git a/security/tomoyo/file.c b/security/tomoyo/file.c
+index 8f3b90b6e03d..4fa58abf5975 100644
+--- a/security/tomoyo/file.c
++++ b/security/tomoyo/file.c
+@@ -109,7 +109,7 @@ void tomoyo_put_number_union(struct tomoyo_number_union *ptr)
+  *
+  * Returns true if @value matches @ptr, false otherwise.
+  */
+-bool tomoyo_compare_number_union(const unsigned long value,
++bool tomoyo_compare_number_union(const u64 value,
+ 				 const struct tomoyo_number_union *ptr)
+ {
+ 	if (ptr->group)
+@@ -230,8 +230,8 @@ static int tomoyo_audit_path_number_log(struct tomoyo_request_info *r)
+ 		radix = TOMOYO_VALUE_TYPE_DECIMAL;
+ 		break;
+ 	}
+-	tomoyo_print_ulong(buffer, sizeof(buffer), r->param.path_number.number,
+-			   radix);
++	tomoyo_print_u64(buffer, sizeof(buffer), r->param.path_number.number,
++			 radix);
+ 	return tomoyo_supervisor(r, "file %s %s %s\n", tomoyo_mac_keywords
+ 				 [tomoyo_pn2mac[type]],
+ 				 r->param.path_number.filename->name, buffer);
+diff --git a/security/tomoyo/group.c b/security/tomoyo/group.c
+index 1cecdd797597..dc650eaedba3 100644
+--- a/security/tomoyo/group.c
++++ b/security/tomoyo/group.c
+@@ -155,8 +155,7 @@ tomoyo_path_matches_group(const struct tomoyo_path_info *pathname,
+  *
+  * Caller holds tomoyo_read_lock().
+  */
+-bool tomoyo_number_matches_group(const unsigned long min,
+-				 const unsigned long max,
++bool tomoyo_number_matches_group(const u64 min, const u64 max,
+ 				 const struct tomoyo_group *group)
+ {
+ 	struct tomoyo_number_group *member;
+diff --git a/security/tomoyo/util.c b/security/tomoyo/util.c
+index 6799b1122c9d..ac9535b4bdcd 100644
+--- a/security/tomoyo/util.c
++++ b/security/tomoyo/util.c
+@@ -172,9 +172,9 @@ const struct tomoyo_path_info *tomoyo_get_domainname
+ }
+ 
+ /**
+- * tomoyo_parse_ulong - Parse an "unsigned long" value.
++ * tomoyo_parse_u64 - Parse a u64 value.
+  *
+- * @result: Pointer to "unsigned long".
++ * @result: Pointer to u64.
+  * @str:    Pointer to string to parse.
+  *
+  * Returns one of values in "enum tomoyo_value_type".
+@@ -182,7 +182,7 @@ const struct tomoyo_path_info *tomoyo_get_domainname
+  * The @src is updated to point the first character after the value
+  * on success.
+  */
+-u8 tomoyo_parse_ulong(unsigned long *result, char **str)
++u8 tomoyo_parse_u64(u64 *result, char **str)
+ {
+ 	const char *cp = *str;
+ 	char *ep;
+@@ -199,7 +199,7 @@ u8 tomoyo_parse_ulong(unsigned long *result, char **str)
+ 			cp++;
+ 		}
+ 	}
+-	*result = simple_strtoul(cp, &ep, base);
++	*result = (u64) simple_strtoull(cp, &ep, base);
+ 	if (cp == ep)
+ 		return TOMOYO_VALUE_TYPE_INVALID;
+ 	*str = ep;
+@@ -214,24 +214,24 @@ u8 tomoyo_parse_ulong(unsigned long *result, char **str)
+ }
+ 
+ /**
+- * tomoyo_print_ulong - Print an "unsigned long" value.
++ * tomoyo_print_u64 - Print a u64 value.
+  *
+  * @buffer:     Pointer to buffer.
+  * @buffer_len: Size of @buffer.
+- * @value:      An "unsigned long" value.
++ * @value:      A u64 value.
+  * @type:       Type of @value.
+  *
+  * Returns nothing.
+  */
+-void tomoyo_print_ulong(char *buffer, const int buffer_len,
+-			const unsigned long value, const u8 type)
++void tomoyo_print_u64(char *buffer, const int buffer_len,
++		      const u64 value, const u8 type)
+ {
+ 	if (type == TOMOYO_VALUE_TYPE_DECIMAL)
+-		snprintf(buffer, buffer_len, "%lu", value);
++		snprintf(buffer, buffer_len, "%llu", value);
+ 	else if (type == TOMOYO_VALUE_TYPE_OCTAL)
+-		snprintf(buffer, buffer_len, "0%lo", value);
++		snprintf(buffer, buffer_len, "0%llo", value);
+ 	else if (type == TOMOYO_VALUE_TYPE_HEXADECIMAL)
+-		snprintf(buffer, buffer_len, "0x%lX", value);
++		snprintf(buffer, buffer_len, "0x%llX", value);
+ 	else
+ 		snprintf(buffer, buffer_len, "type(%u)", type);
+ }
+@@ -274,7 +274,7 @@ bool tomoyo_parse_number_union(struct tomoyo_acl_param *param,
+ {
+ 	char *data;
+ 	u8 type;
+-	unsigned long v;
++	u64 v;
+ 
+ 	memset(ptr, 0, sizeof(*ptr));
+ 	if (param->data[0] == '@') {
+@@ -283,7 +283,7 @@ bool tomoyo_parse_number_union(struct tomoyo_acl_param *param,
+ 		return ptr->group != NULL;
+ 	}
+ 	data = tomoyo_read_token(param);
+-	type = tomoyo_parse_ulong(&v, &data);
++	type = tomoyo_parse_u64(&v, &data);
+ 	if (type == TOMOYO_VALUE_TYPE_INVALID)
+ 		return false;
+ 	ptr->values[0] = v;
+@@ -295,7 +295,7 @@ bool tomoyo_parse_number_union(struct tomoyo_acl_param *param,
+ 	}
+ 	if (*data++ != '-')
+ 		return false;
+-	type = tomoyo_parse_ulong(&v, &data);
++	type = tomoyo_parse_u64(&v, &data);
+ 	if (type == TOMOYO_VALUE_TYPE_INVALID || *data || ptr->values[0] > v)
+ 		return false;
+ 	ptr->values[1] = v;
+-- 
+2.43.5
 
-My preference would be to take this via the vfs or fsnotify tree.
 
->
-> As far as stable prior to v6.8 is concerned, once this hits Linus'
-> tree you can submit an adjusted backport for the older kernels to the
-> stable team.
-
-Please do NOT submit an adjustable backport.
-Instead please include the following tags for the decoupling patch:
-
-Depends-on: 36e28c42187c fsnotify: split fsnotify_perm() into two hooks
-Depends-on: d9e5d31084b0 fsnotify: optionally pass access range in
-file permission hooks
-
->
-> Acked-by: Paul Moore <paul@paul-moore.com>
->
-
-Thanks,
-Amir.
