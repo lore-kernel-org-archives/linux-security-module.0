@@ -1,159 +1,103 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from omr000.pc5.atmailcloud.com (omr000.pc5.atmailcloud.com [103.150.252.0])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25BF7154BFF;
-	Mon, 14 Oct 2024 11:46:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9F9E19D086;
+	Mon, 14 Oct 2024 12:12:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.150.252.0
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728906390; cv=none; b=qNNBXGjUQcNlw82lgAHeoo8BDXcVaPX8EYi3TshFL7+l8enr2/4iacg/IbgEydyptZrUUJNYnRLUQSixZDPSbQ2nIIHkhXaXo3tkoYpcfJEC7bwZDvA3SiWTS/6URXDLc+dBOykx3OofovW7Qf1tEfN131XuCkOxFr0jedHpI10=
+	t=1728907956; cv=none; b=KH5GwYaFWDPO6EvofOmVTfXR1gGY2AAZo3C/4wrqdJ6dcK5fQ3c5ZiflXtfV2XR/NGV+tulGcQFAJJE/h1GgNRj9ijfNoTdja75/GcH3rNRgQSY6zFIhcyRuJPdwZ/LlqUbWjUc7jbOwGXabRWWgjvX8ElCKYFU0YzR5ELH85Mo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728906390; c=relaxed/simple;
-	bh=WCsxHw3vZQcjnLcbXSjXjwVJ4eA/MYcD+tajOib6FT4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=VolPdGa5VJtL2CurWFaCE6rW6NOwAVApeZYXsw5sML984jtqFF5rBqdJSEd9dwaHAX6Fgei5JTECUELfmS8g1/AQis8qBS7QGgl07PEy2sANeZFdTp1XpbnVfjhGDKbn0rSZHzPGwaTWg0dqK+/jEcx70dpsZ0owR6rSfFoWUL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=MdS0KHEf; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1728907956; c=relaxed/simple;
+	bh=JZLBHV5vFgJKv+6jkMgKEJyH05oqWfyMdWfWaJ6792s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jMhr7zK+BG1398cUJXGPnRUjpCMsPvCzfaakJjh32Y6ZCEK9lmgPMbuMQ9FPU2Y3fyMMzmzDruF3AKNRDRTjiNPjuQUqV9X58K+3qmESMx/H3NBqu3nGNcnuwBHrKMFqN6ct9uYZl9tKP7eHqmRSGQPUIPum6uLBew5YlXh8P6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iinet.net.au; spf=pass smtp.mailfrom=iinet.net.au; dkim=pass (2048-bit key) header.d=iinet.net.au header.i=@iinet.net.au header.b=a42kvwFP; arc=none smtp.client-ip=103.150.252.0
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iinet.net.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iinet.net.au
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="MdS0KHEf"
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49E9shQo005514;
-	Mon, 14 Oct 2024 11:46:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:subject:from:to:cc:date:in-reply-to:references
-	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
-	WCsxHw3vZQcjnLcbXSjXjwVJ4eA/MYcD+tajOib6FT4=; b=MdS0KHEfRRyQVmol
-	l7Foxf3uI71SAwaBHJEHAXKpSmji55GQD4A7nlBYv6etacyeuim5f0xt/xxCk1iZ
-	XiU4+TcUABZwnyNSp0StGb+nYUwFWNLZ5OL0d4xX9gndVgfUf1Ld8JjmKiNwYjJ/
-	uMc2pVBS2lDPJX1ELTJxPOxiXsui+mtA/7JRAYA8ljAeGav399O/qYhdj78rgVpe
-	/HWmCTjsjtY/0WXZLegLZKyI0Brb9GWKdq1CAZVIf3vLNvF4ZIvIkmDkJIOcQQy5
-	gYmeeVZohS5iatQKgdFD3Rq/E4TQ0JSelrr9ReuPZ30oyMk67+VK+QvnWSKP0JkV
-	RfyaGw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4291330fxk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Oct 2024 11:46:01 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49EBk1Tg017492;
-	Mon, 14 Oct 2024 11:46:01 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4291330fxc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Oct 2024 11:46:01 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49EBbf5K002452;
-	Mon, 14 Oct 2024 11:45:59 GMT
-Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4284eme94a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Oct 2024 11:45:59 +0000
-Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
-	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49EBjxIx25231986
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 14 Oct 2024 11:45:59 GMT
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0810A58067;
-	Mon, 14 Oct 2024 11:45:58 +0000 (GMT)
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 389CF58052;
-	Mon, 14 Oct 2024 11:45:58 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.89.75])
-	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 14 Oct 2024 11:45:58 +0000 (GMT)
-Message-ID: <04dc04872f2925166f969b43852161d468ee899a.camel@linux.ibm.com>
-Subject: Re: [PATCH v5 0/5] Lazy flush for the auth session
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>,
-        Roberto Sassu
-	 <roberto.sassu@huaweicloud.com>,
-        linux-integrity@vger.kernel.org
-Cc: James.Bottomley@HansenPartnership.com, roberto.sassu@huawei.com,
-        mapengyu@gmail.com, David Howells <dhowells@redhat.com>,
-        Paul Moore
- <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn"
- <serge@hallyn.com>, Peter Huewe <peterhuewe@gmx.de>,
-        Jason Gunthorpe
- <jgg@ziepe.ca>, keyrings@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Mon, 14 Oct 2024 07:45:57 -0400
-In-Reply-To: <e70c55c6edea2a5be7786ee04a85778193237444.camel@kernel.org>
-References: <20240921120811.1264985-1-jarkko@kernel.org>
-	 <f69e08167d8354db31013018edf064a2876f8d1c.camel@kernel.org>
-	 <21b46f4882f0b9b12304d7786bd88f33a7ad2b97.camel@huaweicloud.com>
-	 <a0068539450a81fdd363d078521cb3822c54608b.camel@kernel.org>
-	 <e70c55c6edea2a5be7786ee04a85778193237444.camel@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	dkim=pass (2048-bit key) header.d=iinet.net.au header.i=@iinet.net.au header.b="a42kvwFP"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=iinet.net.au; s=202309; h=Content-Type:From:To:Subject:MIME-Version:Date:
+	Message-ID; bh=7bzoUaGmGd5GJ8pEJdquUclvFKaCwupX43uBvA/GI+g=; b=a42kvwFP81OpuC
+	SqIZ0ALxc+ySEPI6GBWLvLOxcJXjVdRy+WtQbXOlfRkbzj+kovllcRIXz4Xxw+IEVRSI0Z7hqYYa4
+	yuaGlKx/PQ5fqipf4oMAqeWWP/iyFKnqMOViXBOgsSAyaciVVo7Kx+HOCTViEsLjAzsMZnQMlG41C
+	2AdulAVLNfTESIeVKKQGwkEob2HmNC0XX0B10/uNZeVah/DRwI0Ld9eGyEW+uHmtV+yvw8nzC8n60
+	hZlaS3DF+NaNyS7r7UXF8addHDFaAtUYm4GVxv7Q62+5fs4VKUdFVoyyzjy+9vzeKHkX5qhqNSmlp
+	Zhc/kwfl/KLAq2DUWv2Q==;
+Received: from CMR-TMC.i-0acf53ef05dcc86bb
+	 by OMR.i-0dfa7ead5d297886b with esmtps
+	(envelope-from <burn.alting@iinet.net.au>)
+	id 1t0Jw4-000000004T2-3hw0;
+	Mon, 14 Oct 2024 12:12:28 +0000
+Received: from [121.45.199.178] (helo=[192.168.2.220])
+	 by CMR-TMC.i-0acf53ef05dcc86bb with esmtpsa
+	(envelope-from <burn.alting@iinet.net.au>)
+	id 1t0Jw4-000000000KE-2GfL;
+	Mon, 14 Oct 2024 12:12:28 +0000
+Message-ID: <e0188174-a8ae-461b-b30a-bc7acd545a18@iinet.net.au>
+Date: Mon, 14 Oct 2024 23:12:25 +1100
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: rYrsrcYGDrxAJtbTIwXVtk0T6VlTXmWv
-X-Proofpoint-GUID: Yej-s5UB3gYcINthSPFZKN81Sf6sAPvl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-14_10,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- phishscore=0 mlxscore=0 bulkscore=0 priorityscore=1501 mlxlogscore=999
- spamscore=0 lowpriorityscore=0 clxscore=1015 adultscore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410140083
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1 1/7] fs: Add inode_get_ino() and implement
+ get_ino() for NFS
+To: Christoph Hellwig <hch@infradead.org>
+Cc: audit@vger.kernel.org, linux-security-module@vger.kernel.org,
+ linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <ZwkaVLOFElypvSDX@infradead.org>
+ <20241011.ieghie3Aiye4@digikod.net> <ZwkgDd1JO2kZBobc@infradead.org>
+ <20241011.yai6KiDa7ieg@digikod.net> <Zwkm5HADvc5743di@infradead.org>
+ <20241011.aetou9haeCah@digikod.net> <Zwk4pYzkzydwLRV_@infradead.org>
+ <20241011.uu1Bieghaiwu@digikod.net>
+ <05cb94c0dda9e1b23fe566c6ecd71b3d1739b95b.camel@kernel.org>
+ <0e4e7a6d-09e0-480d-baa9-a2e7522a088a@iinet.net.au>
+ <ZwzeGausiU0IDkFy@infradead.org>
+Content-Language: en-US
+From: Burn Alting <burn.alting@iinet.net.au>
+In-Reply-To: <ZwzeGausiU0IDkFy@infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Atmail-Id: burn.alting@iinet.net.au
+X-atmailcloud-spam-action: no action
+X-Cm-Analysis: v=2.4 cv=E4bLp7dl c=1 sm=1 tr=0 ts=670d0aac a=ad8utJckiWseeaTPZMijYg==:117 a=ad8utJckiWseeaTPZMijYg==:17 a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=x7bEGLp0ZPQA:10 a=jEJR_5qdvOA3Q1yG22IA:9 a=QEXdDO2ut3YA:10
+X-Cm-Envelope: MS4xfFZ1mGb3gpeJ4QhT+lZ1HPnqxfoCLMTv+9F+DKGtZPHX3yX3sOtIBjJ1poCaXTW9Xr+qRhVSCHmFrP9c/dAKGLZGJBqnC1pTsV7HeNZnrs7ajIw096q7 nD+lZYwnYInsYl0Xx3vco6iZVrdHBzgFkbuoRQwaXyZk04nrE7jyjfCDQm60EMpk0I7eYpbysTAcSA==
+X-atmailcloud-route: unknown
 
-On Sat, 2024-10-12 at 13:56 +0300, Jarkko Sakkinen wrote:
-> On Fri, 2024-10-11 at 19:25 +0300, Jarkko Sakkinen wrote:
-> > On Fri, 2024-10-11 at 18:10 +0200, Roberto Sassu wrote:
-> > > Initially, I thought that maybe it would not be good to have an
-> > > event
-> > > log with unmodified and altered measurement entries. Then, I tried
-> > > to
-> > > think if we can really prevent an active interposer from injecting
-> > > arbitrary PCR extends and pretending that those events actually
-> > > happened.
-> > >=20
-> > > If I understood James's cover letter correctly, the kernel can
-> > > detect
-> > > whether a TPM reset occurred, but not that a PCR extend occurred
-> > > (maybe
-> > > with a shadow PCR?).
-> >=20
-> > We can detect TPM reset indirectly. I.e. null seed re-randomizes
-> > per reset.
-> >=20
-> > >=20
-> > > Second point, do we really want to take the responsibility to
-> > > disable
-> > > the protection on behalf of users? Maybe a better choice is to let
-> > > them
-> > > consciously disable HMAC protection.
-> >=20
-> > So when IMA is not used already with these fixes we get good
-> > results. And for tpm2_get_random() we can make the algorithm
-> > smarter. All in all we have good path ongoing for "desktop
-> > use case" that I would keep thing way there are or at least
-> > postpone any major decisions just a bit.
-> >=20
-> > For server/IMA use case I'll add a boot parameter it can be
-> > either on or off by default, I will state that in the commit
-> > message and we'll go from there.
 
-Sounds good.
 
->=20
-> Up until legit fixes are place distributors can easily disable
-> the feature. It would be worse if TCG_TPM2_HMAC did not exist.
->=20
-> So I think it is better to focus on doing right things right,
-> since the feature itself is useful objectively, and make sure
-> that those fixes bring the wanted results.
+On 14/10/24 20:02, Christoph Hellwig wrote:
+> On Mon, Oct 14, 2024 at 07:40:37PM +1100, Burn Alting wrote:
+>> As someone who lives in the analytical user space of Linux audit,  I take it
+>> that for large (say >200TB) file systems, the inode value reported in audit
+>> PATH records is no longer forensically defensible and it's use as a
+>> correlation item is of questionable value now?
+> 
+> What do you mean with forensically defensible?
 
-Are you backtracking on having a boot parameter here specifically to turn o=
-n/off
-HMAC encryption for IMA?
+If the auditd system only maintains a 32 bit variable for an inode 
+value, when it emits an inode number, then how does one categorically 
+state/defend that the inode value in the audit event is the actual one 
+on the file system. The PATH record will offer one value (32 bits) but 
+the returned inode value from a stat will return another (the actual 64 
+bit value). Basically auditd would not be recording the correct value.
 
-Mimi
+> 
+> A 64-bit inode number is supposed to be unique.  Some file systems
+> (most notably btrfs, but probably also various non-native file system)
+> break and this, and get away with lots of userspace hacks papering
+> over it.  If you are on a 32-bit system and not using the LFS APIs
+> stat will fail with -EOVERFLOW.  Some file systems have options to
+> never generate > 32bit inode numbers.  None of that is directly
+> related to file system size, although at least for XFS file system
+> size is one relevant variable, but 200TB is in no way relevant.
 
+My reference to the filesystem size was a quick and dirty estimate of 
+when one may see more than 2^32 inodes on a single filesystem. What I 
+failed to state (my apologies) is that this presumed an xfs filesystem 
+with default values when creating the file system. (A quick check on an 
+single 240TB xfs filesystem advised more than 5000000000 inodes were 
+available).
