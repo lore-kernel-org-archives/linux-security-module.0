@@ -1,116 +1,77 @@
-Received: from omr000.pc5.atmailcloud.com (omr000.pc5.atmailcloud.com [103.150.252.0])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34CBE1474A5;
-	Mon, 14 Oct 2024 08:40:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.150.252.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8252714D6EB;
+	Mon, 14 Oct 2024 09:02:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728895243; cv=none; b=FTius6LNppU/O1f6EfzNX/RLxzrZbLz6J8rb8sAVLtdia1F/JATJ02y6xH+OBypL5btppo79L10HrMwEuimXhXpAC/yz8We5xHpZlsp/BKkjiSmdUZGnQkwAHMvFinrS6GmBy8POWf9LiPdZ+6YNTS6ERernHrzC09OoLoGnvDo=
+	t=1728896539; cv=none; b=Y4y3Wa3s6XD74JJzI+U2GVk1pHPvNBgcJ3Z/uIYnwqt568f+8Kt5HMtgpjZ+j1T5pcrrOS6W6D5eAA2XBWDFJcy2O2rtibELnPQbJOdHFE5YYHILmRYCGzEcc/UBP7/A7/Kb4MC/6uq3f/3/f4LY6RYtedQiP3fLriDA/y5jouY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728895243; c=relaxed/simple;
-	bh=mjvTs/Rg1BxKP6CQdxfVJpnbZeiHlJIKmkqRkZJ2euc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=BVC2DCt1TrSLz0mpnlUHz390dZtYfXxBuFVqvivjvyjo6S1CzgOir1FI3hgmDNwYWdJpYs0MLsIFsX3tvhStdvU7RZFlQEnUEfU9mwO0Jh2ZK+aCDd7dBDXlRkBEGltniCtvp/qR1gdrad5dBnDqcq73F4zuVQa5BSnv+wky0RA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iinet.net.au; spf=pass smtp.mailfrom=iinet.net.au; dkim=pass (2048-bit key) header.d=iinet.net.au header.i=@iinet.net.au header.b=G9RFdKKJ; arc=none smtp.client-ip=103.150.252.0
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iinet.net.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iinet.net.au
+	s=arc-20240116; t=1728896539; c=relaxed/simple;
+	bh=SC5TVik2Xxca7/VhWdKwosUr9zEWIXPsOrWR/3NySFk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EEKYkovgXzXZ+/VF3G1C6QR/0WgUuRIC/sNjQrlnJYfWIBPiO3I+ygcjzQXDSFtIjsJoi+4I7qOZ6nRhkATkn+yq9xjrIN5LRNjOZy0zUs3ryf0shCguobKN6aF4mA/sTFd02/qK1hMinOR90rUg1I0B1Qx9GIpbepaztpIxCr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=2cPGw0JO; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iinet.net.au header.i=@iinet.net.au header.b="G9RFdKKJ"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="2cPGw0JO"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=iinet.net.au; s=202309; h=Content-Type:From:To:Subject:MIME-Version:Date:
-	Message-ID; bh=7kzM5FpMbnXs7iTj1M/pCDaWsEiikl3NuYf4Y5aJL1c=; b=G9RFdKKJBut41n
-	DI0v3wYsLbgsCfLFqnKhfyy77k3s2cDuVMr96V24CecinDP1gydk08FbGeyG524IR3zo9CMhpbD7V
-	1jUX+KMW01QZXO+5K0pGzcTP3Xnu5gUvNqczH5l7vDJuUgaTeFvPpsNzIzZK+4jkjytl52f6a2bHO
-	csi4XdZZakk2xcpO59aZy8WtDGTpUCSkK46myvRHS67VMqpXMP/usSuMt1BtdFn2u8N09tukp28qf
-	Tqlol4EPEZnrZZAlemSwlJmFa1tA2hBLviIyBy2Z0hsBae83H7VS1FjmpS5F8Q8qcYyDAXCvRm8zm
-	r2vx+m1iWweT/6iw0aZg==;
-Received: from CMR-TMC.i-0e96db1614e72c689
-	 by OMR.i-0dfa7ead5d297886b with esmtps
-	(envelope-from <burn.alting@iinet.net.au>)
-	id 1t0Gd4-000000001Yu-2Q2o;
-	Mon, 14 Oct 2024 08:40:38 +0000
-Received: from [121.45.199.178] (helo=[192.168.2.220])
-	 by CMR-TMC.i-0e96db1614e72c689 with esmtpsa
-	(envelope-from <burn.alting@iinet.net.au>)
-	id 1t0Gd4-000000004Lp-11ny;
-	Mon, 14 Oct 2024 08:40:38 +0000
-Message-ID: <0e4e7a6d-09e0-480d-baa9-a2e7522a088a@iinet.net.au>
-Date: Mon, 14 Oct 2024 19:40:37 +1100
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=I1o3feqvMCIzR4DfO8N4j2JacDyYMM5NCJMg3xk+TCE=; b=2cPGw0JOJr4TdveJLcRiOhb3NK
+	RLAXU/H6JVEoI6fC7MOyaY4JalrfkMnYEHZwjqJMHkKe7jCqp0pDQUdp2y6EYTH1iVWGHzOODykjI
+	KGfbDMT9oG45coa3kR8w+m2LBHBbp0dUD6/OaDVTG7Gx7aL1zWmUCohtlNe01ET57+hc+lN0q0PCp
+	t9DhXptIH67ZMvfsaT1frgxKynIGQ/ok93TOBo7gFJnLFHPjJQH76e6a8HRYCVwPjuhlCT5fZyvs7
+	pvmnezun86TUtTgFG7TReWn9NW9s3S3EeZ/aUecf0xlKomVDE0gdY5aGviaYx1MhSq4F20yFqgPW/
+	h63yxoig==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1t0Gy1-00000004Pbq-3gqy;
+	Mon, 14 Oct 2024 09:02:17 +0000
+Date: Mon, 14 Oct 2024 02:02:17 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Burn Alting <burn.alting@iinet.net.au>
+Cc: audit@vger.kernel.org, linux-security-module@vger.kernel.org,
+	linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH v1 1/7] fs: Add inode_get_ino() and implement
+ get_ino() for NFS
+Message-ID: <ZwzeGausiU0IDkFy@infradead.org>
+References: <ZwkaVLOFElypvSDX@infradead.org>
+ <20241011.ieghie3Aiye4@digikod.net>
+ <ZwkgDd1JO2kZBobc@infradead.org>
+ <20241011.yai6KiDa7ieg@digikod.net>
+ <Zwkm5HADvc5743di@infradead.org>
+ <20241011.aetou9haeCah@digikod.net>
+ <Zwk4pYzkzydwLRV_@infradead.org>
+ <20241011.uu1Bieghaiwu@digikod.net>
+ <05cb94c0dda9e1b23fe566c6ecd71b3d1739b95b.camel@kernel.org>
+ <0e4e7a6d-09e0-480d-baa9-a2e7522a088a@iinet.net.au>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 1/7] fs: Add inode_get_ino() and implement
- get_ino() for NFS
-To: audit@vger.kernel.org, linux-security-module@vger.kernel.org,
- linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20241010152649.849254-1-mic@digikod.net>
- <ZwkaVLOFElypvSDX@infradead.org> <20241011.ieghie3Aiye4@digikod.net>
- <ZwkgDd1JO2kZBobc@infradead.org> <20241011.yai6KiDa7ieg@digikod.net>
- <Zwkm5HADvc5743di@infradead.org> <20241011.aetou9haeCah@digikod.net>
- <Zwk4pYzkzydwLRV_@infradead.org> <20241011.uu1Bieghaiwu@digikod.net>
- <05cb94c0dda9e1b23fe566c6ecd71b3d1739b95b.camel@kernel.org>
-Content-Language: en-US
-From: Burn Alting <burn.alting@iinet.net.au>
-In-Reply-To: <05cb94c0dda9e1b23fe566c6ecd71b3d1739b95b.camel@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Atmail-Id: burn.alting@iinet.net.au
-X-atmailcloud-spam-action: no action
-X-Cm-Analysis: v=2.4 cv=JqH3rt4C c=1 sm=1 tr=0 ts=670cd906 a=ad8utJckiWseeaTPZMijYg==:117 a=ad8utJckiWseeaTPZMijYg==:17 a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=x7bEGLp0ZPQA:10 a=q7kHw0SAeLOdz_FGtMwA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Cm-Envelope: MS4xfEbwnGFsAduAAbxbbDekDJQvVXVN1BYHo7Jibe90oIHgx/m/xssYzHZkVoG0wp8kegKOzYQOSXZouYTYJBlqJHfl7Q+A7/H/lgwpEUlKCepe1EVRi0Rs jfOwUUcBIC0Deny30eF0GCZrgP/7Ob4GgNjwC/9glHlWQVjOuZiLfI0zZgntb/eDzsiWwo5tL4e99Q==
-X-atmailcloud-route: unknown
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0e4e7a6d-09e0-480d-baa9-a2e7522a088a@iinet.net.au>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
+On Mon, Oct 14, 2024 at 07:40:37PM +1100, Burn Alting wrote:
+> As someone who lives in the analytical user space of Linux audit,  I take it
+> that for large (say >200TB) file systems, the inode value reported in audit
+> PATH records is no longer forensically defensible and it's use as a
+> correlation item is of questionable value now?
 
+What do you mean with forensically defensible?
 
-On 13/10/24 21:17, Jeff Layton wrote:
-> On Fri, 2024-10-11 at 17:30 +0200, Mickaël Salaün wrote:
->> On Fri, Oct 11, 2024 at 07:39:33AM -0700, Christoph Hellwig wrote:
->>> On Fri, Oct 11, 2024 at 03:52:42PM +0200, Mickaël Salaün wrote:
->>>>>> Yes, but how do you call getattr() without a path?
->>>>>
->>>>> You don't because inode numbers are irrelevant without the path.
->>>>
->>>> They are for kernel messages and audit logs.  Please take a look at the
->>>> use cases with the other patches.
->>>
->>> It still is useless.  E.g. btrfs has duplicate inode numbers due to
->>> subvolumes.
->>
->> At least it reflects what users see.
->>
->>>
->>> If you want a better pretty but not useful value just work on making
->>> i_ino 64-bits wide, which is long overdue.
->>
->> That would require too much work for me, and this would be a pain to
->> backport to all stable kernels.
->>
-> 
-> Would it though? Adding this new inode operation seems sub-optimal.
-> 
-> Inode numbers are static information. Once an inode number is set on an
-> inode it basically never changes.  This patchset will turn all of those
-> direct inode->i_ino fetches into a pointer chase for the new inode
-> operation, which will then almost always just result in a direct fetch.
-> 
-> A better solution here would be to make inode->i_ino a u64, and just
-> fix up all of the places that touch it to expect that. Then, just
-> ensure that all of the filesystems set it properly when instantiating
-> new inodes. Even on 32-bit arch, you likely wouldn't need a seqcount
-> loop or anything to fetch this since the chance of a torn read there is
-> basically zero.
-> 
-> If there are places where we need to convert i_ino down to 32-bits,
-> then we can just use some scheme like nfs_fattr_to_ino_t(), or just
-> cast i_ino to a u32.
-> 
-> Yes, it'd be a larger patchset, but that seems like it would be a
-> better solution.
-As someone who lives in the analytical user space of Linux audit,  I 
-take it that for large (say >200TB) file systems, the inode value 
-reported in audit PATH records is no longer forensically defensible and 
-it's use as a correlation item is of questionable value now?
+A 64-bit inode number is supposed to be unique.  Some file systems
+(most notably btrfs, but probably also various non-native file system)
+break and this, and get away with lots of userspace hacks papering
+over it.  If you are on a 32-bit system and not using the LFS APIs
+stat will fail with -EOVERFLOW.  Some file systems have options to
+never generate > 32bit inode numbers.  None of that is directly
+related to file system size, although at least for XFS file system
+size is one relevant variable, but 200TB is in no way relevant.
+
