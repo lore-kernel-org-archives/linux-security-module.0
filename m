@@ -1,152 +1,285 @@
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [185.125.25.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E260B25763;
-	Mon, 14 Oct 2024 01:33:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 089FB14B95A;
+	Mon, 14 Oct 2024 07:39:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728869606; cv=none; b=b5m7vFXMiq3wKyNwBHN4CV+103Qiu+ps/2lzHs6IihWH2gBgRa0t5jNzoXP+XRnljPoue5DAhm8581226JToswJA6TJ5N+QQxh+1nI30V46TBDnmuOtnOnAkTsXph20u6FkVOMtbiYQj7FVPmHa0sRVFwmT28xfQKhsZ79/OfBc=
+	t=1728891593; cv=none; b=AKD6b3fmc8yv+dtgJ91jMLtkUwjtXNvpiUVQY8Wh3TwHKoHUu8eslvek+SCTtm2OmCHXpBb1x60ff6evkW+tESMHzLpDEwbd1/SDsL8atNNtt3LxVs3np2aHc8dE/2cFkuGuG0Dlb00HghuYwpn0PG8Y5Cz79Sg73f4XEfRI8go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728869606; c=relaxed/simple;
-	bh=1KoyUr7OUAAKJE72JEhYBQIws427NExhvIEoCRtqtvw=;
-	h=Subject:To:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=P1167R9S+Vnq/ALPoAfSm9bNF+NyXbmm7RShkPC/lNOhnclMi8bQs6q2Pk0w+5ZbpfwnReQnwfB+fse5XtjyMHhb6AwzIIeBaLD6ye857Yt4ZDlTKi90wqiguIQGEZketmtoKVOdsRTM6XJXS7CmEvHVJwhKrue9hRkY4vUszmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4XRfqP4pDzzQrfD;
-	Mon, 14 Oct 2024 09:32:33 +0800 (CST)
-Received: from kwepemh100016.china.huawei.com (unknown [7.202.181.102])
-	by mail.maildlp.com (Postfix) with ESMTPS id 675AF140137;
-	Mon, 14 Oct 2024 09:33:15 +0800 (CST)
-Received: from [10.174.179.93] (10.174.179.93) by
- kwepemh100016.china.huawei.com (7.202.181.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Mon, 14 Oct 2024 09:33:11 +0800
-Subject: Re: [PATCH v3 -next 00/15] sysctl: move sysctls from vm_table into
- its own files
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, <akpm@linux-foundation.org>,
-	<mcgrof@kernel.org>, <ysato@users.sourceforge.jp>, <dalias@libc.org>,
-	<glaubitz@physik.fu-berlin.de>, <luto@kernel.org>, <tglx@linutronix.de>,
-	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
-	<hpa@zytor.com>, <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
-	<jack@suse.cz>, <kees@kernel.org>, <j.granados@samsung.com>,
-	<willy@infradead.org>, <vbabka@suse.cz>, <lorenzo.stoakes@oracle.com>,
-	<trondmy@kernel.org>, <anna@kernel.org>, <chuck.lever@oracle.com>,
-	<jlayton@kernel.org>, <neilb@suse.de>, <okorniev@redhat.com>,
-	<Dai.Ngo@oracle.com>, <tom@talpey.com>, <davem@davemloft.net>,
-	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<paul@paul-moore.com>, <jmorris@namei.org>, <linux-sh@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-	<linux-mm@kvack.org>, <linux-nfs@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<linux-security-module@vger.kernel.org>, <dhowells@redhat.com>,
-	<haifeng.xu@shopee.com>, <baolin.wang@linux.alibaba.com>,
-	<shikemeng@huaweicloud.com>, <dchinner@redhat.com>, <bfoster@redhat.com>,
-	<souravpanda@google.com>, <hannes@cmpxchg.org>, <rientjes@google.com>,
-	<pasha.tatashin@soleen.com>, <david@redhat.com>, <ryan.roberts@arm.com>,
-	<ying.huang@intel.com>, <yang@os.amperecomputing.com>,
-	<zev@bewilderbeest.net>, <serge@hallyn.com>, <vegard.nossum@oracle.com>,
-	<wangkefeng.wang@huawei.com>, <sunnanyong@huawei.com>
-References: <20241010152215.3025842-1-yukaixiong@huawei.com>
- <ykseykkxta6fk747pejzpatstsf3vzx63rk4gayfrh5hsru7nq@duruino6qmys>
-From: yukaixiong <yukaixiong@huawei.com>
-Message-ID: <3ce4d2b1-02bb-f5ac-dbb9-729fe3d10f62@huawei.com>
-Date: Mon, 14 Oct 2024 09:33:10 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.1
+	s=arc-20240116; t=1728891593; c=relaxed/simple;
+	bh=/0EWjnNyTSMVWAX7PR9l4tolkkuP28KKuXM//fxuEKE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=upWDMo3n41WEkaPLnI9OQDgw946XG6w0hXHh8wxVGQnifhW3Y6dQMfYaf9antxoG25mUztK4GCrQ4s3hOxKsTvMyYWhK/xxkaYFLb7t+uL7u4lg4WQNWGnOQ2cfKQfwS881w/77NZ7vtMLz+G70LY0ameTQntBSFa89gtfnfR0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=0+X0hdlg; arc=none smtp.client-ip=185.125.25.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="0+X0hdlg"
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XRpz03Ln1zg0x;
+	Mon, 14 Oct 2024 09:39:40 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1728891580;
+	bh=LI5PHQ4qVwieWJi0zgaZu9T5DqqBB/W0M4DOCvj8jsQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=0+X0hdlgJlXgMJtiAOITPn46f5lIuSOhhnBn2S0Tb4X4zEbDzPAlXeHEaNSQcZgYM
+	 iq2fFvzQgCnWSWAbYs4suC7XyBSkpgiUEihe0E2nJEs5N2t5HjkfqWoOXQv/SXpkfg
+	 TywKiuM3+jDssRwG1bFqaFSvyDR12s2dLpULg0ik=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4XRpyt3jmBzLB1;
+	Mon, 14 Oct 2024 09:39:34 +0200 (CEST)
+Date: Mon, 14 Oct 2024 09:39:30 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, 
+	Serge Hallyn <serge@hallyn.com>, Theodore Ts'o <tytso@mit.edu>, 
+	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>, Alejandro Colomar <alx@kernel.org>, 
+	Aleksa Sarai <cyphar@cyphar.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
+	Dmitry Vyukov <dvyukov@google.com>, Elliott Hughes <enh@google.com>, 
+	Eric Biggers <ebiggers@kernel.org>, Eric Chiang <ericchiang@google.com>, 
+	Fan Wu <wufan@linux.microsoft.com>, Florian Weimer <fweimer@redhat.com>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, James Morris <jamorris@linux.microsoft.com>, 
+	Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
+	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
+	Luis Chamberlain <mcgrof@kernel.org>, "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Matthew Garrett <mjg59@srcf.ucam.org>, 
+	Matthew Wilcox <willy@infradead.org>, Miklos Szeredi <mszeredi@redhat.com>, 
+	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, 
+	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
+	Stephen Rothwell <sfr@canb.auug.org.au>, Steve Dower <steve.dower@python.org>, 
+	Steve Grubb <sgrubb@redhat.com>, Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
+	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
+	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v20 1/6] exec: Add a new AT_CHECK flag to execveat(2)
+Message-ID: <20241014.waet2se6Jeiw@digikod.net>
+References: <20241011184422.977903-1-mic@digikod.net>
+ <20241011184422.977903-2-mic@digikod.net>
+ <CAOQ4uxi502PNn8eyKt9BExXVhbpx04f0XTeLg771i6wPOrLadA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ykseykkxta6fk747pejzpatstsf3vzx63rk4gayfrh5hsru7nq@duruino6qmys>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggpeml500010.china.huawei.com (7.185.36.155) To
- kwepemh100016.china.huawei.com (7.202.181.102)
+In-Reply-To: <CAOQ4uxi502PNn8eyKt9BExXVhbpx04f0XTeLg771i6wPOrLadA@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
+On Sun, Oct 13, 2024 at 11:25:11AM +0200, Amir Goldstein wrote:
+> On Fri, Oct 11, 2024 at 8:45 PM Mickaël Salaün <mic@digikod.net> wrote:
+> >
+> > Add a new AT_CHECK flag to execveat(2) to check if a file would be
+> > allowed for execution.  The main use case is for script interpreters and
+> > dynamic linkers to check execution permission according to the kernel's
+> > security policy. Another use case is to add context to access logs e.g.,
+> > which script (instead of interpreter) accessed a file.  As any
+> > executable code, scripts could also use this check [1].
+> >
+> > This is different from faccessat(2) + X_OK which only checks a subset of
+> > access rights (i.e. inode permission and mount options for regular
+> > files), but not the full context (e.g. all LSM access checks).  The main
+> > use case for access(2) is for SUID processes to (partially) check access
+> > on behalf of their caller.  The main use case for execveat(2) + AT_CHECK
+> > is to check if a script execution would be allowed, according to all the
+> > different restrictions in place.  Because the use of AT_CHECK follows
+> > the exact kernel semantic as for a real execution, user space gets the
+> > same error codes.
+> >
+> > An interesting point of using execveat(2) instead of openat2(2) is that
+> > it decouples the check from the enforcement.  Indeed, the security check
+> > can be logged (e.g. with audit) without blocking an execution
+> > environment not yet ready to enforce a strict security policy.
+> >
+> > LSMs can control or log execution requests with
+> > security_bprm_creds_for_exec().  However, to enforce a consistent and
+> > complete access control (e.g. on binary's dependencies) LSMs should
+> > restrict file executability, or mesure executed files, with
+> > security_file_open() by checking file->f_flags & __FMODE_EXEC.
+> >
+> > Because AT_CHECK is dedicated to user space interpreters, it doesn't
+> > make sense for the kernel to parse the checked files, look for
+> > interpreters known to the kernel (e.g. ELF, shebang), and return ENOEXEC
+> > if the format is unknown.  Because of that, security_bprm_check() is
+> > never called when AT_CHECK is used.
+> >
+> > It should be noted that script interpreters cannot directly use
+> > execveat(2) (without this new AT_CHECK flag) because this could lead to
+> > unexpected behaviors e.g., `python script.sh` could lead to Bash being
+> > executed to interpret the script.  Unlike the kernel, script
+> > interpreters may just interpret the shebang as a simple comment, which
+> > should not change for backward compatibility reasons.
+> >
+> > Because scripts or libraries files might not currently have the
+> > executable permission set, or because we might want specific users to be
+> > allowed to run arbitrary scripts, the following patch provides a dynamic
+> > configuration mechanism with the SECBIT_EXEC_RESTRICT_FILE and
+> > SECBIT_EXEC_DENY_INTERACTIVE securebits.
+> >
+> > This is a redesign of the CLIP OS 4's O_MAYEXEC:
+> > https://github.com/clipos-archive/src_platform_clip-patches/blob/f5cb330d6b684752e403b4e41b39f7004d88e561/1901_open_mayexec.patch
+> > This patch has been used for more than a decade with customized script
+> > interpreters.  Some examples can be found here:
+> > https://github.com/clipos-archive/clipos4_portage-overlay/search?q=O_MAYEXEC
+> >
+> > Cc: Al Viro <viro@zeniv.linux.org.uk>
+> > Cc: Christian Brauner <brauner@kernel.org>
+> > Cc: Kees Cook <keescook@chromium.org>
+> > Cc: Paul Moore <paul@paul-moore.com>
+> > Cc: Serge Hallyn <serge@hallyn.com>
+> > Link: https://docs.python.org/3/library/io.html#io.open_code [1]
+> > Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> > Link: https://lore.kernel.org/r/20241011184422.977903-2-mic@digikod.net
+> > ---
+> >
+> > Changes since v19:
+> > * Remove mention of "role transition" as suggested by Andy.
+> > * Highlight the difference between security_bprm_creds_for_exec() and
+> >   the __FMODE_EXEC check for LSMs (in commit message and LSM's hooks) as
+> >   discussed with Jeff.
+> > * Improve documentation both in UAPI comments and kernel comments
+> >   (requested by Kees).
+> >
+> > New design since v18:
+> > https://lore.kernel.org/r/20220104155024.48023-3-mic@digikod.net
+> > ---
+> >  fs/exec.c                  | 18 ++++++++++++++++--
+> >  include/linux/binfmts.h    |  7 ++++++-
+> >  include/uapi/linux/fcntl.h | 31 +++++++++++++++++++++++++++++++
+> >  kernel/audit.h             |  1 +
+> >  kernel/auditsc.c           |  1 +
+> >  security/security.c        | 10 ++++++++++
+> >  6 files changed, 65 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/fs/exec.c b/fs/exec.c
+> > index 6c53920795c2..163c659d9ae6 100644
+> > --- a/fs/exec.c
+> > +++ b/fs/exec.c
+> > @@ -891,7 +891,7 @@ static struct file *do_open_execat(int fd, struct filename *name, int flags)
+> >                 .lookup_flags = LOOKUP_FOLLOW,
+> >         };
+> >
+> > -       if ((flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH)) != 0)
+> > +       if ((flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH | AT_CHECK)) != 0)
+> >                 return ERR_PTR(-EINVAL);
+> >         if (flags & AT_SYMLINK_NOFOLLOW)
+> >                 open_exec_flags.lookup_flags &= ~LOOKUP_FOLLOW;
+> > @@ -1545,6 +1545,20 @@ static struct linux_binprm *alloc_bprm(int fd, struct filename *filename, int fl
+> >         }
+> >         bprm->interp = bprm->filename;
+> >
+> > +       /*
+> > +        * At this point, security_file_open() has already been called (with
+> > +        * __FMODE_EXEC) and access control checks for AT_CHECK will stop just
+> > +        * after the security_bprm_creds_for_exec() call in bprm_execve().
+> > +        * Indeed, the kernel should not try to parse the content of the file
+> > +        * with exec_binprm() nor change the calling thread, which means that
+> > +        * the following security functions will be not called:
+> > +        * - security_bprm_check()
+> > +        * - security_bprm_creds_from_file()
+> > +        * - security_bprm_committing_creds()
+> > +        * - security_bprm_committed_creds()
+> > +        */
+> > +       bprm->is_check = !!(flags & AT_CHECK);
+> > +
+> >         retval = bprm_mm_init(bprm);
+> >         if (!retval)
+> >                 return bprm;
+> > @@ -1839,7 +1853,7 @@ static int bprm_execve(struct linux_binprm *bprm)
+> >
+> >         /* Set the unchanging part of bprm->cred */
+> >         retval = security_bprm_creds_for_exec(bprm);
+> > -       if (retval)
+> > +       if (retval || bprm->is_check)
+> >                 goto out;
+> >
+> >         retval = exec_binprm(bprm);
+> > diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
+> > index e6c00e860951..8ff0eb3644a1 100644
+> > --- a/include/linux/binfmts.h
+> > +++ b/include/linux/binfmts.h
+> > @@ -42,7 +42,12 @@ struct linux_binprm {
+> >                  * Set when errors can no longer be returned to the
+> >                  * original userspace.
+> >                  */
+> > -               point_of_no_return:1;
+> > +               point_of_no_return:1,
+> > +               /*
+> > +                * Set by user space to check executability according to the
+> > +                * caller's environment.
+> > +                */
+> > +               is_check:1;
+> >         struct file *executable; /* Executable to pass to the interpreter */
+> >         struct file *interpreter;
+> >         struct file *file;
+> > diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
+> > index 87e2dec79fea..e606815b1c5a 100644
+> > --- a/include/uapi/linux/fcntl.h
+> > +++ b/include/uapi/linux/fcntl.h
+> > @@ -154,6 +154,37 @@
+> >                                            usable with open_by_handle_at(2). */
+> >  #define AT_HANDLE_MNT_ID_UNIQUE        0x001   /* Return the u64 unique mount ID. */
+> >
+> > +/*
+> > + * AT_CHECK only performs a check on a regular file and returns 0 if execution
+> > + * of this file would be allowed, ignoring the file format and then the related
+> > + * interpreter dependencies (e.g. ELF libraries, script's shebang).
+> > + *
+> > + * Programs should always perform this check to apply kernel-level checks
+> > + * against files that are not directly executed by the kernel but passed to a
+> > + * user space interpreter instead.  All files that contain executable code,
+> > + * from the point of view of the interpreter, should be checked.  However the
+> > + * result of this check should only be enforced according to
+> > + * SECBIT_EXEC_RESTRICT_FILE or SECBIT_EXEC_DENY_INTERACTIVE.  See securebits.h
+> > + * documentation and the samples/check-exec/inc.c example.
+> > + *
+> > + * The main purpose of this flag is to improve the security and consistency of
+> > + * an execution environment to ensure that direct file execution (e.g.
+> > + * `./script.sh`) and indirect file execution (e.g. `sh script.sh`) lead to the
+> > + * same result.  For instance, this can be used to check if a file is
+> > + * trustworthy according to the caller's environment.
+> > + *
+> > + * In a secure environment, libraries and any executable dependencies should
+> > + * also be checked.  For instance, dynamic linking should make sure that all
+> > + * libraries are allowed for execution to avoid trivial bypass (e.g. using
+> > + * LD_PRELOAD).  For such secure execution environment to make sense, only
+> > + * trusted code should be executable, which also requires integrity guarantees.
+> > + *
+> > + * To avoid race conditions leading to time-of-check to time-of-use issues,
+> > + * AT_CHECK should be used with AT_EMPTY_PATH to check against a file
+> > + * descriptor instead of a path.
+> > + */
+> 
+> If you ask me, the very elaborate comment above belongs to execveat(2)
+> man page and is way too verbose for a uapi header.
 
+OK, but since this new flags raised a lot of questions, I guess a
+dedicated Documentation/userspace-api/check-exec.rst file with thit
+AT*_CHECK and the related securebits would be useful instead of the
+related inlined documentation.
 
-On 2024/10/11 21:04, Liam R. Howlett wrote:
-> * Kaixiong Yu <yukaixiong@huawei.com> [241010 10:11]:
->> This patch series moves sysctls of vm_table in kernel/sysctl.c to
->> places where they actually belong, and do some related code clean-ups.
->> After this patch series, all sysctls in vm_table have been moved into its
->> own files, meanwhile, delete vm_table.
->>
->> All the modifications of this patch series base on
->> linux-next(tags/next-20241010). To test this patch series, the code was
->> compiled with both the CONFIG_SYSCTL enabled and disabled on arm64 and
->> x86_64 architectures. After this patch series is applied, all files
->> under /proc/sys/vm can be read or written normally.
-> This change set moves nommu code out of the common code into the nommu.c
-> file (which is nice), but the above text implies that no testing was
-> performed on that code.  Could we have some basic compile/boot testing
-> for nommu?
-this patch series has been compiled with CONFIG_MMU=n on arm，and produce
-nommu.o without error and warning. But I don't have machine to do test 
-for nommu.
->> Changes in v3:
->>   - change patch1~10, patch14 title suggested by Joel Granados
->>   - change sysctl_stat_interval to static type in patch1
->>   - add acked-by from Paul Moore in patch7
->>   - change dirtytime_expire_interval to static type in patch9
->>   - add acked-by from Anna Schumaker in patch11
->>
->> Changes in v2:
->>   - fix sysctl_max_map_count undeclared issue in mm/nommu.c for patch6
->>   - update changelog for patch7/12, suggested by Kees/Paul
->>   - fix patch8, sorry for wrong changes and forget to built with NOMMU
->>   - add reviewed-by from Kees except patch8 since patch8 is wrong in v1
->>   - add reviewed-by from Jan Kara, Christian Brauner in patch12
->>
->> Kaixiong Yu (15):
->>    mm: vmstat: move sysctls to mm/vmstat.c
->>    mm: filemap: move sysctl to mm/filemap.c
->>    mm: swap: move sysctl to mm/swap.c
->>    mm: vmscan: move vmscan sysctls to mm/vmscan.c
->>    mm: util: move sysctls to mm/util.c
->>    mm: mmap: move sysctl to mm/mmap.c
->>    security: min_addr: move sysctl to security/min_addr.c
->>    mm: nommu: move sysctl to mm/nommu.c
->>    fs: fs-writeback: move sysctl to fs/fs-writeback.c
->>    fs: drop_caches: move sysctl to fs/drop_caches.c
->>    sunrpc: use vfs_pressure_ratio() helper
->>    fs: dcache: move the sysctl to fs/dcache.c
->>    x86: vdso: move the sysctl to arch/x86/entry/vdso/vdso32-setup.c
->>    sh: vdso: move the sysctl to arch/sh/kernel/vsyscall/vsyscall.c
->>    sysctl: remove unneeded include
->>
->>   arch/sh/kernel/vsyscall/vsyscall.c |  14 ++
->>   arch/x86/entry/vdso/vdso32-setup.c |  16 ++-
->>   fs/dcache.c                        |  21 ++-
->>   fs/drop_caches.c                   |  23 ++-
->>   fs/fs-writeback.c                  |  30 ++--
->>   include/linux/dcache.h             |   7 +-
->>   include/linux/mm.h                 |  23 ---
->>   include/linux/mman.h               |   2 -
->>   include/linux/swap.h               |   9 --
->>   include/linux/vmstat.h             |  11 --
->>   include/linux/writeback.h          |   4 -
->>   kernel/sysctl.c                    | 221 -----------------------------
->>   mm/filemap.c                       |  18 ++-
->>   mm/internal.h                      |  10 ++
->>   mm/mmap.c                          |  54 +++++++
->>   mm/nommu.c                         |  15 +-
->>   mm/swap.c                          |  16 ++-
->>   mm/swap.h                          |   1 +
->>   mm/util.c                          |  67 +++++++--
->>   mm/vmscan.c                        |  23 +++
->>   mm/vmstat.c                        |  44 +++++-
->>   net/sunrpc/auth.c                  |   2 +-
->>   security/min_addr.c                |  11 ++
->>   23 files changed, 330 insertions(+), 312 deletions(-)
->>
->> -- 
->> 2.34.1
->>
-> .
->
+> 
+> > +#define AT_CHECK               0x10000
+> 
+> Please see the comment "Per-syscall flags for the *at(2) family of syscalls."
+> above. If this is a per-syscall flag please use one of the per-syscall
+> flags, e.g.:
+> 
+> /* Flags for execveat2(2) */
+> #define AT_EXECVE_CHECK     0x0001   /* Only perform a check if
+> execution would be allowed */
 
+I missed this part, this prefix makes sense, thanks.
+
+> 
+> 
+> Thanks,
+> Amir.
