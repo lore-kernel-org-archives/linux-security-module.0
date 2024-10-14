@@ -1,108 +1,80 @@
-Received: from smtp-42ae.mail.infomaniak.ch (smtp-42ae.mail.infomaniak.ch [84.16.66.174])
+Received: from smtp-bc0f.mail.infomaniak.ch (smtp-bc0f.mail.infomaniak.ch [45.157.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E66DC1AA7B9
-	for <linux-security-module@vger.kernel.org>; Mon, 14 Oct 2024 12:48:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D23E61AA793
+	for <linux-security-module@vger.kernel.org>; Mon, 14 Oct 2024 13:13:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728910135; cv=none; b=jKpyDQBhGmCsBHM/TRQamDL/ot+gs+7nK6LgiJKOo3EIWjtzci5pn3Tyo0EgkQJmzTbGYkjrH72mNruHHDa1lszWywentM4lkdZeJIx3O0No7Oh5B5JnaY1CE4k1KKtYcVw8OLd2SFZLfLNXvWej+6/28VnT0W+m2crtPt5tX/8=
+	t=1728911640; cv=none; b=EDxBr2uwzy7eSEXOU6pDwZLtSO16a7oyl5d66hUvy4FBbrtt6h1BuuLLKX3R2xGcGK39RDagohici/pQFYqNV8j9O6UVCoulPZLw/cqEyNJ5GBvt1pPG2ZnMPLVTLEFzwXLuDJL6whWAEYbIPR7fFi2o4Lu3gvUKvLvJOLZngM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728910135; c=relaxed/simple;
-	bh=u+Frg8K6dfoEQO/pJOtxl1TEyBhn/WOcmEL2VttDlNM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Btju3u1zcLwYzEqDYWOBSvryszEYZ6ihUE1VYS/kR3Ys4uIjfvLyqWVt5ATJnLR4WHoyRaJKGwScKPK6ExhRnlJauJFQN5hkl68cFPgedzIpOWwCv/10fxDD3wZSiVduGGf3h3U6zpveFtM9Gb+SBHvx2kXcPtx9e3Am09U6BoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=X5EW+cpF; arc=none smtp.client-ip=84.16.66.174
+	s=arc-20240116; t=1728911640; c=relaxed/simple;
+	bh=YZAwdhLxqIVEsN8AzkOH372BYEQdFlQUVF42OlinRyY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G/3vj7qUHjGrDdYb7CUmbOYiMug/Ap5a+FgfRej/pEvsnKsXeR/Ec+ERO5EHiz5v+pt0dIbEyzrrVsFEK4++0cKRPOAMWoYcqZK7OB45ypBFOqNzEb6OV0p/7qQsrfv2AD14IXtqK2IoAESc/VwsNIwIfYlpo3v6hq9aIOjXrdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=v993vigk; arc=none smtp.client-ip=45.157.188.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="X5EW+cpF"
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XRxqc2zSLz110;
-	Mon, 14 Oct 2024 14:48:44 +0200 (CEST)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="v993vigk"
+Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10:40ca:feff:fe05:0])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XRyNX6m0TzlcM;
+	Mon, 14 Oct 2024 15:13:48 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1728910124;
-	bh=c1uqC+Kh4xD6yGA0+mYQyWZVTBTYgQOzGdoFdJKZEdQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=X5EW+cpFBchBKXn1BQNPgP0v99NIYuvQgQJujWlDz6u2IGoFcHSlf1Ja3k+mhaMRy
-	 aS0aQZr9T39BZC/HHM2Kq0eQusR9hu/dqXDQCjtvjxnToV0aux1ZQmhnc/87g5uFVb
-	 QT5h/VgsrFDNyFCTZdHOX6h/UTMCTj0o7ap9ZQnc=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4XRxqb5ntNzBPj;
-	Mon, 14 Oct 2024 14:48:43 +0200 (CEST)
-From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-	Paul Moore <paul@paul-moore.com>,
-	Tahera Fahimi <fahimitahera@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: [PATCH v2 2/3] landlock: Refactor network access mask management
-Date: Mon, 14 Oct 2024 14:48:34 +0200
-Message-ID: <20241014124835.1152246-3-mic@digikod.net>
-In-Reply-To: <20241014124835.1152246-1-mic@digikod.net>
-References: <20241014124835.1152246-1-mic@digikod.net>
+	s=20191114; t=1728911628;
+	bh=Yd8xTfXZsZiPbyGaXM8oxi4qY6znQrMCC6wFQMaJAxg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=v993vigkwHSQ+l5Pil6ZeqOGzi3Wn6Wx5mLsxeB7hlZzqMM9EaGIziSps/pGeDj1l
+	 /VHneQcEcsHKkGRF+Qo2W/liXjdSO/njK8zyIPP9sXRuWkao3/+iBL7tY4zdiduUED
+	 jauTWinPO4rysuIze5V6zh4EsvKyDu+ykcY0b658=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4XRyNX2wWwzFjk;
+	Mon, 14 Oct 2024 15:13:45 +0200 (CEST)
+Date: Mon, 14 Oct 2024 15:13:41 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Burn Alting <burn.alting@iinet.net.au>, audit@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH v1 1/7] fs: Add inode_get_ino() and implement
+ get_ino() for NFS
+Message-ID: <20241014.seeN6daap2ta@digikod.net>
+References: <20241011.yai6KiDa7ieg@digikod.net>
+ <Zwkm5HADvc5743di@infradead.org>
+ <20241011.aetou9haeCah@digikod.net>
+ <Zwk4pYzkzydwLRV_@infradead.org>
+ <20241011.uu1Bieghaiwu@digikod.net>
+ <05cb94c0dda9e1b23fe566c6ecd71b3d1739b95b.camel@kernel.org>
+ <0e4e7a6d-09e0-480d-baa9-a2e7522a088a@iinet.net.au>
+ <ZwzeGausiU0IDkFy@infradead.org>
+ <e0188174-a8ae-461b-b30a-bc7acd545a18@iinet.net.au>
+ <Zw0L8ZrEani3uWa5@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Zw0L8ZrEani3uWa5@infradead.org>
 X-Infomaniak-Routing: alpha
 
-Replace the get_raw_handled_net_accesses() implementation with a call to
-landlock_match_ruleset().
+On Mon, Oct 14, 2024 at 05:17:53AM -0700, Christoph Hellwig wrote:
+> On Mon, Oct 14, 2024 at 11:12:25PM +1100, Burn Alting wrote:
+> > > > PATH records is no longer forensically defensible and it's use as a
+> > > > correlation item is of questionable value now?
+> > > 
+> > > What do you mean with forensically defensible?
+> > 
+> > If the auditd system only maintains a 32 bit variable for an inode value,
+> > when it emits an inode number, then how does one categorically state/defend
+> > that the inode value in the audit event is the actual one on the file
+> > system. The PATH record will offer one value (32 bits) but the returned
+> > inode value from a stat will return another (the actual 64 bit value).
+> > Basically auditd would not be recording the correct value.
+> 
+> Does auditd only track 32-bit inodes?  If yes, it is fundamentally
+> broken.
 
-Cc: Günther Noack <gnoack@google.com>
-Cc: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Cc: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Link: https://lore.kernel.org/r/20241014124835.1152246-3-mic@digikod.net
----
-
-Changes since v1:
-* Rename the all_net mask to any_net.
----
- security/landlock/net.c | 21 ++++-----------------
- 1 file changed, 4 insertions(+), 17 deletions(-)
-
-diff --git a/security/landlock/net.c b/security/landlock/net.c
-index c8bcd29bde09..fdc1bb0a9c5d 100644
---- a/security/landlock/net.c
-+++ b/security/landlock/net.c
-@@ -39,26 +39,13 @@ int landlock_append_net_rule(struct landlock_ruleset *const ruleset,
- 	return err;
- }
- 
--static access_mask_t
--get_raw_handled_net_accesses(const struct landlock_ruleset *const domain)
--{
--	access_mask_t access_dom = 0;
--	size_t layer_level;
--
--	for (layer_level = 0; layer_level < domain->num_layers; layer_level++)
--		access_dom |= landlock_get_net_access_mask(domain, layer_level);
--	return access_dom;
--}
--
- static const struct landlock_ruleset *get_current_net_domain(void)
- {
--	const struct landlock_ruleset *const dom =
--		landlock_get_current_domain();
--
--	if (!dom || !get_raw_handled_net_accesses(dom))
--		return NULL;
-+	const union access_masks any_net = {
-+		.net = ~0,
-+	};
- 
--	return dom;
-+	return landlock_match_ruleset(landlock_get_current_domain(), any_net);
- }
- 
- static int current_check_access_socket(struct socket *const sock,
--- 
-2.47.0
-
+auditd logs 32-bit inodes on 32-bit architecture, whereas it should
+always log 64-bit inodes.  The goal of this patch series is to fix this
+this issue for auditd and other kernel logs (and to backport these
+fixes).
