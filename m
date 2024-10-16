@@ -1,150 +1,206 @@
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7192E208D88;
-	Wed, 16 Oct 2024 13:08:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8803D502BE;
+	Wed, 16 Oct 2024 14:23:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729084125; cv=none; b=ARI3kgF1HEjryEw8Q7bqZjhC6h3gEnyBLt3DwE05ODcuVk4dEHfI1g/MNvs+xLJ36H4edEMFINgRsU9ua3yVDJhlJh8xxRhUiPmNYgKuSzQtOTsGKaBCx8MGohAYbMOZV7qFTSCJzyBynObE3hadW1s7c+P3wWo2odJltO+UDNo=
+	t=1729088587; cv=none; b=D3Jc98cSqFuqLI44TiW0uLczwHPvwA/1Cc0nzxezf7P8OO3qOo7BrMvMinBNbYoYVgOc04t+yBpM1PWgF6aSocVi3Sjs5N3YfRxM1kmKnFYLBPzmMONEKMyw/EWRRilEo1JIwbak34BC6wjeEBjMf5C7vCiHXns7d7slpXM9nGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729084125; c=relaxed/simple;
-	bh=p6qrzMsv92J2BKqZn/+oJpMYE2tiMW03Q9j+yCiO0f4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Uudo1FJj+8nnIAX83xXlROHxK1NmOxDcEcBqNbx18i/VA/CPqsDqyYcHz8saq6MMXyHTSKeSkKOYXuHAvrzM/tuMt/ukne15fQkicFv9Q2FVeMtGgbcQWp0Xm7q2lumT5hcysH9ww481bvFmMLq4Kqc+Nm6/eZOi/2u7B4BaaZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4XT9kL507yz9v7NL;
-	Wed, 16 Oct 2024 20:48:26 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 4A5EA14075E;
-	Wed, 16 Oct 2024 21:08:28 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwAniMjDug9nyd39Ag--.38782S2;
-	Wed, 16 Oct 2024 14:08:27 +0100 (CET)
-Message-ID: <33fefedfbdc44ea9c58a14030d58bff20b2c7d86.camel@huaweicloud.com>
-Subject: Re: [PATCH 2/3] ima: Ensure lock is held when setting iint pointer
- in inode security blob
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Mimi Zohar <zohar@linux.ibm.com>, Paul Moore <paul@paul-moore.com>
-Cc: dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, jmorris@namei.org, 
-	serge@hallyn.com, linux-integrity@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org, ebpqwerty472123@gmail.com, Roberto Sassu
-	 <roberto.sassu@huawei.com>
-Date: Wed, 16 Oct 2024 15:08:16 +0200
-In-Reply-To: <3ab95195af7db9d2bd482f46a69305f2f386cc32.camel@huaweicloud.com>
-References: <20241008165732.2603647-1-roberto.sassu@huaweicloud.com>
-	 <20241008165732.2603647-2-roberto.sassu@huaweicloud.com>
-	 <CAHC9VhRkMwLqVFfWMvMOJ6x4UNUK=C_cMVW7Op9icz28MMDYdQ@mail.gmail.com>
-	 <69ed92fde951b20a9b976d48803fe9b5daaa9eea.camel@huaweicloud.com>
-	 <92c528d8848f78869888a746643e1cf2969df62a.camel@linux.ibm.com>
-	 <3ab95195af7db9d2bd482f46a69305f2f386cc32.camel@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1729088587; c=relaxed/simple;
+	bh=jD6ZYgj249WXE3YgGo+kGl7esi6CCSX0C5qgagYAYIs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hV8x5xkPXHfxbr1mLs/gJ0DM+V66GgVPCjy0AOE1ZAI/fiykx8MbPr89SRugMUECVEJCYjr/ouj0VvWWFrJJdhONOt+Au7aTRhoiYGC7Y9gHTWnQD3WDAptHtN3OIb6SssdTXGxPraF7idjN0M5yq69J9tiHHReLWnrD13yYnCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gSZUiYyT; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gSZUiYyT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9EE4C4CEC7;
+	Wed, 16 Oct 2024 14:23:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729088587;
+	bh=jD6ZYgj249WXE3YgGo+kGl7esi6CCSX0C5qgagYAYIs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gSZUiYyTGbnxwEtnXpQe7swluYTRtTMbhW0Zo9YwBJuSp/DaIhpNLAdDnxcDAltWI
+	 Ighd5wfWR+JZAu5k+bSd+q9HiFRNIhJbbLjt5QqEfM4e3i3S29WpLUL3pf6TmzojCd
+	 zaeDtDtcuKzewuvWJ1cJvDK9Id0M0JbsHlTwZ21cF9wEFvwAj0nebZR6CtCDxbTH57
+	 9v4/gu1I8tWE71TcxHwad0OuFHrD3oCti7JZ928lDsIy3rPmCfHsWHnym3Jx3QrUVl
+	 obej86Qtl1vQ97Qd55tqiWmpjwDQqJe6JFx/uwE18Jy7blZSq5htHsulKc9IPoHDTd
+	 KIg2+5Ycqyzqw==
+Date: Wed, 16 Oct 2024 16:23:02 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Cc: Paul Moore <paul@paul-moore.com>, linux-fsdevel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org, linux-security-module@vger.kernel.org, audit@vger.kernel.org, 
+	Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>
+Subject: Re: [RFC PATCH v1 1/7] fs: Add inode_get_ino() and implement
+ get_ino() for NFS
+Message-ID: <20241016-mitdenken-bankdaten-afb403982468@brauner>
+References: <20241010152649.849254-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:GxC2BwAniMjDug9nyd39Ag--.38782S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxGFW3Zr13Zr1fuw4UKF1ftFb_yoW5XF4fpF
-	Wvg3WUAayUXFW7urs0qasIvrWfK3yfGFWkWw15Jw1DZFyvvr1Yqr48Jr1Uury5Gr4xJw10
-	vr47Ka13uw1qyrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
-	v3UUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQASBGcPIPkKdAAAsY
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241010152649.849254-1-mic@digikod.net>
 
-On Mon, 2024-10-14 at 13:45 +0200, Roberto Sassu wrote:
-> On Fri, 2024-10-11 at 15:30 -0400, Mimi Zohar wrote:
-> > On Wed, 2024-10-09 at 17:43 +0200, Roberto Sassu wrote:
-> > > On Wed, 2024-10-09 at 11:41 -0400, Paul Moore wrote:
-> > > > On Tue, Oct 8, 2024 at 12:57=E2=80=AFPM Roberto Sassu
-> > > > <roberto.sassu@huaweicloud.com> wrote:
-> > > > >=20
-> > > > > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > > > >=20
-> > > > > IMA stores a pointer of the ima_iint_cache structure, containing =
-integrity
-> > > > > metadata, in the inode security blob. However, check and assignme=
-nt of this
-> > > > > pointer is not atomic, and it might happen that two tasks both se=
-e that the
-> > > > > iint pointer is NULL and try to set it, causing a memory leak.
-> > > > >=20
-> > > > > Ensure that the iint check and assignment is guarded, by adding a=
- lockdep
-> > > > > assertion in ima_inode_get().
-> > > > >=20
-> > > > > Consequently, guard the remaining ima_inode_get() calls, in
-> > > > > ima_post_create_tmpfile() and ima_post_path_mknod(), to avoid the=
- lockdep
-> > > > > warnings.
-> > > > >=20
-> > > > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > > > ---
-> > > > >  security/integrity/ima/ima_iint.c |  5 +++++
-> > > > >  security/integrity/ima/ima_main.c | 14 ++++++++++++--
-> > > > >  2 files changed, 17 insertions(+), 2 deletions(-)
-> > > > >=20
-> > > > > diff --git a/security/integrity/ima/ima_iint.c b/security/integri=
-ty/ima/ima_iint.c
-> > > > > index c176fd0faae7..fe676ccec32f 100644
-> > > > > --- a/security/integrity/ima/ima_iint.c
-> > > > > +++ b/security/integrity/ima/ima_iint.c
-> > > > > @@ -87,8 +87,13 @@ static void ima_iint_free(struct ima_iint_cach=
-e *iint)
-> > > > >   */
-> > > > >  struct ima_iint_cache *ima_inode_get(struct inode *inode)
-> > > > >  {
-> > > > > +       struct ima_iint_cache_lock *iint_lock;
-> > > > >         struct ima_iint_cache *iint;
-> > > > >=20
-> > > > > +       iint_lock =3D ima_inode_security(inode->i_security);
-> > > > > +       if (iint_lock)
-> > > > > +               lockdep_assert_held(&iint_lock->mutex);
-> > > > > +
-> > > > >         iint =3D ima_iint_find(inode);
-> > > > >         if (iint)
-> > > > >                 return iint;
-> > > >=20
-> > > > Can you avoid the ima_iint_find() call here and just do the followi=
-ng?
-> > > >=20
-> > > >   /* not sure if you need to check !iint_lock or not? */
-> > > >   if (!iint_lock)
-> > > >     return NULL;
-> > > >   iint =3D iint_lock->iint;
-> > > >   if (!iint)
-> > > >     return NULL;
-> > >=20
-> > > Yes, I also like it much more.
-> >=20
-> > Yes, testing iint_lock and then iint_lock->iint should be fine, but the=
- logic
-> > needs to be inverted.  ima_inode_get() should return the existing iint,=
- if it
-> > exists, or allocate the memory.
->=20
-> Right, I checked the patches I'm about to send, they do that.
+On Thu, Oct 10, 2024 at 05:26:41PM +0200, Mickaël Salaün wrote:
+> When a filesystem manages its own inode numbers, like NFS's fileid shown
+> to user space with getattr(), other part of the kernel may still expose
+> the private inode->ino through kernel logs and audit.
+> 
+> Another issue is on 32-bit architectures, on which ino_t is 32 bits,
+> whereas the user space's view of an inode number can still be 64 bits.
+> 
+> Add a new inode_get_ino() helper calling the new struct
+> inode_operations' get_ino() when set, to get the user space's view of an
+> inode number.  inode_get_ino() is called by generic_fillattr().
+> 
+> Implement get_ino() for NFS.
+> 
+> Cc: Trond Myklebust <trondmy@kernel.org>
+> Cc: Anna Schumaker <anna@kernel.org>
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: Jan Kara <jack@suse.cz>
+> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> ---
+> 
+> I'm not sure about nfs_namespace_getattr(), please review carefully.
+> 
+> I guess there are other filesystems exposing inode numbers different
+> than inode->i_ino, and they should be patched too.
 
-I think Paul's point was that we should not create a iint anyway, if
-the inode does not have a security blob. That check I think it is fine
-to keep.
+What are the other filesystems that are presumably affected by this that
+would need an inode accessor?
 
-Roberto
+If this is just about NFS then just add a helper function that audit and
+whatever can call if they need to know the real inode number without
+forcing a new get_inode() method onto struct inode_operations.
 
+I'm against adding a new inode_operations method unless we really have
+to because it means that we grow a nasty interface that filesystem can
+start using and we absolutely don't want them to.
+
+And I don't buy that is suddenly rush hour for this. Seemingly no one
+noticed this in the past idk how many years.
+
+> ---
+>  fs/nfs/inode.c     | 6 ++++--
+>  fs/nfs/internal.h  | 1 +
+>  fs/nfs/namespace.c | 2 ++
+>  fs/stat.c          | 2 +-
+>  include/linux/fs.h | 9 +++++++++
+>  5 files changed, 17 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/nfs/inode.c b/fs/nfs/inode.c
+> index 542c7d97b235..5dfc176b6d92 100644
+> --- a/fs/nfs/inode.c
+> +++ b/fs/nfs/inode.c
+> @@ -83,18 +83,19 @@ EXPORT_SYMBOL_GPL(nfs_wait_bit_killable);
+>  
+>  /**
+>   * nfs_compat_user_ino64 - returns the user-visible inode number
+> - * @fileid: 64-bit fileid
+> + * @inode: inode pointer
+>   *
+>   * This function returns a 32-bit inode number if the boot parameter
+>   * nfs.enable_ino64 is zero.
+>   */
+> -u64 nfs_compat_user_ino64(u64 fileid)
+> +u64 nfs_compat_user_ino64(const struct *inode)
+>  {
+>  #ifdef CONFIG_COMPAT
+>  	compat_ulong_t ino;
+>  #else	
+>  	unsigned long ino;
+>  #endif
+> +	u64 fileid = NFS_FILEID(inode);
+>  
+>  	if (enable_ino64)
+>  		return fileid;
+> @@ -103,6 +104,7 @@ u64 nfs_compat_user_ino64(u64 fileid)
+>  		ino ^= fileid >> (sizeof(fileid)-sizeof(ino)) * 8;
+>  	return ino;
+>  }
+> +EXPORT_SYMBOL_GPL(nfs_compat_user_ino64);
+>  
+>  int nfs_drop_inode(struct inode *inode)
+>  {
+> diff --git a/fs/nfs/internal.h b/fs/nfs/internal.h
+> index 430733e3eff2..f5555a71a733 100644
+> --- a/fs/nfs/internal.h
+> +++ b/fs/nfs/internal.h
+> @@ -451,6 +451,7 @@ extern void nfs_zap_acl_cache(struct inode *inode);
+>  extern void nfs_set_cache_invalid(struct inode *inode, unsigned long flags);
+>  extern bool nfs_check_cache_invalid(struct inode *, unsigned long);
+>  extern int nfs_wait_bit_killable(struct wait_bit_key *key, int mode);
+> +extern u64 nfs_compat_user_ino64(const struct *inode);
+>  
+>  #if IS_ENABLED(CONFIG_NFS_LOCALIO)
+>  /* localio.c */
+> diff --git a/fs/nfs/namespace.c b/fs/nfs/namespace.c
+> index e7494cdd957e..d9b1e0606833 100644
+> --- a/fs/nfs/namespace.c
+> +++ b/fs/nfs/namespace.c
+> @@ -232,11 +232,13 @@ nfs_namespace_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+>  const struct inode_operations nfs_mountpoint_inode_operations = {
+>  	.getattr	= nfs_getattr,
+>  	.setattr	= nfs_setattr,
+> +	.get_ino	= nfs_compat_user_ino64,
+>  };
+>  
+>  const struct inode_operations nfs_referral_inode_operations = {
+>  	.getattr	= nfs_namespace_getattr,
+>  	.setattr	= nfs_namespace_setattr,
+> +	.get_ino	= nfs_compat_user_ino64,
+>  };
+>  
+>  static void nfs_expire_automounts(struct work_struct *work)
+> diff --git a/fs/stat.c b/fs/stat.c
+> index 41e598376d7e..05636919f94b 100644
+> --- a/fs/stat.c
+> +++ b/fs/stat.c
+> @@ -50,7 +50,7 @@ void generic_fillattr(struct mnt_idmap *idmap, u32 request_mask,
+>  	vfsgid_t vfsgid = i_gid_into_vfsgid(idmap, inode);
+>  
+>  	stat->dev = inode->i_sb->s_dev;
+> -	stat->ino = inode->i_ino;
+> +	stat->ino = inode_get_ino(inode);
+>  	stat->mode = inode->i_mode;
+>  	stat->nlink = inode->i_nlink;
+>  	stat->uid = vfsuid_into_kuid(vfsuid);
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index e3c603d01337..0eba09a21cf7 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -2165,6 +2165,7 @@ struct inode_operations {
+>  			    struct dentry *dentry, struct fileattr *fa);
+>  	int (*fileattr_get)(struct dentry *dentry, struct fileattr *fa);
+>  	struct offset_ctx *(*get_offset_ctx)(struct inode *inode);
+> +	u64 (*get_ino)(const struct inode *inode);
+>  } ____cacheline_aligned;
+>  
+>  static inline int call_mmap(struct file *file, struct vm_area_struct *vma)
+> @@ -2172,6 +2173,14 @@ static inline int call_mmap(struct file *file, struct vm_area_struct *vma)
+>  	return file->f_op->mmap(file, vma);
+>  }
+>  
+> +static inline u64 inode_get_ino(struct inode *inode)
+> +{
+> +	if (unlikely(inode->i_op->get_ino))
+> +		return inode->i_op->get_ino(inode);
+> +
+> +	return inode->i_ino;
+> +}
+> +
+>  extern ssize_t vfs_read(struct file *, char __user *, size_t, loff_t *);
+>  extern ssize_t vfs_write(struct file *, const char __user *, size_t, loff_t *);
+>  extern ssize_t vfs_copy_file_range(struct file *, loff_t , struct file *,
+> -- 
+> 2.46.1
+> 
