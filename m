@@ -1,160 +1,89 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA15E1D1F7E;
-	Thu, 17 Oct 2024 21:58:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A9003BB24;
+	Fri, 18 Oct 2024 05:15:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729202290; cv=none; b=COFOhMuOpFFXatnWiNBbP6YyWJGXGSG3JZsDomhNrZm1z+KekAyWOQlZ1tMGLEHoCNUJu+knSEc6IGTPNwtc86wOc+zTMP0dvjBnanTcLgxyRi+ERUiKsjEaDl8lzcWb7eY6P6rZQSZrl3Qva4yMcOt/baaYb3JIUXIMeohRpdc=
+	t=1729228549; cv=none; b=kE4CdBt1TiUL8ucnfGFOpNYwEVfKhIPjlr5YuX8is5if2WbbIaw+4Tfd1vcf85hJgteed5KYl9uf9QTlH5ba1Gnlq+gGr4ldY3cL+/X1rtSuT+Pvm5W+sV/8kVfaCXqUxHPm5464OEOl3JQaOGB8oRmGYAHWNPX2abzPPquwz6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729202290; c=relaxed/simple;
-	bh=KHR/VZNuK28wg96sxQVqQhjXxhUA5+d9A8qACNPCbYE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=kUe9HUjmB4SImFMldCYoQCWgTZtikKV/WlZsHMWSlluR0g8mQAVT594LtSA0tHtCQnGulQ0Y39C+flCrSEf82G06vLl/BAyHha3Q8g/Sz1k2YkhWzug5hn142ILbkrH/BxTMdcRdC4e+kg/GK8Chblo2aWnnJ6CM4f+ryYeXUak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b/5veJ3k; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1729228549; c=relaxed/simple;
+	bh=osd+Afx7KZ986PJ9Yt3tyik2H2xn0VcmGztB3We7urE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iluWzqD0F92UU57BksjkIiY8pqnU78p0OtWT0OGe9XeNO1NTjE4X+CDv5MP8vLMkOYxl2+Qxw5iNyTm0MsAr8rLxemeG9bEK+7frCISAYKaAxbssPPtQBftScrs0g4W+uln4SHFDD5106jB6A8RZsPQFTD6YdL4kB2tWcyflBaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=z/x7GOEn; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b/5veJ3k"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4594C4CEC3;
-	Thu, 17 Oct 2024 21:58:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729202289;
-	bh=KHR/VZNuK28wg96sxQVqQhjXxhUA5+d9A8qACNPCbYE=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=b/5veJ3kqMVo6mmiuWbC7SkFWLN0qSDEjKc/PqmJahowPVC7Hyze6LqFvaQmnOy2x
-	 0bqGMeCkb7aPgiSWw4eyss6T7FMhWLrvt5pD8J32iXVWxVS+FU2uoJgm9sENSKaCPO
-	 Ufe0Ltm8+UDrof8dxoB0X9wqZTJU/VTgTNviMvcfQU/Ji960kvCMhTw6z0GbKa2K0S
-	 brMQ/lGX8V1peAfd0LFMULJnb4JngoJR4v+9frZcwx0DDPsZPpIGtr1gp+MoMe7zq+
-	 5e+q0JeFIKF9TYIbTQDboWI4Fws/tOIde2I/ZGkeDkEs/wdDnnlLnisnabLQRQMrri
-	 ZpRDZ42pwwALA==
-Message-ID: <2e696bea1657b6c1a9309be7aa0e217fec47b750.camel@kernel.org>
-Subject: Re: [RFC PATCH v3 04/13] keys: Add new verification type
- (VERIFYING_CLAVIS_SIGNATURE)
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Eric Snowberg <eric.snowberg@oracle.com>
-Cc: "open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>, 
- David Howells <dhowells@redhat.com>, David Woodhouse <dwmw2@infradead.org>,
- "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
- "davem@davemloft.net" <davem@davemloft.net>,  Ard Biesheuvel
- <ardb@kernel.org>, Paul Moore <paul@paul-moore.com>, James Morris
- <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Mimi Zohar
- <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, Dmitry
- Kasatkin <dmitry.kasatkin@gmail.com>, =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?=
- <mic@digikod.net>,  "casey@schaufler-ca.com" <casey@schaufler-ca.com>,
- Stefan Berger <stefanb@linux.ibm.com>,  "ebiggers@kernel.org"
- <ebiggers@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, open list
- <linux-kernel@vger.kernel.org>, "keyrings@vger.kernel.org"
- <keyrings@vger.kernel.org>, "linux-crypto@vger.kernel.org"
- <linux-crypto@vger.kernel.org>, "linux-efi@vger.kernel.org"
- <linux-efi@vger.kernel.org>, "linux-integrity@vger.kernel.org"
- <linux-integrity@vger.kernel.org>
-Date: Fri, 18 Oct 2024 00:58:05 +0300
-In-Reply-To: <46017A8E-88EB-4B8D-9FB2-643F9A5BF7F0@oracle.com>
-References: <20241017155516.2582369-1-eric.snowberg@oracle.com>
-	 <20241017155516.2582369-5-eric.snowberg@oracle.com>
-	 <24f4db65f9417b5a686b642bf5a8559236efafb9.camel@kernel.org>
-	 <46017A8E-88EB-4B8D-9FB2-643F9A5BF7F0@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="z/x7GOEn"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=cny8j9MGeLy8h+jkGZlUWGSEbbVf30O3fi+EU6iRwhQ=; b=z/x7GOEnr7yw3kxAzfoJLMNa5k
+	IL6FU8B2K6hoU03mRWfliedPompXVDs8XQYa2tDu0wC9yFVHxbQJKD13AoaZ219Z8yLYUtp3nQDvU
+	kuOjL3bnKLyDzaujihKXe5u3kRL1w6LkoRelIuJ8L1Fx+73DKtx/5eD9711svAPybTJnoizGMt7tX
+	FPhNgzj58xPH+Er6VmW2KFibBlFl4QCHUK/ui6x8ZOz0t+FoLaITw9vev06DgOSE5/GRk7yJ7Mtm2
+	dvLtFgT0HDl0BU3kieH05pri7onhxBQ8DrL3aLQDOyJLyWNGDMszvaFdlHdrGV4utOA3217I/9FXv
+	9+8VSDmQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1t1fKz-0000000Gwbz-05nQ;
+	Fri, 18 Oct 2024 05:15:45 +0000
+Date: Thu, 17 Oct 2024 22:15:44 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Jan Kara <jack@suse.cz>
+Cc: Christoph Hellwig <hch@infradead.org>, Paul Moore <paul@paul-moore.com>,
+	Trond Myklebust <trondmy@hammerspace.com>,
+	"brauner@kernel.org" <brauner@kernel.org>,
+	"mic@digikod.net" <mic@digikod.net>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"anna@kernel.org" <anna@kernel.org>,
+	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>,
+	"audit@vger.kernel.org" <audit@vger.kernel.org>,
+	"linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
+Subject: Re: [RFC PATCH v1 1/7] fs: Add inode_get_ino() and implement
+ get_ino() for NFS
+Message-ID: <ZxHvAN85R9gP0bml@infradead.org>
+References: <20241010152649.849254-1-mic@digikod.net>
+ <20241016-mitdenken-bankdaten-afb403982468@brauner>
+ <CAHC9VhRd7cRXWYJ7+QpGsQkSyF9MtNGrwnnTMSNf67PQuqOC8A@mail.gmail.com>
+ <5bbddc8ba332d81cbea3fce1ca7b0270093b5ee0.camel@hammerspace.com>
+ <CAHC9VhQVBAJzOd19TeGtA0iAnmccrQ3-nq16FD7WofhRLgqVzw@mail.gmail.com>
+ <ZxEmDbIClGM1F7e6@infradead.org>
+ <CAHC9VhTtjTAXdt_mYEFXMRLz+4WN2ZR74ykDqknMFYWaeTNbww@mail.gmail.com>
+ <ZxEsX9aAtqN2CbAj@infradead.org>
+ <20241017164338.kzl7uotdyvhu5wv5@quack3>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241017164338.kzl7uotdyvhu5wv5@quack3>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Thu, 2024-10-17 at 21:42 +0000, Eric Snowberg wrote:
->=20
->=20
-> > On Oct 17, 2024, at 1:20=E2=80=AFPM, Jarkko Sakkinen <jarkko@kernel.org=
->
-> > wrote:
-> >=20
-> > On Thu, 2024-10-17 at 09:55 -0600, Eric Snowberg wrote:
-> > > Add a new verification type called VERIFYING_CLAVIS_SIGNATURE.=C2=A0
-> > > This
-> > > new
-> > > usage will be used for validating keys added to the new clavis
-> > > LSM
-> > > keyring.
-> > > This will be introduced in a follow-on patch.
-> > >=20
-> > > Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
-> > > ---
-> > > =C2=A0crypto/asymmetric_keys/asymmetric_type.c | 1 +
-> > > =C2=A0crypto/asymmetric_keys/pkcs7_verify.c=C2=A0=C2=A0=C2=A0 | 1 +
-> > > =C2=A0include/linux/verification.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 2 ++
-> > > =C2=A03 files changed, 4 insertions(+)
-> > >=20
-> > > diff --git a/crypto/asymmetric_keys/asymmetric_type.c
-> > > b/crypto/asymmetric_keys/asymmetric_type.c
-> > > index 43af5fa510c0..d7bf95c77f4a 100644
-> > > --- a/crypto/asymmetric_keys/asymmetric_type.c
-> > > +++ b/crypto/asymmetric_keys/asymmetric_type.c
-> > > @@ -25,6 +25,7 @@ const char *const
-> > > key_being_used_for[NR__KEY_BEING_USED_FOR] =3D {
-> > > =C2=A0 [VERIFYING_KEY_SIGNATURE] =3D "key sig",
-> > > =C2=A0 [VERIFYING_KEY_SELF_SIGNATURE] =3D "key self sig",
-> > > =C2=A0 [VERIFYING_UNSPECIFIED_SIGNATURE] =3D "unspec sig",
-> > > + [VERIFYING_CLAVIS_SIGNATURE] =3D "clavis sig",
-> > > =C2=A0};
-> > > =C2=A0EXPORT_SYMBOL_GPL(key_being_used_for);
-> > > =C2=A0
-> > > diff --git a/crypto/asymmetric_keys/pkcs7_verify.c
-> > > b/crypto/asymmetric_keys/pkcs7_verify.c
-> > > index f0d4ff3c20a8..1dc80e68ce96 100644
-> > > --- a/crypto/asymmetric_keys/pkcs7_verify.c
-> > > +++ b/crypto/asymmetric_keys/pkcs7_verify.c
-> > > @@ -428,6 +428,7 @@ int pkcs7_verify(struct pkcs7_message *pkcs7,
-> > > =C2=A0 }
-> > > =C2=A0 /* Authattr presence checked in parser */
-> > > =C2=A0 break;
-> > > + case VERIFYING_CLAVIS_SIGNATURE:
-> > > =C2=A0 case VERIFYING_UNSPECIFIED_SIGNATURE:
-> > > =C2=A0 if (pkcs7->data_type !=3D OID_data) {
-> > > =C2=A0 pr_warn("Invalid unspecified sig (not pkcs7-
-> > > data)\n");
-> > > diff --git a/include/linux/verification.h
-> > > b/include/linux/verification.h
-> > > index cb2d47f28091..02d2d70e2324 100644
-> > > --- a/include/linux/verification.h
-> > > +++ b/include/linux/verification.h
-> > > @@ -36,6 +36,8 @@ enum key_being_used_for {
-> > > =C2=A0 VERIFYING_KEY_SIGNATURE,
-> > > =C2=A0 VERIFYING_KEY_SELF_SIGNATURE,
-> > > =C2=A0 VERIFYING_UNSPECIFIED_SIGNATURE,
-> > > + /* Add new entries above, keep VERIFYING_CLAVIS_SIGNATURE at
-> > > the end. */
-> > > + VERIFYING_CLAVIS_SIGNATURE,
-> > > =C2=A0 NR__KEY_BEING_USED_FOR
-> > > =C2=A0};
-> > > =C2=A0extern const char *const
-> > > key_being_used_for[NR__KEY_BEING_USED_FOR];
-> >=20
-> > This looks as good as it can get. Just wondering that does this
-> > Clavis
-> > thing connect with the TPM2 asymmetric keys that I've been working
-> > on?
-> > I.e. can they be used in tandem. I should really update that patch
-> > set
-> > (latest from April).
->=20
-> With some changes, I think they could be used in tandem.=C2=A0 If I'm
-> looking at=20
-> the correct series, tpm2_key_rsa_describe would need to be changed to
-> return a unique identifier, instead of "TPM2/RSA".=C2=A0 This identifier
-> could be=20
-> used instead of the skid when creating a Clavis ACL.=C2=A0 There would
-> probably=20
-> also need to be a new system kernel keyring containing these TPM
-> keys.=20
-> Similar to the builtin, secondary, machine, etc.
+On Thu, Oct 17, 2024 at 06:43:38PM +0200, Jan Kara wrote:
+> On Thu 17-10-24 08:25:19, Christoph Hellwig wrote:
+> > On Thu, Oct 17, 2024 at 11:15:49AM -0400, Paul Moore wrote:
+> > > Also good to know, thanks.  However, at this point the lack of a clear
+> > > answer is making me wonder a bit more about inode numbers in the view
+> > > of VFS developers; do you folks care about inode numbers?
+> > 
+> > The VFS itself does not care much about inode numbers.  The Posix API
+> > does, although btrfs ignores that and seems to get away with that
+> > (mostly because applications put in btrfs-specific hacks).
+> 
+> Well, btrfs plays tricks with *device* numbers, right? Exactly so that
+> st_ino + st_dev actually stay unique for each file. Whether it matters for
+> audit I don't dare to say :). Bcachefs does not care and returns non-unique
+> inode numbers.
 
-I think when I finally get into working on this again I focus on
-purely to get ECDSA right. Thanks for the tip, most likely this
-revamp will happen post your patch set. I'm still busy fixing
-corner cases with the bus encryption that James Bottomley
-contributed.
+But st_ino + st_dev is the only thing Posix and thus historically Linux
+has guaranteed to applications.  So if st_dev is unique, but you need
+an unknown scope in which it is unique it might as well not be for
+that purpose.  And I think for any kind of audit report that is true
+as well.
 
-BR, Jarkko
