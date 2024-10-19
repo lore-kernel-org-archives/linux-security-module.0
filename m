@@ -1,111 +1,142 @@
-Received: from mx1.buffet.re (mx1.buffet.re [51.83.41.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A19212A1DC;
-	Sat, 19 Oct 2024 15:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.83.41.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B01138DD8
+	for <linux-security-module@vger.kernel.org>; Sat, 19 Oct 2024 15:34:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729350981; cv=none; b=Y0mHdqEBleqkbcsvWQAGKQpopN09DVEbrS0I28dFfO66u7cfwhk9dFfecm5RArBTuOvj7k3YzEwwxtj0jH0BN2OsAcc+b1vyzMeTaKOuPBFW5PDDX6bn4mXF+SYWvl2KCBqfS6pEGt+vR1cJmWQb0Xx2AUBgdSGJioCJTf9jVa8=
+	t=1729352063; cv=none; b=Mf/SscguNtFIuIkRCBHgV5bx/XFmjx21MyJJN8wAFtu5emv3wjtvv55zHvgx7BgavnLV4d31Ai9XNfwrLUR7VJOZzL2oJeI8EJWMQxBX0RAEI4loK2ncyXgD6yDV75/WH9niiC6EmcMqShaGoq6rTf3RIPrBn9aalt6HyK67K48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729350981; c=relaxed/simple;
-	bh=pb5BOcbIw+1C1GTdxWqkBm/vZQtpW4RtR+DB6pQVSpw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=oI4TB5Dm96g0pffWqf9PI0gWkka6LnHFKfcB9iQIvIqGkjsTvnnIZKqAneIrD0GWZJMTcMPb5vNB/CqYG07WC7yqNnHgP+g44HR8GmF73VBdoDVBYTHwheEBCXbJL8OWSUKA3pUBiPxWn/xkPVl4MTLRwpWrIvA26o7iEcBIh6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buffet.re; spf=pass smtp.mailfrom=buffet.re; dkim=pass (2048-bit key) header.d=buffet.re header.i=@buffet.re header.b=CP/nvToJ; arc=none smtp.client-ip=51.83.41.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buffet.re
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=buffet.re
+	s=arc-20240116; t=1729352063; c=relaxed/simple;
+	bh=2VEf0sZkKNyJqV8bPANqoeIKJLjrteDBJkPH+wW3P7Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NU13E4SA8Hi4rPLXSwbo4zh6ZLXfPCc+cY2q1lRprlfF3j2Ojg7dXAQd6fb0Ecu4dv0twNi1pwfN/VTpaStW9sNNu4ydtq2u+UaatuyAq3YAAT1wYvaoASPNQan5V03DeI6a5o6W6Dj8otObrcGrWeuranorw81jP2urTDYS9eE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=RSxock2j; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=buffet.re header.i=@buffet.re header.b="CP/nvToJ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=buffet.re; s=mx1;
-	t=1729350972; bh=pb5BOcbIw+1C1GTdxWqkBm/vZQtpW4RtR+DB6pQVSpw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CP/nvToJ/wCqnnvAbjydjgKVpPMeYVBCPXYbygwdPLKD5KX/l+b8fH3lBhdVBs1TR
-	 rX3yGOeiRLsxzJJywoB/+lKaskYmLogL1eNxlahoL5GDasUzTGqqj8pvUSmh5ZjRm4
-	 QGuXN5wW8O8M5JA1RCD3JvVrsNsFj11CNpFkIEhWdNllDNJt5at5H6NmSOuNC4FnSU
-	 SESVj4VyVqcRkGWBxV+8CHB2NsVYbx9FuSmc5WY/JXi8R5fqrEnEzjTmhef9Y8pZZ4
-	 UYbR5E4/yvRm6nEGCIFfrpjBRfOUkr8wIzx/xt2rm5OlRZFx9dPLBN0nmWUnPotL8U
-	 jqe0EFze04GqQ==
-Received: from localhost.localdomain (unknown [10.0.1.3])
-	by mx1.buffet.re (Postfix) with ESMTPA id B7112123074;
-	Sat, 19 Oct 2024 17:16:12 +0200 (CEST)
-From: Matthieu Buffet <matthieu@buffet.re>
-To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-Cc: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-	Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Matthieu Buffet <matthieu@buffet.re>,
-	Tahera Fahimi <fahimitahera@gmail.com>
-Subject: [PATCH v3 3/3] samples/landlock: Clarify option parsing behaviour
-Date: Sat, 19 Oct 2024 17:15:34 +0200
-Message-Id: <20241019151534.1400605-4-matthieu@buffet.re>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20241019151534.1400605-1-matthieu@buffet.re>
-References: <20241019151534.1400605-1-matthieu@buffet.re>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="RSxock2j"
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6e2e508bd28so23772927b3.2
+        for <linux-security-module@vger.kernel.org>; Sat, 19 Oct 2024 08:34:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1729352059; x=1729956859; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dt9BnWbKgBvIPn8Egk93F8g/4UamVtbhqjDHYRc0VbU=;
+        b=RSxock2j4eFSMhlPud2PzMLhYJac3rWyeEDfgpn6nEyOad4weShuW0oPInoz9hKbG8
+         Ww7E5MQV80gkmZirtXUcT3sGyi4ZKtp275tH4BsfKCP0Laepk+0gV2WD25h77PzZ8Ck9
+         Qb61d6X1prsbHCW6kW+Kuj5dxj5OA7Dl9h3HosI/w+TnOjM+mzsqsQapyJJZaF6mc4Ka
+         fd48+oheIE9sLzbV5e0BiUExUP7Z0PLusAZbv8b6lLFLWYxjO/1IQ04uuoPvgTKjTijU
+         Ld9RDoyrTGzzCyxH0fkWmrCIFrz1YWyuBfy66q1laX3QGf9P16At8QHYI36hm66E3Og4
+         8+iQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729352059; x=1729956859;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dt9BnWbKgBvIPn8Egk93F8g/4UamVtbhqjDHYRc0VbU=;
+        b=EhqTf90/W/kK+NS2YDTRoxXHYuvUAFEROPQ7XVNi1Dhw/nUygjVS2SoLD/dlNvWOIZ
+         1i17X1Fhsfv+FAOUinfLz8YV4L0POt1An1FQoJ1KCjudfF04Uk4ZVsyVq6+7mEogkIir
+         4MnNJ/SVJNp2+cTaphmhO4t/VVaj4ctPnxK0xnRSA7LvUqTcH4SE37NV5DYX5dfVEkwC
+         z6oYe7A9n5rKKH4akXQdF7CCREq20OPxCyiCQcwk3GsqGoCPCZvM3992oKjMBQXTn9sh
+         0RcZBDoZC6gZUsYCAVfCiD55iI+v7fPcknBwyKDOJGYvGBzxHSVCyhukiQQc7mg2qxzi
+         69OQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXW8T40c3++FfA9B/VllU0wgz4oj6vzucBSeClZmA9PZZSJ1lhp/fNwvZbII5SHZP3RJP0UfjzuSY9ooAZYAmMFZRJrVww=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9ia3RFhBDLIG1P38dQwY9ep6saxfuVwVsvd5wmg37uWoNX7fa
+	m6jd964HmTog82LMlk1WPpYhM2thuAHvYaunHJT+hEJA6bLCLSwy53HoRMi4HOmvjVrOVqDrjm9
+	xNAt7m0uxjmAC1nDI+7Oqg6Rwedbk0KzbbABv
+X-Google-Smtp-Source: AGHT+IGtdGqzYcDLxnIpfjuAVP5vxoGEl/nSImRtgtKWi9QsQ/qNJR8p9BgodGD1xEymrlwrAaFBjtak2CSZfpvFhTo=
+X-Received: by 2002:a05:690c:f91:b0:6de:c0e:20ef with SMTP id
+ 00721157ae682-6e5bfbdbe14mr53079707b3.7.1729352059439; Sat, 19 Oct 2024
+ 08:34:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241018161415.3845146-1-roberto.sassu@huaweicloud.com>
+In-Reply-To: <20241018161415.3845146-1-roberto.sassu@huaweicloud.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Sat, 19 Oct 2024 11:34:08 -0400
+Message-ID: <CAHC9VhQP7gBa4AV-Hbh4Bq4fRU6toRmjccv52dGoU-s+MqsmfQ@mail.gmail.com>
+Subject: Re: [PATCH v2] mm: Split critical region in remap_file_pages() and
+ invoke LSMs in between
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, 
+	Roberto Sassu <roberto.sassu@huaweicloud.com>, akpm@linux-foundation.org
+Cc: Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, vbabka@suse.cz, 
+	jannh@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	ebpqwerty472123@gmail.com, zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, 
+	eric.snowberg@oracle.com, jmorris@namei.org, serge@hallyn.com, 
+	linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, stable@vger.kernel.org, 
+	syzbot+1cd571a672400ef3a930@syzkaller.appspotmail.com, 
+	Roberto Sassu <roberto.sassu@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Clarify the distinction between filesystem variables (mandatory)
-and all others (optional).
-For optional variables, explain the difference between unset variables
-(no access check performed) and empty variables (nothing allowed for
-lists of allowed paths/ports, or no effect for lists of scopes).
-List LL_SCOPED values understood and their effect.
+On Fri, Oct 18, 2024 at 12:15=E2=80=AFPM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
+> From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+>
+> Commit ea7e2d5e49c0 ("mm: call the security_mmap_file() LSM hook in
+> remap_file_pages()") fixed a security issue, it added an LSM check when
+> trying to remap file pages, so that LSMs have the opportunity to evaluate
+> such action like for other memory operations such as mmap() and mprotect(=
+).
+>
+> However, that commit called security_mmap_file() inside the mmap_lock loc=
+k,
+> while the other calls do it before taking the lock, after commit
+> 8b3ec6814c83 ("take security_mmap_file() outside of ->mmap_sem").
+>
+> This caused lock inversion issue with IMA which was taking the mmap_lock
+> and i_mutex lock in the opposite way when the remap_file_pages() system
+> call was called.
+>
+> Solve the issue by splitting the critical region in remap_file_pages() in
+> two regions: the first takes a read lock of mmap_lock, retrieves the VMA
+> and the file descriptor associated, and calculates the 'prot' and 'flags'
+> variables; the second takes a write lock on mmap_lock, checks that the VM=
+A
+> flags and the VMA file descriptor are the same as the ones obtained in th=
+e
+> first critical region (otherwise the system call fails), and calls
+> do_mmap().
+>
+> In between, after releasing the read lock and before taking the write loc=
+k,
+> call security_mmap_file(), and solve the lock inversion issue.
+>
+> Cc: stable@vger.kernel.org # v6.12-rcx
+> Fixes: ea7e2d5e49c0 ("mm: call the security_mmap_file() LSM hook in remap=
+_file_pages()")
+> Reported-by: syzbot+1cd571a672400ef3a930@syzkaller.appspotmail.com
+> Closes: https://lore.kernel.org/linux-security-module/66f7b10e.050a0220.4=
+6d20.0036.GAE@google.com/
+> Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Reviewed-by: Jann Horn <jannh@google.com>
+> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Tested-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Tested-by: syzbot+1cd571a672400ef3a930@syzkaller.appspotmail.com
+> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> ---
+>  mm/mmap.c | 69 +++++++++++++++++++++++++++++++++++++++++--------------
+>  1 file changed, 52 insertions(+), 17 deletions(-)
 
-Signed-off-by: Matthieu Buffet <matthieu@buffet.re>
----
- samples/landlock/sandboxer.c | 29 +++++++++++++++--------------
- 1 file changed, 15 insertions(+), 14 deletions(-)
+Thanks for working on this Roberto, Kirill, and everyone else who had
+a hand in reviewing and testing.
 
-diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
-index 38fc6ebd7222..96b451cf0531 100644
---- a/samples/landlock/sandboxer.c
-+++ b/samples/landlock/sandboxer.c
-@@ -296,23 +296,24 @@ static bool check_ruleset_scope(const char *const env_var,
- /* clang-format off */
- 
- static const char help[] =
--	"usage: "
--	ENV_FS_RO_NAME "=\"...\" "
--	ENV_FS_RW_NAME "=\"...\" "
--	ENV_TCP_BIND_NAME "=\"...\" "
--	ENV_TCP_CONNECT_NAME "=\"...\" "
--	ENV_SCOPED_NAME "=\"...\" %1$s <cmd> [args]...\n"
-+	"usage: " ENV_FS_RO_NAME "=\"...\" " ENV_FS_RW_NAME "=\"...\" "
-+	"[other environment variables] %1$s <cmd> [args]...\n"
- 	"\n"
--	"Execute a command in a restricted environment.\n"
-+	"Execute the given command in a restricted environment.\n"
-+	"Multi-valued settings (lists of ports, paths, scopes) are colon-delimited.\n"
- 	"\n"
--	"Environment variables containing paths and ports each separated by a colon:\n"
--	"* " ENV_FS_RO_NAME ": list of paths allowed to be used in a read-only way\n"
--	"* " ENV_FS_RW_NAME ": list of paths allowed to be used in a read-write way\n"
-+	"Mandatory settings:\n"
-+	"* " ENV_FS_RO_NAME ": paths allowed to be used in a read-only way\n"
-+	"* " ENV_FS_RW_NAME ": paths allowed to be used in a read-write way\n"
- 	"\n"
--	"Environment variables containing ports are optional and could be skipped.\n"
--	"* " ENV_TCP_BIND_NAME ": list of ports allowed to bind (server)\n"
--	"* " ENV_TCP_CONNECT_NAME ": list of ports allowed to connect (client)\n"
--	"* " ENV_SCOPED_NAME ": list of scoped IPCs\n"
-+	"Optional settings (when not set, their associated access check "
-+	"is always allowed, which is different from an empty string which "
-+	"means an empty list)\n"
-+	"* " ENV_TCP_BIND_NAME ": ports allowed to bind (server)\n"
-+	"* " ENV_TCP_CONNECT_NAME ": ports allowed to connect (client)\n"
-+	"* " ENV_SCOPED_NAME ": actions denied on the outside of the landlock domain\n"
-+	"  - \"a\" to restrict opening abstract unix sockets\n"
-+	"  - \"s\" to restrict sending signals\n"
- 	"\n"
- 	"Example:\n"
- 	ENV_FS_RO_NAME "=\"${PATH}:/lib:/usr:/proc:/etc:/dev/urandom\" "
--- 
-2.39.5
+Reviewed-by: Paul Moore <paul@paul-moore.com>
 
+Andrew, I see you're pulling this into the MM/hotfixes-unstable
+branch, do you also plan to send this up to Linus soon/next-week?  If
+so, great, if not let me know and I can send it up via the LSM tree.
+
+We need to get clarity around Roberto's sign-off, but I think that is
+more of an administrative mistake rather than an intentional omission
+:)
+
+--=20
+paul-moore.com
