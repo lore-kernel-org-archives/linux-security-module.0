@@ -1,47 +1,53 @@
-Received: from smtp-bc08.mail.infomaniak.ch (smtp-bc08.mail.infomaniak.ch [45.157.188.8])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D17501E4113
-	for <linux-security-module@vger.kernel.org>; Mon, 21 Oct 2024 09:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D1E326ACD;
+	Mon, 21 Oct 2024 13:13:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729504690; cv=none; b=IrcWIdEYu63LHq8p90gB+0txDzDr6mtEpmxlb4NvipjIHT8435+TSWLmx61NEp5qFI4xZ8+XGHtwvmZGHVoBBEXk8oUdX0TPF/MY0yMtIZb0YfJQ9kZd8450psKv0lSYXuu/AmLLXKT3iArsjcroctoCTyFcGhDOwKGh4JNXme8=
+	t=1729516406; cv=none; b=O1dWEjxpSm+Q4Jzztm5AWe9XpWvxc5c74PzP9ZQ+5qsiyHmhWeyLtyW9jB28LbzniHsLHwCz5QbxfR+gzcpW404UTyzsou/Gpm5BlRdqFeUE87SnJdMJxdOM8PauN14Srqt60JtnhK5lD5+smAT7kMMXgTrLwYWHosZGh+gyuec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729504690; c=relaxed/simple;
-	bh=EVL4wUmYrTJEyHGsQ/62BPsBtlNsOUVSRfFQ61ReZ6c=;
+	s=arc-20240116; t=1729516406; c=relaxed/simple;
+	bh=EmRhKWOSYYuWLKvPGQXVgmL4h7IfTxQWrgR1R9tpH9k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QgM3XyUZPBifdQyBd4W3lJ6Cm2WvIP9QMrSVFCaxNir7yToBEzrWHIY/ye+TvEN/qFIkpqbKeDyajq8rIRZIdd94csXAwCeDF7CJqc7APuOBfbOFNQ3K4A1442tMAg+Pop2xlmioIE5xCVMJhMQSq+34ypFYP7kJM9Un+74IktM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=G4O7qF5J; arc=none smtp.client-ip=45.157.188.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kcaarta7j3xjWi9K36Cpoidn+8R0cTV6+tHKGLrvtFOsHbTtIDirwH6+WhFbKXLkm5oFChWy4DXAkJkXJUrmXwFeE6/lMizbbNznVmfI4o9itKn9lxToGxvPU8cGQJBqbnTzjXDJKlFlywyaK0Yr4dJ7sR+X59IeqsyX9lsuieQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VCaVSN9d; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="G4O7qF5J"
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XX9jH57xszXs9;
-	Mon, 21 Oct 2024 11:57:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1729504675;
-	bh=oQqDcNvi3dV/GKQZTqzoU9Gy+j6RUcYEDosffosB1cE=;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VCaVSN9d"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E77FDC4CEC3;
+	Mon, 21 Oct 2024 13:13:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729516405;
+	bh=EmRhKWOSYYuWLKvPGQXVgmL4h7IfTxQWrgR1R9tpH9k=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=G4O7qF5Jlq8MVI5T7TPwo0OXw/iZ+oNwBlrtKbywh/q/ICD+2YW2GyClZm/L4XJFD
-	 JirGE6PckwP2NdFR8Wh4hcrBRrMwUqn2ESk2UpSyHYxxB2zcRTl6D1AmdJR5j4L5Zm
-	 4GNjbCAHym9OHgf4mKwFXzNhtpdBpc3CyQhu/4Qk=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4XX9jG0KMHzcSf;
-	Mon, 21 Oct 2024 11:57:53 +0200 (CEST)
-Date: Mon, 21 Oct 2024 11:57:53 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Matthieu Buffet <matthieu@buffet.re>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E . Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>
-Subject: Re: [RFC PATCH v1 4/7] landlock: Add UDP send+recv access control
-Message-ID: <20241021.Abohbuph8eet@digikod.net>
-References: <20240916122230.114800-1-matthieu@buffet.re>
- <20240916122230.114800-5-matthieu@buffet.re>
- <20240921.ohCheQuoh1eu@digikod.net>
- <3631edfd-7f41-4ff1-9f30-20dcaa17b726@buffet.re>
+	b=VCaVSN9dURA9zYAY3uImNi5qLazdbe6a2oNN9dDIdK9SKGXJypGFSKDbW1zZZgz5C
+	 Q2FjkH3Y5zkG4We999HkJnuJNHfoq6lu/xBOUxUM6pbinhzdZeTGOEktECYOt5v2Pw
+	 n8IuF3DdDQ1Uyixlm+r0gppHIbk0qru+/rzrnxPDXk6XCgq8mhdkfd1Bd/5Ga5JFqS
+	 8Yy5Zd//cWWK/y/+Aif1UXy4cfCcCQdjglW+2lLn/ZpnVqlC29ontCDM2L4vYghy5J
+	 NoXhjEkV0zXBHg6hReNac75yNRGWkCOQ0sU5sIVG7a/OdIJ7x/PiQDS+guTmEiMTW2
+	 lzw/z0bIjXE4Q==
+Date: Mon, 21 Oct 2024 15:13:20 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Jan Kara <jack@suse.cz>
+Cc: Paul Moore <paul@paul-moore.com>, Jeff Layton <jlayton@kernel.org>, 
+	Christoph Hellwig <hch@infradead.org>, Trond Myklebust <trondmy@hammerspace.com>, 
+	"mic@digikod.net" <mic@digikod.net>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"anna@kernel.org" <anna@kernel.org>, 
+	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, "audit@vger.kernel.org" <audit@vger.kernel.org>, 
+	"linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
+Subject: Re: [RFC PATCH v1 1/7] fs: Add inode_get_ino() and implement
+ get_ino() for NFS
+Message-ID: <20241021-forsten-sitzreihen-45035569f83b@brauner>
+References: <20241010152649.849254-1-mic@digikod.net>
+ <20241016-mitdenken-bankdaten-afb403982468@brauner>
+ <CAHC9VhRd7cRXWYJ7+QpGsQkSyF9MtNGrwnnTMSNf67PQuqOC8A@mail.gmail.com>
+ <5bbddc8ba332d81cbea3fce1ca7b0270093b5ee0.camel@hammerspace.com>
+ <CAHC9VhQVBAJzOd19TeGtA0iAnmccrQ3-nq16FD7WofhRLgqVzw@mail.gmail.com>
+ <ZxEmDbIClGM1F7e6@infradead.org>
+ <CAHC9VhTtjTAXdt_mYEFXMRLz+4WN2ZR74ykDqknMFYWaeTNbww@mail.gmail.com>
+ <5a5cfe8cb8155c2bb91780cc75816751213e28d7.camel@kernel.org>
+ <CAHC9VhR=-MMA3JoUABhwdqkraDp_vvsK2k7Nh0NA4yomtn855w@mail.gmail.com>
+ <20241018122543.cxbbtsmeksegoeh3@quack3>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -51,209 +57,80 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <3631edfd-7f41-4ff1-9f30-20dcaa17b726@buffet.re>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <20241018122543.cxbbtsmeksegoeh3@quack3>
 
-On Sat, Oct 19, 2024 at 02:47:48PM +0200, Matthieu Buffet wrote:
-> Hi Mickaël,
+On Fri, Oct 18, 2024 at 02:25:43PM +0200, Jan Kara wrote:
+> On Thu 17-10-24 16:21:34, Paul Moore wrote:
+> > On Thu, Oct 17, 2024 at 1:05 PM Jeff Layton <jlayton@kernel.org> wrote:
+> > > On Thu, 2024-10-17 at 11:15 -0400, Paul Moore wrote:
+> > > > On Thu, Oct 17, 2024 at 10:58 AM Christoph Hellwig <hch@infradead.org> wrote:
+> > > > > On Thu, Oct 17, 2024 at 10:54:12AM -0400, Paul Moore wrote:
+> > > > > > Okay, good to know, but I was hoping that there we could come up with
+> > > > > > an explicit list of filesystems that maintain their own private inode
+> > > > > > numbers outside of inode-i_ino.
+> > > > >
+> > > > > Anything using iget5_locked is a good start.  Add to that file systems
+> > > > > implementing their own inode cache (at least xfs and bcachefs).
+> > > >
+> > > > Also good to know, thanks.  However, at this point the lack of a clear
+> > > > answer is making me wonder a bit more about inode numbers in the view
+> > > > of VFS developers; do you folks care about inode numbers?  I'm not
+> > > > asking to start an argument, it's a genuine question so I can get a
+> > > > better understanding about the durability and sustainability of
+> > > > inode->i_no.  If all of you (the VFS folks) aren't concerned about
+> > > > inode numbers, I suspect we are going to have similar issues in the
+> > > > future and we (the LSM folks) likely need to move away from reporting
+> > > > inode numbers as they aren't reliably maintained by the VFS layer.
+> > > >
+> > >
+> > > Like Christoph said, the kernel doesn't care much about inode numbers.
+> > >
+> > > People care about them though, and sometimes we have things in the
+> > > kernel that report them in some fashion (tracepoints, procfiles, audit
+> > > events, etc.). Having those match what the userland stat() st_ino field
+> > > tells you is ideal, and for the most part that's the way it works.
+> > >
+> > > The main exception is when people use 32-bit interfaces (somewhat rare
+> > > these days), or they have a 32-bit kernel with a filesystem that has a
+> > > 64-bit inode number space (NFS being one of those). The NFS client has
+> > > basically hacked around this for years by tracking its own fileid field
+> > > in its inode.
+> > 
+> > When I asked if the VFS dev cared about inode numbers this is more of
+> > what I was wondering about.  Regardless of if the kernel itself uses
+> > inode numbers for anything, it does appear that users do care about
+> > inode numbers to some extent, and I wanted to know if the VFS devs
+> > viewed the inode numbers as a first order UAPI interface/thing, or if
+> > it was of lesser importance and not something the kernel was going to
+> > provide much of a guarantee around.  Once again, I'm not asking this
+> > to start a war, I'm just trying to get some perspective from the VFS
+> > dev side of things.
 > 
-> I've almost finished merging your review (thanks for all the feedback), with
-> the exception of this main point. Just making sure we agree on the
-> limitations before I merge this into a new version.
+> Well, we do care to not break our users. So our opinion about "first order
+> UAPI" doesn't matter that much. If userspace is using it, we have to
+> avoid breaking it. And there definitely is userspace depending on st_ino +
+> st_dev being unique identifier of a file / directory so we want to maintain
+> that as much as possible (at least as long as there's userspace depending
+> on it which I don't see changing in the near future).
 > 
-> On 9/21/2024 12:23 PM, Mickaël Salaün wrote:
-> >> +	/*
-> >> +	 * If there is a more specific address in the message, it will take
-> >> +	 * precedence over any connect()ed address. Base our access check on
-> it.
-> >> +	 */
-> >> +	if (address) {
-> >> +		const bool in_udpv6_sendmsg =
-> >> +			(sock->sk->sk_prot == &udpv6_prot);
-> >> +
-> >> +		err = get_addr_port(address, msg->msg_namelen, in_udpv6_sendmsg,
-> >> +				    &port);
-> >> +		if (err != 0)
-> >> +			return err;
-> >> +
-> >> +		/*
-> >> +		 * In `udpv6_sendmsg`, AF_UNSPEC is interpreted as "no address".
-> >> +		 * In that case, the call above will succeed but without
-> >> +		 * returning a port.
-> >> +		 */
-> >> +		if (in_udpv6_sendmsg && address->sa_family == AF_UNSPEC)
-> >> +			address = NULL;
-> >> +	}
-> >> +
-> >> +	/*
-> >> +	 * Without a message-specific destination address, the socket must be
-> >> +	 * connect()ed to an address, base our access check on that one.
-> >> +	 */
-> >> +	if (!address) {
-> >
-> > If the address is not specified, I think we should just allow the
-> > request and let the network stack handle the rest.  The advantage of
-> > this approach would be that if the socket was previously allowed to be
-> > connected, the check is only done once and they will be almost no
-> > performance impact when calling sendto/write/recvfrom/read on this
-> > "connected" socket.
-> > [...]
-> > What about something like this (with the appropriate comments)?
-> >
-> > if (!address)
-> > 	return 0;
-> >
-> > if (address->sa_family == AF_UNSPEC && sock->sk->sk_prot ==
-> >     &udpv6_prot)
-> > 	return 0;
-> >
-> > err = get_addr_port(address, msg->msg_namelen, &port);
-> > if (err)
-> > 	return err;
-> >
-> > return check_access_port(dom, LANDLOCK_ACCESS_NET_SENDMSG_UDP, port);
+> That being said historically people have learned NFS has its quirks,
+> similarly as btrfs needing occasionally a special treatment and adapted to
+> it, bcachefs is new enough that userspace didn't notice yet, that's going
+> to be interesting.
 > 
-> If I understand correctly, you would like the semantics of
-> LANDLOCK_ACCESS_NET_CONNECT_UDP to be {connect(), and sendmsg() without
-> explicit address} and LANDLOCK_ACCESS_NET_SENDMSG_UDP to be {sendmsg() with
-> explicit address}.
+> There's another aspect that even 64-bits start to be expensive to pack
+> things into for some filesystems (either due to external protocol
+> constraints such as for AFS or due to the combination of features such as
+> subvolumes, snapshotting, etc.). Going to 128-bits for everybody seems
+> like a waste so at last LSF summit we've discussed about starting to push
+> file handles (output of name_to_handle_at(2)) as a replacement of st_ino
+> for file/dir identifier in a filesystem. For the kernel this would be
+> convenient because each filesystem can pack there what it needs. But
+> userspace guys were not thrilled by this (mainly due to the complexities of
+> dynamically sized identifier and passing it around). So this transition
+> isn't currently getting much traction and we'll see how things evolve.
 
-Not exactly, here is the rewording with my thinking:
-...the semantics of LANDLOCK_ACCESS_NET_CONNECT_UDP to be {connect()}
-and LANDLOCK_ACCESS_NET_SENDMSG_UDP to be {sendmsg() with explicit
-address}.
-
-sendmsg() without explicit address should always be allowed,
-whatever the Landlock policy (similarly as write(2) on a write-opened
-file descriptor).  In a nutshell, sendmsg(2) without explicit address
-should be handled the same as a write(2) call on a connected socket (I
-guess the kernel handles such action on connected datagram sockets the
-same as on connected stream sockets).
-
-I think it is more important to first have a simple model that
-enables developers to initialize a socket with connect(2) and then
-sandbox the process to only be able to use this socket to communicate
-with the configured peer, similar to what can be enforced with TCP
-sockets.
-
-sendmsg(2) can do two different thinks: (optionally) configure a
-peer/port and write data. recvmsg(2) only reads data.  We should first
-start by controlling exchange from/to peers, and maybe later controlling
-data flow.
-
-An alternative approach would be to not add a sendmsg specific access
-right but only LANDLOCK_ACCESS_NET_CONNECT_UDP because connect should
-be a superset of sendmsg.  This would make it impossible to specifically
-deny (shared) socket's configuration change though.  I think it's
-better to stick to the kernel semantic with 3 dedicated access rights,
-and it should make more sense for users too.  What do you think?
-
-
-> This makes it impossible to allow a landlocked server to
-> connect() in order to receive traffic only from a specific client while at
-> the same time preventing it from sending traffic (that is, a receive-only
-> client-specific socket ala Cloudflare's "established-over-unconnected"[1]).
-
-My proposal would indeed makes this use case impossible to enforce only
-with the proposed access rights, and we would need to restrict write(2)
-too BTW.  However, I think it would make sense to add complementary
-access rights to restrict reading or writing to a socket.  I guess this
-semantic would be useful for non-UDP protocols too with
-LANDLOCK_ACCESS_NET_{READ,WRITE}_{TCP,UDP} access rights set at
-socket-creation time and stored in the socket object (instead of looking
-at a Landlock domain for each read/write call, similarly to the truncate
-and ioctl_dev access rights).  What do you think?
-
-I wonder what happens if we call recvmsg(2) on a newly created (and then
-unconfigured) socket.  Without prior call to bind(2) I would guess that
-the recvmsg(2) call fail but I'm not so sure with a datagram socket.  We
-should check that.
-
-> 
-> >> +	err = check_access_port(dom, LANDLOCK_ACCESS_NET_RECVMSG_UDP,
-> >> +				port_bigendian);
-> >> +	if (err != -EACCES)
-> >> +		return err;
-> >
-> > We should be able to follow the same policy for "connected" sockets.
-> 
-> Again if I understand correctly, to fully merge semantics of
-> LANDLOCK_ACCESS_NET_BIND_UDP and LANDLOCK_ACCESS_NET_RECVMSG_UDP (since if
-> the access check is performed at bind() time, there is nothing to check in
-> recvmsg() anymore).
-
-Correct (I was a bit confused with recvmsg, but it doesn't set the
-receiving address/port).
-
-> Similarly, this makes it impossible to allow a send-only
-> program to bind() to set a source port without allowing it to recvmsg()
-> traffic.
-
-Correct with the current access rights.  We would need a
-LANDLOCK_ACCESS_NET_READ_UDP.
-
-> 
-> I do not know of real-life programs that might want to sandbox their network
-> workers *that* precisely, nor how much we want to be future-proof and
-> support it. If not, I can merge your feedback and:
-> - remove LANDLOCK_ACCESS_NET_RECVMSG_UDP and the recvmsg() hook;
-
-Yes
-
-> - change the doc for LANDLOCK_ACCESS_NET_SENDMSG_UDP to mention that it is
-> not required if the app uses connect() and then sendmsg() without explicit
-> addresses;
-
-Yes
-
-> - change the doc for LANDLOCK_ACCESS_NET_CONNECT_UDP to mention that it
-> grants the right to send traffic (and similarly for
-> LANDLOCK_ACCESS_NET_BIND_UDP to receive traffic), and the reason
-
-The documentation should highlight that these flags grants the right to
-configure a socket, but indeed, no restrictions are enforced on reading
-or writing on sockets.
-
-> (performance, though I haven't managed to get a benchmark);
-> - rename to LANDLOCK_ACCESS_NET_CONNECT_SENDMSG_UDP,
-> LANDLOCK_ACCESS_NET_SENDMSG_UDP, and LANDLOCK_ACCESS_NET_BIND_RECVMSG_UDP,
-> what do you think?
-
-The first and third rights are confusing.  I prefer simple names such as
-LANDLOCK_ACCESS_NET_CONNECT_UDP and LANDLOCK_ACCESS_NET_BIND_UDP.
-Moreover, LANDLOCK_ACCESS_NET_CONNECT_UDP would not impact sendmsg(2)
-calls at all.
-
-> 
-> If merging semantics is a problem, I mentioned socket tagging in [2] to
-> reduce the performance impact (e.g. tag whether it can send traffic at
-> connect() time, and tag whether it can recv at bind() time). So another
-> option could be to keep precise semantics and explore that?
-
-This tagging mechanism looks like a good idea to implement
-LANDLOCK_ACCESS_NET_{READ,WRITE}_{TCP,UDP}, but that should be a
-future separate patch series.
-
-> 
-> >> +	/*
-> >> +	 * Slow path: socket is bound to an ephemeral port. Need a second check
-> >> +	 * on port 0 with different semantics ("any ephemeral port").
-> >> +	 */
-> >> +	inet_sk_get_local_port_range(sk, &ephemeral_low, &ephemeral_high);
-> >
-> > Is it to handle recvmsg(with port 0)?
-> 
-> If you mean recvmsg() on a socket that was previously bind(0), yep. This
-> second rule lookup added a different meaning to rules on port 0. Without
-> this, one would not be able to allow "all ephemeral ports", making the
-> feature unusable for servers that bind on ephemeral ports. All this
-> disappears if we remove LANDLOCK_ACCESS_NET_RECVMSG_UDP.
-
-OK
-
-> 
-> Matthieu
-> 
-> [1] https://blog.cloudflare.com/everything-you-ever-wanted-to-know-about-udp-sockets-but-were-afraid-to-ask-part-1/
-> [2] https://github.com/landlock-lsm/linux/issues/10#issuecomment-2267871144
-> 
+It's also not an answer for every filesystem. For example, you don't
+want to use file handles for pidfds when you are guaranteed that the
+inode numbers will be unique. So file handles will not be used for that
+where a simple statx() and comparing inode numbers can do.
