@@ -1,380 +1,228 @@
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C38EE1DFDE;
-	Sun, 20 Oct 2024 14:43:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31F701D14E2;
+	Mon, 21 Oct 2024 07:22:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729435409; cv=none; b=EEwMIuJilbIXkpJiHufsLN+Qw4oFfKh6HLUdPLoldA+MhSvmXpXR8xLIOtsgMXwmqRl6BaJ/Mf0lADvXLpNjwcBe71XAjAAfXBSl/B6zcVDTdSJk8aElpkcTyKO2cxR91WPl/nQQeM8uX2QAV13vrfyCvKGMxEkrjhKXIU06ll4=
+	t=1729495374; cv=none; b=Dh8fFtrBg3Dik2vI0cihZ7LO8/tH3OifSyD125DPeXLAMTAmUmMcJh9gZl7P95I+mAqL6aC/CWMhgg7VXsd47CiFoTHrvha6EtCHw0YlcoM/FlZrYzUBWCg/43dRqJZMXp3yICktTUOoc6WJgRXmJg5+folyUJix3HfiUYg337g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729435409; c=relaxed/simple;
-	bh=WnyClXxPk81fS8+Mq3pc6pKejSwN4CmokOlKWf/xWUE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g6XPvoARGKXP+bQCF119fGVrBw5tmEWItch4BTOIr3hq8rstR//nF5qmC8Fl3tEmTRfXLrG9pizvEO0QN4wNQDgPhPo6S7D1Bb0fQh8rdf6SFwGBvYJmzgP3DR7FLr1N4AlAO8eh7Qser2c/fNpcdq9ccxeAunFgHoZZNoHZqIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=ej28YNrt; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+	s=arc-20240116; t=1729495374; c=relaxed/simple;
+	bh=j2o9aZZ2MpjYuhcSr3OChzYTBDv4hplxBC14TRULQI8=;
+	h=Date:From:To:CC:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To:References; b=TtEU88xkeZM8Ji4n2xNUCZ+Nflh+Sw85TbE+szClsz59bDv20jWDu7s5mhSteReZh6dYN83sEGFZv4CV9gnWURdcySOuPXQWJEcCfFMgsdaL6+Kb27WnWIg1yhXNzwB9B9EaGNNFqiQnK5ZSRtt3lLTWVxRZAnED57ACA6yj8Rk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=fnxRFywd; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="ej28YNrt"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=zLeQYIuPBrvqDLt+hFWJVaybZ76pDtWY6kgR6hV/jJ4=; b=ej28YNrtVhjpz/+m
-	qPmyZDmIX5f1/NJE0/Vq/Fenlkfao9gPBD+XnLtQwu6FvYMde4BUBjD0Onl7SHgdPbu2ptdH8iXA9
-	FyEwwFP9WN8T+JjS2DPsmCFQk8mIiqnNDowzAv6RL3Q2FRsIInS+prXbBFClFrY8f+ZZdRPqA0hq0
-	SKMt2rygSE5jvuoXl9BB61+IQJktI2w5GEG1fH5GP2X5vUVEsmUwNiHAPk2BeEmqOq/bKdXlxXlrl
-	Rf+cklmyDu8Y/nm4EQxA7n/49i2ThaepJpMst2aVMLaxJcsmywAK4hI8azBvRMREAxT1RXhsvy2ej
-	iygtOk/6RWgPseJuLQ==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1t2X9I-00CMp9-1e;
-	Sun, 20 Oct 2024 14:43:16 +0000
-Date: Sun, 20 Oct 2024 14:43:16 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: john.johansen@canonical.com, paul@paul-moore.com, jmorris@namei.org,
-	serge@hallyn.com
-Cc: apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] apparmor: Remove deadcode
-Message-ID: <ZxUXBBI4XE0oqcee@gallifrey>
-References: <20240920235517.615309-1-linux@treblig.org>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="fnxRFywd"
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20241021072248euoutp0154700447ddf6f2066342e26bab501df4~AZt-x-Amy0550305503euoutp01m;
+	Mon, 21 Oct 2024 07:22:48 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20241021072248euoutp0154700447ddf6f2066342e26bab501df4~AZt-x-Amy0550305503euoutp01m
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1729495369;
+	bh=7Vo8bdrcTD2TExgOyGSaPfXGd7Aa+ItF6FSKHNsruAQ=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=fnxRFywdKm9yix+Os5AePl5xtBGH7BesiJShYmaisTyJZ/AS4iGDhbklMvt9x1kEM
+	 zPaQ2OJJ4T/lPQNPh4sf7AiPbu0Wstfk081wl8KgWVn05dVgeJ49CYQ0zb3V+7tuzC
+	 yr4G/XvCuCQv+r4PENRyJdNjfV8WfhOtwbvyeYMs=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20241021072248eucas1p1ac0b469a13d7941e669de1fa2b7f0fa0~AZt-gjzjO2488824888eucas1p1n;
+	Mon, 21 Oct 2024 07:22:48 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges2new.samsung.com (EUCPMTA) with SMTP id 69.14.20409.84106176; Mon, 21
+	Oct 2024 08:22:48 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20241021072248eucas1p127c01b427e01c363b0425b9f5e130811~AZt-DOXgy2553825538eucas1p17;
+	Mon, 21 Oct 2024 07:22:48 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20241021072248eusmtrp2bc9e687864d5b91d6aadf0c7c223c017~AZt-BmeZp2870628706eusmtrp22;
+	Mon, 21 Oct 2024 07:22:48 +0000 (GMT)
+X-AuditID: cbfec7f4-c0df970000004fb9-92-671601482b13
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id 05.B1.19654.74106176; Mon, 21
+	Oct 2024 08:22:47 +0100 (BST)
+Received: from CAMSVWEXC02.scsc.local (unknown [106.1.227.72]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20241021072247eusmtip2b1ef0deb415b435079661bd6a9f0346a~AZt_l4KqO0165901659eusmtip2t;
+	Mon, 21 Oct 2024 07:22:47 +0000 (GMT)
+Received: from localhost (106.110.32.107) by CAMSVWEXC02.scsc.local
+	(2002:6a01:e348::6a01:e348) with Microsoft SMTP Server (TLS) id 15.0.1497.2;
+	Mon, 21 Oct 2024 08:22:46 +0100
+Date: Mon, 21 Oct 2024 09:22:45 +0200
+From: Joel Granados <j.granados@samsung.com>
+To: Kaixiong Yu <yukaixiong@huawei.com>
+CC: <akpm@linux-foundation.org>, <mcgrof@kernel.org>, <ysato@users.osdn.me>,
+	<dalias@libc.org>, <glaubitz@physik.fu-berlin.de>, <luto@kernel.org>,
+	<tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+	<dave.hansen@linux.intel.com>, <hpa@zytor.com>, <viro@zeniv.linux.org.uk>,
+	<brauner@kernel.org>, <jack@suse.cz>, <kees@kernel.org>,
+	<willy@infradead.org>, <Liam.Howlett@oracle.com>, <vbabka@suse.cz>,
+	<lorenzo.stoakes@oracle.com>, <trondmy@kernel.org>, <anna@kernel.org>,
+	<chuck.lever@oracle.com>, <jlayton@kernel.org>, <neilb@suse.de>,
+	<okorniev@redhat.com>, <Dai.Ngo@oracle.com>, <tom@talpey.com>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <paul@paul-moore.com>, <jmorris@namei.org>,
+	<linux-sh@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-nfs@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-security-module@vger.kernel.org>, <dhowells@redhat.com>,
+	<haifeng.xu@shopee.com>, <baolin.wang@linux.alibaba.com>,
+	<shikemeng@huaweicloud.com>, <dchinner@redhat.com>, <bfoster@redhat.com>,
+	<souravpanda@google.com>, <hannes@cmpxchg.org>, <rientjes@google.com>,
+	<pasha.tatashin@soleen.com>, <david@redhat.com>, <ryan.roberts@arm.com>,
+	<ying.huang@intel.com>, <yang@os.amperecomputing.com>,
+	<zev@bewilderbeest.net>, <serge@hallyn.com>, <vegard.nossum@oracle.com>,
+	<wangkefeng.wang@huawei.com>, <sunnanyong@huawei.com>
+Subject: Re: [PATCH v3 -next 00/15] sysctl: move sysctls from vm_table into
+ its own files
+Message-ID: <ngknhtecptqk56gtiikvb5mdujhtxdyngzndiaz7ifslzrki7q@4wcykosdnsna>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20240920235517.615309-1-linux@treblig.org>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 14:43:01 up 165 days,  1:57,  1 user,  load average: 0.00, 0.00,
- 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+In-Reply-To: <20241010152215.3025842-1-yukaixiong@huawei.com>
+X-ClientProxiedBy: CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348) To
+	CAMSVWEXC02.scsc.local (2002:6a01:e348::6a01:e348)
+X-Brightmail-Tracker: H4sIAAAAAAAAA02TeUxUVxTGc986YLHDItwMiBaENqQsNiYeKza1rfWVRkvqVjVFpvIymALS
+	GbCWLgFZBRkREBSQpRLZhsWBIKtQrSDbDC2iWOvSiahldwAtjAwdeNj633fOd373nu8mV0Ra
+	dbES0aGQMF4eIg1yYsyp2rYZjTuHbGVehS9WQU6lioHY+nkK5pvbEIxNRsBklZGB4at6BPN3
+	HxOQ93M1AwUzszQ8qYpHkKONoWC6cpaEnqFzLIwdM1Aw2KZjIXvcGUZqSkgoU2+DjIt2kJ0Z
+	TcDMhVIWKirPE1AxqqWht1ZJw6XIByw0NXdQ0NeQw8A91bzJaO2iYeKEjoGcF+kkdGSVUKBt
+	KKdhIGUQwe+t+QQ050VS0JZvC6mP9Cw86xpB0DnzA9xJzaQgrvAiAScaTyPQ9mpYGFc2ERCl
+	SiLhtvYhA9Xq0yR0znYSoD9npCE7Somg55iKBu1cOw1Rk/cRGP4xbZJc2MGark4zPUbLcwbK
+	5mtIuDHYS73vzT2PVVKcKleFuPw7n3JXR8ZJrqbkNsHlq8O5m417uZhfR2luqv4k4qqL3bjz
+	TX8TnLr0OMOp9aksp8meoLgxjYblrp8xUL5v7DP3DuCDDh3h5Z7v+ZsHJvam06EDK4+Wnxih
+	I9G4TSIyE2HxOjx3/BabiMxFVuJihHWzKUgophBOfVRICsUkwuml/cxLJO3JGCEYRQh3x5Yz
+	/03dKile4msQ1hcZ6AWEErvgSGUPtaAZ8dtYO/InuaBtxG/iR+M9izQpblyGz55qXjSsxftx
+	382cRcBCvA3PXeulBW2JO84+XOyTpoPyG/UmWGTS9rjIKFqQZuJNuH5WImzqhPtT7lKC/hE3
+	R7cuBsXiY6/hqrxYVjA+woaoNlLQ1niovWap74Dn6/MIAUhDuMU4sUSXIXwhapoQpjbimBsP
+	l4jNuDM6GS1sgcXL8cCopbDncpxam0kKbQucEGclTLvisnsjVApyznolWdYrybL+T5aPyFJk
+	x4crgmW84p0Q/lsPhTRYER4i8zh4OFiNTP+ty9g+VYeKhp56XEGECF1BWEQ62Vg4ha2QWVkE
+	SL+L4OWHD8jDg3jFFWQvopzsLFwCVvFWYpk0jP+a50N5+UuXEJlJIomtvn6OH9pteGBfF/jx
+	bytXLyua8lnPtv3yeIPhoJnuTtal2e5QdDnxOrPCVeO7qtJDl5tzbbNO0mE7mqlqeWvt/bg/
+	jmzcWG8f5RfySaGxoMZVdqpBs166+/PpOuwRN+Syu3vHqN83Ljurk9Ren63p3jWk/PKr/Z3D
+	vnXJ3cjRLWDa+obDyjnJC52PrVfYsGT7lsoI26sVElm8ZkuCdcaeMM+BGHdf/czeYN3lA6E7
+	g+f+GgS3nzrd8hwb/ZOednv6vG7f51iYy21aF2Gw7H9wm0zvO9wf+32yrPjMasUX209qvBQF
+	7xrcd+2R73D4oEnpP+6cERP/THLUqG/PhX0JpZZrMrydKEWgdK0bKVdI/wXyI7Kl3gQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Te0yTZxTGfb9bi46kXNRvXCLWuCXIKgXKDhs4nX/sC85ly2IWvAw77MBR
+	wLSFVKdZuc1xGSKiDCiW4WUDKki5iYXJgOEKgdahjLsLEXBYWiigo2hZoS7zv+fNc57fe3Jy
+	Dht3naI82MfjZSJJvFDMpdYT3ba7Y299gDZF+7fcCgFltZqC9KYVAlZaOhGY5k/B/E0bBU/a
+	LQhWRqcwUJXVUvDjkpWExzfPIlDq0whYrLbi0DNdwgJTyjIBE53jLCg2bwNjXTkOlZr9cKlm
+	MxQXpGKwdL2CBVXVVzComtGTYGjIIaFR8RcLmlt0BPTdVlIwpl6xG63dJMxmj1OgfJ6Pg66o
+	nAD97RskDOROIPijtRSDFpWCgM7STZA3aWHB024jgq6l0zCcV0DAt1drMMjWXkSgN/SywJzT
+	jEGyOguHQf0jCmo1F3HosnZhYCmxkVCcnIOgJ0VNgv7FXRKS5x8iWP7H3sn3V3Us+9cX7MO4
+	84yCypU6HO5PGIjdocyz9ByCUV9WI6Z0eB/TbjTjTF35IMaUahKZfm0Ek9YxQzILTecQU/uz
+	L3Ol+W+M0VRkUIzGksdieotnCcbU28tifv9hmfh460FeqCQhUSbyiUmQysK4h/gQwOOHAC8g
+	KITHD3z7yDsBAu7OXaHHROLjSSLJzl1HeTGZhnzyxIC3/Ea2kVQgs3smcmLTnCD6wmMTlonW
+	s1051xCt0C6xHIYXXbPwgHRoN/p5fyblKJpD9PCTEdLxqEP0ZFoltVpFcLbTipweYlVTHD9a
+	bxzBV7U750160tyzlsY52g104fmWNcONc4ju61euBZw5++kXvxleUnMRbZsbfWm40LrCR2sa
+	t1NLtRY7iW3XnvRPNvaqdOKE0U1WD0enXPpBriNJc87QGdPdVC5yK3oFVPQKqOh/UCnCK5C7
+	KFEaFx0nDeBJhXHSxPhoXlRCnAbZN76hc6nuFiqfnuO1IYyN2hDNxrnuzlzZxmhX52PCk6dE
+	koRISaJYJG1DAvsozuMeG6MS7CcTL4vkB/sL+EHBIf6CkOBA7mZn6r7+S1dOtFAmihWJTogk
+	/+UwtpOHAlMxh9NdI6as+jvys25cWdK9vfE6T1ty6OI2vNhTOvzLYLsyTGMouvRReJbFrCpq
+	DOw2HS0Xf9NQ/53nhjw2e2xP7IiO2H2knr2uNyN1MGO+PWJ8ct2svF4a5JoVTn7xKTWY9dWK
+	8l6fT7+VHhAslry/5GbxKvORjUpC/2zxde4cKtg+V+vSLn/vDYE2aW8YHrul6zM94SMQS4rP
+	dHjv8fu6pmZh3n98KLfjYOTl4En9zI7UiEYXT9Un7uFphg8PDD1N1UdtPQmGw3G4d9mo3PQw
+	heM38K7SeGC0zetXj/y86+KqgWprkxPK+vw1Ve4OaJVvqQ4716Pqep2VYTx9rZBLSGOEfF9c
+	IhX+C6gKfYZ6BAAA
+X-CMS-MailID: 20241021072248eucas1p127c01b427e01c363b0425b9f5e130811
+X-Msg-Generator: CA
+X-RootMTR: 20241010141133eucas1p1999f17c74198d3880cbd345276bcd3bd
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20241010141133eucas1p1999f17c74198d3880cbd345276bcd3bd
+References: <CGME20241010141133eucas1p1999f17c74198d3880cbd345276bcd3bd@eucas1p1.samsung.com>
+	<20241010152215.3025842-1-yukaixiong@huawei.com>
 
-* linux@treblig.org (linux@treblig.org) wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Thu, Oct 10, 2024 at 11:22:00PM +0800, Kaixiong Yu wrote:
+> This patch series moves sysctls of vm_table in kernel/sysctl.c to
+> places where they actually belong, and do some related code clean-ups.
+> After this patch series, all sysctls in vm_table have been moved into its
+> own files, meanwhile, delete vm_table.
 > 
-> aa_label_audit, aa_label_find, aa_label_seq_print and aa_update_label_name
-> were added by commit
-> f1bd904175e8 ("apparmor: add the base fns() for domain labels")
-> but never used.
+> All the modifications of this patch series base on
+> linux-next(tags/next-20241010). To test this patch series, the code was
+> compiled with both the CONFIG_SYSCTL enabled and disabled on arm64 and
+> x86_64 architectures. After this patch series is applied, all files
+> under /proc/sys/vm can be read or written normally.
 > 
-> aa_profile_label_perm was added by commit
-> 637f688dc3dc ("apparmor: switch from profiles to using labels on contexts")
-> but never used.
+> Changes in v3:
+>  - change patch1~10, patch14 title suggested by Joel Granados
+>  - change sysctl_stat_interval to static type in patch1
+>  - add acked-by from Paul Moore in patch7
+>  - change dirtytime_expire_interval to static type in patch9
+>  - add acked-by from Anna Schumaker in patch11
 > 
-> aa_secid_update was added by commit
-> c092921219d2 ("apparmor: add support for mapping secids and using secctxes")
-> but never used.
+> Changes in v2:
+>  - fix sysctl_max_map_count undeclared issue in mm/nommu.c for patch6
+>  - update changelog for patch7/12, suggested by Kees/Paul
+>  - fix patch8, sorry for wrong changes and forget to built with NOMMU
+>  - add reviewed-by from Kees except patch8 since patch8 is wrong in v1
+>  - add reviewed-by from Jan Kara, Christian Brauner in patch12
 > 
-> aa_split_fqname has been unused since commit
-> 3664268f19ea ("apparmor: add namespace lookup fns()")
+> Kaixiong Yu (15):
+>   mm: vmstat: move sysctls to mm/vmstat.c
+>   mm: filemap: move sysctl to mm/filemap.c
+>   mm: swap: move sysctl to mm/swap.c
+>   mm: vmscan: move vmscan sysctls to mm/vmscan.c
+>   mm: util: move sysctls to mm/util.c
+>   mm: mmap: move sysctl to mm/mmap.c
+>   security: min_addr: move sysctl to security/min_addr.c
+>   mm: nommu: move sysctl to mm/nommu.c
+>   fs: fs-writeback: move sysctl to fs/fs-writeback.c
+>   fs: drop_caches: move sysctl to fs/drop_caches.c
+>   sunrpc: use vfs_pressure_ratio() helper
+>   fs: dcache: move the sysctl to fs/dcache.c
+>   x86: vdso: move the sysctl to arch/x86/entry/vdso/vdso32-setup.c
+>   sh: vdso: move the sysctl to arch/sh/kernel/vsyscall/vsyscall.c
+>   sysctl: remove unneeded include
 > 
-> aa_lookup_profile has been unused since commit
-> 93c98a484c49 ("apparmor: move exec domain mediation to using labels")
+>  arch/sh/kernel/vsyscall/vsyscall.c |  14 ++
+>  arch/x86/entry/vdso/vdso32-setup.c |  16 ++-
+>  fs/dcache.c                        |  21 ++-
+>  fs/drop_caches.c                   |  23 ++-
+>  fs/fs-writeback.c                  |  30 ++--
+>  include/linux/dcache.h             |   7 +-
+>  include/linux/mm.h                 |  23 ---
+>  include/linux/mman.h               |   2 -
+>  include/linux/swap.h               |   9 --
+>  include/linux/vmstat.h             |  11 --
+>  include/linux/writeback.h          |   4 -
+>  kernel/sysctl.c                    | 221 -----------------------------
+>  mm/filemap.c                       |  18 ++-
+>  mm/internal.h                      |  10 ++
+>  mm/mmap.c                          |  54 +++++++
+>  mm/nommu.c                         |  15 +-
+>  mm/swap.c                          |  16 ++-
+>  mm/swap.h                          |   1 +
+>  mm/util.c                          |  67 +++++++--
+>  mm/vmscan.c                        |  23 +++
+>  mm/vmstat.c                        |  44 +++++-
+>  net/sunrpc/auth.c                  |   2 +-
+>  security/min_addr.c                |  11 ++
+>  23 files changed, 330 insertions(+), 312 deletions(-)
 > 
-> aa_audit_perms_cb was only used by aa_profile_label_perm (see above).
-> 
-> All of these commits are from around 2017.
-> 
-> Remove them.
-> 
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-
-Ping.
-
-Dave
-
-> ---
->  security/apparmor/include/label.h  |  4 --
->  security/apparmor/include/lib.h    |  1 -
->  security/apparmor/include/perms.h  |  3 --
->  security/apparmor/include/policy.h |  1 -
->  security/apparmor/include/secid.h  |  1 -
->  security/apparmor/label.c          | 33 ------------
->  security/apparmor/lib.c            | 84 ------------------------------
->  security/apparmor/policy.c         |  5 --
->  security/apparmor/secid.c          | 14 -----
->  9 files changed, 146 deletions(-)
-> 
-> diff --git a/security/apparmor/include/label.h b/security/apparmor/include/label.h
-> index 2a72e6b17d68..83a840d935bc 100644
-> --- a/security/apparmor/include/label.h
-> +++ b/security/apparmor/include/label.h
-> @@ -291,8 +291,6 @@ bool aa_label_replace(struct aa_label *old, struct aa_label *new);
->  bool aa_label_make_newest(struct aa_labelset *ls, struct aa_label *old,
->  			  struct aa_label *new);
->  
-> -struct aa_label *aa_label_find(struct aa_label *l);
-> -
->  struct aa_profile *aa_label_next_in_merge(struct label_it *I,
->  					  struct aa_label *a,
->  					  struct aa_label *b);
-> @@ -320,8 +318,6 @@ void aa_label_seq_xprint(struct seq_file *f, struct aa_ns *ns,
->  			 struct aa_label *label, int flags, gfp_t gfp);
->  void aa_label_xprintk(struct aa_ns *ns, struct aa_label *label, int flags,
->  		      gfp_t gfp);
-> -void aa_label_audit(struct audit_buffer *ab, struct aa_label *label, gfp_t gfp);
-> -void aa_label_seq_print(struct seq_file *f, struct aa_label *label, gfp_t gfp);
->  void aa_label_printk(struct aa_label *label, gfp_t gfp);
->  
->  struct aa_label *aa_label_strn_parse(struct aa_label *base, const char *str,
-> diff --git a/security/apparmor/include/lib.h b/security/apparmor/include/lib.h
-> index d7a894b1031f..f11a0db7f51d 100644
-> --- a/security/apparmor/include/lib.h
-> +++ b/security/apparmor/include/lib.h
-> @@ -59,7 +59,6 @@ extern int apparmor_initialized;
->  
->  /* fn's in lib */
->  const char *skipn_spaces(const char *str, size_t n);
-> -char *aa_split_fqname(char *args, char **ns_name);
->  const char *aa_splitn_fqname(const char *fqname, size_t n, const char **ns_name,
->  			     size_t *ns_len);
->  void aa_info_message(const char *str);
-> diff --git a/security/apparmor/include/perms.h b/security/apparmor/include/perms.h
-> index 0f7e913c3fc2..bbaa7d39a39a 100644
-> --- a/security/apparmor/include/perms.h
-> +++ b/security/apparmor/include/perms.h
-> @@ -213,9 +213,6 @@ void aa_perms_accum_raw(struct aa_perms *accum, struct aa_perms *addend);
->  void aa_profile_match_label(struct aa_profile *profile,
->  			    struct aa_ruleset *rules, struct aa_label *label,
->  			    int type, u32 request, struct aa_perms *perms);
-> -int aa_profile_label_perm(struct aa_profile *profile, struct aa_profile *target,
-> -			  u32 request, int type, u32 *deny,
-> -			  struct apparmor_audit_data *ad);
->  int aa_check_perms(struct aa_profile *profile, struct aa_perms *perms,
->  		   u32 request, struct apparmor_audit_data *ad,
->  		   void (*cb)(struct audit_buffer *, void *));
-> diff --git a/security/apparmor/include/policy.h b/security/apparmor/include/policy.h
-> index 75088cc310b6..757e3c232c57 100644
-> --- a/security/apparmor/include/policy.h
-> +++ b/security/apparmor/include/policy.h
-> @@ -264,7 +264,6 @@ void aa_free_profile(struct aa_profile *profile);
->  struct aa_profile *aa_find_child(struct aa_profile *parent, const char *name);
->  struct aa_profile *aa_lookupn_profile(struct aa_ns *ns, const char *hname,
->  				      size_t n);
-> -struct aa_profile *aa_lookup_profile(struct aa_ns *ns, const char *name);
->  struct aa_profile *aa_fqlookupn_profile(struct aa_label *base,
->  					const char *fqname, size_t n);
->  
-> diff --git a/security/apparmor/include/secid.h b/security/apparmor/include/secid.h
-> index a912a5d5d04f..b49dd0253118 100644
-> --- a/security/apparmor/include/secid.h
-> +++ b/security/apparmor/include/secid.h
-> @@ -32,6 +32,5 @@ void apparmor_release_secctx(char *secdata, u32 seclen);
->  
->  int aa_alloc_secid(struct aa_label *label, gfp_t gfp);
->  void aa_free_secid(u32 secid);
-> -void aa_secid_update(u32 secid, struct aa_label *label);
->  
->  #endif /* __AA_SECID_H */
-> diff --git a/security/apparmor/label.c b/security/apparmor/label.c
-> index c71e4615dd46..91483ecacc16 100644
-> --- a/security/apparmor/label.c
-> +++ b/security/apparmor/label.c
-> @@ -899,23 +899,6 @@ struct aa_label *aa_vec_find_or_create_label(struct aa_profile **vec, int len,
->  	return vec_create_and_insert_label(vec, len, gfp);
->  }
->  
-> -/**
-> - * aa_label_find - find label @label in label set
-> - * @label: label to find (NOT NULL)
-> - *
-> - * Requires: caller to hold a valid ref on l
-> - *
-> - * Returns: refcounted @label if @label is in tree
-> - *          refcounted label that is equiv to @label in tree
-> - *     else NULL if @label or equiv is not in tree
-> - */
-> -struct aa_label *aa_label_find(struct aa_label *label)
-> -{
-> -	AA_BUG(!label);
-> -
-> -	return vec_find(label->vec, label->size);
-> -}
-> -
->  
->  /**
->   * aa_label_insert - insert label @label into @ls or return existing label
-> @@ -1811,22 +1794,6 @@ void aa_label_xprintk(struct aa_ns *ns, struct aa_label *label, int flags,
->  		pr_info("%s", label->hname);
->  }
->  
-> -void aa_label_audit(struct audit_buffer *ab, struct aa_label *label, gfp_t gfp)
-> -{
-> -	struct aa_ns *ns = aa_get_current_ns();
-> -
-> -	aa_label_xaudit(ab, ns, label, FLAG_VIEW_SUBNS, gfp);
-> -	aa_put_ns(ns);
-> -}
-> -
-> -void aa_label_seq_print(struct seq_file *f, struct aa_label *label, gfp_t gfp)
-> -{
-> -	struct aa_ns *ns = aa_get_current_ns();
-> -
-> -	aa_label_seq_xprint(f, ns, label, FLAG_VIEW_SUBNS, gfp);
-> -	aa_put_ns(ns);
-> -}
-> -
->  void aa_label_printk(struct aa_label *label, gfp_t gfp)
->  {
->  	struct aa_ns *ns = aa_get_current_ns();
-> diff --git a/security/apparmor/lib.c b/security/apparmor/lib.c
-> index cd569fbbfe36..7db62213e352 100644
-> --- a/security/apparmor/lib.c
-> +++ b/security/apparmor/lib.c
-> @@ -45,44 +45,6 @@ void aa_free_str_table(struct aa_str_table *t)
->  	}
->  }
->  
-> -/**
-> - * aa_split_fqname - split a fqname into a profile and namespace name
-> - * @fqname: a full qualified name in namespace profile format (NOT NULL)
-> - * @ns_name: pointer to portion of the string containing the ns name (NOT NULL)
-> - *
-> - * Returns: profile name or NULL if one is not specified
-> - *
-> - * Split a namespace name from a profile name (see policy.c for naming
-> - * description).  If a portion of the name is missing it returns NULL for
-> - * that portion.
-> - *
-> - * NOTE: may modify the @fqname string.  The pointers returned point
-> - *       into the @fqname string.
-> - */
-> -char *aa_split_fqname(char *fqname, char **ns_name)
-> -{
-> -	char *name = strim(fqname);
-> -
-> -	*ns_name = NULL;
-> -	if (name[0] == ':') {
-> -		char *split = strchr(&name[1], ':');
-> -		*ns_name = skip_spaces(&name[1]);
-> -		if (split) {
-> -			/* overwrite ':' with \0 */
-> -			*split++ = 0;
-> -			if (strncmp(split, "//", 2) == 0)
-> -				split += 2;
-> -			name = skip_spaces(split);
-> -		} else
-> -			/* a ns name without a following profile is allowed */
-> -			name = NULL;
-> -	}
-> -	if (name && *name == 0)
-> -		name = NULL;
-> -
-> -	return name;
-> -}
-> -
->  /**
->   * skipn_spaces - Removes leading whitespace from @str.
->   * @str: The string to be stripped.
-> @@ -275,33 +237,6 @@ void aa_audit_perm_mask(struct audit_buffer *ab, u32 mask, const char *chrs,
->  	audit_log_format(ab, "\"");
->  }
->  
-> -/**
-> - * aa_audit_perms_cb - generic callback fn for auditing perms
-> - * @ab: audit buffer (NOT NULL)
-> - * @va: audit struct to audit values of (NOT NULL)
-> - */
-> -static void aa_audit_perms_cb(struct audit_buffer *ab, void *va)
-> -{
-> -	struct common_audit_data *sa = va;
-> -	struct apparmor_audit_data *ad = aad(sa);
-> -
-> -	if (ad->request) {
-> -		audit_log_format(ab, " requested_mask=");
-> -		aa_audit_perm_mask(ab, ad->request, aa_file_perm_chrs,
-> -				   PERMS_CHRS_MASK, aa_file_perm_names,
-> -				   PERMS_NAMES_MASK);
-> -	}
-> -	if (ad->denied) {
-> -		audit_log_format(ab, "denied_mask=");
-> -		aa_audit_perm_mask(ab, ad->denied, aa_file_perm_chrs,
-> -				   PERMS_CHRS_MASK, aa_file_perm_names,
-> -				   PERMS_NAMES_MASK);
-> -	}
-> -	audit_log_format(ab, " peer=");
-> -	aa_label_xaudit(ab, labels_ns(ad->subj_label), ad->peer,
-> -				      FLAGS_NONE, GFP_ATOMIC);
-> -}
-> -
->  /**
->   * aa_apply_modes_to_perms - apply namespace and profile flags to perms
->   * @profile: that perms where computed from
-> @@ -349,25 +284,6 @@ void aa_profile_match_label(struct aa_profile *profile,
->  }
->  
->  
-> -/* currently unused */
-> -int aa_profile_label_perm(struct aa_profile *profile, struct aa_profile *target,
-> -			  u32 request, int type, u32 *deny,
-> -			  struct apparmor_audit_data *ad)
-> -{
-> -	struct aa_ruleset *rules = list_first_entry(&profile->rules,
-> -						    typeof(*rules), list);
-> -	struct aa_perms perms;
-> -
-> -	ad->peer = &target->label;
-> -	ad->request = request;
-> -
-> -	aa_profile_match_label(profile, rules, &target->label, type, request,
-> -			       &perms);
-> -	aa_apply_modes_to_perms(profile, &perms);
-> -	*deny |= request & perms.deny;
-> -	return aa_check_perms(profile, &perms, request, ad, aa_audit_perms_cb);
-> -}
-> -
->  /**
->   * aa_check_perms - do audit mode selection based on perms set
->   * @profile: profile being checked
-> diff --git a/security/apparmor/policy.c b/security/apparmor/policy.c
-> index 14df15e35695..74c854e8889f 100644
-> --- a/security/apparmor/policy.c
-> +++ b/security/apparmor/policy.c
-> @@ -580,11 +580,6 @@ struct aa_profile *aa_lookupn_profile(struct aa_ns *ns, const char *hname,
->  	return profile;
->  }
->  
-> -struct aa_profile *aa_lookup_profile(struct aa_ns *ns, const char *hname)
-> -{
-> -	return aa_lookupn_profile(ns, hname, strlen(hname));
-> -}
-> -
->  struct aa_profile *aa_fqlookupn_profile(struct aa_label *base,
->  					const char *fqname, size_t n)
->  {
-> diff --git a/security/apparmor/secid.c b/security/apparmor/secid.c
-> index 83d3d1e6d9dc..a52c789d4f18 100644
-> --- a/security/apparmor/secid.c
-> +++ b/security/apparmor/secid.c
-> @@ -39,20 +39,6 @@ int apparmor_display_secid_mode;
->   * TODO: use secid_update in label replace
->   */
->  
-> -/**
-> - * aa_secid_update - update a secid mapping to a new label
-> - * @secid: secid to update
-> - * @label: label the secid will now map to
-> - */
-> -void aa_secid_update(u32 secid, struct aa_label *label)
-> -{
-> -	unsigned long flags;
-> -
-> -	xa_lock_irqsave(&aa_secids, flags);
-> -	__xa_store(&aa_secids, secid, label, 0);
-> -	xa_unlock_irqrestore(&aa_secids, flags);
-> -}
-> -
->  /*
->   * see label for inverse aa_label_to_secid
->   */
 > -- 
-> 2.46.1
+> 2.34.1
 > 
+General comment for the patchset in general. I would consider making the
+new sysctl tables const. There is an effort for doing this and it has
+already lanted in linux-next. So if you base your patch from a recent
+next release, then it should just work. If you *do* decide to add a
+const qualifier, then note that you will create a dependency with the
+sysctl patchset currently in next and that will have to go in before.
+
+Best
+
 -- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+
+Joel Granados
