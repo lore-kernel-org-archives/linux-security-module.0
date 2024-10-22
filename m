@@ -1,112 +1,121 @@
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EB921B9835
-	for <linux-security-module@vger.kernel.org>; Tue, 22 Oct 2024 16:27:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 738D5139CE2
+	for <linux-security-module@vger.kernel.org>; Tue, 22 Oct 2024 16:28:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729614454; cv=none; b=kjnWyQDB4S1LjVeZcsErGg60wPuSI8QJtCbLnm1ikhGP7rdKl+bknG4p7gPEHTeDyd/73mK6BLcO0+cRFk5Pr/IvnS+UfCsnPsX9I8BIuWmVTViqBuoyD9McLD8d1weC5plA1+ytuI/nVBqjnxsfbUMtLWrh2TB7A1LrvxUN1w8=
+	t=1729614519; cv=none; b=tZ/m5hTV3kRTRPjQCO1Dt24zQ0qw7drYVS5rRFmnaoPXlXBCpPbk0pIDm+FTs/dkGwGClMD9pDM4cjPfFbRM33YeBeb450INwlnY05gKRXnebVcKSxT14U/1Vfeb6cZy+pvjQLIJt6WjJ24rJF1Zm2kAj3nw7aF2rqz/LeWKBzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729614454; c=relaxed/simple;
-	bh=YetXmpo1FU87tQbfMy3tmCWhG8Jq9L1beNcjzGpdrnw=;
+	s=arc-20240116; t=1729614519; c=relaxed/simple;
+	bh=iXjeFKiD99haFW/5MC3Hv9lDG8yZPMN7OzwoUnSvoRk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JWehhhTuFr6X0VZhl6+DRM6mIs4Rkz/n495tgD6rDtv/OtZfiPDO+/kQsclWLRlzAW0fc5QydgV5pAG3r3vAD+CnG/F+EJdx9Nu8yvSdXoJdCO9iro8qAISkxVDgYeBn0SiHdFc0s/Lym6OewsYoNOHr3lKAf1kAR7376p6o+6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ZKFHH9OO; arc=none smtp.client-ip=209.85.219.181
+	 To:Cc:Content-Type; b=RLmx8pv/TJyroIVZ9de031H5JphO9ySGzXRQw5hUQpUiWExnZRqB/7Ljc2mnddaAv+iLF8G55ov3jrwUuRM2zBBtyUMuU3BxqsBJZ8WcjB0m5rGsWnE0OGLfrU1xo4EED7jHt9LOW9YfRNSSMp63zMo9A79a3fSjTs6p/bJeiQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=FNyJs8ZA; arc=none smtp.client-ip=209.85.219.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ZKFHH9OO"
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e29327636f3so5793885276.2
-        for <linux-security-module@vger.kernel.org>; Tue, 22 Oct 2024 09:27:32 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="FNyJs8ZA"
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e2903a48ef7so5655471276.2
+        for <linux-security-module@vger.kernel.org>; Tue, 22 Oct 2024 09:28:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1729614452; x=1730219252; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1729614517; x=1730219317; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IfcQit/uWdai0Gz1OYnQOrro3YmwaBdxtR4cFYi7qqc=;
-        b=ZKFHH9OOHDNsUqpTPg1WWwHvZ129r2jsVgULvDny9/dW3/qppYYdqAfs33pFenZj0W
-         bI9wWgoy+NZ3/n4z0mnnWAdvGoC77hYmxLdbbYtp1QContGSh0skZJ+aEK7fOfRdP4uR
-         aWtuN3Oc9o4H+ZtosbduzzEs25AhK9RXpRXpXVSWc+GzpvfzZ6pwQp020mYqAZrJ2DYU
-         Py6QPNNB4cxX3gsjmL9d5y+xgNAclzT4HDfPiwNtBCgIJp3AMexHftypJzVKiYpR+fBN
-         v9P5RFGsg78/CFjnh/fT6lRwr1kbhGaXiKvSAn9djphmjA7CcQntNbTAJPy40iekF45K
-         hHPA==
+        bh=tWYJNGzZWfbmwj1ofhCHll6/oPb1z1h29ShW2Fi22MM=;
+        b=FNyJs8ZAmFYvq4M4Cro/+ITlt7MppTmuKsaI9XEdsWZJqdC5JAe84o8VGDG+objZ51
+         jM7eY6SljnSXUHvmgwpGVll+FiJcKc7GlkJIkqlBf+qGoSPCX4oKv2rd6iLOymSfEysb
+         HA3iLDqL7Cm92mP4QIzmTpJkUnDMhHlozb2EdDsaPOwmixaJlhGHpTTrV50URAdSuKqu
+         oRjTO5eYTkhBuRz4i4VYrEJQbA0D7ApUXZA2H5is4KRlQITEsVnHsLXKSewZpWYFDLRJ
+         ROA4VTBMtuXEghn/+yjPK0y+8x018Mhx6q2on2d8LYEEXrOp0CU4SG7Lp+C1RY881e1z
+         IW9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729614452; x=1730219252;
+        d=1e100.net; s=20230601; t=1729614517; x=1730219317;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=IfcQit/uWdai0Gz1OYnQOrro3YmwaBdxtR4cFYi7qqc=;
-        b=BeIG3LMj/gHiRLyAnueg0VdxH0/EGjeIZwF46QgnFhPAfFH/fa4xd5VThNoPJvD4xR
-         i46/XoPjYBQCpZQC0oITBhCnnSV4OlxHkWelWkM86iLGf2/KqazZiDSE4+iZzjOxrX7e
-         Lko7+FvunghS/XtT2xAzN9sNJtfd+6VuAi2EiorY3McZpxnT74gHXdb4dXQ0ULgFF6q9
-         D2q/4Btn1SBdgnSo+bGgQeR9etN1eHgiWqELjEdmdj2AC3Sk92TntB2zuWUrioSndYmV
-         4EM/3TfyPihBiyCDMsFJF92keKklXc/mPCv/kwNVZ6kcCCHkuMe/E3bJm5qTfKh04CF7
-         Y4vA==
-X-Forwarded-Encrypted: i=1; AJvYcCWtWqKaVcsQYCgC67HuZpDxiv8Vztxw5jsV19iDQKmnXSPFnw+QNNDTYYYii3AfO8XfqRCXIxaJ70Um9thE0xhhUtBKzcs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5Wt46VSOL+KRi+7iFkoGzqyL1hWWXU0+Y2OuI9OhcRLozQpKF
-	T+XWfdBo3OqBsrV7T4y7qhmXQVG+8lm/eRIzt4LrG/KR6hSRHvYZgxqwmfl2bKRQ7KOyPAcK4mi
-	3IBTyb8BjvqM2z41MtKvOWWQP9tBkrTP0LPmG
-X-Google-Smtp-Source: AGHT+IH6teBDteuKX1IfTUU7aOF/brFPLWkJN/2yz4gkMpur17JiIyAYiy3u4lW9412aaSoQIXj6qPi46aPfQzyDatk=
-X-Received: by 2002:a05:6902:723:b0:e2b:d610:9d61 with SMTP id
- 3f1490d57ef6-e2bd610a475mr10370763276.43.1729614452032; Tue, 22 Oct 2024
- 09:27:32 -0700 (PDT)
+        bh=tWYJNGzZWfbmwj1ofhCHll6/oPb1z1h29ShW2Fi22MM=;
+        b=vWaFFrPEuf+QB+pMdidNf2jUwUFP1S7xGF+7eofuEIdUfYy9TJsH7rTJUDMYsgRgx9
+         JtdPItlhdMg/3w0KN8cXO/ZMztKmuvwbEX4SYo8Cc5ytrGyeSidnKAqcK486t51K1Mjh
+         yNFF9PtiyQnyuldZ4pQHeG2qAUSPQ+CwXQBqNDnbAp2Al/835swhwygs8EcS2uHYesDA
+         TN6DFKgJ7tQgFzaDEvnHDM8Ga5zv9sm4TxvF9cLR7j0D9i1zARFSHGAxGv8sZh0TDMe8
+         gktPoxtjxqMGCIQfKvXSe1e3/LHzO9dX7JlCC8FuPW4iyve+i+Nqda9OdFyMSgDQqEVm
+         RI5g==
+X-Gm-Message-State: AOJu0YwqDYf7gTo1UbLC+BkR9ZiTwXmjW8Na3X64N7FCkSfCBQLiRpVF
+	5c62zp/GwyYwzxQiKu+EDDk3LIKJVrJRMLJAF9tAA5S79qZvq6ytNCZlERcLmWW//uq4+hnZ+po
+	xDNEoofTClIoIxcsakUHyXaebpg2dhxLxAsUd
+X-Google-Smtp-Source: AGHT+IG8gwlSMlcXwhB5hmB2a2N3NP1Y0saoWpYAmsDJuzddp8xHNIDF6id0PJuosvZNqRP2WWC0i4XxnfSqteqw3o4=
+X-Received: by 2002:a05:6902:2501:b0:e28:fec0:c673 with SMTP id
+ 3f1490d57ef6-e2e271bb115mr2837315276.31.1729614517559; Tue, 22 Oct 2024
+ 09:28:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241018161415.3845146-1-roberto.sassu@huaweicloud.com>
- <CAHC9VhQP7gBa4AV-Hbh4Bq4fRU6toRmjccv52dGoU-s+MqsmfQ@mail.gmail.com> <20241021200636.308f155a72f8a4d1e26f82b8@linux-foundation.org>
-In-Reply-To: <20241021200636.308f155a72f8a4d1e26f82b8@linux-foundation.org>
+References: <20241014151450.73674-6-casey@schaufler-ca.com>
+ <5b6addd938c9feae0b4df8f54d56f9f0@paul-moore.com> <617a2679-404c-4127-8dfd-4f3895e2372f@schaufler-ca.com>
+In-Reply-To: <617a2679-404c-4127-8dfd-4f3895e2372f@schaufler-ca.com>
 From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 22 Oct 2024 12:27:21 -0400
-Message-ID: <CAHC9VhRxXAj3ee0z7eMAiDYJ858xOgRyBTwCjvTRfNzDqt6yVw@mail.gmail.com>
-Subject: Re: [PATCH v2] mm: Split critical region in remap_file_pages() and
- invoke LSMs in between
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, 
-	Roberto Sassu <roberto.sassu@huaweicloud.com>, Liam.Howlett@oracle.com, 
-	lorenzo.stoakes@oracle.com, vbabka@suse.cz, jannh@google.com, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, ebpqwerty472123@gmail.com, 
-	zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, 
-	jmorris@namei.org, serge@hallyn.com, linux-integrity@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, bpf@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, stable@vger.kernel.org, 
-	syzbot+1cd571a672400ef3a930@syzkaller.appspotmail.com, 
-	Roberto Sassu <roberto.sassu@huawei.com>
+Date: Tue, 22 Oct 2024 12:28:26 -0400
+Message-ID: <CAHC9VhQzva=uKWqFduADzvyTR+NXokCH6R7WNe6RgmDDa-Ge1g@mail.gmail.com>
+Subject: Re: [PATCH v2 5/6] LSM: secctx provider check on release
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: linux-security-module@vger.kernel.org, jmorris@namei.org, serge@hallyn.com, 
+	keescook@chromium.org, john.johansen@canonical.com, 
+	penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com, 
+	linux-kernel@vger.kernel.org, selinux@vger.kernel.org, mic@digikod.net
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 21, 2024 at 11:06=E2=80=AFPM Andrew Morton
-<akpm@linux-foundation.org> wrote:
-> On Sat, 19 Oct 2024 11:34:08 -0400 Paul Moore <paul@paul-moore.com> wrote=
-:
+On Mon, Oct 21, 2024 at 8:06=E2=80=AFPM Casey Schaufler <casey@schaufler-ca=
+.com> wrote:
+> On 10/21/2024 4:39 PM, Paul Moore wrote:
+> > On Oct 14, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
+> >> Verify that the LSM releasing the secctx is the LSM that
+> >> allocated it. This was not necessary when only one LSM could
+> >> create a secctx, but once there can be more than one it is.
+> >>
+> >> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> >> ---
+> >>  security/apparmor/secid.c | 10 ++--------
+> >>  security/selinux/hooks.c  | 10 ++--------
+> >>  2 files changed, 4 insertions(+), 16 deletions(-)
+> >>
+> >> diff --git a/security/apparmor/secid.c b/security/apparmor/secid.c
+> >> index 5d92fc3ab8b4..974f802cbe5a 100644
+> >> --- a/security/apparmor/secid.c
+> >> +++ b/security/apparmor/secid.c
+> >> @@ -122,14 +122,8 @@ int apparmor_secctx_to_secid(const char *secdata,=
+ u32 seclen, u32 *secid)
+> >>
+> >>  void apparmor_release_secctx(struct lsm_context *cp)
+> >>  {
+> >> -    /*
+> >> -     * stacking scaffolding:
+> >> -     * When it is possible for more than one LSM to provide a
+> >> -     * release hook, do this check:
+> >> -     * if (cp->id =3D=3D LSM_ID_APPARMOR || cp->id =3D=3D LSM_ID_UNDE=
+F)
+> >> -     */
+> >> -
+> >> -    kfree(cp->context);
+> >> +    if (cp->id =3D=3D LSM_ID_APPARMOR)
+> >> +            kfree(cp->context);
+> > Should we set cp->context to NULL too?  One could argue that it's an
+> > unecessary assignment, given the cp->id checks, and they wouldn't be
+> > wrong, but considering the potential for a BPF LSM to do things with
+> > a lsm_context, I wonder if resetting the pointer to NULL is the
+> > smart thing to do.
 >
-> > >  mm/mmap.c | 69 +++++++++++++++++++++++++++++++++++++++++------------=
---
-> > >  1 file changed, 52 insertions(+), 17 deletions(-)
-> >
-> > Thanks for working on this Roberto, Kirill, and everyone else who had
-> > a hand in reviewing and testing.
-> >
-> > Reviewed-by: Paul Moore <paul@paul-moore.com>
-> >
-> > Andrew, I see you're pulling this into the MM/hotfixes-unstable
-> > branch, do you also plan to send this up to Linus soon/next-week?  If
-> > so, great, if not let me know and I can send it up via the LSM tree.
->
-> In the normal course of things I'd send it upstream next week ...
+> Wouldn't hurt. I'll go ahead and add that. If a BPF LSM does anything
+> with a lsm_context we're likely to hear about the many issues quite
+> quickly.
 
-That sounds good to me, I just wanted to make sure there was a path
-forward to get into Linus' tree.
-
-> ... but I
-> can include it in this week's batch if we know that -next testing is
-> hurting from it?
-
-I don't believe so, I think this was just a syzbot gotcha.  From what
-I understand remap_file_pages(2) isn't used much anymore.
+Yes, I suspect you're right about that, at least we can protect
+against a UAF in this one case :)
 
 --=20
 paul-moore.com
