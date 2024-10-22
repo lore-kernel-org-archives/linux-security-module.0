@@ -1,154 +1,116 @@
-Received: from sonic310-22.consmr.mail.bf2.yahoo.com (sonic310-22.consmr.mail.bf2.yahoo.com [74.6.135.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-bc0d.mail.infomaniak.ch (smtp-bc0d.mail.infomaniak.ch [45.157.188.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D0E139CE2
-	for <linux-security-module@vger.kernel.org>; Tue, 22 Oct 2024 16:47:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.6.135.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1DC812B93
+	for <linux-security-module@vger.kernel.org>; Tue, 22 Oct 2024 18:50:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729615635; cv=none; b=IRMaLafC0ZwMp92FvjgbTbtHCb4ApZGJJo6ovrlbwHAqxbemZtoTLnqkrWGM5dFjmUmaYBbS4NH0aNnsNSmolvfSx+Ex041S9TnTXc3DV8reNH14n2chfCmqkVej2SVQROismxHzvOAn/Ay4U2cPXxxYosn+73V0AU4dQhhlZEo=
+	t=1729623012; cv=none; b=HeA2eutaAgYKUdrJJsaQK/xvKlg1mmied3UZoV9/01D2njgxGBpqiDT6YvADxF/i0enmoeP8dzzMnVJg7V25V7n75oCWpDiAX01jfyvaap/+zgsfGLCHU9SxMcZyMyOG4jgBbTSD7eFPo1ADwadrjGvB9lZq85TeqIkMUiiE8Xs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729615635; c=relaxed/simple;
-	bh=LGvZfBG932kQ1YrUvUr/IcYClA07C6OSPqb3K/idqnA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AN7wwz1hZ9m/91xToTmzaQ4QF+pvEN4B8mu6gYC9uA6w2vYvOHHD5zgJ+Rnk0UFNPkyVDP+w6x6ClnL9OzPVzn68TL4QDsxAm3vKN8O2pExU2i1DG9VSDadnhOqCsJg0LTkvONmVK6z/HPbiA8v6HW9tAV2FaYDDIOTQ7coQ8DE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=FqnCFpoq; arc=none smtp.client-ip=74.6.135.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1729623012; c=relaxed/simple;
+	bh=rzEfqvMCwNPvnROLLEKOHkkfJYfrE/ITRVrNm+kfwcQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aJC/1TroG61NaxfKp4d0+wQi7I8ZTKi/kX6DRz/Z2/xtwXM9gC9PRdTzbifrqild9sykriLpFSMEn0b4R/l5cfUkYLinklbcoHJMvngspc6D9Md7AQMSGshmfZO0ZcdHOcDyBIORTJg5LUpXWMf/vnbW+g05HZW8RLKG/k/A+BM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=H5nwin2W; arc=none smtp.client-ip=45.157.188.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="FqnCFpoq"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1729615626; bh=W+YjoM+UFsc+LXmblPgB436l9oughyTIbgOOXvBruAo=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=FqnCFpoq4jCFPithiMRhzrH6/bQ5DnkHF1qBy13oYrO4qV+tunzbgWpMQSbouxzN0DzGC9tVspro4/le3iFQO4VmLPPsJCAQ4zvywr2eOySFmQ0AUrSvPw5t0S4Wj0Z861cIHEc9vPng33XHQc5J6B4aKk9OBaLxCB7Ulck9ScoR4ddzfz7L551RBREZuIS2egH9hYTJPCNnxp+AKz1b2iZEvc1Xl8/vufKGziBM5EiTJ/ezWmFFnHramlaLI39n9AncgaCzHHwe450EKCDRo1bHQGOQPYQ8feeK/QM6+np54MtOmNYUjj8jGALU0HNjpbnzWR0Lr0i+0zhYTRe9Hg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1729615626; bh=8ljbTKG1CBu5VxP3Wr9j7681FZtFjfm8i3yCvVR/QlJ=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=P0XBXDGHiWkYf8fBqsO1jjiuFU2PJy8pAI66/ED2pyc+3AzyGHxPZqUuS8R1L/o0qIiIZm8gNsNvtsXOWH/jwyFvsrelrz7x/L0OQL8yMt/kJZc0gs2Sg8TMjU1eJRFgitHIuDr535RNLHVAk0axb1R5iPuzKbjrnvpL/MJlVB34xZsCuSUlnABgMLOuTZdc8qLpML1ks90lLT6POrTeopYsQ158dBTaR5YzuQ1Kb2vpksVe/bgdHywr4Xy4M60CaPedcq+ZtvgKVqTg7ancNTk2Ev0IxjacndRzAoIYK2GCafcyW87r1Pvr1Ie9M8Qv++RX3PJvTahGVhe3k/8AGQ==
-X-YMail-OSG: S.gcgSEVM1mhBlYSMpGksHU3UnFXpOxOFfQ11kpgsEQ44mS6gPshQRhu44cC_TZ
- bLrtowY2iy1ZoKBaGB2XJf8vQDAtgxdylNVpLzxYzKdfgqeObMLWP4NodJoiOyh3UolCCyGnG0Op
- BVYEfXs3Oj2VOnki5cNJ.0Xy5H0X.qjThRv1eQSoe6Ykm6xyyi6w0_z.CSIqkgZUo6aeDeLKMa3A
- g64PLIvdQmbqscPkDrS.5lq1GNgJ3VYU.M6sE6HCSkIUomRUVlqP5_MzHE_UE9ckeuKPep3rwwTd
- ET2.wQWFZSNK84SRqHoER0vww.8jxfVVef.YLwC2_ald4dCtDA_UAI9_9gffQYZWLPbTJVHIAOOi
- fNTSTDf4EbaP8wDgqY_wvYjgSnc7c0jnzizqebZ47_xi4ZpIoCc2srV_.wH4yU4I_1PSMcAKIntg
- b8NBv0B8OkrBlz_QPZXRPzmFoAIxxqXVasnw5hKv5djFHIRjFE0uCeB6NFQuF9DceiDkAQ7IQInm
- qJpTDhwsNKdnhN7A521cyxy13Ix9zRPQWja7hheeLJ8MWHXmxetb5dqOoF_u5PLiShJW9pvY9vc9
- _wgt_SLecosY.Z9BEtaF8V_b4L9dMqWvfevM3_OOZ6s9zWjUcWqKzPQMwoOXExfyErPRIrNb99Ow
- JvWTRUtXIFvcTq.llSknRayxy9DFOPzzxNkkkCWme.UkQyt6loXVmafhvvV3SYEQtrDayKrswAQi
- hUcAwFet.msF1poOLI0IF54sYZhe3RGX0zAt5pzFJWmbaSE_dOQcEiqxDHPYMS5pVq37wSDTfcv5
- sTscDBC6LGo6imhe5y0OO0E1IdOsFYy7h_RyEHfS6PaC8TfTjmqmkWMWZp7LJI..NtXHX7R6pX6p
- bUQhxCPiJsMFQPwrB2jXFe_7IW8mGxXTGHCaUU3jM6dWrc4cyMpKrLU0PO9aFX1GaJbdOnD4DIbF
- uRLtFP2BzS0bdXk0fb4sXjnqtsh7X9Ao26PZfbgET02BUcsL0c7hcXGi50XkPVTYMkpr.wysgjMr
- fyB6C.2FFT.qt5RcsEUv3Uu3EqsSVZlSXHgp202dEqgXv.btqKQr3SqMpdGZz2pWvrJPvypIYy2s
- 1eyj83RK8oZCit9c3QuneekVol_KF68h7gthX_FP1XJJbcSCgjZAReVrg7FMSca.ZY_L3ZUUvI5m
- vN0fd.gYWoqOSXykbZl_iZr3gYlPor_ujRpi21MYWqeQvUaxL13j7tKxaoChbyJh_sROwMMc.gC6
- jl_LIMosVWAO9z8SO_ohfYEp5W6GHSDRTjuU_QwEP8JQAymkEcYTXxwUJCh4cqUDe.hvLJX0sjl1
- N31MLFBJZO9hqh_7jWqErDEsAmoEi_dyngqWrZgBXdux2GV8tL5WtG9PBW1zXYswNQNoBMFZRIPh
- s5fNcKkX3YMMzDz9TWNM1Wr6rojNVBkxMAT2WPav0RRTsdlS7yj_mPEngouIJXXDZ73SpavN3yS4
- .Cw96yAep9OtN0WQYkBRVA0IItTu7VzJXdWDqy28Rv4OhAqAS1gFK5e2AeSDMn_bnCrIyiruiMq3
- CgPFG1hblTSsgKYhdq4PtmhjD5YL81QElvtBhh7Ok5hIjJZE5LCD8OQSAyOorU2hGQpxU.iRtK3R
- hZWzOl9SVSxfxdZIhThhqtk03F242vn3C2YDHVNco.MIP3iwItYbuziIEan3abEV3SLtFqSYvLZM
- MOcDigr32.nTQVwb3Wc8rqOJcZnFBp4rF9RMbFUlGnEu4UCzZiTpYwyWAW8MZC4mDHgx9C26_nxt
- 5dR7HdNeDqxUpbdVSkI6wPOC7PscMKbcIak52A0BIqFSOY.B9dASRtTdqfqJyDu4P8q.tIWK_XFK
- z8yKzY8BLxBkUrIhHL3DDdC2oy5z2_OR4yZOyozaCmPxCN0CajPxJcLkBJI3fGr0PbZBWxpwb73Z
- rJk6WjlnmzCCJV.n.EUqBTqlilPm4z51BUgkXXXzhEXombZyEk0DyhJxt0DfjReKr9INKyiomtgX
- Bvo.aUICSmhoMx2U1x7ZBhvB.ec9egcK.s3MJeDR12DsQy1yfiEUyOiTWF2nyMHPWhZiGeWtpwq4
- FCldIVTUqnW71Xu5xnRybxAgm6O3mGytqZH92EgH0pKuWlwt9pXJqYGCtnFhykpo84nbHFYX3IfJ
- kzWoRd_xBb45psnPLUYPKZsXegO4AyuAI7H_LIckk60FkHLuDHKZ_oXF5q1C8E1Ii2XQdWt4lpHn
- kekTNVwjcBwhKUFgV.KqOoP6mGDyH8PJxv9jGcinNZxw2mtExFZBVo7h9fsaDWjHgUiIB88ISKr.
- C85D5HyLLGGypjUww
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: cb6630a2-79bc-4591-ab0b-03f7386e3ee5
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.bf2.yahoo.com with HTTP; Tue, 22 Oct 2024 16:47:06 +0000
-Received: by hermes--production-gq1-5dd4b47f46-dvwsq (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 6a5b3f8172a524a4157cdb05ea625898;
-          Tue, 22 Oct 2024 16:46:59 +0000 (UTC)
-Message-ID: <6dc1c686-108e-41a2-bda3-8744e5f7626f@schaufler-ca.com>
-Date: Tue, 22 Oct 2024 09:46:57 -0700
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="H5nwin2W"
+Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10:40ca:feff:fe05:0])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XY1St0zbczkgb;
+	Tue, 22 Oct 2024 20:50:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1729623006;
+	bh=f/ta3AxLOvb07LysQmqxTAkTwof++RaTMAGaYQwf3Us=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=H5nwin2WAeaL2gX8GHUyjL4HXE+2Y21Zp8vXzHCpagTHtadYxGFVum8mfcnjnSIr0
+	 gmu6KnZ1BmC809SO/4nmMH+sILnGUFRER3zfPVG6SbiVE43b/a/gqPoys2jpp/FysG
+	 Qt1KIKARmFvm1hqC2lZ4yafaHXZwPYnJyyvuMFp0=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4XY1Ss3whczLrS;
+	Tue, 22 Oct 2024 20:50:05 +0200 (CEST)
+Date: Tue, 22 Oct 2024 20:50:03 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Matthieu Buffet <matthieu@buffet.re>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Ivanov Mikhail <ivanov.mikhail1@huawei-partners.com>, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Tahera Fahimi <fahimitahera@gmail.com>
+Subject: Re: [PATCH v3 3/3] samples/landlock: Clarify option parsing behaviour
+Message-ID: <20241022.Oov8ohRe4shu@digikod.net>
+References: <20241019151534.1400605-1-matthieu@buffet.re>
+ <20241019151534.1400605-4-matthieu@buffet.re>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/6] LSM: lsm_context in security_dentry_init_security
-To: Paul Moore <paul@paul-moore.com>
-Cc: linux-security-module@vger.kernel.org, jmorris@namei.org,
- serge@hallyn.com, keescook@chromium.org, john.johansen@canonical.com,
- penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
- linux-kernel@vger.kernel.org, selinux@vger.kernel.org, mic@digikod.net,
- ceph-devel@vger.kernel.org, linux-nfs@vger.kernel.org,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20241014151450.73674-5-casey@schaufler-ca.com>
- <b94aa34a25a19ea729faa1c8240ebf5b@paul-moore.com>
- <d2d34843-e23c-40a7-92ae-5ebd7c678ad4@schaufler-ca.com>
- <CAHC9VhS0zagjyqQmN6x=_ftHeeeeF50NW91yY5eEW4RF4sE98g@mail.gmail.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CAHC9VhS0zagjyqQmN6x=_ftHeeeeF50NW91yY5eEW4RF4sE98g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.22806 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241019151534.1400605-4-matthieu@buffet.re>
+X-Infomaniak-Routing: alpha
 
-On 10/22/2024 9:35 AM, Paul Moore wrote:
-> On Mon, Oct 21, 2024 at 8:00 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->> On 10/21/2024 4:39 PM, Paul Moore wrote:
->>> On Oct 14, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
->>>> Replace the (secctx,seclen) pointer pair with a single lsm_context
->>>> pointer to allow return of the LSM identifier along with the context
->>>> and context length. This allows security_release_secctx() to know how
->>>> to release the context. Callers have been modified to use or save the
->>>> returned data from the new structure.
->>>>
->>>> Special care is taken in the NFS code, which uses the same data structure
->>>> for its own copied labels as it does for the data which comes from
->>>> security_dentry_init_security().  In the case of copied labels the data
->>>> has to be freed, not released.
->>>>
->>>> The scaffolding funtion lsmcontext_init() is no longer needed and is
->>>> removed.
->>>>
->>>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
->>>> Cc: ceph-devel@vger.kernel.org
->>>> Cc: linux-nfs@vger.kernel.org
->>>> ---
->>>>  fs/ceph/super.h               |  3 +--
->>>>  fs/ceph/xattr.c               | 16 ++++++----------
->>>>  fs/fuse/dir.c                 | 35 ++++++++++++++++++-----------------
->>>>  fs/nfs/dir.c                  |  2 +-
->>>>  fs/nfs/inode.c                | 17 ++++++++++-------
->>>>  fs/nfs/internal.h             |  8 +++++---
->>>>  fs/nfs/nfs4proc.c             | 22 +++++++++-------------
->>>>  fs/nfs/nfs4xdr.c              | 22 ++++++++++++----------
->>>>  include/linux/lsm_hook_defs.h |  2 +-
->>>>  include/linux/nfs4.h          |  8 ++++----
->>>>  include/linux/nfs_fs.h        |  2 +-
->>>>  include/linux/security.h      | 26 +++-----------------------
->>>>  security/security.c           |  9 ++++-----
->>>>  security/selinux/hooks.c      |  9 +++++----
->>>>  14 files changed, 80 insertions(+), 101 deletions(-)
-> ..
->
->>>> diff --git a/include/linux/nfs_fs.h b/include/linux/nfs_fs.h
->>>> index 039898d70954..47652d217d05 100644
->>>> --- a/include/linux/nfs_fs.h
->>>> +++ b/include/linux/nfs_fs.h
->>>> @@ -457,7 +457,7 @@ static inline void nfs4_label_free(struct nfs4_label *label)
->>>>  {
->>>>  #ifdef CONFIG_NFS_V4_SECURITY_LABEL
->>>>      if (label) {
->>>> -            kfree(label->label);
->>>> +            kfree(label->lsmctx.context);
->>> Shouldn't this be a call to security_release_secctx() instead of a raw
->>> kfree()?
->> As mentioned in the description, the NFS data is a copy that NFS
->> manages, so it does need to be freed, not released.
-> It does, my apologies.
->
-> However, this makes me wonder if using the lsm_context struct for the
-> private NFS copy is the right decision.  The NFS code assumes and
-> requires a single string, ala secctx, but I think we want the ability
-> to potentially do other/additional things with lsm_context, even if
-> this patchset doesn't do that.
+On Sat, Oct 19, 2024 at 05:15:34PM +0200, Matthieu Buffet wrote:
+> Clarify the distinction between filesystem variables (mandatory)
+> and all others (optional).
+> For optional variables, explain the difference between unset variables
+> (no access check performed) and empty variables (nothing allowed for
+> lists of allowed paths/ports, or no effect for lists of scopes).
+> List LL_SCOPED values understood and their effect.
+> 
+> Signed-off-by: Matthieu Buffet <matthieu@buffet.re>
+> ---
+>  samples/landlock/sandboxer.c | 29 +++++++++++++++--------------
+>  1 file changed, 15 insertions(+), 14 deletions(-)
+> 
+> diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
+> index 38fc6ebd7222..96b451cf0531 100644
+> --- a/samples/landlock/sandboxer.c
+> +++ b/samples/landlock/sandboxer.c
+> @@ -296,23 +296,24 @@ static bool check_ruleset_scope(const char *const env_var,
+>  /* clang-format off */
+>  
+>  static const char help[] =
+> -	"usage: "
+> -	ENV_FS_RO_NAME "=\"...\" "
+> -	ENV_FS_RW_NAME "=\"...\" "
+> -	ENV_TCP_BIND_NAME "=\"...\" "
+> -	ENV_TCP_CONNECT_NAME "=\"...\" "
+> -	ENV_SCOPED_NAME "=\"...\" %1$s <cmd> [args]...\n"
+> +	"usage: " ENV_FS_RO_NAME "=\"...\" " ENV_FS_RW_NAME "=\"...\" "
+> +	"[other environment variables] %1$s <cmd> [args]...\n"
+>  	"\n"
+> -	"Execute a command in a restricted environment.\n"
+> +	"Execute the given command in a restricted environment.\n"
+> +	"Multi-valued settings (lists of ports, paths, scopes) are colon-delimited.\n"
+>  	"\n"
+> -	"Environment variables containing paths and ports each separated by a colon:\n"
+> -	"* " ENV_FS_RO_NAME ": list of paths allowed to be used in a read-only way\n"
+> -	"* " ENV_FS_RW_NAME ": list of paths allowed to be used in a read-write way\n"
+> +	"Mandatory settings:\n"
+> +	"* " ENV_FS_RO_NAME ": paths allowed to be used in a read-only way\n"
+> +	"* " ENV_FS_RW_NAME ": paths allowed to be used in a read-write way\n"
+>  	"\n"
+> -	"Environment variables containing ports are optional and could be skipped.\n"
+> -	"* " ENV_TCP_BIND_NAME ": list of ports allowed to bind (server)\n"
+> -	"* " ENV_TCP_CONNECT_NAME ": list of ports allowed to connect (client)\n"
+> -	"* " ENV_SCOPED_NAME ": list of scoped IPCs\n"
+> +	"Optional settings (when not set, their associated access check "
+> +	"is always allowed, which is different from an empty string which "
+> +	"means an empty list)\n"
 
-This came down to a choice about where the ugly code would be.
-I'll restore the old behavior.
+I would just add ":" at the end of the line.  No need to send another
+patch for that.
 
->
-> I would suggest keeping the NFS private copy as sec_ctx/sec_ctxlen and
-> keep the concept of a translation between the data structures in
-> place, even though it is just a simple string duplication right now.
->
+> +	"* " ENV_TCP_BIND_NAME ": ports allowed to bind (server)\n"
+> +	"* " ENV_TCP_CONNECT_NAME ": ports allowed to connect (client)\n"
+> +	"* " ENV_SCOPED_NAME ": actions denied on the outside of the landlock domain\n"
+> +	"  - \"a\" to restrict opening abstract unix sockets\n"
+> +	"  - \"s\" to restrict sending signals\n"
+>  	"\n"
+>  	"Example:\n"
+>  	ENV_FS_RO_NAME "=\"${PATH}:/lib:/usr:/proc:/etc:/dev/urandom\" "
+> -- 
+> 2.39.5
+> 
+> 
