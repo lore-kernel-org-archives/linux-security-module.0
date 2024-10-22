@@ -1,62 +1,62 @@
-Received: from sonic315-22.consmr.mail.bf2.yahoo.com (sonic315-22.consmr.mail.bf2.yahoo.com [74.6.134.196])
+Received: from sonic310-23.consmr.mail.bf2.yahoo.com (sonic310-23.consmr.mail.bf2.yahoo.com [74.6.135.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 073F781E
-	for <linux-security-module@vger.kernel.org>; Tue, 22 Oct 2024 00:10:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.6.134.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AC1A323D
+	for <linux-security-module@vger.kernel.org>; Tue, 22 Oct 2024 00:16:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.6.135.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729555844; cv=none; b=g0TLDhEr9djnitcJavnVD9MMHcLdC26xSXwmghiY4eqtbj0clMYqdF5tTXIsxkKWUaAt7Rci8jYI0/fMyzxsGXn8Eg+C54jyQwhPdzfDCLNkzuEMhMTtZeFYVnTr/KXoG7kpRY/6CbRyHMqhtWRORUSpHlJDd0CV6fWLWifU84Y=
+	t=1729556174; cv=none; b=d280dQXq7CSGvCJajf+CtqdkNsY28bkUleJEOWXnMm4vtSDm0JoE36z9/WZ4lHmowuk1wHNhA8va1hGMbcKQHlHPvKmaUEvhOIAv8YXjfsHyiFL77n6tN/OcGIn/vJEJakaiBXHuQbea8nRkX9fWoEDx8WYTusVpsQzJzFemehk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729555844; c=relaxed/simple;
-	bh=g2hE1WEcvzFd3lrsuFbjFYGS4IfgneZqzB/K2Y1ufSs=;
+	s=arc-20240116; t=1729556174; c=relaxed/simple;
+	bh=PBvO+JmDcUXPLakhUBN7WxelfxPE9dinaqB6xdOpU60=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Dh6TRxdJCMAWRYaoWKWZNXjYhXAPbW11uiLYBqRFKERj2yoUn9glQrL96Zu5/ee7m9QSG9VOfWbPVY9a3g4m2gQ/DyZSHtZEYXHbxtiQOqAG/BrutgV8aREYoanSWEQQo8EdiSY+8T9ldRwRa1akJF+mXeUzXhYH2n/3oia6ztQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=U1oXxpg7; arc=none smtp.client-ip=74.6.134.196
+	 In-Reply-To:Content-Type; b=IovItxOH6SQrnsL2cdv9zihAu/Ybwn8mhR4YCS+qofkSdRCU1Gq1vcrIQP7PNbn/Kg83r/WZyKeFB0cViP2GfKiStyxI7PVM4PHEFbjBRTkg/dj9aJdHwhsAkvVshq+ba35Ywmp/6o6eRaFl0ITaaPwzqZCrv6ao2LlYpW2AkEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=V6OjES8Z; arc=none smtp.client-ip=74.6.135.197
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="U1oXxpg7"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1729555842; bh=pUVserrOqjjheIVK2zlgb58YznUavZUYeG9J/bknkFE=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=U1oXxpg7gSPlgpVsDr14vjXlugfAkiagnvUTAwTUx692iMWhk9dUl+QbenUyDFDJhB7ywEOE7KgiY4r4yXJarRAICQ91XO/TZI9t196Dud31o3z+yTaetSiFBEpz0QBzqzqttswqxfO4UDSupxlmAGEBZmuTNjd3d3AycQITqKb4QDhvf2ckfEd0fLwEeEfhIbf2RIW34HsWhARYmTyHI4OutzVVyrVeR7F79lnFeJSOwfqz640EGsKmOzokFLwu+jGlKKUwrrb1slYt7Fx+w0f+4k7VUfxdMRqwWMN44eTSBlvEvH6Vu3QNFEqkgZq5pQDJ2wbrhVm/HZsbkTgAGQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1729555842; bh=whBO2FDFMD9WkNmnWhLRfLGurylhgp4TlYw7RZ4SLJm=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=cCoJf5J0RdSLeK2FbikUFGfCzM2mlIwSyZJoAWjAXvegUQAxQvTqMSE+lY2dc9XkUF3BSsdMgL9fKsUjbVzR8OFnYT5UqD4aVcpy5L1A1iSfcgFpVEah9L9uKE5x4DT6X2StLvTuElT1Mg9sC7OX9/euVvZfT30M4Ksj0b1VGBxjPiMziGTKdUdHahM9jd74EDh2rT4XC5NEO3WmYBKZ82iFe+4QRQg0EmR3vwfUxgWey9q+kh+afdXubMNxGf5fsBkMfbmU40SfN+K62rGwa0D1IY+anFK2nXgqTJCCDBBHwWcWR/9goqgrogKiTnH/d+d1x8zvZDiXkpbLCbkmmQ==
-X-YMail-OSG: blKsv6gVM1mbqlTp_znbpm2ldrh.uN1rtZiKvHerhd17GF1fCNVNJ7JgsJVudPH
- JuwnfRrdkJqZmHk_aBv.X6nTQYkbDWNH.EXUJk6de3QqnRa.1Z1XZpT41TVuaSMENhHZ3LohYuRX
- UOJxgF4HYa6gTIje0.z5wY9.x5HlHHI0l.suq39fYYaSfmsvXN2ZDu4fCq5zkAzuGy3cwrwcUNAV
- dziyYl4Z_LAtH32uQqoF1NAhsuqBZsn2PBvten3ehgqJGfRb4sj1X1G7Wk4RtZVk_ItNj4JCXabt
- H.VgTKo4SzuvRyG4x3qH8TqSFfXCbcEKQhL8xrlPtX8YRBn1Wp6vBuikq3vppAqzd7rV4Al9.zr7
- Y5iiDfZvHaE39JaKIn77Vg2Ho02oQjJwQA_qxu60dj6pFVi7AmTXF2_keweAbSdznfG74FBGvGU7
- 2bxJsKaauzvh17.eKJdMiuJtIAY3lAfPEqqaqPhbNAEM2GgSkChwLuAGcy9U1saCneojLCBeQkXs
- Ljjz7oyvT3WubwTWrLN6Tr_eVsDq6fHS8RilSzra8Sh.7LUu1kkg_pZWdG5K16k4VpzCFKoDCarx
- 9DDz8k.wxvM.50OjtMsZbUjXZ9iFX3O7WXWEMy23NbktgdrDpyN.1RavsdATiDy2jz7VCGJ4y1pj
- wPbE6X0vaviJKhWfSNs4I3M7O5AT0vDop55aeoTzuV.jd.PWKp9Vwap.DLYW5Uj1YlOvIi9h._6m
- GcrC.hSKCp94WS4gwR71srKe4GjmBBaM92a7ZUu3g7cN422H0xetwgk1kPYI.4q949bsGlO0HQrB
- ziqy5YPcnHN7tJHqL9WyRwxuss4qFzzXb5VA7RnTWBm2pkiaTidZFzyQANVKGSfo_QK3FE7p2dzu
- 8mU88WQcYCYocjpEGP4uMEJF__zEN0d3ZjsH1DeX3lwSqnxnWvZcItEXJX.djYVm27nUwsuBd_sT
- .hRToazxy8xygL9VafdexW3vBIUQ0fzZybrhf1jZNnzUBKr2gR4f3kvlNPZvD2A27IbGFkwRiYI_
- 7FMUAYc6cGNjcykzJ9siYh2Fsm.EBhSAw1x.QzndAD59hG_84lrnutyqGapy5Zt8OTNp1e1egt1x
- vId0u5usQC1es40AYq9g4IQcSaGUsoZORM0wFmPQT9BkBAvBOHu7yAUVN670SlT7LoGXEZm9x.VZ
- D.o99PkpVH25Ff9y7SDvgz7fhZsu7HKyIzH8wuz4rL9_iLp1y86BsAE4C5zhoyVszi6LPP0EvhV9
- .J5NF1cRCEQ1guO.jE3lWDj0WAbdDLbnIAECyx5xQqUk0IhKu3arHRuxKhMeEqJfCv4eRID1C0jB
- Z8i5TGnpAxhVH1nRKG5Zrf67X3GBYLxIc59Qj7Jj2JpcnZUWMaw.4NBTg79qx7v8gtG2FjgoJGmc
- ZFdN6UuEZz_M0fvmshKZfJXz7W1uLJPuiqPMISm1Bck5s02VsmU2qNnEraAarDgc5wn1tAyO7ktx
- IbtC4YgAxI6XnnGOSuOUi0cr_mzBicrz1hZ.lNpDrTVcFpohvb7UA57hwMoBthAxSewSRXbMbvBD
- eZTAd1RntmBLYjogKcxM7pTIIVy0Xsfh7n_BJzokKoRh7L3FcjfRIiGAdtHZRFHCfVqkO.jLJkhw
- 75O6h9jdMMXG5qF3g37Bea25EVlPK1S_h6bmZ3jUVMsSbKbPLLKBtiNdrkrb_X5WjNuFymtAbCZl
- u4xxMgH64fjmaRVx8e8WKRlVpMoucJ75H3IzDnxexk1lFuikQ7TfX6GkA3..9qPOAXb4vN0Ba16s
- Qcp3qXz0NfM51.cm.HlJ.w4QhL3qpExgjON7k4PB3WnzDJ8H4qkRB4PXza5F1IViHKpwg2.VnuiL
- 7GiJPA2diHlmONuo4DYYFuD6bCg6OuJvJAxyMXxlMUVOSZXbZm.NEBbgW_0PKmZpWWQE7.LvkQV3
- o.3tnnxGIAqVZcgyFSWEmGKvOXgso7MW1fEJ8L5ZhalOB8cAF4Gi2s5j6YCK3vwkHVdMbZ5Cdiy6
- c645Uq4Uk.8iYol0vHhlB1rUNpwl172JyqNOe..zK1dZaNmkqZESyH16VtHb1RDkTimnPDEsAIIt
- NZ_YZEtTdHCapQ50g3_zKnfyHjt7_3Jq76S1Y.nee1nzO2V5NrqOFpS8pN6_hulzrDymeqeH7Q1c
- qLhv57vUjqfw1z.gOyJGOsDUMWBJGGEVIzzt_KE.hegoRij30isWM3kjsoFs33.2TnuqWZy8LMwi
- 0257iF5xbcaIJ3bKKqA3rRls9Ti3tZ2YiGurnkMFur6CXaPSlKAz5bL_PboaaA._XsrH1Y5CpA6o
- HYYlqxIVciw1QVpGoVLmwDpDQUYcKgA--
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="V6OjES8Z"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1729556171; bh=uKAdnfZ8DHGLvEgYRuEDP9dXyb6uc8wXDnOoyjaz+OM=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=V6OjES8ZBNE/9ylrW8rUgOPDYllf464yiWTr0AQ73F/KOf0DmLAWIDFjYPlM06eQ5cyMrI7x9oG8sbPVVy00RWW6AXHq71M/pIppfB6zdNAmp7ARx3eHfcv2MqH3ooECFX0KyNA6KfZJJPCI2OFJb1tUQizOQUgLiR2zVQJKnEcW2c/9JKI6JIkSSJw3y7a8p9KcB6ZLYTbd8Qj3pRCjE8b5CHScfQvI5rjnpf2OWrNBEpjQ4w5gx+1B9LMjZcLnBpFCGTst3vBSOKbVKRnKbzk5oTpnipAAG8ztSkYBMzfZDByp0YBAjYEcUsKbMOyVF1LKFhIJUjBP4ARESIMiVw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1729556171; bh=9kom1IMbtSqfNFlYugfkXmrPvqwVbt19jj/3mlLgtlu=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=jwwZNPiJf3UPWtEAdklXK1gOipViVnAY0/b7jKL4pna1mikBSlz+8V2SfXX5wvmUVNiEZHBsDQhYgBD9AnnuTUzTgwZC+ikeoJGcjPNV/HL4sou+AhHyiEtnOimFdR2dcrnxTGDS9JEY3tTklc6uiJ23VCRHEFDBIKXb/dOexvPtmDUuxeS4znlhmXOrPLj2usngoK20ukhEQpROd+Haldum8Yv06P4mXbeQMosGxq10MwjXix/yy3s6R25gyi2EgvNO44P8XTyTHPdVbSenVmeyq2Ii3xU0JcGkGjojfl1vKxW3EYiYF9S57/VEvwTv5dkoL+tojXtbWi18078Czw==
+X-YMail-OSG: 7JVnBMcVM1nUp6p6J5_sNh2r48TJEL5JprpnqW2z3f_7NhyC9s_DCLkp8QVEMG8
+ byZGgFdSkJ1Ac.A4d6ICWVHLkhfAoZjXtfJzM0FGYg6Y17mOZqtQay_A6yAo_SDOiJ.DBakRTNKG
+ bqqSPr_Fll8.HRjXEU7xLYGc8AWY1Y2LPrU7zE4.rXXugM4DjwaIONE4_92drKdU5gSktDXJxiPx
+ tyORtYIXL0smebo70JS7OukXzPAtciJeXPw8GKcJKGDubW1bLu6K06qxmQnwmWXYftBa3f3E_4T8
+ 1nuEK1pKeLNvfomrDWM4di_a8I1HaIfDx7Z.3U9YySi2dSgTLDO7VJ4eKeZdMGj4kBdNmFHxVzQN
+ z7db03NhYqoysJOE7kYOz_IdMLuz.R1wX5cjj54cZX.8P7G_FYMr7EcsW8pghrhxL54XE4b7hVn9
+ 8r7h3NaS8PyB3qJmUy.duBj13KHSjHnD3niS5HSrmtFL6UFFL5CMvgneWiQhSnUptJZCsK.NALm3
+ jQIwPOg7jVh0J4G13em6XXKF3bzJzza8MHCQzzix7zwNNpgSFv_IyNC5aKJDUqDk9Jm4Sb.3KofN
+ pU.UOGsTO6xJJeyEEFQ38Sy2E9Uv9ZoFEuKBRUbeQ0JjCbO_gMkmqJC44.zDjX_fQpfEMu0N0Tux
+ zNLwtVQjxGnDfoRg0AIoggE2602EXAB86YkI9eFdKe_txrPUClBsz6O0QbO5GkcGy2CFR70ySkm7
+ TNqVHros4pFNCD3zwKthD1Y62JRQBp9_kiOGP792KEu34_JJ6.7G1.FvLFdesCikuzvOyy2ZZ5X6
+ jJEoAaIFtddua7pmzKREUJiLpoh1XPlx9v33obbdt3Ot_I4Kq4DzS_HsBOIc6mQP.XYvR8CSIpJ.
+ 2VaJG4Go8pi_dJ9kHB2FhrpVPMLjY3Qa89p7v2hkXeTbnTrywKr5N1wkEtZlukQJHdFv..mEG7ji
+ aYjdc0E._D4FUsTq5d9xamyx_lemy2e4W6MeK3zsjipEZRjPO3Ee7zsy9LXUry8FdT.MD.87NGKP
+ ahgfoAsKDwJxDPv3H1GOdPnYUd8c9i9DwKcvRZyQnx8GDMKJfMKtcC41ZZrFIdORHgbGXAQ2K696
+ TqwCqRZlvIjvDl4m_g.M0bHFMNGUqNMBeAFWutwmgMDSBnHf8paJCnYmHVP2PpDVkbPlyFlQyrSn
+ pt4P_Ot6mol9QjdwwjnOYQKB.ARqx9o2_sGP0LeNQXfeoz1HNF4nKaGPtxFiRaR0iIsWO_.T2m5n
+ JVgy3J2uwdjwxF6qFQSjacYwoY9n64QfzH6ka92ntWqmdhaMkDlQtSSr.RAc0bMo7TBL2ipXzV1X
+ cO92SYzozaXQSQ0c0iKiUFZLG1tHpP.0bcXfpvTsBkGhGquydQpDkZFyuSZl04vbjCvJx6pvrj9Y
+ wBGkD18IG9fhxj1bEaMxIoki0SGwaIjTnQimrXAvQ9PPi_96tSUmKpbjsfVH7PCux.M0HND4IwsK
+ sJqxmEfnuWU0dkCihFRfUOyXgyrMh1b2_8D69Vd3Q3GVrc7VdZ.5fOZinoOl3J_puaM6dw1mfCxk
+ ZRlTAjQUeoxIWF71ekPN3vOiXgURef1x3BGMKlqyyjpKLcHwl7r97t5ynab1H.7T89JCpKiw2mRn
+ 4zfk18ksEv3lShx1G_pXVoR9m.So8_JfVc7l5BieIUjJVGAQU7IFPfLt_FSJrPvVTJuUsqeXc9Uw
+ JjMv6LrVXsxglIQ1vAVOR4mRrA56nvGTOmAuM8W6I6fnISTs_8GVzBUlDLMxWVmLnlvStbToylIo
+ RLaQzSZiDF9xXIW2J_uFpx8F3VK.307.fWFpwPpoCEoJqgT4W18nctCz20ZtRLjbyc10yCGkJ.7u
+ aozQRNggyhCDx3e8BUets.0Pfkz98itJxzib_U.rHxRKp1Nt0oyebvXFWgpX7ucBsn74A9v6_rg4
+ L2Cu4BUgzZ_C9QBqXbXX74ErRwIT3TsNoDi5OFJ3CxOvQhCGJCVvwqgNSZu2URb_UxFUg.A2DjXC
+ pA_9SwAxq58PWlnop2o0Eo8aXie74y5wqDIeLaIM5eQRqJ6axMOhiXX5BuLYArHXh4I4b78PRkl7
+ Mr12G5B8MEXO.WycncYxxthzIQ8Mo641z2VLaxNYv90wuOoRWe2iWuntQpSyVWT5KJv2QlZGFu5F
+ UPKsG31wcFw9BhYsmUldvL8dtKA2._8XbxfkEBEAd0uKQgA3AXa7A2j1ovUm6BPS8H_O7pImObyl
+ nCy3rWosLRqamUkTJwlgwLmYkJ32D4jQW1hXkMhL4E8Ethm28cQM_N_FKYoMPWtrecrWEac8nZHl
+ KTiR4QG1XbsfhPM.VcKJ64Xu1AzSuuA--
 X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 4b11dd98-73fb-4a66-a5e4-68bdd261eb16
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic315.consmr.mail.bf2.yahoo.com with HTTP; Tue, 22 Oct 2024 00:10:42 +0000
-Received: by hermes--production-gq1-5dd4b47f46-k4d2j (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID bbbab94bfacf20b28d9123c76cae1022;
-          Tue, 22 Oct 2024 00:00:32 +0000 (UTC)
-Message-ID: <d2d34843-e23c-40a7-92ae-5ebd7c678ad4@schaufler-ca.com>
-Date: Mon, 21 Oct 2024 17:00:30 -0700
+X-Sonic-ID: fe59fcbb-91bc-4fad-b327-28214724d246
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.bf2.yahoo.com with HTTP; Tue, 22 Oct 2024 00:16:11 +0000
+Received: by hermes--production-gq1-5dd4b47f46-5kxd4 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 9ab5b1500e56173fe5efd6e5094bcf97;
+          Tue, 22 Oct 2024 00:06:01 +0000 (UTC)
+Message-ID: <617a2679-404c-4127-8dfd-4f3895e2372f@schaufler-ca.com>
+Date: Mon, 21 Oct 2024 17:05:59 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -64,79 +64,89 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/6] LSM: lsm_context in security_dentry_init_security
+Subject: Re: [PATCH v2 5/6] LSM: secctx provider check on release
 To: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org
 Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
  john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
  stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
- selinux@vger.kernel.org, mic@digikod.net, ceph-devel@vger.kernel.org,
- linux-nfs@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
-References: <20241014151450.73674-5-casey@schaufler-ca.com>
- <b94aa34a25a19ea729faa1c8240ebf5b@paul-moore.com>
+ selinux@vger.kernel.org, mic@digikod.net,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20241014151450.73674-6-casey@schaufler-ca.com>
+ <5b6addd938c9feae0b4df8f54d56f9f0@paul-moore.com>
 Content-Language: en-US
 From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <b94aa34a25a19ea729faa1c8240ebf5b@paul-moore.com>
+In-Reply-To: <5b6addd938c9feae0b4df8f54d56f9f0@paul-moore.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Mailer: WebService/1.1.22806 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
 On 10/21/2024 4:39 PM, Paul Moore wrote:
 > On Oct 14, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
->> Replace the (secctx,seclen) pointer pair with a single lsm_context
->> pointer to allow return of the LSM identifier along with the context
->> and context length. This allows security_release_secctx() to know how
->> to release the context. Callers have been modified to use or save the
->> returned data from the new structure.
->>
->> Special care is taken in the NFS code, which uses the same data structure
->> for its own copied labels as it does for the data which comes from
->> security_dentry_init_security().  In the case of copied labels the data
->> has to be freed, not released.
->>
->> The scaffolding funtion lsmcontext_init() is no longer needed and is
->> removed.
+>> Verify that the LSM releasing the secctx is the LSM that
+>> allocated it. This was not necessary when only one LSM could
+>> create a secctx, but once there can be more than one it is.
 >>
 >> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
->> Cc: ceph-devel@vger.kernel.org
->> Cc: linux-nfs@vger.kernel.org
 >> ---
->>  fs/ceph/super.h               |  3 +--
->>  fs/ceph/xattr.c               | 16 ++++++----------
->>  fs/fuse/dir.c                 | 35 ++++++++++++++++++-----------------
->>  fs/nfs/dir.c                  |  2 +-
->>  fs/nfs/inode.c                | 17 ++++++++++-------
->>  fs/nfs/internal.h             |  8 +++++---
->>  fs/nfs/nfs4proc.c             | 22 +++++++++-------------
->>  fs/nfs/nfs4xdr.c              | 22 ++++++++++++----------
->>  include/linux/lsm_hook_defs.h |  2 +-
->>  include/linux/nfs4.h          |  8 ++++----
->>  include/linux/nfs_fs.h        |  2 +-
->>  include/linux/security.h      | 26 +++-----------------------
->>  security/security.c           |  9 ++++-----
->>  security/selinux/hooks.c      |  9 +++++----
->>  14 files changed, 80 insertions(+), 101 deletions(-)
-> ..
->
->> diff --git a/include/linux/nfs_fs.h b/include/linux/nfs_fs.h
->> index 039898d70954..47652d217d05 100644
->> --- a/include/linux/nfs_fs.h
->> +++ b/include/linux/nfs_fs.h
->> @@ -457,7 +457,7 @@ static inline void nfs4_label_free(struct nfs4_label *label)
+>>  security/apparmor/secid.c | 10 ++--------
+>>  security/selinux/hooks.c  | 10 ++--------
+>>  2 files changed, 4 insertions(+), 16 deletions(-)
+>>
+>> diff --git a/security/apparmor/secid.c b/security/apparmor/secid.c
+>> index 5d92fc3ab8b4..974f802cbe5a 100644
+>> --- a/security/apparmor/secid.c
+>> +++ b/security/apparmor/secid.c
+>> @@ -122,14 +122,8 @@ int apparmor_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid)
+>>  
+>>  void apparmor_release_secctx(struct lsm_context *cp)
 >>  {
->>  #ifdef CONFIG_NFS_V4_SECURITY_LABEL
->>  	if (label) {
->> -		kfree(label->label);
->> +		kfree(label->lsmctx.context);
-> Shouldn't this be a call to security_release_secctx() instead of a raw
-> kfree()?
+>> -	/*
+>> -	 * stacking scaffolding:
+>> -	 * When it is possible for more than one LSM to provide a
+>> -	 * release hook, do this check:
+>> -	 * if (cp->id == LSM_ID_APPARMOR || cp->id == LSM_ID_UNDEF)
+>> -	 */
+>> -
+>> -	kfree(cp->context);
+>> +	if (cp->id == LSM_ID_APPARMOR)
+>> +		kfree(cp->context);
+> Should we set cp->context to NULL too?  One could argue that it's an
+> unecessary assignment, given the cp->id checks, and they wouldn't be
+> wrong, but considering the potential for a BPF LSM to do things with
+> a lsm_context, I wonder if resetting the pointer to NULL is the
+> smart thing to do.
 
-As mentioned in the description, the NFS data is a copy that NFS
-manages, so it does need to be freed, not released.
+Wouldn't hurt. I'll go ahead and add that. If a BPF LSM does anything
+with a lsm_context we're likely to hear about the many issues quite
+quickly.
 
 >
->>  		kfree(label);
->>  	}
->>  #endif
+> This obviously applies to the SELinux code (below) too.
+>
+>>  }
+>>  
+>>  /**
+>> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+>> index 79776a5e651d..b9286c2c5efe 100644
+>> --- a/security/selinux/hooks.c
+>> +++ b/security/selinux/hooks.c
+>> @@ -6640,14 +6640,8 @@ static int selinux_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid)
+>>  
+>>  static void selinux_release_secctx(struct lsm_context *cp)
+>>  {
+>> -	/*
+>> -	 * stacking scaffolding:
+>> -	 * When it is possible for more than one LSM to provide a
+>> -	 * release hook, do this check:
+>> -	 * if (cp->id == LSM_ID_SELINUX || cp->id == LSM_ID_UNDEF)
+>> -	 */
+>> -
+>> -	kfree(cp->context);
+>> +	if (cp->id == LSM_ID_SELINUX)
+>> +		kfree(cp->context);
+>>  }
+>>  
+>>  static void selinux_inode_invalidate_secctx(struct inode *inode)
 > --
 > paul-moore.com
 >
