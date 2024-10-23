@@ -1,109 +1,142 @@
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A467D3FD4
-	for <linux-security-module@vger.kernel.org>; Wed, 23 Oct 2024 00:08:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 855FB1CA81;
+	Wed, 23 Oct 2024 02:26:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729642088; cv=none; b=At/Cb1fXJ4qMImpRLtM0rZp7LEs91UFu1WHUGI/W8s5bXb833o9ZWjEnUQgZ4+efVnyhBELgnumY0/yxRPqTOJMFxaCpH/Guz0iECgMUj7OpdvXEA43PucVcZqU6TPi9q0Odk7Obdw0xMhQrtNnlNd8xqRJye0cVM1trkMCM2DY=
+	t=1729650364; cv=none; b=C4LTdGIcwl02HZYq9X5NZA0fQ5lWUZlZE32NLzoeM71xs8BAYdUz82fOJNZsGo7HbkM7e/uaKjpOjcBpj+ykhVTK9y6UcS8ly0X6rHqxmOiTPUU/QmNskNFoPBsNU30dZPe7w72AbjQwk+uDU1mkf/R/N7z7rwiFpwqC4cnkyUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729642088; c=relaxed/simple;
-	bh=L9wuywf5/cbaM5/uK1OhLnWZI2jluA+vbm9p8zFAP3Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GXb1NPuPbhRopekTO11dEkF2UBWSW3Uaazh/fzQXwJor9jBlvJLi3YAUSRgl1j7zB24V/5TgDS0heXJDtEVKmW+YXOU89xYXcPApvBE+DAHDuwrmeok+NhoLACbCnxsNq6PWL7Uf43c6RuR7zOwzNU4JjIICxy6llbnHnNfR3xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=CpnSwByV; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1729650364; c=relaxed/simple;
+	bh=aJii0wlPQcMK44UHYw5Iz7PQVdWdQ12Cr0ITPClYgIo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CNoM0RU9LwBOP+C5VU0Tybt8+B3A7kQ7SZ0IGOAC5xp41/2Pv3MYR1VuSwdOmJcbweV3xxjOpzJ7tuu9TfFuneMOfMgW6uJI0D3quoppjPjH9LAglXMNpt2VUDtKLAiuoSCTt2hIGGc/IrmbApBoXEaXEFGRJ2obcod5B4WklDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OV52kJ4F; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="CpnSwByV"
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6e5fadb5e23so28268427b3.3
-        for <linux-security-module@vger.kernel.org>; Tue, 22 Oct 2024 17:08:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1729642085; x=1730246885; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=57Fj8gLod8rIEZZw/4UIvzCnaCOQol0AMMxxaOEWmfc=;
-        b=CpnSwByVMmecKruLhu/w+5LXjkJOV73mQH9i3X0hCTApDTl13C0h3mbRHMmVyfFxEk
-         HYTXA+Tbub0IS1hu0+szclE9FSRC2q++XVK1kYPedqsKv/LpVywznPtjss6ijuPQiiLR
-         KUbmsS8rXJyDtGvPf4t4xYKtjhxAb9NGzixDGJPmyNPCpefxXtf3ty1ZgxhFDmG+ogR6
-         YVXHCMLDMhDeSxf7Oo/a3f3TRK6MQRKJLs1bEQ6LxYNqhtdvwyWpo3qCDoXtEQf2v2Cq
-         TZOD5dmBIaEEKu4t3JU3lLO8syhKJSmYHMmH7kqCw9vNcga7fnv6p9BuRpAYHWQtcFPd
-         c8ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729642085; x=1730246885;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=57Fj8gLod8rIEZZw/4UIvzCnaCOQol0AMMxxaOEWmfc=;
-        b=iW3O8nUrRMBCXNM51K2G/vexrpzzBsj4E+WrB60KFLCa0WTsvRSA3gp3y2ZyphDApo
-         dI5t3H3PaSD3YPBI/BsLVXJzREqJxXqqsU4jwZBEsLhYLUMdZCf6oIB/X0VKj2r3MzJv
-         GVKxVtueWgI2akRDe19TFrsr8wU3vaLSHovHjQcBiTBZAaxPSpUfTlCT3PYXJB+oUxVH
-         Izu758YuL/BH5JULwPWBLzPFrOJ29iETMlNpUrAHN/Jtq6BikFGTAFJ1P1glmJQMmP5D
-         N0Fac/9EJ55aEoyrIXTmT7jH98PR7N2+LIue/tNvQsUHBgnBznvQzemsHFKfybcapjoC
-         NXBA==
-X-Forwarded-Encrypted: i=1; AJvYcCUuTST0JyXu+2zK2Hm2+zWWQ9bM12HFIbw+Zsn/qpCJ9Tww/+T4+6QxwalHxdJ6fxHAj2q3UFsprRt/peqv6w7/cYZWWCE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJ2I3E/c5UxJ1C8mkVU0gtqMkIkUlq3uc6alVqIYYcFPhgCueK
-	P5Z0kwm5Fez/qRddJgjfQbMfY7vqEkQ2w4NWiBGFVeiHuQJoFDWh9MvPJ+fU5A6UbIbdlImSzmx
-	k1WMnKRLTKrrp9IFLQRN3PXne017rny6Aibcz
-X-Google-Smtp-Source: AGHT+IHbuDmIRR/TLOrqFnG0inIcjWy4wLhddUf2dm3fEuDr1h8EDF1PeHoMyPzTrVGW9ITR2voHEzHCgq/TwyIeZDs=
-X-Received: by 2002:a05:690c:61c4:b0:6e3:2c7c:3739 with SMTP id
- 00721157ae682-6e7f0e32236mr9195097b3.18.1729642084739; Tue, 22 Oct 2024
- 17:08:04 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OV52kJ4F"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E6AFC4CEC3;
+	Wed, 23 Oct 2024 02:25:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729650364;
+	bh=aJii0wlPQcMK44UHYw5Iz7PQVdWdQ12Cr0ITPClYgIo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OV52kJ4FsxxzSBeENS9k+vcJvi+ee8AteRf6pAEJ5C898hJZHVv+c0qxAgvxKg+V4
+	 mGC+m2E3vfYYx8dMPANNIqOhoGMCgcnW7DAfZ+XtUfqiLOu08IK6bfR31xshoSbmY2
+	 h5fP3+I30WpQLxqAQTceTfQQuI/SEtDmM6butPlopBcZEETjp9eUc5AVIFyYzT28Ht
+	 yfsDUqcCIb5v9akypZpj01PblzSAsayHU/u+ulfJluHM9lL1tqI/VrXBirbpluj3+F
+	 Nc2MmWc1DafcpuJfabZIYqZIsUYAuxC9h5/NKMv9XKanH7yKlGJCIkKr7HJV2P5fCQ
+	 JxEv+74sIAqKg==
+Date: Wed, 23 Oct 2024 02:25:56 +0000
+From: sergeh@kernel.org
+To: Eric Snowberg <eric.snowberg@oracle.com>
+Cc: linux-security-module@vger.kernel.org, dhowells@redhat.com,
+	dwmw2@infradead.org, herbert@gondor.apana.org.au,
+	davem@davemloft.net, ardb@kernel.org, jarkko@kernel.org,
+	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+	zohar@linux.ibm.com, roberto.sassu@huawei.com,
+	dmitry.kasatkin@gmail.com, mic@digikod.net, casey@schaufler-ca.com,
+	stefanb@linux.ibm.com, ebiggers@kernel.org, rdunlap@infradead.org,
+	linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
+	linux-crypto@vger.kernel.org, linux-efi@vger.kernel.org,
+	linux-integrity@vger.kernel.org
+Subject: Re: [RFC PATCH v3 08/13] clavis: Introduce new LSM called clavis
+Message-ID: <ZxhetCy5RE1k4_Jk@lei>
+References: <20241017155516.2582369-1-eric.snowberg@oracle.com>
+ <20241017155516.2582369-9-eric.snowberg@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241022161009.982584-1-mic@digikod.net> <20241022161009.982584-3-mic@digikod.net>
-In-Reply-To: <20241022161009.982584-3-mic@digikod.net>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 22 Oct 2024 20:07:54 -0400
-Message-ID: <CAHC9VhRZ6Ug7ACLDgAiqQC3LPRPNM=Q5NX8TYxo-fcPA5XBEoQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 02/14] lsm: Add audit_log_lsm_data() helper
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Eric Paris <eparis@redhat.com>, =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	"Serge E . Hallyn" <serge@hallyn.com>, Ben Scarlato <akhna@google.com>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Charles Zaffery <czaffery@roblox.com>, 
-	James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Jorge Lucangeli Obes <jorgelo@google.com>, Kees Cook <kees@kernel.org>, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
-	Praveen K Paladugu <prapal@linux.microsoft.com>, Robert Salvet <robert.salvet@roblox.com>, 
-	Shervin Oloumi <enlightened@google.com>, Song Liu <song@kernel.org>, 
-	Tahera Fahimi <fahimitahera@gmail.com>, audit@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241017155516.2582369-9-eric.snowberg@oracle.com>
 
-On Tue, Oct 22, 2024 at 12:10=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@digi=
-kod.net> wrote:
->
-> Extract code from dump_common_audit_data() into the audit_log_lsm_data()
-> helper. This helps reuse common LSM audit data while not abusing
-> AUDIT_AVC records because of the common_lsm_audit() helper.
->
-> Cc: Casey Schaufler <casey@schaufler-ca.com>
-> Cc: James Morris <jmorris@namei.org>
-> Cc: Paul Moore <paul@paul-moore.com>
-> Cc: Serge E. Hallyn <serge@hallyn.com>
-> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
-> Link: https://lore.kernel.org/r/20241022161009.982584-3-mic@digikod.net
+On Thu, Oct 17, 2024 at 09:55:11AM -0600, Eric Snowberg wrote:
+> Introduce a new LSM called clavis.  The motivation behind this LSM is to
+> provide access control for system keys.  The access control list is
+> contained within a keyring call .clavis.  During boot if the clavis= boot
+> arg is supplied with a key id contained within any of the current system
+> keyrings (builtin, secondary, machine, or platform) it shall be used as
+> the root of trust for validating anything that is added to the ACL list.
+> 
+> The first restriction introduced with this LSM is the ability to enforce
+> key usage.  The kernel already has a notion of tracking key usage.  This
+> LSM adds the ability to enforce this usage based on the system owners
+> configuration.
+> 
+> Each system key may have one or more uses defined within the ACL list.
+> Until an entry is added to the .clavis keyring, no other system key may
+> be used for any other purpose.
+> 
+> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
 > ---
->
-> Changes since v1:
-> * Fix commit message (spotted by Paul).
-> * Constify dump_common_audit_data()'s and audit_log_lsm_data()'s "a"
->   argument.
-> * Fix build without CONFIG_NET: see previous patch.
-> ---
->  include/linux/lsm_audit.h |  8 ++++++++
->  security/lsm_audit.c      | 27 ++++++++++++++++++---------
->  2 files changed, 26 insertions(+), 9 deletions(-)
+>  Documentation/admin-guide/LSM/clavis.rst      | 191 ++++++++++++++++++
+>  MAINTAINERS                                   |   7 +
+>  crypto/asymmetric_keys/signature.c            |   4 +
+>  include/linux/lsm_count.h                     |   8 +-
+>  include/linux/lsm_hook_defs.h                 |   2 +
+>  include/linux/security.h                      |   7 +
+>  include/uapi/linux/lsm.h                      |   1 +
+>  security/Kconfig                              |  10 +-
+>  security/clavis/Makefile                      |   1 +
+>  security/clavis/clavis.c                      |  26 +++
+>  security/clavis/clavis.h                      |   4 +
+>  security/clavis/clavis_keyring.c              |  78 ++++++-
+>  security/security.c                           |  13 ++
+>  .../selftests/lsm/lsm_list_modules_test.c     |   3 +
+>  14 files changed, 346 insertions(+), 9 deletions(-)
+>  create mode 100644 Documentation/admin-guide/LSM/clavis.rst
+>  create mode 100644 security/clavis/clavis.c
+> 
+> diff --git a/Documentation/admin-guide/LSM/clavis.rst b/Documentation/admin-guide/LSM/clavis.rst
+> new file mode 100644
+> index 000000000000..0e924f638a86
+> --- /dev/null
+> +++ b/Documentation/admin-guide/LSM/clavis.rst
+> @@ -0,0 +1,191 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +======
+> +Clavis
+> +======
+> +
+> +Clavis is a Linux Security Module that provides mandatory access control to
+> +system kernel keys (i.e. builtin, secondary, machine and platform). These
+> +restrictions will prohibit keys from being used for validation. Upon boot, the
+> +Clavis LSM is provided a key id as a boot parameter.  This single key is then
+> +used as the root of trust for any access control modifications made going
+> +forward. Access control updates must be signed and validated by this key.
+> +
+> +Clavis has its own keyring.  All ACL updates are applied through this keyring.
+> +The update must be signed by the single root of trust key.
+> +
+> +When enabled, all system keys are prohibited from being used until an ACL is
+> +added for them.
+> +
+> +On UEFI platforms, the root of trust key shall survive a kexec. Trying to
+> +defeat or change it from the command line is not allowed.  The original boot
+> +parameter is stored in UEFI and will always be referenced following a kexec.
 
-While not a fix like 1/14, reducing AUDIT_AVC reuse is a reasonable
-goal.  Merged into lsm/dev, thanks!
+Does this mean someone can reboot the host, boot another OS, store a key
+id in UEFI, and force the root of trust key to be one other than what
+the user lists in clavis= boot argument?
 
---=20
-paul-moore.com
+Never mind!  Saw the answer in patches 10 and 11, thanks.
+
+> +The Clavis LSM contains a system keyring call .clavis.  It contains a single
+
+s/call/called/
+
+> +asymmetric key that is used to validate anything added to it.  This key can
+> +be added during boot and must be a preexisting system kernel key.  If the
+> +``clavis=`` boot parameter is not used, any asymmetric key the user owns
+
+Who is "the user", and precisely what does "owns' mean here?  Is it just
+restating that it must be a key already in one of the builtin or secondary
+or platform keyrings?
+
+And this is done by simply loading it into the clavis keyring, right?
+
+-serge
