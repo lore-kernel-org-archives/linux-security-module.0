@@ -1,262 +1,249 @@
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+Received: from sonic307-8.consmr.mail.bf2.yahoo.com (sonic307-8.consmr.mail.bf2.yahoo.com [74.6.134.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DB411FC7F6;
-	Thu, 24 Oct 2024 17:50:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFAA0200110
+	for <linux-security-module@vger.kernel.org>; Thu, 24 Oct 2024 17:57:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.6.134.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729792253; cv=none; b=oTOwAB5c8RNP5aY/4KRIySoZeOZ27KwBLvNf82BI/tF1hWP8rgcAk/gRs1ISiuIHqgXyi8twNaF+oC7SN82FTeioLVqr2iilNGV/XompLxs/uX9A5imZCrEozcSgtz1/KqE4GIKPjLubsR1/+QFneP8frgSXWg4kyhbrrSXtttw=
+	t=1729792678; cv=none; b=rYul0S6BkDk9C9bScj+Cm+dLBAdfmePEvMs0lhfVmBvxO5+59pMV07aSDnh5lINI0ffu2B5kXzJbFu6pDWmkoTY4XqInqXOMHLKgJEmgRP32Jkxv2YHaG0J8NpEl6W/RFQkkKjOrpL7XOhvEuyAzXx/WJwp/4PVEh1xAXnck5nQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729792253; c=relaxed/simple;
-	bh=ePxtA9ibl8mGCexU5e3k6ufEN9i+IRxWmd3lv9J5aNY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LkkCyH5VAOJHISYmTrnmRTq3bKaUZ1VAuKfML7GEVhf5UVw9g1HCVYQkll1aauSN9qd1ZcVUi/RoHYrZM+lNzS9xxFT/mgHl4yiE2zHmkp0JnjeDRE1DgQ6w6J39ZffNYcpY1MaAo6ySCjgTRcrgW9K32/62uoz6Z9nrp49Dv8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SFUBok4C; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1729792678; c=relaxed/simple;
+	bh=ok50NMY0aXVs5DusdYWDZiWPFfU42CX3tvhS4lCDWo0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YIkLD7PwZwALECMmSp0NpJ+Mru/d3adnOg9E+egePHPj2d4bYxjkspDbpIakaGzIDP7i0ZrPGYP0GMRougl8a1BzqaRj4fNYoMY0/hu4KW1UTn1jrJV2AqICP2T0r+NW3jJDStLvHNKeKhaZDA2mbZ12H6sZ9QrcFSk5ZJZI/wU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=EQuM0vxQ; arc=none smtp.client-ip=74.6.134.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SFUBok4C"
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-71e70c32cd7so971405b3a.1;
-        Thu, 24 Oct 2024 10:50:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729792250; x=1730397050; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=q+cPuItU2Qup8nDkfzVI70nJCDy/rsNDn+ncMCnWNy8=;
-        b=SFUBok4CK0+bHsUYflccT2yy/zR/JQoscZ69X1XiWe5vHvcu9uh/5PmcsCzuX26+py
-         ESir+IJDyFnOyuhodSfrrNryUEnM9gbN9Uhtyajuix64ATwqniQKuc7UaolYtE9vIUky
-         OgGOZatuJgITJwiUwB+Q9dMzK+iK6NmvvL5rUlAlGYXiXmmGoSW6/3oex63jLzSZOn+C
-         towtYkTFTNXiOY3hIpUiV3X1KbH2uBYpivaATVPqbtoTGk+BsaliA0P1ioy/0l4Fy/fy
-         QZnts4SU91kGptosaaSvN0IVeXxHdVetCPZNeeTMViJf5yBqSs8kCnfqb/daYYwGmpt5
-         z8xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729792250; x=1730397050;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=q+cPuItU2Qup8nDkfzVI70nJCDy/rsNDn+ncMCnWNy8=;
-        b=iTGgX3RP1Bg105WggJUYxvPEJoai20vsGr1l0US6MGBEhn6YABhPgdwyQZnpRVx6gU
-         HWo6kn/4slplWR2hBAtckL1SqZ97ymrcbF/s8Z+xIN7aTZa+n8LNzhpyJELEe+5gcaSh
-         NmpDvrIF26atvc/en4AXV6gmVeO3mTRJhOXSyRgA5AiKyISYV9TpgJuFgxgyDBAHMABe
-         cAuiBk/XPEeAWldECHYP9FGjIcH8oJxX8WDSW73lITQCw8KO0UCpFE8ZJy7sICBOw2MX
-         0No2UTrnoodE875RmfrkwFDu3ysgf1vxoUdB5SNT56YnG1fiHBxUx6RYQxzTf8I5dj//
-         wfSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXQ0Mpp/8EQcY0ACIsD4TbiTDcZ/YPdIOz1wDINIGxH+Ig0OrfnPaBJKFCh6CVQQriJKI0XydJdnTzH0x59IgBTCc0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSCYtLPbx6lf7OwOseOdMYLWP+W7bflvNuKgBDmmIB12beH88v
-	VB/UskY0a41ZnszRWYSE9qs3KOyt3WTEDwvUQDIusxigkzLiuHTA9Hat3mtq1J9F0MeXegP/45G
-	SwLi8a1P+oY2jcuRku+YEUVr69Ic=
-X-Google-Smtp-Source: AGHT+IHrYbbGdNWssux5csLTeDBlJDPlpt7WCS4fuefXRw472cYGQABHrKgkA4YdRqjxKWPXI+GLg64dj0YmPOFHAA0=
-X-Received: by 2002:a05:6a00:b50:b0:70b:176e:b3bc with SMTP id
- d2e1a72fcca58-72045f8a518mr3880370b3a.28.1729792250325; Thu, 24 Oct 2024
- 10:50:50 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="EQuM0vxQ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1729792669; bh=pMfHkMgglQx3nh3YTV4JOae6naXEVyPNSmv9vS8Fpl4=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=EQuM0vxQhefxfG7ChLdlpBCgVuirXIu+LEEDf1Cfn/R12Hzl0KnSV//jkmedWaH1bbdj2wQZak59iIjhVzr7ZgI0CD6PJKai1xzoqThem7hhkh908b7hUq6NHDDM8XToAdvmCJfFazcA6V7YleK5RohdoTiSxGy16W3aHY6UQ6XYKSGori2mJFsh2EYZ0VM2nw1MbgGWVTAfavY/bGtn27YduNUrIHZ/RDS0umLscjxcEUxdWCzE77//HUHIAMfuzh7l5fuMHnYNRDn8YYdW3rxCILpovOIYgho2FFxZR42eW7Y9fYJWf+E0lnYoNYr/RAlQ6TzWyXoGwdldJnus2A==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1729792669; bh=1QkIXn+owGpl+30HRIbYPtM2h9j7h+7THZ12QG14cRx=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=aiUNprW3r9PNVYSpoAjx+u8oIR8SmtXbUhgtUuNDeJ0czo015T6Lbui47RuLYZkNyZ1l/+F49vBI0EIimWMT83hMvmD1ieUn+gHQgwmgkbtC4xF/iBkTAzxcb1uIQfW77BAV4XAWDcRXRhEtdgZtgZU943X6n9pnhHJ5BU7hvul/j1shkaSAgot2ryc0dwqZLXcsyHyTSDIxnMO4s5mpRA4gcesWotBJzgVlcYc0oSvgaHHSd3TpPzk9fvWVxkAOgsc0I6Z62wTnJLxw648GbRf5E5Kqb1Cf+s3qIyO6bfU8iZVarjemfWPpOgYSpctLA6ad9Z8UaleG8aBU+BdbpA==
+X-YMail-OSG: .N9KrrgVM1mxM5NcPiRqgH4LIvlbRv.MRg1yZ_HM.ib195bx8L2Ag6h12ViR7fT
+ CxI5BZVDRnlP9.w7Mr8zxl.pipQs5t9ys_ZOX.GWbCrE.LIZFRs5yQeCbBem16RLbA.VkaGsJymd
+ W.Vj9u.s8ACImhafMrXPmn4CiZ1CSA3k1VMEOcSRBmLDTY4B11PF.f6z7jbVN8K2F6Keqj4mfipT
+ LmqhmStPTTVaO6BxjjB6JfY1Z.yb5eyaStUC9h9ZrfbVv9vM9r0DPmcx1XDM1EZWytTpAG2aMKmM
+ xKKhBKn0LnorkOf4TguFCUSz3hId0jhWq6Z5ssWSd10.06Mz_8iCUEQyHTV1.6w2lFCgPj.Z71ae
+ 4nXLnNI0k5RDgntj4yWwZGjmb84GLWs_f6fPlTYkq7zdjw_Gf6q0djSYZvKmeevvB78PilR_Yvu5
+ w0R6A9RnPqr637clqioz46o4I8Ou3M.cM_oGSUyh5D2HmhgNKQcEQaK1BbtBBlL_JrraZY7RXhD6
+ Q5RryeT34p0h8tLXqW9c_JjEThW3VQSFxhfTMkyjGAuwRgIVi72EMQlwyRRVyGnNtSY1jpKd_.zY
+ lP9o_Ll8kKb2VpNnTBwbBJgnaaTdzoXgnJbMfsvAzgSZL6CVq32Ni_IlsktR977FYZEf3.eygXw8
+ Lz.zzc7HeM92c.XS76YMpzKhFQpXNzQQsN1XccYDztPSnIU4H5guIjo1.tjLwXDF3x2xdOAnfrwA
+ y8jrGOuzHCCuLN.sK9yM3vsogxUtOrSSBOYloBZ4NnbkWzuLGyg_nwpYtbngbsU27Zp_z5pP1fgN
+ jR.RT.gJOt4ZiobjulM4rrdiitEYI68r1SLYlCQsL2OA138k4GStVYnxvf2Z.lm7drcmMQEaZmoI
+ cQb9ZsAqMr5P2XCu5i9LNCTlRobaLPGeEj2NhbIeFbKndrFtP9ikRhhputCo5jx5ijsBXWg76rYf
+ h8t1oXhe5eLC_UWWb7jmebx0bfuvNgd76Mm8_cI2WdxuAokKjPxjUQHy3hLkW4i3keB5qj_lLMx4
+ 9E.FNS.2q7C1bQqIrN46bLDRIAMgdbPT6.V6gy74JDGaZSb.Obl70zPUTkBiW_1.826jRJ5g2ZMP
+ wWdCrgcft18ShNbCT.3QUsz0Z6K7N03fvk2DE7Yb7cCpesVrbVFE4gMJHRdJLz16K_jP6Edojkb2
+ 0FRlRZ8s5_7vt0EOtpDymt9Wgpdp5WUaEaCYtM_Qsc6A_Hr3y.hwdVPE3QYT_r2l2UKOtlcgkq9H
+ CHpAbbvBWHVwDDowAHLil8R1JSSAUtDRIUE1d4K7eWQX0x6MAgUbaHlr3dhTFum2GSZHGNSziUqY
+ iKiVyPEV5HfA.TbbLHF7JvqcnycywyWOTQJpKbg4.ki9NIYqw8ZiWg0jklUb4EqtFJ9EuK8L1FMT
+ 2EXC2.B3GanRW9XTUu2XrBVMaffC5fE19_HRLZlS_3xcZz2LipwrjCdYORuJIOSwRS94vF3mhNmE
+ NyNqDWgKwQiludvs3dJuTijXCr6K.QvgnElzwx0u49_rHUQlFoN1sKtOYcj15.r9ck8Fng0mGRJu
+ d3G1CFmXZWcjUoUufbw7Q2yfMigkCSC.xrLfGlLEUOhRPz8Lipb1iirY4sOWcSZsCsj4PujI9nOy
+ t6LYmWlLt5k3pbjdBLf8bWz1qXWSe6KseN3IuYfM4uFGn6WTQRVflk7SwGr5E2DhdfGKg9luXTXt
+ SA52fG94ICUMRTg31U9mJA7_a9UvA3sRN0_.fP0Ignfc7.jbLiWr2kXcoT_eSlj9E1VSylWHFC5L
+ 3eP8yQSZ.REPkFEYyQqbPywUHljljkmdwiVj2K4n8yJiLVSOFb1B997pdMJRb0KB1XwqOqq.nNbR
+ 7XXRPA7kBnuPZSag3SvxysZuvvHToPeXL0LHVgo5tFw9z6zhriSljx3gHFMlZLNmdlW8O1ApvrYM
+ gIpASAcnOjbJ4cx.MxL2xWXxdThb9XiRFrbA9VFKWO739gtSsPW_p_fYq0q1c2NoT6rOSYf9ZA5r
+ fUbLkXpaY0BDs.s6USJV5wYfWdBswmubxxOqVV0Q1FhRydMKcUrNNretaR7oDma.NOnrW6824fUn
+ LiwaP.XqGehzvCrzvhcx7ajmBRYEsro.A0ptjyGvHfbwzyrDzvQjh8VsczvaYqFKrxp0t5uvluSJ
+ QtlpE.XLtp8nrWduYD4rFQ7wBSAXDHo1y76OYNONIHfarf6Nkkmg9K9wPnP3ynwfth_Q9MRdeZy5
+ HY_YlBX_NlHDE3uPmsBYeggddRHncWuKl15X3lOhyxlBLq.zJfekei1n.4fnpB3.pPNiKk6_s43v
+ 0tgFOGU8WhYqYCF2L8Cw-
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 5319af78-d978-419c-9abd-0afcd7a4684d
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.bf2.yahoo.com with HTTP; Thu, 24 Oct 2024 17:57:49 +0000
+Received: by hermes--production-gq1-5dd4b47f46-5kxd4 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 34a0acd965b86539600f15366b5397a9;
+          Thu, 24 Oct 2024 17:57:42 +0000 (UTC)
+Message-ID: <0b4f0cd3-181f-4be6-890c-1d225ac1f161@schaufler-ca.com>
+Date: Thu, 24 Oct 2024 10:57:41 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241024104012.1815022-1-linux@jordanrome.com>
-In-Reply-To: <20241024104012.1815022-1-linux@jordanrome.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Thu, 24 Oct 2024 10:50:38 -0700
-Message-ID: <CAEf4BzY6QxzuhN9MgBb_aWLpBCoxCnWhCoCjuiOZ1T5ORxTXGA@mail.gmail.com>
-Subject: Re: [v1] security: add trace event for cap_capable
-To: Jordan Rome <linux@jordanrome.com>
-Cc: linux-security-module@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	Andrii Nakryiko <andrii@kernel.org>, Kernel Team <kernel-team@fb.com>, Serge Hallyn <serge@hallyn.com>, 
-	Yonghong Song <yonghong.song@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/5] LSM: Replace context+len with lsm_context
+To: Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: paul@paul-moore.com, linux-security-module@vger.kernel.org,
+ jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
+ john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+ stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+ selinux@vger.kernel.org, mic@digikod.net, netdev@vger.kernel.org,
+ audit@vger.kernel.org, netfilter-devel@vger.kernel.org,
+ Todd Kjos <tkjos@google.com>, Casey Schaufler <casey@schaufler-ca.com>
+References: <20241023212158.18718-1-casey@schaufler-ca.com>
+ <20241023212158.18718-3-casey@schaufler-ca.com> <ZxpxZuErvXSLApsf@calendula>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <ZxpxZuErvXSLApsf@calendula>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.22806 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Thu, Oct 24, 2024 at 3:40=E2=80=AFAM Jordan Rome <linux@jordanrome.com> =
-wrote:
+On 10/24/2024 9:10 AM, Pablo Neira Ayuso wrote:
+> Hi Casey,
 >
-> In cases where we want a stable way to observe/trace
-> cap_capable (e.g. protection from inlining and API updates)
-> add a tracepoint that passes:
-> - The credentials used
-> - The user namespace which needs the capability
-> - The user namespace that actually has the capability (if one exists)
-> - The capability to check for
-> - Bitmask of options defined in include/linux/security.h
-> - The return value of the check
->
-> Signed-off-by: Jordan Rome <linux@jordanrome.com>
-> ---
->  MAINTAINERS                       |  1 +
->  include/trace/events/capability.h | 58 +++++++++++++++++++++++++++++++
->  security/commoncap.c              | 21 +++++++----
->  3 files changed, 74 insertions(+), 6 deletions(-)
->  create mode 100644 include/trace/events/capability.h
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index cc40a9d9b8cd..210e9076c858 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -4994,6 +4994,7 @@ M:        Serge Hallyn <serge@hallyn.com>
->  L:     linux-security-module@vger.kernel.org
->  S:     Supported
->  F:     include/linux/capability.h
-> +F:     include/trace/events/capability.h
->  F:     include/uapi/linux/capability.h
->  F:     kernel/capability.c
->  F:     security/commoncap.c
-> diff --git a/include/trace/events/capability.h b/include/trace/events/cap=
-ability.h
-> new file mode 100644
-> index 000000000000..092b8e77063a
-> --- /dev/null
-> +++ b/include/trace/events/capability.h
-> @@ -0,0 +1,58 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#undef TRACE_SYSTEM
-> +#define TRACE_SYSTEM capability
-> +
-> +#if !defined(_TRACE_CAPABILITY_H) || defined(TRACE_HEADER_MULTI_READ)
-> +#define _TRACE_CAPABILITY_H
-> +
-> +#include <linux/cred.h>
-> +#include <linux/tracepoint.h>
-> +#include <linux/user_namespace.h>
-> +
-> +/**
-> + * capable - called after it's determined if a task has a particular
-> + * effective capability
-> + *
-> + * @cred: The credentials used
-> + * @targ_ns:  The user namespace which needs the capability
-> + * @capable_ns:  The user namespace that actually has the capability
-> + *               if ret is 0 otherwise this will be NULL
-> + * @cap: The capability to check for
-> + * @opts: Bitmask of options defined in include/linux/security.h
-> + * @ret: The return value of the check: 0 if it does, -ve if it does not
-> + *
-> + * Allows to trace calls to cap_capable in commoncap.c
-> + */
-> +TRACE_EVENT(capable,
-> +
-> +       TP_PROTO(const struct cred *cred, struct user_namespace *targ_ns,
-> +               struct user_namespace *capable_ns, int cap, unsigned int =
-opts, int ret),
-> +
-> +       TP_ARGS(cred, targ_ns, capable_ns, cap, opts, ret),
-> +
-> +       TP_STRUCT__entry(
-> +               __field(const struct cred *, cred)
-> +               __field(struct user_namespace *, targ_ns)
-> +               __field(struct user_namespace *, capable_ns)
-> +               __field(int, cap)
-> +               __field(unsigned int, opts)
-> +               __field(int, ret)
-> +       ),
-> +
-> +       TP_fast_assign(
-> +               __entry->cred       =3D cred;
-> +               __entry->targ_ns    =3D targ_ns;
-> +               __entry->capable_ns =3D capable_ns;
-> +               __entry->cap        =3D cap;
-> +               __entry->opts       =3D opts;
-> +               __entry->ret        =3D ret;
-> +       ),
-> +
-> +       TP_printk("cap %d, opts %u, ret %d",
-> +               __entry->cap, __entry->opts, __entry->ret)
-> +);
-> +
-> +#endif /* _TRACE_CAPABILITY_H */
-> +
-> +/* This part must be outside protection */
-> +#include <trace/define_trace.h>
-> diff --git a/security/commoncap.c b/security/commoncap.c
-> index 162d96b3a676..675d40fbaa77 100644
-> --- a/security/commoncap.c
-> +++ b/security/commoncap.c
-> @@ -27,6 +27,9 @@
->  #include <linux/mnt_idmapping.h>
->  #include <uapi/linux/lsm.h>
->
-> +#define CREATE_TRACE_POINTS
-> +#include <trace/events/capability.h>
-> +
->  /*
->   * If a non-root user executes a setuid-root binary in
->   * !secure(SECURE_NOROOT) mode, then we raise capabilities.
-> @@ -68,6 +71,7 @@ int cap_capable(const struct cred *cred, struct user_na=
-mespace *targ_ns,
->                 int cap, unsigned int opts)
->  {
->         struct user_namespace *ns =3D targ_ns;
-> +       int ret =3D 0;
->
->         /* See if cred has the capability in the target user namespace
->          * by examining the target user namespace and all of the target
-> @@ -75,22 +79,26 @@ int cap_capable(const struct cred *cred, struct user_=
-namespace *targ_ns,
->          */
->         for (;;) {
->                 /* Do we have the necessary capabilities? */
-> -               if (ns =3D=3D cred->user_ns)
-> -                       return cap_raised(cred->cap_effective, cap) ? 0 :=
- -EPERM;
-> +               if (ns =3D=3D cred->user_ns) {
-> +                       ret =3D cap_raised(cred->cap_effective, cap) ? 0 =
-: -EPERM;
-> +                       break;
-> +               }
->
->                 /*
->                  * If we're already at a lower level than we're looking f=
-or,
->                  * we're done searching.
->                  */
-> -               if (ns->level <=3D cred->user_ns->level)
-> -                       return -EPERM;
-> +               if (ns->level <=3D cred->user_ns->level) {
+> This is a review of the netfilter chunk.
 
-I'd do
+Thank you.
 
-ns =3D NULL;
-
-here
-
-> +                       ret =3D -EPERM;
-> +                       break;
-> +               }
+> On Wed, Oct 23, 2024 at 02:21:55PM -0700, Casey Schaufler wrote:
+>> diff --git a/net/netfilter/nf_conntrack_netlink.c b/net/netfilter/nf_conntrack_netlink.c
+>> index 86a57a3afdd6..dd74d4c67c69 100644
+>> --- a/net/netfilter/nf_conntrack_netlink.c
+>> +++ b/net/netfilter/nf_conntrack_netlink.c
+>> @@ -360,8 +360,8 @@ static int ctnetlink_dump_secctx(struct sk_buff *skb, const struct nf_conn *ct)
+>>  	struct lsm_context ctx;
+>>  	int ret;
+>>  
+>> -	ret = security_secid_to_secctx(ct->secmark, &ctx.context, &ctx.len);
+>> -	if (ret)
+>> +	ret = security_secid_to_secctx(ct->secmark, &ctx);
+>> +	if (ret < 0)
+>>  		return 0;
+>>  
+>>  	ret = -1;
+>> @@ -665,8 +665,8 @@ static inline int ctnetlink_secctx_size(const struct nf_conn *ct)
+>>  #ifdef CONFIG_NF_CONNTRACK_SECMARK
+>>  	int len, ret;
+>>  
+>> -	ret = security_secid_to_secctx(ct->secmark, NULL, &len);
+>> -	if (ret)
+>> +	ret = security_secid_to_secctx(ct->secmark, NULL);
+> This breaks here.
 >
->                 /*
->                  * The owner of the user namespace in the parent of the
->                  * user namespace has all caps.
->                  */
->                 if ((ns->parent =3D=3D cred->user_ns) && uid_eq(ns->owner=
-, cred->euid))
-
-and this needs `ns =3D ns->parent;` (because that's the namespace that
-grants capability, is that right?)
-
-> -                       return 0;
-> +                       break;
+> len is really used, this should be instead:
 >
->                 /*
->                  * If you have a capability in a parent user ns, then you=
- have
-> @@ -99,7 +107,8 @@ int cap_capable(const struct cred *cred, struct user_n=
-amespace *targ_ns,
->                 ns =3D ns->parent;
->         }
+> 	ret = security_secid_to_secctx(ct->secmark, &ctx);
 >
-> -       /* We never get here */
-> +       trace_capable(cred, targ_ns, ret =3D=3D 0 ? ns : NULL, cap, opts,=
- ret);
+> [...]
+>         return nla_total_size(0) /* CTA_SECCTX */
+>                + nla_total_size(sizeof(char) * ctx.len); /* CTA_SECCTX_NAME */
+> #else
+>         return 0;
+> #endif
+> }
 
-with the above changes just pass ns directly, no need for `ret =3D=3D 0`
-check (and it seems it's wrong for one of the case due to ns->parent
-use)
+I'll fix that.
 
-> +       return ret;
->  }
+>> +	if (ret < 0)
+>>  		return 0;
+>>  
+>>  	return nla_total_size(0) /* CTA_SECCTX */
+>> diff --git a/net/netfilter/nf_conntrack_standalone.c b/net/netfilter/nf_conntrack_standalone.c
+>> index 5f7fd23b7afe..502cf10aab41 100644
+>> --- a/net/netfilter/nf_conntrack_standalone.c
+>> +++ b/net/netfilter/nf_conntrack_standalone.c
+>> @@ -175,8 +175,8 @@ static void ct_show_secctx(struct seq_file *s, const struct nf_conn *ct)
+>>  	struct lsm_context ctx;
+>>  	int ret;
+>>  
+>> -	ret = security_secid_to_secctx(ct->secmark, &ctx.context, &ctx.len);
+>> -	if (ret)
+>> +	ret = security_secid_to_secctx(ct->secmark, &ctx);
+>> +	if (ret < 0)
+>>  		return;
+>>  
+>>  	seq_printf(s, "secctx=%s ", ctx.context);
+>> diff --git a/net/netfilter/nfnetlink_queue.c b/net/netfilter/nfnetlink_queue.c
+>> index 37757cd77cf1..5110f29b2f40 100644
+>> --- a/net/netfilter/nfnetlink_queue.c
+>> +++ b/net/netfilter/nfnetlink_queue.c
+>> @@ -470,18 +470,18 @@ static int nfqnl_put_sk_classid(struct sk_buff *skb, struct sock *sk)
+>>  	return 0;
+>>  }
+>>  
+>> -static u32 nfqnl_get_sk_secctx(struct sk_buff *skb, char **secdata)
+>> +static u32 nfqnl_get_sk_secctx(struct sk_buff *skb, struct lsm_context *ctx)
+>>  {
+>>  	u32 seclen = 0;
+>>  #if IS_ENABLED(CONFIG_NETWORK_SECMARK)
+>> +
+> remove unneeded line.
+
+Will do.
+
+>>  	if (!skb || !sk_fullsock(skb->sk))
+>>  		return 0;
+>>  
+>>  	read_lock_bh(&skb->sk->sk_callback_lock);
+>>  
+>>  	if (skb->secmark)
+>> -		security_secid_to_secctx(skb->secmark, secdata, &seclen);
+>> -
+>> +		seclen = security_secid_to_secctx(skb->secmark, ctx);
+>>  	read_unlock_bh(&skb->sk->sk_callback_lock);
+>>  #endif
+>>  	return seclen;
+>> @@ -567,8 +567,7 @@ nfqnl_build_packet_message(struct net *net, struct nfqnl_instance *queue,
+>>  	enum ip_conntrack_info ctinfo = 0;
+>>  	const struct nfnl_ct_hook *nfnl_ct;
+>>  	bool csum_verify;
+>> -	struct lsm_context scaff; /* scaffolding */
+>> -	char *secdata = NULL;
+>> +	struct lsm_context ctx;
+> Help us make this get closer to revert xmas tree:
 >
->  /**
-> --
-> 2.43.5
->
+>   	enum ip_conntrack_info ctinfo = 0;
+>   	const struct nfnl_ct_hook *nfnl_ct;
+> +	struct lsm_context ctx;
+>   	bool csum_verify;
+> -	struct lsm_context scaff; /* scaffolding */
+> -	char *secdata = NULL;
+
+Will do.
+
+>>  	bool csum_verify;
+>> -	struct lsm_context scaff; /* scaffolding */
+>> -	char *secdata = NULL;
+>>  	u32 seclen = 0;
+>>  	ktime_t tstamp;
+>>  
+>> @@ -643,8 +642,8 @@ nfqnl_build_packet_message(struct net *net, struct nfqnl_instance *queue,
+>>  	}
+>>  
+>>  	if ((queue->flags & NFQA_CFG_F_SECCTX) && entskb->sk) {
+>> -		seclen = nfqnl_get_sk_secctx(entskb, &secdata);
+>> -		if (seclen)
+>> +		seclen = nfqnl_get_sk_secctx(entskb, &ctx);
+>> +		if (seclen >= 0)
+>>  			size += nla_total_size(seclen);
+>>  	}
+>>  
+>> @@ -783,7 +782,7 @@ nfqnl_build_packet_message(struct net *net, struct nfqnl_instance *queue,
+>>  	if (nfqnl_put_sk_classid(skb, entskb->sk) < 0)
+>>  		goto nla_put_failure;
+>>  
+>> -	if (seclen && nla_put(skb, NFQA_SECCTX, seclen, secdata))
+>> +	if (seclen && nla_put(skb, NFQA_SECCTX, ctx.len, ctx.context))
+>>  		goto nla_put_failure;
+>>  
+>>  	if (ct && nfnl_ct->build(skb, ct, ctinfo, NFQA_CT, NFQA_CT_INFO) < 0)
+>> @@ -811,10 +810,8 @@ nfqnl_build_packet_message(struct net *net, struct nfqnl_instance *queue,
+>>  	}
+>>  
+>>  	nlh->nlmsg_len = skb->len;
+>> -	if (seclen) {
+>> -		lsmcontext_init(&scaff, secdata, seclen, 0);
+>> -		security_release_secctx(&scaff);
+>> -	}
+>> +	if (seclen >= 0)
+>> +		security_release_secctx(&ctx);
+>>  	return skb;
+>>  
+>>  nla_put_failure:
+>> @@ -822,10 +819,8 @@ nfqnl_build_packet_message(struct net *net, struct nfqnl_instance *queue,
+>>  	kfree_skb(skb);
+>>  	net_err_ratelimited("nf_queue: error creating packet message\n");
+>>  nlmsg_failure:
+>> -	if (seclen) {
+>> -		lsmcontext_init(&scaff, secdata, seclen, 0);
+>> -		security_release_secctx(&scaff);
+>> -	}
+>> +	if (seclen >= 0)
+>> +		security_release_secctx(&ctx);
+>>  	return NULL;
+>>  }
+>>  
