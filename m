@@ -1,206 +1,117 @@
-Received: from ganesha.gnumonks.org (ganesha.gnumonks.org [213.95.27.120])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B73931B0F26;
-	Thu, 24 Oct 2024 16:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.27.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D88F1139597
+	for <linux-security-module@vger.kernel.org>; Thu, 24 Oct 2024 16:30:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729786234; cv=none; b=AD5TU1poxsq6nDSu6eDWoq39P5SMkeg0UDZdVgn5ENGUagXZUsRKpo3p8X8eTa6GFeX2VXqkkm7KsaztsTVYCZWRB9YwEmoRho68dKU2aWYeHyVVt78EgR6AsRDuWKuQBiHUdaaH6cXb3ux+c4B53oEEY8qKcemP99Ews7CKszU=
+	t=1729787455; cv=none; b=RyxIE/XqB7VuZocsMG7CbvDQPpKImjts2wqncDrtlykai69XiHgIJJi1B3D7hwy3ZUotExiq3QZDT/LZy8LnpbCi/rnF+JFAZmHLciIeGhSujj7vihf+jbabBaGYr63jYCUoAputd5AGsJ8YQguxGVC9DHtmElQR23L7YfMODsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729786234; c=relaxed/simple;
-	bh=OpjoVF0VuGF5sKCt7TDKYW928JWMZOf7mNiX1LT8/8Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jKU/zZG7BSxEXz+MCHQMOSra2Kgf0VeIkwfEtSqcwCvt0mzvvcz9rfg7kAFKaY9dZ9vt8tDBRnI+wx1FNW2vXUxG830jJSG1KWYkqsHt5UlrAjRYlajrSC59iqhjV4REvB9Aq+65dhKjTH1qvIQK9UMrc3MbWg9wKFKqLxJiBEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org; spf=pass smtp.mailfrom=gnumonks.org; arc=none smtp.client-ip=213.95.27.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=netfilter.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnumonks.org
-Received: from [78.30.37.63] (port=60766 helo=gnumonks.org)
-	by ganesha.gnumonks.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <pablo@gnumonks.org>)
-	id 1t40Pf-004H0p-NK; Thu, 24 Oct 2024 18:10:17 +0200
-Date: Thu, 24 Oct 2024 18:10:14 +0200
-From: Pablo Neira Ayuso <pablo@netfilter.org>
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: paul@paul-moore.com, linux-security-module@vger.kernel.org,
-	jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
-	john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-	stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
-	selinux@vger.kernel.org, mic@digikod.net, netdev@vger.kernel.org,
-	audit@vger.kernel.org, netfilter-devel@vger.kernel.org,
-	Todd Kjos <tkjos@google.com>
-Subject: Re: [PATCH v3 2/5] LSM: Replace context+len with lsm_context
-Message-ID: <ZxpxZuErvXSLApsf@calendula>
-References: <20241023212158.18718-1-casey@schaufler-ca.com>
- <20241023212158.18718-3-casey@schaufler-ca.com>
+	s=arc-20240116; t=1729787455; c=relaxed/simple;
+	bh=7tJRCi0ii2GMhIt1l0n/AkjsLxR0kD0RiGVRd2LjTWM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MkRj6kjILhKdyltoov3TbLpdGW5fnIVYJzbU0B+n5JrHL7rGaHs0CjHXrnRxn3J42Or7xNZ8W1XSsqspx+JG7kL9vGZ7zzrWhXPAo5NcaleVa2zswEVCTDXsZX1yjhVCWTddYey/NQECwd2IBrElGslwKWgNVAOvBqzJI4zTOIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=fm18Vev7; arc=none smtp.client-ip=209.85.219.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="fm18Vev7"
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e290e857d56so1267920276.1
+        for <linux-security-module@vger.kernel.org>; Thu, 24 Oct 2024 09:30:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1729787453; x=1730392253; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3TSL/B9XdjEyCV+/degN5rGlymEtotZApdFGlr1YP/w=;
+        b=fm18Vev7V5KpYbQHVOz5slEG/kDBbO2cis8AHQzk0D9BpxheHq6n3h9SShaRMC+N3E
+         MJwFcWUtvdxps4RrTIBo8ZqNs/bmGD0Qb4oRfgWE4qtDse8DL+ovd/pcjtRUGkNmAeE4
+         //DzwvxggdwlcmA3BfCBbZgYiImD3ILKQ/mxGHVrJlJlfF5uu1dWB2oWMG7AtRxYFxGT
+         ktf5Oi49U+hBUTKC717xykEOSQ6ZI+kTcGod2SThbFaDQVA+bKlDtaCzVLIIUZWdbDUh
+         nKoZe6OT/9xp2HgO9odkMBfmM9sOm4sSM9OheNRX11BqSvqY/QnzW5XCJHt7q6Yl27WK
+         s7oA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729787453; x=1730392253;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3TSL/B9XdjEyCV+/degN5rGlymEtotZApdFGlr1YP/w=;
+        b=DiMextx6a+q2bHa7dZGuUluW3oq5W053J9wbRshIm1l9sMkpz1TDSGo/rkwAZAQjto
+         fnxOXXWAKN/m9GNMeZgTFMmnUG32NLTLUCYiHqUbibRkb9BnHd5QA9erPpR99I7Wy3iK
+         xsAivylkwpyNwxxkFfhZ0bB0LDKzRAYYZQn6TRrEbf/fLkBsT+IfyCInGzJlwF6Cma1Z
+         RvNrNYvcFF+c5JoIIfOQ82lcVZWzE4OMuqQYTlbzAG6EMCvwqyNOtGwEpqmTcBSa9lAo
+         0blb7Ml5PHiIk5iUYEKtuiTKrji6gdsmELhq6QxgKPlTEdrcgBE0RoFDg0MSzwbQSaR+
+         q47A==
+X-Forwarded-Encrypted: i=1; AJvYcCXuZ+EsOgYJf9kYUYYv3J+bY0ol3B5SYm1XSdM6vyXdzt9U6Bl7hwN7OtfVpEMmcMXDDalFB8yFyZCwuXk9/urim3uax+A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhprdeVj3oXbCaeYUd+3VMv1bvYDvN9koO5KioV2JwGzQ7Tju9
+	IGgXb1zwqkldmGArXt/Xj1AZoSjEoi4mYX0YqvCygjCUolz7Muc6VKgK489Pd8/ANdatGnvCzhV
+	estaZ+PLmxHq7Juw0TNEHEZpUOo7SQX+aWeC0
+X-Google-Smtp-Source: AGHT+IGJa9gs/RjChDDnTmllQ6BKnXc33rjqKLafOqz0uPltOOw4BhIDujUPxTaOIv/aaM7/OCtBzhWs6O0xxcAScHI=
+X-Received: by 2002:a05:6902:228c:b0:e29:41af:e1a with SMTP id
+ 3f1490d57ef6-e2f22f1f219mr2632147276.4.1729787452339; Thu, 24 Oct 2024
+ 09:30:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241023212158.18718-3-casey@schaufler-ca.com>
-X-Spam-Score: -1.6 (-)
+References: <20241022161009.982584-1-mic@digikod.net> <20241022161009.982584-3-mic@digikod.net>
+ <CAHC9VhRZ6Ug7ACLDgAiqQC3LPRPNM=Q5NX8TYxo-fcPA5XBEoQ@mail.gmail.com>
+In-Reply-To: <CAHC9VhRZ6Ug7ACLDgAiqQC3LPRPNM=Q5NX8TYxo-fcPA5XBEoQ@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 24 Oct 2024 12:30:41 -0400
+Message-ID: <CAHC9VhSPJ9j0eFnHg-b3wh+Baxv9F6GfK0rG2TAtadxWgCKszQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 02/14] lsm: Add audit_log_lsm_data() helper
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: Eric Paris <eparis@redhat.com>, =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	"Serge E . Hallyn" <serge@hallyn.com>, Ben Scarlato <akhna@google.com>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Charles Zaffery <czaffery@roblox.com>, 
+	James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Jorge Lucangeli Obes <jorgelo@google.com>, Kees Cook <kees@kernel.org>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
+	Praveen K Paladugu <prapal@linux.microsoft.com>, Robert Salvet <robert.salvet@roblox.com>, 
+	Shervin Oloumi <enlightened@google.com>, Song Liu <song@kernel.org>, 
+	Tahera Fahimi <fahimitahera@gmail.com>, audit@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Casey,
+On Tue, Oct 22, 2024 at 8:07=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+ote:
+>
+> On Tue, Oct 22, 2024 at 12:10=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@di=
+gikod.net> wrote:
+> >
+> > Extract code from dump_common_audit_data() into the audit_log_lsm_data(=
+)
+> > helper. This helps reuse common LSM audit data while not abusing
+> > AUDIT_AVC records because of the common_lsm_audit() helper.
+> >
+> > Cc: Casey Schaufler <casey@schaufler-ca.com>
+> > Cc: James Morris <jmorris@namei.org>
+> > Cc: Paul Moore <paul@paul-moore.com>
+> > Cc: Serge E. Hallyn <serge@hallyn.com>
+> > Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+> > Link: https://lore.kernel.org/r/20241022161009.982584-3-mic@digikod.net
+> > ---
+> >
+> > Changes since v1:
+> > * Fix commit message (spotted by Paul).
+> > * Constify dump_common_audit_data()'s and audit_log_lsm_data()'s "a"
+> >   argument.
+> > * Fix build without CONFIG_NET: see previous patch.
+> > ---
+> >  include/linux/lsm_audit.h |  8 ++++++++
+> >  security/lsm_audit.c      | 27 ++++++++++++++++++---------
+> >  2 files changed, 26 insertions(+), 9 deletions(-)
+>
+> While not a fix like 1/14, reducing AUDIT_AVC reuse is a reasonable
+> goal.  Merged into lsm/dev, thanks!
 
-This is a review of the netfilter chunk.
+I'm also going to have to remove this patch from lsm/dev due to
+problems uncovered by the kernel test robot.
 
-On Wed, Oct 23, 2024 at 02:21:55PM -0700, Casey Schaufler wrote:
-> diff --git a/net/netfilter/nf_conntrack_netlink.c b/net/netfilter/nf_conntrack_netlink.c
-> index 86a57a3afdd6..dd74d4c67c69 100644
-> --- a/net/netfilter/nf_conntrack_netlink.c
-> +++ b/net/netfilter/nf_conntrack_netlink.c
-> @@ -360,8 +360,8 @@ static int ctnetlink_dump_secctx(struct sk_buff *skb, const struct nf_conn *ct)
->  	struct lsm_context ctx;
->  	int ret;
->  
-> -	ret = security_secid_to_secctx(ct->secmark, &ctx.context, &ctx.len);
-> -	if (ret)
-> +	ret = security_secid_to_secctx(ct->secmark, &ctx);
-> +	if (ret < 0)
->  		return 0;
->  
->  	ret = -1;
-> @@ -665,8 +665,8 @@ static inline int ctnetlink_secctx_size(const struct nf_conn *ct)
->  #ifdef CONFIG_NF_CONNTRACK_SECMARK
->  	int len, ret;
->  
-> -	ret = security_secid_to_secctx(ct->secmark, NULL, &len);
-> -	if (ret)
-> +	ret = security_secid_to_secctx(ct->secmark, NULL);
-
-This breaks here.
-
-len is really used, this should be instead:
-
-	ret = security_secid_to_secctx(ct->secmark, &ctx);
-
-[...]
-        return nla_total_size(0) /* CTA_SECCTX */
-               + nla_total_size(sizeof(char) * ctx.len); /* CTA_SECCTX_NAME */
-#else
-        return 0;
-#endif
-}
-
-> +	if (ret < 0)
->  		return 0;
->  
->  	return nla_total_size(0) /* CTA_SECCTX */
-> diff --git a/net/netfilter/nf_conntrack_standalone.c b/net/netfilter/nf_conntrack_standalone.c
-> index 5f7fd23b7afe..502cf10aab41 100644
-> --- a/net/netfilter/nf_conntrack_standalone.c
-> +++ b/net/netfilter/nf_conntrack_standalone.c
-> @@ -175,8 +175,8 @@ static void ct_show_secctx(struct seq_file *s, const struct nf_conn *ct)
->  	struct lsm_context ctx;
->  	int ret;
->  
-> -	ret = security_secid_to_secctx(ct->secmark, &ctx.context, &ctx.len);
-> -	if (ret)
-> +	ret = security_secid_to_secctx(ct->secmark, &ctx);
-> +	if (ret < 0)
->  		return;
->  
->  	seq_printf(s, "secctx=%s ", ctx.context);
-> diff --git a/net/netfilter/nfnetlink_queue.c b/net/netfilter/nfnetlink_queue.c
-> index 37757cd77cf1..5110f29b2f40 100644
-> --- a/net/netfilter/nfnetlink_queue.c
-> +++ b/net/netfilter/nfnetlink_queue.c
-> @@ -470,18 +470,18 @@ static int nfqnl_put_sk_classid(struct sk_buff *skb, struct sock *sk)
->  	return 0;
->  }
->  
-> -static u32 nfqnl_get_sk_secctx(struct sk_buff *skb, char **secdata)
-> +static u32 nfqnl_get_sk_secctx(struct sk_buff *skb, struct lsm_context *ctx)
->  {
->  	u32 seclen = 0;
->  #if IS_ENABLED(CONFIG_NETWORK_SECMARK)
-> +
-
-remove unneeded line.
-
->  	if (!skb || !sk_fullsock(skb->sk))
->  		return 0;
->  
->  	read_lock_bh(&skb->sk->sk_callback_lock);
->  
->  	if (skb->secmark)
-> -		security_secid_to_secctx(skb->secmark, secdata, &seclen);
-> -
-> +		seclen = security_secid_to_secctx(skb->secmark, ctx);
->  	read_unlock_bh(&skb->sk->sk_callback_lock);
->  #endif
->  	return seclen;
-> @@ -567,8 +567,7 @@ nfqnl_build_packet_message(struct net *net, struct nfqnl_instance *queue,
->  	enum ip_conntrack_info ctinfo = 0;
->  	const struct nfnl_ct_hook *nfnl_ct;
->  	bool csum_verify;
-> -	struct lsm_context scaff; /* scaffolding */
-> -	char *secdata = NULL;
-> +	struct lsm_context ctx;
-
-Help us make this get closer to revert xmas tree:
-
-  	enum ip_conntrack_info ctinfo = 0;
-  	const struct nfnl_ct_hook *nfnl_ct;
-+	struct lsm_context ctx;
-  	bool csum_verify;
--	struct lsm_context scaff; /* scaffolding */
--	char *secdata = NULL;
-
->  	bool csum_verify;
-> -	struct lsm_context scaff; /* scaffolding */
-> -	char *secdata = NULL;
-
->  	u32 seclen = 0;
->  	ktime_t tstamp;
->  
-> @@ -643,8 +642,8 @@ nfqnl_build_packet_message(struct net *net, struct nfqnl_instance *queue,
->  	}
->  
->  	if ((queue->flags & NFQA_CFG_F_SECCTX) && entskb->sk) {
-> -		seclen = nfqnl_get_sk_secctx(entskb, &secdata);
-> -		if (seclen)
-> +		seclen = nfqnl_get_sk_secctx(entskb, &ctx);
-> +		if (seclen >= 0)
->  			size += nla_total_size(seclen);
->  	}
->  
-> @@ -783,7 +782,7 @@ nfqnl_build_packet_message(struct net *net, struct nfqnl_instance *queue,
->  	if (nfqnl_put_sk_classid(skb, entskb->sk) < 0)
->  		goto nla_put_failure;
->  
-> -	if (seclen && nla_put(skb, NFQA_SECCTX, seclen, secdata))
-> +	if (seclen && nla_put(skb, NFQA_SECCTX, ctx.len, ctx.context))
->  		goto nla_put_failure;
->  
->  	if (ct && nfnl_ct->build(skb, ct, ctinfo, NFQA_CT, NFQA_CT_INFO) < 0)
-> @@ -811,10 +810,8 @@ nfqnl_build_packet_message(struct net *net, struct nfqnl_instance *queue,
->  	}
->  
->  	nlh->nlmsg_len = skb->len;
-> -	if (seclen) {
-> -		lsmcontext_init(&scaff, secdata, seclen, 0);
-> -		security_release_secctx(&scaff);
-> -	}
-> +	if (seclen >= 0)
-> +		security_release_secctx(&ctx);
->  	return skb;
->  
->  nla_put_failure:
-> @@ -822,10 +819,8 @@ nfqnl_build_packet_message(struct net *net, struct nfqnl_instance *queue,
->  	kfree_skb(skb);
->  	net_err_ratelimited("nf_queue: error creating packet message\n");
->  nlmsg_failure:
-> -	if (seclen) {
-> -		lsmcontext_init(&scaff, secdata, seclen, 0);
-> -		security_release_secctx(&scaff);
-> -	}
-> +	if (seclen >= 0)
-> +		security_release_secctx(&ctx);
->  	return NULL;
->  }
->  
+--=20
+paul-moore.com
