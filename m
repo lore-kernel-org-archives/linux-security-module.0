@@ -1,117 +1,119 @@
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D88F1139597
-	for <linux-security-module@vger.kernel.org>; Thu, 24 Oct 2024 16:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A5911F585D;
+	Thu, 24 Oct 2024 17:49:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729787455; cv=none; b=RyxIE/XqB7VuZocsMG7CbvDQPpKImjts2wqncDrtlykai69XiHgIJJi1B3D7hwy3ZUotExiq3QZDT/LZy8LnpbCi/rnF+JFAZmHLciIeGhSujj7vihf+jbabBaGYr63jYCUoAputd5AGsJ8YQguxGVC9DHtmElQR23L7YfMODsU=
+	t=1729792150; cv=none; b=J/rgAt2PKptV/p8tKWvDXD+LyN9myws2Pu2cXG00IN2J4CS0uLbqYXEoWdM5Omv8b48PTTFZTVmEibdrG3DZrmNRD4e5YYlyEPLqQuoynHIG8DMtzvPxikrrb5I0YVC+i/7RZfRFcdTM7iooJIupK0eUwbUkwgrg8Zoek6YVV00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729787455; c=relaxed/simple;
-	bh=7tJRCi0ii2GMhIt1l0n/AkjsLxR0kD0RiGVRd2LjTWM=;
+	s=arc-20240116; t=1729792150; c=relaxed/simple;
+	bh=o33mdDcr08NnMI6+EuH+0VIB/xt6TEqaE50XcDUztqs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MkRj6kjILhKdyltoov3TbLpdGW5fnIVYJzbU0B+n5JrHL7rGaHs0CjHXrnRxn3J42Or7xNZ8W1XSsqspx+JG7kL9vGZ7zzrWhXPAo5NcaleVa2zswEVCTDXsZX1yjhVCWTddYey/NQECwd2IBrElGslwKWgNVAOvBqzJI4zTOIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=fm18Vev7; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	 To:Cc:Content-Type; b=Fr8f/mbYdPZSWOW2Sqa/DCe4pAb9g8rJykGoOPFgMm9jTL5uTa1Iui71Rst6b239TSLbGPtr+I1P8xBbc/UAQu0Kc8g2y66mToTfgimJHnR66vY/yOyxYQMWNYI6B090/4NtMdWWpiIDU93RTWqMZ/8fZup9w83pbOsFg52sO+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WkqyQzka; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="fm18Vev7"
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e290e857d56so1267920276.1
-        for <linux-security-module@vger.kernel.org>; Thu, 24 Oct 2024 09:30:53 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WkqyQzka"
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7ea76a12c32so790798a12.1;
+        Thu, 24 Oct 2024 10:49:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1729787453; x=1730392253; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1729792147; x=1730396947; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3TSL/B9XdjEyCV+/degN5rGlymEtotZApdFGlr1YP/w=;
-        b=fm18Vev7V5KpYbQHVOz5slEG/kDBbO2cis8AHQzk0D9BpxheHq6n3h9SShaRMC+N3E
-         MJwFcWUtvdxps4RrTIBo8ZqNs/bmGD0Qb4oRfgWE4qtDse8DL+ovd/pcjtRUGkNmAeE4
-         //DzwvxggdwlcmA3BfCBbZgYiImD3ILKQ/mxGHVrJlJlfF5uu1dWB2oWMG7AtRxYFxGT
-         ktf5Oi49U+hBUTKC717xykEOSQ6ZI+kTcGod2SThbFaDQVA+bKlDtaCzVLIIUZWdbDUh
-         nKoZe6OT/9xp2HgO9odkMBfmM9sOm4sSM9OheNRX11BqSvqY/QnzW5XCJHt7q6Yl27WK
-         s7oA==
+        bh=ikFyTCNo4lCkc/He2G82/uKVruxJK5os7sSXWZwAzOQ=;
+        b=WkqyQzkaG8NrCzqXtK0qQShsiELgMbAyFLLO39Cy8ELDwKgxJ3V/9qOhF2xcpuO8V3
+         y2q/PFdPNR5tesFq82z17CYnCar07aQSISKoYVzsNtoIeJWu85b5zEYCrd80YXXa8INa
+         qdPASdBuo6t1Mr9+i2cZwpO+Bag3XxqIx5zruo2Js6hXm2CVof0ZFX8BTP/HJpy3QdVn
+         Mi8kdEtTlZ/QTJ7L4rcMVQzUlaWQ41pFfsnz4iHZBDPjaREhAxZC+EHm6iSfKUaginGQ
+         dCHgLdGJ3jvWA59QupJ/p4ZycGSpTyXwvrqxRguxUcFgu6gNUlyHK3YvwgkcPGWux4j7
+         PSBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729787453; x=1730392253;
+        d=1e100.net; s=20230601; t=1729792147; x=1730396947;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3TSL/B9XdjEyCV+/degN5rGlymEtotZApdFGlr1YP/w=;
-        b=DiMextx6a+q2bHa7dZGuUluW3oq5W053J9wbRshIm1l9sMkpz1TDSGo/rkwAZAQjto
-         fnxOXXWAKN/m9GNMeZgTFMmnUG32NLTLUCYiHqUbibRkb9BnHd5QA9erPpR99I7Wy3iK
-         xsAivylkwpyNwxxkFfhZ0bB0LDKzRAYYZQn6TRrEbf/fLkBsT+IfyCInGzJlwF6Cma1Z
-         RvNrNYvcFF+c5JoIIfOQ82lcVZWzE4OMuqQYTlbzAG6EMCvwqyNOtGwEpqmTcBSa9lAo
-         0blb7Ml5PHiIk5iUYEKtuiTKrji6gdsmELhq6QxgKPlTEdrcgBE0RoFDg0MSzwbQSaR+
-         q47A==
-X-Forwarded-Encrypted: i=1; AJvYcCXuZ+EsOgYJf9kYUYYv3J+bY0ol3B5SYm1XSdM6vyXdzt9U6Bl7hwN7OtfVpEMmcMXDDalFB8yFyZCwuXk9/urim3uax+A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhprdeVj3oXbCaeYUd+3VMv1bvYDvN9koO5KioV2JwGzQ7Tju9
-	IGgXb1zwqkldmGArXt/Xj1AZoSjEoi4mYX0YqvCygjCUolz7Muc6VKgK489Pd8/ANdatGnvCzhV
-	estaZ+PLmxHq7Juw0TNEHEZpUOo7SQX+aWeC0
-X-Google-Smtp-Source: AGHT+IGJa9gs/RjChDDnTmllQ6BKnXc33rjqKLafOqz0uPltOOw4BhIDujUPxTaOIv/aaM7/OCtBzhWs6O0xxcAScHI=
-X-Received: by 2002:a05:6902:228c:b0:e29:41af:e1a with SMTP id
- 3f1490d57ef6-e2f22f1f219mr2632147276.4.1729787452339; Thu, 24 Oct 2024
- 09:30:52 -0700 (PDT)
+        bh=ikFyTCNo4lCkc/He2G82/uKVruxJK5os7sSXWZwAzOQ=;
+        b=Wfq3Q+dPaOG7QqKAwI/nIMHpqTYZGe6Nn5XfD7kZcsKV8iwUNpcfilYgQzcCkk9Sdl
+         YDYowhwgNiiERU/qaZd4tieXI/zjwF5NUW63lrO9YFBtIuXw50LHtCdYt7wafIR1IgKD
+         O9RpCDQqa3fuyaTek3oUKOhwekDAMKMdAESkhx5P2j9g/U1guGwfgA6zOPdGgkhH6hh4
+         biALmbwZhpClQP4x6Ycwk5LJFlIypjMoWdjLiTnITt5A1jKwyFuWokazhu8AIJvMl9vg
+         9yrGlVepTGzqSzx8K8+qPND5p479cCe7TaffJuyyporj1yTSumrmjPDizG568E3/fHo5
+         3ykQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVHuFw/XyhhUQQfG5FZhyspr0uaaXXPxkgwrRFAFXbQQvCKQjw05aNuvuhHXswiDc3k/7K8mL5KDQZxtCiLxYqMcRdupY0=@vger.kernel.org, AJvYcCXABUknxHrQUuhEf1Xbdjr03QSZ70lOb1vEvHELsn4wQBtDptJhITjaH6WiEV/njgdRh3srPE9K9eDUgxgeLjY8zOkk@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmoYVxoafYIeO5LTZgPr23YZvZHpTZBj6QXvZLdj1BEpsd+KS5
+	iXst+O72rAH9BjrdVJ8C45pQOUog2rAVSRl3bQa57CPcZlR7AqtxvDJTU+izS3Ltxs2PPATuN5w
+	sCVWpoISEeI2Z1Cuwh/Q7XB6gD1c=
+X-Google-Smtp-Source: AGHT+IEsjKUtq8o9rAgB39zgiEtf+gJZYutfiVjAzLYKGRVAld7uL9YPG545/aHblFPil+Go6LDHrgYKUEYNXpqCkpA=
+X-Received: by 2002:a05:6a20:d805:b0:1d9:261c:5943 with SMTP id
+ adf61e73a8af0-1d978ad5a29mr8702453637.10.1729792147606; Thu, 24 Oct 2024
+ 10:49:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241022161009.982584-1-mic@digikod.net> <20241022161009.982584-3-mic@digikod.net>
- <CAHC9VhRZ6Ug7ACLDgAiqQC3LPRPNM=Q5NX8TYxo-fcPA5XBEoQ@mail.gmail.com>
-In-Reply-To: <CAHC9VhRZ6Ug7ACLDgAiqQC3LPRPNM=Q5NX8TYxo-fcPA5XBEoQ@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 24 Oct 2024 12:30:41 -0400
-Message-ID: <CAHC9VhSPJ9j0eFnHg-b3wh+Baxv9F6GfK0rG2TAtadxWgCKszQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 02/14] lsm: Add audit_log_lsm_data() helper
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Eric Paris <eparis@redhat.com>, =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	"Serge E . Hallyn" <serge@hallyn.com>, Ben Scarlato <akhna@google.com>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Charles Zaffery <czaffery@roblox.com>, 
-	James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Jorge Lucangeli Obes <jorgelo@google.com>, Kees Cook <kees@kernel.org>, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
-	Praveen K Paladugu <prapal@linux.microsoft.com>, Robert Salvet <robert.salvet@roblox.com>, 
-	Shervin Oloumi <enlightened@google.com>, Song Liu <song@kernel.org>, 
-	Tahera Fahimi <fahimitahera@gmail.com>, audit@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+References: <20241024104012.1815022-1-linux@jordanrome.com> <20241024091904.2650d758@rorschach.local.home>
+In-Reply-To: <20241024091904.2650d758@rorschach.local.home>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Thu, 24 Oct 2024 10:48:55 -0700
+Message-ID: <CAEf4BzaZvSHnHBPcgkznq62sm_E2JNi1Bwg3g_a9PutfZLicmQ@mail.gmail.com>
+Subject: Re: [v1] security: add trace event for cap_capable
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Jordan Rome <linux@jordanrome.com>, linux-security-module@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, Andrii Nakryiko <andrii@kernel.org>, 
+	Kernel Team <kernel-team@fb.com>, Serge Hallyn <serge@hallyn.com>, 
+	Yonghong Song <yonghong.song@linux.dev>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 22, 2024 at 8:07=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
+On Thu, Oct 24, 2024 at 6:19=E2=80=AFAM Steven Rostedt <rostedt@goodmis.org=
+> wrote:
 >
-> On Tue, Oct 22, 2024 at 12:10=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@di=
-gikod.net> wrote:
-> >
-> > Extract code from dump_common_audit_data() into the audit_log_lsm_data(=
-)
-> > helper. This helps reuse common LSM audit data while not abusing
-> > AUDIT_AVC records because of the common_lsm_audit() helper.
-> >
-> > Cc: Casey Schaufler <casey@schaufler-ca.com>
-> > Cc: James Morris <jmorris@namei.org>
-> > Cc: Paul Moore <paul@paul-moore.com>
-> > Cc: Serge E. Hallyn <serge@hallyn.com>
-> > Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
-> > Link: https://lore.kernel.org/r/20241022161009.982584-3-mic@digikod.net
-> > ---
-> >
-> > Changes since v1:
-> > * Fix commit message (spotted by Paul).
-> > * Constify dump_common_audit_data()'s and audit_log_lsm_data()'s "a"
-> >   argument.
-> > * Fix build without CONFIG_NET: see previous patch.
-> > ---
-> >  include/linux/lsm_audit.h |  8 ++++++++
-> >  security/lsm_audit.c      | 27 ++++++++++++++++++---------
-> >  2 files changed, 26 insertions(+), 9 deletions(-)
+> On Thu, 24 Oct 2024 03:40:12 -0700
+> Jordan Rome <linux@jordanrome.com> wrote:
 >
-> While not a fix like 1/14, reducing AUDIT_AVC reuse is a reasonable
-> goal.  Merged into lsm/dev, thanks!
+> > +TRACE_EVENT(capable,
+> > +
+> > +     TP_PROTO(const struct cred *cred, struct user_namespace *targ_ns,
+> > +             struct user_namespace *capable_ns, int cap, unsigned int =
+opts, int ret),
+> > +
+> > +     TP_ARGS(cred, targ_ns, capable_ns, cap, opts, ret),
+> > +
+> > +     TP_STRUCT__entry(
+> > +             __field(const struct cred *, cred)
+> > +             __field(struct user_namespace *, targ_ns)
+> > +             __field(struct user_namespace *, capable_ns)
+> > +             __field(int, cap)
+> > +             __field(unsigned int, opts)
+> > +             __field(int, ret)
+> > +     ),
+> > +
+> > +     TP_fast_assign(
+> > +             __entry->cred       =3D cred;
+> > +             __entry->targ_ns    =3D targ_ns;
+> > +             __entry->capable_ns =3D capable_ns;
+> > +             __entry->cap        =3D cap;
+> > +             __entry->opts       =3D opts;
+> > +             __entry->ret        =3D ret;
+> > +     ),
+> > +
+> > +     TP_printk("cap %d, opts %u, ret %d",
+> > +             __entry->cap, __entry->opts, __entry->ret)
+> > +);
+> > +
+>
+> You record cred, targ_ns and capable_ns but don't use it in TP_printk?
+>
+> It's fine to print pointers there. Is there a reason you do not?
 
-I'm also going to have to remove this patch from lsm/dev due to
-problems uncovered by the kernel test robot.
+Are those pointers really useful for anything? Maybe it's better to
+print ns->ns.inum instead? At least that's something that is usable
+from user space side, no?
 
---=20
-paul-moore.com
+>
+> -- Steve
