@@ -1,145 +1,161 @@
-Received: from sonic314-22.consmr.mail.bf2.yahoo.com (sonic314-22.consmr.mail.bf2.yahoo.com [74.6.132.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9C231FCF6B
-	for <linux-security-module@vger.kernel.org>; Wed, 23 Oct 2024 21:23:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.6.132.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 560D819F104;
+	Thu, 24 Oct 2024 08:07:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729718634; cv=none; b=alFfPlPn3twSHjSpQiz6Mq3lQJfu7ePFMkVbLyX2/jnarBO9Appc385k4WZ9wURtPMv0/zYyfoVpQKaFktF+5Meaww5ca98F+32zd0fynAEoyjraGUEdtvb3u05Vye/YAP6AvHcWX78dIAMAT0DiiXB1CfiOvsHgvQqvvykOniQ=
+	t=1729757242; cv=none; b=lXBx968ig4F+2uTpSjEKET9iVZ0Yfc1FZ2htkZNNNMzTF+yOFD4OavpGFkBemlmbvHXsypc8ZDtFvtPQH8go6A/Hrut5bCA545nrWtwD7tNdPsz5Skv3Pqce65CwfEcC3IkPdKvebRruX5kMBru9RrccwzVaqGw6ko8phiCByEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729718634; c=relaxed/simple;
-	bh=xI5Udp7+iPy8mZha0q7CIj13Ny/nmKfB0rckcmSATx4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=d+EC0BBMVzFla3wBrmv52oooYbc2P006gKU5vp4pSMwpWJ/UEDk901lxn/SqM2IvGa3J/vygFBW5Eb4+8duztzggC/FunQDHTixZITHZdwPxJdzNuwAXWJt3x1Ky+Sb7n7znJNcJ5zO1jFZnCGgpo68caltZUzNpVbUotaWjapw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=fr7uK6et; arc=none smtp.client-ip=74.6.132.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="fr7uK6et"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1729718632; bh=UnQ0rI2w33MXrRKYOUPZC8/87Ao4K9IiWmtcpAV7+bI=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=fr7uK6et/YAx+qyUKA6eygkZedeebOOL6bKeY2Sndbhjumpk95padF92MsLEvYfv+nczDAThs9IgoCyts0C/lItVJdCsbgh0ZbWjm1EfxUqANMtLtSgZQ7bqaH5+qCw3CR4/Z1yDXpdL2oqJxVMKGYdjBA1U0lyapksb4gmyLquy0SLXNez5aLue1+ymRq2/WJnr5gtKAdMkgB8D2pGREqaant+MBP1BBiSwwuYuzH4eFakhIZQ/SDYL3FbTuGtCYd7K1cG8G4OuOOhm6aM0frYO9OVPD8k+o0As3wD5rVI2mKCPExhmjQ7ln6nRu2f1bn6smUQ2VmNzib9KqpZ9eA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1729718632; bh=BtzF3sJGDcYWa7OTjtwH1ZCDRrlzg+6XoLpnavP8yrW=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=qqHEoFeRaQO+PRJ6aEUO/jCkTdizp4xQEI4RwOQdCl3oSoPEiiyjC8Edx2xmY+jFz+duZtL/2CtbvsWZq6lbvQgk7cadQdWzlaMMW4HA3T9VPZi4Y84hxKhiC/y9e5JUexpIQa719PjYg3kdblSr1VFHHlg0sPKowy1wdVKdJS+0xC/gzi7P/DWUL8eYvBB7zpwtOfS74BQS3L3YgHx5qeu1oXwBwtYcKBNCymJ1QwBhbrAckrgbOAUpG5TKFj5FRh3roH54QM2Eio/oVyjufg/0pwevatHW0vcWadSdGdyuALJ1eSImYeHs0maf4Q0dN2uWzREj3pHXRRC2FVUzFw==
-X-YMail-OSG: DYTnJWUVM1nuMpFoEsfs9VW7mCAzIzNOUfaT6wet0nBcvqIzpI6zQpBsEkyLSHS
- LBSZkPUVNZQwH4PCdqwqey6eZ5Ha6btUjGs9CRUMj4e_ii3qur.dcLLuC_h9L0B6VFUUUR42OdY5
- J4aUpkOL_2J9mb6oQxEgFyGXoXNd5LOFdDQj3arTOxWoczEq0TZWX2CmU9UewVLYr2ep1mxsdCi2
- Q8kd_7d507eAd3UgzH.2d7vuijBjvX9E098.4IpGhCxlHIO5jVe9.0LZeJ2tOFqRo9_UqR.ncj58
- he0bIhV6QnBLv5RKxYWhrtT98ECFCG0zkovfxpNBPRYBNBW2UCefRKNKyuzrxVPsWejYckzv_FeG
- Z8oX53z7lqdXomVUMNOtnYI.njw_WIdSb5UIzuFnV9zGba9iSzZ5E97RvdmykNbYeBkaH8P.O8wI
- pM0QPQ8IOq_YfboQqohCNBB1Q_W9sxChWMSOavo_UGBf4VeuO8jFAgN5pCKL0bdVmOJL7q5BNYjf
- XzENkJj9BOvF9bsd6Lb0AKbu3rwdKwC58Cn6ZUzxGpIoYbwrSSmpFafaFzDZHdV2tofohqaAfEaj
- N8NzaQoHo_2YYvcJ6mpVN5VKpCm7LBN72Ypq65tCm_vTC_DvFfnQpFew32XpcKGSptiFRIPSXlKA
- MiQfNU8N43SVvgd7U8UVoZsuVDRMRUqtko10f6PdP_LfrQJEYbpLPL012YqJM45ZJmNmyrLDyseO
- OspWQcvxDsAPMwsM1o85WKzAREPUolCEILYJy279n7u0xy5Xo6DwE3UVRnkrC2Rz8RHQ9H4zQ0er
- enJ5xXKWW2I1qhJN2rY7WNKJGeHti04gFKta7D2fqLwhqxbdlLSBMt.RqVRaNNLznJ6j8XzAPxDo
- S1GUGdFe58E4NjsdtyX_cDx0qIgsBcl29FZ0U_yTvWDAH0FM.fmjA4CdiLTrSejFAERe7ftTRl5I
- 3hZIh46uURW1Uvde99rgjzQl2WRInYZELT1lZVZQTvsxHSesHTsUSLm6KLCgvocbRJ1T8.0CzVO6
- A1_pSod3p3w2DJF.ag_RObL3Qt4RnK_.WZdZhoB3m2TZ3PX_vL4cTISPuRKotVZJgFA5vrjAOXsc
- ERIcvkxBTp7ZxgGICdyUDigX4RlbtThOKztYEKJY.TsnJEe5at4HNqGDWtoMIBQfqZ.WRzK55Yk0
- YeWXAktwTg63mO5vZyIrEQjyZPQLM18wkxJVsDsh7NBbooUirke6H45PYFed9LtYwcWD6txMbEGd
- IK8BUDtNjDFRHwusbq78INyOQaceCguh_OX7V5AnRzR.Dg0B6EhX.xOo2E1RNHjqkhm0r556HE52
- 5B1R.og1bGGbYkhtXznVrloql.qL5aZyUYdCUNzMqXXTiu9qDBIX5hss9de4wXULR9lGfUZ.CAJV
- hBi6TedEiaC2zEHw4HhBjCerAntGTANOxuIdLOOCJV89MlvbUq1kYzTAsuUm4XlShB.h0yWcXbCa
- IsMnFeIm._9wS7h32vzdpPbuIOrQjQdquYfGyD6K_tZ4Wj0UGsvA9sirU8ZX1cwWQuTqPThxpkp1
- eKKvs5nyRlVf2CVy5fELFd5LHlBxfb8WzlUPlkvg.vLUuUmw1b92teD649Gvrpd5XVD61mjBAyIl
- LHyZzqU2Jz2fJvpo.VndfSwbTrR44bRcMBJRm9WSwwJyGi9i2LBRaDiVha0q1xp5Z_pSBAR7VLC.
- spG8YU2uj2wzXa97AeZ7T5SGHI2CAblS8zhwie3cSngh1gLr7hJ.ulnZEmLlr_fCy0u2f_6BcjmM
- bQw00GFMwBqpq_QJA_Y7Wzc_Kccku9fIYeCIkchxWvRkkRNG_YQVVst9u6qQdzAEuNlgKqq0gpYA
- x2VTVFg_MQkbUSvTFPRJtVAx.bbQZAraCwdTue3Nbhx0q0HjlCwXR._edJ75RNojyJx_Kz9bT.Uv
- rEZbPRBwssicwFQHxg2IIuQiR80wEQapNiXbslI9ylCtAZ9CI9Yf3pRLmfMjqNiTfqFQDgYkphBt
- iOOWRegwp5RvJYdQdwNE.Wzm9vV3i8FPJMAYE3bsJCOYIOVhpFyDmkNyfh1JtOFAed9S_xM9xNGB
- rqN99HBamaTkHjyD5RDRreqoQUumCKLOo9ZN31pJ1gbqZmZni0Rm0loLHfKAjsVM8TmxR_bmfrBj
- j2lcliA4ECttSVgnVFsiWuKCsf9v23Xmd9fLocOxrDaZfv0hox0inNmtrwxhcZ0KWWxnxkXh4x14
- bqRDOEcd4ujewUfd1G9qMixyGYYHohAl1onzTTIA6Pjm2_cjU0VXkZqZQtv9.j5myKezWRzOJGkf
- lXKH8pJX5ziTsN.V.Zkv4gScJdQ4-
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 0349e8d1-6b76-498c-9fd1-a59c85c93dce
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.bf2.yahoo.com with HTTP; Wed, 23 Oct 2024 21:23:52 +0000
-Received: by hermes--production-gq1-5dd4b47f46-pfhh2 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID d261940d1cdfc655543cc442dda3a810;
-          Wed, 23 Oct 2024 21:23:44 +0000 (UTC)
-From: Casey Schaufler <casey@schaufler-ca.com>
-To: casey@schaufler-ca.com,
-	paul@paul-moore.com,
-	linux-security-module@vger.kernel.org
-Cc: jmorris@namei.org,
-	serge@hallyn.com,
-	keescook@chromium.org,
-	john.johansen@canonical.com,
-	penguin-kernel@i-love.sakura.ne.jp,
-	stephen.smalley.work@gmail.com,
-	linux-kernel@vger.kernel.org,
-	selinux@vger.kernel.org,
-	mic@digikod.net
-Subject: [PATCH v3 5/5] LSM: secctx provider check on release
-Date: Wed, 23 Oct 2024 14:21:58 -0700
-Message-ID: <20241023212158.18718-6-casey@schaufler-ca.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20241023212158.18718-1-casey@schaufler-ca.com>
-References: <20241023212158.18718-1-casey@schaufler-ca.com>
+	s=arc-20240116; t=1729757242; c=relaxed/simple;
+	bh=KBY3Xq32mH8OhQWVjBV/Bq8SdNGCd36z6O+Nh0qKmDQ=;
+	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=ehn7treRhPiyNJlmiSIwgNY/U9Ipmih4TKg45PfBUMHDQOQVHU+OpEoz9TBIVht/X8JJ8Zynu0aJd/03LXAE+z3ScDJNd06v3LUrwhsnl/ZCqWyzBzapn6m30dMSojcIqvqEVZ/9UxujjbXVhzFT6Xpd69BL31AK1iN3q88wIwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XYz193blfz1HLRk;
+	Thu, 24 Oct 2024 16:02:53 +0800 (CST)
+Received: from kwepemh100016.china.huawei.com (unknown [7.202.181.102])
+	by mail.maildlp.com (Postfix) with ESMTPS id 603111A016C;
+	Thu, 24 Oct 2024 16:07:15 +0800 (CST)
+Received: from [10.174.179.93] (10.174.179.93) by
+ kwepemh100016.china.huawei.com (7.202.181.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 24 Oct 2024 16:07:11 +0800
+Subject: Re: [PATCH v3 -next 00/15] sysctl: move sysctls from vm_table into
+ its own files
+To: Joel Granados <j.granados@samsung.com>
+References: <CGME20241010141133eucas1p1999f17c74198d3880cbd345276bcd3bd@eucas1p1.samsung.com>
+ <20241010152215.3025842-1-yukaixiong@huawei.com>
+ <ngknhtecptqk56gtiikvb5mdujhtxdyngzndiaz7ifslzrki7q@4wcykosdnsna>
+CC: <akpm@linux-foundation.org>, <mcgrof@kernel.org>, <ysato@users.osdn.me>,
+	<dalias@libc.org>, <glaubitz@physik.fu-berlin.de>, <luto@kernel.org>,
+	<tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+	<dave.hansen@linux.intel.com>, <hpa@zytor.com>, <viro@zeniv.linux.org.uk>,
+	<brauner@kernel.org>, <jack@suse.cz>, <kees@kernel.org>,
+	<willy@infradead.org>, <Liam.Howlett@oracle.com>, <vbabka@suse.cz>,
+	<lorenzo.stoakes@oracle.com>, <trondmy@kernel.org>, <anna@kernel.org>,
+	<chuck.lever@oracle.com>, <jlayton@kernel.org>, <neilb@suse.de>,
+	<okorniev@redhat.com>, <Dai.Ngo@oracle.com>, <tom@talpey.com>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <paul@paul-moore.com>, <jmorris@namei.org>,
+	<linux-sh@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-nfs@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-security-module@vger.kernel.org>, <dhowells@redhat.com>,
+	<haifeng.xu@shopee.com>, <baolin.wang@linux.alibaba.com>,
+	<shikemeng@huaweicloud.com>, <dchinner@redhat.com>, <bfoster@redhat.com>,
+	<souravpanda@google.com>, <hannes@cmpxchg.org>, <rientjes@google.com>,
+	<pasha.tatashin@soleen.com>, <david@redhat.com>, <ryan.roberts@arm.com>,
+	<ying.huang@intel.com>, <yang@os.amperecomputing.com>,
+	<zev@bewilderbeest.net>, <serge@hallyn.com>, <vegard.nossum@oracle.com>,
+	<wangkefeng.wang@huawei.com>, <sunnanyong@huawei.com>
+From: yukaixiong <yukaixiong@huawei.com>
+Message-ID: <79b33640-fc81-b4c1-4967-30189d9a4b23@huawei.com>
+Date: Thu, 24 Oct 2024 16:07:10 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <ngknhtecptqk56gtiikvb5mdujhtxdyngzndiaz7ifslzrki7q@4wcykosdnsna>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggpeml500026.china.huawei.com (7.185.36.106) To
+ kwepemh100016.china.huawei.com (7.202.181.102)
 
-Verify that the LSM releasing the secctx is the LSM that
-allocated it. This was not necessary when only one LSM could
-create a secctx, but once there can be more than one it is.
 
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
----
- security/apparmor/secid.c | 13 +++++--------
- security/selinux/hooks.c  | 13 +++++--------
- 2 files changed, 10 insertions(+), 16 deletions(-)
 
-diff --git a/security/apparmor/secid.c b/security/apparmor/secid.c
-index 5d92fc3ab8b4..854613e58e34 100644
---- a/security/apparmor/secid.c
-+++ b/security/apparmor/secid.c
-@@ -122,14 +122,11 @@ int apparmor_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid)
- 
- void apparmor_release_secctx(struct lsm_context *cp)
- {
--	/*
--	 * stacking scaffolding:
--	 * When it is possible for more than one LSM to provide a
--	 * release hook, do this check:
--	 * if (cp->id == LSM_ID_APPARMOR || cp->id == LSM_ID_UNDEF)
--	 */
--
--	kfree(cp->context);
-+	if (cp->id == LSM_ID_APPARMOR) {
-+		kfree(cp->context);
-+		cp->context = NULL;
-+		cp->id = LSM_ID_UNDEF;
-+	}
- }
- 
- /**
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 79776a5e651d..996e765b6823 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -6640,14 +6640,11 @@ static int selinux_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid)
- 
- static void selinux_release_secctx(struct lsm_context *cp)
- {
--	/*
--	 * stacking scaffolding:
--	 * When it is possible for more than one LSM to provide a
--	 * release hook, do this check:
--	 * if (cp->id == LSM_ID_SELINUX || cp->id == LSM_ID_UNDEF)
--	 */
--
--	kfree(cp->context);
-+	if (cp->id == LSM_ID_SELINUX) {
-+		kfree(cp->context);
-+		cp->context = NULL;
-+		cp->id = LSM_ID_UNDEF;
-+	}
- }
- 
- static void selinux_inode_invalidate_secctx(struct inode *inode)
--- 
-2.46.0
+On 2024/10/21 15:22, Joel Granados wrote:
+> On Thu, Oct 10, 2024 at 11:22:00PM +0800, Kaixiong Yu wrote:
+>> This patch series moves sysctls of vm_table in kernel/sysctl.c to
+>> places where they actually belong, and do some related code clean-ups.
+>> After this patch series, all sysctls in vm_table have been moved into its
+>> own files, meanwhile, delete vm_table.
+>>
+>> All the modifications of this patch series base on
+>> linux-next(tags/next-20241010). To test this patch series, the code was
+>> compiled with both the CONFIG_SYSCTL enabled and disabled on arm64 and
+>> x86_64 architectures. After this patch series is applied, all files
+>> under /proc/sys/vm can be read or written normally.
+>>
+>> Changes in v3:
+>>   - change patch1~10, patch14 title suggested by Joel Granados
+>>   - change sysctl_stat_interval to static type in patch1
+>>   - add acked-by from Paul Moore in patch7
+>>   - change dirtytime_expire_interval to static type in patch9
+>>   - add acked-by from Anna Schumaker in patch11
+>>
+>> Changes in v2:
+>>   - fix sysctl_max_map_count undeclared issue in mm/nommu.c for patch6
+>>   - update changelog for patch7/12, suggested by Kees/Paul
+>>   - fix patch8, sorry for wrong changes and forget to built with NOMMU
+>>   - add reviewed-by from Kees except patch8 since patch8 is wrong in v1
+>>   - add reviewed-by from Jan Kara, Christian Brauner in patch12
+>>
+>> Kaixiong Yu (15):
+>>    mm: vmstat: move sysctls to mm/vmstat.c
+>>    mm: filemap: move sysctl to mm/filemap.c
+>>    mm: swap: move sysctl to mm/swap.c
+>>    mm: vmscan: move vmscan sysctls to mm/vmscan.c
+>>    mm: util: move sysctls to mm/util.c
+>>    mm: mmap: move sysctl to mm/mmap.c
+>>    security: min_addr: move sysctl to security/min_addr.c
+>>    mm: nommu: move sysctl to mm/nommu.c
+>>    fs: fs-writeback: move sysctl to fs/fs-writeback.c
+>>    fs: drop_caches: move sysctl to fs/drop_caches.c
+>>    sunrpc: use vfs_pressure_ratio() helper
+>>    fs: dcache: move the sysctl to fs/dcache.c
+>>    x86: vdso: move the sysctl to arch/x86/entry/vdso/vdso32-setup.c
+>>    sh: vdso: move the sysctl to arch/sh/kernel/vsyscall/vsyscall.c
+>>    sysctl: remove unneeded include
+>>
+>>   arch/sh/kernel/vsyscall/vsyscall.c |  14 ++
+>>   arch/x86/entry/vdso/vdso32-setup.c |  16 ++-
+>>   fs/dcache.c                        |  21 ++-
+>>   fs/drop_caches.c                   |  23 ++-
+>>   fs/fs-writeback.c                  |  30 ++--
+>>   include/linux/dcache.h             |   7 +-
+>>   include/linux/mm.h                 |  23 ---
+>>   include/linux/mman.h               |   2 -
+>>   include/linux/swap.h               |   9 --
+>>   include/linux/vmstat.h             |  11 --
+>>   include/linux/writeback.h          |   4 -
+>>   kernel/sysctl.c                    | 221 -----------------------------
+>>   mm/filemap.c                       |  18 ++-
+>>   mm/internal.h                      |  10 ++
+>>   mm/mmap.c                          |  54 +++++++
+>>   mm/nommu.c                         |  15 +-
+>>   mm/swap.c                          |  16 ++-
+>>   mm/swap.h                          |   1 +
+>>   mm/util.c                          |  67 +++++++--
+>>   mm/vmscan.c                        |  23 +++
+>>   mm/vmstat.c                        |  44 +++++-
+>>   net/sunrpc/auth.c                  |   2 +-
+>>   security/min_addr.c                |  11 ++
+>>   23 files changed, 330 insertions(+), 312 deletions(-)
+>>
+>> -- 
+>> 2.34.1
+>>
+> General comment for the patchset in general. I would consider making the
+> new sysctl tables const. There is an effort for doing this and it has
+> already lanted in linux-next. So if you base your patch from a recent
+> next release, then it should just work. If you *do* decide to add a
+> const qualifier, then note that you will create a dependency with the
+> sysctl patchset currently in next and that will have to go in before.
+>
+> Best
+>
+
+Sorry,  I don't understand what is the meaning of "create a dependency 
+with the sysctl patchset".
+
+Do you just want me to change all "static struct ctl_table" type table 
+into "static const struct ctl_table" type in my patchset?
 
