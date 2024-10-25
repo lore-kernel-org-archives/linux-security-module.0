@@ -1,32 +1,32 @@
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
+Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 967321B0F1C
-	for <linux-security-module@vger.kernel.org>; Fri, 25 Oct 2024 06:40:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C7D81B3940
+	for <linux-security-module@vger.kernel.org>; Fri, 25 Oct 2024 06:55:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729838453; cv=none; b=apPngpQdH3Rj7WeCIhNLaMy2CFb3/M6IzKq3GDGGacgqV6kEkSU8M7giC5SAdO/eoFSBqSJiPIoRsauzo+VUT9iJ0vm6elgEY/bOJiqf4XLiZ7yQe8mJVe/i+SlapEBFcIf1zA2rUPUCs6nQb5i7C5BeKGIYY6J764T2cLQuHmU=
+	t=1729839307; cv=none; b=VDr8i0GBo1q6+ikBB9o9LlErOh7HlbHQWBRFWeY1HDADQp8+/On5G1lK5ZAP4Vlus3qnPjCDBoIQf0yBA8bL3uNg3n+hPxg+Rw1fMkQ7YLhRPUh2sevipIxIHiOJW+PKSiy51NqhNZLGo0E3HPjfePpFc5EPaZVn73HjDvsKh0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729838453; c=relaxed/simple;
+	s=arc-20240116; t=1729839307; c=relaxed/simple;
 	bh=tux+kVXoxeqatZsSvhUcOundmYXP9bd2WCJpZ0y15bQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GSL0yUKm+oOcgKHwIHx06aaMbHXN1AXkFlV7qZ4loZFQhy0Rg1mRHr+0FvYAgvO0BtzY6hSExIPMYqTnenkDy8YpOasSWyu1rHNNHraX1b/ltzf9UTx5IEOks+jYBYg0PHDzRXaq4QgFh9PQzTv1k4ayobueD1twXvIalMXVl2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=X5tHcEWB; arc=none smtp.client-ip=95.215.58.179
+	 MIME-Version; b=WivemALgnOcx0O6LiEx1eoiqvmhlYUcCtMc0wFgbEEj6LfUzZM6jIDm6OSBObaLiIqL2NJK2d8lcZwytNpNTXW9GpHRbJIK+qe7/WqMekpD4mpEomJ731cHmkHwwnSW8nweDcc1jefkK582+dYXb/8ySuYJaENz4xlRfSPpfwcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ipvoAb7w; arc=none smtp.client-ip=95.215.58.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="X5tHcEWB"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ipvoAb7w"
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729838443;
+	t=1729839296;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
 	bh=utWPae6JOH6Gfwt6/OMxC57uOc92cN39G9Jp3wctaGM=;
-	b=X5tHcEWB8OdWSIIyQT+3QxldtX7NRuHMzh+qXnCQ9ncWmoejFFWDWhAXbsNW2Ar2F68uVp
-	9Itqwi9IJs8ODBkR9ziKTO11Gfa+I6ya2kVPkcIhzasoHxgWMnakw/TO2cp467Ho0h55Yn
-	+sCAcKwHPCQA47e4imk7BAXHiNS+U5w=
+	b=ipvoAb7wizNjLbnsMi5gnUC/2Kr5hGsx/CI0ySYYppvcYpqlTUz1B850F9inafyqCHXzXY
+	E7DkHEaMgIrYY5RDQAZgpijc6GimwDDPw1Lz4E/aK0wvTtEMckswS67XU2Qo1fzsMF7QGG
+	/XCQUFIUIWwLWVvd2uhykQ6kIGC1GUk=
 From: George Guo <dongtai.guo@linux.dev>
 To: pabeni@redhat.com
 Cc: davem@davemloft.net,
@@ -39,8 +39,8 @@ Cc: davem@davemloft.net,
 	netdev@vger.kernel.org,
 	paul@paul-moore.com
 Subject: [PATCH 1/1] add comment for doi_remove in struct netlbl_lsm_secattr
-Date: Fri, 25 Oct 2024 14:40:31 +0800
-Message-Id: <20241025064031.994215-1-dongtai.guo@linux.dev>
+Date: Fri, 25 Oct 2024 14:54:41 +0800
+Message-Id: <20241025065441.1001852-1-dongtai.guo@linux.dev>
 In-Reply-To: <0667f18b-2228-4201-9da7-0e3536bae321@redhat.com>
 References: <0667f18b-2228-4201-9da7-0e3536bae321@redhat.com>
 Precedence: bulk
