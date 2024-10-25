@@ -1,68 +1,64 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC39B1DAC90;
-	Fri, 25 Oct 2024 13:53:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 860E8212195;
+	Fri, 25 Oct 2024 14:48:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729864417; cv=none; b=OuWjZ9GFjX+oB83nOaKmkV/9NGr5R3GPpaPkkZ19Xh1ByI35HsNiu6CWDDo0MEUgwUlDHdj6SMkCjtuVsuNWEJKGnF0+udHIK0pbLHYHZ53PoCz0K3IBkwBjtPndXFTV5RtHoD/wKAlCbblpqh7jhRRWbmDlk7OLEfYfEWDNVgk=
+	t=1729867710; cv=none; b=lIN5OiAnqFGWMztSpe5U3wp3mWnktBhtcHz+gXuErPVd9I3PT2E+CSe+kBxyIdAKT2x/L2oXTqeAhXmAxIKzhkfKlBsAX5Ne2VkqQAVXwrTiob0UUS6S8eJCwnI/pKzGbXfmifttbUEJEujvIDsrefyJNQF6B3as6hoRiKz7/rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729864417; c=relaxed/simple;
-	bh=XBk3S6xgZ+z4/lHENN2+khzfrjgwZ6ZfGM+usPbyvoI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XG25f40sJXWZllwoJOY73rLj7F4RwZ3WmroORrq6TrWgtL3aCG8+ZXF4ghjVYa5R1D0GtPsOBRWlLlSX2dyX0ZvYkg1FGQ2FcAsh8WGnjnJWJsFaAc5IQYpgEQ1ii5V3QfmU+2xZBhks3wc/vtngAtXrCz9SzTm66WP71JNl9KY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cC19/6Oy; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1729867710; c=relaxed/simple;
+	bh=aUonxWk/Wb6mMpEzIzSZDDZlf2vaFKkhtJQaWHKDrmY=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=ndCRtd2WGOs7zDOWqUiaTYcKsYeCMAmaDuXwU6eC9N0D3NfE0tEkxshihT0zdGwBh5Z1mH+eJTxiC3wM5bP3E7l+cZBuu53KxCKsEgUEjo1aaFnfNcom3U8KVzaEj43U2pz9etD5wkRxmGS1AZhyUOqIWmlFmuuC8+BRDK5u65g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gH44ALbA; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cC19/6Oy"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97078C4CEC3;
-	Fri, 25 Oct 2024 13:53:34 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gH44ALbA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 223EBC4CEC3;
+	Fri, 25 Oct 2024 14:48:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729864416;
-	bh=XBk3S6xgZ+z4/lHENN2+khzfrjgwZ6ZfGM+usPbyvoI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cC19/6OyRAWI2Lz8xJuMUzr2BUCcGLPFCakpjjr/tsQhnmgYh/6ty/eGNpYtpljVY
-	 Y8fhEttQnDO0Giz2o5aqc1721rGcr7rBA3k12J9/XSXE2EQ+bEwXuE/WEB0j9qXNtt
-	 VzAqY3d/CCFxeXFnpKQ+rY55PlB5y/dtkOcQVO0rHdcLwcvGDm5e6Y7K2rBwHKu0na
-	 OnKBI/TddOz9po1G+3QStaPfIjW+qwpf7Dx0Y1nyXh/iZhqd15kz17voU4DX6k+k5n
-	 9zclBPhc0n6K0l01DazNWScgC3BOVJn+hEOQQI24PZ21AgK+PdHTMPb263hsck12xn
-	 ogxEXD7JvvYDA==
-Date: Fri, 25 Oct 2024 14:53:32 +0100
-From: Simon Horman <horms@kernel.org>
-To: George Guo <dongtai.guo@linux.dev>
-Cc: pabeni@redhat.com, davem@davemloft.net, edumazet@google.com,
-	guodongtai@kylinos.cn, kuba@kernel.org,
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
-	netdev@vger.kernel.org, paul@paul-moore.com
-Subject: Re: [PATCH 1/1] netlabel: Add missing comment to struct field
-Message-ID: <20241025135332.GY1202098@kernel.org>
-References: <0667f18b-2228-4201-9da7-0e3536bae321@redhat.com>
- <20241025070229.1006241-1-dongtai.guo@linux.dev>
+	s=k20201202; t=1729867710;
+	bh=aUonxWk/Wb6mMpEzIzSZDDZlf2vaFKkhtJQaWHKDrmY=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=gH44ALbAO6nxYlI8caLeWzMji+gRCI/y69bK/6XDkizz3CPG4iVzgNhYFYcuMgX4F
+	 cpDxIMa+ZdFqcg9iKjzy//sriqjfSyaoUeSnJzqmmkFKYQP7J9bhvvC4f12v3i1Ye3
+	 nEGbOtF3186STLuevltzo1RLyEeLGGLtCDys2Osg6ELAMFrnverD/evZOcYifGBoT8
+	 2CYpZxX7QzOj8yeOoVHYOrovot9UdgFCIyk3Qtwr5qYPO5h/+b7w3BdMZINK4ObofL
+	 FMMYriiTFWIJHNCaekHPKaPdPjteeli6qpKpeifODuYoYiIvowbFmYnTJT8rTKqfzG
+	 K/Z9+DPrcKqbg==
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241025070229.1006241-1-dongtai.guo@linux.dev>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 25 Oct 2024 17:48:18 +0300
+Message-Id: <D54YX5TQD6PC.KPDZRST813O5@kernel.org>
+Subject: Re: [PATCH v6] tpm: Add new device/vendor ID 0x50666666
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Tzung-Bi Shih" <tzungbi@kernel.org>
+Cc: "Jett Rink" <jettrink@chromium.org>, "LKML"
+ <linux-kernel@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+ "Jason Gunthorpe" <jgg@ziepe.ca>, "Peter Huewe" <peterhuewe@gmx.de>,
+ <linux-integrity@vger.kernel.org>
+X-Mailer: aerc 0.18.2
+References: <20240910191117.1001581-1-jettrink@chromium.org>
+ <D43HINLZGMXS.FYJOK0SVQFQW@kernel.org> <ZxckGbxzpWDuXG_q@google.com>
+In-Reply-To: <ZxckGbxzpWDuXG_q@google.com>
 
-On Fri, Oct 25, 2024 at 03:02:29PM +0800, George Guo wrote:
-> From: George Guo <guodongtai@kylinos.cn>
-> 
-> add a comment to doi_remove in struct netlbl_calipso_ops.
-> 
-> Flagged by ./scripts/kernel-doc -none.
-> 
-> Signed-off-by: George Guo <guodongtai@kylinos.cn>
+On Tue Oct 22, 2024 at 7:03 AM EEST, Tzung-Bi Shih wrote:
+> Hi Jarkko,
+>
+> On Wed, Sep 11, 2024 at 04:21:24PM +0300, Jarkko Sakkinen wrote:
+> > I applied this (will push later to my remote tree).
+>
+> I failed to find the patch in [1].  Is it somehow overlooked?
+>
+> [1]: https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.g=
+it/log/?h=3Dnext
 
-This revision is looking much nicer than the previous 2.
-But I think it would be best to mention that you are
-adding a Kernel doc entry, as per my comment on an earlier version:
+I'll check this next week. Not on purpose if it is missing.
 
-https://lore.kernel.org/netdev/20241025065441.1001852-1-dongtai.guo@linux.dev/T/#mc951365b9ba02e3538efa0f0eb6a215199efc73b
-
-...
-
--- 
-pw-bot: changes-requested
+BR, Jarkko
