@@ -1,73 +1,76 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AF8F1DA2FD;
-	Mon, 28 Oct 2024 12:10:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E6151D5CC5
+	for <linux-security-module@vger.kernel.org>; Mon, 28 Oct 2024 12:34:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730117412; cv=none; b=O9MBP0ZS4vi16aZIUEi96+SyQeklOk+czvOcLG9cmmR+Y++vshMn/FZcb16WHgtvASbANgQn/jFUdgv/7On5nOdaRHp9EW/fvQE6AGYU3Wel19S2k9+oEmtLcNg6czFPRdtPO3Q2QxdrXFNEGHyVrghz4/49RFMqvwNk+KoUQ84=
+	t=1730118892; cv=none; b=OjO512oYfQtXoBEw82FzX+f3g8omWneVt5lMZlZTCMLVFQ27OzEUB4eMdZH6/gG481Gh1FgFJCkopQWRewPsUGGr5sC4ExZMf0C5IeW4aQ+2UPpmrti+z35+QJGS+UT8iFaUUUqNDjA7451X05V9T4WQ27unDeqSV4QRF4gcH7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730117412; c=relaxed/simple;
-	bh=l5qalQPiwCYhTC3zWpqOzDEvbB3Z5puNHOvHklAezwA=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=Gry9jjep4+PKEJUXfUh5uWwKRGwsAsRxNX4DNdaQA3ZDXGq44ePiqrHeQdSttw7KH3FUL9nAt/OV0V/VpD8Vu4ShInmjXLl3KkOWCxS5gk57gQKcmOye6rrPvbKGeZSQ8K1xM00YRUGoVFLjtwpo4Hte9u6Ry2DiKo+vH+NSWXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EDlL1ozw; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1730118892; c=relaxed/simple;
+	bh=54620GN/b8tzXBU3NRajAw15Isqlyf4C7qPxGP7Pq/M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=G4z8lLvmDsUvFdgqGCIafW6wrJuzehrq7TMU3eGOi5NSKdNntqjly/f0DHuiRf8x5OEOfmg7/7OqVlUN/pmGInM6mqe1POjqCFZV8QLzzsFzKqGObXA0PSmDgh/iS/nbke+jXUl4KtmzlvguGFGoNsZinqW1VkJksNJBYrTUD/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=AmydIm7Y; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EDlL1ozw"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A34DC4CEE4;
-	Mon, 28 Oct 2024 12:10:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730117411;
-	bh=l5qalQPiwCYhTC3zWpqOzDEvbB3Z5puNHOvHklAezwA=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=EDlL1ozw1Wu3K3uSzBJ5adQi8VkhBdNP+GTmcAI/b+yah183t8I4np5OzbcAJy5HM
-	 PR1241pJnh4SP1Rx8700JfmXBeGRiRvLQjKX4fWkmGPbzYaBSL1apxUfDTQPhMbGHJ
-	 FSxFkDUUM8zHl7ZztgEAptrbCryJbM2r769Wd1xo1i6ykZeiblrYfQMbZB325/Nsdc
-	 tZuhY+xSlwRZeU1Jnh0LskNp3cIYO2zJSbclbnuKbJ+4zHegJfrPVZZgIGJ6O+snwO
-	 pAbXn1ZDfvq+LayFD6CyXYiB9TmG7aNHSZxQzk5lQZnsf7eRj52RyMPDytNPZ6Wcr8
-	 sa6cgOWVPuYKQ==
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="AmydIm7Y"
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730118886;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=MREqdIhMV696ufnyoHe89T22c4ii2X74R+5suzL/X8U=;
+	b=AmydIm7Ypwe3nC3I/+piTl+Jlavhxf+BB9uIb5scDerBELhPUKMK4qxWEEYXwawXaeS3+K
+	ROVi3t3mpejBh4vFbRLLVLfPWkPVd6oK6rLevZw2HgnFVh82GF3QoWoEuGsDkcrVE5RcEw
+	FLkkbfGRITjGgur0ZkGWoKF1tim3UUY=
+From: George Guo <dongtai.guo@linux.dev>
+To: horms@kernel.org,
+	paul@paul-moore.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: netdev@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	George Guo <guodongtai@kylinos.cn>
+Subject: [PATCH net-next v2] netlabel: document doi_remove field of struct netlbl_calipso_ops
+Date: Mon, 28 Oct 2024 20:34:35 +0800
+Message-Id: <20241028123435.3495916-1-dongtai.guo@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 28 Oct 2024 14:10:07 +0200
-Message-Id: <D57FFOHZQDUV.QA3SZQSP63Q2@kernel.org>
-Cc: <linux-kernel@vger.kernel.org>, "David Howells" <dhowells@redhat.com>,
- "Mimi Zohar" <zohar@linux.ibm.com>, "Roberto Sassu"
- <roberto.sassu@huawei.com>, "Stefan Berger" <stefanb@linux.ibm.com>, "Paul
- Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
- Hallyn" <serge@hallyn.com>, "Dmitry Kasatkin" <dmitry.kasatkin@gmail.com>,
- "Eric Snowberg" <eric.snowberg@oracle.com>, <keyrings@vger.kernel.org>,
- <linux-security-module@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: Re: [PATCH v8 2/3] tpm: Rollback tpm2_load_null()
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Paul Menzel" <pmenzel@molgen.mpg.de>,
- <linux-integrity@vger.kernel.org>, "Peter Huewe" <peterhuewe@gmx.de>,
- "Jason Gunthorpe" <jgg@ziepe.ca>, "James Bottomley"
- <James.Bottomley@HansenPartnership.com>
-X-Mailer: aerc 0.18.2
-References: <20241028055007.1708971-1-jarkko@kernel.org>
- <20241028055007.1708971-3-jarkko@kernel.org>
- <88bfa0f8-4900-4c56-bd23-14d3b3c7de85@molgen.mpg.de>
-In-Reply-To: <88bfa0f8-4900-4c56-bd23-14d3b3c7de85@molgen.mpg.de>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon Oct 28, 2024 at 8:13 AM EET, Paul Menzel wrote:
-> Dear Jarkko,
->
->
-> Thank you for your patch.
->
-> Am 28.10.24 um 06:50 schrieb Jarkko Sakkinen:
-> > Do not continue on tpm2_create_primary() failure in tpm2_load_null().
->
-> Could you please elaborate, why this is done, that means the motivation=
-=20
-> for your change?
+From: George Guo <guodongtai@kylinos.cn>
 
-Which part of "not properly handling a return value" I should explain?
+Add documentation of doi_remove field to Kernel doc for struct netlbl_calipso_ops.
 
-BR, Jarkko
+Flagged by ./scripts/kernel-doc -none.
+
+Signed-off-by: George Guo <guodongtai@kylinos.cn>
+---
+ include/net/netlabel.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/net/netlabel.h b/include/net/netlabel.h
+index 529160f76cac..4afd934b1238 100644
+--- a/include/net/netlabel.h
++++ b/include/net/netlabel.h
+@@ -208,6 +208,7 @@ struct netlbl_lsm_secattr {
+  * struct netlbl_calipso_ops - NetLabel CALIPSO operations
+  * @doi_add: add a CALIPSO DOI
+  * @doi_free: free a CALIPSO DOI
++ * @doi_remove: remove a CALIPSO DOI
+  * @doi_getdef: returns a reference to a DOI
+  * @doi_putdef: releases a reference of a DOI
+  * @doi_walk: enumerate the DOI list
+-- 
+2.39.2
+
