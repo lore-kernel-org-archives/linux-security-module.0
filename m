@@ -1,260 +1,141 @@
-Received: from mout.perfora.net (mout.perfora.net [74.208.4.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8EA520403E;
-	Tue, 29 Oct 2024 11:21:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.208.4.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 350DE1DF989
+	for <linux-security-module@vger.kernel.org>; Tue, 29 Oct 2024 11:34:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730200877; cv=none; b=a3XVrAVMH17uBl4qxvowWQptoS4s2TUKE/bcQIhy79U+lQVMUkwzrw+gwsGdRFvKjPdcNFecSVTEYbto+qkebqBm+nCsXeymitidR07hq4kqmeHMJR2IP5LvlmbTQbnMKOrQgduHWEYIAefXkNti04z4zHo95PcvzGtIDOPQElM=
+	t=1730201665; cv=none; b=c44ixCrmDIwCV0sDJMVb6ld+8K1rgSBNKYuU17ogU9ZLcNXLmTeCms6LSm2033V4qZHuFqmYxiVSLaV/78phPH10FS3PpIpFp066/077mKA41RAMi01udc1x+FQmIDiae2Qt0nVWGIEWHhooohJct1KrQBAjRuJVL7hjqO/8YfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730200877; c=relaxed/simple;
-	bh=pY5BTmvixJSnUXFdrCBOHwyLwnNYeJ3eAVoRCFLpiv0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CbWYKaqbYHK+Nk1KJvnWFbnch6ahv7ov4Wqu7x575zSbZfW4mXE+zse2qWJw6u8yq4ejKG5+Z4fqF8z5RzFSg3uNx7cCztsIox4Lmlo7++ag9q8YB3tOFT04WrO1PlYeVxeRBkmpHGzOmrnNAi8lQg6+cNXycv+OoEc13ZD63ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jordanrome.com; spf=pass smtp.mailfrom=jordanrome.com; dkim=pass (2048-bit key) header.d=jordanrome.com header.i=linux@jordanrome.com header.b=bVyi3rKI; arc=none smtp.client-ip=74.208.4.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jordanrome.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jordanrome.com
+	s=arc-20240116; t=1730201665; c=relaxed/simple;
+	bh=cPKEJ4jerXa/h6ueOtoFqHZZD6u7n4AElLCBfDVkuAw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=KXL8ltkXScO8SVRzTWxQXNj4SWq6K04k4s/JUr2JAbyYriyO4fiayYSmebJiIqSzKxSCT+NgwZrbXlRIWS0tG17ZOdbqK5+MAyFaB2CdXvQWDuF7sGIoAsBZX7EbM9rIB7pb9928VX19oelpAsSjnzL1XUsvSxrlHz5NH5uP1QM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at; spf=pass smtp.mailfrom=sigma-star.at; dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b=ap/W9MXz; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigma-star.at
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jordanrome.com header.i=linux@jordanrome.com header.b="bVyi3rKI"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jordanrome.com;
-	s=s1-ionos; t=1730200843; x=1730805643; i=linux@jordanrome.com;
-	bh=oUD262rHnLFVaLqePc2SP62T5dCJwI2MdM2J9YroiRg=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:
-	 MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=bVyi3rKIerkYb1mCkMGI+nvIp7waqnUO9q4sUDdh6RyboEerkSs2C3DutdqMaVXt
-	 CEUJLM4n0JQwo8WR8s78VABXg3W6ALBt1HE99Zs2G4pylPbNci0IYpg9K1+mpv/ZH
-	 HKqdDMjt+t6zxdG7XCMf7sW/gYWJGpRnq0vW9rqvexXfFJqCvmHpxGI+qQP+y0D/W
-	 DtPoP480LWMSGqUCSXEgD527rkMGJAT0rdnkSxW8ciIj+JV/X8tY7fCY4XRMJuxKs
-	 YFREiT2zqOBbkyqmlaAZUBkSSDmN/B3atmNxkfthl+aM4T2WN8O6BvF3YJpLA+D6H
-	 hV2H370xrc8f7jbVSw==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from localhost ([69.171.251.25]) by mrelay.perfora.net (mreueus002
- [74.208.5.2]) with ESMTPSA (Nemesis) id 0MGCIr-1t3JqW0gdT-006s3g; Tue, 29 Oct
- 2024 12:20:43 +0100
-From: Jordan Rome <linux@jordanrome.com>
-To: linux-security-module@vger.kernel.org
-Cc: linux-trace-kernel@vger.kernel.org,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Kernel Team <kernel-team@fb.com>,
-	Serge Hallyn <serge@hallyn.com>,
-	Yonghong Song <yonghong.song@linux.dev>
-Subject: [v3] security: add trace event for cap_capable
-Date: Tue, 29 Oct 2024 04:20:38 -0700
-Message-ID: <20241029112038.1225847-1-linux@jordanrome.com>
-X-Mailer: git-send-email 2.43.5
+	dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b="ap/W9MXz"
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-37d4ba20075so3660190f8f.0
+        for <linux-security-module@vger.kernel.org>; Tue, 29 Oct 2024 04:34:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sigma-star.at; s=google; t=1730201660; x=1730806460; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xUO11C/JRTs4GKxfufQ6dUqgB6gKo2LmLUMdUeU8K1k=;
+        b=ap/W9MXzkQRzXylxlEwl9vrjtn4+mVxv5Dln5/HFOmSJtI2c1uJDvPw+iTmPDB6+NM
+         ogtZzXTUR0mOpR4sKySkHlXlwfGp2SVUCRPOWNM934bn42MyKO/j0AW86OTPImOeKcq7
+         ehYDhB6SbvxWHr9PZ28OxYEKvyioWUz4eLZ/5aury1TZa0G8wEIFXfyBVnFG3G3b49Fc
+         yvQor9LnoJhhJm1sQuR5nd2A4XENxUIpsZmMuH9+JWbDWzpK+sdTL7FO501zS3pi1YGL
+         IyEyu9Xgun/pPgBSnura1G3Q6dHNJA6h6E0XPPz8roSsapXM/Ya/tjj9PPS0qtJsY3y3
+         hjAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730201660; x=1730806460;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xUO11C/JRTs4GKxfufQ6dUqgB6gKo2LmLUMdUeU8K1k=;
+        b=rkpSboaWv1UNZNyGXWZ8PW2Cog0rpVLmc1hrJNECxJKCPXYmKEZaR0a1vf08iLiWDX
+         sUnJN6yu9i9Y8TExr3d2oWTpnYc38UTGG1xQZywabciRx9uFlsJkMSk2KVWXh1dPAHqS
+         G5oDkvFfnYTyMick8NRy4ZuuBZXTzQqoCVp+gP+ue5hDtz5lahWKRjti5ceTx7YGJmwR
+         g+tA9mJ5Ib7hrCF91B6lX71CyiDLzMndWJTl6ihRcRRBjdv+lBXrtleXKRbpZEX13MNK
+         tnQO1gKVkWbu7i+KvAFDOvQOmszly9BPqJBHBkjn5DGmFQwsoEYqQTKNufy5qolAMZ92
+         ksrw==
+X-Forwarded-Encrypted: i=1; AJvYcCXqx/pjO0naAheYWjswzluY1Kdv2PpHk0BqzPmUURuKTgF/i+fq+8MG7O+W7asclzILDtK4nPFyjmEIZWySzKhUpmQmwBE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcdGF7Ty0BnEs0+VzZP6HCPzC7bpijM93ArHLXamLd7brg8F83
+	adHdcRrpYxaOK5DPm62t+yZl59Ucn8tfYx7KvSZOuApDol7Isx+z6OlXol4WtB8=
+X-Google-Smtp-Source: AGHT+IFJoyZ6NxzI4ys9GDFWfJixnTkKlsJEMZbZjWGrqOc2/MIuNQIrRuJSwDRXg2rPjjIDI76/9g==
+X-Received: by 2002:adf:fdc9:0:b0:37d:43e5:a013 with SMTP id ffacd0b85a97d-380610f49e4mr7243573f8f.8.1730201660311;
+        Tue, 29 Oct 2024 04:34:20 -0700 (PDT)
+Received: from localhost ([82.150.214.1])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-38058b47952sm12152755f8f.48.2024.10.29.04.34.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Oct 2024 04:34:20 -0700 (PDT)
+From: David Gstir <david@sigma-star.at>
+To: parthiban@linumiz.com,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>
+Cc: sigma star Kernel Team <upstream+dcp@sigma-star.at>,
+	linux-integrity@vger.kernel.org,
+	keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	David Gstir <david@sigma-star.at>,
+	stable@vger.kernel.org
+Subject: [PATCH] KEYS: trusted: dcp: fix NULL dereference in AEAD crypto operation
+Date: Tue, 29 Oct 2024 12:34:01 +0100
+Message-ID: <20241029113401.90539-1-david@sigma-star.at>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <254d3bb1-6dbc-48b4-9c08-77df04baee2f@linumiz.com>
+References: <254d3bb1-6dbc-48b4-9c08-77df04baee2f@linumiz.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:so5afXzKmBlfk/Fla5DEnSFEXWwvjB6LXJN9H/kdO6/VWsH8zuw
- oZjS70VVcN83wiYcM6nQZEo+1VF7iKg3rF5aYVOnr0HZsUNwN+47iHVTjW+7ijxpBz0828M
- FqC9rgwzBxCGzE1FNChiguqbETyRGwKkHM4PTP4R58zAdd9O2GRrGBQ2AnhNpimXT/oQwGj
- Ti0HqdU2DD/wMaiATBs3w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:yCBtADiG8us=;FYm8KI1y4def561+doMrOoZrJG6
- jQ4OwIw0ObqGPdvnVEQcRRX0TMUzfHfZ3iFQ0jkPonvcHWl+rBWqtVgZjYDPHqZzDh6pf60Wa
- 2+QRxF3iiNiBAZr398c6efag/esbz2MaARbpV9LlKO8mnFX0XX+lDFIrFMfg1WJveOHNZ8Ug9
- U4gPg0q8w8IpoYyfvnyphL4UOXUkJZ9Kk/Y+UeNL1L6fSPbb3icEue2hq71UcLzvZGvPU5FYm
- Nmd4Xa+3xg30kcUop2lgCTzYFs2riLxPo6Od2mRwqPazlxXodo7aSDgco2l1HOBIjzbyXVTyN
- 6jeRIZuKkN/HYssQe2HMIONjRCeDr39PbPnzJj0lCI/LEfHCWolMr3g/rTqVkIIyzQtXXtOgo
- AmvTAZ+rkJMk0644DxMcsCe27GequkBEy4/yNvQoiFElrhRkVsaR8K4gBFEvcDBR59ycS0lOW
- wTLwBs34ViIsXjYEbr4Zkt2CqdWw2qPfmHZlE/pq5R2FrF2+gf7CbymumypQpkcYWO1nS/Xq2
- 5yx33Kx0FvqZjrp6zYQ3N+4R95EocjpX2AOx75PSbcH/kMo5J8CoVGW8c6mf++Zg/qht5m/Jh
- Fb2maeU15/ktPgvX7J+7ZMVb3MaAmTP9XwNBABkeBr3XZEgCnikU3czEctRDMvnkkhwD230x5
- q6Q7VBEDh4QrYQ43UOLfycc6Cm/zSL/TWRd2mWXC4VjKnKP6GKBP8qYRF4II8Dnf3AL+DosBd
- sW0o7Qu3qiNCBTbFgp1uZahuGHqCwDUfA==
+Content-Transfer-Encoding: 8bit
 
-In cases where we want a stable way to observe/trace
-cap_capable (e.g. protection from inlining and API updates)
-add a tracepoint that passes:
-- The credentials used
-- The user namespace of the resource being accessed
-- The user namespace in which the credential provides the
-capability to access the targeted resource
-- The capability to check for
-- Bitmask of options defined in include/linux/security.h
-- The return value of the check
+When sealing or unsealing a key blob we currently do not wait for
+the AEAD cipher operation to finish and simply return after submitting
+the request. If there is some load on the system we can exit before
+the cipher operation is done and the buffer we read from/write to
+is already removed from the stack. This will e.g. result in NULL
+pointer dereference errors in the DCP driver during blob creation.
 
-Signed-off-by: Jordan Rome <linux@jordanrome.com>
-=2D--
- MAINTAINERS                       |  1 +
- include/trace/events/capability.h | 60 +++++++++++++++++++++++++++++++
- security/commoncap.c              | 32 ++++++++++++-----
- 3 files changed, 85 insertions(+), 8 deletions(-)
- create mode 100644 include/trace/events/capability.h
+Fix this by waiting for the AEAD cipher operation to finish before
+resuming the seal and unseal calls.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index cc40a9d9b8cd..210e9076c858 100644
-=2D-- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4994,6 +4994,7 @@ M:	Serge Hallyn <serge@hallyn.com>
- L:	linux-security-module@vger.kernel.org
- S:	Supported
- F:	include/linux/capability.h
-+F:	include/trace/events/capability.h
- F:	include/uapi/linux/capability.h
- F:	kernel/capability.c
- F:	security/commoncap.c
-diff --git a/include/trace/events/capability.h b/include/trace/events/capa=
-bility.h
-new file mode 100644
-index 000000000000..e706ce690c38
-=2D-- /dev/null
-+++ b/include/trace/events/capability.h
-@@ -0,0 +1,60 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#undef TRACE_SYSTEM
-+#define TRACE_SYSTEM capability
-+
-+#if !defined(_TRACE_CAPABILITY_H) || defined(TRACE_HEADER_MULTI_READ)
-+#define _TRACE_CAPABILITY_H
-+
-+#include <linux/cred.h>
-+#include <linux/tracepoint.h>
-+#include <linux/user_namespace.h>
-+
-+/**
-+ * cap_capable - called after it's determined if a task has a particular
-+ * effective capability
-+ *
-+ * @cred: The credentials used
-+ * @targ_ns: The user namespace of the resource being accessed
-+ * @capable_ns: The user namespace in which the credential provides the
-+ *              capability to access the targeted resource.
-+ *              This will be NULL if ret is not 0.
-+ * @cap: The capability to check for
-+ * @opts: Bitmask of options defined in include/linux/security.h
-+ * @ret: The return value of the check: 0 if it does, -ve if it does not
-+ *
-+ * Allows to trace calls to cap_capable in commoncap.c
-+ */
-+TRACE_EVENT(cap_capable,
-+
-+	TP_PROTO(const struct cred *cred, struct user_namespace *targ_ns,
-+		struct user_namespace *capable_ns, int cap, unsigned int opts, int ret)=
-,
-+
-+	TP_ARGS(cred, targ_ns, capable_ns, cap, opts, ret),
-+
-+	TP_STRUCT__entry(
-+		__field(const struct cred *, cred)
-+		__field(struct user_namespace *, targ_ns)
-+		__field(struct user_namespace *, capable_ns)
-+		__field(int, cap)
-+		__field(unsigned int, opts)
-+		__field(int, ret)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->cred       =3D cred;
-+		__entry->targ_ns    =3D targ_ns;
-+		__entry->capable_ns =3D capable_ns;
-+		__entry->cap        =3D cap;
-+		__entry->opts       =3D opts;
-+		__entry->ret        =3D ret;
-+	),
-+
-+	TP_printk("cred %p, targ_ns %p, capable_ns %p, cap %d, opts %u, ret %d",
-+		__entry->cred, __entry->targ_ns, __entry->capable_ns, __entry->cap,
-+		__entry->opts, __entry->ret)
-+);
-+
-+#endif /* _TRACE_CAPABILITY_H */
-+
-+/* This part must be outside protection */
-+#include <trace/define_trace.h>
-diff --git a/security/commoncap.c b/security/commoncap.c
-index 162d96b3a676..7287feee0683 100644
-=2D-- a/security/commoncap.c
-+++ b/security/commoncap.c
-@@ -27,6 +27,9 @@
- #include <linux/mnt_idmapping.h>
- #include <uapi/linux/lsm.h>
+Cc: stable@vger.kernel.org # v6.10+
+Fixes: 0e28bf61a5f9 ("KEYS: trusted: dcp: fix leak of blob encryption key")
+Reported-by: Parthiban N <parthiban@linumiz.com>
+Closes: https://lore.kernel.org/keyrings/254d3bb1-6dbc-48b4-9c08-77df04baee2f@linumiz.com/
+Signed-off-by: David Gstir <david@sigma-star.at>
+---
+ security/keys/trusted-keys/trusted_dcp.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-+#define CREATE_TRACE_POINTS
-+#include <trace/events/capability.h>
-+
- /*
-  * If a non-root user executes a setuid-root binary in
-  * !secure(SECURE_NOROOT) mode, then we raise capabilities.
-@@ -52,7 +55,7 @@ static void warn_setuid_and_fcaps_mixed(const char *fnam=
-e)
- /**
-  * cap_capable - Determine whether a task has a particular effective capa=
-bility
-  * @cred: The credentials to use
-- * @targ_ns:  The user namespace in which we need the capability
-+ * @targ_ns:  The user namespace of the resource being accessed
-  * @cap: The capability to check for
-  * @opts: Bitmask of options defined in include/linux/security.h
-  *
-@@ -67,7 +70,11 @@ static void warn_setuid_and_fcaps_mixed(const char *fna=
-me)
- int cap_capable(const struct cred *cred, struct user_namespace *targ_ns,
- 		int cap, unsigned int opts)
- {
--	struct user_namespace *ns =3D targ_ns;
-+	int ret =3D -EPERM;
-+	struct user_namespace *capable_ns, *ns;
-+
-+	capable_ns =3D NULL;
-+	ns =3D targ_ns;
-
- 	/* See if cred has the capability in the target user namespace
- 	 * by examining the target user namespace and all of the target
-@@ -75,22 +82,30 @@ int cap_capable(const struct cred *cred, struct user_n=
-amespace *targ_ns,
- 	 */
- 	for (;;) {
- 		/* Do we have the necessary capabilities? */
--		if (ns =3D=3D cred->user_ns)
--			return cap_raised(cred->cap_effective, cap) ? 0 : -EPERM;
-+		if (ns =3D=3D cred->user_ns) {
-+			if (cap_raised(cred->cap_effective, cap)) {
-+				capable_ns =3D ns;
-+				ret =3D 0;
-+			}
-+			break;
-+		}
-
- 		/*
- 		 * If we're already at a lower level than we're looking for,
- 		 * we're done searching.
- 		 */
- 		if (ns->level <=3D cred->user_ns->level)
--			return -EPERM;
-+			break;
-
- 		/*
- 		 * The owner of the user namespace in the parent of the
- 		 * user namespace has all caps.
- 		 */
--		if ((ns->parent =3D=3D cred->user_ns) && uid_eq(ns->owner, cred->euid))
--			return 0;
-+		if ((ns->parent =3D=3D cred->user_ns) && uid_eq(ns->owner, cred->euid))=
- {
-+			capable_ns =3D ns->parent;
-+			ret =3D 0;
-+			break;
-+		}
-
- 		/*
- 		 * If you have a capability in a parent user ns, then you have
-@@ -99,7 +114,8 @@ int cap_capable(const struct cred *cred, struct user_na=
-mespace *targ_ns,
- 		ns =3D ns->parent;
+diff --git a/security/keys/trusted-keys/trusted_dcp.c b/security/keys/trusted-keys/trusted_dcp.c
+index 4edc5bbbcda3..e908c53a803c 100644
+--- a/security/keys/trusted-keys/trusted_dcp.c
++++ b/security/keys/trusted-keys/trusted_dcp.c
+@@ -133,6 +133,7 @@ static int do_aead_crypto(u8 *in, u8 *out, size_t len, u8 *key, u8 *nonce,
+ 	struct scatterlist src_sg, dst_sg;
+ 	struct crypto_aead *aead;
+ 	int ret;
++	DECLARE_CRYPTO_WAIT(wait);
+ 
+ 	aead = crypto_alloc_aead("gcm(aes)", 0, CRYPTO_ALG_ASYNC);
+ 	if (IS_ERR(aead)) {
+@@ -163,8 +164,8 @@ static int do_aead_crypto(u8 *in, u8 *out, size_t len, u8 *key, u8 *nonce,
  	}
-
--	/* We never get here */
-+	trace_cap_capable(cred, targ_ns, capable_ns, cap, opts, ret);
-+	return ret;
- }
-
- /**
-=2D-
-2.43.5
+ 
+ 	aead_request_set_crypt(aead_req, &src_sg, &dst_sg, len, nonce);
+-	aead_request_set_callback(aead_req, CRYPTO_TFM_REQ_MAY_SLEEP, NULL,
+-				  NULL);
++	aead_request_set_callback(aead_req, CRYPTO_TFM_REQ_MAY_SLEEP,
++				  crypto_req_done, &wait);
+ 	aead_request_set_ad(aead_req, 0);
+ 
+ 	if (crypto_aead_setkey(aead, key, AES_KEYSIZE_128)) {
+@@ -174,9 +175,9 @@ static int do_aead_crypto(u8 *in, u8 *out, size_t len, u8 *key, u8 *nonce,
+ 	}
+ 
+ 	if (do_encrypt)
+-		ret = crypto_aead_encrypt(aead_req);
++		ret = crypto_wait_req(crypto_aead_encrypt(aead_req), &wait);
+ 	else
+-		ret = crypto_aead_decrypt(aead_req);
++		ret = crypto_wait_req(crypto_aead_decrypt(aead_req), &wait);
+ 
+ free_req:
+ 	aead_request_free(aead_req);
+-- 
+2.47.0
 
