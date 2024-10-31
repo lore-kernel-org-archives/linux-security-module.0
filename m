@@ -1,167 +1,107 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 881822144D3;
-	Wed, 30 Oct 2024 23:51:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6626F6A019
+	for <linux-security-module@vger.kernel.org>; Thu, 31 Oct 2024 15:05:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730332262; cv=none; b=Nnj/50/bbBwwpTYLn3sVmfd+YwK1fr58RyuC9NL6MresA2rBCLopy+6Gd8eP0u08INDuFznj74Ca9asNJ5+uwXfZzN5mGAY3i8m70DsOU0yHAdCT+ntuxOZUtI3w3Bi9Q7Fqc13RvFC5WAjTrruOut2mm5D+89KuS83zVGA+ebU=
+	t=1730387161; cv=none; b=YsytolYhN4HQoLXLp0W6b6Dp0eiEfd7VzDbQtyqpfSaVxbScbIkg8uSUWP0apwtrHNsjdfsprPsnhZk2UZIWIN9nFNWyPSzF+L71IxH0aEiAE/apidF3NVmZ1FviUaKDieIBx0g5YJNBVi/Gc750gIwDUUCnK7nsA1DEuj6tNgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730332262; c=relaxed/simple;
-	bh=MOLCf3aBNQw/Ib0eAl9t92b97pZC42tHEgHRlmV73Xw=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=M8sBYhgxwHGXMJkxtQ9zdqepEy1+3YGuDmIz59+zGht48BTDg7V04K/MEsg7GDo0PzkHhgRkVgXyMCDc7uMQstJTB4ly2FMCwLZBiHFZHmqyD3XsJ8JUCtinStLSqYRn1CtUMp8OvRX6XsvX/CSl43reOpCy2xT3Rlv6YQkjoeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ODBeBf6V; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1730387161; c=relaxed/simple;
+	bh=okN6iKADsHDU5G1xc79CsdDuAzz4fO12E3NBBKkipAM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Yt+u6RTa1dDotTnz/+b3t92qbBxt2jrWxi6YtEgx1iFHDxHQ/c4tJ2LuzpnzKGOgB+1xHU+dvuEUEbspjAv9sAt1sPYBNIUcqVY5K/Ph0H+z8I0oU7+sBU1Hm2AQ+uVQrF6Aj8myPl5tJz8BbSr4jrEvufA5RTP4cSG9dAfT4OY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=G6ZMR07w; arc=none smtp.client-ip=209.85.160.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ODBeBf6V"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75675C4E698;
-	Wed, 30 Oct 2024 23:51:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730332262;
-	bh=MOLCf3aBNQw/Ib0eAl9t92b97pZC42tHEgHRlmV73Xw=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=ODBeBf6VZ/lOw7HcjB5DZwd9N8g/KAgcREpXPmZA/spBI52kMhu0ovLns+TDuH/OJ
-	 WHS0zwNQdBPrrlH+qiLReX+DxzBOublsSYNTu7Nq1QEZQAc471tSpvjC6JWrzCTSyq
-	 XDFT2A2i6DRxTToDIAfeAxyJrJAFxxPsCSaboJ6SHNHK1h704TIL0y2muersOVATOG
-	 o12KbaUN2FGI6a+UIzPti1UF1a3JGY3k/zJG3L70tQmAcFhZrtz+ZVRMxBc6mZlbHa
-	 rmowNRA3iEPgxj1GKGMYr067inhCldZERlX8gs9PmDVTyJgvFYRTzI9jIq4fp45EAB
-	 +zrUUyLJP4nhg==
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="G6ZMR07w"
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-288fa5ce8f0so506709fac.3
+        for <linux-security-module@vger.kernel.org>; Thu, 31 Oct 2024 08:05:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1730387158; x=1730991958; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p9gmY1X+Z6HaiDqI0rcQKxzw47LjvFY8Hd6hj/Hqn7c=;
+        b=G6ZMR07w8tevJNTje3ABI3oJ7cHZVCKHddeJFBHhkW1nAMGiYL98gtbTPX+EwN7Kap
+         upJxsGRNgNLNEKhiApaCsXEy5r4jNLYuSjFnnEUNco+XXZJn1Hm59uY35AvxvZzEDpTA
+         nyfUsDqN0pLPiffF6TeJMp25M75DKGrJJlWAQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730387158; x=1730991958;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=p9gmY1X+Z6HaiDqI0rcQKxzw47LjvFY8Hd6hj/Hqn7c=;
+        b=KDhe88zT22kfhSYIesemeq8M4XIvX7KG8K8FwdzuTPK7Qc1rVkYHcwQfHeIelvg0lA
+         Wf6rsmowR2iH3k9z0bj4GcWXVR3SRQK0N3BP+xoxIV45e6OvT72EkwzrOhZWgn2mC2zg
+         x2Xzc2Spe7OsphK90yKekzr8xfE5Y0RtN8V7nVG+n2tJUD2maLwMT7ZJkNkpVWSrwOfL
+         4QuHig6HN/Ab/V3uZHWSy5YM8gcNOFdDn8AfMWJsXX3ucBAcjwc+8ObHkoMXsMwmPcYK
+         TH/VROr+Mly29ZMSceeHd/NqGQ/+R/ou34+Cq3DMtHhh6TFJ9WoCeEmKzjhV/EDM2XjY
+         i54g==
+X-Forwarded-Encrypted: i=1; AJvYcCVWR3dB8oJfemPnNgzfYh2kLpDT6rVQo+ms1lWra5mCih5QNlznJhk6BosbRqA/0F9vi/eRoAaA3BkFcAK+GqlpjG3QsUw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxROUuJt2TUUdve81ngg6neTpNNypaclkC6HjYpq36Dy2YszJXv
+	P9Wm5uM2hqXx9fbDyT8+cueotHrZOqT/I35egOrtGZgdUu4MPrib1Ya+VC/qxOsGZukJSPCyIN3
+	hKw==
+X-Google-Smtp-Source: AGHT+IGLD+TFBF8njIDJOZio2BN4e+RhYdWNMb2IZ0Q/10OypmOjD3pvHNgbdbApTjkVZpGGCPgAnw==
+X-Received: by 2002:a05:6870:5249:b0:288:60d3:a257 with SMTP id 586e51a60fabf-29051ddc93cmr17686203fac.40.1730387158247;
+        Thu, 31 Oct 2024 08:05:58 -0700 (PDT)
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com. [209.85.166.175])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4de048bfebesm326880173.55.2024.10.31.08.05.57
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 31 Oct 2024 08:05:57 -0700 (PDT)
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3a3bd5a273bso226685ab.1
+        for <linux-security-module@vger.kernel.org>; Thu, 31 Oct 2024 08:05:57 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVFmfM7zTXMF6CGILT9PEiArBfsN6MVtO6nCvCxTG2cqlsCzjFk4De6aH1yfurrJkmeZkKYlDzN8sDaN6tkbJmqRy7/pIk=@vger.kernel.org
+X-Received: by 2002:a05:6e02:2141:b0:3a0:a3cd:f23d with SMTP id
+ e9e14a558f8ab-3a6a9361423mr2927785ab.5.1730387156524; Thu, 31 Oct 2024
+ 08:05:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
+References: <20240910191117.1001581-1-jettrink@chromium.org>
+ <D43HINLZGMXS.FYJOK0SVQFQW@kernel.org> <ZxckGbxzpWDuXG_q@google.com> <D59JJFBKKJ14.2KQSUSXP649DE@kernel.org>
+In-Reply-To: <D59JJFBKKJ14.2KQSUSXP649DE@kernel.org>
+From: Jett Rink <jettrink@chromium.org>
+Date: Thu, 31 Oct 2024 09:05:45 -0600
+X-Gmail-Original-Message-ID: <CAK+PMK45YwcV9S+nvB-QcjAKete889QATvv5jtVm=TbgRHZW2A@mail.gmail.com>
+Message-ID: <CAK+PMK45YwcV9S+nvB-QcjAKete889QATvv5jtVm=TbgRHZW2A@mail.gmail.com>
+Subject: Re: [PATCH v6] tpm: Add new device/vendor ID 0x50666666
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Tzung-Bi Shih <tzungbi@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	linux-security-module@vger.kernel.org, Jason Gunthorpe <jgg@ziepe.ca>, 
+	Peter Huewe <peterhuewe@gmx.de>, linux-integrity@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 31 Oct 2024 01:50:57 +0200
-Message-Id: <D59JLDCHCZPD.3CA4121HVVJXL@kernel.org>
-Cc: <linux-kernel@vger.kernel.org>, "David Howells" <dhowells@redhat.com>,
- "Mimi Zohar" <zohar@linux.ibm.com>, "Roberto Sassu"
- <roberto.sassu@huawei.com>, "Stefan Berger" <stefanb@linux.ibm.com>, "Paul
- Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
- Hallyn" <serge@hallyn.com>, "Dmitry Kasatkin" <dmitry.kasatkin@gmail.com>,
- "Eric Snowberg" <eric.snowberg@oracle.com>, "open list:KEYS-TRUSTED"
- <keyrings@vger.kernel.org>, "open list:SECURITY SUBSYSTEM"
- <linux-security-module@vger.kernel.org>, <stable@vger.kernel.org>
-Subject: Re: [PATCH v8 2/3] tpm: Rollback tpm2_load_null()
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Jarkko Sakkinen" <jarkko@kernel.org>, "James Bottomley"
- <James.Bottomley@HansenPartnership.com>, <linux-integrity@vger.kernel.org>,
- "Peter Huewe" <peterhuewe@gmx.de>, "Jason Gunthorpe" <jgg@ziepe.ca>
-X-Mailer: aerc 0.18.2
-References: <20241028055007.1708971-1-jarkko@kernel.org>
- <20241028055007.1708971-3-jarkko@kernel.org>
- <27e3ac1678bde5e107691e12c09fa470ab47a5b2.camel@HansenPartnership.com>
- <D59JG45GJC5V.1HT5KJQ0K4CKI@kernel.org>
-In-Reply-To: <D59JG45GJC5V.1HT5KJQ0K4CKI@kernel.org>
 
-On Thu Oct 31, 2024 at 1:44 AM EET, Jarkko Sakkinen wrote:
-> On Wed Oct 30, 2024 at 5:47 PM EET, James Bottomley wrote:
-> > On Mon, 2024-10-28 at 07:50 +0200, Jarkko Sakkinen wrote:
-> > [...]
-> > > --- a/drivers/char/tpm/tpm2-sessions.c
-> > > +++ b/drivers/char/tpm/tpm2-sessions.c
-> > > @@ -915,33 +915,37 @@ static int tpm2_parse_start_auth_session(struct
-> > > tpm2_auth *auth,
-> > > =C2=A0
-> > > =C2=A0static int tpm2_load_null(struct tpm_chip *chip, u32 *null_key)
-> > > =C2=A0{
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int rc;
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0unsigned int offset =
-=3D 0; /* dummy offset for null seed
-> > > context */
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0u8 name[SHA256_DIGEST=
-_SIZE + 2];
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0u32 tmp_null_key;
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0int rc;
-> > > =C2=A0
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0rc =3D tpm2_load_cont=
-ext(chip, chip->null_key_context, &offset,
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 null_key);
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (rc !=3D -EINVAL)
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0return rc;
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 &tmp_null_key);
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (rc !=3D -EINVAL) {
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0if (!rc)
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0*nu=
-ll_key =3D tmp_null_key;
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0goto err;
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
-> > > =C2=A0
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* an integrity failure ma=
-y mean the TPM has been reset */
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0dev_err(&chip->dev, "NULL =
-key integrity failure!\n");
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* check the null name aga=
-inst what we know */
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0tpm2_create_primary(chip, =
-TPM2_RH_NULL, NULL, name);
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (memcmp(name, chip->nul=
-l_key_name, sizeof(name)) =3D=3D 0)
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0/* name unchanged, assume transient integrity failu=
-re
-> > > */
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0return rc;
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/*
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * Fatal TPM failure: the =
-NULL seed has actually changed, so
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * the TPM must have been =
-illegally reset.=C2=A0 All in-kernel TPM
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * operations will fail be=
-cause the NULL primary can't be
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * loaded to salt the sess=
-ions, but disable the TPM anyway so
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 * userspace programmes ca=
-n't be compromised by it.
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0dev_err(&chip->dev, "NULL =
-name has changed, disabling TPM due
-> > > to interference\n");
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0/* Try to re-create null k=
-ey, given the integrity failure: */
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0rc =3D tpm2_create_primary=
-(chip, TPM2_RH_NULL, &tmp_null_key,
-> > > name);
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (rc)
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0goto err;
+Looks good, thank you!
+
+-Jett
+
+On Wed, Oct 30, 2024 at 5:48=E2=80=AFPM Jarkko Sakkinen <jarkko@kernel.org>=
+ wrote:
+>
+> On Tue Oct 22, 2024 at 7:03 AM EEST, Tzung-Bi Shih wrote:
+> > Hi Jarkko,
 > >
-> > From a security point of view, this probably isn't such a good idea:
-> > the reason the context load failed above is likely the security
-> > condition we're checking for: the null seed changed because an
-> > interposer did a reset.  That means that if the interposer knows about
-> > this error leg, it would simply error out the create primary here and
-> > the TPM wouldn't be disabled.
+> > On Wed, Sep 11, 2024 at 04:21:24PM +0300, Jarkko Sakkinen wrote:
+> > > I applied this (will push later to my remote tree).
+> >
+> > I failed to find the patch in [1].  Is it somehow overlooked?
+> >
+> > [1]: https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd=
+.git/log/?h=3Dnext
 >
-> If you think there is something that should be still addressed, or there
-> is overlooked issue please do send a patch, and we will review that.
-> There's been plenty of time to comment on patches.
+> It is applied to my master branch now:
 >
-> Neither in previous TPM_CHIP_FLAG_DISABLED was set tpm2_load_context()
-> failed. It went like this:
+> https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/lo=
+g/
 >
-> 	rc =3D tpm2_load_context(chip, chip->null_key_context, &offset,
-> 			       null_key);
-> 	if (rc !=3D -EINVAL)
-> 		return rc;
+> Can you sanity check that it looks good? Thanks and sorry for the
+> delay!
 >
-> If you think that this should be addressed, do send a patch but point
-> out the fixes-tag to your original patch then.
-
-Also want to denotat that I specifically did not set flag because I
-thought you had good reasons not to disable TPM. So it was left like
-that knowingly, definitely not by ignorance. Good that it became now
-apparent and I'm happy to take a fix in (with correct fixes tag).
-
-BR, Jarkko
+> BR, Jarkko
