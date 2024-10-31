@@ -1,107 +1,121 @@
-Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6626F6A019
-	for <linux-security-module@vger.kernel.org>; Thu, 31 Oct 2024 15:05:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DC9F33F7;
+	Thu, 31 Oct 2024 15:59:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730387161; cv=none; b=YsytolYhN4HQoLXLp0W6b6Dp0eiEfd7VzDbQtyqpfSaVxbScbIkg8uSUWP0apwtrHNsjdfsprPsnhZk2UZIWIN9nFNWyPSzF+L71IxH0aEiAE/apidF3NVmZ1FviUaKDieIBx0g5YJNBVi/Gc750gIwDUUCnK7nsA1DEuj6tNgY=
+	t=1730390342; cv=none; b=pQMWHIk1hlEy5v8v96Rnq3CX4LXjPpDjmFgj9/EI7M81Khd0udpahj7isc/XAx3ohdlr/PwruAdiPIkiF4pH7eqfR8Sfb756GZ2ctvU5oYJsgtBfFORvW8dY37p2ui78AM1PmSQ0nHLffhbvrVch5Di+NzDO7xlgx5HswDYpUR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730387161; c=relaxed/simple;
-	bh=okN6iKADsHDU5G1xc79CsdDuAzz4fO12E3NBBKkipAM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Yt+u6RTa1dDotTnz/+b3t92qbBxt2jrWxi6YtEgx1iFHDxHQ/c4tJ2LuzpnzKGOgB+1xHU+dvuEUEbspjAv9sAt1sPYBNIUcqVY5K/Ph0H+z8I0oU7+sBU1Hm2AQ+uVQrF6Aj8myPl5tJz8BbSr4jrEvufA5RTP4cSG9dAfT4OY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=G6ZMR07w; arc=none smtp.client-ip=209.85.160.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1730390342; c=relaxed/simple;
+	bh=KVqtJ6+31/7LG0jubAcYGxBoG3ai1OLyPduzkmuaIoQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=iQ2xA0SW9aqe9nFhpRbuQPcFMP5dWfG8rRELN4C7rl9TUR4LQ+3qAcCX8594cS24EZnb0UUNEK1bmGeuMIT3yu1tKu/E5fdpXc69CowO31wj3W7i83EknLFYWfsYofoW/3dXYbz5+/K8U1KLu3F0RmD8NHFGyM4u0iHBumvvskU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TS3Batvj; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="G6ZMR07w"
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-288fa5ce8f0so506709fac.3
-        for <linux-security-module@vger.kernel.org>; Thu, 31 Oct 2024 08:05:59 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TS3Batvj"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4316e9f4a40so9203175e9.2;
+        Thu, 31 Oct 2024 08:58:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1730387158; x=1730991958; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=p9gmY1X+Z6HaiDqI0rcQKxzw47LjvFY8Hd6hj/Hqn7c=;
-        b=G6ZMR07w8tevJNTje3ABI3oJ7cHZVCKHddeJFBHhkW1nAMGiYL98gtbTPX+EwN7Kap
-         upJxsGRNgNLNEKhiApaCsXEy5r4jNLYuSjFnnEUNco+XXZJn1Hm59uY35AvxvZzEDpTA
-         nyfUsDqN0pLPiffF6TeJMp25M75DKGrJJlWAQ=
+        d=gmail.com; s=20230601; t=1730390338; x=1730995138; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UgwNFtv7v+HTHeQa2LyIvaRpePXDUo69gSnUNfeHmCM=;
+        b=TS3Batvjdkr9QSGLcJr7NqN+nM686G/mwVgH6vRn0gcpm9G97ooPxsYbxOI3MDePNC
+         K1ANC0glmYeXGb97F0HFme7HHnyHprNSDd38hDZQV8HoqjuXXHn86mbwTsaCPQoMXT8r
+         1jPIC/yltCK5kt1eCOdRQFJnkkyud6S0JQRZhS0ekgJZFFuqXXN7cPUWsv4sgHaFO7ns
+         VbZGnWqT4Hs9f1XjJqE1ZxRGb1fi1NHcl5zBAoVqy95h7nNA+HpupsRqVUvvtyZIjQR/
+         8ji6z0C8TZV0gGE+LAOk4wHs7E+ha3nEYYUcQCE5o7zbpzW9zm70Fw/c4IobOLtQN5Qc
+         AI6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730387158; x=1730991958;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=p9gmY1X+Z6HaiDqI0rcQKxzw47LjvFY8Hd6hj/Hqn7c=;
-        b=KDhe88zT22kfhSYIesemeq8M4XIvX7KG8K8FwdzuTPK7Qc1rVkYHcwQfHeIelvg0lA
-         Wf6rsmowR2iH3k9z0bj4GcWXVR3SRQK0N3BP+xoxIV45e6OvT72EkwzrOhZWgn2mC2zg
-         x2Xzc2Spe7OsphK90yKekzr8xfE5Y0RtN8V7nVG+n2tJUD2maLwMT7ZJkNkpVWSrwOfL
-         4QuHig6HN/Ab/V3uZHWSy5YM8gcNOFdDn8AfMWJsXX3ucBAcjwc+8ObHkoMXsMwmPcYK
-         TH/VROr+Mly29ZMSceeHd/NqGQ/+R/ou34+Cq3DMtHhh6TFJ9WoCeEmKzjhV/EDM2XjY
-         i54g==
-X-Forwarded-Encrypted: i=1; AJvYcCVWR3dB8oJfemPnNgzfYh2kLpDT6rVQo+ms1lWra5mCih5QNlznJhk6BosbRqA/0F9vi/eRoAaA3BkFcAK+GqlpjG3QsUw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxROUuJt2TUUdve81ngg6neTpNNypaclkC6HjYpq36Dy2YszJXv
-	P9Wm5uM2hqXx9fbDyT8+cueotHrZOqT/I35egOrtGZgdUu4MPrib1Ya+VC/qxOsGZukJSPCyIN3
-	hKw==
-X-Google-Smtp-Source: AGHT+IGLD+TFBF8njIDJOZio2BN4e+RhYdWNMb2IZ0Q/10OypmOjD3pvHNgbdbApTjkVZpGGCPgAnw==
-X-Received: by 2002:a05:6870:5249:b0:288:60d3:a257 with SMTP id 586e51a60fabf-29051ddc93cmr17686203fac.40.1730387158247;
-        Thu, 31 Oct 2024 08:05:58 -0700 (PDT)
-Received: from mail-il1-f175.google.com (mail-il1-f175.google.com. [209.85.166.175])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4de048bfebesm326880173.55.2024.10.31.08.05.57
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 31 Oct 2024 08:05:57 -0700 (PDT)
-Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3a3bd5a273bso226685ab.1
-        for <linux-security-module@vger.kernel.org>; Thu, 31 Oct 2024 08:05:57 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVFmfM7zTXMF6CGILT9PEiArBfsN6MVtO6nCvCxTG2cqlsCzjFk4De6aH1yfurrJkmeZkKYlDzN8sDaN6tkbJmqRy7/pIk=@vger.kernel.org
-X-Received: by 2002:a05:6e02:2141:b0:3a0:a3cd:f23d with SMTP id
- e9e14a558f8ab-3a6a9361423mr2927785ab.5.1730387156524; Thu, 31 Oct 2024
- 08:05:56 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730390338; x=1730995138;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UgwNFtv7v+HTHeQa2LyIvaRpePXDUo69gSnUNfeHmCM=;
+        b=S7JJbBqjvAVQ+RyALq1NR9hxAtllIQtZwDZh5xFq9nln84qUewHwpuSZ2XmNfCg4jt
+         En73yLpI84ehxKf2bGY0IFIrMSNIqm/hEvAO8hkGLeehrVM1e5+KpVR/pDBxOKisGFX3
+         u93WkqwXFboSjwyUdz1pOMo/zJ/KM+iucM+T6Ok32F+XwBkYJSHQtR5mLSwrEDmMoODh
+         VZ1I2vp4C33g52I3+AWgpRNR1Ix4uEyOVIExTq5S+c5+JxcKHlCwD2394O38nUgtl8Yk
+         9XRB9HEd2mST31rLmBIyn7Q1jwIMHscrqsCqaebElIZbwNIjLdyK8sgJD4zVE9i/eh38
+         Poeg==
+X-Forwarded-Encrypted: i=1; AJvYcCUCHpuDY5sXzyh2t3XZmzrwAFy/4Tao5eImVSTuJIOdS38xmrkYkDJyXREQAdBMIwU0R8wBQY6vFgX2gZ6uShOnEG/NTeqZ@vger.kernel.org, AJvYcCVpSBN6NdwZtKR54f+6TNSHT+/xDdTQZ+hQroSkcJYmxV2nSfKWsHMi6DX7zxDxZMvS9lOYqAR9fopJ59c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwniNFOusgaiCEbwecj2lVKnwjDRHFA/ljEfWSI6So6IRCv7wSn
+	HNFjEMMS8CfGTT1AsOnJUuODW2sx2VDG68KUmoYU7cbv+DsaxBOP
+X-Google-Smtp-Source: AGHT+IGaxUg+BMAR7WuTyNDh1F0SjP7q7ZPR3WHVrYWH4Tl6rULWauDzozYmmm+H4JDnLkKSEFz18w==
+X-Received: by 2002:adf:ea43:0:b0:37d:633a:b361 with SMTP id ffacd0b85a97d-38061206c0cmr15050819f8f.51.1730390338315;
+        Thu, 31 Oct 2024 08:58:58 -0700 (PDT)
+Received: from localhost ([194.120.133.65])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10b7c08sm2532758f8f.17.2024.10.31.08.58.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Oct 2024 08:58:57 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Fan Wu <wufan@kernel.org>,
+	Deven Bowers <deven.desai@linux.microsoft.com>,
+	Paul Moore <paul@paul-moore.com>,
+	linux-security-module@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] scripts: ipe: polgen: remove redundant close and error exit path
+Date: Thu, 31 Oct 2024 15:58:57 +0000
+Message-Id: <20241031155857.3262806-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240910191117.1001581-1-jettrink@chromium.org>
- <D43HINLZGMXS.FYJOK0SVQFQW@kernel.org> <ZxckGbxzpWDuXG_q@google.com> <D59JJFBKKJ14.2KQSUSXP649DE@kernel.org>
-In-Reply-To: <D59JJFBKKJ14.2KQSUSXP649DE@kernel.org>
-From: Jett Rink <jettrink@chromium.org>
-Date: Thu, 31 Oct 2024 09:05:45 -0600
-X-Gmail-Original-Message-ID: <CAK+PMK45YwcV9S+nvB-QcjAKete889QATvv5jtVm=TbgRHZW2A@mail.gmail.com>
-Message-ID: <CAK+PMK45YwcV9S+nvB-QcjAKete889QATvv5jtVm=TbgRHZW2A@mail.gmail.com>
-Subject: Re: [PATCH v6] tpm: Add new device/vendor ID 0x50666666
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Tzung-Bi Shih <tzungbi@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	linux-security-module@vger.kernel.org, Jason Gunthorpe <jgg@ziepe.ca>, 
-	Peter Huewe <peterhuewe@gmx.de>, linux-integrity@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Looks good, thank you!
+Currently if an fopen fails the error exit path is via code that
+checks if fp is not null and closes the file, however, fp is null
+so this check and close is redundant. Since the only use of the
+err exit label is on the fopen check, remove it and replace the
+code with a simple return of errno. Also remove variable rc since
+it's no longer required.
 
--Jett
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ scripts/ipe/polgen/polgen.c | 12 ++----------
+ 1 file changed, 2 insertions(+), 10 deletions(-)
 
-On Wed, Oct 30, 2024 at 5:48=E2=80=AFPM Jarkko Sakkinen <jarkko@kernel.org>=
- wrote:
->
-> On Tue Oct 22, 2024 at 7:03 AM EEST, Tzung-Bi Shih wrote:
-> > Hi Jarkko,
-> >
-> > On Wed, Sep 11, 2024 at 04:21:24PM +0300, Jarkko Sakkinen wrote:
-> > > I applied this (will push later to my remote tree).
-> >
-> > I failed to find the patch in [1].  Is it somehow overlooked?
-> >
-> > [1]: https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd=
-.git/log/?h=3Dnext
->
-> It is applied to my master branch now:
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/lo=
-g/
->
-> Can you sanity check that it looks good? Thanks and sorry for the
-> delay!
->
-> BR, Jarkko
+diff --git a/scripts/ipe/polgen/polgen.c b/scripts/ipe/polgen/polgen.c
+index c6283b3ff006..01134cf895d0 100644
+--- a/scripts/ipe/polgen/polgen.c
++++ b/scripts/ipe/polgen/polgen.c
+@@ -61,15 +61,12 @@ static int policy_to_buffer(const char *pathname, char **buffer, size_t *size)
+ 
+ static int write_boot_policy(const char *pathname, const char *buf, size_t size)
+ {
+-	int rc = 0;
+ 	FILE *fd;
+ 	size_t i;
+ 
+ 	fd = fopen(pathname, "w");
+-	if (!fd) {
+-		rc = errno;
+-		goto err;
+-	}
++	if (!fd)
++		return errno;
+ 
+ 	fprintf(fd, "/* This file is automatically generated.");
+ 	fprintf(fd, " Do not edit. */\n");
+@@ -113,11 +110,6 @@ static int write_boot_policy(const char *pathname, const char *buf, size_t size)
+ 	fclose(fd);
+ 
+ 	return 0;
+-
+-err:
+-	if (fd)
+-		fclose(fd);
+-	return rc;
+ }
+ 
+ int main(int argc, const char *const argv[])
+-- 
+2.39.5
+
