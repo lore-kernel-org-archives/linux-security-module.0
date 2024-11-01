@@ -1,56 +1,79 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7393C1EA65;
-	Fri,  1 Nov 2024 02:02:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3008C762F7;
+	Fri,  1 Nov 2024 02:10:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730426528; cv=none; b=K05ivkT4qJ5ZSHNKfjfSteXg1wqDzRaYTPda2DnTvxr+cxyzRTfOM32XF+LDNcmncY2Als4fDewLgMu1Mw8HlXnh5lO1E/rCZs2b3wQiDi7Ah/Sj8KrjL9ujJLudNXsKvIsgeeD9xtcJyW+fpR3jo2er1aPcAPm6GezhqL2UDXc=
+	t=1730427022; cv=none; b=C59S6mXWk72Iz+Xv6zhK4wLL8rQOYlfAQBAoyQnHHQhTg+4YKhixURKNFlzVHKGNmRIN85nBjIyM2aEmYzMjNbuCwNkHvdUwWv/Ixu2rjQUDaCboEUljv+USml/xcdawquQjBDObqTyqqlzdgPNHJGrCjcRunD4HYaXHrSpG07o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730426528; c=relaxed/simple;
-	bh=00Qzs0zLAQpvza5LdbNUpf4OdZ8Rc7JiePkFOhbFX4A=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=R/ofYb6IKhStywRhJwgY39nn7fJoRigOuv/lmydYUPWYRS22s0CIe2b0iBfzD8tBbtjnJrnNt1z+lCNN5IsgdevuL0N6OZYOSvvuk3z1BFMaJbRZI5FLyPMpG9K5t5z81/8qlkLfgUhtfUN5gT5p/fviypd6VtFEgr/2ez4mBzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oU7Cunw/; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1730427022; c=relaxed/simple;
+	bh=434GrK+5RrXuOXbsNXdMgMWxvF6vZmC8e5FPvlkKo8M=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=BsOAMbM9LrF4drSV2LGe8HS3/gZcCzLdnEvVyko1MtrpqqP2GfyzqJ/tR4eiV9gNdmCaHezSSZpTf0Erl60Lt1g9W00ZY9uh0CTVZlLh1VseqRt82yiqTin/7ypCrBncdE4Q1NBW4SHZflV5wkLhgd4IfVtQclJKlHfUPMWPydQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qXYLeujq; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oU7Cunw/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50C70C4CEC3;
-	Fri,  1 Nov 2024 02:02:07 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qXYLeujq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA0F8C4CEC3;
+	Fri,  1 Nov 2024 02:10:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730426527;
-	bh=00Qzs0zLAQpvza5LdbNUpf4OdZ8Rc7JiePkFOhbFX4A=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=oU7Cunw/Eu2gpa6G+pancwyFwb0Lv+AYQZYY7SJPFaBtoeBGHyQ/soBnDO87qBXKH
-	 k139dZPkQbsvrJ7mMXCANSURqzaTQ25Hm0JwMJjLaoKLouFPccIf+s5kNLLpmOydlv
-	 jN+vu7V6CjHiXrZr4vRWMzG4HeuGIV5t96TAG2jf+V0KdYRSTM8/FuiRk7AmSCaB3i
-	 bB/0i8c90S3Eiv3GAhG5QsbLmwXvQal2Sl4cJ2QIO2jvr2Xae2nVgmiUNmC0PzrnWS
-	 v6jIRG3DbgFifG6gF509+UxfKoxXIw3TF+1NuS01iC3o22NjZrKInu7UWAXHH5oIJv
-	 iZmtnMAmHkmTQ==
-Date: Thu, 31 Oct 2024 19:02:06 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: George Guo <dongtai.guo@linux.dev>
-Cc: horms@kernel.org, paul@paul-moore.com, davem@davemloft.net,
- edumazet@google.com, pabeni@redhat.com, netdev@vger.kernel.org,
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, George
- Guo <guodongtai@kylinos.cn>
-Subject: Re: [PATCH net-next v2] netlabel: document doi_remove field of
- struct netlbl_calipso_ops
-Message-ID: <20241031190206.475dbc4c@kernel.org>
-In-Reply-To: <20241028123435.3495916-1-dongtai.guo@linux.dev>
-References: <20241028123435.3495916-1-dongtai.guo@linux.dev>
+	s=k20201202; t=1730427021;
+	bh=434GrK+5RrXuOXbsNXdMgMWxvF6vZmC8e5FPvlkKo8M=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=qXYLeujqdnkJj3kQY+Pyk6/5DFITBUaqyYruIFq4zV0Z0dIAEddJ/77X/Q81z5HmU
+	 liJECTbdK/LmXTCP2qQQE1JVYJReEW+GWjKBZSGgjWmPJdtmfiwVKU0AA9FVvc6Oq0
+	 aoCS69Y+mn0aOF5JMwqi54IJsaGQ/x0/qp+tzM/N53PaIYRo69adLs6yrzK8pDzOHR
+	 VmcjEPDhcJ/ZWlKU5zMMgjVTuAQwadLpWSw+wMbg7070DA5opc8Zag4y4rMKFGtJbf
+	 iVKkh6vbFNdm0UuyO7HL8/7DoZd/bkC2E3Fhg+xrpXei5cda1NP2ZtIzHr1onO6gis
+	 wkxcrPuFc3IgA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB57D380AC02;
+	Fri,  1 Nov 2024 02:10:30 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next v2] netlabel: document doi_remove field of struct
+ netlbl_calipso_ops
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173042702977.2154072.6542843382909285441.git-patchwork-notify@kernel.org>
+Date: Fri, 01 Nov 2024 02:10:29 +0000
+References: <20241028123435.3495916-1-dongtai.guo@linux.dev>
+In-Reply-To: <20241028123435.3495916-1-dongtai.guo@linux.dev>
+To: George Guo <dongtai.guo@linux.dev>
+Cc: horms@kernel.org, paul@paul-moore.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org, guodongtai@kylinos.cn
 
-On Mon, 28 Oct 2024 20:34:35 +0800 George Guo wrote:
+Hello:
+
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Mon, 28 Oct 2024 20:34:35 +0800 you wrote:
+> From: George Guo <guodongtai@kylinos.cn>
+> 
 > Add documentation of doi_remove field to Kernel doc for struct netlbl_calipso_ops.
 > 
 > Flagged by ./scripts/kernel-doc -none.
+> 
+> Signed-off-by: George Guo <guodongtai@kylinos.cn>
+> 
+> [...]
 
-Okay but there are 5 other warnings in this file.
-In the future please try to address all kdocs warnings in one change.
+Here is the summary with links:
+  - [net-next,v2] netlabel: document doi_remove field of struct netlbl_calipso_ops
+    https://git.kernel.org/netdev/net-next/c/d86c7a9162ae
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
