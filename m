@@ -1,113 +1,95 @@
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEC621C7603
-	for <linux-security-module@vger.kernel.org>; Fri,  1 Nov 2024 16:42:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1550B1CA81
+	for <linux-security-module@vger.kernel.org>; Fri,  1 Nov 2024 16:52:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730479364; cv=none; b=SZmzKEZ2l1k1uzG+7GwQOGHxS8pOCqyXUH3rruDFwVZuJU0JlDhsX1i2W/BJ5bQFYhnorI0G+ar5Cd2a8ACJ6OPqLGgDAs/sLUWbE1t2hJd1NI0v7/LRVQzY8iMb16g1zUUfiGmVUtoOWltGy7Fxx9zQDE+zG3g5CH+PlSTyBbM=
+	t=1730479978; cv=none; b=SkckswS/xl9eueORyZJPcU3KB84NOxTmM3d/HCJ2U5UNCYhW1RoZRBjnuR3zey+cxLHT/4CVeIspUXpUXwJmyJ8mPBib4lVaYJ4M2txXw2YK9ZOvG2tYV0UP1zF6CDO6z3Fd7l1A7viT0QFO0BTFwOuzSrhoiqS2lL1krW+Tzcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730479364; c=relaxed/simple;
-	bh=bdl1QU1TO9smfZlcjavKeh83DDahAr/viN7jpcXBk5k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iwNsiJ6N52WEXRhv7aoiGODpW5D5LoMR76+fVzDpUpDbN6ylTRT+eX6aZmm/hBZs4cySRyZ8LhB+WcZ/m8x4kC8Xg8kyblQ+LyMD/UEb0GH05wEPXu3NxD6iYrvttHappUZcvbdv90332vknnQhw9zNKiStD/z9n8gkyC9yMb/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=VYfqtx9n; arc=none smtp.client-ip=209.85.219.172
+	s=arc-20240116; t=1730479978; c=relaxed/simple;
+	bh=NV0lZsmdBRff0dguOgfQcvcQNTlN8QeO+n94mtctPwU=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=PCZepYRPBw6z5vJuvS5OHGi4lYAT282Lqs++PZprZEHzEyeCfJPrIvlYbL1+lQFmDDk8pISxM3wj/N1jjwwkT199Mxsgm2QzlBIYhfO2MAqmhiScD/EY1JAWBM6w5DlCrq10ybsHMTly0V8IQCQ0I+tCEfpD64WOcoYEbfYC27Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=e0s9lPhp; arc=none smtp.client-ip=209.85.210.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="VYfqtx9n"
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e2918664a3fso1868841276.0
-        for <linux-security-module@vger.kernel.org>; Fri, 01 Nov 2024 09:42:42 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="e0s9lPhp"
+Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-71815313303so1169443a34.1
+        for <linux-security-module@vger.kernel.org>; Fri, 01 Nov 2024 09:52:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1730479361; x=1731084161; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bdl1QU1TO9smfZlcjavKeh83DDahAr/viN7jpcXBk5k=;
-        b=VYfqtx9nPvwxjeNA2O+gya3m+TvMduWac+RbsuNMk22voUhZb7wMdf+xsxnfDZS3MP
-         G7/QScRRGjcvFjhIsLiGKDytElrhns/2RnUJneUMzAoDe3b4uMxtxMmLs6Qa+AyQwbwn
-         hFOXIZx+O4TdNyW/i9RCP/WLEYgf+qHjk2rglGBLuIVhyphy6ete2y6qou6+ZOzuKA4h
-         GEBnu/qEarDy0rH8yeQQKtMBsqIm9hYHp0aLADN19qwJExWGNteC8HfumB8VYbqOasia
-         YQ5TKINwYYkvzjqFEYeLqqN7NhY46d9dUPbGvSqB7zCYIrT94UynPJwoxEz3hryqbJfB
-         RGqw==
+        d=paul-moore.com; s=google; t=1730479976; x=1731084776; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+3ygkqdGxg83D5e6rrGBxV+j6uXECqqZZ6Nma7RiOT0=;
+        b=e0s9lPhp6g4cHPRqg7r25gpr2y08cz0bM9WEvsbWgmZKRSW1wzmaJgGi0FutdeqLyO
+         sWvqQDuMZrmo+6bj4j9BYWFHi4X6eSKkGQvmXBBAV9fxwfxa1yEHvRWsx7xIaCSrkgYo
+         tYHwjx5OtxydQZMWyX7IXDv+t5T2/VCvMGCragOFejrPpLAM3ko9IjwrLDxKua+GLUYB
+         zbQu4fGXFsTLGSjx9Klxq3tJicDeiovM3ddp/uPbHa8o5DxXV1gR7pZEgbiz6HPN7YLe
+         pYO5SwTe+n/vOJRjxAMHLcZ4VGHIZvl+nDkAPu49hb4BulSaB3eHcR2LWWt5ipl58RCE
+         MhBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730479361; x=1731084161;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bdl1QU1TO9smfZlcjavKeh83DDahAr/viN7jpcXBk5k=;
-        b=PMU+4osnAgyLsMEexulSt5/UnZZvAlHmB12cQMRUx3g0P3iDenrnkGlPH7gXq2WVHM
-         nGd0ibUaH5Dw0/ZwNmB+BYVy+EoYB5gT/q5kL8GiGghkTlmYnoblRENw5vyBIrEqt4Od
-         sQRvFickGBJIUDu7Lk7GxScL4D+LkIStoDTri6fewoLCFH8G25dpVBw+YpJm1dYG3Lgq
-         H4wXeO2P1JJ4lngHw56WvZUBtTLUmc3dIYrl1XqWWmCGJlaUqwf97oIcxa3VQaK5RubK
-         zo66DVAbhBRodzO5eZJDth8ldmLC3NKqQ9tOVATcKuD25cWDRgtzDOAZtit1+YBT223s
-         wy8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUt1NmyUnxGuo+qUUkFwy/azdraKque2lSS0b+RmSEZzFKkryIDbmdpXPH9p91sjccBQj2+hRBm1a+e/yD7+rrcwp7tjTU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwHHm9gem7V/BUR8Wa/iY6D0YUvFHYFNTvpcPRwcTPaWzPyYyD
-	T3OqxGAnwiEPwFnl9TPo68H/9Z2h8wh6BdXl6oaJerzSsGjX8XhoakeH4sRCiZuoWIGsIpXyrAX
-	JCoYe2uYeao4+hRZpXoTOcbI5bxvccbLdKW+5
-X-Google-Smtp-Source: AGHT+IG9mMz1RBUHXYHb/KKXWnOdSpX/tW+Owz4me+P1+nRvR/UjY6v7IpSbecbnAja/zhUSQpxNQyrM8+BVM9tybAM=
-X-Received: by 2002:a05:6902:641:b0:e30:c97d:2fd9 with SMTP id
- 3f1490d57ef6-e3301836be1mr3682602276.24.1730479361585; Fri, 01 Nov 2024
- 09:42:41 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730479976; x=1731084776;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+3ygkqdGxg83D5e6rrGBxV+j6uXECqqZZ6Nma7RiOT0=;
+        b=jPKn7e9tFYxYFgWhByMYKJp/Rxd/qrjgGccMknxMeyH37yhZrxq20DmqtXUtieg+SC
+         ueD6FeE05H9837Ev9qHBCiPaOxgjx1EVhHd3k9bwNw4eLLpadmz9VTApYnoMbcm8HGb9
+         nSlHlASdzcTCDLpsc8pt/9sI9m7Gje1mH3eo67RDp7dMhaZGTj9zr6CSh9zz5oAq+93G
+         0hzlyxiVsVj6bI+SpeUPGgXBUqYmQpKzJRKf5OlSWelpfScH5WJO+/sqTQllinmlhPTI
+         h80UVb3C/PWXFi2OGR59q5rSth7FjAIFXdvV/H6DhmIgPK6bQHHlDoxmeM21oOYHP1/4
+         +ZrQ==
+X-Gm-Message-State: AOJu0YwW9V+ANj7u5ZfdD8GUg97jfREtkxacZ/bbcDrF5eKHzYmMqDdJ
+	Jeb1gyHMr74MaaCl+q0kP+D6i4MKe+G74hMTuwe9e3THDCwpjgkJJUdsXGz/58xAbof8YnXji5A
+	=
+X-Google-Smtp-Source: AGHT+IHAAto/xQsFZe1BDywut3aaicGD5whr46UtNlQFXGHMmzuk9E7qLVU7jFy1/StChGrktCqiBg==
+X-Received: by 2002:a05:6358:d5a2:b0:1c5:e2f3:b9f8 with SMTP id e5c5f4694b2df-1c5e2f3ba33mr836991755d.4.1730479975912;
+        Fri, 01 Nov 2024 09:52:55 -0700 (PDT)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d353e7a24asm21009356d6.0.2024.11.01.09.52.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Nov 2024 09:52:55 -0700 (PDT)
+From: Paul Moore <paul@paul-moore.com>
+To: linux-security-module@vger.kernel.org,
+	Casey Schaufler <casey@schaufler-ca.com>
+Subject: [PATCH] smack: fix the smack_lsmprop_to_secctx() kdoc
+Date: Fri,  1 Nov 2024 12:52:44 -0400
+Message-ID: <20241101165243.159021-2-paul@paul-moore.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241023212158.18718-3-casey@schaufler-ca.com>
- <68a956fa44249434dedf7d13cd949b35@paul-moore.com> <ZyQPfFvPD72rx4ME@calendula>
- <ZyQRgL_jWdvKgRl-@calendula> <dd727620-9823-4701-aaf1-080b03fb6ccd@schaufler-ca.com>
- <ZySCeoe3kVqKTyUh@calendula> <6a405591-40c5-4db6-bed5-8133a80b55f7@schaufler-ca.com>
- <CAHC9VhRZg5ODurJrXWbZ+DaAdEGVJYn9MhNi+bV0f4Di12P5xA@mail.gmail.com>
-In-Reply-To: <CAHC9VhRZg5ODurJrXWbZ+DaAdEGVJYn9MhNi+bV0f4Di12P5xA@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 1 Nov 2024 12:42:30 -0400
-Message-ID: <CAHC9VhQ+ig=GY1CeVGj1OrsyZtMAMBwst03b-oZ+eC2mLnqjNg@mail.gmail.com>
-Subject: Re: [PATCH v3 2/5] LSM: Replace context+len with lsm_context
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Pablo Neira Ayuso <pablo@netfilter.org>, linux-security-module@vger.kernel.org, 
-	jmorris@namei.org, serge@hallyn.com, keescook@chromium.org, 
-	john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp, 
-	stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org, 
-	selinux@vger.kernel.org, mic@digikod.net, netdev@vger.kernel.org, 
-	audit@vger.kernel.org, netfilter-devel@vger.kernel.org, 
-	Todd Kjos <tkjos@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=openpgp-sha256; l=888; i=paul@paul-moore.com; h=from:subject; bh=NV0lZsmdBRff0dguOgfQcvcQNTlN8QeO+n94mtctPwU=; b=owEBbQKS/ZANAwAIAeog8tqXN4lzAcsmYgBnJQdcQ28iuYoBpM9ScISB5NiMd0noc0DCe9rx9 lxX5oEdWnqJAjMEAAEIAB0WIQRLQqjPB/KZ1VSXfu/qIPLalzeJcwUCZyUHXAAKCRDqIPLalzeJ c9ToEADQ12wuuy8QvsztqlMyw2eHonuxra59SGOlqWJHzyT+6hl6clE5hxKtT157Mu+s8N2P4tD R5mnehQozvufUJlN3KK2LEgjUfXoSsPLN6V7epffDn2ixJJDALtCD28vFb2Hdm2lb4vdMqP3nIa 3sozWljQUnkW6NTzNw3V9kcqGoISBIgvDXHLzeqU9hfd4irukgwJXgwizZEkgM2aJVmbHWdEVQX zlAlIFdlKcjdatm/YWEymrCRi5fQB6Xc0NtJyRVa8mOG2Id9e2CZE0BbtcVSk8InOS+kTdx6nSk KJaJaTbTocLW4Q0+rKt66FxaSmbLtmtvGAmmFE1XOZoiuApkpaXmboXmOS99p6WcFdWoF2fQ6/K 7flcQ8PDrelq29vYW3g+dgUXMcqIp+xpCuJQIfhaidBPMSakIVMhik0x0eqS8w0A5oKT8LKGFSL OjW0ltl7880hdsXGd1XSHN2S+nsALwQ4rJMSgnD212UZi707p/i1awCVm8+p1oni5c3VB3B22Ms voVvCcBoCn2jS25WL5CRc3vWehdSGtLOSHLK72+Cn3QDM5XcjfAUc2XCKx+M5oKQIVC6cm2oReS m0X8rRJP3yIOmvn7Hx3y8gB+kblOWKbKmCiN3tDA3GRYX9HhIFLjWeO3n4mnI6/+vSE44d3jjO6 neOvsaO57d+NkLg==
+X-Developer-Key: i=paul@paul-moore.com; a=openpgp; fpr=7100AADFAE6E6E940D2E0AD655E45A5AE8CA7C8A
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 1, 2024 at 12:35=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
-> On Fri, Nov 1, 2024 at 12:14=E2=80=AFPM Casey Schaufler <casey@schaufler-=
-ca.com> wrote:
-> > On 11/1/2024 12:25 AM, Pablo Neira Ayuso wrote:
-> > > On Thu, Oct 31, 2024 at 04:58:13PM -0700, Casey Schaufler wrote:
-> > >> On 10/31/2024 4:23 PM, Pablo Neira Ayuso wrote:
-> > >>> On Fri, Nov 01, 2024 at 12:15:16AM +0100, Pablo Neira Ayuso wrote:
-> > >>>> Hi Paul,
-> > >>>>
-> > >>>> This patch breaks nf_conntrack_netlink, Casey mentioned that he wi=
-ll
-> > >>>> post another series.
-> > >> I have a fix, it is pretty simple. How about I send a 6/5 patch for =
-it?
-> > > No idea. I don't know what is the status of this series. I would
-> > > suggest to repost a new series.
-> >
-> > I will post v4 shortly. Thanks for the feedback.
->
-> Please just post a fix against v2 using lsm/dev as a base.
+Trivial kdoc fix to correct a fixup omission when converting to the
+lsm_context struct in the LSM and Smack.
 
-That should have been "against *v3* using lsm/dev as a base".
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202411011723.I59qZ7Ke-lkp@intel.com/
+Signed-off-by: Paul Moore <paul@paul-moore.com>
+---
+ security/smack/smack_lsm.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Also, since I didn't explicitly mention it, if I don't see a fix by
-dinner time tonight (US East Coast), I'll revert this patchset, but
-I'd like to avoid that if possible.
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index c9ec4d93fb13..55a556f17ade 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -4851,8 +4851,7 @@ static int smack_secid_to_secctx(u32 secid, struct lsm_context *cp)
+ /**
+  * smack_lsmprop_to_secctx - return the smack label
+  * @prop: includes incoming Smack data
+- * @secdata: destination
+- * @seclen: how long it is
++ * @cp: destination
+  *
+  * Exists for audit code.
+  */
+-- 
+2.47.0
 
-Sorry for the screw-up on my end folks, I was trying to get things
-done before Halloween kicked off and it looks like I was a bit too
-hasty in my review/merging.
-
---=20
-paul-moore.com
