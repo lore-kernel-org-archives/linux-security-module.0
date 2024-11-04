@@ -1,46 +1,60 @@
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53FD0290F;
-	Mon,  4 Nov 2024 10:47:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F3851FA265
+	for <linux-security-module@vger.kernel.org>; Mon,  4 Nov 2024 21:06:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730717244; cv=none; b=homyDOZcd3efwyMxJu3+PPbsRlIAHMtC5JTd7DiKIQVF2i46UVUvTsjYMUihFrMrMyBS13cHSsB31SEyNDbuMb5pPdP0NNvoBQTW/S3L8uy65FnkEjanC6anZQUX8ilt7JGRLy8lTlScyLrKDTpfs99ycI01h4YbdnJEIFQFVHc=
+	t=1730754405; cv=none; b=WHtfLXZMjNmccPEqoAHQ5lIBGXSeKTLjPX5+3uDcboEC+uDfBPXKFFEFaOTUMBmuPRzHlB7VQCk6mIf3/GpZAvQuNMjAybcSOz5HmpHaMZt3YFrB+YTfL/+nvOt8yqx9h3zerB6CeaYosPR0X3x51mGXnB+ZUbJ0jdhLWYyF+8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730717244; c=relaxed/simple;
-	bh=fF/BJOYudXv+MdqZ0BpwPkVcSD5wC31ZfqhPishC4pM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=nDF2Cpf+jK2+VRezfV1iu0o9vZloUbKrmnwOGShfx/eboB0q3MNWuYYPhTAf5bQ2qadC/wbwlnaSTOMuaK41JsQ/ii642SnozTUTz7zekT1LKb9rdqxcV6DGASfZEnmWJBbXa1Z6c4hYE6MeHs7mr3JxZLVBLiOVL2dEaQnJtsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a99ebb390a5so927714566b.1;
-        Mon, 04 Nov 2024 02:47:22 -0800 (PST)
+	s=arc-20240116; t=1730754405; c=relaxed/simple;
+	bh=5/i4aYa+bDmYTyC5+2MiIF90lU7UD7sa8a5447uXxv8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=bHK58pvYVUSBBupb8sndr3wuBveRqZGJAN9rcy6jkK2Gm/D5b7WSE7RYp4y1ISZ9u8TKxIG71BMMZXo5LD25SNwSSjGjqdk+EOQGtcU82wHvxffGuPgXdvfDLOBh2uJKA7PStxuSkNcAFxi54tsmgxjIH6EcNFBMCGF1v/oXOwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=z1yOEn+f; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="z1yOEn+f"
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-720b2d8bb8dso3489185b3a.1
+        for <linux-security-module@vger.kernel.org>; Mon, 04 Nov 2024 13:06:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1730754402; x=1731359202; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4V9Yv2fAvOK/vMiP82IoKQz/aaC4GtvY8C8de1dPo6U=;
+        b=z1yOEn+flhKXg8I1JSj4uCDyhQcr++5qhPuW4e9nTtRUhby6Iefe42ANg2SspvsKfv
+         KaIcgOL45jgrnR9I0HEBcgjbTjTCodEvlvwTY+pH3AUb+laFPqyJGEd1YN6P3W5KGxt3
+         RUycyDy9/OGrKHnqqUKQSUkliPPfIEF5ipHIpUq/BO84d/EXAk4Thpdaj3y41xNkPVtc
+         0KMckUeSErZiXjnMPLlrGGPHXCg9wJhlHUUu6YrXyjhMcZNo4zX5SQHZ/mfoQ8ZKMH0V
+         49iqVr9vmjmHmw0YvhXb1/AnuTA0OhkgJeRCBbD9eKTjFWcNa8CJaHq7f8ZFT91h7daz
+         lsvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730717241; x=1731322041;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1730754402; x=1731359202;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=GQQEfUO1UteUr9ACef70Th0pKJE+Tg+KwybXseX/MFE=;
-        b=SZDLl+TPQHMRUjE9JpCotzO8JiUYJoV0Z8eCgSMAdkeCUduiKd5tX7cCO6EOPipd1V
-         z9ZTLvAGjPEszXZ74JjnPrXfiTJ0siIDtfWvIk64Sdyb5QyyyQuVhCJ30iHbhu22jZAO
-         720XLEYPxe6fD1lAMo2s3Cj3uCf88oFeQyrDhERTDqnu20dCRjCrut1XAy3Fzoq82YoS
-         GJ41beEi6pUCCYiqbkF45EUIghwjKwF5rXQ1errlEcWT9QQkiyynugvGTkVFLlWS2RCW
-         2xpotnG48PaMnL+RttakLiKiC2FzALO73/cEIExoeRyBaDWa0kP+9on1N2c7Ay8XZGTC
-         gpUg==
-X-Forwarded-Encrypted: i=1; AJvYcCV8iYIIf8mTf+W0Oq30UMUmgyPEj2wElmmAS5bcn4YGuhdMyG6cqt9u/6PuKWDGSlK3kos5tA4q/yqpYrjb@vger.kernel.org, AJvYcCVGHq/TAj1hGWkiH5kZqNk8Orkv6J4q/pm9MJkZQDVLU9Q51EM2IVW44lDj7BiXjJARs69jKLdZg7VpqqVwTI/BSRG3qDs4@vger.kernel.org, AJvYcCWeAONJ8g428gpzU/9B5LlsVfls4zLex+nLj3HVTIdvbblCpv/Hdq3gC2QkoV0LHlU9TGBI5qYkWgXbUrnkEiw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+qpy8Kli1QQZVGLwH3M4vnuEuLC/Z7OvtqW8t1Z1lDnzxU406
-	ibTntYtJHzCaIX1/SxoOQMFbMy41Z7jpCEdEmDjIVNm28rXK4iy1F3zSRw==
-X-Google-Smtp-Source: AGHT+IGJczchdEfg7PAI7b5vVk9OlDmJnRR0O1DDPuiuIWnFdZNY3LbItDcPyZsYPciUomWmnx1jMw==
-X-Received: by 2002:a17:907:7205:b0:a99:facf:cfc with SMTP id a640c23a62f3a-a9e55a87862mr1278049966b.17.1730717240215;
-        Mon, 04 Nov 2024 02:47:20 -0800 (PST)
-Received: from localhost (fwdproxy-lla-004.fbsv.net. [2a03:2880:30ff:4::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e5663cd43sm544106866b.143.2024.11.04.02.47.19
+        bh=4V9Yv2fAvOK/vMiP82IoKQz/aaC4GtvY8C8de1dPo6U=;
+        b=JOTzKRnL6S3WcDjQ5gbfOJT+GYU2FC4vde1/ldVs75RGMfGew9DBeVtRkydzWPB+Bl
+         JgoAYAdEUIok0hF9FbSJJ0ECDm+AxLGsHTeKzEP6g5d4BR1HNKtmlpqdLmrDeZPvFx7D
+         FJXsurbZsGqHcah7M2Ib/x9TWZPFGW/CTI1LQIcL9XXBfSwwKIpqMqiTUYZjIh5qyaHt
+         /3ll+E6rf0o4nNnilzL4GI2fyJt6caG7HSiXuNeFKHMcZbyM4L6WIPCadOB6k8KXN0ys
+         EhS6FW/9uyPjb1mIlXU70HI4tp78Ls2cA+4hqbEgQwnm7QihN3svcXbuZV068caeCz1h
+         e+Iw==
+X-Forwarded-Encrypted: i=1; AJvYcCUC5qC1ptVVCaTlwzQr7DSnFp14+ZJVxFVqoKgwLC0RU4KURRRFGNFoc86l6vIjC9e+iXayOskaLCxVPOe4hpwP3zLL580=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0cF5YDFY+lE39RoVarHy2f1PcRX9HXZeysCrBdG/p20lm8gEJ
+	5Njezcr/cv1qqHyoSAPIHE5NXYxkk35FiTdqSALGCvXK33SFP0fPAGWiwAh4nHY=
+X-Google-Smtp-Source: AGHT+IFk0UULo9afhQbnlnWjUo65KmcRu9RXVFubvhCDhtDv1i7bMZR037d187cAIN7jV72mG65BAw==
+X-Received: by 2002:a05:6a00:398f:b0:71e:3b8:666f with SMTP id d2e1a72fcca58-72062f712a6mr45086642b3a.11.1730754402245;
+        Mon, 04 Nov 2024 13:06:42 -0800 (PST)
+Received: from charlie.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ee490e08f4sm7248293a12.40.2024.11.04.13.06.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2024 02:47:19 -0800 (PST)
-From: Breno Leitao <leitao@debian.org>
-Date: Mon, 04 Nov 2024 02:47:16 -0800
-Subject: [PATCH] ima: kexec: Add RCU read lock protection for
- ima_measurements list traversal
+        Mon, 04 Nov 2024 13:06:41 -0800 (PST)
+From: Charlie Jenkins <charlie@rivosinc.com>
+Subject: [PATCH RFT 00/16] perf tools: Use generic syscall scripts for all
+ archs
+Date: Mon, 04 Nov 2024 13:06:02 -0800
+Message-Id: <20241104-perf_syscalltbl-v1-0-9adae5c761ef@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -49,82 +63,163 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241104-ima_rcu-v1-1-5157460c5907@debian.org>
-X-B4-Tracking: v=1; b=H4sIADOmKGcC/x3MWwqAIBAF0K0M9ztBy0jcSkRITjUfPVCKINx70
- FnAeZE5CWd4epH4lizHDk+mIkxr2BdWEuEJta6tMdoq2cKYpksxuyYG10XdalSEM/Eszz/1Qyk
- f4oMEhFkAAAA=
-X-Change-ID: 20241104-ima_rcu-ee83da87d050
-To: Mimi Zohar <zohar@linux.ibm.com>, 
- Roberto Sassu <roberto.sassu@huawei.com>, 
- Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
- Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, 
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
- "Eric W. Biederman" <ebiederm@xmission.com>, 
- Andrew Morton <akpm@linux-foundation.org>, 
- Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>, linux-integrity@vger.kernel.org, 
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
- noodles@earth.li, Breno Leitao <leitao@debian.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1553; i=leitao@debian.org;
- h=from:subject:message-id; bh=fF/BJOYudXv+MdqZ0BpwPkVcSD5wC31ZfqhPishC4pM=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBnKKY2QG3u+OgeyzQ7/nyKXGqN7uUqwCWc8KKBw
- mJZtFtrgoqJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCZyimNgAKCRA1o5Of/Hh3
- bWm5D/9G8GgbraopxFjvSPKhpNSrDcdPCB6JtFhbwfB66HfjNAzUjHTniPUsdVoa5k48TAGDLOT
- KC/yclvHcV6QMeCO/gy2wzY08zJKbVOnQFrnpZCSu24asHu5wh6+pCpp8cqzh7MpubsX/8a7n8m
- OGNxbzwsEOjuMUbX5rzYS28rYzA31buPYNtxNM9uThJxuAu98h56SHMqphZVKjkztI5Dmo1qaZa
- rvacn92tx64qGEggNHnnomdQSKTqprXD6T8heGGAojWPyzTb3O3JfdwOwbgDa2N59MTUjUwvST3
- BfcC1CNi7kUWIFl3rP2eS1vr2UoMvxDaV40FN5UQLGotapuhC1mRm7XjInIcZlSzB8NUJvZ3K4l
- ZIZ6dwUIpuZnoSzAhvE4Ajw8elOoUoZbs5kaKxBFcbtum3Ws4kVuR1EoTyNS/NJc+OdUiqWw4eC
- SmxOjrBBMq32t7RCsmumWDFa9F2QUZz77wYRdTxKFqt1s3wXbMiPtQDt2z/F6O39bWuLXwoOrvk
- ZaA/fLrfccODWB4p0gwiCKFq7+PGThcsX1TyfFhDZ2Sl3YYiOSIb9LOrc6E/IYM0OBa9kdXPuEq
- 3rRS+8lsoWaMDVtDsIVxzgdNfLsg8hBychDn7AcSAM+XhwRe4jq6/Xsb4PYkhnIC1Vo3ofm96ep
- SkADklTj+UUWUMg==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
+X-B4-Tracking: v=1; b=H4sIADs3KWcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDS0Nj3YLUorT44sri5MScnJKkHF2zNEuLlNS05GSzNFMloK6CotS0zAq
+ widFKQW4hSrG1tQBojDoLZgAAAA==
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+ Arnaldo Carvalho de Melo <acme@kernel.org>, 
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+ Adrian Hunter <adrian.hunter@intel.com>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+ =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
+ =?utf-8?q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+ Christian Brauner <brauner@kernel.org>, Guo Ren <guoren@kernel.org>, 
+ John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, 
+ James Clark <james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>, 
+ Leo Yan <leo.yan@linux.dev>, Jonathan Corbet <corbet@lwn.net>, 
+ Arnd Bergmann <arnd@arndb.de>
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+ linux-riscv@lists.infradead.org, linux-security-module@vger.kernel.org, 
+ bpf@vger.kernel.org, linux-csky@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
+ Charlie Jenkins <charlie@rivosinc.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7158; i=charlie@rivosinc.com;
+ h=from:subject:message-id; bh=5/i4aYa+bDmYTyC5+2MiIF90lU7UD7sa8a5447uXxv8=;
+ b=owGbwMvMwCHWx5hUnlvL8Y3xtFoSQ7qmeciNY1P03++xMXAsfRHbpe+78drinTw1tXbGz7+Wr
+ Ju8KWh2RykLgxgHg6yYIgvPtQbm1jv6ZUdFyybAzGFlAhnCwMUpABM5EsbI8GVF2ZM24Xkrris0
+ z/sq5lEb29TY+lRskptvquex1zdnTmVkeMmzRCpUqM1DZ3Uzn/zaQNNXQb5t557syf19M6pitXc
+ /DwA=
+X-Developer-Key: i=charlie@rivosinc.com; a=openpgp;
+ fpr=7D834FF11B1D8387E61C776FFB10D1F27D6B1354
 
-Fix a potential RCU issue where ima_measurements list is traversed using
-list_for_each_entry_rcu() without proper RCU read lock protection. This
-caused warnings when CONFIG_PROVE_RCU was enabled:
+Standardize the generation of syscall headers around syscall tables.
+Previously each architecture independently selected how syscall headers
+would be generated, or would not define a way and fallback onto
+libaudit. Convert all architectures to use a standard syscall header
+generation script and allow each architecture to override the syscall
+table to use if they do not use the generic table.
 
-  security/integrity/ima/ima_kexec.c:40 RCU-list traversed in non-reader section!!
+As a result of these changes, no architecture will require libaudit, and
+so the fallback case of using libaudit is removed by this series.
 
-Add rcu_read_lock() before iterating over ima_measurements list to ensure
-proper RCU synchronization, consistent with other RCU list traversals in
-the codebase.
+Testing:
 
-Signed-off-by: Breno Leitao <leitao@debian.org>
-Fixes: 7b8589cc29e7 ("ima: on soft reboot, save the measurement list")
+I have tested that the syscall mappings of id to name generation works
+as expected for every architecture, but I have only validated that perf
+trace compiles and runs as expected on riscv, arm64, and x86_64.
+
+Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
 ---
- security/integrity/ima/ima_kexec.c | 2 ++
- 1 file changed, 2 insertions(+)
+Charlie Jenkins (16):
+      perf tools: Create generic syscall table support
+      perf tools: arc: Support generic syscall headers
+      perf tools: csky: Support generic syscall headers
+      perf tools: arm: Support syscall headers
+      perf tools: sh: Support syscall headers
+      perf tools: sparc: Support syscall headers
+      perf tools: xtensa: Support syscall header
+      perf tools: x86: Use generic syscall scripts
+      perf tools: alpha: Support syscall header
+      perf tools: parisc: Support syscall header
+      perf tools: arm64: Use syscall table
+      perf tools: loongarch: Use syscall table
+      perf tools: mips: Use generic syscall scripts
+      perf tools: powerpc: Use generic syscall table scripts
+      perf tools: s390: Use generic syscall table scripts
+      perf tools: Remove dependency on libaudit
 
-diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
-index 52e00332defed39774c9e23e045f1377cfa30d0c..3b17ddb91d35ac806aedd2ee970ff365675dac0b 100644
---- a/security/integrity/ima/ima_kexec.c
-+++ b/security/integrity/ima/ima_kexec.c
-@@ -37,6 +37,7 @@ static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
- 
- 	memset(&khdr, 0, sizeof(khdr));
- 	khdr.version = 1;
-+	rcu_read_lock();
- 	list_for_each_entry_rcu(qe, &ima_measurements, later) {
- 		if (file.count < file.size) {
- 			khdr.count++;
-@@ -46,6 +47,7 @@ static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
- 			break;
- 		}
- 	}
-+	rcu_read_unlock();
- 
- 	if (ret < 0)
- 		goto out;
-
+ Documentation/admin-guide/workload-tracing.rst     |   2 +-
+ tools/build/feature/Makefile                       |   4 -
+ tools/build/feature/test-libaudit.c                |  11 -
+ tools/perf/Documentation/perf-check.txt            |   1 -
+ tools/perf/Makefile.config                         |  28 +-
+ tools/perf/Makefile.perf                           |  12 +-
+ tools/perf/arch/alpha/entry/syscalls/Kbuild        |   2 +
+ .../arch/alpha/entry/syscalls/Makefile.syscalls    |   5 +
+ tools/perf/arch/alpha/entry/syscalls/syscall.tbl   | 504 ++++++++++++++++++++
+ tools/perf/arch/alpha/include/syscall_table.h      |   2 +
+ tools/perf/arch/arc/entry/syscalls/Kbuild          |   2 +
+ .../perf/arch/arc/entry/syscalls/Makefile.syscalls |   3 +
+ tools/perf/arch/arc/include/syscall_table.h        |   2 +
+ tools/perf/arch/arm/entry/syscalls/Kbuild          |   4 +
+ .../perf/arch/arm/entry/syscalls/Makefile.syscalls |   2 +
+ tools/perf/arch/arm/entry/syscalls/syscall.tbl     | 479 +++++++++++++++++++
+ tools/perf/arch/arm/include/syscall_table.h        |   2 +
+ tools/perf/arch/arm64/Makefile                     |  22 -
+ tools/perf/arch/arm64/entry/syscalls/Kbuild        |   3 +
+ .../arch/arm64/entry/syscalls/Makefile.syscalls    |   6 +
+ tools/perf/arch/arm64/entry/syscalls/mksyscalltbl  |  46 --
+ .../perf/arch/arm64/entry/syscalls/syscall_32.tbl  | 476 +++++++++++++++++++
+ .../perf/arch/arm64/entry/syscalls/syscall_64.tbl  |   1 +
+ tools/perf/arch/arm64/include/syscall_table.h      |   8 +
+ tools/perf/arch/csky/entry/syscalls/Kbuild         |   2 +
+ .../arch/csky/entry/syscalls/Makefile.syscalls     |   3 +
+ tools/perf/arch/csky/include/syscall_table.h       |   2 +
+ tools/perf/arch/loongarch/Makefile                 |  22 -
+ tools/perf/arch/loongarch/entry/syscalls/Kbuild    |   2 +
+ .../loongarch/entry/syscalls/Makefile.syscalls     |   3 +
+ .../arch/loongarch/entry/syscalls/mksyscalltbl     |  45 --
+ tools/perf/arch/loongarch/include/syscall_table.h  |   2 +
+ tools/perf/arch/mips/Makefile                      |  18 -
+ tools/perf/arch/mips/entry/syscalls/Kbuild         |   2 +
+ .../arch/mips/entry/syscalls/Makefile.syscalls     |   5 +
+ tools/perf/arch/mips/entry/syscalls/mksyscalltbl   |  32 --
+ tools/perf/arch/mips/include/syscall_table.h       |   2 +
+ tools/perf/arch/parisc/entry/syscalls/Kbuild       |   3 +
+ .../arch/parisc/entry/syscalls/Makefile.syscalls   |   6 +
+ tools/perf/arch/parisc/entry/syscalls/syscall.tbl  | 463 +++++++++++++++++++
+ tools/perf/arch/parisc/include/syscall_table.h     |   8 +
+ tools/perf/arch/powerpc/Makefile                   |  25 -
+ tools/perf/arch/powerpc/entry/syscalls/Kbuild      |   3 +
+ .../arch/powerpc/entry/syscalls/Makefile.syscalls  |   6 +
+ .../perf/arch/powerpc/entry/syscalls/mksyscalltbl  |  39 --
+ tools/perf/arch/powerpc/include/syscall_table.h    |   8 +
+ tools/perf/arch/riscv/entry/syscalls/Kbuild        |   2 +
+ .../arch/riscv/entry/syscalls/Makefile.syscalls    |   4 +
+ tools/perf/arch/riscv/include/syscall_table.h      |   8 +
+ tools/perf/arch/s390/Makefile                      |  21 -
+ tools/perf/arch/s390/entry/syscalls/Kbuild         |   2 +
+ .../arch/s390/entry/syscalls/Makefile.syscalls     |   5 +
+ tools/perf/arch/s390/entry/syscalls/mksyscalltbl   |  32 --
+ tools/perf/arch/s390/include/syscall_table.h       |   2 +
+ tools/perf/arch/sh/entry/syscalls/Kbuild           |   2 +
+ .../perf/arch/sh/entry/syscalls/Makefile.syscalls  |   4 +
+ tools/perf/arch/sh/entry/syscalls/syscall.tbl      | 468 +++++++++++++++++++
+ tools/perf/arch/sh/include/syscall_table.h         |   2 +
+ tools/perf/arch/sparc/entry/syscalls/Kbuild        |   3 +
+ .../arch/sparc/entry/syscalls/Makefile.syscalls    |   5 +
+ tools/perf/arch/sparc/entry/syscalls/syscall.tbl   | 510 +++++++++++++++++++++
+ tools/perf/arch/sparc/include/syscall_table.h      |   8 +
+ tools/perf/arch/x86/Build                          |   1 -
+ tools/perf/arch/x86/Makefile                       |  25 -
+ tools/perf/arch/x86/entry/syscalls/Kbuild          |   3 +
+ .../perf/arch/x86/entry/syscalls/Makefile.syscalls |   6 +
+ tools/perf/arch/x86/entry/syscalls/syscalltbl.sh   |  42 --
+ tools/perf/arch/x86/include/syscall_table.h        |   8 +
+ tools/perf/arch/xtensa/entry/syscalls/Kbuild       |   2 +
+ .../arch/xtensa/entry/syscalls/Makefile.syscalls   |   4 +
+ tools/perf/arch/xtensa/entry/syscalls/syscall.tbl  | 435 ++++++++++++++++++
+ tools/perf/arch/xtensa/include/syscall_table.h     |   2 +
+ tools/perf/builtin-check.c                         |   1 -
+ tools/perf/builtin-help.c                          |   2 -
+ tools/perf/builtin-trace.c                         |  30 --
+ tools/perf/check-headers.sh                        |   9 +
+ tools/perf/perf.c                                  |   6 +-
+ tools/perf/scripts/Makefile.syscalls               |  69 +++
+ tools/perf/scripts/syscalltbl.sh                   |  86 ++++
+ tools/perf/tests/make                              |   7 +-
+ tools/perf/util/env.c                              |   4 +-
+ tools/perf/util/generate-cmdlist.sh                |   4 +-
+ tools/perf/util/syscalltbl.c                       |  87 +---
+ tools/scripts/syscall.tbl                          | 405 ++++++++++++++++
+ 84 files changed, 4089 insertions(+), 555 deletions(-)
 ---
-base-commit: f488649e40f8900d23b86afeab7d4b78c063d5d1
-change-id: 20241104-ima_rcu-ee83da87d050
-
-Best regards,
+base-commit: 59b723cd2adbac2a34fc8e12c74ae26ae45bf230
+change-id: 20240913-perf_syscalltbl-6f98defcc6f5
 -- 
-Breno Leitao <leitao@debian.org>
+- Charlie
 
