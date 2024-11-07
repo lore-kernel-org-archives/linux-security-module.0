@@ -1,48 +1,42 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6DA1F4272;
-	Thu,  7 Nov 2024 11:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1FDD1DE8BF
+	for <linux-security-module@vger.kernel.org>; Thu,  7 Nov 2024 11:26:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730978437; cv=none; b=KWyIUPQy2wSxdcM29IRRdJY44NBG/3D2OYbaT21rst507hPklfpBdKodgoqx4GG6bmPdtb6M+oEcfdaz1j1Gr3v9YXnKQWp55H6YcfSgxvf1wFCDk4qch48EGK98rZPfocwKINN52mc2MwRanks7Se8aLD18DuEe753myZBKHhc=
+	t=1730978772; cv=none; b=YaxYEIzig+Xs2qee33CAnq0uNiY9CwQVQ6SCKPzqtFoTL+6Cjwl4uuYk7BfVq5VNJy1K6FyoqQ9ScpKL0bpMY14S9VIwgnOeMVgfW49tnu4b0mYGAK9YgM5rwOeN/5hCgoINe+FBUKddeAYimsVvOkZmFbBnryUjF514db62Ir4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730978437; c=relaxed/simple;
-	bh=xF8ZbGW400Arsn35oIvMaUkwIQp/crqb3h+5bmD2B1U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jpTodcY9vEjOOdJu3gBxPFSW61Qs0RjTnwpbvencp7qAvXrwIiPXBMKTjQjteDCYlNcl3g325Ta7gtvoSJqIo6mPo/OlGKk6Otx2FmU1mGJf9SJB5nYpBQfUONWExoWcfSV5ScPSwz2Y4VzYYw+DMD7xFAf5urmERujExUoPlcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dMIYWxih; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1730978772; c=relaxed/simple;
+	bh=tOA01gs5nPhL/vmNbtW+GIMrz7TJDXxOicvU7S/TnUU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZsI5qqsFksttUSjHpUh+2ipUbiVXP9iPWl60S7UGb2JD1LQqjn9yRQLP5WmCN5fY3HFNuNlCCnG4xdg6ICN5ETb1PHN1jeJ+6IqRNXbOR5BYhiu0uumPc+l/O/3sCsWBUo2RvOSEa3yXvRGriLP+8LkJD6F4isGpTYtjzAzC9J8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SmGXQCHI; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dMIYWxih"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABBABC4CECC;
-	Thu,  7 Nov 2024 11:20:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730978435;
-	bh=xF8ZbGW400Arsn35oIvMaUkwIQp/crqb3h+5bmD2B1U=;
-	h=From:To:Cc:Subject:Date:From;
-	b=dMIYWxihqJd2f7YIyVUdr4osx65WrXPDKZzzCQHlutrf5SGCIsLYofcQxeo+ZtIeO
-	 riio+hhM/Bc76/6iuFMJja+tmVZQsFqNglzqhnAEHRj2eIZMnm4tH+zISlro4nrBcc
-	 OrDWGGYAQMR/2Rkl4CJfO0iOFGS4jsyavDa9KIhRCNgr9SDoxYEZfJh57kVUZQrG0Z
-	 KTIbsGeF36UlNemRx1SYrsuHW1uT7rN09GWb8J4/MKXh+IAwzYImOenVv2KVmqquhR
-	 /lsfnD9khFPook7TByWQqwzutMAqiz5Piv6qFqAvwcS9IHuAfi7TL7Wyrq4r+D49f1
-	 Hsxh0Jg7tqZGA==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: linux-integrity@vger.kernel.org,
-	Peter Huewe <peterhuewe@gmx.de>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>
-Cc: James Bottomley <James.Bottomley@HansenPartnership.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SmGXQCHI"
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730978768;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=R9I7quaW8/F+28X0/jjvHTMqunMj8YXAmloyPwoMZ/s=;
+	b=SmGXQCHIusoolfYfMOHg5DuBbqL/hF5Us3taZS5xeNi32QdaJ3IIWEfk/pQnxjtTujw9TG
+	2NdgK9QjKA9nKM51FrfNVHEJ3U92GTkcHFoX1JVNgzfhr2KQuj50f9q69oZ63YjFpc+l5Z
+	2uIyo2PUmRtCr6ifcZe/nkoV8SRaFaw=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: John Johansen <john.johansen@canonical.com>,
 	Paul Moore <paul@paul-moore.com>,
 	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-kernel@vger.kernel.org (open list),
-	keyrings@vger.kernel.org (open list:KEYS-TRUSTED),
-	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM)
-Subject: [PATCH] tpm: Remove the documentation from tpm2-sessions.c
-Date: Thu,  7 Nov 2024 13:20:22 +0200
-Message-ID: <20241107112023.5731-1-jarkko@kernel.org>
-X-Mailer: git-send-email 2.47.0
+	"Serge E. Hallyn" <serge@hallyn.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	apparmor@lists.ubuntu.com,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH] apparmor: Remove unnecessary NULL check before kvfree()
+Date: Thu,  7 Nov 2024 12:25:27 +0100
+Message-ID: <20241107112526.2312-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -50,95 +44,35 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Nobody will maintain this, i.e. it is destined to rotten. It is better to
-just rip it off, and not have duplicate stuff that is already in the kernel
-documentation and function headers.
+Since kvfree() already checks if its argument is NULL, an additional
+check before calling kvfree() is unnecessary and can be removed.
 
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+Remove it and the following Coccinelle/coccicheck warning reported by
+ifnullfree.cocci:
+
+  WARNING: NULL check before some freeing functions is not needed
+
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
 ---
- drivers/char/tpm/tpm2-sessions.c | 68 ++------------------------------
- 1 file changed, 3 insertions(+), 65 deletions(-)
+ security/apparmor/policy.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-sessions.c
-index a7c1b162251b..ff00e9483564 100644
---- a/drivers/char/tpm/tpm2-sessions.c
-+++ b/drivers/char/tpm/tpm2-sessions.c
-@@ -1,71 +1,9 @@
- // SPDX-License-Identifier: GPL-2.0
--
- /*
-- * Copyright (C) 2018 James.Bottomley@HansenPartnership.com
-- *
-- * Cryptographic helper routines for handling TPM2 sessions for
-- * authorization HMAC and request response encryption.
-- *
-- * The idea is to ensure that every TPM command is HMAC protected by a
-- * session, meaning in-flight tampering would be detected and in
-- * addition all sensitive inputs and responses should be encrypted.
-- *
-- * The basic way this works is to use a TPM feature called salted
-- * sessions where a random secret used in session construction is
-- * encrypted to the public part of a known TPM key.  The problem is we
-- * have no known keys, so initially a primary Elliptic Curve key is
-- * derived from the NULL seed (we use EC because most TPMs generate
-- * these keys much faster than RSA ones).  The curve used is NIST_P256
-- * because that's now mandated to be present in 'TCG TPM v2.0
-- * Provisioning Guidance'
-- *
-- * Threat problems: the initial TPM2_CreatePrimary is not (and cannot
-- * be) session protected, so a clever Man in the Middle could return a
-- * public key they control to this command and from there intercept
-- * and decode all subsequent session based transactions.  The kernel
-- * cannot mitigate this threat but, after boot, userspace can get
-- * proof this has not happened by asking the TPM to certify the NULL
-- * key.  This certification would chain back to the TPM Endorsement
-- * Certificate and prove the NULL seed primary had not been tampered
-- * with and thus all sessions must have been cryptographically secure.
-- * To assist with this, the initial NULL seed public key name is made
-- * available in a sysfs file.
-- *
-- * Use of these functions:
-- *
-- * The design is all the crypto, hash and hmac gunk is confined in this
-- * file and never needs to be seen even by the kernel internal user.  To
-- * the user there's an init function tpm2_sessions_init() that needs to
-- * be called once per TPM which generates the NULL seed primary key.
-- *
-- * These are the usage functions:
-+ * Copyright (c) 2018 James Bottomley <James.Bottomley@HansenPartnership.com>
-  *
-- * tpm2_start_auth_session() which allocates the opaque auth structure
-- *	and gets a session from the TPM.  This must be called before
-- *	any of the following functions.  The session is protected by a
-- *	session_key which is derived from a random salt value
-- *	encrypted to the NULL seed.
-- * tpm2_end_auth_session() kills the session and frees the resources.
-- *	Under normal operation this function is done by
-- *	tpm_buf_check_hmac_response(), so this is only to be used on
-- *	error legs where the latter is not executed.
-- * tpm_buf_append_name() to add a handle to the buffer.  This must be
-- *	used in place of the usual tpm_buf_append_u32() for adding
-- *	handles because handles have to be processed specially when
-- *	calculating the HMAC.  In particular, for NV, volatile and
-- *	permanent objects you now need to provide the name.
-- * tpm_buf_append_hmac_session() which appends the hmac session to the
-- *	buf in the same way tpm_buf_append_auth does().
-- * tpm_buf_fill_hmac_session() This calculates the correct hash and
-- *	places it in the buffer.  It must be called after the complete
-- *	command buffer is finalized so it can fill in the correct HMAC
-- *	based on the parameters.
-- * tpm_buf_check_hmac_response() which checks the session response in
-- *	the buffer and calculates what it should be.  If there's a
-- *	mismatch it will log a warning and return an error.  If
-- *	tpm_buf_append_hmac_session() did not specify
-- *	TPM_SA_CONTINUE_SESSION then the session will be closed (if it
-- *	hasn't been consumed) and the auth structure freed.
-+ * Cryptographic helper routines for handling TPM2 sessions for authorization
-+ * HMAC and request response encryption.
-  */
- 
- #include "tpm.h"
+diff --git a/security/apparmor/policy.c b/security/apparmor/policy.c
+index 14df15e35695..ce1c96cb2aed 100644
+--- a/security/apparmor/policy.c
++++ b/security/apparmor/policy.c
+@@ -103,8 +103,7 @@ static void aa_free_pdb(struct aa_policydb *pdb)
+ {
+ 	if (pdb) {
+ 		aa_put_dfa(pdb->dfa);
+-		if (pdb->perms)
+-			kvfree(pdb->perms);
++		kvfree(pdb->perms);
+ 		aa_free_str_table(&pdb->trans);
+ 		kfree(pdb);
+ 	}
 -- 
 2.47.0
 
