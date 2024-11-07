@@ -1,172 +1,144 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BC5F18FDDB
-	for <linux-security-module@vger.kernel.org>; Wed,  6 Nov 2024 17:00:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6DA1F4272;
+	Thu,  7 Nov 2024 11:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730912430; cv=none; b=j4eUs1gdIpVrNaJC5GSyOo1NnfTOU+rjYUmIn8W9eY71eH1RMkw/aySBtF/UCpJ7ZknpATOe04Jz49BGEu4RemsJct/R+AvOWtOxLfWSQAs+ENKnsJWsmOBsHoVJovFnAijUCDX1tK/bEePm6o1IjibO197WKxK62a3GwTZOnWc=
+	t=1730978437; cv=none; b=KWyIUPQy2wSxdcM29IRRdJY44NBG/3D2OYbaT21rst507hPklfpBdKodgoqx4GG6bmPdtb6M+oEcfdaz1j1Gr3v9YXnKQWp55H6YcfSgxvf1wFCDk4qch48EGK98rZPfocwKINN52mc2MwRanks7Se8aLD18DuEe753myZBKHhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730912430; c=relaxed/simple;
-	bh=M0P7cs84jjZ9MZPgSMNMZ4jFY7gU+GyjBVnr9jmkpNE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lQvPfTBj27pwztZT4UWyqYGEYimaxv3pudlKrClFhKrunOowU8XXZU8vjwOQm52iuAMj/9ueYreUkQz/R7yNj9GIba9FziprO3Ln7A/QHWJ+CX/DE8uT0FT8eGPlkZCeu4RdZapv9+pYBK/lb6giv+4o+tvyLR1lm82/yOxG5go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Fv8908II; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1730978437; c=relaxed/simple;
+	bh=xF8ZbGW400Arsn35oIvMaUkwIQp/crqb3h+5bmD2B1U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jpTodcY9vEjOOdJu3gBxPFSW61Qs0RjTnwpbvencp7qAvXrwIiPXBMKTjQjteDCYlNcl3g325Ta7gtvoSJqIo6mPo/OlGKk6Otx2FmU1mGJf9SJB5nYpBQfUONWExoWcfSV5ScPSwz2Y4VzYYw+DMD7xFAf5urmERujExUoPlcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dMIYWxih; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Fv8908II"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-37ed7eb07a4so5048786f8f.2
-        for <linux-security-module@vger.kernel.org>; Wed, 06 Nov 2024 09:00:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730912427; x=1731517227; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BLNouObUorCzJ6AkcXYcYQkgJBmZc32SGAGNMMbQIqo=;
-        b=Fv8908IIWKbmy2IzdZhM+rXLzKQDIh35Pyg+zUqFd1hp+8/KaQM0B/BbcvgEx0X9tb
-         LMrDs+HRM1Amudb7fo19JACipRDY0poa96ro0fZyNNgZUl8EzI8IO8b3oHkfH/4JLOFu
-         svnavBQ6kbRqydpZycJyzmaNY0FTehqW0ZUIfHb5MVGkTGag5O6p2Kq4/EGJgY0D1WjH
-         q19PSr9Sv6vPwr2QUsk6ew8yRPoKCaa8kRUTiwkHO2pmklPG9wL44uQcohz55pfjh6ep
-         GZpsJekj1kOGIIbrpALXxQiDqgd+oWVqh7WdHYTfdM+sj9PzZfWx7J5d0pMXpw1Y/Yku
-         tmpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730912427; x=1731517227;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BLNouObUorCzJ6AkcXYcYQkgJBmZc32SGAGNMMbQIqo=;
-        b=Bd8fT38zoMNJagyYDeyS60S1CS7EqKRn1biCFlfmMv7DL1HcyP9BFqU4CaGe6R2Hl0
-         8rfI9urg6upuDoGFtc7GFhJVXE+1bXdrGFYkoYuhbphA4ddeGXsqr0o3IM30cEbKLREE
-         xl++cYMaDfDIVI8n+xrqlfDmoZJXiybtaJU+Gb6UTV9EZ0Julpr87uJXhqq/Ef/CGaV+
-         3QyYdaY3zoH41yjL6raqLTd0v0aowjA6nBAkcdE4UPdBXTgCRC3axYFXzzfrnQgUmriT
-         HZNtDl0/gTQI6Kwo/372WrzaL5ykCwOk6xckxdxldXl2j5NHk78cIK1BSuZ2xGvC7hbu
-         8B2w==
-X-Forwarded-Encrypted: i=1; AJvYcCWg8WJhV+arP/lEMlcDlCanh64yFTBcsEVp9AhgwKiwB0j9SoxJoc3EtFxGCaTKXk0kKR6v8ejQzdOWmvPi+C7FkBabPQE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwM7bLPQqxHYQ1mHSsKelUv7JGNuwDZWLCuxLpwkipzFnGftqPx
-	Efx7H2ClLrvlYFs9f1DdX1l2VU/E/3mML5TvUF9G9jLX0xVZyKsUa3cA1jDisiTKPKUx7w8y9Md
-	ll2gV3arJxde4qPKU9MTENco6fVln/ajsrsM+
-X-Google-Smtp-Source: AGHT+IHrnx1TLzKwmMZlGwZeX1FBkou/Z8ONAtZQvMq43XEgpy8Y8EBDJpgktHzfFZkFyumWTNC5i3EASlSIUyX9odk=
-X-Received: by 2002:a5d:59a2:0:b0:37d:5129:f454 with SMTP id
- ffacd0b85a97d-381be776c81mr20504534f8f.15.1730912426398; Wed, 06 Nov 2024
- 09:00:26 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dMIYWxih"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABBABC4CECC;
+	Thu,  7 Nov 2024 11:20:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730978435;
+	bh=xF8ZbGW400Arsn35oIvMaUkwIQp/crqb3h+5bmD2B1U=;
+	h=From:To:Cc:Subject:Date:From;
+	b=dMIYWxihqJd2f7YIyVUdr4osx65WrXPDKZzzCQHlutrf5SGCIsLYofcQxeo+ZtIeO
+	 riio+hhM/Bc76/6iuFMJja+tmVZQsFqNglzqhnAEHRj2eIZMnm4tH+zISlro4nrBcc
+	 OrDWGGYAQMR/2Rkl4CJfO0iOFGS4jsyavDa9KIhRCNgr9SDoxYEZfJh57kVUZQrG0Z
+	 KTIbsGeF36UlNemRx1SYrsuHW1uT7rN09GWb8J4/MKXh+IAwzYImOenVv2KVmqquhR
+	 /lsfnD9khFPook7TByWQqwzutMAqiz5Piv6qFqAvwcS9IHuAfi7TL7Wyrq4r+D49f1
+	 Hsxh0Jg7tqZGA==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: linux-integrity@vger.kernel.org,
+	Peter Huewe <peterhuewe@gmx.de>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>
+Cc: James Bottomley <James.Bottomley@HansenPartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-kernel@vger.kernel.org (open list),
+	keyrings@vger.kernel.org (open list:KEYS-TRUSTED),
+	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM)
+Subject: [PATCH] tpm: Remove the documentation from tpm2-sessions.c
+Date: Thu,  7 Nov 2024 13:20:22 +0200
+Message-ID: <20241107112023.5731-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241106155509.1706965-1-omosnace@redhat.com> <CANn89iKag19EPvnQRthsG98pfjriRwtS+YND0359xFijGAoEYg@mail.gmail.com>
- <CAFqZXNumyhpRvrZ6mAK9OVxbte=_3MG195i_+Z1j79PsE=6k_g@mail.gmail.com>
-In-Reply-To: <CAFqZXNumyhpRvrZ6mAK9OVxbte=_3MG195i_+Z1j79PsE=6k_g@mail.gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Wed, 6 Nov 2024 18:00:14 +0100
-Message-ID: <CANn89iJj2sQX3rZvmbL0zQjX7K-OFwyautgAXqxNvk2M17++bw@mail.gmail.com>
-Subject: Re: [PATCH] selinux,xfrm: fix dangling refcount on deferred skb free
-To: Ondrej Mosnacek <omosnace@redhat.com>
-Cc: Paul Moore <paul@paul-moore.com>, Steffen Klassert <steffen.klassert@secunet.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, selinux@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Nov 6, 2024 at 5:54=E2=80=AFPM Ondrej Mosnacek <omosnace@redhat.com=
-> wrote:
->
-> On Wed, Nov 6, 2024 at 5:13=E2=80=AFPM Eric Dumazet <edumazet@google.com>=
- wrote:
-> >
-> > On Wed, Nov 6, 2024 at 4:55=E2=80=AFPM Ondrej Mosnacek <omosnace@redhat=
-.com> wrote:
-> > >
-> > > SELinux tracks the number of allocated xfrm_state/xfrm_policy objects
-> > > (via the selinux_xfrm_refcount variable) as an input in deciding if p=
-eer
-> > > labeling should be used.
-> > >
-> > > However, as a result of commits f35f821935d8 ("tcp: defer skb freeing
-> > > after socket lock is released") and 68822bdf76f1 ("net: generalize sk=
-b
-> > > freeing deferral to per-cpu lists"), freeing of a sk_buff object, whi=
-ch
-> > > may hold a reference to an xfrm_state object, can be deferred for
-> > > processing on another CPU core, so even after xfrm_state is deleted f=
-rom
-> > > the configuration by userspace, the refcount isn't decremented until =
-the
-> > > deferred freeing of relevant sk_buffs happens. On a system with many
-> > > cores this can take a very long time (even minutes or more if the sys=
-tem
-> > > is not very active), leading to peer labeling being enabled for much
-> > > longer than expected.
-> > >
-> > > Fix this by moving the selinux_xfrm_refcount decrementing to just aft=
-er
-> > > the actual deletion of the xfrm objects rather than waiting for the
-> > > freeing to happen. For xfrm_policy it currently doesn't seem to be
-> > > necessary, but let's do the same there for consistency and
-> > > future-proofing.
-> > >
-> > > We hit this issue on a specific aarch64 256-core system, where the
-> > > sequence of unix_socket/test and inet_socket/tcp/test from
-> > > selinux-testsuite [1] would quite reliably trigger this scenario, and=
- a
-> > > subsequent sctp/test run would then stumble because the policy for th=
-at
-> > > test misses some rules that would make it work under peer labeling
-> > > enabled (namely it was getting the netif::egress permission denied in
-> > > some of the test cases).
-> > >
-> > > [1] https://github.com/SELinuxProject/selinux-testsuite/
-> > >
-> > > Fixes: f35f821935d8 ("tcp: defer skb freeing after socket lock is rel=
-eased")
-> > > Fixes: 68822bdf76f1 ("net: generalize skb freeing deferral to per-cpu=
- lists")
-> > > Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-> > > ---
-> >
-> > Can we explain why TCP packets sitting in TCP receive queues would
-> > need to keep xfrm_state around ?
-> >
-> > With thousands of TCP sockets. I would imagine that a similar issue
-> > would be hit,
-> > regardless of f35f821935d8 ("tcp: defer skb freeing after socket lock
-> > is released") and 68822bdf76f1 ("net: generalize skb freeing deferral
-> > to per-cpu lists")
-> >
-> > We remove the dst from these incoming packets (see skb_dst_drop() in
-> > tcp_data_queue() and tcp_add_backlog()),
-> > I do not see how XFRM state could be kept ?
->
-> The problem is not with the xfrm_state reference via dst_entry, but
-> the one in skb_ext (skb->extensions) -> sec_path
-> (skb_ext_get_ptr(skb->extensions, SKB_EXT_SEC_PATH)) -> the xvec
-> array. But you have a point that I should say that in the commit
-> message...
->
+Nobody will maintain this, i.e. it is destined to rotten. It is better to
+just rip it off, and not have duplicate stuff that is already in the kernel
+documentation and function headers.
 
-So some secpath_reset() calls should be added in various protocol handlers
-before packets are possibly queued for hours in a socket queue  ?
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+ drivers/char/tpm/tpm2-sessions.c | 68 ++------------------------------
+ 1 file changed, 3 insertions(+), 65 deletions(-)
 
-I see one in l2tp_eth_dev_recv().
+diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-sessions.c
+index a7c1b162251b..ff00e9483564 100644
+--- a/drivers/char/tpm/tpm2-sessions.c
++++ b/drivers/char/tpm/tpm2-sessions.c
+@@ -1,71 +1,9 @@
+ // SPDX-License-Identifier: GPL-2.0
+-
+ /*
+- * Copyright (C) 2018 James.Bottomley@HansenPartnership.com
+- *
+- * Cryptographic helper routines for handling TPM2 sessions for
+- * authorization HMAC and request response encryption.
+- *
+- * The idea is to ensure that every TPM command is HMAC protected by a
+- * session, meaning in-flight tampering would be detected and in
+- * addition all sensitive inputs and responses should be encrypted.
+- *
+- * The basic way this works is to use a TPM feature called salted
+- * sessions where a random secret used in session construction is
+- * encrypted to the public part of a known TPM key.  The problem is we
+- * have no known keys, so initially a primary Elliptic Curve key is
+- * derived from the NULL seed (we use EC because most TPMs generate
+- * these keys much faster than RSA ones).  The curve used is NIST_P256
+- * because that's now mandated to be present in 'TCG TPM v2.0
+- * Provisioning Guidance'
+- *
+- * Threat problems: the initial TPM2_CreatePrimary is not (and cannot
+- * be) session protected, so a clever Man in the Middle could return a
+- * public key they control to this command and from there intercept
+- * and decode all subsequent session based transactions.  The kernel
+- * cannot mitigate this threat but, after boot, userspace can get
+- * proof this has not happened by asking the TPM to certify the NULL
+- * key.  This certification would chain back to the TPM Endorsement
+- * Certificate and prove the NULL seed primary had not been tampered
+- * with and thus all sessions must have been cryptographically secure.
+- * To assist with this, the initial NULL seed public key name is made
+- * available in a sysfs file.
+- *
+- * Use of these functions:
+- *
+- * The design is all the crypto, hash and hmac gunk is confined in this
+- * file and never needs to be seen even by the kernel internal user.  To
+- * the user there's an init function tpm2_sessions_init() that needs to
+- * be called once per TPM which generates the NULL seed primary key.
+- *
+- * These are the usage functions:
++ * Copyright (c) 2018 James Bottomley <James.Bottomley@HansenPartnership.com>
+  *
+- * tpm2_start_auth_session() which allocates the opaque auth structure
+- *	and gets a session from the TPM.  This must be called before
+- *	any of the following functions.  The session is protected by a
+- *	session_key which is derived from a random salt value
+- *	encrypted to the NULL seed.
+- * tpm2_end_auth_session() kills the session and frees the resources.
+- *	Under normal operation this function is done by
+- *	tpm_buf_check_hmac_response(), so this is only to be used on
+- *	error legs where the latter is not executed.
+- * tpm_buf_append_name() to add a handle to the buffer.  This must be
+- *	used in place of the usual tpm_buf_append_u32() for adding
+- *	handles because handles have to be processed specially when
+- *	calculating the HMAC.  In particular, for NV, volatile and
+- *	permanent objects you now need to provide the name.
+- * tpm_buf_append_hmac_session() which appends the hmac session to the
+- *	buf in the same way tpm_buf_append_auth does().
+- * tpm_buf_fill_hmac_session() This calculates the correct hash and
+- *	places it in the buffer.  It must be called after the complete
+- *	command buffer is finalized so it can fill in the correct HMAC
+- *	based on the parameters.
+- * tpm_buf_check_hmac_response() which checks the session response in
+- *	the buffer and calculates what it should be.  If there's a
+- *	mismatch it will log a warning and return an error.  If
+- *	tpm_buf_append_hmac_session() did not specify
+- *	TPM_SA_CONTINUE_SESSION then the session will be closed (if it
+- *	hasn't been consumed) and the auth structure freed.
++ * Cryptographic helper routines for handling TPM2 sessions for authorization
++ * HMAC and request response encryption.
+  */
+ 
+ #include "tpm.h"
+-- 
+2.47.0
 
-> And I think you're right that even without those commits a delay in
-> processing the RCU free callbacks could cause a similar issue, it just
-> wouldn't be as easy to trigger. That made me look deeper into history
-> which commit actually added the decrement on free and it turns out it
-> was done intentionally as a bugfix - see commit e4e8536f65b5
-> ("selinux: fix the labeled xfrm/IPsec reference count handling").
-> Before that commit the logic was similar to what my patch is doing, so
-> I could be re-introducing another bug here :-/ The commit message is
-> not very helpful there - Paul, do you happen to remember what the
-> issue was that prompted it? I guess there can be some alloc's that
-> won't have a matching delete in the right circumstances? Or something
-> involving the selinux_xfrm_policy_clone() case?
->
-> --
-> Ondrej Mosnacek
-> Senior Software Engineer, Linux Security - SELinux kernel
-> Red Hat, Inc.
->
