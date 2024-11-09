@@ -1,67 +1,67 @@
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+Received: from mail-ej1-f74.google.com (mail-ej1-f74.google.com [209.85.218.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B07AF29CF4
-	for <linux-security-module@vger.kernel.org>; Sat,  9 Nov 2024 18:23:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD7FF7F460
+	for <linux-security-module@vger.kernel.org>; Sat,  9 Nov 2024 18:30:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731176627; cv=none; b=fbp0ihHfj4gtw7ta+xHekr62DL/r46ac/6iMYIbpWguj4Zs+r/M21JEpxFK2bbxViERKlz+BpkSOk2vNJc3ZmNKzVc3cQIc1r1Rfp7sbtf6ZnAHda7lL0qgHHWJEN++kdjtmaRhm+U01mk4nN1T51JeDBqnJyH3bgGanHfxgi6Q=
+	t=1731177033; cv=none; b=TNR2ON8WfGQI+DPcePP4tL5eu0YN0iBxSW0glI+fsiWRDJ1TL41UnvnN9h8eQexa0tADZlwUkxQd9Y4zL9STd1NUN8UZFhKdonKkIw9ya+wZZTyehYbgWylhchp89qQTVreEiKjGoTGXa2vDgctSCO7+s9Rbnyq9R6dON+/b4UQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731176627; c=relaxed/simple;
-	bh=mlbBETcupgCb414Ky4zumxeZ+96zYQqjYsHF7GElXuM=;
+	s=arc-20240116; t=1731177033; c=relaxed/simple;
+	bh=KCVB8kSdHUut1Z9+Ll7oW9hPbxlbyOhRBNGy8mo2a6k=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=pUYqN8bMjJq6OaZNzkHwh8eHuGEneliX528GAHof8OICqQU9/dIfDfID38Crwb8gsJvuVUUi2YmwJS6OuzDmJsOKIYiW7jCnpS9GmTA+PSXPNLVSk6MfiTy7coSgvAPgDvchqEG4Xi8I7vC4Oyugt5aq1yw/1ZYkYFi1S9M12HI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SpJctR3U; arc=none smtp.client-ip=209.85.128.201
+	 To:Cc:Content-Type; b=PMHTGfOCIx8H/NnMKXy772BPG1G+dp15cPA1ALlh89A1DQNg2CUDeCUqS0HkULqLczh0mpEAWBz4JVNA9WyAy5FJW3renfljXF3qkQe9nxnfgv8kTiQ9MbNtG4c3t+WvGz9YW5gpSGMYgbhr46QdmyS6ZjgqrICopitJ90WL+9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FXFfSSzx; arc=none smtp.client-ip=209.85.218.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SpJctR3U"
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e35199eb2bso62498017b3.3
-        for <linux-security-module@vger.kernel.org>; Sat, 09 Nov 2024 10:23:45 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FXFfSSzx"
+Received: by mail-ej1-f74.google.com with SMTP id a640c23a62f3a-a99efe7369dso62398766b.0
+        for <linux-security-module@vger.kernel.org>; Sat, 09 Nov 2024 10:30:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1731176625; x=1731781425; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1731177030; x=1731781830; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:from:subject:message-id:references
          :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=DNMtpNh0EyiH5Cih+rXzvOX64NKOibAYniapXi4mnKE=;
-        b=SpJctR3U8RWNiR1dmMrHyQT0ObVPhK/x6w6xrd4SmjVKhmPqhBA2V16cA/pk4TJpIA
-         3gC8TNq5T6/10hn3EcLcgB0KYPmJQl39YPwWwYdry6xPxWWBuV5p0NukxYPsNbCcBpC6
-         fKCPnVjkz9twjDBy5jgxcUtBaVi2wa/1+epm4QFWAmIFl1lc5SiclQoxJQ+2LOBsVCMP
-         0ghnRGSVC6Z03MZ+zyZEk2KcvocLi0PWdag2cQEqWoCVcrWFNH+oWVK/yTSSt5mTnSHS
-         M9Gydr8Slzvut+20vqUV4QLClQ382mjqlsCHocw/M0zQ8IMCfQlrEN60MnU44T+DKtTm
-         uY2Q==
+        bh=MLufq+X/yG9C9kLGe2tLygXN2l6dm6u4UYRcmXiA5h4=;
+        b=FXFfSSzxfHFtAw4bPthrLFaQ9UMwmSEodxglx0kTTyianUfkTLYdV7sKiXx1BupyC9
+         uSA7B7ULO23CFNCnrUbOnOdjPo8ZI0KHu5rqBuCZNNvp4/mLfYt0U7HRBxj7fuBRA++V
+         V9hOmcf3wPpy/p5ZGWg18YAhIY7HTYCXT6x+pOS1B2JTqvxegIV7TbP76RSKbGBKwGfG
+         QAydh53MzA0+g/MvsR6CozQMajxzQiGCNtNNnTeBAnPMx7X5xX3omou2junWQu51R2ig
+         LBXLa56f7d5iYVs9EmSGPM4HpRYI+ufIq8ZWh2LU1nard4GrX4WarAE/DDLULs/ly5Ly
+         aRug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731176625; x=1731781425;
+        d=1e100.net; s=20230601; t=1731177030; x=1731781830;
         h=content-transfer-encoding:cc:to:from:subject:message-id:references
          :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=DNMtpNh0EyiH5Cih+rXzvOX64NKOibAYniapXi4mnKE=;
-        b=HwQLKayK7UY9vQMqMllWCDNZxISl6p16c0r5wCTjuRgXCB3TmPPzKx3n9uzzIgaIhg
-         TcFSyJiiTpvK2GD+ayfrYPzDQl7uF1KhvMcP7Qc5j0OB6ZlcjAI6qGHCWncfA3DRcZwY
-         wNjn/HMy1/ArLIDdGhuloH/PoC1YuCwFFYVjQClbbHg3DwAA/JV+/ZgHFaxlJ1x/Qh1G
-         BlFkCetCeVFWhi/y88bq0N57DKC6FFHcUhRdB7fOFWQnwltSp4Ff9nR85WK6vCpB29dd
-         zqWEW7Y7PDzr67kq+9KroVEhATkpGHJ3vR+L7QVaTV1s7oitlW2f6s3vxLkXYLPoeERk
-         jB+A==
-X-Forwarded-Encrypted: i=1; AJvYcCW6h9Nhu2HV/miryait5sW/HLB4D8CR4Ig7F6YEmefDyjuYpNsvvC60uaLMOAlbNmEh4uhggJ8kIulGCekoXanLUKE7hAI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQhJEJoKYPhkWR1h7nJcvIRtFcx6IB6cIuDVTBVjtXLgp8UIvH
-	m9ZDBD1L+fI4NG64NQfMTQ16KQyv4G2kuTS9qoq3TXfFjRGXsgCPVT4/COwlj/LTMUcB/6rmFP+
-	AjA==
-X-Google-Smtp-Source: AGHT+IFb2ALdev8rkS2MP1OpmqtRhIJDwy41Rc8Ssp6CChyEzIsFEJl8h3SRKE9oiK0DStU4Ojd1+peHK9s=
+        bh=MLufq+X/yG9C9kLGe2tLygXN2l6dm6u4UYRcmXiA5h4=;
+        b=LC+sZdNM7GY35QivAv8ojCQ9PUixvw3W6FzHzhAY7SLgBUVjxmASDgNDIJRo02Snxd
+         XEixLT/alFVUkcGHKCKnIxKbFmBGxlAvDBLvmjPLv/iCKKraJkRcTiiENEkhbx0Gd6Bt
+         Pmr14InYPGqLvFECl77Qb0KpJuMVMhIDje1NkkVMiObJQHfv7pjRJoLt1X7N9qVYEo93
+         T4iJY/+vOChQtoy/cwJb1iCOQmEw4Zh2x1+B51JdP1Z6wBITNVqSygnW+v26lRf6SSg6
+         TeZ36bne5Uk8wTQyWCyoceMQwbxDtp0yxbF1UUg7FTd1+sYYte2NGz6D1iaNMVb/ozWD
+         t0dQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXeft0UrhxwhVxl4FzTooSQEBgK+pRLigza1keJW5x/wCRwuEcOqioVAMgvJUg+K49Z1qfP/oSsVivtvIlJgIkI2W4eMuI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxA27EvnYdc48eVmE3Kg6WP1jPAn8k7jR11Y0pA7SyQ4dzlSruf
+	BtD32HzI1vGc6JZ70rRaCryRVBKGaGncNqd8e2IyTXhN55kC/poVPo7zktRJxCCrGml0QHjVxJL
+	6Og==
+X-Google-Smtp-Source: AGHT+IE7LbqfVTOkNsjoWw7EyG5NChQgRbBMHJ5PTDRwT9sRYpmCvNRUgx5yJbwxA97XgSr4PBu/2Cd0OVg=
 X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
- (user=gnoack job=sendgmr) by 2002:a25:acd3:0:b0:e30:da65:7240 with SMTP id
- 3f1490d57ef6-e337f85bbf5mr14424276.3.1731176624715; Sat, 09 Nov 2024 10:23:44
+ (user=gnoack job=sendgmr) by 2002:a17:906:b818:b0:a9a:940:5432 with SMTP id
+ a640c23a62f3a-a9eefff12fdmr208266b.6.1731177030058; Sat, 09 Nov 2024 10:30:30
  -0800 (PST)
-Date: Sat, 9 Nov 2024 19:23:42 +0100
-In-Reply-To: <20241109110856.222842-3-mic@digikod.net>
+Date: Sat, 9 Nov 2024 19:30:28 +0100
+In-Reply-To: <20241109110856.222842-4-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20241109110856.222842-1-mic@digikod.net> <20241109110856.222842-3-mic@digikod.net>
-Message-ID: <Zy-oriCJELJSBYFZ@google.com>
-Subject: Re: [PATCH v4 2/3] landlock: Refactor network access mask management
+References: <20241109110856.222842-1-mic@digikod.net> <20241109110856.222842-4-mic@digikod.net>
+Message-ID: <Zy-qROSRm1rb_pww@google.com>
+Subject: Re: [PATCH v4 3/3] landlock: Optimize scope enforcement
 From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
 To: "=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>
 Cc: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
@@ -71,81 +71,105 @@ Cc: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Nov 09, 2024 at 12:08:55PM +0100, Micka=C3=ABl Sala=C3=BCn wrote:
-> Replace get_raw_handled_net_accesses() and get_current_net_domain() with
-> a call to landlock_match_ruleset().
+On Sat, Nov 09, 2024 at 12:08:56PM +0100, Micka=C3=ABl Sala=C3=BCn wrote:
+> Do not walk through the domain hierarchy when the required scope is not
+> supported by this domain.  This is the same approach as for filesystem
+> and network restrictions.
 >=20
 > Cc: G=C3=BCnther Noack <gnoack@google.com>
-> Cc: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
 > Cc: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+> Cc: Tahera Fahimi <fahimitahera@gmail.com>
 > Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
-> Link: https://lore.kernel.org/r/20241109110856.222842-3-mic@digikod.net
+> Link: https://lore.kernel.org/r/20241109110856.222842-4-mic@digikod.net
 > ---
 >=20
 > Changes since v2:
-> * Replace get_current_net_domain() with explicit call to
->   landlock_match_ruleset().
->=20
-> Changes since v1:
-> * Rename the all_net mask to any_net.
+> * Make the unix_scope variable global to the file and remove
+>   previous get_current_unix_scope_domain().
 > ---
->  security/landlock/net.c | 28 ++++++----------------------
->  1 file changed, 6 insertions(+), 22 deletions(-)
+>  security/landlock/task.c | 18 +++++++++++++++---
+>  1 file changed, 15 insertions(+), 3 deletions(-)
 >=20
-> diff --git a/security/landlock/net.c b/security/landlock/net.c
-> index c8bcd29bde09..d5dcc4407a19 100644
-> --- a/security/landlock/net.c
-> +++ b/security/landlock/net.c
-> @@ -39,27 +39,9 @@ int landlock_append_net_rule(struct landlock_ruleset *=
-const ruleset,
->  	return err;
+> diff --git a/security/landlock/task.c b/security/landlock/task.c
+> index 4acbd7c40eee..dc7dab78392e 100644
+> --- a/security/landlock/task.c
+> +++ b/security/landlock/task.c
+> @@ -204,12 +204,17 @@ static bool is_abstract_socket(struct sock *const s=
+ock)
+>  	return false;
 >  }
 > =20
-> -static access_mask_t
-> -get_raw_handled_net_accesses(const struct landlock_ruleset *const domain=
-)
-> -{
-> -	access_mask_t access_dom =3D 0;
-> -	size_t layer_level;
-> -
-> -	for (layer_level =3D 0; layer_level < domain->num_layers; layer_level++=
-)
-> -		access_dom |=3D landlock_get_net_access_mask(domain, layer_level);
-> -	return access_dom;
-> -}
-> -
-> -static const struct landlock_ruleset *get_current_net_domain(void)
-> -{
-> -	const struct landlock_ruleset *const dom =3D
-> -		landlock_get_current_domain();
-> -
-> -	if (!dom || !get_raw_handled_net_accesses(dom))
-> -		return NULL;
-> -
-> -	return dom;
-> -}
-> +static const struct access_masks any_net =3D {
-> +	.net =3D ~0,
+> +static const struct access_masks unix_scope =3D {
+> +	.scope =3D LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET,
 > +};
-> =20
->  static int current_check_access_socket(struct socket *const sock,
->  				       struct sockaddr *const address,
-> @@ -72,7 +54,9 @@ static int current_check_access_socket(struct socket *c=
-onst sock,
->  	struct landlock_id id =3D {
->  		.type =3D LANDLOCK_KEY_NET_PORT,
->  	};
-> -	const struct landlock_ruleset *const dom =3D get_current_net_domain();
-> +	const struct landlock_ruleset *const dom =3D
+
+Optional nit: You could probably inline these two struct access_masks value=
+s
+into the respective functions where they are used.  (But it's just a minor =
+code
+style matter IMHO; both ways are fine.)
+
+> +
+>  static int hook_unix_stream_connect(struct sock *const sock,
+>  				    struct sock *const other,
+>  				    struct sock *const newsk)
+>  {
+>  	const struct landlock_ruleset *const dom =3D
+> -		landlock_get_current_domain();
 > +		landlock_get_applicable_domain(landlock_get_current_domain(),
-> +					       any_net);
+> +					       unix_scope);
+> =20
+>  	/* Quick return for non-landlocked tasks. */
+>  	if (!dom)
+> @@ -225,7 +230,8 @@ static int hook_unix_may_send(struct socket *const so=
+ck,
+>  			      struct socket *const other)
+>  {
+>  	const struct landlock_ruleset *const dom =3D
+> -		landlock_get_current_domain();
+> +		landlock_get_applicable_domain(landlock_get_current_domain(),
+> +					       unix_scope);
 > =20
 >  	if (!dom)
 >  		return 0;
+> @@ -243,6 +249,10 @@ static int hook_unix_may_send(struct socket *const s=
+ock,
+>  	return 0;
+>  }
+> =20
+> +static const struct access_masks signal_scope =3D {
+> +	.scope =3D LANDLOCK_SCOPE_SIGNAL,
+> +};
+> +
+>  static int hook_task_kill(struct task_struct *const p,
+>  			  struct kernel_siginfo *const info, const int sig,
+>  			  const struct cred *const cred)
+> @@ -256,6 +266,7 @@ static int hook_task_kill(struct task_struct *const p=
+,
+>  	} else {
+>  		dom =3D landlock_get_current_domain();
+>  	}
+> +	dom =3D landlock_get_applicable_domain(dom, signal_scope);
+> =20
+>  	/* Quick return for non-landlocked tasks. */
+>  	if (!dom)
+> @@ -279,7 +290,8 @@ static int hook_file_send_sigiotask(struct task_struc=
+t *tsk,
+> =20
+>  	/* Lock already held by send_sigio() and send_sigurg(). */
+>  	lockdep_assert_held(&fown->lock);
+> -	dom =3D landlock_file(fown->file)->fown_domain;
+> +	dom =3D landlock_get_applicable_domain(
+> +		landlock_file(fown->file)->fown_domain, signal_scope);
+> =20
+>  	/* Quick return for unowned socket. */
+>  	if (!dom)
 > --=20
 > 2.47.0
 >=20
 
 Reviewed-by: G=C3=BCnther Noack <gnoack@google.com>
+
+Looks good!
 
 =E2=80=94G=C3=BCnther
