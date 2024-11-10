@@ -1,88 +1,63 @@
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-190d.mail.infomaniak.ch (smtp-190d.mail.infomaniak.ch [185.125.25.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D0711A0711
-	for <linux-security-module@vger.kernel.org>; Sat,  9 Nov 2024 21:59:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2766F84D29
+	for <linux-security-module@vger.kernel.org>; Sun, 10 Nov 2024 18:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731189601; cv=none; b=OZcwQwuNDxQDF3PaPz30lTy5rwIURoMQYnfh73VR24Jng64swT8ekzrou8EvdpO6zFf+7pa+tD0EuFGyX2xLafaxhK1OFtP0dbP5cuNONLUhSANfCdGSkPVx+AQxRX4Q4kJCKWkkImcIRJon0XE6G/ShGm6yN3M/iQF+FdGhGw4=
+	t=1731265016; cv=none; b=UYNQQAeVkPit45Flk+RefOCU5sedA1S6oAa/3haTidDaYlBPOB9/ITBHAFbiJNvKgO7Td8MfnfwNxSu4QPRE+UkziqQ+YGsDnlymv3f6hA2Y+gm8xE23x/UB5dOFU5hUpsntZJwp+796ZNQsoGaJp7FK4dFxNQN7yeTOXTDGU+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731189601; c=relaxed/simple;
-	bh=SorAhy9ty86LD00viwQJqvRfEu8dv8sSy3YjFa1woIM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EknZ+9xj6kfwBEGcqB/WLEqFqleEbcCM2gnZRC3AMEgE+GZIRnAJRnze+hkzMRZ0yLdBEpNeVbb7tVBUylA48IQjg5BjLxo4sbE44+XujkKmKnNurWNKaVpyo4Bl9dU5lpJ8W/On4ZijnnCHE8g2tTLr/0bYfeb2oURSy2IcEuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=GRs9eVeg; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+	s=arc-20240116; t=1731265016; c=relaxed/simple;
+	bh=MaEFS9bus4W6Lu28k4HbgCiUQ4Zh+/UyfhUhzlj7n68=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=spYnyphaOKhM5dFWpZIHkoeFjXw+rzlcdyhLuofAnwXAj5YsK9bD+VGxf0Kt/C3rHkhvaGm2yZSL4m2XUw1BttS+1Rt/a0LNwXcgdR/7uOEtnLiKUJlsIRCRCfDEjg4bZQJm6gLw8OM/xXf7B3okFbnh4jKTXx8RR+FFBA/9Fnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=mxV67elR; arc=none smtp.client-ip=185.125.25.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="GRs9eVeg"
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a9ee097a478so212107466b.2
-        for <linux-security-module@vger.kernel.org>; Sat, 09 Nov 2024 13:59:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1731189598; x=1731794398; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GZMpIxu5tJ4g1sGmptF0V0nSmDcf4fOLJUmZLvsgvkM=;
-        b=GRs9eVegPprtpaA4OM9g22GdOC8bv3VCWNIV+lZk7Y+B+ntNJqW0J6E/4GWZpFSSul
-         6+Rv1GMHTLigLzYoz/POW4DBtZUoJ5XCkfh+2GCU/M7sY1a5tqu4JeqTuMvSWOowActn
-         XmxbagP0zaQIOJk015R6E+qW2xV1pK+Mi0WCM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731189598; x=1731794398;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GZMpIxu5tJ4g1sGmptF0V0nSmDcf4fOLJUmZLvsgvkM=;
-        b=izXfADPHNjPdvAh+Q1U/6iDrd8bH7kb8hoTSz66/qtpG2GrUqVQcAwqCw+bnUKrf3b
-         PoFvA62Pq3NOUd1Z+vKibnYc9Gjyn3cinK5AWgkOkzXN4L1oesS/MKKCvJpgzkZMJgwy
-         wX281IOlnkArCUnz3IZrnXMW0qZTrbOpsNJuPz/hamojACrwIjmJlILycOQPUWifcFKF
-         kE3H/UxjpGT+7QlEHFb/SAmsyJ6lDLFhjE09wTulONzQoU0BW5FrdumEB9KO4HLz8K2O
-         UlloqChZQI5sQX8lMFWj2WgpXsEEeKRY3a0RedXsCMIhLOutFPaCM8chLL3xkwR3DD8y
-         vrdA==
-X-Forwarded-Encrypted: i=1; AJvYcCVaq4gsI7qq/rKPDFo3prdviORRF57Fg3/C7cY3tvNM+jF/iBuVYcfm0ZmU5iwKnN3EwIww8U3FHFTTm8FRdP5cl9Ta5yA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9cYcbxb9dA3do4Q4SNVQW1IJ4OEHdLbbi2SXqv6Idj967icOA
-	l1gdcWK7u4yA0i8LRcdtY/UARcd9bMMRQWgCJBWqtfvJ2EgEjgkJK8g/N7aRddq5ugZIdPlKNka
-	htS8=
-X-Google-Smtp-Source: AGHT+IFuu8Gt3LGlqh3HVaRWvrYBm0GbwrsQNyhtaMJCC9qRE0H+L6V8JwxCKdO9ATcImqz6wzuJNw==
-X-Received: by 2002:a05:6402:234c:b0:5cb:f1d7:56ac with SMTP id 4fb4d7f45d1cf-5cf0a2fe267mr9227090a12.2.1731189597633;
-        Sat, 09 Nov 2024 13:59:57 -0800 (PST)
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com. [209.85.208.43])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cf03c4f09csm3468039a12.54.2024.11.09.13.59.56
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 09 Nov 2024 13:59:57 -0800 (PST)
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5cf0810f5f9so1862991a12.0
-        for <linux-security-module@vger.kernel.org>; Sat, 09 Nov 2024 13:59:56 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCX6gI3u4CFTiFdfzbNPFVK8ZtIuqJSRB28VFEHIALY+q+ApPg/WcoED/g/ytLhZixydy5yj2HZRklpqOBimoz2Gww66DmY=@vger.kernel.org
-X-Received: by 2002:a05:6402:348f:b0:5ce:b733:2ac7 with SMTP id
- 4fb4d7f45d1cf-5cf0a44667bmr7719738a12.29.1731189595811; Sat, 09 Nov 2024
- 13:59:55 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="mxV67elR"
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Xmhjh0vGgzRKW;
+	Sun, 10 Nov 2024 19:56:40 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1731265000;
+	bh=Q+LBf0Sv5jwbPqaYWAqayiv7fFnFEnvkioJQxITAAdk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mxV67elRaNQ31kjFhRw7Oje8v9A4C+1/pe8CUUCkU0VfpGJdiKPlg1Lyt7ErX5499
+	 piNSrfgDc6G/ISIE40wmh6Djq5FeoXUdjZpOTDCQz0/mOnj4CBRCMQyO3U8/8Y78XI
+	 AW5r4fS48/jJ1Www2hxsv44GXkNQarAf2tabgim8=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Xmhjg1dn8zWsF;
+	Sun, 10 Nov 2024 19:56:39 +0100 (CET)
+Date: Sun, 10 Nov 2024 19:56:37 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Daniel Burgener <dburgener@linux.microsoft.com>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Matthieu Buffet <matthieu@buffet.re>, 
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [GIT PULL] Landlock fix for v6.12-rc7
+Message-ID: <20241110.Iek0rephiele@digikod.net>
+References: <20241109194158.422529-1-mic@digikod.net>
+ <CAHk-=wiUy+ixmBnJuFzTMe4yvxH6fNqu5UG-K=EKZzCAXw8pVQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241109194158.422529-1-mic@digikod.net>
-In-Reply-To: <20241109194158.422529-1-mic@digikod.net>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 9 Nov 2024 13:59:39 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wiUy+ixmBnJuFzTMe4yvxH6fNqu5UG-K=EKZzCAXw8pVQ@mail.gmail.com>
-Message-ID: <CAHk-=wiUy+ixmBnJuFzTMe4yvxH6fNqu5UG-K=EKZzCAXw8pVQ@mail.gmail.com>
-Subject: Re: [GIT PULL] Landlock fix for v6.12-rc7
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Daniel Burgener <dburgener@linux.microsoft.com>, =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	Matthieu Buffet <matthieu@buffet.re>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHk-=wiUy+ixmBnJuFzTMe4yvxH6fNqu5UG-K=EKZzCAXw8pVQ@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-On Sat, 9 Nov 2024 at 11:42, Micka=C3=ABl Sala=C3=BCn <mic@digikod.net> wro=
-te:
->
-> This PR fixes issues in the Landlock's sandboxer [...]
+On Sat, Nov 09, 2024 at 01:59:39PM -0800, Linus Torvalds wrote:
+> On Sat, 9 Nov 2024 at 11:42, Mickaël Salaün <mic@digikod.net> wrote:
+> >
+> > This PR fixes issues in the Landlock's sandboxer [...]
+> 
+> There were neither diffstats nor a shortlog in the pull request, so
+> honestly, it's not a pull request at all as far as I'm concerned.
 
-There were neither diffstats nor a shortlog in the pull request, so
-honestly, it's not a pull request at all as far as I'm concerned.
-
-       Linus
+Indeed, my git request-pull command was buggy.  Sorry for the trouble,
+I'll send a fixed one.
