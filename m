@@ -1,108 +1,114 @@
-Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [185.125.25.15])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 436C413C9C7
-	for <linux-security-module@vger.kernel.org>; Sun, 10 Nov 2024 18:58:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CB391BC58;
+	Mon, 11 Nov 2024 14:49:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731265100; cv=none; b=RTVA2KY4tyo0DDlWoY/b0EFHpYSPV+20GpbiI+3IQetp9rcNkeotx5cGMAfyg6VBD3FCPQrnhBfdnZVisRAIOxqYFiX7m21OW2l2hGqdMBveFhppLOfIFVN1ZtT7ebjOmE4AARE9ZgDsRbcTnnNCwndvm4BttpDW6zthvDNghI0=
+	t=1731336589; cv=none; b=FM8Hl/o3zunmqeSdGuXnlUzeCynUSoZIJoDKiebw86cS720X0/eogzRRggoLt0V3P5Ag2oog71QhhxqclWHFLqWAGO4Tlaqriboy+Ll3t0FvZ1VDkJ4zVKS/PrmM5GBZL92UrLnJkfJfQ9415c5foOVpo4UxDMC3MVmF1vMURcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731265100; c=relaxed/simple;
-	bh=gwNhPkdB4ruEn6kKJNJyb3mDaAE5VeSeNIQnUk2j1vk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Gsuu/Wy8LZmE3XdVPNdHRUlK+jHXA/jM4DRuf9QsToaDPvvcTa+Ak7yh4DeKFdcp5pUWFGXENmKzbC2/PCDYMu7NNdaqBBdrjg0DiMmn/lLnzQ00IRj+SMEbXaeLJdtMw7eG3/+yVBQ7P9BF46BLkVPH8D4VVK3O9efr3imwbfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=K23TZD1F; arc=none smtp.client-ip=185.125.25.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1731336589; c=relaxed/simple;
+	bh=ZZOkQZlepEFjStUosjL2ipFfpBBqpltZJPRQrLteQ7I=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=twVoY3mtiRualZhdxE3w/NAf4cjL4sBbXhRkUVxLJHbhJKKPmUEPjohm3MjBpDgky6lRyksNRV3FxgihjsT6EAi/tvFizhLapNgGWFWPptiB8fNX6zedoKUx5mNYpuYFtJ+07D0Pr0NmLeTubDjhNC0njMUGcLh/eTs9JPfsp50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PAhW4mNo; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="K23TZD1F"
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XmhlM1GQ7zSJb;
-	Sun, 10 Nov 2024 19:58:07 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1731265087;
-	bh=dLQPd5L0DoALOdUi/7m3a7RNhlisSihSXNCjGti09EA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=K23TZD1FdH4gPv1ljPAngEUDpTcZGdoivT+Q5AQ2HT4dKhoMHlZr6Vvl3Wjf1DvWX
-	 xUI/QuNDLzsgp548R1mnA5i6QaQTW/JKQdD98v3W+LRoDrsFHKryhP82YrLQzFdqIJ
-	 q9oQDutkwDZpYfiN6quYQAGLiniYpRFfC0kMLW7o=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4XmhlL4ky6zk66;
-	Sun, 10 Nov 2024 19:58:06 +0100 (CET)
-From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	Daniel Burgener <dburgener@linux.microsoft.com>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	Matthieu Buffet <matthieu@buffet.re>,
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: [GIT PULL] Landlock fix for v6.12-rc7 #2
-Date: Sun, 10 Nov 2024 19:58:04 +0100
-Message-ID: <20241110185804.73158-1-mic@digikod.net>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PAhW4mNo"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 717EAC4CECF;
+	Mon, 11 Nov 2024 14:49:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731336588;
+	bh=ZZOkQZlepEFjStUosjL2ipFfpBBqpltZJPRQrLteQ7I=;
+	h=From:Date:Subject:To:Cc:From;
+	b=PAhW4mNon2UieJ6UMXSzGCOSlFpRqJL7VxB7ijV2lpYigshncvzGh8l7fLSwt7ZnH
+	 TpOWtEkd9y+i2AIw+dn7RKXxz2Hv2xqCz+1NFfVozy0dFid8nomkk7OvVLs/jNgCSL
+	 gw0kwiJJV6KChCtFWUpHsr1Iy1/cTFPeOAosoygEuFtpZPSFYrDymzjOvlEGMkcdJb
+	 HrzK7yrddLgqHKRQZ4dDNHXoVooO+x+E0fPzTrfCHvNvFDcg0WHbmklas8B4iDQwZN
+	 PpQw/KM8ZuROh4gmEj9BHmXMznqFKtKUVA6CTjVaKshtx1NuVWr4IcwEpoChU82CbY
+	 CQwiGKGZHzjBA==
+From: Nathan Chancellor <nathan@kernel.org>
+Date: Mon, 11 Nov 2024 07:49:43 -0700
+Subject: [PATCH] apparmor: Add empty statement between label and
+ declaration in profile_transition(()
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241111-apparmor-fix-label-declaration-warning-v1-1-adb64ab6482b@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAIYZMmcC/x2NQQrDMAwEvxJ0riA2hkC+EnpQbSUROLaRSxsI+
+ XtF9zaHmb2gswp3mIcLlD/SpRYD9xgg7lQ2RknG4EcfnA2pNdKjKq5yYqYXZ0wcMym9TcUvaZG
+ y4RqTD5F9CmECizVlE/5Hy/O+f49tURV4AAAA
+X-Change-ID: 20241111-apparmor-fix-label-declaration-warning-fcd24ce2d447
+To: John Johansen <john.johansen@canonical.com>
+Cc: Ryan Lee <ryan.lee@canonical.com>, apparmor@lists.ubuntu.com, 
+ linux-security-module@vger.kernel.org, llvm@lists.linux.dev, 
+ patches@lists.linux.dev, kernel test robot <lkp@intel.com>, 
+ Nathan Chancellor <nathan@kernel.org>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2357; i=nathan@kernel.org;
+ h=from:subject:message-id; bh=ZZOkQZlepEFjStUosjL2ipFfpBBqpltZJPRQrLteQ7I=;
+ b=owGbwMvMwCUmm602sfCA1DTG02pJDOlGkj1aedv2/Dkot0DL/lLXycubufgUeW5IXVDedMwn1
+ bBdPmtmRykLgxgXg6yYIkv1Y9XjhoZzzjLeODUJZg4rE8gQBi5OAZhI7AtGhj08lleXfD3rsvzp
+ nDVNKa8z2C70rWkBGjrp0TIu9RzzKob/2cevRH8zUjWYeXvxvy/WRW+uytZPNtmko6RatXH91me
+ vuAA=
+X-Developer-Key: i=nathan@kernel.org; a=openpgp;
+ fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
 
-Hi Linus,
+Clang 18 and newer warns (or errors with CONFIG_WERROR=y):
 
-This PR fixes issues in the Landlock's sandboxer sample and documentation,
-slightly refactors helpers (required for ongoing patch series), and improve/fix
-a feature merged in v6.12 (signal and abstract UNIX socket scoping).
+  security/apparmor/domain.c:695:3: error: label followed by a declaration is a C23 extension [-Werror,-Wc23-extensions]
+    695 |                 struct aa_profile *new_profile = NULL;
+        |                 ^
 
-Please pull these changes for v6.12-rc7 (or rc8, if any).  These commits merge
-cleanly with your master branch.  The kernel code has been tested in the latest
-linux-next releases for a few weeks, but I updated the last three patches with
-cosmetic changes according to reviews.
+With Clang 17 and older, this is just an unconditional hard error:
 
-Test coverage for security/landlock is 92.5% of 1129 lines according to
-gcc/gcov-14, and it was 92.8% of 1134 lines before this PR.
+  security/apparmor/domain.c:695:3: error: expected expression
+    695 |                 struct aa_profile *new_profile = NULL;
+        |                 ^
+  security/apparmor/domain.c:697:3: error: use of undeclared identifier 'new_profile'
+    697 |                 new_profile = aa_new_learning_profile(profile, false, name,
+        |                 ^
+  security/apparmor/domain.c:699:8: error: use of undeclared identifier 'new_profile'
+    699 |                 if (!new_profile) {
+        |                      ^
+  security/apparmor/domain.c:704:11: error: use of undeclared identifier 'new_profile'
+    704 |                         new = &new_profile->label;
+        |                                ^
 
-Regards,
- Mickaël
+Add a semicolon directly after the label to create an empty statement,
+which keeps the original intent of the code while clearing up the
+warning/error on all clang versions.
 
---
-The following changes since commit 8e929cb546ee42c9a61d24fae60605e9e3192354:
+Fixes: ee650b3820f3 ("apparmor: properly handle cx/px lookup failure for complain")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202411101808.AI8YG6cs-lkp@intel.com/
+Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+---
+ security/apparmor/domain.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-  Linux 6.12-rc3 (2024-10-13 14:33:32 -0700)
+diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
+index 602d7a1bb44823a9b81e34d270b03c5f3aff3a34..eb0f222aa29442686b0a6751001c879f5b366c59 100644
+--- a/security/apparmor/domain.c
++++ b/security/apparmor/domain.c
+@@ -691,7 +691,7 @@ static struct aa_label *profile_transition(const struct cred *subj_cred,
+ 			error = -EACCES;
+ 		}
+ 	} else if (COMPLAIN_MODE(profile)) {
+-create_learning_profile:
++create_learning_profile:;
+ 		/* no exec permission - learning mode */
+ 		struct aa_profile *new_profile = NULL;
+ 
 
-are available in the Git repository at:
+---
+base-commit: 8c4f7960ae8a7a03a43f814e4af471b8e6ea3391
+change-id: 20241111-apparmor-fix-label-declaration-warning-fcd24ce2d447
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-6.12-rc7
+Best regards,
+-- 
+Nathan Chancellor <nathan@kernel.org>
 
-for you to fetch changes up to 03197e40a22c2641a1f9d1744418cd29f4954b83:
-
-  landlock: Optimize scope enforcement (2024-11-09 19:52:13 +0100)
-
-----------------------------------------------------------------
-Landlock fix for v6.12-rc7
-
-----------------------------------------------------------------
-Daniel Burgener (1):
-      landlock: Fix grammar issues in documentation
-
-Matthieu Buffet (3):
-      samples/landlock: Fix port parsing in sandboxer
-      samples/landlock: Refactor help message
-      samples/landlock: Clarify option parsing behaviour
-
-Mickaël Salaün (4):
-      landlock: Improve documentation of previous limitations
-      landlock: Refactor filesystem access mask management
-      landlock: Refactor network access mask management
-      landlock: Optimize scope enforcement
-
- Documentation/security/landlock.rst      |  14 ++--
- Documentation/userspace-api/landlock.rst |  90 ++++++++++++-------------
- samples/landlock/sandboxer.c             | 112 +++++++++++++++++++------------
- security/landlock/fs.c                   |  31 +++------
- security/landlock/net.c                  |  28 ++------
- security/landlock/ruleset.h              |  74 +++++++++++++++++---
- security/landlock/syscalls.c             |   2 +-
- security/landlock/task.c                 |  18 ++++-
- 8 files changed, 217 insertions(+), 152 deletions(-)
