@@ -1,114 +1,120 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CB391BC58;
-	Mon, 11 Nov 2024 14:49:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0B4C1A2C04;
+	Mon, 11 Nov 2024 16:30:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731336589; cv=none; b=FM8Hl/o3zunmqeSdGuXnlUzeCynUSoZIJoDKiebw86cS720X0/eogzRRggoLt0V3P5Ag2oog71QhhxqclWHFLqWAGO4Tlaqriboy+Ll3t0FvZ1VDkJ4zVKS/PrmM5GBZL92UrLnJkfJfQ9415c5foOVpo4UxDMC3MVmF1vMURcA=
+	t=1731342605; cv=none; b=sycg75o6XNJWrXogJoIeZxslxrah6BsEDGcAz7L0uwOyFO7vlPRZf4NrSjcjitawBdDikyYkoU+2nEL0h9A8rmw5LRn1EyFwosE2F6vE+tUxekRQQiza13+I+cWMosMTZJGLCjK04TUmVZ001iAr+hdi3Gj/HGucaKdaO6U1NsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731336589; c=relaxed/simple;
-	bh=ZZOkQZlepEFjStUosjL2ipFfpBBqpltZJPRQrLteQ7I=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=twVoY3mtiRualZhdxE3w/NAf4cjL4sBbXhRkUVxLJHbhJKKPmUEPjohm3MjBpDgky6lRyksNRV3FxgihjsT6EAi/tvFizhLapNgGWFWPptiB8fNX6zedoKUx5mNYpuYFtJ+07D0Pr0NmLeTubDjhNC0njMUGcLh/eTs9JPfsp50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PAhW4mNo; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PAhW4mNo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 717EAC4CECF;
-	Mon, 11 Nov 2024 14:49:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731336588;
-	bh=ZZOkQZlepEFjStUosjL2ipFfpBBqpltZJPRQrLteQ7I=;
-	h=From:Date:Subject:To:Cc:From;
-	b=PAhW4mNon2UieJ6UMXSzGCOSlFpRqJL7VxB7ijV2lpYigshncvzGh8l7fLSwt7ZnH
-	 TpOWtEkd9y+i2AIw+dn7RKXxz2Hv2xqCz+1NFfVozy0dFid8nomkk7OvVLs/jNgCSL
-	 gw0kwiJJV6KChCtFWUpHsr1Iy1/cTFPeOAosoygEuFtpZPSFYrDymzjOvlEGMkcdJb
-	 HrzK7yrddLgqHKRQZ4dDNHXoVooO+x+E0fPzTrfCHvNvFDcg0WHbmklas8B4iDQwZN
-	 PpQw/KM8ZuROh4gmEj9BHmXMznqFKtKUVA6CTjVaKshtx1NuVWr4IcwEpoChU82CbY
-	 CQwiGKGZHzjBA==
-From: Nathan Chancellor <nathan@kernel.org>
-Date: Mon, 11 Nov 2024 07:49:43 -0700
-Subject: [PATCH] apparmor: Add empty statement between label and
- declaration in profile_transition(()
+	s=arc-20240116; t=1731342605; c=relaxed/simple;
+	bh=9fDruoMlfXUHmwmsvf9FAXDWc9/JlJxAuM/fbaROEu4=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=JQZp5G9Y8VKUjoESepONxAc3l/wNMkSMaAvAWKYHZvQ1NRZ5gANKCLBh91FNNFZlS+6BQl4YFlK7a3115U5+0tShEOgx08p/33YCCF2kOlTen5JFy4GLD1JwJWJjyVz37yilLbGi7xHbVW7E6vBLn5wcMPnfd8xgtf7Y5K6aSCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XnFPg3pY4z6L6yR;
+	Tue, 12 Nov 2024 00:29:43 +0800 (CST)
+Received: from mscpeml500004.china.huawei.com (unknown [7.188.26.250])
+	by mail.maildlp.com (Postfix) with ESMTPS id A2A3114022E;
+	Tue, 12 Nov 2024 00:29:53 +0800 (CST)
+Received: from [10.123.123.159] (10.123.123.159) by
+ mscpeml500004.china.huawei.com (7.188.26.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Mon, 11 Nov 2024 19:29:51 +0300
+Message-ID: <ea026af8-bc29-709c-7e04-e145d01fd825@huawei-partners.com>
+Date: Mon, 11 Nov 2024 19:29:49 +0300
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v3 01/19] landlock: Support socket access-control
+Content-Language: ru
+From: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+To: <mic@digikod.net>
+CC: <willemdebruijn.kernel@gmail.com>, <gnoack3000@gmail.com>,
+	<linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
+	<artem.kuzin@huawei.com>, <konstantin.meskhidze@huawei.com>
+References: <20240904104824.1844082-1-ivanov.mikhail1@huawei-partners.com>
+ <20240904104824.1844082-2-ivanov.mikhail1@huawei-partners.com>
+In-Reply-To: <20240904104824.1844082-2-ivanov.mikhail1@huawei-partners.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241111-apparmor-fix-label-declaration-warning-v1-1-adb64ab6482b@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAIYZMmcC/x2NQQrDMAwEvxJ0riA2hkC+EnpQbSUROLaRSxsI+
- XtF9zaHmb2gswp3mIcLlD/SpRYD9xgg7lQ2RknG4EcfnA2pNdKjKq5yYqYXZ0wcMym9TcUvaZG
- y4RqTD5F9CmECizVlE/5Hy/O+f49tURV4AAAA
-X-Change-ID: 20241111-apparmor-fix-label-declaration-warning-fcd24ce2d447
-To: John Johansen <john.johansen@canonical.com>
-Cc: Ryan Lee <ryan.lee@canonical.com>, apparmor@lists.ubuntu.com, 
- linux-security-module@vger.kernel.org, llvm@lists.linux.dev, 
- patches@lists.linux.dev, kernel test robot <lkp@intel.com>, 
- Nathan Chancellor <nathan@kernel.org>
-X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2357; i=nathan@kernel.org;
- h=from:subject:message-id; bh=ZZOkQZlepEFjStUosjL2ipFfpBBqpltZJPRQrLteQ7I=;
- b=owGbwMvMwCUmm602sfCA1DTG02pJDOlGkj1aedv2/Dkot0DL/lLXycubufgUeW5IXVDedMwn1
- bBdPmtmRykLgxgXg6yYIkv1Y9XjhoZzzjLeODUJZg4rE8gQBi5OAZhI7AtGhj08lleXfD3rsvzp
- nDVNKa8z2C70rWkBGjrp0TIu9RzzKob/2cevRH8zUjWYeXvxvy/WRW+uytZPNtmko6RatXH91me
- vuAA=
-X-Developer-Key: i=nathan@kernel.org; a=openpgp;
- fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
+X-ClientProxiedBy: lhrpeml500005.china.huawei.com (7.191.163.240) To
+ mscpeml500004.china.huawei.com (7.188.26.250)
 
-Clang 18 and newer warns (or errors with CONFIG_WERROR=y):
+On 9/4/2024 1:48 PM, Mikhail Ivanov wrote:
+> Landlock implements the `LANDLOCK_RULE_NET_PORT` rule type, which provides
+> fine-grained control of actions for a specific protocol. Any action or
+> protocol that is not supported by this rule can not be controlled. As a
+> result, protocols for which fine-grained control is not supported can be
+> used in a sandboxed system and lead to vulnerabilities or unexpected
+> behavior.
+> 
+> Controlling the protocols used will allow to use only those that are
+> necessary for the system and/or which have fine-grained Landlock control
+> through others types of rules (e.g. TCP bind/connect control with
+> `LANDLOCK_RULE_NET_PORT`, UNIX bind control with
+> `LANDLOCK_RULE_PATH_BENEATH`). Consider following examples:
+> 
+> * Server may want to use only TCP sockets for which there is fine-grained
+>    control of bind(2) and connect(2) actions [1].
+> * System that does not need a network or that may want to disable network
+>    for security reasons (e.g. [2]) can achieve this by restricting the use
+>    of all possible protocols.
+> 
+> This patch implements such control by restricting socket creation in a
+> sandboxed process.
+> 
+> Add `LANDLOCK_RULE_SOCKET` rule type that restricts actions on sockets.
+> This rule uses values of address family and socket type (Cf. socket(2))
+> to determine sockets that should be restricted. This is represented in a
+> landlock_socket_attr struct:
+> 
+>    struct landlock_socket_attr {
+>      __u64 allowed_access;
+>      int family; /* same as domain in socket(2) */
+>      int type; /* see socket(2) */
+>    };
 
-  security/apparmor/domain.c:695:3: error: label followed by a declaration is a C23 extension [-Werror,-Wc23-extensions]
-    695 |                 struct aa_profile *new_profile = NULL;
-        |                 ^
+Hello! I'd like to consider another approach to define this structure
+before sending the next version of this patchset.
 
-With Clang 17 and older, this is just an unconditional hard error:
+Currently, it has following possible issues:
 
-  security/apparmor/domain.c:695:3: error: expected expression
-    695 |                 struct aa_profile *new_profile = NULL;
-        |                 ^
-  security/apparmor/domain.c:697:3: error: use of undeclared identifier 'new_profile'
-    697 |                 new_profile = aa_new_learning_profile(profile, false, name,
-        |                 ^
-  security/apparmor/domain.c:699:8: error: use of undeclared identifier 'new_profile'
-    699 |                 if (!new_profile) {
-        |                      ^
-  security/apparmor/domain.c:704:11: error: use of undeclared identifier 'new_profile'
-    704 |                         new = &new_profile->label;
-        |                                ^
+First of all, there is a lack of protocol granularity. It's impossible
+to (for example) deny creation of ICMP and SCTP sockets and allow TCP
+and UDP. Since the values of address family and socket type do not
+completely define the protocol for the restriction, we may gain
+incomplete control of the network actions. AFAICS, this is limited to
+only a couple of IP protocol cases (e.g. it's impossible to deny SCTP
+and SMC sockets to only allow TCP, deny ICMP and allow UDP).
 
-Add a semicolon directly after the label to create an empty statement,
-which keeps the original intent of the code while clearing up the
-warning/error on all clang versions.
+But one of the main advantages of socket access rights is the ability to
+allow only those protocols for which there is a fine-grained control
+over their actions (TCP bind/connect). It can be inconvenient
+(and unsafe) for SCTP to be unrestricted, while sandboxed process only
+needs TCP sockets.
 
-Fixes: ee650b3820f3 ("apparmor: properly handle cx/px lookup failure for complain")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202411101808.AI8YG6cs-lkp@intel.com/
-Signed-off-by: Nathan Chancellor <nathan@kernel.org>
----
- security/apparmor/domain.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Adding protocol (Cf. socket(2)) field was considered a bit during the
+initial discussion:
+https://lore.kernel.org/all/CABi2SkVWU=Wxb2y3fP702twyHBD3kVoySPGSz2X22VckvcHeXw@mail.gmail.com/
 
-diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
-index 602d7a1bb44823a9b81e34d270b03c5f3aff3a34..eb0f222aa29442686b0a6751001c879f5b366c59 100644
---- a/security/apparmor/domain.c
-+++ b/security/apparmor/domain.c
-@@ -691,7 +691,7 @@ static struct aa_label *profile_transition(const struct cred *subj_cred,
- 			error = -EACCES;
- 		}
- 	} else if (COMPLAIN_MODE(profile)) {
--create_learning_profile:
-+create_learning_profile:;
- 		/* no exec permission - learning mode */
- 		struct aa_profile *new_profile = NULL;
- 
+Secondly, I'm not really sure if socket type granularity is required
+for most of the protocols. It may be more convenient for the end user
+to be able to completely restrict the address family without specifying
+whether restriction is dedicated to stream or dgram sockets (e.g. for
+BLUETOOTH, VSOCK sockets). However, this is not a big issue for the
+current design, since address family can be restricted by specifying
+type = SOCK_TYPE_MASK.
 
----
-base-commit: 8c4f7960ae8a7a03a43f814e4af471b8e6ea3391
-change-id: 20241111-apparmor-fix-label-declaration-warning-fcd24ce2d447
-
-Best regards,
--- 
-Nathan Chancellor <nathan@kernel.org>
-
+I suggest implementing something close to selinux socket classes for the
+struct landlock_socket_attr (Cf. socket_type_to_security_class()). This
+will provide protocol granularity and may be simpler and more convenient
+in the terms of determining access rights. WDYT?
