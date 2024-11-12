@@ -1,127 +1,112 @@
-Received: from sonic310-30.consmr.mail.ne1.yahoo.com (sonic310-30.consmr.mail.ne1.yahoo.com [66.163.186.211])
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B45C921500C
-	for <linux-security-module@vger.kernel.org>; Tue, 12 Nov 2024 18:09:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.186.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5977E215C62;
+	Tue, 12 Nov 2024 18:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731434965; cv=none; b=tNLzYjEi0QNVeqnwvwEhE5AcbE1IpM1aUP34wWeVgx3p1LJI/d8UFM4OVmLk3Nsx3NS8OdFtGriZaM1BsGx9lzjXea2CTLXZBRONrGCkbiHlp2oJ/3QNzNR9N9osZGU/0E3MAuVwtV9+Xe0e8oZJmIWOoyMxlPWADODrDth+sUs=
+	t=1731436110; cv=none; b=rMWI3ui2pEZHLrRgyevF+iJPgBuf/hoELVgi+tvdiNPsJReH6dP8t91uY/xs4M5KW9pKMJbHdLWW9wg3bB/LXAe2JoVqSC7Rj+o9r2nQJzhzoX08BdPaWaZMeciumEu0m0FcM0PvYeBI8xO2ZNNFmbzjhR8mFDkW1mM1/Ded0L8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731434965; c=relaxed/simple;
-	bh=ZeMsQ9qmz6sar1+qRF1IrbSxJqQDOI7B1ydNY+Vxfh4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QuyHatJ9axpgoRG35k57jPK3Gi9w1f7aVaiBr6wXqGBGA1htJgAquVcNXinUUp8mAwRZK0ge33dyfrskkETJpO+mkKPycnU/+/s1yhAZBUexh/zyY6wqL9qyiWrKa7sGrKGyVbbJs5VDS1ro8XuSAeeNfEyMKDmZzLGP+OItgVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=m1TOqpEK; arc=none smtp.client-ip=66.163.186.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1731436110; c=relaxed/simple;
+	bh=dZbDMAUdLbxNNQpgzzFwvZxHCF4K+0N0LYW0Z3+EY0s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=V29F/a8cQZxEv2mgwYlh7fxMVniid6AupbbcBbx2dp8ZoaUDX8Ypb7U4DKBVSVmyyfPWRsPfXzf87vvUze9uIclmt1iTuV1XlmSp2t8OUEu+bhnyxNUCQk5O2mfnOD3LobWQ5WbLBxJVBkoF6YCEFz8yuXVVvFgJJQrGWO3yY9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mZBUXlNi; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="m1TOqpEK"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1731434956; bh=qiA6OYbVINpqQio6bZbVkubTbHjsCHoFHaRkfiCUYvE=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=m1TOqpEKfjTCdbsqML8ApsEQZnIofSFcKFDfNlhQzJc5NZQdFQn+ZngwZ+qY1DYWGKjAzdSwsJoLQm31H0XIUteQNjrNjMUir4wnY8GphbJQiKBhfK2t9QVIklUEUGAbKd142mH+Tg6nzyZSKetcz8S8BHF8Di12i9qtnOBbEVF9L6aVj4LS1cy+M4GUzFHwBMP7BhviTJeTLeA49wzjy2jEDJ8cAPyZLxB8VkulEJX64HadBNg1dixTXfGzGDaCfeDlzFfkC4tKeg+sgRNBt6cA+Rt4aoi+bMB/XmB2Up4GYri1FY+69/TeRdu+njrG2JrUj/iqDDIpjpAowVOJjA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1731434956; bh=mdWo68nfuXRRyC/wYJDcgExv0uWteKy1HOyNntiQJDB=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=b3PXUPfdA5g7fA8xk3CG5M4kt86nZpG2BLzFnBq0Tzh0v1nJBjaH/4RzTr9tEygsjZtvgWcAaCsnWn28dQShNNGZEORqeLn1L8JLuExvT9F7gl+6SX9jpA+EyQdp3gAaIKKQ43TBnnWdtRQZ5rpYOO3+k1+RUfyc7scu5E28o+/hEmEtgRDmdiJwg9a3XHyKrMHnap6wrqUzb0q74dxey8D6ZiHXfLgk29RBNpgPtxgePVL8y306/cK20nCjPo2XREteHocYmI4SsEh1qhekzrFJsKNUUEpjwZ44FJWQjyd+meJdJXq3YDcSiXk3n5kH2fnR72ZfO028bxurthlzAg==
-X-YMail-OSG: H6L6BawVM1lfrBYf9MsYCnXW_QeFhcbs22D86ti.DLuh4KZKbKfDDz.QT29qqQF
- tPrMD_9yFIQrWmhSQ3NgyoI7XTDXFDXq9rHzU112GZ_u18FumpenIWLMmnJVIT73ByRJb16kHped
- d8VASRP8HIK7QWB.9FJz5tnAOrTiEuxQxje2aTR4dPKtVN.x7X2hxd4wnTDTjH4QfC7zVpuKbtOY
- b4WjaPf2p3VCOjpAyid2YlZXTcRlV4vqh4ccottDD3fWBU7IBaMSBMxQi0p3uT7EfM2N.WDnXLQb
- wEFLwD8T070.P7dDsNr_GLLvgdJSTBb5r64xcwfksTKKtwwcRnPKqACpAVzmh5YYBP8AAbgLOCNf
- sQsFhn91uBtReRyM0UixeaKwpbkO5PT8P8f60R.xyoKPWL3pAfMNVsrvJyeJ17aOJCxVDPcMiRei
- CXeZ9xs9ekyIdQoS6u7dnYwREHoUtGukVl51e6aoWLXOM8NrFHSwYDrkaOkojjME_WSZhnYBxnJg
- eES9fYn37.FWkgr16wVjBqLLnh8Ogzcv7dAubQCkI5_xA_Q9fn5.8zceXwS1SgjR1k5Yjir9L5jh
- nDAunufoOUasm.vkAcA5GxIuB7zd84zECqen9ABoW56fEnDgxBlx9oVmIgn0BBW5g5EU3DCI6Iq0
- pr7JUrz.JMhtO0zrVjhZUbTKCuS.nid5j9CQshGSwmpNpHPDf9rjxK0MwMPi85H9z3mnc7TIONa7
- V.Fw.7CN8MgE0R4S.VVEJEglHf43st5NomEKQG_s52_VEj.0JDFqlIJwcHX0PRs0ewQIvg0k5.6o
- qQQ1hiMhKjJm7z8t5DnjTOykVGdf5GRfiFg_ELVUAxMr3Ks.d3eeTKTP3I9uSxn9o0nmixnx8Zo1
- wDMwlodAxcQVzG2MNjyMkfIdrQNJV3w1EF94ICHkM19GLQLnanDgXyTwSoD0Lc2n.ng7gOi3YYZn
- T3mRL3mfyY9dhSFENQMItvTgWncBjBYoxvvGywlPYO9WXK8J3U5oi1ooiU5qNz8sJxTOcYKzL_Ev
- qLhUIsHB1xfDD8tBoW5hKgS2z9JIHHre.pSNxCbhLNA.gK2ZhclVXehUerc362YMKQQ6Lqc8A9aQ
- nBybvbbuiLtApePo1d52Z.qeYFHmYU3p7Kynr94JECZ9G6bDFNregomZ_rDhQAW0YuIrzW.zZhOx
- ajbwxA9mGcoKb7NuJYXLcnQxLjIVnRGS8m_almf6BaLk0btIKPpOWcpkVTaGEQk0TW666vaM7v1Z
- 79ZvqRDFglTodpdmxLOmxU0Bp7CelDjU4_D_p9Qy7Tq_FR7QJaMga1PwwjztRklak3ezunSeANYm
- P6TrVJ6XQ2hAM4gzxyUkhBlfOUqRhAUBBKt5Gtq799vg9iZtd2Li_be0E0Hx0ABus0M6YW2eXJxr
- _r1e5EX.kpegeaErAR6jLu22V31A8ggrzlHX9AgOhG_vlj711zzns.extcloO0RI3WS6kK4_u1ME
- CzlZ5NTMQvyheFqA.DfrMJdgnUst_JEv73rLUz8pGMpvVa9.stRHLJvRuabCpij5tmvcS_m2KixJ
- qcP5IG84Uea64HuhsMnLEzSm8c.qs4HW3RU8PUHHaGD7dnApm46cnNNXsKzU7q96cBmC.hB2_Pci
- FNQ1GhbTgw3CvLOLp3w0h_1RwmyIf.7uueL1DfALg0b.Ke4RXAywqaaX6pXvxmMg85t34kuG9oFA
- V8MxTUAf60KYecuvr6rw1YZhKh3VFEEGlXb28UkLraTAxxsDg0gGw1V32ILRIx4nWu0dd9IZ3yYf
- kHzzs0Bp.uiVJGdkYQv3OIKZ8RtxfTRdM3KbCw2Tb.KOelAsYLmT7a0hulaeVozvLv4ipCK5qkB7
- pC.rPRFi9QUHSKkV1ZSfuOndY2TknOultb4Ntd0pN5O_NlfKNqrF3vq9obVhHZDyRBrvbMznVRRz
- B8hx5Mo.1M1W8ohzU2b957gOaeFD8UlCfNXQ6skEEY5J4deS9nbm48MbMPdk_mBGr_eQkLnoLMr1
- JsdHntxLHYAJISlyr5ZupnIKvPO5SDcMAOFO.gSSMiwX7kL0P8QwQ8xSnrV5B68nxjni2hA3QlqV
- ld6ehRm1WYmfExRmg.aIPBG7PBL0PQSUNMUF8VHbzq2SQDba5eXvOWFMSUUZTl2JD13_2NzQg0eA
- wY5CiEEToUXT9MoJ1rZbnR3SwU7heFBSE_VWPZbWxyD5gJPafjmKoNpQD7HDH8yGcOpUMM9vuVAc
- 8znvZmeq.cO0HRzo_K7TLkpR2hx6.50M6I4vHcGu3L4VqLTGqF_aDqdi0vJNfcDA7_JKIFwV8
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: be3fc355-73f1-4b57-8273-4c1fe9df1bf4
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.ne1.yahoo.com with HTTP; Tue, 12 Nov 2024 18:09:16 +0000
-Received: by hermes--production-gq1-5dd4b47f46-k4d2j (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 09f46e153db59299890927b30af07809;
-          Tue, 12 Nov 2024 18:09:12 +0000 (UTC)
-Message-ID: <d3e82f51-d381-4aaf-a6aa-917d5ec08150@schaufler-ca.com>
-Date: Tue, 12 Nov 2024 10:09:10 -0800
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mZBUXlNi"
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20cbcd71012so70323285ad.3;
+        Tue, 12 Nov 2024 10:28:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731436109; x=1732040909; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xG9BoyCsOgxLRKpKuSPK8dWttGY6kTRBEqiurMHDglI=;
+        b=mZBUXlNiXG9VAyShu8T4KJKSDJ0GbgNl2Cgn7lXugS4vOTh5/DwHgQLSsf0v7qDKVg
+         zlRroOVun1522qoRgt3vRhAaJkhc86vFeXGBzsQARH8NLNDjPupbrN8Y1ng73gGIMyDM
+         attsVvbaoEP0l+CX/apuGKsSaQL0cR5JaCZD7JvbqHppYxMBYAV2vjRZ4Zo6YmHqcWKv
+         6WTpcEwALHJ9lmsFH7w61NQlUX8L8Io2cfuHRrXAzN1MsfRO0DJ1WD0zggD6FxmYsrlT
+         QUScJWC5pRgQf8+/+7EQc2dhx+NQToUW4woncKargqSfWVR8vwWgLfgK2TdLYzYtgDod
+         T7bQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731436109; x=1732040909;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xG9BoyCsOgxLRKpKuSPK8dWttGY6kTRBEqiurMHDglI=;
+        b=WhGkYch9PujtkycaC1l5XvCJ39NoSNjRHrQ2bP+Gmf9gISphG39whs/eTMXjgXIsaq
+         oK5cUHh6LqaIdToAQYJJo7KDegitxrphpbQCjVhbk4htphdQ2xpkzYwXUwY6S9mxd4ol
+         aULsw3IQswmBJJ7j6WG3JpuC00WcnUNJRz6hyyPHd2F2DdQRyr8EZqArSFrIBrO0Zozt
+         wltZZ87RJBu1OFkqcHq289v6rPDxMhuDiSF1lFy4Q40YwOmjsjhL9vtlgwI96FxnSq7c
+         BtEIdnz8Ptwx/y9TDz6DB4ipdW0HZn1jk10T4PCYXUZL7+gxT0bKsJaIDRW7Wyw726aQ
+         /JHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUnkmEWRzX1WXAm5F5QA/rSc9x070YYp7hkaWGOxs2VieiIdhCWJO3o+70e9co6m4eCb2bCrHehKaYN1pAgRn2KlxoIYhT7@vger.kernel.org, AJvYcCVGqpirpiFpaEvDr/q8N/GEqEo/4g/L54znbNLOqfaohjssRzSj0iCX2wzGOIm2WMIknPhP0ZRf5tzWjTI=@vger.kernel.org, AJvYcCXeHHpe0X9sDm47tVTGKyAOGe3E5QzisR2AqngNB4XwgHIq7Yj99uMOhk5odfqlaIqLaC1fgHJXxrs1/B27MSUr@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywa/IVPszVRnPBbMv4xImT2nUbuUy74+foV6QgAY11GR48sbr3a
+	vuxlGsEru8Yx4OVeVMz5grFRTYvVHdMd8sV4PCLodqI+bW+6N8lQx6fMtj5F
+X-Google-Smtp-Source: AGHT+IFuSJadtnFgM9MFW1vjwXlMMm8dIwqjw4ui+YdL0RTBFsiyLLHYGSeNc9iQfcZUC+POAvX7qA==
+X-Received: by 2002:a17:902:f686:b0:206:c486:4c4c with SMTP id d9443c01a7336-211835c16b1mr192400855ad.57.1731436108568;
+        Tue, 12 Nov 2024 10:28:28 -0800 (PST)
+Received: from localhost.localdomain ([2409:40c1:5f:8acf:74ef:bde5:4fe9:96c6])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21177ddf7e1sm97092525ad.106.2024.11.12.10.28.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 12 Nov 2024 10:28:28 -0800 (PST)
+From: Amit Vadhavana <av2082000@gmail.com>
+To: paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	casey@schaufler-ca.com,
+	shuah@kernel.org
+Cc: ricardo@marliere.net,
+	av2082000@gmail.com,
+	skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev,
+	linux-security-module@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] selftests: lsm: Refactor `flags_overset_lsm_set_self_attr` test
+Date: Tue, 12 Nov 2024 23:58:10 +0530
+Message-Id: <20241112182810.24761-1-av2082000@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next 0/4] Make inode storage available to tracing prog
-To: Song Liu <song@kernel.org>, bpf@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-security-module@vger.kernel.org
-Cc: kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com,
- ast@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev,
- viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
- kpsingh@kernel.org, mattbobrowski@google.com, amir73il@gmail.com,
- repnop@google.com, jlayton@kernel.org, josef@toxicpanda.com,
- mic@digikod.net, gnoack@google.com, Casey Schaufler <casey@schaufler-ca.com>
-References: <20241112082600.298035-1-song@kernel.org>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20241112082600.298035-1-song@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.22876 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Transfer-Encoding: 8bit
 
-On 11/12/2024 12:25 AM, Song Liu wrote:
-> bpf inode local storage can be useful beyond LSM programs. For example,
-> bcc/libbpf-tools file* can use inode local storage to simplify the logic.
-> This set makes inode local storage available to tracing program.
+- Remove unnecessary `tctx` variable, use `ctx` directly.
+- Simplified code with no functional changes.
 
-Mixing the storage and scope of LSM data and tracing data leaves all sorts
-of opportunities for abuse. Add inode data for tracing if you can get the
-patch accepted, but do not move the LSM data out of i_security. Moving
-the LSM data would break the integrity (such that there is) of the LSM
-model.
+Signed-off-by: Amit Vadhavana <av2082000@gmail.com>
+---
+ tools/testing/selftests/lsm/lsm_set_self_attr_test.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
->
-> 1/4 is missing change for bpf task local storage. 2/4 move inode local
-> storage from security blob to inode.
->
-> Similar to task local storage in tracing program, it is necessary to add
-> recursion prevention logic for inode local storage. Patch 3/4 adds such
-> logic, and 4/4 add a test for the recursion prevention logic.
->
-> Song Liu (4):
->   bpf: lsm: Remove hook to bpf_task_storage_free
->   bpf: Make bpf inode storage available to tracing program
->   bpf: Add recursion prevention logic for inode storage
->   selftest/bpf: Test inode local storage recursion prevention
->
->  fs/inode.c                                    |   1 +
->  include/linux/bpf.h                           |   9 +
->  include/linux/bpf_lsm.h                       |  29 ---
->  include/linux/fs.h                            |   4 +
->  kernel/bpf/Makefile                           |   3 +-
->  kernel/bpf/bpf_inode_storage.c                | 185 +++++++++++++-----
->  kernel/bpf/bpf_lsm.c                          |   4 -
->  kernel/trace/bpf_trace.c                      |   8 +
->  security/bpf/hooks.c                          |   7 -
->  tools/testing/selftests/bpf/DENYLIST.s390x    |   1 +
->  .../bpf/prog_tests/inode_local_storage.c      |  72 +++++++
->  .../bpf/progs/inode_storage_recursion.c       |  90 +++++++++
->  12 files changed, 320 insertions(+), 93 deletions(-)
->  create mode 100644 tools/testing/selftests/bpf/prog_tests/inode_local_storage.c
->  create mode 100644 tools/testing/selftests/bpf/progs/inode_storage_recursion.c
->
-> --
-> 2.43.5
->
+diff --git a/tools/testing/selftests/lsm/lsm_set_self_attr_test.c b/tools/testing/selftests/lsm/lsm_set_self_attr_test.c
+index 66dec47e3ca3..732e89fe99c0 100644
+--- a/tools/testing/selftests/lsm/lsm_set_self_attr_test.c
++++ b/tools/testing/selftests/lsm/lsm_set_self_attr_test.c
+@@ -56,16 +56,15 @@ TEST(flags_zero_lsm_set_self_attr)
+ TEST(flags_overset_lsm_set_self_attr)
+ {
+ 	const long page_size = sysconf(_SC_PAGESIZE);
+-	char *ctx = calloc(page_size, 1);
++	struct lsm_ctx *ctx = calloc(page_size, 1);
+ 	__u32 size = page_size;
+-	struct lsm_ctx *tctx = (struct lsm_ctx *)ctx;
+ 
+ 	ASSERT_NE(NULL, ctx);
+ 	if (attr_lsm_count()) {
+-		ASSERT_LE(1, lsm_get_self_attr(LSM_ATTR_CURRENT, tctx, &size,
++		ASSERT_LE(1, lsm_get_self_attr(LSM_ATTR_CURRENT, ctx, &size,
+ 					       0));
+ 	}
+-	ASSERT_EQ(-1, lsm_set_self_attr(LSM_ATTR_CURRENT | LSM_ATTR_PREV, tctx,
++	ASSERT_EQ(-1, lsm_set_self_attr(LSM_ATTR_CURRENT | LSM_ATTR_PREV, ctx,
+ 					size, 0));
+ 
+ 	free(ctx);
+-- 
+2.25.1
+
