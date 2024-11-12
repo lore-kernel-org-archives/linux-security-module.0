@@ -1,39 +1,66 @@
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0BF7200B8B;
-	Tue, 12 Nov 2024 14:52:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A4F8207A27;
+	Tue, 12 Nov 2024 16:52:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731423151; cv=none; b=UW7ATVZ12KpK8jP/fLjdV3k866VI1VOmUv8MRv4wazjFUt3/zr42yn9DynvFBBBVVAWyFaKw/2UfJeLii3sU8jbEI4XeQPfS/t3aoRi+H3g5K/pV5IW+uAnpQyc6QY3AHTSWX3arMpcNI5d6qJT/irj4V/ETHzZ0Kuym84gbr94=
+	t=1731430349; cv=none; b=i4O+FBAVxySzYybQz7A5gT7+8Q+XgTJ6Jj97QiVvLQHOGIjGrowHR3d9gGZuG+EyrE7WA0Z+wBHEJY/9QvnnYLMw+5XSYCgwBO/iS/GNMrmkB+aJoIeGyBDbbWUlaq/hb8GyPue0l6PoUmVju4Jnbpkne5YztN65oNdnU6vnkNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731423151; c=relaxed/simple;
-	bh=3pCo5OAsNaEj9j0X5SyEEovuDYqC3xwvL4AT1U3A0qk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=A7VpkGiVVJJaaCnjFCWOEmUNo+F/IxuZuiaAadUe3ShwWPc5V25KUOTIG82rkcywlSdEQx7SJSL7h0hX84HkIW1+mIG7tFJB6jmVnUr+OJyOsmruaTINa0uxi3GMEBUoz4oDq2hxX+Ic6rLmgeNcoMMpWLDLTduhV/yhgA+jksA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Xnq7K69pyz6J6pH;
-	Tue, 12 Nov 2024 22:49:17 +0800 (CST)
-Received: from mscpeml500004.china.huawei.com (unknown [7.188.26.250])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4E6F5140A08;
-	Tue, 12 Nov 2024 22:52:24 +0800 (CST)
-Received: from mscphis02103.huawei.com (10.123.65.215) by
- mscpeml500004.china.huawei.com (7.188.26.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Tue, 12 Nov 2024 17:52:23 +0300
-From: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-To: <paul@paul-moore.com>
-CC: <mic@digikod.net>, <selinux@vger.kernel.org>,
-	<stephen.smalley.work@gmail.com>, <omosnace@redhat.com>,
-	<linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<yusongping@huawei.com>, <artem.kuzin@huawei.com>,
-	<konstantin.meskhidze@huawei.com>
-Subject: [RFC PATCH] selinux: Fix SCTP error inconsistency in selinux_socket_bind()
-Date: Tue, 12 Nov 2024 22:52:03 +0800
-Message-ID: <20241112145203.2053193-1-ivanov.mikhail1@huawei-partners.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1731430349; c=relaxed/simple;
+	bh=iI5szIIcqmZrkEhRC5Ov52XwoqJuRtw9HckXkdyExoc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WGl8WARucrWjBWckfBhT0LN5mMYZ990iHdGDqGaOuHAAPHMGha4obWnni+1qhsq1kn+7JVmjt4BIL0dt33fABH90suhRZGuVtU1V+1QC6HllVYUkjZCvO908rhy79J1vpzhnL1Af0K87MztwYdZq2JylvegO/JT5Om7EcZ5sjJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=YsnWFga/; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="YsnWFga/"
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ACF9wNV032510;
+	Tue, 12 Nov 2024 16:52:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=5kGHGQW/UIKfyiFBOgAB7MFfaJ7VUgcXK/YC6y9G0
+	2k=; b=YsnWFga/XpiBK5kNJAAHPxl708odkqq+j+RFS/i1r/iJUevzNHsdKGAtC
+	JLZVkBT8aY3/+Aojjn9qIHCEIlN4QVKoC8UvOSOvNIg7z/Los1YyrAEbDExgKkXc
+	by74mVR9qzjmx1GqzERdp+q6dnfsAcLyffmJAwMYg//BAr9Jwc5XO50+y/HvesNr
+	hFWBxBboLDX/M4QpkLl+A//H8Y7jhc7AZ/LqyINib61lcE39a6cfEEX/SL8iEfmU
+	a/7QFp0mRB3hDofnCjsAPMqoOZTXMkblcXnqqHRhtBflxCXU81YWH9P9hP9Qk6al
+	ElQVSEO/Kcy47hFeO+IaunRl+qLog==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42v9dv0dv2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Nov 2024 16:52:17 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4ACGZ5Co008270;
+	Tue, 12 Nov 2024 16:52:16 GMT
+Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42tjeykfns-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 12 Nov 2024 16:52:16 +0000
+Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
+	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4ACGqEPU56295774
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 12 Nov 2024 16:52:15 GMT
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D620058055;
+	Tue, 12 Nov 2024 16:52:14 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2D4E75804E;
+	Tue, 12 Nov 2024 16:52:14 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 12 Nov 2024 16:52:14 +0000 (GMT)
+From: Stefan Berger <stefanb@linux.ibm.com>
+To: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        zohar@linux.ibm.com
+Cc: linux-kernel@vger.kernel.org, roberto.sassu@huawei.com,
+        Stefan Berger <stefanb@linux.ibm.com>,
+        Tushar Sugandhi <tusharsu@linux.microsoft.com>
+Subject: [PATCH v2] ima: Suspend PCR extends and log appends when rebooting
+Date: Tue, 12 Nov 2024 11:52:06 -0500
+Message-ID: <20241112165206.756351-1-stefanb@linux.ibm.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -41,39 +68,152 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: mscpeml500003.china.huawei.com (7.188.49.51) To
- mscpeml500004.china.huawei.com (7.188.26.250)
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: wQXyKy6mVxh0lCDZ9il-AdL2qV_-7djN
+X-Proofpoint-ORIG-GUID: wQXyKy6mVxh0lCDZ9il-AdL2qV_-7djN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1015
+ lowpriorityscore=0 phishscore=0 bulkscore=0 malwarescore=0 adultscore=0
+ priorityscore=1501 mlxscore=0 impostorscore=0 mlxlogscore=999 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411120133
 
-Check sk->sk_protocol instead of security class to recognize SCTP socket.
-SCTP socket is initialized with SECCLASS_SOCKET class if policy does not
-support EXTSOCKCLASS capability. In this case bind(2) hook wrongfully
-return EAFNOSUPPORT instead of EINVAL.
+To avoid the following types of error messages due to a failure by the TPM
+driver to use the TPM, suspend TPM PCR extensions and the appending of
+entries to the IMA log once IMA's reboot notifier has been called. This
+avoids trying to use the TPM after the TPM subsystem has been shut down.
 
-The inconsistency was detected with help of Landlock tests:
-https://lore.kernel.org/all/b58680ca-81b2-7222-7287-0ac7f4227c3c@huawei-partners.com/
+[111707.685315][    T1] ima: Error Communicating to TPM chip, result: -19
+[111707.685960][    T1] ima: Error Communicating to TPM chip, result: -19
 
-Fixes: 0f8db8cc73df ("selinux: add AF_UNSPEC and INADDR_ANY checks to selinux_socket_bind()")
-Signed-off-by: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+This error could be observed on a ppc64 machine running SuSE Linux where
+processes are still accessing files after devices have been shut down.
+
+Suspending the IMA log and PCR extensions shortly before reboot does not
+seem to open a significant measurement gap since neither TPM quoting would
+work for attestation nor that new log entries could be written to anywhere
+after devices have been shut down. However, there's a time window between
+the invocation of the reboot notifier and the shutdown of devices in
+kernel_restart_prepare() where __usermodehelper_disable() waits for all
+running_helpers to exit. During this time window IMA could now miss log
+entries even though attestation would still work. The reboot of the system
+shortly after may make this small gap insignificant.
+
+Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+
 ---
- security/selinux/hooks.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ v2:
+  - followed Mimi's suggestions
 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index ad3abd48eed1..15e31299a833 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -4828,7 +4828,7 @@ static int selinux_socket_bind(struct socket *sock, struct sockaddr *address, in
- 	return err;
- err_af:
- 	/* Note that SCTP services expect -EINVAL, others -EAFNOSUPPORT. */
--	if (sksec->sclass == SECCLASS_SCTP_SOCKET)
-+	if (sk->sk_protocol == IPPROTO_SCTP)
- 		return -EINVAL;
- 	return -EAFNOSUPPORT;
+---
+ security/integrity/ima/ima.h       |  1 +
+ security/integrity/ima/ima_init.c  |  2 ++
+ security/integrity/ima/ima_queue.c | 43 ++++++++++++++++++++++++++++++
+ 3 files changed, 46 insertions(+)
+
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 3c323ca213d4..3f1a82b7cd71 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -278,6 +278,7 @@ unsigned long ima_get_binary_runtime_size(void);
+ int ima_init_template(void);
+ void ima_init_template_list(void);
+ int __init ima_init_digests(void);
++void __init ima_init_reboot_notifier(void);
+ int ima_lsm_policy_change(struct notifier_block *nb, unsigned long event,
+ 			  void *lsm_data);
+ 
+diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
+index 4e208239a40e..a2f34f2d8ad7 100644
+--- a/security/integrity/ima/ima_init.c
++++ b/security/integrity/ima/ima_init.c
+@@ -152,6 +152,8 @@ int __init ima_init(void)
+ 
+ 	ima_init_key_queue();
+ 
++	ima_init_reboot_notifier();
++
+ 	ima_measure_critical_data("kernel_info", "kernel_version",
+ 				  UTS_RELEASE, strlen(UTS_RELEASE), false,
+ 				  NULL, 0);
+diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
+index 532da87ce519..9b3c9587313f 100644
+--- a/security/integrity/ima/ima_queue.c
++++ b/security/integrity/ima/ima_queue.c
+@@ -16,6 +16,7 @@
+  */
+ 
+ #include <linux/rculist.h>
++#include <linux/reboot.h>
+ #include <linux/slab.h>
+ #include "ima.h"
+ 
+@@ -44,6 +45,12 @@ struct ima_h_table ima_htable = {
+  */
+ static DEFINE_MUTEX(ima_extend_list_mutex);
+ 
++/*
++ * Used internally by the kernel to suspend measurements.
++ * Protected by ima_extend_list_mutex.
++ */
++static bool ima_measurements_suspended;
++
+ /* lookup up the digest value in the hash table, and return the entry */
+ static struct ima_queue_entry *ima_lookup_digest_entry(u8 *digest_value,
+ 						       int pcr)
+@@ -176,6 +183,17 @@ int ima_add_template_entry(struct ima_template_entry *entry, int violation,
+ 		}
+ 	}
+ 
++	/*
++	 * ima_measurements_suspended will be set before the TPM subsystem has
++	 * been shut down.
++	 */
++	if (ima_measurements_suspended) {
++		audit_cause = "measurements_suspended";
++		audit_info = 0;
++		result = -ENODEV;
++		goto out;
++	}
++
+ 	result = ima_add_digest_entry(entry,
+ 				      !IS_ENABLED(CONFIG_IMA_DISABLE_HTABLE));
+ 	if (result < 0) {
+@@ -211,6 +229,31 @@ int ima_restore_measurement_entry(struct ima_template_entry *entry)
+ 	return result;
  }
-
-base-commit: d7b6918e22c74f2b354d8dc0ef31ab17ae334b93
+ 
++static void ima_measurements_suspend(void)
++{
++	mutex_lock(&ima_extend_list_mutex);
++	ima_measurements_suspended = true;
++	mutex_unlock(&ima_extend_list_mutex);
++}
++
++static int ima_reboot_notifier(struct notifier_block *nb,
++			       unsigned long action,
++			       void *data)
++{
++	ima_measurements_suspend();
++
++	return NOTIFY_DONE;
++}
++
++static struct notifier_block ima_reboot_nb = {
++	.notifier_call = ima_reboot_notifier,
++};
++
++void __init ima_init_reboot_notifier(void)
++{
++	register_reboot_notifier(&ima_reboot_nb);
++}
++
+ int __init ima_init_digests(void)
+ {
+ 	u16 digest_size;
 -- 
-2.34.1
+2.43.0
 
