@@ -1,100 +1,79 @@
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AED241885A4
-	for <linux-security-module@vger.kernel.org>; Tue, 12 Nov 2024 14:00:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0BF7200B8B;
+	Tue, 12 Nov 2024 14:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731420030; cv=none; b=GMJCJ5u/3lVxZAV6FtMZ0GTU0QumA08h3Amyck5Ryd8UJBNlPvuEKpMTVZYUBRSm64SwDRv0zv+an+vDE0HJJoS32TpKpmWjnYblWs2BTcbi9WThhDZFux/bp2DLKqrnnIhnT4qx/3Wxitf/qnhUx3wDdcy0lYK4RSEIVM/keFc=
+	t=1731423151; cv=none; b=UW7ATVZ12KpK8jP/fLjdV3k866VI1VOmUv8MRv4wazjFUt3/zr42yn9DynvFBBBVVAWyFaKw/2UfJeLii3sU8jbEI4XeQPfS/t3aoRi+H3g5K/pV5IW+uAnpQyc6QY3AHTSWX3arMpcNI5d6qJT/irj4V/ETHzZ0Kuym84gbr94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731420030; c=relaxed/simple;
-	bh=TRnR0puv3DVvdMkmJ8jXgDJd8hbXTb7LJCiudOLugI4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MxmQjE0oy5WShnPrYPDuaFlvNJdnPFKujbH5Hkn04btjPHC/vocxVSchmbjTY/AaQ0O877Bvucd9OK+U7g31+St/cV9T7FcwdxS0wEL/V8tcVsALWormFrsld0EVOiGkDMLI+tzW3jGXd8WtNCnW0UjEIe6VrPdTGB+urC3Yt1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XQeLXCXk; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XQeLXCXk"
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a9e8522445dso1006629566b.1
-        for <linux-security-module@vger.kernel.org>; Tue, 12 Nov 2024 06:00:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1731420027; x=1732024827; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JotyiF7JA1aOKIxM8oyPGm4XUpGQdD7Isb1ZkZqsUuw=;
-        b=XQeLXCXksUkzajjXbDYEGT2ycAsgDtiBV/8QLIMg1k/s4+UF9BCa9jWyH2ZDzx/i4u
-         lTKAitmlazOOh7NBqKwLfkJ7CukU57dfQH0Q12x4opSBVdrTIulvcilW4dnb0Q1tNiMg
-         m3b9XnQKDukpea+aJ0wqDpbjEC7/CuXGj/5IHdotwichMhAVdV/evirozu7XZAfcR+bN
-         V6dtXck8hLJLbTxbL1tcNg5VsARFJ+j6/0NKmOlmBJD4TaiGg408kbwaBTlxcVX33u8p
-         MZgJezxTUDutvAe7ZjdZoHdOtroa2wCJPTnbC3MFF+RuB6yDiPS6lQbXuZFMq1jUGPhj
-         mGAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731420027; x=1732024827;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JotyiF7JA1aOKIxM8oyPGm4XUpGQdD7Isb1ZkZqsUuw=;
-        b=YxaGj5dcrOIlGFgOecwb+7N2UOTrvwgd3Gg1SuujSFVtJPLSSgVP5MKDj+RYdZER0h
-         BnR7f4b6S5uAB/gxxxOuZiC7YxVzmdeBRJE+RgyCEKBkxqIP7EoVEF8EWKIsFtVY/qEs
-         Zj+2gEG9b5Rptg7Gw/VYSXDGUlEzFf86M5GskCyKtUAkQIyOxGk07G2EiGPjQQc17uVD
-         3ZtS4IZ4zUDp3FSs600hgPKoinHOukAb+hSf81ibHrreNvWLrOhlcHmFOl1jijkf2+dq
-         9WzK1Je3VzezXp4NYfJVby3kIbSHeDEdmD5hNrZEYjtaoZGZlzBc+eGqEQVZKhjqh5XL
-         NIyg==
-X-Forwarded-Encrypted: i=1; AJvYcCVHFNkB4+e0m7TDTGvWOnEEyHQ8vxNE0jBZi/XAXjKi4h55MhLrkQoeT/GFmLBs2Fu8BTO5bdPxI+FTWRqidxDI0IAu+LE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLEqVNuDVK8oj48f7ZS04lLBucGGeHFFQiZsTx5eWv5/eREwWZ
-	4FV74QGoh4aE4l/p7//BAJ2zxlh5DgN5Svw4XC0a+mtZT9JN1rX/bqBFeVxDJ4c=
-X-Google-Smtp-Source: AGHT+IEuCfFqsVepbJbSlEu8+mWrlXZd1MVpoMO+tLhQgthVKd5GpvRRJnE/ndDrxDsOu4+BUtcj0w==
-X-Received: by 2002:a17:907:9344:b0:a9a:714:4393 with SMTP id a640c23a62f3a-a9eefeecafcmr1660632466b.23.1731420027014;
-        Tue, 12 Nov 2024 06:00:27 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9f08c9ae30sm416505066b.55.2024.11.12.06.00.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 06:00:25 -0800 (PST)
-Date: Tue, 12 Nov 2024 17:00:22 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: Colin Ian King <colin.i.king@gmail.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	linux-security-module@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] security: remove redundant assignment to variable
- rc
-Message-ID: <433bb625-480f-46f2-986a-604fda49c046@stanley.mountain>
-References: <20241112124532.468198-1-colin.i.king@gmail.com>
- <20241112133224.GA340871@mail.hallyn.com>
+	s=arc-20240116; t=1731423151; c=relaxed/simple;
+	bh=3pCo5OAsNaEj9j0X5SyEEovuDYqC3xwvL4AT1U3A0qk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=A7VpkGiVVJJaaCnjFCWOEmUNo+F/IxuZuiaAadUe3ShwWPc5V25KUOTIG82rkcywlSdEQx7SJSL7h0hX84HkIW1+mIG7tFJB6jmVnUr+OJyOsmruaTINa0uxi3GMEBUoz4oDq2hxX+Ic6rLmgeNcoMMpWLDLTduhV/yhgA+jksA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Xnq7K69pyz6J6pH;
+	Tue, 12 Nov 2024 22:49:17 +0800 (CST)
+Received: from mscpeml500004.china.huawei.com (unknown [7.188.26.250])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4E6F5140A08;
+	Tue, 12 Nov 2024 22:52:24 +0800 (CST)
+Received: from mscphis02103.huawei.com (10.123.65.215) by
+ mscpeml500004.china.huawei.com (7.188.26.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Tue, 12 Nov 2024 17:52:23 +0300
+From: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+To: <paul@paul-moore.com>
+CC: <mic@digikod.net>, <selinux@vger.kernel.org>,
+	<stephen.smalley.work@gmail.com>, <omosnace@redhat.com>,
+	<linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<yusongping@huawei.com>, <artem.kuzin@huawei.com>,
+	<konstantin.meskhidze@huawei.com>
+Subject: [RFC PATCH] selinux: Fix SCTP error inconsistency in selinux_socket_bind()
+Date: Tue, 12 Nov 2024 22:52:03 +0800
+Message-ID: <20241112145203.2053193-1-ivanov.mikhail1@huawei-partners.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241112133224.GA340871@mail.hallyn.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: mscpeml500003.china.huawei.com (7.188.49.51) To
+ mscpeml500004.china.huawei.com (7.188.26.250)
 
-On Tue, Nov 12, 2024 at 07:32:24AM -0600, Serge E. Hallyn wrote:
-> On Tue, Nov 12, 2024 at 12:45:32PM +0000, Colin Ian King wrote:
-> > In the case where rc is equal to EOPNOTSUPP it is being reassigned a
-> > new value of zero that is never read. The following continue statement
-> > loops back to the next iteration of the lsm_for_each_hook loop and
-> > rc is being re-assigned a new value from the call to getselfattr.
-> > The assignment is redundant and can be removed.
-> > 
-> > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> 
-> Reviewed-by: Serge Hallyn <serge@hallyn.com>
-> 
-> (long as it doesn't go to stable :)
-> 
+Check sk->sk_protocol instead of security class to recognize SCTP socket.
+SCTP socket is initialized with SECCLASS_SOCKET class if policy does not
+support EXTSOCKCLASS capability. In this case bind(2) hook wrongfully
+return EAFNOSUPPORT instead of EINVAL.
 
-There is a tag for fixes which would break stable.
+The inconsistency was detected with help of Landlock tests:
+https://lore.kernel.org/all/b58680ca-81b2-7222-7287-0ac7f4227c3c@huawei-partners.com/
 
-Cc: <stable+noautosel@kernel.org> # reason goes here, and must be present
+Fixes: 0f8db8cc73df ("selinux: add AF_UNSPEC and INADDR_ANY checks to selinux_socket_bind()")
+Signed-off-by: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+---
+ security/selinux/hooks.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-But this isn't a fix and it wouldn't break stable so probably that's not
-appropriate.
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index ad3abd48eed1..15e31299a833 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -4828,7 +4828,7 @@ static int selinux_socket_bind(struct socket *sock, struct sockaddr *address, in
+ 	return err;
+ err_af:
+ 	/* Note that SCTP services expect -EINVAL, others -EAFNOSUPPORT. */
+-	if (sksec->sclass == SECCLASS_SCTP_SOCKET)
++	if (sk->sk_protocol == IPPROTO_SCTP)
+ 		return -EINVAL;
+ 	return -EAFNOSUPPORT;
+ }
 
-regards,
-dan carpenter
+base-commit: d7b6918e22c74f2b354d8dc0ef31ab17ae334b93
+-- 
+2.34.1
 
