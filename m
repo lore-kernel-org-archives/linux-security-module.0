@@ -1,60 +1,59 @@
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD3A21C175
-	for <linux-security-module@vger.kernel.org>; Tue, 12 Nov 2024 23:02:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 170CC21CF9A
+	for <linux-security-module@vger.kernel.org>; Tue, 12 Nov 2024 23:02:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731452535; cv=none; b=DUPOyZWC3pxYUQgw1akQiwY5UmtrAN/WkLjsSFd6lkA0XWFHB2nzTqmOPkiPTNHwiU8kwadlHOtbriQ4IoznU7YfrRvhsSEk25XtFZcTBOzDJjlCSPX475Dms/QLqtTA2R8z2d4aNkHlX9PK3nfo/Pl7sPKjwH7rTb+71XqpyCs=
+	t=1731452538; cv=none; b=iAeAOeBiDIRIIli5d5K48//9fMl95NumpvJvFgrrLVbq7JHNfFmXSeB+oQyxEyBImeeX8HJr37nznGYvUJf/XL/iUdwmCK697ep/SAbOeYEIGlS00jqzw7qlm67o/UHMuJev4DOWtEnuN37j0jLBt9+LfTnZQU3+TS5jMrl/UEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731452535; c=relaxed/simple;
-	bh=FK01Cqcp97I7XL+wXX+mJ3b5BMi9xsq3QWrUoxHj1mA=;
-	h=Date:Message-ID:From:To:Cc:Subject; b=JeZYMRsyQyQ13MrtNF3+itL97FB1OXhQIXoUmbYafgrGm8QC5eZya/6EQyN1Uh97tcrdkW9o+o/53p+GQihGdZJ888i9yTGW8OcoO1CDhMRkxQjCMauBa0OwYu5Tmnul9aJze8BfOr/K5am9CkMXN9eAzwcCyyYtrgOMMgu2uLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=PAr+5kLT; arc=none smtp.client-ip=209.85.128.181
+	s=arc-20240116; t=1731452538; c=relaxed/simple;
+	bh=+/h/OVIt1xMoc+y3f5DsdExA+tfWxuS4CcvyCfSCZyk=;
+	h=Date:Message-ID:From:To:Cc:Subject; b=TWhzLsgFXZ8D1UEc0BHXHdBqR93veC5ABIU5MizzfSauBimix/GbAKOa2Nzgr5+SR1V2k5BvvLh8xuqsxtfCQu9c9CC40fQ9FgFqkd0Z8IKaI8T5qkfbvJ5UWmbwK1J+qjyFnAxgLAl00T7RRWuoC03E8j26k5IQag6Zvcj3kUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=FjulBd/e; arc=none smtp.client-ip=209.85.222.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="PAr+5kLT"
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6ea5f68e17aso63888427b3.3
-        for <linux-security-module@vger.kernel.org>; Tue, 12 Nov 2024 15:02:12 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="FjulBd/e"
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7b1467af9dbso420869585a.0
+        for <linux-security-module@vger.kernel.org>; Tue, 12 Nov 2024 15:02:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1731452531; x=1732057331; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1731452536; x=1732057336; darn=vger.kernel.org;
         h=subject:cc:to:from:message-id:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BHvetM05P3zGjWpuRnYjsqYcRWEVa2mfqaBVGc8Mcps=;
-        b=PAr+5kLTSajzVlcyiLUezsCvegkrW3S0lvt3DfTypaYblnmS5Ydx5J4eXutZip2YxL
-         szTZVv6cSfcExDqWuftP6Fy8dXUrnRDzqqVsHszbiHOE2gSjRWe4/CWMkDE2t0CYbYJc
-         HhhMT/ENL/fXn8t8muJY6HWz/EvahelloXOTs48mEbs7vj8Tq5YDApJ09p9slWPCaQbG
-         gulC9ahfj+QuUarZxq6+3eONsN4bS80PYVer5qqG65pn0LpsRXg49psnrB+ROPZ2yjga
-         2qEZy7tGK8ZYUixLnpI7H2t6DDMYZzJzi6iuQQHr2RKpJTEsbHlqyAHE6HaWEMCrVTvl
-         A6wQ==
+        bh=/WUshJXvcMUR3pZ9oCVittkBd+qFJCly4hVcX+M04OM=;
+        b=FjulBd/e/iUdQxvtWNmVy3oYDDIa7XxN9BavvfaUO/kJKADSL+/HU3yfw6s4u3+6+y
+         7GcPeDDtrS/K54hIK7+XOi5/za40P3tRHZpNIdiwO0fkfRjLwtJ6RFyfeX7waIRFz/25
+         qAXVG9pzstwSPS+EcFiflW96q0/UD/SvgcZGIAeOkDeUVzLcL2iX5QV3/k+BPCmM1Dqu
+         oO+2m2ZfU1GZBrwiKBhG4hZMFeEAaBbknJdYR5vkRlq8x/rULE9Dj6L1jBmTxZhz/tdv
+         hQm3UJbaJtGSyhO1a+qZwzmhlwU5guYVNP+kw/caD92M3sSmSEC9Hm+XlqTe5N86Xnvk
+         XH6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731452531; x=1732057331;
+        d=1e100.net; s=20230601; t=1731452536; x=1732057336;
         h=subject:cc:to:from:message-id:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=BHvetM05P3zGjWpuRnYjsqYcRWEVa2mfqaBVGc8Mcps=;
-        b=dqM+MLBoHPuSlrTrZys/kny+klkBsGwMLBXnh8eKocwucTd3+9uy2B85trAC7Rq1hb
-         sTSsOVIxB8iTNIcSohMomUVI0zj7CRZNmHk8EbT4E3eotq9ZB1u3vFcbzQin9Lhf8y5q
-         CjhI3cHrx3oozZv1luDbG3jW4uVXsjAnLTjBbkwoXAAgkTG9lZmvKW68cXbGAyCj36dF
-         jEvBAi9AGqc9f49349daOsRRBAlGmSYc6K21qtJyYLag1tArInWoN3iNsc1DHPjiJMvj
-         ktL5BjQ+K/ls0ZQmdWtDei88qyxCAb3OFJCrf8EvZ1bG6JiO4kl2adMDPxekO45w/mDy
-         JFSg==
-X-Forwarded-Encrypted: i=1; AJvYcCUXb4nogqSVcjkBopaiKMVS9wkIKSe2Q4bz5a3w7tb3b3e69R8c6ubNCZmfhHdYtqFLP1no80XjzE0o++f4tWqOVj5MH44=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWY7cbjWTpx1osz8h9WMW4h+CtmU+zFs3kCyISnCzDaaOav04T
-	VOAgkgIhicuOUwFp/Tn0jt+NRkbzT5ZLVpzd3P8pEwWnilZGTE3IXbal5rqUwA==
-X-Google-Smtp-Source: AGHT+IEeplSh+zRVdxlGEMyRKLmcBzSWozQ9XuX62SjwqcAgtKT2e4I/k8eAuNvod0Mqrsw0HL2YtA==
-X-Received: by 2002:a05:690c:48c8:b0:6e3:2192:e0e6 with SMTP id 00721157ae682-6eaddda2d9fmr189360147b3.14.1731452531393;
-        Tue, 12 Nov 2024 15:02:11 -0800 (PST)
+        bh=/WUshJXvcMUR3pZ9oCVittkBd+qFJCly4hVcX+M04OM=;
+        b=fjE1Oe9bwKuIA7PCv3ae/a/JVCSWPfF9Hlq1e00AUEnNdI3iM1gPpeVhEVKHPC550g
+         P28Cs1JCBFbusixOMeZdejuPNh3CYnMAr+eDEkgAj8zwEH/DTELoXz4VGy/bWzlM5Il6
+         P1lszkEoqpn8FLlCTYl5Ad67C5+f2EBA1wvuTRcpP0gbt5WVM0sJgnixa3J3CiZ9sz8b
+         Rarg5YdjH0hl9+Wcw0GFPY2RCnhy09r9PFbms/zOLOLuqHSflUAGO0iieBjgSeNGieo3
+         PfCVuz7HeS7cMEU7S8Rr3xRlECob8MtnYopxjt9v8PJO50WTTB78iKt53s9E/gLYL7mk
+         ARlQ==
+X-Gm-Message-State: AOJu0YzA+ACe067HNwYZMtmR2AjKN4NA7PoBZjNHOJQMCIVzsHYut9Wc
+	twNbXJm43rlHf4HG/4zipGzfErLK0YflDCUDtboXjhiXzwK8vgYaXmn11fM1iw==
+X-Google-Smtp-Source: AGHT+IGmWV3BewoUGuZMjs2WfRC7N+PQJpHK1EgVdEb9hnOhW8uzO6oU4NQKg/X+r21KgPFHAYvNmg==
+X-Received: by 2002:a05:620a:4502:b0:7ac:c348:6a52 with SMTP id af79cd13be357-7b34bb56079mr527666085a.34.1731452535892;
+        Tue, 12 Nov 2024 15:02:15 -0800 (PST)
 Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b32ac2dd1fsm635997185a.15.2024.11.12.15.02.10
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b32acb2bc1sm636804985a.91.2024.11.12.15.02.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 15:02:10 -0800 (PST)
-Date: Tue, 12 Nov 2024 18:02:10 -0500
-Message-ID: <accfdfaee6d92e9049ecc0f8b7e16889@paul-moore.com>
+        Tue, 12 Nov 2024 15:02:15 -0800 (PST)
+Date: Tue, 12 Nov 2024 18:02:14 -0500
+Message-ID: <90954b9699f3d9f2a185f0b97ec2119a@paul-moore.com>
 From: Paul Moore <paul@paul-moore.com>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: selinux@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] selinux/selinux-pr-20241112
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] lsm/lsm-pr-20241112
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -65,37 +64,11 @@ Linus,
 
 I'm expecting to have spotty network access later this week and early
 into next so I'm sending my v6.13 merge window pull requests a bit
-earlier than normal.  The SELinux highlights are below:
-
-- Add support for netlink xperms
-
-Some time ago we added the concept of "xperms" to the SELinux policy
-so that we could write policy for individual ioctls, this pull request
-builds upon this by using extending xperms to netlink so that we can
-write SELinux policy for individual netlnk message types and not rely
-on the fairly coarse read/write mapping tables we currently have.
-There are limitations involving generic netlink due to the multiplexing
-that is done, but it's no worse that what we currently have.  As usual,
-more information can be found in the commit message.
-
-- Deprecate /sys/fs/selinux/user
-
-We removed the only known userspace use of this back in 2020 and now
-that several years have elapsed we're starting down the path of
-deprecating it in the kernel.
-
-- Cleanup the build under scripts/selinux
-
-A couple of patches to move the genheaders tool under security/selinux
-and correct our usage of kernel headers in the tools located under
-scripts/selinux.  While these changes originated out of an effort to
-build Linux on different systems, they are arguably the right thing to
-do regardless.
-
-- Minor code cleanups and style fixes
-
-Not much to say here, two minor cleanup patches that came out of the
-netlink xperms work.
+earlier than normal.  While the LSM pull request is composed of thirteen
+patches, they all focused on moving away from the current "secid" LSM
+identifier to a richer "lsm_prop" structure.  This move will help reduce
+the translation that is necessary in many LSMs, offering better
+performance, and make it easier to support different LSMs in the future.
 
 -Paul
 
@@ -106,52 +79,64 @@ The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
-    tags/selinux-pr-20241112
+  https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git
+    tags/lsm-pr-20241112
 
-for you to fetch changes up to d7b6918e22c74f2b354d8dc0ef31ab17ae334b93:
+for you to fetch changes up to 8afd8c8faa24249e48f5007aee46209299377588:
 
-  selinux: Deprecate /sys/fs/selinux/user (2024-10-07 16:39:49 -0400)
+  lsm: remove lsm_prop scaffolding (2024-10-11 14:34:16 -0400)
 
 ----------------------------------------------------------------
-selinux/stable-6.13 PR 20241112
+lsm/stable-6.13 PR 20241112
 ----------------------------------------------------------------
 
-Masahiro Yamada (2):
-      selinux: do not include <linux/*.h> headers from host programs
-      selinux: move genheaders to security/selinux/
+Casey Schaufler (13):
+      lsm: add the lsm_prop data structure
+      lsm: use lsm_prop in security_audit_rule_match
+      lsm: add lsmprop_to_secctx hook
+      audit: maintain an lsm_prop in audit_context
+      lsm: use lsm_prop in security_ipc_getsecid
+      audit: update shutdown LSM data
+      lsm: use lsm_prop in security_current_getsecid
+      lsm: use lsm_prop in security_inode_getsecid
+      audit: use an lsm_prop in audit_names
+      lsm: create new security_cred_getlsmprop LSM hook
+      audit: change context data from secid to lsm_prop
+      netlabel,smack: use lsm_prop for audit data
+      lsm: remove lsm_prop scaffolding
 
-Paul Moore (2):
-      selinux: streamline selinux_nlmsg_lookup()
-      selinux: apply clang format to security/selinux/nlmsgtab.c
-
-Stephen Smalley (1):
-      selinux: Deprecate /sys/fs/selinux/user
-
-Thiébaud Weksteen (1):
-      selinux: Add netlink xperm support
-
- Documentation/ABI/obsolete/sysfs-selinux-user    |   12 
- scripts/remove-stale-files                       |    3 
- scripts/selinux/Makefile                         |    2 
- scripts/selinux/genheaders/.gitignore            |    2 
- scripts/selinux/genheaders/Makefile              |    5 
- scripts/selinux/mdp/Makefile                     |    2 
- scripts/selinux/mdp/mdp.c                        |    4 
- security/selinux/.gitignore                      |    1 
- security/selinux/Makefile                        |    7 
- security/selinux/genheaders.c                    |    3 
- security/selinux/hooks.c                         |   51 ++
- security/selinux/include/classmap.h              |   19 
- security/selinux/include/initial_sid_to_string.h |    4 
- security/selinux/include/policycap.h             |    1 
- security/selinux/include/policycap_names.h       |    1 
- security/selinux/include/security.h              |    6 
- security/selinux/nlmsgtab.c                      |  299 +++++++--------
- security/selinux/selinuxfs.c                     |    4 
- security/selinux/ss/avtab.h                      |    5 
- security/selinux/ss/services.c                   |   78 ++-
- 20 files changed, 295 insertions(+), 214 deletions(-)
+ MAINTAINERS                           |    1 
+ include/linux/lsm/apparmor.h          |   17 ++++
+ include/linux/lsm/bpf.h               |   16 ++++
+ include/linux/lsm/selinux.h           |   16 ++++
+ include/linux/lsm/smack.h             |   17 ++++
+ include/linux/lsm_hook_defs.h         |   20 +++--
+ include/linux/security.h              |   98 +++++++++++++++++++++-----
+ include/net/netlabel.h                |    2 
+ kernel/audit.c                        |   21 ++---
+ kernel/audit.h                        |    7 +
+ kernel/auditfilter.c                  |    9 +-
+ kernel/auditsc.c                      |   61 +++++++---------
+ net/netlabel/netlabel_unlabeled.c     |    2 
+ net/netlabel/netlabel_user.c          |    7 -
+ net/netlabel/netlabel_user.h          |    2 
+ security/apparmor/audit.c             |    4 -
+ security/apparmor/include/audit.h     |    2 
+ security/apparmor/include/secid.h     |    2 
+ security/apparmor/lsm.c               |   17 ++--
+ security/apparmor/secid.c             |   21 +++++
+ security/integrity/ima/ima.h          |    8 +-
+ security/integrity/ima/ima_api.c      |    6 -
+ security/integrity/ima/ima_appraise.c |    6 -
+ security/integrity/ima/ima_main.c     |   60 +++++++--------
+ security/integrity/ima/ima_policy.c   |   20 ++---
+ security/security.c                   |   96 +++++++++++++++++--------
+ security/selinux/hooks.c              |   49 ++++++++-----
+ security/selinux/include/audit.h      |    5 -
+ security/selinux/ss/services.c        |    6 -
+ security/smack/smack_lsm.c            |   96 ++++++++++++++++---------
+ security/smack/smackfs.c              |    4 -
+ 31 files changed, 470 insertions(+), 228 deletions(-)
 
 --
 paul-moore.com
