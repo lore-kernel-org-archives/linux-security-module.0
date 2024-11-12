@@ -1,142 +1,113 @@
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 170CC21CF9A
-	for <linux-security-module@vger.kernel.org>; Tue, 12 Nov 2024 23:02:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CAC421A6EC;
+	Tue, 12 Nov 2024 23:10:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731452538; cv=none; b=iAeAOeBiDIRIIli5d5K48//9fMl95NumpvJvFgrrLVbq7JHNfFmXSeB+oQyxEyBImeeX8HJr37nznGYvUJf/XL/iUdwmCK697ep/SAbOeYEIGlS00jqzw7qlm67o/UHMuJev4DOWtEnuN37j0jLBt9+LfTnZQU3+TS5jMrl/UEw=
+	t=1731453016; cv=none; b=pOBvKb3OSSHD487Y4EPcOnCoOD5Xxy6MQv4+kqElYP1QdFDTzdTvjnl7D+D7clXM+9XL56+G0zmTUJlGpAVHvaAzxZvgeJW7cOOxXg4ESKxgXnWPOqQgToPkPd4QHHkcIX/HvAgNnrWKTc/HeK+CL2hbM98A+af7pGT4Tixgo84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731452538; c=relaxed/simple;
-	bh=+/h/OVIt1xMoc+y3f5DsdExA+tfWxuS4CcvyCfSCZyk=;
-	h=Date:Message-ID:From:To:Cc:Subject; b=TWhzLsgFXZ8D1UEc0BHXHdBqR93veC5ABIU5MizzfSauBimix/GbAKOa2Nzgr5+SR1V2k5BvvLh8xuqsxtfCQu9c9CC40fQ9FgFqkd0Z8IKaI8T5qkfbvJ5UWmbwK1J+qjyFnAxgLAl00T7RRWuoC03E8j26k5IQag6Zvcj3kUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=FjulBd/e; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1731453016; c=relaxed/simple;
+	bh=+/GVDHlhcxMMbbyhM88+h7i00DClk7wy+rPYrTySRB0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=quQpmYGCIBEPiiorWswfrq/sykYoWZXs7E0ZGOXKzNoCGharhsxFLoB4ylnbUujXFXkp8dv9iYeQL15lDBWqoVC22MSLugIoix8em1s4aN6rpFg9kDaTJ3TZYsRjf8ZAcp8+7Th4O2U6L9su8bRHN8JK6awIgQSmhGJ4dMji/YA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NnHJGbz6; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="FjulBd/e"
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7b1467af9dbso420869585a.0
-        for <linux-security-module@vger.kernel.org>; Tue, 12 Nov 2024 15:02:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1731452536; x=1732057336; darn=vger.kernel.org;
-        h=subject:cc:to:from:message-id:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/WUshJXvcMUR3pZ9oCVittkBd+qFJCly4hVcX+M04OM=;
-        b=FjulBd/e/iUdQxvtWNmVy3oYDDIa7XxN9BavvfaUO/kJKADSL+/HU3yfw6s4u3+6+y
-         7GcPeDDtrS/K54hIK7+XOi5/za40P3tRHZpNIdiwO0fkfRjLwtJ6RFyfeX7waIRFz/25
-         qAXVG9pzstwSPS+EcFiflW96q0/UD/SvgcZGIAeOkDeUVzLcL2iX5QV3/k+BPCmM1Dqu
-         oO+2m2ZfU1GZBrwiKBhG4hZMFeEAaBbknJdYR5vkRlq8x/rULE9Dj6L1jBmTxZhz/tdv
-         hQm3UJbaJtGSyhO1a+qZwzmhlwU5guYVNP+kw/caD92M3sSmSEC9Hm+XlqTe5N86Xnvk
-         XH6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731452536; x=1732057336;
-        h=subject:cc:to:from:message-id:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/WUshJXvcMUR3pZ9oCVittkBd+qFJCly4hVcX+M04OM=;
-        b=fjE1Oe9bwKuIA7PCv3ae/a/JVCSWPfF9Hlq1e00AUEnNdI3iM1gPpeVhEVKHPC550g
-         P28Cs1JCBFbusixOMeZdejuPNh3CYnMAr+eDEkgAj8zwEH/DTELoXz4VGy/bWzlM5Il6
-         P1lszkEoqpn8FLlCTYl5Ad67C5+f2EBA1wvuTRcpP0gbt5WVM0sJgnixa3J3CiZ9sz8b
-         Rarg5YdjH0hl9+Wcw0GFPY2RCnhy09r9PFbms/zOLOLuqHSflUAGO0iieBjgSeNGieo3
-         PfCVuz7HeS7cMEU7S8Rr3xRlECob8MtnYopxjt9v8PJO50WTTB78iKt53s9E/gLYL7mk
-         ARlQ==
-X-Gm-Message-State: AOJu0YzA+ACe067HNwYZMtmR2AjKN4NA7PoBZjNHOJQMCIVzsHYut9Wc
-	twNbXJm43rlHf4HG/4zipGzfErLK0YflDCUDtboXjhiXzwK8vgYaXmn11fM1iw==
-X-Google-Smtp-Source: AGHT+IGmWV3BewoUGuZMjs2WfRC7N+PQJpHK1EgVdEb9hnOhW8uzO6oU4NQKg/X+r21KgPFHAYvNmg==
-X-Received: by 2002:a05:620a:4502:b0:7ac:c348:6a52 with SMTP id af79cd13be357-7b34bb56079mr527666085a.34.1731452535892;
-        Tue, 12 Nov 2024 15:02:15 -0800 (PST)
-Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b32acb2bc1sm636804985a.91.2024.11.12.15.02.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 12 Nov 2024 15:02:15 -0800 (PST)
-Date: Tue, 12 Nov 2024 18:02:14 -0500
-Message-ID: <90954b9699f3d9f2a185f0b97ec2119a@paul-moore.com>
-From: Paul Moore <paul@paul-moore.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] lsm/lsm-pr-20241112
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NnHJGbz6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11487C4AF0C;
+	Tue, 12 Nov 2024 23:10:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731453016;
+	bh=+/GVDHlhcxMMbbyhM88+h7i00DClk7wy+rPYrTySRB0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=NnHJGbz6uGLEcym4/th6ycGiqotcUpQbA6RiHYEYFMeg7eVH0zCCEEqQUJh8G2gOv
+	 U1eseakEvTh5Dn1SaRAjkQtDbugdiXFPniSuZoJnZzeyxqbfsGZeKdtz74ETACbh28
+	 IADSB6ns4f6h1nl+wWBrjtYsuYoCoiIV7NZbf0ZKGeetR4/BaLrXX8k16m8nDwAhWj
+	 4Bc32NySndzg1IuZlhqELOcFQO/lA7k2at1mu90MhfZAE23X6E+HGSR7JvgccJmaFy
+	 3jZQIAiwLGQnTXP3JTFQk+0S4dzTTfTrZorcmQDz2qqa21AMja273/Yg5yA4tTEQiP
+	 tbs/XqP0CDR7w==
+Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3a3a5cd2a3bso26577655ab.3;
+        Tue, 12 Nov 2024 15:10:15 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU6S0SMQ/YnypMBySRdkQM8QmUsSiCaGIun9rOdGObyk2qwRguAQMn/VI1r66+cIhuQrVUVp2+H/EUCANrGMAdN7PZWBlkz@vger.kernel.org, AJvYcCUPURv+4qdedeIeRbRJP+nx1BxHMKpSJfDA3nfOnAA2KHCONNE8kwQp9lVZ6/g76Ns/UEKyKkWYivBNcGKn@vger.kernel.org, AJvYcCV8O9MKWgiMNE5J1Nc2DBwSoTgL6kEXbdWnDg3EZLWLVnQOYNx0hUtEVKmSR9Js34Lr/2iCbINrwJ+56aGV@vger.kernel.org
+X-Gm-Message-State: AOJu0YyR6UPCmPI/S64loWU01HrQ1qAu+0q9unl4g4Gqg2Hm3wzcTBVY
+	c+7CuiciiGTGX+o4bmJhkM9K30WZcmzvMWw3B7WoFC5L3Vci0BZe0/NWRDBpUvgkjTLduWJaRRE
+	EtknOE2A7JDG5gaLOcsMADFFLUHw=
+X-Google-Smtp-Source: AGHT+IEXmhz1rxonQxVF9WnrvL5ssfbjegUNS/LxNPZajWMp4pzlmmyDv6Gn+IormVUzECKOO/t/JZ3mNxf/pFz86cs=
+X-Received: by 2002:a05:6e02:1a43:b0:3a6:b258:fcd with SMTP id
+ e9e14a558f8ab-3a6f19a01c1mr198967205ab.1.1731453015412; Tue, 12 Nov 2024
+ 15:10:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20241112083700.356299-1-song@kernel.org> <20241112083700.356299-3-song@kernel.org>
+ <2cb0cd4f-5d78-4b7f-b280-2a3377ffbc21@linux.dev>
+In-Reply-To: <2cb0cd4f-5d78-4b7f-b280-2a3377ffbc21@linux.dev>
+From: Song Liu <song@kernel.org>
+Date: Tue, 12 Nov 2024 15:10:04 -0800
+X-Gmail-Original-Message-ID: <CAPhsuW4xEOhpU87kGvO45TBW0aLwCKvFi9hRfJ90FgGUq8OAcA@mail.gmail.com>
+Message-ID: <CAPhsuW4xEOhpU87kGvO45TBW0aLwCKvFi9hRfJ90FgGUq8OAcA@mail.gmail.com>
+Subject: Re: [PATCH v2 bpf-next 2/4] bpf: Make bpf inode storage available to
+ tracing program
+To: Martin KaFai Lau <martin.lau@linux.dev>
+Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, 
+	daniel@iogearbox.net, viro@zeniv.linux.org.uk, brauner@kernel.org, 
+	jack@suse.cz, kpsingh@kernel.org, mattbobrowski@google.com, 
+	amir73il@gmail.com, repnop@google.com, jlayton@kernel.org, 
+	josef@toxicpanda.com, mic@digikod.net, gnoack@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Linus,
+On Tue, Nov 12, 2024 at 3:00=E2=80=AFPM Martin KaFai Lau <martin.lau@linux.=
+dev> wrote:
+>
+> On 11/12/24 12:36 AM, Song Liu wrote:
+> >   void __destroy_inode(struct inode *inode)
+> >   {
+> >       BUG_ON(inode_has_buffers(inode));
+> > +     bpf_inode_storage_free(inode);
+>
+> Not sure if this is done in the rcu callback (i.e. after the rcu gp). Ple=
+ase check.
+>
+> >       inode_detach_wb(inode);
+> >       security_inode_free(inode);
+> >       fsnotify_inode_delete(inode);
+>
+> [ ... ]
+>
+> > @@ -136,12 +119,7 @@ BPF_CALL_5(bpf_inode_storage_get, struct bpf_map *=
+, map, struct inode *, inode,
+> >       if (flags & ~(BPF_LOCAL_STORAGE_GET_F_CREATE))
+> >               return (unsigned long)NULL;
+> >
+> > -     /* explicitly check that the inode_storage_ptr is not
+> > -      * NULL as inode_storage_lookup returns NULL in this case and
+> > -      * bpf_local_storage_update expects the owner to have a
+> > -      * valid storage pointer.
+> > -      */
+> > -     if (!inode || !inode_storage_ptr(inode))
+> > +     if (!inode)
+> >               return (unsigned long)NULL;
+>
+> There is an atomic_read in this function:
+>
+>         /* only allocate new storage, when the inode is refcounted */
+>         if (atomic_read(&inode->i_count) &&
+>             flags & BPF_LOCAL_STORAGE_GET_F_CREATE) {
+>
+> If the bpf_inode_storage_free is not done after rcu gp, this will need a
+> inc_not_zero like how the sk storage does. I think moving the storage_fre=
+e to
+> the inode rcu call back may be easier if it is not the case now.
 
-I'm expecting to have spotty network access later this week and early
-into next so I'm sending my v6.13 merge window pull requests a bit
-earlier than normal.  While the LSM pull request is composed of thirteen
-patches, they all focused on moving away from the current "secid" LSM
-identifier to a richer "lsm_prop" structure.  This move will help reduce
-the translation that is necessary in many LSMs, offering better
-performance, and make it easier to support different LSMs in the future.
+This is a great catch!
 
--Paul
+I will move bpf_inode_storage_free to i_callback().
 
---
-The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
-
-  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git
-    tags/lsm-pr-20241112
-
-for you to fetch changes up to 8afd8c8faa24249e48f5007aee46209299377588:
-
-  lsm: remove lsm_prop scaffolding (2024-10-11 14:34:16 -0400)
-
-----------------------------------------------------------------
-lsm/stable-6.13 PR 20241112
-----------------------------------------------------------------
-
-Casey Schaufler (13):
-      lsm: add the lsm_prop data structure
-      lsm: use lsm_prop in security_audit_rule_match
-      lsm: add lsmprop_to_secctx hook
-      audit: maintain an lsm_prop in audit_context
-      lsm: use lsm_prop in security_ipc_getsecid
-      audit: update shutdown LSM data
-      lsm: use lsm_prop in security_current_getsecid
-      lsm: use lsm_prop in security_inode_getsecid
-      audit: use an lsm_prop in audit_names
-      lsm: create new security_cred_getlsmprop LSM hook
-      audit: change context data from secid to lsm_prop
-      netlabel,smack: use lsm_prop for audit data
-      lsm: remove lsm_prop scaffolding
-
- MAINTAINERS                           |    1 
- include/linux/lsm/apparmor.h          |   17 ++++
- include/linux/lsm/bpf.h               |   16 ++++
- include/linux/lsm/selinux.h           |   16 ++++
- include/linux/lsm/smack.h             |   17 ++++
- include/linux/lsm_hook_defs.h         |   20 +++--
- include/linux/security.h              |   98 +++++++++++++++++++++-----
- include/net/netlabel.h                |    2 
- kernel/audit.c                        |   21 ++---
- kernel/audit.h                        |    7 +
- kernel/auditfilter.c                  |    9 +-
- kernel/auditsc.c                      |   61 +++++++---------
- net/netlabel/netlabel_unlabeled.c     |    2 
- net/netlabel/netlabel_user.c          |    7 -
- net/netlabel/netlabel_user.h          |    2 
- security/apparmor/audit.c             |    4 -
- security/apparmor/include/audit.h     |    2 
- security/apparmor/include/secid.h     |    2 
- security/apparmor/lsm.c               |   17 ++--
- security/apparmor/secid.c             |   21 +++++
- security/integrity/ima/ima.h          |    8 +-
- security/integrity/ima/ima_api.c      |    6 -
- security/integrity/ima/ima_appraise.c |    6 -
- security/integrity/ima/ima_main.c     |   60 +++++++--------
- security/integrity/ima/ima_policy.c   |   20 ++---
- security/security.c                   |   96 +++++++++++++++++--------
- security/selinux/hooks.c              |   49 ++++++++-----
- security/selinux/include/audit.h      |    5 -
- security/selinux/ss/services.c        |    6 -
- security/smack/smack_lsm.c            |   96 ++++++++++++++++---------
- security/smack/smackfs.c              |    4 -
- 31 files changed, 470 insertions(+), 228 deletions(-)
-
---
-paul-moore.com
+Thanks,
+Song
