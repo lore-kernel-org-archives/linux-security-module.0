@@ -1,275 +1,152 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic314-27.consmr.mail.ne1.yahoo.com (sonic314-27.consmr.mail.ne1.yahoo.com [66.163.189.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3215A7405A;
-	Wed, 13 Nov 2024 00:54:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3252A1CD1F
+	for <linux-security-module@vger.kernel.org>; Wed, 13 Nov 2024 01:30:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.189.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731459286; cv=none; b=oQzH/w/bk0pjdtyonOXpnobt93KSlZewL9tSHKOLVkLi8BTLRlOlZJeh+AjN0wb2HULtls1VYk8VYVEv8j0cjiIxKdp0ADbAnMp2W2twhAv4mRkTDr/p4mo2+yEvFzO/QYOQrZ474+Bt4sY8QCAllszP9v5GQeQGovB5SPwlaDo=
+	t=1731461423; cv=none; b=tEN225YxTx3iEkWTm/m/EWUyqtOQ/JMRuqskkFL6brXqlBreNZaeTCoXm/YZWQf+3YH7zZWYduey+T/emkSCZUKbkMU3SOqEWrfbOE7xWv91963hnvdvsxdmao5EoLR4fD5EiJadH4SgyvEqp8xTpn4bYQLfDHLP77dCxjpSYiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731459286; c=relaxed/simple;
-	bh=yGbQ5LZb3K4ouo5/IVAj2bIoOta5TOuCDkkqCTX1MBY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Eo5tOFFHn6fDY2tuJSFHdF0urpK1X7RIX5xYTNF/4jez0yLAFxG7Qb5gVSVHyIiAF3/xuG87UDbJmZvj2ZMCcXAoCIKixp5/xAoXcdqbQWsi7r4+XM7nyNVz5+5rvr2ZjBwqdLDuhlBjv5HJPcRSjUQf3GZonhOrcQ0jzre7VvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ER2h3VW6; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1731461423; c=relaxed/simple;
+	bh=SlroORLPVCsS8/MtfzHMV8o/2y8GFOAdZJOG9/IDfPc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DGrU9RkzYBnJXFeyhx7G3/3sZGeL+frpK4rC7pKndDkhasyo74FUbX67tZ0RXvJUpn/SGNW2iAAZA1XxKhombghGZPoGYMaPQgiTbm3N+DphzYbwsMLRmrMFapQ4Io3/mc34S6qttKGE0QgvyyZ7cisR9j83uA9HfYv9YALFZHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=VGUyDhC9; arc=none smtp.client-ip=66.163.189.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ER2h3VW6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E8A3C4CECD;
-	Wed, 13 Nov 2024 00:54:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731459285;
-	bh=yGbQ5LZb3K4ouo5/IVAj2bIoOta5TOuCDkkqCTX1MBY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ER2h3VW6HNC7vuONmOB8aR+yhSE4dYzPQ2jRkTkHBW2UB7Am2uv2ZCZJnTS2cSpJd
-	 3yHWWKGlTgZOaQ94ams3eW8m5AAaQm/YCJBl/1mtaxNiD9pvi3hqBLvPHxb45ENs8W
-	 ah+DCax95ZI3i29FuYpCoR1IQyaOaQXSYFGGzRBEvf8hQ0ozSo8PAzeYOS4WsyIovs
-	 sEki+YUO+tGF+PqBhvGDfb72JYSosZddYty2/6cA1+sYJ5xmBXqfFzBuxh7opYQLAE
-	 ZVWepEqtMJLe5TSR6dLmPTnc5PfAnvp2Akjaxo77/ceVoar5/HlHKT88YlJGnOPlur
-	 ETc120MkwSuMg==
-From: Song Liu <song@kernel.org>
-To: bpf@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Cc: kernel-team@meta.com,
-	andrii@kernel.org,
-	eddyz87@gmail.com,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	martin.lau@linux.dev,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	kpsingh@kernel.org,
-	mattbobrowski@google.com,
-	amir73il@gmail.com,
-	repnop@google.com,
-	jlayton@kernel.org,
-	josef@toxicpanda.com,
-	mic@digikod.net,
-	gnoack@google.com,
-	Song Liu <song@kernel.org>
-Subject: [PATCH v3 bpf-next 4/4] selftest/bpf: Test inode local storage recursion prevention
-Date: Tue, 12 Nov 2024 16:53:51 -0800
-Message-ID: <20241113005351.2197340-5-song@kernel.org>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20241113005351.2197340-1-song@kernel.org>
-References: <20241113005351.2197340-1-song@kernel.org>
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="VGUyDhC9"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1731461421; bh=shmrktBCQXaesTtkMCJkfhQ0TWorayqU+05d82/clTw=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=VGUyDhC9n5YWawQDBlicfCUtPBpL0fBrv0eksiCzlDZ/lNJ3sVhZKcAXkXzI50p1Cq3pVI5fPj5G8LGNpgF6jlo0+qfXbFKEhi7unARqXJ+9Uq/LwoL6JKXN/HTGomSICgvONM+iJysVO1IkoyyG3m6D+qAx8sG5p++8D2itET4oKqMUrHCRlJH4MZ8Z/eikw4v8DAA5/LPzukI2CcqJTfvT+fvKyyRmnTjuFL9bPOOMfKkUC0Ngjo5a1cFAs9t6OZ9kiRZ8aO8e0qmLY8tCthy+uXTyvmnVgS0fE2Sgc7n1C8g2QmHZ0bMYqXPz+8xkyvVWR66ldmNc+EYfanwEKQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1731461421; bh=sFol5V8w4vAgRIMiiiXmVVz5BQjfA9EuJ/ng1l4VQCB=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=nkLod7NIx/ZfyNvqQzdt5TtZ3E35Ona/zfAVvjfMMi8XCnauSWON3s7LcpN72FUTvPE82mMI1Ipsfw0IV0drjWdww7sYtb8VZ6Xb6JhDL4qKCP2vvJgWyGfLyrfekwsY/89Lbo5VO8v1gXCh9X+ElS9i29xY1xRNx5GXwvOnyrkGasCy7p3avkIspyc7mw4YEUdxrNC67dMAi6jH/ZdUedLucAbqRr1Kk2/wgUA/hNcvfEIHYmRvYhD3q2ancOmcS1QSdcmjg8KIaC6XZnYb1XKRGpHl/LQVcvlZu3aCjTA+n66+H5hTxPzzI3U2wXq/t/3g/7aNLAy/Cs0yVkDLeQ==
+X-YMail-OSG: 9qQwb9YVM1n3hctZOjGDZ1e9CJP4M7eHtuXaKtNMlwyKEl8vKzQkOliSWAiWAK2
+ vM2FcfmtKXGQu0dwI2oXMJmxHbTYFRHQTBcJzdpJmRTttDHMtznIFDMo55sjBAMrzLf6Vn1J.P3V
+ 2wytM98bamqKz.Bms8GrSahWG85Q7G2vuldSuXgaVWxfKsqpD1bPM9_J_LHlgLXqZzsab5OtjFnc
+ btunQFBzU_jzRXs2XiLqTnsTYERLN57WdAedu4kcie_xjlcLr.ITCJI3jqop7ALRQwZTa0Er2Jsv
+ lmjuw.VY6qFRcMFkKpWis1YJnWyoZvjfaJD.Bx5w9PNsx4qAverbkWsZc2beSGU4g1pp9kk2TF7m
+ 2ZxifXqfeOddpY4DqdZAIO3RmhQde0VFGWo__zIM0wPCi1faHBxiXhQ77brbXqoH0.9i8gI.8VgS
+ L13JAB.epqnKd9oi.toI7ejndOtqet_xyzJMNslvqq4ITPeO4i5DkGoZRwRJNAkDHXXkYpZ.WO45
+ 6UQgttt_celNg.72uEWUJnIqL6AY493s7j2B99iwzqBdO1YkKMwVmewia0NhFdvHuTewTknuM_Z0
+ 36fBkXjBm6qWGMb6415jnmowq48VwdIl4iTSaN81az9tHIDU_QsKmAHUMc5xxZGUfnqnfFNqxL_m
+ nbr78WvU.rzlJmiqN8uqsCeVWvbHBFb_Ib5NdH3MS09_YfRGn0Dbhzcv8YaY6wuJQ1SPE3Eum7Rp
+ 9FYiXr0GM._bWfJXQaLfDe2a2lQJdEJ80n_lJDUh60TLS5dcI1v31OUN693NBgVLxiqNxk9wjJBl
+ CssVRiocHA7knCVtNpdXNTqm5u45pnuDLjkriMYnkDnio5NsX0Gv014brX5G2koSy7D5mmxh9gUZ
+ kc.tiA27whPDJ9TTomTfITPEKRw7RDW4orc2Esm4SqIqRS5sNtvStaSiUnfwMPqqIoc7Tnm7debJ
+ vib14lLjxlWPE061_.BB6FQjQ5sNv4QOU20_OXs5mgNxjOeu5eBrN6VSUnH1QvVjIGWB3F4oEgwJ
+ TO0noVeTTKHe21jt1Zw88.K7VnHxoF6jWXyCxQ3Jdy0u2WVBCNhJaLNSPuN3.QVpqNUg4tGaav9s
+ IXfSIitCSVQtTjiNDeOEYNWPTTEF4ifKSrP.LZJ5LLF0NZ3QhBT_Zxm.TUju_qQorzyHT8.5Bwbw
+ Tsrp6kQljJZtlGbdXpZTbCmR.CTxN99d7WQ6owtvB3S.zmApAl1sh98zVeU3PEIS6iBVs4u.qmbq
+ Y3Xu9Y6v9DGLdYOEcwFdxPCan_WADSL6IVHJSyU.qbW4x24NWFUe3JenN8ibWO0lmozQPigys6NI
+ SI9tn8rkKZoZdd5DzMlIMvfIHR8qnoSEn4gnMhjl2BiFlVH_P2Yt3NmDpnPB.tGAe.ZoeMzoF84O
+ hDN5tYwjGpeeGHRc8ejS_Chf29zuySjRkR8QEYub00I7ulHwcsrSoSCO.KmQ2YTOBoqhzcMaEeAE
+ Yp4855y8Jz.XLRdgb8.p5QiAkWwwL1gC2NbOwPXPz4lkJLXeJ2xVdSOPorMLgYRKvvqhTHUip1hn
+ i3rZBiCaeA_CGQSmFS16BpAlA7W5f9GyaJpfmjhMJfaMf2nFYeQAz5y1Lucvpxmk8xsg76bSbr4c
+ D3wg8hy9HX8AqCHmsr0PAwBnNi8vdhfsB6Bmsg6tsf17MoGVB4tXL1EQKPrgLSsgZGWX6G6Yp56T
+ Eh62gzvg_ujBtn4pUd.TVdSV9EylsBYBM_ROKN7YE3ejvI7aHXXWQi_yRHtQzDmTL6jn5WLnjulb
+ dNQXsI6survJsrB5jAi8EEzVisj1NnYfEVAPIVsxN4jqofjWp_ycnRQCpZaSSnqipo.2TX_vqGF8
+ 3O9lyC5w8D_WmG1dBpWV_9.zDx3j0yugfHk0z7vWH7cXdRhqgZk4noRcjBq9cRsHVGQGPCST7VsG
+ skgrEWZhetI.kw3xoAozAT478JMbDmRPiS06iqK_GEgNFLQegGEbkd05aCvgUu2Utbmz9q0.RMar
+ yRybM4u1fZseCzMLWlHSNP1XtLRpiHsZQCNHWFvYcE3E7rvLtSJ03c49nQGHki4oWgnqgUs3cE28
+ wUm0NlWgTa1p1Wdk7x.mkJ0n8OJgH1U9tqggrF1m5PTHi4.6tAvnoia1DNhGOOe1PgXOQYV8JlXW
+ zOqutjx5bh9LVhX833FctZTIoT5XdGnH.tpa6Vh1QpDz7Yvwx6wGYzIuaCyIhul7HBp4EIRJ77lN
+ bWJgEsCkD3QeXKXLe42FK9FQag20jFflf1v9Jou3_GFBhyzwqAVyfa9TGi2l9Ciowrztdo10.Gw-
+ -
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 516c5a87-90ca-4dce-9f38-6a1b53fd3cec
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.ne1.yahoo.com with HTTP; Wed, 13 Nov 2024 01:30:21 +0000
+Received: by hermes--production-gq1-5dd4b47f46-sx6k2 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID e9528446bd432b6a011384ccbc674449;
+          Wed, 13 Nov 2024 01:10:06 +0000 (UTC)
+Message-ID: <d7d23675-88e6-4f63-b04d-c732165133ba@schaufler-ca.com>
+Date: Tue, 12 Nov 2024 17:10:03 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next 0/4] Make inode storage available to tracing prog
+To: Song Liu <songliubraving@meta.com>
+Cc: Song Liu <song@kernel.org>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-security-module@vger.kernel.org"
+ <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>,
+ "andrii@kernel.org" <andrii@kernel.org>,
+ "eddyz87@gmail.com" <eddyz87@gmail.com>, "ast@kernel.org" <ast@kernel.org>,
+ "daniel@iogearbox.net" <daniel@iogearbox.net>,
+ "martin.lau@linux.dev" <martin.lau@linux.dev>,
+ "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+ "brauner@kernel.org" <brauner@kernel.org>, "jack@suse.cz" <jack@suse.cz>,
+ "kpsingh@kernel.org" <kpsingh@kernel.org>,
+ "mattbobrowski@google.com" <mattbobrowski@google.com>,
+ "amir73il@gmail.com" <amir73il@gmail.com>,
+ "repnop@google.com" <repnop@google.com>,
+ "jlayton@kernel.org" <jlayton@kernel.org>, Josef Bacik
+ <josef@toxicpanda.com>, "mic@digikod.net" <mic@digikod.net>,
+ "gnoack@google.com" <gnoack@google.com>,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20241112082600.298035-1-song@kernel.org>
+ <d3e82f51-d381-4aaf-a6aa-917d5ec08150@schaufler-ca.com>
+ <ACCC67D1-E206-4D9B-98F7-B24A2A44A532@fb.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <ACCC67D1-E206-4D9B-98F7-B24A2A44A532@fb.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.22876 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-Add selftest for recursion prevention logic of bpf local storage.
+On 11/12/2024 10:44 AM, Song Liu wrote:
+> Hi Casey, 
+>
+> Thanks for your input. 
+>
+>> On Nov 12, 2024, at 10:09 AM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+>>
+>> On 11/12/2024 12:25 AM, Song Liu wrote:
+>>> bpf inode local storage can be useful beyond LSM programs. For example,
+>>> bcc/libbpf-tools file* can use inode local storage to simplify the logic.
+>>> This set makes inode local storage available to tracing program.
+>> Mixing the storage and scope of LSM data and tracing data leaves all sorts
+>> of opportunities for abuse. Add inode data for tracing if you can get the
+>> patch accepted, but do not move the LSM data out of i_security. Moving
+>> the LSM data would break the integrity (such that there is) of the LSM
+>> model.
+> I honestly don't see how this would cause any issues. Each bpf inode 
+> storage maps are independent of each other, and the bpf local storage is 
+> designed to handle multiple inode storage maps properly. Therefore, if
+> the user decide to stick with only LSM hooks, there isn't any behavior 
+> change. OTOH, if the user decides some tracing hooks (on tracepoints, 
+> etc.) are needed, making a inode storage map available for both tracing 
+> programs and LSM programs would help simplify the logic. (Alternatively,
+> the tracing programs need to store per inode data in a hash map, and 
+> the LSM program would read that instead of the inode storage map.)
+>
+> Does this answer the question and address the concerns?
 
-When inode local storage function is traced, helpers that access inode
-local storage should return -EBUSY.
+First off, I had no question. No, this does not address my concern.
+LSM data should be kept in and managed by the LSMs. We're making an
+effort to make the LSM infrastructure more consistent. Moving some of
+the LSM data into an LSM specific field in the inode structure goes
+against this. What you're proposing is a one-off clever optimization
+hack. We have too many of those already.
 
-The recurring program is attached to inode_storage_lookup(). This is not
-an ideal target for recursion tests. However, given that the target
-function have to take "struct inode *" argument, there isn't a better
-target function for the tests.
 
-Test results showed that inode_storage_lookup() is inlined in s390x.
-Work around this by adding this test to DENYLIST.s390x.
 
-Signed-off-by: Song Liu <song@kernel.org>
----
- tools/testing/selftests/bpf/DENYLIST.s390x    |  1 +
- .../bpf/prog_tests/inode_local_storage.c      | 72 +++++++++++++++
- .../bpf/progs/inode_storage_recursion.c       | 90 +++++++++++++++++++
- 3 files changed, 163 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/inode_local_storage.c
- create mode 100644 tools/testing/selftests/bpf/progs/inode_storage_recursion.c
-
-diff --git a/tools/testing/selftests/bpf/DENYLIST.s390x b/tools/testing/selftests/bpf/DENYLIST.s390x
-index 3ebd77206f98..6b8c9c9ec754 100644
---- a/tools/testing/selftests/bpf/DENYLIST.s390x
-+++ b/tools/testing/selftests/bpf/DENYLIST.s390x
-@@ -1,5 +1,6 @@
- # TEMPORARY
- # Alphabetical order
- get_stack_raw_tp                         # user_stack corrupted user stack                                             (no backchain userspace)
-+inode_localstorage/recursion             # target function (inode_storage_lookup) is inlined on s390)
- stacktrace_build_id                      # compare_map_keys stackid_hmap vs. stackmap err -2 errno 2                   (?)
- verifier_iterating_callbacks
-diff --git a/tools/testing/selftests/bpf/prog_tests/inode_local_storage.c b/tools/testing/selftests/bpf/prog_tests/inode_local_storage.c
-new file mode 100644
-index 000000000000..a9d9f77216f4
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/inode_local_storage.c
-@@ -0,0 +1,72 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2024 Meta Platforms, Inc. and affiliates. */
-+
-+#include <stdio.h>
-+#include <sys/stat.h>
-+#include <test_progs.h>
-+#include "inode_storage_recursion.skel.h"
-+
-+#define TDIR "/tmp/inode_local_storage"
-+#define TDIR_PARENT "/tmp"
-+
-+static void test_recursion(void)
-+{
-+	struct inode_storage_recursion *skel;
-+	struct bpf_prog_info info;
-+	__u32 info_len = sizeof(info);
-+	int err, prog_fd, map_fd, inode_fd = -1;
-+	long value;
-+
-+	skel = inode_storage_recursion__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "skel_open_and_load"))
-+		return;
-+
-+	skel->bss->test_pid = getpid();
-+
-+	err = inode_storage_recursion__attach(skel);
-+	if (!ASSERT_OK(err, "skel_attach"))
-+		goto out;
-+
-+	err = mkdir(TDIR, 0755);
-+	if (!ASSERT_OK(err, "mkdir " TDIR))
-+		goto out;
-+
-+	inode_fd = open(TDIR_PARENT, O_RDONLY | O_CLOEXEC);
-+	if (!ASSERT_OK_FD(inode_fd, "open inode_fd"))
-+		goto out;
-+
-+	/* Detach so that the following lookup won't trigger
-+	 * trace_inode_storage_lookup and further change the values.
-+	 */
-+	inode_storage_recursion__detach(skel);
-+	map_fd = bpf_map__fd(skel->maps.inode_map);
-+	err = bpf_map_lookup_elem(map_fd, &inode_fd, &value);
-+	ASSERT_OK(err, "lookup inode_map");
-+
-+	/* Check trace_inode_mkdir for the reason that value == 201 */
-+	ASSERT_EQ(value, 201, "inode_map value");
-+	ASSERT_EQ(skel->bss->nr_del_errs, 1, "bpf_task_storage_delete busy");
-+
-+	prog_fd = bpf_program__fd(skel->progs.trace_inode_mkdir);
-+	memset(&info, 0, sizeof(info));
-+	err = bpf_prog_get_info_by_fd(prog_fd, &info, &info_len);
-+	ASSERT_OK(err, "get prog info");
-+	ASSERT_EQ(info.recursion_misses, 0, "trace_inode_mkdir prog recursion");
-+
-+	prog_fd = bpf_program__fd(skel->progs.trace_inode_storage_lookup);
-+	memset(&info, 0, sizeof(info));
-+	err = bpf_prog_get_info_by_fd(prog_fd, &info, &info_len);
-+	ASSERT_OK(err, "get prog info");
-+	ASSERT_EQ(info.recursion_misses, 3, "trace_inode_storage_lookup prog recursion");
-+
-+out:
-+	rmdir(TDIR);
-+	close(inode_fd);
-+	inode_storage_recursion__destroy(skel);
-+}
-+
-+void test_inode_localstorage(void)
-+{
-+	if (test__start_subtest("recursion"))
-+		test_recursion();
-+}
-diff --git a/tools/testing/selftests/bpf/progs/inode_storage_recursion.c b/tools/testing/selftests/bpf/progs/inode_storage_recursion.c
-new file mode 100644
-index 000000000000..0ad36f8c6e04
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/inode_storage_recursion.c
-@@ -0,0 +1,90 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2024 Meta Platforms, Inc. and affiliates. */
-+
-+#include "vmlinux.h"
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_tracing.h>
-+
-+#ifndef EBUSY
-+#define EBUSY 16
-+#endif
-+
-+char _license[] SEC("license") = "GPL";
-+int nr_del_errs;
-+int test_pid;
-+
-+struct {
-+	__uint(type, BPF_MAP_TYPE_INODE_STORAGE);
-+	__uint(map_flags, BPF_F_NO_PREALLOC);
-+	__type(key, int);
-+	__type(value, long);
-+} inode_map SEC(".maps");
-+
-+/* inode_storage_lookup is not an ideal hook for recursion tests, as it
-+ * is static and more likely to get inlined. However, there isn't a
-+ * better function for the test. This is because we need to call
-+ * bpf_inode_storage_* helpers with an inode intput. Unlike task local
-+ * storage, for which we can use bpf_get_current_task_btf() to get task
-+ * pointer with BTF, for inode local storage, we need the get the inode
-+ * pointer from function arguments. Other functions, such as,
-+ * bpf_local_storage_get() does not take inode as input.
-+ */
-+SEC("fentry/inode_storage_lookup")
-+int BPF_PROG(trace_inode_storage_lookup, struct inode *inode)
-+{
-+	struct task_struct *task = bpf_get_current_task_btf();
-+	long *ptr;
-+	int err;
-+
-+	if (!test_pid || task->pid != test_pid)
-+		return 0;
-+
-+	/* This doesn't have BPF_LOCAL_STORAGE_GET_F_CREATE, so it will
-+	 * not trigger on the first call of bpf_inode_storage_get() below.
-+	 *
-+	 * This is called twice, recursion_misses += 2.
-+	 */
-+	ptr = bpf_inode_storage_get(&inode_map, inode, 0, 0);
-+	if (ptr) {
-+		*ptr += 1;
-+
-+		/* This is called once, recursion_misses += 1. */
-+		err = bpf_inode_storage_delete(&inode_map, inode);
-+		if (err == -EBUSY)
-+			nr_del_errs++;
-+	}
-+
-+	return 0;
-+}
-+
-+SEC("fentry/security_inode_mkdir")
-+int BPF_PROG(trace_inode_mkdir, struct inode *dir,
-+	     struct dentry *dentry,
-+	     int mode)
-+{
-+	struct task_struct *task = bpf_get_current_task_btf();
-+	long *ptr;
-+
-+	if (!test_pid || task->pid != test_pid)
-+		return 0;
-+
-+	/* Trigger trace_inode_storage_lookup, the first time */
-+	ptr = bpf_inode_storage_get(&inode_map, dir, 0,
-+				    BPF_LOCAL_STORAGE_GET_F_CREATE);
-+
-+	/* trace_inode_storage_lookup cannot get ptr, so *ptr is 0.
-+	 * Set ptr to 200.
-+	 */
-+	if (ptr && !*ptr)
-+		*ptr = 200;
-+
-+	/* Trigger trace_inode_storage_lookup, the second time.
-+	 * trace_inode_storage_lookup can now get ptr and increase the
-+	 * value. Now the value is 201.
-+	 */
-+	bpf_inode_storage_get(&inode_map, dir, 0,
-+			      BPF_LOCAL_STORAGE_GET_F_CREATE);
-+
-+	return 0;
-+
-+}
--- 
-2.43.5
-
+>
+> Thanks,
+> Song
+>
+>>> 1/4 is missing change for bpf task local storage. 2/4 move inode local
+>>> storage from security blob to inode.
+>>>
+>>> Similar to task local storage in tracing program, it is necessary to add
+>>> recursion prevention logic for inode local storage. Patch 3/4 adds such
+>>> logic, and 4/4 add a test for the recursion prevention logic.
+>>>
+>>> Song Liu (4):
+>>>  bpf: lsm: Remove hook to bpf_task_storage_free
+>>>  bpf: Make bpf inode storage available to tracing program
+>>>  bpf: Add recursion prevention logic for inode storage
+>>>  selftest/bpf: Test inode local storage recursion prevention
+> [...]
+>
