@@ -1,91 +1,101 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7CB120125C;
-	Wed, 13 Nov 2024 18:44:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8817202647;
+	Wed, 13 Nov 2024 18:57:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731523495; cv=none; b=XsEl2K0QrzHMb9v7vqGp7K5FQSfe7WougIrJnS53bcy0tbBpTtvclkbXNY2Lfl1u4Wqes+RSzN46uEy61p6UtJAFOJBPJ0eaE4ZdeRSVRHpythKBgr8pNm2vnBLKwxlVa7EIQ6mzlLybtCxaF5Bw/OohaN3DzpxdnZ9YX3Q8+HY=
+	t=1731524237; cv=none; b=FsgtpLtJaD7bc9agOcZuuhA8okeOZc3Lvlz+GZTLmMTbrEt8pD5UCyPTrljkS3gXrIGF3EmyRGfqPddeWma55eQ2Q9RiF01Q8tnAyp/k81JzLa7p89peVEVKlccmgZFaKRXEV9xQkFccuJs+rTSMF0RNxY+p3YjTFAiJsFRze3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731523495; c=relaxed/simple;
-	bh=9b+TTCpVQFtzpW7fgoyoQDsAoWwHFZNEITgQxl3ZD38=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Wjd+ALIBZ56L8q5yRRt6XMFH3HaMQfmqVAUq2wwt2XD+OC3d5aX3cQQscbk6lOMdaLrQxF+Y18fPKuakKDP5+7tXxnLcvq5oXWFdTUJEv+IJyIEIWYM4T6nHB54hJ6eE08UkchWnYMoNxrl72oMX7pEUbElwQdwjGiGzdr6M4Rk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YMzIN0Ai; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1731524237; c=relaxed/simple;
+	bh=5wZKxu12qYihpmKa28+AtTnrGYmnzuouLS+qJVdqhyI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RUKsFo+YGC8zXomN5mUqFFkUbDlUirnSMpN/5uHA9YCVTUBXea5k8Wku5VYJwAk0DLkvp6b3Rh3kZcQSxJ6WZEJMivBwIyuCLLofLdtG1LGwmiPO9e+NE9vk8U70b8BJfkoF4YeZEkYApxrYgwu3jJwbmvtyO3iFubD+BNFnOBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QTO6Xv3N; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YMzIN0Ai"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D097C4CEC3;
-	Wed, 13 Nov 2024 18:44:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QTO6Xv3N"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57745C4CEDA;
+	Wed, 13 Nov 2024 18:57:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731523495;
-	bh=9b+TTCpVQFtzpW7fgoyoQDsAoWwHFZNEITgQxl3ZD38=;
-	h=From:To:Cc:Subject:Date:From;
-	b=YMzIN0AiFnKMPxtr73YZGmnkfyafC0lzJsSeoamnxWf0XyCiZCO+nKgXJYKwzAcOq
-	 2EG8evfPHOmBBZB1pmbTiM7uLweJ2hkFuU9uCSaTRbR28SmAmntI1Vy/E43rE5TEvJ
-	 0Pw5NgwmkqfuxkoH3n2lel3sErtiCUAclFC8OImxsV7PKF5pWpzXznf9vM5hbaFIUB
-	 3FFxfKgV2YjxAb0xX7eg2k8pM8HQ5IjE1aBPlIs9S8SEWWNaVycWyTQuqSwrPfOdMy
-	 nLBSUIxeIOS1OaxQhTA4eKp/NUAOhmz2cFQNgU7pSYP8+FTRGjtShtRsgCGoUkmiWP
-	 3KI3yfG+F+/jw==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: linux-integrity@vger.kernel.org,
-	Peter Huewe <peterhuewe@gmx.de>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Stefan Berger <stefanb@linux.ibm.com>
-Cc: stable@vger.kernel.org,
-	Christoph Anton Mitterer <calestyo@scientia.org>,
-	James Bottomley <James.Bottomley@HansenPartnership.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-kernel@vger.kernel.org (open list),
-	keyrings@vger.kernel.org (open list:KEYS-TRUSTED),
-	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM)
-Subject: [PATCH] tpm: Disable TPM on tpm2_create_primary() failure
-Date: Wed, 13 Nov 2024 20:44:49 +0200
-Message-ID: <20241113184449.477731-1-jarkko@kernel.org>
-X-Mailer: git-send-email 2.47.0
+	s=k20201202; t=1731524237;
+	bh=5wZKxu12qYihpmKa28+AtTnrGYmnzuouLS+qJVdqhyI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=QTO6Xv3Nzt1Sl1cSrVwDdF3CxydDl38AarSD2qHMSu6MFkwSl9Zy2wTBo+UYceLYn
+	 z/ycXiHgR2YwuQ3MbS5VfNKbRIiT/L/4EKjpuRo0WqmiQUDgjnRemidHu1C+tiIVLE
+	 Q3nFJUJVYj5voKZ0E44SCdAtis1Yv6Rm2AfbVGpcw4EelbXHV1lGRgbylxlsrpoJ8Q
+	 MhiABYdfsewy7EhEZR+wLIJASxGVFWdWxRep/x3S8132CaGDFVC4Oa+sduyO9yGIFE
+	 ugdq7OTVaFfIdCJLyF14MEHKRqrUjelQ2U9v7Xhj65VFuVeRvzlFY2dAjB/QzOHNKe
+	 D1n2U9Mzw0zSg==
+Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3a6bf539cabso25687115ab.3;
+        Wed, 13 Nov 2024 10:57:17 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUhh3x6ge0UJ9wcZaRC+pOtq3G5JImbxWfeL2IuCnJ/qUVm5SydBi1sXYTmeR40crndjA7M2DtgfEpKr3jYIGrMBu71Qxpu@vger.kernel.org, AJvYcCWOe4GO6rWXSjD0y4729j2tEJTDoWlSI6nbcDZr+dm2+tk2ptzqmx0TYRCpP2PclNBEodk=@vger.kernel.org, AJvYcCXH6Vi6d5j8uvxCVi5ySbFrru1pKWVzhwemkWlc3F2OcyewbdRiEuSBhdRuKBqw9EmykxPIgN0S8X5f+WzS@vger.kernel.org, AJvYcCXRJsUNklM4CWM7synqYYjuRa2SwR/DUH9kOKB6t6cKI+YjCY7j6dpB/wjapDBpB2j4V59E+CtkEH5dB/C0hg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxL/CqG1yBAPZMXUMSOOqr2Fa4intdkc36Pc23PUDh20q3Sieve
+	vlZVANMz4dtDhJ8HsJxouwKwckHudUcKM+JRB3RC9pnzwpiCEXr22HCdOD2+nUto5wAunxY+Du6
+	+XbmgMuheIdMM0jENsVBXl2MxqBY=
+X-Google-Smtp-Source: AGHT+IFRUe2R/KYe/0g+BBuwonrcFhhroRTWjnMS2oIC1YXoUQZfpRdPFs2YH+Q3iuxsU6xarKf1JgvIqeEdqoMJdQs=
+X-Received: by 2002:a05:6e02:1b0e:b0:3a7:1d09:d90e with SMTP id
+ e9e14a558f8ab-3a71d09db79mr14105765ab.15.1731524236545; Wed, 13 Nov 2024
+ 10:57:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241112082600.298035-1-song@kernel.org> <d3e82f51-d381-4aaf-a6aa-917d5ec08150@schaufler-ca.com>
+ <ACCC67D1-E206-4D9B-98F7-B24A2A44A532@fb.com> <d7d23675-88e6-4f63-b04d-c732165133ba@schaufler-ca.com>
+ <332BDB30-BCDC-4F24-BB8C-DD29D5003426@fb.com> <8c86c2b4-cd23-42e0-9eb6-2c8f7a4cbcd4@schaufler-ca.com>
+In-Reply-To: <8c86c2b4-cd23-42e0-9eb6-2c8f7a4cbcd4@schaufler-ca.com>
+From: Song Liu <song@kernel.org>
+Date: Wed, 13 Nov 2024 10:57:05 -0800
+X-Gmail-Original-Message-ID: <CAPhsuW5zDzUp7eSut9vekzH7WZHpk38fKHmFVRTMiBbeW10_SQ@mail.gmail.com>
+Message-ID: <CAPhsuW5zDzUp7eSut9vekzH7WZHpk38fKHmFVRTMiBbeW10_SQ@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 0/4] Make inode storage available to tracing prog
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Song Liu <songliubraving@meta.com>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
+	"andrii@kernel.org" <andrii@kernel.org>, "eddyz87@gmail.com" <eddyz87@gmail.com>, "ast@kernel.org" <ast@kernel.org>, 
+	"daniel@iogearbox.net" <daniel@iogearbox.net>, "martin.lau@linux.dev" <martin.lau@linux.dev>, 
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "brauner@kernel.org" <brauner@kernel.org>, 
+	"jack@suse.cz" <jack@suse.cz>, "kpsingh@kernel.org" <kpsingh@kernel.org>, 
+	"mattbobrowski@google.com" <mattbobrowski@google.com>, "amir73il@gmail.com" <amir73il@gmail.com>, 
+	"repnop@google.com" <repnop@google.com>, "jlayton@kernel.org" <jlayton@kernel.org>, 
+	Josef Bacik <josef@toxicpanda.com>, "mic@digikod.net" <mic@digikod.net>, 
+	"gnoack@google.com" <gnoack@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The earlier bug fix misplaced the error-label when dealing with the
-tpm2_create_primary() return value, which the original completely ignored.
+On Wed, Nov 13, 2024 at 10:06=E2=80=AFAM Casey Schaufler <casey@schaufler-c=
+a.com> wrote:
+>
+> On 11/12/2024 5:37 PM, Song Liu wrote:
+[...]
+> > Could you provide more information on the definition of "more
+> > consistent" LSM infrastructure?
+>
+> We're doing several things. The management of security blobs
+> (e.g. inode->i_security) has been moved out of the individual
+> modules and into the infrastructure. The use of a u32 secid is
+> being replaced with a more general lsm_prop structure, except
+> where networking code won't allow it. A good deal of work has
+> gone into making the return values of LSM hooks consistent.
 
-Cc: stable@vger.kernel.org
-Reported-by: Christoph Anton Mitterer <calestyo@scientia.org>
-Closes: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1087331
-Fixes: cc7d8594342a ("tpm: Rollback tpm2_load_null()")
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
- drivers/char/tpm/tpm2-sessions.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+Thanks for the information. Unifying per-object memory usage of
+different LSMs makes sense. However, I don't think we are limiting
+any LSM to only use memory from the lsm_blobs. The LSMs still
+have the freedom to use other memory allocators. BPF inode
+local storage, just like other BPF maps, is a way to manage
+memory. BPF LSM programs have full access to BPF maps. So
+I don't think it makes sense to say this BPF map is used by tracing,
+so we should not allow LSM to use it.
 
-diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-sessions.c
-index a7c1b162251b..b70165b588ec 100644
---- a/drivers/char/tpm/tpm2-sessions.c
-+++ b/drivers/char/tpm/tpm2-sessions.c
-@@ -953,10 +953,13 @@ static int tpm2_load_null(struct tpm_chip *chip, u32 *null_key)
- 	/* Deduce from the name change TPM interference: */
- 	dev_err(&chip->dev, "null key integrity check failed\n");
- 	tpm2_flush_context(chip, tmp_null_key);
--	chip->flags |= TPM_CHIP_FLAG_DISABLE;
- 
- err:
--	return rc ? -ENODEV : 0;
-+	if (rc) {
-+		chip->flags |= TPM_CHIP_FLAG_DISABLE;
-+		rc = -ENODEV;
-+	}
-+	return rc;
- }
- 
- /**
--- 
-2.47.0
+Does this make sense?
+Song
 
+> Some of this was done as part of the direct call change, and some
+> in support of LSM stacking. There are also some hardening changes
+> that aren't ready for prime-time, but that are in the works.
+> There have been concerns about the potential expoitability of the
+> LSM infrastructure, and we're serious about addressing those.
