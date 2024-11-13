@@ -1,198 +1,140 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F09C12AE90;
-	Wed, 13 Nov 2024 10:19:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C511D4C81;
+	Wed, 13 Nov 2024 12:33:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731493170; cv=none; b=ZPWVtRUdXaBjJxODlhUbEagQiTzg09tKhdZF7FeG6n8UaMcTiBeUUzL0Z61go4XjFEy9l0YIKrAaKqwa9OfzyILnSo0YnXeGHVguGRIDfbviiXk5nQxSZ3ka28tAV1YmJUra9rdU0rzjBpJZze7FN5AAoh4YkiZeqUvHA2ofSCc=
+	t=1731501199; cv=none; b=LApALi1w79sRgBC9IOM63tITy7iG7XU+XUC9JS0M3J+zXBOam/6cPUVjeq8t9GkIwBbBFgAp7hpY6ZvQ/N08GQUbHobOwb0Z3cxbJrKNvNXLiU9v5wohfFhWd2pT+VldXg6TEWs1IMyB0l8Ma+RYkxP388QcPXOKC18MISMc+6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731493170; c=relaxed/simple;
-	bh=pU6pB26ySh8saykSDK55Zekt0Hffao3oKz0ODlb9rwI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PV4sQbXiQ0PUi+h6Ekng87MHXqWhUg5XVmxFpxVR0XbG8hNN308bA4W/mkI1IziCJlK/1A/2KmC7/775z0PBkqqDJNXrs1XUX/wkEjKdcIp3tv5AY3Qzt7G3qP44BJ1SKYpPE6rU5/SWKl/isws+0y/S+GeERC5H83jb0CzQQd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R/yZkrUW; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1731501199; c=relaxed/simple;
+	bh=ojzcGIB9941E35oVcvIXfN2E6iur5Ozi5Ww/WaflAJ4=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ZtUMSAvx9TMaRFmxA7gdP5G061StnKAqij3OHQs3o9o3CCoTzDvNJyJxdqabkshwN9cpVCMvApzCaDVUp6ktqggHvBmHbEicJ2S6+M116qn8sR0/Qgx9eq4tAF7NXWUmf4L+G0LOdoia2UK/tmv8t5/edIXPt6efL8suVWQbpWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=OPS9YKnS; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R/yZkrUW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C35D8C4CECD;
-	Wed, 13 Nov 2024 10:19:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731493169;
-	bh=pU6pB26ySh8saykSDK55Zekt0Hffao3oKz0ODlb9rwI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R/yZkrUWUvToi2+LtTxf2a/fPltRPGO+/ty4021M9ZAtKNdlaNa9Vp7vJJ9geLzZB
-	 9m0/squq+pWy8pCIqOr9Uo06uoFUNAoAQbkCElGhB15bgTIDioSNMpx6+PSYYu3jbr
-	 RDMJRZkHJRdBusYp6s8a7RNzU/Gb4gg/FjMEjzAonbSxNdSo+smBBtBN734t6tWvAD
-	 hSEt0Po4oAQGGQJcMRWdOkvF+ab8rfz8yamb2matfsD78hV0tKPAKmJXQRQ8+Tu5ga
-	 WCMLJiJa3zOlXtuzkcU48roxDhuSEEzp0cEBIAOHeeXNe57s0PritQVqFEw2S8g2ok
-	 8/xZIBD5dysRg==
-Date: Wed, 13 Nov 2024 11:19:20 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Song Liu <song@kernel.org>
-Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, kernel-team@meta.com, 
-	andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, daniel@iogearbox.net, 
-	martin.lau@linux.dev, viro@zeniv.linux.org.uk, jack@suse.cz, kpsingh@kernel.org, 
-	mattbobrowski@google.com, amir73il@gmail.com, repnop@google.com, jlayton@kernel.org, 
-	josef@toxicpanda.com, mic@digikod.net, gnoack@google.com
-Subject: Re: [PATCH bpf-next 2/4] bpf: Make bpf inode storage available to
- tracing program
-Message-ID: <20241113-sensation-morgen-852f49484fd8@brauner>
-References: <20241112082600.298035-1-song@kernel.org>
- <20241112082600.298035-3-song@kernel.org>
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="OPS9YKnS"
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ADBe1xQ006269;
+	Wed, 13 Nov 2024 12:33:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=/Zjhyx
+	wOI0fnkEYiFheXSls2X5u8cNQv20LoK+7e/aA=; b=OPS9YKnSUvnr8E36/rQTUE
+	TYmYe8Svvjh9GAeoeSmeuWnAKJVRmEghq1KJ00M/9AkRPLYW5OO8m8kSITHs6p0N
+	HpcaOJ308Jq59RUf38W9mMj8M1GA6jB6OyceCs31iYKOBp01QXArb7NQ80J9G3eY
+	d8aBb7L5hgq6E2IK1vDgg5VkAraLWzjdI7U+TLgQouQ34MPJmltGO4ucefW8ERD9
+	d185JBLNohD2cOrYFYBy6utpyRvaQ6abnOu9Yg9DhSAp+WW7KS+Jz5E9sYESOu6g
+	qVeMBqdlhqNdVB/ASlY2rLPrxsaYKX2w5swEVQSRrztQ/lX5VxBsyt1bfwcZlGpg
+	==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42vued87ew-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Nov 2024 12:33:09 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AD45nlc018606;
+	Wed, 13 Nov 2024 12:33:08 GMT
+Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42tk2mx761-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 13 Nov 2024 12:33:08 +0000
+Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
+	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4ADCX7Ed59572648
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 13 Nov 2024 12:33:07 GMT
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7748858056;
+	Wed, 13 Nov 2024 12:33:07 +0000 (GMT)
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1F92B58052;
+	Wed, 13 Nov 2024 12:33:07 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 13 Nov 2024 12:33:07 +0000 (GMT)
+Message-ID: <7e66377e-38d6-4885-acb6-e9a72573a697@linux.ibm.com>
+Date: Wed, 13 Nov 2024 07:33:06 -0500
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241112082600.298035-3-song@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] ima: Suspend PCR extends and log appends when
+ rebooting
+From: Stefan Berger <stefanb@linux.ibm.com>
+To: Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, roberto.sassu@huawei.com,
+        Tushar Sugandhi <tusharsu@linux.microsoft.com>
+References: <20241112165206.756351-1-stefanb@linux.ibm.com>
+ <a616939fa13b9e01b9cb6be68246152772944a76.camel@linux.ibm.com>
+ <e72ec14c-1593-410f-a4ed-a5583b36fc7c@linux.ibm.com>
+Content-Language: en-US
+In-Reply-To: <e72ec14c-1593-410f-a4ed-a5583b36fc7c@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: _d7VT8Fh9J-GxNG2DEf41YAOsLdWydZL
+X-Proofpoint-GUID: _d7VT8Fh9J-GxNG2DEf41YAOsLdWydZL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 phishscore=0 adultscore=0 spamscore=0
+ bulkscore=0 impostorscore=0 malwarescore=0 mlxlogscore=999
+ priorityscore=1501 suspectscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2411130104
 
-On Tue, Nov 12, 2024 at 12:25:56AM -0800, Song Liu wrote:
-> inode storage can be useful for non-LSM program. For example, file* tools
-> from bcc/libbpf-tools can use inode storage instead of hash map; fanotify
-> fastpath [1] can also use inode storage to store useful data.
-> 
-> Make inode storage available for tracing program. Move bpf inode storage
-> from a security blob to inode->i_bpf_storage, and adjust related code
-> accordingly.
-> 
-> [1] https://lore.kernel.org/linux-fsdevel/20241029231244.2834368-1-song@kernel.org/
-> Signed-off-by: Song Liu <song@kernel.org>
-> ---
->  fs/inode.c                     |  1 +
->  include/linux/bpf.h            |  9 +++++++++
->  include/linux/bpf_lsm.h        | 29 -----------------------------
->  include/linux/fs.h             |  4 ++++
->  kernel/bpf/Makefile            |  3 +--
->  kernel/bpf/bpf_inode_storage.c | 32 +++++---------------------------
->  kernel/bpf/bpf_lsm.c           |  4 ----
->  kernel/trace/bpf_trace.c       |  4 ++++
->  security/bpf/hooks.c           |  6 ------
->  9 files changed, 24 insertions(+), 68 deletions(-)
-> 
-> diff --git a/fs/inode.c b/fs/inode.c
-> index 8dabb224f941..3c679578169f 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -286,6 +286,7 @@ static struct inode *alloc_inode(struct super_block *sb)
->  void __destroy_inode(struct inode *inode)
->  {
->  	BUG_ON(inode_has_buffers(inode));
-> +	bpf_inode_storage_free(inode);
->  	inode_detach_wb(inode);
->  	security_inode_free(inode);
->  	fsnotify_inode_delete(inode);
-> diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-> index 1b84613b10ac..0b31d2e74df6 100644
-> --- a/include/linux/bpf.h
-> +++ b/include/linux/bpf.h
-> @@ -2672,6 +2672,7 @@ struct bpf_link *bpf_link_by_id(u32 id);
->  const struct bpf_func_proto *bpf_base_func_proto(enum bpf_func_id func_id,
->  						 const struct bpf_prog *prog);
->  void bpf_task_storage_free(struct task_struct *task);
-> +void bpf_inode_storage_free(struct inode *inode);
->  void bpf_cgrp_storage_free(struct cgroup *cgroup);
->  bool bpf_prog_has_kfunc_call(const struct bpf_prog *prog);
->  const struct btf_func_model *
-> @@ -2942,6 +2943,10 @@ static inline void bpf_task_storage_free(struct task_struct *task)
->  {
->  }
->  
-> +static inline void bpf_inode_storage_free(struct inode *inode)
-> +{
-> +}
-> +
->  static inline bool bpf_prog_has_kfunc_call(const struct bpf_prog *prog)
->  {
->  	return false;
-> @@ -3305,6 +3310,10 @@ extern const struct bpf_func_proto bpf_task_storage_get_recur_proto;
->  extern const struct bpf_func_proto bpf_task_storage_get_proto;
->  extern const struct bpf_func_proto bpf_task_storage_delete_recur_proto;
->  extern const struct bpf_func_proto bpf_task_storage_delete_proto;
-> +extern const struct bpf_func_proto bpf_inode_storage_get_proto;
-> +extern const struct bpf_func_proto bpf_inode_storage_get_recur_proto;
-> +extern const struct bpf_func_proto bpf_inode_storage_delete_proto;
-> +extern const struct bpf_func_proto bpf_inode_storage_delete_recur_proto;
->  extern const struct bpf_func_proto bpf_for_each_map_elem_proto;
->  extern const struct bpf_func_proto bpf_btf_find_by_name_kind_proto;
->  extern const struct bpf_func_proto bpf_sk_setsockopt_proto;
-> diff --git a/include/linux/bpf_lsm.h b/include/linux/bpf_lsm.h
-> index aefcd6564251..a819c2f0a062 100644
-> --- a/include/linux/bpf_lsm.h
-> +++ b/include/linux/bpf_lsm.h
-> @@ -19,31 +19,12 @@
->  #include <linux/lsm_hook_defs.h>
->  #undef LSM_HOOK
->  
-> -struct bpf_storage_blob {
-> -	struct bpf_local_storage __rcu *storage;
-> -};
-> -
-> -extern struct lsm_blob_sizes bpf_lsm_blob_sizes;
-> -
->  int bpf_lsm_verify_prog(struct bpf_verifier_log *vlog,
->  			const struct bpf_prog *prog);
->  
->  bool bpf_lsm_is_sleepable_hook(u32 btf_id);
->  bool bpf_lsm_is_trusted(const struct bpf_prog *prog);
->  
-> -static inline struct bpf_storage_blob *bpf_inode(
-> -	const struct inode *inode)
-> -{
-> -	if (unlikely(!inode->i_security))
-> -		return NULL;
-> -
-> -	return inode->i_security + bpf_lsm_blob_sizes.lbs_inode;
-> -}
-> -
-> -extern const struct bpf_func_proto bpf_inode_storage_get_proto;
-> -extern const struct bpf_func_proto bpf_inode_storage_delete_proto;
-> -void bpf_inode_storage_free(struct inode *inode);
-> -
->  void bpf_lsm_find_cgroup_shim(const struct bpf_prog *prog, bpf_func_t *bpf_func);
->  
->  int bpf_lsm_get_retval_range(const struct bpf_prog *prog,
-> @@ -66,16 +47,6 @@ static inline int bpf_lsm_verify_prog(struct bpf_verifier_log *vlog,
->  	return -EOPNOTSUPP;
->  }
->  
-> -static inline struct bpf_storage_blob *bpf_inode(
-> -	const struct inode *inode)
-> -{
-> -	return NULL;
-> -}
-> -
-> -static inline void bpf_inode_storage_free(struct inode *inode)
-> -{
-> -}
-> -
->  static inline void bpf_lsm_find_cgroup_shim(const struct bpf_prog *prog,
->  					   bpf_func_t *bpf_func)
->  {
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 3559446279c1..479097e4dd5b 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -79,6 +79,7 @@ struct fs_context;
->  struct fs_parameter_spec;
->  struct fileattr;
->  struct iomap_ops;
-> +struct bpf_local_storage;
->  
->  extern void __init inode_init(void);
->  extern void __init inode_init_early(void);
-> @@ -648,6 +649,9 @@ struct inode {
->  #ifdef CONFIG_SECURITY
->  	void			*i_security;
->  #endif
-> +#ifdef CONFIG_BPF_SYSCALL
-> +	struct bpf_local_storage __rcu *i_bpf_storage;
-> +#endif
 
-Sorry, we're not growing struct inode for this. It just keeps getting
-bigger. Last cycle we freed up 8 bytes to shrink it and we're not going
-to waste them on special-purpose stuff. We already NAKed someone else's
-pet field here.
+
+On 11/12/24 9:28 PM, Stefan Berger wrote:
+> 
+> 
+> On 11/12/24 6:42 PM, Mimi Zohar wrote:
+>> On Tue, 2024-11-12 at 11:52 -0500, Stefan Berger wrote:
+>>> To avoid the following types of error messages due to a failure by 
+>>> the TPM
+>>> driver to use the TPM, suspend TPM PCR extensions and the appending of
+>>> entries to the IMA log once IMA's reboot notifier has been called. This
+>>> avoids trying to use the TPM after the TPM subsystem has been shut down.
+>>>
+>>> [111707.685315][    T1] ima: Error Communicating to TPM chip, result: 
+>>> -19
+>>> [111707.685960][    T1] ima: Error Communicating to TPM chip, result: 
+>>> -19
+>>>
+>>> This error could be observed on a ppc64 machine running SuSE Linux where
+>>> processes are still accessing files after devices have been shut down.
+>>>
+>>> Suspending the IMA log and PCR extensions shortly before reboot does not
+>>> seem to open a significant measurement gap since neither TPM quoting 
+>>> would
+>>> work for attestation nor that new log entries could be written to 
+>>> anywhere
+>>> after devices have been shut down. However, there's a time window 
+>>> between
+>>> the invocation of the reboot notifier and the shutdown of devices in
+>>> kernel_restart_prepare() where __usermodehelper_disable() waits for all
+>>> running_helpers to exit. During this time window IMA could now miss log
+>>> entries even though attestation would still work. The reboot of the 
+>>> system
+>>> shortly after may make this small gap insignificant.
+>>>
+>>> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+>>> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
+>>
+>> Thanks, Stefan.  The patch looks good.  Based on the updated patch 
+>> description,
+>> I'm wondering if we should be testing the "system_state" instead of 
+>> registering
+>> a reboot notifier?
+> 
+> That's a possibility and would definitely be less code. I don't see why 
+> not...
+> 
+... the missing synchronization with the mutex speaks against it. If we 
+don't have it we could try to use the TPM subsystem after it's been shut 
+down.
