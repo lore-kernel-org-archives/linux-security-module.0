@@ -1,75 +1,198 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4ED1527A7;
-	Wed, 13 Nov 2024 05:56:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F09C12AE90;
+	Wed, 13 Nov 2024 10:19:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731477394; cv=none; b=cE7wlO8aKPIVm0ywRdEt/G7ds4HW3TOCQiDoj0CCfqfEfX2qC/aw6aB7F8vSv9iFMkKgDcjUbnnq/z4yxaCPtvRKfvRTSJAzndx9QPC2aRb2cP54GLE/npHowG6fR9spxAr3Ttz7QPj4TDF6qz2prZ/mcItnPkU8kRCoJTm9smY=
+	t=1731493170; cv=none; b=ZPWVtRUdXaBjJxODlhUbEagQiTzg09tKhdZF7FeG6n8UaMcTiBeUUzL0Z61go4XjFEy9l0YIKrAaKqwa9OfzyILnSo0YnXeGHVguGRIDfbviiXk5nQxSZ3ka28tAV1YmJUra9rdU0rzjBpJZze7FN5AAoh4YkiZeqUvHA2ofSCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731477394; c=relaxed/simple;
-	bh=MN5GOjIImDbDM2pOrDVGASQO5/OZe6x9pHt7qMO222g=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=HR7EpTVsaX4j/U8gzMI2jilHkAE4yOZxKeNA6O1X6vpI2VVTVUKd4t5f/mWp+U7MpaVvW77PWFbsc1EU0ABQelGjS4mKhZ/Qth+stdeFv3zxvIZ/tEd35czRMS8DKm5zAirqdfGKPFdbKd+CZQHD8Z1rOdcKYpF396KaVvFyAXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YG2vKlER; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1731493170; c=relaxed/simple;
+	bh=pU6pB26ySh8saykSDK55Zekt0Hffao3oKz0ODlb9rwI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PV4sQbXiQ0PUi+h6Ekng87MHXqWhUg5XVmxFpxVR0XbG8hNN308bA4W/mkI1IziCJlK/1A/2KmC7/775z0PBkqqDJNXrs1XUX/wkEjKdcIp3tv5AY3Qzt7G3qP44BJ1SKYpPE6rU5/SWKl/isws+0y/S+GeERC5H83jb0CzQQd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R/yZkrUW; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YG2vKlER"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2A1AC4CECD;
-	Wed, 13 Nov 2024 05:56:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R/yZkrUW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C35D8C4CECD;
+	Wed, 13 Nov 2024 10:19:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731477393;
-	bh=MN5GOjIImDbDM2pOrDVGASQO5/OZe6x9pHt7qMO222g=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=YG2vKlERddDbtjfH4zBA57xZpwGNhlZTBy8ifh/QN2AjvmlO7sWXw3kMnlIw8qG6X
-	 JiJMUMIk4BvV+qU/WG1mVApoY2SocaF/2ESELOQVQ6mHWXu2Q+R3icb1GpLlilvNMn
-	 4CXkfLE54awLDw4Lh0Eahr9OXazNmQm2R23zKMoRk5RpPylwMMoDULQy/HSuk3qw55
-	 2HKmX1IBMfNUllwSU/Z0EU+hessQ0IGnU311Zag4lNH+EbL5/Swnah2QDcqwEp4kym
-	 vN+XhH2WhLi85H1bSHpYvNWWDUPukEjIcA5mFB0toI2Wssymse8mKns179o0pFnP+q
-	 1XD9jGrtvX/sA==
+	s=k20201202; t=1731493169;
+	bh=pU6pB26ySh8saykSDK55Zekt0Hffao3oKz0ODlb9rwI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=R/yZkrUWUvToi2+LtTxf2a/fPltRPGO+/ty4021M9ZAtKNdlaNa9Vp7vJJ9geLzZB
+	 9m0/squq+pWy8pCIqOr9Uo06uoFUNAoAQbkCElGhB15bgTIDioSNMpx6+PSYYu3jbr
+	 RDMJRZkHJRdBusYp6s8a7RNzU/Gb4gg/FjMEjzAonbSxNdSo+smBBtBN734t6tWvAD
+	 hSEt0Po4oAQGGQJcMRWdOkvF+ab8rfz8yamb2matfsD78hV0tKPAKmJXQRQ8+Tu5ga
+	 WCMLJiJa3zOlXtuzkcU48roxDhuSEEzp0cEBIAOHeeXNe57s0PritQVqFEw2S8g2ok
+	 8/xZIBD5dysRg==
+Date: Wed, 13 Nov 2024 11:19:20 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Song Liu <song@kernel.org>
+Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, kernel-team@meta.com, 
+	andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, daniel@iogearbox.net, 
+	martin.lau@linux.dev, viro@zeniv.linux.org.uk, jack@suse.cz, kpsingh@kernel.org, 
+	mattbobrowski@google.com, amir73il@gmail.com, repnop@google.com, jlayton@kernel.org, 
+	josef@toxicpanda.com, mic@digikod.net, gnoack@google.com
+Subject: Re: [PATCH bpf-next 2/4] bpf: Make bpf inode storage available to
+ tracing program
+Message-ID: <20241113-sensation-morgen-852f49484fd8@brauner>
+References: <20241112082600.298035-1-song@kernel.org>
+ <20241112082600.298035-3-song@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 13 Nov 2024 07:56:29 +0200
-Message-Id: <D5KTIBJRLLZO.393Y9M060YHWG@kernel.org>
-Cc: "Roberto Sassu" <roberto.sassu@huawei.com>, "David Howells"
- <dhowells@redhat.com>, "Paul Moore" <paul@paul-moore.com>, "James Morris"
- <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, "Thomas Huth"
- <thuth@redhat.com>, "Andrew Morton" <akpm@linux-foundation.org>, "Paul E.
- McKenney" <paulmck@kernel.org>, "Steven Rostedt" <rostedt@goodmis.org>,
- "Xiongwei Song" <xiongwei.song@windriver.com>, "Stefan Berger"
- <stefanb@linux.ibm.com>, "Ard Biesheuvel" <ardb@kernel.org>, "Al Viro"
- <viro@zeniv.linux.org.uk>, "open list:DOCUMENTATION"
- <linux-doc@vger.kernel.org>, "open list" <linux-kernel@vger.kernel.org>,
- "open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>, "open list:SECURITY
- SUBSYSTEM" <linux-security-module@vger.kernel.org>, "Josh Poimboeuf"
- <jpoimboe@kernel.org>
-Subject: Re: [PATCH v3] tpm: Opt-in in disable PCR integrity protection
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Mimi Zohar" <zohar@linux.ibm.com>, <linux-integrity@vger.kernel.org>,
- "Jonathan Corbet" <corbet@lwn.net>, "Peter Huewe" <peterhuewe@gmx.de>,
- "Jason Gunthorpe" <jgg@ziepe.ca>, "James Bottomley"
- <James.Bottomley@HansenPartnership.com>
-X-Mailer: aerc 0.18.2
-References: <20241113002414.609168-1-jarkko@kernel.org>
- <9649cec7710241dc359c7c1a715b2cef36ebce15.camel@linux.ibm.com>
-In-Reply-To: <9649cec7710241dc359c7c1a715b2cef36ebce15.camel@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241112082600.298035-3-song@kernel.org>
 
-On Wed Nov 13, 2024 at 6:34 AM EET, Mimi Zohar wrote:
-> The module_param variable documentation needs to be updated to reflect th=
-e
-> actual module_param variable 'disable_pcr_integrity'.
->
-> Otherwise,
-> Tested-by: Mimi Zohar <zohar@linux.ibm.com>
+On Tue, Nov 12, 2024 at 12:25:56AM -0800, Song Liu wrote:
+> inode storage can be useful for non-LSM program. For example, file* tools
+> from bcc/libbpf-tools can use inode storage instead of hash map; fanotify
+> fastpath [1] can also use inode storage to store useful data.
+> 
+> Make inode storage available for tracing program. Move bpf inode storage
+> from a security blob to inode->i_bpf_storage, and adjust related code
+> accordingly.
+> 
+> [1] https://lore.kernel.org/linux-fsdevel/20241029231244.2834368-1-song@kernel.org/
+> Signed-off-by: Song Liu <song@kernel.org>
+> ---
+>  fs/inode.c                     |  1 +
+>  include/linux/bpf.h            |  9 +++++++++
+>  include/linux/bpf_lsm.h        | 29 -----------------------------
+>  include/linux/fs.h             |  4 ++++
+>  kernel/bpf/Makefile            |  3 +--
+>  kernel/bpf/bpf_inode_storage.c | 32 +++++---------------------------
+>  kernel/bpf/bpf_lsm.c           |  4 ----
+>  kernel/trace/bpf_trace.c       |  4 ++++
+>  security/bpf/hooks.c           |  6 ------
+>  9 files changed, 24 insertions(+), 68 deletions(-)
+> 
+> diff --git a/fs/inode.c b/fs/inode.c
+> index 8dabb224f941..3c679578169f 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -286,6 +286,7 @@ static struct inode *alloc_inode(struct super_block *sb)
+>  void __destroy_inode(struct inode *inode)
+>  {
+>  	BUG_ON(inode_has_buffers(inode));
+> +	bpf_inode_storage_free(inode);
+>  	inode_detach_wb(inode);
+>  	security_inode_free(inode);
+>  	fsnotify_inode_delete(inode);
+> diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+> index 1b84613b10ac..0b31d2e74df6 100644
+> --- a/include/linux/bpf.h
+> +++ b/include/linux/bpf.h
+> @@ -2672,6 +2672,7 @@ struct bpf_link *bpf_link_by_id(u32 id);
+>  const struct bpf_func_proto *bpf_base_func_proto(enum bpf_func_id func_id,
+>  						 const struct bpf_prog *prog);
+>  void bpf_task_storage_free(struct task_struct *task);
+> +void bpf_inode_storage_free(struct inode *inode);
+>  void bpf_cgrp_storage_free(struct cgroup *cgroup);
+>  bool bpf_prog_has_kfunc_call(const struct bpf_prog *prog);
+>  const struct btf_func_model *
+> @@ -2942,6 +2943,10 @@ static inline void bpf_task_storage_free(struct task_struct *task)
+>  {
+>  }
+>  
+> +static inline void bpf_inode_storage_free(struct inode *inode)
+> +{
+> +}
+> +
+>  static inline bool bpf_prog_has_kfunc_call(const struct bpf_prog *prog)
+>  {
+>  	return false;
+> @@ -3305,6 +3310,10 @@ extern const struct bpf_func_proto bpf_task_storage_get_recur_proto;
+>  extern const struct bpf_func_proto bpf_task_storage_get_proto;
+>  extern const struct bpf_func_proto bpf_task_storage_delete_recur_proto;
+>  extern const struct bpf_func_proto bpf_task_storage_delete_proto;
+> +extern const struct bpf_func_proto bpf_inode_storage_get_proto;
+> +extern const struct bpf_func_proto bpf_inode_storage_get_recur_proto;
+> +extern const struct bpf_func_proto bpf_inode_storage_delete_proto;
+> +extern const struct bpf_func_proto bpf_inode_storage_delete_recur_proto;
+>  extern const struct bpf_func_proto bpf_for_each_map_elem_proto;
+>  extern const struct bpf_func_proto bpf_btf_find_by_name_kind_proto;
+>  extern const struct bpf_func_proto bpf_sk_setsockopt_proto;
+> diff --git a/include/linux/bpf_lsm.h b/include/linux/bpf_lsm.h
+> index aefcd6564251..a819c2f0a062 100644
+> --- a/include/linux/bpf_lsm.h
+> +++ b/include/linux/bpf_lsm.h
+> @@ -19,31 +19,12 @@
+>  #include <linux/lsm_hook_defs.h>
+>  #undef LSM_HOOK
+>  
+> -struct bpf_storage_blob {
+> -	struct bpf_local_storage __rcu *storage;
+> -};
+> -
+> -extern struct lsm_blob_sizes bpf_lsm_blob_sizes;
+> -
+>  int bpf_lsm_verify_prog(struct bpf_verifier_log *vlog,
+>  			const struct bpf_prog *prog);
+>  
+>  bool bpf_lsm_is_sleepable_hook(u32 btf_id);
+>  bool bpf_lsm_is_trusted(const struct bpf_prog *prog);
+>  
+> -static inline struct bpf_storage_blob *bpf_inode(
+> -	const struct inode *inode)
+> -{
+> -	if (unlikely(!inode->i_security))
+> -		return NULL;
+> -
+> -	return inode->i_security + bpf_lsm_blob_sizes.lbs_inode;
+> -}
+> -
+> -extern const struct bpf_func_proto bpf_inode_storage_get_proto;
+> -extern const struct bpf_func_proto bpf_inode_storage_delete_proto;
+> -void bpf_inode_storage_free(struct inode *inode);
+> -
+>  void bpf_lsm_find_cgroup_shim(const struct bpf_prog *prog, bpf_func_t *bpf_func);
+>  
+>  int bpf_lsm_get_retval_range(const struct bpf_prog *prog,
+> @@ -66,16 +47,6 @@ static inline int bpf_lsm_verify_prog(struct bpf_verifier_log *vlog,
+>  	return -EOPNOTSUPP;
+>  }
+>  
+> -static inline struct bpf_storage_blob *bpf_inode(
+> -	const struct inode *inode)
+> -{
+> -	return NULL;
+> -}
+> -
+> -static inline void bpf_inode_storage_free(struct inode *inode)
+> -{
+> -}
+> -
+>  static inline void bpf_lsm_find_cgroup_shim(const struct bpf_prog *prog,
+>  					   bpf_func_t *bpf_func)
+>  {
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 3559446279c1..479097e4dd5b 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -79,6 +79,7 @@ struct fs_context;
+>  struct fs_parameter_spec;
+>  struct fileattr;
+>  struct iomap_ops;
+> +struct bpf_local_storage;
+>  
+>  extern void __init inode_init(void);
+>  extern void __init inode_init_early(void);
+> @@ -648,6 +649,9 @@ struct inode {
+>  #ifdef CONFIG_SECURITY
+>  	void			*i_security;
+>  #endif
+> +#ifdef CONFIG_BPF_SYSCALL
+> +	struct bpf_local_storage __rcu *i_bpf_storage;
+> +#endif
 
-Thanks for catching that glitch. Here's updated version:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/comm=
-it/?id=3D8f22b3ed4d200ae0c575791e069316c633ed5c39
-
-BR, Jarkko
+Sorry, we're not growing struct inode for this. It just keeps getting
+bigger. Last cycle we freed up 8 bytes to shrink it and we're not going
+to waste them on special-purpose stuff. We already NAKed someone else's
+pet field here.
