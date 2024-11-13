@@ -1,212 +1,166 @@
-Received: from smtp-1909.mail.infomaniak.ch (smtp-1909.mail.infomaniak.ch [185.125.25.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic317-38.consmr.mail.ne1.yahoo.com (sonic317-38.consmr.mail.ne1.yahoo.com [66.163.184.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 759741FF7C2
-	for <linux-security-module@vger.kernel.org>; Wed, 13 Nov 2024 15:21:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5726B13D8B1
+	for <linux-security-module@vger.kernel.org>; Wed, 13 Nov 2024 18:16:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.184.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731511313; cv=none; b=eJkTI5Kx2vlYxFS24hG4daLsAwT12HBLYn0NTg22J7vp5Q7/9qtRVrbTczV4vmCifrIxb3U+MFEnblep4BkqNBRGNK0tRso852+nS3OtXRxmjg4rz3VnvpArO6ygjjI+ECoJWYe8AuPV0A52H/mSmaqhI/UhL3zcDw2HtlIDlV8=
+	t=1731521797; cv=none; b=S6UVbPahvJZGCkDi92vqTe4wiGnkcQuo53Mj13leRGsfgKE8MrenP3vKBQiJhcCDYqE1sxZzdT9/qF89TGRhbwFAiotlRGQmHdxU58vd/y7epKyrR1Lvnkp5yVmHYI3hwTR0qANt4nW4U4QOMhHlrDZFBO5vxtA0i78chc3xDCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731511313; c=relaxed/simple;
-	bh=oQqLj+VTG52Pd8JpuUEISAjkJSUrTrwueurA5xER+Qs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R2AJgsSBAhY2m+MeoZRdkMp4UMN1EQN/H1oaAkIaNYHFW6pJn4J3LWS9GdyXHg+5WkN52OZuR61XbIWrEc9tkTddMeLMtIlKg5ThVE3466uUzWF2v7p4GQfXzrGYwLNSt2hVlORUyyl8oeO/iPnMWZhzcOG0H2LIoEmcazmeRd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=ZaXq2ZJ7; arc=none smtp.client-ip=185.125.25.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1731521797; c=relaxed/simple;
+	bh=98TZmzT2MooiEezIeSkgUrdFZXX490rOVv6Tto3W0wQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tUfkNxqVEGdxy/RQK54tvF4uj9hDhDOT3AD58+0p6wikcluEJ1bWoCYe5ldaRrYb1wESnmCnkf8zh+9RGy7M0MWwXClPUtf4uLoVtJqJfKi+4HPPevLZ+xuDMgpvg5wXHaeAu8DseM0nVoSXAl0/C5qU1G/C9CDCEmASlxNd7f0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=BBQGjNFK; arc=none smtp.client-ip=66.163.184.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="ZaXq2ZJ7"
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XpRpN2n0nzpPM;
-	Wed, 13 Nov 2024 16:21:48 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1731511308;
-	bh=jjAbEbcMySB+5Dq2slVS7gS9u4ZlQ2TKG5y+0STveNU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZaXq2ZJ7B1AxWTWiQ6a8wWVNQ+PYgUTTajpNs6/os/UM5l6BwL2w2L69DnzrLQ+Xu
-	 uynFLpcTj2mvRQak4nYaVr02NmIFyPITeB1LWzTHB5DWDrbokFJ75IO2vmoQr4U/L7
-	 QsYd6Uy++HS//FMbOxYqwlE1v6KmLauZTJK+AsGU=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4XpRpM3hdMzbrt;
-	Wed, 13 Nov 2024 16:21:47 +0100 (CET)
-Date: Wed, 13 Nov 2024 16:21:47 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Francis Laniel <flaniel@linux.microsoft.com>
-Cc: Eric Paris <eparis@redhat.com>, Paul Moore <paul@paul-moore.com>, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, "Serge E . Hallyn" <serge@hallyn.com>, 
-	Ben Scarlato <akhna@google.com>, Casey Schaufler <casey@schaufler-ca.com>, 
-	Charles Zaffery <czaffery@roblox.com>, James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, 
-	Jeff Xu <jeffxu@google.com>, Jorge Lucangeli Obes <jorgelo@google.com>, 
-	Kees Cook <kees@kernel.org>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
-	Praveen K Paladugu <prapal@linux.microsoft.com>, Robert Salvet <robert.salvet@roblox.com>, 
-	Shervin Oloumi <enlightened@google.com>, Song Liu <song@kernel.org>, 
-	Tahera Fahimi <fahimitahera@gmail.com>, audit@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH v2 12/14] landlock: Log TCP bind and connect denials
-Message-ID: <20241113.oThieDiehaa8@digikod.net>
-References: <20241022161009.982584-1-mic@digikod.net>
- <20241022161009.982584-13-mic@digikod.net>
- <2345615.iZASKD2KPV@pwmachine>
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="BBQGjNFK"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1731521795; bh=nK3uVT0icuqVtInCsSNHN4I+MCkUBZj85NQuNcPcveQ=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=BBQGjNFKCOrMnODOnGG382npnC7ZeH5NRQmjZdBM2kHpbeqVdxERVJ7Tvii8qj5k3CL6usuj3yrdh8PWWZ+8oDTV/6HZ3jWJmLgrkL9dg9GZG39gHpdfmlq+kOnkfJkmXu1DbA3H0UrAKkSdQfy2D1+azEpjJJfNiSTKvV6ckIjasLm8hMbOE48vQ8hZg/u07WzBpYMlyAaqzpazPR7sNRaPQ/Bi0J3sCKfdhd3zY2TrmBQiFdmrvOHQXgjv4MZM6haF1lRRIzYWzBeyLzcbbXIOqXyO0hdd+U2IgazYm3WZgJKH7B+lanAcmdE/5eRJSR1a0Y502kXDFe+xVlhyMA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1731521795; bh=HXy4Rm0cyxkLl65lHjMFR9dj9o4XyUuMwUmxUB8cbEf=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=NWcqtkVTzKFxD0y4gLPuT9v0aOg9KdkHHSBMXHgEbbSq/u4G1lw+Q+9ttOwFvpyd5FCSOSMA5T9ZKRW5WQMwh/zJI0QjURl+t/BMMIHu2xYLRZjnBIX0UeZ78J5OiQtcsuLqezDkxqpBupksIyGUW4io92XKBYnZ9e6uf3MWKEUW1y49b4JokTOC0Yof5H+2XU2adcujv3dws64FRxSaKgwLzdY1a0MtalW2H9z1Ftv5RwYUt4FWNUEFTbEoX/f/znIQfqxp24NbVgx7/OaHepv8b9+Z+9L5Octohsg0GXBt7BPZJow+MYW4sYZO6QGgIchybACPlhl4ocJZBKA02Q==
+X-YMail-OSG: Uxjk32kVM1luneeRTquscdUZ4LgKFH.IAkCUxC5LV.UP.gulMSYd04ah4LUwcU0
+ LD3.wRosaVEzYtfAkWU7Z_LTYnQ06y_oxjnJmpDKzhMCWg2njhnkUHtCgITevk6nyHfbi5UH2NOU
+ 2IxCzvy1k4ZlfLkvf2jIFDytUpSSOYI7k3c.6JGqQjF.8V5kadDoX8nejGdOVIB8rOuLeA.7pAmX
+ zMZ_X2NpJBcO8kOZpCFDte2lwLxsWn4Sct6mXUDJt7_y5.FZXQHx0my9ULIphC2sZRHvAukfYO9P
+ s2Y19pY_Onm5JTnCqj4Wj8xFKcI9ku6bdZLSqQCmaIFTLSrrqfZ8brcTUW8gRQQ.28yCrJhBO7fU
+ KYxUUMApjUTiLDj4Nwt4GR.B_BOfcH7QK5.kQBQ3HFYmhn2XYIURB7cXmyP8xYlK0qqTSJYPTfiX
+ w0vQ4xksf_WkGwjXZCG6AukyhckFdWTXLMAhw8GoyJ9Qsspx39XR8HqioGmxM30yzdmIyIybZUkt
+ WCU6blPIEextXkCMEJDDf_8JrCq4zSEaWlqU3wC0B9FAOTQkrLDhoZNcqrXxmzkx7fxst.ooBHxn
+ EsXfJMegnFMoYeZna9WALp9v8TVFiKniRPioMjmR9RGcdolK3QzxDdddO0_EOr1TCSoFk1gE..Iu
+ 6mSRCiOctTPG9ZdDhZ6PPLfn.PUHHfrRncIlVtTxf_g6WmKo_lJXorFe.ginNVOWXt4m1sW77FOM
+ xbg.C5nI9lDIVCFjhp6uRbociKZtOYdhhXzqKYPYVwgXhRjznQX4jp9QuWWtycetTQRi8l1DjCeG
+ CAWgMGQDsK1aYkEhamOF48xjHFnuH8x7Tby8NZtrZ1g4IS1OgRN9l381_35EnPp8hYXFmvKzRSLw
+ Cu8OvKIhjvpeXJqxOHH5XY4iJNNMxvgB29_rMPxotTzWIbUmUshaQwLuHIkZgC9GFFRuXpHDqBnW
+ WShy4OBMVtxy8PgSa7oLGN7VO7bV6vE0K4.srHyEdQb9YTrEYUSvUmcrKRgCexTusTzp9NuTl8LS
+ _tLM6OcOMMyVVj00GRip_5yF0qqv5lTI5OAzos73R4WkyT6d1BElDysgjrokJnJqxn8IAjp8rkMF
+ dZIYsaagoaBwwrp_KpbVBTGTh8RtLU5wcqSS0pNSoz2MdMIIlUCU_li3omFvzLuvv.eqExNoffwJ
+ 9I_sJB9uvHsSVjRjb0XIuc9awy0m_twhjpRajB4I9rXYiHPYZG_B_YpNjiD9ZwGWkz6xqgwknNvS
+ jbwNXzqxvJBniwa4won.ARKeNwvJPKrppCyMohuH49R_4CeyCwiUpdv09sTjke.tbhxW1GYqqGMd
+ 7.7vrE5_ahv_zbFAdlvS9Fx5HwHP5niboB2eUNCdTNAIvX_Q7QclcWZeuEDK8gaMRA8rJ3NscHey
+ iOvAYcDkwHWSaBfY4a598zmt1yrwmTsrch0L1jkwQaxuN9Twpxq1szlzv6e66RtrDZsZQd.2fP7x
+ xRP__yFGS4mxecz7GjTVA6PzGR4ZCWke0jGnWK8ip8fCZwbdRVdkt1ewz5o0MpikZ1a_Tq9_cN00
+ AidJstdHNRuQp6DQp9pLPiHnVaM8fOk9npgbWM.MbyBfJK.B5tYVK3naQRhUe_sDsOALGufxY4PQ
+ KP34cqMdSNvN1_cJuJDK0eLpQAs5RyjM4Pf3mFizK2th4jlDEBgfKQOHgC3yFzcFOSsDnX7vKgcE
+ 4kCdfpnEPX7R2Tim0tkpJXD3sGFtjYxE_PzKOyFeBeEN3wM2EdzjKDGWIXZVSMnfFVNngiCrrB9N
+ 1INigPvBNyKnbTNipkn8NcBaRQUQcabmuODql7VM6kN9EjVVP6JpxT6wdxvmAnXibOyKCi.S0JVG
+ krRtnxnSxNT_xA_fi5LEOxzWCW31NL9fluxf3DrfFGmXtD.x4Ez4m.F.qBWfOixt1w3VjXXtp.Vm
+ Tw59EGEFR4FMnWCG94LAgA7MPLyWSsEaQrqr0d9y3TPemyTvmywQSnJtrECtSbyyPq3019SZ6McB
+ .D3zJG.np3KJBCS_2zqwY0JxsZWRXQ828z0aVjIeRxYvfX4UUK8SAZrOQo9kxUhaRkeLdmJmyqfQ
+ Q2e1YQ4U5VlEBf4s_TxpbQo3sV_LL2pJEdOe.wHkDeSTG_KOkS.qihmw3kv2a0j83aM_n3TmGa.t
+ EmczdJBbd7lxkO.UrBsxA3Ckd66HZEyAWMewm3VKLKbUiUXPfCE9fOmbJyUg3ZMTpawiWUVAtKG.
+ zacAbSPsGR9jyeME6WTudQxkDth.eSqgrS1sLdY94lV4KhLS8vMzxdCUhtM5bx_spqA99NTgX.fw
+ -
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 523fd01a-36c6-4113-a0a5-f206da02e08a
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic317.consmr.mail.ne1.yahoo.com with HTTP; Wed, 13 Nov 2024 18:16:35 +0000
+Received: by hermes--production-gq1-5dd4b47f46-ps69l (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 3a47f707b068f3c37ad3e14e6ceee550;
+          Wed, 13 Nov 2024 18:06:25 +0000 (UTC)
+Message-ID: <8c86c2b4-cd23-42e0-9eb6-2c8f7a4cbcd4@schaufler-ca.com>
+Date: Wed, 13 Nov 2024 10:06:23 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next 0/4] Make inode storage available to tracing prog
+To: Song Liu <songliubraving@meta.com>
+Cc: Song Liu <song@kernel.org>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-security-module@vger.kernel.org"
+ <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>,
+ "andrii@kernel.org" <andrii@kernel.org>,
+ "eddyz87@gmail.com" <eddyz87@gmail.com>, "ast@kernel.org" <ast@kernel.org>,
+ "daniel@iogearbox.net" <daniel@iogearbox.net>,
+ "martin.lau@linux.dev" <martin.lau@linux.dev>,
+ "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+ "brauner@kernel.org" <brauner@kernel.org>, "jack@suse.cz" <jack@suse.cz>,
+ "kpsingh@kernel.org" <kpsingh@kernel.org>,
+ "mattbobrowski@google.com" <mattbobrowski@google.com>,
+ "amir73il@gmail.com" <amir73il@gmail.com>,
+ "repnop@google.com" <repnop@google.com>,
+ "jlayton@kernel.org" <jlayton@kernel.org>, Josef Bacik
+ <josef@toxicpanda.com>, "mic@digikod.net" <mic@digikod.net>,
+ "gnoack@google.com" <gnoack@google.com>,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20241112082600.298035-1-song@kernel.org>
+ <d3e82f51-d381-4aaf-a6aa-917d5ec08150@schaufler-ca.com>
+ <ACCC67D1-E206-4D9B-98F7-B24A2A44A532@fb.com>
+ <d7d23675-88e6-4f63-b04d-c732165133ba@schaufler-ca.com>
+ <332BDB30-BCDC-4F24-BB8C-DD29D5003426@fb.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <332BDB30-BCDC-4F24-BB8C-DD29D5003426@fb.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <2345615.iZASKD2KPV@pwmachine>
-X-Infomaniak-Routing: alpha
+X-Mailer: WebService/1.1.22876 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Fri, Oct 25, 2024 at 05:25:45PM +0200, Francis Laniel wrote:
-> Le mardi 22 octobre 2024, 18:10:07 CEST Mickaël Salaün a écrit :
-> > Add audit support to socket_bind and socket_connect hooks.
-> > 
-> > Audit record sample:
-> > 
-> >   DENY:    domain=4533720601 blockers=net_connect_tcp daddr=127.0.0.1
-> > dest=80 SYSCALL: arch=c000003e syscall=42 success=no exit=-13 ...
-> > 
-> > Cc: Günther Noack <gnoack@google.com>
-> > Cc: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-> > Cc: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-> > Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> > Link: https://lore.kernel.org/r/20241022161009.982584-13-mic@digikod.net
-> > ---
-> >  security/landlock/audit.c | 11 +++++++++
-> >  security/landlock/audit.h |  1 +
-> >  security/landlock/net.c   | 52 ++++++++++++++++++++++++++++++++++++---
-> >  3 files changed, 60 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/security/landlock/audit.c b/security/landlock/audit.c
-> > index 898c95ebe847..c31a4a8719ee 100644
-> > --- a/security/landlock/audit.c
-> > +++ b/security/landlock/audit.c
-> > @@ -41,6 +41,12 @@ static const char *const fs_access_strings[] = {
-> >  };
-> >  static_assert(ARRAY_SIZE(fs_access_strings) == LANDLOCK_NUM_ACCESS_FS);
-> > 
-> > +static const char *const net_access_strings[] = {
-> > +	[BIT_INDEX(LANDLOCK_ACCESS_NET_BIND_TCP)] = "net_bind_tcp",
-> > +	[BIT_INDEX(LANDLOCK_ACCESS_NET_CONNECT_TCP)] = "net_connect_tcp",
-> > +};
-> > +static_assert(ARRAY_SIZE(net_access_strings) == LANDLOCK_NUM_ACCESS_NET);
-> > +
-> >  static __attribute_const__ const char *
-> >  get_blocker(const enum landlock_request_type type,
-> >  	    const unsigned long access_bit)
-> > @@ -58,6 +64,11 @@ get_blocker(const enum landlock_request_type type,
-> >  		if (WARN_ON_ONCE(access_bit >= ARRAY_SIZE(fs_access_strings)))
-> >  			return "unknown";
-> >  		return fs_access_strings[access_bit];
-> > +
-> > +	case LANDLOCK_REQUEST_NET_ACCESS:
-> > +		if (WARN_ON_ONCE(access_bit >= ARRAY_SIZE(net_access_strings)))
-> > +			return "unknown";
-> > +		return net_access_strings[access_bit];
-> >  	}
-> > 
-> >  	WARN_ON_ONCE(1);
-> > diff --git a/security/landlock/audit.h b/security/landlock/audit.h
-> > index 320394fd6b84..1075b0c8401f 100644
-> > --- a/security/landlock/audit.h
-> > +++ b/security/landlock/audit.h
-> > @@ -18,6 +18,7 @@ enum landlock_request_type {
-> >  	LANDLOCK_REQUEST_PTRACE = 1,
-> >  	LANDLOCK_REQUEST_FS_CHANGE_LAYOUT,
-> >  	LANDLOCK_REQUEST_FS_ACCESS,
-> > +	LANDLOCK_REQUEST_NET_ACCESS,
-> >  };
-> > 
-> >  /*
-> > diff --git a/security/landlock/net.c b/security/landlock/net.c
-> > index 27872d0f7e11..c21afd6e0b4d 100644
-> > --- a/security/landlock/net.c
-> > +++ b/security/landlock/net.c
-> > @@ -7,10 +7,12 @@
-> >   */
-> > 
-> >  #include <linux/in.h>
-> > +#include <linux/lsm_audit.h>
-> >  #include <linux/net.h>
-> >  #include <linux/socket.h>
-> >  #include <net/ipv6.h>
-> > 
-> > +#include "audit.h"
-> >  #include "common.h"
-> >  #include "cred.h"
-> >  #include "limits.h"
-> > @@ -56,6 +58,10 @@ static int current_check_access_socket(struct socket
-> > *const sock, };
-> >  	const struct landlock_ruleset *const dom =
-> >  		landlock_match_ruleset(landlock_get_current_domain(), any_net);
-> > +	struct lsm_network_audit audit_net = {};
-> > +	struct landlock_request request = {
-> > +		.type = LANDLOCK_REQUEST_NET_ACCESS,
-> > +	};
-> > 
-> >  	if (!dom)
-> >  		return 0;
-> > @@ -72,18 +78,49 @@ static int current_check_access_socket(struct socket
-> > *const sock,
-> > 
-> >  	switch (address->sa_family) {
-> >  	case AF_UNSPEC:
-> > -	case AF_INET:
-> > +	case AF_INET: {
-> > +		const struct sockaddr_in *addr4;
-> > +
-> >  		if (addrlen < sizeof(struct sockaddr_in))
-> >  			return -EINVAL;
-> > -		port = ((struct sockaddr_in *)address)->sin_port;
-> > +
-> > +		addr4 = (struct sockaddr_in *)address;
-> > +		port = addr4->sin_port;
-> > +
-> > +		if (access_request == LANDLOCK_ACCESS_NET_CONNECT_TCP) {
-> > +			audit_net.dport = port;
-> > +			audit_net.v4info.daddr = addr4->sin_addr.s_addr;
-> > +		} else if (access_request == LANDLOCK_ACCESS_NET_BIND_TCP) {
-> > +			audit_net.sport = port;
-> > +			audit_net.v4info.saddr = addr4->sin_addr.s_addr;
-> > +		} else {
-> > +			WARN_ON_ONCE(1);
-> > +		}
-> >  		break;
-> > +	}
-> > 
-> >  #if IS_ENABLED(CONFIG_IPV6)
-> > -	case AF_INET6:
-> > +	case AF_INET6: {
-> > +		const struct sockaddr_in6 *addr6;
-> > +
-> >  		if (addrlen < SIN6_LEN_RFC2133)
-> >  			return -EINVAL;
-> > -		port = ((struct sockaddr_in6 *)address)->sin6_port;
-> > +
-> > +		addr6 = (struct sockaddr_in6 *)address;
-> > +		port = addr6->sin6_port;
-> > +		audit_net.v6info.saddr = addr6->sin6_addr;
-> 
-> You set this for all access_request, but not for IPv4, is this done on 
-> purpose?
+On 11/12/2024 5:37 PM, Song Liu wrote:
+>
+>> On Nov 12, 2024, at 5:10 PM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+>>
+>> On 11/12/2024 10:44 AM, Song Liu wrote:
+>>> Hi Casey, 
+>>>
+>>> Thanks for your input. 
+>>>
+>>>> On Nov 12, 2024, at 10:09 AM, Casey Schaufler <casey@schaufler-ca.com> wrote:
+>>>>
+>>>> On 11/12/2024 12:25 AM, Song Liu wrote:
+>>>>> bpf inode local storage can be useful beyond LSM programs. For example,
+>>>>> bcc/libbpf-tools file* can use inode local storage to simplify the logic.
+>>>>> This set makes inode local storage available to tracing program.
+>>>> Mixing the storage and scope of LSM data and tracing data leaves all sorts
+>>>> of opportunities for abuse. Add inode data for tracing if you can get the
+>>>> patch accepted, but do not move the LSM data out of i_security. Moving
+>>>> the LSM data would break the integrity (such that there is) of the LSM
+>>>> model.
+>>> I honestly don't see how this would cause any issues. Each bpf inode 
+>>> storage maps are independent of each other, and the bpf local storage is 
+>>> designed to handle multiple inode storage maps properly. Therefore, if
+>>> the user decide to stick with only LSM hooks, there isn't any behavior 
+>>> change. OTOH, if the user decides some tracing hooks (on tracepoints, 
+>>> etc.) are needed, making a inode storage map available for both tracing 
+>>> programs and LSM programs would help simplify the logic. (Alternatively,
+>>> the tracing programs need to store per inode data in a hash map, and 
+>>> the LSM program would read that instead of the inode storage map.)
+>>>
+>>> Does this answer the question and address the concerns?
+>> First off, I had no question. No, this does not address my concern.
+>> LSM data should be kept in and managed by the LSMs. We're making an
+>> effort to make the LSM infrastructure more consistent.
+> Could you provide more information on the definition of "more 
+> consistent" LSM infrastructure?
 
-Indeed, this is a bug, I'll remove this line.  Thanks!
+We're doing several things. The management of security blobs
+(e.g. inode->i_security) has been moved out of the individual
+modules and into the infrastructure. The use of a u32 secid is
+being replaced with a more general lsm_prop structure, except
+where networking code won't allow it. A good deal of work has
+gone into making the return values of LSM hooks consistent.
 
-> 
-> > +
-> > +		if (access_request == LANDLOCK_ACCESS_NET_CONNECT_TCP) {
-> > +			audit_net.dport = port;
-> > +			audit_net.v6info.daddr = addr6->sin6_addr;
-> > +		} else if (access_request == LANDLOCK_ACCESS_NET_BIND_TCP) {
-> > +			audit_net.sport = port;
-> > +			audit_net.v6info.saddr = addr6->sin6_addr;
-> > +		} else {
-> > +			WARN_ON_ONCE(1);
-> > +		}
-> >  		break;
-> > +	}
-> >  #endif /* IS_ENABLED(CONFIG_IPV6) */
-> > 
-> >  	default:
+Some of this was done as part of the direct call change, and some
+in support of LSM stacking. There are also some hardening changes
+that aren't ready for prime-time, but that are in the works.
+There have been concerns about the potential expoitability of the
+LSM infrastructure, and we're serious about addressing those.
+
+>
+> BPF LSM programs have full access to regular BPF maps (hash map, 
+> array, etc.). There was never a separation of LSM data vs. other 
+> data. 
+>
+> AFAICT, other LSMs also use kzalloc and similar APIs for memory 
+> allocation. So data separation is not a goal for any LSM, right?
+>
+> Thanks,
+> Song
+>
+>> Moving some of
+>> the LSM data into an LSM specific field in the inode structure goes
+>> against this. What you're proposing is a one-off clever optimization
+>> hack. We have too many of those already.
+>
+>
