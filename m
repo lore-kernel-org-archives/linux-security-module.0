@@ -1,61 +1,62 @@
 Received: from sonic308-15.consmr.mail.ne1.yahoo.com (sonic308-15.consmr.mail.ne1.yahoo.com [66.163.187.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A5B617A583
-	for <linux-security-module@vger.kernel.org>; Thu, 14 Nov 2024 17:15:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01ADD262A3
+	for <linux-security-module@vger.kernel.org>; Thu, 14 Nov 2024 17:39:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.187.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731604531; cv=none; b=EItTMUvGVdHTt4iCUewTG0ITq9uYyO6euN7+cj8Yd9d7AIRFOtD64z0ugHiaIHsZ6O/FFOOvhVeu9YrBjcXdhLsprToqZeZFytJPxyZEkYg+00NwdlZehD86Tx+lDTf01siUKpgaLgaIkBjiqppaiXU0M1x0G27WiDfMGcoXcbE=
+	t=1731605995; cv=none; b=mLefHm8imHbQNUcKqRSJFuGgom6VVAbl3uYTnNhk4trfoASZEOIlh7XSfpLGUFWA0wzeaN8oRcOnAIRJ/wsisz05sEbN7uOQaDqXwDXTXyDYytjPMsSut4BpCASFHRAAi5EJeBZnQkuhu2W3NymESMxq81dz3S3V8t6N58VtJ/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731604531; c=relaxed/simple;
-	bh=225Xg3lGtzU2suqnuMm7mLYtTLLYNlKBn9V7o6ahfHY=;
+	s=arc-20240116; t=1731605995; c=relaxed/simple;
+	bh=0Ri26y6BNd727u8kMVaoNzmyXUjeTT1xZXrJxlQ7Tls=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J2TLOnecsEd4xyoMrtd7QAyu8GxKgOiiwJHsAGhDSYerudbv0IqLflQCVRaveUmU50fx0pUOaejSdZxIbMFDKezMmNOggNTklK+deQQEZq9njKDy6ck6WyZ1sQe5OYaMHKpROJN6QWBgCkTql4I6XOpni+nWDz0M5IdkLUFnZR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=WZlyjAho; arc=none smtp.client-ip=66.163.187.38
+	 In-Reply-To:Content-Type; b=mKsS1agUOwbd2x/IfBe+GwMTbMxWRq5ShTm6C0JUaVsUE71HaebSlBllTiBP58hllWxCEt0BOPNLcMkmvBKhx6482gKCWcD76R6Wh9PE1QBEIDnFZGjL8uYAZjwnIvHPl0uoRnwbxquyX7YLMrxTU8+p4RmVskT6F5jCzPH65uI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=TmUYOHke; arc=none smtp.client-ip=66.163.187.38
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="WZlyjAho"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1731604529; bh=225Xg3lGtzU2suqnuMm7mLYtTLLYNlKBn9V7o6ahfHY=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=WZlyjAhoITTdmdFl/LoUXwK1OmKW/vQ5u0sl8ST2nEvCbZWP+Efo55ap5tSbed/hNvrAUpWc6QnIo733poixWy7L8UfYtVDbRcuxECrFlz2efuDNdf0xHzN+mrTtIkeqFvd4XvI4zR8OMLUPyFmkdwq87HisQKv9MYvfhhfpX/TiZKb1kp3ifIvAchGwGMFB8xavBTK6APjeZbAQSCAsWmZYXLNL8c3F9fuJf3qeQ+t1gLcuxCwAp4D7Y9AElbi+dbJ0U1CZMlGarGCUE5BtXPqHwkvVp8d66lYGTYK38R40JFgnHifhcFB9XbKiUuO6M2Hpdqq5d6632Wwvjlz8KA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1731604529; bh=slUQ8pPryvGbs5G7k+PnI+/wqQ+1iUc8Yxhn/tBN3NQ=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=GVAKdkEG0z40UM18j4a0K6qP3wBqm7g6FEYLe9EK00ODzEJuOKIW2xRNt50UCcgk2PSVw9Ycf1HzrQm1oKmZ1IFx9y9nRQ/xZFkhXF0hoac1F6Cs96k1oBj0ReyDIMPnRMa+pOipM8xl2gmPSdy7rYBSFktjd54aRC885Ql10wMSvNLmhsIeg8De1oqxB0ZQYFpYZ3/HzbB4uc6pXtP/449kBcQaWAE9ZYSI0jyAwjEBXZAAfHiNXPo+FJAmdXBa1mDS18lH3oh+6F+mKhoWe+J/XqQnJy2B4TmSdQuffkOuSualRkf2re/tllcPGB0IIyREWIxe4aD18ko60cytfA==
-X-YMail-OSG: F_SLC2sVM1mL8EeQF2d1knzo_cGXLETriYy.ZIgaCj.i4h2Fc..ajxb8d81yZt5
- ohHogactWDk0NJ6sMVmlgvRhq6Nnt.H_gUiqOF_ga2Gm.gPjk0BXZTV.LFRGF8K0NdrPvpadV8LP
- RvHjE3c7AM3COGDw._RmZj6YtiXZvxXsUfF3gJeU2vHx0uvAytZAdCdHEWaDeeCerosUgA0u.M9t
- D7jLRPeNYTAouzOM7hhHA0pmGAGqIVSisjjjhM1_41srcy84KFIiKzYsFcK1BYyYzLf7GpbkPWTk
- zhxgpkyIHtG9nCQm_knKdbXNNmEuTikTz02vtZpSk_BRghC2b.6e4QDxRbQBKM51JBM8MzDaGWG3
- MJeEzO7lgDfrcgXJD1AU2fiPnkG4smwMtEC13PH2Rz2ZVNtv6hPjF2LKTmiaKO0Qh_nu9FPHH95o
- MCLkv1gxyHVKJ1cfENcZ6dABrpZdrHpG8RO9ZPM2.mfftTNCdqC4LiNavrLm7zPV7.faheXnsCQW
- pXgY7dLpbesNrpreD4ekHZJaEmi8K1aqsMeCxcrJwdLxhObvqLvgtRDxmJtQZnnc9nYefistTpG6
- i.NN49pRZNaoNa0FT8fVGErJtn_4DSa.aUXAuSOIZZ4KDtj0Opm2rNZt2ga8Ub.sXUZhwVdDB_C5
- tOu38aNfTSsitIgVRaLvBFwxF.Fl8IcyZZa692AIylgTJaSIXRD7DMEJgzU1e3rtTkZ9jQhoaa4M
- jnP68V.iNEgkPhlkBj7MkpLRdxrl7C1J5SQ6gy7FEVrQZgyMagMoKudLj9ppctdXkoRPd6LZnqGZ
- LCNZA.l53tOlu.6zfZNkUKrMPiHYNk8CfjvUCkLu8s8YYBN9Vk6EgCxCi4EYIzldRQYWzV7Ui7c.
- cYJfb4QOgdRGeF1rTs52PCuqm86f0.UYBM_nXqMLsmGC5jtGxK8EpS4LZjD0HQQhegJrpjbAkR4A
- 6sI3hKm.7I2wHQ.3nRfOX1QGDFLQDd3l7LuptR90n7DN8c91BqNqPnSub7YeboYFS3e5VkaTK6oP
- DpRE8CG3vBpyImW35lmCirjeXUFXALovT9E3nUcg7quN440G_pc3.XZZDiDPFs7_UmtefjBGlj10
- sZa9CPQCFO0wHVvofP0HpfMG3cid1BhAcKMEN55ZeFUA_gdj8nJcvsKY.gpC0aydlCnwBH8j2yck
- 2BnfZsqfu5CrTIf1.YM03MsC7.QVtXtPhRKRef5TI3OnGtqwFJvnm2u0nzuRRXcSTksD6BL9iU9D
- EUjAxEDo3hyD6LUBw2gynhAKhXX7pVN1k5xV9.Zr8cekcNVHEWM9D0KqXaSe04FTIW1nK2C6BfTf
- jCFNbQCb9VySqRqTQuJMygVu6CozU3PctL1Gfu_6xcu8Nr1pAe9wKeZI.6DlxJk1g9fYiwafon2n
- 5zB4tGkB10aYGJ0TywzminM7qTVgtpbM15exNXSvXf_NIRstXpeaO8Gih0GoZevCmDJq1nZr_VR2
- 43pZe69p8WW0Zf9OMVpMYG67QaT84c9nPeDVkBeJl20dme1nUNM7MDosoh2kA.Rjm9fKA6vQsLs4
- nVgap7p8jlWR5RzRoXC7NfgHLpyg8lOIF8NQl9u6g2cXqMiR74SzosU1uKoLPx4S7umOqt1joRF.
- YdChiQHNfrbSqkQTyACEzL3UIQ9MtR1qBcJMFa.XIJinpZUTJp8LwaIh5_1_6lLiZJCUxp_g5RHP
- XYPdUr3lZ5SrK.fR7.fpB1HUbQXnY7pEPixduS0ZJdqWuq0O3g57CnN0BIMSXfUw4qW2wU5JIMVp
- 2JhUfrN6i1eUAlweQ9TOxKdqrXzCjyJGHT_suK.fnhnzKPrhKXRy_aykDvcC8WQCvR2ifwy0Te9B
- hBzXPDmrIx6HWArhWAZYSmDA2e.0wJdwn1mJdVZ8p_zK8yWqQNIDoQoE64gWQ_sXvjlfiEJhxsna
- f9IGn1izZP6vXTli0AGKAjYcPz1B23SK7sryUa4ixp.A7ogyEn.CadaBAV3iwml6OlQPMuYlWvjb
- i99vOPO.zLJrG2QW5xYCRdYavNTratonmPINnoGKa52nI7_EXy7Q.k2jjeSmIGcTjKzRFQKqhEwB
- lYw_p7wg7yVjJ53VI4DPVd3QBvqEcgNhTgyWBuQoizOQJ1GtlHKZpuMJmum2vkhTGGsY.DCDuFVo
- KpdBOt7yUS6c9UoDoHROt1ocweYcmoV_U9YGWiTcceNbVKSENmWvBPrG4NENvEoDaP7beXRhl6DU
- EJTdeKicNyLDQ59TF6tyq3f0yhkASC8P_kJ9r9FlZUmtqYw--
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="TmUYOHke"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1731605992; bh=263+m7XTl10hNqcF/0th/BSfkHJbQiC6Xwiw+AsLuFk=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=TmUYOHkeH0yYuMyMxji65Z4pI8IroL+otfWphrilXrck9S//cv8BuY1jmGyOc+XvY51Ef+hhiWX8shcF3q2gbE3s8AsQkSaR8MNsbYDJ0wGqA2L/A73LPZqekzYKHfpvHtOq9GvrRAtTqlx7BRbbGGwjTkAlSrxkwwFMZbgNqPMnuWcxWHHUa1VXXlG1HlUZoSALPFfv0DIRYFH/psbhuJSFyd46/WO35Zl6iF2RqcvOLKyN+lFKswWW+5iy2psmAiZOY6s/fKMZQkORf1rexp2LZ2Sbexz5KI2PHnbkYhTiQ6wIexO1yHpzygUynWjK8lMOjjpXVi6sg94FIPHNMQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1731605992; bh=A0h6mKBzruH4U+2bo0pZ/75pvRA9JWkhzj8Sh29N+tb=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=JjtwJq04Gt8Qo9LRCoxwtUdly2SZrGNGeVPv0if5dsNJ4Z8NimO1UrC0u3JNNEwulwoslimYqUWgIu1Iuiwzu7mNOfM8y0wrR8Opg3Y9Vps5B/cs2jOscCyOriW/t1220M8K3mzFWCXjtZr9vTkdmhMsfJl0w+AVuW8e4WksTMDqHEg1FMLitGOOSzubI+j3UoK8xbfFBPnA3clst9lsagSjavhNsnqQKTvBMb969okTPASnOc0O8byPSInRWMEjEMJHu2blIqleONw4n8o0Q7jRVYPsTfApbl/PfhwGAzYwEBR3IKnfzU//zwT95kY4NuRhGof2zInH2pNrpEoTGg==
+X-YMail-OSG: HeXyeTUVM1l145AB5nS_R73jMvyo1oKHYgE0ffzWIgs8pErH4mxLa6iSCn.o9HB
+ _62O4EqDuxAvZaVN0Ls2vCRSYTjb5ea3FBe4oTjOBp_Ynak3wENXPEQ6L3ZSMXMzz2EdGayke6iy
+ yuvm5PI1XEAUVuMzBlBrdvPKeWouAA3I4lkevvDO19Y9JpixgZ2sqjvyihZdkwmZqT2QDKChv..h
+ 63GyqoQQbeLcsONDXkQRdfk90vQFHHAiRn.9jBB0GFj2fCuueS3sNZ4Zg5iYAQGMBM8EoIw.jUrA
+ eaKPm5QDvZjdUg00aDHmyABrVdjpTDMrQt6cwv_20vwlZgmF7sKr_pMVy3sSTffblb7BGZ59w.xZ
+ FPRHXQbJdhj2kbA6vMofpdptNnIN5V1u4wYueT8BhkswqLLwf_1sKeqBTZ1yp0FEbC3rU91wMAVd
+ CJqlqEUfWw78aXa39RNke32qFf3C05TLxmtz7ydFdN61Y7HPj6.myUByH4n_HcAldepqybW3Vtwn
+ raAoGe8AzZYSicPn3Acg1MBqSkQXok.b6X89YGVCZB1GPntQhm0G3RwpLpHB4FByE4uXjTC9NvJm
+ ORGfsX6y7b3mNE57dxCcVXvBf61pbkqPIoWMApSabDY0jqN7a8m5N16K8eENmjJjgNGE1YB2G7Gd
+ t6JZAjB__qATXlpEYDxcF.wzx5HGQRFa.03vm2WONpfzL0KZMS.fKbRQlHXfjy8K4CVjUSfUvRze
+ dFre8UfnQRIfc80d0JZUUlHXfwashIgvtCeHPVMvK7BIaoywXphB9BivXsWaJDPp3c6qji1SSv3V
+ 9pKOqyZJ0bYNEFSRpFIcoIhxx3SdpWBpkCpWhYQuloPVd.L1JPUvk5GrTePcepubdA4cnlkqfIXJ
+ KpGJWyUX6uKl7EjYSY0S23AccKm5DCWBr21FCXh4kghR0Ly65nN4.G9XrCEPDhLV8x9Q.dTlXYFd
+ I_CvBh3g1Qnv_YT4aYjNrL824TfWRdE22Or7kQrKwlP.B0vSiwSCJ0XjnWmtooqBWtbusMSw.szK
+ F8lTxzVDNBGX9hW1ORzqLhM0Gd6ASK2cHTk7SdmhylRYmCwig05jt0IMFQ8FZVutuHJELUAW5Ulg
+ Uvw8b524F4XRVSPmf0O6i.lC42hpXZzB076FAs_.Eszu5Az7Jde2tReW4iAh6CYOYPUJbYaXDsbI
+ dUnQvdQaXfLhEb_Rf_wQtkOIT4mxFJAIwkLI_a9LnpiNQk1Fe0bsl0FQEHsWVP5455AjQLLSBvar
+ uOKi_FcI_lVt0hXApRuCdsZvdfOh.zHumvaCeCwxsCty2OTBsSFZu4INOpvqqNN4rMcnQH8_BDHC
+ RzJOQ1mLkul6ofhoEC8jhBLGFKbqPQMt_35VET9.znns6bPP47NIAgNMKakRQK3Aqvn4qo4KK7py
+ NiZxmWMsacY3bwPayHSENEFmrT6ZLlqM1bJMNE5OH8IlDJ3wCSGt8_LgR2OFrhjFS.O8M5CIffsD
+ 8cks25e9BOVlwZSWWeOBtY09_F2biy8vDjl4VunPJvMKInA388k9VB4Vhf42NQ1jXunS.NM6QLGB
+ SM3Aj7vvF0rol8WooiB8TZfALioEGZiy6ARV4F359fRJkflPVGhcVC1xCtLGpbJeVQ9B7eEhW6sF
+ 4TL75cZ.iiJ6DchYjGe6JrMMTSR08PtMAz8gbcqPSgvPZQU0orxsFvMcIisaIeShGk3PB5BxKjF6
+ Ss5ugUd4yRnUiaI_YrOutnvobpA0ptMqtTX5HHM5Qls0V48f_2j5BzMeEpFVTuiB62Cn0s_8LVC_
+ uR8cZQ.UIDDMMqZpV08rne.isV1F3H2BaOZyqlLEWu_6ZL2dIU_VAzbM95wQVp5HRB6cOObqLX98
+ wYdp8HLM4KBO6BoZGl8oFCKjiwPyzbUNg97Glr4gvzjUz0tq5PhHtNunSiac9R7bZNrBtFVGsaiT
+ MmNdAiSwvTI732oFOeVgZzb6zdGiYQL7o.UpgkWOP6SbnN.J1ER5OlUfpB4Eq26U.HnYtMypxiKg
+ 3RFJkZI1h__G7MXsgZumRfNQICYB94XKzxItbBDaNr_Oxguy5VIV5xpJXavAXtFpcgn3V72cxx7y
+ nXq0dOw9j.sznePAmPUu8lEJAamyiIVAcMRBgVyxgVbvLrtefhObrjX8QcWF2nQ7BdpcEViVz3EM
+ 0iWWC9G7me6esynGFjuuZSdpgWXfUTQPS2J12QJos5adC5xMrK6b48XSoY9QrP.BQOMZx9VM5x_B
+ Qae4RVmJeuKYdFKWfryEe6iDQP_9Nn7XtY4caGJkQr6VrgExhnVryKgLANl2r2f2x_gsWMI0FhMV
+ jxNEM.FE-
 X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: dc530b32-4640-4104-a80a-76b3cc4eac0a
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Thu, 14 Nov 2024 17:15:29 +0000
-Received: by hermes--production-gq1-5dd4b47f46-mb2l9 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 62a3195ceac711131de6021a88b7222d;
-          Thu, 14 Nov 2024 16:55:09 +0000 (UTC)
-Message-ID: <c16b7517-e490-48d9-a2b6-f0077cbb0eba@schaufler-ca.com>
-Date: Thu, 14 Nov 2024 08:55:08 -0800
+X-Sonic-ID: 81d03b63-939c-4e86-a69f-4777cd396e25
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Thu, 14 Nov 2024 17:39:52 +0000
+Received: by hermes--production-gq1-5dd4b47f46-9j75b (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID debdf0be1d06a72001b6043acb052466;
+          Thu, 14 Nov 2024 17:29:40 +0000 (UTC)
+Message-ID: <53a3601e-0999-4603-b69f-7bed39d4d89a@schaufler-ca.com>
+Date: Thu, 14 Nov 2024 09:29:39 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -63,92 +64,160 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests: lsm: Refactor
- `flags_overset_lsm_set_self_attr` test
-To: Shuah Khan <skhan@linuxfoundation.org>,
- Amit Vadhavana <av2082000@gmail.com>, paul@paul-moore.com,
- jmorris@namei.org, serge@hallyn.com, shuah@kernel.org
-Cc: ricardo@marliere.net, linux-kernel-mentees@lists.linux.dev,
- linux-security-module@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
-References: <20241112182810.24761-1-av2082000@gmail.com>
- <52cc8e51-9e85-465b-8ee3-63a7a0a42951@linuxfoundation.org>
+Subject: Re: [PATCH bpf-next 0/4] Make inode storage available to tracing prog
+To: "Dr. Greg" <greg@enjellic.com>, Song Liu <song@kernel.org>
+Cc: Song Liu <songliubraving@meta.com>,
+ "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-security-module@vger.kernel.org"
+ <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>,
+ "andrii@kernel.org" <andrii@kernel.org>,
+ "eddyz87@gmail.com" <eddyz87@gmail.com>, "ast@kernel.org" <ast@kernel.org>,
+ "daniel@iogearbox.net" <daniel@iogearbox.net>,
+ "martin.lau@linux.dev" <martin.lau@linux.dev>,
+ "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+ "brauner@kernel.org" <brauner@kernel.org>, "jack@suse.cz" <jack@suse.cz>,
+ "kpsingh@kernel.org" <kpsingh@kernel.org>,
+ "mattbobrowski@google.com" <mattbobrowski@google.com>,
+ "amir73il@gmail.com" <amir73il@gmail.com>,
+ "repnop@google.com" <repnop@google.com>,
+ "jlayton@kernel.org" <jlayton@kernel.org>, Josef Bacik
+ <josef@toxicpanda.com>, "mic@digikod.net" <mic@digikod.net>,
+ "gnoack@google.com" <gnoack@google.com>,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20241112082600.298035-1-song@kernel.org>
+ <d3e82f51-d381-4aaf-a6aa-917d5ec08150@schaufler-ca.com>
+ <ACCC67D1-E206-4D9B-98F7-B24A2A44A532@fb.com>
+ <d7d23675-88e6-4f63-b04d-c732165133ba@schaufler-ca.com>
+ <332BDB30-BCDC-4F24-BB8C-DD29D5003426@fb.com>
+ <8c86c2b4-cd23-42e0-9eb6-2c8f7a4cbcd4@schaufler-ca.com>
+ <CAPhsuW5zDzUp7eSut9vekzH7WZHpk38fKHmFVRTMiBbeW10_SQ@mail.gmail.com>
+ <20241114163641.GA8697@wind.enjellic.com>
 Content-Language: en-US
 From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <52cc8e51-9e85-465b-8ee3-63a7a0a42951@linuxfoundation.org>
+In-Reply-To: <20241114163641.GA8697@wind.enjellic.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-Mailer: WebService/1.1.22876 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-
-On 11/14/2024 8:25 AM, Shuah Khan wrote:
-> On 11/12/24 11:28, Amit Vadhavana wrote:
->> - Remove unnecessary `tctx` variable, use `ctx` directly.
->> - Simplified code with no functional changes.
+On 11/14/2024 8:36 AM, Dr. Greg wrote:
+> On Wed, Nov 13, 2024 at 10:57:05AM -0800, Song Liu wrote:
+>
+> Good morning, I hope the week is going well for everyone.
+>
+>> On Wed, Nov 13, 2024 at 10:06???AM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>>> On 11/12/2024 5:37 PM, Song Liu wrote:
+>> [...]
+>>>> Could you provide more information on the definition of "more
+>>>> consistent" LSM infrastructure?
+>>> We're doing several things. The management of security blobs
+>>> (e.g. inode->i_security) has been moved out of the individual
+>>> modules and into the infrastructure. The use of a u32 secid is
+>>> being replaced with a more general lsm_prop structure, except
+>>> where networking code won't allow it. A good deal of work has
+>>> gone into making the return values of LSM hooks consistent.
+>> Thanks for the information. Unifying per-object memory usage of
+>> different LSMs makes sense. However, I don't think we are limiting
+>> any LSM to only use memory from the lsm_blobs. The LSMs still
+>> have the freedom to use other memory allocators. BPF inode
+>> local storage, just like other BPF maps, is a way to manage
+>> memory. BPF LSM programs have full access to BPF maps. So
+>> I don't think it makes sense to say this BPF map is used by tracing,
+>> so we should not allow LSM to use it.
 >>
+>> Does this make sense?
+> As involved bystanders, some questions and thoughts that may help
+> further the discussion.
 >
-> I would rephrase the short to simply say Remove unused variable,
-> as refactor implies more extensive changes than what this patch
-> is actually doing.
+> With respect to inode specific storage, the currently accepted pattern
+> in the LSM world is roughly as follows:
 >
-> Please write complete sentences instead of bullet points in the
-> change log.
+> The LSM initialization code, at boot, computes the total amount of
+> storage needed by all of the LSM's that are requesting inode specific
+> storage.  A single pointer to that 'blob' of storage is included in
+> the inode structure.
 >
-> How did you find this problem? Do include the details on how
-> in the change log.
+> In an include file, an inline function similar to the following is
+> declared, whose purpose is to return the location inside of the
+> allocated storage or 'LSM inode blob' where a particular LSM's inode
+> specific data structure is located:
 >
->> Signed-off-by: Amit Vadhavana <av2082000@gmail.com>
->> ---
->>   tools/testing/selftests/lsm/lsm_set_self_attr_test.c | 7 +++----
->>   1 file changed, 3 insertions(+), 4 deletions(-)
->>
->> diff --git a/tools/testing/selftests/lsm/lsm_set_self_attr_test.c
->> b/tools/testing/selftests/lsm/lsm_set_self_attr_test.c
->> index 66dec47e3ca3..732e89fe99c0 100644
->> --- a/tools/testing/selftests/lsm/lsm_set_self_attr_test.c
->> +++ b/tools/testing/selftests/lsm/lsm_set_self_attr_test.c
->> @@ -56,16 +56,15 @@ TEST(flags_zero_lsm_set_self_attr)
->>   TEST(flags_overset_lsm_set_self_attr)
->>   {
->>       const long page_size = sysconf(_SC_PAGESIZE);
->> -    char *ctx = calloc(page_size, 1);
->> +    struct lsm_ctx *ctx = calloc(page_size, 1);
+> static inline struct tsem_inode *tsem_inode(struct inode *inode)
+> {
+> 	return inode->i_security + tsem_blob_sizes.lbs_inode;
+> }
 >
-> Why not name this tctx and avoid changes to the ASSERT_EQs
-> below?
+> In an LSM's implementation code, the function gets used in something
+> like the following manner:
+>
+> static int tsem_inode_alloc_security(struct inode *inode)
+> {
+> 	struct tsem_inode *tsip = tsem_inode(inode);
+>
+> 	/* Do something with the structure pointed to by tsip. */
+> }
+>
+> Christian appears to have already chimed in and indicated that there
+> is no appetite to add another pointer member to the inode structure.
+>
+> So, if this were to proceed forward, is it proposed that there will be
+> a 'flag day' requirement to have each LSM that uses inode specific
+> storage implement a security_inode_alloc() event handler that creates
+> an LSM specific BPF map key/value pair for that inode?
+>
+> Which, in turn, would require that the accessor functions be converted
+> to use a bpf key request to return the LSM specific information for
+> that inode?
+>
+> A flag day event is always somewhat of a concern, but the larger
+> concern may be the substitution of simple pointer arithmetic for a
+> body of more complex code.  One would assume with something like this,
+> that there may be a need for a shake-out period to determine what type
+> of potential regressions the more complex implementation may generate,
+> with regressions in security sensitive code always a concern.
+>
+> In a larger context.  Given that the current implementation works on
+> simple pointer arithmetic over a common block of storage, there is not
+> much of a safety guarantee that one LSM couldn't interfere with the
+> inode storage of another LSM.  However, using a generic BPF construct
+> such as a map, would presumably open the level of influence over LSM
+> specific inode storage to a much larger audience, presumably any BPF
+> program that would be loaded.
+>
+> The LSM inode information is obviously security sensitive, which I
+> presume would be be the motivation for Casey's concern that a 'mistake
+> by a BPF programmer could cause the whole system to blow up', which in
+> full disclosure is only a rough approximation of his statement.
+>
+> We obviously can't speak directly to Casey's concerns.  Casey, any
+> specific technical comments on the challenges of using a common inode
+> specific storage architecture?
 
-In the realm of linux security modules ctx is short for "context".
-I used tctx here because I was lazy. It would be much better to
-drop tctx, even if it means a tiny bit more change.
+My objection to using a union for the BPF and LSM pointer is based
+on the observation that a lot of modern programmers don't know what
+a union does. The BPF programmer would see that there are two ways
+to accomplish their task, one for CONFIG_SECURITY=y and the other
+for when it isn't. The second is much simpler. Not understanding
+how kernel configuration works, nor being "real" C language savvy,
+the programmer installs code using the simpler interfaces on a
+Redhat system. The SELinux inode data is compromised by the BPF
+code, which thinks the data is its own. Hilarity ensues.
 
 >
->>       __u32 size = page_size;
->> -    struct lsm_ctx *tctx = (struct lsm_ctx *)ctx;
->>         ASSERT_NE(NULL, ctx);
->>       if (attr_lsm_count()) {
->> -        ASSERT_LE(1, lsm_get_self_attr(LSM_ATTR_CURRENT, tctx, &size,
->> +        ASSERT_LE(1, lsm_get_self_attr(LSM_ATTR_CURRENT, ctx, &size,
->>                              0));
->>       }
->> -    ASSERT_EQ(-1, lsm_set_self_attr(LSM_ATTR_CURRENT |
->> LSM_ATTR_PREV, tctx,
->> +    ASSERT_EQ(-1, lsm_set_self_attr(LSM_ATTR_CURRENT |
->> LSM_ATTR_PREV, ctx,
->>                       size, 0));
->>         free(ctx);
+> Song, FWIW going forward.  I don't know how closely you follow LSM
+> development, but we believe an unbiased observer would conclude that
+> there is some degree of reticence about BPF's involvement with the LSM
+> infrastructure by some of the core LSM maintainers, that in turn makes
+> these types of conversations technically sensitive.
 >
-> You have to change this tctx for sure.
+>> Song
+> We will look forward to your thoughts on the above.
 >
-> With these changes:
+> Have a good week.
 >
-> Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
+> As always,
+> Dr. Greg
 >
-> Paul, James,
->
-> Please do let me know if you would me to take this through
-> kselftest tree.
->
-> thanks,
-> -- Shuah
->
->
+> The Quixote Project - Flailing at the Travails of Cybersecurity
+>               https://github.com/Quixote-Project
