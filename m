@@ -1,74 +1,57 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 799FA1C9DC9
-	for <linux-security-module@vger.kernel.org>; Wed, 13 Nov 2024 21:28:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44512E573;
+	Thu, 14 Nov 2024 08:44:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731533299; cv=none; b=e2Un5LdjcUbO2rxeJ90FAnt4cYsbsj38jccBXnmQB4wenJtieMebHtjdMw74lH5m9bNjGngOxZAxDpocjLc+qr7O8GhVZKdh6F3PJcj5MqtbPciH8epkc8l1yE5dh802IolOxIixy6fWMkrz30THNeP8UEe1Bbshl1+bJMVzyoA=
+	t=1731573842; cv=none; b=GmiA535N1E9gphgh+LZ3mM84paSBia0Pw7/oCB9vKFdDBhmnAxgoQ7LPE8s+GgTlqeTSGPhokfPOcO0R0L/3UB5ZLF3d9bqDITW5ktPVsgtfE87/bW4pXv9CNp6bjK3MwRjWHoORfZbvsV6LdLJBVJ2tNIsXQRsZuZU1wJQjkvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731533299; c=relaxed/simple;
-	bh=rKhHAG+LvAXKqEHhSlBUI3rw27sV72XPt1hCRbQISuo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CvaqZko9Z4YfUX2i/WSWVaSQ8aRtM5d76nlJ6x3IcsB3Spa3rlPMMSgTsEweh9GWgmsM2REYzUIx1ZGUbULW0mxkMJ0fChDEfVvh6k7T+gipsuOL3D6T9S2B7xz0q7mZqqFREvqLAgL5A99OrBAd6c57ORGdF4J9XXESDaS3s70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at; spf=pass smtp.mailfrom=sigma-star.at; dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b=gwdBbD+g; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigma-star.at
+	s=arc-20240116; t=1731573842; c=relaxed/simple;
+	bh=yueFnat0srpXokXZ3xaTaiktYxAAHlj69Ro0EkqDHQc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=N0DdGgZLfV/CuciWWntyalgVDlXCCbTCXuWhCIJPLJ9AJy/rUIn/RTXTzYiwRaKwVMg5yeMSgTmJNQ5VjK8QYwG69CpYx0Qvhz/9tjAsUdL7bxHdqwPwW5mPaL3ROSXqjP/3aCg3vgr0DSxgkiGfotW2C5u8Tc0rvaPtQeQPCt0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rxWo43cw; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b="gwdBbD+g"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4316a44d1bbso61911595e9.3
-        for <linux-security-module@vger.kernel.org>; Wed, 13 Nov 2024 13:28:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sigma-star.at; s=google; t=1731533294; x=1732138094; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=QQ6xAbIC8Al8OcOI95+3pwvP6j9wIJ23QXfOfXWSupE=;
-        b=gwdBbD+gMOJlgKY4stYurbeaVqgSW9rmuoGPSWiXjDn3oz/rIOpGtrACiY82gWXTjo
-         Pd/YotrMvXQx2xueYlulDGe6v/00u8vffQJj4xvSw0/JlMXxRcg2dngCdpiaQWeNNyuJ
-         G3m0hP2HDFZpL0IL4JG+ypHPODSEofGffv4MejhEjGnOcLhH/bbmn8kRbbdSb7QsGIDb
-         ksj/TwDceE7hjKTwxi1XMXMfEpdpyuDsHVbDoOcY6ZmKNVxZlXiDEQ6gtpNQdtODhhio
-         HunON0sXyr1mIioyT489OrmOjIgiLWL/fnsPaZuDeIxRqpQT0+N/mD0Wqu+oxASUUjz5
-         znCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731533294; x=1732138094;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QQ6xAbIC8Al8OcOI95+3pwvP6j9wIJ23QXfOfXWSupE=;
-        b=fW13ouC5h0h0PbBI0gh0ggvcoY1gbtZ+Wo8yOl9jQc7jvluq54E3HxBXmaynfGwqTB
-         mKwCAZOA9tlLX0ZTU6x9deB4Vbj18LBoMbjTv1sxaKBl+lMOIeFG+Q0QGDJPv5W9zvoq
-         1ER01YSgBsJLB7b0EdBlYrFZyOBGpPGhJh3Zs5+KxwCl4WdSvbrMwkJqzEotz1zbEEtw
-         Fu+K9TNbvIDpL8u2xUgavc6IqrzT4dmU+8nFTs5+d9uhnpRjiI47p+FQyk17OSI6iVpK
-         xwu+dOtPpTFzMo5EvK0dQn7Ucz3XcaASuKMyEs3g8cgALszG/ieJYqqi8vEPjYrJSLJu
-         P4pA==
-X-Forwarded-Encrypted: i=1; AJvYcCX4A8oFuLR56FCuHcvQrkzoFlrKeTLhs4b1xGfoHaJaojIHqSa3FlTQOYGVDAbHrED0eFA80jgEFkCQ3o6uiXUOSXFgjNU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygSPgq8jkvPzQcyHPj9hHUIZkyFVUg9koryNtWWOnCeowNZZTD
-	vq96VrxSdb7QwDlebUCKt4nt1NGUCZZsPorAiy9rCltczljMxIn1tBBaWG4nMwY=
-X-Google-Smtp-Source: AGHT+IEG3+0loCICljuOQmwpXB+TVjExLPGwnEULJ4Fhnr8A6GRVCEaGZc+hzlpvGDhdAwfNGhjx+w==
-X-Received: by 2002:a05:600c:b95:b0:431:57d2:d7b4 with SMTP id 5b1f17b1804b1-432d4ad3329mr37270825e9.26.1731533294505;
-        Wed, 13 Nov 2024 13:28:14 -0800 (PST)
-Received: from localhost (17-14-180.cgnat.fonira.net. [185.17.14.180])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-432da265c45sm229285e9.11.2024.11.13.13.28.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 13 Nov 2024 13:28:14 -0800 (PST)
-From: David Gstir <david@sigma-star.at>
-To: sigma star Kernel Team <upstream+dcp@sigma-star.at>,
-	James Bottomley <jejb@linux.ibm.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>
-Cc: linux-integrity@vger.kernel.org,
-	keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rxWo43cw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27C69C4CECD;
+	Thu, 14 Nov 2024 08:43:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1731573841;
+	bh=yueFnat0srpXokXZ3xaTaiktYxAAHlj69Ro0EkqDHQc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=rxWo43cwFb5eeMp2KXc2N3dRMTdeL6xpJsO1nhH/4es6mrWCDapd1Th1yhMVFYecr
+	 xjyMz2r+jvTIunUhItNs4QVx7Pd3dvyx7dzJN+7YwyHuDarUNG6DCPqg0GCH8t4wnL
+	 ObvZ5dd0rhi6wT4ygczUDXCTCaXG7F2nv38k3qPm8BttKEuY4CmO6V9zBuKRHk3qSh
+	 nLSb/JAM9AErHCIbR7Hneue+0mU3BCI0PWmPCK+CAfC39SGirkLMj168MP2OA0tPGf
+	 gEIGjG3WagIM1c+FVMCYnzOsSkQ7an8DaXuocsAQYKfFMaCEAKS1Lt+fC+Y+FVnLHQ
+	 fE5453mu2Z7RA==
+From: Song Liu <song@kernel.org>
+To: bpf@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	David Gstir <david@sigma-star.at>,
-	stable@vger.kernel.org
-Subject: [PATCH] KEYS: trusted: dcp: fix improper sg use with CONFIG_VMAP_STACK=y
-Date: Wed, 13 Nov 2024 22:27:54 +0100
-Message-ID: <20241113212754.12758-1-david@sigma-star.at>
-X-Mailer: git-send-email 2.47.0
+	linux-security-module@vger.kernel.org
+Cc: kernel-team@meta.com,
+	andrii@kernel.org,
+	eddyz87@gmail.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	martin.lau@linux.dev,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	kpsingh@kernel.org,
+	mattbobrowski@google.com,
+	amir73il@gmail.com,
+	repnop@google.com,
+	jlayton@kernel.org,
+	josef@toxicpanda.com,
+	mic@digikod.net,
+	gnoack@google.com,
+	Song Liu <song@kernel.org>
+Subject: [RFC/PATCH v2 bpf-next fanotify 0/7] Fanotify fastpath handler
+Date: Thu, 14 Nov 2024 00:43:38 -0800
+Message-ID: <20241114084345.1564165-1-song@kernel.org>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -77,87 +60,102 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-With vmalloc stack addresses enabled (CONFIG_VMAP_STACK=y) DCP trusted
-keys can crash during en- and decryption of the blob encryption key via
-the DCP crypto driver. This is caused by improperly using sg_init_one()
-with vmalloc'd stack buffers (plain_key_blob).
+Overview of v2:
 
-Fix this by always using kmalloc() for buffers we give to the DCP crypto
-driver.
+Patch 1/7 adds logic to write fastpath handlers in kernel modules.
+Patch 2/7 adds a sample of a fastpath handler in a kernel module.
+Patch 3/7 to 5/7 are preparation work on BPF side.
+Patch 6/7 adds logic to write fastpath handlers in bpf programs.
+Patch 7/7 is a selftest and example of bpf based fastpath handler.
 
-Cc: stable@vger.kernel.org # v6.10+
-Fixes: 0e28bf61a5f9 ("KEYS: trusted: dcp: fix leak of blob encryption key")
-Signed-off-by: David Gstir <david@sigma-star.at>
----
- security/keys/trusted-keys/trusted_dcp.c | 22 ++++++++++++++++++----
- 1 file changed, 18 insertions(+), 4 deletions(-)
+Changes v1 => v2:
+1. Add sysfs entries for fastpath handler.
+2. Rewrite the sample and bpf selftest to handle subtree monitoring.
+   This requires quite some work from BPF side to properly handle
+   inode, dentry, etc.
+3. Add CONFIG_FANOTIFY_FASTPATH.
+4. Add more documents.
 
-diff --git a/security/keys/trusted-keys/trusted_dcp.c b/security/keys/trusted-keys/trusted_dcp.c
-index e908c53a803c..7b6eb655df0c 100644
---- a/security/keys/trusted-keys/trusted_dcp.c
-+++ b/security/keys/trusted-keys/trusted_dcp.c
-@@ -201,12 +201,16 @@ static int trusted_dcp_seal(struct trusted_key_payload *p, char *datablob)
- {
- 	struct dcp_blob_fmt *b = (struct dcp_blob_fmt *)p->blob;
- 	int blen, ret;
--	u8 plain_blob_key[AES_KEYSIZE_128];
-+	u8 *plain_blob_key;
- 
- 	blen = calc_blob_len(p->key_len);
- 	if (blen > MAX_BLOB_SIZE)
- 		return -E2BIG;
- 
-+	plain_blob_key = kmalloc(AES_KEYSIZE_128, GFP_KERNEL);
-+	if (!plain_blob_key)
-+		return -ENOMEM;
-+
- 	b->fmt_version = DCP_BLOB_VERSION;
- 	get_random_bytes(b->nonce, AES_KEYSIZE_128);
- 	get_random_bytes(plain_blob_key, AES_KEYSIZE_128);
-@@ -229,7 +233,8 @@ static int trusted_dcp_seal(struct trusted_key_payload *p, char *datablob)
- 	ret = 0;
- 
- out:
--	memzero_explicit(plain_blob_key, sizeof(plain_blob_key));
-+	memzero_explicit(plain_blob_key, AES_KEYSIZE_128);
-+	kfree(plain_blob_key);
- 
- 	return ret;
- }
-@@ -238,7 +243,7 @@ static int trusted_dcp_unseal(struct trusted_key_payload *p, char *datablob)
- {
- 	struct dcp_blob_fmt *b = (struct dcp_blob_fmt *)p->blob;
- 	int blen, ret;
--	u8 plain_blob_key[AES_KEYSIZE_128];
-+	u8 *plain_blob_key = NULL;
- 
- 	if (b->fmt_version != DCP_BLOB_VERSION) {
- 		pr_err("DCP blob has bad version: %i, expected %i\n",
-@@ -256,6 +261,12 @@ static int trusted_dcp_unseal(struct trusted_key_payload *p, char *datablob)
- 		goto out;
- 	}
- 
-+	plain_blob_key = kmalloc(AES_KEYSIZE_128, GFP_KERNEL);
-+	if (!plain_blob_key) {
-+		ret = -ENOMEM;
-+		goto out;
-+	}
-+
- 	ret = decrypt_blob_key(b->blob_key, plain_blob_key);
- 	if (ret) {
- 		pr_err("Unable to decrypt blob key: %i\n", ret);
-@@ -271,7 +282,10 @@ static int trusted_dcp_unseal(struct trusted_key_payload *p, char *datablob)
- 
- 	ret = 0;
- out:
--	memzero_explicit(plain_blob_key, sizeof(plain_blob_key));
-+	if (plain_blob_key) {
-+		memzero_explicit(plain_blob_key, AES_KEYSIZE_128);
-+		kfree(plain_blob_key);
-+	}
- 
- 	return ret;
- }
--- 
-2.47.0
+TODO of v2:
+1. Enable prviate (not added to global list) bpf based fastpath handlers.
+4. Man pages.
 
+From v1 RFC:
+
+This RFC set introduces in-kernel fastpath handler for fanotify. The
+fastpath handler can be used to handle/filter some events without going
+through userspace.
+
+In LPC 2024, multiple talks covered use cases of monitoring a subtree in
+the VFS (fanotify: [1], bpf/lsm: [2]). This work is inspired by these
+discussions. Reliably monitoring of a subtree with low overhead is a hard
+problem. We do not claim this set fully solves problem. But we think this
+work can be a very useful building block of the solution to this problem.
+
+The fastpath handler can be implemented with built-in logic, in a kernel
+module, or a bpf program. The fastpath handler is attached to a fsnotify
+group. With current implementation, the multiple fastpath handlers are
+maintained in a global list. Only users with CAP_SYS_ADMIN can add
+fastpath handlers to the list by loading a kernel module. User without
+CAP_SYS_ADMIN can attach a loaded fastpath handler to fanotify instances.
+During the attach operation, the fastpath handler can take an argument.
+This enables non-CAP_SYSADMIN users to customize/configure the fastpath
+handler, for example, with a specific allowlist/denylist.
+
+As the patchset grows to 1000+ lines (including samples and tests), I
+would like some feedback before pushing it further.
+
+[1] https://lpc.events/event/18/contributions/1717/
+[2] https://lpc.events/event/18/contributions/1940/
+
+
+Song Liu (7):
+  fanotify: Introduce fanotify fastpath handler
+  samples/fanotify: Add a sample fanotify fastpath handler
+  bpf: Make bpf inode storage available to tracing programs
+  bpf: fs: Add three kfuncs
+  bpf: Allow bpf map hold reference on dentry
+  fanotify: Enable bpf based fanotify fastpath handler
+  selftests/bpf: Add test for BPF based fanotify fastpath handler
+
+ MAINTAINERS                                   |   1 +
+ fs/Makefile                                   |   2 +-
+ fs/bpf_fs_kfuncs.c                            |  51 +-
+ fs/inode.c                                    |   2 +
+ fs/notify/fanotify/Kconfig                    |  13 +
+ fs/notify/fanotify/Makefile                   |   1 +
+ fs/notify/fanotify/fanotify.c                 |  29 ++
+ fs/notify/fanotify/fanotify_fastpath.c        | 448 ++++++++++++++++++
+ fs/notify/fanotify/fanotify_user.c            |   7 +
+ include/linux/bpf.h                           |   9 +
+ include/linux/bpf_lsm.h                       |  29 --
+ include/linux/fanotify.h                      | 131 +++++
+ include/linux/fs.h                            |   4 +
+ include/linux/fsnotify_backend.h              |   4 +
+ include/uapi/linux/fanotify.h                 |  25 +
+ kernel/bpf/Makefile                           |   3 +-
+ kernel/bpf/bpf_inode_storage.c                | 176 +++++--
+ kernel/bpf/bpf_lsm.c                          |   4 -
+ kernel/bpf/helpers.c                          |  14 +-
+ kernel/bpf/verifier.c                         |   6 +
+ kernel/trace/bpf_trace.c                      |   8 +
+ samples/Kconfig                               |  20 +-
+ samples/Makefile                              |   2 +-
+ samples/fanotify/.gitignore                   |   1 +
+ samples/fanotify/Makefile                     |   5 +-
+ samples/fanotify/fastpath-mod.c               |  82 ++++
+ samples/fanotify/fastpath-user.c              | 111 +++++
+ security/bpf/hooks.c                          |   7 -
+ tools/testing/selftests/bpf/bpf_kfuncs.h      |   5 +
+ tools/testing/selftests/bpf/config            |   2 +
+ .../testing/selftests/bpf/prog_tests/fan_fp.c | 264 +++++++++++
+ tools/testing/selftests/bpf/progs/fan_fp.c    | 154 ++++++
+ 32 files changed, 1530 insertions(+), 90 deletions(-)
+ create mode 100644 fs/notify/fanotify/fanotify_fastpath.c
+ create mode 100644 samples/fanotify/fastpath-mod.c
+ create mode 100644 samples/fanotify/fastpath-user.c
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/fan_fp.c
+ create mode 100644 tools/testing/selftests/bpf/progs/fan_fp.c
+
+--
+2.43.5
