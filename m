@@ -1,55 +1,55 @@
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFAE91CEE97;
-	Fri, 15 Nov 2024 19:41:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46F501E2007;
+	Fri, 15 Nov 2024 20:04:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731699711; cv=none; b=Ym3oBIRnkFLaeANFrf+JClyehcYIwiCtjs1XavASd3X5vW9801d/SrFmNqFnQCLWAjCur/SCFXexrYbR7dXl5IMj496LgoS9uptczf5O2/IAlwirMENOyK01AXwpPuGYSxf0aLKcu6oum3h9jr+6NaSwlP0OO+4KvCAZPNw2gNg=
+	t=1731701057; cv=none; b=iDPd/NW2bIQQ+TRW1QjaAzBtw2kVHIqd1qkquBO9yeKGMnTyLe4sboQQPDayWJA8zzN7qpztCOcazOmf4llXv3h1vkGgkJL7pOwjbcGDStNKIzgS29NSJuQChHhQss6Jz/8zAt9GE+n8q5usygjxxDbbk+IntsO/AjSUx88ik6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731699711; c=relaxed/simple;
-	bh=11+JLjIDjOOyK0Aqas1540GH5ts0hbJToWK8RT6in2Q=;
+	s=arc-20240116; t=1731701057; c=relaxed/simple;
+	bh=GNNsgXZz94lF3I3Pz1DGMTj1jbKzkiOuGPGsVCeAhFM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RElvCZoHE2hNTmNZ7POSY/n2t0woe1LUByuRA8TTawuMTH7q4JFs5DTyHgUuUvSal6bgZlm3q9f0ALcQbjWJ2nsvMUbilppBKYuuwg5zL/KuIjQeyntnQw20gQYwEsbXo7AxIr0bPGP7qkuhmdlF4pSR9Nb2Ddq+WkMdfCztFpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V3Eztt1G; arc=none smtp.client-ip=209.85.221.48
+	 To:Cc:Content-Type; b=lld1csml+Ui3uPxqnmSHlG8/Gjnhb+VWjbulXnMpBrAXmQSHMO6AnO3fV3OU6sUfid9lJEAdWwItF8Hu2h8rjbEYuJUQT/2FRdfCPSJuqHb2tq22rqcVnVIyhWK9yXVOpaRkeyVk41chBvBKY4xiQ9QbIkyUqKGKczDQCayY78Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LAkHYuqJ; arc=none smtp.client-ip=209.85.221.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V3Eztt1G"
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3821a905dbcso1384467f8f.0;
-        Fri, 15 Nov 2024 11:41:49 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LAkHYuqJ"
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37d49a7207cso1315454f8f.0;
+        Fri, 15 Nov 2024 12:04:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731699708; x=1732304508; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1731701054; x=1732305854; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nOgoGVaGPGzqc8HLQFO0H9kyoYBMblQj8Truem6RMlg=;
-        b=V3Eztt1GU5sGkaAu+0hIjjMiWDrFZguJSTyhXACLs+LDVYKqTr2ont3IUaMFRH6IHB
-         0PNzqTwCvdo4EzhFX7Lz9mfj2y1aTTHbcKozAx3AlUz5Bgyeasndcu0IsfIUgwJ4rVeF
-         gRr14a1yZxI9REaRvEVD3wHLrnU+MGlLI1GZR7CKQQxIz8iBTJfsCoegDh0DNK+Eg3Ie
-         D9neFNnThzrKo84HQzT6S2XaKXCQF2DUsbn8pwzMp8R9a1S/5yPrMlVAEgTEMU4d0W3P
-         jl8JIguQPOQKKrhFTIR+DDNvpzqvUKp+0yhShQ65rwf1ijQZ9LIfsBzH0bMdgWKiXOhz
-         AaVQ==
+        bh=uwYXMR7UIXp9uh4TDepTdI8MR5u6vSz3D5tn0WWpGys=;
+        b=LAkHYuqJHnuYpdBrxUxTPHHieOvXnzn+27AfqGWj9sygN4bCGMhNgki1LPFfSPBvbw
+         sdBMpkPrS4WchCLR/Jedggdx+0kP78V0fqOWjF7xJ2NtA9ri8IENyHMA/qIPtdcLw0Ww
+         XuGZhpW+ncCCVFP7dEOX4gW2mpMqb+R5Y96AIN26gvEkXr2RrMqLAOWZohcQuwSE5C3Y
+         stM7lni0TffsoVqgFhqkB/t+oKEfjmC0DB7BKMzUkN/e/1LPFjgSgFXYWEaZHsY5cbDi
+         LztRuci+S/P2CGZPBq9DThV/zBUNL32nciiEVi6pxtQNl0TIgGrqrcnPL3G0/0cQIlhV
+         PMsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731699708; x=1732304508;
+        d=1e100.net; s=20230601; t=1731701054; x=1732305854;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=nOgoGVaGPGzqc8HLQFO0H9kyoYBMblQj8Truem6RMlg=;
-        b=S7xMu3ufqWt4hiL57n8XOYXSlmMZ3aeZ15qsz73jOgDoraosvhT8BMK+zvpogCpkj7
-         wG7yiSgxJjHu3lOkbM0CiDEG2ofX2TDcy1P+vvphlHHBs/2apuVF+Mc4lh+d01dRdVTf
-         c5GMlo0wIV4XE2m9YyMyYYGwR9h9XeDMApPm/BYRm6kUJ2RgJOXq85ftS0/OB45+qAs4
-         WH6Fqp/s05U5wS1Aaz7FWlZWEGs1syBWmjTJ0JGk9BzTI6SIbNatCBgZR7epuL+VNUl7
-         aUZ0I0dTe559D1vpg/WZeTc/pjaWi3dBFQ61ndZoVkQvBF9LdmELBYr//rRYlJgoBlLU
-         crOg==
-X-Forwarded-Encrypted: i=1; AJvYcCUztC56waOTJ0rXottSRHRPXKjVfdDiFu63nu+AlFq06+iA+/93wVLhrf0txRmgDsvcQD8yOvI1AJN6K2SVfMjxFQu6adyG@vger.kernel.org, AJvYcCVNeAykylK1vGcWCDqQ8KoG3VBZXcB8jRgdwYIYn0iRILCzc0cwPKMng8x8q/vnp+11BrMKsB2hflZfTo4w@vger.kernel.org, AJvYcCWE/905eFDJiTAMXkX8zHklyu/zAWICPA/PVqBhlYeGK+DUJV0tMYr4eWWSu7yb9P6eVkcI3r687OUgh08XUw==@vger.kernel.org, AJvYcCXCnI5oKWH5ExIBFIdLWlUUJrZKyxzn+2x93BTQ4rS8u2KqBjDqmpphdBw7gz0Q3N6WNsA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZa2//VFSA2l1WVvMBj3PM9RyiQuvSMA0g1XU24oYF6GoUFZ6f
-	gHZyfmEgcqZeg1/YMtJBdtmA79Cq6DxvYxy3JdeDafILduzkAswubPdeOPTD3FD4BhPc+QnbXqU
-	+h4RaPfigFNS+mn7dAUG+czvImuM=
-X-Google-Smtp-Source: AGHT+IGHWSINqizwBrIJZlSoKrrg7DDQwkttX3kAOSa+kF7ZXNbLwGYJTiHnJ0AB6OJJOAogaGxA3sd8WRNWsXBj4wU=
-X-Received: by 2002:a5d:47a4:0:b0:37d:4e74:684 with SMTP id
- ffacd0b85a97d-38225aa59f8mr3079318f8f.52.1731699707797; Fri, 15 Nov 2024
- 11:41:47 -0800 (PST)
+        bh=uwYXMR7UIXp9uh4TDepTdI8MR5u6vSz3D5tn0WWpGys=;
+        b=MSEFHkR+Lo3SVewUZWyFwSzwoOArShaNMKsHwsxFFVqYvI5THz1fffIbsGuYYoMRkR
+         d8ygrqfSl4yrd/IgP4KFAAULNV1YVylJpPkjoYMKRYS0PGo8HRIJhT/PcVxxSIRGWLv4
+         Zaj8tWLLNP84TCDFYnS3cHZMo6hMdzff4tASOO20gZbnTZCgkU2crw60byBZXC96e8av
+         tJSJDTkPER18xvsrfNEwEE8EllbuGY5hIeBzlo80RmGuUeCt2YnwDuTmhYyqypWdQ16O
+         1lrOtdDVqyqvrxcN1hJ+003lDS0w3on9nhiauyVMCIsgv1Z6/gcPJN9lv4ALmiBDg7KJ
+         YLnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU1gk799GzJ4vjb3vqHpRVIfcZGQ8ijXlA/84tYFTh9U8cxpvnlWNFF0I0/eOEr6ynxd8o79jZudzLkdcJtHpBQFusKSHnd@vger.kernel.org, AJvYcCVfoCOLW2piAWTxa6OK4Ea5/lw+qYvGJcMHwNm9Kt4MjfBERn7S+D+cB/SoCALYt4wvnHSUNOi0BDUhhyevpQ==@vger.kernel.org, AJvYcCWjw9lbVfwVqCbb1tyrEZxwoDmvL9QE1Jl7b6KurObyiME70cKCVQvbZR2KhClOIpGmJ+cGzSs3+wu7HLfP@vger.kernel.org, AJvYcCXaLMh0IwW6r3/pcT0CcyJNdx/PCMCpdUQFmqs5xNa4yRxZtMwwXV/SmG4n8Sz3Ub+lQyg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjNprNqY+R8aCFBndG9Qb+2ca8cXgD7grAebujq9kDqB4xWorX
+	qRNN4YYcMU44gCk6BmxxCtLag3AGCLm3yDw5mwrEy8l2GIvtSPsnqYcSkbBt4csgwzRWxLvDC5i
+	RRtdFACpbE4KtLePmsiTBQhvcEp8=
+X-Google-Smtp-Source: AGHT+IGO8SZPf2XiKcxVV0GNc5Ely/yXtW0TWMw9NpRXJ0GMX7rOaWzJom9SfnTAG8X01LKFbW/sS2hvsUM4LOOCHNk=
+X-Received: by 2002:a05:6000:1845:b0:37d:4eeb:7375 with SMTP id
+ ffacd0b85a97d-382259058dfmr3348693f8f.16.1731701053372; Fri, 15 Nov 2024
+ 12:04:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -57,17 +57,14 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20241114084345.1564165-1-song@kernel.org> <20241114084345.1564165-8-song@kernel.org>
- <CAADnVQK6YyPUzQoPKkXptLHoHXJZ50A8vNPfpDAk8Jc3Z6+iRw@mail.gmail.com>
- <E5457BFD-F7B9-4077-9EAC-168DA5C271E4@fb.com> <CAADnVQJ1um9u4cBpAEw83CS8xZJN=iP8WXdG0Ops5oTP-_NDFg@mail.gmail.com>
- <DCE25AB7-E337-4E11-9D57-2880F822BF33@fb.com> <CAADnVQ+bRO+UakzouzR5OfmvJAcyOs7VqCJKiLsjnfW1xkPZOg@mail.gmail.com>
- <C7C15985-2560-4D52-ADF9-C7680AF10E90@fb.com>
-In-Reply-To: <C7C15985-2560-4D52-ADF9-C7680AF10E90@fb.com>
+ <CAADnVQK6YyPUzQoPKkXptLHoHXJZ50A8vNPfpDAk8Jc3Z6+iRw@mail.gmail.com> <CAOQ4uxhnBRs2Wtr7QsEzxHrkqOtkh9+xxDuNRHxxFY0ih-543g@mail.gmail.com>
+In-Reply-To: <CAOQ4uxhnBRs2Wtr7QsEzxHrkqOtkh9+xxDuNRHxxFY0ih-543g@mail.gmail.com>
 From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Fri, 15 Nov 2024 11:41:36 -0800
-Message-ID: <CAADnVQK2mhS0RLN7fEpn=zuLMT0D=QFMuibLAvc42Td0eU=eaQ@mail.gmail.com>
+Date: Fri, 15 Nov 2024 12:04:02 -0800
+Message-ID: <CAADnVQ+nzeyitBVgz2a0K=kSMi5HOSVwxBuuHMqSqmT6H+oqnw@mail.gmail.com>
 Subject: Re: [RFC/PATCH v2 bpf-next fanotify 7/7] selftests/bpf: Add test for
  BPF based fanotify fastpath handler
-To: Song Liu <songliubraving@meta.com>
+To: Amir Goldstein <amir73il@gmail.com>
 Cc: Song Liu <song@kernel.org>, bpf <bpf@vger.kernel.org>, 
 	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
 	LSM List <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
@@ -75,135 +72,108 @@ Cc: Song Liu <song@kernel.org>, bpf <bpf@vger.kernel.org>,
 	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
 	Martin KaFai Lau <martin.lau@linux.dev>, Alexander Viro <viro@zeniv.linux.org.uk>, 
 	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, KP Singh <kpsingh@kernel.org>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Amir Goldstein <amir73il@gmail.com>, 
-	"repnop@google.com" <repnop@google.com>, Jeff Layton <jlayton@kernel.org>, 
-	Josef Bacik <josef@toxicpanda.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	Matt Bobrowski <mattbobrowski@google.com>, "repnop@google.com" <repnop@google.com>, 
+	Jeff Layton <jlayton@kernel.org>, Josef Bacik <josef@toxicpanda.com>, 
+	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
 	"gnoack@google.com" <gnoack@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 14, 2024 at 11:01=E2=80=AFPM Song Liu <songliubraving@meta.com>=
- wrote:
+On Thu, Nov 14, 2024 at 11:26=E2=80=AFPM Amir Goldstein <amir73il@gmail.com=
+> wrote:
 >
+> On Thu, Nov 14, 2024 at 9:14=E2=80=AFPM Alexei Starovoitov
+> <alexei.starovoitov@gmail.com> wrote:
 > >
-> > I think bpf-lsm hook fires before fanotify, so bpf-lsm prog
-> > implementing some security policy has to decide right
-> > at the moment what to do with, say, security_file_open().
-> > fanotify with or without bpf fastpath is too late.
+> > On Thu, Nov 14, 2024 at 12:44=E2=80=AFAM Song Liu <song@kernel.org> wro=
+te:
+> > >
+> > > +
+> > > +       if (bpf_is_subdir(dentry, v->dentry))
+> > > +               ret =3D FAN_FP_RET_SEND_TO_USERSPACE;
+> > > +       else
+> > > +               ret =3D FAN_FP_RET_SKIP_EVENT;
+> >
+> > It seems to me that all these patches and feature additions
+> > to fanotify, new kfuncs, etc are done just to do the above
+> > filtering by subdir ?
+> >
+> > If so, just hard code this logic as an extra flag to fanotify ?
+> > So it can filter all events by subdir.
+> > bpf programmability makes sense when it needs to express
+> > user space policy. Here it's just a filter by subdir.
+> > bpf hammer doesn't look like the right tool for this use case.
 >
-> Actually, fanotify in permission mode can stop a file open.
-
-The proposed patch 1 did:
-
-+/* Return value of fp_handler */
-+enum fanotify_fastpath_return {
-+ /* The event should be sent to user space */
-+ FAN_FP_RET_SEND_TO_USERSPACE =3D 0,
-+ /* The event should NOT be sent to user space */
-+ FAN_FP_RET_SKIP_EVENT =3D 1,
-+};
-
-It looked like a read-only notification to user space
-where bpf prog is merely a filter.
-
-> In current upstream code, fsnotify hook fsnotify_open_perm
-> is actually part of security_file_open(). It will be moved
-> to do_dentry_open(), right after security_file_open(). This
-> move is done by 1cda52f1b461 in linux-next.
-
-Separating fsnotify from LSM makes sense.
-
-> In practice, we are not likely to use BPF LSM and fanotify
-> on the same hook at the same time. Instead, we can use
-> BPF LSM hooks to gather information and use fanotify to
-> make allow/deny decision, or vice versa.
-
-Pick one.
-If the proposal is changing to let fsnotify-bpf prog to deny
-file_open then it's a completely different discussion.
-
-In such a case make it clear upfront that fsnotify will
-rely on CONFIG_FANOTIFY_ACCESS_PERMISSIONS and
-bpf-lsm part of file access will not be used,
-since interaction of two callbacks at file_open makes little sense.
-
-> > In general fanotify is not for security. It's notifying
-> > user space of events that already happened, so I don't see
-> > how these two can be combined.
+> Good question.
 >
-> fanotify is actually used by AntiVirus softwares. For
-> example, CalmAV (https://www.clamav.net/) uses fanotify
-> for its Linux version (it also supports Window and MacOS).
-
-It's relying on user space to send back FANOTIFY_PERM_EVENTS ?
-
-fsnotify_open_perm->fsnotify->send_to_group->fanotify_handle_event.
-
-is a pretty long path to call bpf prog and
-preparing a giant 'struct fanotify_fastpath_event'
-is not going to fast either.
-
-If we want to accelerate that with bpf it needs to be done
-sooner with negligible overhead.
-
+> Speaking as someone who has made several attempts to design
+> efficient subtree filtering in fanotify, it is not as easy as it sounds.
 >
-> I guess I didn't state the motivation clearly. So let me
-> try it now.
+> I recently implemented a method that could be used for "practical"
+> subdir filtering in userspace, not before Jan has questioned if we
+> should go directly to subtree filtering with bpf [1].
 >
-> Tracing is a critical part of a security solution. With
-> LSM, blocking an operation is straightforward. However,
-> knowing which operation should be blocked is not always
-> easy. Also, security hooks (LSM or fanotify) sit in the
-> critical path of user requests. It is very important to
-> optimize the latency of a security hook. Ideally, the
-> tracing logic should gather all the information ahead
-> of time, and make the actual hook fast.
+> This is not the only filter that was proposed for fanotify, where bpf
+> filter came as an alternative proposal [2], but subtree filtering is by f=
+ar
+> the most wanted filter.
+
+Interesting :)
+Thanks for the links. Long threads back then.
+Looks like bpf filtering was proposed 2 and 4 years ago and
+Song's current attempt is the first real prototype that actually
+implements what was discussed for so long?
+Cool. I guess it has legs then.
+
+> The problem with implementing a naive is_subtree() filter in fanotify
+> is the unbounded cost to be paid by every user for every fs access
+> when M such filters are installed deep in the fs tree.
+
+Agree that the concern is real.
+I just don't see how filtering in bpf vs filtering in the kernel
+is going to be any different.
+is_subdir() is fast, so either kernel or bpf prog calling it
+on every file_open doesn't seem like a big deal.
+Are you saying that 'naive is_subdir' would call is_subdir
+M times for every such filter ?
+I guess it can be optimized. When these M filters are installed
+the kernel can check whether they're subdirs of each other
+and filter a subset of M filters with a single is_subdir() call.
+Same logic can be in either bpf prog or in the kernel.
+
+> Making this more efficient then becomes a matter of trading of
+> memory (inode/path cache size) and performance and depends
+> on the size and depth of the watched filesystem.
+> This engineering decision *is* the userspace policy that can be
+> expressed by a bpf program.
 >
-> For example, if security_file_open() only needs to read
-> a flag from inode local storage, the overhead is minimal
-> and predictable. If security_file_open() has to walk the
-> dentry tree, or call d_path(), the overhead will be
-> much higher. fanotify_file_perm() provides another
-> level of optimization over security_file_open(). If a
-> file is not being monitored, fanotify will not generate
-> the event.
-
-I agree with motivation, but don't see this in the patches.
-The overhead to call into bpf prog is big.
-Even if prog does nothing it's still going to be slower.
-
-> Security solutions hold higher bars for the tracing logic:
+> As you may know, Linux is lagging behind Win and MacOS w.r.t
+> subtree filtering for fs events.
 >
-> - It needs to be accurate, as false positives and false
->   negatives can be very annoying and/or harmful.
-> - It needs to be efficient, as security daemons run 24/7.
+> MacOS/FreeBSD took the userspace approach with fseventsd [3].
+> If you Google "fseventsd", you will get results with "High CPU and
+> Memory Usage" for as far as the browser can scroll.
+
+Yeah. Fun.
+
+Looking at your 2 year old attempt it seems the key part was to
+make sure inodes are not pinned for filtering purpose?
+How would you call is_subdir() then if parent dentry is not dget() ?
+Or meaning of 'pinning' is different?
+
+> I hope the bpf-aided early subtree filtering technology would be
+> able to reduce some of this overhead to facilitate a better engineering
+> solution, but that remains to be proven...
+
+Sure. Let's explore this further.
+
+> Thanks,
+> Amir.
 >
-> Given these requirements of security solutions, I believe
-> it is important to optimize tracing logic as much as
-> possible. And BPF based fanotify fastpath handler can
-> bring non-trivials benefit to BPF based security solutions.
-
-Doing everything in the kernel is certainly faster than
-going back and forth to user space,
-but bpf-lsm should be able to do the same already.
-
-Without patch 1 and only patches 4,5 that add few kfuncs,
-bpf-lsm prog will be able to remember subtree dentry and
-do the same is_subdir() to deny.
-The patch 7 stays pretty much as-is. All in bpf-lsm.
-Close to zero overhead without long chain of fsnotify callbacks.
-
-> fanotify also has a feature that LSM doesn't provide.
-> When a file is accessed, user space daemon can get a
-> fd on this file from fanotify. OTOH, LSM can only send
-> an ino or a path to user space, which is not always
-> reliable.
-
-That sounds useful, but we're mixing too many things.
-If user space cares about fd it will be using the existing
-mechanism with all accompanied overhead. fsnotify-bpf can
-barely accelerate anything, since user space makes
-ultimate decisions.
-If user space is not in the driving seat then existing bpf-lsm
-plus few kfuncs to remember dentry and call is_subdir()
-will do the job and no need for patch 1.
+> [1] https://lore.kernel.org/linux-fsdevel/20220228140556.ae5rhgqsyzm5djbp=
+@quack3.lan/
+> [2] https://lore.kernel.org/linux-fsdevel/20200828084603.GA7072@quack2.su=
+se.cz/
+> [3] https://developer.apple.com/library/archive/documentation/Darwin/Conc=
+eptual/FSEvents_ProgGuide/TechnologyOverview/TechnologyOverview.html#//appl=
+e_ref/doc/uid/TP40005289-CH3-SW1
