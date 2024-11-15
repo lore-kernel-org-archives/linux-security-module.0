@@ -1,152 +1,209 @@
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1C5A126C10
-	for <linux-security-module@vger.kernel.org>; Fri, 15 Nov 2024 19:04:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFAE91CEE97;
+	Fri, 15 Nov 2024 19:41:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731697474; cv=none; b=LJ7fhCSydaudMwdAp6LnHEIfGla5yUJlEogH4A/LGOULzVEDOS8x5+HaxDoeZX2VGKtYX637xPdPj8a2sQphSSKemtLP0En0GYkNo205DF8qaocOjoSDxnhrQuJlXJSA53Ijcy8FjAgYkQBKVE+28WzhSOF6pEj2GU5hFlNlqoo=
+	t=1731699711; cv=none; b=Ym3oBIRnkFLaeANFrf+JClyehcYIwiCtjs1XavASd3X5vW9801d/SrFmNqFnQCLWAjCur/SCFXexrYbR7dXl5IMj496LgoS9uptczf5O2/IAlwirMENOyK01AXwpPuGYSxf0aLKcu6oum3h9jr+6NaSwlP0OO+4KvCAZPNw2gNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731697474; c=relaxed/simple;
-	bh=RqoaPyle6AhgXj44zMAywhohYrVIBDR1YleC07B2gzI=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=KbFN11Ypbtw79Y3P/Q3i0v1WgwUZyXaIl2oU9/ozKeKOj5KrcVITlsYISCEVTqpELNiaOrkOy9Uy05C56EGH0QGcZXiZ1+r0f3f/7hnNEif7Gd3/OFE4a25fkvi48b91UJdktP8pK+rIqnAZ65jvD/85tC3GMt2XS1XuaAqj9d4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-83adc5130e3so107382539f.0
-        for <linux-security-module@vger.kernel.org>; Fri, 15 Nov 2024 11:04:32 -0800 (PST)
+	s=arc-20240116; t=1731699711; c=relaxed/simple;
+	bh=11+JLjIDjOOyK0Aqas1540GH5ts0hbJToWK8RT6in2Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RElvCZoHE2hNTmNZ7POSY/n2t0woe1LUByuRA8TTawuMTH7q4JFs5DTyHgUuUvSal6bgZlm3q9f0ALcQbjWJ2nsvMUbilppBKYuuwg5zL/KuIjQeyntnQw20gQYwEsbXo7AxIr0bPGP7qkuhmdlF4pSR9Nb2Ddq+WkMdfCztFpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V3Eztt1G; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V3Eztt1G"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3821a905dbcso1384467f8f.0;
+        Fri, 15 Nov 2024 11:41:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731699708; x=1732304508; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nOgoGVaGPGzqc8HLQFO0H9kyoYBMblQj8Truem6RMlg=;
+        b=V3Eztt1GU5sGkaAu+0hIjjMiWDrFZguJSTyhXACLs+LDVYKqTr2ont3IUaMFRH6IHB
+         0PNzqTwCvdo4EzhFX7Lz9mfj2y1aTTHbcKozAx3AlUz5Bgyeasndcu0IsfIUgwJ4rVeF
+         gRr14a1yZxI9REaRvEVD3wHLrnU+MGlLI1GZR7CKQQxIz8iBTJfsCoegDh0DNK+Eg3Ie
+         D9neFNnThzrKo84HQzT6S2XaKXCQF2DUsbn8pwzMp8R9a1S/5yPrMlVAEgTEMU4d0W3P
+         jl8JIguQPOQKKrhFTIR+DDNvpzqvUKp+0yhShQ65rwf1ijQZ9LIfsBzH0bMdgWKiXOhz
+         AaVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731697472; x=1732302272;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yp5h//oLzoC6374LvAAklgUbuPJM8OxXuxClcyxNTnk=;
-        b=vI+WuE4P/eg7BqE/n2cQyEWo16XIMYju0dkgynexXbQ4grZAT3MrHzsVpCnU12ngUo
-         ++1BWg2YZovlPAc6jxxjd1MDPHGEeo1LX6LNH6Z1y36V/umbGaZ+wYKRXv3gQKEdsagn
-         aaWV2L/uWx9HO0JvfEUNh3Mkp66AQyCCQnX8nv9/Cxx7w9ABoS33G7QSNr1VkYpf3YDI
-         I16prRPvRZjqP1kaQBhnBnQe1DkIgjhN++LmQjEk+ey8sKTg5ba8AkSDYSBYgQbyxIea
-         OFUQBsXS+SSTuzhnPCv/WFiCYRMbIKmCpQ3APbqE+l6iplh5f6RbDrPHvOrzJBI1xh9z
-         m4aA==
-X-Forwarded-Encrypted: i=1; AJvYcCWx3downrezu+mpWAz5I9OAkfOqdYxyciPARiN1M0e4/7uxB+QiIF3Z1h0Yq/GM1ztvILbGitVFaCLlzx00fHj6B1S5ccc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuuvFJl9eZrxs/cYlfiIBSq7f0wmDrAWeMP7wfbRZVvs2obuWg
-	f0EghMk3ecXIGTvjXBoqTlCzuZmX6ofJ8po1Qn3pgNi37tqfQimtL9SqlXwnKp0eL1WnwxVmMeq
-	7C3EdE5pTntCK5kANsl/C5s+ZQAItAVpnAuFCym4reGoIyeUXU2Ib1Zc=
-X-Google-Smtp-Source: AGHT+IFfsYlt4YiX3VHukn8Jmu357hVqEqTkJGzU/XPze01Kk/BIvCVPvVT2NjY6bEmFbr6a4/P+seFK6PbnCxvmG+vJq1DsGvFX
+        d=1e100.net; s=20230601; t=1731699708; x=1732304508;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nOgoGVaGPGzqc8HLQFO0H9kyoYBMblQj8Truem6RMlg=;
+        b=S7xMu3ufqWt4hiL57n8XOYXSlmMZ3aeZ15qsz73jOgDoraosvhT8BMK+zvpogCpkj7
+         wG7yiSgxJjHu3lOkbM0CiDEG2ofX2TDcy1P+vvphlHHBs/2apuVF+Mc4lh+d01dRdVTf
+         c5GMlo0wIV4XE2m9YyMyYYGwR9h9XeDMApPm/BYRm6kUJ2RgJOXq85ftS0/OB45+qAs4
+         WH6Fqp/s05U5wS1Aaz7FWlZWEGs1syBWmjTJ0JGk9BzTI6SIbNatCBgZR7epuL+VNUl7
+         aUZ0I0dTe559D1vpg/WZeTc/pjaWi3dBFQ61ndZoVkQvBF9LdmELBYr//rRYlJgoBlLU
+         crOg==
+X-Forwarded-Encrypted: i=1; AJvYcCUztC56waOTJ0rXottSRHRPXKjVfdDiFu63nu+AlFq06+iA+/93wVLhrf0txRmgDsvcQD8yOvI1AJN6K2SVfMjxFQu6adyG@vger.kernel.org, AJvYcCVNeAykylK1vGcWCDqQ8KoG3VBZXcB8jRgdwYIYn0iRILCzc0cwPKMng8x8q/vnp+11BrMKsB2hflZfTo4w@vger.kernel.org, AJvYcCWE/905eFDJiTAMXkX8zHklyu/zAWICPA/PVqBhlYeGK+DUJV0tMYr4eWWSu7yb9P6eVkcI3r687OUgh08XUw==@vger.kernel.org, AJvYcCXCnI5oKWH5ExIBFIdLWlUUJrZKyxzn+2x93BTQ4rS8u2KqBjDqmpphdBw7gz0Q3N6WNsA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZa2//VFSA2l1WVvMBj3PM9RyiQuvSMA0g1XU24oYF6GoUFZ6f
+	gHZyfmEgcqZeg1/YMtJBdtmA79Cq6DxvYxy3JdeDafILduzkAswubPdeOPTD3FD4BhPc+QnbXqU
+	+h4RaPfigFNS+mn7dAUG+czvImuM=
+X-Google-Smtp-Source: AGHT+IGHWSINqizwBrIJZlSoKrrg7DDQwkttX3kAOSa+kF7ZXNbLwGYJTiHnJ0AB6OJJOAogaGxA3sd8WRNWsXBj4wU=
+X-Received: by 2002:a5d:47a4:0:b0:37d:4e74:684 with SMTP id
+ ffacd0b85a97d-38225aa59f8mr3079318f8f.52.1731699707797; Fri, 15 Nov 2024
+ 11:41:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:218e:b0:3a4:e4d0:9051 with SMTP id
- e9e14a558f8ab-3a74808cc3emr41775455ab.24.1731697471800; Fri, 15 Nov 2024
- 11:04:31 -0800 (PST)
-Date: Fri, 15 Nov 2024 11:04:31 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67379b3f.050a0220.85a0.0001.GAE@google.com>
-Subject: [syzbot] [lsm?] WARNING in get_mode_access
-From: syzbot <syzbot+360866a59e3c80510a62@syzkaller.appspotmail.com>
-To: gnoack@google.com, jmorris@namei.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, mic@digikod.net, paul@paul-moore.com, 
-	serge@hallyn.com, syzkaller-bugs@googlegroups.com
+References: <20241114084345.1564165-1-song@kernel.org> <20241114084345.1564165-8-song@kernel.org>
+ <CAADnVQK6YyPUzQoPKkXptLHoHXJZ50A8vNPfpDAk8Jc3Z6+iRw@mail.gmail.com>
+ <E5457BFD-F7B9-4077-9EAC-168DA5C271E4@fb.com> <CAADnVQJ1um9u4cBpAEw83CS8xZJN=iP8WXdG0Ops5oTP-_NDFg@mail.gmail.com>
+ <DCE25AB7-E337-4E11-9D57-2880F822BF33@fb.com> <CAADnVQ+bRO+UakzouzR5OfmvJAcyOs7VqCJKiLsjnfW1xkPZOg@mail.gmail.com>
+ <C7C15985-2560-4D52-ADF9-C7680AF10E90@fb.com>
+In-Reply-To: <C7C15985-2560-4D52-ADF9-C7680AF10E90@fb.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Fri, 15 Nov 2024 11:41:36 -0800
+Message-ID: <CAADnVQK2mhS0RLN7fEpn=zuLMT0D=QFMuibLAvc42Td0eU=eaQ@mail.gmail.com>
+Subject: Re: [RFC/PATCH v2 bpf-next fanotify 7/7] selftests/bpf: Add test for
+ BPF based fanotify fastpath handler
+To: Song Liu <songliubraving@meta.com>
+Cc: Song Liu <song@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	LSM List <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, Eddy Z <eddyz87@gmail.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, KP Singh <kpsingh@kernel.org>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Amir Goldstein <amir73il@gmail.com>, 
+	"repnop@google.com" <repnop@google.com>, Jeff Layton <jlayton@kernel.org>, 
+	Josef Bacik <josef@toxicpanda.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	"gnoack@google.com" <gnoack@google.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Thu, Nov 14, 2024 at 11:01=E2=80=AFPM Song Liu <songliubraving@meta.com>=
+ wrote:
+>
+> >
+> > I think bpf-lsm hook fires before fanotify, so bpf-lsm prog
+> > implementing some security policy has to decide right
+> > at the moment what to do with, say, security_file_open().
+> > fanotify with or without bpf fastpath is too late.
+>
+> Actually, fanotify in permission mode can stop a file open.
 
-syzbot found the following issue on:
+The proposed patch 1 did:
 
-HEAD commit:    2d5404caa8c7 Linux 6.12-rc7
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=1592d35f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c3a3896a92fb300b
-dashboard link: https://syzkaller.appspot.com/bug?extid=360866a59e3c80510a62
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16f0b8c0580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16c87ea7980000
++/* Return value of fp_handler */
++enum fanotify_fastpath_return {
++ /* The event should be sent to user space */
++ FAN_FP_RET_SEND_TO_USERSPACE =3D 0,
++ /* The event should NOT be sent to user space */
++ FAN_FP_RET_SKIP_EVENT =3D 1,
++};
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/f7fdf3a28c09/disk-2d5404ca.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/37016caab507/vmlinux-2d5404ca.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/ee15f845ad51/bzImage-2d5404ca.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/2518ff26b7ab/mount_0.gz
+It looked like a read-only notification to user space
+where bpf prog is merely a filter.
 
-Bisection is inconclusive: the first bad commit could be any of:
+> In current upstream code, fsnotify hook fsnotify_open_perm
+> is actually part of security_file_open(). It will be moved
+> to do_dentry_open(), right after security_file_open(). This
+> move is done by 1cda52f1b461 in linux-next.
 
-385975dca53e landlock: Set up the security framework and manage credentials
-afe81f754117 landlock: Add ptrace restrictions
-1aea7808372e LSM: Infrastructure management of the superblock
-ae271c1b14de landlock: Add ruleset and domain management
-90945448e983 landlock: Add object management
-cb2c7d1a1776 landlock: Support filesystem access-control
-83e804f0bfee fs,security: Add sb_delete hook
+Separating fsnotify from LSM makes sense.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11f60ce8580000
+> In practice, we are not likely to use BPF LSM and fanotify
+> on the same hook at the same time. Instead, we can use
+> BPF LSM hooks to gather information and use fanotify to
+> make allow/deny decision, or vice versa.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+360866a59e3c80510a62@syzkaller.appspotmail.com
+Pick one.
+If the proposal is changing to let fsnotify-bpf prog to deny
+file_open then it's a completely different discussion.
 
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 5839 at security/landlock/fs.c:971 get_mode_access security/landlock/fs.c:971 [inline]
-WARNING: CPU: 0 PID: 5839 at security/landlock/fs.c:971 get_mode_access+0xae/0xc0 security/landlock/fs.c:951
-Modules linked in:
-CPU: 0 UID: 0 PID: 5839 Comm: syz-executor461 Not tainted 6.12.0-rc7-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
-RIP: 0010:get_mode_access security/landlock/fs.c:971 [inline]
-RIP: 0010:get_mode_access+0xae/0xc0 security/landlock/fs.c:951
-Code: c2 66 81 fb 00 10 75 1c bd 00 04 00 00 eb b4 66 81 fb 00 80 75 0e bd 00 01 00 00 eb a6 bd 00 08 00 00 eb 9f e8 a3 0e 3c fd 90 <0f> 0b 90 31 ed eb 92 66 66 2e 0f 1f 84 00 00 00 00 00 90 90 90 90
-RSP: 0018:ffffc900040d7b58 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: 000000000000f000 RCX: ffffffff84516b24
-RDX: ffff888034d40000 RSI: ffffffff84516bad RDI: 0000000000000003
-RBP: 0000000000001000 R08: 0000000000000003 R09: 000000000000c000
-R10: 000000000000f000 R11: 0000000000000000 R12: 0000000000000001
-R13: ffff888075ce1478 R14: 0000000000400000 R15: ffff888079c0d608
-FS:  000055558f349380(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000000000066c7e0 CR3: 0000000031b8c000 CR4: 0000000000350ef0
-Call Trace:
- <TASK>
- current_check_refer_path+0x253/0x710 security/landlock/fs.c:1127
- security_path_rename+0x160/0x3c0 security/security.c:2022
- do_renameat2+0x7a0/0xdd0 fs/namei.c:5157
- __do_sys_renameat2 fs/namei.c:5204 [inline]
- __se_sys_renameat2 fs/namei.c:5201 [inline]
- __x64_sys_renameat2+0xe7/0x130 fs/namei.c:5201
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f48877e0679
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 61 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffcbfbffbf8 EFLAGS: 00000246 ORIG_RAX: 000000000000013c
-RAX: ffffffffffffffda RBX: 00007ffcbfbffdc8 RCX: 00007f48877e0679
-RDX: 00000000ffffff9c RSI: 0000000020000780 RDI: 00000000ffffff9c
-RBP: 00007f4887854610 R08: 0000000000000002 R09: 00007ffcbfbffdc8
-R10: 00000000200007c0 R11: 0000000000000246 R12: 0000000000000001
-R13: 00007ffcbfbffdb8 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
+In such a case make it clear upfront that fsnotify will
+rely on CONFIG_FANOTIFY_ACCESS_PERMISSIONS and
+bpf-lsm part of file access will not be used,
+since interaction of two callbacks at file_open makes little sense.
 
+> > In general fanotify is not for security. It's notifying
+> > user space of events that already happened, so I don't see
+> > how these two can be combined.
+>
+> fanotify is actually used by AntiVirus softwares. For
+> example, CalmAV (https://www.clamav.net/) uses fanotify
+> for its Linux version (it also supports Window and MacOS).
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+It's relying on user space to send back FANOTIFY_PERM_EVENTS ?
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+fsnotify_open_perm->fsnotify->send_to_group->fanotify_handle_event.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+is a pretty long path to call bpf prog and
+preparing a giant 'struct fanotify_fastpath_event'
+is not going to fast either.
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+If we want to accelerate that with bpf it needs to be done
+sooner with negligible overhead.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+>
+> I guess I didn't state the motivation clearly. So let me
+> try it now.
+>
+> Tracing is a critical part of a security solution. With
+> LSM, blocking an operation is straightforward. However,
+> knowing which operation should be blocked is not always
+> easy. Also, security hooks (LSM or fanotify) sit in the
+> critical path of user requests. It is very important to
+> optimize the latency of a security hook. Ideally, the
+> tracing logic should gather all the information ahead
+> of time, and make the actual hook fast.
+>
+> For example, if security_file_open() only needs to read
+> a flag from inode local storage, the overhead is minimal
+> and predictable. If security_file_open() has to walk the
+> dentry tree, or call d_path(), the overhead will be
+> much higher. fanotify_file_perm() provides another
+> level of optimization over security_file_open(). If a
+> file is not being monitored, fanotify will not generate
+> the event.
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+I agree with motivation, but don't see this in the patches.
+The overhead to call into bpf prog is big.
+Even if prog does nothing it's still going to be slower.
 
-If you want to undo deduplication, reply with:
-#syz undup
+> Security solutions hold higher bars for the tracing logic:
+>
+> - It needs to be accurate, as false positives and false
+>   negatives can be very annoying and/or harmful.
+> - It needs to be efficient, as security daemons run 24/7.
+>
+> Given these requirements of security solutions, I believe
+> it is important to optimize tracing logic as much as
+> possible. And BPF based fanotify fastpath handler can
+> bring non-trivials benefit to BPF based security solutions.
+
+Doing everything in the kernel is certainly faster than
+going back and forth to user space,
+but bpf-lsm should be able to do the same already.
+
+Without patch 1 and only patches 4,5 that add few kfuncs,
+bpf-lsm prog will be able to remember subtree dentry and
+do the same is_subdir() to deny.
+The patch 7 stays pretty much as-is. All in bpf-lsm.
+Close to zero overhead without long chain of fsnotify callbacks.
+
+> fanotify also has a feature that LSM doesn't provide.
+> When a file is accessed, user space daemon can get a
+> fd on this file from fanotify. OTOH, LSM can only send
+> an ino or a path to user space, which is not always
+> reliable.
+
+That sounds useful, but we're mixing too many things.
+If user space cares about fd it will be using the existing
+mechanism with all accompanied overhead. fsnotify-bpf can
+barely accelerate anything, since user space makes
+ultimate decisions.
+If user space is not in the driving seat then existing bpf-lsm
+plus few kfuncs to remember dentry and call is_subdir()
+will do the job and no need for patch 1.
