@@ -1,40 +1,49 @@
-Received: from cmccmta2.chinamobile.com (cmccmta8.chinamobile.com [111.22.67.151])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF5FE54652;
-	Mon, 18 Nov 2024 06:25:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.151
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6356148827;
+	Mon, 18 Nov 2024 11:45:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731911138; cv=none; b=q7yycTATm+OmvMELSeDD7aZPBt3HxuV2cb+9MHCMqVqjo96lcbq9SIeAAOCqthTb3oKDfn7D9aeZw5O4iHnxuzQjkycmL0yYQ8r+M5bb1W4Yya1PSw+LTFJ6Hv4QR03Hj7aoqCZYC/bkrbrqS5C7bpIzWL7n75bgYtQLHLliiZg=
+	t=1731930315; cv=none; b=BAgOl0gXIMCP/p3o8BrhHQUszBAtPUkc8hROj9m0TSU6WHq5o7p6nUcY7ga4b0P+gJKGeTGTcYp7vze5HhMlYtCoGrr3y+H6Lcfz5IbliTmeCj1uQyJ49csX429NUlvFNBYfi0J2F9aYZ5U4S1g/ZWTv8y4/ftjGdoIgjRoZ94g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731911138; c=relaxed/simple;
-	bh=eYvTGSmwc/HG7pTWakworhP5mMe7YU+guEWVku/y6no=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HswH7CiV3uvKLVUL5vHJNrYrVeWwNlXM092duvhmhQV6Wol0v7Ao1GDLkJE4i6MLa3OfEqbyokmnt7FFCpjogCLuGcvZ/ur91LQQPXNaNrfxh9CtG1pcablV1fCGbwjS36lJo+pF63UAsW69yaJ9KW3YqPU7ZeBIodfPT+B+7oU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app06-12006 (RichMail) with SMTP id 2ee6673addd61fb-0cacc;
-	Mon, 18 Nov 2024 14:25:27 +0800 (CST)
-X-RM-TRANSID:2ee6673addd61fb-0cacc
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from localhost.localdomain (unknown[223.108.79.101])
-	by rmsmtp-syy-appsvr08-12008 (RichMail) with SMTP id 2ee8673addc9ddf-b0623;
-	Mon, 18 Nov 2024 14:25:27 +0800 (CST)
-X-RM-TRANSID:2ee8673addc9ddf-b0623
-From: Ba Jing <bajing@cmss.chinamobile.com>
-To: mic@digikod.net
-Cc: gnoack@google.com,
-	shuah@kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ba Jing <bajing@cmss.chinamobile.com>
-Subject: [PATCH] landlock: ptrace_test: remove unused macros
-Date: Mon, 18 Nov 2024 12:24:07 +0800
-Message-Id: <20241118042407.12900-1-bajing@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1731930315; c=relaxed/simple;
+	bh=rcgFhFs++ejbghwtrVjfsT60p3rYlOkju6ZDDpb8mZg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=L3sVYJAXZkRqX5n8AtN1jU2126urH5t7hI63RtKzP96CRSkGjABIx5bhiANaQ+kyKu7cyHehCKx4LQuxh5ipq44eNzUDG0fnJauA6Gx4kkKUysEH5uDPfPMbkjOpqu7uTv+DIz8Mul7XxzAbiK0s4JStHBihmATla3ysFjFS1RM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XsQlm45H7z4f3jXJ;
+	Mon, 18 Nov 2024 19:44:52 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 04FE61A0568;
+	Mon, 18 Nov 2024 19:45:11 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.101.107])
+	by APP4 (Coremail) with SMTP id gCh0CgCnzoLEKDtn3fCKCA--.48005S4;
+	Mon, 18 Nov 2024 19:45:10 +0800 (CST)
+From: Ye Bin <yebin@huaweicloud.com>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	linux-fsdevel@vger.kernel.org,
+	axboe@kernel.dk,
+	linux-block@vger.kernel.org,
+	agruenba@redhat.com,
+	gfs2@lists.linux.dev,
+	amir73il@gmail.com,
+	mic@digikod.net,
+	gnoack@google.com,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	linux-security-module@vger.kernel.org
+Cc: yebin10@huawei.com,
+	zhangxiaoxu5@huawei.com
+Subject: [PATCH 00/11] fix hungtask due to repeated traversal of inodes list
+Date: Mon, 18 Nov 2024 19:44:57 +0800
+Message-Id: <20241118114508.1405494-1-yebin@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -42,30 +51,64 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCnzoLEKDtn3fCKCA--.48005S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxJr4fuF15Xr1DWw45ZFyDGFg_yoW8WrW8pF
+	43XFW3XF4UJry3Wr93Jw18Xw1Syan5GrWDJrW7tw13Xr45Aryayr4Iyw1YgFyDWFWrZw1Y
+	9r4UC3y7uF1DXrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0E
+	n4kS14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I
+	0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8
+	ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcV
+	CY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAF
+	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
+	7IU0s2-5UUUUU==
+X-CM-SenderInfo: p1hex046kxt4xhlfz01xgou0bp/
 
-After reviewing the code, it was found that these macros are never
-referenced in the code. Just remove them.
+From: Ye Bin <yebin10@huawei.com>
 
-Signed-off-by: Ba Jing <bajing@cmss.chinamobile.com>
----
- tools/testing/selftests/landlock/ptrace_test.c | 2 --
- 1 file changed, 2 deletions(-)
+As commit 04646aebd30b ("fs: avoid softlockups in s_inodes iterators")
+introduces the retry logic. In the problem environment, the 'i_count'
+of millions of files is not zero. As a result, the time slice for each
+traversal to the matching inode process is almost used up, and then the
+traversal is started from scratch. The worst-case scenario is that only
+one inode can be processed after each wakeup. Because this process holds
+a lock, other processes will be stuck for a long time, causing a series
+of problems.
+To solve the problem of repeated traversal from the beginning, each time
+the CPU needs to be freed, a cursor is inserted into the linked list, and
+the traversal continues from the cursor next time.
 
-diff --git a/tools/testing/selftests/landlock/ptrace_test.c b/tools/testing/selftests/landlock/ptrace_test.c
-index a19db4d0b3bd..8f31b673ff2d 100644
---- a/tools/testing/selftests/landlock/ptrace_test.c
-+++ b/tools/testing/selftests/landlock/ptrace_test.c
-@@ -22,8 +22,6 @@
- /* Copied from security/yama/yama_lsm.c */
- #define YAMA_SCOPE_DISABLED 0
- #define YAMA_SCOPE_RELATIONAL 1
--#define YAMA_SCOPE_CAPABILITY 2
--#define YAMA_SCOPE_NO_ATTACH 3
- 
- static void create_domain(struct __test_metadata *const _metadata)
- {
+Ye Bin (11):
+  fs: introduce I_CURSOR flag for inode
+  block: use sb_for_each_inodes API
+  fs: use sb_for_each_inodes API
+  gfs2: use sb_for_each_inodes API
+  fs: use sb_for_each_inodes_safe API
+  fsnotify: use sb_for_each_inodes API
+  quota: use sb_for_each_inodes API
+  fs/super.c: use sb_for_each_inodes API
+  landlock: use sb_for_each_inodes API
+  fs: fix hungtask due to repeated traversal of inodes list
+  fs: fix potential soft lockup when 'sb->s_inodes' has large number of
+    inodes
+
+ block/bdev.c           |  4 +--
+ fs/drop_caches.c       |  2 +-
+ fs/gfs2/ops_fstype.c   |  2 +-
+ fs/inode.c             | 59 ++++++++++++++++++++++++++++--------------
+ fs/notify/fsnotify.c   |  2 +-
+ fs/quota/dquot.c       |  4 +--
+ fs/super.c             |  2 +-
+ include/linux/fs.h     | 45 ++++++++++++++++++++++++++++++++
+ security/landlock/fs.c |  2 +-
+ 9 files changed, 93 insertions(+), 29 deletions(-)
+
 -- 
-2.33.0
-
-
+2.34.1
 
