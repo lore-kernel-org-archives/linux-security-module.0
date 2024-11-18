@@ -1,84 +1,242 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6795A1863F
-	for <linux-security-module@vger.kernel.org>; Mon, 18 Nov 2024 15:26:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF8C319E99A
+	for <linux-security-module@vger.kernel.org>; Mon, 18 Nov 2024 16:27:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731943595; cv=none; b=MrjsUH9cHjvEdsqW5gAtp/ew2ac35HLYW1Pfux9r3yRQyuE1lttcjdahpCJj0ASKoJ+jK9HYx3SSYfmGJalMxuOW1KuxFsTZi/L/x12cDR0NrJieWEux/iq3DurP9PNqw1lgsJq9bmxKKb7bmVtXBrlYcqjl1GLuO30/8RpZZO0=
+	t=1731947247; cv=none; b=L1xtI6D8g3AGIFk59vHWWuguPKlfnRU9wH3eHnWM98EILZoT+kxAixApyKBINwdXvx/QioLtkZ7V/cIgebfkXixji3AhBlHBJIudl2rT70iqmTDMAGfTpB3CHJVD2KJh6MfP9Wl8602tq44mDeIM67pral/mM9xGzBphJZqkSNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731943595; c=relaxed/simple;
-	bh=fPrzbIMZHF+KGmCfA5oOjgDxMGgSIXC30pd8ypgLgog=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=K0I7mw6IgdEiudF2tGuZVDn1G2W8+Sqk8r/bkrSCHwHpmuTMgPW7OZYQCKYffo603vGXVZPeZ0o3ph7ynWG5mfl2zKY0jLInqXTFWp3wyAErt8Bp2GNE4LibB9enp0aTaGnujVGT/6yjvy8qYSYfWD4d3Rv5AiCeQhmasAAahUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bqebZHNy; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bqebZHNy"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CFEFC4CECC;
-	Mon, 18 Nov 2024 15:26:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1731943595;
-	bh=fPrzbIMZHF+KGmCfA5oOjgDxMGgSIXC30pd8ypgLgog=;
-	h=Date:From:To:Cc:Subject:From;
-	b=bqebZHNyWOVGLlvHiHsOTTIqCUfOdaqDvJgGQuOrbFnA8gAhu1OChaccD3JAZiQ2f
-	 Ji6mV3vW67gOWi3ezmjVpG5nCv/G5IftB9uUnJ10W+xR+EBOJWNMl9OOuWKN4WJCaJ
-	 dYLpQJdb/wZVY3ouoS3bYlicEGrrlRDcOxjGStkKVHFyvP8TosHhpUhY1Es41MHjEB
-	 6lWdbfpYHLbHgS6TgAlfXdmuCHled7R/L+cuWt7i5V2tnj2A0FMVCxf5RCfM1+Ub35
-	 AFXH/px08WHWhhUdYQTuGx5gAepg1l0ATLZWWOgP3JoedY+NtELx9phnmCGpWOlBPK
-	 Dju1KeTcKVScg==
-Date: Mon, 18 Nov 2024 15:26:31 +0000
-From: sergeh@kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Paul Moore <paul@paul-moore.com>, Jordan Rome <linux@jordanrome.com>,
-	linux-security-module@vger.kernel.org
-Subject: [GIT PULL] capabilities
-Message-ID: <Zztcp-fm9Ln57c-t@lei>
+	s=arc-20240116; t=1731947247; c=relaxed/simple;
+	bh=Bj2t0z6lmFrkDW5fiWSqJnk+1pYR5JnDN0b4eF9Esso=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=L88u1IllwhnhrwBqHgwhFZof7WwBFuxDXY9/02hyxOItT/XLrj01UvFbmmQeeCVYqejy8H5WVAO5Myiebd3chA9jEJMMOXQiq4IohdJwWh9dkffeA46yxZrIYBBJvS/DGv/X1o5r1c88qgoedt+gtXGzQej5rHiGtHGJDy4MLgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a715ac91f6so36141205ab.2
+        for <linux-security-module@vger.kernel.org>; Mon, 18 Nov 2024 08:27:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1731947245; x=1732552045;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=opLgGPpErA58ELBQFfDLjhmki6hEN/TThPq1Nvu+aSE=;
+        b=FTMR4cFsFOj6No9gviB/kcmwAHhXlI3CqcqWjeQDamPE3K2zs+7tOCHV8R6zgC/++l
+         f6w8SBjDwnhIUcZXEt7DjT8kNVBKxR0A1b+S7CQEsU2YBBpg4BJ9THL7KwZwHlEiKmah
+         H+KGXQpnk33RVYEtbsIOCWJbgEdxQjWJe0Bd78FaRGb0LHXIzaThro6KnrIbW0ViifqC
+         yjZgi9t8fE0Hq6Pjyo8/vyrQ9d+OJd4h6jrobSHkWhQ8PYCeNIOuShc7TNUGiRNNuyS1
+         SLqE8j2ujU3AQFyNl6b+UXE5FC7m49QTc7u4MXDzq5I0v7ArFxWDWm3VUB4RalTB3X7w
+         sAJg==
+X-Forwarded-Encrypted: i=1; AJvYcCX1xIowmSPHMNQiyhPT/rKZYbPxikwEafKCD0GZaYWz9Sie2glzT+6DOu9ajmkzIXjjCgKsD0NB+jLUcWkfHOfHf3fop30=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaBYQoHqpAhmCtFgWKHv8sXb46gbFu/z52mroLCzFnHVvcGzvv
+	Rlnmbu9nnwMnzBSHkiLt19nGBw2cbPW10dXmhx/SxvbJlFoh8esX6Nz/FT2rSIFLYzOxnDr2oZb
+	a3m0a+kv4xrthImrPGG2hpW9LKkZhiUBQJ4TamkvcUlh16QEddUGfs7M=
+X-Google-Smtp-Source: AGHT+IEnZUUF46G0mw4HMVmpeD8SQ5Cn14q95AEABSclESINCuh75j0D2A/zGpmlEM7ztBB3IUmf+R5UbNPhMYP9kUwrLMEpmgKG
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-Received: by 2002:a05:6e02:1a2e:b0:3a7:6f5a:e5c7 with SMTP id
+ e9e14a558f8ab-3a76f5ae756mr17759695ab.4.1731947244875; Mon, 18 Nov 2024
+ 08:27:24 -0800 (PST)
+Date: Mon, 18 Nov 2024 08:27:24 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <673b6aec.050a0220.87769.004a.GAE@google.com>
+Subject: [syzbot] [keyrings?] [lsm?] KASAN: slab-use-after-free Read in key_put
+From: syzbot <syzbot+6105ffc1ded71d194d6d@syzkaller.appspotmail.com>
+To: dhowells@redhat.com, jarkko@kernel.org, jmorris@namei.org, 
+	keyrings@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, paul@paul-moore.com, serge@hallyn.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Linus,
+Hello,
 
-The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
+syzbot found the following issue on:
 
-  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
+HEAD commit:    adc218676eef Linux 6.12
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=16c672e8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=55f8591b98dd132
+dashboard link: https://syzkaller.appspot.com/bug?extid=6105ffc1ded71d194d6d
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12dbbb5f980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11c672e8580000
 
-are available in the Git repository at:
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/2362200b664b/disk-adc21867.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/866b8b236466/vmlinux-adc21867.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/607680582dad/bzImage-adc21867.xz
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/sergeh/linux.git tags/caps-6.12-rc1
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+6105ffc1ded71d194d6d@syzkaller.appspotmail.com
 
-for you to fetch changes up to 54eb2cec2ed7aaf25524dd5ebeaa4f87ed5c6bd6:
+trusted_key: encrypted_key: insufficient parameters specified
+==================================================================
+BUG: KASAN: slab-use-after-free in key_put security/keys/key.c:657 [inline]
+BUG: KASAN: slab-use-after-free in key_put+0x288/0x2a0 security/keys/key.c:646
+Read of size 8 at addr ffff888079173b00 by task syz-executor356/7162
 
-  security: add trace event for cap_capable (2024-10-30 14:40:02 -0500)
+CPU: 0 UID: 0 PID: 7162 Comm: syz-executor356 Not tainted 6.12.0-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0xc3/0x620 mm/kasan/report.c:488
+ kasan_report+0xd9/0x110 mm/kasan/report.c:601
+ key_put security/keys/key.c:657 [inline]
+ key_put+0x288/0x2a0 security/keys/key.c:646
+ __key_create_or_update+0x92b/0xe10 security/keys/key.c:940
+ key_create_or_update+0x42/0x60 security/keys/key.c:1018
+ __do_sys_add_key+0x29c/0x460 security/keys/keyctl.c:134
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f410659a399
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 51 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f4106552218 EFLAGS: 00000246 ORIG_RAX: 00000000000000f8
+RAX: ffffffffffffffda RBX: 00007f4106621328 RCX: 00007f410659a399
+RDX: 0000000020000100 RSI: 0000000020000180 RDI: 0000000020000140
+RBP: 00007f4106621320 R08: 00000000fffffffe R09: 0000000000000000
+R10: 00000000000000ca R11: 0000000000000246 R12: 00007f41065ee074
+R13: 0072736d2f232f75 R14: 7570632f7665642f R15: 6574707972636e65
+ </TASK>
 
-This branch contains two patches:
+Allocated by task 7162:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+ unpoison_slab_object mm/kasan/common.c:319 [inline]
+ __kasan_slab_alloc+0x89/0x90 mm/kasan/common.c:345
+ kasan_slab_alloc include/linux/kasan.h:247 [inline]
+ slab_post_alloc_hook mm/slub.c:4085 [inline]
+ slab_alloc_node mm/slub.c:4134 [inline]
+ kmem_cache_alloc_noprof+0x121/0x2f0 mm/slub.c:4141
+ key_alloc+0x3e3/0x13a0 security/keys/key.c:277
+ __key_create_or_update+0x71f/0xe10 security/keys/key.c:930
+ key_create_or_update+0x42/0x60 security/keys/key.c:1018
+ __do_sys_add_key+0x29c/0x460 security/keys/keyctl.c:134
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-1. Remove the cap_mmap_file() hook (Paul Moore), as it wasn't actually doing anything.
-   de2433c608c2c2633b8a452dd4925d876f3d5add
+Freed by task 46:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+ kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:579
+ poison_slab_object mm/kasan/common.c:247 [inline]
+ __kasan_slab_free+0x51/0x70 mm/kasan/common.c:264
+ kasan_slab_free include/linux/kasan.h:230 [inline]
+ slab_free_hook mm/slub.c:2342 [inline]
+ slab_free mm/slub.c:4579 [inline]
+ kmem_cache_free+0x152/0x4b0 mm/slub.c:4681
+ key_gc_unused_keys.constprop.0+0x134/0x480 security/keys/gc.c:167
+ key_garbage_collector+0x432/0x990 security/keys/gc.c:300
+ process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ kthread+0x2c1/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
-2. Add a trace event for cap_capable (Jordan Rome).
-   54eb2cec2ed7aaf25524dd5ebeaa4f87ed5c6bd6
+The buggy address belongs to the object at ffff888079173a40
+ which belongs to the cache key_jar of size 336
+The buggy address is located 192 bytes inside of
+ freed 336-byte region [ffff888079173a40, ffff888079173b90)
 
-Both patches have been sitting in linux-next for quite some time with no apparent
-issues.
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x79172
+head: order:1 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 00fff00000000040 ffff88801c2ba140 dead000000000122 0000000000000000
+raw: 0000000000000000 0000000080120012 00000001f5000000 0000000000000000
+head: 00fff00000000040 ffff88801c2ba140 dead000000000122 0000000000000000
+head: 0000000000000000 0000000080120012 00000001f5000000 0000000000000000
+head: 00fff00000000001 ffffea0001e45c81 ffffffffffffffff 0000000000000000
+head: 0000000000000002 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 1, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 7134, tgid 7131 (syz-executor356), ts 90591707414, free_ts 84975549277
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x2d1/0x350 mm/page_alloc.c:1556
+ prep_new_page mm/page_alloc.c:1564 [inline]
+ get_page_from_freelist+0xfce/0x2f80 mm/page_alloc.c:3474
+ __alloc_pages_noprof+0x223/0x25a0 mm/page_alloc.c:4751
+ alloc_pages_mpol_noprof+0x2c9/0x610 mm/mempolicy.c:2265
+ alloc_slab_page mm/slub.c:2412 [inline]
+ allocate_slab mm/slub.c:2578 [inline]
+ new_slab+0x2c9/0x410 mm/slub.c:2631
+ ___slab_alloc+0xdac/0x1880 mm/slub.c:3818
+ __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3908
+ __slab_alloc_node mm/slub.c:3961 [inline]
+ slab_alloc_node mm/slub.c:4122 [inline]
+ kmem_cache_alloc_noprof+0x2a7/0x2f0 mm/slub.c:4141
+ key_alloc+0x3e3/0x13a0 security/keys/key.c:277
+ keyring_alloc+0x44/0xc0 security/keys/keyring.c:526
+ install_process_keyring_to_cred security/keys/process_keys.c:275 [inline]
+ install_process_keyring security/keys/process_keys.c:300 [inline]
+ lookup_user_key+0xa34/0x12f0 security/keys/process_keys.c:653
+ __do_sys_add_key+0x25a/0x460 security/keys/keyctl.c:126
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+page last free pid 6961 tgid 6958 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1127 [inline]
+ free_unref_page+0x661/0x1080 mm/page_alloc.c:2657
+ qlink_free mm/kasan/quarantine.c:163 [inline]
+ qlist_free_all+0x4e/0x120 mm/kasan/quarantine.c:179
+ kasan_quarantine_reduce+0x192/0x1e0 mm/kasan/quarantine.c:286
+ __kasan_slab_alloc+0x69/0x90 mm/kasan/common.c:329
+ kasan_slab_alloc include/linux/kasan.h:247 [inline]
+ slab_post_alloc_hook mm/slub.c:4085 [inline]
+ slab_alloc_node mm/slub.c:4134 [inline]
+ __kmalloc_cache_node_noprof+0x173/0x350 mm/slub.c:4303
+ kmalloc_node_noprof include/linux/slab.h:901 [inline]
+ alloc_user_cpus_ptr kernel/sched/sched.h:2614 [inline]
+ sched_setaffinity+0x252/0x430 kernel/sched/syscalls.c:1282
+ __do_sys_sched_setaffinity kernel/sched/syscalls.c:1331 [inline]
+ __se_sys_sched_setaffinity kernel/sched/syscalls.c:1320 [inline]
+ __x64_sys_sched_setaffinity+0x101/0x170 kernel/sched/syscalls.c:1320
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-thanks,
--serge
+Memory state around the buggy address:
+ ffff888079173a00: fc fc fc fc fc fc fc fc fa fb fb fb fb fb fb fb
+ ffff888079173a80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff888079173b00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                   ^
+ ffff888079173b80: fb fb fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+ ffff888079173c00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
 
-----------------------------------------------------------------
-Jordan Rome (1):
-      security: add trace event for cap_capable
 
-Paul Moore (1):
-      capabilities: remove cap_mmap_file()
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
- MAINTAINERS                       |  1 +
- include/trace/events/capability.h | 60 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- security/commoncap.c              | 37 ++++++++++++++++++++++---------------
- 3 files changed, 83 insertions(+), 15 deletions(-)
- create mode 100644 include/trace/events/capability.h
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
