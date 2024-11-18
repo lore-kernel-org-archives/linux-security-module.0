@@ -1,52 +1,66 @@
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 304EA1A00F8;
-	Mon, 18 Nov 2024 11:45:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FB0813D518;
+	Mon, 18 Nov 2024 14:58:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731930322; cv=none; b=IGctFQph3MA5777HgMJt6qco4vW4xlpC1jFjDi2RRA5FxRVmOzTWEB0AtZjR4CyYBjBnTXxRBQFM3cgmi8rULZLnr9Y+JzeimcOJVOrOHgwL/0ZpVVXJ9Y1f8sq3SuyuZg0lJ9jGPwqelCdP0Eyw+0fHSBxVW6rKjQ24xgVbnuU=
+	t=1731941890; cv=none; b=fA/SOFl6Ev9aiRe1zc71aoNF8OfkV3ZgM8g3H21IPO9U07sVzYIJD/aZJL4G+5qDNDrgPPrHQeUibvaRpnHDPmN5Hdk0VV7ZShnDCOJeO5tMwNpwDoK/+uUeaL9Ed2YpTDfGHLOYCNrqWsWN9VwqR2tZeHxMMxCaXbPL42wG2/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731930322; c=relaxed/simple;
-	bh=5kGt5YdPzQR7JjnloKlub9ZvkTDiI38fa29tAWFwlR0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=pttNn4bi4B6+4suQzKyyIjgu60BFLbSDYhCu0qahQwzRrjNv0yuMdCccV2l7pLDvWhb+Jxdo0InS47VRVvHRss3/KHTdQc5cGAFGfG8060eonnVq0vdzU20ysk9nIpSE7TFoYJFE/9THwSu08PjyrSZaj8pRbga4NkDmWFbElcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XsQlv5nt7z4f3jXs;
-	Mon, 18 Nov 2024 19:44:59 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 3F61C1A0568;
-	Mon, 18 Nov 2024 19:45:18 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.101.107])
-	by APP4 (Coremail) with SMTP id gCh0CgCnzoLEKDtn3fCKCA--.48005S15;
-	Mon, 18 Nov 2024 19:45:17 +0800 (CST)
-From: Ye Bin <yebin@huaweicloud.com>
-To: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	linux-fsdevel@vger.kernel.org,
-	axboe@kernel.dk,
-	linux-block@vger.kernel.org,
-	agruenba@redhat.com,
-	gfs2@lists.linux.dev,
-	amir73il@gmail.com,
-	mic@digikod.net,
-	gnoack@google.com,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	linux-security-module@vger.kernel.org
-Cc: yebin10@huawei.com,
-	zhangxiaoxu5@huawei.com
-Subject: [PATCH 11/11] fs: fix potential soft lockup when 'sb->s_inodes' has large number of inodes
-Date: Mon, 18 Nov 2024 19:45:08 +0800
-Message-Id: <20241118114508.1405494-12-yebin@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241118114508.1405494-1-yebin@huaweicloud.com>
-References: <20241118114508.1405494-1-yebin@huaweicloud.com>
+	s=arc-20240116; t=1731941890; c=relaxed/simple;
+	bh=cY/3EZ1/rIUKj6nA/2T++bb1HPfWnyEXEsAsEslo11o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XiF6oJpgYuQZJg1B5dcbmdfF4WrnrvDnh9sRkIDBeRcZ6+K/PWh4NpAO+oU+eNoxTknoSucd7qmDhoYZv0gE2Tl3QE8c8Uxqj4SfBG4A2h8NdrwveTz57TtONxutXxqzBp4FoAp7+aAOheb9MDL69tWPsLtoKMW9eqbrHKTSlXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=areC5p2a; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="areC5p2a"
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AIDTD6G003352;
+	Mon, 18 Nov 2024 14:57:55 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=c6t0TcuKxeY2VY9QNhhebI8mq3rfkrSo2oexHy4Yy
+	lk=; b=areC5p2akx3l0wqMgznZPPDyzNkJKhSunaXWjJrRwiSJ2o/qQklyFxYKl
+	FTkzARjqzsdmlHZC8mW5tmMxChmudPoJrsYu5txJugvKUoLJ7ve9lVTFfD9sabyB
+	UrNQW4SfZsiXBWjHqefWSGy2qhmNVMVKztlERLQDiEH0KS4E+Y0E3U4D/I1dVSWE
+	+jSAfcAEwvX6jd1Sr+S3IPffe2S0PvOSHHRaf4wOiihE9NFaysP7SHmglMPof4sM
+	lev+N3aV9/fs1O+B2Cpy0gT9EYb9Rf1LrNyi9zqR2SijdUNDtllAC6MozCDYu98G
+	dy3rSaxvgYk6Wn+XKjq8TZ0lKrZVQ==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42xyu1gcd3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 18 Nov 2024 14:57:55 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AIDbYQY000599;
+	Mon, 18 Nov 2024 14:57:46 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42y77kmthy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 18 Nov 2024 14:57:46 +0000
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AIEviWi43844128
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 18 Nov 2024 14:57:45 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id BB2FD58051;
+	Mon, 18 Nov 2024 14:57:44 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4FB665805C;
+	Mon, 18 Nov 2024 14:57:44 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 18 Nov 2024 14:57:44 +0000 (GMT)
+From: Stefan Berger <stefanb@linux.vnet.ibm.com>
+To: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        zohar@linux.ibm.com
+Cc: linux-kernel@vger.kernel.org, roberto.sassu@huawei.com,
+        Stefan Berger <stefanb@linux.ibm.com>,
+        Tushar Sugandhi <tusharsu@linux.microsoft.com>
+Subject: [PATCH v3] ima: Suspend PCR extends and log appends when rebooting
+Date: Mon, 18 Nov 2024 09:57:31 -0500
+Message-ID: <20241118145732.1258631-1-stefanb@linux.vnet.ibm.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -54,121 +68,157 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCnzoLEKDtn3fCKCA--.48005S15
-X-Coremail-Antispam: 1UD129KBjvJXoWxAw18GFWkWFyDXrWUuw47XFb_yoW5Cry7pF
-	nIgFW3Xw48KayFgw4ftF1kWrn3ta4v9r4xtryfCr9xAayjy343tF1UAr17XFWrKF47Zr90
-	qF48Cry3Ars3AwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPvb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
-	Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
-	rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267
-	AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E
-	14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7
-	xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Y
-	z7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2
-	AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAq
-	x4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6r
-	W5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Gr0_Xr1lIxAIcVC0I7IYx2IY6xkF
-	7I0E14v26r4UJVWxJr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14
-	v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuY
-	vjxUI-eODUUUU
-X-CM-SenderInfo: p1hex046kxt4xhlfz01xgou0bp/
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: MPRWE60AY8HBaGLZtXIpTHJOWOJQujsl
+X-Proofpoint-ORIG-GUID: MPRWE60AY8HBaGLZtXIpTHJOWOJQujsl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ lowpriorityscore=0 priorityscore=1501 suspectscore=0 impostorscore=0
+ bulkscore=0 spamscore=0 mlxlogscore=999 adultscore=0 mlxscore=0
+ clxscore=1011 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2411180124
 
-From: Ye Bin <yebin10@huawei.com>
+From: Stefan Berger <stefanb@linux.ibm.com>
 
-If the memory is sufficient, a large number of inodes that do not
-meet the conditions may exist in the 'sb->s_inodes' list when
-evict_inodes()/invalidate_inodes() traverse the 'sb->s_inodes' list.
-Then it maybe trigger soft lockup.
-To solve potential soft lockup, move need_resched() check from tail
-to head when traverse the 'sb->s_inodes' list.
+To avoid the following types of error messages due to a failure by the TPM
+driver to use the TPM, suspend TPM PCR extensions and the appending of
+entries to the IMA log once IMA's reboot notifier has been called. This
+avoids trying to use the TPM after the TPM subsystem has been shut down.
 
-Signed-off-by: Ye Bin <yebin10@huawei.com>
+[111707.685315][    T1] ima: Error Communicating to TPM chip, result: -19
+[111707.685960][    T1] ima: Error Communicating to TPM chip, result: -19
+
+Synchronization with the ima_extend_list_mutex to set
+ima_measurements_suspended ensures that the TPM subsystem is not shut down
+when IMA holds the mutex while appending to the log and extending the PCR.
+The alternative of reading the system_state variable would not provide this
+guarantee.
+
+This error could be observed on a ppc64 machine running SuSE Linux where
+processes are still accessing files after devices have been shut down.
+
+Suspending the IMA log and PCR extensions shortly before reboot does not
+seem to open a significant measurement gap since neither TPM quoting would
+work for attestation nor that new log entries could be written to anywhere
+after devices have been shut down. However, there's a time window between
+the invocation of the reboot notifier and the shutdown of devices. This
+includes all subsequently invoked reboot notifiers as well as
+kernel_restart_prepare() where __usermodehelper_disable() waits for all
+running_helpers to exit. During this time window IMA could now miss log
+entries even though attestation would still work. The reboot of the system
+shortly after may make this small gap insignificant.
+
+Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
 ---
- fs/inode.c | 49 +++++++++++++++++++++++++------------------------
- 1 file changed, 25 insertions(+), 24 deletions(-)
+ security/integrity/ima/ima.h       |  1 +
+ security/integrity/ima/ima_init.c  |  2 ++
+ security/integrity/ima/ima_queue.c | 44 ++++++++++++++++++++++++++++++
+ 3 files changed, 47 insertions(+)
 
-diff --git a/fs/inode.c b/fs/inode.c
-index b78895af8779..e865fc1f5a95 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -867,6 +867,21 @@ void evict_inodes(struct super_block *sb)
- again:
- 	spin_lock(&sb->s_inode_list_lock);
- 	sb_for_each_inodes_continue_safe(inode, next, &sb->s_inodes) {
-+		/*
-+		 * We can have a ton of inodes to evict at unmount time given
-+		 * enough memory, check to see if we need to go to sleep for a
-+		 * bit so we don't livelock.
-+		 */
-+		if (need_resched()) {
-+			list_del(&cursor.i_sb_list);
-+			list_add_tail(&cursor.i_sb_list, &inode->i_sb_list);
-+			inode = &cursor;
-+			spin_unlock(&sb->s_inode_list_lock);
-+			cond_resched();
-+			dispose_list(&dispose);
-+			goto again;
-+		}
-+
- 		if (atomic_read(&inode->i_count))
- 			continue;
+diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+index 3c323ca213d4..3f1a82b7cd71 100644
+--- a/security/integrity/ima/ima.h
++++ b/security/integrity/ima/ima.h
+@@ -278,6 +278,7 @@ unsigned long ima_get_binary_runtime_size(void);
+ int ima_init_template(void);
+ void ima_init_template_list(void);
+ int __init ima_init_digests(void);
++void __init ima_init_reboot_notifier(void);
+ int ima_lsm_policy_change(struct notifier_block *nb, unsigned long event,
+ 			  void *lsm_data);
  
-@@ -884,21 +899,6 @@ void evict_inodes(struct super_block *sb)
- 		inode_lru_list_del(inode);
- 		spin_unlock(&inode->i_lock);
- 		list_add(&inode->i_lru, &dispose);
--
--		/*
--		 * We can have a ton of inodes to evict at unmount time given
--		 * enough memory, check to see if we need to go to sleep for a
--		 * bit so we don't livelock.
--		 */
--		if (need_resched()) {
--			list_del(&cursor.i_sb_list);
--			list_add(&cursor.i_sb_list, &inode->i_sb_list);
--			inode = &cursor;
--			spin_unlock(&sb->s_inode_list_lock);
--			cond_resched();
--			dispose_list(&dispose);
--			goto again;
--		}
- 	}
- 	list_del(&cursor.i_sb_list);
- 	spin_unlock(&sb->s_inode_list_lock);
-@@ -926,6 +926,16 @@ void invalidate_inodes(struct super_block *sb)
- again:
- 	spin_lock(&sb->s_inode_list_lock);
- 	sb_for_each_inodes_continue_safe(inode, next, &sb->s_inodes) {
-+		if (need_resched()) {
-+			list_del(&cursor.i_sb_list);
-+			list_add_tail(&cursor.i_sb_list, &inode->i_sb_list);
-+			inode = &cursor;
-+			spin_unlock(&sb->s_inode_list_lock);
-+			cond_resched();
-+			dispose_list(&dispose);
-+			goto again;
-+		}
+diff --git a/security/integrity/ima/ima_init.c b/security/integrity/ima/ima_init.c
+index 4e208239a40e..a2f34f2d8ad7 100644
+--- a/security/integrity/ima/ima_init.c
++++ b/security/integrity/ima/ima_init.c
+@@ -152,6 +152,8 @@ int __init ima_init(void)
+ 
+ 	ima_init_key_queue();
+ 
++	ima_init_reboot_notifier();
 +
- 		spin_lock(&inode->i_lock);
- 		if (inode->i_state & (I_NEW | I_FREEING | I_WILL_FREE)) {
- 			spin_unlock(&inode->i_lock);
-@@ -940,15 +950,6 @@ void invalidate_inodes(struct super_block *sb)
- 		inode_lru_list_del(inode);
- 		spin_unlock(&inode->i_lock);
- 		list_add(&inode->i_lru, &dispose);
--		if (need_resched()) {
--			list_del(&cursor.i_sb_list);
--			list_add(&cursor.i_sb_list, &inode->i_sb_list);
--			inode = &cursor;
--			spin_unlock(&sb->s_inode_list_lock);
--			cond_resched();
--			dispose_list(&dispose);
--			goto again;
--		}
- 	}
- 	list_del(&cursor.i_sb_list);
- 	spin_unlock(&sb->s_inode_list_lock);
+ 	ima_measure_critical_data("kernel_info", "kernel_version",
+ 				  UTS_RELEASE, strlen(UTS_RELEASE), false,
+ 				  NULL, 0);
+diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
+index 532da87ce519..83d53824aa98 100644
+--- a/security/integrity/ima/ima_queue.c
++++ b/security/integrity/ima/ima_queue.c
+@@ -16,6 +16,7 @@
+  */
+ 
+ #include <linux/rculist.h>
++#include <linux/reboot.h>
+ #include <linux/slab.h>
+ #include "ima.h"
+ 
+@@ -44,6 +45,12 @@ struct ima_h_table ima_htable = {
+  */
+ static DEFINE_MUTEX(ima_extend_list_mutex);
+ 
++/*
++ * Used internally by the kernel to suspend measurements.
++ * Protected by ima_extend_list_mutex.
++ */
++static bool ima_measurements_suspended;
++
+ /* lookup up the digest value in the hash table, and return the entry */
+ static struct ima_queue_entry *ima_lookup_digest_entry(u8 *digest_value,
+ 						       int pcr)
+@@ -168,6 +175,18 @@ int ima_add_template_entry(struct ima_template_entry *entry, int violation,
+ 	int result = 0, tpmresult = 0;
+ 
+ 	mutex_lock(&ima_extend_list_mutex);
++
++	/*
++	 * Avoid appending to the measurement log when the TPM subsystem has
++	 * been shut down while preparing for system reboot.
++	 */
++	if (ima_measurements_suspended) {
++		audit_cause = "measurements_suspended";
++		audit_info = 0;
++		result = -ENODEV;
++		goto out;
++	}
++
+ 	if (!violation && !IS_ENABLED(CONFIG_IMA_DISABLE_HTABLE)) {
+ 		if (ima_lookup_digest_entry(digest, entry->pcr)) {
+ 			audit_cause = "hash_exists";
+@@ -211,6 +230,31 @@ int ima_restore_measurement_entry(struct ima_template_entry *entry)
+ 	return result;
+ }
+ 
++static void ima_measurements_suspend(void)
++{
++	mutex_lock(&ima_extend_list_mutex);
++	ima_measurements_suspended = true;
++	mutex_unlock(&ima_extend_list_mutex);
++}
++
++static int ima_reboot_notifier(struct notifier_block *nb,
++			       unsigned long action,
++			       void *data)
++{
++	ima_measurements_suspend();
++
++	return NOTIFY_DONE;
++}
++
++static struct notifier_block ima_reboot_nb = {
++	.notifier_call = ima_reboot_notifier,
++};
++
++void __init ima_init_reboot_notifier(void)
++{
++	register_reboot_notifier(&ima_reboot_nb);
++}
++
+ int __init ima_init_digests(void)
+ {
+ 	u16 digest_size;
 -- 
-2.34.1
+2.43.0
 
