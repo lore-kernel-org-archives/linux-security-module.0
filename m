@@ -1,165 +1,165 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB03C8FF;
-	Tue, 19 Nov 2024 00:11:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45E68A93D;
+	Tue, 19 Nov 2024 01:05:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731975063; cv=none; b=s1V5Can8ASw0xOvpLRu6oVy5pXJF1S3NgO8jvmnwET347SB15NgZqkLEzEgr8FXfALYjF533w3JP3sCcWg3inZKU6us3yGCYCmAZ0PmVhdUzKmJQxfiY3cPp51sx9m7ni2VanZGEMTPUZkyo5M57WXcr2+hR5SkJN3AqMsfXbLE=
+	t=1731978339; cv=none; b=DFMQqONdnvNgwOYNUbYx9DgpNZVmHvXhTXDf2hc7L9Wx5fg+QtlXzTUnGiH2I8oN04CmWBdnmqjKyzzsWOA1QKO3pIxcC46cXpfTu6SX/nWacPj7JeUinuuhGGF2hHuHkZNBPKGpAa92jLYDfe7VhMCKZrwrGquLCL2xemu3qJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731975063; c=relaxed/simple;
-	bh=A0Ap+tCZPda+zWvq3LT3lAWaJyJgNMoZc7tW/G691sY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZcB3ExZftVJaHUnSHx+jmxXYcembklgZVVwpzl5qE3elWzi3apMHb6XvP3MQOFAu9NbPYWAnKEhTxbKAOPUMh0rKNnCYb5DyNRDtaivLEsFw1dDFJeOVKzKFwAW0qJhyoj+OQpay6vFZ8ybYITXUPZZ/hvN5V8hZka1dn9CLDsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yjepgakh; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1731978339; c=relaxed/simple;
+	bh=dJfvBSfmbjhQ6llfWcJivt4BmuuxtAnrWORyR3RQ23E=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 MIME-Version:Date; b=Fu9jFD0zFVVTWdi/Q5C5zpjcuPfAZObCnHDz1lcLU9BU7x3g9+1/7w3HmaZk7uGeruIJdo+KpAxyuJ/5U41aZlkNydZwSJPLPNnZrpsfY1siuvlTB0zpL6FTEvM4V/ppyVLLv6U20lx7grPda1LdNCksXI5l6vRsKQTura9POVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=msMHyPUU; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yjepgakh"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-431548bd1b4so22345495e9.3;
-        Mon, 18 Nov 2024 16:11:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1731975060; x=1732579860; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A0Ap+tCZPda+zWvq3LT3lAWaJyJgNMoZc7tW/G691sY=;
-        b=Yjepgakh+KmMbwuwQYtXE3q7MMM98AcaavdVH1OBm/LcQqaRfl73El22AOrKhdnFgK
-         /bMD4s2G1XCkrB0BnpCSABJsv7MaFHpw93RXM3s3B5gJlYc3BOrCWKnhf9xsu/uQEMVV
-         jkEw7U4GpRd4DT0BBYXmKbLGgCdodKOE35tyfrFV9YWsIyfz487+9XszaBEwPXGtm6kk
-         WvF/JFOZrZxo0QD/OeIBygjpInnfevCP76pczExNZuxZxyXif4qBzVyx61ILmM5SIvvG
-         adGimucUx095tceOXBOtsK1NM7kTn8zKXywc9mwC8iXF/vlCFdUYx4nm5muaYuO7Pxa5
-         rxeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731975060; x=1732579860;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=A0Ap+tCZPda+zWvq3LT3lAWaJyJgNMoZc7tW/G691sY=;
-        b=RT6uTcYOC7qlKJw8R9KLLb0Q5waawQwPuD51fLoZGtPPN62O7/xLpalUFjgVtEFwFh
-         Tuhkc9FP4p2i7jq8vFiTYOA3Tddu9TAOWgcmzkAdbW7V7SpPxQYQKjkqYo+iJAvIoOwI
-         suXPSR26JqzjusciEo4EPOHxGIrxkn0j54LZV96er0RLbKkJqJ3StUjKTQYJYPljEWYb
-         Yiqqhjap56vj2Q09b9ZPvH/2VIaOUzJSCN8+z7mjSv5unfbEl3TxTHBCaGCwy44MdsGL
-         imcX1Q51Y7Cgwqzp7H7xMJj6gIM/9vKomMY46n/yrbb83zeAiAGEFvjYZgje3PMvkA4z
-         tEyA==
-X-Forwarded-Encrypted: i=1; AJvYcCUS01atyBuS25m80H6QcHoN6qNybWitp2NQdhierPJKDdqqqMjiJ4zbjHxHG3R8MM+GAxFk8OS2tf5uIim2@vger.kernel.org, AJvYcCV2H9I/Le02Q58EdE6ZRQHj34DevjvWwOuLJsd0AQG0YBPR7gRDWspA2vq93wsoB+KCRFen/5ffjwW4zDAWQCgziLzOQiDX@vger.kernel.org, AJvYcCVeMKhkc2DmFF+SkK82v0fRbYtNL4VKckzYILWt+it0mfCn4ztj5tYGsJifhzISMM/BqJM=@vger.kernel.org, AJvYcCWsIROZe5XHMCcqQd1KyAAhZKXJlkXqh1gs4VmJvHK+BJh2SGWqwWdhS27t7I2t0K2KtjTl+b6NeUdDgdMzyA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/Yigvyh+I3fVxQwopI8kfXFbGIWeRCbnoVsf9mYJjXnBeMjZt
-	Z/PbWyLkjRzoezw6WWya+iM2VR8nX5Ac/WCPIGdPVBHAJ6ZFGjbF0FlYpB1TZdt3pJnJnaM9wMD
-	PUW+seoQ23wNhrdb8UwqflLgbIQ8=
-X-Google-Smtp-Source: AGHT+IFbKcAGeX9oW64nBsmy9scvBQQTJAqWNC31VE6QpX+sDVYU8zY8RFHlGMnLhwshWBMEpIEUlBFKw7tTwUJwZzo=
-X-Received: by 2002:a05:6000:71d:b0:37d:45de:9dfb with SMTP id
- ffacd0b85a97d-38225acd2e4mr10716132f8f.46.1731975059636; Mon, 18 Nov 2024
- 16:10:59 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="msMHyPUU"
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AILwE0l023275;
+	Tue, 19 Nov 2024 01:05:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=tEZ5Pr
+	bHuWe3wqw/gvWY8LMX5+E2VHOII1rRZd2Op/k=; b=msMHyPUUnpTlkIROlBtp/h
+	qgNmxcBcdGILUR6lnQOme6HzAkg1X+AB7TxhHIJFb0KwUIWgsoO5SvdM6XMB6PyL
+	IyeDkccur9tZOgCBE3OmoZVugguJCHmUtBpmBTTF7kDYTOYmVzQKrkt6uQCWqnSd
+	KxrRHmYV7Mg+a7NE3ZmYDH/0jNjtpU7G4z1iHEiJVB4EABdbBCMvqk1lNoHSxKOe
+	RmyIJP8BDnUNUSckhXvi+7IL1TrWNy8Ee9v+l2gbKI9D9Hr44T+UQyxOKBCI8557
+	bXh0aJ0Bb8bDz3qKCLdkQwbjrDXAt/k0IUPkvfQfXOE49J0dao94vbP1T/1ILk/g
+	==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42xhtjmdct-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 19 Nov 2024 01:05:21 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AJ0AqIL031179;
+	Tue, 19 Nov 2024 01:05:20 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 42y5qsbp0h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 19 Nov 2024 01:05:20 +0000
+Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AJ15JfO46924380
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 19 Nov 2024 01:05:19 GMT
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id BD87D5805A;
+	Tue, 19 Nov 2024 01:05:19 +0000 (GMT)
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 067B558054;
+	Tue, 19 Nov 2024 01:05:19 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.30.225])
+	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 19 Nov 2024 01:05:18 +0000 (GMT)
+Message-ID: <539ec9eb95fbb5fd0a092ffb9b3c1adb1031de5c.camel@linux.ibm.com>
+Subject: Re: [PATCH v3] ima: Suspend PCR extends and log appends when
+ rebooting
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, roberto.sassu@huawei.com,
+        Stefan Berger
+	 <stefanb@linux.ibm.com>,
+        Tushar Sugandhi <tusharsu@linux.microsoft.com>
+In-Reply-To: <20241118145732.1258631-1-stefanb@linux.vnet.ibm.com>
+References: <20241118145732.1258631-1-stefanb@linux.vnet.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241114084345.1564165-1-song@kernel.org> <20241114084345.1564165-8-song@kernel.org>
- <CAADnVQK6YyPUzQoPKkXptLHoHXJZ50A8vNPfpDAk8Jc3Z6+iRw@mail.gmail.com>
- <E5457BFD-F7B9-4077-9EAC-168DA5C271E4@fb.com> <CAADnVQJ1um9u4cBpAEw83CS8xZJN=iP8WXdG0Ops5oTP-_NDFg@mail.gmail.com>
- <DCE25AB7-E337-4E11-9D57-2880F822BF33@fb.com> <CAADnVQ+bRO+UakzouzR5OfmvJAcyOs7VqCJKiLsjnfW1xkPZOg@mail.gmail.com>
- <C7C15985-2560-4D52-ADF9-C7680AF10E90@fb.com> <CAADnVQK2mhS0RLN7fEpn=zuLMT0D=QFMuibLAvc42Td0eU=eaQ@mail.gmail.com>
- <968F7C58-691D-4636-AA91-D0EA999EE3FD@fb.com> <B3CE1128-B988-46FE-AC3B-C024C8C987CA@fb.com>
-In-Reply-To: <B3CE1128-B988-46FE-AC3B-C024C8C987CA@fb.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Mon, 18 Nov 2024 16:10:48 -0800
-Message-ID: <CAADnVQJtW=WBOmxXjfL2sWsHafHJjYh4NCWXT5Gnxk99AqBfBw@mail.gmail.com>
-Subject: Re: [RFC/PATCH v2 bpf-next fanotify 7/7] selftests/bpf: Add test for
- BPF based fanotify fastpath handler
-To: Song Liu <songliubraving@meta.com>
-Cc: Song Liu <song@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	LSM List <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Eddy Z <eddyz87@gmail.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, KP Singh <kpsingh@kernel.org>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Amir Goldstein <amir73il@gmail.com>, 
-	"repnop@google.com" <repnop@google.com>, Jeff Layton <jlayton@kernel.org>, 
-	Josef Bacik <josef@toxicpanda.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	"gnoack@google.com" <gnoack@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Date: Mon, 18 Nov 2024 19:56:53 -0500
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: r-TXCmcYMB2Lyl_1TYvS70rbnX9LaQTh
+X-Proofpoint-GUID: r-TXCmcYMB2Lyl_1TYvS70rbnX9LaQTh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
+ clxscore=1015 malwarescore=0 spamscore=0 bulkscore=0 priorityscore=1501
+ impostorscore=0 mlxscore=0 adultscore=0 suspectscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2411190003
 
-On Mon, Nov 18, 2024 at 12:51=E2=80=AFPM Song Liu <songliubraving@meta.com>=
- wrote:
->
->
->
-> > On Nov 15, 2024, at 1:05=E2=80=AFPM, Song Liu <songliubraving@meta.com>=
- wrote:
->
-> [...]
-> >
-> >>
-> >> fsnotify_open_perm->fsnotify->send_to_group->fanotify_handle_event.
-> >>
-> >> is a pretty long path to call bpf prog and
-> >> preparing a giant 'struct fanotify_fastpath_event'
-> >> is not going to fast either.
-> >>
-> >> If we want to accelerate that with bpf it needs to be done
-> >> sooner with negligible overhead.
-> >
-> > Agreed. This is actually something I have been thinking
-> > since the beginning of this work: Shall it be fanotify-bpf
-> > or fsnotify-bpf. Given we have more materials, this is a
-> > good time to have broader discussions on this.
-> >
-> > @all, please chime in whether we should redo this as
-> > fsnotify-bpf. AFAICT:
-> >
-> > Pros of fanotify-bpf:
-> > - There is existing user space that we can leverage/reuse.
-> >
-> > Pros of fsnotify-bpf:
-> > - Faster fast path.
-> >
-> > Another major pros/cons did I miss?
->
-> Adding more thoughts on this: I think it makes more sense to
-> go with fanotify-bpf. This is because one of the benefits of
-> fsnotify/fanotify over LSM solutions is the built-in event
-> filtering of events. While this call chain is a bit long:
->
-> fsnotify_open_perm->fsnotify->send_to_group->fanotify_handle_event.
->
-> There are built-in filtering in fsnotify() and
-> send_to_group(), so logics in the call chain are useful.
+On Mon, 2024-11-18 at 09:57 -0500, Stefan Berger wrote:
+> From: Stefan Berger <stefanb@linux.ibm.com>
+>=20
+> To avoid the following types of error messages due to a failure by the TP=
+M
+> driver to use the TPM, suspend TPM PCR extensions and the appending of
+> entries to the IMA log once IMA's reboot notifier has been called. This
+> avoids trying to use the TPM after the TPM subsystem has been shut down.
+>=20
+> [111707.685315][    T1] ima: Error Communicating to TPM chip, result: -19
+> [111707.685960][    T1] ima: Error Communicating to TPM chip, result: -19
+>=20
+> Synchronization with the ima_extend_list_mutex to set
+> ima_measurements_suspended ensures that the TPM subsystem is not shut dow=
+n
+> when IMA holds the mutex while appending to the log and extending the PCR=
+.
+> The alternative of reading the system_state variable would not provide th=
+is
+> guarantee.
+>=20
+> This error could be observed on a ppc64 machine running SuSE Linux where
+> processes are still accessing files after devices have been shut down.
+>=20
+> Suspending the IMA log and PCR extensions shortly before reboot does not
+> seem to open a significant measurement gap since neither TPM quoting woul=
+d
+> work for attestation nor that new log entries could be written to anywher=
+e
+> after devices have been shut down. However, there's a time window between
+> the invocation of the reboot notifier and the shutdown of devices. This
+> includes all subsequently invoked reboot notifiers as well as
+> kernel_restart_prepare() where __usermodehelper_disable() waits for all
+> running_helpers to exit. During this time window IMA could now miss log
+> entries even though attestation would still work. The reboot of the syste=
+m
+> shortly after may make this small gap insignificant.
+>=20
+> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+> Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
 
-fsnotify_marks based filtering happens in fsnotify.
-No need to do more indirect calls to get to fanotify.
+Thank you for updating the patch description and the comment below.  The pa=
+tch
+is now queued in next-integrity-testing.
 
-I would add the bpf struct_ops hook right before send_to_group
-or inside of it.
-Not sure whether fsnotify_group concept should be reused
-or avoided.
-Per inode mark/mask filter should stay.
+Mimi
 
-> struct fanotify_fastpath_event is indeed big. But I think
-> we need to pass these information to the fastpath handler
-> either way.
+> ---
 
-Disagree.
-That was the old way of hooking bpf bits in.
-uapi/bpf.h is full of such "context" structs.
-xpd_md, bpf_tcp_sock, etc.
-They pack fields into one struct only because
-old style bpf has one input argument: ctx.
-struct_ops doesn't have this limitation.
-Pass things like path/dentry/inode/whatever pointers directly.
-No need to pack into fanotify_fastpath_event.
+[...]=20
+> 						       int pcr)
+> @@ -168,6 +175,18 @@ int ima_add_template_entry(struct ima_template_entry=
+ *entry, int violation,
+>  	int result =3D 0, tpmresult =3D 0;
+> =20
+>  	mutex_lock(&ima_extend_list_mutex);
+> +
+> +	/*
+> +	 * Avoid appending to the measurement log when the TPM subsystem has
+> +	 * been shut down while preparing for system reboot.
+> +	 */
+> +	if (ima_measurements_suspended) {
+> +		audit_cause =3D "measurements_suspended";
+> +		audit_info =3D 0;
+> +		result =3D -ENODEV;
+> +		goto out;
+> +	}
+> +
+>  	if (!violation && !IS_ENABLED(CONFIG_IMA_DISABLE_HTABLE)) {
+>  		if (ima_lookup_digest_entry(digest, entry->pcr)) {
+>  			audit_cause =3D "hash_exists";
+> @@ -211,6 +230,31 @@ int ima_restore_measurement_entry(struct ima_templat=
+e_entry *entry)
+>  	return result;
+>  }
 
-> Overall, I think current fastpath design makes sense,
-> though there are things we need to fix (as Amir and Alexei
-> pointed out). Please let me know comments and suggestions
-> on this.
-
-On one side you're arguing that extra indirection for
-inode local storage due to inode->i_secruity is needed
-for performance,
-but on the other side you're not worried about the deep
-call stack of fsnotify->fanotify and argument packing
-which add way more overhead than i_security hop.
