@@ -1,72 +1,165 @@
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FC3014D71A
-	for <linux-security-module@vger.kernel.org>; Mon, 18 Nov 2024 21:37:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CB03C8FF;
+	Tue, 19 Nov 2024 00:11:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1731965826; cv=none; b=rD2AvAF8WkBJscUzs2wM2G0hta9L7BPwTdJSpZDGpCFojPCw+ZAQtURmEWafFsNknTTEthUjvy4G+ZqXgoUX0JFeeFz0bb3NdtUAHiltLs+qp7gjRfO2kIPNP3yuXFuQuFkwVP7oSGvxWuhLykIN77NcepuIb7k+IczkOOBEWRs=
+	t=1731975063; cv=none; b=s1V5Can8ASw0xOvpLRu6oVy5pXJF1S3NgO8jvmnwET347SB15NgZqkLEzEgr8FXfALYjF533w3JP3sCcWg3inZKU6us3yGCYCmAZ0PmVhdUzKmJQxfiY3cPp51sx9m7ni2VanZGEMTPUZkyo5M57WXcr2+hR5SkJN3AqMsfXbLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1731965826; c=relaxed/simple;
-	bh=AD8RL+a16qS304XyMe5fRqoLGy5XqE4pyAEjYUVdeB0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=aMZYf2fwPCF4yA0Lb4ZDXXf6zRNeACeRbu5CW/2jlVyatJa8S3iJ3yJQlDEWRRAYvlcWeeGkiYBQcPEx4mdba4F/YTu5qNOVuWynhYlWhfYr7TZ+dHX1vTI+s9/ZY3vP8p1o9pv2LRdKQqOAadF65yXyhTaQZeb0IJ5CnQENWRA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a76d10a7dbso13726395ab.0
-        for <linux-security-module@vger.kernel.org>; Mon, 18 Nov 2024 13:37:04 -0800 (PST)
+	s=arc-20240116; t=1731975063; c=relaxed/simple;
+	bh=A0Ap+tCZPda+zWvq3LT3lAWaJyJgNMoZc7tW/G691sY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZcB3ExZftVJaHUnSHx+jmxXYcembklgZVVwpzl5qE3elWzi3apMHb6XvP3MQOFAu9NbPYWAnKEhTxbKAOPUMh0rKNnCYb5DyNRDtaivLEsFw1dDFJeOVKzKFwAW0qJhyoj+OQpay6vFZ8ybYITXUPZZ/hvN5V8hZka1dn9CLDsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yjepgakh; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yjepgakh"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-431548bd1b4so22345495e9.3;
+        Mon, 18 Nov 2024 16:11:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1731975060; x=1732579860; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A0Ap+tCZPda+zWvq3LT3lAWaJyJgNMoZc7tW/G691sY=;
+        b=Yjepgakh+KmMbwuwQYtXE3q7MMM98AcaavdVH1OBm/LcQqaRfl73El22AOrKhdnFgK
+         /bMD4s2G1XCkrB0BnpCSABJsv7MaFHpw93RXM3s3B5gJlYc3BOrCWKnhf9xsu/uQEMVV
+         jkEw7U4GpRd4DT0BBYXmKbLGgCdodKOE35tyfrFV9YWsIyfz487+9XszaBEwPXGtm6kk
+         WvF/JFOZrZxo0QD/OeIBygjpInnfevCP76pczExNZuxZxyXif4qBzVyx61ILmM5SIvvG
+         adGimucUx095tceOXBOtsK1NM7kTn8zKXywc9mwC8iXF/vlCFdUYx4nm5muaYuO7Pxa5
+         rxeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1731965824; x=1732570624;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nICKXi7/BY4L+b4MgIKYet21aV0bch1WeZjTtJNx1VM=;
-        b=lCmI2J/G+fWr6pquLA168di7vxbKRHlmhbRyip1rzFG4INSUxTx8cYv0MJOw2fSnmE
-         2mhP2z+cxvZ0eH2PYcTLTEwKKP6nRbY39OP3+XlAHzDd6stzY2nXk8yo6kzxYpkJEQYY
-         JSp0MgsVBCeGpM80PXRkppOqB3adBJAuqJ/KuLDkg4KrfaBvetlFIi4zmME1YinzzJGC
-         rA0PsPZoimxToLPOVXaxykRiMEkQ7k9MPpddwWPrBI6kEQDRQwrb57nI1l4/D/jc2Ktt
-         QgaXVV5ojF92S+9ACMr9R8OOqxB8H/dgdlz5Fq0gAA6j0lGm07oehtxH7h94B5gufpUn
-         ZiAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV0Qh+FxlsuW3/YMtwMlezc0Zb7mSQuOYspIgnO4RazrzphqAZSrHMzJ7W3+8MBh7EVVoo0Dgq1dzm6N64M8qQv+k+mxpw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwO/AdYs0/nqz8xeT2mTl5CjP1ZyEqcPzbePKxjz9+wuyV/QrRZ
-	Nw5UwRi0S5nTmCkCHiQ8Q60gVgYwkn+t64rXj0ozDK8/gYnNsgTFbrBe7pUBW1Tq4skJzaSXj1q
-	2/MJ9JihClYfSIgw0izhtnVvUhT+3c0UdWzwiO+G3AAAPdM0E7OL7cnI=
-X-Google-Smtp-Source: AGHT+IGJW+n7lvA83sJnLZWBSzq5D53guT7v7kIGh3rmiBABzveN4sxuyZ+8da1KEFDylZ92PG81tcaxMFqjeI71tSx+BKKbO1L+
+        d=1e100.net; s=20230601; t=1731975060; x=1732579860;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=A0Ap+tCZPda+zWvq3LT3lAWaJyJgNMoZc7tW/G691sY=;
+        b=RT6uTcYOC7qlKJw8R9KLLb0Q5waawQwPuD51fLoZGtPPN62O7/xLpalUFjgVtEFwFh
+         Tuhkc9FP4p2i7jq8vFiTYOA3Tddu9TAOWgcmzkAdbW7V7SpPxQYQKjkqYo+iJAvIoOwI
+         suXPSR26JqzjusciEo4EPOHxGIrxkn0j54LZV96er0RLbKkJqJ3StUjKTQYJYPljEWYb
+         Yiqqhjap56vj2Q09b9ZPvH/2VIaOUzJSCN8+z7mjSv5unfbEl3TxTHBCaGCwy44MdsGL
+         imcX1Q51Y7Cgwqzp7H7xMJj6gIM/9vKomMY46n/yrbb83zeAiAGEFvjYZgje3PMvkA4z
+         tEyA==
+X-Forwarded-Encrypted: i=1; AJvYcCUS01atyBuS25m80H6QcHoN6qNybWitp2NQdhierPJKDdqqqMjiJ4zbjHxHG3R8MM+GAxFk8OS2tf5uIim2@vger.kernel.org, AJvYcCV2H9I/Le02Q58EdE6ZRQHj34DevjvWwOuLJsd0AQG0YBPR7gRDWspA2vq93wsoB+KCRFen/5ffjwW4zDAWQCgziLzOQiDX@vger.kernel.org, AJvYcCVeMKhkc2DmFF+SkK82v0fRbYtNL4VKckzYILWt+it0mfCn4ztj5tYGsJifhzISMM/BqJM=@vger.kernel.org, AJvYcCWsIROZe5XHMCcqQd1KyAAhZKXJlkXqh1gs4VmJvHK+BJh2SGWqwWdhS27t7I2t0K2KtjTl+b6NeUdDgdMzyA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/Yigvyh+I3fVxQwopI8kfXFbGIWeRCbnoVsf9mYJjXnBeMjZt
+	Z/PbWyLkjRzoezw6WWya+iM2VR8nX5Ac/WCPIGdPVBHAJ6ZFGjbF0FlYpB1TZdt3pJnJnaM9wMD
+	PUW+seoQ23wNhrdb8UwqflLgbIQ8=
+X-Google-Smtp-Source: AGHT+IFbKcAGeX9oW64nBsmy9scvBQQTJAqWNC31VE6QpX+sDVYU8zY8RFHlGMnLhwshWBMEpIEUlBFKw7tTwUJwZzo=
+X-Received: by 2002:a05:6000:71d:b0:37d:45de:9dfb with SMTP id
+ ffacd0b85a97d-38225acd2e4mr10716132f8f.46.1731975059636; Mon, 18 Nov 2024
+ 16:10:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c2d:b0:3a7:74e1:d54d with SMTP id
- e9e14a558f8ab-3a774e1d777mr22152385ab.21.1731965823827; Mon, 18 Nov 2024
- 13:37:03 -0800 (PST)
-Date: Mon, 18 Nov 2024 13:37:03 -0800
-In-Reply-To: <CAHiZj8j7dp5L_A_nvN4zv9q9qH865MDhhzgEgtZUBMq9H1gPMg@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <673bb37f.050a0220.87769.005d.GAE@google.com>
-Subject: Re: [syzbot] [keyrings?] [lsm?] KASAN: slab-use-after-free Read in key_put
-From: syzbot <syzbot+6105ffc1ded71d194d6d@syzkaller.appspotmail.com>
-To: dhowells@redhat.com, jarkko@kernel.org, jmorris@namei.org, 
-	keyrings@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, paul@paul-moore.com, serge@hallyn.com, 
-	surajsonawane0215@gmail.com, syzkaller-bugs@googlegroups.com
+References: <20241114084345.1564165-1-song@kernel.org> <20241114084345.1564165-8-song@kernel.org>
+ <CAADnVQK6YyPUzQoPKkXptLHoHXJZ50A8vNPfpDAk8Jc3Z6+iRw@mail.gmail.com>
+ <E5457BFD-F7B9-4077-9EAC-168DA5C271E4@fb.com> <CAADnVQJ1um9u4cBpAEw83CS8xZJN=iP8WXdG0Ops5oTP-_NDFg@mail.gmail.com>
+ <DCE25AB7-E337-4E11-9D57-2880F822BF33@fb.com> <CAADnVQ+bRO+UakzouzR5OfmvJAcyOs7VqCJKiLsjnfW1xkPZOg@mail.gmail.com>
+ <C7C15985-2560-4D52-ADF9-C7680AF10E90@fb.com> <CAADnVQK2mhS0RLN7fEpn=zuLMT0D=QFMuibLAvc42Td0eU=eaQ@mail.gmail.com>
+ <968F7C58-691D-4636-AA91-D0EA999EE3FD@fb.com> <B3CE1128-B988-46FE-AC3B-C024C8C987CA@fb.com>
+In-Reply-To: <B3CE1128-B988-46FE-AC3B-C024C8C987CA@fb.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Mon, 18 Nov 2024 16:10:48 -0800
+Message-ID: <CAADnVQJtW=WBOmxXjfL2sWsHafHJjYh4NCWXT5Gnxk99AqBfBw@mail.gmail.com>
+Subject: Re: [RFC/PATCH v2 bpf-next fanotify 7/7] selftests/bpf: Add test for
+ BPF based fanotify fastpath handler
+To: Song Liu <songliubraving@meta.com>
+Cc: Song Liu <song@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	LSM List <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, Eddy Z <eddyz87@gmail.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, KP Singh <kpsingh@kernel.org>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Amir Goldstein <amir73il@gmail.com>, 
+	"repnop@google.com" <repnop@google.com>, Jeff Layton <jlayton@kernel.org>, 
+	Josef Bacik <josef@toxicpanda.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	"gnoack@google.com" <gnoack@google.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Mon, Nov 18, 2024 at 12:51=E2=80=AFPM Song Liu <songliubraving@meta.com>=
+ wrote:
+>
+>
+>
+> > On Nov 15, 2024, at 1:05=E2=80=AFPM, Song Liu <songliubraving@meta.com>=
+ wrote:
+>
+> [...]
+> >
+> >>
+> >> fsnotify_open_perm->fsnotify->send_to_group->fanotify_handle_event.
+> >>
+> >> is a pretty long path to call bpf prog and
+> >> preparing a giant 'struct fanotify_fastpath_event'
+> >> is not going to fast either.
+> >>
+> >> If we want to accelerate that with bpf it needs to be done
+> >> sooner with negligible overhead.
+> >
+> > Agreed. This is actually something I have been thinking
+> > since the beginning of this work: Shall it be fanotify-bpf
+> > or fsnotify-bpf. Given we have more materials, this is a
+> > good time to have broader discussions on this.
+> >
+> > @all, please chime in whether we should redo this as
+> > fsnotify-bpf. AFAICT:
+> >
+> > Pros of fanotify-bpf:
+> > - There is existing user space that we can leverage/reuse.
+> >
+> > Pros of fsnotify-bpf:
+> > - Faster fast path.
+> >
+> > Another major pros/cons did I miss?
+>
+> Adding more thoughts on this: I think it makes more sense to
+> go with fanotify-bpf. This is because one of the benefits of
+> fsnotify/fanotify over LSM solutions is the built-in event
+> filtering of events. While this call chain is a bit long:
+>
+> fsnotify_open_perm->fsnotify->send_to_group->fanotify_handle_event.
+>
+> There are built-in filtering in fsnotify() and
+> send_to_group(), so logics in the call chain are useful.
 
-syzbot tried to test the proposed patch but the build/boot failed:
+fsnotify_marks based filtering happens in fsnotify.
+No need to do more indirect calls to get to fanotify.
 
-security/keys/gc.c:146:40: error: 'KEY_IS_DEAD' undeclared (first use in this function); did you mean 'KEY_USR_READ'?
+I would add the bpf struct_ops hook right before send_to_group
+or inside of it.
+Not sure whether fsnotify_group concept should be reused
+or avoided.
+Per inode mark/mask filter should stay.
 
+> struct fanotify_fastpath_event is indeed big. But I think
+> we need to pass these information to the fastpath handler
+> either way.
 
-Tested on:
+Disagree.
+That was the old way of hooking bpf bits in.
+uapi/bpf.h is full of such "context" structs.
+xpd_md, bpf_tcp_sock, etc.
+They pack fields into one struct only because
+old style bpf has one input argument: ctx.
+struct_ops doesn't have this limitation.
+Pass things like path/dentry/inode/whatever pointers directly.
+No need to pack into fanotify_fastpath_event.
 
-commit:         9fb2cfa4 Merge tag 'pull-ufs' of git://git.kernel.org/..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=55f8591b98dd132
-dashboard link: https://syzkaller.appspot.com/bug?extid=6105ffc1ded71d194d6d
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1781eac0580000
+> Overall, I think current fastpath design makes sense,
+> though there are things we need to fix (as Amir and Alexei
+> pointed out). Please let me know comments and suggestions
+> on this.
 
+On one side you're arguing that extra indirection for
+inode local storage due to inode->i_secruity is needed
+for performance,
+but on the other side you're not worried about the deep
+call stack of fsnotify->fanotify and argument packing
+which add way more overhead than i_security hop.
