@@ -1,180 +1,257 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic308-15.consmr.mail.ne1.yahoo.com (sonic308-15.consmr.mail.ne1.yahoo.com [66.163.187.38])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B6B81D0164;
-	Tue, 19 Nov 2024 18:10:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC1491AA1F8
+	for <linux-security-module@vger.kernel.org>; Tue, 19 Nov 2024 18:14:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.187.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732039849; cv=none; b=MA9JQqQmwyIcaDkaLUkHVCYRHNvhvsuuV78iWa5akKYQRIm2KuJgufsIwTA8qUZmPwbz/wMfR1ss2jpEKaYkrRAuIqwXvYWDzgIkr5OmirnWJueSvbOE+K+vTk8dC4iIt+qRwhL2L0vyB9rTNdeSH5bHL7ScMj9VEvjUvHCy1LQ=
+	t=1732040082; cv=none; b=VXZN0hX1cxaCTXu00nclfclwNGMLq8W+j18EDz9LjtwuLPkeJlihMDo7AU5JI8rBtGYZXArsx2l6nX372rxI2oj907LCQkutBrwo/U2pZpZLbM1f69FgowKgf7EEdRo+tAPmSNJCahtIPmckFZISPholv3QtHuZYQOegg/m+ESQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732039849; c=relaxed/simple;
-	bh=00N6d3fq1vN0i91RXeimmFleEY7w+R+iFQQlmAiWUoA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=uP3t5AGqSZ3kK/tbDRZlB0ryn87QM+AwRwwfT56UWIMzNpocTq0qAfp4G58pBigSGy3QQFtir7usaRfu2H5fLwLQQVv7M19i/YpGihX6x1BwOc9QAhM523nGYBQ9AQ43U9c6H3NtCduBynh/hc0iDtsWVd4l2QjpTaW/GLUzzus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=bybPnNME; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1732040082; c=relaxed/simple;
+	bh=YGrukaN8kCGJGHRiUBBNlloY3HIJBATms6xHILea7eU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UTb1KngTOSow98sz2MK37pvYhB+5HuXcBE38+dRyBanbsDX/AhQGJFKG1YdNbU+/yY3YWHScuDpY4P5OqTl5uwdKYnZgbCdRgkU5WwzLeUo/t8CxdQ1BQGlh8wI57NQ/U58++FQJlt+rPzWo//l2tycOVjWY9bAAvi3cw9kD3oM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=bmQ5uE2O; arc=none smtp.client-ip=66.163.187.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="bybPnNME"
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4AJDMSXk016076;
-	Tue, 19 Nov 2024 18:10:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=rnZhD+
-	ID/LMS+Nr00/1M7SEoYQBZvFHRkYGvYtfv7sU=; b=bybPnNME6w7s0KL23VRCD7
-	sXDTCCRYeHe4jz1KMD9A7mc0Q3M8+i18R39AQ2h+YWztmLfjOKWneQasRwkoim8u
-	AqnrOqMt4xmjk0UJ2BW1bQcscoaubE5fdo9DtBMp19pL9njbIddZ1MKRATclAH7A
-	8p0UVyd3930ewr21caxY1cTXUhsdOqgIuoAqNIznP/d/SeirALkDVkNucUDXDM1m
-	QS459xeBXHwHcTIGmLZ1iaIB++xlWeM7WBFbzPtbqCGw6w3AE45+3dI+e9Lt+zTA
-	4WW2eZmxf/DUAy1QOrU/9ajX3sYGWso455PjQyEC7UHUdu1muZ3yZiGXqfepm86g
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42xhtjrshj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 19 Nov 2024 18:10:14 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4AJI6n8Z026354;
-	Tue, 19 Nov 2024 18:10:13 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42xhtjrshc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 19 Nov 2024 18:10:13 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4AJBupUI021792;
-	Tue, 19 Nov 2024 18:10:12 GMT
-Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42y6qmw32f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 19 Nov 2024 18:10:12 +0000
-Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
-	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4AJIACnc59703638
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 19 Nov 2024 18:10:12 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 09D2558052;
-	Tue, 19 Nov 2024 18:10:12 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BE7E158045;
-	Tue, 19 Nov 2024 18:10:10 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.31.103.152])
-	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 19 Nov 2024 18:10:10 +0000 (GMT)
-Message-ID: <b89a084a98e7427911ac4344225eca99a04a52fb.camel@linux.ibm.com>
-Subject: Re: [PATCH] ima: kexec: Add RCU read lock protection for
- ima_measurements list traversal
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Breno Leitao <leitao@debian.org>,
-        Roberto Sassu
- <roberto.sassu@huawei.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Andrew Morton
- <akpm@linux-foundation.org>,
-        Thiago Jung Bauermann
- <bauerman@linux.vnet.ibm.com>
-Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-        noodles@earth.li
-Date: Tue, 19 Nov 2024 13:10:10 -0500
-In-Reply-To: <20241104-ima_rcu-v1-1-5157460c5907@debian.org>
-References: <20241104-ima_rcu-v1-1-5157460c5907@debian.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="bmQ5uE2O"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1732040074; bh=5MIDBio7RlI+gPVccsIcQjhlUCUhZSZMz/kKi+sUibY=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=bmQ5uE2O78KsM8XPxQLychbU4wMe9Nes7avYA5o2GlYxqA8v+6nM6bINUbsXsb0sDk6NQCoNkZwTJFsifybzfYRgmLzZEn/pYzoZAvEDI71XYR41a1treuog2gANxOXXrW4NXGOTw7ShIF7Vdz5CBqaOL2oxFcq6FgOhsESKxQUtkD9rDsDdqOWPz8dY2g9kGi3QL8+paG5GTEXN3j+whQyim1qTUEM+vnB4z6Nd/L2igU5Hstznypmb9iGd4e+ntaGA0EUTZ31etEoMuPucRNVc5A5M8PNclO/m44Vv9/hWox4QyWrzEdMgJT569efhuigZ/gCvGbZawbSi311PSA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1732040074; bh=XFdHigJ/GeFgQpVvuO65RIEAzhhWOiqFs8u/gTUjOTO=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=ZuHZ/A1/R+b8F261h9LAuseVDaaKVrerTig2NtOBvWauwx6WGEkN6ymAWmbaZpgVb8KXexH1WGXbhmJnl2tT1T/pEKxjTKGrbhd5s+X04Hn8pjOjeqT2fwC7bgnr9+w5RhPyDdNpWlXWV/8yCscleJDLz/bW68B3ZyJk7TCQFjUkBUCkS7EbjZPq2yk4YsYEIvtIzBk1seBE3ctcHm8ZLnrNXaRqU4bSLK+rZutYcQfy6Np07c5HNOsF/I5b4KviSmXAEJPOQybVKUG6I1XvRhf4UuSpUufWlEjiQg/Myn0VG0k64y8crCfhb409oJt/F1Yf/rR6ivPWcWC8kwKBlQ==
+X-YMail-OSG: 6rs14YgVM1mx3RJGgJzukNZGZIxrTZH9y6oalS0qyaY7C23ywG6p6vuGpvSRhRR
+ wesKDlWegn8nioGj7agjHP0.lcJAgX7KcVXHAbL9cp0V.n.H2Zd0OeVCGKhP0Snj0twPPRC1ft5W
+ RUztQ1XGzxdy1QcKzDCx61eIgD4vGVCey.aJqdTqKWOyMo2Nq2xYM_2Wew13zcm3WIe.seAXGdWE
+ 4xEry3RxBDQaPWAfErH0ibwMmDVmI7YK48MPzoMQyOHjD7D.k18wj6U3p_k3pSs5Uxte2814COzY
+ UeZEQWrgnsld3MGn_vtyw5fgh5BqTUfj3m3BVsb4.rgbJ0VtBdQJa_6UjnECsFg1tkpnqUJaKO1o
+ tt9jErAyp7JZciliWcbTeiLHeBHShgqMwFe4r1r.N44TuHl3XSEQUDwu2F9jB5jjxKV1JBA7aOab
+ 4k3t.ZoCIeKEA7X4KEfq.WqlBkKa5QgnJj5Q6Yrzz_kbwZ4xvAujWJoIPdFG3QI5AyRLhKGip9Sh
+ hJIVSPuXMr2sREvUbL1OFUayNHa6lMKAdkxPhddpz4d.pIQbJPzltOfTJ8ERzirS8cfRZxivrtGv
+ SpRDIabttsFeKJ6KCmXSrfyFqHXB_pdDhcLc9YpWnor_RArbOBdgyKe9dMc3D3MAFKRd7dhIbRBs
+ WvD_B_IcbTPnyjqskzh4QETYNsrLi5Vd3dMvga4m5DvPPObTt3Qw68Svz7KEMFupc5HVgs22Jekv
+ 2PlVN5YKmN94yYKgc9ITjQUzP18M1clsdh0aY0MWubEa.n_prkMvMU4wcYCTju.inl9qrEh6zd9j
+ iIgO.FJvn8kQX.voZ64dqaD0I0fPkD.KZr8QqyzBMab96J6JkKdmsoLV5oCCmpUcPFnhiTvseaIm
+ N63wyLgn1XVogMGe6aDqBA9yhcXQjWgE751LIsvgPTKpE.F143TtQOfRDq.g7IkTwMiN.nEpf2Zd
+ QNKaiR9Q6.X3LNFF4FuP98tqrg.yyXF9c4xBchkMicZwuPSSbnR9_hwxi6y3bt_Dme5FILnQOYL5
+ .D_0RZ6PYFz9CqMfqvcZhpF60fwIGfPieetSW9GAnrExjFJh17yu2Py8wLcA9NUQFTU5HOTxrOWz
+ 31zVnapO7gfOO2R6VJ_3m7RfzQt4dwJz8Jfilx9mSBAB7inRt3_Vw2YqQ4g5Cwym0IG5f.BQf..z
+ pxxzmv.GMAmNPwjvy2JJujOAamBmUFBF.lw4ArKO6oBkm.199JjVkkuFhGaYRzVKzSmluybIpK8v
+ Os84Sj.8UfmEYpirH5x99fNI2avbgWCHTq8y1C9XrTE1ljQwAQberN5fOoCUcexbEhOsPDyAr8ip
+ 5gB77ctmNNdE03kTyO3KoSnUupdetL2UVNJT6knXOYaWX9Whz8I17lorS.ZWf6D2QFSXun00B1tf
+ 4oRY6gqSsls7XDELbpG7c7q3aDzCIpm1qnMXcm4wjgPJ1rhWdM1O0GF0h8P1bVwwC3Q120bro9z2
+ cJtmZiv8BRZQAokxD_UvBcEeHrEdZWr2BPP0IJfzQqxHmE9JWDBsElKAD2f6TQvXFe8TiGmSIDJ1
+ NFQudfwM8631OvqwkKbctOsB8k8tEP1AV4gWOLJE4w6dXj4_BbXbtd6p7NTVFzMjAw1hP7l2F1tG
+ q3e33HW_5FTmYw3.wyRHWvE9s.aQmiWz34g1zlo9RuEqgmDAbPYyXw9u7HEmKzWf53L3Kxd1ao0C
+ Pd042DZ1LiWgCXZldNkCqNwEGZUeQpAL2MuipTE8uKbC09yiKMxqaiAgJCkI9v1qw0EM2tkoUV6i
+ zR7jCAafDyxvRfwx9ha6k.y4U4snN7pYA09DPDTOkRMO.i5FbnPRIDbi7_r9NMz.drhr1R5a9Lpp
+ 5gbY05nBR9hKGiQlfKE3dj3GzwloT_5TSLOTtsURTNvzKn7PkAPMfcWplc4T657Ur0kQp8vpopra
+ xewnWeot2LNj1KR5g0XCFiD.YHD_uzvsQ4MRWmV3_SlVpZxEYek3aIH1qngDXm15AIF5DEhEihKy
+ oJn5WptUjZYroub5JGuNu8EHnItWPnDkfq50Ne1mbBTb9VKtPo_j3FlENijnAZ_Nl3qLgT2SoM_k
+ 5cEks9v_WA.pBqwbkpOh._UpCHSaenlEIx9EwSl8A7PYBMQdGtdx6cdL5YFBSvFSL0abdjMxKhBy
+ VL1XrrlVRDjAYq18m2XhxWdTtZ4oXyPVrmuqMRlIpR9UE7Yxpcke4.luhU5i.0CPr.5fDOC7Y0Ci
+ aJ6KcuxnKUNfx2NUYUJD0g12NQ57NgGRlMUJpiL8SaKcJ_e5XQpdrJU12QBb9K1lXExdBufv6Lju
+ 71Dg-
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: aad1bbcc-f8f9-488f-987d-e0d77ab82508
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Tue, 19 Nov 2024 18:14:34 +0000
+Received: by hermes--production-gq1-5dd4b47f46-fhdpd (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 0a7fa34da5b4eefb55e99d41ad7bb4d1;
+          Tue, 19 Nov 2024 18:14:31 +0000 (UTC)
+Message-ID: <561687f7-b7f3-4d56-a54c-944c52ed18b7@schaufler-ca.com>
+Date: Tue, 19 Nov 2024 10:14:29 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 6KE2p3ayPT6aqwHI3JjzhenjP_Q-NCvb
-X-Proofpoint-GUID: y5i2EbHVmUtOxXQb_GpwSFzEZjUWj1HC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
- clxscore=1011 malwarescore=0 spamscore=0 bulkscore=0 priorityscore=1501
- impostorscore=0 mlxscore=0 adultscore=0 suspectscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2411190134
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next 0/4] Make inode storage available to tracing prog
+To: "Dr. Greg" <greg@enjellic.com>, Song Liu <songliubraving@meta.com>
+Cc: James Bottomley <James.Bottomley@HansenPartnership.com>,
+ "jack@suse.cz" <jack@suse.cz>, "brauner@kernel.org" <brauner@kernel.org>,
+ Song Liu <song@kernel.org>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-security-module@vger.kernel.org"
+ <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>,
+ "andrii@kernel.org" <andrii@kernel.org>,
+ "eddyz87@gmail.com" <eddyz87@gmail.com>, "ast@kernel.org" <ast@kernel.org>,
+ "daniel@iogearbox.net" <daniel@iogearbox.net>,
+ "martin.lau@linux.dev" <martin.lau@linux.dev>,
+ "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+ "kpsingh@kernel.org" <kpsingh@kernel.org>,
+ "mattbobrowski@google.com" <mattbobrowski@google.com>,
+ "amir73il@gmail.com" <amir73il@gmail.com>,
+ "repnop@google.com" <repnop@google.com>,
+ "jlayton@kernel.org" <jlayton@kernel.org>, Josef Bacik
+ <josef@toxicpanda.com>, "mic@digikod.net" <mic@digikod.net>,
+ "gnoack@google.com" <gnoack@google.com>,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <ACCC67D1-E206-4D9B-98F7-B24A2A44A532@fb.com>
+ <d7d23675-88e6-4f63-b04d-c732165133ba@schaufler-ca.com>
+ <332BDB30-BCDC-4F24-BB8C-DD29D5003426@fb.com>
+ <8c86c2b4-cd23-42e0-9eb6-2c8f7a4cbcd4@schaufler-ca.com>
+ <CAPhsuW5zDzUp7eSut9vekzH7WZHpk38fKHmFVRTMiBbeW10_SQ@mail.gmail.com>
+ <20241114163641.GA8697@wind.enjellic.com>
+ <53a3601e-0999-4603-b69f-7bed39d4d89a@schaufler-ca.com>
+ <4BF6D271-51D5-4768-A460-0853ABC5602D@fb.com>
+ <b1e82da8daa1c372e4678b1984ac942c98db998d.camel@HansenPartnership.com>
+ <A7017094-1A0C-42C8-BE9D-7352D2200ECC@fb.com>
+ <20241119122706.GA19220@wind.enjellic.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20241119122706.GA19220@wind.enjellic.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.22941 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-Hi Breno,
+On 11/19/2024 4:27 AM, Dr. Greg wrote:
+> On Sun, Nov 17, 2024 at 10:59:18PM +0000, Song Liu wrote:
+>
+>> Hi Christian, James and Jan, 
+> Good morning, I hope the day is starting well for everyone.
+>
+>>> On Nov 14, 2024, at 1:49???PM, James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
+>> [...]
+>>
+>>>> We can address this with something like following:
+>>>>
+>>>> #ifdef CONFIG_SECURITY
+>>>>         void                    *i_security;
+>>>> #elif CONFIG_BPF_SYSCALL
+>>>>         struct bpf_local_storage __rcu *i_bpf_storage;
+>>>> #endif
+>>>>
+>>>> This will help catch all misuse of the i_bpf_storage at compile
+>>>> time, as i_bpf_storage doesn't exist with CONFIG_SECURITY=y. 
+>>>>
+>>>> Does this make sense?
+>>> Got to say I'm with Casey here, this will generate horrible and failure
+>>> prone code.
+>>>
+>>> Since effectively you're making i_security always present anyway,
+>>> simply do that and also pull the allocation code out of security.c in a
+>>> way that it's always available?  That way you don't have to special
+>>> case the code depending on whether CONFIG_SECURITY is defined. 
+>>> Effectively this would give everyone a generic way to attach some
+>>> memory area to an inode.  I know it's more complex than this because
+>>> there are LSM hooks that run from security_inode_alloc() but if you can
+>>> make it work generically, I'm sure everyone will benefit.
+>> On a second thought, I think making i_security generic is not 
+>> the right solution for "BPF inode storage in tracing use cases". 
+>>
+>> This is because i_security serves a very specific use case: it 
+>> points to a piece of memory whose size is calculated at system 
+>> boot time. If some of the supported LSMs is not enabled by the 
+>> lsm= kernel arg, the kernel will not allocate memory in 
+>> i_security for them. The only way to change lsm= is to reboot 
+>> the system. BPF LSM programs can be disabled at the boot time, 
+>> which fits well in i_security. However, BPF tracing programs 
+>> cannot be disabled at boot time (even we change the code to 
+>> make it possible, we are not likely to disable BPF tracing). 
+>> IOW, as long as CONFIG_BPF_SYSCALL is enabled, we expect some 
+>> BPF tracing programs to load at some point of time, and these 
+>> programs may use BPF inode storage. 
+>>
+>> Therefore, with CONFIG_BPF_SYSCALL enabled, some extra memory 
+>> always will be attached to i_security (maybe under a different 
+>> name, say, i_generic) of every inode. In this case, we should 
+>> really add i_bpf_storage directly to the inode, because another 
+>> pointer jump via i_generic gives nothing but overhead. 
+>>
+>> Does this make sense? Or did I misunderstand the suggestion?
+> There is a colloquialism that seems relevant here: "Pick your poison".
+>
+> In the greater interests of the kernel, it seems that a generic
+> mechanism for attaching per inode information is the only realistic
+> path forward, unless Christian changes his position on expanding
+> the size of struct inode.
+>
+> There are two pathways forward.
+>
+> 1.) Attach a constant size 'blob' of storage to each inode.
+>
+> This is a similar approach to what the LSM uses where each blob is
+> sized as follows:
+>
+> S = U * sizeof(void *)
+>
+> Where U is the number of sub-systems that have a desire to use inode
+> specific storage.
 
-On Mon, 2024-11-04 at 02:47 -0800, Breno Leitao wrote:
-> Fix a potential RCU issue where ima_measurements list is traversed using
-> list_for_each_entry_rcu() without proper RCU read lock protection. This
-> caused warnings when CONFIG_PROVE_RCU was enabled:
->=20
->   security/integrity/ima/ima_kexec.c:40 RCU-list traversed in non-reader =
-section!!
->=20
-> Add rcu_read_lock() before iterating over ima_measurements list to ensure
-> proper RCU synchronization, consistent with other RCU list traversals in
-> the codebase.
+I can't tell for sure, but it looks like you don't understand how
+LSM i_security blobs are used. It is *not* the case that each LSM
+gets a pointer in the i_security blob. Each LSM that wants storage
+tells the infrastructure at initialization time how much space it
+wants in the blob. That can be a pointer, but usually it's a struct
+with flags, pointers and even lists.
 
-The synchronization is to prevent freeing of data while walking the RCU lis=
-t. In
-this case, new measurements are only appended to the IMA measurement list. =
- So
-there shouldn't be an issue.
+> Each sub-system uses it's pointer slot to manage any additional
+> storage that it desires to attach to the inode.
 
-The IMA measurement list is being copied during kexec "load", while other
-processes are still running.  Depending on the IMA policy, the kexec "load"=
-,
-itself, and these other processes may result in additional measurements, wh=
-ich
-should be copied across kexec.  Adding the rcu_read_{lock, unlock} would
-unnecessarily prevent them from being copied.
+Again, an LSM may choose to do it that way, but most don't.
+SELinux and Smack need data on every inode. It makes much more sense
+to put it directly in the blob than to allocate a separate chunk
+for every inode.
 
-There have been discussions about deferring copying the IMA measurement lis=
-t
-from kexec "load" to later at "exec" and about trimming the IMA measurement
-list.  At least for now, neither of these changes have been upstreamed.
+> This has the obvious advantage of O(1) cost complexity for any
+> sub-system that wants to access its inode specific storage.
+>
+> The disadvantage, as you note, is that it wastes memory if a
+> sub-system does not elect to attach per inode information, for example
+> the tracing infrastructure.
 
-Perhaps add a comment as a reminder as to why it is currently safe.
+To be clear, that disadvantage only comes up if the sub-system uses
+inode data on an occasional basis. If it never uses inode data there
+is no need to have a pointer to it.
 
-Mimi
-=20
->=20
-> Signed-off-by: Breno Leitao <leitao@debian.org>
-> Fixes: 7b8589cc29e7 ("ima: on soft reboot, save the measurement list")
-> ---
->  security/integrity/ima/ima_kexec.c | 2 ++
->  1 file changed, 2 insertions(+)
->=20
-> diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/=
-ima_kexec.c
-> index 52e00332defed39774c9e23e045f1377cfa30d0c..3b17ddb91d35ac806aedd2ee9=
-70ff365675dac0b 100644
-> --- a/security/integrity/ima/ima_kexec.c
-> +++ b/security/integrity/ima/ima_kexec.c
-> @@ -37,6 +37,7 @@ static int ima_dump_measurement_list(unsigned long *buf=
-fer_size, void **buffer,
-> =20
->  	memset(&khdr, 0, sizeof(khdr));
->  	khdr.version =3D 1;
-> +	rcu_read_lock();
->  	list_for_each_entry_rcu(qe, &ima_measurements, later) {
->  		if (file.count < file.size) {
->  			khdr.count++;
-> @@ -46,6 +47,7 @@ static int ima_dump_measurement_list(unsigned long *buf=
-fer_size, void **buffer,
->  			break;
->  		}
->  	}
-> +	rcu_read_unlock();
-> =20
->  	if (ret < 0)
->  		goto out;
->=20
-> ---
-> base-commit: f488649e40f8900d23b86afeab7d4b78c063d5d1
-> change-id: 20241104-ima_rcu-ee83da87d050
->=20
-> Best regards,
+> This disadvantage is parried by the fact that it reduces the size of
+> the inode proper by 24 bytes (4 pointers down to 1) and allows future
+> extensibility without colliding with the interests and desires of the
+> VFS maintainers.
 
+You're adding a level of indirection. Even I would object based on
+the performance impact.
+
+> 2.) Implement key/value mapping for inode specific storage.
+>
+> The key would be a sub-system specific numeric value that returns a
+> pointer the sub-system uses to manage its inode specific memory for a
+> particular inode.
+>
+> A participating sub-system in turn uses its identifier to register an
+> inode specific pointer for its sub-system.
+>
+> This strategy loses O(1) lookup complexity but reduces total memory
+> consumption and only imposes memory costs for inodes when a sub-system
+> desires to use inode specific storage.
+
+SELinux and Smack use an inode blob for every inode. The performance
+regression boggles the mind. Not to mention the additional complexity
+of managing the memory.
+
+> Approach 2 requires the introduction of generic infrastructure that
+> allows an inode's key/value mappings to be located, presumably based
+> on the inode's pointer value.  We could probably just resurrect the
+> old IMA iint code for this purpose.
+>
+> In the end it comes down to a rather standard trade-off in this
+> business, memory vs. execution cost.
+>
+> We would posit that option 2 is the only viable scheme if the design
+> metric is overall good for the Linux kernel eco-system.
+
+No. Really, no. You need look no further than secmarks to understand
+how a key based blob allocation scheme leads to tears. Keys are fine
+in the case where use of data is sparse. They have no place when data
+use is the norm.
+
+>> Thanks,
+>> Song
+> Have a good day.
+>
+> As always,
+> Dr. Greg
+>
+> The Quixote Project - Flailing at the Travails of Cybersecurity
+>               https://github.com/Quixote-Project
+>
