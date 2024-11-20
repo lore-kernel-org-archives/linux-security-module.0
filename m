@@ -1,476 +1,329 @@
-Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5938076410
-	for <linux-security-module@vger.kernel.org>; Wed, 20 Nov 2024 16:06:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
+Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93CD1150994;
+	Wed, 20 Nov 2024 16:55:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732118783; cv=none; b=F20rEgyOV7sG7F19ZjX1M1/PYERLey1jyzLeTmmHejd1Xzuhe+MqyOpnysA4MzJcbA4iM5D3fzFjK8rucmpdyZdAdW2i1kCCbPeQEAUGhhNHntusK9lonGcWp382/4eLhOb4vvsAPQ+5FsCDUaVeXJKotNICyx6Q1H9EjVc77nU=
+	t=1732121727; cv=none; b=lCZpJ6+oU1IOgeZqNW9LIfbqJyuxEHFqvlHf4AgZrXzlnPlyhmx47DL1STLgvFeuTmt3Z0dgTqI+u12ur9DrvnvUcwV2OwcV3ja0aHbnDWFd38DhNirz65qhK56xjrg6/hMaQbWpFbSJ8MZBzhnctcR3D7jm+hNBqRhtFp+WdNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732118783; c=relaxed/simple;
-	bh=z8vK4Qadnc+JLHpwO05RWHC49QG9bKA+PeouZyVH3WY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o0oxNrrH7qPB0hIxKE7wiW1aAyKf5EuTB2hzzmxcWVZlu359urESBGBmV2WbAK48UPkf/EI2JuRRyrvCOacPR8FFamwir8syyJMCzfjlDp66p4sfM0gsjnZiif7qGjXdJ4BLQsqtJ+eg98KnNjIOXxuQdK6Fl4qdlLvZ27Vnvk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=aef5PZ35; arc=none smtp.client-ip=209.85.210.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="aef5PZ35"
-Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-718061440e2so483252a34.2
-        for <linux-security-module@vger.kernel.org>; Wed, 20 Nov 2024 08:06:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1732118779; x=1732723579; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WZoQhgMTbtoxG5e5YAFh1GHk/Gz9C4nwf6K19BOyDyk=;
-        b=aef5PZ35x0L1yPB5TskKZhaj3jWr/4dFVGo4Nw7avFtnljqbCavmCLjZG+3IAUkCU1
-         ZTVX3BRWHn8duM3x4pBAhyJOoG2yP57e07YbYlD22stHbOQuHsaT5r+FOI7eCykXQ0y5
-         Fq7BnRYA1fJQU8CtbVyvGbVwY7DS1jWsHkLpI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732118779; x=1732723579;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WZoQhgMTbtoxG5e5YAFh1GHk/Gz9C4nwf6K19BOyDyk=;
-        b=Y8HUPfkOZWUtEE2wsoVBt8rXuAYgM3kZ+SpUTlhQBXz3m94YI/fqesUYkFP94nyqO4
-         38TRvC8BqJxy7yXq51ZtMiBYSvgQDaeKC6mKe0ZwgSvBzfNbfZpE+HLSexL3gNzIdmtk
-         vn/JQt2f4vUdkF5s9tJlT1J0S/kvnxKENPdGKBE6OAQTcsM9A4OrxEV2Ulioleu+WbZJ
-         Dk5McLGsfWSEJead1nLBUwxbIy2rKoiQYxZIcWeviZfPzJBy4wRaDXMI/UNgKpxqtkdY
-         2zpTawFL5OflekYMhhVrwCuDMdagfFEcBfR8KnpVp7nI8MC2SplilEx1dsNnqkrIiAWx
-         Mb4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWi9S5HcGeipBUeAknF1oZvsqXwVqnXlgPu/rLP4ouLClhWMk+/JkBJklaxgUPpAp6/K1LQmRLSegyFpG6PVyZCAXpvs5w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzip/ZPIz5kQi8rZoJMGasXW8kbQaOA5NkJdUkrte0+JPtX45rr
-	isPpEPBdjUK4gx4VdKL+mubILJf+saKaAxXK2Ch3wU0HpoYG/MtFebO0IoP0zpYVHCt0rFlvGlW
-	wQoYoTid6oFHBalnJDQBKSaXnRDBLbjfXIM72
-X-Gm-Gg: ASbGnct6raJNbjceyLKEPZHeFNw7r5tm88Co3l4qXDD4I019PpcXqjbsLf96ePIhyK5
-	+4K5kvY1zn2GUn6Dt4Wy/rYG3cvKEcObVfDbXfV4Eh0y/4URc3DfANLQcPKnx
-X-Google-Smtp-Source: AGHT+IFyqLszhvQ+h29a1Auhie80JzMNSwcl4Xe8P/6XDOeRRL7FyHVGdd2HZB9sAOvkseaJWNwau7B8A2quiTR4jf4=
-X-Received: by 2002:a05:6830:6813:b0:704:45ed:fa3 with SMTP id
- 46e09a7af769-71ab30bd650mr834958a34.1.1732118779291; Wed, 20 Nov 2024
- 08:06:19 -0800 (PST)
+	s=arc-20240116; t=1732121727; c=relaxed/simple;
+	bh=VX+3BK6Bok/eIK8oDpdMei+evdB4wKdIEyIm/oeGrWs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UF1oAodZwBziPuoKL0R4CwZWE5o9wjNg4PJq7uoqUUCmt9VFYG1Y6f4CIZ4HHLwgMaTn58/hc8uk1DCmwdgds7izCYpoR0tD+eYpPQZkSvhOQ7wq1ukD7OYk+sXTpFjR3FRXyGhnhW96gwGkjL6IO0Cc9Rpi/fnsas+3mn2GBuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 4AKGsQ9j001857;
+	Wed, 20 Nov 2024 10:54:26 -0600
+Received: (from greg@localhost)
+	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 4AKGsPi8001856;
+	Wed, 20 Nov 2024 10:54:25 -0600
+Date: Wed, 20 Nov 2024 10:54:25 -0600
+From: "Dr. Greg" <greg@enjellic.com>
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Song Liu <songliubraving@meta.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        "jack@suse.cz" <jack@suse.cz>,
+        "brauner@kernel.org" <brauner@kernel.org>, Song Liu <song@kernel.org>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>,
+        Kernel Team <kernel-team@meta.com>,
+        "andrii@kernel.org" <andrii@kernel.org>,
+        "eddyz87@gmail.com" <eddyz87@gmail.com>,
+        "ast@kernel.org" <ast@kernel.org>,
+        "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        "martin.lau@linux.dev" <martin.lau@linux.dev>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "kpsingh@kernel.org" <kpsingh@kernel.org>,
+        "mattbobrowski@google.com" <mattbobrowski@google.com>,
+        "amir73il@gmail.com" <amir73il@gmail.com>,
+        "repnop@google.com" <repnop@google.com>,
+        "jlayton@kernel.org" <jlayton@kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        "mic@digikod.net" <mic@digikod.net>,
+        "gnoack@google.com" <gnoack@google.com>
+Subject: Re: [PATCH bpf-next 0/4] Make inode storage available to tracing prog
+Message-ID: <20241120165425.GA1723@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <332BDB30-BCDC-4F24-BB8C-DD29D5003426@fb.com> <8c86c2b4-cd23-42e0-9eb6-2c8f7a4cbcd4@schaufler-ca.com> <CAPhsuW5zDzUp7eSut9vekzH7WZHpk38fKHmFVRTMiBbeW10_SQ@mail.gmail.com> <20241114163641.GA8697@wind.enjellic.com> <53a3601e-0999-4603-b69f-7bed39d4d89a@schaufler-ca.com> <4BF6D271-51D5-4768-A460-0853ABC5602D@fb.com> <b1e82da8daa1c372e4678b1984ac942c98db998d.camel@HansenPartnership.com> <A7017094-1A0C-42C8-BE9D-7352D2200ECC@fb.com> <20241119122706.GA19220@wind.enjellic.com> <561687f7-b7f3-4d56-a54c-944c52ed18b7@schaufler-ca.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241112191858.162021-1-mic@digikod.net> <20241112191858.162021-2-mic@digikod.net>
- <CABi2SkVRJC_7qoU56mDt3Ch7U9GnVeRogUt9wc9=32OtG6aatw@mail.gmail.com> <20241120.Uy8ahtai5oku@digikod.net>
-In-Reply-To: <20241120.Uy8ahtai5oku@digikod.net>
-From: Jeff Xu <jeffxu@chromium.org>
-Date: Wed, 20 Nov 2024 08:06:07 -0800
-Message-ID: <CABi2SkUx=7zummB4JCqEfb37p6MORR88y7S0E_YxJND_8dGaKA@mail.gmail.com>
-Subject: Re: [PATCH v21 1/6] exec: Add a new AT_EXECVE_CHECK flag to execveat(2)
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Kees Cook <keescook@chromium.org>, Paul Moore <paul@paul-moore.com>, 
-	Serge Hallyn <serge@hallyn.com>, Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>, 
-	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Casey Schaufler <casey@schaufler-ca.com>, 
-	Christian Heimes <christian@python.org>, Dmitry Vyukov <dvyukov@google.com>, 
-	Elliott Hughes <enh@google.com>, Eric Biggers <ebiggers@kernel.org>, 
-	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
-	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, 
-	Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Luca Boccassi <bluca@debian.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, 
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
-	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Scott Shell <scottsh@microsoft.com>, 
-	Shuah Khan <shuah@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
-	"Theodore Ts'o" <tytso@mit.edu>, Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
-	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
-	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, 
-	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <561687f7-b7f3-4d56-a54c-944c52ed18b7@schaufler-ca.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Wed, 20 Nov 2024 10:54:26 -0600 (CST)
 
-On Wed, Nov 20, 2024 at 1:42=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
-od.net> wrote:
->
-> On Tue, Nov 19, 2024 at 05:17:00PM -0800, Jeff Xu wrote:
-> > On Tue, Nov 12, 2024 at 11:22=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@=
-digikod.net> wrote:
-> > >
-> > > Add a new AT_EXECVE_CHECK flag to execveat(2) to check if a file woul=
-d
-> > > be allowed for execution.  The main use case is for script interprete=
-rs
-> > > and dynamic linkers to check execution permission according to the
-> > > kernel's security policy. Another use case is to add context to acces=
-s
-> > > logs e.g., which script (instead of interpreter) accessed a file.  As
-> > > any executable code, scripts could also use this check [1].
-> > >
-> > > This is different from faccessat(2) + X_OK which only checks a subset=
- of
-> > > access rights (i.e. inode permission and mount options for regular
-> > > files), but not the full context (e.g. all LSM access checks).  The m=
-ain
-> > > use case for access(2) is for SUID processes to (partially) check acc=
-ess
-> > > on behalf of their caller.  The main use case for execveat(2) +
-> > > AT_EXECVE_CHECK is to check if a script execution would be allowed,
-> > > according to all the different restrictions in place.  Because the us=
-e
-> > > of AT_EXECVE_CHECK follows the exact kernel semantic as for a real
-> > > execution, user space gets the same error codes.
-> > >
-> > > An interesting point of using execveat(2) instead of openat2(2) is th=
-at
-> > > it decouples the check from the enforcement.  Indeed, the security ch=
-eck
-> > > can be logged (e.g. with audit) without blocking an execution
-> > > environment not yet ready to enforce a strict security policy.
-> > >
-> > > LSMs can control or log execution requests with
-> > > security_bprm_creds_for_exec().  However, to enforce a consistent and
-> > > complete access control (e.g. on binary's dependencies) LSMs should
-> > > restrict file executability, or mesure executed files, with
-> > > security_file_open() by checking file->f_flags & __FMODE_EXEC.
-> > >
-> > > Because AT_EXECVE_CHECK is dedicated to user space interpreters, it
-> > > doesn't make sense for the kernel to parse the checked files, look fo=
-r
-> > > interpreters known to the kernel (e.g. ELF, shebang), and return ENOE=
-XEC
-> > > if the format is unknown.  Because of that, security_bprm_check() is
-> > > never called when AT_EXECVE_CHECK is used.
-> > >
-> > > It should be noted that script interpreters cannot directly use
-> > > execveat(2) (without this new AT_EXECVE_CHECK flag) because this coul=
-d
-> > > lead to unexpected behaviors e.g., `python script.sh` could lead to B=
-ash
-> > > being executed to interpret the script.  Unlike the kernel, script
-> > > interpreters may just interpret the shebang as a simple comment, whic=
-h
-> > > should not change for backward compatibility reasons.
-> > >
-> > > Because scripts or libraries files might not currently have the
-> > > executable permission set, or because we might want specific users to=
- be
-> > > allowed to run arbitrary scripts, the following patch provides a dyna=
-mic
-> > > configuration mechanism with the SECBIT_EXEC_RESTRICT_FILE and
-> > > SECBIT_EXEC_DENY_INTERACTIVE securebits.
-> > >
-> > > This is a redesign of the CLIP OS 4's O_MAYEXEC:
-> > > https://github.com/clipos-archive/src_platform_clip-patches/blob/f5cb=
-330d6b684752e403b4e41b39f7004d88e561/1901_open_mayexec.patch
-> > > This patch has been used for more than a decade with customized scrip=
-t
-> > > interpreters.  Some examples can be found here:
-> > > https://github.com/clipos-archive/clipos4_portage-overlay/search?q=3D=
-O_MAYEXEC
-> > >
-> > > Cc: Al Viro <viro@zeniv.linux.org.uk>
-> > > Cc: Christian Brauner <brauner@kernel.org>
-> > > Cc: Kees Cook <keescook@chromium.org>
-> > > Cc: Paul Moore <paul@paul-moore.com>
-> > > Reviewed-by: Serge Hallyn <serge@hallyn.com>
-> > > Link: https://docs.python.org/3/library/io.html#io.open_code [1]
-> > > Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
-> > > Link: https://lore.kernel.org/r/20241112191858.162021-2-mic@digikod.n=
-et
-> > > ---
-> > >
-> > > Changes since v20:
-> > > * Rename AT_CHECK to AT_EXECVE_CHECK, requested by Amir Goldstein and
-> > >   Serge Hallyn.
-> > > * Move the UAPI documentation to a dedicated RST file.
-> > > * Add Reviewed-by: Serge Hallyn
-> > >
-> > > Changes since v19:
-> > > * Remove mention of "role transition" as suggested by Andy.
-> > > * Highlight the difference between security_bprm_creds_for_exec() and
-> > >   the __FMODE_EXEC check for LSMs (in commit message and LSM's hooks)=
- as
-> > >   discussed with Jeff.
-> > > * Improve documentation both in UAPI comments and kernel comments
-> > >   (requested by Kees).
-> > >
-> > > New design since v18:
-> > > https://lore.kernel.org/r/20220104155024.48023-3-mic@digikod.net
-> > > ---
-> > >  Documentation/userspace-api/check_exec.rst | 34 ++++++++++++++++++++=
-++
-> > >  Documentation/userspace-api/index.rst      |  1 +
-> > >  fs/exec.c                                  | 20 +++++++++++--
-> > >  include/linux/binfmts.h                    |  7 ++++-
-> > >  include/uapi/linux/fcntl.h                 |  4 +++
-> > >  kernel/audit.h                             |  1 +
-> > >  kernel/auditsc.c                           |  1 +
-> > >  security/security.c                        | 10 +++++++
-> > >  8 files changed, 75 insertions(+), 3 deletions(-)
-> > >  create mode 100644 Documentation/userspace-api/check_exec.rst
-> > >
-> > > diff --git a/Documentation/userspace-api/check_exec.rst b/Documentati=
-on/userspace-api/check_exec.rst
-> > > new file mode 100644
-> > > index 000000000000..ad1aeaa5f6c0
-> > > --- /dev/null
-> > > +++ b/Documentation/userspace-api/check_exec.rst
-> > > @@ -0,0 +1,34 @@
-> > > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > +Executability check
-> > > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > +
-> > > +AT_EXECVE_CHECK
-> > > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > +
-> > > +Passing the ``AT_EXECVE_CHECK`` flag to :manpage:`execveat(2)` only =
-performs a
-> > > +check on a regular file and returns 0 if execution of this file woul=
-d be
-> > > +allowed, ignoring the file format and then the related interpreter d=
-ependencies
-> > > +(e.g. ELF libraries, script's shebang).
-> > > +
-> > > +Programs should always perform this check to apply kernel-level chec=
-ks against
-> > > +files that are not directly executed by the kernel but passed to a u=
-ser space
-> > > +interpreter instead.  All files that contain executable code, from t=
-he point of
-> > > +view of the interpreter, should be checked.  However the result of t=
-his check
-> > > +should only be enforced according to ``SECBIT_EXEC_RESTRICT_FILE`` o=
-r
-> > > +``SECBIT_EXEC_DENY_INTERACTIVE.``.
-> > Regarding "should only"
-> > Userspace (e.g. libc) could decide to enforce even when
-> > SECBIT_EXEC_RESTRICT_FILE=3D0), i.e. if it determines not-enforcing
-> > doesn't make sense.
->
-> User space is always in control, but I don't think it would be wise to
-> not follow the configuration securebits (in a generic system) because
-> this could result to unattended behaviors (I don't have a specific one
-> in mind but...).  That being said, configuration and checks are
-> standalones and specific/tailored systems are free to do the checks they
-> want.
->
-In the case of dynamic linker, we can always enforce honoring the
-execveat(AT_EXECVE_CHECK) result, right ? I can't think of a case not
-to,  the dynamic linker doesn't need to check the
-SECBIT_EXEC_RESTRICT_FILE bit.
+On Tue, Nov 19, 2024 at 10:14:29AM -0800, Casey Schaufler wrote:
 
-script interpreters need to check this though,  because the apps might
-need to adjust/test the scripts they are calling, so
-SECBIT_EXEC_RESTRICT_FILE can be used to opt-out the enforcement.
+Good morning, I hope the day is goning well for everyone.
 
-> > When SECBIT_EXEC_RESTRICT_FILE=3D1,  userspace is bound to enforce.
+> On 11/19/2024 4:27 AM, Dr. Greg wrote:
+> > On Sun, Nov 17, 2024 at 10:59:18PM +0000, Song Liu wrote:
 > >
-> > > +
-> > > +The main purpose of this flag is to improve the security and consist=
-ency of an
-> > > +execution environment to ensure that direct file execution (e.g.
-> > > +``./script.sh``) and indirect file execution (e.g. ``sh script.sh``)=
- lead to
-> > > +the same result.  For instance, this can be used to check if a file =
-is
-> > > +trustworthy according to the caller's environment.
-> > > +
-> > > +In a secure environment, libraries and any executable dependencies s=
-hould also
-> > > +be checked.  For instance, dynamic linking should make sure that all=
- libraries
-> > > +are allowed for execution to avoid trivial bypass (e.g. using ``LD_P=
-RELOAD``).
-> > > +For such secure execution environment to make sense, only trusted co=
-de should
-> > > +be executable, which also requires integrity guarantees.
-> > > +
-> > > +To avoid race conditions leading to time-of-check to time-of-use iss=
-ues,
-> > > +``AT_EXECVE_CHECK`` should be used with ``AT_EMPTY_PATH`` to check a=
-gainst a
-> > > +file descriptor instead of a path.
-> > > diff --git a/Documentation/userspace-api/index.rst b/Documentation/us=
-erspace-api/index.rst
-> > > index 274cc7546efc..6272bcf11296 100644
-> > > --- a/Documentation/userspace-api/index.rst
-> > > +++ b/Documentation/userspace-api/index.rst
-> > > @@ -35,6 +35,7 @@ Security-related interfaces
-> > >     mfd_noexec
-> > >     spec_ctrl
-> > >     tee
-> > > +   check_exec
-> > >
-> > >  Devices and I/O
-> > >  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > diff --git a/fs/exec.c b/fs/exec.c
-> > > index 6c53920795c2..bb83b6a39530 100644
-> > > --- a/fs/exec.c
-> > > +++ b/fs/exec.c
-> > > @@ -891,7 +891,8 @@ static struct file *do_open_execat(int fd, struct=
- filename *name, int flags)
-> > >                 .lookup_flags =3D LOOKUP_FOLLOW,
-> > >         };
-> > >
-> > > -       if ((flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH)) !=3D 0)
-> > > +       if ((flags &
-> > > +            ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH | AT_EXECVE_CHECK)=
-) !=3D 0)
-> > >                 return ERR_PTR(-EINVAL);
-> > >         if (flags & AT_SYMLINK_NOFOLLOW)
-> > >                 open_exec_flags.lookup_flags &=3D ~LOOKUP_FOLLOW;
-> > > @@ -1545,6 +1546,21 @@ static struct linux_binprm *alloc_bprm(int fd,=
- struct filename *filename, int fl
-> > >         }
-> > >         bprm->interp =3D bprm->filename;
-> > >
-> > > +       /*
-> > > +        * At this point, security_file_open() has already been calle=
-d (with
-> > > +        * __FMODE_EXEC) and access control checks for AT_EXECVE_CHEC=
-K will
-> > > +        * stop just after the security_bprm_creds_for_exec() call in
-> > > +        * bprm_execve().  Indeed, the kernel should not try to parse=
- the
-> > > +        * content of the file with exec_binprm() nor change the call=
-ing
-> > > +        * thread, which means that the following security functions =
-will be
-> > > +        * not called:
-> > > +        * - security_bprm_check()
-> > > +        * - security_bprm_creds_from_file()
-> > > +        * - security_bprm_committing_creds()
-> > > +        * - security_bprm_committed_creds()
-> > > +        */
-> > > +       bprm->is_check =3D !!(flags & AT_EXECVE_CHECK);
-> > > +
-> > >         retval =3D bprm_mm_init(bprm);
-> > >         if (!retval)
-> > >                 return bprm;
-> > > @@ -1839,7 +1855,7 @@ static int bprm_execve(struct linux_binprm *bpr=
-m)
-> > >
-> > >         /* Set the unchanging part of bprm->cred */
-> > >         retval =3D security_bprm_creds_for_exec(bprm);
-> > > -       if (retval)
-> > > +       if (retval || bprm->is_check)
-> > >                 goto out;
-> > >
-> > >         retval =3D exec_binprm(bprm);
-> > > diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
-> > > index e6c00e860951..8ff0eb3644a1 100644
-> > > --- a/include/linux/binfmts.h
-> > > +++ b/include/linux/binfmts.h
-> > > @@ -42,7 +42,12 @@ struct linux_binprm {
-> > >                  * Set when errors can no longer be returned to the
-> > >                  * original userspace.
-> > >                  */
-> > > -               point_of_no_return:1;
-> > > +               point_of_no_return:1,
-> > > +               /*
-> > > +                * Set by user space to check executability according=
- to the
-> > > +                * caller's environment.
-> > > +                */
-> > > +               is_check:1;
-> > >         struct file *executable; /* Executable to pass to the interpr=
-eter */
-> > >         struct file *interpreter;
-> > >         struct file *file;
-> > > diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-> > > index 87e2dec79fea..2e87f2e3a79f 100644
-> > > --- a/include/uapi/linux/fcntl.h
-> > > +++ b/include/uapi/linux/fcntl.h
-> > > @@ -154,6 +154,10 @@
-> > >                                            usable with open_by_handle=
-_at(2). */
-> > >  #define AT_HANDLE_MNT_ID_UNIQUE        0x001   /* Return the u64 uni=
-que mount ID. */
-> > >
-> > > +/* Flags for execveat2(2). */
-> > > +#define AT_EXECVE_CHECK                0x10000 /* Only perform a che=
-ck if execution
-> > > +                                          would be allowed. */
-> > > +
-> > >  #if defined(__KERNEL__)
-> > >  #define AT_GETATTR_NOSEC       0x80000000
-> > >  #endif
-> > > diff --git a/kernel/audit.h b/kernel/audit.h
-> > > index a60d2840559e..8ebdabd2ab81 100644
-> > > --- a/kernel/audit.h
-> > > +++ b/kernel/audit.h
-> > > @@ -197,6 +197,7 @@ struct audit_context {
-> > >                 struct open_how openat2;
-> > >                 struct {
-> > >                         int                     argc;
-> > > +                       bool                    is_check;
-> > >                 } execve;
-> > >                 struct {
-> > >                         char                    *name;
-> > > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-> > > index cd57053b4a69..8d9ba5600cf2 100644
-> > > --- a/kernel/auditsc.c
-> > > +++ b/kernel/auditsc.c
-> > > @@ -2662,6 +2662,7 @@ void __audit_bprm(struct linux_binprm *bprm)
-> > >
-> > >         context->type =3D AUDIT_EXECVE;
-> > >         context->execve.argc =3D bprm->argc;
-> > > +       context->execve.is_check =3D bprm->is_check;
-> > Where is execve.is_check used ?
->
-> It is used in bprm_execve(), exposed to the audit framework, and
-> potentially used by LSMs.
->
-bprm_execve() uses bprm->is_check, not  the context->execve.is_check.
-
-
+> >> Hi Christian, James and Jan, 
+> > Good morning, I hope the day is starting well for everyone.
 > >
+> >>> On Nov 14, 2024, at 1:49???PM, James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
+> >> [...]
+> >>
+> >>>> We can address this with something like following:
+> >>>>
+> >>>> #ifdef CONFIG_SECURITY
+> >>>>         void                    *i_security;
+> >>>> #elif CONFIG_BPF_SYSCALL
+> >>>>         struct bpf_local_storage __rcu *i_bpf_storage;
+> >>>> #endif
+> >>>>
+> >>>> This will help catch all misuse of the i_bpf_storage at compile
+> >>>> time, as i_bpf_storage doesn't exist with CONFIG_SECURITY=y. 
+> >>>>
+> >>>> Does this make sense?
+> >>> Got to say I'm with Casey here, this will generate horrible and failure
+> >>> prone code.
+> >>>
+> >>> Since effectively you're making i_security always present anyway,
+> >>> simply do that and also pull the allocation code out of security.c in a
+> >>> way that it's always available?  That way you don't have to special
+> >>> case the code depending on whether CONFIG_SECURITY is defined. 
+> >>> Effectively this would give everyone a generic way to attach some
+> >>> memory area to an inode.  I know it's more complex than this because
+> >>> there are LSM hooks that run from security_inode_alloc() but if you can
+> >>> make it work generically, I'm sure everyone will benefit.
+> >> On a second thought, I think making i_security generic is not 
+> >> the right solution for "BPF inode storage in tracing use cases". 
+> >>
+> >> This is because i_security serves a very specific use case: it 
+> >> points to a piece of memory whose size is calculated at system 
+> >> boot time. If some of the supported LSMs is not enabled by the 
+> >> lsm= kernel arg, the kernel will not allocate memory in 
+> >> i_security for them. The only way to change lsm= is to reboot 
+> >> the system. BPF LSM programs can be disabled at the boot time, 
+> >> which fits well in i_security. However, BPF tracing programs 
+> >> cannot be disabled at boot time (even we change the code to 
+> >> make it possible, we are not likely to disable BPF tracing). 
+> >> IOW, as long as CONFIG_BPF_SYSCALL is enabled, we expect some 
+> >> BPF tracing programs to load at some point of time, and these 
+> >> programs may use BPF inode storage. 
+> >>
+> >> Therefore, with CONFIG_BPF_SYSCALL enabled, some extra memory 
+> >> always will be attached to i_security (maybe under a different 
+> >> name, say, i_generic) of every inode. In this case, we should 
+> >> really add i_bpf_storage directly to the inode, because another 
+> >> pointer jump via i_generic gives nothing but overhead. 
+> >>
+> >> Does this make sense? Or did I misunderstand the suggestion?
+> > There is a colloquialism that seems relevant here: "Pick your poison".
 > >
-> > >  }
-> > >
-> > >
-> > > diff --git a/security/security.c b/security/security.c
-> > > index c5981e558bc2..456361ec249d 100644
-> > > --- a/security/security.c
-> > > +++ b/security/security.c
-> > > @@ -1249,6 +1249,12 @@ int security_vm_enough_memory_mm(struct mm_str=
-uct *mm, long pages)
-> > >   * to 1 if AT_SECURE should be set to request libc enable secure mod=
-e.  @bprm
-> > >   * contains the linux_binprm structure.
-> > >   *
-> > > + * If execveat(2) is called with the AT_EXECVE_CHECK flag, bprm->is_=
-check is
-> > > + * set.  The result must be the same as without this flag even if th=
-e execution
-> > > + * will never really happen and @bprm will always be dropped.
-> > > + *
-> > > + * This hook must not change current->cred, only @bprm->cred.
-> > > + *
-> > >   * Return: Returns 0 if the hook is successful and permission is gra=
-nted.
-> > >   */
-> > >  int security_bprm_creds_for_exec(struct linux_binprm *bprm)
-> > > @@ -3100,6 +3106,10 @@ int security_file_receive(struct file *file)
-> > >   * Save open-time permission checking state for later use upon file_=
-permission,
-> > >   * and recheck access if anything has changed since inode_permission=
-.
-> > >   *
-> > > + * We can check if a file is opened for execution (e.g. execve(2) ca=
-ll), either
-> > > + * directly or indirectly (e.g. ELF's ld.so) by checking file->f_fla=
-gs &
-> > > + * __FMODE_EXEC .
-> > > + *
-> > >   * Return: Returns 0 if permission is granted.
-> > >   */
-> > >  int security_file_open(struct file *file)
-> > > --
-> > > 2.47.0
-> > >
-> > >
+> > In the greater interests of the kernel, it seems that a generic
+> > mechanism for attaching per inode information is the only realistic
+> > path forward, unless Christian changes his position on expanding
+> > the size of struct inode.
+> >
+> > There are two pathways forward.
+> >
+> > 1.) Attach a constant size 'blob' of storage to each inode.
+> >
+> > This is a similar approach to what the LSM uses where each blob is
+> > sized as follows:
+> >
+> > S = U * sizeof(void *)
+> >
+> > Where U is the number of sub-systems that have a desire to use inode
+> > specific storage.
+
+> I can't tell for sure, but it looks like you don't understand how
+> LSM i_security blobs are used. It is *not* the case that each LSM
+> gets a pointer in the i_security blob. Each LSM that wants storage
+> tells the infrastructure at initialization time how much space it
+> wants in the blob. That can be a pointer, but usually it's a struct
+> with flags, pointers and even lists.
+
+I can state unequivocably for everyone's benefit, that as a team, we
+have an intimate understanding of how LSM i_security blobs are used.
+
+It was 0500 in the morning when I wrote the reply and I had personally
+been working for 22 hours straight, so my apologies for being
+imprecise.
+
+I should not have specified sizeof(void *), I should have written
+sizeof(allocation), for lack of a better syntax.
+
+Also for the record, in a universal allocation scheme, when I say
+sub-system I mean any implementation that would make use of per inode
+information.  So the LSM, bpf tracing et.al., could all be considered
+sub-systems that would register at boot time for a section of the
+arena.
+
+> > Each sub-system uses it's pointer slot to manage any additional
+> > storage that it desires to attach to the inode.
+
+> Again, an LSM may choose to do it that way, but most don't.  SELinux
+> and Smack need data on every inode. It makes much more sense to put
+> it directly in the blob than to allocate a separate chunk for every
+> inode.
+
+See my correction above.
+
+> > This has the obvious advantage of O(1) cost complexity for any
+> > sub-system that wants to access its inode specific storage.
+> >
+> > The disadvantage, as you note, is that it wastes memory if a
+> > sub-system does not elect to attach per inode information, for example
+> > the tracing infrastructure.
+
+> To be clear, that disadvantage only comes up if the sub-system uses
+> inode data on an occasional basis. If it never uses inode data there
+> is no need to have a pointer to it.
+
+I think we all agree on that, therein lies the rub with a common arena
+architecture, which is why I indicated in my earlier e-mail that this
+comes down to engineering trade-off decisions.
+
+That is why there would be a probable assumption that such sub-systems
+would only request a pointer per arena slot and use that to reference
+a dynamically allocated structure.  If, as a group, we are really
+concerned about inode memory consumption the assumption would be that
+the maintainers would have to whine about sparse consumers requesting
+a structure sized allocation rather than a pointer sized allocation.
+
+> > This disadvantage is parried by the fact that it reduces the size of
+> > the inode proper by 24 bytes (4 pointers down to 1) and allows future
+> > extensibility without colliding with the interests and desires of the
+> > VFS maintainers.
+
+> You're adding a level of indirection. Even I would object based on
+> the performance impact.
+
+I'm not sure that a thorough and complete analysis of the costs
+associated with a sub-system touching inode local storage would
+support the notion of a tangible performance hit.
+
+The pointer in an arena slot would presumably be a pointer to a data
+structure that a sub-system allocates at inode creation time.  After
+computing the arena slot address in classic style (i_arena + offset)
+the sub-system uses the pointer at that location to dereference
+its structure elements or to find subordinate members in its arena.
+
+If we take SMACK as an example, the smack inode contains three
+pointers and a scalar.  So, if there is a need to access storage behind
+one of those pointers, there is an additional indirection hit.
+
+The three pointers are each to a structure (smack_known) that has
+three list pointers and a mutex lock inside of it.
+
+The SeLinux inode has a back pointer to the sponsoring inode, a list
+head, a spinlock and some scalars.
+
+So there is lots of potential indirection and locking going on with
+access to inode local storage.
+
+To extend further, for everyone thinking about this from an
+engineering perspective.
+
+A common arena model where everyone asks for a structure sized blob is
+inherently cache pessimal.  Unless you are the first blob in the arena
+you are going to need to hit another cache-line in order to start the
+indirection process for your structure.
+
+A pointer based arena architecture would allow up to eight sub-systems
+to get their inode storage pointer for the cost of a single cache-line
+fetch.
+
+Let me offer another line of thinking on this drawn from the
+discussion above.
+
+A further optimization in the single pointer arena model is for the
+LSM to place a pointer to a standard LSM sized memory blob in its
+pointer slot on behalf of all the individual LSM's.  All of the
+individual participating LSM's take that pointer and do the offset
+calculation into the LSM arena for that inode as they normally would.
+
+So there would seem to be a lot of engineering issues to consider that
+are beyond the simple predicate that indirection is bad.
+
+See, I do understand how the LSM arena model works.
+
+> > 2.) Implement key/value mapping for inode specific storage.
+> >
+> > The key would be a sub-system specific numeric value that returns a
+> > pointer the sub-system uses to manage its inode specific memory for a
+> > particular inode.
+> >
+> > A participating sub-system in turn uses its identifier to register an
+> > inode specific pointer for its sub-system.
+> >
+> > This strategy loses O(1) lookup complexity but reduces total memory
+> > consumption and only imposes memory costs for inodes when a sub-system
+> > desires to use inode specific storage.
+
+> SELinux and Smack use an inode blob for every inode. The performance
+> regression boggles the mind. Not to mention the additional
+> complexity of managing the memory.
+
+I guess we would have to measure the performance impacts to understand
+their level of mind boggliness.
+
+My first thought is that we hear a huge amount of fanfare about BPF
+being a game changer for tracing and network monitoring.  Given
+current networking speeds, if its ability to manage storage needed for
+it purposes are truely abysmal the industry wouldn't be finding the
+technology useful.
+
+Beyond that.
+
+As I noted above, the LSM could be an independent subscriber.  The
+pointer to register would come from the the kmem_cache allocator as it
+does now, so that cost is idempotent with the current implementation.
+The pointer registration would also be a single instance cost.
+
+So the primary cost differential over the common arena model will be
+the complexity costs associated with lookups in a red/black tree, if
+we used the old IMA integrity cache as an example implementation.
+
+As I noted above, these per inode local storage structures are complex
+in of themselves, including lists and locks.  If touching an inode
+involves locking and walking lists and the like it would seem that
+those performance impacts would quickly swamp an r/b lookup cost.
+
+> > Approach 2 requires the introduction of generic infrastructure that
+> > allows an inode's key/value mappings to be located, presumably based
+> > on the inode's pointer value.  We could probably just resurrect the
+> > old IMA iint code for this purpose.
+> >
+> > In the end it comes down to a rather standard trade-off in this
+> > business, memory vs. execution cost.
+> >
+> > We would posit that option 2 is the only viable scheme if the design
+> > metric is overall good for the Linux kernel eco-system.
+
+> No. Really, no. You need look no further than secmarks to understand
+> how a key based blob allocation scheme leads to tears. Keys are fine
+> in the case where use of data is sparse. They have no place when data
+> use is the norm.
+
+Then it would seem that we need to get everyone to agree that we can
+get by with using two pointers in struct inode.  One for uses best
+served by common arena allocation and one for a key/pointer mapping,
+and then convert the sub-systems accordingly.
+
+Or alternately, getting everyone to agree that allocating a mininum of
+eight additional bytes for every subscriber to private inode data
+isn't the end of the world, even if use of the resource is sparse.
+
+Of course, experience would suggest, that getting everyone in this
+community to agree on something is roughly akin to throwing a hand
+grenade into a chicken coop with an expectation that all of the
+chickens will fly out in a uniform flock formation.
+
+As always,
+Dr. Greg
+
+The Quixote Project - Flailing at the Travails of Cybersecurity
+              https://github.com/Quixote-Project
