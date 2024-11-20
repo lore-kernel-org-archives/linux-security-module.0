@@ -1,329 +1,143 @@
-Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93CD1150994;
-	Wed, 20 Nov 2024 16:55:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B88413C83D;
+	Wed, 20 Nov 2024 19:44:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732121727; cv=none; b=lCZpJ6+oU1IOgeZqNW9LIfbqJyuxEHFqvlHf4AgZrXzlnPlyhmx47DL1STLgvFeuTmt3Z0dgTqI+u12ur9DrvnvUcwV2OwcV3ja0aHbnDWFd38DhNirz65qhK56xjrg6/hMaQbWpFbSJ8MZBzhnctcR3D7jm+hNBqRhtFp+WdNc=
+	t=1732131893; cv=none; b=OGYPFQjFl2rZB6UGPM0KVLlawh8bjempkKUYBkgjr2OZdgKniHENb55iEzZI+UPVDtirBEfPLvwHji6EAK6KtnistKc8Mm3+XSMoriC/5inDHtHO4ZtSnaqd/0s1RAhi15AolHhbaCHs3WHkjRqkmzlgd63sVa6LiLmpPnogWRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732121727; c=relaxed/simple;
-	bh=VX+3BK6Bok/eIK8oDpdMei+evdB4wKdIEyIm/oeGrWs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UF1oAodZwBziPuoKL0R4CwZWE5o9wjNg4PJq7uoqUUCmt9VFYG1Y6f4CIZ4HHLwgMaTn58/hc8uk1DCmwdgds7izCYpoR0tD+eYpPQZkSvhOQ7wq1ukD7OYk+sXTpFjR3FRXyGhnhW96gwGkjL6IO0Cc9Rpi/fnsas+3mn2GBuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 4AKGsQ9j001857;
-	Wed, 20 Nov 2024 10:54:26 -0600
-Received: (from greg@localhost)
-	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 4AKGsPi8001856;
-	Wed, 20 Nov 2024 10:54:25 -0600
-Date: Wed, 20 Nov 2024 10:54:25 -0600
-From: "Dr. Greg" <greg@enjellic.com>
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Song Liu <songliubraving@meta.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "jack@suse.cz" <jack@suse.cz>,
-        "brauner@kernel.org" <brauner@kernel.org>, Song Liu <song@kernel.org>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>,
-        Kernel Team <kernel-team@meta.com>,
-        "andrii@kernel.org" <andrii@kernel.org>,
-        "eddyz87@gmail.com" <eddyz87@gmail.com>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        "martin.lau@linux.dev" <martin.lau@linux.dev>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "kpsingh@kernel.org" <kpsingh@kernel.org>,
-        "mattbobrowski@google.com" <mattbobrowski@google.com>,
-        "amir73il@gmail.com" <amir73il@gmail.com>,
-        "repnop@google.com" <repnop@google.com>,
-        "jlayton@kernel.org" <jlayton@kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        "mic@digikod.net" <mic@digikod.net>,
-        "gnoack@google.com" <gnoack@google.com>
-Subject: Re: [PATCH bpf-next 0/4] Make inode storage available to tracing prog
-Message-ID: <20241120165425.GA1723@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <332BDB30-BCDC-4F24-BB8C-DD29D5003426@fb.com> <8c86c2b4-cd23-42e0-9eb6-2c8f7a4cbcd4@schaufler-ca.com> <CAPhsuW5zDzUp7eSut9vekzH7WZHpk38fKHmFVRTMiBbeW10_SQ@mail.gmail.com> <20241114163641.GA8697@wind.enjellic.com> <53a3601e-0999-4603-b69f-7bed39d4d89a@schaufler-ca.com> <4BF6D271-51D5-4768-A460-0853ABC5602D@fb.com> <b1e82da8daa1c372e4678b1984ac942c98db998d.camel@HansenPartnership.com> <A7017094-1A0C-42C8-BE9D-7352D2200ECC@fb.com> <20241119122706.GA19220@wind.enjellic.com> <561687f7-b7f3-4d56-a54c-944c52ed18b7@schaufler-ca.com>
+	s=arc-20240116; t=1732131893; c=relaxed/simple;
+	bh=/wiwytDOUcHNNbF55kARr56LnJaKs85SIuaDjna0Bx4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pjfaCDW0ZZToNdgFvXe2cKYsBbkELMLRJd41tbuxe8uX6mSgUU6/sXqwuELjpMieEFO/MTfHQkIgX9F/TjqcYWtHC/81wxiC0T4av5BfRCgVSxGNKwPosATaJDF8B/uIWTIWTh90kmlC7B1HxuZbA9FHJ3AEritl2yx/aer3fW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5cfa90e04c2so85581a12.1;
+        Wed, 20 Nov 2024 11:44:51 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732131890; x=1732736690;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=THRi3sy/5qC0fUASXvWioXtk0quT9gz69AznhmP0uAU=;
+        b=UfD7GMDc0S1yWw5NHjniLfXDXfc0MNwLydrz7kmTBx8OVUzKiob5EGpzP8OWGR03sn
+         hnx9IC1XPomedBnoENZOl3hI1QBzNFD3XaVu1/cCGsV0bdH8YUNmXhAAmjNRT2Ufx8ME
+         SaO3uZiEeUOLrDkbHPQHXK4JYucL0WrKx23gOaVn20Zzf357bUtwbQs68CdJbKoPcvXq
+         nFotKc3Z6yHlBO2/b+wN62vf8X+X8LDtTq7O1nOCLx1+Gzf3JEOYK2RmVVlT/Iui043e
+         PuOLeAzRy2hCzemtay6giJx38NSzZr6v7JsYZILTBZ4rYtFlSeKQK53xdko88hjgL+NM
+         QG4g==
+X-Forwarded-Encrypted: i=1; AJvYcCUKOuqSvl6rPAw40qGImwjqvi2vvBtuwjlEtqg4nBH+vcZ2KqheCYkGnpNXs8ooe162Ri8u96amWbiM6HUb@vger.kernel.org, AJvYcCWLG4xIjU7ZfA/JeCTYKGuVdTwevKXx1O1PmQRulIMHeHE+3lh1d9WpjCp/WDxzhi4hBf3A1d5a60ucIuCePuo=@vger.kernel.org, AJvYcCWreHQGdPI2kapt0AHzPs1j2P5TrVUUAQSALdquEt3cKRdornwIhUQw2D1i+IUygi57ZA16dgDs3r4lSCEAosyRKiuwiVOb@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFjXOdLCO5F7aHHUGf7Lv26SXBcaj35BgIYDtvujTei09xI9Wq
+	vrA0q63XGosqUxhSBvrCGxJv1kI94chBHo5w43gr1tQ5MQxhY/gy
+X-Gm-Gg: ASbGncsKaR+TFayHPY5qqZoi4hyNi8dYzWKtEvsE38iwiLv2283XoDNnKZeeODrvgu3
+	BGGl9vxNaUCrjVqO4nX0/xDi/zYuP3tbW1DzXvBtpaAQKRm36YvXCuGGeCUiwDk5hLP/F1GaZW2
+	fzgtdGA+eHgWNU+zGCwh4xpb2qQuYmdVq/XXN99CNM89XER316hAOa47n1xEnlozhoiODRScU6V
+	AM9SmBMEp/jLrZ+PrVc2KdUq4f3K2p/plVcs0FVY9U6N88=
+X-Google-Smtp-Source: AGHT+IFydFiruA8tqHqM/ls2aflXZ4jqqlwr3HW3n3VmZyZisUMwDNoaSegIST8iHiz4H6TlviaeNA==
+X-Received: by 2002:a17:907:1c0d:b0:a99:f0cf:f571 with SMTP id a640c23a62f3a-aa4dd57e0b9mr365748666b.33.1732131889496;
+        Wed, 20 Nov 2024 11:44:49 -0800 (PST)
+Received: from gmail.com ([2620:10d:c092:400::5:a87e])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa20df265bbsm805833766b.38.2024.11.20.11.44.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 20 Nov 2024 11:44:49 -0800 (PST)
+Date: Wed, 20 Nov 2024 19:44:46 +0000
+From: Breno Leitao <leitao@debian.org>
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Thiago Jung Bauermann <bauerman@linux.vnet.ibm.com>,
+	Mimi Zohar <zohar@linux.vnet.ibm.com>,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	noodles@earth.li
+Subject: Re: [PATCH] ima: kexec: Add RCU read lock protection for
+ ima_measurements list traversal
+Message-ID: <Zz48LjTS_r-j9Qny@gmail.com>
+References: <20241104-ima_rcu-v1-1-5157460c5907@debian.org>
+ <b89a084a98e7427911ac4344225eca99a04a52fb.camel@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <561687f7-b7f3-4d56-a54c-944c52ed18b7@schaufler-ca.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Wed, 20 Nov 2024 10:54:26 -0600 (CST)
+In-Reply-To: <b89a084a98e7427911ac4344225eca99a04a52fb.camel@linux.ibm.com>
 
-On Tue, Nov 19, 2024 at 10:14:29AM -0800, Casey Schaufler wrote:
+Hello Mimi,
 
-Good morning, I hope the day is goning well for everyone.
+On Tue, Nov 19, 2024 at 01:10:10PM -0500, Mimi Zohar wrote:
+> Hi Breno,
+> 
+> On Mon, 2024-11-04 at 02:47 -0800, Breno Leitao wrote:
+> > Fix a potential RCU issue where ima_measurements list is traversed using
+> > list_for_each_entry_rcu() without proper RCU read lock protection. This
+> > caused warnings when CONFIG_PROVE_RCU was enabled:
+> > 
+> >   security/integrity/ima/ima_kexec.c:40 RCU-list traversed in non-reader section!!
+> > 
+> > Add rcu_read_lock() before iterating over ima_measurements list to ensure
+> > proper RCU synchronization, consistent with other RCU list traversals in
+> > the codebase.
+> 
+> The synchronization is to prevent freeing of data while walking the RCU list. In
+> this case, new measurements are only appended to the IMA measurement list.  So
+> there shouldn't be an issue.
+> 
+> The IMA measurement list is being copied during kexec "load", while other
+> processes are still running.  Depending on the IMA policy, the kexec "load",
+> itself, and these other processes may result in additional measurements, which
+> should be copied across kexec.  Adding the rcu_read_{lock, unlock} would
+> unnecessarily prevent them from being copied.
 
-> On 11/19/2024 4:27 AM, Dr. Greg wrote:
-> > On Sun, Nov 17, 2024 at 10:59:18PM +0000, Song Liu wrote:
-> >
-> >> Hi Christian, James and Jan, 
-> > Good morning, I hope the day is starting well for everyone.
-> >
-> >>> On Nov 14, 2024, at 1:49???PM, James Bottomley <James.Bottomley@HansenPartnership.com> wrote:
-> >> [...]
-> >>
-> >>>> We can address this with something like following:
-> >>>>
-> >>>> #ifdef CONFIG_SECURITY
-> >>>>         void                    *i_security;
-> >>>> #elif CONFIG_BPF_SYSCALL
-> >>>>         struct bpf_local_storage __rcu *i_bpf_storage;
-> >>>> #endif
-> >>>>
-> >>>> This will help catch all misuse of the i_bpf_storage at compile
-> >>>> time, as i_bpf_storage doesn't exist with CONFIG_SECURITY=y. 
-> >>>>
-> >>>> Does this make sense?
-> >>> Got to say I'm with Casey here, this will generate horrible and failure
-> >>> prone code.
-> >>>
-> >>> Since effectively you're making i_security always present anyway,
-> >>> simply do that and also pull the allocation code out of security.c in a
-> >>> way that it's always available?  That way you don't have to special
-> >>> case the code depending on whether CONFIG_SECURITY is defined. 
-> >>> Effectively this would give everyone a generic way to attach some
-> >>> memory area to an inode.  I know it's more complex than this because
-> >>> there are LSM hooks that run from security_inode_alloc() but if you can
-> >>> make it work generically, I'm sure everyone will benefit.
-> >> On a second thought, I think making i_security generic is not 
-> >> the right solution for "BPF inode storage in tracing use cases". 
-> >>
-> >> This is because i_security serves a very specific use case: it 
-> >> points to a piece of memory whose size is calculated at system 
-> >> boot time. If some of the supported LSMs is not enabled by the 
-> >> lsm= kernel arg, the kernel will not allocate memory in 
-> >> i_security for them. The only way to change lsm= is to reboot 
-> >> the system. BPF LSM programs can be disabled at the boot time, 
-> >> which fits well in i_security. However, BPF tracing programs 
-> >> cannot be disabled at boot time (even we change the code to 
-> >> make it possible, we are not likely to disable BPF tracing). 
-> >> IOW, as long as CONFIG_BPF_SYSCALL is enabled, we expect some 
-> >> BPF tracing programs to load at some point of time, and these 
-> >> programs may use BPF inode storage. 
-> >>
-> >> Therefore, with CONFIG_BPF_SYSCALL enabled, some extra memory 
-> >> always will be attached to i_security (maybe under a different 
-> >> name, say, i_generic) of every inode. In this case, we should 
-> >> really add i_bpf_storage directly to the inode, because another 
-> >> pointer jump via i_generic gives nothing but overhead. 
-> >>
-> >> Does this make sense? Or did I misunderstand the suggestion?
-> > There is a colloquialism that seems relevant here: "Pick your poison".
-> >
-> > In the greater interests of the kernel, it seems that a generic
-> > mechanism for attaching per inode information is the only realistic
-> > path forward, unless Christian changes his position on expanding
-> > the size of struct inode.
-> >
-> > There are two pathways forward.
-> >
-> > 1.) Attach a constant size 'blob' of storage to each inode.
-> >
-> > This is a similar approach to what the LSM uses where each blob is
-> > sized as follows:
-> >
-> > S = U * sizeof(void *)
-> >
-> > Where U is the number of sub-systems that have a desire to use inode
-> > specific storage.
+Thank you for the detailed explanation. Since rcu_read_lock() operations are
+lightweight, I believe keeping them wouldn't impact performance significantly.
 
-> I can't tell for sure, but it looks like you don't understand how
-> LSM i_security blobs are used. It is *not* the case that each LSM
-> gets a pointer in the i_security blob. Each LSM that wants storage
-> tells the infrastructure at initialization time how much space it
-> wants in the blob. That can be a pointer, but usually it's a struct
-> with flags, pointers and even lists.
+However, if you prefer the lockless approach, I would suggest adding an
+argument to list_for_each_entry_rcu() to keep the warning out. What are
+your thoughts on this?
 
-I can state unequivocably for everyone's benefit, that as a team, we
-have an intimate understanding of how LSM i_security blobs are used.
+Author: Breno Leitao <leitao@debian.org>
+Date:   Mon Nov 4 02:26:45 2024 -0800
 
-It was 0500 in the morning when I wrote the reply and I had personally
-been working for 22 hours straight, so my apologies for being
-imprecise.
+    ima: kexec: silence RCU list traversal warning
 
-I should not have specified sizeof(void *), I should have written
-sizeof(allocation), for lack of a better syntax.
+    The ima_measurements list is append-only and doesn't require rcu_read_lock()
+    protection. However, lockdep issues a warning when traversing RCU lists
+    without the read lock:
 
-Also for the record, in a universal allocation scheme, when I say
-sub-system I mean any implementation that would make use of per inode
-information.  So the LSM, bpf tracing et.al., could all be considered
-sub-systems that would register at boot time for a section of the
-arena.
+      security/integrity/ima/ima_kexec.c:40 RCU-list traversed in non-reader section!!
 
-> > Each sub-system uses it's pointer slot to manage any additional
-> > storage that it desires to attach to the inode.
+    Fix this by using the lockless variant of list_for_each_entry_rcu() with
+    the last argument set to true. This tells the RCU subsystem that
+    traversing this append-only list without the read lock is intentional
+    and safe.
 
-> Again, an LSM may choose to do it that way, but most don't.  SELinux
-> and Smack need data on every inode. It makes much more sense to put
-> it directly in the blob than to allocate a separate chunk for every
-> inode.
+    This change silences the lockdep warning while maintaining the correct
+    semantics for the append-only list traversal.
 
-See my correction above.
+    Signed-off-by: Breno Leitao <leitao@debian.org>
 
-> > This has the obvious advantage of O(1) cost complexity for any
-> > sub-system that wants to access its inode specific storage.
-> >
-> > The disadvantage, as you note, is that it wastes memory if a
-> > sub-system does not elect to attach per inode information, for example
-> > the tracing infrastructure.
+diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
+index 52e00332defed..9d45f4d26f731 100644
+--- a/security/integrity/ima/ima_kexec.c
++++ b/security/integrity/ima/ima_kexec.c
+@@ -37,7 +37,8 @@ static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
 
-> To be clear, that disadvantage only comes up if the sub-system uses
-> inode data on an occasional basis. If it never uses inode data there
-> is no need to have a pointer to it.
+ 	memset(&khdr, 0, sizeof(khdr));
+ 	khdr.version = 1;
+-	list_for_each_entry_rcu(qe, &ima_measurements, later) {
++	/* This is an append-only list, no need to hold the RCU read lock */
++	list_for_each_entry_rcu(qe, &ima_measurements, later, true) {
+ 		if (file.count < file.size) {
+ 			khdr.count++;
+ 			ima_measurements_show(&file, qe);
 
-I think we all agree on that, therein lies the rub with a common arena
-architecture, which is why I indicated in my earlier e-mail that this
-comes down to engineering trade-off decisions.
-
-That is why there would be a probable assumption that such sub-systems
-would only request a pointer per arena slot and use that to reference
-a dynamically allocated structure.  If, as a group, we are really
-concerned about inode memory consumption the assumption would be that
-the maintainers would have to whine about sparse consumers requesting
-a structure sized allocation rather than a pointer sized allocation.
-
-> > This disadvantage is parried by the fact that it reduces the size of
-> > the inode proper by 24 bytes (4 pointers down to 1) and allows future
-> > extensibility without colliding with the interests and desires of the
-> > VFS maintainers.
-
-> You're adding a level of indirection. Even I would object based on
-> the performance impact.
-
-I'm not sure that a thorough and complete analysis of the costs
-associated with a sub-system touching inode local storage would
-support the notion of a tangible performance hit.
-
-The pointer in an arena slot would presumably be a pointer to a data
-structure that a sub-system allocates at inode creation time.  After
-computing the arena slot address in classic style (i_arena + offset)
-the sub-system uses the pointer at that location to dereference
-its structure elements or to find subordinate members in its arena.
-
-If we take SMACK as an example, the smack inode contains three
-pointers and a scalar.  So, if there is a need to access storage behind
-one of those pointers, there is an additional indirection hit.
-
-The three pointers are each to a structure (smack_known) that has
-three list pointers and a mutex lock inside of it.
-
-The SeLinux inode has a back pointer to the sponsoring inode, a list
-head, a spinlock and some scalars.
-
-So there is lots of potential indirection and locking going on with
-access to inode local storage.
-
-To extend further, for everyone thinking about this from an
-engineering perspective.
-
-A common arena model where everyone asks for a structure sized blob is
-inherently cache pessimal.  Unless you are the first blob in the arena
-you are going to need to hit another cache-line in order to start the
-indirection process for your structure.
-
-A pointer based arena architecture would allow up to eight sub-systems
-to get their inode storage pointer for the cost of a single cache-line
-fetch.
-
-Let me offer another line of thinking on this drawn from the
-discussion above.
-
-A further optimization in the single pointer arena model is for the
-LSM to place a pointer to a standard LSM sized memory blob in its
-pointer slot on behalf of all the individual LSM's.  All of the
-individual participating LSM's take that pointer and do the offset
-calculation into the LSM arena for that inode as they normally would.
-
-So there would seem to be a lot of engineering issues to consider that
-are beyond the simple predicate that indirection is bad.
-
-See, I do understand how the LSM arena model works.
-
-> > 2.) Implement key/value mapping for inode specific storage.
-> >
-> > The key would be a sub-system specific numeric value that returns a
-> > pointer the sub-system uses to manage its inode specific memory for a
-> > particular inode.
-> >
-> > A participating sub-system in turn uses its identifier to register an
-> > inode specific pointer for its sub-system.
-> >
-> > This strategy loses O(1) lookup complexity but reduces total memory
-> > consumption and only imposes memory costs for inodes when a sub-system
-> > desires to use inode specific storage.
-
-> SELinux and Smack use an inode blob for every inode. The performance
-> regression boggles the mind. Not to mention the additional
-> complexity of managing the memory.
-
-I guess we would have to measure the performance impacts to understand
-their level of mind boggliness.
-
-My first thought is that we hear a huge amount of fanfare about BPF
-being a game changer for tracing and network monitoring.  Given
-current networking speeds, if its ability to manage storage needed for
-it purposes are truely abysmal the industry wouldn't be finding the
-technology useful.
-
-Beyond that.
-
-As I noted above, the LSM could be an independent subscriber.  The
-pointer to register would come from the the kmem_cache allocator as it
-does now, so that cost is idempotent with the current implementation.
-The pointer registration would also be a single instance cost.
-
-So the primary cost differential over the common arena model will be
-the complexity costs associated with lookups in a red/black tree, if
-we used the old IMA integrity cache as an example implementation.
-
-As I noted above, these per inode local storage structures are complex
-in of themselves, including lists and locks.  If touching an inode
-involves locking and walking lists and the like it would seem that
-those performance impacts would quickly swamp an r/b lookup cost.
-
-> > Approach 2 requires the introduction of generic infrastructure that
-> > allows an inode's key/value mappings to be located, presumably based
-> > on the inode's pointer value.  We could probably just resurrect the
-> > old IMA iint code for this purpose.
-> >
-> > In the end it comes down to a rather standard trade-off in this
-> > business, memory vs. execution cost.
-> >
-> > We would posit that option 2 is the only viable scheme if the design
-> > metric is overall good for the Linux kernel eco-system.
-
-> No. Really, no. You need look no further than secmarks to understand
-> how a key based blob allocation scheme leads to tears. Keys are fine
-> in the case where use of data is sparse. They have no place when data
-> use is the norm.
-
-Then it would seem that we need to get everyone to agree that we can
-get by with using two pointers in struct inode.  One for uses best
-served by common arena allocation and one for a key/pointer mapping,
-and then convert the sub-systems accordingly.
-
-Or alternately, getting everyone to agree that allocating a mininum of
-eight additional bytes for every subscriber to private inode data
-isn't the end of the world, even if use of the resource is sparse.
-
-Of course, experience would suggest, that getting everyone in this
-community to agree on something is roughly akin to throwing a hand
-grenade into a chicken coop with an expectation that all of the
-chickens will fly out in a uniform flock formation.
-
-As always,
-Dr. Greg
-
-The Quixote Project - Flailing at the Travails of Cybersecurity
-              https://github.com/Quixote-Project
