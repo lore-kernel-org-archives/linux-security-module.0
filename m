@@ -1,63 +1,92 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A1681C7274
-	for <linux-security-module@vger.kernel.org>; Wed, 20 Nov 2024 22:55:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B98813BAF1;
+	Wed, 20 Nov 2024 23:21:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732143359; cv=none; b=TO1F/BUXYFIrnWx3wjkQ8rhlHP2JbVGLab9Z74llVooLwHU311PM5MCMU4uemZ6ZfdOW/RiJ7PEX3X84Xjp7jCkTLO/BQtTst9e2JbMkVu+O8XMTia9aMyuZ4KZOzrAnATJ6+QI9h+nEcIu3zg/0bpeTgc/7okI/JIxCT4B7uuQ=
+	t=1732144912; cv=none; b=MQG1MyssbbaA3sYIywHIX1Nim/eEm4SqocNyeQML/PGYGGmxiDPhMQDBxytNAufwtqQC0E6nqyQUSNL7GDxCoykW/Ngd0wGGXzy1mphw61XuPCQLEXeRI7RnKOmI2vWE06HPkewSvejRao5KTezHDlur5C9/VyF148Efk9l7agU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732143359; c=relaxed/simple;
-	bh=3V+RGmgvheXXx87CscugIPVFxgDhdS18+wX2CtaARYY=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=OxqM2BzOskFcXgOCQHttcw7EZIld6TUhKUmCAKnsfY+a7n6FW3UTHxrqOM7NKF6V2VpSEvh1xsK94lIXa0QdsJNkRo1iyr/srwCN6DiTosocZXhcHXq7F9TgsJNGJMoaheD+9PVMEYSFmj0uAA/eHctPn3FkvN0WNeXkdf+2nT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rVx/6vd2; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1732144912; c=relaxed/simple;
+	bh=JQcskyZBxz3FQjjtWi+ZSeY1Sy4GxLjQbSR/Y5saeHQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V/l5GzCQUAmEhEPUolPCnZsgnK93r37Y2fwLMxbDWNTFElKu5uO149r1M4zLX8eFmwZJWI/9sfA1Cexzsa3I5gOtuXXBlfeiMH2KxoNt5bsMuBT12tCZsODJ9Yzp3vKmPY4pgLwgwkISorA0omYc8Zm1D/uSTuxoI4A3Wu7tDzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HKrwqy09; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rVx/6vd2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3717EC4AF09;
-	Wed, 20 Nov 2024 22:55:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732143359;
-	bh=3V+RGmgvheXXx87CscugIPVFxgDhdS18+wX2CtaARYY=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=rVx/6vd2wn7RPBOhPasPJQug02lArvV5LtDtNpkeXV2QugU7QBmMCCzyCFmZ2Y7fY
-	 8Mv5JqZBZgtb0xeopdgr6z2KWEyO1TCdEngddqjH9UkNOcZ6wCg7+d3qEDvqEONOL1
-	 cPwPrDd2qRAhSqZ6K76OAdgQRhNlltwGjOX6f8w5sXrjFWKzAU6inEnlkNGgGBRG+R
-	 SqmJ1bhErvhysWqWWS1bep8ak14xdLCuVrPHlzU4v2vr1Q2pOVX5use8a4/0M7JYXv
-	 PnbFfMYYq7xTIENM2wFfCWG109U2IyIU8r6DQOv4KVyd3nLhWHWkXk1jpobjPl4L1X
-	 wl0QKgRsIyq/g==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 340283809A80;
-	Wed, 20 Nov 2024 22:56:12 +0000 (UTC)
-Subject: Re: [GIT PULL] IPE update for 6.13
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <CAKtyLkEwKogdje+Wo_ZH2W+sUA2+E6H1J0gMQ0TEyAfxWigLmA@mail.gmail.com>
-References: <CAKtyLkEwKogdje+Wo_ZH2W+sUA2+E6H1J0gMQ0TEyAfxWigLmA@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-security-module.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAKtyLkEwKogdje+Wo_ZH2W+sUA2+E6H1J0gMQ0TEyAfxWigLmA@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/wufan/ipe.git tags/ipe-pr-20241119
-X-PR-Tracked-Commit-Id: 9080d11a6c5c1fbf27127afdef84d8dcd65b91ff
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 7e7f65647e5216b667d7d98a74446a80a9adcfc0
-Message-Id: <173214337067.1377324.13903627732825534462.pr-tracker-bot@kernel.org>
-Date: Wed, 20 Nov 2024 22:56:10 +0000
-To: Fan Wu <wufan@kernel.org>
-Cc: torvalds@linux-foundation.org, linux-security-module@vger.kernel.org, Colin Ian King <colin.i.king@gmail.com>
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HKrwqy09"
+Date: Wed, 20 Nov 2024 18:21:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1732144908;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JQcskyZBxz3FQjjtWi+ZSeY1Sy4GxLjQbSR/Y5saeHQ=;
+	b=HKrwqy09rx+v3St23VlrK6XlssnrZJ4sNXBHbXhKUzVhYaBvnvTAmeXFQY9KeRZ+PII+QN
+	HwPjeSSjpI8GuJ1gLIBH89oKKoVhUMw/npHWT80DDmWfRxoykto0sOpdAXNqtwVKmiZsQa
+	5tA3yCWmWNB79qvI+pkZza0c4Oh92NM=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: Michal Hocko <mhocko@suse.com>, Dave Chinner <david@fromorbit.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Christoph Hellwig <hch@lst.de>, 
+	Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, Christian Brauner <brauner@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-bcachefs@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	"conduct@kernel.org" <conduct@kernel.org>
+Subject: Re: [PATCH 1/2 v2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
+Message-ID: <3hzjgsbq4fjmo4fd3d7gmn6p4uhqw2plqwx3lgzymtlf7vbgzf@ql7ly575idde>
+References: <ZtWH3SkiIEed4NDc@tiehlicka>
+ <citv2v6f33hoidq75xd2spaqxf7nl5wbmmzma4wgmrwpoqidhj@k453tmq7vdrk>
+ <22a3da3d-6bca-48c6-a36f-382feb999374@linuxfoundation.org>
+ <vvulqfvftctokjzy3ookgmx2ja73uuekvby3xcc2quvptudw7e@7qj4gyaw2zfo>
+ <71b51954-15ba-4e73-baea-584463d43a5c@linuxfoundation.org>
+ <cl6nyxgqccx7xfmrohy56h3k5gnvtdin5azgscrsclkp6c3ko7@hg6wt2zdqkd3>
+ <9efc2edf-c6d6-494d-b1bf-64883298150a@linuxfoundation.org>
+ <be7f4c32-413e-4154-abe3-8b87047b5faa@linuxfoundation.org>
+ <nu6cezr5ilc6vm65l33hrsz5tyjg5yu6n22tteqvx6fewjxqgq@biklf3aqlook>
+ <v2ur4jcqvjc4cqdbllij5gh6inlsxp3vmyswyhhjiv6m6nerxq@mrekyulqghv2>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <v2ur4jcqvjc4cqdbllij5gh6inlsxp3vmyswyhhjiv6m6nerxq@mrekyulqghv2>
+X-Migadu-Flow: FLOW_OUT
 
-The pull request you sent on Tue, 19 Nov 2024 14:22:04 -0800:
+Lastly, the thing that motivated me to make an issue out of this was
+several recent complaints, by my funders, that it's gotten increasingly
+difficult to get work done on the lists lately without showing up at
+conferences and shmoozing with the right people. I've noticed that as
+well.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/wufan/ipe.git tags/ipe-pr-20241119
+That's something we do need to address, and I see a common thread
+between that and dismissive/authoritarian behaviour, and I think those
+of us at the highest level (i.e. CoC board members) should be mindful of
+how we set the tone for everyone else.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/7e7f65647e5216b667d7d98a74446a80a9adcfc0
+Yes, we're all Busy Important People (TM), but doing our jobs well
+requires us to engage well with people.
 
-Thank you!
+I think that should be prioritized at least as much as "language". It's
+not just about what words we use to communicate, it's about whether
+we're able to communicate effectively or at all.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Couple's therapists say they can tell in a few minutes if a relationship
+is worth salvaging or if it's beyond repair - and it comes down to if
+they come in displaying anger or dismissiventess. Anger can be worked
+through, dismissiveness means they no longer care.
+
+I find the same is true with engineers. When people are pissed off about
+something, that anger is often pointing to some important issue
+underneath that, and getting to the bottom of it is going to hava a big
+payoff. But when teams stop being able to work together - when people
+start getting silod, afraid to stick their head up - that's really bad.
+
+Vannevar Bush said that all he did was get people to talk to each other.
