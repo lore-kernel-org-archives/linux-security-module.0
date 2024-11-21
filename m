@@ -1,228 +1,156 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C40C21CB323;
-	Thu, 21 Nov 2024 08:44:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 579D615573D
+	for <linux-security-module@vger.kernel.org>; Thu, 21 Nov 2024 09:03:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732178641; cv=none; b=N31ONkJ20D0ZxiA/l3JmJXZBXxUcSz+l6Vep17XbOPlVf2QHJfW6J1xsslnAZpH6gO+huQ/IsOa7GPLizEi5UkunKaf8kAwDi+ZvrifxPV4MhF3Jm31A7Uf0VwUwpl2NwKMVLDpm1av6E4yLJ142xGHhjUxrTzoPqJ4J8PDqUv8=
+	t=1732179838; cv=none; b=SlJ2Kj6z1/hLG0CMQHzVUH8t3AiehETtV0FGTlyydOMrzlvXCc/nl1Hj9nX2GMym2Rfc1JmISlJ7YW4yL+55xTc0QcLlCwEnj9+txNYcBHnZ+oxC5Q/y0H3BiLmHxO4DSL/pOihCt0IeEYX1Dv0SqMz/tpxwTXXHthX+cL9E5aI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732178641; c=relaxed/simple;
-	bh=93d+OqbVd9Ea0NG2jzTeioEuzX6Aq7NOIU6RQqe9nlY=;
+	s=arc-20240116; t=1732179838; c=relaxed/simple;
+	bh=gB3nR5R4h8gsTpxvHF/nfyuNGADmt8PUmyGd/Q0jLrc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l0Dx6DGzrYPDM4oCJHDskmJPQJX5zm/5Ua+XcyCBHNRp49GxrWH5zix8/p6QsjZ+/MoXxrvl21X7GymSj+XbETj/NzcLpNubWYzh707q7jdJyj6NK2E80OTzUTv6MwhjLNvZbYuAFf0KvInMHGlE50YFAVjYbZaFZdOSCBjUTPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZZd9bmXE; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=LKyEbtH6Kg8gIWa0oQ6gsSHC2CKaCILXg+WnY28gCwfppQN9ZpHz7ikz/AEs3i19pq0S0dSCkDzzTFiVxrtQvNzNnAB+pXaHoJJlg/d8gU29eWpbxxb4P9yAJnrzGsi+DlzUCv2vTQWFnFa0f5nQGfo6pZuxUkiK+xxIEpT93UE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HiOO3Ibu; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZZd9bmXE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 193F1C4CECE;
-	Thu, 21 Nov 2024 08:43:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732178641;
-	bh=93d+OqbVd9Ea0NG2jzTeioEuzX6Aq7NOIU6RQqe9nlY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZZd9bmXEsHfChSC2aGGlnkiIzf9lWdGjwnqCPXDdGdAN+Z+csyftlF80cpphfn0zi
-	 ozvQS+XQXfe/gtGwm3cOUHr/4L2vKNNqChErygaOJ1t/mrVSnBczW5+X1HQCSlRPBU
-	 aX1XCMRqDLLuko25njgEYFoLzGb2wuLbhmN4zDNzXuKDUOo0kWcpm0EqBakv/v8/k7
-	 CYiqRae1FtkzC705/sCiOGSip1nXQkq6mQMR0ETfHk1NzHJLkLPARKS1NGWh8WUcTs
-	 84gt0t3tzzVmieSC7eLIhsQ1FU/msJ5G48ejiJzUhnQUzm/bg1OUG2+95xXkCpZxBd
-	 2z+CjzORZ7IgA==
-Date: Thu, 21 Nov 2024 09:43:52 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Song Liu <songliubraving@meta.com>, Jeff Layton <jlayton@kernel.org>, 
-	Jan Kara <jack@suse.cz>, Song Liu <song@kernel.org>, 
-	"bpf@vger.kernel.org" <bpf@vger.kernel.org>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
-	"andrii@kernel.org" <andrii@kernel.org>, "eddyz87@gmail.com" <eddyz87@gmail.com>, 
-	"ast@kernel.org" <ast@kernel.org>, "daniel@iogearbox.net" <daniel@iogearbox.net>, 
-	"martin.lau@linux.dev" <martin.lau@linux.dev>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, 
-	"kpsingh@kernel.org" <kpsingh@kernel.org>, "mattbobrowski@google.com" <mattbobrowski@google.com>, 
-	"repnop@google.com" <repnop@google.com>, Josef Bacik <josef@toxicpanda.com>, 
-	"mic@digikod.net" <mic@digikod.net>, "gnoack@google.com" <gnoack@google.com>
-Subject: Re: [PATCH bpf-next 2/4] bpf: Make bpf inode storage available to
- tracing program
-Message-ID: <20241121-erleuchten-getobt-aba2e8f03611@brauner>
-References: <20241113-sensation-morgen-852f49484fd8@brauner>
- <86C65B85-8167-4D04-BFF5-40FD4F3407A4@fb.com>
- <20241115111914.qhrwe4mek6quthko@quack3>
- <E79EFA17-A911-40E8-8A51-CB5438FD2020@fb.com>
- <8ae11e3e0d9339e6c60556fcd2734a37da3b4a11.camel@kernel.org>
- <CAOQ4uxgUYHEZTx7udTXm8fDTfhyFM-9LOubnnAc430xQSLvSVA@mail.gmail.com>
- <CAOQ4uxhyDAHjyxUeLfWeff76+Qpe5KKrygj2KALqRPVKRHjSOA@mail.gmail.com>
- <DF0C7613-56CC-4A85-B775-0E49688A6363@fb.com>
- <20241120-wimpel-virologen-1a58b127eec6@brauner>
- <CAOQ4uxhSM0PL8g3w6E2fZUUGds-13Swj-cfBvPz9b9+8XhHD3w@mail.gmail.com>
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HiOO3Ibu"
+Date: Thu, 21 Nov 2024 04:03:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1732179833;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FRLw+DGKdwBq59yleVzq1+0cEo5aRODfgmqZBbkpOO8=;
+	b=HiOO3Ibumb6pS42WpgNsTAOgm0t1JNKUQXlVy4TDWQpC6qMR5Mu2auqGAp/9UcRs4mpQqg
+	BTWLfzZkEJLvYUAnXH3M3QzIZgaLoNBtZfZU53hBdNRFeHRYX2v0Ve7bDDqF0uCtR1qI3I
+	NG98hydgjDXFeWfNtktWDltia42/XJ0=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Michal Hocko <mhocko@suse.com>
+Cc: Shuah Khan <skhan@linuxfoundation.org>, 
+	Dave Chinner <david@fromorbit.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Christoph Hellwig <hch@lst.de>, Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, 
+	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-bcachefs@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, "conduct@kernel.org" <conduct@kernel.org>
+Subject: Re: review process (was: underalated stuff)
+Message-ID: <nfui5woq5n4lc4xggsflvjqr3gmukfzo64ejxrg4o6iq6ud4ju@rctq63kb43wb>
+References: <ZtWH3SkiIEed4NDc@tiehlicka>
+ <citv2v6f33hoidq75xd2spaqxf7nl5wbmmzma4wgmrwpoqidhj@k453tmq7vdrk>
+ <22a3da3d-6bca-48c6-a36f-382feb999374@linuxfoundation.org>
+ <vvulqfvftctokjzy3ookgmx2ja73uuekvby3xcc2quvptudw7e@7qj4gyaw2zfo>
+ <71b51954-15ba-4e73-baea-584463d43a5c@linuxfoundation.org>
+ <cl6nyxgqccx7xfmrohy56h3k5gnvtdin5azgscrsclkp6c3ko7@hg6wt2zdqkd3>
+ <9efc2edf-c6d6-494d-b1bf-64883298150a@linuxfoundation.org>
+ <be7f4c32-413e-4154-abe3-8b87047b5faa@linuxfoundation.org>
+ <nu6cezr5ilc6vm65l33hrsz5tyjg5yu6n22tteqvx6fewjxqgq@biklf3aqlook>
+ <Zz7yqeI0RatH4ao5@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxhSM0PL8g3w6E2fZUUGds-13Swj-cfBvPz9b9+8XhHD3w@mail.gmail.com>
+In-Reply-To: <Zz7yqeI0RatH4ao5@tiehlicka>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Nov 20, 2024 at 12:19:51PM +0100, Amir Goldstein wrote:
-> On Wed, Nov 20, 2024 at 10:28 AM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > On Tue, Nov 19, 2024 at 09:53:20PM +0000, Song Liu wrote:
-> > > Hi Jeff and Amir,
-> > >
-> > > Thanks for your inputs!
-> > >
-> > > > On Nov 19, 2024, at 7:30 AM, Amir Goldstein <amir73il@gmail.com> wrote:
-> > > >
-> > > > On Tue, Nov 19, 2024 at 4:25 PM Amir Goldstein <amir73il@gmail.com> wrote:
-> > > >>
-> > > >> On Tue, Nov 19, 2024 at 3:21 PM Jeff Layton <jlayton@kernel.org> wrote:
-> > > >>>
-> > >
-> > > [...]
-> > >
-> > > >>> Longer term, I think it may be beneficial to come up with a way to attach
-> > > >>>>> private info to the inode in a way that doesn't cost us one pointer per
-> > > >>>>> funcionality that may possibly attach info to the inode. We already have
-> > > >>>>> i_crypt_info, i_verity_info, i_flctx, i_security, etc. It's always a tough
-> > > >>>>> call where the space overhead for everybody is worth the runtime &
-> > > >>>>> complexity overhead for users using the functionality...
-> > > >>>>
-> > > >>>> It does seem to be the right long term solution, and I am willing to
-> > > >>>> work on it. However, I would really appreciate some positive feedback
-> > > >>>> on the idea, so that I have better confidence my weeks of work has a
-> > > >>>> better chance to worth it.
-> > > >>>>
-> > > >>>> Thanks,
-> > > >>>> Song
-> > > >>>>
-> > > >>>> [1] https://github.com/systemd/systemd/blob/main/src/core/bpf/restrict_fs/restrict-fs.bpf.c
-> > > >>>
-> > > >>> fsnotify is somewhat similar to file locking in that few inodes on the
-> > > >>> machine actually utilize these fields.
-> > > >>>
-> > > >>> For file locking, we allocate and populate the inode->i_flctx field on
-> > > >>> an as-needed basis. The kernel then hangs on to that struct until the
-> > > >>> inode is freed.
-> > >
-> > > If we have some universal on-demand per-inode memory allocator,
-> > > I guess we can move i_flctx to it?
-> > >
-> > > >>> We could do something similar here. We have this now:
-> > > >>>
-> > > >>> #ifdef CONFIG_FSNOTIFY
-> > > >>>        __u32                   i_fsnotify_mask; /* all events this inode cares about */
-> > > >>>        /* 32-bit hole reserved for expanding i_fsnotify_mask */
-> > > >>>        struct fsnotify_mark_connector __rcu    *i_fsnotify_marks;
-> > > >>> #endif
-> > >
-> > > And maybe some fsnotify fields too?
-> > >
-> > > With a couple users, I think it justifies to have some universal
-> > > on-demond allocator.
-> > >
-> > > >>> What if you were to turn these fields into a pointer to a new struct:
-> > > >>>
-> > > >>>        struct fsnotify_inode_context {
-> > > >>>                struct fsnotify_mark_connector __rcu    *i_fsnotify_marks;
-> > > >>>                struct bpf_local_storage __rcu          *i_bpf_storage;
-> > > >>>                __u32                                   i_fsnotify_mask; /* all events this inode cares about */
-> > > >>>        };
-> > > >>>
-> > > >>
-> > > >> The extra indirection is going to hurt for i_fsnotify_mask
-> > > >> it is being accessed frequently in fsnotify hooks, so I wouldn't move it
-> > > >> into a container, but it could be moved to the hole after i_state.
-> > >
-> > > >>> Then whenever you have to populate any of these fields, you just
-> > > >>> allocate one of these structs and set the inode up to point to it.
-> > > >>> They're tiny too, so don't bother freeing it until the inode is
-> > > >>> deallocated.
-> > > >>>
-> > > >>> It'd mean rejiggering a fair bit of fsnotify code, but it would give
-> > > >>> the fsnotify code an easier way to expand per-inode info in the future.
-> > > >>> It would also slightly shrink struct inode too.
-> > >
-> > > I am hoping to make i_bpf_storage available to tracing programs.
-> > > Therefore, I would rather not limit it to fsnotify context. We can
-> > > still use the universal on-demand allocator.
-> >
-> > Can't we just do something like:
-> >
-> > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> > index 7e29433c5ecc..cc05a5485365 100644
-> > --- a/include/linux/fs.h
-> > +++ b/include/linux/fs.h
-> > @@ -627,6 +627,12 @@ is_uncached_acl(struct posix_acl *acl)
-> >  #define IOP_DEFAULT_READLINK   0x0010
-> >  #define IOP_MGTIME     0x0020
-> >
-> > +struct inode_addons {
-> > +        struct fsnotify_mark_connector __rcu    *i_fsnotify_marks;
-> > +        struct bpf_local_storage __rcu          *i_bpf_storage;
-> > +        __u32                                   i_fsnotify_mask; /* all events this inode cares about */
-> > +};
-> > +
-> >  /*
-> >   * Keep mostly read-only and often accessed (especially for
-> >   * the RCU path lookup and 'stat' data) fields at the beginning
-> > @@ -731,12 +737,7 @@ struct inode {
-> >                 unsigned                i_dir_seq;
-> >         };
-> >
-> > -
-> > -#ifdef CONFIG_FSNOTIFY
-> > -       __u32                   i_fsnotify_mask; /* all events this inode cares about */
-> > -       /* 32-bit hole reserved for expanding i_fsnotify_mask */
-> > -       struct fsnotify_mark_connector __rcu    *i_fsnotify_marks;
-> > -#endif
-> > +       struct inode_addons *i_addons;
-> >
-> >  #ifdef CONFIG_FS_ENCRYPTION
-> >         struct fscrypt_inode_info       *i_crypt_info;
-> >
-> > Then when either fsnotify or bpf needs that storage they can do a
-> > cmpxchg() based allocation for struct inode_addons just like I did with
-> > f_owner:
-> >
-> > int file_f_owner_allocate(struct file *file)
-> > {
-> >         struct fown_struct *f_owner;
-> >
-> >         f_owner = file_f_owner(file);
-> >         if (f_owner)
-> >                 return 0;
-> >
-> >         f_owner = kzalloc(sizeof(struct fown_struct), GFP_KERNEL);
-> >         if (!f_owner)
-> >                 return -ENOMEM;
-> >
-> >         rwlock_init(&f_owner->lock);
-> >         f_owner->file = file;
-> >         /* If someone else raced us, drop our allocation. */
-> >         if (unlikely(cmpxchg(&file->f_owner, NULL, f_owner)))
-> >                 kfree(f_owner);
-> >         return 0;
-> > }
-> >
-> > The internal allocations for specific fields are up to the subsystem
-> > ofc. Does that make sense?
-> >
+On Thu, Nov 21, 2024 at 09:43:21AM +0100, Michal Hocko wrote:
+> On Wed 20-11-24 17:39:09, Kent Overstreet wrote:
+> > Michal's (as well as Steve's) behaviour in the memory allocation
+> > profiling review process was, in my view, unacceptable (this included
+> > such things as crashing our LSF presentation with ideas they'd come up
+> > with that morning, and persistent dismissive axegrinding on the list).
+> > The project was nearly killed because of his inability to listen to the
+> > reasons for a design and being stubbornly stuck on his right to be heard
+> > as the maintainer.
 > 
-> Maybe, but as I wrote, i_fsnotify_mask should not be moved out
-> of inode struct, because it is accessed in fast paths of fsnotify vfs
-> hooks, where we do not want to have to deref another context,
-> but i_fsnotify_mask can be moved to the hole after i_state.
+> Couple of entry points that might be helful for that.
+> https://lore.kernel.org/all/YxBc1xuGbB36f8zC@dhcp22.suse.cz/
+> I have expressed my concerns and set expectations to move the
+> work forward. I've had couple of back and forth with Suren about
+> specifics of overhead assumptions from the stack unwinding IIRC. 
 > 
-> And why stop at i_fsnotify/i_bfp?
-> If you go to "addons" why not also move i_security/i_crypt/i_verify?
-> Need to have some common rationale behind those decisions.
+> For the first non-RFC version my feedback was
+> https://lore.kernel.org/all/ZFIMaflxeHS3uR%2FA@dhcp22.suse.cz/#t
+> not really "maintenance burden only" but a request to show that alternative
+> approaches have been explored. It was not particularly helpful that you
+> had expected tracing people would implement the feature for you.
+> https://lore.kernel.org/all/20230503092128.1a120845@gandalf.local.home/
+> Other people have also expressed that this is not completely impossible
+> https://lore.kernel.org/all/ZFKNZZwC8EUbOLMv@slm.duckdns.org/
+> The rest of the email thread is mostly a combat zone that I have avoided
+> participating as much as possible.
+> 
+> I didn't have any reaction to v2 at all.
+> 
+> v3 was aiming to be merged and I've stepped up as there was no single
+> review at the time https://lore.kernel.org/all/Zctfa2DvmlTYSfe8@tiehlicka/
+> 
+> I admit that I was really open that I do not like the solution and I've
+> said reasons for that. Allocator APIs have always been a large mess of
+> macros, static inlines that makes it really far from free to maintain
+> and alternative ways should be considered before going that route.
+> 
+> I was also clear that support by MM people was necessary to get this
+> merged. I have explicitly _not_ NAKed the series and backed off for you
+> guys to gain that support. 
+> 
+> So essentially there was a clear outline for you and Sure how to achieve
+> that.
+> 
+> I would really like to hear from other maintainers. Is tnis really
+> unacceptable maintainer behavior? I am OK to apologize but the above is
+> in line of my understanding of how to ack properly.
 
-The rationale is that we need a mechanism to stop bloating our
-structures with ever more stuff somehow. What happens to older members
-of struct inode is a cleanup matter and then it needs to be seen what
-can be moved into a substruct and not mind the additional pointer chase.
+I wonder if I was reading too much into what you were saying in the
+off-list thread, when I said "argument to authority". Can you tell me if
+this might be closer to the mark?
 
-It's just a generalization of your proposal in a way because I don't
-understand why you would move the bpf stuff into fsnotify specific
-parts.
+If I read you correctly, when you said you were "voicing your concerns",
+I took it as you being pushy because that was the effects: I need you to
+take me at my word, because you didn't see everything behind the scenes,
+that this did derail and nearly kill the project.
+
+But I should've been taking you at your word, that you just really were
+that concerned.
+
+I think the best way I can explain this issue is with an analogy to
+parenting: when we're parenting, our first and foremost job isn't really
+to make sure there's a roof, shelter, food - that part is easy in
+today's world. The main job really is to make sure that people feel
+safe, that they can go out and explore the world without being
+terrified.
+
+In order to do that, we have to master our own fears, we can't be
+projecting them all the time.
+
+Being a maintainer, or any kind of leader, is the exact same thing. My
+big lesson on this was watching Andrew, back during the process of
+merging MGLRU - I couldn't believe at the time how chill he was about
+it. But he understood the process, and he's a master at this.
+
+Part of mastering our fears in a group setting like this is learning to
+trust other people.
+
+It's not that your concerns didn't have any validity - but we were
+already doing as much as we could to address them, and you didn't show
+any trust that we, I especially, knew what we were doing. And that led
+to a _lot_ of wasted effort down blind alleys that I already knew
+weren't going to work.
+
+I think that may be what this is really about, sometimes you do have to
+trust that people know what they're doing; you share your knowledge if
+you have knowledge to share, otherwise you have to back off and let
+people do their work. Otherwise the whole thing breaks down and no one
+can get anything done.
+
+The main thing is I just want to ask yourself if you could have done
+anything better in the memory allocation profiling process. I don't need
+you to apologize for anything specific, if you can just try to work
+better together in the future that's all I need.
