@@ -1,95 +1,129 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A631CEAAC;
-	Thu, 21 Nov 2024 09:15:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0FC4169AE4;
+	Thu, 21 Nov 2024 09:57:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732180504; cv=none; b=SFd3MQ3HDGxIExXK8szJDtROP8d95XfhRoFphTnyTm0VIB//AHbGr54ZRK+6VE5CBDcwGC/lFpMdwa+wSHQIegtsknrjdw4NhkmZc8LY6wVkkDIu/i5xESQUFpEXvfFFC24jG3nxfdltX2Qm800YKFzCjX+HW0chcQK/y67b0ks=
+	t=1732183053; cv=none; b=mP9KkkrfmcEuGdbJsVViQ6mHT5XuViZ8AK3O2AVNZC0jEeKEtoyZiP/uBFSaeWtK2nQf2z839QrItXxfqHVG6v2nPaTOI4BjmgxJjDW7nOc1JP9dyAtW+N/s5kd0MrZW2dHWeZ6pUwThUU18SuTmoypihYTaQirsIpDJEVxnbkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732180504; c=relaxed/simple;
-	bh=Uf0hWkHxoYiN8riGMbGntzjOtzPqvs2h2lMGB0HeONY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qofhVKcFIeRNNEtcRubsM9zK0PxPPN74hLnGaDJsY3M9JK6+NMzfD1YwE9q12SxoueyXgJ1U56MH+t4cdKxpT3sqId1G4sa+sF5LHTYB5ems4yeOSxazjvC3IFkHC8qhcdOmwL7nN8PfAj+Q0f6+DnjMxOdf35SXSeOrOj9xOnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=foWLhjSc; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="foWLhjSc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9A41C4CED0;
-	Thu, 21 Nov 2024 09:14:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732180503;
-	bh=Uf0hWkHxoYiN8riGMbGntzjOtzPqvs2h2lMGB0HeONY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=foWLhjSczE7CDgEqUlZ+g26zxC+rtnOjzye+ImrsXs0W3dXcBoJlqCi4vnXVd44BD
-	 jSFh7mPfAoZXfTk/mRNxeWrVhRJl9wYqmf6qTX/E53klyvUIvdraLqDNsrESzJ0eQ9
-	 sZQ6fnJ3aYafoy/Sx8koStFVKdxjdnZpvlLhd1ybDJOqjfLA/oVmY3chzAlOoZJuWf
-	 RuubicXY+6J3hUbkIPHZt5rXUI/ixtONh4nbRzfWfeaW2P8ll6G3AS8dri1MrBtrGF
-	 DLqq6qUKqOmlOiY9UtJXErsXU2F2mKXoZ/0pNpWN6aVuWxL5+MN77UKd1e/jqOCIrc
-	 PsyUOcsVLDF2g==
-Date: Thu, 21 Nov 2024 10:14:56 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Song Liu <songliubraving@meta.com>, Song Liu <song@kernel.org>, 
-	"bpf@vger.kernel.org" <bpf@vger.kernel.org>, "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
-	"andrii@kernel.org" <andrii@kernel.org>, "eddyz87@gmail.com" <eddyz87@gmail.com>, 
-	"ast@kernel.org" <ast@kernel.org>, "daniel@iogearbox.net" <daniel@iogearbox.net>, 
-	"martin.lau@linux.dev" <martin.lau@linux.dev>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, 
-	"kpsingh@kernel.org" <kpsingh@kernel.org>, "mattbobrowski@google.com" <mattbobrowski@google.com>, 
-	"amir73il@gmail.com" <amir73il@gmail.com>, "repnop@google.com" <repnop@google.com>, 
-	"jlayton@kernel.org" <jlayton@kernel.org>, Josef Bacik <josef@toxicpanda.com>, 
-	"mic@digikod.net" <mic@digikod.net>, "gnoack@google.com" <gnoack@google.com>
-Subject: Re: [PATCH bpf-next 2/4] bpf: Make bpf inode storage available to
- tracing program
-Message-ID: <20241121-unfertig-hypothek-a665360efcf0@brauner>
-References: <20241112082600.298035-1-song@kernel.org>
- <20241112082600.298035-3-song@kernel.org>
- <20241113-sensation-morgen-852f49484fd8@brauner>
- <86C65B85-8167-4D04-BFF5-40FD4F3407A4@fb.com>
- <20241115111914.qhrwe4mek6quthko@quack3>
+	s=arc-20240116; t=1732183053; c=relaxed/simple;
+	bh=mXE/tvgFt0bXqhIgNFNLrntXXGNOV3Lq+zjQqIpTj3s=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=XkpR7zOA0vK6wcwEvNy5aX93KBuw1x1Np2BLyh6ctZRGJakQsGa0Bo3Ide7Omj89PGHRxWbSKt6bWj3/mvcAcHEW1y3hTqUknBs1Gw3USojCsGxGWajA03YYHHSDYvtAIGVkgFLH5oeVn1PKd3PgbnV8hyTUR6fG8jn/5YZ0yV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2fb4af0b6beso11986861fa.3;
+        Thu, 21 Nov 2024 01:57:31 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732183050; x=1732787850;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bTMbqsnoMNGLibkdcP7u5QI9+AWxB+kh9RGVzPPW/zM=;
+        b=EPpl5iuGFI9ecX+jeCjYlksMf7z2mEAVNm2zkkNEVOOSTG1BHa0n8fBmwu+I2WdYc4
+         j55+EncyDKix9z1oplNRW95ZPEolHHZ1gTTufMafHGIOsjaPzXqcJCJ2hMqL33IMtbMC
+         Zij3m7ew1ATB0n1fP+CEIzimoiW8YhuaDx4hDiIFbZJMEmmGTG/M2ONatnOq527HlACB
+         DsaOVXu7LPQ6DKOiY2xBppx2+K7JTC2ykzTgmc4T2U4FA0Eg9xxLE6CDKAWZ07IhlTol
+         UbybmHcFdykGBSeYGN6GDWfH5AukQT/8RoS+0AIpHlPb20KaILwf9uOOhepWyzXncqM8
+         3DCA==
+X-Forwarded-Encrypted: i=1; AJvYcCU/uC+2dtvBDYG2ssbHQeS0PYcBB9Rl5o2iAoDnWkfCV+EBHEv/Y+Fokaif8AjhAwvi52Z3/lMx/pirzJE1EVo=@vger.kernel.org, AJvYcCWVEFktrF5RaWMr6uTxFLPg98fg683gDLFeULgTvFUUEVryqkvRqbjLgWadjmUPYnixVBS9rV1cfef88d2H@vger.kernel.org, AJvYcCWq4aO7by5hgA0hpzReMsAlRLwNuCkLf78rYH366w0bEMlEDGN+kw+8DiUsMe+0v6xxLHVKJLOZqF0SZrL50spdXPl4TBmA@vger.kernel.org
+X-Gm-Message-State: AOJu0YweNL2njmy0tRnzGcJ6SgOHrBg5ooNCUgixlAR8m0qYaA8bd+x+
+	zkeEv5ngrbBW8UN4/Rf1G9qBMe/H8wtN4rilrSTRY+1HJWQUEJ1z
+X-Google-Smtp-Source: AGHT+IEQ/3h1gmcyg8y0A2e1lAMy5tgKib+tZmeEdbSDdDb77Bea91wE6C/Db4iqDbt6Va8idVgQoQ==
+X-Received: by 2002:a2e:a549:0:b0:2fb:5014:aad4 with SMTP id 38308e7fff4ca-2ff8db2c665mr54822141fa.9.1732183049765;
+        Thu, 21 Nov 2024 01:57:29 -0800 (PST)
+Received: from localhost (fwdproxy-lla-008.fbsv.net. [2a03:2880:30ff:8::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa4f436c412sm60692166b.179.2024.11.21.01.57.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 21 Nov 2024 01:57:28 -0800 (PST)
+From: Breno Leitao <leitao@debian.org>
+Date: Thu, 21 Nov 2024 01:57:12 -0800
+Subject: [PATCH v2] ima: kexec: silence RCU list traversal warning
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241115111914.qhrwe4mek6quthko@quack3>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241121-ima_rcu-v2-1-4d48630cf2c6@debian.org>
+X-B4-Tracking: v=1; b=H4sIAPcDP2cC/2XMMQ7CIBQA0KuQPxcDCFKZvIdpDMK3/YNgQImm4
+ e7Grq5veCtULIQVHFuhYKNKOYFjamAQFp9m5BTBMVBCaSmF5nT3lxJeHHHcRz/aKIyAgcGj4I3
+ e23SeBgYL1Wcuny1u8qf/R5NcciON1QcRzFHYU8Qr+bTLZYap9/4FUVfrFp8AAAA=
+X-Change-ID: 20241104-ima_rcu-ee83da87d050
+To: Mimi Zohar <zohar@linux.ibm.com>, 
+ Roberto Sassu <roberto.sassu@huawei.com>, 
+ Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
+ Eric Snowberg <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, 
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+ "Eric W. Biederman" <ebiederm@xmission.com>, 
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>, linux-integrity@vger.kernel.org, 
+ linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel-team@meta.com, Breno Leitao <leitao@debian.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1865; i=leitao@debian.org;
+ h=from:subject:message-id; bh=mXE/tvgFt0bXqhIgNFNLrntXXGNOV3Lq+zjQqIpTj3s=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBnPwQHUPDLWuedaB6ehCHozdKpH5lLrUX4VJvc1
+ /GUz1Fu5AGJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCZz8EBwAKCRA1o5Of/Hh3
+ bfoWD/9V3QR+gu4NonzlOTUolGXozhUyVj7t/ynvxnIY6gQw/KFarveBDzIE1Gf8QDp9T4BOn6a
+ BqXlKNssfsh7V4K+L8O7P09b4OfdjF6g2drULQ9qYB3V9Rz/7vLr2j9/FLcKl/C7IVJjYXGVuVU
+ TQNIGc9+QDuEqbMZZPqCdnjmYliKGOKoHoDTfJSohLHxukbDrrd4vIVYPMfSVbwDbZyxvJ83LzS
+ hEs4koOdH/3Uw2HNLg0R/v1VR74kiox/8HnBB9c6+bXjNmHOXBzBsMFBBu54Ke6Pa4iKbaKwJKA
+ LhgLzP45Q6/QOiQWQE0E7C0PSTNtRdrDckrUG+ICzrYdIzCCPa9ya4q3KI8QOCMIHWsXjp7UC+F
+ XaCJXzI7LJyfRmFHcCWcpQwXMHwpZrajVK9SPeXGNFCBg1oqp96ZDLxxxrIsoOLf7R45BfWXxwC
+ 1Gsw05C2ojyzjnyTq/0pjxv4bj6d0E5Z5ETaAhFtSbyCx8m5yZDeQScSf3bF9uT//qaQAzhGBM/
+ d9zEDWZJKl24s+PPNLSFBm2zCOycfEMMWYtxSwxlxJtnRMEYhGJVjqFQdevxHxxfkuhuDjyvUlN
+ ZFtbyZeLUB/WtuewnrW4V1MkYfQk76pAixhTvmRamBlfe5EZ1WCuVGIdAYbrSnoncRpL/EmbX9a
+ 8Wq/wQAs4j41rgg==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-> I'm personally not *so* hung up about a pointer in struct inode but I can
-> see why Christian is and I agree adding a pointer there isn't a win for
-> everybody.
+The ima_measurements list is append-only and doesn't require
+rcu_read_lock() protection. However, lockdep issues a warning when
+traversing RCU lists without the read lock:
 
-Maybe I'm annoying here but I feel that I have to be. Because it's
-trivial to grow structs it's rather cumbersome work to get them to
-shrink. I just looked at struct task_struct again and it has four bpf
-related structures/pointers in there. Ok, struct task_struct is
-everyone's favorite struct to bloat so whatever.
+  security/integrity/ima/ima_kexec.c:40 RCU-list traversed in non-reader section!!
 
-For the VFS the structures we maintain longterm that need to be so
-generic as to be usable by so many different filesystems have a tendency
-to grow over time.
+Fix this by using the variant of list_for_each_entry_rcu() with the last
+argument set to true. This tells the RCU subsystem that traversing this
+append-only list without the read lock is intentional and safe.
 
-With some we are very strict, i.e., nobody would dare to grow struct
-dentry and that's mostly because we have people that really care about
-this and have an eye on that and ofc also because it's costly.
+This change silences the lockdep warning while maintaining the correct
+semantics for the append-only list traversal.
 
-But for some structures we simply have no one caring about them that
-much. So what happens is that with the ever growing list of features we
-bloat them over time. There need to be some reasonable boundaries on
-what we accept or not and the criteria I have been using is how
-generically useful to filesystems or our infrastructre this is (roughly)
-and this is rather very special-case so I'm weary of wasting 8 bytes in
-struct inode that we fought rather hard to get back: Jeff's timespec
-conversion and my i_state conversion.
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+Changes in v2:
+- Do not hold the RCU read lock, but, annotate list_for_each_entry_rcu()
+  that is OK to traverse the list without the RCU read lock.
+- Link to v1: https://lore.kernel.org/r/20241104-ima_rcu-v1-1-5157460c5907@debian.org
+---
+ security/integrity/ima/ima_kexec.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-I'm not saying it's out of the question but I want to exhaust all other
-options and I'm not yet sure we have.
+diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
+index 52e00332defed39774c9e23e045f1377cfa30d0c..9d45f4d26f731658a79b94b9f95f4dcc4dcb6325 100644
+--- a/security/integrity/ima/ima_kexec.c
++++ b/security/integrity/ima/ima_kexec.c
+@@ -37,7 +37,8 @@ static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
+ 
+ 	memset(&khdr, 0, sizeof(khdr));
+ 	khdr.version = 1;
+-	list_for_each_entry_rcu(qe, &ima_measurements, later) {
++	/* This is an append-only list, no need to hold the RCU read lock */
++	list_for_each_entry_rcu(qe, &ima_measurements, later, true) {
+ 		if (file.count < file.size) {
+ 			khdr.count++;
+ 			ima_measurements_show(&file, qe);
 
-> Longer term, I think it may be beneficial to come up with a way to attach
-> private info to the inode in a way that doesn't cost us one pointer per
-> funcionality that may possibly attach info to the inode. We already have
+---
+base-commit: ac24e26aa08fe026804f678599f805eb13374a5d
+change-id: 20241104-ima_rcu-ee83da87d050
 
-Agreed.
+Best regards,
+-- 
+Breno Leitao <leitao@debian.org>
+
