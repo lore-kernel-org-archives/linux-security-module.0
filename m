@@ -1,218 +1,135 @@
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BB72187344
-	for <linux-security-module@vger.kernel.org>; Fri, 22 Nov 2024 22:02:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E00CD185935;
+	Fri, 22 Nov 2024 23:00:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732312935; cv=none; b=TZeQf4BvYiDD4qADvwoGqbXPbvU7yLkKXYoZ28TIESuUcioRW9tUT8izONPUL+gtaf9s8aJDv5MvIWBLhMtdaRhyZ01SFm6wkTZULuks149GFiR1oNypIWFrVde2oFa5rk8tXZ4GhNqRYmsdairgjgDr5OLDtkIYEnXqF2cqLkE=
+	t=1732316415; cv=none; b=pnqhGczc9fQlyM5ABRx/Tps0WECUCY/apfFo0hQU9xCG4DlKe8yL/z+qczDnd7m2XRQ7Q1lfW/7AcO15ZFU96U7J1mdvO4PC4hkOgq7SiqrUmzRK8/x63QKGO0ZTJBUOuSeBnSWwHJzJMkZF1I1/z63//Hp2IO0zuhjGrTcJeRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732312935; c=relaxed/simple;
-	bh=3GYeIrBV2AhviVYKCufI9HReuGgZ8/tGhXDP17TkM1Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K2PWs5m3DPni2/6WO0q035eNcKrCalRah/RR6sAthnr15MWLrps5/g9J6R88iNWKXExMGelYqTw6ecqLi4ifKMQNW6mp4hx1Xqu6mh+meTN8ZbJ1/10hxrL9MJozqKT1UkvWIQaHp2OUPkTTe4t1JWN7fF+cXj53EbuS7j7by0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=TJjYLcuE; arc=none smtp.client-ip=91.218.175.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+	s=arc-20240116; t=1732316415; c=relaxed/simple;
+	bh=mYyvNCwltqY/fLuBN/nF24u6tj4DXTz633vpbTM+X8g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pP1HOBeHBdAx6FxA5V2yXv4pAtaO6lePe8z5CIoLTAYJuStsTtwneue16zEzB2ssX0hF+cFHA3hHgYdvcf1z25R7xdi1Xnf+e8SfbB24+cL5xfyJE5MMZ/Mbpdu5BuTUTcW+OUN8+Zzih+lp2tWpL6oLTZFCuCLkfdgKLhTkpF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pWOEKMBe; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="TJjYLcuE"
-Date: Fri, 22 Nov 2024 17:02:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1732312927;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7GPdysU3+ulwwEZym2gbb4LV2XNAsMZyaMxjoxUdvB0=;
-	b=TJjYLcuEehU9rXjjANl641dzAmpdwyRVnPXBAD3hi93j7iO70q+kZM0cRhqXky8BYbwpzs
-	vNEt9DhzO6PHrmTnqLmq6uLj7B800wnZRup6/7nRZjkbm6jQV3gSwa6p8+IMuVzdg442sz
-	uRH30CxPY04qAHyFUmghkytqv+J0G78=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Michal Hocko <mhocko@suse.com>, Dave Chinner <david@fromorbit.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Christoph Hellwig <hch@lst.de>, 
-	Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, Christian Brauner <brauner@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-bcachefs@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, maintainers@linux.kernel.org
-Subject: Re: [PATCH 1/2 v2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
-Message-ID: <o5tbrrk4r3sxtvk7tjyua5h2qaa3fos7446dkxbjyxjwhp4odd@we5elwaeb7dv>
-References: <ylycajqc6yx633f4sh5g3mdbco7zrjdc5bg267sox2js6ok4qb@7j7zut5drbyy>
- <ZtBzstXltxowPOhR@dread.disaster.area>
- <myb6fw5v2l2byxn4raxlaqozwfdpezdmn3mnacry3y2qxmdxtl@bxbsf4v4qbmg>
- <ZtUFaq3vD+zo0gfC@dread.disaster.area>
- <nawltogcoffous3zv4kd2eerrrwhihbulz7pi2qyfjvslp6g3f@j3qkqftra2qm>
- <ZtV6OwlFRu4ZEuSG@tiehlicka>
- <v664cj6evwv7zu3b77gf2lx6dv5sp4qp2rm7jjysddi2wc2uzl@qvnj4kmc6xhq>
- <ZtWH3SkiIEed4NDc@tiehlicka>
- <citv2v6f33hoidq75xd2spaqxf7nl5wbmmzma4wgmrwpoqidhj@k453tmq7vdrk>
- <6740fc3aabec0_5eb129497@dwillia2-xfh.jf.intel.com.notmuch>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pWOEKMBe"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1AE2C4CECE;
+	Fri, 22 Nov 2024 23:00:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732316414;
+	bh=mYyvNCwltqY/fLuBN/nF24u6tj4DXTz633vpbTM+X8g=;
+	h=From:To:Cc:Subject:Date:From;
+	b=pWOEKMBeG9/qnsTCZcRDxjFwgkY4x6oIRnm2AronqaWfnUkTz8U+hv4JLux7SCjeN
+	 /DNvyUHKUQLpJJR4UX4pHJMvpjeomlt29Hn7OrGqxavTNJfZo9RQnQV2St2KKDHskO
+	 P8hg4zR2Cro+7FXx6ReqDmswImcnA9oAcYJLnqg5eVnFTMMXR6Ig29812PtdmrQ5Ku
+	 iP0ITblXqeLXgwfpCQkFEDUVduiaaiqLxx9TPwqXwG3od4O5z2B+Wx542BbEDbXYgw
+	 vHVnxefMCh7LyNrguR1AMUye+MJPQvtBpO0OcjVtkG1CnrFFD1nGIWyZoiiy+EA7TL
+	 027GpQd30kxZQ==
+From: Song Liu <song@kernel.org>
+To: bpf@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Cc: kernel-team@meta.com,
+	andrii@kernel.org,
+	eddyz87@gmail.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	martin.lau@linux.dev,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	kpsingh@kernel.org,
+	mattbobrowski@google.com,
+	amir73il@gmail.com,
+	repnop@google.com,
+	jlayton@kernel.org,
+	josef@toxicpanda.com,
+	mic@digikod.net,
+	gnoack@google.com,
+	Song Liu <song@kernel.org>
+Subject: [PATCH v3 fanotify 0/2] Fanotify in kernel filter
+Date: Fri, 22 Nov 2024 14:59:56 -0800
+Message-ID: <20241122225958.1775625-1-song@kernel.org>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6740fc3aabec0_5eb129497@dwillia2-xfh.jf.intel.com.notmuch>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 22, 2024 at 01:48:42PM -0800, Dan Williams wrote:
-> Kent Overstreet wrote:
-> > On Mon, Sep 02, 2024 at 11:39:41AM GMT, Michal Hocko wrote:
-> > > On Mon 02-09-24 04:52:49, Kent Overstreet wrote:
-> > > > On Mon, Sep 02, 2024 at 10:41:31AM GMT, Michal Hocko wrote:
-> > > > > On Sun 01-09-24 21:35:30, Kent Overstreet wrote:
-> [..]
-> 
-> Kent,
-> 
-> The Code of Conduct Committee received reports about your conduct in
-> this email discussion.
-> 
-> Link to email where the violation took place:
-> 
-> https://lore.kernel.org/citv2v6f33hoidq75xd2spaqxf7nl5wbmmzma4wgmrwpoqidhj@k453tmq7vdrk
-> 
-> Our community works on trust and respect and has agreed to abide by the
-> Code of Conduct:
-> 
-> Reference: https://docs.kernel.org/process/code-of-conduct.html
-> 
-> The code of Conduct Committee has determined that your written abuse
-> of another community member required action on your part to repair the
-> damage to the individual and the community. You took insufficient action
-> to restore the community's faith in having otherwise productive technical
-> discussions without the fear of personal attacks.
-> 
-> Following the Code of Conduct Interpretation process the TAB has approved
-> has approved the following recommendation:
-> 
-> -- Restrict Kent Overstreet's participation in the kernel development
->    process during the Linux 6.13 kernel development cycle.
-> 
->        - Scope: Decline all pull requests from Kent Overstreet during
->          the Linux 6.13 kernel development cycle.
+This is the first part of v2.
 
-Ok.
+Changes v2 => v3:
+1. v3 is the fanotify part of v2.
+2. Rebrand as fanotify in kernel filter (instead of fastpath handler).
+3. Fix logic and add sample for permission mmode.
 
-Just to be clear on what this is about though, I'm going to post
-publically what I wrote Michal back in September.
+[v2]: https://lore.kernel.org/linux-fsdevel/20241114084345.1564165-1-song@kernel.org/
 
-This is about a CoC board that on the one hand, doesn't wish to follow
-its own rules, and on the other - I can't even make sense of.
+Changes v1 => v2:
+1. Add sysfs entries for fastpath handler.
+2. Rewrite the sample and bpf selftest to handle subtree monitoring.
+   This requires quite some work from BPF side to properly handle
+   inode, dentry, etc.
+3. Add CONFIG_FANOTIFY_FASTPATH.
+4. Add more documents.
 
-From kent.overstreet@linux.dev Wed Sep  4 14:22:39 2024
-Date: Wed, 4 Sep 2024 14:22:39 -0400
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Michal Hocko <mhocko@suse.com>
-Subject: Re: [PATCH 1/2 v2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
-Message-ID: <5qukfetlxkadrdjp443xlzbyjhw26l3zzgcdlmfkxgbkpkrv65@hobl73hoc5ip>
-References: <20240827061543.1235703-1-mhocko@kernel.org>
- <Zs6jFb953AR2Raec@dread.disaster.area>
- <ylycajqc6yx633f4sh5g3mdbco7zrjdc5bg267sox2js6ok4qb@7j7zut5drbyy>
- <ZtBzstXltxowPOhR@dread.disaster.area>
- <myb6fw5v2l2byxn4raxlaqozwfdpezdmn3mnacry3y2qxmdxtl@bxbsf4v4qbmg>
- <ZtUFaq3vD+zo0gfC@dread.disaster.area>
- <nawltogcoffous3zv4kd2eerrrwhihbulz7pi2qyfjvslp6g3f@j3qkqftra2qm>
- <ZtV6OwlFRu4ZEuSG@tiehlicka>
- <v664cj6evwv7zu3b77gf2lx6dv5sp4qp2rm7jjysddi2wc2uzl@qvnj4kmc6xhq>
- <ZtWH3SkiIEed4NDc@tiehlicka>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZtWH3SkiIEed4NDc@tiehlicka>
-Status: RO
-Content-Length: 4224
-Lines: 88
+From v1 RFC:
 
-On Mon, Sep 02, 2024 at 11:39:41AM GMT, Michal Hocko wrote:
-> On Mon 02-09-24 04:52:49, Kent Overstreet wrote:
-> > On Mon, Sep 02, 2024 at 10:41:31AM GMT, Michal Hocko wrote:
-> > > On Sun 01-09-24 21:35:30, Kent Overstreet wrote:
-> > > [...]
-> > > > But I am saying that kmalloc(__GFP_NOFAIL) _should_ fail and return NULL
-> > > > in the case of bugs, because that's going to be an improvement w.r.t.
-> > > > system robustness, in exactly the same way we don't use BUG_ON() if it's
-> > > > something that we can't guarantee won't happen in the wild - we WARN()
-> > > > and try to handle the error as best we can.
-> > > 
-> > > We have discussed that in a different email thread. And I have to say
-> > > that I am not convinced that returning NULL makes a broken code much
-> > > better. Why? Because we can expect that broken NOFAIL users will not have a
-> > > error checking path. Even valid NOFAIL users will not have one because
-> > > they _know_ they do not have a different than retry for ever recovery
-> > > path. 
-> > 
-> > You mean where I asked you for a link to the discussion and rationale
-> > you claimed had happened? Still waiting on that
-> 
-> I am not your assistent to be tasked and search through lore archives.
-> Find one if you need that.
-> 
-> Anyway, if you read the email and even tried to understand what is
-> written there rather than immediately started shouting a response then
-> you would have noticed I have put actual arguments here. You are free to
-> disagree with them and lay down your arguments. You have decided to
-> 
-> [...]
-> 
-> > Yeah, enough of this insanity.
-> 
-> so I do not think you are able to do that. Again...
+This RFC set introduces in-kernel fastpath handler for fanotify. The
+fastpath handler can be used to handle/filter some events without going
+through userspace.
 
-BTW - (after getting emails for three different people about this, heh)
+In LPC 2024, multiple talks covered use cases of monitoring a subtree in
+the VFS (fanotify: [1], bpf/lsm: [2]). This work is inspired by these
+discussions. Reliably monitoring of a subtree with low overhead is a hard
+problem. We do not claim this set fully solves problem. But we think this
+work can be a very useful building block of the solution to this problem.
 
-I do want to apologize for things getting this heated the other day, but
-I need to also tell you why I reacted the way I did.
+The fastpath handler can be implemented with built-in logic, in a kernel
+module, or a bpf program. The fastpath handler is attached to a fsnotify
+group. With current implementation, the multiple fastpath handlers are
+maintained in a global list. Only users with CAP_SYS_ADMIN can add
+fastpath handlers to the list by loading a kernel module. User without
+CAP_SYS_ADMIN can attach a loaded fastpath handler to fanotify instances.
+During the attach operation, the fastpath handler can take an argument.
+This enables non-CAP_SYSADMIN users to customize/configure the fastpath
+handler, for example, with a specific allowlist/denylist.
 
-Firstly, it's nothing personal: I'm not axe grinding against you
-(although you were a major source of frustration for myself and Suren in
-the memory allocation profiling discussions, and I hope you can
-recognize that as well).
+As the patchset grows to 1000+ lines (including samples and tests), I
+would like some feedback before pushing it further.
 
-But I do take correctness issues very seriously, and I will get frosty
-or genuinely angry if they're being ignored or brushed aside.
+[1] https://lpc.events/event/18/contributions/1717/
+[2] https://lpc.events/event/18/contributions/1940/
 
-The reality as that experience, and to be frank standards of
-professionalism, do vary within the kernel community, and I have had
-some _outrageous_ fights over things as bad as silent data corruption
-bugs (introduced in code I wrote by people who did not CC me, no less;
-it was _bad_, and yes it has happened more than once). So - I am _not_
-inclined to let things slide, even if it means being the asshole at
-times.
+Song Liu (2):
+  fanotify: Introduce fanotify filter
+  samples/fanotify: Add a sample fanotify fiter
 
-Thankfully, most people aren't like that. Dave, Willy, Linus - we can be
-shouting at each other, but we still listen, and we know how not to take
-it personally and focus on the technical when there's something serious
-going on.
+ MAINTAINERS                          |   1 +
+ fs/notify/fanotify/Kconfig           |  13 ++
+ fs/notify/fanotify/Makefile          |   1 +
+ fs/notify/fanotify/fanotify.c        |  44 +++-
+ fs/notify/fanotify/fanotify_filter.c | 289 +++++++++++++++++++++++++++
+ fs/notify/fanotify/fanotify_user.c   |   7 +
+ include/linux/fanotify.h             | 128 ++++++++++++
+ include/linux/fsnotify_backend.h     |   6 +-
+ include/uapi/linux/fanotify.h        |  36 ++++
+ samples/Kconfig                      |  20 +-
+ samples/Makefile                     |   2 +-
+ samples/fanotify/.gitignore          |   1 +
+ samples/fanotify/Makefile            |   5 +-
+ samples/fanotify/filter-mod.c        | 105 ++++++++++
+ samples/fanotify/filter-user.c       | 131 ++++++++++++
+ samples/fanotify/filter.h            |  19 ++
+ 16 files changed, 801 insertions(+), 7 deletions(-)
+ create mode 100644 fs/notify/fanotify/fanotify_filter.c
+ create mode 100644 samples/fanotify/filter-mod.c
+ create mode 100644 samples/fanotify/filter-user.c
+ create mode 100644 samples/fanotify/filter.h
 
-Usually when one of us is shouting, you'll find there's a good reason
-and some history behind it, even if we also recognize the need to try to
-tone things down and not be _too_ much of an asshole. Linus was
-reminding me of that yesterday...
-
-So for the record: I'm not trying to roadblock you or anyone else, I'm
-just trying to make sure we all have shit that _works_.
-
-And I have been noticing you stepping up in discussions more, and I'd
-like to encourage that, if I may. MM has been lacking in strong
-technical leadership for a _long_ time - Andrew's great on the process
-side, he makes sure things move along, but we haven't had anyone who's
-trying to keep everything important in their heads, who's able to point
-out to people where their work fits in the larger picture, and there's
-been some messy things that have built up over time.
-
-And a word on technical leadership - it doesn't mean being the one who's
-"right" all the time, although it does involve a lot of saying "no" to
-people. The people who seem the smartest - it's not raw IQ that they've
-got (although that helps!), it's the ability to listen and quickly
-incorporate other people's ideas without drama or attachment, and the
-ability to maintain perspective; notice what people are blocked on,
-without getting stuck on it, and think about how it fits into the wider
-perspective.
-
-Cheers,
-Kent
+--
+2.43.5
