@@ -1,79 +1,91 @@
-Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBAF8EC4
-	for <linux-security-module@vger.kernel.org>; Fri, 22 Nov 2024 04:13:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C234A178CE4
+	for <linux-security-module@vger.kernel.org>; Fri, 22 Nov 2024 06:51:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732248786; cv=none; b=BupIshGAJZ0/hlAD5EGjQ0bL5e9Ggqw0sCwyhlkIlAfSL75h8BdxEJGOOv7BAbFngLBdFmVd3DfSsXhetITCRD8ltaNRu3tdfn/OgNLbyLviUJOsimJBqEQmPkPWT7qIqlk9eHzcrNTOA697jWFR/c96eeJ+eVT9GYFpeobtIJA=
+	t=1732258309; cv=none; b=OjqSLwz+Lu6DPLfHaCZ69RH0P+m36mBw79ZnwMGg+3+H9GiCoSbYvxpu3e1Oo+v9+7n89uRPdmWM8H/Ibg49Wmnys3Z3miYqNTLD3bH2a1JbZiaPB847wVBUw7LxMQSoWwyHSs7y56+4p5sWlqIXxfIcNmlrrTAx3+uAw+R5LRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732248786; c=relaxed/simple;
-	bh=lY9C1lxbNY/2bnsCxRTFsqgYtdsYe8esoSp/fOpIisQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d8twuBVvSxqMtp4/SjZrQSbv1MtUC///H5aPLktOhWKvzXfEqubPt8SXc8xs/Yu6dPVONGuUerMKgK6zUBJ56T83dB2I4DkcWGLJwXbLXuW4OZq2Q6SpGTcliPKFPH4kCcoX131/Se4R9rvqXzFOEbdayyNqthnc1ys0zNQ0b/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 4AM4Casj014695;
-	Thu, 21 Nov 2024 22:12:36 -0600
-Received: (from greg@localhost)
-	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 4AM4CYGX014694;
-	Thu, 21 Nov 2024 22:12:34 -0600
-Date: Thu, 21 Nov 2024 22:12:34 -0600
-From: "Dr. Greg" <greg@enjellic.com>
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc: linux-security-module@vger.kernel.org
-Subject: Re: TOMOYO and runc containers dislike one another.
-Message-ID: <20241122041234.GA14684@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <20241121184207.GA11007@wind.enjellic.com> <ad1b3db0-b5b5-40c4-9a44-ce11195cd1b5@I-love.SAKURA.ne.jp>
+	s=arc-20240116; t=1732258309; c=relaxed/simple;
+	bh=FksEp9kapCY4+YbOqxOtRfRJLC2TEUlIdnGiXK6I00c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JbuyMAkVheh5gBaqwlFatrjJij7VKZTyfT0e72g5ou03IVK8kebqxijPxmlKMuNeYgcuS5eDT7uPC6BoToESdvqwDHdI1fwgi4JCMbWdA0NgDlf3QPCF8uZCHORk55wjKbWpVdpu/SRR0xk5aKvC6tkbKIuSLOdNgIpLufKbiq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UdvEOMQ/; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UdvEOMQ/"
+Date: Fri, 22 Nov 2024 01:51:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1732258305;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rjgj1cBWl/+Hfb4W6G3LBJubD6GGLHSB/5rnaF15CvM=;
+	b=UdvEOMQ/ljA52aWMaj+kjBRg6rsV/9XN0YFltdXsWPGJxpTRb2F4HQUsQ6IlSBuFwfYcC3
+	jGx3uzQPKE2eIHvlo1ySZkNWszETq6lZ5yw4X1MiSCVbF5ZLe50pmGkzrCXVHwVLzBs1xE
+	ypy3uUPd8Wh2Tk8EEv4jpxiVGBl24fI=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: Christoph Hellwig <hch@lst.de>, Theodore Ts'o <tytso@mit.edu>, 
+	Michal Hocko <mhocko@suse.com>, Dave Chinner <david@fromorbit.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Yafang Shao <laoar.shao@gmail.com>, jack@suse.cz, 
+	Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-bcachefs@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, "conduct@kernel.org" <conduct@kernel.org>
+Subject: Re: [PATCH 1/2 v2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
+Message-ID: <grcqflezvbht4mqyaalavqoneqgo2yfnmbdhbizrllv27dlgrl@jq3reem4va7i>
+References: <vvulqfvftctokjzy3ookgmx2ja73uuekvby3xcc2quvptudw7e@7qj4gyaw2zfo>
+ <71b51954-15ba-4e73-baea-584463d43a5c@linuxfoundation.org>
+ <cl6nyxgqccx7xfmrohy56h3k5gnvtdin5azgscrsclkp6c3ko7@hg6wt2zdqkd3>
+ <9efc2edf-c6d6-494d-b1bf-64883298150a@linuxfoundation.org>
+ <be7f4c32-413e-4154-abe3-8b87047b5faa@linuxfoundation.org>
+ <nu6cezr5ilc6vm65l33hrsz5tyjg5yu6n22tteqvx6fewjxqgq@biklf3aqlook>
+ <v2ur4jcqvjc4cqdbllij5gh6inlsxp3vmyswyhhjiv6m6nerxq@mrekyulqghv2>
+ <20241120234759.GA3707860@mit.edu>
+ <20241121042558.GA20176@lst.de>
+ <39e8f416-d136-4307-989a-361bf729e688@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ad1b3db0-b5b5-40c4-9a44-ce11195cd1b5@I-love.SAKURA.ne.jp>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Thu, 21 Nov 2024 22:12:36 -0600 (CST)
+In-Reply-To: <39e8f416-d136-4307-989a-361bf729e688@linuxfoundation.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Nov 22, 2024 at 08:22:07AM +0900, Tetsuo Handa wrote:
-
-> Hello.
-
-Hi Tetsuo, I hope this note finds the week ending well for you.
-
-> On 2024/11/22 3:42, Dr. Greg wrote:
-> > Kernel version is 6.10 something.
+On Thu, Nov 21, 2024 at 04:53:48PM -0700, Shuah Khan wrote:
+> On 11/20/24 21:25, Christoph Hellwig wrote:
+> > On Wed, Nov 20, 2024 at 03:47:59PM -0800, Theodore Ts'o wrote:
+> > > On Wed, Nov 20, 2024 at 05:55:03PM -0500, Kent Overstreet wrote:
+> > > > Shuah, would you be willing to entertain the notion of modifying your...
+> > > 
+> > > Kent, I'd like to gently remind you that Shuah is not speaking in her
+> > > personal capacity, but as a representative of the Code of Conduct
+> > > Committee[1], as she has noted in her signature.  The Code of Conduct
+> > > Committee is appointed by, and reports to, the TAB[2], which is an
+> > > elected body composed of kernel developers and maintainers.
 > > 
-> > The path causing the issue is as follows:
-> > 
-> > /dev/fd/7
-> > 
-> > Here are the warning messages that runc spits out:
-> > 
-> > FATA[0000] nsexec[1291]: could not ensure we are a cloned binary: No
-> > such file or directory
-> > 
-> > ERRO[0000] runc run failed: unable to start container process: waiting
-> > for init preliminary setup: read init-p: connection reset by peer
+> > FYI, without taking any stance on the issue under debate here, I find the
+> > language used by Shuah on behalf of the Code of Conduct committee
+> > extremely patronising and passive aggressive.  This might be because I
+> > do not have an American academic class background, but I would suggest
+> > that the code of conduct committee should educate itself about
+> > communicating without projecting this implicit cultural and class bias
+> > so blatantly.
+> 
+> I tend to use formal style when I speak on behalf of the Code of Conduct
+> committee. I would label it as very formal bordering on pedantic.
+> Would you prefer less formal style in the CoC communication?
 
-> Please try applying commit ada1986d0797 ("tomoyo: fallback to realpath
-> if symlink's pathname does not exist").
+Personally, it's always easier to take requests from a human, than a
+faceless process that I have no input into.
 
-Yes, that did it, thanks for the pointer to the patch.
-
-We now have multiple containers running, each with their own Tomoyo
-implementation.... :-)
-
-> Regards.
-
-Have a good weekend.
-
-As always,
-Dr. Greg
-
-The Quixote Project - Flailing at the Travails of Cybersecurity
-              https://github.com/Quixote-Project
-
+I'll always rebell against the latter, but I'll always work to help out
+or make things right with people in the community.
