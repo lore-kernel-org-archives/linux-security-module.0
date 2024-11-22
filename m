@@ -1,124 +1,88 @@
-Received: from smtp-bc09.mail.infomaniak.ch (smtp-bc09.mail.infomaniak.ch [45.157.188.9])
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 987A71514FE
-	for <linux-security-module@vger.kernel.org>; Fri, 22 Nov 2024 14:50:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE4781DF759;
+	Fri, 22 Nov 2024 17:42:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732287060; cv=none; b=Bll5Ncyh4jK2YiPtpD5DsMwZ+BUbZFFVqr06cEMMEQQ5Qki+EK8tIGzHc6QiIfCsH4fcGwpay9iDW+xglAn5Ra/8wRcy6NWlIytWAUbaWzPODMuzoE3orK5mQe6VcuxFTA0PTsn+lCmVe7mn/cimOrq5pD/F2lHy0zvMVbSVYgQ=
+	t=1732297330; cv=none; b=h7QW14MwHjoA4fmBtmHv1VmshnVjVGnKxaIgp7bMWZiapJu+bz/riDjraYpL0Z0bB64poAqKfn0LhnGkBknZPvdktxN61/jCbAnsAZ1MbdQWJEbAtPJvxBs147ft1GsA6hUxlXlwP4KU2jBbMUZhuyhAwWfeMCF9wXhlydz15+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732287060; c=relaxed/simple;
-	bh=da/B3C3m95B9xDN7inCPJver2jyI9WY4gvWq4YtWhFA=;
+	s=arc-20240116; t=1732297330; c=relaxed/simple;
+	bh=a4st4C5XXyoPcxv2sZbE67XBW/hIZc7o/BdosAHwM4I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fjDrLsf4v4L67wXHKObiUsnW6ztyua/+U5Nw/TOVzXIcZk1teUwgxMIEOb1Y/TrNReP2JxjxcpS0gw2+Oa092eaIljBY1jCZF/RiJbS53L/29laCnCc/IQ+uXEAgHTNZVsR5o6akJ/U/In3aMnEwSztsWsn4jWaCq/ZY3eVbhUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=ZxPR1yB/; arc=none smtp.client-ip=45.157.188.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="ZxPR1yB/"
-Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10:40ca:feff:fe05:0])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Xvyhd0W8fzbr5;
-	Fri, 22 Nov 2024 15:50:57 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1732287056;
-	bh=Dw83SL5Y8yup9QeWhRY3Xv+H570yVpAemu+fQwUxJwQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZxPR1yB/99EMPpelBHdCWInnXjSxUxn8CxobKR87WOV/XW8j4P2i/WrLRNt3tk3Pm
-	 PwdepQSQuLCaAzIfcdHDKM5tasTYMdPYLpz5ZRscRNi4N8kGaH50/8TPen3EyKDgJ6
-	 Cu2uU2k/vW0zhArwJAuMwtubKMwDV38J+e5CnuqY=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Xvyhc0l95zs22;
-	Fri, 22 Nov 2024 15:50:56 +0100 (CET)
-Date: Fri, 22 Nov 2024 15:50:56 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
-	Paul Moore <paul@paul-moore.com>, Serge Hallyn <serge@hallyn.com>, 
-	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>, Alejandro Colomar <alx@kernel.org>, 
-	Aleksa Sarai <cyphar@cyphar.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
-	Dmitry Vyukov <dvyukov@google.com>, Elliott Hughes <enh@google.com>, 
-	Eric Biggers <ebiggers@kernel.org>, Eric Chiang <ericchiang@google.com>, 
-	Fan Wu <wufan@linux.microsoft.com>, Florian Weimer <fweimer@redhat.com>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, James Morris <jamorris@linux.microsoft.com>, 
-	Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
-	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
-	Miklos Szeredi <mszeredi@redhat.com>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, 
-	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
-	Stephen Rothwell <sfr@canb.auug.org.au>, Steve Dower <steve.dower@python.org>, 
-	Steve Grubb <sgrubb@redhat.com>, Theodore Ts'o <tytso@mit.edu>, 
-	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, Vincent Strubel <vincent.strubel@ssi.gouv.fr>, 
-	Xiaoming Ni <nixiaoming@huawei.com>, Yin Fengwei <fengwei.yin@intel.com>, 
-	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v21 6/6] samples/check-exec: Add an enlighten "inc"
- interpreter and 28 tests
-Message-ID: <20241122.ahY1pooz1ing@digikod.net>
-References: <20241112191858.162021-1-mic@digikod.net>
- <20241112191858.162021-7-mic@digikod.net>
- <d115a20889d01bc7b12dbd8cf99aad0be58cbc97.camel@linux.ibm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=spdx9T3fI8Je+LTNOZn0jOhAyK9PPofrh5iBseGag2Fgk7t9Ww6OYB8F9si3cAJgLNIpBI++PGOGYi2doJi+gY3/NDuR4nWKeMb4m0cXj6oGN5S/q0A8uXr5YEVEurLUiIT1zDaIXDmz+MCsHdTYJr4kEdxkqUW5BQSSLXzeNUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id 796D620D; Fri, 22 Nov 2024 11:34:18 -0600 (CST)
+Date: Fri, 22 Nov 2024 11:34:18 -0600
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: sergeh@kernel.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Paul Moore <paul@paul-moore.com>,
+	Jordan Rome <linux@jordanrome.com>,
+	linux-security-module@vger.kernel.org,
+	lkml <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] capabilities
+Message-ID: <20241122173418.GA518018@mail.hallyn.com>
+References: <Zztcp-fm9Ln57c-t@lei>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d115a20889d01bc7b12dbd8cf99aad0be58cbc97.camel@linux.ibm.com>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <Zztcp-fm9Ln57c-t@lei>
 
-On Thu, Nov 21, 2024 at 03:34:47PM -0500, Mimi Zohar wrote:
-> Hi Mickaël,
+On Mon, Nov 18, 2024 at 03:26:31PM +0000, sergeh@kernel.org wrote:
+> Hi Linus,
+
+Hi,
+
+before the merge window closes, I just wanted to make sure this didn't get
+lost.
+
+thanks,
+-serge
+
+> The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
 > 
-> On Tue, 2024-11-12 at 20:18 +0100, Mickaël Salaün wrote:
-> > 
-> > +
-> > +/* Returns 1 on error, 0 otherwise. */
-> > +static int interpret_stream(FILE *script, char *const script_name,
-> > +			    char *const *const envp, const bool restrict_stream)
-> > +{
-> > +	int err;
-> > +	char *const script_argv[] = { script_name, NULL };
-> > +	char buf[128] = {};
-> > +	size_t buf_size = sizeof(buf);
-> > +
-> > +	/*
-> > +	 * We pass a valid argv and envp to the kernel to emulate a native
-> > +	 * script execution.  We must use the script file descriptor instead of
-> > +	 * the script path name to avoid race conditions.
-> > +	 */
-> > +	err = execveat(fileno(script), "", script_argv, envp,
-> > +		       AT_EMPTY_PATH | AT_EXECVE_CHECK);
+>   Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
 > 
-> At least with v20, the AT_CHECK always was being set, independent of whether
-> set-exec.c set it.  I'll re-test with v21.
-
-AT_EXECVE_CEHCK should always be set, only the interpretation of the
-result should be relative to securebits.  This is highlighted in the
-documentation.
-
+> are available in the Git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/sergeh/linux.git tags/caps-6.12-rc1
+> 
+> for you to fetch changes up to 54eb2cec2ed7aaf25524dd5ebeaa4f87ed5c6bd6:
+> 
+>   security: add trace event for cap_capable (2024-10-30 14:40:02 -0500)
+> 
+> This branch contains two patches:
+> 
+> 1. Remove the cap_mmap_file() hook (Paul Moore), as it wasn't actually doing anything.
+>    de2433c608c2c2633b8a452dd4925d876f3d5add
+> 
+> 2. Add a trace event for cap_capable (Jordan Rome).
+>    54eb2cec2ed7aaf25524dd5ebeaa4f87ed5c6bd6
+> 
+> Both patches have been sitting in linux-next for quite some time with no apparent
+> issues.
 > 
 > thanks,
+> -serge
 > 
-> Mimi
+> ----------------------------------------------------------------
+> Jordan Rome (1):
+>       security: add trace event for cap_capable
 > 
-> > +	if (err && restrict_stream) {
-> > +		perror("ERROR: Script execution check");
-> > +		return 1;
-> > +	}
-> > +
-> > +	/* Reads script. */
-> > +	buf_size = fread(buf, 1, buf_size - 1, script);
-> > +	return interpret_buffer(buf, buf_size);
-> > +}
-> > +
+> Paul Moore (1):
+>       capabilities: remove cap_mmap_file()
 > 
-> 
+>  MAINTAINERS                       |  1 +
+>  include/trace/events/capability.h | 60 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+>  security/commoncap.c              | 37 ++++++++++++++++++++++---------------
+>  3 files changed, 83 insertions(+), 15 deletions(-)
+>  create mode 100644 include/trace/events/capability.h
