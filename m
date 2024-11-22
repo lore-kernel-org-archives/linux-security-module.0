@@ -1,33 +1,33 @@
-Received: from smtp-bc08.mail.infomaniak.ch (smtp-bc08.mail.infomaniak.ch [45.157.188.8])
+Received: from smtp-190d.mail.infomaniak.ch (smtp-190d.mail.infomaniak.ch [185.125.25.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E5A81DFE1E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B6541DFE33;
 	Fri, 22 Nov 2024 14:34:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.8
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732286072; cv=none; b=Etfpxfmi04xRh1eDNFioqc5v0NgJMMBM9OqhuimjLujRZiHRnDiK5c9RIj+RU0uvuT2H1gBTa47NL2TG4iuxTa13WZm3fq+6UYB7mHStZQaxYaESDeowb3NdpIEy+qzRHN9CiQWfuRouGytFoBeKfoju9Vmh9/vIVxIvhVEfHmI=
+	t=1732286073; cv=none; b=mDp59V8C+fQxJmPsmmgXiM+WV4Kh0i7SBBQNY7ptELoJf/3i68FLkI4tqd4RNgC7XORZ+JdjeVTibP5CUsKyZ9q98sAM3vNUXeTgYPxrWbo7OoeBFgbJL2vlvz/LGbSZEUA6oEsPOPKLuStpjrZEW11CjDfVN2jw9tQ6r9xtOpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732286072; c=relaxed/simple;
-	bh=mcO299gnz9ndiaMSwPmQbuZYoMNokkhMIATxSJ2kdIU=;
+	s=arc-20240116; t=1732286073; c=relaxed/simple;
+	bh=bQqucovuqXsfcpnCRY6ioAvHAX0oJC0TChC0D8tZzOw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qItTxEWt+8sxnoSBQcRS/NNkWgAdy7BP3uWaMhmwqKC9M2mkNi85d5j6NdbLLKoctL8BWufVfpDra6ZPBGJs+SrsM+3DuTzcrMDQcZkOjblhu4vzqp+2l2y6B7n/96f/QtaA9MtpUDVXf5D8MQoCeSrhxrv/moXH84wdb7MQuFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=asEjhPON; arc=none smtp.client-ip=45.157.188.8
+	 MIME-Version:Content-Type; b=VpxRVGc89qNj+H1+SduWBFIs+AteWmdtVOOK/BNZubCCOJi1z97b0ekqJqzMOTc58AXKfjxalh8xt5x4JuxOfIl5SU1SkT6Mq/5gctjUGQZ5lgJcGbLFVzw5whtTbc9VEFoMWiq53rv23K8Sc01kOlt4DkZ13KbG71Mg3cpi3LA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=PX2OshPo; arc=none smtp.client-ip=185.125.25.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="asEjhPON"
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XvyKc2zV8zlSf;
-	Fri, 22 Nov 2024 15:34:28 +0100 (CET)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="PX2OshPo"
+Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10:40ca:feff:fe05:1])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XvyKd4sJ5zcvq;
+	Fri, 22 Nov 2024 15:34:29 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1732286068;
-	bh=Lq3kha7+yN0YJbY/oShjU2K3cOge2QbVPhVQ4nd4Oko=;
+	s=20191114; t=1732286069;
+	bh=9jecdmy7jrK2+6zmM20QZ0wgXA3NijoGLJiaDMUhMsk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=asEjhPONGwsuFqUltq6GBOetEvMHRIQ25/kGigkrREcVN+PMoTAvVWB8w2A5JxWsK
-	 wNs5d3uxtQpNrguLbelsMOivgIyfRBABijXEoDpPA6ZznNBYBRe3QxeLQNd1dqy9mJ
-	 omltWKAT21kZLpRN1LidHmQdAmw3UEyUS9MEjwZc=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4XvyKb5VmxzHkl;
-	Fri, 22 Nov 2024 15:34:27 +0100 (CET)
+	b=PX2OshPoniRIe+tqtSJRTa2QBiSu+SwASCo/3G9G/9AzmOJAa6S6uHDAm/zhDuQot
+	 twlxyLum7gbhnZ2UeiPtErbEjdEvfOqdMiCnM6GnLutRYkBg7sgmtq2CD1eNQ5O3Xn
+	 rLS5OKXYX90DFUTP1ws9/9sYb0LyYe4jZBYdKOqw=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4XvyKc6YKKzn2K;
+	Fri, 22 Nov 2024 15:34:28 +0100 (CET)
 From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To: Eric Paris <eparis@redhat.com>,
 	Paul Moore <paul@paul-moore.com>,
@@ -55,9 +55,9 @@ Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	audit@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH v3 20/23] samples/landlock: Do not log denials from the sandboxer by default
-Date: Fri, 22 Nov 2024 15:33:50 +0100
-Message-ID: <20241122143353.59367-21-mic@digikod.net>
+Subject: [PATCH v3 21/23] selftests/landlock: Extend tests for landlock_restrict_self()'s flags
+Date: Fri, 22 Nov 2024 15:33:51 +0100
+Message-ID: <20241122143353.59367-22-mic@digikod.net>
 In-Reply-To: <20241122143353.59367-1-mic@digikod.net>
 References: <20241122143353.59367-1-mic@digikod.net>
 Precedence: bulk
@@ -70,123 +70,48 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
 
-Do not pollute audit logs because of unknown sandboxed programs.
-Indeed, the sandboxer's security policy might not be fitted to the set
-of sandboxed processes that could be spawned (e.g. from a shell).
-
-The LANDLOCK_RESTRICT_SELF_LOGLESS flag should be used for all similar
-sandboxer tools by default.  Only natively-sandboxed programs should not
-use this flag.
-
-For test purpose, parse the LL_FORCE_LOG environment variable to still
-log denials.
+Add the restrict_self_flags test suite to check that
+LANDLOCK_RESTRICT_SELF_LOGLESS is valid but not the next bit.  Some
+checks are similar to restrict_self_checks_ordering's ones.
 
 Cc: Günther Noack <gnoack@google.com>
 Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Link: https://lore.kernel.org/r/20241122143353.59367-21-mic@digikod.net
+Link: https://lore.kernel.org/r/20241122143353.59367-22-mic@digikod.net
 ---
 
 Changes since v2:
 - New patch.
 ---
- samples/landlock/sandboxer.c | 35 ++++++++++++++++++++++++++++++++---
- 1 file changed, 32 insertions(+), 3 deletions(-)
+ tools/testing/selftests/landlock/base_test.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
-index 57565dfd74a2..49fd4fdb1dcf 100644
---- a/samples/landlock/sandboxer.c
-+++ b/samples/landlock/sandboxer.c
-@@ -58,6 +58,7 @@ static inline int landlock_restrict_self(const int ruleset_fd,
- #define ENV_TCP_BIND_NAME "LL_TCP_BIND"
- #define ENV_TCP_CONNECT_NAME "LL_TCP_CONNECT"
- #define ENV_SCOPED_NAME "LL_SCOPED"
-+#define ENV_FORCE_LOG_NAME "LL_FORCE_LOG"
- #define ENV_DELIMITER ":"
+diff --git a/tools/testing/selftests/landlock/base_test.c b/tools/testing/selftests/landlock/base_test.c
+index fbd687691b3c..4e0104f1efa0 100644
+--- a/tools/testing/selftests/landlock/base_test.c
++++ b/tools/testing/selftests/landlock/base_test.c
+@@ -233,6 +233,22 @@ TEST(restrict_self_checks_ordering)
+ 	ASSERT_EQ(0, close(ruleset_fd));
+ }
  
- static int str2num(const char *numstr, __u64 *num_dst)
-@@ -288,7 +289,7 @@ static bool check_ruleset_scope(const char *const env_var,
- 
- /* clang-format on */
- 
--#define LANDLOCK_ABI_LAST 6
-+#define LANDLOCK_ABI_LAST 7
- 
- #define XSTR(s) #s
- #define STR(s) XSTR(s)
-@@ -315,6 +316,9 @@ static const char help[] =
- 	"  - \"a\" to restrict opening abstract unix sockets\n"
- 	"  - \"s\" to restrict sending signals\n"
- 	"\n"
-+	"A sandboxer should not log denied access requests to avoid spamming logs, "
-+	"but to test audit we can set " ENV_FORCE_LOG_NAME "=1\n"
-+	"\n"
- 	"Example:\n"
- 	ENV_FS_RO_NAME "=\"${PATH}:/lib:/usr:/proc:/etc:/dev/urandom\" "
- 	ENV_FS_RW_NAME "=\"/dev/null:/dev/full:/dev/zero:/dev/pts:/tmp\" "
-@@ -333,7 +337,7 @@ int main(const int argc, char *const argv[], char *const *const envp)
- 	const char *cmd_path;
- 	char *const *cmd_argv;
- 	int ruleset_fd, abi;
--	char *env_port_name;
-+	char *env_port_name, *env_force_log;
- 	__u64 access_fs_ro = ACCESS_FS_ROUGHLY_READ,
- 	      access_fs_rw = ACCESS_FS_ROUGHLY_READ | ACCESS_FS_ROUGHLY_WRITE;
- 
-@@ -344,6 +348,8 @@ int main(const int argc, char *const argv[], char *const *const envp)
- 		.scoped = LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET |
- 			  LANDLOCK_SCOPE_SIGNAL,
- 	};
-+	/* Do not pollute audit logs because of unknown sandboxed programs. */
-+	int restrict_flags = LANDLOCK_RESTRICT_SELF_LOGLESS;
- 
- 	if (argc < 2) {
- 		fprintf(stderr, help, argv[0]);
-@@ -415,6 +421,12 @@ int main(const int argc, char *const argv[], char *const *const envp)
- 		/* Removes LANDLOCK_SCOPE_* for ABI < 6 */
- 		ruleset_attr.scoped &= ~(LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET |
- 					 LANDLOCK_SCOPE_SIGNAL);
-+		__attribute__((fallthrough));
-+	case 6:
-+		/* Removes LANDLOCK_RESTRICT_SELF_LOGLESS for ABI < 7 */
-+		restrict_flags &= ~LANDLOCK_RESTRICT_SELF_LOGLESS;
++TEST(restrict_self_flags)
++{
++	ASSERT_EQ(-1, landlock_restrict_self(-1, 0));
++	ASSERT_EQ(EBADF, errno);
 +
-+		/* Must be printed for any ABI < LANDLOCK_ABI_LAST. */
- 		fprintf(stderr,
- 			"Hint: You should update the running kernel "
- 			"to leverage Landlock features "
-@@ -449,6 +461,23 @@ int main(const int argc, char *const argv[], char *const *const envp)
- 	if (check_ruleset_scope(ENV_SCOPED_NAME, &ruleset_attr))
- 		return 1;
- 
-+	/* Enables optional logs. */
-+	env_force_log = getenv(ENV_FORCE_LOG_NAME);
-+	if (env_force_log) {
-+		if (strcmp(env_force_log, "1") != 0) {
-+			fprintf(stderr,
-+				"Unknown value for " ENV_FORCE_LOG_NAME "\n");
-+			return 1;
-+		}
-+		if (!(restrict_flags & LANDLOCK_RESTRICT_SELF_LOGLESS)) {
-+			fprintf(stderr,
-+				"Audit logs not supported by current kernel\n");
-+			return 1;
-+		}
-+		restrict_flags &= ~LANDLOCK_RESTRICT_SELF_LOGLESS;
-+		unsetenv(ENV_FORCE_LOG_NAME);
-+	}
++	ASSERT_EQ(-1,
++		  landlock_restrict_self(-1, LANDLOCK_RESTRICT_SELF_LOGLESS));
++	ASSERT_EQ(EBADF, errno);
 +
- 	ruleset_fd =
- 		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
- 	if (ruleset_fd < 0) {
-@@ -476,7 +505,7 @@ int main(const int argc, char *const argv[], char *const *const envp)
- 		perror("Failed to restrict privileges");
- 		goto err_close_ruleset;
- 	}
--	if (landlock_restrict_self(ruleset_fd, 0)) {
-+	if (landlock_restrict_self(ruleset_fd, restrict_flags)) {
- 		perror("Failed to enforce ruleset");
- 		goto err_close_ruleset;
- 	}
++	ASSERT_EQ(-1, landlock_restrict_self(-1, 1U << 1));
++	ASSERT_EQ(EINVAL, errno);
++
++	ASSERT_EQ(-1, landlock_restrict_self(-1, -1));
++	ASSERT_EQ(EINVAL, errno);
++}
++
+ TEST(ruleset_fd_io)
+ {
+ 	struct landlock_ruleset_attr ruleset_attr = {
 -- 
 2.47.0
 
