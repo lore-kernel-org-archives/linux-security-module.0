@@ -1,33 +1,33 @@
-Received: from smtp-8faf.mail.infomaniak.ch (smtp-8faf.mail.infomaniak.ch [83.166.143.175])
+Received: from smtp-8fac.mail.infomaniak.ch (smtp-8fac.mail.infomaniak.ch [83.166.143.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 757EA1E0485
-	for <linux-security-module@vger.kernel.org>; Fri, 22 Nov 2024 14:34:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A187B70834
+	for <linux-security-module@vger.kernel.org>; Fri, 22 Nov 2024 14:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732286077; cv=none; b=FJvnMe6WYKKA0wh4hX9rdPmNfr+u1u6LBd8L/ph+ViPKo0fxORMDPE7VQJX9PJx8FmjKH5D7wVuoL6nX14av5yC7sPYree031NNiNlkNnlkP3ZqdCFvdLwrxixCFmkASyqg9/92iySUYKIb0nloGYDvqeTE03Hfy4esCR6+KvHE=
+	t=1732286413; cv=none; b=Ikr+xWaQszHl0R8zmyyBA7wCiq1b/7nFxF32NyC4MRizMJNoR8bnHUeQv+do/EBAaaCjuEtA1E3BlUCJSVILy6TQSpEQyUABRiM96XZ3YFMzaphSzPZm0IZIgMHwlcBw2z+cb/sS9nDwMsCZuNDza3hRowt7OUHj4dnIuXhHCQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732286077; c=relaxed/simple;
-	bh=USmnvWm36M0c97ARvRM1m0YWzludoSF5lONc+2fkOzQ=;
+	s=arc-20240116; t=1732286413; c=relaxed/simple;
+	bh=2iJktCeaTluhzGMhzwBTsU05yTdrj/X6rZ9VX/kRBo4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OHiwSVC0q98VXKUdYLTGe+lM0chRfKvHMby6tGEbyjo6eAAFb6blDZvWwa52LPUt7rfACA/qA/w9r8gxJxyseS3LhiPU0+0gQK/rVHmEfFZk9ejIMtAHMiE2pAGGrOmwuOccq/HQiBKz6Dplw873r+7NUj9GxGUVmHTN64SSeDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=mT6MCM9n; arc=none smtp.client-ip=83.166.143.175
+	 MIME-Version:Content-Type; b=izmL6OTm6/Yf2lKvjTgkGLcaeTETtDnrY0QsXeth627QhH9ZHdRBnplHEm/Rut2uptjgUiqjqrtjdZGD9vNsWC5EFzRd572JdD3UlaN14HnaFdzMdL83FiMOhbdcNYYKMkGjxG+eEqYusOZdFCCchq6FNKTgUMY7oJxSf6Nofxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=14EZBYXs; arc=none smtp.client-ip=83.166.143.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="mT6MCM9n"
-Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10:40ca:feff:fe05:0])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XvyKZ1P31zbc9;
-	Fri, 22 Nov 2024 15:34:26 +0100 (CET)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="14EZBYXs"
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246b])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XvyK94fpXzgVL;
+	Fri, 22 Nov 2024 15:34:05 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1732286066;
-	bh=gtx2VSieXbkLGqKYte00kz6TjPK2PPAbtO/Q3N+TNSo=;
+	s=20191114; t=1732286045;
+	bh=DxTkVg18bqBuopoJy37l1mwDFC0IuH3r81EWdfJlrGc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=mT6MCM9nkxU8z+5Y26G/Wi7fnFuj915tXQrregzkvu3mhsHilLn0qS6W7sqkGvaoW
-	 z019AbC6c9D5LB6Obv8VKDH6E0vHGNYxEkPC1VZAUT4/WWACPCZbloYf+uyLfDOKNW
-	 8TqAILm1p7L7Nkt2UQdjl9GTH97dMWKP1E/F301E=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4XvyKY2w7mzlpc;
-	Fri, 22 Nov 2024 15:34:25 +0100 (CET)
+	b=14EZBYXsghzpHcV4S9I/82WBIuEutrRSJbYqLSze9QEYnwPklS2xKoKvfXcVragVF
+	 be+0kf9RAHS+IJGyHlMF1Scd+I8dk97gWys97GznkAmwVStfOGqyLksLtJpdFGrR87
+	 ovaonRdKTRPB/SndwK+NJfXY5cyf2qRZXvj4afX4=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4XvyK90L6Kzm5p;
+	Fri, 22 Nov 2024 15:34:05 +0100 (CET)
 From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To: Eric Paris <eparis@redhat.com>,
 	Paul Moore <paul@paul-moore.com>,
@@ -55,9 +55,9 @@ Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	audit@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH v3 18/23] landlock: Log scoped denials
-Date: Fri, 22 Nov 2024 15:33:48 +0100
-Message-ID: <20241122143353.59367-19-mic@digikod.net>
+Subject: [PATCH v3 02/23] lsm: Add audit_log_lsm_data() helper
+Date: Fri, 22 Nov 2024 15:33:32 +0100
+Message-ID: <20241122143353.59367-3-mic@digikod.net>
 In-Reply-To: <20241122143353.59367-1-mic@digikod.net>
 References: <20241122143353.59367-1-mic@digikod.net>
 Precedence: bulk
@@ -70,179 +70,110 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
 
-Add audit support for unix_stream_connect, unix_may_send, task_kill, and
-file_send_sigiotask hooks.
+Extract code from dump_common_audit_data() into the audit_log_lsm_data()
+helper. This helps reuse common LSM audit data while not abusing
+AUDIT_AVC records because of the common_lsm_audit() helper.
 
-Audit event sample:
-
-  type=LL_DENY [...]: domain=195ba459b blockers=scope_abstract_unix_socket path=00666F6F
-
-Cc: Günther Noack <gnoack@google.com>
-Cc: Tahera Fahimi <fahimitahera@gmail.com>
+Cc: Casey Schaufler <casey@schaufler-ca.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: Serge E. Hallyn <serge@hallyn.com>
 Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Link: https://lore.kernel.org/r/20241122143353.59367-19-mic@digikod.net
+Link: https://lore.kernel.org/r/20241122143353.59367-3-mic@digikod.net
 ---
 
 Changes since v1:
-- New patch.
+- Fix commit message (spotted by Paul).
+- Constify dump_common_audit_data()'s and audit_log_lsm_data()'s "a"
+  argument.
+- Fix build without CONFIG_NET: see previous patch.
 ---
- security/landlock/audit.c |  8 ++++++
- security/landlock/audit.h |  2 ++
- security/landlock/task.c  | 58 ++++++++++++++++++++++++++++++++++++---
- 3 files changed, 64 insertions(+), 4 deletions(-)
+ include/linux/lsm_audit.h |  8 ++++++++
+ security/lsm_audit.c      | 27 ++++++++++++++++++---------
+ 2 files changed, 26 insertions(+), 9 deletions(-)
 
-diff --git a/security/landlock/audit.c b/security/landlock/audit.c
-index 0b69b4c9ba1c..7e4acc746cd6 100644
---- a/security/landlock/audit.c
-+++ b/security/landlock/audit.c
-@@ -71,6 +71,14 @@ get_blocker(const enum landlock_request_type type,
- 		if (WARN_ON_ONCE(access_bit >= ARRAY_SIZE(net_access_strings)))
- 			return "unknown";
- 		return net_access_strings[access_bit];
+diff --git a/include/linux/lsm_audit.h b/include/linux/lsm_audit.h
+index c2b01380262c..b62769a7c5fa 100644
+--- a/include/linux/lsm_audit.h
++++ b/include/linux/lsm_audit.h
+@@ -130,6 +130,9 @@ void common_lsm_audit(struct common_audit_data *a,
+ 	void (*pre_audit)(struct audit_buffer *, void *),
+ 	void (*post_audit)(struct audit_buffer *, void *));
+ 
++void audit_log_lsm_data(struct audit_buffer *ab,
++			const struct common_audit_data *a);
 +
-+	case LANDLOCK_REQUEST_SCOPE_ABSTRACT_UNIX_SOCKET:
-+		WARN_ON_ONCE(access_bit != -1);
-+		return "scope_abstract_unix_socket";
+ #else /* CONFIG_AUDIT */
+ 
+ static inline void common_lsm_audit(struct common_audit_data *a,
+@@ -138,6 +141,11 @@ static inline void common_lsm_audit(struct common_audit_data *a,
+ {
+ }
+ 
++static inline void audit_log_lsm_data(struct audit_buffer *ab,
++			const struct common_audit_data *a)
++{
++}
 +
-+	case LANDLOCK_REQUEST_SCOPE_SIGNAL:
-+		WARN_ON_ONCE(access_bit != -1);
-+		return "scope_signal";
- 	}
+ #endif /* CONFIG_AUDIT */
  
- 	WARN_ON_ONCE(1);
-diff --git a/security/landlock/audit.h b/security/landlock/audit.h
-index 1075b0c8401f..1e0a9164bacc 100644
---- a/security/landlock/audit.h
-+++ b/security/landlock/audit.h
-@@ -19,6 +19,8 @@ enum landlock_request_type {
- 	LANDLOCK_REQUEST_FS_CHANGE_LAYOUT,
- 	LANDLOCK_REQUEST_FS_ACCESS,
- 	LANDLOCK_REQUEST_NET_ACCESS,
-+	LANDLOCK_REQUEST_SCOPE_ABSTRACT_UNIX_SOCKET,
-+	LANDLOCK_REQUEST_SCOPE_SIGNAL,
- };
- 
- /*
-diff --git a/security/landlock/task.c b/security/landlock/task.c
-index 1decd6f114e8..bdf7adc14e32 100644
---- a/security/landlock/task.c
-+++ b/security/landlock/task.c
-@@ -263,13 +263,27 @@ static int hook_unix_stream_connect(struct sock *const sock,
- 	const struct landlock_ruleset *const dom =
- 		landlock_get_applicable_domain(landlock_get_current_domain(),
- 					       unix_scope);
-+	struct lsm_network_audit audit_net = {
-+		.sk = other,
-+	};
-+	struct landlock_request request = {
-+		.type = LANDLOCK_REQUEST_SCOPE_ABSTRACT_UNIX_SOCKET,
-+		.audit = {
-+			.type = LSM_AUDIT_DATA_NET,
-+			.u.net = &audit_net,
-+		},
-+	};
- 
- 	/* Quick return for non-landlocked tasks. */
- 	if (!dom)
- 		return 0;
- 
--	if (is_abstract_socket(other) && sock_is_scoped(other, dom))
-+	if (is_abstract_socket(other) && sock_is_scoped(other, dom)) {
-+		request.layer_plus_one =
-+			landlock_match_layer_level(dom, unix_scope) + 1;
-+		landlock_log_denial(dom, &request);
- 		return -EPERM;
-+	}
- 
- 	return 0;
+ #endif
+diff --git a/security/lsm_audit.c b/security/lsm_audit.c
+index 849e832719e2..de29ce8ff708 100644
+--- a/security/lsm_audit.c
++++ b/security/lsm_audit.c
+@@ -189,16 +189,13 @@ static inline void print_ipv4_addr(struct audit_buffer *ab, __be32 addr,
  }
-@@ -280,6 +294,16 @@ static int hook_unix_may_send(struct socket *const sock,
- 	const struct landlock_ruleset *const dom =
- 		landlock_get_applicable_domain(landlock_get_current_domain(),
- 					       unix_scope);
-+	struct lsm_network_audit audit_net = {
-+		.sk = other->sk,
-+	};
-+	struct landlock_request request = {
-+		.type = LANDLOCK_REQUEST_SCOPE_ABSTRACT_UNIX_SOCKET,
-+		.audit = {
-+			.type = LSM_AUDIT_DATA_NET,
-+			.u.net = &audit_net,
-+		},
-+	};
  
- 	if (!dom)
- 		return 0;
-@@ -291,8 +315,12 @@ static int hook_unix_may_send(struct socket *const sock,
- 	if (unix_peer(sock->sk) == other->sk)
- 		return 0;
- 
--	if (is_abstract_socket(other->sk) && sock_is_scoped(other->sk, dom))
-+	if (is_abstract_socket(other->sk) && sock_is_scoped(other->sk, dom)) {
-+		request.layer_plus_one =
-+			landlock_match_layer_level(dom, unix_scope) + 1;
-+		landlock_log_denial(dom, &request);
- 		return -EPERM;
-+	}
- 
- 	return 0;
- }
-@@ -307,6 +335,13 @@ static int hook_task_kill(struct task_struct *const p,
+ /**
+- * dump_common_audit_data - helper to dump common audit data
++ * audit_log_lsm_data - helper to log common LSM audit data
+  * @ab : the audit buffer
+  * @a : common audit data
+- *
+  */
+-static void dump_common_audit_data(struct audit_buffer *ab,
+-				   struct common_audit_data *a)
++void audit_log_lsm_data(struct audit_buffer *ab,
++			const struct common_audit_data *a)
  {
- 	bool is_scoped;
- 	const struct landlock_ruleset *dom;
-+	struct landlock_request request = {
-+		.type = LANDLOCK_REQUEST_SCOPE_SIGNAL,
-+		.audit = {
-+			.type = LSM_AUDIT_DATA_TASK,
-+			.u.tsk = p,
-+		},
-+	};
+-	char comm[sizeof(current->comm)];
+-
+ 	/*
+ 	 * To keep stack sizes in check force programmers to notice if they
+ 	 * start making this union too large!  See struct lsm_network_audit
+@@ -206,9 +203,6 @@ static void dump_common_audit_data(struct audit_buffer *ab,
+ 	 */
+ 	BUILD_BUG_ON(sizeof(a->u) > sizeof(void *)*2);
  
- 	if (cred) {
- 		/* Dealing with USB IO. */
-@@ -324,8 +359,12 @@ static int hook_task_kill(struct task_struct *const p,
- 	is_scoped = domain_is_scoped(dom, landlock_get_task_domain(p),
- 				     LANDLOCK_SCOPE_SIGNAL);
- 	rcu_read_unlock();
--	if (is_scoped)
-+	if (is_scoped) {
-+		request.layer_plus_one =
-+			landlock_match_layer_level(dom, signal_scope) + 1;
-+		landlock_log_denial(dom, &request);
- 		return -EPERM;
-+	}
- 
- 	return 0;
+-	audit_log_format(ab, " pid=%d comm=", task_tgid_nr(current));
+-	audit_log_untrustedstring(ab, memcpy(comm, current->comm, sizeof(comm)));
+-
+ 	switch (a->type) {
+ 	case LSM_AUDIT_DATA_NONE:
+ 		return;
+@@ -428,6 +422,21 @@ static void dump_common_audit_data(struct audit_buffer *ab,
+ 	} /* switch (a->type) */
  }
-@@ -334,6 +373,13 @@ static int hook_file_send_sigiotask(struct task_struct *tsk,
- 				    struct fown_struct *fown, int signum)
- {
- 	const struct landlock_ruleset *dom;
-+	struct landlock_request request = {
-+		.type = LANDLOCK_REQUEST_SCOPE_SIGNAL,
-+		.audit = {
-+			.type = LSM_AUDIT_DATA_TASK,
-+			.u.tsk = tsk,
-+		},
-+	};
- 	bool is_scoped = false;
  
- 	/* Lock already held by send_sigio() and send_sigurg(). */
-@@ -349,8 +395,12 @@ static int hook_file_send_sigiotask(struct task_struct *tsk,
- 	is_scoped = domain_is_scoped(dom, landlock_get_task_domain(tsk),
- 				     LANDLOCK_SCOPE_SIGNAL);
- 	rcu_read_unlock();
--	if (is_scoped)
-+	if (is_scoped) {
-+		request.layer_plus_one =
-+			landlock_match_layer_level(dom, signal_scope) + 1;
-+		landlock_log_denial(dom, &request);
- 		return -EPERM;
-+	}
- 
- 	return 0;
- }
++/**
++ * dump_common_audit_data - helper to dump common audit data
++ * @ab : the audit buffer
++ * @a : common audit data
++ */
++static void dump_common_audit_data(struct audit_buffer *ab,
++				   const struct common_audit_data *a)
++{
++	char comm[sizeof(current->comm)];
++
++	audit_log_format(ab, " pid=%d comm=", task_tgid_nr(current));
++	audit_log_untrustedstring(ab, memcpy(comm, current->comm, sizeof(comm)));
++	audit_log_lsm_data(ab, a);
++}
++
+ /**
+  * common_lsm_audit - generic LSM auditing function
+  * @a:  auxiliary audit data
 -- 
 2.47.0
 
