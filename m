@@ -1,33 +1,33 @@
-Received: from smtp-8faa.mail.infomaniak.ch (smtp-8faa.mail.infomaniak.ch [83.166.143.170])
+Received: from smtp-190c.mail.infomaniak.ch (smtp-190c.mail.infomaniak.ch [185.125.25.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB4C31DE8B0
-	for <linux-security-module@vger.kernel.org>; Fri, 22 Nov 2024 14:34:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 975DD1DEFEE
+	for <linux-security-module@vger.kernel.org>; Fri, 22 Nov 2024 14:34:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732286065; cv=none; b=Z2p75t2STDe63vvXKtdTy6K+qp+TgQNMqEbTTyNAefqxoxss6EzulJ8vJeVlqurn3ZgyNtrW05dCK4AcetZbHm4WNi4luSHSg/gXPZokOFzHya/bVWBlkpZrgMEKr7YymjFPCBUhackufn6doSdNArSFP/EWg57UOvxL0tAhTIc=
+	t=1732286065; cv=none; b=LKe6ZfhMbUF7ks2haBEfl4FuoZ8A6o1mk+8XqvF1ypjXwQ+WEQLwPsYLcD1OypK9bcvDeh1KRG3059UOZplWg08WIuN/YEz7ryzd1lqFEolGviQ7yYzKITKEvoqa0Tn7bwnut8xXoXQ2GtG/P1xceqKUn94tW/5MGWo6mxSV+nY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1732286065; c=relaxed/simple;
-	bh=r9ftnbbE8+eDuDA3+7n9COnZvjC1aYV3g18xqvTZxnA=;
+	bh=oA5h+lIhIMGHdMq3GlqkFyWUv2dO2b0FhZB7G/chb0g=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GFy3DaCiNYpUfvb/FJVjRERhMTNHErj1P8fnyyPcRWpqHG8rTIcH6jTjCSmjLy2P1T22GGVbX5i1PNA+S7ejodpeF1NAmCPUzHtkuSuzIqctmaJa7p2ThDxKH3hnb8grH9xgbiL1kaoa3MfXjMUFsL8GjGiSgmZ6Jh8Tu0r7Th4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=rsDw6lvl; arc=none smtp.client-ip=83.166.143.170
+	 MIME-Version:Content-Type; b=kUqJ4DRbCMLpsC4fQjcDz3VWC385FnqmFhPaBKw0CgPG4umIleSKDR0GhWoGlEtK3IUhC31W5lwSbHZiyR2k5baDjCYiwph4x3UnAFyvfTZl2iY9qBdTXt5CbyZ1RnXOHg7Q+X49fCeVaVb/PXPOjcCuq+KZ64ViZ+0H6fHsPlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=JWzgivDs; arc=none smtp.client-ip=185.125.25.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="rsDw6lvl"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="JWzgivDs"
 Received: from smtp-3-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246b])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XvyKR1C0Bzjcn;
-	Fri, 22 Nov 2024 15:34:19 +0100 (CET)
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XvyKM0JPgzjT6;
+	Fri, 22 Nov 2024 15:34:15 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1732286059;
-	bh=Tr09ZZYMmyRN9g3gpEskXCFWHcXDgxBCb8vxALpa40g=;
+	s=20191114; t=1732286054;
+	bh=1sr0WCuh3QxUACqP8dYROb6HbctHZuOp4t4pm8z1faM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=rsDw6lvl4iF2+us577286u/6fbvYgIUoVM04ftvujWeYE4UqaiMENZ+5R0/XXarIp
-	 qN1kw68U1e1VqslNRj1wXqYbslk7JnGfuuyrqby4T/Q1mVsMYLtoB5Tn5HWFV9hHv+
-	 7cSz8vS++DEVobITGRCfv0N2XB+BV2zYilr+chJ8=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4XvyKQ2jynzlnp;
-	Fri, 22 Nov 2024 15:34:18 +0100 (CET)
+	b=JWzgivDsxbicKpp6/jeidUMoxCaM87H0dcpCfAXfXbYXRuB1R6g12hzW26BtQH6Yq
+	 vvG9cbTvUbgW0pCJHhPlapUrQtozAIJTx+S0xXNKmePgjfssojBIhhYOyIy/Nhim56
+	 2HAn0wEymjIeBxgVVWfDm4yyY36ijJTY2G0d7xGQ=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4XvyKK5y5jzlKK;
+	Fri, 22 Nov 2024 15:34:13 +0100 (CET)
 From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To: Eric Paris <eparis@redhat.com>,
 	Paul Moore <paul@paul-moore.com>,
@@ -55,9 +55,9 @@ Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	audit@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH v3 12/23] landlock: Align partial refer access checks with final ones
-Date: Fri, 22 Nov 2024 15:33:42 +0100
-Message-ID: <20241122143353.59367-13-mic@digikod.net>
+Subject: [PATCH v3 09/23] audit: Add a new audit_get_ctime() helper
+Date: Fri, 22 Nov 2024 15:33:39 +0100
+Message-ID: <20241122143353.59367-10-mic@digikod.net>
 In-Reply-To: <20241122143353.59367-1-mic@digikod.net>
 References: <20241122143353.59367-1-mic@digikod.net>
 Precedence: bulk
@@ -70,76 +70,102 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
 
-Fix a logical issue that could have been visible if the source or the
-destination of a rename/link action was allowed for either the source or
-the destination but not both.  However, this logical bug is unreachable
-because either:
-- the rename/link action is allowed by the access rights tied to the
-  same mount point (without relying on access rights in a parent mount
-  point) and the access request is allowed (i.e. allow_parent1 and
-  allow_parent2 are true in current_check_refer_path),
-- or a common rule in a parent mount point updates the access check for
-  the source and the destination (cf. is_access_to_paths_allowed).
+It may be useful to synchronize with the audit's timestamp e.g., to
+identify asynchronous events as being created with a previous audit
+record (see next commit).
 
-See the following layout1.refer_part_mount_tree_is_allowed test that
-work with and without this fix.
+auditsc_get_stamp() does more than just getting a timestamp, so add a
+new helper instead of exposing it and risking side effects.
 
-This fix does not impact current code but it is required for the audit
-support.
+It should be noted that we cannot reliably expose event's serial numbers
+because there may not be any related event, which would then create
+holes in the sequence of serial numbers.
 
-Cc: Günther Noack <gnoack@google.com>
+Cc: Eric Paris <eparis@redhat.com>
+Cc: Paul Moore <paul@paul-moore.com>
 Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Link: https://lore.kernel.org/r/20241122143353.59367-13-mic@digikod.net
+Link: https://lore.kernel.org/r/20241122143353.59367-10-mic@digikod.net
 ---
 
 Changes since v2:
 - New patch.
 ---
- security/landlock/fs.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ include/linux/audit.h |  8 ++++++++
+ kernel/auditsc.c      | 21 ++++++++++++++++++---
+ 2 files changed, 26 insertions(+), 3 deletions(-)
 
-diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-index 171012efb559..ddadc465581e 100644
---- a/security/landlock/fs.c
-+++ b/security/landlock/fs.c
-@@ -567,6 +567,12 @@ static void test_no_more_access(struct kunit *const test)
- #undef NMA_TRUE
- #undef NMA_FALSE
- 
-+static bool is_layer_masks_allowed(
-+	layer_mask_t (*const layer_masks)[LANDLOCK_NUM_ACCESS_FS])
+diff --git a/include/linux/audit.h b/include/linux/audit.h
+index 0050ef288ab3..cff07525c6ae 100644
+--- a/include/linux/audit.h
++++ b/include/linux/audit.h
+@@ -12,6 +12,7 @@
+ #include <linux/sched.h>
+ #include <linux/ptrace.h>
+ #include <linux/audit_arch.h>
++#include <linux/time64.h>
+ #include <uapi/linux/audit.h>
+ #include <uapi/linux/netfilter/nf_tables.h>
+ #include <uapi/linux/fanotify.h>
+@@ -408,6 +409,7 @@ extern int __audit_socketcall(int nargs, unsigned long *args);
+ extern int __audit_sockaddr(int len, void *addr);
+ extern void __audit_fd_pair(int fd1, int fd2);
+ extern void __audit_mq_open(int oflag, umode_t mode, struct mq_attr *attr);
++extern struct timespec64 audit_get_ctime(const struct audit_context *ctx);
+ extern void __audit_mq_sendrecv(mqd_t mqdes, size_t msg_len, unsigned int msg_prio, const struct timespec64 *abs_timeout);
+ extern void __audit_mq_notify(mqd_t mqdes, const struct sigevent *notification);
+ extern void __audit_mq_getsetattr(mqd_t mqdes, struct mq_attr *mqstat);
+@@ -653,6 +655,12 @@ static inline int audit_sockaddr(int len, void *addr)
+ }
+ static inline void audit_mq_open(int oflag, umode_t mode, struct mq_attr *attr)
+ { }
++static inline struct timespec64 audit_get_ctime(const struct audit_context *ctx)
 +{
-+	return !memchr_inv(layer_masks, 0, sizeof(*layer_masks));
++	struct timespec64 t = {};
++
++	return t;
++}
+ static inline void audit_mq_sendrecv(mqd_t mqdes, size_t msg_len,
+ 				     unsigned int msg_prio,
+ 				     const struct timespec64 *abs_timeout)
+diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+index cd57053b4a69..3b7dcb47f5af 100644
+--- a/kernel/auditsc.c
++++ b/kernel/auditsc.c
+@@ -2511,6 +2511,22 @@ void __audit_inode_child(struct inode *parent,
+ }
+ EXPORT_SYMBOL_GPL(__audit_inode_child);
+ 
++/**
++ * audit_get_ctime - get creation time of audit_context
++ *
++ * @ctx: audit_context for the task
++ *
++ * Returns an empty timespec64 if ctx is NULL.
++ */
++struct timespec64 audit_get_ctime(const struct audit_context *ctx)
++{
++	struct timespec64 t = {};
++
++	if (ctx)
++		return ctx->ctime;
++	return t;
 +}
 +
- /*
-  * Removes @layer_masks accesses that are not requested.
-  *
-@@ -584,7 +590,8 @@ scope_to_request(const access_mask_t access_request,
- 
- 	for_each_clear_bit(access_bit, &access_req, ARRAY_SIZE(*layer_masks))
- 		(*layer_masks)[access_bit] = 0;
--	return !memchr_inv(layer_masks, 0, sizeof(*layer_masks));
-+
-+	return is_layer_masks_allowed(layer_masks);
- }
- 
- #ifdef CONFIG_SECURITY_LANDLOCK_KUNIT_TEST
-@@ -773,9 +780,14 @@ static bool is_access_to_paths_allowed(
- 	if (WARN_ON_ONCE(domain->num_layers < 1 || !layer_masks_parent1))
- 		return false;
- 
-+	allowed_parent1 = is_layer_masks_allowed(layer_masks_parent1);
-+
- 	if (unlikely(layer_masks_parent2)) {
- 		if (WARN_ON_ONCE(!dentry_child1))
- 			return false;
-+
-+		allowed_parent2 = is_layer_masks_allowed(layer_masks_parent2);
-+
- 		/*
- 		 * For a double request, first check for potential privilege
- 		 * escalation by looking at domain handled accesses (which are
+ /**
+  * auditsc_get_stamp - get local copies of audit_context values
+  * @ctx: audit_context for the task
+@@ -2526,9 +2542,8 @@ int auditsc_get_stamp(struct audit_context *ctx,
+ 		return 0;
+ 	if (!ctx->serial)
+ 		ctx->serial = audit_serial();
+-	t->tv_sec  = ctx->ctime.tv_sec;
+-	t->tv_nsec = ctx->ctime.tv_nsec;
+-	*serial    = ctx->serial;
++	*t = audit_get_ctime(ctx);
++	*serial = ctx->serial;
+ 	if (!ctx->prio) {
+ 		ctx->prio = 1;
+ 		ctx->current_state = AUDIT_STATE_RECORD;
 -- 
 2.47.0
 
