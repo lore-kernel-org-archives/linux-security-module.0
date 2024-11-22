@@ -1,210 +1,219 @@
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BE9D18452E
-	for <linux-security-module@vger.kernel.org>; Fri, 22 Nov 2024 17:45:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732297542; cv=none; b=gLD793/r3R9K59fpEXKeQhv5DLNa1T7jpZUp8c5t7uIaNVKJ+modko3Nbxmd/BNk0RJoD2rImZthrTw2utL25j70BF1lx2YfUu7QOLKV4ENMT1+GVSpfw/w7LQalI9zjy58XMurIHy+yS7oQkle8omxdNLXseA6FHduVGQeAK/U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732297542; c=relaxed/simple;
-	bh=GzDOHvjcxzQzuwVAI8aacTcXN5qiXjiblZ5GPw3Jb3Y=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=EA2U1R8Bqne/pxHcsPXbJkdj10TvNw7kvk8ozvQ/4K+TRP+ZXZi6His0W+iPYSMfzgqRlp/pmp+4yDMypisGzXz0e+2Cb11EklP+eWf9PbZwUsTKquoeYUu9PHWuSPSbiefC0xgQS2VdzFqJZzE30qxdJGm5qq1aFVFd0gjul1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vRpdBDfe; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758D81CA9C;
+	Fri, 22 Nov 2024 21:48:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1732312132; cv=fail; b=BqCbsuojULZ0ubWhDlDSg4kOU+BkStmoIwUafYso7jB8R/WkE70PyuNy6asWIvHKaqKB5hvEixHYKq1//zRTGwz1vlJP6/3fPTwrRm+FaDJ7rGrVqdeQIvIswHLb1+ohTVHMs1fzaMOVhkbfgNkvxySA5akHNo/pVgivEW1B0Fk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1732312132; c=relaxed/simple;
+	bh=PoKQd3M0dhTjpFk7RN+ukD8qcViK7Zx74sLf6sl6HXo=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Zx7BBP4jJw9z1AHOWiHd+AkD3BUAusdJ6zO07TJtWPZCnBVm5qMvSGy7rYFedLmLXA9ZuH7S7ZhCwtWHt9LbFwYMo4MeayfGbZOf/r8atIpkLYT9QhP2xsTcJVOxvzerkDNSckw+Cs6V4Q0VqD1WuDxn3T2MqAxQlGKreE9PgPQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Cql9YvyL; arc=fail smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vRpdBDfe"
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6eedb7b9455so26378607b3.0
-        for <linux-security-module@vger.kernel.org>; Fri, 22 Nov 2024 09:45:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1732297539; x=1732902339; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2veOvqcd8OHbMSkqCARfAafTZ6QmJgZjD8FJhS72cj8=;
-        b=vRpdBDfeZKirbaifT7cm6tGWj+NmTJqH2PcBSHg15AvkOuBDbM0DReW9stZGADx4tU
-         ZV91SL7cuwoCB7ODiAe4BwQYWQ+KM8qa3bpc/G1Or56Eu5f+IO5nRuKq+PlfdBh62/v5
-         Bp1wQhzbdZZE1OtVVQzHRY5tyv4KD/Om1LvD9Mjo1qQQN7KmQjR9DPm4wSZoV66phdxM
-         hRETn6JuqnOrve0nMcTeNqemT6ZhYPTJmV+vyqUCnO4bP95aagoEiFJYpbxyX1Buzht0
-         cm1QaxXbDqefieOv98LUvcmMN2eq/wtuLAWCPBJs5uD8AvbTRC8FNAyFmX/Abjx23AOz
-         qdWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732297539; x=1732902339;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=2veOvqcd8OHbMSkqCARfAafTZ6QmJgZjD8FJhS72cj8=;
-        b=mVqKPbKneFrlkDlAedudp35ZXbcWQqCr9iDpEKReGSmLJMKFfPHglTJv2g+8a9ilyh
-         a19c8osv+AQJNb8h5iMX63frge9WhogkuCoABgKVOQoJFhRP80aR68hNROoMDfeRX3BB
-         qb1wjXH8OYnoI7UiBnPM/s145B3ynZzchqTVjB5YkMTNCc+5uZSjpkXfjrIgaIlqbgwW
-         CLVXlFDpHopitslhcREqotdsT+SC3dbOjH1rlDbrzk96tVvHLlKOOGNNcgFpkJvBIsWm
-         8RNFlZelRvQNe18bblih1+OrS/PT0RZZ+X8CcyYU0UqpqcKtCrlmNv9/WXaNPo3jv5jj
-         PEhA==
-X-Forwarded-Encrypted: i=1; AJvYcCW0fE1OImjdDfNZV2sR699Gstbkc7V+OLstwLfB+FyL3sdhodaoL2ZAQpJkjI+yc0GoPYJMAYqMuYPo/moC/LUewyf1ptI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoI6IfGagb8umj0IbvCEP8+B9xe9UYZqg3nGP+3339Kr/F0qiE
-	N+WKMhdh8Gv+dCDuhw9c1QsuvMIMlGZ90rl8LaKxXQp2U/Hk/OFJg423t0YYIixdjf1VvWynAW9
-	0yw==
-X-Google-Smtp-Source: AGHT+IHpEH/kPLV9idcYzJND6POdq3yx44U5bnV0sZuSwFiXFLFRZYwm6InrSGcTHIk7sCXgXu9JFIe7vzc=
-X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
- (user=gnoack job=sendgmr) by 2002:a25:d802:0:b0:e38:1f5f:485a with SMTP id
- 3f1490d57ef6-e38f8acc967mr1566276.1.1732297539121; Fri, 22 Nov 2024 09:45:39
- -0800 (PST)
-Date: Fri, 22 Nov 2024 18:45:36 +0100
-In-Reply-To: <ea026af8-bc29-709c-7e04-e145d01fd825@huawei-partners.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Cql9YvyL"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1732312131; x=1763848131;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=PoKQd3M0dhTjpFk7RN+ukD8qcViK7Zx74sLf6sl6HXo=;
+  b=Cql9YvyL8J70Mg7l/XdM5Paeazfdrve2IJMqJ5Yd44tXfULXngJwbMeN
+   HaJCnA50rUol5/O3Nn3BAq6+xixPvs7RljPCtBGNlOuOKDe0M7SXKkcPh
+   fatNsWtXab0dz4bMukU/Kdj1FjZV/qgtV2Stlk3G/CZpe0orkFxVNb9ad
+   R6F8RFyKIr4Fus69hTuziCLXx+KvpTCl5aYN2G8FiL/1o/REz2AiV8lnh
+   B0hLxmafl5S5geRK+K2EZGo9/cz9Jth8CDQ4L015ZKPRq1dmjI5GP7y9x
+   dKqZT1wJ50QNGTUcyl2MQ9IO9TzTrld1/cZn19kotyEUMllFKTsQSVG5x
+   Q==;
+X-CSE-ConnectionGUID: 4ZRqrOCaRICjdYfMjaLMrg==
+X-CSE-MsgGUID: yWiEKdLARAKpR98KgyHA1w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11264"; a="31840970"
+X-IronPort-AV: E=Sophos;i="6.12,176,1728975600"; 
+   d="scan'208";a="31840970"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Nov 2024 13:48:49 -0800
+X-CSE-ConnectionGUID: JmbcAtmuSGKu0ZcL4SjhZw==
+X-CSE-MsgGUID: 73h0PxSETXyCGem2ob96Tw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,176,1728975600"; 
+   d="scan'208";a="128190753"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+  by orviesa001.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 22 Nov 2024 13:48:50 -0800
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 22 Nov 2024 13:48:48 -0800
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Fri, 22 Nov 2024 13:48:48 -0800
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.170)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 22 Nov 2024 13:48:48 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DZqU6jzi1B7/BpRsgdJHa2SI8MD39urLMV7yV9Zkl4TCxPF/ysraItNvNpivsVrLeWsiLrF6x4B4gvRv69FNW9i5SKmuP45x2N0JRfeMPkBgi3nXP/QjmAVS9eQqvHhotlRskDm8tVxBo1BG3u7dzLN/Fzo25Ta3ISysmj+Xm9Nb5hFJubbm/t5pdjjF231KYjcZfLgf0IRcxJV36Y0VepVIyE9/PCSMOGgxs3GC5/WE+GzisPoptDA2rD839VyAeWtvN8rgCTga7R1ClJa4SfkQBCbEvg3YTufIVcj180rZu9Q0l2U3rnn4TSYUUKR//iUf9zfr6jFmdwlzbFiFMg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=amZw5f4l2r5tpOyL/8d2BbCTqfnnNP05dStK/tollj0=;
+ b=vWfKqH8HNk8EjRqHeImXB0sujViEvntRJ2qcV3mkIkZSdAKUO7oIInvflmfTg4rurGEy+/YkCb4FBk14frjh6L2uZlpn6iC8iM7vjmCrrjc909hbp8VfgIpRbWHbWGGgZLfIoV4p/KJSxInkOnk281pRMOxYUSSMqQM18ZFV759kbjvTg+gtpBQwiVhvpfeTYMAzyH4xorT4F6G2bn+80W/LZ8KM7L9241ibIQtKQ8mI9+24djbeLw3trp60DGFX/x6bRcZFPnUzaLwDyZMvjliYEr6vW2nwZixgg/PwPQVMLFV2DPIUuNrtnnZ67B2SChQxw9jSojjOSASTerXZZw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
+ by CY8PR11MB7338.namprd11.prod.outlook.com (2603:10b6:930:9e::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.16; Fri, 22 Nov
+ 2024 21:48:45 +0000
+Received: from PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
+ ([fe80::6b05:74cf:a304:ecd8%5]) with mapi id 15.20.8158.019; Fri, 22 Nov 2024
+ 21:48:45 +0000
+Date: Fri, 22 Nov 2024 13:48:42 -0800
+From: Dan Williams <dan.j.williams@intel.com>
+To: Kent Overstreet <kent.overstreet@linux.dev>, Michal Hocko
+	<mhocko@suse.com>
+CC: Dave Chinner <david@fromorbit.com>, Andrew Morton
+	<akpm@linux-foundation.org>, Christoph Hellwig <hch@lst.de>, Yafang Shao
+	<laoar.shao@gmail.com>, <jack@suse.cz>, Christian Brauner
+	<brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Paul Moore
+	<paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge E. Hallyn"
+	<serge@hallyn.com>, <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-bcachefs@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <maintainers@linux.kernel.org>
+Subject: Re: [PATCH 1/2 v2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
+Message-ID: <6740fc3aabec0_5eb129497@dwillia2-xfh.jf.intel.com.notmuch>
+References: <Zs6jFb953AR2Raec@dread.disaster.area>
+ <ylycajqc6yx633f4sh5g3mdbco7zrjdc5bg267sox2js6ok4qb@7j7zut5drbyy>
+ <ZtBzstXltxowPOhR@dread.disaster.area>
+ <myb6fw5v2l2byxn4raxlaqozwfdpezdmn3mnacry3y2qxmdxtl@bxbsf4v4qbmg>
+ <ZtUFaq3vD+zo0gfC@dread.disaster.area>
+ <nawltogcoffous3zv4kd2eerrrwhihbulz7pi2qyfjvslp6g3f@j3qkqftra2qm>
+ <ZtV6OwlFRu4ZEuSG@tiehlicka>
+ <v664cj6evwv7zu3b77gf2lx6dv5sp4qp2rm7jjysddi2wc2uzl@qvnj4kmc6xhq>
+ <ZtWH3SkiIEed4NDc@tiehlicka>
+ <citv2v6f33hoidq75xd2spaqxf7nl5wbmmzma4wgmrwpoqidhj@k453tmq7vdrk>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <citv2v6f33hoidq75xd2spaqxf7nl5wbmmzma4wgmrwpoqidhj@k453tmq7vdrk>
+X-ClientProxiedBy: MW4PR04CA0379.namprd04.prod.outlook.com
+ (2603:10b6:303:81::24) To PH8PR11MB8107.namprd11.prod.outlook.com
+ (2603:10b6:510:256::6)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240904104824.1844082-1-ivanov.mikhail1@huawei-partners.com>
- <20240904104824.1844082-2-ivanov.mikhail1@huawei-partners.com> <ea026af8-bc29-709c-7e04-e145d01fd825@huawei-partners.com>
-Message-ID: <Z0DDQKACIRRDRZRE@google.com>
-Subject: Re: [RFC PATCH v3 01/19] landlock: Support socket access-control
-From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
-To: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-Cc: mic@digikod.net, willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com, 
-	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
-	netfilter-devel@vger.kernel.org, yusongping@huawei.com, 
-	artem.kuzin@huawei.com, konstantin.meskhidze@huawei.com
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|CY8PR11MB7338:EE_
+X-MS-Office365-Filtering-Correlation-Id: c75f5b1c-d487-4e85-8d11-08dd0b3f7070
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|7416014|366016;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?T3XSSS3xDkBXfsUjvwMzQ6kjJMY9PyGzSdUTDDCK76w7m2ZZ023lLkON6sus?=
+ =?us-ascii?Q?lxYv2YKy6CLl45g4z10vNqKYvoDwv2GHpGWd1X6JeObgtZqDr/NMb8S9ibg3?=
+ =?us-ascii?Q?BKydLb0JeykB1xcsUD2XNJqNbncTkXImyjIG1Fnwvzp/kFLszAQ4o3WkuI85?=
+ =?us-ascii?Q?1OC/gV0UzjSANm3RbwOmaSAZ4jrDIZI02mnVaaC3FS/jVyMjMFmCfLJgQO1B?=
+ =?us-ascii?Q?MQ/ve+k87bwnvXdEjn2d8BwKGw5UW04nu8Y8HWsQQMfBNZFxK0O0zYtHDzO/?=
+ =?us-ascii?Q?v6vp5tBta8+nZWaO2PhL4WNLA+bbQpx96iVmcUEIcXhE9/6tItcWs7WxRqhB?=
+ =?us-ascii?Q?aAnvnguDOydb3oH1pQP3MIFndEG4LWAOhUulozhCMF8x1cdntec12WBbBwSv?=
+ =?us-ascii?Q?Pt4L9rGwyr1lU8jb+UjUWeJUD7r3lbvJt4jT2T3qcBfsa0hffP5mkDmUaZMz?=
+ =?us-ascii?Q?CU/vqoDUNnvU3fAJ9iwQPrzHUd/RNXmM7IcUehAgcuKe1wO673OJC8bmDZjV?=
+ =?us-ascii?Q?drxKSG5JDTFqQ4qjQCUnSs5UjbizpMa2C4bEB5vMMT9PyT1NAwjmorS8kqL/?=
+ =?us-ascii?Q?clgcF0m09xQyEA9OpWVzqvGTfUhGbqn0NaunZL+ddDttfriZkQEEGNO0hAe9?=
+ =?us-ascii?Q?AaKpVHS1Qd84disGCkouUJ2xTBQ760kq7B8eygxpVBtLAt0IR+DYXucb3QQW?=
+ =?us-ascii?Q?bCiHr0Wt+K9oVp3WaViQ69T7AJy2FLjqNKXJMFJ068RCpz/ITMCbQMNbJhsH?=
+ =?us-ascii?Q?fSu/kSKXc88xHg5I0XaZ9QWGmSTEDSXjcYVseZUqTC0j6Z/iFv4jvJ6iJpnT?=
+ =?us-ascii?Q?rrnNy3rMm0PE8TKWIf+xOAzD8KkoD8yHyYzPRu6J2BW7n7YG3bzB7Ao5NO7X?=
+ =?us-ascii?Q?QsnJ0DqI5Tw6xvHcqX13TcYepRek4DCJZPklzWx0KXrMzyumNsR8oakgpXZt?=
+ =?us-ascii?Q?79OuiFuVjmuQUpTV7LR/V0ugtqom4ldAaGSY/qxXq+F5LW1Jv0f3okyvseAA?=
+ =?us-ascii?Q?5zQcAmN+ybPJNUjv35KahlbAJGZSWBcUCfTawH1+d2m/IghohmFIr+xsmVW8?=
+ =?us-ascii?Q?xKNCWNw55Sc/xGOf0O+y9RQr4QgTDnmxvtO4FxddnIN3NiPNdd2L1BGDu6fw?=
+ =?us-ascii?Q?lxfXIORYWEjYOga+P2B/qNlCoB9walGcYoH52IWRs4rsKjOVKhJGNCl0Z4kP?=
+ =?us-ascii?Q?Ze24sMhVl9smsGKw80E5yhuZLgglLBTY6Yx79e0bG9nMamJdUkqb8VrWDpFz?=
+ =?us-ascii?Q?cv7I5LTzTD8uC5iogAB7J5pVeazyxTBZlKYCRCHSvg=3D=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?b5rTVaqSs9aj1IwR2iXLCBcBtdepN4eZzOi67e8WHss2JPgadCZXRVsmKi5z?=
+ =?us-ascii?Q?GiSwdnZgby64EwSEJCyNp/WNgkcpX/6eC9uqt3lXvyrxQuwA4/dADdvFKV6x?=
+ =?us-ascii?Q?WDpGyzRX8BBtVOc8CM9tnJOpjHCHzhrfQaoVISmz4ctlbjFlZJOYP3e8uWgQ?=
+ =?us-ascii?Q?9axHsn+T9BHykavxYMI4cknT15x5lRkyhmUPSzP+kCl5mRcw5guJO6wG6/XB?=
+ =?us-ascii?Q?Cn4DnufX8oHf5020OiTMFi0Wg0P5cWv1FKDWrHbCRMFIy54DCsi5hG838LOq?=
+ =?us-ascii?Q?5Wj5zgHbPR2xkgJYLH5B49wBcfw8JCBBCeystKJJLNC6cFPqtnVkELaXKYmx?=
+ =?us-ascii?Q?RjSvbhzkIQvjmBGUv/MHkzqRvUpErKnTaZVwmFwOEoEMjBmF9yW7AQzpQ4fh?=
+ =?us-ascii?Q?rdORwaxEqND2NQKRq9/W3Z2WjMvnFbgfqco9wcKQ1w5Jobz+T+WhK5GeaEqQ?=
+ =?us-ascii?Q?sxZihx0wk+RxzJAR88MALUBJEdKj1ubrqCP9tjerp8BzZ97VVuOzD0g/Ca9z?=
+ =?us-ascii?Q?1voSN+BIWpGj3Zi5CsGAxLqpxSztPrKPn0Xog26hVOe5Vml2Xns11YK8VKQK?=
+ =?us-ascii?Q?eTLEpr0yrD3s7YrU+mbHXqNaZMyt8Zz5q+p8m9KiLOZGYcezgLvupaLBptgD?=
+ =?us-ascii?Q?ju4c6orFuzr3z3bRFSULJEqs1i2Lglm3hhXMPz/6BajFj1rXXh9oZNrn2ZqN?=
+ =?us-ascii?Q?B/YWXNAeawTMDJffCLAoNMlLGlabo054BpeJCldbMbYgm4VqEhaTnDqPGrrs?=
+ =?us-ascii?Q?aK1VzsQfaRc5YPLPRSry56/Oz1+3vplbIW5VOseyjWd2q+uSAcoApecklAJ3?=
+ =?us-ascii?Q?G8zpajkfwW5GaP3LDu86/H3TLk/h+o5B8/edStUwiXFm2hZ6Zw3S4kntx9py?=
+ =?us-ascii?Q?aI8eC4cR6Zn9H2UvQNbhljG8XyfDmXcDQJcUkJpfqK1DL9Q5UsNZa4+JRp9D?=
+ =?us-ascii?Q?ZcUu07jqSXLQObWYtjaUglW2aWAFzASlSyMFRftSKk2iTSWgyyflhsRf+XCM?=
+ =?us-ascii?Q?jfX3eBGMPikJc2nxHLkrthX2piGjbLM8sx0vK+YFxt7wLs0+t1ODzjJLV0yJ?=
+ =?us-ascii?Q?WyQMAnd9KW23rJ1MKIVBN5Crq7Nda5OHquNTPuqvMpiVdov0T5Ot2idVpBP2?=
+ =?us-ascii?Q?C49qe+zWsuw196/jzE8vo2EwslEWCgb6AgnuxTKaL2oTOE17GIUgBPYSlYS3?=
+ =?us-ascii?Q?a51hRH+crtq2BqMvG8BczNR+lsojYPggA0bDJttB+ykHHCUtR55rmHGx3Iwu?=
+ =?us-ascii?Q?H6KSTHVvqlYEKe5wttBi4NuIOEkuNY4HQzMMpea7bLmBXIfTlhD3ywAD54YV?=
+ =?us-ascii?Q?17YlaUdkdAFKtwemqDoYk6IlAsXxYAqCNpK8Dx3LCvLew7lqocwWP98Fi6xo?=
+ =?us-ascii?Q?PInLidujo4VH1Zp725dJOdWN1qzSjGyv+gbqDjuoO50Xv94MjSM0l1Z30nC6?=
+ =?us-ascii?Q?W4Pz0yDZvlBfRqcWVHBOsk+ufcYsXmIGmdGi2WCCJwKEuS9ZZvceLLVlZdZp?=
+ =?us-ascii?Q?n6DfAYADwKhLwyS5tPBVNv+BhdvMViCPTjerSgm6lzR/fzEpw6jNpKDXeWZW?=
+ =?us-ascii?Q?DOVRvr7tb0SHmo8bfai6MoooancIyfY54Ju6XY2IfakFWSftRpznJ/XByYx2?=
+ =?us-ascii?Q?gA=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: c75f5b1c-d487-4e85-8d11-08dd0b3f7070
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Nov 2024 21:48:45.6628
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: LOYSeA7x8huse/oEPGYk5zvcR61Nn8V3AEm28/Bt0xIusQhg5TjyNiQeYChi0Lc2xl9FntQPfU4IzVBoPS6SaXbpJTQBcs8RYSF44vWjVKo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7338
+X-OriginatorOrg: intel.com
 
-Hello Mikhail,
+Kent Overstreet wrote:
+> On Mon, Sep 02, 2024 at 11:39:41AM GMT, Michal Hocko wrote:
+> > On Mon 02-09-24 04:52:49, Kent Overstreet wrote:
+> > > On Mon, Sep 02, 2024 at 10:41:31AM GMT, Michal Hocko wrote:
+> > > > On Sun 01-09-24 21:35:30, Kent Overstreet wrote:
+[..]
 
-sorry for the delayed response;
-I am very happy to see activity on this patch set! :)
+Kent,
 
-On Mon, Nov 11, 2024 at 07:29:49PM +0300, Mikhail Ivanov wrote:
-> On 9/4/2024 1:48 PM, Mikhail Ivanov wrote:
-> > Landlock implements the `LANDLOCK_RULE_NET_PORT` rule type, which provi=
-des
-> > fine-grained control of actions for a specific protocol. Any action or
-> > protocol that is not supported by this rule can not be controlled. As a
-> > result, protocols for which fine-grained control is not supported can b=
-e
-> > used in a sandboxed system and lead to vulnerabilities or unexpected
-> > behavior.
-> >=20
-> > Controlling the protocols used will allow to use only those that are
-> > necessary for the system and/or which have fine-grained Landlock contro=
-l
-> > through others types of rules (e.g. TCP bind/connect control with
-> > `LANDLOCK_RULE_NET_PORT`, UNIX bind control with
-> > `LANDLOCK_RULE_PATH_BENEATH`). Consider following examples:
-> >=20
-> > * Server may want to use only TCP sockets for which there is fine-grain=
-ed
-> >    control of bind(2) and connect(2) actions [1].
-> > * System that does not need a network or that may want to disable netwo=
-rk
-> >    for security reasons (e.g. [2]) can achieve this by restricting the =
-use
-> >    of all possible protocols.
-> >=20
-> > This patch implements such control by restricting socket creation in a
-> > sandboxed process.
-> >=20
-> > Add `LANDLOCK_RULE_SOCKET` rule type that restricts actions on sockets.
-> > This rule uses values of address family and socket type (Cf. socket(2))
-> > to determine sockets that should be restricted. This is represented in =
-a
-> > landlock_socket_attr struct:
-> >=20
-> >    struct landlock_socket_attr {
-> >      __u64 allowed_access;
-> >      int family; /* same as domain in socket(2) */
-> >      int type; /* see socket(2) */
-> >    };
->=20
-> Hello! I'd like to consider another approach to define this structure
-> before sending the next version of this patchset.
->=20
-> Currently, it has following possible issues:
->=20
-> First of all, there is a lack of protocol granularity. It's impossible
-> to (for example) deny creation of ICMP and SCTP sockets and allow TCP
-> and UDP. Since the values of address family and socket type do not
-> completely define the protocol for the restriction, we may gain
-> incomplete control of the network actions. AFAICS, this is limited to
-> only a couple of IP protocol cases (e.g. it's impossible to deny SCTP
-> and SMC sockets to only allow TCP, deny ICMP and allow UDP).
->=20
-> But one of the main advantages of socket access rights is the ability to
-> allow only those protocols for which there is a fine-grained control
-> over their actions (TCP bind/connect). It can be inconvenient
-> (and unsafe) for SCTP to be unrestricted, while sandboxed process only
-> needs TCP sockets.
+The Code of Conduct Committee received reports about your conduct in
+this email discussion.
 
-That is a good observation which I had missed.
+Link to email where the violation took place:
 
-I agree with your analysis, I also see the main use case of socket()
-restrictions in:
+https://lore.kernel.org/citv2v6f33hoidq75xd2spaqxf7nl5wbmmzma4wgmrwpoqidhj@k453tmq7vdrk
 
- (a) restricting socket creating altogether
- (b) only permitting socket types for which there is fine grained control
+Our community works on trust and respect and has agreed to abide by the
+Code of Conduct:
 
-and I also agree that it would be very surprising when the same socket type=
-s
-that provide fine grained control would also open the door for unrestricted
-access to SMC, SCTP or other protocols.  We should instead strive for a
-socket() access control with which these additional protocols weren't
-accessible.
+Reference: https://docs.kernel.org/process/code-of-conduct.html
 
+The code of Conduct Committee has determined that your written abuse
+of another community member required action on your part to repair the
+damage to the individual and the community. You took insufficient action
+to restore the community's faith in having otherwise productive technical
+discussions without the fear of personal attacks.
 
-> Adding protocol (Cf. socket(2)) field was considered a bit during the
-> initial discussion:
-> https://lore.kernel.org/all/CABi2SkVWU=3DWxb2y3fP702twyHBD3kVoySPGSz2X22V=
-ckvcHeXw@mail.gmail.com/
+Following the Code of Conduct Interpretation process the TAB has approved
+has approved the following recommendation:
 
-So adding "protocol" to the rule attributes would suffice to restrict the u=
-se of
-SMC and SCTP then?  (Sorry, I lost context on these protocols a bit in the
-meantime, I was so far under the impression that these were using different
-values for family and type than TCP and UDP do.)
+-- Restrict Kent Overstreet's participation in the kernel development
+   process during the Linux 6.13 kernel development cycle.
 
-
-> Secondly, I'm not really sure if socket type granularity is required
-> for most of the protocols. It may be more convenient for the end user
-> to be able to completely restrict the address family without specifying
-> whether restriction is dedicated to stream or dgram sockets (e.g. for
-> BLUETOOTH, VSOCK sockets). However, this is not a big issue for the
-> current design, since address family can be restricted by specifying
-> type =3D SOCK_TYPE_MASK.
-
-Whether the user is adding one rule to permit AF_INET+*, or whether the use=
-r is
-adding two rules to permit (1) AF_INET+SOCK_STREAM and (2) AF_INET+SOCK_DGR=
-AM,
-that does not seem like a big deal to me as long as the list of such
-combinations is so low?
-
-
-> I suggest implementing something close to selinux socket classes for the
-> struct landlock_socket_attr (Cf. socket_type_to_security_class()). This
-> will provide protocol granularity and may be simpler and more convenient
-> in the terms of determining access rights. WDYT?
-
-I see that this is a longer switch statement that maps to this enum, it wou=
-ld be
-an additional data table that would have to be documented separately for us=
-ers.
-
-Do you have an example for how such a "security class enum" would map to th=
-e
-combinations of family, type and socket for the protocols discussed above?
-
-If this is just a matter of actually mapping (family, type, protocol)
-combinations in a more flexible way, could we get away by allowing a specia=
-l
-"wildcard" value for the "protocol" field, when it is used within a ruleset=
-?
-Then the LSM would have to look up whether there is a rule for (family, typ=
-e,
-protocol) and the only change would be that it now needs to also check whet=
-her
-there is a rule for (family, type, *)?
-
-=E2=80=94G=C3=BCnther
+       - Scope: Decline all pull requests from Kent Overstreet during
+         the Linux 6.13 kernel development cycle.
