@@ -1,263 +1,143 @@
-Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0FC5182C5;
-	Sat, 23 Nov 2024 17:02:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 303A4150997
+	for <linux-security-module@vger.kernel.org>; Sat, 23 Nov 2024 19:11:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732381380; cv=none; b=GjwiPsb1GZ+VbcsIAkUfY5tiWUeM7rRPwkJa1tO6Iu5VoFffcs6bUByRxYSSHpNWUZqvhztKAYwF2RIQwNnDokXh/+aB4gK2n+scAA2Nx2ECmO7QIyy2rSsAlOKlZpI5LVOj3W3EVjmp5ElozSIabr64YZR+MCbAs4QTHFTmp6o=
+	t=1732389100; cv=none; b=rglnIzLUfoNkruaP6qMEA1fKKMy318ntKN4XSh7/Mz3WKhlPeRo85PvGj+q8P728Q2qh880UeY5bkL3ku8pt+nWRqRf4aV7TC43Z1A14EkQp4PYNvonKBTikTvsUDRLH5iZIUrNGknjUC6AnCqdimjauW2ORduTMYQ/K1BOYPU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732381380; c=relaxed/simple;
-	bh=qYV6ojSzaiLvDcHiuvU53HQJ0j3I4z89aMoHzcBSAFg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=erQI+aDmjXgn+9xfVl4DU093nNVywbtzRH2hwV1QHvUuAmkDkG78gcBlAqLzt/1eLgHyjCz0fjOepqL+WMkPUimkQOwEJfx2SQWH6aj6FZ8IT2pZz0hj81CwqXZZCKuEjhG1iI8vtlMAm0tJR3rJu3UTU5bz5HldSEZhHZ3l4xQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 4ANH1ekl027103;
-	Sat, 23 Nov 2024 11:01:40 -0600
-Received: (from greg@localhost)
-	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 4ANH1bR9027102;
-	Sat, 23 Nov 2024 11:01:37 -0600
-Date: Sat, 23 Nov 2024 11:01:37 -0600
-From: "Dr. Greg" <greg@enjellic.com>
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Song Liu <songliubraving@meta.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "jack@suse.cz" <jack@suse.cz>,
-        "brauner@kernel.org" <brauner@kernel.org>, Song Liu <song@kernel.org>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>,
-        Kernel Team <kernel-team@meta.com>,
-        "andrii@kernel.org" <andrii@kernel.org>,
-        "eddyz87@gmail.com" <eddyz87@gmail.com>,
-        "ast@kernel.org" <ast@kernel.org>,
-        "daniel@iogearbox.net" <daniel@iogearbox.net>,
-        "martin.lau@linux.dev" <martin.lau@linux.dev>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "kpsingh@kernel.org" <kpsingh@kernel.org>,
-        "mattbobrowski@google.com" <mattbobrowski@google.com>,
-        "amir73il@gmail.com" <amir73il@gmail.com>,
-        "repnop@google.com" <repnop@google.com>,
-        "jlayton@kernel.org" <jlayton@kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        "mic@digikod.net" <mic@digikod.net>,
-        "gnoack@google.com" <gnoack@google.com>
-Subject: Re: [PATCH bpf-next 0/4] Make inode storage available to tracing prog
-Message-ID: <20241123170137.GA26831@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <53a3601e-0999-4603-b69f-7bed39d4d89a@schaufler-ca.com> <4BF6D271-51D5-4768-A460-0853ABC5602D@fb.com> <b1e82da8daa1c372e4678b1984ac942c98db998d.camel@HansenPartnership.com> <A7017094-1A0C-42C8-BE9D-7352D2200ECC@fb.com> <20241119122706.GA19220@wind.enjellic.com> <561687f7-b7f3-4d56-a54c-944c52ed18b7@schaufler-ca.com> <20241120165425.GA1723@wind.enjellic.com> <28FEFAE6-ABEE-454C-AF59-8491FAB08E77@fb.com> <20241121160259.GA9933@wind.enjellic.com> <d0b61238-735b-478c-9e18-c94e4dde4d88@schaufler-ca.com>
+	s=arc-20240116; t=1732389100; c=relaxed/simple;
+	bh=Q3Bv+YAcYdx4Kbghoas2EOnIJDKc082hRcftApY277U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ILopitc2KqnBnL44WVT/oDeDC+g6xPO3QR9pX2Cp8qyG6vi/dVemmLP51QJ141HrHAnsGP5oqMTU7G0iTfO4rcwVfwqkeG9Yar7TuUm0BzG3k5QW1EyomOCqxvq/dFVypnVxwG0qv5UhUEW8a0Sspi6b9exu8/rTE2HH7v3I290=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=L3AxKC6s; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="L3AxKC6s"
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6eb0c2dda3cso40886397b3.1
+        for <linux-security-module@vger.kernel.org>; Sat, 23 Nov 2024 11:11:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1732389098; x=1732993898; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Qh9HuRP2TUeXMIAhRQU5UITcyp5cug1fkWSRB28P/dk=;
+        b=L3AxKC6szWtKL+zVW1sTZ5HaKDCFETPhuCaMiCV+Wvp2fllG/rcCUU/N1XTGXe53Mn
+         7mgW4tZMsL4FKauX5tLC80jXXGv/bTTHhJ/PqBZ01DvqmNyw8ns+fmu41CPNU60QCaQC
+         aZCLTNlK4AvYinhclachnr5lnTRjzOYbgmUAU52lV7CX23qsGENbD/BHQXYdTNEimESO
+         sY3XnyKxNmcWxJIyAbvWhm2roIC9oHxV2o8hqNaNAfxBN4SGHo4PsqdZv9EDI087ZVcP
+         JhanUxBlWsIY8UpcxNv/fuAVJUfMB2rqEdCFbCOT3mu8d8oewBycRqK3nkzcJDrFitVs
+         vL3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732389098; x=1732993898;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Qh9HuRP2TUeXMIAhRQU5UITcyp5cug1fkWSRB28P/dk=;
+        b=GnqD+f6nTEDlsgf48/RiT4b9CdnNBsxjBJj2bPN/K82IdW07r2+LnBuMpKL+MDtfq5
+         ZeatMbuEaj2W4iZxjSBByF9FSkpU0I1XKcw7f1Y7C/r1AnyqR5WV+FLvgeBfuOJ12vDj
+         sMFdVHHWEX8ySH6I+xTe8qx+uYD9DgplnZfThoOylqLafJysvpECB5DuAljWNOYS/7tW
+         uCzH5gVJYM4mVoTOuCwHAQI5KqovmbSB6pyg9FPlJHTj5sXcS1Du8tiSJNwMu8dT04JU
+         578a4+NJSZa/6fC6GpcLXpfPKqKG0cHEHPoEBPqVv9Erep7spIq+btFtMvqlhBT6zuuR
+         IinA==
+X-Forwarded-Encrypted: i=1; AJvYcCWsBb8gJYcEkLU4qxl3u7Xuv8EzpjysWpnTCYvcZyoc715ZIsQPYw0eeGaYgFyEhGXS0ajSLlEHbT4dCzZkr85YE+6sRbE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYMNRpyL893qMKxWs+DWtypQPt7Zo3pAv6IxitDg9V7VcOUtge
+	wViXPARMKezVvMzTIG/2pHbB8UNPed7uCoYyPZhcaYQcYoBDB7ljD+JKq5WxUwhmi6fw33cRbhg
+	LBgRFKrUudnfcS9M3vjuAq9L8g6RpVBbNj2zi
+X-Gm-Gg: ASbGncuccnyxxJGn7uoXctxfTSY1ILBnTLtWgvEaCvPujq+blprYDLt1BWyWTM6X3Zz
+	mKNb5qqfmrOEjdQTFyKMp8BQ5cgJqfw==
+X-Google-Smtp-Source: AGHT+IFRQw2HWda+FH6Hq/asaKKE9KhYk6qQP2bkHz6lvGB9Yq/rCe0VCi2xcCZCO80m1bTU/ozhGnDwUyu/IGj9xE4=
+X-Received: by 2002:a05:690c:768f:b0:6ee:af06:fdf0 with SMTP id
+ 00721157ae682-6eee09e82camr66104827b3.23.1732389098163; Sat, 23 Nov 2024
+ 11:11:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d0b61238-735b-478c-9e18-c94e4dde4d88@schaufler-ca.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Sat, 23 Nov 2024 11:01:40 -0600 (CST)
+MIME-Version: 1.0
+References: <20241112082600.298035-1-song@kernel.org> <d3e82f51-d381-4aaf-a6aa-917d5ec08150@schaufler-ca.com>
+ <ACCC67D1-E206-4D9B-98F7-B24A2A44A532@fb.com> <d7d23675-88e6-4f63-b04d-c732165133ba@schaufler-ca.com>
+ <332BDB30-BCDC-4F24-BB8C-DD29D5003426@fb.com> <8c86c2b4-cd23-42e0-9eb6-2c8f7a4cbcd4@schaufler-ca.com>
+ <CAPhsuW5zDzUp7eSut9vekzH7WZHpk38fKHmFVRTMiBbeW10_SQ@mail.gmail.com>
+ <20241114163641.GA8697@wind.enjellic.com> <53a3601e-0999-4603-b69f-7bed39d4d89a@schaufler-ca.com>
+ <4BF6D271-51D5-4768-A460-0853ABC5602D@fb.com> <b1e82da8daa1c372e4678b1984ac942c98db998d.camel@HansenPartnership.com>
+In-Reply-To: <b1e82da8daa1c372e4678b1984ac942c98db998d.camel@HansenPartnership.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Sat, 23 Nov 2024 14:11:27 -0500
+Message-ID: <CAHC9VhT4-aVbx_4EV3jAj27CUT=Lk0eb_fTRzFjHU8OO=ske8g@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 0/4] Make inode storage available to tracing prog
+To: James Bottomley <James.Bottomley@hansenpartnership.com>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Song Liu <songliubraving@meta.com>
+Cc: "Dr. Greg" <greg@enjellic.com>, Song Liu <song@kernel.org>, 
+	"bpf@vger.kernel.org" <bpf@vger.kernel.org>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
+	"andrii@kernel.org" <andrii@kernel.org>, "eddyz87@gmail.com" <eddyz87@gmail.com>, "ast@kernel.org" <ast@kernel.org>, 
+	"daniel@iogearbox.net" <daniel@iogearbox.net>, "martin.lau@linux.dev" <martin.lau@linux.dev>, 
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "brauner@kernel.org" <brauner@kernel.org>, 
+	"jack@suse.cz" <jack@suse.cz>, "kpsingh@kernel.org" <kpsingh@kernel.org>, 
+	"mattbobrowski@google.com" <mattbobrowski@google.com>, "amir73il@gmail.com" <amir73il@gmail.com>, 
+	"repnop@google.com" <repnop@google.com>, "jlayton@kernel.org" <jlayton@kernel.org>, 
+	Josef Bacik <josef@toxicpanda.com>, "mic@digikod.net" <mic@digikod.net>, 
+	"gnoack@google.com" <gnoack@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 21, 2024 at 10:11:16AM -0800, Casey Schaufler wrote:
+On Thu, Nov 14, 2024 at 4:49=E2=80=AFPM James Bottomley
+<James.Bottomley@hansenpartnership.com> wrote:
+>
+> Got to say I'm with Casey here, this will generate horrible and failure
+> prone code.
+>
+> Since effectively you're making i_security always present anyway,
+> simply do that and also pull the allocation code out of security.c in a
+> way that it's always available?  That way you don't have to special
+> case the code depending on whether CONFIG_SECURITY is defined.
+> Effectively this would give everyone a generic way to attach some
+> memory area to an inode.  I know it's more complex than this because
+> there are LSM hooks that run from security_inode_alloc() but if you can
+> make it work generically, I'm sure everyone will benefit.
 
-Good morning, I hope the weekend is going well for everyone.
+My apologies on such a delayed response to this thread, I've had very
+limited network access for a bit due to travel and the usual merge
+window related distractions (and some others that were completely
+unrelated) have left me with quite the mail backlog to sift through.
 
-> On 11/21/2024 8:02 AM, Dr. Greg wrote:
-> > On Thu, Nov 21, 2024 at 08:28:05AM +0000, Song Liu wrote:
-> >
-> >> Hi Dr. Greg,
-> >>
-> >> Thanks for your input!
-> > Good morning, I hope everyone's day is going well.
-> >
-> >>> On Nov 20, 2024, at 8:54???AM, Dr. Greg <greg@enjellic.com> wrote:
-> >>>
-> >>> On Tue, Nov 19, 2024 at 10:14:29AM -0800, Casey Schaufler wrote:
-> >> [...]
-> >>
-> >>>>> 2.) Implement key/value mapping for inode specific storage.
-> >>>>>
-> >>>>> The key would be a sub-system specific numeric value that returns a
-> >>>>> pointer the sub-system uses to manage its inode specific memory for a
-> >>>>> particular inode.
-> >>>>>
-> >>>>> A participating sub-system in turn uses its identifier to register an
-> >>>>> inode specific pointer for its sub-system.
-> >>>>>
-> >>>>> This strategy loses O(1) lookup complexity but reduces total memory
-> >>>>> consumption and only imposes memory costs for inodes when a sub-system
-> >>>>> desires to use inode specific storage.
+Enough with the excuses ...
 
-> >>>> SELinux and Smack use an inode blob for every inode. The performance
-> >>>> regression boggles the mind. Not to mention the additional
-> >>>> complexity of managing the memory.
+Quickly skimming this thread and the v3 patchset, I would advise you
+that there may be issues around using BPF LSMs and storing inode LSM
+state outside the LSM managed inode storage blob.  Beyond the
+conceptual objections that Casey has already mentioned, there have
+been issues relating to the disjoint inode and inode->i_security
+lifetimes.  While I believe we have an okay-ish solution in place now
+for LSMs, I can't promise everything will work fine for BPF LSMs that
+manage their inode LSM state outside of the LSM managed inode blob.
+I'm sure you've already looked at it, but if you haven't it might be
+worth looking at security_inode_free() to see some of the details.  In
+a perfect world inode->i_security would be better synchronized with
+the inode lifetime, but that would involve changes that the VFS folks
+dislike.
 
-> >>> I guess we would have to measure the performance impacts to understand
-> >>> their level of mind boggliness.
-> >>>
-> >>> My first thought is that we hear a huge amount of fanfare about BPF
-> >>> being a game changer for tracing and network monitoring.  Given
-> >>> current networking speeds, if its ability to manage storage needed for
-> >>> it purposes are truely abysmal the industry wouldn't be finding the
-> >>> technology useful.
-> >>>
-> >>> Beyond that.
-> >>>
-> >>> As I noted above, the LSM could be an independent subscriber.  The
-> >>> pointer to register would come from the the kmem_cache allocator as it
-> >>> does now, so that cost is idempotent with the current implementation.
-> >>> The pointer registration would also be a single instance cost.
-> >>>
-> >>> So the primary cost differential over the common arena model will be
-> >>> the complexity costs associated with lookups in a red/black tree, if
-> >>> we used the old IMA integrity cache as an example implementation.
-> >>>
-> >>> As I noted above, these per inode local storage structures are complex
-> >>> in of themselves, including lists and locks.  If touching an inode
-> >>> involves locking and walking lists and the like it would seem that
-> >>> those performance impacts would quickly swamp an r/b lookup cost.
+However, while I will recommend against it, I'm not going to object to
+you storing BPF LSM inode state elsewhere, that is up to you and KP
+(he would need to ACK that as the BPF LSM maintainer).  I just want
+you to know that if things break, there isn't much we (the LSM folks)
+will be able to do to help other than suggest you go back to using the
+LSM managed inode storage.
 
-> >> bpf local storage is designed to be an arena like solution that
-> >> works for multiple bpf maps (and we don't know how many of maps we
-> >> need ahead of time). Therefore, we may end up doing what you
-> >> suggested earlier: every LSM should use bpf inode storage. ;) I am
-> >> only 90% kidding.
+As far as some of the other ideas in this thread are concerned, at
+this point in time I don't think we want to do any massive rework or
+consolidation around i_security.  That's a critical field for the LSM
+framework and many individual LSMs and there is work underway which
+relies on this as a LSM specific inode storage blob; having to share
+i_security with non-LSM users or moving the management of i_security
+outside of the LSM is not something I'm overly excited about right
+now.
 
-> > I will let you thrash that out with the LSM folks, we have enough on
-> > our hands just with TSEM.... :-)
-> >
-> > I think the most important issue in all of this is to get solid
-> > performance measurements and let those speak to how we move forward.
-> >
-> > As LSM authors ourself, we don't see an off-putting reason to not have
-> > a common arena storage architecture that builds on what the LSM is
-> > doing.  If sub-systems with sparse usage would agree that they need to
-> > restrict themselves to a single pointer slot in the arena, it would
-> > seem that memory consumption, in this day and age, would be tolerable.
-> >
-> > See below for another idea.
-
-> >>>>> Approach 2 requires the introduction of generic infrastructure that
-> >>>>> allows an inode's key/value mappings to be located, presumably based
-> >>>>> on the inode's pointer value.  We could probably just resurrect the
-> >>>>> old IMA iint code for this purpose.
-> >>>>>
-> >>>>> In the end it comes down to a rather standard trade-off in this
-> >>>>> business, memory vs. execution cost.
-> >>>>>
-> >>>>> We would posit that option 2 is the only viable scheme if the design
-> >>>>> metric is overall good for the Linux kernel eco-system.
-
-> >>>> No. Really, no. You need look no further than secmarks to understand
-> >>>> how a key based blob allocation scheme leads to tears. Keys are fine
-> >>>> in the case where use of data is sparse. They have no place when data
-> >>>> use is the norm.
-
-> >>> Then it would seem that we need to get everyone to agree that we can
-> >>> get by with using two pointers in struct inode.  One for uses best
-> >>> served by common arena allocation and one for a key/pointer mapping,
-> >>> and then convert the sub-systems accordingly.
-> >>>
-> >>> Or alternately, getting everyone to agree that allocating a mininum of
-> >>> eight additional bytes for every subscriber to private inode data
-> >>> isn't the end of the world, even if use of the resource is sparse.
-
-> >> Christian suggested we can use an inode_addon structure, which is 
-> >> similar to this idea. It won't work well in all contexts, though. 
-> >> So it is not as good as other bpf local storage (task, sock,
-> >> cgroup). 
-
-> > Here is another thought in all of this.
-> >
-> > I've mentioned the old IMA integrity inode cache a couple of times in
-> > this thread.  The most peacable path forward may be to look at
-> > generalizing that architecture so that a sub-system that wanted inode
-> > local storage could request that an inode local storage cache manager
-> > be implemented for it.
-> >
-> > That infrastructure was based on a red/black tree that used the inode
-> > pointer as a key to locate a pointer to a structure that contained
-> > local information for the inode.  That takes away the need to embed
-> > something in the inode structure proper.
-> >
-> > Since insertion and lookup times have complexity functions that scale
-> > with tree height it would seem to be a good fit for sparse utilization
-> > scenarios.
-> >
-> > An extra optimization that may be possible would be to maintain an
-> > indicator flag tied the filesystem superblock that would provide a
-> > simple binary answer as to whether any local inode cache managers have
-> > been registered for inodes on a filesystem.  That would allow the
-> > lookup to be completely skipped with a simple conditional test.
-> >
-> > If the infrastructure was generalized to request and release cache
-> > managers it would be suitable for systems, implemented as modules,
-> > that have a need for local inode storage.
-
-> Do you think that over the past 20 years no one has thought of this?
-> We're working to make the LSM infrastructure cleaner and more
-> robust.  Adding the burden of memory management to each LSM is a
-> horrible idea.
-
-No, I cannot ascribe to the notion that I, personally, know what
-everyone has thought about in the last 20 years.
-
-I do know, personally, that very talented individuals who are involved
-with large security sensitive operations question the trajectory of
-the LSM.  That, however, is a debate for another venue.
-
-For the lore record and everyone reading along at home, you
-misinterpreted or did not read closely my e-mail.
-
-We were not proposing adding memory management to each LSM, we were
-suggesting to Song Liu that generalizing, what was the old IMA inode
-integrity infrastructure, may be a path forward for sub-systems that
-need inode local storage, particularly systems that have sparse
-occupancy requirements.
-
-Everyone has their britches in a knicker about performance.
-
-Note that we called out a possible optimization for this architecture
-so that there would be no need to even hit the r/b tree if a
-filesystem had no sub-systems that had requested sparse inode local
-storage for that filesystem.
-
-> > It also offers the ability for implementation independence, which is
-> > always a good thing in the Linux community.
-
-> Generality for the sake of generality is seriously overrated.
-> File systems have to be done so as to fit into the VFS infrastructure,
-> network protocols have to work with sockets without impacting the
-> performance of others and so forth.
-
-We were not advocating generality for the sake of generality, we were
-suggesting a generalized architecture, that does not require expansion
-of struct inode, because Christian has publically indicated there is
-no appetite by the VFS maintainers for consuming additional space in
-struct inode for infrastructure requiring local inode storage.
-
-You talk about cooperation, yet you object to any consideration that
-the LSM should participate in a shared arena environment where
-sub-systems wanting local inode storage could just request a block in
-a common arena.  The LSM, in this case, is just like a filesystem
-since it is a consumer of infrastructure supplied by the VFS and
-should thus cooperate with other consumers of VFS infrastructure.
-
-If people go back and read our last paragraph you replied to we were
-not speaking to the advantages of generality, we were speaking to the
-advantage of independent implementations that did unnecessarily cross
-sub-system lines.  Casual observation of Linux development, and this
-thread, would suggest the importance of that.
-
-I need to get a bunch of firewood under cover so I will leave things
-at that.
-
-Have a good weekend.
-
-As always,
-Dr. Greg
-
-The Quixote Project - Flailing at the Travails of Cybersecurity
-              https://github.com/Quixote-Project
+--=20
+paul-moore.com
