@@ -1,125 +1,87 @@
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F80A59;
-	Sat, 23 Nov 2024 00:08:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D3D281AC8
+	for <linux-security-module@vger.kernel.org>; Sat, 23 Nov 2024 10:02:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732320518; cv=none; b=kEedu4AximaJzVqa6KtkEKrmHoPHR9iK7kkjeeY48PZQGH3fLLB4BMkmKJqkwqcqQu/2ng3uIFkBXFCVg9yPnhdmO1+JhinFLmML9QQ8nwEeGDypfyWzdVrj3MQUUYOd48j+AKmUHCjCX0kPLW84CVHWXJ9zHWo4ohZzqq1T57g=
+	t=1732356145; cv=none; b=NCpyB09POcy8HZxeXvWE8b3HcGmfJ0YnZkS2ucbQWI0pTt1o6Odj6Et6AovkxU8ijo7behIRiKRX92sZH1wNZdpEC/Ka45NYAxtRKiSbR+ETzsdPjWgw8dAxbtk416HP+V8C4o41PMCsLu7m+2KM/moEEO0VVDMU3IpELg9/Z7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732320518; c=relaxed/simple;
-	bh=OivMuzy8RmEkygfwmOEeRITzjbJ3pOEAQUDbzLRND4A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gg+b5uZGBFiHBaTX+ccCFWZCrbYkhBs25oVL754xHG6/aHsXC0fO/j0hhVENPZxWqnD5m1m+2uDIsyPrgv92eCp4spRXg+iiZ0v6P9GvHAtneEpvPlXa1fNn1uySwPBf0UKZ3bFlej16clrko8ekVB8V9UI9DOqTBExthBkHo7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gEOSEUiB; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gEOSEUiB"
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-382325b0508so1777602f8f.3;
-        Fri, 22 Nov 2024 16:08:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732320515; x=1732925315; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OivMuzy8RmEkygfwmOEeRITzjbJ3pOEAQUDbzLRND4A=;
-        b=gEOSEUiBXbvC61nCDiG8aSMD1cYuCzsisT3U7DznNg0yo9/pmbAGPPJ0Q6+Z4x83mG
-         fU0XAoM4f5hDl3PGNCwZ37W5Pr/XlDdopl8f2Mrhe4BU71sb/hEjjF54rfjZVr3OBiUG
-         lkZMom+lDFCIyft/0tcNRYLnBtykSszHNHTgJBuAi5ShQL1jjhky9jpybo9arjlRqNWy
-         r0pQZKce7mtNKbTlHGynFNKIf1IwHg7+cA7JiXSWLnyS9n0Sfe10w7Vf6vh/kn+S75fR
-         YeCu4HUbHtK9u86a9FwhN8ATcPlX2VatXQ2k7kbrhGvPc7wD5vXw4WcEKKJZ7xGCC4OU
-         tTXg==
+	s=arc-20240116; t=1732356145; c=relaxed/simple;
+	bh=eIKYcVCQQjJFBkH1lJcvxgr2iA+FCk76ApgQpF0yQlw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=XGZzUHJsxYWJOCo03nr4Tv3J06JGXpz2gTOm6P4zsx6DAgkMiOeJy4zUgOxeQkd2VRo3nIlD9qv11kVCLlpBnIjx3pmA1YZ7z2VyWJi7s5Q5CjxDsIvdfaRGnDJKwE2JdfcE8ZcaTYyz8vEiFhS/gSWpqtUCl6F2hB2YlwQNWxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-83abf68e7f0so287627439f.2
+        for <linux-security-module@vger.kernel.org>; Sat, 23 Nov 2024 02:02:24 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732320515; x=1732925315;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OivMuzy8RmEkygfwmOEeRITzjbJ3pOEAQUDbzLRND4A=;
-        b=KpB6VLs0pOisjBKVwlrcCB2U7saEKbuV9XnJqTt/680SeJyTSMhP0uvvScI+Rbjriy
-         i7dS5K9nA2YokOjdBi2Rz8PdKPWqEdLsoLlCiG8P1zD3LQjgmoNEMKwRegl+21xWexwM
-         r9PcrXrZT+pRJPX7EGtkcf2Paq3eDE0iqyNAn/HFUBcNlSO3hI0K59pjZbCJ5dyq4bmP
-         GJQj0EtxbN33Xe/pehrZzsHbYD2frJ0OKtGOMN5vkirJYUOfjtmpbHAM5fV9obtENen4
-         coXUkUazFPzcrNgTgE7wuBX/pcJuHv12evvFivsMeMuCbgG911bPN15w+o3J76CipRxj
-         WtZA==
-X-Forwarded-Encrypted: i=1; AJvYcCU070cHVUKiy4BMfQKFGUGAf9B4ms1GhOJkXmmcOli301tqE2sl3F5KVcTlFe5ANElbm83XVljX5n7rE1S2xZjLrCw6lj8Q@vger.kernel.org, AJvYcCVDaA6b8+qcjuxvdRd9F81bzmDz4yclN0OL33NaEXObfoRBld5CN0p+32jKZYf5TgFMJ6+OX2PN70S+5UQ6@vger.kernel.org, AJvYcCVsQIWTsnDHHF2DyY6HAQ81uUe7g5yUKBbEVbgndaGl2e2KG5KQW7wLoAWZNw912hrpBsK3D+hQyUFAWTPB6Q==@vger.kernel.org, AJvYcCXupxYHc0cERQKjuhvR5p8KvZHn3gmfLbCFtuTXrb8LupwzmHkzPXeiAoBgiiTm9sh80sg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTSJJ/L5520IKwA23kBTNg5gXeZHxniRxdItAuLQWcO+pTKkuX
-	wfuCi816xrfUD4j0cMeRIPO6mr/BZDWAV2z7Za36aS/MBaT74DAD3xn56gz+cjuzOWFggYHLfMW
-	6kXFzprAbCYFadeOppGowMxO1bTo=
-X-Gm-Gg: ASbGnct8T2r+o16pulLi0Y897le/PzqLh461RYLb9FJjPe8VtHL3QSg9lUuOXhbDX0E
-	c4X4alpuy15ImOkbB8e3WSyZjpfT48g==
-X-Google-Smtp-Source: AGHT+IHZ4AAsVux9lUn0M+uDFGgBgO1vJ+SRqNv0DY5oxafFBj4LEno3SqwFlKuShIrT1Ho7aCIILMqtA6hgCcTt4iE=
-X-Received: by 2002:a5d:5889:0:b0:382:4e6a:bfd6 with SMTP id
- ffacd0b85a97d-38260b46e71mr3947803f8f.10.1732320515104; Fri, 22 Nov 2024
- 16:08:35 -0800 (PST)
+        d=1e100.net; s=20230601; t=1732356143; x=1732960943;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=se6nHRVLma2x6ELMn9VIGQomPTv3OczUsSGNoxBdl3s=;
+        b=P5FRycYTQJuv+jznLrkKcgbOlzvZAzsrV5tvwFkHWdN9dk3ZHUY8eoDFKug3XUjtGv
+         wA2r9YXnCgM4+uVJsiY+DS0w88OtnDDgBhBfst3WSSw3joQaNYe8xRvuUN594w0EYDHS
+         utTuFqE+jYezqF6wqGAEtGzaaplbP5MvUEwkgNw8WfnYRJnqNwwzQZukaooQuoluphly
+         /q0hfd0PqdhZE+sPKNNyNbvJewXzc4OQmnhQbzuLxm41u1wQvoDgnT4J8G0tK/ZACYFC
+         ZrEVND7TayWzDq2C7QiKubIbQJpf+/tuBq0WpO6+OrC49peD0fFC6C3DDb94/2NpLAsE
+         vEsA==
+X-Forwarded-Encrypted: i=1; AJvYcCXe8/pGUcAVdZ8v/PwTeN3EpveXjMGT8p6JiotX/hmci9nYqTFTKe33NM6vhvBWGc41uZbiHfQLprp8NaYbjn9qdpA4dLc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkYzPR428ZCTWmqsol2T+xoN5YUoO6IGBLMH9yYH42C7b+ozLR
+	LVlduMfaTPEobppnor0nvBvjjREUWgRfvugt8vxa5KSDMSX/douWeTbl1PRkq5oIwBcduutjR5Z
+	UTdXBAUXRKFuvAq+L+tfYjLjGPOWnbmsB0nH562QWc2PinmKkOhxVas0=
+X-Google-Smtp-Source: AGHT+IEFZw7X4VqDou46tA28UccIR9yRsRnvS4wmHsZzCcqCTVT2/cdmvQKE/N6OdTIpVcedJAC3mB3B3UpAXE1iPILHsb6Aa/Af
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241112082600.298035-1-song@kernel.org> <20241112082600.298035-3-song@kernel.org>
- <20241113-sensation-morgen-852f49484fd8@brauner> <86C65B85-8167-4D04-BFF5-40FD4F3407A4@fb.com>
- <20241115111914.qhrwe4mek6quthko@quack3> <20241121-unfertig-hypothek-a665360efcf0@brauner>
-In-Reply-To: <20241121-unfertig-hypothek-a665360efcf0@brauner>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Fri, 22 Nov 2024 16:08:24 -0800
-Message-ID: <CAADnVQLvN7uF7NBapCWYtsfCHr3rDm-jRnN=9F=_xSjf4SAuLg@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 2/4] bpf: Make bpf inode storage available to
- tracing program
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Song Liu <songliubraving@meta.com>, Song Liu <song@kernel.org>, 
-	"bpf@vger.kernel.org" <bpf@vger.kernel.org>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
-	"andrii@kernel.org" <andrii@kernel.org>, "eddyz87@gmail.com" <eddyz87@gmail.com>, "ast@kernel.org" <ast@kernel.org>, 
-	"daniel@iogearbox.net" <daniel@iogearbox.net>, "martin.lau@linux.dev" <martin.lau@linux.dev>, 
-	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "kpsingh@kernel.org" <kpsingh@kernel.org>, 
-	"mattbobrowski@google.com" <mattbobrowski@google.com>, "amir73il@gmail.com" <amir73il@gmail.com>, 
-	"repnop@google.com" <repnop@google.com>, "jlayton@kernel.org" <jlayton@kernel.org>, 
-	Josef Bacik <josef@toxicpanda.com>, "mic@digikod.net" <mic@digikod.net>, 
-	"gnoack@google.com" <gnoack@google.com>
+X-Received: by 2002:a05:6e02:1885:b0:3a7:8720:9de5 with SMTP id
+ e9e14a558f8ab-3a79acfb902mr90618525ab.1.1732356143548; Sat, 23 Nov 2024
+ 02:02:23 -0800 (PST)
+Date: Sat, 23 Nov 2024 02:02:23 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6741a82f.050a0220.1cc393.0004.GAE@google.com>
+Subject: [syzbot] Monthly lsm report (Nov 2024)
+From: syzbot <syzbot+list403996b4777f311516dc@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 21, 2024 at 1:15=E2=80=AFAM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> > I'm personally not *so* hung up about a pointer in struct inode but I c=
-an
-> > see why Christian is and I agree adding a pointer there isn't a win for
-> > everybody.
->
-> Maybe I'm annoying here but I feel that I have to be. Because it's
-> trivial to grow structs it's rather cumbersome work to get them to
-> shrink. I just looked at struct task_struct again and it has four bpf
-> related structures/pointers in there. Ok, struct task_struct is
-> everyone's favorite struct to bloat so whatever.
->
-> For the VFS the structures we maintain longterm that need to be so
-> generic as to be usable by so many different filesystems have a tendency
-> to grow over time.
->
-> With some we are very strict, i.e., nobody would dare to grow struct
-> dentry and that's mostly because we have people that really care about
-> this and have an eye on that and ofc also because it's costly.
->
-> But for some structures we simply have no one caring about them that
-> much. So what happens is that with the ever growing list of features we
-> bloat them over time. There need to be some reasonable boundaries on
-> what we accept or not and the criteria I have been using is how
-> generically useful to filesystems or our infrastructre this is (roughly)
-> and this is rather very special-case so I'm weary of wasting 8 bytes in
-> struct inode that we fought rather hard to get back: Jeff's timespec
-> conversion and my i_state conversion.
->
-> I'm not saying it's out of the question but I want to exhaust all other
-> options and I'm not yet sure we have.
+Hello lsm maintainers/developers,
 
-+1 to all of the above.
+This is a 31-day syzbot report for the lsm subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/lsm
 
-I hope we don't end up as strict as sk_buff though.
+During the period, 2 new issues were detected and 0 were fixed.
+In total, 8 issues are still open and 28 have already been fixed.
 
-I think Song can proceed without this patch.
-Worst case bpf hash map with key=3D=3Dinode will do.
+Some of the still happening issues:
+
+Ref Crashes Repro Title
+<1> 409     No    INFO: task hung in process_measurement (2)
+                  https://syzkaller.appspot.com/bug?extid=1de5a37cb85a2d536330
+<2> 56      Yes   WARNING in current_check_refer_path
+                  https://syzkaller.appspot.com/bug?extid=34b68f850391452207df
+<3> 29      Yes   KMSAN: uninit-value in ima_add_template_entry (2)
+                  https://syzkaller.appspot.com/bug?extid=91ae49e1c1a2634d20c0
+<4> 7       Yes   WARNING in get_mode_access
+                  https://syzkaller.appspot.com/bug?extid=360866a59e3c80510a62
+<5> 2       Yes   INFO: task hung in ima_file_free (4)
+                  https://syzkaller.appspot.com/bug?extid=8036326eebe7d0140944
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
