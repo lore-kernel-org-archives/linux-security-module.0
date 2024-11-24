@@ -1,143 +1,312 @@
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 303A4150997
-	for <linux-security-module@vger.kernel.org>; Sat, 23 Nov 2024 19:11:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09C1D1FDA;
+	Sun, 24 Nov 2024 05:07:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732389100; cv=none; b=rglnIzLUfoNkruaP6qMEA1fKKMy318ntKN4XSh7/Mz3WKhlPeRo85PvGj+q8P728Q2qh880UeY5bkL3ku8pt+nWRqRf4aV7TC43Z1A14EkQp4PYNvonKBTikTvsUDRLH5iZIUrNGknjUC6AnCqdimjauW2ORduTMYQ/K1BOYPU8=
+	t=1732424835; cv=none; b=WaYr9JIAh0dUS8loXznD8Mokwsc+q6RvsmagWjBxTvXwp6h4x/v9oSCjz39CzSprS/1utlWLZrneOhX2nl3I0urzLeCO2lgo5PoTySLPKEFS1jgq8Rc+cJ060S9dxoglT51XsDIulnTLya6gXb2gdJubOP1cXndbtM51wgoDbV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732389100; c=relaxed/simple;
-	bh=Q3Bv+YAcYdx4Kbghoas2EOnIJDKc082hRcftApY277U=;
+	s=arc-20240116; t=1732424835; c=relaxed/simple;
+	bh=A5JBufp3BqZcVJebv3vOi2L6YFd1Xn8pnl7u0aBWWRY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ILopitc2KqnBnL44WVT/oDeDC+g6xPO3QR9pX2Cp8qyG6vi/dVemmLP51QJ141HrHAnsGP5oqMTU7G0iTfO4rcwVfwqkeG9Yar7TuUm0BzG3k5QW1EyomOCqxvq/dFVypnVxwG0qv5UhUEW8a0Sspi6b9exu8/rTE2HH7v3I290=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=L3AxKC6s; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	 To:Cc:Content-Type; b=oTeC9V6r/UEVlgphI8KjReOq4MVHK7hcdJjl6VhQH8XgKYihEQx+lRhlLAZFA3T/ml+0yWa9o3V0nzmgyTvNl+tV3ujp97QbuB/PCJNEotyeUE9KnIP1fiTl6G47MF5ozoXvxxTm/Vzyk0pae6DiXJAyugpkzYmHNwFMgH8V0hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CGUlvasj; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="L3AxKC6s"
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6eb0c2dda3cso40886397b3.1
-        for <linux-security-module@vger.kernel.org>; Sat, 23 Nov 2024 11:11:38 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CGUlvasj"
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a9ec267b879so524260866b.2;
+        Sat, 23 Nov 2024 21:07:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1732389098; x=1732993898; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1732424832; x=1733029632; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Qh9HuRP2TUeXMIAhRQU5UITcyp5cug1fkWSRB28P/dk=;
-        b=L3AxKC6szWtKL+zVW1sTZ5HaKDCFETPhuCaMiCV+Wvp2fllG/rcCUU/N1XTGXe53Mn
-         7mgW4tZMsL4FKauX5tLC80jXXGv/bTTHhJ/PqBZ01DvqmNyw8ns+fmu41CPNU60QCaQC
-         aZCLTNlK4AvYinhclachnr5lnTRjzOYbgmUAU52lV7CX23qsGENbD/BHQXYdTNEimESO
-         sY3XnyKxNmcWxJIyAbvWhm2roIC9oHxV2o8hqNaNAfxBN4SGHo4PsqdZv9EDI087ZVcP
-         JhanUxBlWsIY8UpcxNv/fuAVJUfMB2rqEdCFbCOT3mu8d8oewBycRqK3nkzcJDrFitVs
-         vL3w==
+        bh=wcWLt9BzM+D5P0pawjkoXFMqoRI4kKmtgFNF6FAIvWI=;
+        b=CGUlvasjtI19Hitg1UETxwh7aOOCtrkwgnNbQvJqCnkAaGJDiJR9aZ2F9z7qDuy/j3
+         NuHodz/3mlxQo8SrBauAnXekUrdeW8E4fcjSaYCn9G/nnYD2NyOgF/cDZ5u3Fam5g0rl
+         H3BUtnvf8eQUXNGpQoqhcHO6CT49hiHfwDHdGBZaRGct4yttADuYCHMpBjt+z7yp1fl6
+         RLuG9T2Y8AfpKgY8Eo0xtoqIUkVcPRNelNyruyPOdKzuaFZHFWmLGuZ+jzLMilNKDdJ+
+         mL19j1AMBJ2aX+MYNcUr35Amr7TUUzR8+wLkUcMKs2beX2pF/cPVqw8tJlKHadMiXxrj
+         hfUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732389098; x=1732993898;
+        d=1e100.net; s=20230601; t=1732424832; x=1733029632;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Qh9HuRP2TUeXMIAhRQU5UITcyp5cug1fkWSRB28P/dk=;
-        b=GnqD+f6nTEDlsgf48/RiT4b9CdnNBsxjBJj2bPN/K82IdW07r2+LnBuMpKL+MDtfq5
-         ZeatMbuEaj2W4iZxjSBByF9FSkpU0I1XKcw7f1Y7C/r1AnyqR5WV+FLvgeBfuOJ12vDj
-         sMFdVHHWEX8ySH6I+xTe8qx+uYD9DgplnZfThoOylqLafJysvpECB5DuAljWNOYS/7tW
-         uCzH5gVJYM4mVoTOuCwHAQI5KqovmbSB6pyg9FPlJHTj5sXcS1Du8tiSJNwMu8dT04JU
-         578a4+NJSZa/6fC6GpcLXpfPKqKG0cHEHPoEBPqVv9Erep7spIq+btFtMvqlhBT6zuuR
-         IinA==
-X-Forwarded-Encrypted: i=1; AJvYcCWsBb8gJYcEkLU4qxl3u7Xuv8EzpjysWpnTCYvcZyoc715ZIsQPYw0eeGaYgFyEhGXS0ajSLlEHbT4dCzZkr85YE+6sRbE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYMNRpyL893qMKxWs+DWtypQPt7Zo3pAv6IxitDg9V7VcOUtge
-	wViXPARMKezVvMzTIG/2pHbB8UNPed7uCoYyPZhcaYQcYoBDB7ljD+JKq5WxUwhmi6fw33cRbhg
-	LBgRFKrUudnfcS9M3vjuAq9L8g6RpVBbNj2zi
-X-Gm-Gg: ASbGncuccnyxxJGn7uoXctxfTSY1ILBnTLtWgvEaCvPujq+blprYDLt1BWyWTM6X3Zz
-	mKNb5qqfmrOEjdQTFyKMp8BQ5cgJqfw==
-X-Google-Smtp-Source: AGHT+IFRQw2HWda+FH6Hq/asaKKE9KhYk6qQP2bkHz6lvGB9Yq/rCe0VCi2xcCZCO80m1bTU/ozhGnDwUyu/IGj9xE4=
-X-Received: by 2002:a05:690c:768f:b0:6ee:af06:fdf0 with SMTP id
- 00721157ae682-6eee09e82camr66104827b3.23.1732389098163; Sat, 23 Nov 2024
- 11:11:38 -0800 (PST)
+        bh=wcWLt9BzM+D5P0pawjkoXFMqoRI4kKmtgFNF6FAIvWI=;
+        b=EWtW40ghG9ClekWBLYWlev01lX1KK55K9KWrlF0sKEvmDlgJeeh46ji9Ovh1fuYV3P
+         Tq8rxF/bQ7ZtBVWYnVh1LbL/cJqn9xnQqTUO1DEbMihLfVNp73SIhYaEBxnwTTqKeBvK
+         4YxjR1fetrXCwAtWAEJNkRkrGZ+j3g08KvDewAD007buXLCyWvjKXZoOkeHoOc1KT9F4
+         QPINumeUc6EvaDttB64LLobvJT8SnsSHSmV78hfWMgjZU9GikHrP9dElOWwqR48m5BrG
+         WwmZwXr6Ku6Y5RyGfDJlUDvCsbakRO4QghiMMN97JxYSVMhKLGbWkUv1h5nPeFRSmCSw
+         7bWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVegm/DxK9UhJhm6UAizrPlLWBBChAaTnEdavSl2ZLe81y0LRjke7XPsp9x4s39zmvuLViv2ULRV7nelJqQ4zoCenzy69xt@vger.kernel.org, AJvYcCWUDnx8c9xexUcVTiS+ruoRMgkuBhYuJ5EWltjXj7mfo5dm+4rvH+kYOFZReAKAWOeOnKhjJ3xQiPmKXP/q@vger.kernel.org, AJvYcCX82Uz0jfmZkXdzRPsURsDMCwtVSi5wsv2YaS7myirOPeejdZwJxNDxrRUpzazF0Tg27O2Yx4Y2TbvlCDFX@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxyb5M5yAba8RuhiJ4aIjIbVfGG2S9KFc230M1M/9g1q87CzlRQ
+	bZMLzNQRxVx7Dl9F2ZnAee7lAMFcqOFerMt2J0InV9BJCYRJ3ox9TrfDvXdzNbeeFotuzCyBBFa
+	qtyb3eUPV/g5Ua77NQAAMQsE2Gt/rV8q/OPg=
+X-Gm-Gg: ASbGnctAN/6exvZG43DcdPdWaJAaXvWLO1OQR/7FvwQfo9mRe8BNjhROThOQEf0fIMW
+	yJV0Z6wQ3owM18triZdhLC8UnmuYmNWU=
+X-Google-Smtp-Source: AGHT+IG2XZClBYhOqCC8Y9IQVvaihZ4ptkp7C6cgp9yuK+MvG/190TPd/69ziujBe5Esc+YpzA2pQbpRJXvduVYW3KM=
+X-Received: by 2002:a17:906:3293:b0:a9a:14fc:9868 with SMTP id
+ a640c23a62f3a-aa50995de26mr794376866b.4.1732424832006; Sat, 23 Nov 2024
+ 21:07:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241112082600.298035-1-song@kernel.org> <d3e82f51-d381-4aaf-a6aa-917d5ec08150@schaufler-ca.com>
- <ACCC67D1-E206-4D9B-98F7-B24A2A44A532@fb.com> <d7d23675-88e6-4f63-b04d-c732165133ba@schaufler-ca.com>
- <332BDB30-BCDC-4F24-BB8C-DD29D5003426@fb.com> <8c86c2b4-cd23-42e0-9eb6-2c8f7a4cbcd4@schaufler-ca.com>
- <CAPhsuW5zDzUp7eSut9vekzH7WZHpk38fKHmFVRTMiBbeW10_SQ@mail.gmail.com>
- <20241114163641.GA8697@wind.enjellic.com> <53a3601e-0999-4603-b69f-7bed39d4d89a@schaufler-ca.com>
- <4BF6D271-51D5-4768-A460-0853ABC5602D@fb.com> <b1e82da8daa1c372e4678b1984ac942c98db998d.camel@HansenPartnership.com>
-In-Reply-To: <b1e82da8daa1c372e4678b1984ac942c98db998d.camel@HansenPartnership.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Sat, 23 Nov 2024 14:11:27 -0500
-Message-ID: <CAHC9VhT4-aVbx_4EV3jAj27CUT=Lk0eb_fTRzFjHU8OO=ske8g@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 0/4] Make inode storage available to tracing prog
-To: James Bottomley <James.Bottomley@hansenpartnership.com>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Song Liu <songliubraving@meta.com>
-Cc: "Dr. Greg" <greg@enjellic.com>, Song Liu <song@kernel.org>, 
-	"bpf@vger.kernel.org" <bpf@vger.kernel.org>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
-	"andrii@kernel.org" <andrii@kernel.org>, "eddyz87@gmail.com" <eddyz87@gmail.com>, "ast@kernel.org" <ast@kernel.org>, 
-	"daniel@iogearbox.net" <daniel@iogearbox.net>, "martin.lau@linux.dev" <martin.lau@linux.dev>, 
-	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "brauner@kernel.org" <brauner@kernel.org>, 
-	"jack@suse.cz" <jack@suse.cz>, "kpsingh@kernel.org" <kpsingh@kernel.org>, 
-	"mattbobrowski@google.com" <mattbobrowski@google.com>, "amir73il@gmail.com" <amir73il@gmail.com>, 
-	"repnop@google.com" <repnop@google.com>, "jlayton@kernel.org" <jlayton@kernel.org>, 
-	Josef Bacik <josef@toxicpanda.com>, "mic@digikod.net" <mic@digikod.net>, 
-	"gnoack@google.com" <gnoack@google.com>
+References: <20241122225958.1775625-1-song@kernel.org> <20241122225958.1775625-3-song@kernel.org>
+In-Reply-To: <20241122225958.1775625-3-song@kernel.org>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Sun, 24 Nov 2024 06:07:00 +0100
+Message-ID: <CAOQ4uxhfd8ryQ6ua5u60yN5sh06fyiieS3XgfR9jvkAOeDSZUg@mail.gmail.com>
+Subject: Re: [PATCH v3 fanotify 2/2] samples/fanotify: Add a sample fanotify fiter
+To: Song Liu <song@kernel.org>
+Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, 
+	daniel@iogearbox.net, martin.lau@linux.dev, viro@zeniv.linux.org.uk, 
+	brauner@kernel.org, jack@suse.cz, kpsingh@kernel.org, 
+	mattbobrowski@google.com, repnop@google.com, jlayton@kernel.org, 
+	josef@toxicpanda.com, mic@digikod.net, gnoack@google.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 14, 2024 at 4:49=E2=80=AFPM James Bottomley
-<James.Bottomley@hansenpartnership.com> wrote:
+On Sat, Nov 23, 2024 at 12:00=E2=80=AFAM Song Liu <song@kernel.org> wrote:
 >
-> Got to say I'm with Casey here, this will generate horrible and failure
-> prone code.
+> This sample can run in two different mode: filter mode and block mode.
+> In filter mode, the filter only sends events in a subtree to user space.
+> To use it:
 >
-> Since effectively you're making i_security always present anyway,
-> simply do that and also pull the allocation code out of security.c in a
-> way that it's always available?  That way you don't have to special
-> case the code depending on whether CONFIG_SECURITY is defined.
-> Effectively this would give everyone a generic way to attach some
-> memory area to an inode.  I know it's more complex than this because
-> there are LSM hooks that run from security_inode_alloc() but if you can
-> make it work generically, I'm sure everyone will benefit.
+> [root] insmod ./filter-mod.ko
+> [root] mkdir -p /tmp/a/b/c/d
+> [root] ./filter-user /tmp/ /tmp/a/b &
+> Running in filter mode
+> [root] touch /tmp/xx      # Doesn't generate event
+> [root]# touch /tmp/a/xxa  # Doesn't generate event
+> [root]# touch /tmp/a/b/xxab      # Generates an event
+> Accessing file xxab   # this is the output from filter-user
+> [root@]# touch /tmp/a/b/c/xxabc  # Generates an event
+> Accessing file xxabc  # this is the output from filter-user
+>
+> In block mode, the filter will block accesses to file in a subtree. To
+> use it:
+>
+> [root] insmod ./filter-mod.ko
+> [root] mkdir -p /tmp/a/b/c/d
+> [root] ./filter-user /tmp/ /tmp/a/b block &
+> Running in block mode
+> [root]# dd if=3D/dev/zero of=3D/tmp/a/b/xx    # this will fail
+> dd: failed to open '/tmp/a/b/xx': Operation not permitted
+>
+> Signed-off-by: Song Liu <song@kernel.org>
+> ---
+>  MAINTAINERS                    |   1 +
+>  samples/Kconfig                |  20 ++++-
+>  samples/Makefile               |   2 +-
+>  samples/fanotify/.gitignore    |   1 +
+>  samples/fanotify/Makefile      |   5 +-
+>  samples/fanotify/filter-mod.c  | 105 ++++++++++++++++++++++++++
+>  samples/fanotify/filter-user.c | 131 +++++++++++++++++++++++++++++++++
+>  samples/fanotify/filter.h      |  19 +++++
+>  8 files changed, 281 insertions(+), 3 deletions(-)
+>  create mode 100644 samples/fanotify/filter-mod.c
+>  create mode 100644 samples/fanotify/filter-user.c
+>  create mode 100644 samples/fanotify/filter.h
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 7ad507f49324..8939a48b2d99 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -8658,6 +8658,7 @@ S:        Maintained
+>  F:     fs/notify/fanotify/
+>  F:     include/linux/fanotify.h
+>  F:     include/uapi/linux/fanotify.h
+> +F:     samples/fanotify/
+>
+>  FARADAY FOTG210 USB2 DUAL-ROLE CONTROLLER
+>  M:     Linus Walleij <linus.walleij@linaro.org>
+> diff --git a/samples/Kconfig b/samples/Kconfig
+> index b288d9991d27..9cc0a5cdf604 100644
+> --- a/samples/Kconfig
+> +++ b/samples/Kconfig
+> @@ -149,15 +149,33 @@ config SAMPLE_CONNECTOR
+>           with it.
+>           See also Documentation/driver-api/connector.rst
+>
+> +config SAMPLE_FANOTIFY
+> +       bool "Build fanotify monitoring sample"
+> +       depends on FANOTIFY && CC_CAN_LINK && HEADERS_INSTALL
+> +       help
+> +         When enabled, this builds samples for fanotify.
+> +         There multiple samples for fanotify. Please see the
+> +         following configs for more details of these
+> +         samples.
+> +
+>  config SAMPLE_FANOTIFY_ERROR
+>         bool "Build fanotify error monitoring sample"
+> -       depends on FANOTIFY && CC_CAN_LINK && HEADERS_INSTALL
+> +       depends on SAMPLE_FANOTIFY
+>         help
+>           When enabled, this builds an example code that uses the
+>           FAN_FS_ERROR fanotify mechanism to monitor filesystem
+>           errors.
+>           See also Documentation/admin-guide/filesystem-monitoring.rst.
+>
+> +config SAMPLE_FANOTIFY_FILTER
+> +       tristate "Build fanotify filter sample"
+> +       depends on SAMPLE_FANOTIFY && m
+> +       help
+> +         When enabled, this builds kernel module that contains a
+> +         fanotify filter handler.
+> +         The filter handler filters out certain filename
+> +         prefixes for the fanotify user.
+> +
+>  config SAMPLE_HIDRAW
+>         bool "hidraw sample"
+>         depends on CC_CAN_LINK && HEADERS_INSTALL
+> diff --git a/samples/Makefile b/samples/Makefile
+> index b85fa64390c5..108360972626 100644
+> --- a/samples/Makefile
+> +++ b/samples/Makefile
+> @@ -6,7 +6,7 @@ subdir-$(CONFIG_SAMPLE_ANDROID_BINDERFS) +=3D binderfs
+>  subdir-$(CONFIG_SAMPLE_CGROUP) +=3D cgroup
+>  obj-$(CONFIG_SAMPLE_CONFIGFS)          +=3D configfs/
+>  obj-$(CONFIG_SAMPLE_CONNECTOR)         +=3D connector/
+> -obj-$(CONFIG_SAMPLE_FANOTIFY_ERROR)    +=3D fanotify/
+> +obj-$(CONFIG_SAMPLE_FANOTIFY)          +=3D fanotify/
+>  subdir-$(CONFIG_SAMPLE_HIDRAW)         +=3D hidraw
+>  obj-$(CONFIG_SAMPLE_HW_BREAKPOINT)     +=3D hw_breakpoint/
+>  obj-$(CONFIG_SAMPLE_KDB)               +=3D kdb/
+> diff --git a/samples/fanotify/.gitignore b/samples/fanotify/.gitignore
+> index d74593e8b2de..df75eb5b8f95 100644
+> --- a/samples/fanotify/.gitignore
+> +++ b/samples/fanotify/.gitignore
+> @@ -1 +1,2 @@
+>  fs-monitor
+> +filter-user
+> diff --git a/samples/fanotify/Makefile b/samples/fanotify/Makefile
+> index e20db1bdde3b..c33e9460772e 100644
+> --- a/samples/fanotify/Makefile
+> +++ b/samples/fanotify/Makefile
+> @@ -1,5 +1,8 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
+> -userprogs-always-y +=3D fs-monitor
+> +userprogs-always-$(CONFIG_SAMPLE_FANOTIFY_ERROR) +=3D fs-monitor
+>
+>  userccflags +=3D -I usr/include -Wall
+>
+> +obj-$(CONFIG_SAMPLE_FANOTIFY_FILTER) +=3D filter-mod.o
+> +
+> +userprogs-always-$(CONFIG_SAMPLE_FANOTIFY_FILTER) +=3D filter-user
+> diff --git a/samples/fanotify/filter-mod.c b/samples/fanotify/filter-mod.=
+c
+> new file mode 100644
+> index 000000000000..eafe55b1840a
+> --- /dev/null
+> +++ b/samples/fanotify/filter-mod.c
+> @@ -0,0 +1,105 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/* Copyright (c) 2024 Meta Platforms, Inc. and affiliates. */
+> +
+> +#include <linux/fsnotify.h>
+> +#include <linux/fanotify.h>
+> +#include <linux/module.h>
+> +#include <linux/path.h>
+> +#include <linux/file.h>
+> +#include "filter.h"
+> +
+> +struct fan_filter_sample_data {
+> +       struct path subtree_path;
+> +       enum fan_filter_sample_mode mode;
+> +};
+> +
+> +static int sample_filter(struct fsnotify_group *group,
+> +                        struct fanotify_filter_hook *filter_hook,
+> +                        struct fanotify_filter_event *filter_event)
+> +{
+> +       struct fan_filter_sample_data *data;
+> +       struct dentry *dentry;
+> +
+> +       dentry =3D fsnotify_data_dentry(filter_event->data, filter_event-=
+>data_type);
+> +       if (!dentry)
+> +               return FAN_FILTER_RET_SEND_TO_USERSPACE;
+> +
+> +       data =3D filter_hook->data;
+> +
+> +       if (is_subdir(dentry, data->subtree_path.dentry)) {
+> +               if (data->mode =3D=3D FAN_FILTER_SAMPLE_MODE_BLOCK)
+> +                       return -EPERM;
+> +               return FAN_FILTER_RET_SEND_TO_USERSPACE;
+> +       }
+> +       return FAN_FILTER_RET_SKIP_EVENT;
+> +}
+> +
+> +static int sample_filter_init(struct fsnotify_group *group,
+> +                             struct fanotify_filter_hook *filter_hook,
+> +                             void *argp)
+> +{
+> +       struct fan_filter_sample_args *args;
+> +       struct fan_filter_sample_data *data;
+> +       struct file *file;
+> +       int fd;
+> +
+> +       args =3D (struct fan_filter_sample_args *)argp;
+> +       fd =3D args->subtree_fd;
+> +
+> +       file =3D fget(fd);
+> +       if (!file)
+> +               return -EBADF;
+> +       data =3D kzalloc(sizeof(struct fan_filter_sample_data), GFP_KERNE=
+L);
+> +       if (!data) {
+> +               fput(file);
+> +               return -ENOMEM;
+> +       }
+> +       path_get(&file->f_path);
+> +       data->subtree_path =3D file->f_path;
+> +       fput(file);
+> +       data->mode =3D args->mode;
+> +       filter_hook->data =3D data;
+> +       return 0;
+> +}
+> +
+> +static void sample_filter_free(struct fanotify_filter_hook *filter_hook)
+> +{
+> +       struct fan_filter_sample_data *data =3D filter_hook->data;
+> +
+> +       path_put(&data->subtree_path);
+> +       kfree(data);
+> +}
+> +
 
-My apologies on such a delayed response to this thread, I've had very
-limited network access for a bit due to travel and the usual merge
-window related distractions (and some others that were completely
-unrelated) have left me with quite the mail backlog to sift through.
+Hi Song,
 
-Enough with the excuses ...
+This example looks fine but it raises a question.
+This filter will keep the mount of subtree_path busy until the group is clo=
+sed
+or the filter is detached.
+This is probably fine for many services that keep the mount busy anyway.
 
-Quickly skimming this thread and the v3 patchset, I would advise you
-that there may be issues around using BPF LSMs and storing inode LSM
-state outside the LSM managed inode storage blob.  Beyond the
-conceptual objections that Casey has already mentioned, there have
-been issues relating to the disjoint inode and inode->i_security
-lifetimes.  While I believe we have an okay-ish solution in place now
-for LSMs, I can't promise everything will work fine for BPF LSMs that
-manage their inode LSM state outside of the LSM managed inode blob.
-I'm sure you've already looked at it, but if you haven't it might be
-worth looking at security_inode_free() to see some of the details.  In
-a perfect world inode->i_security would be better synchronized with
-the inode lifetime, but that would involve changes that the VFS folks
-dislike.
+But what if this wasn't the intention?
+What if an Anti-malware engine that watches all mounts wanted to use that
+for configuring some ignore/block subtree filters?
 
-However, while I will recommend against it, I'm not going to object to
-you storing BPF LSM inode state elsewhere, that is up to you and KP
-(he would need to ACK that as the BPF LSM maintainer).  I just want
-you to know that if things break, there isn't much we (the LSM folks)
-will be able to do to help other than suggest you go back to using the
-LSM managed inode storage.
+One way would be to use a is_subtree() variant that looks for a
+subtree root inode
+number and then verifies it with a subtree root fid.
+A production subtree filter will need to use a variant of is_subtree()
+anyway that
+looks for a set of subtree root inodes, because doing a loop of is_subtree(=
+) for
+multiple paths is a no go.
 
-As far as some of the other ideas in this thread are concerned, at
-this point in time I don't think we want to do any massive rework or
-consolidation around i_security.  That's a critical field for the LSM
-framework and many individual LSMs and there is work underway which
-relies on this as a LSM specific inode storage blob; having to share
-i_security with non-LSM users or moving the management of i_security
-outside of the LSM is not something I'm overly excited about right
-now.
+Don't need to change anything in the example, unless other people
+think that we do need to set a better example to begin with...
 
---=20
-paul-moore.com
+Thanks,
+Amir.
