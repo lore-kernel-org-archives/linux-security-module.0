@@ -1,43 +1,50 @@
 Received: from server02.seltendoof.de (server02.seltendoof.de [168.119.48.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A9FB192D70;
-	Mon, 25 Nov 2024 10:40:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3740192D7E;
+	Mon, 25 Nov 2024 10:40:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.48.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732531234; cv=none; b=I7h1Hs2DAKJAfbJ2MUd2aqPl6bvM8iXjH3oJ2ry/tX3Lw3AtFP/Auvoq0m+2Fu7NW+oOqmNL2hhRIJMte9tohN0ifjg2ZqRO6V+86uncEW10nkhp2cCrTE6H6o7f7NYVq5Y/qjcAFRUcCV4iw96CF+FhBbFWPf8+WqHZYSSf65I=
+	t=1732531235; cv=none; b=i4W0ljPdcK3h+2flWjqH4Z2WDPJ4s53h/xdMm5bF3NZ+YegialndgN3nMC3FBEsd9OVcHO47Dcj+JSlRmltMwm1OPfo+cnZgGZw8WeOwuEZDqAIulGsq3TR3d/BrH2AalbnBxB8zY06AD76LerRNhhRiGBUu9hx8f7D6fkkG72E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732531234; c=relaxed/simple;
-	bh=/RTyild0b7BT+76FJnjYMZVk+Wy7NGYbYU493r0v9V0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Eoo6EvbHoZTW5hiYhdp3fTNN5oxajpp0CRRUl77T3j23x5+8lqG8mvda5PvndlhDovwFOVrLekethEuQfoe6oT86fqaQBBSqg3/BRRg+I70QdYY6uiGdVvqe6w6trTOEdYTCmUM2TdxLGEZqkjaNG+mhPtQZq8J7Yhwt81D7spA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=jFlHUnSJ; arc=none smtp.client-ip=168.119.48.163
+	s=arc-20240116; t=1732531235; c=relaxed/simple;
+	bh=1o2+SCKbPMlZSfhshov97BHiZ6npLENrivJUl/obBl0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Qoj4a5zs1bFXQZyexigvl1LUhMGqELN1rtey/zVovcns7tsMbMzKnQMX4MHaQfhYwCeTjyTiE9Srmn0hCeO65o2tk2MLA0ERta3t4ivK8Vi08S/He9pqQFtsbgp2s9FLIS+LO6AZNTEFIQibf/Wk+lk4l9lxXCs6lHuiaQqjpAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=nqGJcLfQ; arc=none smtp.client-ip=168.119.48.163
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seltendoof.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="jFlHUnSJ"
+	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="nqGJcLfQ"
 From: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seltendoof.de;
-	s=2023072701; t=1732531222;
+	s=2023072701; t=1732531224;
 	h=from:from:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=17lhHTnnZGmrh/UycwQ7pmOcwP/SDxseygpcnk52sbc=;
-	b=jFlHUnSJvVahXsR69S9gj5XhwOZOsx5mApFRT8497wpNJyGwwA7cfg7pEHClwY3EqMnwJS
-	16s13rukrF0jxcnU4oJZse0adk+QnpoVnIrLGjWT3Z3v1hqD0/rz3cKNL4icom2QnisO+O
-	52mTcwDrpYGSSIO5tMsUSRk249MQUpqXOxopVq4MvMOHI2hNIrgmXrIQ4lMEIPLvaLvo1o
-	eil+6vDCkSBuqJtZei1xOBeQ6SmFf5x8awUZo6AhLqGdzAdbtqT6DNM4/LYTdsN+RzomRg
-	Pa94yEk0S+pz6JHp2rzZRP/L46XO6/mQecqyF7JlaS9Ty2QdWS9rygJkL3FXeA==
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=g0u/9xnJFmCzCIsRXywH2TwoCekIvWc3+cszQ3gofsI=;
+	b=nqGJcLfQpuCPVU4svGCFemBiN+Nqp+1R16Nvd1Z8RvKusipz8MFxJLNdU2uhjFvntoOYSb
+	Xj1L3BtASdJeevaSB18S7Dl4G9iVy2NeKuB5bVvlEQ/00Zw4mWcB4rc9Y8T8msyZ1lYG1X
+	9EFJuwkmLAYq+yC2ipfy3AxGyZxlF/Jc9QDPrMphpZ2z7VT/m3D7jllOSk539ISoY/tFbc
+	kSn7Zr8qrh9mhI/pb9WE7RVtWlm2DpAmQRLqFEX0I9t3ojiACy+XuvtER8YjGVp+0wWSGE
+	NlMPqw/DtS7g8Ao5UdD3jNlwW46B8Yn6PoWxwEILbI/QoEnLV0D9q/lx/AKSKA==
 To: linux-security-module@vger.kernel.org
 Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
-	Jan Kara <jack@suse.com>,
+	"Theodore Ts'o" <tytso@mit.edu>,
+	Andreas Dilger <adilger.kernel@dilger.ca>,
 	Serge Hallyn <serge@hallyn.com>,
 	Julia Lawall <Julia.Lawall@inria.fr>,
 	Nicolas Palix <nicolas.palix@imag.fr>,
 	linux-kernel@vger.kernel.org,
+	linux-ext4@vger.kernel.org,
 	cocci@inria.fr
-Subject: [PATCH 02/11] quota: reorder capability check last
-Date: Mon, 25 Nov 2024 11:39:54 +0100
-Message-ID: <20241125104011.36552-1-cgoettsche@seltendoof.de>
+Subject: [PATCH 03/11] ext4: reorder capability check last
+Date: Mon, 25 Nov 2024 11:39:55 +0100
+Message-ID: <20241125104011.36552-2-cgoettsche@seltendoof.de>
+In-Reply-To: <20241125104011.36552-1-cgoettsche@seltendoof.de>
+References: <20241125104011.36552-1-cgoettsche@seltendoof.de>
 Reply-To: cgzones@googlemail.com
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
@@ -67,26 +74,24 @@ It can lead to three undesired cases:
 
 Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
 ---
- fs/quota/dquot.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ fs/ext4/balloc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
-index 3dd8d6f27725..a2dddffeaac5 100644
---- a/fs/quota/dquot.c
-+++ b/fs/quota/dquot.c
-@@ -1281,9 +1281,9 @@ static int ignore_hardlimit(struct dquot *dquot)
- {
- 	struct mem_dqinfo *info = &sb_dqopt(dquot->dq_sb)->info[dquot->dq_id.type];
+diff --git a/fs/ext4/balloc.c b/fs/ext4/balloc.c
+index 8042ad873808..c48fd36b2d74 100644
+--- a/fs/ext4/balloc.c
++++ b/fs/ext4/balloc.c
+@@ -649,8 +649,8 @@ static int ext4_has_free_clusters(struct ext4_sb_info *sbi,
+ 	/* Hm, nope.  Are (enough) root reserved clusters available? */
+ 	if (uid_eq(sbi->s_resuid, current_fsuid()) ||
+ 	    (!gid_eq(sbi->s_resgid, GLOBAL_ROOT_GID) && in_group_p(sbi->s_resgid)) ||
+-	    capable(CAP_SYS_RESOURCE) ||
+-	    (flags & EXT4_MB_USE_ROOT_BLOCKS)) {
++	    (flags & EXT4_MB_USE_ROOT_BLOCKS) ||
++	    capable(CAP_SYS_RESOURCE)) {
  
--	return capable(CAP_SYS_RESOURCE) &&
--	       (info->dqi_format->qf_fmt_id != QFMT_VFS_OLD ||
--		!(info->dqi_flags & DQF_ROOT_SQUASH));
-+	return (info->dqi_format->qf_fmt_id != QFMT_VFS_OLD ||
-+		!(info->dqi_flags & DQF_ROOT_SQUASH)) &&
-+		capable(CAP_SYS_RESOURCE);
- }
- 
- static int dquot_add_inodes(struct dquot *dquot, qsize_t inodes,
+ 		if (free_clusters >= (nclusters + dirty_clusters +
+ 				      resv_clusters))
 -- 
 2.45.2
 
