@@ -1,57 +1,47 @@
 Received: from server02.seltendoof.de (server02.seltendoof.de [168.119.48.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DABDD193064;
-	Mon, 25 Nov 2024 10:40:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B8B1426C;
+	Mon, 25 Nov 2024 10:40:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.48.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732531235; cv=none; b=b6Dlejcz4+ob6Bd7VijiV4UqjR3JWR81dvN+oTlQ4o4mWtA8Ik5hRYAmX+keFmutjLGUZHytYtwtMkf/zOkerkc0ce1jF6ohmUJ5FQSvuzfyOGg3uONBJCb4NZYi4K/baQpQ8ZCUIaBWCQgqbsAC/hV9rzVcsrXVq0p1Ygi9TP4=
+	t=1732531236; cv=none; b=EWuKFtJbUE2AdFPp8xBuvnkcewWG4rBIiciA+U9oBsqHt95nBo3hhO6W1+7IslQFtjqyFLURr4BNl9FV3/yD4aukBPTb9C9ohAvEieHPN2Rwvwjk5KTZ6duyLoZhH300xFS1kQnVYxba8piciX19lQj9Bd74prmbxMrQlrDykZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732531235; c=relaxed/simple;
-	bh=VhnL2wmSb+pfgIHkp6bvcyX/tRAnbRI3P76lLhLZZrc=;
+	s=arc-20240116; t=1732531236; c=relaxed/simple;
+	bh=RiX1qAPwXOtMydW3Bf48L9hzhNoJhOnr+55MkoLjnyI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JiNoiifgIoHbhXMbwzVc84NbL/ueGpyiXMo0OIroByecsPjdnrm5vd5jcxXe8dyjPvMvVEZ2VbOC88jDu9NgKO1OwmJFlSffhViatZdzg0GPXA0XeGKjP4NPyiUeBL36UoyHLfxV1JTBc2DU3bBJ9pd+li0DJOi6wUkFqa6RfM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=renzaNjY; arc=none smtp.client-ip=168.119.48.163
+	 MIME-Version:Content-Type; b=WEwHpd2b7xsN4Fgak6CTMmG++kOi5KWJ05g4X5RrR6O5StsoQtgUgso74HRldCr2hb/Dsue/GwgkWSyOoB477BQ0X89IDHT6SzYJIUwUcMbiHVN8J0tNcTcvJypfQYIDOCgI4pxlkCNTKIWAB0A8zWKT3XNXg1xPiBS4+S755t4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=Mdb4xOeL; arc=none smtp.client-ip=168.119.48.163
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seltendoof.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="renzaNjY"
+	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="Mdb4xOeL"
 From: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seltendoof.de;
-	s=2023072701; t=1732531230;
+	s=2023072701; t=1732531225;
 	h=from:from:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=BnJPwZBINKy4LES6pr7BNEYT4c7M8sYvf1DiqcmfvZQ=;
-	b=renzaNjYJ9YJyG9gUtmjWqJwQ0VY7TQPB8AIE5W2eHdeqh2KtO/X4RlDCy1my/SVpQmQbZ
-	wjNEjBd+3Nx5SYzGSi/4OwNEhlCfesxm4VNww0jT0OEYCfKsxUBHnyqFZjs4qmm0yXdPXf
-	JQVxhmVSoR7oSv45zcTLYW4BjQnZhX+TQ9oYJfvSmhOwIXh5wbGCNS9yLVPQ//3K2TAHgl
-	Eb4e91BrZZEw09F7m/z/76uD9fpDEgjnOst+2rcsjNChNW2KdjtqLgROIapy8OMfgZI/BW
-	MreOsqodNcQhtkdGSCQM3CtyEM177zZSZrrnzTyeG6viMRNF26psOPQLgVZyPg==
+	bh=uXJbjp9TEMr3wvQ+2vZpGMNVJ7tkSZTdw7fouyXGnz0=;
+	b=Mdb4xOeLmRxHgooUx3JOijX3+LMSlj4GRxvTHEPWd1og60SnG27YZkYD2Ceyjx+7B333QM
+	ZyLgYWtMHFmpAS4jQ0VS7zdfJq9cQ9qMI1VXAh2OJqLOjuiladwhEQxhs5QkMpM4d+88/j
+	YY61kw6/zF9K2N5hNSbT40SYIj6CvC8CdzV+bU9xHoZrZXIDj3azO4Pssrl2ovpBnSmIzD
+	Mv0etwsaWtD04zX2lsGfDFSxo61zYM7APvut1Mn8G6dTOzCPF4BW7lPtuQElc1iacTmQXf
+	8qW38Pn8ScwYATLiIG45X5y8yS2CZ7A99XQg1RtL/r9qa9EeW8r4/TzXlS2Ylw==
 To: linux-security-module@vger.kernel.org
 Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
-	Boris Brezillon <boris.brezillon@collabora.com>,
-	Steven Price <steven.price@arm.com>,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Richard Weinberger <richard@nod.at>,
-	Zhihao Cheng <chengzhihao1@huawei.com>,
+	Muchun Song <muchun.song@linux.dev>,
 	Serge Hallyn <serge@hallyn.com>,
 	Julia Lawall <Julia.Lawall@inria.fr>,
 	Nicolas Palix <nicolas.palix@imag.fr>,
 	linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-mtd@lists.infradead.org,
+	linux-mm@kvack.org,
 	cocci@inria.fr
-Subject: [PATCH 06/11] ubifs: reorder capability check last
-Date: Mon, 25 Nov 2024 11:39:58 +0100
-Message-ID: <20241125104011.36552-5-cgoettsche@seltendoof.de>
+Subject: [PATCH 04/11] hugetlbfs: reorder capability check last
+Date: Mon, 25 Nov 2024 11:39:56 +0100
+Message-ID: <20241125104011.36552-3-cgoettsche@seltendoof.de>
 In-Reply-To: <20241125104011.36552-1-cgoettsche@seltendoof.de>
 References: <20241125104011.36552-1-cgoettsche@seltendoof.de>
 Reply-To: cgzones@googlemail.com
@@ -83,39 +73,22 @@ It can lead to three undesired cases:
 
 Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
 ---
- drivers/gpu/drm/panthor/panthor_drv.c | 2 +-
- fs/ubifs/budget.c                     | 5 +++--
- 2 files changed, 4 insertions(+), 3 deletions(-)
+ fs/hugetlbfs/inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
-index ac7e53f6e3f0..2de0c3627fbf 100644
---- a/drivers/gpu/drm/panthor/panthor_drv.c
-+++ b/drivers/gpu/drm/panthor/panthor_drv.c
-@@ -791,7 +791,7 @@ static int group_priority_permit(struct drm_file *file,
- 		return 0;
- 
- 	/* Higher priorities require CAP_SYS_NICE or DRM_MASTER */
--	if (capable(CAP_SYS_NICE) || drm_is_current_master(file))
-+	if (drm_is_current_master(file) || capable(CAP_SYS_NICE))
- 		return 0;
- 
- 	return -EACCES;
-diff --git a/fs/ubifs/budget.c b/fs/ubifs/budget.c
-index d76eb7b39f56..6137aeadec3f 100644
---- a/fs/ubifs/budget.c
-+++ b/fs/ubifs/budget.c
-@@ -256,8 +256,9 @@ long long ubifs_calc_available(const struct ubifs_info *c, int min_idx_lebs)
-  */
- static int can_use_rp(struct ubifs_info *c)
+diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+index a4441fb77f7c..e4f6790c1638 100644
+--- a/fs/hugetlbfs/inode.c
++++ b/fs/hugetlbfs/inode.c
+@@ -1508,7 +1508,7 @@ static int can_do_hugetlb_shm(void)
  {
--	if (uid_eq(current_fsuid(), c->rp_uid) || capable(CAP_SYS_RESOURCE) ||
--	    (!gid_eq(c->rp_gid, GLOBAL_ROOT_GID) && in_group_p(c->rp_gid)))
-+	if (uid_eq(current_fsuid(), c->rp_uid) ||
-+	    (!gid_eq(c->rp_gid, GLOBAL_ROOT_GID) && in_group_p(c->rp_gid)) ||
-+	    capable(CAP_SYS_RESOURCE))
- 		return 1;
- 	return 0;
+ 	kgid_t shm_group;
+ 	shm_group = make_kgid(&init_user_ns, sysctl_hugetlb_shm_group);
+-	return capable(CAP_IPC_LOCK) || in_group_p(shm_group);
++	return in_group_p(shm_group) || capable(CAP_IPC_LOCK);
  }
+ 
+ static int get_hstate_idx(int page_size_log)
 -- 
 2.45.2
 
