@@ -1,47 +1,53 @@
 Received: from server02.seltendoof.de (server02.seltendoof.de [168.119.48.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D654194AEE;
-	Mon, 25 Nov 2024 10:40:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 225CC193070;
+	Mon, 25 Nov 2024 10:40:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.48.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732531238; cv=none; b=pUBR5sxmDjKMewZKTmdhGw2lr6DghJ2bQUTkKVp/vrrVNr+dn1ocThhA4S5BTvoK4SeV/g0MZkN7at5f7nL/ZO3gSOG2hnSRF3FNO1bMC02DxYl9sk9XxH/Guphd0wZLk7cIVlopU9Y9Jhv5AAIXjkfbhqfQ4nxbQE4vv45hzk0=
+	t=1732531239; cv=none; b=lgKFQd3fQkMrIbSftYXbDAhpveMrL4yfiiCxzcrE6l0eFH9QUT95IPaHlbkrs8RND9/RbaSpY59yUPaCXG2/2tsLYEl4otVSQtiYshtM6VPb4ClXLihnkL8IeEdNmVpvg2P3/zO/6vp4H2+sudDG8NE/in/9gZuJKv7w4CcPXJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732531238; c=relaxed/simple;
-	bh=sqRRylGkLtbdHiY0aJnVCbtjNbB4VGS+linaOHS6NsY=;
+	s=arc-20240116; t=1732531239; c=relaxed/simple;
+	bh=iQFabzcbeyd0VMqCL1uH7Fo+292SfpJATJ4pnluwUxE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Jf/HXENEzliS5uJPlhsNyJIJy6mT5G/B2F9FhBLe5inYRb7bnh+Jt62DbFhg1UK+0J0loEs/YMx+B+cr8aH3wNJPzvhy24hjo5fHS/s3KWeMG5yJhvHscuNruqcwH/9uaGPfKD3ed9Gzec7aoK49lbjSaV6mNzjM10VAVaSZISU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=htLbeYks; arc=none smtp.client-ip=168.119.48.163
+	 MIME-Version:Content-Type; b=Lz+PXjHnGcK+Rm5P+ugxqgCq2LdBXzZ6QRzubhw0PKu11sq23w5EtQ7LNqkPFGnMsRNaEvu0gdGq2gGkJfzmK5he9fAHa5982bdyLygmpUmLh7hENb6jklxUaFo7h5nrgLJEgnUbQE+MlEDvWM1O1jjAJ4xxbBjauzjyW8KHa+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=hlpyVRYU; arc=none smtp.client-ip=168.119.48.163
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seltendoof.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="htLbeYks"
+	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="hlpyVRYU"
 From: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seltendoof.de;
-	s=2023072701; t=1732531232;
+	s=2023072701; t=1732531234;
 	h=from:from:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=wEUm66qIu8PkMwOxCNnnSHqwyJubiCsERAs4lb+4vxc=;
-	b=htLbeYksaORg5/HvEg6PKAtZC4kv17t058Wj3CTukaT/twqcgszc31G/pliYnDXAeXwBbx
-	QMLvNRwy/9JY/gwAElTZUIR+VhYroro5VjcvBj36kROIgytwGOorYZM1uE3ah7VuglSwNJ
-	AJxkQfGe5n5pbNgcZ1Rwi9TZs8GGnAWKUcc1cdRJgOLc8JE647oNbHFT07b/NW6yQe/mw8
-	9LPEjY1zZnx1vLvmbV8hw3+OasVI71Nk4ieD3f9NOoxnejq/Anz920QM/DOTM6uO7hcHXU
-	5BCkR9dAKb3kUbIeYS+K2wGlLZ4Z+FtponRFMBmBu3IkMFi7cKP95/dBb8x2Cw==
+	bh=z8toJKTqYgiOm8yX0/nayZUss8l7ma5sqSjl7KCBpF0=;
+	b=hlpyVRYUw1z9xdZYuJDetCTFRs3+Z1lxqLniLK0tn8ZkmcWiAL0wZ78aQGq5CBamzi3BHV
+	9ieNcRpM7AGfB0BdD6l6XEGEzBKC9k8riy5y0h8JJXkaR+hA4W0RSz2SHOGCNm/utmsRAu
+	6scALFYJ6L6f4jz72hqrt5zCGRec5vFh8cJ8r+g/FidQPHC401sojwGuGwasJDZtsSuTG+
+	MFk4OzmeTYuB9D47W/amQTcxAHVR44Kd0A40nLT+O6oXPtDHrzLhNB9/rGRLHRQDFjf6nC
+	uDUoXOqRx5fDWxJ10epkJwqkfBoBKMtSxMC4LcDFdEjqZI1nPZhmdSi/iwslTA==
 To: linux-security-module@vger.kernel.org
 Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
-	Andreas Gruenbacher <agruenba@redhat.com>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
 	Serge Hallyn <serge@hallyn.com>,
 	Julia Lawall <Julia.Lawall@inria.fr>,
 	Nicolas Palix <nicolas.palix@imag.fr>,
 	linux-kernel@vger.kernel.org,
-	gfs2@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	linux-nfs@vger.kernel.org,
 	cocci@inria.fr
-Subject: [PATCH 08/11] gfs2: reorder capability check last
-Date: Mon, 25 Nov 2024 11:40:00 +0100
-Message-ID: <20241125104011.36552-7-cgoettsche@seltendoof.de>
+Subject: [PATCH 09/11] fs: reorder capability check last
+Date: Mon, 25 Nov 2024 11:40:01 +0100
+Message-ID: <20241125104011.36552-8-cgoettsche@seltendoof.de>
 In-Reply-To: <20241125104011.36552-1-cgoettsche@seltendoof.de>
 References: <20241125104011.36552-1-cgoettsche@seltendoof.de>
 Reply-To: cgzones@googlemail.com
@@ -73,24 +79,25 @@ It can lead to three undesired cases:
 
 Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
 ---
- fs/gfs2/quota.h | 4 ++--
+ fs/fhandle.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/gfs2/quota.h b/fs/gfs2/quota.h
-index f462d9cb3087..988f38dc5b2c 100644
---- a/fs/gfs2/quota.h
-+++ b/fs/gfs2/quota.h
-@@ -44,8 +44,8 @@ static inline int gfs2_quota_lock_check(struct gfs2_inode *ip,
- 	int ret;
- 
- 	ap->allowed = UINT_MAX; /* Assume we are permitted a whole lot */
--	if (capable(CAP_SYS_RESOURCE) ||
--	    sdp->sd_args.ar_quota == GFS2_QUOTA_OFF)
-+	if (sdp->sd_args.ar_quota == GFS2_QUOTA_OFF ||
-+	    capable(CAP_SYS_RESOURCE))
- 		return 0;
- 	ret = gfs2_quota_lock(ip, NO_UID_QUOTA_CHANGE, NO_GID_QUOTA_CHANGE);
- 	if (ret)
+diff --git a/fs/fhandle.c b/fs/fhandle.c
+index 5f801139358e..01b3e14e07de 100644
+--- a/fs/fhandle.c
++++ b/fs/fhandle.c
+@@ -265,9 +265,9 @@ static inline bool may_decode_fh(struct handle_to_path_ctx *ctx,
+ 	if (ns_capable(root->mnt->mnt_sb->s_user_ns, CAP_SYS_ADMIN))
+ 		ctx->flags = HANDLE_CHECK_PERMS;
+ 	else if (is_mounted(root->mnt) &&
++		 !has_locked_children(real_mount(root->mnt), root->dentry) &&
+ 		 ns_capable(real_mount(root->mnt)->mnt_ns->user_ns,
+-			    CAP_SYS_ADMIN) &&
+-		 !has_locked_children(real_mount(root->mnt), root->dentry))
++			    CAP_SYS_ADMIN))
+ 		ctx->flags = HANDLE_CHECK_PERMS | HANDLE_CHECK_SUBTREE;
+ 	else
+ 		return false;
 -- 
 2.45.2
 
