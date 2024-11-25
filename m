@@ -1,48 +1,57 @@
 Received: from server02.seltendoof.de (server02.seltendoof.de [168.119.48.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3740192D7E;
-	Mon, 25 Nov 2024 10:40:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DABDD193064;
+	Mon, 25 Nov 2024 10:40:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.48.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732531235; cv=none; b=i4W0ljPdcK3h+2flWjqH4Z2WDPJ4s53h/xdMm5bF3NZ+YegialndgN3nMC3FBEsd9OVcHO47Dcj+JSlRmltMwm1OPfo+cnZgGZw8WeOwuEZDqAIulGsq3TR3d/BrH2AalbnBxB8zY06AD76LerRNhhRiGBUu9hx8f7D6fkkG72E=
+	t=1732531235; cv=none; b=b6Dlejcz4+ob6Bd7VijiV4UqjR3JWR81dvN+oTlQ4o4mWtA8Ik5hRYAmX+keFmutjLGUZHytYtwtMkf/zOkerkc0ce1jF6ohmUJ5FQSvuzfyOGg3uONBJCb4NZYi4K/baQpQ8ZCUIaBWCQgqbsAC/hV9rzVcsrXVq0p1Ygi9TP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1732531235; c=relaxed/simple;
-	bh=1o2+SCKbPMlZSfhshov97BHiZ6npLENrivJUl/obBl0=;
+	bh=VhnL2wmSb+pfgIHkp6bvcyX/tRAnbRI3P76lLhLZZrc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Qoj4a5zs1bFXQZyexigvl1LUhMGqELN1rtey/zVovcns7tsMbMzKnQMX4MHaQfhYwCeTjyTiE9Srmn0hCeO65o2tk2MLA0ERta3t4ivK8Vi08S/He9pqQFtsbgp2s9FLIS+LO6AZNTEFIQibf/Wk+lk4l9lxXCs6lHuiaQqjpAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=nqGJcLfQ; arc=none smtp.client-ip=168.119.48.163
+	 MIME-Version:Content-Type; b=JiNoiifgIoHbhXMbwzVc84NbL/ueGpyiXMo0OIroByecsPjdnrm5vd5jcxXe8dyjPvMvVEZ2VbOC88jDu9NgKO1OwmJFlSffhViatZdzg0GPXA0XeGKjP4NPyiUeBL36UoyHLfxV1JTBc2DU3bBJ9pd+li0DJOi6wUkFqa6RfM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=renzaNjY; arc=none smtp.client-ip=168.119.48.163
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seltendoof.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="nqGJcLfQ"
+	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="renzaNjY"
 From: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seltendoof.de;
-	s=2023072701; t=1732531224;
+	s=2023072701; t=1732531230;
 	h=from:from:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=g0u/9xnJFmCzCIsRXywH2TwoCekIvWc3+cszQ3gofsI=;
-	b=nqGJcLfQpuCPVU4svGCFemBiN+Nqp+1R16Nvd1Z8RvKusipz8MFxJLNdU2uhjFvntoOYSb
-	Xj1L3BtASdJeevaSB18S7Dl4G9iVy2NeKuB5bVvlEQ/00Zw4mWcB4rc9Y8T8msyZ1lYG1X
-	9EFJuwkmLAYq+yC2ipfy3AxGyZxlF/Jc9QDPrMphpZ2z7VT/m3D7jllOSk539ISoY/tFbc
-	kSn7Zr8qrh9mhI/pb9WE7RVtWlm2DpAmQRLqFEX0I9t3ojiACy+XuvtER8YjGVp+0wWSGE
-	NlMPqw/DtS7g8Ao5UdD3jNlwW46B8Yn6PoWxwEILbI/QoEnLV0D9q/lx/AKSKA==
+	bh=BnJPwZBINKy4LES6pr7BNEYT4c7M8sYvf1DiqcmfvZQ=;
+	b=renzaNjYJ9YJyG9gUtmjWqJwQ0VY7TQPB8AIE5W2eHdeqh2KtO/X4RlDCy1my/SVpQmQbZ
+	wjNEjBd+3Nx5SYzGSi/4OwNEhlCfesxm4VNww0jT0OEYCfKsxUBHnyqFZjs4qmm0yXdPXf
+	JQVxhmVSoR7oSv45zcTLYW4BjQnZhX+TQ9oYJfvSmhOwIXh5wbGCNS9yLVPQ//3K2TAHgl
+	Eb4e91BrZZEw09F7m/z/76uD9fpDEgjnOst+2rcsjNChNW2KdjtqLgROIapy8OMfgZI/BW
+	MreOsqodNcQhtkdGSCQM3CtyEM177zZSZrrnzTyeG6viMRNF26psOPQLgVZyPg==
 To: linux-security-module@vger.kernel.org
 Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
-	"Theodore Ts'o" <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
+	Boris Brezillon <boris.brezillon@collabora.com>,
+	Steven Price <steven.price@arm.com>,
+	Liviu Dudau <liviu.dudau@arm.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Richard Weinberger <richard@nod.at>,
+	Zhihao Cheng <chengzhihao1@huawei.com>,
 	Serge Hallyn <serge@hallyn.com>,
 	Julia Lawall <Julia.Lawall@inria.fr>,
 	Nicolas Palix <nicolas.palix@imag.fr>,
 	linux-kernel@vger.kernel.org,
-	linux-ext4@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-mtd@lists.infradead.org,
 	cocci@inria.fr
-Subject: [PATCH 03/11] ext4: reorder capability check last
-Date: Mon, 25 Nov 2024 11:39:55 +0100
-Message-ID: <20241125104011.36552-2-cgoettsche@seltendoof.de>
+Subject: [PATCH 06/11] ubifs: reorder capability check last
+Date: Mon, 25 Nov 2024 11:39:58 +0100
+Message-ID: <20241125104011.36552-5-cgoettsche@seltendoof.de>
 In-Reply-To: <20241125104011.36552-1-cgoettsche@seltendoof.de>
 References: <20241125104011.36552-1-cgoettsche@seltendoof.de>
 Reply-To: cgzones@googlemail.com
@@ -74,24 +83,39 @@ It can lead to three undesired cases:
 
 Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
 ---
- fs/ext4/balloc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/panthor/panthor_drv.c | 2 +-
+ fs/ubifs/budget.c                     | 5 +++--
+ 2 files changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/fs/ext4/balloc.c b/fs/ext4/balloc.c
-index 8042ad873808..c48fd36b2d74 100644
---- a/fs/ext4/balloc.c
-+++ b/fs/ext4/balloc.c
-@@ -649,8 +649,8 @@ static int ext4_has_free_clusters(struct ext4_sb_info *sbi,
- 	/* Hm, nope.  Are (enough) root reserved clusters available? */
- 	if (uid_eq(sbi->s_resuid, current_fsuid()) ||
- 	    (!gid_eq(sbi->s_resgid, GLOBAL_ROOT_GID) && in_group_p(sbi->s_resgid)) ||
--	    capable(CAP_SYS_RESOURCE) ||
--	    (flags & EXT4_MB_USE_ROOT_BLOCKS)) {
-+	    (flags & EXT4_MB_USE_ROOT_BLOCKS) ||
-+	    capable(CAP_SYS_RESOURCE)) {
+diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
+index ac7e53f6e3f0..2de0c3627fbf 100644
+--- a/drivers/gpu/drm/panthor/panthor_drv.c
++++ b/drivers/gpu/drm/panthor/panthor_drv.c
+@@ -791,7 +791,7 @@ static int group_priority_permit(struct drm_file *file,
+ 		return 0;
  
- 		if (free_clusters >= (nclusters + dirty_clusters +
- 				      resv_clusters))
+ 	/* Higher priorities require CAP_SYS_NICE or DRM_MASTER */
+-	if (capable(CAP_SYS_NICE) || drm_is_current_master(file))
++	if (drm_is_current_master(file) || capable(CAP_SYS_NICE))
+ 		return 0;
+ 
+ 	return -EACCES;
+diff --git a/fs/ubifs/budget.c b/fs/ubifs/budget.c
+index d76eb7b39f56..6137aeadec3f 100644
+--- a/fs/ubifs/budget.c
++++ b/fs/ubifs/budget.c
+@@ -256,8 +256,9 @@ long long ubifs_calc_available(const struct ubifs_info *c, int min_idx_lebs)
+  */
+ static int can_use_rp(struct ubifs_info *c)
+ {
+-	if (uid_eq(current_fsuid(), c->rp_uid) || capable(CAP_SYS_RESOURCE) ||
+-	    (!gid_eq(c->rp_gid, GLOBAL_ROOT_GID) && in_group_p(c->rp_gid)))
++	if (uid_eq(current_fsuid(), c->rp_uid) ||
++	    (!gid_eq(c->rp_gid, GLOBAL_ROOT_GID) && in_group_p(c->rp_gid)) ||
++	    capable(CAP_SYS_RESOURCE))
+ 		return 1;
+ 	return 0;
+ }
 -- 
 2.45.2
 
