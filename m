@@ -1,209 +1,212 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4D46193086;
-	Mon, 25 Nov 2024 11:01:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50FA01922D3;
+	Mon, 25 Nov 2024 11:04:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732532508; cv=none; b=eUSKVRObtuKTqKgaxL4Qbds7pNEupfPN1TgO7U5y3MDWZ7hHSvOSKsSiesQm1LpRPrK4uzu6Pot0vJjsjz/ViH+QJl/+1WmU0+ULBB0yF3ItBKS1N3a8d3dIsQVmYpPr8I333BpPijK3HSieSYxwjCoPkU2RBDSPcaLJrF/EBxs=
+	t=1732532667; cv=none; b=HrGfbt1WQPExDZ1qZCzGutWOQv+M4T7HaibdB20126RsEM3oCWWseakAxmoQ0Ze8NDV28nZaVI8//9vc3MaKnNXmpozarHUeEwvaQCLbVED7cZfXYpvKWkxvVz3qO48CrUGBVYZ7AZYZtHHoKxjZt2jvCN8QJCZgsWu+qH60WT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732532508; c=relaxed/simple;
-	bh=T/UU+rrT+tPh3M85iNCZvELpys75SfWLzM9o42mtaR8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dzaae57F+qE618vNQGWkS4S9E6QNqnyJRK5k3aTXEjhww99A1cJdLJgXJ9BUkorQe+sBQqC9Zov2pREkDKqFMyMkFPqJ18C9tobKgbO9uxQsU2L7t07nzAGL4bvY3V4NF4jkJ6i+P7CTRzMdcbGqyEpAm4i8PLSuhxIZIQgIZw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ekP2l7bX; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ekP2l7bX"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732532506; x=1764068506;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=T/UU+rrT+tPh3M85iNCZvELpys75SfWLzM9o42mtaR8=;
-  b=ekP2l7bXbpkxFP4gsRSxQU5T5VTPLO/iMgFXuUA3A16mlBMb4+2hH3kf
-   PNdUM2TvWdvubKn6VtK4Dn1TfZpQjijEb7WuUwp4h9uFp4RiGeye9saN0
-   3O3SyJmKbA9vh0AOiyLD4o8qXoTs1qTIhfj3/VSnn0Fsyn0niq+0npq8o
-   cTjqj0Mw1gLo0IfDgdbEC7X0omSfYcZeZaKiJYbKJUaIU+TOdl7IUfhhD
-   8gbsSVuhf72vL8nURQYy50fZCekCqbPyjZZJWgdNB2ltPp+K4e/5HT3rN
-   aJvkwSc0LjsS/RZt27SQgm8xv8PuaiNB1nf2spWcJTbeWrrnXQ5/+ELdI
-   A==;
-X-CSE-ConnectionGUID: ELFnvTxUTnCjVWuUJWQHvQ==
-X-CSE-MsgGUID: iBwx3q3pRPmTz9l+wkxv1g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11266"; a="43290717"
-X-IronPort-AV: E=Sophos;i="6.12,182,1728975600"; 
-   d="scan'208";a="43290717"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Nov 2024 03:01:46 -0800
-X-CSE-ConnectionGUID: WRgJmM8ETMW+viEZnd9lEA==
-X-CSE-MsgGUID: 4UuiGSoXQg+oFmbkppG6Pg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="96289499"
-Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 25 Nov 2024 03:01:41 -0800
-Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tFWqY-0006BI-01;
-	Mon, 25 Nov 2024 11:01:38 +0000
-Date: Mon, 25 Nov 2024 19:01:14 +0800
-From: kernel test robot <lkp@intel.com>
-To: Song Liu <song@kernel.org>, bpf@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, kernel-team@meta.com, andrii@kernel.org,
-	eddyz87@gmail.com, ast@kernel.org, daniel@iogearbox.net,
-	martin.lau@linux.dev, viro@zeniv.linux.org.uk, brauner@kernel.org,
-	jack@suse.cz, kpsingh@kernel.org, mattbobrowski@google.com,
-	amir73il@gmail.com, repnop@google.com, jlayton@kernel.org,
-	josef@toxicpanda.com, mic@digikod.net, gnoack@google.com,
-	Song Liu <song@kernel.org>
-Subject: Re: [PATCH v3 fanotify 1/2] fanotify: Introduce fanotify filter
-Message-ID: <202411251801.nLqLjFGW-lkp@intel.com>
-References: <20241122225958.1775625-2-song@kernel.org>
+	s=arc-20240116; t=1732532667; c=relaxed/simple;
+	bh=NFhBhP3/TVWro0ElJi6vj5V8/PmXfpxK+X0fLDMV7GA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=I0nDCM8PeOVurUpvxOh6g8jQH8aX2R9PeDc0kDdBW8C2cIdvUUg5/907DJz85DF4vuDcFv04/aUejcbqyciJb4fHudhUD+MH+wRFPgXjIFGRVycyFhWpFseLrk3wv8Hi1HaN/dABS77H1qra1F1zQn8WqachtAstph8r+2frNrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XxjW32Jvwz6L76x;
+	Mon, 25 Nov 2024 19:03:43 +0800 (CST)
+Received: from mscpeml500004.china.huawei.com (unknown [7.188.26.250])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5BF34140367;
+	Mon, 25 Nov 2024 19:04:13 +0800 (CST)
+Received: from [10.123.123.159] (10.123.123.159) by
+ mscpeml500004.china.huawei.com (7.188.26.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Mon, 25 Nov 2024 14:04:11 +0300
+Message-ID: <36ac2fde-1344-9055-42e2-db849abf02e0@huawei-partners.com>
+Date: Mon, 25 Nov 2024 14:04:09 +0300
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241122225958.1775625-2-song@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v3 01/19] landlock: Support socket access-control
+To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>
+CC: <mic@digikod.net>, <willemdebruijn.kernel@gmail.com>,
+	<gnoack3000@gmail.com>, <linux-security-module@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <netfilter-devel@vger.kernel.org>,
+	<yusongping@huawei.com>, <artem.kuzin@huawei.com>,
+	<konstantin.meskhidze@huawei.com>
+References: <20240904104824.1844082-1-ivanov.mikhail1@huawei-partners.com>
+ <20240904104824.1844082-2-ivanov.mikhail1@huawei-partners.com>
+ <ea026af8-bc29-709c-7e04-e145d01fd825@huawei-partners.com>
+ <Z0DDQKACIRRDRZRE@google.com>
+Content-Language: ru
+From: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+In-Reply-To: <Z0DDQKACIRRDRZRE@google.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
+ mscpeml500004.china.huawei.com (7.188.26.250)
 
-Hi Song,
+On 11/22/2024 8:45 PM, Günther Noack wrote:
+> Hello Mikhail,
+> 
+> sorry for the delayed response;
+> I am very happy to see activity on this patch set! :)
 
-kernel test robot noticed the following build warnings:
+Hello Günther,
+No problem, thanks a lot for your feedback!
 
-[auto build test WARNING on jack-fs/fsnotify]
-[also build test WARNING on linus/master v6.12 next-20241125]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+> On Mon, Nov 11, 2024 at 07:29:49PM +0300, Mikhail Ivanov wrote:
+>> On 9/4/2024 1:48 PM, Mikhail Ivanov wrote:
+>>> Landlock implements the `LANDLOCK_RULE_NET_PORT` rule type, which provides
+>>> fine-grained control of actions for a specific protocol. Any action or
+>>> protocol that is not supported by this rule can not be controlled. As a
+>>> result, protocols for which fine-grained control is not supported can be
+>>> used in a sandboxed system and lead to vulnerabilities or unexpected
+>>> behavior.
+>>>
+>>> Controlling the protocols used will allow to use only those that are
+>>> necessary for the system and/or which have fine-grained Landlock control
+>>> through others types of rules (e.g. TCP bind/connect control with
+>>> `LANDLOCK_RULE_NET_PORT`, UNIX bind control with
+>>> `LANDLOCK_RULE_PATH_BENEATH`). Consider following examples:
+>>>
+>>> * Server may want to use only TCP sockets for which there is fine-grained
+>>>     control of bind(2) and connect(2) actions [1].
+>>> * System that does not need a network or that may want to disable network
+>>>     for security reasons (e.g. [2]) can achieve this by restricting the use
+>>>     of all possible protocols.
+>>>
+>>> This patch implements such control by restricting socket creation in a
+>>> sandboxed process.
+>>>
+>>> Add `LANDLOCK_RULE_SOCKET` rule type that restricts actions on sockets.
+>>> This rule uses values of address family and socket type (Cf. socket(2))
+>>> to determine sockets that should be restricted. This is represented in a
+>>> landlock_socket_attr struct:
+>>>
+>>>     struct landlock_socket_attr {
+>>>       __u64 allowed_access;
+>>>       int family; /* same as domain in socket(2) */
+>>>       int type; /* see socket(2) */
+>>>     };
+>>
+>> Hello! I'd like to consider another approach to define this structure
+>> before sending the next version of this patchset.
+>>
+>> Currently, it has following possible issues:
+>>
+>> First of all, there is a lack of protocol granularity. It's impossible
+>> to (for example) deny creation of ICMP and SCTP sockets and allow TCP
+>> and UDP. Since the values of address family and socket type do not
+>> completely define the protocol for the restriction, we may gain
+>> incomplete control of the network actions. AFAICS, this is limited to
+>> only a couple of IP protocol cases (e.g. it's impossible to deny SCTP
+>> and SMC sockets to only allow TCP, deny ICMP and allow UDP).
+>>
+>> But one of the main advantages of socket access rights is the ability to
+>> allow only those protocols for which there is a fine-grained control
+>> over their actions (TCP bind/connect). It can be inconvenient
+>> (and unsafe) for SCTP to be unrestricted, while sandboxed process only
+>> needs TCP sockets.
+> 
+> That is a good observation which I had missed.
+> 
+> I agree with your analysis, I also see the main use case of socket()
+> restrictions in:
+> 
+>   (a) restricting socket creating altogether
+>   (b) only permitting socket types for which there is fine grained control
+> 
+> and I also agree that it would be very surprising when the same socket types
+> that provide fine grained control would also open the door for unrestricted
+> access to SMC, SCTP or other protocols.  We should instead strive for a
+> socket() access control with which these additional protocols weren't
+> accessible.
+> 
+> 
+>> Adding protocol (Cf. socket(2)) field was considered a bit during the
+>> initial discussion:
+>> https://lore.kernel.org/all/CABi2SkVWU=Wxb2y3fP702twyHBD3kVoySPGSz2X22VckvcHeXw@mail.gmail.com/
+> 
+> So adding "protocol" to the rule attributes would suffice to restrict the use of
+> SMC and SCTP then?  (Sorry, I lost context on these protocols a bit in the
+> meantime, I was so far under the impression that these were using different
+> values for family and type than TCP and UDP do.)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Song-Liu/fanotify-Introduce-fanotify-filter/20241125-110818
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fsnotify
-patch link:    https://lore.kernel.org/r/20241122225958.1775625-2-song%40kernel.org
-patch subject: [PATCH v3 fanotify 1/2] fanotify: Introduce fanotify filter
-config: i386-randconfig-001-20241125 (https://download.01.org/0day-ci/archive/20241125/202411251801.nLqLjFGW-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241125/202411251801.nLqLjFGW-lkp@intel.com/reproduce)
+Yeap. Following rule will be enough to allow TCP sockets only:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411251801.nLqLjFGW-lkp@intel.com/
+const struct landlock_socket_attr create_socket_attr = {
+	.allowed_access = LANDLOCK_ACCESS_SOCKET_CREATE,
+	.family = AF_INET{,6},
+	.type = SOCK_STREAM,
+	.protocol = 0
+};
 
-All warnings (new ones prefixed by >>):
+Btw, creation of SMC sockets via IP stack was added quite recently.
+So far, creation has been possible only with AF_SMC family.
 
-   fs/notify/fanotify/fanotify_filter.c: In function 'fanotify_filter_add':
->> fs/notify/fanotify/fanotify_filter.c:226:55: warning: cast to pointer from integer of different size [-Wint-to-pointer-cast]
-     226 |                         if (copy_from_user(init_args, (void __user *)args.init_args,
-         |                                                       ^
+https://lore.kernel.org/all/1718301630-63692-1-git-send-email-alibuda@linux.alibaba.com/
 
+> 
+> 
+>> Secondly, I'm not really sure if socket type granularity is required
+>> for most of the protocols. It may be more convenient for the end user
+>> to be able to completely restrict the address family without specifying
+>> whether restriction is dedicated to stream or dgram sockets (e.g. for
+>> BLUETOOTH, VSOCK sockets). However, this is not a big issue for the
+>> current design, since address family can be restricted by specifying
+>> type = SOCK_TYPE_MASK.
+> 
+> Whether the user is adding one rule to permit AF_INET+*, or whether the user is
+> adding two rules to permit (1) AF_INET+SOCK_STREAM and (2) AF_INET+SOCK_DGRAM,
+> that does not seem like a big deal to me as long as the list of such
+> combinations is so low?
 
-vim +226 fs/notify/fanotify/fanotify_filter.c
+Agreed
 
-   156	
-   157	/*
-   158	 * fanotify_filter_add - Add a filter to fsnotify_group.
-   159	 *
-   160	 * Add a filter from filter_list to a fsnotify_group.
-   161	 *
-   162	 * @group:	fsnotify_group that will have add
-   163	 * @argp:	fanotify_filter_args that specifies the filter
-   164	 *		and the init arguments of the filter.
-   165	 *
-   166	 * Returns:
-   167	 *	0	- on success;
-   168	 *	-EEXIST	- filter of the same name already exists.
-   169	 */
-   170	int fanotify_filter_add(struct fsnotify_group *group,
-   171				struct fanotify_filter_args __user *argp)
-   172	{
-   173		struct fanotify_filter_hook *filter_hook;
-   174		struct fanotify_filter_ops *filter_ops;
-   175		struct fanotify_filter_args args;
-   176		void *init_args = NULL;
-   177		int ret = 0;
-   178	
-   179		ret = copy_from_user(&args, argp, sizeof(args));
-   180		if (ret)
-   181			return -EFAULT;
-   182	
-   183		if (args.init_args_size > FAN_FILTER_ARGS_MAX)
-   184			return -EINVAL;
-   185	
-   186		args.name[FAN_FILTER_NAME_MAX - 1] = '\0';
-   187	
-   188		fsnotify_group_lock(group);
-   189	
-   190		if (rcu_access_pointer(group->fanotify_data.filter_hook)) {
-   191			fsnotify_group_unlock(group);
-   192			return -EBUSY;
-   193		}
-   194	
-   195		filter_hook = kzalloc(sizeof(*filter_hook), GFP_KERNEL);
-   196		if (!filter_hook) {
-   197			ret = -ENOMEM;
-   198			goto out;
-   199		}
-   200	
-   201		spin_lock(&filter_list_lock);
-   202		filter_ops = fanotify_filter_find(args.name);
-   203		if (!filter_ops || !try_module_get(filter_ops->owner)) {
-   204			spin_unlock(&filter_list_lock);
-   205			ret = -ENOENT;
-   206			goto err_free_hook;
-   207		}
-   208		spin_unlock(&filter_list_lock);
-   209	
-   210		if (!capable(CAP_SYS_ADMIN) && (filter_ops->flags & FAN_FILTER_F_SYS_ADMIN_ONLY)) {
-   211			ret = -EPERM;
-   212			goto err_module_put;
-   213		}
-   214	
-   215		if (filter_ops->filter_init) {
-   216			if (args.init_args_size != filter_ops->init_args_size) {
-   217				ret = -EINVAL;
-   218				goto err_module_put;
-   219			}
-   220			if (args.init_args_size) {
-   221				init_args = kzalloc(args.init_args_size, GFP_KERNEL);
-   222				if (!init_args) {
-   223					ret = -ENOMEM;
-   224					goto err_module_put;
-   225				}
- > 226				if (copy_from_user(init_args, (void __user *)args.init_args,
-   227						   args.init_args_size)) {
-   228					ret = -EFAULT;
-   229					goto err_free_args;
-   230				}
-   231	
-   232			}
-   233			ret = filter_ops->filter_init(group, filter_hook, init_args);
-   234			if (ret)
-   235				goto err_free_args;
-   236			kfree(init_args);
-   237		}
-   238		filter_hook->ops = filter_ops;
-   239		rcu_assign_pointer(group->fanotify_data.filter_hook, filter_hook);
-   240	
-   241	out:
-   242		fsnotify_group_unlock(group);
-   243		return ret;
-   244	
-   245	err_free_args:
-   246		kfree(init_args);
-   247	err_module_put:
-   248		module_put(filter_ops->owner);
-   249	err_free_hook:
-   250		kfree(filter_hook);
-   251		goto out;
-   252	}
-   253	
+> 
+> 
+>> I suggest implementing something close to selinux socket classes for the
+>> struct landlock_socket_attr (Cf. socket_type_to_security_class()). This
+>> will provide protocol granularity and may be simpler and more convenient
+>> in the terms of determining access rights. WDYT?
+> 
+> I see that this is a longer switch statement that maps to this enum, it would be
+> an additional data table that would have to be documented separately for users.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+This table is the general drawback, since it makes API a bit more
+complex.
+
+> 
+> Do you have an example for how such a "security class enum" would map to the
+> combinations of family, type and socket for the protocols discussed above?
+
+I think the socket_type_to_security_class() has a pretty good mapping
+for UNIX and IP families.
+
+> 
+> If this is just a matter of actually mapping (family, type, protocol)
+> combinations in a more flexible way, could we get away by allowing a special
+> "wildcard" value for the "protocol" field, when it is used within a ruleset?
+> Then the LSM would have to look up whether there is a rule for (family, type,
+> protocol) and the only change would be that it now needs to also check whether
+> there is a rule for (family, type, *)?
+
+Something like this?
+
+const struct landlock_socket_attr create_socket_attr = {
+	.allowed_access = LANDLOCK_ACCESS_SOCKET_CREATE,
+	.family = AF_INET6,
+	.type = SOCK_DGRAM,
+	.protocol = LANDLOCK_SOCKET_PROTO_ALL
+};
+
+> 
+> —Günther
