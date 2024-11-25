@@ -1,58 +1,48 @@
 Received: from server02.seltendoof.de (server02.seltendoof.de [168.119.48.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 839D8199924;
-	Mon, 25 Nov 2024 10:40:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C8791A08A6;
+	Mon, 25 Nov 2024 10:40:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.48.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732531240; cv=none; b=sECDE6XqApn9pQ89XlA/Di9UEtmFmDpGfdTykrUQ2jV5EJuTRotfwUvrmTW3PCnPiN8g/rTrlzfs85qub+0skcXDQ2xv0nDrmGpftt5ovdZP1WfOvM0QWTO8pWt5CKQMqESInTXlxHV6jscmmUTazL1emgd1dz2w5im+eUybyaM=
+	t=1732531241; cv=none; b=AZlbwO5B7gGR2hr8/rHUMXq8yTiBwGz0+GTV5GVTY6Yuw2agx09PJz0np7grNdmL8I9/Gx8iibF9aLAF9IPsuRXd287VwmxPjyaA58L/4VqTA6PD18Am4qFw+qFYjLAuRbY/2AB2SeGgpKTmHpwqUNkd0W1ziSxnuhJwO96sjXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732531240; c=relaxed/simple;
-	bh=5zl918IEUyEEK6Zj6zbtZJmQTRCcBiXNutEld1pO/Ks=;
+	s=arc-20240116; t=1732531241; c=relaxed/simple;
+	bh=lloAGaLbURbVlon1dVtedwbqFYbXXpREa5EYQ+0jSvc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UnsczJ3xfz+0i9zBBRgx6mLWFkJ2+Pk0DJAjywp8Ysy92JYKuk/17vp4Rc5V/4mqdJf8r86C/BTK94w4ioZavcUYLNB0Vbrq6jASp6GnfDaN+PmyszSp4mr/WUrFtppRZULUtn/mDIh1djhAECcjBBSk140FtVxv9Te4TJipC5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=He/Nsu8T; arc=none smtp.client-ip=168.119.48.163
+	 MIME-Version:Content-Type; b=J1/tDY84VVkOSC68QZ5mBu7QiZwx3BngMNLtkS5BuKry/o+ASwqRBoVk0ghq09xXckUxNqgV/ZI8IYZyhT/3Lzp6kl+AmZ4ZF7/q13x8KKnosr6SCragXvvoM6xdW2nwUSsaHlpJM+eQzOnWq0pNmqwhH/kTfQeKtehxYWVqvFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=egFZ8oIa; arc=none smtp.client-ip=168.119.48.163
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seltendoof.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="He/Nsu8T"
+	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="egFZ8oIa"
 From: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seltendoof.de;
-	s=2023072701; t=1732531236;
+	s=2023072701; t=1732531237;
 	h=from:from:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=e3xkA6/OPtNWl6A170imeRaHJSFeFAlcMrS6betDjBY=;
-	b=He/Nsu8T8nvfNlUyWxosD+aqdOqwmX/wEHaa2TjwySQRhsy3y5mTIIxk/xGqu/tcDJ5953
-	ZnRNBzqyhJWSs4bdvRWugPMdaEsZwP1EY0ud9vuXGWC4i3ViL8z0nnFQIVAsnam3OKt7my
-	K2Ca6NHqvTfAEibYKAzLnT1cErwF54vzr0x0gtB5XB/U8Jumi5mAICsd54kb+UqDr39vt6
-	jctvGmD/eh545sdjY605727XRkT0xXG6+ZLYPvzo7Bw//DkeQH4/XwiZL3HYSTqumPksvy
-	biWPeTD9ZM37zKthExv/H7ZnuC3e8ZPnbE/4hQKbh6oXoC0j3uLMOb2YBU12kA==
+	bh=jlzbf+EP4WQ9ERhB8MeGSUxEvK9pVGrKH+pSzOMuEbY=;
+	b=egFZ8oIa6Adyyq1lI/k2/7m4vxLRXLRn+Wt3Rqrnhzb3SfQ5501wiHrxZ5Hh82c9pnpMXM
+	tYFM+X7VOO2MvY1lLyNSYdDsqdtL+pJRt3Q8+mM/LBcLLRFnb7XdJ1KQa5kGg/oCpQO9di
+	bCgKaiQoeHAmqvvLNsihH1RYfcsOPEbEktZ8DrpivnKmA7oW295+etWpuflxh+/+m2mC8h
+	JcHrixMYoiM89hrRnhz70aBFe5JJjrUZLCIRNJ5f+wt+8IJKX2gBONy56XdMKZzRYkhxLx
+	sRNOVGL1GBxGIPYLf8SztrzZNZb5E37pWOmFQDg7gpMMuxzx91L1/e8x2hR+ug==
 To: linux-security-module@vger.kernel.org
 Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
+	Leon Romanovsky <leon@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
 	Serge Hallyn <serge@hallyn.com>,
 	Julia Lawall <Julia.Lawall@inria.fr>,
 	Nicolas Palix <nicolas.palix@imag.fr>,
-	Mina Almasry <almasrymina@google.com>,
-	Willem de Bruijn <willemb@google.com>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Liang Chen <liangchen.linux@gmail.com>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
 	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org,
 	cocci@inria.fr
-Subject: [PATCH 10/11] skbuff: reorder capability check last
-Date: Mon, 25 Nov 2024 11:40:02 +0100
-Message-ID: <20241125104011.36552-9-cgoettsche@seltendoof.de>
+Subject: [PATCH 11/11] infiniband: reorder capability check last
+Date: Mon, 25 Nov 2024 11:40:03 +0100
+Message-ID: <20241125104011.36552-10-cgoettsche@seltendoof.de>
 In-Reply-To: <20241125104011.36552-1-cgoettsche@seltendoof.de>
 References: <20241125104011.36552-1-cgoettsche@seltendoof.de>
 Reply-To: cgzones@googlemail.com
@@ -84,22 +74,32 @@ It can lead to three undesired cases:
 
 Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
 ---
- net/core/skbuff.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/infiniband/hw/mlx5/devx.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/net/core/skbuff.c b/net/core/skbuff.c
-index 6841e61a6bd0..8bf622744862 100644
---- a/net/core/skbuff.c
-+++ b/net/core/skbuff.c
-@@ -1656,7 +1656,7 @@ int mm_account_pinned_pages(struct mmpin *mmp, size_t size)
- 	unsigned long max_pg, num_pg, new_pg, old_pg, rlim;
- 	struct user_struct *user;
+diff --git a/drivers/infiniband/hw/mlx5/devx.c b/drivers/infiniband/hw/mlx5/devx.c
+index 4186884c66e1..39304cae5b10 100644
+--- a/drivers/infiniband/hw/mlx5/devx.c
++++ b/drivers/infiniband/hw/mlx5/devx.c
+@@ -136,12 +136,14 @@ int mlx5_ib_devx_create(struct mlx5_ib_dev *dev, bool is_user)
+ 		return -EINVAL;
  
--	if (capable(CAP_IPC_LOCK) || !size)
-+	if (!size || capable(CAP_IPC_LOCK))
- 		return 0;
+ 	uctx = MLX5_ADDR_OF(create_uctx_in, in, uctx);
+-	if (is_user && capable(CAP_NET_RAW) &&
+-	    (MLX5_CAP_GEN(dev->mdev, uctx_cap) & MLX5_UCTX_CAP_RAW_TX))
++	if (is_user &&
++	    (MLX5_CAP_GEN(dev->mdev, uctx_cap) & MLX5_UCTX_CAP_RAW_TX) &&
++	    capable(CAP_NET_RAW))
+ 		cap |= MLX5_UCTX_CAP_RAW_TX;
+-	if (is_user && capable(CAP_SYS_RAWIO) &&
++	if (is_user &&
+ 	    (MLX5_CAP_GEN(dev->mdev, uctx_cap) &
+-	     MLX5_UCTX_CAP_INTERNAL_DEV_RES))
++	     MLX5_UCTX_CAP_INTERNAL_DEV_RES) &&
++	    capable(CAP_SYS_RAWIO))
+ 		cap |= MLX5_UCTX_CAP_INTERNAL_DEV_RES;
  
- 	rlim = rlimit(RLIMIT_MEMLOCK);
+ 	MLX5_SET(create_uctx_in, in, opcode, MLX5_CMD_OP_CREATE_UCTX);
 -- 
 2.45.2
 
