@@ -1,47 +1,48 @@
 Received: from server02.seltendoof.de (server02.seltendoof.de [168.119.48.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B8B1426C;
-	Mon, 25 Nov 2024 10:40:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B22791925A6;
+	Mon, 25 Nov 2024 10:40:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.48.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732531236; cv=none; b=EWuKFtJbUE2AdFPp8xBuvnkcewWG4rBIiciA+U9oBsqHt95nBo3hhO6W1+7IslQFtjqyFLURr4BNl9FV3/yD4aukBPTb9C9ohAvEieHPN2Rwvwjk5KTZ6duyLoZhH300xFS1kQnVYxba8piciX19lQj9Bd74prmbxMrQlrDykZQ=
+	t=1732531238; cv=none; b=IZltobQdi+K5XmRfwLxjLYcQhPFxZy2nMzwVYnD9BBNalJrEiEirfU5mXMUeekvwBRx40a/KR+M0SuXEnw8IZ2XDHouhz2RWLpZNAUP4jV148blNxC+MdBZUbdTQILTbivvMAIOHsCPI7Ag1tgXpCWkml8TOoz9DdRP9F7BhTQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732531236; c=relaxed/simple;
-	bh=RiX1qAPwXOtMydW3Bf48L9hzhNoJhOnr+55MkoLjnyI=;
+	s=arc-20240116; t=1732531238; c=relaxed/simple;
+	bh=OINYhmpNgcEI4tTl8Cjxh0NZwDWWt5w395EWwdrZTOQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WEwHpd2b7xsN4Fgak6CTMmG++kOi5KWJ05g4X5RrR6O5StsoQtgUgso74HRldCr2hb/Dsue/GwgkWSyOoB477BQ0X89IDHT6SzYJIUwUcMbiHVN8J0tNcTcvJypfQYIDOCgI4pxlkCNTKIWAB0A8zWKT3XNXg1xPiBS4+S755t4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=Mdb4xOeL; arc=none smtp.client-ip=168.119.48.163
+	 MIME-Version:Content-Type; b=FBQSNiIa+pXj4xkjAcgYnHw1lIsHrmSHgg6sw1s7OSJGiwlkV/FSVVKwuqkppRTVrwVlArjuYaFgmLiN6/XC4ilTg2LCq8CtpnWwioI79zMcBNbkMaEWKN3ncCqcL2E2ZBOvcnaXb/xsaooKuPnl1rPkYBzqqe9uW57dOvlECg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=fj/rRme9; arc=none smtp.client-ip=168.119.48.163
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seltendoof.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="Mdb4xOeL"
+	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="fj/rRme9"
 From: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seltendoof.de;
-	s=2023072701; t=1732531225;
+	s=2023072701; t=1732531226;
 	h=from:from:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=uXJbjp9TEMr3wvQ+2vZpGMNVJ7tkSZTdw7fouyXGnz0=;
-	b=Mdb4xOeLmRxHgooUx3JOijX3+LMSlj4GRxvTHEPWd1og60SnG27YZkYD2Ceyjx+7B333QM
-	ZyLgYWtMHFmpAS4jQ0VS7zdfJq9cQ9qMI1VXAh2OJqLOjuiladwhEQxhs5QkMpM4d+88/j
-	YY61kw6/zF9K2N5hNSbT40SYIj6CvC8CdzV+bU9xHoZrZXIDj3azO4Pssrl2ovpBnSmIzD
-	Mv0etwsaWtD04zX2lsGfDFSxo61zYM7APvut1Mn8G6dTOzCPF4BW7lPtuQElc1iacTmQXf
-	8qW38Pn8ScwYATLiIG45X5y8yS2CZ7A99XQg1RtL/r9qa9EeW8r4/TzXlS2Ylw==
+	bh=P6AGqeaWbUDe9y5vDnfY9zmRKUFqqfOHVoZc9OQ1JdE=;
+	b=fj/rRme9yehwZA25c2Ni1/9tPmwADULk1KpFn/cVxyAjjBhxyj8Rg7aA5iUrANhXFj3LDF
+	EVEGpnqH2qxuU7xy7zbZVAr4PN6VXR1u6SaguSc7GBpAUwBFP2HQJcV/7rETu2atweRoUA
+	DK3HuU8potvt0ji3IF7E3NaCAPi/OzmAMILLwPVEudy8K/V1Sdv63rqOny0qQy7l6LvQi7
+	Qnx0BqyipTaX8aKvcgEzC2iX2EuYf59bvAQ8Qid3xQZb/Mswa40vldOlKBAAKO8BzLXU81
+	uOeCjHBIVLuJs5xjOP6IrtRBAxUkLS0+WGDcxbdL3NWIKBOcibJLOqsDLIBdFg==
 To: linux-security-module@vger.kernel.org
 Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
-	Muchun Song <muchun.song@linux.dev>,
+	Frank Haverkamp <haver@linux.ibm.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Serge Hallyn <serge@hallyn.com>,
 	Julia Lawall <Julia.Lawall@inria.fr>,
 	Nicolas Palix <nicolas.palix@imag.fr>,
 	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
 	cocci@inria.fr
-Subject: [PATCH 04/11] hugetlbfs: reorder capability check last
-Date: Mon, 25 Nov 2024 11:39:56 +0100
-Message-ID: <20241125104011.36552-3-cgoettsche@seltendoof.de>
+Subject: [PATCH 05/11] genwqe: reorder capability check last
+Date: Mon, 25 Nov 2024 11:39:57 +0100
+Message-ID: <20241125104011.36552-4-cgoettsche@seltendoof.de>
 In-Reply-To: <20241125104011.36552-1-cgoettsche@seltendoof.de>
 References: <20241125104011.36552-1-cgoettsche@seltendoof.de>
 Reply-To: cgzones@googlemail.com
@@ -73,22 +74,22 @@ It can lead to three undesired cases:
 
 Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
 ---
- fs/hugetlbfs/inode.c | 2 +-
+ drivers/misc/genwqe/card_dev.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
-index a4441fb77f7c..e4f6790c1638 100644
---- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -1508,7 +1508,7 @@ static int can_do_hugetlb_shm(void)
- {
- 	kgid_t shm_group;
- 	shm_group = make_kgid(&init_user_ns, sysctl_hugetlb_shm_group);
--	return capable(CAP_IPC_LOCK) || in_group_p(shm_group);
-+	return in_group_p(shm_group) || capable(CAP_IPC_LOCK);
- }
+diff --git a/drivers/misc/genwqe/card_dev.c b/drivers/misc/genwqe/card_dev.c
+index 4441aca2280a..77b2d191d21c 100644
+--- a/drivers/misc/genwqe/card_dev.c
++++ b/drivers/misc/genwqe/card_dev.c
+@@ -461,7 +461,7 @@ static int genwqe_mmap(struct file *filp, struct vm_area_struct *vma)
+ 		goto free_dma_map;
+ 	}
  
- static int get_hstate_idx(int page_size_log)
+-	if (capable(CAP_SYS_ADMIN) && (vsize > sizeof(dma_addr_t)))
++	if ((vsize > sizeof(dma_addr_t)) && capable(CAP_SYS_ADMIN))
+ 		*(dma_addr_t *)dma_map->k_vaddr = dma_map->dma_addr;
+ 
+ 	pfn = virt_to_phys(dma_map->k_vaddr) >> PAGE_SHIFT;
 -- 
 2.45.2
 
