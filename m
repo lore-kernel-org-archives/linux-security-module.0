@@ -1,153 +1,170 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D5E717C208
-	for <linux-security-module@vger.kernel.org>; Tue, 26 Nov 2024 08:01:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 268A71C3F36;
+	Tue, 26 Nov 2024 10:25:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732608113; cv=none; b=OYqHAAqVh9qh68OFqAWIU7ZYRswczbOLF31jGeB9VgRPdBH8pqrbJpybFNEeshP0bY6O1ytfuUI22c+5TuL2PMF7Uy0dK8cPzhGSNrrTK3A0HQ7cGMfjM+UVKA85aQ7sZf7m2WUBrixwNt+gVnpCnyP1ZVttgLpBT65SNDqlh0Y=
+	t=1732616744; cv=none; b=Xkro9t02LHIegy2/BLd9pfZQXIkXXQDbDj0Hr8UUddbmVtyS8F9oQt8qBuOpsCiIIvUtm2r/Hd4IvLyOcZsTJPtT6brA2QDE8kNRCP+bciwa57QxjSXc11bXn/H7/ephCGtFBKWSls1IoOyVSErWMmvDrxtD2c2XMQvdaAeWLko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732608113; c=relaxed/simple;
-	bh=HClPhchoZHieJ4PXk0ZPMDdo+jy31usGVuk4vyKuzbI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tS3TRWQxX0MLVb5QzFjr5YaAhBiCeiR4h90sahgm/90XeR6Mq6jEDRaHC/UzjXAK7Uj6gHyCT7Cp0qldW3FB99yLiqf+Lx/QoshVukp0N5YhYj37EO+oZiaueDuoEkT5V34PHiVlqy4rn2/Z2A/5gTF6Kuf/JWa3It4yuR3OU+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=I35rT2WP; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="I35rT2WP"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1732608109;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lAfqafsxwrqLArJ1cwO4NK3iIDoMu1BiTOyHhDVtA1I=;
-	b=I35rT2WP5st8oh6fMLR4DwWfPbPiEJ8ZmVH+1gnRBSnkhiEWkpZRcP0rW2hO+nDspNI75j
-	6igcNdPzFIIXt9OXYHCSAKLRj3R2gA/rDD8pLdqVl9XTxW+DBUp+M2M/xfxCA4h7IY5EXK
-	EamCkQPh7LC556GxoclOR+Enrf67FUg=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-177--RsNtY8SNz6cXZlR2Fw4Tg-1; Tue, 26 Nov 2024 03:01:47 -0500
-X-MC-Unique: -RsNtY8SNz6cXZlR2Fw4Tg-1
-X-Mimecast-MFC-AGG-ID: -RsNtY8SNz6cXZlR2Fw4Tg
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-434a876d15cso67525e9.0
-        for <linux-security-module@vger.kernel.org>; Tue, 26 Nov 2024 00:01:47 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732608106; x=1733212906;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lAfqafsxwrqLArJ1cwO4NK3iIDoMu1BiTOyHhDVtA1I=;
-        b=Q4oAuCc3sPiHhe5YCER7OyPlWuytT4mzJ7mwzV0IexQUenhVHNMyp7uz+RZzmZUc7h
-         e04+Lv05gj0wXux2rfP9ZUDdmzrcfW9FknV2trUoPAwdeZgP8PsS7n4YxgdNfCxhsAcU
-         D7VNT0LgM57FiQBsyfcfh5guUPNloFbANrogw+mMb1z4KMi5OyUE1L3OgC/M4HrcXYAi
-         K8+XJX2vVLJgNh+D2JCgC62OqtSvogx5j0GcRNXHY6m8I/eB9sAHYhuFHHRWaJGwhFQp
-         GeqTRGKBA/1hGn9kLEaHXQBiK6QezUjq4peZ1G0HCVKC+sqZnH3bbWI4egyi1b5BcYWi
-         jnEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWC15cM8n5SujMZnrRTfI08xjZCH2JQf53KY4E5lFvKwdztcW4xGZpLRbh4GFqBDLnvea3sH1kdN4O89eR0GGEaMxB6Frs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz06R1D9cDhHZ/CPsZ84okYuwpgYtL/1f22YRTNwoD4XtTrdsV5
-	gm3LPW24py3X0UI3zWajsTk7VYQuaRNFbsKjP1ujbNEu44FiZI8oSRzFZv+6/wfj/EsOpZNFFFh
-	H+XEClFkgUFAUIJvhPa3hBHvONO5RFcjWXOSyZ1pS8Z+6NNtPw1usf43Ib0nX65ThPANGy6KTKA
-	==
-X-Gm-Gg: ASbGnculwqsIyEDlQ+dbQD7ykHUFjfur553GGYS9BZvRyUEsTD89rUlosC5bXy0Gx4q
-	ZL0vUHjU3EEb49GYNfRJPNch9eiHR/V1T1dy5XljO9dR0R9XTKkbh1dNDnHexFUbKvC30l/CydW
-	3Z4qn70fYLCcRdblWIk1PMrW9xOEMNobdAllHY1UUnSNiDgySBM4B8dCJqiXLcWKSEV9VFMEPVA
-	HfcLJ/5vlPhUYfjhzSo6YMjcluZZz9p8g+Oxo7v+4q2Dqdbh4ufoXEn73mVUcAs+hx0N6A2Fnzx
-X-Received: by 2002:a05:600c:5253:b0:434:9e17:190c with SMTP id 5b1f17b1804b1-434a4dfa99emr15576595e9.0.1732608106706;
-        Tue, 26 Nov 2024 00:01:46 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IG3Zs+v/tKW0ky58iJbPzmLtmmXAe1KS/DiR3119yAT3rtX8xL7zpJ9OBnWLqLvIaKIGk8HBA==
-X-Received: by 2002:a05:600c:5253:b0:434:9e17:190c with SMTP id 5b1f17b1804b1-434a4dfa99emr15576215e9.0.1732608106313;
-        Tue, 26 Nov 2024 00:01:46 -0800 (PST)
-Received: from [192.168.88.24] (146-241-94-87.dyn.eolo.it. [146.241.94.87])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3825fafedbcsm12725815f8f.41.2024.11.26.00.01.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 26 Nov 2024 00:01:45 -0800 (PST)
-Message-ID: <afe444bb-5419-47db-8b2e-b51945dae752@redhat.com>
-Date: Tue, 26 Nov 2024 09:01:43 +0100
+	s=arc-20240116; t=1732616744; c=relaxed/simple;
+	bh=fs0tdLUjiZ9ilJD7V6bohMscAEWEo6Ye5zBOhSJnsXo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=go49S8vMWABrDI9oytGoA5uWk65IbhpPJaFtWWNwU+yCaIzpaXIbozhnMPrA+Ppjo4m1H46uyhRXRnmHl65EMGMV7I1nZeVuQ7iR7p83WqVUollvY5sAWJgSk5sqBn6xmWo+n+5t419WfMLlAQdUTfNgFTguA5uDaWz7P/qGtrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4XyJ8F1xc4z9v7Vg;
+	Tue, 26 Nov 2024 18:04:29 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id F337E1407AB;
+	Tue, 26 Nov 2024 18:25:30 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP2 (Coremail) with SMTP id GxC2BwCnwH8HokVnxjpVAg--.1157S2;
+	Tue, 26 Nov 2024 11:25:30 +0100 (CET)
+Message-ID: <d428a5d926d695ebec170e98463f7501a1b00793.camel@huaweicloud.com>
+Subject: Re: [PATCH v6 07/15] digest_cache: Allow registration of digest
+ list parsers
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+ eric.snowberg@oracle.com,  corbet@lwn.net, petr.pavlu@suse.com,
+ samitolvanen@google.com, da.gomez@samsung.com,  akpm@linux-foundation.org,
+ paul@paul-moore.com, jmorris@namei.org,  serge@hallyn.com,
+ shuah@kernel.org, mcoquelin.stm32@gmail.com,  alexandre.torgue@foss.st.com,
+ linux-integrity@vger.kernel.org,  linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org,  linux-api@vger.kernel.org,
+ linux-modules@vger.kernel.org,  linux-security-module@vger.kernel.org,
+ linux-kselftest@vger.kernel.org,  wufan@linux.microsoft.com,
+ pbrobinson@gmail.com, zbyszek@in.waw.pl, hch@lst.de,  mjg59@srcf.ucam.org,
+ pmatilai@redhat.com, jannh@google.com, dhowells@redhat.com, 
+ jikos@kernel.org, mkoutny@suse.com, ppavlu@suse.com, petr.vorel@gmail.com, 
+ mzerqung@0pointer.de, kgold@linux.ibm.com, Roberto Sassu
+ <roberto.sassu@huawei.com>
+Date: Tue, 26 Nov 2024 11:25:07 +0100
+In-Reply-To: <Z0UN9ub0iztWvgLi@bombadil.infradead.org>
+References: <20241119104922.2772571-1-roberto.sassu@huaweicloud.com>
+	 <20241119104922.2772571-8-roberto.sassu@huaweicloud.com>
+	 <Z0UN9ub0iztWvgLi@bombadil.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 07/11] ipv4: reorder capability check last
-To: cgzones@googlemail.com, linux-security-module@vger.kernel.org
-Cc: Eric Dumazet <edumazet@google.com>, "David S. Miller"
- <davem@davemloft.net>, David Ahern <dsahern@kernel.org>,
- Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>,
- Serge Hallyn <serge@hallyn.com>, Julia Lawall <Julia.Lawall@inria.fr>,
- Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, cocci@inria.fr
-References: <20241125104011.36552-1-cgoettsche@seltendoof.de>
- <20241125104011.36552-6-cgoettsche@seltendoof.de>
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20241125104011.36552-6-cgoettsche@seltendoof.de>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: QWZ2gy-cMY9Tj2WC8IhHGZ7-bW9wgr-i16FIkfJ6ANo_1732608107
-X-Mimecast-Originator: redhat.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:GxC2BwCnwH8HokVnxjpVAg--.1157S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxGw18KrWxCr48Jw4fWF17Jrb_yoWrZF4xpF
+	4Ykw15KF4vyr1rCayxAa1I93yF9393XrW5WFn5JryrZr4Y9F4Svw1IgF43u3WUGr4DKF1a
+	grs0g343tryDZ3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Wrv_ZF1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26rWY6r4U
+	JwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
+	EksDUUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQATBGdFMjUCtgAAsH
 
-On 11/25/24 11:39, Christian Göttsche wrote:
-> capable() calls refer to enabled LSMs whether to permit or deny the
-> request.  This is relevant in connection with SELinux, where a
-> capability check results in a policy decision and by default a denial
-> message on insufficient permission is issued.
-> It can lead to three undesired cases:
->   1. A denial message is generated, even in case the operation was an
->      unprivileged one and thus the syscall succeeded, creating noise.
->   2. To avoid the noise from 1. the policy writer adds a rule to ignore
->      those denial messages, hiding future syscalls, where the task
->      performs an actual privileged operation, leading to hidden limited
->      functionality of that task.
->   3. To avoid the noise from 1. the policy writer adds a rule to permit
->      the task the requested capability, while it does not need it,
->      violating the principle of least privilege.
-> 
-> Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
-> ---
->  net/ipv4/tcp.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
-> index 0d704bda6c41..bd3d7a3d6655 100644
-> --- a/net/ipv4/tcp.c
-> +++ b/net/ipv4/tcp.c
-> @@ -3406,8 +3406,8 @@ EXPORT_SYMBOL(tcp_disconnect);
->  
->  static inline bool tcp_can_repair_sock(const struct sock *sk)
->  {
-> -	return sockopt_ns_capable(sock_net(sk)->user_ns, CAP_NET_ADMIN) &&
-> -		(sk->sk_state != TCP_LISTEN);
-> +	return (sk->sk_state != TCP_LISTEN) &&
-> +	       sockopt_ns_capable(sock_net(sk)->user_ns, CAP_NET_ADMIN);
->  }
->  
->  static int tcp_repair_set_window(struct tcp_sock *tp, sockptr_t optbuf, int len)
+On Mon, 2024-11-25 at 15:53 -0800, Luis Chamberlain wrote:
+> On Tue, Nov 19, 2024 at 11:49:14AM +0100, Roberto Sassu wrote:
+> > From: Roberto Sassu <roberto.sassu@huawei.com>
+> > Introduce load_parser() to load a kernel module containing a
+> > parser for the requested digest list format (compressed kernel modules =
+are
+> > supported). Kernel modules are searched in the
+> > /lib/modules/<kernel ver>/security/integrity/digest_cache directory.
+> >=20
+> > load_parser() calls ksys_finit_module() to load a kernel module directl=
+y
+> > from the kernel. request_module() cannot be used at this point, since t=
+he
+> > reference digests of modprobe and the linked libraries (required for IM=
+A
+> > appraisal) might not be yet available, resulting in modprobe execution
+> > being denied.
+>=20
+> You are doing a full solution implementation of loading modules in-kernel=
+.
+> Appraisals of modules is just part of the boot process, some module
+> loading may need firmware to loading to get some functinality to work
+> for example some firmware to get a network device up or a GPU driver.
+> So module loading alone is not the only thing which may require
+> IMA appraisal, and this solution only addresses modules. There are other
+> things which may be needed other than firmware, eBPF programs are
+> another example.
 
-The code change IMHO makes sense, but the commit message looks quite
-unrelated to this specific change, please re-word it describing this
-change helps capability validation.
+Firmware, eBPF programs and so on are supposed to be verified with
+digest lists (or alternative methods, such as file signatures), once
+the required digest list parsers are loaded.
 
-Additionally it looks the net patches don't depend on other patches in
-this series, so it would simplify the merging if you would resubmit them
-separately targeting the net-next tree explicitly (add 'net-next' in the
-subj prefix).
+The parser is an exceptional case, because user space cannot be
+executed at this point. Once the parsers are loaded, verification of
+everything else proceeds as normal. Fortunately, in most cases kernel
+modules are signed, so digest lists are not required to verify them.
 
-Note that the net-next tree is currently closed for the merge window, it
-will reopen around ~2 Dec.
+> It sounds more like you want to provide or extend LSM hooks fit your
+> architecture and make kernel_read_file() LSM hooks optionally use it to
+> fit this model.
 
-Please have a look at:
+As far as the LSM infrastructure is concerned, I'm not adding new LSM
+hooks, nor extending/modifying the existing ones. The operations the
+Integrity Digest Cache is doing match the usage expectation by LSM (net
+denying access, as discussed with Paul Moore).
 
-https://elixir.bootlin.com/linux/v6.12/source/Documentation/process/maintainer-netdev.rst
+The Integrity Digest Cache is supposed to be used as a supporting tool
+for other LSMs to do regular access control based on file data and
+metadata integrity. In doing that, it still needs the LSM
+infrastructure to notify about filesystem changes, and to store
+additional information in the inode and file descriptor security blobs.
 
-for more details.
+The kernel_post_read_file LSM hook should be implemented by another LSM
+to verify the integrity of a digest list, when the Integrity Digest
+Cache calls kernel_read_file() to read that digest list. That LSM is
+also responsible to provide the result of the integrity verification to
+the Integrity Digest Cache, so that the latter can give this
+information back to whoever wants to do a digest lookup from that
+digest list and also wants to know whether or not the digest list was
+authentic.
 
-Thanks,
+> Because this is just for a *phase* in boot, which you've caught because
+> a catch-22 situaton, where you didn't have your parsers loaded. Which is
+> just a reflection that you hit that snag. It doesn't prove all snags
+> will be caught yet.
 
-Paolo
+Yes, that didn't happen earlier, since all the parsers were compiled
+built-in in the kernel. The Integrity Digest Cache already has a
+deadlock avoidance mechanism for digest lists.
+
+Supporting kernel modules opened the road for new deadlocks, since one
+can ask a digest list to verify a kernel module, but that digest list
+requires the same kernel module. That is why the in-kernel mechanism is
+100% reliable, because the Integrity Digest Cache marks the file
+descriptors it opens, and can recognize them, when those file
+descriptors are passed back to it by other LSMs (e.g. through the
+kernel_post_read_file LSM hook).
+
+> And you only want to rely on this .. in-kernel loading solution only
+> early on boot, is there a way to change this over to enable regular
+> operation later?
+
+User space can voluntarily load new digest list parsers, but the
+Integrity Digest Cache cannot rely on it to be done. Also, using
+request_module() does not seem a good idea, since it wouldn't allow the
+Integrity Digest Cache to mark the file descriptor of kernel modules,
+and thus the Integrity Digest Cache could not determine whether or not
+a deadlock is happening.
+
+Thanks
+
+Roberto
 
