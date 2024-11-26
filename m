@@ -1,98 +1,131 @@
-Received: from wilbur.contactoffice.com (wilbur.contactoffice.com [212.3.242.68])
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF8B83208;
-	Tue, 26 Nov 2024 06:27:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.3.242.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8664C190072;
+	Tue, 26 Nov 2024 07:50:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732602448; cv=none; b=e1GnJzunVJPIhwO/tyCwtrbG8yafgaf48VLMxANlwwFzJmeLLytNbcyc1gU9cZ2obIHy9HUmaQ6l7MTabpuma8WPcytrdsLhr9XRczSMrlZkt6Fbq6biJbe5Sd99lxwoIqb19Uvy0nxxxi35tBn6OE/inaYnYc1s9xOMudpxvAI=
+	t=1732607430; cv=none; b=fI0bv7Uslk1H28f8i0lv+XTq4rIajxcptP+OI9Ki9Pqp0k2LpyKf/tqvIyCfK9VG9xZ+pwJGZ4vdAvvn8L8CazgFCcGP351OqrAGmzbDsNPhwRs6hgBD0VOcT4Y7KkMTMlCT4i3pf3sKWQATDf7KtN1F5kqm+5hft2oNmEn8XZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732602448; c=relaxed/simple;
-	bh=UlO7t7b9uptyFYeH6BbOgjSWlkU5vvwVNEeLCtPAiAA=;
-	h=Date:From:To:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type:Cc; b=nJJp+ukJ3Oi6o22SgiiS5czPPQ/00mFs8cV11IoT8Ol59zBRkq7h0uH5yDEHyDVn0HEm35UwjUPMIh+VlDvZMPyzunGo6VMcO3i18L639d+MjuSImM5oT2DrAy+bBDTQyqcfCehuwWIrsSx8CIwp938MUOk7wjMIyJ4QTovOhRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailfence.com; spf=pass smtp.mailfrom=mailfence.com; dkim=pass (2048-bit key) header.d=mailfence.com header.i=falaichte@mailfence.com header.b=qVIOdvn/; arc=none smtp.client-ip=212.3.242.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailfence.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailfence.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailfence.com header.i=falaichte@mailfence.com header.b="qVIOdvn/"
-Received: from fidget.co-bxl (fidget.co-bxl [10.2.0.33])
-	by wilbur.contactoffice.com (Postfix) with ESMTP id E9C316D4D;
-	Tue, 26 Nov 2024 07:27:23 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1732602443;
-	s=20240605-akrp; d=mailfence.com; i=falaichte@mailfence.com;
-	h=Date:From:To:Message-ID:In-Reply-To:References:Subject:MIME-Version:Content-Type:Cc:Content-Transfer-Encoding;
-	bh=4d2OucsJr+i4BIPoqG8I3DVx/83M6LVwokgDc0xnD1o=;
-	b=qVIOdvn/eo+MJiJHppJvhgS+NCcrSzZCQtLmVlGXO7CZtvdm629KwDJcizSsfhDJ
-	eCgYMjUHkMZNXdc2OQN0D3LmyR6a0JOKvpE8X3bTBFHoLShYwSlDQln4VcY6iAHtjHp
-	HK8xTLe5k8zIeNZt1d8Ec7XDdyKN6l+UH8vvJQk/Q5p7bX0mwNpezxjjktXne60dMOn
-	Vhz3NddVoHUaNO2Zv6V/C+suWFpHfTqeT5+5mgQWMfebmxFH1cmuWMjRrZ7qFw75cBm
-	NdpiPsvCi3gnwi98osMoeu2K1MMS1+qEnPnse4Ehg5N5PMqWETabx/a8p5c2OnfGT+L
-	dyA/VEq6nQ==
-Date: Tue, 26 Nov 2024 07:27:21 +0100 (CET)
-From: =?utf-8?Q?Dylan_=E2=80=8E_=E2=80=8E?= <falaichte@mailfence.com>
-To: Michal Hocko <mhocko@suse.com>, Dan Williams <dan.j.williams@intel.com>,
-	Kent Overstreet <kent.overstreet@linux.dev>
-Message-ID: <1027126957.1379993.1732602441355@fidget.co-bxl>
-In-Reply-To: <1592065022.1379875.1732602282945@fidget.co-bxl>
-References: <Zs6jFb953AR2Raec@dread.disaster.area> <ylycajqc6yx633f4sh5g3mdbco7zrjdc5bg267sox2js6ok4qb@7j7zut5drbyy> <ZtBzstXltxowPOhR@dread.disaster.area> <myb6fw5v2l2byxn4raxlaqozwfdpezdmn3mnacry3y2qxmdxtl@bxbsf4v4qbmg> <ZtUFaq3vD+zo0gfC@dread.disaster.area> <nawltogcoffous3zv4kd2eerrrwhihbulz7pi2qyfjvslp6g3f@j3qkqftra2qm> <ZtV6OwlFRu4ZEuSG@tiehlicka> <v664cj6evwv7zu3b77gf2lx6dv5sp4qp2rm7jjysddi2wc2uzl@qvnj4kmc6xhq> <ZtWH3SkiIEed4NDc@tiehlicka> <citv2v6f33hoidq75xd2spaqxf7nl5wbmmzma4wgmrwpoqidhj@k453tmq7vdrk> <6740fc3aabec0_5eb129497@dwillia2-xfh.jf.intel.com.notmuch> <1592065022.1379875.1732602282945@fidget.co-bxl>
-Subject: Re: [PATCH 1/2 v2] bcachefs: do not use PF_MEMALLOC_NORECLAIM
+	s=arc-20240116; t=1732607430; c=relaxed/simple;
+	bh=Ng0CqI/QswNyp0LtIzxZD+B8Cj05Geu2R/eOST9w10o=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=fDQ38buItMnJGQvi0UucF7I6Bs8rq6ilpIENPtFedGNZinq4zyicG1/ONlPVaY0U9wdyzxH9Z4iVIumM+l5ez6lFSQ5nFKMvK3Z/PGFSXZ2/IEueX3IMyubJuaOSHV9dzfYH3bKPqpPYXnNg6eOa+4qwj82fXvUqgrjWw28zj6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4XyDjC3DYXz9v7J5;
+	Tue, 26 Nov 2024 15:29:19 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 94F7414040D;
+	Tue, 26 Nov 2024 15:50:12 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP2 (Coremail) with SMTP id GxC2BwD3XHyrfUVngopTAg--.23041S2;
+	Tue, 26 Nov 2024 08:50:12 +0100 (CET)
+Message-ID: <91a227f3b57374a8aece5480f285c433d3888572.camel@huaweicloud.com>
+Subject: Re: ima: property parameter unused in ima_match_rules()
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Casey Schaufler <casey@schaufler-ca.com>, Christian
+	=?ISO-8859-1?Q?G=F6ttsche?=
+	 <cgzones@googlemail.com>, linux-integrity@vger.kernel.org
+Cc: Mimi Zohar <zohar@linux.ibm.com>, "M: Roberto Sassu"
+ <roberto.sassu@huawei.com>, "M: Dmitry Kasatkin"
+ <dmitry.kasatkin@gmail.com>,  "R: Eric Snowberg"
+ <eric.snowberg@oracle.com>, Paul Moore <paul@paul-moore.com>, LSM List
+ <linux-security-module@vger.kernel.org>
+Date: Tue, 26 Nov 2024 08:49:59 +0100
+In-Reply-To: <92e5fd64-8c75-4e82-981a-846364fc7a38@schaufler-ca.com>
+References: 
+	<CAJ2a_DeUX9UdAYOo9OwG-yXSH1etKQZortPcyxfzG70K3N+g7g@mail.gmail.com>
+	 <92e5fd64-8c75-4e82-981a-846364fc7a38@schaufler-ca.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-X-Mailer: ContactOffice Mail
-X-ContactOffice-Account: com:490142097
+X-CM-TRANSID:GxC2BwD3XHyrfUVngopTAg--.23041S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kw4kKr4rJFW8ZFWfKF18uFg_yoW8ZF4Upa
+	1kKFWUGr1kZFy7KFnrC3Wj9ayFgFW5W3W7Gry5Ka4qvF98JF1jqr4rJrya9r45XF1rAw4S
+	qw4qkr4aywsF9aDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUymb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVWUJVW8JwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vI
+	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
+	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0
+	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
+	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
+	14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UAwIDUUUUU=
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgATBGdD4PMHhgAFsm
 
-When do you plan on addressing the Code of Conduct violation done by Greg Kroah-Hartman and the rest of the Linux Foundation by banning all Russians from contributing to the Linux kernel and in doing so discriminating against nationality and ethnicity?
+On Mon, 2024-11-25 at 10:23 -0800, Casey Schaufler wrote:
+> On 11/25/2024 3:38 AM, Christian G=C3=B6ttsche wrote:
+> > Hi,
+> >=20
+> > I noticed that the `prop` parameter of `ima_match_rules()` is
+> > currently unused (due to shadowing).
+> > Is that by design or a mishap of the recent rework?
+> >=20
+> > Related commits:
+> >=20
+> > 37f670a ("lsm: use lsm_prop in security_current_getsecid")
+> > 870b7fd ("lsm: use lsm_prop in security_audit_rule_match")
+> > 07f9d2c ("lsm: use lsm_prop in security_inode_getsecid")
+>=20
+> The shadowing was inadvertent. The use of lsm_prop data is
+> corrected by this patch.
 
-*Apologies in advance for not replying to everyone, my service provider has a cap on recipients I can reply to.
+Thanks Casey. Yes, this is what I had in mind.
 
-On Nov 22, 2024 at 9:48 PM, Dan Williams <dan.j.williams@intel.com> wrote:Kent Overstreet wrote:
-> On Mon, Sep 02, 2024 at 11:39:41AM GMT, Michal Hocko wrote:
-> > On Mon 02-09-24 04:52:49, Kent Overstreet wrote:
-> > > On Mon, Sep 02, 2024 at 10:41:31AM GMT, Michal Hocko wrote:
-> > > > On Sun 01-09-24 21:35:30, Kent Overstreet wrote:
-[..]
+Roberto
 
-Kent,
+> ---
+>  security/integrity/ima/ima_policy.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima=
+/ima_policy.c
+> index dbfd554b4624..21a8e54c383f 100644
+> --- a/security/integrity/ima/ima_policy.c
+> +++ b/security/integrity/ima/ima_policy.c
+> @@ -635,7 +635,7 @@ static bool ima_match_rules(struct ima_rule_entry *ru=
+le,
+>  		return false;
+>  	for (i =3D 0; i < MAX_LSM_RULES; i++) {
+>  		int rc =3D 0;
+> -		struct lsm_prop prop =3D { };
+> +		struct lsm_prop inode_prop =3D { };
+> =20
+>  		if (!lsm_rule->lsm[i].rule) {
+>  			if (!lsm_rule->lsm[i].args_p)
+> @@ -649,15 +649,16 @@ static bool ima_match_rules(struct ima_rule_entry *=
+rule,
+>  		case LSM_OBJ_USER:
+>  		case LSM_OBJ_ROLE:
+>  		case LSM_OBJ_TYPE:
+> -			security_inode_getlsmprop(inode, &prop);
+> -			rc =3D ima_filter_rule_match(&prop, lsm_rule->lsm[i].type,
+> +			security_inode_getlsmprop(inode, &inode_prop);
+> +			rc =3D ima_filter_rule_match(&inode_prop,
+> +						   lsm_rule->lsm[i].type,
+>  						   Audit_equal,
+>  						   lsm_rule->lsm[i].rule);
+>  			break;
+>  		case LSM_SUBJ_USER:
+>  		case LSM_SUBJ_ROLE:
+>  		case LSM_SUBJ_TYPE:
+> -			rc =3D ima_filter_rule_match(&prop, lsm_rule->lsm[i].type,
+> +			rc =3D ima_filter_rule_match(prop, lsm_rule->lsm[i].type,
+>  						   Audit_equal,
+>  						   lsm_rule->lsm[i].rule);
+>  			break;
+>=20
 
-The Code of Conduct Committee received reports about your conduct in
-this email discussion.
-
-Link to email where the violation took place:
-
-https://lore.kernel.org/citv2v6f33hoidq75xd2spaqxf7nl5wbmmzma4wgmrwpoqidhj@k453tmq7vdrk
-
-Our community works on trust and respect and has agreed to abide by the
-Code of Conduct:
-
-Reference: https://docs.kernel.org/process/code-of-conduct.html
-
-The code of Conduct Committee has determined that your written abuse
-of another community member required action on your part to repair the
-damage to the individual and the community. You took insufficient action
-to restore the community's faith in having otherwise productive technical
-discussions without the fear of personal attacks.
-
-Following the Code of Conduct Interpretation process the TAB has approved
-has approved the following recommendation:
-
--- Restrict Kent Overstreet's participation in the kernel development
-   process during the Linux 6.13 kernel development cycle.
-
-       - Scope: Decline all pull requests from Kent Overstreet during
-         the Linux 6.13 kernel development cycle.
-
--- 
-Sent with https://mailfence.com  
-Secure and private email
-
--- 
-Sent with https://mailfence.com  
-Secure and private email
