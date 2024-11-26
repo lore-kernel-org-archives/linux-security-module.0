@@ -1,100 +1,102 @@
-Received: from mail-oi1-f193.google.com (mail-oi1-f193.google.com [209.85.167.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEDCC1DE2DB
-	for <linux-security-module@vger.kernel.org>; Tue, 26 Nov 2024 18:42:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61B5C16F0E8;
+	Tue, 26 Nov 2024 19:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732646536; cv=none; b=OgoKqaACpMz1SxUWtCspALPFgRdJX18Bu90jUp9/ifoypRll9C6P3MFhlyytYRyvaZVI+OJ0HXB+4RsyOzk4f1M5c72pf21LDUczPoBzH4ft/M8pSzXoltzqvIFuEpaGgMKBuvBpn/uJrEZXSElvgxYju01AlnkWAqHYPBDJlAk=
+	t=1732647874; cv=none; b=dOgZL+rjFBs1vOzzfVHxaOGOaRI/Z0b4jjMeQ9Y8kOWiWpP6tUdv4AVKOMbxQg2xhCr+eZPMRAq12Mimx5jyAF9PgwIPhLrjaK5lRPnp6sJ/V+Hrhn9Saux/9kC1ZF1xjHoNEb1bTxkAqjhyW92MYX/bmN7EQB5h2KI8p8vmo8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732646536; c=relaxed/simple;
-	bh=Twl5ypj0+CDkFTQUNnh5Aon13c1lEyUu57FmqAb1EAs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KIpFWUoXSbiQlU7hYlt+2UtxbKcHqjS1hYvyLj1ltqafehF03Ix1KsPpsR+HKg9oHxGwb6Lk7PQ42NB4r0Deu08rUfPmlMfjf8F8amab5C6TKfa7cJArBNjggVIsBNTHSSsU7wXzNCVLTf2UiA+z0GlnrjPq8De6bRrYjTi30/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KK4HPYWT; arc=none smtp.client-ip=209.85.167.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1732647874; c=relaxed/simple;
+	bh=E18gfvq447oO7905Vj2Agqf4+xGXFE0FgW3F4b7o0Zs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TM2VlsMQ2Mx9hX8h8cOcCyQ8EkMILUEQKS05a42mzsXSrWaMnpJKg0rJ/UUsCsfso+Fk1/ZVYurpTpVf5pxZyCNNmxvxnYHMU606vSqBhQRYC0+zmwHXrxVyEVfN/DDdTKz655i3W5EoQHmYMYFqFyc48AoiOB5r+/SZOqYK2AU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=evq0lHqQ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KK4HPYWT"
-Received: by mail-oi1-f193.google.com with SMTP id 5614622812f47-3ea60f074c3so489054b6e.1
-        for <linux-security-module@vger.kernel.org>; Tue, 26 Nov 2024 10:42:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1732646534; x=1733251334; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=MXrXqESosptyKiwOViGdMQ3y49t+BKzrdrshLPbcwlM=;
-        b=KK4HPYWT6aAXHFMnXLFRUxPZ8isZraRxnSJSDaXr+YQhaNncB8XXZxqAY3R29CXYfl
-         lsSfZDByMuvUvJ8EPWevHSy08xmSTK+ZUMrZXHJKwW5Y9NA89+k0UdOtXJuATzqSVG6b
-         36TLupz1xEvapMMG0CSzn3jXuD+uAg2yWcoSuzkGjJwiHnEydfxAhx3gxPfSE8fmHdAg
-         NDMSsGaRF9Nx6R3kpXV3E5zJ1l4bmFe2yeafqbajGbgFuYQAwlX9gvYdNGS7xGmZzaI4
-         6Zxi2HIPyfWKD7Z4JtiLisfzypTzjtqPngSH66yhMTIXVn0ydLokoLt0bofsaS2b6fyA
-         HqYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732646534; x=1733251334;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MXrXqESosptyKiwOViGdMQ3y49t+BKzrdrshLPbcwlM=;
-        b=MA6uVb1tvAIm6mWvNyomOVuNEECmhcC7oai4AXaiaKt2Rw3VD8Uwv5I1VRVjPaOtBM
-         onLzB4vLeDAa/6/KT2p91s5oNczVYC6TT8xmZ9hgG5SBLmBPtMEYQIV6qREbpDrc3Zqk
-         gcD6A9fF2m/rBkBGfz47MuBZs6rpVNVAuQtm28X/bZekUMV63TZr9FbivSzahPvNGrjP
-         iwbfQ8xZJxeDYL8oyWZ9IROW2knqLs0Y3bb1kXPJUCiQqSjiN0mGFndL1q83LybPNQOu
-         6IFTQYA0uL1+xsnoick6BXr3fQhoLtyIZox4t3BhXgCNndsEpFBkg6tcC61h+km4C9Gr
-         WLNw==
-X-Gm-Message-State: AOJu0Yxvvww4VMS4JrduTXgtLeFmN0e3DqXPq6PTEnu4VmxTM4+3TEVd
-	0XFdhxVLANCo1rYlaCN9UCvF3kGaxEstez36qHX6xC5ILuhSZ4V0
-X-Gm-Gg: ASbGncuDazrwhVqI8P1B5yllodBaf0ClRSXRi3WjterupbLIvhIE/aeQirDEKGPe0HO
-	WIpVxPIUvZkv/+qYI8ifeFlQ4BF7t2Uh0u7lQnA9t09ZvaubzL2nu5Ei+Mm+Vk5AhZFH9PbhEg6
-	qDx7KOgdTooKcPcCt7YyiAw8cdAis2MKm9Q0MqoUDd+AlxrfW4MWyOrDE0VpFlBblXFM+sXNcm7
-	bvj8kdnxDUUq+RKekr7SSshXOUmXXv/uNzZaQVpd4+KpyndWLErFeekBnyzA3JJMm4pN+K4Cm2k
-	Qx2BgrISZMTcyN25SRrxbwj3a+7LrDl7bZz4
-X-Google-Smtp-Source: AGHT+IGBgM2zuIiFJxmCPgCUoWYag7TC45f6sd5q2buRuwIj9CS3n9I8YVuA6szlxUVH2DyiLMHWwQ==
-X-Received: by 2002:a05:6808:19a4:b0:3e7:a201:dc31 with SMTP id 5614622812f47-3ea6dc2511bmr476790b6e.23.1732646533791;
-        Tue, 26 Nov 2024 10:42:13 -0800 (PST)
-Received: from localhost.localdomain (mobile-130-126-255-54.near.illinois.edu. [130.126.255.54])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b667a4c89esm268801385a.76.2024.11.26.10.42.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 26 Nov 2024 10:42:13 -0800 (PST)
-From: Gax-c <zichenxie0106@gmail.com>
-To: mic@digikod.net,
-	gnoack@google.com
-Cc: linux-security-module@vger.kernel.org,
-	Zichen Xie <zichenxie0106@gmail.com>
-Subject: [PATCH] samples/landlock: Fix possible NULL dereference in parse_path()
-Date: Tue, 26 Nov 2024 12:41:57 -0600
-Message-Id: <20241126184156.12503-1-zichenxie0106@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="evq0lHqQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0614CC4CECF;
+	Tue, 26 Nov 2024 19:04:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1732647873;
+	bh=E18gfvq447oO7905Vj2Agqf4+xGXFE0FgW3F4b7o0Zs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=evq0lHqQcRyOWBXrClvl/1VAJ8nO2sr/dOC3x1+WlqqujfoTC4ZXYWcwPVbv4gwTy
+	 OlIFx9XYY/w/liF5WJE1p42IrMOx2KrHMc6gcnVrLCaJGdyzXSCMo1Mi3Ffdivj0O1
+	 MSxb7kSw9B0zNQADgLbAdFyKr7+ucf9mLTvuP+5oVxOYGGyBYq+TzlBq/a/1lF8cry
+	 kjXpsCCFcl38DIliPVPFAu7C3QUHNhlXNxNLrbh6SfwA6rlyZiGebaMp+rsDBmB+8s
+	 NYM60vsi3Lia2B4/GrzeutZhCFQLYqENG5UBcXrNqz6UM1R3KMgJwguPZ3yyThIUSi
+	 iYwe37ciSIjJQ==
+Date: Tue, 26 Nov 2024 11:04:31 -0800
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
+	eric.snowberg@oracle.com, corbet@lwn.net, petr.pavlu@suse.com,
+	samitolvanen@google.com, da.gomez@samsung.com,
+	akpm@linux-foundation.org, paul@paul-moore.com, jmorris@namei.org,
+	serge@hallyn.com, shuah@kernel.org, mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com, linux-integrity@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-api@vger.kernel.org, linux-modules@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, wufan@linux.microsoft.com,
+	pbrobinson@gmail.com, zbyszek@in.waw.pl, hch@lst.de,
+	mjg59@srcf.ucam.org, pmatilai@redhat.com, jannh@google.com,
+	dhowells@redhat.com, jikos@kernel.org, mkoutny@suse.com,
+	ppavlu@suse.com, petr.vorel@gmail.com, mzerqung@0pointer.de,
+	kgold@linux.ibm.com, Roberto Sassu <roberto.sassu@huawei.com>
+Subject: Re: [PATCH v6 07/15] digest_cache: Allow registration of digest list
+ parsers
+Message-ID: <Z0Ybvzy7ianR-Sx9@bombadil.infradead.org>
+References: <20241119104922.2772571-1-roberto.sassu@huaweicloud.com>
+ <20241119104922.2772571-8-roberto.sassu@huaweicloud.com>
+ <Z0UN9ub0iztWvgLi@bombadil.infradead.org>
+ <d428a5d926d695ebec170e98463f7501a1b00793.camel@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d428a5d926d695ebec170e98463f7501a1b00793.camel@huaweicloud.com>
 
-From: Zichen Xie <zichenxie0106@gmail.com>
+On Tue, Nov 26, 2024 at 11:25:07AM +0100, Roberto Sassu wrote:
+> On Mon, 2024-11-25 at 15:53 -0800, Luis Chamberlain wrote:
+> 
+> Firmware, eBPF programs and so on are supposed
 
-malloc() may return NULL, leading to NULL dereference.
-Add a NULL check.
+Keyword: "supposed". 
 
-Signed-off-by: Zichen Xie <zichenxie0106@gmail.com>
----
- samples/landlock/sandboxer.c | 3 +++
- 1 file changed, 3 insertions(+)
+> As far as the LSM infrastructure is concerned, I'm not adding new LSM
+> hooks, nor extending/modifying the existing ones. The operations the
+> Integrity Digest Cache is doing match the usage expectation by LSM (net
+> denying access, as discussed with Paul Moore).
 
-diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
-index 57565dfd74a2..385fc115647f 100644
---- a/samples/landlock/sandboxer.c
-+++ b/samples/landlock/sandboxer.c
-@@ -91,6 +91,9 @@ static int parse_path(char *env_path, const char ***const path_list)
- 		}
- 	}
- 	*path_list = malloc(num_paths * sizeof(**path_list));
-+	if (*path_list == NULL)
-+		return 1;
-+
- 	for (i = 0; i < num_paths; i++)
- 		(*path_list)[i] = strsep(&env_path, ENV_DELIMITER);
- 
--- 
-2.34.1
+If modules are the only proven exception to your security model you are
+not making the case for it clearly.
 
+> The Integrity Digest Cache is supposed to be used as a supporting tool
+> for other LSMs to do regular access control based on file data and
+> metadata integrity. In doing that, it still needs the LSM
+> infrastructure to notify about filesystem changes, and to store
+> additional information in the inode and file descriptor security blobs.
+> 
+> The kernel_post_read_file LSM hook should be implemented by another LSM
+> to verify the integrity of a digest list, when the Integrity Digest
+> Cache calls kernel_read_file() to read that digest list.
+
+If LSM folks *do* agree that this work is *suplementing* LSMS then sure,
+it was not clear from the commit logs. But then you need to ensure the
+parsers are special snowflakes which won't ever incur other additional
+kernel_read_file() calls.
+
+> Supporting kernel modules opened the road for new deadlocks, since one
+> can ask a digest list to verify a kernel module, but that digest list
+> requires the same kernel module. That is why the in-kernel mechanism is
+> 100% reliable,
+
+Are users of this infrastructure really in need of modules for these
+parsers?
+
+  Luis
