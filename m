@@ -1,129 +1,100 @@
-Received: from sonic308-15.consmr.mail.ne1.yahoo.com (sonic308-15.consmr.mail.ne1.yahoo.com [66.163.187.38])
+Received: from mail-oi1-f193.google.com (mail-oi1-f193.google.com [209.85.167.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4B6F1DD894
-	for <linux-security-module@vger.kernel.org>; Tue, 26 Nov 2024 18:21:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.187.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEDCC1DE2DB
+	for <linux-security-module@vger.kernel.org>; Tue, 26 Nov 2024 18:42:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732645294; cv=none; b=RJj2e6VNyrItffk6IO+R19m86U5GgolrhMMM1lFd4gmxs+W2pI0tegPFALtr4Uje3BwTeYMJvnWnQ1VTJT0K13tpqMCM2euyzAUMMxqelI0jSGAzGASwjwkWwdqEV4JJ3PprxUXSXYnKS6FrDM/XPgDzlKtesrBsTQ/QaXCjXEU=
+	t=1732646536; cv=none; b=OgoKqaACpMz1SxUWtCspALPFgRdJX18Bu90jUp9/ifoypRll9C6P3MFhlyytYRyvaZVI+OJ0HXB+4RsyOzk4f1M5c72pf21LDUczPoBzH4ft/M8pSzXoltzqvIFuEpaGgMKBuvBpn/uJrEZXSElvgxYju01AlnkWAqHYPBDJlAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732645294; c=relaxed/simple;
-	bh=kgu/8heoFL26/8+SrMsvaQzy6PxggChIOLBjf0ZIOG4=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=tFCFScMxJr0lawBoZ6izaR7ydGteMV+UdlTqQvXS0il4EW+/RYwsuWziLKfP9tqXzXAPZoNtDFqvlv9Orc8V3FSnCSy8QuLSEP+ZFjl9UXoCZd+mMOswN4hOFYCd8xx4vVSOAL8y4oBNZAes2S2Uvm0U6dUv1UedLro91B9Mi7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=CWlxu1d/; arc=none smtp.client-ip=66.163.187.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1732646536; c=relaxed/simple;
+	bh=Twl5ypj0+CDkFTQUNnh5Aon13c1lEyUu57FmqAb1EAs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KIpFWUoXSbiQlU7hYlt+2UtxbKcHqjS1hYvyLj1ltqafehF03Ix1KsPpsR+HKg9oHxGwb6Lk7PQ42NB4r0Deu08rUfPmlMfjf8F8amab5C6TKfa7cJArBNjggVIsBNTHSSsU7wXzNCVLTf2UiA+z0GlnrjPq8De6bRrYjTi30/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KK4HPYWT; arc=none smtp.client-ip=209.85.167.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="CWlxu1d/"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1732645285; bh=iq9ZgR0bPF3dCmO2VEAGc8zOrSJ8HYs5megjwQ5dlak=; h=Date:From:Subject:To:Cc:References:In-Reply-To:From:Subject:Reply-To; b=CWlxu1d/BisL3kzLovhu3dDnwPCup4iZBjFqe1njMaHWtaOtZFKsagBENNf3HbNtEetyJLG20n0NXeD+k15vnrGkONI5t9uiuS5wGqQDBBqfVuZP5JXXIs1wulrhKeAgGvAlxy8ar033rdT+iNb03pbyd6n2C+5Y3GqdMcQi8ZmKUx3ekGLEgxQim3Z0aIB2SfKekETv3M1U99YsqH9EPSc7rT5mNLtWRL3wCN7ScSTUFxyDNas0f68WvAd2prncM7vlDBWt0CtyffOBC+42zrkn/TJ3TAlGdPFSuwEx15CBGn2Qasg8LKqK2eSNR3d/j/SnhawVYVUKvUAwN6myOw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1732645285; bh=YXUitMr6QYQnRGCmTWRAzmhfzaph8+qyAnQ0Qn3rEem=; h=X-Sonic-MF:Date:From:Subject:To:From:Subject; b=lzKNeXcvSL7Mtchg3GiFUrwbFgQ9TmUkm6wGmYfV4VG+v/NEMibfuXMass9/tzMXOrewAQixY67t2e8/Q6VjOXzjHOGGKC+jU6ve17FP0k61yBDjCLemckK3mcBp2FGOe2okH9g4fB0oKqSldZ0vh6E3ndCRgME2aEwMSwMA3sRiY386xMUUdhjT07YmmW8OJN5YLxDr8tBsUS5TCWmAnFHZyqoSCHlTwm4ESigbeCQ9927S5vZxAuEgut/+3H2YqPsOSzWX8wNnx8da6pWOUm3AcFmVj8bggXkkuFxWcKMMTsAOtWnwQPQvdXLIbs9qMygswVdgAqDEk/b/lws2BA==
-X-YMail-OSG: 99LyrCkVM1mxEbGfR8IM0G1bsY4qI0dUywLEmrGAZIdb5Pil8ovmyY1rm0T8j05
- ja1CQmyxntEedHwkNrxELAQtu5M19TQzMhi2S.YGwSiKmEpFZCwMKMpkwyIdMiQ5tS3P5apNbn6D
- NhrlE11H.ayo3_x6G5CC8sWTO9y5BEtSGAsKdnj0Xpfcp5QpR45bvgv2e2NpviSpgwisuJO1e2Gj
- vpClKQ1MYaLOg3ap.9RC5A00a.M_XH1YYCyEV9vM6XabjhdxQX8AQ9G.SEP0sNFNLGQIi22ta.Lm
- _EkLv.fJPGHM1shFdJq7tBAnJmA5fIw9Wr_RYsB6KKr_9QDkbhOspYKRaVgD9Hbj18TYQ3cjz.C6
- _9rZ2KnOjF8wouc299AGk46pEbfE02l95ZoVAjP3AGHsWr4kDOYUIfQz0NJ05bsXQJpAltzEdeyt
- xv8sPzNY7ym4HnKMEv3TumEgFXFu_8tIU5htyQTW5OAcPKjYmupNYjLYJ7p07ducIH87Eadiv0QO
- FhJpXaj3PkIZQVtNk1RIyx7rUfKnnq2AroBwjhKkeDPXSYtWPLW_gpXkl07qVtrTUgiqvlnhQErs
- rwyRzjVTiVV9DvUO0Y3IQG4lriRwF37ewCo1lLIDCbhE5jm9xODoPfyEXkGjpw6BQBO6yL3htegV
- U4.KEoKxA1oE1TRruUXCiSRrPzCrIPwKjpsDPwnNWMK4tncQ1iLramK9Z5LvwXHDQPHzQZTkITkr
- wmt0H13FecFypjQzz6b7.dSb4ky_dJc76igJSSrwebpqqigXyWv5FK12u0jcow43mhtX7ZDH3_9W
- 9YqNfF7jkFo_L74IJuP5Fu8cqzECz90wNNCOJVa1H4RsqAOlEjf.3qfCOOEeDbg1odLVuTnwg6SN
- nwrBkMSmMx_uXb1nC6BqCcvoCyRhan0ZpLNLlF489yJ3yFdIGqbI6yKP2T9ATyMKjt3N3mJAoNQz
- eZScI9wHOtF8xpHGvaThRcpUtEBxBlM_DL269kQn3ZXeUbQb.CEGdSGZko.89ab5Npwr3VwIlhMT
- w0YAKqAGOXghsBdFzunznE4FBfi8XIMW5XMZQRs7XIabHel34BVVG94kTPWmMjKYwCq.IVcHSnxs
- vCbKv3PdHS2nyQQ2csJeXZFprVPypinZNmjKOOJmKTqvAlgstb4CNTy00ItgzvPg43xJDvrx84h5
- zKAcSVndl8xZfiSxjFe9wc6mCb.iOIWcnuheVrBobPINgmVrpfq6.7ZkVo3DkXHy5xEFvxHqkk2I
- 0w0wNyD6YrGhusMUHZRouQwnvkwv3PJsLle.aXxPIxdqga2Yekmq9L1fWSUDbK1I.geCw4sLIiYd
- zoRnIcG.BTYUgvI5BxmTf2VmaTJmLQChn9LEfGfngFupy8nGkozTEVFU.ic_7TGImuiWP6tuuiKU
- y24TbppqASIT8cTtjwNMWixVyML1nxO0j6GBN9oQytNrS6oqCPQbMggZBRSJj_UmM0RcFRJHds8b
- LTHUlmVmogt9UXIJiwfqI7xsLt7fX3u6e7c4tjSNpAqhtIwjKGBquLuhpf6Ah9SyAB8pX2DYNWqO
- 5EdgNCJlNzKoQrDUC4CxbpgOORjpVoS49mtD3X3uUkAWGf.MjkvQS9AR4Mq0WE.sHIBuzfUm9Co2
- mCTj4QX1WOXISUJngCmdPhSvqSGyVAKPA7U5BzZSmMBuRY3rxlv8uQHW7NdY1eTBg0F4lw5aUhRw
- W6Hu2_Xz85C8pzqudzqeUIEb05VQc.4rQGdo8D35NjC1VJ7o7gKJVJDkgGoM7.IZFzIUUUqqWV0B
- gWWDf1GJPo7i46TmsH0QXB9435GiSBOEeZxOMF0sY6TnjwdF3hj2arE6d3qCMj9pmikL9W6BrH9H
- AJzpL9Wjz.O2EuMgFegHRo1d5stGk9CLP8Z7Sk7ooPhLv_D.olvAEoSRpfv315kIxLe6jNrZw2lb
- VoM2.P6LwEPRzjGqnMnggQwWxYEEs4Y2Gex_JeAJnxNFPgoar92cM3QUj.ZM5SbhV7pHgcyWiZgJ
- o9cX6iIKAjz_kYLktl.TarQskmMdZm4ON_M.qFtRwm.oise8Y8kqcjTCUyMVa_.6716ZkE2WrxLB
- k6dwzEG.5Vm4GPV1PzyMTaJqSNwQIWIGHZUzUlHXvFYnUx8CyFfVldh5rRDEs.PJekghtIpnekNo
- fTQOpdNrD0i46wNSDK5pxUF.KBTMcJo9awUEckmXCZMXGnwjcWc7hKtYWr._6.zLOFUzsEWw5Tta
- mFuD7.hDB_3Zgxw1Bl.uGHi0ghO5Y1bdL8g1uOIxEQkPEuMi_rnQnkCfJYRmadH7ZIr1hgNi__mB
- 0.7kXpYaDZDGbAerp7NGRGpDWMQ--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 35fe37b8-9eb3-490c-8976-d0d9495fd0b9
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Tue, 26 Nov 2024 18:21:25 +0000
-Received: by hermes--production-gq1-5dd4b47f46-wrqn7 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 55e9207d670faa2d9a961105f9775dc7;
-          Tue, 26 Nov 2024 18:21:22 +0000 (UTC)
-Message-ID: <77003d04-f3a4-46b1-9368-510b529fda44@schaufler-ca.com>
-Date: Tue, 26 Nov 2024 10:21:20 -0800
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KK4HPYWT"
+Received: by mail-oi1-f193.google.com with SMTP id 5614622812f47-3ea60f074c3so489054b6e.1
+        for <linux-security-module@vger.kernel.org>; Tue, 26 Nov 2024 10:42:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732646534; x=1733251334; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MXrXqESosptyKiwOViGdMQ3y49t+BKzrdrshLPbcwlM=;
+        b=KK4HPYWT6aAXHFMnXLFRUxPZ8isZraRxnSJSDaXr+YQhaNncB8XXZxqAY3R29CXYfl
+         lsSfZDByMuvUvJ8EPWevHSy08xmSTK+ZUMrZXHJKwW5Y9NA89+k0UdOtXJuATzqSVG6b
+         36TLupz1xEvapMMG0CSzn3jXuD+uAg2yWcoSuzkGjJwiHnEydfxAhx3gxPfSE8fmHdAg
+         NDMSsGaRF9Nx6R3kpXV3E5zJ1l4bmFe2yeafqbajGbgFuYQAwlX9gvYdNGS7xGmZzaI4
+         6Zxi2HIPyfWKD7Z4JtiLisfzypTzjtqPngSH66yhMTIXVn0ydLokoLt0bofsaS2b6fyA
+         HqYg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732646534; x=1733251334;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MXrXqESosptyKiwOViGdMQ3y49t+BKzrdrshLPbcwlM=;
+        b=MA6uVb1tvAIm6mWvNyomOVuNEECmhcC7oai4AXaiaKt2Rw3VD8Uwv5I1VRVjPaOtBM
+         onLzB4vLeDAa/6/KT2p91s5oNczVYC6TT8xmZ9hgG5SBLmBPtMEYQIV6qREbpDrc3Zqk
+         gcD6A9fF2m/rBkBGfz47MuBZs6rpVNVAuQtm28X/bZekUMV63TZr9FbivSzahPvNGrjP
+         iwbfQ8xZJxeDYL8oyWZ9IROW2knqLs0Y3bb1kXPJUCiQqSjiN0mGFndL1q83LybPNQOu
+         6IFTQYA0uL1+xsnoick6BXr3fQhoLtyIZox4t3BhXgCNndsEpFBkg6tcC61h+km4C9Gr
+         WLNw==
+X-Gm-Message-State: AOJu0Yxvvww4VMS4JrduTXgtLeFmN0e3DqXPq6PTEnu4VmxTM4+3TEVd
+	0XFdhxVLANCo1rYlaCN9UCvF3kGaxEstez36qHX6xC5ILuhSZ4V0
+X-Gm-Gg: ASbGncuDazrwhVqI8P1B5yllodBaf0ClRSXRi3WjterupbLIvhIE/aeQirDEKGPe0HO
+	WIpVxPIUvZkv/+qYI8ifeFlQ4BF7t2Uh0u7lQnA9t09ZvaubzL2nu5Ei+Mm+Vk5AhZFH9PbhEg6
+	qDx7KOgdTooKcPcCt7YyiAw8cdAis2MKm9Q0MqoUDd+AlxrfW4MWyOrDE0VpFlBblXFM+sXNcm7
+	bvj8kdnxDUUq+RKekr7SSshXOUmXXv/uNzZaQVpd4+KpyndWLErFeekBnyzA3JJMm4pN+K4Cm2k
+	Qx2BgrISZMTcyN25SRrxbwj3a+7LrDl7bZz4
+X-Google-Smtp-Source: AGHT+IGBgM2zuIiFJxmCPgCUoWYag7TC45f6sd5q2buRuwIj9CS3n9I8YVuA6szlxUVH2DyiLMHWwQ==
+X-Received: by 2002:a05:6808:19a4:b0:3e7:a201:dc31 with SMTP id 5614622812f47-3ea6dc2511bmr476790b6e.23.1732646533791;
+        Tue, 26 Nov 2024 10:42:13 -0800 (PST)
+Received: from localhost.localdomain (mobile-130-126-255-54.near.illinois.edu. [130.126.255.54])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b667a4c89esm268801385a.76.2024.11.26.10.42.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 26 Nov 2024 10:42:13 -0800 (PST)
+From: Gax-c <zichenxie0106@gmail.com>
+To: mic@digikod.net,
+	gnoack@google.com
+Cc: linux-security-module@vger.kernel.org,
+	Zichen Xie <zichenxie0106@gmail.com>
+Subject: [PATCH] samples/landlock: Fix possible NULL dereference in parse_path()
+Date: Tue, 26 Nov 2024 12:41:57 -0600
+Message-Id: <20241126184156.12503-1-zichenxie0106@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Casey Schaufler <casey@schaufler-ca.com>
-Subject: [PATCH] IMA,LSM: Uncover hidden variable in ima_match_rules()
-To: =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>,
- linux-integrity@vger.kernel.org, Paul Moore <paul@paul-moore.com>
-Cc: Mimi Zohar <zohar@linux.ibm.com>,
- "M: Roberto Sassu" <roberto.sassu@huawei.com>,
- "M: Dmitry Kasatkin" <dmitry.kasatkin@gmail.com>,
- "R: Eric Snowberg" <eric.snowberg@oracle.com>,
- Casey Schaufler <casey@schaufler-ca.com>,
- LSM List <linux-security-module@vger.kernel.org>
-References: <CAJ2a_DeUX9UdAYOo9OwG-yXSH1etKQZortPcyxfzG70K3N+g7g@mail.gmail.com>
-Content-Language: en-US
-In-Reply-To: <CAJ2a_DeUX9UdAYOo9OwG-yXSH1etKQZortPcyxfzG70K3N+g7g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.22941 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Transfer-Encoding: 8bit
 
-The variable name "prop" is inadvertently used twice in
-ima_match_rules(), resulting in incorrect use of the local
-variable when the function parameter should have been.
-Rename the local variable and correct the use if the parameter.
+From: Zichen Xie <zichenxie0106@gmail.com>
 
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-Suggested-by: Roberto Sassu <roberto.sassu@huawei.com>
-Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com>
+malloc() may return NULL, leading to NULL dereference.
+Add a NULL check.
+
+Signed-off-by: Zichen Xie <zichenxie0106@gmail.com>
 ---
- security/integrity/ima/ima_policy.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ samples/landlock/sandboxer.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index dbfd554b4624..21a8e54c383f 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -635,7 +635,7 @@ static bool ima_match_rules(struct ima_rule_entry *rule,
- 		return false;
- 	for (i = 0; i < MAX_LSM_RULES; i++) {
- 		int rc = 0;
--		struct lsm_prop prop = { };
-+		struct lsm_prop inode_prop = { };
+diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
+index 57565dfd74a2..385fc115647f 100644
+--- a/samples/landlock/sandboxer.c
++++ b/samples/landlock/sandboxer.c
+@@ -91,6 +91,9 @@ static int parse_path(char *env_path, const char ***const path_list)
+ 		}
+ 	}
+ 	*path_list = malloc(num_paths * sizeof(**path_list));
++	if (*path_list == NULL)
++		return 1;
++
+ 	for (i = 0; i < num_paths; i++)
+ 		(*path_list)[i] = strsep(&env_path, ENV_DELIMITER);
  
- 		if (!lsm_rule->lsm[i].rule) {
- 			if (!lsm_rule->lsm[i].args_p)
-@@ -649,15 +649,16 @@ static bool ima_match_rules(struct ima_rule_entry *rule,
- 		case LSM_OBJ_USER:
- 		case LSM_OBJ_ROLE:
- 		case LSM_OBJ_TYPE:
--			security_inode_getlsmprop(inode, &prop);
--			rc = ima_filter_rule_match(&prop, lsm_rule->lsm[i].type,
-+			security_inode_getlsmprop(inode, &inode_prop);
-+			rc = ima_filter_rule_match(&inode_prop,
-+						   lsm_rule->lsm[i].type,
- 						   Audit_equal,
- 						   lsm_rule->lsm[i].rule);
- 			break;
- 		case LSM_SUBJ_USER:
- 		case LSM_SUBJ_ROLE:
- 		case LSM_SUBJ_TYPE:
--			rc = ima_filter_rule_match(&prop, lsm_rule->lsm[i].type,
-+			rc = ima_filter_rule_match(prop, lsm_rule->lsm[i].type,
- 						   Audit_equal,
- 						   lsm_rule->lsm[i].rule);
- 			break;
+-- 
+2.34.1
 
