@@ -1,126 +1,132 @@
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4DF11CCB4B;
-	Tue, 26 Nov 2024 10:42:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 955341D4169;
+	Tue, 26 Nov 2024 12:56:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732617748; cv=none; b=WJpb5XOFwb8PKTtrvjGz+TjgaZChYBgY2UrUfzc7OtVWTm0VwWLe2V7f05sFRtAwSF0wdnetUkqA4NAEFsIuz9I1Nu910GMfDs+jzV4ImialcPWYsdUut81nrvxrazhre/TprnEl1XqRp8NT+B64PtkwbPIfqVFOCuVcyKaDPH8=
+	t=1732625766; cv=none; b=L9SUFtA42abU604ZvSYUXCGKqoIh/AbiSPMighsLj8e1Q73OdirsmkJd1jmvMezyd/U8ThvT1REim8M/TCoS/8I+PmSFQUPsCV04tbzhlWlIbxjlRrNJmGGjpKvJLggVVHHuErrXBc64IF2naliob4ABPFti8K13Ytwidq7lUtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732617748; c=relaxed/simple;
-	bh=HcXBZKhKro8Mrm0E19xPfTjpRCVC9cZacjQApk3mIXk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=m12FSE4yYU18QM2PmTUsb62/zqTusnM+ci3yZyvTSmFmXhHvyxCRJSY7emOEoH0wAPjf+ZvYyDBgHWijjMe2C4Q5R7cPtL1Ggh9CDz1hEG8tysqV6WnNpjIA0HYnH0LbJEKAXAxOEzK7TPdw9MFIzpT1BHZhdp+RMq0kGchhEB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4XyJWh21vLz9v7Vv;
-	Tue, 26 Nov 2024 18:21:20 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 5937B140535;
-	Tue, 26 Nov 2024 18:42:13 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwB3IyTspUVnG6xSAg--.24828S2;
-	Tue, 26 Nov 2024 11:42:07 +0100 (CET)
-Message-ID: <17ef4f662e594c8431a00fe423507af4f6a82286.camel@huaweicloud.com>
-Subject: Re: [PATCH v6 00/15] integrity: Introduce the Integrity Digest Cache
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Eric Snowberg <eric.snowberg@oracle.com>
-Cc: Mimi Zohar <zohar@linux.ibm.com>, Dmitry Kasatkin
- <dmitry.kasatkin@gmail.com>, "corbet@lwn.net" <corbet@lwn.net>, 
- "mcgrof@kernel.org" <mcgrof@kernel.org>, "petr.pavlu@suse.com"
- <petr.pavlu@suse.com>,  "samitolvanen@google.com"
- <samitolvanen@google.com>, "da.gomez@samsung.com" <da.gomez@samsung.com>, 
- Andrew Morton <akpm@linux-foundation.org>, "paul@paul-moore.com"
- <paul@paul-moore.com>, "jmorris@namei.org" <jmorris@namei.org>,
- "serge@hallyn.com" <serge@hallyn.com>, "shuah@kernel.org"
- <shuah@kernel.org>, "mcoquelin.stm32@gmail.com"
- <mcoquelin.stm32@gmail.com>,  "alexandre.torgue@foss.st.com"
- <alexandre.torgue@foss.st.com>, "linux-integrity@vger.kernel.org"
- <linux-integrity@vger.kernel.org>, "linux-doc@vger.kernel.org"
- <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "linux-api@vger.kernel.org"
- <linux-api@vger.kernel.org>, "linux-modules@vger.kernel.org"
- <linux-modules@vger.kernel.org>, "linux-security-module@vger.kernel.org"
- <linux-security-module@vger.kernel.org>, "linux-kselftest@vger.kernel.org"
- <linux-kselftest@vger.kernel.org>, "wufan@linux.microsoft.com"
- <wufan@linux.microsoft.com>, "pbrobinson@gmail.com" <pbrobinson@gmail.com>,
-  "zbyszek@in.waw.pl" <zbyszek@in.waw.pl>, "hch@lst.de" <hch@lst.de>,
- "mjg59@srcf.ucam.org" <mjg59@srcf.ucam.org>, "pmatilai@redhat.com"
- <pmatilai@redhat.com>,  "jannh@google.com" <jannh@google.com>,
- "dhowells@redhat.com" <dhowells@redhat.com>,  "jikos@kernel.org"
- <jikos@kernel.org>, "mkoutny@suse.com" <mkoutny@suse.com>,
- "ppavlu@suse.com" <ppavlu@suse.com>, "petr.vorel@gmail.com"
- <petr.vorel@gmail.com>,  "mzerqung@0pointer.de" <mzerqung@0pointer.de>,
- "kgold@linux.ibm.com" <kgold@linux.ibm.com>, Roberto Sassu
- <roberto.sassu@huawei.com>
-Date: Tue, 26 Nov 2024 11:41:44 +0100
-In-Reply-To: <C4BE31F8-1FA3-4AD1-A712-ED2AA7E61E96@oracle.com>
-References: <20241119104922.2772571-1-roberto.sassu@huaweicloud.com>
-	 <C4BE31F8-1FA3-4AD1-A712-ED2AA7E61E96@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1732625766; c=relaxed/simple;
+	bh=aI7+FG4RPSOgPwFDA4/SqIlk+zFiNLjorVRUZAJqHsY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=Di6ozz4330+AgZK6esm5fydasnxT+U/GnMo9Q6QjdC5lOm/wrGUfy7Erv9zkddu+awPOK2VseTDB9jZl1tQ2/eXF/o67hEyLktGSCov/eAJhBXnJt1VUMuPt0bB8Gx3huQLWtRoiSbCy+bL6EkvmIHIimEnpBx+aIGu9fhehEoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Ws0PxqQD; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Ws0PxqQD"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1732625738; x=1733230538; i=markus.elfring@web.de;
+	bh=gK3YHcEUeZ+zgADUiKv/PJwsDoDZu3Bm0tlV3ysUn1E=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
+	 References:Cc:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=Ws0PxqQDC4XZm2wteDC2J3YFTVpgUeNaV7Pys1K/oBjCS3USX2Lr3IQbzsFXmEVI
+	 bezYVgEGestzd5+pHFvLqhp0IFwhofb5EjkC1l8W15KQT0V9rFc19eRmKCxL+Altr
+	 /j0ijHcKBeeak7lKy0wF09kMMCBFWkoje33nTjm/isWQV28lsUcsZW5VzLkNp/sIY
+	 FmMJxTLyNSei5FGdlPamriRxu+kw2XJNoSiEpiZfxa+4TS/xK87Mng778wns6HDRl
+	 7xiUGFzordrLFW9FSq+vmpZNtQqNU1H4O5/gdpN/Gu+3i7CVElgyO3k9SpZrQnduV
+	 BfeCe6vDcqTnzID5eQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MjBVv-1ts19D2HxN-00en7K; Tue, 26
+ Nov 2024 13:55:38 +0100
+Message-ID: <8e49861c-123d-4d78-9da7-bdf747c9c33a@web.de>
+Date: Tue, 26 Nov 2024 13:55:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwB3IyTspUVnG6xSAg--.24828S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7JF15KFWxWFWrtrWxJryUtrb_yoW8JF13pa
-	ySga4UKr9Y9r10yF13Aa15ZryFkwsrtr1DZrn8Jry5ArWruryI9348Ca15uFykKr1kJw1a
-	qw12ga4xGan8C3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvFb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26rWY6Fy7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWrXVW8
-	Jr1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
-	CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v2
-	6r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr1j6F4UJbIYCTnIWIevJa73UjIFyTuYvj
-	xUVZ2-UUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQATBGdFMjUC7gAAsf
+User-Agent: Mozilla Thunderbird
+Subject: Re: [cocci] [PATCH 01/11] coccinelle: Add script to reorder capable()
+ calls
+To: =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>,
+ linux-security-module@vger.kernel.org, cocci@inria.fr,
+ Julia Lawall <Julia.Lawall@inria.fr>, Nicolas Palix <nicolas.palix@imag.fr>,
+ Serge Hallyn <serge@hallyn.com>
+References: <20241125104011.36552-1-cgoettsche@seltendoof.de>
+ <20241125104011.36552-11-cgoettsche@seltendoof.de>
+Content-Language: en-GB
+Cc: =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgoettsche@seltendoof.de>,
+ LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20241125104011.36552-11-cgoettsche@seltendoof.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:MDBaCd5Ogw2HMK7C+j9ZJzpAn0WcQvq6r/9CqpSCCwTa/pHw77Z
+ z29khTQMVIoaz+4QqnLEzWe/ypodb9ldfFheccW3ousjK1py8Cb/+kCL0JZy/BH9qQv5WYt
+ qpOa1QAs43MpmSFuElXXieOK+Z4diFseMlqhZSsGWoYlui2blbEQy/Ab8bjUi6KSe65zdBm
+ WON7+b3IX2YQB6f5D8p7A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:o8lRbajgDeg=;DDK1KaYZnjqCcyqvQm63NFF+INt
+ CKuiNH3fyOqSfxRWfzyEODHBWSNpfw7bmpIlwV4lTnl24NXEjWLE0hPMKdDsMwrG0uxoYHhn3
+ dxvXqQVsRDiyJc89tnLJgPjNo2a9GFuzP4KqMpA/RpaIQPEv2X99K1fJwujDZDgwYztvQe2K3
+ F5jYpRUuXPsxm6hOKGYB+3C3df5nTX/VnqUZ1FHUNh87hhgtJabOIRbiHQxvoY5SrgluVW2qd
+ 1g06360v5WijjEG7QdL+c49nNi7XOwd3hHAKn9I9tv1coJ1mw8hLBQ5VY8EpzXW8Qpan5pjKS
+ 81Drw9jb3cw+AL5JJhtQTNuLhQC9jiqGJrnUmcMm3R9x48MZt3dmeFtJU1XOQYhMWiY0PHnYY
+ rvVosnr7WPIS7tohynjqdwHvolU1jdX7jVCYnzsttAeoHGccmNalLAlIJN75KYxfClH/NXac7
+ yvLj/iYvcbVZvK/IO+lGzEiFfzrP2CP2K6StAvmieMEBlsEuCFxbQa0ddOk+j9aU9C0Z3w86K
+ jVRZOqIoJ9TKk47BwoTgkg/63Dhu7fTD3g8IAvl/l86aZP5fY3+vL8/txY1jQe2Q1WValROCy
+ kyNzSHofJ1/y7WISW+ymD/j6fopIopi0aSujHfApUlhztfYsk0wQ+yW7mGl4ITDWZ60Q0T1+N
+ xNYOCGf80SZS6SnSdnvUJhqJEaDjbP55fIWZxadUvtR1bjm6KLHn89WcFo+dq5ixamEgE6A3h
+ OzIusA4klgIDtykVWVQG+RglIVeT28s+QLOWLBEnJyAVHWZEGxvLM3xVTf1bhxDkr7X/vT0X+
+ DPRKZWOQD3cVJfzPBD6meWSz7SOSDni015L1vsFhCV+hBF4MOX2smYmA2ZjSMw7eP1tOar9VT
+ 91No5+V5jugl4/+/zxnIsfmJqXV0kl/6cdbaKi+Y6GgTw+6eBPv3p32CSIaSSJXSkTG8gUaOd
+ XicZuuVNWUNIGFvycq+soIWSYONRN2Q5KKIxvzfadKxgAKBmac7YJ+ZEpsmSF6r9hKGf6V5sW
+ ECY7bizU1wxIJXGN5y1TyqyUeKwqmGW0FRsufzO2K3HW5wM9kRJb+y0lpVNQBhe5fXcGya2Ag
+ qesnjVmYc=
 
-On Tue, 2024-11-26 at 00:13 +0000, Eric Snowberg wrote:
->=20
-> > On Nov 19, 2024, at 3:49=E2=80=AFAM, Roberto Sassu <roberto.sassu@huawe=
-icloud.com> wrote:
-> >=20
-> > From: Roberto Sassu <roberto.sassu@huawei.com>
-> >=20
-> > The Integrity Digest Cache can also help IMA for appraisal. IMA can sim=
-ply
-> > lookup the calculated digest of an accessed file in the list of digests
-> > extracted from package headers, after verifying the header signature. I=
-t is
-> > sufficient to verify only one signature for all files in the package, a=
-s
-> > opposed to verifying a signature for each file.
->=20
-> Is there a way to maintain integrity over time?  Today if a CVE is discov=
-ered=20
-> in a signed program, the program hash can be added to the blacklist keyri=
-ng.=20
-> Later if IMA appraisal is used, the signature validation will fail just f=
-or that=20
-> program.  With the Integrity Digest Cache, is there a way to do this? =
-=20
+=E2=80=A6
+> +(
+> +-  F@p(EL) op E
+> ++  E op F(EL)
+> +|
+> +-  E1 op1 F@p(EL) op2 E2
+> ++  E1 op1 E2 op2 F(EL)
+> +)
 
-As far as I can see, the ima_check_blacklist() call is before
-ima_appraise_measurement(). If it fails, appraisal with the Integrity
-Digest Cache will not be done.
+How do you think about to use an SmPL code variant like the following?
 
-In the future, we might use the Integrity Digest Cache for blacklists
-too. Since a digest cache is reset on a file/directory change, IMA
-would have to revalidate the program digest against a new digest cache.
+(
+ E1 op1
+-F@p(EL)
++E2
+ op2
+-E2
++F(EL)
+|
+-F@p(EL) op
+ E
++op F(EL)
+)
 
-Thanks
 
-Roberto
+> +//----------------------------------------------------------
+> +//  For context mode
+> +//----------------------------------------------------------
+> +
+> +@r1 depends on !patch exists@
+=E2=80=A6
 
+I would prefer the dependency specification =E2=80=9Ccontext=E2=80=9D for =
+this SmPL rule.
+The SmPL asterisk functionality should be better distinguished here.
+
+
+=E2=80=A6
+> +@script:python depends on org@
+> +p << r1.p;
+> +@@
+=E2=80=A6
+
+I got the impression that source code search approaches can be safely
+shared only between the operation modes =E2=80=9Corg=E2=80=9D and =E2=80=
+=9Creport=E2=80=9D so far.
+
+Regards,
+Markus
