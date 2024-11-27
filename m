@@ -1,104 +1,119 @@
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0FCA1805A
-	for <linux-security-module@vger.kernel.org>; Wed, 27 Nov 2024 04:02:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6691918E0E
+	for <linux-security-module@vger.kernel.org>; Wed, 27 Nov 2024 04:17:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732680141; cv=none; b=LYQs0qKPSyAUwrigF2e7nvI0zwtWaXosO+E7CwR8d8YAWpobLC3eNU/yyc0l3m5TIgqw0yC7KjATEYw4kC1m+OAdRiwT9wzQkKQOzTzr1I5RcB7ifPTk53pisu7Yw9ItlqbJNbMH35BLJjAF4PTNthQPqxMBa69F25gpu7jcO+8=
+	t=1732681052; cv=none; b=uxa3W8XtUY42mujrpE+SuxSk4svyX0fEh84jjyvTAFH/4B8uNh7h4mZczkAsa8H17ycirJVIm0nr1em8UTZjiwvRYEoduMrlTHBYqpo9tPF3uHQUJvzwLTbV1fWINifysCmM8nbD9bqjcq6Ha2bIN+oQk9RR7joCIr+dRAq2ooQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732680141; c=relaxed/simple;
-	bh=rgGUtTi6cgHbXeEIBneesc4o26QfRW4kSE8z1VlqAaE=;
+	s=arc-20240116; t=1732681052; c=relaxed/simple;
+	bh=3XeU/4V/Sr4YWgBMd+JGTL2NUBHoyZBYkokHxbYNh0o=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Bh9LFGcmF7l0FaLGyhzv3PWgq42cG0sBA7ypyQMnSZza4DG8kIis+O2QqH1enSyJCBKxGdgheKRBon5Wb4Zu9P+KLqnRg+lRc82BxToyrhJY7/FWMhsLGo1i8811e27Pf4stp0uPwRUL9BLk1jZQNyNemSTTA8+JGidXzr7FRPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=MJu6yPxR; arc=none smtp.client-ip=209.85.219.169
+	 To:Cc:Content-Type; b=eevpM1lkZNLilosEoSEu9D1Iw2sPQ6O//C6OQo6gGNEnUR4OsgP7Q2Y4ZSn1rqvtXsVQY/6442ot412XCAeWXnmeH5y5KePdmokZhYDuBqczq3mc6WIm+tpCvfFApiuQ3tTNxp5hFagd5YxK9HFvOL3V69q5YHSyMMWyxcu8cmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=G9fXHMvQ; arc=none smtp.client-ip=209.85.219.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="MJu6yPxR"
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e3839177651so5044236276.3
-        for <linux-security-module@vger.kernel.org>; Tue, 26 Nov 2024 20:02:18 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="G9fXHMvQ"
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e38c1ac8e3cso389891276.0
+        for <linux-security-module@vger.kernel.org>; Tue, 26 Nov 2024 20:17:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1732680137; x=1733284937; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1732681049; x=1733285849; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=uYdPHxRKENTOkIj1dnE8bjE/PoWNE+0I9VP8yD2g53Q=;
-        b=MJu6yPxR0bpmYq3MPhwFovVdnvbGor5GSl5VunSGA/TQ9H6oUmNCy3zKyuOdm3/uua
-         4nt0op4cvi9S6y/9i9SPy6M0hfmfN/4dnmhcUiIH+xtcPQrwtX2xhwJxGw3VC0ArCkb5
-         4eXN0C9+fG90aUgoZCOrKwCd1VexkFviOyhospxgnqEAxINSKDngtrqcPttS+HYR5IZA
-         orSirMqUpzgeXGQVMTUWDfD4Pu1bBDyFV01Gr2OXcyWAFfGfVSQHPn077LRaGQOl60GW
-         oagCpzIJSOy3ScIBM66K6DUmFFnZMwP4o0VSBvzLIzV+p51/VgXhlRg/w6LOaKk5Amq6
-         IQnA==
+        bh=Hm7ENvoP6HhdoXpahiQX6CDXmuqD55Pzj7gK8dROaY0=;
+        b=G9fXHMvQBnwDF8bAXx9CjgAeymt6tsUyLAj7a9yJuRWxTbOSF5SX2zLR2TbQf5Cvw1
+         5SWEkvge7ppLKW6YXIbHBGRw+UXUywtiLn4meVjOtK14s77KUTUD6SIhAMGzZ3ncsGVy
+         H832mrPtzv6YkHurVyaBghwUeC9cFhFj68RNKj3+fhXZebkdqH0stRTeli95t3KCGhtd
+         9hmlEigwPRshcCzHDyHv56vtQdIa54ZJrXreFYREzbLro1cExU/U55gihpZ6cIpRn/HZ
+         BO3DgamYCRTeA1IyKqk37GE1VXxImPZzrSX207IVjIzQudPMoRmRWxp1QozKFgAQ4e6L
+         1PDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732680137; x=1733284937;
+        d=1e100.net; s=20230601; t=1732681049; x=1733285849;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=uYdPHxRKENTOkIj1dnE8bjE/PoWNE+0I9VP8yD2g53Q=;
-        b=RwlMy5qsJmfFyrMhbjCnnA1w0om+ZSgpYKkFa0agfL27pzzyE33TyOPn1HsSI21J8y
-         iXQON5cdA8LEEm/DlIFxlx1OUuWH+lpfX189JPpYoq7dcKoI5/dH6Irdo2F+Vn90kebn
-         xH+p4tkKHtftWS58KTV4fr7XIKUPk5D4xoYHlKZFUZ9L7iAcWMv23Gp+LLhC2jCYH/ZX
-         EUbhIHQYbNYy4jSt7W6mInAhukLPoJnkY8eh0zQv5qxgfPleM0qoDhMGfARLXfdGS/Va
-         VxbtwS0X+xzZcUDQtiEeB+Ire235dJmllT7jhBRGZy6NuWHzqtXrj/fJh6yF+YYV92gK
-         2Dpg==
-X-Forwarded-Encrypted: i=1; AJvYcCXX1fAo/z2femh4q2qPIm9bTEYq1Yc3WtB657VZJhnYX+BTi89TBST35D9p8a4Obv715wbfiij356d6A4KnDybrsne3JNk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKZU5yyOWmixtvj1TmvInGpLBVW8sYdMCpr0aFTm1F+O3TxKyQ
-	atowZOLieY5PZHPcrzzCxcFCzdrlx5N9OqT1n4McB9OENKr0GdDJYnneA03dKq+wc9nosTtKIHi
-	/bNF9rdpnU+aIf2tHZccdvxibh6aBrE5eFH0o
-X-Gm-Gg: ASbGncsugREVFYOu156UW4eW4QBH/D4RH2XbDMc/07dmP1CxfzZvqvQqSH8lRKTpNsV
-	fbq1mqM6fcWj02dH3vBwbfdcTHrkkwQ==
-X-Google-Smtp-Source: AGHT+IFIhoHV1KZILzwwjbRHgH3oq5xxKI/6tI2yJz7Higi7u+bkhBhq9AhbFSn85Rm7+o3h+w2rhHHyh73JVHZ2jOM=
-X-Received: by 2002:a05:6902:114b:b0:e38:b868:cfea with SMTP id
- 3f1490d57ef6-e395b891d60mr1535472276.16.1732680137568; Tue, 26 Nov 2024
- 20:02:17 -0800 (PST)
+        bh=Hm7ENvoP6HhdoXpahiQX6CDXmuqD55Pzj7gK8dROaY0=;
+        b=XiA63zt98M0+Py1TjEnY0Z9Rn9JBSPw7XbN0LbUqMHgChyu8AlB9QEpwhE+pBAPqC3
+         ThHkp02wCZR9Gt+Kd0ymUvvXsgSWDU/DeJXMkKy8wvYihBM2lDJu4BY5iEQGN3daw40g
+         3K5QByqGCVPsrMJAWH4KwOSlWfnVUXlD+FHz04tGRfOV/vS+WRxZItULqWslIHB5thM2
+         TFsqaXFIfg5Tyf/Pro+g2EvzHt5l7lnAGf6l1UPM2ibIFPYoY5DTu8isglIck50Qg8gj
+         5Liki3/scfxql01P2hyXW0rSe/DsL9t1WEg8DkdPaVDH3xfaIRTCBht6+ESp/3HmRVlK
+         7nWw==
+X-Forwarded-Encrypted: i=1; AJvYcCUw6mwWIYZ+51GJxP/RO8xkkAK7GyuVj4HtatutClcF7M/U+rtytDYPhgWIIqUQaj+mi4V24k3g4bqLEA1vLK5gDEGRaMM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnJMUCEWVDdgQJFoDZ+h8HAftKhRXvO6/naCrB1USNbbmWZOgQ
+	236zQWEvRPGw02HEVpEkLEivL6lDDY7iXnlmq7bYhRBsJt6rAd9amclgNbmR74ezzwgVjOfB8zc
+	PjWdEtjsdsZ47RgYFO0zpI1Kt6rYGP2M6/hfT
+X-Gm-Gg: ASbGncsZ36rBggTENzxYGJr+1elZzR3Te24IiE5ix8upRvu34rjpjwb9j8aAc7HD+5O
+	/PxT071E4sxHYYB04hmz+eUSNLwTXeg==
+X-Google-Smtp-Source: AGHT+IGXltr9ckprSIGJ0zk8EcAJ0ecH4ajUfDHmT84fEIG+PhA0s/gKfL7agqnI0QojZ8X6EzqtwtUPYNqjUQ4yOIw=
+X-Received: by 2002:a05:6902:1505:b0:e2b:b9bf:f248 with SMTP id
+ 3f1490d57ef6-e395af39d32mr1792887276.24.1732681049420; Tue, 26 Nov 2024
+ 20:17:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAJ2a_DeUX9UdAYOo9OwG-yXSH1etKQZortPcyxfzG70K3N+g7g@mail.gmail.com>
- <77003d04-f3a4-46b1-9368-510b529fda44@schaufler-ca.com>
-In-Reply-To: <77003d04-f3a4-46b1-9368-510b529fda44@schaufler-ca.com>
+References: <CA+G9fYv_Y2tzs+uYhMGtfUK9dSYV2mFr6WyKEzJazDsdk9o5zw@mail.gmail.com>
+ <20241101095620.2526421-1-aliceryhl@google.com> <CAHC9VhS5wLQeF4LX67UgUYVG3oViA7CmSZS_kugH+M5J0XS2Vg@mail.gmail.com>
+ <CAHC9VhTKzXPja5mLHmqOoTiDm1K8k=vtK+x9Hfa6t-7hpMmwag@mail.gmail.com>
+In-Reply-To: <CAHC9VhTKzXPja5mLHmqOoTiDm1K8k=vtK+x9Hfa6t-7hpMmwag@mail.gmail.com>
 From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 26 Nov 2024 23:02:06 -0500
-Message-ID: <CAHC9VhTmyHr1U97mE0YwueJ_-8p_sBK-CB6O8rWMUz1Gr70iKw@mail.gmail.com>
-Subject: Re: [PATCH] IMA,LSM: Uncover hidden variable in ima_match_rules()
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>, 
-	linux-integrity@vger.kernel.org, Mimi Zohar <zohar@linux.ibm.com>, 
-	"M: Roberto Sassu" <roberto.sassu@huawei.com>, "M: Dmitry Kasatkin" <dmitry.kasatkin@gmail.com>, 
-	"R: Eric Snowberg" <eric.snowberg@oracle.com>, LSM List <linux-security-module@vger.kernel.org>
+Date: Tue, 26 Nov 2024 23:17:18 -0500
+Message-ID: <CAHC9VhS=gqq6JuXsvzhsX2qEbDyxsvU_5cmx5dZF17kfb_bpsQ@mail.gmail.com>
+Subject: Re: [PATCH] rust: lsm: replace context+len with lsm_context
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: naresh.kamboju@linaro.org, casey@schaufler-ca.com, 
+	anders.roxell@linaro.org, arnd@arndb.de, brauner@kernel.org, 
+	dan.carpenter@linaro.org, kees@kernel.org, linux-kernel@vger.kernel.org, 
+	lkft-triage@lists.linaro.org, ojeda@kernel.org, regressions@lists.linux.dev, 
+	rust-for-linux@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	lkft@linaro.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 26, 2024 at 1:21=E2=80=AFPM Casey Schaufler <casey@schaufler-ca=
-.com> wrote:
+On Fri, Nov 1, 2024 at 1:02=E2=80=AFPM Paul Moore <paul@paul-moore.com> wro=
+te:
+> On Fri, Nov 1, 2024 at 12:56=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
+wrote:
+> > On Fri, Nov 1, 2024 at 5:56=E2=80=AFAM Alice Ryhl <aliceryhl@google.com=
+> wrote:
+> > >
+> > > This brings the Rust SecurityCtx abstraction [1] up to date with the =
+new
+> > > API where context+len is replaced with an lsm_context [2] struct.
+> > >
+> > > Link: https://lore.kernel.org/r/20240915-alice-file-v10-5-88484f7a3dc=
+f@google.com [1]
+> > > Link: https://lore.kernel.org/r/20241023212158.18718-3-casey@schaufle=
+r-ca.com [2]
+> > > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> > > Closes: https://lore.kernel.org/r/CA+G9fYv_Y2tzs+uYhMGtfUK9dSYV2mFr6W=
+yKEzJazDsdk9o5zw@mail.gmail.com
+> > > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> > > ---
+> > >  rust/helpers/security.c |  8 ++++----
+> > >  rust/kernel/security.rs | 38 +++++++++++++++++---------------------
+> > >  2 files changed, 21 insertions(+), 25 deletions(-)
+> >
+> > Thanks Alice.  Would you like me to pull this in via the LSM tree with
+> > the associated LSM changes, or would you prefer to do this some other
+> > way?
+> >
+> > I'm going to merge this into lsm/dev for now so that we fix the issue
+> > in linux-next, but I'm happy to drop it or do something else, let me
+> > know.
 >
-> The variable name "prop" is inadvertently used twice in
-> ima_match_rules(), resulting in incorrect use of the local
-> variable when the function parameter should have been.
-> Rename the local variable and correct the use if the parameter.
+> Nevermind, no I'm not, as I don't have the LSM/security rust helpers
+> in the LSM tree as it looks like those aren't in Linus' tree yet.
 
-/if/of/
-
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> Suggested-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com>
-> ---
->  security/integrity/ima/ima_policy.c | 9 +++++----
->  1 file changed, 5 insertions(+), 4 deletions(-)
-
-Aside from the typo above (which can be fixed during the merge) this
-looks good to me.  Based on the discussion in the previous revision it
-looks like Roberto would prefer this go via the LSM tree, so I'm going
-to merge this into lsm/stable-6.13 and send this up to Linus later
-this week (or early next depending on how my holiday travels go);
-additional testing is always welcome :)
-
-I'm also going to swap Roberto's reviewed-by tag for his ack which he
-gave on the previous revision as this is touching IMA code.
+With all of the dependencies now in Linus' tree, I'm going to merge
+this into lsm/dev-staging so we can get some crude testing done.
+Thanks again :)
 
 --=20
 paul-moore.com
