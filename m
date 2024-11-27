@@ -1,153 +1,128 @@
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84D0C42A9D
-	for <linux-security-module@vger.kernel.org>; Wed, 27 Nov 2024 03:38:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C034481CD
+	for <linux-security-module@vger.kernel.org>; Wed, 27 Nov 2024 03:54:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732678733; cv=none; b=EJcDy4ztuESL7A4M0WqpKAi4ADDwKGEex2dn2JnhffHNQJMRUAYCAB3//oBmMlMwaw+o7yDOdGCRull7MFchz1ZayM2RqUciJt3UPsFO3CTWSP9LZ7zURU5QNXlC6NvzXxfemHP0IKNjzj7VHEV4nRMlbZOeIffDnUoiPtPadoU=
+	t=1732679647; cv=none; b=GpBqJgcPWrlT+CW9FVth/sIjCSXIBEDAsISD5fju4qrvQR3QAfz9clSR/PXUzITftYf18Oyiim6aEMwE137Z6N0Mg75kyD6uZQv2Jv6LLm+kycaulA5aVy/fdRWqlYGF/zJGIyUu0f+DlDlcu8kmeSTpEbXcFYmCLv7VBNaLlQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732678733; c=relaxed/simple;
-	bh=fS8NQOHGJ0ogLcUGas01yt4cIbC36qC1c0kAb7nEjj0=;
+	s=arc-20240116; t=1732679647; c=relaxed/simple;
+	bh=gHWVtT64xW/oYKsm1H1s7gXvV5oC9AiMhgDBCf2ERw4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fdDpNDp3PVPOyfG0WiXjkQYY+wXCoRP251BBgTH2ZvmAwetegujxyCDv/AsNseEm7E/zOs8NNxvtWPEp/lLJ3iJT/JBfxhGDoOlz0b3RXI3i/Ky/wDa9JB/YdzKh/W7mJiKYRl6QNCIBAlE9JS4AAHyt4SgugMvsMR5ovoetW2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=cB/dW1Ka; arc=none smtp.client-ip=209.85.219.169
+	 To:Cc:Content-Type; b=as7HAyDYwMGaUUpCQ0Z/u+flYpXBgwtuwbjCv/5DgOnAzHyzsmKQ70Dh0RqMS6h3iSzQiMVU8/2Hdlhg3RB6jDr7EURpuvDCj32VQdTKqZs5teZdbZW1mC3xuEQ9H3q/1ujgFf4mnkbCPJuIsSN9khSqYKfc+R2oiyHAODTP1pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=RNJgJ8sF; arc=none smtp.client-ip=209.85.219.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="cB/dW1Ka"
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e3908dad395so3672619276.2
-        for <linux-security-module@vger.kernel.org>; Tue, 26 Nov 2024 19:38:51 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="RNJgJ8sF"
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e38261653aaso5775091276.2
+        for <linux-security-module@vger.kernel.org>; Tue, 26 Nov 2024 19:54:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1732678730; x=1733283530; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1732679645; x=1733284445; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Bn2mqiTffvoc/D8+m6E2ss000lrDjRnXwpfuiiix1M4=;
-        b=cB/dW1Ka9C9lJ5J9Y8Acsl1+4xWXQWUfM1JTXDvq1vGIkVq46JYtzzWFpWXyG6cBMJ
-         SXf678eDjuYbe8GpiNS+Rkxh8s28hQVXIJciGjEH3LpXG3Cp9FmNErUgiNOLvT5vEgei
-         Vkj1O680lacSMDB7iq/DsG9vGrpRmX63BNKm8LzF5MBxI5agf0DUrDWE1N/JOKFqcUBw
-         IP/LtYHK2sT2xNyvofuP+k7jnDHfaRn5X4HSbQ8FLlyV7KxsqvUnf8J96JUQlfrf16Yr
-         I1d5LJlk9kpklPjsjtAzCyfsOPS2XMD8P91q3eEQ434o1FdmK+tRqFNBNdatCuUDHjTM
-         vaqA==
+        bh=9JFRcmOZiXHu3/zU8zCoF0fSGQ7YTFiOrtbQ3JdZhf4=;
+        b=RNJgJ8sFc9hYqyLg6ykQB5Va/6h1tuD9tOjf1PWqpObSbbHxOM2M+z0l9E0MWiuw3N
+         r5NqaIaZCdAyT+zetuFiJzTef5IngPxZqzHsVZgpIlt8PSaniccPPTatYXb0PiXh48Ru
+         Pw3NxbShi2RsEhAYKiUT9OZuC7ukR7hWb9B/rilX2HTQuOYpqzwycz6bDUIemEjal9aE
+         jxrwHBvhSb99oLGEBwCkYir75JLWnL/RSwRuSR7lMvn0wsALfdGQZx6aoDmfVRomv6ES
+         bbsfX6nMFVDVgNDilip3nKlf5hhh0b0Q7k7Np6M3BWku+DmRxxtw90SKXIB2yDXl63Jb
+         6+8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1732678730; x=1733283530;
+        d=1e100.net; s=20230601; t=1732679645; x=1733284445;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Bn2mqiTffvoc/D8+m6E2ss000lrDjRnXwpfuiiix1M4=;
-        b=DGZGwCj/PRoAmfBHb68wcjEI3D4/dmJSLMefmqQJPhXV0F/Nqw3mIjj9FY/13Hr7J0
-         H5/htBntBx52Pa0/C09gd7wLXd8zwPuAP9Zmn23aG+Zh1F2w1UsR2HceHwb/g9+IPPC5
-         sMDWr0j5t59n/zRw69966GKhmVHkYMl563jZiJSapV3alD4PhPJnSBzewslZw+uVKQwW
-         X4iDrIym2WYA3gltYcW3e9teyJFkkwClJsq9wraY9eeA4Hks0hQiRiCdqKa+FRmQkTzD
-         GZ/0YTVdv45lsfQIg0E3BcH/LocZjJF7PO576krBO03Fz3bT56k1weCcS1ycjG5xvw37
-         QN7w==
-X-Forwarded-Encrypted: i=1; AJvYcCXfP3C4N2LgYMePZhpAPceOYSQ4G0gr8hvuMBsWcFCHv/MRAO9O2/vy/Ldb/bteswfYAZoYefXOsl3pz8T3xuDb5BTTUTA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaGjSz9bZwvqPSC2ZBzbYKKyqxFsd6a8mt4VISyeo7hEA6mymR
-	07KGVoSAr1HTrwMWH3CgBFHdaHXzxy6a8y4QO+Cr129yd2aLtp+cGxJ9SwqGIORlf9uF0Ks6jwl
-	V0i0lekrAiKoDquLYwHxIEFZoAT6DNbgKQp83
-X-Gm-Gg: ASbGnctqKIkJl9+KfIsbCsHcVwDE4/Jk3dTrLkwTEjhv9/ccHKyH/oK44STLKEI5hxp
-	W6XnLcf0Xh4jp1bstdnUU8V3H72Aqig==
-X-Google-Smtp-Source: AGHT+IGlxuYZ/LrsjfAgvwWFFpg3oOOBV7K+iujlFrnCdH+8elzoi/D8ZMqcY8qv4XgdvqDdz60wqZKADimRrgR9ovc=
-X-Received: by 2002:a05:6902:110b:b0:e30:da65:723c with SMTP id
- 3f1490d57ef6-e395b95633amr1331814276.45.1732678730497; Tue, 26 Nov 2024
- 19:38:50 -0800 (PST)
+        bh=9JFRcmOZiXHu3/zU8zCoF0fSGQ7YTFiOrtbQ3JdZhf4=;
+        b=Yp8aMnUQwgT32dA14zfMDvnJ8M1n8JlwZZDPLPSgKwtCwSzKfQKFqbzcCcbZICPgjH
+         +U0Kl3coMGqtvFVYv5O2jC9+rvyWAS2UEkff7IWU5FgRzgxjgCtw6ZxPbHAd9PzTC9d4
+         lC7lXVhxgAxRi8nb29ssKVulWqBWZIVxEU2h6Hopn1SC3qa+7QIJGDbRwFjOM3ZXNKcR
+         RSmxJjjcPYXN3Ra5NJPl+JoUo1r87sIPMUCXJyavE8burSkri4rwVM1/NknIC5PDYahR
+         7EIG6M1Ks1iR3rwOTfzwNw3lR2Lu22mtq/2neDmtQGjUFJ/X8m/F5NXlLo/UTW+NYLu7
+         9zvw==
+X-Forwarded-Encrypted: i=1; AJvYcCXhzhU/xEPGVirBaLXDpINn1zz+dpiu8UQBx7Bqm1BCQOOz+F8u3VYLDmYA0xDlj0DwY5Fr49G5DZBmrdQSylj28vcdEiU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqodS9jfk/mmeL9f8cnIS7ZIq7thZpEJAgwZ9eh4ntii1BKo1c
+	CLMhOWsPxm5L7Mmez1+siP631prpP4UmgN+3I5caRym5YivN3Al4cxyx+XJlFyz61xlV5qVep+r
+	ET6+58cJ7b7CD5fsH2wjZs9kxpHOh+FfVspUL
+X-Gm-Gg: ASbGnctMhPbfbLvMoq+PoA4RagrYV5S6DUMtlLjeD8MH2SeLNnKOjgFxIhJV9usyq8R
+	WxqUIFdOvhuLnzsTtfG1GKxb2zi3wRw==
+X-Google-Smtp-Source: AGHT+IEdqF+9WL4cRPWTyDd8aisGMJUrebOf6avTBCMaDvjIIq3DWm39d2KLQfyoufDVabCnOWJJVG7gr6EsbTiVTLI=
+X-Received: by 2002:a05:6902:2d8c:b0:e35:e24f:284d with SMTP id
+ 3f1490d57ef6-e395b8a5f2cmr1359548276.16.1732679645222; Tue, 26 Nov 2024
+ 19:54:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241112182810.24761-1-av2082000@gmail.com> <52cc8e51-9e85-465b-8ee3-63a7a0a42951@linuxfoundation.org>
-In-Reply-To: <52cc8e51-9e85-465b-8ee3-63a7a0a42951@linuxfoundation.org>
+References: <CAJ2a_DeUX9UdAYOo9OwG-yXSH1etKQZortPcyxfzG70K3N+g7g@mail.gmail.com>
+ <92e5fd64-8c75-4e82-981a-846364fc7a38@schaufler-ca.com> <91a227f3b57374a8aece5480f285c433d3888572.camel@huaweicloud.com>
+ <CAHC9VhS7KRcpA7cHcwpKknYsC7iZiBjZGVz1xznC=d=uDYu7EQ@mail.gmail.com> <86863031e74c46e9982fee38706a4d17b5c536dd.camel@huaweicloud.com>
+In-Reply-To: <86863031e74c46e9982fee38706a4d17b5c536dd.camel@huaweicloud.com>
 From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 26 Nov 2024 22:38:39 -0500
-Message-ID: <CAHC9VhTJERn54qNDDOwNrJ09VWrmq5Qn+sPQV__LyeEUgSi5pw@mail.gmail.com>
-Subject: Re: [PATCH] selftests: lsm: Refactor `flags_overset_lsm_set_self_attr`
- test
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: Amit Vadhavana <av2082000@gmail.com>, jmorris@namei.org, serge@hallyn.com, 
-	casey@schaufler-ca.com, shuah@kernel.org, ricardo@marliere.net, 
-	linux-kernel-mentees@lists.linux.dev, linux-security-module@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Tue, 26 Nov 2024 22:53:54 -0500
+Message-ID: <CAHC9VhTw71a2tKdbOeYz_1hv6vFG9EDREwG==Ri-Z6iL594J+g@mail.gmail.com>
+Subject: Re: ima: property parameter unused in ima_match_rules()
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: Casey Schaufler <casey@schaufler-ca.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	=?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>, 
+	linux-integrity@vger.kernel.org, 
+	"M: Roberto Sassu" <roberto.sassu@huawei.com>, "M: Dmitry Kasatkin" <dmitry.kasatkin@gmail.com>, 
+	"R: Eric Snowberg" <eric.snowberg@oracle.com>, LSM List <linux-security-module@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 14, 2024 at 11:25=E2=80=AFAM Shuah Khan <skhan@linuxfoundation.=
-org> wrote:
-> On 11/12/24 11:28, Amit Vadhavana wrote:
-> > - Remove unnecessary `tctx` variable, use `ctx` directly.
-> > - Simplified code with no functional changes.
+On Tue, Nov 26, 2024 at 11:39=E2=80=AFAM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
+> On Tue, 2024-11-26 at 10:57 -0500, Paul Moore wrote:
+> > On Tue, Nov 26, 2024 at 2:50=E2=80=AFAM Roberto Sassu
+> > <roberto.sassu@huaweicloud.com> wrote:
+> > >
+> > > On Mon, 2024-11-25 at 10:23 -0800, Casey Schaufler wrote:
+> > > > On 11/25/2024 3:38 AM, Christian G=C3=B6ttsche wrote:
+> > > > > Hi,
+> > > > >
+> > > > > I noticed that the `prop` parameter of `ima_match_rules()` is
+> > > > > currently unused (due to shadowing).
+> > > > > Is that by design or a mishap of the recent rework?
+> > > > >
+> > > > > Related commits:
+> > > > >
+> > > > > 37f670a ("lsm: use lsm_prop in security_current_getsecid")
+> > > > > 870b7fd ("lsm: use lsm_prop in security_audit_rule_match")
+> > > > > 07f9d2c ("lsm: use lsm_prop in security_inode_getsecid")
+> > > >
+> > > > The shadowing was inadvertent. The use of lsm_prop data is
+> > > > corrected by this patch.
+> > >
+> > > Thanks Casey. Yes, this is what I had in mind.
 > >
+> > Looks good to me too.  Casey can you resend the patch with the proper
+> > sign-off, commit description, etc.?  Roberto, can we convert your
+> > comment above into an ACK?
 >
-> I would rephrase the short to simply say Remove unused variable,
-> as refactor implies more extensive changes than what this patch
-> is actually doing.
+> Yes:
 >
-> Please write complete sentences instead of bullet points in the
-> change log.
+> Suggested-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Reviewed-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Acked-by: Roberto Sassu <roberto.sassu@huawei.com>
 >
-> How did you find this problem? Do include the details on how
-> in the change log.
+> > Lastly, Mimi and Roberto, would you like me to take this fix up to
+> > Linus via the LSM tree, or would you prefer to take it via IMA?
+> > Either way is fine with me as long as we get it fixed :)
 >
-> > Signed-off-by: Amit Vadhavana <av2082000@gmail.com>
-> > ---
-> >   tools/testing/selftests/lsm/lsm_set_self_attr_test.c | 7 +++----
-> >   1 file changed, 3 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/tools/testing/selftests/lsm/lsm_set_self_attr_test.c b/too=
-ls/testing/selftests/lsm/lsm_set_self_attr_test.c
-> > index 66dec47e3ca3..732e89fe99c0 100644
-> > --- a/tools/testing/selftests/lsm/lsm_set_self_attr_test.c
-> > +++ b/tools/testing/selftests/lsm/lsm_set_self_attr_test.c
-> > @@ -56,16 +56,15 @@ TEST(flags_zero_lsm_set_self_attr)
-> >   TEST(flags_overset_lsm_set_self_attr)
-> >   {
-> >       const long page_size =3D sysconf(_SC_PAGESIZE);
-> > -     char *ctx =3D calloc(page_size, 1);
-> > +     struct lsm_ctx *ctx =3D calloc(page_size, 1);
+> It is fine if you take in your tree.
 >
-> Why not name this tctx and avoid changes to the ASSERT_EQs
-> below?
->
-> >       __u32 size =3D page_size;
-> > -     struct lsm_ctx *tctx =3D (struct lsm_ctx *)ctx;
-> >
-> >       ASSERT_NE(NULL, ctx);
-> >       if (attr_lsm_count()) {
-> > -             ASSERT_LE(1, lsm_get_self_attr(LSM_ATTR_CURRENT, tctx, &s=
-ize,
-> > +             ASSERT_LE(1, lsm_get_self_attr(LSM_ATTR_CURRENT, ctx, &si=
-ze,
-> >                                              0));
-> >       }
-> > -     ASSERT_EQ(-1, lsm_set_self_attr(LSM_ATTR_CURRENT | LSM_ATTR_PREV,=
- tctx,
-> > +     ASSERT_EQ(-1, lsm_set_self_attr(LSM_ATTR_CURRENT | LSM_ATTR_PREV,=
- ctx,
-> >                                       size, 0));
-> >
-> >       free(ctx);
->
-> You have to change this tctx for sure.
->
-> With these changes:
->
-> Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
->
-> Paul, James,
->
-> Please do let me know if you would me to take this through
-> kselftest tree.
+> May I also ask to double check for the patches in your PRs that we are
+> aware and me or Mimi acked our parts?
 
-Amit has already posted a v2 with the requested changes, but I wanted
-to get back to you on this even if this patch is outdated ... Shuah,
-what is your preference for things like this?  My general policy is
-that patches only affecting one subsystem tree should be taken by the
-associated subsystem to minimize merge headaches and other ugliness,
-however, the kselftest is an interesting subsystem in that it relies
-so heavily on others that I'm not sure my policy makes as much sense
-here :)
+Yes, of course.  I didn't chase the ACKs like I normally do on Casey's
+lsm_prop patchset as I was in a bit of a rush and thought it minor
+enough for most everything, but you are correct that I should have
+sought out you and Mimi's ACK on the IMA related changes.
 
 --=20
 paul-moore.com
