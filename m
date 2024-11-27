@@ -1,102 +1,193 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61B5C16F0E8;
-	Tue, 26 Nov 2024 19:04:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47283360;
+	Wed, 27 Nov 2024 00:50:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732647874; cv=none; b=dOgZL+rjFBs1vOzzfVHxaOGOaRI/Z0b4jjMeQ9Y8kOWiWpP6tUdv4AVKOMbxQg2xhCr+eZPMRAq12Mimx5jyAF9PgwIPhLrjaK5lRPnp6sJ/V+Hrhn9Saux/9kC1ZF1xjHoNEb1bTxkAqjhyW92MYX/bmN7EQB5h2KI8p8vmo8Y=
+	t=1732668638; cv=none; b=aE/SLPM1teykufm3iEyV7m6tYwqA3oJvwRbTRs/gFcV2FenKUATdU3me4WCijsd+xbx489ZuTMSrQ3tj879EKstAiX/+SZQ3FLIA3fFDID21G7KXeo6oTecNe9PZx0wiB60ZAUXJPMEBrvvSE0nk27l7LqGunMBLY2zZcNakNGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732647874; c=relaxed/simple;
-	bh=E18gfvq447oO7905Vj2Agqf4+xGXFE0FgW3F4b7o0Zs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TM2VlsMQ2Mx9hX8h8cOcCyQ8EkMILUEQKS05a42mzsXSrWaMnpJKg0rJ/UUsCsfso+Fk1/ZVYurpTpVf5pxZyCNNmxvxnYHMU606vSqBhQRYC0+zmwHXrxVyEVfN/DDdTKz655i3W5EoQHmYMYFqFyc48AoiOB5r+/SZOqYK2AU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=evq0lHqQ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1732668638; c=relaxed/simple;
+	bh=t1hVwwhncVAUj/Lm9r7LI34ioqQ7kMq0x+fo0u4M8Q0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pyoyJFf9vDBNBwidywUODSbgMQa/DytmVIp4AApJXcJTiq5j61nXolfOuUFhMspKmcQcNssk1Vx7dXwylPYk0liAExZTgQwUTJVgWryPUQintj0Tby9WDW8gOvGO4ubTFz0naiSwjsayfob1MKIbvTx7/ci2xEf/OesN2oxf8Hk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QPkJ7nTO; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="evq0lHqQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0614CC4CECF;
-	Tue, 26 Nov 2024 19:04:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1732647873;
-	bh=E18gfvq447oO7905Vj2Agqf4+xGXFE0FgW3F4b7o0Zs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=evq0lHqQcRyOWBXrClvl/1VAJ8nO2sr/dOC3x1+WlqqujfoTC4ZXYWcwPVbv4gwTy
-	 OlIFx9XYY/w/liF5WJE1p42IrMOx2KrHMc6gcnVrLCaJGdyzXSCMo1Mi3Ffdivj0O1
-	 MSxb7kSw9B0zNQADgLbAdFyKr7+ucf9mLTvuP+5oVxOYGGyBYq+TzlBq/a/1lF8cry
-	 kjXpsCCFcl38DIliPVPFAu7C3QUHNhlXNxNLrbh6SfwA6rlyZiGebaMp+rsDBmB+8s
-	 NYM60vsi3Lia2B4/GrzeutZhCFQLYqENG5UBcXrNqz6UM1R3KMgJwguPZ3yyThIUSi
-	 iYwe37ciSIjJQ==
-Date: Tue, 26 Nov 2024 11:04:31 -0800
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: zohar@linux.ibm.com, dmitry.kasatkin@gmail.com,
-	eric.snowberg@oracle.com, corbet@lwn.net, petr.pavlu@suse.com,
-	samitolvanen@google.com, da.gomez@samsung.com,
-	akpm@linux-foundation.org, paul@paul-moore.com, jmorris@namei.org,
-	serge@hallyn.com, shuah@kernel.org, mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com, linux-integrity@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-api@vger.kernel.org, linux-modules@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, wufan@linux.microsoft.com,
-	pbrobinson@gmail.com, zbyszek@in.waw.pl, hch@lst.de,
-	mjg59@srcf.ucam.org, pmatilai@redhat.com, jannh@google.com,
-	dhowells@redhat.com, jikos@kernel.org, mkoutny@suse.com,
-	ppavlu@suse.com, petr.vorel@gmail.com, mzerqung@0pointer.de,
-	kgold@linux.ibm.com, Roberto Sassu <roberto.sassu@huawei.com>
-Subject: Re: [PATCH v6 07/15] digest_cache: Allow registration of digest list
- parsers
-Message-ID: <Z0Ybvzy7ianR-Sx9@bombadil.infradead.org>
-References: <20241119104922.2772571-1-roberto.sassu@huaweicloud.com>
- <20241119104922.2772571-8-roberto.sassu@huaweicloud.com>
- <Z0UN9ub0iztWvgLi@bombadil.infradead.org>
- <d428a5d926d695ebec170e98463f7501a1b00793.camel@huaweicloud.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QPkJ7nTO"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43497839b80so27619645e9.2;
+        Tue, 26 Nov 2024 16:50:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1732668634; x=1733273434; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=j3EkoerGTLMLe4OrsMDgak1/GJweiL9MEJTp4Bxm4Oc=;
+        b=QPkJ7nTOAqL7nwYQZbew6Jcz+9wC6VCi1AJtWi0Eyp5d5CnDpTQ+9voWMZpJkzt+yC
+         RTb5h+v74CF1YKDVw6atVKGg9qcI3Pezl3ZRJJscESDOa4fFO95izCqb4qDLYqI8HDG7
+         Nv5+DzJheds/FLqrleTKPqOXRCkpXeCtIoGf+/hLt7+A+ZhLpdzBSrqBBsuF6PB92Odn
+         6wXOC1A0qmDQsEIsZyOkoCQ8jLn7hlfUTUoT79RQRcQ60COGqfWKe5L+fI0JayxAWwE4
+         oPIwjFSqpBqs6T94EA6kFxBfNSiXALj8IOZDkeXgRryDPMXNuLMQldxmPiUiU/UZDBRK
+         6cLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732668634; x=1733273434;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=j3EkoerGTLMLe4OrsMDgak1/GJweiL9MEJTp4Bxm4Oc=;
+        b=wV1joy3pFX7CFyQKMnr6RcojZdFOrmCOM1VeJtkiybeLPWf7eTr1Ml0k2Fv5CJDB+y
+         EFiBCSLwTYu7Nx1zvYJl5FUglfeP4/23QIlzZWUf76XVvjPvL4iUwF7k+4okOXI2uumj
+         jmPX1QgCSLt03Y9buIl9FbJjadVoYNrU1FeSZcKyGiLeYWAevi76BR0666I/5Kz5YRlv
+         znZe96IzRyO26V4Rn0MWR5x4X6NdEQq1CAcPt6Lw1186U7CgZcnkmeWpHxGu+8evZSnf
+         RT+R2T5REI3AZlpCQvohYja45HbOlfLdpFRkHUvM5iGTpQIVkKDy5AmW1skNLepXaP8Q
+         978w==
+X-Forwarded-Encrypted: i=1; AJvYcCV5txyAorvv3Ewd8gcRmWwULuuW26thTaFlRQt16qkRslAtMjUhqrR0HG2+gfnKFHi6plPCx0VNMmwsRPAL@vger.kernel.org, AJvYcCVvHLKb/Pm9Iyg+aDukr/drsYgmCxBAvmGnQjZva/fk2M0v8wCVo3ZTzCvntiZ+hcgQwWy/f9WpumXywPM0mQ==@vger.kernel.org, AJvYcCWUev8K6l1iM8mlO9a9NCk6tNenu1vDneLdw1dAFkn/+soVOCzisfTThBxpZtxJhnmDfFo=@vger.kernel.org, AJvYcCWzEpW0vng2fSzHMNferCARPcCh3pABmWVq/9JevUD9SRgYciS53SUOlcxE65YOtL2waxMAMAJZfGeLvNgCy3Ty9TEyjUVM@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw54rS6hGxSPE51KBQLnxCb0+tsq/pXQNesjTM0CSOLOYhzcx1B
+	V0kAZk3rxSFsaGq5mWDTY1WU+2N0YJwer4/7/x3Oa6jJz4hZf+9pFH+ET1qZp3Cy3PhfMI9dvbQ
+	xcIk6siAAVuP1VAXeuIlixAjP4QA=
+X-Gm-Gg: ASbGncsZ5AiWUiihJdGK3ye3Wt7UIg0ovju+mbmtUajwfUN5VSt9wjaqYJqEO1ZU91X
+	weIciTThg1YEGTPqcKKt9uz9NW/Q9PXhdU59mgDwat7cqQeA=
+X-Google-Smtp-Source: AGHT+IFylzibwq1l1tgeIghi7zw0a98fwkBarp9Liyrr2JP3fgWDlTpjUXEBRNTykRpSKDm4u8WaYRM6y926pb50xhI=
+X-Received: by 2002:a05:6000:18ab:b0:381:f08b:71a4 with SMTP id
+ ffacd0b85a97d-385c6edd52dmr635501f8f.45.1732668634501; Tue, 26 Nov 2024
+ 16:50:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d428a5d926d695ebec170e98463f7501a1b00793.camel@huaweicloud.com>
+References: <20241122225958.1775625-1-song@kernel.org> <20241122225958.1775625-3-song@kernel.org>
+ <CAOQ4uxhfd8ryQ6ua5u60yN5sh06fyiieS3XgfR9jvkAOeDSZUg@mail.gmail.com>
+In-Reply-To: <CAOQ4uxhfd8ryQ6ua5u60yN5sh06fyiieS3XgfR9jvkAOeDSZUg@mail.gmail.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 26 Nov 2024 16:50:23 -0800
+Message-ID: <CAADnVQK-6MFdwD_0j-3x2-t8VUjbNJUuGrTXEWJ0ttdpHvtLOA@mail.gmail.com>
+Subject: Re: [PATCH v3 fanotify 2/2] samples/fanotify: Add a sample fanotify fiter
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Song Liu <song@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	LSM List <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, Eddy Z <eddyz87@gmail.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, KP Singh <kpsingh@kernel.org>, 
+	Matt Bobrowski <mattbobrowski@google.com>, repnop@google.com, 
+	Jeff Layton <jlayton@kernel.org>, Josef Bacik <josef@toxicpanda.com>, 
+	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, gnoack@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 26, 2024 at 11:25:07AM +0100, Roberto Sassu wrote:
-> On Mon, 2024-11-25 at 15:53 -0800, Luis Chamberlain wrote:
-> 
-> Firmware, eBPF programs and so on are supposed
+On Sat, Nov 23, 2024 at 9:07=E2=80=AFPM Amir Goldstein <amir73il@gmail.com>=
+ wrote:
+> > +++ b/samples/fanotify/filter-mod.c
+> > @@ -0,0 +1,105 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +/* Copyright (c) 2024 Meta Platforms, Inc. and affiliates. */
+> > +
+> > +#include <linux/fsnotify.h>
+> > +#include <linux/fanotify.h>
+> > +#include <linux/module.h>
+> > +#include <linux/path.h>
+> > +#include <linux/file.h>
+> > +#include "filter.h"
+> > +
+> > +struct fan_filter_sample_data {
+> > +       struct path subtree_path;
+> > +       enum fan_filter_sample_mode mode;
+> > +};
+> > +
+> > +static int sample_filter(struct fsnotify_group *group,
+> > +                        struct fanotify_filter_hook *filter_hook,
+> > +                        struct fanotify_filter_event *filter_event)
+> > +{
+> > +       struct fan_filter_sample_data *data;
+> > +       struct dentry *dentry;
+> > +
+> > +       dentry =3D fsnotify_data_dentry(filter_event->data, filter_even=
+t->data_type);
+> > +       if (!dentry)
+> > +               return FAN_FILTER_RET_SEND_TO_USERSPACE;
+> > +
+> > +       data =3D filter_hook->data;
+> > +
+> > +       if (is_subdir(dentry, data->subtree_path.dentry)) {
+> > +               if (data->mode =3D=3D FAN_FILTER_SAMPLE_MODE_BLOCK)
+> > +                       return -EPERM;
+> > +               return FAN_FILTER_RET_SEND_TO_USERSPACE;
+> > +       }
+> > +       return FAN_FILTER_RET_SKIP_EVENT;
+> > +}
+> > +
+> > +static int sample_filter_init(struct fsnotify_group *group,
+> > +                             struct fanotify_filter_hook *filter_hook,
+> > +                             void *argp)
+> > +{
+> > +       struct fan_filter_sample_args *args;
+> > +       struct fan_filter_sample_data *data;
+> > +       struct file *file;
+> > +       int fd;
+> > +
+> > +       args =3D (struct fan_filter_sample_args *)argp;
+> > +       fd =3D args->subtree_fd;
+> > +
+> > +       file =3D fget(fd);
+> > +       if (!file)
+> > +               return -EBADF;
+> > +       data =3D kzalloc(sizeof(struct fan_filter_sample_data), GFP_KER=
+NEL);
+> > +       if (!data) {
+> > +               fput(file);
+> > +               return -ENOMEM;
+> > +       }
+> > +       path_get(&file->f_path);
+> > +       data->subtree_path =3D file->f_path;
+> > +       fput(file);
+> > +       data->mode =3D args->mode;
+> > +       filter_hook->data =3D data;
+> > +       return 0;
+> > +}
+> > +
+> > +static void sample_filter_free(struct fanotify_filter_hook *filter_hoo=
+k)
+> > +{
+> > +       struct fan_filter_sample_data *data =3D filter_hook->data;
+> > +
+> > +       path_put(&data->subtree_path);
+> > +       kfree(data);
+> > +}
+> > +
+>
+> Hi Song,
+>
+> This example looks fine but it raises a question.
+> This filter will keep the mount of subtree_path busy until the group is c=
+losed
+> or the filter is detached.
+> This is probably fine for many services that keep the mount busy anyway.
+>
+> But what if this wasn't the intention?
+> What if an Anti-malware engine that watches all mounts wanted to use that
+> for configuring some ignore/block subtree filters?
+>
+> One way would be to use a is_subtree() variant that looks for a
+> subtree root inode
+> number and then verifies it with a subtree root fid.
+> A production subtree filter will need to use a variant of is_subtree()
+> anyway that
+> looks for a set of subtree root inodes, because doing a loop of is_subtre=
+e() for
+> multiple paths is a no go.
+>
+> Don't need to change anything in the example, unless other people
+> think that we do need to set a better example to begin with...
 
-Keyword: "supposed". 
-
-> As far as the LSM infrastructure is concerned, I'm not adding new LSM
-> hooks, nor extending/modifying the existing ones. The operations the
-> Integrity Digest Cache is doing match the usage expectation by LSM (net
-> denying access, as discussed with Paul Moore).
-
-If modules are the only proven exception to your security model you are
-not making the case for it clearly.
-
-> The Integrity Digest Cache is supposed to be used as a supporting tool
-> for other LSMs to do regular access control based on file data and
-> metadata integrity. In doing that, it still needs the LSM
-> infrastructure to notify about filesystem changes, and to store
-> additional information in the inode and file descriptor security blobs.
-> 
-> The kernel_post_read_file LSM hook should be implemented by another LSM
-> to verify the integrity of a digest list, when the Integrity Digest
-> Cache calls kernel_read_file() to read that digest list.
-
-If LSM folks *do* agree that this work is *suplementing* LSMS then sure,
-it was not clear from the commit logs. But then you need to ensure the
-parsers are special snowflakes which won't ever incur other additional
-kernel_read_file() calls.
-
-> Supporting kernel modules opened the road for new deadlocks, since one
-> can ask a digest list to verify a kernel module, but that digest list
-> requires the same kernel module. That is why the in-kernel mechanism is
-> 100% reliable,
-
-Are users of this infrastructure really in need of modules for these
-parsers?
-
-  Luis
+I think we have to treat this patch as a real filter and not as an example
+to make sure that the whole approach is workable end to end.
+The point about not holding path/dentry is very valid.
+The algorithm needs to support that.
+It may very well turn out that the logic of handling many filters
+without a loop and not grabbing a path refcnt is too complex for bpf.
+Then this subtree filtering would have to stay as a kernel module
+or extra flag/feature for fanotify.
