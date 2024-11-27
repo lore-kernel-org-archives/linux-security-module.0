@@ -1,374 +1,219 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8065B140E38;
-	Wed, 27 Nov 2024 21:02:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1572B140E38;
+	Wed, 27 Nov 2024 21:05:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.121
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732741374; cv=none; b=FDReR6mo8EPdcatQfH/dMxqieLdrk0KGubmfTsjIeaUI7ODHJKSIqDcOOkOzm2R/+yQ8H2C+RxrHPpH3uqwArSsIrn9n9Qqklfoe0h3v0pQMozr9rF+AJan+4jR8fyfamIJH6HhOu59zmkNqZFvSCvX/hBBxCihNDAgSmwIaSdE=
+	t=1732741507; cv=none; b=Nv6zs3sRv9qtqdj7o/MwMCNAgndySfM5SY9aPIX0setO/UjUxwDS7yPnA9fV8jKmzLWGWzzk76jyL4PXof2ZyGGmWeMmw7no+UPQvODUlZGa6pQw5PH/pVaiQQxeUdAgQP6BGsAOAZX2OzWh4JTKcbYJtMf99+IvmwbU2OYDstA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732741374; c=relaxed/simple;
-	bh=t6m3YvbjS8NicfRrUZkEJsoXFNyppTRQ8GvBsQvPZ0Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tqp/BqxJDxOjJTx9pZdxfBq55zMjfz32Iz04yDeOkCnyRsHTvNoBWTe9rKNWV9WKcV/3frr2zM7b7qOW4gC0OMHRSCXiAwvQ0mifcVbDN5Q4tNb+pyA90TWeRC7y0k0w2f7pMABMxV4UjXqJzLozphfHguHS3QfbBUDRjQX6GFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=EseRpknu; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1732741507; c=relaxed/simple;
+	bh=1tQB4KkCRYLj9EIXaNnivm9OriRx0yD4O7OrpTTzag8=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=UgJT/r9wRVw25aHM2mZ1orlytFEQuQkoRk0ltGqXeYJ6PxsHygkJ/+7jBoCN8ZyYY6bovhLhDhk+N/GJwAk1gWXOiL2R9e2HTazaovX59RrX0hKx7WGovEeILE3AoRz3jgTTig96QyKkfGIZJkESR2XYpAAAIcMKR4qVJlehRYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=oBWYO9qG; arc=none smtp.client-ip=185.125.188.121
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="EseRpknu"
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4ARHXgA5018057;
-	Wed, 27 Nov 2024 21:02:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=Py0nmOg/OGfeoc6ZQj8Xz5DCd3iv4EoR9dulVzsxZ
-	94=; b=EseRpknuo35h+WupTL6QrCMWpK+iNwjAjOfRxC+i1b5nZh8N3xGsD5S+X
-	XaTuzK2a6Kyk8FwbXU3kJYvGYchi4zJOlYd4gLu3kIcTkuTtrvFF9453jt49j0Xf
-	I5sNTRfsZJEIuYeULQRYs34rA6uijsTRxq4P53qqqiG+NSjnTpg3KHIdvcl8vjjP
-	YHf3E7QpNZ679H4z4zP/HC3kqaxujp3J1ANQ2Ij/dNR9JrVVHgE4v8XcWmB43aDp
-	g/CF419kKv47Pc9FlRU10XmJ9kkfCLfoNHivKBhv1ztEoCxdtvgdVJdY+SrCm4ai
-	rs9r4TlZZb4PCEF7pHlX3dvqeppWA==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4366yx12vs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 27 Nov 2024 21:02:42 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4ARK81oa012010;
-	Wed, 27 Nov 2024 21:02:41 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43672ga5jk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 27 Nov 2024 21:02:41 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4ARL2dNA42860910
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 27 Nov 2024 21:02:39 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8BBD820040;
-	Wed, 27 Nov 2024 21:02:39 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CB12120043;
-	Wed, 27 Nov 2024 21:02:37 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.fios-router.home (unknown [9.61.172.160])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 27 Nov 2024 21:02:37 +0000 (GMT)
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: linux-integrity@vger.kernel.org
-Cc: Mimi Zohar <zohar@linux.ibm.com>,
-        =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-        roberto.sassu@huawei.com, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] ima: instantiate the bprm_creds_for_exec() hook
-Date: Wed, 27 Nov 2024 16:02:34 -0500
-Message-ID: <20241127210234.121546-1-zohar@linux.ibm.com>
-X-Mailer: git-send-email 2.47.0
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="oBWYO9qG"
+Received: from [192.168.192.84] (unknown [50.39.104.138])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 91DD140616;
+	Wed, 27 Nov 2024 20:59:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1732741192;
+	bh=lsiL23PSGeS7kRkaSO0TSWcYoeiimM07RgelnQ4NhV4=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type;
+	b=oBWYO9qGU5ng+HsrEoemmmgygH6oiyX19AYmiYRUKlMO4XIRXPVIHpUB//07oSeWn
+	 CR1bzOeE4IIDsxpp+6FQMXWojdwiXag36Uo2jBPzPZ1GqUY4c+PixxZKMxmDvpbbbU
+	 7bZyPpW8wJPkwzOXw/hJmAMXeMLEYDnpb0wlZoAlDN5e/pG8QO0U04hYvsiebY4+Bl
+	 f+WFbNjCVVLAxgwnhzPibrpP2Iny28PcriHTN1sJRPe0/VT3Dh7XfDT+FaYLjudYPM
+	 qUpMiAHXW0KduAr89KKUeh//EB8sPqzYJeHYoawruX+kdSO40q28twp8qHL7K/RbYm
+	 vUROkB9Vppr1w==
+Message-ID: <f8ecfc95-61d4-4637-b6ce-aa43b038ea37@canonical.com>
+Date: Wed, 27 Nov 2024 12:59:49 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: S98G5gwaC1k6Z3ghZ4LRLR3dTusTb67d
-X-Proofpoint-GUID: S98G5gwaC1k6Z3ghZ4LRLR3dTusTb67d
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
- clxscore=1015 lowpriorityscore=0 mlxscore=0 priorityscore=1501
- suspectscore=0 impostorscore=0 adultscore=0 bulkscore=0 malwarescore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2411270163
+User-Agent: Mozilla Thunderbird
+From: John Johansen <john.johansen@canonical.com>
+Subject: [GIT PULL] AppArmor updates for 6.13
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LKLM <linux-kernel@vger.kernel.org>,
+ "open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>
+Content-Language: en-US
+Autocrypt: addr=john.johansen@canonical.com; keydata=
+ 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 lT9Q
+Organization: Canonical
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Like direct file execution (e.g. ./script.sh), indirect file execution
-(e.g. sh script.sh) needs to be measured and appraised.  Instantiate
-the new security_bprm_creds_for_exec() hook to measure and verify the
-indirect file's integrity.  Unlike direct file execution, indirect file
-execution integrity is optionally enforced by the interpreter.
+Hi Linus,
 
-Update the audit messages to differentiate between kernel and userspace
-enforced integrity.
+This update is largely Bug fixes and cleanups. It has two small
+developments, which I can drop and push to 6.14 if you would like. The
+first increases the size of the policy state machine that can be
+supported. At run time this is just swap out the next/check tables to
+use u32, older policy is remains supported by mapping remapping the old
+u16 to the u32 during policy load. The second is an improvement to age
+the capability auditing cache.
 
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
----
- security/integrity/ima/ima_appraise.c | 84 ++++++++++++++++++++-------
- security/integrity/ima/ima_main.c     | 22 +++++++
- 2 files changed, 86 insertions(+), 20 deletions(-)
+These have all been in linux-next for more than two weeks, and I finally
+managed to trace down and fix a bug in the regression tests that was causing
+a failure, so these have been merge and regression tested against your tree
+from this last weekend.
 
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index 656c709b974f..b5f8e49cde9d 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -8,6 +8,7 @@
- #include <linux/module.h>
- #include <linux/init.h>
- #include <linux/file.h>
-+#include <linux/binfmts.h>
- #include <linux/fs.h>
- #include <linux/xattr.h>
- #include <linux/magic.h>
-@@ -16,6 +17,7 @@
- #include <linux/fsverity.h>
- #include <keys/system_keyring.h>
- #include <uapi/linux/fsverity.h>
-+#include <linux/securebits.h>
- 
- #include "ima.h"
- 
-@@ -276,7 +278,8 @@ static int calc_file_id_hash(enum evm_ima_xattr_type type,
-  */
- static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
- 			struct evm_ima_xattr_data *xattr_value, int xattr_len,
--			enum integrity_status *status, const char **cause)
-+			enum integrity_status *status, const char **cause,
-+			bool is_check)
- {
- 	struct ima_max_digest_data hash;
- 	struct signature_v2_hdr *sig;
-@@ -292,9 +295,11 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
- 		if (*status != INTEGRITY_PASS_IMMUTABLE) {
- 			if (iint->flags & IMA_DIGSIG_REQUIRED) {
- 				if (iint->flags & IMA_VERITY_REQUIRED)
--					*cause = "verity-signature-required";
-+					*cause = !is_check ? "verity-signature-required" :
-+						"verity-signature-required(userspace)";
- 				else
--					*cause = "IMA-signature-required";
-+					*cause = !is_check ? "IMA-signature-required" :
-+						"IMA-signature-required(userspace)";
- 				*status = INTEGRITY_FAIL;
- 				break;
- 			}
-@@ -314,7 +319,8 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
- 		else
- 			rc = -EINVAL;
- 		if (rc) {
--			*cause = "invalid-hash";
-+			*cause = !is_check ? "invalid-hash" :
-+				"invalid-hash(userspace)";
- 			*status = INTEGRITY_FAIL;
- 			break;
- 		}
-@@ -325,14 +331,16 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
- 
- 		mask = IMA_DIGSIG_REQUIRED | IMA_VERITY_REQUIRED;
- 		if ((iint->flags & mask) == mask) {
--			*cause = "verity-signature-required";
-+			*cause = !is_check ? "verity-signature-required" :
-+				"verity-signature-required(userspace)";
- 			*status = INTEGRITY_FAIL;
- 			break;
- 		}
- 
- 		sig = (typeof(sig))xattr_value;
- 		if (sig->version >= 3) {
--			*cause = "invalid-signature-version";
-+			*cause = !is_check ? "invalid-signature-version" :
-+				"invalid-signature-version(userspace)";
- 			*status = INTEGRITY_FAIL;
- 			break;
- 		}
-@@ -353,7 +361,8 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
- 						     iint->ima_hash->digest,
- 						     iint->ima_hash->length);
- 		if (rc) {
--			*cause = "invalid-signature";
-+			*cause = !is_check ? "invalid-signature" :
-+				"invalid-signature(userspace)";
- 			*status = INTEGRITY_FAIL;
- 		} else {
- 			*status = INTEGRITY_PASS;
-@@ -364,7 +373,8 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
- 
- 		if (iint->flags & IMA_DIGSIG_REQUIRED) {
- 			if (!(iint->flags & IMA_VERITY_REQUIRED)) {
--				*cause = "IMA-signature-required";
-+				*cause = !is_check ? "IMA-signature-required" :
-+					"IMA-signature-required(userspace)";
- 				*status = INTEGRITY_FAIL;
- 				break;
- 			}
-@@ -372,7 +382,8 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
- 
- 		sig = (typeof(sig))xattr_value;
- 		if (sig->version != 3) {
--			*cause = "invalid-signature-version";
-+			*cause = !is_check ? "invalid-signature-version" :
-+				"invalid-signature-version(userspace)";
- 			*status = INTEGRITY_FAIL;
- 			break;
- 		}
-@@ -382,7 +393,8 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
- 				       container_of(&hash.hdr,
- 					       struct ima_digest_data, hdr));
- 		if (rc) {
--			*cause = "sigv3-hashing-error";
-+			*cause = !is_check ? "sigv3-hashing-error" :
-+				"sigv3-hashing-error(userspace)";
- 			*status = INTEGRITY_FAIL;
- 			break;
- 		}
-@@ -392,7 +404,8 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
- 					     xattr_len, hash.digest,
- 					     hash.hdr.length);
- 		if (rc) {
--			*cause = "invalid-verity-signature";
-+			*cause = !is_check ? "invalid-verity-signature" :
-+				"invalid-verify-signature(userspace)";
- 			*status = INTEGRITY_FAIL;
- 		} else {
- 			*status = INTEGRITY_PASS;
-@@ -401,7 +414,8 @@ static int xattr_verify(enum ima_hooks func, struct ima_iint_cache *iint,
- 		break;
- 	default:
- 		*status = INTEGRITY_UNKNOWN;
--		*cause = "unknown-ima-data";
-+		*cause = !is_check ? "unknown-ima-data" :
-+			"unknown-ima-data(userspace)";
- 		break;
- 	}
- 
-@@ -469,6 +483,18 @@ int ima_check_blacklist(struct ima_iint_cache *iint,
- 	return rc;
- }
- 
-+static int is_bprm_creds_for_exec(enum ima_hooks func, struct file *file)
-+{
-+	struct linux_binprm *bprm = NULL;
-+
-+	if (func == BPRM_CHECK) {
-+		bprm = container_of(&file, struct linux_binprm, file);
-+		if (bprm->is_check)
-+			return 1;
-+	}
-+	return 0;
-+}
-+
- /*
-  * ima_appraise_measurement - appraise file measurement
-  *
-@@ -489,11 +515,24 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
- 	enum integrity_status status = INTEGRITY_UNKNOWN;
- 	int rc = xattr_len;
- 	bool try_modsig = iint->flags & IMA_MODSIG_ALLOWED && modsig;
-+	bool is_check = false;
- 
- 	/* If not appraising a modsig, we need an xattr. */
- 	if (!(inode->i_opflags & IOP_XATTR) && !try_modsig)
- 		return INTEGRITY_UNKNOWN;
- 
-+	/*
-+	 * Unlike any of the other LSM hooks where the kernel enforces file
-+	 * integrity, enforcing file integrity for the bprm_creds_for_exec()
-+	 * LSM hook is left up to the discretion of the script interpreter
-+	 * (userspace).
-+	 *
-+	 * Since the SECBIT_EXEC_RESTRICT_FILE flag is just a hint as to
-+	 * userspace intentions, simply annotate the audit messages indicating
-+	 * a userspace based query.
-+	 */
-+	is_check = is_bprm_creds_for_exec(func, file);
-+
- 	/* If reading the xattr failed and there's no modsig, error out. */
- 	if (rc <= 0 && !try_modsig) {
- 		if (rc && rc != -ENODATA)
-@@ -501,11 +540,14 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
- 
- 		if (iint->flags & IMA_DIGSIG_REQUIRED) {
- 			if (iint->flags & IMA_VERITY_REQUIRED)
--				cause = "verity-signature-required";
-+				cause = !is_check ? "verity-signature-required" :
-+					"verity-signature-required(userspace)";
- 			else
--				cause = "IMA-signature-required";
-+				cause = !is_check ? "IMA-signature-required" :
-+					"IMA-signature-required(userspace)";
- 		} else {
--			cause = "missing-hash";
-+			cause = !is_check ? "missing-hash" :
-+				"missing-hash(userspace)";
- 		}
- 
- 		status = INTEGRITY_NOLABEL;
-@@ -531,14 +573,15 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
- 			break;
- 		fallthrough;
- 	case INTEGRITY_NOLABEL:		/* No security.evm xattr. */
--		cause = "missing-HMAC";
-+		cause = !is_check ? "missing-HMAC" : "missing-HMAC(userspace)";
- 		goto out;
- 	case INTEGRITY_FAIL_IMMUTABLE:
- 		set_bit(IMA_DIGSIG, &iint->atomic_flags);
--		cause = "invalid-fail-immutable";
-+		cause = !is_check ? "invalid-fail-immutable" :
-+		       "invalid-fail-immutable(userspace)";
- 		goto out;
- 	case INTEGRITY_FAIL:		/* Invalid HMAC/signature. */
--		cause = "invalid-HMAC";
-+		cause = !is_check ? "invalid-HMAC" : "invalid-HMAC(userspace)";
- 		goto out;
- 	default:
- 		WARN_ONCE(true, "Unexpected integrity status %d\n", status);
-@@ -546,7 +589,7 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
- 
- 	if (xattr_value)
- 		rc = xattr_verify(func, iint, xattr_value, xattr_len, &status,
--				  &cause);
-+				  &cause, is_check);
- 
- 	/*
- 	 * If we have a modsig and either no imasig or the imasig's key isn't
-@@ -568,7 +611,8 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
- 	    ((inode->i_sb->s_iflags & SB_I_UNTRUSTED_MOUNTER) ||
- 	     (iint->flags & IMA_FAIL_UNVERIFIABLE_SIGS))) {
- 		status = INTEGRITY_FAIL;
--		cause = "unverifiable-signature";
-+		cause = !is_check ? "unverifiable-signature" :
-+			"unverifiable-signature(userspace)";
- 		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
- 				    op, cause, rc, 0);
- 	} else if (status != INTEGRITY_PASS) {
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 06132cf47016..2b5d6bae77a4 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -554,6 +554,27 @@ static int ima_bprm_check(struct linux_binprm *bprm)
- 				   MAY_EXEC, CREDS_CHECK);
- }
- 
-+/**
-+ * ima_bprm_creds_for_exec - based on policy, collect/store/appraise measurement.
-+ * @bprm: contains the linux_binprm structure
-+ *
-+ * Based on the IMA policy and the execvat(2) AT_CHECK flag, measure and
-+ * appraise the integrity of a file to be executed by script interpreters.
-+ * Unlike any of the other LSM hooks where the kernel enforces file integrity,
-+ * enforcing file integrity is left up to the discretion of the script
-+ * interpreter (userspace).
-+ *
-+ * On success return 0.  On integrity appraisal error, assuming the file
-+ * is in policy and IMA-appraisal is in enforcing mode, return -EACCES.
-+ */
-+static int ima_bprm_creds_for_exec(struct linux_binprm *bprm)
-+{
-+	if (!bprm->is_check)
-+		return 0;
-+
-+	return ima_bprm_check(bprm);
-+}
-+
- /**
-  * ima_file_check - based on policy, collect/store measurement.
-  * @file: pointer to the file to be measured
-@@ -1177,6 +1198,7 @@ static int __init init_ima(void)
- 
- static struct security_hook_list ima_hooks[] __ro_after_init = {
- 	LSM_HOOK_INIT(bprm_check_security, ima_bprm_check),
-+	LSM_HOOK_INIT(bprm_creds_for_exec, ima_bprm_creds_for_exec),
- 	LSM_HOOK_INIT(file_post_open, ima_file_check),
- 	LSM_HOOK_INIT(inode_post_create_tmpfile, ima_post_create_tmpfile),
- 	LSM_HOOK_INIT(file_release, ima_file_free),
--- 
-2.47.0
+thanks
+- john
+
+
+
+
+The following changes since commit aaf20f870da056752f6386693cc0d8e25421ef35:
+
+   Merge tag 'rpmsg-v6.13' of git://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux (2024-11-26 18:36:55 -0800)
+
+are available in the Git repository at:
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor tags/apparmor-pr-2024-11-27
+
+for you to fetch changes up to 04b5f0a5bfee5a5886dc19296c90d9a6964275e4:
+
+   apparmor: lift new_profile declaration to remove C23 extension warning (2024-11-26 19:21:06 -0800)
+
+----------------------------------------------------------------
+* Features
+   - extend next/check table to add support for 2^24 states to the
+     state machine.
+   - rework capability audit cache to use broader cred information
+     instead of just the profile. Also add a time stamp so old
+     entries can be aged out of the cache.
+
+* Bug Fixes
+   - fix 'Do simple duplicate message elimination' to clear previous
+     state when updating in capability audit cache
+   - Fix memory leak for aa_unpack_strdup()
+   - properly handle cx/px lookup failure when in complain mode
+   - allocate xmatch for nullpdb inside aa_alloc_null fixing a
+     NULL ptr deref of tracking profiles in when in complain mode
+
+* Cleanups
+   - Remove everything being reported as deadcode
+   - replace misleading 'scrubbing environment' phrase in debug print
+   - Remove unnecessary NULL check before kvfree()
+   - clean up duplicated parts of handle_onexec()
+   - Use IS_ERR_OR_NULL() helper function
+   - move new_profile declaration to top of block instead immediately
+     after label to remove C23 extension warning
+
+* Documentation
+   - add comment to document capability.c:profile_capable ad ptr
+     parameter can not be NULL
+   - add comment to document first entry is in packed perms struct is
+     reserved for future planned expansion.
+   - Update LSM/apparmor.rst add blurb for
+     CONFIG_DEFAULT_SECURITY_APPARMOR
+
+----------------------------------------------------------------
+Dr. David Alan Gilbert (1):
+       apparmor: Remove deadcode
+
+Hongbo Li (1):
+       apparmor: Use IS_ERR_OR_NULL() helper function
+
+Jinjie Ruan (2):
+       apparmor: test: Fix memory leak for aa_unpack_strdup()
+       apparmor: Remove unused parameter L1 in macro next_comb
+
+John Johansen (4):
+       apparmor: add support for 2^24 states to the dfa state machine.
+       apparmor: document first entry is in packed perms struct is reserved
+       parser: drop dead code for XXX_comb macros
+       apparmor: lift new_profile declaration to remove C23 extension warning
+
+Leesoo Ahn (1):
+       apparmor: domain: clean up duplicated parts of handle_onexec()
+
+Ryan Lee (6):
+       apparmor: allocate xmatch for nullpdb inside aa_alloc_null
+       apparmor: properly handle cx/px lookup failure for complain
+       apparmor: document capability.c:profile_capable ad ptr not being NULL
+       apparmor: add a cache entry expiration time aging out capability audit cache
+       apparmor: audit_cap dedup based on subj_cred instead of profile
+       apparmor: replace misleading 'scrubbing environment' phrase in debug print
+
+Siddharth Menon (1):
+       Docs: Update LSM/apparmor.rst
+
+Thorsten Blum (1):
+       apparmor: Remove unnecessary NULL check before kvfree()
+
+chao liu (1):
+       apparmor: fix 'Do simple duplicate message elimination'
+
+  Documentation/admin-guide/LSM/apparmor.rst |  7 ++-
+  security/apparmor/apparmorfs.c             |  1 +
+  security/apparmor/capability.c             | 19 +++---
+  security/apparmor/domain.c                 | 66 +++++++++-----------
+  security/apparmor/include/label.h          | 28 ---------
+  security/apparmor/include/lib.h            |  1 -
+  security/apparmor/include/match.h          |  8 ++-
+  security/apparmor/include/perms.h          |  3 -
+  security/apparmor/include/policy.h         |  1 -
+  security/apparmor/include/secid.h          |  1 -
+  security/apparmor/label.c                  | 33 ----------
+  security/apparmor/lib.c                    | 84 -------------------------
+  security/apparmor/match.c                  | 99 +++++++++++++++++++++++-------
+  security/apparmor/path.c                   |  2 +-
+  security/apparmor/policy.c                 |  9 +--
+  security/apparmor/policy_unpack.c          |  5 +-
+  security/apparmor/policy_unpack_test.c     |  6 ++
+  security/apparmor/secid.c                  | 14 -----
+  18 files changed, 141 insertions(+), 246 deletions(-)
+
+
 
