@@ -1,124 +1,129 @@
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 937942744E;
-	Thu, 28 Nov 2024 16:25:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79B221BD9C1
+	for <linux-security-module@vger.kernel.org>; Thu, 28 Nov 2024 16:28:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732811145; cv=none; b=RUf217FGWBeTdrFbY0qWmN+AbxpfOZE3bG4yMXHFIaXztAfqM3FQleNH1bhzjFOjblAm9Byk4lyYmXL59ReYgoS3FUPiyIrxQDsHeTLGRbrx9Pp4nSwyaxZw3YpMP7355tLbE7ZurjjKMKLJRJXJ13VYoccoAV7KjmyDNT3CbU8=
+	t=1732811349; cv=none; b=G0M3WdUAbAwcP3OIWzzIbC+9kjFfgk01XfmbONl62NehAjRYSA7O7R2jCgUYAeDFeoosh+1/HYTfWQ8XNmSCRF8GMgRsW1TDl9Z0qsWaJqiZS01jYohgiO3mu/+5qlCtqyck5l8gE6mq48l81Gl+EzDpURxB5r3IQeBwEGx0e4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732811145; c=relaxed/simple;
-	bh=cIcUqMLjWP354kYtE+Raag2eS84h1gxaXuZaR+YTpc8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=gvr65VtL37l3odc8LJTQGhmD3c3ZvQb4UCSayAtJNzld5zlQPxWkYEYQcrYo1Qb/xGaoUV+9rXfyOUv1NmioPmIkPqDvjnU2DLLNlLWCM2VEFHOP0YrLr4Gw+e7ZeCq4cmNVPQ13A0FFx+66bc9UDhlBnuq4JwYdzVZvTZIUUf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4Xzh2l1Wysz9v7VJ;
-	Fri, 29 Nov 2024 00:04:31 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 68BD714035F;
-	Fri, 29 Nov 2024 00:25:36 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwBHYYB1mUhnN_l3Ag--.45451S2;
-	Thu, 28 Nov 2024 17:25:35 +0100 (CET)
-Message-ID: <99408482e7f5002b2b3defb6d7b816b25e11cbbf.camel@huaweicloud.com>
-Subject: Re: [PATCH v2 6/7] ima: Discard files opened with O_PATH
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: viro@zeniv.linux.org.uk, jack@suse.cz, zohar@linux.ibm.com, 
- dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, paul@paul-moore.com, 
- jmorris@namei.org, serge@hallyn.com, linux-fsdevel@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org, 
- linux-security-module@vger.kernel.org, Roberto Sassu
- <roberto.sassu@huawei.com>,  stable@vger.kernel.org
-Date: Thu, 28 Nov 2024 17:25:21 +0100
-In-Reply-To: <20241128-musikalisch-soweit-7feb366d2c7a@brauner>
-References: <20241128100621.461743-1-roberto.sassu@huaweicloud.com>
-	 <20241128100621.461743-7-roberto.sassu@huaweicloud.com>
-	 <20241128-musikalisch-soweit-7feb366d2c7a@brauner>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1732811349; c=relaxed/simple;
+	bh=e0wfWjSleIBlGJvkb54Ss1rj/qQ0JiteCkN+CQxwt5k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GfIdpw2kpLI+cNIn2vcT1yPg5DGy8yP+Ik/BqriXreEJkKaxUGIaIGVCOBVjyKZQ9ZaaPC7zIuzd8HrkLhJhw2jvH2VpmaEaUqcyMu9cP9iMF4OtBEfLIpXTlNkSIJsPinhSttr/5mBDb3YDqw0hm71vY9A3f+gU5OPhbfgTV0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id 6259755E; Thu, 28 Nov 2024 10:28:56 -0600 (CST)
+Date: Thu, 28 Nov 2024 10:28:56 -0600
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Jordan Rome <linux@jordanrome.com>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Serge Hallyn <sergeh@kernel.org>, Paul Moore <paul@paul-moore.com>,
+	linux-security-module@vger.kernel.org
+Subject: Re: [GIT PULL] capabilities
+Message-ID: <20241128162856.GA40355@mail.hallyn.com>
+References: <Zztcp-fm9Ln57c-t@lei>
+ <CAHk-=wiotQ0isGLKp3EUOdq6sSEb=G=WbnxCfcsDnbszHGXNtw@mail.gmail.com>
+ <20241127214243.GA28695@mail.hallyn.com>
+ <CA+QiOd6pNMzAxsHsr11oyJNY5V9DLAxSdECC37X_WYDHbv4v0Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:GxC2BwBHYYB1mUhnN_l3Ag--.45451S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Cw1DKFyfXrWUKw4rKw4kWFg_yoW8AFWDpa
-	95Ga4FyF1DXryxCF4fGayayayrK3y2kr4UWws5X3WavFnxXF9Ygr1fJr15WFySyF1Yyr10
-	vr43Kryak3Wqy3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvYb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
-	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x07
-	UAwIDUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgABBGdH1XMGJAAAsj
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+QiOd6pNMzAxsHsr11oyJNY5V9DLAxSdECC37X_WYDHbv4v0Q@mail.gmail.com>
 
-On Thu, 2024-11-28 at 17:22 +0100, Christian Brauner wrote:
-> On Thu, Nov 28, 2024 at 11:06:19AM +0100, Roberto Sassu wrote:
-> > From: Roberto Sassu <roberto.sassu@huawei.com>
-> >=20
-> > According to man open.2, files opened with O_PATH are not really opened=
-. The
-> > obtained file descriptor is used to indicate a location in the filesyst=
-em
-> > tree and to perform operations that act purely at the file descriptor
-> > level.
-> >=20
-> > Thus, ignore open() syscalls with O_PATH, since IMA cares about file da=
-ta.
-> >=20
-> > Cc: stable@vger.kernel.org # v2.6.39.x
-> > Fixes: 1abf0c718f15a ("New kind of open files - "location only".")
-> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > ---
-> >  security/integrity/ima/ima_main.c | 6 ++++--
-> >  1 file changed, 4 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima=
-/ima_main.c
-> > index 50b37420ea2c..712c3a522e6c 100644
-> > --- a/security/integrity/ima/ima_main.c
-> > +++ b/security/integrity/ima/ima_main.c
-> > @@ -202,7 +202,8 @@ static void ima_file_free(struct file *file)
-> >  	struct inode *inode =3D file_inode(file);
-> >  	struct ima_iint_cache *iint;
-> > =20
-> > -	if (!ima_policy_flag || !S_ISREG(inode->i_mode))
-> > +	if (!ima_policy_flag || !S_ISREG(inode->i_mode) ||
-> > +	    (file->f_flags & O_PATH))
-> >  		return;
-> > =20
-> >  	iint =3D ima_iint_find(inode);
-> > @@ -232,7 +233,8 @@ static int process_measurement(struct file *file, c=
-onst struct cred *cred,
-> >  	enum hash_algo hash_algo;
-> >  	unsigned int allowed_algos =3D 0;
-> > =20
-> > -	if (!ima_policy_flag || !S_ISREG(inode->i_mode))
-> > +	if (!ima_policy_flag || !S_ISREG(inode->i_mode) ||
-> > +	    (file->f_flags & O_PATH))
-> >  		return 0;
->=20
-> if (file->f_mode & FMODE_PATH)
->=20
-> please.
+On Thu, Nov 28, 2024 at 10:42:16AM -0500, Jordan Rome wrote:
+> On Wed, Nov 27, 2024 at 4:42 PM Serge E. Hallyn <serge@hallyn.com> wrote:
+> >
+> > On Wed, Nov 27, 2024 at 09:30:14AM -0800, Linus Torvalds wrote:
+> > > On Mon, 18 Nov 2024 at 07:26, <sergeh@kernel.org> wrote:
+> > > >
+> > > > 2. Add a trace event for cap_capable (Jordan Rome).
+> > >
+> > > So I've finally gotten around to this, but I absolutely detest how
+> > > this was written.
+> > >
+> > > It was oddly written before, but now it's absolutely illegible.  All
+> > > just to have one single tracepoint.
+> > >
+> > > And it's all *stupid*.
+> > >
+> > > The "capable_ns" thing is entirely pointless.
+> > >
+> > > Why? It always has exactly one value: 'cred->user_ns'. Lookie here,
+> > > it's assigned exactly twice:
+> > >
+> > >                 if (ns == cred->user_ns) {
+> > >                         if (cap_raised(cred->cap_effective, cap)) {
+> > >                                 capable_ns = ns;
+> > > ...
+> > >                 if ((ns->parent == cred->user_ns) && uid_eq(ns->owner,
+> > > cred->euid)) {
+> > >                         capable_ns = ns->parent;
+> > >
+> > > and *both* times it's assigned something that we just checked is equal
+> > > to cred->user_ns.
+> > >
+> > > And for this useless value, the already odd for-loop was written to be
+> > > even more odd, and the code added a new variable 'capable_ns'.
+> > >
+> > > So I pulled this, tried to figure out _why_ it was written that oddly,
+> > > decided that the "why" was "because it's being stupid", and I unpulled
+> > > it again.
+> > >
+> > > If we really need that trace point, I have a few requirements:
+> > >
+> > >  - none of this crazy stuff
+> > >
+> > >  - use a simple inline helper
+> > >
+> > >  - make the pointers 'const', because there is no reason not to.
+> > >
+> > > Something *UNTESTED* like the attached diff.
+> > >
+> > > Again: very untested. But at least this generates good code, and
+> > > doesn't have pointless crazy variables. Yes, I add that
+> > >
+> > >         const struct user_namespace *cred_ns = cred->user_ns;
+> > >
+> > > because while I think gcc may be smart enough to figure out that it's
+> > > all the same value, I wanted to make sure.
+> > >
+> > > Then the tracepoint would look something like
+> > >
+> > >         trace_cap_capable(cred, targ_ns,  cred_ns, cap, opts, ret);
+> > >
+> > > although I don't understand why you'd even trace that 'opts' value
+> > > that is never used.
+> >
+> > You mean cap_capable doesn't use opts?  Yeah, it's used only by other
+> > LSMs.  I suppose knowing the value might in some cases help to figure
+> > out caller state, but dropping it seems sensible.
+> >
+> > Jordan is working on a new version based on your feedback.
+> >
+> > thanks,
+> > -serge
+> 
+> Here is the new patch:
+> https://patchwork.kernel.org/project/linux-security-module/patch/20241128153733.1542817-1-linux@jordanrome.com/
+> 
+> I applied the suggested changes but left the local `struct
+> user_namespace *ns` in the helper (as it gets updated in the loop to
+> the ns parent).
+> Though it feels a bit icky that there is not a null check against the
+> `ns` variable (maybe it's not possible to reach that condition
+> though).
 
-Oh, ok.
+Feels like a lot of bikeshedding here, but...
 
-Thanks
-
-Roberto
-
+Is there any reason at this point not to just pass in cred_euid as a uid_t,
+and not pass the cred in at all?  Avoid a few more dereferences...
