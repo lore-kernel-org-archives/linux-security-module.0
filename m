@@ -1,107 +1,98 @@
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C667B20010A
-	for <linux-security-module@vger.kernel.org>; Wed, 27 Nov 2024 21:42:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96DFF4C7C;
+	Thu, 28 Nov 2024 01:45:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732743768; cv=none; b=GcRnjOqa5pjzHaqDMXVeX4x1K4qMJMcd/veWHSIGe+Pqllk3p0LiqwvNz7q3enPGRKcQ6Iz+IhlZXsgzQJSKfcGt9JOEz9KLUIeiKsDFA5y7Qr7iZV/SXmmEgUnaqg7+F2RHmTOBsq1xN2iN8lAj+jct4221uu/vQ7LBdakNxBw=
+	t=1732758338; cv=none; b=bz2Z2FMNN7XgUc9AZM8rvvJlsjfkQiWMvDZ0cLeReveMg0U+XSVEY5mo9wU1J3Dly8QVEx/1Gn7aASI2Pm6+Pr9ezt1tP4ndjGdJeK7Qryu+Fj3gk+idvHgDOltv0OGd4LVraRabKblwUx5PDFOsPo3iCXdXXmprmw32mu0+/WI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732743768; c=relaxed/simple;
-	bh=dhjTpDAhWClHBfrpQqnrArAoty22MA7J2P0QfwfC7ds=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M2Z98/zrRRZtL0ReC/LP/vEYa3nMpxjZ0X0BxgiwXtqIutnjlXqnjT2UmWllnkeIarP4yEJ0cCREukllRlbtWsgU90+zpCR7TK85ZvTuiFYqpCjnFl4pzEZOOm6LPCrW2Ozr+rVTmtsJtIyiPfTzgWgaLXmE1+Io/DcTh+tAykU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id 7909C4B3; Wed, 27 Nov 2024 15:42:43 -0600 (CST)
-Date: Wed, 27 Nov 2024 15:42:43 -0600
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Serge Hallyn <sergeh@kernel.org>, Paul Moore <paul@paul-moore.com>,
-	Jordan Rome <linux@jordanrome.com>,
-	linux-security-module@vger.kernel.org
-Subject: Re: [GIT PULL] capabilities
-Message-ID: <20241127214243.GA28695@mail.hallyn.com>
-References: <Zztcp-fm9Ln57c-t@lei>
- <CAHk-=wiotQ0isGLKp3EUOdq6sSEb=G=WbnxCfcsDnbszHGXNtw@mail.gmail.com>
+	s=arc-20240116; t=1732758338; c=relaxed/simple;
+	bh=yuC/DqKdSJpZMyxKYTTgBUuGxFyWG0qpYNLRxxo2mUU=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=TZdIglCQJsUS3LcxWo8/DBHuf14a+kBWnVA4Dr7C1O3LkK7/krPWfFj4wyjKDd1PTTRQbbzcW8Y/p4amnilfAHpzaTm9mP7gVKoGq6gbX3TZw/0zwKIM5/uSo9NzwFgJb0zIq49TZkL6zFXeOMKZGYp+NX3+H0LpiC9ruTpEMNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=uOISfUnd; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="uOISfUnd"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC2B2C4CECC;
+	Thu, 28 Nov 2024 01:45:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1732758337;
+	bh=yuC/DqKdSJpZMyxKYTTgBUuGxFyWG0qpYNLRxxo2mUU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=uOISfUndAcjBTDGd0M+QePGbr78g096PjKpfjXSTe0gAacr6HPJtmfUyZFkNvGG3d
+	 UA7O1AJ/qsBkhTSkgmR5ygBR2g1Xb/7z5TK4LXndWRzBffkOueNQlqFOQ62xWrj7HL
+	 SDMixjbPCbPFW55c/128Cv61TVGxMtaMg/JdtNx4=
+Date: Wed, 27 Nov 2024 17:45:36 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Zhen Ni <zhen.ni@easystack.cn>
+Cc: viro@zeniv.linux.org.uk, oleg@redhat.com, catalin.marinas@arm.com,
+ brauner@kernel.org, zev@bewilderbeest.net, linux-kernel@vger.kernel.org,
+ linux-security-module@vger.kernel.org
+Subject: Re: [PATCH] kernel/sys: Optimize do_prlimit lock scope to reduce
+ contention
+Message-Id: <20241127174536.752def18058e84487ab9ad65@linux-foundation.org>
+In-Reply-To: <20241120132156.207250-1-zhen.ni@easystack.cn>
+References: <20241120132156.207250-1-zhen.ni@easystack.cn>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wiotQ0isGLKp3EUOdq6sSEb=G=WbnxCfcsDnbszHGXNtw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 27, 2024 at 09:30:14AM -0800, Linus Torvalds wrote:
-> On Mon, 18 Nov 2024 at 07:26, <sergeh@kernel.org> wrote:
-> >
-> > 2. Add a trace event for cap_capable (Jordan Rome).
-> 
-> So I've finally gotten around to this, but I absolutely detest how
-> this was written.
-> 
-> It was oddly written before, but now it's absolutely illegible.  All
-> just to have one single tracepoint.
-> 
-> And it's all *stupid*.
-> 
-> The "capable_ns" thing is entirely pointless.
-> 
-> Why? It always has exactly one value: 'cred->user_ns'. Lookie here,
-> it's assigned exactly twice:
-> 
->                 if (ns == cred->user_ns) {
->                         if (cap_raised(cred->cap_effective, cap)) {
->                                 capable_ns = ns;
-> ...
->                 if ((ns->parent == cred->user_ns) && uid_eq(ns->owner,
-> cred->euid)) {
->                         capable_ns = ns->parent;
-> 
-> and *both* times it's assigned something that we just checked is equal
-> to cred->user_ns.
-> 
-> And for this useless value, the already odd for-loop was written to be
-> even more odd, and the code added a new variable 'capable_ns'.
-> 
-> So I pulled this, tried to figure out _why_ it was written that oddly,
-> decided that the "why" was "because it's being stupid", and I unpulled
-> it again.
-> 
-> If we really need that trace point, I have a few requirements:
-> 
->  - none of this crazy stuff
-> 
->  - use a simple inline helper
-> 
->  - make the pointers 'const', because there is no reason not to.
-> 
-> Something *UNTESTED* like the attached diff.
-> 
-> Again: very untested. But at least this generates good code, and
-> doesn't have pointless crazy variables. Yes, I add that
-> 
->         const struct user_namespace *cred_ns = cred->user_ns;
-> 
-> because while I think gcc may be smart enough to figure out that it's
-> all the same value, I wanted to make sure.
-> 
-> Then the tracepoint would look something like
-> 
->         trace_cap_capable(cred, targ_ns,  cred_ns, cap, opts, ret);
-> 
-> although I don't understand why you'd even trace that 'opts' value
-> that is never used.
+On Wed, 20 Nov 2024 21:21:56 +0800 Zhen Ni <zhen.ni@easystack.cn> wrote:
 
-You mean cap_capable doesn't use opts?  Yeah, it's used only by other
-LSMs.  I suppose knowing the value might in some cases help to figure
-out caller state, but dropping it seems sensible.
+> Refines the lock scope in the do_prlimit function to reduce
+> contention on task_lock(tsk->group_leader). The lock now protects only
+> sections that access or modify shared resources (rlim). Permission
+> checks (capable) and security validations (security_task_setrlimit)
+> are placed outside the lock, as they do not modify rlim and are
+> independent of shared data protection.
 
-Jordan is working on a new version based on your feedback.
+Let's cc linux-security-module@vger.kernel.org, as we're proposing
+altering their locking environment!
 
-thanks,
--serge
+> The security_task_setrlimit function is a Linux Security Module (LSM)
+> hook that evaluates resource limit changes based on security policies.
+> It does not alter the rlim data structure, as confirmed by existing
+> LSM implementations (e.g., SELinux and AppArmor). Thus, this function
+> does not require locking, ensuring correctness while improving
+> concurrency.
+
+Seems sane.
+
+Does any code call do_prlimit() frequently enough for this to matter?
+
+> --- a/kernel/sys.c
+> +++ b/kernel/sys.c
+> @@ -1481,18 +1481,20 @@ static int do_prlimit(struct task_struct *tsk, unsigned int resource,
+>  
+>  	/* Holding a refcount on tsk protects tsk->signal from disappearing. */
+>  	rlim = tsk->signal->rlim + resource;
+> -	task_lock(tsk->group_leader);
+>  	if (new_rlim) {
+>  		/*
+>  		 * Keep the capable check against init_user_ns until cgroups can
+>  		 * contain all limits.
+>  		 */
+>  		if (new_rlim->rlim_max > rlim->rlim_max &&
+> -				!capable(CAP_SYS_RESOURCE))
+> -			retval = -EPERM;
+> -		if (!retval)
+> -			retval = security_task_setrlimit(tsk, resource, new_rlim);
+> +		    !capable(CAP_SYS_RESOURCE))
+> +			return -EPERM;
+> +		retval = security_task_setrlimit(tsk, resource, new_rlim);
+> +		if (retval)
+> +			return retval;
+>  	}
+> +
+> +	task_lock(tsk->group_leader);
+>  	if (!retval) {
+>  		if (old_rlim)
+>  			*old_rlim = *rlim;
+
