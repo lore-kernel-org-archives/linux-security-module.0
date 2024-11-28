@@ -1,47 +1,48 @@
-Received: from mout.perfora.net (mout.perfora.net [74.208.4.194])
+Received: from mout.perfora.net (mout.perfora.net [74.208.4.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C15AC1BD9F9;
-	Thu, 28 Nov 2024 15:09:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.208.4.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C40561BD017;
+	Thu, 28 Nov 2024 15:37:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.208.4.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732806592; cv=none; b=MpwM7g95HhZge2vDJ1PFlzhGwrU9wR+LpD5UZfyfxEXJb2Uh6C2zreGpm4JTdJSEd/RG8KvSUQhrcVlIF/BbCkAzM5+iLPgjATXGRlub3xD63x1dfOPEQWFbJOVsKoQyx0xTOEIoUS0xmdn/qBllPdxeSoxvKE+XYPRu7qTPNno=
+	t=1732808271; cv=none; b=aIVXTt/67YCi4o0TKsWqe+Fzyi3xj5W6hHGxMKlwS16BrIGffVokItZCnjaxX+EsZm5TDeh8E78GCqBj9+VzBGjCB/RiER+mzI1neamh0QUqESjNleWFzz1+WxgCpQBrw80IQRzquDfcu2Ln780AndX1bI29RVPl3WVpv8QfLqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732806592; c=relaxed/simple;
-	bh=OFDNZ4CArynOCJUfVDL4KBORWd/87vPtRmOrJ0iMz80=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CS7JN2eKHC4osK3eQOWNuujXVEWudJeBCaDZ52uDLLerhaWKXYx8gI9vAHza76F+njG/AN7BkM5GnP2GksRiOjc3sYA3vwYPtsKPgqf44340R3P06AVbQ0im1BjbHTFDc9IgAzWYD6ZdorbVfPJNZl7eP8Y9Z0WTTTpxNLanl6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jordanrome.com; spf=pass smtp.mailfrom=jordanrome.com; dkim=pass (2048-bit key) header.d=jordanrome.com header.i=linux@jordanrome.com header.b=kwBshZX7; arc=none smtp.client-ip=74.208.4.194
+	s=arc-20240116; t=1732808271; c=relaxed/simple;
+	bh=FBllIi69NT12UHooDWyXLkb67zAZxcMdq7SEz33g3EM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YFBLEdDLb7quhh79mzWrx9ZYYDO9XammqmwMzeIsMFcqNQf58pvRa19GmvGjYeOlOzQTimxlI4+3lRVz4RNXGOrWbe+zoilOjjcP2oh0515K1UaXl3PnRA8alBUznmdDiaGa3URpTBFecuCt/xg4v1rrKhno83UkNg30vYlx0r8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jordanrome.com; spf=pass smtp.mailfrom=jordanrome.com; dkim=pass (2048-bit key) header.d=jordanrome.com header.i=linux@jordanrome.com header.b=GMueBuk7; arc=none smtp.client-ip=74.208.4.196
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jordanrome.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jordanrome.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jordanrome.com header.i=linux@jordanrome.com header.b="kwBshZX7"
+	dkim=pass (2048-bit key) header.d=jordanrome.com header.i=linux@jordanrome.com header.b="GMueBuk7"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jordanrome.com;
-	s=s1-ionos; t=1732806580; x=1733411380; i=linux@jordanrome.com;
-	bh=L4O6Pb3fNrhg8NReFkddqBQXhY9hvdlnI3baYJeIYP8=;
+	s=s1-ionos; t=1732808260; x=1733413060; i=linux@jordanrome.com;
+	bh=kqfp/A5sdg6kMn0UfLS5keOWlilq95cyPF7zwaLZYCc=;
 	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:
 	 MIME-Version:Content-Transfer-Encoding:cc:
 	 content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=kwBshZX7iTI0s1VFJD7ZL5q3UWPr7HODZmIrDUpgziAq3fBfe4ncBayG6A+l6u+G
-	 TbpZWU+AVn8lS18UYJDA78qQ7GJIHCvjzDls01yOPIu3ViEiMj6atHtV+5ZO8W8Gg
-	 6GE1JcJau+4JAk8pl+gWIOeSibt6r9cU0y7Z2dHyGM8bQCg4UP68r/qbKwykRB0LO
-	 5aWE4R50F9CR0tMtdxd++aQ6KSI9XGZqo8s0hK8HAoApiTPoHswer9RyebrPhRBF5
-	 Iok7W+nfZ+VkkOwzv7f3ajAqyXes0ZEEMgLs5s2VDuoyoHk0YVGQlheCQ0BQZWwrR
-	 bGXyJ97h40PVx4A+yA==
+	b=GMueBuk70BJ7eYEIH47h8YRph/ueLC77L0bPSW5mCn3uN+3AXr5SePBlD1nfIShL
+	 CKhbZtOFYswsR/2BwyKqzZOGNCH49/5rtHoZwr3MpfKmD5OVcKRT8I/UxrigKFZ/o
+	 iZpEE6CHZrS/7EfPWjVB7GTYE5SYfInEmGtmhT6OmcD5uHxGMxzyNhfagNR0Yy8sp
+	 FmoJs5+M6ov/85mtqoM/3nfmhgIf8QMlBBAi8hle3sXyNuwnyxxMe2uXFlIJ7iOzn
+	 U2zbDFllZUn4cEzNKOpWsHhKycEtOJcToonxtQvuiIfbYmKfwQj/BhAQb5ts3q7vt
+	 I5HVCaEItZnnjblohw==
 X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from localhost ([69.171.251.116]) by mrelay.perfora.net (mreueus004
- [74.208.5.2]) with ESMTPSA (Nemesis) id 1MqJRf-1u3oKV1qGB-00pB3P; Thu, 28 Nov
- 2024 16:09:40 +0100
+Received: from localhost ([69.171.251.115]) by mrelay.perfora.net (mreueus003
+ [74.208.5.2]) with ESMTPSA (Nemesis) id 0M8Ouq-1tdBHl3XYg-00zCGl; Thu, 28 Nov
+ 2024 16:37:40 +0100
 From: Jordan Rome <linux@jordanrome.com>
 To: linux-security-module@vger.kernel.org
 Cc: linux-trace-kernel@vger.kernel.org,
 	Andrii Nakryiko <andrii@kernel.org>,
 	Kernel Team <kernel-team@fb.com>,
+	Serge Hallyn <sergeh@kernel.org>,
 	Yonghong Song <yonghong.song@linux.dev>,
 	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [v6] security: add trace event for cap_capable
-Date: Thu, 28 Nov 2024 07:09:33 -0800
-Message-ID: <20241128150933.1414388-1-linux@jordanrome.com>
+Subject: [v7] security: add trace event for cap_capable
+Date: Thu, 28 Nov 2024 07:37:33 -0800
+Message-ID: <20241128153733.1542817-1-linux@jordanrome.com>
 X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
@@ -50,27 +51,27 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:KSvFNfChFec7Tv5gEdXtHhxyrPeGS74m4LZAqN5cM+pzajviI5A
- 1i5XHaPTHgGKgBmIg6agrocKSUagmx9a9zfivIcbdjFWHxW76eIBDYPeMWCTBaAJTUlVKc5
- Z69NrKpCYHp05Q0FISYJmTmC7cQEHVGVuq3DtCDcmCej5iApqc92GbVporuL+yNYocRYVhN
- eJmxsjzrPaSeFewTq+QHQ==
+X-Provags-ID: V03:K1:EGQgsmwo7BJzNqWN+47s4eU70hMaM8bBHGjUC1+FcEF7LXvulFp
+ pq7dlLDapNPUDWYMq85uWC9n8RMJ4De6PRqBt/fNKwiiUBHaS9h68GpWS0pK7pwGqGYf1k9
+ 1DSA+J6SxT9TJ52H/3tlwNWfVcxiE8EF9MV5R25JrtDk0X+G+VSNKbhU5WU8WO3HuLnmZd3
+ b8Y/2Hx7It9Xcww3HfGjw==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:fMqZOZzU/rM=;QJcmNwNwOy9X0UDeRSUoRt8/PmU
- V3qQfGdoUKxqJNlIV3JPhPo4JJ3kXOOxLB5bBHfthLgSOFZZby+Wk2gdc4rCs/LuDGTskqq1E
- gB8k+87XYYNOjFvu8OfGrZL7whkLa5MLxsrOWZJ2WIcAWYT+OFKZiVAfpj3Qqye969YB/FNV7
- be16kX8uDt/A4soixDfm3lRDe+hZIp9z/tUiqUrKCEy8gacrE+RaQad/YO3Hynr3BQjG5I+x7
- /Tpk2x/NbYvDTG6diK5gI62LuU+/eV6IC0ppB5mjNmIUaC1g+B8OGVlIWpyCwLMhT4sj2KNoc
- JqzjbnclQGa2S8H3t+C9RD3EnS5fM1OO/bLMAyWdh+aHdGMR2Cj9j7TCI7AodbEbNH594iOrP
- XGTHJwTTa1Wu7pon4h39kqCnG1dZtjHy9rUjLsMkn3ts/bixLkMN8s8OAj7ulLZMur5buAgdP
- yM7JRV+3T3RLc96mGBj9Ld3Wz0op1wAAiRknwTqLQxnyS5/uo/NqlFEQogxoTiM7XocIrNhPb
- oGS4w3CVEzftqqnMTRNQhnoFMp29wKiGo6M1y2NNFyychiukLsONYv5NW+B1XyobF813M2W0i
- xe5xbz5CpfyO3sxNsebd/FBu17TgIwL9vSEe/51E/68OoJM+PPgfB2BnW1R9is4kPMT794Qgi
- r2mKoBF+cUWqz+bMwJtMsG27b/Mhai0y8JBbgz/SqAnRmZU5p9C+JwUBSk4deFVsSEMctFycV
- KRE50IUReLleHQngJEq+/8UHMciMAJc5N7O+2rrbnGeECSBiCySZ7WojmG2nk9LcVIMdZnl29
- 7TpDxOuKPMUyUGGzTWnMwSXi+CNMa7vL4Prun6EHKsNHhZbKw6owqnRZhFktbOjSDowq3wbKm
- hms3WwbvW2JMuYMrx9j/qStvPsUeMLOi+c+s5O3cVIAird6uCHo5/6lBETC2Bq+6qtcjV2BmT
- G+NjNmuAHr29xpndDjAc/2ncBt9bQU0XcJS7p9iFeuuw9Z6zvWq072hPT5o0oh+iUz9tz1gRm
- qitPGGgfIhswlkQEtmIcyucvpWOehzzF4Cvs/CS
+UI-OutboundReport: notjunk:1;M01:P0:RR03HkHHJ9I=;lHcUpJMZCqqo+F6DtsW3L2A96zG
+ A238PNNf9o14SO5laBWgcXhJcFgzhzV2vUmYOzMvKTPXTzQKbzfniV6QYFX0xSGx6Ve/6o2PS
+ 3k/DbASKoY65CjasL4rYhBqTGsEYmSptXzbsHKQTW8y5JqRW8+qjk7eSZGkZI4etvyD8iTZ/p
+ is5Lp1AXHT0lwVE1d30Z+Ozaynm7/A3bOakrrg7LHxPyLU2EwghjG9X7KpONpYN9qjicuNef2
+ ijs2IrMVlXBMzswPo3DYUTF9/CVbj3iyj4aAynZYVVE315F9nTj2Uq9quW4BU9J8fl/4Z7CWa
+ +5YCLa623yE9bw/cd79MexXO8QQeUjEP0AUkbefG0aqf/dfIOZImOzAIUKs+jnodgIq3T4YS5
+ jMO35uhHyOsJZ/spSbxFSNseEs3nkhxRSeYMetoW3H82wDG+xTyoI5nFHKQtR8AgbN0kmm8Mv
+ IfcEW/mc7bIewuOVOw7tHDyJZ7J8TKHNaYNjXe1Tkdqwla/wwLT2O3JQLehsP5HSj7EJpsrQU
+ 6HD6wnqF5ufivSAkUxvb/S54n2V7Rl5lgATFV7YfRWLeaV4PyjFTKu1CSNOdXKe5cIwvqxVQn
+ 3FOI1Xb6MvdOhOcwkWiXtBvAaphGm2/kn8YG0cGHaCHoMVP+ZQELZ3sUSJNO4xlF14nOZdmV0
+ Y/85aHrKjzE3r26ekFXLQTtdjscq2d7vhStESlRFNkzY+e4zWm8XUZl55mruy1/HTelcbVvYq
+ ml2oduqBTwi2YOEa66svxaaAebFNvySZ6u2qjn+ktsZLknJzhtBM8NyfwisR2xsHJTRnI3Svv
+ mLMf3VycpeVQiWgj7V2bcKcudyCKi4SchZXF1eJThNPnAG/URLZktFXbtvq+hWAx9U5ZGR2QL
+ 7hcsukmswXCDRUUoMNTqL8EvQUihgyVIifAAoFjItyFfDLb5HW3z0Uob/yJf14azZ8TuhjasI
+ NSN43mtZe9Po+jCrx+hXUfRbdpge1TYs2oClEL1pkSRDL+ix7ioyIwhkSWuKcn+QeurDpc7DX
+ mZ3CyQJo+oRB+AHo0d0Bk1OiVU04txJMrikaoJk
 
 In cases where we want a stable way to observe/trace
 cap_capable (e.g. protection from inlining and API updates)
@@ -173,7 +174,7 @@ t ret),
 +/* This part must be outside protection */
 +#include <trace/define_trace.h>
 diff --git a/security/commoncap.c b/security/commoncap.c
-index cefad323a0b1..28096831a2b2 100644
+index cefad323a0b1..9fa9aba3961d 100644
 =2D-- a/security/commoncap.c
 +++ b/security/commoncap.c
 @@ -27,6 +27,9 @@
@@ -216,9 +217,9 @@ le()
 -int cap_capable(const struct cred *cred, struct user_namespace *targ_ns,
 -		int cap, unsigned int opts)
 +static inline int cap_capable_helper(const struct cred *cred,
-+							struct user_namespace *target_ns,
-+							const struct user_namespace *cred_ns,
-+							int cap)
++				     struct user_namespace *target_ns,
++				     const struct user_namespace *cred_ns,
++				     int cap)
  {
 -	struct user_namespace *ns =3D targ_ns;
 +	struct user_namespace *ns =3D target_ns;
