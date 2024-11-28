@@ -1,35 +1,97 @@
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E61B83232
-	for <linux-security-module@vger.kernel.org>; Thu, 28 Nov 2024 16:35:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 907953232;
+	Thu, 28 Nov 2024 16:37:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732811763; cv=none; b=Q2780aibtklhh7IJ0tzxPavLYfSM3VtGKVJMdEjiSpmxaNOJ3tP9PV6vsvX0qe+IdWaxSKSn1BDY4ec1SMfnUoQUVqT1sGBsIuOavQUlb/mFens83WIpAKtnlaKoTlDoinpDm07EIxit0c46DbF8Htkn4dUSeC5rwBqQROkDssg=
+	t=1732811834; cv=none; b=iwDaMf9fqqg7zpALyQJFXWP+UbO9TUycf8mQY9ro3KzZV7Qm1dZUegA+vxNFV85dcu0p1l+c1wyoAzGAFNN3UOWE5VKT7+0/L3Pb6izNz1otFknzreCwlZ59aAovnH3yvG9X8gK+21NHQcwCvE55JKuodBELvIBPpZjgpBm4gYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732811763; c=relaxed/simple;
-	bh=f1dRqSWTDZzygXtryjLCToq1NFffc79FCjY+xdgKOI8=;
+	s=arc-20240116; t=1732811834; c=relaxed/simple;
+	bh=r2jPPi2WYm83gXv0yUX9hMRv1Yl3wYFnxKf79bIJQsM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=blHIrPLn84ewXdXXQ71GPYi9ea8yDv+LS+iJYh5ZOEF7GQH9JVUsAnYdElglWx0MJKtJ+OsKVqhkjJNiG1u+hNf0/AZnL1SS7tEC2Q5S5l3SFd+eS6FTWsyVcSuPvrD8PxSfXkti+jj/29PUW55EjMRTyTrL7FUJiQBlGxJ8B94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id 3FC3C20CF; Thu, 28 Nov 2024 10:35:54 -0600 (CST)
-Date: Thu, 28 Nov 2024 10:35:54 -0600
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: Jordan Rome <linux@jordanrome.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Serge Hallyn <sergeh@kernel.org>, Paul Moore <paul@paul-moore.com>,
-	linux-security-module@vger.kernel.org
-Subject: Re: [GIT PULL] capabilities
-Message-ID: <20241128163554.GB40476@mail.hallyn.com>
-References: <Zztcp-fm9Ln57c-t@lei>
- <CAHk-=wiotQ0isGLKp3EUOdq6sSEb=G=WbnxCfcsDnbszHGXNtw@mail.gmail.com>
- <20241127214243.GA28695@mail.hallyn.com>
- <CA+QiOd6pNMzAxsHsr11oyJNY5V9DLAxSdECC37X_WYDHbv4v0Q@mail.gmail.com>
- <20241128162856.GA40355@mail.hallyn.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GhFZnr7wjNbL9socOWRApsVfz+Mxz24QwayFmD9SD24pdxFdmVcmN/uQki+0giut2xuwFxxcBIR2SFShIVAhVo/13UTWqRJm5NFIPip0g3bww/Beof3BfapFoGjZztAUOjNUuDCmjYBD8PBol0pAgBYD9moKAt6pF6Uh1CVPR7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ypE/f/ly; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=mFPlkiz0; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ypE/f/ly; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=mFPlkiz0; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ypE/f/ly";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="mFPlkiz0";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ypE/f/ly";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="mFPlkiz0"
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 686711F7A0;
+	Thu, 28 Nov 2024 16:37:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732811830; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G0YgWV6B4NeYWbbuY++6ThFtY8hDLYVjJacblvd4LZk=;
+	b=ypE/f/lyhocdeAN6ZwjEPZFCeOHj6U3UuV/obnwq+c3zlz7pjUqqG6IbeuWbKghiOeQHIm
+	Jx928IyrjE1bcLX4VvW2UqvkWtdI38jYGDkqLrzA7U8POK5PaHGQGUMXOPX9ow9yRnF0BF
+	4tz1++A3tNzzvnIR5c2fZo7wWQaVmT8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732811830;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G0YgWV6B4NeYWbbuY++6ThFtY8hDLYVjJacblvd4LZk=;
+	b=mFPlkiz08UCciVZ4DOGLQCJXaAWOquF46g3IhZMnJ3F148VZRsq0T50lIPKUoetF0v4du+
+	cByqib9ZYHpFW/CA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="ypE/f/ly";
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=mFPlkiz0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1732811830; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G0YgWV6B4NeYWbbuY++6ThFtY8hDLYVjJacblvd4LZk=;
+	b=ypE/f/lyhocdeAN6ZwjEPZFCeOHj6U3UuV/obnwq+c3zlz7pjUqqG6IbeuWbKghiOeQHIm
+	Jx928IyrjE1bcLX4VvW2UqvkWtdI38jYGDkqLrzA7U8POK5PaHGQGUMXOPX9ow9yRnF0BF
+	4tz1++A3tNzzvnIR5c2fZo7wWQaVmT8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1732811830;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G0YgWV6B4NeYWbbuY++6ThFtY8hDLYVjJacblvd4LZk=;
+	b=mFPlkiz08UCciVZ4DOGLQCJXaAWOquF46g3IhZMnJ3F148VZRsq0T50lIPKUoetF0v4du+
+	cByqib9ZYHpFW/CA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 545A913974;
+	Thu, 28 Nov 2024 16:37:10 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id gRg3FDacSGeIPwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 28 Nov 2024 16:37:10 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id B0D27A09D3; Thu, 28 Nov 2024 17:37:05 +0100 (CET)
+Date: Thu, 28 Nov 2024 17:37:05 +0100
+From: Jan Kara <jack@suse.cz>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Song Liu <song@kernel.org>, bpf@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, kernel-team@meta.com,
+	andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org,
+	daniel@iogearbox.net, martin.lau@linux.dev, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, jack@suse.cz, kpsingh@kernel.org,
+	mattbobrowski@google.com, repnop@google.com, jlayton@kernel.org,
+	josef@toxicpanda.com, mic@digikod.net, gnoack@google.com
+Subject: Re: [PATCH v3 fanotify 1/2] fanotify: Introduce fanotify filter
+Message-ID: <20241128163705.vuvmb5k6ryyiblt5@quack3>
+References: <20241122225958.1775625-1-song@kernel.org>
+ <20241122225958.1775625-2-song@kernel.org>
+ <CAOQ4uxgKoCztsPZ-X-annfrDwetpy1fcRJz-RdD-pAdMQKVH=Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -39,95 +101,68 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241128162856.GA40355@mail.hallyn.com>
+In-Reply-To: <CAOQ4uxgKoCztsPZ-X-annfrDwetpy1fcRJz-RdD-pAdMQKVH=Q@mail.gmail.com>
+X-Rspamd-Queue-Id: 686711F7A0
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCPT_COUNT_TWELVE(0.00)[22];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[gmail.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MISSING_XM_UA(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,vger.kernel.org,meta.com,gmail.com,iogearbox.net,linux.dev,zeniv.linux.org.uk,suse.cz,google.com,toxicpanda.com,digikod.net];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.01
+X-Spam-Flag: NO
 
-On Thu, Nov 28, 2024 at 10:28:56AM -0600, Serge E. Hallyn wrote:
-> On Thu, Nov 28, 2024 at 10:42:16AM -0500, Jordan Rome wrote:
-> > On Wed, Nov 27, 2024 at 4:42 PM Serge E. Hallyn <serge@hallyn.com> wrote:
-> > >
-> > > On Wed, Nov 27, 2024 at 09:30:14AM -0800, Linus Torvalds wrote:
-> > > > On Mon, 18 Nov 2024 at 07:26, <sergeh@kernel.org> wrote:
-> > > > >
-> > > > > 2. Add a trace event for cap_capable (Jordan Rome).
-> > > >
-> > > > So I've finally gotten around to this, but I absolutely detest how
-> > > > this was written.
-> > > >
-> > > > It was oddly written before, but now it's absolutely illegible.  All
-> > > > just to have one single tracepoint.
-> > > >
-> > > > And it's all *stupid*.
-> > > >
-> > > > The "capable_ns" thing is entirely pointless.
-> > > >
-> > > > Why? It always has exactly one value: 'cred->user_ns'. Lookie here,
-> > > > it's assigned exactly twice:
-> > > >
-> > > >                 if (ns == cred->user_ns) {
-> > > >                         if (cap_raised(cred->cap_effective, cap)) {
-> > > >                                 capable_ns = ns;
-> > > > ...
-> > > >                 if ((ns->parent == cred->user_ns) && uid_eq(ns->owner,
-> > > > cred->euid)) {
-> > > >                         capable_ns = ns->parent;
-> > > >
-> > > > and *both* times it's assigned something that we just checked is equal
-> > > > to cred->user_ns.
-> > > >
-> > > > And for this useless value, the already odd for-loop was written to be
-> > > > even more odd, and the code added a new variable 'capable_ns'.
-> > > >
-> > > > So I pulled this, tried to figure out _why_ it was written that oddly,
-> > > > decided that the "why" was "because it's being stupid", and I unpulled
-> > > > it again.
-> > > >
-> > > > If we really need that trace point, I have a few requirements:
-> > > >
-> > > >  - none of this crazy stuff
-> > > >
-> > > >  - use a simple inline helper
-> > > >
-> > > >  - make the pointers 'const', because there is no reason not to.
-> > > >
-> > > > Something *UNTESTED* like the attached diff.
-> > > >
-> > > > Again: very untested. But at least this generates good code, and
-> > > > doesn't have pointless crazy variables. Yes, I add that
-> > > >
-> > > >         const struct user_namespace *cred_ns = cred->user_ns;
-> > > >
-> > > > because while I think gcc may be smart enough to figure out that it's
-> > > > all the same value, I wanted to make sure.
-> > > >
-> > > > Then the tracepoint would look something like
-> > > >
-> > > >         trace_cap_capable(cred, targ_ns,  cred_ns, cap, opts, ret);
-> > > >
-> > > > although I don't understand why you'd even trace that 'opts' value
-> > > > that is never used.
-> > >
-> > > You mean cap_capable doesn't use opts?  Yeah, it's used only by other
-> > > LSMs.  I suppose knowing the value might in some cases help to figure
-> > > out caller state, but dropping it seems sensible.
-> > >
-> > > Jordan is working on a new version based on your feedback.
-> > >
-> > > thanks,
-> > > -serge
-> > 
-> > Here is the new patch:
-> > https://patchwork.kernel.org/project/linux-security-module/patch/20241128153733.1542817-1-linux@jordanrome.com/
-> > 
-> > I applied the suggested changes but left the local `struct
-> > user_namespace *ns` in the helper (as it gets updated in the loop to
-> > the ns parent).
-> > Though it feels a bit icky that there is not a null check against the
-> > `ns` variable (maybe it's not possible to reach that condition
-> > though).
+On Sun 24-11-24 07:25:20, Amir Goldstein wrote:
+> On Sat, Nov 23, 2024 at 12:00 AM Song Liu <song@kernel.org> wrote:
+...
+> > @@ -921,6 +924,39 @@ static int fanotify_handle_event(struct fsnotify_group *group, u32 mask,
+> >         pr_debug("%s: group=%p mask=%x report_mask=%x\n", __func__,
+> >                  group, mask, match_mask);
+> >
+> > +       if (FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS))
+> > +               fsid = fanotify_get_fsid(iter_info);
+> > +
+> > +#ifdef CONFIG_FANOTIFY_FILTER
+> > +       filter_hook = srcu_dereference(group->fanotify_data.filter_hook, &fsnotify_mark_srcu);
 > 
-> Feels like a lot of bikeshedding here, but...
-> 
-> Is there any reason at this point not to just pass in cred_euid as a uid_t,
-> and not pass the cred in at all?  Avoid a few more dereferences...
+> Do we actually need the sleeping rcu protection for calling the hook?
+> Can regular rcu read side be nested inside srcu read side?
 
-Sorry, I don't know how I missed the use of cred->cap_effective.  Please ignore.
+Nesting rcu inside srcu is fine.
+
+> Jan,
+> 
+> I don't remember why srcu is needed since we are not holding it
+> when waiting for userspace anymore?
+
+You need srcu to access marks or notification group unless you grab a
+reference to them (which is what waiting for permission event reply code
+does).
+ 
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
