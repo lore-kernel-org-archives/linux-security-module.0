@@ -1,284 +1,290 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+Received: from mout.perfora.net (mout.perfora.net [74.208.4.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 732F114F9ED;
-	Thu, 28 Nov 2024 21:08:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E8CE15250F;
+	Thu, 28 Nov 2024 22:49:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.208.4.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732828109; cv=none; b=B5dE0PVH6pVKbA+NOHDJAYZsgO9WTZGAwl0oO6AYoBQwx3Zu3vMWXsIPj6nag4+MLSJt8NlKE+Mvl7GBrnQIswBY5OJkZvVlaXKMqkI7/4+1L9pCi7tPmjHXrl9wSw+rG2hz0rTllqBSanEVR3FEvwpO79oPeWOk/76YaLdaDuE=
+	t=1732834179; cv=none; b=eNMBOXnP0266iV+UkbqIFPvvwvzX3POFJecjClezoqpcVKpGG6gEwpnS3skFZHAOnCgyziVt+qdTNcB4GADBnm++JMRG/Hj21QLOj3aXW1gaCvfPER3/uS+O1yxFoHE4HSfrzXkUh8C73BprUlYNdrKBayby6esCNbxtSBWoU0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732828109; c=relaxed/simple;
-	bh=/OJtRx1FY9ovQap3Q78I0ih2AiBCsYSAtG/6gia7k+Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BNGJTtULqlrAL719869nfYFWZ/BfrtK8HwqJcEUU23WiGj38WYTuXtTnxy0pthsaOx3ijFMdrrTfNPjpOZH8IT2Mee0PQnprSoIe2kINzn2IEeet24Nc1iJGLSuokid2WEQI4GooXA7jAhrRBgDS8iX5Fzv3qUQdrVgCxKHu148=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AQ05mUVh; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1732834179; c=relaxed/simple;
+	bh=2CLq5AvTfa+uLsdmJdFRiMOmi9FGNuFypfi6aWel7DQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TSyW5TcZJrNXTo2YIFlSXnKt7AwANOmLD0Fwh8CNZizrtpilg6Rk8eWpgFhNC1kGfLR+1kSQ0t4B071hyOYVFUT5ukXCejfEAXXKvsv4hVD7MnbUbs/TK37UmC7agfFSe05MG+y0WrTgzs6rhx3JbWehkgle1cUD/DMKonCIZRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jordanrome.com; spf=pass smtp.mailfrom=jordanrome.com; dkim=pass (2048-bit key) header.d=jordanrome.com header.i=linux@jordanrome.com header.b=KCHtb+de; arc=none smtp.client-ip=74.208.4.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jordanrome.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jordanrome.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AQ05mUVh"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1732828107; x=1764364107;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=/OJtRx1FY9ovQap3Q78I0ih2AiBCsYSAtG/6gia7k+Y=;
-  b=AQ05mUVh7K5lgSLWg18um3IqRYFjotjD8cDeS8r3XUhJnta47NtOtu8V
-   uh/RDKhxNSpV4szjRk7ty1J6Fk0FqQP6GQgjIFhxn/J987SM+hxwJYQyd
-   mXRsHWt8N9KtYRV3oijMsdnNfHMIoAlf7xdOT2X7huW7Z5VirsG9GbxPf
-   HgoHi5ee5nAvKZU4hv5JakPkZWhpJIMJNwVANG/qPX9MJ3uoYqV+sJtcC
-   I1+0rjKDD8UpvWcvQ1Y2cixfT5HwkgsfZFKRgtEUn0kDfVTsaPG3q2MTO
-   FL78CCwk8KArI1lOcYQsJLd/zIjmmCtinJv9vV5QgkR38KUGaNopcowOy
-   Q==;
-X-CSE-ConnectionGUID: NCW7KixBSfmyOCHmbKy8gQ==
-X-CSE-MsgGUID: gVxsYdF4RnWb6Ef2hVIyvw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11270"; a="43734263"
-X-IronPort-AV: E=Sophos;i="6.12,193,1728975600"; 
-   d="scan'208";a="43734263"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Nov 2024 13:08:27 -0800
-X-CSE-ConnectionGUID: FOa+daaARsuFumC2FuNs/A==
-X-CSE-MsgGUID: mmuFnT+7TOKprVa0qmE/ew==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,193,1728975600"; 
-   d="scan'208";a="96408269"
-Received: from lkp-server01.sh.intel.com (HELO 8122d2fc1967) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 28 Nov 2024 13:08:24 -0800
-Received: from kbuild by 8122d2fc1967 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tGlkM-000A2z-1L;
-	Thu, 28 Nov 2024 21:08:22 +0000
-Date: Fri, 29 Nov 2024 05:07:42 +0800
-From: kernel test robot <lkp@intel.com>
-To: Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	=?unknown-8bit?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
-	roberto.sassu@huawei.com, linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ima: instantiate the bprm_creds_for_exec() hook
-Message-ID: <202411290413.VUC6seTw-lkp@intel.com>
-References: <20241127210234.121546-1-zohar@linux.ibm.com>
+	dkim=pass (2048-bit key) header.d=jordanrome.com header.i=linux@jordanrome.com header.b="KCHtb+de"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jordanrome.com;
+	s=s1-ionos; t=1732834138; x=1733438938; i=linux@jordanrome.com;
+	bh=zlLtIl9pEgeclkx+VQzLAlgQP/261yb+11wdt+sU1g4=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:
+	 MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=KCHtb+deIvj7P/JR4ynLug2JEcVixcBXANyHYf2qyQqR3UPsq+U3H5sDpwZX7jCj
+	 D0LZfdJ86muEqTW6z4nnWPTQIXPENYY4UpI+mFmDC0MP4YsPA3bfIxubkSyAWzRTc
+	 oJn/eB1qt5qnZQ8YNyUyjbOHoHK6AnqbXbRgS9NQCBOc/jdA+65jnkj4Tjs3UGoS5
+	 GIGHfpgvcAzdRsfDrarssuzR923xMyALKjVtHNuS9JHpIN1akKxadu1krGAZxkL0s
+	 fK3rfL5z8hXCjJxX3ic22287xBhufvy1bG+5/xYmbrFw5ipaZp+8Ti2Li1K/Lq71a
+	 gdwq7ZmFLDqsTtngCQ==
+X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
+Received: from localhost ([69.171.251.11]) by mrelay.perfora.net (mreueus002
+ [74.208.5.2]) with ESMTPSA (Nemesis) id 0M91Zb-1tOkLP1eu5-00Ab5u; Thu, 28 Nov
+ 2024 23:48:58 +0100
+From: Jordan Rome <linux@jordanrome.com>
+To: linux-security-module@vger.kernel.org
+Cc: linux-trace-kernel@vger.kernel.org,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Kernel Team <kernel-team@fb.com>,
+	Serge Hallyn <sergeh@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: [v8] security: add trace event for cap_capable
+Date: Thu, 28 Nov 2024 14:48:49 -0800
+Message-ID: <20241128224849.3774367-1-linux@jordanrome.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241127210234.121546-1-zohar@linux.ibm.com>
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:RMwbQ4Ilj/NG4zsrO3K8nDIDa3RL8Ok6sTNpPFQuiDUbpsh+cx0
+ s7+UkdF9KhW9HADc+WdZx+y25Wkzi0euHo9/5Y93RQmjhsh/jl4A/1xWQtaaODcl5VTCKUw
+ askxX7JympRA9Ev64vthNE8h6WndkCDHQ4lG1zd7fdNpSQqfqn4VdygvZgWM9cTkyvCFFew
+ BajdAgGYnJEwNurbL8t4Q==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:MdVQKAfc10w=;b4R7deXdLj9SOLu30u/QTf5Fy28
+ uPItoWLyHzr5oshDElIMP/Td6sU8hTLdtB726SJC80a25cpZ51/lWRDdnye096nZTrmTuucIY
+ xGLsH+Pwjc8g6xN3GbfFIMgMXaRBk5ALy//9H2ZiFMPI4H4zznUx+iKRVvW8+ElQhP+4eC0pc
+ yl2ZcDldVF8iIDfvE8UdAVSN/TytzjRYxVRg/ouizrInt0+dwAU/+OXyRmWXSFFP8U9XmS5r0
+ JTTj0A8dArdKlzEmL6vo52LLnOVmza6CQ+yOOrG90PP7RpQGQ+j2RPQOv9BqiCKN6X3hA6XWZ
+ 3vp4QOVI/Z8uWkIVak/HIKxufKuwSrfaSUb9diRS2VF3jFemCH4Hc3hAse7vS6/EwgZimUUrK
+ MdidEfcDCxhj6On9pGsfoRHq2rSXbBDqJDH51DzmTJ7PWQFdfRt3iCAGfyZ9DgShkGDOdjdbw
+ QE7YV1BOjuZELP/N5ugmxQniDSxdXGs0zDzXMYTCtFgqZfJX9xJwfycM8mpnmaRd4pmjj2A0b
+ myk/ujLtOc/Z485kYWig2nxyrjhe1JglYLqcTyZhwmK5e53kstyJm1NFjKzRKExr6L74TC7il
+ sit9MEDUB/RCDWx9+CYNmhh5R9lTdtSNbph92lsUJ1S6zGizzHujav6J3fG8FfkbLUZgubjXG
+ SwhqDAD1MBVv10w/PWKEctVaF020CNbZpd3M9azRe1O15sHK9Lnk4lHnxV3lgnonYLIyCl3GL
+ 4yVffnrphhr6v19oTFmSBEIeFlvIGgbfNoxE7zbTPwWgzBs6r5TtdQVl7H10ETyxCDVlbHhQW
+ D2J8ZxZlVa7fnF2Y3Koi9xvbwfcbdCw0S84Kmdm4wM0cHCAm8+IFuIA2sE8S+J3Sl1N5PByPI
+ x0oxRZtLzdKn1L+sSSLHieHTyFjTixGqQ2rn9lOYrXbOVQKzDeymMxRMoQakkJMF4OrcrvgO3
+ dvln/H/6oDVfz8sQrJiKmuyjozxH7xqbftfd58OOy/i13n0e20dx3pOj8IEEUs6tVttxHs2GH
+ +BrwDFV3kLdNuzLPVrtjOS9ljVqcmaXQbYXhb+E
 
-Hi Mimi,
+In cases where we want a stable way to observe/trace
+cap_capable (e.g. protection from inlining and API updates)
+add a tracepoint that passes:
+- The credentials used
+- The user namespace of the resource being accessed
+- The user namespace in which the credential provides the
+capability to access the targeted resource
+- The capability to check for
+- The return value of the check
 
-kernel test robot noticed the following build errors:
+Signed-off-by: Jordan Rome <linux@jordanrome.com>
+=2D--
+ MAINTAINERS                       |  1 +
+ include/trace/events/capability.h | 57 +++++++++++++++++++++++++++++++
+ security/commoncap.c              | 57 +++++++++++++++++++++----------
+ 3 files changed, 97 insertions(+), 18 deletions(-)
+ create mode 100644 include/trace/events/capability.h
 
-[auto build test ERROR on zohar-integrity/next-integrity]
-[also build test ERROR on linus/master v6.12 next-20241128]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+diff --git a/MAINTAINERS b/MAINTAINERS
+index f870842fad9c..b90df58f6030 100644
+=2D-- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -5103,6 +5103,7 @@ M:	Serge Hallyn <serge@hallyn.com>
+ L:	linux-security-module@vger.kernel.org
+ S:	Supported
+ F:	include/linux/capability.h
++F:	include/trace/events/capability.h
+ F:	include/uapi/linux/capability.h
+ F:	kernel/capability.c
+ F:	security/commoncap.c
+diff --git a/include/trace/events/capability.h b/include/trace/events/capa=
+bility.h
+new file mode 100644
+index 000000000000..17340257946c
+=2D-- /dev/null
++++ b/include/trace/events/capability.h
+@@ -0,0 +1,57 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#undef TRACE_SYSTEM
++#define TRACE_SYSTEM capability
++
++#if !defined(_TRACE_CAPABILITY_H) || defined(TRACE_HEADER_MULTI_READ)
++#define _TRACE_CAPABILITY_H
++
++#include <linux/cred.h>
++#include <linux/tracepoint.h>
++#include <linux/user_namespace.h>
++
++/**
++ * cap_capable - called after it's determined if a task has a particular
++ * effective capability
++ *
++ * @cred: The credentials used
++ * @target_ns: The user namespace of the resource being accessed
++ * @capable_ns: The user namespace in which the credential provides the
++ *              capability to access the targeted resource.
++ *              This will be NULL if ret is not 0.
++ * @cap: The capability to check for
++ * @ret: The return value of the check: 0 if it does, -ve if it does not
++ *
++ * Allows to trace calls to cap_capable in commoncap.c
++ */
++TRACE_EVENT(cap_capable,
++
++	TP_PROTO(const struct cred *cred, struct user_namespace *target_ns,
++		const struct user_namespace *capable_ns, int cap, int ret),
++
++	TP_ARGS(cred, target_ns, capable_ns, cap, ret),
++
++	TP_STRUCT__entry(
++		__field(const struct cred *, cred)
++		__field(struct user_namespace *, target_ns)
++		__field(const struct user_namespace *, capable_ns)
++		__field(int, cap)
++		__field(int, ret)
++	),
++
++	TP_fast_assign(
++		__entry->cred       =3D cred;
++		__entry->target_ns    =3D target_ns;
++		__entry->capable_ns =3D ret =3D=3D 0 ? capable_ns : NULL;
++		__entry->cap        =3D cap;
++		__entry->ret        =3D ret;
++	),
++
++	TP_printk("cred %p, target_ns %p, capable_ns %p, cap %d, ret %d",
++		__entry->cred, __entry->target_ns, __entry->capable_ns, __entry->cap,
++		__entry->ret)
++);
++
++#endif /* _TRACE_CAPABILITY_H */
++
++/* This part must be outside protection */
++#include <trace/define_trace.h>
+diff --git a/security/commoncap.c b/security/commoncap.c
+index cefad323a0b1..6b40f12bda18 100644
+=2D-- a/security/commoncap.c
++++ b/security/commoncap.c
+@@ -27,6 +27,9 @@
+ #include <linux/mnt_idmapping.h>
+ #include <uapi/linux/lsm.h>
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Mimi-Zohar/ima-instantiate-the-bprm_creds_for_exec-hook/20241128-120656
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
-patch link:    https://lore.kernel.org/r/20241127210234.121546-1-zohar%40linux.ibm.com
-patch subject: [PATCH] ima: instantiate the bprm_creds_for_exec() hook
-config: hexagon-allmodconfig (https://download.01.org/0day-ci/archive/20241129/202411290413.VUC6seTw-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 592c0fe55f6d9a811028b5f3507be91458ab2713)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241129/202411290413.VUC6seTw-lkp@intel.com/reproduce)
++#define CREATE_TRACE_POINTS
++#include <trace/events/capability.h>
++
+ /*
+  * If a non-root user executes a setuid-root binary in
+  * !secure(SECURE_NOROOT) mode, then we raise capabilities.
+@@ -50,24 +53,17 @@ static void warn_setuid_and_fcaps_mixed(const char *fn=
+ame)
+ }
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202411290413.VUC6seTw-lkp@intel.com/
+ /**
+- * cap_capable - Determine whether a task has a particular effective capa=
+bility
+- * @cred: The credentials to use
+- * @targ_ns:  The user namespace in which we need the capability
+- * @cap: The capability to check for
+- * @opts: Bitmask of options defined in include/linux/security.h
++ * cap_capable_helper - Determine whether a task has a particular effecti=
+ve
++ * capability.
+  *
+- * Determine whether the nominated task has the specified capability amon=
+gst
+- * its effective set, returning 0 if it does, -ve if it does not.
+- *
+- * NOTE WELL: cap_has_capability() cannot be used like the kernel's capab=
+le()
+- * and has_capability() functions.  That is, it has the reverse semantics=
+:
+- * cap_has_capability() returns 0 when a task has a capability, but the
+- * kernel's capable() and has_capability() returns 1 for this case.
++ * See cap_capable for more details.
+  */
+-int cap_capable(const struct cred *cred, struct user_namespace *targ_ns,
+-		int cap, unsigned int opts)
++static inline int cap_capable_helper(const struct cred *cred,
++				     struct user_namespace *target_ns,
++				     const struct user_namespace *cred_ns,
++				     int cap)
+ {
+-	struct user_namespace *ns =3D targ_ns;
++	struct user_namespace *ns =3D target_ns;
 
-All errors (new ones prefixed by >>):
+ 	/* See if cred has the capability in the target user namespace
+ 	 * by examining the target user namespace and all of the target
+@@ -75,21 +71,21 @@ int cap_capable(const struct cred *cred, struct user_n=
+amespace *targ_ns,
+ 	 */
+ 	for (;;) {
+ 		/* Do we have the necessary capabilities? */
+-		if (ns =3D=3D cred->user_ns)
++		if (likely(ns =3D=3D cred_ns))
+ 			return cap_raised(cred->cap_effective, cap) ? 0 : -EPERM;
 
-   In file included from security/integrity/ima/ima_main.c:23:
-   In file included from include/linux/mman.h:5:
-   In file included from include/linux/mm.h:2213:
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   In file included from security/integrity/ima/ima_main.c:26:
-   In file included from include/linux/ima.h:12:
-   In file included from include/linux/security.h:35:
-   In file included from include/linux/bpf.h:31:
-   In file included from include/linux/memcontrol.h:13:
-   In file included from include/linux/cgroup.h:26:
-   In file included from include/linux/kernel_stat.h:8:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     548 |         val = __raw_readb(PCI_IOBASE + addr);
-         |                           ~~~~~~~~~~ ^
-   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
-      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
-         |                                                   ^
-   In file included from security/integrity/ima/ima_main.c:26:
-   In file included from include/linux/ima.h:12:
-   In file included from include/linux/security.h:35:
-   In file included from include/linux/bpf.h:31:
-   In file included from include/linux/memcontrol.h:13:
-   In file included from include/linux/cgroup.h:26:
-   In file included from include/linux/kernel_stat.h:8:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
-         |                                                   ^
-   In file included from security/integrity/ima/ima_main.c:26:
-   In file included from include/linux/ima.h:12:
-   In file included from include/linux/security.h:35:
-   In file included from include/linux/bpf.h:31:
-   In file included from include/linux/memcontrol.h:13:
-   In file included from include/linux/cgroup.h:26:
-   In file included from include/linux/kernel_stat.h:8:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     585 |         __raw_writeb(value, PCI_IOBASE + addr);
-         |                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
->> security/integrity/ima/ima_main.c:572:13: error: no member named 'is_check' in 'struct linux_binprm'
-     572 |         if (!bprm->is_check)
-         |              ~~~~  ^
-   7 warnings and 1 error generated.
---
-   In file included from security/integrity/ima/ima_appraise.c:13:
-   In file included from include/linux/xattr.h:18:
-   In file included from include/linux/mm.h:2213:
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   In file included from security/integrity/ima/ima_appraise.c:15:
-   In file included from include/linux/ima.h:12:
-   In file included from include/linux/security.h:35:
-   In file included from include/linux/bpf.h:31:
-   In file included from include/linux/memcontrol.h:13:
-   In file included from include/linux/cgroup.h:26:
-   In file included from include/linux/kernel_stat.h:8:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     548 |         val = __raw_readb(PCI_IOBASE + addr);
-         |                           ~~~~~~~~~~ ^
-   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
-      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
-         |                                                   ^
-   In file included from security/integrity/ima/ima_appraise.c:15:
-   In file included from include/linux/ima.h:12:
-   In file included from include/linux/security.h:35:
-   In file included from include/linux/bpf.h:31:
-   In file included from include/linux/memcontrol.h:13:
-   In file included from include/linux/cgroup.h:26:
-   In file included from include/linux/kernel_stat.h:8:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
-         |                                                   ^
-   In file included from security/integrity/ima/ima_appraise.c:15:
-   In file included from include/linux/ima.h:12:
-   In file included from include/linux/security.h:35:
-   In file included from include/linux/bpf.h:31:
-   In file included from include/linux/memcontrol.h:13:
-   In file included from include/linux/cgroup.h:26:
-   In file included from include/linux/kernel_stat.h:8:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     585 |         __raw_writeb(value, PCI_IOBASE + addr);
-         |                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
->> security/integrity/ima/ima_appraise.c:492:13: error: no member named 'is_check' in 'struct linux_binprm'
-     492 |                 if (bprm->is_check)
-         |                     ~~~~  ^
-   7 warnings and 1 error generated.
+ 		/*
+ 		 * If we're already at a lower level than we're looking for,
+ 		 * we're done searching.
+ 		 */
+-		if (ns->level <=3D cred->user_ns->level)
++		if (ns->level <=3D cred_ns->level)
+ 			return -EPERM;
 
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for GET_FREE_REGION
-   Depends on [n]: SPARSEMEM [=n]
-   Selected by [m]:
-   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
+ 		/*
+ 		 * The owner of the user namespace in the parent of the
+ 		 * user namespace has all caps.
+ 		 */
+-		if ((ns->parent =3D=3D cred->user_ns) && uid_eq(ns->owner, cred->euid))
++		if ((ns->parent =3D=3D cred_ns) && uid_eq(ns->owner, cred->euid))
+ 			return 0;
 
+ 		/*
+@@ -102,6 +98,31 @@ int cap_capable(const struct cred *cred, struct user_n=
+amespace *targ_ns,
+ 	/* We never get here */
+ }
 
-vim +572 security/integrity/ima/ima_main.c
++/**
++ * cap_capable - Determine whether a task has a particular effective capa=
+bility
++ * @cred: The credentials to use
++ * @target_ns:  The user namespace of the resource being accessed
++ * @cap: The capability to check for
++ * @opts: Bitmask of options defined in include/linux/security.h (unused)
++ *
++ * Determine whether the nominated task has the specified capability amon=
+gst
++ * its effective set, returning 0 if it does, -ve if it does not.
++ *
++ * NOTE WELL: cap_has_capability() cannot be used like the kernel's capab=
+le()
++ * and has_capability() functions.  That is, it has the reverse semantics=
+:
++ * cap_has_capability() returns 0 when a task has a capability, but the
++ * kernel's capable() and has_capability() returns 1 for this case.
++ */
++int cap_capable(const struct cred *cred, struct user_namespace *target_ns=
+,
++		int cap, unsigned int opts)
++{
++	const struct user_namespace *cred_ns =3D cred->user_ns;
++	int ret =3D cap_capable_helper(cred, target_ns, cred_ns, cap);
++
++	trace_cap_capable(cred, target_ns, cred_ns, cap, ret);
++	return ret;
++}
++
+ /**
+  * cap_settime - Determine whether the current process may set the system=
+ clock
+  * @ts: The time to set
+=2D-
+2.43.5
 
-   556	
-   557	/**
-   558	 * ima_bprm_creds_for_exec - based on policy, collect/store/appraise measurement.
-   559	 * @bprm: contains the linux_binprm structure
-   560	 *
-   561	 * Based on the IMA policy and the execvat(2) AT_CHECK flag, measure and
-   562	 * appraise the integrity of a file to be executed by script interpreters.
-   563	 * Unlike any of the other LSM hooks where the kernel enforces file integrity,
-   564	 * enforcing file integrity is left up to the discretion of the script
-   565	 * interpreter (userspace).
-   566	 *
-   567	 * On success return 0.  On integrity appraisal error, assuming the file
-   568	 * is in policy and IMA-appraisal is in enforcing mode, return -EACCES.
-   569	 */
-   570	static int ima_bprm_creds_for_exec(struct linux_binprm *bprm)
-   571	{
- > 572		if (!bprm->is_check)
-   573			return 0;
-   574	
-   575		return ima_bprm_check(bprm);
-   576	}
-   577	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
