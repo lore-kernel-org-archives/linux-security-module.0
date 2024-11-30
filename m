@@ -1,162 +1,101 @@
-Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1C014D430;
-	Fri, 29 Nov 2024 19:33:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 760DF156CA
+	for <linux-security-module@vger.kernel.org>; Sat, 30 Nov 2024 02:27:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1732908821; cv=none; b=oTWapRYDIvXnPNvW/1xNlwfSpiF6jreQFVShh/s7K8KClXZ2g2pEuqzGm+8jSuALF4L6cn2Qvh011ADSnhNIN1GnFz9R18bfQ4cQEJiHeWfG2MHFqXYgUFQgijQO6rx1KBEgkNseTYZPWLFBAOEzkzyNxopLW6ApfkZ34Fa2cIw=
+	t=1732933662; cv=none; b=RkTlt8vGBSfziOi72S3INeoAba4jTe2nyRyARHCxJSNFKo8uzmMlAcroCrJi/YuwHQKjgBCh1CZLbaQC4h/+UuCki8b9EsKG4kc/+GNGdLqr7zfg2ul/y2ccnjy7ealtMfbVp31TGFAcvpITSpndBhJHBIrQEM7Tvyp53B+vGJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1732908821; c=relaxed/simple;
-	bh=e/oiH+5eV0PnzU69I+789jp/4kAzHHx31CuIFIOmRe4=;
-	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
-	 Content-Type:Subject; b=qMNaO8+Lak+0d7RSl+gqzNMq5nFizPtsv/dvdhJVwR7qhL97kXaqXWgpKJ76rQYRtmY346PvGy2T3mh4AtCwmNT8xB9HgK7lMeU6x+mX+bd4wRypodV+Sy/ELHdDwzNt2ea/eYAOvGJV9uAXI96OjZZnzDyKtwF3pZ6gEQQFV/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
-Received: from in02.mta.xmission.com ([166.70.13.52]:46322)
-	by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1tH6kD-006Z6q-8p; Fri, 29 Nov 2024 12:33:37 -0700
-Received: from ip72-198-198-28.om.om.cox.net ([72.198.198.28]:44368 helo=email.froward.int.ebiederm.org.xmission.com)
-	by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1tH6kC-00AdPl-AQ; Fri, 29 Nov 2024 12:33:36 -0700
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,  Kees Cook
- <kees@kernel.org>,  linux-kernel@vger.kernel.org,  Christophe JAILLET
- <christophe.jaillet@wanadoo.fr>,  Nir Lichtman <nir@lichtman.org>,  Tycho
- Andersen <tandersen@netflix.com>,  Vegard Nossum
- <vegard.nossum@oracle.com>,  linux-security-module@vger.kernel.org,  Al
- Viro <viro@zeniv.linux.org.uk>
-References: <202411210651.CD8B5A3B98@keescook>
-	<CAHk-=wjMagH_5-_8KhAOJ+YSjXUR5FELYxFgqtWBHOhKyUzGxA@mail.gmail.com>
-	<05F133C4-DB2D-4186-9243-E9E18FCBF745@kernel.org>
-	<CAHk-=wgEjs8bwSMSpoyFRiUT=_NEFzF8BXFEvYzVQCu8RD=WmA@mail.gmail.com>
-	<202411271645.04C3508@keescook>
-	<CAHk-=wi+_a9Y8DtEp2P9RnDCjn=gd4ym_5ddSTEAadAyzy1rkw@mail.gmail.com>
-	<20241128020558.GF3387508@ZenIV>
-	<CAHk-=whb+V5UC0kuJkBByeEkeRGyLhTupBvpF-z57Hvmn7kszA@mail.gmail.com>
-	<13223528-74FF-4B68-B0CF-25DCC995D0A0@kernel.org>
-	<CAHk-=wgKgi5eqo6oW0bBS2-Cr+d4jraoKfVq6wbmdiWWsZbMLw@mail.gmail.com>
-	<20241129033419.GI3387508@ZenIV>
-	<87h67qoeh5.fsf@email.froward.int.ebiederm.org>
-Date: Fri, 29 Nov 2024 13:33:19 -0600
-In-Reply-To: <87h67qoeh5.fsf@email.froward.int.ebiederm.org> (Eric
-	W. Biederman's message of "Thu, 28 Nov 2024 22:23:18 -0600")
-Message-ID: <87mshhn8cg.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1732933662; c=relaxed/simple;
+	bh=aWnmarBawaRLlTgny6s97w2dRCAw14joD5nX5cQZVF8=;
+	h=Date:Message-ID:From:To:Cc:Subject; b=JeiS7SZWqGxacIpZTppjpNUDjaf5JFzcPOj2gEvyv7jpIYJKUE9AmhbvnjldxlbW8anBWNSMytCyMy4+hhLi0QcN9MZ404HiKpWzwYkBqKTgK+LyNBYHHaWvBzs+/+XfcVYUZA+VHjaJwOhS6eijzERSAzkr84FUIa8RY6+y5dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=VF5dqM+p; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="VF5dqM+p"
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7b65db9b69fso142174385a.2
+        for <linux-security-module@vger.kernel.org>; Fri, 29 Nov 2024 18:27:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1732933659; x=1733538459; darn=vger.kernel.org;
+        h=subject:cc:to:from:message-id:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ny/xOclvKvO96CaJgqDIoJ71/Sn21XjQ/xxsbfZgVno=;
+        b=VF5dqM+pP/gUpot2DVRAZqXtyJ0bEEi4VNHmDrqQ5L+SddiFjKIFcQJe5LopUQKsWM
+         S5SINF7Wgo/I02eIAPovwsVp/zOCp+9417CdNWTzT9NYlQsHApu4aP8T5b26JPMUEZJa
+         GqQx/iCBTUMPwxkPbeoXodeiuE3iMnBUxyqmeg7z4tmJhd/avK4KDsOgMsn4nRWOv8yK
+         +jRNmpadLBAY+h59c2NPJp+cCnwOirAvFEMkNvGJChySIp8h5RQ0AH75GBNcT4IFib23
+         25PPGtxMdew4+E8NVMAWyCl+QMsk6LmkHsgpt1ZJoT1Kp6nBEVEr4RYHW01W08fSZmRS
+         j77w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1732933659; x=1733538459;
+        h=subject:cc:to:from:message-id:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ny/xOclvKvO96CaJgqDIoJ71/Sn21XjQ/xxsbfZgVno=;
+        b=E4cCCC6DVbQ3h6VfKxOcUFx3spxN9mqa5En2VnhjRbo0Q+tkGwcIktJIBM7tQ6pmZ9
+         CxAqMXYt4GfFrQBpFFvh4edtbzySE0889c9AL85/KYNevZS/5KplOYSAZDP+rOObDgI5
+         rWlKEmpISk8CJK5qgZqn9z4f6YB4Ql7bRn6Ks8GIDpjItJ+MedUMDzEERIKYy6BoUkJM
+         li8IHF3KBMLzfh2cXiKeAxlsoGeS5f/NF/XfsVkTBHZa5xraPD1rs9wN/wBLWl/jCcoN
+         Of/GKHQssu4N3tLFmecDFb/tg8G+HEiihIqe3Q+zI3EirWv9SK4SPWGH4kKH/hvLJBFP
+         wrVg==
+X-Gm-Message-State: AOJu0Yyf2YsRqOQxDWAq1g+wOJr/7NsfW/4INMPufAYOEhG319brEDt4
+	zCcZQJuvgOFKXO9PyH1cGQAkL3o6//Tetyk3xZX/Irtqs0OtsaoJA0R0Oaua9w==
+X-Gm-Gg: ASbGncsxPIk3lxfR73TQLm34MXJkMkiAUiK3MWMccgm/CMImmWAeTKEy9LyFVv8dncG
+	Pn/tMF9uBdxbvivMNW01DiAss90V/0VocpVTdI1eBKuP2RCX+66DAV/sA6rGf3buFZc7yXjqLwA
+	p5fEKwhCWBu7/jDwChAs3bqnRDkptmG+VlHJuhkMX0JkEDDBP51c2zOQM29O1Pdu62mJhQEU6nO
+	ZAde5xybt1K0k0rHUrWTQRT3VUeXw9dc9RInjejgCIR
+X-Google-Smtp-Source: AGHT+IEaIDdrWw106ZDQw0mbWestIN+m9HBQ9vmiOd4JwFtKrDnxFQ8CI9ZeiVjBiiizd4mXDAYLNg==
+X-Received: by 2002:a05:620a:4109:b0:7b6:6634:5a38 with SMTP id af79cd13be357-7b67c278e4dmr1869693385a.19.1732933659414;
+        Fri, 29 Nov 2024 18:27:39 -0800 (PST)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b6849aaaf9sm192839885a.79.2024.11.29.18.27.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 29 Nov 2024 18:27:39 -0800 (PST)
+Date: Fri, 29 Nov 2024 21:27:33 -0500
+Message-ID: <86752346e28a77c830cb8249610f0f00@paul-moore.com>
+From: Paul Moore <paul@paul-moore.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] lsm/lsm-pr-20241129
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1tH6kC-00AdPl-AQ;;;mid=<87mshhn8cg.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=72.198.198.28;;;frm=ebiederm@xmission.com;;;spf=pass
-X-XM-AID: U2FsdGVkX18jUckRObL07lbPAu08BtIHDhNQReedVyU=
-X-Spam-Level: **
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-	*      [score: 0.4422]
-	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-	*      [sa05 1397; Body=1 Fuz1=1 Fuz2=1]
-	*  1.0 XMSubMetaSx_00 1+ Sexy Words
-	*  0.0 T_TooManySym_03 6+ unique symbols in subject
-	*  0.0 T_TooManySym_01 4+ unique symbols in subject
-	*  0.0 T_TooManySym_02 5+ unique symbols in subject
-	*  1.2 XMSubMetaSxObfu_03 Obfuscated Sexy Noun-People
-X-Spam-DCC: XMission; sa05 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;Casey Schaufler <casey@schaufler-ca.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 397 ms - load_scoreonly_sql: 0.07 (0.0%),
-	signal_user_changed: 13 (3.3%), b_tie_ro: 11 (2.8%), parse: 1.99
-	(0.5%), extract_message_metadata: 6 (1.5%), get_uri_detail_list: 1.79
-	(0.5%), tests_pri_-2000: 6 (1.5%), tests_pri_-1000: 4.2 (1.1%),
-	tests_pri_-950: 1.92 (0.5%), tests_pri_-900: 1.52 (0.4%),
-	tests_pri_-90: 66 (16.6%), check_bayes: 64 (16.2%), b_tokenize: 9
-	(2.3%), b_tok_get_all: 7 (1.6%), b_comp_prob: 2.6 (0.6%),
-	b_tok_touch_all: 42 (10.7%), b_finish: 1.01 (0.3%), tests_pri_0: 256
-	(64.4%), check_dkim_signature: 0.90 (0.2%), check_dkim_adsp: 3.7
-	(0.9%), poll_dns_idle: 1.11 (0.3%), tests_pri_10: 4.1 (1.0%),
-	tests_pri_500: 22 (5.6%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [GIT PULL] execve updates for v6.13-rc1 (take 2)
-X-SA-Exim-Connect-IP: 166.70.13.52
-X-SA-Exim-Rcpt-To: viro@zeniv.linux.org.uk, linux-security-module@vger.kernel.org, vegard.nossum@oracle.com, tandersen@netflix.com, nir@lichtman.org, christophe.jaillet@wanadoo.fr, linux-kernel@vger.kernel.org, kees@kernel.org, torvalds@linux-foundation.org, casey@schaufler-ca.com
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-SA-Exim-Scanned: No (on out01.mta.xmission.com); SAEximRunCond expanded to false
 
+Linus,
 
-Casey and the smack folks my apologies for copying you in.
+One small patch to fix a function parameter / local variable naming
+snafu that went up to you in the current merge window.  Please merge
+for v6.13-rcX.
 
-I just read the code below a little more carefully and it is definitely
-a systemd bug.
+-Paul
 
-mac_smack_read_fd reads the xattr that smack will apply as a label if it
-is present.  So there is no reason for systemd to apply the label
-itself.  Worse smack_bprm_creds_for_exec applies checks before
-applying the label (aka is the superblock trusted) that systemd doesn't.
+--
+The following changes since commit 8afd8c8faa24249e48f5007aee46209299377588:
 
-Which means systemd might apply a label from a smack xattr when
-smack wouldn't.
+  lsm: remove lsm_prop scaffolding (2024-10-11 14:34:16 -0400)
 
-> static int setup_smack(
->                 const ExecParameters *params,
->                 const ExecContext *context,
->                 int executable_fd) {
->         int r;
->
->         assert(params);
->         assert(executable_fd >= 0);
->
->         if (context->smack_process_label) {
->                 r = mac_smack_apply_pid(0, context->smack_process_label);
->                 if (r < 0)
->                         return r;
->         } else if (params->fallback_smack_process_label) {
->                 _cleanup_free_ char *exec_label = NULL;
->
->                 r = mac_smack_read_fd(executable_fd, SMACK_ATTR_EXEC, &exec_label);
->                 if (r < 0 && !ERRNO_IS_XATTR_ABSENT(r))
->                         return r;
->
->                 r = mac_smack_apply_pid(0, exec_label ?: params->fallback_smack_process_label);
->                 if (r < 0)
->                         return r;
->         }
->
->         return 0;
-> }
+are available in the Git repository at:
 
+  https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git
+    tags/lsm-pr-20241129
 
-Which means the systemd code should really be:
+for you to fetch changes up to a65d9d1d893b124917141bd8cdf0e0e47ff96438:
 
-> static int setup_smack(
->                 const ExecParameters *params,
->                 const ExecContext *context) {
->         int r;
->
->         assert(params);
->         if (context->smack_process_label) {
->                 r = mac_smack_apply_pid(0, context->smack_process_label);
->                 if (r < 0)
->                         return r;
->         } else if (params->fallback_smack_process_label) {
->                 r = mac_smack_apply_pid(0, params->fallback_smack_process_label);
->                 if (r < 0)
->                         return r;
->         }
->
->         return 0;
-> }
+  ima: uncover hidden variable in ima_match_rules()
+    (2024-11-26 22:58:03 -0500)
 
+----------------------------------------------------------------
+lsm/stable-6.13 PR 20241129
+----------------------------------------------------------------
 
-At which point systemd has no need to open the executable file
-descriptor and thus no need to play with fexecve.
+Casey Schaufler (1):
+      ima: uncover hidden variable in ima_match_rules()
 
-Eric
+ security/integrity/ima/ima_policy.c |    9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+--
+paul-moore.com
