@@ -1,356 +1,298 @@
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B6961FA245;
-	Mon,  2 Dec 2024 11:32:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733139175; cv=none; b=lzdrErMxUf5FW473DIksxT0QLf+7JN7e6XYoatGZNM5ZNjQwr4vhxlCey7RszsacVjXhPxA7i5h4aczFw+613yhGFxZ+pvpuoqgCOF+mBxEljIj6a74H4fi5I4TRojMlxtrTXTg0GC6eaXonsHTka6BPWN22Wcg73WoC2qHz4yA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733139175; c=relaxed/simple;
-	bh=q1oTX19RB5TTGmMPwQPIbTWTnp2rfELwgORKeXdNJfo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=GqxTInc3ZZCo3gBiQ3buBmF7rIeYQfFTvVzsfKcsxtvLTUNySyv1nZLKTbzSuvOFTuMO04OgMBOsc2H8I2EbXGzynPAT2RRGG9JXERKPwb5tBGramSSAPK2KYD276wxykmEusD+xjDp2xBBdFpQ8wCPRkdBeB8QNO+hOyDEzIEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Y21m6713cz6K9Hn;
-	Mon,  2 Dec 2024 19:29:58 +0800 (CST)
-Received: from mscpeml500004.china.huawei.com (unknown [7.188.26.250])
-	by mail.maildlp.com (Postfix) with ESMTPS id BEC7E14034E;
-	Mon,  2 Dec 2024 19:32:49 +0800 (CST)
-Received: from [10.123.123.159] (10.123.123.159) by
- mscpeml500004.china.huawei.com (7.188.26.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Mon, 2 Dec 2024 14:32:47 +0300
-Message-ID: <af72be74-50c7-d251-5df3-a2c63c73296a@huawei-partners.com>
-Date: Mon, 2 Dec 2024 14:32:45 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E4E1DAC97;
+	Mon,  2 Dec 2024 17:38:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.153.30
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733161124; cv=fail; b=ngaM3i+LKzt7XVKGJVgPJHXHYm4PzWVLFNI+3ccWCASLfnJy1KJWiY+LnrPUIlIU+CFG0ybQhY4cJFDn/wwdx3DIqdPu786/0qMKfU1igaOzFRkHrP4mwhaGSn2Ec1BWNurKNzmCYkkatKYYAZkLLiRS4BNoM3ww2XtiSPR3hzw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733161124; c=relaxed/simple;
+	bh=xBmYlKRhY+AvqDYj/ObnKuYOJHjRQUqKHXtzU/ffiLY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=roR/UvSaVLrnH3LBEG5PzW2AMF+6JL00yvl9MdvYSMR2mpfCFMGf1Rl+OKZKy9PktNySvf6NkQpcxoltaaFuk1v61nNSrK7fFVobr5Bz2qj3abz5G9ukHrXS6Epm2yv8dKOS+nA3VebHhBujmSUd6fNcG4niQro5STLoNCJ038c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=K+bs8LdK; arc=fail smtp.client-ip=67.231.153.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="K+bs8LdK"
+Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B2Gwi7V020269;
+	Mon, 2 Dec 2024 09:38:39 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
+	:content-id:content-transfer-encoding:content-type:date:from
+	:in-reply-to:message-id:mime-version:references:subject:to; s=
+	s2048-2021-q4; bh=xBmYlKRhY+AvqDYj/ObnKuYOJHjRQUqKHXtzU/ffiLY=; b=
+	K+bs8LdK5IBIheuH7YTIA2ptzhL548NHCSTsbj/L6GxKuBydxIzn830So06QHnqX
+	BMVAOWCzdxhMWHNtBf5XIGciwLxtrE9OAI2jpWuE9cOrj34k5o95COqpafa797CM
+	7h8Uz+rvlwxP7B2+342HhT28/WCHDGoRQhwRsMvToTuGk/VcDwHpI3MyM9IiDPJV
+	Qmj9vXl6IM4z0RBCE6AFKf7m8tseMgmNjTa0Xhza6S0a33JmZi2uiNXsvHJhshbw
+	2qSxFcZX+8dWb0hB0BenndYdM6QVn1GosTkE3LC72Tn6Z6ZR6oiYgjIdfnM+xCkX
+	AFqap3dbFbAx9x/6wF2b1g==
+Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2169.outbound.protection.outlook.com [104.47.59.169])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 439962uc93-2
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 02 Dec 2024 09:38:38 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SwMTpS6ltLfhjZsspSmf8oMtrKQVdJMFeRtqb1gUE0yzy3HGqIpXhDG/xWFxvjhfIybte/nW4NpdX3DI+7XvevZ7PCkusqVH2MQrcC+iXLSdlEJp//uYsT9UZGpnnPhBHouPAe5do7fTNBod8a37mEUYL9+t1bGe1Wj6VMfGwdwXK9aPNgXep9pl7CknfOO0RSqDtkvJWAHK/R1JzzvRfaaDjSa5tTNroIJWe6aNBDUjWPZtI0HrphF/mwmazpJuN+fHJd8qWc9DwXnzpRSmmukZAZTh/g7qWmqVAUGXKW4j5OPoQBRa9r5y/asGKmOxpnI5fIIB+Hx/xig91xZI+A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xBmYlKRhY+AvqDYj/ObnKuYOJHjRQUqKHXtzU/ffiLY=;
+ b=lzXqamrxvm3MKpblv7KqXptCZc0dygWxQ6r4mCDU7lnhGPDIP3rZpSTNeOzHjGZ/QMzSyb51YmeOj86HEm32+yB0wbGeVcZiD5G2hGKYrZlUk2m3LGM/LVipwpEiva+IS+c+rNb5fkuqvL+8FJVVgg0YUWlOt4+sQ91a+LTpwcKfLKp2ixr5x0/gsYfPNnCCZSACuruBj0hI87nibR0yHGuY7WIeYOIelGST5zs7366H1hQtmZXrT/zGUIOuZ8adIvom1C2/x+ixEyGXxUyAVtPKhyFwijxtzEYILaFjRUKNkS5llZhlz9hGUzpeTy2+3DWGPGc9kFZYeg/ERYpu+w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=meta.com; dmarc=pass action=none header.from=meta.com;
+ dkim=pass header.d=meta.com; arc=none
+Received: from SA1PR15MB5109.namprd15.prod.outlook.com (2603:10b6:806:1dc::10)
+ by BLAPR15MB4019.namprd15.prod.outlook.com (2603:10b6:208:274::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.18; Mon, 2 Dec
+ 2024 17:38:35 +0000
+Received: from SA1PR15MB5109.namprd15.prod.outlook.com
+ ([fe80::662b:d7bd:ab1b:2610]) by SA1PR15MB5109.namprd15.prod.outlook.com
+ ([fe80::662b:d7bd:ab1b:2610%7]) with mapi id 15.20.8207.017; Mon, 2 Dec 2024
+ 17:38:35 +0000
+From: Song Liu <songliubraving@meta.com>
+To: Jan Kara <jack@suse.cz>
+CC: Song Liu <songliubraving@meta.com>,
+        Alexei Starovoitov
+	<alexei.starovoitov@gmail.com>,
+        Amir Goldstein <amir73il@gmail.com>, Song Liu
+	<song@kernel.org>,
+        bpf <bpf@vger.kernel.org>,
+        Linux-Fsdevel
+	<linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        LSM
+ List <linux-security-module@vger.kernel.org>,
+        Kernel Team
+	<kernel-team@meta.com>,
+        Andrii Nakryiko <andrii@kernel.org>, Eddy Z
+	<eddyz87@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann
+	<daniel@iogearbox.net>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        Alexander
+ Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>, KP
+ Singh <kpsingh@kernel.org>,
+        Matt Bobrowski <mattbobrowski@google.com>,
+        "repnop@google.com" <repnop@google.com>,
+        Jeff Layton <jlayton@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
+        =?utf-8?B?TWlja2HDq2wgU2FsYcO8bg==?=
+	<mic@digikod.net>,
+        "gnoack@google.com" <gnoack@google.com>
+Subject: Re: [PATCH v3 fanotify 2/2] samples/fanotify: Add a sample fanotify
+ fiter
+Thread-Topic: [PATCH v3 fanotify 2/2] samples/fanotify: Add a sample fanotify
+ fiter
+Thread-Index: AQHbPTJZqeNX/hCyTk2z4ZUDy/y7a7LF4v0AgARvTICAABfpAIACjCGAgAZRRAA=
+Date: Mon, 2 Dec 2024 17:38:34 +0000
+Message-ID: <50444DD4-34E5-4F75-AE02-5DF1D28EF12E@fb.com>
+References: <20241122225958.1775625-1-song@kernel.org>
+ <20241122225958.1775625-3-song@kernel.org>
+ <CAOQ4uxhfd8ryQ6ua5u60yN5sh06fyiieS3XgfR9jvkAOeDSZUg@mail.gmail.com>
+ <CAADnVQK-6MFdwD_0j-3x2-t8VUjbNJUuGrTXEWJ0ttdpHvtLOA@mail.gmail.com>
+ <21A94434-5519-4659-83FA-3AB782F064E2@fb.com>
+ <20241128171001.xamzdpqlumqdqdkl@quack3>
+In-Reply-To: <20241128171001.xamzdpqlumqdqdkl@quack3>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-mailer: Apple Mail (2.3826.200.121)
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SA1PR15MB5109:EE_|BLAPR15MB4019:EE_
+x-ms-office365-filtering-correlation-id: 080c84d0-fa9c-49a6-8c98-08dd12f825b8
+x-fb-source: Internal
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|7416014|366016|10070799003|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?NkZEL2Y3QzlibEo2eWp6Ym1zNE91dWxrbmUyT0lramY2S1pnREo5OWtWam1P?=
+ =?utf-8?B?NG1FelpvL2h1eGZhSk5WTWl6RnVsSW92ekIzSEcrWDVFK2sxS1MrcXBKYkwr?=
+ =?utf-8?B?TzhTb3VTMHdtMnJTME5qMHNqSG5HRUF6VzlOQWo3bkFOMFFrL3V0OXNuMXN5?=
+ =?utf-8?B?WWlIRUlKZ29IazltN1VodWdvQVdzMEwzN1ViRzlOZlQrSjl2a3NPK1BTUWgv?=
+ =?utf-8?B?QitKdytZN1dXZWlnODhyVTJuSFBreGZnRy8zekVFY3cxcGpGOVFhcUttTGxL?=
+ =?utf-8?B?MlNuZlJOd1Nqbi9vWVUvZ2FGdHFEUGZlRElDTmdCdVFhOUFONUN1TVRuVTR2?=
+ =?utf-8?B?RUdZY2lzY1FVVS9ObDh6OW5HSmFkMDArd09pdEc3S2UyZVZMelNDdjdXSGw3?=
+ =?utf-8?B?ZHJFNmkxSFNaRWI4elF5WWY3T1czYzZIMFRGZjQ3ay9LWitxMGwxc1VaWm85?=
+ =?utf-8?B?UW1Jb3Z1RnU1QjB1d2czbXFwWlN5K0RoRXB1Z1NCVHZmcTlaZlFOcjdVNCtJ?=
+ =?utf-8?B?VGJEek8xbkJVY1JtR0YrZ28rU1ZjS2twc2NDZDNhbHVKdHhFSjFLV20vTXZ5?=
+ =?utf-8?B?d1BndWdSMitHQ1E4R0ppSkh4WUlnQVdHaTZ0cXoyNy9mTnpYRUxRUHRYMUhN?=
+ =?utf-8?B?dk1LTW5rK1VjbFJjVXZ5eDM4ejJLbzRmb3k4bENzQXhhbFloTFpSQWRYVVdu?=
+ =?utf-8?B?b2MvUjdpQWd6Vi82QW1JcWhic21DMEVXeFNDUU9VVktiV3ZYait6QVZUZk9V?=
+ =?utf-8?B?ZW12eHhIeVFuWTZaeHdwNmo4K3hLaFR2MS9xQTk4UXRRbFkvcm5EeklDWnhr?=
+ =?utf-8?B?Z0Y4MDUrSWFTaXh0SU9Jem1QanNsQ3RYN1ppMmQrbGM1OVRmS1ZCSXdPZEdz?=
+ =?utf-8?B?QjIwNitjNGdUSDBkYmUwbTU4eCtZZDVjZmd5TGxHMlJXWEVVNmEvN0tUbnBX?=
+ =?utf-8?B?SnpMSW5VZWJwdVNRZXM5MFh3TnRJZ09VYVlDd2lxZGEwNDVBSVd5T2x2d2RZ?=
+ =?utf-8?B?VG94alpNeU1JSU5SS3RVVjh3TTZQaEJYZjVNd2lUaXhIWnlhT1JtYjVxRWM2?=
+ =?utf-8?B?UXZEa1BlQmZJblVhb01KTlo1ZVhpQ0hGcUExUFJSNURoV3FPakJUWDU0Mk5u?=
+ =?utf-8?B?K0tlaGhLQUdoVTNZaDh5YUVibU9JQ2NZNCs0SnJ4Sk9DeEthMHJvUDN6N0pa?=
+ =?utf-8?B?M1JLMmtiQnB5aExncjBmUGZwcHFsNkRFQ3QvbTMrdjdIRzN3NHlrcFN4MVVN?=
+ =?utf-8?B?SEZhUmxaeUpUcUNJZWFQTEpCdWpneUlvSS9mRFVyMENHM3FKY1BaSjdmS2o2?=
+ =?utf-8?B?SkcvaVNCb0dCTi9MeWZtRnhpL2tEOFd2S0VaRmQyRGpNRXBVekw4b3dNeFVr?=
+ =?utf-8?B?cmpzVk5rVnc1LytQaldZVndxVm5VTGEybTJna3Z3WWVUQXArUzBvcnllNHkv?=
+ =?utf-8?B?anloRkNCdjNFUWV3bC95aVhPLytZREF3MmlBaml3WmpWYi9OMXJLQW1RRHZZ?=
+ =?utf-8?B?TlI5Uy9JdHorMXZ4cm9GakZoajFaZUhEdUVIaURBL3BHNDVsb2szUnVsdUdj?=
+ =?utf-8?B?Y25MY0gzRDF2NTJuOTlvb3BNM2dFcWlwblFZM2V5NzFvKzJmM2pXcVpSQXRH?=
+ =?utf-8?B?MHRiZ0R6QmN2S2d1UUJOSEZ1aUl6WjFxa1VOUmcrakNjZGcrSm9JdXNDa2JT?=
+ =?utf-8?B?dU1HalFOenVwMUNmQy9uZENaWTR4U3NkOHhCQ0tHOUNsbWMrMXc5cDkzcWdh?=
+ =?utf-8?B?SGpETnF1RVNhV082UFpYa3luKzFPWFQ0bHpNVWVQOGYrMmVFNWlJS2tzSGh4?=
+ =?utf-8?B?TGtQdzl6SkhGSDBSTXVOejdWR0tZb05HMjBRL1ZtL0d1Uk00bzFMck9GZENS?=
+ =?utf-8?B?ZVY3WFMybE1nQ3IwYnRtSGhEUlZpTE01UTdpK3ZGZlBvcnc9PQ==?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR15MB5109.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(10070799003)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?SEMxN2xZZzFyUlFOQy9VYUM5Mm83YStyYkJFYmQrU1lzUVRBTjlWQmxGcnBT?=
+ =?utf-8?B?VVg1QTdGVUZSQWV4dkpSSVRDcXVqRjEwSnZBOVpuaHQ1N3FJcHZvd3BxZ0lR?=
+ =?utf-8?B?NDdsYnRZVTNBUlhCcmsrMnFxT2t1ZWdlZkplenhrTWJlbnkrejU1S2RUak5w?=
+ =?utf-8?B?eXY1V1pZaW9xcmZwS0lOWjV1L3VnRFpjK1dPaXNWQjFNNld5a01XbnNXb0ox?=
+ =?utf-8?B?eStXcnVrT3ZETldoWVJGdWNjakhOODRiUGxkLzhOTGxOcEphbm90bks4Ri9a?=
+ =?utf-8?B?YkR3QjZWWkpqZGhUdnNqcngwc1dQQ2dIU2QyOXhuUHlFd055bjBTSXZGQVFX?=
+ =?utf-8?B?cWJZUmZKOTAzQWdRTTF1TkZEbWtlejVDUWE3ZjRnbDNGTUFXVlVseWZENVIw?=
+ =?utf-8?B?aTA5b1V2QXpaNVd3V1NMTDJNUzU4Z1lpbzhtaW11SkhkbE11bWlQMW1oa0pz?=
+ =?utf-8?B?Ump1ZU85bUg0NnFJcGprVTNOOHFTOE93ekJON3pjS2M3bmJIWExyeGNGNTAr?=
+ =?utf-8?B?R0R2TjZwZGZ6eXVsamhmQUtjNU5GbUdMcjFhNFhYTExWUWNWUjhuZG5OL1lW?=
+ =?utf-8?B?RVVsNS9zWTYrM25QZHRpRENkRGVUU0kxRFo3NHRaZnFTM2tyRkw1YkJJQzJY?=
+ =?utf-8?B?YUxVdEdNNjlvQWVDMjlXYUJBaG1Kd3dHc24ySGFIZWJuYzFvQTlVSEk5ZWth?=
+ =?utf-8?B?T3BqY2h4SWNPUjkrZFV1d1JPM2ZjQnFoTHRXdlYraGsvaFIxRnJLVEpHSllu?=
+ =?utf-8?B?Wjk3ZmtjTUlzZGlOcGxlYnB3QnlXOCszSi84NkxubytlNHhzc0dXeks0RGZx?=
+ =?utf-8?B?K1Z4ZkRaNktCQlBzVm5oeWNmQ0E0WEphRlRsZTg3QkNURnZ6SG5Fd09UcC9v?=
+ =?utf-8?B?OWtpeFZVVnJUc1YvK3dqR00xSE51L29nTUVSRVFYOWF4em01eFkwNFRJQ0lo?=
+ =?utf-8?B?NTAwL2tXWGNLQkhCbXljbGZOTGtOMGdRUlMyY2FsalRoUDhKek8wTlFvcjVv?=
+ =?utf-8?B?UXJ2eCtCaGttRVBmVWg2cUV5dFBGMVp5NGszbmsxU1hPRjZqWEtMZW1qazRi?=
+ =?utf-8?B?NXdzZHQ0MjM0WHZ0NGpMTHJsOGxnV2gxYXdsTjlaTVFqNjVVZDBzMmEwa0JB?=
+ =?utf-8?B?R0p1c3ZJcnNlMk9VQ3Y2d3dTYnV4eGlSUmRZenQ1a2tSWllCeVlGK3pSNEl3?=
+ =?utf-8?B?d1c4WGNMbnVLZ3FUVzRpc1BJTjJxZHJ3bDVqbTB1b2lpT0hwUklIVFU3bkpQ?=
+ =?utf-8?B?WHZvRFNZS2RRQmlFaWo2amozM1c0V1BOcGE0a0loVDkwa0czNnovZ05rUVMv?=
+ =?utf-8?B?Y0k1VU9abDVRaUxJKytQc0JZcTVxUEpLcUVDNlFmY09SMHluZ2hyRWtOS1FI?=
+ =?utf-8?B?RzVpL25STU9tVlRkWE0xZlh2MkZqUW54TEdlREFFOUpUZk02SmE1SVpZM1la?=
+ =?utf-8?B?OVZ4ZjlMbTZ5M3pWTmkwVHhmTElhTlpuUlovZ04zYzU5ckQwSCtnQ3hyTUh5?=
+ =?utf-8?B?c2lyMWU0THVsb2ZlN3Z0Q2RxUWVTOGJFYy9UZlgzUkR6SjkwYkc3bkkxeGVl?=
+ =?utf-8?B?Z2dIY1NweVc4N3dxTWNuNGdoSmpGOGR5elVORysxSytPcjk3RS85YjF1WEFV?=
+ =?utf-8?B?d3NMQU52ZmIvWExFdytGUW04UUlhOE9BVWJYSmc5R1dNMEp3dkRWMkkybzNv?=
+ =?utf-8?B?MUpZQUp4dUtZVnNqTGJVY3J4UG1sTmhIOUdKR28vdUdEb3pqUFlVVGo5Y2FH?=
+ =?utf-8?B?Z2dpR2hTT3NwS1FhTWY3ajBQRXhYaGR1aFJKLzJMN3liUHVFd053Q09zazZo?=
+ =?utf-8?B?NStGMnBKenhvbnpLTjZDQk9uMDJsY3Robzl3RnRoQ2krNURpQlB0Tmk3eGZS?=
+ =?utf-8?B?cXJDSXdYT1ZTc1p2SkgyWFV6MDRucXJ5cXJWTllsQ01mUUFvNit0dm04a2ZR?=
+ =?utf-8?B?eVk5RGFualNrU1lYK2NFVWdKdnlxMzNjWjNROHBsVHJTNUJWUjIrZjR1am9s?=
+ =?utf-8?B?R2VTS0tBQ2FhZHY4NGlFK1dqRk00YXRyS1ZlTTJnUkZ6OEwyZTZvSHBoYkkr?=
+ =?utf-8?B?c1lKWmFZNmgrVjBvU2dNblBMdkcyV0oybTRlbmpBNy9CekxWdmpKTzRLdmJn?=
+ =?utf-8?B?dUV5UThVNWtKdFdnUUJaMEJCWUorMjNUbDdaVFBpM2RWZTVlK3ZDTXFoZWpR?=
+ =?utf-8?Q?AQ//c5Q2lLVA/C1lIp7agEM=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <403260747599E54985EC3BBCD5DA9098@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v3 01/19] landlock: Support socket access-control
-To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-CC: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
-	<willemdebruijn.kernel@gmail.com>, <gnoack3000@gmail.com>,
-	<linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
-	<artem.kuzin@huawei.com>, <konstantin.meskhidze@huawei.com>
-References: <20240904104824.1844082-1-ivanov.mikhail1@huawei-partners.com>
- <20240904104824.1844082-2-ivanov.mikhail1@huawei-partners.com>
- <ea026af8-bc29-709c-7e04-e145d01fd825@huawei-partners.com>
- <Z0DDQKACIRRDRZRE@google.com>
- <36ac2fde-1344-9055-42e2-db849abf02e0@huawei-partners.com>
- <20241127.oophah4Ueboo@digikod.net>
- <eafd855d-2681-8dfd-a2be-9c02fc07050d@huawei-partners.com>
- <20241128.um9voo5Woo3I@digikod.net>
-Content-Language: ru
-From: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-In-Reply-To: <20241128.um9voo5Woo3I@digikod.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: lhrpeml100010.china.huawei.com (7.191.174.197) To
- mscpeml500004.china.huawei.com (7.188.26.250)
+X-OriginatorOrg: meta.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR15MB5109.namprd15.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 080c84d0-fa9c-49a6-8c98-08dd12f825b8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Dec 2024 17:38:34.9950
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Scw+E+evJJBIMuwd2bXnWWVDIAhsNyEJbPfxgmNaXXUWGi6r5pZ1eeK5R2FGaTFJFPKibw8jK6wSCB9As8VH6g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLAPR15MB4019
+X-Proofpoint-GUID: -RZphlj_lpa_9tGFv5lMCD7x9HpS8RcW
+X-Proofpoint-ORIG-GUID: -RZphlj_lpa_9tGFv5lMCD7x9HpS8RcW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-05_03,2024-10-04_01,2024-09-30_01
 
-On 11/28/2024 11:52 PM, Mickaël Salaün wrote:
-> On Thu, Nov 28, 2024 at 03:01:52PM +0300, Mikhail Ivanov wrote:
->> On 11/27/2024 9:43 PM, Mickaël Salaün wrote:
->>> On Mon, Nov 25, 2024 at 02:04:09PM +0300, Mikhail Ivanov wrote:
->>>> On 11/22/2024 8:45 PM, Günther Noack wrote:
->>>>> Hello Mikhail,
->>>>>
->>>>> sorry for the delayed response;
->>>>> I am very happy to see activity on this patch set! :)
->>>>
->>>> Hello Günther,
->>>> No problem, thanks a lot for your feedback!
->>>>
->>>>>
->>>>> On Mon, Nov 11, 2024 at 07:29:49PM +0300, Mikhail Ivanov wrote:
->>>>>> On 9/4/2024 1:48 PM, Mikhail Ivanov wrote:
->>>>>>> Landlock implements the `LANDLOCK_RULE_NET_PORT` rule type, which provides
->>>>>>> fine-grained control of actions for a specific protocol. Any action or
->>>>>>> protocol that is not supported by this rule can not be controlled. As a
->>>>>>> result, protocols for which fine-grained control is not supported can be
->>>>>>> used in a sandboxed system and lead to vulnerabilities or unexpected
->>>>>>> behavior.
->>>>>>>
->>>>>>> Controlling the protocols used will allow to use only those that are
->>>>>>> necessary for the system and/or which have fine-grained Landlock control
->>>>>>> through others types of rules (e.g. TCP bind/connect control with
->>>>>>> `LANDLOCK_RULE_NET_PORT`, UNIX bind control with
->>>>>>> `LANDLOCK_RULE_PATH_BENEATH`). Consider following examples:
->>>>>>>
->>>>>>> * Server may want to use only TCP sockets for which there is fine-grained
->>>>>>>       control of bind(2) and connect(2) actions [1].
->>>>>>> * System that does not need a network or that may want to disable network
->>>>>>>       for security reasons (e.g. [2]) can achieve this by restricting the use
->>>>>>>       of all possible protocols.
->>>>>>>
->>>>>>> This patch implements such control by restricting socket creation in a
->>>>>>> sandboxed process.
->>>>>>>
->>>>>>> Add `LANDLOCK_RULE_SOCKET` rule type that restricts actions on sockets.
->>>>>>> This rule uses values of address family and socket type (Cf. socket(2))
->>>>>>> to determine sockets that should be restricted. This is represented in a
->>>>>>> landlock_socket_attr struct:
->>>>>>>
->>>>>>>       struct landlock_socket_attr {
->>>>>>>         __u64 allowed_access;
->>>>>>>         int family; /* same as domain in socket(2) */
->>>>>>>         int type; /* see socket(2) */
->>>>>>>       };
->>>>>>
->>>>>> Hello! I'd like to consider another approach to define this structure
->>>>>> before sending the next version of this patchset.
->>>>>>
->>>>>> Currently, it has following possible issues:
->>>>>>
->>>>>> First of all, there is a lack of protocol granularity. It's impossible
->>>>>> to (for example) deny creation of ICMP and SCTP sockets and allow TCP
->>>>>> and UDP. Since the values of address family and socket type do not
->>>>>> completely define the protocol for the restriction, we may gain
->>>>>> incomplete control of the network actions. AFAICS, this is limited to
->>>>>> only a couple of IP protocol cases (e.g. it's impossible to deny SCTP
->>>>>> and SMC sockets to only allow TCP, deny ICMP and allow UDP).
->>>>>>
->>>>>> But one of the main advantages of socket access rights is the ability to
->>>>>> allow only those protocols for which there is a fine-grained control
->>>>>> over their actions (TCP bind/connect). It can be inconvenient
->>>>>> (and unsafe) for SCTP to be unrestricted, while sandboxed process only
->>>>>> needs TCP sockets.
->>>>>
->>>>> That is a good observation which I had missed.
->>>>>
->>>>> I agree with your analysis, I also see the main use case of socket()
->>>>> restrictions in:
->>>>>
->>>>>     (a) restricting socket creating altogether
->>>>>     (b) only permitting socket types for which there is fine grained control
->>>>>
->>>>> and I also agree that it would be very surprising when the same socket types
->>>>> that provide fine grained control would also open the door for unrestricted
->>>>> access to SMC, SCTP or other protocols.  We should instead strive for a
->>>>> socket() access control with which these additional protocols weren't
->>>>> accessible.
->>>>>
->>>>>
->>>>>> Adding protocol (Cf. socket(2)) field was considered a bit during the
->>>>>> initial discussion:
->>>>>> https://lore.kernel.org/all/CABi2SkVWU=Wxb2y3fP702twyHBD3kVoySPGSz2X22VckvcHeXw@mail.gmail.com/
->>>>>
->>>>> So adding "protocol" to the rule attributes would suffice to restrict the use of
->>>>> SMC and SCTP then?  (Sorry, I lost context on these protocols a bit in the
->>>>> meantime, I was so far under the impression that these were using different
->>>>> values for family and type than TCP and UDP do.)
->>>>
->>>> Yeap. Following rule will be enough to allow TCP sockets only:
->>>>
->>>> const struct landlock_socket_attr create_socket_attr = {
->>>> 	.allowed_access = LANDLOCK_ACCESS_SOCKET_CREATE,
->>>> 	.family = AF_INET{,6},
->>>> 	.type = SOCK_STREAM,
->>>> 	.protocol = 0
->>>> };
->>>
->>> We should indeed include the protocol type in the rule definition.
->>>
->>>>
->>>> Btw, creation of SMC sockets via IP stack was added quite recently.
->>>> So far, creation has been possible only with AF_SMC family.
->>>>
->>>> https://lore.kernel.org/all/1718301630-63692-1-git-send-email-alibuda@linux.alibaba.com/
->>>>
->>>>>
->>>>>
->>>>>> Secondly, I'm not really sure if socket type granularity is required
->>>>>> for most of the protocols. It may be more convenient for the end user
->>>>>> to be able to completely restrict the address family without specifying
->>>>>> whether restriction is dedicated to stream or dgram sockets (e.g. for
->>>>>> BLUETOOTH, VSOCK sockets). However, this is not a big issue for the
->>>>>> current design, since address family can be restricted by specifying
->>>>>> type = SOCK_TYPE_MASK.
->>>
->>> It looks like SOCK_TYPE_MASK is not part of UAPI, which means it could
->>> change with kernel versions (even while being in UAPI in fact).  This
->>> new socket creation control should allow to deny any socket creation
->>> known or unknow at the time of the user space program build, and
->>> whatever the available C headers.
->>
->> Agreed
->>
->>>
->>> This also means that Landlock should accept any domain, type, and
->>> protocols defined in rules.  Indeed, we don't want to reject rules for
->>> which some protocols are not allowed.
->>
->> Do you mean that Landlock should not make any assumptions about this
->> values during a build time? Currently, patchset provides boundary checks
->> for domain (< AF_MAX) and type (< SOCK_MAX) in landlock_add_rule().
-> 
-> The *running kernel* may not support some socket's domains or types,
-> which may be confusing for users if the rule was tested on a kernel
-> supporting such domains/types. >
-> For the bitmask of domains or types, the issues to keep boundary checks
-> would be when a subset of them is not supported.  Landlock would reject
-> such rule and it would be difficult for users to identify the cause.
-
-Ok, I'll remove these checks.
-
-> 
-> I'm still wondering if the landlock_append_net_rule()'s -EAFNOSUPPORT
-> return value for kernels without CONFIG_INET was a good idea.  We should
-> probably return 0 in this case, which would be similar to not checking
-> socket's domains nor types.
-
-It seems that returning -EAFNOSUPPORT only complicates error checking
-for landlock_append_net_rule() from the user's perspective. Probably the
-only reason to check the correctness of restricted objects in Landlock
-is to provide errors consistency in hooks.
-
-> 
->>
->>>
->>> What about using bitmasks for the domain and type fields (renamed to
->>> "domains" and "types")?  The last protocol is currently 45/MCTP so a
->>> 64-bit field is enough, and 10/SOCK_PACKET also fits for the last socket
->>> type.
->>>
->>> We cannot do the same with the protocol because the higher one is
->>> 262/MPTCP though.  But it looks like a value of 0 (default protocol)
->>> should be enough for most use cases, and users could specify a protocol
->>> (but this time as a number, not a bitmask).
->>>
->>> To sum up, we could have something like this:
->>>
->>>     const struct landlock_socket_attr create_socket_attr = {
->>>     	.allowed_access = LANDLOCK_ACCESS_SOCKET_CREATE,
->>>     	.families = 1 << AF_INET | 1 << AF_INET6,
->>>     	.types = 1 << SOCK_STREAM,
->>>     	.protocol = IPPROTO_SCTP
->>>     };
->>
->> Looks good! I think it's a nice approach which will provide a sufficient
->> level of flexibility to define a single rule for a specific protocol (or
->> for related protocols).
->>
->> But, this adds possibility to define a single rule for the set of
->> unrelated protocols:
->>
->> /* Allows TCP, UDP and UNIX sockets. */
->> const struct landlock_socket_attr create_socket_attr = {
->> 	.allowed_access = LANDLOCK_ACCESS_SOCKET_CREATE,
->> 	.families = 1 << AF_INET | 1 << AF_INET6 | 1 << AF_UNIX,
->> 	.types = 1 << SOCK_STREAM | 1 << SOCK_DGRAM,
->> 	.protocol = 0
->> };
->>
->> Perhaps limiting the addition of one rule to only one address family
->> would be more clear in terms of rule semantics?:
->>
->> /* Allows TCP, UDP, UNIX STREAM, UNIX DGRAM sockets. */
->> const struct landlock_socket_attr create_socket_attrs[] = {
->> 	{
->> 		/* Allows IPv4 TCP and UDP sockets. */
->> 		.allowed_access = LANDLOCK_ACCESS_SOCKET_CREATE,
->> 		.family = AF_INET,
->> 		.types = 1 << SOCK_STREAM | 1 << SOCK_DGRAM,
->> 		.protocol = 0
->> 	},
->> 	{
->> 		/* Allows IPv6 TCP and UDP sockets. */
->> 		.allowed_access = LANDLOCK_ACCESS_SOCKET_CREATE,
->> 		.family = AF_INET6,
->> 		.types = 1 << SOCK_STREAM | 1 << SOCK_DGRAM,
->> 		.protocol = 0
->> 	},
->> 	{
->> 		/* Allows UNIX sockets. */
->> 		.allowed_access = LANDLOCK_ACCESS_SOCKET_CREATE,
->> 		.family = AF_UNIX,
->> 		.types = 1 << SOCK_STREAM | 1 << SOCK_DGRAM,
->> 		.protocol = 0
->> 	},
->> };
-> 
-> Because we are already mixing bitmasks and (protocol) value, I'm not
-> sure it will help much.  I think in most cases the "families" bitmask
-> would handle IPv4 and IPv6 the same (e.g. to only allow TCP with one
-> rule).  I think this is also required to be able to have a 1:1 mapping
-> with SELinux's socket_type_to_security_class().
-
-Ok, agreed
-
-> 
->>
->>>
->>>
->>>>>
->>>>> Whether the user is adding one rule to permit AF_INET+*, or whether the user is
->>>>> adding two rules to permit (1) AF_INET+SOCK_STREAM and (2) AF_INET+SOCK_DGRAM,
->>>>> that does not seem like a big deal to me as long as the list of such
->>>>> combinations is so low?
->>>>
->>>> Agreed
->>>
->>> I also agree, but this might change if users have to set a combination
->>> of families, types, and protocols.  This should be OK with the bitmask
->>> approach though.
->>>
->>>>
->>>>>
->>>>>
->>>>>> I suggest implementing something close to selinux socket classes for the
->>>>>> struct landlock_socket_attr (Cf. socket_type_to_security_class()). This
->>>>>> will provide protocol granularity and may be simpler and more convenient
->>>>>> in the terms of determining access rights. WDYT?
->>>>>
->>>>> I see that this is a longer switch statement that maps to this enum, it would be
->>>>> an additional data table that would have to be documented separately for users.
->>>>
->>>> This table is the general drawback, since it makes API a bit more
->>>> complex.
->>>>
->>>>>
->>>>> Do you have an example for how such a "security class enum" would map to the
->>>>> combinations of family, type and socket for the protocols discussed above?
->>>>
->>>> I think the socket_type_to_security_class() has a pretty good mapping
->>>> for UNIX and IP families.
->>>
->>> The mapping looks good indeed, and it has been tested for a long time
->>> with many applications.  However, this would make the kernel
->>> implementation more complex, and I think this mapping could easily be
->>> implemented in user space libraries with the bitmask approach, if really
->>> needed, which I'm not sure.
->>
->> I agree, implementing this in a library is a better approach. Thanks for
->> the catch!
->>
->>>
->>>>
->>>>>
->>>>> If this is just a matter of actually mapping (family, type, protocol)
->>>>> combinations in a more flexible way, could we get away by allowing a special
->>>>> "wildcard" value for the "protocol" field, when it is used within a ruleset?
->>>>> Then the LSM would have to look up whether there is a rule for (family, type,
->>>>> protocol) and the only change would be that it now needs to also check whether
->>>>> there is a rule for (family, type, *)?
->>>>
->>>> Something like this?
->>>>
->>>> const struct landlock_socket_attr create_socket_attr = {
->>>> 	.allowed_access = LANDLOCK_ACCESS_SOCKET_CREATE,
->>>> 	.family = AF_INET6,
->>>> 	.type = SOCK_DGRAM,
->>>> 	.protocol = LANDLOCK_SOCKET_PROTO_ALL
->>>> };
->>>>
->>>>>
->>>>> —Günther
->>>>
->>
+DQoNCj4gT24gTm92IDI4LCAyMDI0LCBhdCA5OjEw4oCvQU0sIEphbiBLYXJhIDxqYWNrQHN1c2Uu
+Y3o+IHdyb3RlOg0KPiANCj4gT24gV2VkIDI3LTExLTI0IDAyOjE2OjA5LCBTb25nIExpdSB3cm90
+ZToNCj4+PiBPbiBOb3YgMjYsIDIwMjQsIGF0IDQ6NTDigK9QTSwgQWxleGVpIFN0YXJvdm9pdG92
+IDxhbGV4ZWkuc3Rhcm92b2l0b3ZAZ21haWwuY29tPiB3cm90ZToNCj4+PiANCj4+IA0KPj4gWy4u
+Ll0NCj4+IA0KPj4+Pj4gKw0KPj4+Pj4gK3N0YXRpYyB2b2lkIHNhbXBsZV9maWx0ZXJfZnJlZShz
+dHJ1Y3QgZmFub3RpZnlfZmlsdGVyX2hvb2sgKmZpbHRlcl9ob29rKQ0KPj4+Pj4gK3sNCj4+Pj4+
+ICsgICAgICAgc3RydWN0IGZhbl9maWx0ZXJfc2FtcGxlX2RhdGEgKmRhdGEgPSBmaWx0ZXJfaG9v
+ay0+ZGF0YTsNCj4+Pj4+ICsNCj4+Pj4+ICsgICAgICAgcGF0aF9wdXQoJmRhdGEtPnN1YnRyZWVf
+cGF0aCk7DQo+Pj4+PiArICAgICAgIGtmcmVlKGRhdGEpOw0KPj4+Pj4gK30NCj4+Pj4+ICsNCj4+
+Pj4gDQo+Pj4+IEhpIFNvbmcsDQo+Pj4+IA0KPj4+PiBUaGlzIGV4YW1wbGUgbG9va3MgZmluZSBi
+dXQgaXQgcmFpc2VzIGEgcXVlc3Rpb24uDQo+Pj4+IFRoaXMgZmlsdGVyIHdpbGwga2VlcCB0aGUg
+bW91bnQgb2Ygc3VidHJlZV9wYXRoIGJ1c3kgdW50aWwgdGhlIGdyb3VwIGlzIGNsb3NlZA0KPj4+
+PiBvciB0aGUgZmlsdGVyIGlzIGRldGFjaGVkLg0KPj4+PiBUaGlzIGlzIHByb2JhYmx5IGZpbmUg
+Zm9yIG1hbnkgc2VydmljZXMgdGhhdCBrZWVwIHRoZSBtb3VudCBidXN5IGFueXdheS4NCj4+Pj4g
+DQo+Pj4+IEJ1dCB3aGF0IGlmIHRoaXMgd2Fzbid0IHRoZSBpbnRlbnRpb24/DQo+Pj4+IFdoYXQg
+aWYgYW4gQW50aS1tYWx3YXJlIGVuZ2luZSB0aGF0IHdhdGNoZXMgYWxsIG1vdW50cyB3YW50ZWQg
+dG8gdXNlIHRoYXQNCj4+Pj4gZm9yIGNvbmZpZ3VyaW5nIHNvbWUgaWdub3JlL2Jsb2NrIHN1YnRy
+ZWUgZmlsdGVycz8NCj4+Pj4gDQo+Pj4+IE9uZSB3YXkgd291bGQgYmUgdG8gdXNlIGEgaXNfc3Vi
+dHJlZSgpIHZhcmlhbnQgdGhhdCBsb29rcyBmb3IgYQ0KPj4+PiBzdWJ0cmVlIHJvb3QgaW5vZGUN
+Cj4+Pj4gbnVtYmVyIGFuZCB0aGVuIHZlcmlmaWVzIGl0IHdpdGggYSBzdWJ0cmVlIHJvb3QgZmlk
+Lg0KPj4+PiBBIHByb2R1Y3Rpb24gc3VidHJlZSBmaWx0ZXIgd2lsbCBuZWVkIHRvIHVzZSBhIHZh
+cmlhbnQgb2YgaXNfc3VidHJlZSgpDQo+Pj4+IGFueXdheSB0aGF0DQo+Pj4+IGxvb2tzIGZvciBh
+IHNldCBvZiBzdWJ0cmVlIHJvb3QgaW5vZGVzLCBiZWNhdXNlIGRvaW5nIGEgbG9vcCBvZiBpc19z
+dWJ0cmVlKCkgZm9yDQo+Pj4+IG11bHRpcGxlIHBhdGhzIGlzIGEgbm8gZ28uDQo+Pj4+IA0KPj4+
+PiBEb24ndCBuZWVkIHRvIGNoYW5nZSBhbnl0aGluZyBpbiB0aGUgZXhhbXBsZSwgdW5sZXNzIG90
+aGVyIHBlb3BsZQ0KPj4+PiB0aGluayB0aGF0IHdlIGRvIG5lZWQgdG8gc2V0IGEgYmV0dGVyIGV4
+YW1wbGUgdG8gYmVnaW4gd2l0aC4uLg0KPj4+IA0KPj4+IEkgdGhpbmsgd2UgaGF2ZSB0byB0cmVh
+dCB0aGlzIHBhdGNoIGFzIGEgcmVhbCBmaWx0ZXIgYW5kIG5vdCBhcyBhbiBleGFtcGxlDQo+Pj4g
+dG8gbWFrZSBzdXJlIHRoYXQgdGhlIHdob2xlIGFwcHJvYWNoIGlzIHdvcmthYmxlIGVuZCB0byBl
+bmQuDQo+Pj4gVGhlIHBvaW50IGFib3V0IG5vdCBob2xkaW5nIHBhdGgvZGVudHJ5IGlzIHZlcnkg
+dmFsaWQuDQo+Pj4gVGhlIGFsZ29yaXRobSBuZWVkcyB0byBzdXBwb3J0IHRoYXQuDQo+PiANCj4+
+IEhtbS4uIEkgYW0gbm90IHN1cmUgd2hldGhlciB3ZSBjYW5ub3QgaG9sZCBhIHJlZmNvdW50LiBJ
+ZiB0aGF0IGlzIGEgDQo+PiByZXF1aXJlbWVudCwgdGhlIGFsZ29yaXRobSB3aWxsIGJlIG1vcmUg
+Y29tcGxleC4NCj4gDQo+IFdlbGwsIGZvciBwcm9kdWN0aW9uIHVzZSB0aGF0IHdvdWxkIGNlcnRh
+aW5seSBiZSBhIHJlcXVpcmVtZW50LiBNYW55IHllYXJzDQo+IGFnbyBkbm90aWZ5ICh0aGUgZmly
+c3QgZnMgbm90aWZpY2F0aW9uIHN1YnN5c3RlbSkgd2FzIHByZXZlbnRpbmcNCj4gZmlsZXN5c3Rl
+bXMgZnJvbSBiZWluZyB1bm1vdW50ZWQgYmVjYXVzZSBpdCByZXF1aXJlZCBvcGVuIGZpbGUgYW5k
+IGl0IHdhcyBhDQo+IHBhaW4uDQo+IA0KPj4gSUlVQywgZnNub3RpZnlfbWFyayBvbiBhIGlub2Rl
+IGRvZXMgbm90IGhvbGQgYSByZWZjb3VudCB0byBpbm9kZS4NCj4gDQo+IFRoZSBjb25uZWN0b3Ig
+KGhlYWQgb2YgdGhlIG1hcmsgbGlzdCkgZG9lcyBob2xkIGlub2RlIHJlZmVyZW5jZS4gQnV0IHdl
+DQo+IGhhdmUgYSBob29rIGluIHRoZSB1bm1vdW50IHBhdGggKGZzbm90aWZ5X3VubW91bnRfaW5v
+ZGVzKCkpIHdoaWNoIGRyb3BzIGFsbA0KPiB0aGUgbWFya3MgYW5kIGNvbm5lY3RvcnMgZm9yIHRo
+ZSBmaWxlc3lzdGVtLg0KPiANCj4+IEFuZCB3aGVuIHRoZSBpbm9kZSBpcyBldmljdGVkLCB0aGUg
+bWFyayBpcyBmcmVlZC4gSSBndWVzcyB0aGlzIA0KPj4gcmVxdWlyZXMgdGhlIHVzZXIgc3BhY2Us
+IHRoZSBBbnRpVmlydXMgc2Nhbm5lciBmb3IgZXhhbXBsZSwgdG8gDQo+PiBob2xkIGEgcmVmZXJl
+bmNlIHRvIHRoZSBpbm9kZT8gSWYgdGhpcyBpcyB0aGUgY2FzZSwgSSB0aGluayBpdCANCj4+IGlz
+IE9LIGZvciB0aGUgZmlsdGVyLCBlaXRoZXIgYnBmIG9yIGtlcm5lbCBtb2R1bGUsIHRvIGhvbGQg
+YSANCj4+IHJlZmVyZW5jZSB0byB0aGUgc3VidHJlZSByb290Lg0KPiANCj4gTm8sIGZzbm90aWZ5
+IHBpbnMgdGhlIGlub2RlcyBpbiBtZW1vcnkgKHdoaWNoIGlmIGZpbmUpIGJ1dCByZWxlYXNlcyB0
+aGVtDQo+IHdoZW4gdW5tb3VudCBzaG91bGQgaGFwcGVuLiBVc2Vyc3BhY2UgZG9lc24ndCBuZWVk
+IHRvIHBpbiBhbnl0aGluZy4NCg0KVG8gZ2V0IHNpbWlsYXIgbG9naWMgZm9yIHRoZSBmaWx0ZXIg
+KG1vZHVsZSBvciBCUEYpLCB3ZSB3aWxsIG5lZWQgDQphbm90aGVyIGNhbGwgYmFjay4gV2Ugc2hv
+dWxkIGFkZCB0aGlzLCB0aG91Z2ggd2UgbWF5IG5vdCB1c2UgaXQgDQppbiB0aGUgc3VidHJlZSBt
+b25pdG9yaW5nIGNhc2UuIA0KDQo+IA0KPj4+IEl0IG1heSB2ZXJ5IHdlbGwgdHVybiBvdXQgdGhh
+dCB0aGUgbG9naWMgb2YgaGFuZGxpbmcgbWFueSBmaWx0ZXJzDQo+Pj4gd2l0aG91dCBhIGxvb3Ag
+YW5kIG5vdCBncmFiYmluZyBhIHBhdGggcmVmY250IGlzIHRvbyBjb21wbGV4IGZvciBicGYuDQo+
+Pj4gVGhlbiB0aGlzIHN1YnRyZWUgZmlsdGVyaW5nIHdvdWxkIGhhdmUgdG8gc3RheSBhcyBhIGtl
+cm5lbCBtb2R1bGUNCj4+PiBvciBleHRyYSBmbGFnL2ZlYXR1cmUgZm9yIGZhbm90aWZ5Lg0KPj4g
+DQo+PiBIYW5kbGluZyBtdWx0aXBsZSBzdWJ0cmVlcyBpcyBpbmRlZWQgYW4gaXNzdWUuIFNpbmNl
+IHdlIHJlbHkgb24gDQo+PiB0aGUgbWFyayBpbiB0aGUgU0IsIG11bHRpcGxlIHN1YnRyZWVzIHVu
+ZGVyIHRoZSBzYW1lIFNCIHdpbGwgc2hhcmUNCj4+IHRoYXQgbWFyay4gVW5sZXNzIHdlIHVzZSBz
+b21lIGNhY2hlLCBhY2Nlc3NpbmcgYSBmaWxlIHdpbGwgDQo+PiB0cmlnZ2VyIG11bHRpcGxlIGlz
+X3N1YmRpcigpIGNhbGxzLiANCj4+IA0KPj4gT25lIHBvc3NpYmxlIHNvbHV0aW9uIGlzIHRoYXQg
+aGF2ZSBhIG5ldyBoZWxwZXIgdGhhdCBjaGVja3MNCj4+IGlzX3N1YmRpcigpIGZvciBhIGxpc3Qg
+b2YgcGFyZW50IHN1YnRyZWVzIHdpdGggYSBzaW5nbGUgc2VyaWVzDQo+PiBvZiBkZW50cnkgd2Fs
+ay4gSU9XLCBzb21ldGhpbmcgbGlrZToNCj4+IA0KPj4gYm9vbCBpc19zdWJkaXJfb2ZfYW55KHN0
+cnVjdCBkZW50cnkgKm5ld19kZW50cnksIA0KPj4gICAgICAgICAgICAgICAgICAgICAgc3RydWN0
+IGxpc3RfaGVhZCAqbGlzdF9vZl9kZW50cnkpLg0KPj4gDQo+PiBGb3IgQlBGLCBvbmUgcG9zc2li
+bGUgc29sdXRpb24gaXMgdG8gd2FsayB0aGUgZGVudHJ5IHRyZWUgDQo+PiB1cCB0byB0aGUgcm9v
+dCwgdW5kZXIgYnBmX3JjdV9yZWFkX2xvY2soKS4NCj4gDQo+IEkgY2FuIHNlZSB0d28gcG9zc2li
+bGUgaXNzdWVzIHdpdGggdGhpcy4gRmlyc3RseSwgeW91IGRvbid0IGhhdmUgbGlzdF9oZWFkDQo+
+IGluIGEgZGVudHJ5IHlvdSBjb3VsZCBlYXNpbHkgdXNlIHRvIHBhc3MgZGVudHJpZXMgdG8gYSBm
+dW5jdGlvbiBsaWtlIHRoaXMuDQo+IFByb2JhYmx5IHlvdSdsbCBuZWVkIGFuIGV4dGVybmFsIGFy
+cmF5IHdpdGggZGVudHJ5IHBvaW50ZXJzIG9yIHNvbWV0aGluZw0KPiBsaWtlIHRoYXQuDQo+IA0K
+PiBTZWNvbmQgaXNzdWUgaXMgbW9yZSBpbmhlcmVudCBpbiB0aGUgQlBGIGZpbHRlciBhcHByb2Fj
+aCAtIGlmIHRoZXJlIHdvdWxkDQo+IGJlIG1vcmUgbm90aWZpY2F0aW9uIGdyb3VwcyBlYWNoIHdh
+dGNoaW5nIGZvciBzb21lIHN1YnRyZWUgKGxpa2UgdXNlcnMNCj4gd2F0Y2hpbmcgdGhlaXIgaG9t
+ZSBkaXJzLCBhcHBzIHdhdGNoaW5nIHRoZWlyIHN1YnRyZWVzIHdpdGggZGF0YSBldGMuKSwgdGhl
+bg0KPiB3ZSdkIHN0aWxsIGVuZCB1cCB0cmF2ZXJzaW5nIHRoZSBkaXJlY3RvcnkgdHJlZSBmb3Ig
+ZWFjaCBzdWNoIG5vdGlmaWNhdGlvbg0KPiBncm91cC4gVGhhdCBzZWVtcyBzdWJvcHRpbWFsIGJ1
+dCBJIGhhdmUgdG8gdGhpbmsgaG93IG11Y2ggd2UgY2FyZSBob3cgd2UNCj4gY291bGQgcG9zc2li
+bHkgYXZvaWQgdGhhdC4NCg0KRm9yIHRoZSBzdWJ0cmVlIG1vbml0b3JpbmcgZXhhbXBsZSwgbWF5
+YmUgIm1vbml0b3IgdGhlIHdob2xlIHNiIA0KYW5kIGZpbHRlciB0aGUgZXZlbnRzIiBpcyBub3Qg
+dGhlIHJpZ2h0IGFwcHJvYWNoLiBNYWludGFpbmluZyBhIA0KbWFyayBvbiBlYWNoIGRpcmVjdG9y
+eSB1bmRlciB0aGUgc3VidHJlZSBtaWdodCBiZSBhIGJldHRlciBhcHByb2FjaC4gDQpBbnkgY29t
+bWVudHMgb3Igc3VnZ2VzdGlvbnMgb24gdGhpcz8NCg0KVGhhbmtzLA0KU29uZw0KDQo=
