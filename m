@@ -1,146 +1,80 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic303-28.consmr.mail.ne1.yahoo.com (sonic303-28.consmr.mail.ne1.yahoo.com [66.163.188.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E70C223CE;
-	Tue,  3 Dec 2024 16:03:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F8CF1F76BE
+	for <linux-security-module@vger.kernel.org>; Tue,  3 Dec 2024 19:49:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.188.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733241810; cv=none; b=ONPhPZnaxYmCOgezLJs4UY6FkzK5LwjAFAk/zpUAJjdts2mwqDHYH+0wmuOaAKpMcZ8p4CWx+XB+mTzuCxb3SYw0zxkjSjXjV7voZNAq+YTpNyOjq4wd6KiU8UZQE87Nygc7RIH8btv3pFdroKG3Glg0BJ/P+3sRfB8I8AMsfDk=
+	t=1733255376; cv=none; b=Ew4vh4lWW8EP+I4ozK6JEcL5gRUg4VLljkKU+hJfQ41EJWIZj6eh5eOkdpS6H+FB3NqcB/HRT4GFyfGCyhs5FD9fxHSZPUdwr0YHEcspAtDRAtA8Z/7R/ypdmWSDVpuoHk8KMAOahvCXAJS2HLoiwghG7vVMjRWjv5Z5yTiHkk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733241810; c=relaxed/simple;
-	bh=1wm8VU2k6nsO+/umiWcRuh2paY89HdBSNb686MfE21k=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=chkPq2rMto+LWenVKEBwj7BQpiEkA5mr1bzW/XDUzIv/D359Yi5ucuMBRlZFTTDeYFdcsWiNWfH8L22vBHKKdsJMZDCdhk+L8aOzBtMVYlWgQgcrrRIHfdTqjOX9Ziq27imHD+pLt4vB4HcNtB/R2Wa2M5SEHEiLcesAmkNN+Is=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=DTCMe78g; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1733255376; c=relaxed/simple;
+	bh=1hhAoBvrf9N7IbOa5cmyJLA7EmkasAR4g3qIUHqoE/4=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type:
+	 References; b=CZrXjZY7L7/7QTxTLceoE3Zv3xyUYlnYXy0VyLoqoGg1HJZIu1HtyavtM/ZCbcJ7FejQyRdGcCxOGhxUc2ogU9ViYYfrdWglPOjekrvcqNiXmweJ362cExcVYZ+RW9dXgJjVtgmBjSOtYgmkc7QuZyozE6zwxVOs5HarLVdRpW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=FTZCt/8Q; arc=none smtp.client-ip=66.163.188.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="DTCMe78g"
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B3Csm4W014626;
-	Tue, 3 Dec 2024 16:03:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=AB6ql1
-	Lm3mqwBjXtDY+Mfmwa6WnsslgZoWq9phCEbKc=; b=DTCMe78gmAyVzpknlkLOXL
-	Rpg+loZpBVZD3CPAOwljK8au0mWPAbsEXnT4FWxSnDbOtTorhiCJ0JMi5iXJ1AIl
-	NAqha6wnUp/jvZUSpwrnLKyEDmGecr+cT6FHq8LnzBmPaMRskW3QH6tzl/LwjTcL
-	uUaGZbdX40imH9baD33q2Dn+a6nT538Yrczc/tBRiaN2IL+t/5Voavfwl1wu67TB
-	x0+YwggWo5EjHVAUxS6UyGqzquTDro9yP5ZUzWbYtTFRxks0IzjV+aAEbwThwEf7
-	TZsF4Lzt01HQYoMaH+MwwqxJnAPhZvyaJq0LGcfh+DJQVCdTFAMrGE1He/R1D44g
-	==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 437tbxjjjk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 03 Dec 2024 16:03:10 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B3D3PMW023551;
-	Tue, 3 Dec 2024 16:03:09 GMT
-Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 438e1n0cwe-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 03 Dec 2024 16:03:09 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4B3G39U622348424
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 3 Dec 2024 16:03:09 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E5B5A58043;
-	Tue,  3 Dec 2024 16:03:08 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6808C58055;
-	Tue,  3 Dec 2024 16:03:08 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.31.103.152])
-	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  3 Dec 2024 16:03:08 +0000 (GMT)
-Message-ID: <f588fffdb27b28531e900e59cc17182617726b59.camel@linux.ibm.com>
-Subject: Re: [PATCH] ima: instantiate the bprm_creds_for_exec() hook
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: linux-integrity@vger.kernel.org, roberto.sassu@huawei.com,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-        audit@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
-        Jeff Xu
-	 <jeffxu@chromium.org>, Kees Cook <kees@kernel.org>
-Date: Tue, 03 Dec 2024 11:03:08 -0500
-In-Reply-To: <20241203.oZu0aemaiv5a@digikod.net>
-References: <20241127210234.121546-1-zohar@linux.ibm.com>
-	 <20241129.keeDathoo3Oh@digikod.net>
-	 <421b119b81ec044fcdc714aac5748ebe5b4557aa.camel@linux.ibm.com>
-	 <20241203.oZu0aemaiv5a@digikod.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="FTZCt/8Q"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1733255373; bh=1hhAoBvrf9N7IbOa5cmyJLA7EmkasAR4g3qIUHqoE/4=; h=Date:To:Cc:From:Subject:References:From:Subject:Reply-To; b=FTZCt/8QsZORLJiGzl/MVAYHniDducJBmzV8+gK53l16Kz1D9x8eY9EeidIu8uVGTLnm4wvCX4fhmhKadRk2NnGkbq7utkxfkQWzSimfmgUSMCj1wxeN3rmNo9RMxgVSXjGtwbcpycB6mlQXRIClw8YlcDZir6wJk1fhFVcJxqW8JfHBxa89HN/qmcQhcQoc/Y5VM19RP1U6ELjOfUd0yl1c63FEyc6LVlcZPUv73QmxmGDuIdacpJwQztBnal7ogPBl3BJgn21/lozwe8EQ5V/lIgklqVfk03xnjmU9YAamHrmlUYnOaSL8Bo4DeuHF38MxK9NjJdPbEU1KVIaoYQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1733255373; bh=Rd0IIYaymaz/9203tQytWNaB4yQa+9xmksTruwNDeJg=; h=X-Sonic-MF:Date:To:From:Subject:From:Subject; b=pRXoWyrm2NCxlgs6cxGVKY3tsrsXVCbcXj6NXBToBmcV6vluLF3WnxyS+JOhFPqn7ntqQcnSQb3URCjA6IyhiIYf2BmciRZRw8+81P6sJHfGSqCSaYmUu+Ikt7k3NoVstqBztS9TIrOS9RldC5hGigzgsLrpw5S/3lVmIT1wfiAK+H7NSgTOXDmoI2UaNNts/8sQQoY6ec8RCKr36BMH3H/Fk+JJgxFv3b+JkPu49JSdRTA8535JTEC87HglbOQmr1RHYmLw+GNf7+pDuH3IQwPi/InFo0xBjcuGcYy0v+3CY6QD5LSAmIsOM4iBDlrgohbu8lpHD7JqL2RvPfAntw==
+X-YMail-OSG: RFd6zMUVM1mESMltGW3BTMNYkeBASvqqQq3QRymBwIlhvKMpOY4t2_ZKonIcDBG
+ H1Dpf7X16gm8fTwSZ66V60XZWtBk5SXzahiAC5uorExuSrmspiYvVXlvkx0KdgflezpjaXNW_9vo
+ wLdPnTNt0JY.ynwvUmX2GyMCI0ftrE_ID1EwGyFHjfZYj9xWobBrJFYMSfuEPyKQB3_2TpNfrMwy
+ aFPnQ01zDuLOtGZbsHwefikimHFOzTwdODlkWSprYUaCdCaXEJidNEJOH9MZeZtcKrTCC5wbXMpY
+ gBro_DsvWdgB7_XQetN3VqVcZbhQxK1lh0pGVlntRdEV3PsBe8TFijAasr48FuBzVghpORjtvZbJ
+ lWX2LdRnDhfeYV7Q9tAZVaI4oBcRws9XCKun_g7J_2Ye8HannurE3iBvGL8vKadiH05.B73MmK2L
+ RwpFRVe0XBX.fEkJFSq3c6T.aexRLpPi.gzL2hX5Bul.OIgNraEWnNpGuwNnM9H2EosRmsvA.4Pp
+ fJwxpjvYT710mUlWdQ0OyJkRMqGs0tfa3j38lgvPBhSv.elj_VujPT0Iejz43Oj6Q.HIAjQ0wRyp
+ DuL1Alrx8EIeE1HOsNh2HQXSIxT5b_tT66C6F.vfVrbSxmRVFP4XKVDg9hmVoA61R6HbIc9P5XJU
+ f3cNlxhXo5cDepWNZ.yKIkb_yUuIfTY9mt8bsHIZdxTgcDFeOrB2P54P86N5MCcEomkCD20R0Acv
+ KhZWhaG.XtmYJARHYf_vmzWw5s5SK5Lnk9wxbQwXFsdMg3U6EHTlt0jbTM9ywCrsBWJXMb2AJxtm
+ hUHk1KIeHmdG0ns3j2k6CsAx1igI_YbC6QIZtoXMcrBj.GFj9WY1OKtr.GgBNMMeK2KAwyDUltj0
+ MFjZPsNclcBoIwVRI2KbT2PGmuZxoKebbKbowb1wUP7gTcvGMHaB5Z2_oJDgSvs9VC.D7Rf.13eY
+ TdLJv3iQcrSs_q8sabRlZzgVDx1txqYQ_a31LlDePOsAIOsMbidCnA9DBh7Vb6mlt_TRmMeW3u4O
+ eStIvWXX1IRma9OJUNg0ct5Y2NXG4TFZ_BHNep7nCbzbaKHxiu6Ckwimk4tDNzuN5WuSzARarYw5
+ PTxoUq6kN9sfQ6p5CZpmpxhMKbTDv89NN7Rkc1zYuVmZvb2xdcUjxpna5Diz1GL_PzwyNAUc28Ht
+ F1HWH0BSwUIQ8E3RvX79mZ6aly5iJuWqLTs6KKOhpA600ctelpAyqVIYtALTDq_wKZcY8y6ZTK7i
+ 89zfSV6rAuUhOv3krwu26Y3AxM1DLyo2.2Jy6C24Ym3gQkNjr2xTXGKYG81H9bpDHK1SKN.B8fHH
+ Lt8i04gGXixqngZWYEc1IMvtJNwU9GYOP0IUsiS.jXkdvwxFrYLcCs_vbW7ekxz.GVI5JmgPL8v4
+ myHzJu2EVXKt.k9nRnrzfvG5daBBdBNd2EHsBsq3TQI6zLxqtAMR6Z5sN13tSanbsnrNviLef1FY
+ ancWnB83XizYkw1M_5RwhMj0JXy9u.liWKxixilfsNV7Wyu.1OxdeF59Hf0QWyahWU8NMtSE8d5e
+ Lk1vSAsNa.C14SbGkCSFwg8pky8KVlFQoRjcErfiOV9ipVQO41NLbRsqIPJ1p1rai4O0sif1M4Nq
+ Ywf_kc7_ZLXxLFWsRC.depSfoIrdG9hW_piA.qwymz3o.9Q9yVY3HW33FKqbjJ4RKe39R3yxZ9uk
+ 6xs6VhVnVFtPvwpuIpVR_MTLMRpK5MjDVW6iG1pC09Lc2eRaUErg1S0SIEbAPr6GfPjelnzlN4SR
+ WjO_fmAXZ4TPJmaeZWgDmNPXTkytfUVnnFfQvoXsG68oByf79cixzNwcVRmdLqimrPnsUISTCxZ4
+ 9efBD2t.Ph2CCfZOYZ80W5SAxh9TNNXZd3e0F7fEpqB1Dv3CTU.wxuVBk823HXren9VDhUgq5Efh
+ 4vqJ7h2nY5zysBvJr8ABokH72i4ZAD27NfE9BDy02Qqys.hqfnj8uof0ylbKNGGRklKTExx2HZa9
+ _3rekAfry1PpSg2QwAeIm17CWfyBhJiaj.jZR.ZVOasJkSEfqCpTRBru06vmFwssRIipu40fS_L_
+ oQqlo2VgZJv9QzRYzlP8dy.ZoJ2AwDhzcGGiFRAl315r_EvxkUnn_u668MMIi4U5Km5HVdwEoEDY
+ dM65.14_D4ERe4nvZJxZFt2T2TBXgLJHact.8qIByES1.MSvdTXy1cHzKqdECITVe0Uw3mv0QM.z
+ VqY0c_jZ6X1ICPaFu01AtcieNOA9ZsF90_O32hysUQqkuybl4lKraCtmJ61DR.u3Efr0yY77eTT0
+ Szc5J
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: cca71c90-d104-4fc9-9b53-1f1dbf1e64ac
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.ne1.yahoo.com with HTTP; Tue, 3 Dec 2024 19:49:33 +0000
+Received: by hermes--production-gq1-5dd4b47f46-mb2l9 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 13984d63c985a630996f9b00a6a6b56d;
+          Tue, 03 Dec 2024 19:29:13 +0000 (UTC)
+Message-ID: <f16f8d81-3894-404d-baeb-febf2fba16f7@schaufler-ca.com>
+Date: Tue, 3 Dec 2024 11:29:11 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: V0vnWNp8XSm0ldcdvHu0FdPdWm7dODi0
-X-Proofpoint-GUID: V0vnWNp8XSm0ldcdvHu0FdPdWm7dODi0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 impostorscore=0
- mlxscore=0 suspectscore=0 mlxlogscore=884 priorityscore=1501 bulkscore=0
- phishscore=0 adultscore=0 malwarescore=0 spamscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412030134
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Paul Moore <paul@paul-moore.com>
+Cc: Casey Schaufler <casey@schaufler-ca.com>,
+ LSM List <linux-security-module@vger.kernel.org>
+From: Casey Schaufler <casey@schaufler-ca.com>
+Subject: RE: LSM: Replace secctx/len pairs with lsm_context
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+References: <f16f8d81-3894-404d-baeb-febf2fba16f7.ref@schaufler-ca.com>
+X-Mailer: WebService/1.1.22941 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Tue, 2024-12-03 at 12:53 +0100, Micka=C3=ABl Sala=C3=BCn wrote:
-> On Mon, Dec 02, 2024 at 02:40:35PM -0500, Mimi Zohar wrote:
-> > On Fri, 2024-11-29 at 12:06 +0100, Micka=C3=ABl Sala=C3=BCn wrote:
-> > > For reference, here is the base patch series:
-> > > https://lore.kernel.org/all/20241112191858.162021-1-mic@digikod.net/
-> > >=20
-> > > CCing audit@
-> > >=20
-> > > On Wed, Nov 27, 2024 at 04:02:34PM -0500, Mimi Zohar wrote:
-> > > > Like direct file execution (e.g. ./script.sh), indirect file execut=
-ion
-> > > > (e.g. sh script.sh) needs to be measured and appraised.  Instantiat=
-e
-> > > > the new security_bprm_creds_for_exec() hook to measure and verify t=
-he
-> > > > indirect file's integrity.  Unlike direct file execution, indirect =
-file
-> > > > execution integrity is optionally enforced by the interpreter.
-> > > >=20
-> > > > Update the audit messages to differentiate between kernel and users=
-pace
-> > > > enforced integrity.
-> > >=20
-> > > I'm not sure to see the full picture.  What is the difference between
-> > > execveat() calls and execveat() + AT_EXECVE_CHECK calls?  Both are fr=
-om
-> > > user space, the only difference is that the first can lead to a full
-> > > execution, but the intent is the same.
-> >=20
-> > We do want the full execution in order to measure/appraise/audit both t=
-he direct
-> > file execution (e.g. ./script.sh) and the interpreter (e.g. #!/usr/bin/=
-bash)
-> > specified.
->=20
-> Yes, but I was wondering about the difference in the log messages.  In
-> both cases the script is checked, but only without AT_EXECVE_CHECK its
-> "dependencies" (e.g. script interpreter) are checked.  I guess it could
-> be useful to differenciate those but I wanted to make sure we were on
-> the same page.
-
-By "those" I assume you're referring to with/without AT_EXECVE_CHECK and no=
-t the
-missing "dependencies".
-
-In both cases the integrity of the script is being checked, but in one case=
- the
-integrity is being enforced by the kernel, while in the other case userspac=
-e may
-enforce integrity.  The audit message should different between these two ca=
-ses.
-
-Mimi
-
+Paul, do you want a revised patch set for the lsm_context change,
+or do you want to stick with what's in dev-staging?
 
