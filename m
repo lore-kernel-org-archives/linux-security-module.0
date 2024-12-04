@@ -1,292 +1,110 @@
-Received: from mout.perfora.net (mout.perfora.net [74.208.4.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic314-26.consmr.mail.ne1.yahoo.com (sonic314-26.consmr.mail.ne1.yahoo.com [66.163.189.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A05D768FD;
-	Wed,  4 Dec 2024 15:59:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.208.4.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC8242391BE
+	for <linux-security-module@vger.kernel.org>; Wed,  4 Dec 2024 17:16:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.189.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733327994; cv=none; b=VHii7p7ZxDtaE5prlgrywllBx8asPyRFJCZ4T9hdvFyqoxTC4eVhGh6S1LD7ljsnz6SgohkxYmaQnFtnR7z4788wwuSyPl93481oLZ8vdVh3ukcIA9CcIFq2G4s6ChoppMARkMqSXhTDxAtyemlOn5benJKHk5TSRRSIn88AyMU=
+	t=1733332611; cv=none; b=q1CTc97Lvsd9sr1tfxdzgWUDH7rAHwQ7Yn48Zcs/UZjo+kQ6ToWCKHn+Xo/oKXeCkKWyxwbsMTdvFCL5+UvZhMvxvdgs69op0tMEHOFmdv3T9TExmiKIbbcLStXwddVTyD4I9pp9OozExikevQcoFRJQeVHJisyUti0gK1vAg2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733327994; c=relaxed/simple;
-	bh=zIA3TxiOmbKF3e5A5//COwVad3MJeBPLDUKpu1l/bAA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oAznz1A9EPpbgYNqE19tXR1ZECyHDJg/TDBq7crDW/pF2aH8n8mSEyXebjmm3BYP6t28UB99sI8bMq6KlSOtm7kgeY3EFa97D8iiBP8rT4QxTf8nIIN08TpreRtTrHtcW5C+HDJj9AWCyuKoaP/GaQI+UnwLyRqufwpSx/9oVIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jordanrome.com; spf=pass smtp.mailfrom=jordanrome.com; dkim=pass (2048-bit key) header.d=jordanrome.com header.i=linux@jordanrome.com header.b=m42WVFSO; arc=none smtp.client-ip=74.208.4.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jordanrome.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jordanrome.com
+	s=arc-20240116; t=1733332611; c=relaxed/simple;
+	bh=1M+pc0gnBkiOS0bKSh8WykprIL0kKeuWWOWOejfdfjs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r53YK/bo92f76NkId5sXAMmnM/6NQOfXnaG/heoEfJ+/XjM9Iv8NAq6V3L2sIMdXIMfZI3PQDq2jvUN6VxhLjdHdf93oOPhG87ay0SsSm8pyosz4iNf1CU4V8hwlqGqwyUZecE3/GDWwKtp41u9y/D768QSpkIvpoJZFm3mzK0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=kjWQOjg0; arc=none smtp.client-ip=66.163.189.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jordanrome.com header.i=linux@jordanrome.com header.b="m42WVFSO"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jordanrome.com;
-	s=s1-ionos; t=1733327966; x=1733932766; i=linux@jordanrome.com;
-	bh=XCB4W2BOQL/tfAWKczjPzz6aeIxJEWr6go/9V2esXIA=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:
-	 MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=m42WVFSOPdtT+ZtaDLyusIRVRFW3Z7uRQK49gJiw7GFdFo5r7Ow1/2Y91gMPqkRc
-	 5KnABkeYF8tGIAxXJMyCH/HicQczbacL5FiR3/Vw2h8qfuwyle9fNPWDJiUF+AmQ0
-	 vkyuNhV/jeX8l6uNIzKAdjJMamMjPxBmdvqZni38kx6XbH2AOsdBWD7c/0+TLQ2W3
-	 Dd6/QhBmbg8OezCb/m3WhON25QGPlT3eYOFr5RvWbwwoFys3RCZ0vP6BCWBr84srD
-	 VXfI81YeftUjdBtawlvmG+OPeUO1kU0WY+Wawie1F8aLiDEAZ1XjDYlLspNY6w6CO
-	 UP0yZ8c/VzhYslb8Fg==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from localhost ([69.171.251.10]) by mrelay.perfora.net (mreueus002
- [74.208.5.2]) with ESMTPSA (Nemesis) id 0M3ys8-1tb5QN3E2c-00vkaj; Wed, 04 Dec
- 2024 16:59:25 +0100
-From: Jordan Rome <linux@jordanrome.com>
-To: linux-security-module@vger.kernel.org
-Cc: linux-trace-kernel@vger.kernel.org,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Kernel Team <kernel-team@fb.com>,
-	Serge Hallyn <sergeh@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [v9] security: add trace event for cap_capable
-Date: Wed,  4 Dec 2024 07:59:11 -0800
-Message-ID: <20241204155911.1817092-1-linux@jordanrome.com>
-X-Mailer: git-send-email 2.43.5
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="kjWQOjg0"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1733332602; bh=PvfwH6Rb3iGeOKjhjdFXumFZlZ6VJjUVLQf0cq2EA5I=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=kjWQOjg06cmJOrXVWsrg1eZAbjBjZzaCthhst/g2LU+2sTRu84SM5BahTdW6l9CB/rf7AQEHoz2Wzh1XQ23Krbssx9wAlP6ienH8olcAP2AmQGYgLfxvnXeG4gJJ91tEgFaxpsJ33BG2I8JvIvER4Y6g/U1h/JOTq5tjVU1wAvzf+5NB5WME9Y80dl5fMcYDiv+0HM+BU5zHpLAjYQSKPKriqaOWHpdczi4jNHW7PfHlYI+r2uN4ntOlREhRYV7ebs8XM6mP01cfHrSMb78B3F/HeGedI1j7+lxiCDfjwCtfyI8VziK05XxQS3IwRuoI0RBczAB20CEWDI5e1Qhk6w==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1733332602; bh=5fn+Ac6P/jiLpr+lC/7GCc5wdnpvKN3a1xdTrHD/CT0=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=VvmoBhYQo4OjrpQvKxKJ6BW4hHCBX1BWuKLhZTQObmgp/HouSlN4jW6ncC7yxK/t3rh8jPDplY6CMEsfbHtqGJ/tT+6l+QfBR6iHUP8GbEkP0xSIVPh0R1qqPjMq27lZcfvDLF0ET23tiDNUSLQaTMX3N+MFS7jU4g6vrRMN8BPhUnEPfhMIlwaWK8lT+d6roRu2l/xfIXVnhRrmJPGLockbk1V+QNybQI3/Jb1GtQyNH8k7wxSu9JYWYdhIzVpbmled/mDEkxoaz33LooA9b+i7KDsxXnDMZuJ8F01XVksIXM/Dpf+l/0DFsd5hpB7+5OEA1tB+SpEYR6OLxcrmeA==
+X-YMail-OSG: QKEK7ecVM1ngWDZgP8gMaGI6o4tGF5LClPY1WcxSjCVe9UKb7SSXpVa327qHHFX
+ lgJRVq_gJPOjd4xRsTFn3qVHUR7DLHKJfG8v1FLYH_SKBcQWUGhE3BS1vNuHQwY8Xb2ZCN7LJGOZ
+ Hb5mS6TBQOV0EOFRAYghsQNUHaYJXgYMXlp3hO2a.lpXVZDksyulZlpEOdb6uNMjWBVIRUK.cCyF
+ brW_Fa_t.t19QMkpk5tNk39BNk7N9LFM3ZnIzwZSIjgW.ERituQ_9LJNxEACMsWmjMbLje_8Tl_m
+ .E9J6rsc6lLjsBy3AGQrBKP8ZT6l0zx8zRG9jw8rqfuyS9kwM7JuXokRtAxN82pK0bRn2mta02Rs
+ XIVHMPtyXKmDX3L2YzocGAOjNUL.6.MGF1F011bnEmZ0YMWjio4O6VIfukabsGwlb2tyTp93DavY
+ 8RbBb5O.bf9nX0PB3Io7GHjKGCSNkNTu.ATPowsdi7JBQZQiIhBtsdygFO0vKA6UJGM2eLYTt0ia
+ QaJKq4ZbRhekeAAsSI1ykwblK5gK.CWZ_QJpNVfVLKLmuLptvDOrLaBKzW23zWNI9vQFNs.RY2W0
+ 7lJ3P9jyP_XpVWFj4t18NZ19iIjfPAuxmdEYmzlQePIi67ZTq1VgqGPvpxonfsLj7KzPNUphbhFQ
+ HFrtyhyAgDkViSv.1ICiZcxt1SKrpUOBqpOnv.iUaLj0RzupVE.9GOjfQWeFXt_T2hlBDJTiuL1V
+ twOfH4xXMKiefW_kIUY8PgeejF9UosWPhdv0hHE.6z2zbMHgYqG8uksOIS7Yu.R_aa.Dp7FctlSs
+ JWaUGibRiekagzStTHRvpRsoETNUGyVN90fxCzRAUEEVdZS3GZzkPifB5DX6p.W6CgSzq2i3FT52
+ P3FvPlVFrUzECxY8AHV76JIGjcFQD1DRzhVXuzVCBZ1hcmueze.UFOPsZinyCxDbyUPjN7EvK9QK
+ ZxkMPhkfs6zVYtcSbzJMpIJT6VKS38DMyyW41RxliOdi87wEU1Y7onhBohKhV2y2AyveRUTIQ5qY
+ 8pva2gHOiTf5NrESmaNQI5Q_SK_vKTj4diB9stJgQzfEevb.lDDKq71kJZbqyVkx9lCgrN_I0M62
+ 5JDnH51sHopbnTxoXt86J5BxFtLOjzYxWfcqqDiiZdZarskigmRhyXVRpAD2fZnTV8JDdtbVuJc5
+ sNwnF9Eh0udMvpYea53U1SZLOt_50UeKl1Rmal5EhDE6BklQwFp3AK0h_0zOWnlcLs3ZoKj.FBMu
+ hWT0dfVXXPZu8e8jmf3pDr71NGx2VIEdp9y.qmZDsN1NbtCoNlsr2FRa4ORgr4mPoxtAjYcCFJZU
+ JqeZiv1s8ITlFlHe7o5JTzMJKUFyZtqkEvWypP6TJXJV6BAO9rPhucZaC48mvxFR3PzLlBWKI2QC
+ gU6Ha7WDC9QagQv39pn6hlFH6_wIfXFtcy8hYIGC1EMgDP6BYRNemdVF1TIZyv1e.j6C_eAkM1.x
+ JMWdTHV_M8pelIbKq9toHl4PdCOzlUyIZMfeIRk9roFAvPe6Hf3LEOZWlU2rHYO9A0Hy50HTIav8
+ BxmgssAwxna1COExxF6zGn3xOG7CDYXUeMVIQpvRYC9_NaZxf8NsOAxMsqKKJUYOe5IkMX6y1gDr
+ fRAxff0r2t6yY85MEyvcZgUUWrUDeJuhip6R3rxmzQP9eRrxhMQVCZxCvlVaUKjd9jZOh_JOPyTw
+ PstXCWPUSAWML1DfwdxcJX7rkj.izrPksq0Vcs6VzZcBisRor0PQnwzELqXBtVFU3SwYB12cBUEA
+ tB2ydqpIwNNVY4LneDzFGYptrKAP9HA.7Yy68HcKm1kfd4_XWt06fF3_uNX9Xo.xiqQNJnI71sOT
+ miQkYcdwbamvzIQwwD23BfXF753TBLpO03TcJkP5W2dQY2q.e7Bty0Pze0bcXC5syteDVCCvJWRE
+ _9TOZQkO0VqUsexTBOtr2f1BQQg3J3zmcJIJu_r1Nvoj4vF6F4AIneoPrhXeynnlew9BGQ70aoPY
+ cNZ.P3T_LH74P6SvLxM2L7meHK61RyYg5rqOww9AuWet3N3k6PimrAkrmIrJyYub001NjhHdplFe
+ 1FlZyxezPEc03ax7ErzYM7lgZleQtp3TJWemecEHCf2NkZgaRk_zFv6nTx2skEudC50CuGhboonv
+ e00pZiti42IEvtQOecUGK9iGkrutxjx4AUmVhjuz3l3WKs3pxBckJpVAFo2zoNfpRaaD5JK7D3U1
+ WGdWQVBXxNMV0MSJ6KJkUxrcHCWuw2EifQMaIed7bfNVQw3mouRPm.bJzBMAsEcf6dCudBnLUWka
+ 0yVTvoQ--
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 5501f2ba-0354-49be-9ccc-e80f9ac09207
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.ne1.yahoo.com with HTTP; Wed, 4 Dec 2024 17:16:42 +0000
+Received: by hermes--production-gq1-5dd4b47f46-sx6k2 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID f7e903d40bf9bdf6b3228502bf238ca3;
+          Wed, 04 Dec 2024 17:16:40 +0000 (UTC)
+Message-ID: <c8f5b77c-71d6-4cf9-9245-997ddffd72ec@schaufler-ca.com>
+Date: Wed, 4 Dec 2024 09:16:38 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:odD+DbWcBiLdvjgyb6kV1nV8SSLfSTVh3V9QgDd6PdI/8V1QWCf
- 1ChVJE9aO5Kq+8lcqkv5nxlpTLC93cOYHZTi8CG+LROVX/1xIZrkUlbBfI9yoC9ePTEP5XL
- 6vgz7wslKSTYMJY0/LfaRpADtwoBma64PFZfnACY0lpQ+Zhq/LRrnGl1GG0MVYFLVtmryHF
- 6oNi9Pw9SCyXSSs2DXfFA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:8Io9GytoiZA=;H9/g7EShbkNVVycaoITdPwvUp0V
- GzR+Bx1Q/RN5rff6GUPDjlX9ry/JKJGaXFt0U9jHqtg1COYwQ0H69Y/UcmrnKifuPUdpKz6Uh
- RffIrk1Q43heMmEURThvVAT2S0BCUq2Cmm3eFvDbLFIA3ch9bnFmx3VojpM/V1B2kpfKn/PmM
- BUwVvHKfADSUECcJ5WaWuXN5XUZzc0IykJVQyCROO/afQ9Z9uPuCLOQXg8gWeolPGEUJKE1ZF
- Kuc9gSXzH9hru6BMUBG0N9rN+Uii3bBN7wtlg9vSy7BIVEBC2QOJKC1P35wrZ9Sp+sLr6lrA7
- me52DbrzeKr43z6mtQJBIwObqD8E4dUJC4O5KtK0kijfTcdl8RjwAXFC2MHOozQkoSPr0Pyby
- qNyIwtD4+DzSLpeTLSBjZ2tYYtTAOeDeqzHAwMHRMQx1pYHa9f+OMAhYI4tN/wjmOYVds9F/D
- uJneYmVsSNJdgRT+WpT9Lwes7fftX9hUfnjqLgFjzNb6QNxJtJsclB5d9rgff8vi9eaCHpQw1
- 3ggHklJULftmlgOLFujat0yvLeCsLTt1XnzEVyErJkGqcRpKtI5Sl7BWQjVMce66g0p764a4c
- Kd/7l1ogk+sU0kSj+ma6woVKSoObFmKStjq+uFy8NJL43hB+P5OhvQrYkiR2JcmFrCbb6S8i8
- 1Yrp2chVghh7rEXEufGE0aTVgEL3UhCUpsLxhr92pMnXp7SMIZRaxh4iHXPH3qelwNo90LLqE
- ggdo+4yBU5JklCxCGG14GIady+2inIrUZyPkdr9BHwC/Y+xZ71rpar9rEkZiiUDG33R3ZiRqI
- Jb55HdvuYHBvgkoSQSZm8MCyMOV9hqEXJV6OdEdZYsAKlKt2+7izyvi6GTJGEmX7e1045xe95
- eHPtpiBo5Kyw0SYpAwRQ1MmYLuLtmiYvHR3FE9kjg/AWpvbbAzB8B7JQReU7vL5yw4lbNbcEU
- GJE7Km8neU1n8rCHwUmMpYsv4CPccyrQPZ/t2nQPYHVlsN8Z0QPEWrJT9BU6nuVwqKUQit/HC
- uy8DkTSir4djeq/cUvtJqSKvt9T+4VEwIp5eRfl
+User-Agent: Mozilla Thunderbird
+Subject: Re: LSM: Replace secctx/len pairs with lsm_context
+To: Paul Moore <paul@paul-moore.com>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>,
+ LSM List <linux-security-module@vger.kernel.org>,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <f16f8d81-3894-404d-baeb-febf2fba16f7.ref@schaufler-ca.com>
+ <f16f8d81-3894-404d-baeb-febf2fba16f7@schaufler-ca.com>
+ <CAHC9VhTfKfAeKKbe3P-ZxP-0Y01r0GF6pPvt=2FxvQzAeTGjag@mail.gmail.com>
+ <6bf287dd-36a6-48e4-b847-3030fe3f7bb9@schaufler-ca.com>
+ <CAHC9VhR8Pay3cePZVdvVwks36d7pfGNLUhUxSs5xPCuRcVtbRg@mail.gmail.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <CAHC9VhR8Pay3cePZVdvVwks36d7pfGNLUhUxSs5xPCuRcVtbRg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.22941 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-In cases where we want a stable way to observe/trace
-cap_capable (e.g. protection from inlining and API updates)
-add a tracepoint that passes:
-- The credentials used
-- The user namespace of the resource being accessed
-- The user namespace in which the credential provides the
-capability to access the targeted resource
-- The capability to check for
-- The return value of the check
+On 12/3/2024 3:06 PM, Paul Moore wrote:
+> On Tue, Dec 3, 2024 at 5:54 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> On 12/3/2024 1:59 PM, Paul Moore wrote:
+>>> On Tue, Dec 3, 2024 at 2:29 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>>>> Paul, do you want a revised patch set for the lsm_context change,
+>>>> or do you want to stick with what's in dev-staging?
+>>> I figured I would just move dev-staging over (I've already ported them
+>>> to v6.13-rc1 in my tree), but if you want to send out another patchset
+>>> I guess that's fine too.  Although looking at the related patches in
+>>> dev-staging right now, excluding the rust update from Alice, there is
+>>> only a kdoc fix (me), a signedness fix (Dan Carpenter), and then the
+>>> two fixes from you.  If you like, I can just squash your fixes into
+>>> the relevant patches since there is no authorship issue, and to be
+>>> frank I'm fine with squashing my kdoc fix too, which leaves us with
+>>> just Dan's fix ... which I think is okay~ish to leave standalone, but
+>>> if Dan's okay with squashing that I can do that too as it would be
+>>> preferable.  Dan?
+>>>
+>>> In case anyone is wondering, yes, squashing does take a little bit of
+>>> work on my end, but it borders on trivial, and it is much quicker than
+>>> re-reviewing a patchset.
+>> I figured that it could go either way. I won't resend. Thank you.
+> No problem.  Just to be clear, do I have your okay to squash your patches?
 
-Signed-off-by: Jordan Rome <linux@jordanrome.com>
-=2D--
- MAINTAINERS                       |  1 +
- include/trace/events/capability.h | 57 +++++++++++++++++++++++++++++++
- security/commoncap.c              | 54 ++++++++++++++++++++++-------
- 3 files changed, 99 insertions(+), 13 deletions(-)
- create mode 100644 include/trace/events/capability.h
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 1e930c7a58b1..33fde7f660d0 100644
-=2D-- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5147,6 +5147,7 @@ M:	Serge Hallyn <serge@hallyn.com>
- L:	linux-security-module@vger.kernel.org
- S:	Supported
- F:	include/linux/capability.h
-+F:	include/trace/events/capability.h
- F:	include/uapi/linux/capability.h
- F:	kernel/capability.c
- F:	security/commoncap.c
-diff --git a/include/trace/events/capability.h b/include/trace/events/capa=
-bility.h
-new file mode 100644
-index 000000000000..17340257946c
-=2D-- /dev/null
-+++ b/include/trace/events/capability.h
-@@ -0,0 +1,57 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#undef TRACE_SYSTEM
-+#define TRACE_SYSTEM capability
-+
-+#if !defined(_TRACE_CAPABILITY_H) || defined(TRACE_HEADER_MULTI_READ)
-+#define _TRACE_CAPABILITY_H
-+
-+#include <linux/cred.h>
-+#include <linux/tracepoint.h>
-+#include <linux/user_namespace.h>
-+
-+/**
-+ * cap_capable - called after it's determined if a task has a particular
-+ * effective capability
-+ *
-+ * @cred: The credentials used
-+ * @target_ns: The user namespace of the resource being accessed
-+ * @capable_ns: The user namespace in which the credential provides the
-+ *              capability to access the targeted resource.
-+ *              This will be NULL if ret is not 0.
-+ * @cap: The capability to check for
-+ * @ret: The return value of the check: 0 if it does, -ve if it does not
-+ *
-+ * Allows to trace calls to cap_capable in commoncap.c
-+ */
-+TRACE_EVENT(cap_capable,
-+
-+	TP_PROTO(const struct cred *cred, struct user_namespace *target_ns,
-+		const struct user_namespace *capable_ns, int cap, int ret),
-+
-+	TP_ARGS(cred, target_ns, capable_ns, cap, ret),
-+
-+	TP_STRUCT__entry(
-+		__field(const struct cred *, cred)
-+		__field(struct user_namespace *, target_ns)
-+		__field(const struct user_namespace *, capable_ns)
-+		__field(int, cap)
-+		__field(int, ret)
-+	),
-+
-+	TP_fast_assign(
-+		__entry->cred       =3D cred;
-+		__entry->target_ns    =3D target_ns;
-+		__entry->capable_ns =3D ret =3D=3D 0 ? capable_ns : NULL;
-+		__entry->cap        =3D cap;
-+		__entry->ret        =3D ret;
-+	),
-+
-+	TP_printk("cred %p, target_ns %p, capable_ns %p, cap %d, ret %d",
-+		__entry->cred, __entry->target_ns, __entry->capable_ns, __entry->cap,
-+		__entry->ret)
-+);
-+
-+#endif /* _TRACE_CAPABILITY_H */
-+
-+/* This part must be outside protection */
-+#include <trace/define_trace.h>
-diff --git a/security/commoncap.c b/security/commoncap.c
-index cefad323a0b1..7b6984b27127 100644
-=2D-- a/security/commoncap.c
-+++ b/security/commoncap.c
-@@ -27,6 +27,9 @@
- #include <linux/mnt_idmapping.h>
- #include <uapi/linux/lsm.h>
-
-+#define CREATE_TRACE_POINTS
-+#include <trace/events/capability.h>
-+
- /*
-  * If a non-root user executes a setuid-root binary in
-  * !secure(SECURE_NOROOT) mode, then we raise capabilities.
-@@ -50,24 +53,24 @@ static void warn_setuid_and_fcaps_mixed(const char *fn=
-ame)
- }
-
- /**
-- * cap_capable - Determine whether a task has a particular effective capa=
-bility
-+ * cap_capable_helper - Determine whether a task has a particular effecti=
-ve
-+ * capability.
-  * @cred: The credentials to use
-- * @targ_ns:  The user namespace in which we need the capability
-+ * @target_ns:  The user namespace of the resource being accessed
-+ * @cred_ns:  The user namespace of the credentials
-  * @cap: The capability to check for
-- * @opts: Bitmask of options defined in include/linux/security.h
-  *
-  * Determine whether the nominated task has the specified capability amon=
-gst
-  * its effective set, returning 0 if it does, -ve if it does not.
-  *
-- * NOTE WELL: cap_has_capability() cannot be used like the kernel's capab=
-le()
-- * and has_capability() functions.  That is, it has the reverse semantics=
-:
-- * cap_has_capability() returns 0 when a task has a capability, but the
-- * kernel's capable() and has_capability() returns 1 for this case.
-+ * See cap_capable for more details.
-  */
--int cap_capable(const struct cred *cred, struct user_namespace *targ_ns,
--		int cap, unsigned int opts)
-+static inline int cap_capable_helper(const struct cred *cred,
-+				     struct user_namespace *target_ns,
-+				     const struct user_namespace *cred_ns,
-+				     int cap)
- {
--	struct user_namespace *ns =3D targ_ns;
-+	struct user_namespace *ns =3D target_ns;
-
- 	/* See if cred has the capability in the target user namespace
- 	 * by examining the target user namespace and all of the target
-@@ -75,21 +78,21 @@ int cap_capable(const struct cred *cred, struct user_n=
-amespace *targ_ns,
- 	 */
- 	for (;;) {
- 		/* Do we have the necessary capabilities? */
--		if (ns =3D=3D cred->user_ns)
-+		if (likely(ns =3D=3D cred_ns))
- 			return cap_raised(cred->cap_effective, cap) ? 0 : -EPERM;
-
- 		/*
- 		 * If we're already at a lower level than we're looking for,
- 		 * we're done searching.
- 		 */
--		if (ns->level <=3D cred->user_ns->level)
-+		if (ns->level <=3D cred_ns->level)
- 			return -EPERM;
-
- 		/*
- 		 * The owner of the user namespace in the parent of the
- 		 * user namespace has all caps.
- 		 */
--		if ((ns->parent =3D=3D cred->user_ns) && uid_eq(ns->owner, cred->euid))
-+		if ((ns->parent =3D=3D cred_ns) && uid_eq(ns->owner, cred->euid))
- 			return 0;
-
- 		/*
-@@ -102,6 +105,31 @@ int cap_capable(const struct cred *cred, struct user_=
-namespace *targ_ns,
- 	/* We never get here */
- }
-
-+/**
-+ * cap_capable - Determine whether a task has a particular effective capa=
-bility
-+ * @cred: The credentials to use
-+ * @target_ns:  The user namespace of the resource being accessed
-+ * @cap: The capability to check for
-+ * @opts: Bitmask of options defined in include/linux/security.h (unused)
-+ *
-+ * Determine whether the nominated task has the specified capability amon=
-gst
-+ * its effective set, returning 0 if it does, -ve if it does not.
-+ *
-+ * NOTE WELL: cap_has_capability() cannot be used like the kernel's capab=
-le()
-+ * and has_capability() functions.  That is, it has the reverse semantics=
-:
-+ * cap_has_capability() returns 0 when a task has a capability, but the
-+ * kernel's capable() and has_capability() returns 1 for this case.
-+ */
-+int cap_capable(const struct cred *cred, struct user_namespace *target_ns=
-,
-+		int cap, unsigned int opts)
-+{
-+	const struct user_namespace *cred_ns =3D cred->user_ns;
-+	int ret =3D cap_capable_helper(cred, target_ns, cred_ns, cap);
-+
-+	trace_cap_capable(cred, target_ns, cred_ns, cap, ret);
-+	return ret;
-+}
-+
- /**
-  * cap_settime - Determine whether the current process may set the system=
- clock
-  * @ts: The time to set
-=2D-
-2.43.5
+Yes. I may have introduced some formatting (e.g. tabs in struct definitions)
+that you dislike. Feel free to "correct" any you find as well.
 
