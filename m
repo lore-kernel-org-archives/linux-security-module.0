@@ -1,57 +1,57 @@
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73DFC154433
-	for <linux-security-module@vger.kernel.org>; Wed,  4 Dec 2024 19:45:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 052B31F03C8
+	for <linux-security-module@vger.kernel.org>; Wed,  4 Dec 2024 20:20:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733341517; cv=none; b=tSqGgwQa1aH7dk9R9R5JcTxHmaZp5YXiS/aA4wvE6SWiM0CqYLUHFUEUDhJ+sPvw7HHm0XVSLvi2FxEq5q44f3nl04tbRFc7iYjycXya+0mBfXC/AoqHAozpTQ9l8eQ8vu6a85M2fPiIe0oYMaEjId0tXRxK8dK+KdRDX1vqLyU=
+	t=1733343654; cv=none; b=Q181Re3PZMmUaPdQrDe2oFqz/6WBG0udATsfrE0XwP1AqfSOZv5TBgF1To34+nMyoWuGf7Y9K5XQdYxmct2++cSfffjbVCrXMR4lW12iurx8e42FnbxSCXFrnRhSk/u1XcZvUs+W+gia/zFJYo3MVsq3yDsvJFXOpbZAhu7U1aQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733341517; c=relaxed/simple;
-	bh=UAkwa2cB6iXtXZ73Zwtwfu2Ebwdp/3xHmhRhqzDlhcY=;
+	s=arc-20240116; t=1733343654; c=relaxed/simple;
+	bh=qvmU/VAVN0pvhP+IwnYOoDWxB9kfEGI58cN9BjeqFTM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YH0zEf6yoCxOQj5MZx2f+1tV+0vCk1DhgxmgLoalljrXWhh+o5UUa+DXDoVEZG+QSAoMCPTzCk1dYEyxZ4a/bqW+M2ikSbdWfgYhm+5WF7dWYwrF0LEK1u5nlFiFDkrH7WFqjidv0YC1g8X8hxrMRYLY281D1fAesAO3b8tPJdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Hi7+YswQ; arc=none smtp.client-ip=209.85.219.182
+	 To:Cc:Content-Type; b=q5H8e9ujct0PQuJ/Zhx7L816lAt2PPbNTW6BSCczRLiXlqTt2fq/I8bQVJcH7OXHTtSfb8mREgSBNsijskcCuQ/uE0rXCSl44uEktC+zMNZN+DaCVoUnKDeqEiZM2XVZbiYyTY6IuwjAEuTySk0DP2YiV+lQa4OHpaMBuiAuQZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=DsbWMXPW; arc=none smtp.client-ip=209.85.219.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Hi7+YswQ"
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e3971be41d8so126624276.2
-        for <linux-security-module@vger.kernel.org>; Wed, 04 Dec 2024 11:45:15 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="DsbWMXPW"
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e0875f1e9edso251683276.1
+        for <linux-security-module@vger.kernel.org>; Wed, 04 Dec 2024 12:20:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1733341514; x=1733946314; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1733343651; x=1733948451; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=kP4SSjgJ9EZghLG63HAk0V11vB5Y1HI8YOM2R0ZNk4U=;
-        b=Hi7+YswQSDQ/MEUFGeED3pDFF5CSTp55iTsJTIDOgojnwzmgkftsFkBBu/ftfi5frw
-         wbfxKgFh44stMfIn9AeieGZfOtcy3fFmQY+nVTsPjSD6su3W7JHpQVZVZZKEjc6YNyx7
-         Jits2iY+KjDjYG2qI32z07v1+pIl/IAXp9dRc+zGq0kfP8kmtjpCvM2e9+CL1zS2CRg3
-         4G8ZpsB54fQK4wW4qz6vrjPHUKwqzJ9CkEY6nq11Qftt1iketYNdvcKmT0Lo2xsyq1p8
-         WR4zHBC0TCUzB5e/Or7W1YgBOjvesVlw+XIEqO9+c2owIhbVvKyA5H88omwM+n1uaCH+
-         DmXg==
+        bh=OLVo1t0oglaNriHIRqIrOTtgfyInHa0criF3pQMsL9c=;
+        b=DsbWMXPWB7LyGAUEY/s9BtHUKNNv35HOoN6wwzyPaSle7wgArfU66800LgjRatcZVL
+         R5OlJqK1EpuEqJUxnSNqsiOwJJzHGRdyQcWXdvXvGC9P/aqPC8Y154APZDJLoYQ0xfo3
+         sjxatG4nj7gicxY9zUtWfUXX+emd0FrBNXf8oq90FAh1TcvbaQMKraKrBHqZ2LACfcC5
+         OnK9mBmbrS/H0EyaVzMCp7zhDBTp73pWY+Vz7pZ6erHioE/A9nWjnYMgnK5OgfibjBV6
+         GCG/e8DbzTLPL6W/jm59i4pd1CGLxw8RvIXTpMEYyyNLKwIyUMwaQwWn3T8Y41b9IL85
+         VbIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733341514; x=1733946314;
+        d=1e100.net; s=20230601; t=1733343651; x=1733948451;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=kP4SSjgJ9EZghLG63HAk0V11vB5Y1HI8YOM2R0ZNk4U=;
-        b=ugWxkEP6UHN+pM9ZPxvnzsNnYVFyE1CO9hIUk7jhqxih2o2cofJ/8liGg2P2jFUuz+
-         UIWIVN7JdluklBusYkVpJonvBe6RKf/Fubx75Y3nkFQd5102sY1k5S9XzwSxUy0X/c4W
-         aMJxzqbiO4qhlImrb352mH8cArrxanFDXYvCsjoLNVFaAxkCl5GPrVdTX53zQVzKG/AB
-         2duTd4tnGpodllGoYK89QukOfXqi5DAmwx91fMU6CFieH+ycf9cyGr30BFNhLEvmbz06
-         Irhcx+WMyvqqxWPYzpKuPOu30CwWwRMyTgkXhjYvAS19bnEaUfTQCr4jxua17Iu9BJbD
-         TGQg==
-X-Forwarded-Encrypted: i=1; AJvYcCWKqlNNtz7YeEhtMzWEhSuNGMzYQJEcTVZmr7X+nti2aLbGmf8X8LotTrMvbPpnOSszPsmyMzCaiYx6iO8O8PFmTRvKiJ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIDsrz0hy3M0JttqUG/yOSQ/XmCxBDKmS5wIwy0ZBG6BRGMBQ1
-	QauZLeq3nllajn6KZPlsw56/KWJ4rcxQsmbDRcSv5IYgxwg3PrcBJTBzDdUCIFt9d8anJR98Gnw
-	EXVc67fh+SNN5Am8Z1AfUrVn/m/sbklRPRNla
-X-Gm-Gg: ASbGnculY5LTxOpY6oSXJdxfOiT6dGv6pVRUY4g6ILU/8+WWnLFOTJwjhv5bDiP1QwP
-	mVy0Oib/HnMb/p5ByeLZ8VKh9lRIzmQ==
-X-Google-Smtp-Source: AGHT+IEWqnyl0K8M9qISW0xNz4dzRz38cEKi8U1ZPf7D5pKO8FFHQ2DZApWu+/YL2nCRQLrf55oafMFNf/PH5hQZze4=
-X-Received: by 2002:a05:6902:1022:b0:e38:8263:7990 with SMTP id
- 3f1490d57ef6-e39d438ff2fmr6780032276.48.1733341514392; Wed, 04 Dec 2024
- 11:45:14 -0800 (PST)
+        bh=OLVo1t0oglaNriHIRqIrOTtgfyInHa0criF3pQMsL9c=;
+        b=VH5YDBN5khTL8Kslovv7hKA9kUnXCjkKfa2IOTShhBaqRr+UuYCQR+T///L3Q1KKTe
+         /J6NGa3zi6GVtm4SRQpRcwkk9bocwq2OePuWO+slZhqq0wyX0yOKfoWC8gPeZYzFx/yp
+         /44lCl1YmNwVgAXmNR0J85/fkmQzevN4c8xmnB6zRGdTBPJBna1f54syXzDdLmo2zzfd
+         hk+Lsu1pAUmm8IrgG6KfS19Q3rEMPs1CNb1fV4qqXsGrBlQjS1QgsSPK9hGor4RzC0Rx
+         hwwYnkOmxwlgcor4mTvJVmlEB38IoROLJIRgpXmkf7DnnL8ZnjkXkjxmAhaiAEYU0Qt8
+         iCwA==
+X-Forwarded-Encrypted: i=1; AJvYcCXr3Onxa/CwxmfFgpPwv9K4/vw7mtSpDKqgU2qf2VPEp7FRjLMruENsv6khFFTvLcjSEwX9b/5Y/PZ0+qnSumOn6o/wtL4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8ZAX9+Z05rJ5ge8OnY60sNIqrK8JWQ4vM8+k7YaSwnEPDVc8d
+	F68QOZ27c2sFRM8iMyhyosG5PpfKOBQzKb4GHwXzx4kGDEvIej2hSiQJ78qlbjwaF/RSTHh7MzF
+	G2w+wuYRdCaxj6YsaPqYHHtRVvFKkn2tbxePA
+X-Gm-Gg: ASbGncs5iXbof+PbYfSzcGZORJW1VyMHyOuTOZdKM9s9S4gV9SD6nPJktBc3LxvdB9C
+	LiSeILutpUBK7EkY6mUkPNMa7os8zXg==
+X-Google-Smtp-Source: AGHT+IGtVlwm84qT6rzw7pFpty5lCqYBj1sQiR2A/cPp+IyhVfhXcyQ32GDnNhOfrYx+lZ2qHzOiPX1sC1xsOA9pfII=
+X-Received: by 2002:a05:6902:2782:b0:e39:73bf:f731 with SMTP id
+ 3f1490d57ef6-e39d438da25mr7742955276.50.1733343650945; Wed, 04 Dec 2024
+ 12:20:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -60,43 +60,61 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <f16f8d81-3894-404d-baeb-febf2fba16f7.ref@schaufler-ca.com>
  <f16f8d81-3894-404d-baeb-febf2fba16f7@schaufler-ca.com> <CAHC9VhTfKfAeKKbe3P-ZxP-0Y01r0GF6pPvt=2FxvQzAeTGjag@mail.gmail.com>
- <3a3c35f2-1228-47f2-b0ad-5d861917ce11@stanley.mountain>
-In-Reply-To: <3a3c35f2-1228-47f2-b0ad-5d861917ce11@stanley.mountain>
+ <6bf287dd-36a6-48e4-b847-3030fe3f7bb9@schaufler-ca.com> <CAHC9VhR8Pay3cePZVdvVwks36d7pfGNLUhUxSs5xPCuRcVtbRg@mail.gmail.com>
+ <c8f5b77c-71d6-4cf9-9245-997ddffd72ec@schaufler-ca.com>
+In-Reply-To: <c8f5b77c-71d6-4cf9-9245-997ddffd72ec@schaufler-ca.com>
 From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 4 Dec 2024 14:45:03 -0500
-Message-ID: <CAHC9VhQJxBGOx9hjYoKrQdzzebL7j5Y6GLrqjXvo8AULnFqdgQ@mail.gmail.com>
+Date: Wed, 4 Dec 2024 15:20:40 -0500
+Message-ID: <CAHC9VhRxr0B9w_ntXRbhorfwZyJSbdJAJb_gF0E=GRrK2kCf1Q@mail.gmail.com>
 Subject: Re: LSM: Replace secctx/len pairs with lsm_context
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Casey Schaufler <casey@schaufler-ca.com>, 
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>, 
 	LSM List <linux-security-module@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 4, 2024 at 12:25=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
-.org> wrote:
-> On Tue, Dec 03, 2024 at 04:59:12PM -0500, Paul Moore wrote:
-> > On Tue, Dec 3, 2024 at 2:29=E2=80=AFPM Casey Schaufler <casey@schaufler=
+On Wed, Dec 4, 2024 at 12:16=E2=80=AFPM Casey Schaufler <casey@schaufler-ca=
+.com> wrote:
+> On 12/3/2024 3:06 PM, Paul Moore wrote:
+> > On Tue, Dec 3, 2024 at 5:54=E2=80=AFPM Casey Schaufler <casey@schaufler=
 -ca.com> wrote:
-> > >
-> > > Paul, do you want a revised patch set for the lsm_context change,
-> > > or do you want to stick with what's in dev-staging?
-> >
-> > I figured I would just move dev-staging over (I've already ported them
-> > to v6.13-rc1 in my tree), but if you want to send out another patchset
-> > I guess that's fine too.  Although looking at the related patches in
-> > dev-staging right now, excluding the rust update from Alice, there is
-> > only a kdoc fix (me), a signedness fix (Dan Carpenter), and then the
-> > two fixes from you.  If you like, I can just squash your fixes into
-> > the relevant patches since there is no authorship issue, and to be
-> > frank I'm fine with squashing my kdoc fix too, which leaves us with
-> > just Dan's fix ... which I think is okay~ish to leave standalone, but
-> > if Dan's okay with squashing that I can do that too as it would be
-> > preferable.  Dan?
-> >
+> >> On 12/3/2024 1:59 PM, Paul Moore wrote:
+> >>> On Tue, Dec 3, 2024 at 2:29=E2=80=AFPM Casey Schaufler <casey@schaufl=
+er-ca.com> wrote:
+> >>>> Paul, do you want a revised patch set for the lsm_context change,
+> >>>> or do you want to stick with what's in dev-staging?
+> >>> I figured I would just move dev-staging over (I've already ported the=
+m
+> >>> to v6.13-rc1 in my tree), but if you want to send out another patchse=
+t
+> >>> I guess that's fine too.  Although looking at the related patches in
+> >>> dev-staging right now, excluding the rust update from Alice, there is
+> >>> only a kdoc fix (me), a signedness fix (Dan Carpenter), and then the
+> >>> two fixes from you.  If you like, I can just squash your fixes into
+> >>> the relevant patches since there is no authorship issue, and to be
+> >>> frank I'm fine with squashing my kdoc fix too, which leaves us with
+> >>> just Dan's fix ... which I think is okay~ish to leave standalone, but
+> >>> if Dan's okay with squashing that I can do that too as it would be
+> >>> preferable.  Dan?
+> >>>
+> >>> In case anyone is wondering, yes, squashing does take a little bit of
+> >>> work on my end, but it borders on trivial, and it is much quicker tha=
+n
+> >>> re-reviewing a patchset.
+> >> I figured that it could go either way. I won't resend. Thank you.
+> > No problem.  Just to be clear, do I have your okay to squash your patch=
+es?
 >
-> Squash it.
+> Yes.
 
-Thanks Dan.
+Thanks.  Everything has now been moved over to the lsm/dev branch and
+should be in the next linux-next build.  Thanks again everyone.
+
+> I may have introduced some formatting (e.g. tabs in struct definitions)
+> that you dislike. Feel free to "correct" any you find as well.
+
+FYI, the only changes I made when going from lsm/dev-staging to
+lsm/dev was to squash the patches.
 
 --=20
 paul-moore.com
