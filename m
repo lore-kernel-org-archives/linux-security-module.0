@@ -1,110 +1,261 @@
-Received: from sonic314-26.consmr.mail.ne1.yahoo.com (sonic314-26.consmr.mail.ne1.yahoo.com [66.163.189.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-42af.mail.infomaniak.ch (smtp-42af.mail.infomaniak.ch [84.16.66.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC8242391BE
-	for <linux-security-module@vger.kernel.org>; Wed,  4 Dec 2024 17:16:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.189.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95CFD207648
+	for <linux-security-module@vger.kernel.org>; Wed,  4 Dec 2024 17:47:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733332611; cv=none; b=q1CTc97Lvsd9sr1tfxdzgWUDH7rAHwQ7Yn48Zcs/UZjo+kQ6ToWCKHn+Xo/oKXeCkKWyxwbsMTdvFCL5+UvZhMvxvdgs69op0tMEHOFmdv3T9TExmiKIbbcLStXwddVTyD4I9pp9OozExikevQcoFRJQeVHJisyUti0gK1vAg2E=
+	t=1733334465; cv=none; b=cvLSFa3JQ7MHK8AhGhmSivpHQ6kxP5r1EbRyk2CGHeZRsZy8vn7fAs99XMLmOquvzvXMkCqJvfwvrN8eT7HRLmwGCo1i2rpWr5Vu0jaRFxe90Fn38pqe1s9YwVNJCuSuKrFU1uHR57SKbFb3rwfWnM1FxlPIUStc9ZwsV9CvEwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733332611; c=relaxed/simple;
-	bh=1M+pc0gnBkiOS0bKSh8WykprIL0kKeuWWOWOejfdfjs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r53YK/bo92f76NkId5sXAMmnM/6NQOfXnaG/heoEfJ+/XjM9Iv8NAq6V3L2sIMdXIMfZI3PQDq2jvUN6VxhLjdHdf93oOPhG87ay0SsSm8pyosz4iNf1CU4V8hwlqGqwyUZecE3/GDWwKtp41u9y/D768QSpkIvpoJZFm3mzK0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=kjWQOjg0; arc=none smtp.client-ip=66.163.189.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1733334465; c=relaxed/simple;
+	bh=oksVEKPJuYoz+Muf95nQOq9ziMlrEzAhVSgjxSCL4oQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fOYj0kJ9WiAlY+RsLGu1UEFIYwN6JUQG29f1QLImLO/QG6hkannlqaJkkF/Ntp9x3KfJRyuUu33T6K+UJtUpoq+DtVmRkUMWcN9IuXhrRU4gpBONLOTJSnGzLwcN2r15/FHhEWEliRhtwdcDeNnSR9j9nB6YAD/8JppjbLRtgEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=BEB4/OOt; arc=none smtp.client-ip=84.16.66.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="kjWQOjg0"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1733332602; bh=PvfwH6Rb3iGeOKjhjdFXumFZlZ6VJjUVLQf0cq2EA5I=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=kjWQOjg06cmJOrXVWsrg1eZAbjBjZzaCthhst/g2LU+2sTRu84SM5BahTdW6l9CB/rf7AQEHoz2Wzh1XQ23Krbssx9wAlP6ienH8olcAP2AmQGYgLfxvnXeG4gJJ91tEgFaxpsJ33BG2I8JvIvER4Y6g/U1h/JOTq5tjVU1wAvzf+5NB5WME9Y80dl5fMcYDiv+0HM+BU5zHpLAjYQSKPKriqaOWHpdczi4jNHW7PfHlYI+r2uN4ntOlREhRYV7ebs8XM6mP01cfHrSMb78B3F/HeGedI1j7+lxiCDfjwCtfyI8VziK05XxQS3IwRuoI0RBczAB20CEWDI5e1Qhk6w==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1733332602; bh=5fn+Ac6P/jiLpr+lC/7GCc5wdnpvKN3a1xdTrHD/CT0=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=VvmoBhYQo4OjrpQvKxKJ6BW4hHCBX1BWuKLhZTQObmgp/HouSlN4jW6ncC7yxK/t3rh8jPDplY6CMEsfbHtqGJ/tT+6l+QfBR6iHUP8GbEkP0xSIVPh0R1qqPjMq27lZcfvDLF0ET23tiDNUSLQaTMX3N+MFS7jU4g6vrRMN8BPhUnEPfhMIlwaWK8lT+d6roRu2l/xfIXVnhRrmJPGLockbk1V+QNybQI3/Jb1GtQyNH8k7wxSu9JYWYdhIzVpbmled/mDEkxoaz33LooA9b+i7KDsxXnDMZuJ8F01XVksIXM/Dpf+l/0DFsd5hpB7+5OEA1tB+SpEYR6OLxcrmeA==
-X-YMail-OSG: QKEK7ecVM1ngWDZgP8gMaGI6o4tGF5LClPY1WcxSjCVe9UKb7SSXpVa327qHHFX
- lgJRVq_gJPOjd4xRsTFn3qVHUR7DLHKJfG8v1FLYH_SKBcQWUGhE3BS1vNuHQwY8Xb2ZCN7LJGOZ
- Hb5mS6TBQOV0EOFRAYghsQNUHaYJXgYMXlp3hO2a.lpXVZDksyulZlpEOdb6uNMjWBVIRUK.cCyF
- brW_Fa_t.t19QMkpk5tNk39BNk7N9LFM3ZnIzwZSIjgW.ERituQ_9LJNxEACMsWmjMbLje_8Tl_m
- .E9J6rsc6lLjsBy3AGQrBKP8ZT6l0zx8zRG9jw8rqfuyS9kwM7JuXokRtAxN82pK0bRn2mta02Rs
- XIVHMPtyXKmDX3L2YzocGAOjNUL.6.MGF1F011bnEmZ0YMWjio4O6VIfukabsGwlb2tyTp93DavY
- 8RbBb5O.bf9nX0PB3Io7GHjKGCSNkNTu.ATPowsdi7JBQZQiIhBtsdygFO0vKA6UJGM2eLYTt0ia
- QaJKq4ZbRhekeAAsSI1ykwblK5gK.CWZ_QJpNVfVLKLmuLptvDOrLaBKzW23zWNI9vQFNs.RY2W0
- 7lJ3P9jyP_XpVWFj4t18NZ19iIjfPAuxmdEYmzlQePIi67ZTq1VgqGPvpxonfsLj7KzPNUphbhFQ
- HFrtyhyAgDkViSv.1ICiZcxt1SKrpUOBqpOnv.iUaLj0RzupVE.9GOjfQWeFXt_T2hlBDJTiuL1V
- twOfH4xXMKiefW_kIUY8PgeejF9UosWPhdv0hHE.6z2zbMHgYqG8uksOIS7Yu.R_aa.Dp7FctlSs
- JWaUGibRiekagzStTHRvpRsoETNUGyVN90fxCzRAUEEVdZS3GZzkPifB5DX6p.W6CgSzq2i3FT52
- P3FvPlVFrUzECxY8AHV76JIGjcFQD1DRzhVXuzVCBZ1hcmueze.UFOPsZinyCxDbyUPjN7EvK9QK
- ZxkMPhkfs6zVYtcSbzJMpIJT6VKS38DMyyW41RxliOdi87wEU1Y7onhBohKhV2y2AyveRUTIQ5qY
- 8pva2gHOiTf5NrESmaNQI5Q_SK_vKTj4diB9stJgQzfEevb.lDDKq71kJZbqyVkx9lCgrN_I0M62
- 5JDnH51sHopbnTxoXt86J5BxFtLOjzYxWfcqqDiiZdZarskigmRhyXVRpAD2fZnTV8JDdtbVuJc5
- sNwnF9Eh0udMvpYea53U1SZLOt_50UeKl1Rmal5EhDE6BklQwFp3AK0h_0zOWnlcLs3ZoKj.FBMu
- hWT0dfVXXPZu8e8jmf3pDr71NGx2VIEdp9y.qmZDsN1NbtCoNlsr2FRa4ORgr4mPoxtAjYcCFJZU
- JqeZiv1s8ITlFlHe7o5JTzMJKUFyZtqkEvWypP6TJXJV6BAO9rPhucZaC48mvxFR3PzLlBWKI2QC
- gU6Ha7WDC9QagQv39pn6hlFH6_wIfXFtcy8hYIGC1EMgDP6BYRNemdVF1TIZyv1e.j6C_eAkM1.x
- JMWdTHV_M8pelIbKq9toHl4PdCOzlUyIZMfeIRk9roFAvPe6Hf3LEOZWlU2rHYO9A0Hy50HTIav8
- BxmgssAwxna1COExxF6zGn3xOG7CDYXUeMVIQpvRYC9_NaZxf8NsOAxMsqKKJUYOe5IkMX6y1gDr
- fRAxff0r2t6yY85MEyvcZgUUWrUDeJuhip6R3rxmzQP9eRrxhMQVCZxCvlVaUKjd9jZOh_JOPyTw
- PstXCWPUSAWML1DfwdxcJX7rkj.izrPksq0Vcs6VzZcBisRor0PQnwzELqXBtVFU3SwYB12cBUEA
- tB2ydqpIwNNVY4LneDzFGYptrKAP9HA.7Yy68HcKm1kfd4_XWt06fF3_uNX9Xo.xiqQNJnI71sOT
- miQkYcdwbamvzIQwwD23BfXF753TBLpO03TcJkP5W2dQY2q.e7Bty0Pze0bcXC5syteDVCCvJWRE
- _9TOZQkO0VqUsexTBOtr2f1BQQg3J3zmcJIJu_r1Nvoj4vF6F4AIneoPrhXeynnlew9BGQ70aoPY
- cNZ.P3T_LH74P6SvLxM2L7meHK61RyYg5rqOww9AuWet3N3k6PimrAkrmIrJyYub001NjhHdplFe
- 1FlZyxezPEc03ax7ErzYM7lgZleQtp3TJWemecEHCf2NkZgaRk_zFv6nTx2skEudC50CuGhboonv
- e00pZiti42IEvtQOecUGK9iGkrutxjx4AUmVhjuz3l3WKs3pxBckJpVAFo2zoNfpRaaD5JK7D3U1
- WGdWQVBXxNMV0MSJ6KJkUxrcHCWuw2EifQMaIed7bfNVQw3mouRPm.bJzBMAsEcf6dCudBnLUWka
- 0yVTvoQ--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 5501f2ba-0354-49be-9ccc-e80f9ac09207
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.ne1.yahoo.com with HTTP; Wed, 4 Dec 2024 17:16:42 +0000
-Received: by hermes--production-gq1-5dd4b47f46-sx6k2 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID f7e903d40bf9bdf6b3228502bf238ca3;
-          Wed, 04 Dec 2024 17:16:40 +0000 (UTC)
-Message-ID: <c8f5b77c-71d6-4cf9-9245-997ddffd72ec@schaufler-ca.com>
-Date: Wed, 4 Dec 2024 09:16:38 -0800
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="BEB4/OOt"
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Y3Q2s3ht5z172K;
+	Wed,  4 Dec 2024 18:47:33 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1733334453;
+	bh=EF82IowVMskhUg4yQD8Bmza4zy4ZkRPuqLnkEOraoDo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BEB4/OOt4GDQo/dNDFlXYDhiXxK8HQXcdCj1IOfd5km1LPjxZUjBaNum+XMYZpAqW
+	 ajQLHKnz7mFeatC+fgVjRcb2J9hfsHE5sxe9KRvIZ8/1ywPRftjXyEudxuibWny3MX
+	 cSWfaHQxSZcf0d4b+NDuUWcNhIgTT/MIqOzJHAWU=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Y3Q2r4g9QzSGw;
+	Wed,  4 Dec 2024 18:47:32 +0100 (CET)
+Date: Wed, 4 Dec 2024 18:47:30 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: linux-integrity@vger.kernel.org, roberto.sassu@huawei.com, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, Jeff Xu <jeffxu@chromium.org>, 
+	Kees Cook <kees@kernel.org>, Paul Moore <paul@paul-moore.com>, audit@vger.kernel.org, 
+	Fan Wu <wufan@linux.microsoft.com>
+Subject: Re: [PATCH v2] ima: instantiate the bprm_creds_for_exec() hook
+Message-ID: <20241204.OhCaeCag9eik@digikod.net>
+References: <20241203233424.287880-1-zohar@linux.ibm.com>
+ <20241204.IeZeTheing4e@digikod.net>
+ <a888a94fa38a538f961ad8a3a1bafda5b9870c89.camel@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: LSM: Replace secctx/len pairs with lsm_context
-To: Paul Moore <paul@paul-moore.com>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>,
- LSM List <linux-security-module@vger.kernel.org>,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <f16f8d81-3894-404d-baeb-febf2fba16f7.ref@schaufler-ca.com>
- <f16f8d81-3894-404d-baeb-febf2fba16f7@schaufler-ca.com>
- <CAHC9VhTfKfAeKKbe3P-ZxP-0Y01r0GF6pPvt=2FxvQzAeTGjag@mail.gmail.com>
- <6bf287dd-36a6-48e4-b847-3030fe3f7bb9@schaufler-ca.com>
- <CAHC9VhR8Pay3cePZVdvVwks36d7pfGNLUhUxSs5xPCuRcVtbRg@mail.gmail.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CAHC9VhR8Pay3cePZVdvVwks36d7pfGNLUhUxSs5xPCuRcVtbRg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.22941 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+In-Reply-To: <a888a94fa38a538f961ad8a3a1bafda5b9870c89.camel@linux.ibm.com>
+X-Infomaniak-Routing: alpha
 
-On 12/3/2024 3:06 PM, Paul Moore wrote:
-> On Tue, Dec 3, 2024 at 5:54 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->> On 12/3/2024 1:59 PM, Paul Moore wrote:
->>> On Tue, Dec 3, 2024 at 2:29 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->>>> Paul, do you want a revised patch set for the lsm_context change,
->>>> or do you want to stick with what's in dev-staging?
->>> I figured I would just move dev-staging over (I've already ported them
->>> to v6.13-rc1 in my tree), but if you want to send out another patchset
->>> I guess that's fine too.  Although looking at the related patches in
->>> dev-staging right now, excluding the rust update from Alice, there is
->>> only a kdoc fix (me), a signedness fix (Dan Carpenter), and then the
->>> two fixes from you.  If you like, I can just squash your fixes into
->>> the relevant patches since there is no authorship issue, and to be
->>> frank I'm fine with squashing my kdoc fix too, which leaves us with
->>> just Dan's fix ... which I think is okay~ish to leave standalone, but
->>> if Dan's okay with squashing that I can do that too as it would be
->>> preferable.  Dan?
->>>
->>> In case anyone is wondering, yes, squashing does take a little bit of
->>> work on my end, but it borders on trivial, and it is much quicker than
->>> re-reviewing a patchset.
->> I figured that it could go either way. I won't resend. Thank you.
-> No problem.  Just to be clear, do I have your okay to squash your patches?
+On Wed, Dec 04, 2024 at 09:57:42AM -0500, Mimi Zohar wrote:
+> On Wed, 2024-12-04 at 11:15 +0100, Mickaël Salaün wrote:
+> > On Tue, Dec 03, 2024 at 06:34:24PM -0500, Mimi Zohar wrote:
+> > > Like direct file execution (e.g. ./script.sh), indirect file exection
+> > > (e.g. sh script.sh) needs to be measured and appraised.  Instantiate
+> > > the new security_bprm_creds_for_exec() hook to measure and verify the
+> > > indirect file's integrity.  Unlike direct file execution, indirect file
+> > > execution is optionally enforced by the interpreter.
+> > > 
+> > > Differentiate kernel and userspace enforced integrity audit messages.
+> > > 
+> > 
+> > I guess there is a missing tag:
+> > 
+> > Co-developed-by: Roberto Sassu <roberto.sassu@huawei.com>
+> 
+> Having a different author with multiple "Signed-off-by" implies the patch
+> history, but adding the "Co-developed-by" is explicit.  I'll add the Co-
+> developed-by tag.
+> 
+> > 
+> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> > > Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+> > 
+> > With some minor comments, this looks good to me. I'll include this patch
+> > or the next one in my patch series.  Thanks!
+> 
+> Thank you.
+> 
+> > 
+> > > ---
+> > > Changelog v2:
+> > > - Mickael: Use same audit messages with new audit message number
+> > > - Stefan Berger: Return boolean from is_bprm_creds_for_exec() 
+> > > 
+> > >  include/uapi/linux/audit.h            |  1 +
+> > >  security/integrity/ima/ima_appraise.c | 28 +++++++++++++++++++++++++--
+> > >  security/integrity/ima/ima_main.c     | 22 +++++++++++++++++++++
+> > >  3 files changed, 49 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
+> > > index 75e21a135483..826337905466 100644
+> > > --- a/include/uapi/linux/audit.h
+> > > +++ b/include/uapi/linux/audit.h
+> > > @@ -161,6 +161,7 @@
+> > >  #define AUDIT_INTEGRITY_RULE	    1805 /* policy rule */
+> > >  #define AUDIT_INTEGRITY_EVM_XATTR   1806 /* New EVM-covered xattr */
+> > >  #define AUDIT_INTEGRITY_POLICY_RULE 1807 /* IMA policy rules */
+> > > +#define AUDIT_INTEGRITY_DATA_CHECK  1808 /* Userspace enforced data integrity */
+> > >  
+> > >  #define AUDIT_KERNEL		2000	/* Asynchronous audit record. NOT A REQUEST. */
+> > >  
+> > > diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+> > > index 656c709b974f..144e0b39fbcd 100644
+> > > --- a/security/integrity/ima/ima_appraise.c
+> > > +++ b/security/integrity/ima/ima_appraise.c
+> > > @@ -8,6 +8,7 @@
+> > >  #include <linux/module.h>
+> > >  #include <linux/init.h>
+> > >  #include <linux/file.h>
+> > > +#include <linux/binfmts.h>
+> > >  #include <linux/fs.h>
+> > >  #include <linux/xattr.h>
+> > >  #include <linux/magic.h>
+> > > @@ -469,6 +470,18 @@ int ima_check_blacklist(struct ima_iint_cache *iint,
+> > >  	return rc;
+> > >  }
+> > >  
+> > > +static bool is_bprm_creds_for_exec(enum ima_hooks func, struct file *file)
+> > > +{
+> > > +	struct linux_binprm *bprm = NULL;
+> > > +
+> > > +	if (func == BPRM_CHECK) {
+> > 
+> > struct linux_binprm *bprm;
+> 
+> Local variables are normally defined at the beginning of the function.
+> > 
+> > > +		bprm = container_of(&file, struct linux_binprm, file);
+> > > +		if (bprm->is_check)
+> > > +			return true;
+> > 
+> > return bprm->is_check;
+> 
+> Yes, that's better.
+> 
+> > 
+> > > +	}
+> > > +	return false;
+> > > +}
+> > > +
+> > >  /*
+> > >   * ima_appraise_measurement - appraise file measurement
+> > >   *
+> > > @@ -483,6 +496,7 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
+> > >  			     int xattr_len, const struct modsig *modsig)
+> > >  {
+> > >  	static const char op[] = "appraise_data";
+> > > +	int audit_msgno = AUDIT_INTEGRITY_DATA;
+> > >  	const char *cause = "unknown";
+> > >  	struct dentry *dentry = file_dentry(file);
+> > >  	struct inode *inode = d_backing_inode(dentry);
+> > > @@ -494,6 +508,16 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
+> > >  	if (!(inode->i_opflags & IOP_XATTR) && !try_modsig)
+> > >  		return INTEGRITY_UNKNOWN;
+> > >  
+> > > +	/*
+> > > +	 * Unlike any of the other LSM hooks where the kernel enforces file
+> > > +	 * integrity, enforcing file integrity for the bprm_creds_for_exec()
+> > > +	 * LSM hook with the AT_EXECVE_CHECK flag is left up to the discretion
+> > > +	 * of the script interpreter(userspace). Differentiate kernel and
+> > > +	 * userspace enforced integrity audit messages.
+> > > +	 */
+> > > +	if (is_bprm_creds_for_exec(func, file))
+> > > +		audit_msgno = AUDIT_INTEGRITY_DATA_CHECK;
+> > > +
+> > >  	/* If reading the xattr failed and there's no modsig, error out. */
+> > >  	if (rc <= 0 && !try_modsig) {
+> > >  		if (rc && rc != -ENODATA)
+> > > @@ -569,7 +593,7 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
+> > >  	     (iint->flags & IMA_FAIL_UNVERIFIABLE_SIGS))) {
+> > >  		status = INTEGRITY_FAIL;
+> > >  		cause = "unverifiable-signature";
+> > > -		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
+> > > +		integrity_audit_msg(audit_msgno, inode, filename,
+> > >  				    op, cause, rc, 0);
+> > >  	} else if (status != INTEGRITY_PASS) {
+> > >  		/* Fix mode, but don't replace file signatures. */
+> > > @@ -589,7 +613,7 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
+> > >  			status = INTEGRITY_PASS;
+> > >  		}
+> > >  
+> > > -		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
+> > > +		integrity_audit_msg(audit_msgno, inode, filename,
+> > >  				    op, cause, rc, 0);
+> > >  	} else {
+> > >  		ima_cache_flags(iint, func);
+> > > diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> > > index 06132cf47016..f0830e6d0cda 100644
+> > > --- a/security/integrity/ima/ima_main.c
+> > > +++ b/security/integrity/ima/ima_main.c
+> > > @@ -554,6 +554,27 @@ static int ima_bprm_check(struct linux_binprm *bprm)
+> > >  				   MAY_EXEC, CREDS_CHECK);
+> > >  }
+> > >  
+> > > +/**
+> > > + * ima_bprm_creds_for_exec - collect/store/appraise measurement.
+> > > + * @bprm: contains the linux_binprm structure
+> > > + *
+> > > + * Based on the IMA policy and the execvat(2) AT_CHECK flag, measure and
+> > 
+> > AT_EXECVE_CHECK
+> 
+> Thanks, good catch.
+> > 
+> > > + * appraise the integrity of a file to be executed by script interpreters.
+> > > + * Unlike any of the other LSM hooks where the kernel enforces file integrity,
+> > > + * enforcing file integrity is left up to the discretion of the script
+> > > + * interpreter (userspace).
+> > > + *
+> > > + * On success return 0.  On integrity appraisal error, assuming the file
+> > > + * is in policy and IMA-appraisal is in enforcing mode, return -EACCES.
+> > > + */
+> > > +static int ima_bprm_creds_for_exec(struct linux_binprm *bprm)
+> > > +{
+> > 
+> > We could have a comment explaining that ima_bprm_check() will not be
+> > called a second time bi the bprm_check_security hook if bprm->is_check
+> > is true because this hook would then not be called.  This would not be a
+> > security issue anyway, just a useless call.
+> 
+> Proposed comment:
+> +       /* 
+> +        * As security_bprm_check() is called multiple times, both 
+> +        * the script and the shebang interpreter are measured, appraised,
+> +        * and audited. Limit usage of this LSM hook to just measuring,
+> +        * appraising, and auditing the indirect script execution
+> +        * (e.g. ./sh example.sh).
+> +        */
 
-Yes. I may have introduced some formatting (e.g. tabs in struct definitions)
-that you dislike. Feel free to "correct" any you find as well.
+Looks good!  Feel free to send a new patch with these changes.
 
+> 
+> > 
+> > > +	if (!bprm->is_check)
+> > > +		return 0;
+> > > +
+> > > +	return ima_bprm_check(bprm);
+> > > +}
+> > > +
+> > >  /**
+> > >   * ima_file_check - based on policy, collect/store measurement.
+> > >   * @file: pointer to the file to be measured
+> > > @@ -1177,6 +1198,7 @@ static int __init init_ima(void)
+> > >  
+> > >  static struct security_hook_list ima_hooks[] __ro_after_init = {
+> > >  	LSM_HOOK_INIT(bprm_check_security, ima_bprm_check),
+> > > +	LSM_HOOK_INIT(bprm_creds_for_exec, ima_bprm_creds_for_exec),
+> > >  	LSM_HOOK_INIT(file_post_open, ima_file_check),
+> > >  	LSM_HOOK_INIT(inode_post_create_tmpfile, ima_post_create_tmpfile),
+> > >  	LSM_HOOK_INIT(file_release, ima_file_free),
+> > > -- 
+> > > 2.47.0
+> > > 
+> > > 
+> 
+> 
