@@ -1,134 +1,264 @@
-Received: from smtp-bc0a.mail.infomaniak.ch (smtp-bc0a.mail.infomaniak.ch [45.157.188.10])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5ACAE2391AA;
-	Wed,  4 Dec 2024 19:28:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92D521C3BF5;
+	Wed,  4 Dec 2024 19:28:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733340488; cv=none; b=bKUMc39slCMMiNBboooVfT7By8UuOEW3eZM0F5RR96PhV6TAEpg+3Gn/yA6T0wMDMkH9P124o7PedbEP/xhdaCzGtEoFgrRy2BiXpYptHwbfYNiSxx01IfF8rtwhsZFQe5hizCfZakxOT6VmCTZVGGYl9Pq6FwvG2CP+BelMe/k=
+	t=1733340493; cv=none; b=QYHGhohpBdOcYAffg3vEvw2vcKDIZHNYyuj+98C+jH1189pXs1jN9NXFkElPK63Z0JBWbGQQarN1V/NRkjk2DGm3VqkfgjtraaIUJD5wpwdyzbGvKlCL1dPaLKoxd7fsk0EJATSc8khyh7fxaFQTBIvI26p8DmsIV7900Pnnn6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733340488; c=relaxed/simple;
-	bh=gVf/mBxTJvebnqEdIle6xkNZAvjDrLxAz+i2Ut8HxyQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t5C6Ifc5lu7+DpOoAPsc8aOJJ71s2PKmNdbNr4IXjDlDaAwUj+kdy6TBd+rqwf2TCPTao9sr10fKMWsCgkX2cGLe0Q3LkvB0zxmM88zU7tLheG6YwZoRtxk7pvR91toCw3TqGWeakZ3Ctv6ggQBB8Sue7pO4NzfOJhlhwXn35YI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=yC1l2Qed; arc=none smtp.client-ip=45.157.188.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1733340493; c=relaxed/simple;
+	bh=V5Z99NBb8b6rSst4hRmnhOCuy/3r9IQFwnLv6vaxXTw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=sL6jK9UX5leYlDwjFfwO6rs/Tw50E1uGDwrvV7Pnr6csv+ZsZgLXa1mBRkfFcmQ+whHWFku0A1ppa8taFRnU7F/aAXWQFBD6mbyQyCvR8INCFg7kZ4s+u75Z1s6ZXUMox9+kJkonpGXz9GcXx90NJlHYG+BggW4GhWlwEvn8nWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=gbMLZqc9; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="yC1l2Qed"
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Y3SGl1wkfzXvV;
-	Wed,  4 Dec 2024 20:27:59 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1733340479;
-	bh=K6b7RkVHa81TH/U1AVRf2JXY8+WHDWPpbx+OOiCCbFE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=yC1l2QedjWBXPi2WNHZJ/QvF/BU0TzsyXnWrh6KkpD5KMJ370QTmWCuHpHgCjCA+t
-	 6jbtXLxbmKl6g+VO9dbqsCOTumZbVjS6+Alfdm6/NGXvrugGxMaQbm0hET1cD/dg/i
-	 TPMli8FpzCIJA9s8n7hThfpW+R6Db/JZsVBEG1Sc=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Y3SGk2Q7cz1h6;
-	Wed,  4 Dec 2024 20:27:58 +0100 (CET)
-Date: Wed, 4 Dec 2024 20:27:57 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Matthieu Baerts <matttbe@kernel.org>
-Cc: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
-	gnoack@google.com, willemdebruijn.kernel@gmail.com, matthieu@buffet.re, 
-	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, 
-	yusongping@huawei.com, artem.kuzin@huawei.com, konstantin.meskhidze@huawei.com, 
-	MPTCP Linux <mptcp@lists.linux.dev>, David Laight <David.Laight@aculab.com>
-Subject: Re: [RFC PATCH v2 1/8] landlock: Fix non-TCP sockets restriction
-Message-ID: <20241204.fahVio7eicim@digikod.net>
-References: <20241017110454.265818-1-ivanov.mikhail1@huawei-partners.com>
- <20241017110454.265818-2-ivanov.mikhail1@huawei-partners.com>
- <49bc2227-d8e1-4233-8bc4-4c2f0a191b7c@kernel.org>
- <20241018.Kahdeik0aaCh@digikod.net>
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="gbMLZqc9"
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B4Ht5Ln003827;
+	Wed, 4 Dec 2024 19:27:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=ZyQpPl
+	+bjV1rX6XPFZ/MNos7dOYW2aS9HLGyFn5yUU4=; b=gbMLZqc9EIE3W13YgvcOjj
+	CIO3BdvJJhkJGEK6Cnac70Zbr8qPJLVTwVsUoHG7rkDZnITwax+GD7FvmMGxUojB
+	t5n69PjupIkZXOgE/Nmf5w0sOfMXWkK0yoTJoEkdYn3UAyst8rke2/jleu/TUTGI
+	vwCAZSJXQtYT/vvVznbPrpqc5GU+fDJN+IGTZlvv/xdmJpdkRj6IQXnieX7ibzud
+	phA5XvzF+V+qaZIluVkc6uk96d1kMZ8GGO6JG0aFszu2q5pEu0SM0UnHp0ff4hQE
+	ofttavvYMimniWLrKUy+t244SeqTZP4YLGZ/pusbci3xdK/0HVRG+AuuQo19+V7Q
+	==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 437r4psrkq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Dec 2024 19:27:54 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B4HQFBo005253;
+	Wed, 4 Dec 2024 19:27:53 GMT
+Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43a2kxn36q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 04 Dec 2024 19:27:53 +0000
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4B4JRqnf17367572
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 4 Dec 2024 19:27:53 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A5C3D5805E;
+	Wed,  4 Dec 2024 19:27:52 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 236C15805C;
+	Wed,  4 Dec 2024 19:27:52 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.31.103.152])
+	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed,  4 Dec 2024 19:27:52 +0000 (GMT)
+Message-ID: <67b2e94f263bf9a0099efe74cce659d6acb16fe9.camel@linux.ibm.com>
+Subject: Re: [PATCH v2] ima: instantiate the bprm_creds_for_exec() hook
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: linux-integrity@vger.kernel.org
+Cc: =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        roberto.sassu@huawei.com, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jeff Xu <jeffxu@chromium.org>,
+        Kees Cook
+	 <kees@kernel.org>, Paul Moore <paul@paul-moore.com>,
+        audit@vger.kernel.org
+Date: Wed, 04 Dec 2024 14:27:51 -0500
+In-Reply-To: <20241204192514.40308-1-zohar@linux.ibm.com>
+References: <20241204192514.40308-1-zohar@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241018.Kahdeik0aaCh@digikod.net>
-X-Infomaniak-Routing: alpha
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: Zygmr5Q-Iz5zrBpJOh9SGFXDcZTqJoY_
+X-Proofpoint-ORIG-GUID: Zygmr5Q-Iz5zrBpJOh9SGFXDcZTqJoY_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
+ priorityscore=1501 clxscore=1011 phishscore=0 malwarescore=0
+ suspectscore=0 mlxscore=0 bulkscore=0 mlxlogscore=999 adultscore=0
+ lowpriorityscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2411120000 definitions=main-2412040145
 
-On Fri, Oct 18, 2024 at 08:08:12PM +0200, Mickaël Salaün wrote:
-> On Thu, Oct 17, 2024 at 02:59:48PM +0200, Matthieu Baerts wrote:
-> > Hi Mikhail and Landlock maintainers,
-> > 
-> > +cc MPTCP list.
-> 
-> Thanks, we should include this list in the next series.
-> 
-> > 
-> > On 17/10/2024 13:04, Mikhail Ivanov wrote:
-> > > Do not check TCP access right if socket protocol is not IPPROTO_TCP.
-> > > LANDLOCK_ACCESS_NET_BIND_TCP and LANDLOCK_ACCESS_NET_CONNECT_TCP
-> > > should not restrict bind(2) and connect(2) for non-TCP protocols
-> > > (SCTP, MPTCP, SMC).
-> > 
-> > Thank you for the patch!
-> > 
-> > I'm part of the MPTCP team, and I'm wondering if MPTCP should not be
-> > treated like TCP here. MPTCP is an extension to TCP: on the wire, we can
-> > see TCP packets with extra TCP options. On Linux, there is indeed a
-> > dedicated MPTCP socket (IPPROTO_MPTCP), but that's just internal,
-> > because we needed such dedicated socket to talk to the userspace.
-> > 
-> > I don't know Landlock well, but I think it is important to know that an
-> > MPTCP socket can be used to discuss with "plain" TCP packets: the kernel
-> > will do a fallback to "plain" TCP if MPTCP is not supported by the other
-> > peer or by a middlebox. It means that with this patch, if TCP is blocked
-> > by Landlock, someone can simply force an application to create an MPTCP
-> > socket -- e.g. via LD_PRELOAD -- and bypass the restrictions. It will
-> > certainly work, even when connecting to a peer not supporting MPTCP.
-> > 
-> > Please note that I'm not against this modification -- especially here
-> > when we remove restrictions around MPTCP sockets :) -- I'm just saying
-> > it might be less confusing for users if MPTCP is considered as being
-> > part of TCP. A bit similar to what someone would do with a firewall: if
-> > TCP is blocked, MPTCP is blocked as well.
-> 
-> Good point!  I don't know well MPTCP but I think you're right.  Given
-> it's close relationship with TCP and the fallback mechanism, it would
-> make sense for users to not make a difference and it would avoid bypass
-> of misleading restrictions.  Moreover the Landlock rules are simple and
-> only control TCP ports, not peer addresses, which seems to be the main
-> evolution of MPTCP.
+This should have been patch v3.
 
-Thinking more about this, this makes sense from the point of view of the
-network stack, but looking at external (potentially bogus) firewalls or
-malware detection systems, it is something different.  If we don't
-provide a way for users to differenciate the control of SCTP from TCP,
-malicious use of SCTP could still bypass this kind of bogus security
-appliances.  It would then be safer to stick to the protocol semantic by
-clearly differenciating TCP from MPTCP (or any other protocol).
+Mimi
 
-Mikhail, could you please send a new patch series containing one patch
-to fix the kernel and another to extend tests?  We should also include
-this rationale in the commit message.
+On Wed, 2024-12-04 at 14:25 -0500, Mimi Zohar wrote:
+> Like direct file execution (e.g. ./script.sh), indirect file execution
+> (e.g. sh script.sh) needs to be measured and appraised.  Instantiate
+> the new security_bprm_creds_for_exec() hook to measure and verify the
+> indirect file's integrity.  Unlike direct file execution, indirect file
+> execution is optionally enforced by the interpreter.
+>=20
+> Differentiate kernel and userspace enforced integrity audit messages.
+>=20
+> Co-developed-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+> ---
+> Changelog v3:
+> - Mickael: add comment ima_bprm_creds_for_exec(), minor code cleanup,
+>   add Co-developed-by tag.
+>=20
+> Changelog v2:
+> - Mickael: Use same audit messages with new audit message number
+> - Stefan Berger: Return boolean from is_bprm_creds_for_exec()
+>=20
+>  include/uapi/linux/audit.h            |  1 +
+>  security/integrity/ima/ima_appraise.c | 27 +++++++++++++++++++++++--
+>  security/integrity/ima/ima_main.c     | 29 +++++++++++++++++++++++++++
+>  3 files changed, 55 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
+> index 75e21a135483..826337905466 100644
+> --- a/include/uapi/linux/audit.h
+> +++ b/include/uapi/linux/audit.h
+> @@ -161,6 +161,7 @@
+>  #define AUDIT_INTEGRITY_RULE	    1805 /* policy rule */
+>  #define AUDIT_INTEGRITY_EVM_XATTR   1806 /* New EVM-covered xattr */
+>  #define AUDIT_INTEGRITY_POLICY_RULE 1807 /* IMA policy rules */
+> +#define AUDIT_INTEGRITY_DATA_CHECK  1808 /* Userspace enforced data inte=
+grity */
+> =20
+>  #define AUDIT_KERNEL		2000	/* Asynchronous audit record. NOT A REQUEST. =
+*/
+> =20
+> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/i=
+ma/ima_appraise.c
+> index 656c709b974f..fc0d1f3cceca 100644
+> --- a/security/integrity/ima/ima_appraise.c
+> +++ b/security/integrity/ima/ima_appraise.c
+> @@ -8,6 +8,7 @@
+>  #include <linux/module.h>
+>  #include <linux/init.h>
+>  #include <linux/file.h>
+> +#include <linux/binfmts.h>
+>  #include <linux/fs.h>
+>  #include <linux/xattr.h>
+>  #include <linux/magic.h>
+> @@ -469,6 +470,17 @@ int ima_check_blacklist(struct ima_iint_cache *iint,
+>  	return rc;
+>  }
+> =20
+> +static bool is_bprm_creds_for_exec(enum ima_hooks func, struct file *fil=
+e)
+> +{
+> +	struct linux_binprm *bprm;
+> +
+> +	if (func =3D=3D BPRM_CHECK) {
+> +		bprm =3D container_of(&file, struct linux_binprm, file);
+> +		return bprm->is_check;
+> +	}
+> +	return false;
+> +}
+> +
+>  /*
+>   * ima_appraise_measurement - appraise file measurement
+>   *
+> @@ -483,6 +495,7 @@ int ima_appraise_measurement(enum ima_hooks func, str=
+uct ima_iint_cache *iint,
+>  			     int xattr_len, const struct modsig *modsig)
+>  {
+>  	static const char op[] =3D "appraise_data";
+> +	int audit_msgno =3D AUDIT_INTEGRITY_DATA;
+>  	const char *cause =3D "unknown";
+>  	struct dentry *dentry =3D file_dentry(file);
+>  	struct inode *inode =3D d_backing_inode(dentry);
+> @@ -494,6 +507,16 @@ int ima_appraise_measurement(enum ima_hooks func, st=
+ruct ima_iint_cache *iint,
+>  	if (!(inode->i_opflags & IOP_XATTR) && !try_modsig)
+>  		return INTEGRITY_UNKNOWN;
+> =20
+> +	/*
+> +	 * Unlike any of the other LSM hooks where the kernel enforces file
+> +	 * integrity, enforcing file integrity for the bprm_creds_for_exec()
+> +	 * LSM hook with the AT_EXECVE_CHECK flag is left up to the discretion
+> +	 * of the script interpreter(userspace). Differentiate kernel and
+> +	 * userspace enforced integrity audit messages.
+> +	 */
+> +	if (is_bprm_creds_for_exec(func, file))
+> +		audit_msgno =3D AUDIT_INTEGRITY_DATA_CHECK;
+> +
+>  	/* If reading the xattr failed and there's no modsig, error out. */
+>  	if (rc <=3D 0 && !try_modsig) {
+>  		if (rc && rc !=3D -ENODATA)
+> @@ -569,7 +592,7 @@ int ima_appraise_measurement(enum ima_hooks func, str=
+uct ima_iint_cache *iint,
+>  	     (iint->flags & IMA_FAIL_UNVERIFIABLE_SIGS))) {
+>  		status =3D INTEGRITY_FAIL;
+>  		cause =3D "unverifiable-signature";
+> -		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
+> +		integrity_audit_msg(audit_msgno, inode, filename,
+>  				    op, cause, rc, 0);
+>  	} else if (status !=3D INTEGRITY_PASS) {
+>  		/* Fix mode, but don't replace file signatures. */
+> @@ -589,7 +612,7 @@ int ima_appraise_measurement(enum ima_hooks func, str=
+uct ima_iint_cache *iint,
+>  			status =3D INTEGRITY_PASS;
+>  		}
+> =20
+> -		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
+> +		integrity_audit_msg(audit_msgno, inode, filename,
+>  				    op, cause, rc, 0);
+>  	} else {
+>  		ima_cache_flags(iint, func);
+> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/i=
+ma_main.c
+> index 06132cf47016..5d4ac8aa2f1f 100644
+> --- a/security/integrity/ima/ima_main.c
+> +++ b/security/integrity/ima/ima_main.c
+> @@ -554,6 +554,34 @@ static int ima_bprm_check(struct linux_binprm *bprm)
+>  				   MAY_EXEC, CREDS_CHECK);
+>  }
+> =20
+> +/**
+> + * ima_bprm_creds_for_exec - collect/store/appraise measurement.
+> + * @bprm: contains the linux_binprm structure
+> + *
+> + * Based on the IMA policy and the execvat(2) AT_EXECVE_CHECK flag, meas=
+ure
+> + * and appraise the integrity of a file to be executed by script interpr=
+eters.
+> + * Unlike any of the other LSM hooks where the kernel enforces file inte=
+grity,
+> + * enforcing file integrity is left up to the discretion of the script
+> + * interpreter (userspace).
+> + *
+> + * On success return 0.  On integrity appraisal error, assuming the file
+> + * is in policy and IMA-appraisal is in enforcing mode, return -EACCES.
+> + */
+> +static int ima_bprm_creds_for_exec(struct linux_binprm *bprm)
+> +{
+> +	/*
+> +	 * As security_bprm_check() is called multiple times, both
+> +	 * the script and the shebang interpreter are measured, appraised,
+> +	 * and audited. Limit usage of this LSM hook to just measuring,
+> +	 * appraising, and auditing the indirect script execution
+> +	 * (e.g. ./sh example.sh).
+> +	 */
+> +	if (!bprm->is_check)
+> +		return 0;
+> +
+> +	return ima_bprm_check(bprm);
+> +}
+> +
+>  /**
+>   * ima_file_check - based on policy, collect/store measurement.
+>   * @file: pointer to the file to be measured
+> @@ -1177,6 +1205,7 @@ static int __init init_ima(void)
+> =20
+>  static struct security_hook_list ima_hooks[] __ro_after_init =3D {
+>  	LSM_HOOK_INIT(bprm_check_security, ima_bprm_check),
+> +	LSM_HOOK_INIT(bprm_creds_for_exec, ima_bprm_creds_for_exec),
+>  	LSM_HOOK_INIT(file_post_open, ima_file_check),
+>  	LSM_HOOK_INIT(inode_post_create_tmpfile, ima_post_create_tmpfile),
+>  	LSM_HOOK_INIT(file_release, ima_file_free),
 
-> 
-> > 
-> > I understand that a future goal might probably be to have dedicated
-> > restrictions for MPTCP and the other stream protocols (and/or for all
-> > stream protocols like it was before this patch), but in the meantime, it
-> > might be less confusing considering MPTCP as being part of TCP (I'm not
-> > sure about the other stream protocols).
-> 
-> We need to take a closer look at the other stream protocols indeed.
-
-It would be nice to add support for MPTCP too, but this will be treated
-as a new Landlock feature (with a proper ABI bump).
-
-> 
-> > 
-> > 
-> > > sk_is_tcp() is used for this to check address family of the socket
-> > > before doing INET-specific address length validation. This is required
-> > > for error consistency.
-> > > 
-> > > Closes: https://github.com/landlock-lsm/linux/issues/40
-> > > Fixes: fff69fb03dde ("landlock: Support network rules with TCP bind and connect")
