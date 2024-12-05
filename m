@@ -1,247 +1,84 @@
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+Received: from smtp-42a9.mail.infomaniak.ch (smtp-42a9.mail.infomaniak.ch [84.16.66.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF5AB16F27E;
-	Thu,  5 Dec 2024 08:54:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBD6D1C3F1C
+	for <linux-security-module@vger.kernel.org>; Thu,  5 Dec 2024 10:53:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733388870; cv=none; b=Tp2HpPuqU/8/OJ/lzjMvnkSwn6Dk+bgRCN5xDbdNTrIu8yRoiTj1udZyXAUif90BmPw1HbXx32KUxwwxFbd8SXkQRLvKKTtNFNelSworQ0kjYb61WJ8Yk4UIDQq9/ZP5JW6vJz2Gm00W/MQnfixOwGkMI03pwvDxn9jW4VA+B6s=
+	t=1733396015; cv=none; b=jV4lEDzVAMFk6mpPqkX8FS1L02z4rGDw1Ix0LDS2Ewv++zwyBAxZ/dR5+2WMv6qJDb5bP8hob4jgMCC9kgBBCX9HL9Xy/aInO0WaE+AVCrHTQPsZJ0FS8882GUEEUs1ygUWI/+TOxKUZzHWkRWhmea5YMVWACt/UueCp7/Zg0dA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733388870; c=relaxed/simple;
-	bh=g0gydrHl/2oqhtVxsWa7SZilONyoK1LSyfq8FZ/A+/0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=hpCy5o3WuMg0r11Awj5NtIPVQuYSgP/P2dnMqBsXsdZgZS/sX3nHgXNZ06WfxMKBo8eNzh+LbPjjuUy8wLMF4Oc+fLXry+Cowm7EDFFrXFn9/OwAPkboC1oBgD4x93AFv4AmR8OoELy3nKhR+T7rIx8KEF3qKdrk6q16yi+JCQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4Y3nhd2ylsz9v7Vj;
-	Thu,  5 Dec 2024 16:33:05 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 00C2714051A;
-	Thu,  5 Dec 2024 16:54:09 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwBH9CQdalFnenXcAg--.56302S2;
-	Thu, 05 Dec 2024 09:54:08 +0100 (CET)
-Message-ID: <3a759c091ac097be84b882dd992e6e216ec11723.camel@huaweicloud.com>
-Subject: Re: [PATCH v6 00/15] integrity: Introduce the Integrity Digest Cache
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Eric Snowberg <eric.snowberg@oracle.com>
-Cc: Mimi Zohar <zohar@linux.ibm.com>, Dmitry Kasatkin
- <dmitry.kasatkin@gmail.com>, "corbet@lwn.net" <corbet@lwn.net>, 
- "mcgrof@kernel.org" <mcgrof@kernel.org>, "petr.pavlu@suse.com"
- <petr.pavlu@suse.com>,  "samitolvanen@google.com"
- <samitolvanen@google.com>, "da.gomez@samsung.com" <da.gomez@samsung.com>, 
- Andrew Morton <akpm@linux-foundation.org>, "paul@paul-moore.com"
- <paul@paul-moore.com>, "jmorris@namei.org" <jmorris@namei.org>,
- "serge@hallyn.com" <serge@hallyn.com>, "shuah@kernel.org"
- <shuah@kernel.org>, "mcoquelin.stm32@gmail.com"
- <mcoquelin.stm32@gmail.com>,  "alexandre.torgue@foss.st.com"
- <alexandre.torgue@foss.st.com>, "linux-integrity@vger.kernel.org"
- <linux-integrity@vger.kernel.org>, "linux-doc@vger.kernel.org"
- <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "linux-api@vger.kernel.org"
- <linux-api@vger.kernel.org>, "linux-modules@vger.kernel.org"
- <linux-modules@vger.kernel.org>, "linux-security-module@vger.kernel.org"
- <linux-security-module@vger.kernel.org>, "linux-kselftest@vger.kernel.org"
- <linux-kselftest@vger.kernel.org>, "wufan@linux.microsoft.com"
- <wufan@linux.microsoft.com>, "pbrobinson@gmail.com" <pbrobinson@gmail.com>,
-  "zbyszek@in.waw.pl" <zbyszek@in.waw.pl>, "hch@lst.de" <hch@lst.de>,
- "mjg59@srcf.ucam.org" <mjg59@srcf.ucam.org>, "pmatilai@redhat.com"
- <pmatilai@redhat.com>,  "jannh@google.com" <jannh@google.com>,
- "dhowells@redhat.com" <dhowells@redhat.com>,  "jikos@kernel.org"
- <jikos@kernel.org>, "mkoutny@suse.com" <mkoutny@suse.com>,
- "ppavlu@suse.com" <ppavlu@suse.com>, "petr.vorel@gmail.com"
- <petr.vorel@gmail.com>,  "mzerqung@0pointer.de" <mzerqung@0pointer.de>,
- "kgold@linux.ibm.com" <kgold@linux.ibm.com>, Roberto Sassu
- <roberto.sassu@huawei.com>
-Date: Thu, 05 Dec 2024 09:53:45 +0100
-In-Reply-To: <B0DC94E7-78A3-4797-B864-31DE0A2C903C@oracle.com>
-References: <20241119104922.2772571-1-roberto.sassu@huaweicloud.com>
-	 <C4BE31F8-1FA3-4AD1-A712-ED2AA7E61E96@oracle.com>
-	 <17ef4f662e594c8431a00fe423507af4f6a82286.camel@huaweicloud.com>
-	 <B135AC90-7CE5-4E51-90B1-9D82031668A8@oracle.com>
-	 <00f3eb72042aedaa4644ff0932d06d4e8d215f6b.camel@huaweicloud.com>
-	 <B0DC94E7-78A3-4797-B864-31DE0A2C903C@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1733396015; c=relaxed/simple;
+	bh=V7TDcfBuyky5UsKZRbY/kdI8U0JTK2PgSkZNRMtSVHM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U2sZIr7CPlB5/gddpUbCwnntOKA8cdgvK5uYqTPigZo84vU3MnKNuF0gsRGeBIx7hrb7CcO68cpu9cWaLzHKEOxUi6nHxvLSzvwVN8Dp9KBrxr682iBATxvJ+hFywfd5jgyZI2qF9VxKGc7XgqRbskgkVZdQLOaXey8Y0ZG07+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=1MSiodC3; arc=none smtp.client-ip=84.16.66.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="1MSiodC3"
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Y3rpZ4r0CznS;
+	Thu,  5 Dec 2024 11:53:26 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1733396006;
+	bh=cTdGME8xOveDjt/A541FRkracaMRa2kD7BqhDnfiQ5E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=1MSiodC3yO84x9ruBw8LRr0ArJoSuCIdfqGZ4KKWrBW6uX4L3hoeQqPpWoYwYiCI5
+	 WUuQSLzxs8bbIGUmpy2smurAVkuSf4NEVuqCp0nabu1d7yqINrdz0Dt7V+dCD6OfnA
+	 tmgo9xHpaRvxHHKsOsPkrKOlB2Vn4EOJaVmHuWQY=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Y3rpZ0PF3zK3H;
+	Thu,  5 Dec 2024 11:53:25 +0100 (CET)
+Date: Thu, 5 Dec 2024 11:53:26 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Stefan Berger <stefanb@linux.ibm.com>
+Cc: Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org, 
+	roberto.sassu@huawei.com, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Jeff Xu <jeffxu@chromium.org>, Kees Cook <kees@kernel.org>, 
+	Paul Moore <paul@paul-moore.com>, audit@vger.kernel.org
+Subject: Re: [PATCH v2] ima: instantiate the bprm_creds_for_exec() hook
+Message-ID: <20241205.fien4aet3Jae@digikod.net>
+References: <20241203233424.287880-1-zohar@linux.ibm.com>
+ <c1c61f20-a4ee-437f-840b-2433345e74b6@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwBH9CQdalFnenXcAg--.56302S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3WrW8tF1DCFykKFWfAF47Jwb_yoW7tw1kpa
-	y5Ka13Kr4kWr10k3Z2ka1UWF1Fk3yftr15Xwn8Xry5CrZ0gr929F1xKa15uFyDGr1kGr12
-	vr1ag347CrWDAaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Wrv_ZF1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26rWY6r4U
-	JwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
-	EksDUUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAIBGdRD-QHxQAAsB
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <c1c61f20-a4ee-437f-840b-2433345e74b6@linux.ibm.com>
+X-Infomaniak-Routing: alpha
 
-On Thu, 2024-12-05 at 00:57 +0000, Eric Snowberg wrote:
->=20
-> > On Dec 4, 2024, at 3:44=E2=80=AFAM, Roberto Sassu <roberto.sassu@huawei=
-cloud.com> wrote:
-> >=20
-> > On Tue, 2024-12-03 at 20:06 +0000, Eric Snowberg wrote:
-> > >=20
-> > > > On Nov 26, 2024, at 3:41=E2=80=AFAM, Roberto Sassu <roberto.sassu@h=
-uaweicloud.com> wrote:
-> > > >=20
-> > > > On Tue, 2024-11-26 at 00:13 +0000, Eric Snowberg wrote:
-> > > > >=20
-> > > > > > On Nov 19, 2024, at 3:49=E2=80=AFAM, Roberto Sassu <roberto.sas=
-su@huaweicloud.com> wrote:
-> > > > > >=20
-> > > > > > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > > > > >=20
-> > > > > > The Integrity Digest Cache can also help IMA for appraisal. IMA=
- can simply
-> > > > > > lookup the calculated digest of an accessed file in the list of=
- digests
-> > > > > > extracted from package headers, after verifying the header sign=
-ature. It is
-> > > > > > sufficient to verify only one signature for all files in the pa=
-ckage, as
-> > > > > > opposed to verifying a signature for each file.
-> > > > >=20
-> > > > > Is there a way to maintain integrity over time?  Today if a CVE i=
-s discovered=20
-> > > > > in a signed program, the program hash can be added to the blackli=
-st keyring.=20
-> > > > > Later if IMA appraisal is used, the signature validation will fai=
-l just for that=20
-> > > > > program.  With the Integrity Digest Cache, is there a way to do t=
-his? =20
-> > > >=20
-> > > > As far as I can see, the ima_check_blacklist() call is before
-> > > > ima_appraise_measurement(). If it fails, appraisal with the Integri=
-ty
-> > > > Digest Cache will not be done.
-> > >=20
-> > >=20
-> > > It is good the program hash would be checked beforehand and fail if i=
-t is=20
-> > > contained on the list.=20
-> > >=20
-> > > The .ima keyring may contain many keys.  If one of the keys was later=
-=20
-> > > revoked and added to the .blacklist, wouldn't this be missed?  It wou=
-ld=20
-> > > be caught during signature validation when the file is later appraise=
-d, but=20
-> > > now this step isn't taking place.  Correct?
-> >=20
-> > For files included in the digest lists, yes, there won't be detection
-> > of later revocation of a key. However, it will still work at package
-> > level/digest list level, since they are still appraised with a
-> > signature.
-> >=20
-> > We can add a mechanism (if it does not already exist) to invalidate the
-> > integrity status based on key revocation, which can be propagated to
-> > files verified with the affected digest lists.
-> >=20
-> > > With IMA appraisal, it is easy to maintain authenticity but challengi=
-ng to=20
-> > > maintain integrity over time. In user-space there are constantly new =
-CVEs. =20
-> > > To maintain integrity over time, either keys need to be rotated in th=
-e .ima=20
-> > > keyring or program hashes need to be frequently added to the .blackli=
-st.  =20
-> > > If neither is done, for an end-user on a distro, IMA-appraisal basica=
-lly=20
-> > > guarantees authenticity.
-> > >=20
-> > > While I understand the intent of the series is to increase performanc=
-e,=20
-> > > have you considered using this to give the end-user the ability to ma=
-intain=20
-> > > integrity of their system?  What I mean is, instead of trying to impo=
-rt anything=20
-> > > from an RPM, just have the end-user provide this information in some =
-format=20
-> > > to the Digest Cache.  User-space tools could be built to collect and =
-format=20
-> >=20
-> > This is already possible, digest-cache-tools
-> > (https://github.com/linux-integrity/digest-cache-tools) already allow
-> > to create a digest list with the file a user wants.
-> >=20
-> > But in this case, the user is vouching for having taken the correct
-> > measure of the file at the time it was added to the digest list. This
-> > would be instead automatically guaranteed by RPMs or other packages
-> > shipped with Linux distributions.
-> >=20
-> > To mitigate the concerns of CVEs, we can probably implement a rollback
-> > prevention mechanism, which would not allow to load a previous version
-> > of a digest list.
->=20
-> IMHO, pursuing this with the end-user being in control of what is contain=
-ed=20
-> within the Digest Cache vs what is contained in a distro would provide mo=
-re
-> value. Allowing the end-user to easily update their Digest Cache in some =
-way=20
-> without having to do any type of revocation for both old and vulnerable=
-=20
-> applications with CVEs would be very beneficial.
+On Wed, Dec 04, 2024 at 02:01:02PM -0500, Stefan Berger wrote:
+> 
+> 
+> On 12/3/24 6:34 PM, Mimi Zohar wrote:
+> > Like direct file execution (e.g. ./script.sh), indirect file exection
+> 
+> typo: execution
+> 
+> > (e.g. sh script.sh) needs to be measured and appraised.  Instantiate
+> 
+> If I understand the underlying patches correctly then 'sh script.sh' would
+> be evaluated with execveat(AT_CHECK) but this requires the execute flag to
+> be set. To maintain backwards compatibility  sh cannot assume that script.sh
+> has the execute flag set since it doesn't need today:
+> 
+> $ echo 'echo hi' > foo.sh
+> $ sh foo.sh
+> hi
+> 
+> the same is true for python:
+> 
+> $ echo 'print("hi")' > foo.py
+> $ python foo.py
+> hi
+> 
+> I am not sure which interpreters are going to be able to take advantage of
+> this or whether they will behave differently if the x bit is set versus when
+> it is not set...?
 
-Yes, deleting the digest list would invalidate any integrity result
-done with that digest list.
-
-I developed also an rpm plugin that synchronizes the digest lists with
-installed software. Old vulnerable software cannot be verified anymore
-with the Integrity Digest Cache, since the rpm plugin deletes the old
-software digest lists.
-
-https://github.com/linux-integrity/digest-cache-tools/blob/main/rpm-plugin/=
-digest_cache.c
-
-The good thing is that the Integrity Digest Cache can be easily
-controlled with filesystem operations (it works similarly to security
-blobs attached to kernel objects, like inodes and file descriptors).
-
-As soon as something changes (e.g. digest list written, link to the
-digest lists), this triggers a reset in the Integrity Digest Cache, so
-digest lists and files need to be verified again. Deleting the digest
-list causes the in-kernel digest cache to be wiped away too (when the
-reference count reaches zero).
-
-> Is there a belief the Digest Cache would be used without signed kernel=
-=20
-> modules?  Is the performance gain worth changing how kernel modules=20
-> get loaded at boot?  Couldn't this part just be dropped for easier accept=
-ance? =20
-> Integrity is already maintained with the current model of appended signat=
-ures.=20
-
-I don't like making exceptions in the design, and I recently realized
-that it should not be task of the users of the Integrity Digest Cache
-to limit themselves.
-
-But the main problem was not the kernel modules themselves, but the
-infrastructure needed in user space to load them, which might not be
-available at the time a digest list parser needs to be loaded.
-
-I hope ksys_finit_module() does not cause too much resistance (however
-I need to document it better, as others noted). It is just a different
-way to pass the same parameters of the finit_module() system call.
-
-Thanks
-
-Roberto
-
+This is a valid concern handled with two new securebits.  See the
+related patch series and documentation:
+https://lore.kernel.org/all/20241112191858.162021-3-mic@digikod.net/
