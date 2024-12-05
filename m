@@ -1,33 +1,33 @@
-Received: from smtp-8fab.mail.infomaniak.ch (smtp-8fab.mail.infomaniak.ch [83.166.143.171])
+Received: from smtp-bc0c.mail.infomaniak.ch (smtp-bc0c.mail.infomaniak.ch [45.157.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C76921D5A8
-	for <linux-security-module@vger.kernel.org>; Thu,  5 Dec 2024 16:10:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A626225790;
+	Thu,  5 Dec 2024 16:10:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733415006; cv=none; b=H2T951AP0TzQM/C66EiJdQUNWTMvxG7E5P/eYUPHZfhrbMPFPQ7Ghg+aQCVbscMgqA8AHBSd8wqmTaHylvQOAqQV3T6U8n6T2x3SIe7vqM2JlIw7CeZ8XiCJBHgkL0W8WGILvKlYBqEd2jmXxTFA7ZsaOrQPiQmkiWD9CzXQp5Y=
+	t=1733415007; cv=none; b=SYhnHdNCaD7qUJFHT+La8nrTt9lvQ4fUR+HaxXUSLgUqumPrSE1lQJD/C94DVcvuHYX7yJ9nhtjry6I6guy+qWonPwgUQpPJLCG70fwR6s1ScPdhrRksDKPMzPzSWC8EEieFLpXiZ/CFX0PzzzbafV2OWrkHf1mPJ5rkX98lpXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733415006; c=relaxed/simple;
-	bh=bVl3xGB84hIM+ALmWgXISValV7Ti+RVcoURZwB1yEIU=;
+	s=arc-20240116; t=1733415007; c=relaxed/simple;
+	bh=RGnnC3a3nD7DNr2cvyf3obtjjaxRbzLNQpaS2Ko83PY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=X9HAZf3jYpNF8h2KGL/BSFByLBl8W5TuYl1KoX10PcVbn+4zJY1tnbgrY5gKo3BzL2zAb8iCPLrCzXXB2ezRT51w7Cv37VsrPsG5nAsMT7xQ6gvQUvvzbBFJ0RGlnHamm8xd0fvU32fE9NsfkFEf1ufr/M/X2dhjLZ3Joi/d4Ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=gyVf2SmT; arc=none smtp.client-ip=83.166.143.171
+	 MIME-Version:Content-Type; b=E7sVLcu+JM/s+eGg3ge43sSfnntzj+YXqZjrqnhipPfAafnH4XbcFpyEkOvVPTdBo6xcs/anm8Wzu3uuu+WaALJVdCo5KJWpyts2ThzNSJXD56EO9zHhaK4kDb0ag5mJmuxlTomnp0wSHn5wh6rYjdn8i3xX6wLwYMvftL/zFxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=whclG3JS; arc=none smtp.client-ip=45.157.188.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="gyVf2SmT"
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Y3zqs0MkxzrlZ;
-	Thu,  5 Dec 2024 17:10:01 +0100 (CET)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="whclG3JS"
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246b])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Y3zql3Hjxz77Y;
+	Thu,  5 Dec 2024 17:09:55 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1733415000;
-	bh=q3iLh0+RYBxCd48+szjuBjIcYn8usj2ORomMH4nDYxc=;
+	s=20191114; t=1733414995;
+	bh=qnmDxHFXi6N4fToRcmhVEwvrvRtsDGj6kxHcV7qI41w=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=gyVf2SmTbpZ4F0Fo3Tv2kKWTdUwLRWFx5sCpC+OgU8Ga0uwaNiL9rynsq0G+j9MXz
-	 TcXCsp3n54VduA412Q6Tx8DlZGxUR9YJNk/s3MhGtZxosGn/JO1+ZTHdjMpLG3mX42
-	 dUijeWWbx5fdtSyaWs0iinWMQ/8LulBIaFnzd9i4=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Y3zqq4648zhrT;
-	Thu,  5 Dec 2024 17:09:59 +0100 (CET)
+	b=whclG3JSDD/Ew1OxL9RBYs5MGeSCn4prrQwcJ0jIyZRBfUSfy4hYsrAvSO6A6NsqI
+	 hq/rpFUs1xIw8SJXqDSvfYrRnTBpuOlgRpt4uHhrjzjDIKWGBKNRUVnumINBWJMmkO
+	 QJhN+SpANCYo0Zk4oiPqSQLxpxfXXSJcju023kYM=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Y3zqj4m75zgmB;
+	Thu,  5 Dec 2024 17:09:53 +0100 (CET)
 From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To: Al Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>,
@@ -85,9 +85,9 @@ Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	linux-integrity@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH v22 8/8] ima: instantiate the bprm_creds_for_exec() hook
-Date: Thu,  5 Dec 2024 17:09:25 +0100
-Message-ID: <20241205160925.230119-9-mic@digikod.net>
+Subject: [PATCH v22 5/8] samples/check-exec: Add set-exec
+Date: Thu,  5 Dec 2024 17:09:22 +0100
+Message-ID: <20241205160925.230119-6-mic@digikod.net>
 In-Reply-To: <20241205160925.230119-1-mic@digikod.net>
 References: <20241205160925.230119-1-mic@digikod.net>
 Precedence: bulk
@@ -100,170 +100,182 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
 
-From: Mimi Zohar <zohar@linux.ibm.com>
+Add a simple tool to set SECBIT_EXEC_RESTRICT_FILE or
+SECBIT_EXEC_DENY_INTERACTIVE before executing a command.  This is useful
+to easily test against enlighten script interpreters.
 
-Like direct file execution (e.g. ./script.sh), indirect file execution
-(e.g. sh script.sh) needs to be measured and appraised.  Instantiate
-the new security_bprm_creds_for_exec() hook to measure and verify the
-indirect file's integrity.  Unlike direct file execution, indirect file
-execution is optionally enforced by the interpreter.
-
-Differentiate kernel and userspace enforced integrity audit messages.
-
-Co-developed-by: Roberto Sassu <roberto.sassu@huawei.com>
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
-Link: https://lore.kernel.org/r/20241204192514.40308-1-zohar@linux.ibm.com
-Reviewed-by: Mickaël Salaün <mic@digikod.net>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: Serge Hallyn <serge@hallyn.com>
 Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Link: https://lore.kernel.org/r/20241205160925.230119-9-mic@digikod.net
+Link: https://lore.kernel.org/r/20241205160925.230119-6-mic@digikod.net
 ---
 
-I added both a Reviewed-by and a Signed-off-by because I may not be the
-committer.
-
-Changes since v21:
-* New patch cherry-picked from IMA's patch v3:
-  https://lore.kernel.org/r/67b2e94f263bf9a0099efe74cce659d6acb16fe9.camel@linux.ibm.com
-* Fix a typo in comment: s/execvat/execveat/ .
+Changes since v19:
+* Rename file and directory.
+* Update securebits and related arguments.
+* Remove useless call to prctl() when securebits are unchanged.
 ---
- include/uapi/linux/audit.h            |  1 +
- security/integrity/ima/ima_appraise.c | 27 +++++++++++++++++++++++--
- security/integrity/ima/ima_main.c     | 29 +++++++++++++++++++++++++++
- 3 files changed, 55 insertions(+), 2 deletions(-)
+ samples/Kconfig               |  7 +++
+ samples/Makefile              |  1 +
+ samples/check-exec/.gitignore |  1 +
+ samples/check-exec/Makefile   | 14 ++++++
+ samples/check-exec/set-exec.c | 85 +++++++++++++++++++++++++++++++++++
+ 5 files changed, 108 insertions(+)
+ create mode 100644 samples/check-exec/.gitignore
+ create mode 100644 samples/check-exec/Makefile
+ create mode 100644 samples/check-exec/set-exec.c
 
-diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-index 75e21a135483..826337905466 100644
---- a/include/uapi/linux/audit.h
-+++ b/include/uapi/linux/audit.h
-@@ -161,6 +161,7 @@
- #define AUDIT_INTEGRITY_RULE	    1805 /* policy rule */
- #define AUDIT_INTEGRITY_EVM_XATTR   1806 /* New EVM-covered xattr */
- #define AUDIT_INTEGRITY_POLICY_RULE 1807 /* IMA policy rules */
-+#define AUDIT_INTEGRITY_DATA_CHECK  1808 /* Userspace enforced data integrity */
+diff --git a/samples/Kconfig b/samples/Kconfig
+index b288d9991d27..efa28ceadc42 100644
+--- a/samples/Kconfig
++++ b/samples/Kconfig
+@@ -291,6 +291,13 @@ config SAMPLE_CGROUP
+ 	help
+ 	  Build samples that demonstrate the usage of the cgroup API.
  
- #define AUDIT_KERNEL		2000	/* Asynchronous audit record. NOT A REQUEST. */
- 
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index 884a3533f7af..998c46c769d8 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -8,6 +8,7 @@
- #include <linux/module.h>
- #include <linux/init.h>
- #include <linux/file.h>
-+#include <linux/binfmts.h>
- #include <linux/fs.h>
- #include <linux/xattr.h>
- #include <linux/magic.h>
-@@ -469,6 +470,17 @@ int ima_check_blacklist(struct ima_iint_cache *iint,
- 	return rc;
- }
- 
-+static bool is_bprm_creds_for_exec(enum ima_hooks func, struct file *file)
-+{
-+	struct linux_binprm *bprm;
++config SAMPLE_CHECK_EXEC
++	bool "Exec secure bits examples"
++	depends on CC_CAN_LINK && HEADERS_INSTALL
++	help
++	  Build a tool to easily configure SECBIT_EXEC_RESTRICT_FILE and
++	  SECBIT_EXEC_DENY_INTERACTIVE.
 +
-+	if (func == BPRM_CHECK) {
-+		bprm = container_of(&file, struct linux_binprm, file);
-+		return bprm->is_check;
-+	}
-+	return false;
-+}
+ source "samples/rust/Kconfig"
+ 
+ endif # SAMPLES
+diff --git a/samples/Makefile b/samples/Makefile
+index b85fa64390c5..f988202f3a30 100644
+--- a/samples/Makefile
++++ b/samples/Makefile
+@@ -3,6 +3,7 @@
+ 
+ subdir-$(CONFIG_SAMPLE_AUXDISPLAY)	+= auxdisplay
+ subdir-$(CONFIG_SAMPLE_ANDROID_BINDERFS) += binderfs
++subdir-$(CONFIG_SAMPLE_CHECK_EXEC)	+= check-exec
+ subdir-$(CONFIG_SAMPLE_CGROUP) += cgroup
+ obj-$(CONFIG_SAMPLE_CONFIGFS)		+= configfs/
+ obj-$(CONFIG_SAMPLE_CONNECTOR)		+= connector/
+diff --git a/samples/check-exec/.gitignore b/samples/check-exec/.gitignore
+new file mode 100644
+index 000000000000..3f8119112ccf
+--- /dev/null
++++ b/samples/check-exec/.gitignore
+@@ -0,0 +1 @@
++/set-exec
+diff --git a/samples/check-exec/Makefile b/samples/check-exec/Makefile
+new file mode 100644
+index 000000000000..d9f976e3ff98
+--- /dev/null
++++ b/samples/check-exec/Makefile
+@@ -0,0 +1,14 @@
++# SPDX-License-Identifier: BSD-3-Clause
 +
- /*
-  * ima_appraise_measurement - appraise file measurement
-  *
-@@ -483,6 +495,7 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
- 			     int xattr_len, const struct modsig *modsig)
- {
- 	static const char op[] = "appraise_data";
-+	int audit_msgno = AUDIT_INTEGRITY_DATA;
- 	const char *cause = "unknown";
- 	struct dentry *dentry = file_dentry(file);
- 	struct inode *inode = d_backing_inode(dentry);
-@@ -494,6 +507,16 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
- 	if (!(inode->i_opflags & IOP_XATTR) && !try_modsig)
- 		return INTEGRITY_UNKNOWN;
- 
-+	/*
-+	 * Unlike any of the other LSM hooks where the kernel enforces file
-+	 * integrity, enforcing file integrity for the bprm_creds_for_exec()
-+	 * LSM hook with the AT_EXECVE_CHECK flag is left up to the discretion
-+	 * of the script interpreter(userspace). Differentiate kernel and
-+	 * userspace enforced integrity audit messages.
-+	 */
-+	if (is_bprm_creds_for_exec(func, file))
-+		audit_msgno = AUDIT_INTEGRITY_DATA_CHECK;
++userprogs-always-y := \
++	set-exec
 +
- 	/* If reading the xattr failed and there's no modsig, error out. */
- 	if (rc <= 0 && !try_modsig) {
- 		if (rc && rc != -ENODATA)
-@@ -569,7 +592,7 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
- 	     (iint->flags & IMA_FAIL_UNVERIFIABLE_SIGS))) {
- 		status = INTEGRITY_FAIL;
- 		cause = "unverifiable-signature";
--		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
-+		integrity_audit_msg(audit_msgno, inode, filename,
- 				    op, cause, rc, 0);
- 	} else if (status != INTEGRITY_PASS) {
- 		/* Fix mode, but don't replace file signatures. */
-@@ -589,7 +612,7 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
- 			status = INTEGRITY_PASS;
- 		}
- 
--		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
-+		integrity_audit_msg(audit_msgno, inode, filename,
- 				    op, cause, rc, 0);
- 	} else {
- 		ima_cache_flags(iint, func);
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 9b87556b03a7..9f9897a7c217 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -554,6 +554,34 @@ static int ima_bprm_check(struct linux_binprm *bprm)
- 				   MAY_EXEC, CREDS_CHECK);
- }
- 
-+/**
-+ * ima_bprm_creds_for_exec - collect/store/appraise measurement.
-+ * @bprm: contains the linux_binprm structure
++userccflags += -I usr/include
++
++.PHONY: all clean
++
++all:
++	$(MAKE) -C ../.. samples/check-exec/
++
++clean:
++	$(MAKE) -C ../.. M=samples/check-exec/ clean
+diff --git a/samples/check-exec/set-exec.c b/samples/check-exec/set-exec.c
+new file mode 100644
+index 000000000000..ba86a60a20dd
+--- /dev/null
++++ b/samples/check-exec/set-exec.c
+@@ -0,0 +1,85 @@
++// SPDX-License-Identifier: BSD-3-Clause
++/*
++ * Simple tool to set SECBIT_EXEC_RESTRICT_FILE, SECBIT_EXEC_DENY_INTERACTIVE,
++ * before executing a command.
 + *
-+ * Based on the IMA policy and the execveat(2) AT_EXECVE_CHECK flag, measure
-+ * and appraise the integrity of a file to be executed by script interpreters.
-+ * Unlike any of the other LSM hooks where the kernel enforces file integrity,
-+ * enforcing file integrity is left up to the discretion of the script
-+ * interpreter (userspace).
-+ *
-+ * On success return 0.  On integrity appraisal error, assuming the file
-+ * is in policy and IMA-appraisal is in enforcing mode, return -EACCES.
++ * Copyright © 2024 Microsoft Corporation
 + */
-+static int ima_bprm_creds_for_exec(struct linux_binprm *bprm)
-+{
-+	/*
-+	 * As security_bprm_check() is called multiple times, both
-+	 * the script and the shebang interpreter are measured, appraised,
-+	 * and audited. Limit usage of this LSM hook to just measuring,
-+	 * appraising, and auditing the indirect script execution
-+	 * (e.g. ./sh example.sh).
-+	 */
-+	if (!bprm->is_check)
-+		return 0;
 +
-+	return ima_bprm_check(bprm);
++#define _GNU_SOURCE
++#define __SANE_USERSPACE_TYPES__
++#include <errno.h>
++#include <linux/prctl.h>
++#include <linux/securebits.h>
++#include <stdbool.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <sys/prctl.h>
++#include <unistd.h>
++
++static void print_usage(const char *argv0)
++{
++	fprintf(stderr, "usage: %s -f|-i -- <cmd> [args]...\n\n", argv0);
++	fprintf(stderr, "Execute a command with\n");
++	fprintf(stderr, "- SECBIT_EXEC_RESTRICT_FILE set: -f\n");
++	fprintf(stderr, "- SECBIT_EXEC_DENY_INTERACTIVE set: -i\n");
 +}
 +
- /**
-  * ima_file_check - based on policy, collect/store measurement.
-  * @file: pointer to the file to be measured
-@@ -1174,6 +1202,7 @@ static int __init init_ima(void)
- 
- static struct security_hook_list ima_hooks[] __ro_after_init = {
- 	LSM_HOOK_INIT(bprm_check_security, ima_bprm_check),
-+	LSM_HOOK_INIT(bprm_creds_for_exec, ima_bprm_creds_for_exec),
- 	LSM_HOOK_INIT(file_post_open, ima_file_check),
- 	LSM_HOOK_INIT(inode_post_create_tmpfile, ima_post_create_tmpfile),
- 	LSM_HOOK_INIT(file_release, ima_file_free),
++int main(const int argc, char *const argv[], char *const *const envp)
++{
++	const char *cmd_path;
++	char *const *cmd_argv;
++	int opt, secbits_cur, secbits_new;
++	bool has_policy = false;
++
++	secbits_cur = prctl(PR_GET_SECUREBITS);
++	if (secbits_cur == -1) {
++		/*
++		 * This should never happen, except with a buggy seccomp
++		 * filter.
++		 */
++		perror("ERROR: Failed to get securebits");
++		return 1;
++	}
++
++	secbits_new = secbits_cur;
++	while ((opt = getopt(argc, argv, "fi")) != -1) {
++		switch (opt) {
++		case 'f':
++			secbits_new |= SECBIT_EXEC_RESTRICT_FILE |
++				       SECBIT_EXEC_RESTRICT_FILE_LOCKED;
++			has_policy = true;
++			break;
++		case 'i':
++			secbits_new |= SECBIT_EXEC_DENY_INTERACTIVE |
++				       SECBIT_EXEC_DENY_INTERACTIVE_LOCKED;
++			has_policy = true;
++			break;
++		default:
++			print_usage(argv[0]);
++			return 1;
++		}
++	}
++
++	if (!argv[optind] || !has_policy) {
++		print_usage(argv[0]);
++		return 1;
++	}
++
++	if (secbits_cur != secbits_new &&
++	    prctl(PR_SET_SECUREBITS, secbits_new)) {
++		perror("Failed to set secure bit(s).");
++		fprintf(stderr,
++			"Hint: The running kernel may not support this feature.\n");
++		return 1;
++	}
++
++	cmd_path = argv[optind];
++	cmd_argv = argv + optind;
++	fprintf(stderr, "Executing command...\n");
++	execvpe(cmd_path, cmd_argv, envp);
++	fprintf(stderr, "Failed to execute \"%s\": %s\n", cmd_path,
++		strerror(errno));
++	return 1;
++}
 -- 
 2.47.1
 
