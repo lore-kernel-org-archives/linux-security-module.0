@@ -1,84 +1,105 @@
-Received: from smtp-42a9.mail.infomaniak.ch (smtp-42a9.mail.infomaniak.ch [84.16.66.169])
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBD6D1C3F1C
-	for <linux-security-module@vger.kernel.org>; Thu,  5 Dec 2024 10:53:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 685F2217735;
+	Thu,  5 Dec 2024 15:49:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733396015; cv=none; b=jV4lEDzVAMFk6mpPqkX8FS1L02z4rGDw1Ix0LDS2Ewv++zwyBAxZ/dR5+2WMv6qJDb5bP8hob4jgMCC9kgBBCX9HL9Xy/aInO0WaE+AVCrHTQPsZJ0FS8882GUEEUs1ygUWI/+TOxKUZzHWkRWhmea5YMVWACt/UueCp7/Zg0dA=
+	t=1733413790; cv=none; b=JYFwySHQUyaZbPKWw9wrQVi66oQ22ZrKb+0M+3Cad5tCfVc11EBY1I0daKVJUHUbiHGv6p/i/vhRDNyOKcVpIQpxsej6pQ3dw1fRSkoGyY2zKDShiWRCUkUZ3O1kxVnHB0wpkHB1cR+tSUh0BLpqe3UutXsWMs+LL0SwojRD0BQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733396015; c=relaxed/simple;
-	bh=V7TDcfBuyky5UsKZRbY/kdI8U0JTK2PgSkZNRMtSVHM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U2sZIr7CPlB5/gddpUbCwnntOKA8cdgvK5uYqTPigZo84vU3MnKNuF0gsRGeBIx7hrb7CcO68cpu9cWaLzHKEOxUi6nHxvLSzvwVN8Dp9KBrxr682iBATxvJ+hFywfd5jgyZI2qF9VxKGc7XgqRbskgkVZdQLOaXey8Y0ZG07+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=1MSiodC3; arc=none smtp.client-ip=84.16.66.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1733413790; c=relaxed/simple;
+	bh=5Y+c4NHFD6cgzhHRlErjUw+WUmpChw84padaTrK+qWc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JQ8lOIuyrcxryEEc+8kZmjjIkIO2ocvUzlTurDScNS0+piTVEAKum2W5yKzYKBtvz2YINxgz5b4mjNkbjVWThO3HFQbTsQ5h0W15L4GkDSHWjVapKcafqSyulBntXNJAU0bj06cSrKPVBULqs66plNZ41UofixEhjUQlHv9gWVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=tu9yZa6v; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="1MSiodC3"
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Y3rpZ4r0CznS;
-	Thu,  5 Dec 2024 11:53:26 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1733396006;
-	bh=cTdGME8xOveDjt/A541FRkracaMRa2kD7BqhDnfiQ5E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=1MSiodC3yO84x9ruBw8LRr0ArJoSuCIdfqGZ4KKWrBW6uX4L3hoeQqPpWoYwYiCI5
-	 WUuQSLzxs8bbIGUmpy2smurAVkuSf4NEVuqCp0nabu1d7yqINrdz0Dt7V+dCD6OfnA
-	 tmgo9xHpaRvxHHKsOsPkrKOlB2Vn4EOJaVmHuWQY=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Y3rpZ0PF3zK3H;
-	Thu,  5 Dec 2024 11:53:25 +0100 (CET)
-Date: Thu, 5 Dec 2024 11:53:26 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Stefan Berger <stefanb@linux.ibm.com>
-Cc: Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org, 
-	roberto.sassu@huawei.com, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Jeff Xu <jeffxu@chromium.org>, Kees Cook <kees@kernel.org>, 
-	Paul Moore <paul@paul-moore.com>, audit@vger.kernel.org
-Subject: Re: [PATCH v2] ima: instantiate the bprm_creds_for_exec() hook
-Message-ID: <20241205.fien4aet3Jae@digikod.net>
-References: <20241203233424.287880-1-zohar@linux.ibm.com>
- <c1c61f20-a4ee-437f-840b-2433345e74b6@linux.ibm.com>
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="tu9yZa6v"
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5Cp9La010713;
+	Thu, 5 Dec 2024 15:44:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=uvOX/k
+	j0bum17cJw1LcCJxvsbQYNRZs9luwHtHlOAbo=; b=tu9yZa6v1TgZSzNl8wCRbc
+	T7QdCyPuJouGt6QLkeBpFeaN3injwium7tmKJ9AowwRpQrdE41jXehK/Qm4HhknO
+	lnQPliWWC9lj7HZM+hQwMXefPuynlsj3HkBVerGzARjWj1VrqTajVdlFCHMeVoIf
+	ErRfnaOpR8Ra/ae7kqNB+kc09TUpQ+3EDVnWwX1+6Hrh31oo9wq6ctolQeAybvxl
+	XYqvCnuo++1lthxIG77sX2frxNVLZQrZiLMK74lOrjzRZB5CMg8jDxpPamAdEzdS
+	zb2hvGF+RRD+ig306vTx5sbnjDAqHiJQIZr/PpS4QJ/jyc5FQp7vY3nX14HS+sRg
+	==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43b24rbsqs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Dec 2024 15:44:27 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5BlFZc007467;
+	Thu, 5 Dec 2024 15:44:26 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 438f8jtcye-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 05 Dec 2024 15:44:26 +0000
+Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4B5FiP7c50135712
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 5 Dec 2024 15:44:25 GMT
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7C27258058;
+	Thu,  5 Dec 2024 15:44:25 +0000 (GMT)
+Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4CCBB5805B;
+	Thu,  5 Dec 2024 15:44:24 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  5 Dec 2024 15:44:24 +0000 (GMT)
+Message-ID: <2a449edc-a642-4e6b-a55f-2eb03e5b15ce@linux.ibm.com>
+Date: Thu, 5 Dec 2024 10:44:23 -0500
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <c1c61f20-a4ee-437f-840b-2433345e74b6@linux.ibm.com>
-X-Infomaniak-Routing: alpha
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] ima: instantiate the bprm_creds_for_exec() hook
+To: Mimi Zohar <zohar@linux.ibm.com>, linux-integrity@vger.kernel.org
+Cc: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+        roberto.sassu@huawei.com, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jeff Xu <jeffxu@chromium.org>,
+        Kees Cook <kees@kernel.org>, Paul Moore <paul@paul-moore.com>,
+        audit@vger.kernel.org
+References: <20241203233424.287880-1-zohar@linux.ibm.com>
+Content-Language: en-US
+From: Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <20241203233424.287880-1-zohar@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: tx5W64ZXXLFvZsf-j4fPoGFnWV7eEydM
+X-Proofpoint-ORIG-GUID: tx5W64ZXXLFvZsf-j4fPoGFnWV7eEydM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
+ bulkscore=0 adultscore=0 impostorscore=0 priorityscore=1501
+ lowpriorityscore=0 clxscore=1011 mlxscore=0 spamscore=0 malwarescore=0
+ mlxlogscore=776 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412050112
 
-On Wed, Dec 04, 2024 at 02:01:02PM -0500, Stefan Berger wrote:
-> 
-> 
-> On 12/3/24 6:34 PM, Mimi Zohar wrote:
-> > Like direct file execution (e.g. ./script.sh), indirect file exection
-> 
-> typo: execution
-> 
-> > (e.g. sh script.sh) needs to be measured and appraised.  Instantiate
-> 
-> If I understand the underlying patches correctly then 'sh script.sh' would
-> be evaluated with execveat(AT_CHECK) but this requires the execute flag to
-> be set. To maintain backwards compatibility  sh cannot assume that script.sh
-> has the execute flag set since it doesn't need today:
-> 
-> $ echo 'echo hi' > foo.sh
-> $ sh foo.sh
-> hi
-> 
-> the same is true for python:
-> 
-> $ echo 'print("hi")' > foo.py
-> $ python foo.py
-> hi
-> 
-> I am not sure which interpreters are going to be able to take advantage of
-> this or whether they will behave differently if the x bit is set versus when
-> it is not set...?
 
-This is a valid concern handled with two new securebits.  See the
-related patch series and documentation:
-https://lore.kernel.org/all/20241112191858.162021-3-mic@digikod.net/
+
+On 12/3/24 6:34 PM, Mimi Zohar wrote:
+> Like direct file execution (e.g. ./script.sh), indirect file exection
+> (e.g. sh script.sh) needs to be measured and appraised.  Instantiate
+> the new security_bprm_creds_for_exec() hook to measure and verify the
+> indirect file's integrity.  Unlike direct file execution, indirect file
+> execution is optionally enforced by the interpreter.
+> 
+> Differentiate kernel and userspace enforced integrity audit messages.
+> 
+> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+> Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+
+Tested-by: Stefan Berger <stefanb@linux.ibm.com>
+
