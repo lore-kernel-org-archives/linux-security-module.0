@@ -1,62 +1,62 @@
-Received: from sonic314-27.consmr.mail.ne1.yahoo.com (sonic314-27.consmr.mail.ne1.yahoo.com [66.163.189.153])
+Received: from sonic309-27.consmr.mail.ne1.yahoo.com (sonic309-27.consmr.mail.ne1.yahoo.com [66.163.184.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02CEA213E97
-	for <linux-security-module@vger.kernel.org>; Fri,  6 Dec 2024 21:18:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.189.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CA32212FAE
+	for <linux-security-module@vger.kernel.org>; Fri,  6 Dec 2024 22:57:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.184.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733519897; cv=none; b=fGFIhu0///R+rCWTBhxQgK5hzlCtDyYrjSpZMecjWMXp6Ez2meVvdKniEEdhRWKV685p+PbNjqU7syz7/nkCVUndepmWuLF5lh8Ukg+MsZjIepoLSln+rfA9quoshedxNJiERm/81e5iB/fFx8NPQosg/7VogCU4EOEFL3DeY7Q=
+	t=1733525841; cv=none; b=bASVii0SpjGrJKFxWNrOIHV5ezNJW+tx3X4XDbvnXmrKZFrA/W9IWPiLA6ZUCjl9FoLEYe+Hmh2tjl6qHdeOn2jZsmu7kLIM94QKj0yUSxPLO6jR1XLrQCebY5+O2SYp0RaqNMMepM3ZvAcFUqU52C+CW+VHmjd2oZM1mEupNIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733519897; c=relaxed/simple;
-	bh=HFCwGUFiueafm2TV1Op5osl0zuha+uNJg5IXcEByN/8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dfWOsTH0qQug7eXrr/PQQAo5IRKcrC3ClVDSfnaEGhtlpjVrzjdl7JNBhZOjJyw+d0xcPYOVCijiMNqJ7NE/5aYa8ELvjjck5OBU7GAAW1wiLY40NmKyV33LLTTD8TlMFSLEeTWAMJvG8WbqGNIXpRLnOBjk9pECtyJO4iwhI28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=KDBS8JJS; arc=none smtp.client-ip=66.163.189.153
+	s=arc-20240116; t=1733525841; c=relaxed/simple;
+	bh=ASt7Cgv6XdAlZwm7aOfOExyBnnvrBS3mvDlHdJywV6I=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type:
+	 References; b=QzPRFL39Ipx87z9bXob2Wc5E9rGjr7IgD/hBfN4+0mE80a0chf4+1/gJyuxLl90AKRqDHxb7nIK23ew1QhNdcgB24fwWAwxdtxmgjOM67MG/e5KV9TB6rtgnhSiuwC0miVu4U4MZmL1AO2RgWktq0tLbrdkAwwGQzrFac4hSj2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=JDkB5rOi; arc=none smtp.client-ip=66.163.184.153
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="KDBS8JJS"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1733519889; bh=HFCwGUFiueafm2TV1Op5osl0zuha+uNJg5IXcEByN/8=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=KDBS8JJSKNzQFwLH465Kvu94dfeQLB7tRAnj0qwTjDmPrPTD91953WADBaUyPkcJllSRN0gcgFtOQSKaJ/CIk4H8pM5BXH+w2HCUh0LAtkjTL+TnPgjSEovNTYTUiT0HRPVJPr1v1mgyTWJkqfCggRktc4pvELQssEm7p+t1DXH/8Uaxs9ICZjZRW3CynDloW32TU6SwoDDA+rF2rJh3IFtIBdvmtHoKW81IGo+V64x5wTrmtcQPJ2cmD+lG6YBK/tACcIthegaEnmLg8g8CNw3+zO85jawORUDhZAeN+LsSrdvP04TFqb+0MFMp3oOrFOnmpcrT1JSxn73M73pf+Q==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1733519889; bh=3c8ZpolaW/AmdbACRmL/Hk8PiBaBIkAq6Xet5sabFxz=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=WT4E0DVO6x/XURdSt6LPDBuABMklIlMOXSF/87ild+PDShVN3z3hmGiOKNSHr6umS/srKxLPg37TJecM+8fazVyL9O+z+nluZrQ8BUcdoAspTctpOAVsfoTdrpf6PN62Tssj6Rf4VJlMZUbgTQhHBfrR55b0K9DihENZYsDs8tyKBxycHBHyb5IS5+3iJ/0gLCE8VmhGqT4kysfObyfF7eZcbmkBDgZ5Q22fC6ygJclQDA5EkvSeDyS2US9q5Mo5t9D/zzQ7q+3XdMRmzmGYSlZlqx/mPFopO6Ad+dpFEpL2VQyfeFGY7mfZlp7Il35nAzzJWk7I2X2IiHOgpl6EWw==
-X-YMail-OSG: 60rKrgsVM1lvY6J2WLM.ZIV0sTeFEfdmhxDvFrJ35uDWPyaYVdmmIB7OJBzGrfZ
- vXBNEUllrZbuiNXLcCwk_0zv4vYq3XbHJ3MYgvgbh56Wi4pC22bTKOs5Y9ZuJXxz1pUfzAIgZblO
- q78_MC.7KURHXh4zM9VlK8F2sYa98VF1bg37D4aKTrL6gswXAf6WAOU8jBUUfcmmnDUTMYcsyjYi
- S9q_ktECMkaiJh4dEtgyOT81h5i3gfOB5MPHo5oRn9s8Ie2s3wVy3tnv.XDGnSKVXcLZSfmO.Gst
- L1EIpOtNhVdnHbK2ZFGzKnVo6o8DDnbTDHjg8TrH5CDfiCSRqNVGsv7uVvMcJfHOLXPvG0fAfROG
- L7buDqXdbYJuoKf3mUDlHprK30g.0mQaP2PrS4ATNmUDrmvi8RJeq2_ENRAtOcFoqciF2dfETCoc
- tpTrRBGyH4AsEDBwdjh2dSUUqyeoeBmnSL_fObmhEjD.ZqD759JgtHCtdQsDyCJOoZAoV_7y.cFB
- K2T4yWjrg50vxqBt7W1IvEu1opyCFCXlGva9VHQDyKUN8St0vygPG6QQSSuUjf_eaRbVLw3N9347
- LDTHXSOxo0rQigfW5HrULXfb7c0Ryiv1chJl.MJp5amNv_VIuk7iUnT8R4pJQbPe_qaf42wT3ohK
- BYWfo2XwRW06xSvVrnEt1Kof0xBHO1Wcj_CNae6buktTmEpw8b5fnk9xlWPsMMYBuxLOMgUftvJl
- MOwJ1s.d6iYU0KZ7t4Eknfci3ZG_7nj8mEYlculokbcvnoOhZ0SY4EJz2S4nk62_O6RueMM8W2Ct
- iuCbegh1X8JwiS7LSwZ5lU2JanAPhS7pcrxSTMDGqEXzSIpttM2Ya0TW28WAIfTstnzyZ4XYdell
- mDZh0jxuZygC.GiPYfZEbnceZhOiBC3w67RRCdPObZ6vAArm2w50KTMY0K.pSj8vEvusB0byFrgI
- xh2CW0LhS3391wQ3wb215NsUEVzSl1_DqQE4WVKEjjh5TUBNPBh5HUiyqBN4EeXVCcybNpby1GT3
- h1lwyPdXrX075a9Apm6KL4510i8Q355pXyx4qokKysYW5MyApLlVPJnfKT_p7b13s.vuMTcLVEDt
- pE96uEJmxlmMe76lwh2oMked9yWPM3dO0Fsb4xiTlfwEMuj_YgHxJhjjlOTqq1tdPWpqgSowJ5bi
- jLVpXaarsBk2s3K8Dvm_JSjMcWnPWTzVYG7kHi6KzwtCyzB0NhRXoMHU1uD9qjOnbQcZX_dVKzGz
- 4DdaMeONXGoKEdgyZjPKKyEdS0I12NxbOEbasB1NcfnSRWZsks3TIwOj8n3qi0zQ53WqSff.ODlU
- V1tXrwaD1hUJnoJj3Cl07VbilzWIX9h9JnyroDrJGIcGMXqYZUlfesp4KzvcFF47Z.xaQia0JkGM
- 6qwlsL6BtZ4Anf0YAXqms2TVU085N9u1dFmzi0Y6gYOjkB6tsxmiZGCmlj4yOWjV9HHU8W5bjUka
- adOpiAj_6vL8PHytPVfiBpBRB9ZzCWymJPOtluzJqGd2M8cR6aj5JS08yiOYBLPawaqPtxJwLcge
- UDPA014XTFBkPYYbL.KKrAHY93Bjjv13fbXiF_1ewSLSXbpbf3lKHnuabINSgrYM5ZbHix8S.Hfs
- 0jD5La.zVX007X1ejjrBbW8xgDHj3nMHTCTeVZzjXbz86kQRMt7h0dGJ4qw5XaYQzq5XTt5dyDns
- n3iXtoJyX8bckI3dCYPhaP5xEcYWnTFCKwgk4opxQ33mfREKPOKT5u0NmLOH9q3kdX2i.dwkp62.
- E3i79Pli_nmjyhlE_wkdz3kJvxG9kUBaklj8a8ypPfnv4PErAo3lnj.DGBd2a5kTsHKxAgKTBbOU
- ydL2R9U4.lgmcVdE5zDl6Nf4t0a3G3ZXZciphkKTnVZ5qQfrAeSBW849NFgRhRjp9_WISgCA6P_f
- gaQaJi4RYFnBrnM3pVcfUgOj7XUmDAGNnrWz8S23s4sYHD2ueYyu1i4fu9LAJhME1pNsJB9ZdwvK
- Dqy.9Uj8rGUzM7dCVtJodtmtqAxKJG9KkKQX9G.Mj0nP6na.wTyTpQJAlb3VzLolmtfVzt3bf9hd
- H2ZhuilnGtj3xRE7Q4xi5H8Res4X5BHas3ZWyqye5a1iO01thNhVxkPA17qo9tf.Y_SV5FNozMQo
- brtnCVLXbJMS8xm7gv4ULOLBZ9KHFD8V.l1EkpjhI673ncQNbA3wGIo2ItET.m0JeGjdp_4cWfpU
- s_vOL_988xK_1xdx4wExY698gWSnOAB4.TB5aUtgsJ5WFOOECO7256hwENUoa2.zZCc.yZGnm33_
- PdFHZ1ixnlyk6FnJHj6CA0_StHLY-
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="JDkB5rOi"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1733525838; bh=G/7nMyzlsg2sBwRN5EeArLXNy30CZExU2DL1SPNUXcE=; h=Date:To:Cc:From:Subject:References:From:Subject:Reply-To; b=JDkB5rOibCwgXW+t8Kcs1LmRCNbdPlyR3mlRMy6DVtlN/5B9xF02r3wOJMQ5WIDJgUpUJLJQHwnskXXRmBVr/ea/3qTHaQSo/k0dHm2F0VCyHZ/mdYYl9CIj2CAnaKdSm1uGVw5NJavS1mQiAEy72YKNKJ7Ku8B/Sx7dEjEwZCCyvmfCRuBqYG641S/gPcdDjqqvxUhplqd8zABC5B0F7i8JiB3ldwNHiVgvFluWojBGbsViBjy0AU9WOztNIO+/Q82UUU7uS7khTv5wk+WbcH5vGshpEgd8vMS6bM6qc9LRwiGdmwy6nF9jLKlkDg/TlS35ZnAbQUjek5GY2JfpSA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1733525838; bh=Zl3HdiF1+sY6+6Fu1scUH9xObdmhF7NjRzL4XpI+nba=; h=X-Sonic-MF:Date:To:From:Subject:From:Subject; b=IRTizswLNkYuGKh9h1nYUGEu8Ml2DuA1i/xKKLFp4GLwh7L66QrEu1JrwZ19YIFLypNLj7xTExVx3TxCe0KOVnVE8l85tCpluPShtc72KIlV4b31JYrYKoV78r5J7P4KT2MMO91O9mufaExZ+omgInfxDLntAPu6Wb9Qu476yY5I3n8tQrzvt2YK6RPfBROeuAVMU4KPy91kw4UxM5Zm+CVJWATjArr90D3V9AmL7TBmVV88wHS6u/R0/bBPHBspPL3aIUQl4omDFrntk/6V3rbechjldI/m6j92BfPkWJgp+BzqmLPUYDgaBqiWo/fhuZ56O0aBBmllZALrCO+wjA==
+X-YMail-OSG: Iy3P.KcVM1mFZqf7UW0OqFR9DYj5ns2q6klL84Rra9k0g.oX9epjvxP2PTXzVND
+ mcdBUwr9EZJoiPoWzE3c5TAISb0sreHkqRIbGcVuGdOVLe7X4jEwNRY68jNpgFhCNOaE3x138ylP
+ ZLbjuGLdKnDTbDqVfmjAS6iIT9UDgCO9P9V4qw5siJ0bbBa2GFN838PlnAd30aYXrkGiTZaFfbO1
+ KNcSppK4xUUX6ABHRyVj3c_nSw4iV1CBfJVE.nfP_oqkc9nltTuoM4zgEw..gYMXPjQaYLNTW6ez
+ 8TpGTN1gBKPQFrBB8h0C.BKw0GPAZC_9JWiKHq.1_7o7p2IWKyPZxeoUV5SPFGD6wm8j3SvIzciP
+ SklWswCaiOxekD6V_IL.B0aYzYmPqt7bX0heil9qADmyWZnyqEktyaVBgw8zJIA81wj_qIOS3bRC
+ auFgi7ke_LMZnN0BuBhFzsbRj7y_5iHVMxEn_iQejmkeBOjfXUQ0qFx3ci6nypke_fgTNtWQ2P2I
+ JqGHHEmxWE_F85rdXzfh73WlIQ88XNEeGWD_9WNi5I3vrBt.CioPFJQJLCuPJEEuoo8jgCmwcloe
+ 2sfND6PooLApwhGWnG8ypqFYP1ULzHj8h4Q2ySxGuftqOmj0WPkyV_h0wa1v6lHsV5yeY1p.bxwb
+ pbYCoJIG9sgzWE.fCkvpvZTppdLWyVRF6o7Q7jvTTfGWBhfYsNz7m7F5tcKf0fNESsckKtJ4n8zr
+ NG2oL8bLdYL0CZ5Yu_xAJBVtutkwGjFSUeIq4O3xLEgHY.VMQQDv10zt8KZ6_QzqQv5I8BVU4yr8
+ OeEox4Do3AAXbW7xvgIM89sJyZQvpYTdPcTblkdJtiRK6emyyWYKXL5dF5xJbYWbtVLXg_NGUJA.
+ NMO0gXLomdo9sUTQ0QIBgMGB3BdNLGibfA5UgOiYpYE6mJH4v14WrFmwrf7Mw259z8m.edrIH1g7
+ wjeDusDjzMxwftcR13VfyYA989ia6289OxwKuhMtSD5ebNjAMSGX3IL7e7sg7dg07rAwvo57ChSG
+ JPE59DdRRRIjJwJIpSj3ziOVVWJvXpW.Z6fLhN97WKpO6qwxhwPptDES68ETX7t9dQmbj0LUfg8M
+ ugbB8Nq48rzr14kLVUE9pOuqdwbkLJUYofDEbOKkOko6caI3QdMobsvXitRbRgwX7qHW2w25bnVw
+ ZXyPo0lBKQb2KzoEmZ97DZAgXhN5U447LnghUkA0TE.oRQywjTGkEMzJc1rIQQn.FbslDw2TwyWk
+ XUelbIq5FjpdnweKtPVdF0_stBXI7C2SWxHIq3Z65zE.D24JRTvFr4tpUV1b2dVqOJoacvbLhMYP
+ uFV8lsy4oaAhqJlWdNMQCLZuN1gzrWVOGq.JwTFtjKVVHJanyLibEIayjHKjvuw6Oki1SVq3GsYY
+ kVwYD_MRuFzGKvnAPsMChNW7uBBcS28A3rtQz8pVua_HCDqtv3jG7_FwNLCp5AOCKxVzWyE35xq_
+ JS4k.9THZNQyMrsHDM.qhC4I7uh0Hs2kFgj1Sg_F_0Xc3V_ULrXhYhNeT_BDHVnwH3jd.uANcxv2
+ mJWj1JNCLL7uB67MG8jdNKegylsrZBR5CA.B_p2OYtUYAjYuubjXngpHd6NasWHoKP6zW5fnTLdQ
+ _VCiIytSOUembBBHYlFgrBXJs97yHaQte96s9BsDDsqQcEA9dek6K6gzaeiebtQnzBR8rebnFysr
+ Z3edYNUxmKjpfsJ1FKnJcqNfTqyD3.zsOcnRH7OUYe5YwBPRQUE8WWDCwGZTqLVbUVaAerPMOEkr
+ hxhxpl2.mkKSD9NR88pHSH17jdE64kRAa_BA8s1p7ckl8z10bg0IPE7XFmOtPWurJ0q_1p1lrW48
+ SCIaZ141IbcEV0u..cLhIxGGrUEswLHVsGfGIBdNLpDowC6A6CsKp2Q1RHnMppzJUASJsMX5fYVQ
+ q7FeByBVSyJdtbUDsWpDsNrTkUBxsI8.r_hAdWR4.clQTDphfqpS9QeAU.iaKFmNWCAiOTEk_t_6
+ 5ZPJnE8ttwxBCHOpwP.8Xz57tKpfK4IsOyDv6hpsZRrOpky5rQQHaYU2yQzWmFIk_LoB.CjlJpvC
+ tTlmgJlErVYGjK.gQAJoyNF39EobHPmq6v.WbYAMyj7DgaTxhIno2WVgeEefL.w5ZAdbWivKSG4d
+ oW8A5566dzj1TCNcZWX0iD_fMmTGRT2TQzYhfNO8nln308vUmd2oz3CKr0jxvgyz2JMXWdRViwD6
+ 41465eYhkVXsuyiW9yCXMGezaoMw7MUv1sFI_tIpZEQ92W31zA7pQqndgMfrwLi7XJVbF9W3rXyL
+ f3_X8KcJpLI0SrZe6og--
 X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 07789bf7-90b0-44db-b950-a9f732bbb14d
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.ne1.yahoo.com with HTTP; Fri, 6 Dec 2024 21:18:09 +0000
-Received: by hermes--production-gq1-5dd4b47f46-ps69l (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 3b472a536ded25bdd29cda8fa7614940;
-          Fri, 06 Dec 2024 20:57:54 +0000 (UTC)
-Message-ID: <3db0da6b-4c09-43e6-a75c-c38353e191b3@schaufler-ca.com>
-Date: Fri, 6 Dec 2024 12:57:52 -0800
+X-Sonic-ID: 866a8ec4-8367-42e2-94b9-b6517faf2954
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Fri, 6 Dec 2024 22:57:18 +0000
+Received: by hermes--production-gq1-5dd4b47f46-5kxd4 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID a8e4e923736d38a0832402b2d700732d;
+          Fri, 06 Dec 2024 22:57:15 +0000 (UTC)
+Message-ID: <5859403e-905e-4307-9fc5-dcdc93f85cf2@schaufler-ca.com>
+Date: Fri, 6 Dec 2024 14:57:13 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -64,128 +64,39 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/5] LSM: Ensure the correct LSM context releaser
-To: Kees Bakker <kees@ijzerbout.nl>, paul@paul-moore.com,
- linux-security-module@vger.kernel.org
-Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
- john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
- stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
- selinux@vger.kernel.org, mic@digikod.net, linux-integrity@vger.kernel.org,
- netdev@vger.kernel.org, audit@vger.kernel.org,
- netfilter-devel@vger.kernel.org, linux-nfs@vger.kernel.org,
- Todd Kjos <tkjos@google.com>, Casey Schaufler <casey@schaufler-ca.com>
-References: <20241023212158.18718-1-casey@schaufler-ca.com>
- <20241023212158.18718-2-casey@schaufler-ca.com>
- <78666cf5-2214-413f-9450-19377a06049e@ijzerbout.nl>
 Content-Language: en-US
+To: Paul Moore <paul@paul-moore.com>
+Cc: LSM List <linux-security-module@vger.kernel.org>,
+ Casey Schaufler <casey@schaufler-ca.com>, Kees Bakker <kees@ijzerbout.nl>,
+ Todd Kjos <tkjos@google.com>
 From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <78666cf5-2214-413f-9450-19377a06049e@ijzerbout.nl>
+Subject: [PATCH lsm/dev] Binder: Initialize lsm_context structure
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+References: <5859403e-905e-4307-9fc5-dcdc93f85cf2.ref@schaufler-ca.com>
 X-Mailer: WebService/1.1.23040 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On 12/6/2024 12:05 PM, Kees Bakker wrote:
-> Op 23-10-2024 om 23:21 schreef Casey Schaufler:
->> Add a new lsm_context data structure to hold all the information about a
->> "security context", including the string, its size and which LSM
->> allocated
->> the string. The allocation information is necessary because LSMs have
->> different policies regarding the lifecycle of these strings. SELinux
->> allocates and destroys them on each use, whereas Smack provides a
->> pointer
->> to an entry in a list that never goes away.
->>
->> Update security_release_secctx() to use the lsm_context instead of a
->> (char *, len) pair. Change its callers to do likewise.  The LSMs
->> supporting this hook have had comments added to remind the developer
->> that there is more work to be done.
->>
->> The BPF security module provides all LSM hooks. While there has yet to
->> be a known instance of a BPF configuration that uses security contexts,
->> the possibility is real. In the existing implementation there is
->> potential for multiple frees in that case.
->>
->> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
->> Cc: linux-integrity@vger.kernel.org
->> Cc: netdev@vger.kernel.org
->> Cc: audit@vger.kernel.org
->> Cc: netfilter-devel@vger.kernel.org
->> To: Pablo Neira Ayuso <pablo@netfilter.org>
->> Cc: linux-nfs@vger.kernel.org
->> Cc: Todd Kjos <tkjos@google.com>
->> ---
->>   drivers/android/binder.c                | 24 +++++++--------
->>   fs/ceph/xattr.c                         |  6 +++-
->>   fs/nfs/nfs4proc.c                       |  8 +++--
->>   fs/nfsd/nfs4xdr.c                       |  8 +++--
->>   include/linux/lsm_hook_defs.h           |  2 +-
->>   include/linux/security.h                | 35 ++++++++++++++++++++--
->>   include/net/scm.h                       | 11 +++----
->>   kernel/audit.c                          | 30 +++++++++----------
->>   kernel/auditsc.c                        | 23 +++++++-------
->>   net/ipv4/ip_sockglue.c                  | 10 +++----
->>   net/netfilter/nf_conntrack_netlink.c    | 10 +++----
->>   net/netfilter/nf_conntrack_standalone.c |  9 +++---
->>   net/netfilter/nfnetlink_queue.c         | 13 +++++---
->>   net/netlabel/netlabel_unlabeled.c       | 40 +++++++++++--------------
->>   net/netlabel/netlabel_user.c            | 11 ++++---
->>   security/apparmor/include/secid.h       |  2 +-
->>   security/apparmor/secid.c               | 11 +++++--
->>   security/security.c                     |  8 ++---
->>   security/selinux/hooks.c                | 11 +++++--
->>   19 files changed, 165 insertions(+), 107 deletions(-)
->>
->> diff --git a/drivers/android/binder.c b/drivers/android/binder.c
->> index 978740537a1a..d4229bf6f789 100644
->> --- a/drivers/android/binder.c
->> +++ b/drivers/android/binder.c
->> @@ -3011,8 +3011,7 @@ static void binder_transaction(struct
->> binder_proc *proc,
->>       struct binder_context *context = proc->context;
->>       int t_debug_id = atomic_inc_return(&binder_last_id);
->>       ktime_t t_start_time = ktime_get();
->> -    char *secctx = NULL;
->> -    u32 secctx_sz = 0;
->> +    struct lsm_context lsmctx;
-> Not initialized ?
+It is possible to reach the end of binder_transaction() without
+having set lsmctx. As the variable value is checked there it needs
+to be initialized.
 
-Thank you for the review.
-It makes sense to initialize it here. I will make the change.
+Suggested-by: Kees Bakker <kees@ijzerbout.nl>
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+---
+ drivers/android/binder.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->>       struct list_head sgc_head;
->>       struct list_head pf_head;
->>       const void __user *user_buffer = (const void __user *)
->> @@ -3291,7 +3290,8 @@ static void binder_transaction(struct
->> binder_proc *proc,
->>           size_t added_size;
->>             security_cred_getsecid(proc->cred, &secid);
->> -        ret = security_secid_to_secctx(secid, &secctx, &secctx_sz);
->> +        ret = security_secid_to_secctx(secid, &lsmctx.context,
->> +                           &lsmctx.len);
->>           if (ret) {
->>               binder_txn_error("%d:%d failed to get security context\n",
->>                   thread->pid, proc->pid);
->> @@ -3300,7 +3300,7 @@ static void binder_transaction(struct
->> binder_proc *proc,
->>               return_error_line = __LINE__;
->>               goto err_get_secctx_failed;
->>           }
->> -        added_size = ALIGN(secctx_sz, sizeof(u64));
->> +        added_size = ALIGN(lsmctx.len, sizeof(u64));
->>           extra_buffers_size += added_size;
->>           if (extra_buffers_size < added_size) {
->>               binder_txn_error("%d:%d integer overflow of
->> extra_buffers_size\n",
->> @@ -3334,23 +3334,23 @@ static void binder_transaction(struct
->> binder_proc *proc,
->>           t->buffer = NULL;
->>           goto err_binder_alloc_buf_failed;
->>       }
->> -    if (secctx) {
->> +    if (lsmctx.context) {
-> From code inspection it is not immediately obvious. Can you
-> guarantee that lsmctx is always initialized when the code
-> gets to this point? Perhaps it is safer to just initialize when
-> it is defined above (line 3014).
->
->
+diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+index 919da8e674f5..a4b98e95ab85 100644
+--- a/drivers/android/binder.c
++++ b/drivers/android/binder.c
+@@ -3017,7 +3017,7 @@ static void binder_transaction(struct binder_proc *proc,
+ 	struct binder_context *context = proc->context;
+ 	int t_debug_id = atomic_inc_return(&binder_last_id);
+ 	ktime_t t_start_time = ktime_get();
+-	struct lsm_context lsmctx;
++	struct lsm_context lsmctx = { };
+ 	struct list_head sgc_head;
+ 	struct list_head pf_head;
+ 	const void __user *user_buffer = (const void __user *)
+
