@@ -1,218 +1,205 @@
-Received: from sonic307-15.consmr.mail.ne1.yahoo.com (sonic307-15.consmr.mail.ne1.yahoo.com [66.163.190.38])
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42D3A3FF1
-	for <linux-security-module@vger.kernel.org>; Sat,  7 Dec 2024 18:18:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.190.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C35B14AD2E
+	for <linux-security-module@vger.kernel.org>; Sat,  7 Dec 2024 19:18:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733595492; cv=none; b=hYpPp82rqdY09FDXWrHYYg6ZZhsUenIhP0G72v1g+eYzf9L+ATwf31Pgk4iiOIVsdbYs5YyvBNxLNA8eGl5BlM8lmTAnwgC+xyZ90EoDsjgNfjRLW4qM+Y2yneOJaIJtCuvl9ViZTkkTu/dXVT5Y5SXekQlQeDZA4ZNDAQihRvY=
+	t=1733599109; cv=none; b=bQZgaH2aqmMn9oR71Dp4m4JN1B5ux/7xbfI+WcSUMaTcQkOJYL3vZwAwnAMliQ6TxmoZ12GO6LHjSDC7VyrMRhwyvtu3m2dmm6iVGmb31hS5wgS/hfpK1+UKYmvJ01xv/ZoU/vv1qznYa7+pTQ2IxchoYngUsxXhSv3ONp3VqMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733595492; c=relaxed/simple;
-	bh=snbAjhgxaWiABrSRaultHPvRtVHf0+/ZBYnxqhk0Beg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mFmrrb8aIfwRnHB+w7t5jpWWC3pr3Thi3ye7VoW7XApLSyo7u5fIzLB+mMeoAysVk+fWgb8KaZZVUXcpVdowLSnfYOHg55vVBRUpAE4p11aJ3enB7VY5RQ5JbItCT58a0e4QXdjT6Wrk8wHY8AMli7nymKCH5P1YH1C03jZA6LA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=hEqhgFgL; arc=none smtp.client-ip=66.163.190.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="hEqhgFgL"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1733595489; bh=lYT8ZYPac4TXGPGKZFrFnH+tpMl7kC2we33bV5cLXnU=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=hEqhgFgLMl7JiaBoTuvYoA/+HbhURHqYAcqmNDAtVbuO6Th2JxC6b7rQ4Fx3J0cLvmZRzos9EloszWZkqxnSgKiFqwUVhDd7u83oikz+9kxmpK4ktu7JEDVt4PcuZOxDFfyvyD0fEqhUNA5PBGi1+1gixSzfNCIJeIMay53ipb4V3obFAG8c8ll8uXsCn1K2rdZw9S8VMxx5F8YtaXht0sXOmo/6y1EvTjixlgRc5GaKRX3VFv8a7xsKBNhq94vthZgIUNJ3uQ31TlZbAptzR2+wZdfUI3bIQ7hnS+E3XC1q/eympRnwi7eRcCFn8BwxbCJcAgh/J/6RukKnkO7owA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1733595489; bh=xfgDy00Z2esM88ReixNKJKHctP3zLeHr5pPHrqJ29K3=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=lgUy7H0s/oAh8uHjitQ6UyhqLsqXIVq4iukhHTQlo3uSsltZlFsbV9Z3qfDYtfFM2xsgpbIJxKcnhng8aMPXHWLQWTMVXD1WliyLKo3LLdVmKrcJFhzMf8J6EDT8xxUIJRpRufd36WIbm6NmeE95u+CXSAZe9nMy+wWRdlxgBeu4v5RK5kwTp6mhA1fyRexgvrqrZAUfwIbRGtyZ1dkajqJgqnrcySabx8zOcvHLD3e43aU07XFR5Tn0LOPjClqVRfQHba/820FjB+U0sir83dFY6rp4iy02UAt/DjnlUg9d5ggIatGyfQ1P90+0Qh9groF0t/PuYwelZEyQ3oWpOg==
-X-YMail-OSG: BuGkjrsVM1nbIj0p0CWtudOCeQqh74mpiblKahIWiSIt8qBOKB3lQQfmfzU6jcg
- OfZm6ltBumuxK0L4VrLLmqrXNbecXxrDttXT.Cdy4_yr8ThkResuhuSoKl2a4V.w3mL1RzUAo3ib
- pVcQoDmGiDGN70Mv47Npp2K_JDQQoVp9RkrHizv7cxQF7Mxt1vlhj7Ty8koVmva9y4GD.sBdS2Av
- uCotiROb2BHhv0uU5jIobsPATWGkm8ggd_Rf4dBaXHfXQ8_VX4RqUWS7ZmbhkAC1gbycnEjXN5x8
- .VlrY47k2t6L5CdrmrnFBgE._P4_Rzzx_GW0rgqyqk4_rADk7boY8WkLlnGPXPPClQGKjMZynmqB
- 477XlX4xrAmn5AZ.Kl93NiD5VYBbi6DxZRbVdrhBTHCWKchOUSPunJSrnCVNviJqXLlqyLK7SPhx
- G52Qij1i6wSmC0EhCpiDiBOYxq.pPw7Cwjk_gL3IDwCzlhvrzkSy668ZZjJLuARYOR52.TWc2AFO
- jQeLgRcEmsZAGEJ5y_JTK3bS5fB4pjyid4e2eEBdwM2jkiZCuYvnRV9yrNedZL_CIbPjEhGH1642
- 4WIuxC1SWDaCYjmTlQKFnrWmVkmRX2YYBDTEIuECHKWeG7GqvtIPdUgYPXKuP7sZ5g8prMHsjCYF
- RD8gf5PKn45W9l5fEcyG0WzKTOqJLy2ItXQVyLJdM2nICLuk8t1zSfaqmzM7Fc9ABnQIUaQh_zyY
- jizOO5SfohAHJUcM3S_8hH7iKeODN5yIkJq0.oncVOC1O5kPlBnJjUPYzlDSMVkSzehDByyIqU26
- uFj6hVBOfJXlAJP3VORnCTnI.L2pf365.leYe2zS5BkX6ihEl6dMucDMM8E3oFgaikHwXQTXFE99
- esYjBRgGu55k9BSDJFPTxOItcaom7yOu1l2nKTWWS.egWqOs5WPrKWmrS9HgLISFtGCJJ2x7ZYVF
- J5mQ3EZk_XoO1RH148YY.Lbzmn924VNhktpKdGBQCuZETP6uzS6QdT68m5zNwhoWODXbjZIYN.Oz
- KL57xepP8btLzLqtvxDEzW90saWMWnxLcuazRnjJbDaXkcFuNOIP93qKtUkD26iVnHkyhQESzEAd
- 4UCmfwy6wlNr_cjqPgCM3cQi0kXERANqp.43HhmX8ZeJWHk6xaHE0Mc7z7SgXFpWJiVbmRq4UulI
- ZaTBKbef33FxL_2BrVKDYG1BHBimNHhpQxyDzYVL30cnTC7cHiGzdTLhb1yx46q2449U3l9trODi
- xuiEIVt3jgP37kxbSriRAZphzhHhFLjZDK.__IbwTYuM2j7BM3APuzfcU_x5d2pbcxfNmp7fW5di
- N5ePzp8.G2mOBA8XJ5d84Pk477kdygJBvKd8V0tDTqjqvoSh5QL_c3fU34ShFer1gWkA6pjvEoUt
- vt8G5_ZkRVn8bQlwIzNms6LrhQIOmydjdVkj2g6Q1p7p.r.m40f3PLPx_vKyOqf15Fq1mqcP4nwf
- J.KBPAsgMjakAY6DQSiYEY7F4DQnAsTRkV9iD7wyDmUSiUzht55HPwqr35kng5sBsOfI72S.rr6m
- aqCCiJumMYzuNqDUeZzCxLwOUG4rHS7zZroQ286ucJfLx887TD2lc8ibWVavPIBdqVbvnqY8P2ey
- NG8Zpqnej3yIOvbUPHk5tQK_s5OlNhvhRMwQXCh_vwvNWGu2SvG7jzfE1RiAjggwMaC8.9E6.kCk
- n8qhmSR9mmecFKcd8e0EtVKMtywXPzuI4.54nspsvqzQc1dezAC2jjBS4XzMqarkiaObBn07gaCg
- jvtlfak2YqouSA29NsQzTexmSihOWQZ_TQEH4UK7cbv1OWiJ7osO_VUH_JDRI1U7W.TJtPUZJAAh
- NDWAxfMu2VPTx0xFdo2mHdDRoCwpV5dPMdBCob.mNo_oa38pHmbcyW6cuvERHpZ0QEuzAq_UCDx8
- _5lcx0NpZwXoWZvZJqhTyPjx2.5djyrwDvTzHj8lNIQVrB_cJeBAWRiK7mU3qFz.mTdCysGNe2Up
- R6W.0NYUjOT3ULo6I1eoT061RszxMnX6OmiDLCUqX6joiEOhb8paJOn8iTHFIc.Inur_WWjE8bj1
- CpSHLuFhJFC0Xp9XGIuOpY5ixYFm5tQuildTUAsxC_V_HckAdjD032CLnAeAAQ9NbfAH0yraFKuh
- xjeuDI1xiN8dftgVr2lvquE96.uRfaSm70uowbX6nAGkZP_v2AjHUARlFVspnBIUyBHscYD_T8YA
- JBAIYDdKpukKlOqfZDbodcvzgW30E7dbhBg0DvILdfBQ_1dcr18qTsFzYceuGHXJsJRyCdfolWeK
- uCaBbm2Vj3xE-
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: e1a39e94-4589-4aa1-9b2e-b04e5703ddb8
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.ne1.yahoo.com with HTTP; Sat, 7 Dec 2024 18:18:09 +0000
-Received: by hermes--production-gq1-5dd4b47f46-n48bg (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 4bc89aae52e6cd56a5ae7443130c423c;
-          Sat, 07 Dec 2024 18:18:07 +0000 (UTC)
-Message-ID: <f16d8349-8b98-4a92-af3f-7e0638300aa6@schaufler-ca.com>
-Date: Sat, 7 Dec 2024 10:18:04 -0800
+	s=arc-20240116; t=1733599109; c=relaxed/simple;
+	bh=EIz4KabPAj0rOEIFUfsJmLNnGTuKpD/NluN+kyGkwCk=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=EfICCul9GEOVXsTB16vYsnSmcdwOeBn5MaPMYzbDml6n1Ivk/p6FPBucPQKhonzpbuRpXn2XdUoH6H727tgq1Z5oKpt+Hc+CuvMD3NWf2pQb8cRbSk4SL2z6KkRIKs06nzEdeyYhq1eCCoA5s35Cu10gP/AhTUa+3gonyuGz9FE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3a91a13f63fso6546505ab.3
+        for <linux-security-module@vger.kernel.org>; Sat, 07 Dec 2024 11:18:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733599106; x=1734203906;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FGzxBGWUGEudtCAKk4uMcizyqM7JNg04s2BYXL8B0TU=;
+        b=oYqxJmXPP8TjbqZAsFO5h4ts7bE4eM33unVP+V6xyON3fGajI1WSu1xY7rw/Fg0+HD
+         ljYhD2UY+vjvHKsBQ6Z4mz/hr/ZTllJkxwdYlNWnlhz14cpcoRyTwTxPc1+nQSDiAVKN
+         ITvgED6oZHIxi2ut886+JASjNqJpxoYJUCbk0AjjP2cqbH7T7kqnci0UzYKuYy291BSx
+         wWLLcc1Y8LEFQGUujl3Eq3HkC+2QGQYOox9YnSLViv+WKTul3kI0ocTmztPmpTvRNMlJ
+         NkZD9C5PfyacHSp84RPBy5vYbXMnt2Og78UX7/dld92RB4pWwf0is69NUSfhGlFQtzns
+         S4QQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXC7lEiOEJhlW1HxitXhfliPp6dnX0a45fuY1782fjCF50BiFdgEqvvfMsle2X82H3I5AMznghPYHfckK37Pg8TNbLwc/0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyqj0hIV+lXaEFdEJX/n4+9Qt+1x+sr0UAaC0SXBtc8HsLiqGYy
+	1hOElgi2lgXcsw3lFMWxbSt3qrvQ6/tftuHf7WFsERnHyivZ8D8w822/VGcNbKTO+25sEgtnpFw
+	UzI9forkp0sMDK/8bWg6S4AmEzM3x0WTBZm+5tW5yVqNbCKYShuBG80Y=
+X-Google-Smtp-Source: AGHT+IG8yl4utWwy6hc6H+udRwWwIVAHjJvBhuPt6ziB3wiXQseHsYdq66/0AfS33UvSR1/AIsGmWeaGs09y9HzQ2DNo6e2w+zYS
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] smack: deduplicate access to string conversion
-To: Konstantin Andreev <andreev@swemel.ru>
-Cc: linux-security-module@vger.kernel.org,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20240913144727.1839137-1-andreev@swemel.ru>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20240913144727.1839137-1-andreev@swemel.ru>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.23040 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+X-Received: by 2002:a05:6e02:1a24:b0:3a2:6cd7:3250 with SMTP id
+ e9e14a558f8ab-3a811d9287cmr70249255ab.10.1733599106629; Sat, 07 Dec 2024
+ 11:18:26 -0800 (PST)
+Date: Sat, 07 Dec 2024 11:18:26 -0800
+In-Reply-To: <00000000000065deef0604e8fe03@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67549f82.050a0220.a30f1.0160.GAE@google.com>
+Subject: Re: [syzbot] [integrity?] [lsm?] INFO: task hung in
+ process_measurement (2)
+From: syzbot <syzbot+1de5a37cb85a2d536330@syzkaller.appspotmail.com>
+To: dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, jmorris@namei.org, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, paul@paul-moore.com, 
+	roberto.sassu@huawei.com, serge@hallyn.com, syzkaller-bugs@googlegroups.com, 
+	zohar@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 9/13/2024 7:46 AM, Konstantin Andreev wrote:
-> Signed-off-by: Konstantin Andreev <andreev@swemel.ru>
-> ---
+syzbot has found a reproducer for the following issue on:
 
-Applied to smack-next for v6.14. Thank you.
+HEAD commit:    b5f217084ab3 Merge tag 'bpf-fixes' of git://git.kernel.org..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=17307330580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=335e39020523e2ed
+dashboard link: https://syzkaller.appspot.com/bug?extid=1de5a37cb85a2d536330
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=126a8820580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=153e70f8580000
 
-> Currently, access bitfield is converted to string in 3 different places.
-> This patch consolidates conversion in one place.
-> The patch is against `next' branch at https://github.com/cschaufler/smack-next
-> The patch does not hurt `Smack kernel test suite' https://github.com/smack-team/smack-testsuite.git
->
->  security/smack/smack.h        |  1 +
->  security/smack/smack_access.c | 10 ++++++++--
->  security/smack/smack_lsm.c    | 18 +-----------------
->  security/smack/smackfs.c      | 26 +++++---------------------
->  4 files changed, 15 insertions(+), 40 deletions(-)
->
-> diff --git a/security/smack/smack.h b/security/smack/smack.h
-> index 041688e5a77a..9e17e813fd1f 100644
-> --- a/security/smack/smack.h
-> +++ b/security/smack/smack.h
-> @@ -280,6 +280,7 @@ int smk_access(struct smack_known *, struct smack_known *,
->  int smk_tskacc(struct task_smack *, struct smack_known *,
->  	       u32, struct smk_audit_info *);
->  int smk_curacc(struct smack_known *, u32, struct smk_audit_info *);
-> +int smack_str_from_perm(char *string, int access);
->  struct smack_known *smack_from_secid(const u32);
->  char *smk_parse_smack(const char *string, int len);
->  int smk_netlbl_mls(int, char *, struct netlbl_lsm_secattr *, int);
-> diff --git a/security/smack/smack_access.c b/security/smack/smack_access.c
-> index 585e5e35710b..3727379623e2 100644
-> --- a/security/smack/smack_access.c
-> +++ b/security/smack/smack_access.c
-> @@ -275,7 +275,6 @@ int smk_curacc(struct smack_known *obj_known,
->  	return smk_tskacc(tsp, obj_known, mode, a);
->  }
->  
-> -#ifdef CONFIG_AUDIT
->  /**
->   * smack_str_from_perm : helper to transalate an int to a
->   * readable string
-> @@ -283,7 +282,7 @@ int smk_curacc(struct smack_known *obj_known,
->   * @access : the int
->   *
->   */
-> -static inline void smack_str_from_perm(char *string, int access)
-> +int smack_str_from_perm(char *string, int access)
->  {
->  	int i = 0;
->  
-> @@ -299,8 +298,15 @@ static inline void smack_str_from_perm(char *string, int access)
->  		string[i++] = 't';
->  	if (access & MAY_LOCK)
->  		string[i++] = 'l';
-> +	if (access & MAY_BRINGUP)
-> +		string[i++] = 'b';
-> +	if (i == 0)
-> +		string[i++] = '-';
->  	string[i] = '\0';
-> +	return i;
->  }
-> +
-> +#ifdef CONFIG_AUDIT
->  /**
->   * smack_log_callback - SMACK specific information
->   * will be called by generic audit code
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index 4164699cd4f6..e0c2a2c6add3 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -107,23 +107,7 @@ static char *smk_bu_mess[] = {
->  
->  static void smk_bu_mode(int mode, char *s)
->  {
-> -	int i = 0;
-> -
-> -	if (mode & MAY_READ)
-> -		s[i++] = 'r';
-> -	if (mode & MAY_WRITE)
-> -		s[i++] = 'w';
-> -	if (mode & MAY_EXEC)
-> -		s[i++] = 'x';
-> -	if (mode & MAY_APPEND)
-> -		s[i++] = 'a';
-> -	if (mode & MAY_TRANSMUTE)
-> -		s[i++] = 't';
-> -	if (mode & MAY_LOCK)
-> -		s[i++] = 'l';
-> -	if (i == 0)
-> -		s[i++] = '-';
-> -	s[i] = '\0';
-> +	smack_str_from_perm(s, mode);
->  }
->  #endif
->  
-> diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
-> index 5dd1e164f9b1..cd5327253d1c 100644
-> --- a/security/smack/smackfs.c
-> +++ b/security/smack/smackfs.c
-> @@ -564,6 +564,7 @@ static void smk_seq_stop(struct seq_file *s, void *v)
->  
->  static void smk_rule_show(struct seq_file *s, struct smack_rule *srp, int max)
->  {
-> +	char acc[SMK_NUM_ACCESS_TYPE + 1];
->  	/*
->  	 * Don't show any rules with label names too long for
->  	 * interface file (/smack/load or /smack/load2)
-> @@ -577,28 +578,11 @@ static void smk_rule_show(struct seq_file *s, struct smack_rule *srp, int max)
->  	if (srp->smk_access == 0)
->  		return;
->  
-> -	seq_printf(s, "%s %s",
-> +	smack_str_from_perm(acc, srp->smk_access);
-> +	seq_printf(s, "%s %s %s\n",
->  		   srp->smk_subject->smk_known,
-> -		   srp->smk_object->smk_known);
-> -
-> -	seq_putc(s, ' ');
-> -
-> -	if (srp->smk_access & MAY_READ)
-> -		seq_putc(s, 'r');
-> -	if (srp->smk_access & MAY_WRITE)
-> -		seq_putc(s, 'w');
-> -	if (srp->smk_access & MAY_EXEC)
-> -		seq_putc(s, 'x');
-> -	if (srp->smk_access & MAY_APPEND)
-> -		seq_putc(s, 'a');
-> -	if (srp->smk_access & MAY_TRANSMUTE)
-> -		seq_putc(s, 't');
-> -	if (srp->smk_access & MAY_LOCK)
-> -		seq_putc(s, 'l');
-> -	if (srp->smk_access & MAY_BRINGUP)
-> -		seq_putc(s, 'b');
-> -
-> -	seq_putc(s, '\n');
-> +		   srp->smk_object->smk_known,
-> +		   acc);
->  }
->  
->  /*
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/3b2c9b99ecf6/disk-b5f21708.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/3458db92b2a8/vmlinux-b5f21708.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/e14f0c677748/bzImage-b5f21708.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/928495b63af4/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+1de5a37cb85a2d536330@syzkaller.appspotmail.com
+
+INFO: task syz-executor240:5823 blocked for more than 143 seconds.
+      Not tainted 6.13.0-rc1-syzkaller-00316-gb5f217084ab3 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor240 state:D stack:25592 pid:5823  tgid:5820  ppid:5819   flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5369 [inline]
+ __schedule+0x17fb/0x4be0 kernel/sched/core.c:6756
+ __schedule_loop kernel/sched/core.c:6833 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6848
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6905
+ rwsem_down_write_slowpath+0xeee/0x13b0 kernel/locking/rwsem.c:1176
+ __down_write_common kernel/locking/rwsem.c:1304 [inline]
+ __down_write kernel/locking/rwsem.c:1313 [inline]
+ down_write+0x1d7/0x220 kernel/locking/rwsem.c:1578
+ inode_lock include/linux/fs.h:818 [inline]
+ process_measurement+0x439/0x1fb0 security/integrity/ima/ima_main.c:250
+ ima_file_check+0xd9/0x120 security/integrity/ima/ima_main.c:572
+ security_file_post_open+0xb9/0x280 security/security.c:3121
+ do_open fs/namei.c:3830 [inline]
+ path_openat+0x2ccd/0x3590 fs/namei.c:3987
+ do_filp_open+0x27f/0x4e0 fs/namei.c:4014
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1402
+ do_sys_open fs/open.c:1417 [inline]
+ __do_sys_open fs/open.c:1425 [inline]
+ __se_sys_open fs/open.c:1421 [inline]
+ __x64_sys_open+0x225/0x270 fs/open.c:1421
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f7788ca3409
+RSP: 002b:00007f7788c39218 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
+RAX: ffffffffffffffda RBX: 00007f7788d2b5f8 RCX: 00007f7788ca3409
+RDX: 0000000000000008 RSI: 0000000000002000 RDI: 0000000020001b80
+RBP: 00007f7788d2b5f0 R08: 00007ffddcf3bf57 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f7788d2b5fc
+R13: 0032656c69662f2e R14: 00007f7788cf70c0 R15: 00000000200002c0
+ </TASK>
+
+Showing all locks held in the system:
+1 lock held by khungtaskd/30:
+ #0: ffffffff8e937aa0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+ #0: ffffffff8e937aa0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
+ #0: ffffffff8e937aa0 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6744
+2 locks held by getty/5579:
+ #0: ffff888035afa0a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
+ #1: ffffc9000332b2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x6a6/0x1e00 drivers/tty/n_tty.c:2211
+5 locks held by syz-executor240/5822:
+1 lock held by syz-executor240/5823:
+ #0: ffff8880744782a0 (&sb->s_type->i_mutex_key#14){++++}-{4:4}, at: inode_lock include/linux/fs.h:818 [inline]
+ #0: ffff8880744782a0 (&sb->s_type->i_mutex_key#14){++++}-{4:4}, at: process_measurement+0x439/0x1fb0 security/integrity/ima/ima_main.c:250
+
+=============================================
+
+NMI backtrace for cpu 0
+CPU: 0 UID: 0 PID: 30 Comm: khungtaskd Not tainted 6.13.0-rc1-syzkaller-00316-gb5f217084ab3 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:234 [inline]
+ watchdog+0xff6/0x1040 kernel/hung_task.c:397
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1
+CPU: 1 UID: 0 PID: 5822 Comm: syz-executor240 Not tainted 6.13.0-rc1-syzkaller-00316-gb5f217084ab3 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:EXFAT_SB fs/exfat/exfat_fs.h:336 [inline]
+RIP: 0010:exfat_ent_get+0x3d/0x400 fs/exfat/fatent.c:88
+Code: 89 d7 41 89 f5 49 89 fe 49 bc 00 00 00 00 00 fc ff df e8 46 a5 20 ff 49 8d 9e 38 06 00 00 48 89 d8 48 c1 e8 03 42 80 3c 20 00 <74> 08 48 89 df e8 69 66 88 ff 48 8b 1b bf 01 00 00 00 44 89 ee e8
+RSP: 0018:ffffc90003ad7348 EFLAGS: 00000246
+RAX: 1ffff11006b350c7 RBX: ffff8880359a8638 RCX: ffff8880343c1e00
+RDX: 0000000000000000 RSI: 0000000000000010 RDI: ffff8880359a8000
+RBP: ffffc90003ad74b8 R08: ffffffff827ed915 R09: 1ffff1100eef7874
+R10: dffffc0000000000 R11: ffffed100eef7875 R12: dffffc0000000000
+R13: 0000000000000010 R14: ffff8880359a8000 R15: ffffc90003ad7440
+FS:  00007f7788c5a6c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055c822941600 CR3: 00000000783fc000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <NMI>
+ </NMI>
+ <TASK>
+ __exfat_free_cluster+0x56f/0x990 fs/exfat/fatent.c:200
+ exfat_free_cluster+0x77/0xd0 fs/exfat/fatent.c:232
+ __exfat_truncate+0x745/0xa60 fs/exfat/file.c:235
+ exfat_truncate fs/exfat/file.c:257 [inline]
+ exfat_setattr+0x10fa/0x1a90 fs/exfat/file.c:353
+ notify_change+0xbca/0xe90 fs/attr.c:552
+ do_truncate+0x220/0x310 fs/open.c:65
+ handle_truncate fs/namei.c:3449 [inline]
+ do_open fs/namei.c:3832 [inline]
+ path_openat+0x2e1e/0x3590 fs/namei.c:3987
+ do_filp_open+0x27f/0x4e0 fs/namei.c:4014
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1402
+ do_sys_open fs/open.c:1417 [inline]
+ __do_sys_creat fs/open.c:1495 [inline]
+ __se_sys_creat fs/open.c:1489 [inline]
+ __x64_sys_creat+0x123/0x170 fs/open.c:1489
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f7788ca3409
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 81 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f7788c5a218 EFLAGS: 00000246 ORIG_RAX: 0000000000000055
+RAX: ffffffffffffffda RBX: 00007f7788d2b5e8 RCX: 00007f7788ca3409
+RDX: 00007f7788ca3409 RSI: 0000000000000100 RDI: 0000000020000000
+RBP: 00007f7788d2b5e0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f7788d2b5ec
+R13: 0032656c69662f2e R14: 00007f7788cf70c0 R15: 00000000200002c0
+ </TASK>
+INFO: NMI handler (nmi_cpu_backtrace_handler) took too long to run: 1.409 msecs
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
