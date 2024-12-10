@@ -1,118 +1,151 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from smtp-42ad.mail.infomaniak.ch (smtp-42ad.mail.infomaniak.ch [84.16.66.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB6D978F5A;
-	Tue, 10 Dec 2024 16:48:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63D7B86336
+	for <linux-security-module@vger.kernel.org>; Tue, 10 Dec 2024 18:04:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733849303; cv=none; b=W4cWOz/435CQ/fcmbqwENvriiyJzL32ibib+iJHOeabyrLRy6aXPB6TcKhDtnZfsbP/J/I93KupzYrYeN0AQ6rvOy/5iIeudRL0X3dcuzYR6tW91eOorrgUZqUFJ8rW3LWOK3OPFWXlJSBXQxGktZheg8FKM4uN8HIALVB+bbxc=
+	t=1733853869; cv=none; b=siWSkQAGAodyG+aUdwr50dXoTw04E8cI582K9rMtvBqYrp+qLg2a0zlBtOqWkUEhgExjAqJWpIXjNLaMgGZe4wbT8A69OWLWRjA8fHRLvyqfj1QJYh7pBWsBTythHekZxg+2FVdi0C8LuAKuodbn3bNLHsX7ibd7zOqqEOfaX0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733849303; c=relaxed/simple;
-	bh=CDmWz5CiCJkhk/84wx4DIhxG+Go5pfa/hXNPyS+mkCs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bSlBbXnugkzk1YgmILd6JH2i0g1lRdEvBF7cLgPAlrnM9oilSlKoeroI3jqSzNgeQ0S+gtpq4l/m7z3A9jzhnkJ4pxvxuTYbkNWwUTdNBNxq9WN56HrW+ZOMq6gg8/LMNkBp6mqhqSL0V1wQdcTKjIzqd05kLhdk+e3pK3iNPDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=sj/piHTU; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1733853869; c=relaxed/simple;
+	bh=77Qlx27wlKCeqVSBZaB7kO9QJE1s+ZW9CUlb/3SMJ5g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eXRo6djXaBgulho+Ppr5iBw5UBp++CTU5IeP/ox2KfYe69xwQJgKMtjpsnB9eKjCp7V2opi8BlddjY5cf+eR8brijfL+puBjZ3E5K+sCUAR585oqrcdRD31AWOzlNgfW/MjUVQQUzuHgTCfVIMPBl4pj/IuKJujnIvFQ0ScIXzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=gVwJWa7N; arc=none smtp.client-ip=84.16.66.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="sj/piHTU"
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BADrZHH004001;
-	Tue, 10 Dec 2024 16:47:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=y7ps4y
-	jzkZ/XtpKHNj+sd4uVbzn3335JijmLLbvAbDs=; b=sj/piHTU1zd8XuP3cPux/1
-	nt9tjYfZZyQnHYz3A2vr9VKQhuYytAOUGFAtgxinf7W074xL3dNrnROnnbdDqbEm
-	CrT+xK56u3JERZpicUunH5R1omEhPk/NCg9Sl9HB6CtrZ9LWxIe+JcEtqgU0yD+Y
-	Az2Fbrylw2v2c2rk1qwiWXQ9fqrurjV4DHwypU/hbYBTBFcpsN2yMsFvpuZgznK5
-	xKw05DsIR0Dsrfeuteosjx+C1HRJ7gD+sGvjPf/Rr2u/F9jicfs6Bfe5OljedvsU
-	NoiAFSEe5SYEyXAzLTPM9bgDFChzA1pkzE6b+OBXaarVlyXatrQ/3WxpF9DoZYLA
-	==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ce0xf5pc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 16:47:57 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BAD28MJ017421;
-	Tue, 10 Dec 2024 16:47:57 GMT
-Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 43d3d1m4xj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 16:47:57 +0000
-Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BAGludf22545120
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 10 Dec 2024 16:47:56 GMT
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 519B958059;
-	Tue, 10 Dec 2024 16:47:56 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5C63458053;
-	Tue, 10 Dec 2024 16:47:55 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.160.242])
-	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 10 Dec 2024 16:47:55 +0000 (GMT)
-Message-ID: <983114dbf101b0df7d61a31af002783d06fc963d.camel@linux.ibm.com>
-Subject: Re: [PATCH v2] ima: instantiate the bprm_creds_for_exec() hook
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: Paul Moore <paul@paul-moore.com>, linux-integrity@vger.kernel.org,
-        roberto.sassu@huawei.com, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Jeff Xu <jeffxu@chromium.org>,
-        Kees Cook
-	 <kees@kernel.org>, audit@vger.kernel.org
-Date: Tue, 10 Dec 2024 11:47:54 -0500
-In-Reply-To: <20241210.Wie6ion7Aich@digikod.net>
-References: <20241204192514.40308-1-zohar@linux.ibm.com>
-	 <282573d0ea82ac71c8305d0c8cc89083@paul-moore.com>
-	 <b6dc4d8b23b822638ab676055809503060c0bca2.camel@linux.ibm.com>
-	 <20241210.Wie6ion7Aich@digikod.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="gVwJWa7N"
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Y767Q3NTtzX2X;
+	Tue, 10 Dec 2024 19:04:18 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1733853858;
+	bh=EPOh+etsU+dSAyHlZze34E+Js4PynjzVIPhILt/44/I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gVwJWa7NBoxDL8ckAdGmP++bVnwAiY1zsK5bJap6Fbf1Drbc14M/PN8/U9fTOEIlu
+	 rSDeyq+TvL0FVyLS6wntoaU10rBXzrNjuGAokZ23cZqP7y/matiFuF6spZ6x02Ahhl
+	 j+TGvxdswVQ8Vwzb3amwhs1rPPSwuvALieOMOK5Q=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Y767P2ndgzhsx;
+	Tue, 10 Dec 2024 19:04:17 +0100 (CET)
+Date: Tue, 10 Dec 2024 19:04:06 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+Cc: Matthieu Baerts <matttbe@kernel.org>, gnoack@google.com, 
+	willemdebruijn.kernel@gmail.com, matthieu@buffet.re, linux-security-module@vger.kernel.org, 
+	netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, yusongping@huawei.com, 
+	artem.kuzin@huawei.com, konstantin.meskhidze@huawei.com, 
+	MPTCP Linux <mptcp@lists.linux.dev>, David Laight <David.Laight@aculab.com>
+Subject: Re: [RFC PATCH v2 1/8] landlock: Fix non-TCP sockets restriction
+Message-ID: <20241210.Eenohkipee9f@digikod.net>
+References: <20241017110454.265818-1-ivanov.mikhail1@huawei-partners.com>
+ <20241017110454.265818-2-ivanov.mikhail1@huawei-partners.com>
+ <49bc2227-d8e1-4233-8bc4-4c2f0a191b7c@kernel.org>
+ <20241018.Kahdeik0aaCh@digikod.net>
+ <20241204.fahVio7eicim@digikod.net>
+ <20241204.acho8AiGh6ai@digikod.net>
+ <a24b33c1-57c8-11bb-f3aa-32352b289a5c@huawei-partners.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: COmalQii4v1ua8ESt7Q21uSSxSkETcMb
-X-Proofpoint-ORIG-GUID: COmalQii4v1ua8ESt7Q21uSSxSkETcMb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- spamscore=0 clxscore=1011 impostorscore=0 mlxscore=0 mlxlogscore=538
- priorityscore=1501 malwarescore=0 adultscore=0 bulkscore=0 phishscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412100122
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a24b33c1-57c8-11bb-f3aa-32352b289a5c@huawei-partners.com>
+X-Infomaniak-Routing: alpha
 
-On Tue, 2024-12-10 at 17:34 +0100, Micka=C3=ABl Sala=C3=BCn wrote:
-> > > > +++ b/include/uapi/linux/audit.h
-> > > > @@ -161,6 +161,7 @@
-> > > > =C2=A0 #define AUDIT_INTEGRITY_RULE	=C2=A0=C2=A0=C2=A0 1805 /* poli=
-cy rule */
-> > > > =C2=A0 #define AUDIT_INTEGRITY_EVM_XATTR=C2=A0=C2=A0 1806 /* New EV=
-M-covered xattr */
-> > > > =C2=A0 #define AUDIT_INTEGRITY_POLICY_RULE 1807 /* IMA policy rules=
- */
-> > > > +#define AUDIT_INTEGRITY_DATA_CHECK=C2=A0 1808 /* Userspace enforce=
-d data integrity */
-> > >=20
-> > > I worry that "DATA_CHECK" is a bit vague, should we change the name s=
-o
-> > > that there is some hint of either userspace enforcement or
-> > > AT_EXECVE_CHECK?
-> > >=20
-> > > What about AUDIT_INTEGRITY_DATA_USER?
-> >=20
-> > The emphasis should be on userspace - AUDIT_INTEGRITY_USERSPACE.
->=20
-> Looks good, I'll send a new patch series with this change, following
-> https://lore.kernel.org/all/20241205160925.230119-9-mic@digikod.net/
+On Mon, Dec 09, 2024 at 01:19:19PM +0300, Mikhail Ivanov wrote:
+> On 12/4/2024 10:35 PM, Mickaël Salaün wrote:
+> > On Wed, Dec 04, 2024 at 08:27:58PM +0100, Mickaël Salaün wrote:
+> > > On Fri, Oct 18, 2024 at 08:08:12PM +0200, Mickaël Salaün wrote:
+> > > > On Thu, Oct 17, 2024 at 02:59:48PM +0200, Matthieu Baerts wrote:
+> > > > > Hi Mikhail and Landlock maintainers,
+> > > > > 
+> > > > > +cc MPTCP list.
+> > > > 
+> > > > Thanks, we should include this list in the next series.
+> > > > 
+> > > > > 
+> > > > > On 17/10/2024 13:04, Mikhail Ivanov wrote:
+> > > > > > Do not check TCP access right if socket protocol is not IPPROTO_TCP.
+> > > > > > LANDLOCK_ACCESS_NET_BIND_TCP and LANDLOCK_ACCESS_NET_CONNECT_TCP
+> > > > > > should not restrict bind(2) and connect(2) for non-TCP protocols
+> > > > > > (SCTP, MPTCP, SMC).
+> > > > > 
+> > > > > Thank you for the patch!
+> > > > > 
+> > > > > I'm part of the MPTCP team, and I'm wondering if MPTCP should not be
+> > > > > treated like TCP here. MPTCP is an extension to TCP: on the wire, we can
+> > > > > see TCP packets with extra TCP options. On Linux, there is indeed a
+> > > > > dedicated MPTCP socket (IPPROTO_MPTCP), but that's just internal,
+> > > > > because we needed such dedicated socket to talk to the userspace.
+> > > > > 
+> > > > > I don't know Landlock well, but I think it is important to know that an
+> > > > > MPTCP socket can be used to discuss with "plain" TCP packets: the kernel
+> > > > > will do a fallback to "plain" TCP if MPTCP is not supported by the other
+> > > > > peer or by a middlebox. It means that with this patch, if TCP is blocked
+> > > > > by Landlock, someone can simply force an application to create an MPTCP
+> > > > > socket -- e.g. via LD_PRELOAD -- and bypass the restrictions. It will
+> > > > > certainly work, even when connecting to a peer not supporting MPTCP.
+> > > > > 
+> > > > > Please note that I'm not against this modification -- especially here
+> > > > > when we remove restrictions around MPTCP sockets :) -- I'm just saying
+> > > > > it might be less confusing for users if MPTCP is considered as being
+> > > > > part of TCP. A bit similar to what someone would do with a firewall: if
+> > > > > TCP is blocked, MPTCP is blocked as well.
+> > > > 
+> > > > Good point!  I don't know well MPTCP but I think you're right.  Given
+> > > > it's close relationship with TCP and the fallback mechanism, it would
+> > > > make sense for users to not make a difference and it would avoid bypass
+> > > > of misleading restrictions.  Moreover the Landlock rules are simple and
+> > > > only control TCP ports, not peer addresses, which seems to be the main
+> > > > evolution of MPTCP.
+> > > 
+> > > Thinking more about this, this makes sense from the point of view of the
+> > > network stack, but looking at external (potentially bogus) firewalls or
+> > > malware detection systems, it is something different.  If we don't
+> > > provide a way for users to differenciate the control of SCTP from TCP,
+> > > malicious use of SCTP could still bypass this kind of bogus security
+> > > appliances.  It would then be safer to stick to the protocol semantic by
+> > > clearly differenciating TCP from MPTCP (or any other protocol).
+> 
+> You mean that these firewals have protocol granularity (e.g. different
+> restrictions for MPTCP and TCP sockets)?
 
-Sound good!  Thank you.
+Yes, and more importantly they can miss the MTCP semantic and then not
+properly filter such packet, which can be use to escape the network
+policy.  See some issues here:
+https://en.wikipedia.org/wiki/Multipath_TCP
 
-Mimi
+The point is that we cannot assume anything about other networking
+stacks, and if Landlock can properly differentiate between TCP and MTCP
+(e.g. with new LANDLOCK_ACCESS_NET_CONNECT_MTCP) users of such firewalls
+could still limit the impact of their firewall's bugs.  However, if
+Landlock treats TCP and MTCP the same way, we'll not be able to only
+deny MTCP.  In most use cases, the network policy should treat both TCP
+and MTCP the same way though, but we should let users decide according
+to their context.
+
+From an implementation point of view, adding MTCP support should be
+simple, mainly tests will grow.
+
+> 
+> > > 
+> > > Mikhail, could you please send a new patch series containing one patch
+> > > to fix the kernel and another to extend tests?
+> > 
+> > No need to squash them in one, please keep the current split of the test
+> > patches.  However, it would be good to be able to easily backport them,
+> > or at least the most relevant for this fix, which means to avoid
+> > extended refactoring.
+> 
+> No problem, I'll remove the fix of error consistency from this patchset.
+> BTW, what do you think about second and third commits? Should I send the
+> new version of them as well (in separate patch)?
+
+According to the description, patch 2 may be included in this series if
+it can be tested with any other LSM, but I cannot read these patches:
+https://lore.kernel.org/all/20241017110454.265818-3-ivanov.mikhail1@huawei-partners.com/
