@@ -1,33 +1,33 @@
-Received: from smtp-bc0a.mail.infomaniak.ch (smtp-bc0a.mail.infomaniak.ch [45.157.188.10])
+Received: from smtp-8fa9.mail.infomaniak.ch (smtp-8fa9.mail.infomaniak.ch [83.166.143.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4E3223E93
-	for <linux-security-module@vger.kernel.org>; Thu, 12 Dec 2024 17:42:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8B9C2253F9
+	for <linux-security-module@vger.kernel.org>; Thu, 12 Dec 2024 17:42:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734025374; cv=none; b=DC0YKXBSuRjsosmJOa4l0pN0bjHV7AMlEhWWm8Wj/NG6hyu5j2+Xyv0a4bKDvkjqSUrSMC/QNxtvk0it+7WXrI3TGkbJVUabx5yLSlsft3qYhv3lpLyBefsVzjj3qDGAy1hmRNameYGM6Lt6Hm6O5jwDJMPWCaQ0umMD9DZMvw4=
+	t=1734025376; cv=none; b=fvZUrT1QGD3UxE1u9MOfwL2r9QJ4f1L2IDB8D69FguP+QyY8EOiHp/5nh78BzauifpuWM+fKfbXS3htqP1ZGmKK6wwp6AGNsU2Q6rCpIwLMQX0zW72LnbgHZZylthgU0+BafSwJWQE0/I7Qi+KKTikIZAfyWOgDjQG8tEWeaKnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734025374; c=relaxed/simple;
-	bh=OWtu4/9cb5rBJ0sC28mmX6e1Q8lEqMMH3bhf2adb73g=;
+	s=arc-20240116; t=1734025376; c=relaxed/simple;
+	bh=XXvI0TX1xzAn48I8sTlwK/qf6xAhPIm9D4CPl/Tq860=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=agoHhfPWKunCNNJsBjdtIZ9k+xwH8MwO9kJkf9tDC5XnKUlFaWXALYV3T3ON00D+WBclRiOO2kKCoAdLGxS9bcL4ltrrUkhsAUbX/HqngIMf+5llWShddVQotJuQhPXT9RjFKZGx2czFAkAlwxQPFlfNj1kYJDl3n/Ct0zXd/ck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=yFNuSGxh; arc=none smtp.client-ip=45.157.188.10
+	 MIME-Version:Content-Type; b=ERQj8/U9xJdyQ3okforA/hXk8Jnj8lHssvftXVorKIh90iENfTjoHn44oqgxKH6zJM0NxMFGop2euc7kGzPpblntNYQ5NKQfMzyKPsD6CTF3bqgGwfVbWhdO/WGzariMgl6+AEOExBxwqh/P6kXWojE4Qaz0oFhJCVTRSvstH7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=sjq46jaz; arc=none smtp.client-ip=83.166.143.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="yFNuSGxh"
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Y8KYb0pxRz48W;
-	Thu, 12 Dec 2024 18:42:43 +0100 (CET)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="sjq46jaz"
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Y8KYj5qltz14n;
+	Thu, 12 Dec 2024 18:42:49 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1734025363;
-	bh=z4ssrersaEHFV1b2phErnW7WJMX3XDwnDSGfj0KVL4Q=;
+	s=20191114; t=1734025369;
+	bh=XB5FDSOElLippt2L4YJKGDqg0dFGAnXejgtIjP9qLjQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=yFNuSGxhAFe2wYH+mdHF7gsVGu7RQuLRcjV/ujFKm7soYHH2JOpjcuTcNqsPed0Ni
-	 RZLtCtL4WoSEC56qp3S6MroVxKwyl5CWt9t0D0LMTnpjTyANP4ttKw7jfAzaoOV7Hk
-	 IPx1g1j6QDuJJv514rfFzfKiU/dcE19Lh3mYe+fs=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Y8KYY6rb9z4Hr;
-	Thu, 12 Dec 2024 18:42:41 +0100 (CET)
+	b=sjq46jazjleJeRddEA8ulwHmUTQMvum/t5OcXWXwDqoNI2vhg1EqFMBcVZmwbKjHl
+	 QnRfB7WW06oSxWO/Gjjd0a3zwMhlWhDyQ23PuUEB48AEDg2y2bCu1PWuJKm9H95knq
+	 FhSE6FI3rnqSH0c90EMgci6dFHzuNA25Ahdp//b0=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Y8KYh372fz46M;
+	Thu, 12 Dec 2024 18:42:48 +0100 (CET)
 From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To: Al Viro <viro@zeniv.linux.org.uk>,
 	Christian Brauner <brauner@kernel.org>,
@@ -84,10 +84,10 @@ Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	linux-integrity@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-security-module@vger.kernel.org,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>
-Subject: [PATCH v23 4/8] selftests/landlock: Add tests for execveat + AT_EXECVE_CHECK
-Date: Thu, 12 Dec 2024 18:42:19 +0100
-Message-ID: <20241212174223.389435-5-mic@digikod.net>
+	Stefan Berger <stefanb@linux.ibm.com>
+Subject: [PATCH v23 8/8] ima: instantiate the bprm_creds_for_exec() hook
+Date: Thu, 12 Dec 2024 18:42:23 +0100
+Message-ID: <20241212174223.389435-9-mic@digikod.net>
 In-Reply-To: <20241212174223.389435-1-mic@digikod.net>
 References: <20241212174223.389435-1-mic@digikod.net>
 Precedence: bulk
@@ -100,89 +100,175 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
 
-Extend layout1.execute with the new AT_EXECVE_CHECK flag.  The semantic
-with AT_EXECVE_CHECK is the same as with a simple execve(2),
-LANDLOCK_ACCESS_FS_EXECUTE is enforced the same way.
+From: Mimi Zohar <zohar@linux.ibm.com>
 
-Cc: Günther Noack <gnoack@google.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Paul Moore <paul@paul-moore.com>
+Like direct file execution (e.g. ./script.sh), indirect file execution
+(e.g. sh script.sh) needs to be measured and appraised.  Instantiate
+the new security_bprm_creds_for_exec() hook to measure and verify the
+indirect file's integrity.  Unlike direct file execution, indirect file
+execution is optionally enforced by the interpreter.
+
+Differentiate kernel and userspace enforced integrity audit messages.
+
+Co-developed-by: Roberto Sassu <roberto.sassu@huawei.com>
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Signed-off-by: Mimi Zohar <zohar@linux.ibm.com>
+Tested-by: Stefan Berger <stefanb@linux.ibm.com>
+Reviewed-by: Mickaël Salaün <mic@digikod.net>
 Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Link: https://lore.kernel.org/r/20241212174223.389435-5-mic@digikod.net
+Link: https://lore.kernel.org/r/20241212174223.389435-9-mic@digikod.net
 ---
 
-Changes since v20:
-* Rename AT_CHECK to AT_EXECVE_CHECK.
----
- tools/testing/selftests/landlock/fs_test.c | 27 ++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+I added both a Reviewed-by and a Signed-off-by because I may not be the
+committer.
 
-diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
-index 6788762188fe..cd66901be612 100644
---- a/tools/testing/selftests/landlock/fs_test.c
-+++ b/tools/testing/selftests/landlock/fs_test.c
-@@ -37,6 +37,10 @@
+Changes since v22:
+* Add Stefan's Tested-by.
+* Replace AUDIT_INTEGRITY_DATA_CHECK with AUDIT_INTEGRITY_USERSPACE as
+  spotted by Paul and suggested by Mimi.
+
+Changes since v21:
+* New patch cherry-picked from IMA's patch v3:
+  https://lore.kernel.org/r/67b2e94f263bf9a0099efe74cce659d6acb16fe9.camel@linux.ibm.com
+* Fix a typo in comment: s/execvat/execveat/ .
+---
+ include/uapi/linux/audit.h            |  1 +
+ security/integrity/ima/ima_appraise.c | 27 +++++++++++++++++++++++--
+ security/integrity/ima/ima_main.c     | 29 +++++++++++++++++++++++++++
+ 3 files changed, 55 insertions(+), 2 deletions(-)
+
+diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
+index 75e21a135483..d9a069b4a775 100644
+--- a/include/uapi/linux/audit.h
++++ b/include/uapi/linux/audit.h
+@@ -161,6 +161,7 @@
+ #define AUDIT_INTEGRITY_RULE	    1805 /* policy rule */
+ #define AUDIT_INTEGRITY_EVM_XATTR   1806 /* New EVM-covered xattr */
+ #define AUDIT_INTEGRITY_POLICY_RULE 1807 /* IMA policy rules */
++#define AUDIT_INTEGRITY_USERSPACE   1808 /* Userspace enforced data integrity */
+ 
+ #define AUDIT_KERNEL		2000	/* Asynchronous audit record. NOT A REQUEST. */
+ 
+diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+index 884a3533f7af..f435eff4667f 100644
+--- a/security/integrity/ima/ima_appraise.c
++++ b/security/integrity/ima/ima_appraise.c
+@@ -8,6 +8,7 @@
+ #include <linux/module.h>
+ #include <linux/init.h>
+ #include <linux/file.h>
++#include <linux/binfmts.h>
  #include <linux/fs.h>
- #include <linux/mount.h>
- 
-+/* Defines AT_EXECVE_CHECK without type conflicts. */
-+#define _ASM_GENERIC_FCNTL_H
-+#include <linux/fcntl.h>
-+
- #include "common.h"
- 
- #ifndef renameat2
-@@ -2008,6 +2012,22 @@ static void test_execute(struct __test_metadata *const _metadata, const int err,
- 	};
+ #include <linux/xattr.h>
+ #include <linux/magic.h>
+@@ -469,6 +470,17 @@ int ima_check_blacklist(struct ima_iint_cache *iint,
+ 	return rc;
  }
  
-+static void test_check_exec(struct __test_metadata *const _metadata,
-+			    const int err, const char *const path)
++static bool is_bprm_creds_for_exec(enum ima_hooks func, struct file *file)
 +{
-+	int ret;
-+	char *const argv[] = { (char *)path, NULL };
++	struct linux_binprm *bprm;
 +
-+	ret = execveat(AT_FDCWD, path, argv, NULL,
-+		       AT_EMPTY_PATH | AT_EXECVE_CHECK);
-+	if (err) {
-+		EXPECT_EQ(-1, ret);
-+		EXPECT_EQ(errno, err);
-+	} else {
-+		EXPECT_EQ(0, ret);
++	if (func == BPRM_CHECK) {
++		bprm = container_of(&file, struct linux_binprm, file);
++		return bprm->is_check;
 +	}
++	return false;
 +}
 +
- TEST_F_FORK(layout1, execute)
+ /*
+  * ima_appraise_measurement - appraise file measurement
+  *
+@@ -483,6 +495,7 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
+ 			     int xattr_len, const struct modsig *modsig)
  {
- 	const struct rule rules[] = {
-@@ -2025,20 +2045,27 @@ TEST_F_FORK(layout1, execute)
- 	copy_binary(_metadata, file1_s1d2);
- 	copy_binary(_metadata, file1_s1d3);
+ 	static const char op[] = "appraise_data";
++	int audit_msgno = AUDIT_INTEGRITY_DATA;
+ 	const char *cause = "unknown";
+ 	struct dentry *dentry = file_dentry(file);
+ 	struct inode *inode = d_backing_inode(dentry);
+@@ -494,6 +507,16 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
+ 	if (!(inode->i_opflags & IOP_XATTR) && !try_modsig)
+ 		return INTEGRITY_UNKNOWN;
  
-+	/* Checks before file1_s1d1 being denied. */
-+	test_execute(_metadata, 0, file1_s1d1);
-+	test_check_exec(_metadata, 0, file1_s1d1);
++	/*
++	 * Unlike any of the other LSM hooks where the kernel enforces file
++	 * integrity, enforcing file integrity for the bprm_creds_for_exec()
++	 * LSM hook with the AT_EXECVE_CHECK flag is left up to the discretion
++	 * of the script interpreter(userspace). Differentiate kernel and
++	 * userspace enforced integrity audit messages.
++	 */
++	if (is_bprm_creds_for_exec(func, file))
++		audit_msgno = AUDIT_INTEGRITY_USERSPACE;
 +
- 	enforce_ruleset(_metadata, ruleset_fd);
- 	ASSERT_EQ(0, close(ruleset_fd));
+ 	/* If reading the xattr failed and there's no modsig, error out. */
+ 	if (rc <= 0 && !try_modsig) {
+ 		if (rc && rc != -ENODATA)
+@@ -569,7 +592,7 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
+ 	     (iint->flags & IMA_FAIL_UNVERIFIABLE_SIGS))) {
+ 		status = INTEGRITY_FAIL;
+ 		cause = "unverifiable-signature";
+-		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
++		integrity_audit_msg(audit_msgno, inode, filename,
+ 				    op, cause, rc, 0);
+ 	} else if (status != INTEGRITY_PASS) {
+ 		/* Fix mode, but don't replace file signatures. */
+@@ -589,7 +612,7 @@ int ima_appraise_measurement(enum ima_hooks func, struct ima_iint_cache *iint,
+ 			status = INTEGRITY_PASS;
+ 		}
  
- 	ASSERT_EQ(0, test_open(dir_s1d1, O_RDONLY));
- 	ASSERT_EQ(0, test_open(file1_s1d1, O_RDONLY));
- 	test_execute(_metadata, EACCES, file1_s1d1);
-+	test_check_exec(_metadata, EACCES, file1_s1d1);
- 
- 	ASSERT_EQ(0, test_open(dir_s1d2, O_RDONLY));
- 	ASSERT_EQ(0, test_open(file1_s1d2, O_RDONLY));
- 	test_execute(_metadata, 0, file1_s1d2);
-+	test_check_exec(_metadata, 0, file1_s1d2);
- 
- 	ASSERT_EQ(0, test_open(dir_s1d3, O_RDONLY));
- 	ASSERT_EQ(0, test_open(file1_s1d3, O_RDONLY));
- 	test_execute(_metadata, 0, file1_s1d3);
-+	test_check_exec(_metadata, 0, file1_s1d3);
+-		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
++		integrity_audit_msg(audit_msgno, inode, filename,
+ 				    op, cause, rc, 0);
+ 	} else {
+ 		ima_cache_flags(iint, func);
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 9b87556b03a7..9f9897a7c217 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -554,6 +554,34 @@ static int ima_bprm_check(struct linux_binprm *bprm)
+ 				   MAY_EXEC, CREDS_CHECK);
  }
  
- TEST_F_FORK(layout1, link)
++/**
++ * ima_bprm_creds_for_exec - collect/store/appraise measurement.
++ * @bprm: contains the linux_binprm structure
++ *
++ * Based on the IMA policy and the execveat(2) AT_EXECVE_CHECK flag, measure
++ * and appraise the integrity of a file to be executed by script interpreters.
++ * Unlike any of the other LSM hooks where the kernel enforces file integrity,
++ * enforcing file integrity is left up to the discretion of the script
++ * interpreter (userspace).
++ *
++ * On success return 0.  On integrity appraisal error, assuming the file
++ * is in policy and IMA-appraisal is in enforcing mode, return -EACCES.
++ */
++static int ima_bprm_creds_for_exec(struct linux_binprm *bprm)
++{
++	/*
++	 * As security_bprm_check() is called multiple times, both
++	 * the script and the shebang interpreter are measured, appraised,
++	 * and audited. Limit usage of this LSM hook to just measuring,
++	 * appraising, and auditing the indirect script execution
++	 * (e.g. ./sh example.sh).
++	 */
++	if (!bprm->is_check)
++		return 0;
++
++	return ima_bprm_check(bprm);
++}
++
+ /**
+  * ima_file_check - based on policy, collect/store measurement.
+  * @file: pointer to the file to be measured
+@@ -1174,6 +1202,7 @@ static int __init init_ima(void)
+ 
+ static struct security_hook_list ima_hooks[] __ro_after_init = {
+ 	LSM_HOOK_INIT(bprm_check_security, ima_bprm_check),
++	LSM_HOOK_INIT(bprm_creds_for_exec, ima_bprm_creds_for_exec),
+ 	LSM_HOOK_INIT(file_post_open, ima_file_check),
+ 	LSM_HOOK_INIT(inode_post_create_tmpfile, ima_post_create_tmpfile),
+ 	LSM_HOOK_INIT(file_release, ima_file_free),
 -- 
 2.47.1
 
