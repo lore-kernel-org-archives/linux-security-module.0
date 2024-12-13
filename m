@@ -1,91 +1,138 @@
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE68C1DA5F;
-	Fri, 13 Dec 2024 13:27:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0A792F24;
+	Fri, 13 Dec 2024 15:46:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734096473; cv=none; b=ZlIWe76imwQW3Hmo7XPz74VxV5q5vMvKmkSeOOWVPnjpENALq35qwLafF5aelDpmPAZbEuwmEfhong/e1zKTVCJAQjeegvs63ZTs6IZQvkF8lQB2ntfZifWxzi4dBqdf4kUXIeqpkZ5L3P+WEX4NyQbhWPrytwLxiCzUm1un3hw=
+	t=1734104800; cv=none; b=SsdtyeRLAisqxz0pyWzLxmn9y7Ah+++K/9v/+EYV4y9j0GrrAsoPalseU+LT/WLs7NJIODGVMugzioAbY2CS0zX5lGxnZ5f8/HssPS3WRP1F0C+DyXaybfVGLf6zgqknSkhGuOGGAzNP9Vq2ap6Z5l+NfXR7txMK5MleZPEWE5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734096473; c=relaxed/simple;
-	bh=bxt/ucduwPrssRD95ItPQSQOqvnWV7JgVW5NkbSy77E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uvgzJgD46dhoMK8juiKbDwi7ton9QBTpgN3lwQmEPhvylHgBnImu2OgBX+MTrROAwVHMdBjo1zrFckgB2EizR7hB8uuwj61kXBsDMzio0lrN2OqAu02onyhEmFUxCD8thB+N9JwFICLVo3R7Tawf7uKOxzIkEG1cXBHFxQNZbvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=TCdKp5dG; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+	s=arc-20240116; t=1734104800; c=relaxed/simple;
+	bh=yDWvwmhDMeacL/yRoDS1GfmjTJAOd+U0Gqm66CaMR4M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IBviH++RfxZehOn1fq5vqYd3RLtJDQEjzTQfGhpujACKUV5vAKUfZ2AHZRUC6W1ujR2rhh61/YGE1rkSMxSiGZCY+Mk3q8FylvtkZzernjuVqgsmQuDpBD5H4jROqGQRYtQypaIT0+XsJkzMs+SkOw7/mQc/YepJIBp/mEwE6wQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iKnxpLP4; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="TCdKp5dG"
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id B0D4540E0169;
-	Fri, 13 Dec 2024 13:27:47 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id sGcE60KnN3ec; Fri, 13 Dec 2024 13:27:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1734096462; bh=fx6NJswxnApctvUDdLiVKEkcBeLJJ6f/OgTP8Pi/0ME=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TCdKp5dGfLFekVy98Z5cRjbFBjMfVvYyRYfkhUYQV27uBBXCYYZh9p+mOk9Fgf+Os
-	 pQnkema3VHjYt9PUh0meOBj5NrPk/zKO+QDenixpK9n+dz4n1W1+s+KDo+a/POiJM5
-	 Jf6qn/XogPW/5jtU4WaIDhZKUdouklEFEDqlqUxQY/zqmsi+ilibsowZBZAyXy4Y1x
-	 TpfygtsV0EIon2P3uQJgohoT4cvoEShfdG4TimQLth0mosUPdNeCeUnCPY7vJpG8jp
-	 FMDw44tc9UZ8zLBh5SjSjW+tYFB4s0xcTFhxdZaxrRiBX6ofb+4X6HzSOYzqwyuH19
-	 3Gkh2PB0uUC+JXk2zhzsze0kIwSidQFUGAMJuPIsUXASeoSmC8/pKQYSSGpe+44W7X
-	 wfaRwlYuRha6hXFbAGc3543MSmoNrbjsNXBdfC4dqq55iCvp1sGLVzoHBrZ6ElvUth
-	 Xr+52lDoTAkJQ9VOWavMmRSsyh9669yeE7txdySAT/BnY2u4V0QitRMiF/v+BjKPP3
-	 KRaaFCcHHir2sRjQSC0fOS2DqMpzcB0re3ld0RlRsARj0Xcy3Re1L5ZPKAiOs62UDt
-	 Jv74MNH+taDciFgIldizxt2pc4BNlWyyNgb6b/mcvo5h8L2N4EtjOHDklrGej/mcSh
-	 CG5OdhA4dM08z1FXqQoO86yE=
-Received: from zn.tnic (p200300ea971f9372329c23fffea6a903.dip0.t-ipconnect.de [IPv6:2003:ea:971f:9372:329c:23ff:fea6:a903])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 2E54840E015F;
-	Fri, 13 Dec 2024 13:27:19 +0000 (UTC)
-Date: Fri, 13 Dec 2024 14:27:09 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Kalle Valo <kvalo@kernel.org>
-Cc: Petr Mladek <pmladek@suse.com>, Yafang Shao <laoar.shao@gmail.com>,
-	torvalds@linux-foundation.org, akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
-	x86@kernel.org, linux-snps-arc@lists.infradead.org,
-	linux-wireless@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, ocfs2-devel@lists.linux.dev,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>,
-	Dwaipayan Ray <dwaipayanray1@gmail.com>,
-	Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Subject: Re: [PATCH 1/7] vsprintf: Add %pTN to print task name
-Message-ID: <20241213132709.GAZ1w2LW4LgHi-6XfZ@fat_crate.local>
-References: <20241213054610.55843-1-laoar.shao@gmail.com>
- <20241213054610.55843-2-laoar.shao@gmail.com>
- <Z1vq2-V7vB5KhBR9@pathway.suse.cz>
- <87r06crnew.fsf@kernel.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iKnxpLP4"
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-801c7e6518eso536976a12.2;
+        Fri, 13 Dec 2024 07:46:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734104798; x=1734709598; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1vXA2/urSSs2Rh5p3xBC9KaPnKWnmLtFXFX4YA6dOUY=;
+        b=iKnxpLP4VwCdmM/zmo30MKcfO27kSI+W21doJW+LuBiN9vT/2sO05wK5zaaWdlfuiJ
+         hM4h+yJrp3Z6WAXLR+w9W2aIlfq/SKyiNJgbgBEsoYG1mqfEuLkHypiMm1J75csYwf1l
+         k/LNRMROHcUWaXoL3ms8xoxDm2/+2KpyXF5tJ7i17BZfXYZDU17O6Hr+ARqJpWz99rPb
+         S4QOqUSpd6kTKnir3ojFkVz/IQM6AApQDG6MoQ/KwkA5GGbloxFvozuriSGfYAOKUs2o
+         ltKmzI0luF9WsL10EoMlVy5jcGpInqElYQdWnCSZICONRJYRQTz3qzdffpjp4On8vJ0t
+         Ltpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734104798; x=1734709598;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1vXA2/urSSs2Rh5p3xBC9KaPnKWnmLtFXFX4YA6dOUY=;
+        b=dBUjOwRySIW/aZFsBSFvlVdJnngfhEX34m9FgUnpfxem40zLQNdEv83/0Lf5ActPtp
+         MhK3A+QDhloHlfvUhbrIynK+ETzoPQGLJNcI1IEOzi1rU+ly16Tsf7CN9Ai9FIZFqVdl
+         1xmgCHlDqARfCQT7zO0oLd9KVEoxbYKP6sA6tPImVEyI5fTX56wLaezrneddFDuaPlYx
+         PEoxzEisaI3RkMRC4uGLrXw+Z+u9Um0aUsaYeMZPfGGY0RQLl/ameAZ9ahi1f+5gnEsq
+         Di6bXrpRJW1k4aJyLtioJWaoAdQYbyP/CvCcBg2WyfdbyhQ4T7qbfTLa+9LsV+XuukXE
+         IXAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVRPJ8fAHTiot+c5bSrLItQ5i8hmaGocpqjC6bBYmTKgL3nw15hkzi6/DKRNISZJgSvedwqoDT7TFZrWOqniWxJ6VLO3ek=@vger.kernel.org, AJvYcCXVALwkOamvqSUwxZEG57JJ93V4KyC7SWGVLDlQYBcZysBhOUysyshafh/kDTWNfWQhiwIOcPPY+A==@vger.kernel.org, AJvYcCXuPiikhpKOT4Q1UFjM5bQtPQBt9Vd6DKYJxCv+AO5G9D3C1OkRrar9fWsK+tDY6qibBpcDV1mD@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+SV8jx24feUp/8FTJdExIG5svKXJYUAD7ng17dkgjGnDBvH+x
+	ZZODz79WOewgax5GRrqz8vYxQrl0QH5lzWSyZiAe8FgYZp8kGT3wbvFBHssn+3P8mw+KNOx5+YX
+	PYw2CLw1DBatRylzL2CroMs4Yzc0=
+X-Gm-Gg: ASbGnctImJHOAx4r++hlomCifrQItS7yhwCutPbS1erxgJmdZTZBfBO5/ipwzLRGHB2
+	JtMN8AE4uodEwYyXjYFSTQ8Ti8IiUlWxQ8l3T0Q==
+X-Google-Smtp-Source: AGHT+IGSoI1gRTcKmTJ6qDwY45AoOFeM+TOJQsXJVS1HcUojGwkYvMp1Yp+U2SfDzJ70oJ5suMPNWbUxXV0qJejlsjU=
+X-Received: by 2002:a17:90b:3d0a:b0:2ea:4578:46d8 with SMTP id
+ 98e67ed59e1d1-2f28fb6f01cmr5075422a91.9.1734104796398; Fri, 13 Dec 2024
+ 07:46:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <87r06crnew.fsf@kernel.org>
+References: <20241212102000.2148788-1-ivanov.mikhail1@huawei-partners.com>
+ <20241212.zoh7Eezee9ka@digikod.net> <b92e65aa-84aa-a66f-2f61-b70fd5c6b138@huawei-partners.com>
+In-Reply-To: <b92e65aa-84aa-a66f-2f61-b70fd5c6b138@huawei-partners.com>
+From: Stephen Smalley <stephen.smalley.work@gmail.com>
+Date: Fri, 13 Dec 2024 10:46:25 -0500
+Message-ID: <CAEjxPJ737irXncrwoM3avg4L+U37QB2w+fjJZZYTjND5Z4_Nig@mail.gmail.com>
+Subject: Re: [PATCH] selinux: Read sk->sk_family once in selinux_socket_bind()
+To: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	paul@paul-moore.com, selinux@vger.kernel.org, omosnace@redhat.com, 
+	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
+	yusongping@huawei.com, artem.kuzin@huawei.com, 
+	konstantin.meskhidze@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 13, 2024 at 10:35:03AM +0200, Kalle Valo wrote:
-> I agree, it makes the code harder to read for someone who is not
-> familiar with all the %p magic we have (like me).
+On Fri, Dec 13, 2024 at 5:57=E2=80=AFAM Mikhail Ivanov
+<ivanov.mikhail1@huawei-partners.com> wrote:
+>
+> On 12/12/2024 8:50 PM, Micka=C3=ABl Sala=C3=BCn wrote:
+> > This looks good be there are other places using sk->sk_family that
+> > should also be fixed.
+>
+> Thanks for checking this!
+>
+> For selinux this should be enough, I haven't found any other places
+> where sk->sk_family could be read from an IPv6 socket without locking.
+>
+> I also would like to prepare such fix for other LSMs (apparmor, smack,
+> tomoyo) (in separate patches).
 
-+1
+I'm wondering about the implications for SELinux beyond just
+sk->sk_family access, e.g. SELinux maps the (family, type, protocol)
+triple to a security class at socket creation time via
+socket_type_to_security_class() and caches the security class in the
+inode_security_struct and sk_security_struct for later use.
 
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+>
+> >
+> > On Thu, Dec 12, 2024 at 06:20:00PM +0800, Mikhail Ivanov wrote:
+> >> selinux_socket_bind() is called without holding the socket lock.
+> >>
+> >> Use READ_ONCE() to safely read sk->sk_family for IPv6 socket in case
+> >> of lockless transformation to IPv4 socket via IPV6_ADDRFORM [1].
+> >>
+> >> [1] https://lore.kernel.org/all/20240202095404.183274-1-edumazet@googl=
+e.com/
+> >>
+> >> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> >> Signed-off-by: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+> >> ---
+> >>   security/selinux/hooks.c | 4 +++-
+> >>   1 file changed, 3 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> >> index 5e5f3398f39d..b7adff2cf5f6 100644
+> >> --- a/security/selinux/hooks.c
+> >> +++ b/security/selinux/hooks.c
+> >> @@ -4715,8 +4715,10 @@ static int selinux_socket_bind(struct socket *s=
+ock, struct sockaddr *address, in
+> >>      if (err)
+> >>              goto out;
+> >>
+> >> +    /* IPV6_ADDRFORM can change sk->sk_family under us. */
+> >> +    family =3D READ_ONCE(sk->sk_family);
+> >> +
+> >>      /* If PF_INET or PF_INET6, check name_bind permission for the por=
+t. */
+> >> -    family =3D sk->sk_family;
+> >>      if (family =3D=3D PF_INET || family =3D=3D PF_INET6) {
+> >>              char *addrp;
+> >>              struct common_audit_data ad;
+> >>
+> >> base-commit: 034294fbfdf0ded4f931f9503d2ca5bbf8b9aebd
+> >> --
+> >> 2.34.1
+> >>
+> >>
