@@ -1,127 +1,137 @@
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8E736F30F;
-	Fri, 13 Dec 2024 05:49:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B858B1F95E;
+	Fri, 13 Dec 2024 07:48:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734068970; cv=none; b=Yzn59xzhPPeYRolW14sMbwpoMTaX/NSvVWguUpOa4Rfg4iam65oCGycPL06Tcj8vSVrYI8KNcfA0Q5VNlh157OJPHaZZteeBXK9m/RdMIAm+WMMYfciSjNNb0cGcnpRDUpXe+eID2ejiUZfvmzlA11EJbfP1r8FZU7TJ6z+FVVE=
+	t=1734076090; cv=none; b=A/vH7VF95IUgrECEr3MyBwEzbQiKAInZ5b4fbMlYgNYF+nRVo3wsfeOofF7L2j31h3Hw7TPFQsiXZFz5eql+BtFZUfFlomhbIMX53IeqaOQnMIg3kBDC1ZZqVO6foTobPSL+JQB7e/6EDa5wO8Zn00hfayWixy9M/+Yps9zw2Nc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734068970; c=relaxed/simple;
-	bh=v+pMu9kg4VrTuiGatKb8KwXRW5PcoI6cotIuO17+lWI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jPxpaKWuYAbP+SGnwRcJNaUeFBzXjnJ7cKXh01h2tumJu+Ht3PiVaBRUtjd+/pFbTmULyQ7GWte9OFy8YZNbljc3gcQA72ge+WOzssoY94da7r4JmitktEpoBYH/VOGY9EzrXjALuRFxrvkmTYWeLqyuA65llzggR2GGIfz9K64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZCbBD2l/; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1734076090; c=relaxed/simple;
+	bh=4ephsHzcqtUFjd28fgyOUVnfVqA7f3eQQkM+XWxQ+LQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ug25bD4Uij+WNKwXX0D5Dcn1726PipZOwtkHzev80wPq2pHcgQmJepNaAUU9g5xRTOdKaIrioDba07XfcU+cJBJH2MxPmhSKzuaW/+wy8WmH2uG3+4ISyg2KF2SbrPumx3FLyrv/iakh2s4JSaDn6m3Sq1la4wRx+B6SfIb78YY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lmef4FYa; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZCbBD2l/"
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-728eccf836bso1246952b3a.1;
-        Thu, 12 Dec 2024 21:49:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734068967; x=1734673767; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=m2jUPvsdlfQUhZsdbtI4Ke1sLD5+tvHbQzW9Gl1gyas=;
-        b=ZCbBD2l/iDb6PloRpo6uwogSXrPVaRPybOnJpvUXAAqBE4iaxKmnBDaEoZQHBZEelq
-         0D0iyl8IbBXki3HI8bf7SXXmbKAOHm+iws9cHNceUCY9mx18wdN0B/iK1EtBAgEmyFZn
-         5MamgtFvy7tfPk5fKQ4/zTUOLPktjV8xo+B0D5mAFparK2iGyNGVob+i1vIWEEFSTstt
-         XAyQMM+YxLVeG8psVABNEIWQjUQFYae8yQdOknEjPMCL+y6clEHWdtf6uQSmPbFrRJRT
-         VliSDTFJixovDD7Y3L6q0OIiNfYSKEoJMuIKGgyoglFLuM6yQETn9b7mhORNIJQEPUT8
-         JQyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734068967; x=1734673767;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=m2jUPvsdlfQUhZsdbtI4Ke1sLD5+tvHbQzW9Gl1gyas=;
-        b=owTKe5vO3KzMyZZWMLQVfdRCl64A1Rn5PogPS8KWjV7smqUN0hL26mCIZlwCVXOED8
-         C4jDv9/Zkf94QL98izvQb1iyrveV0yVnoQRyzuHFLw9bFC7Z0fU7ZSVZIIu5zkJf/Hnp
-         UMXbCWzsH8cheAem0FkYOWissJ5F0HUfeduFDG8i58x4O59wyPY+Sy/A1zw/XHKtJ44f
-         +iBCQd8l1Mvys9WDiq800iYbze5HZs1mTkQFHybkPnbT359fd/7curXMsMZb9OTOJ4N+
-         4W+0jWEJjo+nt7BIvVP1RBl9sA4NL9FyL8elB5ZadBF9P509XpQt7W3xANx+EIsIkvjZ
-         LVQA==
-X-Forwarded-Encrypted: i=1; AJvYcCUd2zmuJ/dv12lELyIjSrePyEyx8ajHDZOJ2SSNKFvu2TXcKFmtm2FJtxhmKORhwRaZQD7WbfV5pPWLB0wJQCanM5Vvh24=@vger.kernel.org, AJvYcCVdLGVmBuJOknoQGa171CuanOXH/y81/CTALCDn4aMlDkLyN9qPc8SD1KVg68WeZhMwvFGxcE3kVLMyD/OjucU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqtOoVRqqtUd4enpDt6WO7rZDX7eq89UWM4JjwK3CQZSPkRAF7
-	sjrSvMO22tgxgTK/1SovuA/DSjxYPJZe5VF6gx3SL2nB570k/gtemphsSltbolM=
-X-Gm-Gg: ASbGncu/8ThEtqlfXKdqcz0JB9GLTllJpWjxNfaqmHjiRxE/C6GDOQfCkA2mzkmH911
-	2z1rSXa4GbB8WumHFwhjsLa6bda+AZZ8vWicEoNMeOOl/5w858VQLFY18hWG0Tiwhin2iq/5bee
-	jiRzW9b3zkOR9327lKByPDiyVI9Qkm2M8Q3YzdmvnxuVM7BDxWZ1F+JH8WHj5qZseBcF+oqoYmH
-	M8mhDJCmertlcWAW6M/tW/o2l4XnhbkGcYZDSFskKQV/GdMahSL2XW9N/V9pHGL8hEUcmTjMwJx
-	6n2k/Vw=
-X-Google-Smtp-Source: AGHT+IGsjn2HsD9B470GSaZ7/WuS4a1ciiqbzWwWUR77XR0Zla03DKiQ+x82aV6yWtJ1LuxULtoYsw==
-X-Received: by 2002:a05:6a00:b46:b0:71e:4786:98ee with SMTP id d2e1a72fcca58-7290c2702e3mr2257553b3a.21.1734068967116;
-        Thu, 12 Dec 2024 21:49:27 -0800 (PST)
-Received: from localhost.localdomain ([180.159.118.224])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725ee10f928sm8166032b3a.32.2024.12.12.21.49.23
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Thu, 12 Dec 2024 21:49:26 -0800 (PST)
-From: Yafang Shao <laoar.shao@gmail.com>
-To: torvalds@linux-foundation.org,
-	akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	x86@kernel.org,
-	linux-snps-arc@lists.infradead.org,
-	linux-wireless@vger.kernel.org,
-	intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org,
-	nouveau@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	ocfs2-devel@lists.linux.dev,
-	Yafang Shao <laoar.shao@gmail.com>,
-	Mark Fasheh <mark@fasheh.com>,
-	Joel Becker <jlbec@evilplan.org>,
-	Joseph Qi <joseph.qi@linux.alibaba.com>
-Subject: [PATCH 7/7] fs: Use %pTN to print task name
-Date: Fri, 13 Dec 2024 13:49:18 +0800
-Message-Id: <20241213054918.56441-1-laoar.shao@gmail.com>
-X-Mailer: git-send-email 2.37.1 (Apple Git-137.1)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lmef4FYa"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91C71C4CED0;
+	Fri, 13 Dec 2024 07:48:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734076090;
+	bh=4ephsHzcqtUFjd28fgyOUVnfVqA7f3eQQkM+XWxQ+LQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Lmef4FYa3aYU7MmyGYo7DBM/2C+IeNfEtm5+AzDMtzenVnxTVnar/4rDJm0GO7bGu
+	 w+9Ju3lYXzRx9LMKkp9+exAbjgFM7lji81aFSnSAWvNvGuPTCZdQLlkL8pa2woQsLV
+	 8ZPmxxq8Or/dIS3wg9eTyMQUVRPTr9YP/xISr5bJwMuaRwU343Yh96qWkupwFVqCEc
+	 Ceb3W8U/P/o+ihOcPIZOMPlIp/hSF3333fl6ORPlQ3pxH9PY3V5LmZHpV21PSFa5qB
+	 E2aDD4MEu4Wi3wxA+v69xkEfOAoobRZxOzkIE7IfdmCrufWD+l/N9PWzpxj/7KfU1V
+	 bVLVo9PT2AQ/w==
+Message-ID: <afcdadd9-07c8-4dcf-be12-7cdad1984b33@kernel.org>
+Date: Fri, 13 Dec 2024 08:48:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/7] drivers: Repace get_task_comm() with %pTN
+To: Yafang Shao <laoar.shao@gmail.com>, torvalds@linux-foundation.org,
+ akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+ x86@kernel.org, linux-snps-arc@lists.infradead.org,
+ linux-wireless@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+ intel-xe@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, ocfs2-devel@lists.linux.dev,
+ Ofir Bitton <obitton@habana.ai>, Oded Gabbay <ogabbay@kernel.org>,
+ Jani Nikula <jani.nikula@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Karol Herbst <kherbst@redhat.com>,
+ Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@redhat.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <20241213054610.55843-1-laoar.shao@gmail.com>
+ <20241213054610.55843-7-laoar.shao@gmail.com>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <20241213054610.55843-7-laoar.shao@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Since task->comm is guaranteed to be NUL-terminated, we can print it
-directly without the need to copy it into a separate buffer. This
-simplifies the code and avoids unnecessary operations.
+On 13. 12. 24, 6:46, Yafang Shao wrote:
+> Since task->comm is guaranteed to be NUL-terminated, we can print it
+> directly without the need to copy it into a separate buffer. This
+> simplifies the code and avoids unnecessary operations.
+> 
+> Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
+> Cc: Ofir Bitton <obitton@habana.ai>
+> Cc: Oded Gabbay <ogabbay@kernel.org>
+> Cc: Jani Nikula <jani.nikula@linux.intel.com>
+> Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
+> Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+> Cc: Tvrtko Ursulin <tursulin@ursulin.net>
+> Cc: David Airlie <airlied@gmail.com>
+> Cc: Simona Vetter <simona@ffwll.ch>
+> Cc: Karol Herbst <kherbst@redhat.com>
+> Cc: Lyude Paul <lyude@redhat.com>
+> Cc: Danilo Krummrich <dakr@redhat.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Jiri Slaby <jirislaby@kernel.org>
+> ---
+>   drivers/accel/habanalabs/common/context.c         |  5 ++---
+>   .../accel/habanalabs/common/habanalabs_ioctl.c    | 15 +++++----------
+>   .../gpu/drm/i915/display/intel_display_driver.c   | 10 ++++------
+>   drivers/gpu/drm/nouveau/nouveau_chan.c            |  4 +---
+>   drivers/gpu/drm/nouveau/nouveau_drm.c             |  7 +++----
+>   drivers/tty/tty_io.c                              |  5 ++---
 
-Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
-Cc: Mark Fasheh <mark@fasheh.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Joseph Qi <joseph.qi@linux.alibaba.com>
----
- fs/ocfs2/cluster/netdebug.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+FOr tty:
+Reviewed-by: Jiri Slaby <jirislaby@kernel.org>
 
-diff --git a/fs/ocfs2/cluster/netdebug.c b/fs/ocfs2/cluster/netdebug.c
-index bc27301eab6d..039d99f951ea 100644
---- a/fs/ocfs2/cluster/netdebug.c
-+++ b/fs/ocfs2/cluster/netdebug.c
-@@ -122,11 +122,10 @@ static int nst_seq_show(struct seq_file *seq, void *v)
- 	send = ktime_to_us(ktime_sub(now, nst->st_send_time));
- 	status = ktime_to_us(ktime_sub(now, nst->st_status_time));
- 
--	/* get_task_comm isn't exported.  oh well. */
- 	seq_printf(seq, "%p:\n"
- 		   "  pid:          %lu\n"
- 		   "  tgid:         %lu\n"
--		   "  process name: %s\n"
-+		   "  process name: %pTN\n"
- 		   "  node:         %u\n"
- 		   "  sc:           %p\n"
- 		   "  message id:   %d\n"
-@@ -137,7 +136,7 @@ static int nst_seq_show(struct seq_file *seq, void *v)
- 		   "  wait start:   %lld usecs ago\n",
- 		   nst, (unsigned long)task_pid_nr(nst->st_task),
- 		   (unsigned long)nst->st_task->tgid,
--		   nst->st_task->comm, nst->st_node,
-+		   nst->st_task, nst->st_node,
- 		   nst->st_sc, nst->st_id, nst->st_msg_type,
- 		   nst->st_msg_key,
- 		   (long long)sock,
+thanks,
 -- 
-2.43.5
-
+js
+suse labs
