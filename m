@@ -1,145 +1,282 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx1.buffet.re (mx1.buffet.re [51.83.41.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D067190696;
-	Fri, 13 Dec 2024 23:51:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F177E1A0721;
+	Sat, 14 Dec 2024 18:46:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.83.41.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734133911; cv=none; b=aoKa6lLC+oR3L6A5RRs4FBjKlGvfpRw9Z9+hhRBo4jSK6w5NmsQbt3yYeVP3r8KyvM+owPYilb69+3ySytDtmkm+WXeCjU83VZxKOVNX2BbfSWSd45PNRrQMNzlwGdEvgNuLgQE594rmlV7fESaYegM7uMemchqv+N3E/6Jmvl4=
+	t=1734202004; cv=none; b=htDTPpsEQrWTRCiuoKYamuYBYE/fCm4zHSIhie5Qt7iMmW4FoScYSNfWTineTGVsun3ijZhDZfZuFK4fYkWUElAiZezeyZ7zQ7jxruuCwnxWdXBIaWAO0ix83nbzF1zxpApbNhOyZcDz8QKkyL1r2srH8Xh5nfwBFNGz0x+JnTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734133911; c=relaxed/simple;
-	bh=LBl8bC14OQtqtIKs1HukcWT3y7YKXmSmDiIE/yMGSmc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZBYWL5kWj3xp5ZRKeIHO56165wo624WY1G1og1YY5K8amLkpLilhC8KlyWifHYvnwn1At5RkBY+9sJXuE7ku8O/wJK1bnpY67m59oVVFijrZiNad3e6GT1V/LKf0BaBNOjxkWnhp0w1oxMpop2TwrGY6fh2uKxEUZ0qjYc5WGZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XtbDPPlZ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1734202004; c=relaxed/simple;
+	bh=vOKvRMbY8m00DdlZDc5kSM8azQC0Pu0YHZjQw8q3hIY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=j/QGzCISSYPa2pVyRzTDHaZ+DOyq7yZyzG/Zlz6EyCXe77U977Dvm60qkOOGmnXPaxxv4iIv0AkUkaLZdJBOJlUywPVwo0DPM8R0+svJaJgZhDu5ibTe8VjGpt/LPurd8rMoLZEXsTykSvtGVTPkjWNWFJ09EhD6+78ilom9idg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buffet.re; spf=pass smtp.mailfrom=buffet.re; dkim=pass (2048-bit key) header.d=buffet.re header.i=@buffet.re header.b=X9NbjJ6m; arc=none smtp.client-ip=51.83.41.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=buffet.re
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=buffet.re
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XtbDPPlZ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94490C4CED0;
-	Fri, 13 Dec 2024 23:51:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734133910;
-	bh=LBl8bC14OQtqtIKs1HukcWT3y7YKXmSmDiIE/yMGSmc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XtbDPPlZbvqi8CN6Oxf/cp0n+oSr7ObvLvF/U2VDgAChn1LmY9vPTTrZPXt16xhat
-	 inbTnXZlRscl4snJJ6UgFlEeSj8INrtWj3w+kY5Zw6Xwg/PSii2l0HnKE9BmyS9OVT
-	 8N0rE6al1xzB6jamo6faQdVxRpqtjSmRmiAwfcJhnFdx0fBBSN910Mi1qMJ5n+kktQ
-	 5hNIUPaZXmQiXX9jVYYu5/7CRPAvUoy2K6AFHWYU/z5bFe44BQV9tOCZxs16Vn8N4x
-	 pKammezScSiU7mB84NioErtAEA5PzW9kkj2h4m+pmdJm0TyG9CjJqpZAVG7w4/b+7Y
-	 1sa1Hb94hlvOw==
-Date: Fri, 13 Dec 2024 15:51:48 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>,
-	Christian Brauner <brauner@kernel.org>, Guo Ren <guoren@kernel.org>,
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
-	James Clark <james.clark@linaro.org>,
-	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
-	Jonathan Corbet <corbet@lwn.net>,
-	=?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>,
-	Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
-	linux-csky@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v2 02/16] perf tools: arc: Support generic syscall headers
-Message-ID: <Z1zIlKq19lAXMoGs@google.com>
-References: <20241212-perf_syscalltbl-v2-0-f8ca984ffe40@rivosinc.com>
- <20241212-perf_syscalltbl-v2-2-f8ca984ffe40@rivosinc.com>
+	dkim=pass (2048-bit key) header.d=buffet.re header.i=@buffet.re header.b="X9NbjJ6m"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=buffet.re; s=mx1;
+	t=1734201996; bh=vOKvRMbY8m00DdlZDc5kSM8azQC0Pu0YHZjQw8q3hIY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=X9NbjJ6mTx9UgexeernLA5Uk8ALJcmiD7CQK7q5endYEiWNkrfgAzX2RBkMV+bXD1
+	 C1K5rvJjW9fiTrkaab3J7coLqgQ7FmQ53VOADdvXZvCDEtbVKs8pG67OkqrAZbaO43
+	 e20DMv0T06uPVLQT4zB+aY1Rx6zIQrWGb+HGXvMJQ4wKMjFERKBGoM6O3u7GfcB/yb
+	 +aBljJeuelmJJPxyArZb5e2D4LOJECXm44ZhM5SB0Ny0Pj+wJ8mZ3kydu2Dp9grayr
+	 o+23m6yhSUKgG3k3kWVIB8GszfivvWJ7nxY5xcyaS+gPPWPcPxAAiEszizGcUktj5r
+	 QR12y3bZ0Ly9w==
+Received: from localhost.localdomain (unknown [10.0.1.3])
+	by mx1.buffet.re (Postfix) with ESMTPSA id 8E2A01252E0;
+	Sat, 14 Dec 2024 19:46:36 +0100 (CET)
+From: Matthieu Buffet <matthieu@buffet.re>
+To: Mickael Salaun <mic@digikod.net>
+Cc: Gunther Noack <gnoack@google.com>,
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
+	konstantin.meskhidze@huawei.com,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E . Hallyn" <serge@hallyn.com>,
+	linux-security-module@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Matthieu Buffet <matthieu@buffet.re>
+Subject: [PATCH v2 1/6] landlock: Add UDP bind+connect access control
+Date: Sat, 14 Dec 2024 19:45:35 +0100
+Message-Id: <20241214184540.3835222-2-matthieu@buffet.re>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20241214184540.3835222-1-matthieu@buffet.re>
+References: <20241214184540.3835222-1-matthieu@buffet.re>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241212-perf_syscalltbl-v2-2-f8ca984ffe40@rivosinc.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Dec 12, 2024 at 04:32:52PM -0800, Charlie Jenkins wrote:
-> Arc uses the generic syscall table, use that in perf instead of
-> requiring libaudit.
-> 
-> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> ---
->  tools/perf/Makefile.config                           | 2 +-
->  tools/perf/Makefile.perf                             | 2 +-
->  tools/perf/arch/arc/entry/syscalls/Kbuild            | 2 ++
->  tools/perf/arch/arc/entry/syscalls/Makefile.syscalls | 3 +++
->  tools/perf/arch/arc/include/syscall_table.h          | 2 ++
->  5 files changed, 9 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-> index a72f25162714f0117a88d94474da336814d4f030..3959a9c9972999f6d1bb85e8c1d7dc5dce92fd09 100644
-> --- a/tools/perf/Makefile.config
-> +++ b/tools/perf/Makefile.config
-> @@ -36,7 +36,7 @@ ifneq ($(NO_SYSCALL_TABLE),1)
->    endif
->  
->    # architectures that use the generic syscall table scripts
-> -  ifeq ($(SRCARCH),riscv)
-> +  ifeq ($(SRCARCH),$(filter $(SRCARCH),riscv arc))
+If an app doesn't need to be able to open UDP sockets, it should be
+denied the right to create UDP sockets altogether (via seccomp and/or
+https://github.com/landlock-lsm/linux/issues/6 when it lands).
+For apps using UDP, add support for two more fine-grained access rights:
 
-This might work as well.
+- LANDLOCK_ACCESS_NET_CONNECT_UDP, to gate the possibility to connect()
+  a UDP socket. For client apps (those which want to avoid specifying a
+  destination for each datagram in sendmsg()), and for a few servers
+  (those creating per-client sockets, which want to receive traffic only
+  from a specific address)
 
-  ifneq ($(filter $(SRCARCH), riscv arc),)
+- LANDLOCK_ACCESS_NET_BIND_UDP, to gate the possibility to bind() a UDP
+  socket. For most servers (to start listening for datagrams on a
+  non-ephemeral port) and can be useful for some client applications (to
+  set the source port of future datagrams, e.g. mDNS requires to use
+  source port 5353)
 
-And maybe you can add a variable for supported archs.
+No restriction is enforced on send()/recv() to preserve performance.
+The security boundary is to prevent acquiring a bound/connected socket.
 
-Thanks,
-Namhyung
+Bump ABI to v7 to allow userland to detect and use these new restrictions.
 
+Signed-off-by: Matthieu Buffet <matthieu@buffet.re>
+---
+ include/uapi/linux/landlock.h | 53 ++++++++++++++++++++++++++---------
+ security/landlock/limits.h    |  2 +-
+ security/landlock/net.c       | 49 ++++++++++++++++++++++----------
+ security/landlock/syscalls.c  |  2 +-
+ 4 files changed, 76 insertions(+), 30 deletions(-)
 
->      NO_SYSCALL_TABLE := 0
->      CFLAGS += -DGENERIC_SYSCALL_TABLE
->      CFLAGS += -I$(OUTPUT)/tools/perf/arch/$(SRCARCH)/include/generated
-> diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
-> index f5278ed9f778f928436693a14e016c5c3c5171c1..3b463b42b0e3982e74056e672b2ee6adad5a3f0e 100644
-> --- a/tools/perf/Makefile.perf
-> +++ b/tools/perf/Makefile.perf
-> @@ -311,7 +311,7 @@ FEATURE_TESTS := all
->  endif
->  endif
->  # architectures that use the generic syscall table
-> -ifeq ($(SRCARCH),riscv)
-> +ifeq ($(SRCARCH),$(filter $(SRCARCH),riscv arc))
->  include $(srctree)/tools/perf/scripts/Makefile.syscalls
->  endif
->  include Makefile.config
-> diff --git a/tools/perf/arch/arc/entry/syscalls/Kbuild b/tools/perf/arch/arc/entry/syscalls/Kbuild
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..11707c481a24ecf4e220e51eb1aca890fe929a13
-> --- /dev/null
-> +++ b/tools/perf/arch/arc/entry/syscalls/Kbuild
-> @@ -0,0 +1,2 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +syscall-y += syscalls_32.h
-> diff --git a/tools/perf/arch/arc/entry/syscalls/Makefile.syscalls b/tools/perf/arch/arc/entry/syscalls/Makefile.syscalls
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..391d30ab7a831b72d2ed3f2e7966fdbf558a9ed7
-> --- /dev/null
-> +++ b/tools/perf/arch/arc/entry/syscalls/Makefile.syscalls
-> @@ -0,0 +1,3 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +
-> +syscall_abis_32 += arc time32 renameat stat64 rlimit
-> diff --git a/tools/perf/arch/arc/include/syscall_table.h b/tools/perf/arch/arc/include/syscall_table.h
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..4c942821662d95216765b176a84d5fc7974e1064
-> --- /dev/null
-> +++ b/tools/perf/arch/arc/include/syscall_table.h
-> @@ -0,0 +1,2 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#include <asm/syscalls_32.h>
-> 
-> -- 
-> 2.34.1
-> 
+diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+index 33745642f787..3f7b8e85822d 100644
+--- a/include/uapi/linux/landlock.h
++++ b/include/uapi/linux/landlock.h
+@@ -119,12 +119,15 @@ struct landlock_net_port_attr {
+ 	 *
+ 	 * It should be noted that port 0 passed to :manpage:`bind(2)` will bind
+ 	 * to an available port from the ephemeral port range.  This can be
+-	 * configured with the ``/proc/sys/net/ipv4/ip_local_port_range`` sysctl
+-	 * (also used for IPv6).
++	 * configured globally with the
++	 * ``/proc/sys/net/ipv4/ip_local_port_range`` sysctl (also used for
++	 * IPv6), and, within that first range, on a per-socket basis using
++	 * ``setsockopt(IP_LOCAL_PORT_RANGE)``.
+ 	 *
+-	 * A Landlock rule with port 0 and the ``LANDLOCK_ACCESS_NET_BIND_TCP``
+-	 * right means that requesting to bind on port 0 is allowed and it will
+-	 * automatically translate to binding on the related port range.
++	 * A Landlock rule with port 0 and the %LANDLOCK_ACCESS_NET_BIND_TCP
++	 * or %LANDLOCK_ACCESS_NET_BIND_UDP right means that requesting to
++	 * bind on port 0 is allowed and it will automatically translate to
++	 * binding on the ephemeral port range.
+ 	 */
+ 	__u64 port;
+ };
+@@ -267,18 +270,42 @@ struct landlock_net_port_attr {
+  * Network flags
+  * ~~~~~~~~~~~~~~~~
+  *
+- * These flags enable to restrict a sandboxed process to a set of network
+- * actions. This is supported since the Landlock ABI version 4.
+- *
+- * The following access rights apply to TCP port numbers:
+- *
+- * - %LANDLOCK_ACCESS_NET_BIND_TCP: Bind a TCP socket to a local port.
+- * - %LANDLOCK_ACCESS_NET_CONNECT_TCP: Connect an active TCP socket to
+- *   a remote port.
++ * These flags enable to restrict which network-related actions a sandboxed
++ * process can take. TCP support was added in Landlock ABI version 4, and UDP
++ * support in version 7.
++ *
++ * TCP access rights:
++ *
++ * - %LANDLOCK_ACCESS_NET_BIND_TCP: bind sockets to the given local port,
++ *   for servers that will listen() on that port, or for clients that want
++ *   to open connections with that specific source port instead of using a
++ *   kernel-assigned random ephemeral one
++ * - %LANDLOCK_ACCESS_NET_CONNECT_TCP: connect client sockets to servers
++ *   listening on that remote port
++ *
++ * UDP access rights:
++ *
++ * - %LANDLOCK_ACCESS_NET_BIND_UDP: bind sockets to the given local port,
++ *   for servers that will listen() on that port, or for clients that want
++ *   to send datagrams with that specific source port instead of using a
++ *   kernel-assigned random ephemeral one
++ * - %LANDLOCK_ACCESS_NET_CONNECT_UDP: connect sockets to the given remote
++ *   port, either for clients that will send datagrams to that destination
++ *   (and want to send them faster without specifying an explicit address
++ *   every time), or for servers that want to filter which client address
++ *   they want to receive datagrams from (e.g. creating a client-specific
++ *   socket)
++ *
++ * Note that binding on port 0 means binding to an ephemeral
++ * kernel-assigned port, in the range configured in
++ * ``/proc/sys/net/ipv4/ip_local_port_range`` globally (and, within that
++ * range, on a per-socket basis with ``setsockopt(IP_LOCAL_PORT_RANGE)``).
+  */
+ /* clang-format off */
+ #define LANDLOCK_ACCESS_NET_BIND_TCP			(1ULL << 0)
+ #define LANDLOCK_ACCESS_NET_CONNECT_TCP			(1ULL << 1)
++#define LANDLOCK_ACCESS_NET_BIND_UDP			(1ULL << 2)
++#define LANDLOCK_ACCESS_NET_CONNECT_UDP			(1ULL << 3)
+ /* clang-format on */
+ 
+ /**
+diff --git a/security/landlock/limits.h b/security/landlock/limits.h
+index 15f7606066c8..ca90c1c56458 100644
+--- a/security/landlock/limits.h
++++ b/security/landlock/limits.h
+@@ -22,7 +22,7 @@
+ #define LANDLOCK_MASK_ACCESS_FS		((LANDLOCK_LAST_ACCESS_FS << 1) - 1)
+ #define LANDLOCK_NUM_ACCESS_FS		__const_hweight64(LANDLOCK_MASK_ACCESS_FS)
+ 
+-#define LANDLOCK_LAST_ACCESS_NET	LANDLOCK_ACCESS_NET_CONNECT_TCP
++#define LANDLOCK_LAST_ACCESS_NET	LANDLOCK_ACCESS_NET_CONNECT_UDP
+ #define LANDLOCK_MASK_ACCESS_NET	((LANDLOCK_LAST_ACCESS_NET << 1) - 1)
+ #define LANDLOCK_NUM_ACCESS_NET		__const_hweight64(LANDLOCK_MASK_ACCESS_NET)
+ 
+diff --git a/security/landlock/net.c b/security/landlock/net.c
+index d5dcc4407a19..1c5cf2ddb7c1 100644
+--- a/security/landlock/net.c
++++ b/security/landlock/net.c
+@@ -63,10 +63,6 @@ static int current_check_access_socket(struct socket *const sock,
+ 	if (WARN_ON_ONCE(dom->num_layers < 1))
+ 		return -EACCES;
+ 
+-	/* Checks if it's a (potential) TCP socket. */
+-	if (sock->type != SOCK_STREAM)
+-		return 0;
+-
+ 	/* Checks for minimal header length to safely read sa_family. */
+ 	if (addrlen < offsetofend(typeof(*address), sa_family))
+ 		return -EINVAL;
+@@ -94,17 +90,19 @@ static int current_check_access_socket(struct socket *const sock,
+ 	/* Specific AF_UNSPEC handling. */
+ 	if (address->sa_family == AF_UNSPEC) {
+ 		/*
+-		 * Connecting to an address with AF_UNSPEC dissolves the TCP
+-		 * association, which have the same effect as closing the
+-		 * connection while retaining the socket object (i.e., the file
+-		 * descriptor).  As for dropping privileges, closing
+-		 * connections is always allowed.
+-		 *
+-		 * For a TCP access control system, this request is legitimate.
++		 * Connecting to an address with AF_UNSPEC dissolves the
++		 * remote association while retaining the socket object
++		 * (i.e., the file descriptor). For TCP, it has the same
++		 * effect as closing the connection. For UDP, it removes
++		 * any preset destination for future datagrams.
++		 * Like dropping privileges, these actions are always
++		 * allowed: access control is performed when bind()ing or
++		 * connect()ing.
+ 		 * Let the network stack handle potential inconsistencies and
+ 		 * return -EINVAL if needed.
+ 		 */
+-		if (access_request == LANDLOCK_ACCESS_NET_CONNECT_TCP)
++		if (access_request == LANDLOCK_ACCESS_NET_CONNECT_TCP ||
++		    access_request == LANDLOCK_ACCESS_NET_CONNECT_UDP)
+ 			return 0;
+ 
+ 		/*
+@@ -118,7 +116,8 @@ static int current_check_access_socket(struct socket *const sock,
+ 		 * checks, but it is safer to return a proper error and test
+ 		 * consistency thanks to kselftest.
+ 		 */
+-		if (access_request == LANDLOCK_ACCESS_NET_BIND_TCP) {
++		if (access_request == LANDLOCK_ACCESS_NET_BIND_TCP ||
++		    access_request == LANDLOCK_ACCESS_NET_BIND_UDP) {
+ 			/* addrlen has already been checked for AF_UNSPEC. */
+ 			const struct sockaddr_in *const sockaddr =
+ 				(struct sockaddr_in *)address;
+@@ -159,16 +158,36 @@ static int current_check_access_socket(struct socket *const sock,
+ static int hook_socket_bind(struct socket *const sock,
+ 			    struct sockaddr *const address, const int addrlen)
+ {
++	access_mask_t access_request;
++
++	/* Checks if it's a (potential) TCP socket. */
++	if (sock->type == SOCK_STREAM)
++		access_request = LANDLOCK_ACCESS_NET_BIND_TCP;
++	else if (sk_is_udp(sock->sk))
++		access_request = LANDLOCK_ACCESS_NET_BIND_UDP;
++	else
++		return 0;
++
+ 	return current_check_access_socket(sock, address, addrlen,
+-					   LANDLOCK_ACCESS_NET_BIND_TCP);
++					   access_request);
+ }
+ 
+ static int hook_socket_connect(struct socket *const sock,
+ 			       struct sockaddr *const address,
+ 			       const int addrlen)
+ {
++	access_mask_t access_request;
++
++	/* Checks if it's a (potential) TCP socket. */
++	if (sock->type == SOCK_STREAM)
++		access_request = LANDLOCK_ACCESS_NET_CONNECT_TCP;
++	else if (sk_is_udp(sock->sk))
++		access_request = LANDLOCK_ACCESS_NET_CONNECT_UDP;
++	else
++		return 0;
++
+ 	return current_check_access_socket(sock, address, addrlen,
+-					   LANDLOCK_ACCESS_NET_CONNECT_TCP);
++					   access_request);
+ }
+ 
+ static struct security_hook_list landlock_hooks[] __ro_after_init = {
+diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+index c097d356fa45..200f771fa3a4 100644
+--- a/security/landlock/syscalls.c
++++ b/security/landlock/syscalls.c
+@@ -150,7 +150,7 @@ static const struct file_operations ruleset_fops = {
+ 	.write = fop_dummy_write,
+ };
+ 
+-#define LANDLOCK_ABI_VERSION 6
++#define LANDLOCK_ABI_VERSION 7
+ 
+ /**
+  * sys_landlock_create_ruleset - Create a new ruleset
+-- 
+2.39.5
+
