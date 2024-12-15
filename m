@@ -1,51 +1,51 @@
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CE56194A6F
-	for <linux-security-module@vger.kernel.org>; Sun, 15 Dec 2024 16:56:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA90653
+	for <linux-security-module@vger.kernel.org>; Sun, 15 Dec 2024 21:48:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734281784; cv=none; b=XwLwdAtCYFL9hkkdYEpI8GhzyvYfFshee5lws1R6FySJC/6EiFhyb7mipOQJrpJUpvU5a7IZg77vuTcGSDQXYv83jQ90Hkou7lKp94CgPSGjdN9bccagKpp8IZB7/+sK0T1TkbjW8T9aEEIuAY3P3lkFzi9N8DGNB6Q5P2xHH8Y=
+	t=1734299305; cv=none; b=YyV4DOMU1X5VV6DleuRHl6EX2WxQFqi7M0Tm19r6IUeFPJ34E7aT4NV6qEKDXGxmCVK+NRDvmLqUmNulRoyzJ3HVSWihgrITm9XiVsRBQbSVsdamP99twR8CxU1kwDRTBk2hBAzyZgS/Jp8YYH3yiV/q1HA9NXRwztyNKD2NsWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734281784; c=relaxed/simple;
-	bh=xqOs6Z+UKyv3MXOR0f6n0k7ckhOjJJq2TXjAboGTMCU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=uY/plm6953EM6PF0eh5fmmP0MVCrw/bsbm+5r520zW5XPpHUTqk0nDgduT7kC/VMUVFw8ELcX66JNjd9JUGE5vF526PbZa6/OlmZn3mPyjHykS0JIVEvgOzTlgjj7+bxNsOTdJi5srPT0YLc4jsu+Q/kE9ptQqCVfpNm0Mn6ukE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
+	s=arc-20240116; t=1734299305; c=relaxed/simple;
+	bh=IpgbfIy2DuNdrJKBdvsgJ9iI8u2s/h1Eh+cHoqnnd2E=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=jQrmNIUt3Yp5gx9373LhLG7U92CL3D0cXMqzFxdLD0jlhHaOcfQcf5+86RRdj+eVO5sMGkC0+1hUN3k8qo+PIUKXjGGUCnhFhU/Gk2fvX/JOCRifX4nMLF6s/JsaYH9r5VexEt6Dd7f4nctumCHb/ZCdIs/ehJ6vKgAv8seLm4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-844e9b9233eso183673439f.2
-        for <linux-security-module@vger.kernel.org>; Sun, 15 Dec 2024 08:56:22 -0800 (PST)
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3a7e0d5899bso73616405ab.0
+        for <linux-security-module@vger.kernel.org>; Sun, 15 Dec 2024 13:48:24 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734281782; x=1734886582;
+        d=1e100.net; s=20230601; t=1734299303; x=1734904103;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=jd7/ODe3BJoj9ArJQMpN8NpBbFHmENCWNtUvI7ebTg0=;
-        b=cphFmKJee0SiKGvr5xHIw/YuGoZYk2btX7dCJco3tOzJM3+o3T9ZUqrYAYvH1LRsSH
-         prCO2otM6IElzIbii06r/NuVAZrQS3MNhVzUE47GEv/AshpmRLekLMqJKiBrMNVxZsDg
-         71rv1OBcoRIkoJproWQCgU6RYGS5/osnGpL+J4y/qv3jxLX+tvYhStDbb4dbR0ImEf18
-         S9w3VwisVnrU6j4qVLMhFmxxaHM/pXE82hcFRcizMN2HEVq9tqOM4rsEwYTFRweTtUDW
-         eUVZT1v+rqkpuxUD0jM+RX79KyQ9QWAdbTkOBY56FXeOHXdmaSyHLE+KnlhQprgYhA3u
-         ovJw==
-X-Forwarded-Encrypted: i=1; AJvYcCWtuz7QTx51Wf88amKHvHpXE+86q7lRriByBbebkzzwPjI4qOqv0ijpaDKP1ynkXucdFuA8W+TCf4nE/5uNscAwu+Nay84=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycgWtN02ge2xQJaIpPoQCVBkYw0wLhVDi83jjYz9AqlwgJM2/X
-	n+uTT48ECUvK9RNCHMUEwI3W49oTz8z4IPHUGiEWYMmszBlo4YNMF+Ya3EeSTLWFEzqjIlhzxjn
-	N3ZdpnPEcZ2o2+/A/H+xhy2seNyostgMnO3mHkm16zH0BxFHIaRZ9Vek=
-X-Google-Smtp-Source: AGHT+IHtRdKWCe/qQaG467EGsSK+O1pVmRjK/naWohM0Ag3073bV9ZGFMuJgm6SUgOMstJU4TkSDZZPuRgr1XNK9JfOzgrUc4ETW
+        bh=TBYYRxyJG0IroxJFpY7nB6aCRT29iLvmJ30t7+ONrcI=;
+        b=jRpD3AuEOw9vzxXH8r+zm89oYu358K349/FYevKTXgOjja7u5lOuGF2I5ENRCk/0Fj
+         K5Qvx6tWfo435WQnYXDU2valBb42s7P/+kym4xPe8XpWiC6V6MaUQZ+D0RiIQV79FoNU
+         W0j7Cy+owA/vxt9NAV7c8gYLI6vVsaGeAm8bkZBUNkzF1asbpGRHKL1gNuNiItNbRHvt
+         Y6uuqla+0t1Sj8OD3WXNnpvXMs07JUdjyAjKzrP1l9keqDaYvSbcwUVkJtjvQ1SzNg/V
+         /17Sj00zI+6pEfFgWQUieN2AAff7x18ZRg4bsgf/8lwIdb1It/Dn6LdeFgCp3JERuZUD
+         7gVg==
+X-Forwarded-Encrypted: i=1; AJvYcCWzmyLC+Gum3l4SsuRcR9Arc03uJW6Vqzf7Fmwy/C4lsjHDQ7NNoozlTzJt/eSx3ZuchTvAyJFjq59rgmEYxqERWf88Jc0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhAmmZe6VLg6XsQI5LqlefBebAYiqdAPBlNrpmDadxrcYlnYcv
+	NNJRypuv3LX4c/A7Iwsh7GF1PDf3OiiwD555EQ1+6CmZ+WpJZS98r5N4l8t8FlyrLxgbl4yqcuh
+	6bb6jFa41k0AExHqGOKHQsSscJMI11wY8se9YRRNGMjDKH4ajTpf0Jso=
+X-Google-Smtp-Source: AGHT+IFe7PGDa6k6xeGn37MxcJm13J2M+qzHemq2/qD+jLVqleWB1u+7ENhWDwmJKNcsXG5lQ5X/rOMRHG1BIeICYUvzKBaJd2nz
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a25:b0:3a7:e528:6ee6 with SMTP id
- e9e14a558f8ab-3aff039a554mr109257625ab.13.1734281782211; Sun, 15 Dec 2024
- 08:56:22 -0800 (PST)
-Date: Sun, 15 Dec 2024 08:56:22 -0800
+X-Received: by 2002:a05:6e02:1846:b0:3a3:4175:79da with SMTP id
+ e9e14a558f8ab-3afeee7924emr114778165ab.13.1734299303473; Sun, 15 Dec 2024
+ 13:48:23 -0800 (PST)
+Date: Sun, 15 Dec 2024 13:48:23 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <675f0a36.050a0220.37aaf.00fc.GAE@google.com>
-Subject: [syzbot] [tomoyo?] general protection fault in tomoyo_gc_thread
-From: syzbot <syzbot+bf6351831bc4f9148d98@syzkaller.appspotmail.com>
+Message-ID: <675f4ea7.050a0220.37aaf.0105.GAE@google.com>
+Subject: [syzbot] [tomoyo?] WARNING in tomoyo_write_control
+From: syzbot <syzbot+7536f77535e5210a5c76@syzkaller.appspotmail.com>
 To: jmorris@namei.org, linux-kernel@vger.kernel.org, 
 	linux-security-module@vger.kernel.org, paul@paul-moore.com, 
 	penguin-kernel@I-love.SAKURA.ne.jp, serge@hallyn.com, 
@@ -57,85 +57,66 @@ Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    f92f4749861b Merge tag 'clk-fixes-for-linus' of git://git...
+HEAD commit:    f932fb9b4074 Merge tag 'v6.13-rc2-ksmbd-server-fixes' of g..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12fa2cdf980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=17855be8580000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=99a5586995ec03b2
-dashboard link: https://syzkaller.appspot.com/bug?extid=bf6351831bc4f9148d98
+dashboard link: https://syzkaller.appspot.com/bug?extid=7536f77535e5210a5c76
 compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12fc78f8580000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10a12d44580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11fc4730580000
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/b85403132ddc/disk-f92f4749.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/20613d034287/vmlinux-f92f4749.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/d1ea80bf7e4e/bzImage-f92f4749.xz
+disk image: https://storage.googleapis.com/syzbot-assets/f0d0c95f5364/disk-f932fb9b.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/201cf3c7a7b5/vmlinux-f932fb9b.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/fcb972084579/bzImage-f932fb9b.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+bf6351831bc4f9148d98@syzkaller.appspotmail.com
+Reported-by: syzbot+7536f77535e5210a5c76@syzkaller.appspotmail.com
 
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-CPU: 0 UID: 0 PID: 6044 Comm: GC for TOMOYO Not tainted 6.13.0-rc2-syzkaller-00031-gf92f4749861b #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:tomoyo_collect_acl security/tomoyo/gc.c:511 [inline]
-RIP: 0010:tomoyo_collect_entry security/tomoyo/gc.c:537 [inline]
-RIP: 0010:tomoyo_gc_thread security/tomoyo/gc.c:619 [inline]
-RIP: 0010:tomoyo_gc_thread+0x1ab/0x1390 security/tomoyo/gc.c:612
-Code: 3b 5c 47 fd c6 45 18 ff 4c 89 ee bf 09 00 00 00 e8 8a f1 ff ff e8 25 5c 47 fd 48 89 d8 48 89 de 49 89 dd 48 c1 e8 03 83 e6 07 <42> 0f b6 0c 20 48 8d 43 07 48 89 c2 48 c1 ea 03 42 0f b6 14 22 40
-RSP: 0018:ffffc90003367e78 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff8451e1ab
-RDX: ffff888074e85a00 RSI: 0000000000000000 RDI: 0000000000000001
-RBP: ffff888143b02f00 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000b8f R12: dffffc0000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: ffff888025b49b00
-FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 5829 at mm/page_alloc.c:4727 __alloc_pages_noprof+0xeff/0x25b0 mm/page_alloc.c:4727
+Modules linked in:
+CPU: 1 UID: 0 PID: 5829 Comm: syz-executor788 Not tainted 6.13.0-rc2-syzkaller-00159-gf932fb9b4074 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 11/25/2024
+RIP: 0010:__alloc_pages_noprof+0xeff/0x25b0 mm/page_alloc.c:4727
+Code: 24 2c 00 00 00 00 89 cd 0f 84 8b f9 ff ff 8b 34 24 48 89 da 8b 7c 24 08 e8 0e b3 fe ff e9 69 f9 ff ff c6 05 e1 44 16 0e 01 90 <0f> 0b 90 31 db e9 9f f3 ff ff 89 14 24 e8 9f a2 0c 00 8b 14 24 e9
+RSP: 0018:ffffc90003e1f918 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 000000000000000b RDI: 0000000000040d40
+RBP: 0000000000000000 R08: 0000000000000006 R09: 00000000003fffff
+R10: 00000000003fffff R11: 0000000000000003 R12: 000000000000000b
+R13: 0000000000040d40 R14: 1ffff920007c3f37 R15: 00000000003fffff
+FS:  0000555571ba8380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000008 CR3: 0000000028642000 CR4: 00000000003526f0
+CR2: 00000000003ff000 CR3: 000000007b498000 CR4: 00000000003526f0
 DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
 DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
  <TASK>
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
+ alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
+ ___kmalloc_large_node+0x84/0x1b0 mm/slub.c:4228
+ __kmalloc_large_node_noprof+0x1c/0x70 mm/slub.c:4255
+ __do_kmalloc_node mm/slub.c:4271 [inline]
+ __kmalloc_noprof.cold+0xc/0x63 mm/slub.c:4295
+ kmalloc_noprof include/linux/slab.h:905 [inline]
+ kzalloc_noprof include/linux/slab.h:1037 [inline]
+ tomoyo_write_control+0x267/0x13d0 security/tomoyo/common.c:2668
+ vfs_write+0x24c/0x1150 fs/read_write.c:677
+ ksys_write+0x12b/0x250 fs/read_write.c:731
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f569c4ea2e9
+Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffddff422d8 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 00007ffddff424b8 RCX: 00007f569c4ea2e9
+RDX: 00000000fffffdef RSI: 0000000000000000 RDI: 0000000000000003
+RBP: 00007f569c55d610 R08: 0000000000008000 R09: 0000000000008000
+R10: 0000000000008000 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007ffddff424a8 R14: 0000000000000001 R15: 0000000000000001
  </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:tomoyo_collect_acl security/tomoyo/gc.c:511 [inline]
-RIP: 0010:tomoyo_collect_entry security/tomoyo/gc.c:537 [inline]
-RIP: 0010:tomoyo_gc_thread security/tomoyo/gc.c:619 [inline]
-RIP: 0010:tomoyo_gc_thread+0x1ab/0x1390 security/tomoyo/gc.c:612
-Code: 3b 5c 47 fd c6 45 18 ff 4c 89 ee bf 09 00 00 00 e8 8a f1 ff ff e8 25 5c 47 fd 48 89 d8 48 89 de 49 89 dd 48 c1 e8 03 83 e6 07 <42> 0f b6 0c 20 48 8d 43 07 48 89 c2 48 c1 ea 03 42 0f b6 14 22 40
-RSP: 0018:ffffc90003367e78 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: ffffffff8451e1ab
-RDX: ffff888074e85a00 RSI: 0000000000000000 RDI: 0000000000000001
-RBP: ffff888143b02f00 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000b8f R12: dffffc0000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: ffff888025b49b00
-FS:  0000000000000000(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055b9c4865950 CR3: 0000000029aee000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	3b 5c 47 fd          	cmp    -0x3(%rdi,%rax,2),%ebx
-   4:	c6 45 18 ff          	movb   $0xff,0x18(%rbp)
-   8:	4c 89 ee             	mov    %r13,%rsi
-   b:	bf 09 00 00 00       	mov    $0x9,%edi
-  10:	e8 8a f1 ff ff       	call   0xfffff19f
-  15:	e8 25 5c 47 fd       	call   0xfd475c3f
-  1a:	48 89 d8             	mov    %rbx,%rax
-  1d:	48 89 de             	mov    %rbx,%rsi
-  20:	49 89 dd             	mov    %rbx,%r13
-  23:	48 c1 e8 03          	shr    $0x3,%rax
-  27:	83 e6 07             	and    $0x7,%esi
-* 2a:	42 0f b6 0c 20       	movzbl (%rax,%r12,1),%ecx <-- trapping instruction
-  2f:	48 8d 43 07          	lea    0x7(%rbx),%rax
-  33:	48 89 c2             	mov    %rax,%rdx
-  36:	48 c1 ea 03          	shr    $0x3,%rdx
-  3a:	42 0f b6 14 22       	movzbl (%rdx,%r12,1),%edx
-  3f:	40                   	rex
 
 
 ---
