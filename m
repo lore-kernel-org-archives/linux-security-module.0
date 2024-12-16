@@ -1,168 +1,310 @@
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA3FD1DA109
-	for <linux-security-module@vger.kernel.org>; Mon, 16 Dec 2024 23:13:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31E1B1D63C6;
+	Mon, 16 Dec 2024 23:43:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734390812; cv=none; b=uzBnDfarLw4MTXcjtCyl5pSSb4iDCQakSi4eAWNFcd0s82CFIPuCKz92AyT04Ixx1CI2HmVb/9VVewGXUXJuy2kQz4rTCxnjWZ41vkeWNVb/5Z0cKSD92PLbcP01+gxF2smPIfX7SuC2hJ0r3kPFlaVAvXuWujyu5gZQFYGzkNs=
+	t=1734392618; cv=none; b=BwoYfwsU8H8ynW3AgVA1e1XkWygW/HFqLbbbX+2G88yYW9CaFDpo6M8WS0J7ZSw1Jyn8y37oU1m07txDo6YT89wTwEQDbp2csescDMzrHb32/tRaFM0AHknYPxFXOw1DMLA5Ssl+lO9HxAho8Luizy6BlRSjfI4Tj5AfhIpSPrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734390812; c=relaxed/simple;
-	bh=k4Sj7dM5EROtRyKRIxtv+8o9o4DaFse9qSyIbzlZ98Q=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Fv0AUwd/v2dBYheA7U709HkktLxWU+VO7w5lKeW2Fi+CtI4iRQLkTjk5IBiLtN3ijvBP0ynRKxIthRmUR+A7TAWCfrDwDywmogLbnXZ/aeyVxBPrhtN9mjdJXoI+jEmsYtMiYvEkHQv6qXsVAbsBYBhmR6dtUoc9vWCIoYVqcl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=rLzNy+Zo; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+	s=arc-20240116; t=1734392618; c=relaxed/simple;
+	bh=fIVp+sEQjZ4XZZvtVIOOtRBaJxmavMvZF40g2aZx2jw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UavmaDM/jLOom0qYhHc8vajrXyFmpowGdGnFuljy5eJyCuakhntFcP6VUJGZVsEmswEx0uqb4urG9p7Ctj8K8r7iaTofubf/VqS2J7YaXc6PZQYoVDvjExGroWZFGAEKsoq/0EJisNGpcp516qKmdh668ZnZWv0cmhPh9DPTwYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IjBUqQHm; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="rLzNy+Zo"
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-216728b1836so33244245ad.0
-        for <linux-security-module@vger.kernel.org>; Mon, 16 Dec 2024 15:13:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1734390809; x=1734995609; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sm+gy0vg6ADpwKtQUne3ds2s3sgHguLz0qdVVhDqizo=;
-        b=rLzNy+ZoD62XrVBG36DyvneX+0xpq7HIHUzxZgHPmXBc9QEUE5T62rTbzpje8A9xcz
-         n/NzfEDKmuP3+oXVhcadC8LYl74usW5a8YoL2U4UhvDPN4gFnfv8Eim9I4SfJplAQGgX
-         6iTdSPXU7hLhW6VrjxXpl571KVK7PRLaEa1rTcJIGdJNU32cMQAskfTyef9AKRH7SHwV
-         T8uye/SUoIQZI405B38FMIYd7XH6DTqQnQGWy+AnMOrNYbaCWTkNeNutwJdunKlHOpxR
-         lWz1XL79M5qJnS4WSp8by4kzqYq+B7yzWyXH2Pq4m1fsN5jHcsSv3Tx2b6jhpwPLM4Ou
-         MtCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734390809; x=1734995609;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sm+gy0vg6ADpwKtQUne3ds2s3sgHguLz0qdVVhDqizo=;
-        b=fac0Y5MpDeei3GCbN5Y3cmD4bWwEUgY/FNH1LQ2fyNceuIFklfs8uXEJTjLza5i1Kd
-         HmtcE7j3lBKVm2DUSUdJiJVEjVMFHDFlNfFGq/eHoaehcX8SEi5/3dGLpOWk0GRPaGhq
-         lCbAIotxlkBN948IQ8hlUDBGZ4qZduFQCDBEUNN3SY39DUSEwlhRBMJkR9fsyCJPZ4Fd
-         m9Fwn60mjIFtkCKj8gw5a5YGLuL1H2hG9c2AGu0JRcDYdF6U3Co3Chv4HYwt4s4boupj
-         mjoZZQHuCDqe3oVjC+cE5zWfF84irvaJ20M5MVv5K09nTbUpSgutmU5h8OJrP12msI1W
-         p4Kg==
-X-Forwarded-Encrypted: i=1; AJvYcCWFaX1pbiaTqwlmOjJvQuAj9Mw63VFhg5tCPXsIRkmDE/RJehV5dj6gfJZZYwtSq0bBIN9XDbKrJsIZnns8ykK2djKc9rg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuXpQ9m+Ke14u2lboqHNmW08ePN21lXlWxV9WiN0hAxQWR0nxU
-	hdZP5dkXFPRX7+UhNWhyZZxaWcwStlRiJzT2ZefkG/1LXEP6I9CkX+ySbZmiXb0=
-X-Gm-Gg: ASbGncu1RxOhw84/TwsGMtiRj8EhfVQY+23DvevfYI9GAARaieiZq1qfxgoz17un48V
-	4H0w08sU5CEdL788LJPtOKLlj7VFfPIgO3sBrBLvZvu3DntS7g7FK3jjslKWL3s3VWP7DMCqhZH
-	HqLXn9r2wXmFu2S7EkgXpZ3yCE/zThOYvvLKjNxGEMFeaezjFlwdf6msNFtIpoiJfUfSqAgtmC6
-	tLElFeJVi8sQcfqpRBikmuvJ+aLAx+HsJklisKY/x4E4uhWOSB07rqudUyCzEU8cQdZvHrz
-X-Google-Smtp-Source: AGHT+IEUS1KQ0ef501yi9KQdApUOJap2Q7VLgsPuhiCn2hfgEw7VxTtRPysE5A5XxEfaj3jPqra1Kw==
-X-Received: by 2002:a17:902:ecd1:b0:216:3eaf:3781 with SMTP id d9443c01a7336-21892a58734mr187815855ad.43.1734390808967;
-        Mon, 16 Dec 2024 15:13:28 -0800 (PST)
-Received: from charlie.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-218a1dcc47bsm48333255ad.63.2024.12.16.15.13.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2024 15:13:28 -0800 (PST)
-From: Charlie Jenkins <charlie@rivosinc.com>
-Date: Mon, 16 Dec 2024 15:12:52 -0800
-Subject: [PATCH 2/2] tools: perf: tests: Fix code reading for riscv
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IjBUqQHm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A5ADC4CED0;
+	Mon, 16 Dec 2024 23:43:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734392617;
+	bh=fIVp+sEQjZ4XZZvtVIOOtRBaJxmavMvZF40g2aZx2jw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=IjBUqQHmKfShTYr8EyoM6JIINBGKBmfAaLXRGifWuTmnoBadqBBcZUV26rz+k4End
+	 jbX5m//+FJqoi0xUlGsHoZ3d5CZpFoEfNu2/flclwfAQuluZ3oUMmg1+y0kbSXwU7f
+	 rReU9LoOsxX6YsiQxOJF/WdFENJKMcP5Iad6XVL9db9HlpehiIzfREc8nhyvnABHTZ
+	 O0jouKBl//6/k5+yCCMWIXGMFH+tOIt4phaff9UHh9xAYXVZN8vJ7essFzbGCsIzn8
+	 bDxMXXw61PGjp+xorctrUm8zPrYwxkFExEIKZBYwxr6h7as8sVUGIVX2CUxZOY7p7q
+	 t/8wALQmBqndA==
+From: Song Liu <song@kernel.org>
+To: linux-fsdevel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-btrfs@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Cc: willy@infradead.org,
+	corbet@lwn.net,
+	clm@fb.com,
+	josef@toxicpanda.com,
+	dsterba@suse.com,
+	brauner@kernel.org,
+	jack@suse.cz,
+	cem@kernel.org,
+	djwong@kernel.org,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	fdmanana@suse.com,
+	song@kernel.org,
+	johannes.thumshirn@wdc.com
+Subject: [RFC] lsm: fs: Use i_callback to free i_security in RCU callback
+Date: Mon, 16 Dec 2024 15:43:08 -0800
+Message-ID: <20241216234308.1326841-1-song@kernel.org>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241216-perf_fix_riscv_obj_reading-v1-2-b75962660a9b@rivosinc.com>
-References: <20241216-perf_fix_riscv_obj_reading-v1-0-b75962660a9b@rivosinc.com>
-In-Reply-To: <20241216-perf_fix_riscv_obj_reading-v1-0-b75962660a9b@rivosinc.com>
-To: Masahiro Yamada <masahiroy@kernel.org>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Nathan Chancellor <nathan@kernel.org>, 
- Nick Desaulniers <ndesaulniers@google.com>, 
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
- Arnaldo Carvalho de Melo <acme@kernel.org>, 
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
- Adrian Hunter <adrian.hunter@intel.com>, 
- =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
- =?utf-8?q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
- Nelson Chu <nelson@rivosinc.com>
-Cc: linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
- linux-riscv@lists.infradead.org, llvm@lists.linux.dev, 
- linux-perf-users@vger.kernel.org, linux-security-module@vger.kernel.org, 
- Charlie Jenkins <charlie@rivosinc.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2802; i=charlie@rivosinc.com;
- h=from:subject:message-id; bh=k4Sj7dM5EROtRyKRIxtv+8o9o4DaFse9qSyIbzlZ98Q=;
- b=owGbwMvMwCHWx5hUnlvL8Y3xtFoSQ3rCFsHN62Zdecfs+JNP2uLlep5+jx3vdkTV/r39gW3+i
- RnX8+22dZSyMIhxMMiKKbLwXGtgbr2jX3ZUtGwCzBxWJpAhDFycAjCR+wmMDF+2JGUuPhm4eJ+U
- wobqzxGrOt5EMjWvrZGL5XpxZAfXtzWMDFOnT7tTaS962CctyFjKfIG1dduJX4UMnUpCpZ6iYvz
- KnAA=
-X-Developer-Key: i=charlie@rivosinc.com; a=openpgp;
- fpr=7D834FF11B1D8387E61C776FFB10D1F27D6B1354
+Content-Transfer-Encoding: 8bit
 
-After binutils commit e43d876 which was first included in binutils 2.41,
-riscv no longer supports dumping in the middle of instructions. Increase
-the objdump window by 2-bytes to ensure that any instruction that sits
-on the boundary of the specified stop-address is not cut in half.
+inode->i_security needes to be freed from RCU callback. A rcu_head was
+added to i_security to call the RCU callback. However, since struct inode
+already has i_rcu, the extra rcu_head is wasteful. Specifically, when any
+LSM uses i_security, a rcu_head (two pointers) is allocated for each
+inode.
 
-Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+Add security_inode_free_rcu() to i_callback to free i_security so that
+a rcu_head is saved for each inode. Special care are needed for file
+systems that provide a destroy_inode() callback, but not a free_inode()
+callback. Specifically, the following logic are added to handle such
+cases:
+
+ - XFS recycles inode after destroy_inode. The inodes are freed from
+   recycle logic. Let xfs_inode_free_callback() and xfs_inode_alloc()
+   call security_inode_free_rcu() before freeing the inode.
+ - Let pipe free inode from a RCU callback.
+ - Let btrfs-test free inode from a RCU callback.
+
+Signed-off-by: Song Liu <song@kernel.org>
 ---
- arch/riscv/Kconfig              |  5 +++++
- tools/perf/tests/code-reading.c | 17 ++++++++++++++++-
- 2 files changed, 21 insertions(+), 1 deletion(-)
+ Documentation/filesystems/vfs.rst |  8 ++++-
+ fs/btrfs/fs.h                     |  1 +
+ fs/btrfs/inode.c                  |  4 +++
+ fs/btrfs/tests/btrfs-tests.c      |  1 +
+ fs/inode.c                        |  2 ++
+ fs/pipe.c                         |  1 -
+ fs/xfs/xfs_icache.c               |  3 ++
+ include/linux/security.h          |  4 +++
+ security/security.c               | 49 +++++++++++++++++++------------
+ 9 files changed, 53 insertions(+), 20 deletions(-)
 
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index d4a7ca0388c071b536df59c0eb11d55f9080c7cd..f164047471267936bc62389b7d7d9a7cbdca8f97 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -229,6 +229,11 @@ config GCC_SUPPORTS_DYNAMIC_FTRACE
- 	def_bool CC_IS_GCC
- 	depends on $(cc-option,-fpatchable-function-entry=8)
+diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
+index 0b18af3f954e..af62cdd0bb7a 100644
+--- a/Documentation/filesystems/vfs.rst
++++ b/Documentation/filesystems/vfs.rst
+@@ -306,7 +306,13 @@ or bottom half).
+ ``free_inode``
+ 	this method is called from RCU callback. If you use call_rcu()
+ 	in ->destroy_inode to free 'struct inode' memory, then it's
+-	better to release memory in this method.
++	better to release memory in this method. LSMs leverage the
++	vfs RCU callback (i_callback) to free inode->i_security after a
++	RCU grace period. If the filesystem provides a destroy_inode()
++	callback but not a free_inode() callback, it is responsible to
++	call security_inode_free_rcu() in the filesystem's RCU callback.
++	For example, xfs calls security_inode_free_rcu() from
++	xfs_inode_free_callback().
  
-+config RISCV_OBJDUMP_SUPPORTS_SPLIT_INSTRUCTION
-+	# Some versions of objdump do not support dumping partial instructions
-+	def_bool y
-+	depends on !(OBJDUMP_IS_GNU && OBJDUMP_VERSION > 24100)
+ ``dirty_inode``
+ 	this method is called by the VFS when an inode is marked dirty.
+diff --git a/fs/btrfs/fs.h b/fs/btrfs/fs.h
+index 79a1a3d6f04d..f606ea2a14ab 100644
+--- a/fs/btrfs/fs.h
++++ b/fs/btrfs/fs.h
+@@ -1068,6 +1068,7 @@ static inline int btrfs_is_testing(const struct btrfs_fs_info *fs_info)
+ }
+ 
+ void btrfs_test_destroy_inode(struct inode *inode);
++void btrfs_test_free_inode(struct inode *inode);
+ 
+ #else
+ 
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index 03fe0de2cd0d..62ee8394cf6c 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -7707,6 +7707,10 @@ void btrfs_test_destroy_inode(struct inode *inode)
+ {
+ 	btrfs_drop_extent_map_range(BTRFS_I(inode), 0, (u64)-1, false);
+ 	kfree(BTRFS_I(inode)->file_extent_tree);
++}
 +
- config HAVE_SHADOW_CALL_STACK
- 	def_bool $(cc-option,-fsanitize=shadow-call-stack)
- 	# https://github.com/riscv-non-isa/riscv-elf-psabi-doc/commit/a484e843e6eeb51f0cb7b8819e50da6d2444d769
-diff --git a/tools/perf/tests/code-reading.c b/tools/perf/tests/code-reading.c
-index 27c82cfb7e7de42284bf5af9cf7594a3a963052e..605f4a8e1dbc00d8a572503f45053c2f30ad19e3 100644
---- a/tools/perf/tests/code-reading.c
-+++ b/tools/perf/tests/code-reading.c
-@@ -1,5 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- #include <errno.h>
-+#include <linux/kconfig.h>
- #include <linux/kernel.h>
- #include <linux/types.h>
- #include <inttypes.h>
-@@ -183,9 +184,23 @@ static int read_via_objdump(const char *filename, u64 addr, void *buf,
- 	const char *fmt;
- 	FILE *f;
- 	int ret;
-+	u64 stop_address = addr + len;
++void btrfs_test_free_inode(struct inode *inode)
++{
+ 	kmem_cache_free(btrfs_inode_cachep, BTRFS_I(inode));
+ }
+ #endif
+diff --git a/fs/btrfs/tests/btrfs-tests.c b/fs/btrfs/tests/btrfs-tests.c
+index e607b5d52fb1..581b518b99b7 100644
+--- a/fs/btrfs/tests/btrfs-tests.c
++++ b/fs/btrfs/tests/btrfs-tests.c
+@@ -35,6 +35,7 @@ const char *test_error[] = {
+ static const struct super_operations btrfs_test_super_ops = {
+ 	.alloc_inode	= btrfs_alloc_inode,
+ 	.destroy_inode	= btrfs_test_destroy_inode,
++	.free_inode	= btrfs_test_free_inode,
+ };
+ 
+ 
+diff --git a/fs/inode.c b/fs/inode.c
+index 6b4c77268fc0..4b1eac736730 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -321,6 +321,8 @@ EXPORT_SYMBOL(free_inode_nonrcu);
+ static void i_callback(struct rcu_head *head)
+ {
+ 	struct inode *inode = container_of(head, struct inode, i_rcu);
 +
-+	if (IS_ENABLED(__riscv) && !IS_ENABLED(CONFIG_RISCV_OBJDUMP_SUPPORTS_SPLIT_INSTRUCTION)) {
-+		/*
-+		 * On some versions of riscv objdump, dumping in the middle of
-+		 * instructions is not supported. riscv instructions are aligned along
-+		 * 2-byte intervals and can be either 2-bytes or 4-bytes. This makes it
-+		 * possible that the stop-address lands in the middle of a 4-byte
-+		 * instruction. Increase the stop_address by two to ensure an
-+		 * instruction is not cut in half, but leave the len as-is so only the
-+		 * expected number of bytes are collected.
-+		 */
-+		stop_address += 2;
++	security_inode_free_rcu(inode);
+ 	if (inode->free_inode)
+ 		inode->free_inode(inode);
+ 	else
+diff --git a/fs/pipe.c b/fs/pipe.c
+index 12b22c2723b7..eb9c75ef5d80 100644
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -1422,7 +1422,6 @@ long pipe_fcntl(struct file *file, unsigned int cmd, unsigned int arg)
+ }
+ 
+ static const struct super_operations pipefs_ops = {
+-	.destroy_inode = free_inode_nonrcu,
+ 	.statfs = simple_statfs,
+ };
+ 
+diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
+index 7b6c026d01a1..a85a661ad78f 100644
+--- a/fs/xfs/xfs_icache.c
++++ b/fs/xfs/xfs_icache.c
+@@ -30,6 +30,7 @@
+ #include "xfs_metafile.h"
+ 
+ #include <linux/iversion.h>
++#include <linux/security.h>
+ 
+ /* Radix tree tags for incore inode tree. */
+ 
+@@ -97,6 +98,7 @@ xfs_inode_alloc(
+ 	ip = alloc_inode_sb(mp->m_super, xfs_inode_cache, GFP_KERNEL | __GFP_NOFAIL);
+ 
+ 	if (inode_init_always(mp->m_super, VFS_I(ip))) {
++		security_inode_free_rcu(VFS_I(ip));
+ 		kmem_cache_free(xfs_inode_cache, ip);
+ 		return NULL;
+ 	}
+@@ -162,6 +164,7 @@ xfs_inode_free_callback(
+ 		ip->i_itemp = NULL;
+ 	}
+ 
++	security_inode_free_rcu(inode);
+ 	kmem_cache_free(xfs_inode_cache, ip);
+ }
+ 
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 980b6c207cad..4983d6a3ccb3 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -400,6 +400,7 @@ int security_path_notify(const struct path *path, u64 mask,
+ 					unsigned int obj_type);
+ int security_inode_alloc(struct inode *inode, gfp_t gfp);
+ void security_inode_free(struct inode *inode);
++void security_inode_free_rcu(struct inode *inode);
+ int security_inode_init_security(struct inode *inode, struct inode *dir,
+ 				 const struct qstr *qstr,
+ 				 initxattrs initxattrs, void *fs_data);
+@@ -860,6 +861,9 @@ static inline int security_inode_alloc(struct inode *inode, gfp_t gfp)
+ static inline void security_inode_free(struct inode *inode)
+ { }
+ 
++static inline void security_inode_free_rcu(struct inode *inode)
++{ }
++
+ static inline int security_dentry_init_security(struct dentry *dentry,
+ 						 int mode,
+ 						 const struct qstr *name,
+diff --git a/security/security.c b/security/security.c
+index 7523d14f31fb..0ca9a41b7aca 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -265,12 +265,6 @@ static void __init lsm_set_blob_sizes(struct lsm_blob_sizes *needed)
+ 	lsm_set_blob_size(&needed->lbs_cred, &blob_sizes.lbs_cred);
+ 	lsm_set_blob_size(&needed->lbs_file, &blob_sizes.lbs_file);
+ 	lsm_set_blob_size(&needed->lbs_ib, &blob_sizes.lbs_ib);
+-	/*
+-	 * The inode blob gets an rcu_head in addition to
+-	 * what the modules might need.
+-	 */
+-	if (needed->lbs_inode && blob_sizes.lbs_inode == 0)
+-		blob_sizes.lbs_inode = sizeof(struct rcu_head);
+ 	lsm_set_blob_size(&needed->lbs_inode, &blob_sizes.lbs_inode);
+ 	lsm_set_blob_size(&needed->lbs_ipc, &blob_sizes.lbs_ipc);
+ 	lsm_set_blob_size(&needed->lbs_key, &blob_sizes.lbs_key);
+@@ -1688,23 +1682,26 @@ int security_path_notify(const struct path *path, u64 mask,
+  */
+ int security_inode_alloc(struct inode *inode, gfp_t gfp)
+ {
+-	int rc = lsm_inode_alloc(inode, gfp);
++	int rc;
+ 
+-	if (unlikely(rc))
+-		return rc;
++	/*
++	 * If the file system recycles inode, i_security may be already
++	 * allocated. In this case, we need to call inode_alloc_security
++	 * hooks again, so that the LSMs can reinitialize the inode blob
++	 * properly.
++	 */
++	if (!inode->i_security) {
++		rc = lsm_inode_alloc(inode, gfp);
++
++		if (unlikely(rc))
++			return rc;
 +	}
+ 	rc = call_int_hook(inode_alloc_security, inode);
+ 	if (unlikely(rc))
+ 		security_inode_free(inode);
+ 	return rc;
+ }
  
- 	fmt = "%s -z -d --start-address=0x%"PRIx64" --stop-address=0x%"PRIx64" %s";
--	ret = snprintf(cmd, sizeof(cmd), fmt, test_objdump_path, addr, addr + len,
-+	ret = snprintf(cmd, sizeof(cmd), fmt, test_objdump_path, addr, stop_address,
- 		       filename);
- 	if (ret <= 0 || (size_t)ret >= sizeof(cmd))
- 		return -1;
-
+-static void inode_free_by_rcu(struct rcu_head *head)
+-{
+-	/* The rcu head is at the start of the inode blob */
+-	call_void_hook(inode_free_security_rcu, head);
+-	kmem_cache_free(lsm_inode_cache, head);
+-}
+-
+ /**
+  * security_inode_free() - Free an inode's LSM blob
+  * @inode: the inode
+@@ -1724,9 +1721,25 @@ static void inode_free_by_rcu(struct rcu_head *head)
+ void security_inode_free(struct inode *inode)
+ {
+ 	call_void_hook(inode_free_security, inode);
+-	if (!inode->i_security)
++}
++
++/**
++ * security_inode_free_rcu() - Free an inode's LSM blob from i_callback
++ * @inode: the inode
++ *
++ * Release any LSM resources associated with @inode. This is called from
++ * i_callback after a RCU grace period. Therefore, it is safe to free
++ * everything now.
++ */
++void security_inode_free_rcu(struct inode *inode)
++{
++	void *inode_security = inode->i_security;
++
++	if (!inode_security)
+ 		return;
+-	call_rcu((struct rcu_head *)inode->i_security, inode_free_by_rcu);
++	inode->i_security = NULL;
++	call_void_hook(inode_free_security_rcu, inode_security);
++	kmem_cache_free(lsm_inode_cache, inode_security);
+ }
+ 
+ /**
 -- 
-2.34.1
+2.43.5
 
