@@ -1,99 +1,120 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F561E502;
-	Sun, 15 Dec 2024 22:38:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC268F9DD;
+	Mon, 16 Dec 2024 02:15:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734302316; cv=none; b=JvvxaBSSFuE2iGL++e28bgOuG//hgv+QmgZsB7Rw8C5l5XQH377Hj2ipKvVyvGn9xbPsL802eQFcL5gtDMLqbzSAlI0obYqmonHrnSssIYIABNkiKbp1OiHAWuYoy4XAyOayO6xgpxowB7gpdGhO395XSWyrVwSHHszfpsK+aeI=
+	t=1734315336; cv=none; b=BW0sc5QU1PddBFhweYKwPkskZhvDXVEdXa0zHK7FHyD4HoH0O4m+gIXAKNsDBxZl1IIWY8lRZw5Xbl5dxpSs2of+ZLSDt610Af5Ngserf/JLIoBAV0OQgEpRZsMxBd2M0UAyU4MjO5E1rILBIEsXs/1x7q82vffKKvxSciDoA4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734302316; c=relaxed/simple;
-	bh=DJzqfLQxGe5G83lYAkMGNROuLprTGLPHr/4zHYMfAiY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LKRGq38eE1RN2yQyiA0uGiXkSpkIwpAVUEr6Uh58ykjEw3XuOQYABQdG/TTNS5qs8jo0WSRw8QUvNZmkLpKxNsbbOECv/TE7jIi/Lk7k/BZJ+FQJTnLMcGb6qKmN2d0U0Bvfh52n1A+8VxDHz2uvF4Lmnkoq9DOGQCHaelDTloQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O7F20L5Z; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1734315336; c=relaxed/simple;
+	bh=g1ew64RhiorXQF0KIQimayCQ3duY7awXhUEcCjeyyvg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=VRCvXBjmDbpx157VXg3irWQgyugl+jvMa+ovlgjX6jA0WLqW5wBYlL3aucWxQ0aVhQFqZh9Oc9usXxBuwDfBYODwZhGIEGMPQrruMTQWDAP3aLPYCNiFlx7yQSd2UHsW/TOGx35VUHF2Z4m/pXnCnIM7/ytcwc8Cwt29dmPqCJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ieQYgobW; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O7F20L5Z"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1734302314; x=1765838314;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=DJzqfLQxGe5G83lYAkMGNROuLprTGLPHr/4zHYMfAiY=;
-  b=O7F20L5ZE1bslBRaudvrwJd+uqkdiClYBhFhkn8GajQF3WfgUdUQgWi9
-   VcfKw+bEBcCMU4remQi/wC0Z8lEqgVllxqGWXCSGfJJiKlfUtA8BplzFt
-   aV4XicwDFyb3bnO2dX20byy1ds/kQWzP/NUpMExlsG7WZXukMLOX21Zlh
-   /Vq9RIgJB9y82fwxVFN8T2XtNDf32c1JxmX7V4G2PTTKVcAWzMuTSfyW9
-   ukwMGGET+eSZXEH8GFO1h0FWm/2+H1K6ipO3t3o6gH+Z5pcpATa5s1L0y
-   QmR36Vznj+7YfU/jNTf2YjOlP6xTbzeTyZIu7PzJSxXTRO9DKyT7/vHCQ
-   A==;
-X-CSE-ConnectionGUID: SoQp70EQSKWpzuTKGkeuJA==
-X-CSE-MsgGUID: IL7q1NqIR/2xa4ctu/sSUA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11287"; a="33979690"
-X-IronPort-AV: E=Sophos;i="6.12,237,1728975600"; 
-   d="scan'208";a="33979690"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Dec 2024 14:38:33 -0800
-X-CSE-ConnectionGUID: P/NU1gctRyGXdPtF38Vflg==
-X-CSE-MsgGUID: jMsGun9kQ1WzzwJl+hJiXQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,237,1728975600"; 
-   d="scan'208";a="97445581"
-Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 15 Dec 2024 14:38:31 -0800
-Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tMxFs-000DtG-1s;
-	Sun, 15 Dec 2024 22:38:28 +0000
-Date: Mon, 16 Dec 2024 06:38:04 +0800
-From: kernel test robot <lkp@intel.com>
-To: Matthieu Buffet <matthieu@buffet.re>, Mickael Salaun <mic@digikod.net>
-Cc: oe-kbuild-all@lists.linux.dev, Gunther Noack <gnoack@google.com>,
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
-	konstantin.meskhidze@huawei.com, Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E . Hallyn" <serge@hallyn.com>,
-	linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
-	Matthieu Buffet <matthieu@buffet.re>
-Subject: Re: [PATCH v2 3/6] landlock: Add UDP sendmsg access control
-Message-ID: <202412160648.ACrVdKoZ-lkp@intel.com>
-References: <20241214184540.3835222-4-matthieu@buffet.re>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ieQYgobW"
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-21661be2c2dso25127295ad.1;
+        Sun, 15 Dec 2024 18:15:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734315334; x=1734920134; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DegakvG+kcadAkVPXaNTk+h1UmQKvrfimmgaThYkXXA=;
+        b=ieQYgobWg7Q6GCSC/cDMMNZJQm2dWybNHRsOgiwiPi/rPUJZgbSRAkrDWREIhRf4OW
+         MjnIasP2pyVGHK3aD4HRu883g2DYy86pzvNRV+KkIfkZiuNH/JPcOufuH6iaVIvaB3aX
+         6XTVZaKTMJhaC0/Xni86gofcqfiyYtd7Rz1pg/xBX+XHF3+DBmv7blN40Jm5U+6MZuk5
+         dSLOrDW9j5knUezrM7c3UKZIzyiZsg3KkusaXUoNvBYXEuBzbJnHuAYECG6vt1Woy/nm
+         rTX9ihsZ6dtEKkNOYF4m3DrHnbsROj8zNd3D7JTuppulB0v/c5C++QanGMWD8WQyqpk+
+         pCjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734315334; x=1734920134;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DegakvG+kcadAkVPXaNTk+h1UmQKvrfimmgaThYkXXA=;
+        b=DwpxO4JrsuCt/34hx3v4t0+PGjmYbxeELGIU5tB+C6x7xhjzRpTvzyz9LJ+nlP8NgK
+         epyJ1UsOzFaHgKB8ezQrtUcuAKHDwyFwAvyhI54Uo42tJslu8rfN9B+7NvQtSWW/VeUJ
+         T4QcYskqr287elVlvnAD9xecsdte0ESVXGkddGu3P82wU2iqcdYUpzeE/M259IevT5OW
+         ZME7lQH86pq6rPSTUZSJJA+P9L2NYo7S0IuqbmsRgF5MuVrJWiPwRaT2TggkdYpk/UQp
+         uXj6oo2/r5++sEoXOZv01JppxbX+m3780xskAD4mO8JFKcglyY3h0PZ0cmyf70IHnZrS
+         OC1g==
+X-Forwarded-Encrypted: i=1; AJvYcCUccUzimbMz+L/+uIuP7fmNkIGX1o8X4RqrBzV9uJ/JUNAgTImlxw6AoBsslH9EHC27H89j4TpKunzXzxI=@vger.kernel.org, AJvYcCXyNlIgjIgCWYLErAG+eoyus1uiRkFXkXndQWInpPtOG9r6nRsdQUNGwI3yYTQMHFGGhQqHvobEKg2z54OkHlEQ1vxtz+fg@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw16DsdXO1To5OkAVySVbRGPxElP2147GyUEj3b2NWNWipkoUR9
+	gfChyj0oqQcqWTLtQBBI9/GInuUSXbXRtjwoB6/QjzA6ZXX4p5Vp
+X-Gm-Gg: ASbGncuULrT3iZfaDkynWhEveBDamdcQODImZRS/LM1G+hxVVVxpjeDYnVqtXN3DXDB
+	8XMGE979YcibqvkvQaXtPuUEseox+bOQna0cnzxJCsc2sfrZD/2E535l9sb0TFCR6TNPnx4RcNb
+	nI+a1yxR7dgnP0z/j3eRl27GUIjUbTcLv+nf4pQh4q79F0hBOrgZCniv6jTaaK6d0q3Jr+wlsxM
+	s3MsCWEnC406OnTLRIHiq7+36hakq5v+7kuqqbZaCcVesW0IgrhiHrJ16ObCLsLrjrCvroy
+X-Google-Smtp-Source: AGHT+IH1wW0tKh8Z49W70H8AdbhL/CTjNrnMQ73ELFzK8oUZJlcbfFxMG+Du9/H8mOt8pY/bLMX/+A==
+X-Received: by 2002:a17:903:41cd:b0:215:8ca3:3bac with SMTP id d9443c01a7336-218929a1f14mr155514245ad.16.1734315333869;
+        Sun, 15 Dec 2024 18:15:33 -0800 (PST)
+Received: from tc.hsd1.or.comcast.net ([2601:1c2:c104:170:d782:c275:5ae5:7e7b])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-218a1e5404csm32452495ad.150.2024.12.15.18.15.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 15 Dec 2024 18:15:33 -0800 (PST)
+From: Leo Stone <leocstone@gmail.com>
+To: syzbot+7536f77535e5210a5c76@syzkaller.appspotmail.com
+Cc: Leo Stone <leocstone@gmail.com>,
+	jmorris@namei.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	paul@paul-moore.com,
+	penguin-kernel@I-love.SAKURA.ne.jp,
+	serge@hallyn.com,
+	syzkaller-bugs@googlegroups.com,
+	takedakn@nttdata.co.jp,
+	tomoyo-dev-en@lists.osdn.me
+Subject: [PATCH] tomoyo: Reject excessively long lines
+Date: Sun, 15 Dec 2024 18:14:58 -0800
+Message-ID: <20241216021459.178759-2-leocstone@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <675f4ea7.050a0220.37aaf.0105.GAE@google.com>
+References: <675f4ea7.050a0220.37aaf.0105.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241214184540.3835222-4-matthieu@buffet.re>
+Content-Transfer-Encoding: 8bit
 
-Hi Matthieu,
+syzbot creates an anonymous memory region, and then issues a
+write syscall from the new memory region to a sysfs entry controlled by
+tomoyo, specifying a buffer size of just under 2 GB (the actual size of
+the buffer is ~32 MB). Because tomoyo_write_control will double the
+size of head->write_buf every time it runs out of space for the current
+line, and everything in the zero-initialized buffer is on the same line,
+the function will eventually issue a kzalloc with a size that is too large,
+triggering the warning.
 
-kernel test robot noticed the following build errors:
+Reject writes with excessively long lines.
 
-[auto build test ERROR on adc218676eef25575469234709c2d87185ca223a]
+Reported-by: syzbot+7536f77535e5210a5c76@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=7536f77535e5210a5c76
+Signed-off-by: Leo Stone <leocstone@gmail.com>
+---
+ security/tomoyo/common.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Matthieu-Buffet/landlock-Add-UDP-bind-connect-access-control/20241215-025450
-base:   adc218676eef25575469234709c2d87185ca223a
-patch link:    https://lore.kernel.org/r/20241214184540.3835222-4-matthieu%40buffet.re
-patch subject: [PATCH v2 3/6] landlock: Add UDP sendmsg access control
-config: arm-allmodconfig (https://download.01.org/0day-ci/archive/20241216/202412160648.ACrVdKoZ-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241216/202412160648.ACrVdKoZ-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412160648.ACrVdKoZ-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   arm-linux-gnueabi-ld: security/landlock/net.o: in function `hook_socket_sendmsg':
->> net.c:(.text.hook_socket_sendmsg+0x288): undefined reference to `udpv6_prot'
-
+diff --git a/security/tomoyo/common.c b/security/tomoyo/common.c
+index 5c7b059a332a..0c75be949c9d 100644
+--- a/security/tomoyo/common.c
++++ b/security/tomoyo/common.c
+@@ -2665,6 +2665,10 @@ ssize_t tomoyo_write_control(struct tomoyo_io_buffer *head,
+ 
+ 		if (head->w.avail >= head->writebuf_size - 1) {
+ 			const int len = head->writebuf_size * 2;
++			if (len > KMALLOC_MAX_SIZE) {
++				error = -EINVAL;
++				break;
++			}
+ 			char *cp = kzalloc(len, GFP_NOFS);
+ 
+ 			if (!cp) {
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.43.0
+
