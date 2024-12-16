@@ -1,31 +1,31 @@
 Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B299202C52
-	for <linux-security-module@vger.kernel.org>; Mon, 16 Dec 2024 09:59:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8411B6D1A;
+	Mon, 16 Dec 2024 10:06:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734343186; cv=none; b=tB05GpIQbKR5M2CPZN+lkBIIyGKAjzov0DXBEibLZYLOJbAz+XgSFjJl1sg4szlBsQ+OSDLio6iXekYD4bNwFjh/b5cNVmi1QNXGhwR0whQtt+bClMRj46Tn/ckCx8O/5zwOoWJ5COgWjAPkWqKEcs2fnZaKYmm31lArB9LNieA=
+	t=1734343587; cv=none; b=u+AKoDv4r41jAgCtM4gv1L0C4jAUGVVIknOHQ3nERdGK7LAtFKZS1eQq4NuWv6lVjkzY9ttqjVv8yg10vgqM9CnsjwPaCYmUHgdVKKpUCg8F04IHKAEfnTTaoR18TaWcJbIcL6CimUGGrk0RJASUfg8sDERpcTgGhuXPbQZ0/HU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734343186; c=relaxed/simple;
-	bh=tsjkFMTjq/ky9DiXfGv71ckYUQvUiSS1Y4PYj3Fn5Vw=;
+	s=arc-20240116; t=1734343587; c=relaxed/simple;
+	bh=6tPdULa14btJWCBCOrB4JoSxQdOIe7Tc8dnAL5JfdPM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m19h8c5OHM2HpHvfCIDNhtjAVEwgAfGpwtbJg+4SmQ4RWWZuZZJvNNRUI/qJOBRtpVuaZXTBcaXT8YXsoAheGW/WwUfT2WWsfBNLdJvRLK0dRnUONKcfox+kWo6eXsw+rk9kyS+I9minOEiiHu53hck5QL6UI1YpUiZkmthSXs0=
+	 In-Reply-To:Content-Type; b=AtHMS/FGYdxqsvfyA6pWlgC2upe6m+2Rzj1X0QTXIM2xXi8Uj8WLuZvTogFdqn7kn9xG1uFkA4UnR3tO918DdI6UWUEd0EWcn4Ag4Z4Py3j7OXUInp5iuQn9w7EjIJSIB2Oj2w9+Jnfu6eCxAPFRHw/XcV5NY9xmO42asky+7pU=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
 Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 4BG9x097036083;
-	Mon, 16 Dec 2024 18:59:00 +0900 (JST)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 4BGA61PR040048;
+	Mon, 16 Dec 2024 19:06:01 +0900 (JST)
 	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
 Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
 	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 4BG9x09b036079
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 4BGA61GO040042
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Mon, 16 Dec 2024 18:59:00 +0900 (JST)
+	Mon, 16 Dec 2024 19:06:01 +0900 (JST)
 	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <86023b72-1a45-4115-b800-93297a3e2405@I-love.SAKURA.ne.jp>
-Date: Mon, 16 Dec 2024 18:58:58 +0900
+Message-ID: <0e2b7b6c-ae2e-45b1-aefc-f33864208c33@I-love.SAKURA.ne.jp>
+Date: Mon, 16 Dec 2024 19:06:01 +0900
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -33,56 +33,53 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] lsm: check size of writes
-To: Leo Stone <leocstone@gmail.com>,
-        syzbot+4eb7a741b3216020043a@syzkaller.appspotmail.com
+Subject: Re: [PATCH] tomoyo: prevent bad buffer size in tracing_cpumask_write
+To: Lizhi Xu <lizhi.xu@windriver.com>,
+        syzbot+7536f77535e5210a5c76@syzkaller.appspotmail.com
 Cc: jmorris@namei.org, linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, mortonm@chromium.org,
-        paul@paul-moore.com, serge@hallyn.com, syzkaller-bugs@googlegroups.com,
-        Andrew Morton <akpm@linux-foundation.org>
-References: <675f513a.050a0220.37aaf.0106.GAE@google.com>
- <20241216030213.246804-2-leocstone@gmail.com>
+        linux-security-module@vger.kernel.org, paul@paul-moore.com,
+        serge@hallyn.com, syzkaller-bugs@googlegroups.com,
+        takedakn@nttdata.co.jp
+References: <675f4ea7.050a0220.37aaf.0105.GAE@google.com>
+ <20241216081953.3566217-1-lizhi.xu@windriver.com>
 Content-Language: en-US
 From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <20241216030213.246804-2-leocstone@gmail.com>
+In-Reply-To: <20241216081953.3566217-1-lizhi.xu@windriver.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Anti-Virus-Server: fsav103.rs.sakura.ne.jp
 X-Virus-Status: clean
-X-Anti-Virus-Server: fsav401.rs.sakura.ne.jp
 
-On 2024/12/16 12:02, Leo Stone wrote:
-> syzbot attempts to write a buffer with a large size to a sysfs entry
-> with writes handled by safesetid_gid_file_write(), triggering a warning
-> in kmalloc.
+On 2024/12/16 17:19, Lizhi Xu wrote:
+> User input a too large buffer size 0xfffffdeful, although it is truncated to
+> MAX_RW_COUNT in vfs_write, its value is still too large, causing warning when
+> allocating memory in tomoyo_write_control.
 > 
-> Check the size specified for write buffers before allocating.
+> Add a check for it to avoid this case.
+
+Thank you for a patch. But I don't think this fix is correct, for one can make
+head->writebuf_size too large by writing chunks without new line for many times.
+
 > 
-> Reported-by: syzbot+4eb7a741b3216020043a@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=4eb7a741b3216020043a
-> Signed-off-by: Leo Stone <leocstone@gmail.com>
-
-Since handle_policy_update() has two callers, you should check
-inside handle_policy_update().
-
-By the way, since syzbot found this pattern in multiple LSM modules,
-do we want to ask Andrew Morton to send all patches in one pull request
-(instead of sending trivial patch from multiple LSM modules) ?
-
+> Reported-by: syzbot+7536f77535e5210a5c76@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=7536f77535e5210a5c76
+> Tested-by: syzbot+7536f77535e5210a5c76@syzkaller.appspotmail.com
+> Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
 > ---
->  security/safesetid/securityfs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  security/tomoyo/common.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> diff --git a/security/safesetid/securityfs.c b/security/safesetid/securityfs.c
-> index 25310468bcdd..5eba4c7f8d9e 100644
-> --- a/security/safesetid/securityfs.c
-> +++ b/security/safesetid/securityfs.c
-> @@ -254,7 +254,7 @@ static ssize_t safesetid_gid_file_write(struct file *file,
->  	if (!file_ns_capable(file, &init_user_ns, CAP_MAC_ADMIN))
->  		return -EPERM;
+> diff --git a/security/tomoyo/common.c b/security/tomoyo/common.c
+> index 5c7b059a332a..f63388c2fffd 100644
+> --- a/security/tomoyo/common.c
+> +++ b/security/tomoyo/common.c
+> @@ -2654,6 +2654,8 @@ ssize_t tomoyo_write_control(struct tomoyo_io_buffer *head,
 >  
-> -	if (*ppos != 0)
-> +	if (*ppos != 0 || len >= KMALLOC_MAX_SIZE)
+>  	if (!head->write)
 >  		return -EINVAL;
->  
->  	return handle_policy_update(file, buf, len, GID);
+> +	if (avail_len > KMALLOC_MAX_SIZE)
+> +		return -EINVAL;
+>  	if (mutex_lock_interruptible(&head->io_sem))
+>  		return -EINTR;
+>  	cp0 = head->write_buf;
 
