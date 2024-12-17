@@ -1,255 +1,607 @@
-Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9445F38F9C;
-	Tue, 17 Dec 2024 23:33:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.153.30
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734478415; cv=fail; b=gYMvHO4YNcN2+ujAAjMcV5VmaXCX55UdfQg+mLnw+3Sz9tFbEhtj5IHTskxbwxmk96J60NlEAvElB7iCgjRrdpkx+Q5U7s/uHhdWqw/6tFzqMPK6if3PChv/y6w1fAlUxV/7dk9gQ4n1gNpqK4vMRApM0a0iJsaAOKQ3fiULtqs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734478415; c=relaxed/simple;
-	bh=RjcV14QmRmzyp2plDmSVHtGLPr36iRDBn4xNUyIQk+0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Sh0uhjKm9kDhJB2loHNNx2LIRYNgevn3JgbVBMxdfgu2j016Xv0tz7VB/VJNv+CZ/aHs0f0FtlFeu4VdjNX4cmsWXSRY4XeZcBZCU3VIozsOAYkoP6GmKhmxjiHk1gk0y0wZnNr87AlF4WUcY4j87OgEljmxn+Za95VChHH/Kwk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b=P6byi3/x; arc=fail smtp.client-ip=67.231.153.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=meta.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBC5E1F8F10
+	for <linux-security-module@vger.kernel.org>; Tue, 17 Dec 2024 23:36:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1734478602; cv=none; b=OXaRJdM3vKJEln1jVvtRhioWJht5C6Qz8lTW0VXH/HzR/1f+8AGvjspatbfvN7kH6BpgW8g5LNWMSF5YJ9fQl2HShQ6hPgCO4CxXTQoKH/t/Gjs6Hzbdw4cujT5wk/gbTkkBo8zIP8EVcaDzkfrElJZZac6nxeb2FRrSbKx7iVc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1734478602; c=relaxed/simple;
+	bh=Gx62p44vQAT54ACHLWR3omoI/CwGdpPHaCoFWVjlsWA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EsOJl3U3lxmLmCV4qQpPrUkQ9gPW6jFAmnmkGFqdlZxNGMqX41nt8N5hhazjIjpSJQJyHBVqr128mI586PERAhKUsa4qfj5okvR8ZRLraoZ8Pa59UTrTaF3vzihzHQM8Z0Y7CK2bhEqbrhFcvb3G1dQT8N7OF695C7srxzAc+oU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IB9F9xpG; arc=none smtp.client-ip=209.85.166.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=meta.com header.i=@meta.com header.b="P6byi3/x"
-Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
-	by m0089730.ppops.net (8.18.1.2/8.18.1.2) with ESMTP id 4BHMr1Z4025573;
-	Tue, 17 Dec 2024 15:33:32 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=cc
-	:content-id:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	s2048-2021-q4; bh=RjcV14QmRmzyp2plDmSVHtGLPr36iRDBn4xNUyIQk+0=; b=
-	P6byi3/xk6RLMKjZP/q/ss3pKuxE2mfgwR/6ZnXO3cqj/rQE6LusK2YdP4/R/TVs
-	w5V8U6vI6s7EWtRQFUTHTDdK7vwkm9Xl4jMylhQ+Sy/GApXVbpMLckEKbNTEJto9
-	o1zT+DXTIvjkYSsPSBNJqpMwMA3hm5PM4r1iroHmzDhyScnS566A4kWQTXp9YWn8
-	l5CXOeEiSBEBUwQE+67P8G8cPGofrXB+/GNzaPM6tkPSqjrDGwIzgQgYQyrRrjTM
-	8bGC+CP82ISKd5eOuctDkjQ1bwXnjjnUMSsurGHubRVsQ07jUonjz5gwp6pScMSM
-	Gom4W8fB7HYxlxoBgB1Cfw==
-Received: from nam11-dm6-obe.outbound.protection.outlook.com (mail-dm6nam11lp2169.outbound.protection.outlook.com [104.47.57.169])
-	by m0089730.ppops.net (PPS) with ESMTPS id 43kjg0g7uu-2
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 17 Dec 2024 15:33:32 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RNmfUm7oVZAq+5UldSBDRPwAkkQjA57kaSdZ6iLVl7HftL/YW4T3Zr4QNWoJibJ6bN0r1vVzueUl+TBRd7bCR9YHEY3lTz6PNNQKXQL1C5cWHSHV9Z5HFNh+piyvOsuPdhHULQQVDxXQTPt9cRtFKHK0KArZWoBeNBZ6CDt/PICfsMClKzJqy0fyF71YEy8atPVMVEKeqVwN3qB9YtXavHBcMNTRUgyKy1r6B0UqEYoYlRmPuKEqiU8NOhUBPrLVx4zNkQS/fefIO0n/K4muefvCEuwFPCR5/cN9zJtjOxpTeoMhuJ3B4ZdUDxDTxfPJnRD8BxURmxZswS539Nf3XQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RjcV14QmRmzyp2plDmSVHtGLPr36iRDBn4xNUyIQk+0=;
- b=Otg6eIpIee9bbicLkeS0AcByfCfnpWB8xnuRgCoaMhckbcZ4vdG/rnFuHTQPbTjVi+71LXf8TBxF24H2R3C1DmbrRcOsUW+Tl5BgcSn/dHdWln7mWs+kuYFyf4a4Lng5gxTotSD71uuK5o6hFp54n5xWNCBI6e8g+dCSSpc4HhO/lXfut08odQKh8uD7WSnNt1DYdnatGp2lYxZA+iDESPFpM/662zGCsgnP+TaATDAW9Je55SyNBgFhbBNNtFq0dN5YPY3H2jgvUKtyi14E7QWdK4HsBbNcsO5QWEnP+EGHTdrclROPN7Wh0Dzs0qgQL0FOErTfvTtak88mmYDOSg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=meta.com; dmarc=pass action=none header.from=meta.com;
- dkim=pass header.d=meta.com; arc=none
-Received: from SA1PR15MB5109.namprd15.prod.outlook.com (2603:10b6:806:1dc::10)
- by PH7PR15MB5256.namprd15.prod.outlook.com (2603:10b6:510:13b::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8251.21; Tue, 17 Dec
- 2024 23:33:29 +0000
-Received: from SA1PR15MB5109.namprd15.prod.outlook.com
- ([fe80::662b:d7bd:ab1b:2610]) by SA1PR15MB5109.namprd15.prod.outlook.com
- ([fe80::662b:d7bd:ab1b:2610%7]) with mapi id 15.20.8251.015; Tue, 17 Dec 2024
- 23:33:29 +0000
-From: Song Liu <songliubraving@meta.com>
-To: Paul Moore <paul@paul-moore.com>
-CC: Song Liu <songliubraving@meta.com>,
-        Casey Schaufler
-	<casey@schaufler-ca.com>, Song Liu <song@kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org"
-	<linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "roberto.sassu@huawei.com"
-	<roberto.sassu@huawei.com>,
-        "dmitry.kasatkin@gmail.com"
-	<dmitry.kasatkin@gmail.com>,
-        "eric.snowberg@oracle.com"
-	<eric.snowberg@oracle.com>,
-        "jmorris@namei.org" <jmorris@namei.org>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        Kernel Team <kernel-team@meta.com>,
-        "brauner@kernel.org" <brauner@kernel.org>,
-        "jack@suse.cz" <jack@suse.cz>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
-Subject: Re: [RFC 0/2] ima: evm: Add kernel cmdline options to disable IMA/EVM
-Thread-Topic: [RFC 0/2] ima: evm: Add kernel cmdline options to disable
- IMA/EVM
-Thread-Index:
- AQHbUMHZ/pEEoDutDkiUOsUV91UKILLq8+2AgAAIjYCAAAEqgIAADAaAgAAIRACAAASoAA==
-Date: Tue, 17 Dec 2024 23:33:29 +0000
-Message-ID: <6E598674-720E-40CE-B3F2-B480323C1926@fb.com>
-References: <20241217202525.1802109-1-song@kernel.org>
- <fc60313a-67b3-4889-b1a6-ba2673b1a67d@schaufler-ca.com>
- <CAHC9VhTAJQJ1zh0EZY6aj2Pv=eMWJgTHm20sh_j9Z4NkX_ga=g@mail.gmail.com>
- <8FCA52F6-F9AB-473F-AC9E-73D2F74AA02E@fb.com>
- <B1D93B7E-7595-4B84-BC41-298067EAC8DC@fb.com>
- <CAHC9VhRWhbFbeM0aNhatFTxZ+q0qKVKgPGUUKq4GuZMOzR2aJw@mail.gmail.com>
-In-Reply-To:
- <CAHC9VhRWhbFbeM0aNhatFTxZ+q0qKVKgPGUUKq4GuZMOzR2aJw@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-mailer: Apple Mail (2.3826.200.121)
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA1PR15MB5109:EE_|PH7PR15MB5256:EE_
-x-ms-office365-filtering-correlation-id: c0f92bcb-0d22-4bf7-a9ec-08dd1ef33631
-x-fb-source: Internal
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|7416014|10070799003|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?UnRKd3pVNkxYUDFQbWZTcUhQbWxNMi9rcGk2OFJvMVFSZTVnMnJmSkdZZEM5?=
- =?utf-8?B?Q0JuNjZaUnprZHlQaUdmbDl6RkRtM2lPUVZVanNRaSt4UjZXV2FFbGMvTW9a?=
- =?utf-8?B?eGZrZGtkeWwxNnIyNGt2bks2MTVUTGRkeXZDVWFnb2g4NFF5R3crcFk1Tklz?=
- =?utf-8?B?TWUrQy9uL2NLZjJibGVNVEhqbFBKNHJKc0dIRVlNNFZYUHRTM3d1ajFaQnBk?=
- =?utf-8?B?YzFuNUZ6OHNEeWNMSFVVTEpnUEJjV0NkMnBCZmp3aEdOVFpNSlRHVEhyR3Iv?=
- =?utf-8?B?NE5RbFpmK2t5WEVBTC9wZUJTdEFvVUJqd0prVlNZb3NNVHZqb2tORHJIaTNv?=
- =?utf-8?B?bWREd2ZlK1lvTnJBOXNhZVVkZFYrTWMwYTNpaUtpK0x1NWsyOWVQeEVKeVVl?=
- =?utf-8?B?WnUxL016MkVtc241SlVTWTR3QXpWakt2Snc3NVlwZzJhQjN6ZTkrZWJKYlR4?=
- =?utf-8?B?OUpqV1RBd04xQjkzZlBmQkoyVjg5eWRyd0tHSm5rd2pIVXowVWhnMmtUOEtn?=
- =?utf-8?B?N0hPSHhvQkpKYlo3ZmZUMlcyWUI5YjFsK1N6QWRYTGdTVU1ndzlDcmtEc1cx?=
- =?utf-8?B?aGxtYmVpRmJlL0Rla0wvTGczU1VvQmRCZlQ0TStlQlFGNDVKdkFCdkJ1WTZG?=
- =?utf-8?B?Z1AzMVJ0eHR2QlZVY2JLSXc5NHRsZjFRdmh4S0FqWWZGT2VCcm1SREswbGdx?=
- =?utf-8?B?VXhTUnJURVpUSGxDa2dZL0NGYllXZEl2SUN4d094cEJLeUxlZUZCV2VQeG5O?=
- =?utf-8?B?RGJLU1dlK1lKUHhvbWFQMUJ6clhPMlY5WGx0bmZ2bk40dEdybGljdE9KMVFY?=
- =?utf-8?B?ckRmSFhMaWxjTGkrMFZMSms3Mnprcy9CRUhXeXdLUDcwdTErK3A4S0dETlBH?=
- =?utf-8?B?Z1UxdHVONFdsSm0wa1ZPdzlHMjgycC9IY3Y1ZmwxRWlMZjROQzB2cG1ubm9Q?=
- =?utf-8?B?cXBmM3R6OEdZWGZMVHEzU09vNG5XV290czlSN1Fyc01yN0hGMGcrYkc1SjJi?=
- =?utf-8?B?YmNXUlBhQm1IS0RJL3VjeVYwb0JIWDNLSlF6N1haMWRSWGk0dHVXRnBEV0Zk?=
- =?utf-8?B?VmtkenVlTGVPaGZDTUN0d2ZCTXUrRjlYT2VybHM3K2VBNkdReXJYdklyOWVC?=
- =?utf-8?B?VzhLSEVGY3BaVk1Cd3dDSUxzWWtEV0RvL21TVEhNNjYvUVBWYjJWbnNDb09y?=
- =?utf-8?B?eC9HK2ZBVFdqZytJcnpTdlNLUW9jWlNrL0NzM2lkcFFUQkh2OS9IZW5GRnRS?=
- =?utf-8?B?L2YrK01VVDBjQ3ZNYXFOaEVnb1RzbW1xY3RHL3ZFaHpjajIyUThxazBxcmRJ?=
- =?utf-8?B?WElQV3k2VzlWeDNZQjJMMGd6YmdMOFBwZ1hkcVNuejJuNjVHWE9Ec1pxU0dn?=
- =?utf-8?B?Q1IzQlJiaTVKdk5lcUV0RGdLWlczRWFmbFQ1ekV6dVY5Tnpud1hiVGlSNVBz?=
- =?utf-8?B?ZWZIRGhnMUw0TTdsZlBCOC9ma1ZrRGpoZS9wUGMvUWpFOGo3V2tnN2xJSXVP?=
- =?utf-8?B?MWIvZmt6aXJDeTVxZmlrd3lwZ091TFFxaDl1UlNmUW93a1dpYlY2aEtQeWVB?=
- =?utf-8?B?eFZnNFg0Y3RQSk9JUEkwUEFObHA1K2x0eThSdTFLWUx5dnV2VFdObUo3WXAy?=
- =?utf-8?B?ZzBNRHd1Rjh5c0Y2aU42KzFtK3dob1huUWlzcnVESTIvMjJNU2RJY2Y5eTdV?=
- =?utf-8?B?c1BRRS94UG01N05kbWpnbmJKdnY3SlZSd0JWTk52ZmZSSndRMDBLK2RzZXR2?=
- =?utf-8?B?NkNtanRFUWdXNVI4ZkNDa1RWV0NhY2doUEIwQ0VYOVllbTVpZ2VMOWYwVHBC?=
- =?utf-8?B?THBTS0ZqVHlmS1paUDNydTI5V2lnL1Y3d2FGcnlHb2lqS1d2TG94dld6VkVF?=
- =?utf-8?B?RUFlRkFPbkFmdE9uOUZ4Ym1mWUdVMnJXS1QwVGhhUjRaS1FKRHNqUno5c1pu?=
- =?utf-8?Q?X5K4qCwAN0H+LDCcKn2VpPb7tiGP1Rrk?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR15MB5109.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(10070799003)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?bFRxWnFlVDZuRlhCY1dWaTVLTGtURHZrcG9HZ2g2bWt3dXNlOEpjRFdsUUl3?=
- =?utf-8?B?UzR6dE54STVCdkFQa2ZMbE9IS1puL2U2d1F4MzNIN0lER0hlNkNZS2FZOFJl?=
- =?utf-8?B?dG0wV1JoS3dxSUlOai83REFpWGwwa3BSNUlGNVgwa2c5bml4RUcyOElJVGtM?=
- =?utf-8?B?bnNCVEdrYlV3by9uNmNxVncySkxpWGo4L1Nzd3hBYllEUGhPOS85RTNibk1U?=
- =?utf-8?B?UkJEL0hjUHVLTDk5UWVJYnA3RTl3MGphL2lEM0w4L1JVMkJOMTlLOTNTRGVh?=
- =?utf-8?B?TzRmOUZ6bjZrd1U3eEFTYmsxeDVXU1k2M1VlVktQY1VMT2FFR1V2aFFxY3Ja?=
- =?utf-8?B?c2Frbmp3K056dFp1eDF1Smo5SHY2dXd0akNGWlFWV2hqcUlDSi9ycnB1YWpI?=
- =?utf-8?B?b3pnbmgxcXR2L2F3WHZ1M2R3dXpLZ1pQVDU3K3JlTENyWjJONFV4VlVuQ3ZN?=
- =?utf-8?B?M2R2eGdUck8xcGJPY2QySkpLd2p3L0dWSDJaKzcxdWk3R0tVbldXTEk0SU55?=
- =?utf-8?B?N3k0TEt5SjQ1R2lHVU5QVlJ1MVBseEtEek9PWnh3SXUyWXdTSnZTZWY3R2t6?=
- =?utf-8?B?ejdlM05QWXJHTUlCNVVuVUNJdzdwTlZRbDB3T25MNjVLRCtRSmxaTTBnSEpq?=
- =?utf-8?B?TDVVckt6QWZ3RitKeFZkbUhEMms1MUxodHNienBSVm4vS2V6NE1MYWFmWWQw?=
- =?utf-8?B?M2JFRFRiK3NuNkd1MnJEaVE4a3hCT1VDUkdGYjNkRnBIekNGVjZQMTIwZW9X?=
- =?utf-8?B?SFFEK2p2a21uaXhOMHgyb2J2eGkzdWZiRG5EUkhVeXJKMk1CZy9FMWtkVmFM?=
- =?utf-8?B?c2poR3lrZG96NVROcTVhOGRTRHhIR3RpVXp6QkRNZFZIZkpCdkFqTkIrWVRZ?=
- =?utf-8?B?TE13RThvTHhaNGxKaGZONWU0QXBhQU4rakt5THpXaVJieHNJR1hHTlU2ZSts?=
- =?utf-8?B?L2xGZDdUUy9yZTBBSldwNFl0OU9FSXVvWXRRQjhUSnd2Qm1OQ1JWUGhFMHlx?=
- =?utf-8?B?OEtjOW5IZStiMmltb1BuVFJleU1BbDJ1V1Z1Nkg3R3cyK1FXbERGc3JFSERu?=
- =?utf-8?B?VFprRXNEeW00SlNkOThKNkluYmxIWXZZcXFYNTdNQUtaWDlmZVdiRTlHVHpD?=
- =?utf-8?B?SGE0STVNb0xBdkhmNFFtSVZXYk1UMWxuM1l2S2dsbVEwZkNod3JEa1RIcWI0?=
- =?utf-8?B?Y2RlS25VRWI1N3d3Sk5sTXRuK1VKeEI4RHpNMjdsVTlhYXl1MXNKM0dxUlRF?=
- =?utf-8?B?MHk1aVBmNDlEa2d5Tm83RTRtVFpETktpWE1EcnFFdEFCenV2UEJJYmNiellT?=
- =?utf-8?B?RWxxVDA4UW45UU9KUXVlMmJybWQyc2dXZmEranlvdTNtT2I1V0xjNHErTE5m?=
- =?utf-8?B?UVE2RkVMbjl4bVlteTZ5RDlIa2haY0Y0UDF6Tlc1Tko3MlJJdjRLT3lMSTZh?=
- =?utf-8?B?UEticDBoWGZ1OWt2UHpIcHN6QXVvd3ZSNmdOdTdJR0xDMDYrSllFV3RRNU9l?=
- =?utf-8?B?bkQ3Y2pvSy9nZHVNdW1ZUHhoRlNFc3FXLzJrV09aWDZpV20wR0VvMnRmMXJ2?=
- =?utf-8?B?VFJJVGV6RHE4eHNjb0FlczFJc1JOU3pndVg3eU1KOVVsOXNWTnFJaEpiOWo4?=
- =?utf-8?B?aXpkK3pjK2RiYTU3RTdQMnc0YkNwZGJ2MU9ndWNBK29GNlhBL1gva2JqSm5W?=
- =?utf-8?B?NlJBY0tZOGV0T3puVXhwUjFRdDcwanFxWlE5dnVjT29UVmhlTVpMYXpMMDlR?=
- =?utf-8?B?blp4MkFYOU9zL2hQSjF4SVBqemVySEY4NXpLZ2VRWmVWNXRZc1ZiMENHbjQx?=
- =?utf-8?B?NWRKaEthNHhOZTMwVUtvYjlkdmdmWWRoMGNYSEh2VWdwMnUrMG9yUHk1RCtl?=
- =?utf-8?B?eS83aUpCRHVSRjRodlZqSVpTYTNPQ3lmQlRtcG5jOXEwY3NTK3I0Y2YzWmJD?=
- =?utf-8?B?dzRrMnM4ZWRjSS9DZlIzVHpWc05WaUJrNmFyVzF5VVg1OG00cnp4S25jc1Yv?=
- =?utf-8?B?cTNjdEJ1WUlMSTRLTTNqOWJIUHZ6ckVOZWQwVGp5Y3FVTTZFRWxYNjNpVjFv?=
- =?utf-8?B?UmJGNzRXWURTMDZTVmw0NlVCWEpsaHBZTmMrNDk4YWtrZHlYWTRBYWRwbDg2?=
- =?utf-8?B?cDNRbEREWHQzTktSYWtYUVRjcWZudnluZFBSd2pQK1Npc24wVmpGT3BQekQ0?=
- =?utf-8?Q?yRRcYKwebV6nbRoYxK428kk=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <02D4BACFB41CF348A6A1C2035E996AE5@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IB9F9xpG"
+Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3a7dfcd40fcso21325ab.1
+        for <linux-security-module@vger.kernel.org>; Tue, 17 Dec 2024 15:36:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1734478599; x=1735083399; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qTB+wPZxj6IVBEcZbb0mu4CV1h3o2Joku49InfOzSwY=;
+        b=IB9F9xpGG+9FKuD1wE7knGFdgsUlRNUc3OsXjZ1yb5GoSptylPdgWHDnyROdaUkzcg
+         JOVX+c1t9ZodX5LoDr9ukqwa1VU5HqO0YrObg5T4iagMn5uNc9sXVzApjJy/zpCBp+f2
+         yWxVrB/BXCIpPiJ2F1dg8KirvoGm24ZIiyp7BzzYtUBbjYyCXH/EczOyL9T4HLOmpv7S
+         EwEdvE3GNdU7ZBkTww2dKHMZG+NsNBpva803EpkbeV/Sl/Rt4d3AXUxc8sb9SS6SrBaL
+         P2BgbjC0+uG/ZG2aTIKRykBGOfoCle3+j+pxdpLPLZA2TO6IrPVXmyoU+VuK0/raPVbJ
+         La9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734478599; x=1735083399;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qTB+wPZxj6IVBEcZbb0mu4CV1h3o2Joku49InfOzSwY=;
+        b=kKZkVgFNNp75dL7oxlqwdOEj0TFCsLrzLz17ZfE/QTR7dzsbCN6Zs9Qks7qC1Ixa3p
+         05lHGTYBcPQSxNkihVDXKUxwCjpZ0bQjV/KDyBfls5Ti3WNRb+ZN4hwlVZfBB3UweVzt
+         tViwPaondzgCuRTwr0tmtBpaMWtc1k5vFwnrIzmKBRnTZNZYl7nK4go5eNvbu1wK/quQ
+         acYaOtx1I3934S7YDr06LJX8p9SFc0C3kXiG299b73MLxpwUTR5pCGo/UbRTrTyI9uJY
+         qeerHWNUnEaeH9jpwcH7ztR+5suRAdzYFfxeATH5BPQYBJoqWJIsoB+Z+iRj09nQ6NpN
+         yBoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW6gcx5y0DCTy6Pl5Qd24J1GZrpKbNfqe+yQ7SkzgXdQ8Snn3edRwa2F4Bvi/l779VZ5ijfmCtjfoG9CZr0WjMVcdpSQi0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAf9gameC9n4NBrGfJi9tWcY+RmsUprmEeNqVySAgcBAzUCwwQ
+	YOAott7PV84nonLkKvbLIQXk6xgrIh2TN//vdUDNw2J+HP/zbE/rB8Q7X7SOMNM4u34tZDZaCj2
+	18G5P0DvSofJEhxbMrUUSx60g48/u+2dVea17
+X-Gm-Gg: ASbGncv43x02cXGAsZs7zfOvewG4x+VT4l2U181D26Jv5Wh9h6vS6o6allUM8HGXcWQ
+	IYjsIQoBKTEzwk98Ykq995OjrI/xKZ/mVaVGTh/c=
+X-Google-Smtp-Source: AGHT+IFRahRRxcPjE6bdsf/9fWql6tI4HlsctLqFAwRpYvREueTa+kFA6LtkwhsB/omyiwLLgKOncs6URCfwNaKRZ1E=
+X-Received: by 2002:a05:6e02:13a7:b0:3a7:28e3:268e with SMTP id
+ e9e14a558f8ab-3bde3c1ed2cmr949455ab.12.1734478598621; Tue, 17 Dec 2024
+ 15:36:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: meta.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR15MB5109.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c0f92bcb-0d22-4bf7-a9ec-08dd1ef33631
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Dec 2024 23:33:29.1400
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: pNGPQZI4FWcanGr7lEB00bC7m/qDdvFE6zqcJXIOgMkIRKPYjdxYq/+eTOreyHt04CggiQtWszLh+0oPhoOl3A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR15MB5256
-X-Proofpoint-GUID: hb8_cRc6aJ8Joofi1KrWuSjMzdwik7OI
-X-Proofpoint-ORIG-GUID: hb8_cRc6aJ8Joofi1KrWuSjMzdwik7OI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-05_03,2024-10-04_01,2024-09-30_01
+References: <20241216-perf_syscalltbl-v3-0-239f032481d5@rivosinc.com> <20241216-perf_syscalltbl-v3-16-239f032481d5@rivosinc.com>
+In-Reply-To: <20241216-perf_syscalltbl-v3-16-239f032481d5@rivosinc.com>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 17 Dec 2024 15:36:27 -0800
+Message-ID: <CAP-5=fUNmqnYBLgOJOT9q6QbnhnDKxDXDEAtC-ZZ6orhXa5x3w@mail.gmail.com>
+Subject: Re: [PATCH v3 16/16] perf tools: Remove dependency on libaudit
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	Christian Brauner <brauner@kernel.org>, Guo Ren <guoren@kernel.org>, 
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, 
+	James Clark <james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>, 
+	Leo Yan <leo.yan@linux.dev>, Jonathan Corbet <corbet@lwn.net>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>, 
+	Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-security-module@vger.kernel.org, bpf@vger.kernel.org, 
+	linux-csky@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-DQoNCj4gT24gRGVjIDE3LCAyMDI0LCBhdCAzOjE24oCvUE0sIFBhdWwgTW9vcmUgPHBhdWxAcGF1
-bC1tb29yZS5jb20+IHdyb3RlOg0KPiANCj4gT24gVHVlLCBEZWMgMTcsIDIwMjQgYXQgNTo0N+KA
-r1BNIFNvbmcgTGl1IDxzb25nbGl1YnJhdmluZ0BtZXRhLmNvbT4gd3JvdGU6DQo+PiANCj4+IElm
-IHdlIHVzZSBsc209IHRvIGNvbnRyb2wgaW1hIGFuZCBldm0sIHdlIHdpbGwgbmVlZCB0aGUgZm9s
-bG93aW5nDQo+PiBjaGFuZ2VzIGluIG9yZGVyZWRfbHNtX3BhcnNlKCkuIFdlIHN0aWxsIG5lZWQg
-c3VwcG9ydGluZyBsb2dpYw0KPj4gaW4gaW1hIGFuZCBldm0gc2lkZSwgc28gdGhhdCBpbWEgYW5k
-IGV2bSBhcmUgb25seSBpbml0aWFsaXplZA0KPj4gd2hlbiB0aGV5IGFyZSBpbiBsc209Lg0KPj4g
-DQo+PiBEb2VzIHRoaXMgc291bmQgdGhlIHJpZ2h0IHdheSBmb3J3YXJkPw0KPiANCj4gSGF2ZSB5
-b3UgdGVzdGVkIGl0PyAgV2hhdCBoYXBwZW5zPyAgVGhlcmUgaXMgdmFsdWUgaW4gZ29pbmcgdGhy
-b3VnaA0KPiB0aGUgdGVzdGluZyBwcm9jZXNzLCBlc3BlY2lhbGx5IGlmIHlvdSBoYXZlbid0IHBs
-YXllZCBtdWNoIHdpdGggdGhlDQo+IExTTSBjb2RlLg0KDQpZZXMsIEkgdGVzdGVkIGJvdGggdGhl
-IG9yaWdpbmFsIHBhdGNoZXMgYW5kIHRoZSAibHNtPXh4IiB2ZXJzaW9uLiANCg0KPiANCj4gSSdk
-IGFsc28gd2FudCB0byBzZWUgYSBjb21tZW50IGxpbmUgaW4gYm90aCBwbGFjZXMgZXhwbGFpbmlu
-ZyB3aHkgaXQNCj4gaXMgbmVjZXNzYXJ5IHRvIG1hcmsgdGhlIExTTSBhcyBlbmFibGVkIHByaW9y
-IHRvIGFjdHVhbGx5IGFkZGluZyBpdCB0bw0KPiBAb3JkZXJlZF9sc21zLiAgU29tZXRoaW5nIGFs
-b25nIHRoZSBsaW5lcyBvZiBvbmx5IHBhcnNpbmcgdGhlDQo+IHBhcmFtZXRlciBvbmNlIHNob3Vs
-ZCBiZSBzdWZmaWNpZW50Lg0KDQpQbGVhc2Ugc2VlIGJlbG93IGZvciB0aGUgZXhwbGFuYXRpb24u
-IEkgd2lsbCBhZGQgZGlmZmVyZW50IHdvcmRzIGluIA0KdGhlIGFjdHVhbCBjb21tZW50cyBzbyB0
-aGV5IG1ha2UgbW9yZSBzZW5zZSBhcyBjb21tZW50cw0KDQo+IA0KPj4gZGlmZiAtLWdpdCBpL3Nl
-Y3VyaXR5L3NlY3VyaXR5LmMgdy9zZWN1cml0eS9zZWN1cml0eS5jDQo+PiBpbmRleCAwOTY2NGUw
-OWZlYzkuLjAwMjcxYmUzYjBjMSAxMDA2NDQNCj4+IC0tLSBpL3NlY3VyaXR5L3NlY3VyaXR5LmMN
-Cj4+ICsrKyB3L3NlY3VyaXR5L3NlY3VyaXR5LmMNCj4+IEBAIC0zNjUsNiArMzY1LDkgQEAgc3Rh
-dGljIHZvaWQgX19pbml0IG9yZGVyZWRfbHNtX3BhcnNlKGNvbnN0IGNoYXIgKm9yZGVyLCBjb25z
-dCBjaGFyICpvcmlnaW4pDQo+PiAgICAgICAgICAgICAgICAgICAgICAgIGlmIChzdHJjbXAobHNt
-LT5uYW1lLCBuYW1lKSA9PSAwKSB7DQo+PiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-aWYgKGxzbS0+b3JkZXIgPT0gTFNNX09SREVSX01VVEFCTEUpDQo+PiAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICBhcHBlbmRfb3JkZXJlZF9sc20obHNtLCBvcmlnaW4pOw0K
-Pj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBlbHNlIGlmIChsc20tPm9yZGVyID09
-IExTTV9PUkRFUl9MQVNUKQ0KPj4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgIHNldF9lbmFibGVkKGxzbSwgdHJ1ZSk7DQoNCldlIG5lZWQgYSBmbGFnIGhlcmUsIHNheWlu
-ZyB3ZSB3YW50IHRvIGVuYWJsZSB0aGUgbHNtLiBXZSBjYW5ub3QgZG8gDQphcHBlbmRfb3JkZXJl
-ZF9sc20oKSB5ZXQsIG90aGVyd2lzZSwgaXQgd2lsbCBub3QgYmUgImxhc3QiLiANCg0KPj4gKw0K
-Pj4gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGZvdW5kID0gdHJ1ZTsNCj4+ICAgICAg
-ICAgICAgICAgICAgICAgICAgfQ0KPj4gICAgICAgICAgICAgICAgfQ0KPj4gQEAgLTM4Niw3ICsz
-ODksNyBAQCBzdGF0aWMgdm9pZCBfX2luaXQgb3JkZXJlZF9sc21fcGFyc2UoY29uc3QgY2hhciAq
-b3JkZXIsIGNvbnN0IGNoYXIgKm9yaWdpbikNCj4+IA0KPj4gICAgICAgIC8qIExTTV9PUkRFUl9M
-QVNUIGlzIGFsd2F5cyBsYXN0LiAqLw0KPj4gICAgICAgIGZvciAobHNtID0gX19zdGFydF9sc21f
-aW5mbzsgbHNtIDwgX19lbmRfbHNtX2luZm87IGxzbSsrKSB7DQo+PiAtICAgICAgICAgICAgICAg
-aWYgKGxzbS0+b3JkZXIgPT0gTFNNX09SREVSX0xBU1QpDQo+PiArICAgICAgICAgICAgICAgaWYg
-KGxzbS0+b3JkZXIgPT0gTFNNX09SREVSX0xBU1QgJiYgaXNfZW5hYmxlZChsc20pKQ0KPj4gICAg
-ICAgICAgICAgICAgICAgICAgICBhcHBlbmRfb3JkZXJlZF9sc20obHNtLCAiICAgbGFzdCIpOw0K
-DQpCZWZvcmUgdGhpcyBjaGFuZ2UsIGxzbSB3aXRoIG9yZGVyPT1MU01fT1JERVJfTEFTVCBpcyBh
-bHdheXMgY29uc2lkZXJlZA0KZW5hYmxlZCwgd2hpY2ggaXMgYSBidWcgKGlmIEkgdW5kZXJzdGFu
-ZCB5b3UgYW5kIENhc2V5IGNvcnJlY3RseSkuIA0KVG8gZml4IHRoaXMsIHdlIG5lZWQgYSBmbGFn
-IGZyb20gYWJvdmUgc2F5aW5nIHdlIGFjdHVhbGx5IHdhbnQgdG8gZW5hYmxlIA0KaXQuIA0KDQpJ
-IHBlcnNvbmFsbHkgdGhpbmsgaXQgaXMgZmluZSB0byB1c2Ugc2V0X2VuYWJsZWQoKSB0byBzZXQg
-dGhlIGZsYWcuIA0KQnV0IEkgZG9uJ3QgaGF2ZSBhIHN0cm9uZyBwcmVmZXJlbmNlLCB3ZSBjYW4g
-YWRkIGEgZGlmZmVyZW50IGZsYWcuIA0KDQpEb2VzIHRoaXMgbWFrZSBzZW5zZT8NCg0KVGhhbmtz
-LA0KU29uZw0KDQoNCg0K
+On Mon, Dec 16, 2024 at 10:40=E2=80=AFPM Charlie Jenkins <charlie@rivosinc.=
+com> wrote:
+>
+> All architectures now support HAVE_SYSCALL_TABLE_SUPPORT, so the flag is
+> no longer needed. With the removal of the flag, the related
+> GENERIC_SYSCALL_TABLE can also be removed. libaudit was only used as a
+> fallback for when HAVE_SYSCALL_TABLE_SUPPORT was not defined, so
+> libaudit is also no longer needed for any architecture.
+>
+> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+> ---
+>  Documentation/admin-guide/workload-tracing.rst |  2 +-
+>  tools/build/feature/Makefile                   |  4 --
+>  tools/build/feature/test-libaudit.c            | 11 ------
+>  tools/perf/Documentation/perf-check.txt        |  1 -
+>  tools/perf/Makefile.config                     | 31 +--------------
+>  tools/perf/Makefile.perf                       | 15 --------
+>  tools/perf/builtin-check.c                     |  1 -
+>  tools/perf/builtin-help.c                      |  2 -
+>  tools/perf/builtin-trace.c                     | 30 ---------------
+>  tools/perf/perf.c                              |  6 +--
+>  tools/perf/tests/make                          |  7 +---
+>  tools/perf/util/env.c                          |  4 +-
+>  tools/perf/util/generate-cmdlist.sh            |  4 +-
+>  tools/perf/util/syscalltbl.c                   | 52 --------------------=
+------
+>  14 files changed, 10 insertions(+), 160 deletions(-)
+>
+> diff --git a/Documentation/admin-guide/workload-tracing.rst b/Documentati=
+on/admin-guide/workload-tracing.rst
+> index b2e254ec8ee846afe78eede74a825b51c6ab119b..6be38c1b9c5bb4be899fd261c=
+6d2911abcf959dc 100644
+> --- a/Documentation/admin-guide/workload-tracing.rst
+> +++ b/Documentation/admin-guide/workload-tracing.rst
+> @@ -83,7 +83,7 @@ scripts/ver_linux is a good way to check if your system=
+ already has
+>  the necessary tools::
+>
+>    sudo apt-get build-essentials flex bison yacc
+> -  sudo apt install libelf-dev systemtap-sdt-dev libaudit-dev libslang2-d=
+ev libperl-dev libdw-dev
+> +  sudo apt install libelf-dev systemtap-sdt-dev libslang2-dev libperl-de=
+v libdw-dev
+>
+>  cscope is a good tool to browse kernel sources. Let's install it now::
+>
+> diff --git a/tools/build/feature/Makefile b/tools/build/feature/Makefile
+> index 043dfd00fce72d8f651ccd9b3265a0183f500e5c..e0b63e9d0251abe6d5eafc6d2=
+f26b940918b16ee 100644
+> --- a/tools/build/feature/Makefile
+> +++ b/tools/build/feature/Makefile
+> @@ -13,7 +13,6 @@ FILES=3D                                          \
+>           test-gtk2.bin                          \
+>           test-gtk2-infobar.bin                  \
+>           test-hello.bin                         \
+> -         test-libaudit.bin                      \
+>           test-libbfd.bin                        \
+>           test-libbfd-buildid.bin               \
+>           test-disassembler-four-args.bin        \
+> @@ -228,9 +227,6 @@ $(OUTPUT)test-libunwind-debug-frame-arm.bin:
+>  $(OUTPUT)test-libunwind-debug-frame-aarch64.bin:
+>         $(BUILD) -lelf -llzma -lunwind-aarch64
+>
+> -$(OUTPUT)test-libaudit.bin:
+> -       $(BUILD) -laudit
+> -
+>  $(OUTPUT)test-libslang.bin:
+>         $(BUILD) -lslang
+>
+> diff --git a/tools/build/feature/test-libaudit.c b/tools/build/feature/te=
+st-libaudit.c
+> deleted file mode 100644
+> index f5b0863fa1ec240795339428d8deed98a946d405..0000000000000000000000000=
+000000000000000
+> --- a/tools/build/feature/test-libaudit.c
+> +++ /dev/null
+> @@ -1,11 +0,0 @@
+> -// SPDX-License-Identifier: GPL-2.0
+> -#include <libaudit.h>
+> -
+> -extern int printf(const char *format, ...);
+> -
+> -int main(void)
+> -{
+> -       printf("error message: %s\n", audit_errno_to_name(0));
+> -
+> -       return audit_open();
+> -}
+> diff --git a/tools/perf/Documentation/perf-check.txt b/tools/perf/Documen=
+tation/perf-check.txt
+> index 31741499e7867c9b712227f31a2958fd641d474a..e6d2ceeb2ca7de850f41b1baa=
+0375b6f984bb08f 100644
+> --- a/tools/perf/Documentation/perf-check.txt
+> +++ b/tools/perf/Documentation/perf-check.txt
+> @@ -51,7 +51,6 @@ feature::
+>                  dwarf_getlocations      /  HAVE_LIBDW_SUPPORT
+>                  dwarf-unwind            /  HAVE_DWARF_UNWIND_SUPPORT
+>                  auxtrace                /  HAVE_AUXTRACE_SUPPORT
+> -                libaudit                /  HAVE_LIBAUDIT_SUPPORT
+>                  libbfd                  /  HAVE_LIBBFD_SUPPORT
+>                  libcapstone             /  HAVE_LIBCAPSTONE_SUPPORT
+>                  libcrypto               /  HAVE_LIBCRYPTO_SUPPORT
+> diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+> index 3f82ba907381049213c055ab10c3fe14d9572073..a57b2364578f57e31476f5041=
+a06a0cd22d8b27e 100644
+> --- a/tools/perf/Makefile.config
+> +++ b/tools/perf/Makefile.config
+> @@ -28,20 +28,7 @@ include $(srctree)/tools/scripts/Makefile.arch
+>
+>  $(call detected_var,SRCARCH)
+>
+> -ifneq ($(NO_SYSCALL_TABLE),1)
+> -  NO_SYSCALL_TABLE :=3D 1
+> -
+> -  # architectures that use the generic syscall table scripts
+> -  ifneq ($(filter $(SRCARCH), $(generic_syscall_table_archs)),)
+> -    NO_SYSCALL_TABLE :=3D 0
+> -    CFLAGS +=3D -DGENERIC_SYSCALL_TABLE
+> -    CFLAGS +=3D -I$(OUTPUT)tools/perf/arch/$(SRCARCH)/include/generated
+> -  endif
+> -
+> -  ifneq ($(NO_SYSCALL_TABLE),1)
+> -    CFLAGS +=3D -DHAVE_SYSCALL_TABLE_SUPPORT
+> -  endif
+> -endif
+> +CFLAGS +=3D -I$(OUTPUT)tools/perf/arch/$(SRCARCH)/include/generated
+>
+>  # Additional ARCH settings for ppc
+>  ifeq ($(SRCARCH),powerpc)
+> @@ -755,21 +742,7 @@ ifndef NO_LIBUNWIND
+>  endif
+>
+>  ifneq ($(NO_LIBTRACEEVENT),1)
+> -  ifeq ($(NO_SYSCALL_TABLE),0)
+> -    $(call detected,CONFIG_TRACE)
+> -  else
+> -    ifndef NO_LIBAUDIT
+> -      $(call feature_check,libaudit)
+> -      ifneq ($(feature-libaudit), 1)
+> -        $(warning No libaudit.h found, disables 'trace' tool, please ins=
+tall audit-libs-devel or libaudit-dev)
+> -        NO_LIBAUDIT :=3D 1
+> -      else
+> -        CFLAGS +=3D -DHAVE_LIBAUDIT_SUPPORT
+> -        EXTLIBS +=3D -laudit
+> -        $(call detected,CONFIG_TRACE)
+> -      endif
+> -    endif
+> -  endif
+> +  $(call detected,CONFIG_TRACE)
+>  endif
+>
+>  ifndef NO_LIBCRYPTO
+> diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
+> index 2c6a509c800d3037933c9b49e5a7dafbf78fda0c..ab2d075ff3a23350a5eea1250=
+8cf0376f1d9f4e8 100644
+> --- a/tools/perf/Makefile.perf
+> +++ b/tools/perf/Makefile.perf
+> @@ -59,8 +59,6 @@ include ../scripts/utilities.mak
+>  #
+>  # Define NO_LIBNUMA if you do not want numa perf benchmark
+>  #
+> -# Define NO_LIBAUDIT if you do not want libaudit support
+> -#
+>  # Define NO_LIBBIONIC if you do not want bionic support
+>  #
+>  # Define NO_LIBCRYPTO if you do not want libcrypto (openssl) support
+> @@ -119,10 +117,6 @@ include ../scripts/utilities.mak
+>  #
+>  # Define LIBBPF_DYNAMIC to enable libbpf dynamic linking.
+>  #
+> -# Define NO_SYSCALL_TABLE=3D1 to disable the use of syscall id to/from n=
+ame tables
+> -# generated from the kernel .tbl or unistd.h files and use, if available=
+, libaudit
+> -# for doing the conversions to/from strings/id.
+> -#
+>  # Define NO_LIBPFM4 to disable libpfm4 events extension.
+>  #
+>  # Define NO_LIBDEBUGINFOD if you do not want support debuginfod
+> @@ -310,11 +304,7 @@ ifeq ($(filter feature-dump,$(MAKECMDGOALS)),feature=
+-dump)
+>  FEATURE_TESTS :=3D all
+>  endif
+>  endif
+> -# architectures that use the generic syscall table
+> -generic_syscall_table_archs :=3D riscv arc csky arm sh sparc xtensa x86 =
+alpha parisc arm64 loongarch mips powerpc s390
+> -ifneq ($(filter $(SRCARCH), $(generic_syscall_table_archs)),)
+>  include $(srctree)/tools/perf/scripts/Makefile.syscalls
+> -endif
+>  include Makefile.config
+>  endif
+>
+> @@ -1099,11 +1089,6 @@ endif
+>                 $(INSTALL) $(OUTPUT)perf-archive -t '$(DESTDIR_SQ)$(perfe=
+xec_instdir_SQ)'
+>         $(call QUIET_INSTALL, perf-iostat) \
+>                 $(INSTALL) $(OUTPUT)perf-iostat -t '$(DESTDIR_SQ)$(perfex=
+ec_instdir_SQ)'
+> -ifndef NO_LIBAUDIT
+> -       $(call QUIET_INSTALL, strace/groups) \
+> -               $(INSTALL) -d -m 755 '$(DESTDIR_SQ)$(STRACE_GROUPS_INSTDI=
+R_SQ)'; \
+> -               $(INSTALL) trace/strace/groups/* -m 644 -t '$(DESTDIR_SQ)=
+$(STRACE_GROUPS_INSTDIR_SQ)'
+> -endif
+>  ifndef NO_LIBPERL
+>         $(call QUIET_INSTALL, perl-scripts) \
+>                 $(INSTALL) -d -m 755 '$(DESTDIR_SQ)$(perfexec_instdir_SQ)=
+/scripts/perl/Perf-Trace-Util/lib/Perf/Trace'; \
+> diff --git a/tools/perf/builtin-check.c b/tools/perf/builtin-check.c
+> index 2346536a5ee14f91ecd10bd130a64676e871e1b2..7aed7b9f4f5270527ee1d3632=
+7eb6a01f196a46a 100644
+> --- a/tools/perf/builtin-check.c
+> +++ b/tools/perf/builtin-check.c
+> @@ -31,7 +31,6 @@ struct feature_status supported_features[] =3D {
+>         FEATURE_STATUS("dwarf_getlocations", HAVE_LIBDW_SUPPORT),
+>         FEATURE_STATUS("dwarf-unwind", HAVE_DWARF_UNWIND_SUPPORT),
+>         FEATURE_STATUS("auxtrace", HAVE_AUXTRACE_SUPPORT),
+> -       FEATURE_STATUS("libaudit", HAVE_LIBAUDIT_SUPPORT),
+>         FEATURE_STATUS("libbfd", HAVE_LIBBFD_SUPPORT),
+>         FEATURE_STATUS("libcapstone", HAVE_LIBCAPSTONE_SUPPORT),
+>         FEATURE_STATUS("libcrypto", HAVE_LIBCRYPTO_SUPPORT),
+> diff --git a/tools/perf/builtin-help.c b/tools/perf/builtin-help.c
+> index 0854d3cd9f6a304cd9cb50ad430d5706d91df0e9..7be6fb6df595923c15ae51747=
+d5bf17d867ae785 100644
+> --- a/tools/perf/builtin-help.c
+> +++ b/tools/perf/builtin-help.c
+> @@ -447,9 +447,7 @@ int cmd_help(int argc, const char **argv)
+>  #ifdef HAVE_LIBELF_SUPPORT
+>                 "probe",
+>  #endif
+> -#if defined(HAVE_LIBAUDIT_SUPPORT) || defined(HAVE_SYSCALL_TABLE_SUPPORT=
+)
+>                 "trace",
+> -#endif
+>         NULL };
+>         const char *builtin_help_usage[] =3D {
+>                 "perf help [--all] [--man|--web|--info] [command]",
+> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+> index 6a1a128fe645014d0347ad4ec3e0c9e77ec59aee..0fddf34458db4fe4896d25f42=
+7f2ae29cb3aa15f 100644
+> --- a/tools/perf/builtin-trace.c
+> +++ b/tools/perf/builtin-trace.c
+> @@ -2069,30 +2069,11 @@ static int trace__read_syscall_info(struct trace =
+*trace, int id)
+>         const char *name =3D syscalltbl__name(trace->sctbl, id);
+>         int err;
+>
+> -#ifdef HAVE_SYSCALL_TABLE_SUPPORT
+>         if (trace->syscalls.table =3D=3D NULL) {
+>                 trace->syscalls.table =3D calloc(trace->sctbl->syscalls.m=
+ax_id + 1, sizeof(*sc));
+>                 if (trace->syscalls.table =3D=3D NULL)
+>                         return -ENOMEM;
+>         }
+> -#else
+> -       if (id > trace->sctbl->syscalls.max_id || (id =3D=3D 0 && trace->=
+syscalls.table =3D=3D NULL)) {
+> -               // When using libaudit we don't know beforehand what is t=
+he max syscall id
+> -               struct syscall *table =3D realloc(trace->syscalls.table, =
+(id + 1) * sizeof(*sc));
+> -
+> -               if (table =3D=3D NULL)
+> -                       return -ENOMEM;
+> -
+> -               // Need to memset from offset 0 and +1 members if brand n=
+ew
+> -               if (trace->syscalls.table =3D=3D NULL)
+> -                       memset(table, 0, (id + 1) * sizeof(*sc));
+> -               else
+> -                       memset(table + trace->sctbl->syscalls.max_id + 1,=
+ 0, (id - trace->sctbl->syscalls.max_id) * sizeof(*sc));
+> -
+> -               trace->syscalls.table         =3D table;
+> -               trace->sctbl->syscalls.max_id =3D id;
+> -       }
+> -#endif
+>         sc =3D trace->syscalls.table + id;
+>         if (sc->nonexistent)
+>                 return -EEXIST;
+> @@ -2439,18 +2420,7 @@ static struct syscall *trace__syscall_info(struct =
+trace *trace,
+>
+>         err =3D -EINVAL;
+>
+> -#ifdef HAVE_SYSCALL_TABLE_SUPPORT
+>         if (id > trace->sctbl->syscalls.max_id) {
+> -#else
+> -       if (id >=3D trace->sctbl->syscalls.max_id) {
+> -               /*
+> -                * With libaudit we don't know beforehand what is the max=
+_id,
+> -                * so we let trace__read_syscall_info() figure that out a=
+s we
+> -                * go on reading syscalls.
+> -                */
+> -               err =3D trace__read_syscall_info(trace, id);
+> -               if (err)
+> -#endif
+>                 goto out_cant_read;
+>         }
+>
+> diff --git a/tools/perf/perf.c b/tools/perf/perf.c
+> index a2987f2cfe1a3958f53239ed1a4eec3f87d7466a..f0617cc41f5fe638986e5d831=
+6a6b3056c2c4bc5 100644
+> --- a/tools/perf/perf.c
+> +++ b/tools/perf/perf.c
+> @@ -84,7 +84,7 @@ static struct cmd_struct commands[] =3D {
+>  #endif
+>         { "kvm",        cmd_kvm,        0 },
+>         { "test",       cmd_test,       0 },
+> -#if defined(HAVE_LIBTRACEEVENT) && (defined(HAVE_LIBAUDIT_SUPPORT) || de=
+fined(HAVE_SYSCALL_TABLE_SUPPORT))
+> +#if defined(HAVE_LIBTRACEEVENT)
+>         { "trace",      cmd_trace,      0 },
+>  #endif
+>         { "inject",     cmd_inject,     0 },
+> @@ -514,10 +514,6 @@ int main(int argc, const char **argv)
+>                 fprintf(stderr,
+>                         "trace command not available: missing libtraceeve=
+nt devel package at build time.\n");
+>                 goto out;
+> -#elif !defined(HAVE_LIBAUDIT_SUPPORT) && !defined(HAVE_SYSCALL_TABLE_SUP=
+PORT)
+> -               fprintf(stderr,
+> -                       "trace command not available: missing audit-libs =
+devel package at build time.\n");
+> -               goto out;
+>  #else
+>                 setup_path();
+>                 argv[0] =3D "trace";
+> diff --git a/tools/perf/tests/make b/tools/perf/tests/make
+> index a7fcbd589752a90459815bd21075528c6dfa4d94..0ee94caf9ec19820a94a87dd4=
+6a7ccf1cefb844a 100644
+> --- a/tools/perf/tests/make
+> +++ b/tools/perf/tests/make
+> @@ -86,7 +86,6 @@ make_no_libdw_dwarf_unwind :=3D NO_LIBDW_DWARF_UNWIND=
+=3D1
+>  make_no_backtrace   :=3D NO_BACKTRACE=3D1
+>  make_no_libcapstone :=3D NO_CAPSTONE=3D1
+>  make_no_libnuma     :=3D NO_LIBNUMA=3D1
+> -make_no_libaudit    :=3D NO_LIBAUDIT=3D1
+>  make_no_libbionic   :=3D NO_LIBBIONIC=3D1
+>  make_no_auxtrace    :=3D NO_AUXTRACE=3D1
+>  make_no_libbpf     :=3D NO_LIBBPF=3D1
+> @@ -97,7 +96,6 @@ make_no_libllvm     :=3D NO_LIBLLVM=3D1
+>  make_with_babeltrace:=3D LIBBABELTRACE=3D1
+>  make_with_coresight :=3D CORESIGHT=3D1
+>  make_no_sdt        :=3D NO_SDT=3D1
+> -make_no_syscall_tbl :=3D NO_SYSCALL_TABLE=3D1
+>  make_no_libpfm4     :=3D NO_LIBPFM4=3D1
+>  make_with_gtk2      :=3D GTK2=3D1
+>  make_refcnt_check   :=3D EXTRA_CFLAGS=3D"-DREFCNT_CHECKING=3D1"
+> @@ -122,10 +120,10 @@ make_static         :=3D LDFLAGS=3D-static NO_PERF_=
+READ_VDSO32=3D1 NO_PERF_READ_VDSOX3
+>  # all the NO_* variable combined
+>  make_minimal        :=3D NO_LIBPERL=3D1 NO_LIBPYTHON=3D1 NO_GTK2=3D1
+>  make_minimal        +=3D NO_DEMANGLE=3D1 NO_LIBELF=3D1 NO_BACKTRACE=3D1
+> -make_minimal        +=3D NO_LIBNUMA=3D1 NO_LIBAUDIT=3D1 NO_LIBBIONIC=3D1
+> +make_minimal        +=3D NO_LIBNUMA=3D1 NO_LIBBIONIC=3D1
+>  make_minimal        +=3D NO_LIBDW_DWARF_UNWIND=3D1 NO_AUXTRACE=3D1 NO_LI=
+BBPF=3D1
+>  make_minimal        +=3D NO_LIBCRYPTO=3D1 NO_SDT=3D1 NO_JVMTI=3D1 NO_LIB=
+ZSTD=3D1
+> -make_minimal        +=3D NO_LIBCAP=3D1 NO_SYSCALL_TABLE=3D1 NO_CAPSTONE=
+=3D1
+> +make_minimal        +=3D NO_LIBCAP=3D1 NO_CAPSTONE=3D1
+>
+>  # $(run) contains all available tests
+>  run :=3D make_pure
+> @@ -158,7 +156,6 @@ run +=3D make_no_libdw_dwarf_unwind
+>  run +=3D make_no_backtrace
+>  run +=3D make_no_libcapstone
+>  run +=3D make_no_libnuma
+> -run +=3D make_no_libaudit
+>  run +=3D make_no_libbionic
+>  run +=3D make_no_auxtrace
+>  run +=3D make_no_libbpf
+> diff --git a/tools/perf/util/env.c b/tools/perf/util/env.c
+> index e2843ca2edd92ea5fa1c020ae92b183c496e975e..e9a694350671910d537de5990=
+71dbe7fcc18ced4 100644
+> --- a/tools/perf/util/env.c
+> +++ b/tools/perf/util/env.c
+> @@ -474,13 +474,13 @@ const char *perf_env__arch(struct perf_env *env)
+>
+>  const char *perf_env__arch_strerrno(struct perf_env *env __maybe_unused,=
+ int err __maybe_unused)
+>  {
+> -#if defined(HAVE_SYSCALL_TABLE_SUPPORT) && defined(HAVE_LIBTRACEEVENT)
+> +#if defined(HAVE_LIBTRACEEVENT)
+>         if (env->arch_strerrno =3D=3D NULL)
+>                 env->arch_strerrno =3D arch_syscalls__strerrno_function(p=
+erf_env__arch(env));
+>
+>         return env->arch_strerrno ? env->arch_strerrno(err) : "no arch sp=
+ecific strerrno function";
+>  #else
+> -       return "!(HAVE_SYSCALL_TABLE_SUPPORT && HAVE_LIBTRACEEVENT)";
+> +       return "!HAVE_LIBTRACEEVENT";
+>  #endif
+>  }
+>
+> diff --git a/tools/perf/util/generate-cmdlist.sh b/tools/perf/util/genera=
+te-cmdlist.sh
+> index 1b5140e5ce9975fac87b2674dc694f9d4e439a5f..6a73c903d69050df69267a8ae=
+aeeac1ed170efe1 100755
+> --- a/tools/perf/util/generate-cmdlist.sh
+> +++ b/tools/perf/util/generate-cmdlist.sh
+> @@ -38,7 +38,7 @@ do
+>  done
+>  echo "#endif /* HAVE_LIBELF_SUPPORT */"
+>
+> -echo "#if defined(HAVE_LIBTRACEEVENT) && (defined(HAVE_LIBAUDIT_SUPPORT)=
+ || defined(HAVE_SYSCALL_TABLE_SUPPORT))"
+> +echo "#if defined(HAVE_LIBTRACEEVENT)"
+>  sed -n -e 's/^perf-\([^        ]*\)[   ].* audit*/\1/p' command-list.txt=
+ |
+>  sort |
+>  while read cmd
+> @@ -51,7 +51,7 @@ do
+>             p
+>       }' "Documentation/perf-$cmd.txt"
+>  done
+> -echo "#endif /* HAVE_LIBTRACEEVENT && (HAVE_LIBAUDIT_SUPPORT || HAVE_SYS=
+CALL_TABLE_SUPPORT) */"
+> +echo "#endif /* HAVE_LIBTRACEEVENT */"
+>
+>  echo "#ifdef HAVE_LIBTRACEEVENT"
+>  sed -n -e 's/^perf-\([^        ]*\)[   ].* traceevent.*/\1/p' command-li=
+st.txt |
+> diff --git a/tools/perf/util/syscalltbl.c b/tools/perf/util/syscalltbl.c
+> index 210f61b0a7a264a427ebb602185d3a9da2f426f4..928aca4cd6e9f2f26c5c4fd82=
+5b4538c064a4cc3 100644
+> --- a/tools/perf/util/syscalltbl.c
+> +++ b/tools/perf/util/syscalltbl.c
+> @@ -10,20 +10,12 @@
+>  #include <linux/compiler.h>
+>  #include <linux/zalloc.h>
+>
+> -#ifdef HAVE_SYSCALL_TABLE_SUPPORT
+>  #include <string.h>
+>  #include "string2.h"
+>
+> -#if defined(GENERIC_SYSCALL_TABLE)
+>  #include <syscall_table.h>
+>  const int syscalltbl_native_max_id =3D SYSCALLTBL_MAX_ID;
+>  static const char *const *syscalltbl_native =3D syscalltbl;
+> -#else
+> -const int syscalltbl_native_max_id =3D 0;
+> -static const char *const syscalltbl_native[] =3D {
+> -       [0] =3D "unknown",
+> -};
+> -#endif
+>
+>  struct syscall {
+>         int id;
+> @@ -131,47 +123,3 @@ int syscalltbl__strglobmatch_first(struct syscalltbl=
+ *tbl, const char *syscall_g
+>         *idx =3D -1;
+>         return syscalltbl__strglobmatch_next(tbl, syscall_glob, idx);
+>  }
+> -
+> -#else /* HAVE_SYSCALL_TABLE_SUPPORT */
+> -
+> -#include <libaudit.h>
+> -
+> -struct syscalltbl *syscalltbl__new(void)
+> -{
+> -       struct syscalltbl *tbl =3D zalloc(sizeof(*tbl));
+> -       if (tbl)
+> -               tbl->audit_machine =3D audit_detect_machine();
+
+struct syscalltbl's audit_machine is now unused, remove?
+
+Thanks,
+Ian
+
+> -       return tbl;
+> -}
+> -
+> -void syscalltbl__delete(struct syscalltbl *tbl)
+> -{
+> -       free(tbl);
+> -}
+> -
+> -const char *syscalltbl__name(const struct syscalltbl *tbl, int id)
+> -{
+> -       return audit_syscall_to_name(id, tbl->audit_machine);
+> -}
+> -
+> -int syscalltbl__id(struct syscalltbl *tbl, const char *name)
+> -{
+> -       return audit_name_to_syscall(name, tbl->audit_machine);
+> -}
+> -
+> -int syscalltbl__id_at_idx(struct syscalltbl *tbl __maybe_unused, int idx=
+)
+> -{
+> -       return idx;
+> -}
+> -
+> -int syscalltbl__strglobmatch_next(struct syscalltbl *tbl __maybe_unused,
+> -                                 const char *syscall_glob __maybe_unused=
+, int *idx __maybe_unused)
+> -{
+> -       return -1;
+> -}
+> -
+> -int syscalltbl__strglobmatch_first(struct syscalltbl *tbl, const char *s=
+yscall_glob, int *idx)
+> -{
+> -       return syscalltbl__strglobmatch_next(tbl, syscall_glob, idx);
+> -}
+> -#endif /* HAVE_SYSCALL_TABLE_SUPPORT */
+>
+> --
+> 2.34.1
+>
