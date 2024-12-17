@@ -1,116 +1,161 @@
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+Received: from mail-ej1-f67.google.com (mail-ej1-f67.google.com [209.85.218.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 884301F892F;
-	Tue, 17 Dec 2024 18:27:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCBF01F867D;
+	Tue, 17 Dec 2024 18:32:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734460060; cv=none; b=lCOezRrLlncj/UWQBsU/9K3jZWwgA9qn0CmqWf0UUrKAJrabCy/JP1ts3JJakfkOOkNWn7Z6LwbyLbNRqPyGwHw1v0sXDCj12UfjP9GPJe2PGLYkvmZvVyItua2A4BV316fX+uveOzhUNwtQpoqOkcuOfWtdiYAF5Ezf/eI52dc=
+	t=1734460382; cv=none; b=RFRuR9Gk0N7zdcCvtnIPZw2xUqLs4NK6sX02FuHAsETWlAk1aRtBvZZzzDexZKdDckESbnuM3qiIvzFOUTZsTd681WmBrRxPyR1jqU+Aw7JPFhbtFBHwQY8iEPuaofmIsWeNHeYDT9YhEnI6+G5kPB/FC1e+HZ8r0FeUkBbwMb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734460060; c=relaxed/simple;
-	bh=gGzAEDfO/sAUcikngB0aTjWjVvFST6QJkjZ+eyGWxB0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DoPnhjo09ejjdCbIoz2mUvW/D9Hdy353KoX2AsDhg0ALNFC7rnYqOJClEOuOacDBY21YlVTnD2CEdyMHbp8z1Kk1vqcfhTLM0Q7fMO3XNrVclRhGWPryRCIXAEtTImdzyjlUnkn2LkSW8VR73hV0Gm1391aD77GzsM6oEsNpdtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y9oKlqJH; arc=none smtp.client-ip=209.85.214.181
+	s=arc-20240116; t=1734460382; c=relaxed/simple;
+	bh=w9pYrgnaWj1ewcUC5uehoE4l2crEY1uOPkQ5NXBYUN0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XAS6OTedEaWOHFzgJ+1JMqYUZe2XNwCM5hVSeMfxEBDrGWfbwRyWyfPTO0Ygmg0J3xrw4LnHxUw+GrwL6x43vn2ETb/TXAJBT1LSnxPkjjsDuSaXuvJ8MjHWvbIdieSNfv8CxhzsGseFwccHnpneVeBJSIoqVSz3grzne/Y0OPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OHyz0DEU; arc=none smtp.client-ip=209.85.218.67
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y9oKlqJH"
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-216281bc30fso59073855ad.0;
-        Tue, 17 Dec 2024 10:27:39 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OHyz0DEU"
+Received: by mail-ej1-f67.google.com with SMTP id a640c23a62f3a-aa6c0dbce1fso777680866b.2;
+        Tue, 17 Dec 2024 10:32:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734460059; x=1735064859; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1734460378; x=1735065178; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=tuBX0m9KGve6qqIFa5pHs2fskV9fMCeDvPNQRVxmhdc=;
-        b=Y9oKlqJHO+YC0xTt26O7dImAc244KBcaeFHnyoGp5dR2Pm7ApcJDagU7xXzYS8PkrI
-         uKeUzl8Ne0Dq4U/Z2kR/4RYJ8bsv/urD3MMzfuqijLMTif/UP8SZrLLB81szAEaNHZMJ
-         wZbQwXf9WGV+ju7BvLl+0yPy/TkKFVQ5oGvNcCy/V8HKF62VvQHFsN0TP+mN4d0FKa0e
-         cvtpDlDD6T9yUbzXK6fulHFb03eNOrTolZNTyIH/UuDucsZU+D1SSEYbnh+DDLZdaNrI
-         tdbJVcmUBcPRa45nkCD6t9IP+q0JbVOS4qibV4xhGRHqQgtb4s3y0PO9tjpDwTMQg6M7
-         lqWA==
+        bh=KyLfj9GHrrqzTUNE0LK7GJy5olirvva9Gvx5K9CGs5s=;
+        b=OHyz0DEUbcnQfj5lZk6OqzcpPnXCEt0BIcVHt+doDVf5AkqbpOdhpe/fpKQPTajjnx
+         KEjfKH8Nwsuit5GUhfcD6bF78T59IUZeiLcmTF39XyuF/FA2Xc0gz7a33sQhfTOJgm6B
+         k9JY+nlKM54ZIrnKEAo2Kpz8yGiz6geN8c8yHheZaZdYCif0dW10TprWPRwSqpChtrWC
+         MMdNlS9e/Gl0LRSp6lAu4s0I5bjBrDaD2HIILl1UpbbwmFp6TZMwfqW3E0Ycb6ln3sWJ
+         WUxQlJDuhOGoINu4Becr11+6zAGLtpZx97AfVJNalKylRptuV8Ti2JR7vi/+hA+CCTEe
+         5lXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734460059; x=1735064859;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1734460378; x=1735065178;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=tuBX0m9KGve6qqIFa5pHs2fskV9fMCeDvPNQRVxmhdc=;
-        b=es6xxrPJxXFai3zsXBbwCQ7DL3aC6YJX1O0REkaWP0PbkFDmAUHzpot4z+wR3lFsJR
-         3lDXsVk8zjFvLpkmuu0ryiUyCt+iDxv7dFb+BRfc4NbIhEaAgGeyrWJ6nDDwR/rKiLvv
-         h2esjBzFIftou2h+4TMxVWIgBoqatZjRVz+wIYTl2HPaMgigjVnQTYlrgRhz3SLs0n5p
-         ufiNJ90Q60Za4YFbMGcbaiGqclRF6x1xJr4rMAoHHYkg+06WnYNNR21yCEDsdWGtxBiA
-         TkS10vSm9JAzIK0O8NIvBJKWliaPx7mBaHkeq7KTKlpmDWSMWOCYdGzqmH8M5z2vTwdp
-         DiPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUx8lAGQ+40DAYDk8U5wIdqMhkbNtg80i0JPFMl2gosZKFFZvBxWRcnIAa3MmMrAIj2kGqp4mfrC3xhORhyxq/g7X0vw8vc@vger.kernel.org, AJvYcCWceHREBeKGRQ4srdK1bSge+TlcOXCftos5QMrrR2jLFZxgBYiS8ciYYj3QVxbKQDkM6kFf3HAwq7kezvI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWNA3PHeXpQaCU6Hqs6AoCDEnrAo+5/1ihQ10briIhEjXu/eGf
-	j7a0SPlYJEP2ZrPH5ZM3+qJx/FWJQxZyuoOGWMrGdNPEtfVxqM0u
-X-Gm-Gg: ASbGncskr0HJGl7ztEj0HfmZgfrvCjLl1UMG4C46tPjMnKaHV6vKIXa0bsAqrPVWM3p
-	odqtYAjMMxCYbOCCRPK5jlHBBR0+dxzk2HBbaMBqa6SVbaMGDYmIprk7UXfcRHd8F/pi9LQBPHn
-	NjhfFfR+RPuKuUvu7LVLYioSLVvFJtlW0UMgT4Er8hByyzlXPH2sYIv5XQGg8tLztIqP1yN9tkO
-	LIHgrfqEJegqIBScZLy3dZSw76/NJgRlrhOiuitJypofi7zNAg8gHvxZ2JEk+HFRqXcHm3u
-X-Google-Smtp-Source: AGHT+IF+DHcqTZiYeQlV53vHMwdV1xlZDwwl73xCJZ0PjZ3QI3/2docUFFGlPr3r2lVOeKR/Bu6Rsg==
-X-Received: by 2002:a17:902:fa04:b0:216:1cfa:2bda with SMTP id d9443c01a7336-218d52b1033mr6956665ad.43.1734460058766;
-        Tue, 17 Dec 2024 10:27:38 -0800 (PST)
-Received: from tc.hsd1.or.comcast.net ([2601:1c2:c104:170:ecbe:ab7f:849b:1fad])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-218a1e6c110sm62929085ad.257.2024.12.17.10.27.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2024 10:27:38 -0800 (PST)
-From: Leo Stone <leocstone@gmail.com>
-To: syzbot+4eb7a741b3216020043a@syzkaller.appspotmail.com
-Cc: Leo Stone <leocstone@gmail.com>,
-	jmorris@namei.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	mortonm@chromium.org,
-	paul@paul-moore.com,
-	serge@hallyn.com,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH v2] lsm: check size of writes
-Date: Tue, 17 Dec 2024 10:26:57 -0800
-Message-ID: <20241217182657.10080-2-leocstone@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <675f513a.050a0220.37aaf.0106.GAE@google.com>
-References: <675f513a.050a0220.37aaf.0106.GAE@google.com>
+        bh=KyLfj9GHrrqzTUNE0LK7GJy5olirvva9Gvx5K9CGs5s=;
+        b=BtrasCvp6UO5WcuoRsvukEwD0gWYcT26BWbT+8XxmqtvYT12LF+PqcPZNgyxdVAYS1
+         44cqNQ+OtL9Rl/erZdyC6awonazApTs5Tq8KytdAUxtiU74FJj8cefHaDnHXT9ploGOW
+         d+bbUJt0TYAQUXo7ib0T3o/adnfrm6MQ1yAjviic8/s08Sxh0XGKzQonta/U08heb78l
+         BAHTVU9yNJK5iupTZuMsBc3YW9TvvNAEMVCvBelcKQfbxMY4HCR34jKW/yXFLf4SqtYq
+         H5Zc0hcKt9Qke036tzQyRlDzAuH3eAvXIDXSZIiFr9AXznIDk7BFWZCUCfl/Ik19pswN
+         tjqA==
+X-Forwarded-Encrypted: i=1; AJvYcCU5msdfgM5ftN+06RN15NpoTRO8ljGo8/d4MnyzGlfhDzlnLRyWend1SqX8V/cHvsjXhOoI+utH4mUUiV6/8w==@vger.kernel.org, AJvYcCWKEWDBF5Wg/MG1b6lc9iap9iZ5EAhwns84v2pvxJIDF5rTPTSfQ5kxaIzrdTy7ZeLMDsaRH/Gkuh5YH9iy@vger.kernel.org, AJvYcCX/aicK/z53ULR0Zs3kcVWenCERMvTMSLo/Zef5m1HXMyn86NVvrnuHiOL0RqxmJVEC80E=@vger.kernel.org, AJvYcCX9+FLGQLIRkZA2+TwVnyh7ral4ypBYFZMbK0i1xYWBb52AFpZMG7Mab5Lklroh7ZXd6is0CYnfiR3ksNT0hPo1cN/oNx6P@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZyXphE2xxUI0r/hU5AMijoyfVQ5fyuOGSXy+fg+VBere5LsGn
+	tcT/A/bRP+IJ1a7f4uCslZWt//cYvLYiHhgIkQ5a5rtDxFL8k3cM3RoLIq0/CBgZMMN5Q99e/rw
+	68AgSFP3Qg1U4IgQKBuqHZHJ9bn8=
+X-Gm-Gg: ASbGnct7zDx/ScHZDdbBfx7bbwDtuRV7cDagsMtmYTKUPGXDij2iwmTJpDE4uR/IKWp
+	CPexEdAfrT5dll6BTO3Go3OnQBeomUEVMrhzeJUsnvi9spuX0a+/6VMGZSGs=
+X-Google-Smtp-Source: AGHT+IE0D/9Vd3yi0S/mmNzZKU8P1GTbXnQCQ7s25+McRC8HupAM0mu1u0pwKZUxm/xxqzbOI7IqDHNoKS5+GIDw2W4=
+X-Received: by 2002:a05:6402:35c6:b0:5d1:2377:5af3 with SMTP id
+ 4fb4d7f45d1cf-5d7ee3772f8mr356233a12.5.1734460378086; Tue, 17 Dec 2024
+ 10:32:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241217063821.482857-1-song@kernel.org> <20241217063821.482857-5-song@kernel.org>
+ <CAADnVQKnscWKZHbWt9cgTm7NZ4ZWQkHQ+41Hz=NWoEhUjCAbaw@mail.gmail.com> <7A7A74A6-ED23-455E-A963-8FE7E250C9AA@fb.com>
+In-Reply-To: <7A7A74A6-ED23-455E-A963-8FE7E250C9AA@fb.com>
+From: Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Date: Tue, 17 Dec 2024 19:32:21 +0100
+Message-ID: <CAP01T76SVQ=TJgkTgkvSLY3DFTDUswj_aypAWmQhwKWFBEk_yw@mail.gmail.com>
+Subject: Re: [PATCH v4 bpf-next 4/6] bpf: fs/xattr: Add BPF kfuncs to set and
+ remove xattrs
+To: Song Liu <songliubraving@meta.com>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Song Liu <song@kernel.org>, 
+	bpf <bpf@vger.kernel.org>, Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	LSM List <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, Eddy Z <eddyz87@gmail.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, KP Singh <kpsingh@kernel.org>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Liam Wisehart <liamwisehart@meta.com>, 
+	Shankaran Gnanashanmugam <shankaran@meta.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-syzbot attempts to write a buffer with a large size to a sysfs entry
-with writes handled by handle_policy_update(), triggering a warning
-in kmalloc.
+On Tue, 17 Dec 2024 at 19:25, Song Liu <songliubraving@meta.com> wrote:
+>
+> Hi Alexei,
+>
+> Thanks for the review!
+>
+> > On Dec 17, 2024, at 8:50=E2=80=AFAM, Alexei Starovoitov <alexei.starovo=
+itov@gmail.com> wrote:
+> >
+> > On Mon, Dec 16, 2024 at 10:38=E2=80=AFPM Song Liu <song@kernel.org> wro=
+te:
+> >>
+> >> Add the following kfuncs to set and remove xattrs from BPF programs:
+> >>
+> >>  bpf_set_dentry_xattr
+> >>  bpf_remove_dentry_xattr
+> >>  bpf_set_dentry_xattr_locked
+> >>  bpf_remove_dentry_xattr_locked
+> >>
+> >> The _locked version of these kfuncs are called from hooks where
+> >> dentry->d_inode is already locked.
+> >
+> > ...
+> >
+> >> + *
+> >> + * Setting and removing xattr requires exclusive lock on dentry->d_in=
+ode.
+> >> + * Some hooks already locked d_inode, while some hooks have not locke=
+d
+> >> + * d_inode. Therefore, we need different kfuncs for different hooks.
+> >> + * Specifically, hooks in the following list (d_inode_locked_hooks)
+> >> + * should call bpf_[set|remove]_dentry_xattr_locked; while other hook=
+s
+> >> + * should call bpf_[set|remove]_dentry_xattr.
+> >> + */
+> >
+> > the inode locking rules might change, so let's hide this
+> > implementation detail from the bpf progs by making kfunc polymorphic.
+> >
+> > To struct bpf_prog_aux add:
+> > bool use_locked_kfunc:1;
+> > and set it in bpf_check_attach_target() if it's attaching
+> > to one of d_inode_locked_hooks
+> >
+> > Then in fixup_kfunc_call() call some helper that
+> > if (prog->aux->use_locked_kfunc &&
+> >    insn->imm =3D=3D special_kfunc_list[KF_bpf_remove_dentry_xattr])
+> >     insn->imm =3D special_kfunc_list[KF_bpf_remove_dentry_xattr_locked]=
+;
+> >
+> > The progs will be simpler and will suffer less churn
+> > when the kernel side changes.
+>
+> I was thinking about something in similar direction.
+>
+> If we do this, shall we somehow hide the _locked version of the
+> kfuncs, so that the user cannot use it? If so, what's the best
+> way to do it?
 
-Check the size specified for write buffers before allocating.
+Just don't add BTF_ID_FLAGS entries for them.
+You'd also need to make an extra call to add_kfunc_call to add its
+details before you can do the fixup.
+That allows find_kfunc_desc to work.
+I did something similar in earlier versions of resilient locks.
+In add_kfunc_call's end (instead of directly returning):
+func_id =3D get_shadow_kfunc_id(func_id, offset);
+if (!func_id)
+  return err;
+return add_kfunc_call(env, func_id, offset);
 
-Reported-by: syzbot+4eb7a741b3216020043a@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=4eb7a741b3216020043a
-Signed-off-by: Leo Stone <leocstone@gmail.com>
----
-v2: Make the check in handle_policy_update() to also cover
-safesetid_uid_file_write(). Thanks for your feedback.
-v1: https://lore.kernel.org/all/20241216030213.246804-2-leocstone@gmail.com/
----
- security/safesetid/securityfs.c | 3 +++
- 1 file changed, 3 insertions(+)
+Then check in fixup_kfunc_call to find shadow kfunc id and substitute imm.
+Can use some other naming instead of "shadow".
+Probably need to take a prog pointer to make a decision to find the
+underlying kfunc id in your case.
 
-diff --git a/security/safesetid/securityfs.c b/security/safesetid/securityfs.c
-index 25310468bcdd..8e1ffd70b18a 100644
---- a/security/safesetid/securityfs.c
-+++ b/security/safesetid/securityfs.c
-@@ -143,6 +143,9 @@ static ssize_t handle_policy_update(struct file *file,
- 	char *buf, *p, *end;
- 	int err;
- 
-+	if (len >= KMALLOC_MAX_SIZE)
-+		return -EINVAL;
-+
- 	pol = kmalloc(sizeof(struct setid_ruleset), GFP_KERNEL);
- 	if (!pol)
- 		return -ENOMEM;
--- 
-2.43.0
-
+>
+> Thanks,
+> Song
+>
