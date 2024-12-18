@@ -1,63 +1,64 @@
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E191DDC2A
-	for <linux-security-module@vger.kernel.org>; Wed, 18 Dec 2024 22:58:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 488A91A0AE1
+	for <linux-security-module@vger.kernel.org>; Wed, 18 Dec 2024 23:14:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734562723; cv=none; b=iaxGIRCKzGqs/Fz6x/iXPhzG6wMhEP2uilIa1A28vClXyVjP6GEcwcqKEO4X0d4Dk28qFWYpRDh848Z5/PXGZgU2d9fGf9fPcqAwjhsI9nONXgT+aFV992fmWoRfhtjAmuHp1EJxxd2MyBzKwFayup6IZ6MCRDnuoTFf9HGQMfI=
+	t=1734563672; cv=none; b=ERnNmeMUn2V/Jim5G+fw/2ve/PIn7HfpE6eBXBPchc0wNxHSpvtBqEO7HjbC6/O0mPFdluJV4mGpSgkiCuaNKWWTlSpdfZvqoTkHtgvphroAuHjF546pNQ94yYaOC8UVZr2zMoE3Hv5pNcBYXTABDh9EXxIkokLUOHvNNoRA428=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734562723; c=relaxed/simple;
-	bh=7zTRh9WChwHznVT2uyjcq3GuYdGzsRQW4jp4lj2yhoM=;
+	s=arc-20240116; t=1734563672; c=relaxed/simple;
+	bh=lyAMNMv5eKSuulZNEc/bdNCuyulKLn44+4F3l6KUPRs=;
 	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=u3jwpHbRHhxYSKdXFbhLxquc1F+cf9JRQqe+9TU7Xep54S2cpRzritf5yqHCABoKEuA7l8VT+GgJBiFOIgaUJo5g5CEAWgjcRgmcIg3crVRBKoN8geIOBz8zT/b3zQkd6HJ13iqinPXJKW2MPq2kQ64rqSxMTePA9XsXoeTrdyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ReoBgrEC; arc=none smtp.client-ip=209.85.222.172
+	 References:In-Reply-To; b=BQcLackfUlXBNwabV6mmcoIzSHswE/TagCb+fnHQEqYQm7MqrVu5xo3Qtm5L28R3jvnw4ymQ0ZA3CZiq6RhihnqcMmqxLK6/chxtr85FBnpaBd8XRVxwxvNqV8OK483LswPnTJnpa5RQZ72JhEmSZbuKI8jl/6wZI1gCOshnDog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=duz3P9po; arc=none smtp.client-ip=209.85.219.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ReoBgrEC"
-Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7b6f0afda3fso11903385a.2
-        for <linux-security-module@vger.kernel.org>; Wed, 18 Dec 2024 14:58:41 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="duz3P9po"
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6d88cb85987so1937956d6.1
+        for <linux-security-module@vger.kernel.org>; Wed, 18 Dec 2024 15:14:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1734562720; x=1735167520; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1734563669; x=1735168469; darn=vger.kernel.org;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :mime-version:message-id:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=TgmnWXJMlIfgKvaYXpKZGEl1Rqe9wYgXYNdDsllL8W8=;
-        b=ReoBgrECpIIwW3IW5T39vcSqTUy3Ouomb9KjKPuHr8589NpUtE6KUEOXov+PVlG26F
-         lcfNIqIHjvTCKum/Q4i7asnXZCW107s7qhwIE39YHHqfKqvKjKHZeuO8NzM94cYhaSt9
-         pMQO5nErPXXGY5OurC38iA7laLeAKcp24ZJ8FAT3I31e9hQSMKdXrXCNvXPj9oZkbJiT
-         4M0sQPmjQqHtpdw/kPV4mBf8hKZkqIzBQ94jlWckpQ6Fd9Lu+wJTBkFZs3luofDSdOki
-         GrQgSYz6+3YINSe/U7q+UXtttBTRga61gjjkPdTvWZ1lwAdfsgknkSxfF0OcoaxJZyLY
-         2zkg==
+        bh=fFXlSpmqndisihDpwgewGal8XJGyYG+RFQb6zfcXijY=;
+        b=duz3P9poAea/erOck2V9RvuKIPsuXiWKV6q3VWqs8apR/YYXIY5ukfnVtX7DcZk6rd
+         JKsmBdUEWzQFz5W0Ywg6t2uRces73wp3t8Ll7ACoGjyKmywv2M3IrhASqoBM+V+DpZ8P
+         /z9YaNOxGeAN9uB3vJtQaeEtuDFU2TSDH2+he+2dprN+40kW7heGDZKvLKZDVLdPt3Nr
+         UympnUN+vyJdP1kYH3j7GPexVO4yBX0WPw5d2tvBeg/mOpmB4TY1YkSQuIOFd1KPlGhq
+         zW9joLHbUXxdv/xn00Ar3KSlD2iLMxr4lCFnyvBUo01ufOqNrnF0PksEwPlYY0oEfQNb
+         cxwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734562720; x=1735167520;
+        d=1e100.net; s=20230601; t=1734563669; x=1735168469;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=TgmnWXJMlIfgKvaYXpKZGEl1Rqe9wYgXYNdDsllL8W8=;
-        b=AD0uKTkAeB1l0ZKGBdWd/byjdyB85jSZS9XauV5bwfsIrfvZU5N1BFY2DWWC6ZiFY4
-         0snPUxZDUr0sE8aBbVtubA4Kymm0v60UCx42wmSPiATCJIQJWSi9T8p4WC8bfqtHyzbc
-         NBdRIJ5wdr6jEuaT1IYPbKpAcpBvFLoINBVx+Lnax3bFAbBFoOZIWKMG0WX/qiHPCCNJ
-         eEunU8mnj5OOG8FcBjLT1bCl+cLALyOYDoT3PHwssFXGsA6VDfOEd7zNXc+O3sIEyGoa
-         Q2VhrI5RVLTjw9nXFcly2LhNTGdwrdkeU9nH8vyJBRb1GO8LNdDbxSwZxjgsO/OsN/VN
-         01dw==
-X-Forwarded-Encrypted: i=1; AJvYcCXziE73j0YoX5AnsDFy/pkZ2PoDw0+JEzFwOYsxRmBFaqWHxOKUkIPh+Mw9BDvqHfyAIDI3+zVH+5PbgHiFe8POqRfYg4I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJkvMmx49SHjhqTvyfJDRzb/7g85gluSApOADXrjvJczKJ10lB
-	7e6hyNHC8fMXxqZeu3ONRJtcqPlB8mpftTj2wm6chtzB10XUIvGFypLn5USKng==
-X-Gm-Gg: ASbGnct+13YweTM2E8W401mNbCwfJt5GQ2ggEZ+D+uWuPi0m7i7W03bOLB+QrCMOslT
-	U1/iMNqP+8txvKerfYti4SRKQcU0BirGwXMNVc8EL77Bw+spPyA6Otruut8x9F2zGRdAoy7lE8h
-	m1oq8Ql0NSXM2+uo016gj4Vou7U4PDCVp/QYIpkl/TMnnpcI1pUPwPYsFktS0NVtmZz2dSawguc
-	IN9kAM4JNww3ngf1SLzsV5yzcqkqw3ihnixrTRvUo7dXcm8Jvg=
-X-Google-Smtp-Source: AGHT+IHPbF4Xrxru8NoOlx4rDsgwQu8glHU2FYFB/VqEysgk4esuQAY4ypS+RgD2BO0l18yW1s7X/w==
-X-Received: by 2002:a05:620a:1a24:b0:7b6:d8aa:7ef9 with SMTP id af79cd13be357-7b8637550e8mr814324785a.32.1734562720134;
-        Wed, 18 Dec 2024 14:58:40 -0800 (PST)
+        bh=fFXlSpmqndisihDpwgewGal8XJGyYG+RFQb6zfcXijY=;
+        b=QmFcKF0ewcnHPcFjCaWMhh2pyAIxUHuRw8GploaH2rKWfS49xUP3vRn9GwTcPWeauA
+         htzpU8EmwTuYgbwrTccKlRAzvfTaKwlXAYg9Vs/6o9gdlohNrPTK11iZ2Pv1XMZtgtej
+         TS+S3q84eWid9LHbExRkCLvvyBF5tmjDHl9GMn/sJS8mkUh/BKQMX2VALHyGMcvXD1FE
+         TAGAVnn37U2OFYE1jl5XBJxhY9Dc2iF3FKyqXAkjmibRm0a3GWHjXQjg4g9o8eTJ/ubi
+         FkyXIpCxBjY+9PCg53JhxVuupHqbD9kgUthEdAV72eerckcR/BbKl4Yi+qZQ82QY/5aG
+         lnrw==
+X-Forwarded-Encrypted: i=1; AJvYcCWNEPrmH0kFc7cr7KTPl3l+E9MQWibl0AA92PozDd/vpWMyGjBbysUHXSSr6FWdXIJ63sb5KE275jo/RTldnHIQ5n/0MzY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7rTbMaxB5nLa6l7DscoMKg52+/4fIUJ2e3E67Wx3Mr7quc2gA
+	c8XWCld1ksOQ6nMUEaJAYyaDlyw5UwGMjdlRZJxPVx67a71Rrl1BHZmsRrnR+RCA4PhQEo/apDA
+	=
+X-Gm-Gg: ASbGncuUg5GtpY6bekj1Ago/ITYVT9ssM2SrSQi4iwtNd08N7SSMFoHorxUkidaP9dx
+	BE/jYmVwWbeMeqVmo9uWp6ki+mTP07eG3nXbLOHS6dQ6AVu4KhKdPU2FnYb2710qKFwxZ9K4cAq
+	s/mGNciW+Wt9TDinJkJmlk2X3pyskUfR/qk2EyCYESxMWc71S2hKmJslnqzqBp+DfRPBbSuBNQm
+	EfsSf0RIpnoTqDDrWmCPxCTh5x4Szgv8h7DRTlbyqd28ddCy8A=
+X-Google-Smtp-Source: AGHT+IF812hW3SafWF2rQUyIrEzOBwO01YXN1q6BdXWRjDtGlUPqECITyxWs+43CjiDrTg6b9jZQaA==
+X-Received: by 2002:a05:6214:3107:b0:6d8:a3f2:4cc with SMTP id 6a1803df08f44-6dd15547264mr22536116d6.5.1734563669239;
+        Wed, 18 Dec 2024 15:14:29 -0800 (PST)
 Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b9ac2bc1d4sm5379085a.9.2024.12.18.14.58.39
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6dd181d3d90sm690556d6.106.2024.12.18.15.14.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Dec 2024 14:58:39 -0800 (PST)
-Date: Wed, 18 Dec 2024 17:58:39 -0500
-Message-ID: <d3606724c102694b06da8f8135212ec7@paul-moore.com>
+        Wed, 18 Dec 2024 15:14:28 -0800 (PST)
+Date: Wed, 18 Dec 2024 18:14:28 -0500
+Message-ID: <eb8aefa13af635a5275c3ff446cd54f2@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -68,81 +69,30 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit 
 X-Mailer: pstg-pwork:20241218_1749/pstg-lib:20241217_2346/pstg-pwork:20241218_1749
 From: Paul Moore <paul@paul-moore.com>
-To: Casey Schaufler <casey@schaufler-ca.com>, LSM List <linux-security-module@vger.kernel.org>
-Cc: Florian Westphal <fw@strlen.de>, Karol Przybylski <karprzy7@gmail.com>, Casey Schaufler <casey@schaufler-ca.com>
-Subject: Re: [PATCH] net: corrections for security_secid_to_secctx returns
-References: <a5ac15fc-440e-4483-825a-2d6f08083af3@schaufler-ca.com>
-In-Reply-To: <a5ac15fc-440e-4483-825a-2d6f08083af3@schaufler-ca.com>
+To: Amit Vadhavana <av2082000@gmail.com>, jmorris@namei.org, serge@hallyn.com, casey@schaufler-ca.com, shuah@kernel.org
+Cc: ricardo@marliere.net, av2082000@gmail.com, skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev, linux-security-module@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] selftests: lsm: Refactor  `flags_overset_lsm_set_self_attr` test
+References: <20241116152136.10635-1-av2082000@gmail.com>
+In-Reply-To: <20241116152136.10635-1-av2082000@gmail.com>
 
-On Dec 10, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
+On Nov 16, 2024 Amit Vadhavana <av2082000@gmail.com> wrote:
 > 
-> security_secid_to_secctx() returns the size of the new context,
-> whereas previous versions provided that via a pointer parameter.
-> Correct the type of the value returned in nfqnl_get_sk_secctx()
-> and the check for error in netlbl_unlhsh_add().
+> Remove the temporary context variable `tctx` to simplify the code. use
+> the original context `ctx` directly in calls to `lsm_get_self_attr`,
+> eliminating redundancy without any functional changes.
 > 
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> Reviewed-by: Casey Schaufler <casey@schaufler-ca.com>
+> Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
+> Signed-off-by: Amit Vadhavana <av2082000@gmail.com>
 > ---
->  net/netfilter/nfnetlink_queue.c   | 8 ++++----
->  net/netlabel/netlabel_unlabeled.c | 6 +++---
->  2 files changed, 7 insertions(+), 7 deletions(-)
+> V1:- https://lore.kernel.org/all/20241112182810.24761-1-av2082000@gmail.com/
+> V1 -> V2 :
+> write complete sentences instead of bullet points in the change log.
+> ---
+>  tools/testing/selftests/lsm/lsm_set_self_attr_test.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
 
-This should also have a fixes tag for 2d470c778120 ("lsm: replace context+len
-with lsm_context"), what do you think?
-
-> diff --git a/net/netfilter/nfnetlink_queue.c b/net/netfilter/nfnetlink_queue.c
-> index 5110f29b2f40..6ae6cdc5fa5b 100644
-> --- a/net/netfilter/nfnetlink_queue.c
-> +++ b/net/netfilter/nfnetlink_queue.c
-> @@ -470,9 +470,9 @@ static int nfqnl_put_sk_classid(struct sk_buff *skb, struct sock *sk)
->  	return 0;
->  }
->  
-> -static u32 nfqnl_get_sk_secctx(struct sk_buff *skb, struct lsm_context *ctx)
-> +static int nfqnl_get_sk_secctx(struct sk_buff *skb, struct lsm_context *ctx)
->  {
-> -	u32 seclen = 0;
-> +	int seclen = 0;
->  #if IS_ENABLED(CONFIG_NETWORK_SECMARK)
->  
->  	if (!skb || !sk_fullsock(skb->sk))
-> @@ -568,7 +568,7 @@ nfqnl_build_packet_message(struct net *net, struct nfqnl_instance *queue,
->  	const struct nfnl_ct_hook *nfnl_ct;
->  	bool csum_verify;
->  	struct lsm_context ctx;
-> -	u32 seclen = 0;
-> +	int seclen = 0;
->  	ktime_t tstamp;
->  
->  	size = nlmsg_total_size(sizeof(struct nfgenmsg))
-> @@ -782,7 +782,7 @@ nfqnl_build_packet_message(struct net *net, struct nfqnl_instance *queue,
->  	if (nfqnl_put_sk_classid(skb, entskb->sk) < 0)
->  		goto nla_put_failure;
->  
-> -	if (seclen && nla_put(skb, NFQA_SECCTX, ctx.len, ctx.context))
-> +	if (seclen > 0 && nla_put(skb, NFQA_SECCTX, ctx.len, ctx.context))
->  		goto nla_put_failure;
->  
->  	if (ct && nfnl_ct->build(skb, ct, ctinfo, NFQA_CT, NFQA_CT_INFO) < 0)
-
-In addition to the changes above, I think we should also have some
-protection logic when we first call nfqnl_get_sk_secctx() and then
-use the return value to calculate the nla's size.  Untested snippet
-below:
-
-diff --git a/net/netfilter/nfnetlink_queue.c b/net/netfilter/nfnetlink_queue.c
-index d2773ce9b585..3abc132e7223 100644
---- a/net/netfilter/nfnetlink_queue.c
-+++ b/net/netfilter/nfnetlink_queue.c
-@@ -643,6 +643,8 @@ nfqnl_build_packet_message(struct net *net, struct nfqnl_instance *queue,
- 
-        if ((queue->flags & NFQA_CFG_F_SECCTX) && entskb->sk) {
-                seclen = nfqnl_get_sk_secctx(entskb, &secdata);
-+               if (seclen < 0)
-+                       return NULL;
-                if (seclen)
-                        size += nla_total_size(seclen);
-        }
+Thank you for working on improving the tests, merged into lsm/dev.
 
 --
 paul-moore.com
