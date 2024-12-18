@@ -1,229 +1,237 @@
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B272161310;
-	Wed, 18 Dec 2024 11:41:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC2221D45FC;
+	Wed, 18 Dec 2024 15:14:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734522101; cv=none; b=nTW4g86X9JvMj3ZLycjnmgrI0qq98Sm7dd4zkGFIZrF/Z9lvbAUeJA4uGHmpce+TtyZ4+12dqPW8Eb7sdObrE/WLSLayWgFkO0R/4L9Q3VpjAOPrZlRqtypIfEJGOB+olEiss4jhh045LoceBYc2RYcP71b8qBbzfzQohjai9YA=
+	t=1734534894; cv=none; b=ff2VfFJr3fCDyjke7G0fiDF/ToU2KsCmAKuohiwKCS6xeSq2y6Ay/3Y+D5AdAHSfeDcfKrUgb4Icst0EDMfqEHbFduIOHddW6iCzTiEIpGYXya6IKa1zFXwQTnN8T8ZH/tyX82ODuYfi1WvIZejPVHRNrelol6TnBy6/j5e2Dd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734522101; c=relaxed/simple;
-	bh=jIhlk8uvy6HrKArYDPzubzRzDPP6RkTF814/9kYXh+E=;
+	s=arc-20240116; t=1734534894; c=relaxed/simple;
+	bh=SjNt+XDqcRtFHMkrR6DiTUZbGYdJRYJjVJCsdb9bxhI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O53Nfnuc2vFg1wvw53QHmektVdHOICUMbJeGloI9np22Lm4vM0nogPQfzVB5Riu+MOn8qNkotWF9JMhWqJHMFgNWABFBX7t8Zs8iEmFOIbiI1Wi1XZFgKwlCNL92oIKIh2pqjloq4uxSqxzWWrFQ/4c3T8v5/DQ4OTNco12LdnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rPNkHz7m; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jMNKP+rb; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=nQYTIOAQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QZr0jquw; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+	 Content-Type:Content-Disposition:In-Reply-To; b=BnwOtHgzGVAtHcmCFUzRD9nd10jiYIl9/fhcYwzMvmiGgh3Wb1Fyxr1aW8eMkzuYzGnpSSqQtrE7f+YbwfM1Wg6SsLD77GsPkPCYbO+lRQeXdDC2shon7nNVgUEGiiWLk5Z9LLlSwiuJMOCepDKDcAx2/ZdRfVCrXTJQA5LIKSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZJUNGrrD; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rPNkHz7m";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jMNKP+rb";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="nQYTIOAQ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QZr0jquw"
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id C28241F396;
-	Wed, 18 Dec 2024 11:41:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1734522097; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6B3852qQKp8WfUVxdKcqFB2wusrAAaYORMzobHsGT8g=;
-	b=rPNkHz7mh5tm/yBxyLPVMz/oDfMy2/m6FLt7L6u6oiRFSwq0pqVB5fzA4WhfhhONwaNPEg
-	3QSO5oEay5phlYtPy+qHKgGGY+u/qPX+n6fIsQfZjf/YUyieQ8WhWneKF3YwtCGiS8iBF7
-	9p16PkMqhxCmpzRE+Njr4DfXscTxxm4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1734522097;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6B3852qQKp8WfUVxdKcqFB2wusrAAaYORMzobHsGT8g=;
-	b=jMNKP+rbXsv9Os6STJ3H6aJjT2x0Or2P8kjfKLykWa5QN7XyA4ahE4rha1/ZCaOdQa5lfL
-	1NTSXWS+979N5rCA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=nQYTIOAQ;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=QZr0jquw
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1734522096; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6B3852qQKp8WfUVxdKcqFB2wusrAAaYORMzobHsGT8g=;
-	b=nQYTIOAQixSNvw2OolFlEfanj+fwVUYREdRHydDmUCJu/3m3h1r9t/hK4ivKK6S2e9RQ9D
-	jbDpSeEix1uoHETdwlkxwGVkVSvgkBqq5I7rhLfR1IIhHqSKJcSF8d57TZzGOtlXhfOMgY
-	GbPRpZ9PmgWdlkFEP2Uvyb9QDgfEri0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1734522096;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6B3852qQKp8WfUVxdKcqFB2wusrAAaYORMzobHsGT8g=;
-	b=QZr0jquw3JeLNlobmwBVz5PS1G+d0crQf5dr6nRlN3pfyNg4LkPo/MNFdKeAU1Rbo3VqTX
-	n8qwNI0B23gqHuBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id ACC1A132EA;
-	Wed, 18 Dec 2024 11:41:36 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 8fHKKfC0Ymc6cAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 18 Dec 2024 11:41:36 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 62EBEA0935; Wed, 18 Dec 2024 12:41:32 +0100 (CET)
-Date: Wed, 18 Dec 2024 12:41:32 +0100
-From: Jan Kara <jack@suse.cz>
-To: Song Liu <song@kernel.org>
-Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
-	kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com,
-	ast@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev,
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	kpsingh@kernel.org, mattbobrowski@google.com, liamwisehart@meta.com,
-	shankaran@meta.com
-Subject: Re: [PATCH v4 bpf-next 1/6] fs/xattr: bpf: Introduce security.bpf.
- xattr name prefix
-Message-ID: <20241218114132.xfmavorzcpwo6nwg@quack3>
-References: <20241217063821.482857-1-song@kernel.org>
- <20241217063821.482857-2-song@kernel.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZJUNGrrD"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8CA9C4CECD;
+	Wed, 18 Dec 2024 15:14:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1734534893;
+	bh=SjNt+XDqcRtFHMkrR6DiTUZbGYdJRYJjVJCsdb9bxhI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZJUNGrrD92LbfAoykCRLgv4ue8/TQpJT+ZSjc4y0+QtjHMVeqodSTtGy68pavPYpn
+	 7otipDC35WXX4JW0z0ruRtK60POtL8s39akaRRmceo96gHferykcsnG4fyBicw8PV4
+	 zQ4kWMq0kDgrymMA2EuSu0ZYDIzaDRP5NiwpRzperRw/nx+RzHcyaPYC5zP8YviM3c
+	 cSxv2hGTZ/3MnOxN3hf9Iq7b8IzYriLLiMwWCrkIEmAlWxIG/DznT7dXRim2wPDLVx
+	 W13UxjbMxcgktTohq5MQGZ/I+EvK7fRwj0bSmiCjA/WY02raeDO7JxsE2M3W8MOJUW
+	 oxEBf6ZoYgIbg==
+Date: Wed, 18 Dec 2024 15:14:46 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	Nelson Chu <nelson@rivosinc.com>, linux-kernel@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, linux-riscv@lists.infradead.org,
+	llvm@lists.linux.dev, linux-perf-users@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH 1/2] kbuild: Check version of objdump
+Message-ID: <20241218-sandfish-hence-5fa18539f7ca@spud>
+References: <20241216-perf_fix_riscv_obj_reading-v1-0-b75962660a9b@rivosinc.com>
+ <20241216-perf_fix_riscv_obj_reading-v1-1-b75962660a9b@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="b/GWEQJsBut7jlmV"
+Content-Disposition: inline
+In-Reply-To: <20241216-perf_fix_riscv_obj_reading-v1-1-b75962660a9b@rivosinc.com>
+
+
+--b/GWEQJsBut7jlmV
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241217063821.482857-2-song@kernel.org>
-X-Rspamd-Queue-Id: C28241F396
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[18];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,meta.com,kernel.org,gmail.com,iogearbox.net,linux.dev,zeniv.linux.org.uk,suse.cz,google.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim,suse.cz:email]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
-X-Spam-Flag: NO
+Content-Transfer-Encoding: quoted-printable
 
-On Mon 16-12-24 22:38:16, Song Liu wrote:
-> Introduct new xattr name prefix security.bpf., and enable reading these
-> xattrs from bpf kfuncs bpf_get_[file|dentry]_xattr().
-> 
-> As we are on it, correct the comments for return value of
-> bpf_get_[file|dentry]_xattr(), i.e. return length the xattr value on
-> success.
-> 
-> Signed-off-by: Song Liu <song@kernel.org>
-> Acked-by: Christian Brauner <brauner@kernel.org>
+On Mon, Dec 16, 2024 at 03:12:51PM -0800, Charlie Jenkins wrote:
+> Similar to ld-version, add a way to check the version of objdump. This
+> should most of the time end up being the binutils version or the llvm
+> version.
+>=20
+> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
 
-Looks good to me. Feel free to add:
+This fails for allmodconfig and rv32_defconfig with clang. 19.1.1
+according to Bjorn :)
 
-Reviewed-by: Jan Kara <jack@suse.cz>
-
-								Honza
+Cheers,
+Conor.
 
 > ---
->  fs/bpf_fs_kfuncs.c         | 19 ++++++++++++++-----
->  include/uapi/linux/xattr.h |  4 ++++
->  2 files changed, 18 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/bpf_fs_kfuncs.c b/fs/bpf_fs_kfuncs.c
-> index 3fe9f59ef867..8a65184c8c2c 100644
-> --- a/fs/bpf_fs_kfuncs.c
-> +++ b/fs/bpf_fs_kfuncs.c
-> @@ -93,6 +93,11 @@ __bpf_kfunc int bpf_path_d_path(struct path *path, char *buf, size_t buf__sz)
->  	return len;
->  }
->  
-> +static bool match_security_bpf_prefix(const char *name__str)
+>  init/Kconfig               | 10 +++++++
+>  scripts/Kconfig.include    |  6 ++++
+>  scripts/objdump-version.sh | 69 ++++++++++++++++++++++++++++++++++++++++=
+++++++
+>  3 files changed, 85 insertions(+)
+>=20
+> diff --git a/init/Kconfig b/init/Kconfig
+> index a20e6efd3f0fbdd7f0df2448854cc30734a0ee4f..0b5d36f939e1de89c12ebdd61=
+e4815015314d4f1 100644
+> --- a/init/Kconfig
+> +++ b/init/Kconfig
+> @@ -60,6 +60,16 @@ config LLD_VERSION
+>  	default $(ld-version) if LD_IS_LLD
+>  	default 0
+> =20
+> +config OBJDUMP_IS_GNU
+> +	def_bool $(success,test "$(objdump-name)" =3D objdump)
+> +
+> +config OBJDUMP_IS_LLVM
+> +	def_bool $(success,test "$(objdump-name)" =3D llvm-objdump)
+> +
+> +config OBJDUMP_VERSION
+> +	int
+> +	default $(objdump-version)
+> +
+>  config RUSTC_VERSION
+>  	int
+>  	default $(rustc-version)
+> diff --git a/scripts/Kconfig.include b/scripts/Kconfig.include
+> index 33193ca6e8030e659d6b321acaea1acd42c387a4..cb3e2d2564fea8cce780adb3b=
+e672c9596b7ccf2 100644
+> --- a/scripts/Kconfig.include
+> +++ b/scripts/Kconfig.include
+> @@ -58,6 +58,12 @@ $(error-if,$(success,test -z "$(ld-info)"),Sorry$(comm=
+a) this linker is not supp
+>  ld-name :=3D $(shell,set -- $(ld-info) && echo $1)
+>  ld-version :=3D $(shell,set -- $(ld-info) && echo $2)
+> =20
+> +# Get the objdump name, version, and error out if it is not supported.
+> +objdump-info :=3D $(shell,$(srctree)/scripts/objdump-version.sh $(OBJDUM=
+P))
+> +$(error-if,$(success,test -z "$(objdump-info)"),Sorry$(comma) this objdu=
+mp is not supported.)
+> +objdump-name :=3D $(shell,set -- $(objdump-info) && echo $1)
+> +objdump-version :=3D $(shell,set -- $(objdump-info) && echo $2)
+> +
+>  # machine bit flags
+>  #  $(m32-flag): -m32 if the compiler supports it, or an empty string oth=
+erwise.
+>  #  $(m64-flag): -m64 if the compiler supports it, or an empty string oth=
+erwise.
+> diff --git a/scripts/objdump-version.sh b/scripts/objdump-version.sh
+> new file mode 100755
+> index 0000000000000000000000000000000000000000..fa24f8dc2d3c42fd1195fceb3=
+c96b27f7127db25
+> --- /dev/null
+> +++ b/scripts/objdump-version.sh
+> @@ -0,0 +1,69 @@
+> +#!/bin/sh
+> +# SPDX-License-Identifier: GPL-2.0
+> +#
+> +# Print the objdump name and its version in a 5 or 6-digit form.
+> +# Also, perform the minimum version check.
+> +
+> +set -e
+> +
+> +# Convert the version string x.y.z to a canonical 5 or 6-digit form.
+> +get_canonical_version()
 > +{
-> +	return !strncmp(name__str, XATTR_NAME_BPF_LSM, XATTR_NAME_BPF_LSM_LEN);
+> +	IFS=3D.
+> +	set -- $1
+> +
+> +	# If the 2nd or 3rd field is missing, fill it with a zero.
+> +	#
+> +	# The 4th field, if present, is ignored.
+> +	# This occurs in development snapshots as in 2.35.1.20201116
+> +	echo $((10000 * $1 + 100 * ${2:-0} + ${3:-0}))
 > +}
 > +
->  /**
->   * bpf_get_dentry_xattr - get xattr of a dentry
->   * @dentry: dentry to get xattr from
-> @@ -101,9 +106,10 @@ __bpf_kfunc int bpf_path_d_path(struct path *path, char *buf, size_t buf__sz)
->   *
->   * Get xattr *name__str* of *dentry* and store the output in *value_ptr*.
->   *
-> - * For security reasons, only *name__str* with prefix "user." is allowed.
-> + * For security reasons, only *name__str* with prefix "user." or
-> + * "security.bpf." is allowed.
->   *
-> - * Return: 0 on success, a negative value on error.
-> + * Return: length of the xattr value on success, a negative value on error.
->   */
->  __bpf_kfunc int bpf_get_dentry_xattr(struct dentry *dentry, const char *name__str,
->  				     struct bpf_dynptr *value_p)
-> @@ -117,7 +123,9 @@ __bpf_kfunc int bpf_get_dentry_xattr(struct dentry *dentry, const char *name__st
->  	if (WARN_ON(!inode))
->  		return -EINVAL;
->  
-> -	if (strncmp(name__str, XATTR_USER_PREFIX, XATTR_USER_PREFIX_LEN))
-> +	/* Allow reading xattr with user. and security.bpf. prefix */
-> +	if (strncmp(name__str, XATTR_USER_PREFIX, XATTR_USER_PREFIX_LEN) &&
-> +	    !match_security_bpf_prefix(name__str))
->  		return -EPERM;
->  
->  	value_len = __bpf_dynptr_size(value_ptr);
-> @@ -139,9 +147,10 @@ __bpf_kfunc int bpf_get_dentry_xattr(struct dentry *dentry, const char *name__st
->   *
->   * Get xattr *name__str* of *file* and store the output in *value_ptr*.
->   *
-> - * For security reasons, only *name__str* with prefix "user." is allowed.
-> + * For security reasons, only *name__str* with prefix "user." or
-> + * "security.bpf." is allowed.
->   *
-> - * Return: 0 on success, a negative value on error.
-> + * Return: length of the xattr value on success, a negative value on error.
->   */
->  __bpf_kfunc int bpf_get_file_xattr(struct file *file, const char *name__str,
->  				   struct bpf_dynptr *value_p)
-> diff --git a/include/uapi/linux/xattr.h b/include/uapi/linux/xattr.h
-> index 9854f9cff3c6..c7c85bb504ba 100644
-> --- a/include/uapi/linux/xattr.h
-> +++ b/include/uapi/linux/xattr.h
-> @@ -83,6 +83,10 @@ struct xattr_args {
->  #define XATTR_CAPS_SUFFIX "capability"
->  #define XATTR_NAME_CAPS XATTR_SECURITY_PREFIX XATTR_CAPS_SUFFIX
->  
-> +#define XATTR_BPF_LSM_SUFFIX "bpf."
-> +#define XATTR_NAME_BPF_LSM (XATTR_SECURITY_PREFIX XATTR_BPF_LSM_SUFFIX)
-> +#define XATTR_NAME_BPF_LSM_LEN (sizeof(XATTR_NAME_BPF_LSM) - 1)
+> +orig_args=3D"$@"
 > +
->  #define XATTR_POSIX_ACL_ACCESS  "posix_acl_access"
->  #define XATTR_NAME_POSIX_ACL_ACCESS XATTR_SYSTEM_PREFIX XATTR_POSIX_ACL_ACCESS
->  #define XATTR_POSIX_ACL_DEFAULT  "posix_acl_default"
-> -- 
-> 2.43.5
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> +# Get the first line of the --version output.
+> +IFS=3D'
+> +'
+> +set -- $(LC_ALL=3DC "$@" --version)
+> +
+> +# Split the line on spaces.
+> +IFS=3D' '
+> +set -- $1
+> +
+> +min_tool_version=3D$(dirname $0)/min-tool-version.sh
+> +
+> +if [ "$1" =3D GNU -a "$2" =3D objdump ]; then
+> +	shift $(($# - 1))
+> +	version=3D$1
+> +	min_version=3D$($min_tool_version binutils)
+> +	disp_name=3D"GNU objdump"
+> +else
+> +	while [ $# -gt 1 -a "$1" !=3D "LLVM" ]; do
+> +		shift
+> +	done
+> +
+> +	if [ "$1" =3D LLVM ]; then
+> +		version=3D$3
+> +		min_version=3D$($min_tool_version llvm)
+> +		disp_name=3D"llvm-objdump"
+> +	else
+> +		echo "$orig_args: unknown objdump" >&2
+> +		exit 1
+> +	fi
+> +fi
+> +
+> +version=3D${version%%[!0-9.]*}
+> +
+> +cversion=3D$(get_canonical_version $version)
+> +min_cversion=3D$(get_canonical_version $min_version)
+> +
+> +if [ "$cversion" -lt "$min_cversion" ]; then
+> +	echo >&2 "***"
+> +	echo >&2 "*** objdump is too old."
+> +	echo >&2 "***   Your $disp_name version:    $version"
+> +	echo >&2 "***   Minimum $disp_name version: $min_version"
+> +	echo >&2 "***"
+> +	exit 1
+> +fi
+> +
+> +echo objdump $cversion
+>=20
+> --=20
+> 2.34.1
+>=20
+>=20
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
+
+--b/GWEQJsBut7jlmV
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ2Lm5gAKCRB4tDGHoIJi
+0u/lAP9kRzDD4E/btOPSi7N3eOmgjKUrMlMEji8jDYxIKzyTmAD/XIfHvCTvc6cx
+cqbHAgzjJzYiJ5hNBr8W+Qg7PTaoEwA=
+=4kd8
+-----END PGP SIGNATURE-----
+
+--b/GWEQJsBut7jlmV--
