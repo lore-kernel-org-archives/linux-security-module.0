@@ -1,137 +1,229 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D3F27726;
-	Wed, 18 Dec 2024 11:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B272161310;
+	Wed, 18 Dec 2024 11:41:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734519806; cv=none; b=bjUyUyV4D+6s9Q5N3UzJYEkVQqTJt64eS92EXTCkW5q5qiAIJITWXcu8qOu/gcIZVfqMWHsJjFLGWWBSfxQUD5QU0OstmqxEW2xdYkmeYx2aLJEFumTb+X7CIQ2B27SlqniHRmtPKIJGq5JJhLSagW4AszkzP/R64m2hWbXZdas=
+	t=1734522101; cv=none; b=nTW4g86X9JvMj3ZLycjnmgrI0qq98Sm7dd4zkGFIZrF/Z9lvbAUeJA4uGHmpce+TtyZ4+12dqPW8Eb7sdObrE/WLSLayWgFkO0R/4L9Q3VpjAOPrZlRqtypIfEJGOB+olEiss4jhh045LoceBYc2RYcP71b8qBbzfzQohjai9YA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734519806; c=relaxed/simple;
-	bh=Bwr8wp1S7qTNpXMylQoXZz6n2G4oi79rMKip+WwaDJk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=sHji4918zyN7Sfto+H0Ds0sKNFrodsfYRgEwg1QaKgJUoHkF7I0ZjhYQWIsiRX3HhSq5kV2cHuDb22f69cmIZZKnN9ghl7Zo6Bs6p9pHlmz1LkkAoLzdoJKtno1kR6wa9JgKgPVxXk86VMHgqu94HFk3LMyjh7RcZqwESGkaOqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Fh6B0WGW; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1734522101; c=relaxed/simple;
+	bh=jIhlk8uvy6HrKArYDPzubzRzDPP6RkTF814/9kYXh+E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O53Nfnuc2vFg1wvw53QHmektVdHOICUMbJeGloI9np22Lm4vM0nogPQfzVB5Riu+MOn8qNkotWF9JMhWqJHMFgNWABFBX7t8Zs8iEmFOIbiI1Wi1XZFgKwlCNL92oIKIh2pqjloq4uxSqxzWWrFQ/4c3T8v5/DQ4OTNco12LdnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rPNkHz7m; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jMNKP+rb; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=nQYTIOAQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QZr0jquw; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Fh6B0WGW"
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BHNw8em032269;
-	Wed, 18 Dec 2024 11:03:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=s97y+f
-	eGJAPiLl7JqkNWOTJGCsnACWuH4V+doSwqn6o=; b=Fh6B0WGW1L32l6+5Bverhw
-	4U7xZPRuE3Nx9uYWsO22pQBEAu/tUzc9TWXgbqIqyvp94w9EIr9Le6NLMvjlhcXM
-	PAGMQ0c0Ycm1MjIHjwKvxXnkSUskZFpAwRBDA4Pc+iVaVNVBpZah6V7mA8L6GH/T
-	mClC2VMnl4I07/e+xfuqwPrq9wdZOtzlrXLejtZmNz69/7WL/pM8sUtWeteiLPdd
-	XgKJwswDj+gELiQP0VHqVp5otyAyeQHbklWua0ZeUKFFVQ6053B8yFjpxgHDChNf
-	d1ulu9ZB/3fU7Yqsk6642KaX9L7fpXftZSkV87bFQ3F71BBJ519hwNdMcvlFZsGA
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43kkehagbc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 18 Dec 2024 11:02:59 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4BIB2xSd029200;
-	Wed, 18 Dec 2024 11:02:59 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43kkehagb9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 18 Dec 2024 11:02:59 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BI7id2a014344;
-	Wed, 18 Dec 2024 11:02:57 GMT
-Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43hmqy7mqg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 18 Dec 2024 11:02:57 +0000
-Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
-	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BIB2vQN30868116
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 18 Dec 2024 11:02:57 GMT
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3619658073;
-	Wed, 18 Dec 2024 11:02:57 +0000 (GMT)
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8EAD258077;
-	Wed, 18 Dec 2024 11:02:55 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.145.1])
-	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 18 Dec 2024 11:02:55 +0000 (GMT)
-Message-ID: <bd5a5029302bc05c2fbe3ee716abb644c568da48.camel@linux.ibm.com>
-Subject: Re: [RFC 0/2] ima: evm: Add kernel cmdline options to disable
- IMA/EVM
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Casey Schaufler <casey@schaufler-ca.com>, Song Liu <song@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
-        eric.snowberg@oracle.com, paul@paul-moore.com, jmorris@namei.org,
-        serge@hallyn.com, kernel-team@meta.com, brauner@kernel.org,
-        jack@suse.cz, viro@zeniv.linux.org.uk
-Date: Wed, 18 Dec 2024 06:02:55 -0500
-In-Reply-To: <fc60313a-67b3-4889-b1a6-ba2673b1a67d@schaufler-ca.com>
-References: <20241217202525.1802109-1-song@kernel.org>
-	 <fc60313a-67b3-4889-b1a6-ba2673b1a67d@schaufler-ca.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rPNkHz7m";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jMNKP+rb";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="nQYTIOAQ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QZr0jquw"
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id C28241F396;
+	Wed, 18 Dec 2024 11:41:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1734522097; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6B3852qQKp8WfUVxdKcqFB2wusrAAaYORMzobHsGT8g=;
+	b=rPNkHz7mh5tm/yBxyLPVMz/oDfMy2/m6FLt7L6u6oiRFSwq0pqVB5fzA4WhfhhONwaNPEg
+	3QSO5oEay5phlYtPy+qHKgGGY+u/qPX+n6fIsQfZjf/YUyieQ8WhWneKF3YwtCGiS8iBF7
+	9p16PkMqhxCmpzRE+Njr4DfXscTxxm4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1734522097;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6B3852qQKp8WfUVxdKcqFB2wusrAAaYORMzobHsGT8g=;
+	b=jMNKP+rbXsv9Os6STJ3H6aJjT2x0Or2P8kjfKLykWa5QN7XyA4ahE4rha1/ZCaOdQa5lfL
+	1NTSXWS+979N5rCA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=nQYTIOAQ;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=QZr0jquw
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1734522096; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6B3852qQKp8WfUVxdKcqFB2wusrAAaYORMzobHsGT8g=;
+	b=nQYTIOAQixSNvw2OolFlEfanj+fwVUYREdRHydDmUCJu/3m3h1r9t/hK4ivKK6S2e9RQ9D
+	jbDpSeEix1uoHETdwlkxwGVkVSvgkBqq5I7rhLfR1IIhHqSKJcSF8d57TZzGOtlXhfOMgY
+	GbPRpZ9PmgWdlkFEP2Uvyb9QDgfEri0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1734522096;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6B3852qQKp8WfUVxdKcqFB2wusrAAaYORMzobHsGT8g=;
+	b=QZr0jquw3JeLNlobmwBVz5PS1G+d0crQf5dr6nRlN3pfyNg4LkPo/MNFdKeAU1Rbo3VqTX
+	n8qwNI0B23gqHuBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id ACC1A132EA;
+	Wed, 18 Dec 2024 11:41:36 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 8fHKKfC0Ymc6cAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 18 Dec 2024 11:41:36 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 62EBEA0935; Wed, 18 Dec 2024 12:41:32 +0100 (CET)
+Date: Wed, 18 Dec 2024 12:41:32 +0100
+From: Jan Kara <jack@suse.cz>
+To: Song Liu <song@kernel.org>
+Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+	kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com,
+	ast@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	kpsingh@kernel.org, mattbobrowski@google.com, liamwisehart@meta.com,
+	shankaran@meta.com
+Subject: Re: [PATCH v4 bpf-next 1/6] fs/xattr: bpf: Introduce security.bpf.
+ xattr name prefix
+Message-ID: <20241218114132.xfmavorzcpwo6nwg@quack3>
+References: <20241217063821.482857-1-song@kernel.org>
+ <20241217063821.482857-2-song@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: PR0_6VDIFxuKIqMRZxVmkcCSCK8bPD3N
-X-Proofpoint-ORIG-GUID: Se6wyub2I67PDfXPzx-0XCsLmEvb-SN-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- lowpriorityscore=0 clxscore=1011 spamscore=0 priorityscore=1501
- suspectscore=0 adultscore=0 mlxscore=0 malwarescore=0 bulkscore=0
- mlxlogscore=883 phishscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2411120000 definitions=main-2412180088
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241217063821.482857-2-song@kernel.org>
+X-Rspamd-Queue-Id: C28241F396
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[18];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MISSING_XM_UA(0.00)[];
+	FREEMAIL_CC(0.00)[vger.kernel.org,meta.com,kernel.org,gmail.com,iogearbox.net,linux.dev,zeniv.linux.org.uk,suse.cz,google.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim,suse.cz:email]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.01
+X-Spam-Flag: NO
 
-On Tue, 2024-12-17 at 13:29 -0800, Casey Schaufler wrote:
-> On 12/17/2024 12:25 PM, Song Liu wrote:
-> > While reading and testing LSM code, I found IMA/EVM consume per inode
-> > storage even when they are not in use. Add options to diable them in
-> > kernel command line. The logic and syntax is mostly borrowed from an
-> > old serious [1].
->=20
-> Why not omit ima and evm from the lsm=3D parameter?
+On Mon 16-12-24 22:38:16, Song Liu wrote:
+> Introduct new xattr name prefix security.bpf., and enable reading these
+> xattrs from bpf kfuncs bpf_get_[file|dentry]_xattr().
+> 
+> As we are on it, correct the comments for return value of
+> bpf_get_[file|dentry]_xattr(), i.e. return length the xattr value on
+> success.
+> 
+> Signed-off-by: Song Liu <song@kernel.org>
+> Acked-by: Christian Brauner <brauner@kernel.org>
 
-Casey, Paul, always enabling IMA & EVM as the last LSMs, if configured, wer=
-e the
-conditions for making IMA and EVM LSMs.  Up to that point, only when an ino=
-de
-was in policy did it consume any memory (rbtree).  I'm pretty sure you reme=
-mber
-the rather heated discussion(s).
+Looks good to me. Feel free to add:
 
-Mimi
+Reviewed-by: Jan Kara <jack@suse.cz>
 
->=20
-> >=20
-> > [1] https://lore.kernel.org/lkml/cover.1398259638.git.d.kasatkin@samsun=
-g.com/
-> >=20
-> > Song Liu (2):
-> >   ima: Add kernel parameter to disable IMA
-> >   evm: Add kernel parameter to disable EVM
-> >=20
-> >  security/integrity/evm/evm.h       |  6 ++++++
-> >  security/integrity/evm/evm_main.c  | 22 ++++++++++++++--------
-> >  security/integrity/evm/evm_secfs.c |  3 ++-
-> >  security/integrity/ima/ima_main.c  | 13 +++++++++++++
-> >  4 files changed, 35 insertions(+), 9 deletions(-)
-> >=20
-> > --
-> > 2.43.5
-> >=20
->=20
+								Honza
 
+> ---
+>  fs/bpf_fs_kfuncs.c         | 19 ++++++++++++++-----
+>  include/uapi/linux/xattr.h |  4 ++++
+>  2 files changed, 18 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/bpf_fs_kfuncs.c b/fs/bpf_fs_kfuncs.c
+> index 3fe9f59ef867..8a65184c8c2c 100644
+> --- a/fs/bpf_fs_kfuncs.c
+> +++ b/fs/bpf_fs_kfuncs.c
+> @@ -93,6 +93,11 @@ __bpf_kfunc int bpf_path_d_path(struct path *path, char *buf, size_t buf__sz)
+>  	return len;
+>  }
+>  
+> +static bool match_security_bpf_prefix(const char *name__str)
+> +{
+> +	return !strncmp(name__str, XATTR_NAME_BPF_LSM, XATTR_NAME_BPF_LSM_LEN);
+> +}
+> +
+>  /**
+>   * bpf_get_dentry_xattr - get xattr of a dentry
+>   * @dentry: dentry to get xattr from
+> @@ -101,9 +106,10 @@ __bpf_kfunc int bpf_path_d_path(struct path *path, char *buf, size_t buf__sz)
+>   *
+>   * Get xattr *name__str* of *dentry* and store the output in *value_ptr*.
+>   *
+> - * For security reasons, only *name__str* with prefix "user." is allowed.
+> + * For security reasons, only *name__str* with prefix "user." or
+> + * "security.bpf." is allowed.
+>   *
+> - * Return: 0 on success, a negative value on error.
+> + * Return: length of the xattr value on success, a negative value on error.
+>   */
+>  __bpf_kfunc int bpf_get_dentry_xattr(struct dentry *dentry, const char *name__str,
+>  				     struct bpf_dynptr *value_p)
+> @@ -117,7 +123,9 @@ __bpf_kfunc int bpf_get_dentry_xattr(struct dentry *dentry, const char *name__st
+>  	if (WARN_ON(!inode))
+>  		return -EINVAL;
+>  
+> -	if (strncmp(name__str, XATTR_USER_PREFIX, XATTR_USER_PREFIX_LEN))
+> +	/* Allow reading xattr with user. and security.bpf. prefix */
+> +	if (strncmp(name__str, XATTR_USER_PREFIX, XATTR_USER_PREFIX_LEN) &&
+> +	    !match_security_bpf_prefix(name__str))
+>  		return -EPERM;
+>  
+>  	value_len = __bpf_dynptr_size(value_ptr);
+> @@ -139,9 +147,10 @@ __bpf_kfunc int bpf_get_dentry_xattr(struct dentry *dentry, const char *name__st
+>   *
+>   * Get xattr *name__str* of *file* and store the output in *value_ptr*.
+>   *
+> - * For security reasons, only *name__str* with prefix "user." is allowed.
+> + * For security reasons, only *name__str* with prefix "user." or
+> + * "security.bpf." is allowed.
+>   *
+> - * Return: 0 on success, a negative value on error.
+> + * Return: length of the xattr value on success, a negative value on error.
+>   */
+>  __bpf_kfunc int bpf_get_file_xattr(struct file *file, const char *name__str,
+>  				   struct bpf_dynptr *value_p)
+> diff --git a/include/uapi/linux/xattr.h b/include/uapi/linux/xattr.h
+> index 9854f9cff3c6..c7c85bb504ba 100644
+> --- a/include/uapi/linux/xattr.h
+> +++ b/include/uapi/linux/xattr.h
+> @@ -83,6 +83,10 @@ struct xattr_args {
+>  #define XATTR_CAPS_SUFFIX "capability"
+>  #define XATTR_NAME_CAPS XATTR_SECURITY_PREFIX XATTR_CAPS_SUFFIX
+>  
+> +#define XATTR_BPF_LSM_SUFFIX "bpf."
+> +#define XATTR_NAME_BPF_LSM (XATTR_SECURITY_PREFIX XATTR_BPF_LSM_SUFFIX)
+> +#define XATTR_NAME_BPF_LSM_LEN (sizeof(XATTR_NAME_BPF_LSM) - 1)
+> +
+>  #define XATTR_POSIX_ACL_ACCESS  "posix_acl_access"
+>  #define XATTR_NAME_POSIX_ACL_ACCESS XATTR_SYSTEM_PREFIX XATTR_POSIX_ACL_ACCESS
+>  #define XATTR_POSIX_ACL_DEFAULT  "posix_acl_default"
+> -- 
+> 2.43.5
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
