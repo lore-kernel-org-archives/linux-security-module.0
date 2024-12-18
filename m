@@ -1,64 +1,64 @@
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59CA81A254C
-	for <linux-security-module@vger.kernel.org>; Wed, 18 Dec 2024 09:24:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 434391ACEAD
+	for <linux-security-module@vger.kernel.org>; Wed, 18 Dec 2024 09:24:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734513898; cv=none; b=jXPFN5PxuJmQz2A9C0NzlEadWOONr7KhyI0BD6Lvp0T8aKQbEqjI2srKs1vLfsQXkLITmSED4oj/0dGKge0bLtPD+52NtnT9q8dcX9FJCIsv1b7CQpVN/rWMQ3jOJtuQHBuqg76vyUD6vUesfDhaeuYVeFkyG7F6KgikpOy+A+A=
+	t=1734513900; cv=none; b=NUUDEqDWjx1kR6vASsusaEmINTO9zvR6M75tvmSOR3CNHb2jykVq3h7/walYxem4l3EIAmDUNYNIrXtrS6rxKn6heNh8SF4QvRFH3qjU3PxV/2waE/WOsk83TEAGYeVCjyfig8yREctKFIBpLplV8iL6kF9Os0Qfb4WrV+2lKl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734513898; c=relaxed/simple;
-	bh=PpQNSHrTyKHqfiQ9AljxCE+nXdG00tODHkKAIFHU/K4=;
+	s=arc-20240116; t=1734513900; c=relaxed/simple;
+	bh=8zaNBLsWCcfauluN9i4LFC13erUU3m5MbHaCxvxxTaY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ZLoOfn27TYPg1JhKh6JR6/BsLnGVihUc3DR7KZF1Va8uw2VtN9M9/qeubf226B8ybv7mZnBiEFF5qdFMzSZLHwcmVcDiFaYvSzzBzNYd8x1l0cm73P9dbTJ8bsLJabdmly1SFDCUUlfRjiOumXOpq80ZKA9tv6d3lx7kKtOubxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=ZOn2/RLl; arc=none smtp.client-ip=209.85.214.182
+	 In-Reply-To:To:Cc; b=mHNdUYpsH5VjmNz6g3DjozJktyucPXUvEP/W+6GEeiYUAFP9KhguGDGtKihOWN2PYUPx4sSA7tIxFcgrD2NKWpR+gCAsA711kPYoJdFEHXCnkYB4aOx2JAMkcCsyN7bNBnpnz8Lht6kBrQmFBlohyQu0UTsf9BF7T9f4EshSRyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=OLMpKfX2; arc=none smtp.client-ip=209.85.214.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="ZOn2/RLl"
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-21675fd60feso64813605ad.2
-        for <linux-security-module@vger.kernel.org>; Wed, 18 Dec 2024 01:24:53 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="OLMpKfX2"
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2167141dfa1so4988735ad.1
+        for <linux-security-module@vger.kernel.org>; Wed, 18 Dec 2024 01:24:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1734513893; x=1735118693; darn=vger.kernel.org;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1734513898; x=1735118698; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=BicOFFik/5T0V2bfCBpPvVi1RzBZDBKuI9cy+F3EQmo=;
-        b=ZOn2/RLlW6Kfe1OBv6NVE5M2VkwnknA/qpADPqluLJjyNQerPOYEC653OvnnPXCjxF
-         fRSRrlrkFSAhOK2RGn9pwATss65WSdcqVnASWxp1bLUm/IFiZ4dLydS3rXebUpLf1Xcv
-         Vu9CEuNzvcPHIJu27HLOQ5VPKcrUL5vvydGMbK86nAVjWLKPiAYK62FP6kZdwtUCx/di
-         hWCO1rQYPuo9+zN83YPMmzYx72bytdP6ntm0xuEcn6iHEL9iNhAjDlE5guLOuJMxVmq9
-         EbLhKCX5WNaVvpwGsJ2cftPKzC73zLreVP333/KmPQNLfdT8mSuC3aHDLb2MYhqMr1cW
-         stEg==
+        bh=e+Q2z3RiH+Cxmha3T/07fxqh9kG8swBDg6SVk5HdbKg=;
+        b=OLMpKfX2XLY6vHCqXeLFTm2xjm7ftZFG2K/wm0mT9FBHC6WzDMj8naUsp7/E0jNpJw
+         2rycm+Gtc3wi02DCMnkvQTcl07ZBRfmf2fIoMJxMQ77QWEW5B79QAqoDtAEtSSOA7MUz
+         A70lmFG0gifp6uLLLn6enis91PQd6Ptz9ShkSxOAynyS1gJuI4KUhrhR4CGIowo0xOjy
+         dWC8yuA3cPCN/qPGg+bxAVJ8PWxN4EOrnhBbSUlJLMvrG06nQPJoE7oS9+DdXBsE7ONS
+         6c43HL8FQAlgQK34rfNQN3nXqx4ZexEPBZxEwwTSE/E/yn8Np/yOLGlLbFZE82vRwyZ9
+         Umhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734513893; x=1735118693;
+        d=1e100.net; s=20230601; t=1734513898; x=1735118698;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=BicOFFik/5T0V2bfCBpPvVi1RzBZDBKuI9cy+F3EQmo=;
-        b=XSVko+uRv99stEjc+FESeT5JogvwnhZKKrB5ESCo8fOQ+LvVKrGiWhusmCYBk0sGt2
-         vkMLAYfBZJCddJ6jk86Dv7b+Lt2pFc7NGTlDtAMRAILt+EEIWMpGf2+EBHSsO7j4bEGe
-         +6NaaK0pYH+bbxofJYHHoAy/u0s23kLUc34nEU3IyUuHf9ORFkR03uoT2AMrK6+yHdcr
-         1r+6WGfN2y6uZSuFF5694lvG3jEQYDrUldXfz4h83N3Ih3J9AQBbHQjSuKwVruxPl0N5
-         Ixk0hPe6J0W5280UXJvzcYjoP3C+/Z1eVCvW6adjCrRsqdsMeKJT/tUl4JDHvpId6cDW
-         DY/g==
-X-Forwarded-Encrypted: i=1; AJvYcCWzmVHzjkP/68OOvUXgaS0LbHr/TvKlauKYdhpLREg8Pvukm/Xjj1p6kx0OEQ3DdH3nA08we4pX6J1smZi9IggH8fByLS8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1bp825SCI4KZzZQjkmgw5DW9SW9TQmbic3IAjIL7HtBv3u3Ux
-	8+HF3KUQ4wvDtcIkyI7yDw+34i3nmzcIrffd4bRShn55s10MtWUcIjY32ED6SEM=
-X-Gm-Gg: ASbGnctw8ijkYkXbM7d2yuqf5SyN+HSGaHcPHyMSlt2a+q5Ak7hJq8dSsQ+J4qP0AYr
-	16xPgQUO8yM9mVLuajJg0FBuhAVR824yJVJ/yArzU7mzoAzWauhlLWtpQqa3/iemUTrpcU68Llx
-	tjs+BC04bS6PZmGKLHeX/QqKi86Tusc/kT9qvd2DHM2ubKEGOSKeTBQd5b7YW21csCRjkJS/A9W
-	ZGgdPKJFTJdNK7dSb4ry+mtJZ0SAcyU/j+OEC53KVIG7JDQxUPr7tureNTnEtvRd01NgE3l
-X-Google-Smtp-Source: AGHT+IHMTOZIV/yiN2VL9r1KDa3RDboXjP6NjLpJeQSveocQso2iRmzAObkrZyGWVy1g0I7ETUs2iw==
-X-Received: by 2002:a17:903:188:b0:216:6ef9:621 with SMTP id d9443c01a7336-218d7217a52mr24734455ad.31.1734513892660;
-        Wed, 18 Dec 2024 01:24:52 -0800 (PST)
+        bh=e+Q2z3RiH+Cxmha3T/07fxqh9kG8swBDg6SVk5HdbKg=;
+        b=Ag/bz6geKhTKqwQ/ZI/4xTiSqydW8zd22aviyvHtMVceF4YGVzMhru2wjl8HhiVXt9
+         /mbr8+4rwvut4vpsw+VL/nRaBMrxYgE2j6gpwW596SGOChbmd6qQK3pPRlaxfCk5JGJy
+         4cD0LqAVDSTdqqzrCBrkSDUgbgb2z5tmc6vdfKWYeh5QEnjduXEHNXkfChTFZIRp+NLv
+         laAFZRt8WOir4JmKvYhZ6UEKWgc4in+brByeyHL+vpqANC2QUdH6Kydzi7VkmO/wcmm6
+         8IzG5ZbpV3k0W3CO8HKHUCPPZavH+CL0WtS0Oi0tAwzF5B00H2CBf1v/+KY1DkNBn6a4
+         vvtA==
+X-Forwarded-Encrypted: i=1; AJvYcCWfgBtKFzishE1943VTxmlN9Nly0OoHM1ZQePYOzOR2K12ZlL9DTMuAj2TMjIm4GJBHsKQU0KTqG8244G1go38v5I+N2Mk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxL4qw9bg5DIB3yY4HglaCBdEHkbsOov4vLXwd6j+YpiUXOBa5/
+	GcA2FBcwC8WzkntHOxK/TQI0dhw0jeq73WM3n9PRA1MJ8FVmOo8MgipH+hVHf9A=
+X-Gm-Gg: ASbGncvQ+iN92wTamIT1Cwlzp1Y9pNYc+rzJa76n2jAmvgJiz//TP8LEusifjlOPltL
+	kyrKWUuNVPLjTvwp8S1xm/dcJG4gTo5P59a/y5g/RA9Z9Oo7rsvDRUN7LDYNmqqLxi6hQvT85Ue
+	O6tlWgL/pr29Phy+s/AavW84xbs7qzIZi/IGTZ48eWP4fJqEZixMAtnCZHoyjIf6WdMZXbkXqKY
+	l8YxzA3nGKPyRFOGVum9ol/eix1/85Y6rx7/o/v3pxSshIPHdGx+mxHFqKuYzS8qylGK135
+X-Google-Smtp-Source: AGHT+IHbJHhDW5HIGosLfjTa4TBEb7HdXsptGQd5VzT9LSUe70yM0oJDHxUo2rOfZ2gS0Kvb23LnIQ==
+X-Received: by 2002:a17:903:2c8:b0:215:8847:4377 with SMTP id d9443c01a7336-218d73b30d6mr32003395ad.15.1734513897636;
+        Wed, 18 Dec 2024 01:24:57 -0800 (PST)
 Received: from charlie.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-218a1e64f90sm72119995ad.241.2024.12.18.01.24.50
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-218a1e64f90sm72119995ad.241.2024.12.18.01.24.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Dec 2024 01:24:51 -0800 (PST)
+        Wed, 18 Dec 2024 01:24:56 -0800 (PST)
 From: Charlie Jenkins <charlie@rivosinc.com>
-Date: Wed, 18 Dec 2024 01:24:08 -0800
-Subject: [PATCH v4 10/16] perf tools: parisc: Support syscall header
+Date: Wed, 18 Dec 2024 01:24:10 -0800
+Subject: [PATCH v4 12/16] perf tools: loongarch: Use syscall table
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -67,7 +67,7 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241218-perf_syscalltbl-v4-10-bc8caef2ca8e@rivosinc.com>
+Message-Id: <20241218-perf_syscalltbl-v4-12-bc8caef2ca8e@rivosinc.com>
 References: <20241218-perf_syscalltbl-v4-0-bc8caef2ca8e@rivosinc.com>
 In-Reply-To: <20241218-perf_syscalltbl-v4-0-bc8caef2ca8e@rivosinc.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
@@ -92,557 +92,184 @@ Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
  Charlie Jenkins <charlie@rivosinc.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=23665; i=charlie@rivosinc.com;
- h=from:subject:message-id; bh=PpQNSHrTyKHqfiQ9AljxCE+nXdG00tODHkKAIFHU/K4=;
- b=owGbwMvMwCHWx5hUnlvL8Y3xtFoSQ3rSlGPiE7gCY7v2Xpu5v75v19HFJ7886RY59UNnhcb00
- 7k1n5a87ChlYRDjYJAVU2ThudbA3HpHv+yoaNkEmDmsTCBDGLg4BWAiX7YwMhz+wnPzwFo7pWVf
- /q1U13Z86c/m/CHnwufTlUavAhPkL6swMtxyM1vsOGmW4f8rdbMmTDswaYnZx391Ue+0z3sLHnR
- fl8oPAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6453; i=charlie@rivosinc.com;
+ h=from:subject:message-id; bh=8zaNBLsWCcfauluN9i4LFC13erUU3m5MbHaCxvxxTaY=;
+ b=owGbwMvMwCHWx5hUnlvL8Y3xtFoSQ3rSlOMzf5cFKv9RrMqQ95fdUJv36ofcevlN89xOXhA1d
+ igJVv3TUcrCIMbBICumyMJzrYG59Y5+2VHRsgkwc1iZQIYwcHEKwETSnjAy3NB6J731fH2oaGw9
+ b9s69e57/woeLJ35tjw9rb36S6grL8MfrmNCgXznN6VZVjBuuzgtN+ykW8TR26Z/n274cH+36gN
+ GfgA=
 X-Developer-Key: i=charlie@rivosinc.com; a=openpgp;
  fpr=7D834FF11B1D8387E61C776FFB10D1F27D6B1354
 
-parisc uses a syscall table, use that in perf instead of requiring
-libaudit.
+loongarch uses a syscall table, use that in perf instead of using unistd.h.
 
 Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
 ---
- tools/perf/Makefile.perf                           |   2 +-
- tools/perf/arch/parisc/entry/syscalls/Kbuild       |   3 +
- .../arch/parisc/entry/syscalls/Makefile.syscalls   |   6 +
- tools/perf/arch/parisc/entry/syscalls/syscall.tbl  | 463 +++++++++++++++++++++
- tools/perf/arch/parisc/include/syscall_table.h     |   8 +
- tools/perf/check-headers.sh                        |   1 +
- 6 files changed, 482 insertions(+), 1 deletion(-)
+ tools/perf/Makefile.config                         |  3 +-
+ tools/perf/Makefile.perf                           |  2 +-
+ tools/perf/arch/loongarch/Makefile                 | 22 -----------
+ tools/perf/arch/loongarch/entry/syscalls/Kbuild    |  2 +
+ .../loongarch/entry/syscalls/Makefile.syscalls     |  3 ++
+ .../arch/loongarch/entry/syscalls/mksyscalltbl     | 45 ----------------------
+ tools/perf/arch/loongarch/include/syscall_table.h  |  2 +
+ tools/perf/util/syscalltbl.c                       |  4 --
+ 8 files changed, 9 insertions(+), 74 deletions(-)
 
+diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+index 83ed03f16209b2edff3e81d4e8a79fa058c35a48..dd1a5409e65ef38eb4132cd74c2e18dd2c8af920 100644
+--- a/tools/perf/Makefile.config
++++ b/tools/perf/Makefile.config
+@@ -31,7 +31,7 @@ $(call detected_var,SRCARCH)
+ ifneq ($(NO_SYSCALL_TABLE),1)
+   NO_SYSCALL_TABLE := 1
+ 
+-  ifeq ($(SRCARCH),$(filter $(SRCARCH),powerpc s390 mips loongarch))
++  ifeq ($(SRCARCH),$(filter $(SRCARCH),powerpc s390 mips))
+     NO_SYSCALL_TABLE := 0
+   endif
+ 
+@@ -85,7 +85,6 @@ ifeq ($(SRCARCH),arm64)
+ endif
+ 
+ ifeq ($(SRCARCH),loongarch)
+-  CFLAGS += -I$(OUTPUT)arch/loongarch/include/generated
+   ifndef NO_LIBUNWIND
+     LIBUNWIND_LIBS = -lunwind -lunwind-loongarch64
+   endif
 diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
-index 7528e6acaf3b1cf76198dafe094800fc00fd56eb..c4bd151fb7e4fb14a53998e58afae37599696da3 100644
+index bedf58d2a10f1faccb3579c023d5722cfeaae4cf..c85262db770d18828fc3d9dc65eca00733645d41 100644
 --- a/tools/perf/Makefile.perf
 +++ b/tools/perf/Makefile.perf
 @@ -311,7 +311,7 @@ FEATURE_TESTS := all
  endif
  endif
  # architectures that use the generic syscall table
--generic_syscall_table_archs := riscv arc csky arm sh sparc xtensa x86 alpha
-+generic_syscall_table_archs := riscv arc csky arm sh sparc xtensa x86 alpha parisc
+-generic_syscall_table_archs := riscv arc csky arm sh sparc xtensa x86 alpha parisc arm64
++generic_syscall_table_archs := riscv arc csky arm sh sparc xtensa x86 alpha parisc arm64 loongarch
  ifneq ($(filter $(SRCARCH), $(generic_syscall_table_archs)),)
  include $(srctree)/tools/perf/scripts/Makefile.syscalls
  endif
-diff --git a/tools/perf/arch/parisc/entry/syscalls/Kbuild b/tools/perf/arch/parisc/entry/syscalls/Kbuild
+diff --git a/tools/perf/arch/loongarch/Makefile b/tools/perf/arch/loongarch/Makefile
+index 52544d59245bab5a0fb2baa1e962b2ad4bf25332..087e099fb453a9236db34878077a51f711881ce0 100644
+--- a/tools/perf/arch/loongarch/Makefile
++++ b/tools/perf/arch/loongarch/Makefile
+@@ -1,25 +1,3 @@
+ # SPDX-License-Identifier: GPL-2.0
+ PERF_HAVE_JITDUMP := 1
+ HAVE_KVM_STAT_SUPPORT := 1
+-
+-#
+-# Syscall table generation for perf
+-#
+-
+-out    := $(OUTPUT)arch/loongarch/include/generated/asm
+-header := $(out)/syscalls.c
+-incpath := $(srctree)/tools
+-sysdef := $(srctree)/tools/arch/loongarch/include/uapi/asm/unistd.h
+-sysprf := $(srctree)/tools/perf/arch/loongarch/entry/syscalls/
+-systbl := $(sysprf)/mksyscalltbl
+-
+-# Create output directory if not already present
+-$(shell [ -d '$(out)' ] || mkdir -p '$(out)')
+-
+-$(header): $(sysdef) $(systbl)
+-	$(Q)$(SHELL) '$(systbl)' '$(CC)' '$(HOSTCC)' $(incpath) $(sysdef) > $@
+-
+-clean::
+-	$(call QUIET_CLEAN, loongarch) $(RM) $(header)
+-
+-archheaders: $(header)
+diff --git a/tools/perf/arch/loongarch/entry/syscalls/Kbuild b/tools/perf/arch/loongarch/entry/syscalls/Kbuild
 new file mode 100644
-index 0000000000000000000000000000000000000000..84c6599b4ea6a160217a3496449b205f2263f0fb
+index 0000000000000000000000000000000000000000..9a41e3572c3afd4f202321fd9e492714540e8fd3
 --- /dev/null
-+++ b/tools/perf/arch/parisc/entry/syscalls/Kbuild
++++ b/tools/perf/arch/loongarch/entry/syscalls/Kbuild
+@@ -0,0 +1,2 @@
++# SPDX-License-Identifier: GPL-2.0
++syscall-y += syscalls_64.h
+diff --git a/tools/perf/arch/loongarch/entry/syscalls/Makefile.syscalls b/tools/perf/arch/loongarch/entry/syscalls/Makefile.syscalls
+new file mode 100644
+index 0000000000000000000000000000000000000000..47d32da2aed8d67a7ac026271600e84723031a6b
+--- /dev/null
++++ b/tools/perf/arch/loongarch/entry/syscalls/Makefile.syscalls
 @@ -0,0 +1,3 @@
 +# SPDX-License-Identifier: GPL-2.0
-+syscall-y += syscalls_32.h
-+syscall-y += syscalls_64.h
-diff --git a/tools/perf/arch/parisc/entry/syscalls/Makefile.syscalls b/tools/perf/arch/parisc/entry/syscalls/Makefile.syscalls
-new file mode 100644
-index 0000000000000000000000000000000000000000..ae326fecb83b307fb5b0a885ae109480aafd586f
---- /dev/null
-+++ b/tools/perf/arch/parisc/entry/syscalls/Makefile.syscalls
-@@ -0,0 +1,6 @@
-+# SPDX-License-Identifier: GPL-2.0
 +
-+syscall_abis_32  +=
-+syscall_abis_64  +=
-+
-+syscalltbl = $(srctree)/tools/perf/arch/parisc/entry/syscalls/syscall.tbl
-diff --git a/tools/perf/arch/parisc/entry/syscalls/syscall.tbl b/tools/perf/arch/parisc/entry/syscalls/syscall.tbl
++syscall_abis_64 +=
+diff --git a/tools/perf/arch/loongarch/entry/syscalls/mksyscalltbl b/tools/perf/arch/loongarch/entry/syscalls/mksyscalltbl
+deleted file mode 100755
+index c10ad3580aef25e48ff0682eca4217cbafdfa333..0000000000000000000000000000000000000000
+--- a/tools/perf/arch/loongarch/entry/syscalls/mksyscalltbl
++++ /dev/null
+@@ -1,45 +0,0 @@
+-#!/bin/sh
+-# SPDX-License-Identifier: GPL-2.0
+-#
+-# Generate system call table for perf. Derived from
+-# powerpc script.
+-#
+-# Author(s):  Ming Wang <wangming01@loongson.cn>
+-# Author(s):  Huacai Chen <chenhuacai@loongson.cn>
+-# Copyright (C) 2020-2023 Loongson Technology Corporation Limited
+-
+-gcc=$1
+-hostcc=$2
+-incpath=$3
+-input=$4
+-
+-if ! test -r $input; then
+-	echo "Could not read input file" >&2
+-	exit 1
+-fi
+-
+-create_sc_table()
+-{
+-	local sc nr max_nr
+-
+-	while read sc nr; do
+-		printf "%s\n" "	[$nr] = \"$sc\","
+-		max_nr=$nr
+-	done
+-
+-	echo "#define SYSCALLTBL_LOONGARCH_MAX_ID $max_nr"
+-}
+-
+-create_table()
+-{
+-	echo "#include \"$input\""
+-	echo "static const char *const syscalltbl_loongarch[] = {"
+-	create_sc_table
+-	echo "};"
+-}
+-
+-$gcc -E -dM -x c -I $incpath/include/uapi $input \
+-	|awk '$2 ~ "__NR" && $3 !~ "__NR3264_" {
+-		sub("^#define __NR(3264)?_", "");
+-		print | "sort -k2 -n"}' \
+-	|create_table
+diff --git a/tools/perf/arch/loongarch/include/syscall_table.h b/tools/perf/arch/loongarch/include/syscall_table.h
 new file mode 100644
-index 0000000000000000000000000000000000000000..66dc406b12e4482832b0e8836b8267b0fb37a5ed
+index 0000000000000000000000000000000000000000..9d0646d3455cdaf1a3db8c8565af8eba9a8df8c6
 --- /dev/null
-+++ b/tools/perf/arch/parisc/entry/syscalls/syscall.tbl
-@@ -0,0 +1,463 @@
-+# SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note
-+#
-+# system call numbers and entry vectors for parisc
-+#
-+# The format is:
-+# <number> <abi> <name> <entry point> <compat entry point>
-+#
-+# The <abi> can be common, 64, or 32 for this file.
-+#
-+0	common	restart_syscall		sys_restart_syscall
-+1	common	exit			sys_exit
-+2	common	fork			sys_fork_wrapper
-+3	common	read			sys_read
-+4	common	write			sys_write
-+5	common	open			sys_open			compat_sys_open
-+6	common	close			sys_close
-+7	common	waitpid			sys_waitpid
-+8	common	creat			sys_creat
-+9	common	link			sys_link
-+10	common	unlink			sys_unlink
-+11	common	execve			sys_execve			compat_sys_execve
-+12	common	chdir			sys_chdir
-+13	32	time			sys_time32
-+13	64	time			sys_time
-+14	common	mknod			sys_mknod
-+15	common	chmod			sys_chmod
-+16	common	lchown			sys_lchown
-+17	common	socket			sys_socket
-+18	common	stat			sys_newstat			compat_sys_newstat
-+19	common	lseek			sys_lseek			compat_sys_lseek
-+20	common	getpid			sys_getpid
-+21	common	mount			sys_mount
-+22	common	bind			sys_bind
-+23	common	setuid			sys_setuid
-+24	common	getuid			sys_getuid
-+25	32	stime			sys_stime32
-+25	64	stime			sys_stime
-+26	common	ptrace			sys_ptrace			compat_sys_ptrace
-+27	common	alarm			sys_alarm
-+28	common	fstat			sys_newfstat			compat_sys_newfstat
-+29	common	pause			sys_pause
-+30	32	utime			sys_utime32
-+30	64	utime			sys_utime
-+31	common	connect			sys_connect
-+32	common	listen			sys_listen
-+33	common	access			sys_access
-+34	common	nice			sys_nice
-+35	common	accept			sys_accept
-+36	common	sync			sys_sync
-+37	common	kill			sys_kill
-+38	common	rename			sys_rename
-+39	common	mkdir			sys_mkdir
-+40	common	rmdir			sys_rmdir
-+41	common	dup			sys_dup
-+42	common	pipe			sys_pipe
-+43	common	times			sys_times			compat_sys_times
-+44	common	getsockname		sys_getsockname
-+45	common	brk			sys_brk
-+46	common	setgid			sys_setgid
-+47	common	getgid			sys_getgid
-+48	common	signal			sys_signal
-+49	common	geteuid			sys_geteuid
-+50	common	getegid			sys_getegid
-+51	common	acct			sys_acct
-+52	common	umount2			sys_umount
-+53	common	getpeername		sys_getpeername
-+54	common	ioctl			sys_ioctl			compat_sys_ioctl
-+55	common	fcntl			sys_fcntl			compat_sys_fcntl
-+56	common	socketpair		sys_socketpair
-+57	common	setpgid			sys_setpgid
-+58	common	send			sys_send
-+59	common	uname			sys_newuname
-+60	common	umask			sys_umask
-+61	common	chroot			sys_chroot
-+62	common	ustat			sys_ustat			compat_sys_ustat
-+63	common	dup2			sys_dup2
-+64	common	getppid			sys_getppid
-+65	common	getpgrp			sys_getpgrp
-+66	common	setsid			sys_setsid
-+67	common	pivot_root		sys_pivot_root
-+68	common	sgetmask		sys_sgetmask			sys32_unimplemented
-+69	common	ssetmask		sys_ssetmask			sys32_unimplemented
-+70	common	setreuid		sys_setreuid
-+71	common	setregid		sys_setregid
-+72	common	mincore			sys_mincore
-+73	common	sigpending		sys_sigpending			compat_sys_sigpending
-+74	common	sethostname		sys_sethostname
-+75	common	setrlimit		sys_setrlimit			compat_sys_setrlimit
-+76	common	getrlimit		sys_getrlimit			compat_sys_getrlimit
-+77	common	getrusage		sys_getrusage			compat_sys_getrusage
-+78	common	gettimeofday		sys_gettimeofday		compat_sys_gettimeofday
-+79	common	settimeofday		sys_settimeofday		compat_sys_settimeofday
-+80	common	getgroups		sys_getgroups
-+81	common	setgroups		sys_setgroups
-+82	common	sendto			sys_sendto
-+83	common	symlink			sys_symlink
-+84	common	lstat			sys_newlstat			compat_sys_newlstat
-+85	common	readlink		sys_readlink
-+86	common	uselib			sys_ni_syscall
-+87	common	swapon			sys_swapon
-+88	common	reboot			sys_reboot
-+89	common	mmap2			sys_mmap2
-+90	common	mmap			sys_mmap
-+91	common	munmap			sys_munmap
-+92	common	truncate		sys_truncate			compat_sys_truncate
-+93	common	ftruncate		sys_ftruncate			compat_sys_ftruncate
-+94	common	fchmod			sys_fchmod
-+95	common	fchown			sys_fchown
-+96	common	getpriority		sys_getpriority
-+97	common	setpriority		sys_setpriority
-+98	common	recv			sys_recv			compat_sys_recv
-+99	common	statfs			sys_statfs			compat_sys_statfs
-+100	common	fstatfs			sys_fstatfs			compat_sys_fstatfs
-+101	common	stat64			sys_stat64
-+# 102 was socketcall
-+103	common	syslog			sys_syslog
-+104	common	setitimer		sys_setitimer			compat_sys_setitimer
-+105	common	getitimer		sys_getitimer			compat_sys_getitimer
-+106	common	capget			sys_capget
-+107	common	capset			sys_capset
-+108	32	pread64			parisc_pread64
-+108	64	pread64			sys_pread64
-+109	32	pwrite64		parisc_pwrite64
-+109	64	pwrite64		sys_pwrite64
-+110	common	getcwd			sys_getcwd
-+111	common	vhangup			sys_vhangup
-+112	common	fstat64			sys_fstat64
-+113	common	vfork			sys_vfork_wrapper
-+114	common	wait4			sys_wait4			compat_sys_wait4
-+115	common	swapoff			sys_swapoff
-+116	common	sysinfo			sys_sysinfo			compat_sys_sysinfo
-+117	common	shutdown		sys_shutdown
-+118	common	fsync			sys_fsync
-+119	common	madvise			parisc_madvise
-+120	common	clone			sys_clone_wrapper
-+121	common	setdomainname		sys_setdomainname
-+122	common	sendfile		sys_sendfile			compat_sys_sendfile
-+123	common	recvfrom		sys_recvfrom			compat_sys_recvfrom
-+124	32	adjtimex		sys_adjtimex_time32
-+124	64	adjtimex		sys_adjtimex
-+125	common	mprotect		sys_mprotect
-+126	common	sigprocmask		sys_sigprocmask			compat_sys_sigprocmask
-+# 127 was create_module
-+128	common	init_module		sys_init_module
-+129	common	delete_module		sys_delete_module
-+# 130 was get_kernel_syms
-+131	common	quotactl		sys_quotactl
-+132	common	getpgid			sys_getpgid
-+133	common	fchdir			sys_fchdir
-+134	common	bdflush			sys_ni_syscall
-+135	common	sysfs			sys_sysfs
-+136	32	personality		parisc_personality
-+136	64	personality		sys_personality
-+# 137 was afs_syscall
-+138	common	setfsuid		sys_setfsuid
-+139	common	setfsgid		sys_setfsgid
-+140	common	_llseek			sys_llseek
-+141	common	getdents		sys_getdents			compat_sys_getdents
-+142	common	_newselect		sys_select			compat_sys_select
-+143	common	flock			sys_flock
-+144	common	msync			sys_msync
-+145	common	readv			sys_readv
-+146	common	writev			sys_writev
-+147	common	getsid			sys_getsid
-+148	common	fdatasync		sys_fdatasync
-+149	common	_sysctl			sys_ni_syscall
-+150	common	mlock			sys_mlock
-+151	common	munlock			sys_munlock
-+152	common	mlockall		sys_mlockall
-+153	common	munlockall		sys_munlockall
-+154	common	sched_setparam		sys_sched_setparam
-+155	common	sched_getparam		sys_sched_getparam
-+156	common	sched_setscheduler	sys_sched_setscheduler
-+157	common	sched_getscheduler	sys_sched_getscheduler
-+158	common	sched_yield		sys_sched_yield
-+159	common	sched_get_priority_max	sys_sched_get_priority_max
-+160	common	sched_get_priority_min	sys_sched_get_priority_min
-+161	32	sched_rr_get_interval	sys_sched_rr_get_interval_time32
-+161	64	sched_rr_get_interval	sys_sched_rr_get_interval
-+162	32	nanosleep		sys_nanosleep_time32
-+162	64	nanosleep		sys_nanosleep
-+163	common	mremap			sys_mremap
-+164	common	setresuid		sys_setresuid
-+165	common	getresuid		sys_getresuid
-+166	common	sigaltstack		sys_sigaltstack			compat_sys_sigaltstack
-+# 167 was query_module
-+168	common	poll			sys_poll
-+# 169 was nfsservctl
-+170	common	setresgid		sys_setresgid
-+171	common	getresgid		sys_getresgid
-+172	common	prctl			sys_prctl
-+173	common	rt_sigreturn		sys_rt_sigreturn_wrapper
-+174	common	rt_sigaction		sys_rt_sigaction		compat_sys_rt_sigaction
-+175	common	rt_sigprocmask		sys_rt_sigprocmask		compat_sys_rt_sigprocmask
-+176	common	rt_sigpending		sys_rt_sigpending		compat_sys_rt_sigpending
-+177	32	rt_sigtimedwait		sys_rt_sigtimedwait_time32	compat_sys_rt_sigtimedwait_time32
-+177	64	rt_sigtimedwait		sys_rt_sigtimedwait
-+178	common	rt_sigqueueinfo		sys_rt_sigqueueinfo		compat_sys_rt_sigqueueinfo
-+179	common	rt_sigsuspend		sys_rt_sigsuspend		compat_sys_rt_sigsuspend
-+180	common	chown			sys_chown
-+181	common	setsockopt		sys_setsockopt			sys_setsockopt
-+182	common	getsockopt		sys_getsockopt			sys_getsockopt
-+183	common	sendmsg			sys_sendmsg			compat_sys_sendmsg
-+184	common	recvmsg			sys_recvmsg			compat_sys_recvmsg
-+185	common	semop			sys_semop
-+186	common	semget			sys_semget
-+187	common	semctl			sys_semctl			compat_sys_semctl
-+188	common	msgsnd			sys_msgsnd			compat_sys_msgsnd
-+189	common	msgrcv			sys_msgrcv			compat_sys_msgrcv
-+190	common	msgget			sys_msgget
-+191	common	msgctl			sys_msgctl			compat_sys_msgctl
-+192	common	shmat			sys_shmat			compat_sys_shmat
-+193	common	shmdt			sys_shmdt
-+194	common	shmget			sys_shmget
-+195	common	shmctl			sys_shmctl			compat_sys_shmctl
-+# 196 was getpmsg
-+# 197 was putpmsg
-+198	common	lstat64			sys_lstat64
-+199	32	truncate64		parisc_truncate64
-+199	64	truncate64		sys_truncate64
-+200	32	ftruncate64		parisc_ftruncate64
-+200	64	ftruncate64		sys_ftruncate64
-+201	common	getdents64		sys_getdents64
-+202	common	fcntl64			sys_fcntl64			compat_sys_fcntl64
-+# 203 was attrctl
-+# 204 was acl_get
-+# 205 was acl_set
-+206	common	gettid			sys_gettid
-+207	32	readahead		parisc_readahead
-+207	64	readahead		sys_readahead
-+208	common	tkill			sys_tkill
-+209	common	sendfile64		sys_sendfile64			compat_sys_sendfile64
-+210	32	futex			sys_futex_time32
-+210	64	futex			sys_futex
-+211	common	sched_setaffinity	sys_sched_setaffinity		compat_sys_sched_setaffinity
-+212	common	sched_getaffinity	sys_sched_getaffinity		compat_sys_sched_getaffinity
-+# 213 was set_thread_area
-+# 214 was get_thread_area
-+215	common	io_setup		sys_io_setup			compat_sys_io_setup
-+216	common	io_destroy		sys_io_destroy
-+217	32	io_getevents		sys_io_getevents_time32
-+217	64	io_getevents		sys_io_getevents
-+218	common	io_submit		sys_io_submit			compat_sys_io_submit
-+219	common	io_cancel		sys_io_cancel
-+# 220 was alloc_hugepages
-+# 221 was free_hugepages
-+222	common	exit_group		sys_exit_group
-+223	common	lookup_dcookie		sys_ni_syscall
-+224	common	epoll_create		sys_epoll_create
-+225	common	epoll_ctl		sys_epoll_ctl
-+226	common	epoll_wait		sys_epoll_wait
-+227	common	remap_file_pages	sys_remap_file_pages
-+228	32	semtimedop		sys_semtimedop_time32
-+228	64	semtimedop		sys_semtimedop
-+229	common	mq_open			sys_mq_open			compat_sys_mq_open
-+230	common	mq_unlink		sys_mq_unlink
-+231	32	mq_timedsend		sys_mq_timedsend_time32
-+231	64	mq_timedsend		sys_mq_timedsend
-+232	32	mq_timedreceive		sys_mq_timedreceive_time32
-+232	64	mq_timedreceive		sys_mq_timedreceive
-+233	common	mq_notify		sys_mq_notify			compat_sys_mq_notify
-+234	common	mq_getsetattr		sys_mq_getsetattr		compat_sys_mq_getsetattr
-+235	common	waitid			sys_waitid			compat_sys_waitid
-+236	32	fadvise64_64		parisc_fadvise64_64
-+236	64	fadvise64_64		sys_fadvise64_64
-+237	common	set_tid_address		sys_set_tid_address
-+238	common	setxattr		sys_setxattr
-+239	common	lsetxattr		sys_lsetxattr
-+240	common	fsetxattr		sys_fsetxattr
-+241	common	getxattr		sys_getxattr
-+242	common	lgetxattr		sys_lgetxattr
-+243	common	fgetxattr		sys_fgetxattr
-+244	common	listxattr		sys_listxattr
-+245	common	llistxattr		sys_llistxattr
-+246	common	flistxattr		sys_flistxattr
-+247	common	removexattr		sys_removexattr
-+248	common	lremovexattr		sys_lremovexattr
-+249	common	fremovexattr		sys_fremovexattr
-+250	common	timer_create		sys_timer_create		compat_sys_timer_create
-+251	32	timer_settime		sys_timer_settime32
-+251	64	timer_settime		sys_timer_settime
-+252	32	timer_gettime		sys_timer_gettime32
-+252	64	timer_gettime		sys_timer_gettime
-+253	common	timer_getoverrun	sys_timer_getoverrun
-+254	common	timer_delete		sys_timer_delete
-+255	32	clock_settime		sys_clock_settime32
-+255	64	clock_settime		sys_clock_settime
-+256	32	clock_gettime		sys_clock_gettime32
-+256	64	clock_gettime		sys_clock_gettime
-+257	32	clock_getres		sys_clock_getres_time32
-+257	64	clock_getres		sys_clock_getres
-+258	32	clock_nanosleep		sys_clock_nanosleep_time32
-+258	64	clock_nanosleep		sys_clock_nanosleep
-+259	common	tgkill			sys_tgkill
-+260	common	mbind			sys_mbind
-+261	common	get_mempolicy		sys_get_mempolicy
-+262	common	set_mempolicy		sys_set_mempolicy
-+# 263 was vserver
-+264	common	add_key			sys_add_key
-+265	common	request_key		sys_request_key
-+266	common	keyctl			sys_keyctl			compat_sys_keyctl
-+267	common	ioprio_set		sys_ioprio_set
-+268	common	ioprio_get		sys_ioprio_get
-+269	common	inotify_init		sys_inotify_init
-+270	common	inotify_add_watch	sys_inotify_add_watch
-+271	common	inotify_rm_watch	sys_inotify_rm_watch
-+272	common	migrate_pages		sys_migrate_pages
-+273	32	pselect6		sys_pselect6_time32		compat_sys_pselect6_time32
-+273	64	pselect6		sys_pselect6
-+274	32	ppoll			sys_ppoll_time32		compat_sys_ppoll_time32
-+274	64	ppoll			sys_ppoll
-+275	common	openat			sys_openat			compat_sys_openat
-+276	common	mkdirat			sys_mkdirat
-+277	common	mknodat			sys_mknodat
-+278	common	fchownat		sys_fchownat
-+279	32	futimesat		sys_futimesat_time32
-+279	64	futimesat		sys_futimesat
-+280	common	fstatat64		sys_fstatat64
-+281	common	unlinkat		sys_unlinkat
-+282	common	renameat		sys_renameat
-+283	common	linkat			sys_linkat
-+284	common	symlinkat		sys_symlinkat
-+285	common	readlinkat		sys_readlinkat
-+286	common	fchmodat		sys_fchmodat
-+287	common	faccessat		sys_faccessat
-+288	common	unshare			sys_unshare
-+289	common	set_robust_list		sys_set_robust_list		compat_sys_set_robust_list
-+290	common	get_robust_list		sys_get_robust_list		compat_sys_get_robust_list
-+291	common	splice			sys_splice
-+292	32	sync_file_range		parisc_sync_file_range
-+292	64	sync_file_range		sys_sync_file_range
-+293	common	tee			sys_tee
-+294	common	vmsplice		sys_vmsplice
-+295	common	move_pages		sys_move_pages
-+296	common	getcpu			sys_getcpu
-+297	common	epoll_pwait		sys_epoll_pwait			compat_sys_epoll_pwait
-+298	common	statfs64		sys_statfs64			compat_sys_statfs64
-+299	common	fstatfs64		sys_fstatfs64			compat_sys_fstatfs64
-+300	common	kexec_load		sys_kexec_load			compat_sys_kexec_load
-+301	32	utimensat		sys_utimensat_time32
-+301	64	utimensat		sys_utimensat
-+302	common	signalfd		sys_signalfd			compat_sys_signalfd
-+# 303 was timerfd
-+304	common	eventfd			sys_eventfd
-+305	32	fallocate		parisc_fallocate
-+305	64	fallocate		sys_fallocate
-+306	common	timerfd_create		parisc_timerfd_create
-+307	32	timerfd_settime		sys_timerfd_settime32
-+307	64	timerfd_settime		sys_timerfd_settime
-+308	32	timerfd_gettime		sys_timerfd_gettime32
-+308	64	timerfd_gettime		sys_timerfd_gettime
-+309	common	signalfd4		parisc_signalfd4		parisc_compat_signalfd4
-+310	common	eventfd2		parisc_eventfd2
-+311	common	epoll_create1		sys_epoll_create1
-+312	common	dup3			sys_dup3
-+313	common	pipe2			parisc_pipe2
-+314	common	inotify_init1		parisc_inotify_init1
-+315	common	preadv	sys_preadv	compat_sys_preadv
-+316	common	pwritev	sys_pwritev	compat_sys_pwritev
-+317	common	rt_tgsigqueueinfo	sys_rt_tgsigqueueinfo		compat_sys_rt_tgsigqueueinfo
-+318	common	perf_event_open		sys_perf_event_open
-+319	32	recvmmsg		sys_recvmmsg_time32		compat_sys_recvmmsg_time32
-+319	64	recvmmsg		sys_recvmmsg
-+320	common	accept4			sys_accept4
-+321	common	prlimit64		sys_prlimit64
-+322	common	fanotify_init		sys_fanotify_init
-+323	common	fanotify_mark		sys_fanotify_mark		compat_sys_fanotify_mark
-+324	32	clock_adjtime		sys_clock_adjtime32
-+324	64	clock_adjtime		sys_clock_adjtime
-+325	common	name_to_handle_at	sys_name_to_handle_at
-+326	common	open_by_handle_at	sys_open_by_handle_at		compat_sys_open_by_handle_at
-+327	common	syncfs			sys_syncfs
-+328	common	setns			sys_setns
-+329	common	sendmmsg		sys_sendmmsg			compat_sys_sendmmsg
-+330	common	process_vm_readv	sys_process_vm_readv
-+331	common	process_vm_writev	sys_process_vm_writev
-+332	common	kcmp			sys_kcmp
-+333	common	finit_module		sys_finit_module
-+334	common	sched_setattr		sys_sched_setattr
-+335	common	sched_getattr		sys_sched_getattr
-+336	32	utimes			sys_utimes_time32
-+336	64	utimes			sys_utimes
-+337	common	renameat2		sys_renameat2
-+338	common	seccomp			sys_seccomp
-+339	common	getrandom		sys_getrandom
-+340	common	memfd_create		sys_memfd_create
-+341	common	bpf			sys_bpf
-+342	common	execveat		sys_execveat			compat_sys_execveat
-+343	common	membarrier		sys_membarrier
-+344	common	userfaultfd		parisc_userfaultfd
-+345	common	mlock2			sys_mlock2
-+346	common	copy_file_range		sys_copy_file_range
-+347	common	preadv2			sys_preadv2			compat_sys_preadv2
-+348	common	pwritev2		sys_pwritev2			compat_sys_pwritev2
-+349	common	statx			sys_statx
-+350	32	io_pgetevents		sys_io_pgetevents_time32	compat_sys_io_pgetevents
-+350	64	io_pgetevents		sys_io_pgetevents
-+351	common	pkey_mprotect		sys_pkey_mprotect
-+352	common	pkey_alloc		sys_pkey_alloc
-+353	common	pkey_free		sys_pkey_free
-+354	common	rseq			sys_rseq
-+355	common	kexec_file_load		sys_kexec_file_load		sys_kexec_file_load
-+356	common	cacheflush		sys_cacheflush
-+# up to 402 is unassigned and reserved for arch specific syscalls
-+403	32	clock_gettime64			sys_clock_gettime		sys_clock_gettime
-+404	32	clock_settime64			sys_clock_settime		sys_clock_settime
-+405	32	clock_adjtime64			sys_clock_adjtime		sys_clock_adjtime
-+406	32	clock_getres_time64		sys_clock_getres		sys_clock_getres
-+407	32	clock_nanosleep_time64		sys_clock_nanosleep		sys_clock_nanosleep
-+408	32	timer_gettime64			sys_timer_gettime		sys_timer_gettime
-+409	32	timer_settime64			sys_timer_settime		sys_timer_settime
-+410	32	timerfd_gettime64		sys_timerfd_gettime		sys_timerfd_gettime
-+411	32	timerfd_settime64		sys_timerfd_settime		sys_timerfd_settime
-+412	32	utimensat_time64		sys_utimensat			sys_utimensat
-+413	32	pselect6_time64			sys_pselect6			compat_sys_pselect6_time64
-+414	32	ppoll_time64			sys_ppoll			compat_sys_ppoll_time64
-+416	32	io_pgetevents_time64		sys_io_pgetevents		compat_sys_io_pgetevents_time64
-+417	32	recvmmsg_time64			sys_recvmmsg			compat_sys_recvmmsg_time64
-+418	32	mq_timedsend_time64		sys_mq_timedsend		sys_mq_timedsend
-+419	32	mq_timedreceive_time64		sys_mq_timedreceive		sys_mq_timedreceive
-+420	32	semtimedop_time64		sys_semtimedop			sys_semtimedop
-+421	32	rt_sigtimedwait_time64		sys_rt_sigtimedwait		compat_sys_rt_sigtimedwait_time64
-+422	32	futex_time64			sys_futex			sys_futex
-+423	32	sched_rr_get_interval_time64	sys_sched_rr_get_interval	sys_sched_rr_get_interval
-+424	common	pidfd_send_signal		sys_pidfd_send_signal
-+425	common	io_uring_setup			sys_io_uring_setup
-+426	common	io_uring_enter			sys_io_uring_enter
-+427	common	io_uring_register		sys_io_uring_register
-+428	common	open_tree			sys_open_tree
-+429	common	move_mount			sys_move_mount
-+430	common	fsopen				sys_fsopen
-+431	common	fsconfig			sys_fsconfig
-+432	common	fsmount				sys_fsmount
-+433	common	fspick				sys_fspick
-+434	common	pidfd_open			sys_pidfd_open
-+435	common	clone3				sys_clone3_wrapper
-+436	common	close_range			sys_close_range
-+437	common	openat2				sys_openat2
-+438	common	pidfd_getfd			sys_pidfd_getfd
-+439	common	faccessat2			sys_faccessat2
-+440	common	process_madvise			sys_process_madvise
-+441	common	epoll_pwait2			sys_epoll_pwait2		compat_sys_epoll_pwait2
-+442	common	mount_setattr			sys_mount_setattr
-+443	common	quotactl_fd			sys_quotactl_fd
-+444	common	landlock_create_ruleset		sys_landlock_create_ruleset
-+445	common	landlock_add_rule		sys_landlock_add_rule
-+446	common	landlock_restrict_self		sys_landlock_restrict_self
-+# 447 reserved for memfd_secret
-+448	common	process_mrelease		sys_process_mrelease
-+449	common	futex_waitv			sys_futex_waitv
-+450	common	set_mempolicy_home_node		sys_set_mempolicy_home_node
-+451	common	cachestat			sys_cachestat
-+452	common	fchmodat2			sys_fchmodat2
-+453	common	map_shadow_stack		sys_map_shadow_stack
-+454	common	futex_wake			sys_futex_wake
-+455	common	futex_wait			sys_futex_wait
-+456	common	futex_requeue			sys_futex_requeue
-+457	common	statmount			sys_statmount
-+458	common	listmount			sys_listmount
-+459	common	lsm_get_self_attr		sys_lsm_get_self_attr
-+460	common	lsm_set_self_attr		sys_lsm_set_self_attr
-+461	common	lsm_list_modules		sys_lsm_list_modules
-+462	common	mseal				sys_mseal
-diff --git a/tools/perf/arch/parisc/include/syscall_table.h b/tools/perf/arch/parisc/include/syscall_table.h
-new file mode 100644
-index 0000000000000000000000000000000000000000..7ff51b783000d727ec48be960730b81ecdb05575
---- /dev/null
-+++ b/tools/perf/arch/parisc/include/syscall_table.h
-@@ -0,0 +1,8 @@
++++ b/tools/perf/arch/loongarch/include/syscall_table.h
+@@ -0,0 +1,2 @@
 +/* SPDX-License-Identifier: GPL-2.0 */
-+#include <asm/bitsperlong.h>
-+
-+#if __BITS_PER_LONG == 64
-+#include <asm/syscalls_64.h>
-+#else
-+#include <asm/syscalls_32.h>
-+#endif
-diff --git a/tools/perf/check-headers.sh b/tools/perf/check-headers.sh
-index a821df1fd4c0e78c9706304e5b8974cbc5ef4437..ae9f00ae79f34fec75ef2c91300ccd771c030529 100755
---- a/tools/perf/check-headers.sh
-+++ b/tools/perf/check-headers.sh
-@@ -207,6 +207,7 @@ check_2 tools/perf/arch/sh/entry/syscalls/syscall.tbl arch/sh/kernel/syscalls/sy
- check_2 tools/perf/arch/sparc/entry/syscalls/syscall.tbl arch/sparc/kernel/syscalls/syscall.tbl
- check_2 tools/perf/arch/xtensa/entry/syscalls/syscall.tbl arch/xtensa/kernel/syscalls/syscall.tbl
- check_2 tools/perf/arch/alpha/entry/syscalls/syscall.tbl arch/alpha/entry/syscalls/syscall.tbl
-+check_2 tools/perf/arch/parisc/entry/syscalls/syscall.tbl arch/parisc/entry/syscalls/syscall.tbl
- 
- for i in "${BEAUTY_FILES[@]}"
- do
++#include <asm/syscall_table_64.h>
+diff --git a/tools/perf/util/syscalltbl.c b/tools/perf/util/syscalltbl.c
+index b7c0a4b9245a94b3b245fea59af79081b1f91081..3001386e13a502be5279aa6e4742af0b96202b35 100644
+--- a/tools/perf/util/syscalltbl.c
++++ b/tools/perf/util/syscalltbl.c
+@@ -30,10 +30,6 @@ static const char *const *syscalltbl_native = syscalltbl_powerpc_32;
+ #include <asm/syscalls_n64.c>
+ const int syscalltbl_native_max_id = SYSCALLTBL_MIPS_N64_MAX_ID;
+ static const char *const *syscalltbl_native = syscalltbl_mips_n64;
+-#elif defined(__loongarch__)
+-#include <asm/syscalls.c>
+-const int syscalltbl_native_max_id = SYSCALLTBL_LOONGARCH_MAX_ID;
+-static const char *const *syscalltbl_native = syscalltbl_loongarch;
+ #elif defined(GENERIC_SYSCALL_TABLE)
+ #include <syscall_table.h>
+ const int syscalltbl_native_max_id = SYSCALLTBL_MAX_ID;
 
 -- 
 2.34.1
