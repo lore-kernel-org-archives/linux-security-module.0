@@ -1,124 +1,272 @@
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B0E31FC102
-	for <linux-security-module@vger.kernel.org>; Wed, 18 Dec 2024 21:51:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5422E1FCD02
+	for <linux-security-module@vger.kernel.org>; Wed, 18 Dec 2024 21:55:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734558704; cv=none; b=Odg0iF1PAz6VUnRGCyB3GUUKn/o9rRF3bF9e/H0Ww0KxcaEfdWWqQKpLS5W9Mh/CPDA7igWqF4ySI4i39T8BBXfuMrbQ0qk9XL/hJRZYpCKzbzaUmjTgDR3z5evDkRZjrI2D13lkaaZs4tFWRH5T0su863Wt3u7Y0HmCn1O1aeY=
+	t=1734558911; cv=none; b=hZv4t8Cl75xs8kiBLDEHpq2gDs4rdyCSnyxwLxLiozT1TVkw0nK0QJQIwH3roOtL3X42tiNV1TLV2o1qI0wfTWn85mels6bOlWDEUuiW/R606QMEH+r3iRS6nAvdHdR1b0EwD0/xwDfEf+3eFbqDnLJNd4bHaVi+y/uQUJfJ3H0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734558704; c=relaxed/simple;
-	bh=UNCCDv5z8ixchwYOxk9Ij5M5Pl1xOqzKsRygRZSeBJk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GKtC3pp+7f/YNPnRFPQ01KG2suTjq6W2yFk5zOLGNiq4ArI3bhPYaujZr5rnwdJxgsc7/zKOKwibzbblV9dnjfc+5wumWKCKD8cByeopLONjoKAX75VsaWAlENWBVMdhfuwT3MRNBEEgxHzwlHA0mYHeI4UB1x0XVs358CyVRKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Mimq9mPv; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1734558911; c=relaxed/simple;
+	bh=mHREIE73ZX2NkJWLFVbnaeOle9nuQBT1vzekshsUriI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o53E6UgwOS3GG9xkY3wnj3ulsOHRZ8N1deiaNMVhe00tOPUunKYVbV6oFVcEmn8/HlN8SG6aLqNWsaVYcuHlBCGOvmvLXXlbQ1NUMUNIyoqq08okeTxGjQUOit0gXVXAZLHF6NTkDNxEjkAsjzCZ+zyRuxSNfhE2wGfTV7/UQDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=dBlHxNhg; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Mimq9mPv"
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e399e904940so112819276.2
-        for <linux-security-module@vger.kernel.org>; Wed, 18 Dec 2024 13:51:42 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="dBlHxNhg"
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-21628b3fe7dso1349405ad.3
+        for <linux-security-module@vger.kernel.org>; Wed, 18 Dec 2024 13:55:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1734558701; x=1735163501; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FrXIPFqOBLul2VgugyJ23MO+CFdBjK5d/jspFx7DXnk=;
-        b=Mimq9mPvd7t9yPcK5HwmthhXDUQta3A5fh4AYzj2CbxpEOm7mEkm3d9dx/1GwzKJLt
-         6tD1ohBQqH74x/TIVOAz0mWMvVvwCXzk5lz/Dr+1BgPvXf8/rP579sZZh13/XyjEVTLc
-         nTRY+fuFtOrNLeNfsU9WNXSRJaowIdDMfI2uYWdey5P+WABUpHdyxwg5KyVJm69ATGRK
-         7F2uSHFjSON59mqjIaiAefAwNYgsI7hZ7zWQ+ug+kG1jVM9dw2MtdnBPV+r1YG43k90E
-         pRYaXX+qQjbbl/MkngPDyLHHuBaXreZTlOn36Og67XyLwLUy9GAA2T86Vt+nDZx4pRax
-         EPfw==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1734558908; x=1735163708; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qQSiK4s4Uqm4QJokNKH0Tf7jwBuMNzU4RqKyMwdUVzU=;
+        b=dBlHxNhgV1X1ck6ngRPuygtxvgAqzkHSiR9TPO4TgKirtVxHyHVrHGrqv2s5CekbRl
+         Mwfo9sQPZK/W5b6E3XZ3czu0bfcnF6ki/aeZGCTd1lZ0iSy7D+O+zvuE48Mg4dETJUA6
+         bhyvQtZ8WsSvUJo07090v2gypaIlqqPNlgSk14yc38h+u0bnP5Mm4b1ittlmlSsny6ZK
+         n4mBE7nj/o0yJM7ipYc+QSrlIM/8HQEqSgrhvom6OATA08a81c5V9t5/2uBPgT5NOfkI
+         OcCy9vhvVldncUVVUfzkbQPqVnylbWHrr7PjdeeTclGATz7ysWUjyfMKwybcC0KOo5eL
+         s0wQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734558701; x=1735163501;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FrXIPFqOBLul2VgugyJ23MO+CFdBjK5d/jspFx7DXnk=;
-        b=sTvgNlv0ZJZPpuKfpn5O5vGrm/xygDJSz/axdDCM7AsDcAZAHiIIkjTM63h6umv+GH
-         +4kGInBZ9Eg6PKnygMu+OA8MVprKsZ+KlV7X9BEFFoQfwuaDvWTj/YnISirV7U2DScD8
-         XfHx08xNN2FFOpay/7400FCNUPZoUPh7Yv/gWu1kIVISlCg6sNLqrYw7h4Abr1DlZMML
-         Eq3g3mAeGf/rwqvb/j+4xpAwMShip6Gx9rt92PKb3zt2+5jNd9m7RafqKZKA+ALjZd/8
-         N4QlRDichfFaKFKXJ3lW1zZX6ECAbIx2yZ/hOXm7Jwv71D0uLuLisEnqVSUZ06T2qpeQ
-         kC6A==
-X-Forwarded-Encrypted: i=1; AJvYcCXNRNxPGDZeMjO1Z7tZPNnQwMQokIvFy8q1vG5X/MVxsbis/SKIWF1PI8Oezfft1lsdn2RpP8DXLHwBXRpIWF9fzf8Q9J0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkCKzJV5Vs65z5hWsshI0zRKYkYgSGtXHVfzOzsUiguDkgRPpf
-	LEHGPAzA9XdGxibOvUv7jb8xmT/Xy5TA+KiZINcgvpRDe9BdnYD889ylqaeDJLPf52V6EdUrX0x
-	9PAeRykPPb6n9PUbpaOifjIcj3Sn1V8BcsbqkgLOv02mNUUg=
-X-Gm-Gg: ASbGncsUPAoUxMmSY+o3T2p3i4XQCciq4RNVld0R4TyWcHtybOEmWLwFeY470j+re7e
-	mgqkkxqSPTmsGngTGOghefNsBR1ZRuqiVfSAd
-X-Google-Smtp-Source: AGHT+IGglgUre+DOHpXxcijtzxc1muMl0gK6CeHMSdJgN+FhAIVgXuK6sjmKQkwTVekbrfXp+twO9uPUSn96nFZmo8A=
-X-Received: by 2002:a05:6902:2383:b0:e39:9eab:908e with SMTP id
- 3f1490d57ef6-e5362231224mr4183284276.52.1734558701581; Wed, 18 Dec 2024
- 13:51:41 -0800 (PST)
+        d=1e100.net; s=20230601; t=1734558908; x=1735163708;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qQSiK4s4Uqm4QJokNKH0Tf7jwBuMNzU4RqKyMwdUVzU=;
+        b=KFjtzw+Q3c06pDW9r+dddBjvsmJd/ZgYAtVkevMaoyNVJTBolf6V/u7gGvcN/maHd2
+         4qqa1NERj5tEqeWEfRb0coQvNK+Nvh6BUTjmyZPAicAtFbS30JXtF5v76QKCyucreWpB
+         280yDr/w9dmOMRGhgTx1YUZ4cU1iHKycSvmnQ7/HwCVqeYe00l6Yaa180weU39D/chD9
+         XvsbN/yrPCVYgGcdLlVPeFRXqEU1wZVl+vcAQLQZbmNFVDuOka7A24PZ19eZujIcioqs
+         d+aPDymCMWLwjtMN1soTEeErO/Hh0JH9SoU5tepyoPsg+WlijJoHBOiqp9cH09xUONpU
+         GDGA==
+X-Forwarded-Encrypted: i=1; AJvYcCW2sF7qWf2yQCeHIAOfoFe5lqIWKIu9/kfki7Q2zYpIIhh/yOYD4s9yUzLAE2sBMzphaClEj0RO2lHpARDAHUk9vt9nhN4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOIXiNCU4cAD+djwomCmCYnv0t/9Ia4NjKrAeslexut3R9U76S
+	ilmvXkjHiE9h2s91a2eDuqDoXIwX0oL8eGfaf5ltp7sgmVyFkXnxXS1syySHVTM=
+X-Gm-Gg: ASbGncvQerNHrJ8CC/yBbJznJjak0E+brTGf7cKDHZCowNmTHxw9YahHHw88OAFv94S
+	rJine/CIrYBpEkaTVitdOEPhaJ+nXFNx9oKwwswyl2mlgC0GZpLEIXBPQ3t7AsuuNaO367x5seI
+	pM8fPtbKLjV0t1i9nSo2oD+/ksrar98wI6LVRN9GjEnu3GoQ6YmnaZrzAxgqqK/0mKhulYObR4O
+	cWt2uBDQmioeggJif5x8VKr97PI0vpae8Uws+KF1U/lJvA=
+X-Google-Smtp-Source: AGHT+IED7YCeQuGuUtpDThJELTrJknNCN7ilLzn7fIFW/Z/Wgd/+nA9XgNr9h0l1o/RBE85pV6GJMQ==
+X-Received: by 2002:a17:90b:2d0e:b0:2ee:dcf6:1c77 with SMTP id 98e67ed59e1d1-2f2e91f0dbemr7484871a91.16.1734558908287;
+        Wed, 18 Dec 2024 13:55:08 -0800 (PST)
+Received: from ghost ([50.145.13.30])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f2d9dc7342sm1451271a91.0.2024.12.18.13.55.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Dec 2024 13:55:07 -0800 (PST)
+Date: Wed, 18 Dec 2024 13:55:05 -0800
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	Nelson Chu <nelson@rivosinc.com>, linux-kernel@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, linux-riscv@lists.infradead.org,
+	llvm@lists.linux.dev, linux-perf-users@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH 1/2] kbuild: Check version of objdump
+Message-ID: <Z2NEuXMiP7QKhQnW@ghost>
+References: <20241216-perf_fix_riscv_obj_reading-v1-0-b75962660a9b@rivosinc.com>
+ <20241216-perf_fix_riscv_obj_reading-v1-1-b75962660a9b@rivosinc.com>
+ <20241218-sandfish-hence-5fa18539f7ca@spud>
+ <20241218-hypnotic-acid-630e8a8d35da@spud>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <675f513a.050a0220.37aaf.0106.GAE@google.com> <20241217182657.10080-2-leocstone@gmail.com>
-In-Reply-To: <20241217182657.10080-2-leocstone@gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 18 Dec 2024 16:51:30 -0500
-Message-ID: <CAHC9VhQGeNv=UEhXPN5MN1h0xEZkeE9kbE79+k9HvNxdK_4xzA@mail.gmail.com>
-Subject: Re: [PATCH v2] lsm: check size of writes
-To: Leo Stone <leocstone@gmail.com>, mortonm@chromium.org
-Cc: syzbot+4eb7a741b3216020043a@syzkaller.appspotmail.com, jmorris@namei.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	serge@hallyn.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241218-hypnotic-acid-630e8a8d35da@spud>
 
-On Tue, Dec 17, 2024 at 1:27=E2=80=AFPM Leo Stone <leocstone@gmail.com> wro=
-te:
->
-> syzbot attempts to write a buffer with a large size to a sysfs entry
-> with writes handled by handle_policy_update(), triggering a warning
-> in kmalloc.
->
-> Check the size specified for write buffers before allocating.
->
-> Reported-by: syzbot+4eb7a741b3216020043a@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=3D4eb7a741b3216020043a
-> Signed-off-by: Leo Stone <leocstone@gmail.com>
-> ---
-> v2: Make the check in handle_policy_update() to also cover
-> safesetid_uid_file_write(). Thanks for your feedback.
-> v1: https://lore.kernel.org/all/20241216030213.246804-2-leocstone@gmail.c=
-om/
-> ---
->  security/safesetid/securityfs.c | 3 +++
->  1 file changed, 3 insertions(+)
+On Wed, Dec 18, 2024 at 03:40:25PM +0000, Conor Dooley wrote:
+> On Wed, Dec 18, 2024 at 03:14:46PM +0000, Conor Dooley wrote:
+> > On Mon, Dec 16, 2024 at 03:12:51PM -0800, Charlie Jenkins wrote:
+> > > Similar to ld-version, add a way to check the version of objdump. This
+> > > should most of the time end up being the binutils version or the llvm
+> > > version.
+> > > 
+> > > Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+> > 
+> > This fails for allmodconfig and rv32_defconfig with clang. 19.1.1
+> > according to Bjorn :)
+> 
+> Some additional info from Bjorn:
+> https://paste.debian.net/1340410
+> and the steps to reproduce:
+> https://paste.debian.net/1340408
+> 
+> That should not be reporting 13.0.1, it should be 19.1.x, there's one
+> included in the toolchains we use from https://mirrors.edge.kernel.org/pub/tools/llvm/
+> 
+> 13.0.1 looks like a host toolchain?
 
-Looks okay to me.  Micah, are you planning to merge this patch, or
-would you like me to take it via the LSM tree?
+I ended up sending a v2 that dropped this in favor of detecting this at
+runtime [1] so this is no longer needed.
 
-Reviewed-by: Paul Moore <paul@paul-moore.com>
+- Charlie
 
-I'm going to tag this to come back to it in a week or so in case we
-don't hear from Micah, but if you don't see any further replies Leo,
-feel free to send a gentle nudge ;)
+Link:
+https://lore.kernel.org/lkml/20241217-perf_fix_riscv_obj_reading-v2-1-58f81b7b4c7d@rivosinc.com/
+[1]
 
-> diff --git a/security/safesetid/securityfs.c b/security/safesetid/securit=
-yfs.c
-> index 25310468bcdd..8e1ffd70b18a 100644
-> --- a/security/safesetid/securityfs.c
-> +++ b/security/safesetid/securityfs.c
-> @@ -143,6 +143,9 @@ static ssize_t handle_policy_update(struct file *file=
-,
->         char *buf, *p, *end;
->         int err;
->
-> +       if (len >=3D KMALLOC_MAX_SIZE)
-> +               return -EINVAL;
-> +
->         pol =3D kmalloc(sizeof(struct setid_ruleset), GFP_KERNEL);
->         if (!pol)
->                 return -ENOMEM;
-> --
-> 2.43.0
+> 
+> > 
+> > Cheers,
+> > Conor.
+> > 
+> > > ---
+> > >  init/Kconfig               | 10 +++++++
+> > >  scripts/Kconfig.include    |  6 ++++
+> > >  scripts/objdump-version.sh | 69 ++++++++++++++++++++++++++++++++++++++++++++++
+> > >  3 files changed, 85 insertions(+)
+> > > 
+> > > diff --git a/init/Kconfig b/init/Kconfig
+> > > index a20e6efd3f0fbdd7f0df2448854cc30734a0ee4f..0b5d36f939e1de89c12ebdd61e4815015314d4f1 100644
+> > > --- a/init/Kconfig
+> > > +++ b/init/Kconfig
+> > > @@ -60,6 +60,16 @@ config LLD_VERSION
+> > >  	default $(ld-version) if LD_IS_LLD
+> > >  	default 0
+> > >  
+> > > +config OBJDUMP_IS_GNU
+> > > +	def_bool $(success,test "$(objdump-name)" = objdump)
+> > > +
+> > > +config OBJDUMP_IS_LLVM
+> > > +	def_bool $(success,test "$(objdump-name)" = llvm-objdump)
+> > > +
+> > > +config OBJDUMP_VERSION
+> > > +	int
+> > > +	default $(objdump-version)
+> > > +
+> > >  config RUSTC_VERSION
+> > >  	int
+> > >  	default $(rustc-version)
+> > > diff --git a/scripts/Kconfig.include b/scripts/Kconfig.include
+> > > index 33193ca6e8030e659d6b321acaea1acd42c387a4..cb3e2d2564fea8cce780adb3be672c9596b7ccf2 100644
+> > > --- a/scripts/Kconfig.include
+> > > +++ b/scripts/Kconfig.include
+> > > @@ -58,6 +58,12 @@ $(error-if,$(success,test -z "$(ld-info)"),Sorry$(comma) this linker is not supp
+> > >  ld-name := $(shell,set -- $(ld-info) && echo $1)
+> > >  ld-version := $(shell,set -- $(ld-info) && echo $2)
+> > >  
+> > > +# Get the objdump name, version, and error out if it is not supported.
+> > > +objdump-info := $(shell,$(srctree)/scripts/objdump-version.sh $(OBJDUMP))
+> > > +$(error-if,$(success,test -z "$(objdump-info)"),Sorry$(comma) this objdump is not supported.)
+> > > +objdump-name := $(shell,set -- $(objdump-info) && echo $1)
+> > > +objdump-version := $(shell,set -- $(objdump-info) && echo $2)
+> > > +
+> > >  # machine bit flags
+> > >  #  $(m32-flag): -m32 if the compiler supports it, or an empty string otherwise.
+> > >  #  $(m64-flag): -m64 if the compiler supports it, or an empty string otherwise.
+> > > diff --git a/scripts/objdump-version.sh b/scripts/objdump-version.sh
+> > > new file mode 100755
+> > > index 0000000000000000000000000000000000000000..fa24f8dc2d3c42fd1195fceb3c96b27f7127db25
+> > > --- /dev/null
+> > > +++ b/scripts/objdump-version.sh
+> > > @@ -0,0 +1,69 @@
+> > > +#!/bin/sh
+> > > +# SPDX-License-Identifier: GPL-2.0
+> > > +#
+> > > +# Print the objdump name and its version in a 5 or 6-digit form.
+> > > +# Also, perform the minimum version check.
+> > > +
+> > > +set -e
+> > > +
+> > > +# Convert the version string x.y.z to a canonical 5 or 6-digit form.
+> > > +get_canonical_version()
+> > > +{
+> > > +	IFS=.
+> > > +	set -- $1
+> > > +
+> > > +	# If the 2nd or 3rd field is missing, fill it with a zero.
+> > > +	#
+> > > +	# The 4th field, if present, is ignored.
+> > > +	# This occurs in development snapshots as in 2.35.1.20201116
+> > > +	echo $((10000 * $1 + 100 * ${2:-0} + ${3:-0}))
+> > > +}
+> > > +
+> > > +orig_args="$@"
+> > > +
+> > > +# Get the first line of the --version output.
+> > > +IFS='
+> > > +'
+> > > +set -- $(LC_ALL=C "$@" --version)
+> > > +
+> > > +# Split the line on spaces.
+> > > +IFS=' '
+> > > +set -- $1
+> > > +
+> > > +min_tool_version=$(dirname $0)/min-tool-version.sh
+> > > +
+> > > +if [ "$1" = GNU -a "$2" = objdump ]; then
+> > > +	shift $(($# - 1))
+> > > +	version=$1
+> > > +	min_version=$($min_tool_version binutils)
+> > > +	disp_name="GNU objdump"
+> > > +else
+> > > +	while [ $# -gt 1 -a "$1" != "LLVM" ]; do
+> > > +		shift
+> > > +	done
+> > > +
+> > > +	if [ "$1" = LLVM ]; then
+> > > +		version=$3
+> > > +		min_version=$($min_tool_version llvm)
+> > > +		disp_name="llvm-objdump"
+> > > +	else
+> > > +		echo "$orig_args: unknown objdump" >&2
+> > > +		exit 1
+> > > +	fi
+> > > +fi
+> > > +
+> > > +version=${version%%[!0-9.]*}
+> > > +
+> > > +cversion=$(get_canonical_version $version)
+> > > +min_cversion=$(get_canonical_version $min_version)
+> > > +
+> > > +if [ "$cversion" -lt "$min_cversion" ]; then
+> > > +	echo >&2 "***"
+> > > +	echo >&2 "*** objdump is too old."
+> > > +	echo >&2 "***   Your $disp_name version:    $version"
+> > > +	echo >&2 "***   Minimum $disp_name version: $min_version"
+> > > +	echo >&2 "***"
+> > > +	exit 1
+> > > +fi
+> > > +
+> > > +echo objdump $cversion
+> > > 
+> > > -- 
+> > > 2.34.1
+> > > 
+> > > 
+> > > _______________________________________________
+> > > linux-riscv mailing list
+> > > linux-riscv@lists.infradead.org
+> > > http://lists.infradead.org/mailman/listinfo/linux-riscv
+> 
+> 
+> 
+> > _______________________________________________
+> > linux-riscv mailing list
+> > linux-riscv@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-riscv
+> 
 
---
-paul-moore.com
+
