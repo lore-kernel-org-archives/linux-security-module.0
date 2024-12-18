@@ -1,352 +1,299 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 753B01922EE;
-	Wed, 18 Dec 2024 21:16:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07D971991AA;
+	Wed, 18 Dec 2024 21:20:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734556598; cv=none; b=ktuY+P+Gf4RoISJRXbZZL49DoDb9TPWlSPiIzLjP8bakFDQO6jUTboghtvmQ6a8WIw8Xedr+1jP7eFxG5kD8qard4tuUk/0rIFQXoxQ/TciIoIf29+qzxtHRg4/5SWfjENQw0TDm+KgsZJImSANs6pk7W9pKfvoRVb6kckhfISg=
+	t=1734556855; cv=none; b=JxUQNTzPlxPdKlb/viiFuzpx8/DVFfeEk71XoHnqEBa3jOcvlUIFBIrP7c8s7enTSPJ8pO8Tlvo+fxW5XdXU9xWnA0w8MefyqEc4g90cyFMkXWhWelKbV6cJ0qi2xKQ9dKAjXGBS90TNbzLdRyyPKIJHpjT8TncwIDp+KiQiE0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734556598; c=relaxed/simple;
-	bh=BzP8UTSDo5oitwO7ghy7d6m6Rl07PvzBU5guVa6Dy50=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YvryJ8Fbrsy8kAOoCA53chuaw5bg1P5T21a4UjwavvKO7Gk+Np5rvqy+r4EtVoFDj6dfn2zIGyU7bmqLAhnwbRCByPSzIwTcSmiov3yuIgvReUe27+Qiu5hbDVzFgUISq306oE3Iw4pPlz1goKI1zDo6Mh8jONF5P7v+QxQjS3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bg1tbOH4; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1734556855; c=relaxed/simple;
+	bh=ZAAXJis6h3Gxlks/b62d5xZgaFxE9MDxE2CLjMJAXKE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HraPD7AflOwxl9pPmy44Eiv2GssqpJcSpOnTlkXKOmNzKQ4LdQPWktld+mkrwf6vnpxRtM2JOxgD1KYqddMhJpnOpzzZSuVje+gcy1CQESFbjaTcfNpAUIHsl5x+a/+BZmm3OIOqXEm060WXM0XWe040hqmJ/awFdsby8ngeDHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=akEPXnmG; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bg1tbOH4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17CD1C4CECD;
-	Wed, 18 Dec 2024 21:16:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734556598;
-	bh=BzP8UTSDo5oitwO7ghy7d6m6Rl07PvzBU5guVa6Dy50=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Bg1tbOH40ROGrk3Uq0Flni+/gJucA12nM0oTfZpiwTkmsbAMx0aJCrtjAv9apbXeg
-	 4UkejTo19kGWVQitUrDAf/yoeNbPfyfcBjSkEGsPwY/ZPR9D7Fr6R8hFChxd8a2g79
-	 8AzPEUATSPYM5V8ZdJU32vr1171JPfSLJuDiMNQzb03zdNy2M3TLyAUbBU5V3PWPgU
-	 R9IzYDmu1bTbMObM/ry4KF3l3o9UPS96laRC2dNELzIW4tRSlhVjNRECqEvFDZfTcx
-	 yLB92nCZOVS+JoIwkMidnJjhVkBg5UMBzJqwYU8TagNkyLmvqc2UAlYNpABUvR+hGh
-	 js5MBRA4yyodg==
-From: Song Liu <song@kernel.org>
-To: linux-fsdevel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-btrfs@vger.kernel.org,
-	linux-xfs@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Cc: willy@infradead.org,
-	corbet@lwn.net,
-	clm@fb.com,
-	josef@toxicpanda.com,
-	dsterba@suse.com,
-	brauner@kernel.org,
-	jack@suse.cz,
-	cem@kernel.org,
-	djwong@kernel.org,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	fdmanana@suse.com,
-	song@kernel.org,
-	johannes.thumshirn@wdc.com,
-	kernel-team@meta.com
-Subject: [RFC v2] lsm: fs: Use inode_free_callback to free i_security in RCU callback
-Date: Wed, 18 Dec 2024 13:16:15 -0800
-Message-ID: <20241218211615.506095-1-song@kernel.org>
-X-Mailer: git-send-email 2.43.5
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="akEPXnmG"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-385d7f19f20so60190f8f.1;
+        Wed, 18 Dec 2024 13:20:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1734556852; x=1735161652; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Fltd8tTrg2w0S2s+1CngFstb0NQogjTdUuyCOOE6GS8=;
+        b=akEPXnmG2OjchyVoevTeC8gxPVfB/llLTascwMADdiqR8St2e6jf9l8bLoKSNT31fC
+         ndu/8PJk+ZWc84c/D2XqlQUiJB0jyVCcDFRsBrO9AvhaZq1z4oQLKFVQiyq3vTM+yAd8
+         ZA/2jdCHYq7uzNOIdNCpdHwuDo/EnGP2bsZWelXp9slUKOG4PbOWbw+zq+KikmXbqSga
+         2h4Umkn/o8jncjKIqHg/HzrMOvMY+4pU3gM0oeNdFwAs1lrwa0VwYRf45MchGVG48Yix
+         GjUtWcDQuY6+F6lWLnKmnAyI7UwLWtz7Lvpg57kTAIJ2TcL0b5sUOXnoyCWB73YH18S5
+         syag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734556852; x=1735161652;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Fltd8tTrg2w0S2s+1CngFstb0NQogjTdUuyCOOE6GS8=;
+        b=pyjIgtvYYCZq1ulLF8LNwQt7Sl/nDQ3XppFoyHmw1eJwuvMAXxlg8F80hj4MeBoFq9
+         R5iOZqozeHyQ3OHP3CZH/0g4xNiTkb/rxaYIIXKBRDb8vFt3LJqHjOvOEYR5oZmYtQsF
+         UQYBS38BvXlEdvEK634ODFRHdxGfNl2d1sT+GQ3j0NAxZoGN2u5/WFMquzKzkaT1bfj2
+         JgBj4SDUAzA6hRNRWM+u0Rvfb/oFnaSTJvktWeNEtoY5hT27qiS3I5BuzREPMEhhBPKx
+         YI3C30eJZO8DlF1XyO7HOcum8xwIGD0LHB1CD5pz9v3XpmknMwPa9L5FJ5lO4NCy7XV+
+         /ngg==
+X-Forwarded-Encrypted: i=1; AJvYcCUFd1jcVcvZTJ23AJMXoAb1bz7el+CykZZWz4nVuHyBR+g10KgeIAf5DxXNiy87oXk/1BSLBwG7pLrtqD0=@vger.kernel.org, AJvYcCWwqr2Pas+i9p/2OXFbJfGFkodDjevAfx580jrk0H7dxHE4qNNUxGa0U4YNJIeh9ev/lNCKR7JdVUBZIAHipcEOfmtqX2kx@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRpW81O+zduyMY26EN8dp3RPQ7GS3rJPC6Mu0iZCh/pW0nxGis
+	060cptNa/r6GstqGFkB1Ct7eSfA+W66YSSwGkyBz3BqpaGEsAw8DPQPYhwSYfXFQBrKfTvqWCLs
+	AYYFkbI6sU9RgQ8r0JwOVcosIAOc=
+X-Gm-Gg: ASbGncsbaFck2teWBYNZviSEqoW7GKhL8Qlm2aDpnI4fH/CXQh1Q3h3PJcaTslA57Bc
+	6WSlN5rirlIOwTJfexEehbcNTvrYXrWsDzq0hvA==
+X-Google-Smtp-Source: AGHT+IHrmCRqfFExnAhLv9dcLlNdemkMwaW4bKMAmg7pQhiPbpFYK1+ayuIlWqVolZOXopVmQvTB0k3x3tm21tGUcfs=
+X-Received: by 2002:a05:6000:1faa:b0:385:f17b:de54 with SMTP id
+ ffacd0b85a97d-388e4d2f458mr4505774f8f.5.1734556852007; Wed, 18 Dec 2024
+ 13:20:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241218044711.1723221-1-song@kernel.org> <20241218044711.1723221-5-song@kernel.org>
+In-Reply-To: <20241218044711.1723221-5-song@kernel.org>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 18 Dec 2024 13:20:40 -0800
+Message-ID: <CAADnVQK2chjFr8EwpzbnsqLwGRfoxjRs6yXDXmUuBRFo-iwV_A@mail.gmail.com>
+Subject: Re: [PATCH v5 bpf-next 4/5] bpf: fs/xattr: Add BPF kfuncs to set and
+ remove xattrs
+To: Song Liu <song@kernel.org>
+Cc: bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	LSM List <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	KP Singh <kpsingh@kernel.org>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E . Hallyn" <serge@hallyn.com>, Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-inode->i_security needes to be freed from RCU callback. A rcu_head was
-added to i_security to call the RCU callback. However, since struct inode
-already has i_rcu, the extra rcu_head is wasteful. Specifically, when any
-LSM uses i_security, a rcu_head (two pointers) is allocated for each
-inode.
+On Tue, Dec 17, 2024 at 8:48=E2=80=AFPM Song Liu <song@kernel.org> wrote:
+>
+>
+>  BTF_KFUNCS_START(bpf_fs_kfunc_set_ids)
+> @@ -170,6 +330,10 @@ BTF_ID_FLAGS(func, bpf_put_file, KF_RELEASE)
+>  BTF_ID_FLAGS(func, bpf_path_d_path, KF_TRUSTED_ARGS)
+>  BTF_ID_FLAGS(func, bpf_get_dentry_xattr, KF_SLEEPABLE | KF_TRUSTED_ARGS)
+>  BTF_ID_FLAGS(func, bpf_get_file_xattr, KF_SLEEPABLE | KF_TRUSTED_ARGS)
+> +BTF_ID_FLAGS(func, bpf_set_dentry_xattr, KF_SLEEPABLE | KF_TRUSTED_ARGS)
+> +BTF_ID_FLAGS(func, bpf_remove_dentry_xattr, KF_SLEEPABLE | KF_TRUSTED_AR=
+GS)
+> +BTF_ID_FLAGS(func, bpf_set_dentry_xattr_locked, KF_SLEEPABLE | KF_TRUSTE=
+D_ARGS)
+> +BTF_ID_FLAGS(func, bpf_remove_dentry_xattr_locked, KF_SLEEPABLE | KF_TRU=
+STED_ARGS)
+>  BTF_KFUNCS_END(bpf_fs_kfunc_set_ids)
 
-Rename i_callback to inode_free_callback and call security_inode_free_rcu
-from it to free i_security so that a rcu_head is saved for each inode.
-Special care are needed for file systems that provide a destroy_inode()
-callback, but not a free_inode() callback. Specifically, the following
-logic are added to handle such cases:
+The _locked() versions shouldn't be exposed to bpf prog.
+Don't add them to the above set.
 
- - XFS recycles inode after destroy_inode. The inodes are freed from
-   recycle logic. Let xfs_inode_free_callback() call inode_free_callback.
- - Let pipe free inode from a RCU callback.
- - Let btrfs-test free inode from a RCU callback.
+Also we need to somehow exclude them from being dumped into vmlinux.h
 
-Signed-off-by: Song Liu <song@kernel.org>
+>  static int bpf_fs_kfuncs_filter(const struct bpf_prog *prog, u32 kfunc_i=
+d)
+> @@ -186,6 +350,37 @@ static const struct btf_kfunc_id_set bpf_fs_kfunc_se=
+t =3D {
+>         .filter =3D bpf_fs_kfuncs_filter,
+>  };
+>
+> +/* bpf_[set|remove]_dentry_xattr.* hooks have KF_TRUSTED_ARGS and
+> + * KF_SLEEPABLE, so they are only available to sleepable hooks with
+> + * dentry arguments.
+> + *
+> + * Setting and removing xattr requires exclusive lock on dentry->d_inode=
+.
+> + * Some hooks already locked d_inode, while some hooks have not locked
+> + * d_inode. Therefore, we need different kfuncs for different hooks.
+> + * Specifically, hooks in the following list (d_inode_locked_hooks)
+> + * should call bpf_[set|remove]_dentry_xattr_locked; while other hooks
+> + * should call bpf_[set|remove]_dentry_xattr.
+> + */
+> +BTF_SET_START(d_inode_locked_hooks)
+> +BTF_ID(func, bpf_lsm_inode_post_removexattr)
+> +BTF_ID(func, bpf_lsm_inode_post_setattr)
+> +BTF_ID(func, bpf_lsm_inode_post_setxattr)
+> +BTF_ID(func, bpf_lsm_inode_removexattr)
+> +BTF_ID(func, bpf_lsm_inode_rmdir)
+> +BTF_ID(func, bpf_lsm_inode_setattr)
+> +BTF_ID(func, bpf_lsm_inode_setxattr)
+> +BTF_ID(func, bpf_lsm_inode_unlink)
+> +#ifdef CONFIG_SECURITY_PATH
+> +BTF_ID(func, bpf_lsm_path_unlink)
+> +BTF_ID(func, bpf_lsm_path_rmdir)
+> +#endif /* CONFIG_SECURITY_PATH */
+> +BTF_SET_END(d_inode_locked_hooks)
+> +
+> +bool bpf_lsm_has_d_inode_locked(const struct bpf_prog *prog)
+> +{
+> +       return btf_id_set_contains(&d_inode_locked_hooks, prog->aux->atta=
+ch_btf_id);
+> +}
+> +
+>  static int __init bpf_fs_kfuncs_init(void)
+>  {
+>         return register_btf_kfunc_id_set(BPF_PROG_TYPE_LSM, &bpf_fs_kfunc=
+_set);
+> diff --git a/include/linux/bpf_lsm.h b/include/linux/bpf_lsm.h
+> index aefcd6564251..5147b10e16a2 100644
+> --- a/include/linux/bpf_lsm.h
+> +++ b/include/linux/bpf_lsm.h
+> @@ -48,6 +48,9 @@ void bpf_lsm_find_cgroup_shim(const struct bpf_prog *pr=
+og, bpf_func_t *bpf_func)
+>
+>  int bpf_lsm_get_retval_range(const struct bpf_prog *prog,
+>                              struct bpf_retval_range *range);
+> +
+> +bool bpf_lsm_has_d_inode_locked(const struct bpf_prog *prog);
+> +
+>  #else /* !CONFIG_BPF_LSM */
+>
+>  static inline bool bpf_lsm_is_sleepable_hook(u32 btf_id)
+> @@ -86,6 +89,11 @@ static inline int bpf_lsm_get_retval_range(const struc=
+t bpf_prog *prog,
+>  {
+>         return -EOPNOTSUPP;
+>  }
+> +
+> +static inline bool bpf_lsm_has_d_inode_locked(const struct bpf_prog *pro=
+g)
+> +{
+> +       return false;
+> +}
+>  #endif /* CONFIG_BPF_LSM */
+>
+>  #endif /* _LINUX_BPF_LSM_H */
+> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+> index f27274e933e5..f0d240d46e54 100644
+> --- a/kernel/bpf/verifier.c
+> +++ b/kernel/bpf/verifier.c
+> @@ -206,6 +206,7 @@ static int ref_set_non_owning(struct bpf_verifier_env=
+ *env,
+>  static void specialize_kfunc(struct bpf_verifier_env *env,
+>                              u32 func_id, u16 offset, unsigned long *addr=
+);
+>  static bool is_trusted_reg(const struct bpf_reg_state *reg);
+> +static void remap_kfunc_locked_func_id(struct bpf_verifier_env *env, str=
+uct bpf_insn *insn);
+>
+>  static bool bpf_map_ptr_poisoned(const struct bpf_insn_aux_data *aux)
+>  {
+> @@ -3224,10 +3225,12 @@ static int add_subprog_and_kfunc(struct bpf_verif=
+ier_env *env)
+>                         return -EPERM;
+>                 }
+>
+> -               if (bpf_pseudo_func(insn) || bpf_pseudo_call(insn))
+> +               if (bpf_pseudo_func(insn) || bpf_pseudo_call(insn)) {
+>                         ret =3D add_subprog(env, i + insn->imm + 1);
+> -               else
+> +               } else {
+> +                       remap_kfunc_locked_func_id(env, insn);
+>                         ret =3D add_kfunc_call(env, insn->imm, insn->off)=
+;
+> +               }
+>
+>                 if (ret < 0)
+>                         return ret;
+> @@ -11690,6 +11693,10 @@ enum special_kfunc_type {
+>         KF_bpf_get_kmem_cache,
+>         KF_bpf_local_irq_save,
+>         KF_bpf_local_irq_restore,
+> +       KF_bpf_set_dentry_xattr,
+> +       KF_bpf_remove_dentry_xattr,
+> +       KF_bpf_set_dentry_xattr_locked,
+> +       KF_bpf_remove_dentry_xattr_locked,
+>  };
+>
+>  BTF_SET_START(special_kfunc_set)
+> @@ -11719,6 +11726,12 @@ BTF_ID(func, bpf_wq_set_callback_impl)
+>  #ifdef CONFIG_CGROUPS
+>  BTF_ID(func, bpf_iter_css_task_new)
+>  #endif
+> +#ifdef CONFIG_BPF_LSM
+> +BTF_ID(func, bpf_set_dentry_xattr)
+> +BTF_ID(func, bpf_remove_dentry_xattr)
+> +BTF_ID(func, bpf_set_dentry_xattr_locked)
+> +BTF_ID(func, bpf_remove_dentry_xattr_locked)
+> +#endif
+>  BTF_SET_END(special_kfunc_set)
 
----
+Do they need to be a part of special_kfunc_set ?
+Where is the code that uses that?
 
-Changes v1 => v2:
-1. Wrap security_inode_free_rcu inside inode_free_callback so that
-   the interface is cleaner.
+>
+>  BTF_ID_LIST(special_kfunc_list)
+> @@ -11762,6 +11775,44 @@ BTF_ID_UNUSED
+>  BTF_ID(func, bpf_get_kmem_cache)
+>  BTF_ID(func, bpf_local_irq_save)
+>  BTF_ID(func, bpf_local_irq_restore)
+> +#ifdef CONFIG_BPF_LSM
+> +BTF_ID(func, bpf_set_dentry_xattr)
+> +BTF_ID(func, bpf_remove_dentry_xattr)
+> +BTF_ID(func, bpf_set_dentry_xattr_locked)
+> +BTF_ID(func, bpf_remove_dentry_xattr_locked)
+> +#else
+> +BTF_ID_UNUSED
+> +BTF_ID_UNUSED
+> +BTF_ID_UNUSED
+> +BTF_ID_UNUSED
+> +#endif
+> +
+> +/* Sometimes, we need slightly different verions of a kfunc for differen=
+t
 
-RFC v1: https://lore.kernel.org/linux-fsdevel/20241216234308.1326841-1-song@kernel.org/
----
- Documentation/filesystems/vfs.rst |  5 +++-
- fs/btrfs/fs.h                     |  1 +
- fs/btrfs/inode.c                  |  4 +++
- fs/btrfs/tests/btrfs-tests.c      |  1 +
- fs/inode.c                        | 20 +++++++++----
- fs/pipe.c                         |  1 -
- fs/xfs/xfs_icache.c               |  1 +
- include/linux/fs.h                |  2 ++
- include/linux/security.h          |  4 +++
- security/security.c               | 48 +++++++++++++++++++------------
- 10 files changed, 60 insertions(+), 27 deletions(-)
+versions
 
-diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
-index 0b18af3f954e..93d6f59fd2c0 100644
---- a/Documentation/filesystems/vfs.rst
-+++ b/Documentation/filesystems/vfs.rst
-@@ -306,7 +306,10 @@ or bottom half).
- ``free_inode``
- 	this method is called from RCU callback. If you use call_rcu()
- 	in ->destroy_inode to free 'struct inode' memory, then it's
--	better to release memory in this method.
-+	better to release memory in this method. Some filesystems may
-+	decide not to provide a free_inode() method, but to free the
-+	inode through a different code path. In this case, the filesystem
-+	should call inode_free_callback() before freeing the inode.
- 
- ``dirty_inode``
- 	this method is called by the VFS when an inode is marked dirty.
-diff --git a/fs/btrfs/fs.h b/fs/btrfs/fs.h
-index 79a1a3d6f04d..f606ea2a14ab 100644
---- a/fs/btrfs/fs.h
-+++ b/fs/btrfs/fs.h
-@@ -1068,6 +1068,7 @@ static inline int btrfs_is_testing(const struct btrfs_fs_info *fs_info)
- }
- 
- void btrfs_test_destroy_inode(struct inode *inode);
-+void btrfs_test_free_inode(struct inode *inode);
- 
- #else
- 
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 03fe0de2cd0d..62ee8394cf6c 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -7707,6 +7707,10 @@ void btrfs_test_destroy_inode(struct inode *inode)
- {
- 	btrfs_drop_extent_map_range(BTRFS_I(inode), 0, (u64)-1, false);
- 	kfree(BTRFS_I(inode)->file_extent_tree);
-+}
-+
-+void btrfs_test_free_inode(struct inode *inode)
-+{
- 	kmem_cache_free(btrfs_inode_cachep, BTRFS_I(inode));
- }
- #endif
-diff --git a/fs/btrfs/tests/btrfs-tests.c b/fs/btrfs/tests/btrfs-tests.c
-index e607b5d52fb1..581b518b99b7 100644
---- a/fs/btrfs/tests/btrfs-tests.c
-+++ b/fs/btrfs/tests/btrfs-tests.c
-@@ -35,6 +35,7 @@ const char *test_error[] = {
- static const struct super_operations btrfs_test_super_ops = {
- 	.alloc_inode	= btrfs_alloc_inode,
- 	.destroy_inode	= btrfs_test_destroy_inode,
-+	.free_inode	= btrfs_test_free_inode,
- };
- 
- 
-diff --git a/fs/inode.c b/fs/inode.c
-index 6b4c77268fc0..e5dbf59e7297 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -318,13 +318,13 @@ void free_inode_nonrcu(struct inode *inode)
- }
- EXPORT_SYMBOL(free_inode_nonrcu);
- 
--static void i_callback(struct rcu_head *head)
-+void inode_free_callback(struct rcu_head *head)
- {
- 	struct inode *inode = container_of(head, struct inode, i_rcu);
-+
-+	security_inode_free_rcu(inode);
- 	if (inode->free_inode)
- 		inode->free_inode(inode);
--	else
--		free_inode_nonrcu(inode);
- }
- 
- static struct inode *alloc_inode(struct super_block *sb)
-@@ -346,8 +346,11 @@ static struct inode *alloc_inode(struct super_block *sb)
- 			if (!ops->free_inode)
- 				return NULL;
- 		}
--		inode->free_inode = ops->free_inode;
--		i_callback(&inode->i_rcu);
-+		if (ops->free_inode)
-+			inode->free_inode = ops->free_inode;
-+		else
-+			inode->free_inode = free_inode_nonrcu;
-+		inode_free_callback(&inode->i_rcu);
- 		return NULL;
- 	}
- 
-@@ -387,8 +390,13 @@ static void destroy_inode(struct inode *inode)
- 		if (!ops->free_inode)
- 			return;
- 	}
-+	if (ops->free_inode)
-+		inode->free_inode = ops->free_inode;
-+	else
-+		inode->free_inode = free_inode_nonrcu;
-+
- 	inode->free_inode = ops->free_inode;
--	call_rcu(&inode->i_rcu, i_callback);
-+	call_rcu(&inode->i_rcu, inode_free_callback);
- }
- 
- /**
-diff --git a/fs/pipe.c b/fs/pipe.c
-index 12b22c2723b7..eb9c75ef5d80 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -1422,7 +1422,6 @@ long pipe_fcntl(struct file *file, unsigned int cmd, unsigned int arg)
- }
- 
- static const struct super_operations pipefs_ops = {
--	.destroy_inode = free_inode_nonrcu,
- 	.statfs = simple_statfs,
- };
- 
-diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
-index 7b6c026d01a1..7c72a6199f15 100644
---- a/fs/xfs/xfs_icache.c
-+++ b/fs/xfs/xfs_icache.c
-@@ -162,6 +162,7 @@ xfs_inode_free_callback(
- 		ip->i_itemp = NULL;
- 	}
- 
-+	inode_free_callback(&inode->i_rcu);
- 	kmem_cache_free(xfs_inode_cache, ip);
- }
- 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 7e29433c5ecc..dab8f1cd1b72 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3810,4 +3810,6 @@ static inline bool vfs_empty_path(int dfd, const char __user *path)
- 
- int generic_atomic_write_valid(struct kiocb *iocb, struct iov_iter *iter);
- 
-+void inode_free_callback(struct rcu_head *head);
-+
- #endif /* _LINUX_FS_H */
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 980b6c207cad..4983d6a3ccb3 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -400,6 +400,7 @@ int security_path_notify(const struct path *path, u64 mask,
- 					unsigned int obj_type);
- int security_inode_alloc(struct inode *inode, gfp_t gfp);
- void security_inode_free(struct inode *inode);
-+void security_inode_free_rcu(struct inode *inode);
- int security_inode_init_security(struct inode *inode, struct inode *dir,
- 				 const struct qstr *qstr,
- 				 initxattrs initxattrs, void *fs_data);
-@@ -860,6 +861,9 @@ static inline int security_inode_alloc(struct inode *inode, gfp_t gfp)
- static inline void security_inode_free(struct inode *inode)
- { }
- 
-+static inline void security_inode_free_rcu(struct inode *inode)
-+{ }
-+
- static inline int security_dentry_init_security(struct dentry *dentry,
- 						 int mode,
- 						 const struct qstr *name,
-diff --git a/security/security.c b/security/security.c
-index 7523d14f31fb..b9a515d881f6 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -265,12 +265,6 @@ static void __init lsm_set_blob_sizes(struct lsm_blob_sizes *needed)
- 	lsm_set_blob_size(&needed->lbs_cred, &blob_sizes.lbs_cred);
- 	lsm_set_blob_size(&needed->lbs_file, &blob_sizes.lbs_file);
- 	lsm_set_blob_size(&needed->lbs_ib, &blob_sizes.lbs_ib);
--	/*
--	 * The inode blob gets an rcu_head in addition to
--	 * what the modules might need.
--	 */
--	if (needed->lbs_inode && blob_sizes.lbs_inode == 0)
--		blob_sizes.lbs_inode = sizeof(struct rcu_head);
- 	lsm_set_blob_size(&needed->lbs_inode, &blob_sizes.lbs_inode);
- 	lsm_set_blob_size(&needed->lbs_ipc, &blob_sizes.lbs_ipc);
- 	lsm_set_blob_size(&needed->lbs_key, &blob_sizes.lbs_key);
-@@ -747,10 +741,15 @@ static int lsm_file_alloc(struct file *file)
-  */
- static int lsm_inode_alloc(struct inode *inode, gfp_t gfp)
- {
--	if (!lsm_inode_cache) {
--		inode->i_security = NULL;
-+	/*
-+	 * If the filesystem recycles inode, i_security may be already
-+	 * allocated. Just return in this case.
-+	 */
-+	if (inode->i_security)
-+		return 0;
-+
-+	if (!lsm_inode_cache)
- 		return 0;
--	}
- 
- 	inode->i_security = kmem_cache_zalloc(lsm_inode_cache, gfp);
- 	if (inode->i_security == NULL)
-@@ -1693,18 +1692,13 @@ int security_inode_alloc(struct inode *inode, gfp_t gfp)
- 	if (unlikely(rc))
- 		return rc;
- 	rc = call_int_hook(inode_alloc_security, inode);
--	if (unlikely(rc))
-+	if (unlikely(rc)) {
- 		security_inode_free(inode);
-+		security_inode_free_rcu(inode);
-+	}
- 	return rc;
- }
- 
--static void inode_free_by_rcu(struct rcu_head *head)
--{
--	/* The rcu head is at the start of the inode blob */
--	call_void_hook(inode_free_security_rcu, head);
--	kmem_cache_free(lsm_inode_cache, head);
--}
--
- /**
-  * security_inode_free() - Free an inode's LSM blob
-  * @inode: the inode
-@@ -1724,9 +1718,25 @@ static void inode_free_by_rcu(struct rcu_head *head)
- void security_inode_free(struct inode *inode)
- {
- 	call_void_hook(inode_free_security, inode);
--	if (!inode->i_security)
-+}
-+
-+/**
-+ * security_inode_free_rcu() - Free an inode's LSM blob from i_callback
-+ * @inode: the inode
-+ *
-+ * Release any LSM resources associated with @inode. This is called from
-+ * i_callback after a RCU grace period. Therefore, it is safe to free
-+ * everything now.
-+ */
-+void security_inode_free_rcu(struct inode *inode)
-+{
-+	void *inode_security = inode->i_security;
-+
-+	if (!inode_security)
- 		return;
--	call_rcu((struct rcu_head *)inode->i_security, inode_free_by_rcu);
-+	inode->i_security = NULL;
-+	call_void_hook(inode_free_security_rcu, inode_security);
-+	kmem_cache_free(lsm_inode_cache, inode_security);
- }
- 
- /**
--- 
-2.43.5
+> + * contexts/hooks, for example, bpf_set_dentry_xattr vs.
+> + * bpf_set_dentry_xattr_locked. The former kfunc need to lock the inode
+> + * rwsem, while the latter is called with the inode rwsem held (by the
+> + * caller).
+> + *
+> + * To avoid burden on the users, we allow either version of the kfunc in
+> + * either context. Then the verifier will remap the kfunc to the proper
+> + * version based the context.
+> + */
+> +static void remap_kfunc_locked_func_id(struct bpf_verifier_env *env, str=
+uct bpf_insn *insn)
+> +{
+> +       u32 func_id =3D insn->imm;
+> +
+> +       if (bpf_lsm_has_d_inode_locked(env->prog)) {
+> +               if (func_id =3D=3D special_kfunc_list[KF_bpf_set_dentry_x=
+attr])
+> +                       insn->imm =3D  special_kfunc_list[KF_bpf_set_dent=
+ry_xattr_locked];
+> +               else if (func_id =3D=3D special_kfunc_list[KF_bpf_remove_=
+dentry_xattr])
+> +                       insn->imm =3D special_kfunc_list[KF_bpf_remove_de=
+ntry_xattr_locked];
+> +       } else {
+> +               if (func_id =3D=3D special_kfunc_list[KF_bpf_set_dentry_x=
+attr_locked])
+> +                       insn->imm =3D  special_kfunc_list[KF_bpf_set_dent=
+ry_xattr];
 
+This part is not necessary.
+_locked() shouldn't be exposed and it should be an error
+if bpf prog attempts to use invalid kfunc.
+
+> +               else if (func_id =3D=3D special_kfunc_list[KF_bpf_remove_=
+dentry_xattr_locked])
+> +                       insn->imm =3D special_kfunc_list[KF_bpf_remove_de=
+ntry_xattr];
+> +       }
+> +}
+>
+>  static bool is_kfunc_ret_null(struct bpf_kfunc_call_arg_meta *meta)
+>  {
+> --
+> 2.43.5
+>
