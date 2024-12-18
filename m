@@ -1,119 +1,160 @@
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 848E135949
-	for <linux-security-module@vger.kernel.org>; Wed, 18 Dec 2024 21:24:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 657A11F63EB
+	for <linux-security-module@vger.kernel.org>; Wed, 18 Dec 2024 21:31:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734557081; cv=none; b=OBaFewzuQFe68H/QQ8xO1EcfAbOIk9yqThsOFwMtBEubbOuu8StIMhabdNJLtChDfwsuOZpowNb+eBB/Mn0hTTQdX/UHnSMFqkgbxfWE1mMoIFF6iZlZKBtNlERaC8BnlYryk+9zT5bxlJR54BluTytd5vjzsepswZwYV7oLyWA=
+	t=1734557515; cv=none; b=M5b9ZE1aozgW284H9uq+Hx1nFTtklxr5861k5VsYBJ7kbwJYT4ZcVRwRQJ8Oti2kQxoEXSt543fTj5GfTWOpd9tfgPfjbdvOJACMaV8mN8tzsmvqodm8nktnhjvcbfSdxBQSM8IjIEmBt8HBLzZDcEXxt/otkj8FshuNtd8foo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734557081; c=relaxed/simple;
-	bh=2hrHNssRry+Pfo+ilOcGpNa+7kA+mGTazY1xOwJ4rlw=;
+	s=arc-20240116; t=1734557515; c=relaxed/simple;
+	bh=SaoKEUZWkdHnHaD1cXDQ7o58skgw8VAikNl6ksvw504=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SwfMKgIwVDnH0UDyyQ8lPh/oTRkKX4xBhmhE/dbKjg1D/C+vrnvYdkTWLayAcSSAeAC2dFG/LMl5s1JqKbXNujSp2QctU+RtSwmOlbWoyTsaz3Wz+HMq47l8G97wlOIojZIMAKTWKYQXeOfhR1H285R6PIWUZPgze79pz5zv6jM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=cB0p0MnJ; arc=none smtp.client-ip=209.85.219.169
+	 To:Cc:Content-Type; b=A2153/6eJUHvrLOcSRdP1vueTSP0V609aSbiXt9W2bNtY9FCRuPUfvD0xhGawtWHMkNrzdnFMPOwwB6KRjQkF1V0QkVGAeTgARalFDGgGZkaqXQFFIPUrC4ktXC0Vh+c/p2NKNWxyu9EjmiPdt1d8m387PU8pGrryis3B7fIHVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=bD0BCwgh; arc=none smtp.client-ip=209.85.219.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="cB0p0MnJ"
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e387ad7abdaso142224276.0
-        for <linux-security-module@vger.kernel.org>; Wed, 18 Dec 2024 13:24:39 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="bD0BCwgh"
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e4419a47887so117582276.0
+        for <linux-security-module@vger.kernel.org>; Wed, 18 Dec 2024 13:31:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1734557078; x=1735161878; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1734557512; x=1735162312; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=JfbnqAEPpxJBS72R4SgoHjJAx+OMbOow1uBkiK8I1BQ=;
-        b=cB0p0MnJj641svwuPYGu66a58oIyEINA7gQFNsOizghh8L9rcTvYC9Z9MXVZ2hKgyZ
-         jNymn1bDhVTnoj5ytle/039ipceHQeWpXQ90jOqdVUqJZkgeFWSJXkgtI/psaI9Qft9T
-         s/wqJ36xukzP9DeE9wgpKvu6hMhQRoSUkz4TOZGnIzd4KhFwQ7nxe27BU8pTVZzRZBOI
-         EyvlAgEyY8iaVJ/Wbqx+F7VAoDuoxVJ7XN7nNMk6x7isycFX8uipOzgdSaIrctBz7Knv
-         6SBQb/9QRQ4V3YSKMwi6rnDW08/skEuOg8IFDN1JWXjUly/oHECH72qfblWcSjWrg8SM
-         nMFw==
+        bh=cbb5HxOosSv4xHBBVCidgzEivDXQn/dRx15F72hAHmM=;
+        b=bD0BCwghQfusC7fkrAGznbKEog9hh2a4DnROMaptszIujlar6w8zOXbm7untQxIMwD
+         LJLleHonw0x3HREViO6ubsAu04SDPSQSPtZKaZvgeXmocshXiz6N6L0bi5S4xOexNCEp
+         s9fTN/FH05rDvln6KRdWd3OyUrPfWRvnGHjKFT3A3J8/nWJtt3D+gRdn6u4m3wa52YTz
+         46IrJM8xZ6cAyA+qfYM3qcFKjG1H29ZPpmATfOAbqgC34FjZo98zVa3QwobkwFA1ZjUy
+         njkFo9M0OyVwdTNMPJKIWEV149QUF3bIyNScu/4ChI5/szl8R3YSSxg/gUbUifErGyEZ
+         ohZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734557078; x=1735161878;
+        d=1e100.net; s=20230601; t=1734557512; x=1735162312;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JfbnqAEPpxJBS72R4SgoHjJAx+OMbOow1uBkiK8I1BQ=;
-        b=A7m/ueVd2E6b+I4iXB8deY578XoNJ7ncpkB7QHsVty+TtVklpoSoxV6oZY1sMHa/0P
-         fHdlWPdW2YZ0dzvHBzUSy18ffp+vtvXL8ui6YUrh1H8uykUrbbaem6/D961r5bZkozt0
-         nNi671oOjn8ekz/6HzWIWTr101skMDQm6hQ1Nd1ntg9aQNCvv8D2gBxfOPzQfzE8ImYu
-         qJygxs88nRXYWfxJs272bIIh95AtvbnKDBM+NYzPRRmr7hl5EBbvJ6Qt4Cc27RT3A7El
-         7T382ad4NgMbupTLA+mVYkvlfO8mjSKnDER5Oq2P2dls68xtxv+qUvKXrXzEcL1cLB8B
-         uv1g==
-X-Forwarded-Encrypted: i=1; AJvYcCVUudJ3JWBkxAztbH3epxuf4vptnFqKj6TeTHU3PFxt/UWYvPfsezzhS8ypz96JsX5gesILD0s5tIVo76FVS6ZNpodaGLA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3onS+dPWsKNHbh/zx/qEROa09DBx0DiLP8FQ4Jsmq9sBvftBH
-	7vcAgKgA6+ARe8o9Ai9YgmEscJz+bhzwZFVM05r42wTK+KAxfFC2XXHpjjYwZ0I8v7VOEshVE4g
-	NTUHnG52aXtHd9bIoh6CvuL2Pk9IH2Qo8EUM1
-X-Gm-Gg: ASbGncuCEEQSiz+GT95aHPP+yoBDbg2G68D7tjSzhgsmqQR8yt83GkSLECKlvIZidfC
-	zXldY0hTJN7XwHH/W2T9HX2tupcqb79UykzvC
-X-Google-Smtp-Source: AGHT+IH7OPS0iStmzmEas32N/nAQgDtarFZ3F5NA0hqbTcmbqAPNvcNBDw5ucN0uum35Vxa2W2EaaqlutU5vD0VAtSw=
-X-Received: by 2002:a05:6902:1008:b0:e53:5eca:de59 with SMTP id
- 3f1490d57ef6-e536210f14bmr4802079276.13.1734557078446; Wed, 18 Dec 2024
- 13:24:38 -0800 (PST)
+        bh=cbb5HxOosSv4xHBBVCidgzEivDXQn/dRx15F72hAHmM=;
+        b=tZygxBKVl4abjB3H1l1GZ5EpNtT/LA4b5FxhVtv4hGeHEjM2oW2p2Tbk3cGtz4H10Q
+         s+do3VDyJvsKVXZO9g1wQ7ra3v+/jTVVlVH15FaMyK7ISr17j58YzkDMhVAgoHLg4wWt
+         3Q+Y58+mLFG3g075tjauUZztdROods+FQo0kqEJxnBO2y58D32gYpuRLEr3Ov3wqLldX
+         MHGRiAFmYMNX9ONNPCQZZgqAAUMP8Gyf+ZdkMSXM21ZrWtY1G4+t9C95wff9gGITYW/e
+         u5OCn3DSB/fCliwWMPjxkPwlipDSPLFGdV1vcRP2OUetFaIh/l4UJW3n9aklV3PB6FEc
+         fB1g==
+X-Forwarded-Encrypted: i=1; AJvYcCXH37go2NqRBrk/oVpNKEEkO29+gySRxhTgNk92rC7Ygl1fARTUYv5TIaBQCfGX58bhdPM2AUD++hb+w34dEfaeG6TDOCQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGSXheroCyCpbRmN52/drZzTqJoezKucBqOdLBUrPxk8CjXqLc
+	rlYQoF123QYftMf/SvsoheKQ4Jo6R7XjHR7iiR3yz3IZz6acEnVVbY1cirEooczkQ6e/WyhfqN0
+	+C6EtxoMsjxCdfPSTM2zhXvy3KpwqhZDna96v
+X-Gm-Gg: ASbGnct5/IMwLpq56k+mUzvAZqndPMGP3Lr8S0XFMaANKl7TYwE6H9Fh2sppGBuFFUM
+	dwh5lXOSsz+KZKEuwZNAk7mpNdNXW/ufw9KuT
+X-Google-Smtp-Source: AGHT+IEjrEr9+v70o2geP95qlt0cRv1yOG9LXlkZULe3tUc67P40O378dVss/NWybbKjWzlLMOEhvIQZI5vAW9me90E=
+X-Received: by 2002:a05:6902:1a43:b0:e2b:dbe5:851d with SMTP id
+ 3f1490d57ef6-e53621e7653mr4266621276.28.1734557512447; Wed, 18 Dec 2024
+ 13:31:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aef181673159ac72f1e7922548186fc6@paul-moore.com>
- <20241206114108.342819-1-15074444048@163.com> <d382c0e.8393.193bf12a7f7.Coremail.15074444048@163.com>
-In-Reply-To: <d382c0e.8393.193bf12a7f7.Coremail.15074444048@163.com>
+References: <20241215165352.186692-1-linux@treblig.org>
+In-Reply-To: <20241215165352.186692-1-linux@treblig.org>
 From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 18 Dec 2024 16:24:27 -0500
-Message-ID: <CAHC9VhShLWXKL-pJ-rGZHQAYuH_gwfyjXFbV_G=S__2i9o2=Yg@mail.gmail.com>
-Subject: Re: [PATCH] lsm: add reserved flag in lsm_prop struct
-To: =?UTF-8?B?5p2O6LGq5p2w?= <15074444048@163.com>
-Cc: jmorris@namei.org, serge@hallyn.com, linux-security-module@vger.kernel.org, 
-	lihaojie <lihaojie@kylinos.cn>
+Date: Wed, 18 Dec 2024 16:31:41 -0500
+Message-ID: <CAHC9VhRyf8Jo54gnz2Nu17eHFOEqeXd3B5_HoXbz9uLYDba=HA@mail.gmail.com>
+Subject: Re: [PATCH] capability: Remove unused has_capability
+To: linux@treblig.org
+Cc: serge@hallyn.com, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 13, 2024 at 3:11=E2=80=AFAM =E6=9D=8E=E8=B1=AA=E6=9D=B0 <150744=
-44048@163.com> wrote:
+On Sun, Dec 15, 2024 at 11:54=E2=80=AFAM <linux@treblig.org> wrote:
 >
-> it's the compile error that i met.
-> In file included from ./include/linux/string.h:389,
->                  from ./include/linux/bitmap.h:13,
->                  from ./include/linux/cpumask.h:12,
->                  from ./include/linux/smp.h:13,
->                  from ./include/linux/lockdep.h:14,
->                  from ./include/linux/spinlock.h:63,
->                  from ./include/linux/wait.h:9,
->                  from ./include/linux/wait_bit.h:8,
->                  from ./include/linux/fs.h:6,
->                  from kernel/auditsc.c:37:
-> In function =E2=80=98sized_strscpy=E2=80=99,
->     inlined from =E2=80=98__audit_ptrace=E2=80=99 at kernel/auditsc.c:273=
-2:2:
-> ./include/linux/fortify-string.h:293:3: error: call to =E2=80=98__write_o=
-verflow=E2=80=99 declared with attribute error: detected write beyond size =
-of object (1st parameter)
->   293 |   __write_overflow();
->       |   ^~~~~~~~~~~~~~~~~~
-> In function =E2=80=98sized_strscpy=E2=80=99,
->     inlined from =E2=80=98audit_signal_info_syscall=E2=80=99 at kernel/au=
-ditsc.c:2759:3:
-> ./include/linux/fortify-string.h:293:3: error: call to =E2=80=98__write_o=
-verflow=E2=80=99 declared with attribute error: detected write beyond size =
-of object (1st parameter)
->   293 |   __write_overflow();
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
 >
-> i see commit d9381508ea2b590aff46d28d432d20bfef1ba64c merged,
-> but it's a workaround, so how about my thoughts below?
+> The vanilla has_capability() function has been unused since 2018's
+> commit dcb569cf6ac9 ("Smack: ptrace capability use fixes")
+>
+> Remove it.
+>
+> (There is still mention in a comment in security/commoncap.c
+> but I suspect rather than removing the entry it might be better
+> to expand the comment to talk about the other
+> has_[ns_]capability[_noaudit] variants).
 
-Before we get too far into a workaround, can you confirm that you are
-not seeing the error above with what is currently in Linus' tree, e.g.
-commit d9381508ea2b ("audit: workaround a GCC bug triggered by task
-comm changes")?  If that has resolved your problem, I think we can
-leave things as they are for now, we have one workaround in Linus'
-tree that should mask the compiler bug and I'm not excited about
-adding another.
+I would suggest that this patch would be an excellent place to change
+that comment.  Without historical knowledge, the comment will be hard
+to understand after this patch is merged as inspecting
+has_capability() will be much more difficult, and including the
+comment change with the function removal will bind the two changes
+nicely in the git log.
 
-Like Casey, I'm not excited about adding a useless field to the lsm_prop st=
-ruct.
+Otherwise, this seems fine to me.
+
+Reviewed-by: Paul Moore <paul@paul-moore.com>
+
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> ---
+>  include/linux/capability.h |  5 -----
+>  kernel/capability.c        | 16 ----------------
+>  2 files changed, 21 deletions(-)
+>
+> diff --git a/include/linux/capability.h b/include/linux/capability.h
+> index 0c356a517991..1fb08922552c 100644
+> --- a/include/linux/capability.h
+> +++ b/include/linux/capability.h
+> @@ -139,7 +139,6 @@ static inline kernel_cap_t cap_raise_nfsd_set(const k=
+ernel_cap_t a,
+>  }
+>
+>  #ifdef CONFIG_MULTIUSER
+> -extern bool has_capability(struct task_struct *t, int cap);
+>  extern bool has_ns_capability(struct task_struct *t,
+>                               struct user_namespace *ns, int cap);
+>  extern bool has_capability_noaudit(struct task_struct *t, int cap);
+> @@ -150,10 +149,6 @@ extern bool ns_capable(struct user_namespace *ns, in=
+t cap);
+>  extern bool ns_capable_noaudit(struct user_namespace *ns, int cap);
+>  extern bool ns_capable_setid(struct user_namespace *ns, int cap);
+>  #else
+> -static inline bool has_capability(struct task_struct *t, int cap)
+> -{
+> -       return true;
+> -}
+>  static inline bool has_ns_capability(struct task_struct *t,
+>                               struct user_namespace *ns, int cap)
+>  {
+> diff --git a/kernel/capability.c b/kernel/capability.c
+> index dac4df77e376..67094b628ea9 100644
+> --- a/kernel/capability.c
+> +++ b/kernel/capability.c
+> @@ -289,22 +289,6 @@ bool has_ns_capability(struct task_struct *t,
+>         return (ret =3D=3D 0);
+>  }
+>
+> -/**
+> - * has_capability - Does a task have a capability in init_user_ns
+> - * @t: The task in question
+> - * @cap: The capability to be tested for
+> - *
+> - * Return true if the specified task has the given superior capability
+> - * currently in effect to the initial user namespace, false if not.
+> - *
+> - * Note that this does not set PF_SUPERPRIV on the task.
+> - */
+> -bool has_capability(struct task_struct *t, int cap)
+> -{
+> -       return has_ns_capability(t, &init_user_ns, cap);
+> -}
+> -EXPORT_SYMBOL(has_capability);
+> -
+>  /**
+>   * has_ns_capability_noaudit - Does a task have a capability (unaudited)
+>   * in a specific user ns.
+> --
+> 2.47.1
 
 --=20
 paul-moore.com
