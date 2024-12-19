@@ -1,122 +1,146 @@
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2D4C13C3F2
-	for <linux-security-module@vger.kernel.org>; Thu, 19 Dec 2024 01:47:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24F3CB665
+	for <linux-security-module@vger.kernel.org>; Thu, 19 Dec 2024 02:25:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734572840; cv=none; b=L+9Fwy3XLywKaXRolpym04UOCgDvz7iBHz+LDBpBkTj/DjLZM3bfBYpNVLumcZmYQP0XlEBgT/R4KoPGu06CZBX/fniQBHunrepwhR1GDp1OczBWblCCbHxsHAolKUb1dhN6b4te93KXwWSw3ToOz9aw0QhQNesTcyLxAdxmBlM=
+	t=1734575112; cv=none; b=h0ByvYcy+REjVDh5N1OdvduEDAxrU4CYberPirnjnNPUIq7C59SKxK3jFpwkcCeK8DC+LHbAbFvLqKeElQNzTKetJsUxYH7Pj8zHwFe5npLcFOjJJXIBiSBVd5nZdnVKrSSvXyLqpbVL4D/vlY7RWHe+o3Ov5zY7+Dz0Q0IeOoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734572840; c=relaxed/simple;
-	bh=QoEtvf7G0kC0x/Wl3nJ0XIYl2HZa0Re3rk+nGV30jwk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iORA5ubmllRAZAp8l5zXQJGfTvHqqFpTIbzAuOGBpcpckI8Cx58wQdnMTa2KYTd71uyjtPiNaQNrm0obQ353zdhcnNICCD9k0LRNm18TW4xh5vTNmhd3f3ufZAJ8wRrGfNBKqKdabSQSa51S5hB0cuKFYlJ2v7MSt4wcWTjGEXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=sBTgTpaZ; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+	s=arc-20240116; t=1734575112; c=relaxed/simple;
+	bh=jEp4g7oPSs1tRVVjVHxyfPWRnm74PQ7DID33RpDXw14=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VXgaRLx19wuQ8dleZ9B2xzpLYVZZRSiZ8/pYMlPiGuvTMZkSkHxH1RLPqlY3LmmLQCwYUzs8BvAdzxSpiTvYo7jhG+6ITGVN5Pqg3XS8pdjJzXqUVcaW1sODQo8rKkXjTd8HoefiyJn5mmkjj0/zvkMVd4Bqeqi7uhlkTfWLJk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=bZkmI4mo; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="sBTgTpaZ"
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-21636268e43so3279375ad.2
-        for <linux-security-module@vger.kernel.org>; Wed, 18 Dec 2024 17:47:17 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="bZkmI4mo"
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6ef9b8b4f13so2767807b3.2
+        for <linux-security-module@vger.kernel.org>; Wed, 18 Dec 2024 18:25:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1734572837; x=1735177637; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nFHEfXVHBOjseorucBg5TQ9yn5KG0rfffOIvw+zi84o=;
-        b=sBTgTpaZ8mVD4iBQgBXOlDPLUcA5D4ujZK+4p/HUNST3Ta9ntAVCPRnVoYkIbRgbwj
-         BxAi5U3Kfw7qQvfqcPkVo4P6RsG56qd9I9pFjG8p0wkGGZJZwXdXUDKpxUf9maop46i/
-         AbPkuAuyhFSmGz6HZ0ZhQEjEcjzc08AiDx2hC30agh/yco9b77JUDOHTv0F8V5GWaPiF
-         fc77ZlyF6VTKe2YM3h85tATwMlj0NU45kEZ06niLjkXDkxTtcl440PwxVSuPb+AQg8e9
-         WbwbGBfbyy3wNrbd5CNivDXmZH3H/6RrwbTb9JyvPI51sXy3+lyOj2n8OQEFaN+ys4Xa
-         UOig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734572837; x=1735177637;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=paul-moore.com; s=google; t=1734575109; x=1735179909; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=nFHEfXVHBOjseorucBg5TQ9yn5KG0rfffOIvw+zi84o=;
-        b=luuAZd6f3nO81l3Ll8tkBpNuLpElKS+bvejJYSVBvflx2PtWRrZ5zcU4PJ1tNyzCpt
-         bHChVJWakktehc5pQG/m4qZvxYg7BcoFckF/3fpU+yhMVZtILA+cdbuysnmMufTGqbuN
-         pQfjiGWt2ADnausYpUqq/yZ1BZlb05vcDZ0XvCDNB0u5VMHot45xt8gR8aeTZQwIqN3Y
-         50thiOSEgEZQBVo/7nphEi2e6hjEJa4XIyse+lRETFkDgvYW2r7ENeVfpo5Onod6B/GU
-         lVntyQ7NJq5UC3rD3ewYhQ13jAwC/7ZzNm46YfCbpdcSueQO5pMOg02NM5Uj9FbaNgg+
-         K+Wg==
-X-Forwarded-Encrypted: i=1; AJvYcCVcfAhA772FNdfBsOHko1tSR7N5sqQy5BanNmOUIn3RjP3VGOe0sycg+BtxmcqZiRZJKVELBVN9Qji9uE6PMcRL+J91Z2A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFmzSLVFqpZA5U4dOuHQzVttVtW64D12iYSzyJH88dhRDjtYB1
-	YdIgpe1SjYxsGQSHVm6TA2iy8tet+MVHAnOLagtj2792vr0FIiD9yyzeN16DseM=
-X-Gm-Gg: ASbGncvMTtXSNS7gUQdxdEI5IpFzyRuqfRkJ+HWxpwaGCnz3tFnTVgbLZI57DUzjueH
-	d1+I8fkCs2gFQbFJFn8XfGrd95GlOYiwID+Fw04ZuEaMKG4iUybft3XDRW0RSt+k0kuJrnYAnjq
-	GhJ2eoSVwPgn2bWPhOiO873i3k73opOyG5UsWqF7QCoS0IITMgYA2CGvtVV1fUqs7LkllZcBcrp
-	1vNZ6tuHOJDH0OyuUgnQ6nP4PxsL1hEu1sS1FDfy5ImmPvheKrrPo/Syl/Zs96TwwnGaBPjXyT8
-	djC/zsLBI6lTOAKCm8pGuEDvqN2jrA==
-X-Google-Smtp-Source: AGHT+IHoM9BuzRwWE3UvBbujRjFPqKOpZTGf3EdvmaxlJ9Nm6SjjQJoIghbJbF3BGqAvlV3zRrZEww==
-X-Received: by 2002:a17:902:fc4e:b0:20c:6399:d637 with SMTP id d9443c01a7336-219d96d213emr29814395ad.40.1734572837007;
-        Wed, 18 Dec 2024 17:47:17 -0800 (PST)
-Received: from dread.disaster.area (pa49-195-9-235.pa.nsw.optusnet.com.au. [49.195.9.235])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-219dc962940sm1898825ad.34.2024.12.18.17.47.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Dec 2024 17:47:16 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.98)
-	(envelope-from <david@fromorbit.com>)
-	id 1tO5dB-0000000CUAL-2X1s;
-	Thu, 19 Dec 2024 12:47:13 +1100
-Date: Thu, 19 Dec 2024 12:47:13 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Song Liu <song@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-security-module@vger.kernel.org,
-	willy@infradead.org, corbet@lwn.net, clm@fb.com,
-	josef@toxicpanda.com, dsterba@suse.com, brauner@kernel.org,
-	jack@suse.cz, cem@kernel.org, djwong@kernel.org,
-	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-	fdmanana@suse.com, johannes.thumshirn@wdc.com, kernel-team@meta.com
-Subject: Re: [RFC v2] lsm: fs: Use inode_free_callback to free i_security in
- RCU callback
-Message-ID: <Z2N7Ibxnmm-KEvea@dread.disaster.area>
-References: <20241218211615.506095-1-song@kernel.org>
+        bh=0tWGECUIC18zUy1upfbB2RzIPoTH3nwy9UxQ9Kxd9Hs=;
+        b=bZkmI4mokwdwL8mj3Dr64zHwyQhvJ06RVi7SPHR7ZTQdFhwfIKpTMUn++4V/XkwwlF
+         MXR3r4GXF7ogduy0GzIfps6ErhtZow2GNMt0df5vgYLRuw6+5qJUjJ2X28fX7piIbNHo
+         PFsZU+xW8h+jQOQsgFsNNHFpEBUAwFYMPBf/6vKdJt81iL5EdCxD8dEc1ZhmBt9Ku1wm
+         87q8kvOZNSkSt+hSb5QvPbcNpyu3lqa93qOQMACNiDWklDHx2C883Vv2YaSLcJ23CkKj
+         MIUogHSZiIXtlWIkIauAqhWO4T3MUw+neg80BE3lZC5nIWnERgTJtGc5Gm8+rruVMlf/
+         6PJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734575109; x=1735179909;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0tWGECUIC18zUy1upfbB2RzIPoTH3nwy9UxQ9Kxd9Hs=;
+        b=EOPtPvxLNJeKRJw0hsZUh6ffHYehu7L2TmNxX7rvYfQqU/pOVqMREHne+t9VYw+vkK
+         N1EOwdmU4u6uuJvqFd3mws2DIT0hw0rMT4YdUsBLIsGsX3cb58DIxxcKss95KEiYYXyH
+         b+Owv5R00ULoXNAU1qEULleBhw5qu5X13cs//A8SqklYCaMxLhjp32k2NYjhmc3LfbWo
+         GtDPwyQC7NVVS4AhHL/gn0twxMfsCs4gZ2TeCYai2L6ywM9r195KbYAfjtw7svmH2DO9
+         VvQMF8KhJAfDGgIDmf2+NC1BnkfdtwHeWsffRssdJLndD3/hxiM3Bekl3V7+hrpEcc1S
+         VOoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWZZFSwvR40HvHmnvgq+Myf0leSBUCLCYbywQX/s42cB7WLGkeSJGbRzRk5AN24Yhr4aM2G8muH1JUS0I3pwK4cd1k7+BE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUjmjDJnL8XjHBPB0DYKIN90Y2ROlDeWdSKV2LBlLYFQRb2zWN
+	TvoT2qjgWt0s5AKOoxdjYMiSeOAuC7ZahzRjoVqT80DhNuBi454Eh0NOgknvjj+BkYFHlmp/cYs
+	wgWYr/EHvMgJT7+FXG/4oD6uOTc6j0L2ZfRsW
+X-Gm-Gg: ASbGncvI/LluftHOkDQD7+vv76Rt4JSWYI0zOK7TZ+mO+R2rHSJJ7pYz2KxZx5BUaSm
+	pWvm90UTDf02qgE+xAS7J0AsTT/bqLvlZcSxJ
+X-Google-Smtp-Source: AGHT+IFSFeyjJ3n4aNzgzvRsbG5qYDWf7HOFTcBXnm090pcCmjjK30AFiOncVrR3rfCI6RBs9cpO1mGJaUEf7/sRnjQ=
+X-Received: by 2002:a05:690c:6e03:b0:6ef:c487:f401 with SMTP id
+ 00721157ae682-6f3d0e33a0emr41575887b3.25.1734575109007; Wed, 18 Dec 2024
+ 18:25:09 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241218211615.506095-1-song@kernel.org>
+References: <20241215165352.186692-1-linux@treblig.org> <CAHC9VhRyf8Jo54gnz2Nu17eHFOEqeXd3B5_HoXbz9uLYDba=HA@mail.gmail.com>
+ <Z2NIpSZ9iY0q1EAl@gallifrey>
+In-Reply-To: <Z2NIpSZ9iY0q1EAl@gallifrey>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 18 Dec 2024 21:24:58 -0500
+Message-ID: <CAHC9VhTmqMKkemeyWK3d6tyPGSus9ApMpZzTjtrmgHqbC_au+Q@mail.gmail.com>
+Subject: Re: [PATCH] capability: Remove unused has_capability
+To: "Dr. David Alan Gilbert" <linux@treblig.org>
+Cc: serge@hallyn.com, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 18, 2024 at 01:16:15PM -0800, Song Liu wrote:
-> inode->i_security needes to be freed from RCU callback. A rcu_head was
-> added to i_security to call the RCU callback. However, since struct inode
-> already has i_rcu, the extra rcu_head is wasteful. Specifically, when any
-> LSM uses i_security, a rcu_head (two pointers) is allocated for each
-> inode.
-> 
-> Rename i_callback to inode_free_callback and call security_inode_free_rcu
-> from it to free i_security so that a rcu_head is saved for each inode.
-> Special care are needed for file systems that provide a destroy_inode()
-> callback, but not a free_inode() callback. Specifically, the following
-> logic are added to handle such cases:
-> 
->  - XFS recycles inode after destroy_inode. The inodes are freed from
->    recycle logic. Let xfs_inode_free_callback() call inode_free_callback.
+On Wed, Dec 18, 2024 at 5:11=E2=80=AFPM Dr. David Alan Gilbert
+<linux@treblig.org> wrote:
+> * Paul Moore (paul@paul-moore.com) wrote:
+> > On Sun, Dec 15, 2024 at 11:54=E2=80=AFAM <linux@treblig.org> wrote:
+> > >
+> > > From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> > >
+> > > The vanilla has_capability() function has been unused since 2018's
+> > > commit dcb569cf6ac9 ("Smack: ptrace capability use fixes")
+> > >
+> > > Remove it.
+> > >
+> > > (There is still mention in a comment in security/commoncap.c
+> > > but I suspect rather than removing the entry it might be better
+> > > to expand the comment to talk about the other
+> > > has_[ns_]capability[_noaudit] variants).
+>
+> Hi Paul,
+>   Thanks for the review,
+>
+> > I would suggest that this patch would be an excellent place to change
+> > that comment.  Without historical knowledge, the comment will be hard
+> > to understand after this patch is merged as inspecting
+> > has_capability() will be much more difficult, and including the
+> > comment change with the function removal will bind the two changes
+> > nicely in the git log.
+>
+> Yeh, how would you like it? The existing comment is:
+>
+> '
+>  * NOTE WELL: cap_has_capability() cannot be used like the kernel's capab=
+le()
+>  * and has_capability() functions.  That is, it has the reverse semantics=
+:
+>  * cap_has_capability() returns 0 when a task has a capability, but the
+>  * kernel's capable() and has_capability() returns 1 for this case.
+> '
+>
+> For a start I think that's wrong; the function it's above is
+> 'cap_capable()' not 'cap_has_capability()' - and has been for 15 years :-=
+)
 
-NACK. That's a massive layering violation.
+The code in security/commoncap.c is fairly mature and stable, and I
+don't expect that many people spend a lot of time in that file, I know
+I don't.  An unfortunate side effect is that certain things that
+aren't caught by a compiler can easily go out of date, and stay that
+way for some time :/
 
-LSMs are VFS layer functionality. They *must* be removed from the
-VFS inode before ->destroy_inode() is called. If a filesystem
-supplies ->destroy_inode(), then it -owns- the inode exclusively
-from that point onwards. All VFS and 3rd party stuff hanging off the
-inode must be removed from the inode before ->destroy_inode() is
-called.
+> How about:
+> '
+>  * NOTE WELL: cap_capable() has reverse semantics to the other kernel
+>  * functions. That is cap_capable() returns 0 when a task has a capabilit=
+y,
+>  * the kernel's capable(), has_ns_capability(), has_ns_capability_noaudit=
+(),
+>  * and has_capability_noaudit() return 1 for this case.
+> '
 
-Them's the rules, and hacking around LSM object allocation/freeing
-to try to handle how filesystems manage inodes -underneath- the VFS
-is just asking for problems. LSM object management needs to be
-handled entirely by the generic LSM VFS hooks, not tightly coupled
-to VFS and/or low level filesystem inode lifecycle management.
+Two things come to mind when reading the suggested comment:
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+* I don't like the "... reverse semantics to the other kernel
+functions" text simply because the majority of kernel functions do
+follow the "0 on success, negative errno on failure" pattern that we
+see in cap_capable().  I would suggest something along the lines of
+"... reverse semantics of the capable() call".
+
+* Most (all?) of the capable() family of functions, excluding
+cap_capable() of course, return a bool value, true/false, instead of
+non-zero/zero.  If we're going to complain about the existing comment,
+we probably should get this correct ;)
+
+--=20
+paul-moore.com
