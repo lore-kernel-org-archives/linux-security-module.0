@@ -1,139 +1,137 @@
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B4453D3B8;
-	Thu, 19 Dec 2024 15:59:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D184519993B;
+	Thu, 19 Dec 2024 17:29:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734623957; cv=none; b=T6s7oV8vOjWGoyXWFRAkcNwbBaMzoz5HLBxrmD9cUyWAdOMtQ71bCJluR183h1bZ5iOfj18xIDfrCIyXVI6Hw39cjqgxoHsskv+AOdffg6DKuC8PnymooB1tWmT/omaNibYrBj+wYTKNrAs0UQngTkUFucPCNM7k0K7WcJxnVuU=
+	t=1734629346; cv=none; b=GQdEwmQockK2vdakdRbqemIaCUGBg9UHcajmdgLADdXmMVO0X0F5/RwFgSRK33bceMC3JTyTgjrdkb8hMUMwXPgGIsytoGTwyyW4f1ZCpZxJzrp5fdijme520hRnXnMYeSinI1mRl0DPy/D4gBdHmnw7QCUfKGfY3XemNa02sGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734623957; c=relaxed/simple;
-	bh=ju2mr1duQXKgCD16dzig3TiPnyKVJiihG96mICQIInI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=I0frv3K91hOnpwz5WADDsqZ+nZrRMWNKQ5sPxVT4UPqtMe+sgIje6ySGKaEcqw9zh7Jl+J7IUEJJbQTjV68jIoBfNg9K49PNU/4CgxTSecMLGMUu16PfAaMyHVnDWIN9mXbiidfcrgik6GL7LhQmIKXpcJsEQBtIZ/bzlPsVlQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4YDZ312xl9z9v7NX;
-	Thu, 19 Dec 2024 23:19:25 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 56268140FD0;
-	Thu, 19 Dec 2024 23:40:52 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwAX1zd0PmRnk++5Aw--.39435S2;
-	Thu, 19 Dec 2024 16:40:49 +0100 (CET)
-Message-ID: <ac0d0d8f3d40ec3f7279f3ece0e75d0b2ec32b4e.camel@huaweicloud.com>
-Subject: Re: [RFC 0/2] ima: evm: Add kernel cmdline options to disable
- IMA/EVM
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Song Liu <songliubraving@meta.com>, Mimi Zohar <zohar@linux.ibm.com>
-Cc: Casey Schaufler <casey@schaufler-ca.com>, Song Liu <song@kernel.org>, 
-	"linux-fsdevel@vger.kernel.org"
-	 <linux-fsdevel@vger.kernel.org>, "linux-integrity@vger.kernel.org"
-	 <linux-integrity@vger.kernel.org>, "linux-security-module@vger.kernel.org"
-	 <linux-security-module@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	 <linux-kernel@vger.kernel.org>, "roberto.sassu@huawei.com"
-	 <roberto.sassu@huawei.com>, "dmitry.kasatkin@gmail.com"
-	 <dmitry.kasatkin@gmail.com>, "eric.snowberg@oracle.com"
-	 <eric.snowberg@oracle.com>, "paul@paul-moore.com" <paul@paul-moore.com>, 
-	"jmorris@namei.org"
-	 <jmorris@namei.org>, "serge@hallyn.com" <serge@hallyn.com>, Kernel Team
-	 <kernel-team@meta.com>, "brauner@kernel.org" <brauner@kernel.org>, 
-	"jack@suse.cz"
-	 <jack@suse.cz>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
-Date: Thu, 19 Dec 2024 16:40:32 +0100
-In-Reply-To: <C01F96FE-0E0F-46B1-A50C-42E83543B9E1@fb.com>
-References: <20241217202525.1802109-1-song@kernel.org>
-	 <fc60313a-67b3-4889-b1a6-ba2673b1a67d@schaufler-ca.com>
-	 <bd5a5029302bc05c2fbe3ee716abb644c568da48.camel@linux.ibm.com>
-	 <C01F96FE-0E0F-46B1-A50C-42E83543B9E1@fb.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1734629346; c=relaxed/simple;
+	bh=OG71VB4Qva8tkPsIhdGjUmOZ0r8nsYa50op3JxkZUDA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gfXwKWzXRlhUVFn6HxVIT1ePnz48qAgynUX3Uu7C9GJsmEQ3hVSdVUvKjX1rJ1QtZGBjlgVYL974p3E1oiMzusnXTHn6PTd1lZOtFHce5PJdEty7fmUHPsUvbbJRgy/CKSdrvuIGHNmaG0nXPlrfWZYCUyOaj0juqh9shtjBHyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=eQJ/OBoQ; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="eQJ/OBoQ"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=htjwRJ7qT+wAL9TnKmTfqMbgxIuyKdsF07QoxvvJCP8=; b=eQJ/OBoQG6UMEdno
+	P4WtC2YKj9ujhlmguyFjXe4Ka+xUIczJ1s64c4rHDOI7vPoaPlpgdyYQdGSqZs+sCO9mnDMNYEBTL
+	MWrCcR1GZLsLJ3k6RT5MzUxR2n6po/sbzj0znliPZ8S5qSawxQi/oUWen47MhoZT7THVfdEp0dluu
+	RujDfQLX4A8ozJXohN/d6G8IrARYhTSnrc0DlDOoSL3j8K5d8DcVzbFONNVv040keRZqbUKrPs/tk
+	JQSDN661j6IQSYzg4+PIGWq120rhHhRsCjhVU5r1d3KSDJkGsUNmELUru/dwlqFs3CGD9ZjP9qe6u
+	7MEQ9/MtLpV6OzeIGg==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1tOKKa-006MR1-0U;
+	Thu, 19 Dec 2024 17:29:00 +0000
+From: linux@treblig.org
+To: serge@hallyn.com,
+	paul@paul-moore.com,
+	linux-security-module@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH v2] capability: Remove unused has_capability
+Date: Thu, 19 Dec 2024 17:28:59 +0000
+Message-ID: <20241219172859.188117-1-linux@treblig.org>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwAX1zd0PmRnk++5Aw--.39435S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Ar43GFWxJFW3Xr4DAFWDJwb_yoW8uF17pr
-	WxJFW7tr4vqa40yw1Iyw43uryFv3s7Kan8Kry5Ww1xZa45Cr18tr1Ikry8uaykurn7JFyY
-	vFnxXFyq93WqyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUIa
-	0PDUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQACBGdjhLgFFAAAsu
+Content-Transfer-Encoding: 8bit
 
-On Wed, 2024-12-18 at 17:07 +0000, Song Liu wrote:
-> Hi Mimi,=20
->=20
-> Thanks for your comments!
->=20
-> > On Dec 18, 2024, at 3:02=E2=80=AFAM, Mimi Zohar <zohar@linux.ibm.com> w=
-rote:
-> >=20
-> > On Tue, 2024-12-17 at 13:29 -0800, Casey Schaufler wrote:
-> > > On 12/17/2024 12:25 PM, Song Liu wrote:
-> > > > While reading and testing LSM code, I found IMA/EVM consume per ino=
-de
-> > > > storage even when they are not in use. Add options to diable them i=
-n
-> > > > kernel command line. The logic and syntax is mostly borrowed from a=
-n
-> > > > old serious [1].
-> > >=20
-> > > Why not omit ima and evm from the lsm=3D parameter?
-> >=20
-> > Casey, Paul, always enabling IMA & EVM as the last LSMs, if configured,=
- were the
-> > conditions for making IMA and EVM LSMs.  Up to that point, only when an=
- inode
-> > was in policy did it consume any memory (rbtree).  I'm pretty sure you =
-remember
-> > the rather heated discussion(s).
->=20
-> I didn't know about this history until today. I apologize if this=20
-> RFC/PATCH is moving to the direction against the original agreement.=20
-> I didn't mean to break any agreement.=20
->=20
-> My motivation is actually the per inode memory consumption of IMA=20
-> and EVM. Once enabled, EVM appends a whole struct evm_iint_cache to=20
-> each inode via i_security. IMA is better on memory consumption, as=20
-> it only adds a pointer to i_security.=20
->=20
-> It appears to me that a way to disable IMA and EVM at boot time can=20
-> be useful, especially for distro kernels. But I guess there are=20
-> reasons to not allow this (thus the earlier agreement). Could you=20
-> please share your thoughts on this?
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-Hi Song
+The vanilla has_capability() function has been unused since 2018's
+commit dcb569cf6ac9 ("Smack: ptrace capability use fixes")
 
-IMA/EVM cannot be always disabled for two reasons: (1) for secure and
-trusted boot, IMA is expected to enforce architecture-specific
-policies; (2) accidentally disabling them will cause modified files to
-be rejected when IMA/EVM are turned on again.
+Remove it.
 
-If the requirements above are met, we are fine on disabling IMA/EVM.
+Fixup a comment in security/commoncap.c that referenced it.
 
-As for reserving space in the inode security blob, please refer to this
-discussion, where we reached the agreement:
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ include/linux/capability.h |  5 -----
+ kernel/capability.c        | 16 ----------------
+ security/commoncap.c       |  9 +++++----
+ 3 files changed, 5 insertions(+), 25 deletions(-)
 
-https://lore.kernel.org/linux-integrity/CAHC9VhTTKac1o=3DRnQadu2xqdeKH8C_F+=
-Wh4sY=3DHkGbCArwc8JQ@mail.gmail.com/
-
-Thanks
-
-Roberto
+diff --git a/include/linux/capability.h b/include/linux/capability.h
+index 0c356a517991..1fb08922552c 100644
+--- a/include/linux/capability.h
++++ b/include/linux/capability.h
+@@ -139,7 +139,6 @@ static inline kernel_cap_t cap_raise_nfsd_set(const kernel_cap_t a,
+ }
+ 
+ #ifdef CONFIG_MULTIUSER
+-extern bool has_capability(struct task_struct *t, int cap);
+ extern bool has_ns_capability(struct task_struct *t,
+ 			      struct user_namespace *ns, int cap);
+ extern bool has_capability_noaudit(struct task_struct *t, int cap);
+@@ -150,10 +149,6 @@ extern bool ns_capable(struct user_namespace *ns, int cap);
+ extern bool ns_capable_noaudit(struct user_namespace *ns, int cap);
+ extern bool ns_capable_setid(struct user_namespace *ns, int cap);
+ #else
+-static inline bool has_capability(struct task_struct *t, int cap)
+-{
+-	return true;
+-}
+ static inline bool has_ns_capability(struct task_struct *t,
+ 			      struct user_namespace *ns, int cap)
+ {
+diff --git a/kernel/capability.c b/kernel/capability.c
+index dac4df77e376..67094b628ea9 100644
+--- a/kernel/capability.c
++++ b/kernel/capability.c
+@@ -289,22 +289,6 @@ bool has_ns_capability(struct task_struct *t,
+ 	return (ret == 0);
+ }
+ 
+-/**
+- * has_capability - Does a task have a capability in init_user_ns
+- * @t: The task in question
+- * @cap: The capability to be tested for
+- *
+- * Return true if the specified task has the given superior capability
+- * currently in effect to the initial user namespace, false if not.
+- *
+- * Note that this does not set PF_SUPERPRIV on the task.
+- */
+-bool has_capability(struct task_struct *t, int cap)
+-{
+-	return has_ns_capability(t, &init_user_ns, cap);
+-}
+-EXPORT_SYMBOL(has_capability);
+-
+ /**
+  * has_ns_capability_noaudit - Does a task have a capability (unaudited)
+  * in a specific user ns.
+diff --git a/security/commoncap.c b/security/commoncap.c
+index cefad323a0b1..7019d0e47e62 100644
+--- a/security/commoncap.c
++++ b/security/commoncap.c
+@@ -59,10 +59,11 @@ static void warn_setuid_and_fcaps_mixed(const char *fname)
+  * Determine whether the nominated task has the specified capability amongst
+  * its effective set, returning 0 if it does, -ve if it does not.
+  *
+- * NOTE WELL: cap_has_capability() cannot be used like the kernel's capable()
+- * and has_capability() functions.  That is, it has the reverse semantics:
+- * cap_has_capability() returns 0 when a task has a capability, but the
+- * kernel's capable() and has_capability() returns 1 for this case.
++ * NOTE WELL: cap_capable() has reverse semantics to the capable() call
++ * and friends. That is cap_capable() returns an int 0 when a task has
++ * a capability, while the kernel's capable(), has_ns_capability(),
++ * has_ns_capability_noaudit(), and has_capability_noaudit() return a
++ * bool true (1) for this case.
+  */
+ int cap_capable(const struct cred *cred, struct user_namespace *targ_ns,
+ 		int cap, unsigned int opts)
+-- 
+2.47.1
 
