@@ -1,93 +1,119 @@
-Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [185.125.25.8])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E9F3216E1F
-	for <linux-security-module@vger.kernel.org>; Thu, 19 Dec 2024 07:45:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF3112163A9
+	for <linux-security-module@vger.kernel.org>; Thu, 19 Dec 2024 07:50:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734594308; cv=none; b=hNxxCoLpXErWTcliMPxgkIvwF8g8DQIABIJnfTfbbN4UkF+FLFUJAndQfrpj+dzDAZe0+Rdn076B0iCsMddgR4i5NJTBf56E+ITEtmKXEnatuihLNY+h7G9ZxZ5bQsC6JMnOhHFKr40f0vJASNjUr+Tt6IRPhZTN7dyC0O+uvDQ=
+	t=1734594646; cv=none; b=T7hv7xvZwlICYAdzwa8IoJmL82GnEb9Us//yQQLpLsCMnXkdSiP0+aJRLDmNpRKxTU2UVwh/kCQwb9mTmiUFZXVI5ntmEvjfMp+ld8tqEYrcgitfmM+8bSD4yG9s68W0iw/5xgErwOlccMveeVu22enEK33W0ZQ7KsfQqQ1G7tA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734594308; c=relaxed/simple;
-	bh=4kZV05gAcdH13bba/KY+LydZ9n98bA1dNYEnzu9VffA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k1NH1u5BjcSaqn4jm22eFtJnv9wM81ljd/B6KsAxQ7iEvBF2PHV6CWGIo/i/9cyQF065AV7uX79+rSV4uYwNIj6w3YuMsoneJYuGtSAy+TK2erFrZxwApy0ebr5SVyjWHHkNrXMQnSk38+IMWlAtOuGzkNyqCGvpCJJ+BqYgBo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=0PaeD2mZ; arc=none smtp.client-ip=185.125.25.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="0PaeD2mZ"
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4YDMyk2dlLzg73;
-	Thu, 19 Dec 2024 08:45:02 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1734594302;
-	bh=oKhFkfeKlHLMteV17dJwPYDJMj25IWwSaNtedn4t5og=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=0PaeD2mZXMVXSB0s3zaJLGesGRhVGJwjco61VkN0AtFjed07nbQSnjPZq0OMG4Uiu
-	 6GGqjloRLZ+q2vtgOzexlRTyqCRQmT7TjrWl+anvbdbs6ryn0zJs5ggkQ/7y6qXsl9
-	 4EbXr0LzwyzvuSLNxj4fMgTNVxzVW43NV/jKyqCA=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4YDMyf3syCzYXg;
-	Thu, 19 Dec 2024 08:44:58 +0100 (CET)
-Date: Thu, 19 Dec 2024 08:44:56 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Kees Cook <kees@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Paul Moore <paul@paul-moore.com>, 
-	Serge Hallyn <serge@hallyn.com>, Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>, 
-	Alejandro Colomar <alx@kernel.org>, Aleksa Sarai <cyphar@cyphar.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
-	Dmitry Vyukov <dvyukov@google.com>, Elliott Hughes <enh@google.com>, 
-	Eric Biggers <ebiggers@kernel.org>, Eric Chiang <ericchiang@google.com>, 
-	Fan Wu <wufan@linux.microsoft.com>, Florian Weimer <fweimer@redhat.com>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, James Morris <jamorris@linux.microsoft.com>, 
-	Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
-	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
-	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
-	Shuah Khan <skhan@linuxfoundation.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, Theodore Ts'o <tytso@mit.edu>, 
-	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, Vincent Strubel <vincent.strubel@ssi.gouv.fr>, 
-	Xiaoming Ni <nixiaoming@huawei.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v23 0/8] Script execution control (was O_MAYEXEC)
-Message-ID: <20241219.CaiVie9caNge@digikod.net>
-References: <20241212174223.389435-1-mic@digikod.net>
- <20241218.aBaituy0veK7@digikod.net>
- <202412181130.84A2FCF2@keescook>
+	s=arc-20240116; t=1734594646; c=relaxed/simple;
+	bh=Dwk6bXNu5eZTvBfMa7fJbM+NhBSxfOByQaqOb5V8mPQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Z3fEKSGgQcKaA/l9xfflipjGKh+R+PRA95TpkABZtx5dhUNU85PI4zq1lyTM7qrvShrjDaYi+0NKxvLbYTHB4A7Thm5o8UDizNpCcCIZ991kGonBtq2AlVYjOX6jCYXo9VHRmz6Sfri8/5fro9cZdIznMwc2qWRlZ4/04WxGbpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <a.fatoum@pengutronix.de>)
+	id 1tOBId-0003kT-Pr; Thu, 19 Dec 2024 08:50:23 +0100
+Received: from dude05.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::54])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <a.fatoum@pengutronix.de>)
+	id 1tOBIc-004AWh-0Q;
+	Thu, 19 Dec 2024 08:50:22 +0100
+Received: from localhost ([::1] helo=dude05.red.stw.pengutronix.de)
+	by dude05.red.stw.pengutronix.de with esmtp (Exim 4.96)
+	(envelope-from <a.fatoum@pengutronix.de>)
+	id 1tOB0M-00GkbH-0u;
+	Thu, 19 Dec 2024 08:31:30 +0100
+From: Ahmad Fatoum <a.fatoum@pengutronix.de>
+Date: Thu, 19 Dec 2024 08:31:32 +0100
+Subject: [PATCH 11/11] reboot: retire hw_protection_reboot and
+ hw_protection_shutdown helpers
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <202412181130.84A2FCF2@keescook>
-X-Infomaniak-Routing: alpha
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241219-hw_protection-reboot-v1-11-263a0c1df802@pengutronix.de>
+References: <20241219-hw_protection-reboot-v1-0-263a0c1df802@pengutronix.de>
+In-Reply-To: <20241219-hw_protection-reboot-v1-0-263a0c1df802@pengutronix.de>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, 
+ Fabio Estevam <festevam@denx.de>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
+ Jonathan Corbet <corbet@lwn.net>, Serge Hallyn <serge@hallyn.com>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Matti Vaittinen <mazziesaccount@gmail.com>, 
+ Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, 
+ Guenter Roeck <groeck@chromium.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+ linux-doc@vger.kernel.org, linux-security-module@vger.kernel.org, 
+ chrome-platform@lists.linux.dev, devicetree@vger.kernel.org, 
+ kernel@pengutronix.de, Ahmad Fatoum <a.fatoum@pengutronix.de>
+X-Mailer: b4 0.14.2
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
 
-On Wed, Dec 18, 2024 at 11:31:57AM -0800, Kees Cook wrote:
-> On Wed, Dec 18, 2024 at 11:40:59AM +0100, Mickaël Salaün wrote:
-> > In the meantime I've pushed it in my tree, it should appear in -next
-> > tomorrow.  Please, let me know when you take it, I'll remove it from my
-> > tree.
-> 
-> Thanks! Yeah, I was just finally getting through my email after my
-> pre-holiday holiday. ;)
-> 
-> I'll get this into my -next tree now.
+The hw_protection_reboot and hw_protection_shutdown functions mix
+mechanism with policy: They let the driver requesting an emergency
+action for hardware protection also decide how to deal with it.
 
-Thanks, I just removed mine.
+This is inadequate in the general case as a driver reporting e.g. an
+imminent power failure can't know whether a shutdown or a reboot would
+be more appropriate for a given hardware platform.
 
-> 
-> -Kees
-> 
-> -- 
-> Kees Cook
+With the addition of the hw_protection parameter, it's now possible to
+configure at runtime the default emergency action and drivers are
+expected to use hw_protection_trigger to have this parameter dictate
+policy.
+
+As no current users of either hw_protection_shutdown or
+hw_protection_shutdown helpers remain, remove them, as not to tempt
+driver authors to call them.
+
+Existing users now either defer to hw_protection_trigger or call
+__hw_protection_trigger with a suitable argument directly when
+they have inside knowledge on whether a reboot or shutdown would
+be more appropriate.
+
+Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+---
+ include/linux/reboot.h | 10 ----------
+ 1 file changed, 10 deletions(-)
+
+diff --git a/include/linux/reboot.h b/include/linux/reboot.h
+index 281696f509932e444eadd453fb0233aa7a07fbce..5c709463a7f85189e169bbaeb8bb7b115b20c996 100644
+--- a/include/linux/reboot.h
++++ b/include/linux/reboot.h
+@@ -200,16 +200,6 @@ static inline void hw_protection_trigger(const char *reason, int ms_until_forced
+ 	__hw_protection_trigger(reason, ms_until_forced, HWPROT_ACT_DEFAULT);
+ }
+ 
+-static inline void hw_protection_reboot(const char *reason, int ms_until_forced)
+-{
+-	__hw_protection_trigger(reason, ms_until_forced, HWPROT_ACT_REBOOT);
+-}
+-
+-static inline void hw_protection_shutdown(const char *reason, int ms_until_forced)
+-{
+-	__hw_protection_trigger(reason, ms_until_forced, HWPROT_ACT_SHUTDOWN);
+-}
+-
+ /*
+  * Emergency restart, callable from an interrupt handler.
+  */
+
+-- 
+2.39.5
+
