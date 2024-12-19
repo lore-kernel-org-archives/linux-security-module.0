@@ -1,137 +1,87 @@
 Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D184519993B;
-	Thu, 19 Dec 2024 17:29:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 559FA19C56D;
+	Thu, 19 Dec 2024 17:29:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734629346; cv=none; b=GQdEwmQockK2vdakdRbqemIaCUGBg9UHcajmdgLADdXmMVO0X0F5/RwFgSRK33bceMC3JTyTgjrdkb8hMUMwXPgGIsytoGTwyyW4f1ZCpZxJzrp5fdijme520hRnXnMYeSinI1mRl0DPy/D4gBdHmnw7QCUfKGfY3XemNa02sGQ=
+	t=1734629397; cv=none; b=IL4gv44DBKuoJYhmEFVv/OlAi9e0ozUFgPeBeAiqP1Y4tnKDnPLsqcvWZ4EKGzuxsCUmkKn+C725NBS/mYefKYJVcysSFdjeMHEBFQTm+eoyCutTksGnWyHdaRS/+VaGdM5YrJyKvdWnYBlH5I972eMP/sQ2nbzS/PWhuyHh1c4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734629346; c=relaxed/simple;
-	bh=OG71VB4Qva8tkPsIhdGjUmOZ0r8nsYa50op3JxkZUDA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gfXwKWzXRlhUVFn6HxVIT1ePnz48qAgynUX3Uu7C9GJsmEQ3hVSdVUvKjX1rJ1QtZGBjlgVYL974p3E1oiMzusnXTHn6PTd1lZOtFHce5PJdEty7fmUHPsUvbbJRgy/CKSdrvuIGHNmaG0nXPlrfWZYCUyOaj0juqh9shtjBHyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=eQJ/OBoQ; arc=none smtp.client-ip=46.235.229.95
+	s=arc-20240116; t=1734629397; c=relaxed/simple;
+	bh=iaiPfrciG1fMTdQ6maIaP/A6XF3YaQlnpSVK4cTLW5o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IiDdI7PH0FV2ohqHyEnZZ7JNEOUu5or2aapg9TRw9GUlH0jwsirK7f+O5iXbQv/CyPu8PAPogIdiY/anRqQvOgDak55C87P2wFFdRognJ3Xb1spBtIEjrJQhq7f7XQGt8NoG8OkFGBmaAhgrP14gM11vt50bUpsMKCKiZ//D+7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=fnbZMXCr; arc=none smtp.client-ip=46.235.229.95
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="eQJ/OBoQ"
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="fnbZMXCr"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=htjwRJ7qT+wAL9TnKmTfqMbgxIuyKdsF07QoxvvJCP8=; b=eQJ/OBoQG6UMEdno
-	P4WtC2YKj9ujhlmguyFjXe4Ka+xUIczJ1s64c4rHDOI7vPoaPlpgdyYQdGSqZs+sCO9mnDMNYEBTL
-	MWrCcR1GZLsLJ3k6RT5MzUxR2n6po/sbzj0znliPZ8S5qSawxQi/oUWen47MhoZT7THVfdEp0dluu
-	RujDfQLX4A8ozJXohN/d6G8IrARYhTSnrc0DlDOoSL3j8K5d8DcVzbFONNVv040keRZqbUKrPs/tk
-	JQSDN661j6IQSYzg4+PIGWq120rhHhRsCjhVU5r1d3KSDJkGsUNmELUru/dwlqFs3CGD9ZjP9qe6u
-	7MEQ9/MtLpV6OzeIGg==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1tOKKa-006MR1-0U;
-	Thu, 19 Dec 2024 17:29:00 +0000
-From: linux@treblig.org
-To: serge@hallyn.com,
-	paul@paul-moore.com,
-	linux-security-module@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH v2] capability: Remove unused has_capability
-Date: Thu, 19 Dec 2024 17:28:59 +0000
-Message-ID: <20241219172859.188117-1-linux@treblig.org>
-X-Mailer: git-send-email 2.47.1
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=sXh/U0KQsO7CRbmKWyCg7PNQ0Ou8EAdGuWfXQUz82f0=; b=fnbZMXCrUE/HpG4S
+	lCHZaVMS696RVYqZkfuaOemwlw0S/g7FRs1iDHmuVqZ60VO4e7IWZ03kQwYz/UcO4cyGBc4DUE67t
+	hSiSI2Jf7ES9Hvzg9nfZdPVp4+UeQHold6U2seOWUXt9BdpX2oLnuvn02Q3e+o59kjibUvJRVqY2w
+	+B4nabt7QIvpIk7PTGqOnouiKYtRpAejuhIx9DjQBriAkVadeDde2b9Y/RvW+ul/Mf7nueJKKTheh
+	9kb5V/WBEiGfxbneblC9ywDuF4MPJDtmK+gZfvjZW99lD/LO0fadNh2yJRff1ZYKS/Cp2mDBLIaz7
+	CMWQjNvKY8iDSSI+5w==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1tOKLQ-006MRx-0r;
+	Thu, 19 Dec 2024 17:29:52 +0000
+Date: Thu, 19 Dec 2024 17:29:52 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: Paul Moore <paul@paul-moore.com>
+Cc: serge@hallyn.com, linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] capability: Remove unused has_capability
+Message-ID: <Z2RYECe3OIS4Hcl4@gallifrey>
+References: <20241215165352.186692-1-linux@treblig.org>
+ <CAHC9VhRyf8Jo54gnz2Nu17eHFOEqeXd3B5_HoXbz9uLYDba=HA@mail.gmail.com>
+ <Z2NIpSZ9iY0q1EAl@gallifrey>
+ <CAHC9VhTmqMKkemeyWK3d6tyPGSus9ApMpZzTjtrmgHqbC_au+Q@mail.gmail.com>
+ <Z2QrgI0coNmBMonB@gallifrey>
+ <CAHC9VhTZ98OwAAtk52MreZaU1OJwKS6PqOU=SCzhfBYNEM8qqw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhTZ98OwAAtk52MreZaU1OJwKS6PqOU=SCzhfBYNEM8qqw@mail.gmail.com>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 17:29:24 up 225 days,  4:43,  1 user,  load average: 0.03, 0.03,
+ 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+* Paul Moore (paul@paul-moore.com) wrote:
+> On Thu, Dec 19, 2024 at 9:19 AM Dr. David Alan Gilbert
+> <linux@treblig.org> wrote:
+> >
+> > OK, maybe:
+> >
+> > * NOTE WELL: cap_capable() has reverse semantics to the capable() call
+> > * and friends. That is cap_capable() returns an int 0 when a task has
+> > * a capability, while the kernel's capable(), has_ns_capability(),
+> > * has_ns_capability_noaudit(), and has_capability_noaudit() return a
+> > * bool true (1) for this case.
+> 
+> Works for me, thanks.
 
-The vanilla has_capability() function has been unused since 2018's
-commit dcb569cf6ac9 ("Smack: ptrace capability use fixes")
+Thanks,
 
-Remove it.
+v2 sent - see 20241219172859.188117-1-linux@treblig.org
 
-Fixup a comment in security/commoncap.c that referenced it.
+Dave
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- include/linux/capability.h |  5 -----
- kernel/capability.c        | 16 ----------------
- security/commoncap.c       |  9 +++++----
- 3 files changed, 5 insertions(+), 25 deletions(-)
-
-diff --git a/include/linux/capability.h b/include/linux/capability.h
-index 0c356a517991..1fb08922552c 100644
---- a/include/linux/capability.h
-+++ b/include/linux/capability.h
-@@ -139,7 +139,6 @@ static inline kernel_cap_t cap_raise_nfsd_set(const kernel_cap_t a,
- }
- 
- #ifdef CONFIG_MULTIUSER
--extern bool has_capability(struct task_struct *t, int cap);
- extern bool has_ns_capability(struct task_struct *t,
- 			      struct user_namespace *ns, int cap);
- extern bool has_capability_noaudit(struct task_struct *t, int cap);
-@@ -150,10 +149,6 @@ extern bool ns_capable(struct user_namespace *ns, int cap);
- extern bool ns_capable_noaudit(struct user_namespace *ns, int cap);
- extern bool ns_capable_setid(struct user_namespace *ns, int cap);
- #else
--static inline bool has_capability(struct task_struct *t, int cap)
--{
--	return true;
--}
- static inline bool has_ns_capability(struct task_struct *t,
- 			      struct user_namespace *ns, int cap)
- {
-diff --git a/kernel/capability.c b/kernel/capability.c
-index dac4df77e376..67094b628ea9 100644
---- a/kernel/capability.c
-+++ b/kernel/capability.c
-@@ -289,22 +289,6 @@ bool has_ns_capability(struct task_struct *t,
- 	return (ret == 0);
- }
- 
--/**
-- * has_capability - Does a task have a capability in init_user_ns
-- * @t: The task in question
-- * @cap: The capability to be tested for
-- *
-- * Return true if the specified task has the given superior capability
-- * currently in effect to the initial user namespace, false if not.
-- *
-- * Note that this does not set PF_SUPERPRIV on the task.
-- */
--bool has_capability(struct task_struct *t, int cap)
--{
--	return has_ns_capability(t, &init_user_ns, cap);
--}
--EXPORT_SYMBOL(has_capability);
--
- /**
-  * has_ns_capability_noaudit - Does a task have a capability (unaudited)
-  * in a specific user ns.
-diff --git a/security/commoncap.c b/security/commoncap.c
-index cefad323a0b1..7019d0e47e62 100644
---- a/security/commoncap.c
-+++ b/security/commoncap.c
-@@ -59,10 +59,11 @@ static void warn_setuid_and_fcaps_mixed(const char *fname)
-  * Determine whether the nominated task has the specified capability amongst
-  * its effective set, returning 0 if it does, -ve if it does not.
-  *
-- * NOTE WELL: cap_has_capability() cannot be used like the kernel's capable()
-- * and has_capability() functions.  That is, it has the reverse semantics:
-- * cap_has_capability() returns 0 when a task has a capability, but the
-- * kernel's capable() and has_capability() returns 1 for this case.
-+ * NOTE WELL: cap_capable() has reverse semantics to the capable() call
-+ * and friends. That is cap_capable() returns an int 0 when a task has
-+ * a capability, while the kernel's capable(), has_ns_capability(),
-+ * has_ns_capability_noaudit(), and has_capability_noaudit() return a
-+ * bool true (1) for this case.
-  */
- int cap_capable(const struct cred *cred, struct user_namespace *targ_ns,
- 		int cap, unsigned int opts)
+> -- 
+> paul-moore.com
+> 
 -- 
-2.47.1
-
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
