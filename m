@@ -1,194 +1,98 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F15197552;
-	Thu, 19 Dec 2024 18:18:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CC2C1A08C5
+	for <linux-security-module@vger.kernel.org>; Thu, 19 Dec 2024 18:28:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734632341; cv=none; b=elgtW6+2ZrJ/nTwnnKPYTWHHZG2obaoHqATr7p7dAQATpON1CxrRDqXBHslBI1sdi6zsbtTH9cdC7D5f/PAxiWlxY9xI5QiCZZfrg/z94/++tg8lWdzSOSHvQNUCmQlB8VRSC1wSYywR3kjEdxZi8O/yoQoecG9jq1QyDyXQtYI=
+	t=1734632895; cv=none; b=DkEjZNdNLG5EIDy0VRLCWUOyf6oX2O/tie3GwBrwHxpkfYmQHRSKsaTYY/vlUmW3f+bbaX4B2q2hBRmrTmjMr8gtDtQ5xRlxVztL191L4kj1NjiimYqFJuEB230E1P3k5Wqse1u06mF+Qi9gfXFSPeC3BKCN2pL8NPoVceot2MQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734632341; c=relaxed/simple;
-	bh=YEgEGk++Qawum4Tv6R4g7l33rhRuK+evDXcUWNrk0r4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=flxCDlvztmCORl3HYal3juivegIZmGVtJURUp5xX9wb2RdAbd3QgD1MZUrmSXMhlMjiCmJtXFn6WmU0LAopK4coGcLC0Zuten55CrVBm3dLBuGbs1xFNvGmghvbyRbk93ohYlCVxecUTvbxzesvmVovzTjGR12+mvn2mklSQALU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=I3Wu8QmV; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1734632895; c=relaxed/simple;
+	bh=PZrksKbVCwALT/BKHe0sgDxS0zE36G0ghQIMGarCZuM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ucw3tE0ki715eCN8CBXei0RiicUD6ZY75D6vXV7uQCB+JQ7Nzn0RzNZnO7T2Ebue1FOGa7ZVvqdlom3DWTwBlog0Wf9MNVd6Vy0BH+qhwfrEbDHwG1YhsCh2x2OvjNZuILYKuXxrcv/LJdtIyGlSJhemQj91Zlkrhxgwzt7WgpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=AzdV7Y+F; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="I3Wu8QmV"
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BJB0K7t014132;
-	Thu, 19 Dec 2024 18:18:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=eDuTZs
-	OioSGNDi5/aCCuLNZykanqrA+r2NggIOF7AxE=; b=I3Wu8QmVcPxbXmq9kBF+IH
-	LUdzGRGsv6rA+GG7hCSnmDwyz+RlRUxbrO52cJIwDcjz0vD3XAZWcp9/upRBiKV3
-	xvGBdMjKC18piBTDlQm/UamjO0JunnQgWOgs5p9rwuGojUnlaX1PAb7FHeGptzkt
-	q4DpkpU/naFSBvvtRu9q/HDFpC7C9JROpVwi8hqGLinSmdm0n4jbMr6NCmow54Y7
-	3G8Vo8RA+JHAiSihJ3Eh7qjVZhU4743BTsb72X3uevI5yPY9AuWQT6GOyfolqLs1
-	VRyaj/zxJGiwRCZCQMN3HcODFOIu0r3/T987uQ60JsUnVm90LuRyS3v5otyQv0Kw
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43mj80a4jv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 19 Dec 2024 18:18:21 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4BJIIK4B021333;
-	Thu, 19 Dec 2024 18:18:20 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43mj80a4js-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 19 Dec 2024 18:18:20 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BJGmwgH005564;
-	Thu, 19 Dec 2024 18:18:20 GMT
-Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43hnbneg0t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 19 Dec 2024 18:18:20 +0000
-Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BJIIJCp27656942
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 19 Dec 2024 18:18:19 GMT
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A8FEA58059;
-	Thu, 19 Dec 2024 18:18:19 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C5EE058053;
-	Thu, 19 Dec 2024 18:18:17 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.169.26])
-	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 19 Dec 2024 18:18:17 +0000 (GMT)
-Message-ID: <b325441507555d7e9d1b1f0205da3b06ccaa2553.camel@linux.ibm.com>
-Subject: Re: [RFC 0/2] ima: evm: Add kernel cmdline options to disable
- IMA/EVM
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Song Liu <songliubraving@meta.com>,
-        Roberto Sassu
-	 <roberto.sassu@huaweicloud.com>
-Cc: Casey Schaufler <casey@schaufler-ca.com>, Song Liu <song@kernel.org>,
-        "linux-fsdevel@vger.kernel.org"
-	 <linux-fsdevel@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org"
-	 <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org"
-	 <linux-security-module@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	 <linux-kernel@vger.kernel.org>,
-        "roberto.sassu@huawei.com"
-	 <roberto.sassu@huawei.com>,
-        "dmitry.kasatkin@gmail.com"
-	 <dmitry.kasatkin@gmail.com>,
-        "eric.snowberg@oracle.com"
-	 <eric.snowberg@oracle.com>,
-        "paul@paul-moore.com" <paul@paul-moore.com>,
-        "jmorris@namei.org"
-	 <jmorris@namei.org>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        Kernel Team
-	 <kernel-team@meta.com>,
-        "brauner@kernel.org" <brauner@kernel.org>,
-        "jack@suse.cz"
-	 <jack@suse.cz>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
-Date: Thu, 19 Dec 2024 13:18:17 -0500
-In-Reply-To: <358F6A59-C8ED-4CD6-996C-C68B3034B3F7@fb.com>
-References: <20241217202525.1802109-1-song@kernel.org>
-	 <fc60313a-67b3-4889-b1a6-ba2673b1a67d@schaufler-ca.com>
-	 <bd5a5029302bc05c2fbe3ee716abb644c568da48.camel@linux.ibm.com>
-	 <C01F96FE-0E0F-46B1-A50C-42E83543B9E1@fb.com>
-	 <ac0d0d8f3d40ec3f7279f3ece0e75d0b2ec32b4e.camel@huaweicloud.com>
-	 <358F6A59-C8ED-4CD6-996C-C68B3034B3F7@fb.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="AzdV7Y+F"
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6f145e5cd83so9806677b3.1
+        for <linux-security-module@vger.kernel.org>; Thu, 19 Dec 2024 10:28:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1734632893; x=1735237693; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2Zmy5f2jtsDyVkGn1yaqGCifrzHRxpajGypgt29o7QI=;
+        b=AzdV7Y+FG6fVJmwz3+h/LlYij1BUrDc8JVAqK0NkHKzG0KtPrb+tUnVBNhGWaZAnGB
+         hUY8rn+sXpl3yjW30/MScjTqabXCa3a+trqEEHuBOMuURuFOLG3WUwmMi9KMr3MY4WkR
+         C0nYJq4oy/gEFzoFaJiAAS4gMlt6JV4zv2Gr1G/UTi+6poRmmV3VEX81IUFVSZfulG0J
+         GmuLv1WzDcQUOr8O90Z+LSiAJn4XghEAIpwm+4A8USHw5EXalbIUROkpgtAYoePPn4D8
+         +qHgdewMCUnvPbotOxLdKipCDZdJw4YQoUFuat0fPUfrIyLBjC3+HkZz1HxgPKdxm3VL
+         87SA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734632893; x=1735237693;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2Zmy5f2jtsDyVkGn1yaqGCifrzHRxpajGypgt29o7QI=;
+        b=fAeXK6JVZRrr2SMOJzXaCCRiOF88xQwO+OrGeJjikgN8NZrWUQzP1/CG6ViedLCk/E
+         BH7CVDkCYZa9iPF0b5Mvlu8hXNYshpnm1E0ClOl5TDBpS/bm38QpszbGmuF1vBHeeAyn
+         5S2uCwCO8+BFNOdsElb12DCw7n3Zq2euOUQBMXTAADNzgPdXOusk6/GWdhR7uQ0L6PHo
+         alsWhNStBlsOoUjq4BBlXDQG9cBw2NylnTLIybxL4wS04etGRb402F+pYteGkrA7T1BA
+         V8B+0kNEwbA6M7t8PA+JSk2rZf+EqdPQaEhinNtBReKQbxyoYeWOA6kLfqZTmp7trFyt
+         J/VQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUCbnc2MaR2El/9gMLziM7MHGvYeUEFd7ZbLJM2V70GlO8wXnJlsTsPlx4g+brEQpTaGhqZg79l67uM4ZpZtDRFwoSR1fQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8GkVd8CigW9Memm20PUcj+gzGE1ErWh7XC+X4tM4EyAgCLrl/
+	bevFXJxT4eft92Jt2qq8bdTrY1cDKi3G9wmE9hfhEhmjThH1MVcsPrsabejMM3cEEfEhJgXxDD3
+	+DDCHHP51PUPRc1LJE23ZdlD/6ZWVkRMwXSfHHu4NkBORSaw=
+X-Gm-Gg: ASbGncvNMvsrcPXMXRXudYXOGsV3Q5PYS/OUdweYusURJhFfmE/F3T7/XiPkO2Mrp6n
+	LtKCcIvcY7v9BiEr9XFEdjwszOtiTM4uOtT3o
+X-Google-Smtp-Source: AGHT+IE12V3e82FfLr+A4qhI2TiVCtRjWfYa6rpYzS4Gk8j7Ij0CDUzQ9zZeG8G1wA5x5UxqWZkUZPRjdjquSu5gUXw=
+X-Received: by 2002:a05:690c:6183:b0:6ef:79d8:c908 with SMTP id
+ 00721157ae682-6f3f5176516mr8164807b3.14.1734632893064; Thu, 19 Dec 2024
+ 10:28:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: N4_Uh-vALOVenc9mVTaTNu5VSPUKeKy5
-X-Proofpoint-ORIG-GUID: ZthzyLdI81sc0CSQ9yH0QT5Fje8TI9zv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- lowpriorityscore=0 priorityscore=1501 malwarescore=0 phishscore=0
- mlxlogscore=946 bulkscore=0 adultscore=0 suspectscore=0 clxscore=1011
- mlxscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412190143
+References: <20241219172859.188117-1-linux@treblig.org>
+In-Reply-To: <20241219172859.188117-1-linux@treblig.org>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 19 Dec 2024 13:28:02 -0500
+Message-ID: <CAHC9VhQ73qdL2Qf-jOMMVSf=+h-H8K+mz165XZztb5X6XjH11w@mail.gmail.com>
+Subject: Re: [PATCH v2] capability: Remove unused has_capability
+To: linux@treblig.org
+Cc: serge@hallyn.com, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2024-12-19 at 17:46 +0000, Song Liu wrote:
-> Hi Roberto,=20
->=20
-> Thanks for sharing these information!
->=20
-> > On Dec 19, 2024, at 7:40=E2=80=AFAM, Roberto Sassu <roberto.sassu@huawe=
-icloud.com> wrote:
->=20
-> [...]
->=20
-> > > I didn't know about this history until today. I apologize if this=20
-> > > RFC/PATCH is moving to the direction against the original agreement.=
-=20
-> > > I didn't mean to break any agreement.=20
-> > >=20
-> > > My motivation is actually the per inode memory consumption of IMA=20
-> > > and EVM. Once enabled, EVM appends a whole struct evm_iint_cache to=
-=20
-> > > each inode via i_security. IMA is better on memory consumption, as=
-=20
-> > > it only adds a pointer to i_security.=20
-> > >=20
-> > > It appears to me that a way to disable IMA and EVM at boot time can=
-=20
-> > > be useful, especially for distro kernels. But I guess there are=20
-> > > reasons to not allow this (thus the earlier agreement). Could you=20
-> > > please share your thoughts on this?
-> >=20
-> > Hi Song
-> >=20
-> > IMA/EVM cannot be always disabled for two reasons: (1) for secure and
-> > trusted boot, IMA is expected to enforce architecture-specific
-> > policies; (2) accidentally disabling them will cause modified files to
-> > be rejected when IMA/EVM are turned on again.
-> >=20
-> > If the requirements above are met, we are fine on disabling IMA/EVM.
->=20
-> I probably missed something, but it appears to me IMA/EVM might be=20
-> enabled in distro kernels, but the distro by default does not=20
-> configure IMA/EVM, so they are not actually used. Did I misunderstand=20
-> something?
+On Thu, Dec 19, 2024 at 12:29=E2=80=AFPM <linux@treblig.org> wrote:
+>
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+>
+> The vanilla has_capability() function has been unused since 2018's
+> commit dcb569cf6ac9 ("Smack: ptrace capability use fixes")
+>
+> Remove it.
+>
+> Fixup a comment in security/commoncap.c that referenced it.
+>
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> ---
+>  include/linux/capability.h |  5 -----
+>  kernel/capability.c        | 16 ----------------
+>  security/commoncap.c       |  9 +++++----
+>  3 files changed, 5 insertions(+), 25 deletions(-)
 
-If "CONFIG_IMA_ARCH_POLICY" is configured, then the architecture specific p=
-olicy
-is configured and loaded on boot.  For x86 and arm, the architecture specif=
-ic
-policy rules are defined in ima_efi.c.  On power, the rules are defined in
-arch/powerpc/kernel/ima_arch.c.  On most systems, the currently enabled IMA
-policy rules can be viewed by cat'ing <securityfs>/integrity/ima/policy.
+Now that Serge has the capabilities tree back up and running I'm
+assuming he will grab this patch, if not just let me know Serge and I
+can take it.
 
-For more information on IMA policies, refer to
-https://ima-doc.readthedocs.io/en/latest/ima-policy.html#
+Reviewed-by: Paul Moore <paul@paul-moore.com>
 
-Mimi
-
->=20
-> > As for reserving space in the inode security blob, please refer to this
-> > discussion, where we reached the agreement:
-> >=20
-> > https://lore.kernel.org/linux-integrity/CAHC9VhTTKac1o=3DRnQadu2xqdeKH8=
-C_F+Wh4sY=3DHkGbCArwc8JQ@mail.gmail.com/
->=20
-> AFAICT, the benefit of i_security storage is its ability to be=20
-> configured at boot time. If IMA/EVM cannot be disabled, it is=20
-> better to add them to struct inode within a "#ifdef CONFIG_"
-> block.=20
->=20
-> Thanks,
-> Song
->=20
-
+--=20
+paul-moore.com
