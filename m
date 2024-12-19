@@ -1,123 +1,145 @@
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0D8C223C7B;
-	Thu, 19 Dec 2024 11:15:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFBE369D2B;
+	Thu, 19 Dec 2024 14:19:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734606928; cv=none; b=dJG4QLDkZivzrPlep7Yh+QMqDsNkgDKjVxZeJ2ipssWnSaJ48iZF4J9MPqzAg7wG6yR5xCDiUJQTb4Ybt7S2/fo0Lbs/glzXInhHkd9puoqGF2TtVfIy6EUDsJgh9HllsHiuicMoFM7IYYFyc1DaFX1QInRXg4/jklS+vvaaaDI=
+	t=1734617996; cv=none; b=Cc/4P5zH4liSuWs4Zl7i+t3VnJoEFhRouD4RRBgQReOodcVnO0O2NdmxdRbjFTIVSc9QiBsUnkuKYu8bkUL+AqTYVxh6wubVQCDNrZw6WyMcRHlITlPjCxNMQMqoQD3VAiAjZPj38V9IRfV78amc0idG3UhoIdKM+wnPaSJGk9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734606928; c=relaxed/simple;
-	bh=5VZPTkXvtP9mboW6aOefRLAEFA01dufNNfD6ISGDIMM=;
-	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=h27u+JsAWnPeMCnkmXwAL2j308MIhi/RaTkDwb4GTIVrEFO3NFWt8OGD1xClZK0BYSx4WQjN6bQcos3Fr+blNBUz+PKa7GmG4gRqyafhPqVjeldy/eHKoBuuAuoC/FVfF0V9O56BlcTPdih2IrrxliWA3++2S/I6QSFpj5ZRJXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4YDSbC6M4Kz21kWm;
-	Thu, 19 Dec 2024 19:13:27 +0800 (CST)
-Received: from kwepemh100016.china.huawei.com (unknown [7.202.181.102])
-	by mail.maildlp.com (Postfix) with ESMTPS id 601141A0171;
-	Thu, 19 Dec 2024 19:15:21 +0800 (CST)
-Received: from [10.174.179.93] (10.174.179.93) by
- kwepemh100016.china.huawei.com (7.202.181.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 19 Dec 2024 19:15:17 +0800
-Subject: Re: [PATCH v3 -next 00/15] sysctl: move sysctls from vm_table into
- its own files
-To: Joel Granados <j.granados@samsung.com>
-References: <CGME20241010141133eucas1p1999f17c74198d3880cbd345276bcd3bd@eucas1p1.samsung.com>
- <20241010152215.3025842-1-yukaixiong@huawei.com>
- <ngknhtecptqk56gtiikvb5mdujhtxdyngzndiaz7ifslzrki7q@4wcykosdnsna>
- <79b33640-fc81-b4c1-4967-30189d9a4b23@huawei.com>
- <wk7dqsx42rxjt76dowrydumhinwwdltw7e5ptp7fh4rc4c4sji@jrtopui4fpwb>
-CC: <akpm@linux-foundation.org>, <mcgrof@kernel.org>, <ysato@users.osdn.me>,
-	<dalias@libc.org>, <glaubitz@physik.fu-berlin.de>, <luto@kernel.org>,
-	<tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>, <hpa@zytor.com>, <viro@zeniv.linux.org.uk>,
-	<brauner@kernel.org>, <jack@suse.cz>, <kees@kernel.org>,
-	<willy@infradead.org>, <Liam.Howlett@oracle.com>, <vbabka@suse.cz>,
-	<lorenzo.stoakes@oracle.com>, <trondmy@kernel.org>, <anna@kernel.org>,
-	<chuck.lever@oracle.com>, <jlayton@kernel.org>, <neilb@suse.de>,
-	<okorniev@redhat.com>, <Dai.Ngo@oracle.com>, <tom@talpey.com>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <paul@paul-moore.com>, <jmorris@namei.org>,
-	<linux-sh@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<linux-nfs@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<linux-security-module@vger.kernel.org>, <dhowells@redhat.com>,
-	<haifeng.xu@shopee.com>, <baolin.wang@linux.alibaba.com>,
-	<shikemeng@huaweicloud.com>, <dchinner@redhat.com>, <bfoster@redhat.com>,
-	<souravpanda@google.com>, <hannes@cmpxchg.org>, <rientjes@google.com>,
-	<pasha.tatashin@soleen.com>, <david@redhat.com>, <ryan.roberts@arm.com>,
-	<ying.huang@intel.com>, <yang@os.amperecomputing.com>,
-	<zev@bewilderbeest.net>, <serge@hallyn.com>, <vegard.nossum@oracle.com>,
-	<wangkefeng.wang@huawei.com>, <sunnanyong@huawei.com>,
-	<joel.granados@kernel.org>
-From: yukaixiong <yukaixiong@huawei.com>
-Message-ID: <69509584-92c2-6bcd-0aef-406af7606239@huawei.com>
-Date: Thu, 19 Dec 2024 19:15:16 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.1
+	s=arc-20240116; t=1734617996; c=relaxed/simple;
+	bh=SGePen9HXXCLfOzdBkX1Dh45nluxYHFUpPGXxPHPRU8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oSy+GTwusxF/pbMp4Arkx6F2iAy2Td9/R2j3CJtKuzs7lbVV6nz3AVA2oLawlKrwfsU3CqxBQbTPGA48ZPlebV5o3umKAguHijlkEeGr6oI3g4Ux8MAUuDXK+utd9carlx+WddyOapdEdaFVD98J/sVVf1XRULNoprOQy4RWjf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=sEeEBNqv; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="sEeEBNqv"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=yZrEUdLTpZn3XuClCPpgf+6mRD3kCVpWTAMxXEmtGCU=; b=sEeEBNqv4CMa60hC
+	CiXge5FysVZbOX8uSpdD54A9ojJQpVRy6+HIzRKKqy6CsAxtftVRQ6dduAtbWp6SmW7yIF8ruohxB
+	+GciyYsL0YiWtqCggWRqqSNzMPg7ZQsFKark956gygcMFQZQrEMmRkxrtFdmfr9KH5Df6ALcxR0q1
+	D8K/Fw3b8sIydu6l3olYdDropcA+azxAAanw85LAM+JGYphv2vWpD5ltVgAxQ4PeQb6LZaLHsg+/9
+	ouv7fLb133ag6Sf5SpOJsNWb0s/mAf/K2WUBICAVkdMNWL0qI3qrbaYumLfZANBPO095l5O9eNm5E
+	o8Bo9bQqZLPbBhMPmA==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1tOHNQ-006JUS-1y;
+	Thu, 19 Dec 2024 14:19:44 +0000
+Date: Thu, 19 Dec 2024 14:19:44 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: Paul Moore <paul@paul-moore.com>
+Cc: serge@hallyn.com, linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] capability: Remove unused has_capability
+Message-ID: <Z2QrgI0coNmBMonB@gallifrey>
+References: <20241215165352.186692-1-linux@treblig.org>
+ <CAHC9VhRyf8Jo54gnz2Nu17eHFOEqeXd3B5_HoXbz9uLYDba=HA@mail.gmail.com>
+ <Z2NIpSZ9iY0q1EAl@gallifrey>
+ <CAHC9VhTmqMKkemeyWK3d6tyPGSus9ApMpZzTjtrmgHqbC_au+Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <wk7dqsx42rxjt76dowrydumhinwwdltw7e5ptp7fh4rc4c4sji@jrtopui4fpwb>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggpeml100006.china.huawei.com (7.185.36.169) To
- kwepemh100016.china.huawei.com (7.202.181.102)
+In-Reply-To: <CAHC9VhTmqMKkemeyWK3d6tyPGSus9ApMpZzTjtrmgHqbC_au+Q@mail.gmail.com>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 14:13:59 up 225 days,  1:28,  1 user,  load average: 0.00, 0.00,
+ 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
+* Paul Moore (paul@paul-moore.com) wrote:
+> On Wed, Dec 18, 2024 at 5:11 PM Dr. David Alan Gilbert
+> <linux@treblig.org> wrote:
+> > * Paul Moore (paul@paul-moore.com) wrote:
+> > > On Sun, Dec 15, 2024 at 11:54 AM <linux@treblig.org> wrote:
+> > > >
+> > > > From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> > > >
+> > > > The vanilla has_capability() function has been unused since 2018's
+> > > > commit dcb569cf6ac9 ("Smack: ptrace capability use fixes")
+> > > >
+> > > > Remove it.
+> > > >
+> > > > (There is still mention in a comment in security/commoncap.c
+> > > > but I suspect rather than removing the entry it might be better
+> > > > to expand the comment to talk about the other
+> > > > has_[ns_]capability[_noaudit] variants).
+> >
+> > Hi Paul,
+> >   Thanks for the review,
+> >
+> > > I would suggest that this patch would be an excellent place to change
+> > > that comment.  Without historical knowledge, the comment will be hard
+> > > to understand after this patch is merged as inspecting
+> > > has_capability() will be much more difficult, and including the
+> > > comment change with the function removal will bind the two changes
+> > > nicely in the git log.
+> >
+> > Yeh, how would you like it? The existing comment is:
+> >
+> > '
+> >  * NOTE WELL: cap_has_capability() cannot be used like the kernel's capable()
+> >  * and has_capability() functions.  That is, it has the reverse semantics:
+> >  * cap_has_capability() returns 0 when a task has a capability, but the
+> >  * kernel's capable() and has_capability() returns 1 for this case.
+> > '
+> >
+> > For a start I think that's wrong; the function it's above is
+> > 'cap_capable()' not 'cap_has_capability()' - and has been for 15 years :-)
+> 
+> The code in security/commoncap.c is fairly mature and stable, and I
+> don't expect that many people spend a lot of time in that file, I know
+> I don't.  An unfortunate side effect is that certain things that
+> aren't caught by a compiler can easily go out of date, and stay that
+> way for some time :/
 
+There are 'many eyes' scared to look!
 
-On 2024/10/24 16:59, Joel Granados wrote:
-> On Thu, Oct 24, 2024 at 04:07:10PM +0800, yukaixiong wrote:
-> ...
->>
->>>>    mm/swap.c                          |  16 ++-
->>>>    mm/swap.h                          |   1 +
->>>>    mm/util.c                          |  67 +++++++--
->>>>    mm/vmscan.c                        |  23 +++
->>>>    mm/vmstat.c                        |  44 +++++-
->>>>    net/sunrpc/auth.c                  |   2 +-
->>>>    security/min_addr.c                |  11 ++
->>>>    23 files changed, 330 insertions(+), 312 deletions(-)
->>>>
->>>> -- 
->>>> 2.34.1
->>>>
->>> General comment for the patchset in general. I would consider making the
->>> new sysctl tables const. There is an effort for doing this and it has
->>> already lanted in linux-next. So if you base your patch from a recent
->>> next release, then it should just work. If you *do* decide to add a
->>> const qualifier, then note that you will create a dependency with the
->>> sysctl patchset currently in next and that will have to go in before.
->>>
->>> Best
->>>
->> Sorry,  I don't understand what is the meaning of "create a dependency
->> with the sysctl patchset".
-> The patches in the sysctl subsys that allow you to qualify the ctl_table
-> as const are not in mainline yet. They are in linux-next. This means
-> that if these patches go into the next kernel release before the
-> sysctl-next branch, it will have compilation errors. Therefore the
-> sysctl-next branch needs to be pulled in to the new kernel release
-> before this patchest. This also means that for this to build properly it
-> has to be based on a linux-next release.
->
->> Do you just want me to change all "static struct ctl_table" type table
->> into "static const struct ctl_table" type in my patchset?
-> You should const qualify them if the maintainer that is pulling in these
-> patches is ok with it. You should *not* const qualify them if the
-> maintainer prefers otherwise.
->
-> Please get back to me if I did not address your questions.
->
-> Best
+> > How about:
+> > '
+> >  * NOTE WELL: cap_capable() has reverse semantics to the other kernel
+> >  * functions. That is cap_capable() returns 0 when a task has a capability,
+> >  * the kernel's capable(), has_ns_capability(), has_ns_capability_noaudit(),
+> >  * and has_capability_noaudit() return 1 for this case.
+> > '
+> 
+> Two things come to mind when reading the suggested comment:
+> 
+> * I don't like the "... reverse semantics to the other kernel
+> functions" text simply because the majority of kernel functions do
+> follow the "0 on success, negative errno on failure" pattern that we
+> see in cap_capable().  I would suggest something along the lines of
+> "... reverse semantics of the capable() call".
+> 
+> * Most (all?) of the capable() family of functions, excluding
+> cap_capable() of course, return a bool value, true/false, instead of
+> non-zero/zero.  If we're going to complain about the existing comment,
+> we probably should get this correct ;)
+> 
 
-Thank you! Now， I decide to const qualify them. Maybe, it will be better.
+OK, maybe:
 
+* NOTE WELL: cap_capable() has reverse semantics to the capable() call
+* and friends. That is cap_capable() returns an int 0 when a task has
+* a capability, while the kernel's capable(), has_ns_capability(),
+* has_ns_capability_noaudit(), and has_capability_noaudit() return a
+* bool true (1) for this case.
+
+Dave
+
+> -- 
+> paul-moore.com
+> 
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
