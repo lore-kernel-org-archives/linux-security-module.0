@@ -1,166 +1,122 @@
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55FD517C;
-	Thu, 19 Dec 2024 00:18:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2D4C13C3F2
+	for <linux-security-module@vger.kernel.org>; Thu, 19 Dec 2024 01:47:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734567490; cv=none; b=kg3Y26H7yIMR17vLxtE8V9J+pX4qYdVyHazgVNFzD314b5sTOR9oKhh+O0JPs4tbD0ern4MHOKUVYTOSR9mimiwS2KBQM40vw/syCnHuJD4bwb3s+/ltefrdLJCx5DBZos26bfbDibuy3c8Kfftwo7ZrNe3zA2W3fAsa2ocAXwA=
+	t=1734572840; cv=none; b=L+9Fwy3XLywKaXRolpym04UOCgDvz7iBHz+LDBpBkTj/DjLZM3bfBYpNVLumcZmYQP0XlEBgT/R4KoPGu06CZBX/fniQBHunrepwhR1GDp1OczBWblCCbHxsHAolKUb1dhN6b4te93KXwWSw3ToOz9aw0QhQNesTcyLxAdxmBlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734567490; c=relaxed/simple;
-	bh=3nMMzhab8rGgGn1eCpiUJHnKpt5lb5dLBY/jaiTRmAU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gAFtv7vpL9h3/TU4XheT5tHc4Q5jN+nIHrBLeMl3spgqUS1koIzLX5Syg4mZD3KgICsulEDQ+ckzYDYLniaHLG2GLOmym5a0PUPkId/6g3LqTob5f1nV4R4zZWgP+GLd/z9dFDJssKQp4EiqMg8UixK7LQDvbB/LgvlE8cXrjt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BqUoI83P; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1734572840; c=relaxed/simple;
+	bh=QoEtvf7G0kC0x/Wl3nJ0XIYl2HZa0Re3rk+nGV30jwk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iORA5ubmllRAZAp8l5zXQJGfTvHqqFpTIbzAuOGBpcpckI8Cx58wQdnMTa2KYTd71uyjtPiNaQNrm0obQ353zdhcnNICCD9k0LRNm18TW4xh5vTNmhd3f3ufZAJ8wRrGfNBKqKdabSQSa51S5hB0cuKFYlJ2v7MSt4wcWTjGEXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=sBTgTpaZ; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BqUoI83P"
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-385eed29d17so132711f8f.0;
-        Wed, 18 Dec 2024 16:18:08 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="sBTgTpaZ"
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-21636268e43so3279375ad.2
+        for <linux-security-module@vger.kernel.org>; Wed, 18 Dec 2024 17:47:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1734567486; x=1735172286; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ocjGNIZOXTAe/187ptT/PLf4c0wni1IvAs8DZOiJ7g4=;
-        b=BqUoI83PnxzUiTd7IKsnCrBw03+sl45VcGdMAKtKJqxRKAO4Zk6Hhj+W2OG6g6AKsY
-         XPXgAdyGPLZQ3EscoMHtFhuNcE5jxqZOCXrgSsCIYWC19syonT8hR7yksSlwGazWF1P7
-         L4h/97p6hzwLsu6CurF0SUEPYRZU0Qn8tvD9UJnJOjfaYof8BGTa3tVxVGYnhyEWshMQ
-         zOEHfXu5eanxFUwDDngKG9ZNKsIJPKVkZ35+cqz8lT82eDzr+AIGry9Up4MzTocPtUKT
-         BBrjrY8XlO6osNgSV2+TWwP+68sloLHSJeAJ74BHXSzkKSXwvuxbJ5pBwagMx3R4X4t0
-         SH0Q==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1734572837; x=1735177637; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nFHEfXVHBOjseorucBg5TQ9yn5KG0rfffOIvw+zi84o=;
+        b=sBTgTpaZ8mVD4iBQgBXOlDPLUcA5D4ujZK+4p/HUNST3Ta9ntAVCPRnVoYkIbRgbwj
+         BxAi5U3Kfw7qQvfqcPkVo4P6RsG56qd9I9pFjG8p0wkGGZJZwXdXUDKpxUf9maop46i/
+         AbPkuAuyhFSmGz6HZ0ZhQEjEcjzc08AiDx2hC30agh/yco9b77JUDOHTv0F8V5GWaPiF
+         fc77ZlyF6VTKe2YM3h85tATwMlj0NU45kEZ06niLjkXDkxTtcl440PwxVSuPb+AQg8e9
+         WbwbGBfbyy3wNrbd5CNivDXmZH3H/6RrwbTb9JyvPI51sXy3+lyOj2n8OQEFaN+ys4Xa
+         UOig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1734567486; x=1735172286;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ocjGNIZOXTAe/187ptT/PLf4c0wni1IvAs8DZOiJ7g4=;
-        b=N3DVbcZvTK8xu3J+M4xY8DQb6FUDcdG/xGyVWHsHh+IIOI5THksQWLXm1W8Lj2La2F
-         TzrmcwrCzKKLJ4rNqxnus86iIhVv/gJf9X0xUgSWzIFkcG/2+Gzlk/d16awvUjlvILo1
-         RsTrUJVAUYmLHi0ulBrpmsfhoU/cY1diwSvp4OnkAFN9X0XLEYiaQbV7YxLAwpJcIE/w
-         Yz2jN0ZOejYl6GpO67LFVHtAvdtoCjCoyJGoZ1DerpaID8Sezk63qJB69r+aD/KnyaE6
-         0HyuZ1H7DB4bOGGG5BnFXYE7C9TMXNZX4QYRCd4mZ0KLqLYo2bi59QrIf3byJ3e+Zquo
-         C84Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUqS7x8vetLpF+23zdGWhYcZEb+uHxnR7jx/DPNugOamPhTfXqYhuanL2JoKgqJXmpduM4jNMWsXqXf/yTvGEDcyMgTNdlp@vger.kernel.org, AJvYcCVjAB0+izeUl5Sr1h8XGRAHu+YWpHyqTU2Wa6eUa6vuJ/RKmWPRIhZlEi6L3gXMV0ly86s=@vger.kernel.org, AJvYcCVnpP8RBeZM5lTOx18KrKjdGqeEO/PCS6q6IsY3+tQv31EqFBlL+hsSC76b8v29XiLDRDOCrYoi0PmdQTqg@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDbXSf7nffYyxv9ik0swYnr08Yn5MOR+AvvdIkYf0iwie5Z+zE
-	Hv1JSit1S5MV0cTTiH5ltVOtlX/4ILDdMy9GbmzKbSTXpQqH5+DwuskBbUdiBDygy6HYNNFlnPB
-	W5uJIHkn1NfnrLeFrZfrg+n46n80=
-X-Gm-Gg: ASbGncszYRqDstTI/34laZs5PVlrsbQPK3JSWDGmaD/+LuycKwM7bzYBZDwK533gJAQ
-	mCqjW56sw0DyrAPV0r2cVS4OCr/GHNVvcZAtQgA==
-X-Google-Smtp-Source: AGHT+IE7zrIRkEdfBtKKDqD0ZtdqypQLYrkus+P+4ue1HEXEgpnGcTL+NsYBTMNoDCXxwWLno8+ZBpk3i5xFbbZE7MM=
-X-Received: by 2002:a05:6000:1b8b:b0:388:da2a:653d with SMTP id
- ffacd0b85a97d-388e4dadd2fmr3911916f8f.56.1734567486335; Wed, 18 Dec 2024
- 16:18:06 -0800 (PST)
+        d=1e100.net; s=20230601; t=1734572837; x=1735177637;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nFHEfXVHBOjseorucBg5TQ9yn5KG0rfffOIvw+zi84o=;
+        b=luuAZd6f3nO81l3Ll8tkBpNuLpElKS+bvejJYSVBvflx2PtWRrZ5zcU4PJ1tNyzCpt
+         bHChVJWakktehc5pQG/m4qZvxYg7BcoFckF/3fpU+yhMVZtILA+cdbuysnmMufTGqbuN
+         pQfjiGWt2ADnausYpUqq/yZ1BZlb05vcDZ0XvCDNB0u5VMHot45xt8gR8aeTZQwIqN3Y
+         50thiOSEgEZQBVo/7nphEi2e6hjEJa4XIyse+lRETFkDgvYW2r7ENeVfpo5Onod6B/GU
+         lVntyQ7NJq5UC3rD3ewYhQ13jAwC/7ZzNm46YfCbpdcSueQO5pMOg02NM5Uj9FbaNgg+
+         K+Wg==
+X-Forwarded-Encrypted: i=1; AJvYcCVcfAhA772FNdfBsOHko1tSR7N5sqQy5BanNmOUIn3RjP3VGOe0sycg+BtxmcqZiRZJKVELBVN9Qji9uE6PMcRL+J91Z2A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFmzSLVFqpZA5U4dOuHQzVttVtW64D12iYSzyJH88dhRDjtYB1
+	YdIgpe1SjYxsGQSHVm6TA2iy8tet+MVHAnOLagtj2792vr0FIiD9yyzeN16DseM=
+X-Gm-Gg: ASbGncvMTtXSNS7gUQdxdEI5IpFzyRuqfRkJ+HWxpwaGCnz3tFnTVgbLZI57DUzjueH
+	d1+I8fkCs2gFQbFJFn8XfGrd95GlOYiwID+Fw04ZuEaMKG4iUybft3XDRW0RSt+k0kuJrnYAnjq
+	GhJ2eoSVwPgn2bWPhOiO873i3k73opOyG5UsWqF7QCoS0IITMgYA2CGvtVV1fUqs7LkllZcBcrp
+	1vNZ6tuHOJDH0OyuUgnQ6nP4PxsL1hEu1sS1FDfy5ImmPvheKrrPo/Syl/Zs96TwwnGaBPjXyT8
+	djC/zsLBI6lTOAKCm8pGuEDvqN2jrA==
+X-Google-Smtp-Source: AGHT+IHoM9BuzRwWE3UvBbujRjFPqKOpZTGf3EdvmaxlJ9Nm6SjjQJoIghbJbF3BGqAvlV3zRrZEww==
+X-Received: by 2002:a17:902:fc4e:b0:20c:6399:d637 with SMTP id d9443c01a7336-219d96d213emr29814395ad.40.1734572837007;
+        Wed, 18 Dec 2024 17:47:17 -0800 (PST)
+Received: from dread.disaster.area (pa49-195-9-235.pa.nsw.optusnet.com.au. [49.195.9.235])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-219dc962940sm1898825ad.34.2024.12.18.17.47.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Dec 2024 17:47:16 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.98)
+	(envelope-from <david@fromorbit.com>)
+	id 1tO5dB-0000000CUAL-2X1s;
+	Thu, 19 Dec 2024 12:47:13 +1100
+Date: Thu, 19 Dec 2024 12:47:13 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Song Liu <song@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-security-module@vger.kernel.org,
+	willy@infradead.org, corbet@lwn.net, clm@fb.com,
+	josef@toxicpanda.com, dsterba@suse.com, brauner@kernel.org,
+	jack@suse.cz, cem@kernel.org, djwong@kernel.org,
+	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+	fdmanana@suse.com, johannes.thumshirn@wdc.com, kernel-team@meta.com
+Subject: Re: [RFC v2] lsm: fs: Use inode_free_callback to free i_security in
+ RCU callback
+Message-ID: <Z2N7Ibxnmm-KEvea@dread.disaster.area>
+References: <20241218211615.506095-1-song@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241218044711.1723221-1-song@kernel.org> <20241218044711.1723221-5-song@kernel.org>
- <CAADnVQK2chjFr8EwpzbnsqLwGRfoxjRs6yXDXmUuBRFo-iwV_A@mail.gmail.com> <BF2BF0EC-90C2-4BFC-B1F3-D842AE1B7761@fb.com>
-In-Reply-To: <BF2BF0EC-90C2-4BFC-B1F3-D842AE1B7761@fb.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Wed, 18 Dec 2024 16:17:55 -0800
-Message-ID: <CAADnVQ+vgt=LV+3srtGQUtKKc3ohZkaMdHyouXThNmYG2qGoYg@mail.gmail.com>
-Subject: Re: [PATCH v5 bpf-next 4/5] bpf: fs/xattr: Add BPF kfuncs to set and
- remove xattrs
-To: Song Liu <songliubraving@meta.com>
-Cc: Song Liu <song@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	LSM List <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	KP Singh <kpsingh@kernel.org>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E . Hallyn" <serge@hallyn.com>, Kumar Kartikeya Dwivedi <memxor@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241218211615.506095-1-song@kernel.org>
 
-On Wed, Dec 18, 2024 at 1:47=E2=80=AFPM Song Liu <songliubraving@meta.com> =
-wrote:
->
-> Hi Alexei,
->
-> Thanks for the review!
->
-> > On Dec 18, 2024, at 1:20=E2=80=AFPM, Alexei Starovoitov <alexei.starovo=
-itov@gmail.com> wrote:
-> >
-> > On Tue, Dec 17, 2024 at 8:48=E2=80=AFPM Song Liu <song@kernel.org> wrot=
-e:
-> >>
-> >>
-> >> BTF_KFUNCS_START(bpf_fs_kfunc_set_ids)
-> >> @@ -170,6 +330,10 @@ BTF_ID_FLAGS(func, bpf_put_file, KF_RELEASE)
-> >> BTF_ID_FLAGS(func, bpf_path_d_path, KF_TRUSTED_ARGS)
-> >> BTF_ID_FLAGS(func, bpf_get_dentry_xattr, KF_SLEEPABLE | KF_TRUSTED_ARG=
-S)
-> >> BTF_ID_FLAGS(func, bpf_get_file_xattr, KF_SLEEPABLE | KF_TRUSTED_ARGS)
-> >> +BTF_ID_FLAGS(func, bpf_set_dentry_xattr, KF_SLEEPABLE | KF_TRUSTED_AR=
-GS)
-> >> +BTF_ID_FLAGS(func, bpf_remove_dentry_xattr, KF_SLEEPABLE | KF_TRUSTED=
-_ARGS)
-> >> +BTF_ID_FLAGS(func, bpf_set_dentry_xattr_locked, KF_SLEEPABLE | KF_TRU=
-STED_ARGS)
-> >> +BTF_ID_FLAGS(func, bpf_remove_dentry_xattr_locked, KF_SLEEPABLE | KF_=
-TRUSTED_ARGS)
-> >> BTF_KFUNCS_END(bpf_fs_kfunc_set_ids)
-> >
-> > The _locked() versions shouldn't be exposed to bpf prog.
-> > Don't add them to the above set.
-> >
-> > Also we need to somehow exclude them from being dumped into vmlinux.h
-> >
-> >> static int bpf_fs_kfuncs_filter(const struct bpf_prog *prog, u32 kfunc=
-_id)
-> >> @@ -186,6 +350,37 @@ static const struct btf_kfunc_id_set bpf_fs_kfunc=
-_set =3D {
-> >>        .filter =3D bpf_fs_kfuncs_filter,
-> >> };
->
-> [...]
->
-> >> + */
-> >> +static void remap_kfunc_locked_func_id(struct bpf_verifier_env *env, =
-struct bpf_insn *insn)
-> >> +{
-> >> +       u32 func_id =3D insn->imm;
-> >> +
-> >> +       if (bpf_lsm_has_d_inode_locked(env->prog)) {
-> >> +               if (func_id =3D=3D special_kfunc_list[KF_bpf_set_dentr=
-y_xattr])
-> >> +                       insn->imm =3D  special_kfunc_list[KF_bpf_set_d=
-entry_xattr_locked];
-> >> +               else if (func_id =3D=3D special_kfunc_list[KF_bpf_remo=
-ve_dentry_xattr])
-> >> +                       insn->imm =3D special_kfunc_list[KF_bpf_remove=
-_dentry_xattr_locked];
-> >> +       } else {
-> >> +               if (func_id =3D=3D special_kfunc_list[KF_bpf_set_dentr=
-y_xattr_locked])
-> >> +                       insn->imm =3D  special_kfunc_list[KF_bpf_set_d=
-entry_xattr];
-> >
-> > This part is not necessary.
-> > _locked() shouldn't be exposed and it should be an error
-> > if bpf prog attempts to use invalid kfunc.
->
-> I was implementing this in different way than the solution you and Kumar
-> suggested. Instead of updating this in add_kfunc_call, check_kfunc_call,
-> and fixup_kfunc_call, remap_kfunc_locked_func_id happens before
-> add_kfunc_call. Then, for the rest of the process, the verifier handles
-> _locked version and not _locked version as two different kfuncs. This is
-> why we need the _locked version in bpf_fs_kfunc_set_ids. I personally
-> think this approach is a lot cleaner.
+On Wed, Dec 18, 2024 at 01:16:15PM -0800, Song Liu wrote:
+> inode->i_security needes to be freed from RCU callback. A rcu_head was
+> added to i_security to call the RCU callback. However, since struct inode
+> already has i_rcu, the extra rcu_head is wasteful. Specifically, when any
+> LSM uses i_security, a rcu_head (two pointers) is allocated for each
+> inode.
+> 
+> Rename i_callback to inode_free_callback and call security_inode_free_rcu
+> from it to free i_security so that a rcu_head is saved for each inode.
+> Special care are needed for file systems that provide a destroy_inode()
+> callback, but not a free_inode() callback. Specifically, the following
+> logic are added to handle such cases:
+> 
+>  - XFS recycles inode after destroy_inode. The inodes are freed from
+>    recycle logic. Let xfs_inode_free_callback() call inode_free_callback.
 
-I see. Blind rewrite in add_kfunc_call() looks simpler,
-but allowing progs call _locked() version directly is not clean.
+NACK. That's a massive layering violation.
 
-See specialize_kfunc() as an existing approach that does polymorphism.
+LSMs are VFS layer functionality. They *must* be removed from the
+VFS inode before ->destroy_inode() is called. If a filesystem
+supplies ->destroy_inode(), then it -owns- the inode exclusively
+from that point onwards. All VFS and 3rd party stuff hanging off the
+inode must be removed from the inode before ->destroy_inode() is
+called.
 
-_locked() doesn't need to be __bpf_kfunc annotated.
-It can be just like bpf_dynptr_from_skb_rdonly.
+Them's the rules, and hacking around LSM object allocation/freeing
+to try to handle how filesystems manage inodes -underneath- the VFS
+is just asking for problems. LSM object management needs to be
+handled entirely by the generic LSM VFS hooks, not tightly coupled
+to VFS and/or low level filesystem inode lifecycle management.
 
-There will be no issue with vmlinux.h as well.
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
