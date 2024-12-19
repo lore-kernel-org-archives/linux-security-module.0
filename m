@@ -1,53 +1,49 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16FB01B6525;
-	Thu, 19 Dec 2024 20:26:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1B4E3FD1;
+	Thu, 19 Dec 2024 20:42:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734640000; cv=none; b=Nad/gV7VQcarrXzjXq87RwLIu6S03dwn02wwhDv9ysSDkKqt7BsGI6eqTRibL1A/Pih/AjE5TBCk7qiRSHuzpXP2luDSGnRqGdhfLpijEfSRybyxiYqZPSRhKsWqOWoiiLkdGb1FH76yo/4jyqH4QSnI425+IzIS4aFJ/AyBaKs=
+	t=1734640957; cv=none; b=nnNzI5hBWGAgDi9rWisoNY47xd+WX47Qd0J7rJ6WiqXqTVz/F5H84RtoRqn7mSKjJOnaIxgAHaWRKl4hdvOZQr7u6T215P/oj4DWJ44o1yAeoX8ou5IxfVqqcbsoXoxBHCmM/Kf8Znkq5O6Utd6OUUB9L9sTU6pAEnfbdlE2cW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734640000; c=relaxed/simple;
-	bh=FQmK/zjfrxygp/Pf6guBS6Z2EkiYTrDZoPCVgsbDZ0g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HWjyyl2ow9RPyH8ej3gFPyXKS18tGBk1ob6YFwHXoxVWwnqm8n3zFM12neqsrmtuNKdevCVmrT6iLtFgJFqbB6dFVjLDBsY2s+vtTHpAMQ+nzcymSEx+gNnTrMFZd+8mW2kDcCkQMVv1pfNqjXRk26P+hyHPlioNdS+DSbvYLe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I0AolCyA; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1734640957; c=relaxed/simple;
+	bh=6DSTopWMJNTlqwjejKr077ARPFYD2iH2vMsPv/ooX6o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aB2DZhyk5QXHQDxm8SGYJjuxcjwM138Au2SbXmjQkPiXjKc4c5nt8epxPxMi+7KoJUrLpSX/qBOZ36+UQh9cRCzhkMKBw8tX3sfdGun3wYcXLz0dzqKtustQaZuMkZq/bRwYFIQUeqUu7V1XlCYkqij03Aayy8rQgxOFLxXI4Gg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=YMF++CYn; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I0AolCyA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92A02C4CECE;
-	Thu, 19 Dec 2024 20:26:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734639999;
-	bh=FQmK/zjfrxygp/Pf6guBS6Z2EkiYTrDZoPCVgsbDZ0g=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=I0AolCyAf0+XgAB93NsA/DLDLo2+sEtAVc3YRvoqOQHOxvLcYOxEhVFkfzQsX6nzG
-	 6Ai7j3BCPtbGRSgcrdORWfS3XBE//f2UKoacEOErBOi80n3XbIgL00A8PlGY6ooeDm
-	 rrA44o7VNVDLyy1iirWKbiWLagF6mqRFghBXxF0WFM9uAiZ0WiercnJcQPV2vHI8ad
-	 xyW3XoEXgTviDi0hlorAGEQid+6+vOrfupc6XzDua8LggtiNRVnLcRyBFmt7wtNpoY
-	 PXHxWrp2r8b1wXkqEjr1dP4I3Hu63rgVpXJPZiaH9RqejKQWTFFjC/C7GoNUfd75ML
-	 FYRxnE6uYdySQ==
-From: Song Liu <song@kernel.org>
-To: bpf@vger.kernel.org,
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="YMF++CYn"
+Received: from hm-sls2.corp.microsoft.com (bras-base-toroon4332w-grc-63-70-49-166-4.dsl.bell.ca [70.49.166.4])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 6EFB9203FC94;
+	Thu, 19 Dec 2024 12:42:34 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6EFB9203FC94
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1734640955;
+	bh=iVZB9ew11Lrxd3x06+Ra7NzDQmQpUub+riVhr6QI1Yk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=YMF++CYnXVuqr38qBKTGY/FrIBR1gwXG6P5cu+XkY4PAPBmgKo1u7j0AihVILJrGO
+	 pJmeRJOb97F55RRX2qAgAVnKxNWofj1p8MfEwMUnw+SOrMs/uULp48iXqzv6x2dk5n
+	 tqyN2NUymW1T3ZxbliFMRpHGBpyi4Fmi5yil4pTs=
+From: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
+To: linux-security-module@vger.kernel.org,
+	io-uring@vger.kernel.org
+Cc: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>,
+	Paul Moore <paul@paul-moore.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>,
+	Ondrej Mosnacek <omosnace@redhat.com>,
+	=?UTF-8?q?Thi=C3=A9baud=20Weksteen?= <tweek@google.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	=?UTF-8?q?Bram=20Bonn=C3=A9?= <brambonne@google.com>,
 	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Cc: kernel-team@meta.com,
-	andrii@kernel.org,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	martin.lau@linux.dev,
-	kpsingh@kernel.org,
-	mattbobrowski@google.com,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	memxor@gmail.com,
-	Song Liu <song@kernel.org>
-Subject: [PATCH v6 bpf-next 7/7] selftests/bpf: Test kfuncs that set and remove xattr from BPF programs
-Date: Thu, 19 Dec 2024 12:25:36 -0800
-Message-ID: <20241219202536.1625216-8-song@kernel.org>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20241219202536.1625216-1-song@kernel.org>
-References: <20241219202536.1625216-1-song@kernel.org>
+	selinux@vger.kernel.org
+Subject: [PATCH] lsm,io_uring: add LSM hooks for io_uring_setup()
+Date: Thu, 19 Dec 2024 15:41:41 -0500
+Message-ID: <20241219204143.74736-1-hamzamahfooz@linux.microsoft.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -56,327 +52,172 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Two sets of tests are added to exercise the not _locked and _locked
-version of the kfuncs. For both tests, user space accesses xattr
-security.bpf.foo on a testfile. The BPF program is triggered by user
-space access (on LSM hook inode_[set|get]_xattr) and sets or removes
-xattr security.bpf.bar. Then user space then validates that xattr
-security.bpf.bar is set or removed as expected.
+It is desirable to allow LSM to configure accessibility to io_uring. So,
+add an LSM for io_uring_allowed() to guard access to io_uring.
 
-Note that, in both tests, the BPF programs use the not _locked kfuncs.
-The verifier picks the proper kfuncs based on the calling context.
-
-Signed-off-by: Song Liu <song@kernel.org>
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
 ---
- tools/testing/selftests/bpf/bpf_kfuncs.h      |   5 +
- .../selftests/bpf/prog_tests/fs_kfuncs.c      | 125 ++++++++++++++++
- .../bpf/progs/test_set_remove_xattr.c         | 133 ++++++++++++++++++
- 3 files changed, 263 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/progs/test_set_remove_xattr.c
+ include/linux/lsm_hook_defs.h       |  1 +
+ include/linux/security.h            |  5 +++++
+ io_uring/io_uring.c                 | 21 ++++++++++++++-------
+ security/security.c                 | 12 ++++++++++++
+ security/selinux/hooks.c            | 14 ++++++++++++++
+ security/selinux/include/classmap.h |  2 +-
+ 6 files changed, 47 insertions(+), 8 deletions(-)
 
-diff --git a/tools/testing/selftests/bpf/bpf_kfuncs.h b/tools/testing/selftests/bpf/bpf_kfuncs.h
-index 2eb3483f2fb0..8215c9b3115e 100644
---- a/tools/testing/selftests/bpf/bpf_kfuncs.h
-+++ b/tools/testing/selftests/bpf/bpf_kfuncs.h
-@@ -87,4 +87,9 @@ struct dentry;
-  */
- extern int bpf_get_dentry_xattr(struct dentry *dentry, const char *name,
- 			      struct bpf_dynptr *value_ptr) __ksym __weak;
-+
-+extern int bpf_set_dentry_xattr(struct dentry *dentry, const char *name__str,
-+				const struct bpf_dynptr *value_p, int flags) __ksym __weak;
-+extern int bpf_remove_dentry_xattr(struct dentry *dentry, const char *name__str) __ksym __weak;
-+
- #endif
-diff --git a/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c b/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c
-index 419f45b56472..43a26ec69a8e 100644
---- a/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c
-+++ b/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c
-@@ -8,6 +8,7 @@
- #include <unistd.h>
- #include <test_progs.h>
- #include "test_get_xattr.skel.h"
-+#include "test_set_remove_xattr.skel.h"
- #include "test_fsverity.skel.h"
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index eb2937599cb0..ee45229418dd 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -456,6 +456,7 @@ LSM_HOOK(int, 0, perf_event_write, struct perf_event *event)
+ LSM_HOOK(int, 0, uring_override_creds, const struct cred *new)
+ LSM_HOOK(int, 0, uring_sqpoll, void)
+ LSM_HOOK(int, 0, uring_cmd, struct io_uring_cmd *ioucmd)
++LSM_HOOK(int, 0, uring_allowed, void)
+ #endif /* CONFIG_IO_URING */
  
- static const char testfile[] = "/tmp/test_progs_fs_kfuncs";
-@@ -72,6 +73,127 @@ static void test_get_xattr(const char *name, const char *value, bool allow_acces
- 	remove(testfile);
+ LSM_HOOK(void, LSM_RET_VOID, initramfs_populated, void)
+diff --git a/include/linux/security.h b/include/linux/security.h
+index cbdba435b798..0a5e897289e8 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -2351,6 +2351,7 @@ static inline int security_perf_event_write(struct perf_event *event)
+ extern int security_uring_override_creds(const struct cred *new);
+ extern int security_uring_sqpoll(void);
+ extern int security_uring_cmd(struct io_uring_cmd *ioucmd);
++extern int security_uring_allowed(void);
+ #else
+ static inline int security_uring_override_creds(const struct cred *new)
+ {
+@@ -2364,6 +2365,10 @@ static inline int security_uring_cmd(struct io_uring_cmd *ioucmd)
+ {
+ 	return 0;
  }
- 
-+/* xattr value we will set to security.bpf.foo */
-+static const char value_foo[] = "hello";
-+
-+static void read_and_validate_foo(struct test_set_remove_xattr *skel)
++extern int security_uring_allowed(void)
 +{
-+	char value_out[32];
-+	int err;
-+
-+	err = getxattr(testfile, skel->rodata->xattr_foo, value_out, sizeof(value_out));
-+	ASSERT_EQ(err, sizeof(value_foo), "getxattr size foo");
-+	ASSERT_EQ(strncmp(value_out, value_foo, sizeof(value_foo)), 0, "strncmp value_foo");
-+}
-+
-+static void set_foo(struct test_set_remove_xattr *skel)
-+{
-+	ASSERT_OK(setxattr(testfile, skel->rodata->xattr_foo, value_foo, strlen(value_foo) + 1, 0),
-+		  "setxattr foo");
-+}
-+
-+static void validate_bar_match(struct test_set_remove_xattr *skel)
-+{
-+	char value_out[32];
-+	int err;
-+
-+	err = getxattr(testfile, skel->rodata->xattr_bar, value_out, sizeof(value_out));
-+	ASSERT_EQ(err, sizeof(skel->data->value_bar), "getxattr size bar");
-+	ASSERT_EQ(strncmp(value_out, skel->data->value_bar, sizeof(skel->data->value_bar)), 0,
-+		  "strncmp value_bar");
-+}
-+
-+static void validate_bar_removed(struct test_set_remove_xattr *skel)
-+{
-+	char value_out[32];
-+	int err;
-+
-+	err = getxattr(testfile, skel->rodata->xattr_bar, value_out, sizeof(value_out));
-+	ASSERT_LT(err, 0, "getxattr size bar should fail");
-+}
-+
-+static void test_set_remove_xattr(void)
-+{
-+	struct test_set_remove_xattr *skel = NULL;
-+	int fd = -1, err;
-+
-+	fd = open(testfile, O_CREAT | O_RDONLY, 0644);
-+	if (!ASSERT_GE(fd, 0, "create_file"))
-+		return;
-+
-+	close(fd);
-+	fd = -1;
-+
-+	skel = test_set_remove_xattr__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "test_set_remove_xattr__open_and_load"))
-+		return;
-+
-+	/* Set security.bpf.foo to "hello" */
-+	err = setxattr(testfile, skel->rodata->xattr_foo, value_foo, strlen(value_foo) + 1, 0);
-+	if (err && errno == EOPNOTSUPP) {
-+		printf("%s:SKIP:local fs doesn't support xattr (%d)\n"
-+		       "To run this test, make sure /tmp filesystem supports xattr.\n",
-+		       __func__, errno);
-+		test__skip();
-+		goto out;
-+	}
-+
-+	if (!ASSERT_OK(err, "setxattr"))
-+		goto out;
-+
-+	skel->bss->monitored_pid = getpid();
-+	err = test_set_remove_xattr__attach(skel);
-+	if (!ASSERT_OK(err, "test_set_remove_xattr__attach"))
-+		goto out;
-+
-+	/* First, test not _locked version of the kfuncs with getxattr. */
-+
-+	/* Read security.bpf.foo and trigger test_inode_getxattr. This
-+	 * bpf program will set security.bpf.bar to "world".
-+	 */
-+	read_and_validate_foo(skel);
-+	validate_bar_match(skel);
-+
-+	/* Read security.bpf.foo and trigger test_inode_getxattr again.
-+	 * This will remove xattr security.bpf.bar.
-+	 */
-+	read_and_validate_foo(skel);
-+	validate_bar_removed(skel);
-+
-+	ASSERT_TRUE(skel->bss->set_security_bpf_bar_success, "set_security_bpf_bar_success");
-+	ASSERT_TRUE(skel->bss->remove_security_bpf_bar_success, "remove_security_bpf_bar_success");
-+	ASSERT_TRUE(skel->bss->set_security_selinux_fail, "set_security_selinux_fail");
-+	ASSERT_TRUE(skel->bss->remove_security_selinux_fail, "remove_security_selinux_fail");
-+
-+	/* Second, test _locked version of the kfuncs, with setxattr */
-+
-+	/* Set security.bpf.foo and trigger test_inode_setxattr. This
-+	 * bpf program will set security.bpf.bar to "world".
-+	 */
-+	set_foo(skel);
-+	validate_bar_match(skel);
-+
-+	/* Set security.bpf.foo and trigger test_inode_setxattr again.
-+	 * This will remove xattr security.bpf.bar.
-+	 */
-+	set_foo(skel);
-+	validate_bar_removed(skel);
-+
-+	ASSERT_TRUE(skel->bss->locked_set_security_bpf_bar_success,
-+		    "locked_set_security_bpf_bar_success");
-+	ASSERT_TRUE(skel->bss->locked_remove_security_bpf_bar_success,
-+		    "locked_remove_security_bpf_bar_success");
-+	ASSERT_TRUE(skel->bss->locked_set_security_selinux_fail,
-+		    "locked_set_security_selinux_fail");
-+	ASSERT_TRUE(skel->bss->locked_remove_security_selinux_fail,
-+		    "locked_remove_security_selinux_fail");
-+
-+out:
-+	close(fd);
-+	test_set_remove_xattr__destroy(skel);
-+	remove(testfile);
-+}
-+
- #ifndef SHA256_DIGEST_SIZE
- #define SHA256_DIGEST_SIZE      32
- #endif
-@@ -161,6 +283,9 @@ void test_fs_kfuncs(void)
- 	if (test__start_subtest("security_selinux_xattr_error"))
- 		test_get_xattr("security.selinux", "hello", false);
- 
-+	if (test__start_subtest("set_remove_xattr"))
-+		test_set_remove_xattr();
-+
- 	if (test__start_subtest("fsverity"))
- 		test_fsverity();
- }
-diff --git a/tools/testing/selftests/bpf/progs/test_set_remove_xattr.c b/tools/testing/selftests/bpf/progs/test_set_remove_xattr.c
-new file mode 100644
-index 000000000000..e49be3cc4a33
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/test_set_remove_xattr.c
-@@ -0,0 +1,133 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2024 Meta Platforms, Inc. and affiliates. */
-+
-+#include "vmlinux.h"
-+#include <errno.h>
-+#include <bpf/bpf_tracing.h>
-+#include "bpf_kfuncs.h"
-+#include "bpf_misc.h"
-+
-+char _license[] SEC("license") = "GPL";
-+
-+__u32 monitored_pid;
-+
-+const char xattr_foo[] = "security.bpf.foo";
-+const char xattr_bar[] = "security.bpf.bar";
-+const char xattr_linux[] = "security.selinux";
-+char value_bar[] = "world";
-+char read_value[32];
-+
-+bool set_security_bpf_bar_success;
-+bool remove_security_bpf_bar_success;
-+bool set_security_selinux_fail;
-+bool remove_security_selinux_fail;
-+
-+char name_buf[32];
-+
-+static inline bool name_match_foo(const char *name)
-+{
-+	bpf_probe_read_kernel(name_buf, sizeof(name_buf), name);
-+
-+	return !bpf_strncmp(name_buf, sizeof(xattr_foo), xattr_foo);
-+}
-+
-+/* Test bpf_set_dentry_xattr and bpf_remove_dentry_xattr */
-+SEC("lsm.s/inode_getxattr")
-+int BPF_PROG(test_inode_getxattr, struct dentry *dentry, char *name)
-+{
-+	struct bpf_dynptr value_ptr;
-+	__u32 pid;
-+	int ret;
-+
-+	pid = bpf_get_current_pid_tgid() >> 32;
-+	if (pid != monitored_pid)
-+		return 0;
-+
-+	/* Only do the following for security.bpf.foo */
-+	if (!name_match_foo(name))
-+		return 0;
-+
-+	bpf_dynptr_from_mem(read_value, sizeof(read_value), 0, &value_ptr);
-+
-+	/* read security.bpf.bar */
-+	ret = bpf_get_dentry_xattr(dentry, xattr_bar, &value_ptr);
-+
-+	if (ret < 0) {
-+		/* If security.bpf.bar doesn't exist, set it */
-+		bpf_dynptr_from_mem(value_bar, sizeof(value_bar), 0, &value_ptr);
-+
-+		ret = bpf_set_dentry_xattr(dentry, xattr_bar, &value_ptr, 0);
-+		if (!ret)
-+			set_security_bpf_bar_success = true;
-+		ret = bpf_set_dentry_xattr(dentry, xattr_linux, &value_ptr, 0);
-+		if (ret)
-+			set_security_selinux_fail = true;
-+	} else {
-+		/* If security.bpf.bar exists, remove it */
-+		ret = bpf_remove_dentry_xattr(dentry, xattr_bar);
-+		if (!ret)
-+			remove_security_bpf_bar_success = true;
-+
-+		ret = bpf_remove_dentry_xattr(dentry, xattr_linux);
-+		if (ret)
-+			remove_security_selinux_fail = true;
-+	}
-+
 +	return 0;
 +}
+ #endif /* CONFIG_SECURITY */
+ #endif /* CONFIG_IO_URING */
+ 
+diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+index 06ff41484e29..0922bb0724c0 100644
+--- a/io_uring/io_uring.c
++++ b/io_uring/io_uring.c
+@@ -3806,29 +3806,36 @@ static long io_uring_setup(u32 entries, struct io_uring_params __user *params)
+ 	return io_uring_create(entries, &p, params);
+ }
+ 
+-static inline bool io_uring_allowed(void)
++static inline int io_uring_allowed(void)
+ {
+ 	int disabled = READ_ONCE(sysctl_io_uring_disabled);
+ 	kgid_t io_uring_group;
+ 
+ 	if (disabled == 2)
+-		return false;
++		return -EPERM;
+ 
+ 	if (disabled == 0 || capable(CAP_SYS_ADMIN))
+-		return true;
++		goto allowed_lsm;
+ 
+ 	io_uring_group = make_kgid(&init_user_ns, sysctl_io_uring_group);
+ 	if (!gid_valid(io_uring_group))
+-		return false;
++		return -EPERM;
 +
-+bool locked_set_security_bpf_bar_success;
-+bool locked_remove_security_bpf_bar_success;
-+bool locked_set_security_selinux_fail;
-+bool locked_remove_security_selinux_fail;
++	if (!in_group_p(io_uring_group))
++		return -EPERM;
+ 
+-	return in_group_p(io_uring_group);
++allowed_lsm:
++	return security_uring_allowed();
+ }
+ 
+ SYSCALL_DEFINE2(io_uring_setup, u32, entries,
+ 		struct io_uring_params __user *, params)
+ {
+-	if (!io_uring_allowed())
+-		return -EPERM;
++	int ret;
 +
-+/* Test bpf_set_dentry_xattr_locked and bpf_remove_dentry_xattr_locked.
-+ * It not necessary to differentiate the _locked version and the
-+ * not-_locked version in the BPF program. The verifier will fix them up
-+ * properly.
++	ret = io_uring_allowed();
++	if (ret)
++		return ret;
+ 
+ 	return io_uring_setup(entries, params);
+ }
+diff --git a/security/security.c b/security/security.c
+index 09664e09fec9..e4d532e4ead4 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -5996,6 +5996,18 @@ int security_uring_cmd(struct io_uring_cmd *ioucmd)
+ {
+ 	return call_int_hook(uring_cmd, ioucmd);
+ }
++
++/**
++ * security_uring_allowed() - Check if io_uring_setup() is allowed
++ *
++ * Check whether the current task is allowed to call io_uring_setup().
++ *
++ * Return: Returns 0 if permission is granted.
 + */
-+SEC("lsm.s/inode_setxattr")
-+int BPF_PROG(test_inode_setxattr, struct mnt_idmap *idmap,
-+	     struct dentry *dentry, const char *name,
-+	     const void *value, size_t size, int flags)
++int security_uring_allowed(void)
 +{
-+	struct bpf_dynptr value_ptr;
-+	__u32 pid;
-+	int ret;
-+
-+	pid = bpf_get_current_pid_tgid() >> 32;
-+	if (pid != monitored_pid)
-+		return 0;
-+
-+	/* Only do the following for security.bpf.foo */
-+	if (!name_match_foo(name))
-+		return 0;
-+
-+	bpf_dynptr_from_mem(read_value, sizeof(read_value), 0, &value_ptr);
-+
-+	/* read security.bpf.bar */
-+	ret = bpf_get_dentry_xattr(dentry, xattr_bar, &value_ptr);
-+
-+	if (ret < 0) {
-+		/* If security.bpf.bar doesn't exist, set it */
-+		bpf_dynptr_from_mem(value_bar, sizeof(value_bar), 0, &value_ptr);
-+
-+		ret = bpf_set_dentry_xattr(dentry, xattr_bar, &value_ptr, 0);
-+		if (!ret)
-+			locked_set_security_bpf_bar_success = true;
-+		ret = bpf_set_dentry_xattr(dentry, xattr_linux, &value_ptr, 0);
-+		if (ret)
-+			locked_set_security_selinux_fail = true;
-+	} else {
-+		/* If security.bpf.bar exists, remove it */
-+		ret = bpf_remove_dentry_xattr(dentry, xattr_bar);
-+		if (!ret)
-+			locked_remove_security_bpf_bar_success = true;
-+
-+		ret = bpf_remove_dentry_xattr(dentry, xattr_linux);
-+		if (ret)
-+			locked_remove_security_selinux_fail = true;
-+	}
-+
-+	return 0;
++	return call_int_hook(uring_allowed);
 +}
+ #endif /* CONFIG_IO_URING */
+ 
+ /**
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 366c87a40bd1..b4e298c51c16 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -7117,6 +7117,19 @@ static int selinux_uring_cmd(struct io_uring_cmd *ioucmd)
+ 	return avc_has_perm(current_sid(), isec->sid,
+ 			    SECCLASS_IO_URING, IO_URING__CMD, &ad);
+ }
++
++/**
++ * selinux_uring_allowed - check if io_uring_setup() can be called
++ *
++ * Check to see if the current task is allowed to call io_uring_setup().
++ */
++static int selinux_uring_allowed(void)
++{
++	u32 sid = current_sid();
++
++	return avc_has_perm(sid, sid, SECCLASS_IO_URING, IO_URING__ALLOWED,
++			    NULL);
++}
+ #endif /* CONFIG_IO_URING */
+ 
+ static const struct lsm_id selinux_lsmid = {
+@@ -7370,6 +7383,7 @@ static struct security_hook_list selinux_hooks[] __ro_after_init = {
+ 	LSM_HOOK_INIT(uring_override_creds, selinux_uring_override_creds),
+ 	LSM_HOOK_INIT(uring_sqpoll, selinux_uring_sqpoll),
+ 	LSM_HOOK_INIT(uring_cmd, selinux_uring_cmd),
++	LSM_HOOK_INIT(uring_allowed, selinux_uring_allowed),
+ #endif
+ 
+ 	/*
+diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
+index 2bc20135324a..5ae222f7e543 100644
+--- a/security/selinux/include/classmap.h
++++ b/security/selinux/include/classmap.h
+@@ -177,7 +177,7 @@ const struct security_class_mapping secclass_map[] = {
+ 	{ "perf_event",
+ 	  { "open", "cpu", "kernel", "tracepoint", "read", "write", NULL } },
+ 	{ "anon_inode", { COMMON_FILE_PERMS, NULL } },
+-	{ "io_uring", { "override_creds", "sqpoll", "cmd", NULL } },
++	{ "io_uring", { "override_creds", "sqpoll", "cmd", "allowed", NULL } },
+ 	{ "user_namespace", { "create", NULL } },
+ 	{ NULL }
+ };
 -- 
-2.43.5
+2.47.1
 
