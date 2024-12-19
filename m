@@ -1,16 +1,16 @@
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EDE314A630
-	for <linux-security-module@vger.kernel.org>; Thu, 19 Dec 2024 07:32:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07ECF218AAF
+	for <linux-security-module@vger.kernel.org>; Thu, 19 Dec 2024 07:32:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734593545; cv=none; b=p+OJcfVmMiT0+axMZTBG7O+GiO/Ixb5r/Sxek3Rpu2zpzHDTYgAhmpgVVweGQbz6xyeJQlWqsH0W5PTR6ssUTig87uXL1gs8y3pJmtYr0xX6J7HaaJ90s5kJ54uACrmSDw6FW6Npj96PfYurscsrrrLwwU3eJkAbr7ex+wVD8Oc=
+	t=1734593551; cv=none; b=HPqLoVBVgE4K6b7xK1yzOHBnHX1aRpmZolEuVC0xDXRXrZfwNSCUpAD52gVRE144cQWSEChlRee1Ut3VMhX+N6GTR/53CfuyQK0JoId+r1BHQnQHc5WqJPOGfd+wft3XpICB5dDS6s23uwTkS5T1e19Dl+qe4hXrlKhRLVORhHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734593545; c=relaxed/simple;
-	bh=kYgKdKaP/JPHzEu3qpEwsNrhXqPcqBKY/KOWofPl+Ao=;
+	s=arc-20240116; t=1734593551; c=relaxed/simple;
+	bh=e2IbsiOoO3EPFUAOqg25iHCtvCfjnHRVHByLTl6MTlI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=HWTMzG7Of52rcoqfNs3gJ15ZSc2lKxm7x3KURceoSol1OVWSj9BzzxKPMuDB7sMEOc0aUAT6HKF1vNidBQZw20ZmzNDtF7eXy/20ipB/8nRdOos53H1CWx85I7DFPBaZ4xzTRWfcpuWMMNpz63XkWid+Wevb2McTOqxvYmeIoKM=
+	 In-Reply-To:To:Cc; b=dOSn+/qOKgqXlrA7CDhmPrJ2qxEcjyz0ll5IOIeBWXjoVwU04fnFOarGnO+X5Cnl3N7GTYzc63eg6G7ic0Fq93ImE16g76/Z6/ZQQQCutkFzZZJSgLPfS5iJ27FOGtcJ9l5LRzt6qRdi3g8Wa7GqfJshMUvQBZ0h8ApzYzs+C2A=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -18,22 +18,22 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tOB0O-00088X-1Y; Thu, 19 Dec 2024 08:31:32 +0100
+	id 1tOB0O-00088Z-1R; Thu, 19 Dec 2024 08:31:32 +0100
 Received: from dude05.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::54])
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tOB0L-004APp-24;
+	id 1tOB0L-004APu-25;
 	Thu, 19 Dec 2024 08:31:30 +0100
 Received: from localhost ([::1] helo=dude05.red.stw.pengutronix.de)
 	by dude05.red.stw.pengutronix.de with esmtp (Exim 4.96)
 	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tOB0M-00GkbH-0l;
+	id 1tOB0M-00GkbH-0q;
 	Thu, 19 Dec 2024 08:31:30 +0100
 From: Ahmad Fatoum <a.fatoum@pengutronix.de>
-Date: Thu, 19 Dec 2024 08:31:23 +0100
-Subject: [PATCH 02/11] reboot: reboot, not shutdown, on
- hw_protection_reboot timeout
+Date: Thu, 19 Dec 2024 08:31:28 +0100
+Subject: [PATCH 07/11] regulator: allow user configuration of hardware
+ protection action
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -42,7 +42,7 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241219-hw_protection-reboot-v1-2-263a0c1df802@pengutronix.de>
+Message-Id: <20241219-hw_protection-reboot-v1-7-263a0c1df802@pengutronix.de>
 References: <20241219-hw_protection-reboot-v1-0-263a0c1df802@pengutronix.de>
 In-Reply-To: <20241219-hw_protection-reboot-v1-0-263a0c1df802@pengutronix.de>
 To: Daniel Lezcano <daniel.lezcano@linaro.org>, 
@@ -65,120 +65,92 @@ X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
 
-hw_protection_shutdown() will kick off an orderly shutdown and if that
-takes longer than a configurable amount of time, an emergency shutdown
-will occur.
+When the core detects permanent regulator hardware failure or imminent
+power failure of a critical supply, it will call hw_protection_shutdown
+in an attempt to do a limited orderly shutdown followed by powering off
+the system.
 
-Recently, hw_protection_reboot() was added for those systems that don't
-implement a proper shutdown and are better served by rebooting and
-having the boot firmware worry about doing something about the critical
-condition.
+This doesn't work out well for many unattended embedded systems that don't
+have support for shutdown and that power on automatically when power is
+supplied:
 
-On timeout of the orderly reboot of hw_protection_reboot(), the system
-would go into shutdown, instead of reboot. This is not a good idea, as
-going into shutdown was explicitly not asked for.
+  - A brief power cycle gets detected by the driver
+  - The kernel powers down the system and SoC goes into shutdown mode
+  - Power is restored
+  - The system remains oblivious to the restored power
+  - System needs to be manually power cycled for a duration long enough
+    to drain the capacitors
 
-Fix this by always doing an emergency reboot if hw_protection_reboot()
-is called and the orderly reboot takes too long.
+Allow users to fix this by calling the newly introduced
+hw_protection_trigger() instead: This way the hw_protection commandline
+or sysfs parameter is used to dictate the policy of dealing with the
+regulator fault.
 
-Fixes: 79fa723ba84c ("reboot: Introduce thermal_zone_device_critical_reboot()")
 Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
 ---
- kernel/reboot.c | 46 +++++++++++++++++++++++++++++++++++-----------
- 1 file changed, 35 insertions(+), 11 deletions(-)
+ drivers/regulator/core.c        |  4 ++--
+ drivers/regulator/irq_helpers.c | 16 ++++++++--------
+ 2 files changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/kernel/reboot.c b/kernel/reboot.c
-index f92aa66cbfec0f57ded43ba352a39c54d0c24a25..8e3680d36654587b57db44806a3d7b0228b10f67 100644
---- a/kernel/reboot.c
-+++ b/kernel/reboot.c
-@@ -932,6 +932,20 @@ void orderly_reboot(void)
- }
- EXPORT_SYMBOL_GPL(orderly_reboot);
- 
-+static const char *hw_protection_action_str(enum hw_protection_action action)
-+{
-+	switch (action) {
-+	case HWPROT_ACT_SHUTDOWN:
-+		return "shutdown";
-+	case HWPROT_ACT_REBOOT:
-+		return "reboot";
-+	default:
-+		return "undefined";
-+	}
-+}
-+
-+static enum hw_protection_action hw_failure_emergency_action;
-+
- /**
-  * hw_failure_emergency_poweroff_func - emergency poweroff work after a known delay
-  * @work: work_struct associated with the emergency poweroff function
-@@ -941,21 +955,29 @@ EXPORT_SYMBOL_GPL(orderly_reboot);
-  */
- static void hw_failure_emergency_poweroff_func(struct work_struct *work)
- {
-+	const char *action_str = hw_protection_action_str(hw_failure_emergency_action);
-+
-+	pr_emerg("Hardware protection timed-out. Trying forced %s\n",
-+		 action_str);
-+
- 	/*
--	 * We have reached here after the emergency shutdown waiting period has
--	 * expired. This means orderly_poweroff has not been able to shut off
--	 * the system for some reason.
-+	 * We have reached here after the emergency action waiting period has
-+	 * expired. This means orderly_poweroff/reboot has not been able to
-+	 * shut off the system for some reason.
- 	 *
--	 * Try to shut down the system immediately using kernel_power_off
--	 * if populated
-+	 * Try to shut off the system immediately if possible
- 	 */
--	pr_emerg("Hardware protection timed-out. Trying forced poweroff\n");
--	kernel_power_off();
-+
-+	if (hw_failure_emergency_action == HWPROT_ACT_REBOOT)
-+		kernel_restart(NULL);
-+	else
-+		kernel_power_off();
- 
- 	/*
- 	 * Worst of the worst case trigger emergency restart
- 	 */
--	pr_emerg("Hardware protection shutdown failed. Trying emergency restart\n");
-+	pr_emerg("Hardware protection %s failed. Trying emergency restart\n",
-+		 action_str);
- 	emergency_restart();
- }
- 
-@@ -963,15 +985,17 @@ static DECLARE_DELAYED_WORK(hw_failure_emergency_poweroff_work,
- 			    hw_failure_emergency_poweroff_func);
- 
- /**
-- * hw_failure_emergency_poweroff - Trigger an emergency system poweroff
-+ * hw_failure_emergency_schedule - Schedule an emergency system shutdown or reboot
-  *
-  * This may be called from any critical situation to trigger a system shutdown
-  * after a given period of time. If time is negative this is not scheduled.
-  */
--static void hw_failure_emergency_poweroff(int poweroff_delay_ms)
-+static void hw_failure_emergency_schedule(enum hw_protection_action action,
-+					  int poweroff_delay_ms)
- {
- 	if (poweroff_delay_ms <= 0)
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index 8cb948a91e60d958c6b5ec97d736e6e3bf4b47eb..74c8f1262f2cd4e796ba8f4f1bdf17b685a615c1 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -5137,8 +5137,8 @@ static void regulator_handle_critical(struct regulator_dev *rdev,
+ 	if (!reason)
  		return;
-+	hw_failure_emergency_action = action;
- 	schedule_delayed_work(&hw_failure_emergency_poweroff_work,
- 			      msecs_to_jiffies(poweroff_delay_ms));
+ 
+-	hw_protection_shutdown(reason,
+-			       rdev->constraints->uv_less_critical_window_ms);
++	hw_protection_trigger(reason,
++			      rdev->constraints->uv_less_critical_window_ms);
  }
-@@ -1009,7 +1033,7 @@ void __hw_protection_shutdown(const char *reason, int ms_until_forced,
- 	 * Queue a backup emergency shutdown in the event of
- 	 * orderly_poweroff failure
- 	 */
--	hw_failure_emergency_poweroff(ms_until_forced);
-+	hw_failure_emergency_schedule(action, ms_until_forced);
- 	if (action == HWPROT_ACT_REBOOT)
- 		orderly_reboot();
- 	else
+ 
+ /**
+diff --git a/drivers/regulator/irq_helpers.c b/drivers/regulator/irq_helpers.c
+index 0aa188b2bbb26797b7907cbfb581459ef41df286..5742faee8071dd8104c094587d66693f48fb0f9b 100644
+--- a/drivers/regulator/irq_helpers.c
++++ b/drivers/regulator/irq_helpers.c
+@@ -64,16 +64,16 @@ static void regulator_notifier_isr_work(struct work_struct *work)
+ reread:
+ 	if (d->fatal_cnt && h->retry_cnt > d->fatal_cnt) {
+ 		if (!d->die)
+-			return hw_protection_shutdown("Regulator HW failure? - no IC recovery",
+-						      REGULATOR_FORCED_SAFETY_SHUTDOWN_WAIT_MS);
++			return hw_protection_trigger("Regulator HW failure? - no IC recovery",
++						     REGULATOR_FORCED_SAFETY_SHUTDOWN_WAIT_MS);
+ 		ret = d->die(rid);
+ 		/*
+ 		 * If the 'last resort' IC recovery failed we will have
+ 		 * nothing else left to do...
+ 		 */
+ 		if (ret)
+-			return hw_protection_shutdown("Regulator HW failure. IC recovery failed",
+-						      REGULATOR_FORCED_SAFETY_SHUTDOWN_WAIT_MS);
++			return hw_protection_trigger("Regulator HW failure. IC recovery failed",
++						     REGULATOR_FORCED_SAFETY_SHUTDOWN_WAIT_MS);
+ 
+ 		/*
+ 		 * If h->die() was implemented we assume recovery has been
+@@ -263,14 +263,14 @@ static irqreturn_t regulator_notifier_isr(int irq, void *data)
+ 	if (d->fatal_cnt && h->retry_cnt > d->fatal_cnt) {
+ 		/* If we have no recovery, just try shut down straight away */
+ 		if (!d->die) {
+-			hw_protection_shutdown("Regulator failure. Retry count exceeded",
+-					       REGULATOR_FORCED_SAFETY_SHUTDOWN_WAIT_MS);
++			hw_protection_trigger("Regulator failure. Retry count exceeded",
++					      REGULATOR_FORCED_SAFETY_SHUTDOWN_WAIT_MS);
+ 		} else {
+ 			ret = d->die(rid);
+ 			/* If die() failed shut down as a last attempt to save the HW */
+ 			if (ret)
+-				hw_protection_shutdown("Regulator failure. Recovery failed",
+-						       REGULATOR_FORCED_SAFETY_SHUTDOWN_WAIT_MS);
++				hw_protection_trigger("Regulator failure. Recovery failed",
++						      REGULATOR_FORCED_SAFETY_SHUTDOWN_WAIT_MS);
+ 		}
+ 	}
+ 
 
 -- 
 2.39.5
