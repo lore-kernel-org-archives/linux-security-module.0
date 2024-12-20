@@ -1,40 +1,62 @@
-Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic311-30.consmr.mail.ne1.yahoo.com (sonic311-30.consmr.mail.ne1.yahoo.com [66.163.188.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A2A519DF47;
-	Fri, 20 Dec 2024 20:19:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA658155342
+	for <linux-security-module@vger.kernel.org>; Fri, 20 Dec 2024 22:23:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.188.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734726001; cv=none; b=eBeCa0/uW20cCKG3cKHiyCsgVHVzwOphh+18PdSiHND7IK7XfIs8OH7s535Q4qKS/Y+Cuhxf8So2dcIPJgDXXrnQZYxPmz72YBKUTnjYsgKFoRGeBfKpMMRwVuQ0bWeH28oKAX5Ubxv4edPou4i9HmKn+AvQvriEm6lJu+OQZmM=
+	t=1734733394; cv=none; b=Hbx//UeRL2ickg2tM5J/rD+3beY8R4odBil/sfqQ3DQE+SpvJzvheO8vYhNxlVYs82Do/ragVk4mws4hmgsjqB93JowqD0oxCI/u3SMsBAiEL2h2sdSuWY5gR7uSrpruaxRgv2ya5WmYTj76MDUYtIP163qkh/d1pCASkUCLKmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734726001; c=relaxed/simple;
-	bh=WlrlTxdLGdHZ7YbxhbFSsvu8JsBGpjsLO22+sFAeikA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cbtevR6PoA6k4rePS8BrPJZUAJuoiW4jw+1FWdn/CM+6J+73ARBoRYBrAzoxC1dZLjPuwL6m/SwcKeMQom5hoY1j+GO8VvC2BcaZfslbUna6Ft7Yr/il1fi6WyfuqHsKboKcYowpufFlEY2o8k57Ne0bcYXEBwlT+XOJVS+nj04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=EbinkhYr; arc=none smtp.client-ip=185.125.188.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+	s=arc-20240116; t=1734733394; c=relaxed/simple;
+	bh=+pinxooH9YfYNFVQRkfQU0QTzNRpWhJroziKMZaRDcw=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type:
+	 References; b=tcShwhgB+7Ox0wj3+KQ1G/pSS6OU50+5CNgcu0J04MXYFDXokQFC7CmHXKMAwsqKSCZk5NS/9+/2ueq2Urxg3T3sqV7yGyuojoU9zDPEpWD9NAnGeWfW3vsiow2ttBQZgDpvjlrr0MXVBpYQm6K9sEIru0Yt8agRMljLePetI0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=X15CZl3H; arc=none smtp.client-ip=66.163.188.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="EbinkhYr"
-Received: from [192.168.192.84] (unknown [50.39.104.138])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 348313F783;
-	Fri, 20 Dec 2024 20:19:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1734725989;
-	bh=DJ4dD6OV8rOp/Bh4Apj3JfqRxQYfufxsX7E0hg3wrcE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=EbinkhYrkrQQ2fVrqbNycg2gH+u8mc2xll7caKdo0aQC1Sf0YK4avyvU3FEDzPhqs
-	 M+CfGRvIdxQ/7jwDQAb+3SfFHKX45s4GNZmFS55+pYLrpB2iu0SDPXGYqagLoGyutj
-	 NxhROS3UKpR9yoijATYf2GOR+fOCX5qoql3jEWmk/2mvkGMqfb/jxQxaVfLHkJchd+
-	 Ymz195Ki1rcatfg+HiY+frD1njRZF/xaNh1K6hDxWl9O40zxapTyCdOtML05GwNXOK
-	 SnSXVyoyFbSbzn8C5mdknDtffg8mdlU14JKlZ+JbOCcwPR+LHjOdYMiBsXk90Gr0Gg
-	 7/HNeQs+k8JSw==
-Message-ID: <d93ed7bb-b184-4153-8084-b693eb1e2b85@canonical.com>
-Date: Fri, 20 Dec 2024 12:19:46 -0800
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="X15CZl3H"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1734733386; bh=GrXlJH5FlMn/c5i8Tx9M6gzdkVIzOVqGVuZ4Lixivmg=; h=Date:From:Subject:To:Cc:References:From:Subject:Reply-To; b=X15CZl3HbzGDaNiyvYfxCLDdRvZVuzz5LgSD0I03esEiO07e2FW2nmLW9LZILrQRILsLjBV53BnldEGQtxk81Smi2UXRVBXZ2LeXVUhoNaRcIlfCo3zCt9WYIuAXP11TvJIEGFANGrg8ALz9qI8KnVxjFM4b051lgFKFrFYNAg2zeH+grmnO5FRL9S2mCaB05z2AGEFSqyqOI+1tNh/yiHymuDI+byNPqQGqCLCTv4s/4PrxDjFShKMDejQmSbFGGHoxq3ymbJ0sg5CQPivpBJzyTbVLaoHmnYJchBRg5bZB+o8OVrs8HTqmMc+G4O5ujnRJNiIJWYa06xj9FAcU/g==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1734733386; bh=Dw4TF3yzaJNyqCcTOEtBIFRK+Whi1KCEv4aVaOYCfj2=; h=X-Sonic-MF:Date:From:Subject:To:From:Subject; b=gBxsgQ6Sycly5Gk6oN/XOa33aOpETPMeNAZ/Kgl3wuN1bINCMKOgBlwHDvdeyFr+keuDJRm4mN6L3f5NjOzmjFSyjf2zesYvFd6wElpMqWgudRBvEBUtGFNrHB7Eq0U/csVK6pQKCu7tREry7+CuNLgBtlIbDG08iT+Gs/1AjG9adIzUOdiQZcNMpv2D/2PUMhmetZzPcdHCuzF3dyteoNy2/KTv/idCJVB8xfDLFKyEbNkfjTz4wE5zoGFqwqLQHSRnfX12oSMADAOWtfbv4XPMV9bpSzbMwY60HWcT7bl1ZgCRoApEUGUlXl0PN1oorD0Am20rm1vCPoSrhXJclA==
+X-YMail-OSG: sxzkUNkVM1lxBgfWOMoQ.flRn5sA5K6PHcuotjHS9YDz1ZweOjM1X56FH7B7sdw
+ _mhTcr7oYvuA4OMSf8v8CpLAlde1a8qWNvACN_rixQcOcQwUml7SIkgz2OixSeZ6dBViwXAXAp94
+ IBQ5EkQIxkCESoF.DTZTQ5lPUC2yJQvSNYnqaKps7a83lH8HOcBzhyar.riRhzsZMSIaQVolYdk_
+ KgxbpvUAcKaoyMif3KPqGauanowOzI8A.cBoUBFcb7uHMuyPiOzzdpj1qY7r9Wg9KDynXrsBVEVh
+ 6sxztRJNSr2E7yHYRhm1xq.MxAIPwum6oFbariwSyuKOhJvQeqqxKHqRaS0SpVZc02H_sjzqbGQW
+ lD4l2pBlAPZz77k_74NPYALy3GSkfYayKpFkDTX6X1h3zA.3o5Eynu_6luHian_heR7RdOSJF4WW
+ ubYiY3mC.BF_xl0OeiWrxi2A9bY9G6_dz0CziQxlXozGNVnMc8fRXRogtS9AtINxrZ_uEFHWubAo
+ 4Yvw7VE4WXUFXFA6Vu9ToyIB2R3MNoYWOATap2EX1l3RpK3ZvT3fNVLq8pUa5oBQEXrOem6hLQyH
+ jJhAMeFHThWnkMfza4q2W_fVBeLS7P5dfIGWSBSRJ2.0GPST01a6l8lTDv_oBrCKFzOU_vvt4Jbn
+ Zl1PmR8XEU6NzLebTm97Y9_wrdvWhIPO2K5mJzagyWzx0m3td9Atk3mfxreQYKEvv20X2keElDpj
+ YudHyI_QbaY.sN9gahZaR.9hGaXs4DW4lBiXF1xPPLNnQp.ie31tQSMoJuxtkqFZATordCj_KJhb
+ xnXbCzkgPVaplowzs3l2HGIynfZrIWrcVrBjA7Zvjwd.TkC1Oy1bYD6yZiUEzt0vR4qF4cyP7Ii_
+ UdZaGRVAepvExCw986swErHcvFJ1sPIh.S_OZ3Q1h11s6cPQqKucAcH0jBoqp269cBH6gi7_Rtv5
+ h0bQYbHXjfS7ck26dEC4ZAMYZnUHbcxjVHH0lEX07N5R4fT5NSCy7UGuGZolBTbU2FE9d7csYvVN
+ ViZtB2xFChcnNgnaZK3yAGOLCQ1fOigUs_5qPiQgwBZnb7aI_gwY8WIDR762o6Kaw89I8erph8Fe
+ h_FSz_EX0cgfjmiXI6UaXreOwX3zRBd3fjjbEJG4PfJglDFOhdZ2OWS4p6Beh4v5qLrvbJ3urFt_
+ kt6JTD5173RZ_I7SjlT857x8USV43ttl7snlPWt8QAYT_Knf0qRnCOgHbcfG29f81_p...grDIjy
+ RB_StYiyxUmrepZqDvvDryjhLq7VSE_UY859KYO9p7WF2MrUPHmttw.BQ1itYlnUvletT2VGhsez
+ .1qtYu0yp4wL.Wr5TRkMqTaWBWXTkChgJPxG51Dkwt.7mjAecb5.WiX_b7GWtnP32HKRg8rmB4h5
+ W_yTsHf9R7G1w9HViHKNJQFUzWZwMjdwKw66YgJ2i9yOmZfmHu7whQ1prk58FnTfx.QG18AD0eEw
+ xz0uX9G1hZTjM_XdxnAhr0MVO4XK5elETK541AfhBo.ngi8e2uD8Gh4BE_nWUNRvLOIxUqqb13Kb
+ 7koQQ0_EgDm_6ynfCslMs_Kfa350yhTH_FqAMpiN5PLq_Ji7Pn0t0F4homs4KK2L.4zDU03fSoo_
+ .LuCqpJMLgOsio0JBvKQH.5uzHX1iO9.lBi0MReKU_BBhe_dFdju9fJSZP1JTHlK3Gw9wyOFC1Hv
+ CFOIMYEIUx8WiYnGxwv6yotC1pcEmkL3chilqmnKM0XpqhDnlTgFAl3LHrLfSp45SqWZSMNhrW3M
+ XGqFYB7HpUBOIrhki8Y76MD5thHEMYAmjlBtxkqspx32VGJLS7GUOlgPk7JuVNiVn47Rw7VK.wRO
+ 71m_PllEnZByxj7df7rOpQAt_JFQnMwvYoxoj6crke19GDy3fACYEigxoW4XYft3fVjs7GKqLB7m
+ VS7QZ3O3NLqtK7b4MLfL2MvZPvPUgMVsZRF8Xm5TXVaSqikM9ah5F6IIPMxORYGnK6Ye1Tm3rxgQ
+ PnVNfrdQnA6mtSGEOlVicfSK8UJKT2oPXdLoDLuYVKLR9dt_5TPnjLSPfzPxGhjAOlsXdhseK4PQ
+ GSN3fm3CZVm2uJAzccuS0etHHoI2VWMp37uewNU7SgMgn5ISZo76ncqxemggyriKEUYKkQ_eaviz
+ bDfnE2HNq3dCDZTOYzh4mc328gjs3rHsNB.F_AAWd2SAw5cXFslxdlVo69B8dsoLahGGYhxUqw8k
+ 6X6NMP_VoS915P_83ZB2zbFb2GbYHjD30N5PsbD8PnB_2q9IpobY4T9ozfQE26aUAVbK9eWb13PZ
+ Jn1Su3ruy23Zpiz_kzBBf.oQ-
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 9c858d2f-c178-4013-887d-3c5c2d752bc2
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.ne1.yahoo.com with HTTP; Fri, 20 Dec 2024 22:23:06 +0000
+Received: by hermes--production-gq1-5dd4b47f46-5qmz7 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID e507aec9745ea7d4617055aef3f2e491;
+          Fri, 20 Dec 2024 22:02:48 +0000 (UTC)
+Message-ID: <2ac1afc7-8549-48eb-ac63-daea64c3d80a@schaufler-ca.com>
+Date: Fri, 20 Dec 2024 14:02:46 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -42,120 +64,106 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH] apparmor: Use str_yes_no() helper function
-To: Thorsten Blum <thorsten.blum@linux.dev>, Paul Moore
- <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>
-Cc: apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241220192243.1856-1-thorsten.blum@linux.dev>
 Content-Language: en-US
-From: John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; keydata=
- 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 lT9Q
-Organization: Canonical
-In-Reply-To: <20241220192243.1856-1-thorsten.blum@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Casey Schaufler <casey@schaufler-ca.com>
+Subject: [PATCH v2 lsm/dev] net: corrections for security_secid_to_secctx
+ returns
+To: Paul Moore <paul@paul-moore.com>,
+ LSM List <linux-security-module@vger.kernel.org>
+Cc: Florian Westphal <fw@strlen.de>, Karol Przybylski <karprzy7@gmail.com>,
+ Casey Schaufler <casey@schaufler-ca.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+References: <2ac1afc7-8549-48eb-ac63-daea64c3d80a.ref@schaufler-ca.com>
+X-Mailer: WebService/1.1.23040 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On 12/20/24 11:22, Thorsten Blum wrote:
-> Remove hard-coded strings by using the str_yes_no() helper function.
-> 
-> Fix a typo in a comment: s/unpritable/unprintable/
-> 
-> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+security_secid_to_secctx() returns the size of the new context,
+whereas previous versions provided that via a pointer parameter.
+Correct the type of the value returned in nfqnl_get_sk_secctx()
+and the check for error in netlbl_unlhsh_add(). Add an error
+check.
 
-Hey Thorsten,
+Fixes: 2d470c778120 ("lsm: replace context+len with lsm_context")
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+---
+ net/netfilter/nfnetlink_queue.c   | 12 +++++++-----
+ net/netlabel/netlabel_unlabeled.c |  6 +++---
+ 2 files changed, 10 insertions(+), 8 deletions(-)
 
-sorry for the delay on this I am just really backlogged and will try to catch-up
-on the mailing list traffic this weekend.
-
-Acked-by: John Johansen <john.johansen@canonical.com>
-
-I have pulled this into my tree and it should migrate into linux-next soon
-
-> ---
->   security/apparmor/apparmorfs.c | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
-> index 2c0185ebc900..1bce9a7d2129 100644
-> --- a/security/apparmor/apparmorfs.c
-> +++ b/security/apparmor/apparmorfs.c
-> @@ -997,7 +997,7 @@ static int aa_sfs_seq_show(struct seq_file *seq, void *v)
->   
->   	switch (fs_file->v_type) {
->   	case AA_SFS_TYPE_BOOLEAN:
-> -		seq_printf(seq, "%s\n", fs_file->v.boolean ? "yes" : "no");
-> +		seq_printf(seq, "%s\n", str_yes_no(fs_file->v.boolean));
->   		break;
->   	case AA_SFS_TYPE_STRING:
->   		seq_printf(seq, "%s\n", fs_file->v.string);
-> @@ -1006,7 +1006,7 @@ static int aa_sfs_seq_show(struct seq_file *seq, void *v)
->   		seq_printf(seq, "%#08lx\n", fs_file->v.u64);
->   		break;
->   	default:
-> -		/* Ignore unpritable entry types. */
-> +		/* Ignore unprintable entry types. */
->   		break;
->   	}
->   
-> @@ -1152,7 +1152,7 @@ static int seq_ns_stacked_show(struct seq_file *seq, void *v)
->   	struct aa_label *label;
->   
->   	label = begin_current_label_crit_section();
-> -	seq_printf(seq, "%s\n", label->size > 1 ? "yes" : "no");
-> +	seq_printf(seq, "%s\n", str_yes_no(label->size > 1));
->   	end_current_label_crit_section(label);
->   
->   	return 0;
-> @@ -1175,7 +1175,7 @@ static int seq_ns_nsstacked_show(struct seq_file *seq, void *v)
->   			}
->   	}
->   
-> -	seq_printf(seq, "%s\n", count > 1 ? "yes" : "no");
-> +	seq_printf(seq, "%s\n", str_yes_no(count > 1));
->   	end_current_label_crit_section(label);
->   
->   	return 0;
+diff --git a/net/netfilter/nfnetlink_queue.c b/net/netfilter/nfnetlink_queue.c
+index 5110f29b2f40..5c913987901a 100644
+--- a/net/netfilter/nfnetlink_queue.c
++++ b/net/netfilter/nfnetlink_queue.c
+@@ -470,9 +470,9 @@ static int nfqnl_put_sk_classid(struct sk_buff *skb, struct sock *sk)
+ 	return 0;
+ }
+ 
+-static u32 nfqnl_get_sk_secctx(struct sk_buff *skb, struct lsm_context *ctx)
++static int nfqnl_get_sk_secctx(struct sk_buff *skb, struct lsm_context *ctx)
+ {
+-	u32 seclen = 0;
++	int seclen = 0;
+ #if IS_ENABLED(CONFIG_NETWORK_SECMARK)
+ 
+ 	if (!skb || !sk_fullsock(skb->sk))
+@@ -568,7 +568,7 @@ nfqnl_build_packet_message(struct net *net, struct nfqnl_instance *queue,
+ 	const struct nfnl_ct_hook *nfnl_ct;
+ 	bool csum_verify;
+ 	struct lsm_context ctx;
+-	u32 seclen = 0;
++	int seclen = 0;
+ 	ktime_t tstamp;
+ 
+ 	size = nlmsg_total_size(sizeof(struct nfgenmsg))
+@@ -643,7 +643,9 @@ nfqnl_build_packet_message(struct net *net, struct nfqnl_instance *queue,
+ 
+ 	if ((queue->flags & NFQA_CFG_F_SECCTX) && entskb->sk) {
+ 		seclen = nfqnl_get_sk_secctx(entskb, &ctx);
+-		if (seclen >= 0)
++		if (seclen < 0)
++			return NULL;
++		if (seclen)
+ 			size += nla_total_size(seclen);
+ 	}
+ 
+@@ -782,7 +784,7 @@ nfqnl_build_packet_message(struct net *net, struct nfqnl_instance *queue,
+ 	if (nfqnl_put_sk_classid(skb, entskb->sk) < 0)
+ 		goto nla_put_failure;
+ 
+-	if (seclen && nla_put(skb, NFQA_SECCTX, ctx.len, ctx.context))
++	if (seclen > 0 && nla_put(skb, NFQA_SECCTX, ctx.len, ctx.context))
+ 		goto nla_put_failure;
+ 
+ 	if (ct && nfnl_ct->build(skb, ct, ctinfo, NFQA_CT, NFQA_CT_INFO) < 0)
+diff --git a/net/netlabel/netlabel_unlabeled.c b/net/netlabel/netlabel_unlabeled.c
+index bd7094f225d1..dfda9ea61971 100644
+--- a/net/netlabel/netlabel_unlabeled.c
++++ b/net/netlabel/netlabel_unlabeled.c
+@@ -437,7 +437,7 @@ int netlbl_unlhsh_add(struct net *net,
+ unlhsh_add_return:
+ 	rcu_read_unlock();
+ 	if (audit_buf != NULL) {
+-		if (security_secid_to_secctx(secid, &ctx) == 0) {
++		if (security_secid_to_secctx(secid, &ctx) >= 0) {
+ 			audit_log_format(audit_buf, " sec_obj=%s", ctx.context);
+ 			security_release_secctx(&ctx);
+ 		}
+@@ -490,7 +490,7 @@ static int netlbl_unlhsh_remove_addr4(struct net *net,
+ 					  addr->s_addr, mask->s_addr);
+ 		dev_put(dev);
+ 		if (entry != NULL &&
+-		    security_secid_to_secctx(entry->secid, &ctx) == 0) {
++		    security_secid_to_secctx(entry->secid, &ctx) >= 0) {
+ 			audit_log_format(audit_buf, " sec_obj=%s", ctx.context);
+ 			security_release_secctx(&ctx);
+ 		}
+@@ -548,7 +548,7 @@ static int netlbl_unlhsh_remove_addr6(struct net *net,
+ 					  addr, mask);
+ 		dev_put(dev);
+ 		if (entry != NULL &&
+-		    security_secid_to_secctx(entry->secid, &ctx) == 0) {
++		    security_secid_to_secctx(entry->secid, &ctx) >= 0) {
+ 			audit_log_format(audit_buf, " sec_obj=%s", ctx.context);
+ 			security_release_secctx(&ctx);
+ 		}
 
