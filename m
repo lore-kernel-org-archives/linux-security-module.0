@@ -1,31 +1,31 @@
 Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3928D1EE7AB
-	for <linux-security-module@vger.kernel.org>; Sat, 21 Dec 2024 10:01:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 944B01F37DD
+	for <linux-security-module@vger.kernel.org>; Sat, 21 Dec 2024 13:41:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734775269; cv=none; b=OZWdjPPpZqf073XA80nSvShD8kcTNtwTd35aeFtl6JXkoUYeml64IbtDyL3eS+RV9CFxTiKQdPrSw1+9iPUnIAIA0yBsrSzCbiIXzobFVtlscZCpgTbpfvHKcufs3hO8JWWaIdenVl8v5Fr8xL/ooQItCxazrjYv0jgVnSeEYmU=
+	t=1734788492; cv=none; b=keWzPpGc/xo9aUkDimm9ZgdxKsM3bNDQe+1ipdKfHc5jN0ITd0QBb1sIz/Ec3zx63eWxYFCB9BKgHR/CMqtZ/SZ92Znoe3yA+AOtArjkGH2DGXT7P3AS9dmXD+AHp4jZzci1L2PSv6JfzEW64+trHcnjudeOovCeXXQkh6gdL2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734775269; c=relaxed/simple;
-	bh=q1TtQkdp2BFFO7afCbuAIghBqVzQX/6xewpFIWAyhzQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HTpN+U/ouO8qnsUpGE54Psd/qn4Ab/ddDr8eYSQDA9YAkoTjjBAcsglCXooMVfB2xSf/julsb7viZB4Ooi0sBDDzp/WvB4DGCgN94ChINxOpqP4UCYODSBZyta395wMoD3wdc+glNsERrMhG1SLCUpLI3wUWDJXnFOI3c76p74o=
+	s=arc-20240116; t=1734788492; c=relaxed/simple;
+	bh=Z9We1rb8g/BTgFT44ZyENN1u2DAWMdjEypWUs7v0Aic=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ckaVXDMupHujcyxQp/jqLbPmvROpHgk6jmbONLS12KGdZZvUrAdmrX5TUjDcAsygEQo6HJ6IZaNKHk5oEwAM0nMlZ6GgFwHYuo81NGmi90AA5NO6lFdV2DX4xK/2YwI+rtl1uhGdTKpZCY7GcDoC7mZASFk0vATxYhCCQ5G2KjI=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
 Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 4BLA0YGo047999;
-	Sat, 21 Dec 2024 19:00:34 +0900 (JST)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 4BLDem8S051026;
+	Sat, 21 Dec 2024 22:40:48 +0900 (JST)
 	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
 Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
 	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 4BLA0YWT047991
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 4BLDellB051022
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Sat, 21 Dec 2024 19:00:34 +0900 (JST)
+	Sat, 21 Dec 2024 22:40:47 +0900 (JST)
 	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <ed6e5639-c87e-49e8-8125-5b93cec69d43@I-love.SAKURA.ne.jp>
-Date: Sat, 21 Dec 2024 19:00:31 +0900
+Message-ID: <9fcd3f3d-33c1-4feb-8c98-472d44bc0a54@I-love.SAKURA.ne.jp>
+Date: Sat, 21 Dec 2024 22:40:45 +0900
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -34,54 +34,66 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v2] lsm: check size of writes
-To: Paul Moore <paul@paul-moore.com>, Leo Stone <leocstone@gmail.com>,
-        mortonm@chromium.org
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+To: Kees Cook <kees@kernel.org>
 Cc: syzbot+4eb7a741b3216020043a@syzkaller.appspotmail.com, jmorris@namei.org,
         linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
-        serge@hallyn.com, syzkaller-bugs@googlegroups.com
+        serge@hallyn.com, syzkaller-bugs@googlegroups.com,
+        Paul Moore <paul@paul-moore.com>, Leo Stone <leocstone@gmail.com>,
+        mortonm@chromium.org
 References: <675f513a.050a0220.37aaf.0106.GAE@google.com>
  <20241217182657.10080-2-leocstone@gmail.com>
  <CAHC9VhQGeNv=UEhXPN5MN1h0xEZkeE9kbE79+k9HvNxdK_4xzA@mail.gmail.com>
+ <ed6e5639-c87e-49e8-8125-5b93cec69d43@I-love.SAKURA.ne.jp>
 Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <CAHC9VhQGeNv=UEhXPN5MN1h0xEZkeE9kbE79+k9HvNxdK_4xzA@mail.gmail.com>
+In-Reply-To: <ed6e5639-c87e-49e8-8125-5b93cec69d43@I-love.SAKURA.ne.jp>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Anti-Virus-Server: fsav205.rs.sakura.ne.jp
+Content-Transfer-Encoding: 7bit
+X-Anti-Virus-Server: fsav305.rs.sakura.ne.jp
 X-Virus-Status: clean
 
-On 2024/12/19 6:51, Paul Moore wrote:
-> On Tue, Dec 17, 2024 at 1:27 PM Leo Stone <leocstone@gmail.com> wrote:
->>
->> syzbot attempts to write a buffer with a large size to a sysfs entry
->> with writes handled by handle_policy_update(), triggering a warning
->> in kmalloc.
->>
->> Check the size specified for write buffers before allocating.
->>
->> Reported-by: syzbot+4eb7a741b3216020043a@syzkaller.appspotmail.com
->> Closes: https://syzkaller.appspot.com/bug?extid=4eb7a741b3216020043a
->> Signed-off-by: Leo Stone <leocstone@gmail.com>
->> ---
->> v2: Make the check in handle_policy_update() to also cover
->> safesetid_uid_file_write(). Thanks for your feedback.
->> v1: https://lore.kernel.org/all/20241216030213.246804-2-leocstone@gmail.com/
->> ---
->>  security/safesetid/securityfs.c | 3 +++
->>  1 file changed, 3 insertions(+)
-> 
-> Looks okay to me.  Micah, are you planning to merge this patch, or
-> would you like me to take it via the LSM tree?
-> 
-> Reviewed-by: Paul Moore <paul@paul-moore.com>
-> 
-> I'm going to tag this to come back to it in a week or so in case we
-> don't hear from Micah, but if you don't see any further replies Leo,
-> feel free to send a gentle nudge ;)
+Hello, Kees.
 
-FYI: I sent
+On 2024/12/21 19:00, Tetsuo Handa wrote:
+> FYI: I sent
+> 
+> https://lkml.kernel.org/r/014cd694-cc27-4a07-a34a-2ae95d744515@I-love.SAKURA.ne.jp
+> 
+> which makes this patch redundant if my patch is accepted.
+> 
 
-https://lkml.kernel.org/r/014cd694-cc27-4a07-a34a-2ae95d744515@I-love.SAKURA.ne.jp
+I got a question regarding commit d73778e4b867 ("mm/util: Use dedicated
+slab buckets for memdup_user()").
 
-which makes this patch redundant if my patch is accepted.
+While I consider that using the same slab buckets for memdup_user() and
+memdup_user_nul() is OK, I came to feel that we could utilize
+kmem_buckets_create() more aggressively for debug purpose and/or
+isolation purpose.
+
+I got three bug reports on TOMOYO
+https://lkml.kernel.org/r/67646895.050a0220.1dcc64.0023.GAE@google.com
+and I guess that at least the fix for the first bug is
+https://lkml.kernel.org/r/20241218185000.17920-2-leocstone@gmail.com
+because the syz reproducer includes access to
+/sys/kernel/config/nvmet/discovery_nqn interface.
+
+If the slab buckets for nvmet and TOMOYO were separated, we might have
+received these bug reports as nvmet bugs rather than TOMOYO bugs.
+
+We switched to use module-local workqueue if that module needs to call
+flush_workqueue() because calling flush_workqueue() against the kernel global
+workqueues might introduce unpredictable locking dependency. Therefore, I came
+to feel that it might be helpful to add a kernel config option for switching
+whether to use dedicated slab buckets for individual module/subsystems.
+
+For example, I don't know whether it is worth using a dedicated slab bucket
+for each LSM module, but I feel that having a dedicated slab bucket shared
+between all LSM modules might be worth doing, in order to reduce possibility
+of by error overrunning into chunks used by LSM modules caused by bugs in
+unrelated code.
+
+Maybe we want a flag for not to bloat /proc/slabinfo output if we allow
+using dedicated slab buckets for individual module/subsystems...
+
+What do you think?
 
