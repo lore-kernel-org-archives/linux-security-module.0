@@ -1,172 +1,181 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 054E713C3CD
-	for <linux-security-module@vger.kernel.org>; Sun, 22 Dec 2024 09:59:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EAF686250
+	for <linux-security-module@vger.kernel.org>; Sun, 22 Dec 2024 19:32:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734861577; cv=none; b=rQH3/KWaEWUWI+uJi/L/xG9KyRFjY72pfZ3eEYqXG+oHWLAFgO8IlK1nCwkb1s8nix5YYBFcs3FReA5zdiUetT71LEDft5ejoRsO12lbbtq/S1ggjZugAhcoSMDCXrPASgH5/Eo/1EraN43NgmQ86kavyoGjLWISLVVxt4sfKRo=
+	t=1734895947; cv=none; b=a1cYuItcpmvlvHLkuRuBo0NQJsEkvDFc6Wsc4sZkDioCfXGeo/1bW6oS/zfdIteR1wH6fMtJWlZWcIJkq8ylLBl+ouRTVBVIlzMRXLAMIknaWmTqb38tABGU6w0pRNxn10oX0ZgthAL7jJFGIVWCaRmQ429GjoTVXLfonHTswic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734861577; c=relaxed/simple;
-	bh=c1jEBsE0ZFcv4ZJbYf/uCmaCL4wXgSXoJOgd1V9o03U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dhZiDlmi+/qxXGiGAlt8aYYE26pCLVF2OjJ1Fg7gIG4l8N/UGS0q96Op+4ZDqasWqIuzSdm0C2eU1sXuqUzmy1tl19D4q2robyUbPx3+H3Hw/97XLWU7OHWL6ijIb18DdA6pSKqr7Eul4HI+J9I5lsW2Wh/4HxlQwTSA/Vnm13w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tPIjY-000172-TX; Sun, 22 Dec 2024 10:58:48 +0100
-Message-ID: <273ef7c1-3a4f-4413-9b0b-a3e0fba366a8@pengutronix.de>
-Date: Sun, 22 Dec 2024 10:58:44 +0100
+	s=arc-20240116; t=1734895947; c=relaxed/simple;
+	bh=cHFBaJEIlU0sdjEESE3D2Yc/gmf3xMuXR7oktuijocc=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Hwqwg8zHkYBlVOVVxXwBRALaAOnAX/8zLr5GAoPaB0M/g5a2eCEvbkamQNP4ANuyMXHb9M0Zy7Qnxmq+GmR7ZbMW4kQwbBrZ01bu5T41nInu6PEM5FEksRM5qxxE3n04BKcb6EkYF+ehXDFw7Ur5qW29ZRD8r/JueilZ+XCn0NE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3abe7375ba6so66552555ab.3
+        for <linux-security-module@vger.kernel.org>; Sun, 22 Dec 2024 11:32:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1734895944; x=1735500744;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fPGGNM8fyCSnY7gLpJmwZ9EXwmxm1TR3YqA346xxr0o=;
+        b=XSsO7Z2QrqghojT0s8YxmCpedmS6AVz4rK64JoMLutiYcjo91izOwrSHsb5hbu5zos
+         Ih+1wZfOSGa5j6b2L25c5byGZXWpHjOEMzK3/845ViHyT0fMMp7vW9iYEMoZqHOxYQnm
+         J7lMXWLS0wKSfgkviOlYjNTe3lkMtlHe/Mn/CzZv5sQD0oMNUdiCQgzfDf2cVzsVWjcH
+         +ZC8xmaR2fhZbQ6AsUwnoAPmPjgzamnJsleBv+WwVedKTRsXqdrf9FOiCupy10aC9Iv7
+         CdIFADCzlp1aAB7bbsuUl95zPhZmTA8f3G2xtfvGdHm3AyH3x2ng9a9jzTcWMQX5SO1H
+         jA1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWGtokYGfxqQ4EauFARwJeMirGCJu4k9AGVZwuHIafhsVRz1fWqAldcUa13BDkLTUauL+UF2uLRfvS4Tp8whR+2hAzJPps=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySc8Dr+zkOdspyT2B56uL1RclsqTH9mhqCnTEKNTwwRiaLuxbO
+	lywAxr1wcplUb/+r68Qtboos0BIqpTHVjoH2Qpf8u8307k1iSscDah5r7t7DKFXPcSCVJ06l+8X
+	R7RzbwtS9DTutxJL2G5BvhF3QpM5aooAXPKNliG+iM3dERrp/SkmoOjY=
+X-Google-Smtp-Source: AGHT+IFMTHqHyxvU9v8CNCXzTLFHrKEsvC8THKznn1YhooSnYtRGr/8tj1zM3Sn2WjcMp5douUqV1FhaZZMelLLXCgoOtXiwei/O
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/11] reboot: support runtime configuration of emergency
- hw_protection action
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Fabio Estevam
- <festevam@denx.de>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
- Jonathan Corbet <corbet@lwn.net>, Serge Hallyn <serge@hallyn.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>,
- Guenter Roeck <groeck@chromium.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-security-module@vger.kernel.org,
- chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
- kernel@pengutronix.de, Matteo Croce <mcroce@microsoft.com>
-References: <20241219-hw_protection-reboot-v1-0-263a0c1df802@pengutronix.de>
- <dc8d1cdf-dff4-48fc-a03d-aeab9be22e44@gmail.com>
-Content-Language: en-US
-From: Ahmad Fatoum <a.fatoum@pengutronix.de>
-In-Reply-To: <dc8d1cdf-dff4-48fc-a03d-aeab9be22e44@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
+X-Received: by 2002:a05:6e02:1fc4:b0:3a7:70a4:6877 with SMTP id
+ e9e14a558f8ab-3c2d25669eemr85323485ab.7.1734895944556; Sun, 22 Dec 2024
+ 11:32:24 -0800 (PST)
+Date: Sun, 22 Dec 2024 11:32:24 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67686948.050a0220.2f3838.0009.GAE@google.com>
+Subject: [syzbot] [tomoyo?] general protection fault in tomoyo_init_request_info
+From: syzbot <syzbot+7eb588c75c6a184272af@syzkaller.appspotmail.com>
+To: jmorris@namei.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, paul@paul-moore.com, 
+	penguin-kernel@I-love.SAKURA.ne.jp, serge@hallyn.com, 
+	syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp, 
+	tomoyo-dev-en@lists.osdn.me
+Content-Type: text/plain; charset="UTF-8"
 
-Hello Matti,
+Hello,
 
-On 22.12.24 10:38, Matti Vaittinen wrote:
-> On 19/12/2024 09:31, Ahmad Fatoum wrote:
->> We currently leave the decision of whether to shutdown or reboot to
->> protect hardware in an emergency situation to the individual drivers.
->>
->> This works out in some cases, where the driver detecting the critical
->> failure has inside knowledge: It binds to the system management controller
->> for example or is guided by hardware description that defines what to do.
->>
->> This is inadequate in the general case though as a driver reporting e.g.
->> an imminent power failure can't know whether a shutdown or a reboot would
->> be more appropriate for a given hardware platform.
-> 
-> Sometimes it can. There are platforms where the hardware is such we know that poweroff or reboot are the way to go. In such case the driver should get the information from the hardware description (like device-tree).
+syzbot found the following issue on:
 
-Sure, the thermal framework for example has a device tree property that
-tells it what the critical action should be. This continues to work as
-before, but this series adjust only the default behavior when that device
-tree property is missing.
+HEAD commit:    aef25be35d23 hexagon: Disable constant extender optimizati..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13c28cf8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c22efbd20f8da769
+dashboard link: https://syzkaller.appspot.com/bug?extid=7eb588c75c6a184272af
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=102dc2df980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17c28cf8580000
 
->> To address this, this series adds a hw_protection kernel parameter and
->> sysfs toggle that can be used to change the action from the shutdown
->> default to reboot. A new hw_protection_trigger API then makes use of
->> this default action.
->>
->> My particular use case is unattended embedded systems that don't
->> have support for shutdown and that power on automatically when power is
->> supplied:
->>
->>    - A brief power cycle gets detected by the driver
->>    - The kernel powers down the system and SoC goes into shutdown mode
->>    - Power is restored
->>    - The system remains oblivious to the restored power
-> 
-> This sounds like a consequence of a hardware design as restoring the power doesn't wake up the SoC(?)
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/aa655a321f64/disk-aef25be3.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/222a3010db12/vmlinux-aef25be3.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/7eab659ce042/bzImage-aef25be3.xz
 
-There are two thresholds involved: One when the regulator first reports imminent
-voltage loss and the kernel does something about it and one when the capacitor
-have been depleted enough that the CPU is powered off.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+7eb588c75c6a184272af@syzkaller.appspotmail.com
 
-With short voltage glitches (or big enough capacitors), I run into the situation,
-where the kernel gets a voltage loss interrupt, goes into shutdown, but voltage
-is restored before the CPU is actually powered off. As the system isn't designed
-for shutdown anyway, there is no mechanism to wake up from it and we need to
-hard power cycle the device.
-
->>    - System needs to be manually power cycled for a duration long enough
->>      to drain the capacitors
->>
->> With this series, such systems can configure the kernel with
->> hw_protection=reboot to have the boot firmware worry about critical
->> conditions.
-> 
-> I am not against the change though. Just wondering if this is still a consequence of the hardware design, and if the device-tree would be proper place to indicate that poweroff shouldn't be used.
-
-I considered this initially: add a device tree property for regulators, like there's
-already for thermal zones. But I concluded that that this is a system-wide decision
-and should be decided on at a system-wide level. We already have a
-reboot=[warm,cold,...etc.] parameter, so this fits right in and it allows configuring
-this also for non-DT platforms.
-
-> I'm about to leave my computer behind for holidays, so I am probably not able to do a proper review until the next year. Thus this quick comment :) Also, no strong opinion so I'm not expecting anyone to hold back waiting for me!
-
-Thanks and wishing you happy holidays as well.
-
-Cheers,
-Ahmad
-
-> 
-> Good luck and happy holidays!
-> -- Matti
-> 
->> ---
->> Ahmad Fatoum (11):
->>        reboot: replace __hw_protection_shutdown bool action parameter with an enum
->>        reboot: reboot, not shutdown, on hw_protection_reboot timeout
->>        docs: thermal: sync hardware protection doc with code
->>        reboot: rename now misleading hw_protection symbols
->>        reboot: indicate whether it is a HARDWARE PROTECTION reboot or shutdown
->>        reboot: add support for configuring emergency hardware protection action
->>        regulator: allow user configuration of hardware protection action
->>        platform/chrome: cros_ec_lpc: prepare for hw_protection_shutdown removal
->>        dt-bindings: thermal: give OS some leeway in absence of critical-action
->>        thermal: core: allow user configuration of hardware protection action
->>        reboot: retire hw_protection_reboot and hw_protection_shutdown helpers
->>
->>   Documentation/ABI/testing/sysfs-kernel-reboot      |   8 ++
->>   Documentation/admin-guide/kernel-parameters.txt    |   6 +
->>   .../devicetree/bindings/thermal/thermal-zones.yaml |   5 +-
->>   Documentation/driver-api/thermal/sysfs-api.rst     |  25 +++--
->>   drivers/platform/chrome/cros_ec_lpc.c              |   2 +-
->>   drivers/regulator/core.c                           |   4 +-
->>   drivers/regulator/irq_helpers.c                    |  16 +--
->>   drivers/thermal/thermal_core.c                     |  17 +--
->>   drivers/thermal/thermal_core.h                     |   1 +
->>   drivers/thermal/thermal_of.c                       |   7 +-
->>   include/linux/reboot.h                             |  25 +++--
->>   include/uapi/linux/capability.h                    |   1 +
->>   kernel/reboot.c                                    | 122 ++++++++++++++++-----
->>   13 files changed, 173 insertions(+), 66 deletions(-)
->> ---
->> base-commit: 78d4f34e2115b517bcbfe7ec0d018bbbb6f9b0b8
->> change-id: 20241218-hw_protection-reboot-96953493726a
->>
->> Best regards,
-> 
-> 
+Oops: general protection fault, probably for non-canonical address 0xdffffc000000000a: 0000 [#1] PREEMPT SMP KASAN PTI
+KASAN: null-ptr-deref in range [0x0000000000000050-0x0000000000000057]
+CPU: 0 UID: 0 PID: 7300 Comm: syz-executor176 Not tainted 6.13.0-rc3-syzkaller-00044-gaef25be35d23 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 11/25/2024
+RIP: 0010:tomoyo_init_request_info+0x6f/0x370 security/tomoyo/util.c:1028
+Code: 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 98 02 00 00 48 8d 7d 50 48 89 6b 10 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <0f> b6 04 02 84 c0 74 06 0f 8e 5d 02 00 00 48 8d 7b 4b 44 0f b6 6d
+RSP: 0018:ffffc900057e7790 EFLAGS: 00010206
+RAX: dffffc0000000000 RBX: ffffc900057e7808 RCX: 0000000000000000
+RDX: 000000000000000a RSI: ffffffff8452d677 RDI: 0000000000000050
+RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
+R10: ffffc900057e7808 R11: 0000000000000000 R12: 0000000000000001
+R13: 0000000000109002 R14: ffff88802ede1580 R15: 0000000000000006
+FS:  00007fea9dad26c0(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fffd27aa9d8 CR3: 0000000030f1a000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ tomoyo_check_open_permission+0x27a/0x3c0 security/tomoyo/file.c:769
+ tomoyo_file_open+0x6b/0x90 security/tomoyo/tomoyo.c:334
+ security_file_open+0x84/0x1e0 security/security.c:3105
+ do_dentry_open+0x57e/0x1ea0 fs/open.c:928
+ vfs_open+0x82/0x3f0 fs/open.c:1075
+ do_open fs/namei.c:3828 [inline]
+ path_openat+0x1e6a/0x2d60 fs/namei.c:3987
+ do_filp_open+0x20c/0x470 fs/namei.c:4014
+ do_sys_openat2+0x17a/0x1e0 fs/open.c:1402
+ do_sys_open fs/open.c:1417 [inline]
+ __do_sys_openat fs/open.c:1433 [inline]
+ __se_sys_openat fs/open.c:1428 [inline]
+ __x64_sys_openat+0x175/0x210 fs/open.c:1428
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fea9db23ee9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 81 1d 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fea9dad2218 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 00007fea9dba8408 RCX: 00007fea9db23ee9
+RDX: 0000000000189002 RSI: 0000000020000100 RDI: ffffffffffffff9c
+RBP: 00007fea9dba8400 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fea9db74ed0
+R13: 8000000000000000 R14: 00004000000000df R15: 006e716e5f797265
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:tomoyo_init_request_info+0x6f/0x370 security/tomoyo/util.c:1028
+Code: 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 98 02 00 00 48 8d 7d 50 48 89 6b 10 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 <0f> b6 04 02 84 c0 74 06 0f 8e 5d 02 00 00 48 8d 7b 4b 44 0f b6 6d
+RSP: 0018:ffffc900057e7790 EFLAGS: 00010206
+RAX: dffffc0000000000 RBX: ffffc900057e7808 RCX: 0000000000000000
+RDX: 000000000000000a RSI: ffffffff8452d677 RDI: 0000000000000050
+RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
+R10: ffffc900057e7808 R11: 0000000000000000 R12: 0000000000000001
+R13: 0000000000109002 R14: ffff88802ede1580 R15: 0000000000000006
+FS:  00007fea9dad26c0(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fea9db732c8 CR3: 0000000030f1a000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	48 89 fa             	mov    %rdi,%rdx
+   3:	48 c1 ea 03          	shr    $0x3,%rdx
+   7:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1)
+   b:	0f 85 98 02 00 00    	jne    0x2a9
+  11:	48 8d 7d 50          	lea    0x50(%rbp),%rdi
+  15:	48 89 6b 10          	mov    %rbp,0x10(%rbx)
+  19:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
+  20:	fc ff df
+  23:	48 89 fa             	mov    %rdi,%rdx
+  26:	48 c1 ea 03          	shr    $0x3,%rdx
+* 2a:	0f b6 04 02          	movzbl (%rdx,%rax,1),%eax <-- trapping instruction
+  2e:	84 c0                	test   %al,%al
+  30:	74 06                	je     0x38
+  32:	0f 8e 5d 02 00 00    	jle    0x295
+  38:	48 8d 7b 4b          	lea    0x4b(%rbx),%rdi
+  3c:	44                   	rex.R
+  3d:	0f                   	.byte 0xf
+  3e:	b6 6d                	mov    $0x6d,%dh
 
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
