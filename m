@@ -1,119 +1,109 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E07732C95;
-	Mon, 23 Dec 2024 05:33:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95F4F13F43A;
+	Mon, 23 Dec 2024 06:57:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734931983; cv=none; b=W3sWjy+1SUFBmC63MXVUn5AhkhQZ0Nmi9dhA+KoBok1I6yMgUQLs/0C7eYw5M6xcBfWQJXTit/O0cTnIYXtaff8M7PTVr21LtR204Iefnkn8XJCXK5IBYU/rRCfjmpOA4eTZqRSG9S4yJbPlzvoD0F3f55NgWN5eARIqrC54tZg=
+	t=1734937070; cv=none; b=Zlj5gHfZ7SgnSWzNIhSriZXqIZX2nJ4LtA0OdvX9rXULHP0QrFzjxGeCbCT9y7PF2C75bjMejAetLQB+vL0o0CTPnILYUzxPeiHieBcRMYIC7g7Lvumxwlo2kQHO4A8Lu9b1UleR8vkuhEmZ4jj/X3yMKNy2ffWzfdKUYboLBXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734931983; c=relaxed/simple;
-	bh=nUhGpdyo3TxwV88lvip1eJqnVZ8kNkc+r07iMd5e8UU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lzp3tuHHf4vUIsiGY6zPwTLDaD6H0rtIoIgMFVNCLW7yhGb6yKlg0p6f1cRw4A1OPYH7Y4woF6jlcrY/WikZbzqkBIslX4JzBHTPhXPz5YyIZepRSoLz81aBXai1aYFrJDy1VmIdpaTFjRk091Ten1090Q48bFKqwzg+xLy4avI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qKnejo1N; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qKnejo1N"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 733FEC4CED4;
-	Mon, 23 Dec 2024 05:33:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1734931982;
-	bh=nUhGpdyo3TxwV88lvip1eJqnVZ8kNkc+r07iMd5e8UU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qKnejo1NxRzUOt+gIT0rY8w4qKHWNNiRFBkNk0kkHGZs0zDz3AvZkZDi5Iy9Is1ie
-	 TJU2NuXeQOpiK/hhBODXt574szJ0K4AOAlnwOjwW4WDOW9hdz5Xl3RbWWEIeqtXLQt
-	 xgkafSHRLpTJ6acFBthHE2vLAbDssPlVSmcme0jbwS+7LAm0xVQJ9Yt6ERs53Q7uwG
-	 cVugeexY5ICDSoB9CM5cgB69NoXVukv63jJArjZWiVmj99K7w6uPddRFxpLzj8Pguo
-	 ExS7V+772l0FK2YvBFxHr+4HALU1YMA/DTAB35eRjauWqHyyHUTe9ltFzLXNLvFXSm
-	 x68bQh7QBupow==
-Date: Sun, 22 Dec 2024 21:32:58 -0800
-From: Kees Cook <kees@kernel.org>
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: syzbot+4eb7a741b3216020043a@syzkaller.appspotmail.com,
-	jmorris@namei.org, linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, serge@hallyn.com,
-	syzkaller-bugs@googlegroups.com, Paul Moore <paul@paul-moore.com>,
-	Leo Stone <leocstone@gmail.com>, mortonm@chromium.org
-Subject: Re: [PATCH v2] lsm: check size of writes
-Message-ID: <202412222126.E70910E7A8@keescook>
-References: <675f513a.050a0220.37aaf.0106.GAE@google.com>
- <20241217182657.10080-2-leocstone@gmail.com>
- <CAHC9VhQGeNv=UEhXPN5MN1h0xEZkeE9kbE79+k9HvNxdK_4xzA@mail.gmail.com>
- <ed6e5639-c87e-49e8-8125-5b93cec69d43@I-love.SAKURA.ne.jp>
- <9fcd3f3d-33c1-4feb-8c98-472d44bc0a54@I-love.SAKURA.ne.jp>
+	s=arc-20240116; t=1734937070; c=relaxed/simple;
+	bh=WGufmhjNmDMIR/IZ6GWBQmeQvvOu3n8Pl5/epJptMHU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=D83UG/f0DdIzYBSIICSWBDZ3CW+O6e786IsD6pVQSSASR9aqJ1Mn+FwOmy3so17TkIwsPv4wiu0BsMm1qqeEOBviAuVSKQkNsuj7efKmfWJM8r3/i/G1UCQPWH0jZVIpGkpbcHAOcQEYhqSVux+1djyx3BRdUhPAvUUfd1m71A4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4YGpjw0zGmz4f3lfV;
+	Mon, 23 Dec 2024 14:57:24 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id CCB601A06DA;
+	Mon, 23 Dec 2024 14:57:44 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.67.174.193])
+	by APP4 (Coremail) with SMTP id gCh0CgC33oLoCWlnoBWSFQ--.8658S4;
+	Mon, 23 Dec 2024 14:57:44 +0800 (CST)
+From: Luo Gengkun <luogengkun@huaweicloud.com>
+To: peterz@infradead.org
+Cc: mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com,
+	tglx@linutronix.de,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	hpa@zytor.com,
+	will@kernel.org,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com,
+	stephen.smalley.work@gmail.com,
+	omosnace@redhat.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-security-module@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	selinux@vger.kernel.org,
+	luogengkun@huaweicloud.com
+Subject: [PATCH linux-next 0/2] Fix perf security check problem
+Date: Mon, 23 Dec 2024 07:06:48 +0000
+Message-Id: <20241223070650.2810747-1-luogengkun@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9fcd3f3d-33c1-4feb-8c98-472d44bc0a54@I-love.SAKURA.ne.jp>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgC33oLoCWlnoBWSFQ--.8658S4
+X-Coremail-Antispam: 1UD129KBjvdXoW7Xw1DtryDKF45AF4DCrWkCrg_yoWxCrX_CF
+	97Aa4kJrsYvFySva4xAFs2vFyj9rW0vw1FqF93tr98XrnIqw1UKF1xtayIqry3XF48WryU
+	tFnxWry8XF1YgjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb3kFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwCY1x0262kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+	67AF67kF1VAFwI0_GFv_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
+	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1x
+	MIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIda
+	VFxhVjvjDU0xZFpf9x0pRQAwsUUUUU=
+X-CM-SenderInfo: 5oxrwvpqjn3046kxt4xhlfz01xgou0bp/
 
-On Sat, Dec 21, 2024 at 10:40:45PM +0900, Tetsuo Handa wrote:
-> Hello, Kees.
-> 
-> On 2024/12/21 19:00, Tetsuo Handa wrote:
-> > FYI: I sent
-> > 
-> > https://lkml.kernel.org/r/014cd694-cc27-4a07-a34a-2ae95d744515@I-love.SAKURA.ne.jp
-> > 
-> > which makes this patch redundant if my patch is accepted.
-> > 
-> 
-> I got a question regarding commit d73778e4b867 ("mm/util: Use dedicated
-> slab buckets for memdup_user()").
-> 
-> While I consider that using the same slab buckets for memdup_user() and
-> memdup_user_nul() is OK, I came to feel that we could utilize
-> kmem_buckets_create() more aggressively for debug purpose and/or
-> isolation purpose.
+From: Luo Gengkun <luogengkun2@huawei.com>
 
-Sure!
 
-> 
-> I got three bug reports on TOMOYO
-> https://lkml.kernel.org/r/67646895.050a0220.1dcc64.0023.GAE@google.com
-> and I guess that at least the fix for the first bug is
-> https://lkml.kernel.org/r/20241218185000.17920-2-leocstone@gmail.com
-> because the syz reproducer includes access to
-> /sys/kernel/config/nvmet/discovery_nqn interface.
-> 
-> If the slab buckets for nvmet and TOMOYO were separated, we might have
-> received these bug reports as nvmet bugs rather than TOMOYO bugs.
-> 
-> We switched to use module-local workqueue if that module needs to call
-> flush_workqueue() because calling flush_workqueue() against the kernel global
-> workqueues might introduce unpredictable locking dependency. Therefore, I came
-> to feel that it might be helpful to add a kernel config option for switching
-> whether to use dedicated slab buckets for individual module/subsystems.
-> 
-> For example, I don't know whether it is worth using a dedicated slab bucket
-> for each LSM module, but I feel that having a dedicated slab bucket shared
-> between all LSM modules might be worth doing, in order to reduce possibility
-> of by error overrunning into chunks used by LSM modules caused by bugs in
-> unrelated code.
+Luo Gengkun (2):
+  perf: Remove unnecessary parameter of security check
+  perf: Return EACCESS when need perfmon capability
 
-If the LSM core did a kmem_buckets_create() for each LSM, and the LSMs
-were adjusted to explicitly allocate from their own bucket set, that
-would be one way. Or just for the LSM as a whole (1 set of buckets
-instead of a set for each LSM). I'd be happy to review patches for
-either idea.
-
-> Maybe we want a flag for not to bloat /proc/slabinfo output if we allow
-> using dedicated slab buckets for individual module/subsystems...
-
-No, I think accuracy for slabinfo is more important.
-
-> What do you think?
-
-I think per-site buckets is going to be the most effective long-term:
-https://lore.kernel.org/lkml/20240809072532.work.266-kees@kernel.org/
-
-But that doesn't exclude new kmem_buckets_create() users.
-
--Kees
+ arch/x86/events/intel/bts.c     |  2 +-
+ arch/x86/events/intel/core.c    |  2 +-
+ arch/x86/events/intel/p4.c      |  2 +-
+ drivers/perf/arm_spe_pmu.c      |  4 ++--
+ include/linux/lsm_hook_defs.h   |  2 +-
+ include/linux/perf_event.h      | 12 ++++++------
+ include/linux/security.h        |  5 ++---
+ kernel/events/core.c            | 14 +++++++-------
+ kernel/trace/trace_event_perf.c |  4 ++--
+ security/security.c             |  5 ++---
+ security/selinux/hooks.c        |  2 +-
+ 11 files changed, 26 insertions(+), 28 deletions(-)
 
 -- 
-Kees Cook
+2.34.1
+
