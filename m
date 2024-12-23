@@ -1,152 +1,139 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49F6F46B5;
-	Mon, 23 Dec 2024 13:22:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA0CB194AF9;
+	Mon, 23 Dec 2024 14:19:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734960171; cv=none; b=A0IPawblX4DXgkxXi9TuHOka2WbfyXAoZt32PoGuxIQPS4dHyLXw+8bNZxKb3DBhWaqJlGw57Aunz1wC2obKDm6tP5L/C83CYm2rbQ9huexc6LZD2BJzOUoo7W1NdzyPOuZmGw2kUSMCAh2Kzvoy3iV8E8/QXAiY9ZMPBaPL2f4=
+	t=1734963581; cv=none; b=rDsi3FE9v4irQ9a+EdHg4X9dGGiIdZY3okKMS5+Y6Oh6uDAcngkcSfs68XNXXGir6Ydk7/NID0kb6cUzS5zQLg++121sIOvHwZePcxQSX503MlOk6ZspcqFfoKedMmWtdAWT3Zw92U0G0EQk5OuVuqif2tOhDgVzbM9RUZuIbKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734960171; c=relaxed/simple;
-	bh=CY7ULUEktcxb7bamYkQGXj29N7yWje9RXY2qaPrPHvo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=O8FtQp7lGwvXMvHVVRaoS9f5uAxfK2WgV2xHBBHvX1QQQGrFpU8N9tRMpDJavKXXniL3mIBeH4nlb1eO23vGmA1W6ehN0P32GjbFNWdMFop6UPO0o8k2s8/kQFVRcW+C1LROI6btuMifJ0b/drOxV3HtSfP7gO4g+2SE1o3k4ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=sDnmWTjU; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="sDnmWTjU"
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BN9dTmq008340;
-	Mon, 23 Dec 2024 13:21:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=/c4Nm7
-	sg2cVOF8w//xiKp7ZsdTuXYYOJCJo/aawRB6o=; b=sDnmWTjUJOzKddET5t4Doo
-	aFKpWtjTWktSrcRvWWiKE4CTGTRqGwZvQjPsIMZKXKscjhxyiZ97D7T9A0LUwQui
-	p+ZWaDP1S3qd3Lcuih3xQjpDcSvEsjeeXlF1JCvfqQGx4YS8sgYsebxJWnAZHgdv
-	gIbQZlmtgP+Qc2dPHQOJL5Vqw+m9n9urJrsecyZZiTdTqC2ZErcUOyEnrsZWVkNf
-	tYGZoNAft4YoJ86GFfp86zm9vOybK42CeOr5/+Lb07YnpNMX4oYCghoQrPRZcTfG
-	9ybC5qdfQU2Wx8imdPef7qwM9QsmHviY7wxbJ3kN8hKIYLH4sMfsONOimMdg+0Jg
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43pm84kwu8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 23 Dec 2024 13:21:23 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4BNDFIxj012699;
-	Mon, 23 Dec 2024 13:21:22 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43pm84kwu6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 23 Dec 2024 13:21:22 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BN9H8ls002321;
-	Mon, 23 Dec 2024 13:21:21 GMT
-Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 43p80sdxwq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 23 Dec 2024 13:21:21 +0000
-Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
-	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BNDLLoe30737034
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 23 Dec 2024 13:21:21 GMT
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E583358058;
-	Mon, 23 Dec 2024 13:21:20 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5CEB35805B;
-	Mon, 23 Dec 2024 13:21:18 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.114.169])
-	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 23 Dec 2024 13:21:18 +0000 (GMT)
-Message-ID: <2e413e587556199c7403ecedef2ed854cd3e6c39.camel@linux.ibm.com>
-Subject: Re: [RFC PATCH v3 01/13] certs: Remove
- CONFIG_INTEGRITY_PLATFORM_KEYRING check
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Eric Snowberg <eric.snowberg@oracle.com>,
-        linux-security-module@vger.kernel.org
-Cc: dhowells@redhat.com, dwmw2@infradead.org, herbert@gondor.apana.org.au,
-        davem@davemloft.net, ardb@kernel.org, jarkko@kernel.org,
-        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-        roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com, mic@digikod.net,
-        casey@schaufler-ca.com, stefanb@linux.ibm.com, ebiggers@kernel.org,
-        rdunlap@infradead.org, linux-kernel@vger.kernel.org,
-        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org
-Date: Mon, 23 Dec 2024 08:21:17 -0500
-In-Reply-To: <20241017155516.2582369-2-eric.snowberg@oracle.com>
-References: <20241017155516.2582369-1-eric.snowberg@oracle.com>
-	 <20241017155516.2582369-2-eric.snowberg@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1734963581; c=relaxed/simple;
+	bh=LD1ldJyFEOxj/gShQMs55PiIrz4vec4vEH1Dps8gt9M=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BlRPYlak2kfIHiO0dbCCammk7URxmdAdk29wui5myKuxq8hfFVyK4bji8PxB9Ntn7qBk2z5Cq78rsRUoQNIGROe54T/P36q+warW8CKOibFqJEM8pZgK3hn2CG3GT801IfkHV4Td7Wu1O3YMHgEcP5k4UBb6sHS6YgVbyM5MWQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4YH0XT6B6Kz20mdx;
+	Mon, 23 Dec 2024 22:19:53 +0800 (CST)
+Received: from kwepemh100016.china.huawei.com (unknown [7.202.181.102])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5884F180043;
+	Mon, 23 Dec 2024 22:19:34 +0800 (CST)
+Received: from huawei.com (10.175.113.32) by kwepemh100016.china.huawei.com
+ (7.202.181.102) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 23 Dec
+ 2024 22:19:30 +0800
+From: Kaixiong Yu <yukaixiong@huawei.com>
+To: <akpm@linux-foundation.org>, <mcgrof@kernel.org>
+CC: <ysato@users.sourceforge.jp>, <dalias@libc.org>,
+	<glaubitz@physik.fu-berlin.de>, <luto@kernel.org>, <tglx@linutronix.de>,
+	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
+	<hpa@zytor.com>, <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
+	<jack@suse.cz>, <kees@kernel.org>, <j.granados@samsung.com>,
+	<willy@infradead.org>, <Liam.Howlett@oracle.com>, <vbabka@suse.cz>,
+	<lorenzo.stoakes@oracle.com>, <trondmy@kernel.org>, <anna@kernel.org>,
+	<chuck.lever@oracle.com>, <jlayton@kernel.org>, <neilb@suse.de>,
+	<okorniev@redhat.com>, <Dai.Ngo@oracle.com>, <tom@talpey.com>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <paul@paul-moore.com>, <jmorris@namei.org>,
+	<linux-sh@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-nfs@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-security-module@vger.kernel.org>, <dhowells@redhat.com>,
+	<haifeng.xu@shopee.com>, <baolin.wang@linux.alibaba.com>,
+	<shikemeng@huaweicloud.com>, <dchinner@redhat.com>, <bfoster@redhat.com>,
+	<souravpanda@google.com>, <hannes@cmpxchg.org>, <rientjes@google.com>,
+	<pasha.tatashin@soleen.com>, <david@redhat.com>, <ryan.roberts@arm.com>,
+	<ying.huang@intel.com>, <yang@os.amperecomputing.com>,
+	<zev@bewilderbeest.net>, <serge@hallyn.com>, <vegard.nossum@oracle.com>,
+	<wangkefeng.wang@huawei.com>
+Subject: [PATCH v4 -next 00/15] sysctl: move sysctls from vm_table into its own files
+Date: Mon, 23 Dec 2024 22:15:19 +0800
+Message-ID: <20241223141550.638616-1-yukaixiong@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: sbOmppHa-sbKqs0AgnwwS539HRIC0BOV
-X-Proofpoint-ORIG-GUID: yVV2p4LF8p3a9CrduIMLzaI2EJWjuhss
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 phishscore=0
- impostorscore=0 malwarescore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 suspectscore=0 bulkscore=0 adultscore=0
- priorityscore=1501 mlxscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2411120000 definitions=main-2412230117
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemh100016.china.huawei.com (7.202.181.102)
 
-Hi Eric,
+This patch series moves sysctls of vm_table in kernel/sysctl.c to
+places where they actually belong, and do some related code clean-ups.
+After this patch series, all sysctls in vm_table have been moved into its
+own files, meanwhile, delete vm_table.
 
-On Thu, 2024-10-17 at 09:55 -0600, Eric Snowberg wrote:
-> Remove the CONFIG_INTEGRITY_PLATFORM_KEYRING ifdef check so this
-> pattern does not need to be repeated with new code.
->=20
-> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
+All the modifications of this patch series base on
+linux-next(tags/next-20241219). To test this patch series, the code was
+compiled with both the CONFIG_SYSCTL enabled and disabled on arm64 and
+x86_64 architectures. After this patch series is applied, all files
+under /proc/sys/vm can be read or written normally.
 
-Ok. The reason why testing the Kconfig is unnecessary should be included in=
- the
-patch description.  For example,
+Changes in v4:
+ - change all "static struct ctl_table" type into
+   "static const struct ctl_table" type in patch1~10,12,13,14
+ - simplify result of rpcauth_cache_shrink_count() in patch11
 
-Commit 219a3e8676f3 ("integrity, KEYS: add a reference to platform keyring"=
-)
-unnecessarily added the Kconfig test.  As platform_trusted_keys is already
-initialized, simply use it.
+Changes in v3:
+ - change patch1~10, patch14 title suggested by Joel Granados
+ - change sysctl_stat_interval to static type in patch1
+ - add acked-by from Paul Moore in patch7
+ - change dirtytime_expire_interval to static type in patch9
+ - add acked-by from Anna Schumaker in patch11
 
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+Changes in v2:
+ - fix sysctl_max_map_count undeclared issue in mm/nommu.c for patch6
+ - update changelog for patch7/12, suggested by Kees/Paul
+ - fix patch8, sorry for wrong changes and forget to built with NOMMU
+ - add reviewed-by from Kees except patch8 since patch8 is wrong in v1
+ - add reviewed-by from Jan Kara, Christian Brauner in patch12
 
-> ---
->  certs/system_keyring.c | 6 ------
->  1 file changed, 6 deletions(-)
->=20
-> diff --git a/certs/system_keyring.c b/certs/system_keyring.c
-> index 9de610bf1f4b..e344cee10d28 100644
-> --- a/certs/system_keyring.c
-> +++ b/certs/system_keyring.c
-> @@ -24,9 +24,7 @@ static struct key *secondary_trusted_keys;
->  #ifdef CONFIG_INTEGRITY_MACHINE_KEYRING
->  static struct key *machine_trusted_keys;
->  #endif
-> -#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
->  static struct key *platform_trusted_keys;
-> -#endif
-> =20
->  extern __initconst const u8 system_certificate_list[];
->  extern __initconst const unsigned long system_certificate_list_size;
-> @@ -345,11 +343,7 @@ int verify_pkcs7_message_sig(const void *data, size_=
-t len,
->  		trusted_keys =3D builtin_trusted_keys;
->  #endif
->  	} else if (trusted_keys =3D=3D VERIFY_USE_PLATFORM_KEYRING) {
-> -#ifdef CONFIG_INTEGRITY_PLATFORM_KEYRING
->  		trusted_keys =3D platform_trusted_keys;
-> -#else
-> -		trusted_keys =3D NULL;
-> -#endif
->  		if (!trusted_keys) {
->  			ret =3D -ENOKEY;
->  			pr_devel("PKCS#7 platform keyring is not available\n");
+Kaixiong Yu (15):
+  mm: vmstat: move sysctls to mm/vmstat.c
+  mm: filemap: move sysctl to mm/filemap.c
+  mm: swap: move sysctl to mm/swap.c
+  mm: vmscan: move vmscan sysctls to mm/vmscan.c
+  mm: util: move sysctls to mm/util.c
+  mm: mmap: move sysctl to mm/mmap.c
+  security: min_addr: move sysctl to security/min_addr.c
+  mm: nommu: move sysctl to mm/nommu.c
+  fs: fs-writeback: move sysctl to fs/fs-writeback.c
+  fs: drop_caches: move sysctl to fs/drop_caches.c
+  sunrpc: simplify rpcauth_cache_shrink_count()
+  fs: dcache: move the sysctl to fs/dcache.c
+  x86: vdso: move the sysctl to arch/x86/entry/vdso/vdso32-setup.c
+  sh: vdso: move the sysctl to arch/sh/kernel/vsyscall/vsyscall.c
+  sysctl: remove unneeded include
+
+ arch/sh/kernel/vsyscall/vsyscall.c |  14 ++
+ arch/x86/entry/vdso/vdso32-setup.c |  16 ++-
+ fs/dcache.c                        |  21 ++-
+ fs/drop_caches.c                   |  23 ++-
+ fs/fs-writeback.c                  |  30 ++--
+ include/linux/dcache.h             |   7 +-
+ include/linux/mm.h                 |  23 ---
+ include/linux/mman.h               |   2 -
+ include/linux/swap.h               |   9 --
+ include/linux/vmstat.h             |  11 --
+ include/linux/writeback.h          |   4 -
+ kernel/sysctl.c                    | 221 -----------------------------
+ mm/filemap.c                       |  18 ++-
+ mm/internal.h                      |  10 ++
+ mm/mmap.c                          |  54 +++++++
+ mm/nommu.c                         |  15 +-
+ mm/swap.c                          |  16 ++-
+ mm/swap.h                          |   1 +
+ mm/util.c                          |  67 +++++++--
+ mm/vmscan.c                        |  23 +++
+ mm/vmstat.c                        |  44 +++++-
+ net/sunrpc/auth.c                  |   2 +-
+ security/min_addr.c                |  11 ++
+ 23 files changed, 330 insertions(+), 312 deletions(-)
+
+-- 
+2.34.1
 
