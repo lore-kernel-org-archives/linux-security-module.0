@@ -1,169 +1,207 @@
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3104F6FB0;
-	Mon, 23 Dec 2024 14:37:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C80C17E0FF;
+	Mon, 23 Dec 2024 16:12:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1734964668; cv=none; b=Yc4ONexuAXLzkEDi/ZJoahvS22hJZoUdzKMOa/Nd/Qq5tktrgSkMhXIbAEPzIfvQw0z5V6sXoDVmsN0re//c4l9Z988k3rohHw/9A7zMQinZqCU2bCoolbfQdsJEnVvfoCRNy4suGcw0VG0jBCgWH87XccXsPRYMDz8RunuAGq8=
+	t=1734970380; cv=none; b=Qm3+1Dj7cXnL+cN+IH06H0rMDTruzTdloiExWCq9daxXey9SCCKuqTMhg0LkO5SZAQpl2BViK/m1dqv+JDH8QQA2C1Fu0zoflkS6wyQZe9kjJiSYnTYWyr4b6adZ0qvbijHW8BLKr9isOWnN5limWwZBjOe62cqmxMZe1ObdEs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1734964668; c=relaxed/simple;
-	bh=MJBnExEPzVRwKLL/pZ1B3TcVW6PoQ9S0B/WaOPT2E/w=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lMTk8KN3cUxbxuxG1oIuY0DGHUa3ivIYCNLlVkqhshujxZ0hqnfv+IL0b7AzNspTAIAc7w/DCrj4yNUGeEp0GuOdxWGVE8LR/mgnhHUEWPnOmOg9Vzq4U/oFa+L8xBrP17oA6EhuE/NJS38MeFeZJxsnu3GNLCRwwamWrmzhXZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4YH0Vy3mVgzRk4Y;
-	Mon, 23 Dec 2024 22:18:34 +0800 (CST)
-Received: from kwepemh100016.china.huawei.com (unknown [7.202.181.102])
-	by mail.maildlp.com (Postfix) with ESMTPS id A9E331403D1;
-	Mon, 23 Dec 2024 22:20:32 +0800 (CST)
-Received: from huawei.com (10.175.113.32) by kwepemh100016.china.huawei.com
- (7.202.181.102) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 23 Dec
- 2024 22:20:29 +0800
-From: Kaixiong Yu <yukaixiong@huawei.com>
-To: <akpm@linux-foundation.org>, <mcgrof@kernel.org>
-CC: <ysato@users.sourceforge.jp>, <dalias@libc.org>,
-	<glaubitz@physik.fu-berlin.de>, <luto@kernel.org>, <tglx@linutronix.de>,
-	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
-	<hpa@zytor.com>, <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
-	<jack@suse.cz>, <kees@kernel.org>, <j.granados@samsung.com>,
-	<willy@infradead.org>, <Liam.Howlett@oracle.com>, <vbabka@suse.cz>,
-	<lorenzo.stoakes@oracle.com>, <trondmy@kernel.org>, <anna@kernel.org>,
-	<chuck.lever@oracle.com>, <jlayton@kernel.org>, <neilb@suse.de>,
-	<okorniev@redhat.com>, <Dai.Ngo@oracle.com>, <tom@talpey.com>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <paul@paul-moore.com>, <jmorris@namei.org>,
-	<linux-sh@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<linux-nfs@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<linux-security-module@vger.kernel.org>, <dhowells@redhat.com>,
-	<haifeng.xu@shopee.com>, <baolin.wang@linux.alibaba.com>,
-	<shikemeng@huaweicloud.com>, <dchinner@redhat.com>, <bfoster@redhat.com>,
-	<souravpanda@google.com>, <hannes@cmpxchg.org>, <rientjes@google.com>,
-	<pasha.tatashin@soleen.com>, <david@redhat.com>, <ryan.roberts@arm.com>,
-	<ying.huang@intel.com>, <yang@os.amperecomputing.com>,
-	<zev@bewilderbeest.net>, <serge@hallyn.com>, <vegard.nossum@oracle.com>,
-	<wangkefeng.wang@huawei.com>
-Subject: [PATCH v4 -next 02/15] mm: filemap: move sysctl to mm/filemap.c
-Date: Mon, 23 Dec 2024 22:15:37 +0800
-Message-ID: <20241223141550.638616-19-yukaixiong@huawei.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241223141550.638616-1-yukaixiong@huawei.com>
-References: <20241223141550.638616-1-yukaixiong@huawei.com>
+	s=arc-20240116; t=1734970380; c=relaxed/simple;
+	bh=UtOCTThwOblyR5slazuQ5DRaahQq72ajfmyR4avObJ0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Zr4mL0pmGN77EfQipP/5U4XlQOe7xbGJpc7z5kzDEriaWQc2tzvjIi0FbKGORkMnKTRLyffzsn3f7edlOnQi7OwjcLoPVkBrzHF/svU8OMEBYLEb0f7F8BQ7OrHRdYqNEgqF+IxgkQXLgyWY8HFXRlsx0QSSZ2nybp0CPEgsx98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=gjO5KOjs; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="gjO5KOjs"
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BNE6m0g010100;
+	Mon, 23 Dec 2024 16:11:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=N0YlXv
+	pThyCaloTijE44N+X/vXn8K189/uxnRfbTsO8=; b=gjO5KOjszlMa3CE1dvBXXa
+	Zcp8iyosndSxa8eReS1uoUGP1nvV+ZWm5+QjuhX6W7w286Tsi2dT59DnBu+qHmVW
+	y1K4+d2Gau6M3rpSmQd64ih+Ls1LT2OziM67fXxqM8C9nXWNM6l1bZrrsSazBe1N
+	TWQv3cVr0F2QFi5xt9WmhaQFWW5C3iLugiijCRE7WYaqsUe0GzsXnJgDEQLItO91
+	5e9aUQ4uh6Hr6Bzn6oLBniXgwko+/XIWiCiQgHBG72p3TarNYmqSG2GwgXBygkJ6
+	ucVwqbDxZgg6YcqvjejM5ENbIoHUrlkXvhkYJWyTZFIRtT6Ut6E+MT7lcy6In9dQ
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43q9b4ggby-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 23 Dec 2024 16:11:31 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4BNGBUHY022869;
+	Mon, 23 Dec 2024 16:11:30 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43q9b4ggbu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 23 Dec 2024 16:11:30 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BNEe4gv020602;
+	Mon, 23 Dec 2024 16:11:30 GMT
+Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43p8cy6ee0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 23 Dec 2024 16:11:30 +0000
+Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
+	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BNGBTlK27394700
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 23 Dec 2024 16:11:29 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5871C5805A;
+	Mon, 23 Dec 2024 16:11:29 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E12A75803F;
+	Mon, 23 Dec 2024 16:11:27 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.4.210])
+	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 23 Dec 2024 16:11:27 +0000 (GMT)
+Message-ID: <984b472672b4ff4b93963700e9c52dc873ea1924.camel@linux.ibm.com>
+Subject: Re: [RFC PATCH v3 02/13] certs: Introduce ability to link to a
+ system key
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Eric Snowberg <eric.snowberg@oracle.com>,
+        linux-security-module@vger.kernel.org
+Cc: dhowells@redhat.com, dwmw2@infradead.org, herbert@gondor.apana.org.au,
+        davem@davemloft.net, ardb@kernel.org, jarkko@kernel.org,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com, mic@digikod.net,
+        casey@schaufler-ca.com, stefanb@linux.ibm.com, ebiggers@kernel.org,
+        rdunlap@infradead.org, linux-kernel@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org
+Date: Mon, 23 Dec 2024 11:11:27 -0500
+In-Reply-To: <20241017155516.2582369-3-eric.snowberg@oracle.com>
+References: <20241017155516.2582369-1-eric.snowberg@oracle.com>
+	 <20241017155516.2582369-3-eric.snowberg@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemh100016.china.huawei.com (7.202.181.102)
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: zWC_HwY6eOMjnFjJIxS35vwJKxpFNaBC
+X-Proofpoint-GUID: t9XBt8-Af9dxcZVpdvCwK2uRSMsNNu_j
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ adultscore=0 lowpriorityscore=0 bulkscore=0 malwarescore=0 impostorscore=0
+ mlxscore=0 suspectscore=0 clxscore=1015 phishscore=0 spamscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412230143
 
-This moves the filemap related sysctl to mm/filemap.c, and
-removes the redundant external variable declaration.
+On Thu, 2024-10-17 at 09:55 -0600, Eric Snowberg wrote:
+> Introduce system_key_link(), a new function to allow a keyring to link
+> to a key contained within one of the system keyrings (builtin, secondary,
+> or platform). Depending on how the kernel is built, if the machine
+> keyring is available, it will be checked as well, since it is linked to
+> the secondary keyring. If the asymmetric key id matches a key within one
+> of these system keyrings, the matching key is linked into the passed in
+> keyring.
+>=20
+> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
 
-Signed-off-by: Kaixiong Yu <yukaixiong@huawei.com>
-Reviewed-by: Kees Cook <kees@kernel.org>
----
-v4:
- - const qualify struct ctl_table filemap_sysctl_table
-v3:
- - change the title
----
----
- include/linux/mm.h |  2 --
- kernel/sysctl.c    |  8 --------
- mm/filemap.c       | 18 +++++++++++++++---
- 3 files changed, 15 insertions(+), 13 deletions(-)
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index d61b9c7a3a7b..dbdf8950d681 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -40,8 +40,6 @@ struct user_struct;
- struct pt_regs;
- struct folio_batch;
- 
--extern int sysctl_page_lock_unfairness;
--
- void mm_core_init(void);
- void init_mm_internals(void);
- 
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index f1ab251fc2d0..23c8db80da5d 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -2079,14 +2079,6 @@ static struct ctl_table vm_table[] = {
- 		.extra1		= SYSCTL_ONE,
- 		.extra2		= SYSCTL_FOUR,
- 	},
--	{
--		.procname	= "page_lock_unfairness",
--		.data		= &sysctl_page_lock_unfairness,
--		.maxlen		= sizeof(sysctl_page_lock_unfairness),
--		.mode		= 0644,
--		.proc_handler	= proc_dointvec_minmax,
--		.extra1		= SYSCTL_ZERO,
--	},
- #ifdef CONFIG_MMU
- 	{
- 		.procname	= "max_map_count",
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 899dab55d235..bb7aff8960a4 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -47,6 +47,7 @@
- #include <linux/splice.h>
- #include <linux/rcupdate_wait.h>
- #include <linux/sched/mm.h>
-+#include <linux/sysctl.h>
- #include <linux/fsnotify.h>
- #include <asm/pgalloc.h>
- #include <asm/tlbflush.h>
-@@ -1069,6 +1070,19 @@ static wait_queue_head_t *folio_waitqueue(struct folio *folio)
- 	return &folio_wait_table[hash_ptr(folio, PAGE_WAIT_TABLE_BITS)];
- }
- 
-+/* How many times do we accept lock stealing from under a waiter? */
-+static int sysctl_page_lock_unfairness = 5;
-+static const struct ctl_table filemap_sysctl_table[] = {
-+	{
-+		.procname	= "page_lock_unfairness",
-+		.data		= &sysctl_page_lock_unfairness,
-+		.maxlen		= sizeof(sysctl_page_lock_unfairness),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= SYSCTL_ZERO,
-+	}
-+};
-+
- void __init pagecache_init(void)
- {
- 	int i;
-@@ -1077,6 +1091,7 @@ void __init pagecache_init(void)
- 		init_waitqueue_head(&folio_wait_table[i]);
- 
- 	page_writeback_init();
-+	register_sysctl_init("vm", filemap_sysctl_table);
- }
- 
- /*
-@@ -1224,9 +1239,6 @@ static inline bool folio_trylock_flag(struct folio *folio, int bit_nr,
- 	return true;
- }
- 
--/* How many times do we accept lock stealing from under a waiter? */
--int sysctl_page_lock_unfairness = 5;
--
- static inline int folio_wait_bit_common(struct folio *folio, int bit_nr,
- 		int state, enum behavior behavior)
- {
--- 
-2.34.1
+> ---
+>  certs/system_keyring.c        | 30 ++++++++++++++++++++++++++++++
+>  include/keys/system_keyring.h |  7 ++++++-
+>  2 files changed, 36 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/certs/system_keyring.c b/certs/system_keyring.c
+> index e344cee10d28..4abee7514442 100644
+> --- a/certs/system_keyring.c
+> +++ b/certs/system_keyring.c
+> @@ -20,6 +20,9 @@
+>  static struct key *builtin_trusted_keys;
+>  #ifdef CONFIG_SECONDARY_TRUSTED_KEYRING
+>  static struct key *secondary_trusted_keys;
+> +#define system_trusted_keys secondary_trusted_keys
+> +#else
+> +#define system_trusted_keys builtin_trusted_keys
+>  #endif
+>  #ifdef CONFIG_INTEGRITY_MACHINE_KEYRING
+>  static struct key *machine_trusted_keys;
+> @@ -420,3 +423,30 @@ void __init set_platform_trusted_keys(struct key *ke=
+yring)
+>  	platform_trusted_keys =3D keyring;
+>  }
+>  #endif
+> +
+> +/**
+> + * system_key_link - Link to a system key
+> + * @keyring: The keyring to link into
+> + * @id: The asymmetric key id to look for in the system keyring
+> + *
+> + * Search the system keyrings to see if one of them contains a matching =
+"id".
+> + * If there is a match, link the key into "keyring".  System keyrings al=
+ways
+> + * includes the builtin. If any of the following keyrings are enabled:
+> + * secondary, machine, and platform they are searched as well.
+> + */
+> +int system_key_link(struct key *keyring, struct asymmetric_key_id *id)
+> +{
+> +	struct key *key;
+> +
+> +	key =3D find_asymmetric_key(system_trusted_keys, id, NULL, NULL, false)=
+;
+> +	if (!IS_ERR(key))
+> +		return key_link(keyring, key);
+> +
+> +	if (platform_trusted_keys) {
+> +		key =3D find_asymmetric_key(platform_trusted_keys, id, NULL, NULL, fal=
+se);
+> +		if (!IS_ERR(key))
+> +			return key_link(keyring, key);
+> +	}
+> +
+> +	return -ENOKEY;
+> +}
+> diff --git a/include/keys/system_keyring.h b/include/keys/system_keyring.=
+h
+> index 8365adf842ef..b47ac8e2001a 100644
+> --- a/include/keys/system_keyring.h
+> +++ b/include/keys/system_keyring.h
+> @@ -9,6 +9,7 @@
+>  #define _KEYS_SYSTEM_KEYRING_H
+> =20
+>  #include <linux/key.h>
+> +struct asymmetric_key_id;
+> =20
+>  enum blacklist_hash_type {
+>  	/* TBSCertificate hash */
+> @@ -28,7 +29,7 @@ int restrict_link_by_digsig_builtin(struct key *dest_ke=
+yring,
+>  				    const union key_payload *payload,
+>  				    struct key *restriction_key);
+>  extern __init int load_module_cert(struct key *keyring);
+> -
+> +extern int system_key_link(struct key *keyring, struct asymmetric_key_id=
+ *id);
+>  #else
+>  #define restrict_link_by_builtin_trusted restrict_link_reject
+>  #define restrict_link_by_digsig_builtin restrict_link_reject
+> @@ -38,6 +39,10 @@ static inline __init int load_module_cert(struct key *=
+keyring)
+>  	return 0;
+>  }
+> =20
+> +static inline int system_key_link(struct key *keyring, struct asymmetric=
+_key_id *id)
+> +{
+> +	return 0;
+> +}
+>  #endif
+> =20
+>  #ifdef CONFIG_SECONDARY_TRUSTED_KEYRING
 
