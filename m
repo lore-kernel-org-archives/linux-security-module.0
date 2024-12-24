@@ -1,418 +1,767 @@
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B69E01D798E;
-	Tue, 24 Dec 2024 16:55:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4B141D799D;
+	Tue, 24 Dec 2024 17:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735059312; cv=none; b=EUW6rux94ExSftJyK7c2oyJH050FYSxeExRvgjNYC/gbi+Vbx7MBaNaklOSmNlXoH2W4F8pWRwefdXXfnvkYcQxT6tKDn1Zcb1PMFP9je/RRalSs0WsTtL+2UR7z2pJOyJT2Lk2EbapzeOtvZNsGhxZr3H8lYkxuPJD5oTcY+KM=
+	t=1735062312; cv=none; b=XY+w+BEWHESKZO+OpG7/KUysIBZ+GMY6W+wGh2yu6NiZZvWBvsmin/kxxkWWbjdVZ2mxhAwxJ1L28mO/m39HTdgJOEeyPYAgXI65yOkIMSxyPZqEmyIR3rFxNlcrZ7GoFha5b8mkbf5E2LYftsj2mkVRv7F8AYyTadOZiSy75Hk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735059312; c=relaxed/simple;
-	bh=Epky/pyePOVD+ED9ZcmR1hxyHbZwTB2LaCd7NJFcPug=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=DoIt0+7t4hh8nRM/vPpZzqT8WDwv/usPJKOoQTwhT8Zlrw8LZemtA6HbHFlkfA4milQTKtLwJO7n8lnJ4jXgZw+FVfpF0sweydx29u52EDDHoRSf0GuqVJM7OOLTR+NrG+m1SlaaOOhutyn8XhBHjngmctFs32M+IecLeYom0sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4YHgrc3qW6z6K61V;
-	Wed, 25 Dec 2024 00:51:12 +0800 (CST)
-Received: from mscpeml500004.china.huawei.com (unknown [7.188.26.250])
-	by mail.maildlp.com (Postfix) with ESMTPS id C5C9B140680;
-	Wed, 25 Dec 2024 00:55:05 +0800 (CST)
-Received: from [10.123.123.159] (10.123.123.159) by
- mscpeml500004.china.huawei.com (7.188.26.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Tue, 24 Dec 2024 19:55:03 +0300
-Message-ID: <f6b255c9-5a88-fedd-5d25-dd7d09ddc989@huawei-partners.com>
-Date: Tue, 24 Dec 2024 19:55:01 +0300
+	s=arc-20240116; t=1735062312; c=relaxed/simple;
+	bh=wHnb+WImNcE/bGTP5OYYvXsFJXXpjWcMLlUClt+mTc8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=M7tp1KAcLl4SHDGxjKXh2IcFVBW7dVJgRrIjYG7QCwLD/8XIWU1bynoall6mX2ddVxS/nPPo44Gmsewe2bXc8Ait+eWK9BYJVVqmPs7GwTvspoHrEcA7svi4uXZSg4sK8BnUjgr7CswXKC3uCBNsOF8JqEtgvpvVYCWYj21PTTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=aKasivIp; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="aKasivIp"
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BOGavWp025841;
+	Tue, 24 Dec 2024 17:43:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=dKestP
+	QpUv2K3Y/1wqeTXcp/HysTpHiRWQPfgUpOOQg=; b=aKasivIpDXEZXY4yiF+INH
+	6vKNlveP+5zXnFdSO0bTLM3wcVR0M8EJuTOcY+PbkNrpuYD2xcRtBtlqpsYq3ehf
+	mBjJa2/22pFrTSiChiAqjsZ/cw12bUBE92dx5R3H24n8MmGOdI427UA8yeuDb6bB
+	Ca+1DDGuaRet/RNBEwTwjLcttK9aiAjZKr4oFHlVUusBcMxvGn2UxXyewC2BNm36
+	FfJuR8lJ1GVl6gbiw5PFURguB8liskit6hrpmbFsKlJde2Fm91ykS1N3WA1JUdH9
+	u9v8r/q09c6SqC4J3p3mtfiLm/kPtRtLopSgG8X45AwEI9t4NMe3L3up01kHrEYA
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43qj0hbh67-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 24 Dec 2024 17:43:35 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4BOHhZjE004346;
+	Tue, 24 Dec 2024 17:43:35 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43qj0hbh63-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 24 Dec 2024 17:43:35 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4BOG5N5M010606;
+	Tue, 24 Dec 2024 17:43:33 GMT
+Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43p90n2vjk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 24 Dec 2024 17:43:33 +0000
+Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
+	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4BOHhWJO32375494
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 24 Dec 2024 17:43:33 GMT
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9D08F58053;
+	Tue, 24 Dec 2024 17:43:32 +0000 (GMT)
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6575C58043;
+	Tue, 24 Dec 2024 17:43:29 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.59.17])
+	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 24 Dec 2024 17:43:29 +0000 (GMT)
+Message-ID: <0d71ffced35abf40bbfadb6e03b053c24757183d.camel@linux.ibm.com>
+Subject: Re: [RFC PATCH v3 08/13] clavis: Introduce new LSM called clavis
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Eric Snowberg <eric.snowberg@oracle.com>,
+        linux-security-module@vger.kernel.org
+Cc: dhowells@redhat.com, dwmw2@infradead.org, herbert@gondor.apana.org.au,
+        davem@davemloft.net, ardb@kernel.org, jarkko@kernel.org,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+        roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com, mic@digikod.net,
+        casey@schaufler-ca.com, stefanb@linux.ibm.com, ebiggers@kernel.org,
+        rdunlap@infradead.org, linux-kernel@vger.kernel.org,
+        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org
+Date: Tue, 24 Dec 2024 12:43:28 -0500
+In-Reply-To: <20241017155516.2582369-9-eric.snowberg@oracle.com>
+References: <20241017155516.2582369-1-eric.snowberg@oracle.com>
+	 <20241017155516.2582369-9-eric.snowberg@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v3 01/19] landlock: Support socket access-control
-Content-Language: ru
-From: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-CC: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
-	<willemdebruijn.kernel@gmail.com>, <gnoack3000@gmail.com>,
-	<linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
-	<artem.kuzin@huawei.com>, <konstantin.meskhidze@huawei.com>
-References: <20240904104824.1844082-1-ivanov.mikhail1@huawei-partners.com>
- <20240904104824.1844082-2-ivanov.mikhail1@huawei-partners.com>
- <ea026af8-bc29-709c-7e04-e145d01fd825@huawei-partners.com>
- <Z0DDQKACIRRDRZRE@google.com>
- <36ac2fde-1344-9055-42e2-db849abf02e0@huawei-partners.com>
- <20241127.oophah4Ueboo@digikod.net>
- <eafd855d-2681-8dfd-a2be-9c02fc07050d@huawei-partners.com>
- <20241128.um9voo5Woo3I@digikod.net>
- <af72be74-50c7-d251-5df3-a2c63c73296a@huawei-partners.com>
-In-Reply-To: <af72be74-50c7-d251-5df3-a2c63c73296a@huawei-partners.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
- mscpeml500004.china.huawei.com (7.188.26.250)
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: X3ts4smAvCrt3bySj_tjCFakYo_zuN3n
+X-Proofpoint-GUID: 68eFynIMHPivo4ZDpPOipK-XozvnKAUn
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ spamscore=0 malwarescore=0 suspectscore=0 mlxscore=0 lowpriorityscore=0
+ bulkscore=0 clxscore=1015 adultscore=0 phishscore=0 impostorscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412240152
 
-On 12/2/2024 2:32 PM, Mikhail Ivanov wrote:
-> On 11/28/2024 11:52 PM, Mickaël Salaün wrote:
->> On Thu, Nov 28, 2024 at 03:01:52PM +0300, Mikhail Ivanov wrote:
->>> On 11/27/2024 9:43 PM, Mickaël Salaün wrote:
->>>> On Mon, Nov 25, 2024 at 02:04:09PM +0300, Mikhail Ivanov wrote:
->>>>> On 11/22/2024 8:45 PM, Günther Noack wrote:
->>>>>> Hello Mikhail,
->>>>>>
->>>>>> sorry for the delayed response;
->>>>>> I am very happy to see activity on this patch set! :)
->>>>>
->>>>> Hello Günther,
->>>>> No problem, thanks a lot for your feedback!
->>>>>
->>>>>>
->>>>>> On Mon, Nov 11, 2024 at 07:29:49PM +0300, Mikhail Ivanov wrote:
->>>>>>> On 9/4/2024 1:48 PM, Mikhail Ivanov wrote:
->>>>>>>> Landlock implements the `LANDLOCK_RULE_NET_PORT` rule type, 
->>>>>>>> which provides
->>>>>>>> fine-grained control of actions for a specific protocol. Any 
->>>>>>>> action or
->>>>>>>> protocol that is not supported by this rule can not be 
->>>>>>>> controlled. As a
->>>>>>>> result, protocols for which fine-grained control is not 
->>>>>>>> supported can be
->>>>>>>> used in a sandboxed system and lead to vulnerabilities or 
->>>>>>>> unexpected
->>>>>>>> behavior.
->>>>>>>>
->>>>>>>> Controlling the protocols used will allow to use only those that 
->>>>>>>> are
->>>>>>>> necessary for the system and/or which have fine-grained Landlock 
->>>>>>>> control
->>>>>>>> through others types of rules (e.g. TCP bind/connect control with
->>>>>>>> `LANDLOCK_RULE_NET_PORT`, UNIX bind control with
->>>>>>>> `LANDLOCK_RULE_PATH_BENEATH`). Consider following examples:
->>>>>>>>
->>>>>>>> * Server may want to use only TCP sockets for which there is 
->>>>>>>> fine-grained
->>>>>>>>       control of bind(2) and connect(2) actions [1].
->>>>>>>> * System that does not need a network or that may want to 
->>>>>>>> disable network
->>>>>>>>       for security reasons (e.g. [2]) can achieve this by 
->>>>>>>> restricting the use
->>>>>>>>       of all possible protocols.
->>>>>>>>
->>>>>>>> This patch implements such control by restricting socket 
->>>>>>>> creation in a
->>>>>>>> sandboxed process.
->>>>>>>>
->>>>>>>> Add `LANDLOCK_RULE_SOCKET` rule type that restricts actions on 
->>>>>>>> sockets.
->>>>>>>> This rule uses values of address family and socket type (Cf. 
->>>>>>>> socket(2))
->>>>>>>> to determine sockets that should be restricted. This is 
->>>>>>>> represented in a
->>>>>>>> landlock_socket_attr struct:
->>>>>>>>
->>>>>>>>       struct landlock_socket_attr {
->>>>>>>>         __u64 allowed_access;
->>>>>>>>         int family; /* same as domain in socket(2) */
->>>>>>>>         int type; /* see socket(2) */
->>>>>>>>       };
->>>>>>>
->>>>>>> Hello! I'd like to consider another approach to define this 
->>>>>>> structure
->>>>>>> before sending the next version of this patchset.
->>>>>>>
->>>>>>> Currently, it has following possible issues:
->>>>>>>
->>>>>>> First of all, there is a lack of protocol granularity. It's 
->>>>>>> impossible
->>>>>>> to (for example) deny creation of ICMP and SCTP sockets and allow 
->>>>>>> TCP
->>>>>>> and UDP. Since the values of address family and socket type do not
->>>>>>> completely define the protocol for the restriction, we may gain
->>>>>>> incomplete control of the network actions. AFAICS, this is 
->>>>>>> limited to
->>>>>>> only a couple of IP protocol cases (e.g. it's impossible to deny 
->>>>>>> SCTP
->>>>>>> and SMC sockets to only allow TCP, deny ICMP and allow UDP).
->>>>>>>
->>>>>>> But one of the main advantages of socket access rights is the 
->>>>>>> ability to
->>>>>>> allow only those protocols for which there is a fine-grained control
->>>>>>> over their actions (TCP bind/connect). It can be inconvenient
->>>>>>> (and unsafe) for SCTP to be unrestricted, while sandboxed process 
->>>>>>> only
->>>>>>> needs TCP sockets.
->>>>>>
->>>>>> That is a good observation which I had missed.
->>>>>>
->>>>>> I agree with your analysis, I also see the main use case of socket()
->>>>>> restrictions in:
->>>>>>
->>>>>>     (a) restricting socket creating altogether
->>>>>>     (b) only permitting socket types for which there is fine 
->>>>>> grained control
->>>>>>
->>>>>> and I also agree that it would be very surprising when the same 
->>>>>> socket types
->>>>>> that provide fine grained control would also open the door for 
->>>>>> unrestricted
->>>>>> access to SMC, SCTP or other protocols.  We should instead strive 
->>>>>> for a
->>>>>> socket() access control with which these additional protocols weren't
->>>>>> accessible.
->>>>>>
->>>>>>
->>>>>>> Adding protocol (Cf. socket(2)) field was considered a bit during 
->>>>>>> the
->>>>>>> initial discussion:
->>>>>>> https://lore.kernel.org/all/CABi2SkVWU=Wxb2y3fP702twyHBD3kVoySPGSz2X22VckvcHeXw@mail.gmail.com/
->>>>>>
->>>>>> So adding "protocol" to the rule attributes would suffice to 
->>>>>> restrict the use of
->>>>>> SMC and SCTP then?  (Sorry, I lost context on these protocols a 
->>>>>> bit in the
->>>>>> meantime, I was so far under the impression that these were using 
->>>>>> different
->>>>>> values for family and type than TCP and UDP do.)
->>>>>
->>>>> Yeap. Following rule will be enough to allow TCP sockets only:
->>>>>
->>>>> const struct landlock_socket_attr create_socket_attr = {
->>>>>     .allowed_access = LANDLOCK_ACCESS_SOCKET_CREATE,
->>>>>     .family = AF_INET{,6},
->>>>>     .type = SOCK_STREAM,
->>>>>     .protocol = 0
->>>>> };
->>>>
->>>> We should indeed include the protocol type in the rule definition.
->>>>
->>>>>
->>>>> Btw, creation of SMC sockets via IP stack was added quite recently.
->>>>> So far, creation has been possible only with AF_SMC family.
->>>>>
->>>>> https://lore.kernel.org/all/1718301630-63692-1-git-send-email-alibuda@linux.alibaba.com/
->>>>>
->>>>>>
->>>>>>
->>>>>>> Secondly, I'm not really sure if socket type granularity is required
->>>>>>> for most of the protocols. It may be more convenient for the end 
->>>>>>> user
->>>>>>> to be able to completely restrict the address family without 
->>>>>>> specifying
->>>>>>> whether restriction is dedicated to stream or dgram sockets (e.g. 
->>>>>>> for
->>>>>>> BLUETOOTH, VSOCK sockets). However, this is not a big issue for the
->>>>>>> current design, since address family can be restricted by specifying
->>>>>>> type = SOCK_TYPE_MASK.
->>>>
->>>> It looks like SOCK_TYPE_MASK is not part of UAPI, which means it could
->>>> change with kernel versions (even while being in UAPI in fact).  This
->>>> new socket creation control should allow to deny any socket creation
->>>> known or unknow at the time of the user space program build, and
->>>> whatever the available C headers.
->>>
->>> Agreed
->>>
->>>>
->>>> This also means that Landlock should accept any domain, type, and
->>>> protocols defined in rules.  Indeed, we don't want to reject rules for
->>>> which some protocols are not allowed.
->>>
->>> Do you mean that Landlock should not make any assumptions about this
->>> values during a build time? Currently, patchset provides boundary checks
->>> for domain (< AF_MAX) and type (< SOCK_MAX) in landlock_add_rule().
->>
->> The *running kernel* may not support some socket's domains or types,
->> which may be confusing for users if the rule was tested on a kernel
->> supporting such domains/types. >
->> For the bitmask of domains or types, the issues to keep boundary checks
->> would be when a subset of them is not supported.  Landlock would reject
->> such rule and it would be difficult for users to identify the cause.
-> 
-> Ok, I'll remove these checks.
-> 
->>
->> I'm still wondering if the landlock_append_net_rule()'s -EAFNOSUPPORT
->> return value for kernels without CONFIG_INET was a good idea.  We should
->> probably return 0 in this case, which would be similar to not checking
->> socket's domains nor types.
-> 
-> It seems that returning -EAFNOSUPPORT only complicates error checking
-> for landlock_append_net_rule() from the user's perspective. Probably the
-> only reason to check the correctness of restricted objects in Landlock
-> is to provide errors consistency in hooks.
-> 
->>
->>>
->>>>
->>>> What about using bitmasks for the domain and type fields (renamed to
->>>> "domains" and "types")?  The last protocol is currently 45/MCTP so a
->>>> 64-bit field is enough, and 10/SOCK_PACKET also fits for the last 
->>>> socket
->>>> type.
->>>>
->>>> We cannot do the same with the protocol because the higher one is
->>>> 262/MPTCP though.  But it looks like a value of 0 (default protocol)
->>>> should be enough for most use cases, and users could specify a protocol
->>>> (but this time as a number, not a bitmask).
->>>>
->>>> To sum up, we could have something like this:
->>>>
->>>>     const struct landlock_socket_attr create_socket_attr = {
->>>>         .allowed_access = LANDLOCK_ACCESS_SOCKET_CREATE,
->>>>         .families = 1 << AF_INET | 1 << AF_INET6,
->>>>         .types = 1 << SOCK_STREAM,
->>>>         .protocol = IPPROTO_SCTP
->>>>     };
->>>
->>> Looks good! I think it's a nice approach which will provide a sufficient
->>> level of flexibility to define a single rule for a specific protocol (or
->>> for related protocols).
->>>
->>> But, this adds possibility to define a single rule for the set of
->>> unrelated protocols:
->>>
->>> /* Allows TCP, UDP and UNIX sockets. */
->>> const struct landlock_socket_attr create_socket_attr = {
->>>     .allowed_access = LANDLOCK_ACCESS_SOCKET_CREATE,
->>>     .families = 1 << AF_INET | 1 << AF_INET6 | 1 << AF_UNIX,
->>>     .types = 1 << SOCK_STREAM | 1 << SOCK_DGRAM,
->>>     .protocol = 0
->>> };
->>>
->>> Perhaps limiting the addition of one rule to only one address family
->>> would be more clear in terms of rule semantics?:
->>>
->>> /* Allows TCP, UDP, UNIX STREAM, UNIX DGRAM sockets. */
->>> const struct landlock_socket_attr create_socket_attrs[] = {
->>>     {
->>>         /* Allows IPv4 TCP and UDP sockets. */
->>>         .allowed_access = LANDLOCK_ACCESS_SOCKET_CREATE,
->>>         .family = AF_INET,
->>>         .types = 1 << SOCK_STREAM | 1 << SOCK_DGRAM,
->>>         .protocol = 0
->>>     },
->>>     {
->>>         /* Allows IPv6 TCP and UDP sockets. */
->>>         .allowed_access = LANDLOCK_ACCESS_SOCKET_CREATE,
->>>         .family = AF_INET6,
->>>         .types = 1 << SOCK_STREAM | 1 << SOCK_DGRAM,
->>>         .protocol = 0
->>>     },
->>>     {
->>>         /* Allows UNIX sockets. */
->>>         .allowed_access = LANDLOCK_ACCESS_SOCKET_CREATE,
->>>         .family = AF_UNIX,
->>>         .types = 1 << SOCK_STREAM | 1 << SOCK_DGRAM,
->>>         .protocol = 0
->>>     },
->>> };
->>
->> Because we are already mixing bitmasks and (protocol) value, I'm not
->> sure it will help much.  I think in most cases the "families" bitmask
->> would handle IPv4 and IPv6 the same (e.g. to only allow TCP with one
->> rule).  I think this is also required to be able to have a 1:1 mapping
->> with SELinux's socket_type_to_security_class().
-> 
-> Ok, agreed
+On Thu, 2024-10-17 at 09:55 -0600, Eric Snowberg wrote:
+> Introduce a new LSM called clavis.  The motivation behind this LSM is to
+> provide access control for system keys.  The access control list is
+> contained within a keyring call .clavis.  During boot if the clavis=3D bo=
+ot
+> arg is supplied with a key id contained within any of the current system
+> keyrings (builtin, secondary, machine, or platform) it shall be used as
+> the root of trust for validating anything that is added to the ACL list.
+>=20
+> The first restriction introduced with this LSM is the ability to enforce
+> key usage.  The kernel already has a notion of tracking key usage.  This
+> LSM adds the ability to enforce this usage based on the system owners
+> configuration.
+>=20
+> Each system key may have one or more uses defined within the ACL list.
+> Until an entry is added to the .clavis keyring, no other system key may
+> be used for any other purpose.
+>=20
+> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
+> ---
+>  Documentation/admin-guide/LSM/clavis.rst      | 191 ++++++++++++++++++
+>  MAINTAINERS                                   |   7 +
+>  crypto/asymmetric_keys/signature.c            |   4 +
+>  include/linux/lsm_count.h                     |   8 +-
+>  include/linux/lsm_hook_defs.h                 |   2 +
+>  include/linux/security.h                      |   7 +
+>  include/uapi/linux/lsm.h                      |   1 +
+>  security/Kconfig                              |  10 +-
+>  security/clavis/Makefile                      |   1 +
+>  security/clavis/clavis.c                      |  26 +++
+>  security/clavis/clavis.h                      |   4 +
+>  security/clavis/clavis_keyring.c              |  78 ++++++-
+>  security/security.c                           |  13 ++
+>  .../selftests/lsm/lsm_list_modules_test.c     |   3 +
+>  14 files changed, 346 insertions(+), 9 deletions(-)
+>  create mode 100644 Documentation/admin-guide/LSM/clavis.rst
+>  create mode 100644 security/clavis/clavis.c
+>=20
+> diff --git a/Documentation/admin-guide/LSM/clavis.rst b/Documentation/adm=
+in-guide/LSM/clavis.rst
+> new file mode 100644
+> index 000000000000..0e924f638a86
+> --- /dev/null
+> +++ b/Documentation/admin-guide/LSM/clavis.rst
+> @@ -0,0 +1,191 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +=3D=3D=3D=3D=3D=3D
+> +Clavis
+> +=3D=3D=3D=3D=3D=3D
+> +
+> +Clavis is a Linux Security Module that provides mandatory access control=
+ to
+> +system kernel keys (i.e. builtin, secondary, machine and platform). Thes=
+e
+> +restrictions will prohibit keys from being used for validation. Upon boo=
+t, the
+> +Clavis LSM is provided a key id as a boot parameter.  This single key is=
+ then
+> +used as the root of trust for any access control modifications made goin=
+g
+> +forward. Access control updates must be signed and validated by this key=
+.
+> +
+> +Clavis has its own keyring.  All ACL updates are applied through this ke=
+yring.
+> +The update must be signed by the single root of trust key.
+> +
+> +When enabled, all system keys are prohibited from being used until an AC=
+L is
+> +added for them.
 
-The bitmask approach leads to a complete refactoring of socket rule
-storage. This shouldn't be a big issue, since we're gonna need
-multiplexer for insert_rule(), find_rule() with a port range feature
-anyway [1]. But it seems that the best approach of storing rules
-composed of bitmasks is to store them in linked list and perform
-linear scan in landlock_find_rule(). Any other approach is likely to
-be too heavy and complex.
+Until the single key has been loaded, Clavis is not enabled.  Any key on th=
+e
+system trusted keyrings remains usable for any purpose.
 
-Do you think such refactoring is reasonable?
+-> When enabled, meaning the single key has been loaded onto the Clavis key=
+ring,
+all system keys are prohibited ...
 
-[1] https://github.com/landlock-lsm/linux/issues/16
+Until clavis is enabled, in my opinion the defaults should be restrictive (=
+e.g.
+CONFIG_INTEGRITY_CA_MACHINE_KEYRING,
+CONFIG_SECONDARY_TRUSTED_KEYRING_SIGNED_BY_BUILTIN). Once Clavis is enabled=
+,
+based=C2=A0on a new helper function is_clavis_enforced() we could consider =
+relaxing
+some of the existing keyring requirements (e.g. kernel modules).
 
-> 
->>
->>>
->>>>
->>>>
->>>>>>
->>>>>> Whether the user is adding one rule to permit AF_INET+*, or 
->>>>>> whether the user is
->>>>>> adding two rules to permit (1) AF_INET+SOCK_STREAM and (2) 
->>>>>> AF_INET+SOCK_DGRAM,
->>>>>> that does not seem like a big deal to me as long as the list of such
->>>>>> combinations is so low?
->>>>>
->>>>> Agreed
->>>>
->>>> I also agree, but this might change if users have to set a combination
->>>> of families, types, and protocols.  This should be OK with the bitmask
->>>> approach though.
->>>>
->>>>>
->>>>>>
->>>>>>
->>>>>>> I suggest implementing something close to selinux socket classes 
->>>>>>> for the
->>>>>>> struct landlock_socket_attr (Cf. 
->>>>>>> socket_type_to_security_class()). This
->>>>>>> will provide protocol granularity and may be simpler and more 
->>>>>>> convenient
->>>>>>> in the terms of determining access rights. WDYT?
->>>>>>
->>>>>> I see that this is a longer switch statement that maps to this 
->>>>>> enum, it would be
->>>>>> an additional data table that would have to be documented 
->>>>>> separately for users.
->>>>>
->>>>> This table is the general drawback, since it makes API a bit more
->>>>> complex.
->>>>>
->>>>>>
->>>>>> Do you have an example for how such a "security class enum" would 
->>>>>> map to the
->>>>>> combinations of family, type and socket for the protocols 
->>>>>> discussed above?
->>>>>
->>>>> I think the socket_type_to_security_class() has a pretty good mapping
->>>>> for UNIX and IP families.
->>>>
->>>> The mapping looks good indeed, and it has been tested for a long time
->>>> with many applications.  However, this would make the kernel
->>>> implementation more complex, and I think this mapping could easily be
->>>> implemented in user space libraries with the bitmask approach, if 
->>>> really
->>>> needed, which I'm not sure.
->>>
->>> I agree, implementing this in a library is a better approach. Thanks for
->>> the catch!
->>>
->>>>
->>>>>
->>>>>>
->>>>>> If this is just a matter of actually mapping (family, type, protocol)
->>>>>> combinations in a more flexible way, could we get away by allowing 
->>>>>> a special
->>>>>> "wildcard" value for the "protocol" field, when it is used within 
->>>>>> a ruleset?
->>>>>> Then the LSM would have to look up whether there is a rule for 
->>>>>> (family, type,
->>>>>> protocol) and the only change would be that it now needs to also 
->>>>>> check whether
->>>>>> there is a rule for (family, type, *)?
->>>>>
->>>>> Something like this?
->>>>>
->>>>> const struct landlock_socket_attr create_socket_attr = {
->>>>>     .allowed_access = LANDLOCK_ACCESS_SOCKET_CREATE,
->>>>>     .family = AF_INET6,
->>>>>     .type = SOCK_DGRAM,
->>>>>     .protocol = LANDLOCK_SOCKET_PROTO_ALL
->>>>> };
->>>>>
->>>>>>
->>>>>> —Günther
->>>>>
->>>
+Mimi
+
+> +
+> +On UEFI platforms, the root of trust key shall survive a kexec. Trying t=
+o
+> +defeat or change it from the command line is not allowed.  The original =
+boot
+> +parameter is stored in UEFI and will always be referenced following a ke=
+xec.
+> +
+> +The Clavis LSM contains a system keyring call .clavis.  It contains a si=
+ngle
+> +asymmetric key that is used to validate anything added to it.  This key =
+can
+> +be added during boot and must be a preexisting system kernel key.  If th=
+e
+> +``clavis=3D`` boot parameter is not used, any asymmetric key the user ow=
+ns
+> +can be added to enable the LSM.
+> +
+> +The only user space components are OpenSSL and the keyctl utility. A new
+> +key type call ``clavis_key_acl`` is used for ACL updates. Any number of =
+signed
+> +``clavis_key_acl`` entries may be added to the .clavis keyring. The
+> +``clavis_key_acl`` contains the subject key identifier along with the al=
+lowed
+> +usage type for the key.
+> +
+> +The format is as follows:
+> +
+> +.. code-block:: console
+> +
+> +  XX:YYYYYYYYYYY
+> +
+> +  XX - Single byte of the key type
+> +	VERIFYING_MODULE_SIGNATURE            00
+> +	VERIFYING_FIRMWARE_SIGNATURE          01
+> +	VERIFYING_KEXEC_PE_SIGNATURE          02
+> +	VERIFYING_KEY_SIGNATURE               03
+> +	VERIFYING_KEY_SELF_SIGNATURE          04
+> +	VERIFYING_UNSPECIFIED_SIGNATURE       05
+> +  :  - ASCII colon
+> +  YY - Even number of hexadecimal characters representing the key id
+> +
+> +The ``clavis_key_acl`` must be S/MIME signed by the sole asymmetric key =
+contained
+> +within the .clavis keyring.
+> +
+> +In the future if new features are added, new key types could be created.
+> +
+> +Usage Examples
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +How to create a signing key:
+> +----------------------------
+> +
+> +.. code-block:: bash
+> +
+> +  cat <<EOF > clavis-lsm.genkey
+> +  [ req ]
+> +  default_bits =3D 4096
+> +  distinguished_name =3D req_distinguished_name
+> +  prompt =3D no
+> +  string_mask =3D utf8only
+> +  x509_extensions =3D v3_ca
+> +  [ req_distinguished_name ]
+> +  O =3D TEST
+> +  CN =3D Clavis LSM key
+> +  emailAddress =3D user@example.com
+> +  [ v3_ca ]
+> +  basicConstraints=3DCA:TRUE
+> +  subjectKeyIdentifier=3Dhash
+> +  authorityKeyIdentifier=3Dkeyid:always,issuer
+> +  keyUsage=3DdigitalSignature
+> +  EOF
+> +
+> +  openssl req -new -x509 -utf8 -sha256 -days 3650 -batch \
+> +        -config clavis-lsm.genkey -outform DER \
+> +        -out clavis-lsm.x509 -keyout clavis-lsm.priv
+> +
+> +How to get the Subject Key Identifier
+> +-------------------------------------
+> +
+> +.. code-block:: bash
+> +
+> +  openssl x509 -in ./clavis-lsm.x509 -inform der \
+> +        -ext subjectKeyIdentifier  -nocert \
+> +        | tail -n +2 | cut -f2 -d '=3D'| tr -d ':'
+> +  4a00ab9f35c9dc3aed7c225d22bafcbd9285e1e8
+> +
+> +How to enroll the signing key into the MOK
+> +------------------------------------------
+> +
+> +The key must now be added to the machine or platform keyrings.  This
+> +indicates the key was added by the system owner. For kernels booted thro=
+ugh
+> +shim, a first-stage UEFI boot loader, a key may be added to the machine =
+keyring
+> +by doing:
+> +
+> +.. code-block:: bash
+> +
+> +  mokutil --import ./clavis-lsm.x509
+> +
+> +and then rebooting and enrolling the key through MokManager.
+> +
+> +How to enable the Clavis LSM
+> +----------------------------
+> +
+> +Add the key id to the ``clavis=3D`` boot parameter.  With the example ab=
+ove the
+> +key id is the subject key identifier: 4a00ab9f35c9dc3aed7c225d22bafcbd92=
+85e1e8
+> +
+> +Add the following boot parameter:
+> +
+> +.. code-block:: console
+> +
+> +  clavis=3D4a00ab9f35c9dc3aed7c225d22bafcbd9285e1e8
+> +
+> +After booting there will be a single key contained in the .clavis keyrin=
+g:
+> +
+> +.. code-block:: bash
+> +
+> +  keyctl show %:.clavis
+> +  Keyring
+> +    254954913 ----swrv      0     0  keyring: .clavis
+> +    301905375 ---lswrv      0     0   \_ asymmetric: TEST: Clavis LSM ke=
+y: 4a00ab9f35c9dc3aed7c225d22bafcbd9285e1e8
+> +
+> +The original ``clavis=3D`` boot parameter will persist across any kexec.=
+ Changing it or
+> +removing it has no effect.
+> +
+> +
+> +How to sign an entry to be added to the .clavis keyring:
+> +--------------------------------------------------------
+> +
+> +In this example we have 3 keys in the machine keyring.  Our Clavis LSM k=
+ey, a
+> +key we want to use for kernel verification and a key we want to use for =
+module
+> +verification.
+> +
+> +.. code-block:: bash
+> +
+> +  keyctl show %:.machine
+> +  Keyring
+> +    999488265 ---lswrv      0     0  keyring: .machine
+> +    912608009 ---lswrv      0     0   \_ asymmetric: TEST: Module Key: 1=
+7eb8c5bf766364be094c577625213700add9471
+> +    646229664 ---lswrv      0     0   \_ asymmetric: TEST: Kernel Key: b=
+360d113c848ace3f1e6a80060b43d1206f0487d
+> +   1073737099 ---lswrv      0     0   \_ asymmetric: TEST: Clavis LSM ke=
+y: 4a00ab9f35c9dc3aed7c225d22bafcbd9285e1e8
+> +
+> +To update the .clavis kerying ACL list, first create a file containing t=
+he
+> +key usage type followed by a colon and the key id that we want to allow =
+to
+> +validate that usage.  In the first example we are saying key
+> +17eb8c5bf766364be094c577625213700add9471 is allowed to validate kernel m=
+odules.
+> +In the second example we are saying key b360d113c848ace3f1e6a80060b43d12=
+06f0487d
+> +is allowed to validate signed kernels.
+> +
+> +.. code-block:: bash
+> +
+> +  echo "00:17eb8c5bf766364be094c577625213700add9471" > module-acl.txt
+> +  echo "02:b360d113c848ace3f1e6a80060b43d1206f0487d" > kernel-acl.txt
+> +
+> +Now both these files must be signed by the key contained in the .clavis =
+keyring:
+> +
+> +.. code-block:: bash
+> +
+> +  openssl smime -sign -signer clavis-lsm.x509 -inkey clavis-lsm.priv -in=
+ module-acl.txt \
+> +        -out module-acl.pkcs7 -binary -outform DER -nodetach -noattr
+> +
+> +  openssl smime -sign -signer clavis-lsm.x509 -inkey clavis-lsm.priv -in=
+ kernel-acl.txt \
+> +        -out kernel-acl.pkcs7 -binary -outform DER -nodetach -noattr
+> +
+> +Afterwards the ACL list in the clavis keyring can be updated:
+> +
+> +.. code-block:: bash
+> +
+> +  keyctl padd clavis_key_acl "" %:.clavis < module-acl.pkcs7
+> +  keyctl padd clavis_key_acl "" %:.clavis < kernel-acl.pkcs7
+> +
+> +  keyctl show %:.clavis
+> +
+> +  Keyring
+> +    254954913 ----swrv      0     0  keyring: .clavis
+> +    301905375 ---lswrv      0     0   \_ asymmetric: TEST: Clavis LSM ke=
+y: 4a00ab9f35c9dc3aed7c225d22bafcbd9285e1e8
+> +   1013065475 --alswrv      0     0   \_ clavis_key_acl: 02:b360d113c848=
+ace3f1e6a80060b43d1206f0487d
+> +    445581284 --alswrv      0     0   \_ clavis_key_acl: 00:17eb8c5bf766=
+364be094c577625213700add9471
+> +
+> +Now the 17eb8c5bf766364be094c577625213700add9471 key can be used for
+> +validating kernel modules and the b360d113c848ace3f1e6a80060b43d1206f048=
+7d
+> +key can be used to validate signed kernels.
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 7ad507f49324..748ba3f1143e 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -5567,6 +5567,13 @@ F:	scripts/Makefile.clang
+>  F:	scripts/clang-tools/
+>  K:	\b(?i:clang|llvm)\b
+> =20
+> +CLAVIS LINUX SECURITY MODULE
+> +M:	Eric Snowberg <eric.snowberg@oracle.com>
+> +L:	linux-security-module@vger.kernel.org
+> +S:	Maintained
+> +F:	Documentation/admin-guide/LSM/clavis.rst
+> +F:	security/clavis
+> +
+>  CLK API
+>  M:	Russell King <linux@armlinux.org.uk>
+>  L:	linux-clk@vger.kernel.org
+> diff --git a/crypto/asymmetric_keys/signature.c b/crypto/asymmetric_keys/=
+signature.c
+> index 2deff81f8af5..7e3a78650a93 100644
+> --- a/crypto/asymmetric_keys/signature.c
+> +++ b/crypto/asymmetric_keys/signature.c
+> @@ -13,6 +13,7 @@
+>  #include <linux/err.h>
+>  #include <linux/slab.h>
+>  #include <linux/keyctl.h>
+> +#include <linux/security.h>
+>  #include <crypto/public_key.h>
+>  #include <keys/user-type.h>
+>  #include "asymmetric_keys.h"
+> @@ -153,6 +154,9 @@ int verify_signature(const struct key *key,
+> =20
+>  	ret =3D subtype->verify_signature(key, sig);
+> =20
+> +	if (!ret)
+> +		ret =3D security_key_verify_signature(key, sig);
+> +
+>  	pr_devel("<=3D=3D%s() =3D %d\n", __func__, ret);
+>  	return ret;
+>  }
+> diff --git a/include/linux/lsm_count.h b/include/linux/lsm_count.h
+> index 16eb49761b25..146aba3993d9 100644
+> --- a/include/linux/lsm_count.h
+> +++ b/include/linux/lsm_count.h
+> @@ -102,6 +102,11 @@
+>  #define IPE_ENABLED
+>  #endif
+> =20
+> +#if IS_ENABLED(CONFIG_SECURITY_CLAVIS)
+> +#define CLAVIS_ENABLED 1,
+> +#else
+> +#define CLAVIS_ENABLED
+> +#endif
+>  /*
+>   *  There is a trailing comma that we need to be accounted for. This is =
+done by
+>   *  using a skipped argument in __COUNT_LSMS
+> @@ -124,7 +129,8 @@
+>  		LANDLOCK_ENABLED	\
+>  		IMA_ENABLED		\
+>  		EVM_ENABLED		\
+> -		IPE_ENABLED)
+> +		IPE_ENABLED		\
+> +		CLAVIS_ENABLED)
+> =20
+>  #else
+> =20
+> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.=
+h
+> index 9eca013aa5e1..a405122a4657 100644
+> --- a/include/linux/lsm_hook_defs.h
+> +++ b/include/linux/lsm_hook_defs.h
+> @@ -410,6 +410,8 @@ LSM_HOOK(int, 0, key_getsecurity, struct key *key, ch=
+ar **buffer)
+>  LSM_HOOK(void, LSM_RET_VOID, key_post_create_or_update, struct key *keyr=
+ing,
+>  	 struct key *key, const void *payload, size_t payload_len,
+>  	 unsigned long flags, bool create)
+> +LSM_HOOK(int, 0, key_verify_signature, const struct key *key,
+> +	 const struct public_key_signature *sig)
+>  #endif /* CONFIG_KEYS */
+> =20
+>  #ifdef CONFIG_AUDIT
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 2ec8f3014757..4439be172a51 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -63,6 +63,7 @@ enum fs_value_type;
+>  struct watch;
+>  struct watch_notification;
+>  struct lsm_ctx;
+> +struct public_key_signature;
+> =20
+>  /* Default (no) options for the capable function */
+>  #define CAP_OPT_NONE 0x0
+> @@ -2053,6 +2054,7 @@ void security_key_post_create_or_update(struct key =
+*keyring, struct key *key,
+>  					const void *payload, size_t payload_len,
+>  					unsigned long flags, bool create);
+> =20
+> +int security_key_verify_signature(const struct key *key, const struct pu=
+blic_key_signature *sig);
+>  #else
+> =20
+>  static inline int security_key_alloc(struct key *key,
+> @@ -2087,6 +2089,11 @@ static inline void security_key_post_create_or_upd=
+ate(struct key *keyring,
+>  						      bool create)
+>  { }
+> =20
+> +static inline int security_key_verify_signature(const struct key *key,
+> +						const struct public_key_signature *sig)
+> +{
+> +	return 0;
+> +}
+>  #endif
+>  #endif /* CONFIG_KEYS */
+> =20
+> diff --git a/include/uapi/linux/lsm.h b/include/uapi/linux/lsm.h
+> index 938593dfd5da..a2ef13c71143 100644
+> --- a/include/uapi/linux/lsm.h
+> +++ b/include/uapi/linux/lsm.h
+> @@ -65,6 +65,7 @@ struct lsm_ctx {
+>  #define LSM_ID_IMA		111
+>  #define LSM_ID_EVM		112
+>  #define LSM_ID_IPE		113
+> +#define LSM_ID_CLAVIS		114
+> =20
+>  /*
+>   * LSM_ATTR_XXX definitions identify different LSM attributes
+> diff --git a/security/Kconfig b/security/Kconfig
+> index 714ec08dda96..90355ddec5c0 100644
+> --- a/security/Kconfig
+> +++ b/security/Kconfig
+> @@ -265,11 +265,11 @@ endchoice
+> =20
+>  config LSM
+>  	string "Ordered list of enabled LSMs"
+> -	default "landlock,lockdown,yama,loadpin,safesetid,smack,selinux,tomoyo,=
+apparmor,ipe,bpf" if DEFAULT_SECURITY_SMACK
+> -	default "landlock,lockdown,yama,loadpin,safesetid,apparmor,selinux,smac=
+k,tomoyo,ipe,bpf" if DEFAULT_SECURITY_APPARMOR
+> -	default "landlock,lockdown,yama,loadpin,safesetid,tomoyo,ipe,bpf" if DE=
+FAULT_SECURITY_TOMOYO
+> -	default "landlock,lockdown,yama,loadpin,safesetid,ipe,bpf" if DEFAULT_S=
+ECURITY_DAC
+> -	default "landlock,lockdown,yama,loadpin,safesetid,selinux,smack,tomoyo,=
+apparmor,ipe,bpf"
+> +	default "landlock,lockdown,yama,loadpin,safesetid,smack,selinux,tomoyo,=
+apparmor,ipe,bpf,clavis" if DEFAULT_SECURITY_SMACK
+> +	default "landlock,lockdown,yama,loadpin,safesetid,apparmor,selinux,smac=
+k,tomoyo,ipe,bpf,clavis" if DEFAULT_SECURITY_APPARMOR
+> +	default "landlock,lockdown,yama,loadpin,safesetid,tomoyo,ipe,bpf,clavis=
+" if DEFAULT_SECURITY_TOMOYO
+> +	default "landlock,lockdown,yama,loadpin,safesetid,ipe,bpf,clavis" if DE=
+FAULT_SECURITY_DAC
+> +	default "landlock,lockdown,yama,loadpin,safesetid,selinux,smack,tomoyo,=
+apparmor,ipe,bpf,clavis"
+>  	help
+>  	  A comma-separated list of LSMs, in initialization order.
+>  	  Any LSMs left off this list, except for those with order
+> diff --git a/security/clavis/Makefile b/security/clavis/Makefile
+> index 16c451f45f37..a3430dd6bdf9 100644
+> --- a/security/clavis/Makefile
+> +++ b/security/clavis/Makefile
+> @@ -1,3 +1,4 @@
+>  # SPDX-License-Identifier: GPL-2.0
+> =20
+>  obj-$(CONFIG_SECURITY_CLAVIS) +=3D clavis_keyring.o
+> +obj-$(CONFIG_SECURITY_CLAVIS) +=3D clavis.o
+> diff --git a/security/clavis/clavis.c b/security/clavis/clavis.c
+> new file mode 100644
+> index 000000000000..21ade9e625dc
+> --- /dev/null
+> +++ b/security/clavis/clavis.c
+> @@ -0,0 +1,26 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +//
+> +#include <linux/lsm_hooks.h>
+> +#include <uapi/linux/lsm.h>
+> +#include "clavis.h"
+> +
+> +static struct security_hook_list clavis_hooks[] __ro_after_init =3D {
+> +	LSM_HOOK_INIT(key_verify_signature, clavis_sig_verify),
+> +};
+> +
+> +const struct lsm_id clavis_lsmid =3D {
+> +	.name =3D "clavis",
+> +	.id =3D LSM_ID_CLAVIS,
+> +};
+> +
+> +static int __init clavis_lsm_init(void)
+> +{
+> +	clavis_keyring_init();
+> +	security_add_hooks(clavis_hooks, ARRAY_SIZE(clavis_hooks), &clavis_lsmi=
+d);
+> +	return 0;
+> +};
+> +
+> +DEFINE_LSM(clavis) =3D {
+> +	.name =3D "clavis",
+> +	.init =3D clavis_lsm_init,
+> +};
+> diff --git a/security/clavis/clavis.h b/security/clavis/clavis.h
+> index 92f77a1939ad..b77e4ec8edbe 100644
+> --- a/security/clavis/clavis.h
+> +++ b/security/clavis/clavis.h
+> @@ -3,6 +3,8 @@
+>  #define _SECURITY_CLAVIS_H_
+>  #include <keys/asymmetric-type.h>
+> =20
+> +struct public_key_signature;
+> +
+>  /* Max length for the asymmetric key id contained on the boot param */
+>  #define CLAVIS_BIN_KID_MAX   32
+>  #define CLAVIS_ASCII_KID_MAX 64
+> @@ -20,4 +22,6 @@ const char __initconst *const clavis_module_acl[] =3D {
+>  extern const char __initconst *const clavis_module_acl[];
+>  #endif
+> =20
+> +int __init clavis_keyring_init(void);
+> +int clavis_sig_verify(const struct key *key, const struct public_key_sig=
+nature *sig);
+>  #endif /* _SECURITY_CLAVIS_H_ */
+> diff --git a/security/clavis/clavis_keyring.c b/security/clavis/clavis_ke=
+yring.c
+> index 2a18d0e77189..1e1fbb54f6be 100644
+> --- a/security/clavis/clavis_keyring.c
+> +++ b/security/clavis/clavis_keyring.c
+> @@ -284,7 +284,7 @@ static void clavis_add_acl(const char *const *skid_li=
+st, struct key *keyring)
+>  	}
+>  }
+> =20
+> -static int __init clavis_keyring_init(void)
+> +int __init clavis_keyring_init(void)
+>  {
+>  	struct key_restriction *restriction;
+> =20
+> @@ -306,10 +306,82 @@ static int __init clavis_keyring_init(void)
+> =20
+>  void __init late_init_clavis_setup(void)
+>  {
+> -	clavis_keyring_init();
+> -
+>  	if (!clavis_boot_akid)
+>  		return;
+> =20
+>  	system_key_link(clavis_keyring, clavis_boot_akid);
+>  }
+> +
+> +int clavis_sig_verify(const struct key *key, const struct public_key_sig=
+nature *sig)
+> +{
+> +	const struct asymmetric_key_ids *kids =3D asymmetric_key_ids(key);
+> +	const struct asymmetric_key_subtype *subtype;
+> +	const struct asymmetric_key_id *newkid;
+> +	char *buf_ptr, *ptr;
+> +	key_ref_t ref;
+> +	int i, buf_len;
+> +
+> +	if (!clavis_acl_enforced())
+> +		return 0;
+> +	if (key->type !=3D &key_type_asymmetric)
+> +		return -EKEYREJECTED;
+> +	subtype =3D asymmetric_key_subtype(key);
+> +	if (!subtype || !key->payload.data[0])
+> +		return -EKEYREJECTED;
+> +	if (!subtype->verify_signature)
+> +		return -EKEYREJECTED;
+> +
+> +	/* Allow sig validation when not using a system keyring */
+> +	if (!test_bit(PKS_USAGE_SET, &sig->usage_flags))
+> +		return 0;
+> +
+> +	/* The previous sig validation is enough to get on the clavis keyring *=
+/
+> +	if (sig->usage =3D=3D VERIFYING_CLAVIS_SIGNATURE)
+> +		return 0;
+> +
+> +	if (test_bit(PKS_REVOCATION_PASS, &sig->usage_flags))
+> +		return 0;
+> +
+> +	for (i =3D 0, buf_len =3D 0; i < 3; i++) {
+> +		if (kids->id[i]) {
+> +			newkid =3D (struct asymmetric_key_id *)kids->id[i];
+> +			if (newkid->len > buf_len)
+> +				buf_len =3D newkid->len;
+> +		}
+> +	}
+> +
+> +	if (!buf_len)
+> +		return -EKEYREJECTED;
+> +
+> +	/* Allocate enough space for the conversion to ascii plus the header. *=
+/
+> +	buf_ptr =3D kmalloc(buf_len * 2 + 4, GFP_KERNEL | __GFP_ZERO);
+> +
+> +	if (!buf_ptr)
+> +		return -ENOMEM;
+> +
+> +	for (i =3D 0; i < 3; i++) {
+> +		if (kids->id[i]) {
+> +			newkid =3D (struct asymmetric_key_id *)kids->id[i];
+> +			if (!newkid->len)
+> +				continue;
+> +
+> +			ptr =3D buf_ptr;
+> +			ptr =3D bin2hex(ptr, &sig->usage, 1);
+> +			*ptr++ =3D ':';
+> +			ptr =3D bin2hex(ptr, newkid->data, newkid->len);
+> +			*ptr =3D 0;
+> +			ref =3D keyring_search(make_key_ref(clavis_keyring_get(), true),
+> +					     &clavis_key_acl, buf_ptr, false);
+> +
+> +			if (!IS_ERR(ref))
+> +				break;
+> +		}
+> +	}
+> +
+> +	kfree(buf_ptr);
+> +
+> +	if (IS_ERR(ref))
+> +		return -EKEYREJECTED;
+> +
+> +	return 0;
+> +}
+> diff --git a/security/security.c b/security/security.c
+> index c5981e558bc2..097f8cedcd36 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -5522,6 +5522,19 @@ void security_key_post_create_or_update(struct key=
+ *keyring, struct key *key,
+>  	call_void_hook(key_post_create_or_update, keyring, key, payload,
+>  		       payload_len, flags, create);
+>  }
+> +
+> +/**
+> + * security_key_verify_signature - verify signature
+> + * @key: key
+> + * @sig: signature
+> + *
+> + * See whether signature verification is allowed based on the ACL for
+> + * key usage.
+> + */
+> +int security_key_verify_signature(const struct key *key, const struct pu=
+blic_key_signature *sig)
+> +{
+> +	return call_int_hook(key_verify_signature, key, sig);
+> +}
+>  #endif	/* CONFIG_KEYS */
+> =20
+>  #ifdef CONFIG_AUDIT
+> diff --git a/tools/testing/selftests/lsm/lsm_list_modules_test.c b/tools/=
+testing/selftests/lsm/lsm_list_modules_test.c
+> index 1cc8a977c711..cf292f976ac4 100644
+> --- a/tools/testing/selftests/lsm/lsm_list_modules_test.c
+> +++ b/tools/testing/selftests/lsm/lsm_list_modules_test.c
+> @@ -131,6 +131,9 @@ TEST(correct_lsm_list_modules)
+>  		case LSM_ID_IPE:
+>  			name =3D "ipe";
+>  			break;
+> +		case LSM_ID_CLAVIS:
+> +			name =3D "clavis";
+> +			break;
+>  		default:
+>  			name =3D "INVALID";
+>  			break;
+
