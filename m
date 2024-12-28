@@ -1,220 +1,96 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3455AC8DF;
-	Sat, 28 Dec 2024 15:11:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4078D161311;
+	Sat, 28 Dec 2024 17:49:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735398716; cv=none; b=PSnua+QoYzBcRjfU96JIN8PGzG05wvQwIvKA4WwS/s3qCYj2Ud3l7ngRo0XhIf22mEdmE3EOPM8rOSUCRbxjnn9ckiBSfOX+/P9tcixsbjt5JomcJq9zfq88Ptu8aaccKJ1zyR62QKvWx9SSB6DP/94YkZhNS72r4kwTcTIocjE=
+	t=1735408197; cv=none; b=ElIKNr/BQpcmabOY3/DNLwpz00G+HzKbtQFh8bw5C0rugT/NLhuFTBiiaBXIRb4tmEoWXlAzArX9PMlzupcgYipnHoHtiPTMR5LhZGwS/lLKXyobdL5gK/k6O+c30PgXVMBzsgZ46zLYPOhEAmsUENa+upiQjWEzCWqCPEQVaEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735398716; c=relaxed/simple;
-	bh=EOEi0MLcS4ch1lMOKoM9sInaetVXMgfNRi9r6nCz4Kk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=SjFrg0SuD0ZQF5Lw1skKjXTXp/PeGZGByhBXeGFtVuQRYZC+o1RR8s+JhYajn/OJB9/QRKSdPePAIzStxSFxzajYNZBMZFqaniUZBpZIt4slw+CEkXlfDhAd1/WiOXRC8+dX3Kug6P234zICgdKMx9L3uaMHU1Ab9gTPD9JlYD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OPEtU3ay; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1735408197; c=relaxed/simple;
+	bh=RuMN1Q8CWlTjh15BMmmq58Rea3xmXVi45xWGzB/Hf+0=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=BZ3V91CV4sgnlW9mbA0JZsNvJ/lCvfWTcfFEse6KqOHRzVwSSAjCRi47JccuK203k3OXwWTd7ByOQXlhV8tN8Tz7heX+pmSWo10UEXVfMM4wXRUvolgEgCQBhB/TAUdTMb7WxskxS8RvlzRfuVcBiyLtpkd96gVvzhvIkmhR3yE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=d+sjIZw4; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OPEtU3ay"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09B53C4CECD;
-	Sat, 28 Dec 2024 15:11:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1735398715;
-	bh=EOEi0MLcS4ch1lMOKoM9sInaetVXMgfNRi9r6nCz4Kk=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=OPEtU3ayCdMZiCsKRc6cx8LKfAcnzdJBDDiCHtpPnFYskR+/Id8u0zQl1C/y3zItW
-	 mh4yUQXoGrCYMr01NABU6pwM8Ym/rbZA0FHt5m62voaOZRzD2jvO/0Dmdb1ZOfCmU9
-	 KLzDHe2uYgzOYVe1uCFfEsNQRjCN0fqRTCcvGp83NCH9L1bvuXNbKBMGbLEOuFhapp
-	 Zmf3UZQAEdCOqfO+4MZbm0Odp3MD/YDq5mY0o8ePhhye2ZHWWEp+RasKmceEJAgYVm
-	 uqOQZ0Mcy+v7WJyqu5KKYroJtspFt7oIAssklfeEetNWBpOClLoVl6VRp+bwBL4oP3
-	 vhl6nYEQwGvmw==
-Message-ID: <f020095744b07958be5b66242d6cbd1826c885f5.camel@kernel.org>
-Subject: Re: [PATCH v4 -next 00/15] sysctl: move sysctls from vm_table into
- its own files
-From: Jeff Layton <jlayton@kernel.org>
-To: Kaixiong Yu <yukaixiong@huawei.com>, akpm@linux-foundation.org, 
-	mcgrof@kernel.org
-Cc: ysato@users.sourceforge.jp, dalias@libc.org,
- glaubitz@physik.fu-berlin.de, 	luto@kernel.org, tglx@linutronix.de,
- mingo@redhat.com, bp@alien8.de, 	dave.hansen@linux.intel.com,
- hpa@zytor.com, viro@zeniv.linux.org.uk, 	brauner@kernel.org, jack@suse.cz,
- kees@kernel.org, j.granados@samsung.com, 	willy@infradead.org,
- Liam.Howlett@oracle.com, vbabka@suse.cz, 	lorenzo.stoakes@oracle.com,
- trondmy@kernel.org, anna@kernel.org, 	chuck.lever@oracle.com,
- neilb@suse.de, okorniev@redhat.com, Dai.Ngo@oracle.com, 	tom@talpey.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, paul@paul-moore.com, jmorris@namei.org, 
-	linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-nfs@vger.kernel.org, 	netdev@vger.kernel.org,
- linux-security-module@vger.kernel.org, 	dhowells@redhat.com,
- haifeng.xu@shopee.com, baolin.wang@linux.alibaba.com, 
-	shikemeng@huaweicloud.com, dchinner@redhat.com, bfoster@redhat.com, 
-	souravpanda@google.com, hannes@cmpxchg.org, rientjes@google.com, 
-	pasha.tatashin@soleen.com, david@redhat.com, ryan.roberts@arm.com, 
-	ying.huang@intel.com, yang@os.amperecomputing.com, zev@bewilderbeest.net, 
-	serge@hallyn.com, vegard.nossum@oracle.com, wangkefeng.wang@huawei.com
-Date: Sat, 28 Dec 2024 10:11:50 -0500
-In-Reply-To: <20241228145746.2783627-1-yukaixiong@huawei.com>
-References: <20241228145746.2783627-1-yukaixiong@huawei.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.2 (3.54.2-1.fc41) 
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="d+sjIZw4"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1735408149; x=1736012949; i=markus.elfring@web.de;
+	bh=Dl1BLACyXNqDO9AAAtAEIbXwAH2RJ7SGg5nb491p6UU=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=d+sjIZw4Wju4LgFXHiEoq+B7bW0lhWknN/LU0iVHTD7ju5rgUAZQHzMoIyGawrvh
+	 hNSGzkD+f7j0mYSfRzJxDK2m/6Bno05hL7TsPHtutbxtpEB2lK30k9bcog5d2i4P6
+	 TZSEsqs0gcuj0n+pTemjiS+iLPwErXfkJ1s7duo48cQhxNjj6v8ySheAhgMbRzr68
+	 shrdWpa5OoJUi4aNn31Zo5TWVPCH4lPI66HWGDmX3/vP+mFURBEJa5LFtnaPdVaSo
+	 jcilS0i8Y3wcDVDc/lEixKOJEBhd/sRl/Nmn1/jdh4s7g6ztwXSMxIPQ0VXWZCLFO
+	 W692gYQZhhhppJ6lNw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.93.40]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N6sBp-1taGlO2B7n-010oRv; Sat, 28
+ Dec 2024 18:49:09 +0100
+Message-ID: <fda06873-1c64-4094-a3d3-07bbace16e96@web.de>
+Date: Sat, 28 Dec 2024 18:49:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+To: Tanya Agarwal <tanyaagarwal25699@gmail.com>, linux-sound@vger.kernel.org,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
+Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+ Anup Sharma <anupnewsmail@gmail.com>, James Morris <jmorris@namei.org>,
+ Kees Cook <kees@kernel.org>, Paul Moore <paul@paul-moore.com>,
+ "Serge E. Hallyn" <serge@hallyn.com>, Shuah Khan
+ <skhan@linuxfoundation.org>, YueHaibing <yuehaibing@huawei.com>
+References: <20241228071920.3252-1-tanyaagarwal25699@gmail.com>
+Subject: Re: [PATCH] ALSA: usb-audio: US16x08: Initialize array before use
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20241228071920.3252-1-tanyaagarwal25699@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:kiiLnJAj5XBQQhU1lzye0o/Eg5kAY4fAaFPify0k3gShiQIuyaj
+ bufONpQzslfCXFn7W0oH2JW9x4BmpVpl/L6YPv4QCqdLVAHRGNkL/o7H5nfXwjTIrjniCpW
+ ZG8DY/YMAcscupeqOKdlOQIvjXHfkutmPSRQzuGJd6K/Xg1On1W4mrIHxNpJ+/3rt4X0ap6
+ qZQVdoHO2+hSpuFYI+JDA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:sUOW7E/rA5w=;PzjNlfNXZO4LCIhGaYIniRwAzxq
+ l1yI1zx8keh0UdBoRPguRN3r1jOJ28fosx03+CVkQaNXjrYysQIIPdyzmy3blc7PPMisiogae
+ eLoTtXjjrivpqcF+uFYfAeIKdI9S0xKjbBn+jDyuZKiaHOxW/9WclqJUe6bfKIQs2sC1dYHuq
+ vhjkpOW4sKNh2buRQpVVRo5n0wJ8BAswjlw3UkPw47HydOMC5yqk5mussj+u5t2H2/BlkwXQp
+ mV7mWkDodYztpiBHnivu07mZxHnp6U2qEU3s4DQ7ARgOUCqA2EEgW3zs1n+3BFCh3qzMmuwD2
+ V5dS+f4gcgDVa+VK/Z4C2laIFi0SfrEyWdDyavzmHcOadw6q2YWMD2wpyBU4w/xIlOjLWCQ/o
+ +9BAfT6vYRnH/tp5mMkCb3pIplJbOVaWreYD7MW5iFVCuHoxiZZ2hbpWBNZ6VhH1K3hk4bnkg
+ 39KaORJcKAwBFTJaaGPoCjrpL0riW9Gq6uL0tussP5VysIkPl3IjngFfHZXuFVp9OwRFuMgcB
+ Pzi6zbRkafHkQey97yu+Lkq5ppBJ/w5+b14gSAwoE9w2bqNDSAdvir75dZM5fKrESIUXeB1VO
+ kzcLGKH7095075KI8/uZfzKphCQlQVykhd7dthQ9mKIa1Ut3Q91aA2X2WgWw+4FN+RWm/61ty
+ 23hwr2uRl+DeS7/V9ZNgKsFtaa4u+oNQUpE7k19lwuSOFaQLNY1iCfEpzxBZRZGznQZ3yWO86
+ qKj7k8rN+R1zB6jnFRk+/t+TThzHWSBc8/UQTrOVpkiAesC3wlUpc51JGnG5y3bJeBsOkyJel
+ Z54KqsqkD1w3Gg4Zzs8MsdWp1Y6UbbxzQ/+t/R8Y5u/S34mNHTIrkVW2Eh9ZJ3U6MGV77CW4X
+ fGEkrOuz7pMj7njcKyWy09esfRGp7/zf9zsOfWpA42mbLUno1DdXdlhw+u0cmm7gPNk2rlEEa
+ 76ZN1Tp6B+TSAAqOMWyrzP0Fv7wq9FUc48nNBaM15ScIBDar8OW6evm0Fbp5Kw/dapUw6VqiI
+ eniDAa/b/X+pA3jELd+rS2nXO0PdfXSUUXhWU2QNdLb03O05VS+hjBI74yM94cAJ7wAuq9/8S
+ wlpLl7sfI=
 
-On Sat, 2024-12-28 at 22:57 +0800, Kaixiong Yu wrote:
-> This patch series moves sysctls of vm_table in kernel/sysctl.c to
-> places where they actually belong, and do some related code clean-ups.
-> After this patch series, all sysctls in vm_table have been moved into its
-> own files, meanwhile, delete vm_table.
->=20
-> All the modifications of this patch series base on
-> linux-next(tags/next-20241219). To test this patch series, the code was
-> compiled with both the CONFIG_SYSCTL enabled and disabled on arm64 and
-> x86_64 architectures. After this patch series is applied, all files
-> under /proc/sys/vm can be read or written normally.
->=20
-> Changes in v4:
->  - due to my mistake, the previous version sent 15 patches twice.
->    Please ignore that, as this version is the correct one.
->  - change all "static struct ctl_table" type into
->    "static const struct ctl_table" type in patch1~10,12,13,14
->  - simplify result of rpcauth_cache_shrink_count() in patch11
->=20
-> Changes in v3:
->  - change patch1~10, patch14 title suggested by Joel Granados
->  - change sysctl_stat_interval to static type in patch1
->  - add acked-by from Paul Moore in patch7
->  - change dirtytime_expire_interval to static type in patch9
->  - add acked-by from Anna Schumaker in patch11
->=20
-> Changes in v2:
->  - fix sysctl_max_map_count undeclared issue in mm/nommu.c for patch6
->  - update changelog for patch7/12, suggested by Kees/Paul
->  - fix patch8, sorry for wrong changes and forget to built with NOMMU
->  - add reviewed-by from Kees except patch8 since patch8 is wrong in v1
->  - add reviewed-by from Jan Kara, Christian Brauner in patch12
->=20
-> Kaixiong Yu (15):
->   mm: vmstat: move sysctls to mm/vmstat.c
->   mm: filemap: move sysctl to mm/filemap.c
->   mm: swap: move sysctl to mm/swap.c
->   mm: vmscan: move vmscan sysctls to mm/vmscan.c
->   mm: util: move sysctls to mm/util.c
->   mm: mmap: move sysctl to mm/mmap.c
->   security: min_addr: move sysctl to security/min_addr.c
->   mm: nommu: move sysctl to mm/nommu.c
->   fs: fs-writeback: move sysctl to fs/fs-writeback.c
->   fs: drop_caches: move sysctl to fs/drop_caches.c
->   sunrpc: simplify rpcauth_cache_shrink_count()
->   fs: dcache: move the sysctl to fs/dcache.c
->   x86: vdso: move the sysctl to arch/x86/entry/vdso/vdso32-setup.c
->   sh: vdso: move the sysctl to arch/sh/kernel/vsyscall/vsyscall.c
->   sysctl: remove unneeded include
->=20
->  arch/sh/kernel/vsyscall/vsyscall.c |  14 ++
->  arch/x86/entry/vdso/vdso32-setup.c |  16 ++-
->  fs/dcache.c                        |  21 ++-
->  fs/drop_caches.c                   |  23 ++-
->  fs/fs-writeback.c                  |  30 ++--
->  include/linux/dcache.h             |   7 +-
->  include/linux/mm.h                 |  23 ---
->  include/linux/mman.h               |   2 -
->  include/linux/swap.h               |   9 --
->  include/linux/vmstat.h             |  11 --
->  include/linux/writeback.h          |   4 -
->  kernel/sysctl.c                    | 221 -----------------------------
->  mm/filemap.c                       |  18 ++-
->  mm/internal.h                      |  10 ++
->  mm/mmap.c                          |  54 +++++++
->  mm/nommu.c                         |  15 +-
->  mm/swap.c                          |  16 ++-
->  mm/swap.h                          |   1 +
->  mm/util.c                          |  67 +++++++--
->  mm/vmscan.c                        |  23 +++
->  mm/vmstat.c                        |  44 +++++-
->  net/sunrpc/auth.c                  |   2 +-
->  security/min_addr.c                |  11 ++
->  23 files changed, 330 insertions(+), 312 deletions(-)
->=20
+> Initialize array before use in mixer_us16x08.c to prevent the
+> issues related to uninitialized memory access.
+=E2=80=A6
 
-Nice cleanup.
+* You may occasionally put more than 61 characters into text lines
+  of such a change description.
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+* How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D and=
+ =E2=80=9CCc=E2=80=9D) accordingly?
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
+Documentation/process/submitting-patches.rst?h=3Dv6.13-rc4#n145
+
+
+Regards,
+Markus
