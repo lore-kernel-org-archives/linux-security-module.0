@@ -1,63 +1,64 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 099FB15A848;
-	Tue, 31 Dec 2024 05:29:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A206C1547CC;
+	Tue, 31 Dec 2024 06:03:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735622998; cv=none; b=eZ3nnpxF3joVbUKpXmWo6p1pcLwRHjI9mEup+kCYMfbcSp1+hAMfnXdg4X8UbegOjFOF9+b4274CCWAHM8r6yKujLsLQz6hTdwc/eUslgiXgwAtEK/OjlBS1/GrVTMoNax/ucMuot6aQmCGQmfv1v4m0y5B54Bbl8YlppVTAC3E=
+	t=1735624982; cv=none; b=t0Xz2g9F50suA2JF3fy0DaLOCR/8kf5M/7kSavZN+pljQ8KxdtWJp5+rn2o+3NrQTz4EV9HdhMn5zup72P+T+HFR+3NMz2+hngluz3PbsxUWAjd6FX8NXxmaTmbta63S44S7RpF8mhwSj1XBCVXR8vuy60F+tidd8z1ii7kG0Hw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735622998; c=relaxed/simple;
-	bh=JXjNPOUWo6llxAHjOnawwWCRzvFQjkJg8AXsIhrI1SI=;
+	s=arc-20240116; t=1735624982; c=relaxed/simple;
+	bh=YcnXuO7iHKmJdqPb9BnkF7onhOBNqoZYcDE/yprJUfg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ULigOH+SHqFyOxtwjhmzvldziYiRCvBX3e4bRC1irRhMCHDMJddkHJx9wk5AmoThum4eNTy/WAulr0ECTA6ihbFCzIaeFMHieDLfuSc3FgpWUxWKGP/LTd1dFeElQT+n9zb7LJ/l4/fHk+ccBsTxnQ+9EC1sQ1Eq6P8LZgTIfOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GhLtIn1r; arc=none smtp.client-ip=192.198.163.8
+	 Content-Type:Content-Disposition:In-Reply-To; b=sCXQ7DGKTcO8bYvVB1lJ1NuwDNRQYYXQ4TPshINJknfsygWXm92NUOhhWepmEB3fX6TKEsYsrBXwNutC+zvczUM3MM9gfxxS4Ofd/Wc+hi2q7WGgkGigL4k0re7bRp05nDhHQOMxsbmja+yk5dxDE74ukgWdn5//AxsYo3SzROE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YAF4qIKv; arc=none smtp.client-ip=198.175.65.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GhLtIn1r"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YAF4qIKv"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1735622997; x=1767158997;
+  t=1735624981; x=1767160981;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=JXjNPOUWo6llxAHjOnawwWCRzvFQjkJg8AXsIhrI1SI=;
-  b=GhLtIn1rTc1lJMCvNAtpQej2XbAVgOb215FwbBDJowhQgIXIF249cSxk
-   mBX+5H62hq4GTd1fodk0IAikiPpTMdigFTC0IW0pYctmRiNJVWhDQsIZs
-   Om7sfKSGgGarsVEdddAsO32hCKuWWTp5a5cxRFS+HyjohqL5k0XpMpxiS
-   ggNn8926M6T/W+Cp5LHK7yuXVg0/A1naxmYv1QS+q71w99d85LlkKxF+Q
-   1H317yR3yAv8gAjiEox7ZkwTF/6AivvHD7JjWVwelDyrZk3BeCCr+1wwn
-   djzrd5a/px6WiwTzSSr2tkFqtyKAh+VPu2/squMzEN9Bjn/n6xKSFOZ7D
-   A==;
-X-CSE-ConnectionGUID: lkgZpe0VS9KRoXSBJwQsyQ==
-X-CSE-MsgGUID: 5VK6AQJVQ9aoiN7/H2oPKw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11301"; a="53449955"
+  bh=YcnXuO7iHKmJdqPb9BnkF7onhOBNqoZYcDE/yprJUfg=;
+  b=YAF4qIKvM8VXHWl5qwBOygiecJimOlwqIGL5L24RjycKlUjCFLWU9mOr
+   Qe5qjacgwUSCQpakJ86ZV31BYBvakZRaFA0rmW33DS3jvs+673sTNqQVV
+   d0nr/DM2tyMFBEDefmu+eXkcPvXEUJZfnra1OIUAKjX7LPwFE6vPly1/n
+   q0u80rCmkdh58pIkXStLwPotEzaJAoxuMe/1RbgZBuao2QbYWWgFPZYF1
+   N2vtiXHoqLuAEadHwK4vfmeMPGq0uWMNaJobstPa0pENDKlBPn3PdD2SD
+   WelKyKHE8qyQZHoaNTmocofwOp3qzFsyWufAanFVlJzeqe7xKAfITfwA6
+   g==;
+X-CSE-ConnectionGUID: FsGLo+TsS0WYlPX1zql8jw==
+X-CSE-MsgGUID: Kqr7Sct6RBmADOAARTqBqg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11301"; a="46399018"
 X-IronPort-AV: E=Sophos;i="6.12,278,1728975600"; 
-   d="scan'208";a="53449955"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Dec 2024 21:29:56 -0800
-X-CSE-ConnectionGUID: uH6UoX5TTnujz6o39jC6Ew==
-X-CSE-MsgGUID: OPAZhILIS3yiAWKZVJuTXA==
+   d="scan'208";a="46399018"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Dec 2024 22:03:00 -0800
+X-CSE-ConnectionGUID: aG9EFMEvTda4oslupSCMzQ==
+X-CSE-MsgGUID: IdVyz2JETJCj+ot39c0n4w==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="105971468"
+X-IronPort-AV: E=Sophos;i="6.12,278,1728975600"; 
+   d="scan'208";a="101088930"
 Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 30 Dec 2024 21:29:52 -0800
+  by orviesa006.jf.intel.com with ESMTP; 30 Dec 2024 22:02:56 -0800
 Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1tSUpC-0006nH-0w;
-	Tue, 31 Dec 2024 05:29:50 +0000
-Date: Tue, 31 Dec 2024 13:28:53 +0800
+	id 1tSVLC-0006pT-1B;
+	Tue, 31 Dec 2024 06:02:54 +0000
+Date: Tue, 31 Dec 2024 14:01:57 +0800
 From: kernel test robot <lkp@intel.com>
 To: Shervin Oloumi <enlightened@chromium.org>, mic@digikod.net,
 	viro@zeniv.linux.org.uk
-Cc: oe-kbuild-all@lists.linux.dev, brauner@kernel.org, jack@suse.cz,
-	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
-	gnoack@google.com, shuah@kernel.org, jorgelo@chromium.org,
-	allenwebb@chromium.org, Shervin Oloumi <enlightened@chromium.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, brauner@kernel.org,
+	jack@suse.cz, paul@paul-moore.com, jmorris@namei.org,
+	serge@hallyn.com, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, gnoack@google.com,
+	shuah@kernel.org, jorgelo@chromium.org, allenwebb@chromium.org,
+	Shervin Oloumi <enlightened@chromium.org>
 Subject: Re: [PATCH 1/2] fs: add loopback/bind mount specific security hook
-Message-ID: <202412311303.Cb16SNL3-lkp@intel.com>
+Message-ID: <202412311322.DkS3TbED-lkp@intel.com>
 References: <20241231014632.589049-1-enlightened@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
@@ -79,25 +80,24 @@ url:    https://github.com/intel-lab-lkp/linux/commits/Shervin-Oloumi/landlock-a
 base:   fc033cf25e612e840e545f8d5ad2edd6ba613ed5
 patch link:    https://lore.kernel.org/r/20241231014632.589049-1-enlightened%40chromium.org
 patch subject: [PATCH 1/2] fs: add loopback/bind mount specific security hook
-config: sparc-randconfig-002-20241231 (https://download.01.org/0day-ci/archive/20241231/202412311303.Cb16SNL3-lkp@intel.com/config)
-compiler: sparc-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241231/202412311303.Cb16SNL3-lkp@intel.com/reproduce)
+config: um-randconfig-001-20241231 (https://download.01.org/0day-ci/archive/20241231/202412311322.DkS3TbED-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 319b89197348b7cad1215e235bdc7b5ec8f9b72c)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241231/202412311322.DkS3TbED-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412311303.Cb16SNL3-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412311322.DkS3TbED-lkp@intel.com/
 
 All errors (new ones prefixed by >>):
 
-   fs/namespace.c: In function 'do_loopback':
->> fs/namespace.c:2768:15: error: implicit declaration of function 'security_sb_bindmount'; did you mean 'security_sb_umount'? [-Wimplicit-function-declaration]
+>> fs/namespace.c:2768:8: error: call to undeclared function 'security_sb_bindmount'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
     2768 |         err = security_sb_bindmount(&old_path, path);
-         |               ^~~~~~~~~~~~~~~~~~~~~
-         |               security_sb_umount
+         |               ^
+   1 error generated.
 
 
-vim +2768 fs/namespace.c
+vim +/security_sb_bindmount +2768 fs/namespace.c
 
   2751	
   2752	/*
