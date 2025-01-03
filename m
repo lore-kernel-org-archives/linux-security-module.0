@@ -1,82 +1,208 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1264610D;
-	Thu,  2 Jan 2025 17:33:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70C5E13C9D9
+	for <linux-security-module@vger.kernel.org>; Fri,  3 Jan 2025 05:11:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735839216; cv=none; b=CErwscqSJYZPb9INn9crSeFKt1s03fbF3/+wq/hODDzybyd4omvB9e2D7T2uiND9Ru1E1PzW/9N1TWbdMMpsBH1uutRoEJVN0Cj1pSY7eQ9nCfeHl4Qff3tOORLVpfJ2xQAZeZzu/FFR5v2Ja/Qca/RyukLiNM3sxSYg+Ew9Sx0=
+	t=1735881080; cv=none; b=dwIgfpDrpnqvv8eEMCXlDYzy5vGkqWCHm+TMVC6qUQ6TocmnuXUd40lu8q3N0VfGVQw10+Hivm6gEdHgqaVJ+PAVMyDZQP7ieLle+flF8ZoYorF+iHaRU0KFSeJuSD8iB+jkD31nwjacD06a/bZxW2bNCaoiBOx7t+Qi5pBS+L8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735839216; c=relaxed/simple;
-	bh=g/WWTgiawR9PJ4oGPUfsf/LvEFCMknOwNLRmuuyae2k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MyuFT+xJ30gM/V06JxtDLNWZ4e53i8be3w6gwTF88eNECHNxWV4Yw0I8SJ63eedUKnmly+BB2DVmgDaeW2Ac70CfKOgJZ19yKobHw0FBLMjlUSWRa9/I7LINXoGSf38wf54vk5oVMCjsYG+GISeV7rHktDjFrw94bFMgfJVyt1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZQ2I1Rc4; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1735881080; c=relaxed/simple;
+	bh=lTiAkk7GDhDm6A2A1LdAN7rKdQW4LefYtJBW8i34M9M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mFImkXBf3OEtKpdRZzHat4D6C+hIkT8mh3RqvYsZ9iiNa4BzZ0mZ/VtJrf69Zee6VcIh3FEDCWslXq5Rne4AKiNXUHfGPlORZSHfaSAb7A61tJ435rK04FTdv8j/V53EVBasdakTO3uJCFyNX+3cWiWnpsXNOAgs/yiAKT+qF5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=eJ5UMSPq; arc=none smtp.client-ip=209.85.219.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZQ2I1Rc4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDC64C4CED0;
-	Thu,  2 Jan 2025 17:33:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1735839216;
-	bh=g/WWTgiawR9PJ4oGPUfsf/LvEFCMknOwNLRmuuyae2k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZQ2I1Rc41hpmNvoN8irGwheT1lNzZ+FS5XiApubOClqpcN/p+WPWjnBrkEOecyb24
-	 fVHee+tqcepgI3wcCAnEGpwtgH9NNGO7DLj3mJMEyuX8A4KR+U17Gi+Ac2LEZVTLB9
-	 geOTCPjabNPQdkIJqOcT24MwO214UfU+DAzw8PwGS6632Qdsadt0CfDAtRi6zxNCcZ
-	 vDP1z8QoMP6hr/lu0B9L5dwTZefPhnBKDhCQgOYhoJkQXPmRK5g/7s12zEhbaaZ4e2
-	 dddpOu4K9IRv48hmIrCEqMCyxn++EF2NoD4g76GJ4NWaEt/l7FE0MEZScMRkT7HrS0
-	 kxUxqJ6zJ0twg==
-Date: Thu, 2 Jan 2025 11:33:34 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Ahmad Fatoum <a.fatoum@pengutronix.de>
-Cc: Fabio Estevam <festevam@denx.de>, kernel@pengutronix.de,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>, linux-pm@vger.kernel.org,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	chrome-platform@lists.linux.dev,
-	Guenter Roeck <groeck@chromium.org>,
-	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-	Benson Leung <bleung@chromium.org>,
-	linux-security-module@vger.kernel.org,
-	"Rafael J. Wysocki" <rafael@kernel.org>, devicetree@vger.kernel.org,
-	Serge Hallyn <serge@hallyn.com>, Zhang Rui <rui.zhang@intel.com>,
-	Mark Brown <broonie@kernel.org>,
-	Matti Vaittinen <mazziesaccount@gmail.com>,
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 09/11] dt-bindings: thermal: give OS some leeway in
- absence of critical-action
-Message-ID: <173583921303.72780.9548337351300599303.robh@kernel.org>
-References: <20241219-hw_protection-reboot-v1-0-263a0c1df802@pengutronix.de>
- <20241219-hw_protection-reboot-v1-9-263a0c1df802@pengutronix.de>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="eJ5UMSPq"
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e3978c00a5aso15356045276.1
+        for <linux-security-module@vger.kernel.org>; Thu, 02 Jan 2025 21:11:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1735881077; x=1736485877; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hyUjB1kVxcHFpQ1CRCh4A/RpULQsoGV2kHxd7se2sWU=;
+        b=eJ5UMSPqN+F+9EJUqGDj3rkzALOrwla8q2e3EbQj0R9wtdLLFL7rVmpGpU8j6CMJtf
+         NY773Ja3CuvlmxTHX2ZhjFIUdD/dVmXesaON9EahBW/qsfeOjvf4+/KVW5WxZxqtypwU
+         6N6+zdPIu5tEFgCSPd2E2qS+RssQLwkElclvtArkUvvXfZIHEJTGeWjpXfkh82ndpGJd
+         pKlubHqWGVRxoEu3UqJ0UzNRIJN3rMMENvXGBi1H9QK0KIRGF+BTV93c0kwzd4FMb2Sj
+         f5H5iTvtlJ3hrMn+flrz9TprEmABqRK8PTfthsJPbI+AXvMUFttylt1y2pgKZeZJ4P9B
+         Ty/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1735881077; x=1736485877;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hyUjB1kVxcHFpQ1CRCh4A/RpULQsoGV2kHxd7se2sWU=;
+        b=wz0/oBz+ULZBgpB1tVXHWLMi5keZLGKeZ6BZPM9rb5l3DnCaKFuXpj0X7o+zwiJqIh
+         xRMe8x8NwJXAddDNxAwfYx7tanAd3S7u7/o+G/XDMJAk8NF8Uf5sctorminddf+WLSEw
+         TbyDkY2YLqugjChcCRIPQKP9lOt1DFc5tPK0531mz7g2O0oy9/UpcecEhrRlifCPwWH7
+         M4b+JZ01/tlbdVLBS1raIBL9Yv+1dW18xu4taX0aGyaLE1WFqaF4gWhzEZXrNl0bFy1e
+         4jEFFmCFLrghfB4m+h5FY6Eludd80JykX+d/x0fbrPdpX5N0+dEedlqtIFOkmN/WfccU
+         mXcw==
+X-Forwarded-Encrypted: i=1; AJvYcCVcjR1tXCldvTeloaN2qrf0b5PUficOmLyuaDWr/vxpx5By1WYSHiu7kScrmHl1Dhq/rV3i27TdMK83rAN0ziihHB20aCQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzf+PxFYFCUZ9oE/wVgGp0Vy6/7vQsBR2zdn9Rx95U+nD3E87xy
+	1bRAmxFsdRv595CIsQUWTVyOYOcH2VYwYg1RVAZ8yF+h2zrQXxenp6Pq6RtImSJCFQ1h1b5Tvb2
+	qxO9Lz+OUILMY9tx1iZrHGyAH64mBGwUQSviH
+X-Gm-Gg: ASbGncs4vcHWzXjQK5y8VUjUCmqUfNZogQBiMIiIaVZk0wEuRtot2UyiLHuriN4u3O3
+	Zom51PhTXZnM7BY+vtLqcK6nLArZgx+ZyOzc4
+X-Google-Smtp-Source: AGHT+IEaG1QHaplbyTdibz5moObmuj2MxywH20fhgd3U9cfVIq3ontjJAuQ13WjWl7C70U4yunqFQJZcp2eV/KWGPPM=
+X-Received: by 2002:a05:690c:6208:b0:6ef:4b3f:3bc3 with SMTP id
+ 00721157ae682-6f3f811507amr351018307b3.16.1735881077374; Thu, 02 Jan 2025
+ 21:11:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241219-hw_protection-reboot-v1-9-263a0c1df802@pengutronix.de>
+References: <20241231014632.589049-1-enlightened@chromium.org>
+In-Reply-To: <20241231014632.589049-1-enlightened@chromium.org>
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 3 Jan 2025 00:11:06 -0500
+Message-ID: <CAHC9VhTHviBcqhC=iOgD0R2Z4XqQifd-F1NysaX2C8oaF00oXA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] fs: add loopback/bind mount specific security hook
+To: Shervin Oloumi <enlightened@chromium.org>
+Cc: mic@digikod.net, viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
+	jmorris@namei.org, serge@hallyn.com, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, gnoack@google.com, shuah@kernel.org, 
+	jorgelo@chromium.org, allenwebb@chromium.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-On Thu, 19 Dec 2024 08:31:30 +0100, Ahmad Fatoum wrote:
-> An operating system may allow its user to configure the action to be
-> undertaken on critical overtemperature events.
-> 
-> However, the bindings currently mandate an absence of the critical-action
-> property to be equal to critical-action = "shutdown", which would mean
-> any differing user configuration would violate the bindings.
-> 
-> Resolve this by documenting the absence of the property to mean that the
-> OS gets to decide.
-> 
-> Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+On Mon, Dec 30, 2024 at 8:46=E2=80=AFPM Shervin Oloumi <enlightened@chromiu=
+m.org> wrote:
+>
+> The main mount security hook (security_sb_mount) is called early in the
+> process before the mount type is determined and the arguments are
+> validated and converted to the appropriate format. Specifically, the
+> source path is surfaced as a string, which is not appropriate for
+> checking bind mount requests. For bind mounts the source should be
+> validated and passed as a path struct (same as destination), after the
+> mount type is determined. This allows the hook users to evaluate the
+> mount attributes without the need to perform any validations or
+> conversions out of band, which can introduce a TOCTOU race condition.
+>
+> The newly introduced hook is invoked only if the security_sb_mount hook
+> passes, and only if the MS_BIND flag is detected. At this point the
+> source of the mount has been successfully converted to a path struct
+> using the kernel's kern_path API. This allows LSMs to target bind mount
+> requests at the right stage, and evaluate the attributes in the right
+> format, based on the type of mount.
+>
+> This does not affect the functionality of the existing mount security
+> hooks, including security_sb_mount. The new hook, can be utilized as a
+> supplement to the main hook for further analyzing bind mount requests.
+> This means that there is still the option of only using the main hook
+> function, if all one wants to do is indiscriminately reject all bind
+> mount requests, regardless of the source and destination arguments.
+> However, if one needs to evaluate the source and destination of a bind
+> mount request before making a decision, this hook function should be
+> preferred. Of course, if a bind mount request does not make it past the
+> security_sb_mount check, the bind mount hook function is never invoked.
+>
+> Signed-off-by: Shervin Oloumi <enlightened@chromium.org>
 > ---
->  Documentation/devicetree/bindings/thermal/thermal-zones.yaml | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
+>  fs/namespace.c                |  4 ++++
+>  include/linux/lsm_hook_defs.h |  1 +
+>  include/linux/security.h      |  1 +
+>  security/security.c           | 16 ++++++++++++++++
+>  4 files changed, 22 insertions(+)
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Like Casey I'm not really excited about such a specific LSM hook, but
+unfortunately we can't simply call kern_path() in the existing
+security_sb_mount() callback as that could end up resolving to
+something different than the call in do_loopback() which would be bad.
+Moving the kern_path() call up into path_mount() just looks like a bad
+idea anyway you look at it.  Unfortunately I don't really see an
+alternative to what you're proposing, so I guess we're kinda stuck
+with this as a solution, unless someone can think of something better.
 
+I'm going to need to see an ACK from the VFS folks on this before I
+merge the new hook.
+
+I'd also stick with the security_sb_bindmount() name as opposed to the
+XXX_path() suggestion from Casey simply to help distinguish it from
+the pathname based LSM hooks.  Yes, this is operating on the pathname,
+but bind mounts are a bit of a special case.
+
+Unrelated, but I just noticed that we are calling security_sb_mount()
+*before* may_mount(); that's the opposite order for most LSM hook
+placements where we do the discretionary/capabilities checks first and
+the LSM checks.  That's something we should look at, perhaps there is
+a good reason for the ordering being different, perhaps it's a
+mistake.
+
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index 23e81c2a1e3f..c902608c9759 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -2765,6 +2765,10 @@ static int do_loopback(struct path *path, const ch=
+ar *old_name,
+>         if (err)
+>                 return err;
+>
+> +       err =3D security_sb_bindmount(&old_path, path);
+> +       if (err)
+> +               goto out;
+
+I might make a mention in the commit description that the
+do_reconfigure_mnt() case (MS_REMOUNT|MS_BIND) should be able to be
+handled using the existing security_sb_mount() hook.
+
+>         err =3D -EINVAL;
+>         if (mnt_ns_loop(old_path.dentry))
+>                 goto out;
+
+...
+
+> diff --git a/security/security.c b/security/security.c
+> index 09664e09fec9..bd7cb3df16f4 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -1564,6 +1564,22 @@ int security_sb_mount(const char *dev_name, const =
+struct path *path,
+>         return call_int_hook(sb_mount, dev_name, path, type, flags, data)=
+;
+>  }
+>
+> +/**
+> + * security_sb_bindmount() - Loopback/bind mount specific permission che=
+ck
+> + * @old_path: source of loopback/bind mount
+> + * @path: mount point
+> + *
+> + * This check is performed in addition to security_sb_mount and only if =
+the
+> + * mount type is determined to be loopback/bind mount (flags & MS_BIND).=
+  It
+> + * surfaces the mount source as a path struct.
+
+I wouldn't mention security_sb_mount() above as that makes the comment
+somewhat fragile in the face of changing hooks.  I would suggest
+something along these lines:
+
+"Beyond any general mounting hooks, this check is performed on an
+ initial loopback/bind mount (MS_BIND) with the mount source presented
+ as a path struct in @old_path."
+
+> + * Return: Returns 0 if permission is granted.
+> + */
+> +int security_sb_bindmount(const struct path *old_path, const struct path=
+ *path)
+> +{
+> +       return call_int_hook(sb_bindmount, old_path, path);
+> +}
+> +
+>  /**
+>   * security_sb_umount() - Check permission for unmounting a filesystem
+>   * @mnt: mounted filesystem
+>
+> base-commit: fc033cf25e612e840e545f8d5ad2edd6ba613ed5
+> --
+> 2.47.1.613.gc27f4b7a9f-goog
+
+--=20
+paul-moore.com
