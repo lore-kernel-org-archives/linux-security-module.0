@@ -1,143 +1,121 @@
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F156BC8F0
-	for <linux-security-module@vger.kernel.org>; Sat,  4 Jan 2025 04:48:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A871C01
+	for <linux-security-module@vger.kernel.org>; Sat,  4 Jan 2025 16:47:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1735966130; cv=none; b=NynElIshQXzHYhRW1N+Uci6I6muKA0CGKgXx1JmlOHgMQohCAnxZ1IVxiDbR16rn4VhiJAzR0WGs6QLQ3mNVWVMdNSQr488jw9JhTh3ZnTYtDjqbWHbyW3i81L0P3VOWtHeC109+UMjjEObLQ6RJahV/b2m5D7E5vZ5DtcdJ+3s=
+	t=1736009279; cv=none; b=rHFDyxjpYgUxbC0B1AcsungY0b7Ks7pZ51xAXUV6Xib4E2jy8s0T7IToPKozqL7yuJ1miFk/1yVmQ9yAU3GpCjZlmEqZQFtHZ97tTDK+LregQOTLHM+reU1RU2TQAwjGQ9TVh1BMzo4eI7mxQYCshlYAI5kA3ErwTC3oX1wfaEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1735966130; c=relaxed/simple;
-	bh=A0s2YuACES6mN6TZFiv4N7G7rES2pmBqDGCXNSeyq7w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CJZux9vAwUv+W7o+DFbGpDKVn8xDUnufcsTMctbB8FI6VOglZwoDXrjOiMaGA2eQ0ZuWsYxWFMBNp345FtNQFLM/EFUyZUe2/xfWF668YX+eLqmHFPZs302hHOkC/U4BMKL33p16egO8DqSg8EIbOyx0eMfEkJojUyKEtLjqaD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Bg35BtrZ; arc=none smtp.client-ip=209.85.219.179
+	s=arc-20240116; t=1736009279; c=relaxed/simple;
+	bh=h2tIki7bjEXiM/8jYOiqm11/Uqn3d7vqDv10DCbrnQ8=;
+	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
+	 References:In-Reply-To; b=X7Mfn491/1P3SVD8FPU08V+f/vhB3gFVbqoJhW8Nti6xB11Kogo9WYTFSJJFYOpBvYCo76AkFqMXBW86fjJxC64zz0n9n6kU2F1tiebjEaxOTwioGt0C69b+hBepO6A/5tphor3DcDgReJhomrdLm9kwvo51RGKH3ptVlQdnafU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=fJylvwYr; arc=none smtp.client-ip=209.85.219.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Bg35BtrZ"
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e5372a2fbddso18782603276.3
-        for <linux-security-module@vger.kernel.org>; Fri, 03 Jan 2025 20:48:48 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="fJylvwYr"
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6dcdd9a3e54so132091726d6.3
+        for <linux-security-module@vger.kernel.org>; Sat, 04 Jan 2025 08:47:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1735966128; x=1736570928; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LnP5GGCllDyCZL0yygmBRlrRMIsnWX12av0h5HGIO6s=;
-        b=Bg35BtrZiuJaoZNovuHpcWdmklFwDccz0FsJtLf4vMvucVDTPz8MGrlYtm2UEvbelk
-         HCc7KTdL1uHnjP8ft//YE7SjdfZ/fz1ZX7s8ZUEsTMF8BHZMJIFQRXwqUe8rcfXaasq3
-         gSMYhhCojgDRnp47pRGoGD/tIsAZLyO8Yag4hm1Bo0W+YxwxtA2AFb3AONVHSwC9iwyI
-         oYeEX/ZRcy0K7gWlchbYB5TqycN+Olu2gQmLoct05vk/lC1Y3p6vCv5Ck6dONxvycb5M
-         IWQtMpkq5KO5mgSbZnF5U/YrZF8lg8n8Ev0IMleIYWdzcI6TQrOlgORgFxVSIFmJl0JV
-         TYEg==
+        d=paul-moore.com; s=google; t=1736009276; x=1736614076; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bd5Gcpcx32k0ZpzwyDHTdQhUj4sAgjDRDgH5tS6ZrE0=;
+        b=fJylvwYr6U+FTfTNhAlWBCwmJw9YgHasPovYNPT4UT5dmwto0yXULKaIxfQIy39hA9
+         0MbhqcrKgzpQTAC0lCoYr37sta8KTIb/l5kFWwbR+qAUBTJahAUWkjUgH8x9UXjxHT1K
+         R6faKzhqdgAfV4uzypuCeJKxKfOG6zONzJ8i9uLtF4yDlprJYb1n0TrNQAS3RJaasLIP
+         l67MzoKbzZoqOPQcPdOV69FJ2SdJrUvxDySRyGH6K9125JOCxfzQhOh/KIrBQ2yafNNH
+         xHPQQ9X7Bvngp7su7UncefjeJq5PcJIeWQdI7pRH+r44UZyJxiWzduEvNR6cZKO4fE9i
+         0JmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1735966128; x=1736570928;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LnP5GGCllDyCZL0yygmBRlrRMIsnWX12av0h5HGIO6s=;
-        b=p/sVHm/YBQ4zm7akWDJUBHdqU29HTANOOt8IiC9ZM6j1XdHl4eIeFDbQtJzMo0KUW5
-         cIqqCUvY+0THYLRZT9sQ0Nq9ua4+BEUobvUa/FsiD0FrxFu6cYAmf8JcHhcKD+DdaScW
-         l6HoFEA9T2kQpn6yIxS6gqPsz+tVOVvGibrfPqSr6561FYiC/PX1C4Swe5WNpLIq+X7Y
-         W/R+wLQn5ZWuVp+QnJ9qUxLFE07h/hA8BZRUwB8WIFll8g9BhOo2hKbSog5KOd8sw7Oj
-         NL98J8r9BU32vY9MdPvruj68Kje1qh2fMygUtGdUqHUWJ5OoNAjpm2CO6xzdDh0RJkru
-         EPPw==
-X-Forwarded-Encrypted: i=1; AJvYcCWmIgzGK48lxUCbFCI+gNoXsrOcl3qWKD98RlT7j6TeXKofDni3EwI+BNrrt53RbCU3+1ALaY4/N2cSNpnnf03hBjvtLOU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywtc2DfVprq7Tm+YqZIjWhFjCm05rzbquEBxAW/2cIyHyjgDRmu
-	PJvXo0JP4wwZBpIG/SyX0eaONMgxORIzBM2/BEVTSRz9hgC9OOw/6VXhzGh3LP1eEao87JrxyX5
-	9GFPHBww81/JhKk44M1mWDz9NrRqVxeMi4wyX
-X-Gm-Gg: ASbGncuhL5dcF4dLkBmv43TaUB5A7/yePHyN4VEbwWHQAD/de2rTqsSEf5EDIXYUmMB
-	k3G0EhXAy9pG+96Wiezu46xeNh0ENILLmkE0X
-X-Google-Smtp-Source: AGHT+IEL+4JFcHvCubvCZz/BZBs/n/SCUkFCpUxerc6R9k/w1c/UFGB0K2dl2RQP5eYGYDWQQb7MKzYrVM5fND2eMjs=
-X-Received: by 2002:a05:690c:690b:b0:6ef:7036:3b57 with SMTP id
- 00721157ae682-6f3f821a2camr379894657b3.28.1735966127992; Fri, 03 Jan 2025
- 20:48:47 -0800 (PST)
+        d=1e100.net; s=20230601; t=1736009276; x=1736614076;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=bd5Gcpcx32k0ZpzwyDHTdQhUj4sAgjDRDgH5tS6ZrE0=;
+        b=OWYc7Dj1Lnxb3OcTsYhEOJ7j7TBWFzAVys1hd1mwFMnkcpD4LeWd8QtSjeXfpzsfov
+         Fi9QTFHIHeYdBL9zDuVDT2oW0MM1j9aef+u1UhwRi0KNQPgPWT6W8UuPaJDKljnnc7FT
+         5uV4Q6vwrs6+gHYpp/oquPh+HF6B4rlIl80tc1uOstdwTIA9S9ofRcu9Ag7/D/dbslue
+         ocqjjKMWeJQKxZdYxo3VU5T3ewhzLY2+48k6l160e2cEz7zr8+2GHhU2IsI4pbn8+jZx
+         /I4SP+tut0fu7oa6ePOSRaeQLEZUneS5El+vtS8RuFK42WMHg55kcCVZo5PYqfhSqzje
+         Vhhg==
+X-Forwarded-Encrypted: i=1; AJvYcCV6lAoobxpqhYVe0dRaNgO+hCTd0/v9ehKZNfB8n86YfW3Qfs6BQQNExRo1Dd7VSjYfq3ow0glsC3uLb+F9yy0jMLYkHtw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx23wiKDkZw/abe0QjHZLUVBJU4E2rCPoZi8dZpASxP3Qle+g96
+	ErGXv9mo95chq7JOQqWuDd7LUwJUoB/O/8wzhMRH5RU/AGYpJ9SSvWl11u68lg==
+X-Gm-Gg: ASbGncun0jradTFyppjURyOktQI8e5RKGKJwHwCZ/hPqV826NvKemP+4Apqq4RchVBr
+	jDr/0fU5D61p7VqYZpnWlnTKvJKgatIsTjRdT8AGO4SALXrBusd7nf9UCv9loYmqBDn0tOOlKAz
+	lR8kJ3/b7TXEWFxiNDLl996s4BFF2SX9V4UQGuFG2SpaXdvqSon4QGx6enPR6sCJ+KVp1GgeFCB
+	rMGQTGzjOJzTv5otrEFXfxyXAY4DGB8eBMkQTSaMqLmJ+CP5fU=
+X-Google-Smtp-Source: AGHT+IFPLFZsnBfSRo+5eexgcUQBdUzzkhBzACl/CPaB5hudagsKQ0zX1q4RnI10Mrc/Xdn8h2Ph6w==
+X-Received: by 2002:a05:6214:5f11:b0:6d8:a730:110c with SMTP id 6a1803df08f44-6dd2339b10dmr1115611796d6.38.1736009275804;
+        Sat, 04 Jan 2025 08:47:55 -0800 (PST)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6dd180ea73esm151471096d6.18.2025.01.04.08.47.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 04 Jan 2025 08:47:55 -0800 (PST)
+Date: Sat, 04 Jan 2025 11:47:54 -0500
+Message-ID: <4892093687d106c160329d4d6d9d775f@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241017155516.2582369-1-eric.snowberg@oracle.com>
- <c490397315c2704e9ef65c8ad3fefedb239f1997.camel@linux.ibm.com> <72F52F71-C7F3-402D-8441-3D636A093FE8@oracle.com>
-In-Reply-To: <72F52F71-C7F3-402D-8441-3D636A093FE8@oracle.com>
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=UTF-8 
+Content-Transfer-Encoding: 8bit 
+X-Mailer: pstg-pwork:20250104_1133/pstg-lib:20250104_1133/pstg-pwork:20250104_1133
 From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 3 Jan 2025 23:48:37 -0500
-Message-ID: <CAHC9VhRHEw5c+drC=aX4xTqWoQJJZ+qkJ7aHUT5dcu+Q5f7BqA@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 00/13] Clavis LSM
-To: Eric Snowberg <eric.snowberg@oracle.com>
-Cc: Mimi Zohar <zohar@linux.ibm.com>, 
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>, David Howells <dhowells@redhat.com>, 
-	David Woodhouse <dwmw2@infradead.org>, 
-	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>, "davem@davemloft.net" <davem@davemloft.net>, 
-	Ard Biesheuvel <ardb@kernel.org>, Jarkko Sakkinen <jarkko@kernel.org>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	"casey@schaufler-ca.com" <casey@schaufler-ca.com>, Stefan Berger <stefanb@linux.ibm.com>, 
-	"ebiggers@kernel.org" <ebiggers@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>, 
-	"keyrings@vger.kernel.org" <keyrings@vger.kernel.org>, 
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, 
-	"linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>, 
-	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>, Eric Paris <eparis@redhat.com>, =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>, "Serge E . Hallyn" <serge@hallyn.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>, Ben Scarlato <akhna@google.com>, Casey Schaufler <casey@schaufler-ca.com>, Charles Zaffery <czaffery@roblox.com>, Francis Laniel <flaniel@linux.microsoft.com>, James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, Jorge Lucangeli Obes <jorgelo@google.com>, Kees Cook <kees@kernel.org>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <mattbobrowski@google.com>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, Phil Sutter <phil@nwl.cc>, Praveen K Paladugu <prapal@linux.microsoft.com>, Robert Salvet <robert.salvet@roblox.com>, Shervin Oloumi <enlightened@google.com>, Song Liu <song@kernel.org>, Tahera Fahimi <fahimitahera@gmail.com>, audit@vger.kernel.org, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v3 1/23] lsm: Only build lsm_audit.c if CONFIG_SECURITY and  CONFIG_AUDIT are set
+References: <20241122143353.59367-2-mic@digikod.net>
+In-Reply-To: <20241122143353.59367-2-mic@digikod.net>
 
-On Fri, Jan 3, 2025 at 6:14=E2=80=AFPM Eric Snowberg <eric.snowberg@oracle.=
-com> wrote:
-> > On Dec 23, 2024, at 5:09=E2=80=AFAM, Mimi Zohar <zohar@linux.ibm.com> w=
-rote:
+On Nov 22, 2024 =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net> wrote:
+> 
+> When CONFIG_AUDIT is set, its CONFIG_NET dependency is also set, and the
+> dev_get_by_index and init_net symbols (used by dump_common_audit_data)
+> are found by the linker.  dump_common_audit_data() should then failed to
+> build when CONFIG_NET is not set. However, because the compiler is
+> smart, it knows that audit_log_start() always return NULL when
+> !CONFIG_AUDIT, and it doesn't build the body of common_lsm_audit().  As
+> a side effect, dump_common_audit_data() is not built and the linker
+> doesn't error out because of missing symbols.
+> 
+> Let's only build lsm_audit.o when CONFIG_SECURITY and CONFIG_AUDIT are
+> both set, which is checked with the new CONFIG_HAS_SECURITY_AUDIT.
+> 
+> ipv4_skb_to_auditdata() and ipv6_skb_to_auditdata() are only used by
+> Smack if CONFIG_AUDIT is set, so they don't need fake implementations.
+> 
+> Because common_lsm_audit() is used in multiple places without
+> CONFIG_AUDIT checks, add a fake implementation.
+> 
+> Cc: Casey Schaufler <casey@schaufler-ca.com>
+> Cc: James Morris <jmorris@namei.org>
+> Cc: Paul Moore <paul@paul-moore.com>
+> Cc: Serge E. Hallyn <serge@hallyn.com>
+> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> Link: https://lore.kernel.org/r/20241122143353.59367-2-mic@digikod.net
+> ---
+> Changes since v2:
+> - Add CONFIG_HAS_SECURITY_AUDIT to fix the build with AUDIT &&
+>   !SECURITY, reported by Guenter Roeck.
+> ---
+>  include/linux/lsm_audit.h | 14 ++++++++++++++
+>  security/Kconfig          |  5 +++++
+>  security/Makefile         |  2 +-
+>  3 files changed, 20 insertions(+), 1 deletion(-)
 
-...
+This fix should probably stand alone from the rest of the patchset as it
+is a worthwhile fix independent of the Landlock feature additions.  I'm
+going to go ahead and merge this via the lsm/dev branch now, if anyone
+has any objections please let me know.
 
-> > My main concern is not with Clavis per-se, but that the LSM
-> > infrastructure allows configuring all the LSMs, but enabling at build t=
-ime and
-> > modifying at runtime a subset of them.  Without Clavis enabled, nothing=
- changes
-> > - any key on the system trusted keyrings remains usable for any purpose=
-.  With
-> > the current LSM design, the end user security threat model cannot be gu=
-aranteed.
->
-> I went in the direction of creating a new LSM based on this discussion [1=
-].
-> I was hoping to get some feedback from Paul, since I believe I have
-> addressed the guidelines for a new LSM.  Currently, the Clavis LSM only
-> adds a single LSM hook.  To address your concern, maybe Clavis shouldn't
-> be a LSM?  Possibly it could live in the keyring code on its own.
+Thanks!
 
-My turn to apologize for a very late reply, you've been very patient
-and I appreciate that.
-
-With respect to Mimi's concerns about disabling Clavis, or any LSM for
-that matter, at runtime, doing so requires the ability to modify the
-kernel's command line.  I would argue that if a user can manipulate
-the kernel command line there are more serious issues that need to be
-dealt with first.  Any user who is seriously concerned about the state
-of their system should have some mechanism in place to ensure that the
-kernel command line is not subject to tampering; thankfully there are
-efforts underway to help bring tamper resistant command lines to a
-larger audience (the UKI work).
-
-I can't remember if anyone has ever brought this up on-list, and if so
-what objections there may have been, but I've always wondered if the
-real problem is simply that we use a handful of keyrings for far too
-many things inside the kernel.  What terrible things would need to be
-overcome if we created additional keyrings based on usage, e.g.
-".modulesigning", and used these task specific keyrings instead of the
-existing source/trust oriented keyrings?  I imagine we would likely
-need some mechanism to link a key from the existing source/trust
-keyrings, e.g. ".machine", to a task specific keyring, e.g.
-".modulesigning", but I can't imagine that would be too difficult.
-
-Regardless, back to Clavis ... reading quickly through the cover
-letter again, I do somewhat wonder if this isn't better integrated
-into the keyring proper; have you talked to both David and Jarkko
-about this?  Were they supportive of the idea, but simply felt it was
-better as an LSM?  I see Jarkko has reviewed and commented on a number
-of the patches, so I'll take that as an implicit acceptance of the
-concept, but have you heard anything from David?
-
---=20
+--
 paul-moore.com
