@@ -1,95 +1,116 @@
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D68A79C4
-	for <linux-security-module@vger.kernel.org>; Sun,  5 Jan 2025 03:11:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 797244A3E
+	for <linux-security-module@vger.kernel.org>; Sun,  5 Jan 2025 03:49:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736046684; cv=none; b=Ku4XOn4l/NuLu28wmZHAcHjyRV+PTY3J5jWv2FQ0aMTDBn3yY8867s+b86SMnhxQrDg39L8by26lSExlKvF5KxhQB+CEHh9F2dbp0VZJGLBDRHOPyY4DBSyxQMiunvA7F9zeaVv0wXq4uxJD3qNmf8jjflwbjeNL/8OkWmbTH0w=
+	t=1736048969; cv=none; b=tGJxR9exgwRxx6cJ6dXzmDQrUHpJOPJyBTo0aOOtXbAmS6nSV5p+MrXg62UV41N0GgE0Gtd1hQSGegP1F45S/7oxjb3pcAdpikOkqT8sFXNfrA8pw1t4SmzN7dAuSiK1D18KnM5j6DO9VPmaqQTJH3Z0JFz6Z1iWP9NEDZNKoiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736046684; c=relaxed/simple;
-	bh=LjzVv5pLxvqrc1ynToshNVK4xohlWsJbzs7wMSKW3i4=;
-	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=IQQZ18FID31vIF1qMsMA/0rxYBmZoW5bLeCtqj9hFlKxK4hP9rknvF2YIVn/Jb4QLPd3xsS2niLgR7IxUgzOz+JB0mGwWseLRSM4VN/2+CxVXj8PEeZvlaHVRN1nsd8RLcYGpBKOLR1CBJIfwoEVYY8PVWHrKcw1Clk1Oeso04g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=fF/Emey4; arc=none smtp.client-ip=209.85.222.171
+	s=arc-20240116; t=1736048969; c=relaxed/simple;
+	bh=b6zVtB5LinMc1RpSrZ1qJBHiexLQ02Dvz3MvDOYq9Lg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bcKddsifl5QIUvEo8gnUx9Ctj7tgTCq7+P6RpKQPlPXWd4bl2FHjBtlHwdAOU7NvgxnMhlagwA2cikYQalJCvh0bkzfn5A+cp7B6K7fQ9rF9qV6pPwNlbJ8DEgGgXjRkf+8GMYKXKawkUz/AHL1lRgalz2+CnUm6/r5dlMKn+Tg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=df9O9wnM; arc=none smtp.client-ip=209.85.219.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="fF/Emey4"
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7b70e78351aso1078650785a.0
-        for <linux-security-module@vger.kernel.org>; Sat, 04 Jan 2025 19:11:22 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="df9O9wnM"
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e460717039fso17221802276.0
+        for <linux-security-module@vger.kernel.org>; Sat, 04 Jan 2025 19:49:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1736046682; x=1736651482; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=713K/Xxci2+ii1pa7s1nbThzLbzo8/wputlWA7AidGA=;
-        b=fF/Emey4F8Ra8jzpzTvbHLld1x4U04koNDXwJU+ZF9Xxlaca/aVunxE+pjzr+v3gnO
-         alpaVsPgULWCHx6wANOTklCwVOY8q/pbSrdlYE5k2OKWqJBJDOyKgUdM187R311YBz1d
-         S76VZ1BZ4BKU0914o1DCq3J7NKIFonR46YvgQ96jNcV3Kbb7uZwpu/k7+m9at3d1fmxc
-         huvJYqmDUkADe7CYcGhFv2OKL97+LPma5nvsfT6fSiZrItlCe99Xollvwrq+x4ijzaJu
-         /rshpJ418uvcFLyNOTly7dGcS8vXQIk+NysZrwm3t9si4kBcxu+5hplutmCPsHVbetav
-         0Jgw==
+        d=paul-moore.com; s=google; t=1736048966; x=1736653766; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X4cgSgneQbSlBJD0+kgcCz+RS+iow4L0Shm1nbUOb04=;
+        b=df9O9wnMzHAStMzplZre85Lf9v1XFkVJKoxPhnALZK2LmfxwLbEfFPkU27dTEtIKhq
+         Ldx8d4PspKJB5M2S9d/vhQV0O/LpR2TBuX0EOPAfRrZBDlpxjuYqJnz3+UanD4ZG9jHV
+         1V5zif7ksry+U7Lv48iakMSP+ZIIpD/EdlAHgTWnLhd/jOKiWnMpCqEqBcSaDOCqSph7
+         2em0O3ptrP2TyVShrVww1O7it6g7ZnyZ33QF0lsQhZYagkUZ/CPlJcXVIZ76GK37PWvs
+         uzpcQtO/zl+Abhklk3ZYpGQzvKak2U7NWzkYJ7bGP6mj5yfDD1uEix/VfVA+mIjJKAc5
+         UIAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736046682; x=1736651482;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=713K/Xxci2+ii1pa7s1nbThzLbzo8/wputlWA7AidGA=;
-        b=Q3JQ9fkc+Tz/ZZWAr9NRkVmgVpKLOsjzu8wvonlZHmgXGi2lUa4X01G6ulNYhzSVFH
-         s7OJbMkvmHwumcisB6IJtBgyYFLAr67vHPwooXwtaOGpNSGLI6HtPIXnQkC375mGNEml
-         PSSJYT0hxnOCMwPc1d4A3l1tZLi1VCGpWYadkGAo7TGZ+n0cg5zu7vfLpGPtwnxbRwll
-         4Nopt8vzJvaeML0CALiFIzFk4KiNs8s1cJdvXQ4bCTmFd24kice6hpV4eeOisnW25Edh
-         qWX6m06EVg9UrS/DuRQYyD/FWzHIsa78zdaB1SQfZDF0Izui4lhNs+mUAoYQZsme4k1c
-         YlCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWYmEb+YskB+whQuMfYFrFQ7xPwIZJa6/Qv6CWMFUaAdRg5D765dCDWF1NH3nh1sb0vupb63SWO6t3beOGxWM6750q7NRw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxK1oHAXYXxnfqWFCdqyPlglZq+Dnh+fj7M+6Ftqegl0avB/Z4C
-	xt48WzHGwjV3PbN9fE4IjDaAKGYggD8+A1yyej1yGlBjjNPSVLhmnd5NiwRvLA==
-X-Gm-Gg: ASbGncuYMSjK4qSc9G/pQC3aJOfH/GMGr18eay6BVCdTjJZyuzcPL+OehYbis0JhmOF
-	sa/zybQ2gs+WXmKuBwSUud17RFflnRNECdQrxk8/wdV/yWPp5BpRMzxEmbZR8wy9n4Jws+Skmd/
-	ssWb/2G77sR8frrYch/yWNpUoLw351EWF3SQOuFBh09oo+mpPwQFX3qloJug4fwABtxOpvWI6//
-	uui/FOHa4Ez0zdPgVeGq7XSQ8qop0m1uSTpOi02zEEmGxzsD4k=
-X-Google-Smtp-Source: AGHT+IFYBQEhVjHgNrj6df3L3PvVYd3aTn8gApq+cjhuE7r06vSWA6/s7EWPEL3m0kgHTJ9r058cMA==
-X-Received: by 2002:a05:620a:2807:b0:7b6:d631:2669 with SMTP id af79cd13be357-7b9ba79aa8amr10662502685a.21.1736046682034;
-        Sat, 04 Jan 2025 19:11:22 -0800 (PST)
-Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b9ac2bbfbasm1399728585a.17.2025.01.04.19.11.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 Jan 2025 19:11:21 -0800 (PST)
-Date: Sat, 04 Jan 2025 22:11:21 -0500
-Message-ID: <3a60ad96a636f4fe02bcf10019017d58@paul-moore.com>
+        d=1e100.net; s=20230601; t=1736048966; x=1736653766;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=X4cgSgneQbSlBJD0+kgcCz+RS+iow4L0Shm1nbUOb04=;
+        b=akwi3XmpBRRdoHv8VJj6W9gLASFrDZa2Xk9zB+1C7mG4sAxua1DygmGKTBFoA6QTHh
+         UTys/bYTH9YmZ7Btjd8lITLxXvyPhPm7ArHkA+2r+k8GV84zyTS0/1vn0dbe679vBq1L
+         9EpkfA/JwuuYdwHT2tZCg8p1VgnOOQRM8LG+ZU3G8h7ccycfTuuYdlTbUTV9QtCKwWgv
+         +YLLDeS94qsqmWV52ZgHlL1QbB6X048/koJ+UEyaSruW13/AymLUsGl8WasQNzzQTi+S
+         D7wWd/+SPcHbd7ip108fqXTrPpC7UjWH9l50ZZJGnPF0Cfn5N0FFgnYCQrhmtDTOTt76
+         Frzg==
+X-Forwarded-Encrypted: i=1; AJvYcCXApkKCfbyV+4FRaAN/0IpV5r48v4cnjewsEkIiT8bk2v8JyzFqUYrp4rFN9/E5CNk57T59G7M6IerMH/UrBghDKXcsnvU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzN8y+tg2nu8w05OXVZlOejRC0fANflA0MhtilinKn9vezuPy88
+	dtP9Epa/pMsU/3PtSCjG25RBW9favj+UyTFr4mgTaE4hnyKGuIQaaDQMjDPC2shNRjzCG0aBz1y
+	KzsubVG4ITq0xpcchLEeE6WUh+sKZ7Zi1HxCv
+X-Gm-Gg: ASbGncsArZs/m9mdTg3Y7mP4KQxpfC4GJg1/zAKx+AH7cPGvnC5zGEmAqqkf2XgAl0F
+	4SA9IHnkXEVR+85UtCsIJkfYbZ3C9htNghULW
+X-Google-Smtp-Source: AGHT+IGbfwPxv2tLIgSY8NUO26W2crcCV3cOQls9iEOYgayZOjq0o5a4AnTktqu5sDGnfzTUrXlT8ft4L2Z11DHXov0=
+X-Received: by 2002:a05:690c:6005:b0:6e2:ada7:ab3e with SMTP id
+ 00721157ae682-6f3f821a3femr361116767b3.30.1736048966316; Sat, 04 Jan 2025
+ 19:49:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=UTF-8 
-Content-Transfer-Encoding: 8bit 
-X-Mailer: pstg-pwork:20250104_1133/pstg-lib:20250104_1133/pstg-pwork:20250104_1133
+MIME-Version: 1.0
+References: <675f513a.050a0220.37aaf.0106.GAE@google.com> <20241217182657.10080-2-leocstone@gmail.com>
+ <CAHC9VhQGeNv=UEhXPN5MN1h0xEZkeE9kbE79+k9HvNxdK_4xzA@mail.gmail.com>
+In-Reply-To: <CAHC9VhQGeNv=UEhXPN5MN1h0xEZkeE9kbE79+k9HvNxdK_4xzA@mail.gmail.com>
 From: Paul Moore <paul@paul-moore.com>
-To: Casey Schaufler <casey@schaufler-ca.com>, LSM List <linux-security-module@vger.kernel.org>
-Cc: Florian Westphal <fw@strlen.de>, Karol Przybylski <karprzy7@gmail.com>, Casey Schaufler <casey@schaufler-ca.com>
-Subject: Re: [PATCH v2] net: corrections for security_secid_to_secctx returns
-References: <2ac1afc7-8549-48eb-ac63-daea64c3d80a@schaufler-ca.com>
-In-Reply-To: <2ac1afc7-8549-48eb-ac63-daea64c3d80a@schaufler-ca.com>
+Date: Sat, 4 Jan 2025 22:49:15 -0500
+Message-ID: <CAHC9VhRektpFHeUirRP8MH3NkmHWyy4BLcrDpy9zJH=ZJD4gRw@mail.gmail.com>
+Subject: Re: [PATCH v2] lsm: check size of writes
+To: Leo Stone <leocstone@gmail.com>, mortonm@chromium.org
+Cc: syzbot+4eb7a741b3216020043a@syzkaller.appspotmail.com, jmorris@namei.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	serge@hallyn.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Dec 20, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
-> 
-> security_secid_to_secctx() returns the size of the new context,
-> whereas previous versions provided that via a pointer parameter.
-> Correct the type of the value returned in nfqnl_get_sk_secctx()
-> and the check for error in netlbl_unlhsh_add(). Add an error
-> check.
-> 
-> Fixes: 2d470c778120 ("lsm: replace context+len with lsm_context")
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> ---
->  net/netfilter/nfnetlink_queue.c   | 12 +++++++-----
->  net/netlabel/netlabel_unlabeled.c |  6 +++---
->  2 files changed, 10 insertions(+), 8 deletions(-)
+On Wed, Dec 18, 2024 at 4:51=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+ote:
+> On Tue, Dec 17, 2024 at 1:27=E2=80=AFPM Leo Stone <leocstone@gmail.com> w=
+rote:
+> >
+> > syzbot attempts to write a buffer with a large size to a sysfs entry
+> > with writes handled by handle_policy_update(), triggering a warning
+> > in kmalloc.
+> >
+> > Check the size specified for write buffers before allocating.
+> >
+> > Reported-by: syzbot+4eb7a741b3216020043a@syzkaller.appspotmail.com
+> > Closes: https://syzkaller.appspot.com/bug?extid=3D4eb7a741b3216020043a
+> > Signed-off-by: Leo Stone <leocstone@gmail.com>
+> > ---
+> > v2: Make the check in handle_policy_update() to also cover
+> > safesetid_uid_file_write(). Thanks for your feedback.
+> > v1: https://lore.kernel.org/all/20241216030213.246804-2-leocstone@gmail=
+.com/
+> > ---
+> >  security/safesetid/securityfs.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+>
+> Looks okay to me.  Micah, are you planning to merge this patch, or
+> would you like me to take it via the LSM tree?
+>
+> Reviewed-by: Paul Moore <paul@paul-moore.com>
+>
+> I'm going to tag this to come back to it in a week or so in case we
+> don't hear from Micah, but if you don't see any further replies Leo,
+> feel free to send a gentle nudge ;)
 
-Looks good to me, thanks Casey.  Merged into lsm/dev.
+I'm going to go ahead and merge this into lsm/dev, if Micah has a
+problem with that I can always remove/revert if needed.
 
---
+We may need to revisit safesetid's documented support status, but
+that's a topic for another day.
+
+Thanks everyone.
+
+--=20
 paul-moore.com
