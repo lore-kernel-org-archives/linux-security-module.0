@@ -1,57 +1,57 @@
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7321F4A3E
-	for <linux-security-module@vger.kernel.org>; Sun,  5 Jan 2025 03:51:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C57909461
+	for <linux-security-module@vger.kernel.org>; Sun,  5 Jan 2025 04:04:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736049117; cv=none; b=dnq7pYB4XjtTrCLTXakzT6ldjOfUkY0Suo/xYgCEknFgGDpU9kO3sc/llSZCQYl1jjE4cBhkBLgOrmyHIBCiYmJYplef+mYCJWmCG+FA6HwSLsHaqv2on1S6U5YogTiV1vqMbkjCB2jv4IacmUz7VuYcQsBuZSpBfm9fyXgEPJE=
+	t=1736049863; cv=none; b=aGx76d24w/H0pXgtOrG1vEyp6jizRu5mFt/xcohkR+1an39HsG4cW0ieS1E2Fabg2DVwVT4+mRHXP3scTPOCDmarDiDYlyCvChY//Dw11/+A8guFFvdP4bqq5CpDWW6pzSscmf+bbiUnIWWND9QDsKqV7IVtkBS6n4EMcunr5Nw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736049117; c=relaxed/simple;
-	bh=JB8u9MpdUGcVST/3+QyhiiiB+l2M3B5wnGcVrvsDf1A=;
+	s=arc-20240116; t=1736049863; c=relaxed/simple;
+	bh=3WReSFYMsKW3Kg60qssqQLXfjVQ0S9xUvUd/EYJ92MA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Rft1hN/ccRwYpLneHuwBSQkRj7zzOmlq3J4NO+oi8Jy7W1hMa8J1hBdWn47dTC2o3p3Ar2iRacPXSIaLt0y8NW3Cipwi2nfmZ+5vpl3vRE03twVmhYq8gk+nmbRygd2iH9orZLuK8vrAivB3XkFoS+W5oe/xV3GucCEPtKxYn18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=NHtSQxBk; arc=none smtp.client-ip=209.85.219.179
+	 To:Cc:Content-Type; b=eOirujF+kkVojrWtUtCjD+nC5fTgLjqmRw8nTAW7awz60ID/rMxBBSJ7t1S3SpHS6M437V1PWvjFIq6XBUC6lH7og6QW9Yag4cmX/fi+uPcMq2pvgVxV5nzZUFzV7Gj115WEANX6vnarPaYX6gnK6tpyKqC4UQUuhruS5IRW2rk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=OoAGyLSW; arc=none smtp.client-ip=209.85.219.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="NHtSQxBk"
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e5390ed85a1so17711253276.1
-        for <linux-security-module@vger.kernel.org>; Sat, 04 Jan 2025 19:51:55 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="OoAGyLSW"
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e53a91756e5so17645758276.1
+        for <linux-security-module@vger.kernel.org>; Sat, 04 Jan 2025 20:04:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1736049114; x=1736653914; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1736049860; x=1736654660; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xoyVQMf7stkvDb40CL9IIDCTdKO3yMnPD0zWSkcmakw=;
-        b=NHtSQxBkFpO00/uz4ptChLD4nCgfbpogmz4gPs1HExqa2bsPMmxLtp7W23dx+/ezKl
-         LEl8HYyYqosI7DEl0E2aSwSR0SZzcjCSPXQYrIXVuBi7h+S+yh+dS0aqp1+FXFObN1ZA
-         mfKaXdz/Xc8/AMLRb6H2pRhJqAJdkuHiUPVgqPFfaxEMl75bekfnDk8ZNgRxtLXQAGqQ
-         6Ryb4Hc0KMim+kpPV7QgdkTO5ZsOKdVKI1CJdZzoHFOz5HNg1PGzfqreoiSpRQGAaycs
-         8BDtFLC6NbdgpPbtbqs+CLYMCux2rAuqx6JH6MOZltDV0KDaxJh8QCqvILJvGHMyVTMv
-         tsUw==
+        bh=FHP0DfJRnVMC2nRs6LVvahB5caK8ctNmQriM6U7pNGg=;
+        b=OoAGyLSWEljMJNJP+v5X1RYznmKGX3Ap7Jdw+zEmk7wS2u2MAt+5jMhTIvLZMk3HQ4
+         LXJd5xFx7ZpF/K/Vs3JnmvhUW5H3VP/WVtguPnkkhC0ytI9VCotXCTzy1kVoXGHVd/U3
+         BeWux1BSw7tinHIHkmdI+Pr7FNPYAq/8cLwGW1igHaCjvfyEmCnCVmqNoc7odVlVoagK
+         DLN9DvZLfQmF3K1ef5EG/SPgv6oXCJ0rO2rxqAuEpcMHjQ9soU5njwuNVnfVCdrm4fH1
+         vrS+ykt0/d8mrqChHLqjd1q72DKj4ebBhx9OXDYOo1kT+RqALMaSehpjQLDERGJQDFWA
+         1xmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736049114; x=1736653914;
+        d=1e100.net; s=20230601; t=1736049860; x=1736654660;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xoyVQMf7stkvDb40CL9IIDCTdKO3yMnPD0zWSkcmakw=;
-        b=iV+AH6zR+qeZnt6FdZlJj8KnuUerUQqG56MQL4uef6zdMLIa03MFG4p2nZUrmG3h0M
-         HRiNUOJmPGFQZSn/JHP5wu1j5rJl7zAibm9h9qVlznvt8wWHRJY69vU744dgKOqBUR0b
-         TUyrI/AKwWMUtbpCXOeWaCd/62s1rDYklrv1dB8fuiGNI56ZEUZH78pKjN0bylc8p/9g
-         EPwt3cqune5FmzyjakwN2+UiA6Izpm3vIE/WtRhpJHYx4UdqcRrc+9wSqBZJZP76hwBw
-         1SnCJb8w0IBcQXZz+ZSYyx591JpoiCtC99WKJoLM8VWKpSlE4wEKJ1PaUSNU9WYRZjmS
-         XS1g==
-X-Forwarded-Encrypted: i=1; AJvYcCUunWxcAZQP13AA1oEnHVIPVziOlNfk6jVOkn+Kex5gP+mcz6aiGXm4KdkAmQU3Kzt/02xiXmETvn3pKCNBe5OHQ/TsQFg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRyIqqS5cSWtjxPT2xL2SN2uDbNpqN02fS9oyBSyGPlkLA25sy
-	wY9DM2OTWW7RXhuvRy/zO2Yt6NHGKHseJHCMkywE5rJj6BAdRUjLO5WioYaysVDlA9qgkOKufyh
-	YnAb+iBiGARRAS7yPrTFLqWWe732vMmPGPUi/
-X-Gm-Gg: ASbGncuZqGKitLd0V02hhNpOlXdhIoNIYeiDE63lawgpu4xp+ma0lJJMcsuW44rIBLs
-	C0TrN+riGDQnQ1mYXZXyNQ1Dt9VZOjT3roRBD
-X-Google-Smtp-Source: AGHT+IGc7SMsivE9GNfp0zOKo3BHvCo9GY4oGtCRj5PqxHP0r8P+X/TxYI8hJSRcaVO6yGl+W68xIRiYLzadGWtlYVM=
-X-Received: by 2002:a05:690c:6a02:b0:6ef:7d51:eba6 with SMTP id
- 00721157ae682-6f3f8219ef5mr460876097b3.28.1736049114425; Sat, 04 Jan 2025
- 19:51:54 -0800 (PST)
+        bh=FHP0DfJRnVMC2nRs6LVvahB5caK8ctNmQriM6U7pNGg=;
+        b=ip7ikXfaXzWXLFupqrMLkpEN3+ZmVI92GDD6rbSd6tTZC+WEUASCjwXFRYO68E9RBb
+         Dns5Pnh/P6FltDHyZXWdBZGmCcBAyfjAXghofsyFK2Q+07yC3SAQIDd+N5DKIOmMCujv
+         R7pSdiGcxPpSzdk51AJlXTR5ZE2cIz6mZobTpnhHtkm/x8QhpEFyLRIO5K3SBG2/HKtq
+         8xWYkBmLPAq49qrpjZTMuagsRp3va1VI4EPHHalyF5x3SdZf76rWG3xetzp6f9aIRSZY
+         gB5VtNfYdO/bi5ufzImr2MNMbDf5zvNORenR0hxEZJ7+gYteNYOCrutPgWMnjzNvejT2
+         VqEw==
+X-Forwarded-Encrypted: i=1; AJvYcCUhO2o8iyKk85NCMYrxeavFkn6aXw+IK0WyCOahKawYilxKswqfKR3kUICwNX4SzxR6BDs/7FFYdiWbOk0u+0IY6T9ywS0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyL0hX/LfxHSUYR96h4GehgN7eq1OrMgcaTPs1DNAwBEdtmacLW
+	2RINaiVry6b8dVFkbjBrNh9WUIH/4Z8TE7e/FkFrEuAUG2lZd/pwPPuGPlV7c8O3cI2HMFp/70c
+	pdg/nONZfqXRiw0L7N5eK7Ux10OFqG3wTxDCn
+X-Gm-Gg: ASbGnctdcFy+m07RHVP9AzE11gkzX4h0FeNXwI/74bDQPteFc4AX2Y8ZyR/9Dy/9ZJY
+	aPNV4cNTlYwkj14XedKKo3dRH9wY/Z5GO0enX
+X-Google-Smtp-Source: AGHT+IEA6WJmuttlP+GOkalJMb/6gOa+UmCxrDnHO9xNE01ZzBqSf8gTjyoOcpAlzXnyRqwObZS2F4VfUK/G++bBsKc=
+X-Received: by 2002:a05:690c:7341:b0:6ef:579c:38e6 with SMTP id
+ 00721157ae682-6f3f82238b4mr411527887b3.28.1736049859753; Sat, 04 Jan 2025
+ 20:04:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -59,64 +59,56 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <675f513a.050a0220.37aaf.0106.GAE@google.com> <20241217182657.10080-2-leocstone@gmail.com>
- <CAHC9VhQGeNv=UEhXPN5MN1h0xEZkeE9kbE79+k9HvNxdK_4xzA@mail.gmail.com> <ed6e5639-c87e-49e8-8125-5b93cec69d43@I-love.SAKURA.ne.jp>
-In-Reply-To: <ed6e5639-c87e-49e8-8125-5b93cec69d43@I-love.SAKURA.ne.jp>
+ <CAHC9VhQGeNv=UEhXPN5MN1h0xEZkeE9kbE79+k9HvNxdK_4xzA@mail.gmail.com>
+ <ed6e5639-c87e-49e8-8125-5b93cec69d43@I-love.SAKURA.ne.jp>
+ <9fcd3f3d-33c1-4feb-8c98-472d44bc0a54@I-love.SAKURA.ne.jp> <202412222126.E70910E7A8@keescook>
+In-Reply-To: <202412222126.E70910E7A8@keescook>
 From: Paul Moore <paul@paul-moore.com>
-Date: Sat, 4 Jan 2025 22:51:43 -0500
-Message-ID: <CAHC9VhTUZjsVwO874oW2+6eNYdsudUcnP_ZFGn6ZEFS1O7zk2w@mail.gmail.com>
+Date: Sat, 4 Jan 2025 23:04:09 -0500
+Message-ID: <CAHC9VhRkAbvj=9qe8iWPCtsgkF0zvgP+pbOsUG=VVFcPgO3-jQ@mail.gmail.com>
 Subject: Re: [PATCH v2] lsm: check size of writes
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: Leo Stone <leocstone@gmail.com>, mortonm@chromium.org, 
+To: Kees Cook <kees@kernel.org>
+Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, 
 	syzbot+4eb7a741b3216020043a@syzkaller.appspotmail.com, jmorris@namei.org, 
 	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	serge@hallyn.com, syzkaller-bugs@googlegroups.com
+	serge@hallyn.com, syzkaller-bugs@googlegroups.com, 
+	Leo Stone <leocstone@gmail.com>, mortonm@chromium.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Dec 21, 2024 at 5:01=E2=80=AFAM Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
-> On 2024/12/19 6:51, Paul Moore wrote:
-> > On Tue, Dec 17, 2024 at 1:27=E2=80=AFPM Leo Stone <leocstone@gmail.com>=
- wrote:
-> >>
-> >> syzbot attempts to write a buffer with a large size to a sysfs entry
-> >> with writes handled by handle_policy_update(), triggering a warning
-> >> in kmalloc.
-> >>
-> >> Check the size specified for write buffers before allocating.
-> >>
-> >> Reported-by: syzbot+4eb7a741b3216020043a@syzkaller.appspotmail.com
-> >> Closes: https://syzkaller.appspot.com/bug?extid=3D4eb7a741b3216020043a
-> >> Signed-off-by: Leo Stone <leocstone@gmail.com>
-> >> ---
-> >> v2: Make the check in handle_policy_update() to also cover
-> >> safesetid_uid_file_write(). Thanks for your feedback.
-> >> v1: https://lore.kernel.org/all/20241216030213.246804-2-leocstone@gmai=
-l.com/
-> >> ---
-> >>  security/safesetid/securityfs.c | 3 +++
-> >>  1 file changed, 3 insertions(+)
-> >
-> > Looks okay to me.  Micah, are you planning to merge this patch, or
-> > would you like me to take it via the LSM tree?
-> >
-> > Reviewed-by: Paul Moore <paul@paul-moore.com>
-> >
-> > I'm going to tag this to come back to it in a week or so in case we
-> > don't hear from Micah, but if you don't see any further replies Leo,
-> > feel free to send a gentle nudge ;)
+On Mon, Dec 23, 2024 at 12:33=E2=80=AFAM Kees Cook <kees@kernel.org> wrote:
 >
-> FYI: I sent
->
-> https://lkml.kernel.org/r/014cd694-cc27-4a07-a34a-2ae95d744515@I-love.SAK=
-URA.ne.jp
->
-> which makes this patch redundant if my patch is accepted.
+> If the LSM core did a kmem_buckets_create() for each LSM, and the LSMs
+> were adjusted to explicitly allocate from their own bucket set, that
+> would be one way. Or just for the LSM as a whole (1 set of buckets
+> instead of a set for each LSM). I'd be happy to review patches for
+> either idea.
 
-Sure, but this patch is trivial, and there is no way the
-KMALLOC_MAX_SIZE is limiting any normal use of safesetid so it seems
-safe to apply now.  We can always revisit this change in the future
-depending on how the rest of the kernel changes.
+If we're doing the work to shift over to kmem_buckets, it seems like
+creating per-LSM buckets is the better option unless I'm missing
+something.
+
+I'm also not sure why the LSM framework would need to call
+kmem_buckets_create() on behalf of the individual LSMs, can someone
+help me understand why the individual LSMs couldn't do it in their
+init routines?
+
+If it is necessary for the LSM framework to create the buckets and
+hand them back to the individual LSMs, I would suggest adding a new
+flag to the lsm_info->flags field that a LSM could set to request a
+kmem_bucket, and then add a new field to lsm_info that the LSM
+framework could use to return the bucket to the LSM.  LSMs could
+opt-in to kmem_buckets when they found the time to convert.
+
+> I think per-site buckets is going to be the most effective long-term:
+> https://lore.kernel.org/lkml/20240809072532.work.266-kees@kernel.org/
+>
+> But that doesn't exclude new kmem_buckets_create() users.
+
+Is there an update on the per-site buckets?  I agree that would be the
+preferable solution from a hardening perspective, and if it is on the
+horizon it may not be worth the effort to convert the LSMs over to an
+explicit kmem_buckets approach.
 
 --=20
 paul-moore.com
