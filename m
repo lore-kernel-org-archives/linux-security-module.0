@@ -1,63 +1,63 @@
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1C506F305
-	for <linux-security-module@vger.kernel.org>; Sun,  5 Jan 2025 01:23:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9401E84A30
+	for <linux-security-module@vger.kernel.org>; Sun,  5 Jan 2025 01:23:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736040237; cv=none; b=n6yasX6A2/yPsXtx/u6CFM4cujwbBfQs7V+idp0M5B0euxMYqKOZ3SoBq+lOlRoUti5bGigka6qONOifDFVGWY9rCmCctyEWKUxslJALrwNf+FzY2iwv3W7J6AcdLtSSu2yJPJ1UWEuG4Hc3U7Nbpq1MrRmOPmFpqDSFKMu2jR4=
+	t=1736040238; cv=none; b=XS9bwjDbw8DOG7fwHnx8lwK+IPfXGcs9ywvwcMNycNJmXTSH7zzQImWe4mIRY2wJIUsx0jL4WXWiKBiCoa621nMUVTkQfpH53f3Fw0iOX7LH9K11Kw1PSWSnP5SM/yq8fen4C9OKx41Bz77GfYAGVah9cHZIMKTgnMB0kZiuUKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736040237; c=relaxed/simple;
-	bh=/btT7n0d2ZHfop1mstfeCbgn8fQGxmS9KNdzrV2Bi94=;
+	s=arc-20240116; t=1736040238; c=relaxed/simple;
+	bh=oRpjOHn0MYdlDgb16H93ygH3JV76zY1R0D6wzNkXsBs=;
 	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=lYVFBnEbeMr/FPOGf8PBXhyv9rtn3YTiagd4inCn0n9X2Y84fqBPsqNCm2ZjCCLWcrcrGT+fmOp5swK/VGts8YVOGw4ZVSGsWF/S0e6+FgWMaX1POPK0R1YFE4BafBH4IJqqYKQyJ8qB138xRiU+Jqc40JPJ8CFgrCXV0AO8zGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=GvgYGqlH; arc=none smtp.client-ip=209.85.222.169
+	 References:In-Reply-To; b=lgxTlmJP7jHox9Ae1TPQ/+Xm5rpf3DXUYBRsmZCJz5zkKO4e9NA2HjfREzQM6BWGHxtnqV9KX9aUNEa8KhMWWDq5nK09gOMOrcjUyHinEOsPLBnwEMbRFuluTg244q8g2Vk0H2ilotkRdMkzlrY3x8L4B/nLiLu3CnU2KInO6hk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=PYo6m5o5; arc=none smtp.client-ip=209.85.222.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="GvgYGqlH"
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7b6eb531e13so686125585a.0
-        for <linux-security-module@vger.kernel.org>; Sat, 04 Jan 2025 17:23:54 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="PYo6m5o5"
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7b6fc5bf609so1061827085a.1
+        for <linux-security-module@vger.kernel.org>; Sat, 04 Jan 2025 17:23:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1736040233; x=1736645033; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1736040234; x=1736645034; darn=vger.kernel.org;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :mime-version:message-id:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=oodCSrqLJ6/wV1EWtq/vcEze69LUP+43yNurMHOkC/o=;
-        b=GvgYGqlH/rvxgULg/8rP5+4dRnkP5HEko5Kvlge17oaSgsoM9ZIkbbmLm/ITYrWLxg
-         XqHfyErLJLeTdiYda9xZltV3lQbWrdUsaWaPZah8pCs7p460/74XPQ+/ySSSuJoqFJAL
-         OZWbl7ak0sYn8idvoGRwCR+E23qEAToCP8oWaZ1H3mZ5J7e/PKOE6HVHcwGPQk9dzpRD
-         gv/VXK7KGwVFzTpghm4wti1yGrUNYnA0KeuflF02bM2ItXSY6yuVmpHW19UFsC6W24Xy
-         uDEj3kk0q8qvn0komBt0wSl4juyBz7mSPvUPheKwv3RfjWuMfClAZFtodgesLh7Vuqb3
-         am7Q==
+        bh=IERUjrBgw0h/87tZ2x8wz7LTzEntrKvOegC9huRuDWM=;
+        b=PYo6m5o51rWMjCfRgS0D0a/mfmm3xejPHP6Ia1wnuA2Rc2RfwGaOF1hxiAQ+1MU00X
+         Bo6W5T90IXtU4ptAwKtrFUidrBpTfeIVBzdnWHOYE77yujQGJHAU0gAJihWGJMsZM0ZS
+         qDTTts5kAcb+G0oEzbQkscgPsTXuRmiuGmT+KmKwTMVBPYhv/7knzilMuq5x2ThgNcBm
+         P+HzBgzew9rZYpffJeEZv9O6x5nY5g6okQ5xzvEZQlWNX5W/i6vOp/kx6KP7BgrShv+x
+         SapG7Eix4D0KcUzNKBgArUN5NvDdp30GqUnmO0zzNGMEcB/ODt9PLEQJL2cD5DVGd/03
+         lOZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736040233; x=1736645033;
+        d=1e100.net; s=20230601; t=1736040234; x=1736645034;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=oodCSrqLJ6/wV1EWtq/vcEze69LUP+43yNurMHOkC/o=;
-        b=bS+bNmujY9bPLHnnh7WP0+fV80WMp0ZH4esEVusxkOcduYpNT9TCEXA8Ih/keaM64Z
-         QMyhAjSotWZWqa3tE6jxh07xMSfelaaHA3Ecc6kiFXBSVhzfuU6JxVq0dbOIE5ZfBZXc
-         ZY8xCIkKyYQDzp/lKBTAmfKc9pUkJpx77xXfnOuwTWUAucx/IguFPenJRHUxdMtu1dQo
-         JMWZguPS+Aga+vhzSqpdSVb5jl8i4edEUb7ugNYKPm7EGFnNCMmObKze+kJ6k0tsdc+4
-         1/4e166GiseMakAT/xBuaLKer7eJgjl6R7fJHvAdruTO7Q5x0Nz/zGnXYZ9nhCVlMfUi
-         9K6g==
-X-Forwarded-Encrypted: i=1; AJvYcCWHZV/kRc28RCloBQCUUmfQIpBKLtxsDoxRqVVxCcBrBHGw/Nzi3MlU+0OhLOa/cAz9qFb171MkQLYmBYHsBbbJy/IQVNE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxyy9pnCO5EDGNats5vQRxehl9tnfcHpk+O3emCB9upvXD0Kp9E
-	0Xc9QffBq92O/+wD4732jbXiwCZGRtDtffNL48kGN0Q14MDcfZMgScNBTN0ynQ==
-X-Gm-Gg: ASbGncvVJ/Nsm/FSqCLsurl+dU5o2jlarspF79D+z7Kd0DHRP+yWe5LnGtnrLgyfduJ
-	pg9GbvuYJjosvGj5mykuaf8B2j0wZXssYhkEx0ippqYOFvOoL3oQjyaJUB8v27RDFVFRlcraxyJ
-	Gzvkmlg+ejEbRv0r3G6iNBhzGVDNT6LXAf1m6Dx2GG9qJrX42OYeKrGMlwibLAmCvXSjys8etZr
-	eifwxk8Z0FMwfJFMxfy8R82iHB+v5NRMhNZYUC0TRHJNDP9StY=
-X-Google-Smtp-Source: AGHT+IGH4CFrIPXTbsb1KbkdD0mCjpfzWpvEGfeBYbIb7PKQ7U7KdTUnGjDro4NTziohWutc9MBYew==
-X-Received: by 2002:a05:620a:3915:b0:7b6:dd82:ac9c with SMTP id af79cd13be357-7b9ba6ef8a0mr9033023885a.12.1736040233637;
-        Sat, 04 Jan 2025 17:23:53 -0800 (PST)
+        bh=IERUjrBgw0h/87tZ2x8wz7LTzEntrKvOegC9huRuDWM=;
+        b=BTBLuPokeqBBGeK5HTjtj/J2S4hyI2qlxaNAnSwowp5ZdOOS1oFniZyjknBxNpo9T0
+         d2n8oUzm494Z3c8qfYf59SAZjz77U4NjJxraxJceBN//gTsHK42YO83aRwIhPW9uieY1
+         6goPZxetRWXbuzd0fIvFWNXxlZIimz6Pm9p4GI+n+6udz2CgPTv83wZL8qcPR1RqlbPj
+         sU3i6wejmFtJ7/JjBNRuApeMzUd8jic5ouS9BJy/wEiGWK7bSEj7gSMcowgzgj7SaLG9
+         GrS0vPduamIUtCOT0H9Uil3wKBq2vruZA5m4EY3NAjU9wg0ObAvno805AObarf1axQ7F
+         UGLw==
+X-Forwarded-Encrypted: i=1; AJvYcCXsK6aDicdq523Tkz+5oatd8LG4Kj3HtxNUtTswu2a2qN237F60IMscZiESNZ9ndvoxt9VlvAr0Qoy2lRN2be0NhdTdhDc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyglTLZwqPWfgjdCpvE0RsX/uduvWMSlB+qVuDIVpuWAH1kUpNE
+	5eOdUUrP0nadd9P0uaZyQxOX0WXAlX4XZK11tFRv8ttkqoBORGH9LJxrskVQHA==
+X-Gm-Gg: ASbGnct/QPSWX1kRA2Y6f08Qwy24/LW8MOB+34mVvhTxs4kfg6q9GfB1xwHI42q30cj
+	K+Oqib6ljX8UeihH4r7KJB0F8xTuF59kJFEEf3R6FIGG86pz6XXM0FyCK5LhprQf1P1iJNuaq2D
+	85fj14oQ8G+b/uHMROr3crQZyMvArACy119p169pHGCG9MIZ+1gfhZn3voGNov1pxxD89wJ4hC3
+	SgkgPH8UliSRqdsCeozYaTifaLNl91+kY6P+GXKCgNh89JP/Zs=
+X-Google-Smtp-Source: AGHT+IEa+pstb4Wkj/s5QGwreQlq92o1CyOpFbpUwW+Li/Drfu8YVwkRT28VxYrjRnk6Wfqm7BaqWQ==
+X-Received: by 2002:a05:620a:31aa:b0:7b6:eab3:cdd2 with SMTP id af79cd13be357-7b9ba881fc0mr8162968085a.56.1736040234616;
+        Sat, 04 Jan 2025 17:23:54 -0800 (PST)
 Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b9ac47a354sm1390202485a.70.2025.01.04.17.23.53
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b9ac30d4b9sm1389176485a.57.2025.01.04.17.23.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 Jan 2025 17:23:53 -0800 (PST)
-Date: Sat, 04 Jan 2025 20:23:52 -0500
-Message-ID: <0055bef6843289ac8dc728a68326513d@paul-moore.com>
+        Sat, 04 Jan 2025 17:23:54 -0800 (PST)
+Date: Sat, 04 Jan 2025 20:23:53 -0500
+Message-ID: <1372f9de0bb265a08114a870ec086da0@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -70,36 +70,36 @@ X-Mailer: pstg-pwork:20250104_1133/pstg-lib:20250104_1133/pstg-pwork:20250104_11
 From: Paul Moore <paul@paul-moore.com>
 To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>, Eric Paris <eparis@redhat.com>, =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>, "Serge E . Hallyn" <serge@hallyn.com>
 Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>, Ben Scarlato <akhna@google.com>, Casey Schaufler <casey@schaufler-ca.com>, Charles Zaffery <czaffery@roblox.com>, Francis Laniel <flaniel@linux.microsoft.com>, James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, Jorge Lucangeli Obes <jorgelo@google.com>, Kees Cook <kees@kernel.org>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <mattbobrowski@google.com>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, Phil Sutter <phil@nwl.cc>, Praveen K Paladugu <prapal@linux.microsoft.com>, Robert Salvet <robert.salvet@roblox.com>, Shervin Oloumi <enlightened@google.com>, Song Liu <song@kernel.org>, Tahera Fahimi <fahimitahera@gmail.com>, audit@vger.kernel.org, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v3 17/23] landlock: Log TCP bind and connect denials
-References: <20241122143353.59367-18-mic@digikod.net>
-In-Reply-To: <20241122143353.59367-18-mic@digikod.net>
+Subject: Re: [PATCH v3 18/23] landlock: Log scoped denials
+References: <20241122143353.59367-19-mic@digikod.net>
+In-Reply-To: <20241122143353.59367-19-mic@digikod.net>
 
 On Nov 22, 2024 =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net> wrote:
 > 
-> Add audit support to socket_bind and socket_connect hooks.
+> Add audit support for unix_stream_connect, unix_may_send, task_kill, and
+> file_send_sigiotask hooks.
 > 
 > Audit event sample:
 > 
->   type=LL_DENY [...]: domain=195ba459b blockers=net_connect_tcp daddr=127.0.0.1 dest=80
+>   type=LL_DENY [...]: domain=195ba459b blockers=scope_abstract_unix_socket path=00666F6F
 
-The destination address and port is already captured in the SOCKADDR
-record for bind() and connect(), please don't duplicate it here.
+Similar to 17/23, I believe the SOCKADDR record should already capture
+the socket address information.
+
+It would also be nice to see an example record on a signal event.
 
 > Cc: Günther Noack <gnoack@google.com>
-> Cc: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-> Cc: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+> Cc: Tahera Fahimi <fahimitahera@gmail.com>
 > Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> Link: https://lore.kernel.org/r/20241122143353.59367-18-mic@digikod.net
+> Link: https://lore.kernel.org/r/20241122143353.59367-19-mic@digikod.net
 > ---
-> Changes since v2:
-> - Remove potentially superfluous IPv6 saddr log, spotted by Francis
->   Laniel.
-> - Cosmetic improvements.
+> Changes since v1:
+> - New patch.
 > ---
->  security/landlock/audit.c | 12 +++++++++
->  security/landlock/audit.h |  1 +
->  security/landlock/net.c   | 51 ++++++++++++++++++++++++++++++++++++---
->  3 files changed, 60 insertions(+), 4 deletions(-)
+>  security/landlock/audit.c |  8 ++++++
+>  security/landlock/audit.h |  2 ++
+>  security/landlock/task.c  | 58 ++++++++++++++++++++++++++++++++++++---
+>  3 files changed, 64 insertions(+), 4 deletions(-)
 
 --
 paul-moore.com
