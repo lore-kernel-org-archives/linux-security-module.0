@@ -1,63 +1,63 @@
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB633594D
-	for <linux-security-module@vger.kernel.org>; Sun,  5 Jan 2025 03:04:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D68A79C4
+	for <linux-security-module@vger.kernel.org>; Sun,  5 Jan 2025 03:11:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736046281; cv=none; b=Nv1MjDcxjpead5rAg2YDgiektSYBdLsQ5NbEJywrGeL75W4gX364FQldoUTFvapM5/7Z/Uc1/DdFRyfloE2x66mnZA5aHeaXm4InZJuLGT7LvuQ9phR1HVfR6RUvOmywIwu2023xzO/skaieVofAGVfHzxEC5AYQG14dQACTfHs=
+	t=1736046684; cv=none; b=Ku4XOn4l/NuLu28wmZHAcHjyRV+PTY3J5jWv2FQ0aMTDBn3yY8867s+b86SMnhxQrDg39L8by26lSExlKvF5KxhQB+CEHh9F2dbp0VZJGLBDRHOPyY4DBSyxQMiunvA7F9zeaVv0wXq4uxJD3qNmf8jjflwbjeNL/8OkWmbTH0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736046281; c=relaxed/simple;
-	bh=wVPtncUionGSGB6weARFJPnaU0WDaku2K1rIZTIFdI8=;
+	s=arc-20240116; t=1736046684; c=relaxed/simple;
+	bh=LjzVv5pLxvqrc1ynToshNVK4xohlWsJbzs7wMSKW3i4=;
 	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=BpCSxHqCO1ru8vZiB5f7H1HanrJ04pDRFrEUlhVpL9nSnpWbTbRvQsJLCEFTu1ICrFtaQ6+tevhtll+an6jwnK9g/+N8+X41uUEMjqlh4LhRgnFXff2KEuNz+U9CsAtjxRIFsdYr2MrDarRQVKz7JnuGNnNFk8YaW3TLH8HhQXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=I1uzif15; arc=none smtp.client-ip=209.85.160.182
+	 References:In-Reply-To; b=IQQZ18FID31vIF1qMsMA/0rxYBmZoW5bLeCtqj9hFlKxK4hP9rknvF2YIVn/Jb4QLPd3xsS2niLgR7IxUgzOz+JB0mGwWseLRSM4VN/2+CxVXj8PEeZvlaHVRN1nsd8RLcYGpBKOLR1CBJIfwoEVYY8PVWHrKcw1Clk1Oeso04g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=fF/Emey4; arc=none smtp.client-ip=209.85.222.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="I1uzif15"
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-468f6b3a439so114953521cf.1
-        for <linux-security-module@vger.kernel.org>; Sat, 04 Jan 2025 19:04:39 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="fF/Emey4"
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7b70e78351aso1078650785a.0
+        for <linux-security-module@vger.kernel.org>; Sat, 04 Jan 2025 19:11:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1736046279; x=1736651079; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1736046682; x=1736651482; darn=vger.kernel.org;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :mime-version:message-id:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=6955gtKfg5oEFuxtQGlyDD5kuPjGFQ5vk5JbxQicH/U=;
-        b=I1uzif15fhgYjmpjRt0yNw+SM4AJCKHt+g7jGhO5eihJwni1DUXGpUbVr+dop6SVnS
-         YsIKlUwbpw8X9kZA6mFdfzdVYLcqbpHVrpasrmE3fzqbAW3/L3WfwKpXDAzr3rPxp0SJ
-         UdgZUKUDgthV5p1PMT6W/4IDJplWvo3XJ2LRFW8NjJ4u/+ycEHg9LHwzuik8Ngyp10wl
-         D8uAq3pVK8x78hZLvZEqiqRj21m+2DVFGqBgjEtNH5Nh9pkRxqO6Te0etAfn+gErMeCt
-         QctFrh4daK6yPzcdNNSYm9aCqLyZrILJOj12SIXmDDM5Nm1t/ixLRnHlqbMTL/Mz2nz0
-         Pg9g==
+        bh=713K/Xxci2+ii1pa7s1nbThzLbzo8/wputlWA7AidGA=;
+        b=fF/Emey4F8Ra8jzpzTvbHLld1x4U04koNDXwJU+ZF9Xxlaca/aVunxE+pjzr+v3gnO
+         alpaVsPgULWCHx6wANOTklCwVOY8q/pbSrdlYE5k2OKWqJBJDOyKgUdM187R311YBz1d
+         S76VZ1BZ4BKU0914o1DCq3J7NKIFonR46YvgQ96jNcV3Kbb7uZwpu/k7+m9at3d1fmxc
+         huvJYqmDUkADe7CYcGhFv2OKL97+LPma5nvsfT6fSiZrItlCe99Xollvwrq+x4ijzaJu
+         /rshpJ418uvcFLyNOTly7dGcS8vXQIk+NysZrwm3t9si4kBcxu+5hplutmCPsHVbetav
+         0Jgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736046279; x=1736651079;
+        d=1e100.net; s=20230601; t=1736046682; x=1736651482;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=6955gtKfg5oEFuxtQGlyDD5kuPjGFQ5vk5JbxQicH/U=;
-        b=Wy1D41uogigvu0e6slwyS6o5NS0SNCDuGqKy7tP9ZPhkBZqqFVEGixQ3XvZwHWbzfz
-         FZJRNuipta8KuZ+htGEh4/HToQD6YE5YZgqgxxWm6O6CWOhkkd9AhHN1AWKiikxfaK+c
-         rRF8EnIzG2qU05OMx5qVmsX3QHebn/5tKzg66bCrjoH7Cx/nFxKR9BSkcOgEAOzK7/dK
-         LNdlZ6dWPOts9dGttEiAb7zl+gLSJakd3iwR4xT5ulvgX0T5Kv1FbeBzKr4xbHh0AZcU
-         h5aCIYZGYjGad3MsrcIc/vvxCpyFWQZ6qkb0f19KYT19LVBZNobGsTIVWSpE6wdz0QMO
-         ry+w==
-X-Forwarded-Encrypted: i=1; AJvYcCXinTL6AE9b49Fm61d8QePxG+aqhYOFY78e9CL3U/kSJqkmisrscUKKzuwpy3KRs207SqfEySJcmhcVImRcqUQqWUOBxpE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8U+oLCHV2UTRipPeYL8oitBnIyzGDJYHN0s0sggLL/Y4ZJrnJ
-	S0bNyLu4+hgtWeDcX7vJMUTmtugfl/iDbJKcmf9heimjKJCV4XQrWkyyU4BJxg==
-X-Gm-Gg: ASbGncs4LattH4KLB1/KS3DP7uGKAfiUUx8V0p4HTjnwudwEtcerUQ2PfJuOb2+EQeJ
-	f/XK+rSZoE6gqQpIp63krJD/2J4L08dsftg2l577lI+yI5j2A8mT6ViQuM78ypOGNI4G1pKIpKk
-	QBJO5yZKVdl8RbsRvRla4j/fnlVTZs/tqUsbCV/MBKUnd2yOtgIBzCig/9XHP39tWiNSN5oCZlD
-	59wfLPaAZg6DubFrbCXFRBeKRL/kUJql6Hfckpt4vK/8lGn25w=
-X-Google-Smtp-Source: AGHT+IE27NYmWwTdi5HNIXq4FMJ6UExsCybpWZLcTHc/1IkULeeLF6BI+iMXURnMbLFG6lC6o05CZw==
-X-Received: by 2002:a05:622a:287:b0:45d:82a0:5028 with SMTP id d75a77b69052e-46a4a8b879cmr794375121cf.1.1736046278825;
-        Sat, 04 Jan 2025 19:04:38 -0800 (PST)
+        bh=713K/Xxci2+ii1pa7s1nbThzLbzo8/wputlWA7AidGA=;
+        b=Q3JQ9fkc+Tz/ZZWAr9NRkVmgVpKLOsjzu8wvonlZHmgXGi2lUa4X01G6ulNYhzSVFH
+         s7OJbMkvmHwumcisB6IJtBgyYFLAr67vHPwooXwtaOGpNSGLI6HtPIXnQkC375mGNEml
+         PSSJYT0hxnOCMwPc1d4A3l1tZLi1VCGpWYadkGAo7TGZ+n0cg5zu7vfLpGPtwnxbRwll
+         4Nopt8vzJvaeML0CALiFIzFk4KiNs8s1cJdvXQ4bCTmFd24kice6hpV4eeOisnW25Edh
+         qWX6m06EVg9UrS/DuRQYyD/FWzHIsa78zdaB1SQfZDF0Izui4lhNs+mUAoYQZsme4k1c
+         YlCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWYmEb+YskB+whQuMfYFrFQ7xPwIZJa6/Qv6CWMFUaAdRg5D765dCDWF1NH3nh1sb0vupb63SWO6t3beOGxWM6750q7NRw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxK1oHAXYXxnfqWFCdqyPlglZq+Dnh+fj7M+6Ftqegl0avB/Z4C
+	xt48WzHGwjV3PbN9fE4IjDaAKGYggD8+A1yyej1yGlBjjNPSVLhmnd5NiwRvLA==
+X-Gm-Gg: ASbGncuYMSjK4qSc9G/pQC3aJOfH/GMGr18eay6BVCdTjJZyuzcPL+OehYbis0JhmOF
+	sa/zybQ2gs+WXmKuBwSUud17RFflnRNECdQrxk8/wdV/yWPp5BpRMzxEmbZR8wy9n4Jws+Skmd/
+	ssWb/2G77sR8frrYch/yWNpUoLw351EWF3SQOuFBh09oo+mpPwQFX3qloJug4fwABtxOpvWI6//
+	uui/FOHa4Ez0zdPgVeGq7XSQ8qop0m1uSTpOi02zEEmGxzsD4k=
+X-Google-Smtp-Source: AGHT+IFYBQEhVjHgNrj6df3L3PvVYd3aTn8gApq+cjhuE7r06vSWA6/s7EWPEL3m0kgHTJ9r058cMA==
+X-Received: by 2002:a05:620a:2807:b0:7b6:d631:2669 with SMTP id af79cd13be357-7b9ba79aa8amr10662502685a.21.1736046682034;
+        Sat, 04 Jan 2025 19:11:22 -0800 (PST)
 Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-46a3eb2c578sm161953691cf.77.2025.01.04.19.04.38
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b9ac2bbfbasm1399728585a.17.2025.01.04.19.11.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 04 Jan 2025 19:04:38 -0800 (PST)
-Date: Sat, 04 Jan 2025 22:04:38 -0500
-Message-ID: <a0d6421cd8fb725ebb627f5e22cca220@paul-moore.com>
+        Sat, 04 Jan 2025 19:11:21 -0800 (PST)
+Date: Sat, 04 Jan 2025 22:11:21 -0500
+Message-ID: <3a60ad96a636f4fe02bcf10019017d58@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -68,34 +68,28 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit 
 X-Mailer: pstg-pwork:20250104_1133/pstg-lib:20250104_1133/pstg-pwork:20250104_1133
 From: Paul Moore <paul@paul-moore.com>
-To: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de>
-Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>, James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH 2/2] lsm: rename variable to avoid shadowing
-References: <20241125105926.47141-1-cgoettsche@seltendoof.de>
-In-Reply-To: <20241125105926.47141-1-cgoettsche@seltendoof.de>
+To: Casey Schaufler <casey@schaufler-ca.com>, LSM List <linux-security-module@vger.kernel.org>
+Cc: Florian Westphal <fw@strlen.de>, Karol Przybylski <karprzy7@gmail.com>, Casey Schaufler <casey@schaufler-ca.com>
+Subject: Re: [PATCH v2] net: corrections for security_secid_to_secctx returns
+References: <2ac1afc7-8549-48eb-ac63-daea64c3d80a@schaufler-ca.com>
+In-Reply-To: <2ac1afc7-8549-48eb-ac63-daea64c3d80a@schaufler-ca.com>
 
-On Nov 25, 2024 =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de> wrote:
+On Dec 20, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
 > 
-> The function dump_common_audit_data() contains two variables with the
-> name comm: one declared at the top and one nested one.
-> Rename the nested variable to improve readability and make future refactorings
-> of the function less error prone.
+> security_secid_to_secctx() returns the size of the new context,
+> whereas previous versions provided that via a pointer parameter.
+> Correct the type of the value returned in nfqnl_get_sk_secctx()
+> and the check for error in netlbl_unlhsh_add(). Add an error
+> check.
 > 
-> Reported by clang:
-> 
->     security/lsm_audit.c:302:10: error: declaration shadows a local variable [-Werror,-Wshadow]
->       302 |                                 char comm[sizeof(tsk->comm)];
->           |                                      ^
->     security/lsm_audit.c:200:7: note: previous declaration is here
->       200 |         char comm[sizeof(current->comm)];
->           |              ^
-> 
-> Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
+> Fixes: 2d470c778120 ("lsm: replace context+len with lsm_context")
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 > ---
->  security/lsm_audit.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  net/netfilter/nfnetlink_queue.c   | 12 +++++++-----
+>  net/netlabel/netlabel_unlabeled.c |  6 +++---
+>  2 files changed, 10 insertions(+), 8 deletions(-)
 
-Merged into lsm/dev, thanks.
+Looks good to me, thanks Casey.  Merged into lsm/dev.
 
 --
 paul-moore.com
