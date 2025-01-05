@@ -1,245 +1,98 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC13F150980;
-	Sun,  5 Jan 2025 13:00:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBA1412B73
+	for <linux-security-module@vger.kernel.org>; Sun,  5 Jan 2025 17:48:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736082017; cv=none; b=IDrQ3MGk1B0WX5pqsPfhxiU13LyZQTeVJxBUT6bch78O561044ehgQQfg6EW2GjjHY5h+Dor2gE1T4v1kyiX6xps8fqE4DTynH+VkuAGWv+XScGqw7sWMgza+O1j/5o9g6SxcFnOuJnrT09aSSbU3S2BBHXgRJJFMuQ1UQMYoP4=
+	t=1736099326; cv=none; b=qxzD4xSdCXhr/mG2wO9Jq7wUxMYNxKuRSeKnOVDAaU6dDHtsoLpYZlH7M5TKQSL4FGySjwB2aRxlp2yklpOKeJWcGXH3eE8ql8hcrNNhwpkncNFqiE3FWEK5d71vLzGymUud5HCXBu7R1ChB/Hg+cFDZKpfqMaI1P76IcWAcVCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736082017; c=relaxed/simple;
-	bh=gvis4SR/MbP0rEJuqQir65QphJBwsZNDw6ueWCgw5gE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=r3WW/jYb/nomWtSo3NXob9EC6JDSiBE2YeykbfDDkrYwEo0g6ckR2TIFUJWjd87xlWGuZxdPh6CHMIA3vLLCy9cvgslY9uNyn1QIRH7wdu3v47gzIOsA2zEySjpvX6boTd8Ev5xiJTp/3NiOGIzEsOB+4+4SoCAd7r5XUBfWfcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=AxUZnk5L; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1736099326; c=relaxed/simple;
+	bh=VSKGgBXQitW70O3PlbpQGia2OfQLlQk/cJr0CNetNwQ=;
+	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
+	 References:In-Reply-To; b=oA4Qg2+IyguCp9X6JgkWn1by8chU8SvOBxwapziqYbV0Mf1Z0uJhfUQOVxHZjuaXLq5O9ft2SJRCHvSLw7rK6iTRGIClu9WdO9+4y/GsrIOSSDyyfmxjRn78X7WxWPlqdUmEU9tihxefsxNCIyulskf7Aa3+qLqhWC//VBa/C3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=AEqyPlUp; arc=none smtp.client-ip=209.85.219.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="AxUZnk5L"
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 505BkLhn011998;
-	Sun, 5 Jan 2025 12:59:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=sXijJM
-	kyzCgi7iVH4zfN3oNlQTg/BGz4Ny95xTicY6o=; b=AxUZnk5LYvj61dQJDgiDZm
-	JHAf+y5VSL5pW5lkmRsvuzotCmW6d3eviKTIgaWUrbzbFB9KSZa5nLDlDkjApu4a
-	VpZHLV8SBpcTZcg/M7C8fcvUPBCAr50ykFVHYtl0Yty+YW3ViQ2gP/mODmNcK+i7
-	Snek47nN/PYO5GCispAbLUbDhNeNJbhXbzLFlKYH0HcSCt486SxHUjz6TCdfiYf+
-	jMNvlC7oG3Aeu8zFh/E/ZlUTnq3tClTH2RvcBatWbyYGcSjR29GhDY9vLp1wnRh5
-	J5tnV/rcoGwjs61ImOB0856JP55kubN0U0rS7efa12osu7xqvQfviv5A6M9pzwEg
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43yf4h1x63-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 05 Jan 2025 12:59:42 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 505Cxf7E011565;
-	Sun, 5 Jan 2025 12:59:41 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43yf4h1x5x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 05 Jan 2025 12:59:41 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 505Bue26008970;
-	Sun, 5 Jan 2025 12:59:40 GMT
-Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43yfpyhvrs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 05 Jan 2025 12:59:40 +0000
-Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
-	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 505CxdRp20447920
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 5 Jan 2025 12:59:39 GMT
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 462175805A;
-	Sun,  5 Jan 2025 12:59:39 +0000 (GMT)
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CEF1458051;
-	Sun,  5 Jan 2025 12:59:37 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.62.226])
-	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Sun,  5 Jan 2025 12:59:37 +0000 (GMT)
-Message-ID: <f7f82ef6ed63b91739e9c10cc34ea9931690aeff.camel@linux.ibm.com>
-Subject: Re: [RFC PATCH v3 08/13] clavis: Introduce new LSM called clavis
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Eric Snowberg <eric.snowberg@oracle.com>
-Cc: "open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        "herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "ardb@kernel.org"
- <ardb@kernel.org>,
-        "jarkko@kernel.org" <jarkko@kernel.org>,
-        "paul@paul-moore.com" <paul@paul-moore.com>,
-        "jmorris@namei.org"
- <jmorris@namei.org>,
-        "serge@hallyn.com" <serge@hallyn.com>,
-        "roberto.sassu@huawei.com" <roberto.sassu@huawei.com>,
-        "dmitry.kasatkin@gmail.com" <dmitry.kasatkin@gmail.com>,
-        "mic@digikod.net"
- <mic@digikod.net>,
-        "casey@schaufler-ca.com" <casey@schaufler-ca.com>,
-        "stefanb@linux.ibm.com" <stefanb@linux.ibm.com>,
-        "ebiggers@kernel.org"
- <ebiggers@kernel.org>,
-        "rdunlap@infradead.org" <rdunlap@infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
-Date: Sun, 05 Jan 2025 07:59:37 -0500
-In-Reply-To: <6DDCFABC-8440-4316-98D4-E3F5C9532925@oracle.com>
-References: <20241017155516.2582369-1-eric.snowberg@oracle.com>
-	 <20241017155516.2582369-9-eric.snowberg@oracle.com>
-	 <0d71ffced35abf40bbfadb6e03b053c24757183d.camel@linux.ibm.com>
-	 <6DDCFABC-8440-4316-98D4-E3F5C9532925@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="AEqyPlUp"
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6d8f75b31bfso121295156d6.3
+        for <linux-security-module@vger.kernel.org>; Sun, 05 Jan 2025 09:48:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1736099323; x=1736704123; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eqFAn42MR7s18zOlzS1GbLo3k3bDKDCPzEgFCfO1vGQ=;
+        b=AEqyPlUps09mnZk+9/ejA3Nl+Xm06DvS15Agk6gT5GY+nvQrxLJO0K0Xw7CpRmGHnh
+         TnHjHPWd7s4Gc2iAzfN+a8bFGcQZnwuK+BUXUW0BNm2L86LqRxZHi7m+zqeDCsmZU5mW
+         P09IjgbC/wMakH49fN8LcLfZCEoPMFbQYDAvsQMS+trE4kZ1rpVRchh/eatnRRyxVpt+
+         /kPcxJ1yvtoloLcR4j+dwO4i81V9HuSiAEC3dst3OgM0YJexjWsW104SB3c2mY2MDjiS
+         7nehPqhsSYITgJCkPI+0kCCb9z/Erdj2BHNWx4oL6TSWgBlUizxTFmYxwp27x5dI4D9O
+         YQ8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736099323; x=1736704123;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=eqFAn42MR7s18zOlzS1GbLo3k3bDKDCPzEgFCfO1vGQ=;
+        b=J0La2l4XPEXp8NrJDm0JaJlqW72f4fhwGarwXU9Yi+CT0Y9LOsBjaZwamI+oR+UIzA
+         WpkB9CUlbF/dEP1V49IxyB9qGyPvO9yw6olVXbyuizatOXiBGejiK4FieIizgiILO8Wt
+         de7vTzo/zPBNhgOdKi36KLXG9EZs63Px/EYm4ElMy7TvPcJrUt9ZBPL+1WQ5Rl1mne3+
+         ipO1LGZ3ZKOeFFPzHeIJeuFw0Y495Xwn5ndMXMR4Cd90mLI833iOKC0vikmxCjuA4Hg9
+         GpoMadTWcQBWIzoER1B7l3greQtu+MotwfTMFDXHYfdTLE4S/Y7Zs8YEKlhTqatW6lMy
+         spng==
+X-Forwarded-Encrypted: i=1; AJvYcCUqLhrdbxBhn+cVO2vJeHnUK2WEhWYyUd3KRozb6P7TqJwnmWloRZrTjNNAwlavmKcE1Cl14m5qOjlahdu+ucHTG8H4tW4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfGb46cggxi1O2aLPCwKAVRM11/j5VlY3v4QgKsJ38UMphU9Wa
+	T+NL0+W+cTYaHm4LFOParOjMo6n4z7k2Gcijlg3NUFlHDffAQQi5sVb2ZbrjnA==
+X-Gm-Gg: ASbGncvyG20/q6491SfeLnPcLw8rGDa5Ty2/uCoaAbtIJ4kaR4qohYamcP0nV7UX0Q0
+	5DcmgJ1RA5z154L21OiQfOmkMr+HHY4b3vLgAQy2dFpGbmLWbEzOCCauK5HT89nJl6u6gLcpr7w
+	UPE/8TUJwGmgzCRGu9vyHblCGP0KiNSpiIwrcTaH2EBe4cweJqvDmAA21GNAJKyzuzYPSzlSDjb
+	YyARKNC846u0l0PvRrQeXou0T7Et3OU+7lxtCVyfIjegIxPGKY=
+X-Google-Smtp-Source: AGHT+IEBG2Jubo3FltlrYRM8ERHRDZ/LXGRqqLAqTN9MUrsepD9bPzsvEaQWRSOl1ScA1KyeHxxvaA==
+X-Received: by 2002:ad4:5f89:0:b0:6d8:8416:9c54 with SMTP id 6a1803df08f44-6dd2333272amr1029158056d6.16.1736099322941;
+        Sun, 05 Jan 2025 09:48:42 -0800 (PST)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6dd180ebe59sm162056656d6.27.2025.01.05.09.48.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 05 Jan 2025 09:48:42 -0800 (PST)
+Date: Sun, 05 Jan 2025 12:48:41 -0500
+Message-ID: <2f7db63290c5c81513721f10a65f602e@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: sthn3heN-F8elAPpIVeydWkNYF6OSDI1
-X-Proofpoint-ORIG-GUID: sd254BjKuFHqdxrpjccUdOhjZwxzLQpb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 mlxscore=0
- priorityscore=1501 suspectscore=0 phishscore=0 clxscore=1015 spamscore=0
- lowpriorityscore=0 malwarescore=0 adultscore=0 impostorscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2501050121
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=UTF-8 
+Content-Transfer-Encoding: 8bit 
+X-Mailer: pstg-pwork:20250105_1245/pstg-lib:20250105_1245/pstg-pwork:20250105_1245
+From: Paul Moore <paul@paul-moore.com>
+To: Tanya Agarwal <tanyaagarwal25699@gmail.com>, jmorris@namei.org, serge@hallyn.com
+Cc: kees@kernel.org, yuehaibing@huawei.com, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, matthewgarrett@google.com, skhan@linuxfoundation.org, anupnewsmail@gmail.com, tanyaagarwal25699@gmail.com
+Subject: Re: [PATCH v3] lockdown: Initialize array before use
+References: <20250105070537.58334-1-tanyaagarwal25699@gmail.com>
+In-Reply-To: <20250105070537.58334-1-tanyaagarwal25699@gmail.com>
 
-On Fri, 2025-01-03 at 23:32 +0000, Eric Snowberg wrote:
->=20
-> > On Dec 24, 2024, at 10:43=E2=80=AFAM, Mimi Zohar <zohar@linux.ibm.com> =
-wrote:
-> >=20
-> > On Thu, 2024-10-17 at 09:55 -0600, Eric Snowberg wrote:
-> > > Introduce a new LSM called clavis.  The motivation behind this LSM is=
- to
-> > > provide access control for system keys.  The access control list is
-> > > contained within a keyring call .clavis.  During boot if the clavis=
-=3D boot
-> > > arg is supplied with a key id contained within any of the current sys=
-tem
-> > > keyrings (builtin, secondary, machine, or platform) it shall be used =
-as
-> > > the root of trust for validating anything that is added to the ACL li=
-st.
-> > >=20
-> > > The first restriction introduced with this LSM is the ability to enfo=
-rce
-> > > key usage.  The kernel already has a notion of tracking key usage.  T=
-his
-> > > LSM adds the ability to enforce this usage based on the system owners
-> > > configuration.
-> > >=20
-> > > Each system key may have one or more uses defined within the ACL list=
-.
-> > > Until an entry is added to the .clavis keyring, no other system key m=
-ay
-> > > be used for any other purpose.
-> > >=20
-> > > Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
-> > > ---
-> > > Documentation/admin-guide/LSM/clavis.rst      | 191 +++++++++++++++++=
-+
-> > > MAINTAINERS                                   |   7 +
-> > > crypto/asymmetric_keys/signature.c            |   4 +
-> > > include/linux/lsm_count.h                     |   8 +-
-> > > include/linux/lsm_hook_defs.h                 |   2 +
-> > > include/linux/security.h                      |   7 +
-> > > include/uapi/linux/lsm.h                      |   1 +
-> > > security/Kconfig                              |  10 +-
-> > > security/clavis/Makefile                      |   1 +
-> > > security/clavis/clavis.c                      |  26 +++
-> > > security/clavis/clavis.h                      |   4 +
-> > > security/clavis/clavis_keyring.c              |  78 ++++++-
-> > > security/security.c                           |  13 ++
-> > > .../selftests/lsm/lsm_list_modules_test.c     |   3 +
-> > > 14 files changed, 346 insertions(+), 9 deletions(-)
-> > > create mode 100644 Documentation/admin-guide/LSM/clavis.rst
-> > > create mode 100644 security/clavis/clavis.c
-> > >=20
-> > > diff --git a/Documentation/admin-guide/LSM/clavis.rst b/Documentation=
-/admin-guide/LSM/clavis.rst
-> > > new file mode 100644
-> > > index 000000000000..0e924f638a86
-> > > --- /dev/null
-> > > +++ b/Documentation/admin-guide/LSM/clavis.rst
-> > > @@ -0,0 +1,191 @@
-> > > +.. SPDX-License-Identifier: GPL-2.0
-> > > +
-> > > +=3D=3D=3D=3D=3D=3D
-> > > +Clavis
-> > > +=3D=3D=3D=3D=3D=3D
-> > > +
-> > > +Clavis is a Linux Security Module that provides mandatory access con=
-trol to
-> > > +system kernel keys (i.e. builtin, secondary, machine and platform). =
-These
-> > > +restrictions will prohibit keys from being used for validation. Upon=
- boot, the
-> > > +Clavis LSM is provided a key id as a boot parameter.  This single ke=
-y is then
-> > > +used as the root of trust for any access control modifications made =
-going
-> > > +forward. Access control updates must be signed and validated by this=
- key.
-> > > +
-> > > +Clavis has its own keyring.  All ACL updates are applied through thi=
-s keyring.
-> > > +The update must be signed by the single root of trust key.
-> > > +
-> > > +When enabled, all system keys are prohibited from being used until a=
-n ACL is
-> > > +added for them.
-> >=20
-> > Until the single key has been loaded, Clavis is not enabled.  Any key o=
-n the
-> > system trusted keyrings remains usable for any purpose.
-> >=20
-> > -> When enabled, meaning the single key has been loaded onto the Clavis=
- keyring,
-> > all system keys are prohibited ...
-> >=20
-> > Until clavis is enabled, in my opinion the defaults should be restricti=
-ve (e.g.
-> > CONFIG_INTEGRITY_CA_MACHINE_KEYRING,
-> > CONFIG_SECONDARY_TRUSTED_KEYRING_SIGNED_BY_BUILTIN). Once Clavis is ena=
-bled,
-> > based on a new helper function is_clavis_enforced() we could consider r=
-elaxing
-> > some of the existing keyring requirements (e.g. kernel modules).
+On Jan  5, 2025 Tanya Agarwal <tanyaagarwal25699@gmail.com> wrote:
+> 
+> The static code analysis tool "Coverity Scan" pointed the following
+> details out for further development considerations:
+> CID 1486102: Uninitialized scalar variable (UNINIT)
+> uninit_use_in_call: Using uninitialized value *temp when calling
+> strlen.
+> 
+> Conclusion:
+> Initialize array before use in lockdown_read() to satisfy the static
+> analyzer.
+> 
+> Fixes: 000d388ed3bb ("security: Add a static lockdown policy LSM")
+> Signed-off-by: Tanya Agarwal <tanyaagarwal25699@gmail.com>
 
-For example, kernel/module/signing.c: mod_verify_sig() would be updated to =
-check
-whether Clavis is configured and enabled and then search/use keys on the ot=
-her
-system keyrings.
+I removed the 'Fixes:' tag as the code isn't actually broken as we
+discussed in previous iterations of this patch.  I also edited the
+subject line and commit description a bit, but otherwise this is
+fine.  Merged into lsm/dev.
 
->=20
-> If I made this change, would it be acceptable to update the Kconfig=20
-> description for CONFIG_INTEGRITY_CA_MACHINE_KEYRING and CONFIG_SECONDARY_=
-TRUSTED_KEYRING_SIGNED_BY_BUILTIN=20
-> that the restriction only applies when Clavis is not enabled?  You don't=
-=20
-> think there would be push back that those restrictions are not always=20
-> being enforced?
-
-Instead I would add a Kconfig "Note:" indicating that enabling Clavis relax=
-es
-the requirement that the key exists on the system trusted
-.secondary_trusted_keys keyring.
-
-thanks,
-
-Mimi
+--
+paul-moore.com
