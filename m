@@ -1,98 +1,105 @@
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBA1412B73
-	for <linux-security-module@vger.kernel.org>; Sun,  5 Jan 2025 17:48:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F4FB658;
+	Sun,  5 Jan 2025 17:52:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736099326; cv=none; b=qxzD4xSdCXhr/mG2wO9Jq7wUxMYNxKuRSeKnOVDAaU6dDHtsoLpYZlH7M5TKQSL4FGySjwB2aRxlp2yklpOKeJWcGXH3eE8ql8hcrNNhwpkncNFqiE3FWEK5d71vLzGymUud5HCXBu7R1ChB/Hg+cFDZKpfqMaI1P76IcWAcVCM=
+	t=1736099552; cv=none; b=h8Cyvc+lkFwRlM1xWeuuUaciyQqsxXaXnFi2mXKI9P60BeRlUetkN8EgOLHLmP29EBzODYH9ZmHhxlxafC0t9gQx4j7MwQ2MEQHcSjb93WqoTIFGsaKRznxaBAikEvAs9JkMjEA61HBdh9hvrLJ8zzcdFr9GRhmnT2wmyL+SD4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736099326; c=relaxed/simple;
-	bh=VSKGgBXQitW70O3PlbpQGia2OfQLlQk/cJr0CNetNwQ=;
-	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=oA4Qg2+IyguCp9X6JgkWn1by8chU8SvOBxwapziqYbV0Mf1Z0uJhfUQOVxHZjuaXLq5O9ft2SJRCHvSLw7rK6iTRGIClu9WdO9+4y/GsrIOSSDyyfmxjRn78X7WxWPlqdUmEU9tihxefsxNCIyulskf7Aa3+qLqhWC//VBa/C3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=AEqyPlUp; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1736099552; c=relaxed/simple;
+	bh=xNBPA4resaiUSs4KnFuBu8NQk++qEi1dLXtoi9eWQrA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=H/OASj1WQqle9WO6iE8LNGvfN1opKoPdXY+lnGi473ZMTE+EIWQ+iE6OM26TCNbXI7k9Pw6deGa4f8Slaya9MK7L6rmBMiibA8NoCyJnLQGE7ksBKoKxb6OI+arblgp1jN9Oo1JGYwX8ZLuHRs9ngIwL1wZa6bavjIiVUoC5zzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QCa3Juw0; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="AEqyPlUp"
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6d8f75b31bfso121295156d6.3
-        for <linux-security-module@vger.kernel.org>; Sun, 05 Jan 2025 09:48:43 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QCa3Juw0"
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-aaf57c2e0beso938187466b.3;
+        Sun, 05 Jan 2025 09:52:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1736099323; x=1736704123; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eqFAn42MR7s18zOlzS1GbLo3k3bDKDCPzEgFCfO1vGQ=;
-        b=AEqyPlUps09mnZk+9/ejA3Nl+Xm06DvS15Agk6gT5GY+nvQrxLJO0K0Xw7CpRmGHnh
-         TnHjHPWd7s4Gc2iAzfN+a8bFGcQZnwuK+BUXUW0BNm2L86LqRxZHi7m+zqeDCsmZU5mW
-         P09IjgbC/wMakH49fN8LcLfZCEoPMFbQYDAvsQMS+trE4kZ1rpVRchh/eatnRRyxVpt+
-         /kPcxJ1yvtoloLcR4j+dwO4i81V9HuSiAEC3dst3OgM0YJexjWsW104SB3c2mY2MDjiS
-         7nehPqhsSYITgJCkPI+0kCCb9z/Erdj2BHNWx4oL6TSWgBlUizxTFmYxwp27x5dI4D9O
-         YQ8A==
+        d=gmail.com; s=20230601; t=1736099549; x=1736704349; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mkv4g/Yz/u/3d9D4eqcCq8T2dE6MAra8Lzfwnyjf1uA=;
+        b=QCa3Juw0aXs99Y8rMxOK29DcNvsXkouK04IWdGbX9UqI4Rwxm1AMzy0/IlGKqcyOj2
+         1lfZ7nW6nEV4H/1TacQ+tYz/BLQmBfFNeX8r6Q4O9wl/jIBcQ7rJneuoUjSPqLiBwMpo
+         pDX36hzy/PzIpkrOOXYQBTtD9mFcztSPrLMySw7phAM8iJ7eTUPxjPZS5a6VDpcsQqeU
+         XX1b/dX/+5Qhgh5BfowBvbdEuAWo60zCrx5HQN/gxsFYOEan7UhXTDzgWNlphHhnGIJ2
+         xOyyM7qTMymzv2khP/1e5hrkExy2ICbvWAzxDSx+pgYr9XMdzmZwTdsgJ15GnLLWWtya
+         sv+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736099323; x=1736704123;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=eqFAn42MR7s18zOlzS1GbLo3k3bDKDCPzEgFCfO1vGQ=;
-        b=J0La2l4XPEXp8NrJDm0JaJlqW72f4fhwGarwXU9Yi+CT0Y9LOsBjaZwamI+oR+UIzA
-         WpkB9CUlbF/dEP1V49IxyB9qGyPvO9yw6olVXbyuizatOXiBGejiK4FieIizgiILO8Wt
-         de7vTzo/zPBNhgOdKi36KLXG9EZs63Px/EYm4ElMy7TvPcJrUt9ZBPL+1WQ5Rl1mne3+
-         ipO1LGZ3ZKOeFFPzHeIJeuFw0Y495Xwn5ndMXMR4Cd90mLI833iOKC0vikmxCjuA4Hg9
-         GpoMadTWcQBWIzoER1B7l3greQtu+MotwfTMFDXHYfdTLE4S/Y7Zs8YEKlhTqatW6lMy
-         spng==
-X-Forwarded-Encrypted: i=1; AJvYcCUqLhrdbxBhn+cVO2vJeHnUK2WEhWYyUd3KRozb6P7TqJwnmWloRZrTjNNAwlavmKcE1Cl14m5qOjlahdu+ucHTG8H4tW4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfGb46cggxi1O2aLPCwKAVRM11/j5VlY3v4QgKsJ38UMphU9Wa
-	T+NL0+W+cTYaHm4LFOParOjMo6n4z7k2Gcijlg3NUFlHDffAQQi5sVb2ZbrjnA==
-X-Gm-Gg: ASbGncvyG20/q6491SfeLnPcLw8rGDa5Ty2/uCoaAbtIJ4kaR4qohYamcP0nV7UX0Q0
-	5DcmgJ1RA5z154L21OiQfOmkMr+HHY4b3vLgAQy2dFpGbmLWbEzOCCauK5HT89nJl6u6gLcpr7w
-	UPE/8TUJwGmgzCRGu9vyHblCGP0KiNSpiIwrcTaH2EBe4cweJqvDmAA21GNAJKyzuzYPSzlSDjb
-	YyARKNC846u0l0PvRrQeXou0T7Et3OU+7lxtCVyfIjegIxPGKY=
-X-Google-Smtp-Source: AGHT+IEBG2Jubo3FltlrYRM8ERHRDZ/LXGRqqLAqTN9MUrsepD9bPzsvEaQWRSOl1ScA1KyeHxxvaA==
-X-Received: by 2002:ad4:5f89:0:b0:6d8:8416:9c54 with SMTP id 6a1803df08f44-6dd2333272amr1029158056d6.16.1736099322941;
-        Sun, 05 Jan 2025 09:48:42 -0800 (PST)
-Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6dd180ebe59sm162056656d6.27.2025.01.05.09.48.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 05 Jan 2025 09:48:42 -0800 (PST)
-Date: Sun, 05 Jan 2025 12:48:41 -0500
-Message-ID: <2f7db63290c5c81513721f10a65f602e@paul-moore.com>
+        d=1e100.net; s=20230601; t=1736099549; x=1736704349;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mkv4g/Yz/u/3d9D4eqcCq8T2dE6MAra8Lzfwnyjf1uA=;
+        b=jOLidgzm3SFc/L2x9XfbSyemRKXmXH/ihMgDBJ1jb+XO1RmxhYB/Q7XF3RnWEwvOHE
+         v75y4hG8vsqWbmupw7gtxG5cBG/wOInVXmQj54RW6gBPXacL+pj2aJ3KhUogNAvOYZA8
+         /NsDQLYYebJ9n/3tQXR5t9mfytPkt9rWfIyC0+yXAIVO8VXjIzAfcfYZxQFGQG4SDb6L
+         yzL5AuRzudhyKMgQHmQMlSXm4XcOa1EdgNzfZJ3InqYbEoGIs098On17pVFpAJQg5t9g
+         RB0+6KXND9pwxArJfBlg6EXl9gyiyR/1vvpuERSIntRB5q0xYQuLXkXu/GXqXrMG7cAo
+         ZoeA==
+X-Forwarded-Encrypted: i=1; AJvYcCWKMCuD82Za6IdO3la/0N0SrvrsJZDL0PGjieTNxST+4UdXo4vPSYTLz3SqD5sWmSVTazKJqopAd9LzEqJx6mmYZn/Rsmrh@vger.kernel.org, AJvYcCXNfZExKogjH9GBGFWkoLGDdWmYRrh1s9Zf+RTeb5fJRDeT15tLp1OFdvD/2C6ZV3ij7quE1gD4w/cGpKE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUNLFsABtOyTq9VZq+dl9UjA9VWTwUlRr1f0f3X4mx+qWkJu/C
+	crQVa3JNLiI2feRHyZ2QtZodlrTfj5q+cS/tSBuvJI6cc5UV1tOyFTA6c/1EiGsHQWFwDKmOuZF
+	8KLkmcdsuJB6o8oaMgRU40o3Aj/A=
+X-Gm-Gg: ASbGncv8sDbcTg0jzhv6+fcHQ+Q5rKFcbh3AcTBeD13Tfbk5trL3WrpEdn0kTgnRyAj
+	Wr5IfGtrJ9q+m8oPGOYEvFcfgqaQ1Was76zccWXIv3qq7wubDbyIcIMeVcPOG6a4H1e2VfeWX
+X-Google-Smtp-Source: AGHT+IEKCme3xeaeRe0+dVjujBQKwlFsF1ZxqdlzPvIzgo67U13xtarQBAxmpfkeP0iirYIP1/ea8COscoXAQg/qToE=
+X-Received: by 2002:a17:907:9724:b0:aa6:9624:78f1 with SMTP id
+ a640c23a62f3a-aac28c14948mr4558272166b.9.1736099548841; Sun, 05 Jan 2025
+ 09:52:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=UTF-8 
-Content-Transfer-Encoding: 8bit 
-X-Mailer: pstg-pwork:20250105_1245/pstg-lib:20250105_1245/pstg-pwork:20250105_1245
-From: Paul Moore <paul@paul-moore.com>
-To: Tanya Agarwal <tanyaagarwal25699@gmail.com>, jmorris@namei.org, serge@hallyn.com
-Cc: kees@kernel.org, yuehaibing@huawei.com, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, matthewgarrett@google.com, skhan@linuxfoundation.org, anupnewsmail@gmail.com, tanyaagarwal25699@gmail.com
+MIME-Version: 1.0
+References: <20250105070537.58334-1-tanyaagarwal25699@gmail.com> <2f7db63290c5c81513721f10a65f602e@paul-moore.com>
+In-Reply-To: <2f7db63290c5c81513721f10a65f602e@paul-moore.com>
+From: Tanya Agarwal <tanyaagarwal25699@gmail.com>
+Date: Sun, 5 Jan 2025 23:22:17 +0530
+Message-ID: <CAPdGtUwDVtVi5fcHv4HM4GacS_MTaE6b0CxBu1arZS2NEMd1+g@mail.gmail.com>
 Subject: Re: [PATCH v3] lockdown: Initialize array before use
-References: <20250105070537.58334-1-tanyaagarwal25699@gmail.com>
-In-Reply-To: <20250105070537.58334-1-tanyaagarwal25699@gmail.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: jmorris@namei.org, serge@hallyn.com, kees@kernel.org, 
+	yuehaibing@huawei.com, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, matthewgarrett@google.com, 
+	skhan@linuxfoundation.org, anupnewsmail@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Jan  5, 2025 Tanya Agarwal <tanyaagarwal25699@gmail.com> wrote:
-> 
-> The static code analysis tool "Coverity Scan" pointed the following
-> details out for further development considerations:
-> CID 1486102: Uninitialized scalar variable (UNINIT)
-> uninit_use_in_call: Using uninitialized value *temp when calling
-> strlen.
-> 
-> Conclusion:
-> Initialize array before use in lockdown_read() to satisfy the static
-> analyzer.
-> 
-> Fixes: 000d388ed3bb ("security: Add a static lockdown policy LSM")
-> Signed-off-by: Tanya Agarwal <tanyaagarwal25699@gmail.com>
+On Sun, Jan 5, 2025 at 11:18=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+ote:
+>
+> On Jan  5, 2025 Tanya Agarwal <tanyaagarwal25699@gmail.com> wrote:
+> >
+> > The static code analysis tool "Coverity Scan" pointed the following
+> > details out for further development considerations:
+> > CID 1486102: Uninitialized scalar variable (UNINIT)
+> > uninit_use_in_call: Using uninitialized value *temp when calling
+> > strlen.
+> >
+> > Conclusion:
+> > Initialize array before use in lockdown_read() to satisfy the static
+> > analyzer.
+> >
+> > Fixes: 000d388ed3bb ("security: Add a static lockdown policy LSM")
+> > Signed-off-by: Tanya Agarwal <tanyaagarwal25699@gmail.com>
+>
+> I removed the 'Fixes:' tag as the code isn't actually broken as we
+> discussed in previous iterations of this patch.  I also edited the
+> subject line and commit description a bit, but otherwise this is
+> fine.  Merged into lsm/dev.
+>
+> --
+> paul-moore.com
 
-I removed the 'Fixes:' tag as the code isn't actually broken as we
-discussed in previous iterations of this patch.  I also edited the
-subject line and commit description a bit, but otherwise this is
-fine.  Merged into lsm/dev.
 
---
-paul-moore.com
+Thank you, Paul.
+
+Regards,
+Tanya
