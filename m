@@ -1,120 +1,190 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from smtp-190e.mail.infomaniak.ch (smtp-190e.mail.infomaniak.ch [185.125.25.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139B782D98
-	for <linux-security-module@vger.kernel.org>; Mon,  6 Jan 2025 14:29:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 438AC1DF72D
+	for <linux-security-module@vger.kernel.org>; Mon,  6 Jan 2025 14:45:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736173752; cv=none; b=bTOmHhA3NZrW+wbcwL8E31NfwAIxr1kKehQa7v2HnjNp06bLSs3hvYdOfRrg8PaPURWiF1mZDYAnRM/PB+dy6q2Pnu2XOLSNvFttLU8bL7BEf2Kn81vwpc11e+1I/O+0b3iuj1aRagU1TevzlKwWLXa8ZLkFoyDoLyCJT5gX1Wc=
+	t=1736174726; cv=none; b=FhwXCbCcxvlIw4r/XbVuAJOdmhE8BUWVpEL/ZtYwxMHcCIcJ+NgcD1XvbgdO8S9C28gmFShowSTe+0zFBgyiidvYtxg8zBWKd0IuzPbZ49AJXqZHnC3k9qUAxGJ4QOfBer+KA6sd89tg0vgizEQRkM68jk+8N5all4sGp/QShgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736173752; c=relaxed/simple;
-	bh=tDpzm4Bj9QcJNosTjFSSPqoZ3zZOgYkdsQMreDEVpwY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Fqih8EK9x000YbDGtQBTKYj6aTFK5bLsBH94OpSeO0yp5YHvVMMLofQvHZIZz0p/H0RTFjpkMUqpHGSvVXXxh4pgzjJlBndakfJaOLBahH2TwUPG3ibV7H2GCTHczZqL9Z6oXjrHXerFvV/il2SiTR+Yuqv6V/8NoBWRoOCux9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tUo5x-0005hl-W8; Mon, 06 Jan 2025 15:28:42 +0100
-Message-ID: <1c0957b2-48cf-49a1-aa5e-666defd7f0fd@pengutronix.de>
-Date: Mon, 6 Jan 2025 15:28:39 +0100
+	s=arc-20240116; t=1736174726; c=relaxed/simple;
+	bh=iaHl8nghDHNJxJao3QdubCWEH//IuAIMsoU86J+saEs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T3vFgjBs07Q3+r8wp0Tls016GR2esf7SYlBELvSiMzlciPCPFGBvJkmldHYdQrfiPSvUPbZq5emk3Jj19CbUvTzJDhw3USqLZB4J154smmz7WcmPsWbWw3GM3Tc+ilnR61sMSAselIfJw1P+Q4rf7cItBYwCgvIVgZx/USZguE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=ggIr0Yq0; arc=none smtp.client-ip=185.125.25.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="ggIr0Yq0"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4YRcRH6mYSzZT;
+	Mon,  6 Jan 2025 15:45:15 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1736174715;
+	bh=oNLP5oydomS3aCb4h3+wfUEil3g0RqPdOGQcOcB85Oc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ggIr0Yq0hJXLkfwkjIfniDQr+sGHW2Vt4Tja99Ba2ihSyNEk5bbHouQvTPzuHgwAd
+	 xitlb+3s+TU2zWEsUMpAUbFfdA1Tg42jyplrJFxyv/1D5My0OrhsLr9UKpbR4hw8pY
+	 dZLLjZHJ3cq+yhzTsZMjcNkpTAhusUbBXuw5Poz0=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4YRcRG2yC2zHvL;
+	Mon,  6 Jan 2025 15:45:14 +0100 (CET)
+Date: Mon, 6 Jan 2025 15:45:10 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Eric Paris <eparis@redhat.com>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, "Serge E . Hallyn" <serge@hallyn.com>, 
+	Ben Scarlato <akhna@google.com>, Casey Schaufler <casey@schaufler-ca.com>, 
+	Charles Zaffery <czaffery@roblox.com>, Francis Laniel <flaniel@linux.microsoft.com>, 
+	James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Jorge Lucangeli Obes <jorgelo@google.com>, Kees Cook <kees@kernel.org>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, Phil Sutter <phil@nwl.cc>, 
+	Praveen K Paladugu <prapal@linux.microsoft.com>, Robert Salvet <robert.salvet@roblox.com>, 
+	Shervin Oloumi <enlightened@google.com>, Song Liu <song@kernel.org>, 
+	Tahera Fahimi <fahimitahera@gmail.com>, audit@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v3 8/23] landlock: Log ptrace denials
+Message-ID: <20250106.wohB1leet2vu@digikod.net>
+References: <20241122143353.59367-9-mic@digikod.net>
+ <a0181404db7048781857521d010d0658@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/11] reboot: reboot, not shutdown, on
- hw_protection_reboot timeout
-To: kernel test robot <lkp@intel.com>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Fabio Estevam
- <festevam@denx.de>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
- Jonathan Corbet <corbet@lwn.net>, Serge Hallyn <serge@hallyn.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Matti Vaittinen <mazziesaccount@gmail.com>,
- Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>,
- Guenter Roeck <groeck@chromium.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-security-module@vger.kernel.org, chrome-platform@lists.linux.dev,
- devicetree@vger.kernel.org, kernel@pengutronix.de
-References: <20241219-hw_protection-reboot-v1-2-263a0c1df802@pengutronix.de>
- <202412201310.JWkUQ9qf-lkp@intel.com>
-Content-Language: en-US
-From: Ahmad Fatoum <a.fatoum@pengutronix.de>
-In-Reply-To: <202412201310.JWkUQ9qf-lkp@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a0181404db7048781857521d010d0658@paul-moore.com>
+X-Infomaniak-Routing: alpha
 
-On 20.12.24 07:12, kernel test robot wrote:
-> Hi Ahmad,
+On Sat, Jan 04, 2025 at 08:23:49PM -0500, Paul Moore wrote:
+> On Nov 22, 2024 =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net> wrote:
+> > 
+> > Add audit support to ptrace_access_check and ptrace_traceme hooks.
+> > 
+> > Add a new AUDIT_LANDLOCK_DENY record type dedicated to any Landlock
+> > denials.
+> > 
+> > Log the domain ID restricting the action, the domain's blockers that are
+> > missing to allow the requested access, and the target task.
+> > 
+> > The blockers are implicit restrictions (e.g. ptrace), or explicit access
+> > rights (e.g. filesystem), or explicit scopes (e.g. signal).
+> > 
+> > For the ptrace_access_check case, we log the current/parent domain and
+> > the child task.  For the ptrace_traceme case, we log the parent domain
+> > and the parent task.  Indeed, the requester is the current task, but the
+> > action would be performed by the parent task.
+> > 
+> > The quick return for non-landlocked tasks is moved from task_ptrace() to
+> > each LSM hooks.
+> > 
+> > Audit event sample:
+> > 
+> >   type=LL_DENY msg=audit(1732186800.349:44): domain=195ba459b blockers=ptrace opid=1 ocomm="systemd"
+> >   type=SYSCALL msg=audit(1732186800.349:44): arch=c000003e syscall=101 success=no [...] pid=300 auid=0
+> > 
+> > Cc: Günther Noack <gnoack@google.com>
+> > Cc: Paul Moore <paul@paul-moore.com>
+> > Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> > Link: https://lore.kernel.org/r/20241122143353.59367-9-mic@digikod.net
+> > ---
+> > Changes since v2:
+> > - Log domain IDs as hexadecimal number: this is a more compact notation
+> >   (i.e. at least one less digit), it improves alignment in logs, and it
+> >   makes most IDs start with 1 as leading digit (because of the 2^32
+> >   minimal value).  Do not use the "0x" prefix that would add useless
+> >   data to logs.
+> > - Constify function arguments.
+> > 
+> > Changes since v1:
+> > - Move most audit code to this patch.
+> > - Rebase on the TCP patch series.
+> > - Don't log missing access right: simplify and make it generic for rule
+> >   types.
+> > - Don't log errno and then don't wrap the error with
+> >   landlock_log_request(), as suggested by Jeff.
+> > - Add a WARN_ON_ONCE() check to never dereference null pointers.
+> > - Only log when audit is enabled.
+> > - Don't log task's PID/TID with log_task() because it would be redundant
+> >   with the SYSCALL record.
+> > - Move the "op" in front and rename "domain" to "denying_domain" to make
+> >   it more consistent with other entries.
+> > - Don't update the request with the domain ID but add an helper to get
+> >   it from the layer masks (and in a following commit with a struct
+> >   file).
+> > - Revamp get_domain_id_from_layer_masks() into
+> >   get_level_from_layer_masks().
+> > - For ptrace_traceme, log the parent domain instead of the current one.
+> > - Add documentation.
+> > - Rename AUDIT_LANDLOCK_DENIAL to AUDIT_LANDLOCK_DENY.
+> > - Only log the domain ID and the target task.
+> > - Log "blockers", which are either implicit restrictions (e.g. ptrace)
+> >   or explicit access rights (e.g. filesystem), or scopes (e.g. signal).
+> > - Don't log LSM hook names/operations.
+> > - Pick an audit event ID folling the IPE ones.
+> > - Add KUnit tests.
+> > ---
+> >  include/uapi/linux/audit.h  |   3 +-
+> >  security/landlock/Makefile  |   2 +-
+> >  security/landlock/audit.c   | 137 ++++++++++++++++++++++++++++++++++++
+> >  security/landlock/audit.h   |  52 ++++++++++++++
+> >  security/landlock/domain.c  |  21 ++++++
+> >  security/landlock/domain.h  |  17 +++++
+> >  security/landlock/ruleset.c |   3 +
+> >  security/landlock/task.c    |  91 ++++++++++++++++++------
+> >  8 files changed, 302 insertions(+), 24 deletions(-)
+> >  create mode 100644 security/landlock/audit.c
+> >  create mode 100644 security/landlock/audit.h
+> >  create mode 100644 security/landlock/domain.c
+> > 
+> > diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
+> > index 75e21a135483..60c909c396c0 100644
+> > --- a/include/uapi/linux/audit.h
+> > +++ b/include/uapi/linux/audit.h
+> > @@ -33,7 +33,7 @@
+> >   * 1100 - 1199 user space trusted application messages
+> >   * 1200 - 1299 messages internal to the audit daemon
+> >   * 1300 - 1399 audit event messages
+> > - * 1400 - 1499 SE Linux use
+> > + * 1400 - 1499 access control messages
 > 
-> kernel test robot noticed the following build warnings:
+> Thank you :)
 > 
-> [auto build test WARNING on 78d4f34e2115b517bcbfe7ec0d018bbbb6f9b0b8]
+> I'm also reminded once again that the original audit devs stubbornly
+> used "SE Linux" instead of "SELinux" :/
 > 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Ahmad-Fatoum/reboot-replace-__hw_protection_shutdown-bool-action-parameter-with-an-enum/20241219-155416
-> base:   78d4f34e2115b517bcbfe7ec0d018bbbb6f9b0b8
-> patch link:    https://lore.kernel.org/r/20241219-hw_protection-reboot-v1-2-263a0c1df802%40pengutronix.de
-> patch subject: [PATCH 02/11] reboot: reboot, not shutdown, on hw_protection_reboot timeout
-> config: i386-buildonly-randconfig-003-20241220 (https://download.01.org/0day-ci/archive/20241220/202412201310.JWkUQ9qf-lkp@intel.com/config)
-> compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241220/202412201310.JWkUQ9qf-lkp@intel.com/reproduce)
+> >   * 1500 - 1599 kernel LSPP events
+> >   * 1600 - 1699 kernel crypto events
+> >   * 1700 - 1799 kernel anomaly records
+> > @@ -146,6 +146,7 @@
+> >  #define AUDIT_IPE_ACCESS	1420	/* IPE denial or grant */
+> >  #define AUDIT_IPE_CONFIG_CHANGE	1421	/* IPE config change */
+> >  #define AUDIT_IPE_POLICY_LOAD	1422	/* IPE policy load */
+> > +#define AUDIT_LANDLOCK_DENY	1423	/* Landlock denial */
 > 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202412201310.JWkUQ9qf-lkp@intel.com/
+> Generally speaking, we don't really encode denial/allowed verdicts into
+> the audit record type, instead we ask that developers use a field like
+> "access=" to indicate that an action was allowed or denied.
 > 
-> All warnings (new ones prefixed by >>):
-> 
->    kernel/reboot.c:241: warning: Function parameter or struct member 'cmd' not described in 'do_kernel_restart'
->>> kernel/reboot.c:995: warning: Function parameter or struct member 'action' not described in 'hw_failure_emergency_schedule'
->>> kernel/reboot.c:995: warning: Function parameter or struct member 'poweroff_delay_ms' not described in 'hw_failure_emergency_schedule'
+> How about AUDIT_LANDLOCK_ACCESS ?
 
-Will fix the kernel doc issues for v2.
+A stronger type with the "denied" semantic makes more sense to me,
+especially for Landlock which is unprivileged, and it makes it clear
+that it should only impact performance and log size (i.e. audit log
+creation) for denied actions.  Having dedicated record types enables
+users to easily and efficiently filter log with audit rules.
+AUDIT_LANDLOCK_DENY is also a clear signal that something unexpected is
+ongoing (see the LANDLOCK_RESTRICT_SELF_LOGLESS flag).  The next patch
+series will also contain a new kind of audit rule to specifically
+identify the origin of the policy that created this denied event, which
+should make more sense.
 
->    kernel/reboot.c:1023: warning: Function parameter or struct member 'action' not described in '__hw_protection_shutdown'
->    kernel/reboot.c:1023: warning: Excess function parameter 'shutdown' description in '__hw_protection_shutdown'
-> 
-> 
-> vim +995 kernel/reboot.c
-> 
-> dfa19b11385d4c Matti Vaittinen 2021-06-03   983  
-> dfa19b11385d4c Matti Vaittinen 2021-06-03   984  static DECLARE_DELAYED_WORK(hw_failure_emergency_poweroff_work,
-> dfa19b11385d4c Matti Vaittinen 2021-06-03   985  			    hw_failure_emergency_poweroff_func);
-> dfa19b11385d4c Matti Vaittinen 2021-06-03   986  
-> dfa19b11385d4c Matti Vaittinen 2021-06-03   987  /**
-> 595ab92650cc28 Ahmad Fatoum    2024-12-19   988   * hw_failure_emergency_schedule - Schedule an emergency system shutdown or reboot
-> dfa19b11385d4c Matti Vaittinen 2021-06-03   989   *
-> dfa19b11385d4c Matti Vaittinen 2021-06-03   990   * This may be called from any critical situation to trigger a system shutdown
-> dfa19b11385d4c Matti Vaittinen 2021-06-03   991   * after a given period of time. If time is negative this is not scheduled.
-> dfa19b11385d4c Matti Vaittinen 2021-06-03   992   */
-> 595ab92650cc28 Ahmad Fatoum    2024-12-19   993  static void hw_failure_emergency_schedule(enum hw_protection_action action,
-> 595ab92650cc28 Ahmad Fatoum    2024-12-19   994  					  int poweroff_delay_ms)
-> dfa19b11385d4c Matti Vaittinen 2021-06-03  @995  {
-> dfa19b11385d4c Matti Vaittinen 2021-06-03   996  	if (poweroff_delay_ms <= 0)
-> dfa19b11385d4c Matti Vaittinen 2021-06-03   997  		return;
-> 595ab92650cc28 Ahmad Fatoum    2024-12-19   998  	hw_failure_emergency_action = action;
-> dfa19b11385d4c Matti Vaittinen 2021-06-03   999  	schedule_delayed_work(&hw_failure_emergency_poweroff_work,
-> dfa19b11385d4c Matti Vaittinen 2021-06-03  1000  			      msecs_to_jiffies(poweroff_delay_ms));
-> dfa19b11385d4c Matti Vaittinen 2021-06-03  1001  }
-> dfa19b11385d4c Matti Vaittinen 2021-06-03  1002  
-> 
-
-
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Because of its unprivileged nature, Landlock will never log granted
+accesses by default.  In the future, we might want a permissive-like
+mode for Landlock, but this will be optional, and I would also strongly
+prefer to add new audit record types for new semantics.  That would also
+help log parsers to stick to the current deny-only semantic and avoid
+misinterpretations or even noise from debug/test log entries.
