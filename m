@@ -1,105 +1,117 @@
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F4FB658;
-	Sun,  5 Jan 2025 17:52:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AF0F8BE7
+	for <linux-security-module@vger.kernel.org>; Mon,  6 Jan 2025 03:41:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736099552; cv=none; b=h8Cyvc+lkFwRlM1xWeuuUaciyQqsxXaXnFi2mXKI9P60BeRlUetkN8EgOLHLmP29EBzODYH9ZmHhxlxafC0t9gQx4j7MwQ2MEQHcSjb93WqoTIFGsaKRznxaBAikEvAs9JkMjEA61HBdh9hvrLJ8zzcdFr9GRhmnT2wmyL+SD4g=
+	t=1736134864; cv=none; b=axuo0e+Kmw00ACHLK6Yv4khXcXuoDjCBb1HAhuayi6KFCCHp+22iBwTSysmeU88E2mNyDYUoS8jnAcLhrerOPgQvX2lHgSVbjZgqUg/DXShoik4pEshZyXKn0ekZba3NU+QHHb+rt1kvXvNVfy9HlaRCcLN3x29a3eH5OvB12Ys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736099552; c=relaxed/simple;
-	bh=xNBPA4resaiUSs4KnFuBu8NQk++qEi1dLXtoi9eWQrA=;
+	s=arc-20240116; t=1736134864; c=relaxed/simple;
+	bh=8DUGcNzptq1qMBNMQD/ZKivSEc24A77W165dn0Ba4IU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H/OASj1WQqle9WO6iE8LNGvfN1opKoPdXY+lnGi473ZMTE+EIWQ+iE6OM26TCNbXI7k9Pw6deGa4f8Slaya9MK7L6rmBMiibA8NoCyJnLQGE7ksBKoKxb6OI+arblgp1jN9Oo1JGYwX8ZLuHRs9ngIwL1wZa6bavjIiVUoC5zzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QCa3Juw0; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 To:Cc:Content-Type; b=OLJaxXp8Mxn2BjOBmd54MJ4wLxq76BoAFFcachVOg328OKGbgoaxfSG9zfRUvyJkPGsqf0EGBhb8gVqL4Da4C+mrURZp9Z/rmRI0eoDjsF4/dR64/GZcuG9G8WbgskYyKKfbsQwvkgZ0izLUMFDbuAQXwNMQj/VFObcxOLJN6aM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=IaFudVQo; arc=none smtp.client-ip=209.85.219.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QCa3Juw0"
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-aaf57c2e0beso938187466b.3;
-        Sun, 05 Jan 2025 09:52:30 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="IaFudVQo"
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e537d9e3d75so19957859276.3
+        for <linux-security-module@vger.kernel.org>; Sun, 05 Jan 2025 19:41:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1736099549; x=1736704349; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1736134861; x=1736739661; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mkv4g/Yz/u/3d9D4eqcCq8T2dE6MAra8Lzfwnyjf1uA=;
-        b=QCa3Juw0aXs99Y8rMxOK29DcNvsXkouK04IWdGbX9UqI4Rwxm1AMzy0/IlGKqcyOj2
-         1lfZ7nW6nEV4H/1TacQ+tYz/BLQmBfFNeX8r6Q4O9wl/jIBcQ7rJneuoUjSPqLiBwMpo
-         pDX36hzy/PzIpkrOOXYQBTtD9mFcztSPrLMySw7phAM8iJ7eTUPxjPZS5a6VDpcsQqeU
-         XX1b/dX/+5Qhgh5BfowBvbdEuAWo60zCrx5HQN/gxsFYOEan7UhXTDzgWNlphHhnGIJ2
-         xOyyM7qTMymzv2khP/1e5hrkExy2ICbvWAzxDSx+pgYr9XMdzmZwTdsgJ15GnLLWWtya
-         sv+Q==
+        bh=6t4+KmeeCy/tpHdFuGwkBi9hlofz3W6ub54t1sWW4xg=;
+        b=IaFudVQomY0CGTZMZZ/QWrq6Sxqdqpm8GxZBVG+GIAiBifgYOd9fPWagXG2CXSdfas
+         3lnuAQL6fToxzerwOnK1TRsR+WNAKOyHlqcSnd2+TUwJWRhG0aemZlXxHTm4d3fPcOQU
+         tdPG9Wyxv/XD/cshVQI2noPBDU4p/jsM5oWw3w/bdsi2mKZoo3KRywnTt4Oz+za+wRg/
+         f0dQL0CFKMpgocwyckUtuXrACgIinI6++o8nVlL4U3XyXoiE5tAigHQdslEyGXctJ88g
+         kfAdZdjpvGI72RTTzJ6QPza6imRyPS43OAiqvDM9BKxVTaIuXFrCvE5QjlqXozXyGw3I
+         QUag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736099549; x=1736704349;
+        d=1e100.net; s=20230601; t=1736134861; x=1736739661;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=mkv4g/Yz/u/3d9D4eqcCq8T2dE6MAra8Lzfwnyjf1uA=;
-        b=jOLidgzm3SFc/L2x9XfbSyemRKXmXH/ihMgDBJ1jb+XO1RmxhYB/Q7XF3RnWEwvOHE
-         v75y4hG8vsqWbmupw7gtxG5cBG/wOInVXmQj54RW6gBPXacL+pj2aJ3KhUogNAvOYZA8
-         /NsDQLYYebJ9n/3tQXR5t9mfytPkt9rWfIyC0+yXAIVO8VXjIzAfcfYZxQFGQG4SDb6L
-         yzL5AuRzudhyKMgQHmQMlSXm4XcOa1EdgNzfZJ3InqYbEoGIs098On17pVFpAJQg5t9g
-         RB0+6KXND9pwxArJfBlg6EXl9gyiyR/1vvpuERSIntRB5q0xYQuLXkXu/GXqXrMG7cAo
-         ZoeA==
-X-Forwarded-Encrypted: i=1; AJvYcCWKMCuD82Za6IdO3la/0N0SrvrsJZDL0PGjieTNxST+4UdXo4vPSYTLz3SqD5sWmSVTazKJqopAd9LzEqJx6mmYZn/Rsmrh@vger.kernel.org, AJvYcCXNfZExKogjH9GBGFWkoLGDdWmYRrh1s9Zf+RTeb5fJRDeT15tLp1OFdvD/2C6ZV3ij7quE1gD4w/cGpKE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUNLFsABtOyTq9VZq+dl9UjA9VWTwUlRr1f0f3X4mx+qWkJu/C
-	crQVa3JNLiI2feRHyZ2QtZodlrTfj5q+cS/tSBuvJI6cc5UV1tOyFTA6c/1EiGsHQWFwDKmOuZF
-	8KLkmcdsuJB6o8oaMgRU40o3Aj/A=
-X-Gm-Gg: ASbGncv8sDbcTg0jzhv6+fcHQ+Q5rKFcbh3AcTBeD13Tfbk5trL3WrpEdn0kTgnRyAj
-	Wr5IfGtrJ9q+m8oPGOYEvFcfgqaQ1Was76zccWXIv3qq7wubDbyIcIMeVcPOG6a4H1e2VfeWX
-X-Google-Smtp-Source: AGHT+IEKCme3xeaeRe0+dVjujBQKwlFsF1ZxqdlzPvIzgo67U13xtarQBAxmpfkeP0iirYIP1/ea8COscoXAQg/qToE=
-X-Received: by 2002:a17:907:9724:b0:aa6:9624:78f1 with SMTP id
- a640c23a62f3a-aac28c14948mr4558272166b.9.1736099548841; Sun, 05 Jan 2025
- 09:52:28 -0800 (PST)
+        bh=6t4+KmeeCy/tpHdFuGwkBi9hlofz3W6ub54t1sWW4xg=;
+        b=fdbavludLa0tTjD/S4CvtfzhfrKcKV+/f6/CJWbpy/kxN1fMN9fMmQ652QiGz0Fbga
+         kzCteAahVBAVx/pO9RRcfNKuf8T5N267uOJie/ScH/ADXp1SLOrem5ygauyJv83znAxi
+         plZ4LEWyyWVOszo4mNir2Ycxa1EyVt9iz7Hiu+zVo7HipwwkpMyLtJKiKuaraUyknFl4
+         5jfCkJ2xBlbBJ3qWZ0SdghmanWtoWOGFfrxkJbzTfn5+tjf3/FV1oPm97/zqbFognSj5
+         DtFgLXgatDMajeDSaJcjXfijCNg7tUItYsYI8NP3AvsYv5IkVPT7vSqcegTooew0wZ6t
+         1iLg==
+X-Forwarded-Encrypted: i=1; AJvYcCV0H9AoATJFpizUeg79iMNNgiBOb6UryUsFCYvLw4t2baajQ6wRpyORc60cDt6zpkhCZ5HjZ+X6i6BCYzbT+7lqbh8yUnk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/FmprfKFFhLipcqGQal6Zf9IZp+4xjKeNTNrROSab922z+eu0
+	KPqcyXTaVRFgzcnrLnGhrIkQaBIQkR6t5QJdDKiYmUklGX644W4fvsRA7Kuie4qhzgPbRonhfTa
+	KJ17irnRrbdIlFgPERs3vYipYf3ODKuoNt7wE
+X-Gm-Gg: ASbGncs5SfS6nIqpEg+TLGUL65c/hRu4WpZMx7FQJMFB5+qiH7F1uQ/w5HZP3c1vyym
+	+WpQXO3YPmFqYIM1NNrSrJ41gxeYCDIZDk7+3
+X-Google-Smtp-Source: AGHT+IGV5iWI1X9jzlMyykT81bJsVn3tu5hbb0dX48snfbYwM4zQ6K8WfYhBMKhfP8y7t6HQ8jUgFUo/mnKTQ27HptU=
+X-Received: by 2002:a05:690c:62c6:b0:6ef:59ef:f194 with SMTP id
+ 00721157ae682-6f3f80de678mr365800587b3.4.1736134861363; Sun, 05 Jan 2025
+ 19:41:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250105070537.58334-1-tanyaagarwal25699@gmail.com> <2f7db63290c5c81513721f10a65f602e@paul-moore.com>
-In-Reply-To: <2f7db63290c5c81513721f10a65f602e@paul-moore.com>
-From: Tanya Agarwal <tanyaagarwal25699@gmail.com>
-Date: Sun, 5 Jan 2025 23:22:17 +0530
-Message-ID: <CAPdGtUwDVtVi5fcHv4HM4GacS_MTaE6b0CxBu1arZS2NEMd1+g@mail.gmail.com>
-Subject: Re: [PATCH v3] lockdown: Initialize array before use
-To: Paul Moore <paul@paul-moore.com>
-Cc: jmorris@namei.org, serge@hallyn.com, kees@kernel.org, 
-	yuehaibing@huawei.com, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, matthewgarrett@google.com, 
-	skhan@linuxfoundation.org, anupnewsmail@gmail.com
+References: <20241017155516.2582369-1-eric.snowberg@oracle.com>
+ <c490397315c2704e9ef65c8ad3fefedb239f1997.camel@linux.ibm.com>
+ <72F52F71-C7F3-402D-8441-3D636A093FE8@oracle.com> <CAHC9VhRHEw5c+drC=aX4xTqWoQJJZ+qkJ7aHUT5dcu+Q5f7BqA@mail.gmail.com>
+In-Reply-To: <CAHC9VhRHEw5c+drC=aX4xTqWoQJJZ+qkJ7aHUT5dcu+Q5f7BqA@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Sun, 5 Jan 2025 22:40:50 -0500
+Message-ID: <CAHC9VhSJpnaAK1efgs1Uk0Tr3CaDNR1LiDU-t_yDKDQG6J-74Q@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 00/13] Clavis LSM
+To: Eric Snowberg <eric.snowberg@oracle.com>
+Cc: Mimi Zohar <zohar@linux.ibm.com>, 
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>, David Howells <dhowells@redhat.com>, 
+	David Woodhouse <dwmw2@infradead.org>, 
+	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>, "davem@davemloft.net" <davem@davemloft.net>, 
+	Ard Biesheuvel <ardb@kernel.org>, Jarkko Sakkinen <jarkko@kernel.org>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	"casey@schaufler-ca.com" <casey@schaufler-ca.com>, Stefan Berger <stefanb@linux.ibm.com>, 
+	"ebiggers@kernel.org" <ebiggers@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>, 
+	"keyrings@vger.kernel.org" <keyrings@vger.kernel.org>, 
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, 
+	"linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>, 
+	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jan 5, 2025 at 11:18=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+On Fri, Jan 3, 2025 at 11:48=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
 ote:
 >
-> On Jan  5, 2025 Tanya Agarwal <tanyaagarwal25699@gmail.com> wrote:
-> >
-> > The static code analysis tool "Coverity Scan" pointed the following
-> > details out for further development considerations:
-> > CID 1486102: Uninitialized scalar variable (UNINIT)
-> > uninit_use_in_call: Using uninitialized value *temp when calling
-> > strlen.
-> >
-> > Conclusion:
-> > Initialize array before use in lockdown_read() to satisfy the static
-> > analyzer.
-> >
-> > Fixes: 000d388ed3bb ("security: Add a static lockdown policy LSM")
-> > Signed-off-by: Tanya Agarwal <tanyaagarwal25699@gmail.com>
->
-> I removed the 'Fixes:' tag as the code isn't actually broken as we
-> discussed in previous iterations of this patch.  I also edited the
-> subject line and commit description a bit, but otherwise this is
-> fine.  Merged into lsm/dev.
->
-> --
-> paul-moore.com
+> Regardless, back to Clavis ... reading quickly through the cover
+> letter again, I do somewhat wonder if this isn't better integrated
+> into the keyring proper; have you talked to both David and Jarkko
+> about this?
 
+I realize I should probably expand on my thinking a bit, especially
+since my comment a while regarding LSMs dedicated to enforcing access
+control on keys is what was given as a reason for making Clavis a LSM.
 
-Thank you, Paul.
+I still stand by my comment from over a year ago that I see no reason
+why we couldn't support a LSM that enforces access controls on
+keyrings/keys.  What gives me pause with the Clavis LSM is that so
+much of Clavis is resident in the keyrings themselves, e.g. Clavis
+policy ACLs and authorization keys, that it really feels like it
+should be part of the keys subsystem and not a LSM.  Yes, existing
+LSMs do have LSM specific data that resides outside of the LSM and in
+an object's subsystem, but that is usually limited to security
+identifiers and similar things, not the LSM's security policy.
 
-Regards,
-Tanya
+That's my current thinking, and why I asked about locating Clavis in
+the keys subsystem directly (although I still think better keyring
+granularity and a shift towards usage based keyrings is the better
+option).  If David and Jarkko are opposed to integrating Clavis into
+the keys subsystem we can consider this as a LSM, I'm just not sure
+it's the best first option.  Does that make sense?
+
+--=20
+paul-moore.com
