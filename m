@@ -1,110 +1,212 @@
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1768F1D6DDA
-	for <linux-security-module@vger.kernel.org>; Mon,  6 Jan 2025 22:33:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCF5C1D90DD
+	for <linux-security-module@vger.kernel.org>; Mon,  6 Jan 2025 23:50:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736202800; cv=none; b=N5ivm+tYzpeNWRpmdN6C/RMtKEPnkYrpzEgEOitLf2Kp/LhqUJyo3nWPjabof9OJ8+UVNHIFJ3ffdFjYL7gqTqz6lBfgZjsv+ToTH9J6f9ve3pvvuIeIGMrOmf7U5hR176Wn8pcjwrnHQ0Tip2hfcpH4LLRgwzcsdHsSKkmC8v8=
+	t=1736207438; cv=none; b=EzOsI3JMoT8LhpYelFbo88V5WJ+nBy/DNDHuhhVAKEPdgc9yznfSFapHjvpMcsWdXjYDkGzkkTr+jndmWlUPhcCtNpNms7gLwDUh5chPo6gC2YpvNAo3mLF+SS1dJN4aWuEL9cnQlT69e8DlY/EQavp2FHSdRWxFeSBWi2F2GuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736202800; c=relaxed/simple;
-	bh=kpxzGR4JaJofJNDa5ZJ3pY4v2uSOH1urVRJeJzOWYII=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bzmWlnz7KUV/WXT51BaKrZjkwIVaAiw9Sa3Dt30fMBWFw4Jv9Si4A63mmWxf3OjbOLRWAHkrI0LMA7S/73aj+hPwxTcQxz7gL8sonwe4NDPTnPkpLhdxJxrG5CnEnNneFcgrg5VM8dOiydTuAFSGrbN/sXInRq615WYhXD1WEDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=bamBrdNO; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1736207438; c=relaxed/simple;
+	bh=iB6w2VVpKZ76xhbZkpMOignKIJANEGt87ztW5n2KRfI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UEnbJU76g+ICJ7c+fy5Xi8usi+VNoZoqADbpHSFDcwey5qrrvkpwsIvOAQ0TZ85gcZZEyqaT/lRzjcrvFTCAzXqznoO9CYwPxce43ExNrPUzuioMfA18lM0PvFAjEH3DEBCpT9fp1m7zByz74Sl6dhXUhh28ucW5QtMTo14Ez5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Cxdv3l5y; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="bamBrdNO"
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e39f43344c5so19536303276.1
-        for <linux-security-module@vger.kernel.org>; Mon, 06 Jan 2025 14:33:18 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Cxdv3l5y"
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2164b1f05caso211996285ad.3
+        for <linux-security-module@vger.kernel.org>; Mon, 06 Jan 2025 15:50:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1736202798; x=1736807598; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KnYEdpMsAz0QDzwNW1wx8vhWkXrIqVYrOc5wcWksEcQ=;
-        b=bamBrdNOgaRjGQcB/8IbivWyomkC+0wFRLe0P3/ifJhkvZFRfHGyPYJqaPZ6jE7dr9
-         3+vqcmVrULdJjdUVaJ0Oq7p82rF8gUzFweRtkootMaYSF/kkKXfpefWpB8FZ6vTamJ1t
-         xA2R98f4tsT9er12hZoyvTmPkDaFMNh5y6L8Nfog+6d7kIvwLpcw+fPC2+96T/ULB+nI
-         5SxqG1vSsRqKq2oGcXsVKSfZo6K3OxlRI2i1Ks7rnTPFAu4hQTS2mQubyI/Eqf52VQza
-         oW2qV1+6avrf2xCG3ZKaTVmImawHM0t0ImeR0wr04FHNrgzaTIHnKjMUDM/s0aNSIcJj
-         qVzg==
+        d=chromium.org; s=google; t=1736207436; x=1736812236; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uiv3nlXhpFNKlT/zHDb3Vc4prA2G2s6FDKt7Irs340g=;
+        b=Cxdv3l5y13YrjbUmH5LeYIFPN6Ww/s8OpvXIaFkjXlL7bO8nIl2eI12HEK7EGh0nJc
+         ygBDBTDhiYzwuTB60fCf2fCbBL6+TeMW42Ut5dnz5Rhb4ZFG+0ydo6Ds6d1q78zfre2/
+         wHbF92PNv0IvArUKNPt/SqVmdoIcerU/N/Gjk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736202798; x=1736807598;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KnYEdpMsAz0QDzwNW1wx8vhWkXrIqVYrOc5wcWksEcQ=;
-        b=H9m2A7Ra8I9OicQBOxQDmPRAXt6t1TcOriK9PL7+48iAUXJT5gAEdTHaNuweQ3xs2r
-         B9k4gn5i/6skz6wYpKD2coF3x6i8CCQ2bEdMUChxC1jQ4/DvuSJdBeiWHLf4OUE/RNd9
-         6TmMQyHv/qhmg5hrE6cPl34YMk+aN6mug12r50i0XUztSATbsRG4+XkfbrPNgVgZoIDC
-         4XxWMLAI7VRoiPrfhNjqeu1V1dpiKIhIzTcIzl923MlY2CQa8CqMpHPh1rK7n+rMZm++
-         nPFcGND2ix/aTgk9veh10Md/ET9iQ3PIkD5U4cC8zZ0roKHAQky8KoOWOeNZgdqyF8GS
-         ZJew==
-X-Forwarded-Encrypted: i=1; AJvYcCUCiapEokM19gE08N5IPvYnTqwTXECVSJemmz844at2Cce0r7leEvEFSlq5m0gtLea2/oaILpuvioAqWzgDAWC6tjyOTd8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzyNfnXpEV9gGmj3vWjwd77SkXZ/4mjsk4S/GW1ip2txtr1YGl
-	xC9yY2KDsb1HNYHBnINuDAZdsYvQR/i4e8t6aByoFy0LN42YFwUMwH/ZLOAZePLAL1kOx3E/S2a
-	2MuaizsL486aSkBsNmHcnd93c45iHs8fTQtUQ
-X-Gm-Gg: ASbGncvCwqHnWUhkSpfxVh709d8NKoxLXkSpi/f/EuSsi6QylnDIOumyiNutcjUTZhQ
-	x/IkveaOtbF7PSPG7l6wnK/0HNow/nR7yiNdq
-X-Google-Smtp-Source: AGHT+IFSn6EmyzYcayFke1bry03EZjwyI2ykxVAT2ssmOGcaLUn1LXokDJByOKaRFr7je/0lN2AHCYWtk+7hnvzD69E=
-X-Received: by 2002:a05:690c:4d81:b0:6ef:4e42:64b5 with SMTP id
- 00721157ae682-6f3f8115a00mr425350417b3.16.1736202798164; Mon, 06 Jan 2025
- 14:33:18 -0800 (PST)
+        d=1e100.net; s=20230601; t=1736207436; x=1736812236;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uiv3nlXhpFNKlT/zHDb3Vc4prA2G2s6FDKt7Irs340g=;
+        b=eMZYXQQ4B+T+rxTK1I/N8Na8YLmwO/GNrFF+W0HaPbNt5FZYCUFIU3IZm5MFyVo8XZ
+         BeTQzLzMP8aHdd2Jxs+M/1UlC139kzrQQi6OvW1pQt3X72yEVas7VQGuwU8vJWOn1Af2
+         W8iAHtVqewP9hSDEfklODozNy0lN/a7GemO8MC+1nqwbeiH1Eizfk/4jGQaTIIM7WC0r
+         7jOxcMO2ilexqyBL1EEMA99mmNJqG3Ba0RYaiU0Om/Usel6DTkQy8pGGJlNO0DNeODBn
+         u79lzv7YoRga6jYNgq379AenZ+lNwOOKPsa18KV3xXVuAnPWyia4dVjhIXHvNCKrxf1Q
+         NIgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUKfq4jedA2OLMfxAXYFfi0ImiwUZNeAnXZVAAG8J8fb54bl88jxyM0vPB+69yVAWqQTrd399G6seIR+/TEdGzTV7JZa7s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsyPfRGEJM+gh+pLAnn+oKMIbz8C4LYPNcveFip8mV9eOsAiUh
+	NzaKdhLktF1JZug1EmyvNWJOaGHWu0dmUi+Pd2a55ydGFDNcFnneQpB2E4IQug==
+X-Gm-Gg: ASbGncv2NpgtDHNsSyBYYyWSL3wgBQdT4eHx6/g0fP1BfbC1Xwj4/+xcMpZehqsYEJK
+	+v94Womm1hSEY22oxAaj7zLdVbbUZ6ekaYMnNzz1eTIU/DBw1wZ6uPvQppvtZx92dEveDypN+nY
+	bSHZX0uA9uCjochph6XWpgGNk1oOkq8hr5PgZT9qYm6qmhM5M91MY1/2vWCByj+I0r5KtQchVFk
+	aUDTVq/DM0G74KcXeXq4ia0VXDU7uk4C53raW0OyJvOK80GesoW78e9HP+ndCsMO4kSL543qcPl
+	i3WFFfJdDA==
+X-Google-Smtp-Source: AGHT+IH9SJmZBbMjz/aBJwhiN0mT7AF9qZCyUpGpRneRR3Mw4jIzVYhbxoOVjq6QcJJzfOA3nRI6Bw==
+X-Received: by 2002:a17:902:ec86:b0:215:603e:214a with SMTP id d9443c01a7336-219e6e8c51emr768701785ad.1.1736207436209;
+        Mon, 06 Jan 2025 15:50:36 -0800 (PST)
+Received: from enlightened2.mtv.corp.google.com ([2620:15c:9d:4:d597:3a81:f139:970c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-219dc962c1bsm298594375ad.3.2025.01.06.15.50.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Jan 2025 15:50:35 -0800 (PST)
+From: Shervin Oloumi <enlightened@chromium.org>
+To: mic@digikod.net,
+	viro@zeniv.linux.org.uk
+Cc: brauner@kernel.org,
+	jack@suse.cz,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	gnoack@google.com,
+	shuah@kernel.org,
+	jorgelo@chromium.org,
+	allenwebb@chromium.org,
+	Shervin Oloumi <enlightened@chromium.org>
+Subject: [PATCH v2 1/2] fs: add loopback/bind mount specific security hook
+Date: Mon,  6 Jan 2025 15:50:21 -0800
+Message-ID: <20250106235022.3859523-1-enlightened@chromium.org>
+X-Mailer: git-send-email 2.47.1.613.gc27f4b7a9f-goog
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241122143353.59367-19-mic@digikod.net> <1372f9de0bb265a08114a870ec086da0@paul-moore.com>
- <20250106.ohHi4La0ahTh@digikod.net>
-In-Reply-To: <20250106.ohHi4La0ahTh@digikod.net>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 6 Jan 2025 17:33:07 -0500
-X-Gm-Features: AbW1kvYKse12ll4fYv0870kHY_o3Lyw_REBr4iiKqgVQkplZz_g1WsoqSMdceVg
-Message-ID: <CAHC9VhQsUkthgGpoNZZdXGcPS9zF2aijYfKfuNYCZB08N=UDKg@mail.gmail.com>
-Subject: Re: [PATCH v3 18/23] landlock: Log scoped denials
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Eric Paris <eparis@redhat.com>, =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	"Serge E . Hallyn" <serge@hallyn.com>, Ben Scarlato <akhna@google.com>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Charles Zaffery <czaffery@roblox.com>, 
-	Francis Laniel <flaniel@linux.microsoft.com>, James Morris <jmorris@namei.org>, 
-	Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Jorge Lucangeli Obes <jorgelo@google.com>, Kees Cook <kees@kernel.org>, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, Phil Sutter <phil@nwl.cc>, 
-	Praveen K Paladugu <prapal@linux.microsoft.com>, Robert Salvet <robert.salvet@roblox.com>, 
-	Shervin Oloumi <enlightened@google.com>, Song Liu <song@kernel.org>, 
-	Tahera Fahimi <fahimitahera@gmail.com>, audit@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jan 6, 2025 at 9:51=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digiko=
-d.net> wrote:
-> On Sat, Jan 04, 2025 at 08:23:53PM -0500, Paul Moore wrote:
-> > On Nov 22, 2024 =3D?UTF-8?q?Micka=3DC3=3DABl=3D20Sala=3DC3=3DBCn?=3D <m=
-ic@digikod.net> wrote:
-> > >
-> > > Add audit support for unix_stream_connect, unix_may_send, task_kill, =
-and
-> > > file_send_sigiotask hooks.
-> > >
-> > > Audit event sample:
-> > >
-> > >   type=3DLL_DENY [...]: domain=3D195ba459b blockers=3Dscope_abstract_=
-unix_socket path=3D00666F6F
-> >
-> > Similar to 17/23, I believe the SOCKADDR record should already capture
-> > the socket address information.
->
-> This might not be the case, which is why SELinux and others explicitly
-> log it I guess.
+The main mount security hook (security_sb_mount) is called early in the
+process before the mount type is determined and the arguments are
+validated and converted to the appropriate format. Specifically, the
+source path is surfaced as a string, which is not appropriate for
+checking bind mount requests. For bind mounts the source should be
+validated and passed as a path struct (same as destination), after the
+mount type is determined. This allows the hook users to evaluate the
+mount attributes without the need to perform any validations or
+conversions out of band, which can introduce a TOCTOU race condition.
 
-I think I may be misunderstanding you, can you point to the section of
-SELinux code that you are referring to in your comment?
+The newly introduced hook is invoked only if the security_sb_mount hook
+passes, and only if the MS_BIND flag is detected. At this point the
+source of the mount has been successfully converted to a path struct
+using the kernel's kern_path API. This allows LSMs to target bind mount
+requests at the right stage, and evaluate the attributes in the right
+format, based on the type of mount.
 
---=20
-paul-moore.com
+This does not affect the functionality of the existing mount security
+hooks, including security_sb_mount. The new hook, can be utilized as a
+supplement to the main hook for further analyzing bind mount requests.
+This means that there is still the option of only using the main hook
+function, if all one wants to do is indiscriminately reject all bind
+mount requests, regardless of the source and destination arguments.
+However, if one needs to evaluate the source and destination of a bind
+mount request before making a decision, this hook function should be
+preferred. Of course, if a bind mount request does not make it past the
+security_sb_mount check, the bind mount hook function is never invoked.
+
+Signed-off-by: Shervin Oloumi <enlightened@chromium.org>
+---
+
+Changes since v1:
+- Indicate whether the mount is recursive in the hook. This can be a
+  factor when deciding if a mount should be allowed
+- Add default capabilities function for the new hook in security.h. This
+  is required for some tests to pass
+- Reword the hook description to be more future proof
+---
+ fs/namespace.c                |  4 ++++
+ include/linux/lsm_hook_defs.h |  2 ++
+ include/linux/security.h      |  7 +++++++
+ security/security.c           | 18 ++++++++++++++++++
+ 4 files changed, 31 insertions(+)
+
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 23e81c2a1e3f..535a1841c200 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -2765,6 +2765,10 @@ static int do_loopback(struct path *path, const char *old_name,
+ 	if (err)
+ 		return err;
+ 
++	err = security_sb_bindmount(&old_path, path, recurse ? true : false);
++	if (err)
++		goto out;
++
+ 	err = -EINVAL;
+ 	if (mnt_ns_loop(old_path.dentry))
+ 		goto out;
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index eb2937599cb0..94f5a3530b98 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -71,6 +71,8 @@ LSM_HOOK(int, 0, sb_show_options, struct seq_file *m, struct super_block *sb)
+ LSM_HOOK(int, 0, sb_statfs, struct dentry *dentry)
+ LSM_HOOK(int, 0, sb_mount, const char *dev_name, const struct path *path,
+ 	 const char *type, unsigned long flags, void *data)
++LSM_HOOK(int, 0, sb_bindmount, const struct path *old_path,
++	 const struct path *path, bool recurse)
+ LSM_HOOK(int, 0, sb_umount, struct vfsmount *mnt, int flags)
+ LSM_HOOK(int, 0, sb_pivotroot, const struct path *old_path,
+ 	 const struct path *new_path)
+diff --git a/include/linux/security.h b/include/linux/security.h
+index cbdba435b798..d4a4c71865e3 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -365,6 +365,7 @@ int security_sb_show_options(struct seq_file *m, struct super_block *sb);
+ int security_sb_statfs(struct dentry *dentry);
+ int security_sb_mount(const char *dev_name, const struct path *path,
+ 		      const char *type, unsigned long flags, void *data);
++int security_sb_bindmount(const struct path *old_path, const struct path *path, bool recurse);
+ int security_sb_umount(struct vfsmount *mnt, int flags);
+ int security_sb_pivotroot(const struct path *old_path, const struct path *new_path);
+ int security_sb_set_mnt_opts(struct super_block *sb,
+@@ -801,6 +802,12 @@ static inline int security_sb_mount(const char *dev_name, const struct path *pat
+ 	return 0;
+ }
+ 
++static inline int security_sb_bindmount(const struct path *old_path,
++					const struct path *path, bool recurse)
++{
++	return 0;
++}
++
+ static inline int security_sb_umount(struct vfsmount *mnt, int flags)
+ {
+ 	return 0;
+diff --git a/security/security.c b/security/security.c
+index 09664e09fec9..c115d8627e2d 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1564,6 +1564,24 @@ int security_sb_mount(const char *dev_name, const struct path *path,
+ 	return call_int_hook(sb_mount, dev_name, path, type, flags, data);
+ }
+ 
++/**
++ * security_sb_bindmount() - Loopback/bind mount permission check
++ * @old_path: source of loopback/bind mount
++ * @path: mount point
++ * @recurse: true if recursive (MS_REC)
++ *
++ * Beyond any general mounting hooks, this check is performed on an initial
++ * loopback/bind mount (MS_BIND) with the mount source presented as a path
++ * struct in @old_path.
++ *
++ * Return: Returns 0 if permission is granted.
++ */
++int security_sb_bindmount(const struct path *old_path, const struct path *path,
++			  bool recurse)
++{
++	return call_int_hook(sb_bindmount, old_path, path, recurse);
++}
++
+ /**
+  * security_sb_umount() - Check permission for unmounting a filesystem
+  * @mnt: mounted filesystem
+
+base-commit: fc033cf25e612e840e545f8d5ad2edd6ba613ed5
+-- 
+2.47.1.613.gc27f4b7a9f-goog
+
