@@ -1,34 +1,34 @@
-Received: from smtp-42a9.mail.infomaniak.ch (smtp-42a9.mail.infomaniak.ch [84.16.66.169])
+Received: from smtp-8faa.mail.infomaniak.ch (smtp-8faa.mail.infomaniak.ch [83.166.143.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1AFC8632E
-	for <linux-security-module@vger.kernel.org>; Mon,  6 Jan 2025 14:51:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 752DF145A11
+	for <linux-security-module@vger.kernel.org>; Mon,  6 Jan 2025 15:00:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736175105; cv=none; b=YuCt/wfyeHdAP8ZTfNtLqN11epTBhAVpo9krKB8SVUaLs6PzLSV8OG48LVZFnKWujaLGnkvRFvda4uD1EyhC+1QDw0jmX1cVnIpeGzfCDDjO5nYU6rf0/ejDfE53WnSf8AJkEhxLlM4NJjBu/ZwVdBdjeiS9lgSJtxO1jbJwi6o=
+	t=1736175617; cv=none; b=VmdD8iz8XpSmYXLspKX1/CP3pG13ViyoHGk20NoUGoGQFdrIezZg/VX7eYygbX31MA8bbgaYvtc6mD7maDZA2VJRHddbLI2uUe4vG3rO2zw9nHUWpJ9r8vGV2GyhzbOwoEsQFybaleSE5tcGe4zhETpGNs5WcrjhzfDTpSzMMHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736175105; c=relaxed/simple;
-	bh=2lvMSkqADvRgxeDd9Hca90mpD+xmUD07lAwG3cQcniE=;
+	s=arc-20240116; t=1736175617; c=relaxed/simple;
+	bh=/vFuWBwJSMaPkLPS6qLPlahd9vTOlI5HHTOiKBma8io=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WomGHCWMrkAm3WzJtjAxyh68LT5vx3GcOHWqFz6zDZ+F83OMxy41qehjeUBmC/Cx5s9+xMVQhHnmeshX1kYA5Z74zsmWRjJks1GY4lu5mraDau0XzKllir/fARtJGEzT14ENdV4zw19JTyz/DPhxo4IIkjv41Ac+DJMbOvS2uBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=eYHw7xV8; arc=none smtp.client-ip=84.16.66.169
+	 Content-Type:Content-Disposition:In-Reply-To; b=GcyjKNkHedpJlyapxc2HL4WjpHyo8aApWF8WPRa0VI7UonQn/Pu9hUoUTIpXlj4SD1vyDn8wLhxvSbHsIkJWMezblLb0eWiQv+oPkYiywPcGzIimoSbqCOAXl29jSarIdghWqzsk8+FDtB9QTNwze78i42jpzbU7Bc4k5bqaX00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=0IYaoN97; arc=none smtp.client-ip=83.166.143.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="eYHw7xV8"
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4YRcZh4sPHzRJp;
-	Mon,  6 Jan 2025 15:51:40 +0100 (CET)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="0IYaoN97"
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4YRcZy4Dq3zpbC;
+	Mon,  6 Jan 2025 15:51:54 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1736175100;
-	bh=c+ZsM6Mm8zd8TH5OlXJfqQMcjwf3r7T/rs7vYlbwu3U=;
+	s=20191114; t=1736175114;
+	bh=pfImSMOnPsu7h9I1ixZWU9vAY8s1VHS6V7qrZPdxR00=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eYHw7xV8WW7C5mG0rGkb/lxPhKM2Ng5viFWLPH81MO5lJQ4D+FfsJBUUewyeYYKRp
-	 2XHuK4KBtfyEkFIVgsH5k3lrFcn8sUlEdvAWTL1IExgLypWXoSz5lx9gdLXlHThSOM
-	 1QsOijhABdwagusY3gW6DeDnAqKl4dREX44MA6/s=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4YRcZg70PDzcmZ;
-	Mon,  6 Jan 2025 15:51:39 +0100 (CET)
-Date: Mon, 6 Jan 2025 15:51:39 +0100
+	b=0IYaoN97PwKp9Q06nPsqT5KENzFTYSNezgVOcfMy9kdWuAKYsgonJIp/ycJVOxxzV
+	 RZAjLo4y9KH7R/AvulAiRNm+JYYtXhPZmn/NHxeM2pnM3ug9lgR6Wvx2SsFd9R8BH6
+	 8nlHHi8ING7GTxaZKXy8mDZ1fB66vle4zbUzqMZE=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4YRcZx63FSzfY5;
+	Mon,  6 Jan 2025 15:51:53 +0100 (CET)
+Date: Mon, 6 Jan 2025 15:51:53 +0100
 From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
 To: Paul Moore <paul@paul-moore.com>
 Cc: Eric Paris <eparis@redhat.com>, 
@@ -43,10 +43,10 @@ Cc: Eric Paris <eparis@redhat.com>,
 	Shervin Oloumi <enlightened@google.com>, Song Liu <song@kernel.org>, 
 	Tahera Fahimi <fahimitahera@gmail.com>, audit@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v3 17/23] landlock: Log TCP bind and connect denials
-Message-ID: <20250106.ea8aex7jai3O@digikod.net>
-References: <20241122143353.59367-18-mic@digikod.net>
- <0055bef6843289ac8dc728a68326513d@paul-moore.com>
+Subject: Re: [PATCH v3 18/23] landlock: Log scoped denials
+Message-ID: <20250106.ohHi4La0ahTh@digikod.net>
+References: <20241122143353.59367-19-mic@digikod.net>
+ <1372f9de0bb265a08114a870ec086da0@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -56,46 +56,43 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <0055bef6843289ac8dc728a68326513d@paul-moore.com>
+In-Reply-To: <1372f9de0bb265a08114a870ec086da0@paul-moore.com>
 X-Infomaniak-Routing: alpha
 
-On Sat, Jan 04, 2025 at 08:23:52PM -0500, Paul Moore wrote:
+On Sat, Jan 04, 2025 at 08:23:53PM -0500, Paul Moore wrote:
 > On Nov 22, 2024 =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net> wrote:
 > > 
-> > Add audit support to socket_bind and socket_connect hooks.
+> > Add audit support for unix_stream_connect, unix_may_send, task_kill, and
+> > file_send_sigiotask hooks.
 > > 
 > > Audit event sample:
 > > 
-> >   type=LL_DENY [...]: domain=195ba459b blockers=net_connect_tcp daddr=127.0.0.1 dest=80
+> >   type=LL_DENY [...]: domain=195ba459b blockers=scope_abstract_unix_socket path=00666F6F
 > 
-> The destination address and port is already captured in the SOCKADDR
-> record for bind() and connect(), please don't duplicate it here.
+> Similar to 17/23, I believe the SOCKADDR record should already capture
+> the socket address information.
 
-This does not show up when a connect or bind is denied.  I guess this is
-because move_addr_to_kernel() is called at syscall entry when there is
-no context, whereas a Landlock denial is created after that.  For this
-to work, users would have to log a list of syscalls, which would not be
-usable (nor reliably maintainable) for most users.  I guess this might
-be different with io_uring too.
+This might not be the case, which is why SELinux and others explicitly
+log it I guess.
 
-SELinux and other LSMs log it this way, which makes sense to me.
+> 
+> It would also be nice to see an example record on a signal event.
+
+Yes, I'll add such example.
 
 > 
 > > Cc: Günther Noack <gnoack@google.com>
-> > Cc: Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-> > Cc: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+> > Cc: Tahera Fahimi <fahimitahera@gmail.com>
 > > Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> > Link: https://lore.kernel.org/r/20241122143353.59367-18-mic@digikod.net
+> > Link: https://lore.kernel.org/r/20241122143353.59367-19-mic@digikod.net
 > > ---
-> > Changes since v2:
-> > - Remove potentially superfluous IPv6 saddr log, spotted by Francis
-> >   Laniel.
-> > - Cosmetic improvements.
+> > Changes since v1:
+> > - New patch.
 > > ---
-> >  security/landlock/audit.c | 12 +++++++++
-> >  security/landlock/audit.h |  1 +
-> >  security/landlock/net.c   | 51 ++++++++++++++++++++++++++++++++++++---
-> >  3 files changed, 60 insertions(+), 4 deletions(-)
+> >  security/landlock/audit.c |  8 ++++++
+> >  security/landlock/audit.h |  2 ++
+> >  security/landlock/task.c  | 58 ++++++++++++++++++++++++++++++++++++---
+> >  3 files changed, 64 insertions(+), 4 deletions(-)
 > 
 > --
 > paul-moore.com
