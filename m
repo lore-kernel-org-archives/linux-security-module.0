@@ -1,117 +1,108 @@
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AF0F8BE7
-	for <linux-security-module@vger.kernel.org>; Mon,  6 Jan 2025 03:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F58812BF24;
+	Mon,  6 Jan 2025 11:22:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736134864; cv=none; b=axuo0e+Kmw00ACHLK6Yv4khXcXuoDjCBb1HAhuayi6KFCCHp+22iBwTSysmeU88E2mNyDYUoS8jnAcLhrerOPgQvX2lHgSVbjZgqUg/DXShoik4pEshZyXKn0ekZba3NU+QHHb+rt1kvXvNVfy9HlaRCcLN3x29a3eH5OvB12Ys=
+	t=1736162553; cv=none; b=GtnfbHIRAn+f4uqkiPC3m61aNbNHuOqfaEv1RpX6sO1ZITiRfyElo+iUqSBR1AEoPo2hFHPz47Nkbw+oQL8POCX7RFn6cNi8mlu3C0e2J2yjNi/NVxkB694UOEhYuFcecNpuHbebH4QLUJSARJ2YtfXOe1LGy3rPtJbm1Q6VlEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736134864; c=relaxed/simple;
-	bh=8DUGcNzptq1qMBNMQD/ZKivSEc24A77W165dn0Ba4IU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OLJaxXp8Mxn2BjOBmd54MJ4wLxq76BoAFFcachVOg328OKGbgoaxfSG9zfRUvyJkPGsqf0EGBhb8gVqL4Da4C+mrURZp9Z/rmRI0eoDjsF4/dR64/GZcuG9G8WbgskYyKKfbsQwvkgZ0izLUMFDbuAQXwNMQj/VFObcxOLJN6aM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=IaFudVQo; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1736162553; c=relaxed/simple;
+	bh=YFa9n4kRGb7FoyqSu+bxpz+vwRWZ9zT3kNRGUT1JfBY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aBT1yzBoM0Dj2fwW5hyl9H7hvNi/uS49Y+6s2TNuQLlKIoAvbAM0uA6+kgHC08P0YtcfAJNMplBhNTDhDjGPogrWvU1P5tr967BCfGCCeJF4klWeWmnDu6bhXV7fUNVR1/xsgqDU1nojfRQ9pbyMnjrWeNdZ0rx3fQreop96qQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EqytaXf/; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="IaFudVQo"
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e537d9e3d75so19957859276.3
-        for <linux-security-module@vger.kernel.org>; Sun, 05 Jan 2025 19:41:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1736134861; x=1736739661; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6t4+KmeeCy/tpHdFuGwkBi9hlofz3W6ub54t1sWW4xg=;
-        b=IaFudVQomY0CGTZMZZ/QWrq6Sxqdqpm8GxZBVG+GIAiBifgYOd9fPWagXG2CXSdfas
-         3lnuAQL6fToxzerwOnK1TRsR+WNAKOyHlqcSnd2+TUwJWRhG0aemZlXxHTm4d3fPcOQU
-         tdPG9Wyxv/XD/cshVQI2noPBDU4p/jsM5oWw3w/bdsi2mKZoo3KRywnTt4Oz+za+wRg/
-         f0dQL0CFKMpgocwyckUtuXrACgIinI6++o8nVlL4U3XyXoiE5tAigHQdslEyGXctJ88g
-         kfAdZdjpvGI72RTTzJ6QPza6imRyPS43OAiqvDM9BKxVTaIuXFrCvE5QjlqXozXyGw3I
-         QUag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736134861; x=1736739661;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6t4+KmeeCy/tpHdFuGwkBi9hlofz3W6ub54t1sWW4xg=;
-        b=fdbavludLa0tTjD/S4CvtfzhfrKcKV+/f6/CJWbpy/kxN1fMN9fMmQ652QiGz0Fbga
-         kzCteAahVBAVx/pO9RRcfNKuf8T5N267uOJie/ScH/ADXp1SLOrem5ygauyJv83znAxi
-         plZ4LEWyyWVOszo4mNir2Ycxa1EyVt9iz7Hiu+zVo7HipwwkpMyLtJKiKuaraUyknFl4
-         5jfCkJ2xBlbBJ3qWZ0SdghmanWtoWOGFfrxkJbzTfn5+tjf3/FV1oPm97/zqbFognSj5
-         DtFgLXgatDMajeDSaJcjXfijCNg7tUItYsYI8NP3AvsYv5IkVPT7vSqcegTooew0wZ6t
-         1iLg==
-X-Forwarded-Encrypted: i=1; AJvYcCV0H9AoATJFpizUeg79iMNNgiBOb6UryUsFCYvLw4t2baajQ6wRpyORc60cDt6zpkhCZ5HjZ+X6i6BCYzbT+7lqbh8yUnk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/FmprfKFFhLipcqGQal6Zf9IZp+4xjKeNTNrROSab922z+eu0
-	KPqcyXTaVRFgzcnrLnGhrIkQaBIQkR6t5QJdDKiYmUklGX644W4fvsRA7Kuie4qhzgPbRonhfTa
-	KJ17irnRrbdIlFgPERs3vYipYf3ODKuoNt7wE
-X-Gm-Gg: ASbGncs5SfS6nIqpEg+TLGUL65c/hRu4WpZMx7FQJMFB5+qiH7F1uQ/w5HZP3c1vyym
-	+WpQXO3YPmFqYIM1NNrSrJ41gxeYCDIZDk7+3
-X-Google-Smtp-Source: AGHT+IGV5iWI1X9jzlMyykT81bJsVn3tu5hbb0dX48snfbYwM4zQ6K8WfYhBMKhfP8y7t6HQ8jUgFUo/mnKTQ27HptU=
-X-Received: by 2002:a05:690c:62c6:b0:6ef:59ef:f194 with SMTP id
- 00721157ae682-6f3f80de678mr365800587b3.4.1736134861363; Sun, 05 Jan 2025
- 19:41:01 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EqytaXf/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F0F7C4CED2;
+	Mon,  6 Jan 2025 11:22:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1736162553;
+	bh=YFa9n4kRGb7FoyqSu+bxpz+vwRWZ9zT3kNRGUT1JfBY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EqytaXf/7ROrApNQc7+jdeEXSnG0XyB08a51lNqhal39rNrVGwnNgN+u/Z8hIhmce
+	 d2yxLhvWHE7J1n1GOk/CTpKIHOHrGQLdUcpmORwyzHesjm2dJGzfoj2kRVelTG1MK/
+	 GuV+fcIovomL/5xMd9TeNwkdviLgqUTGyQRwSokQuZImy34o/4wgB9eZJOa5q3YoyQ
+	 zQRq6cyE9aOlPY+E1XL2LROe2WtvmgyA8HetkqILqy4ZfmOCIOrcqnvQmm0u9C11Tt
+	 dEuIwGkTD9dQfEuPHY4KvFZfnIdzF5adD5QpmOAO6aC5I81zMi2mq+qter+pNgSLS0
+	 p3RjUmiAeK7pQ==
+Date: Mon, 6 Jan 2025 12:22:27 +0100
+From: Joel Granados <joel.granados@kernel.org>
+To: yukaixiong <yukaixiong@huawei.com>
+Cc: akpm@linux-foundation.org, mcgrof@kernel.org, 
+	ysato@users.sourceforge.jp, dalias@libc.org, glaubitz@physik.fu-berlin.de, luto@kernel.org, 
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, 
+	hpa@zytor.com, viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
+	kees@kernel.org, j.granados@samsung.com, willy@infradead.org, 
+	Liam.Howlett@oracle.com, vbabka@suse.cz, lorenzo.stoakes@oracle.com, trondmy@kernel.org, 
+	anna@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de, 
+	okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, paul@paul-moore.com, 
+	jmorris@namei.org, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-nfs@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-security-module@vger.kernel.org, dhowells@redhat.com, 
+	haifeng.xu@shopee.com, baolin.wang@linux.alibaba.com, shikemeng@huaweicloud.com, 
+	dchinner@redhat.com, bfoster@redhat.com, souravpanda@google.com, hannes@cmpxchg.org, 
+	rientjes@google.com, pasha.tatashin@soleen.com, david@redhat.com, 
+	ryan.roberts@arm.com, ying.huang@intel.com, yang@os.amperecomputing.com, 
+	zev@bewilderbeest.net, serge@hallyn.com, vegard.nossum@oracle.com, 
+	wangkefeng.wang@huawei.com
+Subject: Re: Re: [PATCH v4 -next 00/15] sysctl: move sysctls from vm_table
+ into its own files
+Message-ID: <3elcftj5bn5iqfdly4cgmzpz4kodqrdl6dnqyqvn5fxjgmoxw4@yactmy2fbdkm>
+References: <20241223141550.638616-1-yukaixiong@huawei.com>
+ <42tsyuvdvym6i3j4ppsluvx7kejxjzbma5z4jjgccni6kuwtj7@rhuklbyko7yf>
+ <ceb3be0a-f035-aaec-286f-8ba95e62deba@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241017155516.2582369-1-eric.snowberg@oracle.com>
- <c490397315c2704e9ef65c8ad3fefedb239f1997.camel@linux.ibm.com>
- <72F52F71-C7F3-402D-8441-3D636A093FE8@oracle.com> <CAHC9VhRHEw5c+drC=aX4xTqWoQJJZ+qkJ7aHUT5dcu+Q5f7BqA@mail.gmail.com>
-In-Reply-To: <CAHC9VhRHEw5c+drC=aX4xTqWoQJJZ+qkJ7aHUT5dcu+Q5f7BqA@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Sun, 5 Jan 2025 22:40:50 -0500
-Message-ID: <CAHC9VhSJpnaAK1efgs1Uk0Tr3CaDNR1LiDU-t_yDKDQG6J-74Q@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 00/13] Clavis LSM
-To: Eric Snowberg <eric.snowberg@oracle.com>
-Cc: Mimi Zohar <zohar@linux.ibm.com>, 
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>, David Howells <dhowells@redhat.com>, 
-	David Woodhouse <dwmw2@infradead.org>, 
-	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>, "davem@davemloft.net" <davem@davemloft.net>, 
-	Ard Biesheuvel <ardb@kernel.org>, Jarkko Sakkinen <jarkko@kernel.org>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	"casey@schaufler-ca.com" <casey@schaufler-ca.com>, Stefan Berger <stefanb@linux.ibm.com>, 
-	"ebiggers@kernel.org" <ebiggers@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>, 
-	"keyrings@vger.kernel.org" <keyrings@vger.kernel.org>, 
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, 
-	"linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>, 
-	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ceb3be0a-f035-aaec-286f-8ba95e62deba@huawei.com>
 
-On Fri, Jan 3, 2025 at 11:48=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
->
-> Regardless, back to Clavis ... reading quickly through the cover
-> letter again, I do somewhat wonder if this isn't better integrated
-> into the keyring proper; have you talked to both David and Jarkko
-> about this?
+On Sat, Dec 28, 2024 at 09:40:50PM +0800, yukaixiong wrote:
+> 
+> 
+> On 2024/12/28 20:15, Joel Granados wrote:
+> > On Mon, Dec 23, 2024 at 10:15:19PM +0800, Kaixiong Yu wrote:
+> >> This patch series moves sysctls of vm_table in kernel/sysctl.c to
+> >> places where they actually belong, and do some related code clean-ups.
+> >> After this patch series, all sysctls in vm_table have been moved into its
+> >> own files, meanwhile, delete vm_table.
+...
+> >>    sysctl: remove unneeded include
+> > This patchset looks strange. There seems to be 15 patches, but there are
+> > 30 e-mails in the thread? You can also see this when you look at it in
+> > lore [1]. And they are different repeated e-mails (mutt does not
+> > de-duplicate them). Also `b4 shazam ...` does not work. What happened?
+> > Did you send it twice with the same mail ID? Am I the only one seeing
+> > this?
+> >
+> > I would suggest the following (hopefully you are using b4):
+> > 1. Check to see how things will be sent with b4. `b4 send --resend -o OUTPUT_DIR`
+> >     If you see 30 emails in that dir from your patchset then something is
+> >     still wrong.
+> > 2. After you make sure that everything is in order. Do the resend
+> >     without bumping the version up (leave it at version 4)
+> >
+> > Best
+> >
+> > [1] : https://lore.kernel.org/all/20241223141550.638616-1-yukaixiong@huawei.com/
+> 
+> I'm very sorry, due to my mistake, 15 patches were sent twice.
+No worries. I saw that you have re-sent the patchset and it seems that
+this time there is only 15 mails. I see that you are only using my
+j.granados@samsung.com ID; can you please add my kernel.org
+(joel.granados@kernel.org) mail to the future mails that you send (no
+need to re-send v4).
 
-I realize I should probably expand on my thinking a bit, especially
-since my comment a while regarding LSMs dedicated to enforcing access
-control on keys is what was given as a reason for making Clavis a LSM.
+Thx
 
-I still stand by my comment from over a year ago that I see no reason
-why we couldn't support a LSM that enforces access controls on
-keyrings/keys.  What gives me pause with the Clavis LSM is that so
-much of Clavis is resident in the keyrings themselves, e.g. Clavis
-policy ACLs and authorization keys, that it really feels like it
-should be part of the keys subsystem and not a LSM.  Yes, existing
-LSMs do have LSM specific data that resides outside of the LSM and in
-an object's subsystem, but that is usually limited to security
-identifiers and similar things, not the LSM's security policy.
+...
 
-That's my current thinking, and why I asked about locating Clavis in
-the keys subsystem directly (although I still think better keyring
-granularity and a shift towards usage based keyrings is the better
-option).  If David and Jarkko are opposed to integrating Clavis into
-the keys subsystem we can consider this as a LSM, I'm just not sure
-it's the best first option.  Does that make sense?
+-- 
 
---=20
-paul-moore.com
+Joel Granados
