@@ -1,34 +1,34 @@
-Received: from smtp-42ae.mail.infomaniak.ch (smtp-42ae.mail.infomaniak.ch [84.16.66.174])
+Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [185.125.25.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0007A1F540D
-	for <linux-security-module@vger.kernel.org>; Tue,  7 Jan 2025 14:16:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A58591F2C35
+	for <linux-security-module@vger.kernel.org>; Tue,  7 Jan 2025 14:17:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736259393; cv=none; b=onKv9wZtsJoOI1hGjJ+9d7hz4QnBJUw9nnLxrEmSKKfUgDvJ7WLTATZoXUg5aM2od/lGRImLdxYGZ+71wr0Ft9hd6MEhIN6chsHcOrGCkjgmPwkbqdknDoedcGViao6if6n+q56TObG36tqQ4C8Oja4IhksjVONRju3pz0ziaSo=
+	t=1736259481; cv=none; b=a67Wuulmu5vkITt1W4m5/loDkLibw1rnHzbSRCZ2f7Z8B4VNxz+QeKxc3ylLL9h6mZAmsaCEXC2LJ4Hus2eKoIaO8xIWAxjTmy6vafo55+HLHp13JbNbbZXUlb8HbCY7cKiVAr0Y+LihyWLaSz1OdlDDU0GE5PZAsKEsc082pRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736259393; c=relaxed/simple;
-	bh=HkWRbgtHRgtFxahtfa+4WFYJvcN8mxyN8lLNocI1x0k=;
+	s=arc-20240116; t=1736259481; c=relaxed/simple;
+	bh=hxhYCk1yFERYlhBGrwSAFc87/NrnOrt8ye+YSBKlpkw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b7dJGrsFBsihuDQEK9N4LB/MfuNyfGqL9i4H/0z8I4aF52A1m4qLTa3hBgP7rgOMvnLllDqhTTptytIlPA92LvQIBKNMqkFaM5nB2g4vDoaPeQb7gpZ0omhaLULeewB7fn5RX6MsIdNsL3ekXvM0ABPJIjDOyUs7GtBBhnKR7d8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=QUh9UMPq; arc=none smtp.client-ip=84.16.66.174
+	 Content-Type:Content-Disposition:In-Reply-To; b=qOi9VRBCxt3DMDq2Pp7eNbUh7xmv8ivJTbDfUWpAfVnYp/WH4W3ng82NEihTWawZB0woQUGMn1NYDXuztUg2rDuz3HGYMgbaxcG3Ytxqc+nG0xtCPsxkB1a1pnF+o4u5bFHI5Ago9wVmavWZijSNav4sVldvWxZ4YLDeca0AlYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=mvAefoxJ; arc=none smtp.client-ip=185.125.25.8
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="QUh9UMPq"
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4YSClX40fWzVG0;
-	Tue,  7 Jan 2025 15:16:24 +0100 (CET)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="mvAefoxJ"
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246b])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4YSCnB4jcCzXFh;
+	Tue,  7 Jan 2025 15:17:50 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1736259384;
-	bh=qjoeBhexUB4tppgwtHsPKezms784ibvFJ+1Aw98kSVE=;
+	s=20191114; t=1736259470;
+	bh=kNxmZMX1nmlc3ItvZp/1dmwvBl+DE7X/8ebPz7ls8H8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QUh9UMPq0RxKSCmelKqdKeLxtQzNkZSW1RTy18wm/5MSI6/WtPgByG6OWgcf/Ws3q
-	 K+JygkQpSRcHHptFkCQtIH3Uo8Oevgl68bO18ALftz0nXagVkedj3gaDRdyHtbPOMG
-	 B+w9a+VUILEmF08uBorLtmH/DOElIG3u8md27aTc=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4YSClV0VwFzCvb;
-	Tue,  7 Jan 2025 15:16:21 +0100 (CET)
-Date: Tue, 7 Jan 2025 15:16:18 +0100
+	b=mvAefoxJ4+K8BZjg7YUa0DAT/PjDfGDeNZTLtLpmeVd/CoFlZh6R501SVICUvNDpU
+	 04aCyuXeEAQC5lJmwkz4UldqxktWdNIk6B7o32linEtSX9U2g7GdcQvJRjUul90oE4
+	 YRFh0ajs4f1i8WPZvhfx3fmHtapr0xtIMraERIQM=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4YSCn952s8zqVy;
+	Tue,  7 Jan 2025 15:17:49 +0100 (CET)
+Date: Tue, 7 Jan 2025 15:17:49 +0100
 From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
 To: Paul Moore <paul@paul-moore.com>
 Cc: Eric Paris <eparis@redhat.com>, 
@@ -43,12 +43,12 @@ Cc: Eric Paris <eparis@redhat.com>,
 	Shervin Oloumi <enlightened@google.com>, Song Liu <song@kernel.org>, 
 	Tahera Fahimi <fahimitahera@gmail.com>, audit@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v3 10/23] landlock: Log domain properties and release
-Message-ID: <20250107.alee0ahMovoh@digikod.net>
-References: <20241122143353.59367-11-mic@digikod.net>
- <237bfe2be7b4ba5d59b3b832c23622bb@paul-moore.com>
- <20250106.ohgh8Zeu6coo@digikod.net>
- <CAHC9VhR7EWDm5afnzRbVO6jkqtwtBe-UbHk+b-bED7uwisu_bA@mail.gmail.com>
+Subject: Re: [PATCH v3 17/23] landlock: Log TCP bind and connect denials
+Message-ID: <20250107.Amu1eiPohwei@digikod.net>
+References: <20241122143353.59367-18-mic@digikod.net>
+ <0055bef6843289ac8dc728a68326513d@paul-moore.com>
+ <20250106.ea8aex7jai3O@digikod.net>
+ <CAHC9VhRh+_CM5kVmuXkttCn-3f3X8TR4n2q7MzrxCBXhbb2n-Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -58,143 +58,63 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhR7EWDm5afnzRbVO6jkqtwtBe-UbHk+b-bED7uwisu_bA@mail.gmail.com>
+In-Reply-To: <CAHC9VhRh+_CM5kVmuXkttCn-3f3X8TR4n2q7MzrxCBXhbb2n-Q@mail.gmail.com>
 X-Infomaniak-Routing: alpha
 
-On Mon, Jan 06, 2025 at 04:56:50PM -0500, Paul Moore wrote:
+On Mon, Jan 06, 2025 at 05:29:51PM -0500, Paul Moore wrote:
 > On Mon, Jan 6, 2025 at 9:51 AM Mickaël Salaün <mic@digikod.net> wrote:
-> > On Sat, Jan 04, 2025 at 08:23:51PM -0500, Paul Moore wrote:
+> > On Sat, Jan 04, 2025 at 08:23:52PM -0500, Paul Moore wrote:
 > > > On Nov 22, 2024 =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net> wrote:
-> 
-> ...
-> 
-> > > > Audit event sample for a first denial:
 > > > >
-> > > >   type=LL_DENY msg=audit(1732186800.349:44): domain=195ba459b blockers=ptrace opid=1 ocomm="systemd"
-> > > >   type=LL_DOM_INFO msg=audit(1732186800.349:44): domain=195ba459b creation=1732186800.345 pid=300 uid=0 exe="/root/sandboxer" comm="sandboxer"
-> > > >   type=SYSCALL msg=audit(1732186800.349:44): arch=c000003e syscall=101 success=no [...] pid=300 auid=0
+> > > > Add audit support to socket_bind and socket_connect hooks.
+> > > >
+> > > > Audit event sample:
+> > > >
+> > > >   type=LL_DENY [...]: domain=195ba459b blockers=net_connect_tcp daddr=127.0.0.1 dest=80
 > > >
-> > > As mentioned in patch 9/23, I don't want subsystems external to audit
-> > > to access the audit timestamp information, so the "creation=" field
-> > > in the audit event would need to be removed.  Assuming that the timestamp
-> > > was used either to reference the original domain creation and/or simply
-> > > provide some additional information for analysis, all of that information
-> > > should already be in the audit log, assuming of course that you are
-> > > logging domain creation (which you should, at least as an option).
+> > > The destination address and port is already captured in the SOCKADDR
+> > > record for bind() and connect(), please don't duplicate it here.
 > >
-> > As explained in this patch, we don't want to (and cannot realistically)
-> > log domain creations.  That would make the audit support for Landlock
-> > unusable.  Moreover, these information is useless and only add noise
-> > unless there is a denial, hence this asynchronous approach.
+> > This does not show up when a connect or bind is denied.  I guess this is
+> > because move_addr_to_kernel() is called at syscall entry when there is
+> > no context, whereas a Landlock denial is created after that.  For this
+> > to work, users would have to log a list of syscalls, which would not be
+> > usable (nor reliably maintainable) for most users.
 > 
-> That's fine, just know that it doesn't change my thoughts on exposing
-> the audit timestamp.
-> 
-> > However,
-> > users may want to log some syscalls, including landlock_restrict_self(),
-> > and it would make audit logs more consistent using the same timestamp as
-> > the Landlock domain creation time.  I'm wondering why exposing this
-> > timestamp to the kernel would be an issue whereas it is already exposed
-> > to user space.
-> 
-> Currently there are no other users of the audit timestamp besides
-> audit.  Making the audit timestamp available to other subsystems makes
-> the timestamp less flexible over the long term as it would become, in
-> a way, part of the API that audit provides to other in-kernel users.
-> 
-> I still have hopes to rework a large chunk of the audit subsystem, and
-> keeping the interfaces between audit and the other in-kernel
-> subsystems makes that easier.
+> Quick question, can you share the audit filter configuration you are
+> using on your dev/test systems (just dump /etc/audit/audit.rules,
+> unless you are doing it by hand)?
 
-OK
+This file only contains a comment.  auditctl -l says that there is no
+rules.
 
 > 
-> > If you're really opposed to it I can create a new unrelated timestamp
-> > specific to Landlock.
-> 
-> Yes, at this point in time I don't want to support exporting the audit
-> timestamp outside of audit.  My guess is that you probably want to use
-> some identifier, other than a timestamp, when trying to link Landlock
-> events (presumably the domain ID would do this?), but I don't pretend
-> to know the details of Landlock very well right now.
+> One can make an argument that if syscall auditing is being explicitly
+> denied, then the user has decided that the syscall related information
+> is not important to them.  I'm somewhat conflicted on that argument,
+> but I believe the argument is at least valid.
 
-Correct, Landlock domain IDs are used to tie domain creation, denial,
-and destruction/drop events (and their use will be extended to user
-space in the future).
+I did not disable syscall auditing, I get the type=SYSCALL record for
+every Landlock deny event, but there is no SOCKADDR one.  For instance:
 
-> 
-> > > Also, is there a good reason why the LL_DOM_INFO information can't be
-> > > recorded in the LL_DENY (or LL_ACCESS) record?  I think that would be
-> > > preferable.
-> >
-> > The goal of the standalone LL_DOM_INFO record type is to limit useless
-> > log verbosity.  Including this information in LL_DENY would have two
-> > downsides:
-> > - it would increases the length of *all* LL_DENY messages
-> 
-> Are you ever going to emit a LL_ACCESS/LL_DENY record without a
-> LL_DOM_INFO record?
-
-Yes, only the first LL_DENY (for a domain) emits an LL_DOM_INFO (for
-this same domain), which is why this design is interesting: creation of
-domains can happen at a high frequency (e.g. script executing a
-sandboxed program in a loop, or just build a kernel with sandbox
-compilers), and logging every domain creation would make 99% of these
-events useless.  See log_status's LANDLOCK_LOG_RECORDED in log_node() in
-this patch.
+type=UNKNOWN[1423] msg=audit(1736258533.147:45): domain=190464446 blockers=net.connect_tcp daddr=127.0.0.1 dest=80
+type=UNKNOWN[1424] msg=audit(1736258533.147:45): domain=190464446 creation=1736258533.135 pid=359 uid=0 exe="/root/sandboxer" comm="sandboxer"UID="root"
+type=SYSCALL msg=audit(1736258533.147:45): arch=c000003e syscall=42 success=no exit=-13 a0=5 a1=5647c6a26b98 a2=10 a3=7ffd2f5f6acc items=0 ppid=356 pid=359 auid=0 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=(none) ses=4 comm="curl" exe="/usr/bin/curl" key=(null)ARCH=x86_64 SYSCALL=connect AUID="root" UID="root" GID="root" EUID="root" SUID="root" FSUID="root" EGID="root" SGID="root" FSGID="root"
+type=PROCTITLE msg=audit(1736258533.147:45): proctitle=6375726C00687474703A2F2F3132372E31
+type=UNKNOWN[1425] msg=audit(1736258533.199:46): domain=190464446
 
 > 
-> > - it would make it more difficult to extend this new mixed messages with
-> >   access-related informations (e.g. file property) and domain-related
-> >   informations (and associate them with either the object or the
-> >   domain).
+> > I guess this might be different with io_uring too.
 > 
-> How?  Please elaborate on this.
+> There are other issues with SOCKADDR and io_uring related to how
+> io_uring wants to separate the work into different execution contexts.
+> In general I wouldn't spend too much time worrying about auditing and
+> io_uring right now, there are some general issues that need to be
+> resolved in io_uring/audit that are much larger than just Landlock's
+> audit usage.
 
-I mean that appending intertwined (i.e. some might be related to define
-a domain whereas others might be related to define an object) and
-optional (e.g. a file object and a socket object are not defined the
-same way) new fields to one message type makes the message less
-predictable and more difficult to parse.
-
-> 
-> > > > Audit event sample for logged domains deletion:
-> > > >
-> > > >   type=LL_DOM_DROP msg=audit(1732186800.393:45): domain=195ba459b
-> > > >
-> > > > Cc: Günther Noack <gnoack@google.com>
-> > > > Cc: Paul Moore <paul@paul-moore.com>
-> > > > Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> > > > Link: https://lore.kernel.org/r/20241122143353.59367-11-mic@digikod.net
-> > > > ---
-> > > > Questions:
-> > > > - Should we also log the creator's loginuid?
-> > > > - Should we also log the creator's sessionid?
-> > >
-> > > Creation of a Landlock domain can only happen through the Landlock
-> > > syscalls, yes?  If so, that information should already be logged in
-> > > the associated syscall record (see the "auid=" and "ses=" fields )and
-> > > we generally try to avoid duplicating information across records in
-> > > the same audit event.
-> >
-> > The specificity of Landlock compared to existing supported systems is
-> > that we cannot log domain creation for the reason I explain before.
-> 
-> Can you provide a link to that explanation?  I'm sure you explained it
-> well, but I missed it when going over the patchset with a focus on
-> audit.
-
-That wasn't clear enough, I'll include the previous description in the
-next series, but the basic design idea is defined in the cover letter:
-https://lore.kernel.org/all/20241122143353.59367-1-mic@digikod.net/
-
-> 
-> If the Landlock domain is created independent from any user/process
-> action, it likely doesn't make sense to log either the loginuid or
-> sessionid since the domain creation is happening independently from a
-> user session.
-
-Landlock domain creations are a process action.  What we want to log are
-the denials and a minimal context (e.g. which task created the related
-domain).  I was wondering if we should (right now) include loginuid or
-sessionid in this (asynchronous) context.
+OK.  Anyway, my understanding is that SOCKADDR is just a way to enrich
+the syscall record to ease debugging or tracing.  In the case of an
+access control, we want to identify an object/subject, and each LSM may
+have a different way to identify such an object, and this description
+should be enough to identify the relevant part of the object.
