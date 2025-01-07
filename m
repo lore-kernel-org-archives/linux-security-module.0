@@ -1,116 +1,128 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7F3A50;
-	Tue,  7 Jan 2025 00:09:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD38DEEB3;
+	Tue,  7 Jan 2025 01:46:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736208566; cv=none; b=nn4teaMApyNi5Lt6J7NI7wIP8u8xHm5fCd283oZLWR8WwpZU+3iiG8BFQyuDQ2DdqwyYuB0Bg3KgjHyKjLuAJzyQRKHlSxJjPUeTFK2C9qjlgQNUYCwpwCLqmdTNbPdGXx9UBEQ5P/oR5zgrHg9kHkQZ67aY33Zi/CHcfsbuOO0=
+	t=1736214379; cv=none; b=bSB6HDVs5b38bLT3wmau9C7ps2/hI2YeN+B31w5LQ0xuD+RdhFTU4pgymIfnsK6azGorRuRGQJlcXnKmIHdvLt/zQFQgYc5e8I+fnqRBb9m5Zr/KpGQKJ52FKVUr0f+Rm5JCHMw6ViQs+8vUy6JO05GRj5F2eradJ1IP+uCUIG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736208566; c=relaxed/simple;
-	bh=YEIBvLxxL+FT3STBPLqTf/s9XK0487cWowFqLqW5CLI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SrUKYxlg3Sy9c1Xi2OucHKy/TEb+7JIyYyA3aweH0oEDi3MZsIjXsH6lPNWFD3AmxeRjQ0GXiyi/GV8Zrb+Tn/LGDMq2a1HMTLAk6btOH8bgtN7tSiki6wCmIJ+kX1RJXxBjxz+ar+nSWMQlLkUrmBLNhsYgj2M+JiVlDC3HtJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S6U7AsLA; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S6U7AsLA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFE79C4CED2;
-	Tue,  7 Jan 2025 00:09:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736208565;
-	bh=YEIBvLxxL+FT3STBPLqTf/s9XK0487cWowFqLqW5CLI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=S6U7AsLAx0qY+vzqfIyXK2bdgwqF5KWclF7AKUwdLftt4ku+PCtBh9y8nJ8CTOghn
-	 dZQopTBHf69zEeJDg9pLAt7zuI+z6mFrrZ1wKJ7bqNrJg7ihUZOZg4z9yVMsmMD03M
-	 vRQIXqEFhlZFkFrsQKDXOkuwChN31ftrYPrCn5cbY4s8MJUDt4b4SQuDbpa8vzTuxX
-	 6a0Ou3PZJ1J9/yEBdboJ2gX64MFITw1InaGWK9VitAgOtiP4C3cIylu/R133SXWig7
-	 ihdiRtEnvZyb3HThfM6YCl5nXDynvqy1wkY6KU/SRxj5WAv/W4cVN682TVAjR4G2hP
-	 BOfNT8YSuJ9Qw==
-Date: Mon, 6 Jan 2025 16:09:21 -0800
-From: Kees Cook <kees@kernel.org>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-	syzbot+4eb7a741b3216020043a@syzkaller.appspotmail.com,
-	jmorris@namei.org, linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, serge@hallyn.com,
-	syzkaller-bugs@googlegroups.com, Leo Stone <leocstone@gmail.com>,
-	mortonm@chromium.org
-Subject: Re: [PATCH v2] lsm: check size of writes
-Message-ID: <202501061501.26556F56@keescook>
-References: <675f513a.050a0220.37aaf.0106.GAE@google.com>
- <20241217182657.10080-2-leocstone@gmail.com>
- <CAHC9VhQGeNv=UEhXPN5MN1h0xEZkeE9kbE79+k9HvNxdK_4xzA@mail.gmail.com>
- <ed6e5639-c87e-49e8-8125-5b93cec69d43@I-love.SAKURA.ne.jp>
- <9fcd3f3d-33c1-4feb-8c98-472d44bc0a54@I-love.SAKURA.ne.jp>
- <202412222126.E70910E7A8@keescook>
- <CAHC9VhRkAbvj=9qe8iWPCtsgkF0zvgP+pbOsUG=VVFcPgO3-jQ@mail.gmail.com>
+	s=arc-20240116; t=1736214379; c=relaxed/simple;
+	bh=r1KbG9wSdDJSVyW3QdygxR1AvrQxMBsxsSLcBOEkTw0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tIUVfQAr6vVJciQXQOkoNWFa9FSfZUuOfCByuSJ2R4dZrjptNkprMK5F8/4hPsyqMjP2Gy7F2aKcS2eUIVDhpVOtL9AaJn1NfBS7GRfj+TAUWSwtq5Ugy17gBcSH3S5ZgFxqqmmfQ3/cMN7XJ4+G36Dut6ouvRbVjapgqfhlFmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4YRv5N5BP3z4f3lDh;
+	Tue,  7 Jan 2025 09:45:44 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 086681A0C24;
+	Tue,  7 Jan 2025 09:46:06 +0800 (CST)
+Received: from [10.67.108.244] (unknown [10.67.108.244])
+	by APP4 (Coremail) with SMTP id gCh0CgC3Gl9ch3xnFggDAQ--.39405S3;
+	Tue, 07 Jan 2025 09:46:05 +0800 (CST)
+Message-ID: <f035cbed-bff9-426d-9da2-1bc34ef644d3@huaweicloud.com>
+Date: Tue, 7 Jan 2025 09:46:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH linux-next 2/2] perf: Return EACCESS when need perfmon
+ capability
+To: James Clark <james.clark@linaro.org>
+Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
+ mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+ irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com,
+ tglx@linutronix.de, bp@alien8.de, dave.hansen@linux.intel.com,
+ x86@kernel.org, hpa@zytor.com, will@kernel.org, paul@paul-moore.com,
+ jmorris@namei.org, serge@hallyn.com, rostedt@goodmis.org,
+ mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+ stephen.smalley.work@gmail.com, omosnace@redhat.com,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-security-module@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, selinux@vger.kernel.org,
+ Peter Zijlstra <peterz@infradead.org>
+References: <20241223070650.2810747-1-luogengkun@huaweicloud.com>
+ <20241223070650.2810747-3-luogengkun@huaweicloud.com>
+ <57627eec-10b5-4eb0-bfe2-f404a3492eee@linaro.org>
+Content-Language: en-US
+From: Luo Gengkun <luogengkun@huaweicloud.com>
+In-Reply-To: <57627eec-10b5-4eb0-bfe2-f404a3492eee@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhRkAbvj=9qe8iWPCtsgkF0zvgP+pbOsUG=VVFcPgO3-jQ@mail.gmail.com>
+X-CM-TRANSID:gCh0CgC3Gl9ch3xnFggDAQ--.39405S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7Aw13Jw1xGF4UAFW3ZrW3GFg_yoW8Wr4xpF
+	s3Cr1YkayxKr97A34Yvwsru34UJr4Ivr4UJF9YgFs8AF1YgFZ0qF4UW34agr1DuF4xCayj
+	ya1DXF98urWDZaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
+	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
+	4xRDUUUUU==
+X-CM-SenderInfo: 5oxrwvpqjn3046kxt4xhlfz01xgou0bp/
 
-On Sat, Jan 04, 2025 at 11:04:09PM -0500, Paul Moore wrote:
-> On Mon, Dec 23, 2024 at 12:33 AM Kees Cook <kees@kernel.org> wrote:
-> >
-> > If the LSM core did a kmem_buckets_create() for each LSM, and the LSMs
-> > were adjusted to explicitly allocate from their own bucket set, that
-> > would be one way. Or just for the LSM as a whole (1 set of buckets
-> > instead of a set for each LSM). I'd be happy to review patches for
-> > either idea.
-> 
-> If we're doing the work to shift over to kmem_buckets, it seems like
-> creating per-LSM buckets is the better option unless I'm missing
-> something.
-> 
-> I'm also not sure why the LSM framework would need to call
-> kmem_buckets_create() on behalf of the individual LSMs, can someone
-> help me understand why the individual LSMs couldn't do it in their
-> init routines?
 
-When we moved stuff around for stacking, we moved other allocation
-duties into the "core" of the LSM, so it just seemed reasonable to me to
-do it again if this happened.
+On 2025/1/6 23:59, James Clark wrote:
+>
+>
+> On 23/12/2024 7:06 am, Luo Gengkun wrote:
+>> For perf_allow_kernel and perf_allow_cpu, both return EACCES when 
+>> require
+>> CAP_PERFMON or CAP_SYS_ADMIN permissions, so update 
+>> perf_allow_tracepoint
+>> to keep them the same.
+>>
+>> Signed-off-by: Luo Gengkun <luogengkun@huaweicloud.com>
+>> ---
+>>   include/linux/perf_event.h | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+>> index 5d2ec4283ebf..c1bc0d7a275b 100644
+>> --- a/include/linux/perf_event.h
+>> +++ b/include/linux/perf_event.h
+>> @@ -1685,7 +1685,7 @@ static inline int perf_allow_cpu(void)
+>>   static inline int perf_allow_tracepoint(void)
+>>   {
+>>       if (sysctl_perf_event_paranoid > -1 && !perfmon_capable())
+>> -        return -EPERM;
+>> +        return -EACCES;
+>
+> Is this necessary other than for consistency? If not it might be best 
+> to leave it inconsistent even if it's wrong. I see quite a few "if 
+> EPERM do this..." type things in Perf, so changing this would break 
+> error messages being shown to users.
+>
+> If anything, EPERM seems more correct because EACCESS is more about 
+> file access.
+I think so, from the perspective of capabilities and 
+sysctl_perf_event_paranoid, EPERM is more appropriate.
+>
+> Thanks
+> James
 
-> If it is necessary for the LSM framework to create the buckets and
-> hand them back to the individual LSMs, I would suggest adding a new
-> flag to the lsm_info->flags field that a LSM could set to request a
-> kmem_bucket, and then add a new field to lsm_info that the LSM
-> framework could use to return the bucket to the LSM.  LSMs could
-> opt-in to kmem_buckets when they found the time to convert.
 
-Yeah, agreed. Since allocations would need to swap kmalloc() for
-kmem_bucket_alloc(), we could also create something like lsm_alloc() and
-hide everything from the individual LSMs -- the core would handle
-allocating and using the buckets handle, etc.
+Thanks for your review.
 
-Does anyone want to make a series for this? I am not planning to -- I'm
-focused on the per-site implementation.
+Actually, I am not sure if it's typo or intentional, so this patch is 
+more like a consultation. It's okay to keep it the same so it doesn't 
+torture the user.
 
-> > I think per-site buckets is going to be the most effective long-term:
-> > https://lore.kernel.org/lkml/20240809072532.work.266-kees@kernel.org/
-> >
-> > But that doesn't exclude new kmem_buckets_create() users.
-> 
-> Is there an update on the per-site buckets?  I agree that would be the
-> preferable solution from a hardening perspective, and if it is on the
-> horizon it may not be worth the effort to convert the LSMs over to an
-> explicit kmem_buckets approach.
 
-I haven't had a chance to refresh the patch series, but the implementation
-still works well. Besides some smaller feedback, I had also wanted to
-make the individual buckets be allocated as needed. That way if something
-was only doing allocations in, say, the 16 to 128 byte range, we wouldn't
-lose memory to track the (unused) higher order bucket sizes.
+Thanks
 
-I expect to send out the next revision after the coming merge window.
+Gengkun
 
--Kees
-
--- 
-Kees Cook
