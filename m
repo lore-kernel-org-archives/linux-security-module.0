@@ -1,231 +1,163 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4196197558;
-	Wed,  8 Jan 2025 17:57:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 838C11DF746
+	for <linux-security-module@vger.kernel.org>; Wed,  8 Jan 2025 21:17:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736359069; cv=none; b=pnOfxWjyLmE6oycw7hqO+LjzC/rXfRUXL19R8JHtyK/lvyBOewJcIUbuseoI5AvWHZ+9G3gjsClTKpCOTemAZ9LHQth3IjlRqxG3h8ZmptWc/lnW2K1x/yKnVc/JdaF6g+QNU390AcEFHT11ZFV/08UDmzijkBsSGQmuCO7lzek=
+	t=1736371081; cv=none; b=cWCK4lvToKxyTO46+LNhsMwlKY/cyWxywIJUnzaBBwSg3ZPsynDg5C9+usPRQ3G4k//SnL/sA/Adxp3MlurF1+apVMsnQGQEBuG4KdKAg0ZcZzlj5mXjokudJvOCtLD571icHKXGvclOQi54Q6pQM0P5TWL6zoHPs/2n3F/7oO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736359069; c=relaxed/simple;
-	bh=P+YhiCnx0Fp70+mXuaY1U/h12ess8tXc7AGuGDtQ7hE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RcS6x12DWVCD+hhZH8SlThom4/NMA4HrF+/VF3JncFeENx3iDrmGED1HegzE4lms69ZCWpSb0umfLvpwGnuOqE3Ah8vUeTO1KcjGwy9pzeBRD02okpa07k1731llfjKGYOMEh+PWRm/uaAN3BGNA+F83xTrx8kSEAo0bhDdYii4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d9bHZMjV; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1736371081; c=relaxed/simple;
+	bh=NkFCanEVnLS83Ar+4ZbtH7xZLEehznfQmh9+Zbi1ntY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Wb9Xn2y7aRBruyFNSo2MFWRIJeiRPraUa/W3+53NpYmMOjaXlQLYQdwIJTZsSbZQ4WH9n6U8sFI7lub3UC8s7ClX03PlVIUO49Onavo9VYz/z/yy9ePP9hD1OcL6NDwSvKsFHeuGKJCNxTwi4/xXy6rn9XaoYeauxe9tBNxu5iE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=KLJxiWMk; arc=none smtp.client-ip=209.85.219.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d9bHZMjV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87DF0C4CED3;
-	Wed,  8 Jan 2025 17:57:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736359068;
-	bh=P+YhiCnx0Fp70+mXuaY1U/h12ess8tXc7AGuGDtQ7hE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=d9bHZMjVCr+k/1eiOgqOrnlMilnmf/PXn6MNsroSTQ86uPz253XnM3tlOK3DtplsG
-	 0XzccyhCmfJyjVX8/HuHpiFtZZbSlqdCqTBgfzfkp9L3DW1iQxOm9MwPUQnC0HSi+M
-	 kT0lzW6YJddSjJ/DdsMZY+m/DIUuva+aEkplaCROg0DIrlu0SybzpfXFJ83pdVVJWl
-	 YFLJeyz/pkr9PFbVPlC6U5ClFFhSVKUL9A8AcKtbLDvJwBUAOY6mDQMzLu/mvmVWet
-	 jmUvtdCe+5JWXlgxNslVO2K8Uxq3tR4fV/ruEfWCamnpzYFN8Y0f3iDbkdx3IZeg4q
-	 4CMidtmZGGL+w==
-Date: Wed, 8 Jan 2025 09:57:44 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>,
-	Christian Brauner <brauner@kernel.org>, Guo Ren <guoren@kernel.org>,
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
-	James Clark <james.clark@linaro.org>,
-	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
-	Jonathan Corbet <corbet@lwn.net>, Arnd Bergmann <arnd@arndb.de>,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
-	linux-csky@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v5 00/16] perf tools: Use generic syscall scripts for all
- archs
-Message-ID: <Z368mNynBTDWPM6R@google.com>
-References: <20250107-perf_syscalltbl-v5-0-935de46d3175@rivosinc.com>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="KLJxiWMk"
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e479e529ebcso260891276.3
+        for <linux-security-module@vger.kernel.org>; Wed, 08 Jan 2025 13:17:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1736371078; x=1736975878; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hotY+t9DQBcAeb7yhgUdMiRAbJrlaqfeC4dygHkJIvQ=;
+        b=KLJxiWMkoH9C4z/QhbrFiHuDtsbSEyMOwb05Fu8pcr3OkpWfanoGN7TBya19JqFknJ
+         eU6YFUPzmqj48mTgBKrvql/bm+j7KmOO5xbaGZwtPaecFAdKsiX4ErZFIMeshPEQkS1W
+         EluS2jNJR0YuhS3hY6jk1C5YQAL+ZjcQ/MG+vj/BNudhiD0dPPB16ubmLb72xba/B3Ve
+         AVGkqT0BWzO/USmQsp1yMe5iLVYRZMOzwgYC/gwG3Gjtf7SC8A6+82RoW/OpUoJV8kpk
+         3vXdV6W881DtQlEK46YriJcAFfsuNpM0sciS7AZpfkY3hG1bmAtUCXfzGN7D62aUl101
+         A+Ag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736371078; x=1736975878;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hotY+t9DQBcAeb7yhgUdMiRAbJrlaqfeC4dygHkJIvQ=;
+        b=M2MUtYWpCZJTwDd3cFrG9xVzYnRbx9lqbJ1TbCGBm6JnoFJd3Xoe0LcpkTJnQTGQ/P
+         3JdS2kKRbaXejewQKTvMA2f3mJTlnfSU0GErnrPtu4Ktpfc35njlqn16YqqZ+H2EyYFB
+         gWHyWYUGhqTBTu21MDyQPLqYQAMxb6PktMYKQxpvRXoGr3ZZLht7J6ECrxGqdwHWzOtg
+         MmXZKn02cWTtIzdlpyC7wQKpfJeooCFDIywShFR8sNxFe9O2/kSpTSbPKnHd6WibkR7E
+         Ut/4ivM/tcrpbMDUGfkBVNJER0MTAo76/wJuPa7vHvkJHby9Se1QsUJbtehjoDnFgGAE
+         e4mg==
+X-Forwarded-Encrypted: i=1; AJvYcCW10UZxYddrhpk8+TlsIKhaVielR39qWgfpz7qR7SNb3IV2FAtS2grAF7VbnL5+8UArxPjK+rtLeNafhvPpg7jlLju7CvI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXXyWM9iHkC6c8BZPNskYIIomlYvMVq6dYSBDGCSDjdxjPNwut
+	NkgZmn2KfXbj1MFLNi6SaZIQO/mfP+vOdjvsveShdZFA9AdNSpDQBg4FfCweAXSLRYosZnk6927
+	/C7BQhGxyg2EWh5gYmeGy36CD6cfuoZwhR2tI
+X-Gm-Gg: ASbGnctq8nXvNDtYszaHKyf7NB9xRCEB7k3vur3l1bRA7IDJOTMQ/G3anSpgHfqTcTc
+	ACx/Qs4Ol2FXFn6zgqldqHpcvU6x7zaBGVXNO
+X-Google-Smtp-Source: AGHT+IGG2C67qQmC08w9NXrbJqwZe9M1vXisqckUBzUkNTmWQl7xbPMs1vDLrdGGuEjdNAxO9OmsFMH/+sLgYQasnFI=
+X-Received: by 2002:a05:690c:6088:b0:6ef:4a57:fc7c with SMTP id
+ 00721157ae682-6f531248e7fmr39080647b3.16.1736371078550; Wed, 08 Jan 2025
+ 13:17:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250107-perf_syscalltbl-v5-0-935de46d3175@rivosinc.com>
+References: <675f513a.050a0220.37aaf.0106.GAE@google.com> <20241217182657.10080-2-leocstone@gmail.com>
+ <CAHC9VhQGeNv=UEhXPN5MN1h0xEZkeE9kbE79+k9HvNxdK_4xzA@mail.gmail.com>
+ <ed6e5639-c87e-49e8-8125-5b93cec69d43@I-love.SAKURA.ne.jp>
+ <9fcd3f3d-33c1-4feb-8c98-472d44bc0a54@I-love.SAKURA.ne.jp>
+ <202412222126.E70910E7A8@keescook> <CAHC9VhRkAbvj=9qe8iWPCtsgkF0zvgP+pbOsUG=VVFcPgO3-jQ@mail.gmail.com>
+ <202501061501.26556F56@keescook>
+In-Reply-To: <202501061501.26556F56@keescook>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 8 Jan 2025 16:17:47 -0500
+X-Gm-Features: AbW1kvZKBPx02s7TORiggNdKqQ_Brtb_91zlzxJna2YiJfsofKRaNEhHAVO6jZA
+Message-ID: <CAHC9VhQHpBjp-gYTqSg9kDj+ZTQES2EfyeQYgpfW7gaMZxj4eg@mail.gmail.com>
+Subject: Re: [PATCH v2] lsm: check size of writes
+To: Kees Cook <kees@kernel.org>
+Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, 
+	syzbot+4eb7a741b3216020043a@syzkaller.appspotmail.com, jmorris@namei.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	serge@hallyn.com, syzkaller-bugs@googlegroups.com, 
+	Leo Stone <leocstone@gmail.com>, mortonm@chromium.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Mon, Jan 6, 2025 at 7:09=E2=80=AFPM Kees Cook <kees@kernel.org> wrote:
+> On Sat, Jan 04, 2025 at 11:04:09PM -0500, Paul Moore wrote:
+> > On Mon, Dec 23, 2024 at 12:33=E2=80=AFAM Kees Cook <kees@kernel.org> wr=
+ote:
+> > >
+> > > If the LSM core did a kmem_buckets_create() for each LSM, and the LSM=
+s
+> > > were adjusted to explicitly allocate from their own bucket set, that
+> > > would be one way. Or just for the LSM as a whole (1 set of buckets
+> > > instead of a set for each LSM). I'd be happy to review patches for
+> > > either idea.
+> >
+> > If we're doing the work to shift over to kmem_buckets, it seems like
+> > creating per-LSM buckets is the better option unless I'm missing
+> > something.
+> >
+> > I'm also not sure why the LSM framework would need to call
+> > kmem_buckets_create() on behalf of the individual LSMs, can someone
+> > help me understand why the individual LSMs couldn't do it in their
+> > init routines?
+>
+> When we moved stuff around for stacking, we moved other allocation
+> duties into the "core" of the LSM, so it just seemed reasonable to me to
+> do it again if this happened.
 
-On Tue, Jan 07, 2025 at 06:07:48PM -0800, Charlie Jenkins wrote:
-> Standardize the generation of syscall headers around syscall tables.
-> Previously each architecture independently selected how syscall headers
-> would be generated, or would not define a way and fallback onto
-> libaudit. Convert all architectures to use a standard syscall header
-> generation script and allow each architecture to override the syscall
-> table to use if they do not use the generic table.
-> 
-> As a result of these changes, no architecture will require libaudit, and
-> so the fallback case of using libaudit is removed by this series.
-> 
-> Testing:
-> 
-> I have tested that the syscall mappings of id to name generation works
-> as expected for every architecture, but I have only validated that perf
-> trace compiles and runs as expected on riscv, arm64, and x86_64.
-> 
-> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> Reviewed-by: Ian Rogers <irogers@google.com>
-> Tested-by: Ian Rogers <irogers@google.com>
+Moving the allocation of the LSM state blobs for core kernel entities,
+e.g. inode->i_security, was a bit different as it was necessary to
+support multiple LSMs.  How could we support multiple simultaneous
+LSMs if each of them wanted to control the inode->i_security field?
 
-Acked-by: Namhyung Kim <namhyung@kernel.org>
+Moving arbitrary LSM allocations out of the individual LSMs and into
+the LSM framework itself is definitely *not* something we want to do.
+We really want to keep the LSM framework as small as possible.
 
-Thanks,
-Namhyung
+> > If it is necessary for the LSM framework to create the buckets and
+> > hand them back to the individual LSMs, I would suggest adding a new
+> > flag to the lsm_info->flags field that a LSM could set to request a
+> > kmem_bucket, and then add a new field to lsm_info that the LSM
+> > framework could use to return the bucket to the LSM.  LSMs could
+> > opt-in to kmem_buckets when they found the time to convert.
+>
+> Yeah, agreed. Since allocations would need to swap kmalloc() for
+> kmem_bucket_alloc(), we could also create something like lsm_alloc() and
+> hide everything from the individual LSMs -- the core would handle
+> allocating and using the buckets handle, etc.
+>
+> Does anyone want to make a series for this? I am not planning to -- I'm
+> focused on the per-site implementation.
 
-> 
-> ---
-> Changes in v5:
-> - Remove references to HAVE_SYSCALL_TABLE_SUPPORT that were
->   missed/recently introduced
-> - Rebase on perf-tools-next
-> - Install headers to $(OUTPUT)arch instead of $(OUTPUT)tools/perf/arch
-> - Link to v4: https://lore.kernel.org/r/20241218-perf_syscalltbl-v4-0-bc8caef2ca8e@rivosinc.com
-> 
-> Changes in v4:
-> - Remove audit_machine member of syscalltbl struct (Ian)
-> - Rebase on perf-tools-next
-> - Link to v3: https://lore.kernel.org/r/20241216-perf_syscalltbl-v3-0-239f032481d5@rivosinc.com
-> 
-> Changes in v3:
-> - Fix compiliation when OUTPUT is empty
-> - Correct unused headers to be .h instead of .c  (Namhyung)
-> - Make variable definition of supported archs (Namhyung)
-> - Convert += into := for syscalls headers (Namhyung)
-> - Link to v2: https://lore.kernel.org/r/20241212-perf_syscalltbl-v2-0-f8ca984ffe40@rivosinc.com
-> 
-> Changes in v2:
-> - Rebase onto 6.13-rc2
-> - Fix output path so it generates to /tools/perf/arch properly
-> - Link to v1: https://lore.kernel.org/r/20241104-perf_syscalltbl-v1-0-9adae5c761ef@rivosinc.com
-> 
-> ---
-> Charlie Jenkins (16):
->       perf tools: Create generic syscall table support
->       perf tools: arc: Support generic syscall headers
->       perf tools: csky: Support generic syscall headers
->       perf tools: arm: Support syscall headers
->       perf tools: sh: Support syscall headers
->       perf tools: sparc: Support syscall headers
->       perf tools: xtensa: Support syscall header
->       perf tools: x86: Use generic syscall scripts
->       perf tools: alpha: Support syscall header
->       perf tools: parisc: Support syscall header
->       perf tools: arm64: Use syscall table
->       perf tools: loongarch: Use syscall table
->       perf tools: mips: Use generic syscall scripts
->       perf tools: powerpc: Use generic syscall table scripts
->       perf tools: s390: Use generic syscall table scripts
->       perf tools: Remove dependency on libaudit
-> 
->  Documentation/admin-guide/workload-tracing.rst     |   2 +-
->  tools/build/feature/Makefile                       |   4 -
->  tools/build/feature/test-libaudit.c                |  11 -
->  tools/perf/Documentation/perf-check.txt            |   2 -
->  tools/perf/Makefile.config                         |  39 +-
->  tools/perf/Makefile.perf                           |  12 +-
->  tools/perf/arch/alpha/entry/syscalls/Kbuild        |   2 +
->  .../arch/alpha/entry/syscalls/Makefile.syscalls    |   5 +
->  tools/perf/arch/alpha/entry/syscalls/syscall.tbl   | 504 ++++++++++++++++++++
->  tools/perf/arch/alpha/include/syscall_table.h      |   2 +
->  tools/perf/arch/arc/entry/syscalls/Kbuild          |   2 +
->  .../perf/arch/arc/entry/syscalls/Makefile.syscalls |   3 +
->  tools/perf/arch/arc/include/syscall_table.h        |   2 +
->  tools/perf/arch/arm/entry/syscalls/Kbuild          |   4 +
->  .../perf/arch/arm/entry/syscalls/Makefile.syscalls |   2 +
->  tools/perf/arch/arm/entry/syscalls/syscall.tbl     | 483 +++++++++++++++++++
->  tools/perf/arch/arm/include/syscall_table.h        |   2 +
->  tools/perf/arch/arm64/Makefile                     |  22 -
->  tools/perf/arch/arm64/entry/syscalls/Kbuild        |   3 +
->  .../arch/arm64/entry/syscalls/Makefile.syscalls    |   6 +
->  tools/perf/arch/arm64/entry/syscalls/mksyscalltbl  |  46 --
->  .../perf/arch/arm64/entry/syscalls/syscall_32.tbl  | 476 +++++++++++++++++++
->  .../perf/arch/arm64/entry/syscalls/syscall_64.tbl  |   1 +
->  tools/perf/arch/arm64/include/syscall_table.h      |   8 +
->  tools/perf/arch/csky/entry/syscalls/Kbuild         |   2 +
->  .../arch/csky/entry/syscalls/Makefile.syscalls     |   3 +
->  tools/perf/arch/csky/include/syscall_table.h       |   2 +
->  tools/perf/arch/loongarch/Makefile                 |  22 -
->  tools/perf/arch/loongarch/entry/syscalls/Kbuild    |   2 +
->  .../loongarch/entry/syscalls/Makefile.syscalls     |   3 +
->  .../arch/loongarch/entry/syscalls/mksyscalltbl     |  45 --
->  tools/perf/arch/loongarch/include/syscall_table.h  |   2 +
->  tools/perf/arch/mips/entry/syscalls/Kbuild         |   2 +
->  .../arch/mips/entry/syscalls/Makefile.syscalls     |   5 +
->  tools/perf/arch/mips/entry/syscalls/mksyscalltbl   |  32 --
->  tools/perf/arch/mips/include/syscall_table.h       |   2 +
->  tools/perf/arch/parisc/entry/syscalls/Kbuild       |   3 +
->  .../arch/parisc/entry/syscalls/Makefile.syscalls   |   6 +
->  tools/perf/arch/parisc/entry/syscalls/syscall.tbl  | 463 +++++++++++++++++++
->  tools/perf/arch/parisc/include/syscall_table.h     |   8 +
->  tools/perf/arch/powerpc/Makefile                   |  25 -
->  tools/perf/arch/powerpc/entry/syscalls/Kbuild      |   3 +
->  .../arch/powerpc/entry/syscalls/Makefile.syscalls  |   6 +
->  .../perf/arch/powerpc/entry/syscalls/mksyscalltbl  |  39 --
->  tools/perf/arch/powerpc/include/syscall_table.h    |   8 +
->  tools/perf/arch/riscv/Makefile                     |  22 -
->  tools/perf/arch/riscv/entry/syscalls/Kbuild        |   2 +
->  .../arch/riscv/entry/syscalls/Makefile.syscalls    |   4 +
->  tools/perf/arch/riscv/entry/syscalls/mksyscalltbl  |  47 --
->  tools/perf/arch/riscv/include/syscall_table.h      |   8 +
->  tools/perf/arch/s390/Makefile                      |  21 -
->  tools/perf/arch/s390/entry/syscalls/Kbuild         |   2 +
->  .../arch/s390/entry/syscalls/Makefile.syscalls     |   5 +
->  tools/perf/arch/s390/entry/syscalls/mksyscalltbl   |  32 --
->  tools/perf/arch/s390/include/syscall_table.h       |   2 +
->  tools/perf/arch/sh/entry/syscalls/Kbuild           |   2 +
->  .../perf/arch/sh/entry/syscalls/Makefile.syscalls  |   4 +
->  tools/perf/arch/sh/entry/syscalls/syscall.tbl      | 472 +++++++++++++++++++
->  tools/perf/arch/sh/include/syscall_table.h         |   2 +
->  tools/perf/arch/sparc/entry/syscalls/Kbuild        |   3 +
->  .../arch/sparc/entry/syscalls/Makefile.syscalls    |   5 +
->  tools/perf/arch/sparc/entry/syscalls/syscall.tbl   | 514 +++++++++++++++++++++
->  tools/perf/arch/sparc/include/syscall_table.h      |   8 +
->  tools/perf/arch/x86/Build                          |   1 -
->  tools/perf/arch/x86/Makefile                       |  25 -
->  tools/perf/arch/x86/entry/syscalls/Kbuild          |   3 +
->  .../perf/arch/x86/entry/syscalls/Makefile.syscalls |   6 +
->  tools/perf/arch/x86/entry/syscalls/syscalltbl.sh   |  42 --
->  tools/perf/arch/x86/include/syscall_table.h        |   8 +
->  tools/perf/arch/xtensa/entry/syscalls/Kbuild       |   2 +
->  .../arch/xtensa/entry/syscalls/Makefile.syscalls   |   4 +
->  tools/perf/arch/xtensa/entry/syscalls/syscall.tbl  | 439 ++++++++++++++++++
->  tools/perf/arch/xtensa/include/syscall_table.h     |   2 +
->  tools/perf/builtin-check.c                         |   2 -
->  tools/perf/builtin-help.c                          |   2 -
->  tools/perf/builtin-trace.c                         |  30 --
->  tools/perf/check-headers.sh                        |   9 +
->  tools/perf/perf.c                                  |   6 +-
->  tools/perf/scripts/Makefile.syscalls               |  61 +++
->  tools/perf/scripts/syscalltbl.sh                   |  86 ++++
->  tools/perf/tests/make                              |   7 +-
->  tools/perf/util/env.c                              |   6 +-
->  tools/perf/util/generate-cmdlist.sh                |   4 +-
->  tools/perf/util/syscalltbl.c                       |  90 +---
->  tools/perf/util/syscalltbl.h                       |   1 -
->  tools/scripts/syscall.tbl                          | 409 ++++++++++++++++
->  86 files changed, 4103 insertions(+), 623 deletions(-)
-> ---
-> base-commit: 034b5b147bf7f44a45e39334725f8633b7ca8c3b
-> change-id: 20240913-perf_syscalltbl-6f98defcc6f5
-> -- 
-> - Charlie
-> 
+I personally have enough other things to work on, and review, right
+now that I don't see having any time to work on this in the near or
+mid term, especially as a more preferred solution is in the works.
+Putting on my SELinux maintainer hat for a moment, as long as there is
+some belief that we'll have a per-site implementation, I'm not sure I
+would merge a per-LSM bucket patchset right now as it would be work
+that we would need to unroll once we had the per-site work upstream
+... I would need to think about that.  Of course other LSM maintainers
+might feel differently about their respective LSMs.
+
+> > > I think per-site buckets is going to be the most effective long-term:
+> > > https://lore.kernel.org/lkml/20240809072532.work.266-kees@kernel.org/
+> > >
+> > > But that doesn't exclude new kmem_buckets_create() users.
+> >
+> > Is there an update on the per-site buckets?  I agree that would be the
+> > preferable solution from a hardening perspective, and if it is on the
+> > horizon it may not be worth the effort to convert the LSMs over to an
+> > explicit kmem_buckets approach.
+>
+> I haven't had a chance to refresh the patch series, but the implementatio=
+n
+> still works well. Besides some smaller feedback, I had also wanted to
+> make the individual buckets be allocated as needed. That way if something
+> was only doing allocations in, say, the 16 to 128 byte range, we wouldn't
+> lose memory to track the (unused) higher order bucket sizes.
+>
+> I expect to send out the next revision after the coming merge window.
+
+Thanks for the update.
+
+--=20
+paul-moore.com
