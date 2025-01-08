@@ -1,33 +1,33 @@
-Received: from smtp-8fa8.mail.infomaniak.ch (smtp-8fa8.mail.infomaniak.ch [83.166.143.168])
+Received: from smtp-42a9.mail.infomaniak.ch (smtp-42a9.mail.infomaniak.ch [84.16.66.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DBAE1FF7BF
-	for <linux-security-module@vger.kernel.org>; Wed,  8 Jan 2025 15:44:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7267B1F869E
+	for <linux-security-module@vger.kernel.org>; Wed,  8 Jan 2025 15:44:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736351045; cv=none; b=mb4McsDFzQTeUZlvl4Uh/deV6LnXOZY81i1nUDn/PfJuLJI8MuWJbcW7YmY1XRZBs2cH7zju8vR6mqIwd/HtvQGkua1xxJhIgeK0zEHIrtSXQHgxq9ty0tHNtNBgBtKDd1In+7VAwG22uqKGrVtlhKA4qwcMPK4gjcJ5596buyE=
+	t=1736351047; cv=none; b=V842z0fkS9AcaN/41s0lGOyvR9r2wQrKhdbIVay2EnfJAizOjzn9249OwpPlI/mPjgvGMafAby+mU4U1DpXSGF+EJrL3l6zy6gdpLa4HhCNHjXKpk5r51vqvA1S+k1AQ+r/9amsZcXDgnkP9BRvYJGkO/xo1kgO+v1BDxVzwcnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736351045; c=relaxed/simple;
-	bh=sIMzLxtiqYnuIL+sirssPezjol92I2zFln5U2PbP2Bs=;
+	s=arc-20240116; t=1736351047; c=relaxed/simple;
+	bh=QJqwYq5frXoftVqz8LmANwAzt2hFiBJ6iJtSHT5ib30=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bsPKywWuiJWiCkGlAEwJ3hENaWELQK9XoK+4A2802XLrPGaefpHOaXhkBw0SKpF2tn/wNsh7aCTTq7Ua6QIUXwV3JiVoM0K1LEY60PeVYql99eFY2OBLgtufbtC2GMsJ6BjVO38Rt1TjTiGU9hE6yyLkNMIiwAb2ZG8jU7AnsaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=vMoi7bzn; arc=none smtp.client-ip=83.166.143.168
+	 MIME-Version:Content-Type; b=E58zqy55UPbfOiEcLDvwS/oxXDZagh2aw/Y2MdvZn6Aw7bEbIPaCzVNbYKeS31N2xKqDnnBbMVBA+c+VHwrs2nnIfeoXnFIWsdCGxp3+YmdVzEYQhmPWI8hbwQY/U0c5vTLs9UETY16Yrvd8tcCRIODcZnmN/b1ANYI2OuPg8Fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=uKn5Cyt1; arc=none smtp.client-ip=84.16.66.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="vMoi7bzn"
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4YSsf971Xhz4JR;
-	Wed,  8 Jan 2025 16:44:01 +0100 (CET)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="uKn5Cyt1"
+Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10:40ca:feff:fe05:1])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4YSsf46Mrxzt6D;
+	Wed,  8 Jan 2025 16:43:56 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1736351041;
-	bh=sA3tQ0E1xt/REioAAG6B7sH7UGS9WSxhmY0Puu/KnBg=;
+	s=20191114; t=1736351036;
+	bh=+oXeGTZhWH7zBrQn+Rqm0cL2tmgvGubeqz4bC82gHKw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=vMoi7bznWU0HGrjEeznEs60tb3rtDsKVrjjUa6ObJD27315eokYxbPV1PUr4uWmTx
-	 zrTZIELE90PHk+zYE6wA2OJv1liUP0SOPUyIIj17WhDYZhyxpxjQlkhq1UhVzT771T
-	 Ae1S2T52dEiHbsKx/BfbA4OZjhp++0XINzAauuH8=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4YSsf8725Gzs0d;
-	Wed,  8 Jan 2025 16:44:00 +0100 (CET)
+	b=uKn5Cyt1fy8HNn9dNzo94+saIuMbKk9tuT5fAbXUJKDyV5h0042Kkd0h+reDI/kU5
+	 HRbm+GlmT0ZGqNTml3nG76EaK+VfZsWhf1kwxePlbq4eS+DD89TVgaMw3cVQVTe2Nh
+	 YYYy9Vu8vQCXutfEqHClqV3l2i9jH1AO7/ThDHVA=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4YSsf362CyzHf5;
+	Wed,  8 Jan 2025 16:43:55 +0100 (CET)
 From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To: Eric Paris <eparis@redhat.com>,
 	Paul Moore <paul@paul-moore.com>,
@@ -57,9 +57,9 @@ Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	audit@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH v4 10/30] landlock: Log mount-related denials
-Date: Wed,  8 Jan 2025 16:43:18 +0100
-Message-ID: <20250108154338.1129069-11-mic@digikod.net>
+Subject: [PATCH v4 07/30] landlock: Move domain hierarchy management and export helpers
+Date: Wed,  8 Jan 2025 16:43:15 +0100
+Message-ID: <20250108154338.1129069-8-mic@digikod.net>
 In-Reply-To: <20250108154338.1129069-1-mic@digikod.net>
 References: <20250108154338.1129069-1-mic@digikod.net>
 Precedence: bulk
@@ -72,235 +72,290 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
 
-Add audit support for sb_mount, move_mount, sb_umount, sb_remount, and
-sb_pivot_root hooks.
+Create a new domain.h file containing the struct landlock_hierarchy
+definition and helpers.  This type will grow with audit support.  This
+also prepares for a new domain type.
 
-The new related blocker is "fs.change_layout".
+Export landlock_get_hierarchy() and landlock_put_hierarchy() that will
+be used by audit in a following commit.
 
-Add and use a new landlock_match_layer_level() helper.
-
-Audit event sample:
-
-  type=LANDLOCK_DENY msg=audit(1729738800.349:44): domain=195ba459b blockers=fs.change_layout name="/" dev="tmpfs" ino=1
+Clean up Makefile entries.
 
 Cc: Günther Noack <gnoack@google.com>
 Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Link: https://lore.kernel.org/r/20250108154338.1129069-11-mic@digikod.net
+Link: https://lore.kernel.org/r/20250108154338.1129069-8-mic@digikod.net
 ---
 
 Changes since v3:
-- Cosmetic change to the "fs.change_layout" name.
-
-Changes since v2:
-- Log the domain that denied the action because not all layers block FS
-  layout changes.
-- Fix landlock_match_layer_level().
+- Export landlock_get_hierarchy() and landlock_put_hierarchy().
+- Clean up Makefile entries.
 
 Changes since v1:
-- Rebased on the TCP patch series.
-- Don't log missing permissions, only domain layer, and then remove the
-  permission word (suggested by Günther)
+- New patch.
 ---
- security/landlock/audit.c   |  3 ++
- security/landlock/audit.h   |  1 +
- security/landlock/fs.c      | 64 ++++++++++++++++++++++++++++++++++---
- security/landlock/ruleset.h | 31 ++++++++++++++++++
- 4 files changed, 94 insertions(+), 5 deletions(-)
+ MAINTAINERS                 |  1 +
+ include/linux/landlock.h    | 31 +++++++++++++++++++++++++++++++
+ security/landlock/Makefile  | 11 +++++++++--
+ security/landlock/domain.c  | 29 +++++++++++++++++++++++++++++
+ security/landlock/domain.h  | 31 +++++++++++++++++++++++++++++++
+ security/landlock/ruleset.c | 22 ++++------------------
+ security/landlock/ruleset.h | 17 +----------------
+ security/landlock/task.c    |  1 +
+ 8 files changed, 107 insertions(+), 36 deletions(-)
+ create mode 100644 include/linux/landlock.h
+ create mode 100644 security/landlock/domain.c
+ create mode 100644 security/landlock/domain.h
 
-diff --git a/security/landlock/audit.c b/security/landlock/audit.c
-index ccc591146f8a..aae93b2c994b 100644
---- a/security/landlock/audit.c
-+++ b/security/landlock/audit.c
-@@ -20,6 +20,9 @@ static const char *get_blocker(const enum landlock_request_type type)
- 	switch (type) {
- 	case LANDLOCK_REQUEST_PTRACE:
- 		return "ptrace";
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 30cbc3d44cd5..425676b25a4f 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -12961,6 +12961,7 @@ T:	git https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git
+ F:	Documentation/security/landlock.rst
+ F:	Documentation/userspace-api/landlock.rst
+ F:	fs/ioctl.c
++F:	include/linux/landlock.h
+ F:	include/uapi/linux/landlock.h
+ F:	samples/landlock/
+ F:	security/landlock/
+diff --git a/include/linux/landlock.h b/include/linux/landlock.h
+new file mode 100644
+index 000000000000..8491142658a1
+--- /dev/null
++++ b/include/linux/landlock.h
+@@ -0,0 +1,31 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Landlock - Kernel API
++ *
++ * Copyright © 2024-2025 Microsoft Corporation
++ */
 +
-+	case LANDLOCK_REQUEST_FS_CHANGE_LAYOUT:
-+		return "fs.change_layout";
- 	}
++#ifndef _LINUX_LANDLOCK_H
++#define _LINUX_LANDLOCK_H
++
++struct landlock_hierarchy;
++
++#ifdef CONFIG_SECURITY_LANDLOCK
++
++void landlock_get_hierarchy(struct landlock_hierarchy *hierarchy);
++
++void landlock_put_hierarchy(struct landlock_hierarchy *hierarchy);
++
++#else /* CONFIG_SECURITY_LANDLOCK */
++
++static inline void landlock_get_hierarchy(struct landlock_hierarchy *hierarchy)
++{
++}
++
++static inline void landlock_put_hierarchy(struct landlock_hierarchy *hierarchy)
++{
++}
++
++#endif /* CONFIG_SECURITY_LANDLOCK */
++
++#endif /* _LINUX_LANDLOCK_H */
+diff --git a/security/landlock/Makefile b/security/landlock/Makefile
+index e1777abbc413..51815908a464 100644
+--- a/security/landlock/Makefile
++++ b/security/landlock/Makefile
+@@ -1,7 +1,14 @@
+ obj-$(CONFIG_SECURITY_LANDLOCK) := landlock.o
  
- 	WARN_ON_ONCE(1);
-diff --git a/security/landlock/audit.h b/security/landlock/audit.h
-index 7bc67ca2e470..745dcf7b1b6d 100644
---- a/security/landlock/audit.h
-+++ b/security/landlock/audit.h
-@@ -15,6 +15,7 @@
+-landlock-y := setup.o syscalls.o object.o ruleset.o \
+-	cred.o task.o fs.o
++landlock-y := \
++	setup.o \
++	syscalls.o \
++	object.o \
++	ruleset.o \
++	cred.o \
++	task.o \
++	fs.o \
++	domain.o
  
- enum landlock_request_type {
- 	LANDLOCK_REQUEST_PTRACE = 1,
-+	LANDLOCK_REQUEST_FS_CHANGE_LAYOUT,
- };
+ landlock-$(CONFIG_INET) += net.o
  
- /*
-diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-index 9779170d9199..171012efb559 100644
---- a/security/landlock/fs.c
-+++ b/security/landlock/fs.c
-@@ -23,6 +23,7 @@
+diff --git a/security/landlock/domain.c b/security/landlock/domain.c
+new file mode 100644
+index 000000000000..df58638ffc50
+--- /dev/null
++++ b/security/landlock/domain.c
+@@ -0,0 +1,29 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Landlock LSM - Domain management
++ *
++ * Copyright © 2016-2020 Mickaël Salaün <mic@digikod.net>
++ * Copyright © 2018-2020 ANSSI
++ * Copyright © 2024-2025 Microsoft Corporation
++ */
++
++#include <linux/landlock.h>
++#include <linux/mm.h>
++
++#include "domain.h"
++
++void landlock_get_hierarchy(struct landlock_hierarchy *const hierarchy)
++{
++	if (hierarchy)
++		refcount_inc(&hierarchy->usage);
++}
++
++void landlock_put_hierarchy(struct landlock_hierarchy *hierarchy)
++{
++	while (hierarchy && refcount_dec_and_test(&hierarchy->usage)) {
++		const struct landlock_hierarchy *const freeme = hierarchy;
++
++		hierarchy = hierarchy->parent;
++		kfree(freeme);
++	}
++}
+diff --git a/security/landlock/domain.h b/security/landlock/domain.h
+new file mode 100644
+index 000000000000..2e612ef754e3
+--- /dev/null
++++ b/security/landlock/domain.h
+@@ -0,0 +1,31 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Landlock LSM - Domain management
++ *
++ * Copyright © 2016-2020 Mickaël Salaün <mic@digikod.net>
++ * Copyright © 2018-2020 ANSSI
++ */
++
++#ifndef _SECURITY_LANDLOCK_DOMAIN_H
++#define _SECURITY_LANDLOCK_DOMAIN_H
++
++#include <linux/landlock.h>
++#include <linux/refcount.h>
++
++/**
++ * struct landlock_hierarchy - Node in a domain hierarchy
++ */
++struct landlock_hierarchy {
++	/**
++	 * @parent: Pointer to the parent node, or NULL if it is a root
++	 * Landlock domain.
++	 */
++	struct landlock_hierarchy *parent;
++	/**
++	 * @usage: Number of potential children domains plus their parent
++	 * domain.
++	 */
++	refcount_t usage;
++};
++
++#endif /* _SECURITY_LANDLOCK_DOMAIN_H */
+diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
+index dbc528f5f3b7..8b47af69af3e 100644
+--- a/security/landlock/ruleset.c
++++ b/security/landlock/ruleset.c
+@@ -12,6 +12,7 @@
+ #include <linux/err.h>
+ #include <linux/errno.h>
  #include <linux/kernel.h>
- #include <linux/limits.h>
- #include <linux/list.h>
-+#include <linux/lsm_audit.h>
- #include <linux/lsm_hooks.h>
- #include <linux/mount.h>
- #include <linux/namei.h>
-@@ -37,6 +38,7 @@
- #include <uapi/linux/landlock.h>
++#include <linux/landlock.h>
+ #include <linux/lockdep.h>
+ #include <linux/overflow.h>
+ #include <linux/rbtree.h>
+@@ -21,6 +22,7 @@
+ #include <linux/workqueue.h>
  
  #include "access.h"
-+#include "audit.h"
- #include "common.h"
- #include "cred.h"
- #include "fs.h"
-@@ -1301,6 +1303,38 @@ static void hook_sb_delete(struct super_block *const sb)
- 		       !atomic_long_read(&landlock_superblock(sb)->inode_refs));
++#include "domain.h"
+ #include "limits.h"
+ #include "object.h"
+ #include "ruleset.h"
+@@ -305,22 +307,6 @@ int landlock_insert_rule(struct landlock_ruleset *const ruleset,
+ 	return insert_rule(ruleset, id, &layers, ARRAY_SIZE(layers));
  }
  
-+static void
-+log_fs_change_layout_path(const struct landlock_ruleset *const domain,
-+			  const struct path *const path)
-+{
-+	const struct landlock_request request = {
-+		.type = LANDLOCK_REQUEST_FS_CHANGE_LAYOUT,
-+		.audit = {
-+			.type = LSM_AUDIT_DATA_PATH,
-+			.u.path = *path,
-+		},
-+		.layer_plus_one = landlock_match_layer_level(domain, any_fs) + 1,
-+	};
-+
-+	landlock_log_denial(domain, &request);
-+}
-+
-+static void
-+log_fs_change_layout_dentry(const struct landlock_ruleset *const domain,
-+			    struct dentry *const dentry)
-+{
-+	const struct landlock_request request = {
-+		.type = LANDLOCK_REQUEST_FS_CHANGE_LAYOUT,
-+		.audit = {
-+			.type = LSM_AUDIT_DATA_DENTRY,
-+			.u.dentry = dentry,
-+		},
-+		.layer_plus_one = landlock_match_layer_level(domain, any_fs) + 1,
-+	};
-+
-+	landlock_log_denial(domain, &request);
-+}
-+
- /*
-  * Because a Landlock security policy is defined according to the filesystem
-  * topology (i.e. the mount namespace), changing it may grant access to files
-@@ -1323,16 +1357,24 @@ static int hook_sb_mount(const char *const dev_name,
- 			 const struct path *const path, const char *const type,
- 			 const unsigned long flags, void *const data)
- {
--	if (!get_current_fs_domain())
-+	const struct landlock_ruleset *const dom = get_current_fs_domain();
-+
-+	if (!dom)
- 		return 0;
-+
-+	log_fs_change_layout_path(dom, path);
- 	return -EPERM;
- }
+-static void get_hierarchy(struct landlock_hierarchy *const hierarchy)
+-{
+-	if (hierarchy)
+-		refcount_inc(&hierarchy->usage);
+-}
+-
+-static void put_hierarchy(struct landlock_hierarchy *hierarchy)
+-{
+-	while (hierarchy && refcount_dec_and_test(&hierarchy->usage)) {
+-		const struct landlock_hierarchy *const freeme = hierarchy;
+-
+-		hierarchy = hierarchy->parent;
+-		kfree(freeme);
+-	}
+-}
+-
+ static int merge_tree(struct landlock_ruleset *const dst,
+ 		      struct landlock_ruleset *const src,
+ 		      const enum landlock_key_type key_type)
+@@ -475,7 +461,7 @@ static int inherit_ruleset(struct landlock_ruleset *const parent,
+ 		err = -EINVAL;
+ 		goto out_unlock;
+ 	}
+-	get_hierarchy(parent->hierarchy);
++	landlock_get_hierarchy(parent->hierarchy);
+ 	child->hierarchy->parent = parent->hierarchy;
  
- static int hook_move_mount(const struct path *const from_path,
- 			   const struct path *const to_path)
- {
--	if (!get_current_fs_domain())
-+	const struct landlock_ruleset *const dom = get_current_fs_domain();
-+
-+	if (!dom)
- 		return 0;
-+
-+	log_fs_change_layout_path(dom, to_path);
- 	return -EPERM;
- }
+ out_unlock:
+@@ -499,7 +485,7 @@ static void free_ruleset(struct landlock_ruleset *const ruleset)
+ 		free_rule(freeme, LANDLOCK_KEY_NET_PORT);
+ #endif /* IS_ENABLED(CONFIG_INET) */
  
-@@ -1342,15 +1384,23 @@ static int hook_move_mount(const struct path *const from_path,
-  */
- static int hook_sb_umount(struct vfsmount *const mnt, const int flags)
- {
--	if (!get_current_fs_domain())
-+	const struct landlock_ruleset *const dom = get_current_fs_domain();
-+
-+	if (!dom)
- 		return 0;
-+
-+	log_fs_change_layout_dentry(dom, mnt->mnt_root);
- 	return -EPERM;
- }
- 
- static int hook_sb_remount(struct super_block *const sb, void *const mnt_opts)
- {
--	if (!get_current_fs_domain())
-+	const struct landlock_ruleset *const dom = get_current_fs_domain();
-+
-+	if (!dom)
- 		return 0;
-+
-+	log_fs_change_layout_dentry(dom, sb->s_root);
- 	return -EPERM;
- }
- 
-@@ -1365,8 +1415,12 @@ static int hook_sb_remount(struct super_block *const sb, void *const mnt_opts)
- static int hook_sb_pivotroot(const struct path *const old_path,
- 			     const struct path *const new_path)
- {
--	if (!get_current_fs_domain())
-+	const struct landlock_ruleset *const dom = get_current_fs_domain();
-+
-+	if (!dom)
- 		return 0;
-+
-+	log_fs_change_layout_path(dom, new_path);
- 	return -EPERM;
+-	put_hierarchy(ruleset->hierarchy);
++	landlock_put_hierarchy(ruleset->hierarchy);
+ 	kfree(ruleset);
  }
  
 diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
-index 39169b6860e3..7dba8bf960f6 100644
+index 2f29b9f40392..39169b6860e3 100644
 --- a/security/landlock/ruleset.h
 +++ b/security/landlock/ruleset.h
-@@ -267,6 +267,37 @@ landlock_get_applicable_domain(const struct landlock_ruleset *const domain,
- 	return NULL;
- }
+@@ -15,6 +15,7 @@
+ #include <linux/workqueue.h>
  
-+/**
-+ * landlock_match_layer_level - Return the layer level restricting @masks
-+ *
-+ * @domain: Landlock ruleset (used as a domain)
-+ * @masks: access masks
-+ *
-+ * Returns: the number of the layer restricting/handling any right of @access,
-+ * or return 0 (i.e. first layer) otherwise.
-+ */
-+static inline size_t
-+landlock_match_layer_level(const struct landlock_ruleset *const domain,
-+			   const struct access_masks masks)
-+{
-+	const union access_masks_all masks_all = {
-+		.masks = masks,
-+	};
-+	ssize_t layer_level;
-+
-+	for (layer_level = domain->num_layers; layer_level >= 0;
-+	     layer_level--) {
-+		union access_masks_all layer = {
-+			.masks = domain->access_masks[layer_level],
-+		};
-+
-+		if (masks_all.all & layer.all)
-+			return layer_level;
-+	}
-+
-+	return 0;
-+}
-+
- static inline void
- landlock_add_fs_access_mask(struct landlock_ruleset *const ruleset,
- 			    const access_mask_t fs_access_mask,
+ #include "access.h"
++#include "domain.h"
+ #include "limits.h"
+ #include "object.h"
+ 
+@@ -106,22 +107,6 @@ struct landlock_rule {
+ 	struct landlock_layer layers[] __counted_by(num_layers);
+ };
+ 
+-/**
+- * struct landlock_hierarchy - Node in a ruleset hierarchy
+- */
+-struct landlock_hierarchy {
+-	/**
+-	 * @parent: Pointer to the parent node, or NULL if it is a root
+-	 * Landlock domain.
+-	 */
+-	struct landlock_hierarchy *parent;
+-	/**
+-	 * @usage: Number of potential children domains plus their parent
+-	 * domain.
+-	 */
+-	refcount_t usage;
+-};
+-
+ /**
+  * struct landlock_ruleset - Landlock ruleset
+  *
+diff --git a/security/landlock/task.c b/security/landlock/task.c
+index dc7dab78392e..98894ad1abc7 100644
+--- a/security/landlock/task.c
++++ b/security/landlock/task.c
+@@ -18,6 +18,7 @@
+ 
+ #include "common.h"
+ #include "cred.h"
++#include "domain.h"
+ #include "fs.h"
+ #include "ruleset.h"
+ #include "setup.h"
 -- 
 2.47.1
 
