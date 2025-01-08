@@ -1,587 +1,279 @@
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-42ac.mail.infomaniak.ch (smtp-42ac.mail.infomaniak.ch [84.16.66.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA8261E3DFC
-	for <linux-security-module@vger.kernel.org>; Wed,  8 Jan 2025 02:08:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B26B1FDE2A
+	for <linux-security-module@vger.kernel.org>; Wed,  8 Jan 2025 15:43:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736302131; cv=none; b=smqx+1RkC4mldLUqDQnyyqRDlp7qe2ZJ6ST5e4IF5xkZhZS+qJQd+U8JeAZj5k3DnoimgobLM/iP8EpFb7u76mshgcxjS4t704jQsbP/g8RsQSKriV5lIBiEXdfCfF07KkL2Y8PkijP2rtW9JHilexFCpFIm1rTZdvxlK4Ht1L4=
+	t=1736351038; cv=none; b=SstYKj46ZfB2xDlQPZ8O1+XG+40g1SZ90dEMhQLYiIQAPglgjA6G3u1fvNtq/IZDk13AKcq+417Q9luUdog4AlLHDCo//iEaBLRlwJEOm2BfZwDfGd3GW1Y0qY2syouca96xHZ83yzSVNshdnK//zoa1DvWfo1pKTUVd7vtnuVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736302131; c=relaxed/simple;
-	bh=IIAUq83swkQS2L3CQ8q9+4EMHD3YoO1APmWKQvLl73Q=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=QZxxo8ksl/WPk8fEkBW34SDlyAAuEa91n5T9fg8WebxAicSpyvzxoSILaxx0+6oeT5UZoN2EzsdXYp03D6daECe9vO/p6K+PUVoVRYZJP8P6lcGapGTGXFtXPUe5ZqDq0gFU1dMXBzf9LgsyBl7GhzSgjS1tiZXV/9j4cmBMU6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=lVQmpl95; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+	s=arc-20240116; t=1736351038; c=relaxed/simple;
+	bh=3Fo5zphv3fR0VMr0IZdF5iCVUkiUh7FK4w0e3jVvYeU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=n0dWsqRfIGkAowayIVF33MxYCzHsXuU6OmqkBCs2uDjfnr4+WxtV+MfCueHMeZsGqGOMq8rxwIbo/sWmd8eyEikl4DZZjCbFhHK0Qk2YFS0POH/gIjtMrY4sV8GYADWYhgxmhpg8lL6RuLrixAS+PzFcGSrPSPeXO6/MqAeJpWo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=SdbdR3yJ; arc=none smtp.client-ip=84.16.66.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="lVQmpl95"
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2163bd70069so47832045ad.0
-        for <linux-security-module@vger.kernel.org>; Tue, 07 Jan 2025 18:08:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1736302128; x=1736906928; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UmoUDP2j7lySiEXnhAmYjytyq32XIAMnos02j/GTGtY=;
-        b=lVQmpl95tPooTRZK754XXPI6XPwI+9kFAeg+sGGNLaHFEAnEiauyrFEbyIWtpDop+z
-         EO9WLyIFs/Vg5ltGOfmAA6xz2qKcBHmbs2vcLvQp9adTPpBus5VK0gHbWGaokgX2YOW2
-         ByaDS+ryX10vemIGs1m2hLU1Y4qWs8gYgo6uieS3IixgTSXOtT4q51ARHpA4Y0NTm7ut
-         5Ja/0pMKR2rfaCbWBYqQiub8aUxH5JWAiAKxic59Y53sjiuDsBn3nngDx4AGHbWmy7px
-         nrRmgGQPCYzCyhiqabjDHpihioAtz+LzJoeJwE4lk6udAL9LHbDYQ0Pl+SudK+judbc2
-         DbMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736302128; x=1736906928;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UmoUDP2j7lySiEXnhAmYjytyq32XIAMnos02j/GTGtY=;
-        b=QBXsflU6Yhiv8zzHAy9UdbSLO40nB2RKndfKUHc76wMCF7CuB4WoYHvC6yY4Yqo69T
-         /nP65YeXs7Vme4xTUVLmb6qaNrl0Y00/BQ70g0ZUbw6qLRw/5vv1fuVTR8IY3sQ9or1k
-         uW9bY0v5HjvPlttRZTYW7QxS2c0MduVeVT+2ugSyYHbzlL5Jm2vb0LnnLNoHgfjKmjLb
-         MVvZNdyUxUkxYxG0HWDoqXw2RQP8ZEde9NYY64ig0jxAHhi28QVRW6ofjjtx1+hHxoXl
-         qUQJBLEbA3cjbV1RAsYAhOLgvQTwWb0PVO47bYr84h5D2CXoc1+e7S8Q00vV0qy6IF6r
-         cW2g==
-X-Forwarded-Encrypted: i=1; AJvYcCXNOgN/41JWJ6VfwJ2D9N6wK68mOjwcGt4h0hxItRJ0bPbKl3gLF5VEfNz5+qcyLxnksio+dftH9kPPc0W0PoX69K1f0GY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCUhox3TJX1vVZdA1T8/fTQocpCG6soLbkoyM4pUj0vc3NfH4R
-	NhwRYYMByKhij367e/nyJMx/SK1UOpoSL6oc2WleMgCbQTJAqcXjsld/ySzpHS8=
-X-Gm-Gg: ASbGnctre2f0mxPC8tSiz/6osQDibVAIrM26y4C+IuluEf4Gzk/vbJGH4dkC4GqHXzr
-	d7Ei1ohW6PwgtB6QAzFd+V+UXHCo4jjOhSq0wcaV4CgzqM78M2Etpr9Acp14jhXKgKXh9DnvHp4
-	eLNGVM0ZJahtM2ZK0diKVyi8ioiyOnoUnpA14Gdu/LBwm6hQlI3oX/8nAcs/zOvi+zFsjTHPLUS
-	zIeiZrGnmLl/hLg8tlb82IJHmlnBwZ9GKWlEib6zWbpabxftjQG12/EbsmBDjETO8OQbg5X
-X-Google-Smtp-Source: AGHT+IGDbXblTO88GFukx8VonVvRd0UU0Kop/2QYDfhJy4nuN+qyQcFKUpE66eqafJhq7x+/ey7yNg==
-X-Received: by 2002:a17:902:f545:b0:215:6e01:ad19 with SMTP id d9443c01a7336-21a83f96b61mr20379485ad.29.1736302128008;
-        Tue, 07 Jan 2025 18:08:48 -0800 (PST)
-Received: from charlie.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-219dca0282fsm316662405ad.259.2025.01.07.18.08.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Jan 2025 18:08:47 -0800 (PST)
-From: Charlie Jenkins <charlie@rivosinc.com>
-Date: Tue, 07 Jan 2025 18:08:04 -0800
-Subject: [PATCH v5 16/16] perf tools: Remove dependency on libaudit
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="SdbdR3yJ"
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246b])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4YSsdt14PSz7RL;
+	Wed,  8 Jan 2025 16:43:46 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1736351026;
+	bh=cN0QSpezL8v4tsRKsjoQHFf42FQ1y+KLHfexmgD9sDQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=SdbdR3yJ8M4bUViGTt3GEknzLhYa8trPUElyYAAZjSWkj1maPxEc9opYbrILD3G+c
+	 6AxnxZ7/gCfHcQCFDUhubHKiqUqF/bNmAQUj4o40RCi5JNzTut6J2h2F+pM5zRE/sr
+	 yrFlr27BoyDNInril6gYzR74RJm+YnWv8kqYCwug=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4YSsdq6SZFzsJ9;
+	Wed,  8 Jan 2025 16:43:43 +0100 (CET)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: Eric Paris <eparis@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	"Serge E . Hallyn" <serge@hallyn.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	Ben Scarlato <akhna@google.com>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	Charles Zaffery <czaffery@roblox.com>,
+	Daniel Burgener <dburgener@linux.microsoft.com>,
+	Francis Laniel <flaniel@linux.microsoft.com>,
+	James Morris <jmorris@namei.org>,
+	Jann Horn <jannh@google.com>,
+	Jeff Xu <jeffxu@google.com>,
+	Jorge Lucangeli Obes <jorgelo@google.com>,
+	Kees Cook <kees@kernel.org>,
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+	Matt Bobrowski <mattbobrowski@google.com>,
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
+	Phil Sutter <phil@nwl.cc>,
+	Praveen K Paladugu <prapal@linux.microsoft.com>,
+	Robert Salvet <robert.salvet@roblox.com>,
+	Shervin Oloumi <enlightened@google.com>,
+	Song Liu <song@kernel.org>,
+	Tahera Fahimi <fahimitahera@gmail.com>,
+	Tyler Hicks <code@tyhicks.com>,
+	audit@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH v4 00/30] Landlock audit support
+Date: Wed,  8 Jan 2025 16:43:08 +0100
+Message-ID: <20250108154338.1129069-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250107-perf_syscalltbl-v5-16-935de46d3175@rivosinc.com>
-References: <20250107-perf_syscalltbl-v5-0-935de46d3175@rivosinc.com>
-In-Reply-To: <20250107-perf_syscalltbl-v5-0-935de46d3175@rivosinc.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
- Arnaldo Carvalho de Melo <acme@kernel.org>, 
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
- Adrian Hunter <adrian.hunter@intel.com>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, 
- =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
- =?utf-8?q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
- Christian Brauner <brauner@kernel.org>, Guo Ren <guoren@kernel.org>, 
- John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, 
- James Clark <james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>, 
- Leo Yan <leo.yan@linux.dev>, Jonathan Corbet <corbet@lwn.net>, 
- Arnd Bergmann <arnd@arndb.de>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
- linux-riscv@lists.infradead.org, linux-security-module@vger.kernel.org, 
- bpf@vger.kernel.org, linux-csky@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
- Charlie Jenkins <charlie@rivosinc.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=19168; i=charlie@rivosinc.com;
- h=from:subject:message-id; bh=IIAUq83swkQS2L3CQ8q9+4EMHD3YoO1APmWKQvLl73Q=;
- b=owGbwMvMwCHWx5hUnlvL8Y3xtFoSQ3rtPZauN8vqBNh3XFylN//mwdi3u4+fLctZPKtMtq19S
- 0ry1E6ZjlIWBjEOBlkxRRaeaw3MrXf0y46Klk2AmcPKBDKEgYtTACbyjI+RYXaTHNf6HM0Zm1OC
- rTY9q7/tPH+azVZF0/Bc7g1G89im2jAyvGRaPPW5n/YlQel/RV0usQd++Fp/adNY+3nT7thJy+N
- /sgAA
-X-Developer-Key: i=charlie@rivosinc.com; a=openpgp;
- fpr=7D834FF11B1D8387E61C776FFB10D1F27D6B1354
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
-All architectures now support HAVE_SYSCALL_TABLE_SUPPORT, so the flag is
-no longer needed. With the removal of the flag, the related
-GENERIC_SYSCALL_TABLE can also be removed. libaudit was only used as a
-fallback for when HAVE_SYSCALL_TABLE_SUPPORT was not defined, so
-libaudit is also no longer needed for any architecture.
+Hi,
 
-Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
----
- Documentation/admin-guide/workload-tracing.rst |  2 +-
- tools/build/feature/Makefile                   |  4 --
- tools/build/feature/test-libaudit.c            | 11 ------
- tools/perf/Documentation/perf-check.txt        |  2 -
- tools/perf/Makefile.config                     | 31 +--------------
- tools/perf/Makefile.perf                       | 15 --------
- tools/perf/builtin-check.c                     |  2 -
- tools/perf/builtin-help.c                      |  2 -
- tools/perf/builtin-trace.c                     | 30 ---------------
- tools/perf/perf.c                              |  6 +--
- tools/perf/tests/make                          |  7 +---
- tools/perf/util/env.c                          |  6 +--
- tools/perf/util/generate-cmdlist.sh            |  4 +-
- tools/perf/util/syscalltbl.c                   | 52 --------------------------
- tools/perf/util/syscalltbl.h                   |  1 -
- 15 files changed, 11 insertions(+), 164 deletions(-)
+This patch series adds audit support to Landlock.
 
-diff --git a/Documentation/admin-guide/workload-tracing.rst b/Documentation/admin-guide/workload-tracing.rst
-index b2e254ec8ee846afe78eede74a825b51c6ab119b..6be38c1b9c5bb4be899fd261c6d2911abcf959dc 100644
---- a/Documentation/admin-guide/workload-tracing.rst
-+++ b/Documentation/admin-guide/workload-tracing.rst
-@@ -83,7 +83,7 @@ scripts/ver_linux is a good way to check if your system already has
- the necessary tools::
- 
-   sudo apt-get build-essentials flex bison yacc
--  sudo apt install libelf-dev systemtap-sdt-dev libaudit-dev libslang2-dev libperl-dev libdw-dev
-+  sudo apt install libelf-dev systemtap-sdt-dev libslang2-dev libperl-dev libdw-dev
- 
- cscope is a good tool to browse kernel sources. Let's install it now::
- 
-diff --git a/tools/build/feature/Makefile b/tools/build/feature/Makefile
-index 680f9b07150f906c0bae1ab990cc01bb0d6b0de6..cb1e3e2feedf39d7b95442bafc87d43dc84a740d 100644
---- a/tools/build/feature/Makefile
-+++ b/tools/build/feature/Makefile
-@@ -13,7 +13,6 @@ FILES=                                          \
-          test-gtk2.bin                          \
-          test-gtk2-infobar.bin                  \
-          test-hello.bin                         \
--         test-libaudit.bin                      \
-          test-libbfd.bin                        \
-          test-libbfd-buildid.bin		\
-          test-disassembler-four-args.bin        \
-@@ -232,9 +231,6 @@ $(OUTPUT)test-libunwind-debug-frame-arm.bin:
- $(OUTPUT)test-libunwind-debug-frame-aarch64.bin:
- 	$(BUILD) -lelf -llzma -lunwind-aarch64
- 
--$(OUTPUT)test-libaudit.bin:
--	$(BUILD) -laudit
--
- $(OUTPUT)test-libslang.bin:
- 	$(BUILD) -lslang
- 
-diff --git a/tools/build/feature/test-libaudit.c b/tools/build/feature/test-libaudit.c
-deleted file mode 100644
-index f5b0863fa1ec240795339428d8deed98a946d405..0000000000000000000000000000000000000000
---- a/tools/build/feature/test-libaudit.c
-+++ /dev/null
-@@ -1,11 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--#include <libaudit.h>
--
--extern int printf(const char *format, ...);
--
--int main(void)
--{
--	printf("error message: %s\n", audit_errno_to_name(0));
--
--	return audit_open();
--}
-diff --git a/tools/perf/Documentation/perf-check.txt b/tools/perf/Documentation/perf-check.txt
-index 31741499e7867c9b712227f31a2958fd641d474a..a764a46292206632c9bc890342ceadbf8889c4de 100644
---- a/tools/perf/Documentation/perf-check.txt
-+++ b/tools/perf/Documentation/perf-check.txt
-@@ -51,7 +51,6 @@ feature::
-                 dwarf_getlocations      /  HAVE_LIBDW_SUPPORT
-                 dwarf-unwind            /  HAVE_DWARF_UNWIND_SUPPORT
-                 auxtrace                /  HAVE_AUXTRACE_SUPPORT
--                libaudit                /  HAVE_LIBAUDIT_SUPPORT
-                 libbfd                  /  HAVE_LIBBFD_SUPPORT
-                 libcapstone             /  HAVE_LIBCAPSTONE_SUPPORT
-                 libcrypto               /  HAVE_LIBCRYPTO_SUPPORT
-@@ -67,7 +66,6 @@ feature::
-                 libunwind               /  HAVE_LIBUNWIND_SUPPORT
-                 lzma                    /  HAVE_LZMA_SUPPORT
-                 numa_num_possible_cpus  /  HAVE_LIBNUMA_SUPPORT
--                syscall_table           /  HAVE_SYSCALL_TABLE_SUPPORT
-                 zlib                    /  HAVE_ZLIB_SUPPORT
-                 zstd                    /  HAVE_ZSTD_SUPPORT
- 
-diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-index feb61be7c4f93d7ebe0530839aebcd03ab8ec425..a148ca9efca912c588d470335a5a13afeb758206 100644
---- a/tools/perf/Makefile.config
-+++ b/tools/perf/Makefile.config
-@@ -28,20 +28,7 @@ include $(srctree)/tools/scripts/Makefile.arch
- 
- $(call detected_var,SRCARCH)
- 
--ifneq ($(NO_SYSCALL_TABLE),1)
--  NO_SYSCALL_TABLE := 1
--
--  # architectures that use the generic syscall table scripts
--  ifneq ($(filter $(SRCARCH), $(generic_syscall_table_archs)),)
--    NO_SYSCALL_TABLE := 0
--    CFLAGS += -DGENERIC_SYSCALL_TABLE
--    CFLAGS += -I$(OUTPUT)arch/$(SRCARCH)/include/generated
--  endif
--
--  ifneq ($(NO_SYSCALL_TABLE),1)
--    CFLAGS += -DHAVE_SYSCALL_TABLE_SUPPORT
--  endif
--endif
-+CFLAGS += -I$(OUTPUT)arch/$(SRCARCH)/include/generated
- 
- # Additional ARCH settings for ppc
- ifeq ($(SRCARCH),powerpc)
-@@ -776,21 +763,7 @@ ifndef NO_LIBUNWIND
- endif
- 
- ifneq ($(NO_LIBTRACEEVENT),1)
--  ifeq ($(NO_SYSCALL_TABLE),0)
--    $(call detected,CONFIG_TRACE)
--  else
--    ifndef NO_LIBAUDIT
--      $(call feature_check,libaudit)
--      ifneq ($(feature-libaudit), 1)
--        $(warning No libaudit.h found, disables 'trace' tool, please install audit-libs-devel or libaudit-dev)
--        NO_LIBAUDIT := 1
--      else
--        CFLAGS += -DHAVE_LIBAUDIT_SUPPORT
--        EXTLIBS += -laudit
--        $(call detected,CONFIG_TRACE)
--      endif
--    endif
--  endif
-+  $(call detected,CONFIG_TRACE)
- endif
- 
- ifndef NO_LIBCRYPTO
-diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
-index 8081adf0e02354b9662a4e3c8493d6b1cec9fe25..a449d0015536442273a9268b37be34e4757f577a 100644
---- a/tools/perf/Makefile.perf
-+++ b/tools/perf/Makefile.perf
-@@ -59,8 +59,6 @@ include ../scripts/utilities.mak
- #
- # Define NO_LIBNUMA if you do not want numa perf benchmark
- #
--# Define NO_LIBAUDIT if you do not want libaudit support
--#
- # Define NO_LIBBIONIC if you do not want bionic support
- #
- # Define NO_LIBCRYPTO if you do not want libcrypto (openssl) support
-@@ -119,10 +117,6 @@ include ../scripts/utilities.mak
- #
- # Define LIBBPF_DYNAMIC to enable libbpf dynamic linking.
- #
--# Define NO_SYSCALL_TABLE=1 to disable the use of syscall id to/from name tables
--# generated from the kernel .tbl or unistd.h files and use, if available, libaudit
--# for doing the conversions to/from strings/id.
--#
- # Define NO_LIBPFM4 to disable libpfm4 events extension.
- #
- # Define NO_LIBDEBUGINFOD if you do not want support debuginfod
-@@ -310,11 +304,7 @@ ifeq ($(filter feature-dump,$(MAKECMDGOALS)),feature-dump)
- FEATURE_TESTS := all
- endif
- endif
--# architectures that use the generic syscall table
--generic_syscall_table_archs := riscv arc csky arm sh sparc xtensa x86 alpha parisc arm64 loongarch mips powerpc s390
--ifneq ($(filter $(SRCARCH), $(generic_syscall_table_archs)),)
- include $(srctree)/tools/perf/scripts/Makefile.syscalls
--endif
- include Makefile.config
- endif
- 
-@@ -1102,11 +1092,6 @@ endif
- 		$(INSTALL) $(OUTPUT)perf-archive -t '$(DESTDIR_SQ)$(perfexec_instdir_SQ)'
- 	$(call QUIET_INSTALL, perf-iostat) \
- 		$(INSTALL) $(OUTPUT)perf-iostat -t '$(DESTDIR_SQ)$(perfexec_instdir_SQ)'
--ifndef NO_LIBAUDIT
--	$(call QUIET_INSTALL, strace/groups) \
--		$(INSTALL) -d -m 755 '$(DESTDIR_SQ)$(STRACE_GROUPS_INSTDIR_SQ)'; \
--		$(INSTALL) trace/strace/groups/* -m 644 -t '$(DESTDIR_SQ)$(STRACE_GROUPS_INSTDIR_SQ)'
--endif
- ifndef NO_LIBPERL
- 	$(call QUIET_INSTALL, perl-scripts) \
- 		$(INSTALL) -d -m 755 '$(DESTDIR_SQ)$(perfexec_instdir_SQ)/scripts/perl/Perf-Trace-Util/lib/Perf/Trace'; \
-diff --git a/tools/perf/builtin-check.c b/tools/perf/builtin-check.c
-index 2346536a5ee14f91ecd10bd130a64676e871e1b2..61a11a9b4e7594bfc019e9e496b6cc919d584300 100644
---- a/tools/perf/builtin-check.c
-+++ b/tools/perf/builtin-check.c
-@@ -31,7 +31,6 @@ struct feature_status supported_features[] = {
- 	FEATURE_STATUS("dwarf_getlocations", HAVE_LIBDW_SUPPORT),
- 	FEATURE_STATUS("dwarf-unwind", HAVE_DWARF_UNWIND_SUPPORT),
- 	FEATURE_STATUS("auxtrace", HAVE_AUXTRACE_SUPPORT),
--	FEATURE_STATUS("libaudit", HAVE_LIBAUDIT_SUPPORT),
- 	FEATURE_STATUS("libbfd", HAVE_LIBBFD_SUPPORT),
- 	FEATURE_STATUS("libcapstone", HAVE_LIBCAPSTONE_SUPPORT),
- 	FEATURE_STATUS("libcrypto", HAVE_LIBCRYPTO_SUPPORT),
-@@ -47,7 +46,6 @@ struct feature_status supported_features[] = {
- 	FEATURE_STATUS("libunwind", HAVE_LIBUNWIND_SUPPORT),
- 	FEATURE_STATUS("lzma", HAVE_LZMA_SUPPORT),
- 	FEATURE_STATUS("numa_num_possible_cpus", HAVE_LIBNUMA_SUPPORT),
--	FEATURE_STATUS("syscall_table", HAVE_SYSCALL_TABLE_SUPPORT),
- 	FEATURE_STATUS("zlib", HAVE_ZLIB_SUPPORT),
- 	FEATURE_STATUS("zstd", HAVE_ZSTD_SUPPORT),
- 
-diff --git a/tools/perf/builtin-help.c b/tools/perf/builtin-help.c
-index 0854d3cd9f6a304cd9cb50ad430d5706d91df0e9..7be6fb6df595923c15ae51747d5bf17d867ae785 100644
---- a/tools/perf/builtin-help.c
-+++ b/tools/perf/builtin-help.c
-@@ -447,9 +447,7 @@ int cmd_help(int argc, const char **argv)
- #ifdef HAVE_LIBELF_SUPPORT
- 		"probe",
- #endif
--#if defined(HAVE_LIBAUDIT_SUPPORT) || defined(HAVE_SYSCALL_TABLE_SUPPORT)
- 		"trace",
--#endif
- 	NULL };
- 	const char *builtin_help_usage[] = {
- 		"perf help [--all] [--man|--web|--info] [command]",
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index fc257d5e8144746ae5a0aa0538d531c8f86dec05..6f5ae3ac0638ba8c462050b1766770d8a4cd5e18 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -2073,30 +2073,11 @@ static int trace__read_syscall_info(struct trace *trace, int id)
- 	const char *name = syscalltbl__name(trace->sctbl, id);
- 	int err;
- 
--#ifdef HAVE_SYSCALL_TABLE_SUPPORT
- 	if (trace->syscalls.table == NULL) {
- 		trace->syscalls.table = calloc(trace->sctbl->syscalls.max_id + 1, sizeof(*sc));
- 		if (trace->syscalls.table == NULL)
- 			return -ENOMEM;
- 	}
--#else
--	if (id > trace->sctbl->syscalls.max_id || (id == 0 && trace->syscalls.table == NULL)) {
--		// When using libaudit we don't know beforehand what is the max syscall id
--		struct syscall *table = realloc(trace->syscalls.table, (id + 1) * sizeof(*sc));
--
--		if (table == NULL)
--			return -ENOMEM;
--
--		// Need to memset from offset 0 and +1 members if brand new
--		if (trace->syscalls.table == NULL)
--			memset(table, 0, (id + 1) * sizeof(*sc));
--		else
--			memset(table + trace->sctbl->syscalls.max_id + 1, 0, (id - trace->sctbl->syscalls.max_id) * sizeof(*sc));
--
--		trace->syscalls.table	      = table;
--		trace->sctbl->syscalls.max_id = id;
--	}
--#endif
- 	sc = trace->syscalls.table + id;
- 	if (sc->nonexistent)
- 		return -EEXIST;
-@@ -2447,18 +2428,7 @@ static struct syscall *trace__syscall_info(struct trace *trace,
- 
- 	err = -EINVAL;
- 
--#ifdef HAVE_SYSCALL_TABLE_SUPPORT
- 	if (id > trace->sctbl->syscalls.max_id) {
--#else
--	if (id >= trace->sctbl->syscalls.max_id) {
--		/*
--		 * With libaudit we don't know beforehand what is the max_id,
--		 * so we let trace__read_syscall_info() figure that out as we
--		 * go on reading syscalls.
--		 */
--		err = trace__read_syscall_info(trace, id);
--		if (err)
--#endif
- 		goto out_cant_read;
- 	}
- 
-diff --git a/tools/perf/perf.c b/tools/perf/perf.c
-index a2987f2cfe1a3958f53239ed1a4eec3f87d7466a..f0617cc41f5fe638986e5d8316a6b3056c2c4bc5 100644
---- a/tools/perf/perf.c
-+++ b/tools/perf/perf.c
-@@ -84,7 +84,7 @@ static struct cmd_struct commands[] = {
- #endif
- 	{ "kvm",	cmd_kvm,	0 },
- 	{ "test",	cmd_test,	0 },
--#if defined(HAVE_LIBTRACEEVENT) && (defined(HAVE_LIBAUDIT_SUPPORT) || defined(HAVE_SYSCALL_TABLE_SUPPORT))
-+#if defined(HAVE_LIBTRACEEVENT)
- 	{ "trace",	cmd_trace,	0 },
- #endif
- 	{ "inject",	cmd_inject,	0 },
-@@ -514,10 +514,6 @@ int main(int argc, const char **argv)
- 		fprintf(stderr,
- 			"trace command not available: missing libtraceevent devel package at build time.\n");
- 		goto out;
--#elif !defined(HAVE_LIBAUDIT_SUPPORT) && !defined(HAVE_SYSCALL_TABLE_SUPPORT)
--		fprintf(stderr,
--			"trace command not available: missing audit-libs devel package at build time.\n");
--		goto out;
- #else
- 		setup_path();
- 		argv[0] = "trace";
-diff --git a/tools/perf/tests/make b/tools/perf/tests/make
-index a7fcbd589752a90459815bd21075528c6dfa4d94..0ee94caf9ec19820a94a87dd46a7ccf1cefb844a 100644
---- a/tools/perf/tests/make
-+++ b/tools/perf/tests/make
-@@ -86,7 +86,6 @@ make_no_libdw_dwarf_unwind := NO_LIBDW_DWARF_UNWIND=1
- make_no_backtrace   := NO_BACKTRACE=1
- make_no_libcapstone := NO_CAPSTONE=1
- make_no_libnuma     := NO_LIBNUMA=1
--make_no_libaudit    := NO_LIBAUDIT=1
- make_no_libbionic   := NO_LIBBIONIC=1
- make_no_auxtrace    := NO_AUXTRACE=1
- make_no_libbpf	    := NO_LIBBPF=1
-@@ -97,7 +96,6 @@ make_no_libllvm     := NO_LIBLLVM=1
- make_with_babeltrace:= LIBBABELTRACE=1
- make_with_coresight := CORESIGHT=1
- make_no_sdt	    := NO_SDT=1
--make_no_syscall_tbl := NO_SYSCALL_TABLE=1
- make_no_libpfm4     := NO_LIBPFM4=1
- make_with_gtk2      := GTK2=1
- make_refcnt_check   := EXTRA_CFLAGS="-DREFCNT_CHECKING=1"
-@@ -122,10 +120,10 @@ make_static         := LDFLAGS=-static NO_PERF_READ_VDSO32=1 NO_PERF_READ_VDSOX3
- # all the NO_* variable combined
- make_minimal        := NO_LIBPERL=1 NO_LIBPYTHON=1 NO_GTK2=1
- make_minimal        += NO_DEMANGLE=1 NO_LIBELF=1 NO_BACKTRACE=1
--make_minimal        += NO_LIBNUMA=1 NO_LIBAUDIT=1 NO_LIBBIONIC=1
-+make_minimal        += NO_LIBNUMA=1 NO_LIBBIONIC=1
- make_minimal        += NO_LIBDW_DWARF_UNWIND=1 NO_AUXTRACE=1 NO_LIBBPF=1
- make_minimal        += NO_LIBCRYPTO=1 NO_SDT=1 NO_JVMTI=1 NO_LIBZSTD=1
--make_minimal        += NO_LIBCAP=1 NO_SYSCALL_TABLE=1 NO_CAPSTONE=1
-+make_minimal        += NO_LIBCAP=1 NO_CAPSTONE=1
- 
- # $(run) contains all available tests
- run := make_pure
-@@ -158,7 +156,6 @@ run += make_no_libdw_dwarf_unwind
- run += make_no_backtrace
- run += make_no_libcapstone
- run += make_no_libnuma
--run += make_no_libaudit
- run += make_no_libbionic
- run += make_no_auxtrace
- run += make_no_libbpf
-diff --git a/tools/perf/util/env.c b/tools/perf/util/env.c
-index 610c57da5b37ac1a42b81d80e33787b09c25fb28..cae4f6d63318f365609c9f6d2b5b9b15d13d234e 100644
---- a/tools/perf/util/env.c
-+++ b/tools/perf/util/env.c
-@@ -480,19 +480,19 @@ const char *perf_env__arch(struct perf_env *env)
- 	return normalize_arch(arch_name);
- }
- 
--#if defined(HAVE_SYSCALL_TABLE_SUPPORT) && defined(HAVE_LIBTRACEEVENT)
-+#if defined(HAVE_LIBTRACEEVENT)
- #include "trace/beauty/arch_errno_names.c"
- #endif
- 
- const char *perf_env__arch_strerrno(struct perf_env *env __maybe_unused, int err __maybe_unused)
- {
--#if defined(HAVE_SYSCALL_TABLE_SUPPORT) && defined(HAVE_LIBTRACEEVENT)
-+#if defined(HAVE_LIBTRACEEVENT)
- 	if (env->arch_strerrno == NULL)
- 		env->arch_strerrno = arch_syscalls__strerrno_function(perf_env__arch(env));
- 
- 	return env->arch_strerrno ? env->arch_strerrno(err) : "no arch specific strerrno function";
- #else
--	return "!(HAVE_SYSCALL_TABLE_SUPPORT && HAVE_LIBTRACEEVENT)";
-+	return "!HAVE_LIBTRACEEVENT";
- #endif
- }
- 
-diff --git a/tools/perf/util/generate-cmdlist.sh b/tools/perf/util/generate-cmdlist.sh
-index 1b5140e5ce9975fac87b2674dc694f9d4e439a5f..6a73c903d69050df69267a8aeaeeac1ed170efe1 100755
---- a/tools/perf/util/generate-cmdlist.sh
-+++ b/tools/perf/util/generate-cmdlist.sh
-@@ -38,7 +38,7 @@ do
- done
- echo "#endif /* HAVE_LIBELF_SUPPORT */"
- 
--echo "#if defined(HAVE_LIBTRACEEVENT) && (defined(HAVE_LIBAUDIT_SUPPORT) || defined(HAVE_SYSCALL_TABLE_SUPPORT))"
-+echo "#if defined(HAVE_LIBTRACEEVENT)"
- sed -n -e 's/^perf-\([^ 	]*\)[ 	].* audit*/\1/p' command-list.txt |
- sort |
- while read cmd
-@@ -51,7 +51,7 @@ do
- 	    p
-      }' "Documentation/perf-$cmd.txt"
- done
--echo "#endif /* HAVE_LIBTRACEEVENT && (HAVE_LIBAUDIT_SUPPORT || HAVE_SYSCALL_TABLE_SUPPORT) */"
-+echo "#endif /* HAVE_LIBTRACEEVENT */"
- 
- echo "#ifdef HAVE_LIBTRACEEVENT"
- sed -n -e 's/^perf-\([^ 	]*\)[ 	].* traceevent.*/\1/p' command-list.txt |
-diff --git a/tools/perf/util/syscalltbl.c b/tools/perf/util/syscalltbl.c
-index 210f61b0a7a264a427ebb602185d3a9da2f426f4..928aca4cd6e9f2f26c5c4fd825b4538c064a4cc3 100644
---- a/tools/perf/util/syscalltbl.c
-+++ b/tools/perf/util/syscalltbl.c
-@@ -10,20 +10,12 @@
- #include <linux/compiler.h>
- #include <linux/zalloc.h>
- 
--#ifdef HAVE_SYSCALL_TABLE_SUPPORT
- #include <string.h>
- #include "string2.h"
- 
--#if defined(GENERIC_SYSCALL_TABLE)
- #include <syscall_table.h>
- const int syscalltbl_native_max_id = SYSCALLTBL_MAX_ID;
- static const char *const *syscalltbl_native = syscalltbl;
--#else
--const int syscalltbl_native_max_id = 0;
--static const char *const syscalltbl_native[] = {
--	[0] = "unknown",
--};
--#endif
- 
- struct syscall {
- 	int id;
-@@ -131,47 +123,3 @@ int syscalltbl__strglobmatch_first(struct syscalltbl *tbl, const char *syscall_g
- 	*idx = -1;
- 	return syscalltbl__strglobmatch_next(tbl, syscall_glob, idx);
- }
--
--#else /* HAVE_SYSCALL_TABLE_SUPPORT */
--
--#include <libaudit.h>
--
--struct syscalltbl *syscalltbl__new(void)
--{
--	struct syscalltbl *tbl = zalloc(sizeof(*tbl));
--	if (tbl)
--		tbl->audit_machine = audit_detect_machine();
--	return tbl;
--}
--
--void syscalltbl__delete(struct syscalltbl *tbl)
--{
--	free(tbl);
--}
--
--const char *syscalltbl__name(const struct syscalltbl *tbl, int id)
--{
--	return audit_syscall_to_name(id, tbl->audit_machine);
--}
--
--int syscalltbl__id(struct syscalltbl *tbl, const char *name)
--{
--	return audit_name_to_syscall(name, tbl->audit_machine);
--}
--
--int syscalltbl__id_at_idx(struct syscalltbl *tbl __maybe_unused, int idx)
--{
--	return idx;
--}
--
--int syscalltbl__strglobmatch_next(struct syscalltbl *tbl __maybe_unused,
--				  const char *syscall_glob __maybe_unused, int *idx __maybe_unused)
--{
--	return -1;
--}
--
--int syscalltbl__strglobmatch_first(struct syscalltbl *tbl, const char *syscall_glob, int *idx)
--{
--	return syscalltbl__strglobmatch_next(tbl, syscall_glob, idx);
--}
--#endif /* HAVE_SYSCALL_TABLE_SUPPORT */
-diff --git a/tools/perf/util/syscalltbl.h b/tools/perf/util/syscalltbl.h
-index 2b53b7ed25a6affefd3d85012198eab2f2af550c..362411a6d849b1f67ec54b34345364c04ad90f89 100644
---- a/tools/perf/util/syscalltbl.h
-+++ b/tools/perf/util/syscalltbl.h
-@@ -3,7 +3,6 @@
- #define __PERF_SYSCALLTBL_H
- 
- struct syscalltbl {
--	int audit_machine;
- 	struct {
- 		int max_id;
- 		int nr_entries;
+Logging denied requests is useful for different use cases:
+- sysadmins: to look for users' issues,
+- security experts: to detect attack attempts,
+- power users: to understand denials,
+- developers: to ease sandboxing support and get feedback from users.
 
+Because of its unprivileged nature, Landlock can compose standalone
+security policies (i.e. domains).  To make logs useful, they need to
+contain the most relevant Landlock domain that denied an action, and the
+reason of such denial.  This translates to the latest nested domain and
+the related blockers: missing access rights or other kind of
+restrictions.
+
+# Changes from previous version
+
+This fourth patch series mainly adds a new AUDIT_EXE_LANDLOCK_DENY rule
+type to filter Landlock denials according to the executable that loaded
+the policy responsible for this restriction.  New tests are added on top
+of that.
+
+Domain's metadata are now stored in a dedicated struct landlock_details
+that contains the resolved exe's path, because we cannot keep a
+reference to the related struct path.  This fixes umount of the
+mount point containing a binary that restricted itself (if the domain is
+still alive).  Add a dedicated test to check this issue.
+
+Formatting of blockers are slightly improved.
+
+Audit timestamps are no longer exported but dedicated Landlock
+timestamps are use instead for domain creation.
+
+The new landlock_restrict_self()'s flag is renamed to
+LANDLOCK_RESTRICT_SELF_QUIET.
+
+# Design
+
+Log records are created for any denied actions caused by a Landlock
+policy, which means that a well-sandboxed applications should not log
+anything except for unattended access requests that might be the result
+of attacks or bugs.
+
+However, sandbox tools creating restricted environments could lead to
+abundant log entries because the sandboxed processes may not be aware of
+the related restrictions.  To avoid log spam, the
+landlock_restrict_self(2) syscall gets a new
+LANDLOCK_RESTRICT_SELF_QUIET flag to not log denials related to this
+specific domain.  Except for well-understood exceptions, this flag
+should not be set.  Indeed, applications sandboxing themselves should
+only try to bypass their own sandbox if they are compromised, which
+should ring a bell thanks to log events.
+
+When an action is denied, the related Landlock domain ID is specified.
+If this domain was not previously described in a log record, one is
+created.  This record contains the domain ID, its creation time, and
+informations about the process that enforced the restriction (at the
+time of the call to landlock_restrict_self): PID, UID, executable path,
+and name (comm).
+
+This new approach also brings building blocks for an upcoming
+unprivileged introspection interface.  The unique Landlock IDs will be
+useful to tie audit log entries to running processes, and to get
+properties of the related Landlock domains.  This will replace the
+previously logged ruleset properties.
+
+# Samples
+
+Here are two examples of log events (see serial numbers):
+
+$ LL_FS_RO=/ LL_FS_RW=/ LL_SCOPED=s LL_FORCE_LOG=1 ./sandboxer kill 1
+
+  type=LANDLOCK_DENY msg=audit(1729738800.268:30): domain=1a6fdc66f blockers=scope.signal opid=1 ocomm="systemd"
+  type=LANDLOCK_DOM_INFO msg=audit(1729738800.268:30): domain=1a6fdc66f creation=1729738800.264 pid=286 uid=0 exe="/root/sandboxer" comm="sandboxer"UID="root"
+  type=SYSCALL msg=audit(1729738800.268:30): arch=c000003e syscall=62 success=no exit=-1 [..] ppid=272 pid=286 auid=0 uid=0 gid=0 [...] comm="kill" [...]
+  type=PROCTITLE msg=audit(1729738800.268:30): proctitle=6B696C6C0031
+  type=LANDLOCK_DOM_DROP msg=audit(1729738800.324:31): domain=1a6fdc66f denials=1
+
+$ LL_FS_RO=/ LL_FS_RW=/tmp LL_FORCE_LOG=1 ./sandboxer sh -c "echo > /etc/passwd"
+
+  type=LANDLOCK_DENY msg=audit(1729738800.221:33): domain=1a6fdc679 blockers=fs.write_file path="/dev/tty" dev="devtmpfs" ino=9
+  type=LANDLOCK_DOM_INFO msg=audit(1729738800.221:33): domain=1a6fdc679 creation=1729738800.217 pid=289 uid=0 exe="/root/sandboxer" comm="sandboxer"UID="root"
+  type=SYSCALL msg=audit(1729738800.221:33): arch=c000003e syscall=257 success=no exit=-13 [...] ppid=272 pid=289 auid=0 uid=0 gid=0 [...] comm="sh" [...]
+  type=PROCTITLE msg=audit(1729738800.221:33): proctitle=7368002D63006563686F203E202F6574632F706173737764
+  type=LANDLOCK_DENY msg=audit(1729738800.221:34): domain=1a6fdc679 blockers=fs.write_file path="/etc/passwd" dev="vda2" ino=143821
+  type=SYSCALL msg=audit(1729738800.221:34): arch=c000003e syscall=257 success=no exit=-13 [...] ppid=272 pid=289 auid=0 uid=0 gid=0 [...] comm="sh" [...]
+  type=PROCTITLE msg=audit(1729738800.221:34): proctitle=7368002D63006563686F203E202F6574632F706173737764
+  type=LANDLOCK_DOM_DROP msg=audit(1729738800.261:35): domain=1a6fdc679 denials=2
+
+# Future changes
+
+I'll add more tests to check each kind of denied access.
+
+We might want to add new audit rule types to filter according to other
+domain properties (e.g. UID, AUID, session ID), but
+AUDIT_EXE_LANDLOCK_DENY should be enough to mute buggy programs before
+fixing them.
+
+# Previous versions
+
+v3: https://lore.kernel.org/r/20241122143353.59367-1-mic@digikod.net
+v2: https://lore.kernel.org/r/20241022161009.982584-1-mic@digikod.net
+v1: https://lore.kernel.org/r/20230921061641.273654-1-mic@digikod.net
+
+Regards,
+
+Mickaël Salaün (30):
+  lsm: Only build lsm_audit.c if CONFIG_SECURITY and CONFIG_AUDIT are
+    set
+  lsm: Add audit_log_lsm_data() helper
+  landlock: Factor out check_access_path()
+  landlock: Add unique ID generator
+  landlock: Move access types
+  landlock: Simplify initially denied access rights
+  landlock: Move domain hierarchy management and export helpers
+  landlock: Add AUDIT_LANDLOCK_DENY and log ptrace denials
+  landlock: Add AUDIT_LANDLOCK_DOM_{INFO,DROP} and log domain properties
+  landlock: Log mount-related denials
+  landlock: Align partial refer access checks with final ones
+  selftests/landlock: Add test to check partial access in a mount tree
+  landlock: Optimize file path walks and prepare for audit support
+  landlock: Log file-related denials
+  landlock: Log truncate and IOCTL denials
+  landlock: Log TCP bind and connect denials
+  landlock: Log scoped denials
+  landlock: Control log events with LANDLOCK_RESTRICT_SELF_QUIET
+  samples/landlock: Do not log denials from the sandboxer by default
+  selftests/landlock: Fix error message
+  selftests/landlock: Add wrappers.h
+  selftests/landlock: Add layout1.umount_sandboxer tests
+  selftests/landlock: Extend tests for landlock_restrict_self()'s flags
+  selftests/landlock: Add tests for audit and
+    LANDLOCK_RESTRICT_SELF_QUIET
+  selftests/landlock: Add audit tests for ptrace
+  landlock: Export and rename landlock_get_inode_object()
+  fs: Add iput() cleanup helper
+  audit,landlock: Add AUDIT_EXE_LANDLOCK_DENY rule type
+  selftests/landlock: Test audit rule with AUDIT_EXE_LANDLOCK_DOM
+  selftests/landlock: Test compatibility with audit rule lists
+
+ Documentation/userspace-api/landlock.rst      |   2 +-
+ MAINTAINERS                                   |   1 +
+ include/linux/audit.h                         |  11 +
+ include/linux/fs.h                            |   6 +-
+ include/linux/landlock.h                      |  41 ++
+ include/linux/lsm_audit.h                     |  22 +
+ include/uapi/linux/audit.h                    |   6 +-
+ include/uapi/linux/landlock.h                 |  14 +
+ kernel/audit.c                                |   4 +-
+ kernel/audit.h                                |   5 +-
+ kernel/auditfilter.c                          |  30 +-
+ kernel/auditsc.c                              |  31 ++
+ samples/landlock/sandboxer.c                  |  35 +-
+ security/Kconfig                              |   5 +
+ security/Makefile                             |   2 +-
+ security/landlock/.kunitconfig                |   2 +
+ security/landlock/Makefile                    |  15 +-
+ security/landlock/access.h                    | 100 ++++
+ security/landlock/audit.c                     | 510 ++++++++++++++++++
+ security/landlock/audit.h                     |  76 +++
+ security/landlock/domain.c                    | 339 ++++++++++++
+ security/landlock/domain.h                    | 145 +++++
+ security/landlock/fs.c                        | 305 ++++++++---
+ security/landlock/fs.h                        |  12 +
+ security/landlock/id.c                        | 249 +++++++++
+ security/landlock/id.h                        |  25 +
+ security/landlock/net.c                       |  51 +-
+ security/landlock/object.h                    |   4 +-
+ security/landlock/ruleset.c                   |  38 +-
+ security/landlock/ruleset.h                   |  95 ++--
+ security/landlock/setup.c                     |   2 +
+ security/landlock/syscalls.c                  |  28 +-
+ security/landlock/task.c                      | 152 +++++-
+ security/lsm_audit.c                          |  27 +-
+ tools/testing/kunit/configs/all_tests.config  |   2 +
+ tools/testing/selftests/landlock/Makefile     |   2 +-
+ tools/testing/selftests/landlock/audit.h      | 371 +++++++++++++
+ tools/testing/selftests/landlock/audit_test.c | 389 +++++++++++++
+ tools/testing/selftests/landlock/base_test.c  |  19 +-
+ tools/testing/selftests/landlock/common.h     |  40 +-
+ tools/testing/selftests/landlock/config       |   1 +
+ tools/testing/selftests/landlock/fs_test.c    | 151 +++++-
+ .../testing/selftests/landlock/ptrace_test.c  |  67 ++-
+ .../selftests/landlock/sandbox-and-launch.c   |  82 +++
+ tools/testing/selftests/landlock/wait-pipe.c  |  70 +++
+ tools/testing/selftests/landlock/wrappers.h   |  47 ++
+ 46 files changed, 3360 insertions(+), 271 deletions(-)
+ create mode 100644 include/linux/landlock.h
+ create mode 100644 security/landlock/access.h
+ create mode 100644 security/landlock/audit.c
+ create mode 100644 security/landlock/audit.h
+ create mode 100644 security/landlock/domain.c
+ create mode 100644 security/landlock/domain.h
+ create mode 100644 security/landlock/id.c
+ create mode 100644 security/landlock/id.h
+ create mode 100644 tools/testing/selftests/landlock/audit.h
+ create mode 100644 tools/testing/selftests/landlock/audit_test.c
+ create mode 100644 tools/testing/selftests/landlock/sandbox-and-launch.c
+ create mode 100644 tools/testing/selftests/landlock/wait-pipe.c
+ create mode 100644 tools/testing/selftests/landlock/wrappers.h
+
+
+base-commit: 9d89551994a430b50c4fffcb1e617a057fa76e20
 -- 
-2.34.1
+2.47.1
 
