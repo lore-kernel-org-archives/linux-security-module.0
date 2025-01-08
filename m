@@ -1,33 +1,33 @@
-Received: from smtp-190c.mail.infomaniak.ch (smtp-190c.mail.infomaniak.ch [185.125.25.12])
+Received: from smtp-8fa8.mail.infomaniak.ch (smtp-8fa8.mail.infomaniak.ch [83.166.143.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F3BD1FE45E
-	for <linux-security-module@vger.kernel.org>; Wed,  8 Jan 2025 15:43:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B756B1FE477
+	for <linux-security-module@vger.kernel.org>; Wed,  8 Jan 2025 15:43:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736351039; cv=none; b=I67c5O4eIuDKt/totyp5DnKaLIxwHhlXg/8nva6Kzjj1K+KHNz1K5liFXoQLfS4pipIcauD0iP4OZVHU5b/o8hUaPihAg/m0ZGG0pBLbcugZZEF6EMyc8wFhiBvD935EIAI4pWpdr1H2Rb3BbZCGuQC0DshhxPB/+gFsFEl3smU=
+	t=1736351041; cv=none; b=jViZsQFcQCZ/yOnUdcYXWJ+wBIGRG4kRPEUzx2D+rE7RPsASR1z0VqL5cV7tKWWgsgzFBC6uWcN5uAWHpKRo/W1lPHYt2ZkTAAIv0QiBrTVfzfmSBGBRXZmAXPVBg4NSvj8uGgW6Yb6cjfJMjSw9u8u+vi3+vR4qUL0Ylt8hhso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736351039; c=relaxed/simple;
-	bh=pbjs421Pky9glSBPHXWUS1xMZ9hfuvzC41AX1/E76bQ=;
+	s=arc-20240116; t=1736351041; c=relaxed/simple;
+	bh=jkCx7VwBn7yzSOYAV94ez6PoPUBt3wBsN+EoH9D7sJk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qSai4qIcXcoSi490C9UUA6FpzfgEMCTR7tVegSbpxbO06LsHI6KdhV38+QKmff4k2FBpuv72bYvNbPc0Vk5XxnX/X0EzRlWAGMaWMrpZD2r7PYIv1ihstMzD65ZpQS337LLBsMQRBWQK5rWJ3+jy7h/InnVW4ZhftcmspXlqem8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=l6GmoPQ7; arc=none smtp.client-ip=185.125.25.12
+	 MIME-Version:Content-Type; b=aM0kyHRk3oNY/nePzgi1sCYqf5dB+SNG4N+DnH2b3S1YR7/g7X+Y9F9dPYDCCQdjahc8HyHA8XoGNVcSVmgp5RPjFr2BEx9fvSQ9rQ/vqQJ6LhuT0ydIFKjQKy2u9suuG4kVn1wFWlDlVj/t38GuGcw3NuqsmbfGtAOcyEoJvus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=xPiY44Rh; arc=none smtp.client-ip=83.166.143.168
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="l6GmoPQ7"
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4YSsf30x1Bz9s9;
-	Wed,  8 Jan 2025 16:43:55 +0100 (CET)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="xPiY44Rh"
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4YSsdy6QSpzBLL;
+	Wed,  8 Jan 2025 16:43:50 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1736351035;
-	bh=f4tHQfJHpRqEk9p+KaoskKp0MCYGZFL6TV5oGOIgc5Q=;
+	s=20191114; t=1736351030;
+	bh=wog4Z8sglJxp2TnTzlne7/LQuXSQ6DLXgDWqI6IW4kg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=l6GmoPQ72Us7PhF3owCE6mG8SfAdRnQMjDmn0sWMO/XDhJJIZGxz/ncbJajYcSLvR
-	 NJ9WcYHAu9SVZ82q/D+yJC6taeexeZWvHB109XzBgIL7A7fE8BpYQxBOvZnWqSrvzl
-	 VQtqUwx+TtKAwsLzkf/0N2Q0CIKvweyuO9ds68uc=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4YSsf22RwSzLFX;
-	Wed,  8 Jan 2025 16:43:54 +0100 (CET)
+	b=xPiY44Rh2sAv6WNSrqIoNSJ8vP/a10im8yyioqOPazXDCMOxs6Kim3/hV379hPJLB
+	 toojExmoLDOIYQbHQrHVS8B2QXgqJGx16N0dGRuTTlNDgrVB+KsMPHATmVmoVSn186
+	 iaF0fobzVu/aJsNFvSLCstTcnxIKDxSoNOYxa268=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4YSsdy0LzZzJyj;
+	Wed,  8 Jan 2025 16:43:50 +0100 (CET)
 From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To: Eric Paris <eparis@redhat.com>,
 	Paul Moore <paul@paul-moore.com>,
@@ -57,9 +57,9 @@ Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	audit@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH v4 06/30] landlock: Simplify initially denied access rights
-Date: Wed,  8 Jan 2025 16:43:14 +0100
-Message-ID: <20250108154338.1129069-7-mic@digikod.net>
+Subject: [PATCH v4 03/30] landlock: Factor out check_access_path()
+Date: Wed,  8 Jan 2025 16:43:11 +0100
+Message-ID: <20250108154338.1129069-4-mic@digikod.net>
 In-Reply-To: <20250108154338.1129069-1-mic@digikod.net>
 References: <20250108154338.1129069-1-mic@digikod.net>
 Precedence: bulk
@@ -72,98 +72,77 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
 
-Upgrade domain's handled access masks when creating a domain from a
-ruleset, instead of converting them at runtime.  This is more consistent
-and helps with audit support.
+Merge check_access_path() into current_check_access_path() and make
+hook_path_mknod() use it.
 
 Cc: Günther Noack <gnoack@google.com>
 Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Link: https://lore.kernel.org/r/20250108154338.1129069-7-mic@digikod.net
+Link: https://lore.kernel.org/r/20250108154338.1129069-4-mic@digikod.net
 ---
 
-Changes since v2:
-- New patch.
+Changes since v1:
+- Rebased on the TCP patch series.
+- Remove inlining removal which was merged.
 ---
- security/landlock/access.h  | 17 ++++++++++++++++-
- security/landlock/fs.c      | 10 +---------
- security/landlock/ruleset.c |  3 ++-
- 3 files changed, 19 insertions(+), 11 deletions(-)
+ security/landlock/fs.c | 32 +++++++++++---------------------
+ 1 file changed, 11 insertions(+), 21 deletions(-)
 
-diff --git a/security/landlock/access.h b/security/landlock/access.h
-index 9ee4b30a87e6..74fd8f399fbd 100644
---- a/security/landlock/access.h
-+++ b/security/landlock/access.h
-@@ -20,7 +20,8 @@
- /*
-  * All access rights that are denied by default whether they are handled or not
-  * by a ruleset/layer.  This must be ORed with all ruleset->access_masks[]
-- * entries when we need to get the absolute handled access masks.
-+ * entries when we need to get the absolute handled access masks, see
-+ * landlock_upgrade_handled_access_masks().
-  */
- /* clang-format off */
- #define _LANDLOCK_ACCESS_FS_INITIALLY_DENIED ( \
-@@ -59,4 +60,18 @@ typedef u16 layer_mask_t;
- /* Makes sure all layers can be checked. */
- static_assert(BITS_PER_TYPE(layer_mask_t) >= LANDLOCK_MAX_NUM_LAYERS);
- 
-+/* Upgrades with all initially denied by default access rights. */
-+static inline struct access_masks
-+landlock_upgrade_handled_access_masks(struct access_masks access_masks)
-+{
-+	/*
-+	 * All access rights that are denied by default whether they are
-+	 * explicitly handled or not.
-+	 */
-+	if (access_masks.fs)
-+		access_masks.fs |= _LANDLOCK_ACCESS_FS_INITIALLY_DENIED;
-+
-+	return access_masks;
-+}
-+
- #endif /* _SECURITY_LANDLOCK_ACCESS_H */
 diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-index 3da5f1945158..9779170d9199 100644
+index e31b97a9f175..d911c924843f 100644
 --- a/security/landlock/fs.c
 +++ b/security/landlock/fs.c
-@@ -389,14 +389,6 @@ static bool is_nouser_or_private(const struct dentry *dentry)
- 		unlikely(IS_PRIVATE(d_backing_inode(dentry))));
+@@ -908,28 +908,22 @@ static bool is_access_to_paths_allowed(
+ 	return allowed_parent1 && allowed_parent2;
  }
  
--static access_mask_t
--get_handled_fs_accesses(const struct landlock_ruleset *const domain)
+-static int check_access_path(const struct landlock_ruleset *const domain,
+-			     const struct path *const path,
+-			     access_mask_t access_request)
 -{
--	/* Handles all initially denied by default access rights. */
--	return landlock_union_access_masks(domain).fs |
--	       _LANDLOCK_ACCESS_FS_INITIALLY_DENIED;
+-	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] = {};
+-
+-	access_request = landlock_init_layer_masks(
+-		domain, access_request, &layer_masks, LANDLOCK_KEY_INODE);
+-	if (is_access_to_paths_allowed(domain, path, access_request,
+-				       &layer_masks, NULL, 0, NULL, NULL))
+-		return 0;
+-	return -EACCES;
 -}
 -
- static const struct access_masks any_fs = {
- 	.fs = ~0,
- };
-@@ -788,7 +780,7 @@ static bool is_access_to_paths_allowed(
- 		 * a superset of the meaningful requested accesses).
- 		 */
- 		access_masked_parent1 = access_masked_parent2 =
--			get_handled_fs_accesses(domain);
-+			landlock_union_access_masks(domain).fs;
- 		is_dom_check = true;
- 	} else {
- 		if (WARN_ON_ONCE(dentry_child1 || dentry_child2))
-diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
-index cae69f2f01d9..dbc528f5f3b7 100644
---- a/security/landlock/ruleset.c
-+++ b/security/landlock/ruleset.c
-@@ -385,7 +385,8 @@ static int merge_ruleset(struct landlock_ruleset *const dst,
- 		err = -EINVAL;
- 		goto out_unlock;
- 	}
--	dst->access_masks[dst->num_layers - 1] = src->access_masks[0];
-+	dst->access_masks[dst->num_layers - 1] =
-+		landlock_upgrade_handled_access_masks(src->access_masks[0]);
+ static int current_check_access_path(const struct path *const path,
+-				     const access_mask_t access_request)
++				     access_mask_t access_request)
+ {
+ 	const struct landlock_ruleset *const dom = get_current_fs_domain();
++	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] = {};
  
- 	/* Merges the @src inode tree. */
- 	err = merge_tree(dst, src, LANDLOCK_KEY_INODE);
+ 	if (!dom)
+ 		return 0;
+-	return check_access_path(dom, path, access_request);
++
++	access_request = landlock_init_layer_masks(
++		dom, access_request, &layer_masks, LANDLOCK_KEY_INODE);
++	if (is_access_to_paths_allowed(dom, path, access_request, &layer_masks,
++				       NULL, 0, NULL, NULL))
++		return 0;
++
++	return -EACCES;
+ }
+ 
+ static access_mask_t get_mode_access(const umode_t mode)
+@@ -1414,11 +1408,7 @@ static int hook_path_mknod(const struct path *const dir,
+ 			   struct dentry *const dentry, const umode_t mode,
+ 			   const unsigned int dev)
+ {
+-	const struct landlock_ruleset *const dom = get_current_fs_domain();
+-
+-	if (!dom)
+-		return 0;
+-	return check_access_path(dom, dir, get_mode_access(mode));
++	return current_check_access_path(dir, get_mode_access(mode));
+ }
+ 
+ static int hook_path_symlink(const struct path *const dir,
 -- 
 2.47.1
 
