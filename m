@@ -1,109 +1,146 @@
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4798C847C;
-	Thu,  9 Jan 2025 02:50:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 333A210E3;
+	Thu,  9 Jan 2025 03:22:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736391027; cv=none; b=euZ+DV8e442DUJz0e3DSdqy8cYHWYZ8et0NOEJeT4mY1aVwSv6rFuVXhljouwvDKOFblVFsLDeW68TLTeAsR93DNKQJtVrNjHq/Mbjh+UJZjQsyLEMjJX5bdLIc89GWjaEQsGjuX3IT3b4bPsRPaPIArSB4naeiwGVNVBE2Tkug=
+	t=1736392978; cv=none; b=gfCKxWJI3vG6GLVetTM2D8BWt3R8LMsqshk60wrYkqQJbVH+ZCdjG98DVF5h3yCbykiZUYtrnGQJsRvmXjnktfjfwxz9ItMlg0o5SA70ja9rS7hZBJcobaJ+pBygCHZoilF4jz3D7cVxa7pPkqRaKuqkS2bPfIfBMIWbWWjj0jM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736391027; c=relaxed/simple;
-	bh=kwYWjpWfNmL1d5hD26X0HlYhelzrjDrfHJjfWnrO1i0=;
-	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=aG0TSzjGO1rar+lrvcWoRfso/ll4pjzFZ6sXrriTW0uCoJLyAVRcgdUSnQUtsSgyowrWnypWKUQsAHGwvxy35SdRFm6lWRuKsWeDqFuQFqFFqpj+kqRyfrxuyZRonWbq8qSa0EEhpy1DufUn9jWSCDytbosNYZ45B14/j6mOZkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4YT8Ll1PkJz1W3QY;
-	Thu,  9 Jan 2025 10:46:39 +0800 (CST)
-Received: from kwepemh100016.china.huawei.com (unknown [7.202.181.102])
-	by mail.maildlp.com (Postfix) with ESMTPS id CCEBC140135;
-	Thu,  9 Jan 2025 10:50:21 +0800 (CST)
-Received: from [10.174.179.93] (10.174.179.93) by
- kwepemh100016.china.huawei.com (7.202.181.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 9 Jan 2025 10:50:18 +0800
-Subject: Re: [PATCH v4 -next 00/15] sysctl: move sysctls from vm_table into
- its own files
-To: Joel Granados <joel.granados@kernel.org>
-References: <20241228145746.2783627-1-yukaixiong@huawei.com>
- <tgp2b7kbbdx4obapr4fgtmgjjo6zjbxbligucs32eewiasacko@f4h6uoamznry>
-CC: <akpm@linux-foundation.org>, <mcgrof@kernel.org>,
-	<ysato@users.sourceforge.jp>, <dalias@libc.org>,
-	<glaubitz@physik.fu-berlin.de>, <luto@kernel.org>, <tglx@linutronix.de>,
-	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
-	<hpa@zytor.com>, <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
-	<jack@suse.cz>, <kees@kernel.org>, <j.granados@samsung.com>,
-	<willy@infradead.org>, <Liam.Howlett@oracle.com>, <vbabka@suse.cz>,
-	<lorenzo.stoakes@oracle.com>, <trondmy@kernel.org>, <anna@kernel.org>,
-	<chuck.lever@oracle.com>, <jlayton@kernel.org>, <neilb@suse.de>,
-	<okorniev@redhat.com>, <Dai.Ngo@oracle.com>, <tom@talpey.com>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <paul@paul-moore.com>, <jmorris@namei.org>,
-	<linux-sh@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<linux-nfs@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<linux-security-module@vger.kernel.org>, <dhowells@redhat.com>,
-	<haifeng.xu@shopee.com>, <baolin.wang@linux.alibaba.com>,
-	<shikemeng@huaweicloud.com>, <dchinner@redhat.com>, <bfoster@redhat.com>,
-	<souravpanda@google.com>, <hannes@cmpxchg.org>, <rientjes@google.com>,
-	<pasha.tatashin@soleen.com>, <david@redhat.com>, <ryan.roberts@arm.com>,
-	<ying.huang@intel.com>, <yang@os.amperecomputing.com>,
-	<zev@bewilderbeest.net>, <serge@hallyn.com>, <vegard.nossum@oracle.com>,
-	<wangkefeng.wang@huawei.com>
-From: yukaixiong <yukaixiong@huawei.com>
-Message-ID: <5eeef365-6a33-ca76-2406-3102eb49f99f@huawei.com>
-Date: Thu, 9 Jan 2025 10:50:17 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.1
+	s=arc-20240116; t=1736392978; c=relaxed/simple;
+	bh=UK4Z7qZ2n3DHOwfe1/RSpWrSJ+hABJq4TrbP8dFCHbo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Iy/SiqgRtWdx9e94lYZHXYiEbxF7Jm0FfpWXtc1Z3O8OXAFS4T48s4rT/nJYszA/KqL/wNW0SKVsHLcKt9E8wJOZwj2QW4xzMaitO+8IlZL39xIaOhRyROGdRvu4tUjV6nyxYBDgaxmCesaTF8hLe9vsPJdYcl0DoIsojp6cR8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=my1iiEIX; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="my1iiEIX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A52A3C4CEE7;
+	Thu,  9 Jan 2025 03:22:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1736392977;
+	bh=UK4Z7qZ2n3DHOwfe1/RSpWrSJ+hABJq4TrbP8dFCHbo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=my1iiEIXhKbbCPWnQayM2Jb/3gnxaDwAXkWHNpWKa+vWn0OkMn3IPlAS/cXTcFJEA
+	 nMCEZBQhNKWHHygacyYEY/upkop0UkXwgrqtpm9pZ5kvcMewJSGZumqTNJi/5N070u
+	 Y200NC0tYWn3yzZLCr4zNATvv0p9T9e3jxKqlWSAf3diWoxYt4QqEpDcKhz/qlaxII
+	 2VQLz3AO4v6GZ9h54B6fZZfPzF6iL0xjqqCGJIoQPHcTDjdXzFQsfpuGbSbTXc88fK
+	 wtuOvcgel2cecwFDrYKuTLknwbZOwMyXY/stJbNr7RhTuvPWkcNuxn6vhImsF7KkeY
+	 3JNLFfyuMMrNg==
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5d90a5581fcso616883a12.1;
+        Wed, 08 Jan 2025 19:22:57 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU+Na0kwo2GmROAVodXWu8IObpuJeuEc24jW8OtLV+BaH9vxinPxEp2VB06OMsYojltiYKVqWbONZrC8A==@vger.kernel.org, AJvYcCUV7tUbXTNPOq48tH8MeGzglloSi5oAsNIZzOnwT5k2A2MbkDA0T9amd9E1Y3nTzv1L5RdKmPOHbOTQzdjtOP+nfbo63H1L@vger.kernel.org, AJvYcCUys0nSnXJ4/Iwjk5mOgQhkv3zj0G5P6n/O8lAW34q6GT0aBXxQk4nYAS6TNJlzUhN9UiFD+v4mJ2zZYDHQ@vger.kernel.org, AJvYcCVE86aLQMGj7HtSbJSYuDxkTg/G+o1BhbW1aTIvnhvdqnUmrKAoKo9NZqa8rLvtFpNJqTcXl/LRcUfeZJuIC2NvPA==@vger.kernel.org, AJvYcCXAM4gVli5NDbpS3rTs9D+oJ9pCQqUIRa+qbRPI5kBioqDOH+R/Hwc/iXOHKddIXQANinA=@vger.kernel.org, AJvYcCXr3q9uc9C8Vm2sntVzbmsaG1E6G/wzeTdeSoS+is7/TpkRAATY6mm+jPr39zNiOLfEcBs4PzvBHmA1@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJ1qaC529ag3Qt2G7f2ehJUJAFXp0uTDkLHB68PGtbHFRDuyqT
+	YcRVcNiygJ53vARc9h3Uez94W2w1bGbl6vX/sPsO2BVOD9IsJxn+lLN78bkAZ57XeGmNh0uSiyU
+	Bzy2wNnBWTbsQe4zG6W9xNCPnV2E=
+X-Google-Smtp-Source: AGHT+IF2vfwWk/hX1fppoOgb3+DWHmntV4ZAONyRFvI6o1pxOXRZKk7PnjDU1irlzVBy8ipamhJ7KiIEeYXxp0Ftx84=
+X-Received: by 2002:a05:6402:3225:b0:5d3:bab1:513f with SMTP id
+ 4fb4d7f45d1cf-5d972e178cbmr4906639a12.18.1736392976133; Wed, 08 Jan 2025
+ 19:22:56 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <tgp2b7kbbdx4obapr4fgtmgjjo6zjbxbligucs32eewiasacko@f4h6uoamznry>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggpeml500006.china.huawei.com (7.185.36.76) To
- kwepemh100016.china.huawei.com (7.202.181.102)
+References: <20250108-perf_syscalltbl-v6-0-7543b5293098@rivosinc.com> <20250108-perf_syscalltbl-v6-3-7543b5293098@rivosinc.com>
+In-Reply-To: <20250108-perf_syscalltbl-v6-3-7543b5293098@rivosinc.com>
+From: Guo Ren <guoren@kernel.org>
+Date: Thu, 9 Jan 2025 11:22:44 +0800
+X-Gmail-Original-Message-ID: <CAJF2gTQFq41rpBMsEodungBHPbzd2zn9F02fB6dJxnYAr81HJg@mail.gmail.com>
+X-Gm-Features: AbW1kvaPnl9RqcyhYmWgfOMmK2I_eaC06_BB36DSFhf4vdK4RFvF9kDCvTmwHLc
+Message-ID: <CAJF2gTQFq41rpBMsEodungBHPbzd2zn9F02fB6dJxnYAr81HJg@mail.gmail.com>
+Subject: Re: [PATCH v6 03/16] perf tools: csky: Support generic syscall headers
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	Christian Brauner <brauner@kernel.org>, John Garry <john.g.garry@oracle.com>, 
+	Will Deacon <will@kernel.org>, James Clark <james.clark@linaro.org>, 
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>, 
+	Jonathan Corbet <corbet@lwn.net>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-security-module@vger.kernel.org, bpf@vger.kernel.org, 
+	linux-csky@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Jan 9, 2025 at 10:36=E2=80=AFAM Charlie Jenkins <charlie@rivosinc.c=
+om> wrote:
+>
+> csky uses the generic syscall table, use that in perf instead of
+> requiring libaudit.
+>
+> Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+LGTM! Thx
 
+For c-sky part.
 
-On 2025/1/6 20:15, Joel Granados wrote:
-> On Sat, Dec 28, 2024 at 10:57:31PM +0800, Kaixiong Yu wrote:
->> This patch series moves sysctls of vm_table in kernel/sysctl.c to
->> places where they actually belong, and do some related code clean-ups.
->> After this patch series, all sysctls in vm_table have been moved into its
->> own files, meanwhile, delete vm_table.
->>
->> All the modifications of this patch series base on
->> linux-next(tags/next-20241219). To test this patch series, the code was
->> compiled with both the CONFIG_SYSCTL enabled and disabled on arm64 and
->> x86_64 architectures. After this patch series is applied, all files
->> under /proc/sys/vm can be read or written normally.
->>
->> Changes in v4:
->>   - due to my mistake, the previous version sent 15 patches twice.
->>     Please ignore that, as this version is the correct one.
-> I would not ignore the reviewed-by tags that you got from Lorenzo.
-> Please include those moving forward.
-Good suggestion!
-Thx !
->>   - change all "static struct ctl_table" type into
->>     "static const struct ctl_table" type in patch1~10,12,13,14
->>   - simplify result of rpcauth_cache_shrink_count() in patch11
-> ...
->>   mm/vmscan.c                        |  23 +++
->>   mm/vmstat.c                        |  44 +++++-
->>   net/sunrpc/auth.c                  |   2 +-
->>   security/min_addr.c                |  11 ++
->>   23 files changed, 330 insertions(+), 312 deletions(-)
->>
->> -- 
->> 2.34.1
->>
-> best
+Acked-by: Guo Ren <guoren@kernel.org>
+
+> ---
+>  tools/perf/Makefile.perf                              | 2 +-
+>  tools/perf/arch/csky/entry/syscalls/Kbuild            | 2 ++
+>  tools/perf/arch/csky/entry/syscalls/Makefile.syscalls | 3 +++
+>  tools/perf/arch/csky/include/syscall_table.h          | 2 ++
+>  4 files changed, 8 insertions(+), 1 deletion(-)
+>
+> diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
+> index 44b9e33b9568f638ba12ad688833fdb661c16c16..3fe47bd21c0ea39473c584c82=
+383ca5d4daf580f 100644
+> --- a/tools/perf/Makefile.perf
+> +++ b/tools/perf/Makefile.perf
+> @@ -311,7 +311,7 @@ FEATURE_TESTS :=3D all
+>  endif
+>  endif
+>  # architectures that use the generic syscall table
+> -generic_syscall_table_archs :=3D riscv arc
+> +generic_syscall_table_archs :=3D riscv arc csky
+>  ifneq ($(filter $(SRCARCH), $(generic_syscall_table_archs)),)
+>  include $(srctree)/tools/perf/scripts/Makefile.syscalls
+>  endif
+> diff --git a/tools/perf/arch/csky/entry/syscalls/Kbuild b/tools/perf/arch=
+/csky/entry/syscalls/Kbuild
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..11707c481a24ecf4e220e51eb=
+1aca890fe929a13
+> --- /dev/null
+> +++ b/tools/perf/arch/csky/entry/syscalls/Kbuild
+> @@ -0,0 +1,2 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +syscall-y +=3D syscalls_32.h
+> diff --git a/tools/perf/arch/csky/entry/syscalls/Makefile.syscalls b/tool=
+s/perf/arch/csky/entry/syscalls/Makefile.syscalls
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..ea2dd10d0571df464574a9c02=
+32ada0ac1f79a3f
+> --- /dev/null
+> +++ b/tools/perf/arch/csky/entry/syscalls/Makefile.syscalls
+> @@ -0,0 +1,3 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +
+> +syscall_abis_32 +=3D csky time32 stat64 rlimit
+> diff --git a/tools/perf/arch/csky/include/syscall_table.h b/tools/perf/ar=
+ch/csky/include/syscall_table.h
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..4c942821662d95216765b176a=
+84d5fc7974e1064
+> --- /dev/null
+> +++ b/tools/perf/arch/csky/include/syscall_table.h
+> @@ -0,0 +1,2 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#include <asm/syscalls_32.h>
+>
+> --
+> 2.34.1
 >
 
+
+--=20
+Best Regards
+ Guo Ren
