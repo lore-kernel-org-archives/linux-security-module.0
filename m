@@ -1,134 +1,94 @@
-Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4D4C1FBEB6;
-	Thu,  9 Jan 2025 20:00:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD82C84039;
+	Thu,  9 Jan 2025 20:49:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736452811; cv=none; b=sVbqXsO1e0wTAt/yCkdz1lY5Hx0JJO3D44XqAzaYjA8mVeR/Yfc4SKKbdIzpvXC8CpSszp2YQtdNua2cEqnt1nPdASDGwN/emh6ofThKJRL8BPDTOCX/vPV2Lc3koxp+psrgLVwIrudnKuVNenA3y+dXBGAPGgzQ8CfMqKJo3Ew=
+	t=1736455782; cv=none; b=h6DMkQngE7ZRRKjCTtNCwr+Zzmvi47OBqi2NlE2+BQlrHRE0EnwX5L21djHeiflwa2ECtloYf5uS0YaHdmw19buEDOS/m+bdxIH0ZphHC9ZNNGe8I0wUt2bsVtQDNFH8CBuVp1xwKX0JGivT5hNwuJ/mEt2psMlhy3f9/0u3ULw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736452811; c=relaxed/simple;
-	bh=Z2Nx8enSglc7LcdfuFFSOlFjCaW3fClvgCHT8rxPpww=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=Dgg1m4cVnugJA+6c3j4wVpiyWwDMs0F2KRs55SA9fDP73L9WKi552Rtwv+ELRX1v/bZ1zL5r/ziQU2ZOh3Cn4gxpIdlubRg5WXq6b+Yp1Hp5OvDAHxhRTJlagQ/WFI7q5cS5khZngH3yyxc9SYSZwBa0gu7jA1cEJLwucjCKJQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=wqTVVK7d; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=bA527m9P; arc=none smtp.client-ip=103.168.172.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+	s=arc-20240116; t=1736455782; c=relaxed/simple;
+	bh=ZXX4c3x7gBrrsmjeXcEhCbYQD0RNFq9SKOTJyfD+w8M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lz+D+orQkN6J3Wwljwu8kiLR73aocMAc9zQ+onLxbT9FpngCR73Dp+KpA2erRaEP4os3T+C34OnAMsB1rnHA8GHlkhRIMBwQhzsUjBHkys/KAIHUPZC2qljedNoCVCovpTDBxYqz2xtvd6ezwEASAYj40EZtHbP1L3Q9Hsar0ok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tWvKKMjG; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="wqTVVK7d";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="bA527m9P"
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 744621140235;
-	Thu,  9 Jan 2025 15:00:07 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Thu, 09 Jan 2025 15:00:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1736452807;
-	 x=1736539207; bh=XLTeDIvd7zmMPfL4q/D1OTLpXR3HFsMk56y3E9zO+KA=; b=
-	wqTVVK7dPXJAB2lQStsN6IxoHN2Pj6d34ve3t+KQvJ1KMQpnsys/eJQxWbYklwb4
-	OsAq8M5IBNnqSL6OP9ObN9lr1L2N76Jh+6gWue2R38DKnnIcsvnf5SSJ0z+xqUHQ
-	k5dOQV1qZHGqvuxUSA02veKmYONF1xtJvge/c/zqo/kH6B8bYyNs93WlOHT71sGP
-	OlC6sDDYVpY9/OGJbtI1wLJYkApPIRi0rjmpZfypp+IxOMcDTNEytl825EaViivU
-	32seRLxpGbGkw6mREV5QxVROg6A++lg+UsVLWipHxI/BkNAcGSx08Ye90dmQzxxq
-	/FY6hWjgMoCCZh//DUbtbA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1736452807; x=
-	1736539207; bh=XLTeDIvd7zmMPfL4q/D1OTLpXR3HFsMk56y3E9zO+KA=; b=b
-	A527m9PBFcwabQVd8yZImD6568uyMmtm1JIXXCIYUtS3OODLVDiYD73bOCWkQxOq
-	IGGey/epZxo5OWqYFPFL8rmC7fhw/Q+IyiAT4QmpyKQt71us7NEESH5zp+RMXxna
-	6lCvGMlG4XUUcA+x0ENll/WMwi8uArmiDWwLZy8Lhkk+o47kJY7jFeGE/fMWv+Kq
-	ZGb3DufO/RK2ExnAnrnEyiPiU1W3sCftOJ7rPnMecgSN25NPcw3XLMBl+cGdfdek
-	Hm9ctEPXkfxwxvPkYjHAYb4ZCzrSz/fuTqKDVscM59oGy2U+fe1Pg6ZVHUUHociA
-	kPLBFE8EdrdczZbulsLGg==
-X-ME-Sender: <xms:xSqAZxrURnPaa3dQJakFaALo8nuiVsSBuuMgSpV2-x-zITx1qK10sg>
-    <xme:xSqAZzrHpROl3dL67vMtZhKKA_tifFhkQO_R26Mf-AF2U_ABfXmWosZQou3cFhhqa
-    uM3BVx34LXfG9uiZj0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrudegiedguddvkecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
-    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
-    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
-    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopeef
-    uddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepsghpsegrlhhivghnkedruggvpd
-    hrtghpthhtoheptghhrhhishhtohhphhgvrdhlvghrohihsegtshhgrhhouhhprdgvuhdp
-    rhgtphhtthhopehmphgvsegvlhhlvghrmhgrnhdrihgurdgruhdprhgtphhtthhopehjtg
-    hmvhgskhgstgesghhmrghilhdrtghomhdprhgtphhtthhopehnphhighhgihhnsehgmhgr
-    ihhlrdgtohhmpdhrtghpthhtohepsghrrghunhgvrheskhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtoheplhhuthhosehkvghrnhgvlhdrohhrghdprhgtphhtthhopehnrghvvggvnhes
-    khgvrhhnvghlrdhorhhgpdhrtghpthhtohepgiekieeskhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:xSqAZ-NHbDtZv25PVnvrhdYKkO_XGBK5uacgLxnGjuRiVCxVJfbe3g>
-    <xmx:xSqAZ8751_nx_wm3T7pycbKPKjyX_DprmSOI810Jf_zWkUQlYQfEwA>
-    <xmx:xSqAZw41kJVFxoksZLEJIHGUPsJY1LDXgJMdaMNo21UuhcvsUuDuMQ>
-    <xmx:xSqAZ0jH38ur-qtEMUQVvfGvkDvk5Ja80JKFM3V-VkHaqlAUxsRLKg>
-    <xmx:xyqAZ8FPs8CB2q6dYLLfVz8oFDTaugCG4o3zlqe7SWmIznMsnuK4VEBV>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 6DFD82220072; Thu,  9 Jan 2025 15:00:05 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tWvKKMjG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FA63C4CED2;
+	Thu,  9 Jan 2025 20:49:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1736455782;
+	bh=ZXX4c3x7gBrrsmjeXcEhCbYQD0RNFq9SKOTJyfD+w8M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tWvKKMjG4qNcEdVbxpmuI7b4+HbBdLkpA+CAMEMYEpRiDciCf4+vEIw2Q4+w2yjfZ
+	 jTvxs8jEmA05UEDVWAXXpjNc2VtZiEIpRu70xTvqCcsKpRbzaHI1lWSmw7CNxREs+Y
+	 tcF2kH3OJnCH5l1gN7nYB+GygB7QcjZAbUF8tBCsIpAxeJJlhSo8SgcHZCtTgRw+5b
+	 PAoxrRVlGEHzJLN9Oucuu/ShuUtvjHD6sfNGb0+TMeUfZJg8u1/VX1eDTtxpj2kfwH
+	 2u7OfDHS4bABbNg/V0Xml60Go/or9ECQsio/b80eE3ZedaBdcLgKM5LgnvvFLc9HZ/
+	 2p9f4xhFqpurg==
+Date: Thu, 9 Jan 2025 17:49:39 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	Christian Brauner <brauner@kernel.org>, Guo Ren <guoren@kernel.org>,
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+	James Clark <james.clark@linaro.org>,
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
+	Jonathan Corbet <corbet@lwn.net>, Arnd Bergmann <arnd@arndb.de>,
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+	linux-csky@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH v6 00/16] perf tools: Use generic syscall scripts for all
+ archs
+Message-ID: <Z4A2Y269Ffo0ERkS@x1>
+References: <20250108-perf_syscalltbl-v6-0-7543b5293098@rivosinc.com>
+ <Z3_ybwWW3QZvJ4V6@x1>
+ <Z4AoFA974kauIJ9T@ghost>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 09 Jan 2025 20:59:45 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Andrey Albershteyn" <aalbersh@redhat.com>, linux-fsdevel@vger.kernel.org
-Cc: linux-api@vger.kernel.org, "Michal Simek" <monstr@monstr.eu>,
- "Michael Ellerman" <mpe@ellerman.id.au>,
- "Nicholas Piggin" <npiggin@gmail.com>,
- "Christophe Leroy" <christophe.leroy@csgroup.eu>,
- "Naveen N Rao" <naveen@kernel.org>,
- "Madhavan Srinivasan" <maddy@linux.ibm.com>,
- "Andy Lutomirski" <luto@kernel.org>,
- "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar" <mingo@redhat.com>,
- "Borislav Petkov" <bp@alien8.de>,
- "Dave Hansen" <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, chris@zankel.net,
- "Max Filippov" <jcmvbkbc@gmail.com>,
- "Alexander Viro" <viro@zeniv.linux.org.uk>,
- "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
- linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-m68k@lists.linux-m68k.org, linux-parisc@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
- linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-security-module@vger.kernel.org,
- Linux-Arch <linux-arch@vger.kernel.org>
-Message-Id: <e7deabf6-8bba-45d7-a0f4-395bc8e5aabe@app.fastmail.com>
-In-Reply-To: <20250109174540.893098-1-aalbersh@kernel.org>
-References: <20250109174540.893098-1-aalbersh@kernel.org>
-Subject: Re: [PATCH] fs: introduce getfsxattrat and setfsxattrat syscalls
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z4AoFA974kauIJ9T@ghost>
 
-On Thu, Jan 9, 2025, at 18:45, Andrey Albershteyn wrote:
->
->  arch/alpha/kernel/syscalls/syscall.tbl      |   2 +
->  arch/m68k/kernel/syscalls/syscall.tbl       |   2 +
->  arch/microblaze/kernel/syscalls/syscall.tbl |   2 +
->  arch/parisc/kernel/syscalls/syscall.tbl     |   2 +
->  arch/powerpc/kernel/syscalls/syscall.tbl    |   2 +
->  arch/s390/kernel/syscalls/syscall.tbl       |   2 +
->  arch/sh/kernel/syscalls/syscall.tbl         |   2 +
->  arch/sparc/kernel/syscalls/syscall.tbl      |   2 +
->  arch/x86/entry/syscalls/syscall_32.tbl      |   2 +
->  arch/x86/entry/syscalls/syscall_64.tbl      |   2 +
->  arch/xtensa/kernel/syscalls/syscall.tbl     |   2 +
+On Thu, Jan 09, 2025 at 11:48:36AM -0800, Charlie Jenkins wrote:
+> On Thu, Jan 09, 2025 at 12:59:43PM -0300, Arnaldo Carvalho de Melo wrote:
+> > ⬢ [acme@toolbox perf-tools-next]$ git log --oneline -1 ; time make -C tools/perf build-test
+> > d06826160a982494 (HEAD -> perf-tools-next) perf tools: Remove dependency on libaudit
+> > make: Entering directory '/home/acme/git/perf-tools-next/tools/perf'
+> > - tarpkg: ./tests/perf-targz-src-pkg .
+> >                  make_static: cd . && make LDFLAGS=-static NO_PERF_READ_VDSO32=1 NO_PERF_READ_VDSOX32=1 NO_JVMTI=1 NO_LIBTRACEEVENT=1 NO_LIBELF=1 -j28  DESTDIR=/tmp/tmp.JJT3tvN7bV
+> >               make_with_gtk2: cd . && make GTK2=1 -j28  DESTDIR=/tmp/tmp.BF53V2qpl3
+> > - /home/acme/git/perf-tools-next/tools/perf/BUILD_TEST_FEATURE_DUMP: cd . && make FEATURE_DUMP_COPY=/home/acme/git/perf-tools-next/tools/perf/BUILD_TEST_FEATURE_DUMP  feature-dump
+> > cd . && make FEATURE_DUMP_COPY=/home/acme/git/perf-tools-next/tools/perf/BUILD_TEST_FEATURE_DUMP feature-dump
+> >          make_no_libbionic_O: cd . && make NO_LIBBIONIC=1 FEATURES_DUMP=/home/acme/git/perf-tools-next/tools/perf/BUILD_TEST_FEATURE_DUMP -j28 O=/tmp/tmp.KZuQ0q2Vs6 DESTDIR=/tmp/tmp.0sxMyH91gS
+> >            make_util_map_o_O: cd . && make util/map.o FEATURES_DUMP=/home/acme/git/perf-tools-next/tools/perf/BUILD_TEST_FEATURE_DUMP -j28 O=/tmp/tmp.Y0Mx3KLREI DESTDIR=/tmp/tmp.wg9HCVVLHE
+> >               make_install_O: cd . && make install FEATURES_DUMP=/home/acme/git/perf-tools-next/tools/perf/BUILD_TEST_FEATURE_DUMP -j28 O=/tmp/tmp.P0LEBAkW1X DESTDIR=/tmp/tmp.agTavZndFN
+> >   failed to find: etc/bash_completion.d/perf
+> 
+> Is this something introduced by this patch?
 
-You seem to be missing a couple of files here: 
+I don't think so.
 
-arch/arm/tools/syscall.tbl
-arch/arm64/tools/syscall_32.tbl
-arch/mips/kernel/syscalls/syscall_n32.tbl
-arch/mips/kernel/syscalls/syscall_n64.tbl
-arch/mips/kernel/syscalls/syscall_o32.tbl
+BTW this series is already pushed out to perf-tools-next:
 
-       Arnd
+https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/log/?h=perf-tools-next
+
+Thanks!
+
+- Arnaldo
