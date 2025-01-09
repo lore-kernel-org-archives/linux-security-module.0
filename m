@@ -1,382 +1,233 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F139E2054F7;
-	Wed,  8 Jan 2025 22:52:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6687249E5
+	for <linux-security-module@vger.kernel.org>; Thu,  9 Jan 2025 01:42:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736376754; cv=none; b=bEO1PDyC5Je4hjN5STExGDyc3CoveYFxBy/DyBNcfds0xTcdVooeBrUVduJ2x5W7Y+O77Tl1rmi29nCsEQfSA1fRcdzYkWf1p5LRXGJc16yMnLq7Oaw+ybHU4tibspcGcA+AhCB9vj7R7l+xrd5OhMtQvxDmSD2jDmBNKnVOiKc=
+	t=1736386937; cv=none; b=ZJo+yiZVgo7EylVVDwQMTSrSAdJy3oAzQKgUKuzbpcmO1JFsp1wxES//B+4dZwgguzIe6PFVeuxXFsUyfFwO3EIwa1wZWlxYfhB7wxiX4aAmzvnkhzebKw3+gFGfhGJEGpB8Rgc+OtIHePIgAPcBnG/KQ7GFxAnYaAThsuZimNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736376754; c=relaxed/simple;
-	bh=FQmK/zjfrxygp/Pf6guBS6Z2EkiYTrDZoPCVgsbDZ0g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qYH/0Xsq5WYamlTlFiAVjJftcfiBRF0WPJ8Ej8PTIDD54s9Y2TfN1BfQU/dv6txdtCYut5pB7JYFJjnWEzkMXVOrtePPpF6rxywNCT8ZKh7HwceW6e8Lxnvjjs0XcReJiF8wQfQgFq/j47QkP1/5jldY6R2372qVF/jCkl/QSEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J19pCSyn; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1736386937; c=relaxed/simple;
+	bh=zfeDX5addQPMOrAdOMKXjx8Mmkk8MvfM4ueVtIIUTr4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jMrSxzJNzzxpnAqNoPSM4/V9+8OOfCNZZllvRfYp6lOWwBnah+0aqzPULUsMA1wrJ0d7/ElltaqLU4k7sQ14HdktMN6ZepxN+1McUdLhHCmfwOF1JOFdF9uEV2TQ3AeRtCvHVZ82nUpXsOaf+w3nBtzK2pZzaksNUjA6MiAVE4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=BR5ROd2X; arc=none smtp.client-ip=209.85.219.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J19pCSyn"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 129C7C4CED3;
-	Wed,  8 Jan 2025 22:52:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736376753;
-	bh=FQmK/zjfrxygp/Pf6guBS6Z2EkiYTrDZoPCVgsbDZ0g=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=J19pCSynRrT4q2mzYbZX8R6CtOy4aaKMCV/MihQ30d38iie+6FThVEy+22gZl7eHx
-	 DrE0ZSZercYriT/PJSQCQ8BnabnPtq8P7DfrGzZQNUT9pEAVULCPNnEgZlIfA2q6uL
-	 Wo7lmNt6JoOyoaHs7yxjLjos8zZsulTo9ADB08rgZWH5vDecm9zmjepk0W6zEqtDNL
-	 HBxdYNG2P6gvqbk5LPY+c/k7C9LZ3OTEM1hLSK2My6Tx2U33EBzbYDZGNl1wzxWMwh
-	 QtDWdX+iNoeE8s4dAssTGx9oLuNZyLn3a/girVEfsVen3DexIQeGbblWm6fv42NbwE
-	 Syf5QWhZ1WoHg==
-From: Song Liu <song@kernel.org>
-To: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Cc: kernel-team@meta.com,
-	andrii@kernel.org,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	martin.lau@linux.dev,
-	kpsingh@kernel.org,
-	mattbobrowski@google.com,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	memxor@gmail.com,
-	Song Liu <song@kernel.org>
-Subject: [PATCH v8 bpf-next 7/7] selftests/bpf: Test kfuncs that set and remove xattr from BPF programs
-Date: Wed,  8 Jan 2025 14:51:40 -0800
-Message-ID: <20250108225140.3467654-8-song@kernel.org>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20250108225140.3467654-1-song@kernel.org>
-References: <20250108225140.3467654-1-song@kernel.org>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="BR5ROd2X"
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e53a91756e5so659187276.1
+        for <linux-security-module@vger.kernel.org>; Wed, 08 Jan 2025 17:42:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1736386935; x=1736991735; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K4g1ykfPq95SnXVLikXosC+HM7OajCsrb3rQj4uRrmA=;
+        b=BR5ROd2XWbzMMmg50oJbwb5RQZ5QlEjXZ+qayfshUFH3Wnw7OQjjLVmvqgBoEDwA5m
+         PNadrmstK7MqxvewIw7swMl0c4esTbKD3kjvmd3QD6y7OALtxTqZsEioHyRT1/frAe5p
+         J8OiwY9kCMMKrv3fKoGcEEL9+bCwFvz1UozBW7q+omSBsMf3TvXC0D57YcztktdsKm3/
+         hYOYgqtFvEUnWYqofC27VLyOewCBPf5pDSX9zkMyDDhKKPQbbKHfIzkT9xevMFRpPeXw
+         AYlWXwdQR2k3gkahcjO1wKoqeG/TQ2szl4mKaUgWJU6+lE7LDmAcgTjdWjzMl2bQl2Q8
+         Wm5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736386935; x=1736991735;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=K4g1ykfPq95SnXVLikXosC+HM7OajCsrb3rQj4uRrmA=;
+        b=YPpG9prDcGgYTphnl/nEbpFahqrnRL1KTKdJAy4RiXVXTTSyJDqCJL7RN/NXJ0Hi+l
+         OGTgxoTB+qny+vDoRKs/D80Q6wd8PmQ10zeqlUSoujHfW0W3cIkDxN9loudTFh1VIabs
+         koKugVcjBoHruNpUYyO70OPApZwclWd3U+sKk2gYexEh3TRziAj9c+GcMNNhD+SgsE8E
+         ayTXKeQaKcdFrr0NHkgu/lCo/9cKm3AHrpzEofuz5ZjGBSBs9Svf2SN8btY7lW2P8KqG
+         aR+8Kx7aAXJei2+J0+RtSkIgS/zOjRxlcMrCn9uR73tyxkaEYo/d4o5XON1J5vbLrGux
+         Szzw==
+X-Forwarded-Encrypted: i=1; AJvYcCVy6vaSg3Yw4F8v69LCoG2arLJlBWeJKAl/bGTrktZnevD5dsmOMFHNo3V8mNywVhCDakdEeqzjNGEi4mLwB0CtSc5kLJ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGIKqlsG+WR1JnozXr/JF9Rxe97KNYlF2eb+8o6F3qhA7GWggJ
+	wAROBQEZKxk3IZFWqxbIzczbFM/VPhf6GFT3pNvd3wef/BpEQpLrBKjv53xqOHgPnHSn7hR2dWY
+	KI2hK6Tq64OVmAKEYrrvGivgZawfjYvSksol8
+X-Gm-Gg: ASbGncv2dmgKaUa8UW3t2lHugqdevNwm0VlQIvlrtHLCeYS048pGuS3MjvKnauVhqsh
+	kgSmyvSq04U9cP+LolO8XLNFMxRTCXeOue40n
+X-Google-Smtp-Source: AGHT+IFuNxO/vAJGBSQf0X0zue4DrqJfy2Im0U5mQK59KcyjDBi9LKq4XwIzzUc37VkLKwvDPtY4L5mlNnHdAYwyijE=
+X-Received: by 2002:a05:690c:9c02:b0:6ef:6f24:d093 with SMTP id
+ 00721157ae682-6f5311f86dcmr44197627b3.6.1736386934739; Wed, 08 Jan 2025
+ 17:42:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250106235022.3859523-1-enlightened@chromium.org>
+In-Reply-To: <20250106235022.3859523-1-enlightened@chromium.org>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 8 Jan 2025 20:42:04 -0500
+X-Gm-Features: AbW1kvaVBfWYoRuRIg0anjLmixxvkSZIUhwZmuUivTaG5s8l0aMCoV_R-PjeFd8
+Message-ID: <CAHC9VhSdDJrEvSi_8LXM7Uop3dymTOwPyNJJoR+33HymMwuZUg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] fs: add loopback/bind mount specific security hook
+To: Shervin Oloumi <enlightened@chromium.org>
+Cc: mic@digikod.net, viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
+	jmorris@namei.org, serge@hallyn.com, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, gnoack@google.com, shuah@kernel.org, 
+	jorgelo@chromium.org, allenwebb@chromium.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Two sets of tests are added to exercise the not _locked and _locked
-version of the kfuncs. For both tests, user space accesses xattr
-security.bpf.foo on a testfile. The BPF program is triggered by user
-space access (on LSM hook inode_[set|get]_xattr) and sets or removes
-xattr security.bpf.bar. Then user space then validates that xattr
-security.bpf.bar is set or removed as expected.
+On Mon, Jan 6, 2025 at 6:50=E2=80=AFPM Shervin Oloumi <enlightened@chromium=
+.org> wrote:
+>
+> The main mount security hook (security_sb_mount) is called early in the
+> process before the mount type is determined and the arguments are
+> validated and converted to the appropriate format. Specifically, the
+> source path is surfaced as a string, which is not appropriate for
+> checking bind mount requests. For bind mounts the source should be
+> validated and passed as a path struct (same as destination), after the
+> mount type is determined. This allows the hook users to evaluate the
+> mount attributes without the need to perform any validations or
+> conversions out of band, which can introduce a TOCTOU race condition.
+>
+> The newly introduced hook is invoked only if the security_sb_mount hook
+> passes, and only if the MS_BIND flag is detected. At this point the
+> source of the mount has been successfully converted to a path struct
+> using the kernel's kern_path API. This allows LSMs to target bind mount
+> requests at the right stage, and evaluate the attributes in the right
+> format, based on the type of mount.
+>
+> This does not affect the functionality of the existing mount security
+> hooks, including security_sb_mount. The new hook, can be utilized as a
+> supplement to the main hook for further analyzing bind mount requests.
+> This means that there is still the option of only using the main hook
+> function, if all one wants to do is indiscriminately reject all bind
+> mount requests, regardless of the source and destination arguments.
+> However, if one needs to evaluate the source and destination of a bind
+> mount request before making a decision, this hook function should be
+> preferred. Of course, if a bind mount request does not make it past the
+> security_sb_mount check, the bind mount hook function is never invoked.
+>
+> Signed-off-by: Shervin Oloumi <enlightened@chromium.org>
+> ---
+>
+> Changes since v1:
+> - Indicate whether the mount is recursive in the hook. This can be a
+>   factor when deciding if a mount should be allowed
+> - Add default capabilities function for the new hook in security.h. This
+>   is required for some tests to pass
 
-Note that, in both tests, the BPF programs use the not _locked kfuncs.
-The verifier picks the proper kfuncs based on the calling context.
+I'm not seeing anything like that in the patch you sent?  Am I missing
+something, did you send an incomplete/outdated patch, or simply word
+the change above wrong?
 
-Signed-off-by: Song Liu <song@kernel.org>
----
- tools/testing/selftests/bpf/bpf_kfuncs.h      |   5 +
- .../selftests/bpf/prog_tests/fs_kfuncs.c      | 125 ++++++++++++++++
- .../bpf/progs/test_set_remove_xattr.c         | 133 ++++++++++++++++++
- 3 files changed, 263 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/progs/test_set_remove_xattr.c
+> - Reword the hook description to be more future proof
+> ---
+>  fs/namespace.c                |  4 ++++
+>  include/linux/lsm_hook_defs.h |  2 ++
+>  include/linux/security.h      |  7 +++++++
+>  security/security.c           | 18 ++++++++++++++++++
+>  4 files changed, 31 insertions(+)
+>
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index 23e81c2a1e3f..535a1841c200 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -2765,6 +2765,10 @@ static int do_loopback(struct path *path, const ch=
+ar *old_name,
+>         if (err)
+>                 return err;
+>
+> +       err =3D security_sb_bindmount(&old_path, path, recurse ? true : f=
+alse);
+> +       if (err)
+> +               goto out;
+> +
+>         err =3D -EINVAL;
+>         if (mnt_ns_loop(old_path.dentry))
+>                 goto out;
+> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.=
+h
+> index eb2937599cb0..94f5a3530b98 100644
+> --- a/include/linux/lsm_hook_defs.h
+> +++ b/include/linux/lsm_hook_defs.h
+> @@ -71,6 +71,8 @@ LSM_HOOK(int, 0, sb_show_options, struct seq_file *m, s=
+truct super_block *sb)
+>  LSM_HOOK(int, 0, sb_statfs, struct dentry *dentry)
+>  LSM_HOOK(int, 0, sb_mount, const char *dev_name, const struct path *path=
+,
+>          const char *type, unsigned long flags, void *data)
+> +LSM_HOOK(int, 0, sb_bindmount, const struct path *old_path,
+> +        const struct path *path, bool recurse)
+>  LSM_HOOK(int, 0, sb_umount, struct vfsmount *mnt, int flags)
+>  LSM_HOOK(int, 0, sb_pivotroot, const struct path *old_path,
+>          const struct path *new_path)
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index cbdba435b798..d4a4c71865e3 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -365,6 +365,7 @@ int security_sb_show_options(struct seq_file *m, stru=
+ct super_block *sb);
+>  int security_sb_statfs(struct dentry *dentry);
+>  int security_sb_mount(const char *dev_name, const struct path *path,
+>                       const char *type, unsigned long flags, void *data);
+> +int security_sb_bindmount(const struct path *old_path, const struct path=
+ *path, bool recurse);
+>  int security_sb_umount(struct vfsmount *mnt, int flags);
+>  int security_sb_pivotroot(const struct path *old_path, const struct path=
+ *new_path);
+>  int security_sb_set_mnt_opts(struct super_block *sb,
+> @@ -801,6 +802,12 @@ static inline int security_sb_mount(const char *dev_=
+name, const struct path *pat
+>         return 0;
+>  }
+>
+> +static inline int security_sb_bindmount(const struct path *old_path,
+> +                                       const struct path *path, bool rec=
+urse)
+> +{
+> +       return 0;
+> +}
+> +
+>  static inline int security_sb_umount(struct vfsmount *mnt, int flags)
+>  {
+>         return 0;
+> diff --git a/security/security.c b/security/security.c
+> index 09664e09fec9..c115d8627e2d 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -1564,6 +1564,24 @@ int security_sb_mount(const char *dev_name, const =
+struct path *path,
+>         return call_int_hook(sb_mount, dev_name, path, type, flags, data)=
+;
+>  }
+>
+> +/**
+> + * security_sb_bindmount() - Loopback/bind mount permission check
+> + * @old_path: source of loopback/bind mount
+> + * @path: mount point
+> + * @recurse: true if recursive (MS_REC)
+> + *
+> + * Beyond any general mounting hooks, this check is performed on an init=
+ial
+> + * loopback/bind mount (MS_BIND) with the mount source presented as a pa=
+th
+> + * struct in @old_path.
+> + *
+> + * Return: Returns 0 if permission is granted.
+> + */
+> +int security_sb_bindmount(const struct path *old_path, const struct path=
+ *path,
+> +                         bool recurse)
+> +{
+> +       return call_int_hook(sb_bindmount, old_path, path, recurse);
+> +}
+> +
+>  /**
+>   * security_sb_umount() - Check permission for unmounting a filesystem
+>   * @mnt: mounted filesystem
+>
+> base-commit: fc033cf25e612e840e545f8d5ad2edd6ba613ed5
+> --
+> 2.47.1.613.gc27f4b7a9f-goog
+>
 
-diff --git a/tools/testing/selftests/bpf/bpf_kfuncs.h b/tools/testing/selftests/bpf/bpf_kfuncs.h
-index 2eb3483f2fb0..8215c9b3115e 100644
---- a/tools/testing/selftests/bpf/bpf_kfuncs.h
-+++ b/tools/testing/selftests/bpf/bpf_kfuncs.h
-@@ -87,4 +87,9 @@ struct dentry;
-  */
- extern int bpf_get_dentry_xattr(struct dentry *dentry, const char *name,
- 			      struct bpf_dynptr *value_ptr) __ksym __weak;
-+
-+extern int bpf_set_dentry_xattr(struct dentry *dentry, const char *name__str,
-+				const struct bpf_dynptr *value_p, int flags) __ksym __weak;
-+extern int bpf_remove_dentry_xattr(struct dentry *dentry, const char *name__str) __ksym __weak;
-+
- #endif
-diff --git a/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c b/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c
-index 419f45b56472..43a26ec69a8e 100644
---- a/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c
-+++ b/tools/testing/selftests/bpf/prog_tests/fs_kfuncs.c
-@@ -8,6 +8,7 @@
- #include <unistd.h>
- #include <test_progs.h>
- #include "test_get_xattr.skel.h"
-+#include "test_set_remove_xattr.skel.h"
- #include "test_fsverity.skel.h"
- 
- static const char testfile[] = "/tmp/test_progs_fs_kfuncs";
-@@ -72,6 +73,127 @@ static void test_get_xattr(const char *name, const char *value, bool allow_acces
- 	remove(testfile);
- }
- 
-+/* xattr value we will set to security.bpf.foo */
-+static const char value_foo[] = "hello";
-+
-+static void read_and_validate_foo(struct test_set_remove_xattr *skel)
-+{
-+	char value_out[32];
-+	int err;
-+
-+	err = getxattr(testfile, skel->rodata->xattr_foo, value_out, sizeof(value_out));
-+	ASSERT_EQ(err, sizeof(value_foo), "getxattr size foo");
-+	ASSERT_EQ(strncmp(value_out, value_foo, sizeof(value_foo)), 0, "strncmp value_foo");
-+}
-+
-+static void set_foo(struct test_set_remove_xattr *skel)
-+{
-+	ASSERT_OK(setxattr(testfile, skel->rodata->xattr_foo, value_foo, strlen(value_foo) + 1, 0),
-+		  "setxattr foo");
-+}
-+
-+static void validate_bar_match(struct test_set_remove_xattr *skel)
-+{
-+	char value_out[32];
-+	int err;
-+
-+	err = getxattr(testfile, skel->rodata->xattr_bar, value_out, sizeof(value_out));
-+	ASSERT_EQ(err, sizeof(skel->data->value_bar), "getxattr size bar");
-+	ASSERT_EQ(strncmp(value_out, skel->data->value_bar, sizeof(skel->data->value_bar)), 0,
-+		  "strncmp value_bar");
-+}
-+
-+static void validate_bar_removed(struct test_set_remove_xattr *skel)
-+{
-+	char value_out[32];
-+	int err;
-+
-+	err = getxattr(testfile, skel->rodata->xattr_bar, value_out, sizeof(value_out));
-+	ASSERT_LT(err, 0, "getxattr size bar should fail");
-+}
-+
-+static void test_set_remove_xattr(void)
-+{
-+	struct test_set_remove_xattr *skel = NULL;
-+	int fd = -1, err;
-+
-+	fd = open(testfile, O_CREAT | O_RDONLY, 0644);
-+	if (!ASSERT_GE(fd, 0, "create_file"))
-+		return;
-+
-+	close(fd);
-+	fd = -1;
-+
-+	skel = test_set_remove_xattr__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "test_set_remove_xattr__open_and_load"))
-+		return;
-+
-+	/* Set security.bpf.foo to "hello" */
-+	err = setxattr(testfile, skel->rodata->xattr_foo, value_foo, strlen(value_foo) + 1, 0);
-+	if (err && errno == EOPNOTSUPP) {
-+		printf("%s:SKIP:local fs doesn't support xattr (%d)\n"
-+		       "To run this test, make sure /tmp filesystem supports xattr.\n",
-+		       __func__, errno);
-+		test__skip();
-+		goto out;
-+	}
-+
-+	if (!ASSERT_OK(err, "setxattr"))
-+		goto out;
-+
-+	skel->bss->monitored_pid = getpid();
-+	err = test_set_remove_xattr__attach(skel);
-+	if (!ASSERT_OK(err, "test_set_remove_xattr__attach"))
-+		goto out;
-+
-+	/* First, test not _locked version of the kfuncs with getxattr. */
-+
-+	/* Read security.bpf.foo and trigger test_inode_getxattr. This
-+	 * bpf program will set security.bpf.bar to "world".
-+	 */
-+	read_and_validate_foo(skel);
-+	validate_bar_match(skel);
-+
-+	/* Read security.bpf.foo and trigger test_inode_getxattr again.
-+	 * This will remove xattr security.bpf.bar.
-+	 */
-+	read_and_validate_foo(skel);
-+	validate_bar_removed(skel);
-+
-+	ASSERT_TRUE(skel->bss->set_security_bpf_bar_success, "set_security_bpf_bar_success");
-+	ASSERT_TRUE(skel->bss->remove_security_bpf_bar_success, "remove_security_bpf_bar_success");
-+	ASSERT_TRUE(skel->bss->set_security_selinux_fail, "set_security_selinux_fail");
-+	ASSERT_TRUE(skel->bss->remove_security_selinux_fail, "remove_security_selinux_fail");
-+
-+	/* Second, test _locked version of the kfuncs, with setxattr */
-+
-+	/* Set security.bpf.foo and trigger test_inode_setxattr. This
-+	 * bpf program will set security.bpf.bar to "world".
-+	 */
-+	set_foo(skel);
-+	validate_bar_match(skel);
-+
-+	/* Set security.bpf.foo and trigger test_inode_setxattr again.
-+	 * This will remove xattr security.bpf.bar.
-+	 */
-+	set_foo(skel);
-+	validate_bar_removed(skel);
-+
-+	ASSERT_TRUE(skel->bss->locked_set_security_bpf_bar_success,
-+		    "locked_set_security_bpf_bar_success");
-+	ASSERT_TRUE(skel->bss->locked_remove_security_bpf_bar_success,
-+		    "locked_remove_security_bpf_bar_success");
-+	ASSERT_TRUE(skel->bss->locked_set_security_selinux_fail,
-+		    "locked_set_security_selinux_fail");
-+	ASSERT_TRUE(skel->bss->locked_remove_security_selinux_fail,
-+		    "locked_remove_security_selinux_fail");
-+
-+out:
-+	close(fd);
-+	test_set_remove_xattr__destroy(skel);
-+	remove(testfile);
-+}
-+
- #ifndef SHA256_DIGEST_SIZE
- #define SHA256_DIGEST_SIZE      32
- #endif
-@@ -161,6 +283,9 @@ void test_fs_kfuncs(void)
- 	if (test__start_subtest("security_selinux_xattr_error"))
- 		test_get_xattr("security.selinux", "hello", false);
- 
-+	if (test__start_subtest("set_remove_xattr"))
-+		test_set_remove_xattr();
-+
- 	if (test__start_subtest("fsverity"))
- 		test_fsverity();
- }
-diff --git a/tools/testing/selftests/bpf/progs/test_set_remove_xattr.c b/tools/testing/selftests/bpf/progs/test_set_remove_xattr.c
-new file mode 100644
-index 000000000000..e49be3cc4a33
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/test_set_remove_xattr.c
-@@ -0,0 +1,133 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2024 Meta Platforms, Inc. and affiliates. */
-+
-+#include "vmlinux.h"
-+#include <errno.h>
-+#include <bpf/bpf_tracing.h>
-+#include "bpf_kfuncs.h"
-+#include "bpf_misc.h"
-+
-+char _license[] SEC("license") = "GPL";
-+
-+__u32 monitored_pid;
-+
-+const char xattr_foo[] = "security.bpf.foo";
-+const char xattr_bar[] = "security.bpf.bar";
-+const char xattr_linux[] = "security.selinux";
-+char value_bar[] = "world";
-+char read_value[32];
-+
-+bool set_security_bpf_bar_success;
-+bool remove_security_bpf_bar_success;
-+bool set_security_selinux_fail;
-+bool remove_security_selinux_fail;
-+
-+char name_buf[32];
-+
-+static inline bool name_match_foo(const char *name)
-+{
-+	bpf_probe_read_kernel(name_buf, sizeof(name_buf), name);
-+
-+	return !bpf_strncmp(name_buf, sizeof(xattr_foo), xattr_foo);
-+}
-+
-+/* Test bpf_set_dentry_xattr and bpf_remove_dentry_xattr */
-+SEC("lsm.s/inode_getxattr")
-+int BPF_PROG(test_inode_getxattr, struct dentry *dentry, char *name)
-+{
-+	struct bpf_dynptr value_ptr;
-+	__u32 pid;
-+	int ret;
-+
-+	pid = bpf_get_current_pid_tgid() >> 32;
-+	if (pid != monitored_pid)
-+		return 0;
-+
-+	/* Only do the following for security.bpf.foo */
-+	if (!name_match_foo(name))
-+		return 0;
-+
-+	bpf_dynptr_from_mem(read_value, sizeof(read_value), 0, &value_ptr);
-+
-+	/* read security.bpf.bar */
-+	ret = bpf_get_dentry_xattr(dentry, xattr_bar, &value_ptr);
-+
-+	if (ret < 0) {
-+		/* If security.bpf.bar doesn't exist, set it */
-+		bpf_dynptr_from_mem(value_bar, sizeof(value_bar), 0, &value_ptr);
-+
-+		ret = bpf_set_dentry_xattr(dentry, xattr_bar, &value_ptr, 0);
-+		if (!ret)
-+			set_security_bpf_bar_success = true;
-+		ret = bpf_set_dentry_xattr(dentry, xattr_linux, &value_ptr, 0);
-+		if (ret)
-+			set_security_selinux_fail = true;
-+	} else {
-+		/* If security.bpf.bar exists, remove it */
-+		ret = bpf_remove_dentry_xattr(dentry, xattr_bar);
-+		if (!ret)
-+			remove_security_bpf_bar_success = true;
-+
-+		ret = bpf_remove_dentry_xattr(dentry, xattr_linux);
-+		if (ret)
-+			remove_security_selinux_fail = true;
-+	}
-+
-+	return 0;
-+}
-+
-+bool locked_set_security_bpf_bar_success;
-+bool locked_remove_security_bpf_bar_success;
-+bool locked_set_security_selinux_fail;
-+bool locked_remove_security_selinux_fail;
-+
-+/* Test bpf_set_dentry_xattr_locked and bpf_remove_dentry_xattr_locked.
-+ * It not necessary to differentiate the _locked version and the
-+ * not-_locked version in the BPF program. The verifier will fix them up
-+ * properly.
-+ */
-+SEC("lsm.s/inode_setxattr")
-+int BPF_PROG(test_inode_setxattr, struct mnt_idmap *idmap,
-+	     struct dentry *dentry, const char *name,
-+	     const void *value, size_t size, int flags)
-+{
-+	struct bpf_dynptr value_ptr;
-+	__u32 pid;
-+	int ret;
-+
-+	pid = bpf_get_current_pid_tgid() >> 32;
-+	if (pid != monitored_pid)
-+		return 0;
-+
-+	/* Only do the following for security.bpf.foo */
-+	if (!name_match_foo(name))
-+		return 0;
-+
-+	bpf_dynptr_from_mem(read_value, sizeof(read_value), 0, &value_ptr);
-+
-+	/* read security.bpf.bar */
-+	ret = bpf_get_dentry_xattr(dentry, xattr_bar, &value_ptr);
-+
-+	if (ret < 0) {
-+		/* If security.bpf.bar doesn't exist, set it */
-+		bpf_dynptr_from_mem(value_bar, sizeof(value_bar), 0, &value_ptr);
-+
-+		ret = bpf_set_dentry_xattr(dentry, xattr_bar, &value_ptr, 0);
-+		if (!ret)
-+			locked_set_security_bpf_bar_success = true;
-+		ret = bpf_set_dentry_xattr(dentry, xattr_linux, &value_ptr, 0);
-+		if (ret)
-+			locked_set_security_selinux_fail = true;
-+	} else {
-+		/* If security.bpf.bar exists, remove it */
-+		ret = bpf_remove_dentry_xattr(dentry, xattr_bar);
-+		if (!ret)
-+			locked_remove_security_bpf_bar_success = true;
-+
-+		ret = bpf_remove_dentry_xattr(dentry, xattr_linux);
-+		if (ret)
-+			locked_remove_security_selinux_fail = true;
-+	}
-+
-+	return 0;
-+}
--- 
-2.43.5
 
+--=20
+paul-moore.com
