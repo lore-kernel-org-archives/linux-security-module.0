@@ -1,275 +1,145 @@
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3439D1F95E
-	for <linux-security-module@vger.kernel.org>; Thu,  9 Jan 2025 02:29:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C75462A1BB;
+	Thu,  9 Jan 2025 02:33:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736389767; cv=none; b=srpOUGaaTKgvV3r+l7CZxxdrZatPF4Rnc4dIkAIS0NiqFMH88PUIimE4nX8/locMI8icgeRJ+89nCpu6TACNv3ATcQijZbr6EtxSe1fJ/vjLXy9/Eom3i+Hw39v0buuuAUnSUYZL9Btj1p3+sV7aWekzMCaJfqUMNno2p8DxR4M=
+	t=1736390000; cv=none; b=Mbw9Un5mgX0XwS2zDYqG9mpWqx7HQenHOWki8hmzP1HwMrdpcH9BIlSOzsLItmwaw8T8FM/cAHkhCrYmuA2MS5S0O6tv0RkZ16Fk8DB+c4G+IxPsSZucgc6vylKJtYY1b1wV+CXM0T6DBOfXj2r9uRHYW86dRxTVrVBXidiQaRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736389767; c=relaxed/simple;
-	bh=8+qyBcO8apxheZk8Ce9xa2+qlvFR3OyMr82XXfWcAZ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nt+dx0SbAWl/Z1DkNoHwciYVEOnP5OACHfN3gW7aUGUCSpnmb1yYGNWrMO5uZ/bkBy5dBnRx4JfTBeVS+btoaheC5kruRL59k2eTxAbSUVv/Ojxvms0OH5qJjbODAXpYuz1SIJYuFpkBwHu2cPJBlL+9HVb01AYwaaR97TiCiKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=Gv5Peo3u; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="Gv5Peo3u"
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2166022c5caso5566915ad.2
-        for <linux-security-module@vger.kernel.org>; Wed, 08 Jan 2025 18:29:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1736389764; x=1736994564; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=tuHlyCZ2v8Z/UOiT+zevmWuAaJTETQXAMxBjxTo/5Xo=;
-        b=Gv5Peo3u4Ohdbw8NnuFYZI6AbOfW2iNkNmeQAM4mPxbLHQahsR1TlyUtAY4lMfU/zE
-         6fGu9bMim87xmRHXepDITyJg5/iYC+enlXS9hsrzTf8hEPylETnWOUGzy9UQa2E+RGiZ
-         DvwBExJ6oWqV3CSE5xXEeS/g5stsqhSBPF7U5hDhjur88U5I1er04P8Hy1Wdr+CSvI4Y
-         YveYF7WHciO6CoIODJwK07UQsByydBf4abz0yViY8MAHjRT1ydJAGRiNdJEvShHWvw7S
-         TLDQoIiO6uv0YoG3MWkELUzONcmiTXlqFad6HMyOebHwqKnfxr9sBoyra0K1tFNsfa9L
-         xk0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736389764; x=1736994564;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tuHlyCZ2v8Z/UOiT+zevmWuAaJTETQXAMxBjxTo/5Xo=;
-        b=kNv0zi1VIYo5TJjaJfYOlcY8spCOSuAlaqFeMDbRa//MJSyHB3vmJUvC2nylEVzTLf
-         jpmpKYGY2CEczU7CAZifJWkbmsoCtyw4ot/a8gxUeonJy2dPtCoJE95WQ7yil0ThosYO
-         pKmbjmhrSRlYL93VaKK2nM7OPZB5vERGutQmVt6JAluJaTHKUwRV4DXTz2n2Rt/hvLe1
-         dHgBhq2QBX1bbO/DaxuphVRTAFA143T0ALXxLOEt81SwIZMUzL02kqEEuDezLW7V8I1n
-         REtPUmuk9hu5NI0NRcm6BjG90g19w4xj0s1wd4/HYXdpKvcrkOsMCcvK0L/sF0q8lwMz
-         6YdA==
-X-Forwarded-Encrypted: i=1; AJvYcCWAjezd/qu5SrbmcaLHUthud/k8fU14WNv3fnp5oXv08RUg+JBy0y5IjW7J5CIYDwckbcvlLf/8hyuPMfsajWjkai7GvC0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9yW/MGrcV+EuVskUCRVy15gvBjljJToJgxXO38y+O4ydsx5W+
-	GZrkpHtEoTJImG/WOxmUC0s0evB4pcnDkobM0P0VpY6IoveW6SMVWDXOC/BNI1k=
-X-Gm-Gg: ASbGncucusCXkGnd3Wc7bNzxo7K0M/6MfX0PGK635a4GqPhUCDGQD+q+aO4eLLnlw7x
-	9T3ttz41IWgwNkXYKJdSGBgFs54ssgEjh9bw4KTSpIOd5aHBj9vdd4id3wkFW/IlgukrVP7JjlR
-	zCCR1+WR1TFBBv3TqTbFkz+U1ZiSH6blSy17cE0kh95U+kEyeg9dmv7HufVoT542ZUJN3sbTgsg
-	FAgEaMAOjG5j2bZbn/Lvn0WtuGFahBlljrgBpSgDlid8Y8=
-X-Google-Smtp-Source: AGHT+IEiW0hQMlynZLTeSqEG8t5Hx4KJYijsRSL5BopHzTcxKBDRtDH+iOQvqvSzplZg51yWB1kRWw==
-X-Received: by 2002:a05:6a00:e8e:b0:72a:bc6a:3a87 with SMTP id d2e1a72fcca58-72d21df17bfmr7052394b3a.0.1736389764464;
-        Wed, 08 Jan 2025 18:29:24 -0800 (PST)
-Received: from ghost ([50.145.13.30])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-a31d4d6b477sm161833a12.61.2025.01.08.18.29.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jan 2025 18:29:23 -0800 (PST)
-Date: Wed, 8 Jan 2025 18:29:20 -0800
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	Christian Brauner <brauner@kernel.org>, Guo Ren <guoren@kernel.org>,
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
-	James Clark <james.clark@linaro.org>,
-	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
-	Jonathan Corbet <corbet@lwn.net>, Arnd Bergmann <arnd@arndb.de>,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
-	linux-csky@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v5 00/16] perf tools: Use generic syscall scripts for all
- archs
-Message-ID: <Z380gLRYAKVPVEet@ghost>
-References: <20250107-perf_syscalltbl-v5-0-935de46d3175@rivosinc.com>
- <Z368mNynBTDWPM6R@google.com>
- <Z37-t9fhnmSghIPe@x1>
+	s=arc-20240116; t=1736390000; c=relaxed/simple;
+	bh=yyPw+bQMFCgtUYLoHPn9SRKam5YtAZgLVhJXTRBL824=;
+	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=uGnAbV7+5rwBp6ktO85wAxuThd6C7oElhQ/xTcD9a57B9OAiSLsWkLaXTb2meDcEfhu9QngqS+cCAaN2icr0dwUgLPZI5bfvRGqdAJbhalpGXvehrm7ZkvcWpzGoPjjD4gTk09Qil/JaOacIumdjOe2xQYIvxhkaLfThcq0MvI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4YT7zd3TwDz2Dk2R;
+	Thu,  9 Jan 2025 10:30:05 +0800 (CST)
+Received: from kwepemh100016.china.huawei.com (unknown [7.202.181.102])
+	by mail.maildlp.com (Postfix) with ESMTPS id AA373140159;
+	Thu,  9 Jan 2025 10:33:07 +0800 (CST)
+Received: from [10.174.179.93] (10.174.179.93) by
+ kwepemh100016.china.huawei.com (7.202.181.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 9 Jan 2025 10:33:04 +0800
+Subject: Re: [PATCH v4 -next 14/15] sh: vdso: move the sysctl to
+ arch/sh/kernel/vsyscall/vsyscall.c
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+References: <20241228145746.2783627-1-yukaixiong@huawei.com>
+ <20241228145746.2783627-15-yukaixiong@huawei.com>
+ <CAMuHMdVHD+AhMpcyxndTno-ocatS1tRP5uRrKNFL6Z=j3KX8og@mail.gmail.com>
+CC: <akpm@linux-foundation.org>, <mcgrof@kernel.org>,
+	<ysato@users.sourceforge.jp>, <dalias@libc.org>,
+	<glaubitz@physik.fu-berlin.de>, <luto@kernel.org>, <tglx@linutronix.de>,
+	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
+	<hpa@zytor.com>, <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
+	<jack@suse.cz>, <kees@kernel.org>, <j.granados@samsung.com>,
+	<willy@infradead.org>, <Liam.Howlett@oracle.com>, <vbabka@suse.cz>,
+	<lorenzo.stoakes@oracle.com>, <trondmy@kernel.org>, <anna@kernel.org>,
+	<chuck.lever@oracle.com>, <jlayton@kernel.org>, <neilb@suse.de>,
+	<okorniev@redhat.com>, <Dai.Ngo@oracle.com>, <tom@talpey.com>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <paul@paul-moore.com>, <jmorris@namei.org>,
+	<linux-sh@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-nfs@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-security-module@vger.kernel.org>, <dhowells@redhat.com>,
+	<haifeng.xu@shopee.com>, <baolin.wang@linux.alibaba.com>,
+	<shikemeng@huaweicloud.com>, <dchinner@redhat.com>, <bfoster@redhat.com>,
+	<souravpanda@google.com>, <hannes@cmpxchg.org>, <rientjes@google.com>,
+	<pasha.tatashin@soleen.com>, <david@redhat.com>, <ryan.roberts@arm.com>,
+	<ying.huang@intel.com>, <yang@os.amperecomputing.com>,
+	<zev@bewilderbeest.net>, <serge@hallyn.com>, <vegard.nossum@oracle.com>,
+	<wangkefeng.wang@huawei.com>
+From: yukaixiong <yukaixiong@huawei.com>
+Message-ID: <e8f12df8-3502-691a-a60d-645ac8fbdd65@huawei.com>
+Date: Thu, 9 Jan 2025 10:33:03 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <CAMuHMdVHD+AhMpcyxndTno-ocatS1tRP5uRrKNFL6Z=j3KX8og@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z37-t9fhnmSghIPe@x1>
+X-ClientProxiedBy: dggpeml500006.china.huawei.com (7.185.36.76) To
+ kwepemh100016.china.huawei.com (7.202.181.102)
 
-On Wed, Jan 08, 2025 at 07:39:51PM -0300, Arnaldo Carvalho de Melo wrote:
-> On Wed, Jan 08, 2025 at 09:57:44AM -0800, Namhyung Kim wrote:
-> > Hello,
-> > 
-> > On Tue, Jan 07, 2025 at 06:07:48PM -0800, Charlie Jenkins wrote:
-> > > Standardize the generation of syscall headers around syscall tables.
-> > > Previously each architecture independently selected how syscall headers
-> > > would be generated, or would not define a way and fallback onto
-> > > libaudit. Convert all architectures to use a standard syscall header
-> > > generation script and allow each architecture to override the syscall
-> > > table to use if they do not use the generic table.
-> > > 
-> > > As a result of these changes, no architecture will require libaudit, and
-> > > so the fallback case of using libaudit is removed by this series.
-> > > 
-> > > Testing:
-> > > 
-> > > I have tested that the syscall mappings of id to name generation works
-> > > as expected for every architecture, but I have only validated that perf
-> > > trace compiles and runs as expected on riscv, arm64, and x86_64.
-> > > 
-> > > Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
-> > > Reviewed-by: Ian Rogers <irogers@google.com>
-> > > Tested-by: Ian Rogers <irogers@google.com>
-> > 
-> > Acked-by: Namhyung Kim <namhyung@kernel.org>
-> 
-> So, somehow the first patch of this series didn't reach my inbox, b4
-> found it, and in it perf now does;
-> 
-> tools/perf/scripts/Makefile.syscalls
-> 
->   include $(srctree)/scripts/Kbuild.include
-> 
-> I.e. it uses a file that is outside tools/ so normal devel in the kernel
-> community may end up breaking tools/ living code, something we decided
-> not to have.
-> 
-> I noticed this while doing a: "make -C tools/perf build-test", the first
-> test creates a perf tarball and then tries to build it after
-> uncompressing it somewhere out of the checked out kernel source tree:
-> 
-> ⬢ [acme@toolbox perf-tools-next]$ make help | grep perf
->   perf-tar-src-pkg    - Build the perf source tarball with no compression
->   perf-targz-src-pkg  - Build the perf source tarball with gzip compression
->   perf-tarbz2-src-pkg - Build the perf source tarball with bz2 compression
->   perf-tarxz-src-pkg  - Build the perf source tarball with xz compression
->   perf-tarzst-src-pkg - Build the perf source tarball with zst compression
-> ⬢ [acme@toolbox perf-tools-next]$ make perf-tarxz-src-pkg
->   UPD     .tmp_HEAD
->   COPY    .tmp_perf/HEAD
->   GEN     .tmp_perf/PERF-VERSION-FILE
->   PERF_VERSION = 6.13.rc2.g48d3eefaa683
->   ARCHIVE perf-6.13.0-rc2.tar.xz
-> ⬢ [acme@toolbox perf-tools-next]$ mv perf-6.13.0-rc2.tar.xz ~
-> ⬢ [acme@toolbox perf-tools-next]$ cd ~
-> ⬢ [acme@toolbox ~]$ tar xvf perf-6.13.0-rc2.tar.xz | tail -5
-> perf-6.13.0-rc2/tools/scripts/Makefile.include
-> perf-6.13.0-rc2/tools/scripts/syscall.tbl
-> perf-6.13.0-rc2/tools/scripts/utilities.mak
-> perf-6.13.0-rc2/HEAD
-> perf-6.13.0-rc2/PERF-VERSION-FILE
-> ⬢ [acme@toolbox ~]$ cd perf-6.13.0-rc2/
-> ⬢ [acme@toolbox perf-6.13.0-rc2]$ make -C tools/perf
-> make: Entering directory '/home/acme/perf-6.13.0-rc2/tools/perf'
->   BUILD:   Doing 'make -j28' parallel build
-> Warning: Skipped check-headers due to missing ../../include
-> 
-> Auto-detecting system features:
-> ...                                   libdw: [ on  ]
-> ...                                   glibc: [ on  ]
-> ...                                  libbfd: [ on  ]
-> ...                          libbfd-buildid: [ on  ]
-> ...                                  libelf: [ on  ]
-> ...                                 libnuma: [ on  ]
-> ...                  numa_num_possible_cpus: [ on  ]
-> ...                                 libperl: [ on  ]
-> ...                               libpython: [ on  ]
-> ...                               libcrypto: [ on  ]
-> ...                               libunwind: [ on  ]
-> ...                             libcapstone: [ on  ]
-> ...                               llvm-perf: [ on  ]
-> ...                                    zlib: [ on  ]
-> ...                                    lzma: [ on  ]
-> ...                               get_cpuid: [ on  ]
-> ...                                     bpf: [ on  ]
-> ...                                  libaio: [ on  ]
-> ...                                 libzstd: [ on  ]
-> 
-> /home/acme/perf-6.13.0-rc2/tools/perf/scripts/Makefile.syscalls:18: /home/acme/perf-6.13.0-rc2/scripts/Kbuild.include: No such file or directory
-> make[2]: *** No rule to make target '/home/acme/perf-6.13.0-rc2/scripts/Kbuild.include'.  Stop.
-> make[1]: *** [Makefile.perf:286: sub-make] Error 2
-> make: *** [Makefile:76: all] Error 2
-> make: Leaving directory '/home/acme/perf-6.13.0-rc2/tools/perf'
-> ⬢ [acme@toolbox perf-6.13.0-rc2]$ 
-> 
-> This would probably (it does, just tested, but read on) make it work:
-> 
-> ⬢ [acme@toolbox perf-tools-next]$ git diff
-> diff --git a/tools/perf/MANIFEST b/tools/perf/MANIFEST
-> index dc42de1785cee715..83ef5d1365880929 100644
-> --- a/tools/perf/MANIFEST
-> +++ b/tools/perf/MANIFEST
-> @@ -22,6 +22,7 @@ tools/lib/str_error_r.c
->  tools/lib/vsprintf.c
->  tools/lib/zalloc.c
->  scripts/bpf_doc.py
-> +scripts/Kbuild.include
->  tools/bpf/bpftool
->  kernel/bpf/disasm.c
->  kernel/bpf/disasm.h
-> ⬢ [acme@toolbox perf-tools-next]$
-> 
-> As now we would find it, but then it references some other part of the
-> kernel's Kbuild system:
-> 
-> ⬢ [acme@toolbox perf-tools-next]$ grep -w srctree scripts/Kbuild.include
-> build := -f $(srctree)/scripts/Makefile.build obj
-> clean := -f $(srctree)/scripts/Makefile.clean obj
-> ⬢ [acme@toolbox perf-tools-next]$
-> 
-> And perf has:
-> 
-> ⬢ [acme@toolbox perf-tools-next]$ find tools/ -name Makefile.build
-> tools/build/Makefile.build
-> ⬢ [acme@toolbox perf-tools-next]$
-> 
-> And we also have:
-> 
-> ⬢ [acme@toolbox perf-tools-next]$ ls -la tools/scripts/
-> total 40
-> drwxr-xr-x. 1 acme acme   106 Jan  8 19:13 .
-> drwxr-xr-x. 1 acme acme   514 Jan  8 11:39 ..
-> -rw-r--r--. 1 acme acme  1224 Jan  8 11:41 Makefile.arch
-> -rw-r--r--. 1 acme acme  6205 Dec 20 21:48 Makefile.include
-> -rw-r--r--. 1 acme acme 17401 Jan  8 19:13 syscall.tbl
-> -rw-r--r--. 1 acme acme  6186 Dec 20 21:48 utilities.mak
-> ⬢ [acme@toolbox perf-tools-next]$
-> 
-> And:
-> 
-> ⬢ [acme@toolbox perf-tools-next]$ grep -w build tools/build/Makefile.include 
-> build := -f $(srctree)/tools/build/Makefile.build dir=. obj
-> 	$(SILENT_MAKE) -C $(srctree)/tools/build CFLAGS= LDFLAGS= $(OUTPUT)fixdep
-> 	$(Q)$(MAKE) -C $(srctree)/tools/build clean
-> ⬢ [acme@toolbox perf-tools-next]$
-> 
-> That is also in:
-> 
-> ⬢ [acme@toolbox perf-tools-next]$ grep -w build scripts/Kbuild.include 
-> # Shorthand for $(Q)$(MAKE) -f scripts/Makefile.build obj=
-> # $(Q)$(MAKE) $(build)=dir
-> build := -f $(srctree)/scripts/Makefile.build obj
-> # the interrupted recipe. So, you can safely stop the build by Ctrl-C (Make
-> # (1) PHONY targets are always build
-> # (2) No target, so we better build it
-> ⬢ [acme@toolbox perf-tools-next]$
-> 
-> So it seems we need to look at what we're using from the kernel's
-> scripts/Makefile.build to have it in a tools/build/ file.
-> 
-> Its late here and I'll have to stop at this point, please take a look to
-> see if this can be easily resolved so that we can merge your series, I
-> very much like to say goodbye to one more tools/perf library dependency
-> :-)
 
-Thank you for pointing this out. We can use tools/build/Build.include
-which seems to have everything that is required.  A "space" convenience
-variable needs to be added, but that is all. I'll send an updated
-version with that change.
 
-- Charlie
+On 2025/1/3 19:11, Geert Uytterhoeven wrote:
+> Hi Kaixiong,
+>
+> On Sat, Dec 28, 2024 at 4:07 PM Kaixiong Yu <yukaixiong@huawei.com> wrote:
+>> When CONFIG_SUPERH and CONFIG_VSYSCALL are defined,
+>> vdso_enabled belongs to arch/sh/kernel/vsyscall/vsyscall.c.
+>> So, move it into its own file. After this patch is applied,
+>> all sysctls of vm_table would be moved. So, delete vm_table.
+>>
+>> Signed-off-by: Kaixiong Yu <yukaixiong@huawei.com>
+>> Reviewed-by: Kees Cook <kees@kernel.org>
+>> ---
+>> v4:
+>>   - const qualify struct ctl_table vdso_table
+> Thanks for your patch!
+>
+> I gave this a try on landisk, and /proc/sys/vm/vdso_enabled
+> disappeared.
+>
+>> --- a/arch/sh/kernel/vsyscall/vsyscall.c
+>> +++ b/arch/sh/kernel/vsyscall/vsyscall.c
+>> @@ -55,6 +67,8 @@ int __init vsyscall_init(void)
+>>                 &vsyscall_trapa_start,
+>>                 &vsyscall_trapa_end - &vsyscall_trapa_start);
+>>
+>> +       register_sysctl_init("vm", vdso_table);
+>      "failed when register_sysctl_sz vdso_table to vm"
+>
+> Adding some debug prints shows that kzalloc() in
+> __register_sysctl_table() fails, presumably because it is called too
+> early in the boot process.
+>
+>> +
+>>          return 0;
+>>   }
+> Moving the call to register_sysctl_init() into its own fs_initcall(),
+> like the gmail-whitespace-damaged patch below, fixes that.
+>
+> --- a/arch/sh/kernel/vsyscall/vsyscall.c
+> +++ b/arch/sh/kernel/vsyscall/vsyscall.c
+> @@ -67,11 +67,17 @@ int __init vsyscall_init(void)
+>                 &vsyscall_trapa_start,
+>                 &vsyscall_trapa_end - &vsyscall_trapa_start);
+>
+> -       register_sysctl_init("vm", vdso_table);
+> +       return 0;
+> +}
+>
+> +static int __init vm_sysctl_init(void)
+> +{
+> +       register_sysctl_init("vm", vdso_table);
+>          return 0;
+>   }
+>
+> +fs_initcall(vm_sysctl_init);
+> +
+>   /* Setup a VMA at program startup for the vsyscall page */
+>   int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
+>   {
+>
+> Gr{oetje,eeting}s,
+>
+>                          Geert
 
-> 
-> Best regards,
-> 
-> - Arnaldo
+Thank you so much for your test and fix patch !
+
+I will fix it in patches series v5.
+
+Best ...
+
+
