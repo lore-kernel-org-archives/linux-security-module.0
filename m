@@ -1,233 +1,262 @@
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6687249E5
-	for <linux-security-module@vger.kernel.org>; Thu,  9 Jan 2025 01:42:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8005BE5E;
+	Thu,  9 Jan 2025 02:20:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736386937; cv=none; b=ZJo+yiZVgo7EylVVDwQMTSrSAdJy3oAzQKgUKuzbpcmO1JFsp1wxES//B+4dZwgguzIe6PFVeuxXFsUyfFwO3EIwa1wZWlxYfhB7wxiX4aAmzvnkhzebKw3+gFGfhGJEGpB8Rgc+OtIHePIgAPcBnG/KQ7GFxAnYaAThsuZimNA=
+	t=1736389226; cv=none; b=Nyj2ptLlLYxApwyFchThgmSaSZTXzMKyp+p5EjXcTDhETs1nkAUMTMYBZh+HzchV63v2PoK6FDEZxNtuIuhM3V9cK44OKSnsGwlzN+pi+8Y44pp8Os1BMawPNpd7Sr8EjuUuSPLCrzVxJb3FuImzlV0ucppkneCnWGZWz0cszOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736386937; c=relaxed/simple;
-	bh=zfeDX5addQPMOrAdOMKXjx8Mmkk8MvfM4ueVtIIUTr4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jMrSxzJNzzxpnAqNoPSM4/V9+8OOfCNZZllvRfYp6lOWwBnah+0aqzPULUsMA1wrJ0d7/ElltaqLU4k7sQ14HdktMN6ZepxN+1McUdLhHCmfwOF1JOFdF9uEV2TQ3AeRtCvHVZ82nUpXsOaf+w3nBtzK2pZzaksNUjA6MiAVE4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=BR5ROd2X; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="BR5ROd2X"
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e53a91756e5so659187276.1
-        for <linux-security-module@vger.kernel.org>; Wed, 08 Jan 2025 17:42:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1736386935; x=1736991735; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K4g1ykfPq95SnXVLikXosC+HM7OajCsrb3rQj4uRrmA=;
-        b=BR5ROd2XWbzMMmg50oJbwb5RQZ5QlEjXZ+qayfshUFH3Wnw7OQjjLVmvqgBoEDwA5m
-         PNadrmstK7MqxvewIw7swMl0c4esTbKD3kjvmd3QD6y7OALtxTqZsEioHyRT1/frAe5p
-         J8OiwY9kCMMKrv3fKoGcEEL9+bCwFvz1UozBW7q+omSBsMf3TvXC0D57YcztktdsKm3/
-         hYOYgqtFvEUnWYqofC27VLyOewCBPf5pDSX9zkMyDDhKKPQbbKHfIzkT9xevMFRpPeXw
-         AYlWXwdQR2k3gkahcjO1wKoqeG/TQ2szl4mKaUgWJU6+lE7LDmAcgTjdWjzMl2bQl2Q8
-         Wm5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736386935; x=1736991735;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=K4g1ykfPq95SnXVLikXosC+HM7OajCsrb3rQj4uRrmA=;
-        b=YPpG9prDcGgYTphnl/nEbpFahqrnRL1KTKdJAy4RiXVXTTSyJDqCJL7RN/NXJ0Hi+l
-         OGTgxoTB+qny+vDoRKs/D80Q6wd8PmQ10zeqlUSoujHfW0W3cIkDxN9loudTFh1VIabs
-         koKugVcjBoHruNpUYyO70OPApZwclWd3U+sKk2gYexEh3TRziAj9c+GcMNNhD+SgsE8E
-         ayTXKeQaKcdFrr0NHkgu/lCo/9cKm3AHrpzEofuz5ZjGBSBs9Svf2SN8btY7lW2P8KqG
-         aR+8Kx7aAXJei2+J0+RtSkIgS/zOjRxlcMrCn9uR73tyxkaEYo/d4o5XON1J5vbLrGux
-         Szzw==
-X-Forwarded-Encrypted: i=1; AJvYcCVy6vaSg3Yw4F8v69LCoG2arLJlBWeJKAl/bGTrktZnevD5dsmOMFHNo3V8mNywVhCDakdEeqzjNGEi4mLwB0CtSc5kLJ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGIKqlsG+WR1JnozXr/JF9Rxe97KNYlF2eb+8o6F3qhA7GWggJ
-	wAROBQEZKxk3IZFWqxbIzczbFM/VPhf6GFT3pNvd3wef/BpEQpLrBKjv53xqOHgPnHSn7hR2dWY
-	KI2hK6Tq64OVmAKEYrrvGivgZawfjYvSksol8
-X-Gm-Gg: ASbGncv2dmgKaUa8UW3t2lHugqdevNwm0VlQIvlrtHLCeYS048pGuS3MjvKnauVhqsh
-	kgSmyvSq04U9cP+LolO8XLNFMxRTCXeOue40n
-X-Google-Smtp-Source: AGHT+IFuNxO/vAJGBSQf0X0zue4DrqJfy2Im0U5mQK59KcyjDBi9LKq4XwIzzUc37VkLKwvDPtY4L5mlNnHdAYwyijE=
-X-Received: by 2002:a05:690c:9c02:b0:6ef:6f24:d093 with SMTP id
- 00721157ae682-6f5311f86dcmr44197627b3.6.1736386934739; Wed, 08 Jan 2025
- 17:42:14 -0800 (PST)
+	s=arc-20240116; t=1736389226; c=relaxed/simple;
+	bh=/sQEQ5TutOnrYYS0lFylL2fbNiVpAWSQGdovRBLQkiA=;
+	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=MGAsQpnPMVnRuW5n/WgQKYKCOPygWrmGqUmWv0pVRp59POPgTMa+INXreK+IpxWc8Lw/Axc3VYD4Dp8dhahikKUR3ddl+kLwAjIfIwAVwAORicn8PWh3podW+uj6lT9pHUkkByMyncti4XruKJnB2k+dBz2hkgE6zYtOet8YKmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4YT7h55PQ3zjY89;
+	Thu,  9 Jan 2025 10:16:37 +0800 (CST)
+Received: from kwepemh100016.china.huawei.com (unknown [7.202.181.102])
+	by mail.maildlp.com (Postfix) with ESMTPS id A0DFE1800D1;
+	Thu,  9 Jan 2025 10:20:20 +0800 (CST)
+Received: from [10.174.179.93] (10.174.179.93) by
+ kwepemh100016.china.huawei.com (7.202.181.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 9 Jan 2025 10:20:17 +0800
+Subject: Re: [PATCH v4 -next 06/15] mm: mmap: move sysctl to mm/mmap.c
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+References: <20241223141550.638616-1-yukaixiong@huawei.com>
+ <20241223141550.638616-7-yukaixiong@huawei.com>
+ <ef1d602b-23cb-4a95-b83e-c506958dc90c@lucifer.local>
+CC: <akpm@linux-foundation.org>, <mcgrof@kernel.org>,
+	<ysato@users.sourceforge.jp>, <dalias@libc.org>,
+	<glaubitz@physik.fu-berlin.de>, <luto@kernel.org>, <tglx@linutronix.de>,
+	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
+	<hpa@zytor.com>, <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
+	<jack@suse.cz>, <kees@kernel.org>, <j.granados@samsung.com>,
+	<willy@infradead.org>, <Liam.Howlett@oracle.com>, <vbabka@suse.cz>,
+	<trondmy@kernel.org>, <anna@kernel.org>, <chuck.lever@oracle.com>,
+	<jlayton@kernel.org>, <neilb@suse.de>, <okorniev@redhat.com>,
+	<Dai.Ngo@oracle.com>, <tom@talpey.com>, <davem@davemloft.net>,
+	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<paul@paul-moore.com>, <jmorris@namei.org>, <linux-sh@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	<linux-mm@kvack.org>, <linux-nfs@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-security-module@vger.kernel.org>, <dhowells@redhat.com>,
+	<haifeng.xu@shopee.com>, <baolin.wang@linux.alibaba.com>,
+	<shikemeng@huaweicloud.com>, <dchinner@redhat.com>, <bfoster@redhat.com>,
+	<souravpanda@google.com>, <hannes@cmpxchg.org>, <rientjes@google.com>,
+	<pasha.tatashin@soleen.com>, <david@redhat.com>, <ryan.roberts@arm.com>,
+	<ying.huang@intel.com>, <yang@os.amperecomputing.com>,
+	<zev@bewilderbeest.net>, <serge@hallyn.com>, <vegard.nossum@oracle.com>,
+	<wangkefeng.wang@huawei.com>
+From: yukaixiong <yukaixiong@huawei.com>
+Message-ID: <66d64c25-5c82-1388-e09d-f49765efcfba@huawei.com>
+Date: Thu, 9 Jan 2025 10:20:16 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250106235022.3859523-1-enlightened@chromium.org>
-In-Reply-To: <20250106235022.3859523-1-enlightened@chromium.org>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 8 Jan 2025 20:42:04 -0500
-X-Gm-Features: AbW1kvaVBfWYoRuRIg0anjLmixxvkSZIUhwZmuUivTaG5s8l0aMCoV_R-PjeFd8
-Message-ID: <CAHC9VhSdDJrEvSi_8LXM7Uop3dymTOwPyNJJoR+33HymMwuZUg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] fs: add loopback/bind mount specific security hook
-To: Shervin Oloumi <enlightened@chromium.org>
-Cc: mic@digikod.net, viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	jmorris@namei.org, serge@hallyn.com, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, gnoack@google.com, shuah@kernel.org, 
-	jorgelo@chromium.org, allenwebb@chromium.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Jan 6, 2025 at 6:50=E2=80=AFPM Shervin Oloumi <enlightened@chromium=
-.org> wrote:
->
-> The main mount security hook (security_sb_mount) is called early in the
-> process before the mount type is determined and the arguments are
-> validated and converted to the appropriate format. Specifically, the
-> source path is surfaced as a string, which is not appropriate for
-> checking bind mount requests. For bind mounts the source should be
-> validated and passed as a path struct (same as destination), after the
-> mount type is determined. This allows the hook users to evaluate the
-> mount attributes without the need to perform any validations or
-> conversions out of band, which can introduce a TOCTOU race condition.
->
-> The newly introduced hook is invoked only if the security_sb_mount hook
-> passes, and only if the MS_BIND flag is detected. At this point the
-> source of the mount has been successfully converted to a path struct
-> using the kernel's kern_path API. This allows LSMs to target bind mount
-> requests at the right stage, and evaluate the attributes in the right
-> format, based on the type of mount.
->
-> This does not affect the functionality of the existing mount security
-> hooks, including security_sb_mount. The new hook, can be utilized as a
-> supplement to the main hook for further analyzing bind mount requests.
-> This means that there is still the option of only using the main hook
-> function, if all one wants to do is indiscriminately reject all bind
-> mount requests, regardless of the source and destination arguments.
-> However, if one needs to evaluate the source and destination of a bind
-> mount request before making a decision, this hook function should be
-> preferred. Of course, if a bind mount request does not make it past the
-> security_sb_mount check, the bind mount hook function is never invoked.
->
-> Signed-off-by: Shervin Oloumi <enlightened@chromium.org>
-> ---
->
-> Changes since v1:
-> - Indicate whether the mount is recursive in the hook. This can be a
->   factor when deciding if a mount should be allowed
-> - Add default capabilities function for the new hook in security.h. This
->   is required for some tests to pass
-
-I'm not seeing anything like that in the patch you sent?  Am I missing
-something, did you send an incomplete/outdated patch, or simply word
-the change above wrong?
-
-> - Reword the hook description to be more future proof
-> ---
->  fs/namespace.c                |  4 ++++
->  include/linux/lsm_hook_defs.h |  2 ++
->  include/linux/security.h      |  7 +++++++
->  security/security.c           | 18 ++++++++++++++++++
->  4 files changed, 31 insertions(+)
->
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index 23e81c2a1e3f..535a1841c200 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -2765,6 +2765,10 @@ static int do_loopback(struct path *path, const ch=
-ar *old_name,
->         if (err)
->                 return err;
->
-> +       err =3D security_sb_bindmount(&old_path, path, recurse ? true : f=
-alse);
-> +       if (err)
-> +               goto out;
-> +
->         err =3D -EINVAL;
->         if (mnt_ns_loop(old_path.dentry))
->                 goto out;
-> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.=
-h
-> index eb2937599cb0..94f5a3530b98 100644
-> --- a/include/linux/lsm_hook_defs.h
-> +++ b/include/linux/lsm_hook_defs.h
-> @@ -71,6 +71,8 @@ LSM_HOOK(int, 0, sb_show_options, struct seq_file *m, s=
-truct super_block *sb)
->  LSM_HOOK(int, 0, sb_statfs, struct dentry *dentry)
->  LSM_HOOK(int, 0, sb_mount, const char *dev_name, const struct path *path=
-,
->          const char *type, unsigned long flags, void *data)
-> +LSM_HOOK(int, 0, sb_bindmount, const struct path *old_path,
-> +        const struct path *path, bool recurse)
->  LSM_HOOK(int, 0, sb_umount, struct vfsmount *mnt, int flags)
->  LSM_HOOK(int, 0, sb_pivotroot, const struct path *old_path,
->          const struct path *new_path)
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index cbdba435b798..d4a4c71865e3 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -365,6 +365,7 @@ int security_sb_show_options(struct seq_file *m, stru=
-ct super_block *sb);
->  int security_sb_statfs(struct dentry *dentry);
->  int security_sb_mount(const char *dev_name, const struct path *path,
->                       const char *type, unsigned long flags, void *data);
-> +int security_sb_bindmount(const struct path *old_path, const struct path=
- *path, bool recurse);
->  int security_sb_umount(struct vfsmount *mnt, int flags);
->  int security_sb_pivotroot(const struct path *old_path, const struct path=
- *new_path);
->  int security_sb_set_mnt_opts(struct super_block *sb,
-> @@ -801,6 +802,12 @@ static inline int security_sb_mount(const char *dev_=
-name, const struct path *pat
->         return 0;
->  }
->
-> +static inline int security_sb_bindmount(const struct path *old_path,
-> +                                       const struct path *path, bool rec=
-urse)
-> +{
-> +       return 0;
-> +}
-> +
->  static inline int security_sb_umount(struct vfsmount *mnt, int flags)
->  {
->         return 0;
-> diff --git a/security/security.c b/security/security.c
-> index 09664e09fec9..c115d8627e2d 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -1564,6 +1564,24 @@ int security_sb_mount(const char *dev_name, const =
-struct path *path,
->         return call_int_hook(sb_mount, dev_name, path, type, flags, data)=
-;
->  }
->
-> +/**
-> + * security_sb_bindmount() - Loopback/bind mount permission check
-> + * @old_path: source of loopback/bind mount
-> + * @path: mount point
-> + * @recurse: true if recursive (MS_REC)
-> + *
-> + * Beyond any general mounting hooks, this check is performed on an init=
-ial
-> + * loopback/bind mount (MS_BIND) with the mount source presented as a pa=
-th
-> + * struct in @old_path.
-> + *
-> + * Return: Returns 0 if permission is granted.
-> + */
-> +int security_sb_bindmount(const struct path *old_path, const struct path=
- *path,
-> +                         bool recurse)
-> +{
-> +       return call_int_hook(sb_bindmount, old_path, path, recurse);
-> +}
-> +
->  /**
->   * security_sb_umount() - Check permission for unmounting a filesystem
->   * @mnt: mounted filesystem
->
-> base-commit: fc033cf25e612e840e545f8d5ad2edd6ba613ed5
-> --
-> 2.47.1.613.gc27f4b7a9f-goog
->
+In-Reply-To: <ef1d602b-23cb-4a95-b83e-c506958dc90c@lucifer.local>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggpeml500006.china.huawei.com (7.185.36.76) To
+ kwepemh100016.china.huawei.com (7.202.181.102)
 
 
---=20
-paul-moore.com
+
+On 2025/1/2 22:08, Lorenzo Stoakes wrote:
+> On Mon, Dec 23, 2024 at 10:15:25PM +0800, Kaixiong Yu wrote:
+>> This moves all mmap related sysctls to mm/mmap.c, as part of the
+>> kernel/sysctl.c cleaning, also move the variable declaration from
+>> kernel/sysctl.c into mm/mmap.c.
+>>
+>> Signed-off-by: Kaixiong Yu <yukaixiong@huawei.com>
+>> Reviewed-by: Kees Cook <kees@kernel.org>
+> Looks good to me, thanks!
+>
+> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+
+Thanks for your review!
+
+Best ...
+>> ---
+>> v4:
+>>   - const qualify struct ctl_table mmap_table
+>> v3:
+>>   - change the title
+>> v2:
+>>   - fix sysctl_max_map_count undeclared issue in mm/nommu.c
+>> ---
+>> ---
+>>   kernel/sysctl.c | 50 +--------------------------------------------
+>>   mm/mmap.c       | 54 +++++++++++++++++++++++++++++++++++++++++++++++++
+>>   2 files changed, 55 insertions(+), 49 deletions(-)
+>>
+>> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+>> index aea3482106e0..9c245898f535 100644
+>> --- a/kernel/sysctl.c
+>> +++ b/kernel/sysctl.c
+>> @@ -127,12 +127,6 @@ enum sysctl_writes_mode {
+>>
+>>   static enum sysctl_writes_mode sysctl_writes_strict = SYSCTL_WRITES_STRICT;
+>>   #endif /* CONFIG_PROC_SYSCTL */
+>> -
+>> -#if defined(HAVE_ARCH_PICK_MMAP_LAYOUT) || \
+>> -    defined(CONFIG_ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT)
+>> -int sysctl_legacy_va_layout;
+>> -#endif
+>> -
+>>   #endif /* CONFIG_SYSCTL */
+>>
+>>   /*
+>> @@ -2037,16 +2031,7 @@ static struct ctl_table vm_table[] = {
+>>   		.extra1		= SYSCTL_ONE,
+>>   		.extra2		= SYSCTL_FOUR,
+>>   	},
+>> -#ifdef CONFIG_MMU
+>> -	{
+>> -		.procname	= "max_map_count",
+>> -		.data		= &sysctl_max_map_count,
+>> -		.maxlen		= sizeof(sysctl_max_map_count),
+>> -		.mode		= 0644,
+>> -		.proc_handler	= proc_dointvec_minmax,
+>> -		.extra1		= SYSCTL_ZERO,
+>> -	},
+>> -#else
+>> +#ifndef CONFIG_MMU
+>>   	{
+>>   		.procname	= "nr_trim_pages",
+>>   		.data		= &sysctl_nr_trim_pages,
+>> @@ -2064,17 +2049,6 @@ static struct ctl_table vm_table[] = {
+>>   		.proc_handler	= proc_dointvec_minmax,
+>>   		.extra1		= SYSCTL_ZERO,
+>>   	},
+> Nitty, but  this bit belongs in mm/nommu.c?
+>
+>> -#if defined(HAVE_ARCH_PICK_MMAP_LAYOUT) || \
+>> -    defined(CONFIG_ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT)
+>> -	{
+>> -		.procname	= "legacy_va_layout",
+>> -		.data		= &sysctl_legacy_va_layout,
+>> -		.maxlen		= sizeof(sysctl_legacy_va_layout),
+>> -		.mode		= 0644,
+>> -		.proc_handler	= proc_dointvec_minmax,
+>> -		.extra1		= SYSCTL_ZERO,
+>> -	},
+>> -#endif
+>>   #ifdef CONFIG_MMU
+>>   	{
+>>   		.procname	= "mmap_min_addr",
+>> @@ -2100,28 +2074,6 @@ static struct ctl_table vm_table[] = {
+>>   		.extra1		= SYSCTL_ZERO,
+>>   	},
+>>   #endif
+>> -#ifdef CONFIG_HAVE_ARCH_MMAP_RND_BITS
+>> -	{
+>> -		.procname	= "mmap_rnd_bits",
+>> -		.data		= &mmap_rnd_bits,
+>> -		.maxlen		= sizeof(mmap_rnd_bits),
+>> -		.mode		= 0600,
+>> -		.proc_handler	= proc_dointvec_minmax,
+>> -		.extra1		= (void *)&mmap_rnd_bits_min,
+>> -		.extra2		= (void *)&mmap_rnd_bits_max,
+>> -	},
+>> -#endif
+>> -#ifdef CONFIG_HAVE_ARCH_MMAP_RND_COMPAT_BITS
+>> -	{
+>> -		.procname	= "mmap_rnd_compat_bits",
+>> -		.data		= &mmap_rnd_compat_bits,
+>> -		.maxlen		= sizeof(mmap_rnd_compat_bits),
+>> -		.mode		= 0600,
+>> -		.proc_handler	= proc_dointvec_minmax,
+>> -		.extra1		= (void *)&mmap_rnd_compat_bits_min,
+>> -		.extra2		= (void *)&mmap_rnd_compat_bits_max,
+>> -	},
+>> -#endif
+>>   };
+>>
+>>   int __init sysctl_init_bases(void)
+>> diff --git a/mm/mmap.c b/mm/mmap.c
+>> index aef835984b1c..cc579aafd7ba 100644
+>> --- a/mm/mmap.c
+>> +++ b/mm/mmap.c
+>> @@ -1603,6 +1603,57 @@ struct vm_area_struct *_install_special_mapping(
+>>   					&special_mapping_vmops);
+>>   }
+>>
+>> +#ifdef CONFIG_SYSCTL
+>> +#if defined(HAVE_ARCH_PICK_MMAP_LAYOUT) || \
+>> +		defined(CONFIG_ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT)
+>> +int sysctl_legacy_va_layout;
+>> +#endif
+>> +
+>> +static const struct ctl_table mmap_table[] = {
+>> +		{
+>> +				.procname       = "max_map_count",
+>> +				.data           = &sysctl_max_map_count,
+>> +				.maxlen         = sizeof(sysctl_max_map_count),
+>> +				.mode           = 0644,
+>> +				.proc_handler   = proc_dointvec_minmax,
+>> +				.extra1         = SYSCTL_ZERO,
+>> +		},
+>> +#if defined(HAVE_ARCH_PICK_MMAP_LAYOUT) || \
+>> +		defined(CONFIG_ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT)
+>> +		{
+>> +				.procname       = "legacy_va_layout",
+>> +				.data           = &sysctl_legacy_va_layout,
+>> +				.maxlen         = sizeof(sysctl_legacy_va_layout),
+>> +				.mode           = 0644,
+>> +				.proc_handler   = proc_dointvec_minmax,
+>> +				.extra1         = SYSCTL_ZERO,
+>> +		},
+>> +#endif
+>> +#ifdef CONFIG_HAVE_ARCH_MMAP_RND_BITS
+>> +		{
+>> +				.procname       = "mmap_rnd_bits",
+>> +				.data           = &mmap_rnd_bits,
+>> +				.maxlen         = sizeof(mmap_rnd_bits),
+>> +				.mode           = 0600,
+>> +				.proc_handler   = proc_dointvec_minmax,
+>> +				.extra1         = (void *)&mmap_rnd_bits_min,
+>> +				.extra2         = (void *)&mmap_rnd_bits_max,
+>> +		},
+>> +#endif
+>> +#ifdef CONFIG_HAVE_ARCH_MMAP_RND_COMPAT_BITS
+>> +		{
+>> +				.procname       = "mmap_rnd_compat_bits",
+>> +				.data           = &mmap_rnd_compat_bits,
+>> +				.maxlen         = sizeof(mmap_rnd_compat_bits),
+>> +				.mode           = 0600,
+>> +				.proc_handler   = proc_dointvec_minmax,
+>> +				.extra1         = (void *)&mmap_rnd_compat_bits_min,
+>> +				.extra2         = (void *)&mmap_rnd_compat_bits_max,
+>> +		},
+>> +#endif
+>> +};
+>> +#endif /* CONFIG_SYSCTL */
+>> +
+>>   /*
+>>    * initialise the percpu counter for VM
+>>    */
+>> @@ -1612,6 +1663,9 @@ void __init mmap_init(void)
+>>
+>>   	ret = percpu_counter_init(&vm_committed_as, 0, GFP_KERNEL);
+>>   	VM_BUG_ON(ret);
+>> +#ifdef CONFIG_SYSCTL
+>> +	register_sysctl_init("vm", mmap_table);
+>> +#endif
+>>   }
+>>
+>>   /*
+>> --
+>> 2.34.1
+>>
+> .
+>
+
