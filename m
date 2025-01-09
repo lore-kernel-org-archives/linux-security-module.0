@@ -1,64 +1,64 @@
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B3191B042C
-	for <linux-security-module@vger.kernel.org>; Thu,  9 Jan 2025 02:37:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05C201FBCB9
+	for <linux-security-module@vger.kernel.org>; Thu,  9 Jan 2025 02:37:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736390234; cv=none; b=AFLY6Av4MRnZDotBXpd+gexjLEIcKcXFzaZ8XSwGNgHWH4t39vzMrMg7L8VL2pMBCIFIoHt1k6wOxJYueY7k5d25leH8PMms90qSXuW65oc6642IymyogFY2QQcQwAPO+YKu3tS1B9YQy5jPdqbJD2uRdt1KWvAqjfJ35P3jsso=
+	t=1736390237; cv=none; b=evv0miIVCZQ1ZJlTJvBnQBIJZLcC5NOryryYAQ98HulRk4jRLh6ZGDnHcFRrwcyM/GPcGEHJlFt+dkSKq6Kxuhrdm0PkasVcf51cGbY2ycGqsi7jh4SNSuLakV5i/s1iJ0LfOrgtibrC340+eZV4/v5nqURj/6n5e/wvuip/YeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736390234; c=relaxed/simple;
-	bh=oRK0NTjr3v6Mh0jMlSaE9maqBmXa4a6/G9BsJTG/8Tw=;
+	s=arc-20240116; t=1736390237; c=relaxed/simple;
+	bh=WUFZcwWRoAiXUoWOaiOcPbkuOTuGd1/b8k7miYOj5aI=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=TdosWsOGl3iTcjVz0cmdNBUKcypt5j53LGiGiScjXpsbYfxnTx3M/3JdQq7WZbdGe2A3ZMhLG0iK6AenRmMBUe41L1QmBN806U8lwqgwtmX5povuKMrUS4Fi0vH7Vde4UhHZO8vJeKQJeWx2j773aGeG0949cLIh8WSmeiUdpFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=MQxu3IVC; arc=none smtp.client-ip=209.85.216.53
+	 In-Reply-To:To:Cc; b=J1lBxE2vs3SN9u4HK0HJ5BsU1lBWCIS+UsGv6a65tuUs7q4gkEgHC9mCDrIslWzxsYz4Qwcm3D6sUo/ddcAw/C1P2DqGG6M2pPbhCHrufMCq2xt/QxVki41vSkQ4d1on0Op2YWkCGkzuScHnVH0/Ff/cmflXud2fiexXLMtfvSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=OHxQoX0C; arc=none smtp.client-ip=209.85.214.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="MQxu3IVC"
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2efded08c79so632110a91.0
-        for <linux-security-module@vger.kernel.org>; Wed, 08 Jan 2025 18:37:12 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="OHxQoX0C"
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2165448243fso6390325ad.1
+        for <linux-security-module@vger.kernel.org>; Wed, 08 Jan 2025 18:37:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1736390232; x=1736995032; darn=vger.kernel.org;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1736390234; x=1736995034; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=aqeHuZiQk8n4MlJOPbQsxVRUlw8T5DqruaOf4SH+hxw=;
-        b=MQxu3IVC/7BKrb9r06EtnYSgyBt1wznfHVkMmGyV2IaGl2TWY3WX/ck/otTRMPX3FW
-         dIFLtq6vLlJbgyENMY3wZx40C4aPU3bv6XQch+o/2QLfFR5LeAQF7hxITLug277pWBuF
-         zY3g58Dq1Q/ad5+s3ncNxmFwbdMaQkfR3jtDvHRrT5wZhD96tkHJXMqTilgHpSfdObYN
-         fq6D+jjBM719nJM6/+Jzd+a4+aR95ca41SkdhG7eEd0oaBndWiVNJGPyFcwOsQ5p9eVO
-         8EFyYDGQRxsXyuYmb86p3tQPbqowR4yPHnD8KfKhKy3mtbE28rtBabmSFI8sfdU5NVlf
-         OXoQ==
+        bh=Vr1AmSpAXQaPMTqNcGDOgGl9O+bLngonO0DcMs8xKEA=;
+        b=OHxQoX0CP6MVBFmD1rc9YiNer1m4UmGdSgWK/GaUrQq79jLPOqiGuvtFEuvpg7SJIa
+         ei3dO4aLqaqUO0VLTUjyYrqN9m/pkBoYaaJ6eQ0CKeCpSEcU7Vb9XjewM2ysZGyutujl
+         iQmBK29aZ/7jDk1SS9hZl9jLK4TQ2+O3DaIDanvnU4IMmMexrac8v+b30i8dkMFJnZ6Y
+         rczHxcWtX3AkPnBCCjWm4m6yzdUaktmYN/XCh2GpQQVBRLPSQ/6ITDHccz9ydbmjlDBa
+         skF4xCDmkYL3YI2hjYCBUu1qIxgWL6qhVSO9rxnpjDD7iSHW2Mwx9WjjTjoXhfT/eMNV
+         Gi8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736390232; x=1736995032;
+        d=1e100.net; s=20230601; t=1736390234; x=1736995034;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=aqeHuZiQk8n4MlJOPbQsxVRUlw8T5DqruaOf4SH+hxw=;
-        b=eVy/8w0Hvt8h45VyujQHkM/G9p9dVh/k8UIMeW1aZbsC6GZ0C0eUYtAo1ZhKPqkvKF
-         iK+AijMB2p1EJICb9gBILqjkyoywTPal133jzxmus91FZ75eoi+l1fzQO2rzHOvYe/nX
-         apcQqOK6dTEWdQQPEdDe/3aS4iwBXlGGmyQo92KecbaeyhMDIn6UKLNrHz2Qdjjgz2EB
-         4Ajf+MSfSmpdx0rZDz9Ax0rMlnKncVV1fyP7jNFM7VaDGzujLYVsJJVRjRz2oK6/PX6J
-         d07pgly/kArV3iaxKomHCVGGZFpc2xNYwhUP2z1Zf943ITr92KIh6pHWEYAn93+pa1tV
-         T7Wg==
-X-Forwarded-Encrypted: i=1; AJvYcCU3mrDCJZ4GOZh1q4pYqcn6PZeTiObDa0TdnfHZ8j3wXOpUdntNfdmoOmMcy8LXGMpjhCsracUi50U4gfC7XaIGpoFiCbc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIq1+F+xl9JoubgsXxfrZ60MbHqYdMHmEaAXXtQWyU+9Ws91m1
-	e6Zvpr44DwjKVns/tw0+fXzLXkywMsPik9iSoo8uyk5IBdzM76qKLroXnFNr8f4=
-X-Gm-Gg: ASbGncsYw09Fk42D1eR6DqK6XziglswC1+ToToFflTu4f+nwr5A+L3aI4vPqNCFmO6d
-	o47VUk+wWuv8+b1jVZe8eewCX22msyNr0MN/q2IQWxpayK8b/1LgNId0WdD2tny1+QHnBpKCWq/
-	W1g00CcsUdRW0xe0WwqLH85DD7AGwFBmeg1vG8sOsKvXt2g4z1HIWZQ9eQleyecDtwqz+z7gKAF
-	U7V67qkETKbymizidAertgA/PWmo+Ks1D/x1DaV+j+O5IqbjO3ZNmd3Jq1COKl3sAFocshu
-X-Google-Smtp-Source: AGHT+IHMHgQ6RYyWJ2fx/ikjPenJYQhg+6pwBzg5xV1VHjbZDzyx/c9tLjk/WYYk+L3ebG3cV4Qjlw==
-X-Received: by 2002:a17:90b:2cc5:b0:2ee:964e:67ce with SMTP id 98e67ed59e1d1-2f548e9a52dmr7312725a91.3.1736390231775;
-        Wed, 08 Jan 2025 18:37:11 -0800 (PST)
+        bh=Vr1AmSpAXQaPMTqNcGDOgGl9O+bLngonO0DcMs8xKEA=;
+        b=Il6BtrE9Qd1Tj6Zkn5+Ny9yTKdVw9HZsR7t8dviYup379/cRmwEciJVBOnAZaTKe3f
+         fVK56G5T7idVdWyTKeHUG1JBzEmEiX4JdtRNisw4POJtMDcp8KayIjqDYv8puVvqSs4f
+         pzmEW24Nbzo+zirZBirhy9JA4tjnw9LuFD1TgMHVREOUPOSrzxbWEU3L7vpyHOAd/Kxt
+         I8Rx2bjrxwdtS8dHVrhs9os3lNGDLcRpFUZE37lZrJCRHDTnTv34ePKoNlMLsFvmKIcS
+         QB1uKUiijBRlHg5KF3prl0Rjs539Ty2X+bHJtZVtmLbmwrYbZ5fLNDD0i/LWVBeboA0I
+         9fWg==
+X-Forwarded-Encrypted: i=1; AJvYcCVshwQeNuKjVn+r6docupgWonWhfqcB8R4bmNCAh/th1YaJA3ctCpizsP32Lvv3I/CjZj1oHru1IPNFrWBL5je/XflfxM8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkG+XlquJcllpdPqMQd5Vnuq0wqiMynzH3licD7Ncy6T24Jpw1
+	uvSxkvstWXkY1CWgTOkDYPI9SXQ9VOljlXoO/gg4gU5v+PA//4w82bzrRtFq+ng=
+X-Gm-Gg: ASbGnctZLW7o6hQiYd6egd1xroG3+4GYlH/P6xxBYIffE0frPM50Rgm/AdiHkcOH/yJ
+	DyoHGdLBEyBpsvz6LV0iDvttRkLbP/aH5oMk4X16eYnV2NK7jw1JzjkHaIlan3EOH0/btkAzbPh
+	jm0oJGUcLpcW5vm+adt2FzZfRXr1PRP4dTB0tPndwFy+FRxl3ize8uV4rKAtCsSwOR0uMLCi8yn
+	2GHv9K7ceJQ1tyLZRh06H1JRPz2SvM60xnnEtcsyeNpnRbje0qgwulNeVxWc9fHCWQyZRN9
+X-Google-Smtp-Source: AGHT+IFz+rK9PR+JzC1FWypELvWH1cEgCo1/H/4+lhIOHW9EGZFvsyY6ABvYR7ydQVwOeMLVFuh4vg==
+X-Received: by 2002:a17:902:d4cd:b0:216:3c2b:a5e5 with SMTP id d9443c01a7336-21a83f71115mr60403015ad.27.1736390234363;
+        Wed, 08 Jan 2025 18:37:14 -0800 (PST)
 Received: from charlie.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21a9176bed6sm1434365ad.12.2025.01.08.18.37.09
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21a9176bed6sm1434365ad.12.2025.01.08.18.37.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jan 2025 18:37:10 -0800 (PST)
+        Wed, 08 Jan 2025 18:37:13 -0800 (PST)
 From: Charlie Jenkins <charlie@rivosinc.com>
-Date: Wed, 08 Jan 2025 18:36:29 -0800
-Subject: [PATCH v6 14/16] perf tools: powerpc: Use generic syscall table
+Date: Wed, 08 Jan 2025 18:36:30 -0800
+Subject: [PATCH v6 15/16] perf tools: s390: Use generic syscall table
  scripts
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
@@ -68,7 +68,7 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250108-perf_syscalltbl-v6-14-7543b5293098@rivosinc.com>
+Message-Id: <20250108-perf_syscalltbl-v6-15-7543b5293098@rivosinc.com>
 References: <20250108-perf_syscalltbl-v6-0-7543b5293098@rivosinc.com>
 In-Reply-To: <20250108-perf_syscalltbl-v6-0-7543b5293098@rivosinc.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
@@ -92,70 +92,73 @@ Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org, 
  Charlie Jenkins <charlie@rivosinc.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6924; i=charlie@rivosinc.com;
- h=from:subject:message-id; bh=oRK0NTjr3v6Mh0jMlSaE9maqBmXa4a6/G9BsJTG/8Tw=;
- b=owGbwMvMwCHWx5hUnlvL8Y3xtFoSQ3q9mb4Vl4D01SnHbAN/zjjbeqFa+5ZUVlVtrH11A1/F/
- 7W5hd4dpSwMYhwMsmKKLDzXGphb7+iXHRUtmwAzh5UJZAgDF6cATMT1ECPDa/3ZktJTvfY0S1un
- LPJ+sMQgd6k+2w6GLTx/2Fuvr7koyMhwPy3o6DePZoPdiSejBA62RnHcb0l9dWXXRdn91XNFtaQ
- YAQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6102; i=charlie@rivosinc.com;
+ h=from:subject:message-id; bh=WUFZcwWRoAiXUoWOaiOcPbkuOTuGd1/b8k7miYOj5aI=;
+ b=owGbwMvMwCHWx5hUnlvL8Y3xtFoSQ3q9mf5e1eXqbXJv61NV3h9jeCp2N/6Wx/6L05h0PF3qT
+ CZ9i93VUcrCIMbBICumyMJzrYG59Y5+2VHRsgkwc1iZQIYwcHEKwEQ2NzD8Zu+0PnT4+jKbzMYp
+ 4d757N3JCgf63ZoDL22dHs0rWJvexcjwSO5zzQrN1+c3N6hfSbKUDl0wuTLmXqjl4qzSs9nLD9b
+ xAgA=
 X-Developer-Key: i=charlie@rivosinc.com; a=openpgp;
  fpr=7D834FF11B1D8387E61C776FFB10D1F27D6B1354
 
 Use the generic scripts to generate headers from the syscall table
-instead of the custom ones for powerpc.
+instead of the custom ones for s390.
 
 Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
 ---
- tools/perf/Makefile.config                         |  3 +-
+ tools/perf/Makefile.config                         |  6 +---
  tools/perf/Makefile.perf                           |  2 +-
- tools/perf/arch/powerpc/Makefile                   | 25 --------------
- tools/perf/arch/powerpc/entry/syscalls/Kbuild      |  3 ++
- .../arch/powerpc/entry/syscalls/Makefile.syscalls  |  6 ++++
- .../perf/arch/powerpc/entry/syscalls/mksyscalltbl  | 39 ----------------------
- tools/perf/arch/powerpc/include/syscall_table.h    |  8 +++++
- tools/perf/util/syscalltbl.c                       |  8 -----
- 8 files changed, 19 insertions(+), 75 deletions(-)
+ tools/perf/arch/s390/Makefile                      | 21 --------------
+ tools/perf/arch/s390/entry/syscalls/Kbuild         |  2 ++
+ .../arch/s390/entry/syscalls/Makefile.syscalls     |  5 ++++
+ tools/perf/arch/s390/entry/syscalls/mksyscalltbl   | 32 ----------------------
+ tools/perf/arch/s390/include/syscall_table.h       |  2 ++
+ tools/perf/util/syscalltbl.c                       |  6 +---
+ 8 files changed, 12 insertions(+), 64 deletions(-)
 
 diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-index e053a2304f40f6cd06a9fd022ba863b5bf2efa5e..7213f6d806e5497309524cacb16bd8313e9bc5cb 100644
+index 7213f6d806e5497309524cacb16bd8313e9bc5cb..feb61be7c4f93d7ebe0530839aebcd03ab8ec425 100644
 --- a/tools/perf/Makefile.config
 +++ b/tools/perf/Makefile.config
-@@ -31,7 +31,7 @@ $(call detected_var,SRCARCH)
+@@ -31,10 +31,6 @@ $(call detected_var,SRCARCH)
  ifneq ($(NO_SYSCALL_TABLE),1)
    NO_SYSCALL_TABLE := 1
  
--  ifeq ($(SRCARCH),$(filter $(SRCARCH),powerpc s390))
-+  ifeq ($(SRCARCH),s390)
+-  ifeq ($(SRCARCH),s390)
+-    NO_SYSCALL_TABLE := 0
+-  endif
+-
+   # architectures that use the generic syscall table scripts
+   ifneq ($(filter $(SRCARCH), $(generic_syscall_table_archs)),)
      NO_SYSCALL_TABLE := 0
-   endif
+@@ -90,7 +86,7 @@ ifeq ($(SRCARCH),loongarch)
+ endif
  
-@@ -49,7 +49,6 @@ endif
+ ifeq ($(ARCH),s390)
+-  CFLAGS += -fPIC -I$(OUTPUT)arch/s390/include/generated
++  CFLAGS += -fPIC
+ endif
  
- # Additional ARCH settings for ppc
- ifeq ($(SRCARCH),powerpc)
--  CFLAGS += -I$(OUTPUT)arch/powerpc/include/generated
-   ifndef NO_LIBUNWIND
-     LIBUNWIND_LIBS := -lunwind -lunwind-ppc64
-   endif
+ ifeq ($(ARCH),mips)
 diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
-index 84d23f147365d5a57c83fe16a2faedf45f4e2f70..0e30da3b781b5a51ea179ab15993391ff7055635 100644
+index 0e30da3b781b5a51ea179ab15993391ff7055635..8081adf0e02354b9662a4e3c8493d6b1cec9fe25 100644
 --- a/tools/perf/Makefile.perf
 +++ b/tools/perf/Makefile.perf
 @@ -311,7 +311,7 @@ FEATURE_TESTS := all
  endif
  endif
  # architectures that use the generic syscall table
--generic_syscall_table_archs := riscv arc csky arm sh sparc xtensa x86 alpha parisc arm64 loongarch mips
-+generic_syscall_table_archs := riscv arc csky arm sh sparc xtensa x86 alpha parisc arm64 loongarch mips powerpc
+-generic_syscall_table_archs := riscv arc csky arm sh sparc xtensa x86 alpha parisc arm64 loongarch mips powerpc
++generic_syscall_table_archs := riscv arc csky arm sh sparc xtensa x86 alpha parisc arm64 loongarch mips powerpc s390
  ifneq ($(filter $(SRCARCH), $(generic_syscall_table_archs)),)
  include $(srctree)/tools/perf/scripts/Makefile.syscalls
  endif
-diff --git a/tools/perf/arch/powerpc/Makefile b/tools/perf/arch/powerpc/Makefile
-index dc8f4fb8e324ab6679d78b5fee3636ba7d2ff7c0..a295a80ea078199547e816d18531820bfdba7961 100644
---- a/tools/perf/arch/powerpc/Makefile
-+++ b/tools/perf/arch/powerpc/Makefile
-@@ -1,28 +1,3 @@
- # SPDX-License-Identifier: GPL-2.0
+diff --git a/tools/perf/arch/s390/Makefile b/tools/perf/arch/s390/Makefile
+index c431c21b11ef824535c1b9fb6ca4246d666fc97b..0033698a65ce5d5d7ebcc280399957561dd9d2c6 100644
+--- a/tools/perf/arch/s390/Makefile
++++ b/tools/perf/arch/s390/Makefile
+@@ -1,24 +1,3 @@
+ # SPDX-License-Identifier: GPL-2.0-only
  HAVE_KVM_STAT_SUPPORT := 1
  PERF_HAVE_JITDUMP := 1
 -
@@ -163,65 +166,57 @@ index dc8f4fb8e324ab6679d78b5fee3636ba7d2ff7c0..a295a80ea078199547e816d18531820b
 -# Syscall table generation for perf
 -#
 -
--out    := $(OUTPUT)arch/powerpc/include/generated/asm
--header32 := $(out)/syscalls_32.c
--header64 := $(out)/syscalls_64.c
--sysprf := $(srctree)/tools/perf/arch/powerpc/entry/syscalls
+-out    := $(OUTPUT)arch/s390/include/generated/asm
+-header := $(out)/syscalls_64.c
+-sysprf := $(srctree)/tools/perf/arch/s390/entry/syscalls
 -sysdef := $(sysprf)/syscall.tbl
 -systbl := $(sysprf)/mksyscalltbl
 -
 -# Create output directory if not already present
 -$(shell [ -d '$(out)' ] || mkdir -p '$(out)')
 -
--$(header64): $(sysdef) $(systbl)
--	$(Q)$(SHELL) '$(systbl)' '64' $(sysdef) > $@
--
--$(header32): $(sysdef) $(systbl)
--	$(Q)$(SHELL) '$(systbl)' '32' $(sysdef) > $@
+-$(header): $(sysdef) $(systbl)
+-	$(Q)$(SHELL) '$(systbl)' $(sysdef) > $@
 -
 -clean::
--	$(call QUIET_CLEAN, powerpc) $(RM) $(header32) $(header64)
+-	$(call QUIET_CLEAN, s390) $(RM) $(header)
 -
--archheaders: $(header32) $(header64)
-diff --git a/tools/perf/arch/powerpc/entry/syscalls/Kbuild b/tools/perf/arch/powerpc/entry/syscalls/Kbuild
+-archheaders: $(header)
+diff --git a/tools/perf/arch/s390/entry/syscalls/Kbuild b/tools/perf/arch/s390/entry/syscalls/Kbuild
 new file mode 100644
-index 0000000000000000000000000000000000000000..84c6599b4ea6a160217a3496449b205f2263f0fb
+index 0000000000000000000000000000000000000000..9a41e3572c3afd4f202321fd9e492714540e8fd3
 --- /dev/null
-+++ b/tools/perf/arch/powerpc/entry/syscalls/Kbuild
-@@ -0,0 +1,3 @@
++++ b/tools/perf/arch/s390/entry/syscalls/Kbuild
+@@ -0,0 +1,2 @@
 +# SPDX-License-Identifier: GPL-2.0
-+syscall-y += syscalls_32.h
 +syscall-y += syscalls_64.h
-diff --git a/tools/perf/arch/powerpc/entry/syscalls/Makefile.syscalls b/tools/perf/arch/powerpc/entry/syscalls/Makefile.syscalls
+diff --git a/tools/perf/arch/s390/entry/syscalls/Makefile.syscalls b/tools/perf/arch/s390/entry/syscalls/Makefile.syscalls
 new file mode 100644
-index 0000000000000000000000000000000000000000..f7e87a61401c14a1d3a8a04fe2c8ecc8bedcc1b0
+index 0000000000000000000000000000000000000000..9762d7abf17c3f79a6213e7306a5f7b56e833a78
 --- /dev/null
-+++ b/tools/perf/arch/powerpc/entry/syscalls/Makefile.syscalls
-@@ -0,0 +1,6 @@
++++ b/tools/perf/arch/s390/entry/syscalls/Makefile.syscalls
+@@ -0,0 +1,5 @@
 +# SPDX-License-Identifier: GPL-2.0
 +
-+syscall_abis_32 += spu nospu
-+syscall_abis_64 += spu nospu
++syscall_abis_64 += renameat rlimit memfd_secret
 +
-+syscalltbl = $(srctree)/tools/perf/arch/powerpc/entry/syscalls/syscall.tbl
-diff --git a/tools/perf/arch/powerpc/entry/syscalls/mksyscalltbl b/tools/perf/arch/powerpc/entry/syscalls/mksyscalltbl
++syscalltbl = $(srctree)/tools/perf/arch/s390/entry/syscalls/syscall.tbl
+diff --git a/tools/perf/arch/s390/entry/syscalls/mksyscalltbl b/tools/perf/arch/s390/entry/syscalls/mksyscalltbl
 deleted file mode 100755
-index 0eb316fe6dd1175a86035f76f9f3cf7501c376bd..0000000000000000000000000000000000000000
---- a/tools/perf/arch/powerpc/entry/syscalls/mksyscalltbl
+index 52eb88a77c94727aeb8c15427cdd43dfe5f9f2bd..0000000000000000000000000000000000000000
+--- a/tools/perf/arch/s390/entry/syscalls/mksyscalltbl
 +++ /dev/null
-@@ -1,39 +0,0 @@
+@@ -1,32 +0,0 @@
 -#!/bin/sh
 -# SPDX-License-Identifier: GPL-2.0
 -#
--# Generate system call table for perf. Derived from
--# s390 script.
+-# Generate system call table for perf
 -#
--# Copyright IBM Corp. 2017
+-# Copyright IBM Corp. 2017, 2018
 -# Author(s):  Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
--# Changed by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+-#
 -
--wordsize=$1
--SYSCALL_TBL=$2
+-SYSCALL_TBL=$1
 -
 -if ! test -r $SYSCALL_TBL; then
 -	echo "Could not read input file" >&2
@@ -230,58 +225,45 @@ index 0eb316fe6dd1175a86035f76f9f3cf7501c376bd..00000000000000000000000000000000
 -
 -create_table()
 -{
--	local wordsize=$1
 -	local max_nr nr abi sc discard
--	max_nr=-1
--	nr=0
 -
--	echo "static const char *const syscalltbl_powerpc_${wordsize}[] = {"
+-	echo 'static const char *const syscalltbl_s390_64[] = {'
 -	while read nr abi sc discard; do
--		if [ "$max_nr" -lt "$nr" ]; then
--			printf '\t[%d] = "%s",\n' $nr $sc
--			max_nr=$nr
--		fi
+-		printf '\t[%d] = "%s",\n' $nr $sc
+-		max_nr=$nr
 -	done
 -	echo '};'
--	echo "#define SYSCALLTBL_POWERPC_${wordsize}_MAX_ID $max_nr"
+-	echo "#define SYSCALLTBL_S390_64_MAX_ID $max_nr"
 -}
 -
--grep -E "^[[:digit:]]+[[:space:]]+(common|spu|nospu|${wordsize})" $SYSCALL_TBL \
--	|sort -k1 -n                                                           \
--	|create_table ${wordsize}
-diff --git a/tools/perf/arch/powerpc/include/syscall_table.h b/tools/perf/arch/powerpc/include/syscall_table.h
+-grep -E "^[[:digit:]]+[[:space:]]+(common|64)" $SYSCALL_TBL	\
+-	|sort -k1 -n					\
+-	|create_table
+diff --git a/tools/perf/arch/s390/include/syscall_table.h b/tools/perf/arch/s390/include/syscall_table.h
 new file mode 100644
-index 0000000000000000000000000000000000000000..7ff51b783000d727ec48be960730b81ecdb05575
+index 0000000000000000000000000000000000000000..b53e31c15805319a01719c22d489c4037378b02b
 --- /dev/null
-+++ b/tools/perf/arch/powerpc/include/syscall_table.h
-@@ -0,0 +1,8 @@
++++ b/tools/perf/arch/s390/include/syscall_table.h
+@@ -0,0 +1,2 @@
 +/* SPDX-License-Identifier: GPL-2.0 */
-+#include <asm/bitsperlong.h>
-+
-+#if __BITS_PER_LONG == 64
 +#include <asm/syscalls_64.h>
-+#else
-+#include <asm/syscalls_32.h>
-+#endif
 diff --git a/tools/perf/util/syscalltbl.c b/tools/perf/util/syscalltbl.c
-index 675702d686d0d1b53dd3ee2017cc9695686b9c63..8869fed1a58946c590484816354d8c74aff52ee3 100644
+index 8869fed1a58946c590484816354d8c74aff52ee3..210f61b0a7a264a427ebb602185d3a9da2f426f4 100644
 --- a/tools/perf/util/syscalltbl.c
 +++ b/tools/perf/util/syscalltbl.c
-@@ -18,14 +18,6 @@
- #include <asm/syscalls_64.c>
- const int syscalltbl_native_max_id = SYSCALLTBL_S390_64_MAX_ID;
- static const char *const *syscalltbl_native = syscalltbl_s390_64;
--#elif defined(__powerpc64__)
+@@ -14,11 +14,7 @@
+ #include <string.h>
+ #include "string2.h"
+ 
+-#if defined(__s390x__)
 -#include <asm/syscalls_64.c>
--const int syscalltbl_native_max_id = SYSCALLTBL_POWERPC_64_MAX_ID;
--static const char *const *syscalltbl_native = syscalltbl_powerpc_64;
--#elif defined(__powerpc__)
--#include <asm/syscalls_32.c>
--const int syscalltbl_native_max_id = SYSCALLTBL_POWERPC_32_MAX_ID;
--static const char *const *syscalltbl_native = syscalltbl_powerpc_32;
- #elif defined(GENERIC_SYSCALL_TABLE)
+-const int syscalltbl_native_max_id = SYSCALLTBL_S390_64_MAX_ID;
+-static const char *const *syscalltbl_native = syscalltbl_s390_64;
+-#elif defined(GENERIC_SYSCALL_TABLE)
++#if defined(GENERIC_SYSCALL_TABLE)
  #include <syscall_table.h>
  const int syscalltbl_native_max_id = SYSCALLTBL_MAX_ID;
+ static const char *const *syscalltbl_native = syscalltbl;
 
 -- 
 2.34.1
