@@ -1,267 +1,441 @@
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE439202F87
-	for <linux-security-module@vger.kernel.org>; Thu,  9 Jan 2025 23:01:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B0D718132A;
+	Thu,  9 Jan 2025 23:56:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736463665; cv=none; b=uoC16c83dVhnEpWcOslly2KbKG/epsZqqfx9IBpx3u8y8AV5ZupVLEJ10VIMIMZpJyKtUkc+zoNDrfxP56ROOMONkZqdX3+jCYFJm4zHEPK0wzQEofPGimLGHBgN2Q1z4NHPXp1dWuhz8ODWiWp98jBWpeDxMENtJYLBYRrjTw4=
+	t=1736466974; cv=none; b=W54a7+FA01RO3cClDeTVCI4diEVkRvzCyuxThtUcpxxfpldLqbds47WZH8hoMf5fGdL0BwnlIKb1pFTTcwA7Ztsesskp1wyXQvrH7ndPA5MlsY4v0xiy2DSzVoT3v9MoYH9xEMkfq13qGx863MDs38htYwXCCHtWEcaquIRblYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736463665; c=relaxed/simple;
-	bh=ouylJ8vaww+BvN5+CjToW8mtqfVEhB1cWP2LujyiEy8=;
+	s=arc-20240116; t=1736466974; c=relaxed/simple;
+	bh=p7qCU+/cOdfLJlNXjYBcrD89ca8a/7IKizVUQ95Xn04=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rxHTx92xyQ5vAASHUOF1ISu5hiZ1kGXnmVaO1/0xOh1Cbl5dXQe39wgSL+Nzb6dJzPNhd03w3qF4g+X60RcN7AMVEBxYzO5onKbpm/PGlFAXZ53hyIP20O9xHE1gUdfzKMBejz9vLy3E//vIAPKGdwmF/TfxhSbf1Zww6gRRAn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=g9q/3Cy+; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=nnA3gg5pL4btcSnHJ687X+JawHGeIaR5gouCiF+Z0r/ziRDVyTfdLHdCsSy47Ab665n5Z45PX2WTjLUoiy+ruKGGczsn8XvV7w/zX4gQxpf3cF303zPOmkPhKhpIJkUS8CVK2bATDxop7YQXCmtF4HGpJ9waMNd6eDXIkOZHObE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DIoS+L5d; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="g9q/3Cy+"
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-21634338cfdso32807295ad.2
-        for <linux-security-module@vger.kernel.org>; Thu, 09 Jan 2025 15:01:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1736463663; x=1737068463; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=u1Rto3tQvT3jFN5xuxXHqKLZjGHCEokZTCe6xmBnORw=;
-        b=g9q/3Cy+xguC9G42bmdnj9vz+2rGfGWYXgAwg5B1Rg2XFJC1hXiKZU2zYLau/Ev6A2
-         Tyq6HzkDRpTRRH6QykuTg6/ShavOglCcBg3VYKE6k7nz2yVuUU5GGcN10YDJLu01rwba
-         BA7ooUB0gpQeVu4ty+/znHHp4gbXwQHGqEv6US2cOMBuCaG0UQSL0WuhnTvN0BKvMCuL
-         5fzqBajiFdLf8ckDvozIxC3rxNgOLgy/wUhbmqiNkAtIFc9cnKLgjmYJh7xN6RemRxfi
-         gZv+QTtljlvsUH7OwwMbSGhs+u/5uWl8Yck9mkAYSdZwCZbu+IK3fN6Y85OkY40+sGDS
-         0tGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736463663; x=1737068463;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=u1Rto3tQvT3jFN5xuxXHqKLZjGHCEokZTCe6xmBnORw=;
-        b=mW9GK7hyiOK8+mzx9Gk8dZw4MOKmx8np2DPvXwScn/ZDv6mm9wltP6BWETAyC70SbL
-         W4dIDwiG2JA9RhqA9V0P/qCPK5mkUpqygB7ZRl61yiGzH9+x+A4TfDNMwoIvprsHziDZ
-         cBvkM1qzbKGQM7gDNcE6k/w4CODUxlFUpBV27pgZF01T2ZjbiPUN4pyLRqGmn07k+3dp
-         E9j9Z+U/6FlaAw8+6XYK5+fHhmsTZflq4DaHzBkQB4PWfjfQKhnZNIeCUeHMU0sGoaqM
-         cAzd+p2MKVfMD61EiOU0i1zwDufYk+bOqgGbFtU3zuA4aHQrufmCKL4GS20dhScO1l4b
-         /Zyw==
-X-Forwarded-Encrypted: i=1; AJvYcCV29+jNezl4du3KEwtCLz08jGdM9M3Y7GLSN+uxyGtgsoLF5tqYoIIpHiIAqtH36GB/mf0dZCOCGFG/JKSY5U+s+iqPYmg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJBcHNqCCVJY4YVXqjLIoZzKnBgkhE+5+k5+AXiI1WJBkVWsO5
-	usZTcbI6q3SXRCWEre1G5M/UC3DQjH05vok1EL3B2X+Ap1W5o8yFIIxsHU60BC0=
-X-Gm-Gg: ASbGncu5Qu4gOKNDXExhfD9tJImOvQabsa2UY9pTdSZ5nIFGXU18yfm4IlcKhgyPqit
-	ZHakKM8uaOoa3KKpF+2bCwRM/Q3r+ACi52k4sCYnzgQL3/qjYBRiq/ysqPI4AuaVQSSCTNDWgZV
-	Lxh/E8gVGuA9gwSbBMEJB5JgCX85bh/QCl/jwAJ9fl0QfwD4wByds8hoExHd1hfUk2TqQ+liKQb
-	MRVqKkENlVI7shmto9VMdVCfXfPK01bf6rNCP2TP199X3CWIzdU
-X-Google-Smtp-Source: AGHT+IHHLbAhu86VzYd6LBFp5j+Q2QinJd1yN68qZ09Yns1ZwY4dgQCRzdIJeqQ19rPDtpnqmFcSKA==
-X-Received: by 2002:a17:902:f70f:b0:216:32ea:c84b with SMTP id d9443c01a7336-21a83fc3652mr135133105ad.37.1736463663201;
-        Thu, 09 Jan 2025 15:01:03 -0800 (PST)
-Received: from ghost ([2601:647:6700:64d0:691c:638a:ff10:3765])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21a9f234984sm2890475ad.205.2025.01.09.15.01.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 Jan 2025 15:01:02 -0800 (PST)
-Date: Thu, 9 Jan 2025 15:00:59 -0800
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	Christian Brauner <brauner@kernel.org>, Guo Ren <guoren@kernel.org>,
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
-	James Clark <james.clark@linaro.org>,
-	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
-	Jonathan Corbet <corbet@lwn.net>, Arnd Bergmann <arnd@arndb.de>,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
-	linux-csky@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v6 00/16] perf tools: Use generic syscall scripts for all
- archs
-Message-ID: <Z4BVK3D7sN-XYg2o@ghost>
-References: <20250108-perf_syscalltbl-v6-0-7543b5293098@rivosinc.com>
- <Z3_ybwWW3QZvJ4V6@x1>
- <Z4AoFA974kauIJ9T@ghost>
- <Z4A2Y269Ffo0ERkS@x1>
- <Z4BEygdXmofWBr0-@x1>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DIoS+L5d"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1736466972; x=1768002972;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=p7qCU+/cOdfLJlNXjYBcrD89ca8a/7IKizVUQ95Xn04=;
+  b=DIoS+L5dhooUY702wM5ta+KmXRqfdbYpRHUc6MWJ35/a/LfAgCpfD/1D
+   Q5X+AqRjvHXB3oNUy0ViY7ym2lXX4XESGoKE0tUkRAquGLmm5HkD1J+9b
+   SyF3aiiQdR+CQofr557gLVJ+z1Pq0Z6smQHHK1CLOm7+PFYmV7t8Me+lJ
+   tbiwQra3e1PhHdR8PfNPuL9n4QEgVQYnvmlkR+FuK1SC8vA+Q74QmWo75
+   xYzTt7qMBCthxg+rD10uJ51+OZEn1j7FwdiHaiDLAlC+1gmm6r2vesQ8G
+   EfIj0dtl5gFr3tWLjKqGgUjwu1mXqKHoJCmnweyp6wEVOsJ5UuaoX5ffZ
+   Q==;
+X-CSE-ConnectionGUID: kZulk1WhQmqmDSHdd+qXXg==
+X-CSE-MsgGUID: Hmf2ilYYT5yPy9ZahM9sNg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11310"; a="47418040"
+X-IronPort-AV: E=Sophos;i="6.12,302,1728975600"; 
+   d="scan'208";a="47418040"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Jan 2025 15:56:11 -0800
+X-CSE-ConnectionGUID: B5/RRRIWRRWx4Q8Z5UjJOQ==
+X-CSE-MsgGUID: 3eL9ugR5T2i1SYvuKsxZHw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,302,1728975600"; 
+   d="scan'208";a="108555338"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 09 Jan 2025 15:56:07 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tW2Ng-000IJH-2I;
+	Thu, 09 Jan 2025 23:56:04 +0000
+Date: Fri, 10 Jan 2025 07:55:22 +0800
+From: kernel test robot <lkp@intel.com>
+To: Song Liu <song@kernel.org>, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, kernel-team@meta.com, andrii@kernel.org,
+	ast@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev,
+	kpsingh@kernel.org, mattbobrowski@google.com, paul@paul-moore.com,
+	jmorris@namei.org, serge@hallyn.com, memxor@gmail.com,
+	Song Liu <song@kernel.org>
+Subject: Re: [PATCH v8 bpf-next 5/7] bpf: Use btf_kfunc_id_set.remap logic
+ for bpf_dynptr_from_skb
+Message-ID: <202501100757.HDb5slrv-lkp@intel.com>
+References: <20250108225140.3467654-6-song@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z4BEygdXmofWBr0-@x1>
+In-Reply-To: <20250108225140.3467654-6-song@kernel.org>
 
-On Thu, Jan 09, 2025 at 06:51:06PM -0300, Arnaldo Carvalho de Melo wrote:
-> On Thu, Jan 09, 2025 at 05:49:42PM -0300, Arnaldo Carvalho de Melo wrote:
-> > BTW this series is already pushed out to perf-tools-next:
-> > 
-> > https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/log/?h=perf-tools-next
-> 
-> Hey, now I noticed that with this latest version we see:
-> 
-> ⬢ [acme@toolbox perf-tools-next]$ m
-> make: Entering directory '/home/acme/git/perf-tools-next/tools/perf'
->   BUILD:   Doing 'make -j28' parallel build
-> Warning: Kernel ABI header differences:
->   diff -u tools/arch/arm64/include/uapi/asm/unistd.h arch/arm64/include/uapi/asm/unistd.h
-> 
-> Auto-detecting system features:
-> ...                                   libdw: [ on  ]
-> ...                                   glibc: [ on  ]
-> ...                                  libbfd: [ on  ]
-> ...                          libbfd-buildid: [ on  ]
-> ...                                  libelf: [ on  ]
-> ...                                 libnuma: [ on  ]
-> ...                  numa_num_possible_cpus: [ on  ]
-> ...                                 libperl: [ on  ]
-> ...                               libpython: [ on  ]
-> ...                               libcrypto: [ on  ]
-> ...                               libunwind: [ on  ]
-> ...                             libcapstone: [ on  ]
-> ...                               llvm-perf: [ on  ]
-> ...                                    zlib: [ on  ]
-> ...                                    lzma: [ on  ]
-> ...                               get_cpuid: [ on  ]
-> ...                                     bpf: [ on  ]
-> ...                                  libaio: [ on  ]
-> ...                                 libzstd: [ on  ]
-> 
->    /home/acme/git/perf-tools-next/tools/perf/scripts/syscalltbl.sh  --abis common,32,i386 /home/acme/git/perf-tools-next/tools/perf/arch/x86/entry/syscalls/syscall_32.tbl /tmp/build/perf-tools-next/arch/x86/include/generated/asm/syscalls_32.h
->    /home/acme/git/perf-tools-next/tools/perf/scripts/syscalltbl.sh  --abis common,64 /home/acme/git/perf-tools-next/tools/perf/arch/x86/entry/syscalls/syscall_64.tbl /tmp/build/perf-tools-next/arch/x86/include/generated/asm/syscalls_64.h
->   GEN     /tmp/build/perf-tools-next/common-cmds.h
->   GEN     /tmp/build/perf-tools-next/arch/arm64/include/generated/asm/sysreg-defs.h
->   PERF_VERSION = 6.13.rc2.gd73982c39183
->   GEN     perf-archive
->   GEN     perf-iostat
->   MKDIR   /tmp/build/perf-tools-next/jvmti/
->   MKDIR   /tmp/build/perf-tools-next/jvmti/
->   MKDIR   /tmp/build/perf-tools-next/jvmti/
->   MKDIR   /tmp/build/perf-tools-next/jvmti/
-> 
-> 
-> While with the previous one we would see something like SYSCALLTBL as
-> the step name, like we have GEN, MKDIR, etc, can you take a look?
+Hi Song,
 
-Ooh okay I see, the quiet commands were being ignored as-is. We could
-add the lines to handle this to Makefile.syscalls, but I think the
-better solution is to move the lines from Makefile.build to
-Makefile.perf to be more generically available. Here is a patch for
-that. I also added the comment from the kernel Makefile describing what
-this does.
+kernel test robot noticed the following build errors:
 
-From 8dcec7f5d937ede3d33c687573dc2f1654ddc59e Mon Sep 17 00:00:00 2001
-From: Charlie Jenkins <charlie@rivosinc.com>
-Date: Thu, 9 Jan 2025 14:36:40 -0800
-Subject: [PATCH] perf tools: Expose quiet/verbose variables in Makefile.perf
+[auto build test ERROR on bpf-next/master]
 
-The variables to make builds silent/verbose live inside
-tools/build/Makefile.build. Move those variables to the top-level
-Makefile.perf to be generally available.
+url:    https://github.com/intel-lab-lkp/linux/commits/Song-Liu/fs-xattr-bpf-Introduce-security-bpf-xattr-name-prefix/20250109-065503
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
+patch link:    https://lore.kernel.org/r/20250108225140.3467654-6-song%40kernel.org
+patch subject: [PATCH v8 bpf-next 5/7] bpf: Use btf_kfunc_id_set.remap logic for bpf_dynptr_from_skb
+config: i386-buildonly-randconfig-005-20250110 (https://download.01.org/0day-ci/archive/20250110/202501100757.HDb5slrv-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250110/202501100757.HDb5slrv-lkp@intel.com/reproduce)
 
-Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
----
- tools/build/Makefile.build | 20 --------------------
- tools/perf/Makefile.perf   | 37 ++++++++++++++++++++++++++++++++++++-
- 2 files changed, 36 insertions(+), 21 deletions(-)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202501100757.HDb5slrv-lkp@intel.com/
 
-diff --git a/tools/build/Makefile.build b/tools/build/Makefile.build
-index 5fb3fb3d97e0..e710ed67a1b4 100644
---- a/tools/build/Makefile.build
-+++ b/tools/build/Makefile.build
-@@ -12,26 +12,6 @@
- PHONY := __build
- __build:
- 
--ifeq ($(V),1)
--  quiet =
--  Q =
--else
--  quiet=quiet_
--  Q=@
--endif
--
--# If the user is running make -s (silent mode), suppress echoing of commands
--# make-4.0 (and later) keep single letter options in the 1st word of MAKEFLAGS.
--ifeq ($(filter 3.%,$(MAKE_VERSION)),)
--short-opts := $(firstword -$(MAKEFLAGS))
--else
--short-opts := $(filter-out --%,$(MAKEFLAGS))
--endif
--
--ifneq ($(findstring s,$(short-opts)),)
--  quiet=silent_
--endif
--
- build-dir := $(srctree)/tools/build
- 
- # Define $(fixdep) for dep-cmd function
-diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
-index a449d0015536..55d6ce9ea52f 100644
---- a/tools/perf/Makefile.perf
-+++ b/tools/perf/Makefile.perf
-@@ -161,12 +161,47 @@ export VPATH
- SOURCE := $(shell ln -sf $(srctree)/tools/perf $(OUTPUT)/source)
- endif
- 
-+# Beautify output
-+# ---------------------------------------------------------------------------
-+#
-+# Most of build commands in Kbuild start with "cmd_". You can optionally define
-+# "quiet_cmd_*". If defined, the short log is printed. Otherwise, no log from
-+# that command is printed by default.
-+#
-+# e.g.)
-+#    quiet_cmd_depmod = DEPMOD  $(MODLIB)
-+#          cmd_depmod = $(srctree)/scripts/depmod.sh $(DEPMOD) $(KERNELRELEASE)
-+#
-+# A simple variant is to prefix commands with $(Q) - that's useful
-+# for commands that shall be hidden in non-verbose mode.
-+#
-+#    $(Q)$(MAKE) $(build)=scripts/basic
-+#
-+# To put more focus on warnings, be less verbose as default
-+# Use 'make V=1' to see the full commands
-+
- ifeq ($(V),1)
-+  quiet =
-   Q =
- else
--  Q = @
-+  quiet=quiet_
-+  Q=@
- endif
- 
-+# If the user is running make -s (silent mode), suppress echoing of commands
-+# make-4.0 (and later) keep single letter options in the 1st word of MAKEFLAGS.
-+ifeq ($(filter 3.%,$(MAKE_VERSION)),)
-+short-opts := $(firstword -$(MAKEFLAGS))
-+else
-+short-opts := $(filter-out --%,$(MAKEFLAGS))
-+endif
-+
-+ifneq ($(findstring s,$(short-opts)),)
-+  quiet=silent_
-+endif
-+
-+export quiet Q
-+
- # Do not use make's built-in rules
- # (this improves performance and avoids hard-to-debug behaviour);
- MAKEFLAGS += -r
+All error/warnings (new ones prefixed by >>):
+
+>> net/core/filter.c:12071:1: error: return type defaults to 'int' [-Werror=implicit-int]
+   12071 | BTF_HIDDEN_KFUNCS_START(bpf_kfunc_check_hidden_set_skb)
+         | ^~~~~~~~~~~~~~~~~~~~~~~
+>> net/core/filter.c:12071:1: error: function declaration isn't a prototype [-Werror=strict-prototypes]
+   In file included from include/linux/btf.h:10,
+                    from include/linux/bpf.h:28,
+                    from include/linux/bpf_verifier.h:7,
+                    from net/core/filter.c:21:
+   net/core/filter.c: In function 'BTF_HIDDEN_KFUNCS_START':
+>> net/core/filter.c:12075:18: error: storage class specified for parameter 'bpf_kfunc_check_set_xdp'
+   12075 | BTF_KFUNCS_START(bpf_kfunc_check_set_xdp)
+         |                  ^~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/btf_ids.h:235:73: note: in definition of macro 'BTF_KFUNCS_START'
+     235 | #define BTF_KFUNCS_START(name) static struct btf_id_set8 __maybe_unused name = { .flags = BTF_SET8_KFUNCS };
+         |                                                                         ^~~~
+>> include/linux/btf_ids.h:235:46: error: parameter 'bpf_kfunc_check_set_xdp' is initialized
+     235 | #define BTF_KFUNCS_START(name) static struct btf_id_set8 __maybe_unused name = { .flags = BTF_SET8_KFUNCS };
+         |                                              ^~~~~~~~~~~
+   net/core/filter.c:12075:1: note: in expansion of macro 'BTF_KFUNCS_START'
+   12075 | BTF_KFUNCS_START(bpf_kfunc_check_set_xdp)
+         | ^~~~~~~~~~~~~~~~
+>> net/core/filter.c:12079:18: error: storage class specified for parameter 'bpf_kfunc_check_set_sock_addr'
+   12079 | BTF_KFUNCS_START(bpf_kfunc_check_set_sock_addr)
+         |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/btf_ids.h:235:73: note: in definition of macro 'BTF_KFUNCS_START'
+     235 | #define BTF_KFUNCS_START(name) static struct btf_id_set8 __maybe_unused name = { .flags = BTF_SET8_KFUNCS };
+         |                                                                         ^~~~
+>> include/linux/btf_ids.h:235:46: error: parameter 'bpf_kfunc_check_set_sock_addr' is initialized
+     235 | #define BTF_KFUNCS_START(name) static struct btf_id_set8 __maybe_unused name = { .flags = BTF_SET8_KFUNCS };
+         |                                              ^~~~~~~~~~~
+   net/core/filter.c:12079:1: note: in expansion of macro 'BTF_KFUNCS_START'
+   12079 | BTF_KFUNCS_START(bpf_kfunc_check_set_sock_addr)
+         | ^~~~~~~~~~~~~~~~
+>> net/core/filter.c:12083:18: error: storage class specified for parameter 'bpf_kfunc_check_set_tcp_reqsk'
+   12083 | BTF_KFUNCS_START(bpf_kfunc_check_set_tcp_reqsk)
+         |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/btf_ids.h:235:73: note: in definition of macro 'BTF_KFUNCS_START'
+     235 | #define BTF_KFUNCS_START(name) static struct btf_id_set8 __maybe_unused name = { .flags = BTF_SET8_KFUNCS };
+         |                                                                         ^~~~
+>> include/linux/btf_ids.h:235:46: error: parameter 'bpf_kfunc_check_set_tcp_reqsk' is initialized
+     235 | #define BTF_KFUNCS_START(name) static struct btf_id_set8 __maybe_unused name = { .flags = BTF_SET8_KFUNCS };
+         |                                              ^~~~~~~~~~~
+   net/core/filter.c:12083:1: note: in expansion of macro 'BTF_KFUNCS_START'
+   12083 | BTF_KFUNCS_START(bpf_kfunc_check_set_tcp_reqsk)
+         | ^~~~~~~~~~~~~~~~
+>> net/core/filter.c:12087:13: error: storage class specified for parameter 'bpf_dynptr_from_skb_list'
+   12087 | BTF_ID_LIST(bpf_dynptr_from_skb_list)
+         |             ^~~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/btf_ids.h:223:53: note: in definition of macro 'BTF_ID_LIST'
+     223 | #define BTF_ID_LIST(name) static u32 __maybe_unused name[64];
+         |                                                     ^~~~
+>> net/core/filter.c:12092:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+   12092 | {
+         | ^
+>> net/core/filter.c:12122:38: error: storage class specified for parameter 'bpf_kfunc_set_skb'
+   12122 | static const struct btf_kfunc_id_set bpf_kfunc_set_skb = {
+         |                                      ^~~~~~~~~~~~~~~~~
+>> net/core/filter.c:12122:21: error: parameter 'bpf_kfunc_set_skb' is initialized
+   12122 | static const struct btf_kfunc_id_set bpf_kfunc_set_skb = {
+         |                     ^~~~~~~~~~~~~~~~
+>> net/core/filter.c:12125:24: error: 'bpf_kfunc_check_hidden_set_skb' undeclared (first use in this function); did you mean 'bpf_kfunc_check_set_skb'?
+   12125 |         .hidden_set = &bpf_kfunc_check_hidden_set_skb,
+         |                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+         |                        bpf_kfunc_check_set_skb
+   net/core/filter.c:12125:24: note: each undeclared identifier is reported only once for each function it appears in
+>> net/core/filter.c:12126:19: error: 'bpf_kfunc_set_skb_remap' undeclared (first use in this function); did you mean 'bpf_kfunc_set_skb'?
+   12126 |         .remap = &bpf_kfunc_set_skb_remap,
+         |                   ^~~~~~~~~~~~~~~~~~~~~~~
+         |                   bpf_kfunc_set_skb
+>> net/core/filter.c:12129:38: error: storage class specified for parameter 'bpf_kfunc_set_xdp'
+   12129 | static const struct btf_kfunc_id_set bpf_kfunc_set_xdp = {
+         |                                      ^~~~~~~~~~~~~~~~~
+>> net/core/filter.c:12129:21: error: parameter 'bpf_kfunc_set_xdp' is initialized
+   12129 | static const struct btf_kfunc_id_set bpf_kfunc_set_xdp = {
+         |                     ^~~~~~~~~~~~~~~~
+>> net/core/filter.c:12134:38: error: storage class specified for parameter 'bpf_kfunc_set_sock_addr'
+   12134 | static const struct btf_kfunc_id_set bpf_kfunc_set_sock_addr = {
+         |                                      ^~~~~~~~~~~~~~~~~~~~~~~
+>> net/core/filter.c:12134:21: error: parameter 'bpf_kfunc_set_sock_addr' is initialized
+   12134 | static const struct btf_kfunc_id_set bpf_kfunc_set_sock_addr = {
+         |                     ^~~~~~~~~~~~~~~~
+>> net/core/filter.c:12139:38: error: storage class specified for parameter 'bpf_kfunc_set_tcp_reqsk'
+   12139 | static const struct btf_kfunc_id_set bpf_kfunc_set_tcp_reqsk = {
+         |                                      ^~~~~~~~~~~~~~~~~~~~~~~
+>> net/core/filter.c:12139:21: error: parameter 'bpf_kfunc_set_tcp_reqsk' is initialized
+   12139 | static const struct btf_kfunc_id_set bpf_kfunc_set_tcp_reqsk = {
+         |                     ^~~~~~~~~~~~~~~~
+   net/core/filter.c:12145:1: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+   12145 | {
+         | ^
+   In file included from <command-line>:
+   include/linux/compiler.h:189:45: error: storage class specified for parameter '__UNIQUE_ID___addressable_bpf_kfunc_init1505'
+     189 | #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
+         |                                             ^~~~~~~~~~~~
+   include/linux/compiler_types.h:83:23: note: in definition of macro '___PASTE'
+      83 | #define ___PASTE(a,b) a##b
+         |                       ^
+   include/linux/compiler.h:189:29: note: in expansion of macro '__PASTE'
+     189 | #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
+         |                             ^~~~~~~
+   include/linux/compiler_types.h:84:22: note: in expansion of macro '___PASTE'
+      84 | #define __PASTE(a,b) ___PASTE(a,b)
+         |                      ^~~~~~~~
+   include/linux/compiler.h:189:37: note: in expansion of macro '__PASTE'
+     189 | #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
+         |                                     ^~~~~~~
+   include/linux/compiler.h:227:9: note: in expansion of macro '__UNIQUE_ID'
+     227 |         __UNIQUE_ID(__PASTE(__addressable_,sym)) = (void *)(uintptr_t)&sym;
+         |         ^~~~~~~~~~~
+   include/linux/compiler.h:229:9: note: in expansion of macro '___ADDRESSABLE'
+     229 |         ___ADDRESSABLE(sym, __section(".discard.addressable"))
+         |         ^~~~~~~~~~~~~~
+   include/linux/init.h:256:9: note: in expansion of macro '__ADDRESSABLE'
+     256 |         __ADDRESSABLE(fn)
+         |         ^~~~~~~~~~~~~
+   include/linux/init.h:261:9: note: in expansion of macro '__define_initcall_stub'
+     261 |         __define_initcall_stub(__stub, fn)                      \
+         |         ^~~~~~~~~~~~~~~~~~~~~~
+   include/linux/init.h:274:9: note: in expansion of macro '____define_initcall'
+     274 |         ____define_initcall(fn,                                 \
+         |         ^~~~~~~~~~~~~~~~~~~
+   include/linux/init.h:280:9: note: in expansion of macro '__unique_initcall'
+     280 |         __unique_initcall(fn, id, __sec, __initcall_id(fn))
+         |         ^~~~~~~~~~~~~~~~~
+   include/linux/init.h:282:35: note: in expansion of macro '___define_initcall'
+     282 | #define __define_initcall(fn, id) ___define_initcall(fn, id, .initcall##id)
+         |                                   ^~~~~~~~~~~~~~~~~~
+   include/linux/init.h:313:41: note: in expansion of macro '__define_initcall'
+     313 | #define late_initcall(fn)               __define_initcall(fn, 7)
+         |                                         ^~~~~~~~~~~~~~~~~
+   net/core/filter.c:12164:1: note: in expansion of macro 'late_initcall'
+   12164 | late_initcall(bpf_kfunc_init);
+         | ^~~~~~~~~~~~~
+   net/core/filter.c:12164:1: error: parameter '__UNIQUE_ID___addressable_bpf_kfunc_init1505' is initialized
+   net/core/filter.c:12164:1: warning: 'used' attribute ignored [-Wattributes]
+   include/linux/compiler.h:189:45: error: section attribute not allowed for '__UNIQUE_ID___addressable_bpf_kfunc_init1505'
+     189 | #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
+         |                                             ^~~~~~~~~~~~
+   include/linux/compiler_types.h:83:23: note: in definition of macro '___PASTE'
+      83 | #define ___PASTE(a,b) a##b
+         |                       ^
+   include/linux/compiler.h:189:29: note: in expansion of macro '__PASTE'
+     189 | #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
+         |                             ^~~~~~~
+   include/linux/compiler_types.h:84:22: note: in expansion of macro '___PASTE'
+      84 | #define __PASTE(a,b) ___PASTE(a,b)
+         |                      ^~~~~~~~
+   include/linux/compiler.h:189:37: note: in expansion of macro '__PASTE'
+     189 | #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_, prefix), __COUNTER__)
+         |                                     ^~~~~~~
+   include/linux/compiler.h:227:9: note: in expansion of macro '__UNIQUE_ID'
+     227 |         __UNIQUE_ID(__PASTE(__addressable_,sym)) = (void *)(uintptr_t)&sym;
+         |         ^~~~~~~~~~~
+   include/linux/compiler.h:229:9: note: in expansion of macro '___ADDRESSABLE'
+     229 |         ___ADDRESSABLE(sym, __section(".discard.addressable"))
+         |         ^~~~~~~~~~~~~~
+   include/linux/init.h:256:9: note: in expansion of macro '__ADDRESSABLE'
+     256 |         __ADDRESSABLE(fn)
+         |         ^~~~~~~~~~~~~
+   include/linux/init.h:261:9: note: in expansion of macro '__define_initcall_stub'
+     261 |         __define_initcall_stub(__stub, fn)                      \
+         |         ^~~~~~~~~~~~~~~~~~~~~~
+   include/linux/init.h:274:9: note: in expansion of macro '____define_initcall'
+     274 |         ____define_initcall(fn,                                 \
+         |         ^~~~~~~~~~~~~~~~~~~
+   include/linux/init.h:280:9: note: in expansion of macro '__unique_initcall'
+     280 |         __unique_initcall(fn, id, __sec, __initcall_id(fn))
+         |         ^~~~~~~~~~~~~~~~~
+   include/linux/init.h:282:35: note: in expansion of macro '___define_initcall'
+     282 | #define __define_initcall(fn, id) ___define_initcall(fn, id, .initcall##id)
+         |                                   ^~~~~~~~~~~~~~~~~~
+   include/linux/init.h:313:41: note: in expansion of macro '__define_initcall'
+     313 | #define late_initcall(fn)               __define_initcall(fn, 7)
+         |                                         ^~~~~~~~~~~~~~~~~
+   net/core/filter.c:12164:1: note: in expansion of macro 'late_initcall'
+   12164 | late_initcall(bpf_kfunc_init);
+         | ^~~~~~~~~~~~~
+   In file included from arch/x86/include/asm/atomic.h:5,
+                    from include/linux/atomic.h:7,
+                    from net/core/filter.c:20:
+   net/core/filter.c:12164:15: error: 'bpf_kfunc_init' undeclared (first use in this function); did you mean 'bpf_func_info'?
+   12164 | late_initcall(bpf_kfunc_init);
+         |               ^~~~~~~~~~~~~~
+   include/linux/compiler.h:227:72: note: in definition of macro '___ADDRESSABLE'
+     227 |         __UNIQUE_ID(__PASTE(__addressable_,sym)) = (void *)(uintptr_t)&sym;
+
+
+vim +/int +12071 net/core/filter.c
+
+ 12070	
+ 12071	BTF_HIDDEN_KFUNCS_START(bpf_kfunc_check_hidden_set_skb)
+ 12072	BTF_ID_FLAGS(func, bpf_dynptr_from_skb_rdonly, KF_TRUSTED_ARGS)
+ 12073	BTF_KFUNCS_END(bpf_kfunc_check_hidden_set_skb)
+ 12074	
+ 12075	BTF_KFUNCS_START(bpf_kfunc_check_set_xdp)
+ 12076	BTF_ID_FLAGS(func, bpf_dynptr_from_xdp)
+ 12077	BTF_KFUNCS_END(bpf_kfunc_check_set_xdp)
+ 12078	
+ 12079	BTF_KFUNCS_START(bpf_kfunc_check_set_sock_addr)
+ 12080	BTF_ID_FLAGS(func, bpf_sock_addr_set_sun_path)
+ 12081	BTF_KFUNCS_END(bpf_kfunc_check_set_sock_addr)
+ 12082	
+ 12083	BTF_KFUNCS_START(bpf_kfunc_check_set_tcp_reqsk)
+ 12084	BTF_ID_FLAGS(func, bpf_sk_assign_tcp_reqsk, KF_TRUSTED_ARGS)
+ 12085	BTF_KFUNCS_END(bpf_kfunc_check_set_tcp_reqsk)
+ 12086	
+ 12087	BTF_ID_LIST(bpf_dynptr_from_skb_list)
+ 12088	BTF_ID(func, bpf_dynptr_from_skb)
+ 12089	BTF_ID(func, bpf_dynptr_from_skb_rdonly)
+ 12090	
+ 12091	static u32 bpf_kfunc_set_skb_remap(const struct bpf_prog *prog, u32 kfunc_id)
+ 12092	{
+ 12093		if (kfunc_id != bpf_dynptr_from_skb_list[0])
+ 12094			return 0;
+ 12095	
+ 12096		switch (resolve_prog_type(prog)) {
+ 12097		/* Program types only with direct read access go here! */
+ 12098		case BPF_PROG_TYPE_LWT_IN:
+ 12099		case BPF_PROG_TYPE_LWT_OUT:
+ 12100		case BPF_PROG_TYPE_LWT_SEG6LOCAL:
+ 12101		case BPF_PROG_TYPE_SK_REUSEPORT:
+ 12102		case BPF_PROG_TYPE_FLOW_DISSECTOR:
+ 12103		case BPF_PROG_TYPE_CGROUP_SKB:
+ 12104			return bpf_dynptr_from_skb_list[1];
+ 12105	
+ 12106		/* Program types with direct read + write access go here! */
+ 12107		case BPF_PROG_TYPE_SCHED_CLS:
+ 12108		case BPF_PROG_TYPE_SCHED_ACT:
+ 12109		case BPF_PROG_TYPE_XDP:
+ 12110		case BPF_PROG_TYPE_LWT_XMIT:
+ 12111		case BPF_PROG_TYPE_SK_SKB:
+ 12112		case BPF_PROG_TYPE_SK_MSG:
+ 12113		case BPF_PROG_TYPE_CGROUP_SOCKOPT:
+ 12114			return kfunc_id;
+ 12115	
+ 12116		default:
+ 12117			break;
+ 12118		}
+ 12119		return bpf_dynptr_from_skb_list[1];
+ 12120	}
+ 12121	
+ 12122	static const struct btf_kfunc_id_set bpf_kfunc_set_skb = {
+ 12123		.owner = THIS_MODULE,
+ 12124		.set = &bpf_kfunc_check_set_skb,
+ 12125		.hidden_set = &bpf_kfunc_check_hidden_set_skb,
+ 12126		.remap = &bpf_kfunc_set_skb_remap,
+ 12127	};
+ 12128	
+ 12129	static const struct btf_kfunc_id_set bpf_kfunc_set_xdp = {
+ 12130		.owner = THIS_MODULE,
+ 12131		.set = &bpf_kfunc_check_set_xdp,
+ 12132	};
+ 12133	
+ 12134	static const struct btf_kfunc_id_set bpf_kfunc_set_sock_addr = {
+ 12135		.owner = THIS_MODULE,
+ 12136		.set = &bpf_kfunc_check_set_sock_addr,
+ 12137	};
+ 12138	
+ 12139	static const struct btf_kfunc_id_set bpf_kfunc_set_tcp_reqsk = {
+ 12140		.owner = THIS_MODULE,
+ 12141		.set = &bpf_kfunc_check_set_tcp_reqsk,
+ 12142	};
+ 12143	
+ 12144	static int __init bpf_kfunc_init(void)
+ 12145	{
+ 12146		int ret;
+ 12147	
+ 12148		ret = register_btf_kfunc_id_set(BPF_PROG_TYPE_SCHED_CLS, &bpf_kfunc_set_skb);
+ 12149		ret = ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_SCHED_ACT, &bpf_kfunc_set_skb);
+ 12150		ret = ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_SK_SKB, &bpf_kfunc_set_skb);
+ 12151		ret = ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_SOCKET_FILTER, &bpf_kfunc_set_skb);
+ 12152		ret = ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_CGROUP_SKB, &bpf_kfunc_set_skb);
+ 12153		ret = ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_LWT_OUT, &bpf_kfunc_set_skb);
+ 12154		ret = ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_LWT_IN, &bpf_kfunc_set_skb);
+ 12155		ret = ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_LWT_XMIT, &bpf_kfunc_set_skb);
+ 12156		ret = ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_LWT_SEG6LOCAL, &bpf_kfunc_set_skb);
+ 12157		ret = ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_NETFILTER, &bpf_kfunc_set_skb);
+ 12158		ret = ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_TRACING, &bpf_kfunc_set_skb);
+ 12159		ret = ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_XDP, &bpf_kfunc_set_xdp);
+ 12160		ret = ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_CGROUP_SOCK_ADDR,
+ 12161						       &bpf_kfunc_set_sock_addr);
+ 12162		return ret ?: register_btf_kfunc_id_set(BPF_PROG_TYPE_SCHED_CLS, &bpf_kfunc_set_tcp_reqsk);
+ 12163	}
+ 12164	late_initcall(bpf_kfunc_init);
+ 12165	
+ 12166	__bpf_kfunc_start_defs();
+ 12167	
+ 12168	/* bpf_sock_destroy: Destroy the given socket with ECONNABORTED error code.
+ 12169	 *
+ 12170	 * The function expects a non-NULL pointer to a socket, and invokes the
+ 12171	 * protocol specific socket destroy handlers.
+ 12172	 *
+ 12173	 * The helper can only be called from BPF contexts that have acquired the socket
+ 12174	 * locks.
+ 12175	 *
+ 12176	 * Parameters:
+ 12177	 * @sock: Pointer to socket to be destroyed
+ 12178	 *
+ 12179	 * Return:
+ 12180	 * On error, may return EPROTONOSUPPORT, EINVAL.
+ 12181	 * EPROTONOSUPPORT if protocol specific destroy handler is not supported.
+ 12182	 * 0 otherwise
+ 12183	 */
+ 12184	__bpf_kfunc int bpf_sock_destroy(struct sock_common *sock)
+ 12185	{
+ 12186		struct sock *sk = (struct sock *)sock;
+ 12187	
+ 12188		/* The locking semantics that allow for synchronous execution of the
+ 12189		 * destroy handlers are only supported for TCP and UDP.
+ 12190		 * Supporting protocols will need to acquire sock lock in the BPF context
+ 12191		 * prior to invoking this kfunc.
+ 12192		 */
+ 12193		if (!sk->sk_prot->diag_destroy || (sk->sk_protocol != IPPROTO_TCP &&
+ 12194						   sk->sk_protocol != IPPROTO_UDP))
+ 12195			return -EOPNOTSUPP;
+ 12196	
+ 12197		return sk->sk_prot->diag_destroy(sk, ECONNABORTED);
+ 12198	}
+ 12199	
+ 12200	__bpf_kfunc_end_defs();
+ 12201	
+ 12202	BTF_KFUNCS_START(bpf_sk_iter_kfunc_ids)
+ 12203	BTF_ID_FLAGS(func, bpf_sock_destroy, KF_TRUSTED_ARGS)
+ 12204	BTF_KFUNCS_END(bpf_sk_iter_kfunc_ids)
+ 12205	
+ 12206	static int tracing_iter_filter(const struct bpf_prog *prog, u32 kfunc_id)
+ 12207	{
+ 12208		if (btf_id_set8_contains(&bpf_sk_iter_kfunc_ids, kfunc_id) &&
+ 12209		    prog->expected_attach_type != BPF_TRACE_ITER)
+ 12210			return -EACCES;
+ 12211		return 0;
+ 12212	}
+ 12213	
+ 12214	static const struct btf_kfunc_id_set bpf_sk_iter_kfunc_set = {
+ 12215		.owner = THIS_MODULE,
+ 12216		.set   = &bpf_sk_iter_kfunc_ids,
+ 12217		.filter = tracing_iter_filter,
+ 12218	};
+ 12219	
+ 12220	static int init_subsystem(void)
+ 12221	{
+ 12222		return register_btf_kfunc_id_set(BPF_PROG_TYPE_TRACING, &bpf_sk_iter_kfunc_set);
+ 12223	}
+ 12224	late_initcall(init_subsystem);
+
 -- 
-2.34.1
-
-
-- Charlie
-
-> 
-> All is out there in perf-tools-next.
-> 
-> - Arnaldo
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
