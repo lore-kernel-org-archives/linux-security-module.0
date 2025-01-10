@@ -1,283 +1,128 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 143A742A99;
-	Fri, 10 Jan 2025 07:05:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB9220C004
+	for <linux-security-module@vger.kernel.org>; Fri, 10 Jan 2025 09:44:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736492749; cv=none; b=ptLPFOAfzYUYveIpbk01HO9akmG+CnsLYWT670k0rt9VHwBE6iVQGq7gK0HJmmSNM1YXtl+n2xS0oQ2lkVyddy41mBjgl5p6F2vQCDtBuHV8kDXRE1x/AuS5PaYZNRcHKXbWFsFthbOJNz/HBAzLRWpPtol38/wjn6uKj1qorHY=
+	t=1736502299; cv=none; b=L+ztGUta5psJ2RF2iy58jo4iqo8/kesm2GWc2UyCq2k2lWrYKVJ9fE0aa0zMbPs339PdfvNLk7nqsVn8oam4S11F8HcIyDrGO9opijlQ4BpNEZ1raJbLzqToVeWJqxyjMaPb15Jf4uLLLE1OW66w9BIr+dVkYgwQTOGxpi5UQ5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736492749; c=relaxed/simple;
-	bh=t7OYVwRzeyvgItw5U5zv9oC0mjA+jZVUjTlsLW7ILnc=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=oNj0POc7kUCkb7590roD3d/uW5aMGXKPHpaNmOhGD7sjHVlgo9BHgNpdgflN4eCImoPhmSqUfee1trBlWmKbtOC5wX8P5DNdkrfl+QQc5lnF92F1KUMmbhKNU3mF9CPucMAGOjP1D5tK0nX109KQz45yg8DdjBtX8jSQMc49F+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=QnAbgUsL; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
+	s=arc-20240116; t=1736502299; c=relaxed/simple;
+	bh=ENLLV/0PrVWHZJnSd10hwquS1U8BMVZB3K1bFjotxyc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 In-Reply-To:Content-Type:Content-Disposition; b=V9ptYsp4caHUx0xUFXK2aIfB5ZXAx/w+dIx1Hj5M0MP99IXfIgsHLSYIwWtm/Kmb7+SCtYEx1K/bAS3TlJy7RmuzC+KxFf+8ppEdRwVWseEHPU6le/xM4e2wwxzlU7Q4CUTWcRJvK+Xt4PnzgjQGt0qiiAzQmcrxukJbRr8jERk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UIFsE3fM; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="QnAbgUsL"
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 509Nx3WS001536;
-	Fri, 10 Jan 2025 07:05:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=Ga2v7r
-	9meIaBz31U84eL3jzMovm9W2gKUR+quKpB1qA=; b=QnAbgUsLn+3Vws1cBuxTgI
-	q8qT2Sxy0KdXA7TFwPigM8cyZ3GDwHKLSpVpJpb2PwHBGDr1SDvvg7UA0Rt9zpBt
-	vZAL2svAjglyIlH+TCw821igklZH+0BMbx0V7vZYwB/NqQqP8OPj/uXKtcgubVYC
-	WD8yzvXJIln8d1U4DhuZqI+u8nKz8ajOc41MPouCwMpIo7qXkNcy3wRGBKcTeTo+
-	LwvR3qLCv0TkgMQTE3VJU/14iYnAdIInln+AZzQF5Klv3er80Bo/xRJmF0wfSQwc
-	qARk+SpbTp8aW7/7mbnOiu1NWkPtpXp6O06MtO5vUg6r3QCKcN6dWYSG7UNyuyMw
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 442rkhs8x1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 10 Jan 2025 07:05:17 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 50A744c8012820;
-	Fri, 10 Jan 2025 07:05:16 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 442rkhs8wx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 10 Jan 2025 07:05:16 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 50A5RVYL013571;
-	Fri, 10 Jan 2025 07:05:15 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43ygap916j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 10 Jan 2025 07:05:14 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 50A75Do329229632
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 10 Jan 2025 07:05:13 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E42B420040;
-	Fri, 10 Jan 2025 07:05:12 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6A95B2004B;
-	Fri, 10 Jan 2025 07:05:00 +0000 (GMT)
-Received: from smtpclient.apple (unknown [9.61.241.17])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri, 10 Jan 2025 07:04:59 +0000 (GMT)
-Content-Type: text/plain;
-	charset=utf-8
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UIFsE3fM"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1736502295;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=A4Kw1qoNYerqhNjh25Dgp7jdmE++mW9Fl3ZiJ8T3co8=;
+	b=UIFsE3fM8ZpT28RgTD/VWrQgEAnTkGjPT7UbRMlcM0A3WZUp3DhNJ0v0QFBh450AL2dUF2
+	1rk+agWGcGiZ9i74yLeJbYlEoWeR6NzBDaiJjp4lAMBOkt46WyA1BMrDxOCmGN/VpP3McP
+	TQbg59XT+08yYB3kLiyn5GjAlHUungM=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-64-GXMcimKJNQKDEfkO0FUSww-1; Fri, 10 Jan 2025 04:44:54 -0500
+X-MC-Unique: GXMcimKJNQKDEfkO0FUSww-1
+X-Mimecast-MFC-AGG-ID: GXMcimKJNQKDEfkO0FUSww
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-385e03f54d0so781393f8f.3
+        for <linux-security-module@vger.kernel.org>; Fri, 10 Jan 2025 01:44:54 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736502293; x=1737107093;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=A4Kw1qoNYerqhNjh25Dgp7jdmE++mW9Fl3ZiJ8T3co8=;
+        b=dvTnEUuI+LAmCF6to0tpmTWdcEzOsY7pdcYqsv58b7wKW0rnWAlNVfnlIwcfnSMNN7
+         j+GhV+i1IaUYWYfwKFUa5S/x+i5NBPgKaD0aAqi70IfjB0c6DJuHIoEEE1+YuQn8BYLr
+         9677sLBVvLbSIwpOfX7KPEoLR1GP/0bio/vdaI+D3xRUYzg/MMGoSv6Mr6n6dq9UgFtu
+         TpMUdmaugD7DwtdpZC0S2UmkPDJ/M64hBWlmy11cfflX/DCDyGSawAQ5onkEipcXXhZI
+         m1fc9j+Rvg3FED+IXGBgu9cSiLjKLFFZzUa73Pde5YQ9UeUazWLlRT0KVjtCXdTA10IW
+         shcw==
+X-Forwarded-Encrypted: i=1; AJvYcCUXssZv4rYCC8V7GirJQVwm21UAXN3MrEQQuRiN1X05wyUz7aWAal8PflbMJWhWXXMmnpihk5BwVuCnRF8TaJrR/9uHorQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yye3t5+zGNHUQQF+18H17PS125TCOD3jGXwR22jt0E0+3lhrLXd
+	FlE9LD6DYOCdrfoS88nccEzlurT1kZZs6KcU64T5jwQ/tabRHmntXlKO6GhLvKKGvVRhHKmUBAY
+	u1Cu0kb4ki2fvj8AgWGUgesTvaPCdPpbISFVStXw5mbDas2cT2x7N37qwflCptkuqAil8YTZR
+X-Gm-Gg: ASbGnctrYNtJyP9zdtnS4rnGRN23AvZIh2Kmc6P4x18Vw7vh9T1oaAE891velDb509O
+	cq0zQtJvgmeG4dUqirxxK0SN7Bd70llit8xmKNd+CcUvw56GTIYUHZYHNHowqrRkJxJLXuDPbSc
+	dko5LFURDQDEeDF/UPtjW6ft0oGKTpmG1L4/FvIgX8kkH8496O2OBHBS/OTDbNzwbpBGbd3d/o3
+	XoXcDviaYRcYpdd/3+ZfMVbwQ3yS8ZxBEtnY4KNS8nE+vKtQ2+NeOu/bv9XI1Zcl6haQKEY6XmK
+X-Received: by 2002:a05:6000:709:b0:386:3803:bbd5 with SMTP id ffacd0b85a97d-38a8733a1f9mr9910101f8f.45.1736502293463;
+        Fri, 10 Jan 2025 01:44:53 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFWMxVaNXeUTe+wjdV2pCbQXCctILb5vVg9f3+psJOjGS23Sr767uuQBsbyCemBlGukLyZjgw==
+X-Received: by 2002:a05:6000:709:b0:386:3803:bbd5 with SMTP id ffacd0b85a97d-38a8733a1f9mr9910059f8f.45.1736502293124;
+        Fri, 10 Jan 2025 01:44:53 -0800 (PST)
+Received: from thinky (ip-217-030-074-039.aim-net.cz. [217.30.74.39])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38a8e383965sm4140444f8f.31.2025.01.10.01.44.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Jan 2025 01:44:52 -0800 (PST)
+Date: Fri, 10 Jan 2025 10:44:51 +0100
+From: Andrey Albershteyn <aalbersh@redhat.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org, 
+	Michal Simek <monstr@monstr.eu>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
+	Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+	chris@zankel.net, Max Filippov <jcmvbkbc@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org, 
+	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, 
+	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>
+Subject: Re: [PATCH] fs: introduce getfsxattrat and setfsxattrat syscalls
+Message-ID: <4ad35w4mrxb4likkqijkivrkom5rpfdja6klb5uoufdjdyjioq@ksxubq4xb7ei>
+References: <20250109174540.893098-1-aalbersh@kernel.org>
+ <e7deabf6-8bba-45d7-a0f4-395bc8e5aabe@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
-Subject: Re: [PATCH v6 00/16] perf tools: Use generic syscall scripts for all
- archs
-From: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-In-Reply-To: <Z4A8NU02WVBDGrYZ@ghost>
-Date: Fri, 10 Jan 2025 12:34:46 +0530
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
-        =?utf-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
-        Christian Brauner <brauner@kernel.org>, Guo Ren <guoren@kernel.org>,
-        John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
-        James Clark <james.clark@linaro.org>,
-        Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
-        Jonathan Corbet <corbet@lwn.net>, Arnd Bergmann <arnd@arndb.de>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        linux-riscv@lists.infradead.org, linux-security-module@vger.kernel.org,
-        bpf@vger.kernel.org, linux-csky@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <8639C367-2669-4924-83D8-15EAFAC42699@linux.vnet.ibm.com>
-References: <20250108-perf_syscalltbl-v6-0-7543b5293098@rivosinc.com>
- <Z3_ybwWW3QZvJ4V6@x1> <Z4AoFA974kauIJ9T@ghost> <Z4A2Y269Ffo0ERkS@x1>
- <Z4A8NU02WVBDGrYZ@ghost>
-To: Charlie Jenkins <charlie@rivosinc.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
-        Hari Bathini <hbathini@linux.ibm.com>
-X-Mailer: Apple Mail (2.3818.100.11.1.3)
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: CR4E83pg86k8Cx0Y_9xNEtR5rkcWclRc
-X-Proofpoint-GUID: l3UdX7YMbwWwHX9jihu9fy-EzLhsFC2N
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 bulkscore=0
- mlxscore=0 suspectscore=0 phishscore=0 impostorscore=0 adultscore=0
- malwarescore=0 priorityscore=1501 mlxlogscore=999 lowpriorityscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2501100056
+MIME-Version: 1.0
+In-Reply-To: <e7deabf6-8bba-45d7-a0f4-395bc8e5aabe@app.fastmail.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: lrykbEr5Glk0ak40NwVR3vm0Fo8Fa_dxwsMZSHg1QUE_1736502293
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+On 2025-01-09 20:59:45, Arnd Bergmann wrote:
+> On Thu, Jan 9, 2025, at 18:45, Andrey Albershteyn wrote:
+> >
+> >  arch/alpha/kernel/syscalls/syscall.tbl      |   2 +
+> >  arch/m68k/kernel/syscalls/syscall.tbl       |   2 +
+> >  arch/microblaze/kernel/syscalls/syscall.tbl |   2 +
+> >  arch/parisc/kernel/syscalls/syscall.tbl     |   2 +
+> >  arch/powerpc/kernel/syscalls/syscall.tbl    |   2 +
+> >  arch/s390/kernel/syscalls/syscall.tbl       |   2 +
+> >  arch/sh/kernel/syscalls/syscall.tbl         |   2 +
+> >  arch/sparc/kernel/syscalls/syscall.tbl      |   2 +
+> >  arch/x86/entry/syscalls/syscall_32.tbl      |   2 +
+> >  arch/x86/entry/syscalls/syscall_64.tbl      |   2 +
+> >  arch/xtensa/kernel/syscalls/syscall.tbl     |   2 +
+> 
+> You seem to be missing a couple of files here: 
+> 
+> arch/arm/tools/syscall.tbl
+> arch/arm64/tools/syscall_32.tbl
+> arch/mips/kernel/syscalls/syscall_n32.tbl
+> arch/mips/kernel/syscalls/syscall_n64.tbl
+> arch/mips/kernel/syscalls/syscall_o32.tbl
+> 
+>        Arnd
+> 
 
+Thanks! Added
 
-> On 10 Jan 2025, at 2:44=E2=80=AFAM, Charlie Jenkins =
-<charlie@rivosinc.com> wrote:
->=20
-> On Thu, Jan 09, 2025 at 05:49:39PM -0300, Arnaldo Carvalho de Melo =
-wrote:
->> On Thu, Jan 09, 2025 at 11:48:36AM -0800, Charlie Jenkins wrote:
->>> On Thu, Jan 09, 2025 at 12:59:43PM -0300, Arnaldo Carvalho de Melo =
-wrote:
->>>> =E2=AC=A2 [acme@toolbox perf-tools-next]$ git log --oneline -1 ; =
-time make -C tools/perf build-test
->>>> d06826160a982494 (HEAD -> perf-tools-next) perf tools: Remove =
-dependency on libaudit
->>>> make: Entering directory =
-'/home/acme/git/perf-tools-next/tools/perf'
->>>> - tarpkg: ./tests/perf-targz-src-pkg .
->>>>                 make_static: cd . && make LDFLAGS=3D-static =
-NO_PERF_READ_VDSO32=3D1 NO_PERF_READ_VDSOX32=3D1 NO_JVMTI=3D1 =
-NO_LIBTRACEEVENT=3D1 NO_LIBELF=3D1 -j28  DESTDIR=3D/tmp/tmp.JJT3tvN7bV
->>>>              make_with_gtk2: cd . && make GTK2=3D1 -j28  =
-DESTDIR=3D/tmp/tmp.BF53V2qpl3
->>>> - =
-/home/acme/git/perf-tools-next/tools/perf/BUILD_TEST_FEATURE_DUMP: cd . =
-&& make =
-FEATURE_DUMP_COPY=3D/home/acme/git/perf-tools-next/tools/perf/BUILD_TEST_F=
-EATURE_DUMP  feature-dump
->>>> cd . && make =
-FEATURE_DUMP_COPY=3D/home/acme/git/perf-tools-next/tools/perf/BUILD_TEST_F=
-EATURE_DUMP feature-dump
->>>>         make_no_libbionic_O: cd . && make NO_LIBBIONIC=3D1 =
-FEATURES_DUMP=3D/home/acme/git/perf-tools-next/tools/perf/BUILD_TEST_FEATU=
-RE_DUMP -j28 O=3D/tmp/tmp.KZuQ0q2Vs6 DESTDIR=3D/tmp/tmp.0sxMyH91gS
->>>>           make_util_map_o_O: cd . && make util/map.o =
-FEATURES_DUMP=3D/home/acme/git/perf-tools-next/tools/perf/BUILD_TEST_FEATU=
-RE_DUMP -j28 O=3D/tmp/tmp.Y0Mx3KLREI DESTDIR=3D/tmp/tmp.wg9HCVVLHE
->>>>              make_install_O: cd . && make install =
-FEATURES_DUMP=3D/home/acme/git/perf-tools-next/tools/perf/BUILD_TEST_FEATU=
-RE_DUMP -j28 O=3D/tmp/tmp.P0LEBAkW1X DESTDIR=3D/tmp/tmp.agTavZndFN
->>>>  failed to find: etc/bash_completion.d/perf
->>>=20
->>> Is this something introduced by this patch?
->>=20
->> I don't think so.
->>=20
->> BTW this series is already pushed out to perf-tools-next:
->>=20
->> =
-https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/l=
-og/?h=3Dperf-tools-next
->>=20
->> Thanks!
->>=20
->> - Arnaldo
->=20
-> Thank you!
->=20
-> - Charlie
-
-Hi Charlie, Arnaldo
-
-While testing the series, I hit compilation issue in powerpc
-
-Snippet of logs:
-
-
-  CC      util/syscalltbl.o
-In file included from =
-/home/athira/perf-tools-next/tools/perf/arch/powerpc/include/syscall_table=
-.h:5,
-                 from util/syscalltbl.c:16:
-arch/powerpc/include/generated/asm/syscalls_64.h:16:16: error: =
-initialized field overwritten [-Werror=3Doverride-init]
-   16 |         [13] =3D "time",
-      |                ^~~~~~
-arch/powerpc/include/generated/asm/syscalls_64.h:16:16: note: (near =
-initialization for =E2=80=98syscalltbl[13]=E2=80=99)
-arch/powerpc/include/generated/asm/syscalls_64.h:22:16: error: =
-initialized field overwritten [-Werror=3Doverride-init]
-   22 |         [18] =3D "oldstat",
-      |                ^~~~~~~~~
-arch/powerpc/include/generated/asm/syscalls_64.h:22:16: note: (near =
-initialization for =E2=80=98syscalltbl[18]=E2=80=99)
-arch/powerpc/include/generated/asm/syscalls_64.h:27:16: error: =
-initialized field overwritten [-Werror=3Doverride-init]
-   27 |         [22] =3D "umount",
-      |                ^~~~~~~~
-
-
-And similar errors is there for few more entries. The reason is that, =
-the generated syscalls file has two entries for each of these failing =
-cases.
-
-=46rom arch/powerpc/include/generated/asm/syscalls_64.h created by =
-scrips/syscalltbl.sh=20
-
-
-  1 static const char *const syscalltbl[] =3D {
-  2         [0] =3D "restart_syscall",
-  3         [1] =3D "exit",
-  4         [2] =3D "fork",
-  5         [3] =3D "read",
-  6         [4] =3D "write",
-  7         [5] =3D "open",
-  8         [6] =3D "close",
-  9         [7] =3D "waitpid",
- 10         [8] =3D "creat",
- 11         [9] =3D "link",
- 12         [10] =3D "unlink",
- 13         [11] =3D "execve",
- 14         [12] =3D "chdir",
- 15         [13] =3D "time=E2=80=9D,                          =20
- 16         [13] =3D "time=E2=80=9D,                   =20
- 17         [14] =3D "mknod",
- 18         [15] =3D "chmod",
- 19         [16] =3D "lchown",
- 20         [17] =3D "break",
- 21         [18] =3D "oldstat",
- 22         [18] =3D "oldstat=E2=80=9D,
-
-Line number 15 an 16 shows two entries for time. Similarly last two =
-lines for oldstat. This is picked form =
-https://github.com/torvalds/linux/blob/master/tools/perf/arch/powerpc/entr=
-y/syscalls/syscall.tbl
-
-13      32      time                            sys_time32
-13      64      time                            sys_time
-
-18      32      oldstat                         sys_stat                 =
-       sys_ni_syscall
-18      64      oldstat                         sys_ni_syscall
-
-For same nr, two entries are there. In the arch specific version of the =
-script that makes the syscall table, this was handled : =
-https://github.com/torvalds/linux/blob/master/tools/perf/arch/powerpc/entr=
-y/syscalls/mksyscalltbl#L28
-
-So we will need change in generic script also. Proposing below change :=20=
-
-
-diff --git a/tools/perf/scripts/syscalltbl.sh =
-b/tools/perf/scripts/syscalltbl.sh
-index 1ce0d5aa8b50..d66cec10cc2d 100755
---- a/tools/perf/scripts/syscalltbl.sh
-+++ b/tools/perf/scripts/syscalltbl.sh
-@@ -75,8 +75,10 @@ max_nr=3D0
- # the params are: nr abi name entry compat
- # use _ for intentionally unused variables according to SC2034
- while read nr _ name _ _; do
--    emit "$nr" "$name" >> $outfile
--    max_nr=3D$nr
-+ if [ "$max_nr" -lt "$nr" ]; then
-+ emit "$nr" "$name" >> $outfile
-+ max_nr=3D$nr
-+ fi
- done < $sorted_table
-   rm -f $sorted_table
-
-Arnaldo,
-I see we have this patch series in perf-tools-next. If we need above =
-change as a separate patch, please let me know.
-
-Thanks
-Athira
-
->=20
->=20
+-- 
+- Andrey
 
