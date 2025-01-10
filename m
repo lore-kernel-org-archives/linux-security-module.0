@@ -1,128 +1,168 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB9220C004
-	for <linux-security-module@vger.kernel.org>; Fri, 10 Jan 2025 09:44:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87D12204F93;
+	Fri, 10 Jan 2025 11:12:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736502299; cv=none; b=L+ztGUta5psJ2RF2iy58jo4iqo8/kesm2GWc2UyCq2k2lWrYKVJ9fE0aa0zMbPs339PdfvNLk7nqsVn8oam4S11F8HcIyDrGO9opijlQ4BpNEZ1raJbLzqToVeWJqxyjMaPb15Jf4uLLLE1OW66w9BIr+dVkYgwQTOGxpi5UQ5o=
+	t=1736507572; cv=none; b=owBWu93SNP1DGPFupsSsaaWqXIag6ju5oBJb50RFD5v5bH7y0VyC2rQKZ0RfrewGvn6p+P5I+VCPv7x/Cd5nk/tdEahrXQsB9WeZZFi/N/9xlizYTvF7ejrCrt6l0WdNSkz+mJqJX8sNit8PlVBJ+z2OqEqaIV5Y1Ltm9dlGdro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736502299; c=relaxed/simple;
-	bh=ENLLV/0PrVWHZJnSd10hwquS1U8BMVZB3K1bFjotxyc=;
+	s=arc-20240116; t=1736507572; c=relaxed/simple;
+	bh=UeOt5R2P5GeHb8nFPEh954S2nl3+3csDNv4eH/iGYgQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 In-Reply-To:Content-Type:Content-Disposition; b=V9ptYsp4caHUx0xUFXK2aIfB5ZXAx/w+dIx1Hj5M0MP99IXfIgsHLSYIwWtm/Kmb7+SCtYEx1K/bAS3TlJy7RmuzC+KxFf+8ppEdRwVWseEHPU6le/xM4e2wwxzlU7Q4CUTWcRJvK+Xt4PnzgjQGt0qiiAzQmcrxukJbRr8jERk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UIFsE3fM; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=F5DTFc+VboHQudJHdzNFidJHd5kkec7d0J5Kt/Y7U4FocT0gc0COMaapTBbVl7DJ9o02irhmlTp/MZzCtx8PlciUijQdAiw1WBClTwHroVcOuhP7jrvobyPM8TNcE3iaLgqa0ttrMrJEWIEyWIfpVMx012W1c8eGliFbDVS3EMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QX6MbU4H; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UIFsE3fM"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1736502295;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=A4Kw1qoNYerqhNjh25Dgp7jdmE++mW9Fl3ZiJ8T3co8=;
-	b=UIFsE3fM8ZpT28RgTD/VWrQgEAnTkGjPT7UbRMlcM0A3WZUp3DhNJ0v0QFBh450AL2dUF2
-	1rk+agWGcGiZ9i74yLeJbYlEoWeR6NzBDaiJjp4lAMBOkt46WyA1BMrDxOCmGN/VpP3McP
-	TQbg59XT+08yYB3kLiyn5GjAlHUungM=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-64-GXMcimKJNQKDEfkO0FUSww-1; Fri, 10 Jan 2025 04:44:54 -0500
-X-MC-Unique: GXMcimKJNQKDEfkO0FUSww-1
-X-Mimecast-MFC-AGG-ID: GXMcimKJNQKDEfkO0FUSww
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-385e03f54d0so781393f8f.3
-        for <linux-security-module@vger.kernel.org>; Fri, 10 Jan 2025 01:44:54 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QX6MbU4H"
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3863494591bso1070745f8f.1;
+        Fri, 10 Jan 2025 03:12:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1736507569; x=1737112369; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=y+x9FB8gpRu+ny5JZ4ENzOnNmCE2Q/tjr8cqBXheLDU=;
+        b=QX6MbU4HDVaBbMqHG+hWJSmYFgJmeoPSYLDxSSwj+cqH8BPwCcxc0t6+YyRuBEW0gN
+         o3qpXMgA/6ROBEziDgi5aqXJXq5R2CvcVDQIcHnhL8aW2ti54TDM38qJ9GuK0aM0TSRt
+         9y3DMhulU9eaJrcrC1YIPLrI83V/SPaop710lPwSRbY3ylDOUaAytQS08XykQNIPunZO
+         j1/EdEr7Gge851MrpK5HSxtfAKaW0yV5LDYQ4Hi1MSrc/2Qt6m2Wag+Laq7Xx9X335bE
+         s75Vm/mMVjVViLFe0MtkbTEmwQ7IQLPnpR1BYEIWHpUj5wcPoaUZ3RbmAIMHcCMjKYm1
+         62EA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736502293; x=1737107093;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A4Kw1qoNYerqhNjh25Dgp7jdmE++mW9Fl3ZiJ8T3co8=;
-        b=dvTnEUuI+LAmCF6to0tpmTWdcEzOsY7pdcYqsv58b7wKW0rnWAlNVfnlIwcfnSMNN7
-         j+GhV+i1IaUYWYfwKFUa5S/x+i5NBPgKaD0aAqi70IfjB0c6DJuHIoEEE1+YuQn8BYLr
-         9677sLBVvLbSIwpOfX7KPEoLR1GP/0bio/vdaI+D3xRUYzg/MMGoSv6Mr6n6dq9UgFtu
-         TpMUdmaugD7DwtdpZC0S2UmkPDJ/M64hBWlmy11cfflX/DCDyGSawAQ5onkEipcXXhZI
-         m1fc9j+Rvg3FED+IXGBgu9cSiLjKLFFZzUa73Pde5YQ9UeUazWLlRT0KVjtCXdTA10IW
-         shcw==
-X-Forwarded-Encrypted: i=1; AJvYcCUXssZv4rYCC8V7GirJQVwm21UAXN3MrEQQuRiN1X05wyUz7aWAal8PflbMJWhWXXMmnpihk5BwVuCnRF8TaJrR/9uHorQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yye3t5+zGNHUQQF+18H17PS125TCOD3jGXwR22jt0E0+3lhrLXd
-	FlE9LD6DYOCdrfoS88nccEzlurT1kZZs6KcU64T5jwQ/tabRHmntXlKO6GhLvKKGvVRhHKmUBAY
-	u1Cu0kb4ki2fvj8AgWGUgesTvaPCdPpbISFVStXw5mbDas2cT2x7N37qwflCptkuqAil8YTZR
-X-Gm-Gg: ASbGnctrYNtJyP9zdtnS4rnGRN23AvZIh2Kmc6P4x18Vw7vh9T1oaAE891velDb509O
-	cq0zQtJvgmeG4dUqirxxK0SN7Bd70llit8xmKNd+CcUvw56GTIYUHZYHNHowqrRkJxJLXuDPbSc
-	dko5LFURDQDEeDF/UPtjW6ft0oGKTpmG1L4/FvIgX8kkH8496O2OBHBS/OTDbNzwbpBGbd3d/o3
-	XoXcDviaYRcYpdd/3+ZfMVbwQ3yS8ZxBEtnY4KNS8nE+vKtQ2+NeOu/bv9XI1Zcl6haQKEY6XmK
-X-Received: by 2002:a05:6000:709:b0:386:3803:bbd5 with SMTP id ffacd0b85a97d-38a8733a1f9mr9910101f8f.45.1736502293463;
-        Fri, 10 Jan 2025 01:44:53 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFWMxVaNXeUTe+wjdV2pCbQXCctILb5vVg9f3+psJOjGS23Sr767uuQBsbyCemBlGukLyZjgw==
-X-Received: by 2002:a05:6000:709:b0:386:3803:bbd5 with SMTP id ffacd0b85a97d-38a8733a1f9mr9910059f8f.45.1736502293124;
-        Fri, 10 Jan 2025 01:44:53 -0800 (PST)
-Received: from thinky (ip-217-030-074-039.aim-net.cz. [217.30.74.39])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38a8e383965sm4140444f8f.31.2025.01.10.01.44.51
+        d=1e100.net; s=20230601; t=1736507569; x=1737112369;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=y+x9FB8gpRu+ny5JZ4ENzOnNmCE2Q/tjr8cqBXheLDU=;
+        b=o7Xhi1q/pZBTiANLHR2UEij8N49G+eMSCIUGplEG0NRjyKleZOfbwK9lD7ZCJK+6fU
+         xRUCESa25ZHjr3eBj3ObIXkSvDam8gVV1gsGeqaQBPXK8tdMdqHvXPwFK4QQFvniYrak
+         Sq2wxreHMJNfyo4S5lw9acmTzwIU5bRXdZhevHYMyPkBiiC/l8JMR6OdxQZsexsG8mRq
+         AUeVhb/W1bWOEtgVbrN+buPz4+6ff7YlebWSGJDfrQenh/ag+jY4Ba/4LiC65NBoRLXE
+         hCmFX8yoIHtf98bzXgA6yGO6Mkx8yktHtRINJXsIx1Xki8YSa9/yDi77JjRNPi7Kovof
+         19Ow==
+X-Forwarded-Encrypted: i=1; AJvYcCU97ksMh2xRLM0NYIjoWEltEKlGgmI3l2c/Oqu8YS4kOAzDmJ99+J01Fd7e6Z5UlMJQ8cEzsY8m@vger.kernel.org, AJvYcCUomSMONhTmf2J/cJVAZ1rFwP9086dXuSloT61eKlcagVHF8uwKx1CUcrRUN3LSEYnZkI+RW49c4LCV/Xb2wPvxOvcTksU=@vger.kernel.org, AJvYcCWI0twDAxHm/ORiQFgrQAbW0hPxfBUz4PS68j5CvfYWJ03O4mOCrx1LTWhee7Z+auYLmNZjgmdehtYoojyIPp4S@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8NxCLsL67VeketgYsqZWLJ0hQ0CJS3VJgTzkaWZrwfTAVdMFd
+	hD0ji9I16gqlEH+tZMznCCIequHqZl5RjNam2gcPSpmpHfYawauc
+X-Gm-Gg: ASbGncumUGXzpx3AS4tw6UOr8bBGgSzZn8eLdzyuVMDdj6PtwisKXxTjUdEUr+h5b1+
+	0bVbwu7j1YreBf2ZHZdgOwiZ4QO2AB6f3cC4N9k/WeQRBYBoCt2hH99D8q7UZ13fKGMSZ+cKJvm
+	pCH8XzPk/4xMJu39E9+hxVuMMSjHC92Jb48I/a2JGZN89MgxETzYDNCKdROmQdxsQIKPXywH9cy
+	yjgUQllu8FsqFnT5BczrpUNMzQphMYpQwD9e6CeuJdET7Mx91n47GeROA==
+X-Google-Smtp-Source: AGHT+IEgmiSksMHjPRzswCZRI9x/P5xOUcq0e2x7nHHa8Ps+XDO6PG0n5O7zc0nMyxeBvkMf1N/LTg==
+X-Received: by 2002:a5d:5f85:0:b0:387:86cf:4e87 with SMTP id ffacd0b85a97d-38a872deb33mr10369275f8f.15.1736507568637;
+        Fri, 10 Jan 2025 03:12:48 -0800 (PST)
+Received: from localhost ([2a00:79e1:abd:a201:48ff:95d2:7dab:ae81])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436e9e6251asm51588845e9.40.2025.01.10.03.12.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Jan 2025 01:44:52 -0800 (PST)
-Date: Fri, 10 Jan 2025 10:44:51 +0100
-From: Andrey Albershteyn <aalbersh@redhat.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org, 
-	Michal Simek <monstr@monstr.eu>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
-	Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	chris@zankel.net, Max Filippov <jcmvbkbc@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org, 
-	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, 
-	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>
-Subject: Re: [PATCH] fs: introduce getfsxattrat and setfsxattrat syscalls
-Message-ID: <4ad35w4mrxb4likkqijkivrkom5rpfdja6klb5uoufdjdyjioq@ksxubq4xb7ei>
-References: <20250109174540.893098-1-aalbersh@kernel.org>
- <e7deabf6-8bba-45d7-a0f4-395bc8e5aabe@app.fastmail.com>
+        Fri, 10 Jan 2025 03:12:48 -0800 (PST)
+Date: Fri, 10 Jan 2025 12:12:42 +0100
+From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+Cc: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	willemdebruijn.kernel@gmail.com,
+	linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
+	netfilter-devel@vger.kernel.org, yusongping@huawei.com,
+	artem.kuzin@huawei.com, konstantin.meskhidze@huawei.com
+Subject: Re: [RFC PATCH v3 01/19] landlock: Support socket access-control
+Message-ID: <20250110.2893966a7649@gnoack.org>
+References: <20240904104824.1844082-1-ivanov.mikhail1@huawei-partners.com>
+ <20240904104824.1844082-2-ivanov.mikhail1@huawei-partners.com>
+ <ea026af8-bc29-709c-7e04-e145d01fd825@huawei-partners.com>
+ <Z0DDQKACIRRDRZRE@google.com>
+ <36ac2fde-1344-9055-42e2-db849abf02e0@huawei-partners.com>
+ <20241127.oophah4Ueboo@digikod.net>
+ <eafd855d-2681-8dfd-a2be-9c02fc07050d@huawei-partners.com>
+ <20241128.um9voo5Woo3I@digikod.net>
+ <af72be74-50c7-d251-5df3-a2c63c73296a@huawei-partners.com>
+ <f6b255c9-5a88-fedd-5d25-dd7d09ddc989@huawei-partners.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <e7deabf6-8bba-45d7-a0f4-395bc8e5aabe@app.fastmail.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: lrykbEr5Glk0ak40NwVR3vm0Fo8Fa_dxwsMZSHg1QUE_1736502293
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f6b255c9-5a88-fedd-5d25-dd7d09ddc989@huawei-partners.com>
 
-On 2025-01-09 20:59:45, Arnd Bergmann wrote:
-> On Thu, Jan 9, 2025, at 18:45, Andrey Albershteyn wrote:
-> >
-> >  arch/alpha/kernel/syscalls/syscall.tbl      |   2 +
-> >  arch/m68k/kernel/syscalls/syscall.tbl       |   2 +
-> >  arch/microblaze/kernel/syscalls/syscall.tbl |   2 +
-> >  arch/parisc/kernel/syscalls/syscall.tbl     |   2 +
-> >  arch/powerpc/kernel/syscalls/syscall.tbl    |   2 +
-> >  arch/s390/kernel/syscalls/syscall.tbl       |   2 +
-> >  arch/sh/kernel/syscalls/syscall.tbl         |   2 +
-> >  arch/sparc/kernel/syscalls/syscall.tbl      |   2 +
-> >  arch/x86/entry/syscalls/syscall_32.tbl      |   2 +
-> >  arch/x86/entry/syscalls/syscall_64.tbl      |   2 +
-> >  arch/xtensa/kernel/syscalls/syscall.tbl     |   2 +
-> 
-> You seem to be missing a couple of files here: 
-> 
-> arch/arm/tools/syscall.tbl
-> arch/arm64/tools/syscall_32.tbl
-> arch/mips/kernel/syscalls/syscall_n32.tbl
-> arch/mips/kernel/syscalls/syscall_n64.tbl
-> arch/mips/kernel/syscalls/syscall_o32.tbl
-> 
->        Arnd
-> 
+Happy New Year!
 
-Thanks! Added
+On Tue, Dec 24, 2024 at 07:55:01PM +0300, Mikhail Ivanov wrote:
+> The bitmask approach leads to a complete refactoring of socket rule
+> storage. This shouldn't be a big issue, since we're gonna need
+> multiplexer for insert_rule(), find_rule() with a port range feature
+> anyway [1]. But it seems that the best approach of storing rules
+> composed of bitmasks is to store them in linked list and perform
+> linear scan in landlock_find_rule(). Any other approach is likely to
+> be too heavy and complex.
+> 
+> Do you think such refactoring is reasonable?
+> 
+> [1] https://github.com/landlock-lsm/linux/issues/16
 
--- 
-- Andrey
+The way I understood it in your mail from Nov 28th [1], I thought that the
+bitmasks would only exist at the UAPI layer so that users could more
+conveniently specify multiple "types" at the same time.  In other
+words, a rule which is now expressed as
 
+  {
+    .allowed_access = LANDLOCK_ACCESS_SOCKET_CREATE,
+    .family = AF_INET,
+    .types = 1 << SOCK_STREAM | 1 << SOCK_DGRAM,
+    .protocol = 0,
+  },
+
+used to be expressed like this (without bitmasks):
+
+  {
+    .allowed_access = LANDLOCK_ACCESS_SOCKET_CREATE,
+    .family = AF_INET,
+    .type = SOCK_STREAM,
+    .protocol = 0,
+  },
+  {
+    .allowed_access = LANDLOCK_ACCESS_SOCKET_CREATE,
+    .family = AF_INET,
+    .type = SOCK_DGRAM,
+    .protocol = 0,
+  },
+
+I do not understand why this convenience feature in the UAPI layer
+requires a change to the data structures that Landlock uses
+internally?  As far as I can tell, struct landlock_socket_attr is only
+used in syscalls.c and converted to other data structures already.  I
+would have imagined that we'd "unroll" the specified bitmasks into the
+possible combinations in the add_rule_socket() function and then call
+landlock_append_socket_rule() multiple times with each of these?
+
+
+That being said, I am not a big fan of red-black trees for such simple
+integer lookups either, and I also think there should be something
+better if we make more use of the properties of the input ranges. The
+question is though whether you want to couple that to this socket type
+patch set, or rather do it in a follow up?  (So far we have been doing
+fine with the red black trees, and we are already contemplating the
+possibility of changing these internal structures in [2].  We have
+also used RB trees for the "port" rules with a similar reasoning,
+IIRC.)
+
+Regarding the port range feature, I am also not sure whether the data
+structure for that would even be similar?  Looking for a containment
+in a set of integer ranges is a different task than looking for an
+exact match in a non-contiguous set of integers.
+
+In any case, I feel that for now, an exact look up in the RB tree
+would work fine as a generic solution (especially considering that the
+set of added rules is probably usually small).  IMHO, finding a more
+appropriate data structure might be a can of worms that could further
+delay the patch set and which might better be discussed separately.
+
+WDYT?
+
+–Günther
+
+[1] https://lore.kernel.org/all/eafd855d-2681-8dfd-a2be-9c02fc07050d@huawei-partners.com/
+[2] https://github.com/landlock-lsm/linux/issues/1
