@@ -1,144 +1,193 @@
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 039EE20D511
-	for <linux-security-module@vger.kernel.org>; Fri, 10 Jan 2025 12:59:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7D4C20B7FA;
+	Fri, 10 Jan 2025 13:02:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736513970; cv=none; b=kvQFRmamTFNbVWezf9q6OeZoyl/5IUypU0dNL5gd7e+OqTCankTIkDGxJeXzfyhvzLWAAOMp0e1y9wBR+GYlipG9Nsq4lXYENJKm1zigtT3WFWBjf/9HXTvbz3cn/Iso5PCKzG1+ipTXxMelHU90gVgVFVpOfT51ndLyAG/Ui2o=
+	t=1736514174; cv=none; b=ZjRMxAnLhytYICV0UDoEWv/0Vyvgk0pz2RG8Q3U+tmZRRYo179EAq8kuuuNPH77zT+lTMtaaL6ZCypmwGjspHFEaZXK1r1kmGuL1k6VN25WNRbdJkb+FxdQosreG5+DOuTchd4OdBhX+NJ2XRRA+LIhh9kU+jqaAL813VINPCzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736513970; c=relaxed/simple;
-	bh=N5Nwoip5xbeWvZVKWc7XpqHKBZo+r6HFEiCLqn4G52g=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=dj4ZrvtcSgO1r2F/T+OxU+OsiEtA+gJd6fMwBPhMWWrG9SqFnvIQNRzeXiofElh8/G62TSs0TFW3spJSOQPhnOvT5rtCtF5d5YJUHM18qwr/4j+MqDbk0rlQzxbxx9jH4ZKk2ZRHV0tvQ/yG2zCyoE755PMumIaLRCKNK8b3S1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3a7d85ab308so16024255ab.3
-        for <linux-security-module@vger.kernel.org>; Fri, 10 Jan 2025 04:59:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736513968; x=1737118768;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jwSEic0BY8r/N+t2umB/08iOI2Uv7pxcCMfwAJ3rZPo=;
-        b=tbaeP2UkJZp6UDRqYhYw9Em52IG1h5AKbtTu/kJTQJTCBni7c/RctZqDyK975q3NlP
-         gJo298tEVEApRdZOCHq2kuB1ioNl5wpZuw89DTrkvxsHABs0TM0OkBEClt7eL/3vnxb5
-         UcdaSVsASPMbz3UBmh1DDnIGd/Fu9s45xNgaLHoRJ+7NlLbtmjJqWg355r8jazZRSoqs
-         BkFn6xi26ZZJADHhMhTIrHvNjDlUWD8uXWX+sV2Q0IEfGvbxp0EAMlVpUhb5hveICkn2
-         gvHvJwQacL6fbCoSvLstZrt2u8T8WdaexDeWu8vCpg0PmrdV3I7fHA9ejPf3DIiVDeIa
-         x5VA==
-X-Forwarded-Encrypted: i=1; AJvYcCUJkxXUrORxnGO4gfGAY8qclFEdocVbjXwpD1mUSIQBiS7No5h/p66Qan8AuHxoxDWHb+9xAvHxkSzPPRbOWj58niGywto=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/gYCh9MUiJ6rbhO98ipB3NQBeaz119XCrM5IDGkWIsQ6ry4MA
-	JS3J+9znxvN8haReqtsp1gssGTchgTSpMSG/oZLe7hEf6kuz1nCQro2uNP+DUmg6DcCFTgqjU9E
-	qIQAQQ0I7b/qGDUdIdmZ0ZVc/xunY7CCApASe1yr1nzNM5vGC+FXrP48=
-X-Google-Smtp-Source: AGHT+IHUwW4hNvKhlfoJazuKjSWv+jFDD8dEY84Obxi4Q9Je9dw4Jfo6aXdDB133F3RbAjbYnSZaqglz3eyVYGkZLubcJzmnLa34
+	s=arc-20240116; t=1736514174; c=relaxed/simple;
+	bh=OAImGcKOliVNNhgW+BfQ1xldEUlrGQVka1gB2COieeg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=gK71du1DpzSnJWFrHh6MYuuDwT+1z1Os6Ot05gr7IewW1gJerMzmQvI901/voU0TfpMwnE0KiWMivl8Tvppszfl0xBRtL1PBPd8515jBorJgcrj9k/RkmvCe3Y25HYPsZusF8aTg68uGpfVMuJrTk5+6aEHS8hOhL8Xru6v9uMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4YV1xm3hCBz6L54Z;
+	Fri, 10 Jan 2025 21:01:32 +0800 (CST)
+Received: from mscpeml500004.china.huawei.com (unknown [7.188.26.250])
+	by mail.maildlp.com (Postfix) with ESMTPS id CC56C14022E;
+	Fri, 10 Jan 2025 21:02:46 +0800 (CST)
+Received: from [10.123.123.159] (10.123.123.159) by
+ mscpeml500004.china.huawei.com (7.188.26.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Fri, 10 Jan 2025 16:02:44 +0300
+Message-ID: <3cdf6001-4ad4-6edc-e436-41a1eaf773f3@huawei-partners.com>
+Date: Fri, 10 Jan 2025 16:02:42 +0300
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:509:b0:3ce:46e2:429b with SMTP id
- e9e14a558f8ab-3ce46e24583mr35779885ab.10.1736513968175; Fri, 10 Jan 2025
- 04:59:28 -0800 (PST)
-Date: Fri, 10 Jan 2025 04:59:28 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <678119b0.050a0220.d0267.0029.GAE@google.com>
-Subject: [syzbot] [lsm?] WARNING in vfs_writev
-From: syzbot <syzbot+910965bf9c26c6936f34@syzkaller.appspotmail.com>
-To: jmorris@namei.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, paul@paul-moore.com, serge@hallyn.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v3 01/19] landlock: Support socket access-control
+Content-Language: ru
+To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>
+CC: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+	<willemdebruijn.kernel@gmail.com>, <linux-security-module@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <netfilter-devel@vger.kernel.org>,
+	<yusongping@huawei.com>, <artem.kuzin@huawei.com>,
+	<konstantin.meskhidze@huawei.com>
+References: <20240904104824.1844082-1-ivanov.mikhail1@huawei-partners.com>
+ <20240904104824.1844082-2-ivanov.mikhail1@huawei-partners.com>
+ <ea026af8-bc29-709c-7e04-e145d01fd825@huawei-partners.com>
+ <Z0DDQKACIRRDRZRE@google.com>
+ <36ac2fde-1344-9055-42e2-db849abf02e0@huawei-partners.com>
+ <20241127.oophah4Ueboo@digikod.net>
+ <eafd855d-2681-8dfd-a2be-9c02fc07050d@huawei-partners.com>
+ <20241128.um9voo5Woo3I@digikod.net>
+ <af72be74-50c7-d251-5df3-a2c63c73296a@huawei-partners.com>
+ <f6b255c9-5a88-fedd-5d25-dd7d09ddc989@huawei-partners.com>
+ <20250110.2893966a7649@gnoack.org>
+From: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+In-Reply-To: <20250110.2893966a7649@gnoack.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: lhrpeml100012.china.huawei.com (7.191.174.184) To
+ mscpeml500004.china.huawei.com (7.188.26.250)
 
-Hello,
+On 1/10/2025 2:12 PM, Günther Noack wrote:
+> Happy New Year!
 
-syzbot found the following issue on:
+Happy New Year! Glad to see you :)
 
-HEAD commit:    ab75170520d4 Merge tag 'linux-watchdog-6.13-rc6' of git://..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=100fb9c4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=86dd15278dbfe19f
-dashboard link: https://syzkaller.appspot.com/bug?extid=910965bf9c26c6936f34
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11471edf980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15471edf980000
+> 
+> On Tue, Dec 24, 2024 at 07:55:01PM +0300, Mikhail Ivanov wrote:
+>> The bitmask approach leads to a complete refactoring of socket rule
+>> storage. This shouldn't be a big issue, since we're gonna need
+>> multiplexer for insert_rule(), find_rule() with a port range feature
+>> anyway [1]. But it seems that the best approach of storing rules
+>> composed of bitmasks is to store them in linked list and perform
+>> linear scan in landlock_find_rule(). Any other approach is likely to
+>> be too heavy and complex.
+>>
+>> Do you think such refactoring is reasonable?
+>>
+>> [1] https://github.com/landlock-lsm/linux/issues/16
+> 
+> The way I understood it in your mail from Nov 28th [1], I thought that the
+> bitmasks would only exist at the UAPI layer so that users could more
+> conveniently specify multiple "types" at the same time.  In other
+> words, a rule which is now expressed as
+> 
+>    {
+>      .allowed_access = LANDLOCK_ACCESS_SOCKET_CREATE,
+>      .family = AF_INET,
+>      .types = 1 << SOCK_STREAM | 1 << SOCK_DGRAM,
+>      .protocol = 0,
+>    },
+> 
+> used to be expressed like this (without bitmasks):
+> 
+>    {
+>      .allowed_access = LANDLOCK_ACCESS_SOCKET_CREATE,
+>      .family = AF_INET,
+>      .type = SOCK_STREAM,
+>      .protocol = 0,
+>    },
+>    {
+>      .allowed_access = LANDLOCK_ACCESS_SOCKET_CREATE,
+>      .family = AF_INET,
+>      .type = SOCK_DGRAM,
+>      .protocol = 0,
+>    },
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/853d1f53edc7/disk-ab751705.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/2d2656ee9e47/vmlinux-ab751705.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/a6ea69d61e24/bzImage-ab751705.xz
+Correct, but we also agreed to use bitmasks for "family" field as well:
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+910965bf9c26c6936f34@syzkaller.appspotmail.com
+https://lore.kernel.org/all/af72be74-50c7-d251-5df3-a2c63c73296a@huawei-partners.com/
 
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 5827 at mm/page_alloc.c:4729 __alloc_pages_noprof+0xeff/0x25b0 mm/page_alloc.c:4729
-Modules linked in:
-CPU: 1 UID: 0 PID: 5827 Comm: syz-executor324 Not tainted 6.13.0-rc5-syzkaller-00163-gab75170520d4 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:__alloc_pages_noprof+0xeff/0x25b0 mm/page_alloc.c:4729
-Code: 24 2c 00 00 00 00 89 cd 0f 84 8b f9 ff ff 8b 34 24 48 89 da 8b 7c 24 08 e8 de b2 fe ff e9 69 f9 ff ff c6 05 54 6f 16 0e 01 90 <0f> 0b 90 31 db e9 9f f3 ff ff 89 14 24 e8 6f a4 0c 00 8b 14 24 e9
-RSP: 0018:ffffc90003837928 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 0000000000000013 RDI: 0000000000040cc0
-RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000013
-R13: 0000000000040cc0 R14: 1ffff92000706f39 R15: 00000000ffffffff
-FS:  0000555571e5d380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000000 CR3: 0000000029fb0000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
- alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
- ___kmalloc_large_node+0x84/0x1b0 mm/slub.c:4243
- __kmalloc_large_node_noprof+0x1c/0x70 mm/slub.c:4270
- __do_kmalloc_node mm/slub.c:4286 [inline]
- __kmalloc_node_track_caller_noprof.cold+0x5/0x5f mm/slub.c:4317
- memdup_user_nul+0x2b/0x110 mm/util.c:305
- lockdown_write+0x2d/0x290 security/lockdown/lockdown.c:128
- do_loop_readv_writev fs/read_write.c:843 [inline]
- do_loop_readv_writev fs/read_write.c:828 [inline]
- vfs_writev+0x6da/0xdd0 fs/read_write.c:1052
- do_writev+0x133/0x340 fs/read_write.c:1096
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f601de372e9
-Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffcb4f253e8 EFLAGS: 00000246 ORIG_RAX: 0000000000000014
-RAX: ffffffffffffffda RBX: 00007ffcb4f255b8 RCX: 00007f601de372e9
-RDX: 0000000000000001 RSI: 0000000020000580 RDI: 0000000000000003
-RBP: 00007f601deaa610 R08: 0000000000000000 R09: 00007ffcb4f255b8
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
-R13: 00007ffcb4f255a8 R14: 0000000000000001 R15: 0000000000000001
- </TASK>
+> 
+> I do not understand why this convenience feature in the UAPI layer
+> requires a change to the data structures that Landlock uses
+> internally?  As far as I can tell, struct landlock_socket_attr is only
+> used in syscalls.c and converted to other data structures already.  I
+> would have imagined that we'd "unroll" the specified bitmasks into the
+> possible combinations in the add_rule_socket() function and then call
+> landlock_append_socket_rule() multiple times with each of these?
 
+I thought about unrolling bitmask into multiple entries in rbtree, and
+came up with following possible issue:
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Imagine that a user creates a rule that allows to create sockets of all
+possible families and types (with protocol=0 for example):
+{
+	.allowed_access = LANDLOCK_ACCESS_SOCKET_CREATE,
+	.families = INT64_MAX, /* 64 set bits */
+	.types = INT16_MAX, /* 16 set bits */
+	.protocol = 0,
+},
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+This will add 64 x 16 = 1024 entries to the rbtree. Currently, the
+struct landlock_rule, which is used to store rules, weighs 40B. So, it
+will be 40kB by a single rule. Even if we allow rules with only
+"existing" families and types, it will be 46 x 7 = 322 entries and ~12kB
+by a single rule.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+I understand that this may be degenerate case and most common rule will
+result in less then 8 (or 4) entries in rbtree, but I think API should
+be as intuitive as possible. User can expect to see the same
+memory usage regardless of the content of the rule.
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+I'm not really sure if this case is really an issue, so I'd be glad
+to hear your opinion on it.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+I also initially thought that it would be difficult to handle errors
+when adding rule. But it seems that it's not gonna be an issue with
+correctly implemented removal (this will result in additional method in
+ruleset.c and small wrapper over rule structure that would not affect
+ruleset domain implementation).
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+> 
+> 
+> That being said, I am not a big fan of red-black trees for such simple
+> integer lookups either, and I also think there should be something
+> better if we make more use of the properties of the input ranges. The
+> question is though whether you want to couple that to this socket type
+> patch set, or rather do it in a follow up?  (So far we have been doing
+> fine with the red black trees, and we are already contemplating the
+> possibility of changing these internal structures in [2].  We have
+> also used RB trees for the "port" rules with a similar reasoning,
+> IIRC.)
 
-If you want to undo deduplication, reply with:
-#syz undup
+I think it'll be better to have a separate series for [2] if the socket
+restriction can be implemented without rbtree refactoring.
+
+> 
+> Regarding the port range feature, I am also not sure whether the data
+> structure for that would even be similar?  Looking for a containment
+> in a set of integer ranges is a different task than looking for an
+> exact match in a non-contiguous set of integers.
+It seems like it would be better to have a different structure for
+non-ranged lookups if it results in less memory and lookup duration.
+First, we need to check possible candidates for both cases.
+
+> 
+> In any case, I feel that for now, an exact look up in the RB tree
+> would work fine as a generic solution (especially considering that the
+> set of added rules is probably usually small).  IMHO, finding a more
+> appropriate data structure might be a can of worms that could further
+> delay the patch set and which might better be discussed separately.
+> 
+> WDYT?
+
+I agree if you think that worst case presented above is not a big issue.
+
+> 
+> –Günther
+> 
+> [1] https://lore.kernel.org/all/eafd855d-2681-8dfd-a2be-9c02fc07050d@huawei-partners.com/
+> [2] https://github.com/landlock-lsm/linux/issues/1
