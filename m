@@ -1,184 +1,128 @@
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D88620D513
-	for <linux-security-module@vger.kernel.org>; Fri, 10 Jan 2025 14:21:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8953120E709;
+	Fri, 10 Jan 2025 14:43:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736518888; cv=none; b=rrR2UVRI7yM/GkmXrXvYZYFG+wlTxUE6qwRvTjyCNPH+KcEr090Hhs4lsa346Jzio0eyDarODevF8jf/XJzN2FlEq4ghDw6MwdKhCG2fCiUUd4JIf337av9JyaiB6U2tDs6IJWwlhXoPBwsHN4RPtV5uLZe8/XhRC5hVohmW81M=
+	t=1736520210; cv=none; b=T8ztTNa++iRO1NhEFmH2u3RqZ/DAf2mHdZhuMIt1hXUW4nVxewUsOMllyy39P7Uxm6QrvUAfhW9cvsUNzwh0/wLwuj9pSYLwzKebeg83YRW1O3YmHj+PYvCEHHRXT2bGZ3iN7QUgKZ1PxePJP76ThdMbNO65PoL2CmJEJQsvwxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736518888; c=relaxed/simple;
-	bh=mjIAj2CGKDgV/gh2xXwu83huOJGHtSiKZlYcluESCpg=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=I8oTIP3zxyp6U6oX5Ig06QsWZnUMJzJklhZ2jzvt3WQQ/iJkIVF1xT6sRDHDVQ1Vgo5W6hHk4MzM4VxyMR/RwzkRm11Cx2/Sk7TjTtTDADIThHe5kLHJ0S1WxP83xK8bULnfMVnFdiJ7bPwSZHUjgv1+p9uiuuQPk2pp85YxMt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3a7e0d5899bso40929835ab.0
-        for <linux-security-module@vger.kernel.org>; Fri, 10 Jan 2025 06:21:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736518885; x=1737123685;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FwV/JgNmZqAzQiWUpKB2Jk68TmInVBwAYYodij69KIk=;
-        b=GnHRDbXqA9weSzeX9kvkkbdpdKUuQx98rexsPQJ/oK2SbZLyorU4EBCzgosCt2TRGT
-         5BV3H7l43oVr2oVjI1kZR8beSnnTvrqWrl3OGGSLK8SGGZWIxcgam05vAzNPGjsk7imn
-         k8HiehWawRA7HrmPb8E+YLKNzFdWSijqIWIZ0Hi3oh/IPou4P69rc4aDfkdu5QU9qG9P
-         dy7BLKtbDohU7FIEDUxeI2u4wZMvvmu1szwihBSHMuyC3/vE9cmJwRC3fm+dDK0TO+y1
-         E1lOcs07SJ7Zqi7Bjxfyf4CRzMODQ0X8LFB02O4p7N3PPNr+3j/9KX181OBlYDTr3nge
-         lUDg==
-X-Forwarded-Encrypted: i=1; AJvYcCVlwY8aI4+Pxqh2d0BkiX91buMHNl6wvgvIUjsz0W+xekaqUETO+nIVHLs5r5JTMxtgSLxr8sIW6xCNaoEw3CNJGZz3UTg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw12t4bgKr8a5N4MhnAQRV8YLrsXxsqSRsZ8KjqDBXsaB8R6v/h
-	YE6LtO+8DA2C7d+ckyeoWkX4mxrgM7r9lI9PEarDtq4EZiS6S2zglkVVNYIhHaAGc1d5rFg9fkb
-	Vlb4WljJwOUBJpTrAu7SbDDmDtNU863h7VNdDY0BZ+zo9rD0RfZEWaTA=
-X-Google-Smtp-Source: AGHT+IHnhIXGMv/r55fB4F29iQnzQw3Nhr4nPbr3cbniSxV6frUvzJIP/IjBoXl00fAjze2UqQnfsWfmpv5/MTPooKq+0fdB2H31
+	s=arc-20240116; t=1736520210; c=relaxed/simple;
+	bh=NPB5NFD4Tgx2JiOc65v+cROQTjUVAMnTM2bpuZWaG2A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jEmF/A50PdGXjSasqNr7aC9mvn1MqGCC5cTZkUgyZgliJyEo8TWUAAKtXFow/p71xes1162dYKwo6+e5UjIDSoqUPD3V2OCRXpqtUWMW4S4ILjZR2gVyLaXihEmPKTP/4zIPdw0X99Sm7whwfTcyNNCi1szkFqx4YAaFtHZpx2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=unDx1OIS; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="unDx1OIS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8930CC4CED6;
+	Fri, 10 Jan 2025 14:43:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1736520210;
+	bh=NPB5NFD4Tgx2JiOc65v+cROQTjUVAMnTM2bpuZWaG2A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=unDx1OISNdVw+hc8QQjFywLA6bLYlIkgLF4Bu7z2BJxXHdNArtLsIO3LnoVN3Xc2J
+	 ElKUQ7HQgy+0EQlk+p7C1h+CRo6UJZUbFs17FeQzBTgPSgLzAzSzR8RRMQK+BpTkPo
+	 YZpCmpVc+iA1oMKoCoYqhPH06j/lx/o0iEfNXD86f8TKZLgUgzKSOGsAR7Tl2e6liZ
+	 NI2WnSXGbNbj7oXPq5MTSo9NgPX6laQhclxAcalJAfwG2s3ua+UaUQpZsC4Z8KlrCa
+	 xxoQP9cZwSV/uwlUDIPDgO8MJm9pe1vcTuBIx4fqx1Ph4XJD8l/RBPAd9eDKkeYXUU
+	 m1C1mzZLZYlfQ==
+Date: Fri, 10 Jan 2025 11:43:27 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+Cc: Charlie Jenkins <charlie@rivosinc.com>,
+	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
+	Hari Bathini <hbathini@linux.ibm.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	Christian Brauner <brauner@kernel.org>, Guo Ren <guoren@kernel.org>,
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+	James Clark <james.clark@linaro.org>,
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
+	Jonathan Corbet <corbet@lwn.net>, Arnd Bergmann <arnd@arndb.de>,
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+	linux-csky@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH v6 00/16] perf tools: Use generic syscall scripts for all
+ archs
+Message-ID: <Z4EyD_RgjjeD6G4K@x1>
+References: <20250108-perf_syscalltbl-v6-0-7543b5293098@rivosinc.com>
+ <Z3_ybwWW3QZvJ4V6@x1>
+ <Z4AoFA974kauIJ9T@ghost>
+ <Z4A2Y269Ffo0ERkS@x1>
+ <Z4A8NU02WVBDGrYZ@ghost>
+ <8639C367-2669-4924-83D8-15EAFAC42699@linux.vnet.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b44:b0:3a7:15aa:3fcc with SMTP id
- e9e14a558f8ab-3ce3a86a440mr96126615ab.1.1736518885664; Fri, 10 Jan 2025
- 06:21:25 -0800 (PST)
-Date: Fri, 10 Jan 2025 06:21:25 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67812ce5.050a0220.d0267.002e.GAE@google.com>
-Subject: [syzbot] [tomoyo?] general protection fault in tomoyo_get_name (2)
-From: syzbot <syzbot+298f8ae1e0bde70f8e0d@syzkaller.appspotmail.com>
-To: jmorris@namei.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, paul@paul-moore.com, 
-	penguin-kernel@I-love.SAKURA.ne.jp, serge@hallyn.com, 
-	syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp, 
-	tomoyo-dev-en@lists.osdn.me
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8639C367-2669-4924-83D8-15EAFAC42699@linux.vnet.ibm.com>
 
-Hello,
+On Fri, Jan 10, 2025 at 12:34:46PM +0530, Athira Rajeev wrote:
+> 
+> 
+> > On 10 Jan 2025, at 2:44 AM, Charlie Jenkins <charlie@rivosinc.com> wrote:
+> > 
+> > On Thu, Jan 09, 2025 at 05:49:39PM -0300, Arnaldo Carvalho de Melo wrote:
+> >> On Thu, Jan 09, 2025 at 11:48:36AM -0800, Charlie Jenkins wrote:
+> >>> On Thu, Jan 09, 2025 at 12:59:43PM -0300, Arnaldo Carvalho de Melo wrote:
+> >>>> ⬢ [acme@toolbox perf-tools-next]$ git log --oneline -1 ; time make -C tools/perf build-test
+> >>>> d06826160a982494 (HEAD -> perf-tools-next) perf tools: Remove dependency on libaudit
+> >>>> make: Entering directory '/home/acme/git/perf-tools-next/tools/perf'
+> >>>> - tarpkg: ./tests/perf-targz-src-pkg .
+> >>>>                 make_static: cd . && make LDFLAGS=-static NO_PERF_READ_VDSO32=1 NO_PERF_READ_VDSOX32=1 NO_JVMTI=1 NO_LIBTRACEEVENT=1 NO_LIBELF=1 -j28  DESTDIR=/tmp/tmp.JJT3tvN7bV
+> >>>>              make_with_gtk2: cd . && make GTK2=1 -j28  DESTDIR=/tmp/tmp.BF53V2qpl3
+> >>>> - /home/acme/git/perf-tools-next/tools/perf/BUILD_TEST_FEATURE_DUMP: cd . && make FEATURE_DUMP_COPY=/home/acme/git/perf-tools-next/tools/perf/BUILD_TEST_FEATURE_DUMP  feature-dump
+> >>>> cd . && make FEATURE_DUMP_COPY=/home/acme/git/perf-tools-next/tools/perf/BUILD_TEST_FEATURE_DUMP feature-dump
+> >>>>         make_no_libbionic_O: cd . && make NO_LIBBIONIC=1 FEATURES_DUMP=/home/acme/git/perf-tools-next/tools/perf/BUILD_TEST_FEATURE_DUMP -j28 O=/tmp/tmp.KZuQ0q2Vs6 DESTDIR=/tmp/tmp.0sxMyH91gS
+> >>>>           make_util_map_o_O: cd . && make util/map.o FEATURES_DUMP=/home/acme/git/perf-tools-next/tools/perf/BUILD_TEST_FEATURE_DUMP -j28 O=/tmp/tmp.Y0Mx3KLREI DESTDIR=/tmp/tmp.wg9HCVVLHE
+> >>>>              make_install_O: cd . && make install FEATURES_DUMP=/home/acme/git/perf-tools-next/tools/perf/BUILD_TEST_FEATURE_DUMP -j28 O=/tmp/tmp.P0LEBAkW1X DESTDIR=/tmp/tmp.agTavZndFN
+> >>>>  failed to find: etc/bash_completion.d/perf
+> >>> 
+> >>> Is this something introduced by this patch?
+> >> 
+> >> I don't think so.
+> >> 
+> >> BTW this series is already pushed out to perf-tools-next:
+> >> 
+> >> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/log/?h=perf-tools-next
+> >> 
+> >> Thanks!
+> >> 
+> >> - Arnaldo
+> > 
+> > Thank you!
+> > 
+> > - Charlie
+> 
+> Hi Charlie, Arnaldo
+> 
+> While testing the series, I hit compilation issue in powerpc
+> 
+> Snippet of logs:
 
-syzbot found the following issue on:
+Yeah, Stephen Rothwell noticed it in linux next and Charlie provided a
+fix, so I squashed it all together and will push it soon:
 
-HEAD commit:    fc033cf25e61 Linux 6.13-rc5
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14146af8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=86dd15278dbfe19f
-dashboard link: https://syzkaller.appspot.com/bug?extid=298f8ae1e0bde70f8e0d
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+    Link: https://lore.kernel.org/r/20250108-perf_syscalltbl-v6-14-7543b5293098@rivosinc.com
+    Link: https://lore.kernel.org/lkml/20250110100505.78d81450@canb.auug.org.au
+    [ Stephen Rothwell noticed on linux-next that the powerpc build for perf was broken and ...]
+    Link: https://lore.kernel.org/lkml/20250109-perf_powerpc_spu-v1-1-c097fc43737e@rivosinc.com
+    [ ... Charlie fixed it up and asked for it to be squashed to avoid breaking bisection. o
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Thanks for the report!
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/667548f224c3/disk-fc033cf2.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/66b97f5d4785/vmlinux-fc033cf2.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/b27868bf31d2/bzImage-fc033cf2.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+298f8ae1e0bde70f8e0d@syzkaller.appspotmail.com
-
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000004: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000020-0x0000000000000027]
-CPU: 1 UID: 0 PID: 20911 Comm: getty Not tainted 6.13.0-rc5-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:tomoyo_get_name+0xed/0x490 security/tomoyo/memory.c:167
-Code: 48 8b 98 40 af 51 9a 48 39 dd 0f 84 53 01 00 00 49 bd 00 00 00 00 00 fc ff df e8 de 2c 47 fd 48 8d 7b 20 48 89 f8 48 c1 e8 03 <42> 0f b6 04 28 84 c0 74 08 3c 03 0f 8e 00 03 00 00 44 8b 7b 20 44
-RSP: 0018:ffffc9000c44f2d0 EFLAGS: 00010202
-RAX: 0000000000000004 RBX: 0000000000000000 RCX: ffffffff8452230d
-RDX: ffff888064da9e00 RSI: ffffffff845222e2 RDI: 0000000000000020
-RBP: ffffffff9a51afa0 R08: 0000000000000004 R09: 0000000000000000
-R10: 000000008332dfba R11: 0000000000000001 R12: 000000008332dfba
-R13: dffffc0000000000 R14: ffff888029ad8d0a R15: 0000000000000000
-FS:  00007f89fe493380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000561fe8218cc8 CR3: 0000000030f66000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- tomoyo_parse_name_union+0x121/0x1f0 security/tomoyo/util.c:260
- tomoyo_update_path_acl security/tomoyo/file.c:395 [inline]
- tomoyo_write_file+0x4d3/0x7f0 security/tomoyo/file.c:1022
- tomoyo_write_domain2+0x129/0x1f0 security/tomoyo/common.c:1144
- tomoyo_add_entry security/tomoyo/common.c:2034 [inline]
- tomoyo_supervisor+0x4ad/0x1180 security/tomoyo/common.c:2095
- tomoyo_audit_path_log security/tomoyo/file.c:168 [inline]
- tomoyo_path_permission security/tomoyo/file.c:587 [inline]
- tomoyo_path_permission+0x270/0x3b0 security/tomoyo/file.c:573
- tomoyo_check_open_permission+0x37d/0x3c0 security/tomoyo/file.c:777
- tomoyo_file_open+0x6b/0x90 security/tomoyo/tomoyo.c:334
- security_file_open+0x84/0x1e0 security/security.c:3105
- do_dentry_open+0x57e/0x1ea0 fs/open.c:928
- vfs_open+0x82/0x3f0 fs/open.c:1075
- do_open fs/namei.c:3828 [inline]
- path_openat+0x1e6a/0x2d60 fs/namei.c:3987
- do_filp_open+0x20c/0x470 fs/namei.c:4014
- do_sys_openat2+0x17a/0x1e0 fs/open.c:1402
- do_sys_open fs/open.c:1417 [inline]
- __do_sys_openat fs/open.c:1433 [inline]
- __se_sys_openat fs/open.c:1428 [inline]
- __x64_sys_openat+0x175/0x210 fs/open.c:1428
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f89fe5e79a4
-Code: 24 20 48 8d 44 24 30 48 89 44 24 28 64 8b 04 25 18 00 00 00 85 c0 75 2c 44 89 e2 48 89 ee bf 9c ff ff ff b8 01 01 00 00 0f 05 <48> 3d 00 f0 ff ff 76 60 48 8b 15 55 a4 0d 00 f7 d8 64 89 02 48 83
-RSP: 002b:00007fff57111b40 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 0000000000000008 RCX: 00007f89fe5e79a4
-RDX: 0000000000000000 RSI: 00007f89fe77bf2c RDI: 00000000ffffff9c
-RBP: 00007f89fe77bf2c R08: 0000000000000008 R09: 0000000000000001
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f89fe78d513 R14: 0000000000000001 R15: 0000000000000002
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:tomoyo_get_name+0xed/0x490 security/tomoyo/memory.c:167
-Code: 48 8b 98 40 af 51 9a 48 39 dd 0f 84 53 01 00 00 49 bd 00 00 00 00 00 fc ff df e8 de 2c 47 fd 48 8d 7b 20 48 89 f8 48 c1 e8 03 <42> 0f b6 04 28 84 c0 74 08 3c 03 0f 8e 00 03 00 00 44 8b 7b 20 44
-RSP: 0018:ffffc9000c44f2d0 EFLAGS: 00010202
-RAX: 0000000000000004 RBX: 0000000000000000 RCX: ffffffff8452230d
-RDX: ffff888064da9e00 RSI: ffffffff845222e2 RDI: 0000000000000020
-RBP: ffffffff9a51afa0 R08: 0000000000000004 R09: 0000000000000000
-R10: 000000008332dfba R11: 0000000000000001 R12: 000000008332dfba
-R13: dffffc0000000000 R14: ffff888029ad8d0a R15: 0000000000000000
-FS:  00007f89fe493380(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b30d0dff8 CR3: 0000000030f66000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	48 8b 98 40 af 51 9a 	mov    -0x65ae50c0(%rax),%rbx
-   7:	48 39 dd             	cmp    %rbx,%rbp
-   a:	0f 84 53 01 00 00    	je     0x163
-  10:	49 bd 00 00 00 00 00 	movabs $0xdffffc0000000000,%r13
-  17:	fc ff df
-  1a:	e8 de 2c 47 fd       	call   0xfd472cfd
-  1f:	48 8d 7b 20          	lea    0x20(%rbx),%rdi
-  23:	48 89 f8             	mov    %rdi,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	42 0f b6 04 28       	movzbl (%rax,%r13,1),%eax <-- trapping instruction
-  2f:	84 c0                	test   %al,%al
-  31:	74 08                	je     0x3b
-  33:	3c 03                	cmp    $0x3,%al
-  35:	0f 8e 00 03 00 00    	jle    0x33b
-  3b:	44 8b 7b 20          	mov    0x20(%rbx),%r15d
-  3f:	44                   	rex.R
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+- Arnaldo
