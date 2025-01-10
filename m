@@ -1,128 +1,76 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [84.16.66.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8953120E709;
-	Fri, 10 Jan 2025 14:43:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03A852116FC
+	for <linux-security-module@vger.kernel.org>; Fri, 10 Jan 2025 15:39:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736520210; cv=none; b=T8ztTNa++iRO1NhEFmH2u3RqZ/DAf2mHdZhuMIt1hXUW4nVxewUsOMllyy39P7Uxm6QrvUAfhW9cvsUNzwh0/wLwuj9pSYLwzKebeg83YRW1O3YmHj+PYvCEHHRXT2bGZ3iN7QUgKZ1PxePJP76ThdMbNO65PoL2CmJEJQsvwxs=
+	t=1736523572; cv=none; b=YyP71zAfGTiQBv5g/bOflftablePskzxLr0HGD+EDz0LCR/1eSUrTtJgYCqc2XbfuAz4RQshOw4gy3IgPdTQnVD2ZxJCYcYG6v8m4JkfUcm/f56TgeT1SpwoOHJWJ0Fpln7OKDVXTekttcrFKaQ/XWslAhkuGhPlzZeO+ihQpsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736520210; c=relaxed/simple;
-	bh=NPB5NFD4Tgx2JiOc65v+cROQTjUVAMnTM2bpuZWaG2A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jEmF/A50PdGXjSasqNr7aC9mvn1MqGCC5cTZkUgyZgliJyEo8TWUAAKtXFow/p71xes1162dYKwo6+e5UjIDSoqUPD3V2OCRXpqtUWMW4S4ILjZR2gVyLaXihEmPKTP/4zIPdw0X99Sm7whwfTcyNNCi1szkFqx4YAaFtHZpx2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=unDx1OIS; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1736523572; c=relaxed/simple;
+	bh=/PlasUUg+tCGz3EHMvkEX/mc5natk/yUYrZEcdMowco=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dVoDrYJHT3eOZ1M6htOWFOBKFZaF4MApVsjcHKU2OT5ONEN0CIC4CePdQADYFP0zHLkWhmqjmeF+fbpm/OarZ8VO21mMS5DbR8lQmMeRt1h5m9k//g5adVdk7F/s/icgS2kTlKQ87FH40WEKME3J+CmMfby5PwtixyPXY/I1jrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=P2meaDr+; arc=none smtp.client-ip=84.16.66.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="unDx1OIS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8930CC4CED6;
-	Fri, 10 Jan 2025 14:43:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736520210;
-	bh=NPB5NFD4Tgx2JiOc65v+cROQTjUVAMnTM2bpuZWaG2A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=unDx1OISNdVw+hc8QQjFywLA6bLYlIkgLF4Bu7z2BJxXHdNArtLsIO3LnoVN3Xc2J
-	 ElKUQ7HQgy+0EQlk+p7C1h+CRo6UJZUbFs17FeQzBTgPSgLzAzSzR8RRMQK+BpTkPo
-	 YZpCmpVc+iA1oMKoCoYqhPH06j/lx/o0iEfNXD86f8TKZLgUgzKSOGsAR7Tl2e6liZ
-	 NI2WnSXGbNbj7oXPq5MTSo9NgPX6laQhclxAcalJAfwG2s3ua+UaUQpZsC4Z8KlrCa
-	 xxoQP9cZwSV/uwlUDIPDgO8MJm9pe1vcTuBIx4fqx1Ph4XJD8l/RBPAd9eDKkeYXUU
-	 m1C1mzZLZYlfQ==
-Date: Fri, 10 Jan 2025 11:43:27 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-Cc: Charlie Jenkins <charlie@rivosinc.com>,
-	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>,
-	Hari Bathini <hbathini@linux.ibm.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	Christian Brauner <brauner@kernel.org>, Guo Ren <guoren@kernel.org>,
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
-	James Clark <james.clark@linaro.org>,
-	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
-	Jonathan Corbet <corbet@lwn.net>, Arnd Bergmann <arnd@arndb.de>,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
-	linux-csky@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v6 00/16] perf tools: Use generic syscall scripts for all
- archs
-Message-ID: <Z4EyD_RgjjeD6G4K@x1>
-References: <20250108-perf_syscalltbl-v6-0-7543b5293098@rivosinc.com>
- <Z3_ybwWW3QZvJ4V6@x1>
- <Z4AoFA974kauIJ9T@ghost>
- <Z4A2Y269Ffo0ERkS@x1>
- <Z4A8NU02WVBDGrYZ@ghost>
- <8639C367-2669-4924-83D8-15EAFAC42699@linux.vnet.ibm.com>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="P2meaDr+"
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4YV5S00bF7z48X;
+	Fri, 10 Jan 2025 16:39:28 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1736523567;
+	bh=AsHxtaI/j0xAJpUvjMF5GGxk6M6C8AwNGet+DOF16/Q=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=P2meaDr+yvTyyWxF4mFKaRzgKZwGy+K3iASGZUsDnRCyTmnC7qiUh70RhIoeS6r8e
+	 7u9+vjel70PKagbJGyaR929v7mZtAJbcsdpgpOF+OTxMWQ6NQ2kUOu+IZeQc/CnKFW
+	 BjJDgD6nBK2cfkesZHTXwWkRVTGu1zysxHyV1V4Y=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4YV5Rz3J9ZzKnD;
+	Fri, 10 Jan 2025 16:39:27 +0100 (CET)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	Paul Moore <paul@paul-moore.com>
+Subject: [PATCH v1 2/2] landlock: Constify get_mode_access()
+Date: Fri, 10 Jan 2025 16:39:14 +0100
+Message-ID: <20250110153918.241810-2-mic@digikod.net>
+In-Reply-To: <20250110153918.241810-1-mic@digikod.net>
+References: <20250110153918.241810-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <8639C367-2669-4924-83D8-15EAFAC42699@linux.vnet.ibm.com>
+X-Infomaniak-Routing: alpha
 
-On Fri, Jan 10, 2025 at 12:34:46PM +0530, Athira Rajeev wrote:
-> 
-> 
-> > On 10 Jan 2025, at 2:44 AM, Charlie Jenkins <charlie@rivosinc.com> wrote:
-> > 
-> > On Thu, Jan 09, 2025 at 05:49:39PM -0300, Arnaldo Carvalho de Melo wrote:
-> >> On Thu, Jan 09, 2025 at 11:48:36AM -0800, Charlie Jenkins wrote:
-> >>> On Thu, Jan 09, 2025 at 12:59:43PM -0300, Arnaldo Carvalho de Melo wrote:
-> >>>> ⬢ [acme@toolbox perf-tools-next]$ git log --oneline -1 ; time make -C tools/perf build-test
-> >>>> d06826160a982494 (HEAD -> perf-tools-next) perf tools: Remove dependency on libaudit
-> >>>> make: Entering directory '/home/acme/git/perf-tools-next/tools/perf'
-> >>>> - tarpkg: ./tests/perf-targz-src-pkg .
-> >>>>                 make_static: cd . && make LDFLAGS=-static NO_PERF_READ_VDSO32=1 NO_PERF_READ_VDSOX32=1 NO_JVMTI=1 NO_LIBTRACEEVENT=1 NO_LIBELF=1 -j28  DESTDIR=/tmp/tmp.JJT3tvN7bV
-> >>>>              make_with_gtk2: cd . && make GTK2=1 -j28  DESTDIR=/tmp/tmp.BF53V2qpl3
-> >>>> - /home/acme/git/perf-tools-next/tools/perf/BUILD_TEST_FEATURE_DUMP: cd . && make FEATURE_DUMP_COPY=/home/acme/git/perf-tools-next/tools/perf/BUILD_TEST_FEATURE_DUMP  feature-dump
-> >>>> cd . && make FEATURE_DUMP_COPY=/home/acme/git/perf-tools-next/tools/perf/BUILD_TEST_FEATURE_DUMP feature-dump
-> >>>>         make_no_libbionic_O: cd . && make NO_LIBBIONIC=1 FEATURES_DUMP=/home/acme/git/perf-tools-next/tools/perf/BUILD_TEST_FEATURE_DUMP -j28 O=/tmp/tmp.KZuQ0q2Vs6 DESTDIR=/tmp/tmp.0sxMyH91gS
-> >>>>           make_util_map_o_O: cd . && make util/map.o FEATURES_DUMP=/home/acme/git/perf-tools-next/tools/perf/BUILD_TEST_FEATURE_DUMP -j28 O=/tmp/tmp.Y0Mx3KLREI DESTDIR=/tmp/tmp.wg9HCVVLHE
-> >>>>              make_install_O: cd . && make install FEATURES_DUMP=/home/acme/git/perf-tools-next/tools/perf/BUILD_TEST_FEATURE_DUMP -j28 O=/tmp/tmp.P0LEBAkW1X DESTDIR=/tmp/tmp.agTavZndFN
-> >>>>  failed to find: etc/bash_completion.d/perf
-> >>> 
-> >>> Is this something introduced by this patch?
-> >> 
-> >> I don't think so.
-> >> 
-> >> BTW this series is already pushed out to perf-tools-next:
-> >> 
-> >> https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/log/?h=perf-tools-next
-> >> 
-> >> Thanks!
-> >> 
-> >> - Arnaldo
-> > 
-> > Thank you!
-> > 
-> > - Charlie
-> 
-> Hi Charlie, Arnaldo
-> 
-> While testing the series, I hit compilation issue in powerpc
-> 
-> Snippet of logs:
+Use __attribute_const__ for get_mode_access().
 
-Yeah, Stephen Rothwell noticed it in linux next and Charlie provided a
-fix, so I squashed it all together and will push it soon:
+Cc: Günther Noack <gnoack@google.com>
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+---
+ security/landlock/fs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-    Link: https://lore.kernel.org/r/20250108-perf_syscalltbl-v6-14-7543b5293098@rivosinc.com
-    Link: https://lore.kernel.org/lkml/20250110100505.78d81450@canb.auug.org.au
-    [ Stephen Rothwell noticed on linux-next that the powerpc build for perf was broken and ...]
-    Link: https://lore.kernel.org/lkml/20250109-perf_powerpc_spu-v1-1-c097fc43737e@rivosinc.com
-    [ ... Charlie fixed it up and asked for it to be squashed to avoid breaking bisection. o
+diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+index 7adb25150488..f81d0335b825 100644
+--- a/security/landlock/fs.c
++++ b/security/landlock/fs.c
+@@ -932,7 +932,7 @@ static int current_check_access_path(const struct path *const path,
+ 	return check_access_path(dom, path, access_request);
+ }
+ 
+-static access_mask_t get_mode_access(const umode_t mode)
++static __attribute_const__ access_mask_t get_mode_access(const umode_t mode)
+ {
+ 	switch (mode & S_IFMT) {
+ 	case S_IFLNK:
+-- 
+2.47.1
 
-Thanks for the report!
-
-- Arnaldo
