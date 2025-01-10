@@ -1,84 +1,79 @@
-Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
+Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 578E9B661
-	for <linux-security-module@vger.kernel.org>; Fri, 10 Jan 2025 04:11:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 756AAB661
+	for <linux-security-module@vger.kernel.org>; Fri, 10 Jan 2025 04:14:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736482308; cv=none; b=qYGrIsUvCWkK6fDPlS/VYSQA0xSx2adN+TV3YLivLqUIDQKRdVJf4A/ZasB3Tmc8TOdbLEonWWYZllqADQsog4Dm43G8Rh8nJX6wiO/sVPtWWIWcXbKh7mYZrp7EXfJUrpcp1+eKH5ei8EmgTgAFDjnlLZxjeJJI5gxp729tzHw=
+	t=1736482461; cv=none; b=E4QfWPjkUekAfU5wbETo0aNgBQqAn4q1H/yYsJ8KCQuSbuX9RYaBNKHQ9pIg25FWRZFu4+SdzXQ3W+Gm9F6j/78qAMLkEOWpPcZRvdXq/Dxrbl/oaftAx/s1k/d6TMNGHq1/aPVE26EJUH9OZ/jVitO8aW/KmMZ01ogJgfpsspk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736482308; c=relaxed/simple;
-	bh=JqgvAn80P9/B+O4aszNh3FyXqN4DPoeTLBHo4Vxy4OI=;
+	s=arc-20240116; t=1736482461; c=relaxed/simple;
+	bh=rKde/vScUaA8n1F9yCocNUUEF2MI7JsDEALXqG0KRAs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OiD6KKrmBxJqEgy9QJ543K9+dJn75Ejj7ZqkcW8QCR0ItcsWnMAVrUHe0qz69ObirAHvtSz32ANsaLyDylIKjEHTIgq04T7QBJ+2kzQrpIa/DIhNdpwO4RSYpD1/LjsK5tyuTVYOmhY5CtkY8vsnqlAQPXuT7dhvAzSDCobQfD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=R90Dshec; arc=none smtp.client-ip=209.85.210.44
+	 To:Cc:Content-Type; b=nYdcEUIDQe009wyMnmViuvTaUC6VFldYuekn+EAnUavjinqt01xGoTNhlhFFnI0OCw9BKoB0YSwV+dGIlgCDD0wrHNHvn7WW1XEsbMqONgJWpbtGXx3jTmEhj+IkGomYs390+9h0qBNCI+eH9q38LsJ/fMdNLgVH8Fr08/cPuPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=BrbVENMa; arc=none smtp.client-ip=209.85.160.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="R90Dshec"
-Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-71e1597e3b4so472287a34.3
-        for <linux-security-module@vger.kernel.org>; Thu, 09 Jan 2025 20:11:46 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BrbVENMa"
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-29e5aedbebdso813295fac.0
+        for <linux-security-module@vger.kernel.org>; Thu, 09 Jan 2025 20:14:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1736482305; x=1737087105; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1736482458; x=1737087258; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fm5KJeCuva77tHLLZ6/+SmgRih/rGG3E/RNdy1qaLrQ=;
-        b=R90DshecezGDSN/3LRQMv9/et0O2xe4AcToIRwS/f4/Nb4H7qz9K/b8FiqdUfgBYi3
-         jTAe+KHbrXJWOy8f15g7eG/C0q701EGsERZl8EQfogtJwkjUnFghJYEQHzUTwU41Y9Bd
-         sLXRS0vHZyqdKo64nfLWtLMSdnX5cNiz+ZNWM=
+        bh=ottIiiil7Y6TARNn3P9202RaeajOs8YU2PtCXXybCHE=;
+        b=BrbVENMaXHqRbh7CYRcSc8qNvuEekW5LScijORTOy63tLyp+2MncpbUISgVKan00f+
+         /Mx/1bM92ARhQUWMMET7ngBxzmpRE7pzSWHxmmhOqIL3l7ormgiJ2+gVbLyYhDrule1F
+         +/pU+YxiQu3uV4Ppkhp9tWrNw063sFsoXc5sE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736482305; x=1737087105;
+        d=1e100.net; s=20230601; t=1736482458; x=1737087258;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fm5KJeCuva77tHLLZ6/+SmgRih/rGG3E/RNdy1qaLrQ=;
-        b=sM557cN64GyITZlAPgeX11fNyIP+PqjWEYhoReSlEYnRUmjB+Nf9mgvKzRLxDiKKhX
-         Z2bhxl0Ig/g/VYqHvTmYQYH6Uv1kYqXUStroTh86G+zrOTwRcuUUdzqSUhu/Wen8kDwq
-         cPdVC0WACou89qIaL9YRt7otto8lYp6mjVhv4kQOw49wntcUPUg/vitq3OLp3UZZkAt9
-         dXNg0OwpPSqZ2QerQ9nsMcGsr+UV/Ukw/xdpCn2JLoy13DEGblOqUU8/QlaSoSA9+Q5A
-         YSdd+DjFjCc12ixZLk3XSnpqXQQAWbzsx2FyRG9XCdEOkftzbsPr4MF2Es9vj3QN8nIS
-         RdXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV11XQ8Ar/Q2iTflqeLGdIL1XelTun9e7Ulh5aBDW2yRtyVnRlyYUD7rgPD30e7U+9/GJ24k72lKqxQRSM8IuqKIcyofZQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNjGIXNpjsapmvNl/aYxQEAdUJJof1M3Bm112BCMVNisaSZtFP
-	uNUgVT7A3XeS0yGxfTdJeodHTJg2oWgwARUIfUfE9pbliM9evjQoywFb8OnEHaBGVcVmv76Uq8i
-	P4eerSLRiSpfrevKr+APentO9nV1QZeN5NGuL
-X-Gm-Gg: ASbGncsaWW+d+vG7m/5xMid3j6dSlRm6bOoVO0sNmRUC0Ybj2dpAN2bbEc0VJAW9zdw
-	sG9TIV0OopWd/ESIP9ty7ttJiIcPcFwtXeqpMf7ovbA0McR36l3P3XJp7thbvFQv5
-X-Google-Smtp-Source: AGHT+IHpHndbWLn+i9dBwcUBPXjDIdNjkYfEUFj6WhDqLmfEf8XRRzYCes1BuwP8mcWgQcsl22EWAcZhE8ka2IyBvgc=
-X-Received: by 2002:a05:6808:3c47:b0:3eb:4a36:8744 with SMTP id
- 5614622812f47-3ef2ec68ca7mr5595091b6e.17.1736482305436; Thu, 09 Jan 2025
- 20:11:45 -0800 (PST)
+        bh=ottIiiil7Y6TARNn3P9202RaeajOs8YU2PtCXXybCHE=;
+        b=t8nWuQb7PsZZUMUO5mLzeVnZgtC+4ssbOeldb4AbNXlN0MbkcvXqRzWvd+ol3ONcLn
+         EX8vw0fGvJRV9SezWoN4G4g7Y5j/nXVfpLsh65mAaLdF1Avk4fkE1gql/9sSRq5Injt4
+         OnOYTSLFXItaHbtLu3ZI3gSPYiwC/dzNCX7qz98l3Iml7wrZNlPsZcNz45y0V+6DNki+
+         zZkHw4auXoTkNUZ89DPwTv9117ci45WsNSRDXCQqpYkmnTzByGfSHOOmF5XACSDiJlrl
+         8ds+aSvkE/Lzg+TPvAxL1zR4YzDCXTv9vVwDfcfnDPFpEz1ggsRfGFw9wNq7eZGo5sMU
+         +7UA==
+X-Forwarded-Encrypted: i=1; AJvYcCXOWEGjqABhjxsLRmb6yRAbroGVvLt1Khs8fM44I2uQXbx2Tl+VaUhRT7LEJuilAnzKWi08DAMHpAEUNzV8qT540DQMm/E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8ikoZJKfnM8k8xAtigh23Dfyuoa8Xq8xIOMMAKrm/N6iDsV++
+	sFYkWKBn8es3cbFe0vxjiUCkxA3UEpHaGNbrenAdYouKWj9tyRwWvM8UotRUmH2rF+KD+mZhSS0
+	WoIxxAAkAo4i9QYmDseEwDaNYwQQYmtJKtrxCRIVGfaTEskmU3Hea
+X-Gm-Gg: ASbGnctHiUKa0lQtYT6rnmfeiW2JCCjLvySj9GKpqy5hUls07LXvaA5wIqmpXbzxrr2
+	m7sWa1ue+hk4nDE8fFjK27C2592f4diHagUYh71JnGQsCuw9fy4TiLcH8Dcf8f+7j
+X-Google-Smtp-Source: AGHT+IGzb5RQzOQ97cmbpaK99mk5M46FiupwMe+2Mk4nrc96XXgdB6uIh4GAXjSMmsnZb1QNu+nuo7WeOXoDqtktDOw=
+X-Received: by 2002:a05:6870:1712:b0:29e:6bcd:3ba7 with SMTP id
+ 586e51a60fabf-2aa069191f6mr4606933fac.28.1736482457757; Thu, 09 Jan 2025
+ 20:14:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241231014632.589049-1-enlightened@chromium.org> <CAHC9VhTHviBcqhC=iOgD0R2Z4XqQifd-F1NysaX2C8oaF00oXA@mail.gmail.com>
-In-Reply-To: <CAHC9VhTHviBcqhC=iOgD0R2Z4XqQifd-F1NysaX2C8oaF00oXA@mail.gmail.com>
+References: <20241231014632.589049-1-enlightened@chromium.org> <u6jt67meocvhxlzx4bjt7dyba2piipfznrml46lkv5oi4ft4u5@cbqocdezi7is>
+In-Reply-To: <u6jt67meocvhxlzx4bjt7dyba2piipfznrml46lkv5oi4ft4u5@cbqocdezi7is>
 From: Shervin Oloumi <enlightened@chromium.org>
-Date: Thu, 9 Jan 2025 20:11:34 -0800
-X-Gm-Features: AbW1kvZnAU0-j5XCsfcQahLuj8UEkaVkwn6ADPEyU0YLURxg_dGu1DD4NjEAy1c
-Message-ID: <CAMb9sTj5qp3fxba8hRpUHAB5ShTXL7XgxebS2gihPpJTFOCxpQ@mail.gmail.com>
+Date: Thu, 9 Jan 2025 20:14:07 -0800
+X-Gm-Features: AbW1kvYMfzBdXX-e8RKktdLyXJh17sP7rg5jMljFclLqdgQ1EuGnt3B59LyzNOk
+Message-ID: <CAMb9sTgEjNk4X+FLwpmi56z+LDV=gYOO=qN5AjQSN4Erw-SUaw@mail.gmail.com>
 Subject: Re: [PATCH 1/2] fs: add loopback/bind mount specific security hook
-To: Paul Moore <paul@paul-moore.com>
-Cc: mic@digikod.net, viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	jmorris@namei.org, serge@hallyn.com, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, gnoack@google.com, shuah@kernel.org, 
-	jorgelo@chromium.org, allenwebb@chromium.org
+To: Jan Kara <jack@suse.cz>
+Cc: mic@digikod.net, viro@zeniv.linux.org.uk, brauner@kernel.org, 
+	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	gnoack@google.com, shuah@kernel.org, jorgelo@chromium.org, 
+	allenwebb@chromium.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Thanks for the feedback Paul, the latest patch should include the
-recommendations now.
-
-On Thu, Jan 2, 2025 at 9:11=E2=80=AFPM Paul Moore <paul@paul-moore.com> wro=
-te:
+On Fri, Jan 3, 2025 at 3:11=E2=80=AFAM Jan Kara <jack@suse.cz> wrote:
 >
-> On Mon, Dec 30, 2024 at 8:46=E2=80=AFPM Shervin Oloumi <enlightened@chrom=
-ium.org> wrote:
-> >
+> On Mon 30-12-24 17:46:31, Shervin Oloumi wrote:
 > > The main mount security hook (security_sb_mount) is called early in the
 > > process before the mount type is determined and the arguments are
 > > validated and converted to the appropriate format. Specifically, the
@@ -108,36 +103,10 @@ ium.org> wrote:
 > > security_sb_mount check, the bind mount hook function is never invoked.
 > >
 > > Signed-off-by: Shervin Oloumi <enlightened@chromium.org>
-> > ---
-> >  fs/namespace.c                |  4 ++++
-> >  include/linux/lsm_hook_defs.h |  1 +
-> >  include/linux/security.h      |  1 +
-> >  security/security.c           | 16 ++++++++++++++++
-> >  4 files changed, 22 insertions(+)
 >
-> Like Casey I'm not really excited about such a specific LSM hook, but
-> unfortunately we can't simply call kern_path() in the existing
-> security_sb_mount() callback as that could end up resolving to
-> something different than the call in do_loopback() which would be bad.
-> Moving the kern_path() call up into path_mount() just looks like a bad
-> idea anyway you look at it.  Unfortunately I don't really see an
-> alternative to what you're proposing, so I guess we're kinda stuck
-> with this as a solution, unless someone can think of something better.
->
-> I'm going to need to see an ACK from the VFS folks on this before I
-> merge the new hook.
->
-> I'd also stick with the security_sb_bindmount() name as opposed to the
-> XXX_path() suggestion from Casey simply to help distinguish it from
-> the pathname based LSM hooks.  Yes, this is operating on the pathname,
-> but bind mounts are a bit of a special case.
->
-> Unrelated, but I just noticed that we are calling security_sb_mount()
-> *before* may_mount(); that's the opposite order for most LSM hook
-> placements where we do the discretionary/capabilities checks first and
-> the LSM checks.  That's something we should look at, perhaps there is
-> a good reason for the ordering being different, perhaps it's a
-> mistake.
+> Christian is much more experienced in this area than me but let me share =
+my
+> thoughts before he returns from vacation.
 >
 > > diff --git a/fs/namespace.c b/fs/namespace.c
 > > index 23e81c2a1e3f..c902608c9759 100644
@@ -145,68 +114,59 @@ ium.org> wrote:
 > > +++ b/fs/namespace.c
 > > @@ -2765,6 +2765,10 @@ static int do_loopback(struct path *path, const =
 char *old_name,
-> >         if (err)
-> >                 return err;
+> >       if (err)
+> >               return err;
 > >
-> > +       err =3D security_sb_bindmount(&old_path, path);
-> > +       if (err)
-> > +               goto out;
->
-> I might make a mention in the commit description that the
-> do_reconfigure_mnt() case (MS_REMOUNT|MS_BIND) should be able to be
-> handled using the existing security_sb_mount() hook.
->
-> >         err =3D -EINVAL;
-> >         if (mnt_ns_loop(old_path.dentry))
-> >                 goto out;
->
-> ...
->
-> > diff --git a/security/security.c b/security/security.c
-> > index 09664e09fec9..bd7cb3df16f4 100644
-> > --- a/security/security.c
-> > +++ b/security/security.c
-> > @@ -1564,6 +1564,22 @@ int security_sb_mount(const char *dev_name, cons=
-t struct path *path,
-> >         return call_int_hook(sb_mount, dev_name, path, type, flags, dat=
-a);
-> >  }
-> >
-> > +/**
-> > + * security_sb_bindmount() - Loopback/bind mount specific permission c=
-heck
-> > + * @old_path: source of loopback/bind mount
-> > + * @path: mount point
-> > + *
-> > + * This check is performed in addition to security_sb_mount and only i=
-f the
-> > + * mount type is determined to be loopback/bind mount (flags & MS_BIND=
-).  It
-> > + * surfaces the mount source as a path struct.
->
-> I wouldn't mention security_sb_mount() above as that makes the comment
-> somewhat fragile in the face of changing hooks.  I would suggest
-> something along these lines:
->
-> "Beyond any general mounting hooks, this check is performed on an
->  initial loopback/bind mount (MS_BIND) with the mount source presented
->  as a path struct in @old_path."
->
-> > + * Return: Returns 0 if permission is granted.
-> > + */
-> > +int security_sb_bindmount(const struct path *old_path, const struct pa=
-th *path)
-> > +{
-> > +       return call_int_hook(sb_bindmount, old_path, path);
-> > +}
+> > +     err =3D security_sb_bindmount(&old_path, path);
+> > +     if (err)
+> > +             goto out;
 > > +
-> >  /**
-> >   * security_sb_umount() - Check permission for unmounting a filesystem
-> >   * @mnt: mounted filesystem
-> >
-> > base-commit: fc033cf25e612e840e545f8d5ad2edd6ba613ed5
-> > --
-> > 2.47.1.613.gc27f4b7a9f-goog
 >
+> So this gets triggered for the legacy mount API path (mount(2) syscall).
+> For the new mount API, I can see open_tree() does not have any security
+> hook. Is that intented? Are you catching equivalent changes done through
+> the new mount API inside security_move_mount() hook?
+
+I am not very familiar with the new API and when it is used, but LandLock d=
+oes
+listen to security_move_mount() and it rejects all such requests. It also
+listens to and rejects remount and pivotroot. Are there cases where bind mo=
+unt
+requests go through open_tree() and this hook is bypassed?
+
+> Also what caught my eye is that the LSM doesn't care at all whether this =
+is
+> a recursive bind mount (copying all mounts beneath the specified one) or
+> just a normal one (copying only a single mount). Maybe that's fine but it
+> seems a bit counter-intuitive to me as AFAIU it implicitly places a
+> requirement on the policy that if doing some bind mount is forbidden, the=
+n
+> doing bind mount of any predecessor must be forbidden as well (otherwise
+> the policy will be inconsistent).
+
+I need to double check this with Micka=C3=ABl, but I think it is safe to al=
+low
+recursive bind mounts. If a bind mount was allowed, let's say /A -> /home/B=
+,
+then we already verified that the process did not gain more access (or even
+dropped some access) through the new mount point, e.g. accessing /A/a throu=
+gh
+/home/B/a. So with a recursive bind mount, let's say /home -> /C, once we c=
+heck
+for privilege escalation as usual, it should be safe to clone any existing =
+sub
+mounts in the new destination. Because if access through B <=3D A and C <=
+=3D B then
+access through C <=3D A. So back to your point, there should never exist an
+illegal bind mount action that can implicitly happen through a legal recurs=
+ive
+bind mount of its predecessor. Regardless, I think it might be useful to kn=
+ow if
+a mount is recursive for other use cases so I added a boolean for surfacing
+MS_REC in the new patches.
+
+>
+>                                                                 Honza
 > --
-> paul-moore.com
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
