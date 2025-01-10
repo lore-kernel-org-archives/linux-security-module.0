@@ -1,107 +1,179 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49B1620E714;
-	Fri, 10 Jan 2025 16:39:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD86D212B02;
+	Fri, 10 Jan 2025 16:55:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736527178; cv=none; b=juOlL1zahkQAOC3LeznU4b+v+7/27ae2uxQmgvTJ++32zc3bFjLU4RqrDlx+L328apV4UO2Ura/z/e2bLouUBY9OubKoP5nNiuXrRNSLGt6ilXjRYMcTM5uwO6AIUNxpibSrgC1k4wVJm/0SvzO34g9UwI0b/sHuGhkBATz/15Q=
+	t=1736528121; cv=none; b=Dab2H5aT9wEde53aUl57AZRIFW5qRlIy6is4nW26reBzIwB0hPPhsrA5G0GPxmMLq5aTKHGBjDUXMSDM1waQVYR8WIHvZovFyfqI/+GQvs6aaVttoSNblTW5N5rjKqtbnq9E9M51+sErwzXA4hQ79HZ26Dcu1wsKBbsvzAHB5TM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736527178; c=relaxed/simple;
-	bh=wevkyyRE4XzWzc4iD5tWIkhakh/t6XUAOCgDphhxbkc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oO+a8d8c16sB6WiO3PVhorbRtgpPlnxCTBYCUicxEpar4cADoyUHx3yETOWmd25usiOtEzXiiYuwdRm2aFxLeV9yArNo0CSs36ILZWZRxfyHlTt8HCKdiR3I6QFm9cRzADjeXJZiknjR/ltoAX9XKMlyMVFsNM+9iCgo2UR+NVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AlS7VVcB; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AlS7VVcB"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-385ef8b64b3so2032439f8f.0;
-        Fri, 10 Jan 2025 08:39:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1736527174; x=1737131974; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=cAajNuheEIUxYToiDTKpUORJhZAX6ChA6pZVRkkTCDM=;
-        b=AlS7VVcBDeaayAZKCX1MfvI3PQ0wW+9aTZH5VfUWfmxmG4QUWMICli5/uiyHbH2jkS
-         VFLFEjwDBCprhzKd628DMrlGV0NEWjw6aBSY7gkhsFQS+lmx5X4yVIPJ9RyvD6Fjv1jQ
-         cn8r3IPubteIbyjUL/6gUWBaXSPRp7QYoDcrc2RbjJNhmApHd3uI5+RwL+8kEhc3vDf9
-         48z894HQQn5TN2UX6i3nYitPt7kdYfgzfpUWh0DbBLsML/VOczJe7x4uPkhbmSJM+6EA
-         mTedNd/WguL2vskUMymx5noNNcqJMjVnIOSVoL2ZpP1gx9WauNc0m19d49vwGKXU6VYP
-         Yv5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736527174; x=1737131974;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cAajNuheEIUxYToiDTKpUORJhZAX6ChA6pZVRkkTCDM=;
-        b=LuVuqhZlvIEhpFZ9k520CM6j+JTO7azGg+TiMqr/ZJGCTlIuzuH/F2B9qeaRUruc0w
-         07sbUFkbWPzi5sky5MT8y7dUctkRd4bi8a1767/CK3/P4LEIlZolxNqTdoYu5io37Md1
-         ZFBO5PIQ62LPzk6WE30G4+T+YGxNKForIjRQxFgiuLgVSr8MllINU30QKE8aLLaNiEHz
-         GW2ChNns6jZNYZYe/O9c+ACAfbu0WB4gH0FeEqgN2V6v4MyL9EGgCEQiqgasxqFQobze
-         sC3YXMRlLGhTW0uU4RNwyFaWJfE3g8Mg+0kTzsPdCmndB8Xk+PA+ORZ8U5DyRXbF0Ke2
-         KcAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU5tYPE5t8TYbMWmZoajpRr4riNnfdN1wCvKiIMbb+XiLX9+UA8nFbwpYTHvGs1hHwRsUdxdFVWnn2Jbbcs@vger.kernel.org, AJvYcCUkbiU1JQ+8xH9/EWD1Y8FZjtnNWym/hYZLKaLm4H+rZmF11r9EWWdxNo/K2dxSYWGHEIShGYbWJltmZ29f@vger.kernel.org, AJvYcCWoXhW9UFYBvuRDVuMgyEjyXm5x2B6Ch2ss3ncaNj/6G6AVb9TQ0FgEnNvMTEMOd506ryW7CA4Sz2AawuBN8d9aOFNFDVaz@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx48gA8b/JEbU4cXF3ws1Pd42VunWEfbDxzQiflPv7IQAjGXO1D
-	xTmd3jKK+Z6DQ1NM9KDEq8O0GtYeVAEQegs4q2UoQowtCnxX7Lsl
-X-Gm-Gg: ASbGncvLZcTai7OAxLUEV5sNrVpy3w/0FiUIAN16mNTVO8st8eoJFo/Qlc9l2LhdnTs
-	z7vsBza1G/DxxuU2kmrVd8u3Nz7GoZXqYQxSiOzNNRAbkYVfzo09kUg+JCnGDCvYN2OUpzrE3rl
-	SL8JnrrQSI/Kl4HoqFvvK9nx5zFcJqMI1k/4XJ+Iuq7JuDF7+aEGW+p1n4/kzkoN4jW7gO0tNjy
-	SwVVzuFqjB/bOsEY9V3hOfP3b/bgvQxDnFXxSOM2dmeKp9GuJtd8rvfCA==
-X-Google-Smtp-Source: AGHT+IE+UIl5Z+Zv3YdukIMMEPj3XSnEdNDR30DgmIjSlt0D1Mxs/Sp/Et5ttrNPX7c675bRuwUX1A==
-X-Received: by 2002:a05:6000:470b:b0:386:37f5:99e7 with SMTP id ffacd0b85a97d-38a872f51a3mr10210276f8f.33.1736527174296;
-        Fri, 10 Jan 2025 08:39:34 -0800 (PST)
-Received: from localhost ([2a00:79e1:abd:a201:48ff:95d2:7dab:ae81])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38a8e4b81b1sm5029255f8f.66.2025.01.10.08.39.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 Jan 2025 08:39:34 -0800 (PST)
-Date: Fri, 10 Jan 2025 17:39:32 +0100
-From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	Paul Moore <paul@paul-moore.com>
-Subject: Re: [PATCH v1 2/2] landlock: Constify get_mode_access()
-Message-ID: <20250110.672e9e7a7417@gnoack.org>
-References: <20250110153918.241810-1-mic@digikod.net>
- <20250110153918.241810-2-mic@digikod.net>
+	s=arc-20240116; t=1736528121; c=relaxed/simple;
+	bh=713G3w7yLUaNqhCI4MAHxZg8d0OUUUek1/UahKUayyo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=c2WcPrhyaOrzcnTD9sn+5a3p1x9X6Dn4ydOsvpqgK9X5NSq2v1anJ99UI8fhl6MFo7fWmaZVdd0N+rDwmI64Yua9rqMyenGazDFCE2Q8Z1St34xvprPMlZvZ5y+kNUyAl95CXLj93e+xqrdmnri2fgaaPSrXiIOFgU9yfdvRQ6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4YV75X2DKxz6M4NC;
+	Sat, 11 Jan 2025 00:53:36 +0800 (CST)
+Received: from mscpeml500004.china.huawei.com (unknown [7.188.26.250])
+	by mail.maildlp.com (Postfix) with ESMTPS id 402D7140B67;
+	Sat, 11 Jan 2025 00:55:14 +0800 (CST)
+Received: from [10.123.123.159] (10.123.123.159) by
+ mscpeml500004.china.huawei.com (7.188.26.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Fri, 10 Jan 2025 19:55:12 +0300
+Message-ID: <cd78c2c8-feb3-b7f1-90be-3f6ab3becc09@huawei-partners.com>
+Date: Fri, 10 Jan 2025 19:55:10 +0300
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v3 01/19] landlock: Support socket access-control
+Content-Language: ru
+To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>
+CC: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+	<willemdebruijn.kernel@gmail.com>, <linux-security-module@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <netfilter-devel@vger.kernel.org>,
+	<yusongping@huawei.com>, <artem.kuzin@huawei.com>,
+	<konstantin.meskhidze@huawei.com>
+References: <ea026af8-bc29-709c-7e04-e145d01fd825@huawei-partners.com>
+ <Z0DDQKACIRRDRZRE@google.com>
+ <36ac2fde-1344-9055-42e2-db849abf02e0@huawei-partners.com>
+ <20241127.oophah4Ueboo@digikod.net>
+ <eafd855d-2681-8dfd-a2be-9c02fc07050d@huawei-partners.com>
+ <20241128.um9voo5Woo3I@digikod.net>
+ <af72be74-50c7-d251-5df3-a2c63c73296a@huawei-partners.com>
+ <f6b255c9-5a88-fedd-5d25-dd7d09ddc989@huawei-partners.com>
+ <20250110.2893966a7649@gnoack.org>
+ <3cdf6001-4ad4-6edc-e436-41a1eaf773f3@huawei-partners.com>
+ <20250110.8ae6c145948f@gnoack.org>
+From: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+In-Reply-To: <20250110.8ae6c145948f@gnoack.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250110153918.241810-2-mic@digikod.net>
+X-ClientProxiedBy: lhrpeml500010.china.huawei.com (7.191.174.240) To
+ mscpeml500004.china.huawei.com (7.188.26.250)
 
-On Fri, Jan 10, 2025 at 04:39:14PM +0100, Mickaël Salaün wrote:
-> Use __attribute_const__ for get_mode_access().
+On 1/10/2025 7:27 PM, GÃ¼nther Noack wrote:
+> On Fri, Jan 10, 2025 at 04:02:42PM +0300, Mikhail Ivanov wrote:
+>> Correct, but we also agreed to use bitmasks for "family" field as well:
+>>
+>> https://lore.kernel.org/all/af72be74-50c7-d251-5df3-a2c63c73296a@huawei-partners.com/
 > 
-> Cc: Günther Noack <gnoack@google.com>
-> Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> ---
->  security/landlock/fs.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> OK
 > 
-> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> index 7adb25150488..f81d0335b825 100644
-> --- a/security/landlock/fs.c
-> +++ b/security/landlock/fs.c
-> @@ -932,7 +932,7 @@ static int current_check_access_path(const struct path *const path,
->  	return check_access_path(dom, path, access_request);
->  }
->  
-> -static access_mask_t get_mode_access(const umode_t mode)
-> +static __attribute_const__ access_mask_t get_mode_access(const umode_t mode)
->  {
->  	switch (mode & S_IFMT) {
->  	case S_IFLNK:
-> -- 
-> 2.47.1
 > 
+>> On 1/10/2025 2:12 PM, GÃ¼nther Noack wrote:
+>>> I do not understand why this convenience feature in the UAPI layer
+>>> requires a change to the data structures that Landlock uses
+>>> internally?  As far as I can tell, struct landlock_socket_attr is only
+>>> used in syscalls.c and converted to other data structures already.  I
+>>> would have imagined that we'd "unroll" the specified bitmasks into the
+>>> possible combinations in the add_rule_socket() function and then call
+>>> landlock_append_socket_rule() multiple times with each of these?
+>>
+>> I thought about unrolling bitmask into multiple entries in rbtree, and
+>> came up with following possible issue:
+>>
+>> Imagine that a user creates a rule that allows to create sockets of all
+>> possible families and types (with protocol=0 for example):
+>> {
+>> 	.allowed_access = LANDLOCK_ACCESS_SOCKET_CREATE,
+>> 	.families = INT64_MAX, /* 64 set bits */
+>> 	.types = INT16_MAX, /* 16 set bits */
+>> 	.protocol = 0,
+>> },
+>>
+>> This will add 64 x 16 = 1024 entries to the rbtree. Currently, the
+>> struct landlock_rule, which is used to store rules, weighs 40B. So, it
+>> will be 40kB by a single rule. Even if we allow rules with only
+>> "existing" families and types, it will be 46 x 7 = 322 entries and ~12kB
+>> by a single rule.
+>>
+>> I understand that this may be degenerate case and most common rule will
+>> result in less then 8 (or 4) entries in rbtree, but I think API should
+>> be as intuitive as possible. User can expect to see the same
+>> memory usage regardless of the content of the rule.
+>>
+>> I'm not really sure if this case is really an issue, so I'd be glad
+>> to hear your opinion on it.
+> 
+> I think there are two separate questions here:
+> 
+> (a) I think it is OK that it is *possible* to allocate 40kB of kernel
+>      memory.  At least, this is already possible today by calling
+>      landlock_add_rule() repeatedly.
+> 
+>      I assume that the GFP_KERNEL_ACCOUNT flag is limiting the
+>      potential damage to the caller here?  That flag was added in the
+>      Landlock v19 patch set [1] ("Account objects to kmemcg.").
+> 
+> (b) I agree it might be counterintuitive when a single
+>      landlock_add_rule() call allocates more space than expected.
+> 
+> MickaÃ«l, since it is already possible today (but harder), I assume
+> that you have thought about this problem before -- is it a problem
+> when users allocate more kernel memory through Landlock than they
+> expected?
+> 
+> 
+> Naive proposal:
+> 
+> If this is an issue, how about we set a low limit to the number of
+> families and the number of types that can be used in a single
+> landlock_add_rule() invocation?  (It tends to be easier to start with
+> a restrictive API and open it up later than the other way around.)
 
-Reviewed-by: Günther Noack <gnoack3000@gmail.com>
+Looks like a good approach! Better to return with an error (which almost
+always won't happen) and let the user to refactor the code than to
+allow ruleset to eat an unexpected amount of memory.
+
+> 
+> For instance,
+> 
+> * In the families field, at most 2 bits may be set.
+> * In the types field, at most 2 bits may be set.
+
+Or we can say that rule can contain not more than 4 combinations of
+family and type.
+
+BTW, 4 seems to be sufficient, at least for IP protocols.
+
+> 
+> In my understanding, the main use case of the bit vectors is that
+> there is a short way to say "all IPv4+v6 stream+dgram sockets", but we
+> do not know scenarios where much more than that is needed?  With that,
+> we would still keep people from accidentally allocating larger amounts
+> of memory, while permitting the main use case.
+
+Agreed
+
+> 
+> Having independent limits for the family and type fields is a bit
+> easier to understand and document than imposing a limit on the
+> multiplication result.
+> 
+>>> That being said, I am not a big fan of red-black trees for such simple
+>>> integer lookups either, and I also think there should be something
+>>> better if we make more use of the properties of the input ranges. The
+>>> question is though whether you want to couple that to this socket type
+>>> patch set, or rather do it in a follow up?  (So far we have been doing
+>>> fine with the red black trees, and we are already contemplating the
+>>> possibility of changing these internal structures in [2].  We have
+>>> also used RB trees for the "port" rules with a similar reasoning,
+>>> IIRC.)
+>>
+>> I think it'll be better to have a separate series for [2] if the socket
+>> restriction can be implemented without rbtree refactoring.
+> 
+> Sounds good to me. ðŸ‘
+> 
+> â€“GÃ¼nther
+> 
+> [1] https://lore.kernel.org/all/20200707180955.53024-2-mic@digikod.net/
