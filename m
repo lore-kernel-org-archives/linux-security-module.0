@@ -1,392 +1,144 @@
-Received: from smtp-42ab.mail.infomaniak.ch (smtp-42ab.mail.infomaniak.ch [84.16.66.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D5A720C464
-	for <linux-security-module@vger.kernel.org>; Fri, 10 Jan 2025 11:25:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 039EE20D511
+	for <linux-security-module@vger.kernel.org>; Fri, 10 Jan 2025 12:59:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736508314; cv=none; b=KdNv+TCvIIF+UUpk48suq/Me53rr7E2zAJsKiQmDWWbeUxPF2ZF2EOByItR4UvOXc4Sa9zysHmFhxrZlBVq5o5G0rDzNOZ+1XXhh6dr+xuecjOWeD6aGMXNjLMM8gelLOeRiOb1p+LDG8Q0PUn7/okEkoEoWe8zs9OFIGe5BabQ=
+	t=1736513970; cv=none; b=kvQFRmamTFNbVWezf9q6OeZoyl/5IUypU0dNL5gd7e+OqTCankTIkDGxJeXzfyhvzLWAAOMp0e1y9wBR+GYlipG9Nsq4lXYENJKm1zigtT3WFWBjf/9HXTvbz3cn/Iso5PCKzG1+ipTXxMelHU90gVgVFVpOfT51ndLyAG/Ui2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736508314; c=relaxed/simple;
-	bh=uWMG2F279m99+BFcojb/AFuslMz+/oJtvTdz+OwZ1oQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Re1Ib7egU5Pqemgy+D6zComwkwKg0lLsCm0Rj16ZZRvHdtJLD8CMvJT9bHzwIXkiYPf6i+C4p2yGQ1ThJApPbIEikRhpWhZBgQkKBSN1jcds0tIYzL7IxbJaq3PAyYa/JuAgLr0ajn6gwK0WAU722GKDzkghEJuhxj1PQc1w6PM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=DIV5pbU3; arc=none smtp.client-ip=84.16.66.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="DIV5pbU3"
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4YTzpY4Hy2z4X9;
-	Fri, 10 Jan 2025 12:25:09 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1736508309;
-	bh=IbsOgWHIpOBlieRdOx5fQl6DmEA7c4s3aN6oGa1LhAM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DIV5pbU3KSqWN7mvVSCcGPl+o7gXWZRYCcogvVBMEttL4eFDSNgJJ4UvB5GwOghwf
-	 ZojqDmPhc88gfSCpPGOKyKHlq2ttvvLnqkpxRZxIkp7Ku/OWZd1hkYtfukzF3e57fX
-	 uqSPrB22aVUUa4ws4IUMWT6KU4j6qTM/2JA/eQQ4=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4YTzpX5B9bzm1y;
-	Fri, 10 Jan 2025 12:25:08 +0100 (CET)
-Date: Fri, 10 Jan 2025 12:25:08 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Eric Paris <eparis@redhat.com>, Paul Moore <paul@paul-moore.com>, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, "Serge E . Hallyn" <serge@hallyn.com>
-Cc: Ben Scarlato <akhna@google.com>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Charles Zaffery <czaffery@roblox.com>, 
-	Daniel Burgener <dburgener@linux.microsoft.com>, Francis Laniel <flaniel@linux.microsoft.com>, 
-	James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Jorge Lucangeli Obes <jorgelo@google.com>, Kees Cook <kees@kernel.org>, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, Phil Sutter <phil@nwl.cc>, 
-	Praveen K Paladugu <prapal@linux.microsoft.com>, Robert Salvet <robert.salvet@roblox.com>, 
-	Shervin Oloumi <enlightened@google.com>, Song Liu <song@kernel.org>, 
-	Tahera Fahimi <fahimitahera@gmail.com>, Tyler Hicks <code@tyhicks.com>, audit@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v4 22/30] selftests/landlock: Add
- layout1.umount_sandboxer tests
-Message-ID: <20250110.chi1Uwa9ahB4@digikod.net>
-References: <20250108154338.1129069-1-mic@digikod.net>
- <20250108154338.1129069-23-mic@digikod.net>
+	s=arc-20240116; t=1736513970; c=relaxed/simple;
+	bh=N5Nwoip5xbeWvZVKWc7XpqHKBZo+r6HFEiCLqn4G52g=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=dj4ZrvtcSgO1r2F/T+OxU+OsiEtA+gJd6fMwBPhMWWrG9SqFnvIQNRzeXiofElh8/G62TSs0TFW3spJSOQPhnOvT5rtCtF5d5YJUHM18qwr/4j+MqDbk0rlQzxbxx9jH4ZKk2ZRHV0tvQ/yG2zCyoE755PMumIaLRCKNK8b3S1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3a7d85ab308so16024255ab.3
+        for <linux-security-module@vger.kernel.org>; Fri, 10 Jan 2025 04:59:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736513968; x=1737118768;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=jwSEic0BY8r/N+t2umB/08iOI2Uv7pxcCMfwAJ3rZPo=;
+        b=tbaeP2UkJZp6UDRqYhYw9Em52IG1h5AKbtTu/kJTQJTCBni7c/RctZqDyK975q3NlP
+         gJo298tEVEApRdZOCHq2kuB1ioNl5wpZuw89DTrkvxsHABs0TM0OkBEClt7eL/3vnxb5
+         UcdaSVsASPMbz3UBmh1DDnIGd/Fu9s45xNgaLHoRJ+7NlLbtmjJqWg355r8jazZRSoqs
+         BkFn6xi26ZZJADHhMhTIrHvNjDlUWD8uXWX+sV2Q0IEfGvbxp0EAMlVpUhb5hveICkn2
+         gvHvJwQacL6fbCoSvLstZrt2u8T8WdaexDeWu8vCpg0PmrdV3I7fHA9ejPf3DIiVDeIa
+         x5VA==
+X-Forwarded-Encrypted: i=1; AJvYcCUJkxXUrORxnGO4gfGAY8qclFEdocVbjXwpD1mUSIQBiS7No5h/p66Qan8AuHxoxDWHb+9xAvHxkSzPPRbOWj58niGywto=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/gYCh9MUiJ6rbhO98ipB3NQBeaz119XCrM5IDGkWIsQ6ry4MA
+	JS3J+9znxvN8haReqtsp1gssGTchgTSpMSG/oZLe7hEf6kuz1nCQro2uNP+DUmg6DcCFTgqjU9E
+	qIQAQQ0I7b/qGDUdIdmZ0ZVc/xunY7CCApASe1yr1nzNM5vGC+FXrP48=
+X-Google-Smtp-Source: AGHT+IHUwW4hNvKhlfoJazuKjSWv+jFDD8dEY84Obxi4Q9Je9dw4Jfo6aXdDB133F3RbAjbYnSZaqglz3eyVYGkZLubcJzmnLa34
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250108154338.1129069-23-mic@digikod.net>
-X-Infomaniak-Routing: alpha
+X-Received: by 2002:a05:6e02:509:b0:3ce:46e2:429b with SMTP id
+ e9e14a558f8ab-3ce46e24583mr35779885ab.10.1736513968175; Fri, 10 Jan 2025
+ 04:59:28 -0800 (PST)
+Date: Fri, 10 Jan 2025 04:59:28 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <678119b0.050a0220.d0267.0029.GAE@google.com>
+Subject: [syzbot] [lsm?] WARNING in vfs_writev
+From: syzbot <syzbot+910965bf9c26c6936f34@syzkaller.appspotmail.com>
+To: jmorris@namei.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, paul@paul-moore.com, serge@hallyn.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jan 08, 2025 at 04:43:30PM +0100, Mickaël Salaün wrote:
-> Check that a domain is not tied to the executable file that created it.
-> For instance, that could happen if a Landlock domain took a reference to
-> a struct path.
-> 
-> Move global path names to common.h and replace copy_binary() with a more
-> generic copy_file() helper.
-> 
-> Cc: Günther Noack <gnoack@google.com>
-> Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> Link: https://lore.kernel.org/r/20250108154338.1129069-23-mic@digikod.net
+Hello,
 
-Pushed in my next tree to simplify next patch series.
+syzbot found the following issue on:
 
-> ---
-> 
-> Changes since v3:
-> - New patch to check issue from v2.
-> ---
->  tools/testing/selftests/landlock/Makefile     |  2 +-
->  tools/testing/selftests/landlock/common.h     |  3 +
->  tools/testing/selftests/landlock/fs_test.c    | 94 +++++++++++++++++--
->  .../selftests/landlock/sandbox-and-launch.c   | 82 ++++++++++++++++
->  tools/testing/selftests/landlock/wait-pipe.c  | 42 +++++++++
->  5 files changed, 213 insertions(+), 10 deletions(-)
->  create mode 100644 tools/testing/selftests/landlock/sandbox-and-launch.c
->  create mode 100644 tools/testing/selftests/landlock/wait-pipe.c
-> 
-> diff --git a/tools/testing/selftests/landlock/Makefile b/tools/testing/selftests/landlock/Makefile
-> index 348e2dbdb4e0..b1445c8bee50 100644
-> --- a/tools/testing/selftests/landlock/Makefile
-> +++ b/tools/testing/selftests/landlock/Makefile
-> @@ -10,7 +10,7 @@ src_test := $(wildcard *_test.c)
->  
->  TEST_GEN_PROGS := $(src_test:.c=)
->  
-> -TEST_GEN_PROGS_EXTENDED := true
-> +TEST_GEN_PROGS_EXTENDED := true sandbox-and-launch wait-pipe
->  
->  # Short targets:
->  $(TEST_GEN_PROGS): LDLIBS += -lcap
-> diff --git a/tools/testing/selftests/landlock/common.h b/tools/testing/selftests/landlock/common.h
-> index 8391ab574f64..a604ea5d8297 100644
-> --- a/tools/testing/selftests/landlock/common.h
-> +++ b/tools/testing/selftests/landlock/common.h
-> @@ -28,6 +28,9 @@
->  /* TEST_F_FORK() should not be used for new tests. */
->  #define TEST_F_FORK(fixture_name, test_name) TEST_F(fixture_name, test_name)
->  
-> +static const char bin_sandbox_and_launch[] = "./sandbox-and-launch";
-> +static const char bin_wait_pipe[] = "./wait-pipe";
-> +
->  static void _init_caps(struct __test_metadata *const _metadata, bool drop_all)
->  {
->  	cap_t cap_p;
-> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
-> index a359c0d3107f..8ac9aaf38eaa 100644
-> --- a/tools/testing/selftests/landlock/fs_test.c
-> +++ b/tools/testing/selftests/landlock/fs_test.c
-> @@ -59,7 +59,7 @@ int open_tree(int dfd, const char *filename, unsigned int flags)
->  #define RENAME_EXCHANGE (1 << 1)
->  #endif
->  
-> -#define BINARY_PATH "./true"
-> +static const char bin_true[] = "./true";
->  
->  /* Paths (sibling number and depth) */
->  static const char dir_s1d1[] = TMP_DIR "/s1d1";
-> @@ -1965,8 +1965,8 @@ TEST_F_FORK(layout1, relative_chroot_chdir)
->  	test_relative_path(_metadata, REL_CHROOT_CHDIR);
->  }
->  
-> -static void copy_binary(struct __test_metadata *const _metadata,
-> -			const char *const dst_path)
-> +static void copy_file(struct __test_metadata *const _metadata,
-> +		      const char *const src_path, const char *const dst_path)
->  {
->  	int dst_fd, src_fd;
->  	struct stat statbuf;
-> @@ -1976,11 +1976,10 @@ static void copy_binary(struct __test_metadata *const _metadata,
->  	{
->  		TH_LOG("Failed to open \"%s\": %s", dst_path, strerror(errno));
->  	}
-> -	src_fd = open(BINARY_PATH, O_RDONLY | O_CLOEXEC);
-> +	src_fd = open(src_path, O_RDONLY | O_CLOEXEC);
->  	ASSERT_LE(0, src_fd)
->  	{
-> -		TH_LOG("Failed to open \"" BINARY_PATH "\": %s",
-> -		       strerror(errno));
-> +		TH_LOG("Failed to open \"%s\": %s", src_path, strerror(errno));
->  	}
->  	ASSERT_EQ(0, fstat(src_fd, &statbuf));
->  	ASSERT_EQ(statbuf.st_size,
-> @@ -2028,9 +2027,9 @@ TEST_F_FORK(layout1, execute)
->  		create_ruleset(_metadata, rules[0].access, rules);
->  
->  	ASSERT_LE(0, ruleset_fd);
-> -	copy_binary(_metadata, file1_s1d1);
-> -	copy_binary(_metadata, file1_s1d2);
-> -	copy_binary(_metadata, file1_s1d3);
-> +	copy_file(_metadata, bin_true, file1_s1d1);
-> +	copy_file(_metadata, bin_true, file1_s1d2);
-> +	copy_file(_metadata, bin_true, file1_s1d3);
->  
->  	enforce_ruleset(_metadata, ruleset_fd);
->  	ASSERT_EQ(0, close(ruleset_fd));
-> @@ -2048,6 +2047,83 @@ TEST_F_FORK(layout1, execute)
->  	test_execute(_metadata, 0, file1_s1d3);
->  }
->  
-> +TEST_F_FORK(layout1, umount_sandboxer)
-> +{
-> +	int pipe_child[2], pipe_parent[2];
-> +	char buf_parent;
-> +	pid_t child;
-> +	int status;
-> +
-> +	copy_file(_metadata, bin_sandbox_and_launch, file1_s3d3);
-> +	ASSERT_EQ(0, pipe2(pipe_child, 0));
-> +	ASSERT_EQ(0, pipe2(pipe_parent, 0));
-> +
-> +	child = fork();
-> +	ASSERT_LE(0, child);
-> +	if (child == 0) {
-> +		char pipe_child_str[12], pipe_parent_str[12];
-> +		char *const argv[] = { (char *)file1_s3d3,
-> +				       (char *)bin_wait_pipe, pipe_child_str,
-> +				       pipe_parent_str, NULL };
-> +
-> +		/* Passes the pipe FDs to the executed binary and its child. */
-> +		EXPECT_EQ(0, close(pipe_child[0]));
-> +		EXPECT_EQ(0, close(pipe_parent[1]));
-> +		snprintf(pipe_child_str, sizeof(pipe_child_str), "%d",
-> +			 pipe_child[1]);
-> +		snprintf(pipe_parent_str, sizeof(pipe_parent_str), "%d",
-> +			 pipe_parent[0]);
-> +
-> +		/*
-> +		 * We need bin_sandbox_and_launch (copied inside the mount as
-> +		 * file1_s3d3) to execute bin_wait_pipe (outside the mount) to
-> +		 * make sure the mount point will not be EBUSY because of
-> +		 * file1_s3d3 being in use.  This avoids a potential race
-> +		 * condition between the following read() and umount() calls.
-> +		 */
-> +		ASSERT_EQ(0, execve(argv[0], argv, NULL))
-> +		{
-> +			TH_LOG("Failed to execute \"%s\": %s", argv[0],
-> +			       strerror(errno));
-> +		};
-> +		_exit(1);
-> +		return;
-> +	}
-> +
-> +	EXPECT_EQ(0, close(pipe_child[1]));
-> +	EXPECT_EQ(0, close(pipe_parent[0]));
-> +
-> +	/* Waits for the child to sandbox itself. */
-> +	EXPECT_EQ(1, read(pipe_child[0], &buf_parent, 1));
-> +
-> +	/* Tests that the sandboxer is tied to its mount point. */
-> +	set_cap(_metadata, CAP_SYS_ADMIN);
-> +	EXPECT_EQ(-1, umount(dir_s3d2));
-> +	EXPECT_EQ(EBUSY, errno);
-> +	clear_cap(_metadata, CAP_SYS_ADMIN);
-> +
-> +	/* Signals the child to launch a grandchild. */
-> +	EXPECT_EQ(1, write(pipe_parent[1], ".", 1));
-> +
-> +	/* Waits for the grandchild. */
-> +	EXPECT_EQ(1, read(pipe_child[0], &buf_parent, 1));
-> +
-> +	/* Tests that the domain's sandboxer is not tied to its mount point. */
-> +	set_cap(_metadata, CAP_SYS_ADMIN);
-> +	EXPECT_EQ(0, umount(dir_s3d2))
-> +	{
-> +		TH_LOG("Failed to umount \"%s\": %s", dir_s3d2,
-> +		       strerror(errno));
-> +	};
-> +	clear_cap(_metadata, CAP_SYS_ADMIN);
-> +
-> +	/* Signals the grandchild to terminate. */
-> +	EXPECT_EQ(1, write(pipe_parent[1], ".", 1));
-> +	ASSERT_EQ(child, waitpid(child, &status, 0));
-> +	ASSERT_EQ(1, WIFEXITED(status));
-> +	ASSERT_EQ(0, WEXITSTATUS(status));
-> +}
-> +
->  TEST_F_FORK(layout1, link)
->  {
->  	const struct rule layer1[] = {
-> diff --git a/tools/testing/selftests/landlock/sandbox-and-launch.c b/tools/testing/selftests/landlock/sandbox-and-launch.c
-> new file mode 100644
-> index 000000000000..1ef49f349429
-> --- /dev/null
-> +++ b/tools/testing/selftests/landlock/sandbox-and-launch.c
-> @@ -0,0 +1,82 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Sandbox itself and execute another program (in a different mount point).
-> + *
-> + * Used by layout1.umount_sandboxer from fs_test.c
-> + *
-> + * Copyright © 2024 Microsoft Corporation
-> + */
-> +
-> +#define _GNU_SOURCE
-> +#include <errno.h>
-> +#include <stdio.h>
-> +#include <stdlib.h>
-> +#include <sys/prctl.h>
-> +#include <unistd.h>
-> +
-> +#include "wrappers.h"
-> +
-> +int main(int argc, char *argv[])
-> +{
-> +	struct landlock_ruleset_attr ruleset_attr = {
-> +		.scoped = LANDLOCK_SCOPE_SIGNAL,
-> +	};
-> +	int pipe_child, pipe_parent, ruleset_fd;
-> +	char buf;
-> +
-> +	/*
-> +	 * The first argument must be the file descriptor number of a pipe.
-> +	 * The second argument must be the program to execute.
-> +	 */
-> +	if (argc != 4) {
-> +		fprintf(stderr, "Wrong number of arguments (not three)\n");
-> +		return 1;
-> +	}
-> +
-> +	pipe_child = atoi(argv[2]);
-> +	pipe_parent = atoi(argv[3]);
-> +
-> +	ruleset_fd =
-> +		landlock_create_ruleset(&ruleset_attr, sizeof(ruleset_attr), 0);
-> +	if (ruleset_fd < 0) {
-> +		perror("Failed to create ruleset");
-> +		return 1;
-> +	}
-> +
-> +	if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0)) {
-> +		perror("Failed to call prctl()");
-> +		return 1;
-> +	}
-> +
-> +	if (landlock_restrict_self(ruleset_fd, 0)) {
-> +		perror("Failed to restrict self");
-> +		return 1;
-> +	}
-> +
-> +	if (close(ruleset_fd)) {
-> +		perror("Failed to close ruleset");
-> +		return 1;
-> +	}
-> +
-> +	/* Signals that we are sandboxed. */
-> +	errno = 0;
-> +	if (write(pipe_child, ".", 1) != 1) {
-> +		perror("Failed to write to the second argument");
-> +		return 1;
-> +	}
-> +
-> +	/* Waits for the parent to try to umount. */
-> +	if (read(pipe_parent, &buf, 1) != 1) {
-> +		perror("Failed to write to the third argument");
-> +		return 1;
-> +	}
-> +
-> +	/* Shifts arguments. */
-> +	argv[0] = argv[1];
-> +	argv[1] = argv[2];
-> +	argv[2] = argv[3];
-> +	argv[3] = NULL;
-> +	execve(argv[0], argv, NULL);
-> +	perror("Failed to execute the provided binary");
-> +	return 1;
-> +}
-> diff --git a/tools/testing/selftests/landlock/wait-pipe.c b/tools/testing/selftests/landlock/wait-pipe.c
-> new file mode 100644
-> index 000000000000..0dbcd260a0fa
-> --- /dev/null
-> +++ b/tools/testing/selftests/landlock/wait-pipe.c
-> @@ -0,0 +1,42 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Write in a pipe and wait.
-> + *
-> + * Used by layout1.umount_sandboxer from fs_test.c
-> + *
-> + * Copyright © 2024-2025 Microsoft Corporation
-> + */
-> +
-> +#define _GNU_SOURCE
-> +#include <stdio.h>
-> +#include <stdlib.h>
-> +#include <unistd.h>
-> +
-> +int main(int argc, char *argv[])
-> +{
-> +	int pipe_child, pipe_parent;
-> +	char buf;
-> +
-> +	/* The first argument must be the file descriptor number of a pipe. */
-> +	if (argc != 3) {
-> +		fprintf(stderr, "Wrong number of arguments (not two)\n");
-> +		return 1;
-> +	}
-> +
-> +	pipe_child = atoi(argv[1]);
-> +	pipe_parent = atoi(argv[2]);
-> +
-> +	/* Signals that we are waiting. */
-> +	if (write(pipe_child, ".", 1) != 1) {
-> +		perror("Failed to write to first argument");
-> +		return 1;
-> +	}
-> +
-> +	/* Waits for the parent do its test. */
-> +	if (read(pipe_parent, &buf, 1) != 1) {
-> +		perror("Failed to write to the second argument");
-> +		return 1;
-> +	}
-> +
-> +	return 0;
-> +}
-> -- 
-> 2.47.1
-> 
-> 
+HEAD commit:    ab75170520d4 Merge tag 'linux-watchdog-6.13-rc6' of git://..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=100fb9c4580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=86dd15278dbfe19f
+dashboard link: https://syzkaller.appspot.com/bug?extid=910965bf9c26c6936f34
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11471edf980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15471edf980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/853d1f53edc7/disk-ab751705.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/2d2656ee9e47/vmlinux-ab751705.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/a6ea69d61e24/bzImage-ab751705.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+910965bf9c26c6936f34@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 5827 at mm/page_alloc.c:4729 __alloc_pages_noprof+0xeff/0x25b0 mm/page_alloc.c:4729
+Modules linked in:
+CPU: 1 UID: 0 PID: 5827 Comm: syz-executor324 Not tainted 6.13.0-rc5-syzkaller-00163-gab75170520d4 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:__alloc_pages_noprof+0xeff/0x25b0 mm/page_alloc.c:4729
+Code: 24 2c 00 00 00 00 89 cd 0f 84 8b f9 ff ff 8b 34 24 48 89 da 8b 7c 24 08 e8 de b2 fe ff e9 69 f9 ff ff c6 05 54 6f 16 0e 01 90 <0f> 0b 90 31 db e9 9f f3 ff ff 89 14 24 e8 6f a4 0c 00 8b 14 24 e9
+RSP: 0018:ffffc90003837928 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000013 RDI: 0000000000040cc0
+RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000013
+R13: 0000000000040cc0 R14: 1ffff92000706f39 R15: 00000000ffffffff
+FS:  0000555571e5d380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000020000000 CR3: 0000000029fb0000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __alloc_pages_node_noprof include/linux/gfp.h:269 [inline]
+ alloc_pages_node_noprof include/linux/gfp.h:296 [inline]
+ ___kmalloc_large_node+0x84/0x1b0 mm/slub.c:4243
+ __kmalloc_large_node_noprof+0x1c/0x70 mm/slub.c:4270
+ __do_kmalloc_node mm/slub.c:4286 [inline]
+ __kmalloc_node_track_caller_noprof.cold+0x5/0x5f mm/slub.c:4317
+ memdup_user_nul+0x2b/0x110 mm/util.c:305
+ lockdown_write+0x2d/0x290 security/lockdown/lockdown.c:128
+ do_loop_readv_writev fs/read_write.c:843 [inline]
+ do_loop_readv_writev fs/read_write.c:828 [inline]
+ vfs_writev+0x6da/0xdd0 fs/read_write.c:1052
+ do_writev+0x133/0x340 fs/read_write.c:1096
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f601de372e9
+Code: 48 83 c4 28 c3 e8 37 17 00 00 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffcb4f253e8 EFLAGS: 00000246 ORIG_RAX: 0000000000000014
+RAX: ffffffffffffffda RBX: 00007ffcb4f255b8 RCX: 00007f601de372e9
+RDX: 0000000000000001 RSI: 0000000020000580 RDI: 0000000000000003
+RBP: 00007f601deaa610 R08: 0000000000000000 R09: 00007ffcb4f255b8
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007ffcb4f255a8 R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
