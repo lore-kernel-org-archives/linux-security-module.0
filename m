@@ -1,255 +1,115 @@
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C070B22F158;
-	Mon, 13 Jan 2025 11:19:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACCEC125B2
+	for <linux-security-module@vger.kernel.org>; Mon, 13 Jan 2025 13:42:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736767185; cv=none; b=dzPNmPRKO5UJ6TcHgYD229iax17TwazJytOPOTPnp66GPfMKaEhstQi3LrMRRM2PHBehmXoCsIXwgnO6rQMbiaLHCePQL1lOZyV53GufXWQP0ktp0tsLrGWtPzfJ957NjvpNb3WHdTCqj3xsLxoupkM52kK3PejlAxVR8ypcQnw=
+	t=1736775751; cv=none; b=HvmWmxom6WI2UpwAInia7GCV008eN6qveFOmUWCoII67tjFA0POE1BtkzyQtD6A4+dk+pec221vjF+EshxBJseZUW0URZgI3Wn4YDSoeQXGVCgvpBA+qThN7Fx4bsyD4XhHnQKDlAOOoaDLI6oErzvNmyEd6fwAKR2PfXjfBAEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736767185; c=relaxed/simple;
-	bh=mLZrY9jaadQOj6v1sLTVW5BUTvxh6DhZBdhO7Fv+MdM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SI3UJsYndRW5u8WT5g+BCnM3IbOeWyiJ/V+WQag3wgZDLtB1rgqFTlZdbCAXBgw4ybDQw7PMjOrn3nlVA+i0as3mmw2fsq5DWbrsByXpE2ZZdZA7SB2xW4nbehMOR/kzkqNXtuaQ0O6jAoVaD0R2OtKyHSCQF2HRo6cOUiII8ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=sbvzz2FT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=I5CE8/zy; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=sbvzz2FT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=I5CE8/zy; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+	s=arc-20240116; t=1736775751; c=relaxed/simple;
+	bh=3QJHsmMTM6dH0YGCptmQLoKTJZOe4cB2lFQfVgJQnjc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RNAoyk1s0lY0EciVdRumVntkLIvp86exZToolS3aern0gykPYGgdDaW/KdbvZ69U2nzwr9xxmmjJY4EA1Pj5GN2GR0lPK3vao5qDAuEQBQEnYXjHY7YDB1/9M4rlU8FEr1DMqwIaaavb8BH1WwEAkz9dRhLYmTQqQAOpj+vOAbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=SceRTCQI; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="sbvzz2FT";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="I5CE8/zy";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="sbvzz2FT";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="I5CE8/zy"
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 0E0921F37C;
-	Mon, 13 Jan 2025 11:19:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1736767181; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UMT0laOUJ9M1D5IjkCfV/ptVZnIKmdTg97voNpSS9nc=;
-	b=sbvzz2FTVbbUucp+7/XWFQYGw/ubL6oc54Y0aCoBgLwAMxHZH9mZhIeJfvTiKWc4VcC2JO
-	l+UMj7p5mfLWHg9krKVR39faX+FPBAMRkMx/Ow55N06zImCiaNspp4+jOWfIccNDP4Fs4q
-	8bzTsiBD0EcouzCTYfDLnpqr5pi1yPo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1736767181;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UMT0laOUJ9M1D5IjkCfV/ptVZnIKmdTg97voNpSS9nc=;
-	b=I5CE8/zyZTUYGcz4iD65P68ucesjsl655fmMQDmJCAELfC2H42QzzaWLknR2tQCevbMAOh
-	yyKGu24FeQTdSrDg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1736767181; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UMT0laOUJ9M1D5IjkCfV/ptVZnIKmdTg97voNpSS9nc=;
-	b=sbvzz2FTVbbUucp+7/XWFQYGw/ubL6oc54Y0aCoBgLwAMxHZH9mZhIeJfvTiKWc4VcC2JO
-	l+UMj7p5mfLWHg9krKVR39faX+FPBAMRkMx/Ow55N06zImCiaNspp4+jOWfIccNDP4Fs4q
-	8bzTsiBD0EcouzCTYfDLnpqr5pi1yPo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1736767181;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UMT0laOUJ9M1D5IjkCfV/ptVZnIKmdTg97voNpSS9nc=;
-	b=I5CE8/zyZTUYGcz4iD65P68ucesjsl655fmMQDmJCAELfC2H42QzzaWLknR2tQCevbMAOh
-	yyKGu24FeQTdSrDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E8E1613876;
-	Mon, 13 Jan 2025 11:19:40 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id AoDXOMz2hGd8egAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 13 Jan 2025 11:19:40 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id A1B81A08E2; Mon, 13 Jan 2025 12:19:36 +0100 (CET)
-Date: Mon, 13 Jan 2025 12:19:36 +0100
-From: Jan Kara <jack@suse.cz>
-To: Andrey Albershteyn <aalbersh@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org, 
-	monstr@monstr.eu, mpe@ellerman.id.au, npiggin@gmail.com, 
-	christophe.leroy@csgroup.eu, naveen@kernel.org, maddy@linux.ibm.com, luto@kernel.org, 
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, 
-	x86@kernel.org, hpa@zytor.com, chris@zankel.net, jcmvbkbc@gmail.com, 
-	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, arnd@arndb.de, 
-	linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org, 
-	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, 
-	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-arch@vger.kernel.org
-Subject: Re: [PATCH] fs: introduce getfsxattrat and setfsxattrat syscalls
-Message-ID: <doha6zamxgmqapwx4r6ehzbatzar4dcep33zehunonqforjzf5@lxpidn37tdjh>
-References: <20250109174540.893098-1-aalbersh@kernel.org>
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="SceRTCQI"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4363ae65100so44730715e9.0
+        for <linux-security-module@vger.kernel.org>; Mon, 13 Jan 2025 05:42:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1736775747; x=1737380547; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=X97wGoya4UQq1kA6RNcK33LUWiHL/CoWKGoyQkqMvkk=;
+        b=SceRTCQIXjz2NY6DCDr2VSwznHXMPSEW0duUH5cisc8AsDBTbPkp3Kw1m5nVghZQea
+         DvdGVkVyhNFdkpFvHGEDPNwvVbnHeHw/5FBrmhJDHVYUT7ZBFsPcoeFZhoTiPiEP8jDc
+         CDdAMcytpN0Z3VrW1nA94Zocb6evceX1DnxoRXEIf0jYlB95o0Da5UFrAhY9/x94vOIo
+         Xgpz/QSHpyqEWeDeVrUeDtbHtf1BUyX+GNuNnXOVjY4hNH1ZGj9ijDBcVaJiTXvdy/s4
+         4+qe17EA9NvNq7yxNdbX+dZPAbBe7GQ6OJ9viubfF3koabanESTva02omATG/ft/FsLp
+         jEEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736775747; x=1737380547;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=X97wGoya4UQq1kA6RNcK33LUWiHL/CoWKGoyQkqMvkk=;
+        b=W017CF1OkeKud66Yh2VTZ7m0HSNvk0jvN1LkNYn3qo0WdxKub9PztE64l11BDyR9A8
+         tBCrjsKDGO6/ONIULmNl6Vax8pf5bDfo+8ahXqdrrFtABxLKpo3wLDDCa68bq2qtxXG8
+         wpR6VOuUxsrro1Glhs2IJP5t38M6SHyfZysSql76Lcx2OVBWs1/RRbhf/C9u/vTcQQTn
+         WyjuhCnV+Yhpw5revncMm5RdFRvDA9fjOfXX/4wZnGsddBj33kNb6sKKp2bHMoz740ro
+         jWkZ9/Ru3Tuq5hwumPKYAS8eUeTfm8ka2xXWRVKPuIk4pK6WrXPbnuFL+jCNcHzDP+z6
+         AaLA==
+X-Gm-Message-State: AOJu0YzFG8dhLdYye2HLvZtsYoCbpK79urGHWt7VYkIxT9sNue6zbUa8
+	ZVMJwLKhxEFzxAJrjnl2WOi3fTSaaLT/faEk2yyLo+gFZxCl4rRjCxueWPOZmwE=
+X-Gm-Gg: ASbGncsbYbrgx7pHmnC4spB9tkpY+bOBfv0ou7lzgibDfeVdIA3kurlNFKhVqiwACWF
+	uh0gq2zHRrMTIw6yYoxTN2TK0JuSVW6LAkQZ+x5mSv+YzprQ93M73qUCHeoJiFiGYhbzlCSQM/3
+	gQB0DyzI6aSjwrLokKiJ0x77pdZgK9QEhSemFS+vJKyrNUp6t2PhjmczcELTNUrdNIOieDyuFiZ
+	Bg6SfggyWyRyqNTTi/HbnyOTVgz45O65F5o5U4vY9Gn7ToNSl5nzs7+T1R1
+X-Google-Smtp-Source: AGHT+IGapJ+VZSro2x8LJDMDSAh3VRB+eJpi9PBbS1ECgvlLeDPwXL4yp/4ArB4ipngaE2Loe1Qmbg==
+X-Received: by 2002:a05:600c:450d:b0:434:a734:d279 with SMTP id 5b1f17b1804b1-436e26a8927mr234858635e9.16.1736775747037;
+        Mon, 13 Jan 2025 05:42:27 -0800 (PST)
+Received: from [10.100.51.161] ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436e2e8a326sm178970895e9.35.2025.01.13.05.42.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 Jan 2025 05:42:26 -0800 (PST)
+Message-ID: <d76bfa59-8515-43ff-967d-fa7f779bf6c2@suse.com>
+Date: Mon, 13 Jan 2025 14:42:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250109174540.893098-1-aalbersh@kernel.org>
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_TWELVE(0.00)[32];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[vger.kernel.org,monstr.eu,ellerman.id.au,gmail.com,csgroup.eu,kernel.org,linux.ibm.com,linutronix.de,redhat.com,alien8.de,linux.intel.com,zytor.com,zankel.net,zeniv.linux.org.uk,suse.cz,arndb.de,lists.linux-m68k.org,lists.ozlabs.org];
-	R_RATELIMIT(0.00)[to_ip_from(RLyerg7kx5bdf6cnfzf33td54o)];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] loadpin: remove MODULE_COMPRESS_NONE as it is no longer
+ supported
+To: Arulpandiyan Vadivel <arulpandiyan.vadivel@siemens.com>
+Cc: linux-security-module@vger.kernel.org, linux-modules@vger.kernel.org,
+ stable@vger.kernel.org, cedric.hombourger@siemens.com,
+ srikanth.krishnakar@siemens.com
+References: <20250113093115.72619-1-arulpandiyan.vadivel@siemens.com>
+Content-Language: en-US
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <20250113093115.72619-1-arulpandiyan.vadivel@siemens.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu 09-01-25 18:45:40, Andrey Albershteyn wrote:
-> From: Andrey Albershteyn <aalbersh@redhat.com>
+On 1/13/25 10:31, Arulpandiyan Vadivel wrote:
+> Commit c7ff693fa2094ba0a9d0a20feb4ab1658eff9c33 ("module: Split
+> modules_install compression and in-kernel decompression") removed the
+> MODULE_COMPRESS_NONE, but left it loadpin's Kconfig, and removing it
 > 
-> Introduce getfsxattrat and setfsxattrat syscalls to manipulate inode
-> extended attributes/flags. The syscalls take parent directory FD and
-> path to the child together with struct fsxattr.
+> Signed-off-by: Arulpandiyan Vadivel <arulpandiyan.vadivel@siemens.com>
+
+Please use a Fixes tag to record the problematic commit:
+
+Fixes: c7ff693fa209 ("module: Split modules_install compression and in-kernel decompression")
+
+> ---
+>  security/loadpin/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> This is an alternative to FS_IOC_FSSETXATTR ioctl with a difference
-> that file don't need to be open. By having this we can manipulated
-> inode extended attributes not only on normal files but also on
-> special ones. This is not possible with FS_IOC_FSSETXATTR ioctl as
-> opening special files returns VFS special inode instead of
-> underlying filesystem one.
-> 
-> This patch adds two new syscalls which allows userspace to set
-> extended inode attributes on special files by using parent directory
-> to open FS inode.
-> 
-> Also, as vfs_fileattr_set() is now will be called on special files
-> too, let's forbid any other attributes except projid and nextents
-> (symlink can have an extent).
-> 
-> CC: linux-api@vger.kernel.org
-> Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
+> diff --git a/security/loadpin/Kconfig b/security/loadpin/Kconfig
+> index 848f8b4a60190..94348e2831db9 100644
+> --- a/security/loadpin/Kconfig
+> +++ b/security/loadpin/Kconfig
+> @@ -16,7 +16,7 @@ config SECURITY_LOADPIN_ENFORCE
+>  	depends on SECURITY_LOADPIN
+>  	# Module compression breaks LoadPin unless modules are decompressed in
+>  	# the kernel.
+> -	depends on !MODULES || (MODULE_COMPRESS_NONE || MODULE_DECOMPRESS)
+> +	depends on !MODULES || MODULE_DECOMPRESS
+>  	help
+>  	  If selected, LoadPin will enforce pinning at boot. If not
+>  	  selected, it can be enabled at boot with the kernel parameter
 
-Couple of comments below:
+I think this should be updated to:
 
-> @@ -2953,3 +2956,105 @@ umode_t mode_strip_sgid(struct mnt_idmap *idmap,
->  	return mode & ~S_ISGID;
->  }
->  EXPORT_SYMBOL(mode_strip_sgid);
-> +
-> +SYSCALL_DEFINE4(getfsxattrat, int, dfd, const char __user *, filename,
-> +		struct fsxattr *, fsx, int, at_flags)
-				       ^^^ at_flags should be probably
-unsigned - at least they seem to be for other syscalls.
+	depends on !MODULES || (!MODULE_COMPRESS || MODULE_DECOMPRESS)
 
-> +{
-> +	struct fd dir;
-> +	struct fileattr fa;
-> +	struct path filepath;
-> +	struct inode *inode;
-> +	int error;
-> +
-> +	if (at_flags)
-> +		return -EINVAL;
-
-Shouldn't we support basic path resolve flags like AT_SYMLINK_NOFOLLOW or
-AT_EMPTY_PATH? I didn't put too much thought to this but intuitively I'd say
-we should follow what path_setxattrat() does.
-
-> +
-> +	if (!capable(CAP_FOWNER))
-> +		return -EPERM;
-
-Why? Firstly this does not handle user namespaces at all, secondly it
-doesn't match the check done during ioctl, and thirdly vfs_fileattr_get()
-should do all the needed checks?
-
-> +
-> +	dir = fdget(dfd);
-> +	if (!fd_file(dir))
-> +		return -EBADF;
-> +
-> +	if (!S_ISDIR(file_inode(fd_file(dir))->i_mode)) {
-> +		error = -EBADF;
-> +		goto out;
-> +	}
-> +
-> +	error = user_path_at(dfd, filename, at_flags, &filepath);
-> +	if (error)
-> +		goto out;
-
-I guess this is OK for now but allowing full flexibility of the "_at"
-syscall (e.g. like setxattrat() does) would be preferred. Mostly so that
-userspace programmer doesn't have to read manpage in detail and think
-whether the particular combination of path arguments is supported by a
-particular syscall. Admittedly VFS could make this a bit simpler. Currently
-the boilerplate code that's needed in path_setxattrat() &
-filename_setxattr() / file_setxattr() is offputting.
-
-> +
-> +	inode = filepath.dentry->d_inode;
-> +	if (file_inode(fd_file(dir))->i_sb->s_magic != inode->i_sb->s_magic) {
-> +		error = -EBADF;
-> +		goto out_path;
-> +	}
-
-What's the motivation for this check?
-
-> +
-> +	error = vfs_fileattr_get(filepath.dentry, &fa);
-> +	if (error)
-> +		goto out_path;
-> +
-> +	if (copy_fsxattr_to_user(&fa, fsx))
-> +		error = -EFAULT;
-> +
-> +out_path:
-> +	path_put(&filepath);
-> +out:
-> +	fdput(dir);
-> +	return error;
-> +}
-> +
-> +SYSCALL_DEFINE4(setfsxattrat, int, dfd, const char __user *, filename,
-> +		struct fsxattr *, fsx, int, at_flags)
-> +{
-
-Same comments as for getfsxattrat() apply here as well.
-
-> -static int copy_fsxattr_from_user(struct fileattr *fa,
-> -				  struct fsxattr __user *ufa)
-> +int copy_fsxattr_from_user(struct fileattr *fa, struct fsxattr __user *ufa)
->  {
->  	struct fsxattr xfa;
->  
-> @@ -574,6 +573,7 @@ static int copy_fsxattr_from_user(struct fileattr *fa,
->  
->  	return 0;
->  }
-> +EXPORT_SYMBOL(copy_fsxattr_from_user);
-
-I guess no need to export this function? The code you call it from cannot
-be compiled as a module.
-
-								Honza
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Thanks,
+Petr
