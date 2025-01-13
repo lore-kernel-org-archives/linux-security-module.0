@@ -1,115 +1,101 @@
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACCEC125B2
-	for <linux-security-module@vger.kernel.org>; Mon, 13 Jan 2025 13:42:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE80C4315E
+	for <linux-security-module@vger.kernel.org>; Mon, 13 Jan 2025 14:00:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736775751; cv=none; b=HvmWmxom6WI2UpwAInia7GCV008eN6qveFOmUWCoII67tjFA0POE1BtkzyQtD6A4+dk+pec221vjF+EshxBJseZUW0URZgI3Wn4YDSoeQXGVCgvpBA+qThN7Fx4bsyD4XhHnQKDlAOOoaDLI6oErzvNmyEd6fwAKR2PfXjfBAEA=
+	t=1736776861; cv=none; b=OhVBsPdzji4xeyAHd9KrLwe4hVsDr8mLW3bgds+TtMeadOOfi/Q3SgABbOPH+blc12Eg9ZSeld8YxWUq4ObS4BMe/Y9dEWRyQ75dhRJTBhFIsoimkGCUwoBrIjbu30vhwjAoEBB+gwgu3gOCqz5xFkCy7UFK2sl2Qtiku78wD+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736775751; c=relaxed/simple;
-	bh=3QJHsmMTM6dH0YGCptmQLoKTJZOe4cB2lFQfVgJQnjc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RNAoyk1s0lY0EciVdRumVntkLIvp86exZToolS3aern0gykPYGgdDaW/KdbvZ69U2nzwr9xxmmjJY4EA1Pj5GN2GR0lPK3vao5qDAuEQBQEnYXjHY7YDB1/9M4rlU8FEr1DMqwIaaavb8BH1WwEAkz9dRhLYmTQqQAOpj+vOAbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=SceRTCQI; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	s=arc-20240116; t=1736776861; c=relaxed/simple;
+	bh=AmVqrJ76OwdjEXGBbxG4GnI2QXNXsrWG0X01vnKfxPk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rWzWNw1gxq+fjRNobE1p6tHkEBFGFx7etWJvbutuGxdubCzVx1RkgmeeJAfJ2eBcMIg2owI6ZEiYp+QOBzHeMYbDEQcgJuc9ZN46AAExxJvUdNKvxTE+kt4zd3GzJru6c+qO6K/LPtYnF6D84WqXLbVShVpDupXBWmAOHsU0s9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=i+QyNSCg; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="SceRTCQI"
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4363ae65100so44730715e9.0
-        for <linux-security-module@vger.kernel.org>; Mon, 13 Jan 2025 05:42:28 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="i+QyNSCg"
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5d0c939ab78so10207a12.0
+        for <linux-security-module@vger.kernel.org>; Mon, 13 Jan 2025 06:00:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1736775747; x=1737380547; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=X97wGoya4UQq1kA6RNcK33LUWiHL/CoWKGoyQkqMvkk=;
-        b=SceRTCQIXjz2NY6DCDr2VSwznHXMPSEW0duUH5cisc8AsDBTbPkp3Kw1m5nVghZQea
-         DvdGVkVyhNFdkpFvHGEDPNwvVbnHeHw/5FBrmhJDHVYUT7ZBFsPcoeFZhoTiPiEP8jDc
-         CDdAMcytpN0Z3VrW1nA94Zocb6evceX1DnxoRXEIf0jYlB95o0Da5UFrAhY9/x94vOIo
-         Xgpz/QSHpyqEWeDeVrUeDtbHtf1BUyX+GNuNnXOVjY4hNH1ZGj9ijDBcVaJiTXvdy/s4
-         4+qe17EA9NvNq7yxNdbX+dZPAbBe7GQ6OJ9viubfF3koabanESTva02omATG/ft/FsLp
-         jEEA==
+        d=google.com; s=20230601; t=1736776858; x=1737381658; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AmVqrJ76OwdjEXGBbxG4GnI2QXNXsrWG0X01vnKfxPk=;
+        b=i+QyNSCgkb7nRNx6zab9Kr2RWTBQ/KPJRU0z8p4am/7y/jnp0q2tw04KptzEYL4Z89
+         r/yEar28Vk2npI5+XpyRKSHFfL/yGZLBbQHzCAnvPANH8ezTUWzydFyYYHW56oE/5/2L
+         6dwt11NugFqMC6xF6h6hcgk7J2y7E1VKTLt/QuFTWc1tlnD/VwiIwR58uU3vfn62aBti
+         llBQ8vQlcKpNpD7I2ckImzQIvE+JfkwWxeN53xBXn7sj8brFQzozrGZSLKa0L1TDjYNP
+         UnH4bF/OKWCxDlfKCIzzAzgJHZyQO7sUPLXCJrPKqoaUFZrkbYLJaGn7RsHTqU7X3ZBS
+         SVuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736775747; x=1737380547;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=X97wGoya4UQq1kA6RNcK33LUWiHL/CoWKGoyQkqMvkk=;
-        b=W017CF1OkeKud66Yh2VTZ7m0HSNvk0jvN1LkNYn3qo0WdxKub9PztE64l11BDyR9A8
-         tBCrjsKDGO6/ONIULmNl6Vax8pf5bDfo+8ahXqdrrFtABxLKpo3wLDDCa68bq2qtxXG8
-         wpR6VOuUxsrro1Glhs2IJP5t38M6SHyfZysSql76Lcx2OVBWs1/RRbhf/C9u/vTcQQTn
-         WyjuhCnV+Yhpw5revncMm5RdFRvDA9fjOfXX/4wZnGsddBj33kNb6sKKp2bHMoz740ro
-         jWkZ9/Ru3Tuq5hwumPKYAS8eUeTfm8ka2xXWRVKPuIk4pK6WrXPbnuFL+jCNcHzDP+z6
-         AaLA==
-X-Gm-Message-State: AOJu0YzFG8dhLdYye2HLvZtsYoCbpK79urGHWt7VYkIxT9sNue6zbUa8
-	ZVMJwLKhxEFzxAJrjnl2WOi3fTSaaLT/faEk2yyLo+gFZxCl4rRjCxueWPOZmwE=
-X-Gm-Gg: ASbGncsbYbrgx7pHmnC4spB9tkpY+bOBfv0ou7lzgibDfeVdIA3kurlNFKhVqiwACWF
-	uh0gq2zHRrMTIw6yYoxTN2TK0JuSVW6LAkQZ+x5mSv+YzprQ93M73qUCHeoJiFiGYhbzlCSQM/3
-	gQB0DyzI6aSjwrLokKiJ0x77pdZgK9QEhSemFS+vJKyrNUp6t2PhjmczcELTNUrdNIOieDyuFiZ
-	Bg6SfggyWyRyqNTTi/HbnyOTVgz45O65F5o5U4vY9Gn7ToNSl5nzs7+T1R1
-X-Google-Smtp-Source: AGHT+IGapJ+VZSro2x8LJDMDSAh3VRB+eJpi9PBbS1ECgvlLeDPwXL4yp/4ArB4ipngaE2Loe1Qmbg==
-X-Received: by 2002:a05:600c:450d:b0:434:a734:d279 with SMTP id 5b1f17b1804b1-436e26a8927mr234858635e9.16.1736775747037;
-        Mon, 13 Jan 2025 05:42:27 -0800 (PST)
-Received: from [10.100.51.161] ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436e2e8a326sm178970895e9.35.2025.01.13.05.42.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 Jan 2025 05:42:26 -0800 (PST)
-Message-ID: <d76bfa59-8515-43ff-967d-fa7f779bf6c2@suse.com>
-Date: Mon, 13 Jan 2025 14:42:25 +0100
+        d=1e100.net; s=20230601; t=1736776858; x=1737381658;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AmVqrJ76OwdjEXGBbxG4GnI2QXNXsrWG0X01vnKfxPk=;
+        b=tOGNi7hj6OCf/1AnnRGxZ0omdZh0LN6aX9kvXPpAgVBvyykT3eaM86qwaiOH3e8n0y
+         80uvgJzO7KtAyn0T2DqHttI5ZrNhLa9EYM67KtqxhOeN7+SciJcwEc5hz+we3ZPITAql
+         d+ITYXNPx96homxnMg3jjR/xn+6VTHRPJrswYBndw6jZ5xNKxegjJjDGp3TE8ltUT+kh
+         q2TdNnMl0CgckhOYnHBclcqqZtLO/ATFFTFzC7LroftNsDsfHaJ7KNKpg2SMm9eql5Qh
+         56KgWUw8Qes4UTTLGZFH3s1e+ELihLXLJISNIo7ILYuT5Uwl3wCfiJ6BYsG6AAFZbrxw
+         k+cQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWBwdQif+mvM4rHSs8zUxxXBJK0bk6/xOnAWSsrVyCJZ//dUKQWIrSvxqem/vCGJIdSArEyWBhcrXIoLsKGDdjgogY3QaE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDn0s97LkpYmHhmKLYZORwDm8KU782dUSWm6PAMy82wu8ybUS4
+	RYtRXvxNlSDqBfsoJhTSK1tFEfacfhpGgVO+uO3kg2bUeGxjUtl5MD8tHrkFmrCnIIZ2adKiEQs
+	JpelFVnhbFt3YGiuESuTJEoBklX1/D4YMXR98
+X-Gm-Gg: ASbGnctNYNrvgGRHFf4eb/PBmEjhH6Z4Ss+7vKJHcrtLb+ye2MqKZ/gM2xxbr7FV9xX
+	TXe8mjNcQcl7Vrn2ejDTrFkVpR1VpNAiQhE6oEABkudggddPaWcQqOKBDPYHClHEHEQ==
+X-Google-Smtp-Source: AGHT+IHKZ693r6Symww5fH4Feom3gw0SaQrsRBWb1GldoG/HaGHvayUaIeg55n9HFelhlGnGfmWOwP+TP6vIw15HFZ8=
+X-Received: by 2002:aa7:c596:0:b0:5d9:5a5c:f2f9 with SMTP id
+ 4fb4d7f45d1cf-5d9a0ce240emr238092a12.7.1736776857045; Mon, 13 Jan 2025
+ 06:00:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] loadpin: remove MODULE_COMPRESS_NONE as it is no longer
- supported
-To: Arulpandiyan Vadivel <arulpandiyan.vadivel@siemens.com>
-Cc: linux-security-module@vger.kernel.org, linux-modules@vger.kernel.org,
- stable@vger.kernel.org, cedric.hombourger@siemens.com,
- srikanth.krishnakar@siemens.com
-References: <20250113093115.72619-1-arulpandiyan.vadivel@siemens.com>
-Content-Language: en-US
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <20250113093115.72619-1-arulpandiyan.vadivel@siemens.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250108154338.1129069-1-mic@digikod.net> <20250108154338.1129069-28-mic@digikod.net>
+In-Reply-To: <20250108154338.1129069-28-mic@digikod.net>
+From: Jann Horn <jannh@google.com>
+Date: Mon, 13 Jan 2025 15:00:20 +0100
+X-Gm-Features: AbW1kvYBx8dcH5RfbC3sOaT76fCVvwDa3bMTGBf2ix2X_eB1y7LoeUR0Nuu-9l8
+Message-ID: <CAG48ez25VjcbUUkJiPru42LEX9AbUp0tfVrAcujo15ebozb0ew@mail.gmail.com>
+Subject: Re: [PATCH v4 27/30] fs: Add iput() cleanup helper
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
+Cc: Eric Paris <eparis@redhat.com>, Paul Moore <paul@paul-moore.com>, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	"Serge E . Hallyn" <serge@hallyn.com>, Ben Scarlato <akhna@google.com>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Charles Zaffery <czaffery@roblox.com>, 
+	Daniel Burgener <dburgener@linux.microsoft.com>, 
+	Francis Laniel <flaniel@linux.microsoft.com>, James Morris <jmorris@namei.org>, 
+	Jeff Xu <jeffxu@google.com>, Jorge Lucangeli Obes <jorgelo@google.com>, Kees Cook <kees@kernel.org>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, Phil Sutter <phil@nwl.cc>, 
+	Praveen K Paladugu <prapal@linux.microsoft.com>, Robert Salvet <robert.salvet@roblox.com>, 
+	Shervin Oloumi <enlightened@google.com>, Song Liu <song@kernel.org>, 
+	Tahera Fahimi <fahimitahera@gmail.com>, Tyler Hicks <code@tyhicks.com>, audit@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	Jeff Layton <jlayton@kernel.org>, Josef Bacik <josef@toxicpanda.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 1/13/25 10:31, Arulpandiyan Vadivel wrote:
-> Commit c7ff693fa2094ba0a9d0a20feb4ab1658eff9c33 ("module: Split
-> modules_install compression and in-kernel decompression") removed the
-> MODULE_COMPRESS_NONE, but left it loadpin's Kconfig, and removing it
-> 
-> Signed-off-by: Arulpandiyan Vadivel <arulpandiyan.vadivel@siemens.com>
+On Wed, Jan 8, 2025 at 4:44=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@digiko=
+d.net> wrote:
+> Add a simple scope-based helper to put an inode reference, similar to
+> the fput() helper.
 
-Please use a Fixes tag to record the problematic commit:
+Cleaning up inode references with scope-based cleanup seems dangerous
+to me because, unlike most resources, holding a reference to an inode
+beyond the lifetime of the associated superblock can actually cause
+memory corruption; and scope-based cleanup is designed based on the
+idea that the order and precise location of dropping a reference don't
+matter so much.
 
-Fixes: c7ff693fa209 ("module: Split modules_install compression and in-kernel decompression")
-
-> ---
->  security/loadpin/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/security/loadpin/Kconfig b/security/loadpin/Kconfig
-> index 848f8b4a60190..94348e2831db9 100644
-> --- a/security/loadpin/Kconfig
-> +++ b/security/loadpin/Kconfig
-> @@ -16,7 +16,7 @@ config SECURITY_LOADPIN_ENFORCE
->  	depends on SECURITY_LOADPIN
->  	# Module compression breaks LoadPin unless modules are decompressed in
->  	# the kernel.
-> -	depends on !MODULES || (MODULE_COMPRESS_NONE || MODULE_DECOMPRESS)
-> +	depends on !MODULES || MODULE_DECOMPRESS
->  	help
->  	  If selected, LoadPin will enforce pinning at boot. If not
->  	  selected, it can be enabled at boot with the kernel parameter
-
-I think this should be updated to:
-
-	depends on !MODULES || (!MODULE_COMPRESS || MODULE_DECOMPRESS)
-
--- 
-Thanks,
-Petr
+So I would prefer to either not do this, or at least have some big
+warning comment about usage requirements of scope-based inode
+references.
