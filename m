@@ -1,74 +1,81 @@
-Received: from mta-64-225.siemens.flowmailer.net (mta-64-225.siemens.flowmailer.net [185.136.64.225])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6F6816EC19
-	for <linux-security-module@vger.kernel.org>; Mon, 13 Jan 2025 09:30:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.225
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B47521ADAA;
+	Mon, 13 Jan 2025 10:19:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736760610; cv=none; b=mvpH503f5BDCraKXlAPHxegiCnIQ151O7EnlBcyd42uHOtmhLA/ozHEf/iz43jMmAcUSnJJRTJBag9wooZB9ugzMy21iznURopAaVJlUxvmAK6DsItxWMnxWer16MTUHfTokdCojEpq6DBGglJZa1gB3owZUKnIcF2G0H524/jM=
+	t=1736763571; cv=none; b=bpQ17GhlddxjyPJXB4PkPqtzu4hkbgAUzl3acmxDFDGe5bu9Ndj0Bc3Y/Fm8G5xQOmB/gQYd/ZfDhnO9HO2aoIkuE5B1Jg/xdwUNEIMzgZYFn9kqIGbh4drXt8eeMsURg9tAi/Btqj1TZVlCrEabSZzCDqcvimZG0m5PcnYxKgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736760610; c=relaxed/simple;
-	bh=1zi8MlsS3J5PlC4lpGeqtVvP1KN7EE+OfpMnnqp770s=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Pau9MvdDinVk8eQfFuRu7Egpbq4nJHyXjyeikeGaYUhm2qmezPBYuHMNv3t4ZvNqCwiOG8A3aTvOhZ3ObZXQS+iItB6SyjTkp0k9SWYj13ryZtr0UOhniv6gXxxrGPsocJJmlhQCrOb8P3L7u+ufd54cE3fYdZcWJjrYOUD3lHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=arulpandiyan.vadivel@siemens.com header.b=rEHZV9wY; arc=none smtp.client-ip=185.136.64.225
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+	s=arc-20240116; t=1736763571; c=relaxed/simple;
+	bh=t+WuP34zBZKnJMn7RSGmUlRkwlLe6tJCkZEnKRjHjY8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GvN/UaTbBhxWSWvG44+MlEBGBbxBJk7aAYm0zu/CfZgGEXLP8Z+0jshvOFlTsQW7T87r/VwMZ4I0h4dx8TpChcj6Vuifn6Qw3g19+1Y5cCLHw1aGHIJR2q4ccB34QnDNRwWlJgSlyRnLeI74FjLq9OPjQXJHGSS+XwgmCvHJY34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=MXukRBjn; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=arulpandiyan.vadivel@siemens.com header.b="rEHZV9wY"
-Received: by mta-64-225.siemens.flowmailer.net with ESMTPSA id 202501130930019c85ff30ea5179a82e
-        for <linux-security-module@vger.kernel.org>;
-        Mon, 13 Jan 2025 10:30:01 +0100
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=arulpandiyan.vadivel@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
- bh=Ap/B4kbOsbDfWWRsm2B9OFISQzBCwAWhfhE4q/nKKXc=;
- b=rEHZV9wY+yHgsaNPwT/tZHAYQDlACNL1y8eU7pDyHk5psepUq8D+Bx57q7D+meM7pksBT6
- FtFB72T+hbbrEeUnfKPaOqmkNwHizAkUM7EGLrT1ApRT6mQSsqCNwFkCDsevDoJBZIPCyPb2
- 0OdeK4CvhsWH53cRlDh+2zwrvYAy6Qist1RbUSvaHWVwL4Rr3sEulVreXE28bVlpCVgjtOHK
- W04wg7xs1ie0BxSQf0/Bs1dnnBYnEov1uEtMD7flKiZJHTrAvnv2fRpxpcHE+rqvJevtXjDW
- +Sv3G3yPFr54OXxqKHQBUvwufwTnUt+KDWe0bikX9KrtfbZdV61LAp6g==;
-From: Arulpandiyan Vadivel <arulpandiyan.vadivel@siemens.com>
-To: linux-security-module@vger.kernel.org
-Cc: linux-modules@vger.kernel.org,
-	stable@vger.kernel.org,
-	cedric.hombourger@siemens.com,
-	srikanth.krishnakar@siemens.com,
-	Arulpandiyan Vadivel <arulpandiyan.vadivel@siemens.com>
-Subject: [PATCH] loadpin: remove MODULE_COMPRESS_NONE as it is no longer supported
-Date: Mon, 13 Jan 2025 15:01:15 +0530
-Message-Id: <20250113093115.72619-1-arulpandiyan.vadivel@siemens.com>
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="MXukRBjn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0FE4C4CED6;
+	Mon, 13 Jan 2025 10:19:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1736763571;
+	bh=t+WuP34zBZKnJMn7RSGmUlRkwlLe6tJCkZEnKRjHjY8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MXukRBjns7ns7CWpIRSVKEF6UYD5eqND99zqLpVss02CsnRb4tXgc+1b1Mhu5zY2g
+	 pMsdwUmCMtvFO0Pen/nD4HSVUDnctRIrQqJaUWbHQ3W3rtBLywo8gbs88v2PUOAZ60
+	 R4ykVGEVfuqTE+CWn9q5Y+kF73fpMrzQOOONGaDk=
+Date: Mon, 13 Jan 2025 11:19:28 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Arulpandiyan Vadivel <arulpandiyan.vadivel@siemens.com>
+Cc: linux-security-module@vger.kernel.org, linux-modules@vger.kernel.org,
+	stable@vger.kernel.org, cedric.hombourger@siemens.com,
+	srikanth.krishnakar@siemens.com
+Subject: Re: [PATCH] loadpin: remove MODULE_COMPRESS_NONE as it is no longer
+ supported
+Message-ID: <2025011322-climatic-rotting-5b03@gregkh>
+References: <20250113093115.72619-1-arulpandiyan.vadivel@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-1328317:519-21489:flowmailer
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250113093115.72619-1-arulpandiyan.vadivel@siemens.com>
 
-Commit c7ff693fa2094ba0a9d0a20feb4ab1658eff9c33 ("module: Split
-modules_install compression and in-kernel decompression") removed the
-MODULE_COMPRESS_NONE, but left it loadpin's Kconfig, and removing it
+On Mon, Jan 13, 2025 at 03:01:15PM +0530, Arulpandiyan Vadivel wrote:
+> Commit c7ff693fa2094ba0a9d0a20feb4ab1658eff9c33 ("module: Split
+> modules_install compression and in-kernel decompression") removed the
+> MODULE_COMPRESS_NONE, but left it loadpin's Kconfig, and removing it
+> 
+> Signed-off-by: Arulpandiyan Vadivel <arulpandiyan.vadivel@siemens.com>
+> ---
+>  security/loadpin/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/security/loadpin/Kconfig b/security/loadpin/Kconfig
+> index 848f8b4a60190..94348e2831db9 100644
+> --- a/security/loadpin/Kconfig
+> +++ b/security/loadpin/Kconfig
+> @@ -16,7 +16,7 @@ config SECURITY_LOADPIN_ENFORCE
+>  	depends on SECURITY_LOADPIN
+>  	# Module compression breaks LoadPin unless modules are decompressed in
+>  	# the kernel.
+> -	depends on !MODULES || (MODULE_COMPRESS_NONE || MODULE_DECOMPRESS)
+> +	depends on !MODULES || MODULE_DECOMPRESS
+>  	help
+>  	  If selected, LoadPin will enforce pinning at boot. If not
+>  	  selected, it can be enabled at boot with the kernel parameter
+> -- 
+> 2.39.5
+> 
+> 
 
-Signed-off-by: Arulpandiyan Vadivel <arulpandiyan.vadivel@siemens.com>
----
- security/loadpin/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+<formletter>
 
-diff --git a/security/loadpin/Kconfig b/security/loadpin/Kconfig
-index 848f8b4a60190..94348e2831db9 100644
---- a/security/loadpin/Kconfig
-+++ b/security/loadpin/Kconfig
-@@ -16,7 +16,7 @@ config SECURITY_LOADPIN_ENFORCE
- 	depends on SECURITY_LOADPIN
- 	# Module compression breaks LoadPin unless modules are decompressed in
- 	# the kernel.
--	depends on !MODULES || (MODULE_COMPRESS_NONE || MODULE_DECOMPRESS)
-+	depends on !MODULES || MODULE_DECOMPRESS
- 	help
- 	  If selected, LoadPin will enforce pinning at boot. If not
- 	  selected, it can be enabled at boot with the kernel parameter
--- 
-2.39.5
+This is not the correct way to submit patches for inclusion in the
+stable kernel tree.  Please read:
+    https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
+for how to do this properly.
 
+</formletter>
