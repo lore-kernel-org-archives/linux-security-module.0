@@ -1,153 +1,123 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BBA023A117;
-	Mon, 13 Jan 2025 14:50:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0D88229808;
+	Mon, 13 Jan 2025 14:55:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736779851; cv=none; b=fNsjlN9IMlo8Fr6t40NNULvrSyVRJxEdKBYHXyOLgo26iwK4v791ePSluyUe3gbPemsZVMxZJtIWylakhWjy1Qx85X0j3Qj5Mr2PaOFl0TChTXAStgTAMvPB5eQo01nKwG/B9owfnG4Xi3QN5oK5rISkUKS+YiNF64V6N97lXSQ=
+	t=1736780105; cv=none; b=C0hOxr8sKPc2fpBjFwWsGxhoAaupK4JTV2+EFQxjjEJfb2QhvDYIL7RrkmmrPu/nRR2psZZ+Y1kif1N+YtkeRr+BgDtL4HNaxiCyzDT9ag6F9wH1/UOizyAWoFYB+oExRJP6dfy8EcOrYZop8hWuZ8JIP6s17+CcKWAew6Supgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736779851; c=relaxed/simple;
-	bh=L9MrAFXeWGJEebUslcYCuY+qo9s/EjEgrLtokZZ0m3E=;
+	s=arc-20240116; t=1736780105; c=relaxed/simple;
+	bh=rMXm59SPTsrymD3C2yxFqEbLQ1YAvMyEOn3UiB05slc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lj6FEXZnjVhB94wkXYfijmuddJtxW0f4GDCMAdoMYJolpx7+qllIgpNniUoBNyrsAjTBjx3GZLTZMzg67nEpvJDZbPfUdhhG+dbCpJV7hXuHKHhzG99/sSRxRCWoOGjpTR9f/2W3osYUYdf+4TCB4vUZx0i1a3u9sYBOCDzhs/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fg3NxmFu; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=CFyompBHsOUSwU1TUrXceIB8Rs65E5ZOi/vwU7ovAGIZ3O1IN1lmt6Dgm2R3AW9KP3YRsg5eSxfQq2XY/zxaFVG+jWdst7fo6bcAKBSP4h0MWeuqfOQ4Vc+NGpyMT7zdFGNK7pLrTd+f5v7cY0Ac6HYSrDoBHsCw5e5D+iCttfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ljKxA0aF; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fg3NxmFu"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43626213fffso33101705e9.1;
-        Mon, 13 Jan 2025 06:50:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1736779848; x=1737384648; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=d0NjS1II12TMN7g1xhUgyqXDJMjrZfAmxWycmrEMMZc=;
-        b=Fg3NxmFu3sC8I7d0A7b5x+h/My6QJwnOnUUYPBOeGdyVI+VsPsPvhhplkKOgOrpYbJ
-         HOiQGnW5mlnTyTPeORxoKVnte54tX0qRGHUq96EzJKS+LWlGDypKgtqIxXWa7FQq+hr8
-         XuYQkFMDvxtVD1GdexXAFAEz8fKMgNhahFzLlMu9xGyzqBAPzYdVU1qJ8vHRLWml0YLr
-         K/h+eEyhSorZMxW7aAy0IbHNkzAyaL3eRmBJNdnpcgbKrQf7qpQH54OGXbwMS+N+RmOP
-         IaX15ksQsrtknyniccEeaOGpkheosWgmxavhh+mNfTdNsUGMJqxKf4hAz2/il5W4mVYk
-         VyRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736779848; x=1737384648;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=d0NjS1II12TMN7g1xhUgyqXDJMjrZfAmxWycmrEMMZc=;
-        b=OFTt990CRSMlOmQKvNEEZ41FWW5Rhwkz+e8aQ8BeBcHpZD7PiiGDbHBXkQT0XUgoPi
-         ejAWIDc2k62QghShXrfEOa8oiogJMqn5d2+nZ5lYfaa9Ky+diga7qjlNBK5JjbBJGkCO
-         0Qpl4wJwa9yZJqR7gmjlinW4NOBaNQ2nJfIV6EkN+ACW05UdVL4mnxvHCXQ5QFRba3Qi
-         zY2lT1vb062zaadD3zyMMBAknRzbJ1C0O3n9Yb3M6hkqLoiyKoWnLL5tcrGojdWZLTAe
-         ibGEFTt8e2WhjAJP7mACIUgJlsCajSoffNiRguKWP8qls7VmovfrNvx9bdf3k063uVyM
-         lrVg==
-X-Forwarded-Encrypted: i=1; AJvYcCVkz29ctr90HHf5ekRPWi3nh8xpre9wfmEr3EAXpFI7Dgwdp6TqffZMCeIJ3PbQX0C2BtZAHJbVNq1Bx6zWv/JIRMLkD/gP@vger.kernel.org, AJvYcCWrrbiQaubxFulgjdyigwYc2OoTQe0FyXHARwFcOOidAHJ+dmScNB/biQ/A00/m6wvlu8WNxmUYxKunqSLN@vger.kernel.org, AJvYcCXG/Ff3Rs2Od/HjMC1YzH4H8BsS08h4UuQXlFhptZ1WThEtOCo23bov2K7H8+m64iLlOqOPql6bSJbiA7RWFYw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPChKN/+qtKMn6iOFCHiZ3J4mKnW734+TabwayZYYPr0Bua+Si
-	Urr49dRE1L+PrpzLRoJI2e6nmx1aZKarDLyz8M8Ez61OkbeKr1fW
-X-Gm-Gg: ASbGncuLX89mE+MNUAgsD2ccej5pbggNZIejtmV5WYI+6KTyT4yBZRgD8kdWyEam3D3
-	BFDX/znhuPPpu7WyXYvIVN5Gj7/J/ud0t56opDVCP0TwrAbXwCu1xr+51lBVOuzfjzbc30gsomC
-	qA4Er4RF7daFWO3UM+NtC5ia9R8vwPpJFn2/pvt5stw58nk1sn/gB4nzVvhALPKAZLVBcJuGREJ
-	PK8GLsM0qgwboMsXXOa80PmADtjBG3N4cby1+Gc7awQDpZSEfW+fQ==
-X-Google-Smtp-Source: AGHT+IFFNmsPhbFB0SkryX+GHfN4UCZ+BS4WzQbbvfLIbB5I7Ed31UF72Wgu7bCYXm7jNM02zGWjNw==
-X-Received: by 2002:a05:600c:5028:b0:434:fa73:a906 with SMTP id 5b1f17b1804b1-436e9d6fe9emr136818765e9.4.1736779847430;
-        Mon, 13 Jan 2025 06:50:47 -0800 (PST)
-Received: from localhost ([2a02:168:59f0:1:b0ab:dd5e:5c82:86b0])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436e9e6263fsm149560315e9.39.2025.01.13.06.50.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jan 2025 06:50:47 -0800 (PST)
-Date: Mon, 13 Jan 2025 15:50:42 +0100
-From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To: Tanya Agarwal <tanyaagarwal25699@gmail.com>
-Cc: casey@schaufler-ca.com, takedakn@nttdata.co.jp,
-	penguin-kernel@i-love.sakura.ne.jp, john.johansen@canonical.com,
-	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-	zohar@linux.ibm.com, roberto.sassu@huawei.com,
-	dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com,
-	mic@digikod.net, gnoack@google.com, stephen.smalley.work@gmail.com,
-	omosnace@redhat.com, linux-kernel@vger.kernel.org,
-	apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
-	linux-integrity@vger.kernel.org, skhan@linuxfoundation.org,
-	anupnewsmail@gmail.com
-Subject: Re: [PATCH V2] security: fix typos and spelling errors
-Message-ID: <20250113.a860b47a11c7@gnoack.org>
-References: <20250111.22fc32ae0729@gnoack.org>
- <20250112072925.1774-1-tanyaagarwal25699@gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ljKxA0aF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADB7AC4CEE2;
+	Mon, 13 Jan 2025 14:55:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1736780105;
+	bh=rMXm59SPTsrymD3C2yxFqEbLQ1YAvMyEOn3UiB05slc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ljKxA0aFAxh2ONCcjbhbD784GF9s1PYXJEEhRvReBgZEd6mDOgNWpdwwkyWfeJtFD
+	 ms5xEGQtINBAIYgUytnrPynqhAUDRqfv74ujLH6UCshPh2cTPoJ8hPIZXvR3svIiA7
+	 o7F2SGfoA9kSXA0z25eLW/4YvTTMEneP+GangqZLdQgRreaEQhitpVt0fc/v6k9WRZ
+	 cHiPMwk4/ZkoSkgvizHC3Z1Z7DkSrh/HkjwDNIqWHODpNSrreAduK5Y/WeqkUAORaC
+	 kmspZTxOCvVnKX0NexSwAos/8QKdXhniXRbJetXIy518kJYNu8Z9wNyrPdc2P/rmCr
+	 sNZbLt631SwvQ==
+Date: Mon, 13 Jan 2025 11:55:02 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Charlie Jenkins <charlie@rivosinc.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	Christian Brauner <brauner@kernel.org>, Guo Ren <guoren@kernel.org>,
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+	James Clark <james.clark@linaro.org>,
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
+	Jonathan Corbet <corbet@lwn.net>, Arnd Bergmann <arnd@arndb.de>,
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
+	linux-csky@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH v6 00/16] perf tools: Use generic syscall scripts for all
+ archs
+Message-ID: <Z4UpRqywqYPZSUM_@x1>
+References: <20250108-perf_syscalltbl-v6-0-7543b5293098@rivosinc.com>
+ <Z3_ybwWW3QZvJ4V6@x1>
+ <Z4AoFA974kauIJ9T@ghost>
+ <Z4A2Y269Ffo0ERkS@x1>
+ <Z4BEygdXmofWBr0-@x1>
+ <Z4BVK3D7sN-XYg2o@ghost>
+ <Z4F1dXQLPGZ3JFI5@ghost>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250112072925.1774-1-tanyaagarwal25699@gmail.com>
+In-Reply-To: <Z4F1dXQLPGZ3JFI5@ghost>
 
-On Sun, Jan 12, 2025 at 12:59:27PM +0530, Tanya Agarwal wrote:
-> From: Tanya Agarwal <tanyaagarwal25699@gmail.com>
-> 
-> Fix typos and spelling errors in security module comments that were
-> identified using the codespell tool.
-> No functional changes - documentation only.
-> 
-> Signed-off-by: Tanya Agarwal <tanyaagarwal25699@gmail.com>
-> ---
-> Thanks Günther, for catching this error.
-> The irony of having a spelling mistake in a patch that fixes spelling
-> mistakes is not lost on me :) 
-> 
-> I've fixed it in V2 of the patch. Thank you for the careful review!
-> 
-> V2: fix spelling mistake - s/beeen/been/ 
-> 
->  security/apparmor/apparmorfs.c      | 6 +++---
->  security/apparmor/domain.c          | 4 ++--
->  security/apparmor/label.c           | 2 +-
->  security/apparmor/lsm.c             | 2 +-
->  security/apparmor/policy.c          | 4 ++--
->  security/integrity/evm/evm_crypto.c | 2 +-
->  security/integrity/evm/evm_main.c   | 2 +-
->  security/integrity/ima/ima_main.c   | 6 +++---
->  security/landlock/ruleset.c         | 2 +-
->  security/selinux/avc.c              | 2 +-
->  security/smack/smack.h              | 2 +-
->  security/smack/smack_access.c       | 4 ++--
->  security/smack/smack_lsm.c          | 6 +++---
->  security/smack/smackfs.c            | 2 +-
->  security/tomoyo/domain.c            | 2 +-
->  15 files changed, 24 insertions(+), 24 deletions(-)
-> 
+On Fri, Jan 10, 2025 at 11:31:01AM -0800, Charlie Jenkins wrote:
+> On Thu, Jan 09, 2025 at 03:00:59PM -0800, Charlie Jenkins wrote:
+> > Ooh okay I see, the quiet commands were being ignored as-is. We could
+> > add the lines to handle this to Makefile.syscalls, but I think the
+> > better solution is to move the lines from Makefile.build to
+> > Makefile.perf to be more generically available. Here is a patch for
+> > that. I also added the comment from the kernel Makefile describing what
+> > this does.
 
-[...]
+> > From 8dcec7f5d937ede3d33c687573dc2f1654ddc59e Mon Sep 17 00:00:00 2001
+> > From: Charlie Jenkins <charlie@rivosinc.com>
+> > Date: Thu, 9 Jan 2025 14:36:40 -0800
+> > Subject: [PATCH] perf tools: Expose quiet/verbose variables in Makefile.perf
+> > 
+> > The variables to make builds silent/verbose live inside
+> > tools/build/Makefile.build. Move those variables to the top-level
+> > Makefile.perf to be generally available.
 
-> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-> index 9b87556b03a7..cdb8c7419d7e 100644
-> --- a/security/integrity/ima/ima_main.c
-> +++ b/security/integrity/ima/ima_main.c
-> @@ -983,9 +983,9 @@ int process_buffer_measurement(struct mnt_idmap *idmap,
->  	}
->  
->  	/*
-> -	 * Both LSM hooks and auxilary based buffer measurements are
-> -	 * based on policy.  To avoid code duplication, differentiate
-> -	 * between the LSM hooks and auxilary buffer measurements,
-> +	 * Both LSM hooks and auxiliary based buffer measurements are
-> +	 * based on policy. To avoid code duplication, differentiate
-                          ^^^
+<SNIP applied patch>
+ 
+> Let me know how you want to handle this, I can send this out as a
+> separate patch if that's better.
 
-(Small nit:) This change from two-spaces-after-the-dot to a single
-space looks like it happened accidentally.  The two-space style is
-dominant in the ima_main.c file.
+I used the patch you provided above after hand editing the message
+before feeding it to 'git am', added these comments:
 
-(However, I am not involved in IMA and others have more authority to
-review this part.  As Paul also said, reviews tend to go smoother when
-the scope for the patch is a single subsystem - it makes the
-responsibilities clearer.)
+    Committer testing:
+    
+    See the SYSCALL lines, now they are consistent with the other
+    operations in other lines:
+    
+      SYSTBL  /tmp/build/perf-tools-next/arch/x86/include/generated/asm/syscalls_32.h
+      SYSTBL  /tmp/build/perf-tools-next/arch/x86/include/generated/asm/syscalls_64.h
+      GEN     /tmp/build/perf-tools-next/common-cmds.h
+      GEN     /tmp/build/perf-tools-next/arch/arm64/include/generated/asm/sysreg-defs.h
+      PERF_VERSION = 6.13.rc2.g3d94bb6ed1d0
+      GEN     perf-archive
+      MKDIR   /tmp/build/perf-tools-next/jvmti/
+      MKDIR   /tmp/build/perf-tools-next/jvmti/
+      MKDIR   /tmp/build/perf-tools-next/jvmti/
+      MKDIR   /tmp/build/perf-tools-next/jvmti/
+      GEN     perf-iostat
+      CC      /tmp/build/perf-tools-next/jvmti/libjvmti.o
+      CC      /tmp/build/perf-tools-next/jvmti/jvmti_agent.o
+    
+    Reported-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+    Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+    Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-> +	 * between the LSM hooks and auxiliary buffer measurements,
->  	 * retrieving the policy rule information only for the LSM hook
->  	 * buffer measurements.
->  	 */
+Thanks,
 
-–Günther
+- Arnaldo
