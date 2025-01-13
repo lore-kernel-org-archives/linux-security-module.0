@@ -1,103 +1,153 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C7361CAA6A;
-	Mon, 13 Jan 2025 14:37:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BBA023A117;
+	Mon, 13 Jan 2025 14:50:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736779021; cv=none; b=MpeqQd8G55ExGFOhJEPA8M/u+TVX/3GxdNIyTqIdCxAXRR9gOnN3Icae+aMSXAXSP31kQnqA3dYawXCOLy8TaW2PPU+gmwp4WKZObmDSvXvxF7JH5/u7MBG1u7CWnUZXFjk2fEm1UBsVy2KLu37I2JCth8QPqUhUpVWEXu7Vl8c=
+	t=1736779851; cv=none; b=fNsjlN9IMlo8Fr6t40NNULvrSyVRJxEdKBYHXyOLgo26iwK4v791ePSluyUe3gbPemsZVMxZJtIWylakhWjy1Qx85X0j3Qj5Mr2PaOFl0TChTXAStgTAMvPB5eQo01nKwG/B9owfnG4Xi3QN5oK5rISkUKS+YiNF64V6N97lXSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736779021; c=relaxed/simple;
-	bh=uEm7AaHSDpwzRjzu2/54yN04+VtaF1V86eu5JzbTrys=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mhdPJoRQKlJ3FNL6P+GD60TIfZpSDpt4sd6kS3oAwbEz9P5oA/jtVJFtE1dgloXBrdJmhCoP6HC5V0ydygII19GiFYZWxKKThad451FQmd/gx6sIescS5kmBiLxzKDnBJbpqy9orFjEqq7bGA6YyBZd5vO/aRNzPOMRjPzgwY2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gmT/Jlfk; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1736779851; c=relaxed/simple;
+	bh=L9MrAFXeWGJEebUslcYCuY+qo9s/EjEgrLtokZZ0m3E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lj6FEXZnjVhB94wkXYfijmuddJtxW0f4GDCMAdoMYJolpx7+qllIgpNniUoBNyrsAjTBjx3GZLTZMzg67nEpvJDZbPfUdhhG+dbCpJV7hXuHKHhzG99/sSRxRCWoOGjpTR9f/2W3osYUYdf+4TCB4vUZx0i1a3u9sYBOCDzhs/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fg3NxmFu; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gmT/Jlfk"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22D41C4CED6;
-	Mon, 13 Jan 2025 14:36:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1736779020;
-	bh=uEm7AaHSDpwzRjzu2/54yN04+VtaF1V86eu5JzbTrys=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=gmT/JlfkgoGjMyYwfQblR29ULOXQtK8ymlViVmfurx4UuEPHBovlc7O+0Cig2tRNj
-	 58LKBTtv1f4ygkYiFHqZ845hpznaCOjhIZ8mxFWqKOz1nWRgzr2EEt9qe48fqBrzcO
-	 qMbnGmKG4GO8anUUy0qB0sICGvusMu6baqfV0ro2trO5ruYLdOAzAVvTDuEc0Eq+l4
-	 e7xXQRvshUhSYk/f3+FolvLWDvijHgFSp5plXFurEq3HrQGGQ8sS0E/Bndrk8pvItE
-	 SL+vsgQqly+pkHzwb0bMOdXrFLnU8+WLVMb4H1gq8FPo/5kKteGEYW3TcTsLOg9lWf
-	 dQ+v1Gt+qLlIA==
-From: Christian Brauner <brauner@kernel.org>
-To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Ben Scarlato <akhna@google.com>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	Charles Zaffery <czaffery@roblox.com>,
-	Daniel Burgener <dburgener@linux.microsoft.com>,
-	Francis Laniel <flaniel@linux.microsoft.com>,
-	James Morris <jmorris@namei.org>,
-	Jann Horn <jannh@google.com>,
-	Jeff Xu <jeffxu@google.com>,
-	Jorge Lucangeli Obes <jorgelo@google.com>,
-	Kees Cook <kees@kernel.org>,
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-	Matt Bobrowski <mattbobrowski@google.com>,
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
-	Phil Sutter <phil@nwl.cc>,
-	Praveen K Paladugu <prapal@linux.microsoft.com>,
-	Robert Salvet <robert.salvet@roblox.com>,
-	Shervin Oloumi <enlightened@google.com>,
-	Song Liu <song@kernel.org>,
-	Tahera Fahimi <fahimitahera@gmail.com>,
-	Tyler Hicks <code@tyhicks.com>,
-	audit@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Jeff Layton <jlayton@kernel.org>,
-	Josef Bacik <josef@toxicpanda.com>,
-	Eric Paris <eparis@redhat.com>,
-	Paul Moore <paul@paul-moore.com>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	"Serge E . Hallyn" <serge@hallyn.com>
-Subject: Re: (subset) [PATCH v4 27/30] fs: Add iput() cleanup helper
-Date: Mon, 13 Jan 2025 15:36:41 +0100
-Message-ID: <20250113-system-waben-2ff9c594e630@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250108154338.1129069-28-mic@digikod.net>
-References: <20250108154338.1129069-1-mic@digikod.net> <20250108154338.1129069-28-mic@digikod.net>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fg3NxmFu"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43626213fffso33101705e9.1;
+        Mon, 13 Jan 2025 06:50:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1736779848; x=1737384648; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=d0NjS1II12TMN7g1xhUgyqXDJMjrZfAmxWycmrEMMZc=;
+        b=Fg3NxmFu3sC8I7d0A7b5x+h/My6QJwnOnUUYPBOeGdyVI+VsPsPvhhplkKOgOrpYbJ
+         HOiQGnW5mlnTyTPeORxoKVnte54tX0qRGHUq96EzJKS+LWlGDypKgtqIxXWa7FQq+hr8
+         XuYQkFMDvxtVD1GdexXAFAEz8fKMgNhahFzLlMu9xGyzqBAPzYdVU1qJ8vHRLWml0YLr
+         K/h+eEyhSorZMxW7aAy0IbHNkzAyaL3eRmBJNdnpcgbKrQf7qpQH54OGXbwMS+N+RmOP
+         IaX15ksQsrtknyniccEeaOGpkheosWgmxavhh+mNfTdNsUGMJqxKf4hAz2/il5W4mVYk
+         VyRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1736779848; x=1737384648;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=d0NjS1II12TMN7g1xhUgyqXDJMjrZfAmxWycmrEMMZc=;
+        b=OFTt990CRSMlOmQKvNEEZ41FWW5Rhwkz+e8aQ8BeBcHpZD7PiiGDbHBXkQT0XUgoPi
+         ejAWIDc2k62QghShXrfEOa8oiogJMqn5d2+nZ5lYfaa9Ky+diga7qjlNBK5JjbBJGkCO
+         0Qpl4wJwa9yZJqR7gmjlinW4NOBaNQ2nJfIV6EkN+ACW05UdVL4mnxvHCXQ5QFRba3Qi
+         zY2lT1vb062zaadD3zyMMBAknRzbJ1C0O3n9Yb3M6hkqLoiyKoWnLL5tcrGojdWZLTAe
+         ibGEFTt8e2WhjAJP7mACIUgJlsCajSoffNiRguKWP8qls7VmovfrNvx9bdf3k063uVyM
+         lrVg==
+X-Forwarded-Encrypted: i=1; AJvYcCVkz29ctr90HHf5ekRPWi3nh8xpre9wfmEr3EAXpFI7Dgwdp6TqffZMCeIJ3PbQX0C2BtZAHJbVNq1Bx6zWv/JIRMLkD/gP@vger.kernel.org, AJvYcCWrrbiQaubxFulgjdyigwYc2OoTQe0FyXHARwFcOOidAHJ+dmScNB/biQ/A00/m6wvlu8WNxmUYxKunqSLN@vger.kernel.org, AJvYcCXG/Ff3Rs2Od/HjMC1YzH4H8BsS08h4UuQXlFhptZ1WThEtOCo23bov2K7H8+m64iLlOqOPql6bSJbiA7RWFYw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPChKN/+qtKMn6iOFCHiZ3J4mKnW734+TabwayZYYPr0Bua+Si
+	Urr49dRE1L+PrpzLRoJI2e6nmx1aZKarDLyz8M8Ez61OkbeKr1fW
+X-Gm-Gg: ASbGncuLX89mE+MNUAgsD2ccej5pbggNZIejtmV5WYI+6KTyT4yBZRgD8kdWyEam3D3
+	BFDX/znhuPPpu7WyXYvIVN5Gj7/J/ud0t56opDVCP0TwrAbXwCu1xr+51lBVOuzfjzbc30gsomC
+	qA4Er4RF7daFWO3UM+NtC5ia9R8vwPpJFn2/pvt5stw58nk1sn/gB4nzVvhALPKAZLVBcJuGREJ
+	PK8GLsM0qgwboMsXXOa80PmADtjBG3N4cby1+Gc7awQDpZSEfW+fQ==
+X-Google-Smtp-Source: AGHT+IFFNmsPhbFB0SkryX+GHfN4UCZ+BS4WzQbbvfLIbB5I7Ed31UF72Wgu7bCYXm7jNM02zGWjNw==
+X-Received: by 2002:a05:600c:5028:b0:434:fa73:a906 with SMTP id 5b1f17b1804b1-436e9d6fe9emr136818765e9.4.1736779847430;
+        Mon, 13 Jan 2025 06:50:47 -0800 (PST)
+Received: from localhost ([2a02:168:59f0:1:b0ab:dd5e:5c82:86b0])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-436e9e6263fsm149560315e9.39.2025.01.13.06.50.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Jan 2025 06:50:47 -0800 (PST)
+Date: Mon, 13 Jan 2025 15:50:42 +0100
+From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To: Tanya Agarwal <tanyaagarwal25699@gmail.com>
+Cc: casey@schaufler-ca.com, takedakn@nttdata.co.jp,
+	penguin-kernel@i-love.sakura.ne.jp, john.johansen@canonical.com,
+	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+	zohar@linux.ibm.com, roberto.sassu@huawei.com,
+	dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com,
+	mic@digikod.net, gnoack@google.com, stephen.smalley.work@gmail.com,
+	omosnace@redhat.com, linux-kernel@vger.kernel.org,
+	apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+	linux-integrity@vger.kernel.org, skhan@linuxfoundation.org,
+	anupnewsmail@gmail.com
+Subject: Re: [PATCH V2] security: fix typos and spelling errors
+Message-ID: <20250113.a860b47a11c7@gnoack.org>
+References: <20250111.22fc32ae0729@gnoack.org>
+ <20250112072925.1774-1-tanyaagarwal25699@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=967; i=brauner@kernel.org; h=from:subject:message-id; bh=uEm7AaHSDpwzRjzu2/54yN04+VtaF1V86eu5JzbTrys=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS3qjLq/LkUtSh3kqOVU2/cEZUwLoM+X00J6Qf7th/qW xbkv2hGRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwET+fmD4n61avu/GycVRx+s5 HjnWzJx8dAZf66/fllrZd+WM7uvxmTEyLDm0e/3SX0xRHu3nko6tEFB1ZtBg33t6EpvOoVt/XYo DOAE=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250112072925.1774-1-tanyaagarwal25699@gmail.com>
 
-On Wed, 08 Jan 2025 16:43:35 +0100, Mickaël Salaün wrote:
-> Add a simple scope-based helper to put an inode reference, similar to
-> the fput() helper.
+On Sun, Jan 12, 2025 at 12:59:27PM +0530, Tanya Agarwal wrote:
+> From: Tanya Agarwal <tanyaagarwal25699@gmail.com>
 > 
-> This is used in a following commit.
+> Fix typos and spelling errors in security module comments that were
+> identified using the codespell tool.
+> No functional changes - documentation only.
 > 
+> Signed-off-by: Tanya Agarwal <tanyaagarwal25699@gmail.com>
+> ---
+> Thanks Günther, for catching this error.
+> The irony of having a spelling mistake in a patch that fixes spelling
+> mistakes is not lost on me :) 
+> 
+> I've fixed it in V2 of the patch. Thank you for the careful review!
+> 
+> V2: fix spelling mistake - s/beeen/been/ 
+> 
+>  security/apparmor/apparmorfs.c      | 6 +++---
+>  security/apparmor/domain.c          | 4 ++--
+>  security/apparmor/label.c           | 2 +-
+>  security/apparmor/lsm.c             | 2 +-
+>  security/apparmor/policy.c          | 4 ++--
+>  security/integrity/evm/evm_crypto.c | 2 +-
+>  security/integrity/evm/evm_main.c   | 2 +-
+>  security/integrity/ima/ima_main.c   | 6 +++---
+>  security/landlock/ruleset.c         | 2 +-
+>  security/selinux/avc.c              | 2 +-
+>  security/smack/smack.h              | 2 +-
+>  security/smack/smack_access.c       | 4 ++--
+>  security/smack/smack_lsm.c          | 6 +++---
+>  security/smack/smackfs.c            | 2 +-
+>  security/tomoyo/domain.c            | 2 +-
+>  15 files changed, 24 insertions(+), 24 deletions(-)
 > 
 
-Applied to the vfs-6.14.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.14.misc branch should appear in linux-next soon.
+[...]
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+> diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+> index 9b87556b03a7..cdb8c7419d7e 100644
+> --- a/security/integrity/ima/ima_main.c
+> +++ b/security/integrity/ima/ima_main.c
+> @@ -983,9 +983,9 @@ int process_buffer_measurement(struct mnt_idmap *idmap,
+>  	}
+>  
+>  	/*
+> -	 * Both LSM hooks and auxilary based buffer measurements are
+> -	 * based on policy.  To avoid code duplication, differentiate
+> -	 * between the LSM hooks and auxilary buffer measurements,
+> +	 * Both LSM hooks and auxiliary based buffer measurements are
+> +	 * based on policy. To avoid code duplication, differentiate
+                          ^^^
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+(Small nit:) This change from two-spaces-after-the-dot to a single
+space looks like it happened accidentally.  The two-space style is
+dominant in the ima_main.c file.
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+(However, I am not involved in IMA and others have more authority to
+review this part.  As Paul also said, reviews tend to go smoother when
+the scope for the patch is a single subsystem - it makes the
+responsibilities clearer.)
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.14.misc
+> +	 * between the LSM hooks and auxiliary buffer measurements,
+>  	 * retrieving the policy rule information only for the LSM hook
+>  	 * buffer measurements.
+>  	 */
 
-[27/30] fs: Add iput() cleanup helper
-        https://git.kernel.org/vfs/vfs/c/38b1ff0bcff1
+–Günther
