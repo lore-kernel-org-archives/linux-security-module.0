@@ -1,101 +1,103 @@
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE80C4315E
-	for <linux-security-module@vger.kernel.org>; Mon, 13 Jan 2025 14:00:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C7361CAA6A;
+	Mon, 13 Jan 2025 14:37:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736776861; cv=none; b=OhVBsPdzji4xeyAHd9KrLwe4hVsDr8mLW3bgds+TtMeadOOfi/Q3SgABbOPH+blc12Eg9ZSeld8YxWUq4ObS4BMe/Y9dEWRyQ75dhRJTBhFIsoimkGCUwoBrIjbu30vhwjAoEBB+gwgu3gOCqz5xFkCy7UFK2sl2Qtiku78wD+A=
+	t=1736779021; cv=none; b=MpeqQd8G55ExGFOhJEPA8M/u+TVX/3GxdNIyTqIdCxAXRR9gOnN3Icae+aMSXAXSP31kQnqA3dYawXCOLy8TaW2PPU+gmwp4WKZObmDSvXvxF7JH5/u7MBG1u7CWnUZXFjk2fEm1UBsVy2KLu37I2JCth8QPqUhUpVWEXu7Vl8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736776861; c=relaxed/simple;
-	bh=AmVqrJ76OwdjEXGBbxG4GnI2QXNXsrWG0X01vnKfxPk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rWzWNw1gxq+fjRNobE1p6tHkEBFGFx7etWJvbutuGxdubCzVx1RkgmeeJAfJ2eBcMIg2owI6ZEiYp+QOBzHeMYbDEQcgJuc9ZN46AAExxJvUdNKvxTE+kt4zd3GzJru6c+qO6K/LPtYnF6D84WqXLbVShVpDupXBWmAOHsU0s9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=i+QyNSCg; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1736779021; c=relaxed/simple;
+	bh=uEm7AaHSDpwzRjzu2/54yN04+VtaF1V86eu5JzbTrys=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mhdPJoRQKlJ3FNL6P+GD60TIfZpSDpt4sd6kS3oAwbEz9P5oA/jtVJFtE1dgloXBrdJmhCoP6HC5V0ydygII19GiFYZWxKKThad451FQmd/gx6sIescS5kmBiLxzKDnBJbpqy9orFjEqq7bGA6YyBZd5vO/aRNzPOMRjPzgwY2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gmT/Jlfk; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="i+QyNSCg"
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5d0c939ab78so10207a12.0
-        for <linux-security-module@vger.kernel.org>; Mon, 13 Jan 2025 06:00:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1736776858; x=1737381658; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AmVqrJ76OwdjEXGBbxG4GnI2QXNXsrWG0X01vnKfxPk=;
-        b=i+QyNSCgkb7nRNx6zab9Kr2RWTBQ/KPJRU0z8p4am/7y/jnp0q2tw04KptzEYL4Z89
-         r/yEar28Vk2npI5+XpyRKSHFfL/yGZLBbQHzCAnvPANH8ezTUWzydFyYYHW56oE/5/2L
-         6dwt11NugFqMC6xF6h6hcgk7J2y7E1VKTLt/QuFTWc1tlnD/VwiIwR58uU3vfn62aBti
-         llBQ8vQlcKpNpD7I2ckImzQIvE+JfkwWxeN53xBXn7sj8brFQzozrGZSLKa0L1TDjYNP
-         UnH4bF/OKWCxDlfKCIzzAzgJHZyQO7sUPLXCJrPKqoaUFZrkbYLJaGn7RsHTqU7X3ZBS
-         SVuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736776858; x=1737381658;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AmVqrJ76OwdjEXGBbxG4GnI2QXNXsrWG0X01vnKfxPk=;
-        b=tOGNi7hj6OCf/1AnnRGxZ0omdZh0LN6aX9kvXPpAgVBvyykT3eaM86qwaiOH3e8n0y
-         80uvgJzO7KtAyn0T2DqHttI5ZrNhLa9EYM67KtqxhOeN7+SciJcwEc5hz+we3ZPITAql
-         d+ITYXNPx96homxnMg3jjR/xn+6VTHRPJrswYBndw6jZ5xNKxegjJjDGp3TE8ltUT+kh
-         q2TdNnMl0CgckhOYnHBclcqqZtLO/ATFFTFzC7LroftNsDsfHaJ7KNKpg2SMm9eql5Qh
-         56KgWUw8Qes4UTTLGZFH3s1e+ELihLXLJISNIo7ILYuT5Uwl3wCfiJ6BYsG6AAFZbrxw
-         k+cQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWBwdQif+mvM4rHSs8zUxxXBJK0bk6/xOnAWSsrVyCJZ//dUKQWIrSvxqem/vCGJIdSArEyWBhcrXIoLsKGDdjgogY3QaE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDn0s97LkpYmHhmKLYZORwDm8KU782dUSWm6PAMy82wu8ybUS4
-	RYtRXvxNlSDqBfsoJhTSK1tFEfacfhpGgVO+uO3kg2bUeGxjUtl5MD8tHrkFmrCnIIZ2adKiEQs
-	JpelFVnhbFt3YGiuESuTJEoBklX1/D4YMXR98
-X-Gm-Gg: ASbGnctNYNrvgGRHFf4eb/PBmEjhH6Z4Ss+7vKJHcrtLb+ye2MqKZ/gM2xxbr7FV9xX
-	TXe8mjNcQcl7Vrn2ejDTrFkVpR1VpNAiQhE6oEABkudggddPaWcQqOKBDPYHClHEHEQ==
-X-Google-Smtp-Source: AGHT+IHKZ693r6Symww5fH4Feom3gw0SaQrsRBWb1GldoG/HaGHvayUaIeg55n9HFelhlGnGfmWOwP+TP6vIw15HFZ8=
-X-Received: by 2002:aa7:c596:0:b0:5d9:5a5c:f2f9 with SMTP id
- 4fb4d7f45d1cf-5d9a0ce240emr238092a12.7.1736776857045; Mon, 13 Jan 2025
- 06:00:57 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gmT/Jlfk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22D41C4CED6;
+	Mon, 13 Jan 2025 14:36:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1736779020;
+	bh=uEm7AaHSDpwzRjzu2/54yN04+VtaF1V86eu5JzbTrys=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=gmT/JlfkgoGjMyYwfQblR29ULOXQtK8ymlViVmfurx4UuEPHBovlc7O+0Cig2tRNj
+	 58LKBTtv1f4ygkYiFHqZ845hpznaCOjhIZ8mxFWqKOz1nWRgzr2EEt9qe48fqBrzcO
+	 qMbnGmKG4GO8anUUy0qB0sICGvusMu6baqfV0ro2trO5ruYLdOAzAVvTDuEc0Eq+l4
+	 e7xXQRvshUhSYk/f3+FolvLWDvijHgFSp5plXFurEq3HrQGGQ8sS0E/Bndrk8pvItE
+	 SL+vsgQqly+pkHzwb0bMOdXrFLnU8+WLVMb4H1gq8FPo/5kKteGEYW3TcTsLOg9lWf
+	 dQ+v1Gt+qLlIA==
+From: Christian Brauner <brauner@kernel.org>
+To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Ben Scarlato <akhna@google.com>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	Charles Zaffery <czaffery@roblox.com>,
+	Daniel Burgener <dburgener@linux.microsoft.com>,
+	Francis Laniel <flaniel@linux.microsoft.com>,
+	James Morris <jmorris@namei.org>,
+	Jann Horn <jannh@google.com>,
+	Jeff Xu <jeffxu@google.com>,
+	Jorge Lucangeli Obes <jorgelo@google.com>,
+	Kees Cook <kees@kernel.org>,
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+	Matt Bobrowski <mattbobrowski@google.com>,
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
+	Phil Sutter <phil@nwl.cc>,
+	Praveen K Paladugu <prapal@linux.microsoft.com>,
+	Robert Salvet <robert.salvet@roblox.com>,
+	Shervin Oloumi <enlightened@google.com>,
+	Song Liu <song@kernel.org>,
+	Tahera Fahimi <fahimitahera@gmail.com>,
+	Tyler Hicks <code@tyhicks.com>,
+	audit@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Jeff Layton <jlayton@kernel.org>,
+	Josef Bacik <josef@toxicpanda.com>,
+	Eric Paris <eparis@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	"Serge E . Hallyn" <serge@hallyn.com>
+Subject: Re: (subset) [PATCH v4 27/30] fs: Add iput() cleanup helper
+Date: Mon, 13 Jan 2025 15:36:41 +0100
+Message-ID: <20250113-system-waben-2ff9c594e630@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20250108154338.1129069-28-mic@digikod.net>
+References: <20250108154338.1129069-1-mic@digikod.net> <20250108154338.1129069-28-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250108154338.1129069-1-mic@digikod.net> <20250108154338.1129069-28-mic@digikod.net>
-In-Reply-To: <20250108154338.1129069-28-mic@digikod.net>
-From: Jann Horn <jannh@google.com>
-Date: Mon, 13 Jan 2025 15:00:20 +0100
-X-Gm-Features: AbW1kvYBx8dcH5RfbC3sOaT76fCVvwDa3bMTGBf2ix2X_eB1y7LoeUR0Nuu-9l8
-Message-ID: <CAG48ez25VjcbUUkJiPru42LEX9AbUp0tfVrAcujo15ebozb0ew@mail.gmail.com>
-Subject: Re: [PATCH v4 27/30] fs: Add iput() cleanup helper
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
-Cc: Eric Paris <eparis@redhat.com>, Paul Moore <paul@paul-moore.com>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	"Serge E . Hallyn" <serge@hallyn.com>, Ben Scarlato <akhna@google.com>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Charles Zaffery <czaffery@roblox.com>, 
-	Daniel Burgener <dburgener@linux.microsoft.com>, 
-	Francis Laniel <flaniel@linux.microsoft.com>, James Morris <jmorris@namei.org>, 
-	Jeff Xu <jeffxu@google.com>, Jorge Lucangeli Obes <jorgelo@google.com>, Kees Cook <kees@kernel.org>, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, Phil Sutter <phil@nwl.cc>, 
-	Praveen K Paladugu <prapal@linux.microsoft.com>, Robert Salvet <robert.salvet@roblox.com>, 
-	Shervin Oloumi <enlightened@google.com>, Song Liu <song@kernel.org>, 
-	Tahera Fahimi <fahimitahera@gmail.com>, Tyler Hicks <code@tyhicks.com>, audit@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	Jeff Layton <jlayton@kernel.org>, Josef Bacik <josef@toxicpanda.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=967; i=brauner@kernel.org; h=from:subject:message-id; bh=uEm7AaHSDpwzRjzu2/54yN04+VtaF1V86eu5JzbTrys=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaS3qjLq/LkUtSh3kqOVU2/cEZUwLoM+X00J6Qf7th/qW xbkv2hGRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwET+fmD4n61avu/GycVRx+s5 HjnWzJx8dAZf66/fllrZd+WM7uvxmTEyLDm0e/3SX0xRHu3nko6tEFB1ZtBg33t6EpvOoVt/XYo DOAE=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jan 8, 2025 at 4:44=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@digiko=
-d.net> wrote:
+On Wed, 08 Jan 2025 16:43:35 +0100, Mickaël Salaün wrote:
 > Add a simple scope-based helper to put an inode reference, similar to
 > the fput() helper.
+> 
+> This is used in a following commit.
+> 
+> 
 
-Cleaning up inode references with scope-based cleanup seems dangerous
-to me because, unlike most resources, holding a reference to an inode
-beyond the lifetime of the associated superblock can actually cause
-memory corruption; and scope-based cleanup is designed based on the
-idea that the order and precise location of dropping a reference don't
-matter so much.
+Applied to the vfs-6.14.misc branch of the vfs/vfs.git tree.
+Patches in the vfs-6.14.misc branch should appear in linux-next soon.
 
-So I would prefer to either not do this, or at least have some big
-warning comment about usage requirements of scope-based inode
-references.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.14.misc
+
+[27/30] fs: Add iput() cleanup helper
+        https://git.kernel.org/vfs/vfs/c/38b1ff0bcff1
