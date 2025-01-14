@@ -1,295 +1,196 @@
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B6C5202C41
-	for <linux-security-module@vger.kernel.org>; Tue, 14 Jan 2025 19:27:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 164658493;
+	Tue, 14 Jan 2025 20:56:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736882861; cv=none; b=cltseIXiCAylRSdUhAHCZs8rv+78dhpcS7g81vpb8DPjcfvVhK2ahPHlCZifJDObcbrvQHs+5PhnWBGlx/4/umEkREszLj97z7atGHdV9eol4++rrI3Wex3AN6yRNMjJoARh23VvUMQXix0aC0OcPuICw0b7srcbVNDPCEnAWD0=
+	t=1736888221; cv=none; b=niJlIUJjON6hxFnPtSJg/ySVxiCCLcj9JKZ4rbzBpgVG+aF6YT9ToWTVg8DnUr4YtwtVclZ2++JccfzEfigzvnBCOS70mLxzzCyopMD6GgLJFVgUHoajIDXCLegrvmaEwX2EQklItn5o9zYaKd3xvy3Zlzq2IUnr2t9TnAqiPfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736882861; c=relaxed/simple;
-	bh=Uxw0taxwqk1Pq7X+X5K0+wSP4PXacCH+ZF9RVEkvz0M=;
+	s=arc-20240116; t=1736888221; c=relaxed/simple;
+	bh=rXWxQqj1X9udCuDo8ubNb9WhgjDmLf7uCCD7cFqLA1o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dup6IBavBbKwe157+WugujRH+AQyz73bjdqKE99R6L0ofZUuz2V9u1ZqcdmgNLdKX/K4/PeXfn2uuV/BNkPKm5Clpi439EARG0qC4qO52M7Hu6iMuV1P/bxeNNJakw+ArYqRNkRPSBJi4HTCGuIbpr3E0W8SaW6E85BPeW2tT1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=wWgz3XtF; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=iK0WGmIvG6j8C/5ZlPDFEIIpGWMoCHRNj9FRX2DqqFaoLRXeQpT5P/Um7ZZPf+MoU6yumNu+v2KmSyRFbFsK6s5oIYOzrAucJ1ZsxIPg/eYk8gm9Oy0AfYDf5M9L39229Prg0mXwf578vmIXJvS53gajGk4x0wkumPKrDnRQFg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ho7xJgj2; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="wWgz3XtF"
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2166651f752so132801745ad.3
-        for <linux-security-module@vger.kernel.org>; Tue, 14 Jan 2025 11:27:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1736882857; x=1737487657; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ES4PfYVi7ZyhgRUm9GYH+FMCnEy4+AUcUAHWe5oV5jA=;
-        b=wWgz3XtFKEYGCy0b4YoNhIb1fCXl/Z7F2KkJZlBmh3dRCLA2PvI48C7oqgDaE+pEqg
-         FYyNAMsX0JfGGLTRLOehfKbYCTIGCjOIo7f6scTY6Yw8NsR1GCRa0DguFtaZFhWcghR2
-         x32iou7RzmiOp+lK3y6aveqa+rCM+X9+qwD8V4vbDYpNqAKbgvGDXo6MVVcgbeWMl/vf
-         XPBI2cp7SpulNsG2uN+olI53aRT7Dejq3hBkE2fkAJIcVUkyH0NkIFA2vhtVJeh7gvBO
-         nfHqYLSQV/iI4BwxjcZSNdGZwiBjQr/hzcITXsBTKsVF8RNU2JjifmvjoRYAzWmG5Hpd
-         54hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736882857; x=1737487657;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ES4PfYVi7ZyhgRUm9GYH+FMCnEy4+AUcUAHWe5oV5jA=;
-        b=MZAvvup3yDdquj2avUFh/Kueif5kd4V7gEVpPwQ4n0+ADvwpe6YPW3KBL5JokQVguU
-         2EfDvSnkHv5xuvWyV5EFL5amnIKneO7eLcqUrWHAdhrlicB94G/aNKrjoQoCXmEs3sVK
-         HDAZNyEIPPV40YRnL4SulpjghGzR4NYkqaiNw4YZg9yS9CxRSSH+B7qYaj8+2irM1B9q
-         3OF+5f+etDFXpW95MB8UTaKDYIOXl3aJoGCVS/5GnKWwBEbSj22UZ8+H4ot6lIJmGC+j
-         1s4X5YDdg/5WI+UJFYcPywcmXGvgMa322YsohxfBUWVdGuplBkEIG+WlnCTO0m3qOSy+
-         px7A==
-X-Forwarded-Encrypted: i=1; AJvYcCWpY6dK9YOT0BJ+pONcfR7wKTen48ivo1yL3kFg/BEeqzcWuNuKnV5+vDZXR4BetU3tkfl0LuFBAUlyUEFzXdR590/AwOk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeytLP++WxdLPV7/ecwYunI2LGU9ce9S8mzhcrry798T0VJ59D
-	Q1AiEdguRBGIMOnyYziTVQzZ+3nBkKwfiWVXQ8lI+9S/49ahmoHggWNKC+DzvfY=
-X-Gm-Gg: ASbGncuf3QZM/F2f7Y7HoqXCnB0LiX7z1PM1nSe+BIuHFSmBUIcfHZdEV+aKUfufGz7
-	IoA6z+qI/lYNQo5jS0IRMlm9a++BqGQr2gPv4AUhCCOYN9+C44qz9P7IRuQRhS20G8o749ybh+q
-	g0N+XgG825MZh6UFvcUmCjnYlNO277bYOoxSvHkiq+YYu6syR+NNewZ6sHjBMMVDDV83SE98/Cm
-	K7XPPUiTkqbf5ySqgt2nBJN/1JgdFZVnUEG6iFHhvn14/mX467f
-X-Google-Smtp-Source: AGHT+IHNba0GEbibje0t5wLZKfmTow6LQxoYMbmUndt+PVUCx5IeqgXnaaRg1lp0Qu+9TDj1PY7X3A==
-X-Received: by 2002:a17:902:d4cd:b0:216:3c2b:a5e5 with SMTP id d9443c01a7336-21a83f71115mr361190955ad.27.1736882856927;
-        Tue, 14 Jan 2025 11:27:36 -0800 (PST)
-Received: from ghost ([2601:647:6700:64d0:c3be:2c11:1223:572a])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21a9f10e006sm70578375ad.1.2025.01.14.11.27.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 14 Jan 2025 11:27:34 -0800 (PST)
-Date: Tue, 14 Jan 2025 11:27:30 -0800
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	Christian Brauner <brauner@kernel.org>, Guo Ren <guoren@kernel.org>,
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
-	James Clark <james.clark@linaro.org>,
-	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
-	Jonathan Corbet <corbet@lwn.net>, Arnd Bergmann <arnd@arndb.de>,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-security-module@vger.kernel.org, bpf@vger.kernel.org,
-	linux-csky@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v6 00/16] perf tools: Use generic syscall scripts for all
- archs
-Message-ID: <Z4a6oivg7f74N12Q@ghost>
-References: <20250108-perf_syscalltbl-v6-0-7543b5293098@rivosinc.com>
- <Z3_ybwWW3QZvJ4V6@x1>
- <Z4AoFA974kauIJ9T@ghost>
- <Z4A2Y269Ffo0ERkS@x1>
- <Z4BEygdXmofWBr0-@x1>
- <Z4BVK3D7sN-XYg2o@ghost>
- <Z4F1dXQLPGZ3JFI5@ghost>
- <Z4UpRqywqYPZSUM_@x1>
- <Z4alwvqYithaVLSL@x1>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ho7xJgj2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89F9AC4CEE4;
+	Tue, 14 Jan 2025 20:56:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1736888219;
+	bh=rXWxQqj1X9udCuDo8ubNb9WhgjDmLf7uCCD7cFqLA1o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ho7xJgj2U4PjuqI0DTZSJlnU5l3gW1d9BwbvabPXijOrOoQhCFO8q8N56702EGHoL
+	 OU9dxrhOuif6sYmu4a/iWXwB5uYht2baYQunlkGGG78b6/1e30D24z5e9wIYzf86qf
+	 cmVNZ84zhpUgfPDVS2Sd6/pXD0faZ2QGxbnkVaeFA143e1hGjADQQnxc1T1lyjbOuJ
+	 QBAV9sUQPpt+AoVgBzOwXecL+1ebhChhXKy/LTIfJNzghmghwZGThVdbUyX2Y2T4UQ
+	 b3Vzg8Wy//wlpvIlicM+MZwma1zjB0DU6TNXqYYRREg7ESN3JR/0mmSBNB8bqD1kB4
+	 Yzszbo/FhR+Pw==
+Date: Tue, 14 Jan 2025 13:56:45 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: Al Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Kees Cook <keescook@chromium.org>, Paul Moore <paul@paul-moore.com>,
+	Serge Hallyn <serge@hallyn.com>,
+	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>,
+	Alejandro Colomar <alx@kernel.org>,
+	Aleksa Sarai <cyphar@cyphar.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	Christian Heimes <christian@python.org>,
+	Dmitry Vyukov <dvyukov@google.com>, Elliott Hughes <enh@google.com>,
+	Eric Biggers <ebiggers@kernel.org>,
+	Eric Chiang <ericchiang@google.com>,
+	Fan Wu <wufan@linux.microsoft.com>,
+	Florian Weimer <fweimer@redhat.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	James Morris <jamorris@linux.microsoft.com>,
+	Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>,
+	Jeff Xu <jeffxu@google.com>, Jonathan Corbet <corbet@lwn.net>,
+	Jordan R Abrahams <ajordanr@google.com>,
+	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Luca Boccassi <bluca@debian.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>,
+	Matt Bobrowski <mattbobrowski@google.com>,
+	Matthew Garrett <mjg59@srcf.ucam.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Miklos Szeredi <mszeredi@redhat.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Steve Dower <steve.dower@python.org>,
+	Steve Grubb <sgrubb@redhat.com>, Theodore Ts'o <tytso@mit.edu>,
+	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>,
+	Vincent Strubel <vincent.strubel@ssi.gouv.fr>,
+	Xiaoming Ni <nixiaoming@huawei.com>,
+	kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v23 7/8] samples/check-exec: Add an enlighten "inc"
+ interpreter and 28 tests
+Message-ID: <20250114205645.GA2825031@ax162>
+References: <20241212174223.389435-1-mic@digikod.net>
+ <20241212174223.389435-8-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z4alwvqYithaVLSL@x1>
+In-Reply-To: <20241212174223.389435-8-mic@digikod.net>
 
-On Tue, Jan 14, 2025 at 02:58:26PM -0300, Arnaldo Carvalho de Melo wrote:
-> On Mon, Jan 13, 2025 at 11:55:05AM -0300, Arnaldo Carvalho de Melo wrote:
-> > On Fri, Jan 10, 2025 at 11:31:01AM -0800, Charlie Jenkins wrote:
-> > > On Thu, Jan 09, 2025 at 03:00:59PM -0800, Charlie Jenkins wrote:
-> > > > Ooh okay I see, the quiet commands were being ignored as-is. We could
-> > > > add the lines to handle this to Makefile.syscalls, but I think the
-> > > > better solution is to move the lines from Makefile.build to
-> > > > Makefile.perf to be more generically available. Here is a patch for
-> > > > that. I also added the comment from the kernel Makefile describing what
-> > > > this does.
-> > 
-> > > > From 8dcec7f5d937ede3d33c687573dc2f1654ddc59e Mon Sep 17 00:00:00 2001
-> > > > From: Charlie Jenkins <charlie@rivosinc.com>
-> > > > Date: Thu, 9 Jan 2025 14:36:40 -0800
-> > > > Subject: [PATCH] perf tools: Expose quiet/verbose variables in Makefile.perf
-> > > > 
-> > > > The variables to make builds silent/verbose live inside
-> > > > tools/build/Makefile.build. Move those variables to the top-level
-> > > > Makefile.perf to be generally available.
-> > 
-> > <SNIP applied patch>
-> >  
-> > > Let me know how you want to handle this, I can send this out as a
-> > > separate patch if that's better.
-> > 
-> > I used the patch you provided above after hand editing the message
-> > before feeding it to 'git am', added these comments:
-> 
-> Somehow this is causing some trouble:
-> 
-> â¬¢ [acme@toolbox perf-tools-next]$ make -C tools/perf build-test
-> make: Entering directory '/home/acme/git/perf-tools-next/tools/perf'
-> - tarpkg: ./tests/perf-targz-src-pkg .
-> /bin/sh: line 1: @make: command not found
-> make[4]: *** [Makefile:27: clean-asm_pure_loop] Error 127
-> make[3]: *** [Makefile.perf:764: tests-coresight-targets-clean] Error 2
-> make[2]: *** [Makefile:96: clean] Error 2
-> make[1]: *** [tests/make:330: make_static] Error 2
-> make: *** [Makefile:109: build-test] Error 2
-> make: Leaving directory '/home/acme/git/perf-tools-next/tools/perf'
-> â¬¢ [acme@toolbox perf-tools-next]$
-> 
-> Can you please try fixing it as I'm busy now (I'll be on vacation from
-> tomorrow till early February)? This is what I extracted:
+Hi Mickaël,
 
-There was an erroneous $(Q) in
-tools/perf/tests/shell/coresight/Makefile. Previously it would expand to
-the empty string so wouldn't cause any problems, but now it's in the
-middle of an expression so hence the error. I'll send an updated patch.
+On Thu, Dec 12, 2024 at 06:42:22PM +0100, Mickaël Salaün wrote:
+> Add a very simple script interpreter called "inc" that can evaluate two
+> different commands (one per line):
+> - "?" to initialize a counter from user's input;
+> - "+" to increment the counter (which is set to 0 by default).
+> 
+> It is enlighten to only interpret executable files according to
+> AT_EXECVE_CHECK and the related securebits:
+> 
+>   # Executing a script with RESTRICT_FILE is only allowed if the script
+>   # is executable:
+>   ./set-exec -f -- ./inc script-exec.inc # Allowed
+>   ./set-exec -f -- ./inc script-noexec.inc # Denied
+> 
+>   # Executing stdin with DENY_INTERACTIVE is only allowed if stdin is an
+>   # executable regular file:
+>   ./set-exec -i -- ./inc -i < script-exec.inc # Allowed
+>   ./set-exec -i -- ./inc -i < script-noexec.inc # Denied
+> 
+>   # However, a pipe is not executable and it is then denied:
+>   cat script-noexec.inc | ./set-exec -i -- ./inc -i # Denied
+> 
+>   # Executing raw data (e.g. command argument) with DENY_INTERACTIVE is
+>   # always denied.
+>   ./set-exec -i -- ./inc -c "+" # Denied
+>   ./inc -c "$(<script-ask.inc)" # Allowed
+> 
+>   # To directly execute a script, we can update $PATH (used by `env`):
+>   PATH="${PATH}:." ./script-exec.inc
+> 
+>   # To execute several commands passed as argument:
+> 
+> Add a complete test suite to check the script interpreter against all
+> possible execution cases:
+> 
+>   make TARGETS=exec kselftest-install
+>   ./tools/testing/selftests/kselftest_install/run_kselftest.sh
+> 
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Paul Moore <paul@paul-moore.com>
+> Cc: Serge Hallyn <serge@hallyn.com>
+> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> Link: https://lore.kernel.org/r/20241212174223.389435-8-mic@digikod.net
+...
+> diff --git a/samples/check-exec/inc.c b/samples/check-exec/inc.c
+> new file mode 100644
+> index 000000000000..94b87569d2a2
+> --- /dev/null
+> +++ b/samples/check-exec/inc.c
+...
+> +/* Returns 1 on error, 0 otherwise. */
+> +static int interpret_stream(FILE *script, char *const script_name,
+> +			    char *const *const envp, const bool restrict_stream)
+> +{
+> +	int err;
+> +	char *const script_argv[] = { script_name, NULL };
+> +	char buf[128] = {};
+> +	size_t buf_size = sizeof(buf);
+> +
+> +	/*
+> +	 * We pass a valid argv and envp to the kernel to emulate a native
+> +	 * script execution.  We must use the script file descriptor instead of
+> +	 * the script path name to avoid race conditions.
+> +	 */
+> +	err = execveat(fileno(script), "", script_argv, envp,
+> +		       AT_EMPTY_PATH | AT_EXECVE_CHECK);
+> +	if (err && restrict_stream) {
+> +		perror("ERROR: Script execution check");
+> +		return 1;
+> +	}
+> +
+> +	/* Reads script. */
+> +	buf_size = fread(buf, 1, buf_size - 1, script);
+> +	return interpret_buffer(buf, buf_size);
+> +}
 
-> 
-> commit c199fd785d18121ffd0ba5758e23a42ba2984e11
-> Author: Charlie Jenkins <charlie@rivosinc.com>
-> Date:   Mon Jan 13 11:50:55 2025 -0300
-> 
->     perf tools: Expose quiet/verbose variables in Makefile.perf
->     
->     The variables to make builds silent/verbose live inside
->     tools/build/Makefile.build. Move those variables to the top-level
->     Makefile.perf to be generally available.
->     
->     Committer testing:
->     
->     See the SYSCALL lines, now they are consistent with the other
->     operations in other lines:
->     
->       SYSTBL  /tmp/build/perf-tools-next/arch/x86/include/generated/asm/syscalls_32.h
->       SYSTBL  /tmp/build/perf-tools-next/arch/x86/include/generated/asm/syscalls_64.h
->       GEN     /tmp/build/perf-tools-next/common-cmds.h
->       GEN     /tmp/build/perf-tools-next/arch/arm64/include/generated/asm/sysreg-defs.h
->       PERF_VERSION = 6.13.rc2.g3d94bb6ed1d0
->       GEN     perf-archive
->       MKDIR   /tmp/build/perf-tools-next/jvmti/
->       MKDIR   /tmp/build/perf-tools-next/jvmti/
->       MKDIR   /tmp/build/perf-tools-next/jvmti/
->       MKDIR   /tmp/build/perf-tools-next/jvmti/
->       GEN     perf-iostat
->       CC      /tmp/build/perf-tools-next/jvmti/libjvmti.o
->       CC      /tmp/build/perf-tools-next/jvmti/jvmti_agent.o
->     
->     Reported-by: Arnaldo Carvalho de Melo <acme@redhat.com>
->     Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
->     Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
->     Cc: Adrian Hunter <adrian.hunter@intel.com>
->     Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
->     Cc: Arnd Bergmann <arnd@arndb.de>
->     Cc: Christian Brauner <brauner@kernel.org>
->     Cc: Guo Ren <guoren@kernel.org>
->     Cc: GÃ¼nther Noack <gnoack@google.com>
->     Cc: Ian Rogers <irogers@google.com>
->     Cc: Ingo Molnar <mingo@redhat.com>
->     Cc: James Clark <james.clark@linaro.org>
->     Cc: Jiri Olsa <jolsa@kernel.org>
->     Cc: John Garry <john.g.garry@oracle.com>
->     Cc: Jonathan Corbet <corbet@lwn.net>
->     Cc: Leo Yan <leo.yan@linux.dev>
->     Cc: Mark Rutland <mark.rutland@arm.com>
->     Cc: MickaÃ«l SalaÃ¼n <mic@digikod.net>
->     Cc: Mike Leach <mike.leach@linaro.org>
->     Cc: Namhyung Kim <namhyung@kernel.org>
->     Cc: Palmer Dabbelt <palmer@dabbelt.com>
->     Cc: Paul Walmsley <paul.walmsley@sifive.com>
->     Cc: Peter Zijlstra <peterz@infradead.org>
->     Cc: Will Deacon <will@kernel.org>
->     Link: http://lore.kernel.org/lkml/None
->     Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> 
-> diff --git a/tools/build/Makefile.build b/tools/build/Makefile.build
-> index 5fb3fb3d97e0fd11..e710ed67a1b49d9f 100644
-> --- a/tools/build/Makefile.build
-> +++ b/tools/build/Makefile.build
-> @@ -12,26 +12,6 @@
->  PHONY := __build
->  __build:
->  
-> -ifeq ($(V),1)
-> -  quiet =
-> -  Q =
-> -else
-> -  quiet=quiet_
-> -  Q=@
-> -endif
-> -
-> -# If the user is running make -s (silent mode), suppress echoing of commands
-> -# make-4.0 (and later) keep single letter options in the 1st word of MAKEFLAGS.
-> -ifeq ($(filter 3.%,$(MAKE_VERSION)),)
-> -short-opts := $(firstword -$(MAKEFLAGS))
-> -else
-> -short-opts := $(filter-out --%,$(MAKEFLAGS))
-> -endif
-> -
-> -ifneq ($(findstring s,$(short-opts)),)
-> -  quiet=silent_
-> -endif
-> -
->  build-dir := $(srctree)/tools/build
->  
->  # Define $(fixdep) for dep-cmd function
-> diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
-> index a449d00155364422..55d6ce9ea52fb2a5 100644
-> --- a/tools/perf/Makefile.perf
-> +++ b/tools/perf/Makefile.perf
-> @@ -161,12 +161,47 @@ export VPATH
->  SOURCE := $(shell ln -sf $(srctree)/tools/perf $(OUTPUT)/source)
->  endif
->  
-> +# Beautify output
-> +# ---------------------------------------------------------------------------
-> +#
-> +# Most of build commands in Kbuild start with "cmd_". You can optionally define
-> +# "quiet_cmd_*". If defined, the short log is printed. Otherwise, no log from
-> +# that command is printed by default.
-> +#
-> +# e.g.)
-> +#    quiet_cmd_depmod = DEPMOD  $(MODLIB)
-> +#          cmd_depmod = $(srctree)/scripts/depmod.sh $(DEPMOD) $(KERNELRELEASE)
-> +#
-> +# A simple variant is to prefix commands with $(Q) - that's useful
-> +# for commands that shall be hidden in non-verbose mode.
-> +#
-> +#    $(Q)$(MAKE) $(build)=scripts/basic
-> +#
-> +# To put more focus on warnings, be less verbose as default
-> +# Use 'make V=1' to see the full commands
-> +
->  ifeq ($(V),1)
-> +  quiet =
->    Q =
->  else
-> -  Q = @
-> +  quiet=quiet_
-> +  Q=@
->  endif
->  
-> +# If the user is running make -s (silent mode), suppress echoing of commands
-> +# make-4.0 (and later) keep single letter options in the 1st word of MAKEFLAGS.
-> +ifeq ($(filter 3.%,$(MAKE_VERSION)),)
-> +short-opts := $(firstword -$(MAKEFLAGS))
-> +else
-> +short-opts := $(filter-out --%,$(MAKEFLAGS))
-> +endif
-> +
-> +ifneq ($(findstring s,$(short-opts)),)
-> +  quiet=silent_
-> +endif
-> +
-> +export quiet Q
-> +
->  # Do not use make's built-in rules
->  # (this improves performance and avoids hard-to-debug behaviour);
->  MAKEFLAGS += -r
+The use of execveat() in this test case breaks the build when glibc is
+less than 2.34, as that is the earliest version that has the execveat()
+wrapper:
+
+https://sourceware.org/git/?p=glibc.git;a=commit;h=19d83270fcd993cc349570164e21b06d57036704
+
+  $ ldd --version | head -1
+  ldd (Debian GLIBC 2.31-13+deb11u11) 2.31
+
+  $ make -skj"$(nproc)" ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- mrproper allmodconfig samples/
+  ...
+  samples/check-exec/inc.c:81:8: error: call to undeclared function 'execveat'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     81 |         err = execveat(fileno(script), "", script_argv, envp,
+        |               ^
+  samples/check-exec/inc.c:81:8: note: did you mean 'execve'?
+  /usr/include/unistd.h:551:12: note: 'execve' declared here
+    551 | extern int execve (const char *__path, char *const __argv[],
+        |            ^
+  1 error generated.
+  ...
+
+Should this just use the syscall directly?
+
+Cheers,
+Nathan
