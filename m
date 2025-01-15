@@ -1,159 +1,72 @@
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C3729CE6;
-	Wed, 15 Jan 2025 03:26:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 203F52343BC;
+	Wed, 15 Jan 2025 07:15:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736911598; cv=none; b=qxaE7czs5D6Q3rC/ChlP0VjkGCxAa+viPvRNmfO6gD8vaAsZl7ZkyNw3rRyKepLW12cINxOLxAj/t1DYkk1FltnAX87aqWJKHQB+DE+FodYMU/vSxTYhn0M4SuQ3oc2At/Mv7L/AUBp20AWqU4L5OOZ6WnBVnul+H+3UstJEQ1c=
+	t=1736925347; cv=none; b=clnmHVRRdKUpQioEm1Ae88NJn3swo86KV8wAvN7okwF/bfmc9KF8giq5V5+SklKnsceVvtFTC/ed5IG0CpBbyHh33femDP/D7/xAQsiN+UPfwYJ4jiwGeJhB27DbuA8qtYKYbjnfgXnrXpZoOxm3gsekWJb4ZC2xwzjeqoLgsMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736911598; c=relaxed/simple;
-	bh=c6p5MNLk1gS0UOoUHzQPV0qMzsGgrFJlLWgxAeXRZIE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bDlpkql1YTBGu1QDccO9B/8GsdzOHvRiGImkdKYDyPm/B48bfhKYNH8EfjWok3hT3vnK2HmqYta+5Pfz/0smFj9VdPx4W3/bTIv/fQuSfNz2zvWh4h+zScE2fAF0uBRY9da/fG6gFnPyudNr+FiQ8orIxxCbzGAhN7Motfw3bcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=DPlvX8Vx; arc=none smtp.client-ip=90.155.50.34
+	s=arc-20240116; t=1736925347; c=relaxed/simple;
+	bh=zqSPr0qE5kn9a4I6FJEmoK4VISKtbZHWYDAw0edVehk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZWyCNWgKdmF8oJFQkvuc2lB7auvDLsTTQLoQbmGY8YKBcanCTklcDpiPK/f+oGd62hsfLFjec4tU6Ti/9U+80DEbtMKUHOKVxQTxYKRH3sxPPEcOJr5vMCDCO2rE/SvkdFu67CEsKobHdX4EwsQw48zAAnU60izDn+S3ehAzdPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=3VuHiBKY; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DPlvX8Vx"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="3VuHiBKY"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description;
-	bh=pm1m3uzwJlbFVVi6I5yV6EAXsMLspu2WZq0nMzxIyVQ=; b=DPlvX8VxUrcUJyadC4Kj2SkugB
-	Edo5EVe6wZiqqVRnJEWpZ2xRfqdUZ/DMZNqS6e+QH39Kb123e6WUd1XtbtQt7HkGzwhCbZynDLK21
-	NFktL8gtK3RPPIcPfE8w/9tnLxgEBpC1iGXtjquYZwWTb8/AdX4vS3MtO/U8n5Q3vTbcIgaZcquYT
-	9zTJ51v2uBG2pRXL0HFMQQisLnc6YAA8VDiyti+ib7aiwXY2Sz0aP5ixHRRGWyFDBTQjxA+jl8zAV
-	aF+VrKUFU/HQ/jM3al/sjr0IQvliOzYp0DV4yD4hHgz1K7YEgJjE3v1uFN6Hl3e/8I8RhSG9ZwLCC
-	1HbEwcMw==;
-Received: from [50.53.2.24] (helo=[192.168.254.17])
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tXu2w-00000007EEr-32xR;
-	Wed, 15 Jan 2025 03:26:22 +0000
-Message-ID: <b97a0ec7-763f-461b-a510-6d3e409b7652@infradead.org>
-Date: Tue, 14 Jan 2025 19:26:15 -0800
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Transfer-Encoding
+	:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=R4qzS2zYTLs3sOb4/MVR/losKRadCW0XPU16E8aKGz8=; b=3VuHiBKYwG4jxoBye+nNpMHiJn
+	RH08bGUM5Iu1Uvp3WLNAOH0X0jAcLB/L6mvIkypMNc9pH1hBDaDft8kpo+1tncS+VBguiWb0izeTj
+	9GNrX/accdS918A9CBQidmmQtR9vrBj1vz3BtR09BRmRqX+sUKv7eAx/WSBV6iTnerJ2KIYXIj39S
+	75tHmZMew0ua+clDtgbJAcCBfhjhMMpomvqHuI0B97WECK6Pq/Pgz6Byw0ymX91q4h+8+/D8s+Fft
+	h3CX+C0iu3+V3m/TgI8+JfdjIMS0ZBhFyNgmFUJyPy+AQoemDEjZ8hsPA9F9ugoqZr0kEYZqbLpXA
+	OQlW6eFA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tXxcs-0000000Auxu-3ycU;
+	Wed, 15 Jan 2025 07:15:42 +0000
+Date: Tue, 14 Jan 2025 23:15:42 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	Paul Moore <paul@paul-moore.com>,
+	Dave Chinner <david@fromorbit.com>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	syzbot+34b68f850391452207df@syzkaller.appspotmail.com,
+	syzbot+360866a59e3c80510a62@syzkaller.appspotmail.com,
+	Ubisectech Sirius <bugreport@ubisectech.com>,
+	Brian Foster <bfoster@redhat.com>, linux-bcachefs@vger.kernel.org,
+	linux-xfs@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] landlock: Handle weird files
+Message-ID: <Z4dgnkCOc_LxMqq2@infradead.org>
+References: <20250110153918.241810-1-mic@digikod.net>
+ <20250110.3421eeaaf069@gnoack.org>
+ <20250111.PhoHophoh1zi@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Docs/security: update cmdline keyword usage
-To: Paul Moore <paul@paul-moore.com>
-Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
- linux-doc@vger.kernel.org, Kees Cook <kees@kernel.org>,
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <sergeh@kernel.org>,
- linux-security-module@vger.kernel.org,
- Kentaro Takeda <takedakn@nttdata.co.jp>,
- John Johansen <john.johansen@canonical.com>,
- John Johansen <john@apparmor.net>, Jonathan Corbet <corbet@lwn.net>
-References: <20250114225156.10458-1-rdunlap@infradead.org>
- <1b4275ad-a07b-4647-9d2b-48af08cdbebe@I-love.SAKURA.ne.jp>
- <07909d9b-7ec1-4eae-a20e-38a8a15dbc31@infradead.org>
- <CAHC9VhR23zCUsb5hnH4KzL2KbKHVZ=yJ+AvXVNP3369Y_aCa8g@mail.gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <CAHC9VhR23zCUsb5hnH4KzL2KbKHVZ=yJ+AvXVNP3369Y_aCa8g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250111.PhoHophoh1zi@digikod.net>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Hi Paul,
+On Sat, Jan 11, 2025 at 04:38:56PM +0100, Mickaël Salaün wrote:
+> I guess it depends on the filesystem implementation.  For instance, XFS
+> returns an error if a weird file is detected [1], whereas bcachefs
+> ignores it (which is considered a bug, but not fixed yet) [2].
 
-On 1/14/25 7:08 PM, Paul Moore wrote:
-> On Tue, Jan 14, 2025 at 6:17â€¯PM Randy Dunlap <rdunlap@infradead.org> wrote:
->> On 1/14/25 2:59 PM, Tetsuo Handa wrote:
->>> On 2025/01/15 7:51, Randy Dunlap wrote:
->>>> Use "lsm=name,..." instead "security=name,..." since the latter is
->>>> deprecated.
->>>
->>> Sorry, but security= is for specifying only one of exclusive LSM modules
->>> whereas lsm= is for specifying both one of exclusive LSM modules and
->>> all of non-exclusive LSM modules. That is, you can't deprecate
->>> security= using s/security=/lsm=/g .
->>>
->>
->> OK, thanks for the feedback.
->>
->> I am still confused by this part though, in Documentation/doc-guide/kernel-parameters.txt:
->>
->>         security=       [SECURITY] Choose a legacy "major" security module to
->>                         enable at boot. This has been deprecated by the
->>                         "lsm=" parameter.
-> 
-> That wording is correct, look at the ordered_lsm_init() and
-> ordered_lsm_parse() functions in security/security.c.  The legacy
-> "security=" parameter is from a point in time where we didn't support
-> running multiple major LSMs and for various reasons when we did add
-> support for multiple LSMs we moved to the "lsm=" parameter, with
-> continuing support for the "security=" parameter for backwards
-> compatibility with existing installs.  If present, the "lsm="
-> parameter overrides "security=".
-> 
-> Looking at Randy's patch and Tetsuo's comment, I think there was a
-> minor misunderstanding which has led to some confusion.  Tetsuo made
-> the comment that you can't simply do a search and replace on the
-> kernel command line substituting "lsm=" for "security=" as the
-> "security=" parameter will ensure that only one major LSM is activated
-> while "lsm=" would permit multiple major LSMs if they were configured
-> at kernel build time.
-
-Yes, there are some subtle parts there that I overlooked.
-
-> Looking at Randy's original patch, I've got a couple of comments ...
-> 
-> On Tue, Jan 14, 2025 at 5:52â€¯PM Randy Dunlap <rdunlap@infradead.org> wrote:
->>
->> Use "lsm=name,..." instead "security=name,..." since the latter is
->> deprecated.
-> 
-> The "security=" parameter only supports a single LSM name, not a comma
-> delimited list like the "lsm=" parameter.
-> 
->> Fixes: 89a9684ea158 ("LSM: Ignore "security=" when "lsm=" is specified")
->> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
->> Cc: Kees Cook <kees@kernel.org>
->> Cc: Paul Moore <paul@paul-moore.com>
->> Cc: James Morris <jmorris@namei.org>
->> Cc: "Serge E. Hallyn" <sergeh@kernel.org>
->> Cc: linux-security-module@vger.kernel.org
->> Cc: Kentaro Takeda <takedakn@nttdata.co.jp>
->> Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
->> Cc: John Johansen <john.johansen@canonical.com>
->> Cc: John Johansen <john@apparmor.net>
->> Cc: Jonathan Corbet <corbet@lwn.net>
->> ---
->>  Documentation/admin-guide/LSM/apparmor.rst |    4 ++--
->>  Documentation/admin-guide/LSM/index.rst    |    2 +-
->>  Documentation/admin-guide/LSM/tomoyo.rst   |    2 +-
->>  3 files changed, 4 insertions(+), 4 deletions(-)
->>
->> --- linux-next-20250113.orig/Documentation/admin-guide/LSM/apparmor.rst
->> +++ linux-next-20250113/Documentation/admin-guide/LSM/apparmor.rst
->> @@ -27,10 +27,10 @@ in the list.
->>  Build the kernel
->>
->>  If AppArmor is not the default security module it can be enabled by passing
->> -``security=apparmor`` on the kernel's command line.
->> +``lsm=apparmor`` on the kernel's command line.
->>
->>  If AppArmor is the default security module it can be disabled by passing
->> -``apparmor=0, security=XXXX`` (where ``XXXX`` is valid security module), on the
->> +``apparmor=0, lsm=XXXX`` (where ``XXXX`` is valid security module), on the
->>  kernel's command line.
-> 
-> The problem with the /security=/lsm=/ conversion that you've done
-> here, and elsewhere in the patch, is that when you use the "security="
-> parameter the non-major LSMs that are built into the kernel (see the
-> CONFIG_LSM Kconfig knob) are still enabled whereas if you use the
-> "lsm=" parameter you must explicitly list *all* of the LSMs you want
-> to enable.  As an example, "security=apparmor" might enable both
-> AppArmor and Yama, where "lsm=apparmor" only enabled AppArmor, leaving
-> Yama disabled.
-> 
-
-I see. Thanks for the explanations.
-
--- 
-~Randy
+If a filesyste, returns an invalid mode that's a file system bug and
+needs to be fixed there.  Warning in a consumer is perfectly fine.
+But the right action in that case is indeed not to grant the access.
 
