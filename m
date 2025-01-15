@@ -1,94 +1,122 @@
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D9217BD9
-	for <linux-security-module@vger.kernel.org>; Wed, 15 Jan 2025 00:18:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A220723243D;
+	Wed, 15 Jan 2025 01:54:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1736900296; cv=none; b=QNgL0074W7lhRRYIu/DZCRG4oidMZn9yZyXuPiMWp04OvpFjvMqmPBZbuVuRer4es8Ycg4wFQorNnRhk2wac6kl+yl++8eNx4wmEKv2IWk3YGJKRKUFz1rUWMW5429KWopf2MEGiYKPpPCn9sckkOa2JlTa699oOqST/AQHE4Pc=
+	t=1736906049; cv=none; b=sjhbpbGoh6QXlofHjjLsEEqfeIqvUzaStXFbr628yd6aLFkmf4WIDK1yE2OsNfrLRDanKzwS2Wfn4kLLojjpodXx6F+ZRQ9HvOZXEEVlK/XLqxgVb8gPcr4kjwUb31fm2meViGhuyqhB5Ilbu89091xlB16SDmfBVdJrbmUW5gE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1736900296; c=relaxed/simple;
-	bh=Zp49rurA1Myl0pyaSxk9MhtQoSZ5WS+5uSafkdF+aKI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jUyvEacctbATYCVhB49gnV0aZ++JvvGeZ3msN0+kZxgR0O2D7Gfi3IPJp312s+3v+mGi/aR6jYuHrrhfaJHn3rBDmmf0cdUYz53hXZYGrsxERdyqPRpQrltdISfk3YQufBBYz/y4h3VMBXLxMGqZRY2VjEHCeoJxB3/HLarxk+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Ytd0/5vt; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Ytd0/5vt"
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e46c6547266so9205704276.3
-        for <linux-security-module@vger.kernel.org>; Tue, 14 Jan 2025 16:18:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1736900294; x=1737505094; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Zp49rurA1Myl0pyaSxk9MhtQoSZ5WS+5uSafkdF+aKI=;
-        b=Ytd0/5vt5mbHsaA+1uehqTjn72JDz0D4KPYxpwRIK1lXSfDUrv4JepQt1rUn3Ppubx
-         5x2pX1MHSrJ8817FJmBDcfBRCTfIt6tPGDTtfyWEJqSJvaFTnO4wJ9s7HiKGnjD4PRxg
-         MJ4O2YdI20kDRQnXZGTf9JisB75gVe1Bl8oJ6zUQPui6t1odFJouRmIYG0OZVWlXd9r3
-         f2c7xoSdrl/SArjItXBG0tq95SfgLfreQi1qKrUZb5krTQ4B3wDPRgPmxRAF3VUBgEQ+
-         q3Hc2Q3jOQNbafNKmo/FB9Lo4Wk1b7ji9OMhebr6OFtf6uQUlhVwOkIMp2yb5U+B8xC2
-         Dotw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1736900294; x=1737505094;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Zp49rurA1Myl0pyaSxk9MhtQoSZ5WS+5uSafkdF+aKI=;
-        b=NRM/bNHkeOvdnCbyFE7xki6tDv13XUjFiY6yWt/LD8MH6udh/Rk9wIfynwAAwuTHXL
-         7/b0s2eNpYpzF9sUmNBJxL+8aBrxQwW0/EAdXE6kK+O2mteyqVfpNyaYWDUuADEGSciQ
-         kusWBT2t+lwEZx5EJ0lBSEaOxd2RTzqnimCAMUaDimuTcGLJ8oG8vMQNLiyKjFBDXbki
-         M1lrLa5JU7ykIgHntB1iCyGh2mbf/PeO2QEPfLHU3C4GGyrRPmjD51ctfcH5+aLMNHhz
-         lWf13tWTrJm8KbS5vlTEPX3p/l5eA4zWNKCNyFoUWzO/OXHWL018s++056cO1fF46EDw
-         HcpA==
-X-Forwarded-Encrypted: i=1; AJvYcCX7P0yk6diCJbjG2+r3oUe1JwZppHZTtX7Yo4KPT8geyQcor+mVnWD4VlyrQyZV++xuheey8Zy7NPFVa0FUAb2Osx8Yqms=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysCl8nODvGjVSoewJ+mEcTQtzbQDFUD917Ld0yBX7Cs0ARmKGo
-	/NZvIX/WCJJ1dsNpf800gh9JsgFkLkGFPqa3VrQdfifGdzsiJwMtChUQAxqh1V/sRM5Il3xDdSV
-	Fco8XNsBUW3Vo/H9Ghbf+wkBBkKQCVFj1+xFV
-X-Gm-Gg: ASbGnctuzCN7PTv4ZpHmG1P5U/RC6amR7IDu+BjSEqAoi/GzUF5rAYnN6XyTKDS2EyB
-	9mrAcFpSTTQHF+9um0/wUl11ZQooANSs88CiH
-X-Google-Smtp-Source: AGHT+IHtJYSwXkwz+07V0jN+izWJEyDVHZCMBZLUC2IdNu3wLbY2abzMLGBC7XuWrOyXqA98/b43/EFQmm+YZfl72hQ=
-X-Received: by 2002:a05:6902:1444:b0:e57:2e8f:b680 with SMTP id
- 3f1490d57ef6-e572e8fb8d7mr13442994276.40.1736900294049; Tue, 14 Jan 2025
- 16:18:14 -0800 (PST)
+	s=arc-20240116; t=1736906049; c=relaxed/simple;
+	bh=s5wf0PvE8iMPtIJdgC3i2u0xGI6W6jQCAYEtoonO+4w=;
+	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=UXg3un3y/J+N9pCS0SSXJ3b0E7Sr39FzWXySCpw44ejg4/rtFba1abjrYBK7FoS13L5CznpCyZfulhJSoyvsffUyuEmL2utFGMbOgo8+OgCI8j+Wk/HgqSvmSu5KXSvAm1obiiVqGBco6IVuPUeMGhkc5vzOLecdeFaZcoMNXIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4YXppl4sWPz11PCY;
+	Wed, 15 Jan 2025 09:50:07 +0800 (CST)
+Received: from kwepemh100016.china.huawei.com (unknown [7.202.181.102])
+	by mail.maildlp.com (Postfix) with ESMTPS id 48739180101;
+	Wed, 15 Jan 2025 09:53:58 +0800 (CST)
+Received: from [10.174.179.93] (10.174.179.93) by
+ kwepemh100016.china.huawei.com (7.202.181.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 15 Jan 2025 09:53:54 +0800
+Subject: Re: [PATCH v5 -next 00/16] sysctl: move sysctls from vm_table into
+ its own files
+To: Joel Granados <joel.granados@kernel.org>
+References: <20250111070751.2588654-1-yukaixiong@huawei.com>
+ <2asuqwd4rpml6ylxce7mpz2vpvlm2gpdtwpp4lwuf4mdlylig2@dxdj4a73x2sb>
+CC: <akpm@linux-foundation.org>, <mcgrof@kernel.org>,
+	<ysato@users.sourceforge.jp>, <dalias@libc.org>,
+	<glaubitz@physik.fu-berlin.de>, <luto@kernel.org>, <tglx@linutronix.de>,
+	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
+	<hpa@zytor.com>, <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
+	<jack@suse.cz>, <kees@kernel.org>, <j.granados@samsung.com>,
+	<willy@infradead.org>, <Liam.Howlett@oracle.com>, <vbabka@suse.cz>,
+	<lorenzo.stoakes@oracle.com>, <trondmy@kernel.org>, <anna@kernel.org>,
+	<chuck.lever@oracle.com>, <jlayton@kernel.org>, <neilb@suse.de>,
+	<okorniev@redhat.com>, <Dai.Ngo@oracle.com>, <tom@talpey.com>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <paul@paul-moore.com>, <jmorris@namei.org>,
+	<linux-sh@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-nfs@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-security-module@vger.kernel.org>, <dhowells@redhat.com>,
+	<haifeng.xu@shopee.com>, <baolin.wang@linux.alibaba.com>,
+	<shikemeng@huaweicloud.com>, <dchinner@redhat.com>, <bfoster@redhat.com>,
+	<souravpanda@google.com>, <hannes@cmpxchg.org>, <rientjes@google.com>,
+	<pasha.tatashin@soleen.com>, <david@redhat.com>, <ryan.roberts@arm.com>,
+	<ying.huang@intel.com>, <yang@os.amperecomputing.com>,
+	<zev@bewilderbeest.net>, <serge@hallyn.com>, <vegard.nossum@oracle.com>,
+	<wangkefeng.wang@huawei.com>
+From: yukaixiong <yukaixiong@huawei.com>
+Message-ID: <a3b4dcf9-7055-33f9-396c-c90b8cfa68d6@huawei.com>
+Date: Wed, 15 Jan 2025 09:53:53 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250111.22fc32ae0729@gnoack.org> <20250112072925.1774-1-tanyaagarwal25699@gmail.com>
- <20250113.a860b47a11c7@gnoack.org> <d1b05612412a1d4b858662f296b45279c2141aa8.camel@linux.ibm.com>
- <CAPdGtUw9Ee7weCmS2ZP-Hi5KwPw9-O1fGRrY_KLKQh-SWgEN5Q@mail.gmail.com>
-In-Reply-To: <CAPdGtUw9Ee7weCmS2ZP-Hi5KwPw9-O1fGRrY_KLKQh-SWgEN5Q@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 14 Jan 2025 19:18:03 -0500
-X-Gm-Features: AbW1kvaUpZnLTH-RTdyjzL8irQYqX_incLPjKbOpK4BgJaOp8exyZK1GGvI_Sl0
-Message-ID: <CAHC9VhQ1X_6V3ReOQv1ob22My=fjYk-b4Cfm0wB1YS6fomJtYg@mail.gmail.com>
-Subject: Re: [PATCH V2] security: fix typos and spelling errors
-To: Tanya Agarwal <tanyaagarwal25699@gmail.com>
-Cc: Mimi Zohar <zohar@linux.ibm.com>, =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>, 
-	casey@schaufler-ca.com, takedakn@nttdata.co.jp, 
-	penguin-kernel@i-love.sakura.ne.jp, john.johansen@canonical.com, 
-	jmorris@namei.org, serge@hallyn.com, roberto.sassu@huawei.com, 
-	dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, mic@digikod.net, 
-	gnoack@google.com, stephen.smalley.work@gmail.com, omosnace@redhat.com, 
-	linux-kernel@vger.kernel.org, apparmor@lists.ubuntu.com, 
-	linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	skhan@linuxfoundation.org, anupnewsmail@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <2asuqwd4rpml6ylxce7mpz2vpvlm2gpdtwpp4lwuf4mdlylig2@dxdj4a73x2sb>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggpeml500008.china.huawei.com (7.185.36.147) To
+ kwepemh100016.china.huawei.com (7.202.181.102)
 
-On Tue, Jan 14, 2025 at 11:13=E2=80=AFAM Tanya Agarwal
-<tanyaagarwal25699@gmail.com> wrote:
+
+
+On 2025/1/14 21:50, Joel Granados wrote:
+> On Sat, Jan 11, 2025 at 03:07:35PM +0800, Kaixiong Yu wrote:
+>> This patch series moves sysctls of vm_table in kernel/sysctl.c to
+>> places where they actually belong, and do some related code clean-ups.
+>> After this patch series, all sysctls in vm_table have been moved into its
+>> own files, meanwhile, delete vm_table.
+>>
+>> All the modifications of this patch series base on
+>> linux-next(tags/next-20250110). To test this patch series, the code was
+>> compiled with both the CONFIG_SYSCTL enabled and disabled on arm64 and
+>> x86_64 architectures. After this patch series is applied, all files
+>> under /proc/sys/vm can be read or written normally.
+> It is looking good! Here is how I think we should move it upstream:
 >
-> Hi All,
-> Thanks for the review.
-> Sure, I'll split patches of different security subsystems so, that
-> they are easy for maintainers to merge.
+> 1. These should queued in for 6.15 instead of the next merge window.
+>     It is too late in the current cycle and if we put it in now, it will
+>     not properly tested in linux-next.
+>
+> 2. I am putting this in sysctl-testing with the expectation of pushing this
+>     up for the 6.15 merge window. Please tell me if you want this to go
+>     through some other tree.
+>
+> Thx for the contribution
+>
+> Best
 
-Thanks!
+Thank you! I don't want this to go through some other tree.
 
---=20
-paul-moore.com
+Best ...
+>> my test steps as below listed:
+>>
+>> Step 1: Set CONFIG_SYSCTL to 'n' and compile the Linux kernel on the
+>> arm64 architecture. The kernel compiles successfully without any errors
+>> or warnings.
+>>
+> ...
+>>   mm/swap.c                          |  16 ++-
+>>   mm/swap.h                          |   1 +
+>>   mm/util.c                          |  67 +++++++--
+>>   mm/vmscan.c                        |  23 +++
+>>   mm/vmstat.c                        |  44 +++++-
+>>   net/sunrpc/auth.c                  |   2 +-
+>>   security/min_addr.c                |  11 ++
+>>   23 files changed, 336 insertions(+), 312 deletions(-)
+>>
+>> -- 
+>> 2.34.1
+>>
+
