@@ -1,124 +1,131 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-8fa8.mail.infomaniak.ch (smtp-8fa8.mail.infomaniak.ch [83.166.143.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AA3319259A;
-	Thu, 16 Jan 2025 10:04:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42B9D1DE2B8
+	for <linux-security-module@vger.kernel.org>; Thu, 16 Jan 2025 10:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737021843; cv=none; b=d4N9JCIUGro4IBgT5bbU2MOqgoOyZAYyIwqxPN20xNH/xU5NNKZk6BL6/7gqzN3YcQ/SwnQAOSMZv5H/JVuBN6gpyhIRwTGmto9xPbGBVCeuOZ9NcFfzMcBcB8G9/nPUI9cRGJOytLt1+Nyf+/sgrT63YxfwPQDlK6qnVoaj1dY=
+	t=1737024561; cv=none; b=FzBNahkM6NCKNm1Y50iLaefVdwR/y0hAlgI1RbVDduu0yc3CwkpKeNst7Gd3Ak40uEjSYh76qXD13B3EXiTMgGhoofLzCkIvhlRftFipFdx/XOePuoUJeU4FEMbbcKGpnSFIB9hC3FB1JqqZkVLDjKNtmt6SYTG2yQj06zcK9B0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737021843; c=relaxed/simple;
-	bh=vOWQM+I3YRBGjUYDIowHfBe+kql+W0wxpSJ3h1dp89U=;
+	s=arc-20240116; t=1737024561; c=relaxed/simple;
+	bh=wprOV6PY6Ne5vllMDDp4WhKeISLYIhraG6DPdW2oAjI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DTTt3fL1i6hDd/AeZSkB7i+ORX0KuUwxO0QEalyG/UhFginyJiToOZ5ry4DSe1Pvk0lnn7JSKM3q4oiWFRCqQWSI7JJO3tVpU+hJEX2f9A1bZxMHmDHJTzsb+YqKA4r2DMgYW7bCEqDq9mm2jOmTXqWTrh+IAU8+K3lnhn2vRAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IAgqR2f6; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=LsZgAnnAV+uEGKAtgP8LF0Cyfzt0gu5VIrS7yC51WT78KHEWawpLzPGiaU/4p2dAhPdt1cHynduvKJ2BYZkN9wOSNx2R7QhxGRHGfEK1BpQAltlGYdCfKHcZ/5WDQYXqNKTNt2LKplfcLA1GTRtrnfxnsLpM54mdAKxkaYxmTdw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Jrd+MWoh; arc=none smtp.client-ip=83.166.143.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IAgqR2f6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8394EC4CED6;
-	Thu, 16 Jan 2025 10:04:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1737021843;
-	bh=vOWQM+I3YRBGjUYDIowHfBe+kql+W0wxpSJ3h1dp89U=;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Jrd+MWoh"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4YYfkD0csSzrYC;
+	Thu, 16 Jan 2025 11:49:08 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1737024547;
+	bh=0OJztgyAMuj/9iBq14YYE6F6MRhd3WAVnquZ2qjhhTE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IAgqR2f66QLIyDnlJbSk0pURydWNxseM1FJspSLBkNINi0tBhfM9rafMRa8Fh7jXI
-	 X/IP3yQAnuTRRWVUMeZreOqI759pDr0UfGfwD6rxNXDM8bopEelBPpsrHjqB0dq8+Z
-	 f7INV4NNHfjOuSUxgJvNmSniqiSaAOd/F4iyTma5i6Vp7kMzpIK5WuY4DJjAJYUGV5
-	 SybOjcbKgQOt6adDDGmfohqQAh2Wurvyjc4q5ngWeI4K+I/El+T/pSa1BmM0z6vulg
-	 JaRJP2M2hymQq+cuTQPeXzoDhAFUTQvtWiPUncRVXrccXXxEnHYXgKekjrM1OSnKQS
-	 grprVO8ZExbiQ==
-Date: Thu, 16 Jan 2025 11:03:58 +0100
-From: Joel Granados <joel.granados@kernel.org>
-To: yukaixiong <yukaixiong@huawei.com>
-Cc: akpm@linux-foundation.org, mcgrof@kernel.org, 
-	ysato@users.sourceforge.jp, dalias@libc.org, glaubitz@physik.fu-berlin.de, luto@kernel.org, 
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, 
-	hpa@zytor.com, viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	kees@kernel.org, j.granados@samsung.com, willy@infradead.org, 
-	Liam.Howlett@oracle.com, vbabka@suse.cz, lorenzo.stoakes@oracle.com, trondmy@kernel.org, 
-	anna@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de, 
-	okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, paul@paul-moore.com, 
-	jmorris@namei.org, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-nfs@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-security-module@vger.kernel.org, dhowells@redhat.com, 
-	haifeng.xu@shopee.com, baolin.wang@linux.alibaba.com, shikemeng@huaweicloud.com, 
-	dchinner@redhat.com, bfoster@redhat.com, souravpanda@google.com, hannes@cmpxchg.org, 
-	rientjes@google.com, pasha.tatashin@soleen.com, david@redhat.com, 
-	ryan.roberts@arm.com, ying.huang@intel.com, yang@os.amperecomputing.com, 
-	zev@bewilderbeest.net, serge@hallyn.com, vegard.nossum@oracle.com, 
-	wangkefeng.wang@huawei.com
-Subject: Re: Re: [PATCH v5 -next 00/16] sysctl: move sysctls from vm_table
- into its own files
-Message-ID: <lxskw5notxchwlmwl2bspjqsxl52yjd6gknfyssr6xggnj2nll@2nqm5b3itvjh>
-References: <20250111070751.2588654-1-yukaixiong@huawei.com>
- <2asuqwd4rpml6ylxce7mpz2vpvlm2gpdtwpp4lwuf4mdlylig2@dxdj4a73x2sb>
- <a3b4dcf9-7055-33f9-396c-c90b8cfa68d6@huawei.com>
+	b=Jrd+MWohxMTP15wjS0GNr5OCRJyrvuV5zANhcQW0h4jvdQR9K1HFNUrAGFMGZmGq0
+	 0EkXlwph2+gZrqDlwou0GPHG1W2wDRWRYZeebnCFQwxftIAY7iBfFi82Z7W97i2MDf
+	 3r0bstHh8WFdjPAnG7f3/VsF7qgGxbFxtfYST0Xg=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4YYfk91stMzxwR;
+	Thu, 16 Jan 2025 11:49:05 +0100 (CET)
+Date: Thu, 16 Jan 2025 11:49:04 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Eric Paris <eparis@redhat.com>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, "Serge E . Hallyn" <serge@hallyn.com>, 
+	Ben Scarlato <akhna@google.com>, Casey Schaufler <casey@schaufler-ca.com>, 
+	Charles Zaffery <czaffery@roblox.com>, Daniel Burgener <dburgener@linux.microsoft.com>, 
+	Francis Laniel <flaniel@linux.microsoft.com>, James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, 
+	Jeff Xu <jeffxu@google.com>, Jorge Lucangeli Obes <jorgelo@google.com>, 
+	Kees Cook <kees@kernel.org>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
+	Phil Sutter <phil@nwl.cc>, Praveen K Paladugu <prapal@linux.microsoft.com>, 
+	Robert Salvet <robert.salvet@roblox.com>, Shervin Oloumi <enlightened@google.com>, 
+	Song Liu <song@kernel.org>, Tahera Fahimi <fahimitahera@gmail.com>, 
+	Tyler Hicks <code@tyhicks.com>, audit@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v4 8/30] landlock: Add AUDIT_LANDLOCK_DENY and log ptrace
+ denials
+Message-ID: <20250116.gie7theti7Ji@digikod.net>
+References: <20250108154338.1129069-9-mic@digikod.net>
+ <081bd4a2a44a80e046662667e0aeb309@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <a3b4dcf9-7055-33f9-396c-c90b8cfa68d6@huawei.com>
+In-Reply-To: <081bd4a2a44a80e046662667e0aeb309@paul-moore.com>
+X-Infomaniak-Routing: alpha
 
-On Wed, Jan 15, 2025 at 09:53:53AM +0800, yukaixiong wrote:
-> 
-> 
-> On 2025/1/14 21:50, Joel Granados wrote:
-> > On Sat, Jan 11, 2025 at 03:07:35PM +0800, Kaixiong Yu wrote:
-> > > This patch series moves sysctls of vm_table in kernel/sysctl.c to
-> > > places where they actually belong, and do some related code clean-ups.
-> > > After this patch series, all sysctls in vm_table have been moved into its
-> > > own files, meanwhile, delete vm_table.
-> > > 
-> > > All the modifications of this patch series base on
-> > > linux-next(tags/next-20250110). To test this patch series, the code was
-> > > compiled with both the CONFIG_SYSCTL enabled and disabled on arm64 and
-> > > x86_64 architectures. After this patch series is applied, all files
-> > > under /proc/sys/vm can be read or written normally.
-> > It is looking good! Here is how I think we should move it upstream:
+On Wed, Jan 15, 2025 at 06:53:06PM -0500, Paul Moore wrote:
+> On Jan  8, 2025 =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net> wrote:
 > > 
-> > 1. These should queued in for 6.15 instead of the next merge window.
-> >     It is too late in the current cycle and if we put it in now, it will
-> >     not properly tested in linux-next.
-> > 
-> > 2. I am putting this in sysctl-testing with the expectation of pushing this
-> >     up for the 6.15 merge window. Please tell me if you want this to go
-> >     through some other tree.
-> > 
-> > Thx for the contribution
-> > 
-> > Best
+> > Add a new AUDIT_LANDLOCK_DENY record type dedicated to any Landlock
+> > denials.
 > 
-> Thank you! I don't want this to go through some other tree.
-This was more for the mm, net and security maintainers :)
+> ...
+> 
+> > diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
+> > index 75e21a135483..60c909c396c0 100644
+> > --- a/include/uapi/linux/audit.h
+> > +++ b/include/uapi/linux/audit.h
+> > @@ -33,7 +33,7 @@
+> >   * 1100 - 1199 user space trusted application messages
+> >   * 1200 - 1299 messages internal to the audit daemon
+> >   * 1300 - 1399 audit event messages
+> > - * 1400 - 1499 SE Linux use
+> > + * 1400 - 1499 access control messages
+> >   * 1500 - 1599 kernel LSPP events
+> >   * 1600 - 1699 kernel crypto events
+> >   * 1700 - 1799 kernel anomaly records
+> > @@ -146,6 +146,7 @@
+> >  #define AUDIT_IPE_ACCESS	1420	/* IPE denial or grant */
+> >  #define AUDIT_IPE_CONFIG_CHANGE	1421	/* IPE config change */
+> >  #define AUDIT_IPE_POLICY_LOAD	1422	/* IPE policy load */
+> > +#define AUDIT_LANDLOCK_DENY	1423	/* Landlock denial */
+> 
+> I didn't have an opportunity to respond to your reply to my v3 comments
+> before you posted v4, but I see you've decided to stick with _DENY as
+> opposed to _ACCESS (or something similar).  Let me copy your reply
+> below so I can respond appropriately ...
+> 
+> > A stronger type with the "denied" semantic makes more sense to me,
+> > especially for Landlock which is unprivileged, and it makes it clear
+> > that it should only impact performance and log size (i.e. audit log
+> > creation) for denied actions.
+> 
+> This is not consistent with how audit is typically used.  Please
+> convert to AUDIT_LANDLOCK_ACCESS, or something similar.
 
+OK
 
 > 
-> Best ...
-> > > my test steps as below listed:
-> > > 
-> > > Step 1: Set CONFIG_SYSCTL to 'n' and compile the Linux kernel on the
-> > > arm64 architecture. The kernel compiles successfully without any errors
-> > > or warnings.
-> > > 
-> > ...
-> > >   mm/swap.c                          |  16 ++-
-> > >   mm/swap.h                          |   1 +
-> > >   mm/util.c                          |  67 +++++++--
-> > >   mm/vmscan.c                        |  23 +++
-> > >   mm/vmstat.c                        |  44 +++++-
-> > >   net/sunrpc/auth.c                  |   2 +-
-> > >   security/min_addr.c                |  11 ++
-> > >   23 files changed, 336 insertions(+), 312 deletions(-)
-> > > 
-> > > -- 
-> > > 2.34.1
-> > > 
+> > The next patch
+> > series will also contain a new kind of audit rule to specifically
+> > identify the origin of the policy that created this denied event, which
+> > should make more sense.
 > 
+> Generally speaking audit only wants to support a small number of message
+> types dedicated to a specific LSM.  If you're aware of additional message
+> types that you plan to propose in a future patchset, it's probably a
+> time to discuss those now.
 
--- 
+The only other audit record type I'm thinking about would be one
+dedicated to "potentially denied access", something similar to SELinux's
+permissive mode.
 
-Joel Granados
+> 
+> > Because of its unprivileged nature, Landlock will never log granted
+> > accesses by default.  In the future, we might want a permissive-like
+> > mode for Landlock, but this will be optional, and I would also strongly
+> > prefer to add new audit record types for new semantics.
+> 
+> Once again, this isn't consistent with how audit is typically used and
+> I'm not seeing a compelling reason to rework how things are done.  Please
+> stick with encoding the success/failure, accept/reject, etc. states in
+> audit record fields, not the message types themselves.
+
+OK
