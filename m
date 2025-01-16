@@ -1,99 +1,83 @@
-Received: from smtp-8fa8.mail.infomaniak.ch (smtp-8fa8.mail.infomaniak.ch [83.166.143.168])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBC661DE2D7
-	for <linux-security-module@vger.kernel.org>; Thu, 16 Jan 2025 10:57:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A51BB1DDC10;
+	Thu, 16 Jan 2025 11:23:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737025044; cv=none; b=K0kpfvAJnyEGYZvMZzBCWqhi+ujjhfokM7hDUVSpfCz1tLl1imylHVsvDjBM0gVwp1j/Kj1fGqe8wWYyEbRHrONdwaK+KSU4DVS32Yr2QrFdJKhyU5tAI4+KHPzaJFx4XLH/h28Nj5aXsk7CBBPfb5Thm62R9L9f1/gzXw8Wtac=
+	t=1737026616; cv=none; b=WJYfx/T6GKJLYvaRy1jzCcoPENMH7hBHR3/vR2uvypow7RKZ6AZkAiLGarKNwZUwd+B6kCHEnMok1OCgGTe8pG49Dh+rjAnq3yrqTNhKUAIznPfGNZdcYANqXWHxGybWKWQxogJSyBltnZ4o8nKW3UqrImOYqO1mcfaL2kYuFmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737025044; c=relaxed/simple;
-	bh=VQ20OYCm7LTW6QnWoDw/BkUofW5RRIhojQ1mEuKiVAg=;
+	s=arc-20240116; t=1737026616; c=relaxed/simple;
+	bh=EZi6ZK9x72VW0NsySagdtc+fXDlaQIQXzTsLXElG7NA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eu0ZeHXY7wH7Yc5hO56m0/pk0MgeL7MLARg2QUZnYm/1JDwO06TWw5whAwnAOeCSaNl0BS9lOslPQr/L58gXPFzdPE/mWe1Src3rza41mdngRe8i3FReIyCShuhAT30veV9ylLSrOVCbG+49a22yoOmcPsUEL4mTKFY0E6GIoCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=kF3N5X6P; arc=none smtp.client-ip=83.166.143.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="kF3N5X6P"
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246b])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4YYfvg5vPBznM1;
-	Thu, 16 Jan 2025 11:57:19 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1737025039;
-	bh=gTDiyaTDPfpSnRlUFP5GvbzzGcDbaMRsUAaVHeyXyFg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kF3N5X6PYIa/hs4bz66HeXt7oGXMwmBDiyi6tqwX3PM+UaeoDl72WzyjccazmlWom
-	 lY0PObCTTDVq8/KJBDsuFwgnljF4ktnYou0Kgy3smjcv0DGWN2ASsB6Q5DjclI6cZ7
-	 vh/dvENtCQ5BBb+oVBjVfeoTNWtrAKlaxD0QlNTU=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4YYfvf25pYz1s3;
-	Thu, 16 Jan 2025 11:57:18 +0100 (CET)
-Date: Thu, 16 Jan 2025 11:57:17 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Eric Paris <eparis@redhat.com>, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, "Serge E . Hallyn" <serge@hallyn.com>, 
-	Ben Scarlato <akhna@google.com>, Casey Schaufler <casey@schaufler-ca.com>, 
-	Charles Zaffery <czaffery@roblox.com>, Daniel Burgener <dburgener@linux.microsoft.com>, 
-	Francis Laniel <flaniel@linux.microsoft.com>, James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, 
-	Jeff Xu <jeffxu@google.com>, Jorge Lucangeli Obes <jorgelo@google.com>, 
-	Kees Cook <kees@kernel.org>, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
-	Phil Sutter <phil@nwl.cc>, Praveen K Paladugu <prapal@linux.microsoft.com>, 
-	Robert Salvet <robert.salvet@roblox.com>, Shervin Oloumi <enlightened@google.com>, 
-	Song Liu <song@kernel.org>, Tahera Fahimi <fahimitahera@gmail.com>, 
-	Tyler Hicks <code@tyhicks.com>, audit@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v4 28/30] audit,landlock: Add AUDIT_EXE_LANDLOCK_DENY
- rule  type
-Message-ID: <20250116.tie4PhauzooC@digikod.net>
-References: <20250108154338.1129069-29-mic@digikod.net>
- <1ac8548a7b42eaed3f4392690011eb8b@paul-moore.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XMt/t+XvCLQ3mgA4ALE/P9n1pxsrk0Vti9a9RTm6tiF2IZT42N6aM8DhB+JtpIaiHF73OVAZjJyiO9H1ubznk28su2M6aqdNZoIjSi3r07TIt5IVz+5TsbbdqRnKWzt+R3WnePwc/TlhWlrrI/5Bde/5rvUmcS8b+Mpa2BSbwv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5d932eac638so1681017a12.1;
+        Thu, 16 Jan 2025 03:23:34 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737026613; x=1737631413;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=e9qhclktkpiwcVlhX69uBL057FkuaQgXj7Vyw+C1VD0=;
+        b=EA964dk4aKfN7Y4txWIv2pgmokc3gEPCgZnJiblbjW71+fitwPjZk6qUYCtkVEo8ak
+         sW5loacB1/Xgkfl5HqNb8EoEOgwzK+JX26fMz7yjz/StyQ9DDWH5yb4gkwozB+2L/+3D
+         Mzbo1B72z81UmzEhE3ALYy/KpmvqGYNCG44qZBkLdEcU6tQAYxqgwYF/q+PG7oyBVYQD
+         WlhZndLcWDC1N08jUZw/H5e+kVj9slJkwqsXhhxbHBCGGSJYCgcHLZ5be4IDJjAD4hM6
+         4esAOIw1LjkFwfeeQdc+mT9IIvkXZ6xM1mMHD6Dsrki+wZTEQkOJhCp+Zfjl9mH3Z0Fj
+         3PBA==
+X-Forwarded-Encrypted: i=1; AJvYcCVeHBXy5OEpOpeDPEIftHO3HP7FmM1ZUcceXTHilslFXCBOgxtyrVYiPPaSodD11/Jrt0jDifVYJ1be8B4tpww=@vger.kernel.org, AJvYcCX6Ql6yC0xHwPUwfstNWciT+CR+69kjvRZp0ZTVpjFVk8BV/MBE0FJhMDhWsqnNpxPOHOQDPU6Sx5dReRwI@vger.kernel.org, AJvYcCXjVgsMumzrWxU101AxYOOUdWsTGqiw2NXv0hXfIVfq3dETHTKJhSz+uhD2kIpaZ1FT5sq9LE0y4Zb3sQg8UrJn880lFZ/I@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjXbGMipoPtSc9+aV5hQ6nnBkTez9ujVcJ+bKL5xo0ktpstvS6
+	H03pJFdh8CXkhHVgfjZ9Pl6UWxBNWoc6U+dHcTQ87FBerRX1RmRKhwJ6bw==
+X-Gm-Gg: ASbGnctJO7JeTkrHUYyoRC111Mk6bMATfwTep0SfIGvC5x56tH9gDKFubYYlz8+jhuu
+	Kh6eEOAZ2lv5EizuskV6E+2E8NSbQq8R7sh7nsUNdtymMIb/BYW8sXhsKIuA3y2IN3CyubQbW3n
+	S7eKFemu8XQSx84KVaidWP2BBpFh6OIZ/IVaB1HrOVw273rYON4ViNAVjIxoTvAhO4oeNN8Z2Gq
+	dpZjxNCYIV8+AlPTtghsttGCV3f0jUDVVhXPyO/PSQ7S30=
+X-Google-Smtp-Source: AGHT+IFySmbf26jYGiFsqkQqqE8tJBSCG7NGRoWX1HKwuzn/eQvFpo8FWB4CDJLnKBQbywSGYaWqgA==
+X-Received: by 2002:a50:c94d:0:b0:5d9:82bc:ad06 with SMTP id 4fb4d7f45d1cf-5d982bcb571mr22817480a12.3.1737026612825;
+        Thu, 16 Jan 2025 03:23:32 -0800 (PST)
+Received: from gmail.com ([2a03:2880:30ff:4::])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d990469d0fsm8867863a12.61.2025.01.16.03.23.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 16 Jan 2025 03:23:32 -0800 (PST)
+Date: Thu, 16 Jan 2025 03:23:29 -0800
+From: Breno Leitao <leitao@debian.org>
+To: Mimi Zohar <zohar@linux.ibm.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Mimi Zohar <zohar@linux.vnet.ibm.com>, linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: [PATCH v2] ima: kexec: silence RCU list traversal warning
+Message-ID: <20250116-jovial-stalwart-chipmunk-0b3693@leitao>
+References: <20241121-ima_rcu-v2-1-4d48630cf2c6@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1ac8548a7b42eaed3f4392690011eb8b@paul-moore.com>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <20241121-ima_rcu-v2-1-4d48630cf2c6@debian.org>
 
-On Wed, Jan 15, 2025 at 06:53:08PM -0500, Paul Moore wrote:
-> On Jan  8, 2025 =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net> wrote:
-> > 
-> > Landlock manages a set of standalone security policies, which can be
-> > loaded by any process.  Because a sandbox policy may contain errors and
-> > can lead to log spam, we need a way to exclude some of them.  It is
-> > simple and it makes sense to identify Landlock domains (i.e. security
-> > policies) per binary path that loaded such policy.
-> > 
-> > Add a new AUDIT_EXE_LANDLOCK_DENY rule type to enables system
-> > administrator to filter logs according to the origin or the security
-> > policy responsible for a denial.
+Hello Mimi,
+
+On Thu, Nov 21, 2024 at 01:57:12AM -0800, Breno Leitao wrote:
+> The ima_measurements list is append-only and doesn't require
+> rcu_read_lock() protection. However, lockdep issues a warning when
+> traversing RCU lists without the read lock:
 > 
-> For reasons similar to why I didn't want to expose the audit timestamp
-> to users outside of audit, I'm not very enthusiastic about expanding
-> the audit filtering code at this point in time.
-> 
-> I'm not saying "no" exactly, just "not right now".
+>   security/integrity/ima/ima_kexec.c:40 RCU-list traversed in non-reader section!!
 
-Contrary to MAC systems which are configured and tuned by one entity
-(e.g. the sysadmin), Landlock security policies can be configured by a
-lot of different entities (e.g. sysadmin, app developers, users).  One
-noisy policy (e.g. a buggy sandboxed tar called in a loop by maintenance
-scripts) could easily flood the audit logs without the ability for
-sysadmins to filter such policy.  They will only be able to filter all
-users that *may* trigger such log (by executing the buggy sandboxed
-app), which would mean almost all users, which would mask all other
-legitimate Landlock events, then nullifying the entire audit support for
-Landlock.
+What are the next steps in regarding this issue? I am still seeing this
+problem on Linus' tree.
 
-My plan was to extend these new kind of filter types to PID, UID, GID,
-and LOGINUID (a subset of the audit filter exclude list) to give the
-necessary flexibility to filter policy creators.
-
-We really need a way to filter policy creators, and that needs to be
-part of the (initial) Landlock audit support for it to be viable.
-What do you propose?
+Thanks
