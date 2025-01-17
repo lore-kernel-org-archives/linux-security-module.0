@@ -1,116 +1,218 @@
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A8E1155300;
-	Fri, 17 Jan 2025 12:39:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5987015B54A;
+	Fri, 17 Jan 2025 14:42:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737117573; cv=none; b=UMIM3p0hsiQSO3yTJZhJofILxqkHGy+IOlCue6bcCdLs9+UYDXZDbT9jQEARP/Bvtf7ogBFRSjBzvRnxDBb/Y82SIpFrqL2vrj+kMb24THFtGzu6JmgRPGMaoH9u7jH5MMHT4stX8hlhNYTOi8bjX83ErvN4cYXeFRSNV9Op3DM=
+	t=1737124951; cv=none; b=enFSx8wgZl5ROZaEHLF2OS/7lgWKKp+FITjcsx8LD33FNr4aNI6VRpSujs2ULdYUxPOsZQqSZAW38CkeCp2PYxoA7qaAIc4NDZE8Y1EYF8VLAAZTGqRgfMWmoVN8wKtL5CUp3DmjaSCkai/b8KJ5zZ8IHXS0hcNrkO4oYvHbB1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737117573; c=relaxed/simple;
-	bh=JI9e5wxo6nH5Lzl1JNog1oHR2FX5BA+CzpBkTYYobDo=;
+	s=arc-20240116; t=1737124951; c=relaxed/simple;
+	bh=FFsSB34E0ao8K38FLpNRRuWEXihZouOMwO0eIPDcqLg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TNU1Glc92coObX7wE1Od54NuWAEGsyibMOm35tSxKQrtmL+5ghJBfJsxtdeOIjno72FCoK7p+gfWBdgW74onRjRd1Crerx1d15WBIn/84rxpMDKZ8DdoPZtISKZn4vvIuWXN2EPqrxi/KD5CpEH/nL9xWplWUbjjD09ptTki5RQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IuSYFxP1; arc=none smtp.client-ip=209.85.208.42
+	 Content-Type:Content-Disposition:In-Reply-To; b=WiQZ7fuv6T1UNPdCWjWi0EwE3qrfpHz4amnDcv+8+EGY//arJ703jxF73jgWQJ3Q8u7qaweAV9P2+dWHZ1FKN/n4ueIlo2nVCUTQ8sC+VY4b1JOkKJYYuHDnGYsugOQF6vTgmfTWu8XN3o0fD6UNlfCH1EmvfElbR/LexiNE5V8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KEb4H/84; arc=none smtp.client-ip=209.85.218.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IuSYFxP1"
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5d3bbb0f09dso3493769a12.2;
-        Fri, 17 Jan 2025 04:39:30 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KEb4H/84"
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-aaec111762bso427378266b.2;
+        Fri, 17 Jan 2025 06:42:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737117569; x=1737722369; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1737124948; x=1737729748; darn=vger.kernel.org;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=E+qKabMgnA8u24dM8rg//7PlqLp59Zrej0C30Rbwg/8=;
-        b=IuSYFxP1fX+O/i8NeyYleO4LyITblKBmA7ckMQhYluHvjUTnY81Hr7vkM7qK8XidZm
-         2idV8KYtyaLBlfeksqFGSw2m7eF/m9TUKPU3F2TgT6Ou/FGPVRO+LH6kac68cO9gXkhv
-         Aq8RUD6DoZiMmRoE5aARaHgqN0hXCp50m/IWF9MenhHCdG+RYcMR0kGc/WdpBqjHHfn+
-         kTAVkDOZguhLqNF7Upw4XP4Yr/Emkq006gy8CD/l7fJE0b47BvjxKwCbMRzBb1b0x98v
-         VyNR3t3T0kIoFIWZPQQWD90fBzM2RAz+TishFzLd1+4xc345xVMFgC+WDIq3W/T/3Yf3
-         WZ0g==
+        bh=nOD4pNV3mPT1I1Ya6badU5VbEXfW6f5YfORqdQrB6KU=;
+        b=KEb4H/84eZLhjx0b99NpwrroPTTTnOVfs0Mf/mJqhUGK4nB5UxxTcz9lhLLchnqE/D
+         GoCp8Y//8TBGH4NNw/gcaigWRhHOTI6bnyipd0G8REYo+pLcxY0+5SDMwKSIJMI7SHZq
+         HhuwTxs7RGhWAQd8xUrPcJ1gDnr3nDCq6xs6I8mqyLoODfgGz2J+kA1NiUPl2rh+jLVw
+         KeK1jCFUFsu0F7/wyWdBcm3R5ZRytLln0M37sOoZMBPMrs9ouDCmeNi7gPf9erimDfQj
+         QpKO2tn/uBLB7gL+rtoDIiz+orb11TZC6LIVrqX3n6IPi6jbaVcMEdyDEZDir7yRMIbP
+         0Wjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737117569; x=1737722369;
+        d=1e100.net; s=20230601; t=1737124948; x=1737729748;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=E+qKabMgnA8u24dM8rg//7PlqLp59Zrej0C30Rbwg/8=;
-        b=wRnG3Hj5fFa0AaGUsBZpjJHr67wpfa2v7mM9ZyBXDqkqPBhRB66oiHU8WHT2G67iZH
-         6nh3BT0isP9GJO1xRTMHCQfRw6RcP2aAJYY0shC+mGqQ564f1wLvDJm7ZJaLv7VJKWSU
-         w3Y7qYR2CSx+0fkkpxONzVB86faY8BMNSrEEUfplb90qNQQxQOOJ/M7s4DOLOigUsD+W
-         WSPL7gpn9FNN7SzWgkDOWkzigc44pT+ZjR69P8gaOZXUqPsRloaAvUpiWPjv7gMAzuxK
-         0a59dSKdspw4NRVU41P6/vF4K0MqWPWzbyYyi3rDqEP8AqtmoLsBKEzetScHMHe1nhxw
-         onlw==
-X-Forwarded-Encrypted: i=1; AJvYcCVb2IpD6aug1E8Yh+wpShJhBoxxfZHa2QUbU8pZTYLto8mG+/YR6r2B7/WmlEiC1Q1CRvBsq50pcGpwYH+fZSot@vger.kernel.org, AJvYcCWPjeHL18Nn8E0hjgxzREqzfGYU23sMRBUz9PZFoT6999D1KcrrJenpvokYCsWq2NEUCzmkbzgzfqhPz9F2DfJE3RWd+mcE@vger.kernel.org, AJvYcCWheHe9T2QGa98BwbWyyysE0lvdVCCwSK0gTTMuUaloSmNle7ubzZkn1317P0u99pJmZkYxx3YQ5idIjGc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5CjJv3M/41oGxt5zi9YWEK8/uiWuvN8cCpSujHkV1eG4uiNIg
-	HID3tJbH82b/zrVz1FMgUXxT35mq4ut2lT7ZXJY+0gwv9j6gXUS+
-X-Gm-Gg: ASbGncsQ+wUpyyxXEN+DYYWKXcpzeUPbs4badNyNmxJVbxZhfm7Sp+0OjBV4oaxmI9Y
-	q+ptZ5FRs9LIEvbgaXkInzdTTELB5KhVbd2w/YxBkJ+wNRm7EUeRjIYOyNWK5GNnGMNO3lYvFxa
-	vIE/M3BuhESU6nKmeIGimtlU8W6tGMOMqjUO6J0Yd72fhzU0R2ggcFJqOVMVkb+NZSXEcXu+qgT
-	U3uQW1vhPpOY0Z6s182XovmrSatDl2FB7N08DcDLKHskWVfCiUq0T8YYA==
-X-Google-Smtp-Source: AGHT+IG5gdII/Wx4+44JYRMWWUygyGDzj7mipXIwz+FuQ2mISewPs9YXQCReH/GE2unxs4EVvLu8fQ==
-X-Received: by 2002:a05:6402:849:b0:5d0:d91d:c195 with SMTP id 4fb4d7f45d1cf-5db7db06f81mr2069257a12.32.1737117569193;
-        Fri, 17 Jan 2025 04:39:29 -0800 (PST)
+        bh=nOD4pNV3mPT1I1Ya6badU5VbEXfW6f5YfORqdQrB6KU=;
+        b=KQksJWCbmvHKsk5gZYJxFOaxKxYdVjXI/YJP1mYb3O2xLqKt/3b4y3th48CXwytTd5
+         l1E159AL8S0du5FLjP2LjX5s5I7xoFItJVhQzSF3jiAQtj+XKOkhVQP6quzRHpX3BASe
+         +8OfaJQ6nSYZahxZ63EM8HjZyaFfxHRICdJ0040DI6iYaeMqNYWbSvRH6PltMfFZEq5T
+         nWPP4AbIqIIqLk1yI2y+fvaOKD9eutfyll6ZNpMPIkSlRmOUXJXoQlcVjs4L5SlmfUhH
+         uC3HXVOVnbJuRkyYB1IHutJ2rzy2wXBwric5Hov0aTgKJHYWEU+1WN5zL8aM9rtgiERZ
+         r4UA==
+X-Forwarded-Encrypted: i=1; AJvYcCVW76geyWqjM+ObjLZQkmlFw2jdV7dpOkX2KIYSt/+YLxzaNgYlWjNcOfvbEA86DuiNQkbWBMgAnS8KL/qNsCGQ/z0jGWC7@vger.kernel.org, AJvYcCVvieaAeHEqM+1mcWhBOb8Aot5XblMiIsCcYbrYGZumU5VikvQ1+o8uPUFIgBbK80J61QXsy9svsUm6I3fn@vger.kernel.org, AJvYcCWdH625ik0BVlBX48hckyj2XPGwmduCth9/QmnG91eK5qOZxsB4gJ+eutF4WAcrS+AHttxvXSr3I57tuL5AbTs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyti1WlLRZBWDQhpz4OQm6VL1qlPeX3DqLy1hmL5xKh/FpqToFh
+	5pG4Zdf3aIlyPnzPEb2sx3xRsj4yrYwUMz8LHzaR2Qp93tA9mZ9152PNlw==
+X-Gm-Gg: ASbGnctLDyMPPFZEnsD/CohCVf7Pcv4dBMwIZHB0D/IfbblqO6uPxrCVUkxvd1iv/PZ
+	LTRJZEyASxcAJhWbC+bYXG45e/EEAmV40p7u4A2tHV0/3efcmwcK/uEce8xWAC1WELG8RDnUmc0
+	ykOaUA4GYJxv6jQYSxm/CqJByWZGPBl85AvQIY3Bgcz6jhDH4piDVWjAOFMSeGlZw71FC9gu6vo
+	nxAncCxFKdnxdTv6aXDVnU4idPAmjvnmxRMUjKzkDtEt2IgkO2wKD0F1w==
+X-Google-Smtp-Source: AGHT+IGBQ1aAJFrMiRvnQwh32HdjT5afCCpZlBxjV6nktWYkixeKaeSQfoiwlLenrF4Ok9ZEbakrCQ==
+X-Received: by 2002:a17:907:6d1d:b0:aae:c9bf:41b3 with SMTP id a640c23a62f3a-ab38b36bd3amr307044366b.37.1737124947322;
+        Fri, 17 Jan 2025 06:42:27 -0800 (PST)
 Received: from localhost ([2a00:79e1:abd:a201:48ff:95d2:7dab:ae81])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5db73683d28sm1483674a12.40.2025.01.17.04.39.28
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ab384f22c5fsm180915166b.93.2025.01.17.06.42.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jan 2025 04:39:28 -0800 (PST)
-Date: Fri, 17 Jan 2025 13:39:23 +0100
+        Fri, 17 Jan 2025 06:42:26 -0800 (PST)
+Date: Fri, 17 Jan 2025 15:42:22 +0100
 From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
 To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Nathan Chancellor <nathan@kernel.org>,
-	Tahera Fahimi <fahimitahera@gmail.com>
-Subject: Re: [PATCH v1] selftests/landlock: Fix build with non-default
- pthread linking
-Message-ID: <20250117.434d5503a465@gnoack.org>
-References: <20250115145409.312226-1-mic@digikod.net>
+Cc: Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	Jeff Xu <jeffxu@chromium.org>, Mimi Zohar <zohar@linux.ibm.com>,
+	Paul Moore <paul@paul-moore.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Serge Hallyn <serge@hallyn.com>,
+	Stefan Berger <stefanb@linux.ibm.com>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Nathan Chancellor <nathan@kernel.org>
+Subject: Re: [PATCH v1] selftests: Handle old glibc without execveat(2)
+Message-ID: <20250117.062883f45a7d@gnoack.org>
+References: <20250115144753.311152-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250115145409.312226-1-mic@digikod.net>
+In-Reply-To: <20250115144753.311152-1-mic@digikod.net>
 
-On Wed, Jan 15, 2025 at 03:54:07PM +0100, Mickaël Salaün wrote:
-> Old toolchains require explicit -lpthread (e.g. on Debian 11).
+On Wed, Jan 15, 2025 at 03:47:50PM +0100, MickaÃ«l SalaÃ¼n wrote:
+> Add an execveat(2) wrapper because glibc < 2.34 does not have one.  This
+> fixes the check-exec tests and samples.
 > 
-> Cc: Günther Noack <gnoack@google.com>
-> Cc: Nathan Chancellor <nathan@kernel.org>
-> Cc: Tahera Fahimi <fahimitahera@gmail.com>
-> Fixes: c8994965013e ("selftests/landlock: Test signal scoping for threads")
-> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> Cc: GÃ¼nther Noack <gnoack@google.com>
+> Cc: Jeff Xu <jeffxu@chromium.org>
+> Cc: Kees Cook <kees@kernel.org>
+> Cc: Mimi Zohar <zohar@linux.ibm.com>
+> Cc: Paul Moore <paul@paul-moore.com>
+> Cc: Roberto Sassu <roberto.sassu@huawei.com>
+> Cc: Serge Hallyn <serge@hallyn.com>
+> Cc: Stefan Berger <stefanb@linux.ibm.com>
+> Cc: Stephen Rothwell <sfr@canb.auug.org.au>
+> Reported-by: Nathan Chancellor <nathan@kernel.org>
+> Closes: https://lore.kernel.org/r/20250114205645.GA2825031@ax162
+> Signed-off-by: MickaÃ«l SalaÃ¼n <mic@digikod.net>
 > ---
->  tools/testing/selftests/landlock/Makefile | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/tools/testing/selftests/landlock/Makefile b/tools/testing/selftests/landlock/Makefile
-> index 348e2dbdb4e0..480f13e77fcc 100644
-> --- a/tools/testing/selftests/landlock/Makefile
-> +++ b/tools/testing/selftests/landlock/Makefile
-> @@ -13,11 +13,11 @@ TEST_GEN_PROGS := $(src_test:.c=)
->  TEST_GEN_PROGS_EXTENDED := true
+> Based on Kees Cook's next/execve branch.
+> ---
+>  samples/check-exec/inc.c                   | 11 +++++++++--
+>  tools/testing/selftests/exec/check-exec.c  | 11 +++++++++--
+>  tools/testing/selftests/landlock/fs_test.c | 10 ++++++++--
+>  3 files changed, 26 insertions(+), 6 deletions(-)
+> 
+> diff --git a/samples/check-exec/inc.c b/samples/check-exec/inc.c
+> index 94b87569d2a2..7f6ef06a2f06 100644
+> --- a/samples/check-exec/inc.c
+> +++ b/samples/check-exec/inc.c
+> @@ -21,8 +21,15 @@
+>  #include <stdlib.h>
+>  #include <string.h>
+>  #include <sys/prctl.h>
+> +#include <sys/syscall.h>
+>  #include <unistd.h>
 >  
->  # Short targets:
-> -$(TEST_GEN_PROGS): LDLIBS += -lcap
-> +$(TEST_GEN_PROGS): LDLIBS += -lcap -lpthread
->  $(TEST_GEN_PROGS_EXTENDED): LDFLAGS += -static
+> +static int sys_execveat(int dirfd, const char *pathname, char *const argv[],
+> +			char *const envp[], int flags)
+> +{
+> +	return syscall(__NR_execveat, dirfd, pathname, argv, envp, flags);
+> +}
+> +
+>  /* Returns 1 on error, 0 otherwise. */
+>  static int interpret_buffer(char *buffer, size_t buffer_size)
+>  {
+> @@ -78,8 +85,8 @@ static int interpret_stream(FILE *script, char *const script_name,
+>  	 * script execution.  We must use the script file descriptor instead of
+>  	 * the script path name to avoid race conditions.
+>  	 */
+> -	err = execveat(fileno(script), "", script_argv, envp,
+> -		       AT_EMPTY_PATH | AT_EXECVE_CHECK);
+> +	err = sys_execveat(fileno(script), "", script_argv, envp,
+> +			   AT_EMPTY_PATH | AT_EXECVE_CHECK);
+>  	if (err && restrict_stream) {
+>  		perror("ERROR: Script execution check");
+>  		return 1;
+> diff --git a/tools/testing/selftests/exec/check-exec.c b/tools/testing/selftests/exec/check-exec.c
+> index 4d3f4525e1e1..55bce47e56b7 100644
+> --- a/tools/testing/selftests/exec/check-exec.c
+> +++ b/tools/testing/selftests/exec/check-exec.c
+> @@ -22,6 +22,7 @@
+>  #include <sys/prctl.h>
+>  #include <sys/socket.h>
+>  #include <sys/stat.h>
+> +#include <sys/syscall.h>
+>  #include <sys/sysmacros.h>
+>  #include <unistd.h>
 >  
->  include ../lib.mk
+> @@ -31,6 +32,12 @@
 >  
->  # Targets with $(OUTPUT)/ prefix:
-> -$(TEST_GEN_PROGS): LDLIBS += -lcap
-> +$(TEST_GEN_PROGS): LDLIBS += -lcap -lpthread
->  $(TEST_GEN_PROGS_EXTENDED): LDFLAGS += -static
+>  #include "../kselftest_harness.h"
+>  
+> +static int sys_execveat(int dirfd, const char *pathname, char *const argv[],
+> +			char *const envp[], int flags)
+> +{
+> +	return syscall(__NR_execveat, dirfd, pathname, argv, envp, flags);
+> +}
+> +
+>  static void drop_privileges(struct __test_metadata *const _metadata)
+>  {
+>  	const unsigned int noroot = SECBIT_NOROOT | SECBIT_NOROOT_LOCKED;
+> @@ -219,8 +226,8 @@ static void test_exec_fd(struct __test_metadata *_metadata, const int fd,
+>  	 * test framework as an error.  With AT_EXECVE_CHECK, we only check a
+>  	 * potential successful execution.
+>  	 */
+> -	access_ret =
+> -		execveat(fd, "", argv, NULL, AT_EMPTY_PATH | AT_EXECVE_CHECK);
+> +	access_ret = sys_execveat(fd, "", argv, NULL,
+> +				  AT_EMPTY_PATH | AT_EXECVE_CHECK);
+>  	access_errno = errno;
+>  	if (err_code) {
+>  		EXPECT_EQ(-1, access_ret);
+> diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+> index cd66901be612..ac9701c018e0 100644
+> --- a/tools/testing/selftests/landlock/fs_test.c
+> +++ b/tools/testing/selftests/landlock/fs_test.c
+> @@ -59,6 +59,12 @@ int open_tree(int dfd, const char *filename, unsigned int flags)
+>  }
+>  #endif
+>  
+> +static int sys_execveat(int dirfd, const char *pathname, char *const argv[],
+> +			char *const envp[], int flags)
+> +{
+> +	return syscall(__NR_execveat, dirfd, pathname, argv, envp, flags);
+> +}
+> +
+>  #ifndef RENAME_EXCHANGE
+>  #define RENAME_EXCHANGE (1 << 1)
+>  #endif
+> @@ -2018,8 +2024,8 @@ static void test_check_exec(struct __test_metadata *const _metadata,
+>  	int ret;
+>  	char *const argv[] = { (char *)path, NULL };
+>  
+> -	ret = execveat(AT_FDCWD, path, argv, NULL,
+> -		       AT_EMPTY_PATH | AT_EXECVE_CHECK);
+> +	ret = sys_execveat(AT_FDCWD, path, argv, NULL,
+> +			   AT_EMPTY_PATH | AT_EXECVE_CHECK);
+>  	if (err) {
+>  		EXPECT_EQ(-1, ret);
+>  		EXPECT_EQ(errno, err);
+> 
+> base-commit: 95b3cdafd7cb74414070893445a9b731793f7b55
 > -- 
 > 2.48.1
 > 
 
-Reviewed-by: Günther Noack <gnoack3000@gmail.com>
+Reviewed-by: GÃ¼nther Noack <gnoack3000@gmail.com>
+
+Do you want to add a comment next to these, to remind ourselves do undo this?
+You are surely not planning to support old versions of glibc indefinitely?
+
+â€“GÃ¼nther
