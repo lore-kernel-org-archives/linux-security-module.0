@@ -1,162 +1,271 @@
-Received: from mx.swemel.ru (mx.swemel.ru [95.143.211.150])
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2991B17FAC2
-	for <linux-security-module@vger.kernel.org>; Fri, 17 Jan 2025 16:37:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.211.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5512313B59B;
+	Fri, 17 Jan 2025 17:06:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737131848; cv=none; b=hWxVxbcyGqvh1ZBsS7DppeNT3YPhMDnu5lc969b7OoByCJu1eI0nWR3BePA0sD/4MR3zCgvY3E21RRzlqaOdz8FgUyVTTm/PH+RGlDR1j2LQAgRD2DyhEnu74+ACnvZ/cATL+PvZAZEeQBZ+R/9DAiop0Ct3uWrwDtJVJkUUjJI=
+	t=1737133593; cv=none; b=ARWf+3VFb5h0ei3FlUs9xyd/DRP/KFWUG/VuhEXwLmQCMI2I1p4UZVyvb0e6bCLAjxNpKzCzYUrcnWqQ3OyYFz9g8rd9ThOcS5/pvGlAqzh0UuYAvRVPDerCN3a6SptQFV+RXZog1ygK6wXkWFH59GfY8BHeooctT4gHMa6thYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737131848; c=relaxed/simple;
-	bh=3jR9lpnCer8Ct9VHMHErwW3Ou+hGWTE2dUET4Wa225Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EGRQP0beKCxNNls0izsYa4K5uXVJBEfHxGWu1QTN9M974KHg9+U8pZ4/8Xl/v7Tr99nUrdn4sqmupDQYvyGT52C8Y4YTM5qSpsUKmYmZkDc3c9RTzGyPwFPU/atEGnii0EbYuJcU39dGiGcGGVlqu2nat9yHR1cuilkXmItHpOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=Cp0ybS2+; arc=none smtp.client-ip=95.143.211.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=swemel.ru
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="Cp0ybS2+"
-From: Konstantin Andreev <andreev@swemel.ru>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=swemel.ru; s=mail;
-	t=1737131838;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=iePLVgHxEy9DkKuWgeAB/jEmJdl/6D85fhrUCW0v8NU=;
-	b=Cp0ybS2+p8BXtloB6vkUGVsc3LUZQ+NCfHJpUQPJ0WKIPzuTVFG8+T2Bri15fHv68ovcPv
-	jIYX7vNITBoagnFPvQw1JApb+OCXtWu4IRFn2gIP1aE49GAf3kear/zU8U5HegnxiPCZKK
-	lUILOW852TnlVE4nDAci5X8eyE1stxc=
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: linux-security-module@vger.kernel.org
-Subject: [PATCH] smack: dont compile ipv6 code unless ipv6 is configured
-Date: Fri, 17 Jan 2025 19:36:42 +0300
-Message-ID: <20250117163645.3069927-1-andreev@swemel.ru>
+	s=arc-20240116; t=1737133593; c=relaxed/simple;
+	bh=in4JlROnQDHcP8GUZq+j4sVW3Duj8qwmyK5DwZ07WK8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=GrsMk6yqxqtjN2hMbKttJSdh6qojLoDNtB5afhBEoinOd1UICsx/MmbF0S0tuSrdRY48iacVVC8Ww0udzWq/yIj8rrcM/Xtn6VtoKyLk+2mBxYX27RZpQpes8TByQC4raqdvNBjdtPrVwxtxwGSWjp5BJ9tTAxg8tnoCMddCWQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4YZQYb4JKtz9v7Vg;
+	Sat, 18 Jan 2025 00:44:19 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id DDCC81402C8;
+	Sat, 18 Jan 2025 01:06:21 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP1 (Coremail) with SMTP id LxC2BwDnbEsCjopnGx7PAA--.40276S2;
+	Fri, 17 Jan 2025 18:06:21 +0100 (CET)
+Message-ID: <6f310cfc1a0f505cf5e07885728d8cbf783cd644.camel@huaweicloud.com>
+Subject: Re: [PATCH v2 5/7] ima: Set security.ima on file close when
+ ima_appraise=fix
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Mimi Zohar <zohar@linux.ibm.com>, viro@zeniv.linux.org.uk, 
+ brauner@kernel.org, jack@suse.cz, dmitry.kasatkin@gmail.com, 
+ eric.snowberg@oracle.com, paul@paul-moore.com, jmorris@namei.org,
+ serge@hallyn.com
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	Roberto Sassu <roberto.sassu@huawei.com>
+Date: Fri, 17 Jan 2025 18:06:06 +0100
+In-Reply-To: <72d71cc694f27dbafb64656d8db4a89df8532aed.camel@linux.ibm.com>
+References: <20241128100621.461743-1-roberto.sassu@huaweicloud.com>
+	 <20241128100621.461743-6-roberto.sassu@huaweicloud.com>
+	 <72d71cc694f27dbafb64656d8db4a89df8532aed.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:LxC2BwDnbEsCjopnGx7PAA--.40276S2
+X-Coremail-Antispam: 1UD129KBjvJXoW3Xw4DGw1rAF43uw4UWrWUtwb_yoWxuryfpa
+	yvqa4UKryv9F97WFWvya13CayF93yjgF4DWws8J3WvvFnxZr10gr1rJr129Fy3Xrs5Jw1x
+	tr1jg3yUZa1vyrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
+	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
+	7KsUUUUUU==
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgALBGeKAVIGRgAAsz
 
-I want to be sure that ipv6-specific code
-is not compiled in kernel binaries
-if ipv6 is not configured.
+On Wed, 2025-01-15 at 08:46 -0500, Mimi Zohar wrote:
+> Please use "__fput()" rather than "file close".  Perhaps update the subje=
+ct line to
+> something like "ima: Defer fixing security.ima to __fput()".=20
+>=20
+> On Thu, 2024-11-28 at 11:06 +0100, Roberto Sassu wrote:
+> > From: Roberto Sassu <roberto.sassu@huawei.com>
+> >=20
+> > IMA-Appraisal implements a fix mode, selectable from the kernel command
+> > line by specifying ima_appraise=3Dfix.
+> >=20
+> > The fix mode is meant to be used in a TOFU (trust on first use) model,
+> > where systems are supposed to work under controlled conditions before t=
+he
+> > real enforcement starts.
+> >=20
+> > Since the systems are under controlled conditions, it is assumed that t=
+he
+> > files are not corrupted, and thus their current data digest can be trus=
+ted,
+> > and written to security.ima.
+> >=20
+> > When IMA-Appraisal is switched to enforcing mode, the security.ima valu=
+e
+> > collected during the fix mode is used as a reference value, and a misma=
+tch
+> > with the current value cause the access request to be denied.
+> >=20
+> > However, since fixing security.ima is placed in ima_appraise_measuremen=
+t()
+> > during the integrity check, it requires the inode lock to be taken in
+> > process_measurement(), in addition to ima_update_xattr() invoked at fil=
+e
+> > close.
+> >=20
+> > Postpone the security.ima update to ima_check_last_writer(), by setting=
+ the
+> > new atomic flag IMA_UPDATE_XATTR_FIX in the inode integrity metadata, i=
+n
+> > ima_appraise_measurement(), if security.ima needs to be fixed. In this =
+way,
+> > the inode lock can be removed from process_measurement(). Also, set the
+> > cause appropriately for the fix operation and for allowing access to ne=
+w
+> > and empty signed files.
+> >=20
+> > Finally, update security.ima when IMA_UPDATE_XATTR_FIX is set, and when
+> > there wasn't a previous security.ima update, which occurs if the proces=
+s
+> > closing the file descriptor is the last writer. =20
+> >=20
+> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+>=20
+> Roberto, I really like the idea of removing the inode_lock in process_mea=
+surement()
+> needed for writing xattrs, but I'm concerned about the delay being introd=
+uced.  For
+> example, does it interfere with labeling the filesystem with file signatu=
+res
+> (with/without EVM enabled)?
 
-[1] was getting rid of "unused variable" warning, but,
-with that, it also mandated compilation of a handful ipv6-
-specific functions in ipv4-only kernel configurations:
+There will be a difference when EVM is enabled, and inode metadata are
+corrupted.
 
-smk_ipv6_localhost, smack_ipv6host_label, smk_ipv6_check.
+In that case, currently IMA in fix mode is able to fix inode metadata
+as well, by writing security.ima. That happens because IMA ignores the
+result of evm_verifyxattr() and writes the xattr directly, causing EVM
+to update the HMAC to a valid one.
 
-Their compiled bodies are likely to be removed by compiler
-from the resulting binary, but, to be on the safe side,
-I remove them from the compiler view.
+With the new patch, the EVM HMAC remains invalid until file close,
+meaning that it will not be possible for example to set xattr on the
+opened file descriptor. It works after closing the file though.
 
-[1]
-Fixes: 00720f0e7f28 ("smack: avoid unused 'sip' variable warning")
+Setting other LSMs xattrs will fail as well, if the EVM HMAC is
+invalid.
 
-Signed-off-by: Konstantin Andreev <andreev@swemel.ru>
----
- security/smack/smack.h     |  6 ++++++
- security/smack/smack_lsm.c | 10 +++++++++-
- 2 files changed, 15 insertions(+), 1 deletion(-)
+If the problem is EVM, I would recommend setting evm=3Dfix as well, so
+that inode metadata can be properly fixed.
 
-diff --git a/security/smack/smack.h b/security/smack/smack.h
-index 4608b07607a3..c4d998972ba5 100644
---- a/security/smack/smack.h
-+++ b/security/smack/smack.h
-@@ -152,6 +152,7 @@ struct smk_net4addr {
- 	struct smack_known	*smk_label;	/* label */
- };
- 
-+#if IS_ENABLED(CONFIG_IPV6)
- /*
-  * An entry in the table identifying IPv6 hosts.
-  */
-@@ -162,7 +163,9 @@ struct smk_net6addr {
- 	int			smk_masks;	/* mask size */
- 	struct smack_known	*smk_label;	/* label */
- };
-+#endif /* CONFIG_IPV6 */
- 
-+#ifdef SMACK_IPV6_PORT_LABELING
- /*
-  * An entry in the table identifying ports.
-  */
-@@ -175,6 +178,7 @@ struct smk_port_label {
- 	short			smk_sock_type;	/* Socket type */
- 	short			smk_can_reuse;
- };
-+#endif /* SMACK_IPV6_PORT_LABELING */
- 
- struct smack_known_list_elem {
- 	struct list_head	list;
-@@ -315,7 +319,9 @@ extern struct smack_known smack_known_web;
- extern struct mutex	smack_known_lock;
- extern struct list_head smack_known_list;
- extern struct list_head smk_net4addr_list;
-+#if IS_ENABLED(CONFIG_IPV6)
- extern struct list_head smk_net6addr_list;
-+#endif /* CONFIG_IPV6 */
- 
- extern struct mutex     smack_onlycap_lock;
- extern struct list_head smack_onlycap_list;
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index c3f8de53aefd..ce7d44509973 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -2492,6 +2492,7 @@ static struct smack_known *smack_ipv4host_label(struct sockaddr_in *sip)
- 	return NULL;
- }
- 
-+#if IS_ENABLED(CONFIG_IPV6)
- /*
-  * smk_ipv6_localhost - Check for local ipv6 host address
-  * @sip: the address
-@@ -2559,6 +2560,7 @@ static struct smack_known *smack_ipv6host_label(struct sockaddr_in6 *sip)
- 
- 	return NULL;
- }
-+#endif /* CONFIG_IPV6 */
- 
- /**
-  * smack_netlbl_add - Set the secattr on a socket
-@@ -2663,6 +2665,7 @@ static int smk_ipv4_check(struct sock *sk, struct sockaddr_in *sap)
- 	return rc;
- }
- 
-+#if IS_ENABLED(CONFIG_IPV6)
- /**
-  * smk_ipv6_check - check Smack access
-  * @subject: subject Smack label
-@@ -2695,6 +2698,7 @@ static int smk_ipv6_check(struct smack_known *subject,
- 	rc = smk_bu_note("IPv6 check", subject, object, MAY_WRITE, rc);
- 	return rc;
- }
-+#endif /* CONFIG_IPV6 */
- 
- #ifdef SMACK_IPV6_PORT_LABELING
- /**
-@@ -3027,7 +3031,9 @@ static int smack_socket_connect(struct socket *sock, struct sockaddr *sap,
- 		return 0;
- 	if (addrlen < offsetofend(struct sockaddr, sa_family))
- 		return 0;
--	if (IS_ENABLED(CONFIG_IPV6) && sap->sa_family == AF_INET6) {
-+
-+#if IS_ENABLED(CONFIG_IPV6)
-+	if (sap->sa_family == AF_INET6) {
- 		struct sockaddr_in6 *sip = (struct sockaddr_in6 *)sap;
- 		struct smack_known *rsp = NULL;
- 
-@@ -3047,6 +3053,8 @@ static int smack_socket_connect(struct socket *sock, struct sockaddr *sap,
- 
- 		return rc;
- 	}
-+#endif /* CONFIG_IPV6 */
-+
- 	if (sap->sa_family != AF_INET || addrlen < sizeof(struct sockaddr_in))
- 		return 0;
- 	rc = smk_ipv4_check(sock->sk, (struct sockaddr_in *)sap);
--- 
-2.43.0
+I will update the documentation to describe the limitation introduced
+by this patch, and to suggest to use evm=3Dfix.
+
+Thanks
+
+Roberto
+
+> > ---
+> > =C2=A0security/integrity/ima/ima.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 |=C2=A0 1 +
+> > =C2=A0security/integrity/ima/ima_appraise.c |=C2=A0 7 +++++--
+> > =C2=A0security/integrity/ima/ima_main.c=C2=A0=C2=A0=C2=A0=C2=A0 | 18 ++=
++++++++++-------
+> > =C2=A03 files changed, 17 insertions(+), 9 deletions(-)
+> >=20
+> > diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.=
+h
+> > index b4eeab48f08a..22c3b87cfcac 100644
+> > --- a/security/integrity/ima/ima.h
+> > +++ b/security/integrity/ima/ima.h
+> > @@ -179,6 +179,7 @@ struct ima_kexec_hdr {
+> > =C2=A0#define IMA_CHANGE_ATTR		2
+> > =C2=A0#define IMA_DIGSIG		3
+> > =C2=A0#define IMA_MUST_MEASURE	4
+> > +#define IMA_UPDATE_XATTR_FIX	5
+> > =C2=A0
+> > =C2=A0/* IMA integrity metadata associated with an inode */
+> > =C2=A0struct ima_iint_cache {
+> > diff --git a/security/integrity/ima/ima_appraise.c
+> > b/security/integrity/ima/ima_appraise.c
+> > index 656c709b974f..94401de8b805 100644
+> > --- a/security/integrity/ima/ima_appraise.c
+> > +++ b/security/integrity/ima/ima_appraise.c
+> > @@ -576,8 +576,10 @@ int ima_appraise_measurement(enum ima_hooks func, =
+struct
+> > ima_iint_cache *iint,
+> > =C2=A0		if ((ima_appraise & IMA_APPRAISE_FIX) && !try_modsig &&
+> > =C2=A0		=C2=A0=C2=A0=C2=A0 (!xattr_value ||
+> > =C2=A0		=C2=A0=C2=A0=C2=A0=C2=A0 xattr_value->type !=3D EVM_IMA_XATTR_D=
+IGSIG)) {
+> > -			if (!ima_fix_xattr(dentry, iint))
+> > -				status =3D INTEGRITY_PASS;
+> > +			/* Fix by setting security.ima on file close. */
+> > +			set_bit(IMA_UPDATE_XATTR_FIX, &iint->atomic_flags);
+> > +			status =3D INTEGRITY_PASS;
+> > +			cause =3D "fix";
+> > =C2=A0		}
+> > =C2=A0
+> > =C2=A0		/*
+> > @@ -587,6 +589,7 @@ int ima_appraise_measurement(enum ima_hooks func, s=
+truct
+> > ima_iint_cache *iint,
+> > =C2=A0		if (inode->i_size =3D=3D 0 && iint->flags & IMA_NEW_FILE &&
+> > =C2=A0		=C2=A0=C2=A0=C2=A0 test_bit(IMA_DIGSIG, &iint->atomic_flags)) {
+> > =C2=A0			status =3D INTEGRITY_PASS;
+> > +			cause =3D "new-signed-file";
+> > =C2=A0		}
+> > =C2=A0
+> > =C2=A0		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
+> > diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima=
+/ima_main.c
+> > index 1e474ff6a777..50b37420ea2c 100644
+> > --- a/security/integrity/ima/ima_main.c
+> > +++ b/security/integrity/ima/ima_main.c
+> > @@ -158,13 +158,16 @@ static void ima_check_last_writer(struct ima_iint=
+_cache
+> > *iint,
+> > =C2=A0				=C2=A0 struct inode *inode, struct file *file)
+> > =C2=A0{
+> > =C2=A0	fmode_t mode =3D file->f_mode;
+> > -	bool update;
+> > +	bool update =3D false, update_fix;
+> > =C2=A0
+> > -	if (!(mode & FMODE_WRITE))
+> > +	update_fix =3D test_and_clear_bit(IMA_UPDATE_XATTR_FIX,
+> > +					&iint->atomic_flags);
+> > +
+> > +	if (!(mode & FMODE_WRITE) && !update_fix)
+> > =C2=A0		return;
+> > =C2=A0
+> > =C2=A0	ima_iint_lock(inode);
+> > -	if (atomic_read(&inode->i_writecount) =3D=3D 1) {
+> > +	if (atomic_read(&inode->i_writecount) =3D=3D 1 && (mode & FMODE_WRITE=
+)) {
+>=20
+> Probably better to reverse the "mode & FMODE_WRITE" and atomic_read() tes=
+t order.
+>=20
+> Mimi
+>=20
+> > =C2=A0		struct kstat stat;
+> > =C2=A0
+> > =C2=A0		update =3D test_and_clear_bit(IMA_UPDATE_XATTR,
+> > @@ -181,6 +184,10 @@ static void ima_check_last_writer(struct ima_iint_=
+cache *iint,
+> > =C2=A0				ima_update_xattr(iint, file);
+> > =C2=A0		}
+> > =C2=A0	}
+> > +
+> > +	if (!update && update_fix)
+> > +		ima_update_xattr(iint, file);
+> > +
+> > =C2=A0	ima_iint_unlock(inode);
+> > =C2=A0}
+> > =C2=A0
+> > @@ -378,13 +385,10 @@ static int process_measurement(struct file *file,=
+ const
+> > struct cred *cred,
+> > =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 template_desc);
+> > =C2=A0	if (rc =3D=3D 0 && (action & IMA_APPRAISE_SUBMASK)) {
+> > =C2=A0		rc =3D ima_check_blacklist(iint, modsig, pcr);
+> > -		if (rc !=3D -EPERM) {
+> > -			inode_lock(inode);
+> > +		if (rc !=3D -EPERM)
+> > =C2=A0			rc =3D ima_appraise_measurement(func, iint, file,
+> > =C2=A0						=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pathname, xattr_value,
+> > =C2=A0						=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 xattr_len, modsig);
+> > -			inode_unlock(inode);
+> > -		}
+> > =C2=A0		if (!rc)
+> > =C2=A0			rc =3D mmap_violation_check(func, file, &pathbuf,
+> > =C2=A0						=C2=A0 &pathname, filename);
 
