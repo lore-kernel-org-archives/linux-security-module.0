@@ -1,193 +1,162 @@
-Received: from smtp-8fab.mail.infomaniak.ch (smtp-8fab.mail.infomaniak.ch [83.166.143.171])
+Received: from mx.swemel.ru (mx.swemel.ru [95.143.211.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2FE19ABC3
-	for <linux-security-module@vger.kernel.org>; Fri, 17 Jan 2025 15:52:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2991B17FAC2
+	for <linux-security-module@vger.kernel.org>; Fri, 17 Jan 2025 16:37:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.211.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737129177; cv=none; b=elCLELRoa8Bdr8ozs1buVeT2kA85xfR5QlhI41rj3VKUoqZ/O6Nc6spb7NDE8W92FSAMrqc+XUa+sdUQtiq6Q4BLawxiGs58AuQWe0kFl6U1MNDs5ZueP7lgaKbd8LJ0H3tDviC8PHLFRE2UOPKP1lc+H5eJbS+1/G1E3J1RNTU=
+	t=1737131848; cv=none; b=hWxVxbcyGqvh1ZBsS7DppeNT3YPhMDnu5lc969b7OoByCJu1eI0nWR3BePA0sD/4MR3zCgvY3E21RRzlqaOdz8FgUyVTTm/PH+RGlDR1j2LQAgRD2DyhEnu74+ACnvZ/cATL+PvZAZEeQBZ+R/9DAiop0Ct3uWrwDtJVJkUUjJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737129177; c=relaxed/simple;
-	bh=FXtv7W1tTZCZwvKzdYCQy615fK4f84nKg0ubPToRYrA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YTB0ylB9FxuofuVinpctCLpLZ+Ecz7Ovpsw5wA4fhzyqao9NfJLMWdVeo1YJXShppb2N6uK5pIdhVUgWMLa2rMmBTLfaofYdWy2o08SZ7VGW9yPtwG+QmFMuaUPMIzxSheRDlqG0R1Mebcqo32579Ybz0qh1Xbuz5yoKuB00n7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=WRF3I0hI; arc=none smtp.client-ip=83.166.143.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1737131848; c=relaxed/simple;
+	bh=3jR9lpnCer8Ct9VHMHErwW3Ou+hGWTE2dUET4Wa225Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EGRQP0beKCxNNls0izsYa4K5uXVJBEfHxGWu1QTN9M974KHg9+U8pZ4/8Xl/v7Tr99nUrdn4sqmupDQYvyGT52C8Y4YTM5qSpsUKmYmZkDc3c9RTzGyPwFPU/atEGnii0EbYuJcU39dGiGcGGVlqu2nat9yHR1cuilkXmItHpOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=Cp0ybS2+; arc=none smtp.client-ip=95.143.211.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=swemel.ru
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="WRF3I0hI"
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4YZPHd169Bz14PS;
-	Fri, 17 Jan 2025 16:47:09 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1737128829;
-	bh=aCV8+joJ0WwwhpBHcz/sG6l6fT4xHQJOZ3/s67DE/1Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WRF3I0hI9hSvp3sVkvQtKce72h7ota3phhhEv0vDzZ0nf9lnYZH/M0Xl5UtyGIG0z
-	 FtXVy7jQFT/v1LEHUS4zMbFachXwX1YK0KEDUOQNdZc3Zhc3f4yvVmxf+osvox/QfF
-	 358v1GFRlNKEvwFS8suJPUx31gE2r8NTTzaczT2E=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4YZPHZ4gw3z6Rm;
-	Fri, 17 Jan 2025 16:47:06 +0100 (CET)
-Date: Fri, 17 Jan 2025 16:47:05 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>, 
-	Nathan Chancellor <nathan@kernel.org>, Jonathan Corbet <corbet@lwn.net>
-Cc: Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Jeff Xu <jeffxu@chromium.org>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Paul Moore <paul@paul-moore.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Serge Hallyn <serge@hallyn.com>, Stefan Berger <stefanb@linux.ibm.com>, 
-	Stephen Rothwell <sfr@canb.auug.org.au>, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v1] selftests: Handle old glibc without execveat(2)
-Message-ID: <20250117.aiy2ooph6Lee@digikod.net>
-References: <20250115144753.311152-1-mic@digikod.net>
- <20250117.062883f45a7d@gnoack.org>
+	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="Cp0ybS2+"
+From: Konstantin Andreev <andreev@swemel.ru>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=swemel.ru; s=mail;
+	t=1737131838;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=iePLVgHxEy9DkKuWgeAB/jEmJdl/6D85fhrUCW0v8NU=;
+	b=Cp0ybS2+p8BXtloB6vkUGVsc3LUZQ+NCfHJpUQPJ0WKIPzuTVFG8+T2Bri15fHv68ovcPv
+	jIYX7vNITBoagnFPvQw1JApb+OCXtWu4IRFn2gIP1aE49GAf3kear/zU8U5HegnxiPCZKK
+	lUILOW852TnlVE4nDAci5X8eyE1stxc=
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: linux-security-module@vger.kernel.org
+Subject: [PATCH] smack: dont compile ipv6 code unless ipv6 is configured
+Date: Fri, 17 Jan 2025 19:36:42 +0300
+Message-ID: <20250117163645.3069927-1-andreev@swemel.ru>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250117.062883f45a7d@gnoack.org>
-X-Infomaniak-Routing: alpha
 
-On Fri, Jan 17, 2025 at 03:42:22PM +0100, Günther Noack wrote:
-> On Wed, Jan 15, 2025 at 03:47:50PM +0100, Mickaël Salaün wrote:
-> > Add an execveat(2) wrapper because glibc < 2.34 does not have one.  This
-> > fixes the check-exec tests and samples.
-> > 
-> > Cc: Günther Noack <gnoack@google.com>
-> > Cc: Jeff Xu <jeffxu@chromium.org>
-> > Cc: Kees Cook <kees@kernel.org>
-> > Cc: Mimi Zohar <zohar@linux.ibm.com>
-> > Cc: Paul Moore <paul@paul-moore.com>
-> > Cc: Roberto Sassu <roberto.sassu@huawei.com>
-> > Cc: Serge Hallyn <serge@hallyn.com>
-> > Cc: Stefan Berger <stefanb@linux.ibm.com>
-> > Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-> > Reported-by: Nathan Chancellor <nathan@kernel.org>
-> > Closes: https://lore.kernel.org/r/20250114205645.GA2825031@ax162
-> > Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> > ---
-> > 
-> > Based on Kees Cook's next/execve branch.
-> > ---
-> >  samples/check-exec/inc.c                   | 11 +++++++++--
-> >  tools/testing/selftests/exec/check-exec.c  | 11 +++++++++--
-> >  tools/testing/selftests/landlock/fs_test.c | 10 ++++++++--
-> >  3 files changed, 26 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/samples/check-exec/inc.c b/samples/check-exec/inc.c
-> > index 94b87569d2a2..7f6ef06a2f06 100644
-> > --- a/samples/check-exec/inc.c
-> > +++ b/samples/check-exec/inc.c
-> > @@ -21,8 +21,15 @@
-> >  #include <stdlib.h>
-> >  #include <string.h>
-> >  #include <sys/prctl.h>
-> > +#include <sys/syscall.h>
-> >  #include <unistd.h>
-> >  
-> > +static int sys_execveat(int dirfd, const char *pathname, char *const argv[],
-> > +			char *const envp[], int flags)
-> > +{
-> > +	return syscall(__NR_execveat, dirfd, pathname, argv, envp, flags);
-> > +}
-> > +
-> >  /* Returns 1 on error, 0 otherwise. */
-> >  static int interpret_buffer(char *buffer, size_t buffer_size)
-> >  {
-> > @@ -78,8 +85,8 @@ static int interpret_stream(FILE *script, char *const script_name,
-> >  	 * script execution.  We must use the script file descriptor instead of
-> >  	 * the script path name to avoid race conditions.
-> >  	 */
-> > -	err = execveat(fileno(script), "", script_argv, envp,
-> > -		       AT_EMPTY_PATH | AT_EXECVE_CHECK);
-> > +	err = sys_execveat(fileno(script), "", script_argv, envp,
-> > +			   AT_EMPTY_PATH | AT_EXECVE_CHECK);
-> >  	if (err && restrict_stream) {
-> >  		perror("ERROR: Script execution check");
-> >  		return 1;
-> > diff --git a/tools/testing/selftests/exec/check-exec.c b/tools/testing/selftests/exec/check-exec.c
-> > index 4d3f4525e1e1..55bce47e56b7 100644
-> > --- a/tools/testing/selftests/exec/check-exec.c
-> > +++ b/tools/testing/selftests/exec/check-exec.c
-> > @@ -22,6 +22,7 @@
-> >  #include <sys/prctl.h>
-> >  #include <sys/socket.h>
-> >  #include <sys/stat.h>
-> > +#include <sys/syscall.h>
-> >  #include <sys/sysmacros.h>
-> >  #include <unistd.h>
-> >  
-> > @@ -31,6 +32,12 @@
-> >  
-> >  #include "../kselftest_harness.h"
-> >  
-> > +static int sys_execveat(int dirfd, const char *pathname, char *const argv[],
-> > +			char *const envp[], int flags)
-> > +{
-> > +	return syscall(__NR_execveat, dirfd, pathname, argv, envp, flags);
-> > +}
-> > +
-> >  static void drop_privileges(struct __test_metadata *const _metadata)
-> >  {
-> >  	const unsigned int noroot = SECBIT_NOROOT | SECBIT_NOROOT_LOCKED;
-> > @@ -219,8 +226,8 @@ static void test_exec_fd(struct __test_metadata *_metadata, const int fd,
-> >  	 * test framework as an error.  With AT_EXECVE_CHECK, we only check a
-> >  	 * potential successful execution.
-> >  	 */
-> > -	access_ret =
-> > -		execveat(fd, "", argv, NULL, AT_EMPTY_PATH | AT_EXECVE_CHECK);
-> > +	access_ret = sys_execveat(fd, "", argv, NULL,
-> > +				  AT_EMPTY_PATH | AT_EXECVE_CHECK);
-> >  	access_errno = errno;
-> >  	if (err_code) {
-> >  		EXPECT_EQ(-1, access_ret);
-> > diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
-> > index cd66901be612..ac9701c018e0 100644
-> > --- a/tools/testing/selftests/landlock/fs_test.c
-> > +++ b/tools/testing/selftests/landlock/fs_test.c
-> > @@ -59,6 +59,12 @@ int open_tree(int dfd, const char *filename, unsigned int flags)
-> >  }
-> >  #endif
-> >  
-> > +static int sys_execveat(int dirfd, const char *pathname, char *const argv[],
-> > +			char *const envp[], int flags)
-> > +{
-> > +	return syscall(__NR_execveat, dirfd, pathname, argv, envp, flags);
-> > +}
-> > +
-> >  #ifndef RENAME_EXCHANGE
-> >  #define RENAME_EXCHANGE (1 << 1)
-> >  #endif
-> > @@ -2018,8 +2024,8 @@ static void test_check_exec(struct __test_metadata *const _metadata,
-> >  	int ret;
-> >  	char *const argv[] = { (char *)path, NULL };
-> >  
-> > -	ret = execveat(AT_FDCWD, path, argv, NULL,
-> > -		       AT_EMPTY_PATH | AT_EXECVE_CHECK);
-> > +	ret = sys_execveat(AT_FDCWD, path, argv, NULL,
-> > +			   AT_EMPTY_PATH | AT_EXECVE_CHECK);
-> >  	if (err) {
-> >  		EXPECT_EQ(-1, ret);
-> >  		EXPECT_EQ(errno, err);
-> > 
-> > base-commit: 95b3cdafd7cb74414070893445a9b731793f7b55
-> > -- 
-> > 2.48.1
-> > 
-> 
-> Reviewed-by: Günther Noack <gnoack3000@gmail.com>
-> 
-> Do you want to add a comment next to these, to remind ourselves do undo this?
-> You are surely not planning to support old versions of glibc indefinitely?
+I want to be sure that ipv6-specific code
+is not compiled in kernel binaries
+if ipv6 is not configured.
 
-I don't about glibc.  Minimal versions for other tools are documented
-here though:
-https://docs.kernel.org/process/changes.html
+[1] was getting rid of "unused variable" warning, but,
+with that, it also mandated compilation of a handful ipv6-
+specific functions in ipv4-only kernel configurations:
 
-Nathan, Jon, any idea?
+smk_ipv6_localhost, smack_ipv6host_label, smk_ipv6_check.
+
+Their compiled bodies are likely to be removed by compiler
+from the resulting binary, but, to be on the safe side,
+I remove them from the compiler view.
+
+[1]
+Fixes: 00720f0e7f28 ("smack: avoid unused 'sip' variable warning")
+
+Signed-off-by: Konstantin Andreev <andreev@swemel.ru>
+---
+ security/smack/smack.h     |  6 ++++++
+ security/smack/smack_lsm.c | 10 +++++++++-
+ 2 files changed, 15 insertions(+), 1 deletion(-)
+
+diff --git a/security/smack/smack.h b/security/smack/smack.h
+index 4608b07607a3..c4d998972ba5 100644
+--- a/security/smack/smack.h
++++ b/security/smack/smack.h
+@@ -152,6 +152,7 @@ struct smk_net4addr {
+ 	struct smack_known	*smk_label;	/* label */
+ };
+ 
++#if IS_ENABLED(CONFIG_IPV6)
+ /*
+  * An entry in the table identifying IPv6 hosts.
+  */
+@@ -162,7 +163,9 @@ struct smk_net6addr {
+ 	int			smk_masks;	/* mask size */
+ 	struct smack_known	*smk_label;	/* label */
+ };
++#endif /* CONFIG_IPV6 */
+ 
++#ifdef SMACK_IPV6_PORT_LABELING
+ /*
+  * An entry in the table identifying ports.
+  */
+@@ -175,6 +178,7 @@ struct smk_port_label {
+ 	short			smk_sock_type;	/* Socket type */
+ 	short			smk_can_reuse;
+ };
++#endif /* SMACK_IPV6_PORT_LABELING */
+ 
+ struct smack_known_list_elem {
+ 	struct list_head	list;
+@@ -315,7 +319,9 @@ extern struct smack_known smack_known_web;
+ extern struct mutex	smack_known_lock;
+ extern struct list_head smack_known_list;
+ extern struct list_head smk_net4addr_list;
++#if IS_ENABLED(CONFIG_IPV6)
+ extern struct list_head smk_net6addr_list;
++#endif /* CONFIG_IPV6 */
+ 
+ extern struct mutex     smack_onlycap_lock;
+ extern struct list_head smack_onlycap_list;
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index c3f8de53aefd..ce7d44509973 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -2492,6 +2492,7 @@ static struct smack_known *smack_ipv4host_label(struct sockaddr_in *sip)
+ 	return NULL;
+ }
+ 
++#if IS_ENABLED(CONFIG_IPV6)
+ /*
+  * smk_ipv6_localhost - Check for local ipv6 host address
+  * @sip: the address
+@@ -2559,6 +2560,7 @@ static struct smack_known *smack_ipv6host_label(struct sockaddr_in6 *sip)
+ 
+ 	return NULL;
+ }
++#endif /* CONFIG_IPV6 */
+ 
+ /**
+  * smack_netlbl_add - Set the secattr on a socket
+@@ -2663,6 +2665,7 @@ static int smk_ipv4_check(struct sock *sk, struct sockaddr_in *sap)
+ 	return rc;
+ }
+ 
++#if IS_ENABLED(CONFIG_IPV6)
+ /**
+  * smk_ipv6_check - check Smack access
+  * @subject: subject Smack label
+@@ -2695,6 +2698,7 @@ static int smk_ipv6_check(struct smack_known *subject,
+ 	rc = smk_bu_note("IPv6 check", subject, object, MAY_WRITE, rc);
+ 	return rc;
+ }
++#endif /* CONFIG_IPV6 */
+ 
+ #ifdef SMACK_IPV6_PORT_LABELING
+ /**
+@@ -3027,7 +3031,9 @@ static int smack_socket_connect(struct socket *sock, struct sockaddr *sap,
+ 		return 0;
+ 	if (addrlen < offsetofend(struct sockaddr, sa_family))
+ 		return 0;
+-	if (IS_ENABLED(CONFIG_IPV6) && sap->sa_family == AF_INET6) {
++
++#if IS_ENABLED(CONFIG_IPV6)
++	if (sap->sa_family == AF_INET6) {
+ 		struct sockaddr_in6 *sip = (struct sockaddr_in6 *)sap;
+ 		struct smack_known *rsp = NULL;
+ 
+@@ -3047,6 +3053,8 @@ static int smack_socket_connect(struct socket *sock, struct sockaddr *sap,
+ 
+ 		return rc;
+ 	}
++#endif /* CONFIG_IPV6 */
++
+ 	if (sap->sa_family != AF_INET || addrlen < sizeof(struct sockaddr_in))
+ 		return 0;
+ 	rc = smk_ipv4_check(sock->sk, (struct sockaddr_in *)sap);
+-- 
+2.43.0
+
