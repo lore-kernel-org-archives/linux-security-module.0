@@ -1,109 +1,116 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 196E01FBC99;
-	Fri, 17 Jan 2025 09:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A8E1155300;
+	Fri, 17 Jan 2025 12:39:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737107720; cv=none; b=HSjmaH5GtLOf03XrfwRR5qe7JkHTc8LvHHgu9A/PZK27Qni4FpUL6IRZITFw55V+r7Gke6jOA3FAjx0pcqspBogRwM/E8Wtb/xSJGbVUR+dQQyfvbZjpImPP1ZlQOyQZznvHdmuP4Xf8LEPOCpnlzKKeP2LUV74UirMMVmlF+ps=
+	t=1737117573; cv=none; b=UMIM3p0hsiQSO3yTJZhJofILxqkHGy+IOlCue6bcCdLs9+UYDXZDbT9jQEARP/Bvtf7ogBFRSjBzvRnxDBb/Y82SIpFrqL2vrj+kMb24THFtGzu6JmgRPGMaoH9u7jH5MMHT4stX8hlhNYTOi8bjX83ErvN4cYXeFRSNV9Op3DM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737107720; c=relaxed/simple;
-	bh=b2+5I4Ol2pXJvkBZ25q9n0ksWds8r5RzMGcUkZNXIng=;
+	s=arc-20240116; t=1737117573; c=relaxed/simple;
+	bh=JI9e5wxo6nH5Lzl1JNog1oHR2FX5BA+CzpBkTYYobDo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZMMUTgiQA0fOBYP+TcDzey7guNED6Za1VllrGmrkDlngth5FeeOZQIys/2yfQV6y+vv3NjL1Hd1/WSnw+YQHjKS9NXAodRuwyeJbUVg5AgigUwOSUye2muRzzl1dZqz87U4tl2PRSFK1tElJI7Y/l8Pyv74hcRVwGD0powZ6++8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vR7rTmvc; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=TNU1Glc92coObX7wE1Od54NuWAEGsyibMOm35tSxKQrtmL+5ghJBfJsxtdeOIjno72FCoK7p+gfWBdgW74onRjRd1Crerx1d15WBIn/84rxpMDKZ8DdoPZtISKZn4vvIuWXN2EPqrxi/KD5CpEH/nL9xWplWUbjjD09ptTki5RQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IuSYFxP1; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vR7rTmvc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15A99C4CEDD;
-	Fri, 17 Jan 2025 09:55:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1737107719;
-	bh=b2+5I4Ol2pXJvkBZ25q9n0ksWds8r5RzMGcUkZNXIng=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vR7rTmvchnyfzF5H2XyPp+s5v4UNzLMt8hLgNgt0BW9Av3EJtMTzYNgzU8yBYQf6O
-	 MJ2az8kCy+MMGnAQM3b0/4sOVDdU5hd4bwn+kCZRAcL9IIgc/L6LYaz0Jcac90tBUY
-	 XSiwKHtvtallUo+yeHR18MAlGtVbe84A4/kWJypY7x7QNSELNudlnMiqd95GL2WpyC
-	 nvjxxXZsVKR75XEyCu62Yp+i0UWzN9vrcIMM22DUkBDucC5HmEE9ABy4ZeFP/4awU2
-	 bNWXqLsaqYQFUf4U/ETOqNBv3TfJhoLm+PBLt7l5Sx1S4OiORnc1D+Yjs/J/CX8xG+
-	 2JiCJfr4mNPZQ==
-Date: Fri, 17 Jan 2025 10:55:14 +0100
-From: Joel Granados <joel.granados@kernel.org>
-To: Kaixiong Yu <yukaixiong@huawei.com>
-Cc: akpm@linux-foundation.org, mcgrof@kernel.org, 
-	ysato@users.sourceforge.jp, dalias@libc.org, glaubitz@physik.fu-berlin.de, luto@kernel.org, 
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, 
-	hpa@zytor.com, viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	kees@kernel.org, j.granados@samsung.com, willy@infradead.org, 
-	Liam.Howlett@oracle.com, vbabka@suse.cz, lorenzo.stoakes@oracle.com, trondmy@kernel.org, 
-	anna@kernel.org, chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de, 
-	okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, paul@paul-moore.com, 
-	jmorris@namei.org, linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, linux-nfs@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-security-module@vger.kernel.org, dhowells@redhat.com, 
-	haifeng.xu@shopee.com, baolin.wang@linux.alibaba.com, shikemeng@huaweicloud.com, 
-	dchinner@redhat.com, bfoster@redhat.com, souravpanda@google.com, hannes@cmpxchg.org, 
-	rientjes@google.com, pasha.tatashin@soleen.com, david@redhat.com, 
-	ryan.roberts@arm.com, ying.huang@intel.com, yang@os.amperecomputing.com, 
-	zev@bewilderbeest.net, serge@hallyn.com, vegard.nossum@oracle.com, 
-	wangkefeng.wang@huawei.com
-Subject: Re: [PATCH v5 -next 11/16] sunrpc: simplify
- rpcauth_cache_shrink_count()
-Message-ID: <cvhm3wxsuzptwhensumidxykuzgzzhp4u3ypwv4sicmssznxzk@xwfwpjclkzrf>
-References: <20250111070751.2588654-1-yukaixiong@huawei.com>
- <20250111070751.2588654-12-yukaixiong@huawei.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IuSYFxP1"
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5d3bbb0f09dso3493769a12.2;
+        Fri, 17 Jan 2025 04:39:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1737117569; x=1737722369; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=E+qKabMgnA8u24dM8rg//7PlqLp59Zrej0C30Rbwg/8=;
+        b=IuSYFxP1fX+O/i8NeyYleO4LyITblKBmA7ckMQhYluHvjUTnY81Hr7vkM7qK8XidZm
+         2idV8KYtyaLBlfeksqFGSw2m7eF/m9TUKPU3F2TgT6Ou/FGPVRO+LH6kac68cO9gXkhv
+         Aq8RUD6DoZiMmRoE5aARaHgqN0hXCp50m/IWF9MenhHCdG+RYcMR0kGc/WdpBqjHHfn+
+         kTAVkDOZguhLqNF7Upw4XP4Yr/Emkq006gy8CD/l7fJE0b47BvjxKwCbMRzBb1b0x98v
+         VyNR3t3T0kIoFIWZPQQWD90fBzM2RAz+TishFzLd1+4xc345xVMFgC+WDIq3W/T/3Yf3
+         WZ0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737117569; x=1737722369;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=E+qKabMgnA8u24dM8rg//7PlqLp59Zrej0C30Rbwg/8=;
+        b=wRnG3Hj5fFa0AaGUsBZpjJHr67wpfa2v7mM9ZyBXDqkqPBhRB66oiHU8WHT2G67iZH
+         6nh3BT0isP9GJO1xRTMHCQfRw6RcP2aAJYY0shC+mGqQ564f1wLvDJm7ZJaLv7VJKWSU
+         w3Y7qYR2CSx+0fkkpxONzVB86faY8BMNSrEEUfplb90qNQQxQOOJ/M7s4DOLOigUsD+W
+         WSPL7gpn9FNN7SzWgkDOWkzigc44pT+ZjR69P8gaOZXUqPsRloaAvUpiWPjv7gMAzuxK
+         0a59dSKdspw4NRVU41P6/vF4K0MqWPWzbyYyi3rDqEP8AqtmoLsBKEzetScHMHe1nhxw
+         onlw==
+X-Forwarded-Encrypted: i=1; AJvYcCVb2IpD6aug1E8Yh+wpShJhBoxxfZHa2QUbU8pZTYLto8mG+/YR6r2B7/WmlEiC1Q1CRvBsq50pcGpwYH+fZSot@vger.kernel.org, AJvYcCWPjeHL18Nn8E0hjgxzREqzfGYU23sMRBUz9PZFoT6999D1KcrrJenpvokYCsWq2NEUCzmkbzgzfqhPz9F2DfJE3RWd+mcE@vger.kernel.org, AJvYcCWheHe9T2QGa98BwbWyyysE0lvdVCCwSK0gTTMuUaloSmNle7ubzZkn1317P0u99pJmZkYxx3YQ5idIjGc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5CjJv3M/41oGxt5zi9YWEK8/uiWuvN8cCpSujHkV1eG4uiNIg
+	HID3tJbH82b/zrVz1FMgUXxT35mq4ut2lT7ZXJY+0gwv9j6gXUS+
+X-Gm-Gg: ASbGncsQ+wUpyyxXEN+DYYWKXcpzeUPbs4badNyNmxJVbxZhfm7Sp+0OjBV4oaxmI9Y
+	q+ptZ5FRs9LIEvbgaXkInzdTTELB5KhVbd2w/YxBkJ+wNRm7EUeRjIYOyNWK5GNnGMNO3lYvFxa
+	vIE/M3BuhESU6nKmeIGimtlU8W6tGMOMqjUO6J0Yd72fhzU0R2ggcFJqOVMVkb+NZSXEcXu+qgT
+	U3uQW1vhPpOY0Z6s182XovmrSatDl2FB7N08DcDLKHskWVfCiUq0T8YYA==
+X-Google-Smtp-Source: AGHT+IG5gdII/Wx4+44JYRMWWUygyGDzj7mipXIwz+FuQ2mISewPs9YXQCReH/GE2unxs4EVvLu8fQ==
+X-Received: by 2002:a05:6402:849:b0:5d0:d91d:c195 with SMTP id 4fb4d7f45d1cf-5db7db06f81mr2069257a12.32.1737117569193;
+        Fri, 17 Jan 2025 04:39:29 -0800 (PST)
+Received: from localhost ([2a00:79e1:abd:a201:48ff:95d2:7dab:ae81])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5db73683d28sm1483674a12.40.2025.01.17.04.39.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 Jan 2025 04:39:28 -0800 (PST)
+Date: Fri, 17 Jan 2025 13:39:23 +0100
+From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	Nathan Chancellor <nathan@kernel.org>,
+	Tahera Fahimi <fahimitahera@gmail.com>
+Subject: Re: [PATCH v1] selftests/landlock: Fix build with non-default
+ pthread linking
+Message-ID: <20250117.434d5503a465@gnoack.org>
+References: <20250115145409.312226-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250111070751.2588654-12-yukaixiong@huawei.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250115145409.312226-1-mic@digikod.net>
 
-On Sat, Jan 11, 2025 at 03:07:46PM +0800, Kaixiong Yu wrote:
-> It is inappropriate to use sysctl_vfs_cache_pressure here.
-> The sysctl is documented as: This percentage value controls
-> the tendency of the kernel to reclaim the memory which is used
-> for caching of directory and inode objects.
+On Wed, Jan 15, 2025 at 03:54:07PM +0100, Mickaël Salaün wrote:
+> Old toolchains require explicit -lpthread (e.g. on Debian 11).
 > 
-> So, simplify result of rpcauth_cache_shrink_count() to
-> "return number_cred_unused;".
+> Cc: Günther Noack <gnoack@google.com>
+> Cc: Nathan Chancellor <nathan@kernel.org>
+> Cc: Tahera Fahimi <fahimitahera@gmail.com>
+> Fixes: c8994965013e ("selftests/landlock: Test signal scoping for threads")
+> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> ---
+>  tools/testing/selftests/landlock/Makefile | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> Signed-off-by: Kaixiong Yu <yukaixiong@huawei.com>
-> Reviewed-by: Kees Cook <kees@kernel.org>
-> Acked-by: Anna Schumaker <anna.schumaker@oracle.com>
-> Acked-by: Jeff Layton <jlayton@kernel.org>
-> ---
-> v4:
->  - Simplify result of rpcauth_cache_shrink_count().
-> ---
-> ---
->  net/sunrpc/auth.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/net/sunrpc/auth.c b/net/sunrpc/auth.c
-> index 04534ea537c8..5a827afd8e3b 100644
-> --- a/net/sunrpc/auth.c
-> +++ b/net/sunrpc/auth.c
-> @@ -489,7 +489,7 @@ static unsigned long
->  rpcauth_cache_shrink_count(struct shrinker *shrink, struct shrink_control *sc)
+> diff --git a/tools/testing/selftests/landlock/Makefile b/tools/testing/selftests/landlock/Makefile
+> index 348e2dbdb4e0..480f13e77fcc 100644
+> --- a/tools/testing/selftests/landlock/Makefile
+> +++ b/tools/testing/selftests/landlock/Makefile
+> @@ -13,11 +13,11 @@ TEST_GEN_PROGS := $(src_test:.c=)
+>  TEST_GEN_PROGS_EXTENDED := true
 >  
->  {
-> -	return number_cred_unused * sysctl_vfs_cache_pressure / 100;
-> +	return number_cred_unused;
-This one is not related to the "moving sysctls out of kenrel/sysctl.c"
-but I'll keep it here because of the Acks received.
-
-
->  }
+>  # Short targets:
+> -$(TEST_GEN_PROGS): LDLIBS += -lcap
+> +$(TEST_GEN_PROGS): LDLIBS += -lcap -lpthread
+>  $(TEST_GEN_PROGS_EXTENDED): LDFLAGS += -static
 >  
->  static void
+>  include ../lib.mk
+>  
+>  # Targets with $(OUTPUT)/ prefix:
+> -$(TEST_GEN_PROGS): LDLIBS += -lcap
+> +$(TEST_GEN_PROGS): LDLIBS += -lcap -lpthread
+>  $(TEST_GEN_PROGS_EXTENDED): LDFLAGS += -static
 > -- 
-> 2.34.1
+> 2.48.1
 > 
 
--- 
-
-Joel Granados
+Reviewed-by: Günther Noack <gnoack3000@gmail.com>
