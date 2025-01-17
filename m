@@ -1,271 +1,129 @@
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic313-15.consmr.mail.ne1.yahoo.com (sonic313-15.consmr.mail.ne1.yahoo.com [66.163.185.38])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5512313B59B;
-	Fri, 17 Jan 2025 17:06:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E41D126BEE
+	for <linux-security-module@vger.kernel.org>; Fri, 17 Jan 2025 18:30:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.185.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737133593; cv=none; b=ARWf+3VFb5h0ei3FlUs9xyd/DRP/KFWUG/VuhEXwLmQCMI2I1p4UZVyvb0e6bCLAjxNpKzCzYUrcnWqQ3OyYFz9g8rd9ThOcS5/pvGlAqzh0UuYAvRVPDerCN3a6SptQFV+RXZog1ygK6wXkWFH59GfY8BHeooctT4gHMa6thYE=
+	t=1737138652; cv=none; b=YNBNjX9PZHjjKtl6SyvM5ICbhUFZS5ZHKQ5Afp2UeqhE+3n0nFIca09VNXVm1z70csJLaJxvONWs2OKcO+98teZvAufDFdoWL9VvwswXYCCZYFU4jXLdv0MsEkzea4ZS9IVDpsH1wpzb+0gGeWF7da+J5/OGPW907HBdXD959KI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737133593; c=relaxed/simple;
-	bh=in4JlROnQDHcP8GUZq+j4sVW3Duj8qwmyK5DwZ07WK8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=GrsMk6yqxqtjN2hMbKttJSdh6qojLoDNtB5afhBEoinOd1UICsx/MmbF0S0tuSrdRY48iacVVC8Ww0udzWq/yIj8rrcM/Xtn6VtoKyLk+2mBxYX27RZpQpes8TByQC4raqdvNBjdtPrVwxtxwGSWjp5BJ9tTAxg8tnoCMddCWQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4YZQYb4JKtz9v7Vg;
-	Sat, 18 Jan 2025 00:44:19 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id DDCC81402C8;
-	Sat, 18 Jan 2025 01:06:21 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwDnbEsCjopnGx7PAA--.40276S2;
-	Fri, 17 Jan 2025 18:06:21 +0100 (CET)
-Message-ID: <6f310cfc1a0f505cf5e07885728d8cbf783cd644.camel@huaweicloud.com>
-Subject: Re: [PATCH v2 5/7] ima: Set security.ima on file close when
- ima_appraise=fix
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Mimi Zohar <zohar@linux.ibm.com>, viro@zeniv.linux.org.uk, 
- brauner@kernel.org, jack@suse.cz, dmitry.kasatkin@gmail.com, 
- eric.snowberg@oracle.com, paul@paul-moore.com, jmorris@namei.org,
- serge@hallyn.com
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	Roberto Sassu <roberto.sassu@huawei.com>
-Date: Fri, 17 Jan 2025 18:06:06 +0100
-In-Reply-To: <72d71cc694f27dbafb64656d8db4a89df8532aed.camel@linux.ibm.com>
-References: <20241128100621.461743-1-roberto.sassu@huaweicloud.com>
-	 <20241128100621.461743-6-roberto.sassu@huaweicloud.com>
-	 <72d71cc694f27dbafb64656d8db4a89df8532aed.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1737138652; c=relaxed/simple;
+	bh=BViXMiaAHI3FS9EUFuWFm8CA7Xya5pO3DAGNlsp+yeE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XOBk2ufw3rPDUCGUTvEPaJIcQbRJQDbaOfJICU3Qh8vaFRvKOq6bv+vgQZPv5ds2jU3xK+HF/jKJ1RghdjAF+h5N/V0Ju8joNzKGmWw8g7iuTz8cCFzhPlnxLjw3H7OiW5FtgWEoVvp535eQKayLE6bMEbLV6xmgfjtev7jssSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=G25QeMIh; arc=none smtp.client-ip=66.163.185.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="G25QeMIh"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1737138648; bh=iwmlG3DPkVReQ+JGE3IKAZNLTnIXA6O5zfXqMOLP5bA=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=G25QeMIhdMiWP+ShebQap0EeZNhhnegH3/Wae6FD0H6NgGiXtj5EkJ0W7aRTidz4Z4JldTSNyptb5+P2hU1ojnj2cgNEqJZ/huukyh6OyQ67EAFESyma2Q2P+clruPprwMBsgmcmE5mftlR24WU/8ucawl7pqbsLL1mU6lE2H/E2vnvoj9hNF15KLoxoJKtkhyr1pQO7wELr77OqjAhWQ8NIrbiY+CAUw+5THTzy/Uou6mUpIpeGLhFaC3/NwlhHmwcq0jy/Id+sQ34tGR52kTM1jZu+Spo42r64sbaEibFeGLaVJQxklrCV20m8uSHwh8wQAlbzRFFaOgoaSmt2Rg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1737138648; bh=C8RzoX+ICb5sJwLLEzl1qFHHstYBvBMwy3lAMijut4i=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=taqR73d9rp3mxaoIzUQ8TTiOULI7go5HX4iRJWn2uUxoPa+CuP8DkavuKmZbFXLNguotpDVvSzFA9ZzNFozkf7BL8zZRsF8bYenOtx/m4gDjl7HRxtKFby1oNCJSME3iVsjfyX/5jk4a+y0gjbwBEuFM8Jq7LKwO4gbSg30MHHbQXP7ZNnEJnbUDQT4kZ+5HyXea77Cl0rpMncddLaj7CJ67tibaiLkRUavL+O7hq0PvWHIH5yjO6TxFIam9tkbtAnfatU8a4ujS6p5qD7/x/e/04WCWc8+eIKmikihcEY3Vkguh/DVKeuQb3FIiymi69xE5CDnUIN0zatfPpkiF7g==
+X-YMail-OSG: 3Tq6Ql4VM1mDsn4GbxONdAiLIN5t1rgKbmHkNjLLzgaKgCO0avZ8ngjLgv.UB5i
+ bPrJeJycyHpCY7DlJvZ6Z493naglMKzl1SmwF4pRO8ckPn891ti9z6V5IQz6PZHCAIgeEUhl4sDm
+ zW9W3MQpLntXNCFLJ0NYX3rRBv3b4OxJlqOyHbNznLbMd7RERhVUc43ZGpKNelnEvcaw8GQjhAuq
+ lrOmUZ7y2IhZaqV8U1FYBIxVczSurF9huMmbJgOVSpaUZLgAvd14_4g6rS0gIG2ZWKLRWDxmYM_8
+ 8KtAkoLtaHdT8GcpI3SmTmhibbFmq9EQqR2Z0ZhvlwVPOEizfeQsMa6mPki9v9Ps.C_ioe34r5ob
+ lAILASjZV1.di5jTtSjHK7wXbsYHSDgT3c9oj49LlcmHUAzj9FkXBbbK4n7knozpZEbFhPKJJ.C_
+ xSbExJFlAUN9lhzsyjthM3fQYdQVupT1alawo732fxAGEz.ZaAsywm6VYAOZU80U2z4O1_nTxf2R
+ jbWwUsOYhlikiJ3vV_m80Bc5n1NhNrjUA7v_6xjPop5rzmHTietybgCC9aaNShG9U5_azuVRGQef
+ gLRVu9TxFCbjWvBNb2fmoWuQtypQdM5HdW88gBHQCC_1zfcWRuU36j3aqxuc0gVhXmAcN8xh.L_x
+ xaKHSr73LKwQNP880w3kK0bhsbGVJOduSU0MJO1xeTK5ebG1z3Y2q1jA0eHlziP1C1x1i5CF4x9K
+ dafXqWEenJRZ66YiZz1NQWcUiEcObT5dBShbp2UYmQ6kfOLND1PxJ_9ZIShMr8.OHUnrbsrVM4oc
+ j7X9Wovh_MKGnCObPDc3GTh.d9RX6CiCLPSJ30BB5kgI94rBTRrGpoVyqurUY6I8mMFY0H7IrKX7
+ pUQyNfaWFM.23kcyZ0xkZk1aUyLT2MZ5JSwNqs62FvRpEiUMFQ3kHhAtWye.You35tUMyheQPdf8
+ 8PxPEDSAP6.CKPf5OsMYg9L0_0Xch0zyxk3EF1KFcP91PB1HZcJLNHTnKCVntm8F8E3v67p9eTMw
+ .cuQlA_4M0mI.f3pWg3i.LEqNsCAqVgu7Mkacaag1odSCk_s3n1lMjCCVOaody.60EbTDQIQ5tyv
+ u3K6MQABAEwvhxYY2n.LM9jMiPQDhITjJ9MA7wm4W58jx64puBPVXXGG7UY2Sfk8cLu079igtq6k
+ v41c_F9KMe0QuaWnVlQRF7o.8tyeE30ocVt5Kf97Dvs9UJfsCq2aFGGXFi.wT.05tM0nb.3OK.p.
+ CGyDxnEI5O1cuYdju31F83W7_aFKzMXWEVCrJHINrXWpcsMjfTiwJ5xRmdlIykwGg77GcZHznBd_
+ abL8eExMmtCUB0HAJIZ.GpAwP80_wLYt6cGqnZD78ZvG_xNiXJqq.Qibib8DV8ATKMRQfde0pcuG
+ wZasnoOzdWFn1YOBmF_CaKDNIMBREfyuhoOgbUhBMTSkGNWvoNN5Y5tClhIW.RcJ3JKyJN8FJYeg
+ snWzCQMQnSFcOEagwtcHsBixQ8w6SMM8yXY4t7v8eBEWt42kprtQxB2t9C9Oc2CIy5v6TsgYrbsU
+ RKj8UK2x0vTkXP_PmurWpGm7skWOJtcJijKsETTOaU6AQ802l4aaZikX3sdyQqP_0Tqx6DBcO_ch
+ KyNuPDtmvvlbPn72ki427Gtg9SZ5UOj8uGg7Enx02WuD7cZxhOo6ML7zO_fTtZViHS69IilvdOoh
+ 8e4azd_6gl8.TL8rO87LGWt4cbsoxvK4dd9Bdue0bfCTm5_2VK7626b3RX6ehwlviJ1sQN8Cq3oG
+ YskLx6IrdMxG1HC4bd9fLz9jpF43KOQcTGtTYyfsflJjaQRvmDcbY6evhlTjRscYIdhtqRQSYItu
+ QTwZrmRQO6K3GuSJCtVd5XROn0AvXj0T5WF0eW1RyAWV88EWOi0MNuq0LdoFR8ZY3kfqFn.tLgd7
+ .D70koajljlDD97dBpjAqieQQVEzCIHOERqAm9S_KPuHLd3qO2bBYFQj4eJIreg.O8ukZ2gjZxOg
+ lQRolixxm.whZfqebJJipAy5XmONFrEFwD3AZRkWYLkFchmVwQGCwrc866SIYNoFOjKy2oHQn8gl
+ YmRhlxnxUdx4k.d38MUGqDiMUoDNxbagjRPuHSQWqafWty0bOIcLz747O4A2203QmwSjMyZRB1ua
+ KoEucqhqn3seM.QlX.oZVXgt3yUZlVeatZVE.8eyNtkx4ALjO6jHJNagB_yKjs_IdMixMWktBd2S
+ NecV7ZwEZYXSCk6mbicGDXzVRMnOCjJBZE0qX8aiIiaGuajtc.Y9oIZtg8xDKv.nkZjU0NA3j3J7
+ ZGV2czlAydaTj9w--
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: af1c2efd-4810-4a9b-8957-5108a6c238f6
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.ne1.yahoo.com with HTTP; Fri, 17 Jan 2025 18:30:48 +0000
+Received: by hermes--production-gq1-5dd4b47f46-qfm2r (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 3098a66bb1cf9a24af6cfad36d887427;
+          Fri, 17 Jan 2025 18:10:32 +0000 (UTC)
+Message-ID: <1630b5cd-c1ef-4afd-9767-7ebf3c0cc7ae@schaufler-ca.com>
+Date: Fri, 17 Jan 2025 10:10:30 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwDnbEsCjopnGx7PAA--.40276S2
-X-Coremail-Antispam: 1UD129KBjvJXoW3Xw4DGw1rAF43uw4UWrWUtwb_yoWxuryfpa
-	yvqa4UKryv9F97WFWvya13CayF93yjgF4DWws8J3WvvFnxZr10gr1rJr129Fy3Xrs5Jw1x
-	tr1jg3yUZa1vyrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr1j6F4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
-	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
-	7KsUUUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgALBGeKAVIGRgAAsz
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/14] Add TSEM specific documentation.
+To: "Dr. Greg" <greg@enjellic.com>, Paul Moore <paul@paul-moore.com>
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+ jmorris@namei.org, Casey Schaufler <casey@schaufler-ca.com>
+References: <20240826103728.3378-3-greg@enjellic.com>
+ <8642afa96650e02f50709aa3361b62c4@paul-moore.com>
+ <20250117044731.GA31221@wind.enjellic.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20250117044731.GA31221@wind.enjellic.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.23187 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Wed, 2025-01-15 at 08:46 -0500, Mimi Zohar wrote:
-> Please use "__fput()" rather than "file close".  Perhaps update the subje=
-ct line to
-> something like "ima: Defer fixing security.ima to __fput()".=20
->=20
-> On Thu, 2024-11-28 at 11:06 +0100, Roberto Sassu wrote:
-> > From: Roberto Sassu <roberto.sassu@huawei.com>
-> >=20
-> > IMA-Appraisal implements a fix mode, selectable from the kernel command
-> > line by specifying ima_appraise=3Dfix.
-> >=20
-> > The fix mode is meant to be used in a TOFU (trust on first use) model,
-> > where systems are supposed to work under controlled conditions before t=
-he
-> > real enforcement starts.
-> >=20
-> > Since the systems are under controlled conditions, it is assumed that t=
-he
-> > files are not corrupted, and thus their current data digest can be trus=
-ted,
-> > and written to security.ima.
-> >=20
-> > When IMA-Appraisal is switched to enforcing mode, the security.ima valu=
-e
-> > collected during the fix mode is used as a reference value, and a misma=
-tch
-> > with the current value cause the access request to be denied.
-> >=20
-> > However, since fixing security.ima is placed in ima_appraise_measuremen=
-t()
-> > during the integrity check, it requires the inode lock to be taken in
-> > process_measurement(), in addition to ima_update_xattr() invoked at fil=
-e
-> > close.
-> >=20
-> > Postpone the security.ima update to ima_check_last_writer(), by setting=
- the
-> > new atomic flag IMA_UPDATE_XATTR_FIX in the inode integrity metadata, i=
-n
-> > ima_appraise_measurement(), if security.ima needs to be fixed. In this =
-way,
-> > the inode lock can be removed from process_measurement(). Also, set the
-> > cause appropriately for the fix operation and for allowing access to ne=
-w
-> > and empty signed files.
-> >=20
-> > Finally, update security.ima when IMA_UPDATE_XATTR_FIX is set, and when
-> > there wasn't a previous security.ima update, which occurs if the proces=
-s
-> > closing the file descriptor is the last writer. =20
-> >=20
-> > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
->=20
-> Roberto, I really like the idea of removing the inode_lock in process_mea=
-surement()
-> needed for writing xattrs, but I'm concerned about the delay being introd=
-uced.  For
-> example, does it interfere with labeling the filesystem with file signatu=
-res
-> (with/without EVM enabled)?
+On 1/16/2025 8:47 PM, Dr. Greg wrote:
+> On Mon, Jan 13, 2025 at 08:29:47PM -0500, Paul Moore wrote:
+>
+...
 
-There will be a difference when EVM is enabled, and inode metadata are
-corrupted.
+>> Please define the CELL acronym here as I believe it is the first use of
+>> "CELL" in this document.
+> FWIW, CELL isn't an acronym, it is a metaphor.
+>
+> TSEM was conceptually inspired by and derived from the Turing Abstract
+> Machine Model (TAMM), as applied to the problem of modeling the
+> security state of an execution domain.
+>
+> As everyone reading this knows, a TAMM, in practice, consists of a
+> head traversing an infinite paper tape divided into cells that direct
+> the next state of the machine.
+>
+> In TSEM, the model consists of a Context Of Execution (COE) with
+> security definining characteristics, traversing a finite set of
+> measurement points of infinite length, with defining characteristics
+> at each point.
+>
+> We refer to a measurement point and its characteristics as a CELL in
+> deference to the inspiration for all of this.
+>
+> We will add this explanation to the documentation.
 
-In that case, currently IMA in fix mode is able to fix inode metadata
-as well, by writing security.ima. That happens because IMA ignores the
-result of evm_verifyxattr() and writes the xattr directly, causing EVM
-to update the HMAC to a valid one.
+Communication within a community as culturally diverse as the Linux
+kernel developers* requires that you do not assume that "everyone reading
+this" knows much of anything beyond how to type "make". Let's face it,
+there are kernel developers today who would look at the Turing test and
+say "is that even a thing?" There are others who don't have an education
+that includes mid-twentieth century technological history.
 
-With the new patch, the EVM HMAC remains invalid until file close,
-meaning that it will not be possible for example to set xattr on the
-opened file descriptor. It works after closing the file though.
+[* Yes, an awful lot of Linux kernel developers are western males. ] 
 
-Setting other LSMs xattrs will fail as well, if the EVM HMAC is
-invalid.
+...
 
-If the problem is EVM, I would recommend setting evm=3Dfix as well, so
-that inode metadata can be properly fixed.
+> We believe there is a technical solution to this problem as well but
+> our work on that front, at this point, is too technically immature to
+> go into.
 
-I will update the documentation to describe the limitation introduced
-by this patch, and to suggest to use evm=3Dfix.
+Didn't Pierre de Fermat say something like that about some theorem
+or another? 
 
-Thanks
+...
 
-Roberto
-
-> > ---
-> > =C2=A0security/integrity/ima/ima.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 |=C2=A0 1 +
-> > =C2=A0security/integrity/ima/ima_appraise.c |=C2=A0 7 +++++--
-> > =C2=A0security/integrity/ima/ima_main.c=C2=A0=C2=A0=C2=A0=C2=A0 | 18 ++=
-+++++++++-------
-> > =C2=A03 files changed, 17 insertions(+), 9 deletions(-)
-> >=20
-> > diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.=
-h
-> > index b4eeab48f08a..22c3b87cfcac 100644
-> > --- a/security/integrity/ima/ima.h
-> > +++ b/security/integrity/ima/ima.h
-> > @@ -179,6 +179,7 @@ struct ima_kexec_hdr {
-> > =C2=A0#define IMA_CHANGE_ATTR		2
-> > =C2=A0#define IMA_DIGSIG		3
-> > =C2=A0#define IMA_MUST_MEASURE	4
-> > +#define IMA_UPDATE_XATTR_FIX	5
-> > =C2=A0
-> > =C2=A0/* IMA integrity metadata associated with an inode */
-> > =C2=A0struct ima_iint_cache {
-> > diff --git a/security/integrity/ima/ima_appraise.c
-> > b/security/integrity/ima/ima_appraise.c
-> > index 656c709b974f..94401de8b805 100644
-> > --- a/security/integrity/ima/ima_appraise.c
-> > +++ b/security/integrity/ima/ima_appraise.c
-> > @@ -576,8 +576,10 @@ int ima_appraise_measurement(enum ima_hooks func, =
-struct
-> > ima_iint_cache *iint,
-> > =C2=A0		if ((ima_appraise & IMA_APPRAISE_FIX) && !try_modsig &&
-> > =C2=A0		=C2=A0=C2=A0=C2=A0 (!xattr_value ||
-> > =C2=A0		=C2=A0=C2=A0=C2=A0=C2=A0 xattr_value->type !=3D EVM_IMA_XATTR_D=
-IGSIG)) {
-> > -			if (!ima_fix_xattr(dentry, iint))
-> > -				status =3D INTEGRITY_PASS;
-> > +			/* Fix by setting security.ima on file close. */
-> > +			set_bit(IMA_UPDATE_XATTR_FIX, &iint->atomic_flags);
-> > +			status =3D INTEGRITY_PASS;
-> > +			cause =3D "fix";
-> > =C2=A0		}
-> > =C2=A0
-> > =C2=A0		/*
-> > @@ -587,6 +589,7 @@ int ima_appraise_measurement(enum ima_hooks func, s=
-truct
-> > ima_iint_cache *iint,
-> > =C2=A0		if (inode->i_size =3D=3D 0 && iint->flags & IMA_NEW_FILE &&
-> > =C2=A0		=C2=A0=C2=A0=C2=A0 test_bit(IMA_DIGSIG, &iint->atomic_flags)) {
-> > =C2=A0			status =3D INTEGRITY_PASS;
-> > +			cause =3D "new-signed-file";
-> > =C2=A0		}
-> > =C2=A0
-> > =C2=A0		integrity_audit_msg(AUDIT_INTEGRITY_DATA, inode, filename,
-> > diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima=
-/ima_main.c
-> > index 1e474ff6a777..50b37420ea2c 100644
-> > --- a/security/integrity/ima/ima_main.c
-> > +++ b/security/integrity/ima/ima_main.c
-> > @@ -158,13 +158,16 @@ static void ima_check_last_writer(struct ima_iint=
-_cache
-> > *iint,
-> > =C2=A0				=C2=A0 struct inode *inode, struct file *file)
-> > =C2=A0{
-> > =C2=A0	fmode_t mode =3D file->f_mode;
-> > -	bool update;
-> > +	bool update =3D false, update_fix;
-> > =C2=A0
-> > -	if (!(mode & FMODE_WRITE))
-> > +	update_fix =3D test_and_clear_bit(IMA_UPDATE_XATTR_FIX,
-> > +					&iint->atomic_flags);
-> > +
-> > +	if (!(mode & FMODE_WRITE) && !update_fix)
-> > =C2=A0		return;
-> > =C2=A0
-> > =C2=A0	ima_iint_lock(inode);
-> > -	if (atomic_read(&inode->i_writecount) =3D=3D 1) {
-> > +	if (atomic_read(&inode->i_writecount) =3D=3D 1 && (mode & FMODE_WRITE=
-)) {
->=20
-> Probably better to reverse the "mode & FMODE_WRITE" and atomic_read() tes=
-t order.
->=20
-> Mimi
->=20
-> > =C2=A0		struct kstat stat;
-> > =C2=A0
-> > =C2=A0		update =3D test_and_clear_bit(IMA_UPDATE_XATTR,
-> > @@ -181,6 +184,10 @@ static void ima_check_last_writer(struct ima_iint_=
-cache *iint,
-> > =C2=A0				ima_update_xattr(iint, file);
-> > =C2=A0		}
-> > =C2=A0	}
-> > +
-> > +	if (!update && update_fix)
-> > +		ima_update_xattr(iint, file);
-> > +
-> > =C2=A0	ima_iint_unlock(inode);
-> > =C2=A0}
-> > =C2=A0
-> > @@ -378,13 +385,10 @@ static int process_measurement(struct file *file,=
- const
-> > struct cred *cred,
-> > =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 template_desc);
-> > =C2=A0	if (rc =3D=3D 0 && (action & IMA_APPRAISE_SUBMASK)) {
-> > =C2=A0		rc =3D ima_check_blacklist(iint, modsig, pcr);
-> > -		if (rc !=3D -EPERM) {
-> > -			inode_lock(inode);
-> > +		if (rc !=3D -EPERM)
-> > =C2=A0			rc =3D ima_appraise_measurement(func, iint, file,
-> > =C2=A0						=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pathname, xattr_value,
-> > =C2=A0						=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 xattr_len, modsig);
-> > -			inode_unlock(inode);
-> > -		}
-> > =C2=A0		if (!rc)
-> > =C2=A0			rc =3D mmap_violation_check(func, file, &pathbuf,
-> > =C2=A0						=C2=A0 &pathname, filename);
+... Sorry, all I have time for today.
 
