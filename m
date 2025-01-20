@@ -1,81 +1,98 @@
-Received: from mx.swemel.ru (mx.swemel.ru [95.143.211.150])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BA7E1B4149
-	for <linux-security-module@vger.kernel.org>; Mon, 20 Jan 2025 11:15:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.211.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 341E71DFDA5;
+	Mon, 20 Jan 2025 13:12:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737371726; cv=none; b=klPfU56hBJjjJUeYSKTN4RqlvZWJdFQyAPs1kyeiTkdbE7ap3xAm9J8c9zlH8ssE3vZlXIvAeLzSddcm/l0qPFUhmAxFOmoSzZq/HhKWDDG9bFkR6ye0Z/gTnTVmhrl8+zeaXv8XGbdy45IFNcCwKNDc8eAlWvs6RiywU8KnUX0=
+	t=1737378733; cv=none; b=so+vzD0kX7hiZsJE0VIc3htQXPUdMZCdv+5ci8bMIvHIxDK/oGChvrPuPBMyYCje++CY/aPS9VxNGF1gA9bnqF70lZtNSIybXCLNCkybNtZBY5K/z0rP4hklcy0hnVsmkTzcQ/HwAHSRuPNXwyDGlYMIaIL2nfaC7P2F7vgyM00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737371726; c=relaxed/simple;
-	bh=cYb1ralunzlVQ2H9iyCjbc8h0FXLlV22JB0qPucfO+M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
-	 In-Reply-To:Content-Type; b=UeGuswX3nXu0IKmA+BolDtEs2qiM4YLlx03RBcvCn+BCs37NgYJ8I2dlhc05W0O/N7ukYxXDMcNmF2KtQEjIKVOVRzioKo25H5a7LYjAjlpz5L6TIuwXhPFOkHLryRMSx+fjPdyAhcIEW6vAqVIqxDwggqoPSpmtMcXd5bfUyy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=U2fOLFya; arc=none smtp.client-ip=95.143.211.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=swemel.ru
+	s=arc-20240116; t=1737378733; c=relaxed/simple;
+	bh=1dM/JqbDi9bds19lZgDDhhu34d2sR2mWDItkErvDMWo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=bLlROC7Gad5Rpn1ALvXfpmF5aN2rA0DKYkbKxXBZkWNavWh7o55S25zXQuTClTaBG6Wqy0n0NZKnPA24Aa8rttvbf96eZI89jWfkHk7v0QU8g6xzeG7zfi5EF8ElJRHVQLdvC30MCuZ3DtftxHVmRlbMAbM1x6QMZbtMtm+N2vs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HPHChaLV; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="U2fOLFya"
-Message-ID: <3fa2d093-8070-48ae-b595-e2441966c72a@swemel.ru>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=swemel.ru; s=mail;
-	t=1737371721;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=v6ca9nowYKFmGlE+V94M9kf6idGrAIGGmYRQBcybkF0=;
-	b=U2fOLFyayebkNJV7fDUgUfAdisUC9sTcJm71En4cmydU66ZBaf8GHgrZDGtLvt5qH0ixdb
-	ZZ5g+gL8vONKpo/NyTULoIJIkgDvhXepNOuaWLj84QB6wZmRb1N5KN1pwG0/KGZI3tFF5L
-	9Vp2yyZQl+Yz215H9XRqehSaMRgGkrg=
-Date: Mon, 20 Jan 2025 14:16:07 +0300
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HPHChaLV"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13D7CC4CEDD;
+	Mon, 20 Jan 2025 13:12:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1737378732;
+	bh=1dM/JqbDi9bds19lZgDDhhu34d2sR2mWDItkErvDMWo=;
+	h=From:Date:Subject:To:Cc:From;
+	b=HPHChaLVNBQFv8ICY/dxzruF4bJQsv0gPSHIoAzqohUXHEcBMF6eso04im7TBVbyZ
+	 nqVeyPEQEcoFpNlfysQPck0DanVhwTB1SEb2uJIhHTCLyCjtWlu6lOJJpeHw4Cz3+y
+	 Y1KDtBq3dt+a7fh/nntTzA89OMrIpwm56hHJuC+OnSh7MtnH0ogxnOwOuavLCdBApl
+	 PgqRjXOfINmNWjMy3oWMmMRssbcCbAWCACS4oc9oSmqe8TRIdRl+9XN2/uTGN+PGPk
+	 nzhmdChvvrRTEqMxb8mlz9WiJwIafkVrS26C4KKKgsy8nJsxd2LWhj6Tz2eLrsceUB
+	 FCL43Flmq0+Yw==
+From: Nathan Chancellor <nathan@kernel.org>
+Date: Mon, 20 Jan 2025 06:12:01 -0700
+Subject: [PATCH] apparmor: Fix checking address of an array in
+ accum_label_info()
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re[2]: [PATCH] smack: remove /smack/logging if audit is not
- configured
-To: Casey Schaufler <casey@schaufler-ca.com>
-References: <20250117214655.3138888-1-andreev@swemel.ru>
- <5589ad00-89f9-4f87-9de1-c869fa527c8c@schaufler-ca.com>
-Content-Language: en-US
-From: Konstantin Andreev <andreev@swemel.ru>
-Cc: linux-security-module@vger.kernel.org
-In-Reply-To: <5589ad00-89f9-4f87-9de1-c869fa527c8c@schaufler-ca.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-OriginalArrivalTime: 20 Jan 2025 11:15:21.0076 (UTC) FILETIME=[98050340:01DB6B2C]
+Message-Id: <20250120-apparmor-pointer-bool-conversion-label-v1-1-5957d28ffde6@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAKBLjmcC/x2NQQqDMBAAvyJ77kIS2gb7ldJDTFddiNmwESmIf
+ zf2OIeZ2aGSMlV4dTsobVxZcgN76yDOIU+E/G0MzriHsc5gKCXoIopFOK+kOIgkjJI30kvGFAZ
+ K6KM1zvfPe/QjtFhRGvn3H70/x3ECY9RvaXgAAAA=
+X-Change-ID: 20250120-apparmor-pointer-bool-conversion-label-7c1027964c7f
+To: John Johansen <john.johansen@canonical.com>
+Cc: apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org, 
+ llvm@lists.linux.dev, patches@lists.linux.dev, 
+ kernel test robot <lkp@intel.com>, Nathan Chancellor <nathan@kernel.org>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1362; i=nathan@kernel.org;
+ h=from:subject:message-id; bh=1dM/JqbDi9bds19lZgDDhhu34d2sR2mWDItkErvDMWo=;
+ b=owGbwMvMwCUmm602sfCA1DTG02pJDOl93qt23nyjYiLt/9PE5fau2xzTclu1F1VsWffeLS321
+ XGRyBN7O0pZGMS4GGTFFFmqH6seNzScc5bxxqlJMHNYmUCGMHBxCsBEorcx/K8Imn5F3/WUSoLF
+ C70py8UdT209v2HH2d8ZaR12+m374lsY/lf9yF/Is9peutJk9YGr5ez2vwJ2PfuZwyBmb/3t2N+
+ +DRwA
+X-Developer-Key: i=nathan@kernel.org; a=openpgp;
+ fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
 
-Casey Schaufler, 18 Jan 2025:
-> On 1/17/2025 1:46 PM, Konstantin Andreev wrote:
->> If CONFIG_AUDIT is not set then
->> SMACK does not generate audit messages,
->> however, keeps audit control file, /smack/logging,
->> while there is no entity to control.
->> This change removes audit control file /smack/logging
->> when audit is not configured in the kernel
-> 
-> Is there a real reason to do this?
+clang warns:
 
-Not more real than there are real reasons for
-fixing typos and spelling errors,
-removing unused or duplicating code,
-keeping one tab indentation, etc.
+  security/apparmor/label.c:206:15: error: address of array 'new->vec' will always evaluate to 'true' [-Werror,-Wpointer-bool-conversion]
+    206 |         AA_BUG(!new->vec);
+        |                ~~~~~~^~~
 
-The matter of style.
+The address of this array can never be NULL because it is not at the
+beginning of a structure. Convert the assertion to check that the new
+pointer is not NULL.
 
-Personally, I deprecate fake controls,
-they make me (as a user) think that
-it's me who is missing something.
+Fixes: de4754c801f4 ("apparmor: carry mediation check on label")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202501191802.bDp2voTJ-lkp@intel.com/
+Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+---
+ security/apparmor/label.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> I can easily see systems that expect to turn logging off getting
-> upset if the interface disappears seemingly at random.
+diff --git a/security/apparmor/label.c b/security/apparmor/label.c
+index afded9996f61..79be2d3d604b 100644
+--- a/security/apparmor/label.c
++++ b/security/apparmor/label.c
+@@ -203,7 +203,7 @@ static void accum_label_info(struct aa_label *new)
+ 	long u = FLAG_UNCONFINED;
+ 	int i;
+ 
+-	AA_BUG(!new->vec);
++	AA_BUG(!new);
+ 
+ 	/* size == 1 is a profile and flags must be set as part of creation */
+ 	if (new->size == 1)
 
-To me, the system builder who compiles audit out, on purpose,
-must be prepared for special treatment of his system.
+---
+base-commit: e6b087676954e36a7b1ed51249362bb499f8c1c2
+change-id: 20250120-apparmor-pointer-bool-conversion-label-7c1027964c7f
 
-Certainly, I may not have a full picture.
---
-Regards,
-Konstantin Andreev
+Best regards,
+-- 
+Nathan Chancellor <nathan@kernel.org>
+
