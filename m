@@ -1,106 +1,176 @@
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B7B51E9B0D;
-	Tue, 21 Jan 2025 10:11:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E50861F0E44;
+	Tue, 21 Jan 2025 10:27:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737454308; cv=none; b=kMHdJncpUmzRI1Ot3c2ZhsqVnKilDsZDT5XEWW8OnRlYGa+HLjXsCFg3LGdTukRqqyMNgrFHdhyDOuUJXfonJJxbLJou1XuxrN4owTd2krZtSRNe/KplwA09g2fsmulwF+27EgzBN8kvD4v4gVPzhXq6eTk009WE/Rd+Jg8pRUk=
+	t=1737455231; cv=none; b=HMKXiDa+jPCdTE0jz+Yjy4qbu585TajAMKh+dW/QwqVM62Ufh1+3CKmqFCRjAfzoi09tZHpditlo+9NHbvTz2QoyBWRaeUd41GTIZ4NU0SPkuuyHi/H+uVRWMzFFLm7Hun5zxxhQcPBLxErOaMlqJ51yzTSVNme/vnGd2MLul7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737454308; c=relaxed/simple;
-	bh=fcSh4AxZ27ZgC4b06I+jDz8xOha1g9su88HEf3I7ObE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tyYF3dMOQmPT8g05bbw3D+jnOMd8niJ5j7r9uJxtf6gF38chciYdniGwu4ko1BktygHYEoHXRz4m57x6bBn7mAifZWdrs8quIwkPFFBMapfak15cQu2HAcZL8jjOjp9jOy7st3dxf3EsYk/Fdt3ipRcDilc3ZHRY45rPmb/0AqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aWjiTs2O; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aWjiTs2O"
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2163dc5155fso101172685ad.0;
-        Tue, 21 Jan 2025 02:11:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737454306; x=1738059106; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=u4GhAgdGPJao5oBQSTGd+M55EpKH1+oHBv+vxevMflk=;
-        b=aWjiTs2Oky77K98RCfT0WEXezH09matXSnaj98XZ1Nhhs0Pi31vzdShYRgwtbBZ/3R
-         TOgpfNFrKmqhJlotDJJotJw09/ADwBUbFNZ2fhwBaaiyQ6UkL1xONeUbdsBk+AP92el8
-         eoxfuOqNwkimy+2O8FqG3C8ulcG/O4qz2xNx4XN3yyr7txSI7N1bulIDMSueN475uJjz
-         TkjxLxgfFaZNjvbpZEI6C/6qFLBDJGpwy/ccBgEvy3KbkCgvlZQzeLdUuE/JPMzekD/u
-         4NWsfJeKM5bHVM59sCgPvCaP3XyH3VWSlPHxw5tvBn9UYDP5HrC/cuihYOgPBV68tvvM
-         fotw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737454306; x=1738059106;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=u4GhAgdGPJao5oBQSTGd+M55EpKH1+oHBv+vxevMflk=;
-        b=HzBGOPjgzeME9sQnokRL7dhuTkxELR+SFGGTpgfZVvB8WjTjhH/dn0L9xM8fMn/dos
-         qdDlO4jYic6G0z7XiwLGz7d/CCaMXA9EQ/EXObM3xu415gBvKRRkBMB91dgOK+jnSPNQ
-         j1CF22VftP1akdjRxoGGlKEVoIfQiKTqkIugmt9qQGjlODoLejWwLIlXmSb7M/VdGfW0
-         eykBxSWXZcn+j+jnXeMrLLaq9RYnZs6zZ3y8P6VlMZeGqZgUMPsHDfXz/s5EV5+yX04k
-         b46Y+JAYYoCQXO3AKWlo1zBmrvORJtqlD/CaZ1v7NR/L4vT3Mf52Ds5v+G6rRJD+frz2
-         e1aw==
-X-Forwarded-Encrypted: i=1; AJvYcCVBPQNunW9Heumj5ip1sW7yPAMBDqfN+ItbvAN1q2SffvfccvhM2x/Dib3+ilRGVUCp8GX20d7Er0Blx4KiyJNOSrAgg7Cu@vger.kernel.org, AJvYcCX9DFQ3vKSkRNOCo39rBcyKad4RaHSjG/b3QQ0TC1LsVtdh9VEoU7G4HAeBoAoPD6T2pJIC9iHdoVAQirM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFZesdmqeC/Uiv0572WHmSNnhnswYQtxg7J/DUbRg2tWqKhfW/
-	+bTMX/vr8VQropwgmGVJjUDBkGhBJFpe5eDwfCdZiGBFKHop9dGc
-X-Gm-Gg: ASbGncsnybubfvJi7QCKS4vQT0WPiTezdMvD2xU8/NdutQi2Bm6fYXoQ3PEuiiWUIku
-	rUOzJVrbTr0vYNrGXwLGfr5oj7LkAwNAghugn4qZu8lDmmujKEG2+aRnT4yXmS8J2UxWG2GTKbr
-	J6PRRimNr6puIJCYEaYm4xsQeIsDzwaWBuHGwOBs4eKrWCBnCtf3g6BKBGUe1ZQf6MT5U1wA0fL
-	Vt2FJn5yv4Tdt5GcAdg+fqH97k1e+vTddb2jkFaPMUUUQ7lmZDSNxzmMZnSwNJ5qCJUSvJS/A==
-X-Google-Smtp-Source: AGHT+IF6jOOijDRlgAzivw8DReYi5rs58LTDAI7B2+ElM37sm5S/cFLuCYJWzorRK9MfaRj2u+IjKQ==
-X-Received: by 2002:a17:903:1ce:b0:216:4a06:e87a with SMTP id d9443c01a7336-21c355dc64bmr254887485ad.40.1737454306461;
-        Tue, 21 Jan 2025 02:11:46 -0800 (PST)
-Received: from HOME-PC ([223.185.135.17])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21c2d402d61sm74580295ad.229.2025.01.21.02.11.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Jan 2025 02:11:45 -0800 (PST)
-From: Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>
-To: john.johansen@canonical.com,
-	apparmor@lists.ubuntu.com
-Cc: paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>
-Subject: [PATCH security] apparmor: fix logical error in signal range validation
-Date: Tue, 21 Jan 2025 15:41:38 +0530
-Message-Id: <20250121101138.116675-1-dheeraj.linuxdev@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1737455231; c=relaxed/simple;
+	bh=Itx1KidBw4QpxecgKrKibHzjX+XhiOBYVd+0EdKjtZ8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=JTRkQDuqQciMjB3oS2ttAlYwH/QCao9mw7PxHy0y5XY7TI76DbgBI3x3Uofp0cS8qZUJiVRkKpFnj2wbKLWuZW782u+0OtU63p5VX7NfctRjnfWTRgRXU3lDLMEDqQSNWaqSKTNFgrnHVDVWY1biRNbKJzKpxsknF47MpI6Cm9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.51])
+	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4YcjVp0C54z9v7NR;
+	Tue, 21 Jan 2025 18:04:50 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id 8A663140EB3;
+	Tue, 21 Jan 2025 18:26:52 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP1 (Coremail) with SMTP id LxC2BwDHmklZdo9nRW0IAQ--.11999S2;
+	Tue, 21 Jan 2025 11:26:51 +0100 (CET)
+Message-ID: <69b38f6a6fb53e7b8f8250e1d37641c6abbb6d07.camel@huaweicloud.com>
+Subject: Re: [PATCH v2 0/6] module: Introduce hash-based integrity checking
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Thomas =?ISO-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>, Masahiro
+ Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+ Nicolas Schier <nicolas@fjasle.eu>, Arnd Bergmann <arnd@arndb.de>, Luis
+ Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, Sami
+ Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>,
+ Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge
+ E. Hallyn" <serge@hallyn.com>, Jonathan Corbet <corbet@lwn.net>
+Cc: Fabian =?ISO-8859-1?Q?Gr=FCnbichler?= <f.gruenbichler@proxmox.com>, 
+ Arnout Engelen <arnout@bzzt.net>, Mattia Rizzolo <mattia@mapreri.org>,
+ kpcyrd <kpcyrd@archlinux.org>, linux-kbuild@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
+ linux-modules@vger.kernel.org, linux-security-module@vger.kernel.org, 
+ linux-doc@vger.kernel.org, linux-integrity@vger.kernel.org,
+ zohar@linux.ibm.com
+Date: Tue, 21 Jan 2025 11:26:29 +0100
+In-Reply-To: <20250120-module-hashes-v2-0-ba1184e27b7f@weissschuh.net>
+References: <20250120-module-hashes-v2-0-ba1184e27b7f@weissschuh.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:LxC2BwDHmklZdo9nRW0IAQ--.11999S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxGF1fur4ktF1xXw43WF1xZrb_yoWrGF4Upa
+	yDKr45tr4kJryxAFs3Ar109r15K3ykGw4agFsxGw42y34j9r12vFnFg34fZFy29r4IkFyU
+	Gr4aqF1jkryDJ3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUIa
+	0PDUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAPBGePR1QCGgABso
 
-Fix logically impossible condition in unpack_profile() that made the
-signal validation code unreachable. The function was using && instead
-of || when checking if the signal value is outside the valid range,
-making it impossible for both conditions to be true simultaneously.
+On Mon, 2025-01-20 at 18:44 +0100, Thomas Wei=C3=9Fschuh wrote:
+> The current signature-based module integrity checking has some drawbacks
+> in combination with reproducible builds:
+> Either the module signing key is generated at build time, which makes
+> the build unreproducible, or a static key is used, which precludes
+> rebuilds by third parties and makes the whole build and packaging
+> process much more complicated.
+> Introduce a new mechanism to ensure only well-known modules are loaded
+> by embedding a list of hashes of all modules built as part of the full
+> kernel build into vmlinux.
+>=20
+> Interest has been proclaimed by NixOS, Arch Linux, Proxmox, SUSE and the
+> general reproducible builds community.
+>=20
+> To properly test the reproducibility in combination with CONFIG_INFO_BTF
+> another patch is needed:
+> "[PATCH bpf-next] kbuild, bpf: Enable reproducible BTF generation" [0]
+> (If you happen to test that one, please give some feedback)
+>=20
+> Questions for current patch:
+> * Naming
+> * Can the number of built-in modules be retrieved while building
+>   kernel/module/hashes.o? This would remove the need for the
+>   preallocation step in link-vmlinux.sh.
+>=20
+> Further improvements:
+> * Use a LSM/IMA/Keyring to store and validate hashes
 
-Update the condition to ensure proper range validation.
++ linux-integrity, Mimi
 
-Fixes: 84c455decf27 ("apparmor: add support for profiles to define the kill signal")
-Signed-off-by: Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>
----
- security/apparmor/policy_unpack.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi Thomas
 
-diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
-index 73139189df0f..e643514a3d92 100644
---- a/security/apparmor/policy_unpack.c
-+++ b/security/apparmor/policy_unpack.c
-@@ -919,7 +919,7 @@ static struct aa_profile *unpack_profile(struct aa_ext *e, char **ns_name)
- 
- 	/* optional */
- 	(void) aa_unpack_u32(e, &profile->signal, "kill");
--	if (profile->signal < 1 && profile->signal > MAXMAPPED_SIG) {
-+	if (profile->signal < 1 || profile->signal > MAXMAPPED_SIG) {
- 		info = "profile kill.signal invalid value";
- 		goto fail;
- 	}
--- 
-2.34.1
+I developed something related to it, it is called Integrity Digest
+Cache [1].
+
+It has the ability to store in the kernel memory a cache of digests
+extracted from a file (or if desired in the future, from a reserved
+area in the kernel image).
+
+It exposes an API to query a digest (get/lookup/put) from a digest
+cache and to verify whether or not the integrity of the file digests
+were extracted from was verified by IMA or another LSM
+(verif_set/verif_get).=20
+
+Roberto
+
+
+[1]: https://lore.kernel.org/linux-integrity/20241119104922.2772571-1-rober=
+to.sassu@huaweicloud.com/
+
+> * Use MODULE_SIG_HASH for configuration
+> * UAPI for discovery?
+>=20
+> [0] https://lore.kernel.org/lkml/20241211-pahole-reproducible-v1-1-22feae=
+19bad9@weissschuh.net/
+>=20
+> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+> ---
+> Changes in v2:
+> - Drop RFC state
+> - Mention interested parties in cover letter
+> - Expand Kconfig description
+> - Add compatibility with CONFIG_MODULE_SIG
+> - Parallelize module-hashes.sh
+> - Update Documentation/kbuild/reproducible-builds.rst
+> - Link to v1: https://lore.kernel.org/r/20241225-module-hashes-v1-0-d710c=
+e7a3fd1@weissschuh.net
+>=20
+> ---
+> Thomas Wei=C3=9Fschuh (6):
+>       kbuild: add stamp file for vmlinux BTF data
+>       module: Make module loading policy usable without MODULE_SIG
+>       module: Move integrity checks into dedicated function
+>       module: Move lockdown check into generic module loader
+>       lockdown: Make the relationship to MODULE_SIG a dependency
+>       module: Introduce hash-based integrity checking
+>=20
+>  .gitignore                                   |  1 +
+>  Documentation/kbuild/reproducible-builds.rst |  5 ++-
+>  Makefile                                     |  8 ++++-
+>  include/asm-generic/vmlinux.lds.h            | 11 ++++++
+>  include/linux/module.h                       |  8 ++---
+>  include/linux/module_hashes.h                | 17 +++++++++
+>  kernel/module/Kconfig                        | 21 ++++++++++-
+>  kernel/module/Makefile                       |  1 +
+>  kernel/module/hashes.c                       | 52 ++++++++++++++++++++++=
++++++
+>  kernel/module/internal.h                     |  8 +----
+>  kernel/module/main.c                         | 54 ++++++++++++++++++++++=
++++---
+>  kernel/module/signing.c                      | 24 +------------
+>  scripts/Makefile.modfinal                    | 10 ++++--
+>  scripts/Makefile.vmlinux                     |  5 +++
+>  scripts/link-vmlinux.sh                      | 31 +++++++++++++++-
+>  scripts/module-hashes.sh                     | 26 ++++++++++++++
+>  security/lockdown/Kconfig                    |  2 +-
+>  17 files changed, 238 insertions(+), 46 deletions(-)
+> ---
+> base-commit: 2cd5917560a84d69dd6128b640d7a68406ff019b
+> change-id: 20241225-module-hashes-7a50a7cc2a30
+>=20
+> Best regards,
 
