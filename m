@@ -1,47 +1,88 @@
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87ED01F193C;
-	Tue, 21 Jan 2025 13:29:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08E391119A;
+	Tue, 21 Jan 2025 13:40:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737466163; cv=none; b=E7+j3ImrGRHS7HPrUgoTzVLVklyyy+thzWNRP2glFQD20hk29gRxhSbZxoOnqN1m/FliQkWcxSUKkJQrHtf6+foUFYrtkFlcYV7BIrn83ZYSm/guOigt18CnFANWhPWaVprC+bteP0ew1Ry3WgnZ7+X/Ynjady7z5yovNA8QQZw=
+	t=1737466858; cv=none; b=bJQoNIMjC/ZXVoJ9wiufPCSv5ONcgARl1wWqraDdni4qk1GowmVhzTHL6R998R8EqbzgTlSvgGzEZlCYymJCYngaqJ0SXqrrIhxezLxr2xByS2OncKC/RsC8VRnyt47GMNuAI5uxtioi9uIDm14kjd45oLvhwocHzVQ4q/+2rSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737466163; c=relaxed/simple;
-	bh=9Q6yHTklC/n7S2+KGzlqYY9DqTQl9fDlBHLIvs1gGy0=;
+	s=arc-20240116; t=1737466858; c=relaxed/simple;
+	bh=O6UDpyy68BQo7X626NvkAmSzVuRiTAwo5GjYO1FKjts=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e96AlqAsMEEA9+SKtF13jwWWVoeRM5ls7wZaGGiPtdPkBuY8StXthjx3x+oA8KP36/EUDUARaUxd9NyWsK21y14gwybctJzMkhEr3d9mvAFL1+/3eS0YnKx/XCv5c7TuXQtlD5KhFPLLxyoHQqMV3iRWe06q+l7WROT2hm0GDxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=UovvOZw6; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+	 Content-Type:Content-Disposition:In-Reply-To; b=rEQwzI8gOlpxKvmAG5rEfLCFl3QaHckMVAjI5Qbbgr4hNKX7uuOo8DAHBjFUMyQU0qjpKhxAxpFG5zZ9VVeS8VVvzYJwFYfVmgQyFpWy4z/+SgRVlBJvhROJWQm0JcpvL70u98TRZpKvMYUSvw0amTkvcpyZ6mIXFj1TysfDmYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=XXJc1fjY; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="UovvOZw6"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1737466157;
-	bh=9Q6yHTklC/n7S2+KGzlqYY9DqTQl9fDlBHLIvs1gGy0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UovvOZw6FldbKmDHz8lTw5ToS/fBZthSGFNzP3dn33rQ6RrMSZFMoV2m3IILLXsgH
-	 EkNKX3qJuWZF0lDMR1Lf4MqKfStjzc38o9eGzkLC1Y7XgrfoGu1sCszZOEUqaUtcf9
-	 1khXCDCx/uux89PHHWc1d9YorIhVa+S4nkpRwo1E=
-Date: Tue, 21 Jan 2025 14:29:17 +0100
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, 
-	eric.snowberg@oracle.com, corbet@lwn.net, mcgrof@kernel.org, petr.pavlu@suse.com, 
-	samitolvanen@google.com, da.gomez@samsung.com, akpm@linux-foundation.org, 
-	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, shuah@kernel.org, 
-	mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com, linux-integrity@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-modules@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, wufan@linux.microsoft.com, pbrobinson@gmail.com, 
-	zbyszek@in.waw.pl, hch@lst.de, mjg59@srcf.ucam.org, pmatilai@redhat.com, 
-	jannh@google.com, dhowells@redhat.com, jikos@kernel.org, mkoutny@suse.com, 
-	ppavlu@suse.com, petr.vorel@gmail.com, mzerqung@0pointer.de, kgold@linux.ibm.com, 
-	Roberto Sassu <roberto.sassu@huawei.com>
-Subject: Re: [PATCH v6 01/15] lib: Add TLV parser
-Message-ID: <c316b1be-d18f-4bb0-8434-bcc9236619df@t-8ch.de>
-References: <20241119104922.2772571-1-roberto.sassu@huaweicloud.com>
- <20241119104922.2772571-2-roberto.sassu@huaweicloud.com>
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="XXJc1fjY"
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 50LBcWDl021758;
+	Tue, 21 Jan 2025 13:40:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=1XuHjAhe+6crgeyPxGiThULHkHEa/Q
+	wDtL3yiBvZqn4=; b=XXJc1fjY1LEte8uWYOHY0rVlVq4wX9PCcoXpIbn1EYs9EL
+	OD4/8pPTNQ9wGah7zwpokGzeZLvKhyS2XwyswSQynQSvx4Pq0nVXT5v0PMm1KdzN
+	F6FmU2v9zN3MF0dGtVIr8337iz/SeaELL+AkChcaIBTAfjVK9Q1TKCVQHZUYF4b8
+	lkEmavTZcGG7bcRDLLuw9HOFrKWm+iyEw+rBb1iDcR2ksQakFyzbWZB9l+0n9NZH
+	7bFXS3CXhWJ3qAfxFUQeEb9d90I2xBmDXS8qIuY9SsKjzzFL1VStL4eYIhJR/WhB
+	kacwVPn3TvuRt93neu9S0HZxZA9oxnhjkLM3qkFg==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44a1n9b0sf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 21 Jan 2025 13:40:21 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 50LAtOsq021012;
+	Tue, 21 Jan 2025 13:40:19 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 448sb1b14q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 21 Jan 2025 13:40:19 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 50LDeIWj60031254
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 21 Jan 2025 13:40:18 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 25C3B2004B;
+	Tue, 21 Jan 2025 13:40:18 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7FD1A20040;
+	Tue, 21 Jan 2025 13:40:17 +0000 (GMT)
+Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.155.204.135])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue, 21 Jan 2025 13:40:17 +0000 (GMT)
+Date: Tue, 21 Jan 2025 14:40:16 +0100
+From: Alexander Gordeev <agordeev@linux.ibm.com>
+To: Joel Granados <joel.granados@kernel.org>
+Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+        Kees Cook <kees@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+        linux-s390@vger.kernel.org, linux-crypto@vger.kernel.org,
+        openipmi-developer@lists.sourceforge.net,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        intel-xe@lists.freedesktop.org, linux-hyperv@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-raid@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-serial@vger.kernel.org,
+        xen-devel@lists.xenproject.org, linux-aio@kvack.org,
+        linux-fsdevel@vger.kernel.org, netfs@lists.linux.dev,
+        codalist@coda.cs.cmu.edu, linux-mm@kvack.org,
+        linux-nfs@vger.kernel.org, ocfs2-devel@lists.linux.dev,
+        fsverity@lists.linux.dev, linux-xfs@vger.kernel.org,
+        io-uring@vger.kernel.org, bpf@vger.kernel.org,
+        kexec@lists.infradead.org, linux-trace-kernel@vger.kernel.org,
+        linux-hardening@vger.kernel.org, apparmor@lists.ubuntu.com,
+        linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+        Song Liu <song@kernel.org>,
+        "Steven Rostedt (Google)" <rostedt@goodmis.org>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Jani Nikula <jani.nikula@intel.com>,
+        Corey Minyard <cminyard@mvista.com>
+Subject: Re: [PATCH v2] treewide: const qualify ctl_tables where applicable
+Message-ID: <Z4+jwDBrZNRgu85S@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
+References: <20250110-jag-ctl_table_const-v2-1-0000e1663144@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -50,364 +91,130 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241119104922.2772571-2-roberto.sassu@huaweicloud.com>
+In-Reply-To: <20250110-jag-ctl_table_const-v2-1-0000e1663144@kernel.org>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: mWjZL4Eizm--6YwnTI2RlL8astD0-e-i
+X-Proofpoint-GUID: mWjZL4Eizm--6YwnTI2RlL8astD0-e-i
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-01-21_05,2025-01-21_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 phishscore=0
+ bulkscore=0 suspectscore=0 adultscore=0 clxscore=1011 priorityscore=1501
+ spamscore=0 impostorscore=0 lowpriorityscore=0 mlxscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2501210112
 
-Hi Robert,
+On Fri, Jan 10, 2025 at 03:16:08PM +0100, Joel Granados wrote:
 
-On 2024-11-19 11:49:08+0100, Roberto Sassu wrote:
-> From: Roberto Sassu <roberto.sassu@huawei.com>
+Hi Joel,
+
+> Add the const qualifier to all the ctl_tables in the tree except for
+> watchdog_hardlockup_sysctl, memory_allocation_profiling_sysctls,
+> loadpin_sysctl_table and the ones calling register_net_sysctl (./net,
+> drivers/inifiniband dirs). These are special cases as they use a
+> registration function with a non-const qualified ctl_table argument or
+> modify the arrays before passing them on to the registration function.
 > 
-> Add a parser of a generic Type-Length-Value (TLV) format:
-> 
-> +--------------+--+---------+--------+---------+
-> | field1 (u16) | len1 (u32) | value1 (u8 len1) |
-> +--------------+------------+------------------+
-> |     ...      |    ...     |        ...       |
-> +--------------+------------+------------------+
-> | fieldN (u16) | lenN (u32) | valueN (u8 lenN) |
-> +--------------+------------+------------------+
+> Constifying ctl_table structs will prevent the modification of
+> proc_handler function pointers as the arrays would reside in .rodata.
+> This is made possible after commit 78eb4ea25cd5 ("sysctl: treewide:
+> constify the ctl_table argument of proc_handlers") constified all the
+> proc_handlers.
 
-Should mention that its big endian.
+I could identify at least these occurences in s390 code as well:
 
-> Each adopter can define its own fields. The TLV parser does not need to be
-> aware of those, but lets the adopter obtain the data and decide how to
+diff --git a/arch/s390/appldata/appldata_base.c b/arch/s390/appldata/appldata_base.c
+index dd7ba7587dd5..9b83c318f919 100644
+--- a/arch/s390/appldata/appldata_base.c
++++ b/arch/s390/appldata/appldata_base.c
+@@ -204,7 +204,7 @@ appldata_timer_handler(const struct ctl_table *ctl, int write,
+ {
+ 	int timer_active = appldata_timer_active;
+ 	int rc;
+-	struct ctl_table ctl_entry = {
++	const struct ctl_table ctl_entry = {
+ 		.procname	= ctl->procname,
+ 		.data		= &timer_active,
+ 		.maxlen		= sizeof(int),
+@@ -237,7 +237,7 @@ appldata_interval_handler(const struct ctl_table *ctl, int write,
+ {
+ 	int interval = appldata_interval;
+ 	int rc;
+-	struct ctl_table ctl_entry = {
++	const struct ctl_table ctl_entry = {
+ 		.procname	= ctl->procname,
+ 		.data		= &interval,
+ 		.maxlen		= sizeof(int),
+@@ -269,7 +269,7 @@ appldata_generic_handler(const struct ctl_table *ctl, int write,
+ 	struct list_head *lh;
+ 	int rc, found;
+ 	int active;
+-	struct ctl_table ctl_entry = {
++	const struct ctl_table ctl_entry = {
+ 		.data		= &active,
+ 		.maxlen		= sizeof(int),
+ 		.extra1		= SYSCTL_ZERO,
+diff --git a/arch/s390/kernel/hiperdispatch.c b/arch/s390/kernel/hiperdispatch.c
+index 7857a7e8e56c..7d0ba16085c1 100644
+--- a/arch/s390/kernel/hiperdispatch.c
++++ b/arch/s390/kernel/hiperdispatch.c
+@@ -273,7 +273,7 @@ static int hiperdispatch_ctl_handler(const struct ctl_table *ctl, int write,
+ {
+ 	int hiperdispatch;
+ 	int rc;
+-	struct ctl_table ctl_entry = {
++	const struct ctl_table ctl_entry = {
+ 		.procname	= ctl->procname,
+ 		.data		= &hiperdispatch,
+ 		.maxlen		= sizeof(int),
+diff --git a/arch/s390/kernel/topology.c b/arch/s390/kernel/topology.c
+index 6691808bf50a..26e50de83d80 100644
+--- a/arch/s390/kernel/topology.c
++++ b/arch/s390/kernel/topology.c
+@@ -629,7 +629,7 @@ static int topology_ctl_handler(const struct ctl_table *ctl, int write,
+ 	int enabled = topology_is_enabled();
+ 	int new_mode;
+ 	int rc;
+-	struct ctl_table ctl_entry = {
++	const struct ctl_table ctl_entry = {
+ 		.procname	= ctl->procname,
+ 		.data		= &enabled,
+ 		.maxlen		= sizeof(int),
+@@ -658,7 +658,7 @@ static int polarization_ctl_handler(const struct ctl_table *ctl, int write,
+ {
+ 	int polarization;
+ 	int rc;
+-	struct ctl_table ctl_entry = {
++	const struct ctl_table ctl_entry = {
+ 		.procname	= ctl->procname,
+ 		.data		= &polarization,
+ 		.maxlen		= sizeof(int),
+diff --git a/arch/s390/mm/cmm.c b/arch/s390/mm/cmm.c
+index 939e3bec2db7..8e354c90a3dd 100644
+--- a/arch/s390/mm/cmm.c
++++ b/arch/s390/mm/cmm.c
+@@ -263,7 +263,7 @@ static int cmm_pages_handler(const struct ctl_table *ctl, int write,
+ 			     void *buffer, size_t *lenp, loff_t *ppos)
+ {
+ 	long nr = cmm_get_pages();
+-	struct ctl_table ctl_entry = {
++	const struct ctl_table ctl_entry = {
+ 		.procname	= ctl->procname,
+ 		.data		= &nr,
+ 		.maxlen		= sizeof(long),
+@@ -283,7 +283,7 @@ static int cmm_timed_pages_handler(const struct ctl_table *ctl, int write,
+ 				   loff_t *ppos)
+ {
+ 	long nr = cmm_get_timed_pages();
+-	struct ctl_table ctl_entry = {
++	const struct ctl_table ctl_entry = {
+ 		.procname	= ctl->procname,
+ 		.data		= &nr,
+ 		.maxlen		= sizeof(long),
 
-"adopter" -> "user".
 
-> continue.
-> 
-> After processing a TLV entry, call the callback function also with the
-> callback data provided by the adopter. The latter can decide how to
-> interpret the TLV entry depending on the field ID.
-> 
-> Nesting TLVs is also possible, the callback function can call tlv_parse()
-> to parse the inner structure.
-
-Given that we already have the netlink data structures, helpers and
-infrastructure, what is the advantage over those?
-
-> 
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> ---
->  MAINTAINERS                     |  8 +++
->  include/linux/tlv_parser.h      | 32 ++++++++++++
->  include/uapi/linux/tlv_parser.h | 41 ++++++++++++++++
->  lib/Kconfig                     |  3 ++
->  lib/Makefile                    |  2 +
->  lib/tlv_parser.c                | 87 +++++++++++++++++++++++++++++++++
->  lib/tlv_parser.h                | 18 +++++++
->  7 files changed, 191 insertions(+)
->  create mode 100644 include/linux/tlv_parser.h
->  create mode 100644 include/uapi/linux/tlv_parser.h
->  create mode 100644 lib/tlv_parser.c
->  create mode 100644 lib/tlv_parser.h
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index a097afd76ded..1f7ffa1c9dbd 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -23388,6 +23388,14 @@ W:	http://sourceforge.net/projects/tlan/
->  F:	Documentation/networking/device_drivers/ethernet/ti/tlan.rst
->  F:	drivers/net/ethernet/ti/tlan.*
->  
-> +TLV PARSER
-> +M:	Roberto Sassu <roberto.sassu@huawei.com>
-> +L:	linux-kernel@vger.kernel.org
-> +S:	Maintained
-> +F:	include/linux/tlv_parser.h
-> +F:	include/uapi/linux/tlv_parser.h
-> +F:	lib/tlv_parser.*
-> +
->  TMIO/SDHI MMC DRIVER
->  M:	Wolfram Sang <wsa+renesas@sang-engineering.com>
->  L:	linux-mmc@vger.kernel.org
-> diff --git a/include/linux/tlv_parser.h b/include/linux/tlv_parser.h
-> new file mode 100644
-> index 000000000000..0c72742af548
-> --- /dev/null
-> +++ b/include/linux/tlv_parser.h
-> @@ -0,0 +1,32 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Copyright (C) 2023-2024 Huawei Technologies Duesseldorf GmbH
-> + *
-> + * Author: Roberto Sassu <roberto.sassu@huawei.com>
-> + *
-> + * Header file of TLV parser.
-> + */
-> +
-> +#ifndef _LINUX_TLV_PARSER_H
-> +#define _LINUX_TLV_PARSER_H
-> +
-> +#include <uapi/linux/tlv_parser.h>
-> +
-> +/**
-> + * typedef callback - Callback after parsing TLV entry
-> + * @callback_data: Opaque data to supply to the callback function
-> + * @field: Field identifier
-> + * @field_data: Field data
-> + * @field_len: Length of @field_data
-> + *
-> + * This callback is invoked after a TLV entry is parsed.
-> + *
-> + * Return: Zero on success, a negative value on error.
-
-It's not explained what happens on error.
-
-> + */
-> +typedef int (*callback)(void *callback_data, __u16 field,
-> +			const __u8 *field_data, __u32 field_len);
-
-No need for __underscore types in kernel-only signatures.
-
-> +
-> +int tlv_parse(callback callback, void *callback_data, const __u8 *data,
-> +	      size_t data_len, const char **fields, __u32 num_fields);
-> +
-> +#endif /* _LINUX_TLV_PARSER_H */
-> diff --git a/include/uapi/linux/tlv_parser.h b/include/uapi/linux/tlv_parser.h
-> new file mode 100644
-> index 000000000000..171d0cfd2c4c
-> --- /dev/null
-> +++ b/include/uapi/linux/tlv_parser.h
-> @@ -0,0 +1,41 @@
-> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-> +/*
-> + * Copyright (C) 2023-2024 Huawei Technologies Duesseldorf GmbH
-> + *
-> + * Author: Roberto Sassu <roberto.sassu@huawei.com>
-> + *
-> + * Implement the user space interface for the TLV parser.
-> + */
-
-Can you explain in the commit message where this will be exposed to
-userspace as binary?
-
-> +
-> +#ifndef _UAPI_LINUX_TLV_PARSER_H
-> +#define _UAPI_LINUX_TLV_PARSER_H
-> +
-> +#include <linux/types.h>
-> +
-> +/*
-> + * TLV format:
-> + *
-> + * +--------------+--+---------+--------+---------+
-> + * | field1 (u16) | len1 (u32) | value1 (u8 len1) |
-> + * +--------------+------------+------------------+
-> + * |     ...      |    ...     |        ...       |
-> + * +--------------+------------+------------------+
-> + * | fieldN (u16) | lenN (u32) | valueN (u8 lenN) |
-> + * +--------------+------------+------------------+
-> + */
-> +
-> +/**
-> + * struct tlv_entry - Entry of TLV format
-> + * @field: Field identifier
-> + * @length: Data length
-> + * @data: Data
-> + *
-> + * This structure represents an entry of the TLV format.
-> + */
-> +struct tlv_entry {
-> +	__u16 field;
-> +	__u32 length;
-
-Use __be16 and __be32 here.
-
-> +	__u8 data[];
-
-__counted_by()?
-Not sure how this interacts with __be.
-
-> +} __attribute__((packed));
-> +
-> +#endif /* _UAPI_LINUX_TLV_PARSER_H */
-> diff --git a/lib/Kconfig b/lib/Kconfig
-> index b38849af6f13..9141dcfc1704 100644
-> --- a/lib/Kconfig
-> +++ b/lib/Kconfig
-> @@ -777,3 +777,6 @@ config POLYNOMIAL
->  
->  config FIRMWARE_TABLE
->  	bool
-> +
-> +config TLV_PARSER
-> +	bool
-> diff --git a/lib/Makefile b/lib/Makefile
-> index 773adf88af41..630de494eab5 100644
-> --- a/lib/Makefile
-> +++ b/lib/Makefile
-> @@ -393,5 +393,7 @@ obj-$(CONFIG_USERCOPY_KUNIT_TEST) += usercopy_kunit.o
->  obj-$(CONFIG_GENERIC_LIB_DEVMEM_IS_ALLOWED) += devmem_is_allowed.o
->  
->  obj-$(CONFIG_FIRMWARE_TABLE) += fw_table.o
-> +obj-$(CONFIG_TLV_PARSER) += tlv_parser.o
-> +CFLAGS_tlv_parser.o += -I lib
-
-Does this work with out of tree builds?
-
->  
->  subdir-$(CONFIG_FORTIFY_SOURCE) += test_fortify
-> diff --git a/lib/tlv_parser.c b/lib/tlv_parser.c
-> new file mode 100644
-> index 000000000000..dbbe08018b4d
-> --- /dev/null
-> +++ b/lib/tlv_parser.c
-> @@ -0,0 +1,87 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2023-2024 Huawei Technologies Duesseldorf GmbH
-> + *
-> + * Author: Roberto Sassu <roberto.sassu@huawei.com>
-> + *
-> + * Implement the TLV parser.
-> + */
-> +
-> +#define pr_fmt(fmt) "tlv_parser: "fmt
-> +#include <tlv_parser.h>
-
-This should be "tlv_parser.h",
-but the header files looks unnecessary in the first place.
-
-> +
-> +/**
-> + * tlv_parse - Parse TLV data
-> + * @callback: Callback function to call to parse the entries
-> + * @callback_data: Opaque data to supply to the callback function
-> + * @data: Data to parse
-> + * @data_len: Length of @data
-> + * @fields: Array of field strings
-> + * @num_fields: Number of elements of @fields
-> + *
-> + * Parse the TLV data format and call the supplied callback function for each
-> + * entry, passing also the opaque data pointer.
-> + *
-> + * The callback function decides how to process data depending on the field.
-
-Mention that a callback return an error will abort the whole parsing.
-
-> + *
-> + * Return: Zero on success, a negative value on error.
-> + */
-> +int tlv_parse(callback callback, void *callback_data, const __u8 *data,
-> +	      size_t data_len, const char **fields, __u32 num_fields)
-
-No need for __underscore types in kernel-only functions.
-
-"num_fields" and "fields" are accessed without checking for validity.
-
-"fields" is only every used for debug logging, so can be removed.
-"num_fields" probably, too.
-
-> +{
-> +	const __u8 *data_ptr = data;
-> +	struct tlv_entry *entry;
-
-This comes from the input data, should also be const.
-
-> +	__u16 parsed_field;
-> +	__u32 len;
-
-field_len
-
-> +	int ret;
-> +
-> +	if (data_len > U32_MAX) {
-> +		pr_debug("Data too big, size: %zd\n", data_len);
-> +		return -E2BIG;
-> +	}
-> +
-> +	while (data_len) {
-> +		if (data_len < sizeof(*entry))
-> +			return -EBADMSG;
-> +
-> +		entry = (struct tlv_entry *)data_ptr;
-> +		data_ptr += sizeof(*entry);
-> +		data_len -= sizeof(*entry);
-> +
-> +		parsed_field = __be16_to_cpu(entry->field);
-
-This doesn't seem to handle invalid alignment, some architectures will
-trap unaligned accesses.
-Depending on the size and usage patterns it may make sense to document
-some alignment recommendations/requirements.
-(Not sure how big of a performance difference it would make)
-
-> +		if (parsed_field >= num_fields) {
-> +			pr_debug("Invalid field %u, max: %u\n",
-> +				 parsed_field, num_fields - 1);
-> +			return -EBADMSG;
-> +		}
-> +
-> +		len = __be32_to_cpu(entry->length);
-> +
-> +		if (data_len < len)
-> +			return -EBADMSG;
-> +
-> +		pr_debug("Data: field: %s, len: %u\n", fields[parsed_field],
-> +			 len);
-> +
-> +		if (!len)
-> +			continue;
-
-Empty fields are discarded silently, is this intentional?
-It should be documented. Those fields could be useful for flag data.
-
-> +
-> +		ret = callback(callback_data, parsed_field, data_ptr, len);
-> +		if (ret < 0) {
-> +			pr_debug("Parsing of field %s failed, ret: %d\n",
-> +				 fields[parsed_field], ret);
-> +			return ret;
-> +		}
-> +
-> +		data_ptr += len;
-> +		data_len -= len;
-> +	}
-> +
-> +	if (data_len) {
-
-Can this ever happen?
-The check at the beginning of the loop should have caught it already.
-
-> +		pr_debug("Excess data: %zu bytes\n", data_len);
-> +		return -EBADMSG;
-> +	}
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(tlv_parse);
-
-Some kunit tests would be great.
-
-> diff --git a/lib/tlv_parser.h b/lib/tlv_parser.h
-> new file mode 100644
-> index 000000000000..e663966deac5
-> --- /dev/null
-> +++ b/lib/tlv_parser.h
-> @@ -0,0 +1,18 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Copyright (C) 2023-2024 Huawei Technologies Duesseldorf GmbH
-> + *
-> + * Author: Roberto Sassu <roberto.sassu@huawei.com>
-> + *
-> + * Header file of TLV parser.
-> + */
-> +
-> +#ifndef _LIB_TLV_PARSER_H
-> +#define _LIB_TLV_PARSER_H
-> +
-> +#include <linux/kernel.h>
-> +#include <linux/err.h>
-> +#include <linux/limits.h>
-> +#include <linux/tlv_parser.h>
-
-The #includes should move to the .c file and the header be removed.
-
-> +
-> +#endif /* _LIB_TLV_PARSER_H */
+> Best regards,
 > -- 
-> 2.47.0.118.gfd3785337b
-> 
+> Joel Granados <joel.granados@kernel.org>
+
+Thanks!
