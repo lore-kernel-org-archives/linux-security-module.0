@@ -1,165 +1,159 @@
-Received: from sonic304-27.consmr.mail.ne1.yahoo.com (sonic304-27.consmr.mail.ne1.yahoo.com [66.163.191.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC6951F6667
-	for <linux-security-module@vger.kernel.org>; Tue, 21 Jan 2025 18:10:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.191.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 854891F8907;
+	Tue, 21 Jan 2025 21:42:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737483012; cv=none; b=mPhsmRd9vGPAMVDvCNJ691LWQhVF4D/zZWp6RTwLLKf674v56n5uZAlGoNQvh564UYolocM9phQfL5305STBqKiPh67OfIvQ31Vn6//pj+9/PRlHaLpNQNivZR81+L5975B/paAm5keO1+JSW46uThghBzcPbMwFqdQO+aMTQ8Y=
+	t=1737495763; cv=none; b=fmTW46vOTiOB4O8fGAikePPl4FcoEbfqJHfYHC5MfYFLAsNSr3CnLVhjpOTrQfVGQUlHSYFOsXsSLmOsCtDaAnP+sXYD/XxnCwvjzqVAmtXM3eogTET2RUf7vbEga6Jb8+UVN9zCYUmIduJDt9DJ7uDflVLJIx3wBiA9nJhfNPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737483012; c=relaxed/simple;
-	bh=kQ46DTC406UDl/2Ymo9WgXs6JwmqnkDytQ4vQ8pihIs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JE54lOLWjTH/i58KjZvhlhCKJZGHSLnIvmP+8K+ojRv8kuPkKdxl4agYvBvDbNnRi0xTnmqMfVgD1E7YE6Xxpo+LvtCURABwJ/mQQp1PkPUGirvcIdPD/qKcomiXZjw85Q5tR15P7vjGeTIA2fTcdzsLRLuLeOcY+FWaDJs5Zwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=PFTsvV1z; arc=none smtp.client-ip=66.163.191.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1737495763; c=relaxed/simple;
+	bh=n4RD4dubYEheuUHrbVhCJJ//W+/igb2v1YzPOqVxCQ8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OC+4T2LTYZZZ4vnTSnkmAc52YP2K8gQj4+Jo6mozQLC7OHrggvJ+7q8OyB81nzvKy7SWwICEme1YWa1O0Hw6KAAbHB0LQmTqjMyN8AaWtx/rhjQBLI9nDGX0X7PagZ6SscznACwUOPZM+otgbnE3FKDG/g4/S/YzOSrjVMa3vkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=UAaiESDb; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="PFTsvV1z"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1737483004; bh=bENKwb71nO21H3Ixtiy9hwJLu92Zf8U55zOaAlFmQNo=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=PFTsvV1z+Ki0ZsdvaEBmTK1mNMCQbBa/bMCuPIlRqJ3a/XxHFLwn/BR8Ho0mdxo2wmgcBjhxhy/qKOInvegRSEq20mMcmKq8glPoh6SqOjU2SL1b6WYm0xJEhlnB9z50VRZ41m3UDr9GVSvlMs4EyJd9K7F0Q6F3XE0WOgY8Ndy1Q06AXt82rOgGJWtYePp2lZQINP2ZjvHMlaafLLKyK9/R9WDGOjhxmXGGgPmvCLlAUxs1SRTKt9MmLFXu0qwvKbbhK8q3cYgGIPH0pNzVHC/9ss97kf9d28Qrl8XefiexD/CVIJjIKq2B+rV+qeG+HztcvJS/Z8lYhx9CkjdOVg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1737483004; bh=EkdYx7f1x1nNhhHrfPiSy78jzbtMjKCNEAhDQji1Faw=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=nQAwioZyevU3lS2y8mX+JMUYyHL4J9H/OyamSJGAXAUdEJVMsSToFWSjprHllFc3pQTpQwJIlu2NK4guG+OaupyNnVgj9uAwUj4sFPm7OeCjsBddyztsvHfWeSwXEisApKnH3k0IgPPbhAK5SRySEcSYoJAhtt8Zq/jYxbJR6CEYeioXyhTnyvdwP83Xmc4Is+v1fONImOVtt8LhW1U/iBtKZni958TYtLZAFFn6jbdZLiRzWOgk5TAOQ2Jphpj4bymbU9NVihsQZxCzECcG82Mz4H8LzFaGCic0PXoisqYJ6gO8GZlxrK8jUW1UabT4ULaL1lClAqiAFi0V+SO2+Q==
-X-YMail-OSG: NsaljrEVM1nWlRajOiPPr.gMAZYpgMkTsFkQwrqVQAMpT.ygn5mhc61bpapNv39
- lkuMmTTh.mlZgxMW320cUHQy3ilt.WwrRtYJZkNyBpPiIg4N6FfGRsDyVG4B.ZdseYnCiVSUjA3N
- WhCEMNkJweiyiXcmmP84i6KLK7uYsvk7Rl6n0PZf36Qlg2QO6mpOX9ZMqRaX5zxe6qtYMzhUMZLz
- AXVB0xUtKVJpIq9F.BayHSuJ6A.1LrPueIp_Ojpst2Bul7khZB3.HdK3qqt7X855O5zhomBZZyNi
- gYRGMvLNuznseOm1zRXTPikSJVDLouyO3ccNjCcLHCe..h4qVCX0puHmP5GzWx2oBjrYuAvFNmND
- bTJUvZp5PunG2iaLAwHa0BH2wUyKYlrZ.ai__Y1jrLGLdebvd7fV2JdjAAWvZLziiRsVN_KrbGL_
- FAXwAydU.Cn23wolvmVBuWfCb02kuHpj_Iem3X.yILUVCp5lHbad.sT4Nu5duNVtUfi.UTKJbF7j
- _k6bs2XMTdRiNtRGN5g.bHctdVgMYjQ6fjQyswv8NqAfA7tITI.3_zdTPNXGUrERGVNdjHSsUHBm
- L6FE7wo0rFjsxxUedt3ydPw5BIyJzxGvIXFBV1nhOG3lkBVnDa.AaFRW0soDCV6TVva.VfEd4BP9
- hwWh2jiyOgX2k0F_K.FZendFY5EZmR.sc5_.H5_jiPln0zqroMvGTHcqCJtdDJgFuVvzb4YhJyke
- IK0UU6TYL3doQLxr0pNNJuPPKKmWDLaZmfl6n5EzUqLfa9u5HK2hiC3Hz.2MQqXOuK4C75PNdkvI
- oy5q7qo2w3pQVR3enkdMXBP4k2q47LFKRbTN40pTiYU.5lOwGcODjAGLbLBVLs7j2FKx3pu26hiT
- jv21r32ixV95MTo4X._ZrDOmlGk76Y.EVVkQwA5yYln5FNCHwI1eZ2WifLZTtUcejruWpUWc4_Xg
- VFmOTUbOejiaKYAqlDU85dl22Y_r2qEO5wqksssfykbS4HUBMhuJJpdrqUjozeCNQQLvE6NkzqOt
- vxjKN2OkN96cCa8tukZNXIIP87bN2EAFBxloR6wGf3o6j6.Cc8yaOwhvZe4U8RrahdPkgYJV56Hq
- xQnydhN8nVNG.tuIJJVs_NcMggXp6YAiNp1zNDFemmfPP27J715zEfK7xvE03re3OQMTEAG8j7gQ
- TXYoJxdIOpCp6XxgKx7gQmC3AjLS99oVVMpnXWsX3MIPQkZ3lr.7ZjN17JT6.fE9p0k1yYi3AJ0S
- 2w2atxyzRVPLbQdoKNgi10CcXGgDA.ML8pVJI8JNhJf0SbzoGK788yGO2NXHHowVoEg4gW2dzbxx
- 3lg.q0MadAAwvI57UsFzl_Ou_feRUkVYLF.lU1McOHFbPvb.K1CeGCbc1ALBS09qDZVyGMN0SHNj
- epXdrwROx0q8ckrSPfLIOTsJYrOGrWA5yDRJETANZZP7DSArxSStZr4OYzpVngvvBe9BvwEhQL2p
- SxIoF82YBK4jjdyf73rOOf1d9GaLYCbG7oqd5e_EyBHaw3LLedUrZObTjN8aKR6QzJ1BSZOsWSi6
- ygcH8tkxAZvIhPAYeZ1Wsh3MP1VVCo5Tl_aRWIYD65rn7Q5uXhE4v06jpe7MnEXjMkHasTA5qmjN
- .Rd_TD83B_5qiTKDWMH4CzKaffq1NkpgK1X.2PaWCXhW8EW7o0NI04kAbwNKKR94a4f_sZK47Q._
- F9HQSXwSu9y3YwR2sZ9Rk7HMrIhwjZ7gJ7RA75lUYThqbw14EfM0WuF65uazIt8HKUT5_UoBphll
- SEXvPyXi76_mVVaGb0MffSSwG3tGGJRrvc.FG3Go_M_2Ic6INBgqMVd2ioek2oPo10uwUs4YZi8V
- 52UPL8sceV1NfMIiI_n1Y0gx6SxSZ2RtSZnlGcsGXor7Ae3zGJJyfsy8iMutGT0DKqu94rnez5yr
- v.yr7ZbJpigBW92jtoZxmp1x13GZ55s3f8DYdK2XPl8OQBKRVHyBv0Imto2n11rZin88lt3BeMyg
- AkZ6qpXWZbvQlf6N_AkTZ5e3GMbawt4wVeRBtkofv8UGmHftJNusBa.oVEOUGm13d8gEAP3.HJ9f
- DEklIg1_zqYoP9wp93KUOcnR4uqnR8OiAj9WUsPEnb8d_10n5oD8_YxwarUyiolAs4sCYyKhZKm8
- qu2.9HfUvCLnUVrpQpQZv_JKAhl95sW2G.I8Q.6icwYmJtSaUnIzqTaYVVTP.aEd5uoNjnzVCarh
- F1CS_cse2EQEwj1ZV4ZPgLHz6_pXXfh5i
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 9baeff52-a1b8-4ab7-9502-c5b8af608f62
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.ne1.yahoo.com with HTTP; Tue, 21 Jan 2025 18:10:04 +0000
-Received: by hermes--production-gq1-5dd4b47f46-9j75b (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 5add660a64c08cd2a16bdaa82ea6b3c7;
-          Tue, 21 Jan 2025 18:10:00 +0000 (UTC)
-Message-ID: <d61082f5-7426-48cb-8d64-3d8aefee68ca@schaufler-ca.com>
-Date: Tue, 21 Jan 2025 10:09:59 -0800
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="UAaiESDb"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1737495749;
+	bh=n4RD4dubYEheuUHrbVhCJJ//W+/igb2v1YzPOqVxCQ8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UAaiESDbbzPdmNmoLHqaSS32neGSY4I4ypNS43cOa1opJYbIFzp5lwCRIdBJAVUg1
+	 SJ/flduuaUI2McTECmdux8LoW+AFAtJ4YYQarZbEhhxciSfztwrJAY4gnYGR1DKCnm
+	 yvGK4nzYCbAgq6qyPhkj/UqjJ4HCwmc0d+ihxV5k=
+Date: Tue, 21 Jan 2025 22:42:28 +0100
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: zohar@linux.ibm.com, dmitry.kasatkin@gmail.com, 
+	eric.snowberg@oracle.com, corbet@lwn.net, mcgrof@kernel.org, petr.pavlu@suse.com, 
+	samitolvanen@google.com, da.gomez@samsung.com, akpm@linux-foundation.org, 
+	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, shuah@kernel.org, 
+	mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com, linux-integrity@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-api@vger.kernel.org, 
+	linux-modules@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, wufan@linux.microsoft.com, pbrobinson@gmail.com, 
+	zbyszek@in.waw.pl, hch@lst.de, mjg59@srcf.ucam.org, pmatilai@redhat.com, 
+	jannh@google.com, dhowells@redhat.com, jikos@kernel.org, mkoutny@suse.com, 
+	ppavlu@suse.com, petr.vorel@gmail.com, mzerqung@0pointer.de, kgold@linux.ibm.com, 
+	Roberto Sassu <roberto.sassu@huawei.com>
+Subject: Re: [PATCH v6 01/15] lib: Add TLV parser
+Message-ID: <74b5c88d-7ab6-49f2-9b96-ac96cb4daf6e@t-8ch.de>
+References: <20241119104922.2772571-1-roberto.sassu@huaweicloud.com>
+ <20241119104922.2772571-2-roberto.sassu@huaweicloud.com>
+ <c316b1be-d18f-4bb0-8434-bcc9236619df@t-8ch.de>
+ <b14358075fa56f7250d5c9000ab8ee181003ff13.camel@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/14] Add TSEM specific documentation.
-To: "Dr. Greg" <greg@enjellic.com>
-Cc: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org, jmorris@namei.org
-References: <20240826103728.3378-3-greg@enjellic.com>
- <8642afa96650e02f50709aa3361b62c4@paul-moore.com>
- <20250117044731.GA31221@wind.enjellic.com>
- <1630b5cd-c1ef-4afd-9767-7ebf3c0cc7ae@schaufler-ca.com>
- <20250118190346.GA9479@wind.enjellic.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20250118190346.GA9479@wind.enjellic.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.23187 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b14358075fa56f7250d5c9000ab8ee181003ff13.camel@huaweicloud.com>
 
-On 1/18/2025 11:03 AM, Dr. Greg wrote:
-> On Fri, Jan 17, 2025 at 10:10:30AM -0800, Casey Schaufler wrote:
->
-> Good morning Casey, I hope your weekend is going well, thanks for
-> taking the time to forward along your thoughts on our work.
->
->> On 1/16/2025 8:47 PM, Dr. Greg wrote:
->>> On Mon, Jan 13, 2025 at 08:29:47PM -0500, Paul Moore wrote:
->>>
->> ...
->>
->>>> Please define the CELL acronym here as I believe it is the first use of
->>>> "CELL" in this document.
->>> FWIW, CELL isn't an acronym, it is a metaphor.
->>>
->>> TSEM was conceptually inspired by and derived from the Turing Abstract
->>> Machine Model (TAMM), as applied to the problem of modeling the
->>> security state of an execution domain.
->>>
->>> As everyone reading this knows, a TAMM, in practice, consists of a
->>> head traversing an infinite paper tape divided into cells that direct
->>> the next state of the machine.
->>>
->>> In TSEM, the model consists of a Context Of Execution (COE) with
->>> security definining characteristics, traversing a finite set of
->>> measurement points of infinite length, with defining characteristics
->>> at each point.
->>>
->>> We refer to a measurement point and its characteristics as a CELL in
->>> deference to the inspiration for all of this.
->>>
->>> We will add this explanation to the documentation.
->> Communication within a community as culturally diverse as the Linux
->> kernel developers* requires that you do not assume that "everyone reading
->> this" knows much of anything beyond how to type "make". Let's face it,
->> there are kernel developers today who would look at the Turing test and
->> say "is that even a thing?" There are others who don't have an education
->> that includes mid-twentieth century technological history.
->>
->> [* Yes, an awful lot of Linux kernel developers are western males. ] 
->>
->> ...
-> Sigh....
->
-> It would thus appear that effective dialogue in the Linux kernel
-> community is now about as perilous as attempting to square dance in a
-> minefield with snowshoes on.
+On 2025-01-21 15:55:28+0100, Roberto Sassu wrote:
+> On Tue, 2025-01-21 at 14:29 +0100, Thomas Weißschuh wrote:
+> > On 2024-11-19 11:49:08+0100, Roberto Sassu wrote:
 
-This isn't about Political Correctness. It's about communication.
-Your documentation appears to target PHD level computer scientists.
-Most Linux kernel developers are much more the BS engineer sort.
-I'm not saying you need to dumb it down, I'm suggesting that you
-could make it easier to review by targeting your audience better.
+[..]
 
-> When we penned the reflections above, we very specifically didot
-> want to be so pejorative as to suggest that anyone involved in this
-> endeavor wouldn't have at least a basic understanding of the
-> computability theory that all of our work is based.  They even have a
-> movie about it, presumably in multiple languages.
->
-> In any event, we apologize for being mistaken.
->
-> We will add a Wikipedia link in the documentation pointing to an
-> article on Turing machines, for the benefit of the unwashed masses now
-> involved in kernel development.
+> > > +typedef int (*callback)(void *callback_data, __u16 field,
+> > > +			const __u8 *field_data, __u32 field_len);
+> > 
+> > No need for __underscore types in kernel-only signatures.
+> 
+> It is just for convenience. I'm reusing the same file for the userspace
+> counterpart digest-cache-tools. In that case, the parser is used for
+> example to show the content of the digest list.
 
-The link is a good idea.
+This reuse leads to quite some ugly constructs.
+Given that the single function will be really simple after removing the
+unnecessary parts, maybe two clean copies are easier.
+One copy is needed for Frama-C anyways.
 
->>> We believe there is a technical solution to this problem as well but
->>> our work on that front, at this point, is too technically immature to
->>> go into.
->> Didn't Pierre de Fermat say something like that about some theorem
->> or another?
-> ...
->
-> As a Quixote team we take some solace to your reference of Fermat's
-> Theorem with respect to our work.  It took 358 years to formally prove
-> his theorem, in the face of many nay-sayers.  It turns out he was
-> absolutely right and his vision is now universally accepted as a
-> foundational premise of mathematics.
+> > > +
+> > > +int tlv_parse(callback callback, void *callback_data, const __u8 *data,
+> > > +	      size_t data_len, const char **fields, __u32 num_fields);
+> > > +
+> > > +#endif /* _LINUX_TLV_PARSER_H */
+> > > diff --git a/include/uapi/linux/tlv_parser.h b/include/uapi/linux/tlv_parser.h
+> > > new file mode 100644
+> > > index 000000000000..171d0cfd2c4c
+> > > --- /dev/null
+> > > +++ b/include/uapi/linux/tlv_parser.h
+> > > @@ -0,0 +1,41 @@
+> > > +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> > > +/*
+> > > + * Copyright (C) 2023-2024 Huawei Technologies Duesseldorf GmbH
+> > > + *
+> > > + * Author: Roberto Sassu <roberto.sassu@huawei.com>
+> > > + *
+> > > + * Implement the user space interface for the TLV parser.
+> > > + */
+> > 
+> > Can you explain in the commit message where this will be exposed to
+> > userspace as binary?
+> 
+> I see that my explanation is not ideal.
+> 
+> This is the format for data exchange between user space and kernel
+> space, but it is still the kernel that reads and parses the TLV-
+> formatted file for extracting the digests and adding them to the digest
+> cache.
 
-If it takes the Quixote team 358 years to develop a technical solution
-I expect you will miss your market window. :(
+I figured that out :-)
+It should be clear from the commit itself, though.
 
+> > > +
+> > > +#ifndef _UAPI_LINUX_TLV_PARSER_H
+> > > +#define _UAPI_LINUX_TLV_PARSER_H
+> > > +
+> > > +#include <linux/types.h>
+> > > +
+> > > +/*
+> > > + * TLV format:
+> > > + *
+> > > + * +--------------+--+---------+--------+---------+
+> > > + * | field1 (u16) | len1 (u32) | value1 (u8 len1) |
+> > > + * +--------------+------------+------------------+
+> > > + * |     ...      |    ...     |        ...       |
+> > > + * +--------------+------------+------------------+
+> > > + * | fieldN (u16) | lenN (u32) | valueN (u8 lenN) |
+> > > + * +--------------+------------+------------------+
+> > > + */
+> > > +
+> > > +/**
+> > > + * struct tlv_entry - Entry of TLV format
+> > > + * @field: Field identifier
+> > > + * @length: Data length
+> > > + * @data: Data
+> > > + *
+> > > + * This structure represents an entry of the TLV format.
+> > > + */
+> > > +struct tlv_entry {
+> > > +	__u16 field;
+> > > +	__u32 length;
+
+Looking at this again, the "length" field is unaligned by default.
+
+Also FYI there is already a TLV implementation in
+include/uapi/linux/tipc_config.
+
+> > > +} __attribute__((packed));
+
+[..]
+
+> > Some kunit tests would be great.
+> 
+> I implemented kselftests also injecting errors (patch 13). If it is not
+> enough, I implement kunit tests too.
+
+These selftests are for the digest_cache.
+If the TLV library is meant to be used alone, some dedicated tests would
+be nice. kunit has the advantage that it can directly call kernel
+functions with arbitrary parameters and does not require any userspace
+setup.
