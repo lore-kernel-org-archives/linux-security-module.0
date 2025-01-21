@@ -1,62 +1,61 @@
-Received: from sonic309-27.consmr.mail.ne1.yahoo.com (sonic309-27.consmr.mail.ne1.yahoo.com [66.163.184.153])
+Received: from sonic304-27.consmr.mail.ne1.yahoo.com (sonic304-27.consmr.mail.ne1.yahoo.com [66.163.191.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F3091F238E
-	for <linux-security-module@vger.kernel.org>; Tue, 21 Jan 2025 17:39:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.184.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC6951F6667
+	for <linux-security-module@vger.kernel.org>; Tue, 21 Jan 2025 18:10:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.191.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737481149; cv=none; b=CfMSiUexzec9xYKa5d3gG7hQjlKw6IVWaDTApTX0iOm4jfjLEQR/rS/eNOuvLJeqdjt8Vm6H+ufxBGQrJRmKXM74bjq8XdVSrqsvEArO6ayT4sa/L4X7Xl2S5CcCKAV04Sct+6cJU3MjnsxX8XKmRBlg3/dp4BjHHSYJio8DKvw=
+	t=1737483012; cv=none; b=mPhsmRd9vGPAMVDvCNJ691LWQhVF4D/zZWp6RTwLLKf674v56n5uZAlGoNQvh564UYolocM9phQfL5305STBqKiPh67OfIvQ31Vn6//pj+9/PRlHaLpNQNivZR81+L5975B/paAm5keO1+JSW46uThghBzcPbMwFqdQO+aMTQ8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737481149; c=relaxed/simple;
-	bh=Mjd/e/JvtmgejkmIdmev9p5DOrNmC2yCFPmaLYl470U=;
+	s=arc-20240116; t=1737483012; c=relaxed/simple;
+	bh=kQ46DTC406UDl/2Ymo9WgXs6JwmqnkDytQ4vQ8pihIs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Hyvrigrs2bEVBbhzpPf9Q3lbrX8I4OKyFeTI5Dt3oo4QWUTxcCs+M6YTvM68m2yLk3RzWevGp5KSBWXsmCgw+F64C+GMnXWEN1xclR3kV0s8jg61NiU/ZvwsRtgUciSCFNWg3bF3p25kuZraz2miMK6Jr0mhFfWt6z/5wCO4xWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=qrAz824L; arc=none smtp.client-ip=66.163.184.153
+	 In-Reply-To:Content-Type; b=JE54lOLWjTH/i58KjZvhlhCKJZGHSLnIvmP+8K+ojRv8kuPkKdxl4agYvBvDbNnRi0xTnmqMfVgD1E7YE6Xxpo+LvtCURABwJ/mQQp1PkPUGirvcIdPD/qKcomiXZjw85Q5tR15P7vjGeTIA2fTcdzsLRLuLeOcY+FWaDJs5Zwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=PFTsvV1z; arc=none smtp.client-ip=66.163.191.153
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="qrAz824L"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1737481140; bh=C0A9mnZXjtU2iXGsyZ3JoaLGvDbntYZqXFe+JMTXumE=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=qrAz824LX42qRdXJcowvyeBOmV+Hy9MiFvxslsYg3udVW9/vS/md9KkOndR7aDeea6PawMVMok0iIgssjG06yV1zAjhlrdNaeIN3QrEDtBovAZDWbTwiKYzLPPNE2ccog7s70mbAUyAQ06xEXmV6UTmHj2a43EvfJzELCfZOQEfExuGg+8a5e+0PO0mjlfEsgyHyJiRk5vC5E2xzl1WOJmJA9FnstcNWPsxfG/p0W8nafbcEDSl9t3CG7WtOjDOu1E5h8UpTOZDPs7XPoWNpFZzWoJ6LtgrcBLt20BdT0NgqF+tnvmetyBzLN8yZ1FS/MHCvNY56hY6CcyknPWdT7w==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1737481140; bh=fKTptBg2z5uPhdKzRcoMi7FFRP1wffGO4uuV6UYc8w7=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=T7ABu9Wg/aygnNW+Q6HjDnFu/CLhtcKjNOfZie3/xk9oDZu63u3RuGc7afre1EXLiagcKngXS3Jau4rIM3dIAzcw+YQIA79RTtwQpSasOHqXHs+wjiNnwWBZ6pLgs59IPTypDErDGt/C/VlP5yBqsJurATmgeiEhHnNKRriuNGWrkE5nRtfMm166Majb+KzP0gRTAdVMWWCt0tFtmImKVfobv7s6wSudLD6EM5pGI/AKuGq6wbEGoyCp9bPRtp2yoLK0VM2wEcpDqj3mN1ORVNVwmDlkh9dq0aeEM/64tqG+fvf4lwmfjTxsOngVAcxUHirq4a8zltoMYOuu2Vi/xQ==
-X-YMail-OSG: T8pXtAAVM1m.p73y17ObzY0GhhHIYJLJ6mZrr1AcPjbgaW.M4NDdqHDjzME90Z2
- 3hP4cy6jVAqvxP832kz1Zm75W5P5WRolBliJCDDrlDQzrOQ2h49X_MqNrue6DUSIqBI7GEWmoVCT
- 9c5O6L949aNsedJV2lkJ2azus_m5weKBfYyUVx3UYzMAxRc9yaIjrUV.lTdO5MMwGFC6DpWphPNr
- qROFVqIQf7pPtboNUQbChGZyt71sE1WraLO3KhH5LsVc_KWqFJ_m7.VdKGYp6RvoWbLxkuL6s45M
- uGPT0ovT4IJF5se8PW7VZ84tfAgDFJ0wZ1hxI6_ex13y8S8d0FDMZv5zwYG4Gm6exK2pH7YF5VSc
- KY7SUnb6vlCLYZyRKBC58QFa49fNiOabbojZDmILUAjzEtT9RHgm1amQ5YvdZbAjjxN21nDFYeHs
- xnWSWbHADRptnLsV_gqrP6fRcRp_NE.pOuFvr3M7eXJuhGEHOEdv6_lYI6Bdpw.Phgf5l3QEZpNp
- tU4MLXhVx0ADpxQcMyzqCeuAgo8ar7xdC20IE1JdDB.oceGI6vutsxMDQoSCE3g0LSKc7HO2RFZV
- ajzmE1T55YHLoEYsUIFELNyZcR7agEtfWxC.993wjrik3JJIDLs2nPJFKm4rLr7fk4YfORT8tFp2
- o6y9om3ZWnAj7IBsAsJm7N_L0lfX3YrSmaf6md9GvIcwZ22EJ.qsWoIBLwS2Dqxg8aG40GZ2cVMY
- mDpFngDau_UF1f1ttJHlbZzDvdw3ChwY8aJdhGOqBoItftswufdhFQcb1ZwhQjH6LKstElref28l
- BfthdPI_KxJ0hZKFBGDLrz8roE0ZFu0jv6ABOENTXi6f5CtNfGM5XCXDHcmj0iNphj0lqjrMGi05
- 7oj1r.xnsZWNxr4jOGlV5gdVP0QseugyIP36CM8yKkqp9905JMbSVQwB7zPSyjlgfY..5Wb6hf9L
- Kgm9kgNZu01PZqdamBFZdl.oLOiJpkDblctC66DajEs8XFV1pts5ZeyFwbFhU7za3p5PtZYebqko
- pJCkrnR3qPUl9MA46gsZoCgc4PE.3qPoN1sJWGmM5k.1Mlmf.79j.xX0acMLiChkru7ZgOWjQVwm
- WnLJRrIl0UTQc8HguUCVv_dFVlFJPV2gZpOG56Eyg2j.GYu57_LQPUhSQcaAffRDbsioroFglosi
- nSys_t9qYJ2E0SFm7OpR4xBooEJaNXjDmD6htyiAGlh_p.qCJhOZfxYqgAWqjioP4riVkFAIiLal
- _k8744IBnph81ZDmN10FqQQK788r48utcdlbgsEZqiqiboK2_t1jBN0JdzYaSV1Bz.YBzorxZOyx
- Wp3XoKM2i7SUNH0dcnyBxCzfvdl7dCrkAjH6j5xO3TiqH8fu8MosVf0WsXI2lXAd4HAhpJw.89ZH
- fAVs3KddAQCsgvhTKfgO4rnCLW9fQ4CcslDXGgySHsVE7GwIc7cLmGP5ng_ShPhEY3rWXxSCljij
- qdX8PYWlnRlnyNzl1nxwZSzErJg2CMCSKbYYMSdTMbxb9wrdMo5CJDl9v_1En6BFxwFdJhjvBlLy
- p97Dqk5oaEXvbKUdilRxQU1NlIBc4YF3di.0vwMOS3wMOLCVuq.xqD2Vnqw2vMNgq8Y7_kjJ._A_
- OPdpF5pcjEwpJifjjI._w9e0MX5apG39.HReLjH22VcaxhyXndccVNcfDi8gBefUi_jmVYScRT9y
- n8AjJDDDsL6HVmgLta9zihAy40SR5PuUVJPWXTO5OyOyKMNaTNmS5hQdtnpV.74zflsJRPOmEm2Q
- awJnhZzc7EcHpZHkgVc8QnSS1IFpRJZ_tEUzwGkLyj6KQoPPrgGbPn.lU0TCGOe6LKNQ0O81dMFj
- RPlUXOnpgG9dAYleDjFI9S2fNRX0dbdXVOpxaDgdnQ26xX6VtlhZ4LqFxlPTCIWMJg3uvMMHzql2
- 4IkEMLQlbeh.ONB8guhN9M1Y_C46x1AgnAjEw45XFqXBI63Yp07ZK1F0qHIw1UZgry65TjmO_snC
- NwHDugHxoI96OuuRX5_hez7qS.A1VdhUWzpghWLAPHZ5t2ceHcqryVHZmOtFkOCBGGKKJSVzkFTk
- 65mTY5nJaGhzj9BzebTpUaQPa_sIPWd3kEwk9Vz3nKAzyYM4YrZj8QWo7zBNOgthBiE5W.vAGBt8
- ov7YDEATGVvJL0McsKB67s_U_aD3dDd4a2s893h7I30PxGegM3vTTzaMnzrjFuqFEkRvLFojr_C8
- CAN03xJGrQY3ve69NnCf3gh6DHNs8eASEU7an6w3QSTbMYkVBWzUebUrwnY1s7YrRVupXLBW5Tje
- 4eQ--
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="PFTsvV1z"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1737483004; bh=bENKwb71nO21H3Ixtiy9hwJLu92Zf8U55zOaAlFmQNo=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=PFTsvV1z+Ki0ZsdvaEBmTK1mNMCQbBa/bMCuPIlRqJ3a/XxHFLwn/BR8Ho0mdxo2wmgcBjhxhy/qKOInvegRSEq20mMcmKq8glPoh6SqOjU2SL1b6WYm0xJEhlnB9z50VRZ41m3UDr9GVSvlMs4EyJd9K7F0Q6F3XE0WOgY8Ndy1Q06AXt82rOgGJWtYePp2lZQINP2ZjvHMlaafLLKyK9/R9WDGOjhxmXGGgPmvCLlAUxs1SRTKt9MmLFXu0qwvKbbhK8q3cYgGIPH0pNzVHC/9ss97kf9d28Qrl8XefiexD/CVIJjIKq2B+rV+qeG+HztcvJS/Z8lYhx9CkjdOVg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1737483004; bh=EkdYx7f1x1nNhhHrfPiSy78jzbtMjKCNEAhDQji1Faw=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=nQAwioZyevU3lS2y8mX+JMUYyHL4J9H/OyamSJGAXAUdEJVMsSToFWSjprHllFc3pQTpQwJIlu2NK4guG+OaupyNnVgj9uAwUj4sFPm7OeCjsBddyztsvHfWeSwXEisApKnH3k0IgPPbhAK5SRySEcSYoJAhtt8Zq/jYxbJR6CEYeioXyhTnyvdwP83Xmc4Is+v1fONImOVtt8LhW1U/iBtKZni958TYtLZAFFn6jbdZLiRzWOgk5TAOQ2Jphpj4bymbU9NVihsQZxCzECcG82Mz4H8LzFaGCic0PXoisqYJ6gO8GZlxrK8jUW1UabT4ULaL1lClAqiAFi0V+SO2+Q==
+X-YMail-OSG: NsaljrEVM1nWlRajOiPPr.gMAZYpgMkTsFkQwrqVQAMpT.ygn5mhc61bpapNv39
+ lkuMmTTh.mlZgxMW320cUHQy3ilt.WwrRtYJZkNyBpPiIg4N6FfGRsDyVG4B.ZdseYnCiVSUjA3N
+ WhCEMNkJweiyiXcmmP84i6KLK7uYsvk7Rl6n0PZf36Qlg2QO6mpOX9ZMqRaX5zxe6qtYMzhUMZLz
+ AXVB0xUtKVJpIq9F.BayHSuJ6A.1LrPueIp_Ojpst2Bul7khZB3.HdK3qqt7X855O5zhomBZZyNi
+ gYRGMvLNuznseOm1zRXTPikSJVDLouyO3ccNjCcLHCe..h4qVCX0puHmP5GzWx2oBjrYuAvFNmND
+ bTJUvZp5PunG2iaLAwHa0BH2wUyKYlrZ.ai__Y1jrLGLdebvd7fV2JdjAAWvZLziiRsVN_KrbGL_
+ FAXwAydU.Cn23wolvmVBuWfCb02kuHpj_Iem3X.yILUVCp5lHbad.sT4Nu5duNVtUfi.UTKJbF7j
+ _k6bs2XMTdRiNtRGN5g.bHctdVgMYjQ6fjQyswv8NqAfA7tITI.3_zdTPNXGUrERGVNdjHSsUHBm
+ L6FE7wo0rFjsxxUedt3ydPw5BIyJzxGvIXFBV1nhOG3lkBVnDa.AaFRW0soDCV6TVva.VfEd4BP9
+ hwWh2jiyOgX2k0F_K.FZendFY5EZmR.sc5_.H5_jiPln0zqroMvGTHcqCJtdDJgFuVvzb4YhJyke
+ IK0UU6TYL3doQLxr0pNNJuPPKKmWDLaZmfl6n5EzUqLfa9u5HK2hiC3Hz.2MQqXOuK4C75PNdkvI
+ oy5q7qo2w3pQVR3enkdMXBP4k2q47LFKRbTN40pTiYU.5lOwGcODjAGLbLBVLs7j2FKx3pu26hiT
+ jv21r32ixV95MTo4X._ZrDOmlGk76Y.EVVkQwA5yYln5FNCHwI1eZ2WifLZTtUcejruWpUWc4_Xg
+ VFmOTUbOejiaKYAqlDU85dl22Y_r2qEO5wqksssfykbS4HUBMhuJJpdrqUjozeCNQQLvE6NkzqOt
+ vxjKN2OkN96cCa8tukZNXIIP87bN2EAFBxloR6wGf3o6j6.Cc8yaOwhvZe4U8RrahdPkgYJV56Hq
+ xQnydhN8nVNG.tuIJJVs_NcMggXp6YAiNp1zNDFemmfPP27J715zEfK7xvE03re3OQMTEAG8j7gQ
+ TXYoJxdIOpCp6XxgKx7gQmC3AjLS99oVVMpnXWsX3MIPQkZ3lr.7ZjN17JT6.fE9p0k1yYi3AJ0S
+ 2w2atxyzRVPLbQdoKNgi10CcXGgDA.ML8pVJI8JNhJf0SbzoGK788yGO2NXHHowVoEg4gW2dzbxx
+ 3lg.q0MadAAwvI57UsFzl_Ou_feRUkVYLF.lU1McOHFbPvb.K1CeGCbc1ALBS09qDZVyGMN0SHNj
+ epXdrwROx0q8ckrSPfLIOTsJYrOGrWA5yDRJETANZZP7DSArxSStZr4OYzpVngvvBe9BvwEhQL2p
+ SxIoF82YBK4jjdyf73rOOf1d9GaLYCbG7oqd5e_EyBHaw3LLedUrZObTjN8aKR6QzJ1BSZOsWSi6
+ ygcH8tkxAZvIhPAYeZ1Wsh3MP1VVCo5Tl_aRWIYD65rn7Q5uXhE4v06jpe7MnEXjMkHasTA5qmjN
+ .Rd_TD83B_5qiTKDWMH4CzKaffq1NkpgK1X.2PaWCXhW8EW7o0NI04kAbwNKKR94a4f_sZK47Q._
+ F9HQSXwSu9y3YwR2sZ9Rk7HMrIhwjZ7gJ7RA75lUYThqbw14EfM0WuF65uazIt8HKUT5_UoBphll
+ SEXvPyXi76_mVVaGb0MffSSwG3tGGJRrvc.FG3Go_M_2Ic6INBgqMVd2ioek2oPo10uwUs4YZi8V
+ 52UPL8sceV1NfMIiI_n1Y0gx6SxSZ2RtSZnlGcsGXor7Ae3zGJJyfsy8iMutGT0DKqu94rnez5yr
+ v.yr7ZbJpigBW92jtoZxmp1x13GZ55s3f8DYdK2XPl8OQBKRVHyBv0Imto2n11rZin88lt3BeMyg
+ AkZ6qpXWZbvQlf6N_AkTZ5e3GMbawt4wVeRBtkofv8UGmHftJNusBa.oVEOUGm13d8gEAP3.HJ9f
+ DEklIg1_zqYoP9wp93KUOcnR4uqnR8OiAj9WUsPEnb8d_10n5oD8_YxwarUyiolAs4sCYyKhZKm8
+ qu2.9HfUvCLnUVrpQpQZv_JKAhl95sW2G.I8Q.6icwYmJtSaUnIzqTaYVVTP.aEd5uoNjnzVCarh
+ F1CS_cse2EQEwj1ZV4ZPgLHz6_pXXfh5i
 X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: f01e4cba-cd24-4d4b-87cc-d1d6dc98e745
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Tue, 21 Jan 2025 17:39:00 +0000
-Received: by hermes--production-gq1-5dd4b47f46-xx4tp (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 6bf86920c876d71d6153de6bdbb93802;
-          Tue, 21 Jan 2025 17:38:58 +0000 (UTC)
-Message-ID: <40046ce8-1117-47a7-80a3-650f7adb1ecc@schaufler-ca.com>
-Date: Tue, 21 Jan 2025 09:38:57 -0800
+X-Sonic-ID: 9baeff52-a1b8-4ab7-9502-c5b8af608f62
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic304.consmr.mail.ne1.yahoo.com with HTTP; Tue, 21 Jan 2025 18:10:04 +0000
+Received: by hermes--production-gq1-5dd4b47f46-9j75b (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 5add660a64c08cd2a16bdaa82ea6b3c7;
+          Tue, 21 Jan 2025 18:10:00 +0000 (UTC)
+Message-ID: <d61082f5-7426-48cb-8d64-3d8aefee68ca@schaufler-ca.com>
+Date: Tue, 21 Jan 2025 10:09:59 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -64,144 +63,103 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] smack: dont compile ipv6 code unless ipv6 is configured
-To: Konstantin Andreev <andreev@swemel.ru>
-Cc: linux-security-module@vger.kernel.org,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20250117163645.3069927-1-andreev@swemel.ru>
+Subject: Re: [PATCH v4 2/14] Add TSEM specific documentation.
+To: "Dr. Greg" <greg@enjellic.com>
+Cc: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org, jmorris@namei.org
+References: <20240826103728.3378-3-greg@enjellic.com>
+ <8642afa96650e02f50709aa3361b62c4@paul-moore.com>
+ <20250117044731.GA31221@wind.enjellic.com>
+ <1630b5cd-c1ef-4afd-9767-7ebf3c0cc7ae@schaufler-ca.com>
+ <20250118190346.GA9479@wind.enjellic.com>
 Content-Language: en-US
 From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20250117163645.3069927-1-andreev@swemel.ru>
+In-Reply-To: <20250118190346.GA9479@wind.enjellic.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Mailer: WebService/1.1.23187 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On 1/17/2025 8:36 AM, Konstantin Andreev wrote:
-> I want to be sure that ipv6-specific code
-> is not compiled in kernel binaries
-> if ipv6 is not configured.
+On 1/18/2025 11:03 AM, Dr. Greg wrote:
+> On Fri, Jan 17, 2025 at 10:10:30AM -0800, Casey Schaufler wrote:
+>
+> Good morning Casey, I hope your weekend is going well, thanks for
+> taking the time to forward along your thoughts on our work.
+>
+>> On 1/16/2025 8:47 PM, Dr. Greg wrote:
+>>> On Mon, Jan 13, 2025 at 08:29:47PM -0500, Paul Moore wrote:
+>>>
+>> ...
+>>
+>>>> Please define the CELL acronym here as I believe it is the first use of
+>>>> "CELL" in this document.
+>>> FWIW, CELL isn't an acronym, it is a metaphor.
+>>>
+>>> TSEM was conceptually inspired by and derived from the Turing Abstract
+>>> Machine Model (TAMM), as applied to the problem of modeling the
+>>> security state of an execution domain.
+>>>
+>>> As everyone reading this knows, a TAMM, in practice, consists of a
+>>> head traversing an infinite paper tape divided into cells that direct
+>>> the next state of the machine.
+>>>
+>>> In TSEM, the model consists of a Context Of Execution (COE) with
+>>> security definining characteristics, traversing a finite set of
+>>> measurement points of infinite length, with defining characteristics
+>>> at each point.
+>>>
+>>> We refer to a measurement point and its characteristics as a CELL in
+>>> deference to the inspiration for all of this.
+>>>
+>>> We will add this explanation to the documentation.
+>> Communication within a community as culturally diverse as the Linux
+>> kernel developers* requires that you do not assume that "everyone reading
+>> this" knows much of anything beyond how to type "make". Let's face it,
+>> there are kernel developers today who would look at the Turing test and
+>> say "is that even a thing?" There are others who don't have an education
+>> that includes mid-twentieth century technological history.
+>>
+>> [* Yes, an awful lot of Linux kernel developers are western males. ] 
+>>
+>> ...
+> Sigh....
+>
+> It would thus appear that effective dialogue in the Linux kernel
+> community is now about as perilous as attempting to square dance in a
+> minefield with snowshoes on.
 
-The IPv6 Smack support really ought to be replaced with an
-implementation of CALIPSO, now that it is available. The
-conditional compilations that already exist have drawn no
-small amount of well founded criticism. I will most likely
-take this patch, but if you want to be extremely helpful
-you could have a shot at CALIPSO for Smack.
+This isn't about Political Correctness. It's about communication.
+Your documentation appears to target PHD level computer scientists.
+Most Linux kernel developers are much more the BS engineer sort.
+I'm not saying you need to dumb it down, I'm suggesting that you
+could make it easier to review by targeting your audience better.
 
+> When we penned the reflections above, we very specifically didot
+> want to be so pejorative as to suggest that anyone involved in this
+> endeavor wouldn't have at least a basic understanding of the
+> computability theory that all of our work is based.  They even have a
+> movie about it, presumably in multiple languages.
+>
+> In any event, we apologize for being mistaken.
+>
+> We will add a Wikipedia link in the documentation pointing to an
+> article on Turing machines, for the benefit of the unwashed masses now
+> involved in kernel development.
 
+The link is a good idea.
+
+>>> We believe there is a technical solution to this problem as well but
+>>> our work on that front, at this point, is too technically immature to
+>>> go into.
+>> Didn't Pierre de Fermat say something like that about some theorem
+>> or another?
+> ...
 >
-> [1] was getting rid of "unused variable" warning, but,
-> with that, it also mandated compilation of a handful ipv6-
-> specific functions in ipv4-only kernel configurations:
->
-> smk_ipv6_localhost, smack_ipv6host_label, smk_ipv6_check.
->
-> Their compiled bodies are likely to be removed by compiler
-> from the resulting binary, but, to be on the safe side,
-> I remove them from the compiler view.
->
-> [1]
-> Fixes: 00720f0e7f28 ("smack: avoid unused 'sip' variable warning")
->
-> Signed-off-by: Konstantin Andreev <andreev@swemel.ru>
-> ---
->  security/smack/smack.h     |  6 ++++++
->  security/smack/smack_lsm.c | 10 +++++++++-
->  2 files changed, 15 insertions(+), 1 deletion(-)
->
-> diff --git a/security/smack/smack.h b/security/smack/smack.h
-> index 4608b07607a3..c4d998972ba5 100644
-> --- a/security/smack/smack.h
-> +++ b/security/smack/smack.h
-> @@ -152,6 +152,7 @@ struct smk_net4addr {
->  	struct smack_known	*smk_label;	/* label */
->  };
->  
-> +#if IS_ENABLED(CONFIG_IPV6)
->  /*
->   * An entry in the table identifying IPv6 hosts.
->   */
-> @@ -162,7 +163,9 @@ struct smk_net6addr {
->  	int			smk_masks;	/* mask size */
->  	struct smack_known	*smk_label;	/* label */
->  };
-> +#endif /* CONFIG_IPV6 */
->  
-> +#ifdef SMACK_IPV6_PORT_LABELING
->  /*
->   * An entry in the table identifying ports.
->   */
-> @@ -175,6 +178,7 @@ struct smk_port_label {
->  	short			smk_sock_type;	/* Socket type */
->  	short			smk_can_reuse;
->  };
-> +#endif /* SMACK_IPV6_PORT_LABELING */
->  
->  struct smack_known_list_elem {
->  	struct list_head	list;
-> @@ -315,7 +319,9 @@ extern struct smack_known smack_known_web;
->  extern struct mutex	smack_known_lock;
->  extern struct list_head smack_known_list;
->  extern struct list_head smk_net4addr_list;
-> +#if IS_ENABLED(CONFIG_IPV6)
->  extern struct list_head smk_net6addr_list;
-> +#endif /* CONFIG_IPV6 */
->  
->  extern struct mutex     smack_onlycap_lock;
->  extern struct list_head smack_onlycap_list;
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index c3f8de53aefd..ce7d44509973 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -2492,6 +2492,7 @@ static struct smack_known *smack_ipv4host_label(struct sockaddr_in *sip)
->  	return NULL;
->  }
->  
-> +#if IS_ENABLED(CONFIG_IPV6)
->  /*
->   * smk_ipv6_localhost - Check for local ipv6 host address
->   * @sip: the address
-> @@ -2559,6 +2560,7 @@ static struct smack_known *smack_ipv6host_label(struct sockaddr_in6 *sip)
->  
->  	return NULL;
->  }
-> +#endif /* CONFIG_IPV6 */
->  
->  /**
->   * smack_netlbl_add - Set the secattr on a socket
-> @@ -2663,6 +2665,7 @@ static int smk_ipv4_check(struct sock *sk, struct sockaddr_in *sap)
->  	return rc;
->  }
->  
-> +#if IS_ENABLED(CONFIG_IPV6)
->  /**
->   * smk_ipv6_check - check Smack access
->   * @subject: subject Smack label
-> @@ -2695,6 +2698,7 @@ static int smk_ipv6_check(struct smack_known *subject,
->  	rc = smk_bu_note("IPv6 check", subject, object, MAY_WRITE, rc);
->  	return rc;
->  }
-> +#endif /* CONFIG_IPV6 */
->  
->  #ifdef SMACK_IPV6_PORT_LABELING
->  /**
-> @@ -3027,7 +3031,9 @@ static int smack_socket_connect(struct socket *sock, struct sockaddr *sap,
->  		return 0;
->  	if (addrlen < offsetofend(struct sockaddr, sa_family))
->  		return 0;
-> -	if (IS_ENABLED(CONFIG_IPV6) && sap->sa_family == AF_INET6) {
-> +
-> +#if IS_ENABLED(CONFIG_IPV6)
-> +	if (sap->sa_family == AF_INET6) {
->  		struct sockaddr_in6 *sip = (struct sockaddr_in6 *)sap;
->  		struct smack_known *rsp = NULL;
->  
-> @@ -3047,6 +3053,8 @@ static int smack_socket_connect(struct socket *sock, struct sockaddr *sap,
->  
->  		return rc;
->  	}
-> +#endif /* CONFIG_IPV6 */
-> +
->  	if (sap->sa_family != AF_INET || addrlen < sizeof(struct sockaddr_in))
->  		return 0;
->  	rc = smk_ipv4_check(sock->sk, (struct sockaddr_in *)sap);
+> As a Quixote team we take some solace to your reference of Fermat's
+> Theorem with respect to our work.  It took 358 years to formally prove
+> his theorem, in the face of many nay-sayers.  It turns out he was
+> absolutely right and his vision is now universally accepted as a
+> foundational premise of mathematics.
+
+If it takes the Quixote team 358 years to develop a technical solution
+I expect you will miss your market window. :(
+
