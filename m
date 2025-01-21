@@ -1,81 +1,106 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3E121C173C
-	for <linux-security-module@vger.kernel.org>; Tue, 21 Jan 2025 09:35:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B7B51E9B0D;
+	Tue, 21 Jan 2025 10:11:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737452138; cv=none; b=t3j83z+Ce6XwtGNNffc1ck6RNKdqeRbYvaGVszOR+YxYlydHoT1CuF8rPY1bKQHJsn1PriHNt1fKPkcC5Xd7p0gxJlXL3wb6LIJnkJwbm50WJ0dctzNd5DfmmtW3UaYXAXCpyjNvKQp+PuH1C0VlZnb/nAypTNthCdpeezN+DAk=
+	t=1737454308; cv=none; b=kMHdJncpUmzRI1Ot3c2ZhsqVnKilDsZDT5XEWW8OnRlYGa+HLjXsCFg3LGdTukRqqyMNgrFHdhyDOuUJXfonJJxbLJou1XuxrN4owTd2krZtSRNe/KplwA09g2fsmulwF+27EgzBN8kvD4v4gVPzhXq6eTk009WE/Rd+Jg8pRUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737452138; c=relaxed/simple;
-	bh=UOt96m3Ai0Um04yoDoVTR8MiDB83yaiSBVo5rTHIuVE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MkkHJLRHfbdZbyYduRXF4Wzt7t8CLZlyFcTOs/UYEFaOnktfYpnZHcXWr088yfQPomZGX1bgbPOzhhQsdKOmBJMSIIe+kkGWvbP5zyB1FtZjUEihfEAY2u4JZGFfqYCXk3VAXJLW5X885nb0pc6g2TSe4txl47xQDU7i6Y3L1EY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1taAfG-0005Xs-1G; Tue, 21 Jan 2025 10:35:18 +0100
-Message-ID: <825acb12-ac34-49fe-b2d1-d42e08e0cebc@pengutronix.de>
-Date: Tue, 21 Jan 2025 10:35:15 +0100
+	s=arc-20240116; t=1737454308; c=relaxed/simple;
+	bh=fcSh4AxZ27ZgC4b06I+jDz8xOha1g9su88HEf3I7ObE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tyYF3dMOQmPT8g05bbw3D+jnOMd8niJ5j7r9uJxtf6gF38chciYdniGwu4ko1BktygHYEoHXRz4m57x6bBn7mAifZWdrs8quIwkPFFBMapfak15cQu2HAcZL8jjOjp9jOy7st3dxf3EsYk/Fdt3ipRcDilc3ZHRY45rPmb/0AqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aWjiTs2O; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aWjiTs2O"
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2163dc5155fso101172685ad.0;
+        Tue, 21 Jan 2025 02:11:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1737454306; x=1738059106; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=u4GhAgdGPJao5oBQSTGd+M55EpKH1+oHBv+vxevMflk=;
+        b=aWjiTs2Oky77K98RCfT0WEXezH09matXSnaj98XZ1Nhhs0Pi31vzdShYRgwtbBZ/3R
+         TOgpfNFrKmqhJlotDJJotJw09/ADwBUbFNZ2fhwBaaiyQ6UkL1xONeUbdsBk+AP92el8
+         eoxfuOqNwkimy+2O8FqG3C8ulcG/O4qz2xNx4XN3yyr7txSI7N1bulIDMSueN475uJjz
+         TkjxLxgfFaZNjvbpZEI6C/6qFLBDJGpwy/ccBgEvy3KbkCgvlZQzeLdUuE/JPMzekD/u
+         4NWsfJeKM5bHVM59sCgPvCaP3XyH3VWSlPHxw5tvBn9UYDP5HrC/cuihYOgPBV68tvvM
+         fotw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737454306; x=1738059106;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=u4GhAgdGPJao5oBQSTGd+M55EpKH1+oHBv+vxevMflk=;
+        b=HzBGOPjgzeME9sQnokRL7dhuTkxELR+SFGGTpgfZVvB8WjTjhH/dn0L9xM8fMn/dos
+         qdDlO4jYic6G0z7XiwLGz7d/CCaMXA9EQ/EXObM3xu415gBvKRRkBMB91dgOK+jnSPNQ
+         j1CF22VftP1akdjRxoGGlKEVoIfQiKTqkIugmt9qQGjlODoLejWwLIlXmSb7M/VdGfW0
+         eykBxSWXZcn+j+jnXeMrLLaq9RYnZs6zZ3y8P6VlMZeGqZgUMPsHDfXz/s5EV5+yX04k
+         b46Y+JAYYoCQXO3AKWlo1zBmrvORJtqlD/CaZ1v7NR/L4vT3Mf52Ds5v+G6rRJD+frz2
+         e1aw==
+X-Forwarded-Encrypted: i=1; AJvYcCVBPQNunW9Heumj5ip1sW7yPAMBDqfN+ItbvAN1q2SffvfccvhM2x/Dib3+ilRGVUCp8GX20d7Er0Blx4KiyJNOSrAgg7Cu@vger.kernel.org, AJvYcCX9DFQ3vKSkRNOCo39rBcyKad4RaHSjG/b3QQ0TC1LsVtdh9VEoU7G4HAeBoAoPD6T2pJIC9iHdoVAQirM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFZesdmqeC/Uiv0572WHmSNnhnswYQtxg7J/DUbRg2tWqKhfW/
+	+bTMX/vr8VQropwgmGVJjUDBkGhBJFpe5eDwfCdZiGBFKHop9dGc
+X-Gm-Gg: ASbGncsnybubfvJi7QCKS4vQT0WPiTezdMvD2xU8/NdutQi2Bm6fYXoQ3PEuiiWUIku
+	rUOzJVrbTr0vYNrGXwLGfr5oj7LkAwNAghugn4qZu8lDmmujKEG2+aRnT4yXmS8J2UxWG2GTKbr
+	J6PRRimNr6puIJCYEaYm4xsQeIsDzwaWBuHGwOBs4eKrWCBnCtf3g6BKBGUe1ZQf6MT5U1wA0fL
+	Vt2FJn5yv4Tdt5GcAdg+fqH97k1e+vTddb2jkFaPMUUUQ7lmZDSNxzmMZnSwNJ5qCJUSvJS/A==
+X-Google-Smtp-Source: AGHT+IF6jOOijDRlgAzivw8DReYi5rs58LTDAI7B2+ElM37sm5S/cFLuCYJWzorRK9MfaRj2u+IjKQ==
+X-Received: by 2002:a17:903:1ce:b0:216:4a06:e87a with SMTP id d9443c01a7336-21c355dc64bmr254887485ad.40.1737454306461;
+        Tue, 21 Jan 2025 02:11:46 -0800 (PST)
+Received: from HOME-PC ([223.185.135.17])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21c2d402d61sm74580295ad.229.2025.01.21.02.11.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Jan 2025 02:11:45 -0800 (PST)
+From: Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>
+To: john.johansen@canonical.com,
+	apparmor@lists.ubuntu.com
+Cc: paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>
+Subject: [PATCH security] apparmor: fix logical error in signal range validation
+Date: Tue, 21 Jan 2025 15:41:38 +0530
+Message-Id: <20250121101138.116675-1-dheeraj.linuxdev@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 07/12] reboot: add support for configuring emergency
- hardware protection action
-To: Tzung-Bi Shih <tzungbi@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Fabio Estevam
- <festevam@denx.de>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
- Jonathan Corbet <corbet@lwn.net>, Serge Hallyn <serge@hallyn.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Matti Vaittinen <mazziesaccount@gmail.com>,
- Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-security-module@vger.kernel.org, chrome-platform@lists.linux.dev,
- devicetree@vger.kernel.org, kernel@pengutronix.de,
- Matteo Croce <mcroce@microsoft.com>
-References: <20250113-hw_protection-reboot-v2-0-161d3fc734f0@pengutronix.de>
- <20250113-hw_protection-reboot-v2-7-161d3fc734f0@pengutronix.de>
- <Z433SVbr-h3JCycF@google.com>
-Content-Language: en-US
-From: Ahmad Fatoum <a.fatoum@pengutronix.de>
-In-Reply-To: <Z433SVbr-h3JCycF@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 
-Hi,
+Fix logically impossible condition in unpack_profile() that made the
+signal validation code unreachable. The function was using && instead
+of || when checking if the signal value is outside the valid range,
+making it impossible for both conditions to be true simultaneously.
 
-On 20.01.25 08:12, Tzung-Bi Shih wrote:
->> +What:		/sys/kernel/reboot/hw_protection
->> +Date:		Feb 2025
->> +KernelVersion:	6.14
-> 
-> The info might need to be adjusted if the series would be for 6.15. 
+Update the condition to ensure proper range validation.
 
-I was being optimistic, but ye, now v6.15 would be earliest.
-I will wait a bit to see if there's more feedback and then send v3
-with the suggested changes and tags.
+Fixes: 84c455decf27 ("apparmor: add support for profiles to define the kill signal")
+Signed-off-by: Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>
+---
+ security/apparmor/policy_unpack.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thank you for taking the time,
-Ahmad
-
-
+diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
+index 73139189df0f..e643514a3d92 100644
+--- a/security/apparmor/policy_unpack.c
++++ b/security/apparmor/policy_unpack.c
+@@ -919,7 +919,7 @@ static struct aa_profile *unpack_profile(struct aa_ext *e, char **ns_name)
+ 
+ 	/* optional */
+ 	(void) aa_unpack_u32(e, &profile->signal, "kill");
+-	if (profile->signal < 1 && profile->signal > MAXMAPPED_SIG) {
++	if (profile->signal < 1 || profile->signal > MAXMAPPED_SIG) {
+ 		info = "profile kill.signal invalid value";
+ 		goto fail;
+ 	}
 -- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+2.34.1
+
