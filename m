@@ -1,63 +1,65 @@
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A31551F1515
-	for <linux-security-module@vger.kernel.org>; Tue, 21 Jan 2025 23:40:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B26E71EF0BC
+	for <linux-security-module@vger.kernel.org>; Tue, 21 Jan 2025 23:40:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737502814; cv=none; b=jFpBqT5xLpBsgTh/baSNO2NtnqEDyKnUCz8WqvEKADOwIihiWRy1q4Cqp/V8LGxZCljOTOy1Pw4L/F5ju7S5+DUeQmNehOOWE7Wvf/Jj69mWnvDHkJeKcDT1qujg4oMUSbrwfjT7l/fpL99/l96VOHCkJrkWayAfznAxXy+051Q=
+	t=1737502829; cv=none; b=HOvrdBqZw5t7CInxbnJe8ibQMwYRG8Udnt1ejEbaB5jwfsFObQEaLc8oF3Y1nBwOrnDwE/et8aXxMVn480iv3h/hedM+oIfzcpo4bShJSfDNnQIzlO4e3Ynf5Z5zMV+GVBi9e2siBBrH8uxTRoSJHkphJl6KxqlXhZdHZCxVhtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737502814; c=relaxed/simple;
-	bh=pSwiYPlSqiDS39bXiWnOD9G7tmr+fbiAayyRrTmzXWA=;
-	h=Date:Message-ID:From:To:Cc:Subject; b=dbNoVPliuGmxnP2bjFm6hMdLkcgUYt+7SMsBOeP2Kz60wAEfIn+HJezC0REbeBrgbRrqSdAq/pZLnVYT9t8bJ/aCCCTxhwEL5KRb0MnUHsPCzkCzupw7BfUOru7uOT+G4AuBdwqFc+acTuU9bPKd+eEgAS39a0uxcjqDfT8aST4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=UhsS6yA5; arc=none smtp.client-ip=209.85.222.170
+	s=arc-20240116; t=1737502829; c=relaxed/simple;
+	bh=r03QFes6IFOxhf/HJnwsOFl/NvyFoqtNJu4O16zG7P0=;
+	h=Date:Message-ID:From:To:Cc:Subject; b=WZa2D2jiQs0ppvSJu2WzV5tLlBdDHjlWG5uRncOu60+rDADgVreEdSImbkNS2EqwS/UP9s409L/kz73l3VXPlTZDbmalOC7mm8nz3CllaF3aoUEn/GhgXjrTofSGF1yCkm8VmFLqCTZdgveP0NS0Okc/GDtqD5M3N/+1VZI6OWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=HnikFCLy; arc=none smtp.client-ip=209.85.160.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="UhsS6yA5"
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7bcf32a6582so555772785a.1
-        for <linux-security-module@vger.kernel.org>; Tue, 21 Jan 2025 15:40:12 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="HnikFCLy"
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-467a6ecaa54so56663461cf.0
+        for <linux-security-module@vger.kernel.org>; Tue, 21 Jan 2025 15:40:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1737502811; x=1738107611; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1737502825; x=1738107625; darn=vger.kernel.org;
         h=subject:cc:to:from:message-id:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ZGKKV34zlfzM4tj8xlLWpq4U1VmTQkFTMB8ii94f/9g=;
-        b=UhsS6yA50ColarU7JI2KN8hloO1FtXVg9cy2/rA/DOmDiERWbxnznG/O0cCRRXMIaj
-         5ZMOKtWbGqqKz72/9wTBD3h6x1WGO1oMEUFbOMTvJW6E5yfFKWLeV9Id4xtGGp4y1uxP
-         3NTe6AWTYo22XowvvRMh7DsjOMsSYyOpKjKP7T//fNLfSsW9mJK4+9rAsL34jO2Eu99w
-         6RBwRMMYK8NHgD8XO0OmGlYbNxbbjD6411rxLymJyGww+iC+w9MiTKFQ+78CEcfee55R
-         fNVmITX8D2cPhjYGC14fS/BaS4VC/p6XjTA4XwNchLSA9caXdAmjrKm1Lc+23jBclGdP
-         Qzsw==
+        bh=JE0i6kb20DWpBSDBOpkyqoxMa6iQVxxTGWSIt0YyYu0=;
+        b=HnikFCLykEeCsRwf47ZJTKm4SIIypC4ndjPjuMfVoeqO3/LUuaB3V8v8YiMzMe6+ln
+         xhf48l+brL4oiE8LpCviUpxb2Hl2V7D3KxmYrT+pLdcGkQML+D4KL3sXG/bvF29wIiT0
+         xs6ZHdqRWaSFhOE3byjl+AE79ggqMIWde4gzppyLTX0gW81JVUq+49SGaoXIEpL6Do2N
+         HcAhGBl3kxTaXYf1SG2crek43YuOlEdEidTR7DgPF2nRsyCXiecAUjzRtqVOvI4CtDfb
+         VvlcTHld1skSX0BgoZTFbeQCJbYYD8Tys6zTKA3PhtieiFy3zoxPrQO7qi1noMo1oiw2
+         RNAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737502811; x=1738107611;
+        d=1e100.net; s=20230601; t=1737502825; x=1738107625;
         h=subject:cc:to:from:message-id:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ZGKKV34zlfzM4tj8xlLWpq4U1VmTQkFTMB8ii94f/9g=;
-        b=tsJdutZxpoy8Y64FH5EqNOBBZgU9i0UY5RjbAvEjpux2/kS8JGo1lsto3wwijC8Q7C
-         X6W9atRRM6x8xa9Gq2KKYE5gOpldxf2xsZbSBFYm2lRMFUkYeck8hDQQLQpaMmDHq9AE
-         stXthe34BsaPKShfYMkfywPtVxCtBFDV47tkmOJ4+qD5aGWLPwExBrSLMMj3mjgvHmeU
-         ik6dI08lm70J0hhDQjWCsbw0ORkMjYDLx7dvgCMsG8mG7KUvb4ecZsyGvpa+xknnNwf6
-         TGkJqO16Uy/MNXvD6WL9iPMKFfmMvOH+Ywc49YNuIFu9mCVoxz3NxOPwHGeBoWEpUVVP
-         zrJg==
-X-Gm-Message-State: AOJu0Yzw66im333xVLGL8NZS3MgD1VjXwvXIYBi6lCVb6Nj53EFMUviG
-	ucbJnpDGixuleyTerPS/hbi8s2on24GNdU55bU5lMSJlxWbAFbmnukywiQBJrA==
-X-Gm-Gg: ASbGnct1aU2VvK0M0bGzNIml9lTzrQyVA4/MGqWw1QjaK5jYNF6Y5OVnW+z6xJ07DI3
-	h8GfmM8N0UX15w0Vcc1mhEdxJxBVIsrSVqtDQypZLdgwzfKeqoY2BLZJJjftcMk3QLt+1VCrpXy
-	6Ulr9eynMI35rcivO3HCA/Oo7j69P4d9T0fMX3msKHxKFOoKfocgwmkSJXgJ2CkhxQnM/hVZ7l3
-	d7VI0XBmCrulP03sGOE2ELBNZZcNjJ0E4bMoGUspaV0UYAT+dZwB7yx5/A2OHI5
-X-Google-Smtp-Source: AGHT+IFJLsePXH34LfvxbtHxCNvBgBr6oLI3+mxWJhHJgBIBGsLCQ6yYdKKnMk1LxIfB2VYBheRUrw==
-X-Received: by 2002:a05:620a:4396:b0:7b1:48ff:6b56 with SMTP id af79cd13be357-7be6327979emr3166709485a.43.1737502811433;
-        Tue, 21 Jan 2025 15:40:11 -0800 (PST)
+        bh=JE0i6kb20DWpBSDBOpkyqoxMa6iQVxxTGWSIt0YyYu0=;
+        b=Y+Tm79iRWnvByx9hk2xM3iQWXnZgArjQiI4NN/mxra+2v7oVPNzW1ZBYkAmSmP9beM
+         EBbQydxX++nZ23j9WX6LOSRlIAhMeXQlz7luMX925SyVM4nybxRXfd1cJztr3HpBfBDC
+         BjSQF5DrsLT1uG/QGXRqm2Ap3hequXFweazz/0n80qrkMGN3DLOQd7YQeDytkDSPnWm+
+         ejzOK2kYRdvjzjkqtVxrUkwkXqdGohajxMyIYexgndhDUKHCD1DO32Q+rAALVVFvaxEk
+         EPcJpsZ/hZXOK3hOmDHrskETvntGr9FaTqyNpyNFgzbOqVaWjBJGKoQUpcYz2jmkAMV5
+         b17w==
+X-Forwarded-Encrypted: i=1; AJvYcCWUyHE26hAG9I7brkdg+iiGj15Rw3GVH/7RloPIx7vbFqbXf7lFglc3pzXVQmig6hFg/81Ph7p2PR6z3AVtbr1hKVuTUd4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhSVJhnxvBSLYyH85i/aT9OftLXVaPQPMqGWk1wfjXDJu19nza
+	hwdK+xJ/iEiCHW3GytvU0hmD79z1csBe11JiN5jeL1Y1Ob8UvcxManD9fOm0+rVQvzHpyr4M8LI
+	=
+X-Gm-Gg: ASbGnctZeA1/oRNIre8D/rGxpiWUHRHHe8T3J16W8ia0bpk5shU9xNDh99OmayS48jd
+	J81mCt8fSYEpYSlS3BUl5gHfTf0uoCjBs44vM4KLQsTiMpe4P03jy7MWH3aoZyyKghSDdOSloC+
+	FjX+oqhh+sYXRb9mK9REskHelU/GDvPlYAUG4+Vh5lZoiax1Y/PxsWFW/ptujBCMGBQjT7278OG
+	4ohDSLNSleFSGCtTMNr37B9EinP3lxAlNyhAYjfCje3K6NAcMvsrMh0ZP2LGQrb
+X-Google-Smtp-Source: AGHT+IG6/cDRy0NriMPIYCFbswoi8z+2V8sAu37Y+BrObvorJ6UJsoJR5PDz+/pbpj9GiVbLrTbp3g==
+X-Received: by 2002:ac8:57c2:0:b0:46c:77eb:42d4 with SMTP id d75a77b69052e-46e12a96f28mr278054841cf.22.1737502825607;
+        Tue, 21 Jan 2025 15:40:25 -0800 (PST)
 Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7be614d98dbsm608942685a.74.2025.01.21.15.40.10
+        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-46e1030dffesm59301681cf.41.2025.01.21.15.40.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Jan 2025 15:40:10 -0800 (PST)
-Date: Tue, 21 Jan 2025 18:40:10 -0500
-Message-ID: <da749e8ed1a18e2b14d9337a78749b15@paul-moore.com>
+        Tue, 21 Jan 2025 15:40:25 -0800 (PST)
+Date: Tue, 21 Jan 2025 18:40:24 -0500
+Message-ID: <d6c372031669fb475858e5f296fc8222@paul-moore.com>
 From: Paul Moore <paul@paul-moore.com>
 To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] lsm/lsm-pr-20250121
+Cc: selinux@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] selinux/selinux-pr-20250121
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -66,39 +68,38 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 
 Linus,
 
-Fifteen LSM framework patches for the v6.14 merge window, a summary is
+A lucky 13 SELinux patches for the v6.14 merge window, the summary is
 below:
 
-- Improved handling of LSM "secctx" strings through lsm_context struct
+- Extended permissions supported in conditional policy
 
-  The LSM secctx string interface is from an older time when only one
-  LSM was supported, migrate over to the lsm_context struct to better
-  support the different LSMs we now have and make it easier to support
-  new LSMs in the future.
-  
-  These changes explain the Rust, VFS, and networking changes in the
-  diffstat.
+  The SELinux extended permissions, aka "xperms", allow security admins
+  to target individuals ioctls, and recently netlink messages, with
+  their SELinux policy.  Adding support for conditional policies allows
+  admins to toggle the granular xperms using SELinux booleans, helping
+  pave the way for greater use of xperms in general purpose SELinux
+  policies.  This change bumps the maximum SELinux policy version to 34.
 
-- Only build lsm_audit.c if CONFIG_SECURITY and CONFIG_AUDIT are enabled
+- Fix a SCTP/SELinux error return code inconsistency
 
-  Small tweak to be a bit smarter about when we build the LSM's common
-  audit helpers.
+  Depending on the loaded SELinux policy, specifically it's EXTSOCKCLASS
+  support, the bind(2) LSM/SELinux hook could return different error
+  codes due to the SELinux code checking the socket's SELinux object
+  class (which can vary depending on EXTSOCKCLASS) and not the socket's
+  sk_protocol field.  We fix this by doing the obvious, and looking at
+  the sock->sk_protocol field instead of the object class.
 
-- Check for absurdly large policies from userspace in SafeSetID
+- Makefile fixes to properly cleanup av_permissions.h
 
-  SafeSetID policies rules are fairly small, basically just "UID:UID",
-  it easy to impose a limit of KMALLOC_MAX_SIZE on policy writes which
-  helps quiet a number of syzbot related issues.  While work is being
-  done to address the syzbot issues through other mechanisms, this is
-  a trivial and relatively safe fix that we can do now.
+  Add av_permissions.h to "targets" so that it is properly cleaned up
+  using the kbuild infrastructure.
 
-- Various minor improvements and cleanups
+- A number of smaller improvements by Christian Göttsche
 
-  A collection of improvements to the kernel selftests, constification
-  of some function parameters, removing redundant assignments, and local
-  variable renames to improve readability.
-
-Paul
+  A variety of straightforward changes to reduce code duplication,
+  reduce pointer lookups, migrate void pointers to defined types,
+  simplify code, constify function parameters, and correct
+  iterator types.
 
 --
 The following changes since commit 40384c840ea1944d7c5a392e8975ed088ecf0b37:
@@ -107,83 +108,62 @@ The following changes since commit 40384c840ea1944d7c5a392e8975ed088ecf0b37:
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git
-    tags/lsm-pr-20250121
+  https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+    tags/selinux-pr-20250121
 
-for you to fetch changes up to 714d87c90a766e6917f7d69f618b864d350f09d3:
+for you to fetch changes up to 01c2253a0fbdccb58cd79d4ff9ab39964bfb4474:
 
-  lockdown: initialize local array before use to quiet static analysis
-    (2025-01-05 12:48:43 -0500)
+  selinux: make more use of str_read() when loading the policy
+    (2025-01-07 23:14:40 -0500)
 
 ----------------------------------------------------------------
-lsm/stable-6.14 PR 20250121
+selinux/stable-6.14 PR 20250121
 ----------------------------------------------------------------
 
-Alice Ryhl (1):
-      rust: replace lsm context+len with lsm_context
+Christian Göttsche (10):
+      selinux: use native iterator types
+      selinux: add support for xperms in conditional policies
+      selinux: supply missing field initializers
+      selinux: avoid using types indicating user space interaction
+      selinux: constify and reconcile function parameter names
+      selinux: rework match_ipv6_addrmask()
+      selinux: rename comparison functions for clarity
+      selinux: use known type instead of void pointer
+      selinux: avoid unnecessary indirection in struct level_datum
+      selinux: make more use of str_read() when loading the policy
 
-Amit Vadhavana (1):
-      selftests: refactor the lsm `flags_overset_lsm_set_self_attr` test
+Mikhail Ivanov (1):
+      selinux: Fix SCTP error inconsistency in selinux_socket_bind()
 
-Casey Schaufler (7):
-      lsm: ensure the correct LSM context releaser
-      lsm: replace context+len with lsm_context
-      lsm: use lsm_context in security_inode_getsecctx
-      lsm: lsm_context in security_dentry_init_security
-      lsm: secctx provider check on release
-      binder: initialize lsm_context structure
-      net: corrections for security_secid_to_secctx returns
+Thiébaud Weksteen (1):
+      selinux: add netlink nlmsg_type audit message
 
-Christian Göttsche (2):
-      lsm: constify function parameters
-      lsm: rename variable to avoid shadowing
+Thomas Weißschuh (1):
+      selinux: add generated av_permissions.h to targets
 
-Colin Ian King (1):
-      security: remove redundant assignment to return variable
-
-Leo Stone (1):
-      safesetid: check size of policy writes
-
-Mickaël Salaün (1):
-      lsm: Only build lsm_audit.c if CONFIG_SECURITY and CONFIG_AUDIT
-         are set
-
-Tanya Agarwal (1):
-      lockdown: initialize local array before use to quiet static
-         analysis
-
- drivers/android/binder.c                             |   25 +---
- fs/ceph/super.h                                      |    3 
- fs/ceph/xattr.c                                      |   12 -
- fs/fuse/dir.c                                        |   35 ++---
- fs/nfs/nfs4proc.c                                    |   22 ++-
- fs/nfsd/nfs4xdr.c                                    |   22 +--
- include/linux/lsm_audit.h                            |   14 ++
- include/linux/lsm_hook_defs.h                        |   13 --
- include/linux/security.h                             |   37 +++---
- include/net/scm.h                                    |   12 -
- kernel/audit.c                                       |   33 ++---
- kernel/auditsc.c                                     |   27 +---
- net/ipv4/ip_sockglue.c                               |   12 -
- net/netfilter/nf_conntrack_netlink.c                 |   20 +--
- net/netfilter/nf_conntrack_standalone.c              |   11 -
- net/netfilter/nfnetlink_queue.c                      |   26 ++--
- net/netlabel/netlabel_unlabeled.c                    |   44 ++-----
- net/netlabel/netlabel_user.c                         |   10 -
- rust/helpers/security.c                              |    8 -
- rust/kernel/security.rs                              |   38 ++----
- security/Kconfig                                     |    5 
- security/Makefile                                    |    2 
- security/apparmor/include/secid.h                    |    7 -
- security/apparmor/secid.c                            |   34 +++--
- security/lockdown/lockdown.c                         |    2 
- security/lsm_audit.c                                 |    8 -
- security/safesetid/securityfs.c                      |    3 
- security/security.c                                  |   67 ++++-------
- security/selinux/hooks.c                             |   49 +++++---
- security/smack/smack_lsm.c                           |   52 ++++----
- tools/testing/selftests/lsm/lsm_set_self_attr_test.c |    7 -
- 31 files changed, 351 insertions(+), 309 deletions(-)
+ include/linux/lsm_audit.h              |    2 
+ security/lsm_audit.c                   |    3 
+ security/selinux/Makefile              |    7 -
+ security/selinux/hooks.c               |   10 -
+ security/selinux/include/classmap.h    |    2 
+ security/selinux/include/conditional.h |    2 
+ security/selinux/include/security.h    |    7 -
+ security/selinux/selinuxfs.c           |    4 
+ security/selinux/ss/avtab.c            |   19 ++-
+ security/selinux/ss/avtab.h            |   13 +-
+ security/selinux/ss/conditional.c      |   24 +---
+ security/selinux/ss/conditional.h      |    6 -
+ security/selinux/ss/context.c          |    2 
+ security/selinux/ss/context.h          |   14 +-
+ security/selinux/ss/ebitmap.c          |   12 +-
+ security/selinux/ss/ebitmap.h          |    7 -
+ security/selinux/ss/mls.c              |    6 -
+ security/selinux/ss/mls_types.h        |    2 
+ security/selinux/ss/policydb.c         |  135 +++++++++++--------------
+ security/selinux/ss/policydb.h         |   22 ++--
+ security/selinux/ss/services.c         |   30 ++---
+ security/selinux/ss/sidtab.c           |    6 -
+ 22 files changed, 170 insertions(+), 165 deletions(-)
 
 --
 paul-moore.com
