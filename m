@@ -1,132 +1,138 @@
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BF0B2163B3;
-	Wed, 22 Jan 2025 17:26:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E548921576C;
+	Wed, 22 Jan 2025 18:41:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737566776; cv=none; b=V218HmTnYOXtlwwAFWr4rtqS1qt6cqPRg+8jbAyU2KG6RYE6PRoDfZFJiuxZ4VjkJF6Z6YGKHuWU8CSKbtAimWLtC6gb2mMJntYRYprYzcvjL5H+OH/odvNC3O3sVl4yOQ79bAkLE+RnnR8i6V/k6HEAg4mnIy/3i+t+NIOrQtg=
+	t=1737571280; cv=none; b=CaFn3RN2KRheEeGggN+CJsmZP8qe4ga+ULOJC5F6vx+hY9TIhgiltsDI7Lr6xDwA74g/m+iEjLD2GBErZQAyJdN1RgNtTpLh8wiWH6+iQgJq48z99XJxzUNoWWy2UPnyUdA28KA0sJ4JmiFKv73vK/IurYhiwXQ67ka32qlZrA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737566776; c=relaxed/simple;
-	bh=+G54zyLYx4ceeWfGoCy64lc7WrHPNoQcsdY8qK53ikE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bJPum4dLrV7b8gLl6MB7zbUH6Hp07WA+Xv+c1xwlFi2hXT115nw7VKqUvLss+DHcnqimnXUXU78fSGjnn1tdi87quvAgPTcOfERBNsLHMZYsSWFSpbVTObXLCq30xzQPLyQDP5DZBGx0UPqgOGvAo5vDWjkjAiALx1bIMptcCX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4YdVc466Yzz9v7JQ;
-	Thu, 23 Jan 2025 00:57:08 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id ED4E3140521;
-	Thu, 23 Jan 2025 01:26:05 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwDnbEvkKZFnsGscAQ--.5068S8;
-	Wed, 22 Jan 2025 18:26:05 +0100 (CET)
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: corbet@lwn.net,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	zohar@linux.ibm.com,
-	dmitry.kasatkin@gmail.com,
-	eric.snowberg@oracle.com,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com
-Cc: linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v3 6/6] ima: Reset IMA_NONACTION_RULE_FLAGS after post_setattr
-Date: Wed, 22 Jan 2025 18:24:32 +0100
-Message-Id: <20250122172432.3074180-7-roberto.sassu@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250122172432.3074180-1-roberto.sassu@huaweicloud.com>
-References: <20250122172432.3074180-1-roberto.sassu@huaweicloud.com>
+	s=arc-20240116; t=1737571280; c=relaxed/simple;
+	bh=B4/+U/Ou/tjBGutEBQzXHi8NWKYYlh4/2x9CI2HcJvg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MSYlug3oKHEeVd2XMy0qMRkPHjOK89Qx7oOj1kFISyHYpxaSNPoFA6Fl+M8lp6FvmhGuvLM7oeJmJi68Mfdz/NOxSsF0sODfwFQG9ekbcUX/k6oQW0Ew2PQSqVcHFEQwtqS/TwMJ79gKCftdtQdl47MtmY8LegAhaYwygzf+yfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gJ9G2Kcs; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gJ9G2Kcs"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AFD3C4CEE4;
+	Wed, 22 Jan 2025 18:41:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1737571279;
+	bh=B4/+U/Ou/tjBGutEBQzXHi8NWKYYlh4/2x9CI2HcJvg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=gJ9G2KcsgpSKWL5u2+VkDoqb6IEfXlvY6URDikqH2W0zvw49vksktxGQzWw8X+Ek5
+	 ec4QxsD6xwut9xZo6X78zmItjiWrcBbOTroUgwLSklm1343Gy3lwIMTEK3EiXjvDT7
+	 lUENA/T06cDtUIZtyKB2JxZlQyD9mQ13bRoR68HEZ4REOAlPTJZ4Lln7LTG6waYKor
+	 /rddOWScm0RotIVxYtW2FQIZLLYkPO+QRNacMAeHvCyQsiMFICos5oqZooToPwiEJv
+	 EogiqNoCvt1hoqs7I8jev8ztkXERln+8QzFcp4FcX95gQaoQpv2RewnkEFQRASoIgd
+	 N6ppzQPBDiWHA==
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e53ef7462b6so78894276.3;
+        Wed, 22 Jan 2025 10:41:19 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUyWDn8eFHVDU3yLNijQR06hulZ+tSzsOoLUfNNufuYL47D00pkgsJYtE+v+xKz6AS1Qtp4hWK3ZxycOJs=@vger.kernel.org, AJvYcCUzSFxJnGDrQyjP4WVyeN33R0y49OAov705KdiyysdSEg0Rl9UDTZmYxE4PMO4gWNfoujdcrloh3c7lXX/WPFD0Ow1hm/kR@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4FA2cNEGYF9DH/WaqTuVKlhVoR+05IvVgzYFz7HtgfiTm5hLG
+	84aKkk1cTnNmxX5hrsUxxKlOu/EWvWRjemZ5opvhrMcwBZuGEGt5YIStiPa6oY45mrfd89VSA2/
+	+3UT4LjFr7kaDs806eRtbpFiA9/Y=
+X-Google-Smtp-Source: AGHT+IGw8XPJ+ezXlcnmzan5Sds1EJuMAOnlXv0+afbfRCer8nAJDYLJIiJ9woh5TeDj09ETaH1knUypfdYeukDO+cg=
+X-Received: by 2002:a05:690c:498a:b0:6ef:75af:6155 with SMTP id
+ 00721157ae682-6f6eb9323c5mr184378937b3.32.1737571278671; Wed, 22 Jan 2025
+ 10:41:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:LxC2BwDnbEvkKZFnsGscAQ--.5068S8
-X-Coremail-Antispam: 1UD129KBjvJXoWxAr1UCFWUuFWxWry7urW3Jrb_yoW5Jw48pa
-	9a9FyUGr10qFW0krn3J3W3Ca4rK39F9FWUXa15Aw1vyFnxZr1jqFyDtr17CF98Wr1SkFy2
-	qF9IvryYya1qyaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPlb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAV
-	Cq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0
-	rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUCVW8JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267
-	AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I0E
-	14v26r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrV
-	C2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE
-	7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x0262
-	kKe7AKxVW8ZVWrXwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s02
-	6c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GF
-	v_WrylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI42IY6xIIjxv20xvE
-	c7CjxVAFwI0_Gr1j6F4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aV
-	AFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZF
-	pf9x07jIPfQUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAQBGeQmNQFOgAAsR
+References: <20250122065740.545042-1-code@tyhicks.com>
+In-Reply-To: <20250122065740.545042-1-code@tyhicks.com>
+From: Fan Wu <wufan@kernel.org>
+Date: Wed, 22 Jan 2025 10:41:07 -0800
+X-Gmail-Original-Message-ID: <CAKtyLkG75o=+9UtskB6Qn2ZvzDrzQPi6gBoAYXvio__46Mds8Q@mail.gmail.com>
+X-Gm-Features: AWEUYZkZe1-bVhzraw1NtzVH4aRq4zESuBN8sdj5SlSD19NxU3QlOFX4wevij0k
+Message-ID: <CAKtyLkG75o=+9UtskB6Qn2ZvzDrzQPi6gBoAYXvio__46Mds8Q@mail.gmail.com>
+Subject: Re: [PATCH] ipe: Search for the boot policy file in the source tree
+To: Tyler Hicks <code@tyhicks.com>
+Cc: Fan Wu <wufan@kernel.org>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	Deven Bowers <deven.desai@linux.microsoft.com>, 
+	Shyam Saini <shyamsaini@linux.microsoft.com>, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Roberto Sassu <roberto.sassu@huawei.com>
+Thanks for the fix.
 
-Commit 11c60f23ed13 ("integrity: Remove unused macro
-IMA_ACTION_RULE_FLAGS") removed the IMA_ACTION_RULE_FLAGS mask, due to it
-not being used after commit 0d73a55208e9 ("ima: re-introduce own integrity
-cache lock").
+My only concern here is the use of wildcard. I'm not sure but if
+$(CONFIG_IPE_BOOT_POLICY) is a glob pattern it could match multiple
+files?
 
-However, it seems that the latter commit mistakenly used the wrong mask
-when moving the code from ima_inode_post_setattr() to
-process_measurement(). There is no mention in the commit message about this
-change and it looks quite important, since changing from IMA_ACTIONS_FLAGS
-(later renamed to IMA_NONACTION_FLAGS) to IMA_ACTION_RULE_FLAGS was done by
-commit 42a4c603198f0 ("ima: fix ima_inode_post_setattr").
+Other than that I think the doc of security/ipe/Kconfig needs to be
+updated as well to reflect the makefile change.
 
-Restore the original change of resetting only the policy-specific flags and
-not the new file status, but with new mask 0xfb000000 since the
-policy-specific flags changed meanwhile. Also rename IMA_ACTION_RULE_FLAGS
-to IMA_NONACTION_RULE_FLAGS, to be consistent with IMA_NONACTION_FLAGS.
+-Fan
 
-Cc: stable@vger.kernel.org # v4.16.x
-Fixes: 11c60f23ed13 ("integrity: Remove unused macro IMA_ACTION_RULE_FLAGS")
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- security/integrity/ima/ima.h      | 1 +
- security/integrity/ima/ima_main.c | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index e1a3d1239bee..615900d4150d 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -141,6 +141,7 @@ struct ima_kexec_hdr {
- 
- /* IMA iint policy rule cache flags */
- #define IMA_NONACTION_FLAGS	0xff000000
-+#define IMA_NONACTION_RULE_FLAGS	0xfb000000
- #define IMA_DIGSIG_REQUIRED	0x01000000
- #define IMA_PERMIT_DIRECTIO	0x02000000
- #define IMA_NEW_FILE		0x04000000
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 46adfd524dd8..7173dca20c23 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -275,7 +275,7 @@ static int process_measurement(struct file *file, const struct cred *cred,
- 		/* reset appraisal flags if ima_inode_post_setattr was called */
- 		iint->flags &= ~(IMA_APPRAISE | IMA_APPRAISED |
- 				 IMA_APPRAISE_SUBMASK | IMA_APPRAISED_SUBMASK |
--				 IMA_NONACTION_FLAGS);
-+				 IMA_NONACTION_RULE_FLAGS);
- 
- 	/*
- 	 * Re-evaulate the file if either the xattr has changed or the
--- 
-2.34.1
-
+On Tue, Jan 21, 2025 at 10:58=E2=80=AFPM Tyler Hicks <code@tyhicks.com> wro=
+te:
+>
+> Resolve CONFIG_IPE_BOOT_POLICY relative file paths in the source tree if
+> the file was not found within the object tree and is not an absolute path=
+.
+>
+> This fixes an IPE build failure that occurs when using an output director=
+y,
+> such as with the `O=3D/tmp/build` make option, during a build with the
+> CONFIG_IPE_BOOT_POLICY option set to a path that's relative to the kernel
+> source tree. For example,
+>
+>   $ grep CONFIG_IPE_BOOT_POLICY /tmp/build/.config
+>   CONFIG_IPE_BOOT_POLICY=3D"ipe-boot-policy"
+>   $ touch ipe-boot-policy
+>   $ make O=3D/tmp/build
+>   make[1]: Entering directory '/tmp/build'
+>     GEN     Makefile
+>     UPD     include/config/kernel.release
+>     UPD     include/generated/utsrelease.h
+>     CALL    scripts/checksyscalls.sh
+>     CC      init/version.o
+>     AR      init/built-in.a
+>     CC      kernel/sys.o
+>     AR      kernel/built-in.a
+>     IPE_POL ipe-boot-policy
+>   An error occurred during policy conversion: : No such file or directory
+>   make[5]: *** [security/ipe/Makefile:14: security/ipe/boot_policy.c] Err=
+or 2
+>   make[4]: *** [scripts/Makefile.build:440: security/ipe] Error 2
+>   make[3]: *** [scripts/Makefile.build:440: security] Error 2
+>   make[2]: *** [Makefile:1989: .] Error 2
+>   make[1]: *** [Makefile:251: __sub-make] Error 2
+>   make[1]: Leaving directory '/tmp/build'
+>   make: *** [Makefile:251: __sub-make] Error 2
+>
+> Fixes: ba199dc909a2 ("scripts: add boot policy generation program")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Tyler Hicks <code@tyhicks.com>
+> ---
+>  security/ipe/Makefile | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/security/ipe/Makefile b/security/ipe/Makefile
+> index 2ffabfa63fe9..b54d7b7c9e6d 100644
+> --- a/security/ipe/Makefile
+> +++ b/security/ipe/Makefile
+> @@ -10,8 +10,10 @@ quiet_cmd_polgen =3D IPE_POL $(2)
+>
+>  targets +=3D boot_policy.c
+>
+> -$(obj)/boot_policy.c: scripts/ipe/polgen/polgen $(CONFIG_IPE_BOOT_POLICY=
+) FORCE
+> -       $(call if_changed,polgen,$(CONFIG_IPE_BOOT_POLICY))
+> +boot-pol :=3D $(if $(wildcard $(CONFIG_IPE_BOOT_POLICY)),,$(srctree)/)$(=
+CONFIG_IPE_BOOT_POLICY)
+> +
+> +$(obj)/boot_policy.c: scripts/ipe/polgen/polgen $(boot-pol) FORCE
+> +       $(call if_changed,polgen,$(boot-pol))
+>
+>  obj-$(CONFIG_SECURITY_IPE) +=3D \
+>         boot_policy.o \
+> --
+> 2.34.1
+>
