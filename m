@@ -1,64 +1,64 @@
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54E13136A;
-	Wed, 22 Jan 2025 11:18:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05FE2101AD;
+	Wed, 22 Jan 2025 11:28:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737544719; cv=none; b=TVY2U6L5L7JXQhCCzj9qKbsMCS9hPJLzSbg1rCELaPqa7iAAx3aWgJIR/LfT/vEIEQ3B0aFLxk78oRxCjDwmKSk5NFBSUtrid0mvnDuZqwUtHg3a1U2uL+bukNLXrkQ4Qq+tOSkVShWwROxpxG6so2ToW+RQQsl9UuDoXPW8Uz8=
+	t=1737545301; cv=none; b=LsknsFS3yDmFAn/yUSQPvbtV967VZNhX4lweFnu5vdJ5THtZnkdfR6dFVM9gZYFl4TBBOOS7g8s+nSwqkbbcYLHtotAguBvmeCX6P0w5r5XlQoebHfaPnRFULBiSLbWx5V++s25SmaGEzb3Gv2B89wBZ32YShIWmk9Fs5a3rE+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737544719; c=relaxed/simple;
-	bh=VkIsIxFqNnFXBeJpYhyYhbtCp2L6Z0FpexhGbCLsYwY=;
+	s=arc-20240116; t=1737545301; c=relaxed/simple;
+	bh=qgdsDOji/Ki6OjklleBu3dfhkX2SIINNrfcy28ZqIgw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pGWRBItwvuqdfGn8u8L26oT96Djn5RK/u6oXF3XaLSREF5P8ZLjAIJCC4fIKkxe6q0poOvL+oE3AHbugpQdQ/XCdAF+Yc7uFq0zdPb1zWhz1f8i7TXuwKWMrYHKpnmtPvzNtxCVkh/h13BVvxCgRsHiXGSlPe73Cj7aTi6aD2xM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kYGtcph2; arc=none smtp.client-ip=209.85.208.175
+	 In-Reply-To:Content-Type; b=kNo1Q+84xtMmAPPfjC9jLRR0j0qS7LQ161CyY3HfL7IOmRGRvwxTtf4uQTN7MGlnBEG//UxkIMB1zG/dmo/AeUJMwnbKEIMFc3tGG9F7LX6yKLXDZ+2AfWTP/rFnUOd9KH8E9Uc368SdnYoYMOVT5U4ujjYMlgj0YN0Fl8MiMvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RNgXJjqk; arc=none smtp.client-ip=209.85.167.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kYGtcph2"
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-3043e84c687so54882241fa.1;
-        Wed, 22 Jan 2025 03:18:36 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RNgXJjqk"
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5426fcb3c69so5418485e87.3;
+        Wed, 22 Jan 2025 03:28:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737544715; x=1738149515; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1737545296; x=1738150096; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=IHnhEphz7DnDm4X924MxgWq7ImAvK6C+Os9CX2NZWyk=;
-        b=kYGtcph2tAIIo5P6KxamaMNDTu6eqUd9FGEbqYlX0MTL/ka2H849M2fXWqImhR9sSa
-         QCxOB3SdbAP5UyTZ5iMW2VRQU7ttxQcL4vZRQi2VsHsu2h+BT/wNDdk4tPQ3X0tusFMf
-         81HOJS35EYTh7I+EVVcz9LnuHFpUTCfARUH5SckmYoPO/6CAcD+LIy/aYHPXh8P9LmLa
-         Qp/Obt38YIWzCPtl1hwtuqZVuZBbgQUxUjiEjm4bMEu2U4QjveZ2cl3MOh9zjh6T5EYg
-         ZGiuUNe54Pk3YlC62Zu8+e3YqwDEl53BDyDnkvhHNp2cwKgUchZdou6JEVMMygg4hZ7o
-         Um0A==
+        bh=D8uucZoYmTyAW8wW7Yobh9x7Be1LOOBbsYawBwsq5P0=;
+        b=RNgXJjqkHjeho5Q/MTAVogr/IwgBioiJOlW54IoGcPC92cgbN5AewYPFsvhfcK4bNh
+         lfQO15j6HKcpuLTvwBcURpLCzIqj3RFqF4s5HlPYhwze/CvPlZzsFaDt6BBGx8ST+Ipj
+         ppN4DJQs3OwW78mp5Wp5ndGZEVB8vmyWxMbiZuDESOFp02lrHtk0qDlnIGayma1R+WUu
+         wsXPDtffl8BK+xs3+4mp0A1MG9AsTp0K4lGYnztyfuw8b8g5lkro1MB8x4Z2/IqZTtay
+         pS4FTcOTjV5RIZgHaBkWGUIQKON6LDfZh08w79sM1zWoTXvuDOu47HQw4RtC+1fmPG7v
+         zr6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737544715; x=1738149515;
+        d=1e100.net; s=20230601; t=1737545296; x=1738150096;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IHnhEphz7DnDm4X924MxgWq7ImAvK6C+Os9CX2NZWyk=;
-        b=YapRiHPzn0R6x/oFuvX1HqJLNtASoeMSpKkeMZwnbRXjgbFKW74Ac/iyGEsk5EO5vF
-         epwfLhA10vXRyp5te8Vwm6YIhwRh7n/okrTqQOMnYNoaUejNv47E+hwAegQusCFLeYPH
-         8YIZYKNVQh/1acTJFOqxFRq5IlUB9mdhF4lvU4MNU1TU+qZjWOWAnga6D72FG/Rfaecp
-         b92z0Tc7avNZbQUPg7zZL4388xaZZlLwdNDl+QfW/zG/relzKJgUvc59r2CvjmUW4uDY
-         DLZxYN7KLrYqqaOmJS6l62bK7CfWdfXB0luiQ1cC+066xnHuS1XmvKOXvOI0GC3PUJWJ
-         S3fQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV1jM81k6adoDy9tPaTv5CHthvc3TuZhETxTlbxs58TqVMRiQqOqIdxZ3C1T77kQHLioMrRbq4x05eB@vger.kernel.org, AJvYcCVJXrFaN//TM0tl/emOtV5/OoC9/rklfnq3gIFfiV8QM2C5toU+GLec9yS7Z1AMysDBeCWUcONIzVA=@vger.kernel.org, AJvYcCVQ6DcE6FKDxnEdrzi4efhyPUhqVuOdX7wl63uFThSCLnBzxHtfIWzm5TSbl0k06jOcJW6a0tmF5orkgw3OcuTHXeia+HVX@vger.kernel.org, AJvYcCVeyiIRPC/shcCe1NfscNYeU61aWUF0iW0F4FUdtspTll0RbsxsJ7vKG7BZ1baYMICg1DQoSVx8R+6E@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNx13W0YEo+bKSv/PA2spl3tYjpJ73+bHUWIKNxFYxTenjt5Ui
-	jZFMtX7EvvyRzatQ+C/5nZqM4bAijGNWJWX/Xr+wLgOQ4fQponXY
-X-Gm-Gg: ASbGncvaAVFHovNtJ8UGMwWEa7w93NvMaBIeGJnK0xkh04CH01drfhXEm5l/6zfYlF/
-	SNR94VSFDnZfPv1pIUKHsfkzMdYfdoFYhTAEFNjAP74KkHZxk+TKJ7CtKwy9ykm+WbMS4DD/NjQ
-	1YCXgNIs/Du3IIt/SvWVzKm/Mn27BhKMoKxEOZVTO5Iwp/7Fcyc+hPUbkuSC/LcDVV4YxgfqEAa
-	8CNsS6YvKXexxuH0TCjA8OfLpp/G7wNIg0U+t7kygxZAWumvOXKt8z8+7DjvQ12roRJuQTuuCvO
-	wxCRgxo=
-X-Google-Smtp-Source: AGHT+IFhihhIAFdpOqRUkM/GOfhDJsLCkBNl8oVs51jpSRx6+pmdoU/RFlOu7IKHaOw9TUD6UWkJVQ==
-X-Received: by 2002:a2e:b8ce:0:b0:300:34b2:f89e with SMTP id 38308e7fff4ca-3072ca97ef0mr77473731fa.17.1737544715028;
-        Wed, 22 Jan 2025 03:18:35 -0800 (PST)
+        bh=D8uucZoYmTyAW8wW7Yobh9x7Be1LOOBbsYawBwsq5P0=;
+        b=PFphqzrJH2DT8sOSqtFbMfoSsqe1OUtOWP8a9rAfw9M0BBt8DLZqcE8OoozlyF+2qj
+         va0cvmvojN7AwLV7XpL3APyIZ5qVWOUoVLvIUqqwcSl5a4lfW0MSNyBIF+8Ghk8KxY1i
+         Uq0kXmwGdRHuVvCNJ3gBx/KM2S9ZJfWdeOd5HmK6mY10hQqNn5hQtF0PaaHS/0FdCXyA
+         qWbhhviSU6Y7aDPqWg/ZQgHuuhXsgD0ZpOhHFxM59NYZ5JD2ADNHgnKKE8daNur31S2Y
+         2aqIol3vKgFneXmUDpFwVJeZYQ8mc714WYgv1sRxjayUdRjTtopcyTGu+1c6LVcJjjUa
+         Tl+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUEeAhXZyOsjZgG6qtHXA9uifspx4Id8LeqH0y6COpQMsSK4f7ydHZkx5Js4GVYpuB/XaVvrBQBYhge@vger.kernel.org, AJvYcCVPVbocS1nmY7XL9BqkJErUZy1R8aFw3gdPyj+zcZxMHyuo4gUbHK7c66V+BfVlCuByn/eAnJIU2Ns=@vger.kernel.org, AJvYcCXLVkoVItZMG1PuoaZCsjU75u4vd8OAvgmZeTAPYG7aJ9dx4LPsWXY5nsv5CBZoalD0YfeDL4ertg0O@vger.kernel.org, AJvYcCXXs5hOhyNZo/ifI1N8XmCKiFZi+/zLbZMtlKQTXatzoZz9IalF7oyOXdGkJ4EibxrIa6OQp+tCcdgS/cLR+ZDdZB2qirDT@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOgm22umiESwNCjSnGAxI4kmKCh+jP26ZYSbq+kDQN1Aqh/qov
+	72JzDQqywRDoPUpvna5wVOJBOQsjuBVmbMBQnOrOKPCjscr0sfUJ
+X-Gm-Gg: ASbGncsA6uXb3Nii2fIp42z5jyeDH2TeKIRnqHmJ+GhJ/5Z5MEirbHz5tAeNb8x+05d
+	Y+UFWl3sM4oU7tS/pB0peDuFDRukiz+sKwWQ9RnaHT0Hyeg1OTzlCdFOprAZ3B6IXmoAf4mVVry
+	axF0OLBHd92kj5xuT0w2K2XHJ0RVaIcO+42X6tXrd7wjqbTEin+M23uwdzQLPvULVo5TvibYimV
+	kOOhZ98L/oOjVJx0UvE+tpEe4O4jKwiCHAvkD2NNU1FuD5yTDkjPxTE9uzYNigR3zQcen4h/d0Z
+	lcUwYu0=
+X-Google-Smtp-Source: AGHT+IFY2ZBn6rdMHyRFnFAwDqHZp13c5/EODEKdU4E4T1JbLWhr6Ok/wScVhHBxOQ5gw+OI+RSfxw==
+X-Received: by 2002:a05:6512:159b:b0:540:1fd9:b634 with SMTP id 2adb3069b0e04-5439c28255cmr8070137e87.34.1737545295590;
+        Wed, 22 Jan 2025 03:28:15 -0800 (PST)
 Received: from [172.16.183.207] ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3072a35a057sm26180611fa.48.2025.01.22.03.18.32
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5439af78d62sm2171995e87.241.2025.01.22.03.28.12
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Jan 2025 03:18:33 -0800 (PST)
-Message-ID: <eb123791-a63d-4a59-a8c2-e7716201d976@gmail.com>
-Date: Wed, 22 Jan 2025 13:18:31 +0200
+        Wed, 22 Jan 2025 03:28:13 -0800 (PST)
+Message-ID: <7b6d3226-4422-415a-9146-16c421463ac5@gmail.com>
+Date: Wed, 22 Jan 2025 13:28:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -66,8 +66,8 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 08/12] regulator: allow user configuration of hardware
- protection action
+Subject: Re: [PATCH v2 02/12] reboot: reboot, not shutdown, on
+ hw_protection_reboot timeout
 To: Ahmad Fatoum <a.fatoum@pengutronix.de>,
  Andrew Morton <akpm@linux-foundation.org>,
  Daniel Lezcano <daniel.lezcano@linaro.org>, Fabio Estevam
@@ -83,36 +83,67 @@ Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
  chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
  kernel@pengutronix.de
 References: <20250113-hw_protection-reboot-v2-0-161d3fc734f0@pengutronix.de>
- <20250113-hw_protection-reboot-v2-8-161d3fc734f0@pengutronix.de>
+ <20250113-hw_protection-reboot-v2-2-161d3fc734f0@pengutronix.de>
 Content-Language: en-US, en-AU, en-GB, en-BW
 From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <20250113-hw_protection-reboot-v2-8-161d3fc734f0@pengutronix.de>
+In-Reply-To: <20250113-hw_protection-reboot-v2-2-161d3fc734f0@pengutronix.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 13/01/2025 18:25, Ahmad Fatoum wrote:
-> When the core detects permanent regulator hardware failure or imminent
-> power failure of a critical supply, it will call hw_protection_shutdown
-> in an attempt to do a limited orderly shutdown followed by powering off
-> the system.
+> hw_protection_shutdown() will kick off an orderly shutdown and if that
+> takes longer than a configurable amount of time, an emergency shutdown
+> will occur.
 > 
-> This doesn't work out well for many unattended embedded systems that don't
-> have support for shutdown and that power on automatically when power is
-> supplied:
+> Recently, hw_protection_reboot() was added for those systems that don't
+> implement a proper shutdown and are better served by rebooting and
+> having the boot firmware worry about doing something about the critical
+> condition.
 > 
->    - A brief power cycle gets detected by the driver
->    - The kernel powers down the system and SoC goes into shutdown mode
->    - Power is restored
->    - The system remains oblivious to the restored power
->    - System needs to be manually power cycled for a duration long enough
->      to drain the capacitors
+> On timeout of the orderly reboot of hw_protection_reboot(), the system
+> would go into shutdown, instead of reboot. This is not a good idea, as
+> going into shutdown was explicitly not asked for.
 > 
-> Allow users to fix this by calling the newly introduced
-> hw_protection_trigger() instead: This way the hw_protection commandline
-> or sysfs parameter is used to dictate the policy of dealing with the
-> regulator fault.
+> Fix this by always doing an emergency reboot if hw_protection_reboot()
+> is called and the orderly reboot takes too long.
 > 
+> Fixes: 79fa723ba84c ("reboot: Introduce thermal_zone_device_critical_reboot()")
 > Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+> ---
+>   kernel/reboot.c | 70 ++++++++++++++++++++++++++++++++++++++++-----------------
+>   1 file changed, 49 insertions(+), 21 deletions(-)
+> 
+> diff --git a/kernel/reboot.c b/kernel/reboot.c
+> index 847ac5d17a659981c6765699eac323f5e87f48c1..222b63dfd31020d0e2bc1b1402dbfa82adc71990 100644
+> --- a/kernel/reboot.c
+> +++ b/kernel/reboot.c
+> @@ -932,48 +932,76 @@ void orderly_reboot(void)
+>   }
+>   EXPORT_SYMBOL_GPL(orderly_reboot);
+>   
+> +static const char *hw_protection_action_str(enum hw_protection_action action)
+> +{
+> +	switch (action) {
+> +	case HWPROT_ACT_SHUTDOWN:
+> +		return "shutdown";
+> +	case HWPROT_ACT_REBOOT:
+> +		return "reboot";
+> +	default:
+> +		return "undefined";
+> +	}
+> +}
+> +
+> +static enum hw_protection_action hw_failure_emergency_action;
+
+nit: Do we have a (theoretical) possibility that two emergency restarts 
+get scheduled with different actions? Should the action be allocated 
+(maybe not) for each caller, or should there be a check if an operation 
+with conflicting action is already scheduled?
+
+If this was already considered and thought it is not an issue:
 
 Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
 
+
+Yours,
+	-- Matti
