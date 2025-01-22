@@ -1,128 +1,167 @@
-Received: from smtp-42ae.mail.infomaniak.ch (smtp-42ae.mail.infomaniak.ch [84.16.66.174])
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BD49214A89
-	for <linux-security-module@vger.kernel.org>; Wed, 22 Jan 2025 17:02:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BBC521422F;
+	Wed, 22 Jan 2025 17:25:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737565368; cv=none; b=D6YX5aprmU8YvgxEojYXLoKvkbnLs3ofW2r/5+/rdTlvbZaeOdhM62c31qfVeIPtu3O+E42ypKfAuU8I2m58rYPM/rCq/rf5cOGXivr5NpJ23KREhbq+t0J/0N021mexlBQ8G/AMLgp2IL/EwZ/KwNenLgqfmoVchIl7IafUTRU=
+	t=1737566726; cv=none; b=Abxz4i1pC/qXWXP+Cl/wzWbBS8vzHSAGVgifROnOIGhB1wl/FduQ9q1zHEpKFkaXy+TnCnlRF1KBXzfzEYjPdPZVEfZCGixyIWG4edNprlDG+spOPAtAEJO7cY7wIzVORDVDJOfFM/dFTad9hxEvvfFktaC4AE5xsBnMIUVi4yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737565368; c=relaxed/simple;
-	bh=zp8T6rnhYazNcUzJcuyegZ24tuj0V9tpCc6JWapkCzY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mf6hRBXi3CWO01OFIzjbpugR2yF/ItZ7t2pAerJQJWOB3kORVuRAMQ/1ufPlkPQWbDQQYQ6ygZoInjL8g231RYfUOQ2s4RobIO15iiL9zBy7z7L4Xsqw0H/w9eWakZRntlyL/kQSpkPsM0byK+7HdZQLLIp0lcAYUwbbXGtlw3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=DdfpPngQ; arc=none smtp.client-ip=84.16.66.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="DdfpPngQ"
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4YdVbL5mPJz2FL;
-	Wed, 22 Jan 2025 17:56:30 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1737564990;
-	bh=eZOD+4GCYEaXJUZjlOO0w095KodsP1EntiU+78IjSoA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=DdfpPngQLb0JBGxt2XAJjpfvnEGQKw+iljF3x0ztWR0lysFTT/K5PZXisALn6BtPx
-	 58uweGX/wzGZY8S85aDQXU/J2T7U5CmLoGAMCmkRGNUJEh3kymFdKErnkSFA3eZb6m
-	 Cvd/O1A/f1K+4QGf8Lo8x4maWdcw9yrcSEVxnNTY=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4YdVbK4bQZzvvB;
-	Wed, 22 Jan 2025 17:56:29 +0100 (CET)
-From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	Ba Jing <bajing@cmss.chinamobile.com>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	Matthieu Buffet <matthieu@buffet.re>,
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
-	Shervin Oloumi <enlightened@chromium.org>,
-	Zichen Xie <zichenxie0106@gmail.com>,
+	s=arc-20240116; t=1737566726; c=relaxed/simple;
+	bh=xh+6UfzUhksUBh2mXDh33SYXs4ZlMgzjKAiE0jtkSLE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UCPFV2O8ljThNhfrObmDjwEFdC3caqfGXIUMTumUKLTTPTkpNAlomwivIjoTmNoeDDKLREyCOG1f6JUxpPY/or1Crco8/GRH80391yPVs2AKEx2D+MJXprm9lEg95ROHdaBin0EP+AjDjShFsxP/U09/qus84XD6oE5lsRDv4u8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4YdVb04YC4z9v7JN;
+	Thu, 23 Jan 2025 00:56:12 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id 50212140721;
+	Thu, 23 Jan 2025 01:25:08 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.204.63.22])
+	by APP1 (Coremail) with SMTP id LxC2BwDnbEvkKZFnsGscAQ--.5068S2;
+	Wed, 22 Jan 2025 18:25:06 +0100 (CET)
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: corbet@lwn.net,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	zohar@linux.ibm.com,
+	dmitry.kasatkin@gmail.com,
+	eric.snowberg@oracle.com,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com
+Cc: linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: [GIT PULL] Landlock updates for v6.14
-Date: Wed, 22 Jan 2025 17:56:26 +0100
-Message-ID: <20250122165626.331786-1-mic@digikod.net>
+	linux-fsdevel@vger.kernel.org,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v3 0/6] ima: Remove unnecessary inode locks
+Date: Wed, 22 Jan 2025 18:24:26 +0100
+Message-Id: <20250122172432.3074180-1-roberto.sassu@huaweicloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+X-CM-TRANSID:LxC2BwDnbEvkKZFnsGscAQ--.5068S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxGFWfKr1fKF4DXFy3tw4fKrg_yoWrur17pa
+	9Yga45Gr1DJFyxurZ2kF47ua1SkayrWrWUWwsxJw1UZas8ZF10qr4Skr17ur97KF95C3Wq
+	qr1a9rn5u3WqyrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvFb4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAa
+	w2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
+	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a
+	6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
+	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AK
+	xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvj
+	xUFku4UUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAQBGeQmNMFKwAAsE
 
-Hi Linus,
+From: Roberto Sassu <roberto.sassu@huawei.com>
 
-This PR mostly factors out some Landlock code and prepares for upcoming audit
-support.  Because weird files might be visible after filesystem corruption,
-Landlock now properly handles weird files too.  A few sample and test issues
-are also fixed.
+A recent syzbot report [1] showed a possible lock inversion between the
+mmap lock and the inode lock. Paul Moore suggested to remove the inode lock
+in IMA as a possible solution. A first patch set was made [2] to fulfill
+that request, although incomplete due to not removing the inode lock around
+the ima_appraise_measurement() call.
 
-Please pull these changes for v6.14-rc1 .  These commits merge cleanly with
-your master branch.  The kernel code has been tested in the latest linux-next
-releases for a few weeks and rebased to update commit messages.
+While the original report was fixed in a different way, by calling the
+security_mmap_file() hook outside the mmap lock critical region in the
+remap_file_pages() system call [3], the IMA patch set has benefits on its
+own, since it merges two critical sections in one in process_measurement(),
+and makes the latter and __ima_inode_hash() compete for the same lock.
 
-Test coverage for security/landlock is 93.4% of 1124 lines according to
-gcc/gcov-14, and it was 92.7% of 1118 lines before this PR.
+Remove the inode lock in three phases (except from ima_update_xattr(), when
+setting security.ima).
 
-Regards,
- Mickaël
+First, remove the S_IMA inode flag and the IS_IMA() macro, since S_IMA
+needs to be set under the inode lock, and it is going to be removed. There
+is no performance penalty in doing that, since the pointer of the inode
+integrity metadata has been moved to the inode security blob when IMA was
+made as a regular LSM [4], and retrieving such metadata can be done in
+constant time (patch 1).
 
---
-The following changes since commit 9d89551994a430b50c4fffcb1e617a057fa76e20:
+Second, move the mutex from the inode integrity metadata to the inode
+security blob, so that the lock can be taken regardless of whether or not
+the inode integrity metadata was allocated for that inode (patch 2).
 
-  Linux 6.13-rc6 (2025-01-05 14:13:40 -0800)
+Consequently, remove the inode lock just after the policy evaluation and
+extend the critical region previously guarded by the integrity inode
+metadata mutex to where the inode lock was.
 
-are available in the Git repository at:
+Also, make sure that ima_inode_get() is called with the new mutex lock
+held, to avoid non-atomic check/assignment of the integrity metadata in the
+inode security blob (patch 3), and mark the pointer of inode integrity
+metadata as a shared resource with READ_ONCE() and WRITE_ONCE() (patch 4).
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-6.14-rc1
+Third, remove the inode lock around ima_appraise_measurement() by
+postponing setting security.ima when IMA-Appraisal is in fix mode, to when
+the file is closed (patch 5).
 
-for you to fetch changes up to 2a794ee613617b5d8fd978b7ef08d64aa07ff2e6:
+Finally, as a bug fix, do not reset the IMA_NEW_FILE flag when setting
+inode attributes. By resetting the flag, IMA was not able to appraise new
+files with modified metadata before security.ima was written to the disk
+(patch 6).
 
-  selftests/landlock: Add layout1.umount_sandboxer tests (2025-01-17 19:05:38 +0100)
+This patch set applies on top of commit 4785ed362a24 ("ima: ignore suffixed
+policy rule comments") of:
 
-----------------------------------------------------------------
-Landlock updates for v6.14-rc1
+https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git
 
-----------------------------------------------------------------
-Ba Jing (1):
-      selftests/landlock: Remove unused macros in ptrace_test.c
 
-Mickaël Salaün (14):
-      landlock: Handle weird files
-      landlock: Constify get_mode_access()
-      landlock: Use scoped guards for ruleset
-      landlock: Use scoped guards for ruleset in landlock_add_rule()
-      selftests/landlock: Fix build with non-default pthread linking
-      landlock: Factor out check_access_path()
-      landlock: Move access types
-      landlock: Simplify initially denied access rights
-      landlock: Align partial refer access checks with final ones
-      selftests/landlock: Add test to check partial access in a mount tree
-      landlock: Optimize file path walks and prepare for audit support
-      selftests/landlock: Fix error message
-      selftests/landlock: Add wrappers.h
-      selftests/landlock: Add layout1.umount_sandboxer tests
+[1] https://lore.kernel.org/linux-security-module/66f7b10e.050a0220.46d20.0036.GAE@google.com/
+[2] https://lore.kernel.org/linux-security-module/20241008165732.2603647-1-roberto.sassu@huaweicloud.com/
+[3] https://lore.kernel.org/linux-security-module/20241018161415.3845146-1-roberto.sassu@huaweicloud.com/
+[4] https://lore.kernel.org/linux-security-module/20240215103113.2369171-1-roberto.sassu@huaweicloud.com/
 
-Zichen Xie (1):
-      samples/landlock: Fix possible NULL dereference in parse_path()
+v2:
+- Add recommendation to set evm=fix in the kernel command line (suggested
+  by Mimi)
+- Completely remove S_IMA definition (suggested by Jan Kara)
+- Reverse mode and i_writecount checks in ima_check_last_writer()
+  (suggested by Mimi)
+- Drop O_PATH patch (ima_check_last_writer() was erroneously considering
+  file descriptors with that open flag set due to a bug in the appraisal
+  patch)
 
- samples/landlock/sandboxer.c                       |   7 +
- security/landlock/access.h                         |  77 +++++++++++
- security/landlock/fs.c                             | 114 ++++++++--------
- security/landlock/fs.h                             |   1 +
- security/landlock/ruleset.c                        |  26 ++--
- security/landlock/ruleset.h                        |  52 +------
- security/landlock/syscalls.c                       |  39 ++----
- tools/testing/selftests/landlock/Makefile          |   6 +-
- tools/testing/selftests/landlock/common.h          |  38 +-----
- tools/testing/selftests/landlock/fs_test.c         | 151 +++++++++++++++++++--
- tools/testing/selftests/landlock/ptrace_test.c     |   2 -
- .../selftests/landlock/sandbox-and-launch.c        |  82 +++++++++++
- tools/testing/selftests/landlock/wait-pipe.c       |  42 ++++++
- tools/testing/selftests/landlock/wrappers.h        |  47 +++++++
- 14 files changed, 489 insertions(+), 195 deletions(-)
- create mode 100644 security/landlock/access.h
- create mode 100644 tools/testing/selftests/landlock/sandbox-and-launch.c
- create mode 100644 tools/testing/selftests/landlock/wait-pipe.c
- create mode 100644 tools/testing/selftests/landlock/wrappers.h
+v1:
+- New patches (1 suggested by Shu Han, 4-6)
+- Remove ima_inode_get_iint() and ima_inode_set_iint() and access inode
+  integrity metadata from the new ima_iint_cache_lock structure directly
+- Return immediately in ima_inode_get() if the inode does not have a
+  security blob (suggested by Paul Moore)
+
+Roberto Sassu (6):
+  fs: ima: Remove S_IMA and IS_IMA()
+  ima: Remove inode lock
+  ima: Detect if lock is held when iint pointer is set in inode security
+    blob
+  ima: Mark concurrent accesses to the iint pointer in the inode
+    security blob
+  ima: Defer fixing security.ima to __fput()
+  ima: Reset IMA_NONACTION_RULE_FLAGS after post_setattr
+
+ .../admin-guide/kernel-parameters.txt         |  3 +
+ include/linux/fs.h                            |  2 -
+ security/integrity/ima/ima.h                  | 33 +++----
+ security/integrity/ima/ima_api.c              |  4 +-
+ security/integrity/ima/ima_appraise.c         |  7 +-
+ security/integrity/ima/ima_iint.c             | 95 +++++++++++++++----
+ security/integrity/ima/ima_main.c             | 75 ++++++++-------
+ 7 files changed, 144 insertions(+), 75 deletions(-)
+
+-- 
+2.34.1
+
