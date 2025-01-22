@@ -1,149 +1,210 @@
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05FE2101AD;
-	Wed, 22 Jan 2025 11:28:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AC0F1741D2;
+	Wed, 22 Jan 2025 12:25:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737545301; cv=none; b=LsknsFS3yDmFAn/yUSQPvbtV967VZNhX4lweFnu5vdJ5THtZnkdfR6dFVM9gZYFl4TBBOOS7g8s+nSwqkbbcYLHtotAguBvmeCX6P0w5r5XlQoebHfaPnRFULBiSLbWx5V++s25SmaGEzb3Gv2B89wBZ32YShIWmk9Fs5a3rE+0=
+	t=1737548752; cv=none; b=qnGqUlKQTDT0U4gCk5hvog4zl9TJUzcU0WMuHPufmSqMUVPUNhOC2YpQQxvWNiRRRFrZZgtGO/22oFmEueqlX6L74rSdRrOTk3EptdzXz7Qf8ttgYYNucfgVoFADtW4Q4mxZPQrl5gWDoHpv/8GPKWLcEd1MsmyqS8P1zu6q8Mw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737545301; c=relaxed/simple;
-	bh=qgdsDOji/Ki6OjklleBu3dfhkX2SIINNrfcy28ZqIgw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kNo1Q+84xtMmAPPfjC9jLRR0j0qS7LQ161CyY3HfL7IOmRGRvwxTtf4uQTN7MGlnBEG//UxkIMB1zG/dmo/AeUJMwnbKEIMFc3tGG9F7LX6yKLXDZ+2AfWTP/rFnUOd9KH8E9Uc368SdnYoYMOVT5U4ujjYMlgj0YN0Fl8MiMvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RNgXJjqk; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1737548752; c=relaxed/simple;
+	bh=Xfp892u0X0rMtHWkGD3r2bVHj+FTM/t28M4VtoJ0Wyc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QsZDIYuM3YLxcVPftsPxOuU1sP4RDHFDfVb9zezSQC5YrFdwaiye+oZEeAJ/O28IT0LvOb/M0kHjy2j/K/i9coMPBUg08ULrFcWquW9r9ilmqYQuKfwyPSk0GZk6mj7BfkC3UxQv4+XCL8HmhAYUYbDrbULLujtYFDD15MoZVJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZRnNn+6T; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RNgXJjqk"
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5426fcb3c69so5418485e87.3;
-        Wed, 22 Jan 2025 03:28:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737545296; x=1738150096; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=D8uucZoYmTyAW8wW7Yobh9x7Be1LOOBbsYawBwsq5P0=;
-        b=RNgXJjqkHjeho5Q/MTAVogr/IwgBioiJOlW54IoGcPC92cgbN5AewYPFsvhfcK4bNh
-         lfQO15j6HKcpuLTvwBcURpLCzIqj3RFqF4s5HlPYhwze/CvPlZzsFaDt6BBGx8ST+Ipj
-         ppN4DJQs3OwW78mp5Wp5ndGZEVB8vmyWxMbiZuDESOFp02lrHtk0qDlnIGayma1R+WUu
-         wsXPDtffl8BK+xs3+4mp0A1MG9AsTp0K4lGYnztyfuw8b8g5lkro1MB8x4Z2/IqZTtay
-         pS4FTcOTjV5RIZgHaBkWGUIQKON6LDfZh08w79sM1zWoTXvuDOu47HQw4RtC+1fmPG7v
-         zr6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737545296; x=1738150096;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=D8uucZoYmTyAW8wW7Yobh9x7Be1LOOBbsYawBwsq5P0=;
-        b=PFphqzrJH2DT8sOSqtFbMfoSsqe1OUtOWP8a9rAfw9M0BBt8DLZqcE8OoozlyF+2qj
-         va0cvmvojN7AwLV7XpL3APyIZ5qVWOUoVLvIUqqwcSl5a4lfW0MSNyBIF+8Ghk8KxY1i
-         Uq0kXmwGdRHuVvCNJ3gBx/KM2S9ZJfWdeOd5HmK6mY10hQqNn5hQtF0PaaHS/0FdCXyA
-         qWbhhviSU6Y7aDPqWg/ZQgHuuhXsgD0ZpOhHFxM59NYZ5JD2ADNHgnKKE8daNur31S2Y
-         2aqIol3vKgFneXmUDpFwVJeZYQ8mc714WYgv1sRxjayUdRjTtopcyTGu+1c6LVcJjjUa
-         Tl+w==
-X-Forwarded-Encrypted: i=1; AJvYcCUEeAhXZyOsjZgG6qtHXA9uifspx4Id8LeqH0y6COpQMsSK4f7ydHZkx5Js4GVYpuB/XaVvrBQBYhge@vger.kernel.org, AJvYcCVPVbocS1nmY7XL9BqkJErUZy1R8aFw3gdPyj+zcZxMHyuo4gUbHK7c66V+BfVlCuByn/eAnJIU2Ns=@vger.kernel.org, AJvYcCXLVkoVItZMG1PuoaZCsjU75u4vd8OAvgmZeTAPYG7aJ9dx4LPsWXY5nsv5CBZoalD0YfeDL4ertg0O@vger.kernel.org, AJvYcCXXs5hOhyNZo/ifI1N8XmCKiFZi+/zLbZMtlKQTXatzoZz9IalF7oyOXdGkJ4EibxrIa6OQp+tCcdgS/cLR+ZDdZB2qirDT@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOgm22umiESwNCjSnGAxI4kmKCh+jP26ZYSbq+kDQN1Aqh/qov
-	72JzDQqywRDoPUpvna5wVOJBOQsjuBVmbMBQnOrOKPCjscr0sfUJ
-X-Gm-Gg: ASbGncsA6uXb3Nii2fIp42z5jyeDH2TeKIRnqHmJ+GhJ/5Z5MEirbHz5tAeNb8x+05d
-	Y+UFWl3sM4oU7tS/pB0peDuFDRukiz+sKwWQ9RnaHT0Hyeg1OTzlCdFOprAZ3B6IXmoAf4mVVry
-	axF0OLBHd92kj5xuT0w2K2XHJ0RVaIcO+42X6tXrd7wjqbTEin+M23uwdzQLPvULVo5TvibYimV
-	kOOhZ98L/oOjVJx0UvE+tpEe4O4jKwiCHAvkD2NNU1FuD5yTDkjPxTE9uzYNigR3zQcen4h/d0Z
-	lcUwYu0=
-X-Google-Smtp-Source: AGHT+IFY2ZBn6rdMHyRFnFAwDqHZp13c5/EODEKdU4E4T1JbLWhr6Ok/wScVhHBxOQ5gw+OI+RSfxw==
-X-Received: by 2002:a05:6512:159b:b0:540:1fd9:b634 with SMTP id 2adb3069b0e04-5439c28255cmr8070137e87.34.1737545295590;
-        Wed, 22 Jan 2025 03:28:15 -0800 (PST)
-Received: from [172.16.183.207] ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5439af78d62sm2171995e87.241.2025.01.22.03.28.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 22 Jan 2025 03:28:13 -0800 (PST)
-Message-ID: <7b6d3226-4422-415a-9146-16c421463ac5@gmail.com>
-Date: Wed, 22 Jan 2025 13:28:12 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZRnNn+6T"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DED6C4CED6;
+	Wed, 22 Jan 2025 12:25:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1737548751;
+	bh=Xfp892u0X0rMtHWkGD3r2bVHj+FTM/t28M4VtoJ0Wyc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZRnNn+6Tt76019xBirdMVmzRbeL8Q2odMq6HFhgkth9P5ZrYdpErYPlXsxL6Fl3rj
+	 ZI5VtP10jvH/fQAv6HRDykVpsfGmvb0d/xEWjnDE5tgAnq++jvuWWHT6WYDemhqEh2
+	 qhtEzGq7/MMx5/wpO74r4FRgEujUuclOLSKI/Yy3NZM6X5dfnqSKY4Ag8uJB7GG8XW
+	 AQ7J/NzQdgEpLRKLYUKh7jqPAvOBjZZ+gq5nRJ0qTwqiguA+mChUjtx0pX3QTt2bwy
+	 E0gMyTw1G3DnV5TJGaTuN+E86ySP5PQe5fDrGHlTa+/9p9roru7zJ1Awo7fm8PfyZm
+	 vQJdRIi7afA0Q==
+Date: Wed, 22 Jan 2025 13:25:46 +0100
+From: Joel Granados <joel.granados@kernel.org>
+To: Alexander Gordeev <agordeev@linux.ibm.com>
+Cc: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+	Kees Cook <kees@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, linux-crypto@vger.kernel.org, 
+	openipmi-developer@lists.sourceforge.net, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	intel-xe@lists.freedesktop.org, linux-hyperv@vger.kernel.org, linux-rdma@vger.kernel.org, 
+	linux-raid@vger.kernel.org, linux-scsi@vger.kernel.org, linux-serial@vger.kernel.org, 
+	xen-devel@lists.xenproject.org, linux-aio@kvack.org, linux-fsdevel@vger.kernel.org, 
+	netfs@lists.linux.dev, codalist@coda.cs.cmu.edu, linux-mm@kvack.org, 
+	linux-nfs@vger.kernel.org, ocfs2-devel@lists.linux.dev, fsverity@lists.linux.dev, 
+	linux-xfs@vger.kernel.org, io-uring@vger.kernel.org, bpf@vger.kernel.org, 
+	kexec@lists.infradead.org, linux-trace-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org, 
+	keyrings@vger.kernel.org, Song Liu <song@kernel.org>, 
+	"Steven Rostedt (Google)" <rostedt@goodmis.org>, "Martin K. Petersen" <martin.petersen@oracle.com>, 
+	"Darrick J. Wong" <djwong@kernel.org>, Jani Nikula <jani.nikula@intel.com>, 
+	Corey Minyard <cminyard@mvista.com>
+Subject: Re: Re: [PATCH v2] treewide: const qualify ctl_tables where
+ applicable
+Message-ID: <nslqrapp4v3rknjgtfk4cg64ha7rewrrg24aslo2e5jmxfwce5@t4chrpuk632k>
+References: <20250110-jag-ctl_table_const-v2-1-0000e1663144@kernel.org>
+ <Z4+jwDBrZNRgu85S@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 02/12] reboot: reboot, not shutdown, on
- hw_protection_reboot timeout
-To: Ahmad Fatoum <a.fatoum@pengutronix.de>,
- Andrew Morton <akpm@linux-foundation.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Fabio Estevam
- <festevam@denx.de>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
- Jonathan Corbet <corbet@lwn.net>, Serge Hallyn <serge@hallyn.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>,
- Guenter Roeck <groeck@chromium.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-security-module@vger.kernel.org,
- chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
- kernel@pengutronix.de
-References: <20250113-hw_protection-reboot-v2-0-161d3fc734f0@pengutronix.de>
- <20250113-hw_protection-reboot-v2-2-161d3fc734f0@pengutronix.de>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <20250113-hw_protection-reboot-v2-2-161d3fc734f0@pengutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z4+jwDBrZNRgu85S@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
 
-On 13/01/2025 18:25, Ahmad Fatoum wrote:
-> hw_protection_shutdown() will kick off an orderly shutdown and if that
-> takes longer than a configurable amount of time, an emergency shutdown
-> will occur.
+On Tue, Jan 21, 2025 at 02:40:16PM +0100, Alexander Gordeev wrote:
+> On Fri, Jan 10, 2025 at 03:16:08PM +0100, Joel Granados wrote:
 > 
-> Recently, hw_protection_reboot() was added for those systems that don't
-> implement a proper shutdown and are better served by rebooting and
-> having the boot firmware worry about doing something about the critical
-> condition.
+> Hi Joel,
 > 
-> On timeout of the orderly reboot of hw_protection_reboot(), the system
-> would go into shutdown, instead of reboot. This is not a good idea, as
-> going into shutdown was explicitly not asked for.
+> > Add the const qualifier to all the ctl_tables in the tree except for
+> > watchdog_hardlockup_sysctl, memory_allocation_profiling_sysctls,
+> > loadpin_sysctl_table and the ones calling register_net_sysctl (./net,
+> > drivers/inifiniband dirs). These are special cases as they use a
+> > registration function with a non-const qualified ctl_table argument or
+> > modify the arrays before passing them on to the registration function.
+> > 
+> > Constifying ctl_table structs will prevent the modification of
+> > proc_handler function pointers as the arrays would reside in .rodata.
+> > This is made possible after commit 78eb4ea25cd5 ("sysctl: treewide:
+> > constify the ctl_table argument of proc_handlers") constified all the
+> > proc_handlers.
 > 
-> Fix this by always doing an emergency reboot if hw_protection_reboot()
-> is called and the orderly reboot takes too long.
+> I could identify at least these occurences in s390 code as well:
+Hey Alexander
+
+Thx for bringing these to my attention. I had completely missed them as
+the spatch only deals with ctl_tables outside functions.
+
+Short answer:
+These should not be included in the current patch because they are a
+different pattern from how sysctl tables are usually used. So I will not
+include them.
+
+With that said, I think it might be interesting to look closer at them
+as they seem to be complicating the proc_handler (I have to look at them
+closer).
+
+I see that they are defining a ctl_table struct within the functions and
+just using the data (from the incoming ctl_table) to forward things down
+to proc_do{u,}intvec_* functions. This is very odd and I have only seen
+it done in order to change the incoming ctl_table (which is not what is
+being done here).
+
+I will take a closer look after the merge window and circle back with
+more info. Might take me a while as I'm not very familiar with s390
+code; any additional information on why those are being used inside the
+functions would be helpfull.
+
+Best
+
+
 > 
-> Fixes: 79fa723ba84c ("reboot: Introduce thermal_zone_device_critical_reboot()")
-> Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
-> ---
->   kernel/reboot.c | 70 ++++++++++++++++++++++++++++++++++++++++-----------------
->   1 file changed, 49 insertions(+), 21 deletions(-)
+> diff --git a/arch/s390/appldata/appldata_base.c b/arch/s390/appldata/appldata_base.c
+> index dd7ba7587dd5..9b83c318f919 100644
+> --- a/arch/s390/appldata/appldata_base.c
+> +++ b/arch/s390/appldata/appldata_base.c
+> @@ -204,7 +204,7 @@ appldata_timer_handler(const struct ctl_table *ctl, int write,
+>  {
+>  	int timer_active = appldata_timer_active;
+>  	int rc;
+> -	struct ctl_table ctl_entry = {
+> +	const struct ctl_table ctl_entry = {
+>  		.procname	= ctl->procname,
+>  		.data		= &timer_active,
+>  		.maxlen		= sizeof(int),
+> @@ -237,7 +237,7 @@ appldata_interval_handler(const struct ctl_table *ctl, int write,
+>  {
+>  	int interval = appldata_interval;
+>  	int rc;
+> -	struct ctl_table ctl_entry = {
+> +	const struct ctl_table ctl_entry = {
+>  		.procname	= ctl->procname,
+>  		.data		= &interval,
+>  		.maxlen		= sizeof(int),
+> @@ -269,7 +269,7 @@ appldata_generic_handler(const struct ctl_table *ctl, int write,
+>  	struct list_head *lh;
+>  	int rc, found;
+>  	int active;
+> -	struct ctl_table ctl_entry = {
+> +	const struct ctl_table ctl_entry = {
+>  		.data		= &active,
+>  		.maxlen		= sizeof(int),
+>  		.extra1		= SYSCTL_ZERO,
+> diff --git a/arch/s390/kernel/hiperdispatch.c b/arch/s390/kernel/hiperdispatch.c
+> index 7857a7e8e56c..7d0ba16085c1 100644
+> --- a/arch/s390/kernel/hiperdispatch.c
+> +++ b/arch/s390/kernel/hiperdispatch.c
+> @@ -273,7 +273,7 @@ static int hiperdispatch_ctl_handler(const struct ctl_table *ctl, int write,
+>  {
+>  	int hiperdispatch;
+>  	int rc;
+> -	struct ctl_table ctl_entry = {
+> +	const struct ctl_table ctl_entry = {
+>  		.procname	= ctl->procname,
+>  		.data		= &hiperdispatch,
+>  		.maxlen		= sizeof(int),
+> diff --git a/arch/s390/kernel/topology.c b/arch/s390/kernel/topology.c
+> index 6691808bf50a..26e50de83d80 100644
+> --- a/arch/s390/kernel/topology.c
+> +++ b/arch/s390/kernel/topology.c
+> @@ -629,7 +629,7 @@ static int topology_ctl_handler(const struct ctl_table *ctl, int write,
+>  	int enabled = topology_is_enabled();
+>  	int new_mode;
+>  	int rc;
+> -	struct ctl_table ctl_entry = {
+> +	const struct ctl_table ctl_entry = {
+>  		.procname	= ctl->procname,
+>  		.data		= &enabled,
+>  		.maxlen		= sizeof(int),
+> @@ -658,7 +658,7 @@ static int polarization_ctl_handler(const struct ctl_table *ctl, int write,
+>  {
+>  	int polarization;
+>  	int rc;
+> -	struct ctl_table ctl_entry = {
+> +	const struct ctl_table ctl_entry = {
+>  		.procname	= ctl->procname,
+>  		.data		= &polarization,
+>  		.maxlen		= sizeof(int),
+> diff --git a/arch/s390/mm/cmm.c b/arch/s390/mm/cmm.c
+> index 939e3bec2db7..8e354c90a3dd 100644
+> --- a/arch/s390/mm/cmm.c
+> +++ b/arch/s390/mm/cmm.c
+> @@ -263,7 +263,7 @@ static int cmm_pages_handler(const struct ctl_table *ctl, int write,
+>  			     void *buffer, size_t *lenp, loff_t *ppos)
+>  {
+>  	long nr = cmm_get_pages();
+> -	struct ctl_table ctl_entry = {
+> +	const struct ctl_table ctl_entry = {
+>  		.procname	= ctl->procname,
+>  		.data		= &nr,
+>  		.maxlen		= sizeof(long),
+> @@ -283,7 +283,7 @@ static int cmm_timed_pages_handler(const struct ctl_table *ctl, int write,
+>  				   loff_t *ppos)
+>  {
+>  	long nr = cmm_get_timed_pages();
+> -	struct ctl_table ctl_entry = {
+> +	const struct ctl_table ctl_entry = {
+>  		.procname	= ctl->procname,
+>  		.data		= &nr,
+>  		.maxlen		= sizeof(long),
 > 
-> diff --git a/kernel/reboot.c b/kernel/reboot.c
-> index 847ac5d17a659981c6765699eac323f5e87f48c1..222b63dfd31020d0e2bc1b1402dbfa82adc71990 100644
-> --- a/kernel/reboot.c
-> +++ b/kernel/reboot.c
-> @@ -932,48 +932,76 @@ void orderly_reboot(void)
->   }
->   EXPORT_SYMBOL_GPL(orderly_reboot);
->   
-> +static const char *hw_protection_action_str(enum hw_protection_action action)
-> +{
-> +	switch (action) {
-> +	case HWPROT_ACT_SHUTDOWN:
-> +		return "shutdown";
-> +	case HWPROT_ACT_REBOOT:
-> +		return "reboot";
-> +	default:
-> +		return "undefined";
-> +	}
-> +}
-> +
-> +static enum hw_protection_action hw_failure_emergency_action;
+> 
+> > Best regards,
+> > -- 
+> > Joel Granados <joel.granados@kernel.org>
+> 
+> Thanks!
 
-nit: Do we have a (theoretical) possibility that two emergency restarts 
-get scheduled with different actions? Should the action be allocated 
-(maybe not) for each caller, or should there be a check if an operation 
-with conflicting action is already scheduled?
+-- 
 
-If this was already considered and thought it is not an issue:
-
-Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
-
-
-Yours,
-	-- Matti
+Joel Granados
