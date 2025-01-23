@@ -1,150 +1,157 @@
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60EFF153BF8;
-	Thu, 23 Jan 2025 19:40:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83B1A155A59
+	for <linux-security-module@vger.kernel.org>; Thu, 23 Jan 2025 19:41:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737661209; cv=none; b=QoDo9PMf3IT25LLmFuZbAAjUIgvsWaHTTCflelnCgPeGLB6wsFq2h7TdrKW6blAHA0XlnZ9W4AVvreSinTWv3zIMCW+pve+GC/RkK97M4rnxTWTRmcdrDUx1q7wqgosCJwAulbUiJcf8p80c6SFMQw53LQNdAx3l1N3g6F0xMdo=
+	t=1737661276; cv=none; b=s8VUdiNr0a033LeOUSw9O48GwUuCpt6FBNcjab/eQmaB8uLPIOUQ13oukSYPhKzIsSx5OxCmGr3HE5CNagCPx1tKb1zmjAQpu8szI6doUBtBbC401dfTqVFpAqw8CNKDXu3oQ00ASCzoA9Yo4F0s6GSk9R9ArMsnyDXqKpKe+X8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737661209; c=relaxed/simple;
-	bh=lNvFblm0tA75dRFkK2dQQ2vP5N1S9A5oJ9+tZziA3SU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=svqQxiX9STAEoCFIshgKcccGSUBfOcO2rNcG6mNIo2AV/V9UPx3D+OlIaaqqjlR1IvCdoZJO2VLJJHAqbvqFp4sISnHw1ZgpEAqUEug9cO5BX8j6d2a7PWI4ZMs/kVeAyPxZ/ORALl8+6O0A73fibP7/045dY8ZrQD7Il9beVSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R+5861lj; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1737661276; c=relaxed/simple;
+	bh=crfRQrn6rJNEgnAzDpUaAC4avkLkEg1kUUwBWVgapks=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:content-type; b=KA0uxcCgd/JQOVGclmD1PHBfQn/aqAo7HYqzK69Ufhvs2VQYzg+sVtHAzO7yHSA6i7m3M0iXzoQHXG3gabPV47FLR58drzbYE8CgiN1FcBOKfknc8Aoz8G+EEHOzBBO6POWErcWUCDUURlIYbkWxmQu418lsgRa9vjvgm41TyaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZWPmHVVh; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R+5861lj"
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-21680814d42so21924925ad.2;
-        Thu, 23 Jan 2025 11:40:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737661207; x=1738266007; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XGNk0E1QQh9jtcLegFAVre19rme1v+GqwcPtvIzl+1s=;
-        b=R+5861lji0BtabkkiCj0H4SN/x89FJMsQkAoILlgyvHiayuR88Bu2GOxQKoH4XGdFE
-         r7uQqqlwGTNQ0KlDnElJoIZiIkr+SjufvNu7dnyyU0CMw3Sms0K6PUUfIzrkIkWHeLht
-         2461HF/YeLA/RyoLxOXSKxhgntEfuXMA6+3kQYqt7GKzG9FjbU9KFopqVunl6KnEmjUX
-         Po0EmCfJ/3ARi+/eEe54O6lYFf6zjZs7zj18gyysGzhuYNiJ44QML95vbpq5k0Umhl3o
-         R1yptL9e39ncixI/XrYM99vnCxFubWQk+VfuhWKvm/zD4c696Fdo0r6GOLBRO4UzdRaI
-         D8xg==
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZWPmHVVh"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1737661273;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=pMjEfd15YaPnS3m1kK+tJc0UvrQqQ2bQdv285PmS/eo=;
+	b=ZWPmHVVhOeO9Y8eEC1eA7UEEJ7R+QN5h1HukBHw9nQ8MJzQ9TZbgDQDB0EV/gxxsEkI74h
+	zbespgX914qWnHGVjudRdJmOwDjhx5J/ko1QeNTIH4auk9MLkz0e7qKa6siLFN1afhodfa
+	4PUUA8ZKlueiNa6dPMkPCUAcZZqpFkc=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-455-3sxpKFDMPI2KNN9oZNQIiw-1; Thu, 23 Jan 2025 14:41:12 -0500
+X-MC-Unique: 3sxpKFDMPI2KNN9oZNQIiw-1
+X-Mimecast-MFC-AGG-ID: 3sxpKFDMPI2KNN9oZNQIiw
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-436289a570eso9520165e9.0
+        for <linux-security-module@vger.kernel.org>; Thu, 23 Jan 2025 11:41:11 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737661207; x=1738266007;
+        d=1e100.net; s=20230601; t=1737661271; x=1738266071;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=XGNk0E1QQh9jtcLegFAVre19rme1v+GqwcPtvIzl+1s=;
-        b=gUTs2neuN8CBXeh1cHovVkBYq8U8ojPVYFIbp1jMcl5YojIzX1XCt7TwiT/b879sVh
-         Rtox1qVKzUQb011or8hB3tvvlwVELF6KS/Xwddua5rkX+EplWpRK0zrZqSCAPJl/+09u
-         gi4YIWbuOlOLs5zg7P8thanmHWMQ9xeXkm60V2wwWSDjaProEwxw4ScWPb1BDOOdyA8B
-         /VasnBtVCd1zrzfmznGjERxPC0+UdA8eRMcbVY1/gIprs17qrCVHg2t8x/bm1D/S4I8C
-         an79S/naqeVjxWPBb+ga8dcQGokRus1qDdLXl1DGJoAum8NPhW8by1ZkqwISMCGWLN3Z
-         pTGg==
-X-Forwarded-Encrypted: i=1; AJvYcCXQ1Yq4raqHpTEPH9U3IhgGy2cgPA3pf1+4FofQ9JAbweSe5ftAM/Dpkj+cybuCcWTzXt7QvKBcozlBBvY=@vger.kernel.org, AJvYcCXrAYCjNFj01cXYDRbdRuo/ocY/p2JO8jQJg1HinrGrhqinMPx97vGzkRerJLVDSmsOPSzKLid6IA7iJ2ChttHEebtf8Jon@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDPWqR1zq6RX05j+zfjPVJu+zlw99VNV1a4hHXh2sCkFxdlkFg
-	9+jDkDflFYwqP199yq9TNOE3s1p5h2f5efks3cK4Kzc9pbb88/UO
-X-Gm-Gg: ASbGnctbwL0mCsw6hUucqaZKC4Wrw3AVa8NvtJ+1/Rkh/LWqRNtkFQHHraF4crLNrQk
-	W/VgDtWTaeu0ieaX9f2cyhRZxyy8k2ysQyjKqH8VZkkJZH7KTlGOfMnLESkqev3GWVfwOABP7G6
-	GfmLS19OCPCiEfo/PL82s6374wYFoqtNegs2olp3ZaTSJRX4Iaiee/Dmqvdz+IsfczY3EY5N5sB
-	EXtUDdcFrM3mF1mAVPIs2SmkjpVHPF8IqJYl6p3XqQbCjj0IM0UpfsqLz8QlwKbbchmBaorpmT/
-	lg==
-X-Google-Smtp-Source: AGHT+IFOJ0YepxdXCiA5AdmwfYu25lYNDwnM4txqqU57cNwYZy5mXZ0IROA1Lb7I0hEy4FBbPXVl6g==
-X-Received: by 2002:a17:903:2344:b0:210:fce4:11ec with SMTP id d9443c01a7336-21c352ddf4emr456747045ad.1.1737661207398;
-        Thu, 23 Jan 2025 11:40:07 -0800 (PST)
-Received: from localhost.localdomain ([122.174.87.98])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-21da413f453sm2680515ad.120.2025.01.23.11.40.02
+        bh=pMjEfd15YaPnS3m1kK+tJc0UvrQqQ2bQdv285PmS/eo=;
+        b=hl7MjMBCpIdEeD4LXIg0QSHZuzxrH5cdDVBQBg6yeglYFbGVZMimRXnYt1RvyMrNjA
+         /ZhRbmo75CrWnA4dWjrWJHc0XfMhbOBuLAH/M8juLXs/5vFMKfP79ksD0yOtAa/YCd1p
+         tq5uyFJX4rnd5KMbAITWqC6ZnGHRxw8RNjQofN2HAedibTTLJjhLcdFxqFCWMkIAasbA
+         xRkqh2PMLPgUVd0NXI1f1AtTspVtOlBBqlhgvJ/VF2RztIx7aFqYi2hjmLJRgu4Pnwqe
+         92H+S24/2pIuiGOV7B9YttmnkLquNMtOb2PPsvSLRotID8jpKPgYXMlitKb/JY7o7oL2
+         gy1g==
+X-Forwarded-Encrypted: i=1; AJvYcCU/ib4lMso7P3gEX8o0/ursEpvWMRWnlDMdeM16yPb8yFWsOseaLhPADHXVsmQatqktevtcw9/BOAwmn7TLuH85XekQdsU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWXeQvNIvHnUFPcmZTYYQ/O5IoLqc4H9ehx+kbPrWBXvzm/1YS
+	DK1BayMCX9CTBPKb3wqJmd4V9MrJxhh9Iwou37FbfDD0d0J0yKzXAmF2epZZfKBQ7SIZHCvjYFV
+	dClOdrGC4Yatcs8QAFMLX907GuH38g9NxA8ffvqhNsyntmqFhhy75Q6Zcq+ijVnzOGguEKRf14g
+	==
+X-Gm-Gg: ASbGnct8ZUJNZRJ6DWuDk6UXryfDQ1WBIfc3WCyIpqnWJzGkLhB3DHedULHZ007URDC
+	zlQYol5wOVdjqPUqQZI4+4iX53F4qpXdoLhn7Ep+DwoBJiN41CRF1f1znlKfwZNdhUgawuOUZ1J
+	KSbY6ZODfUvXUrU1x6P7Gl2CF/INp/8I6fkMO/yFm54g4Z+0tssLiRRcukdzjDnjt/QaiQuXKCY
+	GSGRkB+FyNCRsMRLh/SRPQcw0ELJFcoiw8eN3BEgYQpP99T+Ngp2Oj55XMDDd+8jMpcxeGUSwiH
+	2f93fAQzlTMZh3VYj1B3uMinN8SeViAVaLA6w63bYYElGw==
+X-Received: by 2002:a05:600c:1386:b0:434:f739:7cd9 with SMTP id 5b1f17b1804b1-438913cf349mr240199855e9.9.1737661270710;
+        Thu, 23 Jan 2025 11:41:10 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHoz2j+PwNk/UXtmsGls7bCH6WnDcHXmR9rN/MaKVJjM3lXOBp6m6yVukwzhUxjrjYNsdB93A==
+X-Received: by 2002:a05:600c:1386:b0:434:f739:7cd9 with SMTP id 5b1f17b1804b1-438913cf349mr240199745e9.9.1737661270368;
+        Thu, 23 Jan 2025 11:41:10 -0800 (PST)
+Received: from maszat.piliscsaba.szeredi.hu (91-82-183-41.pool.digikabel.hu. [91.82.183.41])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-438bd507e46sm1687245e9.21.2025.01.23.11.41.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jan 2025 11:40:06 -0800 (PST)
-From: Tanya Agarwal <tanyaagarwal25699@gmail.com>
-X-Google-Original-From: Tanya Agarwal <tanyaagarwal25699@gmail.com
-To: zohar@linux.ibm.com,
-	roberto.sassu@huawei.com,
-	dmitry.kasatkin@gmail.com,
-	eric.snowberg@oracle.com,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com
-Cc: linux-integrity@vger.kernel.org,
+        Thu, 23 Jan 2025 11:41:09 -0800 (PST)
+From: Miklos Szeredi <mszeredi@redhat.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Karel Zak <kzak@redhat.com>,
+	Lennart Poettering <lennart@poettering.net>,
+	Ian Kent <raven@themaw.net>,
+	Al Viro <viro@zeniv.linux.org.uk>,
 	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	anupnewsmail@gmail.com,
-	Tanya Agarwal <tanyaagarwal25699@gmail.com>
-Subject: [PATCH] integrity: fix typos and spelling errors
-Date: Fri, 24 Jan 2025 01:07:44 +0530
-Message-Id: <20250123193742.2623-1-tanyaagarwal25699@gmail.com>
-X-Mailer: git-send-email 2.39.5
+	Paul Moore <paul@paul-moore.com>
+Subject: [PATCH v4 0/4] mount notification
+Date: Thu, 23 Jan 2025 20:41:03 +0100
+Message-ID: <20250123194108.1025273-1-mszeredi@redhat.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: -RBt_J8s9elR6W-6l22AehYi17lL9ZPembr8llaV3Fs_1737661271
+X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
+content-type: text/plain; charset="US-ASCII"; x-default=true
 
-From: Tanya Agarwal <tanyaagarwal25699@gmail.com>
+Addressed all comments, and split up patch into three pieces (fsnotify,
+fanotify, namespace) and added a fourth patch for mount changes.
 
-Fix typos and spelling errors in integrity module comments that were
-identified using the codespell tool.
-No functional changes - documentation only.
+There's only one FIXME remaining in selinux_path_notify().  The path passed
+to fanotify_mark() and subsequently to ->path_notify() is a namespace file,
+and comes from nsfs (i.e. /proc/$$/ns/mnt).  Does this need to be handled
+specially by selinux?
 
-Signed-off-by: Tanya Agarwal <tanyaagarwal25699@gmail.com>
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+Paul, can you please review this change?
+
+Thanks,
+Miklos
+
 ---
-Original discussion:
-https://lore.kernel.org/all/20250112072925.1774-1-tanyaagarwal25699@gmail.com
+v4:
+  - add notification on attribute change
+  - deal with two FIXMEs
+  - move data and code to #ifdef CONFIG_FSNOTIFY regions
+  - function renames for more consistentcy (Christian)
+  - explanation comment in umount_tree() (Christian)
+  - style cleanups in fanotify (Amir, Jan)
+  - changed FAN_MNT_* values (Amir)
 
-This patch set is split into individual patches for each LSM
-to facilitate easier review by respective maintainers. 
+v3:
+  - use a global list protected for temporarily storing (Christian)
+  - move fsnotify_* calls to namespace_unlock() (Christian)
+  - downgrade namespace_sem to read for fsnotify_* calls (Christian)
+  - add notification for reparenting in propagate_umount (Christian)
+  - require nsfs file (/proc/PID/ns/mnt) in fanotify_mark(2) (Christian)
+  - cleaner check for fsnotify being initialized (Amir)
+  - fix stub __fsnotify_mntns_delete (kernel test robot)
+  - don't add FANOTIFY_MOUNT_EVENTS to FANOTIFY_FD_EVENTS (Amir)
 
- security/integrity/evm/evm_crypto.c | 2 +-
- security/integrity/evm/evm_main.c   | 2 +-
- security/integrity/ima/ima_main.c   | 6 +++---
- 3 files changed, 5 insertions(+), 5 deletions(-)
+v2:
+  - notify for whole namespace as this seems to be what people prefer
+  - move fsnotify() calls outside of mount_lock
+  - only report mnt_id, not parent_id
 
-diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
-index 7c06ffd633d2..a5e730ffda57 100644
---- a/security/integrity/evm/evm_crypto.c
-+++ b/security/integrity/evm/evm_crypto.c
-@@ -180,7 +180,7 @@ static void hmac_add_misc(struct shash_desc *desc, struct inode *inode,
- }
- 
- /*
-- * Dump large security xattr values as a continuous ascii hexademical string.
-+ * Dump large security xattr values as a continuous ascii hexadecimal string.
-  * (pr_debug is limited to 64 bytes.)
-  */
- static void dump_security_xattr_l(const char *prefix, const void *src,
-diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-index 377e57e9084f..0add782e73ba 100644
---- a/security/integrity/evm/evm_main.c
-+++ b/security/integrity/evm/evm_main.c
-@@ -169,7 +169,7 @@ static int is_unsupported_hmac_fs(struct dentry *dentry)
-  * and compare it against the stored security.evm xattr.
-  *
-  * For performance:
-- * - use the previoulsy retrieved xattr value and length to calculate the
-+ * - use the previously retrieved xattr value and length to calculate the
-  *   HMAC.)
-  * - cache the verification result in the iint, when available.
-  *
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 9b87556b03a7..cdb8c7419d7e 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -983,9 +983,9 @@ int process_buffer_measurement(struct mnt_idmap *idmap,
- 	}
- 
- 	/*
--	 * Both LSM hooks and auxilary based buffer measurements are
--	 * based on policy.  To avoid code duplication, differentiate
--	 * between the LSM hooks and auxilary buffer measurements,
-+	 * Both LSM hooks and auxiliary based buffer measurements are
-+	 * based on policy. To avoid code duplication, differentiate
-+	 * between the LSM hooks and auxiliary buffer measurements,
- 	 * retrieving the policy rule information only for the LSM hook
- 	 * buffer measurements.
- 	 */
+
+Miklos Szeredi (4):
+  fsnotify: add mount notification infrastructure
+  fanotify: notify on mount attach and detach
+  vfs: add notifications for mount attach and detach
+  vfs: add notifications for mount attribute change
+
+ fs/mount.h                         |  26 +++++++
+ fs/namespace.c                     | 120 ++++++++++++++++++++++++++++-
+ fs/notify/fanotify/fanotify.c      |  38 ++++++++-
+ fs/notify/fanotify/fanotify.h      |  18 +++++
+ fs/notify/fanotify/fanotify_user.c |  86 +++++++++++++++++----
+ fs/notify/fdinfo.c                 |   5 ++
+ fs/notify/fsnotify.c               |  47 +++++++++--
+ fs/notify/fsnotify.h               |  11 +++
+ fs/notify/mark.c                   |  14 +++-
+ fs/pnode.c                         |   4 +-
+ include/linux/fanotify.h           |  12 ++-
+ include/linux/fsnotify.h           |  25 ++++++
+ include/linux/fsnotify_backend.h   |  43 ++++++++++-
+ include/uapi/linux/fanotify.h      |  11 +++
+ security/selinux/hooks.c           |   4 +
+ 15 files changed, 428 insertions(+), 36 deletions(-)
+
 -- 
-2.39.5
+2.47.1
 
