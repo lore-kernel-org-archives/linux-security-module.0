@@ -1,70 +1,70 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C5BD1ADC77
-	for <linux-security-module@vger.kernel.org>; Thu, 23 Jan 2025 19:41:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B0C1B86D5
+	for <linux-security-module@vger.kernel.org>; Thu, 23 Jan 2025 19:41:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737661280; cv=none; b=N4ymLEuaSgQIQULX5a/Loxrt4rAMz/qUjJPDn8vXlbuAYGLj5W2EUdd5ganeT6divwlAYRPhLip/2fGf0uD4A3jXG2TSPk/O4r2V90TnSZDh/Y4sw9pQZqnqD3KnaaWoTiEOvErOrrMAv4eRvahHgm267cxc3CHguhm9s6DA/SQ=
+	t=1737661281; cv=none; b=fSxZcqPF/r1R4kJZVUK0SG99NCjQoeRQXsFf6Izjo1znKjLIWjceAbiPKA93jQzeGsz2rzqBV9pPsab1KV7BMEbDCqnbZa23q34D8UszkugxG//x4/MRMxWv97QVQL5WDeQaAlabGwrEJO2hi5DNEVj00PPIiYijlZOG7rSL5bU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737661280; c=relaxed/simple;
-	bh=GIF+fk9IobFSfNhuFhApJTMzkrK12SVgNFfAKA+iy3w=;
+	s=arc-20240116; t=1737661281; c=relaxed/simple;
+	bh=8Rex1jue2v4oXkNDV+SsESvmvUW9hToBize8zaIzoh0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:content-type; b=B9LieCl2BpNHudISQ5x2rR2VFoBaOASB7l8mjffuNhYRPWHw9fVEbQHT+7CCfyQ5YBTFfx3rGVTj3H4AAChPlrjiQyi8SZ8t9IXkajC6GNjgSnK7e2a4jEyDpusDAsR/QU72dk2J9HpmwHkFhEfB8iam8oN0ZjsMg1d4OPk0Lew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ao0g4cmf; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version:content-type; b=Akf6WbE8HaTMDfwNi3aRyyoWgRLddv3mRTq6BoWk31YUcpeMkLWQ/WNLK3bQMmwAr61pwycwz71XC4kcazg4/L24F4aqtRt3Mxl0Lmy48VyeAAOh2rixtbg/sARMHmtvIXAA3EoBbQzs7hZxZwAfU+VJ3x7NzUWSjH7fI7aCVT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DbNoBuoA; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ao0g4cmf"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DbNoBuoA"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1737661277;
+	s=mimecast20190719; t=1737661279;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=+V+IxkaybUSMW2r1YO28wGSsGSHInaXvUKJ337QNsU4=;
-	b=ao0g4cmfD115ZEl+DWrVxUZisDK5FEe7TbRWBtAPXrrEkEkNrWCyphU9LbooTzlsIKjQiZ
-	1oTq+PLjDbx6M56Rp6e19vwUu1Zp/uWutSD+rkZNAdENUHpeUapXbQXF77OZgA+SMUM4Sm
-	o9a6YB+NLmU0hjYoqEHPpHoVe0K20uc=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=lVWBJyMVn3pq9QMtoCCB0cgOGlE9eZyl9LQ5JXqGeCA=;
+	b=DbNoBuoA19mM6XSgTRsoMqpTQxBA5RhzeuwZrlZ9u22tsDVPJjdZk/gmSbQToUjp5+aYk1
+	lZGib+udR/z46gVEZPqn1bl1scp62bMyKHBtQ8sI5HxGRPxGVWEo15unKQSAlm5V/tEXs4
+	Ba/pJ8w8d9hCZuWHPrYJHNlVR8j/NCM=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-672-2k4cmDUyN8aD4G5nESB2Fg-1; Thu, 23 Jan 2025 14:41:16 -0500
-X-MC-Unique: 2k4cmDUyN8aD4G5nESB2Fg-1
-X-Mimecast-MFC-AGG-ID: 2k4cmDUyN8aD4G5nESB2Fg
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3862f3ccf4fso531682f8f.0
-        for <linux-security-module@vger.kernel.org>; Thu, 23 Jan 2025 11:41:15 -0800 (PST)
+ us-mta-237-7PmMWVVrO-Kw6MbfHYeYFA-1; Thu, 23 Jan 2025 14:41:17 -0500
+X-MC-Unique: 7PmMWVVrO-Kw6MbfHYeYFA-1
+X-Mimecast-MFC-AGG-ID: 7PmMWVVrO-Kw6MbfHYeYFA
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-385e00ebb16so499119f8f.3
+        for <linux-security-module@vger.kernel.org>; Thu, 23 Jan 2025 11:41:17 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737661275; x=1738266075;
+        d=1e100.net; s=20230601; t=1737661276; x=1738266076;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+V+IxkaybUSMW2r1YO28wGSsGSHInaXvUKJ337QNsU4=;
-        b=OSgl0Vh6Hmk16OM4q+Vos0F3WTVS/kQyrWow5T+ktczpcdZMKuZFBB3ujf+Kuq83EL
-         juFSSx/sZXpVN5TsMbgHxEaJekkfbYkRiqezTgG0Xyu9mmj08Q/39V85VT3L5vImWdfV
-         CEtlCV6lXjq7y+mTrd7e4W66/NC98t7bQUocwz85hPW5kElrCsWFBuSu+1/13emb1Glu
-         fIsYZDwU/m5rxbIvyij4NT6rbQyRYS38awlChgIDdaDzUWWSny5HhKkSuDcfiPDOul9V
-         PSCpnYFgKmd12NJwEWzs3BqszD5o5I808x3J/NqKTQ+0Wm/t8xfg2VVamvERxhmeFISs
-         5d6w==
-X-Forwarded-Encrypted: i=1; AJvYcCXeu04ij6JpcYh5OzuaL9XeF/RHQ3Z4pWmaoMEIeUByQz2b67ZQJY7apLPfHd8JVulKLqMu57PnHCEBAqy/7URZfZ5L6vM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqH5FvOL10mOr0T7HtNcstI96NYcDKuGbS3sQ3O2hMhUU2AhxX
-	aBHuaZ8xXTcJnbpQoMJJm75SDIuJNpcnfhazz960f6HKcdj825gN1+gPdKAAZ1uJJqaEcKdd/NR
-	+PYXy0kPCZukXtc57hHl586EQ7IVomxER3XFpO323C9oVHzgeVyFUzhYMIKtmriNLf6QF13Do/Q
+        bh=lVWBJyMVn3pq9QMtoCCB0cgOGlE9eZyl9LQ5JXqGeCA=;
+        b=Qwoc7trl4oQgAk4ZyVYBshWj1SjCLKxaU1b0g5iYD9lONBiB2vOnMI65kANgQqsa5V
+         jgbHFKZsze9UmAXnrZRupiIXD9RsLNiY9vUf3k0FOkNCXC2MvHTU30WL2Z99RPirNSIP
+         LgNwXaw0ndkA5zDDW8MQ9KQtMCey6HT5i6RA/+0uPfhofG99BTe7j3FM0eWBMkq0YKVk
+         fCGPQw38vpU3Suzw2mBh8ey5JL2ABHTqeAMA0uyYkeLg0sbzB8WhxJWVa2jfw0msWqaW
+         qCjpHp4QM8UmSVBoqodIebT52oD5pWmbrfwB68rHpYCnQC/89IjuKyKhQ1EKHpMXdnfK
+         x81g==
+X-Forwarded-Encrypted: i=1; AJvYcCUPAVNFwRAfBUt/GQRlLhAV/MI2KwX8rn50Vpt98KfFB7rdW0L6cL3vXVhDJPuecDhipe9JqyOwuI1qV7JdTo00HtmMsnU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRmw/wTKAe3d7NFdS+m6VZnNQmdWY6Td5XnslBa/sKSprN5NuH
+	3rUhsITj2Yl8w3EmRcWecRzNdWfd8huxOIM8JMu23bA/xjTjWxBUOTILna0JzQrzatw+2+p6UUP
+	bai8LIS8Yr9ubWTwxrxAJiqg+CzUInzpktvoZcWfqO9wCz4Mt4Do5jhef2HieAcVFddDRhiVOuQ
 	==
-X-Gm-Gg: ASbGncvONi+QEDYfdU92gczAC5MN3isKErHz6vNoPBCXzxi9s02O0YITt6cVhvR1vTW
-	Fhc1S+HqQRHYQvM1vCaIfCIpY6d9Ey6e821IJiTpGbtrysIF6nYomE0NFYmLQnididYuGlUXhjM
-	smLeqFTpw8izYCWhXxaKiyXKrenbiFJqhFJwarus6DVY/fb/MGqEkmVIfsHjkQ7SP+LER5z5GZ2
-	BBqbrkh4AdvxW+fMSeklnBlKH20uuhtTJoHlNjI4CnVbCHQliKFw/OHmMTpEu7VLyEIPHKEwtaa
-	qXg/sKovHgThMAsV0NErxvcJvS1mR/cfSvhpzT3SbiJ2Kg==
-X-Received: by 2002:a5d:5f54:0:b0:38a:4184:151a with SMTP id ffacd0b85a97d-38bf57a662bmr23000428f8f.37.1737661274810;
-        Thu, 23 Jan 2025 11:41:14 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF6bvb2a3XGHOGcH/RcOdmYEOAisg6ahNrkQ9wKfU4H2gSMzXslaNmQdhwD6k+hdMTBdlXNDw==
-X-Received: by 2002:a5d:5f54:0:b0:38a:4184:151a with SMTP id ffacd0b85a97d-38bf57a662bmr23000397f8f.37.1737661274407;
-        Thu, 23 Jan 2025 11:41:14 -0800 (PST)
+X-Gm-Gg: ASbGnctGc6fK6aZgrkZs5COJS6VgivotdMzupxr6R2n8U9eoAKQ/vvnqC+0QvoctuDD
+	1csLBEABlpE1xD8ueEB5gVb50gCjIYHbFHhUA8Jagcw9jwwwQIp24llxx+j5oW2yzwhHt7BAzdf
+	lvhGCc2r720Dxyp23XrlAr6TYU3McOATx284JyfpEeugbzNTAllmIFegYukdIOEzCvUh5G+c/65
+	hogLhtPVwuj3pCkYIxF40LLXaKZpT2PFYfXnKSrHm5TKbOGoittrp+Y/9392r0aPLg1KP6/yVgx
+	VwG8dtAoyVSXAUJWf4VrPRzDDKozwClT8qA7N+97Bj6beg==
+X-Received: by 2002:a05:6000:1863:b0:385:df2c:91aa with SMTP id ffacd0b85a97d-38bf565579fmr22252053f8f.7.1737661276521;
+        Thu, 23 Jan 2025 11:41:16 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGCwYvNPnsOpcrz/YUWLahtCRlJYVF7u4D+kUx15s09iLwHMLIFq/9r+tNumdffqIr6q0gPGA==
+X-Received: by 2002:a05:6000:1863:b0:385:df2c:91aa with SMTP id ffacd0b85a97d-38bf565579fmr22252032f8f.7.1737661276130;
+        Thu, 23 Jan 2025 11:41:16 -0800 (PST)
 Received: from maszat.piliscsaba.szeredi.hu (91-82-183-41.pool.digikabel.hu. [91.82.183.41])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-438bd507e46sm1687245e9.21.2025.01.23.11.41.13
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-438bd507e46sm1687245e9.21.2025.01.23.11.41.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jan 2025 11:41:14 -0800 (PST)
+        Thu, 23 Jan 2025 11:41:15 -0800 (PST)
 From: Miklos Szeredi <mszeredi@redhat.com>
 To: linux-fsdevel@vger.kernel.org
 Cc: Christian Brauner <brauner@kernel.org>,
@@ -76,9 +76,9 @@ Cc: Christian Brauner <brauner@kernel.org>,
 	Al Viro <viro@zeniv.linux.org.uk>,
 	linux-security-module@vger.kernel.org,
 	Paul Moore <paul@paul-moore.com>
-Subject: [PATCH v4 3/4] vfs: add notifications for mount attach and detach
-Date: Thu, 23 Jan 2025 20:41:06 +0100
-Message-ID: <20250123194108.1025273-4-mszeredi@redhat.com>
+Subject: [PATCH v4 4/4] vfs: add notifications for mount attribute change
+Date: Thu, 23 Jan 2025 20:41:07 +0100
+Message-ID: <20250123194108.1025273-5-mszeredi@redhat.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20250123194108.1025273-1-mszeredi@redhat.com>
 References: <20250123194108.1025273-1-mszeredi@redhat.com>
@@ -89,217 +89,198 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: CLk8IkDxgsy7wQoOdKDokAKOVgF5uQE5d-NjbduNyzA_1737661275
+X-Mimecast-MFC-PROC-ID: l7kh4Ik8rqaS3ebFqomKXzs-IjWyWM1PyDwjEuOEGqc_1737661277
 X-Mimecast-Originator: redhat.com
 Content-Transfer-Encoding: 8bit
 content-type: text/plain; charset="US-ASCII"; x-default=true
 
-Add notifications for attaching and detaching mounts to fs/namespace.c
+Notify when mount flags, propagation or idmap changes.
+
+Just like attach and detach, no details are given in the notification, only
+the mount ID.
 
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 ---
- fs/mount.h     | 20 +++++++++++++
- fs/namespace.c | 79 +++++++++++++++++++++++++++++++++++++++++++++++++-
- fs/pnode.c     |  4 ++-
- 3 files changed, 101 insertions(+), 2 deletions(-)
+ fs/namespace.c                   | 27 +++++++++++++++++++++++++++
+ fs/notify/fanotify/fanotify.c    |  2 +-
+ fs/notify/fanotify/fanotify.h    |  2 +-
+ fs/notify/fsnotify.c             |  2 +-
+ include/linux/fanotify.h         |  2 +-
+ include/linux/fsnotify.h         |  5 +++++
+ include/linux/fsnotify_backend.h |  5 ++++-
+ include/uapi/linux/fanotify.h    |  1 +
+ 8 files changed, 41 insertions(+), 5 deletions(-)
 
-diff --git a/fs/mount.h b/fs/mount.h
-index 9689e7bf4501..7dd22a226a6e 100644
---- a/fs/mount.h
-+++ b/fs/mount.h
-@@ -5,6 +5,8 @@
- #include <linux/ns_common.h>
- #include <linux/fs_pin.h>
- 
-+extern struct list_head notify_list;
-+
- struct mnt_namespace {
- 	struct ns_common	ns;
- 	struct mount *	root;
-@@ -72,6 +74,8 @@ struct mount {
- #ifdef CONFIG_FSNOTIFY
- 	struct fsnotify_mark_connector __rcu *mnt_fsnotify_marks;
- 	__u32 mnt_fsnotify_mask;
-+	struct list_head to_notify;	/* need to queue notification */
-+	struct mnt_namespace *prev_ns;	/* previous namespace (NULL if none) */
- #endif
- 	int mnt_id;			/* mount identifier, reused */
- 	u64 mnt_id_unique;		/* mount ID unique until reboot */
-@@ -175,4 +179,20 @@ static inline struct mnt_namespace *to_mnt_ns(struct ns_common *ns)
- 	return container_of(ns, struct mnt_namespace, ns);
- }
- 
-+#ifdef CONFIG_FSNOTIFY
-+static inline void mnt_notify_add(struct mount *m)
-+{
-+	/* Optimize the case where there are no watches */
-+	if ((m->mnt_ns && m->mnt_ns->n_fsnotify_marks) ||
-+	    (m->prev_ns && m->prev_ns->n_fsnotify_marks))
-+		list_add_tail(&m->to_notify, &notify_list);
-+	else
-+		m->prev_ns = m->mnt_ns;
-+}
-+#else
-+static inline void mnt_notify_add(struct mount *m)
-+{
-+}
-+#endif
-+
- struct mnt_namespace *mnt_ns_from_dentry(struct dentry *dentry);
 diff --git a/fs/namespace.c b/fs/namespace.c
-index 4d9072fd1263..948348a37f6c 100644
+index 948348a37f6c..9b9b13665dce 100644
 --- a/fs/namespace.c
 +++ b/fs/namespace.c
-@@ -79,6 +79,9 @@ static struct kmem_cache *mnt_cache __ro_after_init;
- static DECLARE_RWSEM(namespace_sem);
- static HLIST_HEAD(unmounted);	/* protected by namespace_sem */
- static LIST_HEAD(ex_mountpoints); /* protected by namespace_sem */
-+#ifdef CONFIG_FSNOTIFY
-+LIST_HEAD(notify_list); /* protected by namespace_sem */
-+#endif
- static DEFINE_RWLOCK(mnt_ns_tree_lock);
- static struct rb_root mnt_ns_tree = RB_ROOT; /* protected by mnt_ns_tree_lock */
+@@ -2807,6 +2807,9 @@ static int do_change_type(struct path *path, int ms_flags)
+ 		change_mnt_propagation(m, type);
+ 	unlock_mount_hash();
  
-@@ -145,6 +148,7 @@ static void mnt_ns_release(struct mnt_namespace *ns)
- 
- 	/* keep alive for {list,stat}mount() */
- 	if (refcount_dec_and_test(&ns->passive)) {
-+		fsnotify_mntns_delete(ns);
- 		put_user_ns(ns->user_ns);
- 		kfree(ns);
- 	}
-@@ -1136,6 +1140,8 @@ static void mnt_add_to_ns(struct mnt_namespace *ns, struct mount *mnt)
- 	}
- 	rb_link_node(&mnt->mnt_node, parent, link);
- 	rb_insert_color(&mnt->mnt_node, &ns->mounts);
++	for (m = mnt; m; m = (recurse ? next_mnt(m, mnt) : NULL))
++		fsnotify_mnt_change(m->mnt_ns, &m->mnt);
 +
-+	mnt_notify_add(mnt);
+  out_unlock:
+ 	namespace_unlock();
+ 	return err;
+@@ -3089,6 +3092,12 @@ static int do_reconfigure_mnt(struct path *path, unsigned int mnt_flags)
+ 	unlock_mount_hash();
+ 	up_read(&sb->s_umount);
+ 
++	if (!ret) {
++		down_read(&namespace_sem);
++		fsnotify_mnt_change(mnt->mnt_ns, &mnt->mnt);
++		up_read(&namespace_sem);
++	}
++
+ 	mnt_warn_timestamp_expiry(path, &mnt->mnt);
+ 
+ 	return ret;
+@@ -3141,6 +3150,13 @@ static int do_remount(struct path *path, int ms_flags, int sb_flags,
+ 		up_write(&sb->s_umount);
+ 	}
+ 
++	if (!err) {
++		down_read(&namespace_sem);
++		fsnotify_mnt_change(mnt->mnt_ns, &mnt->mnt);
++		up_read(&namespace_sem);
++	}
++
++
+ 	mnt_warn_timestamp_expiry(path, &mnt->mnt);
+ 
+ 	put_fs_context(fc);
+@@ -4708,6 +4724,8 @@ static int do_mount_setattr(struct path *path, struct mount_kattr *kattr)
+ 				return err;
+ 			}
+ 		}
++	} else {
++		down_read(&namespace_sem);
+ 	}
+ 
+ 	err = -EINVAL;
+@@ -4743,10 +4761,19 @@ static int do_mount_setattr(struct path *path, struct mount_kattr *kattr)
+ out:
+ 	unlock_mount_hash();
+ 
++	if (!err) {
++		struct mount *m;
++
++		for (m = mnt; m; m = kattr->recurse ? next_mnt(m, mnt) : NULL)
++			fsnotify_mnt_change(m->mnt_ns, &m->mnt);
++	}
++
+ 	if (kattr->propagation) {
+ 		if (err)
+ 			cleanup_group_ids(mnt, NULL);
+ 		namespace_unlock();
++	} else {
++		up_read(&namespace_sem);
+ 	}
+ 
+ 	return err;
+diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
+index b1937f92f105..c7ddd145f3d8 100644
+--- a/fs/notify/fanotify/fanotify.c
++++ b/fs/notify/fanotify/fanotify.c
+@@ -934,7 +934,7 @@ static int fanotify_handle_event(struct fsnotify_group *group, u32 mask,
+ 	BUILD_BUG_ON(FAN_FS_ERROR != FS_ERROR);
+ 	BUILD_BUG_ON(FAN_RENAME != FS_RENAME);
+ 
+-	BUILD_BUG_ON(HWEIGHT32(ALL_FANOTIFY_EVENT_BITS) != 23);
++	BUILD_BUG_ON(HWEIGHT32(ALL_FANOTIFY_EVENT_BITS) != 24);
+ 
+ 	mask = fanotify_group_event_mask(group, iter_info, &match_mask,
+ 					 mask, data, data_type, dir);
+diff --git a/fs/notify/fanotify/fanotify.h b/fs/notify/fanotify/fanotify.h
+index f1a7cbedc9e3..8d6289da06f1 100644
+--- a/fs/notify/fanotify/fanotify.h
++++ b/fs/notify/fanotify/fanotify.h
+@@ -471,7 +471,7 @@ static inline bool fanotify_is_error_event(u32 mask)
+ 
+ static inline bool fanotify_is_mnt_event(u32 mask)
+ {
+-	return mask & (FAN_MNT_ATTACH | FAN_MNT_DETACH);
++	return mask & FANOTIFY_MOUNT_EVENTS;
  }
+ 
+ static inline const struct path *fanotify_event_path(struct fanotify_event *event)
+diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
+index 2b2c3fd907c7..5872dd27172d 100644
+--- a/fs/notify/fsnotify.c
++++ b/fs/notify/fsnotify.c
+@@ -660,7 +660,7 @@ static __init int fsnotify_init(void)
+ {
+ 	int ret;
+ 
+-	BUILD_BUG_ON(HWEIGHT32(ALL_FSNOTIFY_BITS) != 25);
++	BUILD_BUG_ON(HWEIGHT32(ALL_FSNOTIFY_BITS) != 26);
+ 
+ 	ret = init_srcu_struct(&fsnotify_mark_srcu);
+ 	if (ret)
+diff --git a/include/linux/fanotify.h b/include/linux/fanotify.h
+index fc142be2542d..61e112d25303 100644
+--- a/include/linux/fanotify.h
++++ b/include/linux/fanotify.h
+@@ -100,7 +100,7 @@
+ /* Events that can only be reported with data type FSNOTIFY_EVENT_ERROR */
+ #define FANOTIFY_ERROR_EVENTS	(FAN_FS_ERROR)
+ 
+-#define FANOTIFY_MOUNT_EVENTS	(FAN_MNT_ATTACH | FAN_MNT_DETACH)
++#define FANOTIFY_MOUNT_EVENTS	(FAN_MNT_ATTACH | FAN_MNT_DETACH | FAN_MNT_CHANGE)
+ 
+ /* Events that user can request to be notified on */
+ #define FANOTIFY_EVENTS		(FANOTIFY_PATH_EVENTS | \
+diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
+index ea998551dd0d..ba3e05c69aaa 100644
+--- a/include/linux/fsnotify.h
++++ b/include/linux/fsnotify.h
+@@ -483,4 +483,9 @@ static inline void fsnotify_mnt_move(struct mnt_namespace *ns, struct vfsmount *
+ 	fsnotify_mnt(FS_MNT_MOVE, ns, mnt);
+ }
+ 
++static inline void fsnotify_mnt_change(struct mnt_namespace *ns, struct vfsmount *mnt)
++{
++	fsnotify_mnt(FS_MNT_CHANGE, ns, mnt);
++}
++
+ #endif	/* _LINUX_FS_NOTIFY_H */
+diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
+index 6c3e3a4a7b10..54e01803e309 100644
+--- a/include/linux/fsnotify_backend.h
++++ b/include/linux/fsnotify_backend.h
+@@ -58,6 +58,8 @@
+ 
+ #define FS_MNT_ATTACH		0x01000000	/* Mount was attached */
+ #define FS_MNT_DETACH		0x02000000	/* Mount was detached */
++#define FS_MNT_CHANGE		0x04000000	/* Mount was changed */
++
+ #define FS_MNT_MOVE		(FS_MNT_ATTACH | FS_MNT_DETACH)
  
  /*
-@@ -1683,6 +1689,50 @@ int may_umount(struct vfsmount *mnt)
+@@ -106,7 +108,8 @@
+ 			     FS_EVENTS_POSS_ON_CHILD | \
+ 			     FS_DELETE_SELF | FS_MOVE_SELF | \
+ 			     FS_UNMOUNT | FS_Q_OVERFLOW | FS_IN_IGNORED | \
+-			     FS_ERROR | FS_MNT_ATTACH | FS_MNT_DETACH)
++			     FS_ERROR | \
++			     FS_MNT_ATTACH | FS_MNT_DETACH | FS_MNT_CHANGE )
  
- EXPORT_SYMBOL(may_umount);
+ /* Extra flags that may be reported with event or control handling of events */
+ #define ALL_FSNOTIFY_FLAGS  (FS_ISDIR | FS_EVENT_ON_CHILD | FS_DN_MULTISHOT)
+diff --git a/include/uapi/linux/fanotify.h b/include/uapi/linux/fanotify.h
+index 69340e483ae7..256fc5755b45 100644
+--- a/include/uapi/linux/fanotify.h
++++ b/include/uapi/linux/fanotify.h
+@@ -27,6 +27,7 @@
+ #define FAN_OPEN_EXEC_PERM	0x00040000	/* File open/exec in perm check */
+ #define FAN_MNT_ATTACH		0x01000000	/* Mount was attached */
+ #define FAN_MNT_DETACH		0x02000000	/* Mount was detached */
++#define FAN_MNT_CHANGE		0x04000000	/* Mount was changed */
  
-+#ifdef CONFIG_FSNOTIFY
-+static void mnt_notify(struct mount *p)
-+{
-+	if (!p->prev_ns && p->mnt_ns) {
-+		fsnotify_mnt_attach(p->mnt_ns, &p->mnt);
-+	} else if (p->prev_ns && !p->mnt_ns) {
-+		fsnotify_mnt_detach(p->prev_ns, &p->mnt);
-+	} else if (p->prev_ns == p->mnt_ns) {
-+		fsnotify_mnt_move(p->mnt_ns, &p->mnt);
-+	} else {
-+		fsnotify_mnt_detach(p->prev_ns, &p->mnt);
-+		fsnotify_mnt_attach(p->mnt_ns, &p->mnt);
-+	}
-+	p->prev_ns = p->mnt_ns;
-+}
-+
-+static void notify_mnt_list(void)
-+{
-+	struct mount *m, *tmp;
-+	/*
-+	 * Notify about mounts that were added/reparented/detached/remain
-+	 * connected after unmount.
-+	 */
-+	list_for_each_entry_safe(m, tmp, &notify_list, to_notify) {
-+		mnt_notify(m);
-+		list_del_init(&m->to_notify);
-+	}
-+}
-+
-+static bool need_notify_mnt_list(void)
-+{
-+	return !list_empty(&notify_list);
-+}
-+#else
-+static void notify_mnt_list(void)
-+{
-+}
-+
-+static bool need_notify_mnt_list(void)
-+{
-+	return false;
-+}
-+#endif
-+
- static void namespace_unlock(void)
- {
- 	struct hlist_head head;
-@@ -1693,7 +1743,18 @@ static void namespace_unlock(void)
- 	hlist_move_list(&unmounted, &head);
- 	list_splice_init(&ex_mountpoints, &list);
- 
--	up_write(&namespace_sem);
-+	if (need_notify_mnt_list()) {
-+		/*
-+		 * No point blocking out concurrent readers while notifications
-+		 * are sent. This will also allow statmount()/listmount() to run
-+		 * concurrently.
-+		 */
-+		downgrade_write(&namespace_sem);
-+		notify_mnt_list();
-+		up_read(&namespace_sem);
-+	} else {
-+		up_write(&namespace_sem);
-+	}
- 
- 	shrink_dentry_list(&list);
- 
-@@ -1806,6 +1867,19 @@ static void umount_tree(struct mount *mnt, enum umount_tree_flags how)
- 		change_mnt_propagation(p, MS_PRIVATE);
- 		if (disconnect)
- 			hlist_add_head(&p->mnt_umount, &unmounted);
-+
-+		/*
-+		 * At this point p->mnt_ns is NULL, notification will be queued
-+		 * only if
-+		 *
-+		 *  - p->prev_ns is non-NULL *and*
-+		 *  - p->prev_ns->n_fsnotify_marks is non-NULL
-+		 *
-+		 * This will preclude queuing the mount if this is a cleanup
-+		 * after a failed copy_tree() or destruction of an anonymous
-+		 * namespace, etc.
-+		 */
-+		mnt_notify_add(p);
- 	}
- }
- 
-@@ -2511,6 +2585,7 @@ static int attach_recursive_mnt(struct mount *source_mnt,
- 			dest_mp = smp;
- 		unhash_mnt(source_mnt);
- 		attach_mnt(source_mnt, top_mnt, dest_mp, beneath);
-+		mnt_notify_add(source_mnt);
- 		touch_mnt_namespace(source_mnt->mnt_ns);
- 	} else {
- 		if (source_mnt->mnt_ns) {
-@@ -4426,6 +4501,8 @@ SYSCALL_DEFINE2(pivot_root, const char __user *, new_root,
- 	list_del_init(&new_mnt->mnt_expire);
- 	put_mountpoint(root_mp);
- 	unlock_mount_hash();
-+	mnt_notify_add(root_mnt);
-+	mnt_notify_add(new_mnt);
- 	chroot_fs_refs(&root, &new);
- 	error = 0;
- out4:
-diff --git a/fs/pnode.c b/fs/pnode.c
-index a799e0315cc9..d42b71c3567a 100644
---- a/fs/pnode.c
-+++ b/fs/pnode.c
-@@ -549,8 +549,10 @@ static void restore_mounts(struct list_head *to_restore)
- 			mp = parent->mnt_mp;
- 			parent = parent->mnt_parent;
- 		}
--		if (parent != mnt->mnt_parent)
-+		if (parent != mnt->mnt_parent) {
- 			mnt_change_mountpoint(parent, mp, mnt);
-+			mnt_notify_add(mnt);
-+		}
- 	}
- }
+ #define FAN_EVENT_ON_CHILD	0x08000000	/* Interested in child events */
  
 -- 
 2.47.1
