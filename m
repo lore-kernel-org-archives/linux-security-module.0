@@ -1,65 +1,65 @@
 Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A66FE8C07;
-	Thu, 23 Jan 2025 19:50:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40B761741D2;
+	Thu, 23 Jan 2025 19:57:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737661819; cv=none; b=VSxUKXymWU/GP3CW+g5UP6CSRrbVz3LlGSa5y/M6RRBEhOfR0qWAUIMbv9aKV/N+7E+h0xfhjHKWs6Qsrn9C0dOcul1xieqLtch6L/ScFE6wV83ETnf5vsSrTEXEeJmLeCqIZoBbPS7WYsRcVf+z4jxjEuKM4dTgaWbHxC0WToY=
+	t=1737662248; cv=none; b=UiEwv/nhqFbow+P5/kl2Q/4SABD1hMoh+vSK+dt9HNzSjpzFYrxHrf1ru+27ptc+OyE+5ZpvW9qN/hLrVU77nV0neSBY6IT84jNZ8TQXreXseFNxl7KFnBPAtj1ASZmgdK1Wjw8SCZLeM5AEl7QcpPIVm3lmYADRK/FBhAETc3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737661819; c=relaxed/simple;
-	bh=ers5d3hrIIu2OYOmGLo8rUQlnJ5Fe/BNUYCkOmAW7CA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=XFlPlLN8Lp9xW8jh4LybnU+4GqGVQuCoyfaLfIqDpnIiSi0KvPUZnhVK2KZMYWkWYIx/wGZJd/0lBZZFvlY0iHiLmxEIKm6ixG7obJHBp6wA/wERm+IUIE2H+QFDBiO5LVVMI2gkZZ3old8Tx7H7MU8ODuRNoZFWD2HH5Z0cn6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=marliere.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=marliere.net header.i=@marliere.net header.b=qc7ouZ1M; arc=none smtp.client-ip=209.85.216.42
+	s=arc-20240116; t=1737662248; c=relaxed/simple;
+	bh=ajdgFugDtV/iFWheR0eshitdLUdyFAQt+XYa9k0Mll4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=FlohRzJgRBVWt/fVZHVO1xk5+voALrH91PAlb/1l3M9UxF9WsCSyzGFKo/lSBVyikCVWem3DcprlfmDnp5iBz3YxvUHQMjFPu2bUtsyaX4jbJw8Suhw+DLww2ftggx6bANuVczsgnzbEIKq4eLhX05SqevwDNzq491Q45mYNlSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=marliere.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=marliere.net header.i=@marliere.net header.b=a+dyasHG; arc=none smtp.client-ip=209.85.216.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=marliere.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marliere.net header.i=@marliere.net header.b="qc7ouZ1M"
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2ee46851b5eso1975158a91.1;
-        Thu, 23 Jan 2025 11:50:17 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=marliere.net header.i=@marliere.net header.b="a+dyasHG"
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2eeb4d643a5so2584892a91.3;
+        Thu, 23 Jan 2025 11:57:26 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737661817; x=1738266617;
+        d=1e100.net; s=20230601; t=1737662246; x=1738267046;
         h=cc:to:message-id:content-transfer-encoding:mime-version:subject
          :date:dkim-signature:from:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1wA3gnsLg3TCdMzh4yL31wyhBkqAEvprGU9EsW3rVBk=;
-        b=pBdVhDCSPU0eQ+lYhv3NKowEmK42/8s7xvT+1vEgPqXgcAV8QlrJqy1GGTF9vWcsJi
-         JoiLve7l345ybuMsstfGCB4mf+iu7kXQrA3wM/Sc+FHcU/fzhZpEsgohxPwSsJj3Q+v1
-         6xK/RUHrOZwIIAn/9SOlSP4c+e6ToMOQusqqVHZvYVHhMfT+MhFc29R33oPfr8Z7nMAD
-         RlsNcAMIhzKCjZmxcXfrREsy3qolM43Z1u3R3X/aOSqde3nus69yPAZNniGY9MIKrqzd
-         W8LoUPHNiH1PvwEzFuyPs5aQJqUF9T+hLrhyQF/YKMxRxnnohZ0l32MOUCE/2RjLW86M
-         Dqow==
-X-Forwarded-Encrypted: i=1; AJvYcCUhOUKBEV31LItc5FQtakG4FQByuBhENHsifuBrLz5WV67y6ygIF6SaiYVLKE5v+2ZLj9mHZJ9x23iXxYLSnEwuLQGlOmfi@vger.kernel.org, AJvYcCWam9ZE68HEwrZzkgJAe3XIHNVKdOSFW9dPEwl/0DzeisYuMx9FT38C3zoxk6JKkYJoIQSVW7k1me00b8Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKcxMmaqDXF1ATRL2qEepl/ZbIMSb3U1kNACiObBX6wTbKu0Jy
-	9FGjQJYR918bnzOFi0pZwVTslRRKkMCYn2npCj26Y/yiLxztHU6DhSrm6fnvAng=
-X-Gm-Gg: ASbGncs3X+djicvbaP2BJuufmszb0usPmy/F2z7urp6wQVPadMdSgiLET4FSahJ2hql
-	xK3hUR28rRDOkpPbWEMxpyM+Nr9z3U+WH1L+vfHPAoxCJnq4PnddTKXy3TLq36/FsE5rmcEWXvw
-	lGDNJ6RdT5VP6RHI+eLlb9kk0mrzvHE2TS2hviiOfohBnJvXRGW6Qquj7gyYitvqd7+hishaMJC
-	VdYeXh8THIOVbOeM1cvr3v1kUDnz1i9ZV9r+jaHxtMSnqEpKdXTeE6YjMPoryv6RSgH/xRBQ3Ct
-	rLbfIz4DDR5wveLqMkXqJw==
-X-Google-Smtp-Source: AGHT+IEx3fxH+fsuONSZZ2tzSU2LlotC0s9f5eO7pJ8Qg3HhWZzK+zix7fB1PP7B0zPdNZzaYIyF3w==
-X-Received: by 2002:a17:90a:c2c5:b0:2ee:8008:b583 with SMTP id 98e67ed59e1d1-2f782c9c88fmr42930519a91.16.1737661816962;
-        Thu, 23 Jan 2025 11:50:16 -0800 (PST)
+        bh=GOwTSITdWxSRhub6Za29c5Wdoyuf6atairIJn2Az4eo=;
+        b=ePp2qNCqavbmElOwnElXkDpWsiJHz/iYnCE5kpcFEBv7cVgCswPc/PR0QvhLBafLK+
+         oLAtwxkxxB1MvKjSRMPK16H5aDTqsCTcJ7c2qZk058fyt4kt8FKflHLyuoCyp2WjjcZ1
+         b0WkBbYjZBja7Lu5X+uLtIVZ2RzHhxPEewe1JA0WmottFgVL5uoofiQwZGbKYXAWISDM
+         ZamSj2t5hmT/oHKGQ2cS7bh/agSPjwZmr4kWDFraEc0vQh71bP5YmlaAJNEeU/PghYLe
+         /ts7lO1PGDvMULHmgsK4o71ChoyNiSzFcHx2390S3al5+MgmZF2cwj+02vJvNrFmF/3h
+         dfGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVQ2rciqG8RrjShJgGhveJSyyopSgefirI8kL95KF5YqFkr+3DTk+T18Cf7yyw3pAPdpa1k3/8ZeWrMzsY=@vger.kernel.org, AJvYcCX977LZevAZnZIE73m/HiSwT87jt/qCMJqI1kczFyZhFl8rc6k2h1DPcrgBm+9tUjAnfdSognQ+QrF0TyH2P/DxcvjCqOn/@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUfGSBmO/LFESN/VdSPs5iIt4VTvFlIcM+w6elAac31U78BsPe
+	w4zF2z56Liytn4P03Njfw1QvsphJ5yanwHMDIkztlFk6jJCwQIxP
+X-Gm-Gg: ASbGnctI9/n0bO4OZFh+mYNJOevI3nEqMIcYQhgG5dqA2Irs6QKA3YFyW/supSGX6qT
+	8blDg4bX8bYHkhdAPWafVfL8YlOMU99B8Y0YwhRDp97j9e7rPhouDbWZCKve7cLW0paHTzOiItl
+	kTxqswzcdnU4PG2LqRqvQe0osb7kkOXfZcQH1lzycAS3nIoQhYo63bd6V7uHNax46i+PzJTZjfk
+	1YrM2Fxa1P+pEKrSUB44ucr6SL4sl93q0a4ENiwK0rEkHrBnAgMhSzkfd+ePbHsyvc39C7UUt/6
+	izDYvCaq9FfqNlWHx1JTOg==
+X-Google-Smtp-Source: AGHT+IFIHf7Ml0hlbVH+yfQ2Lodxd4V9tyopFz4fhKwwoKW8uWd4yMBnSwzGPlA5BLm7vg+BY+Qb6Q==
+X-Received: by 2002:a17:90b:5146:b0:2ea:a25d:3baa with SMTP id 98e67ed59e1d1-2f782c6639dmr35379819a91.5.1737662246390;
+        Thu, 23 Jan 2025 11:57:26 -0800 (PST)
 Received: from mail.marliere.net (marliere.net. [24.199.118.162])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f7ffa56155sm97391a91.19.2025.01.23.11.50.16
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ac495d58077sm250246a12.53.2025.01.23.11.57.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jan 2025 11:50:16 -0800 (PST)
+        Thu, 23 Jan 2025 11:57:25 -0800 (PST)
 From: Ricardo B. Marliere <ricardo@marliere.net>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marliere.net;
-	s=2024; t=1737661814;
+	s=2024; t=1737662244;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding;
-	bh=1wA3gnsLg3TCdMzh4yL31wyhBkqAEvprGU9EsW3rVBk=;
-	b=qc7ouZ1MzjIXOPd0+Fg66Evf/M905lsps/+gEsHiD/CGNJ7WeVRKBwbeQnxfV4A0dBs53w
-	ZdXSz2ZzHZiLulZ7RBEfHfm8f3H4GJ20ywu9/zdCI01qFBDMYRfHBt6z4rVN2uAE/F/GTD
-	rlTNKVggPh3ve7PKfZ9RR/nDzYFkY5rRhPFNpfe78bY8XNKXTFxW94CnkUa6Tkdnk86PiM
-	DcwC1yfy61SyKT7tiKYS/mMOTmYdtfceu14nVSXshZnNyncz+zom3JsBk3rx+T+jdr0kyO
-	O9UbDPgENRmwB9IKOnSay4rBwpBNEgjhg1mZVOS5dMrECfeQqIOU38YGqF/sYQ==
+	bh=GOwTSITdWxSRhub6Za29c5Wdoyuf6atairIJn2Az4eo=;
+	b=a+dyasHGG4Bwknl2EBEfeNb24gQblX63vRRPypITuwA/Xm4j6Ovro0Bh/rs1dOGoqarDIR
+	wUwIbtKc9BG1+1y0maCQASw9yjwiyejMzkuZR/L9GWesGODcfUSn3/UqGqXhI3wJIqzQ2K
+	Ya5H6z4nlT2lMF7BlqCqtjBifPEZaNZf9kh2B+ajzXMupA2DnBItJMuOvWCWbgmiFQo1Uf
+	lPh7vXcaWc/aFacqRNXVbMBAPFoiXoYWEMCKlo+hR+lA95r73p+HlKQAOLvD6HwKzQ6OA7
+	0cEcC8XcklMwZFX9BKiPcF0yCr7PCkh7rUdhqST0J4MOEkfIH1FmH/upxe525w==
 Authentication-Results: ORIGINATING;
 	auth=pass smtp.auth=ricardo@marliere.net smtp.mailfrom=ricardo@marliere.net
-Date: Thu, 23 Jan 2025 16:50:11 -0300
-Subject: [PATCH] security: keys: Make sysctl table const
+Date: Thu, 23 Jan 2025 16:57:19 -0300
+Subject: [PATCH] apparmor: Make sysctl table const
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -68,64 +68,64 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250123-sysctl_const-pcmoore-v1-1-d9f918dbb0be@suse.com>
-X-B4-Tracking: v=1; b=H4sIAHKdkmcC/y3MQQrCMBBA0auUWTvYJAqtVxGRJJ3aAU3KTJBK6
- d0bxeVb/L+CkjApXJoVhN6snFOFOTQQJ58ehDxUg23tuTXWoX40luc95qQF5/jKWQhHb06u60P
- nbA81nYVGXn7b6606eCUM4lOcvrN/dky0FNi2HdEXMJ2FAAAA
-X-Change-ID: 20250123-sysctl_const-pcmoore-fa14389b8329
-To: David Howells <dhowells@redhat.com>, 
- Jarkko Sakkinen <jarkko@kernel.org>, Paul Moore <paul@paul-moore.com>, 
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>
-Cc: keyrings@vger.kernel.org, linux-security-module@vger.kernel.org, 
+Message-Id: <20250123-sysctl_const-jj-v1-1-8b9c04238aeb@suse.com>
+X-B4-Tracking: v=1; b=H4sIAB6fkmcC/x3MQQrCMBBA0auUWTuYRHThVURkkk5tgiZhJkil9
+ O6mLt/i/xWUJbLCdVhB+BM1ltxhDwOEmfKTMY7d4Iw7G+tOqF8N7fUIJWvDlNCG0dOFvDHE0Ks
+ qPMXlf7zduz0poxfKYd4/KR2pVpJ3Ecy8NNi2HzUTGiGEAAAA
+X-Change-ID: 20250123-sysctl_const-jj-1cdba6ab00ae
+To: John Johansen <john.johansen@canonical.com>, 
+ Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+ "Serge E. Hallyn" <serge@hallyn.com>
+Cc: apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org, 
  linux-kernel@vger.kernel.org, 
  =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
  "Ricardo B. Marliere" <rbm@suse.com>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1144; i=rbm@suse.com;
- h=from:subject:message-id; bh=ers5d3hrIIu2OYOmGLo8rUQlnJ5Fe/BNUYCkOmAW7CA=;
- b=owEBbQKS/ZANAwAIAckLinxjhlimAcsmYgBnkp1zcdHGjKz10Q8tmQjWzNrLeBbygK3QlJJSR
- t2dFO6QrnaJAjMEAAEIAB0WIQQDCo6eQk7jwGVXh+HJC4p8Y4ZYpgUCZ5KdcwAKCRDJC4p8Y4ZY
- pnZBD/97wZTWMyt/pwhqvAVdXL0cbJiQ+hxYxRCU7z0aR4p8mLxSvR6XrX3zTIXBxmMkK6Ag76/
- g9oFwECRHMtgIT1gWgDlv6O1upGP38BY10OLb4Sy6bLQP/5HxdQKQkZIvqSZ8y2XEF5RircM1TA
- yKmAdHEVf5vhn6VtasWkXMOQltc7qF4HiE6t65ZRb1bBZ5LUUwpp3RVS4NPGpGStDxaO0U66vQu
- I4v7OVVZ2B8LCHSmAx3SpbBQuQx7N81w0k+/kXk+p88+c/lg0fZ8727pR+FVvRY5ZQMW0B8n5cu
- 88/BmPDoyYnn7/zgl++a/gfEfrkxBnUiT/Gb5dACdK8R3qEegTLXBrwVeh7VRFNisyBlKLTIklo
- jXASJapUNFEFj4CJOdf2NsMJZv8c3OPR43wqodfIgt8/dCUol95pO+2OSvc5o0J95zj3O5s5Ayu
- kicSVT6cDbzL85Lh1vKAMlFEpBT6BIoLWQnIKc9Nx1I4fAS1IMWn8AMaI1wO/1BcOplFiJE8BXi
- Tg3/ZyNJEhTquxULA/gCizl29fj8Ng+oiQT3yyIY780JG+yrOwOYBhOMLhnNmOm9Xz0psUGPinT
- E+QbWgeyi3or9pe5Uur/w1cdMCktb4fjQU4yzSrp1vDkOUumebdQk1V4v2H7GotkDw+J3qRrugK
- KJeQCFlTUe3L61w==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1288; i=rbm@suse.com;
+ h=from:subject:message-id; bh=ajdgFugDtV/iFWheR0eshitdLUdyFAQt+XYa9k0Mll4=;
+ b=owEBbQKS/ZANAwAIAckLinxjhlimAcsmYgBnkp8g85TjP3lZGKhnRSUQuQ/fvrDJaXgd4gA4f
+ NEnp+zEc5SJAjMEAAEIAB0WIQQDCo6eQk7jwGVXh+HJC4p8Y4ZYpgUCZ5KfIAAKCRDJC4p8Y4ZY
+ psWCEACDbBx786irWYdw65DETjBaAZ665lTvgBZP+GKsbAIyPvzN7VUSIwjkiD6tU0mCgnxmM4i
+ /Q4a+bfKir5kWK4jMCQVKqwvzhJkqjVCE7SzdQGIPDUUEb3YpoyyvXZcfZUY6+1/Ou942o52rrX
+ cWSJXRxdBalDkS24ScjgOpCa7yS6zNWwl20I5OnBtHmMJifzwqmDAXl/YVtSicCCTjrtWPf2VyO
+ 3l6sjYIpWg25AhjSy5TG59ZxjIiuTRTKG25BlltdrwkPMvByy11Kaj/GO4K+IQ9weTJFfcQpgnM
+ 3N5sPRS8+6mtTzRXWarJT9Yp4pClrvMG3/vyro7oQfFiBTwiuA075SNiZY6Pn/06vbwbFUhEzO3
+ y/Af82Y/sPgmQOQvh+m9+ramErRY1gDGRYkBZnnvpZQePGAy3wXzyWt0q2U7vcsKNDeYyW99RRn
+ KlDcTSjtpsOUV+KRK/QkqE1N2IujFSv11wCHUTWNFXVHU9raWp2FDZXGjs0n/R0wrzZLx+0OykC
+ KhQlijf2j8mTru7s1OLUcfPOrFBMs4rjqtJU6a+py+SWQRE6Az4uyx7vBm104v/o77D+uA8FUFw
+ 6Dk0AU8dEA0IIKMN7o9MaHQNdSCgBJ0GuiX7TULg6FCwsOTDN5eaDYT1WSof8ukxmSivSTwXCLQ
+ rFXSd/IUVYNXNag==
 X-Developer-Key: i=rbm@suse.com; a=openpgp;
  fpr=030A8E9E424EE3C0655787E1C90B8A7C638658A6
 
 Since commit 7abc9b53bd51 ("sysctl: allow registration of const struct
 ctl_table"), the sysctl registration API allows for struct ctl_table to be
-in read-only memory. Move key_sysctls to be declared at build time, instead
-of having to be dynamically allocated at boot time.
+in read-only memory. Move apparmor_sysctl_table to be declared at build
+time, instead of having to be dynamically allocated at boot time.
 
 Cc: Thomas Weißschuh <linux@weissschuh.net>
 Suggested-by: Thomas Weißschuh <linux@weissschuh.net>
 Signed-off-by: Ricardo B. Marliere <rbm@suse.com>
 ---
- security/keys/sysctl.c | 2 +-
+ security/apparmor/lsm.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/security/keys/sysctl.c b/security/keys/sysctl.c
-index 91f000eef3ad82370250e5238d9c9c80757aab61..cde08c478f3272081304e6db34e36b64ce0d321a 100644
---- a/security/keys/sysctl.c
-+++ b/security/keys/sysctl.c
-@@ -9,7 +9,7 @@
- #include <linux/sysctl.h>
- #include "internal.h"
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index 0b4f7e2e4135503f0c78a050e82adb4ff853e9f4..93c7fcd875f764feee7fca6ac302e31ea081d18c 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -2205,7 +2205,7 @@ static int apparmor_dointvec(const struct ctl_table *table, int write,
+ 	return proc_dointvec(table, write, buffer, lenp, ppos);
+ }
  
--static struct ctl_table key_sysctls[] = {
-+static const struct ctl_table key_sysctls[] = {
+-static struct ctl_table apparmor_sysctl_table[] = {
++static const struct ctl_table apparmor_sysctl_table[] = {
+ #ifdef CONFIG_USER_NS
  	{
- 		.procname = "maxkeys",
- 		.data = &key_quota_maxkeys,
+ 		.procname       = "unprivileged_userns_apparmor_policy",
 
 ---
-base-commit: 714d87c90a766e6917f7d69f618b864d350f09d3
-change-id: 20250123-sysctl_const-pcmoore-fa14389b8329
+base-commit: e6b087676954e36a7b1ed51249362bb499f8c1c2
+change-id: 20250123-sysctl_const-jj-1cdba6ab00ae
 
 Best regards,
 -- 
