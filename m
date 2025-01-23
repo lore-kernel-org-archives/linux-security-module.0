@@ -1,133 +1,144 @@
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-190d.mail.infomaniak.ch (smtp-190d.mail.infomaniak.ch [185.125.25.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40B761741D2;
-	Thu, 23 Jan 2025 19:57:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 320D512FB1B
+	for <linux-security-module@vger.kernel.org>; Thu, 23 Jan 2025 20:34:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737662248; cv=none; b=UiEwv/nhqFbow+P5/kl2Q/4SABD1hMoh+vSK+dt9HNzSjpzFYrxHrf1ru+27ptc+OyE+5ZpvW9qN/hLrVU77nV0neSBY6IT84jNZ8TQXreXseFNxl7KFnBPAtj1ASZmgdK1Wjw8SCZLeM5AEl7QcpPIVm3lmYADRK/FBhAETc3Y=
+	t=1737664475; cv=none; b=oUC8fGLFS7Es7PlpcZTzsrrwBvWW0I+NUB94qpCmJzyQycUK72izUoV8t9JwHbb9U+o0xMNHcekmqce0NoyZCSpPAWt0O1AwIdaAK3/yVJvHXlXjldRLUdIctQtCH6whADte449fNPLgfBeHRNdlZYBzbb1oFGpqJnR0RpurA2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737662248; c=relaxed/simple;
-	bh=ajdgFugDtV/iFWheR0eshitdLUdyFAQt+XYa9k0Mll4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=FlohRzJgRBVWt/fVZHVO1xk5+voALrH91PAlb/1l3M9UxF9WsCSyzGFKo/lSBVyikCVWem3DcprlfmDnp5iBz3YxvUHQMjFPu2bUtsyaX4jbJw8Suhw+DLww2ftggx6bANuVczsgnzbEIKq4eLhX05SqevwDNzq491Q45mYNlSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=marliere.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=marliere.net header.i=@marliere.net header.b=a+dyasHG; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=marliere.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1737664475; c=relaxed/simple;
+	bh=ZR6cIOcTfj2fYB8OdhyRkKnDmT0c7vZ8O9YmtjYS6sY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VvXGOiwAT+MweqRSTWLPYVeOnDq07alwZtWUY8zAIdie/D9lk1IJx2aglFEoLKmvFOrsMG598LB69BWI0pwaqrX2wqpvT+KKF+BTb0B5OaS+MKe28/xGO7z0F4vgUdIhX5ycJSjItjpBrF4XGGLthqdOXSLmhZsSddEmQKfl2pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=z9iaQmjG; arc=none smtp.client-ip=185.125.25.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marliere.net header.i=@marliere.net header.b="a+dyasHG"
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2eeb4d643a5so2584892a91.3;
-        Thu, 23 Jan 2025 11:57:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737662246; x=1738267046;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:dkim-signature:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GOwTSITdWxSRhub6Za29c5Wdoyuf6atairIJn2Az4eo=;
-        b=ePp2qNCqavbmElOwnElXkDpWsiJHz/iYnCE5kpcFEBv7cVgCswPc/PR0QvhLBafLK+
-         oLAtwxkxxB1MvKjSRMPK16H5aDTqsCTcJ7c2qZk058fyt4kt8FKflHLyuoCyp2WjjcZ1
-         b0WkBbYjZBja7Lu5X+uLtIVZ2RzHhxPEewe1JA0WmottFgVL5uoofiQwZGbKYXAWISDM
-         ZamSj2t5hmT/oHKGQ2cS7bh/agSPjwZmr4kWDFraEc0vQh71bP5YmlaAJNEeU/PghYLe
-         /ts7lO1PGDvMULHmgsK4o71ChoyNiSzFcHx2390S3al5+MgmZF2cwj+02vJvNrFmF/3h
-         dfGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVQ2rciqG8RrjShJgGhveJSyyopSgefirI8kL95KF5YqFkr+3DTk+T18Cf7yyw3pAPdpa1k3/8ZeWrMzsY=@vger.kernel.org, AJvYcCX977LZevAZnZIE73m/HiSwT87jt/qCMJqI1kczFyZhFl8rc6k2h1DPcrgBm+9tUjAnfdSognQ+QrF0TyH2P/DxcvjCqOn/@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUfGSBmO/LFESN/VdSPs5iIt4VTvFlIcM+w6elAac31U78BsPe
-	w4zF2z56Liytn4P03Njfw1QvsphJ5yanwHMDIkztlFk6jJCwQIxP
-X-Gm-Gg: ASbGnctI9/n0bO4OZFh+mYNJOevI3nEqMIcYQhgG5dqA2Irs6QKA3YFyW/supSGX6qT
-	8blDg4bX8bYHkhdAPWafVfL8YlOMU99B8Y0YwhRDp97j9e7rPhouDbWZCKve7cLW0paHTzOiItl
-	kTxqswzcdnU4PG2LqRqvQe0osb7kkOXfZcQH1lzycAS3nIoQhYo63bd6V7uHNax46i+PzJTZjfk
-	1YrM2Fxa1P+pEKrSUB44ucr6SL4sl93q0a4ENiwK0rEkHrBnAgMhSzkfd+ePbHsyvc39C7UUt/6
-	izDYvCaq9FfqNlWHx1JTOg==
-X-Google-Smtp-Source: AGHT+IFIHf7Ml0hlbVH+yfQ2Lodxd4V9tyopFz4fhKwwoKW8uWd4yMBnSwzGPlA5BLm7vg+BY+Qb6Q==
-X-Received: by 2002:a17:90b:5146:b0:2ea:a25d:3baa with SMTP id 98e67ed59e1d1-2f782c6639dmr35379819a91.5.1737662246390;
-        Thu, 23 Jan 2025 11:57:26 -0800 (PST)
-Received: from mail.marliere.net (marliere.net. [24.199.118.162])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-ac495d58077sm250246a12.53.2025.01.23.11.57.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jan 2025 11:57:25 -0800 (PST)
-From: Ricardo B. Marliere <ricardo@marliere.net>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marliere.net;
-	s=2024; t=1737662244;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=GOwTSITdWxSRhub6Za29c5Wdoyuf6atairIJn2Az4eo=;
-	b=a+dyasHGG4Bwknl2EBEfeNb24gQblX63vRRPypITuwA/Xm4j6Ovro0Bh/rs1dOGoqarDIR
-	wUwIbtKc9BG1+1y0maCQASw9yjwiyejMzkuZR/L9GWesGODcfUSn3/UqGqXhI3wJIqzQ2K
-	Ya5H6z4nlT2lMF7BlqCqtjBifPEZaNZf9kh2B+ajzXMupA2DnBItJMuOvWCWbgmiFQo1Uf
-	lPh7vXcaWc/aFacqRNXVbMBAPFoiXoYWEMCKlo+hR+lA95r73p+HlKQAOLvD6HwKzQ6OA7
-	0cEcC8XcklMwZFX9BKiPcF0yCr7PCkh7rUdhqST0J4MOEkfIH1FmH/upxe525w==
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=ricardo@marliere.net smtp.mailfrom=ricardo@marliere.net
-Date: Thu, 23 Jan 2025 16:57:19 -0300
-Subject: [PATCH] apparmor: Make sysctl table const
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="z9iaQmjG"
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4YfCNG1WByzg0n;
+	Thu, 23 Jan 2025 21:34:22 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1737664462;
+	bh=irHmoTCn7ZZDF3mJgq/Ca/BObYs/zn0JHfu1uLiu7wE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=z9iaQmjGwfkq1N87MaUIbxDWRXGAcypwSwl8KA9RTLVbtsEv6EYtLz19bKHKKMm/K
+	 etkV8sEJfMQNGi7OCHmHvg1jICcp/qMYjCP/+1pikzmPM5ADurHnzz2KKJRaCxJC9h
+	 PdEvRGmv+6zQm6q3CdkAukXxRAnY7lu7Y/IZY4ik=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4YfCNF0NK6zqhY;
+	Thu, 23 Jan 2025 21:34:20 +0100 (CET)
+Date: Thu, 23 Jan 2025 21:34:08 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Shervin Oloumi <enlightened@chromium.org>, viro@zeniv.linux.org.uk, 
+	jack@suse.cz, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, gnoack@google.com, 
+	shuah@kernel.org, jorgelo@chromium.org, allenwebb@chromium.org
+Subject: Re: [PATCH v3 1/2] fs: add loopback/bind mount specific security hook
+Message-ID: <20250123.So6iudahtoom@digikod.net>
+References: <20250110021008.2704246-1-enlightened@chromium.org>
+ <CAMb9sTgEjNk4X+FLwpmi56z+LDV=gYOO=qN5AjQSN4Erw-SUaw@mail.gmail.com>
+ <20250110-luftverkehr-lagen-e9c26ffc277f@brauner>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250123-sysctl_const-jj-v1-1-8b9c04238aeb@suse.com>
-X-B4-Tracking: v=1; b=H4sIAB6fkmcC/x3MQQrCMBBA0auUWTuYRHThVURkkk5tgiZhJkil9
- O6mLt/i/xWUJbLCdVhB+BM1ltxhDwOEmfKTMY7d4Iw7G+tOqF8N7fUIJWvDlNCG0dOFvDHE0Ks
- qPMXlf7zduz0poxfKYd4/KR2pVpJ3Ecy8NNi2HzUTGiGEAAAA
-X-Change-ID: 20250123-sysctl_const-jj-1cdba6ab00ae
-To: John Johansen <john.johansen@canonical.com>, 
- Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
- "Serge E. Hallyn" <serge@hallyn.com>
-Cc: apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
- "Ricardo B. Marliere" <rbm@suse.com>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1288; i=rbm@suse.com;
- h=from:subject:message-id; bh=ajdgFugDtV/iFWheR0eshitdLUdyFAQt+XYa9k0Mll4=;
- b=owEBbQKS/ZANAwAIAckLinxjhlimAcsmYgBnkp8g85TjP3lZGKhnRSUQuQ/fvrDJaXgd4gA4f
- NEnp+zEc5SJAjMEAAEIAB0WIQQDCo6eQk7jwGVXh+HJC4p8Y4ZYpgUCZ5KfIAAKCRDJC4p8Y4ZY
- psWCEACDbBx786irWYdw65DETjBaAZ665lTvgBZP+GKsbAIyPvzN7VUSIwjkiD6tU0mCgnxmM4i
- /Q4a+bfKir5kWK4jMCQVKqwvzhJkqjVCE7SzdQGIPDUUEb3YpoyyvXZcfZUY6+1/Ou942o52rrX
- cWSJXRxdBalDkS24ScjgOpCa7yS6zNWwl20I5OnBtHmMJifzwqmDAXl/YVtSicCCTjrtWPf2VyO
- 3l6sjYIpWg25AhjSy5TG59ZxjIiuTRTKG25BlltdrwkPMvByy11Kaj/GO4K+IQ9weTJFfcQpgnM
- 3N5sPRS8+6mtTzRXWarJT9Yp4pClrvMG3/vyro7oQfFiBTwiuA075SNiZY6Pn/06vbwbFUhEzO3
- y/Af82Y/sPgmQOQvh+m9+ramErRY1gDGRYkBZnnvpZQePGAy3wXzyWt0q2U7vcsKNDeYyW99RRn
- KlDcTSjtpsOUV+KRK/QkqE1N2IujFSv11wCHUTWNFXVHU9raWp2FDZXGjs0n/R0wrzZLx+0OykC
- KhQlijf2j8mTru7s1OLUcfPOrFBMs4rjqtJU6a+py+SWQRE6Az4uyx7vBm104v/o77D+uA8FUFw
- 6Dk0AU8dEA0IIKMN7o9MaHQNdSCgBJ0GuiX7TULg6FCwsOTDN5eaDYT1WSof8ukxmSivSTwXCLQ
- rFXSd/IUVYNXNag==
-X-Developer-Key: i=rbm@suse.com; a=openpgp;
- fpr=030A8E9E424EE3C0655787E1C90B8A7C638658A6
+In-Reply-To: <20250110-luftverkehr-lagen-e9c26ffc277f@brauner>
+X-Infomaniak-Routing: alpha
 
-Since commit 7abc9b53bd51 ("sysctl: allow registration of const struct
-ctl_table"), the sysctl registration API allows for struct ctl_table to be
-in read-only memory. Move apparmor_sysctl_table to be declared at build
-time, instead of having to be dynamically allocated at boot time.
+On Fri, Jan 10, 2025 at 04:42:19PM +0100, Christian Brauner wrote:
 
-Cc: Thomas Weißschuh <linux@weissschuh.net>
-Suggested-by: Thomas Weißschuh <linux@weissschuh.net>
-Signed-off-by: Ricardo B. Marliere <rbm@suse.com>
----
- security/apparmor/lsm.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> On Thu, Jan 09, 2025 at 08:14:07PM -0800, Shervin Oloumi wrote:
+> > On Fri, Jan 3, 2025 at 3:11 AM Jan Kara <jack@suse.cz> wrote:
+> > >
+> > > On Mon 30-12-24 17:46:31, Shervin Oloumi wrote:
 
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index 0b4f7e2e4135503f0c78a050e82adb4ff853e9f4..93c7fcd875f764feee7fca6ac302e31ea081d18c 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -2205,7 +2205,7 @@ static int apparmor_dointvec(const struct ctl_table *table, int write,
- 	return proc_dointvec(table, write, buffer, lenp, ppos);
- }
- 
--static struct ctl_table apparmor_sysctl_table[] = {
-+static const struct ctl_table apparmor_sysctl_table[] = {
- #ifdef CONFIG_USER_NS
- 	{
- 		.procname       = "unprivileged_userns_apparmor_policy",
+> > > > diff --git a/fs/namespace.c b/fs/namespace.c
+> > > > index 23e81c2a1e3f..c902608c9759 100644
+> > > > --- a/fs/namespace.c
+> > > > +++ b/fs/namespace.c
+> > > > @@ -2765,6 +2765,10 @@ static int do_loopback(struct path *path, const char *old_name,
+> > > >       if (err)
+> > > >               return err;
+> > > >
+> > > > +     err = security_sb_bindmount(&old_path, path);
+> > > > +     if (err)
+> > > > +             goto out;
+> > > > +
+> > >
+> > > So this gets triggered for the legacy mount API path (mount(2) syscall).
+> > > For the new mount API, I can see open_tree() does not have any security
+> > > hook. Is that intented? Are you catching equivalent changes done through
+> > > the new mount API inside security_move_mount() hook?
+> > 
+> > I am not very familiar with the new API and when it is used, but LandLock does
+> > listen to security_move_mount() and it rejects all such requests. It also
+> > listens to and rejects remount and pivotroot. Are there cases where bind mount
+> > requests go through open_tree() and this hook is bypassed?
+> 
+> Whether or not Landlock currently blocks security_move_mount()
+> unconditionally doesn't matter. Introducing this api will have to do it
+> for the old and the new mount api. First, because we don't implement new
+> features for the old mount api that aren't also available in the new
+> mount api. Second, because this asymmetry just begs for bugs when
+> security_move_mount() isn't blocked anymore.
+> 
+> And third, there seems to be a misconception here.
+> open_tree(OPEN_TREE_CLONE) gives you an unattached bind-mount.
+> move_mount() is just sugar on top to attach it to a mount namespace.
+> 
+> But a file descriptor from open_tree(OPEN_TREE_CLONE) can be interacted
+> with just fine, i.e., read, write, create, shared with other processes.
+> You could create a bind-mount that is never attached anywhere. So I'm
+> not sure what security guarantees it would give you to block MS_BIND but
+> not OPEN_TREE_CLONE.
+> 
+> It should be done for both.
 
----
-base-commit: e6b087676954e36a7b1ed51249362bb499f8c1c2
-change-id: 20250123-sysctl_const-jj-1cdba6ab00ae
+Yes, the new hook should probably be called by attach_recursive_mnt().
 
-Best regards,
--- 
-Ricardo B. Marliere <rbm@suse.com>
+Landlock tests should check with the legacy mount(2) and the new
+move_mount(2) (e.g. with test variants).
 
+> 
+> > 
+> > > Also what caught my eye is that the LSM doesn't care at all whether this is
+> > > a recursive bind mount (copying all mounts beneath the specified one) or
+> > > just a normal one (copying only a single mount). Maybe that's fine but it
+> > > seems a bit counter-intuitive to me as AFAIU it implicitly places a
+> > > requirement on the policy that if doing some bind mount is forbidden, then
+> > > doing bind mount of any predecessor must be forbidden as well (otherwise
+> > > the policy will be inconsistent).
+> > 
+> > I need to double check this with Mickaël, but I think it is safe to allow
+> > recursive bind mounts. If a bind mount was allowed, let's say /A -> /home/B,
+> > then we already verified that the process did not gain more access (or even
+> > dropped some access) through the new mount point, e.g. accessing /A/a through
+> > /home/B/a. So with a recursive bind mount, let's say /home -> /C, once we check
+> > for privilege escalation as usual, it should be safe to clone any existing sub
+> > mounts in the new destination. Because if access through B <= A and C <= B then
+> > access through C <= A. So back to your point, there should never exist an
+> > illegal bind mount action that can implicitly happen through a legal recursive
+> > bind mount of its predecessor. Regardless, I think it might be useful to know if
+> > a mount is recursive for other use cases so I added a boolean for surfacing
+> > MS_REC in the new patches.
+> 
+> Say /home/hidden is covered by a bind-mount of /dev/null and you're
+> doing mount --bind /home /somewhere then /home/hidden will be uncovered
+> (There's cases where the kernel itself fuses mounts together or "locks"
+> them so things like this cannot happen e.g., when creating an
+> unprivileged mount namespace.). If your policy blocks unmounting
+> /home/hidden to protect the underlying file then a non-recursive
+> bind-mount would be able to circumvent that restriction.
+
+That would be a valid attack scenario.  For Landlock, to make it simple,
+non-recursive bind mounts should always be denied.
+
+Shervin, please add this scenario in a comment for the Landlock
+implementation of the hook.
