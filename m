@@ -1,125 +1,150 @@
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C704F1BD027;
-	Thu, 23 Jan 2025 19:35:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60EFF153BF8;
+	Thu, 23 Jan 2025 19:40:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737660949; cv=none; b=dAutRtbOL0wB8cV+QHVlaMd6Sa6wIarCoMGK2/PYVHFcym43c4C/i/jfYer8sLIQikKz8rn1374wivjIAsf56UGG1UYf0tfrtOpLvC6B4yyckJPfiT+geoCyGREtHd2w+jcQJFA2oIc+ETmnJsXJsEfV3drBuBY1s96CycmnSB4=
+	t=1737661209; cv=none; b=QoDo9PMf3IT25LLmFuZbAAjUIgvsWaHTTCflelnCgPeGLB6wsFq2h7TdrKW6blAHA0XlnZ9W4AVvreSinTWv3zIMCW+pve+GC/RkK97M4rnxTWTRmcdrDUx1q7wqgosCJwAulbUiJcf8p80c6SFMQw53LQNdAx3l1N3g6F0xMdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737660949; c=relaxed/simple;
-	bh=22JbdsQ/o8FxW7s6cjOJlXkC2QWrIuv7vZ+BPQQ4gmE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=J5K7EG70+GG/pIbVmdk0Tt9joNSo7q/Gt8PWsJQ+CKITbXPwlH6FaAIRyOGrj0l/ZA66pyk9ShywuUYDHxKPudIG6VmEtAO+CxA4zMujo18jlt/Dx3CsNdLNoNnoxeH0gG+KAoBz4/VbKlteLOIYoDOcxKGdcc5p4xzVKf6d7Uk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=marliere.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=marliere.net header.i=@marliere.net header.b=Pw6YiuLb; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=marliere.net
+	s=arc-20240116; t=1737661209; c=relaxed/simple;
+	bh=lNvFblm0tA75dRFkK2dQQ2vP5N1S9A5oJ9+tZziA3SU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=svqQxiX9STAEoCFIshgKcccGSUBfOcO2rNcG6mNIo2AV/V9UPx3D+OlIaaqqjlR1IvCdoZJO2VLJJHAqbvqFp4sISnHw1ZgpEAqUEug9cO5BX8j6d2a7PWI4ZMs/kVeAyPxZ/ORALl8+6O0A73fibP7/045dY8ZrQD7Il9beVSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R+5861lj; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marliere.net header.i=@marliere.net header.b="Pw6YiuLb"
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2f4448bf96fso1974254a91.0;
-        Thu, 23 Jan 2025 11:35:47 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R+5861lj"
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-21680814d42so21924925ad.2;
+        Thu, 23 Jan 2025 11:40:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1737661207; x=1738266007; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XGNk0E1QQh9jtcLegFAVre19rme1v+GqwcPtvIzl+1s=;
+        b=R+5861lji0BtabkkiCj0H4SN/x89FJMsQkAoILlgyvHiayuR88Bu2GOxQKoH4XGdFE
+         r7uQqqlwGTNQ0KlDnElJoIZiIkr+SjufvNu7dnyyU0CMw3Sms0K6PUUfIzrkIkWHeLht
+         2461HF/YeLA/RyoLxOXSKxhgntEfuXMA6+3kQYqt7GKzG9FjbU9KFopqVunl6KnEmjUX
+         Po0EmCfJ/3ARi+/eEe54O6lYFf6zjZs7zj18gyysGzhuYNiJ44QML95vbpq5k0Umhl3o
+         R1yptL9e39ncixI/XrYM99vnCxFubWQk+VfuhWKvm/zD4c696Fdo0r6GOLBRO4UzdRaI
+         D8xg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737660947; x=1738265747;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:dkim-signature:from:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3O4RMrkq7tIKB75geYtstjDVTI4Ef93aSfh6a6JCCiA=;
-        b=JMOlrENG006AAmf+22RrqkHMFwCUusNWl1mmMiGG59cXJnzcKZ52N6PqtGZFhe89Mc
-         tytSscG4yPuHW4DLpgl02yL0peRSox94gHCvN19nW1lcuMQnB3fnbwGAta1K2eBIu7xg
-         518GnUCGdHAI8PxlvzVDALo/SL4s0GUSBURYM2zl5UdNGRHmWq58Q4+eAtyZF+Mh2/fb
-         xOF3tewar7SBPkE7iyFMR8d2+00I8xJ+YJIDSeO7sXurIc1zwQ5TqL2ZdF+q4u46vy0X
-         RNavamPtwMfWuh0pzgAnoXmcNSNImY6rphwARc2D7SnPd5BfD+HrJFNWk+7HRrfxypia
-         vRvA==
-X-Forwarded-Encrypted: i=1; AJvYcCUxPm1m34pYljIij+8rB7AaTUKuSC87yrLReYs72Gvzdb6HuzFfYbm/K0e+lbN/L1ebofWZXVMBC9NxeJM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxr+pTkeqSQ5GoytY0fZhtN+D+zrzkEaEoBnUUgB7ARs0GvRPod
-	4VZcYok96RPMykEZ9s/TUrdUzvt59p/L+//VwX6ISyQdjJlWOVKX
-X-Gm-Gg: ASbGnct5POO5aB0f1PZ6INLSvJOfkKMK4PPq72OBniy/kYmXjdsdypAzmtFwIgaa3VL
-	dLTiS0IPVDbdTVoXFjTYIdRkh9XF30yj2NQmFXSfc14OCB3z3yPYFwA0qGhtOutVfZXSVgH/z0K
-	3xei+8mF+YZrHFsXVCI3eN0rNX8buxf/fqTQkZF3M1MqSVk4zr/pgL47cnGO9GkdnGZNTP9gK96
-	Ky09he0UV4uJwa9ZO44aEeQq+cJBcYbSwgp7U5/B1AH7CRzQ/f8qD8tGiCrwrR2r23EmE7cvto=
-X-Google-Smtp-Source: AGHT+IGKtnn2JS8AzBVyiNnW2FRX+gRDHoYKuHg9u5W+PgS/XuNi0YIa7ySgnWyLotVI8NdLH8kRQg==
-X-Received: by 2002:a17:90a:7141:b0:2ee:dd9b:e402 with SMTP id 98e67ed59e1d1-2f782c70237mr45182271a91.12.1737660947044;
-        Thu, 23 Jan 2025 11:35:47 -0800 (PST)
-Received: from mail.marliere.net ([2604:a880:4:1d0::7f5:6000])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f7ffa6b4c7sm83521a91.27.2025.01.23.11.35.46
+        d=1e100.net; s=20230601; t=1737661207; x=1738266007;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XGNk0E1QQh9jtcLegFAVre19rme1v+GqwcPtvIzl+1s=;
+        b=gUTs2neuN8CBXeh1cHovVkBYq8U8ojPVYFIbp1jMcl5YojIzX1XCt7TwiT/b879sVh
+         Rtox1qVKzUQb011or8hB3tvvlwVELF6KS/Xwddua5rkX+EplWpRK0zrZqSCAPJl/+09u
+         gi4YIWbuOlOLs5zg7P8thanmHWMQ9xeXkm60V2wwWSDjaProEwxw4ScWPb1BDOOdyA8B
+         /VasnBtVCd1zrzfmznGjERxPC0+UdA8eRMcbVY1/gIprs17qrCVHg2t8x/bm1D/S4I8C
+         an79S/naqeVjxWPBb+ga8dcQGokRus1qDdLXl1DGJoAum8NPhW8by1ZkqwISMCGWLN3Z
+         pTGg==
+X-Forwarded-Encrypted: i=1; AJvYcCXQ1Yq4raqHpTEPH9U3IhgGy2cgPA3pf1+4FofQ9JAbweSe5ftAM/Dpkj+cybuCcWTzXt7QvKBcozlBBvY=@vger.kernel.org, AJvYcCXrAYCjNFj01cXYDRbdRuo/ocY/p2JO8jQJg1HinrGrhqinMPx97vGzkRerJLVDSmsOPSzKLid6IA7iJ2ChttHEebtf8Jon@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDPWqR1zq6RX05j+zfjPVJu+zlw99VNV1a4hHXh2sCkFxdlkFg
+	9+jDkDflFYwqP199yq9TNOE3s1p5h2f5efks3cK4Kzc9pbb88/UO
+X-Gm-Gg: ASbGnctbwL0mCsw6hUucqaZKC4Wrw3AVa8NvtJ+1/Rkh/LWqRNtkFQHHraF4crLNrQk
+	W/VgDtWTaeu0ieaX9f2cyhRZxyy8k2ysQyjKqH8VZkkJZH7KTlGOfMnLESkqev3GWVfwOABP7G6
+	GfmLS19OCPCiEfo/PL82s6374wYFoqtNegs2olp3ZaTSJRX4Iaiee/Dmqvdz+IsfczY3EY5N5sB
+	EXtUDdcFrM3mF1mAVPIs2SmkjpVHPF8IqJYl6p3XqQbCjj0IM0UpfsqLz8QlwKbbchmBaorpmT/
+	lg==
+X-Google-Smtp-Source: AGHT+IFOJ0YepxdXCiA5AdmwfYu25lYNDwnM4txqqU57cNwYZy5mXZ0IROA1Lb7I0hEy4FBbPXVl6g==
+X-Received: by 2002:a17:903:2344:b0:210:fce4:11ec with SMTP id d9443c01a7336-21c352ddf4emr456747045ad.1.1737661207398;
+        Thu, 23 Jan 2025 11:40:07 -0800 (PST)
+Received: from localhost.localdomain ([122.174.87.98])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-21da413f453sm2680515ad.120.2025.01.23.11.40.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jan 2025 11:35:46 -0800 (PST)
-From: Ricardo B. Marliere <ricardo@marliere.net>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marliere.net;
-	s=2024; t=1737660945;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3O4RMrkq7tIKB75geYtstjDVTI4Ef93aSfh6a6JCCiA=;
-	b=Pw6YiuLbEFSvf2vz5vK5r8ReodOVcUcM3QZZ6HUdIPQJCaIDRy96uaDaNBSS4m5Iw4f2+z
-	H0qQlLSmfM94YNNp2uDVvbiG4KA538rRiwHdXvVC7qyeDWfW/wbJZ+PtOhKnd9EMtvZixn
-	MGeUJIt+qO8Tmt+5JL6tLdtM7WIt2Uw1QX07Y1CxdzkZjsCHYEA5zSgjH1i+l0ljgjGxoM
-	eMcMj+5xE0WAdk19ttuQEtllv2+GP8XgPrf82+g25q4te1VEpCF8tjr1RGkg1K92orASIJ
-	0N1Bzgg6+OWIEprRaUV/Je63VHRoG256mI9D+hEkBlJqfa++VWylXAc5Cnuimw==
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=ricardo@marliere.net smtp.mailfrom=ricardo@marliere.net
-Date: Thu, 23 Jan 2025 16:33:35 -0300
-Subject: [PATCH 2/2] LoadPin: Make sysctl table const
+        Thu, 23 Jan 2025 11:40:06 -0800 (PST)
+From: Tanya Agarwal <tanyaagarwal25699@gmail.com>
+X-Google-Original-From: Tanya Agarwal <tanyaagarwal25699@gmail.com
+To: zohar@linux.ibm.com,
+	roberto.sassu@huawei.com,
+	dmitry.kasatkin@gmail.com,
+	eric.snowberg@oracle.com,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com
+Cc: linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	anupnewsmail@gmail.com,
+	Tanya Agarwal <tanyaagarwal25699@gmail.com>
+Subject: [PATCH] integrity: fix typos and spelling errors
+Date: Fri, 24 Jan 2025 01:07:44 +0530
+Message-Id: <20250123193742.2623-1-tanyaagarwal25699@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250123-sysctl-kees-v1-2-533359e74d66@suse.com>
-References: <20250123-sysctl-kees-v1-0-533359e74d66@suse.com>
-In-Reply-To: <20250123-sysctl-kees-v1-0-533359e74d66@suse.com>
-To: Kees Cook <kees@kernel.org>, Paul Moore <paul@paul-moore.com>, 
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
- "Ricardo B. Marliere" <rbm@suse.com>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1060; i=rbm@suse.com;
- h=from:subject:message-id; bh=22JbdsQ/o8FxW7s6cjOJlXkC2QWrIuv7vZ+BPQQ4gmE=;
- b=owEBbQKS/ZANAwAIAckLinxjhlimAcsmYgBnkpoFtfSMZOmiG6MGCbIEfkS11ng1B9MdZyflJ
- IvBn+5y4auJAjMEAAEIAB0WIQQDCo6eQk7jwGVXh+HJC4p8Y4ZYpgUCZ5KaBQAKCRDJC4p8Y4ZY
- prezEACiRnfKDnQyexZoYsGZplTbzzcwpcvjPax6+26+WoIzs4NDZb9436LdwtMlFdklXY8pAzR
- JWN+zRdpaIwmu/DRGVojDQZX37xaM6AbgNmclDzHby3NIi641ykyKjk3bCnS+Iuw7addRDM2UQJ
- 968tgzRajIzHpLaMRowe/f+1mMDlRjfiuUh6GtOHwT9R4NOu5P5MyUgbP8t7D/iNIaOsg2A31+d
- t2ivAkqhFeRQh6WEUsow+wFg8/F4tc5Us1tOcTuGNbDNx60hP5U6vk2WhvfH9gYxbFyhf8xoyz3
- 6YxrBVdNArHZl7upFmQQ8hXGqpk7Y0lh2mMI8rXf4IfI/CxC4vbkTpR0kJkaW3Ynwlz6FGvBegv
- FmglxE8xDEhVZY22StDDvVOrCNiAZH0g6qRJ/v1j0OkULhtuCGuPMmWSrUXF/R42nZQVep3wDzw
- mGEpfzNhpDjfHvMBKq13Sqgm3pqy5cYdk9Su09t/9hDUE/Jm42yZ5D3R663I/ouUY74dwYU8dzd
- Jb1NHP4Ayj7XyVARd3wf9S09LNtc2piMxgm4Rwi0SznK0lwcRJ8se7b9HN5/gUL1BjnAS0Qu5pU
- eYa6Sm6Z47qlu++BpHJbPeepQpKeQX1+0cvvY66C6qWBOcEv/FerEaR3pRCtE/GdXmIL/eylcDx
- iyeTph2wXvFC6Xg==
-X-Developer-Key: i=rbm@suse.com; a=openpgp;
- fpr=030A8E9E424EE3C0655787E1C90B8A7C638658A6
 
-Since commit 7abc9b53bd51 ("sysctl: allow registration of const struct
-ctl_table"), the sysctl registration API allows for struct ctl_table to be
-in read-only memory. Move loadpin_sysctl_table to be declared at build
-time, instead of having to be dynamically allocated at boot time.
+From: Tanya Agarwal <tanyaagarwal25699@gmail.com>
 
-Cc: Thomas Weißschuh <linux@weissschuh.net>
-Suggested-by: Thomas Weißschuh <linux@weissschuh.net>
-Signed-off-by: Ricardo B. Marliere <rbm@suse.com>
+Fix typos and spelling errors in integrity module comments that were
+identified using the codespell tool.
+No functional changes - documentation only.
+
+Signed-off-by: Tanya Agarwal <tanyaagarwal25699@gmail.com>
+Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 ---
- security/loadpin/loadpin.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Original discussion:
+https://lore.kernel.org/all/20250112072925.1774-1-tanyaagarwal25699@gmail.com
 
-diff --git a/security/loadpin/loadpin.c b/security/loadpin/loadpin.c
-index 68252452b66cb913638abbca2adea26219e77d37..e2d664b7602629c08c86d6d02158a4e9dd189b1a 100644
---- a/security/loadpin/loadpin.c
-+++ b/security/loadpin/loadpin.c
-@@ -53,7 +53,7 @@ static bool deny_reading_verity_digests;
- #endif
+This patch set is split into individual patches for each LSM
+to facilitate easier review by respective maintainers. 
+
+ security/integrity/evm/evm_crypto.c | 2 +-
+ security/integrity/evm/evm_main.c   | 2 +-
+ security/integrity/ima/ima_main.c   | 6 +++---
+ 3 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/security/integrity/evm/evm_crypto.c b/security/integrity/evm/evm_crypto.c
+index 7c06ffd633d2..a5e730ffda57 100644
+--- a/security/integrity/evm/evm_crypto.c
++++ b/security/integrity/evm/evm_crypto.c
+@@ -180,7 +180,7 @@ static void hmac_add_misc(struct shash_desc *desc, struct inode *inode,
+ }
  
- #ifdef CONFIG_SYSCTL
--static struct ctl_table loadpin_sysctl_table[] = {
-+static const struct ctl_table loadpin_sysctl_table[] = {
- 	{
- 		.procname       = "enforce",
- 		.data           = &enforce,
-
+ /*
+- * Dump large security xattr values as a continuous ascii hexademical string.
++ * Dump large security xattr values as a continuous ascii hexadecimal string.
+  * (pr_debug is limited to 64 bytes.)
+  */
+ static void dump_security_xattr_l(const char *prefix, const void *src,
+diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
+index 377e57e9084f..0add782e73ba 100644
+--- a/security/integrity/evm/evm_main.c
++++ b/security/integrity/evm/evm_main.c
+@@ -169,7 +169,7 @@ static int is_unsupported_hmac_fs(struct dentry *dentry)
+  * and compare it against the stored security.evm xattr.
+  *
+  * For performance:
+- * - use the previoulsy retrieved xattr value and length to calculate the
++ * - use the previously retrieved xattr value and length to calculate the
+  *   HMAC.)
+  * - cache the verification result in the iint, when available.
+  *
+diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
+index 9b87556b03a7..cdb8c7419d7e 100644
+--- a/security/integrity/ima/ima_main.c
++++ b/security/integrity/ima/ima_main.c
+@@ -983,9 +983,9 @@ int process_buffer_measurement(struct mnt_idmap *idmap,
+ 	}
+ 
+ 	/*
+-	 * Both LSM hooks and auxilary based buffer measurements are
+-	 * based on policy.  To avoid code duplication, differentiate
+-	 * between the LSM hooks and auxilary buffer measurements,
++	 * Both LSM hooks and auxiliary based buffer measurements are
++	 * based on policy. To avoid code duplication, differentiate
++	 * between the LSM hooks and auxiliary buffer measurements,
+ 	 * retrieving the policy rule information only for the LSM hook
+ 	 * buffer measurements.
+ 	 */
 -- 
-2.48.1
+2.39.5
 
