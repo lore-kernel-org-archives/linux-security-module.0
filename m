@@ -1,116 +1,133 @@
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31DEB18872D;
-	Thu, 23 Jan 2025 19:48:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A66FE8C07;
+	Thu, 23 Jan 2025 19:50:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737661712; cv=none; b=BOHhoA0476z3/5TRqmIFM0G46eVWpuIiFj4qwNjudqrze2zxVNES4I3yCl3Pp0JMHTLeptvGwTfGUapOpd/4QJE9cC8IkwotlOuhUaJbBQQcZqE554/fYa/Dd8e5z9SMpI5Dns61S0jA97O6WrX1Arr22hQkxMwW3lsD4arHSA0=
+	t=1737661819; cv=none; b=VSxUKXymWU/GP3CW+g5UP6CSRrbVz3LlGSa5y/M6RRBEhOfR0qWAUIMbv9aKV/N+7E+h0xfhjHKWs6Qsrn9C0dOcul1xieqLtch6L/ScFE6wV83ETnf5vsSrTEXEeJmLeCqIZoBbPS7WYsRcVf+z4jxjEuKM4dTgaWbHxC0WToY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737661712; c=relaxed/simple;
-	bh=NuVtlAXxonMhqh9RYY3q81ctUqt11M14T0GzXAvF4Zs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Aacc+HDVWg5M8UkpA11B0iFL7XL8EgeL4SUMMazfS/Jj/ma8EacktqBmcB3Li6rQEATOyPoxJl/j7ViGd5hiYbqGkWn3LubTqt8z5qNJV+ufnF5sq6QsY6TB3XKirjk5HVUGNrDMBTP9dpK/AEOu7YN32Hdw2yIlNbDwI5ek7ew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gw7PLNWU; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1737661819; c=relaxed/simple;
+	bh=ers5d3hrIIu2OYOmGLo8rUQlnJ5Fe/BNUYCkOmAW7CA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=XFlPlLN8Lp9xW8jh4LybnU+4GqGVQuCoyfaLfIqDpnIiSi0KvPUZnhVK2KZMYWkWYIx/wGZJd/0lBZZFvlY0iHiLmxEIKm6ixG7obJHBp6wA/wERm+IUIE2H+QFDBiO5LVVMI2gkZZ3old8Tx7H7MU8ODuRNoZFWD2HH5Z0cn6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=marliere.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=marliere.net header.i=@marliere.net header.b=qc7ouZ1M; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=marliere.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gw7PLNWU"
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2ee397a82f6so2574153a91.2;
-        Thu, 23 Jan 2025 11:48:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737661710; x=1738266510; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=oDbzEEjj7IXYYLbCpl+1f4yVi5aNctB68vm0n7Ny/lo=;
-        b=gw7PLNWUnmZjFpU1rGvpgRub2hHVKKZtuBIyF6+tiCMKBN1do6jwFr9DjG8nkPsMge
-         2KpE03Vs0fQzRn/v5C/rfCfA64n9cwahCqLz1NeRPk8CUG3IHdOuya5b64fkuOD/4kq1
-         D3QlbQKDMmBu5OTRPY0UF9M1to5J6kuLDi4Gr1r8up1CcQSoyUApzdRECm9Q7EV0bYY4
-         gbj8ty9AWfwXZzSw5MJj+e4NpA/CO0JqUMtWr4nYFdTPxLPLFJOtPOnbM/FemRvII/et
-         gMQkscqqPd1ikeeNronnoDlJPxbHDrykNahD9KqyLA+0uFLqKQB0oLjSG+OUoy/Km781
-         Ed0Q==
+	dkim=pass (2048-bit key) header.d=marliere.net header.i=@marliere.net header.b="qc7ouZ1M"
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2ee46851b5eso1975158a91.1;
+        Thu, 23 Jan 2025 11:50:17 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737661710; x=1738266510;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oDbzEEjj7IXYYLbCpl+1f4yVi5aNctB68vm0n7Ny/lo=;
-        b=hAHDvaQgbXUCkku6J+cXnL6s8InoWcGeeW/SxocdNlfYM+eWWMfzL3SyDtKJv1SBem
-         x2SlkLvmLrMZopJBs1RaXnVx6EqRsZszUiWj62cu7+pjIPcmF8UznGhqr5GEfiYKnLlh
-         qQznWUHthuJqn0r0otVJk7PUQ5RHnX355uoxyOHeQisa9D6qFB9EMZnmbvyV2Ifizuod
-         1lYZvcxvTFt1/2pKeY5IHYnhRuxuye5ohZkFhpb8HCT1aY3UHdQTKC4jMGYtdKb2X4V9
-         PwEj9uyPLDa3ErA+rjuHU0d99R639LwOVWJWEu1QnT9jAkz4j9qub+/mnidRkKZFwORD
-         dQ0w==
-X-Forwarded-Encrypted: i=1; AJvYcCUSPMvad4K4lSm4Dz2hMEmSmYFvHaOs6C8fZiUJ26Ds3AbAQHG+v5Q7t/BGuLzHKXm0uvJzSwnhp7RLZoQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfZZ1nIiPDZp0I9zerUZJ/dOQr/qvtvVS3m9klxZDnmbNDjMxO
-	Y66MymEg033HQQGVkVFH01Y2hAO2oOJFoh2lFvRjU2KO7LFJRB/I
-X-Gm-Gg: ASbGnctmhs0BNkC6DZ7bdOr+6o7o9ebb8IWljTRRjuAH349HOg2zlEFthmnGX06pKJn
-	Nt/FdcRisbRuw0ROs4YPOIU+ntB6tJyL3ygfDPcJlJ3iqsQMHRmrYx5Hzx/a8benHiveH6f4Kr2
-	HtawPeGW6YL/2m7IYcNEgmv5Mv+H6UVRAXI+geOA4rex1eaqwa5GBtjt8ZfB6K4ginDNuKxw3N9
-	JWLQ9jR+YsSHhxrD69LwJ5r3PBZpoNX51Eys8dp2FpZ/TIVrBh5ebuIZII7BT6kBSsMlEA+z81l
-	2g==
-X-Google-Smtp-Source: AGHT+IGsJwobmrrgEFKH0Z/0DPCOu4irsCPtYB7q1wid6HODeFM/LtgmABD8zKRT/O3L8dHf3giyLA==
-X-Received: by 2002:a05:6a00:4fd3:b0:72a:8461:d172 with SMTP id d2e1a72fcca58-72daf9becfamr43475560b3a.3.1737661710308;
-        Thu, 23 Jan 2025 11:48:30 -0800 (PST)
-Received: from localhost.localdomain ([122.174.87.98])
-        by smtp.googlemail.com with ESMTPSA id 41be03b00d2f7-ac48fa81b1bsm251947a12.27.2025.01.23.11.48.26
+        d=1e100.net; s=20230601; t=1737661817; x=1738266617;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:dkim-signature:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1wA3gnsLg3TCdMzh4yL31wyhBkqAEvprGU9EsW3rVBk=;
+        b=pBdVhDCSPU0eQ+lYhv3NKowEmK42/8s7xvT+1vEgPqXgcAV8QlrJqy1GGTF9vWcsJi
+         JoiLve7l345ybuMsstfGCB4mf+iu7kXQrA3wM/Sc+FHcU/fzhZpEsgohxPwSsJj3Q+v1
+         6xK/RUHrOZwIIAn/9SOlSP4c+e6ToMOQusqqVHZvYVHhMfT+MhFc29R33oPfr8Z7nMAD
+         RlsNcAMIhzKCjZmxcXfrREsy3qolM43Z1u3R3X/aOSqde3nus69yPAZNniGY9MIKrqzd
+         W8LoUPHNiH1PvwEzFuyPs5aQJqUF9T+hLrhyQF/YKMxRxnnohZ0l32MOUCE/2RjLW86M
+         Dqow==
+X-Forwarded-Encrypted: i=1; AJvYcCUhOUKBEV31LItc5FQtakG4FQByuBhENHsifuBrLz5WV67y6ygIF6SaiYVLKE5v+2ZLj9mHZJ9x23iXxYLSnEwuLQGlOmfi@vger.kernel.org, AJvYcCWam9ZE68HEwrZzkgJAe3XIHNVKdOSFW9dPEwl/0DzeisYuMx9FT38C3zoxk6JKkYJoIQSVW7k1me00b8Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKcxMmaqDXF1ATRL2qEepl/ZbIMSb3U1kNACiObBX6wTbKu0Jy
+	9FGjQJYR918bnzOFi0pZwVTslRRKkMCYn2npCj26Y/yiLxztHU6DhSrm6fnvAng=
+X-Gm-Gg: ASbGncs3X+djicvbaP2BJuufmszb0usPmy/F2z7urp6wQVPadMdSgiLET4FSahJ2hql
+	xK3hUR28rRDOkpPbWEMxpyM+Nr9z3U+WH1L+vfHPAoxCJnq4PnddTKXy3TLq36/FsE5rmcEWXvw
+	lGDNJ6RdT5VP6RHI+eLlb9kk0mrzvHE2TS2hviiOfohBnJvXRGW6Qquj7gyYitvqd7+hishaMJC
+	VdYeXh8THIOVbOeM1cvr3v1kUDnz1i9ZV9r+jaHxtMSnqEpKdXTeE6YjMPoryv6RSgH/xRBQ3Ct
+	rLbfIz4DDR5wveLqMkXqJw==
+X-Google-Smtp-Source: AGHT+IEx3fxH+fsuONSZZ2tzSU2LlotC0s9f5eO7pJ8Qg3HhWZzK+zix7fB1PP7B0zPdNZzaYIyF3w==
+X-Received: by 2002:a17:90a:c2c5:b0:2ee:8008:b583 with SMTP id 98e67ed59e1d1-2f782c9c88fmr42930519a91.16.1737661816962;
+        Thu, 23 Jan 2025 11:50:16 -0800 (PST)
+Received: from mail.marliere.net (marliere.net. [24.199.118.162])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2f7ffa56155sm97391a91.19.2025.01.23.11.50.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 23 Jan 2025 11:48:29 -0800 (PST)
-From: Tanya Agarwal <tanyaagarwal25699@gmail.com>
-X-Google-Original-From: Tanya Agarwal <tanyaagarwal25699@gmail.com
-To: zohar@linux.ibm.com,
-	takedakn@nttdata.co.jp,
-	penguin-kernel@I-love.SAKURA.ne.jp,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com
-Cc: linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	anupnewsmail@gmail.com,
-	Tanya Agarwal <tanyaagarwal25699@gmail.com>
-Subject: [PATCH] tomoyo: fix spelling error
-Date: Fri, 24 Jan 2025 01:18:00 +0530
-Message-Id: <20250123194759.2759-1-tanyaagarwal25699@gmail.com>
-X-Mailer: git-send-email 2.39.5
+        Thu, 23 Jan 2025 11:50:16 -0800 (PST)
+From: Ricardo B. Marliere <ricardo@marliere.net>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marliere.net;
+	s=2024; t=1737661814;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=1wA3gnsLg3TCdMzh4yL31wyhBkqAEvprGU9EsW3rVBk=;
+	b=qc7ouZ1MzjIXOPd0+Fg66Evf/M905lsps/+gEsHiD/CGNJ7WeVRKBwbeQnxfV4A0dBs53w
+	ZdXSz2ZzHZiLulZ7RBEfHfm8f3H4GJ20ywu9/zdCI01qFBDMYRfHBt6z4rVN2uAE/F/GTD
+	rlTNKVggPh3ve7PKfZ9RR/nDzYFkY5rRhPFNpfe78bY8XNKXTFxW94CnkUa6Tkdnk86PiM
+	DcwC1yfy61SyKT7tiKYS/mMOTmYdtfceu14nVSXshZnNyncz+zom3JsBk3rx+T+jdr0kyO
+	O9UbDPgENRmwB9IKOnSay4rBwpBNEgjhg1mZVOS5dMrECfeQqIOU38YGqF/sYQ==
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=ricardo@marliere.net smtp.mailfrom=ricardo@marliere.net
+Date: Thu, 23 Jan 2025 16:50:11 -0300
+Subject: [PATCH] security: keys: Make sysctl table const
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Message-Id: <20250123-sysctl_const-pcmoore-v1-1-d9f918dbb0be@suse.com>
+X-B4-Tracking: v=1; b=H4sIAHKdkmcC/y3MQQrCMBBA0auUWTvYJAqtVxGRJJ3aAU3KTJBK6
+ d0bxeVb/L+CkjApXJoVhN6snFOFOTQQJ58ehDxUg23tuTXWoX40luc95qQF5/jKWQhHb06u60P
+ nbA81nYVGXn7b6606eCUM4lOcvrN/dky0FNi2HdEXMJ2FAAAA
+X-Change-ID: 20250123-sysctl_const-pcmoore-fa14389b8329
+To: David Howells <dhowells@redhat.com>, 
+ Jarkko Sakkinen <jarkko@kernel.org>, Paul Moore <paul@paul-moore.com>, 
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>
+Cc: keyrings@vger.kernel.org, linux-security-module@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+ "Ricardo B. Marliere" <rbm@suse.com>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1144; i=rbm@suse.com;
+ h=from:subject:message-id; bh=ers5d3hrIIu2OYOmGLo8rUQlnJ5Fe/BNUYCkOmAW7CA=;
+ b=owEBbQKS/ZANAwAIAckLinxjhlimAcsmYgBnkp1zcdHGjKz10Q8tmQjWzNrLeBbygK3QlJJSR
+ t2dFO6QrnaJAjMEAAEIAB0WIQQDCo6eQk7jwGVXh+HJC4p8Y4ZYpgUCZ5KdcwAKCRDJC4p8Y4ZY
+ pnZBD/97wZTWMyt/pwhqvAVdXL0cbJiQ+hxYxRCU7z0aR4p8mLxSvR6XrX3zTIXBxmMkK6Ag76/
+ g9oFwECRHMtgIT1gWgDlv6O1upGP38BY10OLb4Sy6bLQP/5HxdQKQkZIvqSZ8y2XEF5RircM1TA
+ yKmAdHEVf5vhn6VtasWkXMOQltc7qF4HiE6t65ZRb1bBZ5LUUwpp3RVS4NPGpGStDxaO0U66vQu
+ I4v7OVVZ2B8LCHSmAx3SpbBQuQx7N81w0k+/kXk+p88+c/lg0fZ8727pR+FVvRY5ZQMW0B8n5cu
+ 88/BmPDoyYnn7/zgl++a/gfEfrkxBnUiT/Gb5dACdK8R3qEegTLXBrwVeh7VRFNisyBlKLTIklo
+ jXASJapUNFEFj4CJOdf2NsMJZv8c3OPR43wqodfIgt8/dCUol95pO+2OSvc5o0J95zj3O5s5Ayu
+ kicSVT6cDbzL85Lh1vKAMlFEpBT6BIoLWQnIKc9Nx1I4fAS1IMWn8AMaI1wO/1BcOplFiJE8BXi
+ Tg3/ZyNJEhTquxULA/gCizl29fj8Ng+oiQT3yyIY780JG+yrOwOYBhOMLhnNmOm9Xz0psUGPinT
+ E+QbWgeyi3or9pe5Uur/w1cdMCktb4fjQU4yzSrp1vDkOUumebdQk1V4v2H7GotkDw+J3qRrugK
+ KJeQCFlTUe3L61w==
+X-Developer-Key: i=rbm@suse.com; a=openpgp;
+ fpr=030A8E9E424EE3C0655787E1C90B8A7C638658A6
 
-From: Tanya Agarwal <tanyaagarwal25699@gmail.com>
+Since commit 7abc9b53bd51 ("sysctl: allow registration of const struct
+ctl_table"), the sysctl registration API allows for struct ctl_table to be
+in read-only memory. Move key_sysctls to be declared at build time, instead
+of having to be dynamically allocated at boot time.
 
-Fix spelling error in security/tomoyo module comments that were
-identified using the codespell tool.
-No functional changes - documentation only.
-
-Signed-off-by: Tanya Agarwal <tanyaagarwal25699@gmail.com>
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Thomas Weißschuh <linux@weissschuh.net>
+Suggested-by: Thomas Weißschuh <linux@weissschuh.net>
+Signed-off-by: Ricardo B. Marliere <rbm@suse.com>
 ---
-Original discussion:
-https://lore.kernel.org/all/20250112072925.1774-1-tanyaagarwal25699@gmail.com
-
-This patch set is split into individual patches for each LSM
-to facilitate easier review by respective maintainers. 
-
- security/tomoyo/domain.c | 2 +-
+ security/keys/sysctl.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/security/tomoyo/domain.c b/security/tomoyo/domain.c
-index aed9e3ef2c9e..9a1928be707d 100644
---- a/security/tomoyo/domain.c
-+++ b/security/tomoyo/domain.c
-@@ -913,7 +913,7 @@ bool tomoyo_dump_page(struct linux_binprm *bprm, unsigned long pos,
- #ifdef CONFIG_MMU
- 	/*
- 	 * This is called at execve() time in order to dig around
--	 * in the argv/environment of the new proceess
-+	 * in the argv/environment of the new process
- 	 * (represented by bprm).
- 	 */
- 	mmap_read_lock(bprm->mm);
+diff --git a/security/keys/sysctl.c b/security/keys/sysctl.c
+index 91f000eef3ad82370250e5238d9c9c80757aab61..cde08c478f3272081304e6db34e36b64ce0d321a 100644
+--- a/security/keys/sysctl.c
++++ b/security/keys/sysctl.c
+@@ -9,7 +9,7 @@
+ #include <linux/sysctl.h>
+ #include "internal.h"
+ 
+-static struct ctl_table key_sysctls[] = {
++static const struct ctl_table key_sysctls[] = {
+ 	{
+ 		.procname = "maxkeys",
+ 		.data = &key_quota_maxkeys,
+
+---
+base-commit: 714d87c90a766e6917f7d69f618b864d350f09d3
+change-id: 20250123-sysctl_const-pcmoore-fa14389b8329
+
+Best regards,
 -- 
-2.39.5
+Ricardo B. Marliere <rbm@suse.com>
 
