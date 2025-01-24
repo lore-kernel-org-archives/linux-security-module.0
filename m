@@ -1,40 +1,40 @@
 Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6598314D430;
-	Fri, 24 Jan 2025 22:04:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F60C14D430;
+	Fri, 24 Jan 2025 22:05:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737756248; cv=none; b=BFR4Rg2ZGUQ/eT5ElCqKGwOnsyCx5txE9LESeTAndsm44cnAYNT4a2MpMBeXxLirhZvl9HK2nDA4bL+FMRN2UWfTHz93N5oMWgB3M9fpEeP91PRR3iz/nt3/iafJcY1t7LzDD5LgvWMJ6IUFJqtxUvc3XwjRIY0C6wypwEjPC2s=
+	t=1737756305; cv=none; b=qaC1iCX34i+emxf0HmoiSCBqiTtmKFSfNPBDCRiy7JuuT81lVnACh9B5o9z1Ci0vGycUL4ZAvqkGb0/1sGDlhZEekzBo8IzbxfrgZSvnUBpqJtMV/ahCqChCFQD+ncSwLRpKjJ7v0kb7PlqlmjYnzGsB5d8sEiw+9HLkLqmXaQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737756248; c=relaxed/simple;
-	bh=nUSp0i0lk1mbBolsxZjL8xTxlMkyP8B/YnKHjYhEaSQ=;
+	s=arc-20240116; t=1737756305; c=relaxed/simple;
+	bh=nPgzmYPDqN5JmrWi6BsUKgJFJXD7cVZTxBGB66jUWGs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U8G8a4Cdaaw0c+nW/WYN1xIUO2PCtOsOdkwlLN0ax79rnfN0diHN+cZ9vTAI9pBGCfnVnpxElCWXi4yhRMAFAUxYWEnrpcrYI3fPtUdG2uSpNxQx4+iictPySq9ScHOD5ExOZFeqDrRfuPSfA27WT743F0mzBvXXGFmCMcbcMbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=Q4OpDZ3V; arc=none smtp.client-ip=185.125.188.120
+	 In-Reply-To:Content-Type; b=iODhSd3G7PKOtDwA8JFUd7v3dQhDU7QActYcnhs7IYd4q4GZ7RaKB+8MxuKKivy9Ojze8yVx620/82xxowFICIfTuQ9N/t0IDOvtz6A2UDO16ZlP1p2Q3GWj1QGfnDOpJiT3RvUV14m7ETcUhEluXxNGPYsXeBFzFfrQEDpLiak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=F2i+x+v+; arc=none smtp.client-ip=185.125.188.120
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="Q4OpDZ3V"
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="F2i+x+v+"
 Received: from [192.168.192.85] (unknown [50.39.104.138])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 8D5EB3F925;
-	Fri, 24 Jan 2025 22:04:00 +0000 (UTC)
+	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id A78C03F18C;
+	Fri, 24 Jan 2025 21:57:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1737756241;
-	bh=o1YAUvONUu7Ul6dC45x+y0GtGKT4EgXqn8OAU5T2e4M=;
+	s=20210705; t=1737755825;
+	bh=hgDoAqgGec76Qn1es80BEKttyfB8mlXTWAm6Mg9ImBw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
 	 In-Reply-To:Content-Type;
-	b=Q4OpDZ3VUruvOLzKmep0cOekl0qkaB/l3hT+zz2N90te5QewZmF+gNZrwTY9cGuOA
-	 f4k/tUOTl8wddn+e7mM9UiRIcK1/Ry4IKnj8aXucYAU2yFIsSt0NqHv4NcC9DzRwLX
-	 3wXBBDmiRkBpoI15qFjowzb78HI8n/YumaG84uigzooJbo7AL9cuOLGYqAOSAgf7cN
-	 irPR694c/iQPHgZLE8TpfZLGuoKhFtZNgk3z0/dyPSDwKgThr5NSYuq2iSrXenN3LE
-	 fdUwRIeGoEHnLWQrcUhNkxUUF+pcxwuDJgdRYUC1T7RUeFgy/OFsT9ISnD8CrtnnxQ
-	 mKeBGyl6ssV3A==
-Message-ID: <38ca7459-4034-4171-a231-6c06af1391f2@canonical.com>
-Date: Fri, 24 Jan 2025 14:03:58 -0800
+	b=F2i+x+v+H1IrJNjAKlfSTrnzxhiU8f9/f/rKamu5W/BZGcD+MOsm3DKuGQx5VLaqy
+	 86ysZl92I/o5LSKy0UceiqryesBxzSmoRvehLpBZZGq89TzSrNh8GErjTaynHae87x
+	 k8t/mHJpa/sNxUqiDIjIjyC3ZiXfopTQuIvlztoWzx8j+WuTbjo18kKFeyyOKWx9aW
+	 wOX2N6E2kIHRzVBVnWev1ZinQs5+loxUzbXEvbqE4sroz6ekw/e2O6fbYFErxg5uLJ
+	 c4nLzS4An3CYvQlpVnNbxGQ0jTsh4Ng5dT0xyYpGYMC3Djnvf0WqoKLfxs+zze7mwl
+	 IyeGZgagIRllA==
+Message-ID: <7122554b-d53e-4916-9531-4ceba28ad43f@canonical.com>
+Date: Fri, 24 Jan 2025 13:56:59 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -42,13 +42,14 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next 1/2] apparmor: Modify mismatched function name
-To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-Cc: paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
- apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org, Abaci Robot <abaci@linux.alibaba.com>
-References: <20250121024444.88981-1-jiapeng.chong@linux.alibaba.com>
- <20250121024444.88981-2-jiapeng.chong@linux.alibaba.com>
+Subject: Re: [RESEND PATCH] apparmor: Use str_yes_no() helper function
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>, apparmor@lists.ubuntu.com,
+ linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241220192243.1856-1-thorsten.blum@linux.dev>
+ <d93ed7bb-b184-4153-8084-b693eb1e2b85@canonical.com>
+ <1C3FAFB6-14DB-4E2D-8310-06022B2BB20A@linux.dev>
 Content-Language: en-US
 From: John Johansen <john.johansen@canonical.com>
 Autocrypt: addr=john.johansen@canonical.com; keydata=
@@ -94,38 +95,30 @@ Autocrypt: addr=john.johansen@canonical.com; keydata=
  +T7sv9+iY+e0Y+SolyJgTxMYeRnDWE6S77g6gzYYHmcQOWP7ZMX+MtD4SKlf0+Q8li/F9GUL
  p0rw8op9f0p1+YAhyAd+dXWNKf7zIfZ2ME+0qKpbQnr1oizLHuJX/Telo8KMmHter28DPJ03 lT9Q
 Organization: Canonical
-In-Reply-To: <20250121024444.88981-2-jiapeng.chong@linux.alibaba.com>
+In-Reply-To: <1C3FAFB6-14DB-4E2D-8310-06022B2BB20A@linux.dev>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 1/20/25 18:44, Jiapeng Chong wrote:
-> No functional modification involved.
+On 1/14/25 02:15, Thorsten Blum wrote:
+> On 20. Dec 2024, at 21:19, John Johansen wrote:
+>> On 12/20/24 11:22, Thorsten Blum wrote:
+>>> Remove hard-coded strings by using the str_yes_no() helper function.
+>>> Fix a typo in a comment: s/unpritable/unprintable/
+>>> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+>>
+>> Hey Thorsten,
+>>
+>> sorry for the delay on this I am just really backlogged and will try to catch-up
+>> on the mailing list traffic this weekend.
+>>
+>> Acked-by: John Johansen <john.johansen@canonical.com>
+>>
+>> I have pulled this into my tree and it should migrate into linux-next soon
 > 
-> security/apparmor/file.c:184: warning: expecting prototype for aa_lookup_fperms(). Prototype was for aa_lookup_condperms() instead.
+> Hi John, I can't find this in linux-next yet. Any ideas?
 > 
-> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=13605
-> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
 
-Acked-by: John Johansen <john.johansen@canonical.com>
-
-I have pulled this into my tree
-
-> ---
->   security/apparmor/file.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/security/apparmor/file.c b/security/apparmor/file.c
-> index 85f89814af1e..f113eedbc208 100644
-> --- a/security/apparmor/file.c
-> +++ b/security/apparmor/file.c
-> @@ -169,7 +169,7 @@ static int path_name(const char *op, const struct cred *subj_cred,
->   
->   struct aa_perms default_perms = {};
->   /**
-> - * aa_lookup_fperms - convert dfa compressed perms to internal perms
-> + * aa_lookup_condperms - convert dfa compressed perms to internal perms
->    * @subj_uid: uid to use for subject owner test
->    * @rules: the aa_policydb to lookup perms for  (NOT NULL)
->    * @state: state in dfa
+yeah sorry, I had to disable my pre push hook, it does some sanity checks around
+sign-offs, checkpatch, etc and well takes a while. Any ways it was tripping on some stuff
+causing it not to push, and the last few week being crazy I just missed it.
 
