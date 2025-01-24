@@ -1,253 +1,146 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2E6D130A73;
-	Fri, 24 Jan 2025 15:38:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05E8A1547F3
+	for <linux-security-module@vger.kernel.org>; Fri, 24 Jan 2025 15:45:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737733112; cv=none; b=sj5Ddz8XUkJdo/SI5usMqyijX74deV0iet3vrFyEIrFkt+weXzYadlKHayDFXIxS9s40kYikL4cAaf+7oky/AeM05/N8edhibsZX1O7vHWZcW9QOr37bHL/CqH7pcZe1+n0U7SoSY3OumlzP4GBma3ZU/ikju9Pn2LNIIXAqzh8=
+	t=1737733503; cv=none; b=N4eq9krqpCJ8pOU/nqMvwYXhbR58w+V6lopjmg5TR5aziPk0LRgm0I7bGtRrcgsbmqDFI678G5H3sh5qIm2XJ8hRHWBIDu4ItbVTpQ1vsGWnLtN8ZGXdLq5arFN7G83TNuwnETS7SQ66wON8DoVuTrkZhdJgk8iX3Y5kMO1FO0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737733112; c=relaxed/simple;
-	bh=0Q3+ZDPqlVznH2DBnB+hCmTQTK5hnVFuCIBqHXWe9m8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CaXzMrfasInZ8MiQaP+5NWAODi8OxWb7v+knnMb6owQJLRxx+Rca3HsPchEAdzRL73+5LjnD2dOOrXfn1ASs3zN4o+oNnW8CXOeoXPTOnW4syyYZ2qDauqTuupJkSHoIElf3wdsU5MN6ikk7L2VC0DA8qJm/FP2RPz13KW41/9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eQZWwMYl; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1737733503; c=relaxed/simple;
+	bh=Cl/a/gPKAs8Z5B02O+vIIpPKsGcqpvA8q3YcAkQBuw4=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=O6d/emIgCJlJc8w5NrYGC17Xhrt/wLlwfEUAeD5ax19nmoXohVZrmLoO+B5hxYqiDyzMZkRHkvGm2XpwOOX8siW1exsoqwW5XHijc6zV0LWEZPnWc39aaxpO82xSaw0zS6aLe+FcfYNZYeWAE9ZRRxYz44nmM+yuLhnI0LsFCzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zRhlLdsx; arc=none smtp.client-ip=209.85.208.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eQZWwMYl"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAEA4C4CED2;
-	Fri, 24 Jan 2025 15:38:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1737733112;
-	bh=0Q3+ZDPqlVznH2DBnB+hCmTQTK5hnVFuCIBqHXWe9m8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eQZWwMYlCEGLWHIPE8yWeUZUgZC+DJEXUSLseR58B8f++aqPNhjf0aMYLgkmdQbRS
-	 zIzEtI8scp9h5R85cNXzGtt5/LMHDm6MrzjT0k9m1XPymsBzikIn/IwraY1bGCbNJR
-	 UQCpjuJcpwme819TOAtK1xHO6SLC8+lLNFmfPDOlqrFQMDAucslQSceVm4T+D8MgK5
-	 oAkscLynL9+ZdYSuM9RfgCjT67NAoycLzHXnGFrEUHibW+iZPddvlSj1N2EAqtfbB5
-	 vla9ZmGapnfwZcuQGi7S9edwCrqY1cgsoS9nHYvP3+QXgy8THMWEWhJW7Bz/sZ3Cbq
-	 E4udTKgN3hlQA==
-Date: Fri, 24 Jan 2025 16:38:25 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Miklos Szeredi <mszeredi@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>, 
-	Amir Goldstein <amir73il@gmail.com>, Karel Zak <kzak@redhat.com>, 
-	Lennart Poettering <lennart@poettering.net>, Ian Kent <raven@themaw.net>, Al Viro <viro@zeniv.linux.org.uk>, 
-	linux-security-module@vger.kernel.org, Paul Moore <paul@paul-moore.com>
-Subject: Re: [PATCH v4 4/4] vfs: add notifications for mount attribute change
-Message-ID: <20250124-abklopfen-orbit-287ed6b59c61@brauner>
-References: <20250123194108.1025273-1-mszeredi@redhat.com>
- <20250123194108.1025273-5-mszeredi@redhat.com>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zRhlLdsx"
+Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-5dbf25864a9so2497036a12.1
+        for <linux-security-module@vger.kernel.org>; Fri, 24 Jan 2025 07:45:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1737733500; x=1738338300; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HLF5LMiubeHOgTqo99zX9va/k473tzgX63mo49lOwYA=;
+        b=zRhlLdsxCGw9MmHfkpAWUWsbRNPCCCdKwtQNdl0g/RvVRcOYDa09qg9jZ+OI4xaBbR
+         A77pSrH2uIbwWWOoHSGEIP/MUVQvpO3s8Wn3byXT+3m1j+RGHvmETB2TktJ0h01yIR0l
+         GOHGw8Ep4EzkmpodrbyhMeWD8oTLL+xI7bq8cIdPb8NHZK1QukYJB/4Vq15FCdI11/UB
+         9ZzHzaMCVhHzXIJPUwRrOv4eyyHJY3iv0wcTlUsx++s18WYblpUcox7tAlGzlmE5h1D+
+         EHfG3MoaXE7nmebXr3VosgXSkz8xVGoG0sd6wGspWS8GU9+Z52Kjm8hjH8nAusDpRVX6
+         6YLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737733500; x=1738338300;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HLF5LMiubeHOgTqo99zX9va/k473tzgX63mo49lOwYA=;
+        b=K7ixHFmQ6k3TIs3zB45y+S961gI73DDAVCrg8OmSNKQJ/S1PF97PAB8u2VIIV7klbk
+         AJ3GSKXFYYHyTbxgUyx7ktUIpV3HVRSTu+BZOX+X7YxuxdxozAukhqMLXNQLYVE+FmuI
+         TxNT9w5azNm+YGQpQacPYhkkLxTTd5lUoy7rpmBqbJQBqTkJV8y8q4BRsL9ol764aE/d
+         3rk8+oCELq1KP1X8PEyiN0MLIpLeENnHRzL0R2cxQPndjVsLfNMu0+duLx68L7mQ/wUD
+         t8jXmksONZyw9VK26U58L8QO7U8DSgNNoWCakbGmp7oBieGvPSV7+lEjM/jvqJeVLjCa
+         EkMA==
+X-Gm-Message-State: AOJu0YzEpxBHKK6Nk7wILNPixYWnLFwJR05jNYSjtJsrQpqthOXUAOCO
+	+GBoVnxtlTeKjN4+bvmc1PfTzQ61vtPcMvl+y5fvOcteuhjpuarQ7xfr8Ald0VmdY2Kjrhl+CoY
+	FJ9Fbi3S2ZnFb6uPnQN0/XW9fa7Jqwapud0V685Bj1f2oY7SnfNQnBOlY/cHCCCIl6tVzLHYq+7
+	bUPwwj4+aPhshpQRdTSylvr4w2UV52yKNifIoRaBUV5ygUuqFNAODV
+X-Google-Smtp-Source: AGHT+IErstpsPBWU4GJ3Sraq27yBe2cFNfbU55/PrXsiUqPp5vbK3AwNrDsTV7i56dRs4BCybAemZrMSaVw=
+X-Received: from edbel15.prod.google.com ([2002:a05:6402:360f:b0:5db:e8e8:da25])
+ (user=gnoack job=prod-delivery.src-stubby-dispatcher) by 2002:aa7:c993:0:b0:5db:f5e9:6749
+ with SMTP id 4fb4d7f45d1cf-5dbf5e968d8mr8509417a12.6.1737733500356; Fri, 24
+ Jan 2025 07:45:00 -0800 (PST)
+Date: Fri, 24 Jan 2025 15:44:44 +0000
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250123194108.1025273-5-mszeredi@redhat.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.48.1.262.g85cc9f2d1e-goog
+Message-ID: <20250124154445.162841-1-gnoack@google.com>
+Subject: [PATCH 1/2] landlock: Minor typo and grammar fixes in IPC scoping documentation
+From: "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
+To: linux-security-module@vger.kernel.org
+Cc: "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>, 
+	"=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>, Tahera Fahimi <fahimitahera@gmail.com>, 
+	Tanya Agarwal <tanyaagarwal25699@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 23, 2025 at 08:41:07PM +0100, Miklos Szeredi wrote:
-> Notify when mount flags, propagation or idmap changes.
-> 
-> Just like attach and detach, no details are given in the notification, only
-> the mount ID.
-> 
-> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-> ---
+* Fix some whitespace, punctuation and minor grammar
+* Add a missing sentence about the minimum ABI version,
+  to stay in line with the section next to it
 
-I think this is a good next step but I would first go with the minimal
-functionality of notifying about mount topology changes for v6.15.
+Cc: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+Cc: Tahera Fahimi <fahimitahera@gmail.com>
+Cc: Tanya Agarwal <tanyaagarwal25699@gmail.com>
+Signed-off-by: G=C3=BCnther Noack <gnoack@google.com>
+---
+ Documentation/userspace-api/landlock.rst | 4 ++--
+ include/uapi/linux/landlock.h            | 6 ++++--
+ 2 files changed, 6 insertions(+), 4 deletions(-)
 
-Btw, if we notify in do_remount() on the mount that triggered
-superblock reconfiguration then we also need to trigger in
-vfs_cmd_reconfigure() aka fsconfig(FSCONFIG_CMD_RECONFIGURE) but the
-mount that was used to change superblock options is only available in
-fspick() currently. That would need to be handled.
+diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/users=
+pace-api/landlock.rst
+index d639c61cb472..ca8b325d53e5 100644
+--- a/Documentation/userspace-api/landlock.rst
++++ b/Documentation/userspace-api/landlock.rst
+@@ -329,11 +329,11 @@ non-sandboxed process, we can specify this restrictio=
+n with
+ A sandboxed process can connect to a non-sandboxed process when its domain=
+ is
+ not scoped. If a process's domain is scoped, it can only connect to socket=
+s
+ created by processes in the same scope.
+-Moreover, If a process is scoped to send signal to a non-scoped process, i=
+t can
++Moreover, if a process is scoped to send signal to a non-scoped process, i=
+t can
+ only send signals to processes in the same scope.
+=20
+ A connected datagram socket behaves like a stream socket when its domain i=
+s
+-scoped, meaning if the domain is scoped after the socket is connected , it=
+ can
++scoped, meaning if the domain is scoped after the socket is connected, it =
+can
+ still :manpage:`send(2)` data just like a stream socket.  However, in the =
+same
+ scenario, a non-connected datagram socket cannot send data (with
+ :manpage:`sendto(2)`) outside its scope.
+diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+index 33745642f787..048a2c77c4eb 100644
+--- a/include/uapi/linux/landlock.h
++++ b/include/uapi/linux/landlock.h
+@@ -268,7 +268,7 @@ struct landlock_net_port_attr {
+  * ~~~~~~~~~~~~~~~~
+  *
+  * These flags enable to restrict a sandboxed process to a set of network
+- * actions. This is supported since the Landlock ABI version 4.
++ * actions. This is supported since Landlock ABI version 4.
+  *
+  * The following access rights apply to TCP port numbers:
+  *
+@@ -291,11 +291,13 @@ struct landlock_net_port_attr {
+  * Setting a flag for a ruleset will isolate the Landlock domain to forbid
+  * connections to resources outside the domain.
+  *
++ * This is supported since Landlock ABI version 6.
++ *
+  * Scopes:
+  *
+  * - %LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET: Restrict a sandboxed process fr=
+om
+  *   connecting to an abstract UNIX socket created by a process outside th=
+e
+- *   related Landlock domain (e.g. a parent domain or a non-sandboxed proc=
+ess).
++ *   related Landlock domain (e.g., a parent domain or a non-sandboxed pro=
+cess).
+  * - %LANDLOCK_SCOPE_SIGNAL: Restrict a sandboxed process from sending a s=
+ignal
+  *   to another process outside the domain.
+  */
+--=20
+2.48.1.262.g85cc9f2d1e-goog
 
-But I think this patch makes more sense in follow-up releases.
-
->  fs/namespace.c                   | 27 +++++++++++++++++++++++++++
->  fs/notify/fanotify/fanotify.c    |  2 +-
->  fs/notify/fanotify/fanotify.h    |  2 +-
->  fs/notify/fsnotify.c             |  2 +-
->  include/linux/fanotify.h         |  2 +-
->  include/linux/fsnotify.h         |  5 +++++
->  include/linux/fsnotify_backend.h |  5 ++++-
->  include/uapi/linux/fanotify.h    |  1 +
->  8 files changed, 41 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index 948348a37f6c..9b9b13665dce 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -2807,6 +2807,9 @@ static int do_change_type(struct path *path, int ms_flags)
->  		change_mnt_propagation(m, type);
->  	unlock_mount_hash();
->  
-> +	for (m = mnt; m; m = (recurse ? next_mnt(m, mnt) : NULL))
-> +		fsnotify_mnt_change(m->mnt_ns, &m->mnt);
-> +
->   out_unlock:
->  	namespace_unlock();
->  	return err;
-> @@ -3089,6 +3092,12 @@ static int do_reconfigure_mnt(struct path *path, unsigned int mnt_flags)
->  	unlock_mount_hash();
->  	up_read(&sb->s_umount);
->  
-> +	if (!ret) {
-> +		down_read(&namespace_sem);
-> +		fsnotify_mnt_change(mnt->mnt_ns, &mnt->mnt);
-> +		up_read(&namespace_sem);
-> +	}
-> +
->  	mnt_warn_timestamp_expiry(path, &mnt->mnt);
->  
->  	return ret;
-> @@ -3141,6 +3150,13 @@ static int do_remount(struct path *path, int ms_flags, int sb_flags,
->  		up_write(&sb->s_umount);
->  	}
->  
-> +	if (!err) {
-> +		down_read(&namespace_sem);
-> +		fsnotify_mnt_change(mnt->mnt_ns, &mnt->mnt);
-> +		up_read(&namespace_sem);
-> +	}
-> +
-> +
->  	mnt_warn_timestamp_expiry(path, &mnt->mnt);
->  
->  	put_fs_context(fc);
-> @@ -4708,6 +4724,8 @@ static int do_mount_setattr(struct path *path, struct mount_kattr *kattr)
->  				return err;
->  			}
->  		}
-> +	} else {
-> +		down_read(&namespace_sem);
->  	}
->  
->  	err = -EINVAL;
-> @@ -4743,10 +4761,19 @@ static int do_mount_setattr(struct path *path, struct mount_kattr *kattr)
->  out:
->  	unlock_mount_hash();
->  
-> +	if (!err) {
-> +		struct mount *m;
-> +
-> +		for (m = mnt; m; m = kattr->recurse ? next_mnt(m, mnt) : NULL)
-> +			fsnotify_mnt_change(m->mnt_ns, &m->mnt);
-> +	}
-> +
->  	if (kattr->propagation) {
->  		if (err)
->  			cleanup_group_ids(mnt, NULL);
->  		namespace_unlock();
-> +	} else {
-> +		up_read(&namespace_sem);
->  	}
->  
->  	return err;
-> diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-> index b1937f92f105..c7ddd145f3d8 100644
-> --- a/fs/notify/fanotify/fanotify.c
-> +++ b/fs/notify/fanotify/fanotify.c
-> @@ -934,7 +934,7 @@ static int fanotify_handle_event(struct fsnotify_group *group, u32 mask,
->  	BUILD_BUG_ON(FAN_FS_ERROR != FS_ERROR);
->  	BUILD_BUG_ON(FAN_RENAME != FS_RENAME);
->  
-> -	BUILD_BUG_ON(HWEIGHT32(ALL_FANOTIFY_EVENT_BITS) != 23);
-> +	BUILD_BUG_ON(HWEIGHT32(ALL_FANOTIFY_EVENT_BITS) != 24);
->  
->  	mask = fanotify_group_event_mask(group, iter_info, &match_mask,
->  					 mask, data, data_type, dir);
-> diff --git a/fs/notify/fanotify/fanotify.h b/fs/notify/fanotify/fanotify.h
-> index f1a7cbedc9e3..8d6289da06f1 100644
-> --- a/fs/notify/fanotify/fanotify.h
-> +++ b/fs/notify/fanotify/fanotify.h
-> @@ -471,7 +471,7 @@ static inline bool fanotify_is_error_event(u32 mask)
->  
->  static inline bool fanotify_is_mnt_event(u32 mask)
->  {
-> -	return mask & (FAN_MNT_ATTACH | FAN_MNT_DETACH);
-> +	return mask & FANOTIFY_MOUNT_EVENTS;
->  }
->  
->  static inline const struct path *fanotify_event_path(struct fanotify_event *event)
-> diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
-> index 2b2c3fd907c7..5872dd27172d 100644
-> --- a/fs/notify/fsnotify.c
-> +++ b/fs/notify/fsnotify.c
-> @@ -660,7 +660,7 @@ static __init int fsnotify_init(void)
->  {
->  	int ret;
->  
-> -	BUILD_BUG_ON(HWEIGHT32(ALL_FSNOTIFY_BITS) != 25);
-> +	BUILD_BUG_ON(HWEIGHT32(ALL_FSNOTIFY_BITS) != 26);
->  
->  	ret = init_srcu_struct(&fsnotify_mark_srcu);
->  	if (ret)
-> diff --git a/include/linux/fanotify.h b/include/linux/fanotify.h
-> index fc142be2542d..61e112d25303 100644
-> --- a/include/linux/fanotify.h
-> +++ b/include/linux/fanotify.h
-> @@ -100,7 +100,7 @@
->  /* Events that can only be reported with data type FSNOTIFY_EVENT_ERROR */
->  #define FANOTIFY_ERROR_EVENTS	(FAN_FS_ERROR)
->  
-> -#define FANOTIFY_MOUNT_EVENTS	(FAN_MNT_ATTACH | FAN_MNT_DETACH)
-> +#define FANOTIFY_MOUNT_EVENTS	(FAN_MNT_ATTACH | FAN_MNT_DETACH | FAN_MNT_CHANGE)
->  
->  /* Events that user can request to be notified on */
->  #define FANOTIFY_EVENTS		(FANOTIFY_PATH_EVENTS | \
-> diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
-> index ea998551dd0d..ba3e05c69aaa 100644
-> --- a/include/linux/fsnotify.h
-> +++ b/include/linux/fsnotify.h
-> @@ -483,4 +483,9 @@ static inline void fsnotify_mnt_move(struct mnt_namespace *ns, struct vfsmount *
->  	fsnotify_mnt(FS_MNT_MOVE, ns, mnt);
->  }
->  
-> +static inline void fsnotify_mnt_change(struct mnt_namespace *ns, struct vfsmount *mnt)
-> +{
-> +	fsnotify_mnt(FS_MNT_CHANGE, ns, mnt);
-> +}
-> +
->  #endif	/* _LINUX_FS_NOTIFY_H */
-> diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
-> index 6c3e3a4a7b10..54e01803e309 100644
-> --- a/include/linux/fsnotify_backend.h
-> +++ b/include/linux/fsnotify_backend.h
-> @@ -58,6 +58,8 @@
->  
->  #define FS_MNT_ATTACH		0x01000000	/* Mount was attached */
->  #define FS_MNT_DETACH		0x02000000	/* Mount was detached */
-> +#define FS_MNT_CHANGE		0x04000000	/* Mount was changed */
-> +
->  #define FS_MNT_MOVE		(FS_MNT_ATTACH | FS_MNT_DETACH)
->  
->  /*
-> @@ -106,7 +108,8 @@
->  			     FS_EVENTS_POSS_ON_CHILD | \
->  			     FS_DELETE_SELF | FS_MOVE_SELF | \
->  			     FS_UNMOUNT | FS_Q_OVERFLOW | FS_IN_IGNORED | \
-> -			     FS_ERROR | FS_MNT_ATTACH | FS_MNT_DETACH)
-> +			     FS_ERROR | \
-> +			     FS_MNT_ATTACH | FS_MNT_DETACH | FS_MNT_CHANGE )
->  
->  /* Extra flags that may be reported with event or control handling of events */
->  #define ALL_FSNOTIFY_FLAGS  (FS_ISDIR | FS_EVENT_ON_CHILD | FS_DN_MULTISHOT)
-> diff --git a/include/uapi/linux/fanotify.h b/include/uapi/linux/fanotify.h
-> index 69340e483ae7..256fc5755b45 100644
-> --- a/include/uapi/linux/fanotify.h
-> +++ b/include/uapi/linux/fanotify.h
-> @@ -27,6 +27,7 @@
->  #define FAN_OPEN_EXEC_PERM	0x00040000	/* File open/exec in perm check */
->  #define FAN_MNT_ATTACH		0x01000000	/* Mount was attached */
->  #define FAN_MNT_DETACH		0x02000000	/* Mount was detached */
-> +#define FAN_MNT_CHANGE		0x04000000	/* Mount was changed */
->  
->  #define FAN_EVENT_ON_CHILD	0x08000000	/* Interested in child events */
->  
-> -- 
-> 2.47.1
-> 
