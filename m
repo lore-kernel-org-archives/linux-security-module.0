@@ -1,40 +1,40 @@
 Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1388C14D430
-	for <linux-security-module@vger.kernel.org>; Fri, 24 Jan 2025 22:02:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6598314D430;
+	Fri, 24 Jan 2025 22:04:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737756154; cv=none; b=sZZFo1+jpjAi3/AexeDc8Cn/k3WkGgZkFH57PdTqLre1CLBFBZpI+lnDyGkMKwHIqiFU/yc62SQ59ihEUEpdpJtPP7FFX52EgogN55kZvO1jfYKBjWY2IMEw54cIk65Mo4DoRuTLg4E8n4ZLfyQubxvMETeteILKNwOqWBRQ2Pc=
+	t=1737756248; cv=none; b=BFR4Rg2ZGUQ/eT5ElCqKGwOnsyCx5txE9LESeTAndsm44cnAYNT4a2MpMBeXxLirhZvl9HK2nDA4bL+FMRN2UWfTHz93N5oMWgB3M9fpEeP91PRR3iz/nt3/iafJcY1t7LzDD5LgvWMJ6IUFJqtxUvc3XwjRIY0C6wypwEjPC2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737756154; c=relaxed/simple;
-	bh=tnBZNQWOaVOKz/iP4SAHicFuq1EeGHKyWsQBBrY1FdA=;
+	s=arc-20240116; t=1737756248; c=relaxed/simple;
+	bh=nUSp0i0lk1mbBolsxZjL8xTxlMkyP8B/YnKHjYhEaSQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JXauP30g+Ma55IT60shIkPOmCKFDbrzwz8bE5uaifpIQxAB6ztmiuTr69kBbZ4pxgOv4Q1QudHtvxwXLRLIM8UiEIiNsadJVhhJUcHwsxpcaNYnsXMDTgobjubQ0q8fh+jLEHTqN3wCnHnAv2pId5iw3SSrI/Piz/g7b8DszULU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=muBMgFwo; arc=none smtp.client-ip=185.125.188.120
+	 In-Reply-To:Content-Type; b=U8G8a4Cdaaw0c+nW/WYN1xIUO2PCtOsOdkwlLN0ax79rnfN0diHN+cZ9vTAI9pBGCfnVnpxElCWXi4yhRMAFAUxYWEnrpcrYI3fPtUdG2uSpNxQx4+iictPySq9ScHOD5ExOZFeqDrRfuPSfA27WT743F0mzBvXXGFmCMcbcMbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=Q4OpDZ3V; arc=none smtp.client-ip=185.125.188.120
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="muBMgFwo"
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="Q4OpDZ3V"
 Received: from [192.168.192.85] (unknown [50.39.104.138])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 0338F3F925;
-	Fri, 24 Jan 2025 22:02:28 +0000 (UTC)
+	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 8D5EB3F925;
+	Fri, 24 Jan 2025 22:04:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1737756150;
-	bh=PtlQGxw99o3A1cTQfevkPdg/9d7CG5J/2wIyYL6ZAWQ=;
+	s=20210705; t=1737756241;
+	bh=o1YAUvONUu7Ul6dC45x+y0GtGKT4EgXqn8OAU5T2e4M=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
 	 In-Reply-To:Content-Type;
-	b=muBMgFwoe6+LwF+LrVcK7nwPcGZKlTdb5fFm8+p8WRxWCaI/SMTDaYWzxOf8ryLeG
-	 k8B7+CmtgNm+5YHZPVBLNsL8RLT1Y3jUoGrj7xNFPsY7/S89ODaQdyLNRYG2xgMbWC
-	 RzY51sTmiSkVpF7TEh1l60bN0v8E67ZTN21wtU+xP/DuEv8KvvjmvJVSEuZRk73hXx
-	 3Q7qUcynxWSwaubZxb4nQDE/nxkgn0Q9pTUWQJvT8T3t08hfRbn44npDp64gFeYjvY
-	 36v+mHFljNVH+pFQO3BqxoMPo6vwDKrBkzWOkBw4Pwb63AcIRsCbpHE9qIy+yisR0p
-	 SOqnogtTS6dnw==
-Message-ID: <e66188a9-15d5-47af-9a85-6b8a6537701b@canonical.com>
-Date: Fri, 24 Jan 2025 14:02:27 -0800
+	b=Q4OpDZ3VUruvOLzKmep0cOekl0qkaB/l3hT+zz2N90te5QewZmF+gNZrwTY9cGuOA
+	 f4k/tUOTl8wddn+e7mM9UiRIcK1/Ry4IKnj8aXucYAU2yFIsSt0NqHv4NcC9DzRwLX
+	 3wXBBDmiRkBpoI15qFjowzb78HI8n/YumaG84uigzooJbo7AL9cuOLGYqAOSAgf7cN
+	 irPR694c/iQPHgZLE8TpfZLGuoKhFtZNgk3z0/dyPSDwKgThr5NSYuq2iSrXenN3LE
+	 fdUwRIeGoEHnLWQrcUhNkxUUF+pcxwuDJgdRYUC1T7RUeFgy/OFsT9ISnD8CrtnnxQ
+	 mKeBGyl6ssV3A==
+Message-ID: <38ca7459-4034-4171-a231-6c06af1391f2@canonical.com>
+Date: Fri, 24 Jan 2025 14:03:58 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -42,12 +42,13 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] apparmor: Remove unused variable 'sock' in
- __file_sock_perm()
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
- patches@lists.linux.dev, kernel test robot <lkp@intel.com>
-References: <20250120-apparmor-fix-unused-sock-__file_sock_perm-v1-1-8d17bd672c6a@kernel.org>
+Subject: Re: [PATCH -next 1/2] apparmor: Modify mismatched function name
+To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+Cc: paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+ apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Abaci Robot <abaci@linux.alibaba.com>
+References: <20250121024444.88981-1-jiapeng.chong@linux.alibaba.com>
+ <20250121024444.88981-2-jiapeng.chong@linux.alibaba.com>
 Content-Language: en-US
 From: John Johansen <john.johansen@canonical.com>
 Autocrypt: addr=john.johansen@canonical.com; keydata=
@@ -93,58 +94,38 @@ Autocrypt: addr=john.johansen@canonical.com; keydata=
  +T7sv9+iY+e0Y+SolyJgTxMYeRnDWE6S77g6gzYYHmcQOWP7ZMX+MtD4SKlf0+Q8li/F9GUL
  p0rw8op9f0p1+YAhyAd+dXWNKf7zIfZ2ME+0qKpbQnr1oizLHuJX/Telo8KMmHter28DPJ03 lT9Q
 Organization: Canonical
-In-Reply-To: <20250120-apparmor-fix-unused-sock-__file_sock_perm-v1-1-8d17bd672c6a@kernel.org>
+In-Reply-To: <20250121024444.88981-2-jiapeng.chong@linux.alibaba.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 1/20/25 05:21, Nathan Chancellor wrote:
-> When CONFIG_SECURITY_APPARMOR_DEBUG_ASSERTS is disabled, there is a
-> warning that sock is unused:
+On 1/20/25 18:44, Jiapeng Chong wrote:
+> No functional modification involved.
 > 
->    security/apparmor/file.c: In function '__file_sock_perm':
->    security/apparmor/file.c:544:24: warning: unused variable 'sock' [-Wunused-variable]
->      544 |         struct socket *sock = (struct socket *) file->private_data;
->          |                        ^~~~
+> security/apparmor/file.c:184: warning: expecting prototype for aa_lookup_fperms(). Prototype was for aa_lookup_condperms() instead.
 > 
-> sock was moved into aa_sock_file_perm(), where the same check is
-> present, so remove sock and the assertion from __file_sock_perm() to fix
-> the warning.
-> 
-> Fixes: c05e705812d1 ("apparmor: add fine grained af_unix mediation")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202501190757.myuLxLyL-lkp@intel.com/
-> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
+> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=13605
+> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
 
-yep, thanks
 Acked-by: John Johansen <john.johansen@canonical.com>
 
 I have pulled this into my tree
 
-
 > ---
->   security/apparmor/file.c | 3 ---
->   1 file changed, 3 deletions(-)
+>   security/apparmor/file.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
 > diff --git a/security/apparmor/file.c b/security/apparmor/file.c
-> index 85f89814af1e..e3a858649942 100644
+> index 85f89814af1e..f113eedbc208 100644
 > --- a/security/apparmor/file.c
 > +++ b/security/apparmor/file.c
-> @@ -541,11 +541,8 @@ static int __file_sock_perm(const char *op, const struct cred *subj_cred,
->   			    struct aa_label *flabel, struct file *file,
->   			    u32 request, u32 denied)
->   {
-> -	struct socket *sock = (struct socket *) file->private_data;
->   	int error;
+> @@ -169,7 +169,7 @@ static int path_name(const char *op, const struct cred *subj_cred,
 >   
-> -	AA_BUG(!sock);
-> -
->   	/* revalidation due to label out of date. No revocation at this time */
->   	if (!denied && aa_label_is_subset(flabel, label))
->   		return 0;
-> 
-> ---
-> base-commit: e6b087676954e36a7b1ed51249362bb499f8c1c2
-> change-id: 20250120-apparmor-fix-unused-sock-__file_sock_perm-0e4627bcefb7
-> 
-> Best regards,
+>   struct aa_perms default_perms = {};
+>   /**
+> - * aa_lookup_fperms - convert dfa compressed perms to internal perms
+> + * aa_lookup_condperms - convert dfa compressed perms to internal perms
+>    * @subj_uid: uid to use for subject owner test
+>    * @rules: the aa_policydb to lookup perms for  (NOT NULL)
+>    * @state: state in dfa
 
