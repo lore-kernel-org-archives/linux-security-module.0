@@ -1,192 +1,87 @@
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+Received: from smtp-42af.mail.infomaniak.ch (smtp-42af.mail.infomaniak.ch [84.16.66.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2F0223B0;
-	Fri, 24 Jan 2025 11:06:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2B1C1AAA3D
+	for <linux-security-module@vger.kernel.org>; Fri, 24 Jan 2025 11:36:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737716809; cv=none; b=Ou6rbzFguVqS5ov63GhK223J6tiq7eKQvPE8IGaofFV07Tb9tO+9HbovuntXa2P/9raqyem3CiBrL/PtZFbFBogXWbI3K/DMumnXVc4Zw6Kwnkw0a00iJtABP3faa2IMPuh9eR/fVAMAWbdzGrMEYopKoKgb5dB+vGciN9sCDzg=
+	t=1737718596; cv=none; b=QBC02CElgFyMsWAgKWIdexVg7axR4emlXwwfHmcC90bkpjM22uMOuAYQoX+l5FYwc8ZYcJG2zp7mMuM7JxbP0z06Og7o+g73qbmTszyIQDGKkLfSOOaVDy1fCjTDR5gpCfKfYaGAM0xPWJLkloDOgnrzJqRF/2X/zOHuJLIywao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737716809; c=relaxed/simple;
-	bh=DEttHul2FJhy5MUipTdXFhpudHE0R5Byt0dpVntKa2Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=O9/5FC34IjGaBVBCthJhYHIk0uCCKYYICOb5kSbRcByPgn4j7s0BOpAnnh+MKQsZlA7UkradI4yF732846F/EfhHg+L7lxjiCfYZAupl4mq8NEWWEmjwy0cJcLdKoUU+oTLSAYuzelnUIhXnQhK5W3tcmTcb0AiYUKAEsx3WWcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4YfZhY5FGPz6L5Gt;
-	Fri, 24 Jan 2025 19:04:45 +0800 (CST)
-Received: from mscpeml500004.china.huawei.com (unknown [7.188.26.250])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7965E1400D4;
-	Fri, 24 Jan 2025 19:06:44 +0800 (CST)
-Received: from [10.123.123.159] (10.123.123.159) by
- mscpeml500004.china.huawei.com (7.188.26.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Fri, 24 Jan 2025 14:06:42 +0300
-Message-ID: <49ed71a5-763d-a101-9d0d-5956e15b3de6@huawei-partners.com>
-Date: Fri, 24 Jan 2025 14:06:42 +0300
+	s=arc-20240116; t=1737718596; c=relaxed/simple;
+	bh=c8v0iSP3uPz1sHXkNSRfQ9ZSki5mQZWo4zBufiK0DmU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WjJuKgPkz+9GbmrvzD+K/0eARdtyp1K0qTtjYbFo3Z6jL58zc4nETxP8cA+KljxSzcuwUxVFKwJwmeK8InGogbfTyZNwoefqJPAyCcdzsY3KI5nIQg0mqAh6gLzLlAWFVlwRyju0uQIvICb6YyVU4N5IVhj59uKUu/UTg8ScO3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=ORxxd2/Z; arc=none smtp.client-ip=84.16.66.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="ORxxd2/Z"
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4YfbP40nvzzhJ;
+	Fri, 24 Jan 2025 12:36:24 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1737718584;
+	bh=Yh+2ivu71VmKgJUy4kfSxaoQdkA2KaxGAolLf4ZizBM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ORxxd2/ZevHevUkY+hweA3VuJW8TgTymLzJof3br2Kj5rxDzwrEmZhvxwW1BIj2R/
+	 3xGjzjaN1WyVkH1Vy0JS2vfwXzuUaFrnBto7xdkyhcqgw3knL5mhlSestGljgEvyCI
+	 rSQpVh6NIMvKxcIr5Sw5cu0rMREYxPe7D9Efe2Qw=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4YfbP25t0vzXtS;
+	Fri, 24 Jan 2025 12:36:22 +0100 (CET)
+Date: Fri, 24 Jan 2025 12:36:22 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Tanya Agarwal <tanyaagarwal25699@gmail.com>
+Cc: zohar@linux.ibm.com, gnoack@google.com, paul@paul-moore.com, 
+	jmorris@namei.org, serge@hallyn.com, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, anupnewsmail@gmail.com
+Subject: Re: [PATCH] landlock: fix grammar and spelling error
+Message-ID: <20250124.Zohthoogh7aN@digikod.net>
+References: <20250123194208.2660-1-tanyaagarwal25699@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/6] samples/landlock: Add sandboxer UDP access control
-Content-Language: ru
-To: Matthieu Buffet <matthieu@buffet.re>, Mickael Salaun <mic@digikod.net>
-CC: Gunther Noack <gnoack@google.com>, <konstantin.meskhidze@huawei.com>, Paul
- Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge E .
- Hallyn" <serge@hallyn.com>, <linux-security-module@vger.kernel.org>,
-	<netdev@vger.kernel.org>
-References: <20241214184540.3835222-1-matthieu@buffet.re>
- <20241214184540.3835222-6-matthieu@buffet.re>
-From: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-In-Reply-To: <20241214184540.3835222-6-matthieu@buffet.re>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500012.china.huawei.com (7.191.174.4) To
- mscpeml500004.china.huawei.com (7.188.26.250)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250123194208.2660-1-tanyaagarwal25699@gmail.com>
+X-Infomaniak-Routing: alpha
 
-On 12/14/2024 9:45 PM, Matthieu Buffet wrote:
-> Add environment variables to control associated access rights:
-> (each one takes a list of ports separated by colons, like other
-> list options)
+On Fri, Jan 24, 2025 at 01:12:10AM +0530, Tanya Agarwal wrote:
+> From: Tanya Agarwal <tanyaagarwal25699@gmail.com>
 > 
-> - LL_UDP_BIND
-> - LL_UDP_CONNECT
-> - LL_UDP_SENDTO
+> Fix grammar and spelling error in landlock module comments that were
+> identified using the codespell tool.
+> No functional changes - documentation only.
 > 
-> Signed-off-by: Matthieu Buffet <matthieu@buffet.re>
+> Signed-off-by: Tanya Agarwal <tanyaagarwal25699@gmail.com>
+> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+
+I think Mimi's tag was for the IMA part, so I'll remove it.
+
 > ---
->   samples/landlock/sandboxer.c | 58 ++++++++++++++++++++++++++++++++++--
->   1 file changed, 56 insertions(+), 2 deletions(-)
+> Original discussion:
+> https://lore.kernel.org/all/20250112072925.1774-1-tanyaagarwal25699@gmail.com
 > 
-> diff --git a/samples/landlock/sandboxer.c b/samples/landlock/sandboxer.c
-> index 57565dfd74a2..61dc2645371e 100644
-> --- a/samples/landlock/sandboxer.c
-> +++ b/samples/landlock/sandboxer.c
-> @@ -58,6 +58,9 @@ static inline int landlock_restrict_self(const int ruleset_fd,
->   #define ENV_TCP_BIND_NAME "LL_TCP_BIND"
->   #define ENV_TCP_CONNECT_NAME "LL_TCP_CONNECT"
->   #define ENV_SCOPED_NAME "LL_SCOPED"
-> +#define ENV_UDP_BIND_NAME "LL_UDP_BIND"
-> +#define ENV_UDP_CONNECT_NAME "LL_UDP_CONNECT"
-> +#define ENV_UDP_SENDTO_NAME "LL_UDP_SENDTO"
->   #define ENV_DELIMITER ":"
->   
->   static int str2num(const char *numstr, __u64 *num_dst)
-> @@ -288,7 +291,7 @@ static bool check_ruleset_scope(const char *const env_var,
->   
->   /* clang-format on */
->   
-> -#define LANDLOCK_ABI_LAST 6
-> +#define LANDLOCK_ABI_LAST 7
->   
->   #define XSTR(s) #s
->   #define STR(s) XSTR(s)
-> @@ -311,6 +314,11 @@ static const char help[] =
->   	"means an empty list):\n"
->   	"* " ENV_TCP_BIND_NAME ": ports allowed to bind (server)\n"
->   	"* " ENV_TCP_CONNECT_NAME ": ports allowed to connect (client)\n"
-> +	"* " ENV_UDP_BIND_NAME ": UDP ports allowed to bind (client: set as "
-> +	"source port / server: prepare to listen on port)\n"
+> This patch set is split into individual patches for each LSM
+> to facilitate easier review by respective maintainers.
+> 
+>  security/landlock/ruleset.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
+> index a93bdbf52fff..c464d1f84792 100644
+> --- a/security/landlock/ruleset.c
+> +++ b/security/landlock/ruleset.c
+> @@ -121,7 +121,7 @@ create_rule(const struct landlock_id id,
+>  		return ERR_PTR(-ENOMEM);
+>  	RB_CLEAR_NODE(&new_rule->node);
+>  	if (is_object_pointer(id.type)) {
+> -		/* This should be catched by insert_rule(). */
+> +		/* This should have been caught by insert_rule(). */
+>  		WARN_ON_ONCE(!id.key.object);
+>  		landlock_get_object(id.key.object);
+>  	}
 
-listen(2) is not supported for UDP sockets.
-
-> +	"* " ENV_UDP_CONNECT_NAME ": UDP ports allowed to connect (client: "
-> +	"set as destination port / server: only receive from one client)\n"
-> +	"* " ENV_UDP_SENDTO_NAME ": UDP ports allowed to send to (client/server)\n"
->   	"* " ENV_SCOPED_NAME ": actions denied on the outside of the landlock domain\n"
->   	"  - \"a\" to restrict opening abstract unix sockets\n"
->   	"  - \"s\" to restrict sending signals\n"
-> @@ -320,6 +328,8 @@ static const char help[] =
->   	ENV_FS_RW_NAME "=\"/dev/null:/dev/full:/dev/zero:/dev/pts:/tmp\" "
->   	ENV_TCP_BIND_NAME "=\"9418\" "
->   	ENV_TCP_CONNECT_NAME "=\"80:443\" "
-> +	ENV_UDP_CONNECT_NAME "=\"53\" "
-> +	ENV_UDP_SENDTO_NAME "=\"53\" "
->   	ENV_SCOPED_NAME "=\"a:s\" "
->   	"%1$s bash -i\n"
->   	"\n"
-> @@ -340,7 +350,10 @@ int main(const int argc, char *const argv[], char *const *const envp)
->   	struct landlock_ruleset_attr ruleset_attr = {
->   		.handled_access_fs = access_fs_rw,
->   		.handled_access_net = LANDLOCK_ACCESS_NET_BIND_TCP |
-> -				      LANDLOCK_ACCESS_NET_CONNECT_TCP,
-> +				      LANDLOCK_ACCESS_NET_CONNECT_TCP |
-> +				      LANDLOCK_ACCESS_NET_BIND_UDP |
-> +				      LANDLOCK_ACCESS_NET_CONNECT_UDP |
-> +				      LANDLOCK_ACCESS_NET_SENDTO_UDP,
->   		.scoped = LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET |
->   			  LANDLOCK_SCOPE_SIGNAL,
->   	};
-> @@ -415,6 +428,14 @@ int main(const int argc, char *const argv[], char *const *const envp)
->   		/* Removes LANDLOCK_SCOPE_* for ABI < 6 */
->   		ruleset_attr.scoped &= ~(LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET |
->   					 LANDLOCK_SCOPE_SIGNAL);
-> +
-> +		__attribute__((fallthrough));
-> +	case 6:
-> +		/* Removes UDP support for ABI < 7 */
-> +		ruleset_attr.handled_access_fs &=
-
-typo: handled_access_fs -> handled_access_net
-
-> +			~(LANDLOCK_ACCESS_NET_BIND_UDP |
-> +			  LANDLOCK_ACCESS_NET_CONNECT_UDP |
-> +			  LANDLOCK_ACCESS_NET_SENDTO_UDP);
->   		fprintf(stderr,
->   			"Hint: You should update the running kernel "
->   			"to leverage Landlock features "
-> @@ -445,6 +466,27 @@ int main(const int argc, char *const argv[], char *const *const envp)
->   		ruleset_attr.handled_access_net &=
->   			~LANDLOCK_ACCESS_NET_CONNECT_TCP;
->   	}
-> +	/* Removes UDP bind access control if not supported by a user */
-
-nit: missing dot here and in some other places.
-
-> +	env_port_name = getenv(ENV_UDP_BIND_NAME);
-> +	if (!env_port_name) {
-> +		ruleset_attr.handled_access_net &=
-> +			~LANDLOCK_ACCESS_NET_BIND_UDP;
-> +	}
-> +	/* Removes UDP connect access control if not supported by a user */
-> +	env_port_name = getenv(ENV_UDP_CONNECT_NAME);
-> +	if (!env_port_name) {
-> +		ruleset_attr.handled_access_net &=
-> +			~LANDLOCK_ACCESS_NET_CONNECT_UDP;
-> +	}
-> +	/*
-> +	 * Removes UDP sendmsg(addr != NULL) access control if not
-> +	 * supported by a user
-> +	 */
-> +	env_port_name = getenv(ENV_UDP_SENDTO_NAME);
-> +	if (!env_port_name) {
-> +		ruleset_attr.handled_access_net &=
-> +			~LANDLOCK_ACCESS_NET_SENDTO_UDP;
-> +	}
->   
->   	if (check_ruleset_scope(ENV_SCOPED_NAME, &ruleset_attr))
->   		return 1;
-> @@ -471,6 +513,18 @@ int main(const int argc, char *const argv[], char *const *const envp)
->   				 LANDLOCK_ACCESS_NET_CONNECT_TCP)) {
->   		goto err_close_ruleset;
->   	}
-> +	if (populate_ruleset_net(ENV_UDP_BIND_NAME, ruleset_fd,
-> +				 LANDLOCK_ACCESS_NET_BIND_UDP)) {
-> +		goto err_close_ruleset;
-> +	}
-> +	if (populate_ruleset_net(ENV_UDP_CONNECT_NAME, ruleset_fd,
-> +				 LANDLOCK_ACCESS_NET_CONNECT_UDP)) {
-> +		goto err_close_ruleset;
-> +	}
-> +	if (populate_ruleset_net(ENV_UDP_SENDTO_NAME, ruleset_fd,
-> +				 LANDLOCK_ACCESS_NET_SENDTO_UDP)) {
-> +		goto err_close_ruleset;
-> +	}
->   
->   	if (prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0)) {
->   		perror("Failed to restrict privileges");
+Thanks, I'll take it in my tree.
