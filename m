@@ -1,382 +1,166 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D8051ADC91;
-	Fri, 24 Jan 2025 09:05:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E5E41D5AC6;
+	Fri, 24 Jan 2025 09:10:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737709522; cv=none; b=MPE1oyyyDP/fUsk5CV2/knqZHEGZn16rTqHS4YuFjDomlwVCrhHJP4fxx+yuWmdgUPhw/kE6hCDNU117M5f3/PAXWNXp0U5JEZyudxd3e04iYLS5syEL1pHOT/ziNsVf3II0q1LY0BcmPo5+EgMP+Q9Md45C0LCn8mAl2SXK4W0=
+	t=1737709813; cv=none; b=ktZ2G4AXaH76j+Bix4ijLXZOk3Smhb3h0UIQDFm919kRk8MVq19IBrsJ+2bT2HWa3lnrMZVbz8xCzfHBXl3po6Ev08EshObhlyTl4F45q4Ct2/1mk5egmpicdjlEvH/6rXP80ZtD25zJjEqYRXaHjOCjurDvON3oqQkGSsyQ8+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737709522; c=relaxed/simple;
-	bh=1i6BHZkog9i31oXayy/7iTP1WgizWXFaRDMdDI5Stjo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NK34uz9Aszg8nmdbfXtnPAyibNWgsmhaVF93ESifruCeW7UMf4lui23Cz6tsel9nV7++s9czT4LYCFLCaX2yvFxiSYAxOSNmHcXf3wQ/IJmL7swxNZyQejeXlGDECHwU5dqB5+zEG5oHIyfHg1Vs5RlyQgPCkEyQ0P3P7M9ffLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oE4VcR7E; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1737709813; c=relaxed/simple;
+	bh=xk3kG0BCXcqkU0VbfYJ5fN8Nbwynu9/+rHAyME6dPeE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gmQNv/5WcNiwFbhjuYYRChVGsfpnbX2ScRt9bznFSIhf+iVoMIA7y/nfYAqpvEUCo4xYDMh+H9Pe+gmc7KMmO5KJUV//nkKPKL5RNCnASwhr6lwxuZplJAgJP2/YEWYW92dgjo+xEoPTuepeZYSSRdeY515s75dg9MHuwDklKdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q4k3viE5; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oE4VcR7E"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35852C4CED2;
-	Fri, 24 Jan 2025 09:05:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1737709521;
-	bh=1i6BHZkog9i31oXayy/7iTP1WgizWXFaRDMdDI5Stjo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oE4VcR7ERMAkchg2Q4lq3LTeXYRecZJCxUucizHzvtyz8JwIt8re6m/B4zAv7pYXE
-	 WHr7zeei7UMa0gIsG9QS0oRvdiW76zt3J+HdPCaGBH3+EoXp4aWkrJPTtPZPl58Raz
-	 kMoaJOzvgIVz9bBLOb+jdvuAywDepHfaEXIY4QUrwSlDQkcHe34x0ohCie9EjtAGS+
-	 ubDA4fniqY4Db0z2N5hhCaJ1M9NMxJ0DknpkNNnnpQhFD3J2PBwQn07ABMGTXLQueS
-	 nourOFq8CludYqtQILnSm7bdt+lTozT+d7+1st5fa5d0YpNvDgl4X4uynvbUDj0f85
-	 Pg1d3AykrvWZA==
-Date: Fri, 24 Jan 2025 10:05:15 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Song Liu <song@kernel.org>
-Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, kernel-team@meta.com, andrii@kernel.org, ast@kernel.org, 
-	daniel@iogearbox.net, martin.lau@linux.dev, kpsingh@kernel.org, 
-	mattbobrowski@google.com, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, 
-	memxor@gmail.com
-Subject: Re: [PATCH v9 bpf-next 6/7] bpf: fs/xattr: Add BPF kfuncs to set and
- remove xattrs
-Message-ID: <20250124-luxus-vorsah-5a7a827680ab@brauner>
-References: <20250110011342.2965136-1-song@kernel.org>
- <20250110011342.2965136-7-song@kernel.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q4k3viE5"
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5d3dce16a3dso3599914a12.1;
+        Fri, 24 Jan 2025 01:10:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1737709810; x=1738314610; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PebFCz8wHywlT4G0ONoQK1ioBzzlxVw1mqYjoRgT2S4=;
+        b=Q4k3viE5/+T5X6CZR2TtBX/ZVOzgJgHnXweDZimXYNlKzD4516R/Q/equ7IXbTvslu
+         4W89bGP0XYoRfaSDwmc5NOpGgVsOGhA3mKr2BF86lnKugs74O9ZZo+EZmg4/O+diox08
+         +QwshLltICq41BnFPjl+pruBtEsE2CQS/d5cNXMNFq4Fw2/CLrseDKqAhIsjftiVfGeH
+         oSp1XDNC5pTRfqKH1kK+o6EdFMA0VtSipzUCRsZUOdqlhoyFEoqMvgJx4YBBU02iErdx
+         3kAuFfOAXcZf0au5TPhsLcrPluY6T6/ZavtpzgVJQGRfs+ABvBgTHn/jpuaggwVHzIDf
+         Nclg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737709810; x=1738314610;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PebFCz8wHywlT4G0ONoQK1ioBzzlxVw1mqYjoRgT2S4=;
+        b=MfegGQebc7Qd0/w7wv0VS2hpmvLoFpdKO+aciyoAjwOYbOeiK1FDXpMTdGZK72gZ9s
+         9GAv+KgQ/nGk7ivDG/5oCPzC+StbLB4/c7js6INNny8TG44K8eaDqKY8cydmQrI2TqHb
+         CIVECpZli5wHddapTkWksTaCrKSdAac7z+IEZ8rf1qLPETS3UkkyYbOiaDmSeZ1S/LY8
+         19ESaiyda0L36GuLm4oeA7KLyEmHtjTktKIQIpiPQkHpAGj9qZVYwu6ttDIsYBTRSuJF
+         XkvzP+OIuKWdFCXCbkMdmThr4yRupyj5zeA5hPGoj3c3BE6yBKay0bFJQgr2+r9C1Nnd
+         2E8A==
+X-Forwarded-Encrypted: i=1; AJvYcCXMJ73+rXbXNcHQE2fEYcSUbdYxvZudaYD02QVGfjU4wMuLUw+sqJoZGw7kFi/Z/fHPxWamEkZaQxdPVFJ2j+QwO5MNGLk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4ZVM76ZHb+/eevVG4lxf3BjVQ66JtqY22NJi0tc0x4C9Z4gET
+	nGrO9PhiLE7x3uA18dANc5GpRqn9fwOrmUXVtuG89gRnirndYf55eVstAJAwd+JmNk6oNVgMnlj
+	wgewkr6KvJXEenHu8XKCwtA1sbYlKTaAqpfE=
+X-Gm-Gg: ASbGnct6jCyqVQx4dYD8sd9+7e997it4fbjabfJ/Kp+OESeOkuKemm7RD0188s9lkzL
+	f2Gl5cVPEjQ+OCRZ9nEzQsPNNbpKMph/YN7PrTDWmJ28n6diXjf447GHxyfP0nA==
+X-Google-Smtp-Source: AGHT+IFrA7ABUjmPfjXLWyi0xqf+53fo9KMh4gxsb50I3VlPpKc6LfbT3fGBAeb3/9pKd6sRzjbrrmxv4fyFIjZyeps=
+X-Received: by 2002:a05:6402:40c6:b0:5dc:6c5:69d5 with SMTP id
+ 4fb4d7f45d1cf-5dc17fed20cmr2451343a12.3.1737709809236; Fri, 24 Jan 2025
+ 01:10:09 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250110011342.2965136-7-song@kernel.org>
+References: <20250123194108.1025273-1-mszeredi@redhat.com> <20250123194108.1025273-5-mszeredi@redhat.com>
+In-Reply-To: <20250123194108.1025273-5-mszeredi@redhat.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 24 Jan 2025 10:09:57 +0100
+X-Gm-Features: AWEUYZlLUDlIG7daVyXQpAi5HxQSypgWDfM6ySPrJ_GWQXveV6CRHuRSyqGwdr0
+Message-ID: <CAOQ4uxhmL5P2WVMPQLjNnMD8+jqvkJD7_QVBKU9GEArdGw-7nw@mail.gmail.com>
+Subject: Re: [PATCH v4 4/4] vfs: add notifications for mount attribute change
+To: Miklos Szeredi <mszeredi@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
+	Jan Kara <jack@suse.cz>, Karel Zak <kzak@redhat.com>, 
+	Lennart Poettering <lennart@poettering.net>, Ian Kent <raven@themaw.net>, 
+	Al Viro <viro@zeniv.linux.org.uk>, linux-security-module@vger.kernel.org, 
+	Paul Moore <paul@paul-moore.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 09, 2025 at 05:13:41PM -0800, Song Liu wrote:
-> Add the following kfuncs to set and remove xattrs from BPF programs:
-> 
->   bpf_set_dentry_xattr
->   bpf_remove_dentry_xattr
->   bpf_set_dentry_xattr_locked
->   bpf_remove_dentry_xattr_locked
-> 
-> The _locked version of these kfuncs are called from hooks where
-> dentry->d_inode is already locked. Instead of requiring the user
-> to know which version of the kfuncs to use, the verifier will pick
-> the proper kfunc based on the calling hook.
-> 
-> Signed-off-by: Song Liu <song@kernel.org>
+On Thu, Jan 23, 2025 at 8:41=E2=80=AFPM Miklos Szeredi <mszeredi@redhat.com=
+> wrote:
+>
+> Notify when mount flags, propagation or idmap changes.
+>
+> Just like attach and detach, no details are given in the notification, on=
+ly
+> the mount ID.
+>
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 > ---
->  fs/bpf_fs_kfuncs.c      | 227 +++++++++++++++++++++++++++++++++++++++-
->  include/linux/bpf_lsm.h |   2 +
->  2 files changed, 227 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/bpf_fs_kfuncs.c b/fs/bpf_fs_kfuncs.c
-> index 8a65184c8c2c..f68c83bfb93f 100644
-> --- a/fs/bpf_fs_kfuncs.c
-> +++ b/fs/bpf_fs_kfuncs.c
-> @@ -2,10 +2,12 @@
->  /* Copyright (c) 2024 Google LLC. */
->  
->  #include <linux/bpf.h>
-> +#include <linux/bpf_lsm.h>
->  #include <linux/btf.h>
->  #include <linux/btf_ids.h>
->  #include <linux/dcache.h>
->  #include <linux/fs.h>
-> +#include <linux/fsnotify.h>
->  #include <linux/file.h>
->  #include <linux/mm.h>
->  #include <linux/xattr.h>
-> @@ -161,6 +163,164 @@ __bpf_kfunc int bpf_get_file_xattr(struct file *file, const char *name__str,
->  	return bpf_get_dentry_xattr(dentry, name__str, value_p);
->  }
->  
-> +static int bpf_xattr_write_permission(const char *name, struct inode *inode)
-> +{
-> +	if (WARN_ON(!inode))
-> +		return -EINVAL;
-> +
-> +	/* Only allow setting and removing security.bpf. xattrs */
-> +	if (!match_security_bpf_prefix(name))
-> +		return -EPERM;
-> +
-> +	return inode_permission(&nop_mnt_idmap, inode, MAY_WRITE);
-> +}
-> +
-> +static int __bpf_set_dentry_xattr(struct dentry *dentry, const char *name,
-> +				  const struct bpf_dynptr *value_p, int flags, bool lock_inode)
-> +{
-> +	struct bpf_dynptr_kern *value_ptr = (struct bpf_dynptr_kern *)value_p;
-> +	struct inode *inode = d_inode(dentry);
-> +	const void *value;
-> +	u32 value_len;
-> +	int ret;
-> +
-> +	value_len = __bpf_dynptr_size(value_ptr);
-> +	value = __bpf_dynptr_data(value_ptr, value_len);
-> +	if (!value)
-> +		return -EINVAL;
-> +
-> +	if (lock_inode)
-> +		inode_lock(inode);
-> +
-> +	ret = bpf_xattr_write_permission(name, inode);
-> +	if (ret)
-> +		goto out;
-> +
-> +	ret = __vfs_setxattr(&nop_mnt_idmap, dentry, inode, name,
-> +			     value, value_len, flags);
-> +	if (!ret) {
-> +		fsnotify_xattr(dentry);
-> +
-> +		/* This xattr is set by BPF LSM, so we do not call
-> +		 * security_inode_post_setxattr. This is the same as
-> +		 * security_inode_setsecurity().
-> +		 */
 
-If you did you would risk deadlocks as you could end up calling yourself
-again afaict.
+My only nit this time is that I prefer the fsnotify/fanotify bits here
+to be in patches 1,2
+which as you write, only add the infrastructure to be used later.
 
-> +	}
-> +out:
-> +	if (lock_inode)
-> +		inode_unlock(inode);
-> +	return ret;
-> +}
-> +
-> +/**
-> + * bpf_set_dentry_xattr - set a xattr of a dentry
-> + * @dentry: dentry to get xattr from
-> + * @name__str: name of the xattr
-> + * @value_p: xattr value
-> + * @flags: flags to pass into filesystem operations
-> + *
-> + * Set xattr *name__str* of *dentry* to the value in *value_ptr*.
-> + *
-> + * For security reasons, only *name__str* with prefix "security.bpf."
-> + * is allowed.
-> + *
-> + * The caller has not locked dentry->d_inode.
-> + *
-> + * Return: 0 on success, a negative value on error.
-> + */
-> +__bpf_kfunc int bpf_set_dentry_xattr(struct dentry *dentry, const char *name__str,
-> +				     const struct bpf_dynptr *value_p, int flags)
-> +{
-> +	return __bpf_set_dentry_xattr(dentry, name__str, value_p, flags, true);
-> +}
-> +
-> +/**
-> + * bpf_set_dentry_xattr_locked - set a xattr of a dentry
-> + * @dentry: dentry to get xattr from
-> + * @name__str: name of the xattr
-> + * @value_p: xattr value
-> + * @flags: flags to pass into filesystem operations
-> + *
-> + * Set xattr *name__str* of *dentry* to the value in *value_ptr*.
-> + *
-> + * For security reasons, only *name__str* with prefix "security.bpf."
-> + * is allowed.
-> + *
-> + * The caller already locked dentry->d_inode.
-> + *
-> + * Return: 0 on success, a negative value on error.
-> + */
-> +__bpf_kfunc int bpf_set_dentry_xattr_locked(struct dentry *dentry, const char *name__str,
-> +					    const struct bpf_dynptr *value_p, int flags)
-> +{
-> +	return __bpf_set_dentry_xattr(dentry, name__str, value_p, flags, false);
+[...]
 
-That boolean argument is not needed if you pull
-
-value_len = __bpf_dynptr_size(value_ptr);
-value = __bpf_dynptr_data(value_ptr, value_len);
-if (!value)
-	return -EINVAL;
-
-into the two functions and then put:
-
-inode_lock()
-bpf_set_dentry_xattr_unlocked();
-inode_unlock()
-
-for the locked variant. Similar comment applied to the remove functions.
-
-
-> +}
-> +
-> +static int __bpf_remove_dentry_xattr(struct dentry *dentry, const char *name__str,
-> +				     bool lock_inode)
-> +{
-> +	struct inode *inode = d_inode(dentry);
-> +	int ret;
-> +
-> +	if (lock_inode)
-> +		inode_lock(inode);
-> +
-> +	ret = bpf_xattr_write_permission(name__str, inode);
-> +	if (ret)
-> +		goto out;
-> +
-> +	ret = __vfs_removexattr(&nop_mnt_idmap, dentry, name__str);
-> +	if (!ret) {
-> +		fsnotify_xattr(dentry);
-> +
-> +		/* This xattr is removed by BPF LSM, so we do not call
-> +		 * security_inode_post_removexattr.
-> +		 */
-> +	}
-> +out:
-> +	if (lock_inode)
-> +		inode_unlock(inode);
-> +	return ret;
-> +}
-> +
-> +/**
-> + * bpf_remove_dentry_xattr - remove a xattr of a dentry
-> + * @dentry: dentry to get xattr from
-> + * @name__str: name of the xattr
-> + *
-> + * Rmove xattr *name__str* of *dentry*.
-> + *
-> + * For security reasons, only *name__str* with prefix "security.bpf."
-> + * is allowed.
-> + *
-> + * The caller has not locked dentry->d_inode.
-> + *
-> + * Return: 0 on success, a negative value on error.
-> + */
-> +__bpf_kfunc int bpf_remove_dentry_xattr(struct dentry *dentry, const char *name__str)
-> +{
-> +	return __bpf_remove_dentry_xattr(dentry, name__str, true);
-> +}
-> +
-> +/**
-> + * bpf_remove_dentry_xattr_locked - remove a xattr of a dentry
-> + * @dentry: dentry to get xattr from
-> + * @name__str: name of the xattr
-> + *
-> + * Rmove xattr *name__str* of *dentry*.
-> + *
-> + * For security reasons, only *name__str* with prefix "security.bpf."
-> + * is allowed.
-> + *
-> + * The caller already locked dentry->d_inode.
-> + *
-> + * Return: 0 on success, a negative value on error.
-> + */
-> +__bpf_kfunc int bpf_remove_dentry_xattr_locked(struct dentry *dentry, const char *name__str)
-> +{
-> +	return __bpf_remove_dentry_xattr(dentry, name__str, false);
-> +}
-> +
->  __bpf_kfunc_end_defs();
->  
->  BTF_KFUNCS_START(bpf_fs_kfunc_set_ids)
-> @@ -170,20 +330,83 @@ BTF_ID_FLAGS(func, bpf_put_file, KF_RELEASE)
->  BTF_ID_FLAGS(func, bpf_path_d_path, KF_TRUSTED_ARGS)
->  BTF_ID_FLAGS(func, bpf_get_dentry_xattr, KF_SLEEPABLE | KF_TRUSTED_ARGS)
->  BTF_ID_FLAGS(func, bpf_get_file_xattr, KF_SLEEPABLE | KF_TRUSTED_ARGS)
-> +BTF_ID_FLAGS(func, bpf_set_dentry_xattr, KF_SLEEPABLE | KF_TRUSTED_ARGS)
-> +BTF_ID_FLAGS(func, bpf_remove_dentry_xattr, KF_SLEEPABLE | KF_TRUSTED_ARGS)
->  BTF_KFUNCS_END(bpf_fs_kfunc_set_ids)
->  
-> +BTF_HIDDEN_KFUNCS_START(bpf_fs_kfunc_hidden_set_ids)
-> +BTF_ID_FLAGS(func, bpf_set_dentry_xattr_locked, KF_SLEEPABLE | KF_TRUSTED_ARGS)
-> +BTF_ID_FLAGS(func, bpf_remove_dentry_xattr_locked, KF_SLEEPABLE | KF_TRUSTED_ARGS)
-> +BTF_KFUNCS_END(bpf_fs_kfunc_hidden_set_ids)
-> +
->  static int bpf_fs_kfuncs_filter(const struct bpf_prog *prog, u32 kfunc_id)
+> --- a/fs/notify/fanotify/fanotify.h
+> +++ b/fs/notify/fanotify/fanotify.h
+> @@ -471,7 +471,7 @@ static inline bool fanotify_is_error_event(u32 mask)
+>
+>  static inline bool fanotify_is_mnt_event(u32 mask)
 >  {
-> -	if (!btf_id_set8_contains(&bpf_fs_kfunc_set_ids, kfunc_id) ||
-> -	    prog->type == BPF_PROG_TYPE_LSM)
-> +	if (!btf_id_set8_contains(&bpf_fs_kfunc_set_ids, kfunc_id) &&
-> +	    !btf_id_set8_contains(&bpf_fs_kfunc_hidden_set_ids, kfunc_id))
-> +		return 0;
-> +	if (prog->type == BPF_PROG_TYPE_LSM)
->  		return 0;
->  	return -EACCES;
+> -       return mask & (FAN_MNT_ATTACH | FAN_MNT_DETACH);
+> +       return mask & FANOTIFY_MOUNT_EVENTS;
 >  }
->  
-> +/* bpf_[set|remove]_dentry_xattr.* hooks have KF_TRUSTED_ARGS and
-> + * KF_SLEEPABLE, so they are only available to sleepable hooks with
-> + * dentry arguments.
-> + *
-> + * Setting and removing xattr requires exclusive lock on dentry->d_inode.
-> + * Some hooks already locked d_inode, while some hooks have not locked
-> + * d_inode. Therefore, we need different kfuncs for different hooks.
-> + * Specifically, hooks in the following list (d_inode_locked_hooks)
-> + * should call bpf_[set|remove]_dentry_xattr_locked; while other hooks
-> + * should call bpf_[set|remove]_dentry_xattr.
-> + */
-> +BTF_SET_START(d_inode_locked_hooks)
-> +BTF_ID(func, bpf_lsm_inode_post_removexattr)
-> +BTF_ID(func, bpf_lsm_inode_post_setattr)
-> +BTF_ID(func, bpf_lsm_inode_post_setxattr)
-> +BTF_ID(func, bpf_lsm_inode_removexattr)
-> +BTF_ID(func, bpf_lsm_inode_rmdir)
-> +BTF_ID(func, bpf_lsm_inode_setattr)
-> +BTF_ID(func, bpf_lsm_inode_setxattr)
-> +BTF_ID(func, bpf_lsm_inode_unlink)
-> +#ifdef CONFIG_SECURITY_PATH
-> +BTF_ID(func, bpf_lsm_path_unlink)
-> +BTF_ID(func, bpf_lsm_path_rmdir)
-> +#endif /* CONFIG_SECURITY_PATH */
-> +BTF_SET_END(d_inode_locked_hooks)
+>
+
+This should have used the macro from the first use in patch 2.
+
+[...]
+
+> diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_ba=
+ckend.h
+> index 6c3e3a4a7b10..54e01803e309 100644
+> --- a/include/linux/fsnotify_backend.h
+> +++ b/include/linux/fsnotify_backend.h
+> @@ -58,6 +58,8 @@
+>
+>  #define FS_MNT_ATTACH          0x01000000      /* Mount was attached */
+>  #define FS_MNT_DETACH          0x02000000      /* Mount was detached */
+> +#define FS_MNT_CHANGE          0x04000000      /* Mount was changed */
 > +
-> +static bool bpf_lsm_has_d_inode_locked(const struct bpf_prog *prog)
-> +{
-> +	return btf_id_set_contains(&d_inode_locked_hooks, prog->aux->attach_btf_id);
-> +}
-> +
-> +BTF_ID_LIST(not_locked_fs_kfuncs)
-> +BTF_ID(func, bpf_set_dentry_xattr)
-> +BTF_ID(func, bpf_remove_dentry_xattr)
-> +
-> +BTF_ID_LIST(locked_fs_kfuncs)
-> +BTF_ID(func, bpf_set_dentry_xattr_locked)
-> +BTF_ID(func, bpf_remove_dentry_xattr_locked)
-> +
-> +static u32 bpf_fs_kfunc_remap(const struct bpf_prog *prog, u32 kfunc_id)
-> +{
-> +	if (!bpf_lsm_has_d_inode_locked(prog))
-> +		return 0;
-> +
-> +	if (kfunc_id == not_locked_fs_kfuncs[0])
-> +		return locked_fs_kfuncs[0];
-> +	if (kfunc_id == not_locked_fs_kfuncs[1])
-> +		return locked_fs_kfuncs[1];
-> +
-> +	return 0;
-> +}
-> +
->  static const struct btf_kfunc_id_set bpf_fs_kfunc_set = {
->  	.owner = THIS_MODULE,
->  	.set = &bpf_fs_kfunc_set_ids,
-> +	.hidden_set = &bpf_fs_kfunc_hidden_set_ids,
->  	.filter = bpf_fs_kfuncs_filter,
-> +	.remap = bpf_fs_kfunc_remap,
->  };
->  
->  static int __init bpf_fs_kfuncs_init(void)
-> diff --git a/include/linux/bpf_lsm.h b/include/linux/bpf_lsm.h
-> index aefcd6564251..f4ab0dc1df69 100644
-> --- a/include/linux/bpf_lsm.h
-> +++ b/include/linux/bpf_lsm.h
-> @@ -48,6 +48,7 @@ void bpf_lsm_find_cgroup_shim(const struct bpf_prog *prog, bpf_func_t *bpf_func)
->  
->  int bpf_lsm_get_retval_range(const struct bpf_prog *prog,
->  			     struct bpf_retval_range *range);
-> +
->  #else /* !CONFIG_BPF_LSM */
->  
->  static inline bool bpf_lsm_is_sleepable_hook(u32 btf_id)
-> @@ -86,6 +87,7 @@ static inline int bpf_lsm_get_retval_range(const struct bpf_prog *prog,
->  {
->  	return -EOPNOTSUPP;
->  }
-> +
->  #endif /* CONFIG_BPF_LSM */
->  
->  #endif /* _LINUX_BPF_LSM_H */
-> -- 
-> 2.43.5
-> 
+>  #define FS_MNT_MOVE            (FS_MNT_ATTACH | FS_MNT_DETACH)
+>
+>  /*
+> @@ -106,7 +108,8 @@
+>                              FS_EVENTS_POSS_ON_CHILD | \
+>                              FS_DELETE_SELF | FS_MOVE_SELF | \
+>                              FS_UNMOUNT | FS_Q_OVERFLOW | FS_IN_IGNORED |=
+ \
+> -                            FS_ERROR | FS_MNT_ATTACH | FS_MNT_DETACH)
+> +                            FS_ERROR | \
+> +                            FS_MNT_ATTACH | FS_MNT_DETACH | FS_MNT_CHANG=
+E )
+
+Please add those bits as a group in patch 1:
+
+@@ -80,6 +80,9 @@
+  */
+ #define ALL_FSNOTIFY_DIRENT_EVENTS (FS_CREATE | FS_DELETE | FS_MOVE |
+FS_RENAME)
+
++/* Mount namespace events */
++#define FSNOTIFY_MNT_EVENTS (FS_MNT_ATTACH | FS_MNT_DETACH | FS_MNT_CHANGE=
+)
++
+ /* Content events can be used to inspect file content */
+ #define FSNOTIFY_CONTENT_PERM_EVENTS (FS_OPEN_PERM | FS_OPEN_EXEC_PERM | \
+                                      FS_ACCESS_PERM)
+@@ -108,6 +111,7 @@
+
+ /* Events that can be reported to backends */
+ #define ALL_FSNOTIFY_EVENTS (ALL_FSNOTIFY_DIRENT_EVENTS | \
++                            FSNOTIFY_MNT_EVENTS | \
+                             FS_EVENTS_POSS_ON_CHILD | \
+
+I am aware of the inconsistency of the names ALL_FSNOTIFY_* and FSNOTIFY_*
+but if you look at master as of last night you will find:
+
+FSNOTIFY_CONTENT_PERM_EVENTS and FSNOTIFY_PRE_CONTENT_EVENTS
+
+(please rebase)
+
+One day we may cleanup ALL_FSNOTIFY_DIRENT_EVENTS and
+ALL_FSNOTIFY_PERM_EVENTS to conform.
+
+Thanks,
+Amir.
