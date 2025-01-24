@@ -1,223 +1,148 @@
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from b199.am.arara.com (b199.am.arara.com [182.236.83.128])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF5713AC1;
-	Fri, 24 Jan 2025 01:02:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 960A5188717
+	for <linux-security-module@vger.kernel.org>; Fri, 24 Jan 2025 02:12:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=182.236.83.128
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737680578; cv=none; b=llvwYU4ZYXVFGuY4LeJlgbDpA8nplo2nwBBwLbR179HfEPNiZF23Bsxm4QLoWigOFItjCzhL4RoiC2lKGid7GgvnSJLqVlno+wz2c5tjvCRQjJt2X37uvOKbou92h3CdbedT6JkxF+w42Wbmp5ZGacyHQa2BbuhMOPN78E+T8nY=
+	t=1737684773; cv=none; b=RCm71SLs1Kdf5stJxikOe3iKYq8+mupUKlZS+crgzuyIs6fzjum539my3QludPqqcM4Li0B2+eV38hQ2j0UPJDZq8LnCB2s47FoAJzJKBkCf72+2euHldbOhylufZi+E/cFMy6/WfZAahV24yN6LAN0vy4ZJbqQ6x96D18RuC/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737680578; c=relaxed/simple;
-	bh=Rq8kZwwXGjztMSgzkUP1H/YqKvt3qDXZ21j1s3ck1B0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Cpyhzq3Vv3xGeAxqCjEvsT0CLCFOMvhYO5S2hVzLVT8hZ7LvO5dLHrIek8qHIqGR7F9NJ7Vi20Rr0Q+K447pbxIMuvMelnId/pIAk76FbcwAlLhTjEmhfLkaxU+SScNjqqvkwRqiWC7dEf1Xtdui+NkG64au3vXjnE1Rr0A5xJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kb6LZiNn; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1737684773; c=relaxed/simple;
+	bh=q6KkwCOQlNLZeVpFCozML7N7q0fECwGNGivfjazfOwI=;
+	h=From:To:Subject:Message-Id:Date:MIME-Version:Content-Type; b=QU0w2Y0G7U0VJdx103U0nu0FH3h69ynri2Sya2M8K5e5k9GxqgTnYYGvsxKfnuFsdfHlDrsLljSGCvH6aP5xPqQiultwsIUJIBdYTXVB2o0Ub/g6SbW7ErXWmBn34n32NdvVSyG9bbDKE1zFkRwEb3GgfgTKUXRFLIKs5VQlL4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fc-seminar-online.jp; spf=pass smtp.mailfrom=bvam001.am.arara.com; dkim=pass (1024-bit key) header.d=fc-seminar-online.jp header.i=@fc-seminar-online.jp header.b=WPz16qVl; arc=none smtp.client-ip=182.236.83.128
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fc-seminar-online.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bvam001.am.arara.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kb6LZiNn"
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2164b1f05caso26478215ad.3;
-        Thu, 23 Jan 2025 17:02:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737680576; x=1738285376; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D0aJPrChJkjhsAZYwCY7691Ium0idIWe4UuZ5CwOmvw=;
-        b=Kb6LZiNnNsy45N3x9BUZFMAT4m6MYqT+uR0+JumMm/Djz5cdVm2C4r0GvxM63OmSEH
-         l1PSTbzOp8L9w/dICbUs5YMkofRCje5vJlUs4pRgbSo77q4fl5ZB1aGX0g9jIBqPJtdc
-         7jKBoMSBShHtFfq47Him6yNUEA3dSs7OPpbiyEQFgZfEpjQpOZwPzGBIwvaUM2jQPkKt
-         fIn+vPoFJWZfY9WjIZ9AILWZr3iV80FO773MAVCZzNKECOCd/P14hdXBOgFnUVt5APD9
-         LI09+VEIUgh9GSCzxn0uPGzTaU77HJE4UChWaPrxUQVaJYGhFX1Q+GOopJbQOhEANWH+
-         eVgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737680576; x=1738285376;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=D0aJPrChJkjhsAZYwCY7691Ium0idIWe4UuZ5CwOmvw=;
-        b=MjOTqwhjbcK1j0kr7iqCZceraRSlra/Kj8NjJ8nsGB53JxsBv7TLB/vUl+oDtU9UFt
-         8IBRUoPVAAJVuqUTk5gcWfpRsEPMxFakdkk42ZL/tg29XBrJP7TCq52BGVVfE57ArTz7
-         mYDdAUHZdzirDR0k0DvxyUKWngQ90MCn9uGyvFD6b6zvfNlLlo0lU0wp8j74wjKvIx1/
-         Ty2U3acu/ZPv2BYeS745nn8RCC0+D38FG/MYimohgFpC00CvcKPJusv5uKWRmNqIlzuI
-         Et+6dWBnrz8IH8xWzXEk9rH7m+1w7K8wSMK8UJxjGUqbEfMWhuCoC+YQ8eKpKJaLSMUH
-         lHjg==
-X-Forwarded-Encrypted: i=1; AJvYcCVoL64CgoE96StzztDnzCoNcCa553cmitgbw1j0ftFvkBNw5S0uqWcm6luVK+uui7pkZUWxluW1ncd4iHVpzo03MYNT@vger.kernel.org, AJvYcCWBH6hdcZhfbKM+BzXMqbcYhB35nRFkjN1vw9BfaP4Lcdo6sR47ry3/WZEolcuX1PQU+neB5FP3l8W8t0mkWz1jigVbTQ8p@vger.kernel.org, AJvYcCWX4TCHlJ6M4uATqoGFK0zxGyGSETJUJxPRipujI6vxo47wzTusAvP5DvJm/Ja9pmANJ0XgL4hSe8Rzjmle@vger.kernel.org, AJvYcCX+PidXgu/ui01K/XinzcD5HOrODeuSeIByspoFSIeAp/R0FD3O/LsjGgyQe7b76J2HV3yWw9vtKXL+IjOm44IaFw==@vger.kernel.org, AJvYcCX+f5nJHPYRXgSiJ54IxtDTVeulIYh33Tz2Oq7DbBVM/AqGscy42fIQJa19Ir964Z8hTYx0eFyfiNcsER05Sg==@vger.kernel.org, AJvYcCXaCd4buSUOdEaoz+zE+Ofv+V5kn/GYa+gRTdO4xfyOdaFhrLPoYJ3uLKWOQwKYP3bMEAg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIIAHlsE42BcU1oPbov3lmOXRm29pJ6/rsS6RG3F5LVzlEDUZU
-	n44a/8was8Uj8CpOJA4a7yZubZGGPoVsLKyYNObWq4Dzjj1QWxBZgZIPZI1wzOIhvxNNhoSE9Rk
-	ahQFMpsn4qsSMqUzF29nuOGagVlI=
-X-Gm-Gg: ASbGncvxxKVuFToK6jNUADiaOvo7zJcrVEc9Mq2Gq9qc3Wa4CdubRaKmXZe/IpusTJq
-	Ic8AWtlNMIh4g5AxTLe8usshh98emVUlvS19ptjzsqT7zGYTWjAiXg+Eh98SFMulceBRh5ykcug
-	SJzQ==
-X-Google-Smtp-Source: AGHT+IEuyDzr4dFkkBvqvAW5OHSqHScPRQtMfqosR3W768baJCU6A9tUKJV1y5CH1vjwgjK9jbohovckbO/Io8mhO64=
-X-Received: by 2002:a05:6a00:4214:b0:727:3c8f:3707 with SMTP id
- d2e1a72fcca58-72dafbf3b34mr41968026b3a.23.1737680575847; Thu, 23 Jan 2025
- 17:02:55 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=fc-seminar-online.jp header.i=@fc-seminar-online.jp header.b="WPz16qVl"
+Received: from unknown (HELO) (172.18.130.110)
+  by b199.am.arara.com with SMTP; Fri, 24 Jan 2025 09:31:34 +0900
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fc-seminar-online.jp;
+	s=re202409; t=1737678694;
+	bh=q6KkwCOQlNLZeVpFCozML7N7q0fECwGNGivfjazfOwI=;
+	h=From:To:List-Unsubscribe:List-Unsubscribe-Post:Subject:Message-Id:
+	 Date:MIME-Version:Content-Transfer-Encoding;
+	b=WPz16qVl11zAOU3ww24GyXwYkek71OSTsrpJ0UmexlBc6McMKsvWeK05ZpNdyeqMx
+	 cPsC6vvUSS4PO8FhjnclhVtPvge2NevADnu8+9hijLOzHl88VlgpNRd9KYKzRWZNfN
+	 7ktiyCDcUYQ5X3ayHtYU4RNE1FCxRiIVkIhhNvFQ=
+From: info@fc-seminar-online.jp
+To: linux-security-module@vger.kernel.org
+List-Unsubscribe-Post: List-Unsubscribe=One-Click
+Subject: =?UTF-8?B?6LK35Y+W5bCC6ZaA5bqXIOODleODqeODs+ODgeODo+OCpOOCuuOCt+OCueODhuODoOiqrOaYjuS8mg==?=
+Message-Id: <00jobp-018pz@bam001.am.arara.com>
+Date: Fri, 24 Jan 2025 09:31:34 +0900
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250123214342.4145818-1-andrii@kernel.org> <CAJuCfpE9QOo-xmDpk_FF=gs3p=9Zzb-Q5yDaKAEChBCnpogmQg@mail.gmail.com>
- <202501231526.A3C13EC5@keescook> <CAG48ez1TXEJH3mFmm-QZbbmr_YupnoLA0WQx6WgxKQSHP3jPSA@mail.gmail.com>
-In-Reply-To: <CAG48ez1TXEJH3mFmm-QZbbmr_YupnoLA0WQx6WgxKQSHP3jPSA@mail.gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Thu, 23 Jan 2025 17:02:40 -0800
-X-Gm-Features: AbW1kvaNIXPwtdjTpZnh9pk24SpZKxJaM3CayvMBHXdj24HdZVOFF_DSCaFQHy4
-Message-ID: <CAEf4BzaToT9YcwPm7N63wK0dLTVLEVwABCBXmRVP5+_A7bCKpg@mail.gmail.com>
-Subject: Re: [PATCH] mm,procfs: allow read-only remote mm access under CAP_PERFMON
-To: Jann Horn <jannh@google.com>
-Cc: Kees Cook <kees@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, linux-mm@kvack.org, akpm@linux-foundation.org, 
-	linux-fsdevel@vger.kernel.org, brauner@kernel.org, viro@zeniv.linux.org.uk, 
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, kernel-team@meta.com, 
-	rostedt@goodmis.org, peterz@infradead.org, mingo@kernel.org, 
-	linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	shakeel.butt@linux.dev, rppt@kernel.org, liam.howlett@oracle.com, 
-	linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-SE-GID: 00jobp@bam001.am.arara.com
+X-SE-HID: b199.am.arara.com.1737678694791957
 
-On Thu, Jan 23, 2025 at 3:55=E2=80=AFPM Jann Horn <jannh@google.com> wrote:
->
-> On Fri, Jan 24, 2025 at 12:47=E2=80=AFAM Kees Cook <kees@kernel.org> wrot=
-e:
-> > On Thu, Jan 23, 2025 at 01:52:52PM -0800, Suren Baghdasaryan wrote:
-> > > On Thu, Jan 23, 2025 at 1:44=E2=80=AFPM Andrii Nakryiko <andrii@kerne=
-l.org> wrote:
-> > > >
-> > > > It's very common for various tracing and profiling toolis to need t=
-o
-> > > > access /proc/PID/maps contents for stack symbolization needs to lea=
-rn
-> > > > which shared libraries are mapped in memory, at which file offset, =
-etc.
-> > > > Currently, access to /proc/PID/maps requires CAP_SYS_PTRACE (unless=
- we
-> > > > are looking at data for our own process, which is a trivial case no=
-t too
-> > > > relevant for profilers use cases).
-> > > >
-> > > > Unfortunately, CAP_SYS_PTRACE implies way more than just ability to
-> > > > discover memory layout of another process: it allows to fully contr=
-ol
-> > > > arbitrary other processes. This is problematic from security POV fo=
-r
-> > > > applications that only need read-only /proc/PID/maps (and other sim=
-ilar
-> > > > read-only data) access, and in large production settings CAP_SYS_PT=
-RACE
-> > > > is frowned upon even for the system-wide profilers.
-> > > >
-> > > > On the other hand, it's already possible to access similar kind of
-> > > > information (and more) with just CAP_PERFMON capability. E.g., sett=
-ing
-> > > > up PERF_RECORD_MMAP collection through perf_event_open() would give=
- one
-> > > > similar information to what /proc/PID/maps provides.
-> > > >
-> > > > CAP_PERFMON, together with CAP_BPF, is already a very common combin=
-ation
-> > > > for system-wide profiling and observability application. As such, i=
-t's
-> > > > reasonable and convenient to be able to access /proc/PID/maps with
-> > > > CAP_PERFMON capabilities instead of CAP_SYS_PTRACE.
-> > > >
-> > > > For procfs, these permissions are checked through common mm_access(=
-)
-> > > > helper, and so we augment that with cap_perfmon() check *only* if
-> > > > requested mode is PTRACE_MODE_READ. I.e., PTRACE_MODE_ATTACH wouldn=
-'t be
-> > > > permitted by CAP_PERFMON.
-> > > >
-> > > > Besides procfs itself, mm_access() is used by process_madvise() and
-> > > > process_vm_{readv,writev}() syscalls. The former one uses
-> > > > PTRACE_MODE_READ to avoid leaking ASLR metadata, and as such CAP_PE=
-RFMON
-> > > > seems like a meaningful allowable capability as well.
-> > > >
-> > > > process_vm_{readv,writev} currently assume PTRACE_MODE_ATTACH level=
- of
-> > > > permissions (though for readv PTRACE_MODE_READ seems more reasonabl=
-e,
-> > > > but that's outside the scope of this change), and as such won't be
-> > > > affected by this patch.
-> > >
-> > > CC'ing Jann and Kees.
-> > >
-> > > >
-> > > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> > > > ---
-> > > >  kernel/fork.c | 11 ++++++++++-
-> > > >  1 file changed, 10 insertions(+), 1 deletion(-)
-> > > >
-> > > > diff --git a/kernel/fork.c b/kernel/fork.c
-> > > > index ded49f18cd95..c57cb3ad9931 100644
-> > > > --- a/kernel/fork.c
-> > > > +++ b/kernel/fork.c
-> > > > @@ -1547,6 +1547,15 @@ struct mm_struct *get_task_mm(struct task_st=
-ruct *task)
-> > > >  }
-> > > >  EXPORT_SYMBOL_GPL(get_task_mm);
-> > > >
-> > > > +static bool can_access_mm(struct mm_struct *mm, struct task_struct=
- *task, unsigned int mode)
-> > > > +{
-> > > > +       if (mm =3D=3D current->mm)
-> > > > +               return true;
-> > > > +       if ((mode & PTRACE_MODE_READ) && perfmon_capable())
-> > > > +               return true;
-> > > > +       return ptrace_may_access(task, mode);
-> > > > +}
-> >
-> > nit: "may" tends to be used more than "can" for access check function n=
-aming.
-> >
-> > So, this will bypass security_ptrace_access_check() within
-> > ptrace_may_access(). CAP_PERFMON may be something LSMs want visibility
-> > into.
-> >
-> > It also bypasses the dumpability check in __ptrace_may_access(). (Shoul=
-d
-> > non-dumpability block visibility into "maps" under CAP_PERFMON?)
-> >
-> > This change provides read access for CAP_PERFMON to:
-> >
-> > /proc/$pid/maps
-> > /proc/$pid/smaps
-> > /proc/$pid/mem
-> > /proc/$pid/environ
-> > /proc/$pid/auxv
-> > /proc/$pid/attr/*
-> > /proc/$pid/smaps_rollup
-> > /proc/$pid/pagemap
-> >
-> > /proc/$pid/mem access seems way out of bounds for CAP_PERFMON. environ
-> > and auxv maybe too much also. The "attr" files seem iffy. pagemap may b=
-e
-> > reasonable.
->
-> FWIW, my understanding is that if you can use perf_event_open() on a
-> process, you can also grab large amounts of stack memory contents from
-> that process via PERF_SAMPLE_STACK_USER/sample_stack_user. (The idea
-> there is that stack unwinding for userspace stacks is complicated, so
-> it's the profiler's job to turn a pile of raw stack contents and a
-> register snapshot into a stack trace.) So _to some extent_ I think it
-> is already possible to read memory of another process via CAP_PERFMON.
-> Whether that is desirable or not I don't know, though I guess it's
-> hard to argue that there's a qualitative security difference between
-> reading register contents and reading stack memory...
+新規事業をお探しの経営者様・事業オーナー様へ
 
-If I'm allowed to bring in BPF capabilities coupled with CAP_PERFMON,
-then you can read not just stack, but pretty much anything both inside
-the kernel memory (e.g., through bpf_probe_read_kernel()) and
-user-space (bpf_probe_read_user() for current user task, and more
-generally bpf_copy_from_user_task() for an arbitrary task for which we
-have struct task_struct).
 
-But we don't really allow access to /proc/PID/mem here, because it's
-PTRACE_MODE_ATTACH (which is sort of like read/write vs read-only).
+いつもお世話になります。
 
-Similarly, it would be relevant for process_vm_readv(), but that one
-(currently) is also PTRACE_MODE_ATTACH.
+
+法人の新規事業として、リスクを抑えてスタートできる、
+フランチャイズ事業のオンライン説明会をご案内いたします。
+
+
+業界未経験／社員1名でスタートできるので
+ご興味があれば是非お申込みください。
+
+
+　　※　Zoomのウェビナー機能による発信形式のため
+　　　　視聴者のお顔やお声が表に出ることはございません。
+
+
+　　■　セミナー視聴後のアンケートで個別説明へ
+　　　　お申込みされた方には書籍をプレゼント。
+　　　　　　　　　 ▼　書籍紹介　▼
+　　　　https://www.amazon.co.jp/dp/4478114706
+　　　　―　2022年3月　ダイヤモンド社出版　―
+　　　　　　株式会社エンパワー（買取大吉 運営本部）
+　　　　　　代表 増井俊介 著
+　　　　　　「学歴なし、人脈なしなら、社長になれ!」
+
+
+　1月29日（水）　フランチャイズ事業　オンライン説明会
+----------------------------------------------------------
+
+　　　　　　　　　全国1100店舗
+　　　　 　 10年間の店舗継続率97.4%
+　　　 　　　　　　買取専門店
+　　　　　　　　―　買取大吉　―
+
+　　　　買い取り「専門」だから実現できる
+　　　　低リスク／高収益のビジネスモデル
+
+
+　　　　　　　▼  詳細・申込  ▼
+　 　https://fc-daikichi-kaitori.biz/dai3/
+
+　　　　　　　◆　 　提供　　 ◆
+　　　　　　　株式会社エンパワー
+　　　　　　　（買取大吉FC本部）
+
+　　日　程　：　 1月29日（水）16:00～16:30
+　　対　象　：　新規事業をお考えの法人or個人事業主
+　　※　両日程とも内容は同じです
+　　
+　　　　　　　◇　コンテンツ　◇
+　　―　買い取ったあとの儲けのカラクリは？
+　　―　リサイクルショップとの違いは？
+　　―　未経験で査定はどうするのか？
+　　―　メルカリ、ヤフオクに負けているのでは？
+　　―　新規事業としての収益性・リスク・継続性は？　etc...
+
+----------------------------------------------------------
+
+
+ご紹介するのは「　買取専門店　」のフランチャイズです。
+
+
+一般的にリユース事業は買い取ってから販売するまで在庫を抱えるため
+「在庫リスク」「価格変動リスク」「資金不足リスク」といった3つのリスクが伴います。
+
+
+それらのリスクを取り除き、高収益を生み出すのが“買取専門”というビジネスモデルです。
+
+
+買い取った瞬間に利益が確定するシステムと、少人数／小スペースの運営体制により
+買取大吉の店舗は業界屈指の1100店舗まで拡大し、FC業界の中でも注目を浴びています。
+
+
+しかし、まだまだ伸長するリユース市場に対して店舗が足りていないため
+一緒に取り組んでいただける加盟店を募集しています。
+
+
+本説明会にて儲けのカラクリや収益性・リスク・継続性などをお伝えしますので
+新規事業の立ち上げをお考えの方は是非ともご参加ください。
+
+
+　　日程　：　 1月29日（水）16:00～16:30
+　　※　両日程とも内容は同じです
+
+
+　　▼　お申込は下記URLよりお願いします　▼
+
+　　 https://fc-daikichi-kaitori.biz/dai3/
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+　フランチャイズセミナー　運営事務局
+　電話：0120-891-893
+　住所：東京都中央区銀座7-13-6
+―――――――――――――――――――――――――――――――
+　本メールのご不要な方には大変ご迷惑をおかけいたしました。
+　今後ご案内が不要な方は下記URLにてお手続きをお願いいたします。
+　┗　https://fc-daikichi-kaitori.biz/mail/
+　または件名に「配信不要」と記載して本メールにそのまま
+　返信していただくことでも承っております。
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
