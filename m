@@ -1,166 +1,115 @@
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E5E41D5AC6;
-	Fri, 24 Jan 2025 09:10:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D73C61DB13B
+	for <linux-security-module@vger.kernel.org>; Fri, 24 Jan 2025 09:24:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737709813; cv=none; b=ktZ2G4AXaH76j+Bix4ijLXZOk3Smhb3h0UIQDFm919kRk8MVq19IBrsJ+2bT2HWa3lnrMZVbz8xCzfHBXl3po6Ev08EshObhlyTl4F45q4Ct2/1mk5egmpicdjlEvH/6rXP80ZtD25zJjEqYRXaHjOCjurDvON3oqQkGSsyQ8+w=
+	t=1737710678; cv=none; b=Ua1RmxTLmB8Tg7JFxWLcRjBxiVwZPu0itNN8VNMOGtny8LAXd7JlNABs9HUTMcPHXVJQeIoS9F1A4eTuJCSLqe+zowyTRn+apMynZY57/oBQECsh2sKJ+6wmEPUJ4YH4Vkj0eiQ5tRYfDI+jjWD8NKZbywnf7ftBJQLhofriIn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737709813; c=relaxed/simple;
-	bh=xk3kG0BCXcqkU0VbfYJ5fN8Nbwynu9/+rHAyME6dPeE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gmQNv/5WcNiwFbhjuYYRChVGsfpnbX2ScRt9bznFSIhf+iVoMIA7y/nfYAqpvEUCo4xYDMh+H9Pe+gmc7KMmO5KJUV//nkKPKL5RNCnASwhr6lwxuZplJAgJP2/YEWYW92dgjo+xEoPTuepeZYSSRdeY515s75dg9MHuwDklKdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q4k3viE5; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1737710678; c=relaxed/simple;
+	bh=OFlCvag1dCMWxCbQJF9vTIHIYpXQds68VWnbaoEmzps=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Rm9vFibs5E4zrUJ46hNcC3geAvRp8Ls9a7zYcJDbE5z8gwtAZ7eRuV46Gd49dtEAjQ1vsep6UwfyHYjrMj4dOpJpX2iQu4zSjDo/ladQK073CZqeJjwiMcx0En+WZdTzJPgrynkEdzFOcLTfo3hM+Jp+u3cb0A5YLLWOwey7Pwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GCFywpgO; arc=none smtp.client-ip=209.85.208.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q4k3viE5"
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5d3dce16a3dso3599914a12.1;
-        Fri, 24 Jan 2025 01:10:11 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GCFywpgO"
+Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-5d3d9d6293fso1888398a12.0
+        for <linux-security-module@vger.kernel.org>; Fri, 24 Jan 2025 01:24:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737709810; x=1738314610; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PebFCz8wHywlT4G0ONoQK1ioBzzlxVw1mqYjoRgT2S4=;
-        b=Q4k3viE5/+T5X6CZR2TtBX/ZVOzgJgHnXweDZimXYNlKzD4516R/Q/equ7IXbTvslu
-         4W89bGP0XYoRfaSDwmc5NOpGgVsOGhA3mKr2BF86lnKugs74O9ZZo+EZmg4/O+diox08
-         +QwshLltICq41BnFPjl+pruBtEsE2CQS/d5cNXMNFq4Fw2/CLrseDKqAhIsjftiVfGeH
-         oSp1XDNC5pTRfqKH1kK+o6EdFMA0VtSipzUCRsZUOdqlhoyFEoqMvgJx4YBBU02iErdx
-         3kAuFfOAXcZf0au5TPhsLcrPluY6T6/ZavtpzgVJQGRfs+ABvBgTHn/jpuaggwVHzIDf
-         Nclg==
+        d=google.com; s=20230601; t=1737710674; x=1738315474; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=r4qUWQfGYfCur4iR04Gogqvnq5G2P8cLb5tgTIutD9c=;
+        b=GCFywpgO6mJ6dKthtV1VZaRE7OH5tsptRUzI1aGKCKkEF8lRyyftq3cgHtccIHVTQQ
+         za95g6wybwk3OdfdmcjAX2nHuuHcBqzetz1obPQCFd8Bp6QLsVCPOgrwfjzC91ydLAXD
+         lJ/uuZSVjOvNAmmL7lkPQu/BGRRrCNJ4AqYpZceW+92PNzWgnQYnh6tjPn4cmvdwOLj9
+         09YflXlw1UrCZ6RSM8uBxLwvUj20VXG/u6UVHW6G3E2cJI6IGTruudE0ulWtaroBrglh
+         ANGT85Wfe22qY9BpAXtgPi0qanmX7pXaighmrBqfk9Fe/iM9IvDQTs7rDEswR+UdaBC4
+         mI6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737709810; x=1738314610;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PebFCz8wHywlT4G0ONoQK1ioBzzlxVw1mqYjoRgT2S4=;
-        b=MfegGQebc7Qd0/w7wv0VS2hpmvLoFpdKO+aciyoAjwOYbOeiK1FDXpMTdGZK72gZ9s
-         9GAv+KgQ/nGk7ivDG/5oCPzC+StbLB4/c7js6INNny8TG44K8eaDqKY8cydmQrI2TqHb
-         CIVECpZli5wHddapTkWksTaCrKSdAac7z+IEZ8rf1qLPETS3UkkyYbOiaDmSeZ1S/LY8
-         19ESaiyda0L36GuLm4oeA7KLyEmHtjTktKIQIpiPQkHpAGj9qZVYwu6ttDIsYBTRSuJF
-         XkvzP+OIuKWdFCXCbkMdmThr4yRupyj5zeA5hPGoj3c3BE6yBKay0bFJQgr2+r9C1Nnd
-         2E8A==
-X-Forwarded-Encrypted: i=1; AJvYcCXMJ73+rXbXNcHQE2fEYcSUbdYxvZudaYD02QVGfjU4wMuLUw+sqJoZGw7kFi/Z/fHPxWamEkZaQxdPVFJ2j+QwO5MNGLk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4ZVM76ZHb+/eevVG4lxf3BjVQ66JtqY22NJi0tc0x4C9Z4gET
-	nGrO9PhiLE7x3uA18dANc5GpRqn9fwOrmUXVtuG89gRnirndYf55eVstAJAwd+JmNk6oNVgMnlj
-	wgewkr6KvJXEenHu8XKCwtA1sbYlKTaAqpfE=
-X-Gm-Gg: ASbGnct6jCyqVQx4dYD8sd9+7e997it4fbjabfJ/Kp+OESeOkuKemm7RD0188s9lkzL
-	f2Gl5cVPEjQ+OCRZ9nEzQsPNNbpKMph/YN7PrTDWmJ28n6diXjf447GHxyfP0nA==
-X-Google-Smtp-Source: AGHT+IFrA7ABUjmPfjXLWyi0xqf+53fo9KMh4gxsb50I3VlPpKc6LfbT3fGBAeb3/9pKd6sRzjbrrmxv4fyFIjZyeps=
-X-Received: by 2002:a05:6402:40c6:b0:5dc:6c5:69d5 with SMTP id
- 4fb4d7f45d1cf-5dc17fed20cmr2451343a12.3.1737709809236; Fri, 24 Jan 2025
- 01:10:09 -0800 (PST)
+        d=1e100.net; s=20230601; t=1737710674; x=1738315474;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=r4qUWQfGYfCur4iR04Gogqvnq5G2P8cLb5tgTIutD9c=;
+        b=DdRPOnWUR1EBK4vSUE+KP5GoUUvFtE4RCUHcFgh9EllVIfAYuvLCTTPEwXmSJ5HrM9
+         W9+nm/TUefol+Aos/eHTf/yfHBnaUt/up9N01GnuS/9eZsZ/XfhrqyKeU5M6V6w7nTlf
+         2O7j3dSMkgooR12BNxMZfljk6QTcno4eP2AhDDHUU+ARE73c6nnVWspCYvaVkTpNghY7
+         kTD/YDawmxFJxmihZ0k13k319RmF2WBnQ+7TvyXlmtPmAo4TXBwm/nYBB0akpsmTAzOg
+         yR3+9H0Tfb3bYK1+4WdbpOO8OpLe20i3eKChztqoVJq7hrt8eVpC0vTdFqJvchkxQF8X
+         CDBA==
+X-Forwarded-Encrypted: i=1; AJvYcCU4Lydkd3AOuyeY/DsmW50TPbvjzYg4XnHgDiHJE52k5yX/Z5IarhroWhTYjMT5BdVO0ktettOXLL6Q1p44+ml/5CWUmzY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfxAnx/+EZCI4OvwM5NXTNSHtkdbedxu2cpJIil7fNDaIqShF8
+	5Hu3aiMyjNNMaO6xxoQufBWd/5GjuH9bxVz981tJHwNth5Lndd3Vi1EWJ1Pf7GC5OMN8yavkuum
+	wpg==
+X-Google-Smtp-Source: AGHT+IEyLOTvh3qO2R3zKQwDU3mM0N68wG3/2dAq6sVpthSi5GIlcCrKg2utWHsF1089JWIBT3RJ8EQvj2c=
+X-Received: from edbij8.prod.google.com ([2002:a05:6402:1588:b0:5cf:f391:7e9d])
+ (user=gnoack job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:51ce:b0:5d0:8197:7ab3
+ with SMTP id 4fb4d7f45d1cf-5db7d2e913amr22662796a12.3.1737710674232; Fri, 24
+ Jan 2025 01:24:34 -0800 (PST)
+Date: Fri, 24 Jan 2025 10:24:31 +0100
+In-Reply-To: <20250123194208.2660-1-tanyaagarwal25699@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250123194108.1025273-1-mszeredi@redhat.com> <20250123194108.1025273-5-mszeredi@redhat.com>
-In-Reply-To: <20250123194108.1025273-5-mszeredi@redhat.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 24 Jan 2025 10:09:57 +0100
-X-Gm-Features: AWEUYZlLUDlIG7daVyXQpAi5HxQSypgWDfM6ySPrJ_GWQXveV6CRHuRSyqGwdr0
-Message-ID: <CAOQ4uxhmL5P2WVMPQLjNnMD8+jqvkJD7_QVBKU9GEArdGw-7nw@mail.gmail.com>
-Subject: Re: [PATCH v4 4/4] vfs: add notifications for mount attribute change
-To: Miklos Szeredi <mszeredi@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
-	Jan Kara <jack@suse.cz>, Karel Zak <kzak@redhat.com>, 
-	Lennart Poettering <lennart@poettering.net>, Ian Kent <raven@themaw.net>, 
-	Al Viro <viro@zeniv.linux.org.uk>, linux-security-module@vger.kernel.org, 
-	Paul Moore <paul@paul-moore.com>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <20250123194208.2660-1-tanyaagarwal25699@gmail.com>
+Message-ID: <Z5NcT4Z3Fo5RrB9s@google.com>
+Subject: Re: [PATCH] landlock: fix grammar and spelling error
+From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
+To: Tanya Agarwal <tanyaagarwal25699@gmail.com>
+Cc: zohar@linux.ibm.com, mic@digikod.net, paul@paul-moore.com, 
+	jmorris@namei.org, serge@hallyn.com, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, 
+	anupnewsmail@gmail.com
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 23, 2025 at 8:41=E2=80=AFPM Miklos Szeredi <mszeredi@redhat.com=
-> wrote:
->
-> Notify when mount flags, propagation or idmap changes.
->
-> Just like attach and detach, no details are given in the notification, on=
-ly
-> the mount ID.
->
-> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+On Fri, Jan 24, 2025 at 01:12:10AM +0530, Tanya Agarwal wrote:
+> From: Tanya Agarwal <tanyaagarwal25699@gmail.com>
+>=20
+> Fix grammar and spelling error in landlock module comments that were
+> identified using the codespell tool.
+> No functional changes - documentation only.
+>=20
+> Signed-off-by: Tanya Agarwal <tanyaagarwal25699@gmail.com>
+> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 > ---
+> Original discussion:
+> https://lore.kernel.org/all/20250112072925.1774-1-tanyaagarwal25699@gmail=
+.com
+>=20
+> This patch set is split into individual patches for each LSM
+> to facilitate easier review by respective maintainers.
+>=20
+>  security/landlock/ruleset.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/security/landlock/ruleset.c b/security/landlock/ruleset.c
+> index a93bdbf52fff..c464d1f84792 100644
+> --- a/security/landlock/ruleset.c
+> +++ b/security/landlock/ruleset.c
+> @@ -121,7 +121,7 @@ create_rule(const struct landlock_id id,
+>  		return ERR_PTR(-ENOMEM);
+>  	RB_CLEAR_NODE(&new_rule->node);
+>  	if (is_object_pointer(id.type)) {
+> -		/* This should be catched by insert_rule(). */
+> +		/* This should have been caught by insert_rule(). */
+>  		WARN_ON_ONCE(!id.key.object);
+>  		landlock_get_object(id.key.object);
+>  	}
+> --=20
+> 2.39.5
+>=20
 
-My only nit this time is that I prefer the fsnotify/fanotify bits here
-to be in patches 1,2
-which as you write, only add the infrastructure to be used later.
+Reviewed-by: G=C3=BCnther Noack <gnoack@google.com>
 
-[...]
+Thanks!
 
-> --- a/fs/notify/fanotify/fanotify.h
-> +++ b/fs/notify/fanotify/fanotify.h
-> @@ -471,7 +471,7 @@ static inline bool fanotify_is_error_event(u32 mask)
->
->  static inline bool fanotify_is_mnt_event(u32 mask)
->  {
-> -       return mask & (FAN_MNT_ATTACH | FAN_MNT_DETACH);
-> +       return mask & FANOTIFY_MOUNT_EVENTS;
->  }
->
-
-This should have used the macro from the first use in patch 2.
-
-[...]
-
-> diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_ba=
-ckend.h
-> index 6c3e3a4a7b10..54e01803e309 100644
-> --- a/include/linux/fsnotify_backend.h
-> +++ b/include/linux/fsnotify_backend.h
-> @@ -58,6 +58,8 @@
->
->  #define FS_MNT_ATTACH          0x01000000      /* Mount was attached */
->  #define FS_MNT_DETACH          0x02000000      /* Mount was detached */
-> +#define FS_MNT_CHANGE          0x04000000      /* Mount was changed */
-> +
->  #define FS_MNT_MOVE            (FS_MNT_ATTACH | FS_MNT_DETACH)
->
->  /*
-> @@ -106,7 +108,8 @@
->                              FS_EVENTS_POSS_ON_CHILD | \
->                              FS_DELETE_SELF | FS_MOVE_SELF | \
->                              FS_UNMOUNT | FS_Q_OVERFLOW | FS_IN_IGNORED |=
- \
-> -                            FS_ERROR | FS_MNT_ATTACH | FS_MNT_DETACH)
-> +                            FS_ERROR | \
-> +                            FS_MNT_ATTACH | FS_MNT_DETACH | FS_MNT_CHANG=
-E )
-
-Please add those bits as a group in patch 1:
-
-@@ -80,6 +80,9 @@
-  */
- #define ALL_FSNOTIFY_DIRENT_EVENTS (FS_CREATE | FS_DELETE | FS_MOVE |
-FS_RENAME)
-
-+/* Mount namespace events */
-+#define FSNOTIFY_MNT_EVENTS (FS_MNT_ATTACH | FS_MNT_DETACH | FS_MNT_CHANGE=
-)
-+
- /* Content events can be used to inspect file content */
- #define FSNOTIFY_CONTENT_PERM_EVENTS (FS_OPEN_PERM | FS_OPEN_EXEC_PERM | \
-                                      FS_ACCESS_PERM)
-@@ -108,6 +111,7 @@
-
- /* Events that can be reported to backends */
- #define ALL_FSNOTIFY_EVENTS (ALL_FSNOTIFY_DIRENT_EVENTS | \
-+                            FSNOTIFY_MNT_EVENTS | \
-                             FS_EVENTS_POSS_ON_CHILD | \
-
-I am aware of the inconsistency of the names ALL_FSNOTIFY_* and FSNOTIFY_*
-but if you look at master as of last night you will find:
-
-FSNOTIFY_CONTENT_PERM_EVENTS and FSNOTIFY_PRE_CONTENT_EVENTS
-
-(please rebase)
-
-One day we may cleanup ALL_FSNOTIFY_DIRENT_EVENTS and
-ALL_FSNOTIFY_PERM_EVENTS to conform.
-
-Thanks,
-Amir.
+=E2=80=94G=C3=BCnther
