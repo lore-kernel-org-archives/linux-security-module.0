@@ -1,192 +1,184 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A20B23A0;
-	Fri, 24 Jan 2025 09:38:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC4D323A0;
+	Fri, 24 Jan 2025 09:59:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737711537; cv=none; b=Tc9XlAE05WVM8dCsWzlDV+laCUN6wxrOj3zyCokVyYsNuPJHJRZjDYvo+ty5Ix6VSoj6KwLbJDrsEyYvFK0c+GoX/A4TiwuAe47y7qcUI/pkb0nAH+Gv9IxbP8MqIL6Qfp7GCD9V4JSm2a7cePJBVWdPHJH8cfC4Mz/d2qDnQKA=
+	t=1737712754; cv=none; b=dEBfeMeoNtMvQDtCn6mrHcQ8pIN5FbK/TSguO2ot5zMXZEbPcFYynUEz5/v9nHriinuznE5QXntWfSZGUv1+p4jExEVS1uglz0KSj4Kb8/o/X7rquTPWD5jOtCqXBVx00JD7P4FbS42SI7leqd7P9rycNK6Pknj33OsziNimnbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737711537; c=relaxed/simple;
-	bh=w44kYJhywS4/lsXTR5UrbeYOFe3r10lL99Jo0jLdLfo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CIYjvBHGyMSCSG4RZChMQGuOBVEs15pZ6vwMv9DHYZytk38o2rWPOA3EWhN3hfoK85YTCMdlbJNf2gK0GYJp062vNZwPtpHn84xn9PoO8F9qNqTzfAR/WmeP8VWWIG4hyJPH0pPJCGI9yPYIGME6UOBDQHbDwxOEZJDZcoCI9zU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ayliuE46; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ayliuE46"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 457A3C4CED2;
-	Fri, 24 Jan 2025 09:38:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1737711537;
-	bh=w44kYJhywS4/lsXTR5UrbeYOFe3r10lL99Jo0jLdLfo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ayliuE46c+pkA4cw/TgHsouqsiEEftspfVob2Dh8Wegh2NNJYvDxDdtPFFGPCk1SL
-	 wVz11BKwjOmQosW5Wiuu9R1o3TjWJr0wJzKw3yXcKAfDIn7AXvUqd0xA7hBA3xkmB1
-	 elwLMw5LFGUT1J3V+wEP9YSG6JC026hgc+mxvGqMhh7VAKlx+G9zArV2z/9aGMNgC5
-	 /LpuJgfjXXybVjwXzMcNn3T2HEK8YLRRQdYFVfkQAbg0F6EK0cin0cRyIMO84/MweJ
-	 uFmXVnjrznA+vcqwwKQ9HkhflSfy9CewFL1iCe7pN8V2soL1uANnpB1ewIglfqLK4I
-	 gUbupDqLGAarQ==
-Date: Fri, 24 Jan 2025 10:38:49 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Kees Cook <kees@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, linux-mm@kvack.org, akpm@linux-foundation.org, 
-	linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org, kernel-team@meta.com, rostedt@goodmis.org, peterz@infradead.org, 
-	mingo@kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, shakeel.butt@linux.dev, rppt@kernel.org, liam.howlett@oracle.com, 
-	Jann Horn <jannh@google.com>, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH] mm,procfs: allow read-only remote mm access under
- CAP_PERFMON
-Message-ID: <20250124-hermachen-truthahn-f0ba886b6ae7@brauner>
-References: <20250123214342.4145818-1-andrii@kernel.org>
- <CAJuCfpE9QOo-xmDpk_FF=gs3p=9Zzb-Q5yDaKAEChBCnpogmQg@mail.gmail.com>
- <202501231526.A3C13EC5@keescook>
- <CAEf4BzbYBw3kzWyyG42VZSKh8MX+Xfqa1B_TRRN4p35_C9xZmw@mail.gmail.com>
+	s=arc-20240116; t=1737712754; c=relaxed/simple;
+	bh=IOJbrv4HLpkCrnpS1TfQMsAY9A5wfjrrUImFdpHuccM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=FD/7YbbMT0vbD829qf8U3PHO3UhHEb43b1HGFMl7v5umQG0pP+Y1h2HqLpFTVd2DtOjmFNtH+pvAmVl2uRTIxfB5btVFjiWYEIpU8l1Ab6ea5wsZULBFqqFIgwDbV2TN9/0wwuEr+SZVkizvLwQ1QiMeNYQJZAQfvc4WQ21z8/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4YfYBX6527z6L53p;
+	Fri, 24 Jan 2025 17:57:08 +0800 (CST)
+Received: from mscpeml500004.china.huawei.com (unknown [7.188.26.250])
+	by mail.maildlp.com (Postfix) with ESMTPS id 757FC1402DB;
+	Fri, 24 Jan 2025 17:59:07 +0800 (CST)
+Received: from [10.123.123.159] (10.123.123.159) by
+ mscpeml500004.china.huawei.com (7.188.26.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Fri, 24 Jan 2025 12:59:05 +0300
+Message-ID: <4b24e1d8-8249-ef0e-5069-90fb7b315503@huawei-partners.com>
+Date: Fri, 24 Jan 2025 12:59:03 +0300
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/6] landlock: Add UDP sendmsg access control
+Content-Language: ru
+To: Matthieu Buffet <matthieu@buffet.re>, Mickael Salaun <mic@digikod.net>
+CC: Gunther Noack <gnoack@google.com>, <konstantin.meskhidze@huawei.com>, Paul
+ Moore <paul@paul-moore.com>, <linux-security-module@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <netfilter-devel@vger.kernel.org>, Pablo Neira
+ Ayuso <pablo@netfilter.org>, Jozsef Kadlecsik <kadlec@netfilter.org>
+References: <20241214184540.3835222-1-matthieu@buffet.re>
+ <20241214184540.3835222-4-matthieu@buffet.re>
+ <d77d347c-de99-42b4-a6f5-6982ed2d413f@buffet.re>
+From: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+In-Reply-To: <d77d347c-de99-42b4-a6f5-6982ed2d413f@buffet.re>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzbYBw3kzWyyG42VZSKh8MX+Xfqa1B_TRRN4p35_C9xZmw@mail.gmail.com>
+X-ClientProxiedBy: lhrpeml100002.china.huawei.com (7.191.160.241) To
+ mscpeml500004.china.huawei.com (7.188.26.250)
 
-On Thu, Jan 23, 2025 at 04:59:38PM -0800, Andrii Nakryiko wrote:
-> On Thu, Jan 23, 2025 at 3:47 PM Kees Cook <kees@kernel.org> wrote:
-> >
-> > On Thu, Jan 23, 2025 at 01:52:52PM -0800, Suren Baghdasaryan wrote:
-> > > On Thu, Jan 23, 2025 at 1:44 PM Andrii Nakryiko <andrii@kernel.org> wrote:
-> > > >
-> > > > It's very common for various tracing and profiling toolis to need to
-> > > > access /proc/PID/maps contents for stack symbolization needs to learn
-> > > > which shared libraries are mapped in memory, at which file offset, etc.
-> > > > Currently, access to /proc/PID/maps requires CAP_SYS_PTRACE (unless we
-> > > > are looking at data for our own process, which is a trivial case not too
-> > > > relevant for profilers use cases).
-> > > >
-> > > > Unfortunately, CAP_SYS_PTRACE implies way more than just ability to
-> > > > discover memory layout of another process: it allows to fully control
-> > > > arbitrary other processes. This is problematic from security POV for
-> > > > applications that only need read-only /proc/PID/maps (and other similar
-> > > > read-only data) access, and in large production settings CAP_SYS_PTRACE
-> > > > is frowned upon even for the system-wide profilers.
-> > > >
-> > > > On the other hand, it's already possible to access similar kind of
-> > > > information (and more) with just CAP_PERFMON capability. E.g., setting
-> > > > up PERF_RECORD_MMAP collection through perf_event_open() would give one
-> > > > similar information to what /proc/PID/maps provides.
-> > > >
-> > > > CAP_PERFMON, together with CAP_BPF, is already a very common combination
-> > > > for system-wide profiling and observability application. As such, it's
-> > > > reasonable and convenient to be able to access /proc/PID/maps with
-> > > > CAP_PERFMON capabilities instead of CAP_SYS_PTRACE.
-> > > >
-> > > > For procfs, these permissions are checked through common mm_access()
-> > > > helper, and so we augment that with cap_perfmon() check *only* if
-> > > > requested mode is PTRACE_MODE_READ. I.e., PTRACE_MODE_ATTACH wouldn't be
-> > > > permitted by CAP_PERFMON.
-> > > >
-> > > > Besides procfs itself, mm_access() is used by process_madvise() and
-> > > > process_vm_{readv,writev}() syscalls. The former one uses
-> > > > PTRACE_MODE_READ to avoid leaking ASLR metadata, and as such CAP_PERFMON
-> > > > seems like a meaningful allowable capability as well.
-> > > >
-> > > > process_vm_{readv,writev} currently assume PTRACE_MODE_ATTACH level of
-> > > > permissions (though for readv PTRACE_MODE_READ seems more reasonable,
-> > > > but that's outside the scope of this change), and as such won't be
-> > > > affected by this patch.
-> > >
-> > > CC'ing Jann and Kees.
-> > >
-> > > >
-> > > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> > > > ---
-> > > >  kernel/fork.c | 11 ++++++++++-
-> > > >  1 file changed, 10 insertions(+), 1 deletion(-)
-> > > >
-> > > > diff --git a/kernel/fork.c b/kernel/fork.c
-> > > > index ded49f18cd95..c57cb3ad9931 100644
-> > > > --- a/kernel/fork.c
-> > > > +++ b/kernel/fork.c
-> > > > @@ -1547,6 +1547,15 @@ struct mm_struct *get_task_mm(struct task_struct *task)
-> > > >  }
-> > > >  EXPORT_SYMBOL_GPL(get_task_mm);
-> > > >
-> > > > +static bool can_access_mm(struct mm_struct *mm, struct task_struct *task, unsigned int mode)
-> > > > +{
-> > > > +       if (mm == current->mm)
-> > > > +               return true;
-> > > > +       if ((mode & PTRACE_MODE_READ) && perfmon_capable())
-> > > > +               return true;
-> > > > +       return ptrace_may_access(task, mode);
-> > > > +}
-> >
-> > nit: "may" tends to be used more than "can" for access check function naming.
+On 1/21/2025 1:30 AM, Matthieu Buffet wrote:
+> Hi,
 > 
-> good point, will change to "may"
+> (for netfilter folks added a bit late: this should be self-contained but 
+> original patch is here[1], it now raises a question about netfilter hook 
+> execution context at the end of this email - you can just skip to it if 
+> not interested in the LSM part)
 > 
-> >
-> > So, this will bypass security_ptrace_access_check() within
-> > ptrace_may_access(). CAP_PERFMON may be something LSMs want visibility
-> > into.
+> On 12/14/2024 7:45 PM, Matthieu Buffet wrote:
+>> Add support for a LANDLOCK_ACCESS_NET_SENDTO_UDP access right,
+>> complementing the two previous LANDLOCK_ACCESS_NET_CONNECT_UDP and
+>> LANDLOCK_ACCESS_NET_BIND_UDP.
+>> It allows denying and delegating the right to sendto() datagrams with an
+>> explicit destination address and port, without requiring to connect() the
+>> socket first.
+>> [...]
+>> +static int hook_socket_sendmsg(struct socket *const sock,
+>> +                   struct msghdr *const msg, const int size)
+>> +{
+>> +    const struct landlock_ruleset *const dom =
+>> +        landlock_get_applicable_domain(landlock_get_current_domain(),
+>> +                           any_net);
+>> +    const struct sockaddr *address = (const struct sockaddr 
+>> *)msg->msg_name;
+>> +    const int addrlen = msg->msg_namelen;
+>> +    __be16 port;
+>> +     [...]
+>> +    if (!sk_is_udp(sock->sk))
+>> +        return 0;
+>> +
+>> +    /* Checks for minimal header length to safely read sa_family. */
+>> +    if (addrlen < offsetofend(typeof(*address), sa_family))
+>> +        return -EINVAL;
+>> +
+>> +    switch (address->sa_family) {
+>> +    case AF_UNSPEC:
+>> +        /*
+>> +         * Parsed as "no address" in udpv6_sendmsg(), which means
+>> +         * we fall back into the case checked earlier: policy was
+>> +         * enforced at connect() time, nothing to enforce here.
+>> +         */
+>> +        if (sock->sk->sk_prot == &udpv6_prot)
+>> +            return 0;
+>> +        /* Parsed as "AF_INET" in udp_sendmsg() */
+>> +        fallthrough;
+>> +    case AF_INET:
+>> +        if (addrlen < sizeof(struct sockaddr_in))
+>> +            return -EINVAL;
+>> +        port = ((struct sockaddr_in *)address)->sin_port;
+>> +        break;
+>> +
+>> +#if IS_ENABLED(CONFIG_IPV6)
+>> +    case AF_INET6:
+>> +        if (addrlen < SIN6_LEN_RFC2133)
+>> +            return -EINVAL;
+>> +        port = ((struct sockaddr_in6 *)address)->sin6_port;
+>> +        break;
+>> +#endif /* IS_ENABLED(CONFIG_IPV6) */
+>> +
+>> +    default:
+>> +        return -EAFNOSUPPORT;
+>> +    }
+>> +
+>> +    return check_access_port(dom, LANDLOCK_ACCESS_NET_SENDTO_UDP, port);
+>> +}
+>> +
+>>   static struct security_hook_list landlock_hooks[] __ro_after_init = {
+>>       LSM_HOOK_INIT(socket_bind, hook_socket_bind),
+>>       LSM_HOOK_INIT(socket_connect, hook_socket_connect),
+>> +    LSM_HOOK_INIT(socket_sendmsg, hook_socket_sendmsg),
+>>   };
 > 
-> yeah, similar to perf's perf_check_permission() (though, admittedly,
-> perf has its own security_perf_event_open(&attr, PERF_SECURITY_OPEN)
-> check much earlier in perf_event_open() logic)
+> Looking back at this part of the patch to fix the stupid #ifdef, I 
+> noticed sk->sk_prot can change under our feet, just like sk->sk_family 
+> as highlighted by Mikhail in [2] due to setsockopt(IPV6_ADDRFORM).
+> Replacing the check with READ_ONCE(sock->sk->sk_family) == AF_INET6 or 
+> even taking the socket's lock would not change anything:
+> setsockopt(IPV6_ADDRFORM) runs concurrently and locklessly.
 > 
-> >
-> > It also bypasses the dumpability check in __ptrace_may_access(). (Should
-> > non-dumpability block visibility into "maps" under CAP_PERFMON?)
+> So with this patch, any Landlock domain with rights to connect(port A) 
+> and no port allowed to be set explicitly in sendto() could actually 
+> sendto(arbitrary port B) :
+> 1. create an IPv6 UDP socket
+> 2. connect it to (any IPv4-mapped-IPv6 like ::ffff:127.0.0.1, port A)
+> 3a. sendmsg(AF_UNSPEC + actual IPv4 target, port B)
+> 3b. race setsockopt(IPV6_ADDRFORM) on another thread
+> 4. retry from 1. until sendmsg() succeeds
 > 
-> With perf_event_open() and PERF_RECORD_MMAP none of this dumpability
-> is honored today as well, so I think CAP_PERFMON should override all
-> these ptrace things here, no?
+> I've put together a quick PoC, the race works. SELinux does not have 
+> this problem because it uses a netfilter hook, later down the packet 
+> path. I see three "fixes", I probably missed some others:
 > 
-> >
-> > This change provides read access for CAP_PERFMON to:
-> >
-> > /proc/$pid/maps
-> > /proc/$pid/smaps
-> > /proc/$pid/mem
-> > /proc/$pid/environ
-> > /proc/$pid/auxv
-> > /proc/$pid/attr/*
-> > /proc/$pid/smaps_rollup
-> > /proc/$pid/pagemap
-> >
-> > /proc/$pid/mem access seems way out of bounds for CAP_PERFMON. environ
-> > and auxv maybe too much also. The "attr" files seem iffy. pagemap may be
-> > reasonable.
+> A: block IPV6_ADDRFORM support in a setsockopt() hook, if UDP_SENDMSG is 
+> handled. AFAIU, not an option since this breaks a userland API
 > 
-> As Shakeel pointed out, /proc/PID/mem is PTRACE_MODE_ATTACH, so won't
-> be permitted under CAP_PERFMON either.
+> B: remove sendmsg(AF_UNSPEC) support on IPv6 sockets. Same problem as A
 > 
-> Don't really know what auxv is, but I could read all that with BPF if
-> I had CAP_PERFMON, for any task, so not like we are opening up new
-> possibilities here.
-> 
-> >
-> > Gaining CAP_PERFMON access to *only* the "maps" file doesn't seem too
-> > bad to me, but I think the proposed patch ends up providing way too wide
-> > access to other things.
-> 
-> I do care about maps mostly, yes, but I also wanted to avoid
-> duplicating all that mm_access() logic just for maps (and probably
-> smaps, they are the same data). But again, CAP_PERFMON basically means
-> read-only tracing access to anything within kernel and any user
-> process, so it felt appropriate to allow CAP_PERFMON here.
-> 
-> >
-> > Also, this is doing an init-namespace capability check for
-> > CAP_PERFMON (via perfmon_capable()). Shouldn't this be per-namespace?
-> 
-> CAP_PERFMON isn't namespaced as far as perf_event_open() is concerned,
-> so at least for that reason I don't want to relax the requirement
-> here. Namespacing CAP_PERFMON in general is interesting and I bet
-> there are users that would appreciate that, but that's an entire epic
-> journey we probably don't want to start here.
+> C: use a netfilter NF_INET_LOCAL_OUT hook like selinux_ip_output() 
+> instead of an LSM hook
 
-Agreed.
+We can naively follow the semantics of this flag: "This access right is
+checked [...] when the destination address passed is not NULL", and
+check address even for IPV6+AF_UNSPEC. Calling sendto() on IPV6 socket
+with specified AF_UNSPEC address does not look like common or useful
+practice and can be restricted.
+
+> 
+> For C, problem is to get the sender process' credentials, and ideally to 
+> avoid tagging sockets (what SELinux uses to fetch its security context, 
+> also why it does not have this problem). Otherwise, we would add another 
+> case of varying semantics (like rights to truncate/ioctl) to keep in 
+> mind for Landlock users, this time with sockets kept after enforcing a 
+> new ruleset, or passed to/from another domain - not a fan.
+> 
+> I don't know if it is safe to assume for UDP that NF_INET_LOCAL_OUT 
+> executes in process context: [3] doesn't specify, and [4] mentions the 
+> possibility to execute in interrupt context due to e.g. retransmits, but 
+> that does not apply to UDP. Looking at the code, it looks like it has to 
+> run in process context to be able to make the syscall return EPERM if 
+> the verdict is NF_DROP, but I don't know if that's something that can be 
+> relied upon to be always true, including in future revisions. Could use 
+> some input from someone knowledgeable in netfilter.
+> 
+> What do you think?
+> 
+> [1] 
+> https://lore.kernel.org/all/20241214184540.3835222-1-matthieu@buffet.re/
+> [2] https://lore.kernel.org/netdev/20241212.zoh7Eezee9ka@digikod.net/T/
+> [3] 
+> https://www.netfilter.org/documentation/HOWTO/netfilter-hacking-HOWTO-4.html#ss4.6
+> [4] 
+> https://netfilter-devel.vger.kernel.narkive.com/yZHiFEVh/execution-context-in-netfilter-hooks#post5
