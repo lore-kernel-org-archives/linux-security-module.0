@@ -1,93 +1,223 @@
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9768A4C91
-	for <linux-security-module@vger.kernel.org>; Fri, 24 Jan 2025 01:02:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF5713AC1;
+	Fri, 24 Jan 2025 01:02:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737680563; cv=none; b=L7hfM1NK3rglEEwGyQlBdqIrsyhvz15ux0o6U0KOI7Q/2FIsItkfdTHgoW65WOoBluMmlIyXO60JShbZ+ZS0JUtH2h1fnM8Bwp+xVFD4ThJ6kI0nf6QEDNllUHu/OXfkZ/djSJ7pmwYG8kbrjTySUKBkrQ6R3fiIzbwgSz96bZw=
+	t=1737680578; cv=none; b=llvwYU4ZYXVFGuY4LeJlgbDpA8nplo2nwBBwLbR179HfEPNiZF23Bsxm4QLoWigOFItjCzhL4RoiC2lKGid7GgvnSJLqVlno+wz2c5tjvCRQjJt2X37uvOKbou92h3CdbedT6JkxF+w42Wbmp5ZGacyHQa2BbuhMOPN78E+T8nY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737680563; c=relaxed/simple;
-	bh=rWo4Nb9mYvI0PiMIQ2wnnmSMguUdWNj5SKVmlpgERa4=;
+	s=arc-20240116; t=1737680578; c=relaxed/simple;
+	bh=Rq8kZwwXGjztMSgzkUP1H/YqKvt3qDXZ21j1s3ck1B0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fQV8QV2JZh22tNbcf2qNMc/w3aq8xsah0ev8+fBU87iFDFlJpTGYpnTqjSnUu82aTy3Te/8L1wceHmgQYPqTM/Ls58/fNvt6qXH0X8/LSHtXtJbypK6OgfUrxFWPhwIIMJWf5/Y+fOYQwtbOdE0VyQN5eqN0fF6Jr92BJfV9n8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=V+maciEu; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	 To:Cc:Content-Type; b=Cpyhzq3Vv3xGeAxqCjEvsT0CLCFOMvhYO5S2hVzLVT8hZ7LvO5dLHrIek8qHIqGR7F9NJ7Vi20Rr0Q+K447pbxIMuvMelnId/pIAk76FbcwAlLhTjEmhfLkaxU+SScNjqqvkwRqiWC7dEf1Xtdui+NkG64au3vXjnE1Rr0A5xJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kb6LZiNn; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="V+maciEu"
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e53a91756e5so2859163276.1
-        for <linux-security-module@vger.kernel.org>; Thu, 23 Jan 2025 17:02:40 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kb6LZiNn"
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2164b1f05caso26478215ad.3;
+        Thu, 23 Jan 2025 17:02:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1737680559; x=1738285359; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1737680576; x=1738285376; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=AHr9mD9A58MKwLx0E6DiQmvmvw3cmv2wbrUh7jTBVtY=;
-        b=V+maciEu+c2YgKWxY8wVvr37FIgZJuaWmtHgd7YWVM4+wyKIgpbshVn7F7FCPwBVSJ
-         ZVnsC+YM3eO2DKe2uRB/Hb2/amS3kfcLKbUCt2imLEsdSfYqxHCm3v1o5bNZY/aMh555
-         jupgqOVdTcy74D5TdtOKH16TzUr9/OTIdnvUq6MwV/sLUYT5cLxctoaqs3anxTTEiKJa
-         CCbFHMNROWSD9mDVFzTI11mq2/6+cUcnxjZldxPVbMR0SdQMvo9hsLwNnz+PARKIwNap
-         7Xh6emdvAACAu7fzF1fMmvXsLc6VMjIFchOeTkiity2KmAZ4IlHbyIKKrkQbzxHjxwOf
-         JD8g==
+        bh=D0aJPrChJkjhsAZYwCY7691Ium0idIWe4UuZ5CwOmvw=;
+        b=Kb6LZiNnNsy45N3x9BUZFMAT4m6MYqT+uR0+JumMm/Djz5cdVm2C4r0GvxM63OmSEH
+         l1PSTbzOp8L9w/dICbUs5YMkofRCje5vJlUs4pRgbSo77q4fl5ZB1aGX0g9jIBqPJtdc
+         7jKBoMSBShHtFfq47Him6yNUEA3dSs7OPpbiyEQFgZfEpjQpOZwPzGBIwvaUM2jQPkKt
+         fIn+vPoFJWZfY9WjIZ9AILWZr3iV80FO773MAVCZzNKECOCd/P14hdXBOgFnUVt5APD9
+         LI09+VEIUgh9GSCzxn0uPGzTaU77HJE4UChWaPrxUQVaJYGhFX1Q+GOopJbQOhEANWH+
+         eVgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737680559; x=1738285359;
+        d=1e100.net; s=20230601; t=1737680576; x=1738285376;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=AHr9mD9A58MKwLx0E6DiQmvmvw3cmv2wbrUh7jTBVtY=;
-        b=XUx2qWHz98NvEvnRUijp6gVaSVFNcmW84ATVZ/DKBH6xE5zN3SiK0lOcekzE8xCCA+
-         tBMqOIdMztU3/CrIBIDyJmhcCpLwqiKdPhk57Tneje6Iv6TeA5wdXMbe0imtVinp95cZ
-         Z+e8gwsgdt4LR4s4bJpKc4azKTqHZDBSn/NZtIc7A40HrNAlcw5TZYvozm4l/WFRU/Ol
-         ritW694TbI4XP3YJKyv0b3exGUK5N31ovEwM+uGiBR27WmL/1V4oepWSp72uiWK/b7G2
-         l1zvIn76jm7ttQKVY5wlWx2u8CEm1gymZXrUyM5kED0CH+7BjgfK/MbozXVpkT2Q2qp5
-         OgXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXNAHGE22a9aTf6GDhHZ5AIBuZoUtH1olL9jSttwITyNuERG2usNzcx1RFBlUELrqMNTFc9QRfYls/VNm4d7hORB4m0BZQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwS5r12XAB5FUvSQ0xtISkre3OJ6Ba2AvExcoH4OpFWDvChbHaS
-	zD/krRjYTl/93+U4ARioi/KUbuI3FzZZQiK146efXd7TZkYYf8evJ+LiQW2b0J4r88d6nCEQFrr
-	Z3trHVC6dnh0QIsxWQqBSSjWpxKtpvrjtWujd4grTanQzf6s=
-X-Gm-Gg: ASbGncu045k3Ef3zw83ypf2DQ6+ru7YIzdXTnnnHCvOK3bzHJuJbg1EhujO1bFpOr+S
-	3GvCjGOQUPXTcpeyOnUDSSdJ/EbitFKP4DB72xpeWd3fFJLsxF2Yw7pAW9ufj
-X-Google-Smtp-Source: AGHT+IElp6TBEcc84dL7qmH9z3gGe/bK7LKNsZXLq++G7Vn4tEsmoTZ3xVmsWhnzvir0ZRpTUNnQVXOTWirLrtcXPik=
-X-Received: by 2002:a05:690c:6a04:b0:6ef:48ac:9d0c with SMTP id
- 00721157ae682-6f6eb90d52fmr226383637b3.25.1737680559461; Thu, 23 Jan 2025
- 17:02:39 -0800 (PST)
+        bh=D0aJPrChJkjhsAZYwCY7691Ium0idIWe4UuZ5CwOmvw=;
+        b=MjOTqwhjbcK1j0kr7iqCZceraRSlra/Kj8NjJ8nsGB53JxsBv7TLB/vUl+oDtU9UFt
+         8IBRUoPVAAJVuqUTk5gcWfpRsEPMxFakdkk42ZL/tg29XBrJP7TCq52BGVVfE57ArTz7
+         mYDdAUHZdzirDR0k0DvxyUKWngQ90MCn9uGyvFD6b6zvfNlLlo0lU0wp8j74wjKvIx1/
+         Ty2U3acu/ZPv2BYeS745nn8RCC0+D38FG/MYimohgFpC00CvcKPJusv5uKWRmNqIlzuI
+         Et+6dWBnrz8IH8xWzXEk9rH7m+1w7K8wSMK8UJxjGUqbEfMWhuCoC+YQ8eKpKJaLSMUH
+         lHjg==
+X-Forwarded-Encrypted: i=1; AJvYcCVoL64CgoE96StzztDnzCoNcCa553cmitgbw1j0ftFvkBNw5S0uqWcm6luVK+uui7pkZUWxluW1ncd4iHVpzo03MYNT@vger.kernel.org, AJvYcCWBH6hdcZhfbKM+BzXMqbcYhB35nRFkjN1vw9BfaP4Lcdo6sR47ry3/WZEolcuX1PQU+neB5FP3l8W8t0mkWz1jigVbTQ8p@vger.kernel.org, AJvYcCWX4TCHlJ6M4uATqoGFK0zxGyGSETJUJxPRipujI6vxo47wzTusAvP5DvJm/Ja9pmANJ0XgL4hSe8Rzjmle@vger.kernel.org, AJvYcCX+PidXgu/ui01K/XinzcD5HOrODeuSeIByspoFSIeAp/R0FD3O/LsjGgyQe7b76J2HV3yWw9vtKXL+IjOm44IaFw==@vger.kernel.org, AJvYcCX+f5nJHPYRXgSiJ54IxtDTVeulIYh33Tz2Oq7DbBVM/AqGscy42fIQJa19Ir964Z8hTYx0eFyfiNcsER05Sg==@vger.kernel.org, AJvYcCXaCd4buSUOdEaoz+zE+Ofv+V5kn/GYa+gRTdO4xfyOdaFhrLPoYJ3uLKWOQwKYP3bMEAg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIIAHlsE42BcU1oPbov3lmOXRm29pJ6/rsS6RG3F5LVzlEDUZU
+	n44a/8was8Uj8CpOJA4a7yZubZGGPoVsLKyYNObWq4Dzjj1QWxBZgZIPZI1wzOIhvxNNhoSE9Rk
+	ahQFMpsn4qsSMqUzF29nuOGagVlI=
+X-Gm-Gg: ASbGncvxxKVuFToK6jNUADiaOvo7zJcrVEc9Mq2Gq9qc3Wa4CdubRaKmXZe/IpusTJq
+	Ic8AWtlNMIh4g5AxTLe8usshh98emVUlvS19ptjzsqT7zGYTWjAiXg+Eh98SFMulceBRh5ykcug
+	SJzQ==
+X-Google-Smtp-Source: AGHT+IEuyDzr4dFkkBvqvAW5OHSqHScPRQtMfqosR3W768baJCU6A9tUKJV1y5CH1vjwgjK9jbohovckbO/Io8mhO64=
+X-Received: by 2002:a05:6a00:4214:b0:727:3c8f:3707 with SMTP id
+ d2e1a72fcca58-72dafbf3b34mr41968026b3a.23.1737680575847; Thu, 23 Jan 2025
+ 17:02:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250123-sysctl-kees-v1-0-533359e74d66@suse.com> <202501231521.A114C18BE@keescook>
-In-Reply-To: <202501231521.A114C18BE@keescook>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 23 Jan 2025 20:02:28 -0500
-X-Gm-Features: AWEUYZlvqupEnE3nswlAITAU0hFnRLfZwPmbchWJyo7ZrVU4xcLOuYvltZht8fg
-Message-ID: <CAHC9VhQz-uOsKTynZk-vcGxLgSTJPaT-6QkfkT+poDSu=XV8dA@mail.gmail.com>
-Subject: Re: [PATCH 0/2] security: Constify sysctl tables
-To: Kees Cook <kees@kernel.org>
-Cc: "Ricardo B. Marliere" <ricardo@marliere.net>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, "Ricardo B. Marliere" <rbm@suse.com>, 
-	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+References: <20250123214342.4145818-1-andrii@kernel.org> <CAJuCfpE9QOo-xmDpk_FF=gs3p=9Zzb-Q5yDaKAEChBCnpogmQg@mail.gmail.com>
+ <202501231526.A3C13EC5@keescook> <CAG48ez1TXEJH3mFmm-QZbbmr_YupnoLA0WQx6WgxKQSHP3jPSA@mail.gmail.com>
+In-Reply-To: <CAG48ez1TXEJH3mFmm-QZbbmr_YupnoLA0WQx6WgxKQSHP3jPSA@mail.gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Thu, 23 Jan 2025 17:02:40 -0800
+X-Gm-Features: AbW1kvaNIXPwtdjTpZnh9pk24SpZKxJaM3CayvMBHXdj24HdZVOFF_DSCaFQHy4
+Message-ID: <CAEf4BzaToT9YcwPm7N63wK0dLTVLEVwABCBXmRVP5+_A7bCKpg@mail.gmail.com>
+Subject: Re: [PATCH] mm,procfs: allow read-only remote mm access under CAP_PERFMON
+To: Jann Horn <jannh@google.com>
+Cc: Kees Cook <kees@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, linux-mm@kvack.org, akpm@linux-foundation.org, 
+	linux-fsdevel@vger.kernel.org, brauner@kernel.org, viro@zeniv.linux.org.uk, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, kernel-team@meta.com, 
+	rostedt@goodmis.org, peterz@infradead.org, mingo@kernel.org, 
+	linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	shakeel.butt@linux.dev, rppt@kernel.org, liam.howlett@oracle.com, 
+	linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 23, 2025 at 6:21=E2=80=AFPM Kees Cook <kees@kernel.org> wrote:
-> On Thu, Jan 23, 2025 at 04:33:33PM -0300, Ricardo B. Marliere wrote:
-> > Please consider pulling these small cleanup patches. They simply add
-> > "const" to a couple of ctl_table structs within your subsystem.
+On Thu, Jan 23, 2025 at 3:55=E2=80=AFPM Jann Horn <jannh@google.com> wrote:
 >
-> Paul, do you want to take these, or should I put them in my tree?
+> On Fri, Jan 24, 2025 at 12:47=E2=80=AFAM Kees Cook <kees@kernel.org> wrot=
+e:
+> > On Thu, Jan 23, 2025 at 01:52:52PM -0800, Suren Baghdasaryan wrote:
+> > > On Thu, Jan 23, 2025 at 1:44=E2=80=AFPM Andrii Nakryiko <andrii@kerne=
+l.org> wrote:
+> > > >
+> > > > It's very common for various tracing and profiling toolis to need t=
+o
+> > > > access /proc/PID/maps contents for stack symbolization needs to lea=
+rn
+> > > > which shared libraries are mapped in memory, at which file offset, =
+etc.
+> > > > Currently, access to /proc/PID/maps requires CAP_SYS_PTRACE (unless=
+ we
+> > > > are looking at data for our own process, which is a trivial case no=
+t too
+> > > > relevant for profilers use cases).
+> > > >
+> > > > Unfortunately, CAP_SYS_PTRACE implies way more than just ability to
+> > > > discover memory layout of another process: it allows to fully contr=
+ol
+> > > > arbitrary other processes. This is problematic from security POV fo=
+r
+> > > > applications that only need read-only /proc/PID/maps (and other sim=
+ilar
+> > > > read-only data) access, and in large production settings CAP_SYS_PT=
+RACE
+> > > > is frowned upon even for the system-wide profilers.
+> > > >
+> > > > On the other hand, it's already possible to access similar kind of
+> > > > information (and more) with just CAP_PERFMON capability. E.g., sett=
+ing
+> > > > up PERF_RECORD_MMAP collection through perf_event_open() would give=
+ one
+> > > > similar information to what /proc/PID/maps provides.
+> > > >
+> > > > CAP_PERFMON, together with CAP_BPF, is already a very common combin=
+ation
+> > > > for system-wide profiling and observability application. As such, i=
+t's
+> > > > reasonable and convenient to be able to access /proc/PID/maps with
+> > > > CAP_PERFMON capabilities instead of CAP_SYS_PTRACE.
+> > > >
+> > > > For procfs, these permissions are checked through common mm_access(=
+)
+> > > > helper, and so we augment that with cap_perfmon() check *only* if
+> > > > requested mode is PTRACE_MODE_READ. I.e., PTRACE_MODE_ATTACH wouldn=
+'t be
+> > > > permitted by CAP_PERFMON.
+> > > >
+> > > > Besides procfs itself, mm_access() is used by process_madvise() and
+> > > > process_vm_{readv,writev}() syscalls. The former one uses
+> > > > PTRACE_MODE_READ to avoid leaking ASLR metadata, and as such CAP_PE=
+RFMON
+> > > > seems like a meaningful allowable capability as well.
+> > > >
+> > > > process_vm_{readv,writev} currently assume PTRACE_MODE_ATTACH level=
+ of
+> > > > permissions (though for readv PTRACE_MODE_READ seems more reasonabl=
+e,
+> > > > but that's outside the scope of this change), and as such won't be
+> > > > affected by this patch.
+> > >
+> > > CC'ing Jann and Kees.
+> > >
+> > > >
+> > > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> > > > ---
+> > > >  kernel/fork.c | 11 ++++++++++-
+> > > >  1 file changed, 10 insertions(+), 1 deletion(-)
+> > > >
+> > > > diff --git a/kernel/fork.c b/kernel/fork.c
+> > > > index ded49f18cd95..c57cb3ad9931 100644
+> > > > --- a/kernel/fork.c
+> > > > +++ b/kernel/fork.c
+> > > > @@ -1547,6 +1547,15 @@ struct mm_struct *get_task_mm(struct task_st=
+ruct *task)
+> > > >  }
+> > > >  EXPORT_SYMBOL_GPL(get_task_mm);
+> > > >
+> > > > +static bool can_access_mm(struct mm_struct *mm, struct task_struct=
+ *task, unsigned int mode)
+> > > > +{
+> > > > +       if (mm =3D=3D current->mm)
+> > > > +               return true;
+> > > > +       if ((mode & PTRACE_MODE_READ) && perfmon_capable())
+> > > > +               return true;
+> > > > +       return ptrace_may_access(task, mode);
+> > > > +}
+> >
+> > nit: "may" tends to be used more than "can" for access check function n=
+aming.
+> >
+> > So, this will bypass security_ptrace_access_check() within
+> > ptrace_may_access(). CAP_PERFMON may be something LSMs want visibility
+> > into.
+> >
+> > It also bypasses the dumpability check in __ptrace_may_access(). (Shoul=
+d
+> > non-dumpability block visibility into "maps" under CAP_PERFMON?)
+> >
+> > This change provides read access for CAP_PERFMON to:
+> >
+> > /proc/$pid/maps
+> > /proc/$pid/smaps
+> > /proc/$pid/mem
+> > /proc/$pid/environ
+> > /proc/$pid/auxv
+> > /proc/$pid/attr/*
+> > /proc/$pid/smaps_rollup
+> > /proc/$pid/pagemap
+> >
+> > /proc/$pid/mem access seems way out of bounds for CAP_PERFMON. environ
+> > and auxv maybe too much also. The "attr" files seem iffy. pagemap may b=
+e
+> > reasonable.
+>
+> FWIW, my understanding is that if you can use perf_event_open() on a
+> process, you can also grab large amounts of stack memory contents from
+> that process via PERF_SAMPLE_STACK_USER/sample_stack_user. (The idea
+> there is that stack unwinding for userspace stacks is complicated, so
+> it's the profiler's job to turn a pile of raw stack contents and a
+> register snapshot into a stack trace.) So _to some extent_ I think it
+> is already possible to read memory of another process via CAP_PERFMON.
+> Whether that is desirable or not I don't know, though I guess it's
+> hard to argue that there's a qualitative security difference between
+> reading register contents and reading stack memory...
 
-Since you maintain both Yama and LoadPin and these patches are fully
-contained within those LSMs I kinda figured you would grab them for
-their respective trees.  However, if you would prefer for me to take
-them via the LSM tree I can do that, just let me know.
+If I'm allowed to bring in BPF capabilities coupled with CAP_PERFMON,
+then you can read not just stack, but pretty much anything both inside
+the kernel memory (e.g., through bpf_probe_read_kernel()) and
+user-space (bpf_probe_read_user() for current user task, and more
+generally bpf_copy_from_user_task() for an arbitrary task for which we
+have struct task_struct).
 
-You can also feel free to add my review tag to both patches if you want.
+But we don't really allow access to /proc/PID/mem here, because it's
+PTRACE_MODE_ATTACH (which is sort of like read/write vs read-only).
 
-Reviewed-by: Paul Moore <paul@paul-moore.com>
-
---=20
-paul-moore.com
+Similarly, it would be relevant for process_vm_readv(), but that one
+(currently) is also PTRACE_MODE_ATTACH.
