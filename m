@@ -1,103 +1,151 @@
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C76A615665D
-	for <linux-security-module@vger.kernel.org>; Fri, 24 Jan 2025 15:49:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B8D615623A
+	for <linux-security-module@vger.kernel.org>; Fri, 24 Jan 2025 15:59:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737733783; cv=none; b=HeraJqTT8faSS1PyyitLH7Ih8vyyPuHbyMSpGKr/lixnXgP9QvH48t15IagEukqW+iSooZL5C+vgaHEOIFPjERgN5P+uOjdx8qzZX8zm/gSezPs8+9+pOCHN40LJUcdlE9ZkskK+knYnDifbb/7q80k5poKLkGfye6Zo4vd/ELw=
+	t=1737734342; cv=none; b=FeOBa1wR4Co885IUB1yROE/9O+f6I7Gg7o+fPJ8n+pOwie9gSDQFydceluwzmJdWnbTJ0DJ/A8hhXFV6Lf0d7RKdcitoP6IaovM1Pk5Ru9H5uMXsBcbmzLxVyY10YwSYhIY5Qrm9LuGx/DfA6BEv87sGHTVIm8l4b8cNXowZI34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737733783; c=relaxed/simple;
-	bh=JXIU/HRhJFOslFzs7Y5I8Q5/vTVdUyV4qgXHL6ELb74=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=piMLLzGa43O++2+hAhCI3yPrBNZ9KLMwVkgH/p6fSpTYUBOPhuiyjKC9Trj+8qprUP5t7emRkR4GIvWYxiBYOSY1q38y7P/jRSDu1H5YxSOZoD21z53jasQVpxuistmUjTXMhY99orRZWuwNFzmJsMaL6OhSvC2VG1nibCEs62w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=kKNAqML1; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+	s=arc-20240116; t=1737734342; c=relaxed/simple;
+	bh=IYeE0sfSviNaVOVE61gM2ZZ2ygSrM0ssE85qVGnpVkc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mdmSCSG2QOKr33Cno6fVcxJLMnjDV9y+x4Kr0lpMahHPIweQrhFLr1T3fiWG0OeF1vL2qRdK5CAlE9g1JrtLDSv182zKcBzZjGwTxTDNQtAINYe7iGeaQgJ7idQgV0O5JBqCo80rB8YB9c8C3xQr29TC1g7G67s7sWkWnYyTgD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=QCJw2ms7; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="kKNAqML1"
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-46df3fc7176so21831831cf.2
-        for <linux-security-module@vger.kernel.org>; Fri, 24 Jan 2025 07:49:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1737733778; x=1738338578; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Mm6PRQ+58KnnO/05gSNDI1UU/DGC0eaSudSVsHYmldU=;
-        b=kKNAqML1WPVCMbnXAVOvbt+UEKV+G6Ei86v/1mSH5TtTwuvkUdKKxsp3/XMAXbIHLZ
-         ARLMkhfMRH43b2rnx+oRdT/aeGTEy41d49XI1UAX04+xl6DaOhelDsElhk+u9bXh48jO
-         pBrqXyHqgQeVurm/jjjtJuncvkG6JOEFJCYLM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737733778; x=1738338578;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Mm6PRQ+58KnnO/05gSNDI1UU/DGC0eaSudSVsHYmldU=;
-        b=pdL+nSLULyzNpw7b35ZcCozlvaLdwUDtxQccRP1tyoxMG18T9W0M9qyU201gYJb8R6
-         mwO4TD7qqKRwJdcDGlsBoF8cn/2W75uOk7eqZh4TsYwOblIpNppVYDsx7wnvZFKqh0Ku
-         lvwjWITkbpMBqFaW1e67VbS0QYpTtIvF15VC5E3+T2yZZTPg0Gd5UdSs0sACDeD5v4E3
-         u8749exp/VmzYN5ORt1MhYdVhn+J52gaphm9dfCLyX4rsHJIqeNqDyvX2mhAQ97VEQuE
-         2cJ6ukEaaaBOb8x0CVTNXaaoQhqzCCCaudKltWGN0LTO5/n7hPZ6ZfKOr5OajcSDIGX8
-         iX4A==
-X-Forwarded-Encrypted: i=1; AJvYcCVRDPg7m9FVAZk7cuwqh0j7JbgLoRP5oxDh1JoB0A6Df/K6zzCLWi6OaeGUqYPIH62laMnTvxHIcuI+QzeKYFO4cMw7PPQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywp7ZyRuX9k+fLh+91HwyN5zEfmBODdC0eemAs8d8iLW7YgFwS5
-	LfXi6k1AFP63/pa6Axv4E/Ri0bDXdRUBTZUxmSB49iIC9ah2Nsip+ixfBp9qy9Uwp5uwdWR1743
-	aS519cUp4RZMQgMkjS1TNp3WZWNjURx8lkUBs1UcAUL1X7D63
-X-Gm-Gg: ASbGncsMdsHxqxdo3qjkLJABioGc1a/nTGjs/D0ZPtzUOAxoYgIW5QobHcaigNfyIaS
-	kjbKkYLlphXIDHPuiXOEHuLcXF72ghBHXnYf5/cqWIzpXuefgoFRFBmHZ3w8g
-X-Google-Smtp-Source: AGHT+IFqquliq7HIV96YWV3XAxaZDHz3BuJORL/akaDIVudNtsDg1MClagGxFhuwi/4oxTQvs9U2X4mqMWMQUElMydM=
-X-Received: by 2002:ac8:5dc9:0:b0:467:681c:425c with SMTP id
- d75a77b69052e-46e12a0c0f2mr447495461cf.1.1737733778671; Fri, 24 Jan 2025
- 07:49:38 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="QCJw2ms7"
+Received: from [192.168.1.13] (pool-96-241-22-207.washdc.fios.verizon.net [96.241.22.207])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 532D3210D0C1;
+	Fri, 24 Jan 2025 07:59:00 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 532D3210D0C1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1737734340;
+	bh=jonuxcHXeZaS2wc9aXWqOgA6pI+/a6iRsFuCvLcldKw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=QCJw2ms74CmHAg2iSiqH1XecNJOMz4PVX/8JzTu4nu0KHmu8xaWpftn0d1nugwwia
+	 Q3Uxf90nL+3TAehEfQTqrUBmGb4FzpEWr/x87Zb9AIJxNrba8KNjYljVJBpd3hcVPm
+	 s6As27/nBk33Nd5AgOU/QjpH0H+Q6cJ/aBk+vGmA=
+Message-ID: <976783c4-408d-4758-a864-f75d959ffd90@linux.microsoft.com>
+Date: Fri, 24 Jan 2025 10:58:59 -0500
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250123194108.1025273-1-mszeredi@redhat.com> <20250123194108.1025273-5-mszeredi@redhat.com>
- <20250124-abklopfen-orbit-287ed6b59c61@brauner>
-In-Reply-To: <20250124-abklopfen-orbit-287ed6b59c61@brauner>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Fri, 24 Jan 2025 16:49:28 +0100
-X-Gm-Features: AWEUYZkqDlmuMcNW-5_UjhqZV7-dejOlo_fdpN5dbcCjLjywZlEGET6if1Se7t4
-Message-ID: <CAJfpegvK9Q_uE-O8HkzzjeNh7nZ_sO89=OCyw_SZCudfXbB2JQ@mail.gmail.com>
-Subject: Re: [PATCH v4 4/4] vfs: add notifications for mount attribute change
-To: Christian Brauner <brauner@kernel.org>
-Cc: Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org, 
-	Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, Karel Zak <kzak@redhat.com>, 
-	Lennart Poettering <lennart@poettering.net>, Ian Kent <raven@themaw.net>, 
-	Al Viro <viro@zeniv.linux.org.uk>, linux-security-module@vger.kernel.org, 
-	Paul Moore <paul@paul-moore.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] landlock: Clarify IPC scoping documentation
+To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+ linux-security-module@vger.kernel.org
+Cc: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ Tahera Fahimi <fahimitahera@gmail.com>,
+ Tanya Agarwal <tanyaagarwal25699@gmail.com>
+References: <20250124154445.162841-1-gnoack@google.com>
+ <20250124154445.162841-2-gnoack@google.com>
+Content-Language: en-US
+From: Daniel Burgener <dburgener@linux.microsoft.com>
+In-Reply-To: <20250124154445.162841-2-gnoack@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, 24 Jan 2025 at 16:38, Christian Brauner <brauner@kernel.org> wrote:
->
-> On Thu, Jan 23, 2025 at 08:41:07PM +0100, Miklos Szeredi wrote:
-> > Notify when mount flags, propagation or idmap changes.
-> >
-> > Just like attach and detach, no details are given in the notification, only
-> > the mount ID.
-> >
-> > Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-> > ---
->
-> I think this is a good next step but I would first go with the minimal
-> functionality of notifying about mount topology changes for v6.15.
+On 1/24/2025 10:44 AM, Günther Noack wrote:
+> * Clarify terminology
+> * Stop mixing the unix(7) and signal(7) aspects in the explanation.
+> 
+> Terminology:
+> 
+> * The *IPC Scope* of a Landlock domain is that Landlock domain and its
+>    nested domains.
+> * An *operation* (e.g., signaling, connecting to abstract UDS) is said
+>    *to be scoped within a domain* when the flag for that operation was
+>    *set at ruleset creation time.  This means that for the purpose of
+>    *this operation, only processes within the domain's IPC scope are
+>    *reachable.
+> 
+> Cc: Mickaël Salaün <mic@digikod.net>
+> Cc: Tahera Fahimi <fahimitahera@gmail.com>
+> Cc: Tanya Agarwal <tanyaagarwal25699@gmail.com>
+> Signed-off-by: Günther Noack <gnoack@google.com>
+> ---
+>   Documentation/userspace-api/landlock.rst | 53 ++++++++++++------------
+>   1 file changed, 26 insertions(+), 27 deletions(-)
+> 
+> diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
+> index ca8b325d53e5..6b80106d33de 100644
+> --- a/Documentation/userspace-api/landlock.rst
+> +++ b/Documentation/userspace-api/landlock.rst
+> @@ -317,33 +317,32 @@ IPC scoping
+>   -----------
+>   
+>   Similar to the implicit `Ptrace restrictions`_, we may want to further restrict
+> -interactions between sandboxes. Each Landlock domain can be explicitly scoped
+> -for a set of actions by specifying it on a ruleset.  For example, if a
+> -sandboxed process should not be able to :manpage:`connect(2)` to a
+> -non-sandboxed process through abstract :manpage:`unix(7)` sockets, we can
+> -specify such a restriction with ``LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET``.
+> -Moreover, if a sandboxed process should not be able to send a signal to a
+> -non-sandboxed process, we can specify this restriction with
+> -``LANDLOCK_SCOPE_SIGNAL``.
+> -
+> -A sandboxed process can connect to a non-sandboxed process when its domain is
+> -not scoped. If a process's domain is scoped, it can only connect to sockets
+> -created by processes in the same scope.
+> -Moreover, if a process is scoped to send signal to a non-scoped process, it can
+> -only send signals to processes in the same scope.
+> -
+> -A connected datagram socket behaves like a stream socket when its domain is
+> -scoped, meaning if the domain is scoped after the socket is connected, it can
+> -still :manpage:`send(2)` data just like a stream socket.  However, in the same
+> -scenario, a non-connected datagram socket cannot send data (with
+> -:manpage:`sendto(2)`) outside its scope.
+> -
+> -A process with a scoped domain can inherit a socket created by a non-scoped
+> -process. The process cannot connect to this socket since it has a scoped
+> -domain.
+> -
+> -IPC scoping does not support exceptions, so if a domain is scoped, no rules can
+> -be added to allow access to resources or processes outside of the scope.
+> +interactions between sandboxes.  Therefore, at ruleset creation time, each
+> +Landlock domain can restrict the scope for certain operations, so that these
+> +operations can only reach out to processes within the same Landlock domain or in
+> +a nested Landlock domain (the "scope").
+> +
+> +The operations which can be scoped are:
+> +
+> +``LANDLOCK_SCOPE_SIGNAL``
+> +    When set, this limits the sending of signals to target processes which run
+> +    within the same or a nested Landlock domain.
+> +
+> +``LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET``
+> +    When set, this limits the set of abstract :manpage:`unix(7)` sockets we can
+> +    :manpage:`connect(2)` to to socket addresses which were created by a process
 
-I can totally relate to that.   I added the fourth patch more as a
-"let's see if this can also fit into the current framework".
+The "to to" takes a couple of reads to parse.  Would "...this limits the 
+set of abstract :manpage:`unix(7)` sockets to which we can 
+:manpage:`connect(2)` to socket addresses which were..." perhaps be 
+easier to read?
 
-> Btw, if we notify in do_remount() on the mount that triggered
-> superblock reconfiguration then we also need to trigger in
-> vfs_cmd_reconfigure() aka fsconfig(FSCONFIG_CMD_RECONFIGURE) but the
-> mount that was used to change superblock options is only available in
-> fspick() currently. That would need to be handled.
+> +    in the same or a nested Landlock domain.
+> +
+> +    A :manpage:`send(2)` on a non-connected datagram socket is treated like an
+> +    implicit :manpage:`connect(2)` and will be blocked when the remote end does
+> +    not stem from the same or a nested Landlock domain.
+> +
+> +    A :manpage:`send(2)` on a socket which was previously connected will work.
 
-No, if we'd want to watch changes on super blocks, then we'd need to
-iterate all the mounts of the superblock and notify each.
+Maybe overly pedantic, but I wonder if something like "will not be 
+restricted" instead of "will work" would be clearer?  "Work" just has a 
+lot of meanings.  I don't think it's actually ambiguous as written, I 
+just think that a more precise word could avoid the potential for confusion.
 
-I'm not sure if it's something we really want, watching the super
-block itself for changes sounds saner.
+-Daniel
 
-Thanks,
-Miklos
+> +    This works for both datagram and stream sockets.
+> +
+> +IPC scoping does not support exceptions via :manpage:`landlock_add_rule(2)`.
+> +If an operation is scoped within a domain, no rules can be added to allow access
+> +to resources or processes outside of the scope.
+>   
+>   Truncating files
+>   ----------------
+
