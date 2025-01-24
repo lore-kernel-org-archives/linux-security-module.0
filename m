@@ -1,30 +1,30 @@
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D381E1EEA31;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 122AC1EEA43;
 	Fri, 24 Jan 2025 22:55:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737759360; cv=none; b=HIOicuJLEl8KFYdXPl0h2RpPxDJ6Qm9f6BO85W8vfDuRkxhJqBcKx2+RCiRVe51GX0BqQPcig+NiEc0f8BRzUIivxJ9Afnb0/SVfboU8MAo7tYitIKRHpHwOa0ZVsiHTiqHckPQD17zwGkOglFlbg+jcZVWN9m1Kx5vac2MfBrA=
+	t=1737759360; cv=none; b=RtZ0i5+W9QljPm5a2c9h04l9EC6ZrKST3NFp0HDF/2olplE1VkNlpZBk7P9Z35ahd4R4BwuKUYg0Awkw0IwlFV0/6LpjCtr2fv89pZT9Uoax5lK1p+hlBB6QHojyRoUfJ9i6foJv1BkT47MtamToeeImlJH0sSvH/QZ4NN6beSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1737759360; c=relaxed/simple;
-	bh=XcCYE/P+N1xe2haU4t0///zpxWhVLSW13VRkFoNCq2o=;
+	bh=Pxre783PzACACeV34ZisP2a76BNcKKtQ+N5YCrzjsfo=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=MUbKRyAucCyfkSYIViDTYxlADa3mhuZXwDzrmb6PjjPiTDDTzhGguD46pbk7lfrdUvzwzDWgu7tKg0cSAF8SNAFrJZn4NRyMTDVXn3Y0zdA7L5Q0c2Urrao2m2IORqSndhtK2PGrDXuScuZNgkxLXfA/PYYXbvz+er9lqIXV7T4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=PSt+r7cU; arc=none smtp.client-ip=13.77.154.182
+	 MIME-Version; b=qLtF43Q6iZY32U1lWOGqPgFYfVIY0ESuQgZCvf/o46nqzC2JFr4KUtUWjpyFafcDFxrSkqgEdfdLZwae29E+eQPNAp8zNrPWpKUKTZpd8ob8uny+WoaEQYboqxb1ogNtn1cEPtX24fAwuug1bf4NfJxYP1jrBEAlsxgJmCmFyH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=FbSTWpys; arc=none smtp.client-ip=13.77.154.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="PSt+r7cU"
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="FbSTWpys"
 Received: from localhost.localdomain (unknown [167.220.59.4])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 95EC6210D0DB;
+	by linux.microsoft.com (Postfix) with ESMTPSA id 35433210D0D8;
 	Fri, 24 Jan 2025 14:55:57 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 95EC6210D0DB
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 35433210D0D8
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
 	s=default; t=1737759357;
-	bh=6H+05HlDdwLJYuzzGaRsVd9LIBrCOlgbmTBvfn2uPEs=;
+	bh=SToxeWWYWW6LWJe1NQgF6XwKRGWLZYBJcF4B7FrieaE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=PSt+r7cUOdthhhFLhgRm5KZTH7DCsq7c7/eR32JVwCzKJgNpVnVFIdcmTZIVVeY2Q
-	 rZfHR60Y0bV3aMTMTigwKjTwKiNMr3RU9GbuClfZK2QUGGQtmr97m0sxCyB1PVFl87
-	 oGl292T0bCC3YGB2jNfHaB0cJkuBI0tjo9Pk3qdc=
+	b=FbSTWpysH5IZGaxG2nIWAj17VFWOJEM+rzPr2XTkuwbKrd8kaWJXPTtI70i/Ag8iB
+	 Mrs30XiGb6bALgfqq4x47ZFIgqn1tLN1OJ+d64VTqr7RXV6NKJeR5+TMSjitw4rxgO
+	 x3S4BY9Xy0qU1CYifPUGe6tHUSb92zdFlmKrCSOk=
 From: steven chen <chenste@linux.microsoft.com>
 To: zohar@linux.ibm.com,
 	stefanb@linux.ibm.com,
@@ -40,9 +40,9 @@ Cc: linux-integrity@vger.kernel.org,
 	linux-security-module@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	chenste@linux.microsoft.com
-Subject: [PATCH 7/7] ima: measure kexec load and exec events as critical data
-Date: Fri, 24 Jan 2025 14:55:47 -0800
-Message-Id: <20250124225547.22684-8-chenste@linux.microsoft.com>
+Subject: [PATCH v6 5/7] ima: kexec: move IMA log copy from kexec load to execute
+Date: Fri, 24 Jan 2025 14:55:45 -0800
+Message-Id: <20250124225547.22684-6-chenste@linux.microsoft.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250124225547.22684-1-chenste@linux.microsoft.com>
 References: <20250124225547.22684-1-chenste@linux.microsoft.com>
@@ -54,88 +54,143 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The amount of memory allocated at kexec load, even with the extra memory
-allocated, might not be large enough for the entire measurement list.  The
-indeterminate interval between kexec 'load' and 'execute' could exacerbate
-this problem.
+ima_dump_measurement_list() is called during kexec 'load', which may
+result in loss of IMA measurements during kexec soft reboot.  It needs
+to be called during kexec 'execute'.
 
-Define two new IMA events, 'kexec_load' and 'kexec_execute', to be 
-measured as critical data at kexec 'load' and 'execute' respectively.
-Report the allocated kexec segment size, IMA binary log size and the
-runtime measurements count as part of those events.
+This patch includes the following changes:
+ - Implement kimage_file_post_load() function to be invoked after the new
+   Kernel image has been loaded for kexec.
+ - Call kimage_file_post_load() from kexec_file_load() syscall only for
+   kexec soft reboot scenarios and not for KEXEC_FILE_ON_CRASH.  It will
+   map the IMA segment, and register reboot notifier for the function
+   ima_update_kexec_buffer() which would copy the IMA log at kexec soft
+   reboot.
+ - Make kexec_segment_size variable local static to the file, for it to be
+   accessible both during kexec 'load' and 'execute'.
+ - Move ima_dump_measurement_list() call from ima_add_kexec_buffer()
+   to ima_update_kexec_buffer().
+ - Remove ima_reset_kexec_file() call from ima_add_kexec_buffer(), now
+   that the buffer is being copied at kexec 'execute', and resetting the
+   file at kexec 'load' will corrupt the buffer.
 
-These events, and the values reported through them, serve as markers in
-the IMA log to verify the IMA events are captured during kexec soft
-reboot.  The presence of a 'kexec_load' event in between the last two
-'boot_aggregate' events in the IMA log implies this is a kexec soft
-reboot, and not a cold-boot. And the absence of 'kexec_execute' event
-after kexec soft reboot implies missing events in that window which
-results in inconsistency with TPM PCR quotes, necessitating a cold boot
-for a successful remote attestation.
-
-Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
 Author: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+Reviewed-by: Tyler Hicks <code@tyhicks.com>
 Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
 Signed-off-by: steven chen <chenste@linux.microsoft.com>
 ---
- security/integrity/ima/ima_kexec.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ kernel/kexec_file.c                |  8 ++++++
+ security/integrity/ima/ima_kexec.c | 43 +++++++++++++++++++-----------
+ 2 files changed, 36 insertions(+), 15 deletions(-)
 
-diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
-index c9c916f69ca7..d416ca0382cb 100644
---- a/security/integrity/ima/ima_kexec.c
-+++ b/security/integrity/ima/ima_kexec.c
-@@ -17,6 +17,8 @@
- #include "ima.h"
- 
- #ifdef CONFIG_IMA_KEXEC
-+#define IMA_KEXEC_EVENT_LEN 256
-+
- static struct seq_file ima_kexec_file;
- static void *ima_kexec_buffer;
- static size_t kexec_segment_size;
-@@ -36,6 +38,24 @@ static void ima_free_kexec_file_buf(struct seq_file *sf)
- 	ima_reset_kexec_file(sf);
+diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+index 4ff3ba0f3e8e..d05ce3ee2e53 100644
+--- a/kernel/kexec_file.c
++++ b/kernel/kexec_file.c
+@@ -186,6 +186,11 @@ kimage_validate_signature(struct kimage *image)
  }
+ #endif
  
-+static void ima_measure_kexec_event(const char *event_name)
++static void kimage_file_post_load(struct kimage *image)
 +{
-+	char ima_kexec_event[IMA_KEXEC_EVENT_LEN];
-+	size_t buf_size = 0;
-+	long len;
-+
-+	buf_size = ima_get_binary_runtime_size();
-+	len = atomic_long_read(&ima_htable.len);
-+
-+	scnprintf(ima_kexec_event, IMA_KEXEC_EVENT_LEN,
-+			"kexec_segment_size=%lu;ima_binary_runtime_size=%lu;"
-+			"ima_runtime_measurements_count=%ld;",
-+				kexec_segment_size, buf_size, len);
-+
-+	ima_measure_critical_data("ima_kexec", event_name, ima_kexec_event,
-+					strlen(ima_kexec_event), false, NULL, 0);
++	ima_kexec_post_load(image);
 +}
 +
- static int ima_alloc_kexec_file_buf(size_t segment_size)
- {
- 	/*
-@@ -60,6 +80,7 @@ static int ima_alloc_kexec_file_buf(size_t segment_size)
- out:
- 	ima_kexec_file.read_pos = 0;
- 	ima_kexec_file.count = sizeof(struct ima_kexec_hdr);	/* reserved space */
-+	ima_measure_kexec_event("kexec_load");
+ /*
+  * In file mode list of segments is prepared by kernel. Copy relevant
+  * data from user space, do error checking, prepare segment list
+@@ -413,6 +418,9 @@ SYSCALL_DEFINE5(kexec_file_load, int, kernel_fd, int, initrd_fd,
  
- 	return 0;
- }
-@@ -206,6 +227,8 @@ static int ima_update_kexec_buffer(struct notifier_block *self,
+ 	kimage_terminate(image);
  
++	if (!(flags & KEXEC_FILE_ON_CRASH))
++		kimage_file_post_load(image);
++
+ 	ret = machine_kexec_post_load(image);
  	if (ret)
- 		pr_err("Dump measurements failed. Error:%d\n", ret);
-+	else
-+		ima_measure_kexec_event("kexec_execute");
+ 		goto out;
+diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
+index 854b90d34e2d..d5f004cfeaec 100644
+--- a/security/integrity/ima/ima_kexec.c
++++ b/security/integrity/ima/ima_kexec.c
+@@ -19,6 +19,7 @@
+ #ifdef CONFIG_IMA_KEXEC
+ static struct seq_file ima_kexec_file;
+ static void *ima_kexec_buffer;
++static size_t kexec_segment_size;
+ static bool ima_kexec_update_registered;
  
- 	if (buf_size != 0)
- 		memcpy(ima_kexec_buffer, buf, buf_size);
+ static void ima_reset_kexec_file(struct seq_file *sf)
+@@ -131,7 +132,6 @@ void ima_add_kexec_buffer(struct kimage *image)
+ 	/* use more understandable variable names than defined in kbuf */
+ 	void *kexec_buffer = NULL;
+ 	size_t kexec_buffer_size = 0;
+-	size_t kexec_segment_size;
+ 	int ret;
+ 
+ 	/*
+@@ -156,13 +156,6 @@ void ima_add_kexec_buffer(struct kimage *image)
+ 		return;
+ 	}
+ 
+-	ret = ima_dump_measurement_list(&kexec_buffer_size, &kexec_buffer,
+-					kexec_segment_size);
+-	if (ret < 0) {
+-		pr_err("Failed to dump IMA measurements. Error:%d.\n", ret);
+-		return;
+-	}
+-
+ 	kbuf.buffer = kexec_buffer;
+ 	kbuf.bufsz = kexec_buffer_size;
+ 	kbuf.memsz = kexec_segment_size;
+@@ -180,12 +173,6 @@ void ima_add_kexec_buffer(struct kimage *image)
+ 	image->ima_segment_index = image->nr_segments - 1;
+ 	image->is_ima_segment_index_set = true;
+ 
+-	/*
+-	 * kexec owns kexec_buffer after kexec_add_buffer() is called
+-	 * and it will vfree() that buffer.
+-	 */
+-	ima_reset_kexec_file(&ima_kexec_file);
+-
+ 	kexec_dprintk("kexec measurement buffer for the loaded kernel at 0x%lx.\n",
+ 		      kbuf.mem);
+ }
+@@ -196,7 +183,33 @@ void ima_add_kexec_buffer(struct kimage *image)
+ static int ima_update_kexec_buffer(struct notifier_block *self,
+ 				   unsigned long action, void *data)
+ {
+-	return NOTIFY_OK;
++	void *buf = NULL;
++	size_t buf_size = 0;
++	int ret = NOTIFY_OK;
++
++	if (!kexec_in_progress) {
++		pr_info("No kexec in progress.\n");
++		return ret;
++	}
++
++	if (!ima_kexec_buffer) {
++		pr_err("Kexec buffer not set.\n");
++		return ret;
++	}
++
++	ret = ima_dump_measurement_list(&buf_size, &buf,
++					kexec_segment_size);
++
++	if (ret)
++		pr_err("Dump measurements failed. Error:%d\n", ret);
++
++	if (buf_size != 0)
++		memcpy(ima_kexec_buffer, buf, buf_size);
++
++	kimage_unmap_segment(ima_kexec_buffer);
++	ima_kexec_buffer = NULL;
++
++	return ret;
+ }
+ 
+ struct notifier_block update_buffer_nb = {
 -- 
 2.25.1
 
