@@ -1,95 +1,82 @@
-Received: from smtp.sws.net.au (smtp.sws.net.au [144.76.186.9])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45EAECA4E;
-	Sat, 25 Jan 2025 01:17:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.186.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A432A1C5F0E;
+	Sat, 25 Jan 2025 09:22:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737767841; cv=none; b=kicVWlyp/kQ7v1MY7r3M35Z8V+iMJGQuuEW3BNOuwj3IXLX9dmmJOkmiB6DnsBETjVK/OZj+FZn/UOJxc0Iiaq1baUdvSmLOCGpuBheQggFWe+vcpbBQNOykWxXE/mmmj+3SG73RsgR2waQyVpMWX6WDYQ/gGW0LNtGkru7Txo4=
+	t=1737796950; cv=none; b=VdAGv6WgpRIz0BYLL0W0jitrMuEPECZiLbPXF6emG0oc0BZGcNM8i42aTF+11lz6K1FHnhD6EIvtmo+pTXdYE4L3gg+YJRajI7FmsM4ctjS5xMtkQvp098i00SAsOo0pUoFea9hhrf2Lq6MNOb11bvU+4niUZoGjMv3dY7JQaQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737767841; c=relaxed/simple;
-	bh=kXpTuQ5F0vOsnlvGLI1zKQozRagHI+eeno/zGFHRwEY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aALeEsffsRSnJ/Kx5ixbNtwe3R3RLXr1gVgpwJdngEoyWgKq+t7YipmJY8SVt9WJrU90ISQgThRyhf9j9pXQ3BIDXgv+5zsq7L0+4o0qqAxEOPE8Pidc/Itb4BkPiQph2Ej8ucRCMQUqE3t3UGnuKml2Jtso6Tax1JZpCdd/5Qc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=coker.com.au; spf=pass smtp.mailfrom=coker.com.au; dkim=pass (1024-bit key) header.d=coker.com.au header.i=@coker.com.au header.b=n2VRWLno; arc=none smtp.client-ip=144.76.186.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=coker.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=coker.com.au
+	s=arc-20240116; t=1737796950; c=relaxed/simple;
+	bh=cqUlUk2k5pKbHBcnRD85SRBc5qNEMVL84HeU65uNupg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ymmmsml7csN3U8paROmzcR5DrwJV8imZGUzMYqTXc7Hn0/8a2e/nUAqZBsrTZVDVvZMgKpFdzzK4zpqo4oKDWWVkJzgnh6OGPqbZe90odb3t9BqBUfsEtreQ8Oy1ulKaYkiNUeB+BbhihTkrFafLADqOjBpNCCtHDYUgIVlF1HY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nGRnD05v; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=coker.com.au header.i=@coker.com.au header.b="n2VRWLno"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=coker.com.au;
-	s=2008; t=1737767397;
-	bh=4EICXaoy2GVo4Y1iuFRbi5Srk68cUI0pBzMP+ek9egg=; l=1616;
-	h=From:To:Reply-To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=n2VRWLnoTasd+u/FSBf2Q2Zqd8yKZXbCtXUp1+qcpwjHZ79FsQKgpboS3FQJM1YUm
-	 We3PImEwedcLvkvdcYFEkLumBZCnm5GOBD42NL0u/xaDiH9v5TJIEhaG7IUO+/cAOH
-	 tUQ89EHdTVnVDhLa3wqKph/En+Bzn+Hc59Wa4fI4=
-Received: from xev.localnet (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.sws.net.au (Postfix) with ESMTPS id AD287F351;
-	Sat, 25 Jan 2025 12:09:52 +1100 (AEDT)
-From: Russell Coker <russell@coker.com.au>
-To: Miklos Szeredi <mszeredi@redhat.com>, Paul Moore <paul@paul-moore.com>
-Reply-To: russell@coker.com.au
-Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
- Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
- Karel Zak <kzak@redhat.com>, Lennart Poettering <lennart@poettering.net>,
- Ian Kent <raven@themaw.net>, Al Viro <viro@zeniv.linux.org.uk>,
- linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
- selinux-refpolicy@vger.kernel.org
-Subject: Re: [PATCH v4 2/4] fanotify: notify on mount attach and detach
-Date: Sat, 25 Jan 2025 12:09:32 +1100
-Message-ID: <2041942.usQuhbGJ8B@xev>
-In-Reply-To:
- <CAHC9VhRzRqhXxcrv3ROChToFf4xX2Tdo--q-eMAc=KcUb=xb_w@mail.gmail.com>
-References:
- <20250123194108.1025273-1-mszeredi@redhat.com>
- <20250123194108.1025273-3-mszeredi@redhat.com>
- <CAHC9VhRzRqhXxcrv3ROChToFf4xX2Tdo--q-eMAc=KcUb=xb_w@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nGRnD05v"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7622FC4CED6;
+	Sat, 25 Jan 2025 09:22:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1737796950;
+	bh=cqUlUk2k5pKbHBcnRD85SRBc5qNEMVL84HeU65uNupg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nGRnD05vmKrclL+x7ivQhXL3r/RRgSwiinN0LaeCaVh8PmEL/ZHYjcaEO1E1j6uiS
+	 Z4nGsHnt4FnkbamCXo3UfCe1lkQdxwSzG88l9UJXadXovBcwIGkUiD91enJy706BWv
+	 6Ir/L1KEwPutdMf2Zslv2dC7MfHd98neMa6gMXpTBdDmL/jl/lpceXcaK7C767pMUB
+	 lC+UxQlLoNn/G60ZYu7SBTSD9W64A1hOow3jUpz8g/v2wweJRtlXJMDnpsF/5TVBdF
+	 hQ8KT5RRr6oTS3gNvkIevCrcCYnweO40H8kZJ0XQkqa1nFUoEYMGnh9f52sX/ybxa8
+	 Mwef9jl0Obivw==
+Date: Sat, 25 Jan 2025 10:22:24 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org, 
+	Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, Karel Zak <kzak@redhat.com>, 
+	Lennart Poettering <lennart@poettering.net>, Ian Kent <raven@themaw.net>, Al Viro <viro@zeniv.linux.org.uk>, 
+	linux-security-module@vger.kernel.org, Paul Moore <paul@paul-moore.com>
+Subject: Re: [PATCH v4 4/4] vfs: add notifications for mount attribute change
+Message-ID: <20250125-gesessen-gerutscht-0a0468193303@brauner>
+References: <20250123194108.1025273-1-mszeredi@redhat.com>
+ <20250123194108.1025273-5-mszeredi@redhat.com>
+ <20250124-abklopfen-orbit-287ed6b59c61@brauner>
+ <CAJfpegvK9Q_uE-O8HkzzjeNh7nZ_sO89=OCyw_SZCudfXbB2JQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAJfpegvK9Q_uE-O8HkzzjeNh7nZ_sO89=OCyw_SZCudfXbB2JQ@mail.gmail.com>
 
-On Saturday, 25 January 2025 06:38:45 AEDT Paul Moore wrote:
-> My initial thinking is that if we limit ourselves to existing SELinux
-> policy permissions, this is much more of FILE__WATCH_MOUNT operation
-> rather than a FILE__WATCH operation as while the /proc/PID/ns/mnt file
-> specified in @path is simply a file, it represents much more than
-> that.  However, it we want to consider adding a new SELinux policy
-> permission (which is easy to do), we may want to consider adding a new
-> mount namespace specific permission, e.g. FILE__WATCH_MOUNTNS, this
-> would make it easier for policy developers to distinguish between
-> watching a traditional mount point and a mount namespace (although
-> given the common approaches to labeling this may not be very
-> significant).  I'd personally like to hear from the SELinux policy
-> folks on this (the SELinux reference policy has also been CC'd).
+On Fri, Jan 24, 2025 at 04:49:28PM +0100, Miklos Szeredi wrote:
+> On Fri, 24 Jan 2025 at 16:38, Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > On Thu, Jan 23, 2025 at 08:41:07PM +0100, Miklos Szeredi wrote:
+> > > Notify when mount flags, propagation or idmap changes.
+> > >
+> > > Just like attach and detach, no details are given in the notification, only
+> > > the mount ID.
+> > >
+> > > Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> > > ---
+> >
+> > I think this is a good next step but I would first go with the minimal
+> > functionality of notifying about mount topology changes for v6.15.
 > 
-> If we reuse the file/watch_mount permission the policy rule would look
-> something like below where <subject> is the SELinux domain of the
-> process making the change, and <mntns_label> is the label of the
-> /proc/PID/ns/mnt file:
+> I can totally relate to that.   I added the fourth patch more as a
+> "let's see if this can also fit into the current framework".
 > 
->   allow <subject> <mntns_label>:file { watch_mount };
+> > Btw, if we notify in do_remount() on the mount that triggered
+> > superblock reconfiguration then we also need to trigger in
+> > vfs_cmd_reconfigure() aka fsconfig(FSCONFIG_CMD_RECONFIGURE) but the
+> > mount that was used to change superblock options is only available in
+> > fspick() currently. That would need to be handled.
 > 
-> If we add a new file/watch_mountns permission the policy rule would
-> look like this:
-> 
->   allow <subject> <mntns_label>:file { watch_mountns };
+> No, if we'd want to watch changes on super blocks, then we'd need to
+> iterate all the mounts of the superblock and notify each.
 
-What's the benefit in watching mount being separate from watching a namespace 
-mount?
-
-In what situation could a process be permitted one of those but not the other?
-
--- 
-My Main Blog         http://etbe.coker.com.au/
-My Documents Blog    http://doc.coker.com.au/
-
-
-
+Ah, I remember that old remount had unclear semantics where mount
+specific and superblock specific options are interleaved. So we would
+need to notify from do_remount() on mount specific changes. Right, then
+this change is correct and I agree about the superblock part.
