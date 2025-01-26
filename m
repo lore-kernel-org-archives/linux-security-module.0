@@ -1,48 +1,49 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BC6F202F70;
-	Sun, 26 Jan 2025 14:57:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72C9E1DE2A9;
+	Sun, 26 Jan 2025 15:00:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737903443; cv=none; b=cWNynqX3yk1Hrp1FPX0K6AT4mIaYDY/wDdzNYwuAexVOX9uzsUZI/AA/Hao0tI+JnyIIEEJs8LNvJGTDCvU0kCqBMm760LYBNDQF1UiFNLDsqkhVJkE3aNNChIEERCAN0GS/U+qvjYs+e9iX+/30313Dkn3USOF3Bki67gGvjt8=
+	t=1737903647; cv=none; b=NqMz+L9uzt0nctjhYFTXG4uIOKg3bcSXMGq82TdNVMOToScNlx8716uSPs81i891f/KCoPlFmfzeojLSw/3kUcqLNUTmKm7kZwrLcPFxIUYD9E6aeKM9tDVNfwT1kvPsOxW7+ePzGnpDyGwOCB5H1MfrNxMY+9jEWWXGsUISKUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737903443; c=relaxed/simple;
-	bh=uPc4NVSveHI7GHriDuEDZNzg3746xNX8eV/7hKr234Q=;
+	s=arc-20240116; t=1737903647; c=relaxed/simple;
+	bh=8yq2XVg95QqNPrBbNM7POF3aaHyzT+nf9JDacZVezXY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Yrys5/was+6d4WjyI0i3qwwjYuviX4vK6o07MTUSX5mQOVhnelbWGmGIije4tjz2gEwv4TiMzFPoNxPEcWheMfUNjH9VYjQgqtImOEK+Af7V0an+2jmm/1n75VtrS5hDzLaQTRisoTrkNRZFNcNZw46KZXuMKrZO7Lo48fqTgRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sjnVOXUw; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=QxvgRhMT2BDtnYIOiYYgM3X18DoTHH0KOofE9Ehb0ppAOXS+A+aKeKU0ZWoHpdfDaEjLffda9vmwuVVJeV6YP/JhhGnraaDw8QraIBCbzEaAW9IAvE+iPABt5zYnhI1F5EHm0vwB29llNMA/9tdK4ArDlojvOMJbgQ+AHJCXViA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P5SPZrm8; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sjnVOXUw"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0197C4CED3;
-	Sun, 26 Jan 2025 14:57:21 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P5SPZrm8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C31A9C4CEE3;
+	Sun, 26 Jan 2025 15:00:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1737903443;
-	bh=uPc4NVSveHI7GHriDuEDZNzg3746xNX8eV/7hKr234Q=;
+	s=k20201202; t=1737903647;
+	bh=8yq2XVg95QqNPrBbNM7POF3aaHyzT+nf9JDacZVezXY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=sjnVOXUwqXcos9y75TIhJ3ovhAWunCuUDsa9uVQ+wNLzRBkwDGShkOip2OXE2Yrkl
-	 S3A1z+R3P3LoK7KCtDvABarN1SNjOcj6Xsa5MMuiop9PlX4vtoQYlvNVSxI7gKILxg
-	 Rhf+B+8Pwq4YYth5e4tNlrQEUtWnr5rJJZ98e4M4es7Izf4nvoWPGJgkvvWcsb97PF
-	 Bh0k/WlnpYHRlSMF7wzc8rj30dGzq+JaGZIZoZy9Mz+qySa3nrggO6FgN9C4cT2DkF
-	 +gqRJ8EURy520xO5w9cSPzYCQ2aW/k1xU+6VJ54JF2QtgdtDay2Opd5Ep3dnYgqxO+
-	 X3Xs/pelAjKIQ==
+	b=P5SPZrm8sUvFpNmIsSMUQ5Di7iotUcEYosy/QOMCq9xr/GbRuczDHMDnW2kHc4Yh3
+	 2vnqkaOlS4FCTox0X6a3HIO+yVKDimUSDXxZFNc4ufg5mx3r6/2TcMo6barSeN7+Ri
+	 xuG9zU59El5ZTga0dyJOPDhgpWpIKOWS0XsOeSTF3W+Dud/daBZcdVXuYgfAUcjdkL
+	 t1+W5SrCactsurS025fePRE8fy+WFUgGaXN3CmBqTRDD9OvfEVZ7k1WgA4IPCyoUqZ
+	 +4qspddNEToP1XYgz7PfzLWH4auzj+C1ubKRuTZin8gCSuKE/S7/DCrym3Hj+EKCuG
+	 LJj13QAQfgNHQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Leo Stone <leocstone@gmail.com>,
-	syzbot+4eb7a741b3216020043a@syzkaller.appspotmail.com,
-	Paul Moore <paul@paul-moore.com>,
+Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+	syzbot+7536f77535e5210a5c76@syzkaller.appspotmail.com,
+	Leo Stone <leocstone@gmail.com>,
 	Sasha Levin <sashal@kernel.org>,
-	mortonm@chromium.org,
+	takedakn@nttdata.co.jp,
+	paul@paul-moore.com,
 	jmorris@namei.org,
 	serge@hallyn.com,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 3/3] safesetid: check size of policy writes
-Date: Sun, 26 Jan 2025 09:57:17 -0500
-Message-Id: <20250126145717.946866-3-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.13 09/35] tomoyo: don't emit warning in tomoyo_write_control()
+Date: Sun, 26 Jan 2025 10:00:03 -0500
+Message-Id: <20250126150029.953021-9-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250126145717.946866-1-sashal@kernel.org>
-References: <20250126145717.946866-1-sashal@kernel.org>
+In-Reply-To: <20250126150029.953021-1-sashal@kernel.org>
+References: <20250126150029.953021-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -51,43 +52,47 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.10.233
+X-stable-base: Linux 6.13
 Content-Transfer-Encoding: 8bit
 
-From: Leo Stone <leocstone@gmail.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-[ Upstream commit f09ff307c7299392f1c88f763299e24bc99811c7 ]
+[ Upstream commit 3df7546fc03b8f004eee0b9e3256369f7d096685 ]
 
-syzbot attempts to write a buffer with a large size to a sysfs entry
-with writes handled by handle_policy_update(), triggering a warning
-in kmalloc.
+syzbot is reporting too large allocation warning at tomoyo_write_control(),
+for one can write a very very long line without new line character. To fix
+this warning, I use __GFP_NOWARN rather than checking for KMALLOC_MAX_SIZE,
+for practically a valid line should be always shorter than 32KB where the
+"too small to fail" memory-allocation rule applies.
 
-Check the size specified for write buffers before allocating.
+One might try to write a valid line that is longer than 32KB, but such
+request will likely fail with -ENOMEM. Therefore, I feel that separately
+returning -EINVAL when a line is longer than KMALLOC_MAX_SIZE is redundant.
+There is no need to distinguish over-32KB and over-KMALLOC_MAX_SIZE.
 
-Reported-by: syzbot+4eb7a741b3216020043a@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=4eb7a741b3216020043a
-Signed-off-by: Leo Stone <leocstone@gmail.com>
-[PM: subject tweak]
-Signed-off-by: Paul Moore <paul@paul-moore.com>
+Reported-by: syzbot+7536f77535e5210a5c76@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=7536f77535e5210a5c76
+Reported-by: Leo Stone <leocstone@gmail.com>
+Closes: https://lkml.kernel.org/r/20241216021459.178759-2-leocstone@gmail.com
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- security/safesetid/securityfs.c | 3 +++
- 1 file changed, 3 insertions(+)
+ security/tomoyo/common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/security/safesetid/securityfs.c b/security/safesetid/securityfs.c
-index 25310468bcddf..8e1ffd70b18ab 100644
---- a/security/safesetid/securityfs.c
-+++ b/security/safesetid/securityfs.c
-@@ -143,6 +143,9 @@ static ssize_t handle_policy_update(struct file *file,
- 	char *buf, *p, *end;
- 	int err;
+diff --git a/security/tomoyo/common.c b/security/tomoyo/common.c
+index 5c7b059a332aa..972664962e8f6 100644
+--- a/security/tomoyo/common.c
++++ b/security/tomoyo/common.c
+@@ -2665,7 +2665,7 @@ ssize_t tomoyo_write_control(struct tomoyo_io_buffer *head,
  
-+	if (len >= KMALLOC_MAX_SIZE)
-+		return -EINVAL;
-+
- 	pol = kmalloc(sizeof(struct setid_ruleset), GFP_KERNEL);
- 	if (!pol)
- 		return -ENOMEM;
+ 		if (head->w.avail >= head->writebuf_size - 1) {
+ 			const int len = head->writebuf_size * 2;
+-			char *cp = kzalloc(len, GFP_NOFS);
++			char *cp = kzalloc(len, GFP_NOFS | __GFP_NOWARN);
+ 
+ 			if (!cp) {
+ 				error = -ENOMEM;
 -- 
 2.39.5
 
