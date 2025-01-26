@@ -1,166 +1,94 @@
-Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3535678F39;
-	Sun, 26 Jan 2025 19:06:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
+Received: from mx.swemel.ru (mx.swemel.ru [95.143.211.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0B7D5684
+	for <linux-security-module@vger.kernel.org>; Sun, 26 Jan 2025 22:06:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.211.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737918411; cv=none; b=EI91C8yPmoAi9CcF34czMtO82v2b3sGePveLlSfZQ+Fqmf95volfEEWMH3ZYuNYHH4l+MhtZ2S0Jub/j58DTyY1zTHt5yYVgsiuy4FIV/dQyIuTTpmzz3R1aA3VXmRwanavNQwowBzm/pUJ4XoAx+JbuJSVUZC+alL6qd1uSd6U=
+	t=1737929168; cv=none; b=Ke/f43iIk4HfjMzjTQut1yEibFUXh0ej/bd1D+duKjiTomHZ81dGFeBC7sSSsLrSzrdfMHhk9PiYtsUDPAg9otAmYzeA3gsUHO7xRLO3t0rGUJKhxjMiO89HzHZHJsmooD3cCOXzyCbNDU9fzAPvjiDnDWQF+SFYH5+2tfrb/d0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737918411; c=relaxed/simple;
-	bh=0wZSAjqf7l3VytlHTwrIt2U0jZeddNU7sXfoQwAaI6s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SEceissMFr0rVbaxRfZOIp/04QoCc2EfCJzxM4LpCg44x042aT1QSBr8rJDqZ0it5/NQgw1gZkXzoFu29bJrVhx3eQnj7qtTNx7wXskkIWw9boUsZPMHg/0M2v6BWJhxXgnk4H5mEmofV18zDIMVyvlvV1WsjmzIQM1OwJdwgn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 50QIeY62004281;
-	Sun, 26 Jan 2025 12:40:34 -0600
-Received: (from greg@localhost)
-	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 50QIeWR8004280;
-	Sun, 26 Jan 2025 12:40:32 -0600
-Date: Sun, 26 Jan 2025 12:40:32 -0600
-From: "Dr. Greg" <greg@enjellic.com>
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jmorris@namei.org
-Subject: Re: [PATCH v4 2/14] Add TSEM specific documentation.
-Message-ID: <20250126184032.GA4277@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <20240826103728.3378-3-greg@enjellic.com> <8642afa96650e02f50709aa3361b62c4@paul-moore.com> <20250117044731.GA31221@wind.enjellic.com> <1630b5cd-c1ef-4afd-9767-7ebf3c0cc7ae@schaufler-ca.com> <20250118190346.GA9479@wind.enjellic.com> <d61082f5-7426-48cb-8d64-3d8aefee68ca@schaufler-ca.com>
+	s=arc-20240116; t=1737929168; c=relaxed/simple;
+	bh=bJelYN2AittT6034KMNmjT5EajmP6ahQSxjqiJ99ULo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
+	 In-Reply-To:Content-Type; b=jV+/RoJ4gVWiQa2dSR/8acIe1QmM2C0CyXk/PW/1zLi0rA+BbQvmQcoykkg1UhgUcReQkg7vpD9lXBWKniplT8XJohau2CIid8F4YGXL4UcXsFDPADnEBU+hE4DskWy5CC1BqbQWrwLGQvP1r4WMEfovBgBZZL9YClbwOzx56iI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=jqmOinVz; arc=none smtp.client-ip=95.143.211.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=swemel.ru
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="jqmOinVz"
+Message-ID: <8f84a564-678f-4787-8d80-ab7f93852f18@swemel.ru>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=swemel.ru; s=mail;
+	t=1737929159;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6VhXQoW0YR5q9y8jXXFOEyusKKzfiSgs+3hNddQpGC0=;
+	b=jqmOinVzJUhKWxHVG4NsTMFvwSISPJI6r5BHi9zdaokjyJX2hb1zoPP6QI+Sw7RzotsIPP
+	2ryE6zxODizPGwK2uBkbYjflsUc49+mcP3bjcFCtWyLSUkI+tvalqReIPz3OaxBDFCl6zt
+	4w69GRnGrQyz4IbG1VHs7QxGVZdSp2E=
+Date: Mon, 27 Jan 2025 01:06:45 +0300
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d61082f5-7426-48cb-8d64-3d8aefee68ca@schaufler-ca.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Sun, 26 Jan 2025 12:40:35 -0600 (CST)
+MIME-Version: 1.0
+Subject: Re[4]: [PATCH] smack: dont compile ipv6 code unless ipv6 is
+ configured
+Content-Language: en-US
+To: Casey Schaufler <casey@schaufler-ca.com>
+References: <20250117163645.3069927-1-andreev@swemel.ru>
+ <40046ce8-1117-47a7-80a3-650f7adb1ecc@schaufler-ca.com>
+ <72077b25-4f5f-4a64-ae35-ee2fe72f49c7@swemel.ru>
+ <c65ad1a3-64f7-4101-ac26-d72fbbbf85ee@schaufler-ca.com>
+From: Konstantin Andreev <andreev@swemel.ru>
+Cc: linux-security-module@vger.kernel.org
+In-Reply-To: <c65ad1a3-64f7-4101-ac26-d72fbbbf85ee@schaufler-ca.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-OriginalArrivalTime: 26 Jan 2025 22:05:59.0084 (UTC) FILETIME=[7AF6CEC0:01DB703E]
 
-On Tue, Jan 21, 2025 at 10:09:59AM -0800, Casey Schaufler wrote:
+Casey Schaufler, 26 Jan 2025:
+> On 1/26/2025 6:15 AM, Konstantin Andreev wrote:
+>> Casey Schaufler, 21 Jan 2025:
+>>> On 1/17/2025 8:36 AM, Konstantin Andreev wrote:
+>>>> I want to be sure that ipv6-specific code
+>>>> is not compiled in kernel binaries
+>>>> if ipv6 is not configured.
+>>>
+>>> The IPv6 Smack support really ought to be replaced with an
+>>> implementation of CALIPSO, now that it is available. The
+>>> conditional compilations that already exist have drawn no
+>>> small amount of well founded criticism. I will most likely
+>>> take this patch, but if you want to be extremely helpful
+>>> you could have a shot at CALIPSO for Smack.
+>>
+>> Actually, I am sharing the changes
+>> I have made to SMACK along the way,
+>> during development of other feature.
+> 
+> Thank you for the work you're doing. 
+> I'm curious about your "other feature".
 
-Hi Casey, I hope your weekend has gone well, greetings to other on the
-list as well.
+Well, you may remember the concept of multilevel ports,
+that ascends to Trusted Solaris (2.5 as far as I know)
 
-> On 1/18/2025 11:03 AM, Dr. Greg wrote:
-> > On Fri, Jan 17, 2025 at 10:10:30AM -0800, Casey Schaufler wrote:
-> >
-> > Good morning Casey, I hope your weekend is going well, thanks for
-> > taking the time to forward along your thoughts on our work.
-> >
-> >> On 1/16/2025 8:47 PM, Dr. Greg wrote:
-> >>> On Mon, Jan 13, 2025 at 08:29:47PM -0500, Paul Moore wrote:
-> >>>
-> >> ...
-> >>
-> >>>> Please define the CELL acronym here as I believe it is the first use of
-> >>>> "CELL" in this document.
-> >>> FWIW, CELL isn't an acronym, it is a metaphor.
-> >>>
-> >>> TSEM was conceptually inspired by and derived from the Turing Abstract
-> >>> Machine Model (TAMM), as applied to the problem of modeling the
-> >>> security state of an execution domain.
-> >>>
-> >>> As everyone reading this knows, a TAMM, in practice, consists of a
-> >>> head traversing an infinite paper tape divided into cells that direct
-> >>> the next state of the machine.
-> >>>
-> >>> In TSEM, the model consists of a Context Of Execution (COE) with
-> >>> security definining characteristics, traversing a finite set of
-> >>> measurement points of infinite length, with defining characteristics
-> >>> at each point.
-> >>>
-> >>> We refer to a measurement point and its characteristics as a CELL in
-> >>> deference to the inspiration for all of this.
-> >>>
-> >>> We will add this explanation to the documentation.
-> >> Communication within a community as culturally diverse as the Linux
-> >> kernel developers* requires that you do not assume that "everyone reading
-> >> this" knows much of anything beyond how to type "make". Let's face it,
-> >> there are kernel developers today who would look at the Turing test and
-> >> say "is that even a thing?" There are others who don't have an education
-> >> that includes mid-twentieth century technological history.
-> >>
-> >> [* Yes, an awful lot of Linux kernel developers are western males. ] 
-> >>
-> >> ...
-> > Sigh....
-> >
-> > It would thus appear that effective dialogue in the Linux kernel
-> > community is now about as perilous as attempting to square dance in a
-> > minefield with snowshoes on.
+The approach to allow a single instance of a trusted service
+to serve clients with different labels.
 
-> This isn't about Political Correctness. It's about communication.
-> Your documentation appears to target PHD level computer scientists.
+Given the idea, we decided to make “multilevel” not port,
+but process, and we limited protocol support to
+tcp/ipv4 and unix/stream.
 
-Probably not surprising, given that Quixote has been architected and
-stewarded by three Ph.D.'s, one soon to be Ph.D. and a rather
-remarkable individual that has four Ph.D.'s worth of experience, if I
-can choose my phrasing carefully, in global cyber-operations of
-various types.
+Implementing this in SMACK turned out to be very simple,
+and we found the result highly useful in our use cases.
 
-> Most Linux kernel developers are much more the BS engineer sort.
-> I'm not saying you need to dumb it down, I'm suggesting that you
-> could make it easier to review by targeting your audience better.
+I guess that `@' label was invented for similar goal,
+but we consider `@' approach less secure.
 
-In the theory portion of the documentation we attempted to draw
-correlations between classic mandatory access control and integrity
-architectures and what we are implementing with Quixote/TSEM.
-
-> > When we penned the reflections above, we very specifically didot
-> > want to be so pejorative as to suggest that anyone involved in this
-> > endeavor wouldn't have at least a basic understanding of the
-> > computability theory that all of our work is based.  They even have a
-> > movie about it, presumably in multiple languages.
-> >
-> > In any event, we apologize for being mistaken.
-> >
-> > We will add a Wikipedia link in the documentation pointing to an
-> > article on Turing machines, for the benefit of the unwashed masses now
-> > involved in kernel development.
-
-> The link is a good idea.
-
-Clarifications to the theory section and a Wikipedia link have been
-added and will appear in V5.
-
-> >>> We believe there is a technical solution to this problem as well but
-> >>> our work on that front, at this point, is too technically immature to
-> >>> go into.
-
-> >> Didn't Pierre de Fermat say something like that about some theorem
-> >> or another?
-
-> > As a Quixote team we take some solace to your reference of Fermat's
-> > Theorem with respect to our work.  It took 358 years to formally prove
-> > his theorem, in the face of many nay-sayers.  It turns out he was
-> > absolutely right and his vision is now universally accepted as a
-> > foundational premise of mathematics.
-
-> If it takes the Quixote team 358 years to develop a technical
-> solution I expect you will miss your market window. :(
-
-If we didn't believe that we have a solid technical solution in hand
-within the context of this century, and groups that have asked for it
-to be in the kernel, we wouldn't be expending cycles on getting it
-upstreamed.
-
-We are hoping for considerably better than 358 years, but that would
-seem to be dependent on Linux review bandwidth, which everyone agrees
-is strained.
-
-More to the point, we were making an allusion with our comments that
-throughout history, disruptive innovation has been consistently missed
-by the technical status quo.
-
-Once again, thank you for your comments and review.
-
-Have a good remainder of the weekend.
-
-As always,
-Dr. Greg
-
-The Quixote Project - Flailing at the Travails of Cybersecurity
-              https://github.com/Quixote-Project
+The interfaces we created are not yet stable,
+and the feature isn't generic enough to be offered
+for public use.
+-- 
+Regards, Konstantin Andreev
