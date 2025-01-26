@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F6FE22B8CF;
-	Sun, 26 Jan 2025 15:05:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E672E22F3BB;
+	Sun, 26 Jan 2025 15:05:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737903910; cv=none; b=Me7hANabCjioMXX3t3AtUH4dr73Vpz2XffDGpTvIO1b5/niqhjt9VYbwIWMofl8FK+CXQB5HnoccJdYn/MAUX1P7zCh+Ga40aCdJ2rGICdYekE+dFaAk6TxB8nnWGF5r19llP3JI3/F5/vTRyFiVVjInabQp1KMESLxsZa6T2wM=
+	t=1737903937; cv=none; b=DY1h1vDywphjZimyPfPL7VUylZY0WybLliE83TvWV5gnJkGEDqgNndxs4S/adxZYs33jzeTCSMhfouGRb1iS8hZwL37lsB+mJIPBsiLISZiLLyigPWB8qx7DtlXfTK7jITaBuKlnbHQVQYz8jM8izd1mFSyARnSfAU0TROYwRVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737903910; c=relaxed/simple;
-	bh=BoKVT25+FzNZDExRSFKExNoNJZeO5nsZ/vqkPeYVsCg=;
+	s=arc-20240116; t=1737903937; c=relaxed/simple;
+	bh=coDBjQYCJdMJ8RoSlZOh9725+pb/7qsNmTV+zBP9iiI=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=npweapTrYdjyblnMVEw8nTb3Ae4e8OWgWm7ZVQKyL5ahWout+XaoUXEtxPfjlxo7xTeOknDl7GxN1gI3YIBmRp6fGkgektd9FVXYGEw/m5CC7lGSZTmaQGBRpbTYCgXnvleQzCVTB9LVXRbUIDG2N8V8u6AFhYPLAwKzPQVy/Go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cgw+EAM6; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=OFcjake9sJsrXioPWtHoExhO7qriS9laWi82RGjQGtKj3ZjdT09yP9+j5hJuzjBV1208rtV2nLCdS6Z5QZBtx8pYnjRDWorSxjFEXO3ig16e/hhyFkHl5qukj2KOcRiriYYGfw2GDPsjmeygOCZoYLPiWe8Yuo+6fUkwT8q7M6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W1btQN2A; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cgw+EAM6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 454F7C4CEE2;
-	Sun, 26 Jan 2025 15:05:09 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W1btQN2A"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98F9FC4CEE2;
+	Sun, 26 Jan 2025 15:05:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1737903910;
-	bh=BoKVT25+FzNZDExRSFKExNoNJZeO5nsZ/vqkPeYVsCg=;
+	s=k20201202; t=1737903936;
+	bh=coDBjQYCJdMJ8RoSlZOh9725+pb/7qsNmTV+zBP9iiI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=cgw+EAM6IEewmJjCBEFFh56iwjQAgEAwIQe9wMBAoVH+bzt2Z/nF629YhPZZpBdfE
-	 gJx58g5H9g5v1yl6HRh12gmeGI07nTuqUcKGK379B9whJJ2g3QX6fHbIZrBXxtzSZz
-	 5ivA/7T0Dz9tvp+fFf5xbsrteWVG+VxWDnHs+U+6WjlMgkBafztzAUMk9VJj9QsTTs
-	 Y+mdQyCcSe+jvc1fW+bWwXh2PaoXxw/o/2qklePm98a3o6uwR3KcZrR1s6MPEYmr9o
-	 SiPNoqIvDIHJqSLQxeA5/IfYBuVzWhZBZ6169/tYeffV1WqxshpJ20Q0Xz+uhNJ0QK
-	 GOIbfc/ZYCCwQ==
+	b=W1btQN2AIaNwkJzpCF097LbVGddWDJt98/QLd5VRGsUZzIHHHwAx+hdT6Ph++QL6K
+	 dYhJXpX7boM9tGOhBa9gEllXlNU/PPP245aJ61+5QwvAFnxby5OjpFkjdyt9jb9yZP
+	 VwOwM+UIvw3GjxqGeWpa17WqfrkRWEHd5G+alyOjKdaM0jaCkiHcc+OI4ktHsUxIiK
+	 xDy4W7uVVm+dohUUHsizPCb6XnvLcMxZ+UkR/OgsQqsH+qgb35SlzfjU/JL4OQsnrY
+	 x18h3LMXeg/vSbOtkn2J6A6E8PViem1ILt4PV/K0Di2FLR5K8Q1zICZDnrTAAUnghf
+	 z0BxM9YMSnS5g==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -38,12 +38,12 @@ Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
 	jmorris@namei.org,
 	serge@hallyn.com,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 04/12] tomoyo: don't emit warning in tomoyo_write_control()
-Date: Sun, 26 Jan 2025 10:04:52 -0500
-Message-Id: <20250126150500.959521-4-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 4/7] tomoyo: don't emit warning in tomoyo_write_control()
+Date: Sun, 26 Jan 2025 10:05:24 -0500
+Message-Id: <20250126150527.960265-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250126150500.959521-1-sashal@kernel.org>
-References: <20250126150500.959521-1-sashal@kernel.org>
+In-Reply-To: <20250126150527.960265-1-sashal@kernel.org>
+References: <20250126150527.960265-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.10.233
+X-stable-base: Linux 5.4.289
 Content-Transfer-Encoding: 8bit
 
 From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
@@ -81,10 +81,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/security/tomoyo/common.c b/security/tomoyo/common.c
-index 6235c3be832aa..e23993c784405 100644
+index 1b467381986f7..360cf2960f349 100644
 --- a/security/tomoyo/common.c
 +++ b/security/tomoyo/common.c
-@@ -2673,7 +2673,7 @@ ssize_t tomoyo_write_control(struct tomoyo_io_buffer *head,
+@@ -2674,7 +2674,7 @@ ssize_t tomoyo_write_control(struct tomoyo_io_buffer *head,
  
  		if (head->w.avail >= head->writebuf_size - 1) {
  			const int len = head->writebuf_size * 2;
