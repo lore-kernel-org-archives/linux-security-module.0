@@ -1,70 +1,93 @@
-Received: from mx.swemel.ru (mx.swemel.ru [95.143.211.150])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34AA4155743
-	for <linux-security-module@vger.kernel.org>; Sun, 26 Jan 2025 14:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.211.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4609A1F76AC;
+	Sun, 26 Jan 2025 14:54:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737900910; cv=none; b=h/E654yoqFdPrPiTf+l3W6tkdR8VALzQ02MZAS7S8Tek4Te9nH4JfCJuLr7vD4s0XRQeRKxS/VmFZhJ2XE77Mq4xXsit2ZtsTMGfdUxw3yX0BSxavRkGT1vCUUz9qxmkPYhsJ81vqK8cKjOuy/v4HBidH81pwgy4+9mTcXQghUU=
+	t=1737903280; cv=none; b=FTkzdX4RqK7ad5fLXtQMxLrC72I7n0eje9TFXwZ8MvAuo/outYldPcLEi6Za9jIDLevrqRzYzh6xZi5qfbSdG8MwFuw37tdhjPkolP5suP02vgUyK7oYSamBVdq8MPekecJbDJ4svOgGUMaOey9yWBnOrJ4gqGz8Ph+YsuR1cds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737900910; c=relaxed/simple;
-	bh=5T5KU9AeFx9gpFYlUYIWNv1ehk6tbL87hinsBYrjPKU=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=eEQ7IQQ/0z3k11FBjUzaynGXKcx8rlruMPnOke1x6Hmm5ciCHEsqmDs6TTzTANeV/mjK4QK2bIdrmsr6SV9/ASSkzJuaWA0sNlJWt1LSXR3Qvrah/JmMJfpTxTBMZyvPNM5BOfAzuQjR6uKJ5WGqIl6P4KXWccNsiriZs6JrUWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=e2zzqmsW; arc=none smtp.client-ip=95.143.211.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=swemel.ru
+	s=arc-20240116; t=1737903280; c=relaxed/simple;
+	bh=uPc4NVSveHI7GHriDuEDZNzg3746xNX8eV/7hKr234Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=PAu6QxQeYbAGgz9FjUXtWDs2f0blIspb6TBcKKQvtpfRoYv7mLLNAgLljCfN9mbSWZnQNdFjP3LMBvJ9GwDNjbwKk49gmK1uKs07k0URY0En8mjQFFw9QadDpSJ7Kk4Yp3Klii/NUy1Iks16BPuAdAugLW5ReJtrGR3YKhwBOzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ev58wf6l; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="e2zzqmsW"
-Message-ID: <72077b25-4f5f-4a64-ae35-ee2fe72f49c7@swemel.ru>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=swemel.ru; s=mail;
-	t=1737900904;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=awI40/D+svAcMO79CeOlzsrhudt3JSIO5pj4XhKUn3Y=;
-	b=e2zzqmsW46ZI3vnwc87Vw8GIZU4LG5Z/QqzQq/9IJ5kPOLFVXuqQPSSyQkH/VOHFn2cvjt
-	5ZT4FwBmly6Z+jj3MOaSLTJdogSP1QWK0gUDmFy7LEaCqYAKy9+k+bL2uKU+I7w3lrA27P
-	ZlgDfUhKpmbUxNch8Os4b/ueletbXIw=
-Date: Sun, 26 Jan 2025 17:15:50 +0300
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ev58wf6l"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FF17C4CEE5;
+	Sun, 26 Jan 2025 14:54:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1737903280;
+	bh=uPc4NVSveHI7GHriDuEDZNzg3746xNX8eV/7hKr234Q=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Ev58wf6l1lvIEozBkVIMkEThsIFP513RILG5cR16jUEPv3LNoiiRTPUMiAlGDiVTt
+	 B1JKzFq6afmpHBzNiQsHq5qdTp4SYZRv3x+5pm7lRpjGZkBJFDnM39t+9Mif2Qz7iE
+	 ay/Ps06OyYwEdPYQfVR88CmclYgBQmSCEtfg23eFDLdHaeQafeB3QCW12cA5MZZsU3
+	 Vhwe+LrLzhVl+cEVJPNBBA88Fm517lcArvfN2gM/iB/GevOuIWDeroCsvItZAlmKSP
+	 KkyCr9FweR975CErwta7e8J2xpo4xWJabJ00ARIct6o4wEiXk6ul1U8UrboNyVm1ra
+	 joM4qYs1n0raA==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Leo Stone <leocstone@gmail.com>,
+	syzbot+4eb7a741b3216020043a@syzkaller.appspotmail.com,
+	Paul Moore <paul@paul-moore.com>,
+	Sasha Levin <sashal@kernel.org>,
+	mortonm@chromium.org,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.13 31/34] safesetid: check size of policy writes
+Date: Sun, 26 Jan 2025 09:53:07 -0500
+Message-Id: <20250126145310.926311-31-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250126145310.926311-1-sashal@kernel.org>
+References: <20250126145310.926311-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Konstantin Andreev <andreev@swemel.ru>
-Subject: Re[2]: [PATCH] smack: dont compile ipv6 code unless ipv6 is
- configured
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: linux-security-module@vger.kernel.org
-References: <20250117163645.3069927-1-andreev@swemel.ru>
- <40046ce8-1117-47a7-80a3-650f7adb1ecc@schaufler-ca.com>
-Content-Language: en-US
-In-Reply-To: <40046ce8-1117-47a7-80a3-650f7adb1ecc@schaufler-ca.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-OriginalArrivalTime: 26 Jan 2025 14:15:04.0353 (UTC) FILETIME=[B1D50110:01DB6FFC]
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.13
+Content-Transfer-Encoding: 8bit
 
-Casey Schaufler, 21 Jan 2025:
-> On 1/17/2025 8:36 AM, Konstantin Andreev wrote:
->> I want to be sure that ipv6-specific code
->> is not compiled in kernel binaries
->> if ipv6 is not configured.
-> 
-> The IPv6 Smack support really ought to be replaced with an
-> implementation of CALIPSO, now that it is available. The
-> conditional compilations that already exist have drawn no
-> small amount of well founded criticism. I will most likely
-> take this patch, but if you want to be extremely helpful
-> you could have a shot at CALIPSO for Smack.
+From: Leo Stone <leocstone@gmail.com>
 
-Actually, I am sharing the changes
-I have made to SMACK along the way,
-during development of other feature.
+[ Upstream commit f09ff307c7299392f1c88f763299e24bc99811c7 ]
 
-IPv6 in Smack is in my waiting list,
-but not in a focus right now.
---
-Regards, Konstantin Andreev
+syzbot attempts to write a buffer with a large size to a sysfs entry
+with writes handled by handle_policy_update(), triggering a warning
+in kmalloc.
+
+Check the size specified for write buffers before allocating.
+
+Reported-by: syzbot+4eb7a741b3216020043a@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=4eb7a741b3216020043a
+Signed-off-by: Leo Stone <leocstone@gmail.com>
+[PM: subject tweak]
+Signed-off-by: Paul Moore <paul@paul-moore.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ security/safesetid/securityfs.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/security/safesetid/securityfs.c b/security/safesetid/securityfs.c
+index 25310468bcddf..8e1ffd70b18ab 100644
+--- a/security/safesetid/securityfs.c
++++ b/security/safesetid/securityfs.c
+@@ -143,6 +143,9 @@ static ssize_t handle_policy_update(struct file *file,
+ 	char *buf, *p, *end;
+ 	int err;
+ 
++	if (len >= KMALLOC_MAX_SIZE)
++		return -EINVAL;
++
+ 	pol = kmalloc(sizeof(struct setid_ruleset), GFP_KERNEL);
+ 	if (!pol)
+ 		return -ENOMEM;
+-- 
+2.39.5
+
