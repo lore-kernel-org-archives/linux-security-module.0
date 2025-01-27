@@ -1,148 +1,225 @@
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+Received: from sonic309-27.consmr.mail.ne1.yahoo.com (sonic309-27.consmr.mail.ne1.yahoo.com [66.163.184.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBCA15FDA7
-	for <linux-security-module@vger.kernel.org>; Mon, 27 Jan 2025 16:05:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E25E18A6C0
+	for <linux-security-module@vger.kernel.org>; Mon, 27 Jan 2025 17:18:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.184.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737993938; cv=none; b=SspqKOx9sVak19keLmQ3GnMUWB83Nj5vN6vf3wprugic0boJ07fIYx8caRFksa02bwMzPzqs1ej87NWpe/yoDLemUTMBIFey4Zv+50pfk1Gd9hLUa6GGhMGdG9dN3seZrjWePBDn5TRg0Z+ZYqe2wmveBic13XwLzBv+ielRlLQ=
+	t=1737998328; cv=none; b=i+fnCsTSt5RcwbQx3nFz5yxg5OTWlpxNb1mpDCHYtnvHPxzpyld/PcGiuiWQLsWqtosBAFICW4N4Sg4HNz5nRSi9xycmHGJCkxwzHI6XtzsG8AYQNWy4abec3yWh8OIF5tFaSDqhGlzg8trI6Nl8M1OYOKKvEfUW2VQeSk3P53o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737993938; c=relaxed/simple;
-	bh=i8c9XUT2+PzdjjlJqgShCr3BS0twHVG+rrMukwPmjXs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eMJQkkdFVA/oFYTp6hWze0Bhfok/EOyij1e207ycR4T3C3Uow+nbsxuIrkGnYO7i8yKgIXYGainUZu5z4hpEEUcVb7hSUhYzO8+0FDgsIh3H/rqlhaS83rJYaLRpabf7ROwmWQXyesy8ClzAIsHZMHpFDq6AQGpuISosYdNCmgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ErTrLXht; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1737998328; c=relaxed/simple;
+	bh=t/dos2zj8APz5pI+joT/EuwBbbvSOcgYgZAgIEhiLHw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PGsR2Bsy9gyIrq+ftBHYo3IVL3C+xI8BPsKrKNdeaVb0uS6syIL0litMZK6SzlybKTFIHyYBOKXQOn8PfDIPKz1IvHxeuQ5B81TaQMKo8lQRtna8An7ry5ta8+s5oUNfary0xNq8iYF4mePgoyBoW8zFPYMaxn8XunkqzvsIL6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=RThh2l8h; arc=none smtp.client-ip=66.163.184.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ErTrLXht"
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a9e44654ae3so761391066b.1
-        for <linux-security-module@vger.kernel.org>; Mon, 27 Jan 2025 08:05:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1737993935; x=1738598735; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xpT9nnLdkMtNx9of9sdla+BsN/9HUUmlb0E1+ZPiNUI=;
-        b=ErTrLXhtiNUbP2yOqzZhYn7FZL+kPOxP5whrP+Nb1JV8yyi73wLAFLQ8z+nqLK9azQ
-         dgaUM9GuH42jQflaIVR5sbfpt6i5ryYQY41Pk+XpeCindiJ8R4NLDZGAhcKGbvmNaEw2
-         n75xNsd93/Q/bdXDpE2/jf83BKTIJUdI9DaXs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737993935; x=1738598735;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xpT9nnLdkMtNx9of9sdla+BsN/9HUUmlb0E1+ZPiNUI=;
-        b=Gv1PnAJAaA8zLJ0o52FBiscSDdqCG+SaViHzm7rVfOjjzrrQQLnzLnpkjDqME5jpYY
-         2M3LN3tsxrSRsQfuWDaGvheII4VqlQkyft1fv9oXzgKwdIDKJHvp5EUYBYKuaEqKDQXO
-         Cvq+JRdWVLidYkOulT4iJ6s4NO11KtQE3R96gI9rTaSGo/d5o7HYVDilz7mZn+Xf69BI
-         /x7L8X4qDYw3cma1gIfDkvU2+7W3B9SgwSD7asdK2S6beNzEDgApgIMU/rG2LJ3HefqN
-         0YjxT2mbcwNxy0AmGKx1bh52V1xCRJKlzjaikFEKAPpUngDMLRp0AusK01Q665U5vnMn
-         Fliw==
-X-Forwarded-Encrypted: i=1; AJvYcCVjJQxRl05OTRGyhoEn8O4LU73lALzgx7/As6IziuLWuxKOq6HJSDFJAHKJ4yuthin8lXULhtwZL7d0OTG/vnZDlKSOXEc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7OzjZvf/5mqd0h7cv+gFOL/UfviXBKC0Y2eojJsisc0sbXtSk
-	/YBQ2zDDP40nWugmf/wi1I799Z81zEjD+3KFbb3qAcVW9THG4iBOT/OWY2P8Y4N9ctqfYh+eNI5
-	PlQaX+qgimL1KHgz5B91lfwpghrSBqkIN2MWD
-X-Gm-Gg: ASbGncuwsUci+62x4IkBsSqqzUYhAhfOvbmBp/RZlPv9eXv0K1T9+A09DU1nCj6g2y6
-	TjRavI9Exu2r+HIc/47sKMSRGhB1zQK2G6bt6/066/eWBeu9tHTO7xJTD0J+H6qM=
-X-Google-Smtp-Source: AGHT+IH8UQ9s0x/USGO0ryiQc9PoqsKinsvKKDrHxxpETYg9vi2Jrkbsn+qDx03ChJA7t95EQVwRMvRx62Nw6vV2TFE=
-X-Received: by 2002:a17:907:9721:b0:aa6:5ec2:966c with SMTP id
- a640c23a62f3a-ab38b0b9124mr3844518066b.7.1737993934834; Mon, 27 Jan 2025
- 08:05:34 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="RThh2l8h"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1737998318; bh=x26gB3JNRu+hEDafrk16nnBoQG5bhDVgTkZ9KxR0jDw=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=RThh2l8h3hAarzDmH0dRAzTjP8wnCZdphPxsHhrN/F2nBR9TUGM5WQe8+OKyILEmVsmTvlMjztm3B/mm3S6XQUnCeiw9xfJZZLEsOyTWnm/6ub5IfKY7/6ADE/eKA4Kf+vlB1CbLlQ1RBX9VURUM4dM9Ezwx0X+7qC3fOsX9xWiViKMCh9+Ob5LyYdjzr4NtEHhW/berhEBu1w7TBbko6ow+/WhOM88JHGXe/kVeoYESRrOu3/j2rYZ+WJ18tWx2LJ3oAS5IKe//6sF+CXMyh8hZkoHz9SBJVhjEd6cKA5x0CeDaAmLecskYAWl5tcdc1tYzY10Ri/edVBKAVyEgJA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1737998318; bh=qf3zwfy18vAo4gAsG8dJa6yEqWhaop+KVdos/z4c1uZ=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=GJ0ZEMugSxuAFFd0RiIF4wzAngteVemeMvt9qyztCwExSAveuO+KjGPRmlsZwMzs0NNVQ5UVXscFAIbVxsGZk5rhFLJgIEDCfGClkh8mfretnJrYvShXIDlU/9USehFu11uZT+urL3basknvnYYi+MzVich8JCocgfFfV0zHm8KrfIIrsZVdE+p5IgMvej5KOMrG23M1VjtDsqsQznmnvvo4mUgeu5CrZp+75QbH+LIfa0edgnCnUmBdpzQ3ZUY/GkWjW/FL/5Gw6r9uDga6uhAF4PmlW/bfIuWpTzfDhEJ+Jhm7/q4LZ/YgxBLxnvDRimzK7D9t4ofe2AdSDTkVKg==
+X-YMail-OSG: vSZpAlEVM1l7U6ez4PgOK0aKdNqcuOVY0tr1uXzTkq2MXA1SkJDpmbgrNwZT1fI
+ IZn4EdjSGFf3QGTgbqHgzOAKfYkdsj5SVzFLfNPggVnIdzg6tYLm.iEN3NpGguICuF0ECwsitMQl
+ C6TDvyjMrwmN28jiVFyy3h5PHF6PpEO7rvSV1k47bVZjFlmKYafWiX3.Mq6KsyXgcNwuLLctlYaO
+ bBGRfa5KDek_5GFFE8wDAWFl.WwE8KGWh_jxCZP23ULTvgELGSjz6s6NVBL0Pt7gDXnwuA2Lff9R
+ 2GAZR4xjTkMDDe9A7hGSDy7uHIQ40ZlbPpEC5DjmyuFgTkyMiYBoFBWFaBtMs7waYo2Kc_TIQ5Qk
+ Sa3jg_FEBoysoD_iIP39DKjv6vTdTsPoJtZYdjwZxGvMTPxEziOQsNmC13Z5g3hw8_haolsJ0Sxj
+ IrU5OsWksqmRxJbo6mbGQo.IkecSF13pWwdHas0dgmIW2GHXJ9TFXMJ2.694Wz.DdudJ0vFyYq5m
+ c4psSB1uciS1yvIUsM_Bdc5pEH2K6ljptd3xlcNWB8R7k0gjBy1Boa7x29_sINlsSA2LY93cvpdK
+ 8IqirS0C27F7rxirs.wKSN3DdEHu58UTq4u7KjWrFJpF7qJ8cPDLTQkt0P_YItMAwcvAHCPfkoxb
+ d5hgXCFnNbId0YzEJzIwBQDxeu_.Xh8AWe5x91TB90mungOrLIOO7zlw9I6yKdTaySaK61JHxou2
+ vmfkgf7fnrSS7BAGwlGEGv_zriE9sJIB28jb6NxE7KnDE_keq7R0kirm0HSHy9q1fd9bsg_YIugx
+ ok9dJqowE9I.I1oZvWRzyt40oLJDD2ml1fFglksNq5yILEemaHCjGramOWjUzKYa1aBhtPe_bHwk
+ 6X9PcCirWwZMh1M2BqRybxJMYXNhygbeUUPtl1r_foi6OrfvyjiGVN5361XyaGB9t.jPnAPXK7io
+ MRkTRvFp746SBmNBqVAP7rRgG0wTMb7ebOlCgTqAlYkmNUzoozqmY35XU6Vepf6Yx3CKbMX9TRFf
+ 5.C9dMiNY9sov_5dXkVpwWHx8Fp.1VlXievupEfHgxkkII3aEqFN8U5rdQlhTjihWva9rQBdoWCn
+ JoYaQJkQKY_B5LlX_vK5P91M.pxiJDGHl7JYSUgnZ07glQ6EvU1_Af3KN18Svy4lkchTamzkhXmR
+ 9uo1dHAaJbrir7PZgLFyKLwqH_3_nDMdPbQYYJGfNXJcIZJuAl.o2GD8P13Scr9KS2lRI2M_EZBT
+ XyMc1Ce1gAePClM1yOM9PFPiyneoiMegXycDxJIjtc4Rg06D5E6ft8ddJnKExvSjMpc28mQ4Wbo4
+ Pr3pyyRlY_HKEy7ggcXphRIu0irHy4DlyPKlfJwSpCacO3YbAJZFKNnPTlSKRG9goXdTclWy7DvW
+ dOvU_923HKcYIUvMCbHtcyRcUFolfn2OPVkxQ87j2cyzmFSsieKPsGAI8xRtZ0XpRkudZMNFDjBH
+ MQBTxGT5rYw35k40X4abSjLs0_JWWguwt6bMIH96aGjkhIpnl2XGUxdww6nkKKs2tOFIWEP0vxqg
+ nX1FARP0.jECT_v65XJ9qbIv32RCltzHqpAH_xq3XHh9xDvQdmoM00MsQdKVL5nEnJXLYN.bdI4b
+ OoB0rnWJUlESkvaCX1y5.NBoTQZiVVRwdtPMqwsAuTs_n65_2xJ6WMkiow619vaDOyZdOuZ3rbD2
+ j7GHkSAOK0W.431qlbrhkEpRwXjBrpIvSomDTsnuyl6kFnCo8pLoOWqRVnawAdLEEvy7OBG_aPnH
+ im..mirYfYVCD47I52SKt7OfYnQR3nxSy0CiZv3vrIqyome9kG7NS8db4PPF8JtxPPSiLMFXJrIx
+ QHpE9D09jJ9slCI32600Py5YkxjZ3sV6Eowd8hY4bX2yChggPb7LN5Y8N_f6ZC_tts6RDPORWFJn
+ iP29dvJ2kMtF4M8AP.Ljn1wAuqvoqjCGb9I_Q8ud_xqJnLzvWMCO9_XSizhsZZn.xFRqqZIUiheo
+ M2RrAwarDP5GEiK.i50cnAY2IY3yIzdRU8CuPaEUIF.ZTSG9tuNZcJuZmjJgzTz06Qo0dWpMG9RB
+ DCLBh9mHyzVRPAiedA31fEtDrqdbsCZQjIY8_alnURbejtNnSatFRUTEHEvX2QAfGSoNW7NANLuJ
+ d0QjpwGthUv9WP_UMqgLGfl3dhQJvXNbIVkF0acJl6PQ8dayC2kBNMI92V60yGYCc0GBhTI5mVdE
+ 3QZr0vxbvVj62Qewq6utd.rBG.Dy1PhvZH7_yWEXD9LWBY1GEzEfZvouBoJUPkvDwQE1bhdvMU9A
+ rv4xJcEVW4WfpYWJOBVIwyExpMhNK
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 4a44d33c-5d77-451c-992d-d8c86c4377fb
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Mon, 27 Jan 2025 17:18:38 +0000
+Received: by hermes--production-gq1-5dd4b47f46-5qmz7 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 81936a5dd092f50612d99092c82af2e8;
+          Mon, 27 Jan 2025 17:18:34 +0000 (UTC)
+Message-ID: <bd6c2bee-b9bb-4eba-9216-135df204a10e@schaufler-ca.com>
+Date: Mon, 27 Jan 2025 09:18:31 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <675f513a.050a0220.37aaf.0106.GAE@google.com> <20241217182657.10080-2-leocstone@gmail.com>
- <CAHC9VhQGeNv=UEhXPN5MN1h0xEZkeE9kbE79+k9HvNxdK_4xzA@mail.gmail.com>
- <CAHC9VhRektpFHeUirRP8MH3NkmHWyy4BLcrDpy9zJH=ZJD4gRw@mail.gmail.com>
- <CAJ-EccNAzKwJt_wyRDWCrfP2dkBExsWumBGoNbfxG506erCoRg@mail.gmail.com> <CAHC9VhRWjSmMGDD9TARk6Xw+-+rJH_N5UeO6BqpAmfEtRcS87Q@mail.gmail.com>
-In-Reply-To: <CAHC9VhRWjSmMGDD9TARk6Xw+-+rJH_N5UeO6BqpAmfEtRcS87Q@mail.gmail.com>
-From: Micah Morton <mortonm@chromium.org>
-Date: Mon, 27 Jan 2025 08:05:23 -0800
-X-Gm-Features: AWEUYZkKXdJ9ubv_M4ZYFiQ5BjY4CQZBPGs-ZqVDpV7v3-GtiFvWjA4GFb2c-f0
-Message-ID: <CAJ-EccNE7O-Y_Ay-0udWR1vQ-6qcVihmSb7f1SyhbMP7TKdgpA@mail.gmail.com>
-Subject: Re: [PATCH v2] lsm: check size of writes
-To: Paul Moore <paul@paul-moore.com>
-Cc: Leo Stone <leocstone@gmail.com>, 
-	syzbot+4eb7a741b3216020043a@syzkaller.appspotmail.com, jmorris@namei.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	serge@hallyn.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] lsm,io_uring: add LSM hooks for io_uring_setup()
+To: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>,
+ linux-kernel@vger.kernel.org
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>, Jens Axboe <axboe@kernel.dk>,
+ Pavel Begunkov <asml.silence@gmail.com>,
+ Stephen Smalley <stephen.smalley.work@gmail.com>,
+ Ondrej Mosnacek <omosnace@redhat.com>, =?UTF-8?Q?Bram_Bonn=C3=A9?=
+ <brambonne@google.com>, =?UTF-8?Q?Thi=C3=A9baud_Weksteen?=
+ <tweek@google.com>, =?UTF-8?Q?Christian_G=C3=B6ttsche?=
+ <cgzones@googlemail.com>, Masahiro Yamada <masahiroy@kernel.org>,
+ linux-security-module@vger.kernel.org, io-uring@vger.kernel.org,
+ selinux@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
+References: <20250127155723.67711-1-hamzamahfooz@linux.microsoft.com>
+ <20250127155723.67711-2-hamzamahfooz@linux.microsoft.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20250127155723.67711-2-hamzamahfooz@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.23187 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Fri, Jan 24, 2025 at 11:42=E2=80=AFAM Paul Moore <paul@paul-moore.com> w=
-rote:
->
-> On Fri, Jan 24, 2025 at 2:24=E2=80=AFPM Micah Morton <mortonm@chromium.or=
-g> wrote:
-> > On Sat, Jan 4, 2025 at 7:49=E2=80=AFPM Paul Moore <paul@paul-moore.com>=
- wrote:
-> > >
-> > > On Wed, Dec 18, 2024 at 4:51=E2=80=AFPM Paul Moore <paul@paul-moore.c=
-om> wrote:
-> > > > On Tue, Dec 17, 2024 at 1:27=E2=80=AFPM Leo Stone <leocstone@gmail.=
-com> wrote:
-> > > > >
-> > > > > syzbot attempts to write a buffer with a large size to a sysfs en=
-try
-> > > > > with writes handled by handle_policy_update(), triggering a warni=
-ng
-> > > > > in kmalloc.
-> > > > >
-> > > > > Check the size specified for write buffers before allocating.
-> > > > >
-> > > > > Reported-by: syzbot+4eb7a741b3216020043a@syzkaller.appspotmail.co=
-m
-> > > > > Closes: https://syzkaller.appspot.com/bug?extid=3D4eb7a741b321602=
-0043a
-> > > > > Signed-off-by: Leo Stone <leocstone@gmail.com>
-> > > > > ---
-> > > > > v2: Make the check in handle_policy_update() to also cover
-> > > > > safesetid_uid_file_write(). Thanks for your feedback.
-> > > > > v1: https://lore.kernel.org/all/20241216030213.246804-2-leocstone=
-@gmail.com/
-> > > > > ---
-> > > > >  security/safesetid/securityfs.c | 3 +++
-> > > > >  1 file changed, 3 insertions(+)
-> > > >
-> > > > Looks okay to me.  Micah, are you planning to merge this patch, or
-> > > > would you like me to take it via the LSM tree?
-> > > >
-> > > > Reviewed-by: Paul Moore <paul@paul-moore.com>
-> > > >
-> > > > I'm going to tag this to come back to it in a week or so in case we
-> > > > don't hear from Micah, but if you don't see any further replies Leo=
-,
-> > > > feel free to send a gentle nudge ;)
-> > >
-> > > I'm going to go ahead and merge this into lsm/dev, if Micah has a
-> > > problem with that I can always remove/revert if needed.
-> > >
-> > > We may need to revisit safesetid's documented support status, but
-> > > that's a topic for another day.
-> >
-> > Sorry guys, I missed this one. I usually just check in weekly on my
-> > linux-security-users filter in my email inbox and see if any
-> > discussions include 'SafeSetID'.
-> >
-> > I must have skimmed over 'lsm: check size of writes' thinking it was a
-> > generic LSM patch rather than something specific to SafeSetID.
-> >
-> > I'll have to adjust my email settings so that emails which directly
-> > list me on the CC are sent to a specific folder for me to check more
-> > closely.
->
-> No worries, I'm just happy to hear you're still around and looking out
-> for patches :)
->
-> I'm assuming you are okay with that patch?  If not we still have time
-> to fix it up.
+On 1/27/2025 7:57 AM, Hamza Mahfooz wrote:
+> It is desirable to allow LSM to configure accessibility to io_uring
+> because it is a coarse yet very simple way to restrict access to it. So,
+> add an LSM for io_uring_allowed() to guard access to io_uring.
 
-Yes, looks good to me!
+I don't like this at all at all. It looks like you're putting in a hook
+so that io_uring can easily deflect any responsibility for safely
+interacting with LSMs.
 
 >
-> --
-> paul-moore.com
+> Cc: Paul Moore <paul@paul-moore.com>
+> Signed-off-by: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
+> ---
+>  include/linux/lsm_hook_defs.h       |  1 +
+>  include/linux/security.h            |  5 +++++
+>  io_uring/io_uring.c                 |  2 +-
+>  security/security.c                 | 12 ++++++++++++
+>  security/selinux/hooks.c            | 14 ++++++++++++++
+>  security/selinux/include/classmap.h |  2 +-
+>  6 files changed, 34 insertions(+), 2 deletions(-)
+>
+> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+> index e2f1ce37c41e..9eb313bd0c93 100644
+> --- a/include/linux/lsm_hook_defs.h
+> +++ b/include/linux/lsm_hook_defs.h
+> @@ -455,6 +455,7 @@ LSM_HOOK(int, 0, perf_event_write, struct perf_event *event)
+>  LSM_HOOK(int, 0, uring_override_creds, const struct cred *new)
+>  LSM_HOOK(int, 0, uring_sqpoll, void)
+>  LSM_HOOK(int, 0, uring_cmd, struct io_uring_cmd *ioucmd)
+> +LSM_HOOK(int, 0, uring_allowed, void)
+>  #endif /* CONFIG_IO_URING */
+>  
+>  LSM_HOOK(void, LSM_RET_VOID, initramfs_populated, void)
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 980b6c207cad..3e68f8468a22 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -2362,6 +2362,7 @@ static inline int security_perf_event_write(struct perf_event *event)
+>  extern int security_uring_override_creds(const struct cred *new);
+>  extern int security_uring_sqpoll(void);
+>  extern int security_uring_cmd(struct io_uring_cmd *ioucmd);
+> +extern int security_uring_allowed(void);
+>  #else
+>  static inline int security_uring_override_creds(const struct cred *new)
+>  {
+> @@ -2375,6 +2376,10 @@ static inline int security_uring_cmd(struct io_uring_cmd *ioucmd)
+>  {
+>  	return 0;
+>  }
+> +extern int security_uring_allowed(void)
+> +{
+> +	return 0;
+> +}
+>  #endif /* CONFIG_SECURITY */
+>  #endif /* CONFIG_IO_URING */
+>  
+> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+> index c2d8bd4c2cfc..9df7b3b556ef 100644
+> --- a/io_uring/io_uring.c
+> +++ b/io_uring/io_uring.c
+> @@ -3808,7 +3808,7 @@ static inline int io_uring_allowed(void)
+>  		return -EPERM;
+>  
+>  allowed_lsm:
+> -	return 0;
+> +	return security_uring_allowed();
+>  }
+>  
+>  SYSCALL_DEFINE2(io_uring_setup, u32, entries,
+> diff --git a/security/security.c b/security/security.c
+> index 143561ebc3e8..c9fae447327e 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -5999,6 +5999,18 @@ int security_uring_cmd(struct io_uring_cmd *ioucmd)
+>  {
+>  	return call_int_hook(uring_cmd, ioucmd);
+>  }
+> +
+> +/**
+> + * security_uring_allowed() - Check if io_uring_setup() is allowed
+> + *
+> + * Check whether the current task is allowed to call io_uring_setup().
+> + *
+> + * Return: Returns 0 if permission is granted.
+> + */
+> +int security_uring_allowed(void)
+> +{
+> +	return call_int_hook(uring_allowed);
+> +}
+>  #endif /* CONFIG_IO_URING */
+>  
+>  /**
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index 7b867dfec88b..fb37e87df226 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -7137,6 +7137,19 @@ static int selinux_uring_cmd(struct io_uring_cmd *ioucmd)
+>  	return avc_has_perm(current_sid(), isec->sid,
+>  			    SECCLASS_IO_URING, IO_URING__CMD, &ad);
+>  }
+> +
+> +/**
+> + * selinux_uring_allowed - check if io_uring_setup() can be called
+> + *
+> + * Check to see if the current task is allowed to call io_uring_setup().
+> + */
+> +static int selinux_uring_allowed(void)
+> +{
+> +	u32 sid = current_sid();
+> +
+> +	return avc_has_perm(sid, sid, SECCLASS_IO_URING, IO_URING__ALLOWED,
+> +			    NULL);
+> +}
+>  #endif /* CONFIG_IO_URING */
+>  
+>  static const struct lsm_id selinux_lsmid = {
+> @@ -7390,6 +7403,7 @@ static struct security_hook_list selinux_hooks[] __ro_after_init = {
+>  	LSM_HOOK_INIT(uring_override_creds, selinux_uring_override_creds),
+>  	LSM_HOOK_INIT(uring_sqpoll, selinux_uring_sqpoll),
+>  	LSM_HOOK_INIT(uring_cmd, selinux_uring_cmd),
+> +	LSM_HOOK_INIT(uring_allowed, selinux_uring_allowed),
+>  #endif
+>  
+>  	/*
+> diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
+> index 03e82477dce9..8a8f3908aac8 100644
+> --- a/security/selinux/include/classmap.h
+> +++ b/security/selinux/include/classmap.h
+> @@ -177,7 +177,7 @@ const struct security_class_mapping secclass_map[] = {
+>  	{ "perf_event",
+>  	  { "open", "cpu", "kernel", "tracepoint", "read", "write", NULL } },
+>  	{ "anon_inode", { COMMON_FILE_PERMS, NULL } },
+> -	{ "io_uring", { "override_creds", "sqpoll", "cmd", NULL } },
+> +	{ "io_uring", { "override_creds", "sqpoll", "cmd", "allowed", NULL } },
+>  	{ "user_namespace", { "create", NULL } },
+>  	/* last one */ { NULL, {} }
+>  };
