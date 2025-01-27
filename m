@@ -1,91 +1,101 @@
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5688015B10D;
-	Mon, 27 Jan 2025 21:07:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E4A61A76BC
+	for <linux-security-module@vger.kernel.org>; Mon, 27 Jan 2025 21:23:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738012051; cv=none; b=fq2IxZ8G0Oobo+9FB7dOmuKl4U8cGZH7hXuLGlRwGQMblOLKdwshnoB6S4k3VCCpQ+Phk1LDMWSLEQ3XcwSRuG7FuFKiezfjAgCe438aVY6Su6fxv5KH+XFOPbWmwTWi2U+rcB5y9S/IMBL1Yfb5Y1ABe4H2C45lYudvNkGN3eg=
+	t=1738012999; cv=none; b=MaUNGqno3vkKDsDLo0WNHcTpPICbFjlcsUdRAujr9y+STTXcSKLDaIqz6UOa83qXnTtyG9fk5KCnCx7IniLqdNbESAB2yzRiktziYtUeyIbOuUKfuEW3ip2jM07mPYwTcD6+Zc0aIBy+CQiFT45A8Gyyq70xeilA46xYUhj81xo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738012051; c=relaxed/simple;
-	bh=Ph4LsKdDXKgKXX7RKxCai5H4EMt0LF9SZ1cKR8yZ6Ok=;
+	s=arc-20240116; t=1738012999; c=relaxed/simple;
+	bh=XAyVRpnsN3psIErJlMt7zXtv2npL60nto/i5id7ai5s=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rkPD3XmAf9ZACa0VwJ6cqUfi6kILoY+hLZ9qDAC1qgP+DJjGPeJoMyxvVYahmoPPyhh8AWeYNkQ36Mmlq58CIy5Sm3zOkhD/iDJY3cXbqLV1A3dbI2ocF5LfvfaK61ehbyrMbNRZz0priR3NlHUlBkiOW1iT5quvNigN2UwWG+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ji6DAwYK; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 To:Cc:Content-Type; b=RpEI0hjZawWkDZsE9sA239UjzJCIG6IO1HYv26UND4AC1GSeaGsezC5kyCSDZxvrtxTeNHKCEQNI6FDsMwqbTQFPPwBsMk0r4ig31RKi9bXec08mqgVyOYsl+MuUxitNazlOSOBgMpv1ZIugygnBBZXdJqBDVndJQ8K98vZWIA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=IL6qGAdP; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ji6DAwYK"
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5d7e3f1fdafso9407118a12.0;
-        Mon, 27 Jan 2025 13:07:29 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="IL6qGAdP"
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e4a6b978283so9481792276.0
+        for <linux-security-module@vger.kernel.org>; Mon, 27 Jan 2025 13:23:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1738012048; x=1738616848; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1738012995; x=1738617795; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Ph4LsKdDXKgKXX7RKxCai5H4EMt0LF9SZ1cKR8yZ6Ok=;
-        b=Ji6DAwYKwCn5emZpn+RjE7V92TKlCFwZ1vzSkPK5h4u4DPWu18cNK81r65iLy4bBzk
-         DsgMgLDgng/GfU44Dae1CHtYESdI+IIKNgxowPURBrYMtMXq8NhqgpLemuhZ08F7iLI7
-         0ZdntcZelqD+fmfrYxYuAmmP0GEqLqs1nFUDh4u8QWbCtnv0cAlkjaV7sdcmAclJkiE5
-         jktVIXZrrnHptTXNIZ7+53A9GC+rPaskltx+8KbZykaLGCXmZcw6owgSWYN94f7LduqH
-         Mni2H3u+Yc1TT5k8ArqtgGElzC2a8KXaMZ53jlmIBtS2U7dRZpdDQSmuwmjmt+sIoh/U
-         ynMQ==
+        bh=XAyVRpnsN3psIErJlMt7zXtv2npL60nto/i5id7ai5s=;
+        b=IL6qGAdP5KtEU89F6UIipJRoq4GL+ZhA3eAAkGqA4SrDh2TYRUAF8DRvUZgaMK+4Em
+         Vju0utuOfqEV1TK7KYxBVastQt5wpBxkkdonXc8DXT9wUvL3Cqto44Qc60CG29f+RV+9
+         DACf/0mKDPDIs8FdEYC1UXQOV+1d0MvgLqw4Ru5YsoWIkSPoiDHFS0EHKAk6FWeUkaB6
+         +JRCJR3+V7ULJ4i7DtH0Ev2VWq4XIEr80GK+hHjpsVggPeLqUblieuofzX65wZL9kksq
+         BbEo4qE9nkXEm36GuprA9WhIeou12fGcioXTjGRlogmf4wW+5GXiTcfXx4vYU9DkUlx1
+         EouQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738012048; x=1738616848;
+        d=1e100.net; s=20230601; t=1738012995; x=1738617795;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Ph4LsKdDXKgKXX7RKxCai5H4EMt0LF9SZ1cKR8yZ6Ok=;
-        b=mdVAu7wTYc3M6sGR1UgF7qfbvM5b7CRlStc6MOfXbNXCZw1TSCU/sSLdKsySx2Hoaq
-         cc4zDbPsSrlqzeAq4/E4fLWXzXplPGa/kX5GrxQLkgiHvQF1vh+wDVUUVZwdjX0S0IHO
-         cfbH9NEZb1MktOs8OCzsusYC9vA97z3D2+v593lDgEOkuEVqJnmgzSXiX6+Mn2EpllQW
-         fFAWdAvk69sTreU03flhCPQD5/hwKCFIh5XR7BG52ZLidzEr5t03esVNwwaQfaM48vdD
-         3K57lhneLjWg0+kCd+4dNrCmvLEPUj/AWsgDPIR/IFxLHjbgWjix9l5sm+DgpAurxeH2
-         dYsg==
-X-Forwarded-Encrypted: i=1; AJvYcCVykhfa0ht79KaMWMspwt4pysVqUbUZSdb7UkhwJu4s0+TLURDxoeBMYrGmmVnihJtgHCAcZKV5E2tZg7A=@vger.kernel.org, AJvYcCX7r4Dp5vLpb2TFin8CGcFPn6rRWK3rcOoEV7uHScN+yi1kzrvSKWjFOc/1JvU2bqQbc9duIUKovgHvcj5NjNOzbNK5lKoe@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+mOnTXL8A4QnVY/7ToMfyI9n+N+C+eQPTgTbln+aDbdegs072
-	oeS6TE76KVDbU+7KbTIW6zdDOAQt8jKMcs3cbWQYx2e3BZyid/+c3OuAgVobu3g+0hy5MtW0qbj
-	YlssyVD1EDryEfSLKGKUIGhQRv/o=
-X-Gm-Gg: ASbGncs/twxNYiZreNhSiLW6JW5bJ8DUqeXvwLJDuV0PAXKlvBie+ROEbIBf0IL1GPQ
-	8jnzsoJLTqEYhaDOv1N8PaAtNmA8zcpzm8gh4wyktajjdDNIXpjVTt+O6RxGo
-X-Google-Smtp-Source: AGHT+IGmodn64v6jg9Cv8nLWcX0huPpc7OBi3YIaBJcUH/6N3ZHtxeWvia8KzgFkiOs4wChlFb2f5eK+DOEq55qyDA0=
-X-Received: by 2002:a05:6402:2548:b0:5d3:e79b:3b4c with SMTP id
- 4fb4d7f45d1cf-5db7db2bfebmr39227226a12.31.1738012048458; Mon, 27 Jan 2025
- 13:07:28 -0800 (PST)
+        bh=XAyVRpnsN3psIErJlMt7zXtv2npL60nto/i5id7ai5s=;
+        b=bVh7JVgUDztVl7MZKNvvuTOJmLBJ1vS/HeDcJ82JovJ2oXHXOakrOGX76KyVh8Y3ak
+         Suj0zPeukcCovGZJyr0vGAOfzG/kz+BFMXTzy5JIPXvUe1WVtsixxWyGwVKLJ7ksLQKI
+         4o1vGXg0nEegTCY/qvmUBPL5bw55Tb+8bQIRjk+S3ghPz5OINREF3InSKYi/UKCrRPu1
+         sboATg9+5p2EylcEme2PSaJTD4ka8yraTZSBfnDwtCFvZjabeP/BCOfUpMcaClu+B+g9
+         U1kodGrE2b6Di5jxYhUzJlXWNT3d8QWYdCGVq1vJLqHMMRLU4GwmdnJLoLL3OuHuWf4V
+         +7kg==
+X-Forwarded-Encrypted: i=1; AJvYcCVEq85k10NhS5JP/FsGeMPG+KZI54SLIPJHDQ3CsvJMFAo4KyuWY5V8wwWvc+E9vmMtQVx0eLnVCyVQjg6mzuQ0gtLErog=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKjJZe2e8+hrquR+m4Frss0aviwGU/nNE8x+AEVKfRtCws1csd
+	Y3AZNZV1UL8C1c8SZFXkQa4fTPiGhd6S6EbgruyV4uBmF6muvWuGVWYGl04Wycn3st1+xP2Nys0
+	elCw76ZOlcRznzIcsqbawJ0NRyPyfnsGjm0bk
+X-Gm-Gg: ASbGncuBJDKPSPGvXW1Mtu4UXjhHaWrQN2f8dBfiHQQz3nzlsUYa/Ta3I/mNP7wfa8c
+	4WM3BJHOxGdDTcYM+nJrj7KyNdk0iDHUWykim/5dxQ/UmqV2UQE9F1PUYnYBs
+X-Google-Smtp-Source: AGHT+IF5t5BkdSOg4TSJrHoTqiHeMhIdCAWFpEFPilYMsqGS822/Rm3nUcgF1QsJ8yeEYre5K2r6eTgn+B9c1RFUO7c=
+X-Received: by 2002:a05:690c:7342:b0:6ea:88d4:fd4f with SMTP id
+ 00721157ae682-6f7976f7cc0mr9495627b3.18.1738012995453; Mon, 27 Jan 2025
+ 13:23:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250127205404.3116679-1-mjguzik@gmail.com> <CAKCV-6sRcOOcLOqc62PyUKqbmmqTOje8vf0kDhLdNKaa4r57_Q@mail.gmail.com>
-In-Reply-To: <CAKCV-6sRcOOcLOqc62PyUKqbmmqTOje8vf0kDhLdNKaa4r57_Q@mail.gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Mon, 27 Jan 2025 22:07:15 +0100
-X-Gm-Features: AWEUYZkLfzdxeZl9uzdwZlGdlO-dXeXwY2yysO_AO2CXFVB_zMJPJu1dfcnNRaY
-Message-ID: <CAGudoHGswaubt5-rYNBy-whuf1_+F_gji_RshfM=hmXFF-58qg@mail.gmail.com>
-Subject: Re: [PATCH] apparmor: use the condition in AA_BUG_FMT even with debug disabled
-To: Ryan Lee <ryan.lee@canonical.com>
-Cc: john.johansen@canonical.com, paul@paul-moore.com, 
-	linux-kernel@vger.kernel.org, apparmor@lists.ubuntu.com, 
-	linux-security-module@vger.kernel.org
+References: <20250127155723.67711-1-hamzamahfooz@linux.microsoft.com>
+ <20250127155723.67711-2-hamzamahfooz@linux.microsoft.com> <bd6c2bee-b9bb-4eba-9216-135df204a10e@schaufler-ca.com>
+In-Reply-To: <bd6c2bee-b9bb-4eba-9216-135df204a10e@schaufler-ca.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 27 Jan 2025 16:23:04 -0500
+X-Gm-Features: AWEUYZk_66DBXYyyXGpF3__XoAd1UXYaUgnN9Z9hxMeEkqEEj3wnGpO9yXQUN_Q
+Message-ID: <CAHC9VhRaXgLKo6NbEVBiZOA1NowbwdoYNkFEpZ65VJ6h0TSdFw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] lsm,io_uring: add LSM hooks for io_uring_setup()
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>, linux-kernel@vger.kernel.org, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Jens Axboe <axboe@kernel.dk>, 
+	Pavel Begunkov <asml.silence@gmail.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, =?UTF-8?Q?Bram_Bonn=C3=A9?= <brambonne@google.com>, 
+	=?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>, 
+	=?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>, 
+	Masahiro Yamada <masahiroy@kernel.org>, linux-security-module@vger.kernel.org, 
+	io-uring@vger.kernel.org, selinux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jan 27, 2025 at 9:59=E2=80=AFPM Ryan Lee <ryan.lee@canonical.com> w=
-rote:
+On Mon, Jan 27, 2025 at 12:18=E2=80=AFPM Casey Schaufler <casey@schaufler-c=
+a.com> wrote:
+> On 1/27/2025 7:57 AM, Hamza Mahfooz wrote:
+> > It is desirable to allow LSM to configure accessibility to io_uring
+> > because it is a coarse yet very simple way to restrict access to it. So=
+,
+> > add an LSM for io_uring_allowed() to guard access to io_uring.
 >
-> For the record, a previous patch that removes the sock variable was
-> previously accepted:
-> https://lists.ubuntu.com/archives/apparmor/2025-January/013449.html
-> (patch) and https://lists.ubuntu.com/archives/apparmor/2025-January/01346=
-3.html
-> (ack from John Johansen)
->
+> I don't like this at all at all. It looks like you're putting in a hook
+> so that io_uring can easily deflect any responsibility for safely
+> interacting with LSMs.
 
-That makes sense, but imo the posted patch is still warranted -- all
-other debug macros (WARN_ON, VM_WARN_ON etc.) are expected to evaluate
-the condition.
+That's not how this works Casey, unless you're seeing something different?
+
+This is an additional access control point for io_uring, largely to
+simplify what a LSM would need to do to help control a process' access
+to io_uring, it does not replace any of the io_uring LSM hooks or
+access control points.
 
 --=20
-Mateusz Guzik <mjguzik gmail.com>
+paul-moore.com
