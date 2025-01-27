@@ -1,157 +1,158 @@
-Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D49F78F41;
-	Mon, 27 Jan 2025 14:50:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34E4538DE9;
+	Mon, 27 Jan 2025 14:56:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737989419; cv=none; b=IpJGZIF/mahLGrmMhJfvcr2YSeDJghoCjNM5nHLC1OlsL+IpLgmSqFa5+AQRqJ/pFcMtCAI9nGqvRrxbHvAdu4ZEkYe9Z0XflFGh9oyEAU7m/1nKfLQcs0bR2Lhe6CcnKlHOdpvGCZ6/YNemeXQCNTJ+9Xl8y4fv3VIiLrP6O6U=
+	t=1737989776; cv=none; b=V5GBqUkDNOeZWitYA2XfvQY+fSpuuSzJX10edxhXNQQRk/IdKek95ROewjYlFbQw3WbBtSyfITVYEY0iqeD1KfbBVNzl0SiIi8c7WAzuMqNcrCdJzQm/FviB1MVhnv1AYeGxAGKENg/3q140Y3ph94OMeVJTeZnLlB/jAL3K5L8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737989419; c=relaxed/simple;
-	bh=4jmummf21eCG5N7yeeWqWb8xZ7DSnhTI4KnzJZ2Brdg=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=DzMuBIRGMBNtyNA8LZtV6lweSrhbcz3kfbZDSPs78fKCfggn2gHPY9Ika/J59qOKlTXUe2gguHil3o1oE65CO84itGXeF01G9cP/wQ4xSq8NHKxpbhGohNohHmjVoerj0OJhD96sehQKNpA1iFsTtoe/CLVEQNL8Ys1hp9imtjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TZvylBee; arc=none smtp.client-ip=209.85.217.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1737989776; c=relaxed/simple;
+	bh=jgZ2GO8S3cXCdWyE6ZvOdFoqm0rhCqZC3ICQKad44uQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=qESKVxqOrAXe9OgMwi4km3msue6Z+bStm5HR/sKuHk705JFMXZO/XF4UIO2wht6UtiU7QZzQmMSPdFyJ0eJKeisPSCmuESl0ZAL5Xo8WCRf0A7gE1UM7D9hrBwdkvYeoN/jxu7Qa37qygysMiCtB8+/QlkTDXAc5mWlqoKi8VnQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WVed1oKV; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TZvylBee"
-Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-4afde39e360so1156169137.0;
-        Mon, 27 Jan 2025 06:50:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1737989414; x=1738594214; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j+4PFphjG6BR9vrdCpxlvOY56GsX5BOUCbDC8gOl9Zs=;
-        b=TZvylBee0wnmUmZb5Dw1rjWHugdMpT4Jk19QLxB1q069Xzx006zhdpcbrrt5OHX8t3
-         TWgVThSJWszRHfGusKRmeeCq27y7C4D62JALk+so+uIFA85q0cvKH7in57Bm009mqyEl
-         J99cuEFJh71px6z9xXrw3g9hs1BsJRyvAmSsZI6mqwtgk1yD37bHwvdAxKphva0yUJgd
-         USCgLf8QDNSkJjvqpxT+BbSF/Lye2i5CtWVcaAmXtqwCdRbHasEmx8DHIEwva2Xtai9w
-         HkI82kKS7CLBZdm7CSMB4nspwNr8kR2tSxsu77B8XHhoaulyTfj/GWVqaBqz+uM3Z3Tx
-         c0sQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1737989414; x=1738594214;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=j+4PFphjG6BR9vrdCpxlvOY56GsX5BOUCbDC8gOl9Zs=;
-        b=ZgZl4+VO6uJF/Z2zWzZjG5VDpZYbDTIV32iY+xXvGG93JxK4WrEyr3D/VbKrzSstQt
-         2dNQ7QXbRQPMXvEsjXes+Urh1wpJJK9POJP6/gJqF1rGR2O5ybA1Psq5qb2raWvZpnCP
-         ljZ/SUJUVG47J2pUejY97bxb3xffnZe4Ol6MsYuhasJgxmAGnhgwh8sXZ9XGyRSsdI1G
-         LGx8NF1azLJr+JxuFJWNJLmkrTius07ov7eOmM5Paixhp4kI0v5wmpiaHegSIt/+kKzn
-         QEHLix8EEsysUmjnfCfRlDb2C4qknMvHJfSupxXiItYAdRtmFBErl2aEX4nHrMSWKN7l
-         DAnA==
-X-Forwarded-Encrypted: i=1; AJvYcCUNYBUHFQ0VgcrlTihmnsc8Ee2U9ZT81264ru5u3zvDOeZbNSCRAbCgztOMz2QpU+MXLpwvhA+wJw==@vger.kernel.org, AJvYcCWBF2Os3npPTCkJjU5PaCe66UO/qWJF6lEq6VMhmaKsulC2odYW2bx1BfQETQH6xyFoQ6bTpsq/@vger.kernel.org, AJvYcCWtUtV5P/yfKmmXD16/a0089b11dvKOXxbZwpVxf84Vxx2Dg6lUryeS1dJvyH9RQvWVqXNQ4t/Vzyfy4yBibMZ23s2VZEw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAJQB6AAlGEC29O8BN/HhzX4EASL7igIEC1FbUfYf5XLkLpOCJ
-	KogZTZZhcq6U7TSqpphYUMsAH6gSzryOyB8aUTXf58M9i++k9HwW
-X-Gm-Gg: ASbGnctfpAitHrpo/V7C2kCK8NjZWnTrfeIxNFWO5gHiu/Jtn/h0u9eG7smS0eSmePU
-	zdsyJJnfSLzWDgPRXrxuvAYbeQtnzkYenr31bVTpWr+V6yaHO2J1V8QN1W2qDyp21LIGrTh0Qpa
-	d05xm8aYZ4QVlcc3K4LSqz9bza+X00P5krgoxLdvhKv7kqyX1EfdIuctUVhvs4GAdW/WkrYbVh+
-	zwadorQRx59paOWTJZ/3VmzrrSadfY5SaT+7fto2pzxb5tDBgatQtwADIAnLi+bAdT1PuLm9ZNs
-	bvk0xLo3+87cpTPV21MREoUJdo7lx1b3hM3fKfQKegGWn39F2n7K
-X-Google-Smtp-Source: AGHT+IHiPK8GERIaHyGFAwU9SeGFw2Lt/7vnkO4qXmXaLxYiJ6qqJJKmrSbn29Bn7h/SuNMzrSVk3w==
-X-Received: by 2002:a05:6102:5249:b0:4af:e5fd:77fc with SMTP id ada2fe7eead31-4b690b5ba88mr36746604137.3.1737989414037;
-        Mon, 27 Jan 2025 06:50:14 -0800 (PST)
-Received: from localhost (15.60.86.34.bc.googleusercontent.com. [34.86.60.15])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-864a9af3a53sm1915095241.11.2025.01.27.06.50.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 Jan 2025 06:50:13 -0800 (PST)
-Date: Mon, 27 Jan 2025 09:50:12 -0500
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: stsp <stsp2@yandex.ru>, 
- Ondrej Mosnacek <omosnace@redhat.com>, 
- Willem de Bruijn <willemb@google.com>, 
- Jason Wang <jasowang@redhat.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, 
- network dev <netdev@vger.kernel.org>, 
- Linux Security Module list <linux-security-module@vger.kernel.org>, 
- SElinux list <selinux@vger.kernel.org>
-Message-ID: <67979d24d21bc_3f1a29434@willemb.c.googlers.com.notmuch>
-In-Reply-To: <e8b6c6f9-9647-4ab6-8bbb-ccc94b04ade4@yandex.ru>
-References: <CAFqZXNtkCBT4f+PwyVRmQGoT3p1eVa01fCG_aNtpt6dakXncUg@mail.gmail.com>
- <e8b6c6f9-9647-4ab6-8bbb-ccc94b04ade4@yandex.ru>
-Subject: Re: Possible mistake in commit 3ca459eaba1b ("tun: fix group
- permission check")
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WVed1oKV"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1737989775; x=1769525775;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=jgZ2GO8S3cXCdWyE6ZvOdFoqm0rhCqZC3ICQKad44uQ=;
+  b=WVed1oKVFkzK/oETPO0J8VpsIwi4ypJTg0lX+AcJEgqH+erXdJNaC/zx
+   vwuxJ5EvFrKw8crBjfrH3OrZkmYyiIBfNFMF7HidrQkt6uq0J8zqSAp/C
+   45ZUNEiKIjk56k4gUxBaq3cmZw4dCPXjJfc0nYZR7zJGhVo2kmA6NEUXR
+   0KWBG3Cls9htsZqhlU+aXWYz+V2nSgl8rO7BSXBFLVrHPboFTM4jos7U7
+   sXSVvlfFUG6DsyEBbPRooxxmuhyYGXhs3SfVRgtB3m5OhDLEzWHgORxHb
+   nG6Ys7jT0v1Ol5wgE5vgBrxk+WOrx/f94U1RMMbUu5Eo/yUWua9d7E6Dh
+   w==;
+X-CSE-ConnectionGUID: 6HP7/vAvQ/yiDPBSiq3Asw==
+X-CSE-MsgGUID: yhqiLSZiQVmyFVnUzK1mOg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11328"; a="49104680"
+X-IronPort-AV: E=Sophos;i="6.13,238,1732608000"; 
+   d="scan'208";a="49104680"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jan 2025 06:56:13 -0800
+X-CSE-ConnectionGUID: Z9Coz29cQ6uqfPwc/L4sHg==
+X-CSE-MsgGUID: XE2pskZGQO2Q6A9y4rThjA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="113598177"
+Received: from bergbenj-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.14])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jan 2025 06:56:01 -0800
+From: Jani Nikula <jani.nikula@intel.com>
+To: Joel Granados <joel.granados@kernel.org>, Ard Biesheuvel <ardb@kernel.org>
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>, Thomas =?utf-8?Q?Wei=C3=9F?=
+ =?utf-8?Q?schuh?=
+ <linux@weissschuh.net>, Kees Cook <kees@kernel.org>, Luis Chamberlain
+ <mcgrof@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+ linux-crypto@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
+ intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ intel-xe@lists.freedesktop.org, linux-hyperv@vger.kernel.org,
+ linux-rdma@vger.kernel.org, linux-raid@vger.kernel.org,
+ linux-scsi@vger.kernel.org, linux-serial@vger.kernel.org,
+ xen-devel@lists.xenproject.org, linux-aio@kvack.org,
+ linux-fsdevel@vger.kernel.org, netfs@lists.linux.dev,
+ codalist@coda.cs.cmu.edu, linux-mm@kvack.org, linux-nfs@vger.kernel.org,
+ ocfs2-devel@lists.linux.dev, fsverity@lists.linux.dev,
+ linux-xfs@vger.kernel.org, io-uring@vger.kernel.org, bpf@vger.kernel.org,
+ kexec@lists.infradead.org, linux-trace-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org, apparmor@lists.ubuntu.com,
+ linux-security-module@vger.kernel.org, keyrings@vger.kernel.org, Song Liu
+ <song@kernel.org>, "Steven Rostedt (Google)" <rostedt@goodmis.org>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>, "Darrick J. Wong"
+ <djwong@kernel.org>, Corey Minyard <cminyard@mvista.com>
+Subject: Re: Re: Re: [PATCH v2] treewide: const qualify ctl_tables where
+ applicable
+In-Reply-To: <f4lfo2fb7ajogucsvisfd5sg2avykavmkizr6ycsllcrco4mo3@qt2zx4zp57zh>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250110-jag-ctl_table_const-v2-1-0000e1663144@kernel.org>
+ <Z4+jwDBrZNRgu85S@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
+ <nslqrapp4v3rknjgtfk4cg64ha7rewrrg24aslo2e5jmxfwce5@t4chrpuk632k>
+ <CAMj1kXEZPe8zk7s67SADK9wVH3cfBup-sAZSC6_pJyng9QT7aw@mail.gmail.com>
+ <f4lfo2fb7ajogucsvisfd5sg2avykavmkizr6ycsllcrco4mo3@qt2zx4zp57zh>
+Date: Mon, 27 Jan 2025 16:55:58 +0200
+Message-ID: <87jzag9ugx.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain
 
-stsp wrote:
-> 27.01.2025 12:10, Ondrej Mosnacek =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > Hello,
-> >
-> > It looks like the commit in $SUBJ may have introduced an unintended
-> > change in behavior. According to the commit message, the intent was t=
-o
-> > require just one of {user, group} to match instead of both, which
-> > sounds reasonable, but the commit also changes the behavior for when
-> > neither of tun->owner and tun->group is set. Before the commit the
-> > access was always allowed, while after the commit CAP_NET_ADMIN is
-> > required in this case.
-> >
-> > I'm asking because the tun_tap subtest of selinux-testuite [1] starte=
-d
-> > to fail after this commit (it assumed CAP_NET_ADMIN was not needed),
-> > so I'm trying to figure out if we need to change the test or if it
-> > needs to be fixed in the kernel.
-> >
-> > Thanks,
-> >
-> > [1] https://github.com/SELinuxProject/selinux-testsuite/
-> >
-> Hi, IMHO having the persistent
-> TAP device inaccessible by anyone
-> but the CAP_NET_ADMIN is rather
-> useless, so the compatibility should
-> be restored on the kernel side.
-> I'd raise the questions about adding
-> the CAP_NET_ADMIN checks into
-> TUNSETOWNER and/or TUNSETPERSIST,
-> but this particular change to TUNSETIFF,
-> at least on my side, was unintentional.
-> =
+On Mon, 27 Jan 2025, Joel Granados <joel.granados@kernel.org> wrote:
+> On Wed, Jan 22, 2025 at 01:41:35PM +0100, Ard Biesheuvel wrote:
+>> On Wed, 22 Jan 2025 at 13:25, Joel Granados <joel.granados@kernel.org> wrote:
+>> >
+>> > On Tue, Jan 21, 2025 at 02:40:16PM +0100, Alexander Gordeev wrote:
+>> > > On Fri, Jan 10, 2025 at 03:16:08PM +0100, Joel Granados wrote:
+>> > >
+>> > > Hi Joel,
+>> > >
+>> > > > Add the const qualifier to all the ctl_tables in the tree except for
+>> > > > watchdog_hardlockup_sysctl, memory_allocation_profiling_sysctls,
+>> > > > loadpin_sysctl_table and the ones calling register_net_sysctl (./net,
+>> > > > drivers/inifiniband dirs). These are special cases as they use a
+>> > > > registration function with a non-const qualified ctl_table argument or
+>> > > > modify the arrays before passing them on to the registration function.
+>> > > >
+>> > > > Constifying ctl_table structs will prevent the modification of
+>> > > > proc_handler function pointers as the arrays would reside in .rodata.
+>> > > > This is made possible after commit 78eb4ea25cd5 ("sysctl: treewide:
+>> > > > constify the ctl_table argument of proc_handlers") constified all the
+>> > > > proc_handlers.
+>> > >
+>> > > I could identify at least these occurences in s390 code as well:
+>> > Hey Alexander
+>> >
+>> > Thx for bringing these to my attention. I had completely missed them as
+>> > the spatch only deals with ctl_tables outside functions.
+>> >
+>> > Short answer:
+>> > These should not be included in the current patch because they are a
+>> > different pattern from how sysctl tables are usually used. So I will not
+>> > include them.
+>> >
+>> > With that said, I think it might be interesting to look closer at them
+>> > as they seem to be complicating the proc_handler (I have to look at them
+>> > closer).
+>> >
+>> > I see that they are defining a ctl_table struct within the functions and
+>> > just using the data (from the incoming ctl_table) to forward things down
+>> > to proc_do{u,}intvec_* functions. This is very odd and I have only seen
+>> > it done in order to change the incoming ctl_table (which is not what is
+>> > being done here).
+>> >
+>> > I will take a closer look after the merge window and circle back with
+>> > more info. Might take me a while as I'm not very familiar with s390
+>> > code; any additional information on why those are being used inside the
+>> > functions would be helpfull.
+>> >
+>> 
+>> Using const data on the stack is not as useful, because the stack is
+>> always mapped writable.
+>> 
+>> Global data structures marked 'const' will be moved into an ELF
+>> section that is typically mapped read-only in its entirely, and so the
+>> data cannot be modified by writing to it directly. No such protection
+>> is possible for the stack, and so the constness there is only enforced
+>> at compile time.
+> I completely agree with you. No reason to use const within those
+> functions. But why define those ctl_tables in function to begin with.
+> Can't you just use the ones that are defined outside the functions?
 
-> Sorry about that. :(
+You could have static const within functions too. You get the rodata
+protection and function local scope, best of both worlds?
 
-Thanks for the report Ondrej.
-
-Agreed that we need to reinstate this. I suggest this explicit
-extra branch after the more likely cases:
-
-        @@ -585,6 +585,9 @@ static inline bool tun_capable(struct tun_str=
-uct *tun)
-        		return 1;
-        	if (gid_valid(tun->group) && in_egroup_p(tun->group))
-        		return 1;
-        +       if (!uid_valid(tun->owner) && !gid_valid(tun->group))
-        +               return 1;
-        +
-        	return 0;
-         }
-
-The intent clearly has always been to allow access if owner and group
-are not explicitly set.
-
-It's easy to see when group support was added in commit 8c644623fe7e
-("[NET]: Allow group ownership of TUN/TAP devices."), and the even
-simpler check before that:
-
-                /* Check permissions */
--               if (tun->owner !=3D -1 &&
--                   current->euid !=3D tun->owner && !capable(CAP_NET_ADM=
-IN))
-+               if (((tun->owner !=3D -1 &&
-+                     current->euid !=3D tun->owner) ||
-+                    (tun->group !=3D -1 &&
-+                     current->egid !=3D tun->group)) &&
-+                    !capable(CAP_NET_ADMIN))
-                        return -EPERM;
+BR,
+Jani.
 
 
+-- 
+Jani Nikula, Intel
