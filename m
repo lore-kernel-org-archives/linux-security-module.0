@@ -1,158 +1,80 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+Received: from forward502d.mail.yandex.net (forward502d.mail.yandex.net [178.154.239.210])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34E4538DE9;
-	Mon, 27 Jan 2025 14:56:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 032B538DEC;
+	Mon, 27 Jan 2025 15:06:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.210
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737989776; cv=none; b=V5GBqUkDNOeZWitYA2XfvQY+fSpuuSzJX10edxhXNQQRk/IdKek95ROewjYlFbQw3WbBtSyfITVYEY0iqeD1KfbBVNzl0SiIi8c7WAzuMqNcrCdJzQm/FviB1MVhnv1AYeGxAGKENg/3q140Y3ph94OMeVJTeZnLlB/jAL3K5L8=
+	t=1737990389; cv=none; b=NsopLZp5A58xeFEOA9L+Usv0P7zBNJNWs/zYnWmkWawciwSRJAsy/kSEyERwSsG9830LJXz2nQ+ZwRhNJGIuf06uIkCh5JJRHP6NDR/aCD75A/yLzNw6DwYaRd5a64zpGpm0AgxoMiHiiwXdDRxwTdf75SVFOdY7l523BwVgt88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737989776; c=relaxed/simple;
-	bh=jgZ2GO8S3cXCdWyE6ZvOdFoqm0rhCqZC3ICQKad44uQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=qESKVxqOrAXe9OgMwi4km3msue6Z+bStm5HR/sKuHk705JFMXZO/XF4UIO2wht6UtiU7QZzQmMSPdFyJ0eJKeisPSCmuESl0ZAL5Xo8WCRf0A7gE1UM7D9hrBwdkvYeoN/jxu7Qa37qygysMiCtB8+/QlkTDXAc5mWlqoKi8VnQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WVed1oKV; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1737990389; c=relaxed/simple;
+	bh=GPl6WM1o3qJh2IXD7n1MyxuqxoUNMiwnsLudNpxSMek=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mfDATaC3NJ5lTDRNxCcyw920GDQeuj8oIdWmj84mkSXI7IrY8uHGJylSTC2Ym0PZ6Bqy/7LrYbhGMsIDcntaJj7OA/6wnHlCdxxciWZ+PdsZ/mHXT0BbuOHPi3x9iEEO6NuoMxToAZM9HWnlaeXXiAAd9v5IRdDk46wmn52QFGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=qK+brCiq; arc=none smtp.client-ip=178.154.239.210
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WVed1oKV"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1737989775; x=1769525775;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=jgZ2GO8S3cXCdWyE6ZvOdFoqm0rhCqZC3ICQKad44uQ=;
-  b=WVed1oKVFkzK/oETPO0J8VpsIwi4ypJTg0lX+AcJEgqH+erXdJNaC/zx
-   vwuxJ5EvFrKw8crBjfrH3OrZkmYyiIBfNFMF7HidrQkt6uq0J8zqSAp/C
-   45ZUNEiKIjk56k4gUxBaq3cmZw4dCPXjJfc0nYZR7zJGhVo2kmA6NEUXR
-   0KWBG3Cls9htsZqhlU+aXWYz+V2nSgl8rO7BSXBFLVrHPboFTM4jos7U7
-   sXSVvlfFUG6DsyEBbPRooxxmuhyYGXhs3SfVRgtB3m5OhDLEzWHgORxHb
-   nG6Ys7jT0v1Ol5wgE5vgBrxk+WOrx/f94U1RMMbUu5Eo/yUWua9d7E6Dh
-   w==;
-X-CSE-ConnectionGUID: 6HP7/vAvQ/yiDPBSiq3Asw==
-X-CSE-MsgGUID: yhqiLSZiQVmyFVnUzK1mOg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11328"; a="49104680"
-X-IronPort-AV: E=Sophos;i="6.13,238,1732608000"; 
-   d="scan'208";a="49104680"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jan 2025 06:56:13 -0800
-X-CSE-ConnectionGUID: Z9Coz29cQ6uqfPwc/L4sHg==
-X-CSE-MsgGUID: XE2pskZGQO2Q6A9y4rThjA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="113598177"
-Received: from bergbenj-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.14])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jan 2025 06:56:01 -0800
-From: Jani Nikula <jani.nikula@intel.com>
-To: Joel Granados <joel.granados@kernel.org>, Ard Biesheuvel <ardb@kernel.org>
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>, Thomas =?utf-8?Q?Wei=C3=9F?=
- =?utf-8?Q?schuh?=
- <linux@weissschuh.net>, Kees Cook <kees@kernel.org>, Luis Chamberlain
- <mcgrof@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
- linux-crypto@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
- intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- intel-xe@lists.freedesktop.org, linux-hyperv@vger.kernel.org,
- linux-rdma@vger.kernel.org, linux-raid@vger.kernel.org,
- linux-scsi@vger.kernel.org, linux-serial@vger.kernel.org,
- xen-devel@lists.xenproject.org, linux-aio@kvack.org,
- linux-fsdevel@vger.kernel.org, netfs@lists.linux.dev,
- codalist@coda.cs.cmu.edu, linux-mm@kvack.org, linux-nfs@vger.kernel.org,
- ocfs2-devel@lists.linux.dev, fsverity@lists.linux.dev,
- linux-xfs@vger.kernel.org, io-uring@vger.kernel.org, bpf@vger.kernel.org,
- kexec@lists.infradead.org, linux-trace-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org, apparmor@lists.ubuntu.com,
- linux-security-module@vger.kernel.org, keyrings@vger.kernel.org, Song Liu
- <song@kernel.org>, "Steven Rostedt (Google)" <rostedt@goodmis.org>,
- "Martin K. Petersen" <martin.petersen@oracle.com>, "Darrick J. Wong"
- <djwong@kernel.org>, Corey Minyard <cminyard@mvista.com>
-Subject: Re: Re: Re: [PATCH v2] treewide: const qualify ctl_tables where
- applicable
-In-Reply-To: <f4lfo2fb7ajogucsvisfd5sg2avykavmkizr6ycsllcrco4mo3@qt2zx4zp57zh>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20250110-jag-ctl_table_const-v2-1-0000e1663144@kernel.org>
- <Z4+jwDBrZNRgu85S@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
- <nslqrapp4v3rknjgtfk4cg64ha7rewrrg24aslo2e5jmxfwce5@t4chrpuk632k>
- <CAMj1kXEZPe8zk7s67SADK9wVH3cfBup-sAZSC6_pJyng9QT7aw@mail.gmail.com>
- <f4lfo2fb7ajogucsvisfd5sg2avykavmkizr6ycsllcrco4mo3@qt2zx4zp57zh>
-Date: Mon, 27 Jan 2025 16:55:58 +0200
-Message-ID: <87jzag9ugx.fsf@intel.com>
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="qK+brCiq"
+Received: from mail-nwsmtp-smtp-production-main-13.klg.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-13.klg.yp-c.yandex.net [IPv6:2a02:6b8:c42:86a3:0:640:3a48:0])
+	by forward502d.mail.yandex.net (Yandex) with ESMTPS id E087C60FD3;
+	Mon, 27 Jan 2025 17:58:14 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-13.klg.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id DwdhQljOf4Y0-OzeTgOCL;
+	Mon, 27 Jan 2025 17:58:14 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
+	t=1737989894; bh=lmEQu1PhyP+zEsEpjmNS4QF61wVqPu8L7WVxpIZ3WpE=;
+	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
+	b=qK+brCiqA2E7uj/w3BEixbJZKUUzt59LI2rYIdTyYoG5ynH5jhb6LX4eAwiOjtZSd
+	 dx9YqBY3E7VifDJ4lwKjb/xRIGwvsuCtgMm0Fgz+TsMA/Di6lySBp4n4cXB9MiIMdS
+	 np1HK9YH8xwXD4DsddTNRbbtLTl8fw47CDaJAdqw=
+Authentication-Results: mail-nwsmtp-smtp-production-main-13.klg.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
+Message-ID: <e4a8a2f6-c581-46c9-98f3-16e8c68b4107@yandex.ru>
+Date: Mon, 27 Jan 2025 17:58:13 +0300
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: Possible mistake in commit 3ca459eaba1b ("tun: fix group
+ permission check")
+Content-Language: en-US
+To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+ Ondrej Mosnacek <omosnace@redhat.com>, Willem de Bruijn
+ <willemb@google.com>, Jason Wang <jasowang@redhat.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, network dev <netdev@vger.kernel.org>,
+ Linux Security Module list <linux-security-module@vger.kernel.org>,
+ SElinux list <selinux@vger.kernel.org>
+References: <CAFqZXNtkCBT4f+PwyVRmQGoT3p1eVa01fCG_aNtpt6dakXncUg@mail.gmail.com>
+ <e8b6c6f9-9647-4ab6-8bbb-ccc94b04ade4@yandex.ru>
+ <67979d24d21bc_3f1a29434@willemb.c.googlers.com.notmuch>
+From: stsp <stsp2@yandex.ru>
+In-Reply-To: <67979d24d21bc_3f1a29434@willemb.c.googlers.com.notmuch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, 27 Jan 2025, Joel Granados <joel.granados@kernel.org> wrote:
-> On Wed, Jan 22, 2025 at 01:41:35PM +0100, Ard Biesheuvel wrote:
->> On Wed, 22 Jan 2025 at 13:25, Joel Granados <joel.granados@kernel.org> wrote:
->> >
->> > On Tue, Jan 21, 2025 at 02:40:16PM +0100, Alexander Gordeev wrote:
->> > > On Fri, Jan 10, 2025 at 03:16:08PM +0100, Joel Granados wrote:
->> > >
->> > > Hi Joel,
->> > >
->> > > > Add the const qualifier to all the ctl_tables in the tree except for
->> > > > watchdog_hardlockup_sysctl, memory_allocation_profiling_sysctls,
->> > > > loadpin_sysctl_table and the ones calling register_net_sysctl (./net,
->> > > > drivers/inifiniband dirs). These are special cases as they use a
->> > > > registration function with a non-const qualified ctl_table argument or
->> > > > modify the arrays before passing them on to the registration function.
->> > > >
->> > > > Constifying ctl_table structs will prevent the modification of
->> > > > proc_handler function pointers as the arrays would reside in .rodata.
->> > > > This is made possible after commit 78eb4ea25cd5 ("sysctl: treewide:
->> > > > constify the ctl_table argument of proc_handlers") constified all the
->> > > > proc_handlers.
->> > >
->> > > I could identify at least these occurences in s390 code as well:
->> > Hey Alexander
->> >
->> > Thx for bringing these to my attention. I had completely missed them as
->> > the spatch only deals with ctl_tables outside functions.
->> >
->> > Short answer:
->> > These should not be included in the current patch because they are a
->> > different pattern from how sysctl tables are usually used. So I will not
->> > include them.
->> >
->> > With that said, I think it might be interesting to look closer at them
->> > as they seem to be complicating the proc_handler (I have to look at them
->> > closer).
->> >
->> > I see that they are defining a ctl_table struct within the functions and
->> > just using the data (from the incoming ctl_table) to forward things down
->> > to proc_do{u,}intvec_* functions. This is very odd and I have only seen
->> > it done in order to change the incoming ctl_table (which is not what is
->> > being done here).
->> >
->> > I will take a closer look after the merge window and circle back with
->> > more info. Might take me a while as I'm not very familiar with s390
->> > code; any additional information on why those are being used inside the
->> > functions would be helpfull.
->> >
->> 
->> Using const data on the stack is not as useful, because the stack is
->> always mapped writable.
->> 
->> Global data structures marked 'const' will be moved into an ELF
->> section that is typically mapped read-only in its entirely, and so the
->> data cannot be modified by writing to it directly. No such protection
->> is possible for the stack, and so the constness there is only enforced
->> at compile time.
-> I completely agree with you. No reason to use const within those
-> functions. But why define those ctl_tables in function to begin with.
-> Can't you just use the ones that are defined outside the functions?
-
-You could have static const within functions too. You get the rodata
-protection and function local scope, best of both worlds?
-
-BR,
-Jani.
-
-
--- 
-Jani Nikula, Intel
+27.01.2025 17:50, Willem de Bruijn пишет:
+> Thanks for the report Ondrej.
+>
+> Agreed that we need to reinstate this. I suggest this explicit
+> extra branch after the more likely cases:
+>
+>          @@ -585,6 +585,9 @@ static inline bool tun_capable(struct tun_struct *tun)
+>          		return 1;
+>          	if (gid_valid(tun->group) && in_egroup_p(tun->group))
+>          		return 1;
+>          +       if (!uid_valid(tun->owner) && !gid_valid(tun->group))
+>          +               return 1;
+>          +
+>          	return 0;
+>           }
+>
+> The intent clearly has always been to allow access if owner and group
+> are not explicitly set.
+Perfectly fine with me.
+I'd raise the question about
+the security implications, but
+definitely not within this
+regression subject.
