@@ -1,80 +1,87 @@
-Received: from forward502d.mail.yandex.net (forward502d.mail.yandex.net [178.154.239.210])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 032B538DEC;
-	Mon, 27 Jan 2025 15:06:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F368A19BBA;
+	Mon, 27 Jan 2025 15:42:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737990389; cv=none; b=NsopLZp5A58xeFEOA9L+Usv0P7zBNJNWs/zYnWmkWawciwSRJAsy/kSEyERwSsG9830LJXz2nQ+ZwRhNJGIuf06uIkCh5JJRHP6NDR/aCD75A/yLzNw6DwYaRd5a64zpGpm0AgxoMiHiiwXdDRxwTdf75SVFOdY7l523BwVgt88=
+	t=1737992581; cv=none; b=hlKJ084b+wIEqZXyGUKaz7+c0w8WaWn5o0hoAaeubRTleSjf1mswjJTKsK59jZOs2Vz3B0rrY+AlvAbz449SGJkZ/003U2pbuza3vd4wk/cmUUvDjhUAXv8nqfyaARgsKu+LYmanLs4LbwRrC0GtHk4l/nVs0yDkh941/nwwHR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737990389; c=relaxed/simple;
-	bh=GPl6WM1o3qJh2IXD7n1MyxuqxoUNMiwnsLudNpxSMek=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mfDATaC3NJ5lTDRNxCcyw920GDQeuj8oIdWmj84mkSXI7IrY8uHGJylSTC2Ym0PZ6Bqy/7LrYbhGMsIDcntaJj7OA/6wnHlCdxxciWZ+PdsZ/mHXT0BbuOHPi3x9iEEO6NuoMxToAZM9HWnlaeXXiAAd9v5IRdDk46wmn52QFGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=qK+brCiq; arc=none smtp.client-ip=178.154.239.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
+	s=arc-20240116; t=1737992581; c=relaxed/simple;
+	bh=754tTQ0Xv0FV1pAPiQ7XMzOqvV5Ru3eT2/4MtIxHkKc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pcxjjWPHVuwrYIY3AW5zCkXqNuIvI2fQQ0VJx0xLK3WwbCAoyoO1pu4yLS/kX6gczLJqYNs4V2wyhB3ULJzgKjwL/IDvffeq1CbImkTFPDwGY7ajdNyjpUetqcdWx+dtSyOqy04rVVlQvjLsKbrQIrM+Zsrco896Xe2Q6pjCfmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Pyozw0ts; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="qK+brCiq"
-Received: from mail-nwsmtp-smtp-production-main-13.klg.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-13.klg.yp-c.yandex.net [IPv6:2a02:6b8:c42:86a3:0:640:3a48:0])
-	by forward502d.mail.yandex.net (Yandex) with ESMTPS id E087C60FD3;
-	Mon, 27 Jan 2025 17:58:14 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-13.klg.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id DwdhQljOf4Y0-OzeTgOCL;
-	Mon, 27 Jan 2025 17:58:14 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
-	t=1737989894; bh=lmEQu1PhyP+zEsEpjmNS4QF61wVqPu8L7WVxpIZ3WpE=;
-	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
-	b=qK+brCiqA2E7uj/w3BEixbJZKUUzt59LI2rYIdTyYoG5ynH5jhb6LX4eAwiOjtZSd
-	 dx9YqBY3E7VifDJ4lwKjb/xRIGwvsuCtgMm0Fgz+TsMA/Di6lySBp4n4cXB9MiIMdS
-	 np1HK9YH8xwXD4DsddTNRbbtLTl8fw47CDaJAdqw=
-Authentication-Results: mail-nwsmtp-smtp-production-main-13.klg.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
-Message-ID: <e4a8a2f6-c581-46c9-98f3-16e8c68b4107@yandex.ru>
-Date: Mon, 27 Jan 2025 17:58:13 +0300
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Pyozw0ts"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=754tTQ0Xv0FV1pAPiQ7XMzOqvV5Ru3eT2/4MtIxHkKc=; b=Pyozw0tsKLD9gp97o+N6ZbHkTo
+	Il8/2Vpa4F0aqTQ5eLNtncdojFavxqC+3hOoMyt2pPZYgpxoa7oSXp+1z19h2FwdJ9ksectEr6L5y
+	pdndzuM9IJbuYbMGyY8OnttTeia0ZsfUEQN3vE3Kvu3ywzVzVm7PiaoVN1j+XGx7cGtNMyIWcHM2K
+	IHU9EJmiTnsw2atKedPjlIYgnndG3plYffG/psV0clxoDlPsLg9vBJ8MCt7RCyZQNR2Rl4uIk2hOI
+	SGpvgckCCBw+KC2Pto4K/lzMPYNt+Lyqoqjs99RL8H5P/AQH7nlJDuMDpJ1IZ/IMsyAIp8YsG+ytq
+	PlpOQ/eA==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tcRG3-00000009b8r-2Zcd;
+	Mon, 27 Jan 2025 15:42:39 +0000
+Date: Mon, 27 Jan 2025 15:42:39 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Jani Nikula <jani.nikula@intel.com>
+Cc: Joel Granados <joel.granados@kernel.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+	Kees Cook <kees@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org, linux-crypto@vger.kernel.org,
+	openipmi-developer@lists.sourceforge.net,
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	intel-xe@lists.freedesktop.org, linux-hyperv@vger.kernel.org,
+	linux-rdma@vger.kernel.org, linux-raid@vger.kernel.org,
+	linux-scsi@vger.kernel.org, linux-serial@vger.kernel.org,
+	xen-devel@lists.xenproject.org, linux-aio@kvack.org,
+	linux-fsdevel@vger.kernel.org, netfs@lists.linux.dev,
+	codalist@coda.cs.cmu.edu, linux-mm@kvack.org,
+	linux-nfs@vger.kernel.org, ocfs2-devel@lists.linux.dev,
+	fsverity@lists.linux.dev, linux-xfs@vger.kernel.org,
+	io-uring@vger.kernel.org, bpf@vger.kernel.org,
+	kexec@lists.infradead.org, linux-trace-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org, apparmor@lists.ubuntu.com,
+	linux-security-module@vger.kernel.org, keyrings@vger.kernel.org,
+	Song Liu <song@kernel.org>,
+	"Steven Rostedt (Google)" <rostedt@goodmis.org>,
+	"Martin K. Petersen" <martin.petersen@oracle.com>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Corey Minyard <cminyard@mvista.com>
+Subject: Re: Re: Re: [PATCH v2] treewide: const qualify ctl_tables where
+ applicable
+Message-ID: <Z5epb86xkHQ3BLhp@casper.infradead.org>
+References: <20250110-jag-ctl_table_const-v2-1-0000e1663144@kernel.org>
+ <Z4+jwDBrZNRgu85S@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
+ <nslqrapp4v3rknjgtfk4cg64ha7rewrrg24aslo2e5jmxfwce5@t4chrpuk632k>
+ <CAMj1kXEZPe8zk7s67SADK9wVH3cfBup-sAZSC6_pJyng9QT7aw@mail.gmail.com>
+ <f4lfo2fb7ajogucsvisfd5sg2avykavmkizr6ycsllcrco4mo3@qt2zx4zp57zh>
+ <87jzag9ugx.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Possible mistake in commit 3ca459eaba1b ("tun: fix group
- permission check")
-Content-Language: en-US
-To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- Ondrej Mosnacek <omosnace@redhat.com>, Willem de Bruijn
- <willemb@google.com>, Jason Wang <jasowang@redhat.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, network dev <netdev@vger.kernel.org>,
- Linux Security Module list <linux-security-module@vger.kernel.org>,
- SElinux list <selinux@vger.kernel.org>
-References: <CAFqZXNtkCBT4f+PwyVRmQGoT3p1eVa01fCG_aNtpt6dakXncUg@mail.gmail.com>
- <e8b6c6f9-9647-4ab6-8bbb-ccc94b04ade4@yandex.ru>
- <67979d24d21bc_3f1a29434@willemb.c.googlers.com.notmuch>
-From: stsp <stsp2@yandex.ru>
-In-Reply-To: <67979d24d21bc_3f1a29434@willemb.c.googlers.com.notmuch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87jzag9ugx.fsf@intel.com>
 
-27.01.2025 17:50, Willem de Bruijn пишет:
-> Thanks for the report Ondrej.
->
-> Agreed that we need to reinstate this. I suggest this explicit
-> extra branch after the more likely cases:
->
->          @@ -585,6 +585,9 @@ static inline bool tun_capable(struct tun_struct *tun)
->          		return 1;
->          	if (gid_valid(tun->group) && in_egroup_p(tun->group))
->          		return 1;
->          +       if (!uid_valid(tun->owner) && !gid_valid(tun->group))
->          +               return 1;
->          +
->          	return 0;
->           }
->
-> The intent clearly has always been to allow access if owner and group
-> are not explicitly set.
-Perfectly fine with me.
-I'd raise the question about
-the security implications, but
-definitely not within this
-regression subject.
+On Mon, Jan 27, 2025 at 04:55:58PM +0200, Jani Nikula wrote:
+> You could have static const within functions too. You get the rodata
+> protection and function local scope, best of both worlds?
+
+timer_active is on the stack, so it can't be static const.
+
+Does this really need to be cc'd to such a wide distribution list?
