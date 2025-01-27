@@ -1,192 +1,148 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47561155747;
-	Mon, 27 Jan 2025 15:59:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBCA15FDA7
+	for <linux-security-module@vger.kernel.org>; Mon, 27 Jan 2025 16:05:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1737993578; cv=none; b=QSFtM7AGZJDAVc6sIVg6BU1x45V3Dgw7LkCppwsFyQ1LXWzOOztgl9JKxy3743YpzXEsiUvN6PKN0nuqcbp3J/DHI0WTRz8KOmTuF7rj3dEAKPRtDsBbFNikjAQvvVx5eOPdF+D4LM3OOLHtVlgtLsAFEjN4lL2EH3Tf0khQQp8=
+	t=1737993938; cv=none; b=SspqKOx9sVak19keLmQ3GnMUWB83Nj5vN6vf3wprugic0boJ07fIYx8caRFksa02bwMzPzqs1ej87NWpe/yoDLemUTMBIFey4Zv+50pfk1Gd9hLUa6GGhMGdG9dN3seZrjWePBDn5TRg0Z+ZYqe2wmveBic13XwLzBv+ielRlLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1737993578; c=relaxed/simple;
-	bh=Q7+SMiJKxbIvDSMi+10SwSyW9NdNz2BjBUNgb4kYIoI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=msvQUI8IyOT93HMKCWQ2Jk6wcjSWrinxZv1b0vjgW/2wkMarMyPCC5yZnqaBwBP/hr950cjhliw5+q7XGjPb3a0aZOYUQ3jFQA/33DVshA+Uut5Bon20oPvCTMG1Ckq8mdC3N1gEMe576CbQ4WnsdZl6gdu2g7SA7mT0kUZcYl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=PtDl01qI; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+	s=arc-20240116; t=1737993938; c=relaxed/simple;
+	bh=i8c9XUT2+PzdjjlJqgShCr3BS0twHVG+rrMukwPmjXs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eMJQkkdFVA/oFYTp6hWze0Bhfok/EOyij1e207ycR4T3C3Uow+nbsxuIrkGnYO7i8yKgIXYGainUZu5z4hpEEUcVb7hSUhYzO8+0FDgsIh3H/rqlhaS83rJYaLRpabf7ROwmWQXyesy8ClzAIsHZMHpFDq6AQGpuISosYdNCmgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ErTrLXht; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="PtDl01qI"
-Received: from hm-sls2.corp.microsoft.com (unknown [184.146.177.43])
-	by linux.microsoft.com (Postfix) with ESMTPSA id F2AE72066C1C;
-	Mon, 27 Jan 2025 07:59:29 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com F2AE72066C1C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1737993571;
-	bh=2/udn9ZmxbFIXLbmMids8xdWRcpso7DJ8fjy/XbvBwM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=PtDl01qIGWaAIkA7uy/rx3VGXP1OSQ/fvxYLkugwDZnb7uxpxW1dAlrShz7coKMur
-	 ZLjOs8uHLSTojcH6QKmobhXUHygChiruD2oh5AWOOUXIF8li8VbbHwL8jKEoXUfoZE
-	 sAjj0BaY3Xo127WFH9z9H7ec8q3sOe3BzMpVDgUc=
-From: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
-To: linux-kernel@vger.kernel.org
-Cc: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>,
-	Ondrej Mosnacek <omosnace@redhat.com>,
-	=?UTF-8?q?Bram=20Bonn=C3=A9?= <brambonne@google.com>,
-	=?UTF-8?q?Thi=C3=A9baud=20Weksteen?= <tweek@google.com>,
-	=?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	linux-security-module@vger.kernel.org,
-	io-uring@vger.kernel.org,
-	selinux@vger.kernel.org
-Subject: [PATCH v3 2/2] lsm,io_uring: add LSM hooks for io_uring_setup()
-Date: Mon, 27 Jan 2025 10:57:18 -0500
-Message-ID: <20250127155723.67711-2-hamzamahfooz@linux.microsoft.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250127155723.67711-1-hamzamahfooz@linux.microsoft.com>
-References: <20250127155723.67711-1-hamzamahfooz@linux.microsoft.com>
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ErTrLXht"
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a9e44654ae3so761391066b.1
+        for <linux-security-module@vger.kernel.org>; Mon, 27 Jan 2025 08:05:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1737993935; x=1738598735; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xpT9nnLdkMtNx9of9sdla+BsN/9HUUmlb0E1+ZPiNUI=;
+        b=ErTrLXhtiNUbP2yOqzZhYn7FZL+kPOxP5whrP+Nb1JV8yyi73wLAFLQ8z+nqLK9azQ
+         dgaUM9GuH42jQflaIVR5sbfpt6i5ryYQY41Pk+XpeCindiJ8R4NLDZGAhcKGbvmNaEw2
+         n75xNsd93/Q/bdXDpE2/jf83BKTIJUdI9DaXs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1737993935; x=1738598735;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xpT9nnLdkMtNx9of9sdla+BsN/9HUUmlb0E1+ZPiNUI=;
+        b=Gv1PnAJAaA8zLJ0o52FBiscSDdqCG+SaViHzm7rVfOjjzrrQQLnzLnpkjDqME5jpYY
+         2M3LN3tsxrSRsQfuWDaGvheII4VqlQkyft1fv9oXzgKwdIDKJHvp5EUYBYKuaEqKDQXO
+         Cvq+JRdWVLidYkOulT4iJ6s4NO11KtQE3R96gI9rTaSGo/d5o7HYVDilz7mZn+Xf69BI
+         /x7L8X4qDYw3cma1gIfDkvU2+7W3B9SgwSD7asdK2S6beNzEDgApgIMU/rG2LJ3HefqN
+         0YjxT2mbcwNxy0AmGKx1bh52V1xCRJKlzjaikFEKAPpUngDMLRp0AusK01Q665U5vnMn
+         Fliw==
+X-Forwarded-Encrypted: i=1; AJvYcCVjJQxRl05OTRGyhoEn8O4LU73lALzgx7/As6IziuLWuxKOq6HJSDFJAHKJ4yuthin8lXULhtwZL7d0OTG/vnZDlKSOXEc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7OzjZvf/5mqd0h7cv+gFOL/UfviXBKC0Y2eojJsisc0sbXtSk
+	/YBQ2zDDP40nWugmf/wi1I799Z81zEjD+3KFbb3qAcVW9THG4iBOT/OWY2P8Y4N9ctqfYh+eNI5
+	PlQaX+qgimL1KHgz5B91lfwpghrSBqkIN2MWD
+X-Gm-Gg: ASbGncuwsUci+62x4IkBsSqqzUYhAhfOvbmBp/RZlPv9eXv0K1T9+A09DU1nCj6g2y6
+	TjRavI9Exu2r+HIc/47sKMSRGhB1zQK2G6bt6/066/eWBeu9tHTO7xJTD0J+H6qM=
+X-Google-Smtp-Source: AGHT+IH8UQ9s0x/USGO0ryiQc9PoqsKinsvKKDrHxxpETYg9vi2Jrkbsn+qDx03ChJA7t95EQVwRMvRx62Nw6vV2TFE=
+X-Received: by 2002:a17:907:9721:b0:aa6:5ec2:966c with SMTP id
+ a640c23a62f3a-ab38b0b9124mr3844518066b.7.1737993934834; Mon, 27 Jan 2025
+ 08:05:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <675f513a.050a0220.37aaf.0106.GAE@google.com> <20241217182657.10080-2-leocstone@gmail.com>
+ <CAHC9VhQGeNv=UEhXPN5MN1h0xEZkeE9kbE79+k9HvNxdK_4xzA@mail.gmail.com>
+ <CAHC9VhRektpFHeUirRP8MH3NkmHWyy4BLcrDpy9zJH=ZJD4gRw@mail.gmail.com>
+ <CAJ-EccNAzKwJt_wyRDWCrfP2dkBExsWumBGoNbfxG506erCoRg@mail.gmail.com> <CAHC9VhRWjSmMGDD9TARk6Xw+-+rJH_N5UeO6BqpAmfEtRcS87Q@mail.gmail.com>
+In-Reply-To: <CAHC9VhRWjSmMGDD9TARk6Xw+-+rJH_N5UeO6BqpAmfEtRcS87Q@mail.gmail.com>
+From: Micah Morton <mortonm@chromium.org>
+Date: Mon, 27 Jan 2025 08:05:23 -0800
+X-Gm-Features: AWEUYZkKXdJ9ubv_M4ZYFiQ5BjY4CQZBPGs-ZqVDpV7v3-GtiFvWjA4GFb2c-f0
+Message-ID: <CAJ-EccNE7O-Y_Ay-0udWR1vQ-6qcVihmSb7f1SyhbMP7TKdgpA@mail.gmail.com>
+Subject: Re: [PATCH v2] lsm: check size of writes
+To: Paul Moore <paul@paul-moore.com>
+Cc: Leo Stone <leocstone@gmail.com>, 
+	syzbot+4eb7a741b3216020043a@syzkaller.appspotmail.com, jmorris@namei.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	serge@hallyn.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-It is desirable to allow LSM to configure accessibility to io_uring
-because it is a coarse yet very simple way to restrict access to it. So,
-add an LSM for io_uring_allowed() to guard access to io_uring.
+On Fri, Jan 24, 2025 at 11:42=E2=80=AFAM Paul Moore <paul@paul-moore.com> w=
+rote:
+>
+> On Fri, Jan 24, 2025 at 2:24=E2=80=AFPM Micah Morton <mortonm@chromium.or=
+g> wrote:
+> > On Sat, Jan 4, 2025 at 7:49=E2=80=AFPM Paul Moore <paul@paul-moore.com>=
+ wrote:
+> > >
+> > > On Wed, Dec 18, 2024 at 4:51=E2=80=AFPM Paul Moore <paul@paul-moore.c=
+om> wrote:
+> > > > On Tue, Dec 17, 2024 at 1:27=E2=80=AFPM Leo Stone <leocstone@gmail.=
+com> wrote:
+> > > > >
+> > > > > syzbot attempts to write a buffer with a large size to a sysfs en=
+try
+> > > > > with writes handled by handle_policy_update(), triggering a warni=
+ng
+> > > > > in kmalloc.
+> > > > >
+> > > > > Check the size specified for write buffers before allocating.
+> > > > >
+> > > > > Reported-by: syzbot+4eb7a741b3216020043a@syzkaller.appspotmail.co=
+m
+> > > > > Closes: https://syzkaller.appspot.com/bug?extid=3D4eb7a741b321602=
+0043a
+> > > > > Signed-off-by: Leo Stone <leocstone@gmail.com>
+> > > > > ---
+> > > > > v2: Make the check in handle_policy_update() to also cover
+> > > > > safesetid_uid_file_write(). Thanks for your feedback.
+> > > > > v1: https://lore.kernel.org/all/20241216030213.246804-2-leocstone=
+@gmail.com/
+> > > > > ---
+> > > > >  security/safesetid/securityfs.c | 3 +++
+> > > > >  1 file changed, 3 insertions(+)
+> > > >
+> > > > Looks okay to me.  Micah, are you planning to merge this patch, or
+> > > > would you like me to take it via the LSM tree?
+> > > >
+> > > > Reviewed-by: Paul Moore <paul@paul-moore.com>
+> > > >
+> > > > I'm going to tag this to come back to it in a week or so in case we
+> > > > don't hear from Micah, but if you don't see any further replies Leo=
+,
+> > > > feel free to send a gentle nudge ;)
+> > >
+> > > I'm going to go ahead and merge this into lsm/dev, if Micah has a
+> > > problem with that I can always remove/revert if needed.
+> > >
+> > > We may need to revisit safesetid's documented support status, but
+> > > that's a topic for another day.
+> >
+> > Sorry guys, I missed this one. I usually just check in weekly on my
+> > linux-security-users filter in my email inbox and see if any
+> > discussions include 'SafeSetID'.
+> >
+> > I must have skimmed over 'lsm: check size of writes' thinking it was a
+> > generic LSM patch rather than something specific to SafeSetID.
+> >
+> > I'll have to adjust my email settings so that emails which directly
+> > list me on the CC are sent to a specific folder for me to check more
+> > closely.
+>
+> No worries, I'm just happy to hear you're still around and looking out
+> for patches :)
+>
+> I'm assuming you are okay with that patch?  If not we still have time
+> to fix it up.
 
-Cc: Paul Moore <paul@paul-moore.com>
-Signed-off-by: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
----
- include/linux/lsm_hook_defs.h       |  1 +
- include/linux/security.h            |  5 +++++
- io_uring/io_uring.c                 |  2 +-
- security/security.c                 | 12 ++++++++++++
- security/selinux/hooks.c            | 14 ++++++++++++++
- security/selinux/include/classmap.h |  2 +-
- 6 files changed, 34 insertions(+), 2 deletions(-)
+Yes, looks good to me!
 
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index e2f1ce37c41e..9eb313bd0c93 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -455,6 +455,7 @@ LSM_HOOK(int, 0, perf_event_write, struct perf_event *event)
- LSM_HOOK(int, 0, uring_override_creds, const struct cred *new)
- LSM_HOOK(int, 0, uring_sqpoll, void)
- LSM_HOOK(int, 0, uring_cmd, struct io_uring_cmd *ioucmd)
-+LSM_HOOK(int, 0, uring_allowed, void)
- #endif /* CONFIG_IO_URING */
- 
- LSM_HOOK(void, LSM_RET_VOID, initramfs_populated, void)
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 980b6c207cad..3e68f8468a22 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -2362,6 +2362,7 @@ static inline int security_perf_event_write(struct perf_event *event)
- extern int security_uring_override_creds(const struct cred *new);
- extern int security_uring_sqpoll(void);
- extern int security_uring_cmd(struct io_uring_cmd *ioucmd);
-+extern int security_uring_allowed(void);
- #else
- static inline int security_uring_override_creds(const struct cred *new)
- {
-@@ -2375,6 +2376,10 @@ static inline int security_uring_cmd(struct io_uring_cmd *ioucmd)
- {
- 	return 0;
- }
-+extern int security_uring_allowed(void)
-+{
-+	return 0;
-+}
- #endif /* CONFIG_SECURITY */
- #endif /* CONFIG_IO_URING */
- 
-diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-index c2d8bd4c2cfc..9df7b3b556ef 100644
---- a/io_uring/io_uring.c
-+++ b/io_uring/io_uring.c
-@@ -3808,7 +3808,7 @@ static inline int io_uring_allowed(void)
- 		return -EPERM;
- 
- allowed_lsm:
--	return 0;
-+	return security_uring_allowed();
- }
- 
- SYSCALL_DEFINE2(io_uring_setup, u32, entries,
-diff --git a/security/security.c b/security/security.c
-index 143561ebc3e8..c9fae447327e 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -5999,6 +5999,18 @@ int security_uring_cmd(struct io_uring_cmd *ioucmd)
- {
- 	return call_int_hook(uring_cmd, ioucmd);
- }
-+
-+/**
-+ * security_uring_allowed() - Check if io_uring_setup() is allowed
-+ *
-+ * Check whether the current task is allowed to call io_uring_setup().
-+ *
-+ * Return: Returns 0 if permission is granted.
-+ */
-+int security_uring_allowed(void)
-+{
-+	return call_int_hook(uring_allowed);
-+}
- #endif /* CONFIG_IO_URING */
- 
- /**
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 7b867dfec88b..fb37e87df226 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -7137,6 +7137,19 @@ static int selinux_uring_cmd(struct io_uring_cmd *ioucmd)
- 	return avc_has_perm(current_sid(), isec->sid,
- 			    SECCLASS_IO_URING, IO_URING__CMD, &ad);
- }
-+
-+/**
-+ * selinux_uring_allowed - check if io_uring_setup() can be called
-+ *
-+ * Check to see if the current task is allowed to call io_uring_setup().
-+ */
-+static int selinux_uring_allowed(void)
-+{
-+	u32 sid = current_sid();
-+
-+	return avc_has_perm(sid, sid, SECCLASS_IO_URING, IO_URING__ALLOWED,
-+			    NULL);
-+}
- #endif /* CONFIG_IO_URING */
- 
- static const struct lsm_id selinux_lsmid = {
-@@ -7390,6 +7403,7 @@ static struct security_hook_list selinux_hooks[] __ro_after_init = {
- 	LSM_HOOK_INIT(uring_override_creds, selinux_uring_override_creds),
- 	LSM_HOOK_INIT(uring_sqpoll, selinux_uring_sqpoll),
- 	LSM_HOOK_INIT(uring_cmd, selinux_uring_cmd),
-+	LSM_HOOK_INIT(uring_allowed, selinux_uring_allowed),
- #endif
- 
- 	/*
-diff --git a/security/selinux/include/classmap.h b/security/selinux/include/classmap.h
-index 03e82477dce9..8a8f3908aac8 100644
---- a/security/selinux/include/classmap.h
-+++ b/security/selinux/include/classmap.h
-@@ -177,7 +177,7 @@ const struct security_class_mapping secclass_map[] = {
- 	{ "perf_event",
- 	  { "open", "cpu", "kernel", "tracepoint", "read", "write", NULL } },
- 	{ "anon_inode", { COMMON_FILE_PERMS, NULL } },
--	{ "io_uring", { "override_creds", "sqpoll", "cmd", NULL } },
-+	{ "io_uring", { "override_creds", "sqpoll", "cmd", "allowed", NULL } },
- 	{ "user_namespace", { "create", NULL } },
- 	/* last one */ { NULL, {} }
- };
--- 
-2.47.1
-
+>
+> --
+> paul-moore.com
