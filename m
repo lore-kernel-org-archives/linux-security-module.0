@@ -1,94 +1,101 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE501A072A;
-	Tue, 28 Jan 2025 11:22:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FF5D18E750
+	for <linux-security-module@vger.kernel.org>; Tue, 28 Jan 2025 12:42:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738063363; cv=none; b=WIed3RYgYQwzRJ8kptd6WG0A7azbhd6tlAJ8xEBUaWX2ov0kUBy04gQIi6BbWu8tMFYNKl75YN8czkWDvn+WWRj8QIwQhjvvqbNMsrA3L5EA19mI/kH3RDJIhN/o6fCHiQgk2PAGt6/tbb88ey/PRCR2gcvdGF3miENGXU3HHl8=
+	t=1738068176; cv=none; b=A3cRidPxc6+qvpmFxgOlNq+dYF60zvIx8ONf2aT9pKmfX7h+TBTuq7nGUL1WHWfqWwkU8P6SpjuShRK+uhRkeQs8g+SAQ/74V9KPX4qbZZWMy7Meh9FciN42T0gfNnxy+UO9+550ycDQkcNcMkXpkf1EqXEUfDdHO+xix17S6gM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738063363; c=relaxed/simple;
-	bh=AJfDJn9pFkPItjs+l9CjDlC33TdlTCE01Kr4mfJIOJE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g+cCyGb2/fsQowQreYNLg9qSUrLirXR7MS1CsgJTWL5oNhbhe1swUVk/CwSswe8PDryMSusPUfNKlrWUa3532e8R+YEEmmA4oN6QzpCINKU580mS3vkG99WHUT1yexgg3lDas9CYY6cW1AeZPm219ztniPyeJErJcq9Nc2Lg5xE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=foTouGKI; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1738068176; c=relaxed/simple;
+	bh=i4Ih4yOsCitMuKZsbd4LjFylOAQUX1g8j4CPdMxyPDE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nAmesXkMt9PDdpCSpM0FqNXj96e/QfgrPDx4vfgdaIemMejuUhBaJG9CK759FkVM6mtMHblyOhXOKtpErNJkJP0Vw5TKwB2FhWTGnYwEN0qaJZvGygGOWJpHT7waIwZk3O9lFNo22Max3LONtsXIiOKHczCyRq0cE9AQ0Pj/82w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=OKUl7Q1q; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="foTouGKI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98109C4CEDF;
-	Tue, 28 Jan 2025 11:22:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738063362;
-	bh=AJfDJn9pFkPItjs+l9CjDlC33TdlTCE01Kr4mfJIOJE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=foTouGKI5Xpt6DiifiySGU1Px4B0JlxynZkL/A+4GJ+F1wUAFkM/N4G83a9sI8N06
-	 lsMHA2F0I+BGkV1h4oylhwmSeJznMzbN+UJy9qwbYRK5QlpfqNfv8Msq/ndA/iDm4I
-	 JYp3P2GR22dNEIcBnZOOATJGYPU+gMIFK9XfLLma3B24+UKToDLZL/ZLBF6bwp16qy
-	 HMKr9svtYad8MrCuOMMF5t2I0WLB8bGS9HGYMu9w94+SD6sanYCztaTmP2cubx4D+F
-	 lhSPEntAtoYhJR/j92VqRwE5MifEf7tNzvj9NQnTwv0sbHofELHMou005/QzH1lonP
-	 yczCENnq4hKEA==
-Date: Tue, 28 Jan 2025 12:22:37 +0100
-From: Joel Granados <joel.granados@kernel.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Jani Nikula <jani.nikula@intel.com>, Ard Biesheuvel <ardb@kernel.org>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
-	Kees Cook <kees@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, linux-crypto@vger.kernel.org, 
-	openipmi-developer@lists.sourceforge.net, intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	intel-xe@lists.freedesktop.org, linux-hyperv@vger.kernel.org, linux-rdma@vger.kernel.org, 
-	linux-raid@vger.kernel.org, linux-scsi@vger.kernel.org, linux-serial@vger.kernel.org, 
-	xen-devel@lists.xenproject.org, linux-aio@kvack.org, linux-fsdevel@vger.kernel.org, 
-	netfs@lists.linux.dev, codalist@coda.cs.cmu.edu, linux-mm@kvack.org, 
-	linux-nfs@vger.kernel.org, ocfs2-devel@lists.linux.dev, fsverity@lists.linux.dev, 
-	linux-xfs@vger.kernel.org, io-uring@vger.kernel.org, bpf@vger.kernel.org, 
-	kexec@lists.infradead.org, linux-trace-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org, 
-	keyrings@vger.kernel.org, Song Liu <song@kernel.org>, 
-	"Steven Rostedt (Google)" <rostedt@goodmis.org>, "Martin K. Petersen" <martin.petersen@oracle.com>, 
-	"Darrick J. Wong" <djwong@kernel.org>, Corey Minyard <cminyard@mvista.com>
-Subject: Re: Re: Re: Re: [PATCH v2] treewide: const qualify ctl_tables where
- applicable
-Message-ID: <u2fwibsnbfvulxj6adigla6geiafh2vuve4hcyo4vmeytwjl7p@oz6xonrq5225>
-References: <20250110-jag-ctl_table_const-v2-1-0000e1663144@kernel.org>
- <Z4+jwDBrZNRgu85S@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
- <nslqrapp4v3rknjgtfk4cg64ha7rewrrg24aslo2e5jmxfwce5@t4chrpuk632k>
- <CAMj1kXEZPe8zk7s67SADK9wVH3cfBup-sAZSC6_pJyng9QT7aw@mail.gmail.com>
- <f4lfo2fb7ajogucsvisfd5sg2avykavmkizr6ycsllcrco4mo3@qt2zx4zp57zh>
- <87jzag9ugx.fsf@intel.com>
- <Z5epb86xkHQ3BLhp@casper.infradead.org>
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="OKUl7Q1q"
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6e1a41935c3so81908986d6.3
+        for <linux-security-module@vger.kernel.org>; Tue, 28 Jan 2025 04:42:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1738068174; x=1738672974; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=P9Hjz/HBikG9/lKNWOcgvjSfQzXvtdwqalUBjRJ0K+I=;
+        b=OKUl7Q1qkBRpl6L88ox9Yk92wtAsOuVo5IayOUU/hzGVgf3Rjjecryl2WT1lZFfS+E
+         35FcxVpBKuvDaSdC7AJdwWVFVzBNhQqmFJAiwmz0BfFiNYgIRVTYuRuHS49codimYGWh
+         YOqM3wAb0i8y6dAuFhqKpLnsBaAxtDrfuqFOQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738068174; x=1738672974;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=P9Hjz/HBikG9/lKNWOcgvjSfQzXvtdwqalUBjRJ0K+I=;
+        b=PLiYZBtg+/E+0sWpGeVyktqMyR+2ZB9YYzFR7jXpByYHt+GrQKnsvTM4yic2ojOgyZ
+         vEYIAEnwgXFwSBUQUbFSFdEOS6p87qca7quo2TMjdiIVtA5lfURf+ii8Bx9k8VbInGXM
+         OOvRbT1/Y0JHHvUkinbt7eCHLksCZ3L02apn13KRnqSuZX5hhcukI4mB2pu0SQJYclyt
+         2rcRHe3K4zRDrGedfgR+qmwsW6RnD6cVc2h+vGwCyTjtoJsvbQPW6xqsfA4hHE+HKNH1
+         ehiSnLscNYRvdLhLIgUzghym1do1mKTK5Cv/RuOO0WodmYduLcYq9cHi0kLDjEzB1zyt
+         PdSw==
+X-Forwarded-Encrypted: i=1; AJvYcCVCcuRaUem+VR1HfRYHLVns8wrkxFwW4Besaiec+J8OHBmSUIvuPTYOs6siZ61hzdEZKhD5APikzVivAM8MJ5lwN4ufVuE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWSXQmxHcg6r7RQm+3X4LWyBwuRls/DGRjSgJNLnMzHSgJmPkL
+	9ynCs7KlbOvqogAx3GczyveB/fXke7JiXLqW9yaofd5nZQr/Uc8wOMSzluVe6LUxRkvy46ijVir
+	qH0Y0Q1z8CCo++imGMdx3XuZR64yWg0B+VJ+wFA==
+X-Gm-Gg: ASbGncuOIT2oX0UlqOMlQmbuzZzxFqw/D2pvbrFFwIX7bk5H/Kj8V+iO99mjzDUWREK
+	od4WsWaAV853yh41Aq9E2l0wN94jimkaZ9yQBlgQnaIzi1jE4oOSb9mhpX4Z1YJjeEv+nM0c=
+X-Google-Smtp-Source: AGHT+IFHqb1dD1KZwsa+gpNM1NJUXqlXL4Uhb8XNRH7U63qw4cN6AM1D6ndQnVoLZlpWFWSgCzZ1R+5zN2z1g9INqw8=
+X-Received: by 2002:a05:6214:590a:b0:6d4:22d4:f5b0 with SMTP id
+ 6a1803df08f44-6e1b220a5abmr649661266d6.33.1738068174227; Tue, 28 Jan 2025
+ 04:42:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z5epb86xkHQ3BLhp@casper.infradead.org>
+References: <20250123194108.1025273-1-mszeredi@redhat.com> <20250123194108.1025273-3-mszeredi@redhat.com>
+ <CAHC9VhRzRqhXxcrv3ROChToFf4xX2Tdo--q-eMAc=KcUb=xb_w@mail.gmail.com> <2041942.usQuhbGJ8B@xev>
+In-Reply-To: <2041942.usQuhbGJ8B@xev>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 28 Jan 2025 13:42:43 +0100
+X-Gm-Features: AWEUYZncrMihch-xJFLSWbspT9bam0hgksBqzvIpiATyQ_1noZ-r1ZsPAgPon9U
+Message-ID: <CAJfpegsKWitBYVRSjWO6O_uO-qmnG88Wko2-O+zogvAjZ9CCxA@mail.gmail.com>
+Subject: Re: [PATCH v4 2/4] fanotify: notify on mount attach and detach
+To: russell@coker.com.au
+Cc: Miklos Szeredi <mszeredi@redhat.com>, Paul Moore <paul@paul-moore.com>, 
+	linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Amir Goldstein <amir73il@gmail.com>, Karel Zak <kzak@redhat.com>, 
+	Lennart Poettering <lennart@poettering.net>, Ian Kent <raven@themaw.net>, 
+	Al Viro <viro@zeniv.linux.org.uk>, linux-security-module@vger.kernel.org, 
+	selinux@vger.kernel.org, selinux-refpolicy@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jan 27, 2025 at 03:42:39PM +0000, Matthew Wilcox wrote:
-> On Mon, Jan 27, 2025 at 04:55:58PM +0200, Jani Nikula wrote:
-> > You could have static const within functions too. You get the rodata
-> > protection and function local scope, best of both worlds?
-> 
-> timer_active is on the stack, so it can't be static const.
-> 
-> Does this really need to be cc'd to such a wide distribution list?
-That is a very good question. I removed 160 people from the original
-e-mail and left the ones that where previously involved with this patch
-and left all the lists for good measure. But it seems I can reduce it
-even more.
+On Sat, 25 Jan 2025 at 02:17, Russell Coker <russell@coker.com.au> wrote:
 
-How about this: For these treewide efforts I just leave the people that
-are/were involved in the series and add two lists: linux-kernel and
-linux-hardening.
+> What's the benefit in watching mount being separate from watching a namespace
+> mount?
 
-Unless someone screams, I'll try this out on my next treewide.
+1)
+fanotify_mark(fan_fd, FAN_MARK_ADD | FAN_MARK_MOUNT,  FAN_OPEN,
+AT_FDCWD, "/proc/self/ns/mnt");
 
-Thx for the feedback
+This notifies on mount and unmount events in the current mount namespace.
 
-Best
+2)
+fanotify_mark(fan, FAN_MARK_ADD | FAN_MARK_MOUNT, FAN_OPEN, AT_FDCWD,
+"/proc/self/ns/mnt");
 
--- 
+This notifies on open events within the nsfs mount (proc uses a kernel
+private nsfs mount, so all accesses through proc will trigger this).
 
-Joel Granados
+The latter doesn't really make sense (these files are not openable),
+but it's doable with current kernels and events on the failed opens do
+get generated.
+
+So overloading FILE__WATCH_MOUNT might work, but it is also very
+confusing, since watching a mount namespace and watching a mount mean
+completely different things.
+
+Thanks,
+Miklos
