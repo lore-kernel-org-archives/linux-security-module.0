@@ -1,86 +1,180 @@
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02B341A23B6
-	for <linux-security-module@vger.kernel.org>; Tue, 28 Jan 2025 13:37:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80C4C3FBB3
+	for <linux-security-module@vger.kernel.org>; Tue, 28 Jan 2025 14:21:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738071434; cv=none; b=US7J5ndrMAWy/WjATOz7JGjCXEKL/mvXMNjAg1Y0PYN7FvgriRS9VrD+Sb+Mrj4376Toa75tUFgoVA79wks/Us9i4y1hF0jy7QhZ2cNgk2YF0WbI0A6e7TFksYGGODHG4Cr8eoBwrAcsqMOVONzfncQW+RJi5B1TtZWrJFY5IIY=
+	t=1738074062; cv=none; b=BA992CMF15GsPMZSDgvQk4OUAbGru7nRA/iBh6pLcvGJCD43swJJXxR9w2O8Qr+KZ0cOrxXV4aQJUNIOlsjt27Bcn9+9Ng/uOAV3YBiWwZdkvsunaSK5FjXfKtLXexm4hO0xGyDGkc3EtsPUK+9lq5onR21ifCiuNUNsfhuYwQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738071434; c=relaxed/simple;
-	bh=za4jWSIXiWnx1/PtIdrlQUWfgRWi88/FEbsBClDq++Y=;
+	s=arc-20240116; t=1738074062; c=relaxed/simple;
+	bh=D9oaxmNhn8bPdVAIadKxuci7iQwJYkfAW+dvYSZC5Is=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NbOl1s3n/i92pAuw1mNcs3q1Kzb2d9khNgR3Wt9SZDySsg8VmeH6GxVTRKfprIRcRPSpviCQRUKgzJat0Ya3lnvrHH141feKbL1ocvibLopGeb71g5zAocHejP1HSzR7MzlZA033eRDGMbUkz11gE462I1fN25gDEzAapx+phAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=BM/I/aVo; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+	 To:Cc:Content-Type; b=THMzxQaRUcCZSpIXqEPxcrj/QbTUkAxl3RSAWgTNcFMphdWP5m9ojAbbOSM3P7XAuq129VlCeFYr1efQqIobKoz3v6EHA+oJj7y4XOX2HBA/eukz6XPn1epPMzUw6MfkvJF9F7Vn/r95rQAHSF19TdQcwU/FfZtqJCslqDV5VHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z++VAZR1; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="BM/I/aVo"
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-46c8474d8daso44604911cf.3
-        for <linux-security-module@vger.kernel.org>; Tue, 28 Jan 2025 05:37:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1738071432; x=1738676232; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=cEBqaIaDwYzpAfJb0Xza7F8apQH4HtqaJ+JjUwM8mEQ=;
-        b=BM/I/aVopvQmXAAU9Lx1lLYfIsFez4u45iXCOilKTl7APoK/QCR33ZVougxbmZ2gci
-         TW171voLB67P7eFXO54deYTFS2jCJ+VRUj7eNV1ZJS2fV++Ldaw73t7+w1eywC/EUeKm
-         eH/YKXNOz+nYR/rWsYV+53sm75gtKTIAmL3PA=
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z++VAZR1"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1738074059;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nDtwGzyLUhFclHuJegL5qQB4wHn79dxySq4hBsimLtM=;
+	b=Z++VAZR1sJUmVLUYJ4UEmWQdSxgtCUa7EiKesGUn4d1F4kjUC87Bm/ck7oADNZz5NlJPwD
+	s1UCE0BSR6LpgWz8tMnVtuSW44hou4LXeHEWWw15eTpFv3PWX6K433HSGBOXa7fCNpkqt+
+	wrwMakIG/6R3Xe7/Xp2dgpjpAwaOCbA=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-448-8aJjvtZgMza99l089dT7KA-1; Tue, 28 Jan 2025 09:20:58 -0500
+X-MC-Unique: 8aJjvtZgMza99l089dT7KA-1
+X-Mimecast-MFC-AGG-ID: 8aJjvtZgMza99l089dT7KA
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2ee5668e09bso11646648a91.3
+        for <linux-security-module@vger.kernel.org>; Tue, 28 Jan 2025 06:20:57 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738071432; x=1738676232;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cEBqaIaDwYzpAfJb0Xza7F8apQH4HtqaJ+JjUwM8mEQ=;
-        b=jgPinYN1HKZ2I+JPoixAb47brAte7M4OGvr62c4oVtlWRXc0sBuv1KaeL6Z9LYcGPM
-         GS9d12L1wSsCACVzP8Kne7L9CwdJSrUSBH/Qz7HUxs6324Goi/MGZf1Qii5dwi6GCcyG
-         wxmhqbOPwIKCBkPl2lw+7Ve1z57W/fbGlFpMJ8C821wIdAYKIcQjo5i3Ak9YO1/BL02G
-         LnK/61Elms1hzt09t586Q45DYQmOkJK2o2QUlpwVVGk33Gn2VHueFmBzRJPjBOKpzI6Y
-         bI45TuHP1TbPkdaxJALLLNwsneHuP4LUST1K7RvV+G7kKdWrlSHXaljcsiIgEp4i41wh
-         faAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUUr9N1H1+JLZljIMO5RJiAaKecS/IpPwJKWP/VfzWYxrjm8ActokARBKIEsLsM4jHpbgZKrPhLCaDlilQf5ld3+E1/lLc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/0Dibdxc0lDi7tRPPMBL+JsMUOZer00R2BhhbQUrqaY/v4H7T
-	z/gHEq3ZWW9mhs+hy/DFj4ZwDDLH52QgcB8byKk/vn0HGEt2+yRkEF+nGVO4jOsxXoTqKeMKcHh
-	zbitBLFeXA3ikg9VvLBdtrinnBSqaU0aVUrTtMA==
-X-Gm-Gg: ASbGncv3QAsxZljetZmJAfDhFSucfrY2VB8OJAshYuqe1ah2LHfx3LqqvitiKBrMJ8z
-	5Un06lXvDXza9wVMs/SRiAAEDSPO0CxfWVS4FE1p3RK3WDOhiEE+aCK9pqOm475kOWh9Xhco=
-X-Google-Smtp-Source: AGHT+IFWTIAnK+5eL7HyrGG7lpTg04Tgrx5YKQ2A5MNEXhLez1EsL/JNf1CxyLCjHr2w2Q9lyVqeWMCdUDReSZN1y/4=
-X-Received: by 2002:a05:622a:1311:b0:467:5eb6:5153 with SMTP id
- d75a77b69052e-46e12a3f746mr729277911cf.19.1738071431912; Tue, 28 Jan 2025
- 05:37:11 -0800 (PST)
+        d=1e100.net; s=20230601; t=1738074057; x=1738678857;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nDtwGzyLUhFclHuJegL5qQB4wHn79dxySq4hBsimLtM=;
+        b=WlMy1mHWIIiMnp87rSEAbyBCi1BSxb6S2u1ZcMr8OgKTHr3P/xeW6fdMm93KcvAtiP
+         Iq/UlmaSHXR6x61d16m7B6v7UKqEkkPd+pxlvZxzFeehpgLUKQvs99dSYMbRglvLxzJe
+         C/gXCslxQse2r9PK5DDh9JfKPCamsUeRu5QfXbMUnllLRmKbugkEY3UEsZNn8c+zV/2z
+         zu6mHdguC3rbdwqYdah3c6AlzVqIOPSO1SKrksza/CtxqTXDqeU/7FxXTqRskXh5LaBE
+         cSGqy0rSdyWi0C23GtOzVihIjH2C4JlyO0LozDQ1fgWh+hvdfjK0XDijLo1TpnL/uktN
+         mNdA==
+X-Forwarded-Encrypted: i=1; AJvYcCVAMiExTLlXFGBiLxEOZmTVYpHeih9/e5TWWm9hYKyJtPqTTCvB9fIpNDv7ORoL4msyS6uAUzZt7Mm4hdnVwV2Rg0mi3nA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgAvws8KH1a9pAvRSAzHBJ98FUD9Izr2s55RzgKv64XQvfIEU7
+	lyNrpvdQwSjf8G6njm4/aqL9Ajju6AFtoLfH5Z4DlWLcJ9IKHP6yClLDyD4wFnfVQrNJY4EKrqs
+	1w8I8ob/P1mbfoNCJ5VIu95qTlVs+WbLDYDDgINkERFkQLIZxMoB0Ts1Zu3ykCmJzrtnJlEclkZ
+	J3+gXZJSdxrnJobUPFqQkh4+n0+MdgA5iI4DdTdmCEBrwxD+dK
+X-Gm-Gg: ASbGncsxifLeCfindIsJUsg3+bi9WZbWvWB4i1yrnKKse7Itl6JSyxySNYihto+Cj3e
+	ZZ0lumzTmy+iK0RM2ZTy9I9o/wuy2uauZR0/UYzgpCpTQGN3vfztdO2Q2ctstsQ==
+X-Received: by 2002:a17:90a:c888:b0:2ea:37b4:5373 with SMTP id 98e67ed59e1d1-2f782c6ff50mr68022160a91.10.1738074056992;
+        Tue, 28 Jan 2025 06:20:56 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGLkoSVP9en9QzpKcY6Xy4YZ+5p8cA8G7GD7Vv+4m4AfNhzz2DAH+n7ciNQzuMlQSBYd+zt6z1HhcoTe2jxAzY=
+X-Received: by 2002:a17:90a:c888:b0:2ea:37b4:5373 with SMTP id
+ 98e67ed59e1d1-2f782c6ff50mr68022124a91.10.1738074056671; Tue, 28 Jan 2025
+ 06:20:56 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250123194108.1025273-1-mszeredi@redhat.com> <20250123194108.1025273-3-mszeredi@redhat.com>
- <CAHC9VhRzRqhXxcrv3ROChToFf4xX2Tdo--q-eMAc=KcUb=xb_w@mail.gmail.com>
- <2041942.usQuhbGJ8B@xev> <CAJfpegsKWitBYVRSjWO6O_uO-qmnG88Wko2-O+zogvAjZ9CCxA@mail.gmail.com>
-In-Reply-To: <CAJfpegsKWitBYVRSjWO6O_uO-qmnG88Wko2-O+zogvAjZ9CCxA@mail.gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 28 Jan 2025 14:37:00 +0100
-X-Gm-Features: AWEUYZmizeJU0a7RXrBJlqhjTqK1mNWtSBDQH9Nt1-ZaM-h_jUVyMC5_wxbnhOg
-Message-ID: <CAJfpegs7n5eO6yOms+_TqeXGrN=OaJbjRB9qVm4VsW7JpWG5Xg@mail.gmail.com>
-Subject: Re: [PATCH v4 2/4] fanotify: notify on mount attach and detach
-To: russell@coker.com.au
-Cc: Miklos Szeredi <mszeredi@redhat.com>, Paul Moore <paul@paul-moore.com>, 
-	linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Amir Goldstein <amir73il@gmail.com>, Karel Zak <kzak@redhat.com>, 
-	Lennart Poettering <lennart@poettering.net>, Ian Kent <raven@themaw.net>, 
-	Al Viro <viro@zeniv.linux.org.uk>, linux-security-module@vger.kernel.org, 
-	selinux@vger.kernel.org, selinux-refpolicy@vger.kernel.org
+References: <CAFqZXNtkCBT4f+PwyVRmQGoT3p1eVa01fCG_aNtpt6dakXncUg@mail.gmail.com>
+ <e8b6c6f9-9647-4ab6-8bbb-ccc94b04ade4@yandex.ru> <67979d24d21bc_3f1a29434@willemb.c.googlers.com.notmuch>
+In-Reply-To: <67979d24d21bc_3f1a29434@willemb.c.googlers.com.notmuch>
+From: Ondrej Mosnacek <omosnace@redhat.com>
+Date: Tue, 28 Jan 2025 15:20:45 +0100
+X-Gm-Features: AWEUYZnKMKSPkvMHSDBYDNT5dz12aid0Wz74BtrYevaWtBSeLiLEN3niiqklU-U
+Message-ID: <CAFqZXNscJnX2VF-TyZaEC5nBtUUXdWPM2ejXTWBL8=5UyakssA@mail.gmail.com>
+Subject: Re: Possible mistake in commit 3ca459eaba1b ("tun: fix group
+ permission check")
+To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Cc: stsp <stsp2@yandex.ru>, Willem de Bruijn <willemb@google.com>, 
+	Jason Wang <jasowang@redhat.com>, Jakub Kicinski <kuba@kernel.org>, 
+	network dev <netdev@vger.kernel.org>, 
+	Linux Security Module list <linux-security-module@vger.kernel.org>, 
+	SElinux list <selinux@vger.kernel.org>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: EJTAEfNlA7t6KDBOoEJrxP2CcuYTBV7RwhF2h_KlfEk_1738074057
+X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 28 Jan 2025 at 13:42, Miklos Szeredi <miklos@szeredi.hu> wrote:
+On Mon, Jan 27, 2025 at 3:50=E2=80=AFPM Willem de Bruijn
+<willemdebruijn.kernel@gmail.com> wrote:
+>
+> stsp wrote:
+> > 27.01.2025 12:10, Ondrej Mosnacek =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > > Hello,
+> > >
+> > > It looks like the commit in $SUBJ may have introduced an unintended
+> > > change in behavior. According to the commit message, the intent was t=
+o
+> > > require just one of {user, group} to match instead of both, which
+> > > sounds reasonable, but the commit also changes the behavior for when
+> > > neither of tun->owner and tun->group is set. Before the commit the
+> > > access was always allowed, while after the commit CAP_NET_ADMIN is
+> > > required in this case.
+> > >
+> > > I'm asking because the tun_tap subtest of selinux-testuite [1] starte=
+d
+> > > to fail after this commit (it assumed CAP_NET_ADMIN was not needed),
+> > > so I'm trying to figure out if we need to change the test or if it
+> > > needs to be fixed in the kernel.
+> > >
+> > > Thanks,
+> > >
+> > > [1] https://github.com/SELinuxProject/selinux-testsuite/
+> > >
+> > Hi, IMHO having the persistent
+> > TAP device inaccessible by anyone
+> > but the CAP_NET_ADMIN is rather
+> > useless, so the compatibility should
+> > be restored on the kernel side.
+> > I'd raise the questions about adding
+> > the CAP_NET_ADMIN checks into
+> > TUNSETOWNER and/or TUNSETPERSIST,
+> > but this particular change to TUNSETIFF,
+> > at least on my side, was unintentional.
+> >
+> > Sorry about that. :(
+>
+> Thanks for the report Ondrej.
+>
+> Agreed that we need to reinstate this. I suggest this explicit
+> extra branch after the more likely cases:
+>
+>         @@ -585,6 +585,9 @@ static inline bool tun_capable(struct tun_str=
+uct *tun)
+>                         return 1;
+>                 if (gid_valid(tun->group) && in_egroup_p(tun->group))
+>                         return 1;
+>         +       if (!uid_valid(tun->owner) && !gid_valid(tun->group))
+>         +               return 1;
+>         +
+>                 return 0;
+>          }
 
-> fanotify_mark(fan_fd, FAN_MARK_ADD | FAN_MARK_MOUNT,  FAN_OPEN,
-> AT_FDCWD, "/proc/self/ns/mnt");
+That could work, but the semantics become a bit weird, actually: When
+you set both uid and gid, one of them needs to match. If you unset
+uid/gid, you get a stricter condition (gid/uid must match). And if you
+then also unset the other one, you suddenly get a less strict
+condition than the first two - nothing has to match. Might be
+acceptable, but it may confuse people unless well documented.
 
-Sorry, this should have been:
+Also there is another smaller issue in the new code that I forgot to
+mention - with LSMs (such as SELinux) the ns_capable() call will
+produce an audit record when the capability is denied by an LSM. These
+audit records are meant to indicate that the permission was needed but
+denied and that the policy was either breached or needs to be
+adjusted. Therefore, the ns_capable() call should ideally only happen
+after the user/group checks so that only accesses that actually
+wouldn't succeed without the capability yield an audit record.
 
-1)
-fanotify_mark(fan_fd, FAN_MARK_ADD | FAN_MARK_MNTNS, FAN_MNT_ATTACH |
-FAN_MNT_DETACH, AT_FDCWD, "/proc/self/ns/mnt");
+So I would suggest this version:
 
-This notifies on mount and unmount events in the current mount namespace.
+static inline bool tun_capable(struct tun_struct *tun)
+{
+    const struct cred *cred =3D current_cred();
+    struct net *net =3D dev_net(tun->dev);
+
+    if (uid_valid(tun->owner) && uid_eq(cred->euid, tun->owner))
+        return 1;
+    if (gid_valid(tun->group) && in_egroup_p(tun->group))
+        return 1;
+    if (!uid_valid(tun->owner) && !gid_valid(tun->group))
+        return 1;
+    return ns_capable(net->user_ns, CAP_NET_ADMIN);
+}
+
+--=20
+Ondrej Mosnacek
+Senior Software Engineer, Linux Security - SELinux kernel
+Red Hat, Inc.
+
