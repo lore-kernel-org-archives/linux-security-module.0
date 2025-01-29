@@ -1,48 +1,53 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C452E1E3793;
-	Wed, 29 Jan 2025 20:40:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B2E1E2613;
+	Wed, 29 Jan 2025 21:00:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738183242; cv=none; b=GF2/NPlJhY6IdMYPW5qjvxUACfS0WEpvByXy7JYG/T5YGNu5Ilnf8hbSmcbRPHZM7eKbocBlDWyiUHqxirCt/b7e6K9M0/JLsptqkO6AnmYGrHTyN3P4GhW/SV7QDqv4DeJ8mdqE/mFo6LPUv+mP/HIUALdj2unNLUa1SaB2LS8=
+	t=1738184407; cv=none; b=njuSQ7Pu4wmIcYhNTQx6kzQDFtUbX6triu6bX6DcJo7KM++r5RdJ853uWWgweoFxdBWi7bCTQ/TMKTftAvxR0e375XiUdyhAvaP+Y38Fc5E1gIvTWyRzHcQ4rd+8SSEJDxlCH6HYhEo41rk1yx5DBzqcwOzsb+a9zHvT8IXFIZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738183242; c=relaxed/simple;
-	bh=+iGuA4m5n7VaG2pbvt1ixM40vi20HtiXYCsYX92UMrI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=US61jG3Lxd+KR55SCHAUU8tab1jFq8EB+XgPYMPLiDB5SCWIakK27Xd8zzElFbCn3iWkBbiT7/mWgfrxrsS9NSE1hfpBLrvl+og+sawUYnnrgfoeXxKnl0VPSKrp++v+japM2JLNcPE6zbwE5toEnrJ4fvFvEzf0S3kQ/P7uZLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kVXogvjD; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1738184407; c=relaxed/simple;
+	bh=J6NG0xJGCikkFG/B1ZrwYa2LzoqhJh8SS7oBMDNSwEA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Tqaj6a1AYPMy9sRWpvUGpVzodAKQVHTqxpSw1J7WSihaB47d//mtoL6ZZ1lOD9xlB56zVqTIPPd9LvLSes+GVDm0QeEbuJCQzkMPzxEkQ/S26UIt+SyypauXtIWtXn7VVFn4IyAf0unrGLLlgLGsT8uMHMOPYjcRkPbQcANNSHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=elmbCR2c; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kVXogvjD"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFC02C4CEE2;
-	Wed, 29 Jan 2025 20:40:39 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="elmbCR2c"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9ECFC4CED1;
+	Wed, 29 Jan 2025 21:00:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738183240;
-	bh=+iGuA4m5n7VaG2pbvt1ixM40vi20HtiXYCsYX92UMrI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=kVXogvjDfJl3zZPRq+ZjuAaYmt5NUj0aJTXVyHZqGlfsxXEzd311ko6pdtMHilX9b
-	 J8hW6CL99xN+NTHLkDlJAY0Zi7gvOApfyg79ztM78J45yW3vh5sF72maBM5PD2u3u+
-	 sz2jVq3ganTkkd24gCUcQRMqwnyoVcX2gZuqeYTRorTLeMqhOoeKA81SXwCe055mP1
-	 LwDHUUz/B2UquvWtiDsJCqrnMKWHC9E11j9asDVAkUXsxHuftzxQJE224NlnDVkR3j
-	 6gIjnfMjmscbsd9h8MK4dJcV3FnC/xDK+GSyJ0GaetbY+3hrjWYhZ3ow/mkrh6v7Eu
-	 LtbejmuoRx2Ow==
-From: wufan@kernel.org
-To: corbet@lwn.net,
-	jmorris@namei.org,
-	paul@paul-moore.com,
-	serge@hallyn.com,
-	akpm@linux-foundation.org
-Cc: linux-doc@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-mm@kvack.org,
+	s=k20201202; t=1738184406;
+	bh=J6NG0xJGCikkFG/B1ZrwYa2LzoqhJh8SS7oBMDNSwEA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=elmbCR2cOgY8xDFqQkQAKLfaO+5KJi0tG2OU/GB3ToQ+Jscux/+bFKVhzm/51Cpos
+	 7YpRG7pD6w5rs6E1M4BbHZ4c5vIHL/wtISa6aMr3RJ5wE+jqUNOv8FJQXtEemNg9W/
+	 cZFV+rR2KLXt7HwgxXcoQ4LzPBS2PPaH8CNI+aK3Udo8QaDPpUFsku10qaa3r9ZlKt
+	 GIZyquOywIGZ4OM7K0Wk5JeZhVE5oDCrPv5EhEGCdLc369b8R8z4I7RbbkDCMsrTUC
+	 Zta2wQLfRTEQ3Oxy9nLXPH22rL8gJH3HYc7O4OnrIriFMGp77T8efqATWAmUETF0vQ
+	 uzB1l/jzPTSCA==
+From: Song Liu <song@kernel.org>
+To: bpf@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Fan Wu <wufan@kernel.org>
-Subject: [RFC PATCH v2 2/2] ipe: add 'anonymous_memory' property for policy decisions
-Date: Wed, 29 Jan 2025 20:39:32 +0000
-Message-Id: <20250129203932.22165-3-wufan@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250129203932.22165-1-wufan@kernel.org>
-References: <20250129203932.22165-1-wufan@kernel.org>
+	linux-security-module@vger.kernel.org
+Cc: kernel-team@meta.com,
+	andrii@kernel.org,
+	eddyz87@gmail.com,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	martin.lau@linux.dev,
+	viro@zeniv.linux.org.uk,
+	brauner@kernel.org,
+	jack@suse.cz,
+	kpsingh@kernel.org,
+	mattbobrowski@google.com,
+	liamwisehart@meta.com,
+	shankaran@meta.com,
+	Song Liu <song@kernel.org>
+Subject: [PATCH v11 bpf-next 0/7] Enable writing xattr from BPF programs
+Date: Wed, 29 Jan 2025 12:59:50 -0800
+Message-ID: <20250129205957.2457655-1-song@kernel.org>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -51,320 +56,116 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Fan Wu <wufan@kernel.org>
+Add support to set and remove xattr from BPF program. Also add
+security.bpf. xattr name prefix.
 
-Currently, all existing IPE properties evaluate to FALSE for
-operations triggered by anonymous memory regions or memfd. As a result,
-IPE falls back to the policy's default action for such operations.
+kfuncs are added to set and remove xattrs with security.bpf. name
+prefix. Update kfuncs bpf_get_[file|dentry]_xattr to read xattrs
+with security.bpf. name prefix. Note that BPF programs can read
+user. xattrs, but not write and remove them.
 
-In policies where the default action is DENY, this behavior blocks
-all anonymous memory related operations, rendering binaries that rely on
-anonymous memory, e.g. JIT engine, unusable.
+To pick the right version of kfunc to use, a remap logic is added to
+btf_kfunc_id_set. This helps move some kfunc specific logic off the
+verifier core code. Also use this remap logic to select
+bpf_dynptr_from_skb or bpf_dynptr_from_skb_rdonly.
 
-This commit introduces a new IPE property, 'anonymous_memory',
-which evaluates to TRUE when an operation is triggered by an
-anonymous memory region or memfd. This allows administrators to
-explicitly allow or deny operations involving anonymous memory.
 
-Signed-off-by: Fan Wu <wufan@kernel.org>
+Cover letter of v1 and v2:
+
+Follow up discussion in LPC 2024 [1], that we need security.bpf xattr
+prefix. This set adds "security.bpf." xattr name prefix, and allows
+bpf kfuncs bpf_get_[file|dentry]_xattr() to read these xattrs.
+
+[1] https://lpc.events/event/18/contributions/1940/
+
 ---
- Documentation/admin-guide/LSM/ipe.rst | 12 ++++++++++
- Documentation/security/ipe.rst        |  9 +++----
- security/ipe/Kconfig                  | 10 ++++++++
- security/ipe/audit.c                  |  2 ++
- security/ipe/eval.c                   | 34 +++++++++++++++++++++++----
- security/ipe/eval.h                   | 13 ++++++----
- security/ipe/hooks.c                  | 12 ++++++++++
- security/ipe/hooks.h                  |  4 ++++
- security/ipe/ipe.c                    |  7 ++++--
- security/ipe/policy.h                 |  2 ++
- security/ipe/policy_parser.c          |  4 ++++
- 11 files changed, 95 insertions(+), 14 deletions(-)
 
-diff --git a/Documentation/admin-guide/LSM/ipe.rst b/Documentation/admin-guide/LSM/ipe.rst
-index f93a467db628..9de2e72f29d5 100644
---- a/Documentation/admin-guide/LSM/ipe.rst
-+++ b/Documentation/admin-guide/LSM/ipe.rst
-@@ -669,6 +669,18 @@ fsverity_signature
- 
-       fsverity_signature=(TRUE|FALSE)
- 
-+anonymous_memory
-+~~~~~~~~~~~~~~~~
-+
-+   This property can be used to allow or deny operations triggered by
-+   anonymous memory. It evaluates to TRUE when a memory region
-+   in the evaluation context is not backed by a physical file or it
-+   is from a memory file descriptor. It is controlled by
-+   the ``IPE_PROP_ANONYMOUS_MEMORY`` config option.
-+   The format of this property is::
-+
-+      anonymous_memory=(TRUE|FALSE)
-+
- Policy Examples
- ---------------
- 
-diff --git a/Documentation/security/ipe.rst b/Documentation/security/ipe.rst
-index 4a7d953abcdc..1606484241cb 100644
---- a/Documentation/security/ipe.rst
-+++ b/Documentation/security/ipe.rst
-@@ -385,15 +385,16 @@ Anonymous Memory
- Anonymous memory isn't treated any differently from any other access in IPE.
- When anonymous memory is mapped with ``+X``, it still comes into the ``file_mmap``
- or ``file_mprotect`` hook, but with a ``NULL`` file object. This is submitted to
--the evaluation, like any other file. However, all current trust properties will
--evaluate to false, as they are all file-based and the operation is not
--associated with a file.
-+the evaluation, like any other file. However, except the ``anonymous_memory`` property,
-+all current trust properties will evaluate to false, as they are all file-based and
-+the operation is not associated with a file.
- 
- .. WARNING::
- 
-   This also occurs with the ``kernel_load_data`` hook, when the kernel is
-   loading data from a userspace buffer that is not backed by a file. In this
--  scenario all current trust properties will also evaluate to false.
-+  scenario, all current trust properties except ``anonymous_memory`` will also evaluate
-+  to false.
- 
- Securityfs Interface
- ~~~~~~~~~~~~~~~~~~~~
-diff --git a/security/ipe/Kconfig b/security/ipe/Kconfig
-index 3c75bf267da4..77520714e9ab 100644
---- a/security/ipe/Kconfig
-+++ b/security/ipe/Kconfig
-@@ -94,6 +94,16 @@ config IPE_PROP_FS_VERITY_BUILTIN_SIG
- 
- 	  if unsure, answer Y.
- 
-+config IPE_PROP_ANONYMOUS_MEMORY
-+	bool "Enable support for anonymous memory"
-+	default y
-+	help
-+	  This option enables the 'anonymous_memory' property within IPE
-+	  policies. The property evaluates to TRUE when a memory region
-+	  in the evaluation context is not backed by a physical file
-+	  or it is from a memory file descriptor.
-+
-+	  if unsure, answer Y.
- endmenu
- 
- config SECURITY_IPE_KUNIT_TEST
-diff --git a/security/ipe/audit.c b/security/ipe/audit.c
-index f05f0caa4850..ab5217655910 100644
---- a/security/ipe/audit.c
-+++ b/security/ipe/audit.c
-@@ -59,6 +59,8 @@ static const char *const audit_prop_names[__IPE_PROP_MAX] = {
- 	"fsverity_digest=",
- 	"fsverity_signature=FALSE",
- 	"fsverity_signature=TRUE",
-+	"anonymous_memory=FALSE",
-+	"anonymous_memory=TRUE",
- };
- 
- /**
-diff --git a/security/ipe/eval.c b/security/ipe/eval.c
-index 21439c5be336..38c7214c9889 100644
---- a/security/ipe/eval.c
-+++ b/security/ipe/eval.c
-@@ -52,8 +52,8 @@ static void build_ipe_bdev_ctx(struct ipe_eval_ctx *ctx, const struct inode *con
- }
- #endif /* CONFIG_IPE_PROP_DM_VERITY */
- 
--#ifdef CONFIG_IPE_PROP_FS_VERITY
--#ifdef CONFIG_IPE_PROP_FS_VERITY_BUILTIN_SIG
-+#if defined(CONFIG_IPE_PROP_FS_VERITY) || defined(CONFIG_IPE_PROP_ANONYMOUS_MEMORY)
-+#if defined(CONFIG_IPE_PROP_FS_VERITY_BUILTIN_SIG) || defined(CONFIG_IPE_PROP_ANONYMOUS_MEMORY)
- static void build_ipe_inode_blob_ctx(struct ipe_eval_ctx *ctx,
- 				     const struct inode *const ino)
- {
-@@ -64,7 +64,7 @@ static inline void build_ipe_inode_blob_ctx(struct ipe_eval_ctx *ctx,
- 					    const struct inode *const ino)
- {
- }
--#endif /* CONFIG_IPE_PROP_FS_VERITY_BUILTIN_SIG */
-+#endif
- 
- /**
-  * build_ipe_inode_ctx() - Build inode fields of an evaluation context.
-@@ -80,7 +80,7 @@ static void build_ipe_inode_ctx(struct ipe_eval_ctx *ctx, const struct inode *co
- static void build_ipe_inode_ctx(struct ipe_eval_ctx *ctx, const struct inode *const ino)
- {
- }
--#endif /* CONFIG_IPE_PROP_FS_VERITY */
-+#endif
- 
- /**
-  * ipe_build_eval_ctx() - Build an ipe evaluation context.
-@@ -265,6 +265,28 @@ static bool evaluate_fsv_sig_true(const struct ipe_eval_ctx *const ctx)
- }
- #endif /* CONFIG_IPE_PROP_FS_VERITY_BUILTIN_SIG */
- 
-+#ifdef CONFIG_IPE_PROP_ANONYMOUS_MEMORY
-+static bool evaluate_anonymous_memory_false(const struct ipe_eval_ctx *const ctx)
-+{
-+	return ctx->file && !ctx->ipe_inode->memfd;
-+}
-+
-+static bool evaluate_anonymous_memory_true(const struct ipe_eval_ctx *const ctx)
-+{
-+	return !evaluate_anonymous_memory_false(ctx);
-+}
-+#else
-+static bool evaluate_anonymous_memory_false(const struct ipe_eval_ctx *const ctx)
-+{
-+	return false;
-+}
-+
-+static bool evaluate_anonymous_memory_true(const struct ipe_eval_ctx *const ctx)
-+{
-+	return false;
-+}
-+#endif /* CONFIG_IPE_PROP_ANONYMOUS_MEMORY */
-+
- /**
-  * evaluate_property() - Analyze @ctx against a rule property.
-  * @ctx: Supplies a pointer to the context to be evaluated.
-@@ -297,6 +319,10 @@ static bool evaluate_property(const struct ipe_eval_ctx *const ctx,
- 		return evaluate_fsv_sig_false(ctx);
- 	case IPE_PROP_FSV_SIG_TRUE:
- 		return evaluate_fsv_sig_true(ctx);
-+	case IPE_PROP_ANON_MEM_FALSE:
-+		return evaluate_anonymous_memory_false(ctx);
-+	case IPE_PROP_ANON_MEM_TRUE:
-+		return evaluate_anonymous_memory_true(ctx);
- 	default:
- 		return false;
- 	}
-diff --git a/security/ipe/eval.h b/security/ipe/eval.h
-index fef65a36468c..83b57d12a778 100644
---- a/security/ipe/eval.h
-+++ b/security/ipe/eval.h
-@@ -31,11 +31,16 @@ struct ipe_bdev {
- };
- #endif /* CONFIG_IPE_PROP_DM_VERITY */
- 
--#ifdef CONFIG_IPE_PROP_FS_VERITY_BUILTIN_SIG
-+#if defined(CONFIG_IPE_PROP_FS_VERITY_BUILTIN_SIG) || defined(CONFIG_IPE_PROP_ANONYMOUS_MEMORY)
- struct ipe_inode {
-+#ifdef CONFIG_IPE_PROP_FS_VERITY_BUILTIN_SIG
- 	bool fs_verity_signed;
--};
- #endif /* CONFIG_IPE_PROP_FS_VERITY_BUILTIN_SIG */
-+#ifdef CONFIG_IPE_PROP_ANONYMOUS_MEMORY
-+	bool memfd;
-+#endif /* CONFIG_IPE_PROP_ANONYMOUS_MEMORY */
-+};
-+#endif
- 
- struct ipe_eval_ctx {
- 	enum ipe_op_type op;
-@@ -49,9 +54,9 @@ struct ipe_eval_ctx {
- #ifdef CONFIG_IPE_PROP_FS_VERITY
- 	const struct inode *ino;
- #endif /* CONFIG_IPE_PROP_FS_VERITY */
--#ifdef CONFIG_IPE_PROP_FS_VERITY_BUILTIN_SIG
-+#if defined(CONFIG_IPE_PROP_FS_VERITY_BUILTIN_SIG) || defined(CONFIG_IPE_PROP_ANONYMOUS_MEMORY)
- 	const struct ipe_inode *ipe_inode;
--#endif /* CONFIG_IPE_PROP_FS_VERITY_BUILTIN_SIG */
-+#endif
- };
- 
- enum ipe_match {
-diff --git a/security/ipe/hooks.c b/security/ipe/hooks.c
-index d0323b81cd8f..ce68f08ce343 100644
---- a/security/ipe/hooks.c
-+++ b/security/ipe/hooks.c
-@@ -312,3 +312,15 @@ int ipe_inode_setintegrity(const struct inode *inode,
- 	return -EINVAL;
- }
- #endif /* CONFIG_CONFIG_IPE_PROP_FS_VERITY_BUILTIN_SIG */
-+
-+#ifdef CONFIG_IPE_PROP_ANONYMOUS_MEMORY
-+/**
-+ * ipe_memfd_created() - Mark the current file as a memfd.
-+ * @file: Supplies a pointer to the file structure being created.
-+ */
-+void ipe_memfd_created(struct file *file)
-+{
-+	ipe_inode(file->f_inode)->memfd = true;
-+}
-+#endif /* CONFIG_IPE_PROP_ANONYMOUS_MEMORY */
-+
-diff --git a/security/ipe/hooks.h b/security/ipe/hooks.h
-index 38d4a387d039..fa90db65ca88 100644
---- a/security/ipe/hooks.h
-+++ b/security/ipe/hooks.h
-@@ -49,4 +49,8 @@ int ipe_inode_setintegrity(const struct inode *inode, enum lsm_integrity_type ty
- 			   const void *value, size_t size);
- #endif /* CONFIG_IPE_PROP_FS_VERITY_BUILTIN_SIG */
- 
-+#ifdef CONFIG_IPE_PROP_ANONYMOUS_MEMORY
-+void ipe_memfd_created(struct file *file);
-+#endif /* CONFIG_IPE_PROP_ANONYMOUS_MEMORY */
-+
- #endif /* _IPE_HOOKS_H */
-diff --git a/security/ipe/ipe.c b/security/ipe/ipe.c
-index 4317134cb0da..330925b6a48e 100644
---- a/security/ipe/ipe.c
-+++ b/security/ipe/ipe.c
-@@ -16,9 +16,9 @@ static struct lsm_blob_sizes ipe_blobs __ro_after_init = {
- #ifdef CONFIG_IPE_PROP_DM_VERITY
- 	.lbs_bdev = sizeof(struct ipe_bdev),
- #endif /* CONFIG_IPE_PROP_DM_VERITY */
--#ifdef CONFIG_IPE_PROP_FS_VERITY_BUILTIN_SIG
-+#if defined(CONFIG_IPE_PROP_FS_VERITY_BUILTIN_SIG) || defined(CONFIG_IPE_PROP_ANONYMOUS_MEMORY)
- 	.lbs_inode = sizeof(struct ipe_inode),
--#endif /* CONFIG_IPE_PROP_FS_VERITY_BUILTIN_SIG */
-+#endif
- };
- 
- static const struct lsm_id ipe_lsmid = {
-@@ -59,6 +59,9 @@ static struct security_hook_list ipe_hooks[] __ro_after_init = {
- #ifdef CONFIG_IPE_PROP_FS_VERITY_BUILTIN_SIG
- 	LSM_HOOK_INIT(inode_setintegrity, ipe_inode_setintegrity),
- #endif /* CONFIG_IPE_PROP_FS_VERITY_BUILTIN_SIG */
-+#ifdef CONFIG_IPE_PROP_ANONYMOUS_MEMORY
-+	LSM_HOOK_INIT(memfd_created, ipe_memfd_created),
-+#endif /* CONFIG_IPE_PROP_ANONYMOUS_MEMORY */
- };
- 
- /**
-diff --git a/security/ipe/policy.h b/security/ipe/policy.h
-index 5bfbdbddeef8..0becc2d2bd33 100644
---- a/security/ipe/policy.h
-+++ b/security/ipe/policy.h
-@@ -39,6 +39,8 @@ enum ipe_prop_type {
- 	IPE_PROP_FSV_DIGEST,
- 	IPE_PROP_FSV_SIG_FALSE,
- 	IPE_PROP_FSV_SIG_TRUE,
-+	IPE_PROP_ANON_MEM_FALSE,
-+	IPE_PROP_ANON_MEM_TRUE,
- 	__IPE_PROP_MAX
- };
- 
-diff --git a/security/ipe/policy_parser.c b/security/ipe/policy_parser.c
-index 7f27e39931d6..5c83095e7c37 100644
---- a/security/ipe/policy_parser.c
-+++ b/security/ipe/policy_parser.c
-@@ -281,6 +281,8 @@ static const match_table_t property_tokens = {
- 	{IPE_PROP_FSV_DIGEST,		"fsverity_digest=%s"},
- 	{IPE_PROP_FSV_SIG_FALSE,	"fsverity_signature=FALSE"},
- 	{IPE_PROP_FSV_SIG_TRUE,		"fsverity_signature=TRUE"},
-+	{IPE_PROP_ANON_MEM_FALSE,	"anonymous_memory=FALSE"},
-+	{IPE_PROP_ANON_MEM_TRUE,	"anonymous_memory=TRUE"},
- 	{IPE_PROP_INVALID,		NULL}
- };
- 
-@@ -331,6 +333,8 @@ static int parse_property(char *t, struct ipe_rule *r)
- 	case IPE_PROP_DMV_SIG_TRUE:
- 	case IPE_PROP_FSV_SIG_FALSE:
- 	case IPE_PROP_FSV_SIG_TRUE:
-+	case IPE_PROP_ANON_MEM_FALSE:
-+	case IPE_PROP_ANON_MEM_TRUE:
- 		p->type = token;
- 		break;
- 	default:
--- 
-2.47.1
+Changes v10 => v11:
 
+1. Add Acked-by from Christian Brauner.
+2. Fix selftests build error like this one:
+   https://github.com/kernel-patches/bpf/actions/runs/13022268618/job/36325472992
+3. Rename some variables in the selftests.
+
+v10: https://lore.kernel.org/bpf/20250124202911.3264715-1-song@kernel.org/
+
+Changes v9 => v10:
+1. Refactor bpf_[set|remove]_dentry_xattr[_locked]. (Christian Brauner).
+
+v9: https://lore.kernel.org/bpf/20250110011342.2965136-1-song@kernel.org/
+
+Changes v8 => v9
+1. Fix build for CONFIG_DEBUG_INFO_BTF=n case. (kernel test robot)
+
+v8: https://lore.kernel.org/bpf/20250108225140.3467654-1-song@kernel.org/
+
+Changes v7 => v8
+1. Rebase and resolve conflicts.
+
+v7: https://lore.kernel.org/bpf/20241219221439.2455664-1-song@kernel.org/
+
+Changes v6 => v7
+1. Move btf_kfunc_id_remap() to the right place. (Bug reported by CI)
+
+v6: https://lore.kernel.org/bpf/20241219202536.1625216-1-song@kernel.org/
+
+Changes v5 => v6
+1. Hide _locked version of the kfuncs from vmlinux.h (Alexei)
+2. Add remap logic to btf_kfunc_id_set and use that to pick the correct
+   version of kfuncs to use.
+3. Also use the remap logic for bpf_dynptr_from_skb[|_rdonly].
+
+v5: https://lore.kernel.org/bpf/20241218044711.1723221-1-song@kernel.org/
+
+Changes v4 => v5
+1. Let verifier pick proper kfunc (_locked or not _locked)  based on the
+   calling context. (Alexei)
+2. Remove the __failure test (6/6 of v4).
+
+v4: https://lore.kernel.org/bpf/20241217063821.482857-1-song@kernel.org/
+
+Changes v3 => v4
+1. Do write permission check with inode locked. (Jan Kara)
+2. Fix some source_inline warnings.
+
+v3: https://lore.kernel.org/bpf/20241210220627.2800362-1-song@kernel.org/
+
+Changes v2 => v3
+1. Add kfuncs to set and remove xattr from BPF programs.
+
+v2: https://lore.kernel.org/bpf/20241016070955.375923-1-song@kernel.org/
+
+Changes v1 => v2
+1. Update comment of bpf_get_[file|dentry]_xattr. (Jiri Olsa)
+2. Fix comment for return value of bpf_get_[file|dentry]_xattr.
+
+v1: https://lore.kernel.org/bpf/20241002214637.3625277-1-song@kernel.org/
+
+Song Liu (7):
+  fs/xattr: bpf: Introduce security.bpf. xattr name prefix
+  selftests/bpf: Extend test fs_kfuncs to cover security.bpf. xattr
+    names
+  bpf: lsm: Add two more sleepable hooks
+  bpf: Extend btf_kfunc_id_set to handle kfunc polymorphism
+  bpf: Use btf_kfunc_id_set.remap logic for bpf_dynptr_from_skb
+  bpf: fs/xattr: Add BPF kfuncs to set and remove xattrs
+  selftests/bpf: Test kfuncs that set and remove xattr from BPF programs
+
+ fs/bpf_fs_kfuncs.c                            | 238 +++++++++++++++++-
+ include/linux/bpf_lsm.h                       |   2 +
+ include/linux/btf.h                           |  20 ++
+ include/linux/btf_ids.h                       |   4 +
+ include/uapi/linux/xattr.h                    |   4 +
+ kernel/bpf/bpf_lsm.c                          |   2 +
+ kernel/bpf/btf.c                              | 117 +++++++--
+ kernel/bpf/verifier.c                         |  31 +--
+ net/core/filter.c                             |  49 +++-
+ tools/testing/selftests/bpf/bpf_kfuncs.h      |   5 +
+ .../selftests/bpf/prog_tests/fs_kfuncs.c      | 162 +++++++++++-
+ .../selftests/bpf/progs/test_get_xattr.c      |  28 ++-
+ .../bpf/progs/test_set_remove_xattr.c         | 133 ++++++++++
+ 13 files changed, 732 insertions(+), 63 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/progs/test_set_remove_xattr.c
+
+--
+2.43.5
