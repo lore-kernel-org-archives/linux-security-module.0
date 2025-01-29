@@ -1,176 +1,147 @@
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+Received: from sonic309-28.consmr.mail.ne1.yahoo.com (sonic309-28.consmr.mail.ne1.yahoo.com [66.163.184.154])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4684E28DA1
-	for <linux-security-module@vger.kernel.org>; Tue, 28 Jan 2025 23:41:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55F57257D
+	for <linux-security-module@vger.kernel.org>; Wed, 29 Jan 2025 00:02:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.184.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738107701; cv=none; b=pzSYaNlsMDVIK5r+YEInQPRe/0frrFcAMJYvrZ2e8XY1f+FPXJW8qcZMmXxOW31k4tgBS2AzL1djs0b6dJtU3n/i9fDLTJTkihNbQLIFGXGPcBr8w1GGoLUdDVxqLA6l7BFpJ8r9Eyb/f1usP/yylwwWlPtMe5uett4mME+HFvg=
+	t=1738108929; cv=none; b=IwHhGfrnBTi9aAmMqg0Uy1s74irSufGBT58W3a2sgutaXXALoDTt4s7EmM47m3Kga5Qfr8yd5SWRUMknI9Qd21fBssL8uzGHCrPxY1aNQ9nMzW7irxcZ7sa290gB7ttznrirxeNqA8YT9L0LBuveG/rzxitDrSseUI+ZH9pBrEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738107701; c=relaxed/simple;
-	bh=+REOG522unL42MtunHC5bfcM8U9it12+9IlFiFH1pxc=;
-	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=pz2RzMd9y6f6WL/Hm8GfgZ2oYT0hWotrSeCX+VnWp6z4ckmDa5svoLvy0ILVVzXZFGO/H1jtyBSVHybwUHQ16CpUPhpDXEqNmtWjsyw2DUMiYOBLmO7AEgo7KeJ1xoNq7iqcpY7POYbwJepFt4HvZXqJ9w+kocSzeoW/UboDQkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=DCcgSNen; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1738108929; c=relaxed/simple;
+	bh=d9s7R1FlGhnoCg/BX1Amdn3NuScio9jVOq4QUYKgb6I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h7rYPWdazstnpYZBWZgvOpzqvcOrCPUyjL8JWRfbhgtQmAc9ACRpIy7/vgImkBykZ4ugu1s2JeNn3BqZuIsvgx35pJGZC4unwtDIxpD15Cc2cyET7c9pk+j18ct3Np72FanZH9TsjbVeVJ0y/xtyzk+ReAZ8+hmzS7QbIZVozgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=FM/K62No; arc=none smtp.client-ip=66.163.184.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="DCcgSNen"
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4678cd314b6so62183231cf.3
-        for <linux-security-module@vger.kernel.org>; Tue, 28 Jan 2025 15:41:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1738107698; x=1738712498; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+wzUCgK2QvGoOOyiHtBqsqcjcDIIOCHi8bVaY5LEVb8=;
-        b=DCcgSNenj74/eaU8H72ljUpKdYSkzNew6ObEo+QXbi+NhdohyfyPaT2imsEHMz3q+R
-         LA6OahMXiZNViIAXrYn4W8gM1H2+omZbZMa/8X1SihesnAu52CR2nD/jo9Sv5D8eM78Q
-         RDsKCVjZhh6QXXZqTggrcQSY0C77N+OwRWorXfYlAUiYDvnt9zF4fiVjCs2X52xTj3cF
-         npmWD713x8JyhQVo/uQ2D8CDPvUNhQ+B7ddeNlByISTvLlE9X9Z+xNfVyH+ziPP4obxA
-         pPMOew+kmxs+BdbXBsJx1mp4+JhaKLA/9bQYNjQ8VlKTQHyVOxMSF6DDcm2qxT0NQtL3
-         b+IQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738107698; x=1738712498;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=+wzUCgK2QvGoOOyiHtBqsqcjcDIIOCHi8bVaY5LEVb8=;
-        b=DKklamr7iLkO9uVW1Ft3ulcOVVUmqrtsuZMXcrLNXQy2Bc9MTTPB67N5hkXQBUCJgC
-         JazXrz3GXz/mTqYepTAcds6s+quT8UySQqByNrATCyi5qKRPtpAkiiTKa5VB8BhhREiN
-         EKYLClGSv6u/ZxF0aszHrGuvPiGEBixUuEoJk62t4EeXL/WugswvPaQONquEhRkDX4LK
-         0Fc4wP29iQZDfqYE3VEJUqB9McVpaKY4I2xgACI2lEN3RslqCoBYxVwwF/Qw//x+ACkI
-         9/XYYjR2ZkOdT2Ugc79sVbULeLdiGjYKBrc4QfaiW+0pKxppBMjbgXWMNAwahSqKzipl
-         hreQ==
-X-Forwarded-Encrypted: i=1; AJvYcCULk4FiaQXms1uDsEX396tOWtl0ViXmmOCzI4fWqFMavGfk6Xim8RMz0JI/5LQjJCsGLh4UokJviB/y+aHhFwtbfbCfsTM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7ZWXnP8hAd/OpWP14JfHSH1qx4zJjtujMc6w77om9k56GfKOG
-	yVLNX9XlBBnfozUCtprZsrVMHxtk+UKBRlc+0NYFSaDo6sKK9dn1sGKiratw+g==
-X-Gm-Gg: ASbGncuGXtqv7e7nFx3IfarS8zq6s/4P0bkw1Jt0Q6I1TOisDxrFDsNA/n2Noe/d+sa
-	9Bnz2jzPr2piVH8ycCp67LP7Paonr6golaMiQrh4V/TAjxDLtGQ+egfxHPpEVccsN5bmSzEscMT
-	fUpld998TyO7DtjAAw/GljeG+1z6MmQ6jHLLRrGs/Oc4zKqz0GhFPyHp4sxY+3VPHC5JusymJKx
-	HLWPS8cBz76ubdsD6hMi0MDoweoSQTVZEmqyYRIr16MJLs5DE5sBdw99jcapBm5gog0U7Mperi2
-	c94UAadfuw==
-X-Google-Smtp-Source: AGHT+IGP6OnBNAJZ5InHFaJKtOfZTbH9t7b80ceHIm+d62RDj/wxsm38Y1GxOWCkJI4fiHC7uQlyuQ==
-X-Received: by 2002:a05:622a:285:b0:461:169e:d2dc with SMTP id d75a77b69052e-46fd0ba3b44mr21967781cf.49.1738107698105;
-        Tue, 28 Jan 2025 15:41:38 -0800 (PST)
-Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-46e668c921dsm57893251cf.47.2025.01.28.15.41.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 28 Jan 2025 15:41:37 -0800 (PST)
-Date: Tue, 28 Jan 2025 18:41:36 -0500
-Message-ID: <7c6419901a0f6958c58dc138fe5fd348@paul-moore.com>
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="FM/K62No"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1738108926; bh=teQC2LZ5zSH/sS+eQI6aKaJiOhVbqoZ6j55vxMZd7iM=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=FM/K62NojoZxeFL5DAFaBaul8Wbez9LKtblf35gY4sTX+9FmdvpdIcISBydRwQ2AG5KPKRNweAh0be9VNHF2hR07hVxuLPPRhCu76csev8/iD/JdKKoRWuLi+QFOrNpiLeplUi+2PgkbJWE7vhnF0HhE7A39604wQ83kqQ6/UljvCuWHBylEI1Lbhd6VrgYUwnjIsV9aVjnoQ+QmJY1kJg635Ctvwu7BTRjR2yPpGmQPJhIEcCDJdFzM7QWv25B46NsXGA2+ltUr7iT1hsajOoLC26m7tz3Xjapu9KZjpYVphgIe2YUtb2/2JfRAbIbtw4cY8p1vNBxD9froWxgSlA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1738108926; bh=XnNthY7Z7ABMoByRKv4/cpA+SvmLpxTxX6pBiX7juQB=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=JOQ2vwd1fZUlZ2kwM1kHyQ2F4MAMrZEKO2BqzjUqOVkU27Sobo9510hz1r9IrGqfGakKgxDB9LVCWMm1vTJPcsCpWrAPx5yGPpF3TjPtHiTrVoLnS8PFUOQuUko1dKcvbAJQRTm7P/49PxacVL+I7EXS71ZqKk4hzQwsIXDp/eWSyFo9naT99UQhItJlLox0pszt7ZXACO79ZEcczBfZhVZPWXVSpxhAUR7zSyeiATT1qDkqiL28/3KjeRALg8Zo4E4ZjK0rZZFBuXyNJmmYQKnEq9+uVvImC3eTXQZ3BZ3oqKVdr/b2fDUNfaHM5oYc6EtQR+dIwzh//E98IBBkwA==
+X-YMail-OSG: Za2rmoQVM1m6yjeHTtRWCQGVG7ON.ZE0BMe61C20oPPWp39QKT.ZxfvDELlFB7w
+ IAa4kL.jT.ZVHXYMTNhAch9M4tPpVZMlhQqLUIEOtJYhB0jM7wU.ro.rlZEla33X._2rKiHFFe5e
+ F22DibBEYz3FIfAQPU5pyazStc1wkDizsKKxUZBT6fQHrSZMzXi.QJzbqXIpDAi1FDG7pMNLwVoz
+ m.hvorp5kM9pk26xD3qW6LsVUcD6Zkf46wvngQzoZljGZCb3FT8XSH2sYXE7jWoFRXJDp1tG.R.M
+ DMWNCLGSlDTmuwV6pBw6UjNPBlV6HoL5X27Qv7SobTs70VA8CjVRyVgEBLyjgR1K5aDWPfmSqsf2
+ W9tDlRI_JLdvjlF3_yZp..PvKdWaDHEqDk.THYVfbfgaExnARGf832hM4E8F5OoeZbvkADHh_ZBf
+ RAr5bMkT89rvn_kX0b9.DaE8rllAhvaNboHNdrd.84IyhZEhO4Og_PDtK2sI4wot0FO4awkbPowk
+ TCkQ3V7OH45mP.Pcoqttgt24jhDZkSHdIaa6BmRe2Ya6dDln7D9tcz4sCSlfq5bxMkpRfSPOlati
+ WwDVJTGHoTMrmOOAP8yRenmMFN7CFAOYOROEash82OjzqKdDC0HUWw_lQ7Vwi0ngckfZVJifb1mf
+ 8fakaiFr5LxxdOY7S4w6cjuS5k0hHYVW68fmkrQ8m1r1YreGGdhm0IVhl4HHK4tFFhqJ_d9nwbx0
+ .UwtAO9qJyZ4nmDsEjjd72Xhqz.L_A8aO2dPj3U.FLLTaL6eZWnLT4RbyVD4Ib_pqR40OwpbT0Jn
+ S_Fy4ypTMtoVg1C.KKYelV3FZ2eaz_XBtkLWYk3wabvlP41LoEpZLuu6UzT8MwMogQrSE5Yn1aHS
+ _m_Ztvs2O7fdXBC_8NPRSnmtkJgWw2P3ZeiHdOz4CRee3jntYyCQ0EJ20rml1WK4z820Lmr3s9YO
+ 2LbR1UFuviJ24h5Obvfsi1r2Ej1aM5uJlnWgKe3qVVaet6T9xsYtj5Dk9Y9hNQxxpOLvW5O35.9d
+ ny4moUlsSRrjlqKkwvcmw7sOa96F4hEVU6ajVrz_UVCW2DitchUQI5K1uiW8FTV_Z0S.WYCaIi0u
+ bY7TguI6KcxS2Rtf.whIXhJu.F5rEK.VZRLO_2iqK07T_iMAzt_vZVV7BYyEoMABYinlIhvN1I0k
+ Cnx2WkvTz7HdCFz0OYQmKUR0p4S2x1OkwzX_zDa0QCOTrGD6vJ9Y0C_grUs1st0RMOmzqmHJmCqU
+ 4gq2VNrKYKcm.pC6mTkixmFfbp5NVrI2b8oReYo4tE1A9MSIjPEAOTsZAGPDqlWZmj1L44S3n69L
+ qQUTJPfncWJgtist5F9LG0glCRl8IQOs5RE5OPetXusE45NUXT6LYMwtpF1syAEOPZFoUOqr8XOp
+ CZOyem3Jr0xoDvYq3QAE0PTNfMbmezOVf.gQPP6ZzSKY8dDpH8M5bjAV9uf4BlbNasjpMsaWrQ.1
+ egbd3y_kVvNB54.BOq1Qq7nQBUYTQh43QhkKF9gIr0EL2CnHYIngzIwGDCyrH15z8x89XmQE8V4P
+ RqNCLZh1_eCvHmidK.462GWjlizet0Eka600dghZHkt0bPTmSflQjTYbxuRtCKPVR2ZfmtG0c1SS
+ qeGpT.hbcI7J6Mg2bf6fr4socAOdaj8rYqVt67iSN839Kz1dy.x1AqjnObhLZ7HNf4wY1SUwTlSe
+ .8iZaihGf7PXEjIjqY6GyXu1OyxJc2exCv0Q1PNRW3wiUVHGEVUGd0JCBNkklrqGAcF9nfaEG4mS
+ yNZFZP1TqjkIT8qIw1sYQxEZds4lwe5obr7nzzD3vXvgzko09ywtvSwXjBa3CWEk8AFVTUojYos8
+ ijjts157U_ppbS9XBpDiNzx3g1vukNQK21zz0tnCOxvVQilyve7u3lLQ0vueoLVvPvM.65y6oCbR
+ XmHy.Ip71gpIIGC8P7ZX6Gn3YG55aZRSuNZS9eEtWc36y.OVaBAQ2iz7JviIOEs7mGMk1sgQyWHb
+ NEyDHBwnbo6uzhJ4wX626xWUQ4S9f4Gex_AFneg_8xge47h8Qd24kLXwW3C9csF4kqYOrJEAhagx
+ bAeQvL9cqglCs9Iuo4iIc5EePtadyQeEk_z9brdz1Y0hc4KU7pa4lM70fnrmGJDvVJumUZLBBOMG
+ KoBkp2UNBSkqJff64Musd9A4jvScuC7rzBBYnX6mRYTNiMgpLNF0DRg9HwdHP2NkLq5a1vntI_hA
+ xo8ag9wrxKYMUSjn9sdRGZLy1xiIEBGgQhnaLaliEWDiGpaee3vJdCy0gf0PK1rO2IpJFSNO1rzX
+ XO27tzeH._M_fji0C1sNcwRg-
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 0092f601-379e-43b1-879c-af8004618239
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Wed, 29 Jan 2025 00:02:06 +0000
+Received: by hermes--production-gq1-5dd4b47f46-9j75b (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 8507b724dd85e7e8946c93db75fc6dcb;
+          Wed, 29 Jan 2025 00:02:04 +0000 (UTC)
+Message-ID: <84e580b3-0af9-457f-822c-f03271d20e21@schaufler-ca.com>
+Date: Tue, 28 Jan 2025 16:02:02 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=UTF-8 
-Content-Transfer-Encoding: 8bit 
-X-Mailer: pstg-pwork:20250128_1833/pstg-lib:20250128_1833/pstg-pwork:20250128_1833
-From: Paul Moore <paul@paul-moore.com>
-To: Huacai Chen <chenhuacai@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>, Eric Paris <eparis@redhat.com>
-Cc: James Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>, Casey Schaufler <casey@schaufler-ca.com>, audit@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, Huacai Chen <chenhuacai@loongson.cn>
-Subject: Re: [PATCH v2] audit: Initialize lsmctx to avoid memory allocation  error
-References: <20250125141435.205096-1-chenhuacai@loongson.cn>
-In-Reply-To: <20250125141435.205096-1-chenhuacai@loongson.cn>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] lsm,io_uring: add LSM hooks for io_uring_setup()
+To: Paul Moore <paul@paul-moore.com>
+Cc: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>,
+ linux-kernel@vger.kernel.org, James Morris <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>, Jens Axboe <axboe@kernel.dk>,
+ Pavel Begunkov <asml.silence@gmail.com>,
+ Stephen Smalley <stephen.smalley.work@gmail.com>,
+ Ondrej Mosnacek <omosnace@redhat.com>, =?UTF-8?Q?Bram_Bonn=C3=A9?=
+ <brambonne@google.com>, =?UTF-8?Q?Thi=C3=A9baud_Weksteen?=
+ <tweek@google.com>, =?UTF-8?Q?Christian_G=C3=B6ttsche?=
+ <cgzones@googlemail.com>, Masahiro Yamada <masahiroy@kernel.org>,
+ linux-security-module@vger.kernel.org, io-uring@vger.kernel.org,
+ selinux@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
+References: <20250127155723.67711-1-hamzamahfooz@linux.microsoft.com>
+ <20250127155723.67711-2-hamzamahfooz@linux.microsoft.com>
+ <bd6c2bee-b9bb-4eba-9216-135df204a10e@schaufler-ca.com>
+ <CAHC9VhRaXgLKo6NbEVBiZOA1NowbwdoYNkFEpZ65VJ6h0TSdFw@mail.gmail.com>
+ <bb360079-f485-48c5-825d-89cbf4cf0c52@schaufler-ca.com>
+ <CAHC9VhTAunsgA-k64-qmQzeyvmAHuQ-=Jp-yWDi9XDP9CHkhHA@mail.gmail.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <CAHC9VhTAunsgA-k64-qmQzeyvmAHuQ-=Jp-yWDi9XDP9CHkhHA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.23187 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Jan 25, 2025 Huacai Chen <chenhuacai@loongson.cn> wrote:
-> 
-> Initialize the local variable lsmctx in audit_receive_msg(), so as to
-> avoid memory allocation errors like:
-> 
-> [  258.074914] WARNING: CPU: 2 PID: 443 at mm/page_alloc.c:4727 __alloc_pages_noprof+0x4c8/0x1040
-> [  258.074997] pc 900000000304d588 ra 9000000003059644 tp 9000000107774000 sp 9000000107777890
-> [  258.075000] a0 0000000000040cc0 a1 0000000000000012 a2 0000000000000000 a3 0000000000000000
-> [  258.075003] a4 9000000107777bd0 a5 0000000000000280 a6 0000000000000010 a7 0000000000000000
-> [  258.075006] t0 9000000004b4c000 t1 0000000000000001 t2 1f3f37829c264c80 t3 000000000000002e
-> [  258.075009] t4 0000000000000000 t5 00000000000003f6 t6 90000001066b6310 t7 000000000000002f
-> [  258.075011] t8 000000000000003c u0 00000000000000b4 s9 900000010006f880 s0 9000000004a4b000
-> [  258.075014] s1 0000000000000000 s2 9000000004a4b000 s3 9000000106673400 s4 9000000107777af0
-> [  258.075017] s5 90000001066b6300 s6 0000000000000012 s7 fffffffffffff000 s8 0000000000000004
-> [  258.075019]    ra: 9000000003059644 ___kmalloc_large_node+0x84/0x1e0
-> [  258.075026]   ERA: 900000000304d588 __alloc_pages_noprof+0x4c8/0x1040
-> [  258.075030]  CRMD: 000000b0 (PLV0 -IE -DA +PG DACF=CC DACM=CC -WE)
-> [  258.075040]  PRMD: 00000004 (PPLV0 +PIE -PWE)
-> [  258.075045]  EUEN: 00000007 (+FPE +SXE +ASXE -BTE)
-> [  258.075051]  ECFG: 00071c1d (LIE=0,2-4,10-12 VS=7)
-> [  258.075056] ESTAT: 000c0000 [BRK] (IS= ECode=12 EsubCode=0)
-> [  258.075061]  PRID: 0014c010 (Loongson-64bit, Loongson-3A5000)
-> [  258.075064] CPU: 2 UID: 0 PID: 443 Comm: auditd Not tainted 6.13.0-rc1+ #1899
-> [  258.075070] Stack : ffffffffffffffff 0000000000000000 9000000002debf5c 9000000107774000
-> [  258.075077]         90000001077774f0 0000000000000000 90000001077774f8 900000000489e480
-> [  258.075083]         9000000004b380e8 9000000004b380e0 9000000107777380 0000000000000001
-> [  258.075089]         0000000000000001 9000000004a4b000 1f3f37829c264c80 90000001001a9b40
-> [  258.075094]         9000000107774000 9000000004b080e8 00000000000003d4 9000000004b080e8
-> [  258.075100]         9000000004a580e8 000000000000002d 0000000006ebc000 900000010006f880
-> [  258.075106]         00000000000000b4 0000000000000000 0000000000000004 0000000000001277
-> [  258.075112]         900000000489e480 90000001066b6300 0000000000000012 fffffffffffff000
-> [  258.075118]         0000000000000004 900000000489e480 9000000002def6a8 00007ffff2ba4065
-> [  258.075124]         00000000000000b0 0000000000000004 0000000000000000 0000000000071c1d
-> [  258.075129]         ...
-> [  258.075132] Call Trace:
-> [  258.075135] [<9000000002def6a8>] show_stack+0x30/0x148
-> [  258.075146] [<9000000002debf58>] dump_stack_lvl+0x68/0xa0
-> [  258.075152] [<9000000002e0fe18>] __warn+0x80/0x108
-> [  258.075158] [<900000000407486c>] report_bug+0x154/0x268
-> [  258.075163] [<90000000040ad468>] do_bp+0x2a8/0x320
-> [  258.075172] [<9000000002dedda0>] handle_bp+0x120/0x1c0
-> [  258.075178] [<900000000304d588>] __alloc_pages_noprof+0x4c8/0x1040
-> [  258.075183] [<9000000003059640>] ___kmalloc_large_node+0x80/0x1e0
-> [  258.075187] [<9000000003061504>] __kmalloc_noprof+0x2c4/0x380
-> [  258.075192] [<9000000002f0f7ac>] audit_receive_msg+0x764/0x1530
-> [  258.075199] [<9000000002f1065c>] audit_receive+0xe4/0x1c0
-> [  258.075204] [<9000000003e5abe8>] netlink_unicast+0x340/0x450
-> [  258.075211] [<9000000003e5ae9c>] netlink_sendmsg+0x1a4/0x4a0
-> [  258.075216] [<9000000003d9ffd0>] __sock_sendmsg+0x48/0x58
-> [  258.075222] [<9000000003da32f0>] __sys_sendto+0x100/0x170
-> [  258.075226] [<9000000003da3374>] sys_sendto+0x14/0x28
-> [  258.075229] [<90000000040ad574>] do_syscall+0x94/0x138
-> [  258.075233] [<9000000002ded318>] handle_syscall+0xb8/0x158
+On 1/28/2025 2:35 PM, Paul Moore wrote:
+> On Mon, Jan 27, 2025 at 7:23 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> On 1/27/2025 1:23 PM, Paul Moore wrote:
+>>> On Mon, Jan 27, 2025 at 12:18 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>>>> On 1/27/2025 7:57 AM, Hamza Mahfooz wrote:
+>>>>> It is desirable to allow LSM to configure accessibility to io_uring
+>>>>> because it is a coarse yet very simple way to restrict access to it. So,
+>>>>> add an LSM for io_uring_allowed() to guard access to io_uring.
+>>>> I don't like this at all at all. It looks like you're putting in a hook
+>>>> so that io_uring can easily deflect any responsibility for safely
+>>>> interacting with LSMs.
+>>> That's not how this works Casey, unless you're seeing something different?
+>> Yes, it's just me being paranoid. When a mechanism is introduced that makes
+>> it easy to disable a system feature in the LSM environment I start hearing
+>> voices saying "You can't use security and the cool thing together", and the
+>> developers of "the cool thing" wave hands and say "just disable it" and it
+>> never gets properly integrated. I have seen this so many times it makes me
+>> wonder how anything ever does get made to work in multiple configurations.
+> While there is plenty of precedent regarding paranoia over kernel
+> changes outside the LSM, and yes, I do agree that there are likely
+> some configurations that aren't tested (or make little sense for that
+> matter), I don't believe that to be the case here.  The proposed LSM
+> hook is simply another access control, and it makes it much easier for
+> LSMs without full and clear anonymous inode controls to apply access
+> controls to io_uring.
 
-If you are going to include the backtrace, please ensure that the lines
-do not wrap when viewing the commit using 'git log' in an 80 char wide
-terminal.
+I can't say I agree that it's an access control because although it is
+specific to a process it isn't specific to an object. You can still access
+the set of objects using other means. It is a mechanism control, preventing
+use of io_uring entirely.
 
-> Root cause: if we enable AUDIT but disable LSM, in the AUDIT_SIGNAL_INFO
-> case, lsmprop_is_set() returns false, then kmalloc() may try to allocate
-> a large amount of memory with an uninitialized length.
+>>> This is an additional access control point for io_uring, largely to
+>>> simplify what a LSM would need to do to help control a process' access
+>>> to io_uring, it does not replace any of the io_uring LSM hooks or
+>>> access control points.
+>> What I see is "LSM xyzzy has an issue with io_uring? Just create a
+>> io_uring_allowed() hook that always disables io_uring." LSM xyzzy never
+>> gets attention from the io_uring developers because, as far as they care,
+>> the problem is solved.
+> To be honest, I wouldn't expect the io_uring developers (or any kernel
+> subsystem maintainer outside the LSMs) to worry about a specific LSM.
+> The io_uring developers should be focused on ensuring that the LSM
+> hooks for io_uring are updated as necessary and called from all of the
+> right locations as io_uring continues to evolve.  If there is a
+> problem with LSM xyzzy because it provides a buggy LSM callback for
+> the io_uring LSM hooks, that is a xyzzy issue not an io_uring issue.
 
-You shouldn't need to have a special "Root cause:" section, just work
-that into the commit description normally.  I would suggest that the
-commit description could simply be something like the following:
+I'm much more concerned about bugs in io_uring than in xyzzy. The io_uring
+people have been pretty good about addressing LSM issues, so it's not
+a huge deal, but I never like seeing switches to turn off features because
+security is active.
 
-  When audit is enabled in a kernel build, and there are no LSMs
-  active that support LSM labeling, it is possible that the lsmctx
-  variable in the AUDIT_SIGNAL_INFO handler in audit_receive_msg()
-  could be used before it is properly initialize.  This patch
-  corrects this problem by initializing the lsmctx to a safe value
-  when it is declared.
+If no one else shares my concern you can put my comments down to the
+ravings of the lunatic fringe and ignore them.
 
-> Fixes: 6fba89813ccf333d ("lsm: ensure the correct LSM context releaser")
-> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
-> ---
-> V2: Update commit message and CC list.
-> 
->  kernel/audit.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/audit.c b/kernel/audit.c
-> index 13d0144efaa3..5f5bf85bcc90 100644
-> --- a/kernel/audit.c
-> +++ b/kernel/audit.c
-> @@ -1221,7 +1221,7 @@ static int audit_receive_msg(struct sk_buff *skb, struct nlmsghdr *nlh,
->  	struct audit_buffer	*ab;
->  	u16			msg_type = nlh->nlmsg_type;
->  	struct audit_sig_info   *sig_data;
-> -	struct lsm_context	lsmctx;
-> +	struct lsm_context	lsmctx = { NULL, 0, 0 };
->  
->  	err = audit_netlink_ok(skb, msg_type);
->  	if (err)
-> -- 
-> 2.47.1
-
---
-paul-moore.com
