@@ -1,40 +1,31 @@
-Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CADD319F421;
-	Wed, 29 Jan 2025 11:46:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 642585672;
+	Wed, 29 Jan 2025 11:47:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738151215; cv=none; b=A3xe9vgplGitQWPTH8jJjbicn6LrXHp6bcjWOxMbgYSXxIUnabBhfbKLu8vfijhOJmU2iXhyAPIpfFGuagLKpiD1fyyiPMDDLCwT3OZ1NEPdeRQ8y+v0pdeYk31JeKAqFKbCCMZBArP0iwzmKEDnHYr7hIbnfRSy22HD73JqnBc=
+	t=1738151249; cv=none; b=FBpy17sPu4wHHnKg8Ju550D5Rs+nJ/0kt0dqcS/kaW8sOZkrIOLrpnt0XxScjhB1gfxaNwM/DX+DqWGI0Di7ygQ0+ASqCcudEAVXkaXxSipnahrSjbsYyb1JHKxPuX+03DjUebaE4R+2Q6SdkQoPbq8gE5UkNJpUL/YYjRCzqus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738151215; c=relaxed/simple;
-	bh=yxWPbQLiCpRAZcEQw4Jo9pyS6oOp444sRhCY4nLJpUA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Fgv5+hz9fHgzzDuUBDdMMT2do84u6wAmw1GOrORkO6HiwT9rZurpYRpX0+2/kJs567BGWKwoM083oWLGpvoun03sWMs0O1dTvj+zTKmsVk2rpHwZlB3zoLiSAhUgcYpANvCKYP7gnKlRS1a0W/ks61ZtrBjMJF25xmsoGAOPgio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=WWQiIhLa; arc=none smtp.client-ip=185.125.188.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="WWQiIhLa"
-Received: from [192.168.192.85] (unknown [50.39.104.138])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 14A2B3F0EB;
-	Wed, 29 Jan 2025 11:46:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1738151204;
-	bh=RWHfZbUX/JLgZs/G60sBGf3h9qQmIRKq3pI0+4+Av7Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=WWQiIhLazWJqaN6jcIpnPvv/9lLAjgrO7Oa3bdztwaqml34Gp6eoFzNRNQZnSmBb6
-	 GahJ4sqfP+ghnTm2tAbQu2QF7UrURIYdk5KKvTv5rZIB9tu4r+NwvGbT2guXL0VpVP
-	 es/dUi4w+84QPwcqRpcWT8MEyw9HHuOClMDWuPeaP62EqxmojmYHrBZX1CuCoCEx3e
-	 Poa0ZN9ogOIDYTE1Gqra1c8UhSTB4k1mSy9aURKTwcLHAwsxrrHAd7S0dEvFvwEsQq
-	 HlSD6/6mmyHqQerzaGD/VVwvEzJnHNSz6TPbLVXp90ISRvJjaf6N9YcrzEGYKaImWa
-	 meLqAYltOnDcg==
-Message-ID: <7de8eeda-55bd-4104-88af-0a408d928935@canonical.com>
-Date: Wed, 29 Jan 2025 03:46:41 -0800
+	s=arc-20240116; t=1738151249; c=relaxed/simple;
+	bh=haK7g3FTLV1yMkxYGmT0vm14Le3zJednLqBUS/94VVg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=VqD/c0Wn04hYSM1swYSz4SGL/XVRlCgWvIwOxYIxHtFqNNotOaT9lrYv2eNz18Xw53ZTX1aJqz+jRcm1XcCXhqF2VIQWx4FVtpLBRnVjH29Ff+p8AxQ901OV+xCY8kXq2nl7b8oe1Lo2/2vjo+OSBrC/ujiilKnzn5x+p7sbWaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4YjgM24ncTz6D9DX;
+	Wed, 29 Jan 2025 19:45:18 +0800 (CST)
+Received: from mscpeml500004.china.huawei.com (unknown [7.188.26.250])
+	by mail.maildlp.com (Postfix) with ESMTPS id 00380140B30;
+	Wed, 29 Jan 2025 19:47:24 +0800 (CST)
+Received: from [10.123.123.159] (10.123.123.159) by
+ mscpeml500004.china.huawei.com (7.188.26.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Wed, 29 Jan 2025 14:47:21 +0300
+Message-ID: <b9823ff1-2f66-3992-b389-b8e631ec03ba@huawei-partners.com>
+Date: Wed, 29 Jan 2025 14:47:19 +0300
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -42,97 +33,196 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] apparmor: use the condition in AA_BUG_FMT even with debug
- disabled
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: paul@paul-moore.com, linux-kernel@vger.kernel.org,
- apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org
-References: <20250127205404.3116679-1-mjguzik@gmail.com>
-Content-Language: en-US
-From: John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; keydata=
- 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 lT9Q
-Organization: Canonical
-In-Reply-To: <20250127205404.3116679-1-mjguzik@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [RFC PATCH v2 1/8] landlock: Fix non-TCP sockets restriction
+Content-Language: ru
+To: Matthieu Baerts <matttbe@kernel.org>, =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?=
+	<mic@digikod.net>
+CC: <gnoack@google.com>, <willemdebruijn.kernel@gmail.com>,
+	<matthieu@buffet.re>, <linux-security-module@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <netfilter-devel@vger.kernel.org>,
+	<yusongping@huawei.com>, <artem.kuzin@huawei.com>,
+	<konstantin.meskhidze@huawei.com>, MPTCP Linux <mptcp@lists.linux.dev>,
+	<linux-nfs@vger.kernel.org>, Paul Moore <paul@paul-moore.com>
+References: <20241017110454.265818-1-ivanov.mikhail1@huawei-partners.com>
+ <20241017110454.265818-2-ivanov.mikhail1@huawei-partners.com>
+ <49bc2227-d8e1-4233-8bc4-4c2f0a191b7c@kernel.org>
+ <20241018.Kahdeik0aaCh@digikod.net>
+ <62336067-18c2-3493-d0ec-6dd6a6d3a1b5@huawei-partners.com>
+ <20241212.qua0Os3sheev@digikod.net>
+ <f480bbea-989d-378a-9493-c2bee412db00@huawei-partners.com>
+ <20250124.gaegoo0Ayahn@digikod.net>
+ <2f970b00-7648-1865-858a-214c5c6af0c4@huawei-partners.com>
+ <20250127.Uph4aiph9jae@digikod.net>
+ <d3d589c3-a70b-fc6e-e1bb-d221833dfef5@huawei-partners.com>
+ <594263fc-f4e7-43ce-a613-d3f8ebb7f874@kernel.org>
+ <f6e72e71-c5ed-8a9c-f33e-f190a47b8c27@huawei-partners.com>
+ <2e727df0-c981-4e0c-8d0d-09109cf27d6f@kernel.org>
+ <103de503-be0e-2eb2-b6f0-88567d765148@huawei-partners.com>
+ <1d1d58b3-2516-4fc8-9f9a-b10604bbe05b@kernel.org>
+From: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+In-Reply-To: <1d1d58b3-2516-4fc8-9f9a-b10604bbe05b@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: lhrpeml500009.china.huawei.com (7.191.174.84) To
+ mscpeml500004.china.huawei.com (7.188.26.250)
 
-On 1/27/25 12:54, Mateusz Guzik wrote:
-> This follows the established practice and fixes a build failure for me:
-> security/apparmor/file.c: In function ‘__file_sock_perm’:
-> security/apparmor/file.c:544:24: error: unused variable ‘sock’ [-Werror=unused-variable]
->    544 |         struct socket *sock = (struct socket *) file->private_data;
->        |                        ^~~~
+On 1/29/2025 2:33 PM, Matthieu Baerts wrote:
+> On 29/01/2025 12:02, Mikhail Ivanov wrote:
+>> On 1/29/2025 1:25 PM, Matthieu Baerts wrote:
+>>> Hi Mikhail,
+>>>
+>>> On 29/01/2025 10:52, Mikhail Ivanov wrote:
+>>>> On 1/28/2025 9:14 PM, Matthieu Baerts wrote:
+>>>>> Hi Mikhail,
+>>>>>
+>>>>> Sorry, I didn't follow all the discussions in this thread, but here are
+>>>>> some comments, hoping this can help to clarify the MPTCP case.
+>>>>
+>>>> Thanks a lot for sharing your knowledge, Matthieu!
+>>>>
+>>>>>
+>>>>> On 28/01/2025 11:56, Mikhail Ivanov wrote:
+>>>>>> On 1/27/2025 10:48 PM, Mickaël Salaün wrote:
+>>>>>
+>>>>> (...)
+>>>>>
+>>>>>>> I'm a bit worried that we miss some of these places (now or in future
+>>>>>>> kernel versions).  We'll need a new LSM hook for that.
+>>>>>>>
+>>>>>>> Could you list the current locations?
+>>>>>>
+>>>>>> Currently, I know only about TCP-related transformations:
+>>>>>>
+>>>>>> * SMC can fallback to TCP during connection. TCP connection is used
+>>>>>>      (1) to exchange CLC control messages in default case and (2)
+>>>>>> for the
+>>>>>>      communication in the case of fallback. If socket was connected or
+>>>>>>      connection failed, socket can not be reconnected again. There
+>>>>>> is no
+>>>>>>      existing security hook to control the fallback case,
+>>>>>>
+>>>>>> * MPTCP uses TCP for communication between two network interfaces
+>>>>>> in the
+>>>>>>      default case and can fallback to plain TCP if remote peer does not
+>>>>>>      support MPTCP. AFAICS, there is also no security hook to
+>>>>>> control the
+>>>>>>      fallback transformation,
+>>>>>
+>>>>> There are security hooks to control the path creation, but not to
+>>>>> control the "fallback transformation".
+>>>>>
+>>>>> Technically, with MPTCP, the userspace will create an IPPROTO_MPTCP
+>>>>> socket. This is only used "internally": to communicate between the
+>>>>> userspace and the kernelspace, but not directly used between network
+>>>>> interfaces. This "external" communication is done via one or multiple
+>>>>> kernel TCP sockets carrying extra TCP options for the mapping. The
+>>>>> userspace cannot directly control these sockets created by the kernel.
+>>>>>
+>>>>> In case of fallback, the kernel TCP socket "simply" drop the extra TCP
+>>>>> options needed for MPTCP, and carry on like normal TCP. So on the wire
+>>>>> and in the Linux network stack, it is the same TCP connection, without
+>>>>> the MPTCP options in the TCP header. The userspace continue to
+>>>>> communicate with the same socket.
+>>>>>
+>>>>> I'm not sure if there is a need to block the fallback: it means only
+>>>>> one
+>>>>> path can be used at a time.
+>>>>
+>>>> You mean that users always rely on a plain TCP communication in the case
+>>>> the connection of MPTCP multipath communication fails?
+>>>
+>>> Yes, that's the same TCP connection, just without extra bit to be able
+>>> to use multiple TCP connections associated to the same MPTCP one.
+>>
+>> Indeed, so MPTCP communication should be restricted the same way as TCP.
+>> AFAICS this should be intuitive for MPTCP users and it'll be better
+>> to let userland define this dependency.
 > 
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-
-Acked-by: John Johansen <john.johansen@canonical.com>
-
-thanks, I have pulled this into my tree
-
-> ---
+> Yes, I think that would make more sense.
 > 
-> Plausibly the sock var wants to be eliminated altogether, but I just
-> want this to build.
-> 
->   security/apparmor/include/lib.h | 6 +++++-
->   1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/security/apparmor/include/lib.h b/security/apparmor/include/lib.h
-> index 256f4577c653..d947998262b2 100644
-> --- a/security/apparmor/include/lib.h
-> +++ b/security/apparmor/include/lib.h
-> @@ -60,7 +60,11 @@ do {									\
->   #define AA_BUG_FMT(X, fmt, args...)					\
->   	WARN((X), "AppArmor WARN %s: (" #X "): " fmt, __func__, ##args)
->   #else
-> -#define AA_BUG_FMT(X, fmt, args...) no_printk(fmt, ##args)
-> +#define AA_BUG_FMT(X, fmt, args...)					\
-> +	do {								\
-> +		BUILD_BUG_ON_INVALID(X);				\
-> +		no_printk(fmt, ##args);					\
-> +	} while (0)
->   #endif
->   
->   int aa_parse_debug_params(const char *str);
+> I guess we can look at MPTCP as TCP with extra features.
 
+Yeap
+
+> 
+> So if TCP is blocked, MPTCP should be blocked as well. (And eventually
+> having the possibility to block only TCP but not MPTCP and the opposite,
+> but that's a different topic: a possible new feature, but not a bug-fix)
+What do you mean by the "bug fix"?
+
+> 
+>>>>>> * IPv6 -> IPv4 transformation for TCP and UDP sockets withon
+>>>>>>      IPV6_ADDRFORM. Can be controlled with setsockopt() security hook.
+>>>>>>
+>>>>>> As I said before, I wonder if user may want to use SMC or MPTCP and
+>>>>>> deny
+>>>>>> TCP communication, since he should rely on fallback transformation
+>>>>>> during the connection in the common case. It may be unexpected for
+>>>>>> connect(2) to fail during the fallback due to security politics.
+>>>>>
+>>>>> With MPTCP, fallbacks can happen at the beginning of a connection, when
+>>>>> there is only one path. This is done after the userspace's
+>>>>> connect(). If
+>>>>> the fallback is blocked, I guess the userspace will get the same errors
+>>>>> as when an open connection is reset.
+>>>>
+>>>> In the case of blocking due to security policy, userspace should get
+>>>> -EACESS. I mean, the user might not expect the fallback path to be
+>>>> blocked during the connection if he has allowed only MPTCP communication
+>>>> using the Landlock policy.
+>>>
+>>> A "fallback" can happen on different occasions as mentioned in the
+>>> RFC8684 [1], e.g.
+>>>
+>>> - The client asks to use MPTCP, but the other peer doesn't support it:
+>>>
+>>>     Client                Server
+>>>     |     SYN + MP_CAPABLE     |
+>>>     |------------------------->|
+>>>     |         SYN/ACK          |
+>>>     |<-------------------------|  => Fallback on the client side
+>>>     |           ACK            |
+>>>     |------------------------->|
+>>>
+>>> - A middle box doesn't touch the 3WHS, but intercept the communication
+>>> just after:
+>>>
+>>>     Client                Server
+>>>     |     SYN + MP_CAPABLE     |
+>>>     |------------------------->|
+>>>     |   SYN/ACK + MP_CAPABLE   |
+>>>     |<-------------------------|
+>>>     |     ACK + MP_CAPABLE     |
+>>>     |------------------------->|
+>>>     |        DSS + data        | => but the server doesn't receive the DSS
+>>>     |------------------------->| => So fallback on the server side
+>>>     |           ACK            |
+>>>     |<-------------------------| => Fallback on the client side
+>>>
+>>> - etc.
+>>>
+>>> So the connect(), even in blocking mode, can be OK, but the "fallback"
+>>> will happen later.
+>>
+>> Thanks! Theoretical "socket transformation" control should cover all
+>> these cases.
+>>
+>> You mean that it might be reasonable for a Landlock policy to block
+>> MPTCP fallback when establishing first sublflow (when client does not
+>> receive MP_CAPABLE)?
+> 
+> Personally, I don't even know if there is really a need for such
+> policies. The fallback is there not to block a connection if the other
+> peer doesn't support MPTCP, or if a middlebox decides to mess-up with
+> MPTCP options. So instead of an error, the connection continues but is
+> "degraded" by not being able to create multiple paths later on.
+> 
+> Maybe best to wait for a concrete use-case before implementing this?
+
+Ok, got it! I agree that such policies does not seem to be useful.
+
+> 
+> (...)
+> 
+> Cheers,
+> Matt
