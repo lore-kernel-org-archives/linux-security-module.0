@@ -1,31 +1,30 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07F3629A2;
-	Wed, 29 Jan 2025 20:40:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35AF21E2847;
+	Wed, 29 Jan 2025 20:40:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738183240; cv=none; b=VY5aT8NAp0uiqH1LQv7xKJd7qjqEWFvhcn7CsVVV6qHUYJWU6CDWsGepORxX86Xu7wDEhWaJrWPhZTXncmUJEHxbzWW4nDE9N84KquQKLqr1pMwok/Gqhi43JynGy53PNXy8R88VCEMs5g64nTw6pEpG0c4urt5bTxuH2uYW4tk=
+	t=1738183242; cv=none; b=ek2cRwJKJ65qMeTWShn4SPa23qIihKCn5gWepwV++3vtNbbtdaDnbmZ1SFcNE6uQwfaGUInGQMqk35IMn24fwNdl2wN1uzGW85zTmnHJEG02UEt8v1ihaBI4ovR6kZ0PjqrkvOSL3vJ+i4uiVfK1SABu8dmpfKVxP5pM4n1cxIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738183240; c=relaxed/simple;
-	bh=rNSXy9Sct5j7fuWxOAUzXWDDz8RBbrqWcCcnTgGXcZ8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GRHf64FKO9+pNrvkwnBu/EooyeQP5FkAGIVOwfaLxxfshh1fMOdBP/1iaAeEdd2l8OBIzCV+Lin/n+CgH7tookHJkgPzqmQms4Pe/0fwcQJSPovfy1FM8FHbXXPREEm4VqOkCAfGStzlQGxwb7noIGlqGat2wl+wltESXc+sJt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FBFQfTpr; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1738183242; c=relaxed/simple;
+	bh=TvUphb/vlGuqwwWD+ZxDY8HH0Mf2NGUG6U/J+wtc9zA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RMcCzcPpCO8FC4roTYxIThTyf1N+vECCxfHVijN53342qmH1Rk/87qddX7W/OjiU+Bwk0ZuEveOaMBYKd0Mtbeuj48Xl8G/rmkuLm0MhyDxLneRkLV4LB0EZGRIgDNTTDkaBpJAhujR3oAfVm4LnI8fSaNajSEo2F3MxyM4nFEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xd41c4UU; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FBFQfTpr"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A11CAC4CEE6;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xd41c4UU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4ED86C4CEED;
 	Wed, 29 Jan 2025 20:40:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1738183239;
-	bh=rNSXy9Sct5j7fuWxOAUzXWDDz8RBbrqWcCcnTgGXcZ8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=FBFQfTprdHiKPbOv4p1kJ3C0ty/oxBMjnxUI5cW4VE8S1bpnZP76xYfCQM3QHg5da
-	 K9iMXgtQ7duBEnsiR9P7Gi3YOHEyQh24jkpMeKCSfwsw2qKOk3KQKtfm4QqFs9QXrz
-	 R/BcO9DSXOEwd5lGGmgqtB97B1PQ78AtJ0UdZcDJO9E0R0ns4vYKYHzozi2OfFPyaQ
-	 +Lp/gn4l9XVN2VgUztxLYBH9W4g2AXyXSfrzpzp2v7rhqxR3WgxNsZyUZPAn0Tl6/p
-	 fzFXT0JkwmVIih4UUOvVCu+doUoHFgiQuPnFcohGDrY0QvVS+7lX6QQ1NQef07zegz
-	 Ab0cXtwNuL4zg==
+	bh=TvUphb/vlGuqwwWD+ZxDY8HH0Mf2NGUG6U/J+wtc9zA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Xd41c4UU4fyEfrNAqf6xoW7OKWID7moCyhMfXJfDPcaESFSvKp+E9+0KkfY7Eo3lc
+	 ffz3Umx7wqSHwOzwftAS8vBX+xj8D7LUlJBTb2Hf1gQSUNYpE9PlAFXIzhRHN/4A0F
+	 okVjeWVu6UdwrkqWwTZ21wRxZgn9u5mNAskzF6prH8HNTwUGK00cPE0hTH3RQDZcF/
+	 6L7hMPSI65PyxHiq93BHe33XjP2ANtvtn6z0FQuXiyjlOqO16ST/I/cxRQwYyuWMso
+	 jWftYOlkUfnWdfA3dgwvrbv5I3/uzSzIsAyVPI9Wtba6uj9TliyiyNr5SSsq0aLnIU
+	 kTPFgH7LyEeDA==
 From: wufan@kernel.org
 To: corbet@lwn.net,
 	jmorris@namei.org,
@@ -37,12 +36,10 @@ Cc: linux-doc@vger.kernel.org,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
 	Fan Wu <wufan@kernel.org>
-Subject: [RFC PATCH v2 1/2] memfd,lsm: add a security hook to memfd_create()
-Date: Wed, 29 Jan 2025 20:39:31 +0000
-Message-Id: <20250129203932.22165-2-wufan@kernel.org>
+Subject: [RFC PATCH v2 0/2] ipe support for anonymous memory and memfd
+Date: Wed, 29 Jan 2025 20:39:30 +0000
+Message-Id: <20250129203932.22165-1-wufan@kernel.org>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250129203932.22165-1-wufan@kernel.org>
-References: <20250129203932.22165-1-wufan@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -53,91 +50,83 @@ Content-Transfer-Encoding: 8bit
 
 From: Fan Wu <wufan@kernel.org>
 
-This patch adds a new LSM hook that notifies the security subsystem
-whenever a new memfd is created by memfd_create(). The hook is invoked
-before fd_install() inside memfd_create(), allowing the LSM to
-differentiate memfd files from regular shmemfs or hugetlbfs files that
-share the same superblock.
+This patchset adds support for anonymous memory and memfd to the IPE LSM.
+Currently, the IPE policy language can only allow or deny a physical file
+from an integrity-verified source. However, for events triggered by
+anonymous memory, either created via mmap() with MAP_ANONYMOUS or via
+memfd_create(), IPE provides no mechanism to explicitly allow or deny
+these events.
 
-Upon receiving this notification, the security system can label
-the memfd files thereafter the lsms can make security decision
-specifically for them.
+Execution from anonymous memory is a common use case in modern
+applications. For example, JIT compilers store generated code in such
+regions. This patchset introduces a new IPE property, anonymous_memory,
+to let administrators explicitly allow or deny events triggered by
+anonymous memory.
 
-Signed-off-by: Fan Wu <wufan@kernel.org>
----
- include/linux/lsm_hook_defs.h |  3 +++
- include/linux/security.h      |  8 ++++++++
- mm/memfd.c                    |  2 ++
- security/security.c           | 11 +++++++++++
- 4 files changed, 24 insertions(+)
+For example, the following policy:
 
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index e2f1ce37c41e..1c0a9953c924 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -463,3 +463,6 @@ LSM_HOOK(int, 0, bdev_alloc_security, struct block_device *bdev)
- LSM_HOOK(void, LSM_RET_VOID, bdev_free_security, struct block_device *bdev)
- LSM_HOOK(int, 0, bdev_setintegrity, struct block_device *bdev,
- 	 enum lsm_integrity_type type, const void *value, size_t size)
-+
-+LSM_HOOK(void, 0, memfd_created, struct file *file)
-+
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 980b6c207cad..40ae79270eaf 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -2386,4 +2386,12 @@ static inline void security_initramfs_populated(void)
- }
- #endif /* CONFIG_SECURITY */
- 
-+#ifdef CONFIG_SECURITY
-+extern void security_memfd_created(struct file *file);
-+#else
-+static inline void security_memfd_created(struct file *file)
-+{
-+}
-+#endif /* CONFIG_SECURITY */
-+
- #endif /* ! __LINUX_SECURITY_H */
-diff --git a/mm/memfd.c b/mm/memfd.c
-index 37f7be57c2f5..597d27ccb0b6 100644
---- a/mm/memfd.c
-+++ b/mm/memfd.c
-@@ -19,6 +19,7 @@
- #include <linux/shmem_fs.h>
- #include <linux/memfd.h>
- #include <linux/pid_namespace.h>
-+#include <linux/security.h>
- #include <uapi/linux/memfd.h>
- 
- /*
-@@ -483,6 +484,7 @@ SYSCALL_DEFINE2(memfd_create,
- 		goto err_fd;
- 	}
- 
-+	security_memfd_created(file);
- 	fd_install(fd, file);
- 	kfree(name);
- 	return fd;
-diff --git a/security/security.c b/security/security.c
-index 143561ebc3e8..daa9e0e0e879 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -6010,3 +6010,14 @@ void security_initramfs_populated(void)
- {
- 	call_void_hook(initramfs_populated);
- }
-+
-+/**
-+ * security_memfd_created() - Notify LSMs that a memfd has been created
-+ *
-+ * Tells the LSMs that a memfd has been created.
-+ */
-+void security_memfd_created(struct file *file)
-+{
-+	call_void_hook(memfd_created, file);
-+}
-+
+  policy_name=example_policy policy_version=0.0.0
+  DEFAULT action=DENY
+
+  op=EXECUTE dmverity_signature=TRUE action=ALLOW
+  op=EXECUTE anonymous_memory=TRUE action=ALLOW
+
+will allow execution of files from a signed dm-verity volume and also
+execution from anonymous memory.
+
+In the current design, the anonymous_memory property covers both
+memory regions created by mmap() with MAP_ANONYMOUS and those
+allocated by memfd_create(), as both share the same semantics [1].
+However, because regular files on tmpfs, shmemfs, or hugetlbfs are
+also backed by anonymous memory, the policy language might not be
+entirely clear to users. An alternative approach would be to define
+two separate properties, one covering MAP_ANONYMOUS and another
+covering memfd_create().
+
+Nonetheless, allowing execution from anonymous memory does increase
+the attack surface. Future work will add additional properties to
+the IPE policy language to provide more fine-grained control.
+For instance, one possibility is to permit only processes with certain
+security attributes, such as specific SELinux labels, to execute code
+from anonymous memory.
+
+The ipe test suite has been updated to include anonymous memory tests:
+https://github.com/microsoft/ipe/tree/test-suite
+
+[1] https://man7.org/linux/man-pages/man2/memfd_create.2.html
+
+Previous Postings
+-----------------
+v1: https://lore.kernel.org/all/66922c42-c3a2-4634-a8f0-4c8c2b4c051a@kernel.org/T/
+
+Changelog
+---------
+
+V2:
+  * Update test suite to include anonymous memory tests
+  * Fix property implementation and add memfd support
+
+Fan Wu (2):
+  memfd,lsm: add a security hook to memfd_create()
+  ipe: add 'anonymous_memory' property for policy decisions
+
+ Documentation/admin-guide/LSM/ipe.rst | 12 ++++++++++
+ Documentation/security/ipe.rst        |  9 +++----
+ include/linux/lsm_hook_defs.h         |  3 +++
+ include/linux/security.h              |  8 +++++++
+ mm/memfd.c                            |  2 ++
+ security/ipe/Kconfig                  | 10 ++++++++
+ security/ipe/audit.c                  |  2 ++
+ security/ipe/eval.c                   | 34 +++++++++++++++++++++++----
+ security/ipe/eval.h                   | 13 ++++++----
+ security/ipe/hooks.c                  | 12 ++++++++++
+ security/ipe/hooks.h                  |  4 ++++
+ security/ipe/ipe.c                    |  7 ++++--
+ security/ipe/policy.h                 |  2 ++
+ security/ipe/policy_parser.c          |  4 ++++
+ security/security.c                   | 11 +++++++++
+ 15 files changed, 119 insertions(+), 14 deletions(-)
+
 -- 
 2.47.1
 
