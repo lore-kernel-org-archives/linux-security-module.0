@@ -1,186 +1,169 @@
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A6A64A35;
-	Thu, 30 Jan 2025 20:24:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C22311AC884
+	for <linux-security-module@vger.kernel.org>; Thu, 30 Jan 2025 21:06:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738268648; cv=none; b=kjPkUmAuIT9uYCvbuNabB8BxXMUDAigEOWQy4FouJtKF4NtyPmt0tEQBE5MJ0mvHyd5yAYwPISYiikmf7cK240BYaJClMtB3NFl+nwcqmHWSAtoaBYBXYPvwQKbWnRWQGH2IDNx5HPkD6ThxDLE/x252QMzHD5QZtByiOl2oYGg=
+	t=1738271167; cv=none; b=cw6wLXc0TuPmv2vVO8zvE6ojfIsY/zYeRx4TE20c4pH71gE6g3YDJA+s2avNiL1vmMXv283ZQCKGlTWVP6UAmYAM7ad0kA/Vgl2proaFwoPJcdpi/FzZDrb4AbreC/Mj+Ym9eipuGYBCrff1icqUuEGv7cUAq3dPrxTgUhl+w7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738268648; c=relaxed/simple;
-	bh=fcVzhnqBbO27IvJ9WownzhHG6Rj7fo3UL/gsFbTqje8=;
+	s=arc-20240116; t=1738271167; c=relaxed/simple;
+	bh=OL48AjWgPca1qpR+kW+bsAv3I245rdLzl9l0Juze94M=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P71VBgco/v+hGabtWrLAkHFGKWLDuQryCcojLK+C/ajPAhjxRB6mec1bQRpSzPumasaUrfkrqjxYjLHc8oGQmv1b9E8BgbabFKJEQ3kaxCArS2M6ooUZbsnoCpV2MM/We0uj79NLGUCy0/unS3BAIV7/BTKJxLWmrLkkChlQceo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DRlkk74m; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 To:Cc:Content-Type; b=PNjR/jR7clv1B/+2vdL6+HyXyGfgZsog51oPaKhBSh9aAhVFI2VNQED1CYJ06OKsyi1vCKC3IXb4t7B0k8pAVAr1K5WhZfIYV6XsT3g796iPJhVlDSL/+usofZ0thErUfNd8exAWaUd1gKmuHDLdb7D1Q30cAm4O63UZ0hZ+u3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Xikvh0Ei; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DRlkk74m"
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3863703258fso1539443f8f.1;
-        Thu, 30 Jan 2025 12:24:06 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Xikvh0Ei"
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6f0054cb797so3071757b3.0
+        for <linux-security-module@vger.kernel.org>; Thu, 30 Jan 2025 13:06:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1738268645; x=1738873445; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1738271165; x=1738875965; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xV+2ASZNLztOoZlL3PTiOudYi7XA5OszIeYYPdoNj+s=;
-        b=DRlkk74mTF2GsGqMXSpR3vj+j3M/9ui1TPBZ03yf7xw+0/2fxHBkHM9HTESULhy2Lt
-         oGirF3yzJUaX9Lhl7Ze8u5newYzMOBsWE5TUoW63KPjjQWUnS4oQ1jkR3P1RRTBIGAdI
-         XdLB3tUyyINzmzf1jKfhjmwBpGwhaS8qDxu5k7Xz9dDz29Pd00xkxSMuWhpw22evVOVM
-         EKxHQgj+mq8jBSxya12rLOh8mhfWQ6ZCANzkKG/34VVnlj6nix/MTKER43930Yk0Hnl6
-         cReEfxPkG9/JgpNV/EEIeXxpLl318LvksfeuI0AxTpUXBE14rFsAmvb4qwJUwfr2vsNK
-         STWw==
+        bh=J0tKV1aO06e/O0OrbzjacFwylG9jIZZkGMi9QwaFoQw=;
+        b=Xikvh0Ei9njvYQ/0F9rmMUYPL3PllVVKrPICj2L15ktjltew4nYmKHFn8u4chfxyee
+         ntci+gmnBm+4DW69F02pnkll+QudoRQHgd4bJUWSl4MKDOiAMeohbJuMu9r8zjAoxmZX
+         KrRPzu6bCpUZg7oUzJ9IW8dVKHYtWJ/sXhFbKMGozevBzUIs0BU3hsUz9pKWenbJBAAp
+         WDRsVkIsABSE6qLp+/HalsgnyxzboYtKQgt/LD/qvIVBuwA0k3Z1LuINNbaoec0UskQk
+         5POum7dIn6Yh1wdMl9LKgV1mgjNtZhNsWwr28oksM6Z/UX2zXXHjwLa30ehZIlQxIbtG
+         lCqQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738268645; x=1738873445;
+        d=1e100.net; s=20230601; t=1738271165; x=1738875965;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xV+2ASZNLztOoZlL3PTiOudYi7XA5OszIeYYPdoNj+s=;
-        b=xQ/sq/6Y9oFo7PKDs0D6LYcrfwuNt1sLhgwjWDhb/jfdAQ3cG7QB8UK+LWrEgZUOGb
-         IDpsTBEO5fOjq+dwum0YOd8txWRbs7wyn7GX33kOKOhU58Xkn/LSCb/r24Hw7erhXk81
-         A55po8g9Hmz0GdXC0MoCRf4u4mxiJ+9oJxodRDqUOk6vHkBtXFk46gAJ+P0nsJBU4U7o
-         k3b7YKFu6bU5M40mvnADRtVqon2MpbtNiTUL6E3nOaZ9BtVv65Fd8f+F3ss34JH6H10y
-         bGQYHvTtSZO5tZNVAP++Qoi7GWKtYGXILXIQkWPyLXhzIP0G1HdXF3HzxTxqwUcyKW77
-         1ZKw==
-X-Forwarded-Encrypted: i=1; AJvYcCU1wvFisYK7oYSYbgLIRbqVtFND+MsM9AxbJmb9wsnp08sSDJ/OHwm6pNinWCvnna2/Z+4twW065d/oclwP@vger.kernel.org, AJvYcCVdKAzWMbp2crW+WZvkxHftAsVHpYgBCiAYtwrU0+bNdMbxd58LA/WxOsi8u+0JONV+bRoTcGl/FoMrYBcXSw==@vger.kernel.org, AJvYcCVwUie2uFVjP/uv7jKuTdhGEaiAP9NHox78ybMXXqhWTTrwtvAbVl3xMMLj4Cfu/7niGYP49TTJAkh1APuic6gDaGEkyIZb@vger.kernel.org, AJvYcCWDcrXvAOPnS+hJ9DxWl6B/y6tshmjnWa1aFs3Wx/528ofgmnO8e1eWXqz85fXDgc6Lg8E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywng7m4FgNZCIhp/saYcKr7JWikwIlU2F7CgKAHWqTfsMBpqmSL
-	Me/s/Hf6lG3TKo5M/dJad804Gqr8MI1WffEalaaPvMqdO941NkuyXUc8GD0B+xyK9ix5jmn7/kI
-	gWptx0TBAsmgEjvYALy0D7uCe7vc=
-X-Gm-Gg: ASbGncsiEsg/yxDAh9kVdKIWNI/SszDOQFrI5atVuJ1xGT2wzaP4Lx9w/pn7/8K58Zc
-	alCA6cfk7PDuji+wRF8uBXca5IK10GO/9ZMQojRUSRw6ys2lE3F+l/K4/Q0/yb1GYWafjuuQR
-X-Google-Smtp-Source: AGHT+IFY02Fh9zFX1R5GIBuszCAimxxCsMAyxTddZA8UoFzTX5lo9Jl4O/3oYK9N+WgwYxNJeKpaVeeATA8PccpYr4g=
-X-Received: by 2002:a05:6000:1a85:b0:38b:ee01:a5b with SMTP id
- ffacd0b85a97d-38c5a98de08mr4507429f8f.15.1738268644516; Thu, 30 Jan 2025
- 12:24:04 -0800 (PST)
+        bh=J0tKV1aO06e/O0OrbzjacFwylG9jIZZkGMi9QwaFoQw=;
+        b=hUfPyWm0mA68LdjI+T2A+otJJOBeSNQMXINV4Q/ytL9lsg6A2sywk/7cxiioypIdgI
+         XMdxKDmcHm4KQQzRRh87frxeW+PmJfZnfS2NuSosffMJ9CIcVJpdVNtn2Zcv9GVIHVCz
+         SpUzAkmweCLH59YDJzdPfByXajwFle4B4MLUTpDABOATBq1+Kd774mU05gdUi1E4kLBA
+         NjyaYAfzMRS5hsJkXBcMxUGO1cBRBzzyZEBR15yAFCL6WHKoHiBM3BKwxhd0eNMfLBFx
+         JEdl4po5aQjbN4OmoCOc8wTJ4SQ50trao0uZP3yj+QBBUz6Hw/4uVYOY6dAspEZxtMq4
+         b8nw==
+X-Forwarded-Encrypted: i=1; AJvYcCXBXINU9Kkm0oy6HjZlqBBuUC0VmzIXK3qvNCLa70pLh92PYoFiuL8kNI+z/AwC+bB11X1JSO1pIJ0Qion64i/J5iUgL/A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyw2k8mSA1joIb5ZE4ww4kZPl0zKC+GHTK/6+V5OINi5/O05Rid
+	WGkoEWp4EZU9axKDeW2bEHm6bdSPuVuMQNVFOJxIsfZZ39WXLBbGtwRpYnJZrVqruXry4olZe67
+	R2fWVLfoK84SHvOqyV/bzKEMMd3vAn4CuLPtL
+X-Gm-Gg: ASbGnct0+tvb8mUBx2MieVgyuGco8P3UNZWxlu9hpVR+Mn5PAe9R2EWYRvZoCrtK3eA
+	Se7B6jmKM60g0v+PLMB/3c5/N4sPnWA3jSRk9PcVWlOY6GvM/L9sEm0dHXGNzkutPNjLH22I=
+X-Google-Smtp-Source: AGHT+IH+ckwfvZFjliyWvxAApv5Gvw35jbwVywAqbuEKp/REwr8ScUlmNPXqS/akwDlB60L/XLa+LIC+kidTyTg8nGE=
+X-Received: by 2002:a05:690c:6602:b0:6ef:4a57:fc98 with SMTP id
+ 00721157ae682-6f7a8354df6mr74999037b3.16.1738271164623; Thu, 30 Jan 2025
+ 13:06:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250129205957.2457655-1-song@kernel.org> <20250129205957.2457655-6-song@kernel.org>
- <CAADnVQ+1Woq_mh_9iz+Dhdhw1TuXZgVrx38+aHn-bGZBVa5_uw@mail.gmail.com> <58833120-DD06-4024-B7F5-E255AC9261E6@fb.com>
-In-Reply-To: <58833120-DD06-4024-B7F5-E255AC9261E6@fb.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Thu, 30 Jan 2025 12:23:53 -0800
-X-Gm-Features: AWEUYZkkB50lvEISP2yfaCc8Z9aDGSq3hqMxf2vZ8lIYrimfx1QglBOlzd77btw
-Message-ID: <CAADnVQLa97RqLONmcrfBWckGRWD+OKOFY0FMEu4_pSsoALtdgQ@mail.gmail.com>
-Subject: Re: [PATCH v11 bpf-next 5/7] bpf: Use btf_kfunc_id_set.remap logic
- for bpf_dynptr_from_skb
-To: Song Liu <songliubraving@meta.com>
-Cc: Song Liu <song@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	LSM List <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Eddy Z <eddyz87@gmail.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, KP Singh <kpsingh@kernel.org>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Liam Wisehart <liamwisehart@meta.com>, 
-	Shankaran Gnanashanmugam <shankaran@meta.com>
+References: <20250129165803.72138-1-mszeredi@redhat.com> <20250129165803.72138-3-mszeredi@redhat.com>
+In-Reply-To: <20250129165803.72138-3-mszeredi@redhat.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 30 Jan 2025 16:05:53 -0500
+X-Gm-Features: AWEUYZkqXlCOfnnMA-0yOjXYsL2G1YyD1829MDG4OZWumGa043Y7iRqeD-zMfbY
+Message-ID: <CAHC9VhTOmCjCSE2H0zwPOmpFopheexVb6jyovz92ZtpKtoVv6A@mail.gmail.com>
+Subject: Re: [PATCH v5 2/3] fanotify: notify on mount attach and detach
+To: Miklos Szeredi <mszeredi@redhat.com>, Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>, 
+	Amir Goldstein <amir73il@gmail.com>, Karel Zak <kzak@redhat.com>, 
+	Lennart Poettering <lennart@poettering.net>, Ian Kent <raven@themaw.net>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, selinux@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, selinux-refpolicy@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 30, 2025 at 9:49=E2=80=AFAM Song Liu <songliubraving@meta.com> =
-wrote:
+On Wed, Jan 29, 2025 at 11:58=E2=80=AFAM Miklos Szeredi <mszeredi@redhat.co=
+m> wrote:
 >
-> Hi Alexei,
+> Add notifications for attaching and detaching mounts.  The following new
+> event masks are added:
 >
-> Thanks for the review!
+>   FAN_MNT_ATTACH  - Mount was attached
+>   FAN_MNT_DETACH  - Mount was detached
 >
-> > On Jan 29, 2025, at 6:32=E2=80=AFPM, Alexei Starovoitov <alexei.starovo=
-itov@gmail.com> wrote:
+> If a mount is moved, then the event is reported with (FAN_MNT_ATTACH |
+> FAN_MNT_DETACH).
 >
-> [...]
+> These events add an info record of type FAN_EVENT_INFO_TYPE_MNT containin=
+g
+> these fields identifying the affected mounts:
 >
-> >>
-> >> +BTF_ID_LIST(bpf_dynptr_from_skb_list)
-> >> +BTF_ID(func, bpf_dynptr_from_skb)
-> >> +BTF_ID(func, bpf_dynptr_from_skb_rdonly)
-> >> +
-> >> +static u32 bpf_kfunc_set_skb_remap(const struct bpf_prog *prog, u32 k=
-func_id)
-> >> +{
-> >> +       if (kfunc_id !=3D bpf_dynptr_from_skb_list[0])
-> >> +               return 0;
-> >> +
-> >> +       switch (resolve_prog_type(prog)) {
-> >> +       /* Program types only with direct read access go here! */
-> >> +       case BPF_PROG_TYPE_LWT_IN:
-> >> +       case BPF_PROG_TYPE_LWT_OUT:
-> >> +       case BPF_PROG_TYPE_LWT_SEG6LOCAL:
-> >> +       case BPF_PROG_TYPE_SK_REUSEPORT:
-> >> +       case BPF_PROG_TYPE_FLOW_DISSECTOR:
-> >> +       case BPF_PROG_TYPE_CGROUP_SKB:
-> >
-> > This copy pastes the logic from may_access_direct_pkt_data(),
-> > so any future change to that helper would need to update
-> > this one as well.
+>   __u64 mnt_id    - the ID of the mount (see statmount(2))
 >
-> We can probably improve this with some helpers/macros.
+> FAN_REPORT_MNT must be supplied to fanotify_init() to receive these event=
+s
+> and no other type of event can be received with this report type.
 >
-> >
-> >> +               return bpf_dynptr_from_skb_list[1];
-> >
-> > The [0] and [1] stuff is quite error prone.
-> >
-> >> +
-> >> +       /* Program types with direct read + write access go here! */
-> >> +       case BPF_PROG_TYPE_SCHED_CLS:
-> >> +       case BPF_PROG_TYPE_SCHED_ACT:
-> >> +       case BPF_PROG_TYPE_XDP:
-> >> +       case BPF_PROG_TYPE_LWT_XMIT:
-> >> +       case BPF_PROG_TYPE_SK_SKB:
-> >> +       case BPF_PROG_TYPE_SK_MSG:
-> >> +       case BPF_PROG_TYPE_CGROUP_SOCKOPT:
-> >> +               return kfunc_id;
-> >> +
-> >> +       default:
-> >> +               break;
-> >> +       }
-> >> +       return bpf_dynptr_from_skb_list[1];
-> >> +}
-> >> +
-> >> static const struct btf_kfunc_id_set bpf_kfunc_set_skb =3D {
-> >>        .owner =3D THIS_MODULE,
-> >>        .set =3D &bpf_kfunc_check_set_skb,
-> >> +       .hidden_set =3D &bpf_kfunc_check_hidden_set_skb,
-> >
-> > If I'm reading it correctly the hidden_set serves no additional purpose=
-.
-> > It splits the set into two, but patch 4 just adds them together.
+> Marks are added with FAN_MARK_MNTNS, which records the mount namespace fr=
+om
+> an nsfs file (e.g. /proc/self/ns/mnt).
 >
-> hidden_set does not have BTF_SET8_KFUNCS, so pahole will not export
-> these kfuncs to vmlinux.h.
->
-> >
-> >> +       .remap =3D &bpf_kfunc_set_skb_remap,
-> >
-> > I'm not a fan of callbacks in general.
-> > The makes everything harder to follow.
->
-> This motivation here is to move polymorphism logic from verifier
-> core to kfuncs owners. I guess we will need some callback to
-> achieve this goal. Of course, we don't have to do it in this set.
->
->
-> > For all these reasons I don't like this approach.
-> > This "generality" doesn't make it cleaner or easier to extend.
-> > For the patch 6... just repeat what specialize_kfunc()
-> > currently does for dynptr ?
->
-> Yes, specialize_kfunc() can handle this. But we will need to use
-> d_inode_locked_hooks from 6/7 in specialize_kfunc(). It works,
-> but it is not clean (to me).
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> ---
+>  fs/mount.h                         |  2 +
+>  fs/namespace.c                     | 14 +++--
+>  fs/notify/fanotify/fanotify.c      | 38 +++++++++++--
+>  fs/notify/fanotify/fanotify.h      | 18 +++++++
+>  fs/notify/fanotify/fanotify_user.c | 87 +++++++++++++++++++++++++-----
+>  fs/notify/fdinfo.c                 |  5 ++
+>  include/linux/fanotify.h           | 12 +++--
+>  include/uapi/linux/fanotify.h      | 10 ++++
+>  security/selinux/hooks.c           |  4 ++
+>  9 files changed, 167 insertions(+), 23 deletions(-)
 
-I'm missing why that would be necessary to cross the layers
-so much. I guess the code will tell.
-Pls send an rfc to illustrate the unclean part.
+...
 
-> I will revise this set so that the polymorphism logic in handled
-> in specialize_kfunc(). For longer term, maybe we should discuss
-> "move some logic from verifier core to kfuncs" in the upcoming
-> LSF/MM/BPF?
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index 7b867dfec88b..06d073eab53c 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -3395,6 +3395,10 @@ static int selinux_path_notify(const struct path *=
+path, u64 mask,
+>         case FSNOTIFY_OBJ_TYPE_INODE:
+>                 perm =3D FILE__WATCH;
+>                 break;
+> +       case FSNOTIFY_OBJ_TYPE_MNTNS:
+> +               /* Maybe introduce FILE__WATCH_MOUNTNS? */
+> +               perm =3D FILE__WATCH_MOUNT;
+> +               break;
+>         default:
+>                 return -EINVAL;
+>         }
 
-imo such topic is too narrow and detail oriented.
-There is not much to gain from discussing it at lsfmm.
-email works well for such discussions.
+Ignoring for a moment that this patch was merged without an explicit
+ACK for the SELinux changes, let's talk about these SELinux changes
+...
+
+I understand that you went with the "simpler version" because you
+didn't believe the discussion was converging, which is fair, however,
+I believe Daniel's argument is convincing enough to warrant the new
+permission.  Yes, it has taken me approximately two days to find the
+time to revisit this topic and reply with some clarity, but personally
+I feel like that is not an unreasonable period of time, especially for
+a new feature discussion occurring during the merge window.
+
+If you need an example on how to add a new SELinux permission, you can
+look at commit ed5d44d42c95 ("selinux: Implement userns_create hook")
+for a fairly simple example.  In the watch_mountns case things are
+slightly different due to the existence of the COMMON_FILE_PERMS
+macro, but you basically want to add "watch_mountns" to the end of the
+COMMON_FILE_PERMS macro in security/selinux/include/classmap.h.  Of
+course if you aren't sure about something, let me know.  As a FYI, my
+network access will be spotty starting tonight and extending through
+the weekend, but I will have network/mail access at least once a day.
+
+Now back to the merge into the VFS tree ... I was very surprised to
+open this patchset and see that Christian had merged v5 after less
+than 24 hours (at least according to the email timestamps that I see)
+and without an explicit ACK for the SELinux changes.  I've mentioned
+this to you before Christian, please do not merge any SELinux, LSM
+framework, or audit related patches without an explicit ACK.  I
+recognize that sometimes there are highly critical security issues
+that need immediate attention, but that is clearly not the case here,
+and there are other procedures to help deal with those emergency
+scenarios.
+
+--=20
+paul-moore.com
