@@ -1,153 +1,292 @@
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3A364C7C
-	for <linux-security-module@vger.kernel.org>; Thu, 30 Jan 2025 01:00:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDF5D1D52B;
+	Thu, 30 Jan 2025 02:32:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738198826; cv=none; b=IT3kgo6oV7PEzxQYOHA1TnLp2Pex0tk5pYpBtHM+s79/19agfI7/VY9a1WFShnRKE2JKXmCY4W8NE22i3PtIOGhYEy/ul7vUXLocefQNoaj9bvnOPXW8jMuYVfvkA4dvRZ6bLgIQgYwdUAVpsMC4H3aS9yTT1mPt/uXEVamLzvg=
+	t=1738204338; cv=none; b=Gi4/vEVX84ZPucjvHXuW3iFosZt1a5Utoj232l9TInX0SV13ys7axJYT7dK4uLUUYa8QrikhAob6VmVuJ+KzxN8uTXrT3QITRlFxxH67sTYu0nnyNX+n9QQgHBf2unpzM7zfj7WcNKP/SE5u2MWV3FPpt1WAS2YZMBBq1bIthlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738198826; c=relaxed/simple;
-	bh=gDdLlLY96LiStuvimQHbYFWJtnuNfhr4Ul8KlJuj/jk=;
-	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=SQNSW3VWy/3kZ/88Yu+GQMZE2EcRIt4YUpfeX2mvUhijah7KjtZH03aJzFOR5XjckZsnyg3NroLJAwNljAZtEhb+4LtTBj/hBo8LpHFhZetTflrAE0LStzCgPL9Lzc2pqB6x8xRAK7z2KA0xmiXiThqgRbcJEYBhEw6i6/njpoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=grYieowW; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1738204338; c=relaxed/simple;
+	bh=v0Pleq58QNnh7XauPGPset9KHyOkCN5P87RRWbzCFqs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eNdvkpnieHFtGvAXd4YHgfmT6/PJfhBsM/dXoBXd+mmq+/lfF66RruV9cimyENdLMzhwMy4qR4KBOoB3dfw5ORMQCr7FxkJxSSjhzz8Zckmh1xe4QYUknCzVmOiwnoXHo7zxQyaJLlIxGqvkh8YtAoBYoY0OP0JYnWYmr1QpgAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uhpl1QU8; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="grYieowW"
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6e1b11859a7so1704976d6.1
-        for <linux-security-module@vger.kernel.org>; Wed, 29 Jan 2025 17:00:24 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uhpl1QU8"
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-38be3bfb045so1010724f8f.0;
+        Wed, 29 Jan 2025 18:32:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1738198823; x=1738803623; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=50YnZfhZ1EwddeerDDyK0b3+VDRyxiKAG8Byj60y0A0=;
-        b=grYieowWP2Sd3vX2yzPvI1T7WaTE6MHoY8GBU7NrM2sUcHFI5vD9PMauK4uQRViXEC
-         O7OQjWLnNTxeUcM+nqqwsA+IJtcSyxvs+rTPpjsbHXbLcXVWbPQHuJ99AncLKxLNjZ6F
-         +JZZEbsA+y52HUDfmjRCCumMwOnchuwuH5hkaCxnmZHcLjsKYS/AY3aI2uH6+qbnn6Ig
-         boDbwDkBM6oEvJFA76eeXI6y4jQTJf3LH4ozm5ufjxlcEUmhmN8aF90Zvs9n3a7gaE7a
-         Zkibv54GmeMgE8LD1fB11ATFodk+V+KkWDb2Ij3r6TBzOvILhTMk9UWzLz8UeyEbz/Cz
-         a7/g==
+        d=gmail.com; s=20230601; t=1738204334; x=1738809134; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YVOeKubTpots4CB4SvdanKa5SO+1C9gTy1lOl/7fozA=;
+        b=Uhpl1QU8JpKc9I0o+wn6AYl3AhUbb+0MSQ5W/sS5rWzggruag+vunUfKQlQQWf/8G9
+         Lr3FEpRitTXi7gUT6sIf50Am0lUbU3YCSRrDHlH0YhPh8IlPOlnBbZGSEH1fCpOLZvt7
+         XUsNtoVrK4ZNjwtEzhdqoh/bY6Nc/SzfYZd9KGws9glwEpxffbQMqk1pnOLwPlNURg28
+         m87VH2chqqnNlLxq7wIw7RrXQb+pW6zRD7m129pFuyKg9FwTyXX4kzQEKYrfbgxtQDCY
+         eA3bmoLy9e/XfdR1TTVWiaMYJqGbAl2V8yUSjRY2879MjrlzZ5R0rhizw7IxU7R8zZM6
+         Ivvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738198823; x=1738803623;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=50YnZfhZ1EwddeerDDyK0b3+VDRyxiKAG8Byj60y0A0=;
-        b=pHjo65Oy+tvfYHLA4lMfvD1T7mTW816lCbDL9qLtFVg4xqUbTi45z6P0knWsddPgIG
-         FQEr1fJZMufZ7SmJ3+IZxw8Pq78Og4GmvHjAQYyKh26Ydp5TC91yM1ht82r8lpF8Ptli
-         rXqkFhlUTArimNtQlQacrKeX9gkLFlBPJfmB6tHBBiVkeU1LtkdLQSMOCpVs0mCfx0GQ
-         REFNM28rFAaFf8KAwuiLz5dMlWkWN9V/8LtFilB4aJe9iES6EdJMlNzzk4JAdaXy8tiY
-         wLTTCbl/mFAvve7D306YkiLmyiN56pQmvBBshMXYk80ivMuiUC60XnmEkAQ95L1oLf2F
-         ZhLA==
-X-Forwarded-Encrypted: i=1; AJvYcCVWDb5J34ROlkXSbsoNeHgJhtKT4oeRqwBL8xNbQN32hWVV4JDZSFWHXC8UXzB8NMstqNL8y42noVId7faHpArAAdROFQM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjWRWa10d3z2v5onHRaUcVGAhXCOqddTAcqe9UkZggNhIOc0Fq
-	+gOnyW+UtlWPgy84x8hYNxfddGmhXyaVoxyB5qMneClXjHIy/GQh5eviruwAiQ==
-X-Gm-Gg: ASbGncv138W5h81H5aQCIa9xhkuvUW/t8CEeI6mwO47nD4oPmjWXmZV2Pv7S1I/TyBP
-	lWJmuMuJMmQeQnNUDv3bLCK50vz8h975bAo/K9Mau2ly1XZp3b21P6H8PAHjpUZK8casR94AcQ2
-	Told9d/2lGhNYanVxBfBoUhHGdlmJDMPJmudYO8ZyZfb5ATo+hkDQI16y0TItSzUNu0BgaL3n0Z
-	LeDkXOrCrGOuB8XHuRgTkwr2vNgHn+GCYlS/rlYvkxvfchvKzeqon1hoozSH4tIFPhlsdBtKWzz
-	zZ+9jkfGiA==
-X-Google-Smtp-Source: AGHT+IEX3S7oi/KHeM8vE5UDB3mf3Ubtv0N0TphAa3ZFzJW0gx7CAmYdrXLSKC9jB+hZgEHqPRIUzA==
-X-Received: by 2002:a05:6214:1c86:b0:6d8:a32e:8426 with SMTP id 6a1803df08f44-6e243b91093mr102586276d6.3.1738198823555;
-        Wed, 29 Jan 2025 17:00:23 -0800 (PST)
-Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6e2547f0e00sm913736d6.24.2025.01.29.17.00.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 Jan 2025 17:00:22 -0800 (PST)
-Date: Wed, 29 Jan 2025 20:00:22 -0500
-Message-ID: <c8c74158894e1b955a8b09509b8ce26d@paul-moore.com>
+        d=1e100.net; s=20230601; t=1738204334; x=1738809134;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YVOeKubTpots4CB4SvdanKa5SO+1C9gTy1lOl/7fozA=;
+        b=tKXn/VUFuWiGt/2jdOWp1EkK5Pe8h2C+oVD5A3dAZ3h+KiKGHhH2LDyrQ3HV0XuKOc
+         K9FovXAhkHDnVnuFovPVeFYw9LUD3zblL59vQGPPUKqkgCnR72UV2EivfRpIh/P8LG2O
+         loGbe4VQ0DlOHfuA/yqE+RwkhXI41GfGIy8XMxWQWtInyCSKEhYIwHt+oi46Jck+neHj
+         O9c4e1tGZsib1PkkwgUDiyDOhkGZGTJsbpeT4ElEIaIH2RCkif4j+snZzUOXKXVCRRhP
+         NT3UTps+JeFPKS/tCN9G7ipg25DUZywBIkFXL9isYnT/fJE50Ow1d36wFpKFs3lkdHlw
+         JZGA==
+X-Forwarded-Encrypted: i=1; AJvYcCV8tzJWolRPmoD0x0IkFCw1s41kI0L5g2bZi2hmQ6qUX38KYTRM6GgMl5Vz1PBLHNsGbJ+X+uPG+OGIBqNEBivqrRNufmd/@vger.kernel.org, AJvYcCVFQbHhsERfuSDdpPrcOici+OoyB4XPqFzjtAwfYdxZi/oXnevAOdaQZrytkUcDflQ6sEud+XrOFurhvD9z@vger.kernel.org, AJvYcCXzsazsPovpebMW1eXS1wVapZzsPi9VOk1PpXXS2pbvabWP0s9JZuD5miQp7WtxvjYQ+u1d7GCU5UbKeviu@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxi9zqNrh1eAhXchq7HsnNiXUFZfKbQeZeOadcv15xWAxePOSNT
+	xq7eZfvhIp/Uw+aUuefJmUAL3+qEPj3bzOdIqL1Q+jWWiGFBzHL9D4bWzdilu4UAITJmXic6U/m
+	u/W/Y8Kg1x43jUxRBaudh901Z9AM=
+X-Gm-Gg: ASbGncv60O7mk+Fcecx/dRfHr643W3SHN4Fd2D1B4oQgeMCu41KFC6LujjpsIS8spq6
+	Jjj0ZKZ2gFfIxI/TXCySycF8SKFwnw5o+eK9ZePtbneAGfAheltL+T7We81KucEsdCtg87YVZ1b
+	1+Bnh7SQAjsR+l3+J9Hz2MhRjmqsB2
+X-Google-Smtp-Source: AGHT+IGVldXlUyrAW4PfnbO2DYAtquJ700zbZin57AbxNYkHbXeYShFDnczIS3xHpFxjygPmEtxT5HdPyLbk/LCaQJg=
+X-Received: by 2002:a05:6000:1a89:b0:385:df17:2148 with SMTP id
+ ffacd0b85a97d-38c5a9e8018mr1272334f8f.20.1738204333716; Wed, 29 Jan 2025
+ 18:32:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=UTF-8 
-Content-Transfer-Encoding: 8bit 
-X-Mailer: pstg-pwork:20250129_1952/pstg-lib:20250129_1951/pstg-pwork:20250129_1952
-From: Paul Moore <paul@paul-moore.com>
-To: Huacai Chen <chenhuacai@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>
-Cc: Eric Paris <eparis@redhat.com>, Casey Schaufler <casey@schaufler-ca.com>, James Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>, audit@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, Huacai Chen <chenhuacai@loongson.cn>
-Subject: Re: [PATCH v3] audit: Initialize lsmctx to avoid memory allocation  error
-References: <20250129120652.308571-1-chenhuacai@loongson.cn>
-In-Reply-To: <20250129120652.308571-1-chenhuacai@loongson.cn>
+MIME-Version: 1.0
+References: <20250129205957.2457655-1-song@kernel.org> <20250129205957.2457655-6-song@kernel.org>
+In-Reply-To: <20250129205957.2457655-6-song@kernel.org>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 29 Jan 2025 18:32:02 -0800
+X-Gm-Features: AWEUYZnLJm5ClxjX2wB7choGp3nDXn_DjJuD5Zr2sHSL_AT1tWpIjeV8i15S41E
+Message-ID: <CAADnVQ+1Woq_mh_9iz+Dhdhw1TuXZgVrx38+aHn-bGZBVa5_uw@mail.gmail.com>
+Subject: Re: [PATCH v11 bpf-next 5/7] bpf: Use btf_kfunc_id_set.remap logic
+ for bpf_dynptr_from_skb
+To: Song Liu <song@kernel.org>
+Cc: bpf <bpf@vger.kernel.org>, Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	LSM List <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, Eddy Z <eddyz87@gmail.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, KP Singh <kpsingh@kernel.org>, 
+	Matt Bobrowski <mattbobrowski@google.com>, liamwisehart@meta.com, shankaran@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Jan 29, 2025 Huacai Chen <chenhuacai@loongson.cn> wrote:
-> 
-> When audit is enabled in a kernel build, and there are no LSMs active
-> that support LSM labeling, it is possible that local variable lsmctx
-> in the AUDIT_SIGNAL_INFO handler in audit_receive_msg() could be used
-> before it is properly initialize. Then kmalloc() will try to allocate
-> a large amount of memory with the uninitialized length. 
-> 
-> This patch corrects this problem by initializing the lsmctx to a safe
-> value when it is declared, which avoid errors like:
-> 
->  WARNING: CPU: 2 PID: 443 at mm/page_alloc.c:4727 __alloc_pages_noprof
->  pc 900000000304d588 ra 9000000003059644 tp 9000000107774000 sp 9000000107777890
->  a0 0000000000040cc0 a1 0000000000000012 a2 0000000000000000 a3 0000000000000000
->  a4 9000000107777bd0 a5 0000000000000280 a6 0000000000000010 a7 0000000000000000
->  t0 9000000004b4c000 t1 0000000000000001 t2 1f3f37829c264c80 t3 000000000000002e
->  t4 0000000000000000 t5 00000000000003f6 t6 90000001066b6310 t7 000000000000002f
->  t8 000000000000003c u0 00000000000000b4 s9 900000010006f880 s0 9000000004a4b000
->  s1 0000000000000000 s2 9000000004a4b000 s3 9000000106673400 s4 9000000107777af0
->  s5 90000001066b6300 s6 0000000000000012 s7 fffffffffffff000 s8 0000000000000004
->     ra: 9000000003059644 ___kmalloc_large_node+0x84/0x1e0
->    ERA: 900000000304d588 __alloc_pages_noprof+0x4c8/0x1040
->   CRMD: 000000b0 (PLV0 -IE -DA +PG DACF=CC DACM=CC -WE)
->   PRMD: 00000004 (PPLV0 +PIE -PWE)
->   EUEN: 00000007 (+FPE +SXE +ASXE -BTE)
->   ECFG: 00071c1d (LIE=0,2-4,10-12 VS=7)
->  ESTAT: 000c0000 [BRK] (IS= ECode=12 EsubCode=0)
->   PRID: 0014c010 (Loongson-64bit, Loongson-3A5000)
->  CPU: 2 UID: 0 PID: 443 Comm: auditd Not tainted 6.13.0-rc1+ #1899
->  Stack : ffffffffffffffff 0000000000000000 9000000002debf5c 9000000107774000
->          90000001077774f0 0000000000000000 90000001077774f8 900000000489e480
->          9000000004b380e8 9000000004b380e0 9000000107777380 0000000000000001
->          0000000000000001 9000000004a4b000 1f3f37829c264c80 90000001001a9b40
->          9000000107774000 9000000004b080e8 00000000000003d4 9000000004b080e8
->          9000000004a580e8 000000000000002d 0000000006ebc000 900000010006f880
->          00000000000000b4 0000000000000000 0000000000000004 0000000000001277
->          900000000489e480 90000001066b6300 0000000000000012 fffffffffffff000
->          0000000000000004 900000000489e480 9000000002def6a8 00007ffff2ba4065
->          00000000000000b0 0000000000000004 0000000000000000 0000000000071c1d
->          ...
->  Call Trace:
->  [<9000000002def6a8>] show_stack+0x30/0x148
->  [<9000000002debf58>] dump_stack_lvl+0x68/0xa0
->  [<9000000002e0fe18>] __warn+0x80/0x108
->  [<900000000407486c>] report_bug+0x154/0x268
->  [<90000000040ad468>] do_bp+0x2a8/0x320
->  [<9000000002dedda0>] handle_bp+0x120/0x1c0
->  [<900000000304d588>] __alloc_pages_noprof+0x4c8/0x1040
->  [<9000000003059640>] ___kmalloc_large_node+0x80/0x1e0
->  [<9000000003061504>] __kmalloc_noprof+0x2c4/0x380
->  [<9000000002f0f7ac>] audit_receive_msg+0x764/0x1530
->  [<9000000002f1065c>] audit_receive+0xe4/0x1c0
->  [<9000000003e5abe8>] netlink_unicast+0x340/0x450
->  [<9000000003e5ae9c>] netlink_sendmsg+0x1a4/0x4a0
->  [<9000000003d9ffd0>] __sock_sendmsg+0x48/0x58
->  [<9000000003da32f0>] __sys_sendto+0x100/0x170
->  [<9000000003da3374>] sys_sendto+0x14/0x28
->  [<90000000040ad574>] do_syscall+0x94/0x138
->  [<9000000002ded318>] handle_syscall+0xb8/0x158
-> 
-> Fixes: 6fba89813ccf333d ("lsm: ensure the correct LSM context releaser")
-> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+On Wed, Jan 29, 2025 at 1:00=E2=80=AFPM Song Liu <song@kernel.org> wrote:
+>
+> btf_kfunc_id_set.remap can pick proper version of a kfunc for the calling
+> context. Use this logic to select bpf_dynptr_from_skb or
+> bpf_dynptr_from_skb_rdonly. This will make the verifier simpler.
+>
+> Unfortunately, btf_kfunc_id_set.remap cannot cover the DYNPTR_TYPE_SKB
+> logic in check_kfunc_args(). This can be addressed later.
+>
+> Signed-off-by: Song Liu <song@kernel.org>
 > ---
-> V2: Update commit message and CC list.
-> V3: Update commit message again (thanks to Paul).
-> 
->  kernel/audit.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  kernel/bpf/verifier.c | 25 ++++++----------------
+>  net/core/filter.c     | 49 +++++++++++++++++++++++++++++++++++++++----
+>  2 files changed, 51 insertions(+), 23 deletions(-)
+>
+> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+> index 2188b6674266..55e710e318e5 100644
+> --- a/kernel/bpf/verifier.c
+> +++ b/kernel/bpf/verifier.c
+> @@ -11750,6 +11750,7 @@ enum special_kfunc_type {
+>         KF_bpf_rbtree_add_impl,
+>         KF_bpf_rbtree_first,
+>         KF_bpf_dynptr_from_skb,
+> +       KF_bpf_dynptr_from_skb_rdonly,
+>         KF_bpf_dynptr_from_xdp,
+>         KF_bpf_dynptr_slice,
+>         KF_bpf_dynptr_slice_rdwr,
+> @@ -11785,6 +11786,7 @@ BTF_ID(func, bpf_rbtree_add_impl)
+>  BTF_ID(func, bpf_rbtree_first)
+>  #ifdef CONFIG_NET
+>  BTF_ID(func, bpf_dynptr_from_skb)
+> +BTF_ID(func, bpf_dynptr_from_skb_rdonly)
+>  BTF_ID(func, bpf_dynptr_from_xdp)
+>  #endif
+>  BTF_ID(func, bpf_dynptr_slice)
+> @@ -11816,10 +11818,12 @@ BTF_ID(func, bpf_rbtree_add_impl)
+>  BTF_ID(func, bpf_rbtree_first)
+>  #ifdef CONFIG_NET
+>  BTF_ID(func, bpf_dynptr_from_skb)
+> +BTF_ID(func, bpf_dynptr_from_skb_rdonly)
+>  BTF_ID(func, bpf_dynptr_from_xdp)
+>  #else
+>  BTF_ID_UNUSED
+>  BTF_ID_UNUSED
+> +BTF_ID_UNUSED
+>  #endif
+>  BTF_ID(func, bpf_dynptr_slice)
+>  BTF_ID(func, bpf_dynptr_slice_rdwr)
+> @@ -12741,7 +12745,8 @@ static int check_kfunc_args(struct bpf_verifier_e=
+nv *env, struct bpf_kfunc_call_
+>                         if (is_kfunc_arg_uninit(btf, &args[i]))
+>                                 dynptr_arg_type |=3D MEM_UNINIT;
+>
+> -                       if (meta->func_id =3D=3D special_kfunc_list[KF_bp=
+f_dynptr_from_skb]) {
+> +                       if (meta->func_id =3D=3D special_kfunc_list[KF_bp=
+f_dynptr_from_skb] ||
+> +                           meta->func_id =3D=3D special_kfunc_list[KF_bp=
+f_dynptr_from_skb_rdonly]) {
+>                                 dynptr_arg_type |=3D DYNPTR_TYPE_SKB;
+>                         } else if (meta->func_id =3D=3D special_kfunc_lis=
+t[KF_bpf_dynptr_from_xdp]) {
+>                                 dynptr_arg_type |=3D DYNPTR_TYPE_XDP;
+> @@ -20898,9 +20903,7 @@ static void specialize_kfunc(struct bpf_verifier_=
+env *env,
+>                              u32 func_id, u16 offset, unsigned long *addr=
+)
+>  {
+>         struct bpf_prog *prog =3D env->prog;
+> -       bool seen_direct_write;
+>         void *xdp_kfunc;
+> -       bool is_rdonly;
+>
+>         if (bpf_dev_bound_kfunc_id(func_id)) {
+>                 xdp_kfunc =3D bpf_dev_bound_resolve_kfunc(prog, func_id);
+> @@ -20910,22 +20913,6 @@ static void specialize_kfunc(struct bpf_verifier=
+_env *env,
+>                 }
+>                 /* fallback to default kfunc when not supported by netdev=
+ */
+>         }
+> -
+> -       if (offset)
+> -               return;
+> -
+> -       if (func_id =3D=3D special_kfunc_list[KF_bpf_dynptr_from_skb]) {
+> -               seen_direct_write =3D env->seen_direct_write;
+> -               is_rdonly =3D !may_access_direct_pkt_data(env, NULL, BPF_=
+WRITE);
+> -
+> -               if (is_rdonly)
+> -                       *addr =3D (unsigned long)bpf_dynptr_from_skb_rdon=
+ly;
+> -
+> -               /* restore env->seen_direct_write to its original value, =
+since
+> -                * may_access_direct_pkt_data mutates it
+> -                */
+> -               env->seen_direct_write =3D seen_direct_write;
+> -       }
+>  }
+>
+>  static void __fixup_collection_insert_kfunc(struct bpf_insn_aux_data *in=
+sn_aux,
+> diff --git a/net/core/filter.c b/net/core/filter.c
+> index 2ec162dd83c4..6416689e3976 100644
+> --- a/net/core/filter.c
+> +++ b/net/core/filter.c
+> @@ -12062,10 +12062,8 @@ __bpf_kfunc int bpf_sk_assign_tcp_reqsk(struct _=
+_sk_buff *s, struct sock *sk,
+>  #endif
+>  }
+>
+> -__bpf_kfunc_end_defs();
+> -
+> -int bpf_dynptr_from_skb_rdonly(struct __sk_buff *skb, u64 flags,
+> -                              struct bpf_dynptr *ptr__uninit)
+> +__bpf_kfunc int bpf_dynptr_from_skb_rdonly(struct __sk_buff *skb, u64 fl=
+ags,
+> +                                          struct bpf_dynptr *ptr__uninit=
+)
+>  {
+>         struct bpf_dynptr_kern *ptr =3D (struct bpf_dynptr_kern *)ptr__un=
+init;
+>         int err;
+> @@ -12079,10 +12077,16 @@ int bpf_dynptr_from_skb_rdonly(struct __sk_buff=
+ *skb, u64 flags,
+>         return 0;
+>  }
+>
+> +__bpf_kfunc_end_defs();
+> +
+>  BTF_KFUNCS_START(bpf_kfunc_check_set_skb)
+>  BTF_ID_FLAGS(func, bpf_dynptr_from_skb, KF_TRUSTED_ARGS)
+>  BTF_KFUNCS_END(bpf_kfunc_check_set_skb)
+>
+> +BTF_HIDDEN_KFUNCS_START(bpf_kfunc_check_hidden_set_skb)
+> +BTF_ID_FLAGS(func, bpf_dynptr_from_skb_rdonly, KF_TRUSTED_ARGS)
+> +BTF_KFUNCS_END(bpf_kfunc_check_hidden_set_skb)
+> +
+>  BTF_KFUNCS_START(bpf_kfunc_check_set_xdp)
+>  BTF_ID_FLAGS(func, bpf_dynptr_from_xdp)
+>  BTF_KFUNCS_END(bpf_kfunc_check_set_xdp)
+> @@ -12095,9 +12099,46 @@ BTF_KFUNCS_START(bpf_kfunc_check_set_tcp_reqsk)
+>  BTF_ID_FLAGS(func, bpf_sk_assign_tcp_reqsk, KF_TRUSTED_ARGS)
+>  BTF_KFUNCS_END(bpf_kfunc_check_set_tcp_reqsk)
+>
+> +BTF_ID_LIST(bpf_dynptr_from_skb_list)
+> +BTF_ID(func, bpf_dynptr_from_skb)
+> +BTF_ID(func, bpf_dynptr_from_skb_rdonly)
+> +
+> +static u32 bpf_kfunc_set_skb_remap(const struct bpf_prog *prog, u32 kfun=
+c_id)
+> +{
+> +       if (kfunc_id !=3D bpf_dynptr_from_skb_list[0])
+> +               return 0;
+> +
+> +       switch (resolve_prog_type(prog)) {
+> +       /* Program types only with direct read access go here! */
+> +       case BPF_PROG_TYPE_LWT_IN:
+> +       case BPF_PROG_TYPE_LWT_OUT:
+> +       case BPF_PROG_TYPE_LWT_SEG6LOCAL:
+> +       case BPF_PROG_TYPE_SK_REUSEPORT:
+> +       case BPF_PROG_TYPE_FLOW_DISSECTOR:
+> +       case BPF_PROG_TYPE_CGROUP_SKB:
 
-The backtrace in the commit description still exceeded the width of an 80
-character wide terminal :(  I trimmed the problem sections of the
-backtrace and merged this into audit/stable-6.14; as soon as I can get a
-clean kernel build I'll send this up to Linus.
+This copy pastes the logic from may_access_direct_pkt_data(),
+so any future change to that helper would need to update
+this one as well.
 
---
-paul-moore.com
+> +               return bpf_dynptr_from_skb_list[1];
+
+The [0] and [1] stuff is quite error prone.
+
+> +
+> +       /* Program types with direct read + write access go here! */
+> +       case BPF_PROG_TYPE_SCHED_CLS:
+> +       case BPF_PROG_TYPE_SCHED_ACT:
+> +       case BPF_PROG_TYPE_XDP:
+> +       case BPF_PROG_TYPE_LWT_XMIT:
+> +       case BPF_PROG_TYPE_SK_SKB:
+> +       case BPF_PROG_TYPE_SK_MSG:
+> +       case BPF_PROG_TYPE_CGROUP_SOCKOPT:
+> +               return kfunc_id;
+> +
+> +       default:
+> +               break;
+> +       }
+> +       return bpf_dynptr_from_skb_list[1];
+> +}
+> +
+>  static const struct btf_kfunc_id_set bpf_kfunc_set_skb =3D {
+>         .owner =3D THIS_MODULE,
+>         .set =3D &bpf_kfunc_check_set_skb,
+> +       .hidden_set =3D &bpf_kfunc_check_hidden_set_skb,
+
+If I'm reading it correctly the hidden_set serves no additional purpose.
+It splits the set into two, but patch 4 just adds them together.
+
+> +       .remap =3D &bpf_kfunc_set_skb_remap,
+
+I'm not a fan of callbacks in general.
+The makes everything harder to follow.
+
+For all these reasons I don't like this approach.
+This "generality" doesn't make it cleaner or easier to extend.
+For the patch 6... just repeat what specialize_kfunc()
+currently does for dynptr ?
+
+
+pw-bot: cr
