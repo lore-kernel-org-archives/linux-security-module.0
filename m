@@ -1,118 +1,91 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81E0E1E9B3F;
-	Thu, 30 Jan 2025 15:20:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C011EB9FA;
+	Thu, 30 Jan 2025 16:07:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738250412; cv=none; b=Var1toKtvx81UFy2PE+513/xFQxgo+cGjv00xDA28AGsOQ7cMYmtn+jCM24PkIyYXmeWY6rbu6T3iFjxsqBjIr7un3pdXk6nVmJ+nkb+cq2YDKiRhqHUE90zIV2W5aZB2yG6fudatEbKszkOjDtn/5kOHSdAKMSiu+59YmasYoU=
+	t=1738253276; cv=none; b=ZlEbAhW4hv8scFu/YOskk1dmSn2GqxDe9hIy9vd+R9GvS+ft8PIIlM0o1cfJNhZdSxXw7Vll6OWSWiLtPk6uhL2zx8d0L4GA+EeWfd+jkXKbk4wVklUr88/QzBMYBluSmZB2SHHfrt7Nd3VPDkU1pz8xIp/5lmb2rnV2chvvelQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738250412; c=relaxed/simple;
-	bh=LzJikOHTQrKhiSfwSHwXbPkw3fyrXwxEDOZFzZUeWWU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bUxasOC6w62oMSKuB3MOufb7qdSNZTmi5D1LgWDbrC77qMHbXUOofK0hnsErO27+qI1eYfLxPPcWkYcN+Edr9MgXJYztYsU9jS6Ct4h/w1lR0YoC0AqHdVD15XUOVXsQ/F5vqvevGxc+2EfdCybIwJjWLa0b8jwM5eUbAN+mgI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OW+rZwmM; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1738253276; c=relaxed/simple;
+	bh=iyf9rrIaJTr6PgY3x9SidMmy2ZlE/B1b6A1DN19QU1Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jRwp/Om3ccrBzwL0aBocdOwF6I7cHA0cYF6/q26Fq4ahZ9E+fN3zVFcHD/9PKs90OZI/9DQ8ZxAsfkClrPof4QH0WuuvgyqKrGG1Y7WQSRsegkfO0SlBK59WmiNFxCGk9bAGW/DrW/KjlJLOuWLr0cTzaD9gc/vhJGpbSo5tl3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uz5VSJvT; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OW+rZwmM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57258C4CED2;
-	Thu, 30 Jan 2025 15:20:07 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uz5VSJvT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CA99C4CED2;
+	Thu, 30 Jan 2025 16:07:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738250412;
-	bh=LzJikOHTQrKhiSfwSHwXbPkw3fyrXwxEDOZFzZUeWWU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OW+rZwmMF9dPYRDw7+8Pu8ODOo9lCCF9S9P1aYZNpd20WyCl4ax7Az98braP/Vw0r
-	 cgcpXs9oQsBOlLFbMNjs1nryS9QfwQ+2xowT3uxz3DNDXH8pVse0jSm20CNEI2OYtV
-	 EYd4YjIHfkEN34M9S5TWCdL4Zamtgdh3TK2zyPlOau4X2s5Hqy77ZvprC4R99AgAXJ
-	 tWFfI5COyFLEf30LJbSr43O/yqmH0oWJBiKMkKwXwW2CMdAPjop15kz5QJSW+spd5+
-	 C2bSTvMJsW1UCWxEb6O7eCjl1R5lmaBLMjC4qFSaWaasUo8WfI1tpZLtldN1UzfqXj
-	 VgpuQv0KAiHsw==
-Date: Thu, 30 Jan 2025 16:20:04 +0100
+	s=k20201202; t=1738253273;
+	bh=iyf9rrIaJTr6PgY3x9SidMmy2ZlE/B1b6A1DN19QU1Q=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=uz5VSJvTda2caWKZe1upMY6/31seNJBnPKXqOSb/PocUB5RpYocw4xYjC8zS6BB4N
+	 WSc4a8khlN1c/LVgCNo8Lwp3ZxSJb4fkCRSYrBJDdzKGn9tpWPgGbIBu9RWnB8mwhd
+	 NlxZmjYFLSIZ4xbFUwAXhrQ/hhsFSmYutoVRdnMA3G1yxTQ66xrsf0yewIX4c1tEkJ
+	 JX2J47syH2T6yeu0WnI5rQP8GTooLFqA7F+XVpodv1Bqi+IfOnJhVG1k5X3rHQriib
+	 k4Jnv6HiptEm3PyTd3IJdznR/rG5EhirQG/sIJR7qhaY0FKhY+wy+hOEyNCmeoC9ul
+	 Sl+JIIKC8sgpw==
 From: Christian Brauner <brauner@kernel.org>
-To: Matt Bobrowski <mattbobrowski@google.com>
-Cc: Song Liu <song@kernel.org>, bpf@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, 
-	ast@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev, 
-	viro@zeniv.linux.org.uk, jack@suse.cz, kpsingh@kernel.org, liamwisehart@meta.com, 
-	shankaran@meta.com
-Subject: Re: [PATCH v11 bpf-next 1/7] fs/xattr: bpf: Introduce security.bpf.
- xattr name prefix
-Message-ID: <20250130-erklimmen-erstversorgung-93daf77c9dc4@brauner>
-References: <20250129205957.2457655-1-song@kernel.org>
- <20250129205957.2457655-2-song@kernel.org>
- <Z5tbH13qK6rLJVUI@google.com>
+To: linux-fsdevel@vger.kernel.org,
+	Miklos Szeredi <mszeredi@redhat.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Karel Zak <kzak@redhat.com>,
+	Lennart Poettering <lennart@poettering.net>,
+	Ian Kent <raven@themaw.net>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Paul Moore <paul@paul-moore.com>,
+	selinux@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	selinux-refpolicy@vger.kernel.org
+Subject: Re: [PATCH v5 0/3] mount notification
+Date: Thu, 30 Jan 2025 17:07:41 +0100
+Message-ID: <20250130-heulen-erdarbeiten-8f0c40609021@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250129165803.72138-1-mszeredi@redhat.com>
+References: <20250129165803.72138-1-mszeredi@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Z5tbH13qK6rLJVUI@google.com>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1320; i=brauner@kernel.org; h=from:subject:message-id; bh=iyf9rrIaJTr6PgY3x9SidMmy2ZlE/B1b6A1DN19QU1Q=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTPXnzhQOtFpqz4hfei3132bPOfuofDMYRlivva1vsP0 po3b2Fd2VHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCR7g2MDGesV/G3H1icHREf /9TkAGN9srLuf+Wda3/21uc+mp2ySpXhJ6MDr3G5783uGCWFTTeXRBuf/vt21ybRS/etrx0KPOT hzgIA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jan 30, 2025 at 10:57:35AM +0000, Matt Bobrowski wrote:
-> On Wed, Jan 29, 2025 at 12:59:51PM -0800, Song Liu wrote:
-> > Introduct new xattr name prefix security.bpf., and enable reading these
-> > xattrs from bpf kfuncs bpf_get_[file|dentry]_xattr().
-> > 
-> > As we are on it, correct the comments for return value of
-> > bpf_get_[file|dentry]_xattr(), i.e. return length the xattr value on
-> > success.
+On Wed, 29 Jan 2025 17:57:58 +0100, Miklos Szeredi wrote:
+> This should be ready for adding to the v6.15 queue.  I don't see the
+> SELinux discussion converging, so I took the simpler version out of the two
+> that were suggested.
 > 
-> Reviewed-by: Matt Bobrowski <mattbobrowski@google.com>
+> Will work on adding selftests.
 > 
-> > Signed-off-by: Song Liu <song@kernel.org>
-> > Acked-by: Christian Brauner <brauner@kernel.org>
-> > Reviewed-by: Jan Kara <jack@suse.cz>
-> > ---
-> >  fs/bpf_fs_kfuncs.c         | 19 ++++++++++++++-----
-> >  include/uapi/linux/xattr.h |  4 ++++
-> >  2 files changed, 18 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/fs/bpf_fs_kfuncs.c b/fs/bpf_fs_kfuncs.c
-> > index 3fe9f59ef867..8a65184c8c2c 100644
-> > --- a/fs/bpf_fs_kfuncs.c
-> > +++ b/fs/bpf_fs_kfuncs.c
-> > @@ -93,6 +93,11 @@ __bpf_kfunc int bpf_path_d_path(struct path *path, char *buf, size_t buf__sz)
-> >  	return len;
-> >  }
-> >  
-> > +static bool match_security_bpf_prefix(const char *name__str)
-> > +{
-> > +	return !strncmp(name__str, XATTR_NAME_BPF_LSM, XATTR_NAME_BPF_LSM_LEN);
-> > +}
+> Thanks to everyone for the reviews!
 > 
-> I think this can also just be match_xattr_prefix(const char
-> *name__str, const char *prefix, size_t len) such that we can do the
-> same checks for aribitrary xattr prefixes i.e. XATTR_USER_PREFIX,
-> XATTR_NAME_BPF_LSM.
-> 
-> >  /**
-> >   * bpf_get_dentry_xattr - get xattr of a dentry
-> >   * @dentry: dentry to get xattr from
-> > @@ -101,9 +106,10 @@ __bpf_kfunc int bpf_path_d_path(struct path *path, char *buf, size_t buf__sz)
-> >   *
-> >   * Get xattr *name__str* of *dentry* and store the output in *value_ptr*.
-> >   *
-> > - * For security reasons, only *name__str* with prefix "user." is allowed.
-> > + * For security reasons, only *name__str* with prefix "user." or
->       	  	   	    	 	     	  ^ prefixes
-> 						  
-> > + * "security.bpf." is allowed.
->                       ^ are
-> 
-> Out of curiosity, what is the security reasoning here? This isn't
-> obvious to me, and I'd like to understand this better. Is it simply
-> frowned upon to read arbitrary xattr values from the context of a BPF
-> LSM program, or has it got something to do with the backing xattr
-> handler that ends up being called once we step into __vfs_getxattr()
-> and such?  Also, just so that it's clear, I don't have anything
-> against this allow listing approach either, I just genuinely don't
-> understand the security implications.
+> [...]
 
-I've explained this at lenghts in multiple threads. The gist is various
-xattrs require you to have access to properties that are carried by
-objects you don't have access to (e.g., the mount) or can't guarantee
-that you're in the correct context and interpreting those xattrs without
-this information is either meaningless or actively wrong.
+Applied to the vfs-6.15.mount branch of the vfs/vfs.git tree.
+Patches in the vfs-6.15.mount branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.15.mount
+
+[1/3] fsnotify: add mount notification infrastructure
+      https://git.kernel.org/vfs/vfs/c/3b02618006ea
+[2/3] fanotify: notify on mount attach and detach
+      https://git.kernel.org/vfs/vfs/c/681803d6e3e1
+[3/3] vfs: add notifications for mount attach and detach
+      https://git.kernel.org/vfs/vfs/c/48d9da32719f
