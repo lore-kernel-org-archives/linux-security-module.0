@@ -1,292 +1,325 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-bc08.mail.infomaniak.ch (smtp-bc08.mail.infomaniak.ch [45.157.188.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDF5D1D52B;
-	Thu, 30 Jan 2025 02:32:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A5231B78F3
+	for <linux-security-module@vger.kernel.org>; Thu, 30 Jan 2025 09:51:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738204338; cv=none; b=Gi4/vEVX84ZPucjvHXuW3iFosZt1a5Utoj232l9TInX0SV13ys7axJYT7dK4uLUUYa8QrikhAob6VmVuJ+KzxN8uTXrT3QITRlFxxH67sTYu0nnyNX+n9QQgHBf2unpzM7zfj7WcNKP/SE5u2MWV3FPpt1WAS2YZMBBq1bIthlQ=
+	t=1738230715; cv=none; b=bDzClXTfUSuPqMQEtCpmsBZMWKas/SIUR8w1dMqUHe6UmUCHmUJnWU3BdSDmrtXpWDq8hFQi2adUDayxg7eHzNVhRAGxqqhnSDrb8hi8KFEFFzP/uOjjiTcjMpWI/iij0XpEay4Vre7/sULfNKEvXtGBQGs2ILBBIMeeTkR08qU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738204338; c=relaxed/simple;
-	bh=v0Pleq58QNnh7XauPGPset9KHyOkCN5P87RRWbzCFqs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eNdvkpnieHFtGvAXd4YHgfmT6/PJfhBsM/dXoBXd+mmq+/lfF66RruV9cimyENdLMzhwMy4qR4KBOoB3dfw5ORMQCr7FxkJxSSjhzz8Zckmh1xe4QYUknCzVmOiwnoXHo7zxQyaJLlIxGqvkh8YtAoBYoY0OP0JYnWYmr1QpgAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uhpl1QU8; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1738230715; c=relaxed/simple;
+	bh=M1G3bPGJ7ltahw2nrExz3W1U4Y3lSF4XA1+ifN1BJ3s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sLf1Z9UGe2e0ebcX19LbOHDesuaWxo4Qt6eEesmpQR8Lzj3qUKf1Hdm87JZDFsku/Zd00Sc1sKvV1pVbIVDssfY0vxBff3s/MbNrEwYViF65lBEO9cA/CazTZLoro6E+dao+0ueZUuDKS/Xj9nK5gE+73IrBtoFM5IAd5EKZqFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=rfa5Q7c8; arc=none smtp.client-ip=45.157.188.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uhpl1QU8"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-38be3bfb045so1010724f8f.0;
-        Wed, 29 Jan 2025 18:32:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1738204334; x=1738809134; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YVOeKubTpots4CB4SvdanKa5SO+1C9gTy1lOl/7fozA=;
-        b=Uhpl1QU8JpKc9I0o+wn6AYl3AhUbb+0MSQ5W/sS5rWzggruag+vunUfKQlQQWf/8G9
-         Lr3FEpRitTXi7gUT6sIf50Am0lUbU3YCSRrDHlH0YhPh8IlPOlnBbZGSEH1fCpOLZvt7
-         XUsNtoVrK4ZNjwtEzhdqoh/bY6Nc/SzfYZd9KGws9glwEpxffbQMqk1pnOLwPlNURg28
-         m87VH2chqqnNlLxq7wIw7RrXQb+pW6zRD7m129pFuyKg9FwTyXX4kzQEKYrfbgxtQDCY
-         eA3bmoLy9e/XfdR1TTVWiaMYJqGbAl2V8yUSjRY2879MjrlzZ5R0rhizw7IxU7R8zZM6
-         Ivvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738204334; x=1738809134;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YVOeKubTpots4CB4SvdanKa5SO+1C9gTy1lOl/7fozA=;
-        b=tKXn/VUFuWiGt/2jdOWp1EkK5Pe8h2C+oVD5A3dAZ3h+KiKGHhH2LDyrQ3HV0XuKOc
-         K9FovXAhkHDnVnuFovPVeFYw9LUD3zblL59vQGPPUKqkgCnR72UV2EivfRpIh/P8LG2O
-         loGbe4VQ0DlOHfuA/yqE+RwkhXI41GfGIy8XMxWQWtInyCSKEhYIwHt+oi46Jck+neHj
-         O9c4e1tGZsib1PkkwgUDiyDOhkGZGTJsbpeT4ElEIaIH2RCkif4j+snZzUOXKXVCRRhP
-         NT3UTps+JeFPKS/tCN9G7ipg25DUZywBIkFXL9isYnT/fJE50Ow1d36wFpKFs3lkdHlw
-         JZGA==
-X-Forwarded-Encrypted: i=1; AJvYcCV8tzJWolRPmoD0x0IkFCw1s41kI0L5g2bZi2hmQ6qUX38KYTRM6GgMl5Vz1PBLHNsGbJ+X+uPG+OGIBqNEBivqrRNufmd/@vger.kernel.org, AJvYcCVFQbHhsERfuSDdpPrcOici+OoyB4XPqFzjtAwfYdxZi/oXnevAOdaQZrytkUcDflQ6sEud+XrOFurhvD9z@vger.kernel.org, AJvYcCXzsazsPovpebMW1eXS1wVapZzsPi9VOk1PpXXS2pbvabWP0s9JZuD5miQp7WtxvjYQ+u1d7GCU5UbKeviu@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxi9zqNrh1eAhXchq7HsnNiXUFZfKbQeZeOadcv15xWAxePOSNT
-	xq7eZfvhIp/Uw+aUuefJmUAL3+qEPj3bzOdIqL1Q+jWWiGFBzHL9D4bWzdilu4UAITJmXic6U/m
-	u/W/Y8Kg1x43jUxRBaudh901Z9AM=
-X-Gm-Gg: ASbGncv60O7mk+Fcecx/dRfHr643W3SHN4Fd2D1B4oQgeMCu41KFC6LujjpsIS8spq6
-	Jjj0ZKZ2gFfIxI/TXCySycF8SKFwnw5o+eK9ZePtbneAGfAheltL+T7We81KucEsdCtg87YVZ1b
-	1+Bnh7SQAjsR+l3+J9Hz2MhRjmqsB2
-X-Google-Smtp-Source: AGHT+IGVldXlUyrAW4PfnbO2DYAtquJ700zbZin57AbxNYkHbXeYShFDnczIS3xHpFxjygPmEtxT5HdPyLbk/LCaQJg=
-X-Received: by 2002:a05:6000:1a89:b0:385:df17:2148 with SMTP id
- ffacd0b85a97d-38c5a9e8018mr1272334f8f.20.1738204333716; Wed, 29 Jan 2025
- 18:32:13 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="rfa5Q7c8"
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4YkDnV0P4vzfWS;
+	Thu, 30 Jan 2025 10:51:42 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1738230701;
+	bh=YZm0vTuwCQA/yZDxmiQL1tM2SC0CyU6mDR1fUgobEaw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rfa5Q7c8BZlxn76PD00hzcjeKBZIxcKQoM7rqXLK0zImquZ9ipQCBOFnOA6zcbtQv
+	 XdVE+SR/ismYu/Sxlmk35/CmYkX+r+kLscxgVY+iNv25uS7Qb1sJ0RV4+cgbe81vuE
+	 ToRkGSCjl/emS3aY/1GWc/JM2fAyddv/J+ecGMc8=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4YkDnT0NLPzWgd;
+	Thu, 30 Jan 2025 10:51:40 +0100 (CET)
+Date: Thu, 30 Jan 2025 10:51:40 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Matthieu Baerts <matttbe@kernel.org>
+Cc: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
+	gnoack@google.com, willemdebruijn.kernel@gmail.com, matthieu@buffet.re, 
+	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, 
+	yusongping@huawei.com, artem.kuzin@huawei.com, konstantin.meskhidze@huawei.com, 
+	MPTCP Linux <mptcp@lists.linux.dev>, linux-nfs@vger.kernel.org, Paul Moore <paul@paul-moore.com>
+Subject: Re: [RFC PATCH v2 1/8] landlock: Fix non-TCP sockets restriction
+Message-ID: <20250130.Xe3Ohtai5aen@digikod.net>
+References: <20250127.Uph4aiph9jae@digikod.net>
+ <d3d589c3-a70b-fc6e-e1bb-d221833dfef5@huawei-partners.com>
+ <594263fc-f4e7-43ce-a613-d3f8ebb7f874@kernel.org>
+ <f6e72e71-c5ed-8a9c-f33e-f190a47b8c27@huawei-partners.com>
+ <2e727df0-c981-4e0c-8d0d-09109cf27d6f@kernel.org>
+ <103de503-be0e-2eb2-b6f0-88567d765148@huawei-partners.com>
+ <1d1d58b3-2516-4fc8-9f9a-b10604bbe05b@kernel.org>
+ <b9823ff1-2f66-3992-b389-b8e631ec03ba@huawei-partners.com>
+ <20250129.Oo1xou8ieche@digikod.net>
+ <64b1de00-c724-4748-9133-acd0a79b6d72@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250129205957.2457655-1-song@kernel.org> <20250129205957.2457655-6-song@kernel.org>
-In-Reply-To: <20250129205957.2457655-6-song@kernel.org>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Wed, 29 Jan 2025 18:32:02 -0800
-X-Gm-Features: AWEUYZnLJm5ClxjX2wB7choGp3nDXn_DjJuD5Zr2sHSL_AT1tWpIjeV8i15S41E
-Message-ID: <CAADnVQ+1Woq_mh_9iz+Dhdhw1TuXZgVrx38+aHn-bGZBVa5_uw@mail.gmail.com>
-Subject: Re: [PATCH v11 bpf-next 5/7] bpf: Use btf_kfunc_id_set.remap logic
- for bpf_dynptr_from_skb
-To: Song Liu <song@kernel.org>
-Cc: bpf <bpf@vger.kernel.org>, Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	LSM List <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Eddy Z <eddyz87@gmail.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, KP Singh <kpsingh@kernel.org>, 
-	Matt Bobrowski <mattbobrowski@google.com>, liamwisehart@meta.com, shankaran@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <64b1de00-c724-4748-9133-acd0a79b6d72@kernel.org>
+X-Infomaniak-Routing: alpha
 
-On Wed, Jan 29, 2025 at 1:00=E2=80=AFPM Song Liu <song@kernel.org> wrote:
->
-> btf_kfunc_id_set.remap can pick proper version of a kfunc for the calling
-> context. Use this logic to select bpf_dynptr_from_skb or
-> bpf_dynptr_from_skb_rdonly. This will make the verifier simpler.
->
-> Unfortunately, btf_kfunc_id_set.remap cannot cover the DYNPTR_TYPE_SKB
-> logic in check_kfunc_args(). This can be addressed later.
->
-> Signed-off-by: Song Liu <song@kernel.org>
-> ---
->  kernel/bpf/verifier.c | 25 ++++++----------------
->  net/core/filter.c     | 49 +++++++++++++++++++++++++++++++++++++++----
->  2 files changed, 51 insertions(+), 23 deletions(-)
->
-> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-> index 2188b6674266..55e710e318e5 100644
-> --- a/kernel/bpf/verifier.c
-> +++ b/kernel/bpf/verifier.c
-> @@ -11750,6 +11750,7 @@ enum special_kfunc_type {
->         KF_bpf_rbtree_add_impl,
->         KF_bpf_rbtree_first,
->         KF_bpf_dynptr_from_skb,
-> +       KF_bpf_dynptr_from_skb_rdonly,
->         KF_bpf_dynptr_from_xdp,
->         KF_bpf_dynptr_slice,
->         KF_bpf_dynptr_slice_rdwr,
-> @@ -11785,6 +11786,7 @@ BTF_ID(func, bpf_rbtree_add_impl)
->  BTF_ID(func, bpf_rbtree_first)
->  #ifdef CONFIG_NET
->  BTF_ID(func, bpf_dynptr_from_skb)
-> +BTF_ID(func, bpf_dynptr_from_skb_rdonly)
->  BTF_ID(func, bpf_dynptr_from_xdp)
->  #endif
->  BTF_ID(func, bpf_dynptr_slice)
-> @@ -11816,10 +11818,12 @@ BTF_ID(func, bpf_rbtree_add_impl)
->  BTF_ID(func, bpf_rbtree_first)
->  #ifdef CONFIG_NET
->  BTF_ID(func, bpf_dynptr_from_skb)
-> +BTF_ID(func, bpf_dynptr_from_skb_rdonly)
->  BTF_ID(func, bpf_dynptr_from_xdp)
->  #else
->  BTF_ID_UNUSED
->  BTF_ID_UNUSED
-> +BTF_ID_UNUSED
->  #endif
->  BTF_ID(func, bpf_dynptr_slice)
->  BTF_ID(func, bpf_dynptr_slice_rdwr)
-> @@ -12741,7 +12745,8 @@ static int check_kfunc_args(struct bpf_verifier_e=
-nv *env, struct bpf_kfunc_call_
->                         if (is_kfunc_arg_uninit(btf, &args[i]))
->                                 dynptr_arg_type |=3D MEM_UNINIT;
->
-> -                       if (meta->func_id =3D=3D special_kfunc_list[KF_bp=
-f_dynptr_from_skb]) {
-> +                       if (meta->func_id =3D=3D special_kfunc_list[KF_bp=
-f_dynptr_from_skb] ||
-> +                           meta->func_id =3D=3D special_kfunc_list[KF_bp=
-f_dynptr_from_skb_rdonly]) {
->                                 dynptr_arg_type |=3D DYNPTR_TYPE_SKB;
->                         } else if (meta->func_id =3D=3D special_kfunc_lis=
-t[KF_bpf_dynptr_from_xdp]) {
->                                 dynptr_arg_type |=3D DYNPTR_TYPE_XDP;
-> @@ -20898,9 +20903,7 @@ static void specialize_kfunc(struct bpf_verifier_=
-env *env,
->                              u32 func_id, u16 offset, unsigned long *addr=
-)
->  {
->         struct bpf_prog *prog =3D env->prog;
-> -       bool seen_direct_write;
->         void *xdp_kfunc;
-> -       bool is_rdonly;
->
->         if (bpf_dev_bound_kfunc_id(func_id)) {
->                 xdp_kfunc =3D bpf_dev_bound_resolve_kfunc(prog, func_id);
-> @@ -20910,22 +20913,6 @@ static void specialize_kfunc(struct bpf_verifier=
-_env *env,
->                 }
->                 /* fallback to default kfunc when not supported by netdev=
- */
->         }
-> -
-> -       if (offset)
-> -               return;
-> -
-> -       if (func_id =3D=3D special_kfunc_list[KF_bpf_dynptr_from_skb]) {
-> -               seen_direct_write =3D env->seen_direct_write;
-> -               is_rdonly =3D !may_access_direct_pkt_data(env, NULL, BPF_=
-WRITE);
-> -
-> -               if (is_rdonly)
-> -                       *addr =3D (unsigned long)bpf_dynptr_from_skb_rdon=
-ly;
-> -
-> -               /* restore env->seen_direct_write to its original value, =
-since
-> -                * may_access_direct_pkt_data mutates it
-> -                */
-> -               env->seen_direct_write =3D seen_direct_write;
-> -       }
->  }
->
->  static void __fixup_collection_insert_kfunc(struct bpf_insn_aux_data *in=
-sn_aux,
-> diff --git a/net/core/filter.c b/net/core/filter.c
-> index 2ec162dd83c4..6416689e3976 100644
-> --- a/net/core/filter.c
-> +++ b/net/core/filter.c
-> @@ -12062,10 +12062,8 @@ __bpf_kfunc int bpf_sk_assign_tcp_reqsk(struct _=
-_sk_buff *s, struct sock *sk,
->  #endif
->  }
->
-> -__bpf_kfunc_end_defs();
-> -
-> -int bpf_dynptr_from_skb_rdonly(struct __sk_buff *skb, u64 flags,
-> -                              struct bpf_dynptr *ptr__uninit)
-> +__bpf_kfunc int bpf_dynptr_from_skb_rdonly(struct __sk_buff *skb, u64 fl=
-ags,
-> +                                          struct bpf_dynptr *ptr__uninit=
-)
->  {
->         struct bpf_dynptr_kern *ptr =3D (struct bpf_dynptr_kern *)ptr__un=
-init;
->         int err;
-> @@ -12079,10 +12077,16 @@ int bpf_dynptr_from_skb_rdonly(struct __sk_buff=
- *skb, u64 flags,
->         return 0;
->  }
->
-> +__bpf_kfunc_end_defs();
-> +
->  BTF_KFUNCS_START(bpf_kfunc_check_set_skb)
->  BTF_ID_FLAGS(func, bpf_dynptr_from_skb, KF_TRUSTED_ARGS)
->  BTF_KFUNCS_END(bpf_kfunc_check_set_skb)
->
-> +BTF_HIDDEN_KFUNCS_START(bpf_kfunc_check_hidden_set_skb)
-> +BTF_ID_FLAGS(func, bpf_dynptr_from_skb_rdonly, KF_TRUSTED_ARGS)
-> +BTF_KFUNCS_END(bpf_kfunc_check_hidden_set_skb)
-> +
->  BTF_KFUNCS_START(bpf_kfunc_check_set_xdp)
->  BTF_ID_FLAGS(func, bpf_dynptr_from_xdp)
->  BTF_KFUNCS_END(bpf_kfunc_check_set_xdp)
-> @@ -12095,9 +12099,46 @@ BTF_KFUNCS_START(bpf_kfunc_check_set_tcp_reqsk)
->  BTF_ID_FLAGS(func, bpf_sk_assign_tcp_reqsk, KF_TRUSTED_ARGS)
->  BTF_KFUNCS_END(bpf_kfunc_check_set_tcp_reqsk)
->
-> +BTF_ID_LIST(bpf_dynptr_from_skb_list)
-> +BTF_ID(func, bpf_dynptr_from_skb)
-> +BTF_ID(func, bpf_dynptr_from_skb_rdonly)
-> +
-> +static u32 bpf_kfunc_set_skb_remap(const struct bpf_prog *prog, u32 kfun=
-c_id)
-> +{
-> +       if (kfunc_id !=3D bpf_dynptr_from_skb_list[0])
-> +               return 0;
-> +
-> +       switch (resolve_prog_type(prog)) {
-> +       /* Program types only with direct read access go here! */
-> +       case BPF_PROG_TYPE_LWT_IN:
-> +       case BPF_PROG_TYPE_LWT_OUT:
-> +       case BPF_PROG_TYPE_LWT_SEG6LOCAL:
-> +       case BPF_PROG_TYPE_SK_REUSEPORT:
-> +       case BPF_PROG_TYPE_FLOW_DISSECTOR:
-> +       case BPF_PROG_TYPE_CGROUP_SKB:
+On Wed, Jan 29, 2025 at 04:44:18PM +0100, Matthieu Baerts wrote:
+> Hi Mickaël,
+> 
+> On 29/01/2025 15:51, Mickaël Salaün wrote:
+> > On Wed, Jan 29, 2025 at 02:47:19PM +0300, Mikhail Ivanov wrote:
+> >> On 1/29/2025 2:33 PM, Matthieu Baerts wrote:
+> >>> On 29/01/2025 12:02, Mikhail Ivanov wrote:
+> >>>> On 1/29/2025 1:25 PM, Matthieu Baerts wrote:
+> >>>>> Hi Mikhail,
+> >>>>>
+> >>>>> On 29/01/2025 10:52, Mikhail Ivanov wrote:
+> >>>>>> On 1/28/2025 9:14 PM, Matthieu Baerts wrote:
+> >>>>>>> Hi Mikhail,
+> >>>>>>>
+> >>>>>>> Sorry, I didn't follow all the discussions in this thread, but here are
+> >>>>>>> some comments, hoping this can help to clarify the MPTCP case.
+> >>>>>>
+> >>>>>> Thanks a lot for sharing your knowledge, Matthieu!
+> >>>>>>
+> >>>>>>>
+> >>>>>>> On 28/01/2025 11:56, Mikhail Ivanov wrote:
+> >>>>>>>> On 1/27/2025 10:48 PM, Mickaël Salaün wrote:
+> >>>>>>>
+> >>>>>>> (...)
+> >>>>>>>
+> >>>>>>>>> I'm a bit worried that we miss some of these places (now or in future
+> >>>>>>>>> kernel versions).  We'll need a new LSM hook for that.
+> >>>>>>>>>
+> >>>>>>>>> Could you list the current locations?
+> >>>>>>>>
+> >>>>>>>> Currently, I know only about TCP-related transformations:
+> >>>>>>>>
+> >>>>>>>> * SMC can fallback to TCP during connection. TCP connection is used
+> >>>>>>>>      (1) to exchange CLC control messages in default case and (2)
+> >>>>>>>> for the
+> >>>>>>>>      communication in the case of fallback. If socket was connected or
+> >>>>>>>>      connection failed, socket can not be reconnected again. There
+> >>>>>>>> is no
+> >>>>>>>>      existing security hook to control the fallback case,
+> >>>>>>>>
+> >>>>>>>> * MPTCP uses TCP for communication between two network interfaces
+> >>>>>>>> in the
+> >>>>>>>>      default case and can fallback to plain TCP if remote peer does not
+> >>>>>>>>      support MPTCP. AFAICS, there is also no security hook to
+> >>>>>>>> control the
+> >>>>>>>>      fallback transformation,
+> >>>>>>>
+> >>>>>>> There are security hooks to control the path creation, but not to
+> >>>>>>> control the "fallback transformation".
+> >>>>>>>
+> >>>>>>> Technically, with MPTCP, the userspace will create an IPPROTO_MPTCP
+> >>>>>>> socket. This is only used "internally": to communicate between the
+> >>>>>>> userspace and the kernelspace, but not directly used between network
+> >>>>>>> interfaces. This "external" communication is done via one or multiple
+> >>>>>>> kernel TCP sockets carrying extra TCP options for the mapping. The
+> >>>>>>> userspace cannot directly control these sockets created by the kernel.
+> >>>>>>>
+> >>>>>>> In case of fallback, the kernel TCP socket "simply" drop the extra TCP
+> >>>>>>> options needed for MPTCP, and carry on like normal TCP. So on the wire
+> >>>>>>> and in the Linux network stack, it is the same TCP connection, without
+> >>>>>>> the MPTCP options in the TCP header. The userspace continue to
+> >>>>>>> communicate with the same socket.
+> >>>>>>>
+> >>>>>>> I'm not sure if there is a need to block the fallback: it means only
+> >>>>>>> one
+> >>>>>>> path can be used at a time.
+> > 
+> > Thanks Matthieu.
+> > 
+> > So user space needs to specific IPPROTO_MPTCP to use MPTCP, but on the
+> > network this socket can translate to "augmented" or plain TCP.
+> 
+> Correct. On the wire, you will only see packet with the IPPROTO_TCP
+> protocol. When MPTCP is used, extra MPTCP options will be present in the
+> TCP headers, but the protocol is still IPPROTO_TCP on the network.
+> 
+> > From Landlock point of view, what matters is to have a consistent policy
+> > that maps to user space code.  The fear was that a malicious user space
+> > that is only allowed to use MPTCP could still transform an MPTCP socket
+> > to a TCP socket, while it wasn't allowed to create a TCP socket in the
+> > first place.  I now think this should not be an issue because:
+> > 1. MPTCP is kind of a superset of TCP
+> > 2. user space legitimately using MPTCP should not get any error related
+> >    to a Landlock policy because of TCP/any automatic fallback.  To say
+> >    it another way, such fallback is independent of user space requests
+> >    and may not be predicted because it is related to the current network
+> >    path.  This follows the principle of least astonishment (at least
+> >    from user space point of view).
+> > 
+> > So, if I understand correctly, this should be simple for the Landlock
+> > socket creation control:  we only check socket properties at creation
+> > time and we ignore potential fallbacks.  This should be documented
+> > though.
+> 
+> It depends on the restrictions that are put in place: are the user and
+> kernel sockets treated the same way? If yes, blocking TCP means that
+> even if it will be possible for the userspace to create an IPPROTO_MPTCP
+> socket, the kernel will not be allowed to IPPROTO_TCP ones to
+> communicate with the outside world. So blocking TCP will implicitly
+> block MPTCP.
+> 
+> On the other hand, if only TCP user sockets are blocked, then it will be
+> possible to use MPTCP to communicate to any TCP sockets: with an
+> IPPROTO_MPTCP socket, it is possible to communicate with any IPPROTO_TCP
+> sockets, but without the extra features supported by MPTCP.
 
-This copy pastes the logic from may_access_direct_pkt_data(),
-so any future change to that helper would need to update
-this one as well.
+Yes, that how Landlock works, it only enforces a security policy defined
+by user space on user space.  The kernel on its own is never restricted.
 
-> +               return bpf_dynptr_from_skb_list[1];
+> 
+> > As an example, if a Landlock policies only allows MPTCP: socket(...,
+> > IPPROTO_MPTCP) should be allowed and any legitimate use of the returned
+> > socket (according to MPTCP) should be allowed, including TCP fallback.
+> > However, socket(..., IPPROTO_TCP/0), should only be allowed if TCP is
+> > explicitly allowed.  This means that we might end up with an MPTCP
+> > socket only using TCP, which is OK.
+> 
+> Would it not be confusing for the person who set the Landlock policies?
+> Especially for the ones who had policies to block TCP, and thought they
+> were "safe", no?
 
-The [0] and [1] stuff is quite error prone.
+There are two kind of users for Landlock:
+1. developers sandboxing their applications;
+2. sysadmins or security experts sandboxing execution environments (e.g.
+   with container runtimes, service managers, sandboxing tools...).
 
-> +
-> +       /* Program types with direct read + write access go here! */
-> +       case BPF_PROG_TYPE_SCHED_CLS:
-> +       case BPF_PROG_TYPE_SCHED_ACT:
-> +       case BPF_PROG_TYPE_XDP:
-> +       case BPF_PROG_TYPE_LWT_XMIT:
-> +       case BPF_PROG_TYPE_SK_SKB:
-> +       case BPF_PROG_TYPE_SK_MSG:
-> +       case BPF_PROG_TYPE_CGROUP_SOCKOPT:
-> +               return kfunc_id;
-> +
-> +       default:
-> +               break;
-> +       }
-> +       return bpf_dynptr_from_skb_list[1];
-> +}
-> +
->  static const struct btf_kfunc_id_set bpf_kfunc_set_skb =3D {
->         .owner =3D THIS_MODULE,
->         .set =3D &bpf_kfunc_check_set_skb,
-> +       .hidden_set =3D &bpf_kfunc_check_hidden_set_skb,
+It would make sense for developers to allow what their code request,
+whatever fallback the kernel might use instead.  In this case, they
+should not care about MPTCP being TCP with some flags underneath.
+Moreover, developers might not be aware of the system on which their
+application is running, and their concern should mainly be about
+compatibility.
 
-If I'm reading it correctly the hidden_set serves no additional purpose.
-It splits the set into two, but patch 4 just adds them together.
+For security or network experts, implying that allowing MPTCP means that
+fallback to TCP is allowed might be a bit surprising at first, but they
+should have the knowledge to know how MPTCP works underneath, including
+this fallback mechanism.  Moreover, this kind of users can (and should)
+also rely on system-wide security policies such as Netfilter, which
+give more control.
 
-> +       .remap =3D &bpf_kfunc_set_skb_remap,
+In a nutshell, Landlock should favor compatibility at the sandboxing/app
+layers and we should rely on system-wide security policies (taking into
+account the running system's context) for more fine-grained control.
+This compatibility behaviors should be explained in the Landlock
+documentation though.
 
-I'm not a fan of callbacks in general.
-The makes everything harder to follow.
+> 
+> If only TCP is blocked on the userspace side, simply using IPPROTO_MPTCP
+> instead of IPPROTO_TCP will allow any users to continue to talk with the
+> outside world. Also, it is easy to force apps to use IPPROTO_MPTCP
+> instead of IPPROTO_TCP, e.g. using 'mptcpize' which set LD_PRELOAD in
+> order to change the parameters of the socket() call.
+> 
+>    mptcpize run curl https://check.mptcp.dev
 
-For all these reasons I don't like this approach.
-This "generality" doesn't make it cleaner or easier to extend.
-For the patch 6... just repeat what specialize_kfunc()
-currently does for dynptr ?
+Landlock restrictions are enforced at a specific time for a process and
+all its future children.  LD_PRELOAD is not an issue because a security
+policy cannot be disabled once enforced.  If a sandboxed program uses
+MPTCP (because of LD_PRELOAD) instead of TCP, the previously enforced
+policy will be enforced the same (either to allow or deny the use of
+MPTCP).
 
+The only issue with LD_PRELOAD could be when e.g. curl sandboxes itself
+and denies itself the use of MPTCP, whereas mptcpize would "patch" the
+curl process to use MPTCP.  In this case, connections would failed.  A
+solution would be for mptcpize to "patch" the Landlock security as well,
+or for curl to be more permissive.  If the sandboxing happens before
+calling mptcpize, or if it is enforced by mptcpize, then it would work
+as expected.
 
-pw-bot: cr
+> 
+> > I guess this should be the same for other protocols, except if user
+> > space can explicitly transform a specific socket type to use an
+> > *arbitrary* protocol, but I think this is not possible.
+> I'm sorry, I don't know what is possible with the other ones. But again,
+> blocking both user and kernel sockets the same way might make more sense
+> here.
+> 
+> >>>>>>
+> >>>>>> You mean that users always rely on a plain TCP communication in the case
+> >>>>>> the connection of MPTCP multipath communication fails?
+> >>>>>
+> >>>>> Yes, that's the same TCP connection, just without extra bit to be able
+> >>>>> to use multiple TCP connections associated to the same MPTCP one.
+> >>>>
+> >>>> Indeed, so MPTCP communication should be restricted the same way as TCP.
+> >>>> AFAICS this should be intuitive for MPTCP users and it'll be better
+> >>>> to let userland define this dependency.
+> >>>
+> >>> Yes, I think that would make more sense.
+> >>>
+> >>> I guess we can look at MPTCP as TCP with extra features.
+> >>
+> >> Yeap
+> >>
+> >>>
+> >>> So if TCP is blocked, MPTCP should be blocked as well. (And eventually
+> >>> having the possibility to block only TCP but not MPTCP and the opposite,
+> >>> but that's a different topic: a possible new feature, but not a bug-fix)
+> >> What do you mean by the "bug fix"?
+> >>
+> >>>
+> >>>>>>>> * IPv6 -> IPv4 transformation for TCP and UDP sockets withon
+> >>>>>>>>      IPV6_ADDRFORM. Can be controlled with setsockopt() security hook.
+> > 
+> > According to the man page: "It is allowed only for IPv6 sockets that are
+> > connected and bound to a v4-mapped-on-v6 address."
+> > 
+> > This compatibility feature makes sense from user space point of view and
+> > should not result in an error because of Landlock.
+> > 
+> >>>>>>>>
+> >>>>>>>> As I said before, I wonder if user may want to use SMC or MPTCP and
+> >>>>>>>> deny
+> >>>>>>>> TCP communication, since he should rely on fallback transformation
+> >>>>>>>> during the connection in the common case. It may be unexpected for
+> >>>>>>>> connect(2) to fail during the fallback due to security politics.
+> >>>>>>>
+> >>>>>>> With MPTCP, fallbacks can happen at the beginning of a connection, when
+> >>>>>>> there is only one path. This is done after the userspace's
+> >>>>>>> connect(). If
+> > 
+> > A remaining question is then, can we repurpose an MPTCP socket that did
+> > fallback to TCP, to (re)connect to another destination (this time
+> > directly with TCP)?
+> 
+> If the socket was created with the IPPROTO_MPTCP protocol, the protocol
+> will not change after a disconnection. But still, with an MPTCP socket,
+> it is by design possible to connect to a TCP one no mater how the socket
+> was used before.
+
+OK, this makes sense if we see MPTCP as a superset of TCP.
+
+> 
+> > I guess this is possible.  If it is the case, I think it should be OK
+> > anyway.  That could be used by an attacker, but that should not give
+> > more access because of the MPTCP fallback mechanism anyway.  We should
+> > see MPTCP as a superset of TCP.  At the end, security policy is in the
+> > hands of user space.
+> 
+> As long as it is documented and not seen as a regression :)
+> 
+> To me, it sounds strange to have to add extra rules for MPTCP if TCP is
+> blocked, but that's certainly because I see MPTCP like it is seen on the
+> wire: as an extension to TCP, not as a different protocol.
+
+I understand.  For Landlock, I'd prefer to not add exceptions according
+to protocol implementations, but to define a security policy that could
+easily map to user space code.  The current proposal is to map the
+Landlock API to (a superset of) the socket(2) API, and then being able
+to specify restrictions on a domain, a type, or a protocol.  However, we
+could document and encourage users to only specify AF_INET/AF_INET6 +
+SOCK_STREAM but without specifying any protocol (not "0" but a wildcard
+"(u64)-1"), which would then implicitly allow TCP and MPTCP.
+
+> 
+> (...)
+> 
+> Cheers,
+> Matt
+> -- 
+> Sponsored by the NGI0 Core fund.
+> 
