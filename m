@@ -1,32 +1,33 @@
-Received: from smtp-bc0d.mail.infomaniak.ch (smtp-bc0d.mail.infomaniak.ch [45.157.188.13])
+Received: from smtp-bc0a.mail.infomaniak.ch (smtp-bc0a.mail.infomaniak.ch [45.157.188.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E840082488
-	for <linux-security-module@vger.kernel.org>; Fri, 31 Jan 2025 16:31:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A55F21EE7B6
+	for <linux-security-module@vger.kernel.org>; Fri, 31 Jan 2025 16:31:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738341083; cv=none; b=AydorgNCn8uw5WZ5TBFQa0ums5poRNI12OHPFI9+o9G8dqtAc/kZIqucHaY7m5hN581dgPoKV/+7HZnsXoLFrG7d678NbcwejBkyum0n1oFcie79llzYri3JwaVGU3RRMZM2Uov0yFFbfioXFRwC0rfJV0C4J9GDoVJlJZuxHDQ=
+	t=1738341085; cv=none; b=fltsbtqHGpacbx9O5j0UuFSKuaXR64rwPwjxvYTo6YOLID1bilh8jKVOaxI6RV2N/jFpT7dBAYktrTMcfAOvizA985Azww98B8Z8gUQADOBNVkT6sCUez3vN5iBax9uBmPVLPZChT2lw3iW/5hcahAxXLihSun15e9N6eTpHZpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738341083; c=relaxed/simple;
-	bh=AMCt9P6JkUkWuDlFOAwTYwzzwCm+3MqgVgNFik0QwFU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=i6NEqv8kHQGVDCOiZJGqhRRSaCVFxc9v8hFWkWUOPW9ffwaTQKe7NGBtD3OJsrJ5zjspm+YwiLk8bJzGDbeN/PTXlGYiTRoPwlTEyQQZziSsoXsSqFJxS+X9eW8V5PAVqfGb0gk1j1GSZe7CCwnG4TxbxXJsWcGOOzZBk8br2OE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=yreGICnE; arc=none smtp.client-ip=45.157.188.13
+	s=arc-20240116; t=1738341085; c=relaxed/simple;
+	bh=CWtakTwZyXHQafiz0C337/hADs9ZiKEKJMLWmN8W7tM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HvU94rIEj8kAsyHUVYx/Hm44pSWkAXtAD0+nHMNtwGOF36xu0nqzUbQ8MzXC6nvcx/zYhSdv6X+3kXWg7Xo44FK9MsUxYL1gHS9W2wq8B/tEfB857bMQE81pSI4WZoM/l1zcQyVHOT7tn/zWe+Lw9wgX5nYhL4LV7DXgRPu3uRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=ancQOelZ; arc=none smtp.client-ip=45.157.188.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="yreGICnE"
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Yl1bx1bbJz1gm;
-	Fri, 31 Jan 2025 17:31:09 +0100 (CET)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="ancQOelZ"
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Yl1c20nNVzVYy;
+	Fri, 31 Jan 2025 17:31:14 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1738341069;
-	bh=dvwAlD2qxUygC9tykM8ERL17YCg24jVBE/X4ecph5ks=;
-	h=From:To:Cc:Subject:Date:From;
-	b=yreGICnEccaYZchGm2dUyVnvEfZDCljZlzEuBAmyiOsofUFGa3mkfuzfDAdVLmEQI
-	 BEVMJKaBsRjLSQmHxlQxTYbS+1mrpRKyOgDgaqZKj7ODOarS4ePhyGJyWcN+Hx2U3H
-	 Po/sCi5uJvQWw0VUK5Mosy837+5yitE1YOVKlEZA=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Yl1bt6x7KzXSY;
-	Fri, 31 Jan 2025 17:31:06 +0100 (CET)
+	s=20191114; t=1738341074;
+	bh=Fr2fjcJEr5wg484u712ypsWI93gDcN01iygSsJ63A24=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ancQOelZvcRKx9siVuPaWTRIVYOrSY4+1Cr8rGukoipAU+2HlF7XAYD37lQIPw9EZ
+	 K+oeZKH20fPfT5fjjYCcHPR1Wizy0R5Mps7D5zzwriB85ukwNigpB9kKMOfiYZDShc
+	 rr5lCJaKppMdQ6KwB4zOKfEf5H87iUwv0viwG9W8=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Yl1c06fZNzfBw;
+	Fri, 31 Jan 2025 17:31:12 +0100 (CET)
 From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To: Eric Paris <eparis@redhat.com>,
 	Paul Moore <paul@paul-moore.com>,
@@ -56,9 +57,11 @@ Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	audit@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH v5 00/24] Landlock audit support
-Date: Fri, 31 Jan 2025 17:30:35 +0100
-Message-ID: <20250131163059.1139617-1-mic@digikod.net>
+Subject: [PATCH v5 02/24] landlock: Add unique ID generator
+Date: Fri, 31 Jan 2025 17:30:37 +0100
+Message-ID: <20250131163059.1139617-3-mic@digikod.net>
+In-Reply-To: <20250131163059.1139617-1-mic@digikod.net>
+References: <20250131163059.1139617-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -69,184 +72,408 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
 
-Hi,
+Landlock IDs can be generated to uniquely identify Landlock objects.
+For now, only Landlock domains get an ID at creation time.  These IDs
+map to immutable domain hierarchies.
 
-This patch series adds audit support to Landlock.
+Landlock IDs have important properties:
+- They are unique during the lifetime of the running system thanks to
+  the 64-bit values: at worse, 2^60 - 2*2^32 useful IDs.
+- They are always greater than 2^32 and must then be stored in 64-bit
+  integer types.
+- The initial ID (at boot time) is randomly picked between 2^32 and
+  2^33, which limits collisions in logs between different boots.
+- IDs are sequential, which enables users to order them.
+- IDs may not be consecutive but increase with a random 2^4 step, which
+  limits side channels.
 
-Logging denied requests is useful for different use cases:
-- sysadmins: to look for users' issues,
-- security experts: to detect attack attempts,
-- power users: to understand denials,
-- developers: to ease sandboxing support and get feedback from users.
+Such IDs can be exposed to unprivileged processes, even if it is not the
+case with this audit patch series.  The domain IDs will be useful for
+user space to identify sandboxes and get their properties.
 
-Because of its unprivileged nature, Landlock can compose standalone
-security policies (i.e. domains).  To make logs useful, they need to
-contain the most relevant Landlock domain that denied an action, and the
-reason of such denial.  This translates to the latest nested domain and
-the related blockers: missing access rights or other kind of
-restrictions.
+These Landlock IDs are more robust that other absolute kernel IDs such
+as pipe's inodes which rely on a shared global counter.
 
-# Changes from previous version
+For checkpoint/restore features (i.e. CRIU), we could easily implement a
+privileged interface (e.g. sysfs) to set the next ID counter.
 
-Remove the AUDIT_EXE_LANDLOCK_DENY audit rule and add 2 new
-landlock_restrict_self(2) flags to filter Landlock audit events, which
-makes 3 flags:
-- LANDLOCK_RESTRICT_SELF_QUIET: do not log any denied access because of
-  this new domain.
-- LANDLOCK_RESTRICT_SELF_QUIET_DESCENDENTS: do not log denied access
-  from child domains.
-- LANDLOCK_RESTRICT_SELF_LOG_CROSS_EXEC: log denied access for processes
-  resulting from an execve(2), which is not the case by default anymore.
+IDR/IDA are not used because we only need a bijection from Landlock
+objects to Landlock IDs, and we must not recycle IDs.  This enables us
+to identify all Landlock objects during the lifetime of the system (e.g.
+in logs), but not to access an object from an ID nor know if an ID is
+assigned.   Using a counter is simpler, it scales (i.e. avoids growing
+memory footprint), and it does not require locking.  We'll use proper
+file descriptors (with IDs used as inode numbers) to access Landlock
+objects.
 
-One patch was merged in mainline: 7ccbe076d987 ("lsm: Only build
-lsm_audit.c if CONFIG_SECURITY and CONFIG_AUDIT are set").
+Cc: Günther Noack <gnoack@google.com>
+Cc: Paul Moore <paul@paul-moore.com>
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+Link: https://lore.kernel.org/r/20250131163059.1139617-3-mic@digikod.net
+---
 
-# Design
+Changes since v3:
+- Rename landlock_get_id_range() helper to reflect the "range" of IDs.
+- Add docstring for landlock_get_id_range().
 
-Log records are created for any denied actions caused by a Landlock
-policy, which means that a well-sandboxed applications should not log
-anything except for unattended access requests that might be the result
-of attacks or bugs.
+Changes since v2:
+- Extend commit message.
+- Rename global_counter to next_id.
+- Fix KUnit's test __init types, spotted by kernel test robot.
 
-However, sandbox tools creating restricted environments could lead to
-abundant log entries because the sandboxed processes may not be aware of
-the related restrictions.  To avoid log spam, the
-landlock_restrict_self(2) syscall gets a new
-LANDLOCK_RESTRICT_SELF_QUIET flag to not log denials related to this
-specific domain.  Except for well-understood exceptions, this flag
-should not be set.  Indeed, applications sandboxing themselves should
-only try to bypass their own sandbox if they are compromised, which
-should ring a bell thanks to log events.
-
-When an action is denied, the related Landlock domain ID is specified.
-If this domain was not previously described in a log record, one is
-created.  This record contains the domain ID, its creation time, and
-informations about the process that enforced the restriction (at the
-time of the call to landlock_restrict_self): PID, UID, executable path,
-and name (comm).
-
-This new approach also brings building blocks for an upcoming
-unprivileged introspection interface.  The unique Landlock IDs will be
-useful to tie audit log entries to running processes, and to get
-properties of the related Landlock domains.  This will replace the
-previously logged ruleset properties.
-
-# Samples
-
-Here are two examples of log events (see serial numbers):
-
-$ LL_FS_RO=/ LL_FS_RW=/ LL_SCOPED=s LL_FORCE_LOG=1 ./sandboxer kill 1
-
-  type=LANDLOCK_ACCESS msg=audit(1729738800.268:30): domain=1a6fdc66f blockers=scope.signal opid=1 ocomm="systemd"
-  type=LANDLOCK_DOMAIN msg=audit(1729738800.268:30): domain=1a6fdc66f status=allocated mode=enforcing pid=286 uid=0 exe="/root/sandboxer" comm="sandboxer"
-  type=SYSCALL msg=audit(1729738800.268:30): arch=c000003e syscall=62 success=no exit=-1 [..] ppid=272 pid=286 auid=0 uid=0 gid=0 [...] comm="kill" [...]
-  type=PROCTITLE msg=audit(1729738800.268:30): proctitle=6B696C6C0031
-  type=LANDLOCK_DOMAIN msg=audit(1729738800.324:31): domain=1a6fdc66f status=deallocated denials=1
-
-$ LL_FS_RO=/ LL_FS_RW=/tmp LL_FORCE_LOG=1 ./sandboxer sh -c "echo > /etc/passwd"
-
-  type=LANDLOCK_ACCESS msg=audit(1729738800.221:33): domain=1a6fdc679 blockers=fs.write_file path="/dev/tty" dev="devtmpfs" ino=9
-  type=LANDLOCK_DOMAIN msg=audit(1729738800.221:33): domain=1a6fdc679 status=allocated mode=enforcing pid=289 uid=0 exe="/root/sandboxer" comm="sandboxer"
-  type=SYSCALL msg=audit(1729738800.221:33): arch=c000003e syscall=257 success=no exit=-13 [...] ppid=272 pid=289 auid=0 uid=0 gid=0 [...] comm="sh" [...]
-  type=PROCTITLE msg=audit(1729738800.221:33): proctitle=7368002D63006563686F203E202F6574632F706173737764
-  type=LANDLOCK_ACCESS msg=audit(1729738800.221:34): domain=1a6fdc679 blockers=fs.write_file path="/etc/passwd" dev="vda2" ino=143821
-  type=SYSCALL msg=audit(1729738800.221:34): arch=c000003e syscall=257 success=no exit=-13 [...] ppid=272 pid=289 auid=0 uid=0 gid=0 [...] comm="sh" [...]
-  type=PROCTITLE msg=audit(1729738800.221:34): proctitle=7368002D63006563686F203E202F6574632F706173737764
-  type=LANDLOCK_DOMAIN msg=audit(1729738800.261:35): domain=1a6fdc679 status=deallocated denials=2
-
-# Future changes
-
-I'll add more tests to check each kind of denied access.
-
-# Previous versions
-
-v4: https://lore.kernel.org/r/20250108154338.1129069-1-mic@digikod.net
-v3: https://lore.kernel.org/r/20241122143353.59367-1-mic@digikod.net
-v2: https://lore.kernel.org/r/20241022161009.982584-1-mic@digikod.net
-v1: https://lore.kernel.org/r/20230921061641.273654-1-mic@digikod.net
-
-Regards,
-
-Mickaël Salaün (24):
-  lsm: Add audit_log_lsm_data() helper
-  landlock: Add unique ID generator
-  landlock: Move domain hierarchy management
-  landlock: Prepare to use credential instead of domain for filesystem
-  landlock: Prepare to use credential instead of domain for network
-  landlock: Prepare to use credential instead of domain for scope
-  landlock: Prepare to use credential instead of domain for fowner
-  landlock: Identify domain execution crossing
-  landlock: Add AUDIT_LANDLOCK_ACCESS and log ptrace denials
-  landlock: Add AUDIT_LANDLOCK_DOMAIN and log domain status
-  landlock: Log mount-related denials
-  landlock: Log file-related denials
-  landlock: Log truncate and IOCTL denials
-  landlock: Log TCP bind and connect denials
-  landlock: Log scoped denials
-  landlock: Add LANDLOCK_RESTRICT_SELF_QUIET
-  landlock: Add LANDLOCK_RESTRICT_SELF_QUIET_SUBDOMAINS
-  landlock: Add LANDLOCK_RESTRICT_SELF_LOG_CROSS_EXEC
-  samples/landlock: Enable users to log sandbox denials
-  selftests/landlock: Extend tests for landlock_restrict_self()'s flags
-  selftests/landlock: Add tests for audit and
-    LANDLOCK_RESTRICT_SELF_QUIET
-  selftests/landlock: Test audit with restrict flags
-  selftests/landlock: Add audit tests for ptrace
-  landlock: Add audit documentation
-
- Documentation/admin-guide/LSM/index.rst       |   1 +
- Documentation/admin-guide/LSM/landlock.rst    | 157 ++++++
- Documentation/security/landlock.rst           |   7 +
- Documentation/userspace-api/landlock.rst      |   9 +-
- MAINTAINERS                                   |   1 +
- include/linux/lsm_audit.h                     |   8 +
- include/uapi/linux/audit.h                    |   4 +-
- include/uapi/linux/landlock.h                 |  31 ++
- samples/landlock/sandboxer.c                  |  37 +-
- security/landlock/.kunitconfig                |   2 +
- security/landlock/Makefile                    |   5 +
- security/landlock/access.h                    |  23 +
- security/landlock/audit.c                     | 513 ++++++++++++++++++
- security/landlock/audit.h                     |  77 +++
- security/landlock/cred.c                      |  26 +-
- security/landlock/cred.h                      |  65 +++
- security/landlock/domain.c                    | 264 +++++++++
- security/landlock/domain.h                    | 158 ++++++
- security/landlock/fs.c                        | 279 ++++++++--
- security/landlock/fs.h                        |  21 +-
- security/landlock/id.c                        | 249 +++++++++
- security/landlock/id.h                        |  25 +
- security/landlock/limits.h                    |   4 +
- security/landlock/net.c                       |  74 ++-
- security/landlock/ruleset.c                   |  33 +-
- security/landlock/ruleset.h                   |  47 +-
- security/landlock/setup.c                     |   2 +
- security/landlock/syscalls.c                  |  50 +-
- security/landlock/task.c                      | 232 ++++++--
- security/lsm_audit.c                          |  27 +-
- tools/testing/kunit/configs/all_tests.config  |   2 +
- tools/testing/selftests/landlock/Makefile     |   6 +-
- tools/testing/selftests/landlock/audit.h      | 358 ++++++++++++
- tools/testing/selftests/landlock/audit_test.c | 425 +++++++++++++++
- tools/testing/selftests/landlock/base_test.c  |  43 +-
- tools/testing/selftests/landlock/common.h     |   3 +
- tools/testing/selftests/landlock/config       |   1 +
- .../testing/selftests/landlock/ptrace_test.c  |  67 ++-
- .../selftests/landlock/wait-pipe-sandbox.c    | 131 +++++
- 39 files changed, 3244 insertions(+), 223 deletions(-)
- create mode 100644 Documentation/admin-guide/LSM/landlock.rst
- create mode 100644 security/landlock/audit.c
- create mode 100644 security/landlock/audit.h
- create mode 100644 security/landlock/domain.c
- create mode 100644 security/landlock/domain.h
+Changes since v1:
+- New patch.
+---
+ security/landlock/.kunitconfig               |   2 +
+ security/landlock/Makefile                   |   2 +
+ security/landlock/id.c                       | 249 +++++++++++++++++++
+ security/landlock/id.h                       |  25 ++
+ security/landlock/setup.c                    |   2 +
+ tools/testing/kunit/configs/all_tests.config |   2 +
+ 6 files changed, 282 insertions(+)
  create mode 100644 security/landlock/id.c
  create mode 100644 security/landlock/id.h
- create mode 100644 tools/testing/selftests/landlock/audit.h
- create mode 100644 tools/testing/selftests/landlock/audit_test.c
- create mode 100644 tools/testing/selftests/landlock/wait-pipe-sandbox.c
 
-
-base-commit: 69e858e0b8b2ea07759e995aa383e8780d9d140c
+diff --git a/security/landlock/.kunitconfig b/security/landlock/.kunitconfig
+index 03e119466604..f9423f01ac5b 100644
+--- a/security/landlock/.kunitconfig
++++ b/security/landlock/.kunitconfig
+@@ -1,4 +1,6 @@
++CONFIG_AUDIT=y
+ CONFIG_KUNIT=y
++CONFIG_NET=y
+ CONFIG_SECURITY=y
+ CONFIG_SECURITY_LANDLOCK=y
+ CONFIG_SECURITY_LANDLOCK_KUNIT_TEST=y
+diff --git a/security/landlock/Makefile b/security/landlock/Makefile
+index b4538b7cf7d2..e1777abbc413 100644
+--- a/security/landlock/Makefile
++++ b/security/landlock/Makefile
+@@ -4,3 +4,5 @@ landlock-y := setup.o syscalls.o object.o ruleset.o \
+ 	cred.o task.o fs.o
+ 
+ landlock-$(CONFIG_INET) += net.o
++
++landlock-$(CONFIG_AUDIT) += id.o
+diff --git a/security/landlock/id.c b/security/landlock/id.c
+new file mode 100644
+index 000000000000..b3c353d6e0cd
+--- /dev/null
++++ b/security/landlock/id.c
+@@ -0,0 +1,249 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Landlock LSM - Unique identification number generator
++ *
++ * Copyright © 2024-2025 Microsoft Corporation
++ */
++
++#include <kunit/test.h>
++#include <linux/atomic.h>
++#include <linux/random.h>
++#include <linux/spinlock.h>
++
++#include "common.h"
++#include "id.h"
++
++#define COUNTER_PRE_INIT 0
++
++static atomic64_t next_id = ATOMIC64_INIT(COUNTER_PRE_INIT);
++
++static void __init init_id(atomic64_t *const counter, const u32 random_32bits)
++{
++	u64 init;
++
++	/*
++	 * Ensures sure 64-bit values are always used by user space (or may
++	 * fail with -EOVERFLOW), and makes this testable.
++	 */
++	init = 1ULL << 32;
++
++	/*
++	 * Makes a large (2^32) boot-time value to limit ID collision in logs
++	 * from different boots, and to limit info leak about the number of
++	 * initially (relative to the reader) created elements (e.g. domains).
++	 */
++	init += random_32bits;
++
++	/* Sets first or ignores.  This will be the first ID. */
++	atomic64_cmpxchg(counter, COUNTER_PRE_INIT, init);
++}
++
++#ifdef CONFIG_SECURITY_LANDLOCK_KUNIT_TEST
++
++static void __init test_init_min(struct kunit *const test)
++{
++	atomic64_t counter = ATOMIC64_INIT(COUNTER_PRE_INIT);
++
++	init_id(&counter, 0);
++	KUNIT_EXPECT_EQ(test, atomic64_read(&counter), 1ULL + U32_MAX);
++}
++
++static void __init test_init_max(struct kunit *const test)
++{
++	atomic64_t counter = ATOMIC64_INIT(COUNTER_PRE_INIT);
++
++	init_id(&counter, ~0);
++	KUNIT_EXPECT_EQ(test, atomic64_read(&counter), 1 + (2ULL * U32_MAX));
++}
++
++static void __init test_init_once(struct kunit *const test)
++{
++	const u64 first_init = 1ULL + U32_MAX;
++	atomic64_t counter = ATOMIC64_INIT(COUNTER_PRE_INIT);
++
++	init_id(&counter, 0);
++	KUNIT_EXPECT_EQ(test, atomic64_read(&counter), first_init);
++
++	init_id(&counter, ~0);
++	KUNIT_EXPECT_EQ(test, atomic64_read(&counter), first_init);
++}
++
++#endif /* CONFIG_SECURITY_LANDLOCK_KUNIT_TEST */
++
++void __init landlock_init_id(void)
++{
++	return init_id(&next_id, get_random_u32());
++}
++
++/*
++ * It's not worth it to try to hide the monotonic counter because it can still
++ * be inferred (with N counter ranges), and if we are allowed to read the inode
++ * number we should also be allowed to read the time creation anyway, and it
++ * can be handy to store and sort domain IDs for user space.
++ *
++ * Returns the value of next_id and increment it to let some space for the next
++ * one.
++ */
++static u64 get_id_range(size_t number_of_ids, atomic64_t *const counter,
++			u8 random_4bits)
++{
++	u64 id, step;
++
++	/*
++	 * We should return at least 1 ID, and we may need a set of consecutive
++	 * ones (e.g. to generate a set of inodes).
++	 */
++	if (WARN_ON_ONCE(number_of_ids <= 0))
++		number_of_ids = 1;
++
++	/*
++	 * Blurs the next ID guess with 1/16 ratio.  We get 2^(64 - 4) -
++	 * (2 * 2^32), so a bit less than 2^60 available IDs, which should be
++	 * much more than enough considering the number of CPU cycles required
++	 * to get a new ID (e.g. a full landlock_restrict_self() call), and the
++	 * cost of draining all available IDs during the system's uptime.
++	 */
++	random_4bits = random_4bits % (1 << 4);
++	step = number_of_ids + random_4bits;
++
++	/* It is safe to cast a signed atomic to an unsigned value. */
++	id = atomic64_fetch_add(step, counter);
++
++	/* Warns if landlock_init_id() was not called. */
++	WARN_ON_ONCE(id == COUNTER_PRE_INIT);
++	return id;
++}
++
++#ifdef CONFIG_SECURITY_LANDLOCK_KUNIT_TEST
++
++static void test_range1_rand0(struct kunit *const test)
++{
++	atomic64_t counter;
++	u64 init;
++
++	init = get_random_u32();
++	atomic64_set(&counter, init);
++	KUNIT_EXPECT_EQ(test, get_id_range(1, &counter, 0), init);
++	KUNIT_EXPECT_EQ(
++		test, get_id_range(get_random_u8(), &counter, get_random_u8()),
++		init + 1);
++}
++
++static void test_range1_rand1(struct kunit *const test)
++{
++	atomic64_t counter;
++	u64 init;
++
++	init = get_random_u32();
++	atomic64_set(&counter, init);
++	KUNIT_EXPECT_EQ(test, get_id_range(1, &counter, 1), init);
++	KUNIT_EXPECT_EQ(
++		test, get_id_range(get_random_u8(), &counter, get_random_u8()),
++		init + 2);
++}
++
++static void test_range1_rand16(struct kunit *const test)
++{
++	atomic64_t counter;
++	u64 init;
++
++	init = get_random_u32();
++	atomic64_set(&counter, init);
++	KUNIT_EXPECT_EQ(test, get_id_range(1, &counter, 16), init);
++	KUNIT_EXPECT_EQ(
++		test, get_id_range(get_random_u8(), &counter, get_random_u8()),
++		init + 1);
++}
++
++static void test_range2_rand0(struct kunit *const test)
++{
++	atomic64_t counter;
++	u64 init;
++
++	init = get_random_u32();
++	atomic64_set(&counter, init);
++	KUNIT_EXPECT_EQ(test, get_id_range(2, &counter, 0), init);
++	KUNIT_EXPECT_EQ(
++		test, get_id_range(get_random_u8(), &counter, get_random_u8()),
++		init + 2);
++}
++
++static void test_range2_rand1(struct kunit *const test)
++{
++	atomic64_t counter;
++	u64 init;
++
++	init = get_random_u32();
++	atomic64_set(&counter, init);
++	KUNIT_EXPECT_EQ(test, get_id_range(2, &counter, 1), init);
++	KUNIT_EXPECT_EQ(
++		test, get_id_range(get_random_u8(), &counter, get_random_u8()),
++		init + 3);
++}
++
++static void test_range2_rand2(struct kunit *const test)
++{
++	atomic64_t counter;
++	u64 init;
++
++	init = get_random_u32();
++	atomic64_set(&counter, init);
++	KUNIT_EXPECT_EQ(test, get_id_range(2, &counter, 2), init);
++	KUNIT_EXPECT_EQ(
++		test, get_id_range(get_random_u8(), &counter, get_random_u8()),
++		init + 4);
++}
++
++static void test_range2_rand16(struct kunit *const test)
++{
++	atomic64_t counter;
++	u64 init;
++
++	init = get_random_u32();
++	atomic64_set(&counter, init);
++	KUNIT_EXPECT_EQ(test, get_id_range(2, &counter, 16), init);
++	KUNIT_EXPECT_EQ(
++		test, get_id_range(get_random_u8(), &counter, get_random_u8()),
++		init + 2);
++}
++
++#endif /* CONFIG_SECURITY_LANDLOCK_KUNIT_TEST */
++
++/**
++ * landlock_get_id_range - Get a range of unique IDs
++ *
++ * @number_of_ids: Number of IDs to hold.  Must be greater than one.
++ *
++ * Returns: The first ID in the range.
++ */
++u64 landlock_get_id_range(size_t number_of_ids)
++{
++	return get_id_range(number_of_ids, &next_id, get_random_u8());
++}
++
++#ifdef CONFIG_SECURITY_LANDLOCK_KUNIT_TEST
++
++static struct kunit_case __refdata test_cases[] = {
++	/* clang-format off */
++	KUNIT_CASE(test_init_min),
++	KUNIT_CASE(test_init_max),
++	KUNIT_CASE(test_init_once),
++	KUNIT_CASE(test_range1_rand0),
++	KUNIT_CASE(test_range1_rand1),
++	KUNIT_CASE(test_range1_rand16),
++	KUNIT_CASE(test_range2_rand0),
++	KUNIT_CASE(test_range2_rand1),
++	KUNIT_CASE(test_range2_rand2),
++	KUNIT_CASE(test_range2_rand16),
++	{}
++	/* clang-format on */
++};
++
++static struct kunit_suite test_suite = {
++	.name = "landlock_id",
++	.test_cases = test_cases,
++};
++
++kunit_test_init_section_suite(test_suite);
++
++#endif /* CONFIG_SECURITY_LANDLOCK_KUNIT_TEST */
+diff --git a/security/landlock/id.h b/security/landlock/id.h
+new file mode 100644
+index 000000000000..99f596123c19
+--- /dev/null
++++ b/security/landlock/id.h
+@@ -0,0 +1,25 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Landlock LSM - Unique identification number generator
++ *
++ * Copyright © 2024-2025 Microsoft Corporation
++ */
++
++#ifndef _SECURITY_LANDLOCK_ID_H
++#define _SECURITY_LANDLOCK_ID_H
++
++#ifdef CONFIG_AUDIT
++
++void __init landlock_init_id(void);
++
++u64 landlock_get_id_range(size_t number_of_ids);
++
++#else /* CONFIG_AUDIT */
++
++static inline void __init landlock_init_id(void)
++{
++}
++
++#endif /* CONFIG_AUDIT */
++
++#endif /* _SECURITY_LANDLOCK_ID_H */
+diff --git a/security/landlock/setup.c b/security/landlock/setup.c
+index 28519a45b11f..d297083efcb1 100644
+--- a/security/landlock/setup.c
++++ b/security/landlock/setup.c
+@@ -13,6 +13,7 @@
+ #include "common.h"
+ #include "cred.h"
+ #include "fs.h"
++#include "id.h"
+ #include "net.h"
+ #include "setup.h"
+ #include "task.h"
+@@ -33,6 +34,7 @@ const struct lsm_id landlock_lsmid = {
+ 
+ static int __init landlock_init(void)
+ {
++	landlock_init_id();
+ 	landlock_add_cred_hooks();
+ 	landlock_add_task_hooks();
+ 	landlock_add_fs_hooks();
+diff --git a/tools/testing/kunit/configs/all_tests.config b/tools/testing/kunit/configs/all_tests.config
+index b0049be00c70..cdd9782f9646 100644
+--- a/tools/testing/kunit/configs/all_tests.config
++++ b/tools/testing/kunit/configs/all_tests.config
+@@ -41,6 +41,8 @@ CONFIG_DAMON_PADDR=y
+ 
+ CONFIG_REGMAP_BUILD=y
+ 
++CONFIG_AUDIT=y
++
+ CONFIG_SECURITY=y
+ CONFIG_SECURITY_APPARMOR=y
+ CONFIG_SECURITY_LANDLOCK=y
 -- 
 2.48.1
 
