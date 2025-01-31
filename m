@@ -1,167 +1,113 @@
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 369251B87FA
-	for <linux-security-module@vger.kernel.org>; Fri, 31 Jan 2025 10:53:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC0A31BBBF4;
+	Fri, 31 Jan 2025 11:04:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738320828; cv=none; b=qRWhhqeUEoZzYJLDHDkK3Wsnofu7dl14btC95Kx2vjr2VdTPpp7KKKD2jed79Cf9ooxj3wmlTeJsQQvO/GHKpkSeEqZVh1+ozWrDhvfzbQH9rMMe7/DjVjDtlyY2ZZBFp/QKi5L7JosuTBupTTCRPRJuiXxFPeQiJbtF9oxbGVU=
+	t=1738321500; cv=none; b=B6WIMx/vXpe697SeSLGWdOfNhWG09j3yIkVnhFLYzNvXGJqbeJs/bELtlb3WSZSfNyfIblAy6KKAm7P5Er81rVSm5VmfO3POHbRuI71PAPrSZPThN0FEShMNVE1h3+fbG3mtWUNYAHUytKidEREBuIG4RzOtQZpI+VBHnaG/7DA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738320828; c=relaxed/simple;
-	bh=3hgXlMVhcYDMAsw2gDN/SsigYYRtx/3Q0mYMmRqGjPE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rNSXYiNjsAlRXftAT5A/il+PTF2K24DMFZ5dfDn+7YgsBe3t/1uD2dUfqq/H468BaH5M3qECDtRSZKIDtDZMNeJORHLGQe1sbsobxv9mzW9ttm+hZMF/CB69apiZaDgQrOayoOsrojHONCutgo/kATCZQYWWiIlNlO3Sb7booPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=N/qek0Av; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="N/qek0Av"
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-46783d44db0so16843371cf.1
-        for <linux-security-module@vger.kernel.org>; Fri, 31 Jan 2025 02:53:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1738320824; x=1738925624; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/Gz7xi3O43Ehum+iPQ9UUZJFWDqVki37iCW9g6uPJck=;
-        b=N/qek0Av7+ThM2uead7lhlFud0zEJBJUagVromze9POHfLyLSaESaINw8XPya2cN1i
-         5U5ygAaaPDs0A2b2m7z9T/0l4mGhXpHS1V6UM3+9MmrBhzeOVn8+StKA2VVTyYzJhBcK
-         giWQvA7QpwTU/ttu/AiS/jmYxgEjNDFCYtzWc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738320824; x=1738925624;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/Gz7xi3O43Ehum+iPQ9UUZJFWDqVki37iCW9g6uPJck=;
-        b=gCMl2DLuKXrZytfSI0/vdkN3tNo5tgXio21FSx9aXl/beVuOZ5gHRKHuwUvggyef8F
-         DAd6XYeHUfltyVNLiv33SoA35zPeZP1y3HyDNOKH0iPksTp0OMMuPAlJkvWg5QRr3z7S
-         ZhM1rIB9j8+uSvMg3wA8JhbDUpN1gwwESw5ZivRuo1aqcU1H/sofFuD9enr066GPwYek
-         OEniiKUpvPafqqzM7oMsz7H2KtcKCBhOXY5PuatP1PuNn9p0YEr1F8ZuFCgjb6q9CLtz
-         BMQbxqooDYijgEr1oO0WLdSBVmAK0zgVHdofNbneUpiRvaGZhZXyPjP9h/me9sq+0njy
-         a+9g==
-X-Forwarded-Encrypted: i=1; AJvYcCVLV/ZwYCN4qCoqfsEsGqhOrgSiUH+8Xj5lO2efFGWtysrWqKq1pgzzJ3YLh0Jsw9IRkoObxSOQUk+1OF8FikMisow9q14=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyL1GLG7RsAZLaXrprJpxWmXVyotfaCjbzFomCsJwD3XFSVns5b
-	t9MR4kXJHV/L6K0bpwQmEaMfSRB+LB8P/Mg+xcOTizVwel+bQ8YkZt3THBupN1iAk652HYpmMUs
-	OPa5FZT36MC8f49mDNLjkgI4hAvVDmy8lQAUbVQ==
-X-Gm-Gg: ASbGncvfMrtVoqQkpS+fLmd2N4qQKA47hMAC1Hpe/RBVCZsSwgb7KZ+FwcTohn1UtZr
-	sMY/Cjnni44oGU86GoHx4Tbn3Cn4xy0CrV5rBZdCCnmohVJ6xExYwSA8N/jNicrFLVM8uPxCjs5
-	4=
-X-Google-Smtp-Source: AGHT+IGQs7Swg2gHWVL9TEZAftmQSjqdSY2+1HDzTpdlHt+nPPJXWc2CGYdtUcQGvQVdbfa8zhiVpNeTdhC3/S9tzaE=
-X-Received: by 2002:a05:622a:4892:b0:466:a091:aa3f with SMTP id
- d75a77b69052e-46fd0bda639mr157983931cf.51.1738320823911; Fri, 31 Jan 2025
- 02:53:43 -0800 (PST)
+	s=arc-20240116; t=1738321500; c=relaxed/simple;
+	bh=74zBxMbZtOF6IzL5eYn1BT1WP7txMHcRiO9uVjesNWg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=VTNDZgPBzRAaoI3/yuYnBK05P1eRIoYq34s2UF9tjT7ABjvkyQe/IQkmMR/nqNswxyVrJvVWVi+ktezVgSavLUKnoOQg85DcXHIxkmWbYfRW2eksED/Lccu+nzc3YbG6rgcrRpDJG/lfGhdsVWMaSHXfbPclDmDgp4MAzROtgNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4YktJn3zRrz6G90H;
+	Fri, 31 Jan 2025 19:02:33 +0800 (CST)
+Received: from mscpeml500004.china.huawei.com (unknown [7.188.26.250])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5B5E21400DB;
+	Fri, 31 Jan 2025 19:04:55 +0800 (CST)
+Received: from [10.123.123.159] (10.123.123.159) by
+ mscpeml500004.china.huawei.com (7.188.26.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Fri, 31 Jan 2025 14:04:53 +0300
+Message-ID: <9f7f282b-95c2-8849-7b71-e77213558fd4@huawei-partners.com>
+Date: Fri, 31 Jan 2025 14:04:51 +0300
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250129165803.72138-1-mszeredi@redhat.com> <20250129165803.72138-3-mszeredi@redhat.com>
- <CAHC9VhTOmCjCSE2H0zwPOmpFopheexVb6jyovz92ZtpKtoVv6A@mail.gmail.com>
-In-Reply-To: <CAHC9VhTOmCjCSE2H0zwPOmpFopheexVb6jyovz92ZtpKtoVv6A@mail.gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Fri, 31 Jan 2025 11:53:33 +0100
-X-Gm-Features: AWEUYZnIaqZ2L8wnwxQyaF6vo-Q8TTduPo-90Aj83nHgX6WhuWWuru9KNDGRYME
-Message-ID: <CAJfpegu3N9T4cTQ5z+a_nsTpK1KFNDL-NduhMp15stB3O31=+Q@mail.gmail.com>
-Subject: Re: [PATCH v5 2/3] fanotify: notify on mount attach and detach
-To: Paul Moore <paul@paul-moore.com>
-Cc: Miklos Szeredi <mszeredi@redhat.com>, Christian Brauner <brauner@kernel.org>, 
-	linux-fsdevel@vger.kernel.org, Jan Kara <jack@suse.cz>, 
-	Amir Goldstein <amir73il@gmail.com>, Karel Zak <kzak@redhat.com>, 
-	Lennart Poettering <lennart@poettering.net>, Ian Kent <raven@themaw.net>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, selinux@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, selinux-refpolicy@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v2 1/8] landlock: Fix non-TCP sockets restriction
+Content-Language: ru
+To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+CC: Matthieu Baerts <matttbe@kernel.org>, <gnoack@google.com>,
+	<willemdebruijn.kernel@gmail.com>, <matthieu@buffet.re>,
+	<linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
+	<artem.kuzin@huawei.com>, <konstantin.meskhidze@huawei.com>, MPTCP Linux
+	<mptcp@lists.linux.dev>, <linux-nfs@vger.kernel.org>, Paul Moore
+	<paul@paul-moore.com>
+References: <20250124.gaegoo0Ayahn@digikod.net>
+ <2f970b00-7648-1865-858a-214c5c6af0c4@huawei-partners.com>
+ <20250127.Uph4aiph9jae@digikod.net>
+ <d3d589c3-a70b-fc6e-e1bb-d221833dfef5@huawei-partners.com>
+ <594263fc-f4e7-43ce-a613-d3f8ebb7f874@kernel.org>
+ <f6e72e71-c5ed-8a9c-f33e-f190a47b8c27@huawei-partners.com>
+ <2e727df0-c981-4e0c-8d0d-09109cf27d6f@kernel.org>
+ <103de503-be0e-2eb2-b6f0-88567d765148@huawei-partners.com>
+ <1d1d58b3-2516-4fc8-9f9a-b10604bbe05b@kernel.org>
+ <b9823ff1-2f66-3992-b389-b8e631ec03ba@huawei-partners.com>
+ <20250129.Oo1xou8ieche@digikod.net>
+From: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+In-Reply-To: <20250129.Oo1xou8ieche@digikod.net>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: lhrpeml100012.china.huawei.com (7.191.174.184) To
+ mscpeml500004.china.huawei.com (7.188.26.250)
 
-On Thu, 30 Jan 2025 at 22:06, Paul Moore <paul@paul-moore.com> wrote:
->
-> On Wed, Jan 29, 2025 at 11:58=E2=80=AFAM Miklos Szeredi <mszeredi@redhat.=
-com> wrote:
-> >
-> > Add notifications for attaching and detaching mounts.  The following ne=
-w
-> > event masks are added:
-> >
-> >   FAN_MNT_ATTACH  - Mount was attached
-> >   FAN_MNT_DETACH  - Mount was detached
-> >
-> > If a mount is moved, then the event is reported with (FAN_MNT_ATTACH |
-> > FAN_MNT_DETACH).
-> >
-> > These events add an info record of type FAN_EVENT_INFO_TYPE_MNT contain=
-ing
-> > these fields identifying the affected mounts:
-> >
-> >   __u64 mnt_id    - the ID of the mount (see statmount(2))
-> >
-> > FAN_REPORT_MNT must be supplied to fanotify_init() to receive these eve=
-nts
-> > and no other type of event can be received with this report type.
-> >
-> > Marks are added with FAN_MARK_MNTNS, which records the mount namespace =
-from
-> > an nsfs file (e.g. /proc/self/ns/mnt).
-> >
-> > Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-> > ---
-> >  fs/mount.h                         |  2 +
-> >  fs/namespace.c                     | 14 +++--
-> >  fs/notify/fanotify/fanotify.c      | 38 +++++++++++--
-> >  fs/notify/fanotify/fanotify.h      | 18 +++++++
-> >  fs/notify/fanotify/fanotify_user.c | 87 +++++++++++++++++++++++++-----
-> >  fs/notify/fdinfo.c                 |  5 ++
-> >  include/linux/fanotify.h           | 12 +++--
-> >  include/uapi/linux/fanotify.h      | 10 ++++
-> >  security/selinux/hooks.c           |  4 ++
-> >  9 files changed, 167 insertions(+), 23 deletions(-)
->
-> ...
->
-> > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> > index 7b867dfec88b..06d073eab53c 100644
-> > --- a/security/selinux/hooks.c
-> > +++ b/security/selinux/hooks.c
-> > @@ -3395,6 +3395,10 @@ static int selinux_path_notify(const struct path=
- *path, u64 mask,
-> >         case FSNOTIFY_OBJ_TYPE_INODE:
-> >                 perm =3D FILE__WATCH;
-> >                 break;
-> > +       case FSNOTIFY_OBJ_TYPE_MNTNS:
-> > +               /* Maybe introduce FILE__WATCH_MOUNTNS? */
-> > +               perm =3D FILE__WATCH_MOUNT;
-> > +               break;
-> >         default:
-> >                 return -EINVAL;
-> >         }
->
-> Ignoring for a moment that this patch was merged without an explicit
-> ACK for the SELinux changes, let's talk about these SELinux changes
-> ...
->
-> I understand that you went with the "simpler version" because you
-> didn't believe the discussion was converging, which is fair, however,
-> I believe Daniel's argument is convincing enough to warrant the new
-> permission.
+On 1/29/2025 5:51 PM, Mickaël Salaün wrote:>>>>>>> On 28/01/2025 11:56, 
+Mikhail Ivanov wrote:
 
-Fine, I'll work on this.
+[...]
 
->  Yes, it has taken me approximately two days to find the
-> time to revisit this topic and reply with some clarity, but personally
-> I feel like that is not an unreasonable period of time, especially for
-> a new feature discussion occurring during the merge window.
+>>>>>>>> * IPv6 -> IPv4 transformation for TCP and UDP sockets withon
+>>>>>>>>       IPV6_ADDRFORM. Can be controlled with setsockopt() security hook.
+> 
+> According to the man page: "It is allowed only for IPv6 sockets that are
+> connected and bound to a v4-mapped-on-v6 address."
+> 
+> This compatibility feature makes sense from user space point of view and
+> should not result in an error because of Landlock.
 
-Definitely not.
+IPV6_ADDRFORM is useful to pass IPv6 sockets binded and connected to
+v4-mapped-on-v6 addresses to pure IPv4 applications [1].
 
-Christian is definitely very responsive and quick to queue things up,
-and that can have drawbacks.   In this he made it clear that he wants
-to get this queued ASAP regardless of whether there's decision on the
-SELinux side or not.
+I just realized we first need to consider restriction of IPv4 access
+for IPv4/v6 dual stack. It's possible to communicate with IPv4 peer
+using IPv6 socket (on client or server side) that is mapped on
+v4-mapped-on-v6 address (RFC 3493 [2]). If socket access rights provide
+separate control over IPv6 and IPv4, v4-mapped-on-v6 looks like possible
+bypass of IPv4 restriction and violation of the least astonishment
+principle.
 
-What I think might be a good thing if Christian could record
-conditional NAKs such as this one from you, that need to be worked on
-before sending a feature upstream.  That would prevent wrong code
-being sent upstream due to lack of attention.
+This can be controlled with IPV6_V6ONLY socket option or with
+net.ipv6.bindv6only sysctl knob. Restriction with sysctl knob is applied
+globally and may break some dual-stack dependent applications.
 
-Thanks,
-Miklos
+I'm currently trying to collect real-world examples in which user may
+want to allow IPv6-only communication in a sandboxed environment.
+Theoretically, this can be seen as unprivileged reduction of attack
+surface for IPv6-only programs in dual-stack network (disallow to open
+IPv4 connections and communicate with loopback via IPv4 stack).
+
+Earlier, it was also discussed about possible security issues on the
+userland side related to different address representation and address
+filtering [3]. But, I don't really think these are the good examples for
+the motivation.
+
+If the v4-mapped-on-v6 addressing control is deemed reasonable, it
+should be better implemented with a new access right for
+LANDLOCK_RULE_NET_PORT rather than a part of socket creation control.
+
+[1] https://man7.org/linux/man-pages/man7/ipv6.7.html
+[2] https://datatracker.ietf.org/doc/html/rfc3493#section-3.7
+[3] https://lwn.net/Articles/688462/
+
+
+
