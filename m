@@ -1,205 +1,172 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+Received: from smtp-8fa9.mail.infomaniak.ch (smtp-8fa9.mail.infomaniak.ch [83.166.143.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 670C41F4E5C;
-	Fri, 31 Jan 2025 20:29:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D65814659D
+	for <linux-security-module@vger.kernel.org>; Sat,  1 Feb 2025 10:28:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738355355; cv=none; b=XoBqdN8DSHQx0OhA4Ma3qvJ4EkFH5u/Pktcb/hZyvvnS+CTpfSupToYln1dyfizhTXhIUyiiaDgjor9LPEQlLpjnyUU+642QvLv3gSWPp/TZzMyF0BucLw20LJY5CQp7Pna2HhDqEbNjsVMtyVvsOqH9YFWOXY1KAfJ9G/B/vsE=
+	t=1738405724; cv=none; b=bcptG8Xun+Tra+uQzPCJ15OTQRNpxNBAA36+Atuj7eCHbGAoYTbjYYlgf93S8K8Umw4fsMwtXJ7Oa64wML77HBeZ322XNcCGW+EcwTjaz0+hH80xwf4OFaY5ykwmHBuEOt6y8bXSNyIX2gZ5h5AY6sa58kyr2s0x9wLCNKviSUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738355355; c=relaxed/simple;
-	bh=RSCX9rg3pxhLk0LNvz+k/K/VMw4qWttV4lsGMD5jWLw=;
+	s=arc-20240116; t=1738405724; c=relaxed/simple;
+	bh=J1ifWIaykQ9jC7m+oybw8a6NDp1KR2w9PhpIWhP61VU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l3wiwNI5cCwgBObVCVUmCFTBUhP9L6OQ3RIQDDJ9bZh3mvqIGUk4hopNpbbdSsfzo0e299UMH2mnKsPQeulYpcruGqDSRvnxmvt/kmW1iKNFxm3ZE3xRNLgWpvQFqq1sZeld02eC0avo7Xe87O6eBcIJ8NVxYFxRQtUNgrCd05A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eb2py1lw; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=SehcXp/uj3Mpg/1xYoMGS3ExgR375AvWG5vA5NgvAiZMOgQY7s83AfAc9j/7WmPmJY7nF/l5Xt3JiN81sw0G0Hc1dnFi+WKxT43JOZpkZoBUzJK2+4dp0lWhdXNEhOVQqVTqj5QBayJFaojOXZS4QpYJmVdRCe8LQ2HXhGb+diE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=1t72USoB; arc=none smtp.client-ip=83.166.143.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eb2py1lw"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1738355353; x=1769891353;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=RSCX9rg3pxhLk0LNvz+k/K/VMw4qWttV4lsGMD5jWLw=;
-  b=eb2py1lwvd6D7d4nw7UOx+enir8iDreHoM3lOqb2crFbILyzQj27Dm1O
-   EY+4rRB0lLfZxpJcEdLeRnGaWiK1XQk17Ed7fWwS6eqFnCPP1ym0UH3fV
-   AzAzOUQBc9Jr406Uxg5zjYewpHi5gDfznjMUn4TcSgemC9mP3EgZPbs3s
-   qegfIk9FuAWJQvpbQ7ktfBnO7HVtmgt628mPUR+VwPQyHSGeZaLacOfSH
-   fH7cJMVpCBjbYgXrsdPFRtjgIgNOK5ca/Zmwmb8EK1pukfeT/6M++cQ3V
-   OzR8Crlof8dULAO4kbvIRCSXq07VdclV17pDE8gmT66HhHJCV5ODSnMVQ
-   Q==;
-X-CSE-ConnectionGUID: mZnDs7BnS5SZQzpPk6RHTw==
-X-CSE-MsgGUID: OJFMXltfSbqgNjqyRMoVNA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11332"; a="49193198"
-X-IronPort-AV: E=Sophos;i="6.13,249,1732608000"; 
-   d="scan'208";a="49193198"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jan 2025 12:29:12 -0800
-X-CSE-ConnectionGUID: iOJJo52WQAGwXT5CZt+awQ==
-X-CSE-MsgGUID: XKt/0b3EST+OplvXHxy8FQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="113740721"
-Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 31 Jan 2025 12:29:06 -0800
-Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tdxdQ-000n5t-1e;
-	Fri, 31 Jan 2025 20:29:04 +0000
-Date: Sat, 1 Feb 2025 04:28:07 +0800
-From: kernel test robot <lkp@intel.com>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	Eric Paris <eparis@redhat.com>, Paul Moore <paul@paul-moore.com>,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	"Serge E . Hallyn" <serge@hallyn.com>
-Cc: oe-kbuild-all@lists.linux.dev,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	Ben Scarlato <akhna@google.com>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	Charles Zaffery <czaffery@roblox.com>,
-	Daniel Burgener <dburgener@linux.microsoft.com>,
-	Francis Laniel <flaniel@linux.microsoft.com>,
-	James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
-	Jeff Xu <jeffxu@google.com>,
-	Jorge Lucangeli Obes <jorgelo@google.com>,
-	Kees Cook <kees@kernel.org>,
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-	Matt Bobrowski <mattbobrowski@google.com>,
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
-	Phil Sutter <phil@nwl.cc>,
-	Praveen K Paladugu <prapal@linux.microsoft.com>,
-	Robert Salvet <robert.salvet@roblox.com>,
-	Shervin Oloumi <enlightened@google.com>, Song Liu <song@kernel.org>,
-	Tahera Fahimi <fahimitahera@gmail.com>,
-	Tyler Hicks <code@tyhicks.com>, audit@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v5 17/24] landlock: Add
- LANDLOCK_RESTRICT_SELF_QUIET_SUBDOMAINS
-Message-ID: <202502010411.lOcXpnOG-lkp@intel.com>
-References: <20250131163059.1139617-18-mic@digikod.net>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="1t72USoB"
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4YlTW91NxzzW6L;
+	Sat,  1 Feb 2025 11:28:37 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1738405717;
+	bh=iqJ2oClAM+gYcuSNYA8A87BSAID+U0YtomCWA9x9Zvk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=1t72USoBVp26UEn8RYGT/IfO1Zc6o27OHh9AEBL+AH8wW8t3yG5OMYwhiEt7slkwE
+	 xjzEHk5pGPAE+Dv/E5mxPKvrM2gOGm3VOx0xwd4P1WAM36XBTmmxSAP2LhbCnml1Yy
+	 neO+1u9P9YbEs/x/HDeZcRzInUY4GNUgtcMAoL7w=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4YlTW71g9Kz6gg;
+	Sat,  1 Feb 2025 11:28:35 +0100 (CET)
+Date: Sat, 1 Feb 2025 11:28:28 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Christian Brauner <brauner@kernel.org>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Charles Zaffery <czaffery@roblox.com>, 
+	Daniel Burgener <dburgener@linux.microsoft.com>, Francis Laniel <flaniel@linux.microsoft.com>, 
+	James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Kees Cook <kees@kernel.org>, Luca Boccassi <luca.boccassi@gmail.com>, 
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, Praveen K Paladugu <prapal@linux.microsoft.com>, 
+	Robert Salvet <robert.salvet@roblox.com>, Shervin Oloumi <enlightened@google.com>, 
+	Tyler Hicks <code@tyhicks.com>, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [RFC PATCH v1 2/3] pidfd: Extend PIDFD_GET_INFO with
+ PIDFD_INFO_LANDLOCK_*_DOMAIN
+Message-ID: <20250201.quaizoh3taeV@digikod.net>
+References: <20250131163447.1140564-1-mic@digikod.net>
+ <20250131163447.1140564-3-mic@digikod.net>
+ <CAHC9VhS=mMH9s2KUc2kSK7pW1yG8RB58hyJjW5oWsCK=i-1PdA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250131163059.1139617-18-mic@digikod.net>
+In-Reply-To: <CAHC9VhS=mMH9s2KUc2kSK7pW1yG8RB58hyJjW5oWsCK=i-1PdA@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-Hi Micka�l,
+On Fri, Jan 31, 2025 at 02:02:49PM -0500, Paul Moore wrote:
+> On Fri, Jan 31, 2025 at 11:43 AM Mickaël Salaün <mic@digikod.net> wrote:
+> >
+> > Because Landlock enables users to create nested sandboxes (i.e.
+> > domains), we might need to identify the domain with all restrictions
+> > (latest), or the domain we created (i.e. closest domain).  Indeed,
+> > because any process can create its own domain, the latest domain may not
+> > be known by the requester.
+> >
+> > The PIDFD_INFO_LANDLOCK_LAST_DOMAIN flag enables user space to get the
+> > latest (i.e. most nested) Landlock domain ID related to a sandboxed
+> > task, if any.  The domain ID is set in the pidfd_info's
+> > landlock_last_domain field according to the related mask.
+> >
+> > The PIDFD_INFO_LANDLOCK_FIRST_DOMAIN flag enables user space to get the
+> > closest (i.e. first hierarchy relative to the pidfd's credentials)
+> > Landlock domain ID related to a sandboxed task, if any.  The domain ID
+> > is set in the pidfd_info's landlock_first_domain field according to the
+> > related mask.
+> >
+> > It is only allowed to get information about a Landlock domain if the
+> > task's domain that created the pidfd is a parent of the PID's domain.
+> > Following the object-capability model, the pidfd's credentials are used
+> > instead of the caller's credentials.  This makes this command
+> > idenmpotent wrt the referenced process's state.
+> >
+> > If Landlock is not supported or if access to this information is denied,
+> > then the IOCTL does not set the PIDFD_INFO_LANDLOCK_*_DOMAIN flag in the
+> > returned mask.
+> >
+> > If PIDFD_INFO_LANDLOCK_LAST_DOMAIN or PIDFD_INFO_LANDLOCK_FIRST_DOMAIN
+> > is specified but the provided struct pidfd_info is not large enough to
+> > contain the related field, then -EINVAL is returned.
+> >
+> > Cc: Christian Brauner <brauner@kernel.org>
+> > Cc: Günther Noack <gnoack@google.com>
+> > Cc: Luca Boccassi <luca.boccassi@gmail.com>
+> > Cc: Praveen K Paladugu <prapal@linux.microsoft.com>
+> > Closes: https://github.com/landlock-lsm/linux/issues/26
+> > Signed-off-by: Mickaël Salaün <mic@digikod.net>
+> > Link: https://lore.kernel.org/r/20250131163447.1140564-3-mic@digikod.net
+> > ---
+> >  fs/pidfs.c                 | 24 ++++++++++++++++++++++--
+> >  include/uapi/linux/pidfd.h |  4 ++++
+> >  2 files changed, 26 insertions(+), 2 deletions(-)
+> 
+> While there are exceptions, mostly for legacy things, we try very hard
+> to avoid having the kernel call directly into a specific LSM,
+> preferring to use LSM interfaces, both so that all LSMs can benefit
+> from the change and also so that we can avoid having a lot of very
+> similar, but LSM-specific, calls in various parts in the kernel.
 
-kernel test robot noticed the following build warnings:
+Making life easier for LSMs by sharing common code is a good thing, but
+making life easier for all kernel components by sharing common code is
+even better.  The PIDFD_GET_INFO IOCTL was design to be very flexible,
+and it follows the principle of "pay for what you request" thanks to the
+"mask" bitfield.
 
-[auto build test WARNING on 69e858e0b8b2ea07759e995aa383e8780d9d140c]
+Users specify a set of properties they want, and the kernel returns
+these properties if they are supported and allowed.  Each of this
+property is well-specified and has a clear semantic.  This patch series
+implements two Landlock properties, each clearly identified and
+independent.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Micka-l-Sala-n/lsm-Add-audit_log_lsm_data-helper/20250201-004434
-base:   69e858e0b8b2ea07759e995aa383e8780d9d140c
-patch link:    https://lore.kernel.org/r/20250131163059.1139617-18-mic%40digikod.net
-patch subject: [PATCH v5 17/24] landlock: Add LANDLOCK_RESTRICT_SELF_QUIET_SUBDOMAINS
-config: x86_64-buildonly-randconfig-002-20250201 (https://download.01.org/0day-ci/archive/20250201/202502010411.lOcXpnOG-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250201/202502010411.lOcXpnOG-lkp@intel.com/reproduce)
+One important difference between the current LSMs attributes and these
+two new Landlock properties, is that the Landlock domain IDs are u64
+values instead of strings.  This makes the implementation quite forward
+and it fits well with how PIDFD_GET_INFO currently works, so there is no
+need for a new (PIDFD_GET_SECURITY) IOCTL handling complex data
+structure composing a set of strings such as what is required for
+current LSMs' attributes.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502010411.lOcXpnOG-lkp@intel.com/
+> 
+> There is an effort, albeit a slowly moving effort due to interrupts,
+> to add LSM support via a PIDFS_GET_SECURITY API:
+> 
+> https://lore.kernel.org/linux-security-module/CAHC9VhRV3KcNGRw6_c-97G6w=HKNuEQoUGrfKhsQdWywzDDnBQ@mail.gmail.com/
 
-All warnings (new ones prefixed by >>):
+This effort is good, but it is a separate effort which is independent
+from this patch series.  This will be useful for LSMs (or hopefully
+other parts of the kernel as well) that deal with string-based
+attributes.
 
-   security/landlock/syscalls.c: In function '__do_sys_landlock_restrict_self':
->> security/landlock/syscalls.c:469:24: warning: variable 'is_quiet_subdomains' set but not used [-Wunused-but-set-variable]
-     469 |         bool is_quiet, is_quiet_subdomains,
-         |                        ^~~~~~~~~~~~~~~~~~~
-   security/landlock/syscalls.c:469:14: warning: variable 'is_quiet' set but not used [-Wunused-but-set-variable]
-     469 |         bool is_quiet, is_quiet_subdomains,
-         |              ^~~~~~~~
+Even with a common hook and data structure, any LSM need to implement
+their own attribute management.  This patch series just makes a call to
+the Landlock implementation the same way UID, cgroupid, and other
+properties are retrieved.  There is no need for a wrapper interface for
+simple data types that are already handled by PIDFD_GET_INFO.
 
+Simple property types should all be queryable with the PIDFD_GET_INFO
+IOCTL (compared to a dedicated LSM's PIDFD_GET_SECURITY IOCTL), which
+can batch queries, making it more efficient and easier to implement for
+user space.
 
-vim +/is_quiet_subdomains +469 security/landlock/syscalls.c
-
-   435	
-   436	/**
-   437	 * sys_landlock_restrict_self - Enforce a ruleset on the calling thread
-   438	 *
-   439	 * @ruleset_fd: File descriptor tied to the ruleset to merge with the target.
-   440	 * @flags: Supported values:
-   441	 *
-   442	 * - %LANDLOCK_RESTRICT_SELF_QUIET
-   443	 * - %LANDLOCK_RESTRICT_SELF_QUIET_SUBDOMAINS
-   444	 *
-   445	 * This system call enables to enforce a Landlock ruleset on the current
-   446	 * thread.  Enforcing a ruleset requires that the task has %CAP_SYS_ADMIN in its
-   447	 * namespace or is running with no_new_privs.  This avoids scenarios where
-   448	 * unprivileged tasks can affect the behavior of privileged children.
-   449	 *
-   450	 * Possible returned errors are:
-   451	 *
-   452	 * - %EOPNOTSUPP: Landlock is supported by the kernel but disabled at boot time;
-   453	 * - %EINVAL: @flags contains an unknown bit.
-   454	 * - %EBADF: @ruleset_fd is not a file descriptor for the current thread;
-   455	 * - %EBADFD: @ruleset_fd is not a ruleset file descriptor;
-   456	 * - %EPERM: @ruleset_fd has no read access to the underlying ruleset, or the
-   457	 *   current thread is not running with no_new_privs, or it doesn't have
-   458	 *   %CAP_SYS_ADMIN in its namespace.
-   459	 * - %E2BIG: The maximum number of stacked rulesets is reached for the current
-   460	 *   thread.
-   461	 */
-   462	SYSCALL_DEFINE2(landlock_restrict_self, const int, ruleset_fd, const __u32,
-   463			flags)
-   464	{
-   465		struct landlock_ruleset *new_dom,
-   466			*ruleset __free(landlock_put_ruleset) = NULL;
-   467		struct cred *new_cred;
-   468		struct landlock_cred_security *new_llcred;
- > 469		bool is_quiet, is_quiet_subdomains,
-   470			__maybe_unused inherits_quiet_subdomains;
-   471	
-   472		if (!is_initialized())
-   473			return -EOPNOTSUPP;
-   474	
-   475		/*
-   476		 * Similar checks as for seccomp(2), except that an -EPERM may be
-   477		 * returned.
-   478		 */
-   479		if (!task_no_new_privs(current) &&
-   480		    !ns_capable_noaudit(current_user_ns(), CAP_SYS_ADMIN))
-   481			return -EPERM;
-   482	
-   483		if ((flags | LANDLOCK_MASK_RESTRICT_SELF) !=
-   484		    LANDLOCK_MASK_RESTRICT_SELF)
-   485			return -EINVAL;
-   486	
-   487		is_quiet = !!(flags & LANDLOCK_RESTRICT_SELF_QUIET);
-   488		is_quiet_subdomains =
-   489			!!(flags & LANDLOCK_RESTRICT_SELF_QUIET_SUBDOMAINS);
-   490	
-   491		/* Gets and checks the ruleset. */
-   492		ruleset = get_ruleset_from_fd(ruleset_fd, FMODE_CAN_READ);
-   493		if (IS_ERR(ruleset))
-   494			return PTR_ERR(ruleset);
-   495	
-   496		/* Prepares new credentials. */
-   497		new_cred = prepare_creds();
-   498		if (!new_cred)
-   499			return -ENOMEM;
-   500	
-   501		new_llcred = landlock_cred(new_cred);
-   502	
-   503		/*
-   504		 * There is no possible race condition while copying and manipulating
-   505		 * the current credentials because they are dedicated per thread.
-   506		 */
-   507		new_dom = landlock_merge_ruleset(new_llcred->domain, ruleset);
-   508		if (IS_ERR(new_dom)) {
-   509			abort_creds(new_cred);
-   510			return PTR_ERR(new_dom);
-   511		}
-   512	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> 
+> I don't see any reason why we couldn't support Landlock's domain info
+> as part of that, the lsm_ctx struct was created to support various
+> different LSM contexts/attributes.  You could either add multiple
+> lsm_ctx array entries for Landlock, one for each of the domain IDs, or
+> you could place all of the domain IDs in an expanded lsm_ctx.
+> Remember the lsm_ctx->ctx field can hold binary blobs and/or you can
+> expand past the end of lsm_ctx->ctx so long as lsm_ctx->{len,ctx_len}
+> are set accordingly.
+> 
+> If you want to work on the PIDFS_GET_SECURITY patch(set) as a means to
+> add Landlock domain ID support, I think that would be great.  Luca
+> provided a basic skeleton in the link above, and I expect you would
+> have no issue adding the missing LSM bits.
+> 
+> -- 
+> paul-moore.com
+> 
