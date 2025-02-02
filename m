@@ -1,170 +1,180 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3C351D63D2;
-	Sun,  2 Feb 2025 11:11:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 575251D514A;
+	Sun,  2 Feb 2025 12:51:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738494701; cv=none; b=p+QfDG9tNXjeZ1EYh8uwtFnN2B196IWHNpOiBV0jNMt4kv7HMpXfeUtGYSzOLbmcpo2Q+ToFbLsBUS2cCtymdIIX70YPWPfH6/M5qKugjzRwqSkcyjaeyMy8HFHzaIfNBJx066FdchPEWAg+RHDhMabSKbURL1OSMr4Uk91jPv8=
+	t=1738500718; cv=none; b=IxJu3l0FW8AhjbKEyEplgtnT677iP8j/KQGJmoQfK8QXpU/Tc6qP1g2Gfy0DBR6Q/fgvsBaHony9lActY7IqbqMqVONGin6ePjTo5Zj8LlHLD1dwmQdUMcWvoihtGucGmsXanJVRcXzsclxMI4T9VrJDUZfpksArNyVv6j+hmMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738494701; c=relaxed/simple;
-	bh=jz3MqgGH5E5HKEsnRKw2zBT4wqE3A51XYO9CnVtLyy0=;
+	s=arc-20240116; t=1738500718; c=relaxed/simple;
+	bh=kt9T+CakiobIyIASlhCXRcQekzRSmS1sWACCX2SPCeo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r0Yq61HrkKV+CmFpfsloZHXdHxQH16+i/Bq5JBlI0tzDGlTCzyKAn+DOUOPsWuKhPE386unufE+B45jZQaDcdUnm09deZZrxy1/aP9ey97esQhiBgh+jjby3Q0VBuLwTm7PazJtr5EqVD91f/JHAIhB7cuj0+mPfQ8qakx1sOWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ug7MiW4r; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=sUD3S0PgUK1ZJHZDmqtKhcR8OitXxxeHopfcUz4/yYSMJYrjZxuhuQ2nhpPWONcvAmWJA3HJQSP/AL6r089iZUoDYAlsVRmVZ8sSuMp+h/1XsXFwMJHzI0RvkwdGvKhbBOSTY5Kw1LXA28bjKYLjZ6Bx5PaFe3NpcWbJ0nSHds4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xh1nHj7X; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ug7MiW4r"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1738494698; x=1770030698;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=jz3MqgGH5E5HKEsnRKw2zBT4wqE3A51XYO9CnVtLyy0=;
-  b=Ug7MiW4r8xzqm2q1ORyarsLVyyZXhPOyeCg65vOPsm2+lRfD1njjMmp+
-   464nV4KNFwojaVUj3IakTvFT2xpuE6X8z1KPIQV7hBxH4Yj1lphZWr9Uu
-   EBZlwvwGfsJLsTnzbBUJnzKRvHJjBiBaeoByPpy/oLgC46MYGUIOVIP7c
-   faeizCO9/k4ixeLTCYxWyhCuac/f+KVV7VYoRzQfcVtbV2CTmZxZWs8/z
-   1mV3tfnraCQ2jxoLeAACQiLlmWpgzdHl8/lTxYJpThqTR6vbFaaXv76y8
-   CmBTYUwDC9FYPlgGZhkF8zucyucoclONpOqpwB+B2YX0YqPOdJ4er1wjo
-   g==;
-X-CSE-ConnectionGUID: QiSvMv8JTMWdOvU2MEjeUQ==
-X-CSE-MsgGUID: TrqME7ZRSBuOz5yIravqOg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11333"; a="49663963"
-X-IronPort-AV: E=Sophos;i="6.13,253,1732608000"; 
-   d="scan'208";a="49663963"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Feb 2025 03:11:38 -0800
-X-CSE-ConnectionGUID: AiCiN+YdRe69qT+ilPyNUQ==
-X-CSE-MsgGUID: fvqwam5BT6ORCsDBQpOHDg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="110478693"
-Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 02 Feb 2025 03:11:35 -0800
-Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1teXsy-000pbT-1m;
-	Sun, 02 Feb 2025 11:11:32 +0000
-Date: Sun, 2 Feb 2025 19:10:54 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Ricardo B. Marliere" <ricardo@marliere.net>,
-	Kees Cook <kees@kernel.org>, Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Ricardo B. Marliere" <rbm@suse.com>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Subject: Re: [PATCH 2/2] LoadPin: Make sysctl table const
-Message-ID: <202502021853.d0nqHvPc-lkp@intel.com>
-References: <20250123-sysctl-kees-v1-2-533359e74d66@suse.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xh1nHj7X"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57617C4CED1;
+	Sun,  2 Feb 2025 12:51:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1738500717;
+	bh=kt9T+CakiobIyIASlhCXRcQekzRSmS1sWACCX2SPCeo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Xh1nHj7XRsVc0MRlQJNU5kv1Dh9daq42RFVa4eVWbhJoxs+ESvQnZSbGMLC6Yx2+S
+	 80rxrsDzzfV+CRZt0ZeP3wn7jgfjTQEzEg33+nekQz6eUUtnUNHuF6PUVtefqc+IcV
+	 Qn19y46olstzLwpp/LF24WHBbcIqf1z/X23PDex4DXhZJTLBYK8U54+GwYzcpwvxH8
+	 P83kidsA3GiIuOclCXdeH+hZ+/9zpSUlQ3LX7CRMZUb/5PyYhI/AtWUfFa5kHF/hcm
+	 XzBbJmn3+MEOVAhEX+5znBDbvjhfAbO87qa+eVSKEl0DMPRUblt9k5tFTSvlkre+d0
+	 Ch1jGdRSz3w1A==
+Date: Sun, 2 Feb 2025 13:51:54 +0100
+From: Alejandro Colomar <alx@kernel.org>
+To: G??nther Noack <gnoack@google.com>
+Cc: linux-security-module@vger.kernel.org, 
+	Micka??l Sala??n <mic@digikod.net>, Tahera Fahimi <fahimitahera@gmail.com>, 
+	Tanya Agarwal <tanyaagarwal25699@gmail.com>, linux-man@vger.kernel.org
+Subject: Re: [PATCH 2/2] landlock: Clarify IPC scoping documentation
+Message-ID: <erjborzfvlvlczeahjt7esghr4v3slgxdht6efftekofxljhiq@mkw2ibzvpvsx>
+References: <20250124154445.162841-1-gnoack@google.com>
+ <20250124154445.162841-2-gnoack@google.com>
+ <Z5O44dxg8y-QZV62@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="lpev2x5vd6vzcdfc"
 Content-Disposition: inline
-In-Reply-To: <20250123-sysctl-kees-v1-2-533359e74d66@suse.com>
-
-Hi Ricardo,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on a9a5e0bdc5a77a7c662ad4be0ad661f0b0d5e99d]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Ricardo-B-Marliere/yama-Make-sysctl-table-const/20250124-033808
-base:   a9a5e0bdc5a77a7c662ad4be0ad661f0b0d5e99d
-patch link:    https://lore.kernel.org/r/20250123-sysctl-kees-v1-2-533359e74d66%40suse.com
-patch subject: [PATCH 2/2] LoadPin: Make sysctl table const
-config: arm64-allmodconfig (https://download.01.org/0day-ci/archive/20250202/202502021853.d0nqHvPc-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250202/202502021853.d0nqHvPc-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502021853.d0nqHvPc-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> security/loadpin/loadpin.c:75:34: error: cannot assign to variable 'loadpin_sysctl_table' with const-qualified type 'const struct ctl_table[1]'
-      75 |                 loadpin_sysctl_table[0].extra1 = SYSCTL_ZERO;
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ^
-   security/loadpin/loadpin.c:56:31: note: variable 'loadpin_sysctl_table' declared const here
-      56 | static const struct ctl_table loadpin_sysctl_table[] = {
-         | ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~
-      57 |         {
-         |         ~
-      58 |                 .procname       = "enforce",
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      59 |                 .data           = &enforce,
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      60 |                 .maxlen         = sizeof(int),
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      61 |                 .mode           = 0644,
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~
-      62 |                 .proc_handler   = proc_dointvec_minmax,
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      63 |                 .extra1         = SYSCTL_ONE,
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      64 |                 .extra2         = SYSCTL_ONE,
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      65 |         },
-         |         ~~
-      66 | };
-         | ~
-   security/loadpin/loadpin.c:77:34: error: cannot assign to variable 'loadpin_sysctl_table' with const-qualified type 'const struct ctl_table[1]'
-      77 |                 loadpin_sysctl_table[0].extra1 = SYSCTL_ONE;
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ^
-   security/loadpin/loadpin.c:56:31: note: variable 'loadpin_sysctl_table' declared const here
-      56 | static const struct ctl_table loadpin_sysctl_table[] = {
-         | ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~
-      57 |         {
-         |         ~
-      58 |                 .procname       = "enforce",
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      59 |                 .data           = &enforce,
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      60 |                 .maxlen         = sizeof(int),
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      61 |                 .mode           = 0644,
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~
-      62 |                 .proc_handler   = proc_dointvec_minmax,
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      63 |                 .extra1         = SYSCTL_ONE,
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      64 |                 .extra2         = SYSCTL_ONE,
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      65 |         },
-         |         ~~
-      66 | };
-         | ~
-   2 errors generated.
+In-Reply-To: <Z5O44dxg8y-QZV62@google.com>
 
 
-vim +75 security/loadpin/loadpin.c
+--lpev2x5vd6vzcdfc
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: G??nther Noack <gnoack@google.com>
+Cc: linux-security-module@vger.kernel.org, 
+	Micka??l Sala??n <mic@digikod.net>, Tahera Fahimi <fahimitahera@gmail.com>, 
+	Tanya Agarwal <tanyaagarwal25699@gmail.com>, linux-man@vger.kernel.org
+Subject: Re: [PATCH 2/2] landlock: Clarify IPC scoping documentation
+References: <20250124154445.162841-1-gnoack@google.com>
+ <20250124154445.162841-2-gnoack@google.com>
+ <Z5O44dxg8y-QZV62@google.com>
+MIME-Version: 1.0
+In-Reply-To: <Z5O44dxg8y-QZV62@google.com>
 
-9b091556a073a9 Kees Cook 2016-04-20  67  
-60ba1028fc7b73 Kees Cook 2022-12-09  68  static void set_sysctl(bool is_writable)
-9b091556a073a9 Kees Cook 2016-04-20  69  {
-9b091556a073a9 Kees Cook 2016-04-20  70  	/*
-9b091556a073a9 Kees Cook 2016-04-20  71  	 * If load pinning is not enforced via a read-only block
-9b091556a073a9 Kees Cook 2016-04-20  72  	 * device, allow sysctl to change modes for testing.
-9b091556a073a9 Kees Cook 2016-04-20  73  	 */
-60ba1028fc7b73 Kees Cook 2022-12-09  74  	if (is_writable)
-60ba1028fc7b73 Kees Cook 2022-12-09 @75  		loadpin_sysctl_table[0].extra1 = SYSCTL_ZERO;
-60ba1028fc7b73 Kees Cook 2022-12-09  76  	else
-60ba1028fc7b73 Kees Cook 2022-12-09  77  		loadpin_sysctl_table[0].extra1 = SYSCTL_ONE;
-60ba1028fc7b73 Kees Cook 2022-12-09  78  }
-60ba1028fc7b73 Kees Cook 2022-12-09  79  #else
-60ba1028fc7b73 Kees Cook 2022-12-09  80  static inline void set_sysctl(bool is_writable) { }
-60ba1028fc7b73 Kees Cook 2022-12-09  81  #endif
-60ba1028fc7b73 Kees Cook 2022-12-09  82  
+Hi Guenther!
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+On Fri, Jan 24, 2025 at 04:59:29PM +0100, G??nther Noack wrote:
+> Hi!
+>=20
+> This is an attempt to clarify the kernel documentation for Landlock's IPC
+> scoping support before I send the same wording to the man page list in tr=
+off
+> format.
+>=20
+> (Adding Alejandro and the man-page list to get an early review on wording=
+ and
+> clarity.)
+
+Sorry for not replying before.  I had fever last week.  :)
+
+> On Fri, Jan 24, 2025 at 03:44:45PM +0000, G??nther Noack wrote:
+> > -IPC scoping does not support exceptions, so if a domain is scoped, no =
+rules can
+> > -be added to allow access to resources or processes outside of the scop=
+e.
+> > +interactions between sandboxes.  Therefore, at ruleset creation time, =
+each
+> > +Landlock domain can restrict the scope for certain operations, so that=
+ these
+> > +operations can only reach out to processes within the same Landlock do=
+main or in
+> > +a nested Landlock domain (the "scope").
+> > +
+> > +The operations which can be scoped are:
+> > +
+> > +``LANDLOCK_SCOPE_SIGNAL``
+> > +    When set,
+
+Do we need to say when set?  I'd say that's redundant (of course if you
+don't set a flag, its effects don't apply).
+
+> > this limits the sending of signals to target processes which run
+> > +    within the same or a nested Landlock domain.
+> > +
+> > +``LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET``
+> > +    When set, this limits the set of abstract :manpage:`unix(7)` socke=
+ts we can
+> > +    :manpage:`connect(2)` to to socket addresses which were created by=
+ a process
+> > +    in the same or a nested Landlock domain.
+> > +
+> > +    A :manpage:`send(2)` on a non-connected datagram socket is treated=
+ like an
+> > +    implicit :manpage:`connect(2)` and will be blocked when the remote=
+ end does
+
+I think *if* would be more appropriate than *when* here.
+
+> > +    not stem from the same or a nested Landlock domain.
+
+This could be read such that send(2) is replaced by connect(2) on a
+non-connected datagram socket.  But you want to say that a connect(2)
+is implicitly executed before the actual send(2) (which is still
+executed, if connect(2) succeeds).
+
+How about this wording?
+
+	If send(2) is used on a non-connected datagram socket, an
+	implicit connect(2) is executed first, and will be blocked when
+	the remote end does not ....
+
+
+Have a lovely day!
+Alex
+
+> > +    A :manpage:`send(2)` on a socket which was previously connected wi=
+ll work.
+> > +    This works for both datagram and stream sockets.
+> > +
+> > +IPC scoping does not support exceptions via :manpage:`landlock_add_rul=
+e(2)`.
+> > +If an operation is scoped within a domain, no rules can be added to al=
+low access
+> > +to resources or processes outside of the scope.
+> > =20
+> >  Truncating files
+> >  ----------------
+> > --=20
+> > 2.48.1.262.g85cc9f2d1e-goog
+> >=20
+>=20
+> ???G??nther
+
+--=20
+<https://www.alejandro-colomar.es/>
+
+--lpev2x5vd6vzcdfc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmefamMACgkQnowa+77/
+2zJedQ//ctV5jFx9r4HzCh4D3jCN8VIDXXXs3hMfS6jUbEY1a/FEpOe/UITZ6oin
+P8HdJZSF77jmOVCwHu9/9T801VKiZgXkI4dYgyLrBVaBwek1smZUD2kzB+vEb6qz
+AJUPSFBy6auEQJKDAVp5kkGmsPgbyVEwy/FpkuJMOi2qGE+1BIlBy26ATpUuls7u
+9AXNPd9jmymIR45K3FMcpVeqZDb4/7eIS9NrtOLeOGjyoRfeSQZ0l5S+y/5e5chX
+lV4znIUURmz6k4A0PqyX5deBBg7WrEeHvHZ+/unGEOzJfz7/dYLD8R998xq+sOW1
+Vi6j2gacAOE5YicMY0Ql+JblGNHvHUZBqPYNgvOHR7OlFLf1JK0+Uv46a9Qv87u6
+Ly6KFWPYWUcq5duZIZJv/uazpnGE4+AnPlewm6G/DEn7UrrejJL8/Dl+oCI2/ZFu
+y0feu6canTfByoBW/ZOFsCh+MQT68x2t3QgusmFBlFHbFLbdUVlCzwmp3aGsBn4E
+82Y+gNeQsX/N03kJ09w/k8/qP6jlEG5vDooRIXsomgpYMEm/8Yr88WQr9BtOphly
+CoSnuotbA3WV3sGd3enqhgHovO4cXdvUf283ZiLTY5ci2XU2sokX+15SMFrcsruR
+ZtGYA6MlD0z3GLI/1LRqUeGzTqzZNN2gYQYVdhQZ4Sopy2vadAI=
+=3Ibg
+-----END PGP SIGNATURE-----
+
+--lpev2x5vd6vzcdfc--
