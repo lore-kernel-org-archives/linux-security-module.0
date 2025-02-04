@@ -1,133 +1,168 @@
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9321D207DF2;
-	Tue,  4 Feb 2025 13:15:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70DF1214A60
+	for <linux-security-module@vger.kernel.org>; Tue,  4 Feb 2025 16:19:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738674917; cv=none; b=ZuVkQ3dRwzMZ+sveZwRiRG0kcO+2U3KSKaj8xBxUjehzhLWVSkauccFgjTjloi/PKrPXxPmAk4LQtJftSy7W2e8LCQE4+O+8j+7NQv2nyjXdd7JbJYqUXGwKhRSK4TVZJjizXjcW8w6iA6Fjmr2DmLUpu+HW/UIZfYhyO59k8Co=
+	t=1738685958; cv=none; b=AGSehJ05t1HKyz9qK56q2+zdwUKWooIVBIHYlZGXr4OFw+CafL9+wUj/TVzbHn6WVzIg8fog3EF1+Z/mCHO28hicGHdI+u2Leq0eUFNEET07nhOD9YyjyiwQoc9/VFAIb0u4Hgz1S5lcc3oNuqdWvFnTxRIjc5vvRysfanfiW8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738674917; c=relaxed/simple;
-	bh=mxUPJ/fzzhcjXmPmx43XAUSru5vQ3irzWnNscz5R+zs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=W9HZgeOddX7Ai3mkxAh4olI3mqfJTLAB/XN/Cj6CsUaBhbW5VI23S8WdMeMU9nWKhbaluLCJfBaQJe3lgCSSPO73HATuA/wF+caVHTwsVeO6cusbgJzWtVeDXT9Hc+cQ5ijgWYMwEH9ADPLNBJuQeW/J3A8A2ClW6908jNTWEuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTP id 4YnN9w1pBPz9v7NL;
-	Tue,  4 Feb 2025 20:35:16 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 89191140E0D;
-	Tue,  4 Feb 2025 20:57:36 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwCXakm2DqJncdHhAQ--.22048S2;
-	Tue, 04 Feb 2025 13:57:35 +0100 (CET)
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: zohar@linux.ibm.com,
-	dmitry.kasatkin@gmail.com,
-	eric.snowberg@oracle.com,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com
-Cc: linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] ima: Reset IMA_NONACTION_RULE_FLAGS after post_setattr
-Date: Tue,  4 Feb 2025 13:57:20 +0100
-Message-Id: <20250204125720.1326257-1-roberto.sassu@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1738685958; c=relaxed/simple;
+	bh=74T0US/o9kjlBij28lGopeWdzH++KQNYK++WmLFe1uQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AtAE9OvLp03Wb6v8iXDp9daG1UWJVrhBWUoB0q4UQvtXxgYXtEAK2J4xBxWr/6tq/avq4zlbYhr9YSvLWcPe4eeNA9KIHg9diYd2yZq2zJvlFVU9tI2yJVlOjRvIliqqd2LibT3qZoPMld+L8SeIUEU1Eh/wMFUG8HSjm0WfM2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Yf2TOE5y; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Yf2TOE5y"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1738685955;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=74T0US/o9kjlBij28lGopeWdzH++KQNYK++WmLFe1uQ=;
+	b=Yf2TOE5yEju9v+/toRjI2+NgIr8PnXA3h3WRIt+lJ8Ezbb4yN66qRJz5twTIRN1r9CUHlk
+	U+zzr/Fhd5pzJxb1MNg6wg6Bb3+Sb2Ewja+RyfL+vfe0Kzlh82KpCht40hw/kuosGHZNiq
+	YAL50nr8RyC/b5Ja3DE/9W6oaLVEnNA=
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
+ [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-374-mjrTbfxgN2a0SFKxMZm9pw-1; Tue, 04 Feb 2025 11:19:12 -0500
+X-MC-Unique: mjrTbfxgN2a0SFKxMZm9pw-1
+X-Mimecast-MFC-AGG-ID: mjrTbfxgN2a0SFKxMZm9pw
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2f9c78739f5so1283185a91.1
+        for <linux-security-module@vger.kernel.org>; Tue, 04 Feb 2025 08:19:11 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738685951; x=1739290751;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=74T0US/o9kjlBij28lGopeWdzH++KQNYK++WmLFe1uQ=;
+        b=flYB8/3n0PpDYtFEd/HDuWPib22A0PU3dtJAVH4jfG4fL3oLPL1on5kBYwKYb0CGsJ
+         Sg0sTwxSf1eFdySAZwTmxGQK2TJV9ysHlsmTExwFFAKM+fnWhDACbfQnsIsCDP+lFdqv
+         s02Ru0lbjP2b7BsaUbKpJIAd+mPWKGLmW20+WmB/5Evrt2HFbKytM3E884oLUyJVw41I
+         Rm10nFJJyGHzVFZka6OzJTXDYj3VCrhDhPgPr61fYPxkLkPIBGJIsDkAeVqHU0QMKKA+
+         yg+Rlv36g3yAosOeRh8xGpCE6ijd1n2nJ8Oqu+iE1aBBtQVckWufXhYJq7oMN/cFDV2v
+         ZyJg==
+X-Forwarded-Encrypted: i=1; AJvYcCX/cz9cZ8pV7oKrYAaOYmbFuZF2ejF9RvulTCMuM02R/1vcsFDA9Nce/dyMor5InxKxTGcvkdOWSpaUeI3MtaRbgYM+Fpo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5RSbe7U9WNT1cR0AWAAWXA4XyjrYO3YIhhuzOTLR+NWVoAZ43
+	cAUbwwl5hSMipeSPaY+DABOoQAR+uN+LBWx6KHBNma11ItzkkaiZWmT8jCBDX2UtAnhsPfWj1az
+	QEGpXHFhIlZE+tzUsH4mcX+hKaWw2UWy2RwFzrGe2eWvAzzTrOd4HFQ80tSvytPrFIC9J2NRdw4
+	au6vYNGHePV6prsy9jojphSgmPl33ROqae9SAtN9aWipaBDrNm
+X-Gm-Gg: ASbGncv5HN9TQ/4phP3RXMeMcP0C9qGwiS9Tt3Eg2qk1OxW2N1KBWxuAL9tzWvxnB3U
+	t1RRQBpNL1dmiAHgHNt6a0IZPUYChWrPu8bVwiT9d8DEfLFkMIRp+tVCqczhH1Q==
+X-Received: by 2002:a17:90b:2884:b0:2f9:9c3a:ed3 with SMTP id 98e67ed59e1d1-2f9ba73e992mr5850930a91.16.1738685951013;
+        Tue, 04 Feb 2025 08:19:11 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF3tNzqy+EU7XvxQi+cg7fICk2NlmjtW/FLHsyarEoa9g32uMgqKoDLiZihP/6mbIUzBrFaPLZ4sIHN3Vf+DyA=
+X-Received: by 2002:a17:90b:2884:b0:2f9:9c3a:ed3 with SMTP id
+ 98e67ed59e1d1-2f9ba73e992mr5850904a91.16.1738685950735; Tue, 04 Feb 2025
+ 08:19:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:LxC2BwCXakm2DqJncdHhAQ--.22048S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxAF15Kw48GFW3Ww18CF4UJwb_yoW5Ary5pa
-	93KFyUKr18XFyxCrZ3J3W3CF4rK3yagry5Wan8A3WkAa1avrn0qFy7tr1akF98WF129F92
-	qrnIq34Yvw1qy3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvFb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAa
-	w2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxV
-	Aqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q
-	6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6x
-	kF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AK
-	xVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvj
-	xUF1v3UUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAJBGehvFQDGwABs4
+References: <CAFqZXNtkCBT4f+PwyVRmQGoT3p1eVa01fCG_aNtpt6dakXncUg@mail.gmail.com>
+ <e8b6c6f9-9647-4ab6-8bbb-ccc94b04ade4@yandex.ru> <67979d24d21bc_3f1a29434@willemb.c.googlers.com.notmuch>
+ <CAFqZXNscJnX2VF-TyZaEC5nBtUUXdWPM2ejXTWBL8=5UyakssA@mail.gmail.com>
+ <6798f1fb5e1ba_987d9294dc@willemb.c.googlers.com.notmuch> <c4413e16-d04f-4370-8edc-e4db21cc25f6@yandex.ru>
+ <67996154e30ce_d9324294c4@willemb.c.googlers.com.notmuch> <8b81a534-9c30-4123-bd7d-bf3a9d89dfcb@yandex.ru>
+ <679a376739b99_132e08294f3@willemb.c.googlers.com.notmuch>
+ <04879909-72e5-4ab6-8c28-5d3cb551feb5@yandex.ru> <679bace3a753f_1d35f32942d@willemb.c.googlers.com.notmuch>
+ <CAHC9VhS-uSaVmy65oA8p6tCzMZxMsuzdmxO-vf7L0p44ZKO=_A@mail.gmail.com>
+In-Reply-To: <CAHC9VhS-uSaVmy65oA8p6tCzMZxMsuzdmxO-vf7L0p44ZKO=_A@mail.gmail.com>
+From: Ondrej Mosnacek <omosnace@redhat.com>
+Date: Tue, 4 Feb 2025 17:18:58 +0100
+X-Gm-Features: AWEUYZmXehgyVPBBQTLARAnAWlLsy16wrENGnIjpxFiM8a4vwAAtZ0X_3p-nmQw
+Message-ID: <CAFqZXNtq7SZSu_JyY5yaiOQy89c=5jG+vqdg3_RSUWm4JNN00w@mail.gmail.com>
+Subject: Re: Possible mistake in commit 3ca459eaba1b ("tun: fix group
+ permission check")
+To: Paul Moore <paul@paul-moore.com>
+Cc: Willem de Bruijn <willemdebruijn.kernel@gmail.com>, stsp <stsp2@yandex.ru>, 
+	Willem de Bruijn <willemb@google.com>, Jason Wang <jasowang@redhat.com>, 
+	Jakub Kicinski <kuba@kernel.org>, network dev <netdev@vger.kernel.org>, 
+	Linux Security Module list <linux-security-module@vger.kernel.org>, 
+	SElinux list <selinux@vger.kernel.org>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: ylyhLmaCGVOkmG_U2um7zdF8pn8xKzIKUr6k5I94Ot8_1738685951
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Roberto Sassu <roberto.sassu@huawei.com>
+On Tue, Feb 4, 2025 at 1:30=E2=80=AFAM Paul Moore <paul@paul-moore.com> wro=
+te:
+>
+> On Thu, Jan 30, 2025 at 11:48=E2=80=AFAM Willem de Bruijn
+> <willemdebruijn.kernel@gmail.com> wrote:
+> > stsp wrote:
+> > > 29.01.2025 17:12, Willem de Bruijn =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > > > stsp wrote:
+> > > >> 29.01.2025 01:59, Willem de Bruijn =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > > >>> stsp wrote:
+> > > >>>> By doing that you indeed avoid
+> > > >>>> the problem of "completely
+> > > >>>> inaccessible tap". However, that
+> > > >>>> breaks my setup, as I really
+> > > >>>> intended to provide tap to the
+> > > >>>> owner and the unrelated group.
+> > > >>>> This is because, eg when setting
+> > > >>>> a CI job, you can add the needed
+> > > >>>> user to the needed group, but
+> > > >>>> you also need to re-login, which
+> > > >>>> is not always possible. :(
+> > > >>> Could you leave tun->owner unset?
+> > > >> That's exactly the problem: when
+> > > >> the user is not in the needed group,
+> > > >> then you need to unset _both_.
+> > > >> Unsetting only owner is not enough.
+> > > >> Adding the user to the group is not
+> > > >> enough because then you need to
+> > > >> re-login (bad for CI jobs).
+> > > > At some point we can question whether the issue is with the setup,
+> > > > rather than the kernel mechanism.
+> > > >
+> > > > Why does your setup have an initial user that lacks the group
+> > > > permissions of the later processes, and a tun instance that has bot=
+h
+> > > > owner and group constraints set?
+> > > >
+> > > > Can this be fixed in userspace, rather than allow this odd case in =
+the
+> > > > kernel. Is it baked deeply into common containerization tools, say?
+> > >
+> > > No-no, its not a real or unfixible
+> > > problem. At the end, I can just
+> > > drop both group and user ownership
+> > > of the TAP, and simply not to care.
+> >
+> > In that case the safest course of action is to revert the patch.
+> >
+> > It relaxes some access control restrictions that other users may have
+> > come to depend on.
+> >
+> > Say, someone expects that no process can use the device until it
+> > adds the user to one of the groups.
+> >
+> > It's farfetched, but in cases of access control, err on the side of
+> > caution. Especially retroactively.
+>
+> If a revert is the best path forward for v6.14, do you think it would
+> be possible to get this fixed this week, or do you expect it to take
+> longer?
 
-Commit 0d73a55208e9 ("ima: re-introduce own integrity cache lock")
-mistakenly reverted the performance improvement introduced in commit
-42a4c603198f0 ("ima: fix ima_inode_post_setattr"). The unused bit mask was
-subsequently removed by commit 11c60f23ed13 ("integrity: Remove unused
-macro IMA_ACTION_RULE_FLAGS").
+Willem has already posted patches on netdev [1][2] (thanks!), so I
+expect it will be fixed soon.
 
-Restore the performance improvement by introducing the new mask
-IMA_NONACTION_RULE_FLAGS, equal to IMA_NONACTION_FLAGS without
-IMA_NEW_FILE, which is not a rule-specific flag.
+[1] https://lore.kernel.org/netdev/20250204161015.739430-1-willemdebruijn.k=
+ernel@gmail.com/
+[2] https://lore.kernel.org/netdev/20250203150615.96810-1-willemdebruijn.ke=
+rnel@gmail.com/
 
-Finally, reset IMA_NONACTION_RULE_FLAGS instead of IMA_NONACTION_FLAGS in
-process_measurement(), if the IMA_CHANGE_ATTR atomic flag is set (after
-file metadata modification).
-
-With this patch, new files for which metadata were modified while they are
-still open, can be reopened before the last file close (when security.ima
-is written), since the IMA_NEW_FILE flag is not cleared anymore. Otherwise,
-appraisal fails because security.ima is missing (files with IMA_NEW_FILE
-set are an exception).
-
-Cc: stable@vger.kernel.org # v4.16.x
-Fixes: 0d73a55208e9 ("ima: re-introduce own integrity cache lock")
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
----
- security/integrity/ima/ima.h      | 3 +++
- security/integrity/ima/ima_main.c | 7 +++++--
- 2 files changed, 8 insertions(+), 2 deletions(-)
-
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 24d09ea91b87..a4f284bd846c 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -149,6 +149,9 @@ struct ima_kexec_hdr {
- #define IMA_CHECK_BLACKLIST	0x40000000
- #define IMA_VERITY_REQUIRED	0x80000000
- 
-+/* Exclude non-action flags which are not rule-specific. */
-+#define IMA_NONACTION_RULE_FLAGS	(IMA_NONACTION_FLAGS & ~IMA_NEW_FILE)
-+
- #define IMA_DO_MASK		(IMA_MEASURE | IMA_APPRAISE | IMA_AUDIT | \
- 				 IMA_HASH | IMA_APPRAISE_SUBMASK)
- #define IMA_DONE_MASK		(IMA_MEASURED | IMA_APPRAISED | IMA_AUDITED | \
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 9b87556b03a7..b028c501949c 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -269,10 +269,13 @@ static int process_measurement(struct file *file, const struct cred *cred,
- 	mutex_lock(&iint->mutex);
- 
- 	if (test_and_clear_bit(IMA_CHANGE_ATTR, &iint->atomic_flags))
--		/* reset appraisal flags if ima_inode_post_setattr was called */
-+		/*
-+		 * Reset appraisal flags (action and non-action rule-specific)
-+		 * if ima_inode_post_setattr was called.
-+		 */
- 		iint->flags &= ~(IMA_APPRAISE | IMA_APPRAISED |
- 				 IMA_APPRAISE_SUBMASK | IMA_APPRAISED_SUBMASK |
--				 IMA_NONACTION_FLAGS);
-+				 IMA_NONACTION_RULE_FLAGS);
- 
- 	/*
- 	 * Re-evaulate the file if either the xattr has changed or the
--- 
-2.34.1
+--=20
+Ondrej Mosnacek
+Senior Software Engineer, Linux Security - SELinux kernel
+Red Hat, Inc.
 
