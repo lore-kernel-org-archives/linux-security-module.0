@@ -1,87 +1,101 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAA3A7081A;
-	Tue,  4 Feb 2025 00:56:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 337BC1547C5;
+	Tue,  4 Feb 2025 10:07:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738630589; cv=none; b=hv4c6Ec9lzpP4InB0XXo8snYzYMpsiu9NVC2aFNWQ1xz4C+MxJZ9EkMPgKYaFwaBNZS8rl3WmKFpHi/ZXQ8osnuVbIDUB4OU5YBRkqJPxSar+60Gizoit5GFysmeGKTa2ylLbypLYFB9lY8oGcdJU6msDae+HhLY8zg3WRizgKo=
+	t=1738663658; cv=none; b=QHf8NT5YRjchjbVzf76Me7ToXc5/U5BMgtOKpD8miXpVK3wX3Y94mfpybbxZD2fOEUB35t5Tj43q4MaRRl4DbP79uHG1HeA8xNydl7gYi9NsCfRJSd19czJDoX7O+lzH8vHL/KbUJ+tVjsPSlhEHLEa4Q2jvL/U+apeUU4aNkYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738630589; c=relaxed/simple;
-	bh=MZsJfMliRp32i3XMCATCmzL3VGFxLZSIGtNx1hJ/A1I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=epef9iHEcr47ezPR5Nw/2XtHk6QTx4xgsX/C6nAcvCeIV31JkQ2fNnFciw3lwFv3OZogpA/ncL62yf45EoFly3FenvD5yh768SrLDmNyeQjn8YlcecYBppQGWe61F5SFfMuEaPSE8mG0wIsGMapParocdA01Lpo2ZJZ/NhGcaIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=atLHGOwB; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+	s=arc-20240116; t=1738663658; c=relaxed/simple;
+	bh=X6YYsQzMBZlfPhE2lzhckYnWMCNyVdl8+F/ZdpE5GkE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nQCK2/uOX24PDhZmZNiH+9Xd+YIaCk8I3pzsw9GQ1iUS2UtLQpoNNZPL9lQ9PrKM50yY3QqDgepSj7kumyIVpBxNAKpZGS6l9u5y4zFzc9p2/Ju7sTzYegoCcCn8kVxUytgYVbwps7ICHJPbG8PyH477c9uDjE5qo1WvJvIYxfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EBtgUd0K; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="atLHGOwB"
-Received: from [10.17.64.74] (unknown [131.107.8.74])
-	by linux.microsoft.com (Postfix) with ESMTPSA id E896B205493B;
-	Mon,  3 Feb 2025 16:56:26 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com E896B205493B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1738630587;
-	bh=8wiA7A5oplocwPTbfHbf28Kt1oSZNYikOUM55aAquNU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=atLHGOwBOcjpVxbjMIkShaTJjqRpjXXbwi6BYhHWxRjiAJFniD9fNWQtEmFEb3XRJ
-	 gZ+/2EVFp1VTDXW6DpR8cA2F6BtL1/9WwqGYNSizCmKWZm3guE50d8lo6gLusvHLgs
-	 ZAArZYgabwqImy0Z1BwGQmyTlFQvkGpZzrrya/l0=
-Message-ID: <b07a4b44-b76f-4691-ac01-6e91b6b83672@linux.microsoft.com>
-Date: Mon, 3 Feb 2025 16:56:26 -0800
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EBtgUd0K"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0253EC4CEDF;
+	Tue,  4 Feb 2025 10:07:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1738663657;
+	bh=X6YYsQzMBZlfPhE2lzhckYnWMCNyVdl8+F/ZdpE5GkE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EBtgUd0K4rexLyqU4eQnjG8JQ5Rl3gShCEN19Ms7NacPzu67XrKkcrwGYNPRoben9
+	 BOhzWv21DKI+I8AVFgaxjBUY+PbBJAjK46efbe+TL4zBQP3U894oIFQSwaJg5xfQyj
+	 Vneg3MOnUGyfjsburl4YsUwtOUc2iDdAtPzlzWK4A1Fmtymaol1zUhxvhozuKjBKj2
+	 l+Krqa3yDpxTccWskcY4cVOGwki8tZ1OQzwgvklcqP5OjpQWp/Bk5Ue8aRCC2Ccw3M
+	 Prhdpvvdmt0sEldEfu5hZJiBC4vzEmlfDpc3o+wPnSD+uVjQj8bGF+Sw5dSpXTVprR
+	 8wDVnM/gumeDw==
+Date: Tue, 4 Feb 2025 11:07:30 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org, 
+	Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, Karel Zak <kzak@redhat.com>, 
+	Lennart Poettering <lennart@poettering.net>, Ian Kent <raven@themaw.net>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, selinux@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	selinux-refpolicy@vger.kernel.org
+Subject: Re: [PATCH v5 2/3] fanotify: notify on mount attach and detach
+Message-ID: <20250204-gepachtet-mehrmalig-debca5265df8@brauner>
+References: <20250129165803.72138-1-mszeredi@redhat.com>
+ <20250129165803.72138-3-mszeredi@redhat.com>
+ <CAHC9VhTOmCjCSE2H0zwPOmpFopheexVb6jyovz92ZtpKtoVv6A@mail.gmail.com>
+ <20250131-durften-weitblick-075d05e8f616@brauner>
+ <CAHC9VhTSt-UoGOZvez8WPLxv4s6UQqJgDb5M4hWeTUeJY2oz3w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 0/7] ima: kexec: measure events between kexec load and
- excute
-To: Mimi Zohar <zohar@linux.ibm.com>, stefanb@linux.ibm.com,
- roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
- eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
- code@tyhicks.com, bauermann@kolabnow.com, linux-integrity@vger.kernel.org,
- kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
- James.Bottomley@HansenPartnership.com
-References: <20250203184558.61367-1-chenste@linux.microsoft.com>
- <eb2d3b5f-7aca-42c8-9b34-8ca07b8bc060@linux.microsoft.com>
- <8091ed0d942806e16f995e8444da29df7843df62.camel@linux.ibm.com>
-Content-Language: en-US
-From: steven chen <chenste@linux.microsoft.com>
-In-Reply-To: <8091ed0d942806e16f995e8444da29df7843df62.camel@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhTSt-UoGOZvez8WPLxv4s6UQqJgDb5M4hWeTUeJY2oz3w@mail.gmail.com>
 
-On 2/3/2025 4:50 PM, Mimi Zohar wrote:
-> On Mon, 2025-02-03 at 15:25 -0800, steven chen wrote:
->> Hi all,
->>
->> The below is the correct version for review.
->>
->> [PATCH v7 0/7] ima: kexec: measure events between kexec load and excute
->> <
->> https://lore.kernel.org/linux-integrity/20250203232033.64123-1-chenste@linux.microso
->> ft.com/T/#t>
->>
->> Please ignore the this version because patch 5 is missing.
->>
->> I am really sorry to have troubled you.
-> Thanks, Steven.  I was able to apply the patch set to v6.13.  For some reason, b4
-> downloads a duplicate 4/7 patch.
->
-> Mimi
+On Fri, Jan 31, 2025 at 09:39:31AM -0500, Paul Moore wrote:
+> On Fri, Jan 31, 2025 at 7:09 AM Christian Brauner <brauner@kernel.org> wrote:
+> > On Thu, Jan 30, 2025 at 04:05:53PM -0500, Paul Moore wrote:
+> > >
+> > > Now back to the merge into the VFS tree ... I was very surprised to
+> > > open this patchset and see that Christian had merged v5 after less
+> > > than 24 hours (at least according to the email timestamps that I see)
+> > > and without an explicit ACK for the SELinux changes.  I've mentioned
+> > > this to you before Christian, please do not merge any SELinux, LSM
+> > > framework, or audit related patches without an explicit ACK.  I
+> >
+> > Things go into the tree for testing when the VFS side is ready for
+> > testing. We're at v5 and the patchset has gone through four iterations
+> > over multiple months. It will go into linux-next and fs-next now for as
+> > much expsure as possible.
+> >
+> > I'm not sure what the confusion between merging things into a tree and
+> > sending things upstream is. I have explained this to you before. The
+> > application message is also pretty clear about that.
+> 
+> I'm not sure what the confusion is around my explicit request that you
+> refrain from merging anything that touches the LSM framework, SELinux,
+> or the audit subsystem without an explicit ACK.  I have explained this
+> to you before.
+> 
+> For the record, your application/merge email makes no statement about
+> only sending patches to Linus that have been ACK'd by all relevant
+> parties.  The only statement I can see in your email that remotely
+> relates to ACKs is this:
+> 
+>   "It's encouraged to provide Acked-bys and Reviewed-bys
+>    even though the patch has now been applied. If possible
+>    patch trailers will be updated."
+> 
+> ... which once again makes no claims about holding back changes that
+> have not been properly ACK'd.
 
-Hi Mimi,
+If seems you're having difficulties understanding that included patches
+are subject to be updated from this content. You might want to remember
+that this is similar for the various mm trees where this isn't even
+mentioned. In other words this isn't a novel concept.
 
-Please use the one below
+Anyway, VFS patch series will continue to appear in testing trees when
+they are ready from the VFS side.
 
-[PATCH v7 0/7] ima: kexec: measure events between kexec load and excute 
-<https://lore.kernel.org/linux-integrity/20250203232033.64123-1-chenste@linux.microsoft.com/T/#t>
-
-Please ignore the this version because patch 5 is missing.
-
-I am really sorry.
-
-Steven
-
+Going forward it might be best to add the required LSM integration via
+the LSM subsystem.
