@@ -1,133 +1,108 @@
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 686F821C190
-	for <linux-security-module@vger.kernel.org>; Tue,  4 Feb 2025 23:52:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5461325A65E;
+	Wed,  5 Feb 2025 02:58:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738713152; cv=none; b=Ht24F9Tq6pCKISLWYQJMtlEbpBRG9ZINai3sV9oA62sXxukvTWk8/Zj6qybpwfivM8k0+6t89qa/wPJiTg2YDdDHw3GNqFqFQmLUODTO5Z+9BnSUTAG49i/CD4Uos348kVRePzg2xLSXzTL9l8VpEZR6fSXMVSQn0yxDCa3jmwU=
+	t=1738724319; cv=none; b=MBxCiRi4VrLnEk1EB3nlH11IRX7QGztAJ/bU5ggRuRAyWathpzIu7K3o3n8DkCaAn2HThRSC6vMEzX3/thCx44HAdluAB3vx5NKxN6+N1hsHivTbs/u7C25iMILNl0j3KLn26VYN9h4HOxImEbXZadTWzQ6n1BQUrFPSMPi2nNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738713152; c=relaxed/simple;
-	bh=5l6ADnv5b2mbmvX0rsybSYCtEF2u5mxcpaeARc7J5ns=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oA0enT3JV2JgN1PFqTGZ0mzixT74K9g0mEneeLPUPmHzxubBzxfyclzEy726uqOkajLzClRZ0wbZyxdrE39Kh1YriPP5WyqWDYql0QPmY3cQvhymVY3M3+Mogqd/eOhOXZCychwuPQgRMUdq5Kn7ikrg/3iS6/qz3N2EL9LACVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=fXNPe+6o; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1738724319; c=relaxed/simple;
+	bh=shUoIGcYgurh8v2FD7MUwTclMgTwolkPwMHqI8gTJ08=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=midrmzBGtozlmiWOk0cqa9lYXdahnKe3KFAXlAaXBs8dBCG+WMc/1f11kULsuVKg0Q3vfa4X5uWYQVegU48N0pwb6TutXqKDbudJ8v0GB2ojT1sNx1ReaopWDk9vX5YgupOKLEJ3OB3rqFRiw+aVbkEdH7yfrP0Y00sQSNLtgAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Nr0R/4JG; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="fXNPe+6o"
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6f666c94285so43451887b3.3
-        for <linux-security-module@vger.kernel.org>; Tue, 04 Feb 2025 15:52:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1738713149; x=1739317949; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=l36A6AVJMDU9uRJ7DIwtIfqpyZuenOjv0s0yyt1jqr8=;
-        b=fXNPe+6oaCfzKwi7DVu4dKmQ4cYlGMJjkxSFIdH3VjRVTiB4WqFkd/TMIcfrQl4GvP
-         v5+piVlvipXBcUH74Fq08T0njLjXJq1qkkN1pgymJPArOJYF+sC/HvEtpOgATdTiNpIt
-         x7h7u6X9TA4WY6lhbQpxmCFp41j1FzyHD0q4z7nEJqwmQlEltlP1BsqpjlsOqzmOvSK7
-         gBz75tEA3wD2LedSWqjq16CZPOmDDyPLsESIGFRmPUao7jCr69wJfsp3e3wnBDsh9b6r
-         RKk0lbTDVHKjtsxYWjOpcIG31tPawJk9QDHD2S6o7vBJa7Jcde2+RXfjEDx0irB7hupQ
-         GIbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1738713149; x=1739317949;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=l36A6AVJMDU9uRJ7DIwtIfqpyZuenOjv0s0yyt1jqr8=;
-        b=XlfqsoFgfDjzT1OpOHQHykL30cyWHEDEcFA78rcJjq9evfC2EZJb8yfN5OfdbdaeQ4
-         kxohbNLtkSywluzIgBVnCqMq/JgpQ01d138Fkyf6hkSPVnvNhz3WnGnFIXMUTK0NYJNH
-         ikj4+8m76skCG0cpNnERktRQHM+e/Lr5UBLRCLnUW0/lRt0Ve+VQL1fqlhFHbqycYrMD
-         QR7bvuk2TaJHpUlYcNLyaeR3o8d2K706n4G8E5r4X2kmval1Ec9lQ68FgbZlSJ+s5ety
-         dy2uxBDfjtcrRDR3KGhE26lz1hcGlHj6SmOOhkt61EOS8ygmcr1QaIp2lM1TBxXONxlX
-         CeVg==
-X-Forwarded-Encrypted: i=1; AJvYcCWv/K+8quZZ3xZcHjwjHdfJ7XBWJUkGreCer8/Ux9IyMPHq9tsyEBkGuYap9Nf873XYIdK6lLX6W+s63UelItObg3RSEC4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRSlNl7V3ryFopzG59t3oGk+nqoReIHpDBuxylh8HNtYK4NNZG
-	03L9SUtak/EbdbCyidw3uDa8JwB5tRDkw1Xr20ixzZDVnG4UB8fShnobD18K9gki9RZJb+whJFk
-	pRj7UW/x1nweZ6B+Mhm+mhfGBYKC+mW5m/2Az
-X-Gm-Gg: ASbGnctzwFCnMtcWDvn5VqB2c0cIP2S35rJmVaKxzMOquLEm472geW1v1Vvd03yVsUh
-	DZLDl/5EkiqpjIpZr/fxrLLarXwA/6c0b4AWepfEyR/l4CBgUj5FPAWY/vpK0nj06ClR5P9U=
-X-Google-Smtp-Source: AGHT+IFzPuhfJtcZSLnDRJaPSXwwbf5Qw3rSKr99Mir42c38+Xcm1tFlPBf1odITUXjMtibTW9GpBvgZPvyOhQyyssI=
-X-Received: by 2002:a05:690c:48c3:b0:6f6:cad0:9ddd with SMTP id
- 00721157ae682-6f989ee68bbmr7768737b3.18.1738713149315; Tue, 04 Feb 2025
- 15:52:29 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Nr0R/4JG"
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 515186YJ012355;
+	Wed, 5 Feb 2025 02:58:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=shUoIG
+	cYgurh8v2FD7MUwTclMgTwolkPwMHqI8gTJ08=; b=Nr0R/4JG/xDUCwC+8GfAvZ
+	szUVT46Nh0wD98ZkUQ9FyyJ3CzQiQsw7beI10CqITWPG1ilVTGTBgSYB0zBwjemK
+	sE79d5Zv7i7tmffmRPX3geIXpCDKY3DZ6HzpqjPB2XiHnxDyoX2Yw4vtxn/V16Vd
+	LV1u41sl2uK2gml4VOPQan3nciN2F78cR2qWqk/TSMVNYUeOoOzGSZsDvh1MuB7t
+	+zZxo7v3oJSO1+nNZ2LRcfu3Jh2XydF5DDj0940cfXEHvN/MEW+4zn2I0k0P+QYK
+	lIkjQFF2k5/jfcWcvE7JfnLKThDyKIz9UT0bi9TLpcweoGue6P8uCYwxRDwlLrxw
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44kx29gbxb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Feb 2025 02:58:16 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 5152wFTn012513;
+	Wed, 5 Feb 2025 02:58:15 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44kx29gbx9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Feb 2025 02:58:15 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51504wGJ006535;
+	Wed, 5 Feb 2025 02:58:14 GMT
+Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44hyekek8y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Feb 2025 02:58:14 +0000
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5152wDRB29426324
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 5 Feb 2025 02:58:13 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B054F5805A;
+	Wed,  5 Feb 2025 02:58:13 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E1BDB58051;
+	Wed,  5 Feb 2025 02:58:12 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.30.140])
+	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed,  5 Feb 2025 02:58:12 +0000 (GMT)
+Message-ID: <8c0c4283d5a8143d292f0defdf6da69d891d20c0.camel@linux.ibm.com>
+Subject: Re: [PATCH] integrity: fix typos and spelling errors
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Tanya Agarwal <tanyaagarwal25699@gmail.com>, roberto.sassu@huawei.com,
+        dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com,
+        paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
+Cc: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+        anupnewsmail@gmail.com
+Date: Tue, 04 Feb 2025 21:58:12 -0500
+In-Reply-To: <20250123193742.2623-1-tanyaagarwal25699@gmail.com>
+References: <20250123193742.2623-1-tanyaagarwal25699@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250129165803.72138-1-mszeredi@redhat.com> <20250129165803.72138-3-mszeredi@redhat.com>
- <CAHC9VhTOmCjCSE2H0zwPOmpFopheexVb6jyovz92ZtpKtoVv6A@mail.gmail.com>
- <20250131-durften-weitblick-075d05e8f616@brauner> <CAHC9VhTSt-UoGOZvez8WPLxv4s6UQqJgDb5M4hWeTUeJY2oz3w@mail.gmail.com>
- <20250204-gepachtet-mehrmalig-debca5265df8@brauner>
-In-Reply-To: <20250204-gepachtet-mehrmalig-debca5265df8@brauner>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 4 Feb 2025 18:52:18 -0500
-X-Gm-Features: AWEUYZmxvU9YBBRFSC9Dc7RTfcn4AC_OBYzlikGSwACt4guDBQ0naNT9F1dVLSY
-Message-ID: <CAHC9VhSSxaYKj6J_HxY+cEbeea==_WgwPXH2APcZ0YQg+RhC9Q@mail.gmail.com>
-Subject: Re: [PATCH v5 2/3] fanotify: notify on mount attach and detach
-To: Christian Brauner <brauner@kernel.org>
-Cc: Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org, 
-	Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, Karel Zak <kzak@redhat.com>, 
-	Lennart Poettering <lennart@poettering.net>, Ian Kent <raven@themaw.net>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, selinux@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, selinux-refpolicy@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 7e8vAt-eTGZuwX7Q7mkzcr6uur6IdLEB
+X-Proofpoint-ORIG-GUID: MGzYpa_64irE_5566kFxa8834MJH-zuN
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-04_10,2025-02-04_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 mlxscore=0
+ bulkscore=0 priorityscore=1501 impostorscore=0 spamscore=0 phishscore=0
+ suspectscore=0 adultscore=0 mlxlogscore=836 clxscore=1015
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2501170000 definitions=main-2502050014
 
-On Tue, Feb 4, 2025 at 5:07=E2=80=AFAM Christian Brauner <brauner@kernel.or=
-g> wrote:
-> On Fri, Jan 31, 2025 at 09:39:31AM -0500, Paul Moore wrote:
-> > On Fri, Jan 31, 2025 at 7:09=E2=80=AFAM Christian Brauner <brauner@kern=
-el.org> wrote:
-> > > On Thu, Jan 30, 2025 at 04:05:53PM -0500, Paul Moore wrote:
-> > > >
-> > > > Now back to the merge into the VFS tree ... I was very surprised to
-> > > > open this patchset and see that Christian had merged v5 after less
-> > > > than 24 hours (at least according to the email timestamps that I se=
-e)
-> > > > and without an explicit ACK for the SELinux changes.  I've mentione=
-d
-> > > > this to you before Christian, please do not merge any SELinux, LSM
-> > > > framework, or audit related patches without an explicit ACK.  I
-> > >
-> > > Things go into the tree for testing when the VFS side is ready for
-> > > testing. We're at v5 and the patchset has gone through four iteration=
-s
-> > > over multiple months. It will go into linux-next and fs-next now for =
-as
-> > > much expsure as possible.
-> > >
-> > > I'm not sure what the confusion between merging things into a tree an=
-d
-> > > sending things upstream is. I have explained this to you before. The
-> > > application message is also pretty clear about that.
-> >
-> > I'm not sure what the confusion is around my explicit request that you
-> > refrain from merging anything that touches the LSM framework, SELinux,
-> > or the audit subsystem without an explicit ACK.  I have explained this
-> > to you before.
-> >
-> > For the record, your application/merge email makes no statement about
-> > only sending patches to Linus that have been ACK'd by all relevant
-> > parties.  The only statement I can see in your email that remotely
-> > relates to ACKs is this:
-> >
-> >   "It's encouraged to provide Acked-bys and Reviewed-bys
-> >    even though the patch has now been applied. If possible
-> >    patch trailers will be updated."
-> >
-> > ... which once again makes no claims about holding back changes that
-> > have not been properly ACK'd.
->
-> If seems you're having difficulties understanding that included patches
-> are subject to be updated from this content.
+On Fri, 2025-01-24 at 01:07 +0530, Tanya Agarwal wrote:
+> From: Tanya Agarwal <tanyaagarwal25699@gmail.com>
+>=20
+> Fix typos and spelling errors in integrity module comments that were
+> identified using the codespell tool.
+> No functional changes - documentation only.
+>=20
+> Signed-off-by: Tanya Agarwal <tanyaagarwal25699@gmail.com>
+> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 
-I'm having difficulties reconciling the inconsistencies between what
-you've said here (which is presumably your actual policy/behavior?)
-and what you've said in your merge emails.
+Thanks!
 
---=20
-paul-moore.com
+Mimi
