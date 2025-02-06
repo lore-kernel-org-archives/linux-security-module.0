@@ -1,247 +1,112 @@
-Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F99921CFF7;
-	Thu,  6 Feb 2025 12:46:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71FD11624DC
+	for <linux-security-module@vger.kernel.org>; Thu,  6 Feb 2025 15:49:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738845981; cv=none; b=hyWro5ytiyZY84Fl69RqFajUEuwvHNiBCIoHdvzekh8vuj8ogerk1+DlqyluIxSuBQAl56y+X3nntv6ph2UOuSfvL1Owq1vukqVGzyM350+38V6BoN0r4tQ8Pa7FPLgdprstkNNpHdG+poyTkUif2vY4EnRxcsm6Fr6JIIPwAQQ=
+	t=1738856951; cv=none; b=GaMVxElgNdwJNV9jl2V+0PYAtqB0YfcK7V+XW5AhsHQLoVgu87djVXtG4KdwvuM+Gcfqnl2K5gnh9vXdYevjwjGrPDLk/df0jYeyKKBddx0WiGhVFYGMvuc5NYxY2v1TJizsHloQhCsQnjgMTE/o7xMr3qc7wbhgNHB1IFyPR1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738845981; c=relaxed/simple;
-	bh=LzPmLR4NECVJzanm9D7VrWg3lHEbiyR22YsArEv+U6I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cTxeewmED3NLp6jy8ZlFBUEny9LSDLnnbVZgfAqOrROzhRyzwWCS+AEE9LCqUwA6IpLw1s9q5R8jINHTXTqqDm0A5zT3oFPqmdrXPK6O9qkDpq9zEvSl3LX07wizfT6MMc+xQooFe/P2V2nA/VK0K32YSoIhzQD7hgjzBCc2c3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 516CjkJa027957;
-	Thu, 6 Feb 2025 06:45:46 -0600
-Received: (from greg@localhost)
-	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 516CjiQD027956;
-	Thu, 6 Feb 2025 06:45:44 -0600
-Date: Thu, 6 Feb 2025 06:45:44 -0600
-From: "Dr. Greg" <greg@enjellic.com>
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, jmorris@namei.org
-Subject: Re: [PATCH v4 2/14] Add TSEM specific documentation.
-Message-ID: <20250206124544.GA27587@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <20240826103728.3378-3-greg@enjellic.com> <8642afa96650e02f50709aa3361b62c4@paul-moore.com> <20250205120026.GA15809@wind.enjellic.com> <e8ec2704-90bf-4e67-9e90-eb206e6d08c0@schaufler-ca.com>
+	s=arc-20240116; t=1738856951; c=relaxed/simple;
+	bh=gm5a18TPIE8jhjZVGIfDrBV0rkHyXJ5LhAXrIYfCdU8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YTEgm12FWhu/g7fAvOrWWuF4F4awQfUOp5VYP8iUdFhjxzWdI6WcOrA9hGmtD4JdUT5SRPf9nC0CUOXD6Ccc4nmfGD7vi4vmwbAzPJ65szFPuuw2ty83ewe67dvX3wBiESdY+s2YveXm6QzArGYcXaIzaPdzsgtIQWAMgKxMbME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Yq8KNIjC; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Yq8KNIjC"
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6f9aa66cbe8so3788047b3.1
+        for <linux-security-module@vger.kernel.org>; Thu, 06 Feb 2025 07:49:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1738856948; x=1739461748; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X4yZmynuAqAaX/fsICNG3Afvx5zVtUE7n592NM4a374=;
+        b=Yq8KNIjCfMI2J+h0DOOG2IrpKA1Yi2yuRVl51JeDauRaifHtFuyfJnuBEje0om/w4Z
+         vWEXZZEcaNAWMKEyV1YaAi21bCSGEENGm9wwuzagfDyH2IpWb5hJYTygBToTV6rYoRB5
+         treIbnP9hMtByXKYPH+5A8ejm5TEr/BkfwXHqoAiqK39USiH0qxE+01MEXMoXxoMrjWE
+         yV4Z9GBZsSsRLOdkhPZ1OAtGRrzo7p21kh06luTSomE4+OSijsCKfCVFYQsynYWUo/LQ
+         ixdskHv63SqrmQDKCai0T6qHGN6VftFBZsV9A6WJthprXigrFk6KEBPtl0+IlWmOCTpM
+         J22A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738856948; x=1739461748;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=X4yZmynuAqAaX/fsICNG3Afvx5zVtUE7n592NM4a374=;
+        b=KvJVx3i4MVHO1h5/y2TWf/cIcGa4CBRsDacQ46vGSXuHmrmuKUgEAT5CtqMD/flVxz
+         scRDqJXrI1Hm6IbaL8DgKgXprADnbJrTkos49ylFG0RZTwvnS16Bo8W78TJpt/KGO07b
+         ulD87w77jTdHBboLTZcngOpBHSP9QUGsDCJ5CruEHAG3PTb3DbZMNMmvEOdbQdaauOq/
+         8iKoqgCERxWy1BtTBQayebN9QkndhAxPShNcKFacZyKhKQ8W2NDPf99R1WUadadh/36t
+         w1CHQeTxT69ywLvThFEINP7Jip1Dfj1OJHkYa2JlkAmXIFIOAWux/Ykj5Sltyj/+TtUE
+         DslA==
+X-Gm-Message-State: AOJu0Yz0FrpNsroTcrNfH7yEznssJ2pIhehoVjKA6bTyYv8IEZ/wV7zH
+	4Eg2WbhprFtbIbh/YsU325Mi4Ydysrp/jpiiyatABfHhd63OLbsnyZ/MB9ybPRmICXngMZcTK2H
+	9u+666Fzy0+0+9dwOi+GLe3eM9ByPkcQDkXHDPXBhZp5+MOVqLA==
+X-Gm-Gg: ASbGncsLnxZVGt9VgGrKJwNE+OnPegsgX0gMeTyiPV1XcBss9TptL+6HPjCMy9kAdR8
+	k5TJQ4JtVUtc/4a8b4KMCY9Uqc24NF5ujItorvhUP+1Mz6FuVdaHtf5bUYwwfoomrcXBoDts=
+X-Google-Smtp-Source: AGHT+IFQMv8ErMjprARbuVDAhi7QMq8LWSphsU0CJhVswyKDLYm20gJ5SdMRSVF1SLnRrshn3RuDlYFo/kUPh+93LtY=
+X-Received: by 2002:a05:690c:6302:b0:6ee:7339:ab42 with SMTP id
+ 00721157ae682-6f989eb2e40mr67811147b3.14.1738856948282; Thu, 06 Feb 2025
+ 07:49:08 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e8ec2704-90bf-4e67-9e90-eb206e6d08c0@schaufler-ca.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Thu, 06 Feb 2025 06:45:46 -0600 (CST)
+MIME-Version: 1.0
+References: <20240826103728.3378-3-greg@enjellic.com> <8642afa96650e02f50709aa3361b62c4@paul-moore.com>
+ <20250205120026.GA15809@wind.enjellic.com>
+In-Reply-To: <20250205120026.GA15809@wind.enjellic.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 6 Feb 2025 10:48:57 -0500
+X-Gm-Features: AWEUYZnmKtRI9VO3HSoX82L6GrgusAeFSML7fobxuKG6UrraUu5tWEyugLuu98Y
+Message-ID: <CAHC9VhRq0PrH=0n6okkvfed=8QQOfv-ERA60NNWvLXetgrB_2w@mail.gmail.com>
+Subject: Re: [PATCH v4 2/14] Add TSEM specific documentation.
+To: "Dr. Greg" <greg@enjellic.com>
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	jmorris@namei.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Feb 05, 2025 at 11:58:00AM -0800, Casey Schaufler wrote:
-
-Good morning, I hope the week is progressing well.
-
-I need to climb on an airplane in less than 24 hours to fly to Aspen
-to spend some time skiing with the 'beautiful people', so only two
-comments.
-
-> On 2/5/2025 4:00 AM, Dr. Greg wrote:
-> > On Tue, Jan 28, 2025 at 05:23:52PM -0500, Paul Moore wrote:
+On Wed, Feb 5, 2025 at 7:01=E2=80=AFAM Dr. Greg <greg@enjellic.com> wrote:
+> On Tue, Jan 28, 2025 at 05:23:52PM -0500, Paul Moore wrote:
+>
+> > I believe the LSM can support both the enforcement of security policy
+> > and the observation of security relevant events on a system.  In fact
+> > most of the existing LSMs do both, at least to some extent.
 > >
-> > Good morning, I hope mid-week is going well for everyone.
-> >
-> > After the issue of the functionality of modern cryptographic
-> > primitives, a discussion of the second most important issue Paul
-> > raises.
-> >
-> >> I believe the LSM can support both the enforcement of security policy
-> >> and the observation of security relevant events on a system.  In fact
-> >> most of the existing LSMs do both, at least to some extent.
-> >>
-> >> However, while logging of security events likely needs to be
-> >> asynchronous for performance reasons, enforcement of security policy
-> >> likely needs to be synchronous to have any reasonable level of
-> >> assurance.  You are welcome to propose LSMs which provide
-> >> observability functionality that is either sync, async, or some
-> >> combination of both (? it would need to make sense to do both ?), but
-> >> I'm not currently interested in accepting LSMs that provide
-> >> asynchronous enforcement as I don't view that as a "reasonable"
-> >> enforcement mechanism.
-> > This is an artificial distinction that will prove limiting to the
-> > security that Linux will be able to deliver in the future.
+> > However, while logging of security events likely needs to be
+> > asynchronous for performance reasons, enforcement of security policy
+> > likely needs to be synchronous to have any reasonable level of
+> > assurance.  You are welcome to propose LSMs which provide
+> > observability functionality that is either sync, async, or some
+> > combination of both (? it would need to make sense to do both ?), but
+> > I'm not currently interested in accepting LSMs that provide
+> > asynchronous enforcement as I don't view that as a "reasonable"
+> > enforcement mechanism.
+>
+> This is an artificial distinction that will prove limiting to the
+> security that Linux will be able to deliver in the future.
+>
+> Based on your response, is it your stated position as Linux security
+> maintainer, that you consider modern Endpoint Detection and Response
+> Systems (EDRS) lacking with respect to their ability to implement a
+> "reasonable" enforcement and assurance mechanism?
 
-> I'll apologize up front to everyone else for this response, but I
-> hope it is something you might understand.
-> 
-> A security guard scans a person's access pass. As the computer system that
-> processes the data is slow, the guard lets the person go through the gate.
-> An access denial finally comes through. The guard turns and shoots the
-> intruder. What other choice is available? The intruder may have seen what
-> should not have been seen. Now the guard has to file a fatal incident report
-> and slow down everything else while cleaning up the remains.
-> 
-> tl;dr - async access control is just messy.
+As stated previously: "I'm not currently interested in accepting LSMs
+that provide asynchronous enforcement as I don't view that as a
+reasonable enforcement mechanism."
 
-Stated more precisely, the model is asynchronous behavioral controls
-and model response.
+> If this is the case, your philosophy leaves Linux in a position that
+> is inconsistent with how the industry is choosing to implement
+> security.
 
-It is currently what 100+ billion dollar security companies and their
-products are based on.  Which, in an increasingly wide swath of
-corporate IT, you are required to implement.
+In this case perhaps TSEM is not well suited for the upstream Linux
+kernel and your efforts are better spent downstream, much like the
+industry you appear to respect.
 
-Kernel security maintainers can choose to ignore the issue, doesn't
-mean it isn't reality.
-
-We have a very diverse team, members of which have been involved in
-international cybersecurity issues that have been in the news.  I've
-personally written white papers for the consumption of individuals
-that are in the news, as to the socio-technical issues that are behind
-why we can't have nice things in cybersecurity.
-
-We believe Linux can improve on this situation.  We at least look on
-it as fortunate to have a public record as to why that may not be
-possible, if that turns out to be the case.
-
-> > Based on your response, is it your stated position as Linux security
-> > maintainer, that you consider modern Endpoint Detection and Response
-> > Systems (EDRS) lacking with respect to their ability to implement a
-> > "reasonable" enforcement and assurance mechanism?
-> 
-> You are conflating issues. It isn't the purpose of the system, it is
-> the mechanism by which it is implemented that is the problem.
-> 
-> > If this is the case, your philosophy leaves Linux in a position that
-> > is inconsistent with how the industry is choosing to implement
-> > security.
-> >
-> > Let me cite an example from one of our project advisors.
-> >
-> > This individual is a senior principal at a reasonably large technology
-> > products company that depends on Linux almost exclusively to support
-> > its operations.  At any given instant he participates in supervising a
-> > fleet of around 6,000 virtual machines running about 50,000-60,000
-> > containerized workloads.
-> 
-> How can this possibly be a kernel problem?
-> 
-> > All of the Linux deployments are Ansible orchestrated.  The security
-> > deployment consists of disabling SeLinux and installing an EDRS
-> > solution.  Doing the latter checks all the boxes they need for their
-> > corporate security compliance policies.
-> 
-> Without insight regarding what these policies might be it is impossible
-> to say for sure, but I'll bet a refreshing beverage that they involve
-> all sorts of application level protocols, and other things the kernel
-> has no business moderating.
-> 
-> > He, and others, have watched this discussion closely over the last two
-> > years that we have tried to get TSEM reviewed and just recently phoned
-> > me with the following comment:
-> >
-> > "I think the problem is that these guys don't understand how security
-> > is being done and the reasons why".
-> 
-> Oh, make no mistake, I (at least) understand how security is being
-> done these days and find it terrifying. We do in the kernel what can
-> and should be done in the kernel, but adding general supply chain controls
-> as an LSM isn't gonna happen in my (admittedly limited) lifetime.
-> 
-> > There is probably not a modern EDRS solution that does not involve
-> > going to the cloud for its decision making enforcement,
-> 
-> Wow. The number and density of application and network protocols
-> necessary for that to work puts an Austrian pastry to shame. And
-> you want to put that in the kernel?
-> 
-> >  in most cases
-> > based on Indicators Of Compromise (IOC) trained machine learning
-> > models.  Asynchronous detection, enforcement and remediation is now
-> > standard practice.  In the security industry, a 1 minute response to a
-> > security event is considered the 'gold' standard.
-> 
-> A one minute delay in an openat() call ain't gonna happen.
-> 
-> > For the sake of discussion, lets take a Quixote userspace Trusted
-> > Modeling Agent (TMA) running TSEM based deterministic modeling of a
-> > containerized workload.  As we've discussed previously, demonstrated
-> > average response times are on the order of 170 micro-seconds.
-> >
-> > For an event that needs asynchronous enforcement, ie. running in
-> > atomic context, that represents a 3.5 order of magnitude advantage in
-> > response over the industry standard, without the attendant challenges
-> > of going off machine or installing kernel based infrastructure.
-> >
-> > What would be the rationale or advantage of denying those that desire
-> > this type of security option, a 3,500 fold increase in security
-> > response times?
-> >
-> > Let's take another need for running in userspace, trusted execution
-> > environments.  Support is available in our userspace package for
-> > running a TMA model in either an SGX enclave or in an independent
-> > hypervisor protected execution context, both of which significantly
-> > harden the enforcement implementation against attack by adversaries.
-> >
-> > As Linux security maintainer, we assume that you have read Executive
-> > Order 14144 signed on January 16th 2025.
-> 
-> Remember "C2 in '92"? Executive order. Industry invested ~$25 Million
-> in 1990's dollars in evaluation costs alone. Never enforced. I am not
-> shaking in my boots.
-> 
-> >   That document specifically
-> > calls out the requirement for the increased use of trusted execution
-> > environments in combination with advancements in endpoint detection.
-> >
-> > It shouldn't be a leap in imagination as to the regulatory compliance
-> > advantages associated with hardware attestation that the security
-> > implementation is operational and in a known good enforcement state.
-> 
-> When those technologies have developed some level of maturity and
-> acceptance they'll be worth considering more seriously.
-> 
-> > Finally, at this point in time, it would seem unwise in the technology
-> > industry, to discount the importance of 'AI', or more correctly
-> > machine learning.  As we've noted before in our discussions, it is
-> > unlikely that we are going to see synchronous LSM enforcement using a
-> > machine learning model trained on potentially trillions of data
-> > observations and indicators.
-> 
-> I'm not discounting AI. I'm questioning it's use in kernel access control
-> implementations. You cannot ignore the impact of access control on system
-> performance. Ever.
-> 
-> > The LSM is designed to provide security services to the users of
-> > Linux, not to be a kingdom.
-> 
-> It's never been more than a principality. ;)
-> 
-> > Linux is/was about 'choice' as to how users want to use their
-> > hardware.
-> 
-> Nah, it's about a Finish grad student's side project.
-> 
-> > Artifically limiting the types of security that can be implemented by
-> > the LSM works to the detriment of the security innovation that Linux
-> > can deliver and the Linux user community writ large.
-> 
-> If you can demonstrate a sane implementation of your mechanism we're
-> all ears. User space policy adjudication isn't sane. It wasn't in the
-> 1980's, it isn't now.
-
-For the official record, a number of your assessments above are
-incorrect and do not reflect our implementation or intentions.
-
-It doesn't seem to be a worthwhile expenditure of anyone's time to
-discuss technical specifics.
-
-We will remain content to be 'The Ghost of Christmas Yet To Come'.
-
-Best wishes for a productive remainder of the week to everyone.
-
-As always,
-Dr. Greg
-
-The Quixote Project - Flailing at the Travails of Cybersecurity
-              https://github.com/Quixote-Project
+--=20
+paul-moore.com
