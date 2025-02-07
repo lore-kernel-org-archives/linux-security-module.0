@@ -1,142 +1,148 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DD22187342;
-	Fri,  7 Feb 2025 20:02:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0203723C8D9
+	for <linux-security-module@vger.kernel.org>; Fri,  7 Feb 2025 21:42:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738958563; cv=none; b=VvxHA+fkaVcFXdzdtt4pn8VeTVH4hn0NWCOakNUgdvo0ficCaqrsJMtUaOopbnwROPF4UHM0nlQPyfNGycmAfNM0XQmTROUAxdLtXlgj8UjZSMz02rhdVH/Jwmq0j+2qgB2UZ2P6We19WhMdD1fbCNpXFOHpkbiD6bEIqlAWjSE=
+	t=1738964581; cv=none; b=r3nNPVdwHK2gjsrC+oJ8cXe4yGt3naLvBuu5qcWOb28tUjxiPd4/qdLnvi5oRv59JPQNBYqdPMOmgolWT67Vjnxrtlpj3K06hLCvHhh9dmkR0Eyc2w0riTFILM/8+UGzCxiJz/kVlSSxfVMfnxQb1l8yAjXticU4q54FpM9r06g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738958563; c=relaxed/simple;
-	bh=9dk3rHUzSmTeWIRuA6b+JrU+vJEoo28SEvdU2FGvds0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=jP16IB0ZgKGTppHpeXlNZaEoqJEJx7cCg9B7Vj+GaJYZi4dwUbn0QgQK3ymQrXNj7yj0u7TvwlJytzK+XdKyjTvKx7m7IDy7DgMujQau+nIf3dqY7bWZL38h5zhBKnbzdnr/QDHX7aP4NsEueHdgiKh8AmWQQsdpxgsOiC5Nl1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=n7hUQp3C; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1738964581; c=relaxed/simple;
+	bh=WYNf17jt7Muniz1iCEPbUpabyrjv1SVCpJsiy5bz71M=;
+	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
+	 References:In-Reply-To; b=epPjHMi/nm44deE48ucPG1kJkbnAaTK6D3RSV6kOVBGRX3SQuPkIXW3xnbZA/T8Vm2xG64WuUKXB11o8umW75FWkkeNlKKtNP0mf3ve/cTW8OC/ZxKGrG2Gr7PJDbDHBOoySKGQwnyewt2w4Uchz790mLz6d3YixcLSzH5pYmvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=eStP4XSg; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="n7hUQp3C"
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 517BVFZ0027661;
-	Fri, 7 Feb 2025 20:02:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=HwHTFE
-	VZI2gdyAGVCwWOpvvsHUwDlhYbFcodIx4JiyE=; b=n7hUQp3CPguOh8u/TiE4AS
-	boNk9/TAZ8HmNOC/+ywlbl20+nnjyZbcKm8VW5l368+S5XRBfNOxY8LeMSNRrmuc
-	4q5z696VhapOdfAWNpak8BxTmMusj+52CVqTxODgcDtVzdMIOX0XNUYe7LUSm+zZ
-	ZkjlXzHYFWYDsUkMzdFeamdpvlFpqegoI5Z2vL30UH5wCZPudjaHRWJLicLeFCwf
-	JM3Xcx+/AtzJBaLyEU3P1R4mPhZfpxsiosTU6B5ATiX6E8B3sQu186oDbV8+v3a7
-	IW4BYB8ZfwQY4C4nNTt4KBficPgDb4LlqMpOdxSvWMKr/8d2x8J15RzkGQWi/PDA
-	==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44n910ct8u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Feb 2025 20:02:12 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 517JlEpi024493;
-	Fri, 7 Feb 2025 20:02:11 GMT
-Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44hxxnn7h5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Feb 2025 20:02:11 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 517K2Bdb22479392
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 7 Feb 2025 20:02:11 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 408205805C;
-	Fri,  7 Feb 2025 20:02:11 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 97DFA5805A;
-	Fri,  7 Feb 2025 20:02:09 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.80.253])
-	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Fri,  7 Feb 2025 20:02:09 +0000 (GMT)
-Message-ID: <861f5c51f4af46a4d731c632461b72c0045e577d.camel@linux.ibm.com>
-Subject: Re: [PATCH v7 0/7] ima: kexec: measure events between kexec load
- and excute
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: steven chen <chenste@linux.microsoft.com>, stefanb@linux.ibm.com,
-        roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
-        eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
-        code@tyhicks.com, bauermann@kolabnow.com,
-        linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
-        James.Bottomley@HansenPartnership.com
-Date: Fri, 07 Feb 2025 15:02:09 -0500
-In-Reply-To: <b07a4b44-b76f-4691-ac01-6e91b6b83672@linux.microsoft.com>
-References: <20250203184558.61367-1-chenste@linux.microsoft.com>
-	 <eb2d3b5f-7aca-42c8-9b34-8ca07b8bc060@linux.microsoft.com>
-	 <8091ed0d942806e16f995e8444da29df7843df62.camel@linux.ibm.com>
-	 <b07a4b44-b76f-4691-ac01-6e91b6b83672@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="eStP4XSg"
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-46e28597955so22583411cf.0
+        for <linux-security-module@vger.kernel.org>; Fri, 07 Feb 2025 13:42:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1738964578; x=1739569378; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OyZWD04EzzeMLP2kqehBEA9qaN1gdA31HUl6m14dlVU=;
+        b=eStP4XSgOZDB+nJgRj5RGEx0wHL2SUSx78Qn77CCGv1NHN5hSVLZEH/M5VRkPOFYo0
+         hQjA9o7AR2CHu7kh+erpzhKGehyhcOUw0/oqhcBO8FJKs2kKnsNz98416xqobtgztSxR
+         PFASo2vz2e4uaU1JiicYd3UUiBSLRT6o2iC1dVPDYpgdjnUjwX/9T9xC7Y4H+ZBG90Do
+         y+ORlLsiyLX2315mSJLbNPvr4fe4OD9VrHVDyYYPYHwnfWdjqvfqzZET4Xeqf5l14G01
+         ZjAZznMliaWzqR7rLDS/TFYrVIy7Bud1456LFOlCVy/YvG7e09W/lSYoZoI7KWxhNyIZ
+         7k2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1738964578; x=1739569378;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=OyZWD04EzzeMLP2kqehBEA9qaN1gdA31HUl6m14dlVU=;
+        b=oGf8cV3NNYxNcjcv/CgLTxlHO07/QS8/1ZiE392+inx8X4iTNjTGYVhegEwzsMPAn3
+         VJOU/icuVjEFNk9So5SjwrQWDZEA/bVyXaZsjZFilDBFc/NnqQnf9vYbsYrTFzp7pvLR
+         lVWsqCy5SSULNfCIlb4+if6x643j4mObQzcuFfJZi4B4WZnXnCKymOjOscKQ1PK8iytr
+         fbYVHrYHBHVO8kpzpnP1+btdbdpIcQSorYrVA/BrsCIXKfum7YeXzWLENGRObUIeuDjJ
+         6EXaFibwJEvu3DcnudKhtQMMoJwUlC5RkyFoYZ2q4kwq51whhmFT6ycNa+tbFPKFb8xO
+         lTMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWKByGaMpYr5RYaQtQZHuV8N5piB9S3goPrt35+SvGKvAQyF7N3DittoK7yameSNUL4sifyY2lJLcaa7k4W6yBd4DWNmCk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWKveRZAEbSxkKo0QkKO8I2lzq7wvE7KdyDpoeDSwqDKheAJFD
+	HXks5B2dZgbtPm43QhV4S8BhzSDSEJsnQBH6xmo3VnulKei2YoxqTJONcCT7SQ==
+X-Gm-Gg: ASbGnctrL9lubTRc/sg6biBqd1/bvS8ov7kf4e4KkrLHfA4NjSaFgy1D+niuPFElp5A
+	VY0zFyJXMau9w0U4ak3fjieIFBvWO8wPsWXVU+VxMMc+7n0jx3NMDLkmbjtHZgmJHdeNrSlp+pw
+	NvxrFOlNmDoceDMp6EyY4LF4r4a2Fc4nU9T5JDVDQkB4okbpPqfT7xUlMo078FrO9ZHa8PoFUQT
+	P2ZjLithyXJEP58YR/2l92d6OhJACQOEgRfKMAMWQSHiiW+yRFDCf63jVuvhwnEClQEUh1HQhYT
+	/faNkqZI9g==
+X-Google-Smtp-Source: AGHT+IEKZSzxjNXmRGiHG/W80iDgu7pdtltLCNjruMOjlrTdLuOgHmomS1qSW19gO/TgYVufB/n4Kw==
+X-Received: by 2002:a05:622a:355:b0:471:6706:4506 with SMTP id d75a77b69052e-47167acb942mr62746741cf.36.1738964577790;
+        Fri, 07 Feb 2025 13:42:57 -0800 (PST)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-47153beb6dcsm20871101cf.71.2025.02.07.13.42.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Feb 2025 13:42:57 -0800 (PST)
+Date: Fri, 07 Feb 2025 16:42:56 -0500
+Message-ID: <8743aa5049b129982f7784ad24b2ec48@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: R1EQDqADoagOynRo2WPA8TunqzRaMPbK
-X-Proofpoint-GUID: R1EQDqADoagOynRo2WPA8TunqzRaMPbK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-07_09,2025-02-07_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 mlxlogscore=999
- priorityscore=1501 impostorscore=0 bulkscore=0 clxscore=1015
- lowpriorityscore=0 phishscore=0 spamscore=0 malwarescore=0 suspectscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502070150
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=UTF-8 
+Content-Transfer-Encoding: 8bit 
+X-Mailer: pstg-pwork:20250207_1530/pstg-lib:20250207_1633/pstg-pwork:20250207_1530
+From: Paul Moore <paul@paul-moore.com>
+To: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>, Jens Axboe <axboe@kernel.dk>
+Cc: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>, James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Pavel Begunkov <asml.silence@gmail.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, =?UTF-8?q?Thi=C3=A9baud=20Weksteen?= <tweek@google.com>, =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>, =?UTF-8?q?Bram=20Bonn=C3=A9?= <brambonne@google.com>, Masahiro Yamada <masahiroy@kernel.org>, linux-security-module@vger.kernel.org, io-uring@vger.kernel.org, selinux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] io_uring: refactor io_uring_allowed()
+References: <20250127155723.67711-1-hamzamahfooz@linux.microsoft.com>
+In-Reply-To: <20250127155723.67711-1-hamzamahfooz@linux.microsoft.com>
 
-On Mon, 2025-02-03 at 16:56 -0800, steven chen wrote:
-> On 2/3/2025 4:50 PM, Mimi Zohar wrote:
-> > On Mon, 2025-02-03 at 15:25 -0800, steven chen wrote:
-> > > Hi all,
-> > >=20
-> > > The below is the correct version for review.
-> > >=20
-> > > [PATCH v7 0/7] ima: kexec: measure events between kexec load and excu=
-te
-> > > <
-> > > https://lore.kernel.org/linux-integrity/20250203232033.64123-1-chenst=
-e@linux.microso
-> > > ft.com/T/#t>
-> > >=20
-> > > Please ignore the this version because patch 5 is missing.
-> > >=20
-> > > I am really sorry to have troubled you.
-> > Thanks, Steven.=C2=A0 I was able to apply the patch set to v6.13.=C2=A0=
- For some reason, b4
-> > downloads a duplicate 4/7 patch.
-> >=20
-> > Mimi
->=20
-> Hi Mimi,
->=20
-> Please use the one below
->=20
-> [PATCH v7 0/7] ima: kexec: measure events between kexec load and excute=
-=20
-> <
-> https://lore.kernel.org/linux-integrity/20250203232033.64123-1-chenste@li=
-nux.microso
-> ft.com/T/#t>
->=20
-> Please ignore the this version because patch 5 is missing.
->=20
-> I am really sorry.
+On Jan 27, 2025 Hamza Mahfooz <hamzamahfooz@linux.microsoft.com> wrote:
+> 
+> Have io_uring_allowed() return an error code directly instead of
+> true/false. This is needed for follow-up work to guard io_uring_setup()
+> with LSM.
+> 
+> Cc: Jens Axboe <axboe@kernel.dk>
+> Signed-off-by: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
+> ---
+>  io_uring/io_uring.c | 21 ++++++++++++++-------
+>  1 file changed, 14 insertions(+), 7 deletions(-)
+> 
+> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+> index 7bfbc7c22367..c2d8bd4c2cfc 100644
+> --- a/io_uring/io_uring.c
+> +++ b/io_uring/io_uring.c
+> @@ -3789,29 +3789,36 @@ static long io_uring_setup(u32 entries, struct io_uring_params __user *params)
+>  	return io_uring_create(entries, &p, params);
+>  }
+>  
+> -static inline bool io_uring_allowed(void)
+> +static inline int io_uring_allowed(void)
+>  {
+>  	int disabled = READ_ONCE(sysctl_io_uring_disabled);
+>  	kgid_t io_uring_group;
+>  
+>  	if (disabled == 2)
+> -		return false;
+> +		return -EPERM;
+>  
+>  	if (disabled == 0 || capable(CAP_SYS_ADMIN))
+> -		return true;
+> +		goto allowed_lsm;
 
-No problem.  My point I was trying to make the other day was that I was abl=
-e to apply
-the NEW version of the patch set (even though b4 got confused), in order to=
- give a
-heads up for anyone else trying to apply it.
+I'd probably just 'return 0;' here as the "allowed_lsm" goto label
+doesn't make a lot of sense until patch 2/2, but otherwise this
+looks okay to me.
 
-new: b4 am -o /tmp 20250203232033.64123-1-chenste@linux.microsoft.com
-old: b4 am -o /tmp 20250203184558.61367-1-chenste@linux.microsoft.com
+Jens, are you okay with this patch?  If yes, can we get an ACK from you?
 
-Mimi
+>  	io_uring_group = make_kgid(&init_user_ns, sysctl_io_uring_group);
+>  	if (!gid_valid(io_uring_group))
+> -		return false;
+> +		return -EPERM;
+> +
+> +	if (!in_group_p(io_uring_group))
+> +		return -EPERM;
+>  
+> -	return in_group_p(io_uring_group);
+> +allowed_lsm:
+> +	return 0;
+>  }
+>  
+>  SYSCALL_DEFINE2(io_uring_setup, u32, entries,
+>  		struct io_uring_params __user *, params)
+>  {
+> -	if (!io_uring_allowed())
+> -		return -EPERM;
+> +	int ret;
+> +
+> +	ret = io_uring_allowed();
+> +	if (ret)
+> +		return ret;
+>  
+>  	return io_uring_setup(entries, params);
+>  }
+> -- 
+> 2.47.1
+
+--
+paul-moore.com
