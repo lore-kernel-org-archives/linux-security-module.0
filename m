@@ -1,198 +1,119 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D852B136352;
-	Thu,  6 Feb 2025 20:13:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD8CF80BFF;
+	Fri,  7 Feb 2025 10:20:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1738872801; cv=none; b=AFjeYBOb9NePRPiNKx0fkvBHbvsuDFg6eUgLnvVpACcLD58bss6wgcZHYyGKVmPmQmluK/wdwtY/oLT4cnDqPvIUsvhDUOB0lwjk5cwzLkUhmwfVPDAsb1n9u/gI3UiY94g6gf4M0ebpsH/Fvy242+MfOrU6iZ0Dl+UUqqe2WbQ=
+	t=1738923654; cv=none; b=pX8V7Xheq4lavWwn6bQMSYRsFqNrDAcOwgR1KGgEYuJG3kGZiAmz+sqg4Zk3d/MsxNf3saZjBGmyKNcTgFkxiq3WFcc0TydJB/Q7jdr2bu83QtbMBbzUcqvhWuxg/TNObbBzqDKmbe1xjCL3mt5P/vranquZDa24Xro1EvA79x4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1738872801; c=relaxed/simple;
-	bh=U78ohRtvWW4LXD8QwA9JOGrsvbfL0MT5zsKtYl0AGYk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pz+iwVte8J57wN9/4yneM196Mv4ZVde7N0FNa7lj8GmhuIPhwJX56Opksz51jVoCeoS/sOgWCMtoCz/8Q2RMw7b1LgZ03hZfpZkKlRzMQk+zc4fwkQ+mKMX1SOfne24rXDvGprCl8dIeuNTFmOFwyVs6nTsWOZJaFLgBreVZfDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nxx9enKx; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nxx9enKx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B66C1C4CEDD;
-	Thu,  6 Feb 2025 20:13:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1738872800;
-	bh=U78ohRtvWW4LXD8QwA9JOGrsvbfL0MT5zsKtYl0AGYk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Nxx9enKxZtm0pLVEhcpuBWqfJ6YGeLl4MK4zdg8ThwI+lHlEkl0rY43l2DP09L9ay
-	 blOz8FTptgbE5kzYdgd4xgqzjdvldNhXy/Xl0I4UJUSQOZ6jPrLti40Rv3G3dXAWJT
-	 /ILtpSJH7+gJqapfheRRBTwiHJdtBjc3NXpA9SagckHE1ERx9eOF7B9tjEBPuikVf8
-	 7PKRHwIUdTF3F1iaIA5ECSHI0xk5x/tv2hIXyYvBOqFrHvZ7LYTJ94HO+lJovClB34
-	 4hPPb6TwqhpCpMuBBobtzrg22geO46U5Kygl7QTmVxaZ1kdWHdjLTHIeUYk/5125Tw
-	 v2XvfcRJZlCPw==
-Date: Thu, 6 Feb 2025 22:13:15 +0200
-From: Jarkko Sakkinen <jarkko.sakkinen@kernel.org>
-To: Eric Snowberg <eric.snowberg@oracle.com>
-Cc: linux-security-module@vger.kernel.org, dhowells@redhat.com,
-	dwmw2@infradead.org, herbert@gondor.apana.org.au,
-	davem@davemloft.net, ardb@kernel.org, paul@paul-moore.com,
-	jmorris@namei.org, serge@hallyn.com, zohar@linux.ibm.com,
-	roberto.sassu@huawei.com, dmitry.kasatkin@gmail.com,
-	mic@digikod.net, casey@schaufler-ca.com, stefanb@linux.ibm.com,
-	ebiggers@kernel.org, rdunlap@infradead.org,
-	linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
-	linux-crypto@vger.kernel.org, linux-efi@vger.kernel.org,
-	linux-integrity@vger.kernel.org
-Subject: Re: [RFC PATCH v3 07/13] keys: Add ability to track intended usage
- of the public key
-Message-ID: <Z6UU7anXtW43AhNR@kernel.org>
-References: <20241017155516.2582369-1-eric.snowberg@oracle.com>
- <20241017155516.2582369-8-eric.snowberg@oracle.com>
+	s=arc-20240116; t=1738923654; c=relaxed/simple;
+	bh=FsMReRhSR0sfiNrZcqLBVDxK/HU2cNflLinb44tDRLs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aeDGL53dqbw8gs8Iq4A++K4+VctO+Xy+YXCEdVa1ZHkwKhtAIivTPE427MXEcvRwzv0gNoH238pSW7erZiDVdsX749QmZX5JOafYokFr+9UTHm7jPAs2bM0kR4xl8BYY61t2t/ccMBbBM8WVtSA1xgVWL2DIVxm5oVrebGoucvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 517AKQEU007044;
+	Fri, 7 Feb 2025 04:20:26 -0600
+Received: (from greg@localhost)
+	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 517AKOvj007043;
+	Fri, 7 Feb 2025 04:20:24 -0600
+Date: Fri, 7 Feb 2025 04:20:24 -0600
+From: "Dr. Greg" <greg@enjellic.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+        jmorris@namei.org
+Subject: Re: [PATCH v4 2/14] Add TSEM specific documentation.
+Message-ID: <20250207102024.GA6415@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <20240826103728.3378-3-greg@enjellic.com> <8642afa96650e02f50709aa3361b62c4@paul-moore.com> <20250205120026.GA15809@wind.enjellic.com> <CAHC9VhRq0PrH=0n6okkvfed=8QQOfv-ERA60NNWvLXetgrB_2w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241017155516.2582369-8-eric.snowberg@oracle.com>
+In-Reply-To: <CAHC9VhRq0PrH=0n6okkvfed=8QQOfv-ERA60NNWvLXetgrB_2w@mail.gmail.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Fri, 07 Feb 2025 04:20:26 -0600 (CST)
 
-On Thu, Oct 17, 2024 at 09:55:10AM -0600, Eric Snowberg wrote:
-> Add two new fields in public_key_signature to track the intended usage of
-> the signature.  Also add a flag for the revocation pass.  During signature
-> validation, two verifications can take place for the same signature.  One
-> to see if it verifies against something on the .blacklist keyring and
-> the other to see if it verifies against the supplied keyring. The flag
-> is used to determine which stage the verification is in.
-> 
-> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
+On Thu, Feb 06, 2025 at 10:48:57AM -0500, Paul Moore wrote:
 
-Mimi, was this the patch set you asked to look at while ago?</offtopic>
+Good morning to everyone.
 
-This patch adds PKS_REVOCATION_PASS and REVOCATION_SET. It would be
-nice to put in simple terms how they are used in down to eart terms.
+> On Wed, Feb 5, 2025 at 7:01???AM Dr. Greg <greg@enjellic.com> wrote:
+> > On Tue, Jan 28, 2025 at 05:23:52PM -0500, Paul Moore wrote:
+> >
+> > > I believe the LSM can support both the enforcement of security policy
+> > > and the observation of security relevant events on a system.  In fact
+> > > most of the existing LSMs do both, at least to some extent.
+> > >
+> > > However, while logging of security events likely needs to be
+> > > asynchronous for performance reasons, enforcement of security policy
+> > > likely needs to be synchronous to have any reasonable level of
+> > > assurance.  You are welcome to propose LSMs which provide
+> > > observability functionality that is either sync, async, or some
+> > > combination of both (? it would need to make sense to do both ?), but
+> > > I'm not currently interested in accepting LSMs that provide
+> > > asynchronous enforcement as I don't view that as a "reasonable"
+> > > enforcement mechanism.
+> >
+> > This is an artificial distinction that will prove limiting to the
+> > security that Linux will be able to deliver in the future.
+> >
+> > Based on your response, is it your stated position as Linux security
+> > maintainer, that you consider modern Endpoint Detection and Response
+> > Systems (EDRS) lacking with respect to their ability to implement a
+> > "reasonable" enforcement and assurance mechanism?
 
-> ---
->  certs/blacklist.c                     |  3 +++
->  crypto/asymmetric_keys/pkcs7_trust.c  | 20 ++++++++++++++++++++
->  crypto/asymmetric_keys/pkcs7_verify.c |  4 ++++
->  include/crypto/pkcs7.h                |  3 +++
->  include/crypto/public_key.h           |  4 ++++
->  5 files changed, 34 insertions(+)
-> 
-> diff --git a/certs/blacklist.c b/certs/blacklist.c
-> index 675dd7a8f07a..dd34e56a6362 100644
-> --- a/certs/blacklist.c
-> +++ b/certs/blacklist.c
-> @@ -17,6 +17,7 @@
->  #include <linux/uidgid.h>
->  #include <keys/asymmetric-type.h>
->  #include <keys/system_keyring.h>
-> +#include <crypto/public_key.h>
->  #include "blacklist.h"
->  
->  /*
-> @@ -289,7 +290,9 @@ int is_key_on_revocation_list(struct pkcs7_message *pkcs7)
->  {
->  	int ret;
->  
-> +	pkcs7_set_usage_flag(pkcs7, PKS_REVOCATION_PASS);
->  	ret = pkcs7_validate_trust(pkcs7, blacklist_keyring);
-> +	pkcs7_clear_usage_flag(pkcs7, PKS_REVOCATION_PASS);
->  
->  	if (ret == 0)
->  		return -EKEYREJECTED;
-> diff --git a/crypto/asymmetric_keys/pkcs7_trust.c b/crypto/asymmetric_keys/pkcs7_trust.c
-> index 9a87c34ed173..64d70eb68864 100644
-> --- a/crypto/asymmetric_keys/pkcs7_trust.c
-> +++ b/crypto/asymmetric_keys/pkcs7_trust.c
-> @@ -131,6 +131,26 @@ static int pkcs7_validate_trust_one(struct pkcs7_message *pkcs7,
->  	return 0;
->  }
->  
-> +void pkcs7_clear_usage_flag(struct pkcs7_message *pkcs7, unsigned long usage)
-> +{
-> +	struct pkcs7_signed_info *sinfo;
-> +
-> +	for (sinfo = pkcs7->signed_infos; sinfo; sinfo = sinfo->next) {
-> +		if (sinfo->sig)
-> +			clear_bit(usage, &sinfo->sig->usage_flags);
-> +	}
-> +}
-> +
-> +void pkcs7_set_usage_flag(struct pkcs7_message *pkcs7, unsigned long usage)
-> +{
-> +	struct pkcs7_signed_info *sinfo;
-> +
-> +	for (sinfo = pkcs7->signed_infos; sinfo; sinfo = sinfo->next) {
-> +		if (sinfo->sig)
-> +			set_bit(usage, &sinfo->sig->usage_flags);
-> +	}
-> +}
-> +
->  /**
->   * pkcs7_validate_trust - Validate PKCS#7 trust chain
->   * @pkcs7: The PKCS#7 certificate to validate
-> diff --git a/crypto/asymmetric_keys/pkcs7_verify.c b/crypto/asymmetric_keys/pkcs7_verify.c
-> index 1dc80e68ce96..44b8bd0ad4d8 100644
-> --- a/crypto/asymmetric_keys/pkcs7_verify.c
-> +++ b/crypto/asymmetric_keys/pkcs7_verify.c
-> @@ -455,6 +455,10 @@ int pkcs7_verify(struct pkcs7_message *pkcs7,
->  			return ret;
->  		}
->  		actual_ret = 0;
-> +		if (sinfo->sig) {
-> +			sinfo->sig->usage = usage;
-> +			set_bit(PKS_USAGE_SET, &sinfo->sig->usage_flags);
-> +		}
->  	}
->  
->  	kleave(" = %d", actual_ret);
-> diff --git a/include/crypto/pkcs7.h b/include/crypto/pkcs7.h
-> index 38ec7f5f9041..6c3c9061b118 100644
-> --- a/include/crypto/pkcs7.h
-> +++ b/include/crypto/pkcs7.h
-> @@ -32,6 +32,9 @@ extern int pkcs7_get_content_data(const struct pkcs7_message *pkcs7,
->  extern int pkcs7_validate_trust(struct pkcs7_message *pkcs7,
->  				struct key *trust_keyring);
->  
-> +extern void pkcs7_set_usage_flag(struct pkcs7_message *pkcs7, unsigned long usage);
-> +extern void pkcs7_clear_usage_flag(struct pkcs7_message *pkcs7, unsigned long usage);
-> +
->  /*
->   * pkcs7_verify.c
->   */
-> diff --git a/include/crypto/public_key.h b/include/crypto/public_key.h
-> index b7f308977c84..394022b5d856 100644
-> --- a/include/crypto/public_key.h
-> +++ b/include/crypto/public_key.h
-> @@ -49,6 +49,10 @@ struct public_key_signature {
->  	const char *pkey_algo;
->  	const char *hash_algo;
->  	const char *encoding;
-> +	u32 usage;		/* Intended usage */
+> As stated previously: "I'm not currently interested in accepting
+> LSMs that provide asynchronous enforcement as I don't view that as a
+> reasonable enforcement mechanism."
 
-I'd would not size encode this but instead use "unsigned int".
+You personally don't, the IT and security compliance industry does, it
+seems to leave Linux security infrastructure in an interesting
+conundrum.
 
-> +	unsigned long usage_flags;
+For the record, just to be very clear as to what an LSM is allowed to
+do under your administration, for our benefit and the benefit of
+others:
 
-It would be less convoluting if this was just "flags". Now this leaves
-to wonder what it is encoded for. E.g. for ioctl API one doees it for
-the API to be size agnostic between 32/64-bit kernels.
+An LSM asynchronously streams an encoding of every security event that
+occurs into something in userspace, somewhere, that interprets those
+events.  Is userspace allowed to directly signal the operating system
+if it detects an anomaly in one of those events or a pattern of events
+and at what resolution level can the signalling occur?
 
-> +#define PKS_USAGE_SET		0
-> +#define PKS_REVOCATION_PASS	1
->  };
+> > If this is the case, your philosophy leaves Linux in a position that
+> > is inconsistent with how the industry is choosing to implement
+> > security.
 
-I'd add these before the struct and:
+> In this case perhaps TSEM is not well suited for the upstream Linux
+> kernel and your efforts are better spent downstream, much like the
+> industry you appear to respect.
 
-/* ... */
-#define PKS_USAGE_SET		0
+Fascinating response from someone given the privilege of
+maintainership status of a sub-system in a project whose leadership
+preaches the need to always work with and submit to upstream.
 
-/* ... */
-#define PKS_REVOCATION_PASS	1
+Even more fascinating when that individual publically states that he
+is employed by the largest technology company in the world because of
+that companies desire to promote the health and well being of the
+Linux eco-system and community.
 
->  
->  extern void public_key_signature_free(struct public_key_signature *sig);
-> -- 
-> 2.45.0
-> 
+For the record, we don't respect any industry, we respect the need to
+address the challenges associated with how we are currently doing and
+thinking about things.
 
-BR, Jarkko
+> paul-moore.com
+
+Our apologies to everyone for being a voice crying out in the
+wilderness.
+
+As always,
+Dr. Greg
+
+The Quixote Project - Flailing at the Travails of Cybersecurity
+              https://github.com/Quixote-Project
