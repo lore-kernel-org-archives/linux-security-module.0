@@ -1,99 +1,124 @@
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8E1B24F58E;
-	Mon, 10 Feb 2025 16:11:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79AE0256C98;
+	Mon, 10 Feb 2025 17:06:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739203889; cv=none; b=pEstUkwQ8TVRX702GKMbbnk/GuuGugbsihw39V8tNzExrD/XwuA0pR7LVp4exniRLCgxvA62czYKCKbmyQnThSWjFfX+bJHYdes/rDIvXw6h6BOKgdiKIaohtRky6bmawa0MvGcO5hxl2yEUXrL6lXRO9FZbLKOxcsMK49z4Up0=
+	t=1739207204; cv=none; b=s46MguSwj83L2GpzTWfEA8m04ohuWs0no2s09l/HaLHq/FBGfZWfW1mgg3UKwZePb+nxGAe1yjVqqxJevj81ILJdUrfVKcoVc3SRuxbtk2R6snijQg8pJrOo4s5WfzeoQ8hDD3sLHCAxOZ/n739hLfRAf3mPWdyxWq3aVEq+AKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739203889; c=relaxed/simple;
-	bh=Ju+jLIC+hdALWDNfTRKoeZW9qn5r+NTUgbFhV/yjG5k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ujZJacQEyiaEsccjCEu2dyB95fYTIIyrxRDAraGPopI5fSPuQaqwqO1GpiYaLPTL0wOdoAoDpgj0MT9gVRZaj4/AzyfDQAziPykUl3GPdjpQHrW4LucDBFLEfju049WmhiLUV52QT5TPMJ4ByXSZlfnysBOn4ZxHARYTr9q13vU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nrXTm6rU; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1739207204; c=relaxed/simple;
+	bh=TyUfWAmbEbR0Syct5DJ0eVHnlK1SeULECfjdeJXxZvc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J2njr2rRHkSrgDWRaTzTeAQZJcltHNsAueO74v2RQGyyFx4kuQ0eqQK9YBeyPv9zT/tSTkH8UHHxdMDOappbxksj3jgDuUnVM8cFfiiWyzB1m4lzs3LXq4MO7AHg3fJ98IOrPeeE2te90dNEgq31/IZxPW9qmQ7yq3uefV7IKB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Wu7tXo2u; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nrXTm6rU"
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-21f62cc4088so45226985ad.3;
-        Mon, 10 Feb 2025 08:11:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739203887; x=1739808687; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lt/TBqL493WxqFjgvfkZ2tS4krtyuV+0wcigwiXRZIM=;
-        b=nrXTm6rU0YgVlCbv4nn8RE9ZJXHcHGM0Ax2lnDYWix7c5tQynmMtMUqq7/oEI5qqdY
-         pK6clt2aO9nu0NBBsKCgbk1wDpANIAdaNCssmJ8aZSpAsetdCb5QzwcvXazGWx2L/dPP
-         UY9ExkGkVdjsCHS3kzVa7yLuaYIVHCrsxHXfTA1Dn2gf8AoP3PJU/zUHwq6Ri50y6eoT
-         q++GvJk/q53xt6lR7vk4TH+an96wX61w2o+2TlYfia3bt5TP7cGKp9y/qc5ZC6+36dlx
-         XVpsusIW4kGCmp7RKxKEFsD9nZMTWSmKzje+BMUzds/2o1Rlo4/zuEVYRJE5pbw4+vF9
-         DSLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739203887; x=1739808687;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lt/TBqL493WxqFjgvfkZ2tS4krtyuV+0wcigwiXRZIM=;
-        b=Zq20xygWUjjmLwo3IUasS70jqgpvg5HTw+//kcJX5YNvlg0S6YmlX0G/cNxOdc6HHz
-         58aNq1WDDXCh0maJld+DEMUBm6e+TN6fGxi24QdEPGUZpUlfl4YBM17tt1SANpgOxW92
-         HqwL4BOX9ki3UNbyvkQ7ONVIDZ07+W4XSSHZVLxfl3F4qYwUV+rMNKYJC4YrR16T67jX
-         Avh9eUJqwD5+OhjbEg5GK4m6FSKdKskL1PbZXHDBWEwXdsRtDWT4acSixeN1cZP1kySA
-         8uBlGjXPamGg+FSKtnJ6mPWtgQY66XxWfVvmuuYAn82aPXYWoDyhweZfiYa2iuUzBMat
-         VbrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU//gfLljOI165jkY1MtgYeeLIZEXaK4rq/o62i+IIb+kPCQy2IS4D+jwInIQ1DhjVEt4/f5QFg7X5qI9ze74Klsp8VpIaR@vger.kernel.org, AJvYcCUiCv5CZWhWsW04IngWemx/7tf32yGbzsQ+5/UkM9opnqY7GcA2jJmxHHTCldJy6uqnv5a0PXAZTX48DJF/tdEn@vger.kernel.org, AJvYcCXNMxVyvHxtwwIpf3gc2CJ6V/7obEtH4OQ0/bCZMS0q/KEdHfG0ZzvFn0bKWsb0CvEEIsAp5FObEnADTME=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCVNhCF2k/bDnwllHUHpsa9Ryc38KzpI+V6DclR7ToRSQsVoWU
-	GzaxYiAMrJs8rdzvY9gctvPrJD+P23AS4epGMF5j00Rs8gGfAGBs
-X-Gm-Gg: ASbGnctsx2QD/QA0iKAXbYFH4cBOkBZpju+UR5LaFCQBKMx8di4OM+aRBQJQfn3Bgo3
-	17/40TdXNejGj1VMS47QB4czi+uQKpbtigLzcYKDrxvmCUqOb3v5uu2aBu2VzHnyMo2G7k+lywP
-	zS2dY4OZXSybrhRoXSmZ8NN+lXlIwFyfN+0YuYrHahn20TuHjcZF03hvDjwOBnyADs09S8DriG4
-	wbt1wYbcaG6nBIpGF/V6E/bz4CjN8V78ySMUvi2R0K4EFVh4DXhH/eUxef9LHlILu+FUBuC6jOd
-	82dH+IJ1e7kyyiph3ls3J9I=
-X-Google-Smtp-Source: AGHT+IGBP1tsRARuyphuA4dc3+m2aWSwlcSZROST1syG8GihtPtpjMQ+VBiiwMW4vsoTibNHhabUyg==
-X-Received: by 2002:a05:6a00:148d:b0:730:97a6:f06 with SMTP id d2e1a72fcca58-73097a61364mr3937341b3a.8.1739203885416;
-        Mon, 10 Feb 2025 08:11:25 -0800 (PST)
-Received: from linuxmint.. ([14.139.69.34])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73083c1f029sm3022516b3a.125.2025.02.10.08.11.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Feb 2025 08:11:24 -0800 (PST)
-From: Bharadwaj Raju <bharadwaj.raju777@gmail.com>
-To: mic@digikod.net
-Cc: Bharadwaj Raju <bharadwaj.raju777@gmail.com>,
-	gnoack@google.com,
-	shuah@kernel.org,
-	skhan@linuxfoundation.org,
-	linux-security-module@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev
-Subject: [PATCH] selftests/landlock: add binaries to gitignore
-Date: Mon, 10 Feb 2025 21:40:57 +0530
-Message-ID: <20250210161101.6024-1-bharadwaj.raju777@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Wu7tXo2u"
+Received: from [10.17.64.80] (unknown [131.107.8.16])
+	by linux.microsoft.com (Postfix) with ESMTPSA id C2DF12107A8C;
+	Mon, 10 Feb 2025 09:06:42 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C2DF12107A8C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1739207203;
+	bh=hBpyYwH84HCTrmNtrOfgoYnF3s0Iwvrtgi04480qzkU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Wu7tXo2u19roGC3JKJIuc8Lip2MC7atTL9MEET8GC+paes93zHV3Yvh2rI8g8qFpL
+	 y/spmSThEjUpGTNvdL4+4tQuc4XJNZ1C7kcxFZoCP1LLSdiijmgaaolHCZg5wutVe6
+	 OP3RuYFwggt0BggyJQqLZhfsTwaAkzWUM4DFTQCk=
+Message-ID: <47565966-c735-4758-80a5-523fd93adc72@linux.microsoft.com>
+Date: Mon, 10 Feb 2025 09:06:42 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 2/7] kexec: define functions to map and unmap segments
+To: Mimi Zohar <zohar@linux.ibm.com>, stefanb@linux.ibm.com,
+ roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
+ eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
+ code@tyhicks.com, bauermann@kolabnow.com, linux-integrity@vger.kernel.org,
+ kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
+ James.Bottomley@HansenPartnership.com
+References: <20250203232033.64123-1-chenste@linux.microsoft.com>
+ <20250203232033.64123-3-chenste@linux.microsoft.com>
+ <6fd5510827a2ebb91aee8c72432e248e967fa5be.camel@linux.ibm.com>
+Content-Language: en-US
+From: steven chen <chenste@linux.microsoft.com>
+In-Reply-To: <6fd5510827a2ebb91aee8c72432e248e967fa5be.camel@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Building the test creates binaries 'wait-pipe' and
-'sandbox-and-launch' which need to be gitignore'd.
+On 2/7/2025 11:15 AM, Mimi Zohar wrote:
+> Hi Steven,
+>
+> On Mon, 2025-02-03 at 15:20 -0800, steven chen wrote:
+>> Currently, the mechanism to map and unmap segments to the kimage
+>> structure is not available to the subsystems outside of kexec.  This
+>> functionality is needed when IMA is allocating the memory segments
+>> during kexec 'load' operation.  Implement functions to map and unmap
+>> segments to kimage.
+>>
+>> Implement kimage_map_segment() to enable mapping of IMA buffer source
+>> pages to the kimage structure post kexec 'load'.  This function,
+>> accepting a kimage pointer, an address, and a size, will gather the
+>> source pages within the specified address range, create an array of page
+>> pointers, and map these to a contiguous virtual address range.  The
+>> function returns the start of this range if successful, or NULL if
+>> unsuccessful.
+>>
+>> Implement kimage_unmap_segment() for unmapping segments
+>> using vunmap().
+>>
+>> From: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+>> Author: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+>> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+>> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+> I don't recall previously adding my "Reviewed-by" tag.
+>
+> Eric, I'd appreciate your reviewing this and the subsequent patch "[PATCH v7 3/7]
+> ima: kexec: skip IMA segment validation after kexec soft reboot" in particular.
+Hi Eric, Could you help to review this patch as Mimi mentioned? Thanks!
+>
+>> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+>> Signed-off-by: steven chen <chenste@linux.microsoft.com>
+>> ---
+>>   include/linux/kexec.h |  7 ++++++
+>>   kernel/kexec_core.c   | 54 +++++++++++++++++++++++++++++++++++++++++++
+>>   2 files changed, 61 insertions(+)
+>>
+>> diff --git a/include/linux/kexec.h b/include/linux/kexec.h
+>> index f0e9f8eda7a3..f8413ea5c8c8 100644
+>> --- a/include/linux/kexec.h
+>> +++ b/include/linux/kexec.h
+>> @@ -467,6 +467,9 @@ extern bool kexec_file_dbg_print;
+>>   #define kexec_dprintk(fmt, arg...) \
+>>           do { if (kexec_file_dbg_print) pr_info(fmt, ##arg); } while (0)
+>>   
+>> +extern void *kimage_map_segment(struct kimage *image,
+>> +					unsigned long addr, unsigned long size);
+> scripts/Checkpatch.pl complains about the parenthesis alignment here and elsewhere.
+>
+> Mimi
+>
+>> +extern void kimage_unmap_segment(void *buffer);
+>>   #else /* !CONFIG_KEXEC_CORE */
+>>   struct pt_regs;
+>>   struct task_struct;
+>> @@ -474,6 +477,10 @@ static inline void __crash_kexec(struct pt_regs *regs) { }
+>>   static inline void crash_kexec(struct pt_regs *regs) { }
+>>   static inline int kexec_should_crash(struct task_struct *p) { return 0; }
+>>   static inline int kexec_crash_loaded(void) { return 0; }
+>> +static inline void *kimage_map_segment(struct kimage *image,
+>> +					unsigned long addr, unsigned long size)
+>> +{ return NULL; }
+>> +static inline void kimage_unmap_segment(void *buffer) { }
+>>   #define kexec_in_progress false
+>>   #endif /* CONFIG_KEXEC_CORE */
+>>   
 
-Signed-off-by: Bharadwaj Raju <bharadwaj.raju777@gmail.com>
----
- tools/testing/selftests/landlock/.gitignore | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/tools/testing/selftests/landlock/.gitignore b/tools/testing/selftests/landlock/.gitignore
-index 470203a7cd73..0566c50dfcad 100644
---- a/tools/testing/selftests/landlock/.gitignore
-+++ b/tools/testing/selftests/landlock/.gitignore
-@@ -1,2 +1,4 @@
- /*_test
- /true
-+/wait-pipe
-+/sandbox-and-launch
--- 
-2.43.0
+Thanks, Mimi, I will update in next version
 
