@@ -1,124 +1,84 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79AE0256C98;
-	Mon, 10 Feb 2025 17:06:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from mail.namei.org (namei.org [65.99.196.166])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B12F1F4611;
+	Mon, 10 Feb 2025 21:12:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.99.196.166
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739207204; cv=none; b=s46MguSwj83L2GpzTWfEA8m04ohuWs0no2s09l/HaLHq/FBGfZWfW1mgg3UKwZePb+nxGAe1yjVqqxJevj81ILJdUrfVKcoVc3SRuxbtk2R6snijQg8pJrOo4s5WfzeoQ8hDD3sLHCAxOZ/n739hLfRAf3mPWdyxWq3aVEq+AKM=
+	t=1739221927; cv=none; b=VAG5N2IEH5mBBj5RWBbp2Y2dmnYg/ifmAiiggy8r0EfXiTySGR9EQAWV5aBgrvqmQCVXN+osnRtwEd2Ks0G9hXivGE/rgMdM3mW5D/cpV/iu1pZHnqho1Q8hv3nXLDh08No+9PRy5QtRLFQn71OPdWOo5DWjW5D13ry44HU+EUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739207204; c=relaxed/simple;
-	bh=TyUfWAmbEbR0Syct5DJ0eVHnlK1SeULECfjdeJXxZvc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J2njr2rRHkSrgDWRaTzTeAQZJcltHNsAueO74v2RQGyyFx4kuQ0eqQK9YBeyPv9zT/tSTkH8UHHxdMDOappbxksj3jgDuUnVM8cFfiiWyzB1m4lzs3LXq4MO7AHg3fJ98IOrPeeE2te90dNEgq31/IZxPW9qmQ7yq3uefV7IKB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Wu7tXo2u; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+	s=arc-20240116; t=1739221927; c=relaxed/simple;
+	bh=UBCe9p8sj/JNzRoVoJtwDN+Lk8MaBoj1Z2Y1UU8mEbI=;
+	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=BKhwXwFG0OLan0KTy/a7dZVyq+9LfSClAodj1rPZZBiIHj53WbaSGYFF54jSROIT0cr4IVi8vUrQpHk+1rzX8FgCl2zcsrhr7BxBGjL/av/AeeT7h6vI4772nVTEAwvi4nmolVzpBDA3KtLFtm6kN0IRlRWSVoyO8jA53unoBdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=namei.org; spf=pass smtp.mailfrom=namei.org; dkim=pass (1024-bit key) header.d=namei.org header.i=@namei.org header.b=ZyGYKtxX; arc=none smtp.client-ip=65.99.196.166
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=namei.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=namei.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Wu7tXo2u"
-Received: from [10.17.64.80] (unknown [131.107.8.16])
-	by linux.microsoft.com (Postfix) with ESMTPSA id C2DF12107A8C;
-	Mon, 10 Feb 2025 09:06:42 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C2DF12107A8C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1739207203;
-	bh=hBpyYwH84HCTrmNtrOfgoYnF3s0Iwvrtgi04480qzkU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Wu7tXo2u19roGC3JKJIuc8Lip2MC7atTL9MEET8GC+paes93zHV3Yvh2rI8g8qFpL
-	 y/spmSThEjUpGTNvdL4+4tQuc4XJNZ1C7kcxFZoCP1LLSdiijmgaaolHCZg5wutVe6
-	 OP3RuYFwggt0BggyJQqLZhfsTwaAkzWUM4DFTQCk=
-Message-ID: <47565966-c735-4758-80a5-523fd93adc72@linux.microsoft.com>
-Date: Mon, 10 Feb 2025 09:06:42 -0800
+	dkim=pass (1024-bit key) header.d=namei.org header.i=@namei.org header.b="ZyGYKtxX"
+Received: from localhost (localhost [127.0.0.1])
+	by mail.namei.org (Postfix) with ESMTPS id 6B6F6C9;
+	Mon, 10 Feb 2025 21:03:02 +0000 (UTC)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.namei.org 6B6F6C9
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=namei.org; s=2;
+	t=1739221382; bh=h3x3P3W8K+9OlCaN6BjlODAjJulvwo/lejT6q6M/Los=;
+	h=Date:From:To:cc:Subject:From;
+	b=ZyGYKtxXADc7f/1Rh/aC10cIngjwj16ltm/q3MfCt8DpEmDiqR+PtyGUWVSR0kvRz
+	 WXzo9JxxhLYZGiDmsn7pRtZqTKtOIt2S8lftxNWQi+yDOhiUqDdhK6GX2dF3J+WjHA
+	 woDtfm+66JQFoacJ2svGVd5rL0o5ADlT7Wh/OkFs=
+Date: Mon, 10 Feb 2025 13:03:02 -0800 (PST)
+From: James Morris <jmorris@namei.org>
+To: linux-security-module@vger.kernel.org
+cc: Linux Security Summit Program Committee <lss-pc@lists.linuxfoundation.org>, 
+    linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com, 
+    linux-integrity@vger.kernel.org, lwn@lwn.net
+Subject: [Announce] Linux Security Summit North America 2025 CfP
+Message-ID: <35b17495-427f-549f-6e46-619c56545b34@namei.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 2/7] kexec: define functions to map and unmap segments
-To: Mimi Zohar <zohar@linux.ibm.com>, stefanb@linux.ibm.com,
- roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
- eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
- code@tyhicks.com, bauermann@kolabnow.com, linux-integrity@vger.kernel.org,
- kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
- James.Bottomley@HansenPartnership.com
-References: <20250203232033.64123-1-chenste@linux.microsoft.com>
- <20250203232033.64123-3-chenste@linux.microsoft.com>
- <6fd5510827a2ebb91aee8c72432e248e967fa5be.camel@linux.ibm.com>
-Content-Language: en-US
-From: steven chen <chenste@linux.microsoft.com>
-In-Reply-To: <6fd5510827a2ebb91aee8c72432e248e967fa5be.camel@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; BOUNDARY="1665246916-1759655948-1739221181=:1918214"
+Content-ID: <1eebfa2-83a-d771-38e3-a986f4542214@namei.org>
 
-On 2/7/2025 11:15 AM, Mimi Zohar wrote:
-> Hi Steven,
->
-> On Mon, 2025-02-03 at 15:20 -0800, steven chen wrote:
->> Currently, the mechanism to map and unmap segments to the kimage
->> structure is not available to the subsystems outside of kexec.  This
->> functionality is needed when IMA is allocating the memory segments
->> during kexec 'load' operation.  Implement functions to map and unmap
->> segments to kimage.
->>
->> Implement kimage_map_segment() to enable mapping of IMA buffer source
->> pages to the kimage structure post kexec 'load'.  This function,
->> accepting a kimage pointer, an address, and a size, will gather the
->> source pages within the specified address range, create an array of page
->> pointers, and map these to a contiguous virtual address range.  The
->> function returns the start of this range if successful, or NULL if
->> unsuccessful.
->>
->> Implement kimage_unmap_segment() for unmapping segments
->> using vunmap().
->>
->> From: Tushar Sugandhi <tusharsu@linux.microsoft.com>
->> Author: Tushar Sugandhi <tusharsu@linux.microsoft.com>
->> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
->> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-> I don't recall previously adding my "Reviewed-by" tag.
->
-> Eric, I'd appreciate your reviewing this and the subsequent patch "[PATCH v7 3/7]
-> ima: kexec: skip IMA segment validation after kexec soft reboot" in particular.
-Hi Eric, Could you help to review this patch as Mimi mentioned? Thanks!
->
->> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
->> Signed-off-by: steven chen <chenste@linux.microsoft.com>
->> ---
->>   include/linux/kexec.h |  7 ++++++
->>   kernel/kexec_core.c   | 54 +++++++++++++++++++++++++++++++++++++++++++
->>   2 files changed, 61 insertions(+)
->>
->> diff --git a/include/linux/kexec.h b/include/linux/kexec.h
->> index f0e9f8eda7a3..f8413ea5c8c8 100644
->> --- a/include/linux/kexec.h
->> +++ b/include/linux/kexec.h
->> @@ -467,6 +467,9 @@ extern bool kexec_file_dbg_print;
->>   #define kexec_dprintk(fmt, arg...) \
->>           do { if (kexec_file_dbg_print) pr_info(fmt, ##arg); } while (0)
->>   
->> +extern void *kimage_map_segment(struct kimage *image,
->> +					unsigned long addr, unsigned long size);
-> scripts/Checkpatch.pl complains about the parenthesis alignment here and elsewhere.
->
-> Mimi
->
->> +extern void kimage_unmap_segment(void *buffer);
->>   #else /* !CONFIG_KEXEC_CORE */
->>   struct pt_regs;
->>   struct task_struct;
->> @@ -474,6 +477,10 @@ static inline void __crash_kexec(struct pt_regs *regs) { }
->>   static inline void crash_kexec(struct pt_regs *regs) { }
->>   static inline int kexec_should_crash(struct task_struct *p) { return 0; }
->>   static inline int kexec_crash_loaded(void) { return 0; }
->> +static inline void *kimage_map_segment(struct kimage *image,
->> +					unsigned long addr, unsigned long size)
->> +{ return NULL; }
->> +static inline void kimage_unmap_segment(void *buffer) { }
->>   #define kexec_in_progress false
->>   #endif /* CONFIG_KEXEC_CORE */
->>   
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Thanks, Mimi, I will update in next version
+--1665246916-1759655948-1739221181=:1918214
+Content-Type: text/plain; CHARSET=UTF-8
+Content-Transfer-Encoding: 8BIT
+Content-ID: <30fe1e86-d93-3681-6dff-9a32f4d6df6@namei.org>
 
+The Call for Participation for the 2025 Linux Security Summit North 
+America (LSS-NA) is now open.
+
+LSS-NA 2025 is a technical forum for collaboration between Linux 
+developers, researchers, and end-users. Its primary aim is to foster 
+community efforts in deeply analyzing and solving Linux operating system 
+security challenges, including those in the Linux kernel. Presentations 
+are expected to focus deeply on new or improved technology and how it 
+advances the state of practice for addressing these challenges.
+
+Key dates:
+
+    - CFP Closes:  Monday, March 10 at 11:59 PM MDT / 10:59 PM PDT
+    - CFP Notifications: Monday, March 31
+    - Schedule Announcement: Wednesday, April 2
+    - Presentation Slide Due Date: Tuesday, June 24
+    - Event Dates: Thursday, June 26 – Friday, June 27
+
+Location: Denver, Colorado, USA (co-located with OSS).
+
+Full details may be found here: 
+https://events.linuxfoundation.org/linux-security-summit-north-america/
+
+Follow LSS event updates here:
+https://social.kernel.org/LinuxSecSummit
+
+
+
+-- 
+James Morris
+<jmorris@namei.org>
+--1665246916-1759655948-1739221181=:1918214--
