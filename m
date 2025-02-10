@@ -1,106 +1,112 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 979681F560B
-	for <linux-security-module@vger.kernel.org>; Mon, 10 Feb 2025 11:58:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66F191BEF91
+	for <linux-security-module@vger.kernel.org>; Mon, 10 Feb 2025 14:56:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739188690; cv=none; b=a1555jjXG30ax6sMfUeZfib04tC+6Taz5k68emjB1Z78YAihUd5ujlsV4H6W93V2yWreWDpii5clRbNllhALqmQJBJDRuheti8MCMzxrY/KkdqZhLerfB4Eustp6Nx7eaep9tFAz1Igz/byYiArE9ymEN60DSCFrRPpbgWm3kaU=
+	t=1739199413; cv=none; b=L0KQYAP3N6mfeRPdu/MMmmIro7ntxxJdArUn5k5XCYJnb7lLBJHW9FQSwF6cbri7k9/ikJwMLqFN5d6qCZ6K+unLDl7AUyGuIsG0z0Kwb/0MU0IjqMfVtB41TA2rRzkfalUik6lNdS/0SN01djpyWW9J7xbkDk9ZdBGOie7Ft6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739188690; c=relaxed/simple;
-	bh=as4SUiBKDJu7f/KIbNhAFDg767Lu1xis1B9Fm+JHYDM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=r4bOry6lMLZ+nQd31DZZwMWmXI+GXxRzyqm3LlJl9eiS5yjjjtm6q949f2JMddiq8kum1SA1QUe7/9PO3NEPxd7k8aFbwp/wSrT63LtL7mUjLsE6HGK7jVW0x7Pkk1R/N2aoZwvOLDl/2Z7d1987HW3amuAqkQLQYGFWh6UkHtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at; spf=pass smtp.mailfrom=sigma-star.at; dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b=hF9/qC3q; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigma-star.at
+	s=arc-20240116; t=1739199413; c=relaxed/simple;
+	bh=sFhCPdUNAw5iw44504+Ovi0gxtAx+rM+ifalu1G9FiQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nOt6H23kT5OGRgZdlm2EbksdzeOZ5FeCk3juaFIx7eyn3pZn2GpRcAmFkju6zrtv4Vuplubyr2xp/xl4AkSogYpgCmfGbZeEMW+EpX111d6WIMdwWH1ud0xfNUETGPI0uZXiMMnwUcAFgZPwqr2P9FAzx6nW8zjgOz4tfq6eB3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Yy3WvLMa; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b="hF9/qC3q"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4393f6a2c1bso6137825e9.1
-        for <linux-security-module@vger.kernel.org>; Mon, 10 Feb 2025 03:58:08 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Yy3WvLMa"
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6f679788fd1so30519417b3.2
+        for <linux-security-module@vger.kernel.org>; Mon, 10 Feb 2025 06:56:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sigma-star.at; s=google; t=1739188687; x=1739793487; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=paul-moore.com; s=google; t=1739199410; x=1739804210; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=as4SUiBKDJu7f/KIbNhAFDg767Lu1xis1B9Fm+JHYDM=;
-        b=hF9/qC3qvEkqii5v99lO+25HlASbdJiZ7L6PoI0wqTQP//BzHFo5utI/Oc/Zul/Rq3
-         1Y23yhO94yahrt0YarbuS6KA57b41MSq2JME6u7V6AX+P1RrbmgJ7Er/Gw0wzjb9fi0w
-         15e+iOaPku8YBDmpPMHKaLSUspkLdFmy8qaja+KnU5EGIEXFEScihNfN1gkDQSFwRMSP
-         stfd4NrbWvzctso5rO/eBMoBugLAnlAXx9DF1679nl99G1qfyd/znFsazyD6spd9m7B/
-         y2HOUmDmqaEZuPiJQEA2/jRHrh/RQLeMM08D39zPL9QfbT2N0iOZsU6Hd2NAvm12fYQ3
-         SWHg==
+        bh=sKzEUyykFwouVSNMgbx9VHRlGiI6/+ni72GVpTcZkJs=;
+        b=Yy3WvLMaWrGpEQ8TTc4O2FGWEfLVPn1SgAtS74x4SwYvc6T8YYn0iktg9DCGOvToSY
+         NGv7f4MpVKXxOnWjL2k+tgfhkFBONOZ3C9qK86WyeNG6vj9w11YVmqVL6w9rTNQ5I9OM
+         xQLCRXSmPx7JRQtAo6AlEL5iYU4uv7rIf2SoN46U0AoYg41seolT6Yfhw2nFMIgYH/kx
+         qrQCgPTc3LQpC0zacq2qQphol39FhoyXQ8uCdgcSJOfpAVS3IcZZyaKpuCzCulALO30u
+         v+ka31AXRBi1zdYpRBbVcGISk1VdsGnpV0zbeIeTsfIw2UOb4StwVOjPq5tR8Tp7tSe9
+         9tEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739188687; x=1739793487;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1739199410; x=1739804210;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=as4SUiBKDJu7f/KIbNhAFDg767Lu1xis1B9Fm+JHYDM=;
-        b=aqNJ38B46wNUyisuN7Bb/wo95TTIP/9VWOt6+3yWqm1/dwj6+G1RgDFb2yOSz230Yz
-         T6keX6Layxg8DVightOpfoS+SQBb/USPgIDIgQ1JQWzCYgzgscwOqy5S0v2C4RQALil4
-         G63gZQT3puLi2lmHHimc/JSx3BOgWBQ/cKrl200yhMnTGADf8Baki1jQYC/VB3vgteMo
-         8UfB4he7XJM+I6A6mBVsYAaOxCsbJFELkT8X2CAgv7M2W76hod3xat/6M1y7V73ecYN2
-         jrbzIOF/zfAjOdzrjBnvwGQBXNYa0RHLi8Lu0a64X8muISDg5dA0+XmPT5dJZs8LBeQf
-         VfIA==
-X-Forwarded-Encrypted: i=1; AJvYcCVIjINGvSnktIVsnFMNs86WR2PjS8AFQK+zbyIDS3pZzYpZfCI3hTBcoKy+QjpMX80nXBv6CoedEuYgld4uuJZRK4jEKmA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyl6ZwBsLKJ35I4JNa+c+D77p2msfayz4ceMrZg/HSYhlwVSdfx
-	he3uvnBVYKKyV/Z9/t0psWyyWXvTehNQ/gzZr37fZd7FMTE66XiSxiRC2T7pq1M=
-X-Gm-Gg: ASbGncvWfMNVbbSSDiGuKAmCLLO29906ZiDXq60OAA/ENvp+LVwPHJvCbFs8LUEwTIC
-	K4OXf58F2o9etMLbi2wqBE87ZXG/ELrDFD80MGDgSzyfagcx20Cr+VaYJ9dHezRXQIVb0U8c1k+
-	HtqQ1g82xOTyDgc+CVulaBL6EeNZzHmWXCbE6TruSTynNlQF3c5i0gKFgV+xjyH6VrZ/a4KzCB2
-	wMB90aRbbTUBN81Uu/nCuF5RjtpL/MKBp87gZwS8BhPSuo+0w5KTh+Qjxq7TurKXhLIIYoIOWOv
-	R5Bam6C8s64FHl2L
-X-Google-Smtp-Source: AGHT+IFEd0xQXpxBXbxhVrVFY+Z1GeZScw7oor+XBNGkufWYSsyj+e3PrFPwPqOelxgNNUVPM0WgUw==
-X-Received: by 2002:a5d:6da9:0:b0:38d:dffc:c14f with SMTP id ffacd0b85a97d-38ddffcc5ffmr2071887f8f.1.1739188686752;
-        Mon, 10 Feb 2025 03:58:06 -0800 (PST)
-Received: from somecomputer ([82.150.214.1])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38dcc9bd251sm8905203f8f.9.2025.02.10.03.58.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Feb 2025 03:58:06 -0800 (PST)
-From: Richard Weinberger <richard@sigma-star.at>
-To: David Gstir <david@sigma-star.at>,
- sigma star Kernel Team <upstream+dcp@sigma-star.at>,
- James Bottomley <James.Bottomley@hansenpartnership.com>,
- Jarkko Sakkinen <jarkko@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>,
- David Howells <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>,
- James Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>,
- SCE_Linux_Security_team@msteams.nxp.com, upstream@sigma-star.at
-Cc: linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
- Kshitiz Varshney <kshitiz.varshney@nxp.com>,
- Kshitiz Varshney <kshitiz.varshney@nxp.com>
-Subject:
- Re: [PATCH v1] trusted_dcp.c: Do not return in case of non-secure mode
-Date: Mon, 10 Feb 2025 12:58:05 +0100
-Message-ID: <2171670.G923GbCHz0@anvil>
-In-Reply-To: <20250210114606.1593650-1-kshitiz.varshney@nxp.com>
-References: <20250210114606.1593650-1-kshitiz.varshney@nxp.com>
+        bh=sKzEUyykFwouVSNMgbx9VHRlGiI6/+ni72GVpTcZkJs=;
+        b=Lat7Z8jruevDNF819pr0cOL2V7JmUT4rSm8Ww3P3QyTKt6jqAW7Ovakk6z0dBjFyka
+         zzkPf6BAPiOUh0xnM5kpqTeQ3CktiFys+dNRs1Z3z+ClbknkBjcWx+V6v7vXcjBndBEW
+         RUo2m44QpD9FJMEYoyPUEVhpcjyzlg1KGUGEBcdjgrZLOnNSxqn8SGB0nM+gjBXVegdl
+         WOY5vAs94dzXW/JA7vGh6vZfegjOJ7zfUD7KsCLGiIMWdQVQm6vuN1kxsbT7s2m9bTaf
+         IjcgWukA6TpNzKte+yDetz3XJSSt4fZJxSjwydh8X+z9VpBYD1U9bg10JwIRcRGQZZoA
+         iLpg==
+X-Gm-Message-State: AOJu0YwQmcTYPL8MQ9G18LsimsGx4nYbOSqSU99UsxrauiV53OBC3Ipu
+	15xunVWBCFtaZdBglNlZlVZXDbH72UK/+i66rqCLFDq+FPQifDsW3W7gOTcAYbyWarc7ovhezHM
+	vydX53rJkoeWFXtXjjmKEuBvcYDJ7NxB2nHbqIJQuKq7V5J8=
+X-Gm-Gg: ASbGncszGJR4r2cuRajaT2ilsvrO5rk/8aTYdZ+daUBujYX2Tx3yw0jaF2WboB1DRPX
+	tqC5pyB6Y3MmOMM053j3H56hBmc/U/T2TZEJXVVRGZ8yhlVV8HPiRKQNCKHLm97Da2LoUL0I=
+X-Google-Smtp-Source: AGHT+IFX3Fkp25VzweHfvgEsrx+xC8PuKNFykmTjhscCRMIA+yQ8nq4hk7Ivp9FeonkpLJhReXlBBAxTPaWZi8G4lC4=
+X-Received: by 2002:a05:690c:6f8c:b0:6f5:3bb1:7b7f with SMTP id
+ 00721157ae682-6f9b29d8062mr118695267b3.26.1739199409102; Mon, 10 Feb 2025
+ 06:56:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250210034132.8448-2-paul@paul-moore.com>
+In-Reply-To: <20250210034132.8448-2-paul@paul-moore.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 10 Feb 2025 09:56:36 -0500
+X-Gm-Features: AWEUYZm-GxL2Ov0Xi9Cza8-oaPxHSWN2MC_VBhPJXsMmQeIYb7a2snP2R7tj93c
+Message-ID: <CAHC9VhQfiABZQagVsZV81NyW2Gm8htwHjG7EHiUTt_LSebDUTA@mail.gmail.com>
+Subject: Re: [PATCH] lsm: fix a missing security_uring_allowed() prototype
+To: linux-security-module@vger.kernel.org
+Cc: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
 
-On Montag, 10. Februar 2025 12:46 Kshitiz Varshney wrote:
-> There are multiple type of keys in different worlds, like
-> test key in case of non-secure world and OTP, unique key
-> in case of secure world.
-> So, instead of returning with an error, in case of test key, we
-> should display warning to the user and allow the user to run the
-> trusted key functionality with test key.
+On Sun, Feb 9, 2025 at 10:41=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+ote:
+>
+> The !CONFIG_SECURITY dummy function was missing an inline attribute which
+> caused the compiler to complain about a missing prototype.  This patch
+> adds the missing inline attribute.
+>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202502081912.TeokpAAe-lkp@i=
+ntel.com/
+> Fixes: c6ad9fdbd44b ("io_uring,lsm,selinux: add LSM hooks for io_uring_se=
+tup()")
+> Signed-off-by: Paul Moore <paul@paul-moore.com>
+> ---
+>  include/linux/security.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 3e68f8468a22..fab843d5e621 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -2376,7 +2376,7 @@ static inline int security_uring_cmd(struct io_urin=
+g_cmd *ioucmd)
+>  {
+>         return 0;
+>  }
+> -extern int security_uring_allowed(void)
+> +extern inline int security_uring_allowed(void)
 
-We have the dcp_skip_zk_test module parameter to allow such cases.
-Why can't you use it?
+The extern also needed to be changed out, essentially doing s/extern
+int/static inline/.  Regardless, this is now merged into lsm/dev.
 
-Thanks,
-//richard
+>  {
+>         return 0;
+>  }
+> --
+> 2.48.1
 
-=2D-=20
-=E2=80=8B=E2=80=8B=E2=80=8B=E2=80=8B=E2=80=8Bsigma star gmbh | Eduard-Bodem=
-=2DGasse 6, 6020 Innsbruck, AUT UID/VAT Nr:
-ATU 66964118 | FN: 374287y
-
-
+--=20
+paul-moore.com
