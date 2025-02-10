@@ -1,112 +1,99 @@
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66F191BEF91
-	for <linux-security-module@vger.kernel.org>; Mon, 10 Feb 2025 14:56:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8E1B24F58E;
+	Mon, 10 Feb 2025 16:11:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739199413; cv=none; b=L0KQYAP3N6mfeRPdu/MMmmIro7ntxxJdArUn5k5XCYJnb7lLBJHW9FQSwF6cbri7k9/ikJwMLqFN5d6qCZ6K+unLDl7AUyGuIsG0z0Kwb/0MU0IjqMfVtB41TA2rRzkfalUik6lNdS/0SN01djpyWW9J7xbkDk9ZdBGOie7Ft6U=
+	t=1739203889; cv=none; b=pEstUkwQ8TVRX702GKMbbnk/GuuGugbsihw39V8tNzExrD/XwuA0pR7LVp4exniRLCgxvA62czYKCKbmyQnThSWjFfX+bJHYdes/rDIvXw6h6BOKgdiKIaohtRky6bmawa0MvGcO5hxl2yEUXrL6lXRO9FZbLKOxcsMK49z4Up0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739199413; c=relaxed/simple;
-	bh=sFhCPdUNAw5iw44504+Ovi0gxtAx+rM+ifalu1G9FiQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nOt6H23kT5OGRgZdlm2EbksdzeOZ5FeCk3juaFIx7eyn3pZn2GpRcAmFkju6zrtv4Vuplubyr2xp/xl4AkSogYpgCmfGbZeEMW+EpX111d6WIMdwWH1ud0xfNUETGPI0uZXiMMnwUcAFgZPwqr2P9FAzx6nW8zjgOz4tfq6eB3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Yy3WvLMa; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1739203889; c=relaxed/simple;
+	bh=Ju+jLIC+hdALWDNfTRKoeZW9qn5r+NTUgbFhV/yjG5k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ujZJacQEyiaEsccjCEu2dyB95fYTIIyrxRDAraGPopI5fSPuQaqwqO1GpiYaLPTL0wOdoAoDpgj0MT9gVRZaj4/AzyfDQAziPykUl3GPdjpQHrW4LucDBFLEfju049WmhiLUV52QT5TPMJ4ByXSZlfnysBOn4ZxHARYTr9q13vU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nrXTm6rU; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Yy3WvLMa"
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6f679788fd1so30519417b3.2
-        for <linux-security-module@vger.kernel.org>; Mon, 10 Feb 2025 06:56:51 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nrXTm6rU"
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-21f62cc4088so45226985ad.3;
+        Mon, 10 Feb 2025 08:11:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1739199410; x=1739804210; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sKzEUyykFwouVSNMgbx9VHRlGiI6/+ni72GVpTcZkJs=;
-        b=Yy3WvLMaWrGpEQ8TTc4O2FGWEfLVPn1SgAtS74x4SwYvc6T8YYn0iktg9DCGOvToSY
-         NGv7f4MpVKXxOnWjL2k+tgfhkFBONOZ3C9qK86WyeNG6vj9w11YVmqVL6w9rTNQ5I9OM
-         xQLCRXSmPx7JRQtAo6AlEL5iYU4uv7rIf2SoN46U0AoYg41seolT6Yfhw2nFMIgYH/kx
-         qrQCgPTc3LQpC0zacq2qQphol39FhoyXQ8uCdgcSJOfpAVS3IcZZyaKpuCzCulALO30u
-         v+ka31AXRBi1zdYpRBbVcGISk1VdsGnpV0zbeIeTsfIw2UOb4StwVOjPq5tR8Tp7tSe9
-         9tEg==
+        d=gmail.com; s=20230601; t=1739203887; x=1739808687; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lt/TBqL493WxqFjgvfkZ2tS4krtyuV+0wcigwiXRZIM=;
+        b=nrXTm6rU0YgVlCbv4nn8RE9ZJXHcHGM0Ax2lnDYWix7c5tQynmMtMUqq7/oEI5qqdY
+         pK6clt2aO9nu0NBBsKCgbk1wDpANIAdaNCssmJ8aZSpAsetdCb5QzwcvXazGWx2L/dPP
+         UY9ExkGkVdjsCHS3kzVa7yLuaYIVHCrsxHXfTA1Dn2gf8AoP3PJU/zUHwq6Ri50y6eoT
+         q++GvJk/q53xt6lR7vk4TH+an96wX61w2o+2TlYfia3bt5TP7cGKp9y/qc5ZC6+36dlx
+         XVpsusIW4kGCmp7RKxKEFsD9nZMTWSmKzje+BMUzds/2o1Rlo4/zuEVYRJE5pbw4+vF9
+         DSLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739199410; x=1739804210;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sKzEUyykFwouVSNMgbx9VHRlGiI6/+ni72GVpTcZkJs=;
-        b=Lat7Z8jruevDNF819pr0cOL2V7JmUT4rSm8Ww3P3QyTKt6jqAW7Ovakk6z0dBjFyka
-         zzkPf6BAPiOUh0xnM5kpqTeQ3CktiFys+dNRs1Z3z+ClbknkBjcWx+V6v7vXcjBndBEW
-         RUo2m44QpD9FJMEYoyPUEVhpcjyzlg1KGUGEBcdjgrZLOnNSxqn8SGB0nM+gjBXVegdl
-         WOY5vAs94dzXW/JA7vGh6vZfegjOJ7zfUD7KsCLGiIMWdQVQm6vuN1kxsbT7s2m9bTaf
-         IjcgWukA6TpNzKte+yDetz3XJSSt4fZJxSjwydh8X+z9VpBYD1U9bg10JwIRcRGQZZoA
-         iLpg==
-X-Gm-Message-State: AOJu0YwQmcTYPL8MQ9G18LsimsGx4nYbOSqSU99UsxrauiV53OBC3Ipu
-	15xunVWBCFtaZdBglNlZlVZXDbH72UK/+i66rqCLFDq+FPQifDsW3W7gOTcAYbyWarc7ovhezHM
-	vydX53rJkoeWFXtXjjmKEuBvcYDJ7NxB2nHbqIJQuKq7V5J8=
-X-Gm-Gg: ASbGncszGJR4r2cuRajaT2ilsvrO5rk/8aTYdZ+daUBujYX2Tx3yw0jaF2WboB1DRPX
-	tqC5pyB6Y3MmOMM053j3H56hBmc/U/T2TZEJXVVRGZ8yhlVV8HPiRKQNCKHLm97Da2LoUL0I=
-X-Google-Smtp-Source: AGHT+IFX3Fkp25VzweHfvgEsrx+xC8PuKNFykmTjhscCRMIA+yQ8nq4hk7Ivp9FeonkpLJhReXlBBAxTPaWZi8G4lC4=
-X-Received: by 2002:a05:690c:6f8c:b0:6f5:3bb1:7b7f with SMTP id
- 00721157ae682-6f9b29d8062mr118695267b3.26.1739199409102; Mon, 10 Feb 2025
- 06:56:49 -0800 (PST)
+        d=1e100.net; s=20230601; t=1739203887; x=1739808687;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lt/TBqL493WxqFjgvfkZ2tS4krtyuV+0wcigwiXRZIM=;
+        b=Zq20xygWUjjmLwo3IUasS70jqgpvg5HTw+//kcJX5YNvlg0S6YmlX0G/cNxOdc6HHz
+         58aNq1WDDXCh0maJld+DEMUBm6e+TN6fGxi24QdEPGUZpUlfl4YBM17tt1SANpgOxW92
+         HqwL4BOX9ki3UNbyvkQ7ONVIDZ07+W4XSSHZVLxfl3F4qYwUV+rMNKYJC4YrR16T67jX
+         Avh9eUJqwD5+OhjbEg5GK4m6FSKdKskL1PbZXHDBWEwXdsRtDWT4acSixeN1cZP1kySA
+         8uBlGjXPamGg+FSKtnJ6mPWtgQY66XxWfVvmuuYAn82aPXYWoDyhweZfiYa2iuUzBMat
+         VbrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU//gfLljOI165jkY1MtgYeeLIZEXaK4rq/o62i+IIb+kPCQy2IS4D+jwInIQ1DhjVEt4/f5QFg7X5qI9ze74Klsp8VpIaR@vger.kernel.org, AJvYcCUiCv5CZWhWsW04IngWemx/7tf32yGbzsQ+5/UkM9opnqY7GcA2jJmxHHTCldJy6uqnv5a0PXAZTX48DJF/tdEn@vger.kernel.org, AJvYcCXNMxVyvHxtwwIpf3gc2CJ6V/7obEtH4OQ0/bCZMS0q/KEdHfG0ZzvFn0bKWsb0CvEEIsAp5FObEnADTME=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCVNhCF2k/bDnwllHUHpsa9Ryc38KzpI+V6DclR7ToRSQsVoWU
+	GzaxYiAMrJs8rdzvY9gctvPrJD+P23AS4epGMF5j00Rs8gGfAGBs
+X-Gm-Gg: ASbGnctsx2QD/QA0iKAXbYFH4cBOkBZpju+UR5LaFCQBKMx8di4OM+aRBQJQfn3Bgo3
+	17/40TdXNejGj1VMS47QB4czi+uQKpbtigLzcYKDrxvmCUqOb3v5uu2aBu2VzHnyMo2G7k+lywP
+	zS2dY4OZXSybrhRoXSmZ8NN+lXlIwFyfN+0YuYrHahn20TuHjcZF03hvDjwOBnyADs09S8DriG4
+	wbt1wYbcaG6nBIpGF/V6E/bz4CjN8V78ySMUvi2R0K4EFVh4DXhH/eUxef9LHlILu+FUBuC6jOd
+	82dH+IJ1e7kyyiph3ls3J9I=
+X-Google-Smtp-Source: AGHT+IGBP1tsRARuyphuA4dc3+m2aWSwlcSZROST1syG8GihtPtpjMQ+VBiiwMW4vsoTibNHhabUyg==
+X-Received: by 2002:a05:6a00:148d:b0:730:97a6:f06 with SMTP id d2e1a72fcca58-73097a61364mr3937341b3a.8.1739203885416;
+        Mon, 10 Feb 2025 08:11:25 -0800 (PST)
+Received: from linuxmint.. ([14.139.69.34])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73083c1f029sm3022516b3a.125.2025.02.10.08.11.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Feb 2025 08:11:24 -0800 (PST)
+From: Bharadwaj Raju <bharadwaj.raju777@gmail.com>
+To: mic@digikod.net
+Cc: Bharadwaj Raju <bharadwaj.raju777@gmail.com>,
+	gnoack@google.com,
+	shuah@kernel.org,
+	skhan@linuxfoundation.org,
+	linux-security-module@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev
+Subject: [PATCH] selftests/landlock: add binaries to gitignore
+Date: Mon, 10 Feb 2025 21:40:57 +0530
+Message-ID: <20250210161101.6024-1-bharadwaj.raju777@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250210034132.8448-2-paul@paul-moore.com>
-In-Reply-To: <20250210034132.8448-2-paul@paul-moore.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 10 Feb 2025 09:56:36 -0500
-X-Gm-Features: AWEUYZm-GxL2Ov0Xi9Cza8-oaPxHSWN2MC_VBhPJXsMmQeIYb7a2snP2R7tj93c
-Message-ID: <CAHC9VhQfiABZQagVsZV81NyW2Gm8htwHjG7EHiUTt_LSebDUTA@mail.gmail.com>
-Subject: Re: [PATCH] lsm: fix a missing security_uring_allowed() prototype
-To: linux-security-module@vger.kernel.org
-Cc: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sun, Feb 9, 2025 at 10:41=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
->
-> The !CONFIG_SECURITY dummy function was missing an inline attribute which
-> caused the compiler to complain about a missing prototype.  This patch
-> adds the missing inline attribute.
->
-> Reported-by: kernel test robot <lkp@intel.com>
-> Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202502081912.TeokpAAe-lkp@i=
-ntel.com/
-> Fixes: c6ad9fdbd44b ("io_uring,lsm,selinux: add LSM hooks for io_uring_se=
-tup()")
-> Signed-off-by: Paul Moore <paul@paul-moore.com>
-> ---
->  include/linux/security.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index 3e68f8468a22..fab843d5e621 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -2376,7 +2376,7 @@ static inline int security_uring_cmd(struct io_urin=
-g_cmd *ioucmd)
->  {
->         return 0;
->  }
-> -extern int security_uring_allowed(void)
-> +extern inline int security_uring_allowed(void)
+Building the test creates binaries 'wait-pipe' and
+'sandbox-and-launch' which need to be gitignore'd.
 
-The extern also needed to be changed out, essentially doing s/extern
-int/static inline/.  Regardless, this is now merged into lsm/dev.
+Signed-off-by: Bharadwaj Raju <bharadwaj.raju777@gmail.com>
+---
+ tools/testing/selftests/landlock/.gitignore | 2 ++
+ 1 file changed, 2 insertions(+)
 
->  {
->         return 0;
->  }
-> --
-> 2.48.1
+diff --git a/tools/testing/selftests/landlock/.gitignore b/tools/testing/selftests/landlock/.gitignore
+index 470203a7cd73..0566c50dfcad 100644
+--- a/tools/testing/selftests/landlock/.gitignore
++++ b/tools/testing/selftests/landlock/.gitignore
+@@ -1,2 +1,4 @@
+ /*_test
+ /true
++/wait-pipe
++/sandbox-and-launch
+-- 
+2.43.0
 
---=20
-paul-moore.com
