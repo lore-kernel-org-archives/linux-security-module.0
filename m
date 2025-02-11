@@ -1,45 +1,46 @@
 Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [185.125.25.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E1FB230D0E
-	for <linux-security-module@vger.kernel.org>; Tue, 11 Feb 2025 15:57:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 087FC220686
+	for <linux-security-module@vger.kernel.org>; Tue, 11 Feb 2025 16:02:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739289459; cv=none; b=UdQ3A/QSC2QtGcAphZBPRTOBxv2V/+u4gIPOBDvIWvSDqUy/6bj3V4bWXYyXX158Ow8Hdgi8qPOo4NzmRUFDY9wNaJnY9xeK4JhMFcPC4+K4YdbgK3Cr3fCSkitWJWMu8vP6KY1pc0swTBBULAKJq9ggF1oy1iHKcqjBPDGqVMU=
+	t=1739289757; cv=none; b=gLxPKVknRz6UjTAm6+6IeICJqX8UAXYCvB9XPbXOrwBf8wmDutXYr1VfDXwIHA0Wm9uSOzUOzIRZHDVE0eaOpaXFWeswbfpUUKaRTCqJ6x3w7PK9x0A13zgMP8OC3/tUqNeaDMoZux0kQzok9AB+rKZxhn/lUXrfkUXFTe02CRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739289459; c=relaxed/simple;
-	bh=mGkbpZGcuEAE5mzBw2KwEqym3+OuEvCN3tcnWIYfQa4=;
+	s=arc-20240116; t=1739289757; c=relaxed/simple;
+	bh=EE9vJtpX2ATYq7P/iLIv2EffeX8mXF0GLCkxSw8mNPY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pRmK19YYzvJnUdM+Y2ufJgHGsnFjajTcR7W7bww/lPbpyvSsUGM9pb8ZHldBnCu9lI/MDMoigYmHfGgisHHbygIGg2qEnHYBgSHBZwJfOCpRJKJ77YHZadQ+0pBy1TvpU5JxqFmYQESCHWIqcZYGZNf43SQ/QD3HVntPpCliwHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=AYZFubIZ; arc=none smtp.client-ip=185.125.25.10
+	 Content-Type:Content-Disposition:In-Reply-To; b=Udz2Zm8lxS3Gg4a96xj87X5qnxrPrdVZDGJqtUUeciinZIPNmRPe0lzMxugKluGyKCKPKF3kD9HVGIeP5X60UfBvP5X+YX3Tb4d0d3XVOchOHh5MIKInwTtUFekQktH7xygURKsdcCObGoz63GQSTwJXOKHzmCEOiWQOSWf/6go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=D1V3Wsks; arc=none smtp.client-ip=185.125.25.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="AYZFubIZ"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="D1V3Wsks"
 Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4YslVv1yCWzVLh;
-	Tue, 11 Feb 2025 16:20:07 +0100 (CET)
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4YsmFj3wGMzx79;
+	Tue, 11 Feb 2025 16:53:45 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1739287207;
-	bh=vd3UC2SznqvkWEBk0v6NQpgUdLEiATZMCaqdFNyj0sI=;
+	s=20191114; t=1739289225;
+	bh=5dB7dfUt9R+xnA5SyptKswlOeTlbGATlu2wrqdeEMAo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AYZFubIZ5AJooRqW2mU7v5rAUikbdQrCE6F9lWj3wlskjMp9kiM/OpnK/cYOAdvmw
-	 uUlAXfVaFGtxpXK3xzKfRHmdsV4kb8DF372sYGhPp0CV6Y8j1+KiV/Byv95mEjMMb3
-	 lJrzvvi5ytBTv6nnkYwKwXe6uU53Htep6iBFzPgs=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4YslVt5cNHzw3N;
-	Tue, 11 Feb 2025 16:20:06 +0100 (CET)
-Date: Tue, 11 Feb 2025 16:20:06 +0100
+	b=D1V3WsksWC1wV2rg8K0P41e/r1chTlmz+22427sCrc/jpgkZ5x6gDzVSAuYSNjMOm
+	 /8ROun5lPSbe5S1Ibm4ORSzL/qDQTJP4ikVKvLqGnmWWDReJfCQWhfSpvA7DzD1AXp
+	 6rOihGuy2fVpDmog2BCqNCCg6mTml/1wRMtWS56Y=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4YsmFh6mfHz16Vp;
+	Tue, 11 Feb 2025 16:53:44 +0100 (CET)
+Date: Tue, 11 Feb 2025 16:53:44 +0100
 From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Cc: linux-security-module@vger.kernel.org, 
-	Tahera Fahimi <fahimitahera@gmail.com>, Tanya Agarwal <tanyaagarwal25699@gmail.com>, 
-	Alejandro Colomar <alx@kernel.org>, linux-man@vger.kernel.org, 
-	Daniel Burgener <dburgener@linux.microsoft.com>
-Subject: Re: [PATCH 2/2] landlock: Clarify IPC scoping documentation
-Message-ID: <20250211.eudei8Ohth2w@digikod.net>
+To: Alejandro Colomar <alx@kernel.org>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	linux-security-module@vger.kernel.org, Tahera Fahimi <fahimitahera@gmail.com>, 
+	Tanya Agarwal <tanyaagarwal25699@gmail.com>, Daniel Burgener <dburgener@linux.microsoft.com>, 
+	tools@kernel.org, linux-doc@vger.kernel.org, linux-man@vger.kernel.org
+Subject: Re: [PATCH 1/2] landlock: Minor typo and grammar fixes in IPC
+ scoping documentation
+Message-ID: <20250211.ieSoo7Phe5oh@digikod.net>
 References: <20250124154445.162841-1-gnoack@google.com>
- <20250124154445.162841-2-gnoack@google.com>
- <Z5O44dxg8y-QZV62@google.com>
+ <20250211.Ree5bu6Eph2p@digikod.net>
+ <22olfm76rcgjfs4vrr3adtbznsnz47kaehlr3ljn6e5jkc6waq@ue7azstxlwfv>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -49,143 +50,73 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z5O44dxg8y-QZV62@google.com>
+In-Reply-To: <22olfm76rcgjfs4vrr3adtbznsnz47kaehlr3ljn6e5jkc6waq@ue7azstxlwfv>
 X-Infomaniak-Routing: alpha
 
-On Fri, Jan 24, 2025 at 04:59:29PM +0100, Günther Noack wrote:
-> Hi!
+On Tue, Feb 11, 2025 at 04:27:04PM +0100, Alejandro Colomar wrote:
+> Hey Mickaël!
+
+Hey!
+
 > 
-> This is an attempt to clarify the kernel documentation for Landlock's IPC
-> scoping support before I send the same wording to the man page list in troff
-> format.
-> 
-> (Adding Alejandro and the man-page list to get an early review on wording and
-> clarity.)
-> 
-> On Fri, Jan 24, 2025 at 03:44:45PM +0000, Günther Noack wrote:
-> > * Clarify terminology
-> > * Stop mixing the unix(7) and signal(7) aspects in the explanation.
+> On Tue, Feb 11, 2025 at 04:17:30PM +0100, Mickaël Salaün wrote:
+> > On Fri, Jan 24, 2025 at 03:44:44PM +0000, Günther Noack wrote:
+> > > * Fix some whitespace, punctuation and minor grammar
+> > > * Add a missing sentence about the minimum ABI version,
+> > >   to stay in line with the section next to it
+> > > 
+> > > Cc: Mickaël Salaün <mic@digikod.net>
+> > > Cc: Tahera Fahimi <fahimitahera@gmail.com>
+> > > Cc: Tanya Agarwal <tanyaagarwal25699@gmail.com>
+> > > Signed-off-by: Günther Noack <gnoack@google.com>
 > > 
-> > Terminology:
+> > Looks good, thanks!
 > > 
-> > * The *IPC Scope* of a Landlock domain is that Landlock domain and its
-> >   nested domains.
-> > * An *operation* (e.g., signaling, connecting to abstract UDS) is said
-> >   *to be scoped within a domain* when the flag for that operation was
-> >   *set at ruleset creation time.  This means that for the purpose of
-> >   *this operation, only processes within the domain's IPC scope are
-> >   *reachable.
-
-This makes sense, but there are a lot of stars in here. ;)
-
+> > I'm going to take this patch in my tree with the changes explained
+> > below. You can send a v2 with the second patch according to the reviews.
 > > 
-> > Cc: Mickaël Salaün <mic@digikod.net>
-> > Cc: Tahera Fahimi <fahimitahera@gmail.com>
-> > Cc: Tanya Agarwal <tanyaagarwal25699@gmail.com>
-> > Signed-off-by: Günther Noack <gnoack@google.com>
-> > ---
-> >  Documentation/userspace-api/landlock.rst | 53 ++++++++++++------------
-> >  1 file changed, 26 insertions(+), 27 deletions(-)
+> > As a side note, applying the patch series from this thread with b4
+> > doesn't work because they apply to different repositories.
 > > 
-> > diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
-> > index ca8b325d53e5..6b80106d33de 100644
-> > --- a/Documentation/userspace-api/landlock.rst
-> > +++ b/Documentation/userspace-api/landlock.rst
-> > @@ -317,33 +317,32 @@ IPC scoping
-> >  -----------
-> >  
-> >  Similar to the implicit `Ptrace restrictions`_, we may want to further restrict
-> > -interactions between sandboxes. Each Landlock domain can be explicitly scoped
-> > -for a set of actions by specifying it on a ruleset.  For example, if a
-> > -sandboxed process should not be able to :manpage:`connect(2)` to a
-> > -non-sandboxed process through abstract :manpage:`unix(7)` sockets, we can
-> > -specify such a restriction with ``LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET``.
-> > -Moreover, if a sandboxed process should not be able to send a signal to a
-> > -non-sandboxed process, we can specify this restriction with
-> > -``LANDLOCK_SCOPE_SIGNAL``.
-> > -
-> > -A sandboxed process can connect to a non-sandboxed process when its domain is
-> > -not scoped. If a process's domain is scoped, it can only connect to sockets
-> > -created by processes in the same scope.
-> > -Moreover, if a process is scoped to send signal to a non-scoped process, it can
-> > -only send signals to processes in the same scope.
-> > -
-> > -A connected datagram socket behaves like a stream socket when its domain is
-> > -scoped, meaning if the domain is scoped after the socket is connected, it can
-> > -still :manpage:`send(2)` data just like a stream socket.  However, in the same
-> > -scenario, a non-connected datagram socket cannot send data (with
-> > -:manpage:`sendto(2)`) outside its scope.
-> > -
-> > -A process with a scoped domain can inherit a socket created by a non-scoped
-> > -process. The process cannot connect to this socket since it has a scoped
-> > -domain.
+> > Dealing with duplicated doc in two repositories is not practical and
+> > adds work to everyone...  Could we move the non-libc syscall man pages
+> > to the kernel repository?
 > 
-> Tahera, Mickaël:
-> 
-> I suspect what was meant in this paragraph are Abstract Unix Domain Sockets of
-> the datagram type? -- the scenario where the process has an (unconnected) Unix
-> Datagram Socket and then can not call connect(2) or send(2) *on* it?
+> Let me suggest the opposite: Could we move the kernel docs to manual
+> pages in man9?  (As is the historic place for kernel docs.)
+> (You could keep man9 in the kernel tree if you want, or could handle it
+>  to the Linux man-pages project, if you want.)  That would help have a
+> more clear separation between the two sets of documentation, and prevent
+> duplication.
 
-Yes, that's correct.
+I didn't know about man9 but it's not clear to me what would be the
+content.  Because I want new kernel features to come with proper tests
+and documentation, it would be much easier to apply all these patches to
+the same repository, at the same time.  Using the same repository should
+also help to synchronize documentation with code changes.
+
+One remaining issue would be that some generated documentation come from
+the kernel source files, especially the UAPI headers, which also helps
+maintaining the documentation in sync with the code.  What would you
+suggest to improve the current workflow?
 
 > 
-> I removed this paragraph because I believe it's sufficiently covered in the
-> section that I wrote about Abstract Unix Domain Sockets below.  If I'm
-> misunderstanding this, please let me know. :)
+> I personally don't like the idea of having man2 in the kernel tree.
+> Michael Kerrisk already mentioned several reasons for why it's a bad
+> idea in the past.  On top of them, I'd add that the build system of the
+> Linux man-pages project is quite more powerful than the kernel one, and
+> it would be an important regression to have to adapt to the kernel
+> Makefiles in the manual pages.
+
+For the Landlock syscalls case, could we move the syscall documentation
+to man9?
+
 > 
-> > -
-> > -IPC scoping does not support exceptions, so if a domain is scoped, no rules can
-> > -be added to allow access to resources or processes outside of the scope.
-
-> > +interactions between sandboxes.  Therefore, at ruleset creation time, each
-> > +Landlock domain can restrict the scope for certain operations, so that these
-> > +operations can only reach out to processes within the same Landlock domain or in
-> > +a nested Landlock domain (the "scope").
-> > +
-> > +The operations which can be scoped are:
-> > +
-> > +``LANDLOCK_SCOPE_SIGNAL``
-> > +    When set, this limits the sending of signals to target processes which run
-> > +    within the same or a nested Landlock domain.
-> > +
-> > +``LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET``
-> > +    When set, this limits the set of abstract :manpage:`unix(7)` sockets we can
-> > +    :manpage:`connect(2)` to to socket addresses which were created by a process
-> > +    in the same or a nested Landlock domain.
-> > +
-> > +    A :manpage:`send(2)` on a non-connected datagram socket is treated like an
-> > +    implicit :manpage:`connect(2)` and will be blocked when the remote end does
-> > +    not stem from the same or a nested Landlock domain.
-> > +
-> > +    A :manpage:`send(2)` on a socket which was previously connected will work.
-> > +    This works for both datagram and stream sockets.
-
-Nice!  I also agree with Daniel and Alejandro.
-
-> > +
-> > +IPC scoping does not support exceptions via :manpage:`landlock_add_rule(2)`.
-> > +If an operation is scoped within a domain, no rules can be added to allow access
-> > +to resources or processes outside of the scope.
-
-A bit of background on the rationale.  The particularity of scopes is
-that they implicitly allow operations on the current or a nested domain.
-With a handled field we would have needed to manually add exceptions for
-processes in the current domain or a nested one, which would have been
-possible with a new type of rule to identify relative domains (i.e. not
-at ruleset creation time but at restriction time).  This new scope
-semantic is easy to use, well specified (with this doc ;) ), and it
-should fit to most sandbox use cases.  If we ever need a way to further
-restrict the use of some IPC, we could still implement a new handled_*
-field with the dedicated rule types, which could still compose with the
-current scope.
-
-
-> >  
-> >  Truncating files
-> >  ----------------
-> > -- 
-> > 2.48.1.262.g85cc9f2d1e-goog
-> > 
 > 
-> —Günther
+> Have a lovely day!
+> Alex
 > 
+> -- 
+> <https://www.alejandro-colomar.es/>
+
+
