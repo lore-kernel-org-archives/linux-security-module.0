@@ -1,195 +1,191 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [185.125.25.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1D21253B4C;
-	Tue, 11 Feb 2025 15:50:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E1FB230D0E
+	for <linux-security-module@vger.kernel.org>; Tue, 11 Feb 2025 15:57:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739289046; cv=none; b=ovdTJTLkn/95DomUBi+9WQrnNf3KBrAX0zTFM1g+/6do2sfEBrsYuyyw7/pxjBD4qR6loaHrXdZS5NuPwJYzPSc93Y51lFy27xbuRJaM0vKwKBY681mr+OjKx3ZphRnZ2P/W1A0Y1nhabGnGj9mq+LH9Emhz5sNYngaKGohb2xA=
+	t=1739289459; cv=none; b=UdQ3A/QSC2QtGcAphZBPRTOBxv2V/+u4gIPOBDvIWvSDqUy/6bj3V4bWXYyXX158Ow8Hdgi8qPOo4NzmRUFDY9wNaJnY9xeK4JhMFcPC4+K4YdbgK3Cr3fCSkitWJWMu8vP6KY1pc0swTBBULAKJq9ggF1oy1iHKcqjBPDGqVMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739289046; c=relaxed/simple;
-	bh=DLoVaWN4pPM06i7274kUimEBAEHvEAUb+WbMY772pi4=;
+	s=arc-20240116; t=1739289459; c=relaxed/simple;
+	bh=mGkbpZGcuEAE5mzBw2KwEqym3+OuEvCN3tcnWIYfQa4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LKVMwjvJ+uqCU1O3fFX8zTCxB01A6G/cmKtEDDS1E6kCI6v0bLfgKvqFo3xgLusxIiRYA1XIe0PJEH5XlZL09WCRBcIUQYcpc8AFGd7fwiZSP+FAqwbn86JhXU2qjzJirj2YrX3t9++q8SJ8d3EI1gX/f3A4BRvIs8oLTS9R4ek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Y+D9bioG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cUfJNtWX; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Y+D9bioG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cUfJNtWX; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+	 Content-Type:Content-Disposition:In-Reply-To; b=pRmK19YYzvJnUdM+Y2ufJgHGsnFjajTcR7W7bww/lPbpyvSsUGM9pb8ZHldBnCu9lI/MDMoigYmHfGgisHHbygIGg2qEnHYBgSHBZwJfOCpRJKJ77YHZadQ+0pBy1TvpU5JxqFmYQESCHWIqcZYGZNf43SQ/QD3HVntPpCliwHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=AYZFubIZ; arc=none smtp.client-ip=185.125.25.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Y+D9bioG";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cUfJNtWX";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Y+D9bioG";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cUfJNtWX"
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 90B43339CA;
-	Tue, 11 Feb 2025 13:32:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1739280741; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OQgKLohp9UJppT3FHipy+VgWaxpWCieTbQmYejKjYXo=;
-	b=Y+D9bioGmHa3DDMKdgMsSTgkLT52ggg513kAY8MGyJo9J+RRuPxmzxrz2jzIjsDWXn/LZ8
-	gEyfQUVq5fthuIEy1dQCcDrvTlKHeG82eM0LeaBA5HNEqG/YHozg+247wLhrLpkFo/hl5R
-	pFWJ2Z2FDhZp23o6G91hAm+hxv4AFXI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1739280741;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OQgKLohp9UJppT3FHipy+VgWaxpWCieTbQmYejKjYXo=;
-	b=cUfJNtWXPk4bQ4zdkwAwWtQYsC8ktoRqy5MbAny9T2dyKu7Ut+agGB3+Aw1OF1M/YyifI0
-	0iL5fMt+7L4VmmAA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=Y+D9bioG;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=cUfJNtWX
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1739280741; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OQgKLohp9UJppT3FHipy+VgWaxpWCieTbQmYejKjYXo=;
-	b=Y+D9bioGmHa3DDMKdgMsSTgkLT52ggg513kAY8MGyJo9J+RRuPxmzxrz2jzIjsDWXn/LZ8
-	gEyfQUVq5fthuIEy1dQCcDrvTlKHeG82eM0LeaBA5HNEqG/YHozg+247wLhrLpkFo/hl5R
-	pFWJ2Z2FDhZp23o6G91hAm+hxv4AFXI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1739280741;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OQgKLohp9UJppT3FHipy+VgWaxpWCieTbQmYejKjYXo=;
-	b=cUfJNtWXPk4bQ4zdkwAwWtQYsC8ktoRqy5MbAny9T2dyKu7Ut+agGB3+Aw1OF1M/YyifI0
-	0iL5fMt+7L4VmmAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8292513715;
-	Tue, 11 Feb 2025 13:32:21 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id AW7cH2VRq2dTOgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 11 Feb 2025 13:32:21 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 41745A095C; Tue, 11 Feb 2025 14:32:17 +0100 (CET)
-Date: Tue, 11 Feb 2025 14:32:17 +0100
-From: Jan Kara <jack@suse.cz>
-To: Miklos Szeredi <mszeredi@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
-	Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, Karel Zak <kzak@redhat.com>, 
-	Lennart Poettering <lennart@poettering.net>, Ian Kent <raven@themaw.net>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>, selinux@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, selinux-refpolicy@vger.kernel.org
-Subject: Re: [PATCH v5 2/3] fanotify: notify on mount attach and detach
-Message-ID: <7fjcocufagvqgytwiqvbcehovmehgwytz67jv76327c52jrz2y@5re5g57otcws>
-References: <20250129165803.72138-1-mszeredi@redhat.com>
- <20250129165803.72138-3-mszeredi@redhat.com>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="AYZFubIZ"
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4YslVv1yCWzVLh;
+	Tue, 11 Feb 2025 16:20:07 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1739287207;
+	bh=vd3UC2SznqvkWEBk0v6NQpgUdLEiATZMCaqdFNyj0sI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AYZFubIZ5AJooRqW2mU7v5rAUikbdQrCE6F9lWj3wlskjMp9kiM/OpnK/cYOAdvmw
+	 uUlAXfVaFGtxpXK3xzKfRHmdsV4kb8DF372sYGhPp0CV6Y8j1+KiV/Byv95mEjMMb3
+	 lJrzvvi5ytBTv6nnkYwKwXe6uU53Htep6iBFzPgs=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4YslVt5cNHzw3N;
+	Tue, 11 Feb 2025 16:20:06 +0100 (CET)
+Date: Tue, 11 Feb 2025 16:20:06 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Cc: linux-security-module@vger.kernel.org, 
+	Tahera Fahimi <fahimitahera@gmail.com>, Tanya Agarwal <tanyaagarwal25699@gmail.com>, 
+	Alejandro Colomar <alx@kernel.org>, linux-man@vger.kernel.org, 
+	Daniel Burgener <dburgener@linux.microsoft.com>
+Subject: Re: [PATCH 2/2] landlock: Clarify IPC scoping documentation
+Message-ID: <20250211.eudei8Ohth2w@digikod.net>
+References: <20250124154445.162841-1-gnoack@google.com>
+ <20250124154445.162841-2-gnoack@google.com>
+ <Z5O44dxg8y-QZV62@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250129165803.72138-3-mszeredi@redhat.com>
-X-Rspamd-Queue-Id: 90B43339CA
-X-Spam-Score: -4.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	FREEMAIL_CC(0.00)[vger.kernel.org,kernel.org,suse.cz,gmail.com,redhat.com,poettering.net,themaw.net,zeniv.linux.org.uk,paul-moore.com];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z5O44dxg8y-QZV62@google.com>
+X-Infomaniak-Routing: alpha
 
-On Wed 29-01-25 17:58:00, Miklos Szeredi wrote:
-> Add notifications for attaching and detaching mounts.  The following new
-> event masks are added:
+On Fri, Jan 24, 2025 at 04:59:29PM +0100, Günther Noack wrote:
+> Hi!
 > 
->   FAN_MNT_ATTACH  - Mount was attached
->   FAN_MNT_DETACH  - Mount was detached
+> This is an attempt to clarify the kernel documentation for Landlock's IPC
+> scoping support before I send the same wording to the man page list in troff
+> format.
 > 
-> If a mount is moved, then the event is reported with (FAN_MNT_ATTACH |
-> FAN_MNT_DETACH).
+> (Adding Alejandro and the man-page list to get an early review on wording and
+> clarity.)
 > 
-> These events add an info record of type FAN_EVENT_INFO_TYPE_MNT containing
-> these fields identifying the affected mounts:
-> 
->   __u64 mnt_id    - the ID of the mount (see statmount(2))
-> 
-> FAN_REPORT_MNT must be supplied to fanotify_init() to receive these events
-> and no other type of event can be received with this report type.
-> 
-> Marks are added with FAN_MARK_MNTNS, which records the mount namespace from
-> an nsfs file (e.g. /proc/self/ns/mnt).
-> 
-> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> On Fri, Jan 24, 2025 at 03:44:45PM +0000, Günther Noack wrote:
+> > * Clarify terminology
+> > * Stop mixing the unix(7) and signal(7) aspects in the explanation.
+> > 
+> > Terminology:
+> > 
+> > * The *IPC Scope* of a Landlock domain is that Landlock domain and its
+> >   nested domains.
+> > * An *operation* (e.g., signaling, connecting to abstract UDS) is said
+> >   *to be scoped within a domain* when the flag for that operation was
+> >   *set at ruleset creation time.  This means that for the purpose of
+> >   *this operation, only processes within the domain's IPC scope are
+> >   *reachable.
 
-Just one small comment below. Otherwise feel free to add:
+This makes sense, but there are a lot of stars in here. ;)
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+> > 
+> > Cc: Mickaël Salaün <mic@digikod.net>
+> > Cc: Tahera Fahimi <fahimitahera@gmail.com>
+> > Cc: Tanya Agarwal <tanyaagarwal25699@gmail.com>
+> > Signed-off-by: Günther Noack <gnoack@google.com>
+> > ---
+> >  Documentation/userspace-api/landlock.rst | 53 ++++++++++++------------
+> >  1 file changed, 26 insertions(+), 27 deletions(-)
+> > 
+> > diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/userspace-api/landlock.rst
+> > index ca8b325d53e5..6b80106d33de 100644
+> > --- a/Documentation/userspace-api/landlock.rst
+> > +++ b/Documentation/userspace-api/landlock.rst
+> > @@ -317,33 +317,32 @@ IPC scoping
+> >  -----------
+> >  
+> >  Similar to the implicit `Ptrace restrictions`_, we may want to further restrict
+> > -interactions between sandboxes. Each Landlock domain can be explicitly scoped
+> > -for a set of actions by specifying it on a ruleset.  For example, if a
+> > -sandboxed process should not be able to :manpage:`connect(2)` to a
+> > -non-sandboxed process through abstract :manpage:`unix(7)` sockets, we can
+> > -specify such a restriction with ``LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET``.
+> > -Moreover, if a sandboxed process should not be able to send a signal to a
+> > -non-sandboxed process, we can specify this restriction with
+> > -``LANDLOCK_SCOPE_SIGNAL``.
+> > -
+> > -A sandboxed process can connect to a non-sandboxed process when its domain is
+> > -not scoped. If a process's domain is scoped, it can only connect to sockets
+> > -created by processes in the same scope.
+> > -Moreover, if a process is scoped to send signal to a non-scoped process, it can
+> > -only send signals to processes in the same scope.
+> > -
+> > -A connected datagram socket behaves like a stream socket when its domain is
+> > -scoped, meaning if the domain is scoped after the socket is connected, it can
+> > -still :manpage:`send(2)` data just like a stream socket.  However, in the same
+> > -scenario, a non-connected datagram socket cannot send data (with
+> > -:manpage:`sendto(2)`) outside its scope.
+> > -
+> > -A process with a scoped domain can inherit a socket created by a non-scoped
+> > -process. The process cannot connect to this socket since it has a scoped
+> > -domain.
+> 
+> Tahera, Mickaël:
+> 
+> I suspect what was meant in this paragraph are Abstract Unix Domain Sockets of
+> the datagram type? -- the scenario where the process has an (unconnected) Unix
+> Datagram Socket and then can not call connect(2) or send(2) *on* it?
 
-> @@ -1847,6 +1890,19 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
->  		return -EINVAL;
->  	group = fd_file(f)->private_data;
->  
-> +	/* Only report mount events on mnt namespace */
-> +	if (FAN_GROUP_FLAG(group, FAN_REPORT_MNT)) {
-> +		if (mask & ~FANOTIFY_MOUNT_EVENTS)
-> +			return -EINVAL;
-> +		if (mark_type != FAN_MARK_MNTNS)
-> +			return -EINVAL;
-> +	} else {
-> +		if (mask & FANOTIFY_MOUNT_EVENTS)
-> +			return -EINVAL;
-> +		if (mark_type == FAN_MARK_MNTNS)
-> +			return -EINVAL;
-> +	}
-> +
->  	/*
->  	 * An unprivileged user is not allowed to setup mount nor filesystem
->  	 * marks.  This also includes setting up such marks by a group that
-> @@ -1888,7 +1944,7 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
->  	 * point.
->  	 */
->  	fid_mode = FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS);
-> -	if (mask & ~(FANOTIFY_FD_EVENTS|FANOTIFY_EVENT_FLAGS) &&
-> +	if (mask & ~(FANOTIFY_FD_EVENTS|FANOTIFY_MOUNT_EVENTS|FANOTIFY_EVENT_FLAGS) &&
+Yes, that's correct.
 
-I understand why you need this but the condition is really hard to
-understand now and the comment above it becomes out of date. Perhaps I'd
-move this and the following two checks for FAN_RENAME and
-FANOTIFY_PRE_CONTENT_EVENTS into !FAN_GROUP_FLAG(group, FAN_REPORT_MNT)
-branch to make things more obvious?
+> 
+> I removed this paragraph because I believe it's sufficiently covered in the
+> section that I wrote about Abstract Unix Domain Sockets below.  If I'm
+> misunderstanding this, please let me know. :)
+> 
+> > -
+> > -IPC scoping does not support exceptions, so if a domain is scoped, no rules can
+> > -be added to allow access to resources or processes outside of the scope.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> > +interactions between sandboxes.  Therefore, at ruleset creation time, each
+> > +Landlock domain can restrict the scope for certain operations, so that these
+> > +operations can only reach out to processes within the same Landlock domain or in
+> > +a nested Landlock domain (the "scope").
+> > +
+> > +The operations which can be scoped are:
+> > +
+> > +``LANDLOCK_SCOPE_SIGNAL``
+> > +    When set, this limits the sending of signals to target processes which run
+> > +    within the same or a nested Landlock domain.
+> > +
+> > +``LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET``
+> > +    When set, this limits the set of abstract :manpage:`unix(7)` sockets we can
+> > +    :manpage:`connect(2)` to to socket addresses which were created by a process
+> > +    in the same or a nested Landlock domain.
+> > +
+> > +    A :manpage:`send(2)` on a non-connected datagram socket is treated like an
+> > +    implicit :manpage:`connect(2)` and will be blocked when the remote end does
+> > +    not stem from the same or a nested Landlock domain.
+> > +
+> > +    A :manpage:`send(2)` on a socket which was previously connected will work.
+> > +    This works for both datagram and stream sockets.
+
+Nice!  I also agree with Daniel and Alejandro.
+
+> > +
+> > +IPC scoping does not support exceptions via :manpage:`landlock_add_rule(2)`.
+> > +If an operation is scoped within a domain, no rules can be added to allow access
+> > +to resources or processes outside of the scope.
+
+A bit of background on the rationale.  The particularity of scopes is
+that they implicitly allow operations on the current or a nested domain.
+With a handled field we would have needed to manually add exceptions for
+processes in the current domain or a nested one, which would have been
+possible with a new type of rule to identify relative domains (i.e. not
+at ruleset creation time but at restriction time).  This new scope
+semantic is easy to use, well specified (with this doc ;) ), and it
+should fit to most sandbox use cases.  If we ever need a way to further
+restrict the use of some IPC, we could still implement a new handled_*
+field with the dedicated rule types, which could still compose with the
+current scope.
+
+
+> >  
+> >  Truncating files
+> >  ----------------
+> > -- 
+> > 2.48.1.262.g85cc9f2d1e-goog
+> > 
+> 
+> —Günther
+> 
