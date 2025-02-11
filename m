@@ -1,84 +1,78 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-1909.mail.infomaniak.ch (smtp-1909.mail.infomaniak.ch [185.125.25.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E90524F;
-	Tue, 11 Feb 2025 00:38:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6787320F
+	for <linux-security-module@vger.kernel.org>; Tue, 11 Feb 2025 13:26:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739234312; cv=none; b=MJU+lFgkBpkWSsU9XuMxLtNGEqTETgO+4AIN/e7aXXGfA/2RKGtkjyoW3oESmnWVE6x9M2iF+AkHNwFwh83a6yp2TTiMZ8QhkruQ4iYCEwTRNIh7Oxnw+U+eOtDKYGOr/iqDPTnhYbHkW48jj0F6v2xHdWC7m85S48W+zvak8dA=
+	t=1739280374; cv=none; b=k91N/tcER/C5GviOSCQS8/MeVKtLCYciDMBI9d4EngUa0S98kuQMs8VAlwoxXq40Bc2sQ8kaqPB2uMmow7uJVDzhFIn+VWcoL0t/HaUvjw75shTP5q3NZfQwQLR6fN6pOAGGqMZMHTGn6a4TheFAJiGIGV8UZBVZT5q9TeZRkbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739234312; c=relaxed/simple;
-	bh=l5h5228hacHyEf2k3kEM82BJkSixoxhycvWdQFU7XB0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ewo3n1S3eCRf9r/envDVvUdJ36tr2pEGN8fLBZgmaTUmoedP3+Gq7OBVyOMmlkI6+VagglEwzmtxSMO0wnENsVOfUBtGSs1tYl7tFFUkd1gxZ6Kafp+p+bnotcMvJM54ecWGezhf+s6UDwpazYZ2fwV8Fx17UP+Lf3zfN73vsHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DJ2O00M9; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1739280374; c=relaxed/simple;
+	bh=foLtz4YAIIZIFxsL+bD71O1Y2wSQEYbhjmhB/7tGWUg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=B1y2tFzHTFVkSYP+XIPjjrc6V0InFreyiRBIWr9yWJk1xXnbgiN1rtKgj+zQaDjWnRkqc3m9u2B2XTNAhfMNcp+QrVAGjiYE6xluiEET45mx0smYeW+IXfPaFbAmpwgxsYDzNAXxlu1xGZdZ4VvYL9DLDgt3Ho8mOI/rwijJErU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=0/mPYFNx; arc=none smtp.client-ip=185.125.25.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DJ2O00M9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 852E2C4CED1;
-	Tue, 11 Feb 2025 00:38:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1739234312;
-	bh=l5h5228hacHyEf2k3kEM82BJkSixoxhycvWdQFU7XB0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DJ2O00M9co3/uXOI5zCyPdrE6h3KRMoK+tjGhbudhd/0jfxol2tJ6c+s2U5XVXWs4
-	 EHgkiNCFc6otfWTejUk+42Ie5y8jke8J/S3a3rHn9IkLbUzq0spJaDI0/eaOffx4lO
-	 /y7BnrvgP5RQaWRx6tUI/qgXqUFY6CvxvdQJ3RiRigX4iQmby2qn9nTBBwQ6F88Q6p
-	 k7lz5jSMxNZJo3tNsPXNlXzi/9BtIO5rmcQp3USUELzrtAzCpvGSfk/+AxspcjgoWG
-	 doqIV5+dCWf6XNXiCBnJMuVta6jKw4qSXH3MDatdajmmRX4dPSQOrGqHTtH5upsLUE
-	 tP9t1Ql3HPeag==
-Date: Mon, 10 Feb 2025 16:38:32 -0800
-From: Kees Cook <kees@kernel.org>
-To: "Ricardo B. Marliere" <ricardo@marliere.net>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Ricardo B. Marliere" <rbm@suse.com>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Subject: Re: [PATCH 2/2] LoadPin: Make sysctl table const
-Message-ID: <202502101638.BE56669918@keescook>
-References: <20250123-sysctl-kees-v1-0-533359e74d66@suse.com>
- <20250123-sysctl-kees-v1-2-533359e74d66@suse.com>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="0/mPYFNx"
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4YshzD21WVzpvH;
+	Tue, 11 Feb 2025 14:26:00 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1739280360;
+	bh=oEI1dLX3z3WnJRwXX4fVmgXzFsVcJphDLTIJHUJ5OaE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=0/mPYFNx54hTAEE2qfyb6AIN2Yv/hJLqox9Y4CTypfHJpJlYTZLwS2QdivihjFr9b
+	 T1c9jKE1H5gT0FZWNxQd38Gzsl5JaqIexJ8aRt60CErdlukY7gYDxJ43BK5m4v+ZAA
+	 7ti0ZrOEoLZ2fGNSweznagWQZKo46EPXdMfhelx0=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4YshzC5mr4zCjj;
+	Tue, 11 Feb 2025 14:25:59 +0100 (CET)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	linux-security-module@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	Florent Revest <revest@chromium.org>
+Subject: [PATCH v1] selftests/landlock: Enable the new CONFIG_AF_UNIX_OOB
+Date: Tue, 11 Feb 2025 14:25:28 +0100
+Message-ID: <20250211132531.1625566-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250123-sysctl-kees-v1-2-533359e74d66@suse.com>
+X-Infomaniak-Routing: alpha
 
-On Thu, Jan 23, 2025 at 04:33:35PM -0300, Ricardo B. Marliere wrote:
-> Since commit 7abc9b53bd51 ("sysctl: allow registration of const struct
-> ctl_table"), the sysctl registration API allows for struct ctl_table to be
-> in read-only memory. Move loadpin_sysctl_table to be declared at build
-> time, instead of having to be dynamically allocated at boot time.
-> 
-> Cc: Thomas Weiﬂschuh <linux@weissschuh.net>
-> Suggested-by: Thomas Weiﬂschuh <linux@weissschuh.net>
-> Signed-off-by: Ricardo B. Marliere <rbm@suse.com>
-> ---
->  security/loadpin/loadpin.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/security/loadpin/loadpin.c b/security/loadpin/loadpin.c
-> index 68252452b66cb913638abbca2adea26219e77d37..e2d664b7602629c08c86d6d02158a4e9dd189b1a 100644
-> --- a/security/loadpin/loadpin.c
-> +++ b/security/loadpin/loadpin.c
-> @@ -53,7 +53,7 @@ static bool deny_reading_verity_digests;
->  #endif
->  
->  #ifdef CONFIG_SYSCTL
-> -static struct ctl_table loadpin_sysctl_table[] = {
-> +static const struct ctl_table loadpin_sysctl_table[] = {
->  	{
->  		.procname       = "enforce",
->  		.data           = &enforce,
+Since commit 5155cbcdbf03 ("af_unix: Add a prompt to
+CONFIG_AF_UNIX_OOB"), the Landlock selftests's configuration is not
+enough to build a minimal kernel.  Because scoped_signal_test checks
+with the MSG_OOB flag, we need to enable CONFIG_AF_UNIX_OOB for tests:
 
-This can't be done since the table is modified during set_sysctl().
+ #  RUN           fown.no_sandbox.sigurg_socket ...
+ # scoped_signal_test.c:420:sigurg_socket:Expected 1 (1) == send(client_socket, ".", 1, MSG_OOB) (-1)
+ # sigurg_socket: Test terminated by assertion
+ #          FAIL  fown.no_sandbox.sigurg_socket
+ ...
 
--Kees
+Cc: Florent Revest <revest@chromium.org>
+Cc: G√ºnther Noack <gnoack@google.com>
+Signed-off-by: Micka√´l Sala√ºn <mic@digikod.net>
+---
+ tools/testing/selftests/landlock/config | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/tools/testing/selftests/landlock/config b/tools/testing/selftests/landlock/config
+index 29af19c4e9f9..361f94f8cb0d 100644
+--- a/tools/testing/selftests/landlock/config
++++ b/tools/testing/selftests/landlock/config
+@@ -1,3 +1,4 @@
++CONFIG_AF_UNIX_OOB=y
+ CONFIG_CGROUPS=y
+ CONFIG_CGROUP_SCHED=y
+ CONFIG_INET=y
 -- 
-Kees Cook
+2.48.1
+
