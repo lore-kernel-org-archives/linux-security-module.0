@@ -1,152 +1,246 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CDFA20E020;
-	Wed, 12 Feb 2025 13:03:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC34C20F077;
+	Wed, 12 Feb 2025 15:05:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739365429; cv=none; b=oXSx7OEOLCB5TaqqJgVkLpI68312LMYJQIk7d4/gtDIlVsn8on4cTJk8nfNY9vBZ2f5uIQ2F89UWp7bZ9/+ssIiy+aoV+oAUFeniRAWhUNLtVTZ2h7Y1K6woSQx2PrBWmBhBc4Swgj08IxDUuD1fbZRrcxpCrNLorVuOAC1oLeM=
+	t=1739372730; cv=none; b=JGK8jyQoMAdMEYdHsPfwAkbgVM0RZDY8adrG3No29Brt3tFmzLtYcuXRZwb3iNGrfnsQT+H1paguveXNZOlkQ6nw+1YAvvrIchi6QDIq2nQfyvDa3N7ABNXRrM+76R2KxDbAmXPVsyr9mJFUBmq16AEcAWueWAZTD4P07+fDcMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739365429; c=relaxed/simple;
-	bh=CH67KHtOFoFk6tLjTkF6ElKAoDA4yM8zT/sD1gHjNMs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=TBcUj8/x+zeAKjyIwvrksgt60bQHBUEUoS5mnStbqn7JHUHdoU31ZcVfUt6HrACm0298zEHVKUchAOjDxm5hbWihxbeaCHWVCMADzT379SAf0gm9pgWMhd9ThpNf7Wrj2J/bRR52VVxEZVemcf9mUImZ/qTHMblixpgbHHhn1x4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=JexrGaX+; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1739372730; c=relaxed/simple;
+	bh=w9HBmzbsRhGZHlzu5GUY4UoHmAOJCRjBXRBw6avZ0xg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pfv5ir2D2Vj+lU1Wt8+DycYLR/lfH/17hQIrGWi+PpBlCjR8G1BDkLNf4/qaJ1W4+5vSE9MR18e175VCEkLf10vaBWdKC/n0uGzPIdvsdqKTdvE99LULjC0528m2ytMGtz3M0/8MtFVtZh7M+9USUNhExXSCd3C4ZTZwkoZuCX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qz2wZeVz; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="JexrGaX+"
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51CAxSbX013670;
-	Wed, 12 Feb 2025 13:03:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=krHBiN
-	5fDn9iL+VMLKCmrS+HPrhLWm4BXzABiQLQpLw=; b=JexrGaX++PInzP3zdCZjD3
-	KbkFtDaJsk3RVitxji+enBcU3Rt1JPEFclfW7tGURxY+sQK4uiv8/rP6fE5udfuD
-	etkhmGGIaCJmOgGPosuxlqotL8lgDmvzh/6e1qiXkRNnWvh9MCwprerHMA+q/cYm
-	apU79lmHhkus3D6Eb0vJ36I3RFGcwhZgJdnv7k1gj0sK3smFjjBkRx9wRdd7Bpe0
-	1eE2bSH+LxoDCH1q9U0sVX5bsqtWam7aTMCLgCMC9+gJiT04UioUvfWgM+/XoihA
-	0ivcaVGGv9ZM8kEXCy/Vnkjlyx+VsMe0pyMV+guTWlvFM6u0u7jpgsJtZmADWCVA
-	==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44rjfytvs8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Feb 2025 13:03:20 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51CCZBb4028197;
-	Wed, 12 Feb 2025 13:03:19 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44phyygsnt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 12 Feb 2025 13:03:19 +0000
-Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
-	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51CD3JrI27132602
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 12 Feb 2025 13:03:19 GMT
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1505958077;
-	Wed, 12 Feb 2025 13:03:19 +0000 (GMT)
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A32E25806F;
-	Wed, 12 Feb 2025 13:03:17 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.169.88])
-	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 12 Feb 2025 13:03:17 +0000 (GMT)
-Message-ID: <b7dd78f21a9fa9dc3b6f90eae2668cfe5c7670c7.camel@linux.ibm.com>
-Subject: Re: [PATCH v7 2/7] kexec: define functions to map and unmap segments
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: steven chen <chenste@linux.microsoft.com>, stefanb@linux.ibm.com,
-        roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
-        eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
-        code@tyhicks.com, bauermann@kolabnow.com,
-        linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
-        James.Bottomley@HansenPartnership.com
-Date: Wed, 12 Feb 2025 08:03:17 -0500
-In-Reply-To: <47565966-c735-4758-80a5-523fd93adc72@linux.microsoft.com>
-References: <20250203232033.64123-1-chenste@linux.microsoft.com>
-	 <20250203232033.64123-3-chenste@linux.microsoft.com>
-	 <6fd5510827a2ebb91aee8c72432e248e967fa5be.camel@linux.ibm.com>
-	 <47565966-c735-4758-80a5-523fd93adc72@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qz2wZeVz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6273BC4CEDF;
+	Wed, 12 Feb 2025 15:05:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739372730;
+	bh=w9HBmzbsRhGZHlzu5GUY4UoHmAOJCRjBXRBw6avZ0xg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Qz2wZeVz1Yi9vq6BDXVrCvUySVc5c8FaNCs70mWOICKflyO9kPSzeOYCqoeILaVXl
+	 535sUYmqALGRZg6Jgo18HFbnfqSQLr/JFvh8/1ToN9O0PwxDVRhbMPLxGqj1WdkmyF
+	 eDG91IRZW4QBvpVPdwgksiIIb5B7A19zR+uTTcbiDc/SFBowGjQK/aI6vjWLCu7Rgu
+	 LMrCPQpWLjHk5WK3YYyW6Egjswf9sklCdH+fSRerXm+DA49v2HMj6Dshy2ibNimaCR
+	 hzMAUiO0lSj9cvpmV/+Pj7HArFw+Cg2DOw8J8p6kSp3R4TDpqiam3AJDeJ5Vyatu5a
+	 ++RnDnNR8o93A==
+Date: Wed, 12 Feb 2025 16:06:06 +0100
+From: Alejandro Colomar <alx@kernel.org>
+To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	linux-security-module@vger.kernel.org, Tahera Fahimi <fahimitahera@gmail.com>, 
+	Tanya Agarwal <tanyaagarwal25699@gmail.com>, Daniel Burgener <dburgener@linux.microsoft.com>, 
+	tools@kernel.org, linux-doc@vger.kernel.org, linux-man@vger.kernel.org
+Subject: Re: [PATCH 1/2] landlock: Minor typo and grammar fixes in IPC
+ scoping documentation
+Message-ID: <7vl6uylhzgkokl42bz36d5g3krcusqf7mdy4bd7tblcjckatrw@ullu2kblovji>
+References: <20250124154445.162841-1-gnoack@google.com>
+ <20250211.Ree5bu6Eph2p@digikod.net>
+ <22olfm76rcgjfs4vrr3adtbznsnz47kaehlr3ljn6e5jkc6waq@ue7azstxlwfv>
+ <20250211.ieSoo7Phe5oh@digikod.net>
+ <3unkhxarmiddobfjvojx4sdpgitjld26udcagka2ocgrb6c2jc@dcg4w5yk5mut>
+ <20250211.oavooPhap9OX@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: Wb7pe2c-W48JJx9ojXknjIakieQe4wt2
-X-Proofpoint-ORIG-GUID: Wb7pe2c-W48JJx9ojXknjIakieQe4wt2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-12_04,2025-02-11_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 impostorscore=0
- mlxscore=0 suspectscore=0 adultscore=0 clxscore=1015 mlxlogscore=999
- lowpriorityscore=0 priorityscore=1501 phishscore=0 malwarescore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2501170000 definitions=main-2502120101
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="sewn3eknkwtsr5ds"
+Content-Disposition: inline
+In-Reply-To: <20250211.oavooPhap9OX@digikod.net>
 
-On Mon, 2025-02-10 at 09:06 -0800, steven chen wrote:
-> On 2/7/2025 11:15 AM, Mimi Zohar wrote:
-> > Hi Steven,
+
+--sewn3eknkwtsr5ds
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	linux-security-module@vger.kernel.org, Tahera Fahimi <fahimitahera@gmail.com>, 
+	Tanya Agarwal <tanyaagarwal25699@gmail.com>, Daniel Burgener <dburgener@linux.microsoft.com>, 
+	tools@kernel.org, linux-doc@vger.kernel.org, linux-man@vger.kernel.org
+Subject: Re: [PATCH 1/2] landlock: Minor typo and grammar fixes in IPC
+ scoping documentation
+References: <20250124154445.162841-1-gnoack@google.com>
+ <20250211.Ree5bu6Eph2p@digikod.net>
+ <22olfm76rcgjfs4vrr3adtbznsnz47kaehlr3ljn6e5jkc6waq@ue7azstxlwfv>
+ <20250211.ieSoo7Phe5oh@digikod.net>
+ <3unkhxarmiddobfjvojx4sdpgitjld26udcagka2ocgrb6c2jc@dcg4w5yk5mut>
+ <20250211.oavooPhap9OX@digikod.net>
+MIME-Version: 1.0
+In-Reply-To: <20250211.oavooPhap9OX@digikod.net>
+
+Hi Micka=C3=ABl,
+
+On Tue, Feb 11, 2025 at 08:24:21PM +0100, Micka=C3=ABl Sala=C3=BCn wrote:
+> > The official name of man9 is "Kernel Developer's Manual".
+> > In-scope in man9 are internal kernel APIs, and in general anything that
+> > is of interest to kernel developers but not to user-space developers.
 > >=20
-> > On Mon, 2025-02-03 at 15:20 -0800, steven chen wrote:
-> > > Currently, the mechanism to map and unmap segments to the kimage
-> > > structure is not available to the subsystems outside of kexec.=C2=A0 =
-This
-> > > functionality is needed when IMA is allocating the memory segments
-> > > during kexec 'load' operation.=C2=A0 Implement functions to map and u=
-nmap
-> > > segments to kimage.
+> > >  Because I want new kernel features to come with proper tests
+> > > and documentation, it would be much easier to apply all these patches=
+ to
+> > > the same repository, at the same time.  Using the same repository sho=
+uld
+> > > also help to synchronize documentation with code changes.
 > > >=20
-> > > Implement kimage_map_segment() to enable mapping of IMA buffer source
-> > > pages to the kimage structure post kexec 'load'.=C2=A0 This function,
-> > > accepting a kimage pointer, an address, and a size, will gather the
-> > > source pages within the specified address range, create an array of p=
-age
-> > > pointers, and map these to a contiguous virtual address range.=C2=A0 =
-The
-> > > function returns the start of this range if successful, or NULL if
-> > > unsuccessful.
-> > >=20
-> > > Implement kimage_unmap_segment() for unmapping segments
-> > > using vunmap().
-> > >=20
-> > > From: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-> > > Author: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-> > > Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-> > > Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-> > I don't recall previously adding my "Reviewed-by" tag.
+> > > One remaining issue would be that some generated documentation come f=
+rom
+> > > the kernel source files, especially the UAPI headers, which also helps
+> > > maintaining the documentation in sync with the code.  What would you
+> > > suggest to improve the current workflow?
 > >=20
-> > Eric, I'd appreciate your reviewing this and the subsequent patch "[PAT=
-CH v7 3/7]
-> > ima: kexec: skip IMA segment validation after kexec soft reboot" in par=
-ticular.
-> Hi Eric, Could you help to review this patch as Mimi mentioned? Thanks!
+> > For generated documentation, I'd really avoid that.  Currently, in the
+> > man-pages we only have bpf-helpers(7), and I'd very much not follow that
+> > for other pages.
+>=20
+> OK, kernel doc in man9 would not be a good fit then.
+
+Well, I think I should develop what I said.  I think the quality of
+generated documentation isn't good, compared to hand-written
+documentation.  I wouldn't recommend in general generating man(7) pages,
+just like I wouldn't recommend generating .rst documents.
+
+However, given the assumption that you're going to generate the
+documentation anyway from comments (which is what I recommend against),
+generating man(7) source isn't worse than generating .rst docs.  I
+personally don't like in-source comments either, so writing only man(7)
+source is fine --I don't have the problem of keeping it up to date with
+the comments; there's no duplication--.  If you're committed to
+in-source comments, and your internal APIs change so often that it
+wouldn't be reasonable to write documentation by hand (other than the
+in-source comments), then it makes sense to generate man(7) pages in
+the man9 section.
+
+I'm going to release today the next version of the Linux man-pages
+project, and have refreshed the bpf-helpers(7) manual page from Linux
+source.  The process is pretty easy:
+
+<https://git.kernel.org/pub/scm/docs/man-pages/man-pages.git/commit/?id=3De=
+bfa53a052e70a1252051ba3ad99c3b5a87da42d>
+	commit ebfa53a052e70a1252051ba3ad99c3b5a87da42d
+	Author: Alejandro Colomar <alx@kernel.org>
+	Date:   Wed Feb 12 15:46:18 2025 +0100
+
+	    man/man7/bpf-helpers.7: Refresh page from Linux v6.13
+	   =20
+	    Scripted change:
+	   =20
+		    $ ~/src/linux/linux/v6.13/scripts/bpf_doc.py \
+		    | rst2man \
+		    >man7/bpf-helpers.7;
+	   =20
+	    Signed-off-by: Alejandro Colomar <alx@kernel.org>
+
+	diff --git a/man/man7/bpf-helpers.7 b/man/man7/bpf-helpers.7
+	[...]
+
+So you could really use man9 for internal Landlock stuff.  Even if I
+think generated documentation isn't ideal, it's better than nothing.
+Being able to use man(1) for reading kernel documentation would still be
+a nice feature.
+
+And while I can't run all the linters that I run on hand-written docs on
+generated pages (because generated source necessarily triggers many
+false positives), I could still run some, which would trigger some
+accidents in the docs, and would also detect bugs in the software
+translating the docs from one language to another.
+
+So, I'd still recommend you considering man9.
+
+> > For APIs that change often, that may make sense, but in general, APIs
+> > shouldn't change significantly enough to prefer generated docs.
 > >=20
-> > > Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+> > > > I personally don't like the idea of having man2 in the kernel tree.
+> > > > Michael Kerrisk already mentioned several reasons for why it's a bad
+> > > > idea in the past.  On top of them, I'd add that the build system of=
+ the
+> > > > Linux man-pages project is quite more powerful than the kernel one,=
+ and
+> > > > it would be an important regression to have to adapt to the kernel
+> > > > Makefiles in the manual pages.
+> > >=20
+> > > For the Landlock syscalls case, could we move the syscall documentati=
+on
+> > > to man9?
+> >=20
+> > man9 is for internal kernel APIs.  Here's intro(9) in different systems,
+> > which documents what should go into man9, and what shouldn't:
+> >=20
+> > <https://man.netbsd.org/intro.9>
+> > <https://man.openbsd.org/intro.9>
+> > <https://man.freebsd.org/cgi/man.cgi?query=3Dintro&apropos=3D0&sektion=
+=3D9&manpath=3DFreeBSD+14.2-RELEASE+and+Ports&arch=3Ddefault&format=3Dhtml>
+> >=20
+> > Debian had a project which documented some Linux kernel internals in
+> > man9, but it was eventually dropped.  I don't know who maintained that,
+> > and what was the history about it.
+> >=20
+> > If Landlock has internal documentation that only matters to kernel
+> > developers, yes, that would be in-scope for man9.  The user-facing docs
+> > are more relevant in man2 and man7, though.
+> >=20
+> > I would be happy to take all the landlock docs in the form of man9 pages
+> > if you handle them to the Linux man-pages project.  I can do the work of
+> > transforming the .rst docs into man(7) pages; that's fine by me.
+> >=20
+> > If there's consensus in the kernel of moving to man9 docs, I'd be happy
+> > to help with that.  I fear that some maintainers may fear man(7) pages.
+> > If you need me to give any talks to explain how to write man(7) source
+> > code, and show that it's easier than it looks like, I could do that
+> > (G=C3=BCnther already suggested me to do so :).  Maybe I should give a =
+talk
+> > at Plumbers.
+>=20
+> It would be interesting to get the point of view of other kernel
+> maintainers but I guess a lot of them would have the same: to lower the
+> bar of contributions.
 
-Steven, since these patches impact kdump, before re-posting the patch set, =
-please
-include the following tags before your Signed-off-by tag on the kexec patch=
-es.
+I'm working hard on making it easier to contribute to the Linux
+man-pages project.  Adding consistency to the existing pages makes it
+easier to just look at the surrounding documentation and deduce how to
+document some new feature.  The source is today much more
+self-consistent than it was 5 years ago.
 
-Cc: Eric Biederman <ebiederm@xmission.com>
-Cc: Baoquan He <bhe@redhat.com>                                            =
-=20
-Cc: Vivek Goyal <vgoyal@redhat.com>                                        =
-=20
-Cc: Dave Young <dyoung@redhat.com>  =20
+Also, me being paid to work on the project means significantly less time
+to review something.  If I can do anything else to make it easier to
+write man(7) and/or contribute via email, please let me know.
 
-> > > Signed-off-by: steven chen <chenste@linux.microsoft.com>
-
-thanks,
-
-Mimi
+Yes, tools like b4(1) may not be ideal for working in two different
+repos, but I expect that if you report that to Konstantin, he'll
+probably have ideas for that.  I don't think that should be impossible
+to fix.
 
 
+Have a lovely day!
+Alex
+
+--=20
+<https://www.alejandro-colomar.es/>
+
+--sewn3eknkwtsr5ds
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmesuNgACgkQnowa+77/
+2zJGtg/+ObB/c0bD0V5sdyKq/7jhMu2/ds415RlgP9ISaGSed0nAH9JVQpbkzkhh
+PKlk9N2WszM+x+bAu/+VIVUgBY5Z27Uw9e5BJ+vbZJZjkQPq/cjY1NTbHHTHalbe
+aeh5xHoRXxWJrdr9xrNozQNV2I0bLBWfnFLhaOj47SQ8Ep+maMKD1dwctLUDCRW8
+2Sx1/UiqYx0ZTGZdkvIiSI4iFQje6UdvjzaFf4RXdo3s4ILUhclSkrnOcoDOw47h
+YTUBr7vBytGLSiI3ZpAYhLs+FCfyYKMIDPM+Scw4KxBq0LW1zAiR4Z0os9Wq+9rf
+P1ZM7E1MWeChxy070OXm8AXq+68QEhMG4v7DDHmol/UYhEiWdWdtlsyw7i3N38Ks
+ifE4Aa0Tg7jRjEL6jKUr+JeZ0IdzFdvPN/defU6m0v5bP4GLFEt+w7v0KTLjJqMS
+B8H/+SsqRMfuemEc+FiOaU74GBdl8mZ5C1ZjIkyRLjvzOQtFE3TRDOmlLBrzHZ0q
+/y7etqDSUAxy5GgMpAelJWeu7WvRgyQY+xH7IewrqAhTLF948nESuZScM987S7r6
+rIX22xE1kxIyT4UrOHGAxxT9FhYr+1yxw/N+gyh9fQpwAzAlwh94GKZBRFC30U9v
+ZhAPm6DZEHiSuBZhxYDvycij80TIS0C9Oge7vQwQdnwxKOjPOo8=
+=OiCp
+-----END PGP SIGNATURE-----
+
+--sewn3eknkwtsr5ds--
