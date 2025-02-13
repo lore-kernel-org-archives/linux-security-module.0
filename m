@@ -1,137 +1,110 @@
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A508823F400;
-	Thu, 13 Feb 2025 13:08:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68D4A20E715
+	for <linux-security-module@vger.kernel.org>; Thu, 13 Feb 2025 22:32:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739452101; cv=none; b=M/8ML20uDPd0YD2SjKPZvVg2MmXB+Wj0ZvYzKdZkOPUorwXcm9x6FVFpXsQe90EQK//r+dUiQW/NcU5Xco+EGOjwPcjZ24FAbR1Fg2L2w8Mh2hJ3OTb0Z5bU3COc32XiF8o+R27+W+M3ogcFDDFeEGzyDm3XJWSfPD85dx8IaCU=
+	t=1739485960; cv=none; b=PN1Ycn/cFw/jtxeQJCXDk+1UhQHzlS8t4rR4Ixj9bFCj1C4iezy8aojkXETfy9zYye7wUyWbxU2aD0FifAcEcEcmC47W0NdOPaVM+n05sgDrU/Ikv8EqNrjC8UjLC4TkgYQIWvwFXPOaBMeblBC40Ao1C7EpBVg2f+qx00KpSIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739452101; c=relaxed/simple;
-	bh=bSk0Hj/FyM593T3rKpHDAYfymSX6ObFE0W2NcT1pn+U=;
+	s=arc-20240116; t=1739485960; c=relaxed/simple;
+	bh=3nmRFiQ7uT3udcLq+A3quQ3bTH5Y6oSwIuTOQBLYsb0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nDsNEteYrh+B5+0jEsjviTZqxF5f7MaSfh2nsozI7wYjgoJ+x5ot0Yjh83RWuXyL1YdnbepQGhp+i5OuMNzhUhm7IucbuYcW7+f8tQcvkalE7Uz+L+3xdZ+IahCC5ayjN0cgWjGgVGJqO4xrPxNekXAO/0vtZP1atho7SaQmRiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gV6dwiN0; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 To:Cc:Content-Type; b=lGJm33fomVcX6sjnGal03EABOvDchZHKO0t2HQBYl5vRbaaNb4eRfoN1nFQuPK/nGlrAoS3iw2flYPkpydXV3QjKNvGMFU+jyhLAVkVlRmLv1Df265vFNmPPcy8uMpLndtPY4xqH2yWnByV4mD0baxaY3zx8wKJ+g5VjQRPK+6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=nw3gtonJ; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gV6dwiN0"
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ab7d58aa674so132367766b.0;
-        Thu, 13 Feb 2025 05:08:19 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nw3gtonJ"
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-220d27d490dso3684115ad.2
+        for <linux-security-module@vger.kernel.org>; Thu, 13 Feb 2025 14:32:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1739452098; x=1740056898; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1739485957; x=1740090757; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KUTp6AuhiLhqO2Q9yLQzvCOyNBqKEFt3i2WwkPPjzIU=;
-        b=gV6dwiN0F0jePTT7swIx91ZnJ8fXLGEfD6P4we7ZuDetNS9QaIJQtk3tEc+/8PyQDO
-         2P7SKEc3POAnB2XkgNDvqKwPYMf5HZ09tlylREp0lw+YmqraiT7bWwOo8pmafexgdjle
-         NP15ui/cOI5McxxR2xH3J8GTIROZbo/YL/x5CQS6ly/yKxU0f/tpuijxjO55z+rEb4Rf
-         Bi2oggs27okktBiM8WkHP9rH+0TKJU92mjHcgrqxEIs/8plzq3yUM6cIU7XbwZkI7vYJ
-         s4OG1WV4Z+XjBBCD7JeyxJTOt6bE8XtBHHrV1UufvVNjxuKygTy3BW1x3PidoowBFc8c
-         OhDg==
+        bh=D8EXaFBxLNwE01bf56vbVzMOssj4GtKhR3eMZAm/1Sk=;
+        b=nw3gtonJAoNBfnTSm1t+HGjCD2qwo0tcSc0QKX50PtjKDoWeibbTUUL06YhcwoKwH2
+         nlB6tMF3UxVojHYeG3Vb06u9YVXo0J5JpWrtf+y7wRZGWDwBKxgxKg27l2ym4HtmqxRZ
+         RJ+0CPkcdMOOe4A90DRKVfMopHSa49u8xlyko=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739452098; x=1740056898;
+        d=1e100.net; s=20230601; t=1739485957; x=1740090757;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=KUTp6AuhiLhqO2Q9yLQzvCOyNBqKEFt3i2WwkPPjzIU=;
-        b=c2dHqdvxsRFn+ZMY+NhFj1E3WGhbPVqjKncscxcdXO7vWxh4u/9nzO8vh7W3VNp7Dd
-         BOx2o1teRqhwt8jxLs/EafFICM8LT2zvtbrwwth7Q0AuvzGId4iyHdKl6rI55FaykDjz
-         V/9fDrKda4xHwCSNuUqZGI8vNSjzI/E0DTx5tMjMhmtVdm8T0d6ZpVItTR9ykMbtaAeo
-         cF2jM9dgAZUcBUW5VY/D8qXdz29sUqIciA/TXBm2jbzxXN1DoR80u6ZlQgAmkoliZB0I
-         3oWJkeqQKjFowx3HB4qEiTms3HGIoxryeAQNU9joa7bwsvYJKh6OKbLJ9XcKiq9AeFWY
-         fSNg==
-X-Forwarded-Encrypted: i=1; AJvYcCUGFBM+8K3KgaSmLAykYNJ2r4rhceQ7rM+GU0q8aDrQFzoZlBTw+RsDxpQoUsT2tfSmClLpH5ECn3A3VtJPt28vSLs=@vger.kernel.org, AJvYcCVTZwm2gYn+HlKEvUO/jA4TypvhH6C8GcuADkeNxfWroljF38xzDLLSj+fQjEsvn75UmZ2nMRe/FQ==@vger.kernel.org, AJvYcCWOyE+fHYbsWC8nAaxrkV8Yp7TBTIktSOCJtqnKk93wEcl79DZ9fKaxvcML8hhVdeb5I49GGrWoSZ00BAjg@vger.kernel.org, AJvYcCWczGHN43tB0dIqhtHAzt/3yUxbp80o+skJN76CyxlojyO4HqfSGs33J/f3hginfLVGoFyb29TZ2DiYLH+FBa0elK7kVewV@vger.kernel.org
-X-Gm-Message-State: AOJu0YyO5/dSgORyQziGUfLpfHK7rXIIS1wKwx4gNdSAnWTthJS7CSSG
-	Y4XW8X/HXwmKTWV1BPRGLpBVSJNiu7fY8mF6o0rJ9yq+krAnfIYlbSHuZ+9VIp2pG1JT+ygeZg3
-	OW55+TqSSPO6mXKb+ha3xsTLV0hY=
-X-Gm-Gg: ASbGncuSHKRln7mWtzOKXT83pJBlx6xjpt67ZRTrellRpgqV+27Gi6qtT1ei5hwF/jk
-	W4Id4KWBrqqTr9K/AHuhb0qhzultrY3xh5nmBgi3leR5PQ1b9+0N+bQ+eCcATbH22h9hn3avf
-X-Google-Smtp-Source: AGHT+IEIALstVYu3cDxkEPtjAZqx9bJqNL+AJl9CVv+xsffpsTYOrZGLAzrGmbsNN1f1CV+Xf2LjM/0osE2ACK25KOU=
-X-Received: by 2002:a17:907:720d:b0:ab7:86af:9e19 with SMTP id
- a640c23a62f3a-ab7f34af3a5mr637030066b.43.1739452097409; Thu, 13 Feb 2025
- 05:08:17 -0800 (PST)
+        bh=D8EXaFBxLNwE01bf56vbVzMOssj4GtKhR3eMZAm/1Sk=;
+        b=Bmxh1Wf3IkNXOTUEaubBMFQoBPrMOtx+NtUmZT01sKOHtEhtti4ujtY2Jk3x6NqWnJ
+         zHOsoIe2PMqfLQtjCFu7CvIrnW1RXP99bu2paIj+Ini+Z5ntHWetAHA3wgiWvhAt6MgM
+         7I1ULLdLZaqgwVGkRKkMeJ9qxqFj9p6a7gM6/wpI8NJC2Y00wNzFQjBTCEDmi/XSJGPI
+         FveFUhNarqvLZr3RpQWta3WZoGmls7JNA9WfYoRCTxgmib88IOOOLSDrnQ10vzb1AqzG
+         IayLlOdRnr9GUM3+kYz6msLG6J7S462pfbITbpSN6YXnmOQzaZrVTCXA3Jff468ov4LS
+         ilZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV4/FbDn7dxL4Cnyt6yEvLg9fvYvcn++MhAi/P4s58Nzx6kgI+NGc7ydf0eUtR1Qynd3flfINWmdjuacz7h19QOT4ueyWA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyyOsow9a1+sJkiZgVZGXFW02rd6iYcDFMY7PbQrmsp7KnhdKCj
+	mUu52TvFoICmdF9o6smekzpMah3qNmJYaBrAwsDnkxVqzomKDsmjuvaITJ3COlgsKHr2V4wflIC
+	jQkvixa7hQOVwbk2WAIkV2ZlfJRe8PkfTSPlvwtAGM0kZN+nifRG5
+X-Gm-Gg: ASbGncsz5ZCp1ZOVuwhhveTKt/cBms+I1yEplD4SXJWFBwcOVBiZ/wL3GGaFTW6wwf2
+	Uvn7BiLr4Sfn3D7e1Mw4cP8HLWXS6XjnQ21kZ7If5VyGlIHgbgzq4cSaM4Tas0WdCELPPOsDkRd
+	xRsgzMKYfXAQJXC5a8xQzSDtbQLw==
+X-Google-Smtp-Source: AGHT+IF1OsZN6y8LH5UFbbLgIRQzGQDhYmY9iWe1VIWAc/mhKTx2qLrVd/uziGv/I7jl7tP3DIW1vJlEqePyBZ4ldYU=
+X-Received: by 2002:a17:902:e842:b0:21f:1365:8bcf with SMTP id
+ d9443c01a7336-220ecd267bamr4086825ad.10.1739485957623; Thu, 13 Feb 2025
+ 14:32:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250129165803.72138-1-mszeredi@redhat.com> <20250129165803.72138-3-mszeredi@redhat.com>
- <7fjcocufagvqgytwiqvbcehovmehgwytz67jv76327c52jrz2y@5re5g57otcws> <CAJfpegs2qoZHG4P+WiopDo92MxHQ_0QrZi0qMz7niannGFiPDQ@mail.gmail.com>
-In-Reply-To: <CAJfpegs2qoZHG4P+WiopDo92MxHQ_0QrZi0qMz7niannGFiPDQ@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 13 Feb 2025 14:08:05 +0100
-X-Gm-Features: AWEUYZk768_4685HNZwQTbBM11mfG4zvZDgHs1ea8YV4kaLv6t1_0XExpCDgqrI
-Message-ID: <CAOQ4uxjdMeMq9OCkoJVH1GTgUQHN2-03B-T531eCdKmw0kc=rA@mail.gmail.com>
-Subject: Re: [PATCH v5 2/3] fanotify: notify on mount attach and detach
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Jan Kara <jack@suse.cz>, Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org, 
-	Christian Brauner <brauner@kernel.org>, Karel Zak <kzak@redhat.com>, 
-	Lennart Poettering <lennart@poettering.net>, Ian Kent <raven@themaw.net>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Paul Moore <paul@paul-moore.com>, selinux@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, selinux-refpolicy@vger.kernel.org
+References: <20250211132531.1625566-1-mic@digikod.net>
+In-Reply-To: <20250211132531.1625566-1-mic@digikod.net>
+From: Florent Revest <revest@chromium.org>
+Date: Thu, 13 Feb 2025 23:32:26 +0100
+X-Gm-Features: AWEUYZlJRhpZB56_aH4q9zf3m-yAA_hSq9j-t_OOEGxjuX863x3ZmA-WZyxJpVA
+Message-ID: <CABRcYmJzKdU0H0zXA5QSwD=qF_dnPyGTaXGFFyqiYMF6HZ0OeA@mail.gmail.com>
+Subject: Re: [PATCH v1] selftests/landlock: Enable the new CONFIG_AF_UNIX_OOB
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	linux-security-module@vger.kernel.org, linux-kselftest@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 13, 2025 at 1:00=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu> =
-wrote:
+On Tue, Feb 11, 2025 at 2:26=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@digik=
+od.net> wrote:
 >
-> On Tue, 11 Feb 2025 at 16:50, Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Wed 29-01-25 17:58:00, Miklos Szeredi wrote:
+> Since commit 5155cbcdbf03 ("af_unix: Add a prompt to
+> CONFIG_AF_UNIX_OOB"), the Landlock selftests's configuration is not
+> enough to build a minimal kernel.  Because scoped_signal_test checks
+> with the MSG_OOB flag, we need to enable CONFIG_AF_UNIX_OOB for tests:
+
+Makes sense. Thank you!
+
+Acked-by: Florent Revest <revest@chromium.org>
+
+>  #  RUN           fown.no_sandbox.sigurg_socket ...
+>  # scoped_signal_test.c:420:sigurg_socket:Expected 1 (1) =3D=3D send(clie=
+nt_socket, ".", 1, MSG_OOB) (-1)
+>  # sigurg_socket: Test terminated by assertion
+>  #          FAIL  fown.no_sandbox.sigurg_socket
+>  ...
 >
-> > >       fid_mode =3D FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS);
-> > > -     if (mask & ~(FANOTIFY_FD_EVENTS|FANOTIFY_EVENT_FLAGS) &&
-> > > +     if (mask & ~(FANOTIFY_FD_EVENTS|FANOTIFY_MOUNT_EVENTS|FANOTIFY_=
-EVENT_FLAGS) &&
-> >
-> > I understand why you need this but the condition is really hard to
-> > understand now and the comment above it becomes out of date. Perhaps I'=
-d
-> > move this and the following two checks for FAN_RENAME and
-> > FANOTIFY_PRE_CONTENT_EVENTS into !FAN_GROUP_FLAG(group, FAN_REPORT_MNT)
-> > branch to make things more obvious?
+> Cc: Florent Revest <revest@chromium.org>
+> Cc: G=C3=BCnther Noack <gnoack@google.com>
+> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+> ---
+>  tools/testing/selftests/landlock/config | 1 +
+>  1 file changed, 1 insertion(+)
 >
-> Okay.  git diff -w below.
+> diff --git a/tools/testing/selftests/landlock/config b/tools/testing/self=
+tests/landlock/config
+> index 29af19c4e9f9..361f94f8cb0d 100644
+> --- a/tools/testing/selftests/landlock/config
+> +++ b/tools/testing/selftests/landlock/config
+> @@ -1,3 +1,4 @@
+> +CONFIG_AF_UNIX_OOB=3Dy
+>  CONFIG_CGROUPS=3Dy
+>  CONFIG_CGROUP_SCHED=3Dy
+>  CONFIG_INET=3Dy
+> --
+> 2.48.1
 >
-> Thanks,
-> Miklos
->
-> --- a/fs/notify/fanotify/fanotify_user.c
-> +++ b/fs/notify/fanotify/fanotify_user.c
-> @@ -1936,6 +1936,8 @@ static int do_fanotify_mark(int fanotify_fd,
-> unsigned int flags, __u64 mask,
->              mark_type !=3D FAN_MARK_INODE)
->                 return -EINVAL;
->
-> +       /* The following checks are not relevant to mount events */
-> +       if (!FAN_GROUP_FLAG(group, FAN_REPORT_MNT)) {
-
-Sorry for nit picking, but you already have this !FAN_REPORT_MNT
-branch above:
-
-+       /* Only report mount events on mnt namespace */
-+       if (FAN_GROUP_FLAG(group, FAN_REPORT_MNT)) {
-+               if (mask & ~FANOTIFY_MOUNT_EVENTS)
-+                       return -EINVAL;
-...
-+       } else {
-+               if (mask & FANOTIFY_MOUNT_EVENTS)
-
-Which can be easily moved down here and then we get in one place:
-
-if (FAN_REPORT_MNT) {
-    /* event rules for FAN_REPORT_MNT */
-} else {
-    /* event rules for !FAN_REPORT_MNT */
-}
-
-TBH, with the check for (mask & ~FANOTIFY_MOUNT_EVENTS)
-I personally wouldn't mind leaving checks for FAN_RENAME and
- FANOTIFY_PRE_CONTENT_EVENTS outside of the else branch,
-but I don't have a strong objection to including them in the else branch.
-
-Thanks,
-Amir.
