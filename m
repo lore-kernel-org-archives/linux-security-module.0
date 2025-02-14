@@ -1,110 +1,123 @@
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68D4A20E715
-	for <linux-security-module@vger.kernel.org>; Thu, 13 Feb 2025 22:32:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4672263F2E;
+	Fri, 14 Feb 2025 15:54:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739485960; cv=none; b=PN1Ycn/cFw/jtxeQJCXDk+1UhQHzlS8t4rR4Ixj9bFCj1C4iezy8aojkXETfy9zYye7wUyWbxU2aD0FifAcEcEcmC47W0NdOPaVM+n05sgDrU/Ikv8EqNrjC8UjLC4TkgYQIWvwFXPOaBMeblBC40Ao1C7EpBVg2f+qx00KpSIc=
+	t=1739548481; cv=none; b=NQOw3CEZQm/27zi1+AC1ZB9jj594Jocer29asM48Ur1bjDfM/GHHLq4J+5TlTSC+rAOjm8ySX7sKieF1a8LIW6nhd+4ZV4dLElUIkRvSVNvDJC8x9qZ3vx3IYvaH++/YzL23EdS/iTnE4lKCCq6JeFFwXvS8BwG3msNR9Kea/WY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739485960; c=relaxed/simple;
-	bh=3nmRFiQ7uT3udcLq+A3quQ3bTH5Y6oSwIuTOQBLYsb0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lGJm33fomVcX6sjnGal03EABOvDchZHKO0t2HQBYl5vRbaaNb4eRfoN1nFQuPK/nGlrAoS3iw2flYPkpydXV3QjKNvGMFU+jyhLAVkVlRmLv1Df265vFNmPPcy8uMpLndtPY4xqH2yWnByV4mD0baxaY3zx8wKJ+g5VjQRPK+6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=nw3gtonJ; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1739548481; c=relaxed/simple;
+	bh=D7BUq1W64bg7fk5DTnUp5Q47NWeZX2l+s2B5ADRDdq0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TpmsupETSE38JynY8n+HOobYJdB1sJMWJT1fMQb8urBtxaEodCmFrKkTvrvhQVH+fqxfzVDgwPyIgXpTLbk38bEsN5sduViQX+4WyDHugcnB9TuFXaEDvzz4ytAb6zbnM+2k82L8OSTiz37eyeV7OfemWLrhtInfXsLIT55JFN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bGMxNAV7; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nw3gtonJ"
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-220d27d490dso3684115ad.2
-        for <linux-security-module@vger.kernel.org>; Thu, 13 Feb 2025 14:32:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1739485957; x=1740090757; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D8EXaFBxLNwE01bf56vbVzMOssj4GtKhR3eMZAm/1Sk=;
-        b=nw3gtonJAoNBfnTSm1t+HGjCD2qwo0tcSc0QKX50PtjKDoWeibbTUUL06YhcwoKwH2
-         nlB6tMF3UxVojHYeG3Vb06u9YVXo0J5JpWrtf+y7wRZGWDwBKxgxKg27l2ym4HtmqxRZ
-         RJ+0CPkcdMOOe4A90DRKVfMopHSa49u8xlyko=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739485957; x=1740090757;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=D8EXaFBxLNwE01bf56vbVzMOssj4GtKhR3eMZAm/1Sk=;
-        b=Bmxh1Wf3IkNXOTUEaubBMFQoBPrMOtx+NtUmZT01sKOHtEhtti4ujtY2Jk3x6NqWnJ
-         zHOsoIe2PMqfLQtjCFu7CvIrnW1RXP99bu2paIj+Ini+Z5ntHWetAHA3wgiWvhAt6MgM
-         7I1ULLdLZaqgwVGkRKkMeJ9qxqFj9p6a7gM6/wpI8NJC2Y00wNzFQjBTCEDmi/XSJGPI
-         FveFUhNarqvLZr3RpQWta3WZoGmls7JNA9WfYoRCTxgmib88IOOOLSDrnQ10vzb1AqzG
-         IayLlOdRnr9GUM3+kYz6msLG6J7S462pfbITbpSN6YXnmOQzaZrVTCXA3Jff468ov4LS
-         ilZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV4/FbDn7dxL4Cnyt6yEvLg9fvYvcn++MhAi/P4s58Nzx6kgI+NGc7ydf0eUtR1Qynd3flfINWmdjuacz7h19QOT4ueyWA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyOsow9a1+sJkiZgVZGXFW02rd6iYcDFMY7PbQrmsp7KnhdKCj
-	mUu52TvFoICmdF9o6smekzpMah3qNmJYaBrAwsDnkxVqzomKDsmjuvaITJ3COlgsKHr2V4wflIC
-	jQkvixa7hQOVwbk2WAIkV2ZlfJRe8PkfTSPlvwtAGM0kZN+nifRG5
-X-Gm-Gg: ASbGncsz5ZCp1ZOVuwhhveTKt/cBms+I1yEplD4SXJWFBwcOVBiZ/wL3GGaFTW6wwf2
-	Uvn7BiLr4Sfn3D7e1Mw4cP8HLWXS6XjnQ21kZ7If5VyGlIHgbgzq4cSaM4Tas0WdCELPPOsDkRd
-	xRsgzMKYfXAQJXC5a8xQzSDtbQLw==
-X-Google-Smtp-Source: AGHT+IF1OsZN6y8LH5UFbbLgIRQzGQDhYmY9iWe1VIWAc/mhKTx2qLrVd/uziGv/I7jl7tP3DIW1vJlEqePyBZ4ldYU=
-X-Received: by 2002:a17:902:e842:b0:21f:1365:8bcf with SMTP id
- d9443c01a7336-220ecd267bamr4086825ad.10.1739485957623; Thu, 13 Feb 2025
- 14:32:37 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bGMxNAV7"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1739548480; x=1771084480;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=D7BUq1W64bg7fk5DTnUp5Q47NWeZX2l+s2B5ADRDdq0=;
+  b=bGMxNAV7MJSvGipi2f7Jx8HjOv9I+xa2slkFrtFLvouIuz1cU1AFoYLr
+   oV7B/FQ15KiHGi3HrgJW8U39C9aDKXFA9x648Ykhk1/Mm0UeY7Pu1eoJV
+   4brs7NWR0XEG5xh1NZj/+VdNLHTIt+eywEti7YEnij2ss5MKnyCn0Y+/1
+   uOnqCz42rnEIZQF9x3EpeA2tNHDPnERZeza8aLFUmHjeU66GO6N2b8O16
+   +CVB3kTFYisN7Xep4T9C1ASGg5Vvj6Ete3/YBSyDAHRdAZzix0/vXnHg3
+   PksPQJ4+JQki8ucry0eNcKMX/q16d24gzNOSicD/So5LD2NpfU0FJn8Rr
+   g==;
+X-CSE-ConnectionGUID: rOO8FB1mSnOLSPPAmVQNog==
+X-CSE-MsgGUID: jtUqfanlQqW+hu0fUSocOA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="43139592"
+X-IronPort-AV: E=Sophos;i="6.13,286,1732608000"; 
+   d="scan'208";a="43139592"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 07:54:39 -0800
+X-CSE-ConnectionGUID: DsxNw1+kTkmNVTVesm7Ocw==
+X-CSE-MsgGUID: fUvLz0MPQa+L4F1DE+UP3w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,286,1732608000"; 
+   d="scan'208";a="144344402"
+Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 14 Feb 2025 07:54:37 -0800
+Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tiy1S-0019oR-0L;
+	Fri, 14 Feb 2025 15:54:34 +0000
+Date: Fri, 14 Feb 2025 23:54:00 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Ricardo B. Marliere" <ricardo@marliere.net>,
+	Kees Cook <kees@kernel.org>, Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org, "Ricardo B. Marliere" <rbm@suse.com>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
+Subject: Re: [PATCH 2/2] LoadPin: Make sysctl table const
+Message-ID: <202502142320.sf6WGiJs-lkp@intel.com>
+References: <20250123-sysctl-kees-v1-2-533359e74d66@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250211132531.1625566-1-mic@digikod.net>
-In-Reply-To: <20250211132531.1625566-1-mic@digikod.net>
-From: Florent Revest <revest@chromium.org>
-Date: Thu, 13 Feb 2025 23:32:26 +0100
-X-Gm-Features: AWEUYZlJRhpZB56_aH4q9zf3m-yAA_hSq9j-t_OOEGxjuX863x3ZmA-WZyxJpVA
-Message-ID: <CABRcYmJzKdU0H0zXA5QSwD=qF_dnPyGTaXGFFyqiYMF6HZ0OeA@mail.gmail.com>
-Subject: Re: [PATCH v1] selftests/landlock: Enable the new CONFIG_AF_UNIX_OOB
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	linux-security-module@vger.kernel.org, linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250123-sysctl-kees-v1-2-533359e74d66@suse.com>
 
-On Tue, Feb 11, 2025 at 2:26=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@digik=
-od.net> wrote:
->
-> Since commit 5155cbcdbf03 ("af_unix: Add a prompt to
-> CONFIG_AF_UNIX_OOB"), the Landlock selftests's configuration is not
-> enough to build a minimal kernel.  Because scoped_signal_test checks
-> with the MSG_OOB flag, we need to enable CONFIG_AF_UNIX_OOB for tests:
+Hi Ricardo,
 
-Makes sense. Thank you!
+kernel test robot noticed the following build errors:
 
-Acked-by: Florent Revest <revest@chromium.org>
+[auto build test ERROR on a9a5e0bdc5a77a7c662ad4be0ad661f0b0d5e99d]
 
->  #  RUN           fown.no_sandbox.sigurg_socket ...
->  # scoped_signal_test.c:420:sigurg_socket:Expected 1 (1) =3D=3D send(clie=
-nt_socket, ".", 1, MSG_OOB) (-1)
->  # sigurg_socket: Test terminated by assertion
->  #          FAIL  fown.no_sandbox.sigurg_socket
->  ...
->
-> Cc: Florent Revest <revest@chromium.org>
-> Cc: G=C3=BCnther Noack <gnoack@google.com>
-> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
-> ---
->  tools/testing/selftests/landlock/config | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/tools/testing/selftests/landlock/config b/tools/testing/self=
-tests/landlock/config
-> index 29af19c4e9f9..361f94f8cb0d 100644
-> --- a/tools/testing/selftests/landlock/config
-> +++ b/tools/testing/selftests/landlock/config
-> @@ -1,3 +1,4 @@
-> +CONFIG_AF_UNIX_OOB=3Dy
->  CONFIG_CGROUPS=3Dy
->  CONFIG_CGROUP_SCHED=3Dy
->  CONFIG_INET=3Dy
-> --
-> 2.48.1
->
+url:    https://github.com/intel-lab-lkp/linux/commits/Ricardo-B-Marliere/yama-Make-sysctl-table-const/20250124-033808
+base:   a9a5e0bdc5a77a7c662ad4be0ad661f0b0d5e99d
+patch link:    https://lore.kernel.org/r/20250123-sysctl-kees-v1-2-533359e74d66%40suse.com
+patch subject: [PATCH 2/2] LoadPin: Make sysctl table const
+config: nios2-allmodconfig (https://download.01.org/0day-ci/archive/20250214/202502142320.sf6WGiJs-lkp@intel.com/config)
+compiler: nios2-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250214/202502142320.sf6WGiJs-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202502142320.sf6WGiJs-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   security/loadpin/loadpin.c: In function 'set_sysctl':
+>> security/loadpin/loadpin.c:75:48: error: assignment of member 'extra1' in read-only object
+      75 |                 loadpin_sysctl_table[0].extra1 = SYSCTL_ZERO;
+         |                                                ^
+   security/loadpin/loadpin.c:77:48: error: assignment of member 'extra1' in read-only object
+      77 |                 loadpin_sysctl_table[0].extra1 = SYSCTL_ONE;
+         |                                                ^
+
+
+vim +/extra1 +75 security/loadpin/loadpin.c
+
+9b091556a073a9 Kees Cook 2016-04-20  67  
+60ba1028fc7b73 Kees Cook 2022-12-09  68  static void set_sysctl(bool is_writable)
+9b091556a073a9 Kees Cook 2016-04-20  69  {
+9b091556a073a9 Kees Cook 2016-04-20  70  	/*
+9b091556a073a9 Kees Cook 2016-04-20  71  	 * If load pinning is not enforced via a read-only block
+9b091556a073a9 Kees Cook 2016-04-20  72  	 * device, allow sysctl to change modes for testing.
+9b091556a073a9 Kees Cook 2016-04-20  73  	 */
+60ba1028fc7b73 Kees Cook 2022-12-09  74  	if (is_writable)
+60ba1028fc7b73 Kees Cook 2022-12-09 @75  		loadpin_sysctl_table[0].extra1 = SYSCTL_ZERO;
+60ba1028fc7b73 Kees Cook 2022-12-09  76  	else
+60ba1028fc7b73 Kees Cook 2022-12-09  77  		loadpin_sysctl_table[0].extra1 = SYSCTL_ONE;
+60ba1028fc7b73 Kees Cook 2022-12-09  78  }
+60ba1028fc7b73 Kees Cook 2022-12-09  79  #else
+60ba1028fc7b73 Kees Cook 2022-12-09  80  static inline void set_sysctl(bool is_writable) { }
+60ba1028fc7b73 Kees Cook 2022-12-09  81  #endif
+60ba1028fc7b73 Kees Cook 2022-12-09  82  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
