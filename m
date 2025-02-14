@@ -1,123 +1,196 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4672263F2E;
-	Fri, 14 Feb 2025 15:54:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ABF917E;
+	Fri, 14 Feb 2025 21:42:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739548481; cv=none; b=NQOw3CEZQm/27zi1+AC1ZB9jj594Jocer29asM48Ur1bjDfM/GHHLq4J+5TlTSC+rAOjm8ySX7sKieF1a8LIW6nhd+4ZV4dLElUIkRvSVNvDJC8x9qZ3vx3IYvaH++/YzL23EdS/iTnE4lKCCq6JeFFwXvS8BwG3msNR9Kea/WY=
+	t=1739569340; cv=none; b=g4x7QjoIWw/DfJslj1eYRyKXu50X3jbQXGIEBb2eDKrz99NcJTpI2p+VvGB5u3hAYlSR1Brql5J5MGXaj0msQXJ/PskyWM4VSTOCDc8qJH+pkiWu3hKcjfaPC89YBE2It9JabQH4HGkBaCB8de1denaHxrYP32H81l2Eh8LlJmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739548481; c=relaxed/simple;
-	bh=D7BUq1W64bg7fk5DTnUp5Q47NWeZX2l+s2B5ADRDdq0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TpmsupETSE38JynY8n+HOobYJdB1sJMWJT1fMQb8urBtxaEodCmFrKkTvrvhQVH+fqxfzVDgwPyIgXpTLbk38bEsN5sduViQX+4WyDHugcnB9TuFXaEDvzz4ytAb6zbnM+2k82L8OSTiz37eyeV7OfemWLrhtInfXsLIT55JFN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bGMxNAV7; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1739569340; c=relaxed/simple;
+	bh=XLuOrzEjQyaY0IUo+vLho14NvkAMHT6hDckayFLuutc=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=OBZpNACX5cupor/PyICmB5QK8+j3xnRKxiyjNDkUU9+6N5/nAXUJNghMhqZugbOn2q9/P5e3jthOuP9htkysoDpAOSWmIoIm5HJH0T8w522JcIhQE3q5egWgEEPMFyVUHvu3eGc2tmu2FnfnBqJWPTXR9QEpfhiG7BGOeTmjF5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=TWlgVVC5; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bGMxNAV7"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1739548480; x=1771084480;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=D7BUq1W64bg7fk5DTnUp5Q47NWeZX2l+s2B5ADRDdq0=;
-  b=bGMxNAV7MJSvGipi2f7Jx8HjOv9I+xa2slkFrtFLvouIuz1cU1AFoYLr
-   oV7B/FQ15KiHGi3HrgJW8U39C9aDKXFA9x648Ykhk1/Mm0UeY7Pu1eoJV
-   4brs7NWR0XEG5xh1NZj/+VdNLHTIt+eywEti7YEnij2ss5MKnyCn0Y+/1
-   uOnqCz42rnEIZQF9x3EpeA2tNHDPnERZeza8aLFUmHjeU66GO6N2b8O16
-   +CVB3kTFYisN7Xep4T9C1ASGg5Vvj6Ete3/YBSyDAHRdAZzix0/vXnHg3
-   PksPQJ4+JQki8ucry0eNcKMX/q16d24gzNOSicD/So5LD2NpfU0FJn8Rr
-   g==;
-X-CSE-ConnectionGUID: rOO8FB1mSnOLSPPAmVQNog==
-X-CSE-MsgGUID: jtUqfanlQqW+hu0fUSocOA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11345"; a="43139592"
-X-IronPort-AV: E=Sophos;i="6.13,286,1732608000"; 
-   d="scan'208";a="43139592"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Feb 2025 07:54:39 -0800
-X-CSE-ConnectionGUID: DsxNw1+kTkmNVTVesm7Ocw==
-X-CSE-MsgGUID: fUvLz0MPQa+L4F1DE+UP3w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,286,1732608000"; 
-   d="scan'208";a="144344402"
-Received: from lkp-server01.sh.intel.com (HELO d63d4d77d921) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 14 Feb 2025 07:54:37 -0800
-Received: from kbuild by d63d4d77d921 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tiy1S-0019oR-0L;
-	Fri, 14 Feb 2025 15:54:34 +0000
-Date: Fri, 14 Feb 2025 23:54:00 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Ricardo B. Marliere" <ricardo@marliere.net>,
-	Kees Cook <kees@kernel.org>, Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org, "Ricardo B. Marliere" <rbm@suse.com>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Subject: Re: [PATCH 2/2] LoadPin: Make sysctl table const
-Message-ID: <202502142320.sf6WGiJs-lkp@intel.com>
-References: <20250123-sysctl-kees-v1-2-533359e74d66@suse.com>
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="TWlgVVC5"
+Received: by linux.microsoft.com (Postfix, from userid 1212)
+	id 0A811203F3FE; Fri, 14 Feb 2025 13:42:18 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0A811203F3FE
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1739569338;
+	bh=fF42Nb38qJ+ivB+Q+dFwY6ajo+AlrWRTG8wb/UHK5kg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=TWlgVVC5HsuhpzcrXWS7fqv5KDvU9y+CPhuTJ7ssyDv6W8FMIBI3oPDWx3AomPiYH
+	 NVCM40jnUynDdrQdSV5g6HbIzI7grLpiEyFAPlBApE7eg7rc4ACPygUatMLF4gncgS
+	 Sft7ewXLjsuesP/x01ou7SppDSMTSXyTrke9flgo=
+From: Jasjiv Singh <jasjivsingh@linux.microsoft.com>
+To: corbet@lwn.net,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	eparis@redhat.com,
+	paul@paul-moore.com
+Cc: linux-doc@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-audit@redhat.com,
+	linux-kernel@vger.kernel.org,
+	Jasjiv Singh <jasjivsingh@linux.microsoft.com>
+Subject: [RFC PATCH] ipe: add errno field to IPE policy load auditing
+Date: Fri, 14 Feb 2025 13:41:59 -0800
+Message-Id: <1739569319-22015-1-git-send-email-jasjivsingh@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250123-sysctl-kees-v1-2-533359e74d66@suse.com>
 
-Hi Ricardo,
+Users of IPE require a way to identify when and why an operation fails,
+allowing them to both respond to violations of policy and be notified
+of potentially malicious actions on their systems with respect to IPE.
 
-kernel test robot noticed the following build errors:
+This patch introduces a new error field to the AUDIT_IPE_POLICY_LOAD 
+event to log policy loading failures. Currently, IPE only logs successful 
+policy loads, but not failures. Tracking failures is crucial to detect 
+malicious attempts and ensure a complete audit trail for security events.
 
-[auto build test ERROR on a9a5e0bdc5a77a7c662ad4be0ad661f0b0d5e99d]
+The new error field will capture the following error codes:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ricardo-B-Marliere/yama-Make-sysctl-table-const/20250124-033808
-base:   a9a5e0bdc5a77a7c662ad4be0ad661f0b0d5e99d
-patch link:    https://lore.kernel.org/r/20250123-sysctl-kees-v1-2-533359e74d66%40suse.com
-patch subject: [PATCH 2/2] LoadPin: Make sysctl table const
-config: nios2-allmodconfig (https://download.01.org/0day-ci/archive/20250214/202502142320.sf6WGiJs-lkp@intel.com/config)
-compiler: nios2-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250214/202502142320.sf6WGiJs-lkp@intel.com/reproduce)
+-EBADMSG: Policy is invalid
+-ENOMEM: Out of memory (OOM)
+-ERANGE: Policy version number overflow
+-EINVAL: Policy version parsing error
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202502142320.sf6WGiJs-lkp@intel.com/
+Here are some examples of the updated audit record types:
 
-All errors (new ones prefixed by >>):
+AUDIT_IPE_POLICY_LOAD(1422):
 
-   security/loadpin/loadpin.c: In function 'set_sysctl':
->> security/loadpin/loadpin.c:75:48: error: assignment of member 'extra1' in read-only object
-      75 |                 loadpin_sysctl_table[0].extra1 = SYSCTL_ZERO;
-         |                                                ^
-   security/loadpin/loadpin.c:77:48: error: assignment of member 'extra1' in read-only object
-      77 |                 loadpin_sysctl_table[0].extra1 = SYSCTL_ONE;
-         |                                                ^
+audit: AUDIT1422 policy_name="boot_verified" policy_version=0.0.0
+  policy_digest=sha256:820EEA5B40CA42B51F68962354BA083122A20BB846F2676
+  auid=4294967295 ses=4294967295 lsm=ipe res=1 errno=0
+The above record shows a new policy has been successfully loaded into 
+the kernel with the policy name, version, and hash with the errno=0.
 
+AUDIT_IPE_POLICY_LOAD(1422) with error:
 
-vim +/extra1 +75 security/loadpin/loadpin.c
+audit: AUDIT1422 policy_name="boot_verified" policy_version=0.0.0
+  policy_digest=sha256:820EEA5B40CA42B51F68962354BA083122A20BB846F2676
+  auid=4294967295 ses=4294967295 lsm=ipe res=0 errno=-74
 
-9b091556a073a9 Kees Cook 2016-04-20  67  
-60ba1028fc7b73 Kees Cook 2022-12-09  68  static void set_sysctl(bool is_writable)
-9b091556a073a9 Kees Cook 2016-04-20  69  {
-9b091556a073a9 Kees Cook 2016-04-20  70  	/*
-9b091556a073a9 Kees Cook 2016-04-20  71  	 * If load pinning is not enforced via a read-only block
-9b091556a073a9 Kees Cook 2016-04-20  72  	 * device, allow sysctl to change modes for testing.
-9b091556a073a9 Kees Cook 2016-04-20  73  	 */
-60ba1028fc7b73 Kees Cook 2022-12-09  74  	if (is_writable)
-60ba1028fc7b73 Kees Cook 2022-12-09 @75  		loadpin_sysctl_table[0].extra1 = SYSCTL_ZERO;
-60ba1028fc7b73 Kees Cook 2022-12-09  76  	else
-60ba1028fc7b73 Kees Cook 2022-12-09  77  		loadpin_sysctl_table[0].extra1 = SYSCTL_ONE;
-60ba1028fc7b73 Kees Cook 2022-12-09  78  }
-60ba1028fc7b73 Kees Cook 2022-12-09  79  #else
-60ba1028fc7b73 Kees Cook 2022-12-09  80  static inline void set_sysctl(bool is_writable) { }
-60ba1028fc7b73 Kees Cook 2022-12-09  81  #endif
-60ba1028fc7b73 Kees Cook 2022-12-09  82  
+The above record shows a policy load failure due to an invalid policy.
 
+By adding this error field, we ensure that all policy load attempts, 
+whether successful or failed, are logged, providing a comprehensive 
+audit trail for IPE policy management.
+
+Signed-off-by: Jasjiv Singh <jasjivsingh@linux.microsoft.com>
+---
+ Documentation/admin-guide/LSM/ipe.rst | 17 ++++++++++++-----
+ security/ipe/audit.c                  | 17 ++++++++++++++---
+ security/ipe/policy.c                 |  4 +++-
+ 3 files changed, 29 insertions(+), 9 deletions(-)
+
+diff --git a/Documentation/admin-guide/LSM/ipe.rst b/Documentation/admin-guide/LSM/ipe.rst
+index f93a467db628..2143165f48c9 100644
+--- a/Documentation/admin-guide/LSM/ipe.rst
++++ b/Documentation/admin-guide/LSM/ipe.rst
+@@ -423,7 +423,7 @@ Field descriptions:
+ 
+ Event Example::
+ 
+-   type=1422 audit(1653425529.927:53): policy_name="boot_verified" policy_version=0.0.0 policy_digest=sha256:820EEA5B40CA42B51F68962354BA083122A20BB846F26765076DD8EED7B8F4DB auid=4294967295 ses=4294967295 lsm=ipe res=1
++   type=1422 audit(1653425529.927:53): policy_name="boot_verified" policy_version=0.0.0 policy_digest=sha256:820EEA5B40CA42B51F68962354BA083122A20BB846F26765076DD8EED7B8F4DB auid=4294967295 ses=4294967295 lsm=ipe res=1 errno=0
+    type=1300 audit(1653425529.927:53): arch=c000003e syscall=1 success=yes exit=2567 a0=3 a1=5596fcae1fb0 a2=a07 a3=2 items=0 ppid=184 pid=229 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=4294967295 comm="python3" exe="/usr/bin/python3.10" key=(null)
+    type=1327 audit(1653425529.927:53): PROCTITLE proctitle=707974686F6E3300746573742F6D61696E2E7079002D66002E2E
+ 
+@@ -436,11 +436,11 @@ Field descriptions:
+ +----------------+------------+-----------+---------------------------------------------------+
+ | Field          | Value Type | Optional? | Description of Value                              |
+ +================+============+===========+===================================================+
+-| policy_name    | string     | No        | The policy_name                                   |
++| policy_name    | string     | Yes       | The policy_name                                   |
+ +----------------+------------+-----------+---------------------------------------------------+
+-| policy_version | string     | No        | The policy_version                                |
++| policy_version | string     | Yes       | The policy_version                                |
+ +----------------+------------+-----------+---------------------------------------------------+
+-| policy_digest  | string     | No        | The policy hash                                   |
++| policy_digest  | string     | Yes       | The policy hash                                   |
+ +----------------+------------+-----------+---------------------------------------------------+
+ | auid           | integer    | No        | The login user ID                                 |
+ +----------------+------------+-----------+---------------------------------------------------+
+@@ -450,7 +450,14 @@ Field descriptions:
+ +----------------+------------+-----------+---------------------------------------------------+
+ | res            | integer    | No        | The result of the audited operation(success/fail) |
+ +----------------+------------+-----------+---------------------------------------------------+
+-
++| errno          | integer    | No        | The result of the policy error as follows:        |
++|                |            |           |                                                   |
++|                |            |           | +  0: no error                                    |
++|                |            |           | +  -EBADMSG: policy is invalid                    |
++|                |            |           | +  -ENOMEM: out of memory (OOM)                   |
++|                |            |           | +  -ERANGE: policy version number overflow        |
++|                |            |           | +  -EINVAL: policy version parsing error          |
+++----------------+------------+-----------+---------------------------------------------------+
+ 
+ 1404 AUDIT_MAC_STATUS
+ ^^^^^^^^^^^^^^^^^^^^^
+diff --git a/security/ipe/audit.c b/security/ipe/audit.c
+index f05f0caa4850..f810f7004498 100644
+--- a/security/ipe/audit.c
++++ b/security/ipe/audit.c
+@@ -21,6 +21,8 @@
+ 
+ #define AUDIT_POLICY_LOAD_FMT "policy_name=\"%s\" policy_version=%hu.%hu.%hu "\
+ 			      "policy_digest=" IPE_AUDIT_HASH_ALG ":"
++#define AUDIT_POLICY_LOAD_NULL_FMT "policy_name=? policy_version=? "\
++				   "policy_digest=?"
+ #define AUDIT_OLD_ACTIVE_POLICY_FMT "old_active_pol_name=\"%s\" "\
+ 				    "old_active_pol_version=%hu.%hu.%hu "\
+ 				    "old_policy_digest=" IPE_AUDIT_HASH_ALG ":"
+@@ -253,6 +255,8 @@ void ipe_audit_policy_activation(const struct ipe_policy *const op,
+  */
+ void ipe_audit_policy_load(const struct ipe_policy *const p)
+ {
++	int res = 0;
++	int err = 0;
+ 	struct audit_buffer *ab;
+ 
+ 	ab = audit_log_start(audit_context(), GFP_KERNEL,
+@@ -260,10 +264,17 @@ void ipe_audit_policy_load(const struct ipe_policy *const p)
+ 	if (!ab)
+ 		return;
+ 
+-	audit_policy(ab, AUDIT_POLICY_LOAD_FMT, p);
+-	audit_log_format(ab, " auid=%u ses=%u lsm=ipe res=1",
++	if (!IS_ERR(p)) {
++		audit_policy(ab, AUDIT_POLICY_LOAD_FMT, p);
++		res = 1;
++	} else {
++		audit_log_format(ab, AUDIT_POLICY_LOAD_NULL_FMT);
++		err = PTR_ERR(p);
++	}
++
++	audit_log_format(ab, " auid=%u ses=%u lsm=ipe res=%d errno=%d",
+ 			 from_kuid(&init_user_ns, audit_get_loginuid(current)),
+-			 audit_get_sessionid(current));
++			 audit_get_sessionid(current), res, err);
+ 
+ 	audit_log_end(ab);
+ }
+diff --git a/security/ipe/policy.c b/security/ipe/policy.c
+index b628f696e32b..0f616e9fbe61 100644
+--- a/security/ipe/policy.c
++++ b/security/ipe/policy.c
+@@ -202,7 +202,9 @@ struct ipe_policy *ipe_new_policy(const char *text, size_t textlen,
+ 	return new;
+ err:
+ 	ipe_free_policy(new);
+-	return ERR_PTR(rc);
++	new = ERR_PTR(rc);
++	ipe_audit_policy_load(new);
++	return new;
+ }
+ 
+ /**
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
