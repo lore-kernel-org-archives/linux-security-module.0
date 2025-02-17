@@ -1,156 +1,145 @@
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fhigh-b5-smtp.messagingengine.com (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AADF1A8F71
-	for <linux-security-module@vger.kernel.org>; Mon, 17 Feb 2025 23:09:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C1B14F9E2;
+	Mon, 17 Feb 2025 23:14:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739833761; cv=none; b=dzPacDOMMnZexmyx+8SbumuFaEll12oq70MIjsIr8BaFbXvOuDSK3w9M0IjUL42lpEx3qZRfXU22+CCG85rlWm6WWosQgTS/IBvMHPsY9ZaKTHHeJ2QvIc3xbNnsam8rMC+pf14RSI7r+hoXHW6EA5fcZ5h3XujRfubnTSrlXVM=
+	t=1739834076; cv=none; b=Pn4pd8YyBEqsPguOGZHcVKyZnaJSiv6QU8C2Wcy0b5P54NRbHceweakFOHfzw7o6hh/9cPqnX7+ojlQCVMk9IB/7Rovq/K1hXK5MKUylHEIwM3B22GuHm6hXHY884IZplyLFxX38meX6mlR3A1FqKmZlF5YthrU/bhJ+h1TZ6FY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739833761; c=relaxed/simple;
-	bh=BwNPS53w4xF3ql72DmGgygVOWK2VK8uL8CyO12d8Opw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WuwMjikOe7XyNhHxtaxA6Cxz5Dx/JUq0Du4+N8mRfLsu+A5DeecwThQjK0BMI3SqmTU/TcXacvmjQXeS9lKYN/ZXjD9I9IUM0Migv9F9lA3yZcB02YybU22X8k3pUalAyG59d1Wb2zmXLrriOBhEXr9NNf7dl/9XgjJcv9tDVnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=GSCJoeKW; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1739834076; c=relaxed/simple;
+	bh=NMxipclVNI8ph4c1sJVpJ8RRFWUxSx7dZywnmy1ZJF4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kATJjDYqwxKIZ7Z31YgqlFCFNx16A1hG8qqmnUI/VG8ctz0ZGlh+NeskNHgjrUjr812jKq3b4GBwWJF+gKHFk0QDjzwJ5VPSHqCtH/KO1dQ0GPxGVNHNMNYjFrfAdNYlk44dT1kRB2PL6QMRE0U/qXcrqKZj8yq84ezk809VFeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=CmOfMUkO; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ThIg1xQQ; arc=none smtp.client-ip=202.12.124.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="GSCJoeKW"
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6ef7c9e9592so36973517b3.1
-        for <linux-security-module@vger.kernel.org>; Mon, 17 Feb 2025 15:09:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1739833758; x=1740438558; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6+QIhhbHlQHwTRjyCuWMiGSUjUUNNx/rbC2zutM+tv4=;
-        b=GSCJoeKW/J/OzHGK6d81crM4Hf3Pgg9cTDiSWUspUjFqfSiTpv/1tqAiM1nPbqrFvg
-         hEj83r8H4FR3kef/XLywzGMEAdMwpCoAOgRQHB51yGjX8zqGc9XUXvt9uHK5O4mMuVaX
-         Uoh+OPXZdayk984XkJcMS/EoVG8f84YvDzw0dS5a8mVIn7IT4ccIDeCPIKiphDdh+KXy
-         wmahLIFk7ekLc6fvQSWgncYANgWca3ha8Xa8CEd74FRcpN3XSp4x8bboJllHxjrWobmD
-         KzTUU9MOF4Sikc3En1RMrNCD9v0PtMORfrCzMHD+Jqc550gQ8GHuJyRs7+TokwsZS18K
-         0JJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1739833758; x=1740438558;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6+QIhhbHlQHwTRjyCuWMiGSUjUUNNx/rbC2zutM+tv4=;
-        b=kSa0N7fFtgG/rTLy/AI/H196XeGIadYYFzv9L0YrN75KEuIVCFtFPx7hRmVQ53m6su
-         l5YSw98Nv6eFo9I/PACz+cYu2NJ0/zLlLdxhAEbVWG4pkie/Y85EPHk1Role70W44uI6
-         8I97SZLAAPmdIOVUSBNGArVwYCYIPQE50aOP/X6BuwiXNlWDiEv42Z5XWzHmm52JbbJA
-         MO5TaVA6SFSSMhi9j92dH1OQQsW6DD5ZCtLY6AgsTvXHxBzl+zZzJVqHwJ8egFAVMZUd
-         HDtJCdZIen2rnXU3u3VgLmMD1pPEcWvt7A6KkMJQ8gnjwiQZaZK5mEMtKNhC/Rom9sZb
-         56Dg==
-X-Gm-Message-State: AOJu0YzGG9Yxx8kLqvpTKCmdC9M9j1khG7S7hhWhSRA34qM+jfd2HqLc
-	5u78UBxGcDiWTfYSXmw13njSRDSI3YnpKbt4nvWY/UhLCxrcJLY+WmMZGSmeukZPFaaGUQAkEVa
-	hgEyLHGDPb/Wy80FNCrTP86q4T7lMUQ1emdtV
-X-Gm-Gg: ASbGnct8nc6ASMGlptTN2dKuQ8xtX29qiJt/WffZC8GV9+zxp5k839/HEjBfYbmwj5X
-	3A1HkiRb2sId2xIs5UK3LQgMT8B1jMmRJXpfUT/IguavZ/Q1jhC4o2eCYTyqbYjGMSMZD3rm3
-X-Google-Smtp-Source: AGHT+IFfzUdHvXZltLiZdcP5irnNHzde58g8jKTvV59iWKN2XJh6XKB+iiHFvnwY7rBq3M+QXAkvQMFIiCvdcSL6hLE=
-X-Received: by 2002:a05:690c:4c0a:b0:6f9:b189:3cc7 with SMTP id
- 00721157ae682-6fb582b757emr93667787b3.18.1739833758239; Mon, 17 Feb 2025
- 15:09:18 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="CmOfMUkO";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ThIg1xQQ"
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 6610E2540109;
+	Mon, 17 Feb 2025 18:14:31 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Mon, 17 Feb 2025 18:14:31 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
+	 h=cc:cc:content-transfer-encoding:content-type:content-type
+	:date:date:from:from:in-reply-to:in-reply-to:message-id
+	:mime-version:references:reply-to:subject:subject:to:to; s=fm1;
+	 t=1739834071; x=1739920471; bh=BVPxY/AN1UFMIdx71q3f56HEcF1umPZl
+	YfP8ptr5yIA=; b=CmOfMUkO2F9ADd1Z/gkU7grTYGiPLkkiuMfjHkngVml0dK0V
+	gzve+SsU8usdxmbc2/zNRgSFJfOmLKCog0iC6rb2j55hN7EhWnxAMNQnzOHLvJ/p
+	IUJC0B+ayuu4ZiugKoVhi97/bWET52faK9QcYmXQE1PRBFaSbuPBo2q6ZDCy1G42
+	lvGAvALqUIs0RmwE7TYdrK/8iCkLUFM5VlIMwSk/6KaDAAog1nsSqXleSpHcJPwd
+	kP5P2znoJEvac5EUVnw2jR1aR3CXbfbUbPnZv98c+XsgNiJXXyQ0hW8rfvo6QKxL
+	PQ2aLRhrtQlrb2p89CBfTLlkgKvsl7guSRiLDw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1739834071; x=
+	1739920471; bh=BVPxY/AN1UFMIdx71q3f56HEcF1umPZlYfP8ptr5yIA=; b=T
+	hIg1xQQ7+uhwbgWpm34PmpDVjz18wOq0RT9OgZBlA7f6zhKcG1pOjaq2qakLosja
+	43w1urIGfWg9V+zSbrcSyg3xSfv6fBvySa/Eb4IPZxdpmlZyj6FbjQvDSVWryQye
+	76Z0/UqC1Gfq7rQAvSI4BK2gtnGMYamDjn/fOP6ceQioFkJ1dHFq7fiHqfZsIvQG
+	2SFDirS2wUXZ+BM3DTZOfCViFZj6fDyR4CbAHSy7t2vhXnEzsr90sVPh/+Nxn/DB
+	QyIR4VnVFTzOfhs2MUBczXXYPfVBwkJPm+lQY/c43ttL4vusTIHHC+QApZ7T150F
+	UJlb7D5SvpyMbY9ifMVpw==
+X-ME-Sender: <xms:1sKzZ8aVZcke_x5JuwFNc26TSafKXdZ_RB8clENV2hWyYjkoSu2KYg>
+    <xme:1sKzZ3bFThM6X9xqsMjEPs3cbAwAu663UlE9sjCAauChIExLibK207O-US2luZNQ-
+    i6btw59_zxvv5Bx3UM>
+X-ME-Received: <xmr:1sKzZ29vGlJmKmNKCnG5poVEVLmeOfJZ6VY8S2caDK_agrWOhTbV4X58WqAr>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdehleejtdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddt
+    jeenucfhrhhomhepufgrsghrihhnrgcuffhusghrohgtrgcuoehsugesqhhuvggrshihsh
+    hnrghilhdrnhgvtheqnecuggftrfgrthhtvghrnhepveduvddtveehteekvdeiueegheei
+    veejkeetfefgfeeffeejgfdvfedtleeufeegnecuffhomhgrihhnpehkvghrnhgvlhdroh
+    hrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehs
+    ugesqhhuvggrshihshhnrghilhdrnhgvthdpnhgspghrtghpthhtohepuddtpdhmohguvg
+    epshhmthhpohhuthdprhgtphhtthhopehprghulhesphgruhhlqdhmohhorhgvrdgtohhm
+    pdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpth
+    htohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegvughumhgriigvthes
+    ghhoohhglhgvrdgtohhmpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomh
+    dprhgtphhtthhopehntggrrhgufigvlhhlsehgohhoghhlvgdrtghomhdprhgtphhtthho
+    pehkuhhnihihuhesrghmrgiiohhnrdgtohhmpdhrtghpthhtohepughsrghhvghrnheskh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqshgvtghurhhithihqdhmohgu
+    uhhlvgesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:1sKzZ2qYlvbmXdO9cAqBXIUloHSAq9jbskS9ZckT7aBlzknBrd8o_w>
+    <xmx:1sKzZ3rlCfU_69QjVWUNtWsBF4HZvewVddqA3i_cJTKljydYGY5swA>
+    <xmx:1sKzZ0TtwBK8kplrAuIThZTbIXqr5XVkEzmc7fM01qjlD0BnMDv9GQ>
+    <xmx:1sKzZ3qvnXYTkHoklp7-25SPTs5c46hrQBencBveu1RWdT5cNluuBA>
+    <xmx:18KzZ0jK_Jb0yx5nYrtd4hJszdCrQn1uIXxFYdqHoqJuS4vwPWv-5zym>
+Feedback-ID: i934648bf:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 17 Feb 2025 18:14:30 -0500 (EST)
+Date: Tue, 18 Feb 2025 00:14:28 +0100
+From: Sabrina Dubroca <sd@queasysnail.net>
+To: Paul Moore <paul@paul-moore.com>
+Cc: netdev@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Neal Cardwell <ncardwell@google.com>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>,
+	David Ahern <dsahern@kernel.org>,
+	linux-security-module@vger.kernel.org, Xiumei Mu <xmu@redhat.com>
+Subject: Re: [PATCH net v2] tcp: drop secpath at the same time as we
+ currently drop dst
+Message-ID: <Z7PC1JoBvgFL9JAU@hog>
+References: <5055ba8f8f72bdcb602faa299faca73c280b7735.1739743613.git.sd@queasysnail.net>
+ <CAHC9VhT2YnbCKcAz5ff+CCnBkSwWijC4r7-meLE7wPW6iK2FUQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240826103728.3378-3-greg@enjellic.com> <8642afa96650e02f50709aa3361b62c4@paul-moore.com>
- <20250205120026.GA15809@wind.enjellic.com> <CAHC9VhRq0PrH=0n6okkvfed=8QQOfv-ERA60NNWvLXetgrB_2w@mail.gmail.com>
- <20250207102024.GA6415@wind.enjellic.com> <CAHC9VhSd-5Lm4+DPWG-V5eav5k-Q1evh3oVHxgB7in2o+XMMEg@mail.gmail.com>
- <20250217125325.GA11696@wind.enjellic.com>
-In-Reply-To: <20250217125325.GA11696@wind.enjellic.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 17 Feb 2025 18:09:06 -0500
-X-Gm-Features: AWEUYZnkc2mEsqeaY7vuZ3eTb4_LlXRnKNWXs9DjpYSUNKE9nCD1iZ7DdErZPyU
-Message-ID: <CAHC9VhQRz2ofH_HgUGw=voNyP8nYKQZwJGg_wb+hgGfXHex00Q@mail.gmail.com>
-Subject: Re: [PATCH v4 2/14] Add TSEM specific documentation.
-To: "Dr. Greg" <greg@enjellic.com>
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	jmorris@namei.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhT2YnbCKcAz5ff+CCnBkSwWijC4r7-meLE7wPW6iK2FUQ@mail.gmail.com>
 
-On Mon, Feb 17, 2025 at 7:53=E2=80=AFAM Dr. Greg <greg@enjellic.com> wrote:
-> On Fri, Feb 07, 2025 at 07:29:58PM -0500, Paul Moore wrote:
-> > On Fri, Feb 7, 2025 at 5:20???AM Dr. Greg <greg@enjellic.com> wrote:
-> > > On Thu, Feb 06, 2025 at 10:48:57AM -0500, Paul Moore wrote:
-> > > > On Wed, Feb 5, 2025 at 7:01???AM Dr. Greg <greg@enjellic.com> wrote=
-:
-> > > > > On Tue, Jan 28, 2025 at 05:23:52PM -0500, Paul Moore wrote:
-> > > > >
-> > > > > > I believe the LSM can support both the enforcement of security =
-policy
-> > > > > > and the observation of security relevant events on a system.  I=
-n fact
-> > > > > > most of the existing LSMs do both, at least to some extent.
-> > > > > >
-> > > > > > However, while logging of security events likely needs to be
-> > > > > > asynchronous for performance reasons, enforcement of security p=
-olicy
-> > > > > > likely needs to be synchronous to have any reasonable level of
-> > > > > > assurance.  You are welcome to propose LSMs which provide
-> > > > > > observability functionality that is either sync, async, or some
-> > > > > > combination of both (? it would need to make sense to do both ?=
-), but
-> > > > > > I'm not currently interested in accepting LSMs that provide
-> > > > > > asynchronous enforcement as I don't view that as a "reasonable"
-> > > > > > enforcement mechanism.
-> > > > >
-> > > > > This is an artificial distinction that will prove limiting to the
-> > > > > security that Linux will be able to deliver in the future.
-> > > > >
-> > > > > Based on your response, is it your stated position as Linux secur=
-ity
-> > > > > maintainer, that you consider modern Endpoint Detection and Respo=
-nse
-> > > > > Systems (EDRS) lacking with respect to their ability to implement=
- a
-> > > > > "reasonable" enforcement and assurance mechanism?
-> > >
-> > > > As stated previously: "I'm not currently interested in accepting
-> > > > LSMs that provide asynchronous enforcement as I don't view that as =
-a
-> > > > reasonable enforcement mechanism."
-> > >
-> > > You personally don't, the IT and security compliance industry does, i=
-t
-> > > seems to leave Linux security infrastructure in an interesting
-> > > conundrum.
->
-> > Your concern over the state of the LSM has been previously noted, and
-> > I assure you I've rolled my eyes at each reference since.
->
-> Addressed at the end of this e-mail.
->
-> You can also see our reply to James Morris and the announcement of the
-> Linux Security Summit in Denver this summer.
+2025-02-17, 17:35:32 -0500, Paul Moore wrote:
+> On Mon, Feb 17, 2025 at 5:23 AM Sabrina Dubroca <sd@queasysnail.net> wrote:
+> >
+> > Xiumei reported hitting the WARN in xfrm6_tunnel_net_exit while
+> > running tests that boil down to:
+> >  - create a pair of netns
+> >  - run a basic TCP test over ipcomp6
+> >  - delete the pair of netns
+> >
+> > The xfrm_state found on spi_byaddr was not deleted at the time we
+> > delete the netns, because we still have a reference on it. This
+> > lingering reference comes from a secpath (which holds a ref on the
+> > xfrm_state), which is still attached to an skb. This skb is not
+> > leaked, it ends up on sk_receive_queue and then gets defer-free'd by
+> > skb_attempt_defer_free.
+> >
+> > The problem happens when we defer freeing an skb (push it on one CPU's
+> > defer_list), and don't flush that list before the netns is deleted. In
+> > that case, we still have a reference on the xfrm_state that we don't
+> > expect at this point.
+> >
+> > We already drop the skb's dst in the TCP receive path when it's no
+> > longer needed, so let's also drop the secpath. At this point,
+> > tcp_filter has already called into the LSM hooks that may require the
+> > secpath, so it should not be needed anymore.
+> 
+> I don't recall seeing any follow up in the v1 patchset regarding
+> IP_CMSG_PASSSEC/security_socket_getpeersec_dgram(), can you confirm
+> that the secpath is preserved for that code path?
+> 
+> https://lore.kernel.org/linux-security-module/CAHC9VhQZ+k1J0UidJ-bgdBGBuVX9M18tQ+a+fuqXQM_L-PFvzA@mail.gmail.com
 
-I did.  As Casey already mentioned, you are free to submit a proposal.
-I believe most of the program committee will remember you from your
-previous presentation.
+Sorry, I thought we'd addressed this in the v1 discussion with Eric.
 
-> > > For the record, just to be very clear as to what an LSM is allowed to
-> > > do under your administration, for our benefit and the benefit of
-> > > others ...
->
-> > I've repeated my position once already, if any current or aspiring LSM
-> > developers are unsure about some aspect of this, they are welcome to
-> > bring their specific concerns to the list and we can discuss them.
->
-> For the record, we did bring a specific concern to the list for
-> discussion, you removed the question and example we raised from your
-> reply.
+IP_CMSG_PASSSEC is not blocked for TCP sockets, but it will only
+process skbs that came from the error queue (ip_recv_error ->
+ip_cmsg_recv -> ip_cmsg_recv_offset -> ip_cmsg_recv_security ->
+security_socket_getpeersec_dgram), which don't go through those code
+paths at all. So AFAICT IP_CMSG_PASSSEC for TCP isn't affected by
+dropping the secpath early.
 
-I routinely trim replies to improve readability, especially in the
-case of large emails, and since mailing lists are archived no data is
-lost.  As far as answering questions regarding hypothetical LSMs, I
-see no reason to do so given the nature of your on-list comments of
-late.  I've provided feedback on the specifics of the TSEM approach as
-well as general feedback on async enforcement and that will have to be
-sufficient for now.
-
---=20
-paul-moore.com
+-- 
+Sabrina
