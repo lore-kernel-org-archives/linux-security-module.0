@@ -1,121 +1,139 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A101239068
-	for <linux-security-module@vger.kernel.org>; Mon, 17 Feb 2025 20:56:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40B991A8407
+	for <linux-security-module@vger.kernel.org>; Mon, 17 Feb 2025 22:35:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739825775; cv=none; b=gaN/yQcUWDs9hquNRNW9SCjlVSyq8fuhiFG1ZvGFF0Jz2SUddyxrJksCOaWhPWkXSrQoKLXLJXW9HL4B3ysF7ldGTpbg/tN0tmXCPwRuI1P3/5VMYtgif3j7bORIjYmuQpNhjVvkaaXJrmmU0dCcluxpX5W0FtF4c38cTu5QfW4=
+	t=1739831745; cv=none; b=bF3OJLX0jHtgq+dsZN+cn8lvjFq88Pwe8HToEUNrnqw+GKK/cprzxjjdERttDB7g50V0CTie8wClhX/3DR64K4cANdJCB07mZrRvB46nFiXPr07MtP+9slYLoVlu9DGFO/2xjYxaS1kmJO6e9rHXsFzHOjBZNE5FNaDYBWa3glA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739825775; c=relaxed/simple;
-	bh=7xlQqT6SyHmrrrZ7lcI+lzDoY6cGIt6c6FPPGn5CXb4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ISGK5ivVyDNYgHs4eYy02iJigFr3sR2zR7WdVWIwBk7HRaekCQa62yDiLtmzQwP97pyrvet0A1qr/9JZVsH8K1x1qYlU95BLcx2lAIsFg3Y0vzhAt9R2YtipGbFUURDpd2nKJCi/HSldKR0vZ59ErdxMoqesRmP5wAghHwLx2dY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tk89U-00028h-TM; Mon, 17 Feb 2025 21:55:40 +0100
-Received: from dude05.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::54])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tk89S-001THa-1I;
-	Mon, 17 Feb 2025 21:55:38 +0100
-Received: from localhost ([::1] helo=dude05.red.stw.pengutronix.de)
-	by dude05.red.stw.pengutronix.de with esmtp (Exim 4.96)
-	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tk7uX-000W9t-2Z;
-	Mon, 17 Feb 2025 21:40:13 +0100
-From: Ahmad Fatoum <a.fatoum@pengutronix.de>
-Date: Mon, 17 Feb 2025 21:39:52 +0100
-Subject: [PATCH v3 12/12] reboot: retire hw_protection_reboot and
- hw_protection_shutdown helpers
+	s=arc-20240116; t=1739831745; c=relaxed/simple;
+	bh=UwXls6ySwtXeD3hb7gHOkhfFPWGMyREO4LxhObV+pRM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=j7qG7l22sGqrnEDHr3i8GMtK4EY5g29WMNT1QfBFUrEpKk+YLEUwPgGJngT4KANal6QAbLtsKn13QmHBIDDsP+RVlZK1aMGTdRap9GPUtA0xQC5qi45YvYEG8JW/EjOnHYuu5/9g+qiKKiB75MbFPxp/JGU8nR4c46Fm6mZ7+AM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=dTnXJaKi; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="dTnXJaKi"
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6f8c58229f1so40125617b3.0
+        for <linux-security-module@vger.kernel.org>; Mon, 17 Feb 2025 14:35:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1739831743; x=1740436543; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oqYyGhzk31i7EtcJzCpVKAEo9lj0ASerutNYM4GWtfk=;
+        b=dTnXJaKiFVF9ZN96H5U/9fAv+BfyXLOj6G36WPf6p/TQXzEORT5Pp7NGXH0HGOhrSA
+         qMF19QpHOj0E7iMG9fPTysfJb3GFJ8dJWE8OQe/ezS1jPzb01i8evQ/qzNXiRhCfSzo+
+         pdxet0kEmiXFqyQAsP7tmePxQ6lqWCOXPlQwAgNLDnE2OMGSf544axLSqJZmbTthhaGO
+         gdjYMslXqAc0mvSgZtFcwjZgpBqPycRyoaVY+J0LZznHeXFIbRULGm+SLDFoyNLD+nqY
+         nChtLeMiS8rS5pngnCd4bcAtO72aWTKnjjPUMwCC6gBzWLrDloASyB4T3YcY6L3fuP4D
+         cFbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1739831743; x=1740436543;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oqYyGhzk31i7EtcJzCpVKAEo9lj0ASerutNYM4GWtfk=;
+        b=GRdjgLZOOZEuPx7xhOPf+Hx5OIQ/lpVfUWZrg8Sazjgge5h3j7aFnvyb+LyJ7RnF6w
+         Ej2U+lciuGqpYyzrOvB/qtgOqYcfENgc2hYmm/NWyIwTxg+nUB6Uq2GCOn8g6AIsuR5S
+         iiD0JXrfvl1r6rl4DWO8zunzBgHBKAs0tYwI6IItJnUVXSnnF9Q52lK4yuTfqaIil48N
+         zmbjuAA1TULMrokO6hJybdT+bygUzz71g5r2bicea7bwGIuMWEIfDYf5jcIPisVNDO91
+         hM+WI/lgIQHX/RhGlU7xf7JSXXpm0cCQlJSaaY2CneGw+MFq4jR7HgQzsEFVY6QnNXtl
+         1gKA==
+X-Forwarded-Encrypted: i=1; AJvYcCVpoivYkaKtZy4fpc5rO5r/tOhQqx0V+oOYOLSaeiwmydQlHLxF8baG6q/fvaqHD29utl6G4A4xO7ZfSIyEjI2sk1iAh/0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfCeOkrkVXeHQ/K7YyIJkXGgIQ1xYu1VUgRX/d34t1cMm0cyUX
+	psBf+yHsla7+/77VlWK+rhEc0ky2hInLLeUSRe2ZRo2Ic1/P/e95QgZNQjRMbONN3gR6l4+fhtw
+	nJeuisPxNMl/MXtMZo2cVE2Ex/vR1534e7Gsa
+X-Gm-Gg: ASbGncssQ4JtydToU76WtUq8YbTaeQXVJnWNdIYaVbYWK+lAsAtGefEdgE/GWmObVhj
+	19K4pOBFEi7l8VXdmOkhXbXd+t8aFG6W4ZsbwqDlXni44+40LIhAiluWkiV5m6unT3NCoh5w9
+X-Google-Smtp-Source: AGHT+IHpsxN9S4c30Ho3Vi/yxu7FCXu/W7yH8ysF1Clj1ylsTLtWwccZRSvUrpMVGg/0RIndZsDLME/X1NTo3fbZ+yY=
+X-Received: by 2002:a05:690c:9a8e:b0:6f9:47ad:f5f1 with SMTP id
+ 00721157ae682-6fb58c0107cmr88168237b3.17.1739831743071; Mon, 17 Feb 2025
+ 14:35:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250217-hw_protection-reboot-v3-12-e1c09b090c0c@pengutronix.de>
-References: <20250217-hw_protection-reboot-v3-0-e1c09b090c0c@pengutronix.de>
-In-Reply-To: <20250217-hw_protection-reboot-v3-0-e1c09b090c0c@pengutronix.de>
-To: Andrew Morton <akpm@linux-foundation.org>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, 
- Fabio Estevam <festevam@denx.de>, "Rafael J. Wysocki" <rafael@kernel.org>, 
- Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
- Jonathan Corbet <corbet@lwn.net>, Serge Hallyn <serge@hallyn.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Matti Vaittinen <mazziesaccount@gmail.com>, 
- Benson Leung <bleung@chromium.org>, Tzung-Bi Shih <tzungbi@kernel.org>, 
- Guenter Roeck <groeck@chromium.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
- linux-doc@vger.kernel.org, linux-security-module@vger.kernel.org, 
- chrome-platform@lists.linux.dev, devicetree@vger.kernel.org, 
- kernel@pengutronix.de, Ahmad Fatoum <a.fatoum@pengutronix.de>
-X-Mailer: b4 0.14.2
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-security-module@vger.kernel.org
+References: <5055ba8f8f72bdcb602faa299faca73c280b7735.1739743613.git.sd@queasysnail.net>
+In-Reply-To: <5055ba8f8f72bdcb602faa299faca73c280b7735.1739743613.git.sd@queasysnail.net>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 17 Feb 2025 17:35:32 -0500
+X-Gm-Features: AWEUYZkjwPmHQlt_hlO183_Os4qzr7t4C7oPuhUfOxe1gZ9BOFd1ZjdQSwgsGmM
+Message-ID: <CAHC9VhT2YnbCKcAz5ff+CCnBkSwWijC4r7-meLE7wPW6iK2FUQ@mail.gmail.com>
+Subject: Re: [PATCH net v2] tcp: drop secpath at the same time as we currently
+ drop dst
+To: Sabrina Dubroca <sd@queasysnail.net>
+Cc: netdev@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>, 
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
+	Neal Cardwell <ncardwell@google.com>, Kuniyuki Iwashima <kuniyu@amazon.com>, 
+	David Ahern <dsahern@kernel.org>, linux-security-module@vger.kernel.org, 
+	Xiumei Mu <xmu@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The hw_protection_reboot and hw_protection_shutdown functions mix
-mechanism with policy: They let the driver requesting an emergency
-action for hardware protection also decide how to deal with it.
+On Mon, Feb 17, 2025 at 5:23=E2=80=AFAM Sabrina Dubroca <sd@queasysnail.net=
+> wrote:
+>
+> Xiumei reported hitting the WARN in xfrm6_tunnel_net_exit while
+> running tests that boil down to:
+>  - create a pair of netns
+>  - run a basic TCP test over ipcomp6
+>  - delete the pair of netns
+>
+> The xfrm_state found on spi_byaddr was not deleted at the time we
+> delete the netns, because we still have a reference on it. This
+> lingering reference comes from a secpath (which holds a ref on the
+> xfrm_state), which is still attached to an skb. This skb is not
+> leaked, it ends up on sk_receive_queue and then gets defer-free'd by
+> skb_attempt_defer_free.
+>
+> The problem happens when we defer freeing an skb (push it on one CPU's
+> defer_list), and don't flush that list before the netns is deleted. In
+> that case, we still have a reference on the xfrm_state that we don't
+> expect at this point.
+>
+> We already drop the skb's dst in the TCP receive path when it's no
+> longer needed, so let's also drop the secpath. At this point,
+> tcp_filter has already called into the LSM hooks that may require the
+> secpath, so it should not be needed anymore.
 
-This is inadequate in the general case as a driver reporting e.g. an
-imminent power failure can't know whether a shutdown or a reboot would
-be more appropriate for a given hardware platform.
+I don't recall seeing any follow up in the v1 patchset regarding
+IP_CMSG_PASSSEC/security_socket_getpeersec_dgram(), can you confirm
+that the secpath is preserved for that code path?
 
-With the addition of the hw_protection parameter, it's now possible to
-configure at runtime the default emergency action and drivers are
-expected to use hw_protection_trigger to have this parameter dictate
-policy.
+https://lore.kernel.org/linux-security-module/CAHC9VhQZ+k1J0UidJ-bgdBGBuVX9=
+M18tQ+a+fuqXQM_L-PFvzA@mail.gmail.com
 
-As no current users of either hw_protection_shutdown or
-hw_protection_shutdown helpers remain, remove them, as not to tempt
-driver authors to call them.
+> However, in some of those
+> places, the MPTCP extension has just been attached to the skb, so we
+> cannot simply drop all extensions.
+>
+> Fixes: 68822bdf76f1 ("net: generalize skb freeing deferral to per-cpu lis=
+ts")
+> Reported-by: Xiumei Mu <xmu@redhat.com>
+> Signed-off-by: Sabrina Dubroca <sd@queasysnail.net>
+> ---
+> v1: drop all extensions just before calling skb_attempt_defer_free
+>     https://lore.kernel.org/netdev/879a4592e4e4bd0c30dbe29ca189e224ec1739=
+a5.1739201151.git.sd@queasysnail.net/
+> v2: - drop only secpath, as soon as possible - per Eric's feedback
+>     - add debug warns if trying to add to sk_receive_queue an skb with
+>       a dst or a secpath
+>
+> @Eric feel free to add some tags (Suggested-by? sign-off?) for the
+> code I adapted from
+> https://lore.kernel.org/netdev/CANn89i+JdDukwEhZ%3D41FxY-w63eER6JVixkwL+s=
+2eSOjo6aWEQ@mail.gmail.com/
+>
+>  include/net/tcp.h       | 14 ++++++++++++++
+>  net/ipv4/tcp_fastopen.c |  4 ++--
+>  net/ipv4/tcp_input.c    |  8 ++++----
+>  net/ipv4/tcp_ipv4.c     |  2 +-
+>  4 files changed, 21 insertions(+), 7 deletions(-)
 
-Existing users now either defer to hw_protection_trigger or call
-__hw_protection_trigger with a suitable argument directly when
-they have inside knowledge on whether a reboot or shutdown would
-be more appropriate.
-
-Reviewed-by: Tzung-Bi Shih <tzungbi@kernel.org>
-Signed-off-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
----
- include/linux/reboot.h | 10 ----------
- 1 file changed, 10 deletions(-)
-
-diff --git a/include/linux/reboot.h b/include/linux/reboot.h
-index 79e02876f2ba2b5508f6f26567cbcd5cbe97a277..aa08c3bbbf59a9dec65d775d280902b1455427c2 100644
---- a/include/linux/reboot.h
-+++ b/include/linux/reboot.h
-@@ -211,16 +211,6 @@ static inline void hw_protection_trigger(const char *reason, int ms_until_forced
- 	__hw_protection_trigger(reason, ms_until_forced, HWPROT_ACT_DEFAULT);
- }
- 
--static inline void hw_protection_reboot(const char *reason, int ms_until_forced)
--{
--	__hw_protection_trigger(reason, ms_until_forced, HWPROT_ACT_REBOOT);
--}
--
--static inline void hw_protection_shutdown(const char *reason, int ms_until_forced)
--{
--	__hw_protection_trigger(reason, ms_until_forced, HWPROT_ACT_SHUTDOWN);
--}
--
- /*
-  * Emergency restart, callable from an interrupt handler.
-  */
-
--- 
-2.39.5
-
+--=20
+paul-moore.com
