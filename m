@@ -1,110 +1,222 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B2FC1DC9A7
-	for <linux-security-module@vger.kernel.org>; Wed, 19 Feb 2025 16:14:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 432221FECAF;
+	Wed, 19 Feb 2025 16:24:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739981699; cv=none; b=Zkhn5ur9l+g4fA06pkchiVaD4vtCBT6Sn5580h7vOEfkkQhZ0Y8ds/B96/GYTTbIsE1TvfFzGX+gCgV5bcsiQ/hGcKBJrMFfGq+3uZlDbMLDvV3ATnoyuK/iowfDnPBDkZPXkz8IUUaP/TUoSi3/M8+qDGjRuiUjqMDIEMm7Bx4=
+	t=1739982244; cv=none; b=VAT4EenQ3LXtNiJys727dJNhff8+8HDycIyNLVVa5/Z4sGF3VjRsin1BUitJ6dTg2SfKq3K/bI3DG93j1fbDbv5CzYRaxI8sSBOmafPPSZw+jIfu2oURRugRixbJvcPRZI9kC0WrYYB61rfKgHw2K8gEbJsqXpfNkfYhM6eca7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739981699; c=relaxed/simple;
-	bh=BydXj2d1wp0pcKWu35dDfMG3nLQTkfZH/OgCQu++sK8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=XKBXKliEU+UCxOilgXYXz2aA4pUCHs27PtaxNJjDRDjMA6c80pa8oNegVMv+AqEV7OLrQ4l+yEHXZVJCFEvaqqitjFEK2sNhI8Ct9dfnvqKODxnLaBCk4/dwsoN7LLx2qS9ujWQS8q7FThlPSMafcMqg4VK4qkB92HHuNyxlOEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fMfiZxSi; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1739982244; c=relaxed/simple;
+	bh=xFii1HDVuyc02x4WnVdnzMmIcfDY0tQZ3HrsNPXfVFM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dYbsF7AVMfA00KOzXdRtkR1C34Wqy437Pabya2hqL8CkQpxjhBbfdZvEjpeNDN/PuxvG5nOhQ3Kquf/1kZ+Bujdwdwu1rsrkiA1iwSUgJJC6/UOF8BSAbGnqXdB3yf8YJebohEDTwLrSEE+yZKiCTd4mjc6owRiyzJu+XygAFaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=KRzTfYF6; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fMfiZxSi"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1739981696;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=tSeDNWgGZSmT9QMIfeqqrndMXQ69jdFLbo5e2ZUiTVs=;
-	b=fMfiZxSikapMqy6SYBPG5ommAY2g16PnyiDMFrjTwpsV0PW5e5xtkao3+nwMFmwYL/UYUw
-	hMvxNEa0w5pnkXXXmKYhbL9J0y7OE6VRprXL3L/kUotDPwjKdqEjKXpa8koEuAxkSnanMu
-	37PghEjDRF6q/qDL19i9ZtOqkYBRFZs=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-260-XWIhTvYmMxCtf7_1bTaH-A-1; Wed,
- 19 Feb 2025 11:14:51 -0500
-X-MC-Unique: XWIhTvYmMxCtf7_1bTaH-A-1
-X-Mimecast-MFC-AGG-ID: XWIhTvYmMxCtf7_1bTaH-A_1739981690
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 91D8818EB2C6;
-	Wed, 19 Feb 2025 16:14:50 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.33.102])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id BADC1300019F;
-	Wed, 19 Feb 2025 16:14:47 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed, 19 Feb 2025 17:14:22 +0100 (CET)
-Date: Wed, 19 Feb 2025 17:14:17 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Kees Cook <kees@kernel.org>, Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] yama: don't abuse rcu_read_lock/get_task_struct in
- yama_task_prctl()
-Message-ID: <20250219161417.GA20851@redhat.com>
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="KRzTfYF6"
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51J7Wi95002867;
+	Wed, 19 Feb 2025 16:23:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=/ByoZq
+	d8u++NPkeRg9hvAGqzK470D8TBdBzDzkEQn4E=; b=KRzTfYF6TH1zKrTXX0r3dg
+	G7tToRBYs5Uy5gAR00atpLlXLL+XPwux0asgkXJX+/LGYgxuCrY+kKG62O/HxgFc
+	PvvbnfEJGQl588yC3s3fOLfEt0de40V+zl8suI5stZCj6liUmPIswAgWwAk5sSjK
+	2R1/fH2VzUDkkasvgxCuC+GKk2DwGxqL0v7yDRsgjtwaYUxQlQVrTABZUC458Mkk
+	QfnSGquMKszWleqyT6/tUIuccHaQssqtFfFbCEwH30JHbshn7+MWdUNllZz2VGHm
+	CBQFMdybn3lX5SwMeCBplUhJSeQdbT9GKnWITbgr2uUmC9R1f4k8TeybKEVFeMBg
+	==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44wb0ntk8h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Feb 2025 16:23:43 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51JEA4wi002323;
+	Wed, 19 Feb 2025 16:23:42 GMT
+Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 44w03x4y7t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Feb 2025 16:23:42 +0000
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51JGNfGK65470814
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 19 Feb 2025 16:23:41 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 695A858043;
+	Wed, 19 Feb 2025 16:23:41 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6FDAD5805F;
+	Wed, 19 Feb 2025 16:23:40 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 19 Feb 2025 16:23:40 +0000 (GMT)
+Message-ID: <152e2efc-732f-40bf-9aeb-6e50faa018c0@linux.ibm.com>
+Date: Wed, 19 Feb 2025 11:23:40 -0500
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 7/7] ima: measure kexec load and exec events as
+ critical data
+To: steven chen <chenste@linux.microsoft.com>, zohar@linux.ibm.com,
+        roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
+        eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
+        code@tyhicks.com, bauermann@kolabnow.com,
+        linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
+        James.Bottomley@HansenPartnership.com, bhe@redhat.com,
+        vgoyal@redhat.com, dyoung@redhat.com
+References: <20250218225502.747963-1-chenste@linux.microsoft.com>
+ <20250218225502.747963-8-chenste@linux.microsoft.com>
+Content-Language: en-US
+From: Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <20250218225502.747963-8-chenste@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: UD3M901qbtwd14gJmin1wBVnIcZ3kR0j
+X-Proofpoint-GUID: UD3M901qbtwd14gJmin1wBVnIcZ3kR0j
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-19_07,2025-02-19_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxlogscore=999
+ malwarescore=0 lowpriorityscore=0 mlxscore=0 phishscore=0
+ priorityscore=1501 suspectscore=0 clxscore=1015 bulkscore=0 adultscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502190124
 
-current->group_leader is stable, no need to take rcu_read_lock() and do
-get/put_task_struct().
 
-Signed-off-by: Oleg Nesterov <oleg@redhat.com>
----
- security/yama/yama_lsm.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/security/yama/yama_lsm.c b/security/yama/yama_lsm.c
-index 1971710620c1..3d064dd4e03f 100644
---- a/security/yama/yama_lsm.c
-+++ b/security/yama/yama_lsm.c
-@@ -222,7 +222,7 @@ static int yama_task_prctl(int option, unsigned long arg2, unsigned long arg3,
- 			   unsigned long arg4, unsigned long arg5)
- {
- 	int rc = -ENOSYS;
--	struct task_struct *myself = current;
-+	struct task_struct *myself;
- 
- 	switch (option) {
- 	case PR_SET_PTRACER:
-@@ -232,11 +232,7 @@ static int yama_task_prctl(int option, unsigned long arg2, unsigned long arg3,
- 		 * leader checking is handled later when walking the ancestry
- 		 * at the time of PTRACE_ATTACH check.
- 		 */
--		rcu_read_lock();
--		if (!thread_group_leader(myself))
--			myself = rcu_dereference(myself->group_leader);
--		get_task_struct(myself);
--		rcu_read_unlock();
-+		myself = current->group_leader;
- 
- 		if (arg2 == 0) {
- 			yama_ptracer_del(NULL, myself);
-@@ -255,7 +251,6 @@ static int yama_task_prctl(int option, unsigned long arg2, unsigned long arg3,
- 			}
- 		}
- 
--		put_task_struct(myself);
- 		break;
- 	}
- 
--- 
-2.25.1.362.g51ebf55
+On 2/18/25 5:55 PM, steven chen wrote:
+> The amount of memory allocated at kexec load, even with the extra memory
+> allocated, might not be large enough for the entire measurement list.  The
+> indeterminate interval between kexec 'load' and 'execute' could exacerbate
+> this problem.
+> 
+> Define two new IMA events, 'kexec_load' and 'kexec_execute', to be
+> measured as critical data at kexec 'load' and 'execute' respectively.
+> Report the allocated kexec segment size, IMA binary log size and the
+> runtime measurements count as part of those events.
+> 
+> These events, and the values reported through them, serve as markers in
+> the IMA log to verify the IMA events are captured during kexec soft
+> reboot.  The presence of a 'kexec_load' event in between the last two
+> 'boot_aggregate' events in the IMA log implies this is a kexec soft
+> reboot, and not a cold-boot. And the absence of 'kexec_execute' event
+> after kexec soft reboot implies missing events in that window which
+> results in inconsistency with TPM PCR quotes, necessitating a cold boot
+> for a successful remote attestation.
+> 
+> The 'kexec_load' event IMA log can be found using the following command:
+> sudo cat /sys/kernel/security/integrity/ima/ascii_runtime_measurements |
+>     grep kexec_load
+> 
+> The 'kexec_load' event IMA log can be found using the following command:
+> sudo cat /sys/kernel/security/integrity/ima/ascii_runtime_measurements |
+>     grep kexec_execute
+> 
+> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+> Signed-off-by: steven chen <chenste@linux.microsoft.com>
+> ---
+>   security/integrity/ima/ima.h       |  6 ++++++
+>   security/integrity/ima/ima_kexec.c | 21 +++++++++++++++++++++
+>   security/integrity/ima/ima_queue.c |  5 +++++
+>   3 files changed, 32 insertions(+)
+> 
+> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+> index 4428fcf42167..1452c98242a4 100644
+> --- a/security/integrity/ima/ima.h
+> +++ b/security/integrity/ima/ima.h
+> @@ -240,6 +240,12 @@ void ima_post_key_create_or_update(struct key *keyring, struct key *key,
+>   				   unsigned long flags, bool create);
+>   #endif
+>   
+> +#ifdef CONFIG_IMA_KEXEC
+> +void ima_measure_kexec_event(const char *event_name);
+> +#else
+> +static inline void ima_measure_kexec_event(const char *event_name) {}
+> +#endif
+> +
+>   /*
+>    * The default binary_runtime_measurements list format is defined as the
+>    * platform native format.  The canonical format is defined as little-endian.
+> diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
+> index 6c8c203ad81e..8d0782e51ffa 100644
+> --- a/security/integrity/ima/ima_kexec.c
+> +++ b/security/integrity/ima/ima_kexec.c
+> @@ -17,6 +17,8 @@
+>   #include "ima.h"
+>   
+>   #ifdef CONFIG_IMA_KEXEC
+> +#define IMA_KEXEC_EVENT_LEN 256
+> +
+>   static struct seq_file ima_kexec_file;
+>   static void *ima_kexec_buffer;
+>   static size_t kexec_segment_size;
+> @@ -36,6 +38,24 @@ static void ima_free_kexec_file_buf(struct seq_file *sf)
+>   	ima_reset_kexec_file(sf);
+>   }
+>   
+> +void ima_measure_kexec_event(const char *event_name)
+> +{
+> +	char ima_kexec_event[IMA_KEXEC_EVENT_LEN];
+> +	size_t buf_size = 0;
+> +	long len;
+> +
+> +	buf_size = ima_get_binary_runtime_size();
+> +	len = atomic_long_read(&ima_htable.len);
+> +
+> +	scnprintf(ima_kexec_event, IMA_KEXEC_EVENT_LEN,
+> +		  "kexec_segment_size=%lu;ima_binary_runtime_size=%lu;"
+> +		 "ima_runtime_measurements_count=%ld;",
+> +		 kexec_segment_size, buf_size, len);
 
+Indentation and n = scnprintf(...), as Mimi mentioned in v7.
+
+> +
+> +	ima_measure_critical_data("ima_kexec", event_name, ima_kexec_event,
+> +				  strlen(ima_kexec_event), false, NULL, 0);
+
+Replace strlen(ima_kexec_event) with 'n'.
+
+With these fixes:
+
+Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+
+> +}
+> +
+>   static int ima_alloc_kexec_file_buf(size_t segment_size)
+>   {
+>   	/*
+> @@ -58,6 +78,7 @@ static int ima_alloc_kexec_file_buf(size_t segment_size)
+>   out:
+>   	ima_kexec_file.read_pos = 0;
+>   	ima_kexec_file.count = sizeof(struct ima_kexec_hdr);	/* reserved space */
+> +	ima_measure_kexec_event("kexec_load");
+>   
+>   	return 0;
+>   }
+> diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
+> index 3dfd178d4292..6afb46989cf6 100644
+> --- a/security/integrity/ima/ima_queue.c
+> +++ b/security/integrity/ima/ima_queue.c
+> @@ -241,6 +241,11 @@ static int ima_reboot_notifier(struct notifier_block *nb,
+>   			       unsigned long action,
+>   			       void *data)
+>   {
+> +#ifdef CONFIG_IMA_KEXEC
+> +	if (action == SYS_RESTART && data && !strcmp(data, "kexec reboot"))
+> +		ima_measure_kexec_event("kexec_execute");
+> +#endif
+> +
+>   	ima_measurements_suspend();
+>   
+>   	return NOTIFY_DONE;
 
