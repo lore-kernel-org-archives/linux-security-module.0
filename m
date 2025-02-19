@@ -1,193 +1,107 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AF1022A81E;
-	Wed, 19 Feb 2025 19:24:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81D341B0F33;
+	Wed, 19 Feb 2025 19:33:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1739993043; cv=none; b=NuJX8Ok3gzTRfSnFe8PEUyt1wAKZuVVtqbELi5Kcwd4AlSGGivE4JyfDnCywvBAlctgoLjhEiCIXq54nLa4EjLnC2yVyQg0nI4lpf9lLGBQYwzNKFogdUTz80VXrE45alGaWLRoenYKCw14oi/60T1qs33Pn26ZJopBc4TKZ7Jw=
+	t=1739993596; cv=none; b=W07hPGzbNwf+v8IXbOKN2+clvcOu8UoN+N6k17Ms1gMS80H8XAE/6HelgpY2e/BKqfZc+2e54SrsIt5heokAL9bpUKNToivstdW9zlALToWHwQrN2xBIU3c9FBVSCHGyawT/Vi1g8CBNDaT6x3Zo2y5mw+c45tdKKFayUvGFuho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1739993043; c=relaxed/simple;
-	bh=1ofuSJtl9Q+Xh5uxhwKA+D91ZOgG37H6F3yiUbDQZ6w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sFFg8PsihbfGMAFqTNF6roaBnsi9iTNj5eziVE6T3cKzWWjkFpoZQTMN4z30ZUfdTGAC7At7ts8KS13xi1CInR1UUx6RZCMZ090wsrGY48A96FnVNaCq80ChsDqkoOLAAysj+z6Dd9r5pChVQq79Hczo2i+cpAhSW2a4wUQ7K24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=YmybRIfn; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+	s=arc-20240116; t=1739993596; c=relaxed/simple;
+	bh=B/tsrWMqdKAycCUkzWrulcuHm4sff0bSqRXkpZ6/uOE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MTyDHi2xWdpqgVVCSs89IfeWsoX7JfPE0QkZRshGenptFpHVzk0M2Hxu0w9n32dfOA/sJELtVpQz3qlZYPId56bFU2O+FhnrMbYwgVMtD2ES2+rFFYcbiyGjA0za2JIUrlAL40XcaDHHQyFS/RRZs4sx0iiJ/Y5FzZ44boMOcF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=shZgsFPJ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="YmybRIfn"
-Received: from [10.17.64.130] (unknown [131.107.147.130])
-	by linux.microsoft.com (Postfix) with ESMTPSA id DEAFE2043DEA;
-	Wed, 19 Feb 2025 11:24:00 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com DEAFE2043DEA
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1739993041;
-	bh=zGIv90AETr+F5tSvcvrDjMjlon7SVhu4HONEQ2ljSLg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YmybRIfnRELUqn3fz4oLv3t+43EmM0vEAosrgZzK4zuF4kMjaRej7RQQmwZz43BbQ
-	 RoSN7K2JH38nTdaoVil/zfpSVltiGWOo/jCF3EnSKNoAREqH2Nlb1ismwyB+bkaQc2
-	 ohrySFsliKcwZKvQmiIFDtxDfax6BW5JgHL/v5Kw=
-Message-ID: <6532f9e4-0c02-439d-a2d1-d3ddfa5342f3@linux.microsoft.com>
-Date: Wed, 19 Feb 2025 11:24:00 -0800
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="shZgsFPJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7079C4CED1;
+	Wed, 19 Feb 2025 19:33:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1739993595;
+	bh=B/tsrWMqdKAycCUkzWrulcuHm4sff0bSqRXkpZ6/uOE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=shZgsFPJzX/Rmq7lXoap6nhFc2etFR6yVN3weXpAhdPHANrwtY05A6znl4crRQdtW
+	 dJ4yGoG4bawGoi3oy90HWvHUc3GjIZc2IfYzQ6RWpcF1cD/MidmIXwwwqbjJq8O4U2
+	 dYmpCeAJ4kwAuQs4ojP8UipQryqEXadW8sOgDyW8hFIzyl0xuvm0OCmV5gOc1Y4QKy
+	 bn/r+uwV487M9RnOZjHkBt4GVpPAuODQu19gXQyIYyqPwetjHueWhgsJ1mXl975edD
+	 ZN/nD4KCnGNLes7ct5aybqPKnVbjf23kBqP+Q/vcnQA3k5rNCANPEuUEbhfRPoBee9
+	 pvE0uwXxGb4tg==
+Date: Wed, 19 Feb 2025 11:33:12 -0800
+From: Kees Cook <kees@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] yama: don't abuse rcu_read_lock/get_task_struct in
+ yama_task_prctl()
+Message-ID: <202502191125.1A6F07E@keescook>
+References: <20250219161417.GA20851@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 7/7] ima: measure kexec load and exec events as
- critical data
-To: Stefan Berger <stefanb@linux.ibm.com>, zohar@linux.ibm.com,
- roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
- eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
- code@tyhicks.com, bauermann@kolabnow.com, linux-integrity@vger.kernel.org,
- kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
- James.Bottomley@HansenPartnership.com, bhe@redhat.com, vgoyal@redhat.com,
- dyoung@redhat.com
-References: <20250218225502.747963-1-chenste@linux.microsoft.com>
- <20250218225502.747963-8-chenste@linux.microsoft.com>
- <152e2efc-732f-40bf-9aeb-6e50faa018c0@linux.ibm.com>
-Content-Language: en-US
-From: steven chen <chenste@linux.microsoft.com>
-In-Reply-To: <152e2efc-732f-40bf-9aeb-6e50faa018c0@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250219161417.GA20851@redhat.com>
 
-On 2/19/2025 8:23 AM, Stefan Berger wrote:
->
->
-> On 2/18/25 5:55 PM, steven chen wrote:
->> The amount of memory allocated at kexec load, even with the extra memory
->> allocated, might not be large enough for the entire measurement 
->> list.  The
->> indeterminate interval between kexec 'load' and 'execute' could 
->> exacerbate
->> this problem.
->>
->> Define two new IMA events, 'kexec_load' and 'kexec_execute', to be
->> measured as critical data at kexec 'load' and 'execute' respectively.
->> Report the allocated kexec segment size, IMA binary log size and the
->> runtime measurements count as part of those events.
->>
->> These events, and the values reported through them, serve as markers in
->> the IMA log to verify the IMA events are captured during kexec soft
->> reboot.  The presence of a 'kexec_load' event in between the last two
->> 'boot_aggregate' events in the IMA log implies this is a kexec soft
->> reboot, and not a cold-boot. And the absence of 'kexec_execute' event
->> after kexec soft reboot implies missing events in that window which
->> results in inconsistency with TPM PCR quotes, necessitating a cold boot
->> for a successful remote attestation.
->>
->> The 'kexec_load' event IMA log can be found using the following command:
->> sudo cat /sys/kernel/security/integrity/ima/ascii_runtime_measurements |
->>     grep kexec_load
->>
->> The 'kexec_load' event IMA log can be found using the following command:
->> sudo cat /sys/kernel/security/integrity/ima/ascii_runtime_measurements |
->>     grep kexec_execute
->>
->> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
->> Signed-off-by: steven chen <chenste@linux.microsoft.com>
->> ---
->>   security/integrity/ima/ima.h       |  6 ++++++
->>   security/integrity/ima/ima_kexec.c | 21 +++++++++++++++++++++
->>   security/integrity/ima/ima_queue.c |  5 +++++
->>   3 files changed, 32 insertions(+)
->>
->> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
->> index 4428fcf42167..1452c98242a4 100644
->> --- a/security/integrity/ima/ima.h
->> +++ b/security/integrity/ima/ima.h
->> @@ -240,6 +240,12 @@ void ima_post_key_create_or_update(struct key 
->> *keyring, struct key *key,
->>                      unsigned long flags, bool create);
->>   #endif
->>   +#ifdef CONFIG_IMA_KEXEC
->> +void ima_measure_kexec_event(const char *event_name);
->> +#else
->> +static inline void ima_measure_kexec_event(const char *event_name) {}
->> +#endif
->> +
->>   /*
->>    * The default binary_runtime_measurements list format is defined 
->> as the
->>    * platform native format.  The canonical format is defined as 
->> little-endian.
->> diff --git a/security/integrity/ima/ima_kexec.c 
->> b/security/integrity/ima/ima_kexec.c
->> index 6c8c203ad81e..8d0782e51ffa 100644
->> --- a/security/integrity/ima/ima_kexec.c
->> +++ b/security/integrity/ima/ima_kexec.c
->> @@ -17,6 +17,8 @@
->>   #include "ima.h"
->>     #ifdef CONFIG_IMA_KEXEC
->> +#define IMA_KEXEC_EVENT_LEN 256
->> +
->>   static struct seq_file ima_kexec_file;
->>   static void *ima_kexec_buffer;
->>   static size_t kexec_segment_size;
->> @@ -36,6 +38,24 @@ static void ima_free_kexec_file_buf(struct 
->> seq_file *sf)
->>       ima_reset_kexec_file(sf);
->>   }
->>   +void ima_measure_kexec_event(const char *event_name)
->> +{
->> +    char ima_kexec_event[IMA_KEXEC_EVENT_LEN];
->> +    size_t buf_size = 0;
->> +    long len;
->> +
->> +    buf_size = ima_get_binary_runtime_size();
->> +    len = atomic_long_read(&ima_htable.len);
->> +
->> +    scnprintf(ima_kexec_event, IMA_KEXEC_EVENT_LEN,
->> +          "kexec_segment_size=%lu;ima_binary_runtime_size=%lu;"
->> +         "ima_runtime_measurements_count=%ld;",
->> +         kexec_segment_size, buf_size, len);
->
-> Indentation and n = scnprintf(...), as Mimi mentioned in v7.
->
->> +
->> +    ima_measure_critical_data("ima_kexec", event_name, ima_kexec_event,
->> +                  strlen(ima_kexec_event), false, NULL, 0);
->
-> Replace strlen(ima_kexec_event) with 'n'.
->
-> With these fixes:
->
-> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
->
->> +}
->> +
->>   static int ima_alloc_kexec_file_buf(size_t segment_size)
->>   {
->>       /*
->> @@ -58,6 +78,7 @@ static int ima_alloc_kexec_file_buf(size_t 
->> segment_size)
->>   out:
->>       ima_kexec_file.read_pos = 0;
->>       ima_kexec_file.count = sizeof(struct ima_kexec_hdr);    /* 
->> reserved space */
->> +    ima_measure_kexec_event("kexec_load");
->>         return 0;
->>   }
->> diff --git a/security/integrity/ima/ima_queue.c 
->> b/security/integrity/ima/ima_queue.c
->> index 3dfd178d4292..6afb46989cf6 100644
->> --- a/security/integrity/ima/ima_queue.c
->> +++ b/security/integrity/ima/ima_queue.c
->> @@ -241,6 +241,11 @@ static int ima_reboot_notifier(struct 
->> notifier_block *nb,
->>                      unsigned long action,
->>                      void *data)
->>   {
->> +#ifdef CONFIG_IMA_KEXEC
->> +    if (action == SYS_RESTART && data && !strcmp(data, "kexec reboot"))
->> +        ima_measure_kexec_event("kexec_execute");
->> +#endif
->> +
->>       ima_measurements_suspend();
->>         return NOTIFY_DONE;
+On Wed, Feb 19, 2025 at 05:14:17PM +0100, Oleg Nesterov wrote:
+> current->group_leader is stable, no need to take rcu_read_lock() and do
+> get/put_task_struct().
 
-Hi Stefan, thanks for your comments. I will update in next version.
+Can you explain why this is true? In trying to figure this out again,
+it seems that the only way current->group_leader can vanish is if
+the entire process vanishes (fork or thread exec), in which case the
+"current" in this prctl can't be happening; this appears to be locked
+behind tsk->sighand->siglock ?
 
+-Kees
+
+> 
+> Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+> ---
+>  security/yama/yama_lsm.c | 9 ++-------
+>  1 file changed, 2 insertions(+), 7 deletions(-)
+> 
+> diff --git a/security/yama/yama_lsm.c b/security/yama/yama_lsm.c
+> index 1971710620c1..3d064dd4e03f 100644
+> --- a/security/yama/yama_lsm.c
+> +++ b/security/yama/yama_lsm.c
+> @@ -222,7 +222,7 @@ static int yama_task_prctl(int option, unsigned long arg2, unsigned long arg3,
+>  			   unsigned long arg4, unsigned long arg5)
+>  {
+>  	int rc = -ENOSYS;
+> -	struct task_struct *myself = current;
+> +	struct task_struct *myself;
+>  
+>  	switch (option) {
+>  	case PR_SET_PTRACER:
+> @@ -232,11 +232,7 @@ static int yama_task_prctl(int option, unsigned long arg2, unsigned long arg3,
+>  		 * leader checking is handled later when walking the ancestry
+>  		 * at the time of PTRACE_ATTACH check.
+>  		 */
+> -		rcu_read_lock();
+> -		if (!thread_group_leader(myself))
+> -			myself = rcu_dereference(myself->group_leader);
+> -		get_task_struct(myself);
+> -		rcu_read_unlock();
+> +		myself = current->group_leader;
+>  
+>  		if (arg2 == 0) {
+>  			yama_ptracer_del(NULL, myself);
+> @@ -255,7 +251,6 @@ static int yama_task_prctl(int option, unsigned long arg2, unsigned long arg3,
+>  			}
+>  		}
+>  
+> -		put_task_struct(myself);
+>  		break;
+>  	}
+>  
+> -- 
+> 2.25.1.362.g51ebf55
+> 
+> 
+
+-- 
+Kees Cook
