@@ -1,262 +1,413 @@
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 135321BBBF7;
-	Thu, 20 Feb 2025 14:08:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D3B1CEADB;
+	Thu, 20 Feb 2025 14:53:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740060500; cv=none; b=uaE6yU0r2Wa6ASPBiiu9d4ES+nHbxAXL3N15hZjAe2n76uXEK5XkSXXYZWMJ2CdjY1pmOQGWyHzNajDW+ZnjGISfix4JzG6h1mgnknyutzp0lLvnVy9FRg8FMqPXAcMkYOAVQ9FanNT9kKZSXoV7LqNjIwOSFxpCYHTrgWmB8G8=
+	t=1740063219; cv=none; b=t2XXTMcFiYwZu/DPsMfw5BBSS8XdxkMBfR8S8c78eLl2nUlgGUqG1PpdRii/7trlauH2JbPTRC4aOQvXeXtVlv6Vsp3BaQ43vZCoNShTEUsYdAVyLGaRa2TcDcc2A0G1d7ZtxMXCGMW6OAZ6HOInFoYxDui3Zi9F24ECEVu9wdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740060500; c=relaxed/simple;
-	bh=CoHFlBoN0AcSa0D3D3bSPzTlGbRoOzu9bkMfziXLfYA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h7kxarMF5HjAJQnPoqJG705elk16wnh9GKB14jUjOvhQ4lJA9EGB8CZgFNOkpNyzjnqDU1QhaXzhvkMD/ht5J2tJTvplRFuc4qllS4WGk3mheQOLap/sg9xvY+AKvCPlV1a53YRQDhtUDIznZNejNKAtbuAqgxyhp3HCCg0j3r8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=NTznyQ7W; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+	s=arc-20240116; t=1740063219; c=relaxed/simple;
+	bh=0FD/F3/U3JtxRzEWsoIttOjwcl1YpzXDxVHZBGkrh4g=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ly5ZDkUqMt7UX6GreY219AhDAufY+U3OKCwZCEeOMl1KSILb4TskqJz3Xv6Mgo9U36P15s2ycX8N90TaKzRDOI4CdomY4wEysFIjcSLf4gBGjGNlT1vEDGzAXe4LWGq0COh9ipQ0zEzQjKagHgZIsyvqt1y8yTNRt8DrMeCvlyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=HqfaYLYb; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="NTznyQ7W"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=8K5p3TMW4brEw9zIKOr+aOV1W5N+3CjUyZ3AitePbPY=; b=NTznyQ7WxjSAYRJw
-	tlNpUoTjfxToIh1pxx4I4Fu2aNIScWk/KgtHSn3X9FYs3coL4AgrioDN3ZP/AUHe2vBzFkgi5tSv9
-	7ssLEV2AiPRQbZNLX8lDf/O4Zs3v/MXQxDfTD453FdOcue872nC2vTRxlj7U8pxV5Poq4UnmRyVN8
-	ZjIKDrVscpnBoYe+Gy+RGQDsf6CSj9DtHTN6TX0JaJpXwdA5dscnqzY+HHcIKonR3RhCE4EomcSz5
-	NQX88hKpvXSWUTQR7PI4kdYyaEC7z3iHPZpsURvk9QGlSsZGN+uT6viivvGg+LvwgDqpHMN5KkjuE
-	RSb5Ifv3qh0rOnVxOw==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1tl7Dl-00HBXK-0b;
-	Thu, 20 Feb 2025 14:08:09 +0000
-From: linux@treblig.org
-To: paul@paul-moore.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org
-Cc: linux-security-module@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH net-next] netlabel: Remove unused cfg_calipso funcs
-Date: Thu, 20 Feb 2025 14:08:08 +0000
-Message-ID: <20250220140808.71674-1-linux@treblig.org>
-X-Mailer: git-send-email 2.48.1
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="HqfaYLYb"
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51K5Nt98026987;
+	Thu, 20 Feb 2025 14:53:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=DxPrub
+	vpyMyHPwXulmc6NE8Ykno5YlYbrXFIxcV6o4s=; b=HqfaYLYbsw6dfJiMGJNPsk
+	bE9OTOs6OF8m1KiDqN71YyIBHpi+An2+QQalkdwJqTc+EyU1eJGkK6y9GUpVbSp3
+	K2eRf5vCbCtx1oZVrSXnTCJTjTSUymcwfuGtfUBqUgVDEnipGm6nBZ+vwLZAQeuq
+	Z9Y81zRW+3checmVuSz9FV/L94CmOUDQEPaZG/czY1dc+QaTHQYt22AJEEAc7dlo
+	gRhNqliif/BgB+iM3XlsfkZtOi5DyI3CP+v+Z+gRnRRFtSvxK9G2KLh5p974CMZz
+	gdcRV0vXCxo9HolSjztHb/LCH/1+7nH0L6Co+z49t7zzprZjLZgEZ/S1RlkTKyxg
+	==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44wx78jnp8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Feb 2025 14:53:11 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51KEU69L030262;
+	Thu, 20 Feb 2025 14:53:10 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44w01xajrv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Feb 2025 14:53:10 +0000
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51KEr9vl55247346
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 20 Feb 2025 14:53:10 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9134058043;
+	Thu, 20 Feb 2025 14:53:09 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6563258055;
+	Thu, 20 Feb 2025 14:53:08 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.95.183])
+	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 20 Feb 2025 14:53:08 +0000 (GMT)
+Message-ID: <8023fa50a84817cc911a117db9bd3757c34fddfb.camel@linux.ibm.com>
+Subject: Re: [PATCH v8 1/7] ima: define and call ima_alloc_kexec_file_buf
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: steven chen <chenste@linux.microsoft.com>, stefanb@linux.ibm.com,
+        roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
+        eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
+        code@tyhicks.com, bauermann@kolabnow.com,
+        linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
+        James.Bottomley@HansenPartnership.com, bhe@redhat.com,
+        vgoyal@redhat.com, dyoung@redhat.com
+Date: Thu, 20 Feb 2025 09:53:08 -0500
+In-Reply-To: <20250218225502.747963-2-chenste@linux.microsoft.com>
+References: <20250218225502.747963-1-chenste@linux.microsoft.com>
+	 <20250218225502.747963-2-chenste@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 0u5j1XQVbruFEpzDEASxZk_uqFo1o6kt
+X-Proofpoint-ORIG-GUID: 0u5j1XQVbruFEpzDEASxZk_uqFo1o6kt
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-20_06,2025-02-20_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 phishscore=0 malwarescore=0 mlxscore=0 clxscore=1015
+ spamscore=0 suspectscore=0 mlxlogscore=999 lowpriorityscore=0 bulkscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502200104
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Tue, 2025-02-18 at 14:54 -0800, steven chen wrote:
+> Carrying the IMA measurement list across kexec requires allocating a
+> buffer and copying the measurement records.=C2=A0 Separate allocating the
+> buffer and copying the measurement records into separate functions in
+> order to allocate the buffer at kexec 'load' and copy the measurements
+> at kexec 'execute'.
+>=20
+> This patch includes the following changes:
+> =C2=A0- Refactor ima_dump_measurement_list() to move the memory allocatio=
+n
+> =C2=A0=C2=A0 to a separate function ima_alloc_kexec_file_buf() which allo=
+cates
+> =C2=A0=C2=A0 buffer of size 'kexec_segment_size' at kexec 'load'.
+> =C2=A0- Make the local variable ima_kexec_file in ima_dump_measurement_li=
+st()
+> =C2=A0=C2=A0 a local static to the file, so that it can be accessed from=
+=20
+> =C2=A0=C2=A0 ima_alloc_kexec_file_buf(). Compare actual memory required t=
+o ensure=20
+> =C2=A0=C2=A0 there is enough memory for the entire measurement record.
+> =C2=A0- Copy as many measurement events as possible.
+> =C2=A0- Make necessary changes to the function ima_add_kexec_buffer() to =
+call
+> =C2=A0=C2=A0 the above two functions.
+> =C2=A0- Compared the memory size allocated with memory size of the entire=
+=20
+> =C2=A0=C2=A0 measurement record. If there is not enough memory, it will c=
+opy as many
+> =C2=A0=C2=A0 IMA measurement records as possible, and this situation will=
+ result
+> =C2=A0=C2=A0 in a failure of remote attestation.
+>=20
+> Author: Tushar Sugandhi <tusharsu@linux.microsoft.com>
 
-netlbl_cfg_calipso_map_add(), netlbl_cfg_calipso_add() and
-netlbl_cfg_calipso_del() were added in 2016 as part of
-commit 3f09354ac84c ("netlabel: Implement CALIPSO config functions for
-SMACK.")
+Steven, thank you again for picking up this patch set.
 
-Remove them.
+As previously explained, there is no tag named "Author" in
+https://www.kernel.org/doc/Documentation/process/submitting-patches.rst.  T=
+o give credit
+to the original author use "Co-developed-by".  The "Co-developed-by:" tag i=
+s immediately
+followed by the original author's "Signed-off-by:" tag.  Please refer to th=
+e document for
+an example.
 
-(I see a few other changes in that original commit, whether they
-are reachable I'm not sure).
+> Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+<--- "Co-developed-by:" would go here.
+> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+> Signed-off-by: steven chen <chenste@linux.microsoft.com>
+> ---
+> =C2=A0security/integrity/ima/ima.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
+=C2=A0=C2=A0 1 +
+> =C2=A0security/integrity/ima/ima_kexec.c | 102 +++++++++++++++++++++-----=
 ---
- include/net/netlabel.h       |  26 -------
- net/netlabel/netlabel_kapi.c | 133 -----------------------------------
- 2 files changed, 159 deletions(-)
+> =C2=A0security/integrity/ima/ima_queue.c |=C2=A0=C2=A0 4 +-
+> =C2=A03 files changed, 77 insertions(+), 30 deletions(-)
+>=20
+> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+> index 24d09ea91b87..4428fcf42167 100644
+> --- a/security/integrity/ima/ima.h
+> +++ b/security/integrity/ima/ima.h
+> @@ -274,6 +274,7 @@ bool ima_template_has_modsig(const struct ima_templat=
+e_desc
+> *ima_template);
+> =C2=A0int ima_restore_measurement_entry(struct ima_template_entry *entry)=
+;
+> =C2=A0int ima_restore_measurement_list(loff_t bufsize, void *buf);
+> =C2=A0int ima_measurements_show(struct seq_file *m, void *v);
+> +int ima_get_binary_runtime_entry_size(struct ima_template_entry *entry);
+> =C2=A0unsigned long ima_get_binary_runtime_size(void);
+> =C2=A0int ima_init_template(void);
+> =C2=A0void ima_init_template_list(void);
+> diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/=
+ima_kexec.c
+> index 9d45f4d26f73..89088f1fa989 100644
+> --- a/security/integrity/ima/ima_kexec.c
+> +++ b/security/integrity/ima/ima_kexec.c
+> @@ -15,63 +15,97 @@
+> =C2=A0#include "ima.h"
+> =C2=A0
+> =C2=A0#ifdef CONFIG_IMA_KEXEC
+> +static struct seq_file ima_kexec_file;
+> +
+> +static void ima_reset_kexec_file(struct seq_file *sf)
+> +{
+> +	sf->buf =3D NULL;
+> +	sf->size =3D 0;
+> +	sf->read_pos =3D 0;
+> +	sf->count =3D 0;
+> +}
+> +
+> +static void ima_free_kexec_file_buf(struct seq_file *sf)
+> +{
+> +	vfree(sf->buf);
+> +	ima_reset_kexec_file(sf);
+> +}
+> +
+> +static int ima_alloc_kexec_file_buf(size_t segment_size)
+> +{
+> +	/*
+> +	 * kexec 'load' may be called multiple times.
+> +	 * Free and realloc the buffer only if the segment_size is
+> +	 * changed from the previous kexec 'load' call.
+> +	 */
+> +	if (ima_kexec_file.buf && ima_kexec_file.size =3D=3D segment_size)
+> +		goto out;
+> +
+> +	ima_free_kexec_file_buf(&ima_kexec_file);
+> +
+> +	/* segment size can't change between kexec load and execute */
+> +	ima_kexec_file.buf =3D vmalloc(segment_size);
+> +	if (!ima_kexec_file.buf)
+> +		return -ENOMEM;
+> +
+> +	ima_kexec_file.size =3D segment_size;
+> +
+> +out:
+> +	ima_kexec_file.read_pos =3D 0;
+> +	ima_kexec_file.count =3D sizeof(struct ima_kexec_hdr);	/* reserved spac=
+e */
+> +
+> +	return 0;
+> +}
+> +
 
-diff --git a/include/net/netlabel.h b/include/net/netlabel.h
-index 02914b1df38b..37c9bcfd5345 100644
---- a/include/net/netlabel.h
-+++ b/include/net/netlabel.h
-@@ -435,14 +435,6 @@ int netlbl_cfg_cipsov4_map_add(u32 doi,
- 			       const struct in_addr *addr,
- 			       const struct in_addr *mask,
- 			       struct netlbl_audit *audit_info);
--int netlbl_cfg_calipso_add(struct calipso_doi *doi_def,
--			   struct netlbl_audit *audit_info);
--void netlbl_cfg_calipso_del(u32 doi, struct netlbl_audit *audit_info);
--int netlbl_cfg_calipso_map_add(u32 doi,
--			       const char *domain,
--			       const struct in6_addr *addr,
--			       const struct in6_addr *mask,
--			       struct netlbl_audit *audit_info);
- /*
-  * LSM security attribute operations
-  */
-@@ -561,24 +553,6 @@ static inline int netlbl_cfg_cipsov4_map_add(u32 doi,
- {
- 	return -ENOSYS;
- }
--static inline int netlbl_cfg_calipso_add(struct calipso_doi *doi_def,
--					 struct netlbl_audit *audit_info)
--{
--	return -ENOSYS;
--}
--static inline void netlbl_cfg_calipso_del(u32 doi,
--					  struct netlbl_audit *audit_info)
--{
--	return;
--}
--static inline int netlbl_cfg_calipso_map_add(u32 doi,
--					     const char *domain,
--					     const struct in6_addr *addr,
--					     const struct in6_addr *mask,
--					     struct netlbl_audit *audit_info)
--{
--	return -ENOSYS;
--}
- static inline int netlbl_catmap_walk(struct netlbl_lsm_catmap *catmap,
- 				     u32 offset)
- {
-diff --git a/net/netlabel/netlabel_kapi.c b/net/netlabel/netlabel_kapi.c
-index cd9160bbc919..13b4bc1c30ec 100644
---- a/net/netlabel/netlabel_kapi.c
-+++ b/net/netlabel/netlabel_kapi.c
-@@ -394,139 +394,6 @@ int netlbl_cfg_cipsov4_map_add(u32 doi,
- 	return ret_val;
- }
- 
--/**
-- * netlbl_cfg_calipso_add - Add a new CALIPSO DOI definition
-- * @doi_def: CALIPSO DOI definition
-- * @audit_info: NetLabel audit information
-- *
-- * Description:
-- * Add a new CALIPSO DOI definition as defined by @doi_def.  Returns zero on
-- * success and negative values on failure.
-- *
-- */
--int netlbl_cfg_calipso_add(struct calipso_doi *doi_def,
--			   struct netlbl_audit *audit_info)
--{
--#if IS_ENABLED(CONFIG_IPV6)
--	return calipso_doi_add(doi_def, audit_info);
--#else /* IPv6 */
--	return -ENOSYS;
--#endif /* IPv6 */
--}
--
--/**
-- * netlbl_cfg_calipso_del - Remove an existing CALIPSO DOI definition
-- * @doi: CALIPSO DOI
-- * @audit_info: NetLabel audit information
-- *
-- * Description:
-- * Remove an existing CALIPSO DOI definition matching @doi.  Returns zero on
-- * success and negative values on failure.
-- *
-- */
--void netlbl_cfg_calipso_del(u32 doi, struct netlbl_audit *audit_info)
--{
--#if IS_ENABLED(CONFIG_IPV6)
--	calipso_doi_remove(doi, audit_info);
--#endif /* IPv6 */
--}
--
--/**
-- * netlbl_cfg_calipso_map_add - Add a new CALIPSO DOI mapping
-- * @doi: the CALIPSO DOI
-- * @domain: the domain mapping to add
-- * @addr: IP address
-- * @mask: IP address mask
-- * @audit_info: NetLabel audit information
-- *
-- * Description:
-- * Add a new NetLabel/LSM domain mapping for the given CALIPSO DOI to the
-- * NetLabel subsystem.  A @domain value of NULL adds a new default domain
-- * mapping.  Returns zero on success, negative values on failure.
-- *
-- */
--int netlbl_cfg_calipso_map_add(u32 doi,
--			       const char *domain,
--			       const struct in6_addr *addr,
--			       const struct in6_addr *mask,
--			       struct netlbl_audit *audit_info)
--{
--#if IS_ENABLED(CONFIG_IPV6)
--	int ret_val = -ENOMEM;
--	struct calipso_doi *doi_def;
--	struct netlbl_dom_map *entry;
--	struct netlbl_domaddr_map *addrmap = NULL;
--	struct netlbl_domaddr6_map *addrinfo = NULL;
--
--	doi_def = calipso_doi_getdef(doi);
--	if (doi_def == NULL)
--		return -ENOENT;
--
--	entry = kzalloc(sizeof(*entry), GFP_ATOMIC);
--	if (entry == NULL)
--		goto out_entry;
--	entry->family = AF_INET6;
--	if (domain != NULL) {
--		entry->domain = kstrdup(domain, GFP_ATOMIC);
--		if (entry->domain == NULL)
--			goto out_domain;
--	}
--
--	if (addr == NULL && mask == NULL) {
--		entry->def.calipso = doi_def;
--		entry->def.type = NETLBL_NLTYPE_CALIPSO;
--	} else if (addr != NULL && mask != NULL) {
--		addrmap = kzalloc(sizeof(*addrmap), GFP_ATOMIC);
--		if (addrmap == NULL)
--			goto out_addrmap;
--		INIT_LIST_HEAD(&addrmap->list4);
--		INIT_LIST_HEAD(&addrmap->list6);
--
--		addrinfo = kzalloc(sizeof(*addrinfo), GFP_ATOMIC);
--		if (addrinfo == NULL)
--			goto out_addrinfo;
--		addrinfo->def.calipso = doi_def;
--		addrinfo->def.type = NETLBL_NLTYPE_CALIPSO;
--		addrinfo->list.addr = *addr;
--		addrinfo->list.addr.s6_addr32[0] &= mask->s6_addr32[0];
--		addrinfo->list.addr.s6_addr32[1] &= mask->s6_addr32[1];
--		addrinfo->list.addr.s6_addr32[2] &= mask->s6_addr32[2];
--		addrinfo->list.addr.s6_addr32[3] &= mask->s6_addr32[3];
--		addrinfo->list.mask = *mask;
--		addrinfo->list.valid = 1;
--		ret_val = netlbl_af6list_add(&addrinfo->list, &addrmap->list6);
--		if (ret_val != 0)
--			goto cfg_calipso_map_add_failure;
--
--		entry->def.addrsel = addrmap;
--		entry->def.type = NETLBL_NLTYPE_ADDRSELECT;
--	} else {
--		ret_val = -EINVAL;
--		goto out_addrmap;
--	}
--
--	ret_val = netlbl_domhsh_add(entry, audit_info);
--	if (ret_val != 0)
--		goto cfg_calipso_map_add_failure;
--
--	return 0;
--
--cfg_calipso_map_add_failure:
--	kfree(addrinfo);
--out_addrinfo:
--	kfree(addrmap);
--out_addrmap:
--	kfree(entry->domain);
--out_domain:
--	kfree(entry);
--out_entry:
--	calipso_doi_putdef(doi_def);
--	return ret_val;
--#else /* IPv6 */
--	return -ENOSYS;
--#endif /* IPv6 */
--}
--
- /*
-  * Security Attribute Functions
-  */
--- 
-2.48.1
+<--- ima_dump_measurement_list() function comment goes here.
 
+> =C2=A0static int ima_dump_measurement_list(unsigned long *buffer_size, vo=
+id **buffer,
+> =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0 unsigned long segment_size)
+> =C2=A0{
+> =C2=A0	struct ima_queue_entry *qe;
+> -	struct seq_file file;
+> =C2=A0	struct ima_kexec_hdr khdr;
+> =C2=A0	int ret =3D 0;
+> +	size_t entry_size =3D 0;
+> =C2=A0
+> -	/* segment size can't change between kexec load and execute */
+> -	file.buf =3D vmalloc(segment_size);
+> -	if (!file.buf) {
+> -		ret =3D -ENOMEM;
+> -		goto out;
+> +	if (!ima_kexec_file.buf) {
+> +		pr_err("Kexec file buf not allocated\n");
+> +		return -EINVAL;
+> =C2=A0	}
+> =C2=A0
+> -	file.file =3D NULL;
+> -	file.size =3D segment_size;
+> -	file.read_pos =3D 0;
+> -	file.count =3D sizeof(khdr);	/* reserved space */
+> -
+> =C2=A0	memset(&khdr, 0, sizeof(khdr));
+> =C2=A0	khdr.version =3D 1;
+> =C2=A0	/* This is an append-only list, no need to hold the RCU read lock =
+*/
+> +	/* Copy as many IMA measurements list records as possible */
+
+Having two consecutive comments like this looks weird.  Please refer to sec=
+tion "8)
+Commenting" of https://www.kernel.org/doc/Documentation/process/coding-styl=
+e.rst.=20
+
+The first comment is particular to list_for_each_entry_rcu() and should rem=
+ain here.  The
+latter comment is more generic and should be included as part of a function=
+ comment.
+
+> =C2=A0	list_for_each_entry_rcu(qe, &ima_measurements, later, true) {
+> -		if (file.count < file.size) {
+> +		entry_size +=3D ima_get_binary_runtime_entry_size(qe->entry);
+> +		if (entry_size <=3D segment_size) {
+
+As much as possible splitting a function shouldn't change the existing code=
+.  It makes it
+harder to review.  This sort of change should be a separate patch with the =
+Subject topic
+line something like "ima: copy only complete measurement records across kex=
+ec".  Making
+this change as the first patch in the patch set will also allow it to be ba=
+ckported.
+
+> =C2=A0			khdr.count++;
+> -			ima_measurements_show(&file, qe);
+> +			ima_measurements_show(&ima_kexec_file, qe);
+> =C2=A0		} else {
+> =C2=A0			ret =3D -EINVAL;
+> +			pr_err("IMA log file is too big for Kexec buf\n");
+> =C2=A0			break;
+
+We really DO want to "Copy as many IMA measurements list records as possibl=
+e" as possible.
+However, the code doesn't match the comment, since the caller of
+ima_dump_measurement_list() treats -EINVAL as an error and bails.
+
+> =C2=A0		}
+> =C2=A0	}
+> =C2=A0
+> -	if (ret < 0)
+> -		goto out;
+> -
+> =C2=A0	/*
+> =C2=A0	 * fill in reserved space with some buffer details
+> =C2=A0	 * (eg. version, buffer size, number of measurements)
+> =C2=A0	 */
+> -	khdr.buffer_size =3D file.count;
+> +	khdr.buffer_size =3D ima_kexec_file.count;
+> =C2=A0	if (ima_canonical_fmt) {
+> =C2=A0		khdr.version =3D cpu_to_le16(khdr.version);
+> =C2=A0		khdr.count =3D cpu_to_le64(khdr.count);
+> =C2=A0		khdr.buffer_size =3D cpu_to_le64(khdr.buffer_size);
+> =C2=A0	}
+> -	memcpy(file.buf, &khdr, sizeof(khdr));
+> +	memcpy(ima_kexec_file.buf, &khdr, sizeof(khdr));
+> =C2=A0
+> =C2=A0	print_hex_dump_debug("ima dump: ", DUMP_PREFIX_NONE, 16, 1,
+> -			=C2=A0=C2=A0=C2=A0=C2=A0 file.buf, file.count < 100 ? file.count : 10=
+0,
+> +			=C2=A0=C2=A0=C2=A0=C2=A0 ima_kexec_file.buf, ima_kexec_file.count < 1=
+00 ?
+> +			=C2=A0=C2=A0=C2=A0=C2=A0 ima_kexec_file.count : 100,
+> =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0 true);
+> =C2=A0
+> -	*buffer_size =3D file.count;
+> -	*buffer =3D file.buf;
+> -out:
+> -	if (ret =3D=3D -EINVAL)
+> -		vfree(file.buf);
+> +	*buffer_size =3D ima_kexec_file.count;
+> +	*buffer =3D ima_kexec_file.buf;
+> +
+> =C2=A0	return ret;
+> =C2=A0}
+> =C2=A0
+> @@ -90,7 +124,7 @@ void ima_add_kexec_buffer(struct kimage *image)
+> =C2=A0
+> =C2=A0	/* use more understandable variable names than defined in kbuf */
+> =C2=A0	void *kexec_buffer =3D NULL;
+> -	size_t kexec_buffer_size;
+> +	size_t kexec_buffer_size =3D 0;
+> =C2=A0	size_t kexec_segment_size;
+> =C2=A0	int ret;
+> =C2=A0
+> @@ -110,13 +144,19 @@ void ima_add_kexec_buffer(struct kimage *image)
+> =C2=A0		return;
+> =C2=A0	}
+> =C2=A0
+> -	ima_dump_measurement_list(&kexec_buffer_size, &kexec_buffer,
+> -				=C2=A0 kexec_segment_size);
+> -	if (!kexec_buffer) {
+> +	ret =3D ima_alloc_kexec_file_buf(kexec_segment_size);
+> +	if (ret < 0) {
+> =C2=A0		pr_err("Not enough memory for the kexec measurement buffer.\n");
+> =C2=A0		return;
+> =C2=A0	}
+> =C2=A0
+> +	ret =3D ima_dump_measurement_list(&kexec_buffer_size, &kexec_buffer,
+> +					kexec_segment_size);
+> +	if (ret < 0) {
+> +		pr_err("Failed to dump IMA measurements. Error:%d.\n", ret);
+> +		return;
+> +	}
+> +
+
+As mentioned above, we really do want to copy as many measurement records a=
+s possible
+across kexec.
+
+> =C2=A0	kbuf.buffer =3D kexec_buffer;
+> =C2=A0	kbuf.bufsz =3D kexec_buffer_size;
+> =C2=A0	kbuf.memsz =3D kexec_segment_size;
+> @@ -131,6 +171,12 @@ void ima_add_kexec_buffer(struct kimage *image)
+> =C2=A0	image->ima_buffer_size =3D kexec_segment_size;
+> =C2=A0	image->ima_buffer =3D kexec_buffer;
+> =C2=A0
+> +	/*
+> +	 * kexec owns kexec_buffer after kexec_add_buffer() is called
+> +	 * and it will vfree() that buffer.
+> +	 */
+> +	ima_reset_kexec_file(&ima_kexec_file);
+> +
+> =C2=A0	kexec_dprintk("kexec measurement buffer for the loaded kernel at 0=
+x%lx.\n",
+> =C2=A0		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 kbuf.mem);
+> =C2=A0}
+> diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/=
+ima_queue.c
+> index 83d53824aa98..3dfd178d4292 100644
+> --- a/security/integrity/ima/ima_queue.c
+> +++ b/security/integrity/ima/ima_queue.c
+> @@ -78,7 +78,7 @@ static struct ima_queue_entry *ima_lookup_digest_entry(=
+u8
+> *digest_value,
+> =C2=A0 * binary_runtime_measurement list entry, which contains a
+> =C2=A0 * couple of variable length fields (e.g template name and data).
+> =C2=A0 */
+> -static int get_binary_runtime_size(struct ima_template_entry *entry)
+> +int ima_get_binary_runtime_entry_size(struct ima_template_entry *entry)
+> =C2=A0{
+> =C2=A0	int size =3D 0;
+> =C2=A0
+> @@ -122,7 +122,7 @@ static int ima_add_digest_entry(struct ima_template_e=
+ntry *entry,
+> =C2=A0	if (binary_runtime_size !=3D ULONG_MAX) {
+> =C2=A0		int size;
+> =C2=A0
+> -		size =3D get_binary_runtime_size(entry);
+> +		size =3D ima_get_binary_runtime_entry_size(entry);
+> =C2=A0		binary_runtime_size =3D (binary_runtime_size < ULONG_MAX - size) =
+?
+> =C2=A0		=C2=A0=C2=A0=C2=A0=C2=A0 binary_runtime_size + size : ULONG_MAX;
+> =C2=A0	}
+
+This change would be included in the new first patch named something like "=
+ima: copy only
+complete measurement records across kexec".
+
+Thanks,
+
+Mimi
