@@ -1,291 +1,144 @@
-Received: from sonic303-27.consmr.mail.ne1.yahoo.com (sonic303-27.consmr.mail.ne1.yahoo.com [66.163.188.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E16821CAA6E
-	for <linux-security-module@vger.kernel.org>; Thu, 20 Feb 2025 15:35:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.188.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DECE20D4E5;
+	Thu, 20 Feb 2025 16:24:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740065722; cv=none; b=cGyN4YfKoENMb02k+PiBQczUU+zYVU9d2SwKsuqOSOj4ArvpYTo9m/ul37JMScq2UwQjBQx2KcYVXAyR8B9NOlcnxPZMr+T5rWNXjYQ5yGa8v32qOaUZG943x35XXUFzoJiU3UvoaRPhUoGvQMaUWfSk4ZlPeLAzwRhEEPyMtyw=
+	t=1740068653; cv=none; b=fe+VGT/wI1AM77UdujX1qMBsvpm3wffB6Vxygk3B7/7aOPfvEJKEDy+Cf5moANEKZRARB/HpsEhIG0sgtHMk8OMbSdVthD2YUpRDUZ2CQzgvxm9vHxzBQ9FH3sCqSNMW8mNhJ06cUnxZ/Qh4xUnxBBQfSX8/G/+9nx+MDKjVxjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740065722; c=relaxed/simple;
-	bh=/H4DXco9xQ4lb8Te7gL+UVyO3rUpq5eC8ie7csVvN1g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RII6HH6zfJM8QOaoIbqphtFLuBvSWsPite/Vej/tWdPHY4Pt0CJYz9FzG2lqZ766t3wiuv4SMgXUmOuVEPfYGY1HmVO13JEJhb1+4r9MosSGqgCl+HcDvKzee9xl7kj7n38iiMEQa+zZ4VXmyapmNRgHcVz2GJoJxfeMeCiO9wg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=fgXna+CL; arc=none smtp.client-ip=66.163.188.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1740068653; c=relaxed/simple;
+	bh=+/6yjCYYDC/vx/Xl0epM+sZBCKo21xZL+bewavcyoUs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=rV7sPc3+9shaVLV165t4n7ce0+3dL8hFJT3VnD6yAqb8/VXe1RgPpmjCMuT6NTCU4snIFSEbtbbfaGT1Tg+EQWDJ76E1U15/ULee1ydkpY5k0amvKLwzvatFKVmS/iT3qkhlHwruK7I/5Wm5FBq73BR1y94DwxWPs0D0VR0+tp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=V63/MU68; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="fgXna+CL"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1740065712; bh=ekpCCgF7cpjJGlBUQltrcyy0xqFyiNUqJbBZlZihjSI=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=fgXna+CLybjpJAx9FsolIuR+PElHUjcl4tFgx1tKlI256L8yobcK8LG9F2gI6WN19uDFb6G9Gih8CB6L25vp6Qjct4RTlH2h6nAL6EElANyGjTOtgsmVUUAHKmpH4LFH1ktOmJlYo+xha+liq2kARdAwnzIpC8lo3uOIyLkvd+nje9pK4txC87+NnQ4IGOhwSN/TxrHRcqW4aKf3yepchB6DgnmkW+ZN1SnsoZEwfocptci2DlqbPJgse4eYHvy9zFfwodIlM6ivp1RHHvF5lkOjqiJmGDl+4oIHfdGyCDTbSwAHHHGT1QtrI3RiOzuQ2eUwmKPj/asfxlnIQwxp0w==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1740065712; bh=OrEylGmR1ETH8N6i90c1TSJOV4hynJD8EL2e41dP/XW=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=SVIwCSPWRlgYCRyoKdWvtAKpiRh9Q38pUsMVm86aEP3P+fPu6/MB9mYJNx/7e4xMj6m5vN3t3XN3mhdFNc9LNaAf+zJiFA964cVzlGf3apIJD+a+Ko8M1+EeEVSMMYsLUA2T4oNrmMyNeM0e0xeHLk6BrznfgKMUi/pPYDsBUUy5x2HvB3ygRsOWXESB/i4kgQiuxAcALx7XjFI3qtGkvAVlXoGBW1iUYZxIjUOD0SF292U0QS+CKX5npoR4/KZZzw1+QbmZx+HnpgN1dvq6wwzko18ygqiO09mQ2nX378qSRpSRgGNAcVngroiQmZgU1vlFROzj6Gklmg/8Yu6hKA==
-X-YMail-OSG: uhcwZIIVM1mxwp8UkThAc3Y_VLM2.oFWnsxyHKoXoYvolYx5TF2GnzWKyvPFV1c
- GkY0HhwkYuzhq0TkMgx6Z1yujoaxTKg8vIq4ycJ.eOXwuM7WILK.KsvpRkXd2BfJJKa8SOfrxEa7
- RI6.C5hE9fnk0W22W8YbrCOqW0voEBQLs5aBZsGcZyoS0XtT3SnUMvico3Yrh.Sog39YlZW1MX1Q
- P4ufYb0rwfYaFSiE9kvE0FKQhLchba1dTh6gRy_2zLxXdr5qn4FMqqjIOTH1zk8MD66_ZJfkntQb
- YDvkL2aJBWNLEmBRdUdJAI6.a3Qnh4jdCWFI.H.nI9PPlU5B80FJMvAsHYk5M8zSqsIC7Xj1LIxj
- C7H1AlRRHmKJAa9RrMST9wH3YPWe0Ooixy9esJq_LTiHTuY2PpE2fObuSRiroo203ZyKWNdNDNjX
- SGc5Vr3oDTAZdWzwqx5G3SWKsZ8bKhX1ls1j.7Te.vp2iHomJcU2XZ2WP6VIQmovxKL9nE6RYg7H
- .c_kVqaLBhvoJxXQY7.ZlfRdsHeJMNAdI.RE_vQOP46CAMggWdxu1xm8Pw_H0EZhvK.FUJZyd7Pr
- 6OlK8zTmyFao8QHOl5gl20fbpddW2Pste2mIJxF60ivyLbNx7fDbTrDnGJCEsnT5nPlgg3AqOLiJ
- jbc5n2.D1lo_lX27YiX2fnvhJS7_ZInz7vMo3ggt8PXEYqVC.De2IjDy34A6OwKcP5uzOKXfxrN7
- eA6uunD9HSI1fxH0NF88B8RnAqwqvCFO1ERy17eoayByLfEEQbvULcH8byeICmCRXke1U7m_._nV
- 1V6zqygXIPfCncee3ULnm6SkhL7Hvq5iSU5p3xOPTMReG8BRPjXC0uNKQqeDgP_2Z5BxLuqvGtIE
- YGGioUKUuCNJ9zq9TZ1robKcQ1YUBJZiHJUBzATkJ2OoahsB35sTkYIocccwxWp8Sf1_2k24cKAI
- nf7vlh8XjE7Qxi_uMPL1ksNa_CKTl1Ay4sijs4fLfi8w3J6Cj4vVwt3ZJZHlT_w2qHp1DR.dyhUl
- ep5NByEYDUkwMrpHjvJ7wCieT3Hndm_aLOhGYyh6Pi1Q5knNICsVvseZRh152YFYR127UbVsp7QU
- pS15xzAYWyvTQewnBQAYcDtH0uTL5Ln6KHqi4dN1_Lb73VliJ5yll.K8B.0ptwSjTevrbHizCI5s
- gEZgn50WpaVjoRoxdfzLVX3pUZiTBUMn_PhdNJHz4zhSX6aLRs67.u2jkXpZ3v390fu3iw6X2J74
- rUsWqHk75aW2c1CObBsR_iIDFJvOTqfbIIaaBcw7wKTmWeD5kDIwR8M.5wufAoGM7FO2C4sb70jF
- JksxM58lVhAusUZs9qnJUoJI5RqWhj9cFMsHeqp3vdOXPRGfluyE0dgiThTn6aClq8ZN9jZCJ7bj
- uJDIkW0YeYM31RKVtVVBQqQNI8uJWEqsEs0XYv2km2OLX8WNHthneKwGFVR4hQLL.qrcJc_Z3zbr
- h7Cs4hOdPVlbfIikVBnp9wXooJEP06._6MsXuKILwiCfnETHrzK4iGkP5T9c_dxvcYPGnOt6Qvgx
- _CaOTbplhgiY.xVO5NcvR4638VrccisI.JzQHikKkBmNdckFdqpM3rWKn2dIOfc9hOqelaHy5zAt
- UeQuzN.nYJVfRs2Sj1ub9VJIdMMR9Byxzk8KZqahBYFlSS84qAn4MiC0iKUb8EVmXJrfV7hNvEX5
- zU4r5tSgQC4SgoA1mh3WNsfSp_i1LKR2RvBeOzUIAU7NeSnooF_IRbsJYv1O4uLTXgCEfz9mrLQy
- 3k7uys6W3EUsAKzYdlfia3LNxb57ahiiypl1j93jfsvK9oX2cOjT7BMcvI8Y__DlEtoht9e98LHM
- _YzLfc09n0rSvAID9XE.BBerikZ5tc00TWi5mMAxpq09jquKRJnaE68JKcF2MykhTPN14XqYfJ41
- rGsopxFdB.UdQvOz2U7qyK44h6K6McCkTuJqlvISs8l1MSlPPP4ATyQDEGeUj6EhV_pjAJ01XNti
- ciE8nAHw_NtEhAIfTkgLA90AfFmroTyYWajSCdYWUBJF4jvRVGyGz6UC26YI.GNCDLqSoK9qPc1X
- sXsxqX7wRAVmqWBix.xenntcNTJ9eco_k2k2CoVY25UKHYOvy9HD6tDiZX8KCuHjX3bpWvNX.Nd2
- MxcmP_tVdCnfrto6g11KA1AHqPmcrv8tH3N8J8pFQ7Kvpnk7NzOc5sPWGsvwETaoeLyLdB5dVhHk
- da7IS0maIqYILjx9OmwaPKfbNJTT.nZ0mKmj3fbMM5nwiHsZmIAAgLpza6fxUSMLXMBet8NHwxLQ
- W1x9uFilC4o7Hn4hfJso-
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 5074b6c1-d1d0-467f-804a-4d6abf8211b1
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.ne1.yahoo.com with HTTP; Thu, 20 Feb 2025 15:35:12 +0000
-Received: by hermes--production-gq1-5dd4b47f46-dvwsq (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 437aa463eb35749faded69ee77004126;
-          Thu, 20 Feb 2025 15:35:09 +0000 (UTC)
-Message-ID: <aa6c6f4c-7d46-4e7e-bafc-f042436f47b6@schaufler-ca.com>
-Date: Thu, 20 Feb 2025 07:35:07 -0800
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="V63/MU68"
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51KAVe4o023220;
+	Thu, 20 Feb 2025 16:23:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=VzLAvJ
+	4OFYe9FsbbjKeRVznanRJha9P7le1bYv/dDM8=; b=V63/MU68CqnbjiETxInFou
+	dDQUV6roS0RmVkfOv/FI/QdZU0BBipbmj6Zvc0Qg1oCxWEKy+RKKqCVfdru1LsGN
+	KQGLTR48fGHSSBs4p5pnkoelmmzIz1+nWX6wtFAHVr6rjvliGTuJH3VIaGlmK5iq
+	sCvDAmltgDQgM5vqLl7rwTqyAYxiY5ZUraI7EbHMYS5NKYEj87nsRHlxHjMXAH2D
+	5TtepDr4db8xh6ZtTXZ2QyzB0/HaXRfKaeuSnrGhsUmaXnvaZ/VbZ2R9wmdqBRNB
+	68K0xvt1P6eb6XVXfdRdeFTxx2fKHNCyNfUbcEjUjcLHzBugcC4MLBr4k2pII7Hg
+	==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44wu80bxtj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Feb 2025 16:23:37 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51KFHavG005817;
+	Thu, 20 Feb 2025 16:23:36 GMT
+Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44w02xjwwc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Feb 2025 16:23:36 +0000
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51KGNZbY22544992
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 20 Feb 2025 16:23:35 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 827F05805E;
+	Thu, 20 Feb 2025 16:23:35 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 65CE658051;
+	Thu, 20 Feb 2025 16:23:34 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.68.26])
+	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 20 Feb 2025 16:23:34 +0000 (GMT)
+Message-ID: <241e6b5336d1dcee751cb35554e507e552563a16.camel@linux.ibm.com>
+Subject: Re: [PATCH v8 1/7] ima: define and call ima_alloc_kexec_file_buf
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>,
+        steven chen
+	 <chenste@linux.microsoft.com>, stefanb@linux.ibm.com,
+        roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
+        eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
+        code@tyhicks.com, bauermann@kolabnow.com,
+        linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com, bhe@redhat.com,
+        vgoyal@redhat.com, dyoung@redhat.com
+Date: Thu, 20 Feb 2025 11:23:34 -0500
+In-Reply-To: <58e70121aaee33679ac295847197c1e5511b2a81.camel@HansenPartnership.com>
+References: <20250218225502.747963-1-chenste@linux.microsoft.com>
+	 <20250218225502.747963-2-chenste@linux.microsoft.com>
+	 <8023fa50a84817cc911a117db9bd3757c34fddfb.camel@linux.ibm.com>
+	 <58e70121aaee33679ac295847197c1e5511b2a81.camel@HansenPartnership.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] netlabel: Remove unused cfg_calipso funcs
-To: linux@treblig.org, paul@paul-moore.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org
-Cc: linux-security-module@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
-References: <20250220140808.71674-1-linux@treblig.org>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20250220140808.71674-1-linux@treblig.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.23369 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: jLH567s1uVFEACBTyWlJqrwhOXCg8KrD
+X-Proofpoint-ORIG-GUID: jLH567s1uVFEACBTyWlJqrwhOXCg8KrD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-20_06,2025-02-20_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ priorityscore=1501 spamscore=0 phishscore=0 malwarescore=0 mlxscore=0
+ adultscore=0 mlxlogscore=478 bulkscore=0 suspectscore=0 lowpriorityscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502200113
 
-On 2/20/2025 6:08 AM, linux@treblig.org wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
->
-> netlbl_cfg_calipso_map_add(), netlbl_cfg_calipso_add() and
-> netlbl_cfg_calipso_del() were added in 2016 as part of
-> commit 3f09354ac84c ("netlabel: Implement CALIPSO config functions for
-> SMACK.")
->
-> Remove them.
+On Thu, 2025-02-20 at 10:04 -0500, James Bottomley wrote:
+> On Thu, 2025-02-20 at 09:53 -0500, Mimi Zohar wrote:
+> > On Tue, 2025-02-18 at 14:54 -0800, steven chen wrote:
+> [...
+> > > Author: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+> >=20
+> > Steven, thank you again for picking up this patch set.
+> >=20
+> > As previously explained, there is no tag named "Author" in
+> > https://www.kernel.org/doc/Documentation/process/submitting-patches.rst
+> > .=C2=A0 To give credit to the original author use "Co-developed-by".
+>=20
+> Just on this, only use the co-developed-by if you actually *modified*
+> the patch.=C2=A0 If you're just transmitting the patch unmodified you can
+> give original author credit by including a=20
+>=20
+> From: original author <email>
+>=20
+> Followed by a blank line at the beginning of the email.=C2=A0 That makes =
+the
+> git author field contan whatever the From: line says.=C2=A0 You still nee=
+d a
+> signoff from yourself in the original patch because you transmitted it.
+>=20
+> Some people also consider minor modifications to be insufficient to
+> disturb the original copyright ownership and simply document what they
+> did in square brackets under their signoff, like this:
+>=20
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit=
+/?id=3Db5d1e6ee761a109400e97ac6a1b91c57d0f6a43a
 
-Please don't. The Smack CALIPSO implementation has been delayed
-for a number of reasons, some better than others, but is still on
-the roadmap.
+Originally I had said:
 
->
-> (I see a few other changes in that original commit, whether they
-> are reachable I'm not sure).
->
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> ---
->  include/net/netlabel.h       |  26 -------
->  net/netlabel/netlabel_kapi.c | 133 -----------------------------------
->  2 files changed, 159 deletions(-)
->
-> diff --git a/include/net/netlabel.h b/include/net/netlabel.h
-> index 02914b1df38b..37c9bcfd5345 100644
-> --- a/include/net/netlabel.h
-> +++ b/include/net/netlabel.h
-> @@ -435,14 +435,6 @@ int netlbl_cfg_cipsov4_map_add(u32 doi,
->  			       const struct in_addr *addr,
->  			       const struct in_addr *mask,
->  			       struct netlbl_audit *audit_info);
-> -int netlbl_cfg_calipso_add(struct calipso_doi *doi_def,
-> -			   struct netlbl_audit *audit_info);
-> -void netlbl_cfg_calipso_del(u32 doi, struct netlbl_audit *audit_info);
-> -int netlbl_cfg_calipso_map_add(u32 doi,
-> -			       const char *domain,
-> -			       const struct in6_addr *addr,
-> -			       const struct in6_addr *mask,
-> -			       struct netlbl_audit *audit_info);
->  /*
->   * LSM security attribute operations
->   */
-> @@ -561,24 +553,6 @@ static inline int netlbl_cfg_cipsov4_map_add(u32 doi,
->  {
->  	return -ENOSYS;
->  }
-> -static inline int netlbl_cfg_calipso_add(struct calipso_doi *doi_def,
-> -					 struct netlbl_audit *audit_info)
-> -{
-> -	return -ENOSYS;
-> -}
-> -static inline void netlbl_cfg_calipso_del(u32 doi,
-> -					  struct netlbl_audit *audit_info)
-> -{
-> -	return;
-> -}
-> -static inline int netlbl_cfg_calipso_map_add(u32 doi,
-> -					     const char *domain,
-> -					     const struct in6_addr *addr,
-> -					     const struct in6_addr *mask,
-> -					     struct netlbl_audit *audit_info)
-> -{
-> -	return -ENOSYS;
-> -}
->  static inline int netlbl_catmap_walk(struct netlbl_lsm_catmap *catmap,
->  				     u32 offset)
->  {
-> diff --git a/net/netlabel/netlabel_kapi.c b/net/netlabel/netlabel_kapi.c
-> index cd9160bbc919..13b4bc1c30ec 100644
-> --- a/net/netlabel/netlabel_kapi.c
-> +++ b/net/netlabel/netlabel_kapi.c
-> @@ -394,139 +394,6 @@ int netlbl_cfg_cipsov4_map_add(u32 doi,
->  	return ret_val;
->  }
->  
-> -/**
-> - * netlbl_cfg_calipso_add - Add a new CALIPSO DOI definition
-> - * @doi_def: CALIPSO DOI definition
-> - * @audit_info: NetLabel audit information
-> - *
-> - * Description:
-> - * Add a new CALIPSO DOI definition as defined by @doi_def.  Returns zero on
-> - * success and negative values on failure.
-> - *
-> - */
-> -int netlbl_cfg_calipso_add(struct calipso_doi *doi_def,
-> -			   struct netlbl_audit *audit_info)
-> -{
-> -#if IS_ENABLED(CONFIG_IPV6)
-> -	return calipso_doi_add(doi_def, audit_info);
-> -#else /* IPv6 */
-> -	return -ENOSYS;
-> -#endif /* IPv6 */
-> -}
-> -
-> -/**
-> - * netlbl_cfg_calipso_del - Remove an existing CALIPSO DOI definition
-> - * @doi: CALIPSO DOI
-> - * @audit_info: NetLabel audit information
-> - *
-> - * Description:
-> - * Remove an existing CALIPSO DOI definition matching @doi.  Returns zero on
-> - * success and negative values on failure.
-> - *
-> - */
-> -void netlbl_cfg_calipso_del(u32 doi, struct netlbl_audit *audit_info)
-> -{
-> -#if IS_ENABLED(CONFIG_IPV6)
-> -	calipso_doi_remove(doi, audit_info);
-> -#endif /* IPv6 */
-> -}
-> -
-> -/**
-> - * netlbl_cfg_calipso_map_add - Add a new CALIPSO DOI mapping
-> - * @doi: the CALIPSO DOI
-> - * @domain: the domain mapping to add
-> - * @addr: IP address
-> - * @mask: IP address mask
-> - * @audit_info: NetLabel audit information
-> - *
-> - * Description:
-> - * Add a new NetLabel/LSM domain mapping for the given CALIPSO DOI to the
-> - * NetLabel subsystem.  A @domain value of NULL adds a new default domain
-> - * mapping.  Returns zero on success, negative values on failure.
-> - *
-> - */
-> -int netlbl_cfg_calipso_map_add(u32 doi,
-> -			       const char *domain,
-> -			       const struct in6_addr *addr,
-> -			       const struct in6_addr *mask,
-> -			       struct netlbl_audit *audit_info)
-> -{
-> -#if IS_ENABLED(CONFIG_IPV6)
-> -	int ret_val = -ENOMEM;
-> -	struct calipso_doi *doi_def;
-> -	struct netlbl_dom_map *entry;
-> -	struct netlbl_domaddr_map *addrmap = NULL;
-> -	struct netlbl_domaddr6_map *addrinfo = NULL;
-> -
-> -	doi_def = calipso_doi_getdef(doi);
-> -	if (doi_def == NULL)
-> -		return -ENOENT;
-> -
-> -	entry = kzalloc(sizeof(*entry), GFP_ATOMIC);
-> -	if (entry == NULL)
-> -		goto out_entry;
-> -	entry->family = AF_INET6;
-> -	if (domain != NULL) {
-> -		entry->domain = kstrdup(domain, GFP_ATOMIC);
-> -		if (entry->domain == NULL)
-> -			goto out_domain;
-> -	}
-> -
-> -	if (addr == NULL && mask == NULL) {
-> -		entry->def.calipso = doi_def;
-> -		entry->def.type = NETLBL_NLTYPE_CALIPSO;
-> -	} else if (addr != NULL && mask != NULL) {
-> -		addrmap = kzalloc(sizeof(*addrmap), GFP_ATOMIC);
-> -		if (addrmap == NULL)
-> -			goto out_addrmap;
-> -		INIT_LIST_HEAD(&addrmap->list4);
-> -		INIT_LIST_HEAD(&addrmap->list6);
-> -
-> -		addrinfo = kzalloc(sizeof(*addrinfo), GFP_ATOMIC);
-> -		if (addrinfo == NULL)
-> -			goto out_addrinfo;
-> -		addrinfo->def.calipso = doi_def;
-> -		addrinfo->def.type = NETLBL_NLTYPE_CALIPSO;
-> -		addrinfo->list.addr = *addr;
-> -		addrinfo->list.addr.s6_addr32[0] &= mask->s6_addr32[0];
-> -		addrinfo->list.addr.s6_addr32[1] &= mask->s6_addr32[1];
-> -		addrinfo->list.addr.s6_addr32[2] &= mask->s6_addr32[2];
-> -		addrinfo->list.addr.s6_addr32[3] &= mask->s6_addr32[3];
-> -		addrinfo->list.mask = *mask;
-> -		addrinfo->list.valid = 1;
-> -		ret_val = netlbl_af6list_add(&addrinfo->list, &addrmap->list6);
-> -		if (ret_val != 0)
-> -			goto cfg_calipso_map_add_failure;
-> -
-> -		entry->def.addrsel = addrmap;
-> -		entry->def.type = NETLBL_NLTYPE_ADDRSELECT;
-> -	} else {
-> -		ret_val = -EINVAL;
-> -		goto out_addrmap;
-> -	}
-> -
-> -	ret_val = netlbl_domhsh_add(entry, audit_info);
-> -	if (ret_val != 0)
-> -		goto cfg_calipso_map_add_failure;
-> -
-> -	return 0;
-> -
-> -cfg_calipso_map_add_failure:
-> -	kfree(addrinfo);
-> -out_addrinfo:
-> -	kfree(addrmap);
-> -out_addrmap:
-> -	kfree(entry->domain);
-> -out_domain:
-> -	kfree(entry);
-> -out_entry:
-> -	calipso_doi_putdef(doi_def);
-> -	return ret_val;
-> -#else /* IPv6 */
-> -	return -ENOSYS;
-> -#endif /* IPv6 */
-> -}
-> -
->  /*
->   * Security Attribute Functions
->   */
+   > Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+   > Signed-off-by: steven chen <chenste@linux.microsoft.com>
+
+   Before the "Co-developed-by" tag was defined, it was implied simply by t=
+his ordering
+   of the "Signed-off-by" tags.
+  =20
+   For those patches you didn't modify, simply import Tushar's patch with h=
+im as the
+   author and add your Signed-off-by tag after his.
+
+Thanks, James, for the explanation of using "From: original author <email>"=
+ to force the
+author to be Tushar.
+
+Mimi
