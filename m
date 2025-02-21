@@ -1,219 +1,124 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic313-14.consmr.mail.ne1.yahoo.com (sonic313-14.consmr.mail.ne1.yahoo.com [66.163.185.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D3D71DD9AB;
-	Fri, 21 Feb 2025 15:42:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE6A720FAA1
+	for <linux-security-module@vger.kernel.org>; Fri, 21 Feb 2025 15:59:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.185.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740152571; cv=none; b=T/vXs4TDlBFIlD/GqrnulEwnxdczPEpKq7JU0stfnW13HjnXFX6jIujqaa7szWt8q9TXhlR3aTkp/0sJJvLX2Sb0fxlNYLPAjobFCoyxBuZOpGBgb2/Fx4tgnlvG6wwIkciL/WPxXPGb+qfSitvCeDyPQkhPOdCy51nzMXS9/dw=
+	t=1740153553; cv=none; b=deW09tnP7CaQ5JJB53CHNZRqK9ZH8NsoCU/xgIZO6RlPyKzVLV3dwuHmRSiCP8ObyHgBOmTU6puMJEV43WzAw7xFKs3CJcEVrpKk05z+bJGIh2ZEw+c718NdK1+6dOq6vzEIfujxJh5q0nUUuBDzdLqECI8bkepj3NIKL+ECDrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740152571; c=relaxed/simple;
-	bh=3oGfUaAJqfdFFYmlKDmTZtZ50G7yUU86f5/6w5g2HrE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=XR7OZfbKlXZmfw3PU0BimFoqBWnFDUcETryHw9YSrB990UiN3dxqZtLCzS7dgn7yMt9//sMNtaI6Mjw8o9mOMcJEbueLt6dnwwoIE2jUBvBMLUNr2s29ggFI3u0ibInch19xZQmBJKmJXZWj7P+iTgidY6Jj5q9EqTiRd0QOyrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ZGoS3Cd0; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1740153553; c=relaxed/simple;
+	bh=db6te4m+sCMvgTVmKh+oZCF5YeW77eGS4R8oxUbD4xw=;
+	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type:
+	 References; b=Tvw4m6xqyUsrCQ7dGBw9O7JpsLGty6++A2RtkmFxq1GTS8CJWxYZU7BjaJ9UKWpyTAD21bQNVvkyWNlERhP01jBhhxt0nf1FOpVX/SfCtMl/CFN76ZyVPsVhxtKv3dFsjRoyhjUnLfPeBmorOB1QAJAPPs5VTRi8G8zHaHBQHzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=PJA/Zv8X; arc=none smtp.client-ip=66.163.185.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ZGoS3Cd0"
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51LAu7O9029669;
-	Fri, 21 Feb 2025 15:42:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=KSlXcQ
-	u4bYwd9QVRA4LMcePl4d8VQOxalou03xKgF+4=; b=ZGoS3Cd0dXzWb/TjJkZBvG
-	RZvPkT10j6+s/4pk6XdYBzFUfLXE58cEjEgxUHHLx9LRf/1rPuNfVj9yj2FbPS9E
-	itruWfagpLsn4Jt5sQwvNRd1zK7O1MFg4E56lsWetS7TjF6NDgXRBP9JcH2YPkLD
-	FXcHSKFIPljDXwUeQtoRW4V6KqRgSKGfnjc6SKCmCKSGJK+7e6FygA0DyYfv7uX4
-	6IjI2S7eJeITRR9q9Od6194SXMuPbP3IAe3CDhW3KRLIylOo1GUTdtrhJZNjUVQO
-	7z736y/dcIZ+ZBb4+FZuVOBDeCpERdjwVX2bsmX2hVa1o6Kl0Zwmy0kzmo4/4PNw
-	==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44xfj9uv07-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Feb 2025 15:42:17 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51LFWmDq009721;
-	Fri, 21 Feb 2025 15:42:16 GMT
-Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 44w03ygs12-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Feb 2025 15:42:16 +0000
-Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
-	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51LFgGFU16843430
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 21 Feb 2025 15:42:16 GMT
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 60E9A58052;
-	Fri, 21 Feb 2025 15:42:16 +0000 (GMT)
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3B0E95805E;
-	Fri, 21 Feb 2025 15:42:15 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.157.102])
-	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 21 Feb 2025 15:42:15 +0000 (GMT)
-Message-ID: <1883119129dbeeabad1f5239f042a7b920feef0f.camel@linux.ibm.com>
-Subject: Re: [PATCH v8 3/7] ima: kexec: skip IMA segment validation after
- kexec soft reboot
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: steven chen <chenste@linux.microsoft.com>, stefanb@linux.ibm.com,
-        roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
-        eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
-        code@tyhicks.com, bauermann@kolabnow.com,
-        linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
-        James.Bottomley@HansenPartnership.com, bhe@redhat.com,
-        vgoyal@redhat.com, dyoung@redhat.com
-Date: Fri, 21 Feb 2025 10:41:59 -0500
-In-Reply-To: <20250218225502.747963-4-chenste@linux.microsoft.com>
-References: <20250218225502.747963-1-chenste@linux.microsoft.com>
-	 <20250218225502.747963-4-chenste@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="PJA/Zv8X"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1740153544; bh=sspHfWx8ycvI6P03gAVUkjw/qOVU8F8R3aQbFxvcGH8=; h=Date:From:To:Cc:Subject:References:From:Subject:Reply-To; b=PJA/Zv8XFzPIWXHelwx77K0hFK+KXZB7i4t2cB9Z5CmqrUP3F1/92vFyVq7b0+BsTqHtLmz3zVRs5c7ap8IBex0zulkZOPLCZGTX+2HXK8CpZSxKOBG5hoJxks/hf2k/VvjMQZgzwf/4iku8A1zq7+3VekIkYSP3eWLY4901qAF822jdRFIBIk+DEZXfGSBOdxoy8h8IENSeLDT4UwDg2BiUsdwktZU+o1ARDQTFCxGQxOqjgA2rS0IwkZuGOliSXrsoaI/hGgvClubWrhCFMQ5y8NsReu/85Hk+TUdC8Gcls9h+g67CNgaunGR+q8lUA/O3MNEfvG3SPSvov3Xw6A==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1740153544; bh=x+iMLlkqR1FxB6E3L63dEJqO+yr3VZvk7x7JFFN+hmo=; h=X-Sonic-MF:Date:From:To:Subject:From:Subject; b=pXaV4L2C2BgjCbJWfWLL8b+g1UmtGCYJ5bPmsCgpJqPLHLBiy4/qnvWFCeudcrdfIGlYw6X3yKuOCofukZNecn+Vq12wPKnheQj2tFnb3sTW867XdUXDm9+7tccPao2E3QDiWtTCpHvHpif7/UkwBQ2JDAK3JMYJ9kMh02ACWfOb5tj9QvoKNkAWnIRGHi43PTeGtW+gdaCJF9sijoPJ985HRQGI8Iaymi3a4rHFXm+RS7Y+6rCyS1c+xQlUrk+8blUTM4gB/l91cxnqoqRBIBb9sxdi8gEjtgXBrO10YgmCj9P1GfPGBcy9CmvbHG03DiXGu3Gu2ktBgfJu/xgrvg==
+X-YMail-OSG: XbP_sdoVM1loH3BMm6lrg32wuoVEj5bmknxberTwz5Z08qxrYeZn53dCuWBqocA
+ hORwjRfg0SyOqciO_IspeP1BQ5kOQdL37tRMYMXa.9Zt4KtWuFy1G25jcpLbXWU4w3TiXaV2TyqU
+ zdpOyLaVKway1OZnQVqJtZ0DwiJ_EBIRAPyzej71z2UraioFeHNTkrjEHUx4dVvdvv3Gq8PMogZv
+ 4TGW4LfPQCtFHr_C61owAGI.jY2VHBZw108h.D6j5Ta8wOUQimwS8AJXDd6tP_TByS0z2wABBSEL
+ fePtwCciUGyxIOUC6ABunOq.gtf71bgh_x1mU0oM_SmReKGJqfyLmrZNlDT5s6FgUQEes_1APP4M
+ 4jFLEmLcQV7ZcPS.ffU8QBLjJr9IF02A1PXKg_NTD4rXv9lUfYgCUyUZRSF_IcRLoDZF3f58WgNt
+ C.14tDtvgRA4wbSC48fBBGzwPXOrCCI0_685DZzEaCXxuv7B.ZW7Q6XASMX0s1oRNlDDYhlXeftY
+ WhzjUECtas9N78FMjCq1YEJt5hMJBoLunxNGvqigZcwE7FJmInSwaAl7Dkd4vhDiI4xftfWIKvyK
+ AnXYxT09wzi1G.E8M2urAB.LrpSfYj5CymgaCZ4k09w5B6dIf9lhqwfiDD8xo6qdzM.z1gEgHR1y
+ _sg0a9L.V40Stk6jBY78K73f9CfI4Bdr0eZYP1cqg_NsHJDcbsNZD.V7NPLLI0m6IrsUXBiooyMh
+ g5TD6b51aMtRaHiTcvC4w72kXO0fThIEkDgLuS7oNkhye.o.cUhqzXAkZyuuZ_pJoG59uweZL9.w
+ 3QqCxIzpwXtcVG8Zu1t08gVJLwjcnZIyKW8UuvtnuitzR3xN3zOZlGNKszh_gpz8yNBeUsUFCNVl
+ psd17dZ2YMgx1QJRE957N5Ho3ZhNMV1vULMw61MLAEIMr_4TCZpUnox9X.7Lne4oUDBh7cmWWMYC
+ eT2ssDdb5Q6RNwfpZ0c4_O4AsjDiyaMmG2DdYLTi9Z1kp2E3s2j5XqClzZRbV7V3y5QnClHqmP6r
+ yVGSpqSiyG2Q26eOIqXQfs4y5QIj6vZDnhUzsmPt05efGvzJ6rFI4jsiV10JKV.jG5sHVRPOd6el
+ e396G5ljNC0l1Ulf7YMC4.1o3e58jH9DK0L9EA9zT_m_CWmVE6aWU6ee6N3Kjr13iZ70yT2_KSGo
+ ERpMiICInEknpNLNxOVl7noJbdcS_szQdySnY25pt.TtrsnBmOhbWP90ZlaYkgf3eWeCpExk0UFQ
+ GIAWv4TbBLzwquyYTWIW8ld2bHCSAR0_sWIigUb1GEc9iLyACFa4ko30ItjkBXKNftQ7njJKS_Y9
+ ._QAY87JQhlwV13NkGg5YmqJVzODAQAIVrMesTk3kqHaFmU2d5_fQAS3eTYSnyu8LS_iHZLglUPO
+ QaNegrli_IpDCM5TAvjMUBxbogqkpXBEm_uHpVnssgEqKUrbUx2fH3EHLYdrGow06WU4n6myY3TI
+ rHMCiEmtNzKIlC.wPCSa6FZUAs4I6FzQF2OVSvjOFFmXcTTP5s2yBIyghsfJH4SGJK9G9l0lPo0D
+ a2HbtjXrqsfQN.3qio_js47edEKYn8LutIWAnfpgo1atmj6e8IsWTpLe5Nx3LyguJ3qdIwIIJlwx
+ KVlQuQeuyXjw682_rrk5VKHX2mp_uwuc8JQTFYOU00tPoZMSogMyUU.FpAf0nyDShbPmgJTq2Gjp
+ oyH6sBYMjV8_FwovewPTZi2s9Jd0Ea0Yzk7pw7XS9fngBFidWD1VgKaKIkIaJoGWXQcHd8jqm2Vb
+ Zy37E2GHHjQt1gIKngWYcgTmE9i7OzD5ly5lur_0.kVsy4MxmXMhUAVbOnM5cX2uBYRtIwFScfcK
+ LFZU0SxVQgztKWa_gztNg1u0rj.6UYkLDM5qXnHXHAMD7tWlMElXsvU4YWnVBrxcwoN8ywSRoB2c
+ a1tI_SSJIonu.Ice5fBIpLisUjEG16hyJq4jXP5OOs2sJykpQeyxPJMHai8UZWaqPEBkWOC5e9s4
+ olfEDIHPkuiMiIdc0l4hhOY78ProtYDZTKuVJy2_6eWskizRDw7Oq4ItPhtl0jHyEy0D3XRYOFuW
+ VuKAD0DCdYLeK_UoQGPJAtl.WPfzCCWI_vNpuTJ65VhBlYh8nnJv3Rs.IzxFQVEeq9H5jl.dkJNz
+ 5fhDusXYJlqHOlT8o2Qpbws9PPClFZT2QoE_gOQQMSSGI574ZE1nra70rd7z4miSJou5e17Lu8vz
+ HozBFpKtHdfigmdvpNHhV0.2XOj4hLbMjb946nFLhcc87AV4bxxJcWTxbsMd7rFG1uJKHDCAajyV
+ YU8c5S3YGJJjm8t2Sk_Q-
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: beddc269-80cf-4b6a-a520-8a4560205c07
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.ne1.yahoo.com with HTTP; Fri, 21 Feb 2025 15:59:04 +0000
+Received: by hermes--production-gq1-5dd4b47f46-wrqn7 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID a4bd0c1f9e26f822d065f56915198d14;
+          Fri, 21 Feb 2025 15:59:01 +0000 (UTC)
+Message-ID: <d5fa8ace-8bc4-4261-bf34-c32e7c948bb8@schaufler-ca.com>
+Date: Fri, 21 Feb 2025 07:59:00 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: QCsQPTOODc6JC0-pUekND63em9iiktCZ
-X-Proofpoint-GUID: QCsQPTOODc6JC0-pUekND63em9iiktCZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-21_05,2025-02-20_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 clxscore=1015
- spamscore=0 lowpriorityscore=0 adultscore=0 phishscore=0 mlxscore=0
- impostorscore=0 priorityscore=1501 suspectscore=0 bulkscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502210111
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+To: Paul Moore <paul@paul-moore.com>,
+ Stephen Smalley <stephen.smalley.work@gmail.com>,
+ LSM List <linux-security-module@vger.kernel.org>
+Cc: Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+ Casey Schaufler <casey@schaufler-ca.com>
+Subject: [PATCH] lsm,nfs: fix NFS4 memory leak of lsm_context
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+References: <d5fa8ace-8bc4-4261-bf34-c32e7c948bb8.ref@schaufler-ca.com>
+X-Mailer: WebService/1.1.23369 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Tue, 2025-02-18 at 14:54 -0800, steven chen wrote:
-> kexec_calculate_store_digests() calculates and stores the digest of the
-> segment at kexec_file_load syscall where the IMA segment is also
-> allocated.=C2=A0 With this series, the IMA segment will be updated with t=
-he
-> measurement log at kexec execute stage when soft reboot is initiated.=20
-> Therefore, it may fail digest verification in verify_sha256_digest()=20
-> after kexec soft reboot into the new kernel. Therefore, the digest=20
-> calculation/verification of the IMA segment needs to be skipped.
->=20
-> Skip the calculating and storing digest of the IMA segment in
-> kexec_calculate_store_digests() so that it is not added to the
-> 'purgatory_sha_regions'.
->=20
-> Since verify_sha256_digest() only verifies 'purgatory_sha_regions',
-> no change is needed in verify_sha256_digest() in this context.
->=20
-> With this change, the IMA segment is not included in the digest
-> calculation, storage, and verification.
+The NFS4 security label code does not support multiple labels, and
+is intentionally unaware of which LSM is providing them. It is also
+the case that currently only one LSM that use security contexts is
+permitted to be active, as enforced by LSM_FLAG_EXCLUSIVE. Any LSM
+that receives a release_secctx that is not explicitly designated as
+for another LSM can safely carry out the release process. The NFS4
+code identifies the lsm_context as LSM_ID_UNDEF, so allowing the
+called LSM to perform the release is safe. Additional sophistication
+will be required when context using LSMs are allowed to be used
+together.
 
-Basically you're saying because the hash verification will fail, don't incl=
-ude
-the IMA buffer.  What's missing is the reason for not caring whether the IM=
-A
-hash is included or not.
+Fixes: b530104f50e8 ("lsm: lsm_context in security_dentry_init_security")
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+---
+ security/apparmor/secid.c | 2 +-
+ security/selinux/hooks.c  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-I understand this is the best we can do without making some major kexec cha=
-nges.
-
->=20
-> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-> Signed-off-by: steven chen <chenste@linux.microsoft.com>
-> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-
-After updating the patch description,
-
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-
-> ---
-> =C2=A0include/linux/kexec.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 3 +++
-> =C2=A0kernel/kexec_file.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 22 ++++++++++++++++++++++
-> =C2=A0security/integrity/ima/ima_kexec.c |=C2=A0 3 +++
-> =C2=A03 files changed, 28 insertions(+)
->=20
-> diff --git a/include/linux/kexec.h b/include/linux/kexec.h
-> index 4dbf806bccef..bd554ced9fb2 100644
-> --- a/include/linux/kexec.h
-> +++ b/include/linux/kexec.h
-> @@ -362,6 +362,9 @@ struct kimage {
-> =C2=A0
-> =C2=A0	phys_addr_t ima_buffer_addr;
-> =C2=A0	size_t ima_buffer_size;
-> +
-> +	unsigned long ima_segment_index;
-> +	bool is_ima_segment_index_set;
-> =C2=A0#endif
-> =C2=A0
-> =C2=A0	/* Core ELF header buffer */
-> diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-> index 3eedb8c226ad..606132253c79 100644
-> --- a/kernel/kexec_file.c
-> +++ b/kernel/kexec_file.c
-> @@ -38,6 +38,21 @@ void set_kexec_sig_enforced(void)
-> =C2=A0}
-> =C2=A0#endif
-> =C2=A0
-> +#ifdef CONFIG_IMA_KEXEC
-> +static bool check_ima_segment_index(struct kimage *image, int i)
-> +{
-> +	if (image->is_ima_segment_index_set && i =3D=3D image->ima_segment_inde=
-x)
-> +		return true;
-> +	else
-> +		return false;
-> +}
-> +#else
-> +static bool check_ima_segment_index(struct kimage *image, int i)
-> +{
-> +	return false;
-> +}
-> +#endif
-> +
-> =C2=A0static int kexec_calculate_store_digests(struct kimage *image);
-> =C2=A0
-> =C2=A0/* Maximum size in bytes for kernel/initrd files. */
-> @@ -764,6 +779,13 @@ static int kexec_calculate_store_digests(struct kima=
-ge
-> *image)
-> =C2=A0		if (ksegment->kbuf =3D=3D pi->purgatory_buf)
-> =C2=A0			continue;
-> =C2=A0
-> +		/*
-> +		 * Skip the segment if ima_segment_index is set and matches
-> +		 * the current index
-> +		 */
-> +		if (check_ima_segment_index(image, i))
-> +			continue;
-> +
-> =C2=A0		ret =3D crypto_shash_update(desc, ksegment->kbuf,
-> =C2=A0					=C2=A0 ksegment->bufsz);
-> =C2=A0		if (ret)
-> diff --git a/security/integrity/ima/ima_kexec.c
-> b/security/integrity/ima/ima_kexec.c
-> index 89088f1fa989..704676fa6615 100644
-> --- a/security/integrity/ima/ima_kexec.c
-> +++ b/security/integrity/ima/ima_kexec.c
-> @@ -160,6 +160,7 @@ void ima_add_kexec_buffer(struct kimage *image)
-> =C2=A0	kbuf.buffer =3D kexec_buffer;
-> =C2=A0	kbuf.bufsz =3D kexec_buffer_size;
-> =C2=A0	kbuf.memsz =3D kexec_segment_size;
-> +	image->is_ima_segment_index_set =3D false;
-> =C2=A0	ret =3D kexec_add_buffer(&kbuf);
-> =C2=A0	if (ret) {
-> =C2=A0		pr_err("Error passing over kexec measurement buffer.\n");
-> @@ -170,6 +171,8 @@ void ima_add_kexec_buffer(struct kimage *image)
-> =C2=A0	image->ima_buffer_addr =3D kbuf.mem;
-> =C2=A0	image->ima_buffer_size =3D kexec_segment_size;
-> =C2=A0	image->ima_buffer =3D kexec_buffer;
-> +	image->ima_segment_index =3D image->nr_segments - 1;
-> +	image->is_ima_segment_index_set =3D true;
-> =C2=A0
-> =C2=A0	/*
-> =C2=A0	 * kexec owns kexec_buffer after kexec_add_buffer() is called
+diff --git a/security/apparmor/secid.c b/security/apparmor/secid.c
+index 28caf66b9033..db484c214cda 100644
+--- a/security/apparmor/secid.c
++++ b/security/apparmor/secid.c
+@@ -108,7 +108,7 @@ int apparmor_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid)
+ 
+ void apparmor_release_secctx(struct lsm_context *cp)
+ {
+-	if (cp->id == LSM_ID_APPARMOR) {
++	if (cp->id == LSM_ID_APPARMOR || cp->id == LSM_ID_UNDEF) {
+ 		kfree(cp->context);
+ 		cp->context = NULL;
+ 		cp->id = LSM_ID_UNDEF;
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 7b867dfec88b..b89d3438b3df 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -6673,7 +6673,7 @@ static int selinux_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid)
+ 
+ static void selinux_release_secctx(struct lsm_context *cp)
+ {
+-	if (cp->id == LSM_ID_SELINUX) {
++	if (cp->id == LSM_ID_SELINUX || cp->id == LSM_ID_UNDEF) {
+ 		kfree(cp->context);
+ 		cp->context = NULL;
+ 		cp->id = LSM_ID_UNDEF;
 
