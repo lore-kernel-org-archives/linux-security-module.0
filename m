@@ -1,139 +1,101 @@
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3176E1EE028;
-	Fri, 21 Feb 2025 20:55:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA870253F3F;
+	Fri, 21 Feb 2025 21:03:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740171355; cv=none; b=bx5sIxWZav5/piICDF4CoNKxm56g3eddQUXGJ/UqRWd7uUKQrAWRL0XhNZH9MU2cQIf+gmnfj4PORkKw1YRvq2IKu4BTAl3CTz6EyYC0ut8NQDyrDjlDBSRoCK6+eTjHrQwLmEafDI2DTaHFP+6Tnvy5GpU6rE6c0SJwOWe1E3U=
+	t=1740171782; cv=none; b=Xaj0doQFZNrvqOXGNYnM/OjcjmKeZ2AkeMnt8vsK/Q1qJzj52W8MhXv2GPNiFh2V1mKX44B4Adh7zvLxzcaOv5oevmjVJqQ4uljq+m+4UV0R4J7e9l4lBt52l9czCTkjpKZlOWiOlOGagaXcpjvgAzedUToInqi4GZxUwfYUgOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740171355; c=relaxed/simple;
-	bh=37WpLW3oAzfgtH8aj+4lVOFw/YVOpIINjRGUzhY4sHM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uPEWITOcI+P4X+ZWdq4LmzSUvu71MoqOlWEh+cKighqw6zxQweQzsSxCqvMLa006t8YcWVAiZrqzTDMjKkoF05xO9tC99DKvbzxSspabLfZzNOShJwqzkvLp964p9H3mvU8K7EBsC9bkTl+T8ckR2XaZbHnCN2R8IBWq2Loumic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dQSxg1V1; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1740171782; c=relaxed/simple;
+	bh=gXRIoaHEb4ahhX4SMbS7XTFTss9UrOqAcMI194HS5K8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=N5gxAgFXkBe/H4rg3/KUrd02ErqRyk2CwQJ6cGdcebcEzlPC6cwr09dHYi7afWSUrBnSTTTqyR5o6mA5G95IW3+UXaVQqDoUenYErhnzoBNhfFcvDEBaRNt+x/GanprlHuJUd5GhvRjCCeQ2e9/c5FR5ecMwoAxQgzftmh3gJfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=QrZAWW+W; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dQSxg1V1"
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2fc3027c7aeso5188353a91.0;
-        Fri, 21 Feb 2025 12:55:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740171353; x=1740776153; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=90i7bzYrYHAptL72LiQEPDIHG0tWzBixtnIqNxFuxWE=;
-        b=dQSxg1V18cKv+18DQG6p5dWCk/zVzFUHJk9LkXHDRI/fFDt7Ij0GnXnN4oIX4Q8y8j
-         KXfZ13v2rCPn/u9MZmYPhKEU7OjvUifL936tnAY9omxT3novv01dX1xo7RmQtrGB9spx
-         q+42BoE/PNFrAGabDwJgyUC59aschjYGiy+KrV1s1gBMzUtdBpkiphZtHolwa/1UaUr3
-         xo9I6ZRpT5RUpamAQ6edBfwNKd5KXHa59hdyisOWRmNri2CIm2rPokQCvmBwnkIfNu93
-         aNxptnV/dPMcGgXfq2nZGM2ce9nX0rHoThNvkd/P+13C3YaHW5XyHTpsxMlv4hkRv+az
-         dKwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740171353; x=1740776153;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=90i7bzYrYHAptL72LiQEPDIHG0tWzBixtnIqNxFuxWE=;
-        b=gQHVI9NuM+G9jdQWzc1M2v6GSQV7UMFR1RPwZdN1ITanN205oyT0X75XB0nPYd0uHa
-         rjoUlf4zDrAsDORX754v8Jk+2QXjGk8oF0OrDuqkVvMsKjyNPT6HEZrshCU1r7UAIZaD
-         fXVifLVONpLGxiwnBGx+Pp8bzyvknLXnF4B4Ko7fCGHzzdMxvQzsftBOPOxOsyQMcs0U
-         3h9ii5aND4C3hHXLd/zQkjJ3jN6/0eEIjWM/dak9KxTzm5pTdgGPejLJlUeLhbyoXzIX
-         AlHwkIwwbech3QDa7865j3Kqic5LQvLx3suwXTCSPt4jLf8KERTMFquXgMs+yYVFKuIe
-         4iXg==
-X-Forwarded-Encrypted: i=1; AJvYcCV6ENalwmiAHMPGXnEGIU2PPN2r+cTvHE7l5T7FVl9IJKGMaX37haImve+MQTlNdcDHRXlTkyc3wWA=@vger.kernel.org, AJvYcCWsudrb/COLIrAxa/Y+7N5RQvNcVhokmf8Fwm2evs6VVMdppCkVXi1yojQCSJ1d5aA3yKqhTkUdDkAT/CBHxB1SeqAwkjqC@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywg/tORraixr5hV5m7hQL2Gc8meKukQPY5qcL3Ig+H0DEQ8GhF3
-	T7xzCdIMoRaoDH42oI4X1lKlp1xpmVJzRGvLsUNH61y5rmAJU4fjqGibd8IjCIrGuXUghkdQZX3
-	Yu3SNlq79+A2E6+cJhjfB6XjNQIA=
-X-Gm-Gg: ASbGncu7Ip5m574ru9HyQDiQva5/tTPN0KgEzEINKgzT8y2+3Nw9x9GhbbpF54uHmdq
-	aKrRYXG/H9hEboQLLIkj6llOsebOugH2eBy0PWkQLxL0wlByt1tLh/yHbQp+1/SOy4VI8kT0otM
-	eZonHltx4=
-X-Google-Smtp-Source: AGHT+IGNIlRlpRHWNL8F9GOOYjAkfMxbXL8fbNAki6RBGtVYOc0rxXte51IyL/u0p7/yEV/282i8d2TqXRYOIVxho7k=
-X-Received: by 2002:a17:90b:1b05:b0:2ea:9ccb:d1f4 with SMTP id
- 98e67ed59e1d1-2fce85982bemr8375627a91.0.1740171353331; Fri, 21 Feb 2025
- 12:55:53 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="QrZAWW+W"
+Received: from [10.17.64.59] (unknown [131.107.8.59])
+	by linux.microsoft.com (Postfix) with ESMTPSA id C3AD82053679;
+	Fri, 21 Feb 2025 13:02:59 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C3AD82053679
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1740171780;
+	bh=q7qimWw3fn4gbEHfpk5d5zJg4X5BJznDEs8fnMd9NWU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=QrZAWW+WlDUN2t1FYwRI+vhXC2SlIyYK0t/b7MF+3kKSdrBoY839/T9e5D3+y+wt+
+	 Auc5gw+nuGbrsM87S9flV4lof9nA4Jb12ZAXHw4GPNRL6ojr1RWSxkWnR+F6RF42Sg
+	 fnKvsKqbpJxDGL+KAz1FClIfYEGipGIyQGoWAXmI=
+Message-ID: <0e82335b-ef66-46bf-a0b8-211e20fff77a@linux.microsoft.com>
+Date: Fri, 21 Feb 2025 13:02:58 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <d5fa8ace-8bc4-4261-bf34-c32e7c948bb8.ref@schaufler-ca.com>
- <d5fa8ace-8bc4-4261-bf34-c32e7c948bb8@schaufler-ca.com> <CAEjxPJ6SnFnp773P-OP9VDjgs-D7XOC9Ygfk_MexKs9UdX73dw@mail.gmail.com>
-In-Reply-To: <CAEjxPJ6SnFnp773P-OP9VDjgs-D7XOC9Ygfk_MexKs9UdX73dw@mail.gmail.com>
-From: Stephen Smalley <stephen.smalley.work@gmail.com>
-Date: Fri, 21 Feb 2025 15:55:42 -0500
-X-Gm-Features: AWEUYZmPGLqQfR_wMrabUL3s9rkuy1s1nurw4SnvBxnZQxesL2yyDsPvqB0ZVx4
-Message-ID: <CAEjxPJ50YbWXB1DV65U-vFW-5mVkjwFjXQcEbULW3m3ZE3AM6g@mail.gmail.com>
-Subject: Re: [PATCH] lsm,nfs: fix NFS4 memory leak of lsm_context
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Paul Moore <paul@paul-moore.com>, LSM List <linux-security-module@vger.kernel.org>, 
-	Linux NFS Mailing List <linux-nfs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 1/7] ima: define and call ima_alloc_kexec_file_buf
+To: Mimi Zohar <zohar@linux.ibm.com>,
+ James Bottomley <James.Bottomley@HansenPartnership.com>,
+ stefanb@linux.ibm.com, roberto.sassu@huaweicloud.com,
+ roberto.sassu@huawei.com, eric.snowberg@oracle.com, ebiederm@xmission.com,
+ paul@paul-moore.com, code@tyhicks.com, bauermann@kolabnow.com,
+ linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
+ linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com, bhe@redhat.com,
+ vgoyal@redhat.com, dyoung@redhat.com
+References: <20250218225502.747963-1-chenste@linux.microsoft.com>
+ <20250218225502.747963-2-chenste@linux.microsoft.com>
+ <8023fa50a84817cc911a117db9bd3757c34fddfb.camel@linux.ibm.com>
+ <58e70121aaee33679ac295847197c1e5511b2a81.camel@HansenPartnership.com>
+ <241e6b5336d1dcee751cb35554e507e552563a16.camel@linux.ibm.com>
+Content-Language: en-US
+From: steven chen <chenste@linux.microsoft.com>
+In-Reply-To: <241e6b5336d1dcee751cb35554e507e552563a16.camel@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Feb 21, 2025 at 12:49=E2=80=AFPM Stephen Smalley
-<stephen.smalley.work@gmail.com> wrote:
+On 2/20/2025 8:23 AM, Mimi Zohar wrote:
+> On Thu, 2025-02-20 at 10:04 -0500, James Bottomley wrote:
+>> On Thu, 2025-02-20 at 09:53 -0500, Mimi Zohar wrote:
+>>> On Tue, 2025-02-18 at 14:54 -0800, steven chen wrote:
+>> [...
+>>>> Author: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+>>> Steven, thank you again for picking up this patch set.
+>>>
+>>> As previously explained, there is no tag named "Author" in
+>>> https://www.kernel.org/doc/Documentation/process/submitting-patches.rst
+>>> .  To give credit to the original author use "Co-developed-by".
+>> Just on this, only use the co-developed-by if you actually *modified*
+>> the patch.  If you're just transmitting the patch unmodified you can
+>> give original author credit by including a
+>>
+>> From: original author <email>
+>>
+>> Followed by a blank line at the beginning of the email.  That makes the
+>> git author field contan whatever the From: line says.  You still need a
+>> signoff from yourself in the original patch because you transmitted it.
+>>
+>> Some people also consider minor modifications to be insufficient to
+>> disturb the original copyright ownership and simply document what they
+>> did in square brackets under their signoff, like this:
+>>
+>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=b5d1e6ee761a109400e97ac6a1b91c57d0f6a43a
+> Originally I had said:
 >
-> On Fri, Feb 21, 2025 at 10:59=E2=80=AFAM Casey Schaufler <casey@schaufler=
--ca.com> wrote:
-> >
-> > The NFS4 security label code does not support multiple labels, and
-> > is intentionally unaware of which LSM is providing them. It is also
-> > the case that currently only one LSM that use security contexts is
-> > permitted to be active, as enforced by LSM_FLAG_EXCLUSIVE. Any LSM
-> > that receives a release_secctx that is not explicitly designated as
-> > for another LSM can safely carry out the release process. The NFS4
-> > code identifies the lsm_context as LSM_ID_UNDEF, so allowing the
-> > called LSM to perform the release is safe. Additional sophistication
-> > will be required when context using LSMs are allowed to be used
-> > together.
+>     > Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+>     > Signed-off-by: steven chen <chenste@linux.microsoft.com>
 >
-> Shrug. This seems less safe to me but I will give it a try with
-> SELinux labeled NFS tests.
+>     Before the "Co-developed-by" tag was defined, it was implied simply by this ordering
+>     of the "Signed-off-by" tags.
+>     
+>     For those patches you didn't modify, simply import Tushar's patch with him as the
+>     author and add your Signed-off-by tag after his.
+>
+> Thanks, James, for the explanation of using "From: original author <email>" to force the
+> author to be Tushar.
+>
+> Mimi
 
-My kernel with this patch seems to be crashing during the NFS tests
-but not 100% sure yet if it is your patch's fault or something else.
+Thanks, I will update in next version.
 
->
-> >
-> > Fixes: b530104f50e8 ("lsm: lsm_context in security_dentry_init_security=
-")
-> > Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> > ---
-> >  security/apparmor/secid.c | 2 +-
-> >  security/selinux/hooks.c  | 2 +-
-> >  2 files changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/security/apparmor/secid.c b/security/apparmor/secid.c
-> > index 28caf66b9033..db484c214cda 100644
-> > --- a/security/apparmor/secid.c
-> > +++ b/security/apparmor/secid.c
-> > @@ -108,7 +108,7 @@ int apparmor_secctx_to_secid(const char *secdata, u=
-32 seclen, u32 *secid)
-> >
-> >  void apparmor_release_secctx(struct lsm_context *cp)
-> >  {
-> > -       if (cp->id =3D=3D LSM_ID_APPARMOR) {
-> > +       if (cp->id =3D=3D LSM_ID_APPARMOR || cp->id =3D=3D LSM_ID_UNDEF=
-) {
-> >                 kfree(cp->context);
-> >                 cp->context =3D NULL;
-> >                 cp->id =3D LSM_ID_UNDEF;
-> > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> > index 7b867dfec88b..b89d3438b3df 100644
-> > --- a/security/selinux/hooks.c
-> > +++ b/security/selinux/hooks.c
-> > @@ -6673,7 +6673,7 @@ static int selinux_secctx_to_secid(const char *se=
-cdata, u32 seclen, u32 *secid)
-> >
-> >  static void selinux_release_secctx(struct lsm_context *cp)
-> >  {
-> > -       if (cp->id =3D=3D LSM_ID_SELINUX) {
-> > +       if (cp->id =3D=3D LSM_ID_SELINUX || cp->id =3D=3D LSM_ID_UNDEF)=
- {
-> >                 kfree(cp->context);
-> >                 cp->context =3D NULL;
-> >                 cp->id =3D LSM_ID_UNDEF;
-> >
