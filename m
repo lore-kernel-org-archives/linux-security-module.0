@@ -1,230 +1,329 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 337631D7E50;
-	Fri, 21 Feb 2025 19:07:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A3332512F1
+	for <linux-security-module@vger.kernel.org>; Fri, 21 Feb 2025 19:10:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740164862; cv=none; b=nFdqY3AF0SpCBsZq+a7IQE3JLWGzZaCB/zol+Ubsx2kmoO4x9ZwX5ezRQDEH9cE6g0d+XBCFqiqyxneiyBPHJvzjqIBqOr5lZFr5RtG5dGp4zRY6uszD0zJ7xaLmXbgR2U3zOprVZetlBPjVLGxdFPjAt8DfnUKIbPMXsSPFfiQ=
+	t=1740165051; cv=none; b=jVerzyJUKtvpoaYJrHRZv+g9XIc27A2qlMpBsBlwsGSf0L3JZ/fFL0CFZKkaKfbUkGWLb5sA6y6ow6X9TBSLm4PuX9l/XnShbEY02g+PnKw35bTR33dXkZFi7YBuTjjAWMVwYNKbpDPxmwftEqA3Jn8Q7QYnpIqf71tfZRBonSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740164862; c=relaxed/simple;
-	bh=DbrqP0BacaSAXAnoX53ZZJOcVs7BxL29Huazrq9X37k=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=CGtRhdd/lSi/SDvihhYFWgq686oe5FKc4NH1t/f4ehIYWvxCFcEo2HZ1LDwbjay/HplVZoiFPxGGICOBXhH/Ehsvu3JGMR3xkjW0j9H9Fme60LAp2+0Gt6rSvKwwyAuCoOPgFbSHDzkbOK6xccYdx1p1e/+FQIOV1Us76XPU3Y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Qj+db7xu; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1740165051; c=relaxed/simple;
+	bh=yI3dmhSyYiDSIMoxMJSTIeV5baV544HSR0i+ct4QndM=;
+	h=From:Message-Id:Content-Type:Mime-Version:Subject:Date:
+	 In-Reply-To:Cc:To:References; b=bQ3eRqOVwl9Nv27I3GA03V/nIt4w6L6W4Oy64BiiiYcyHWUfRDVf9aleE7EOG9LKju7THH8xUuM9hHq8P5PE5DFxQabKqpZeurJNVrQZFNWxtT6pMJnJ24uJorKqOM27JIxnpoZ5Gbgum6J3fkrpgxjF/P0NTJDKdIq5pzPk+nI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dilger.ca; spf=pass smtp.mailfrom=dilger.ca; dkim=pass (2048-bit key) header.d=dilger-ca.20230601.gappssmtp.com header.i=@dilger-ca.20230601.gappssmtp.com header.b=n0MEAhqx; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dilger.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dilger.ca
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Qj+db7xu"
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51LIMe4x031829;
-	Fri, 21 Feb 2025 19:07:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=heDO+g
-	AI4iMzWupr9MuQuH5tFKokm/yoJasfRTU3cp0=; b=Qj+db7xuvQd+nLbmOaiux2
-	t+dRcrAR5dmeYNxeHzpBkasiuD429gJdAjnZDSxHONM9ufyDtezX5oGPoWAtvtOf
-	ODXcoEubCilZiTOwHVyLuyW/4I1TcywKpvsk9S3Gr9O3UtvUOiku5JWNAkxhBbhn
-	nQIazWPTtCUMDzxxV9BAb3EZZYrN7giiqGkzy0vOAiwsqzjbSg5TTHuc4mgkh18D
-	0x6tPCQliBF4xyVQKSAcPdd92tbI5m9jkeNO5Xr7In9Gd0IO6ZbIkMotkpL9uoVB
-	Hbm0DJIEXtsKbo9B+zqK/Wy7eWKlCqeMH9P/KzLvza6FaH657PpkisP2ZvKdJ6uQ
-	==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44xgb0ck69-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Feb 2025 19:07:14 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51LIkAsL002433;
-	Fri, 21 Feb 2025 19:07:13 GMT
-Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 44w03xhnkn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Feb 2025 19:07:13 +0000
-Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
-	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51LJ7DoQ32244352
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 21 Feb 2025 19:07:13 GMT
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 39CA158052;
-	Fri, 21 Feb 2025 19:07:13 +0000 (GMT)
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1634658065;
-	Fri, 21 Feb 2025 19:07:12 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.108.12])
-	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 21 Feb 2025 19:07:12 +0000 (GMT)
-Message-ID: <36f8cb5131c51f784fa6e7a062b6318b30c9cc28.camel@linux.ibm.com>
-Subject: Re: [PATCH v8 4/7] ima: kexec: define functions to copy IMA log at
- soft boot
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: steven chen <chenste@linux.microsoft.com>, stefanb@linux.ibm.com,
-        roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
-        eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
-        code@tyhicks.com, bauermann@kolabnow.com,
-        linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
-        James.Bottomley@HansenPartnership.com, bhe@redhat.com,
-        vgoyal@redhat.com, dyoung@redhat.com
-Date: Fri, 21 Feb 2025 14:07:11 -0500
-In-Reply-To: <20250218225502.747963-5-chenste@linux.microsoft.com>
-References: <20250218225502.747963-1-chenste@linux.microsoft.com>
-	 <20250218225502.747963-5-chenste@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	dkim=pass (2048-bit key) header.d=dilger-ca.20230601.gappssmtp.com header.i=@dilger-ca.20230601.gappssmtp.com header.b="n0MEAhqx"
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-22101839807so52837265ad.3
+        for <linux-security-module@vger.kernel.org>; Fri, 21 Feb 2025 11:10:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dilger-ca.20230601.gappssmtp.com; s=20230601; t=1740165047; x=1740769847; darn=vger.kernel.org;
+        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=o8NE366pxsly7loJXwNdcaLiS4OyPKL0PK8UxThxSJc=;
+        b=n0MEAhqx2+hZ5bnEAkZLA1VCTkn4+8zG35idfs/IH1Ll4J4TpIgImdm5kSMQ7rq/gf
+         KPA3N2AA+snJ2z24fFuMpVtJeMzHX+GlD+nB5O0bvxxJCWGbBQ4+RYlml1orW6p3OggR
+         CO9W41yFjNEB7Gw3GBV2bMR7QB+KD/Cr49Tq3al7Ahfagx5oRTlD6Cq+bctOZ4q4LTvl
+         mvG5kT/JGmagjCQ7KyOstYqhW5E35HM50MkAoBBRON0qRI/eR3ckko9tTSr80X46LeEf
+         ZXlbzdnlcdbxg0yRADs3sPRh2Hn8wbaMcM6my938xOLTqGqJ+W+otj0T4/8L8dSsidrB
+         TtEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740165047; x=1740769847;
+        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=o8NE366pxsly7loJXwNdcaLiS4OyPKL0PK8UxThxSJc=;
+        b=fd/S9SoTKVKg/Mwf46gK4p26XabFvLWZy1pT1pqITb9EkFi87W8N2wWTIKWbC/C3yr
+         q5AabYlh9LM2YbTTGvRt+/9hiN6gokwwSXer71kHkaqbHpc/OkDwjQxuU1vgpbTyOUP+
+         d8v0c5RNi9BbIwLG6wI8X0f/XXmeZU/BebxIc8PHc1FfPgM/OTPxadSmQiSv6zd0fSgm
+         7AWHTyMKEx53Spe3GPHLpUig8oFoDyaJ79VgHHXfbFeQ4nrr/tvYX9eFhn+YNfbpsmPj
+         sWnPa5NblX0dnhBWQPWnWNLGJOE8JkhFtJt1WNLLWqikafo3Ie94v8u+VEmlyoPN5840
+         RY5w==
+X-Forwarded-Encrypted: i=1; AJvYcCU3GKqFdNBotFpoX69G1dTmPfm1/+jf5kZ6Ei9b3c1HVRF3oBCA41EJjs9c9xeBQTRTOo4xA/K97qI0wKZm6EHkM4PY6Cc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylP87WnJroqCVtJoVycSTiw45vbjTh3ZRmo44Tr0NvHgqbIevo
+	+iKn/4sqhzEA6p+CyQ+Ckel+qu9RfHcLwxfcSJyOW9+PBPAAfN5klsLF1vlv/uI=
+X-Gm-Gg: ASbGncs47Hkka4tPc45Pf+2gz9OPQeNuQhEkF6ZfX3ylmpPQQVeIHR6qJYWw+3xwfx4
+	TJihNZ8XU/VfNGjVSQh1mQgBMjO7px+8CgVx6f7TR6EhUk7Yajv7cnUmF2P0OO4PO/2RsuBTL/g
+	Q4Igcj0gaT+OoCrFJwVMjUepnfKkdjkOqgxg+aHwk9XAjvXF3iXVuBogMH6xBB54kfGVc06GaJA
+	8lyKXpM2MYUBG104E0evKISCLJjhbSPAy4Qyo1nR/lZLtpd4V1B/cLAJ9yekgsb8fEAi2nh73C0
+	BM3woiw+1pwU9GVXz8q4GHGeUJ5JnlZWYry9dTsnypD7Vvl1+WrBBph4tDuNFfJFpeLmugXwU+4
+	=
+X-Google-Smtp-Source: AGHT+IGsm3cz8CMkWhqPkYHx4pUzXJeTLyxXX2E1Qoyi6Uk1q2t2thGJdA7X/AwDgfRGQ2QCuwoWdg==
+X-Received: by 2002:a05:6a20:8426:b0:1ee:6b16:983e with SMTP id adf61e73a8af0-1eef3c9ab1bmr8652308637.11.1740165047510;
+        Fri, 21 Feb 2025 11:10:47 -0800 (PST)
+Received: from cabot.adilger.int (S01068c763f81ca4b.cg.shawcable.net. [70.77.200.158])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-adb58618479sm12546754a12.33.2025.02.21.11.10.43
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 21 Feb 2025 11:10:46 -0800 (PST)
+From: Andreas Dilger <adilger@dilger.ca>
+Message-Id: <452C3BBF-0EF5-4B13-9D06-A94DF239EB03@dilger.ca>
+Content-Type: multipart/signed;
+ boundary="Apple-Mail=_D1D28E5B-2E34-4F06-A340-A87EB42CD305";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: tl1t-f3xrxoME_Ejbk6c9jgxYK4Zw_1d
-X-Proofpoint-ORIG-GUID: tl1t-f3xrxoME_Ejbk6c9jgxYK4Zw_1d
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-21_07,2025-02-20_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- malwarescore=0 clxscore=1015 lowpriorityscore=0 suspectscore=0
- impostorscore=0 priorityscore=1501 phishscore=0 adultscore=0 mlxscore=0
- bulkscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502210131
+Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
+Subject: Re: [PATCH v3] fs: introduce getfsxattrat and setfsxattrat syscalls
+Date: Fri, 21 Feb 2025 12:10:41 -0700
+In-Reply-To: <20250221181135.GW21808@frogsfrogsfrogs>
+Cc: Andrey Albershteyn <aalbersh@redhat.com>,
+ Richard Henderson <richard.henderson@linaro.org>,
+ Matt Turner <mattst88@gmail.com>,
+ Russell King <linux@armlinux.org.uk>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>,
+ Geert Uytterhoeven <geert@linux-m68k.org>,
+ Michal Simek <monstr@monstr.eu>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+ Helge Deller <deller@gmx.de>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>,
+ Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Naveen N Rao <naveen@kernel.org>,
+ Heiko Carstens <hca@linux.ibm.com>,
+ Vasily Gorbik <gor@linux.ibm.com>,
+ Alexander Gordeev <agordeev@linux.ibm.com>,
+ Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>,
+ Yoshinori Sato <ysato@users.sourceforge.jp>,
+ Rich Felker <dalias@libc.org>,
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ "David S. Miller" <davem@davemloft.net>,
+ Andreas Larsson <andreas@gaisler.com>,
+ Andy Lutomirski <luto@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ Chris Zankel <chris@zankel.net>,
+ Max Filippov <jcmvbkbc@gmail.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>,
+ Jan Kara <jack@suse.cz>,
+ =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ =?utf-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+ Arnd Bergmann <arnd@arndb.de>,
+ linux-alpha@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ linux-m68k@lists.linux-m68k.org,
+ linux-mips@vger.kernel.org,
+ linux-parisc@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org,
+ linux-s390@vger.kernel.org,
+ linux-sh@vger.kernel.org,
+ sparclinux@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org,
+ linux-security-module@vger.kernel.org,
+ linux-api@vger.kernel.org,
+ linux-arch@vger.kernel.org,
+ linux-xfs@vger.kernel.org
+To: "Darrick J. Wong" <djwong@kernel.org>
+References: <20250211-xattrat-syscall-v3-1-a07d15f898b2@kernel.org>
+ <20250221181135.GW21808@frogsfrogsfrogs>
+X-Mailer: Apple Mail (2.3273)
 
-On Tue, 2025-02-18 at 14:54 -0800, steven chen wrote:
-> IMA log is copied to the new Kernel during kexec 'load' using=20
-> ima_dump_measurement_list().=C2=A0 The log copy at kexec 'load' may resul=
-t in
-> loss of IMA measurements during kexec soft reboot.=C2=A0 It needs to be c=
-opied
-> over during kexec 'execute'.=C2=A0 Setup the needed infrastructure to mov=
-e the
-> IMA log copy from kexec 'load' to 'execute'.=20
+
+--Apple-Mail=_D1D28E5B-2E34-4F06-A340-A87EB42CD305
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=us-ascii
+
+On Feb 21, 2025, at 11:11 AM, Darrick J. Wong <djwong@kernel.org> wrote:
 >=20
-> Define a new IMA hook ima_update_kexec_buffer() as a stub function.
-> It will be used to call ima_dump_measurement_list() during kexec=20
-> 'execute'.=C2=A0=C2=A0=20
+> On Tue, Feb 11, 2025 at 06:22:47PM +0100, Andrey Albershteyn wrote:
+>> From: Andrey Albershteyn <aalbersh@redhat.com>
+>>=20
+>> Introduce getfsxattrat and setfsxattrat syscalls to manipulate inode
+>> extended attributes/flags. The syscalls take parent directory fd and
+>> path to the child together with struct fsxattr.
+>>=20
+>> This is an alternative to FS_IOC_FSSETXATTR ioctl with a difference
+>> that file don't need to be open as we can reference it with a path
+>> instead of fd. By having this we can manipulated inode extended
+>> attributes not only on regular files but also on special ones. This
+>> is not possible with FS_IOC_FSSETXATTR ioctl as with special files
+>> we can not call ioctl() directly on the filesystem inode using fd.
+>>=20
+>> This patch adds two new syscalls which allows userspace to get/set
+>> extended inode attributes on special files by using parent directory
+>> and a path - *at() like syscall.
+>>=20
+>> Also, as vfs_fileattr_set() is now will be called on special files
+>> too, let's forbid any other attributes except projid and nextents
+>> (symlink can have an extent).
+>>=20
+>> CC: linux-api@vger.kernel.org
+>> CC: linux-fsdevel@vger.kernel.org
+>> CC: linux-xfs@vger.kernel.org
+>> Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
+>> ---
+>> v1:
+>> =
+https://lore.kernel.org/linuxppc-dev/20250109174540.893098-1-aalbersh@kern=
+el.org/
+>>=20
+>> Previous discussion:
+>> =
+https://lore.kernel.org/linux-xfs/20240520164624.665269-2-aalbersh@redhat.=
+com/
+>>=20
+>> XFS has project quotas which could be attached to a directory. All
+>> new inodes in these directories inherit project ID set on parent
+>> directory.
+>>=20
+>> The project is created from userspace by opening and calling
+>> FS_IOC_FSSETXATTR on each inode. This is not possible for special
+>> files such as FIFO, SOCK, BLK etc. Therefore, some inodes are left
+>> with empty project ID. Those inodes then are not shown in the quota
+>> accounting but still exist in the directory. Moreover, in the case
+>> when special files are created in the directory with already
+>> existing project quota, these inode inherit extended attributes.
+>> This than leaves them with these attributes without the possibility
+>> to clear them out. This, in turn, prevents userspace from
+>> re-creating quota project on these existing files.
+>> ---
+>> Changes in v3:
+>> - Remove unnecessary "dfd is dir" check as it checked in =
+user_path_at()
+>> - Remove unnecessary "same filesystem" check
+>> - Use CLASS() instead of directly calling fdget/fdput
+>> - Link to v2: =
+https://lore.kernel.org/r/20250122-xattrat-syscall-v2-1-5b360d4fbcb2@kerne=
+l.org
+>> ---
+>> arch/alpha/kernel/syscalls/syscall.tbl      |  2 +
+>> arch/arm/tools/syscall.tbl                  |  2 +
+>> arch/arm64/tools/syscall_32.tbl             |  2 +
+>> arch/m68k/kernel/syscalls/syscall.tbl       |  2 +
+>> arch/microblaze/kernel/syscalls/syscall.tbl |  2 +
+>> arch/mips/kernel/syscalls/syscall_n32.tbl   |  2 +
+>> arch/mips/kernel/syscalls/syscall_n64.tbl   |  2 +
+>> arch/mips/kernel/syscalls/syscall_o32.tbl   |  2 +
+>> arch/parisc/kernel/syscalls/syscall.tbl     |  2 +
+>> arch/powerpc/kernel/syscalls/syscall.tbl    |  2 +
+>> arch/s390/kernel/syscalls/syscall.tbl       |  2 +
+>> arch/sh/kernel/syscalls/syscall.tbl         |  2 +
+>> arch/sparc/kernel/syscalls/syscall.tbl      |  2 +
+>> arch/x86/entry/syscalls/syscall_32.tbl      |  2 +
+>> arch/x86/entry/syscalls/syscall_64.tbl      |  2 +
+>> arch/xtensa/kernel/syscalls/syscall.tbl     |  2 +
+>> fs/inode.c                                  | 75 =
++++++++++++++++++++++++++++++
+>> fs/ioctl.c                                  | 16 +++++-
+>> include/linux/fileattr.h                    |  1 +
+>> include/linux/syscalls.h                    |  4 ++
+>> include/uapi/asm-generic/unistd.h           |  8 ++-
+>> 21 files changed, 133 insertions(+), 3 deletions(-)
+>>=20
 >=20
-> Implement ima_kexec_post_load() function to be invoked after the new=20
-> Kernel image has been loaded for kexec. ima_kexec_post_load() maps the=
-=20
-> IMA buffer to a segment in the newly loaded Kernel.=C2=A0 It also registe=
-rs=20
-> the reboot notifier_block to trigger ima_update_kexec_buffer() at=20
-> exec 'execute'.
+> <cut to the syscall definitions>
 >=20
-> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-> Signed-off-by: steven chen <chenste@linux.microsoft.com>
-> ---
-> =C2=A0include/linux/ima.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 3 ++
-> =C2=A0security/integrity/ima/ima_kexec.c | 46 +++++++++++++++++++++++++++=
-+++
-> =C2=A02 files changed, 49 insertions(+)
+>> diff --git a/fs/inode.c b/fs/inode.c
+>> index =
+6b4c77268fc0ecace4ac78a9ca777fbffc277f4a..b2dddd9db4fabaf67a6cbf541a86978b=
+290411ec 100644
+>> --- a/fs/inode.c
+>> +++ b/fs/inode.c
+>> @@ -23,6 +23,9 @@
+>> #include <linux/rw_hint.h>
+>> #include <linux/seq_file.h>
+>> #include <linux/debugfs.h>
+>> +#include <linux/syscalls.h>
+>> +#include <linux/fileattr.h>
+>> +#include <linux/namei.h>
+>> #include <trace/events/writeback.h>
+>> #define CREATE_TRACE_POINTS
+>> #include <trace/events/timestamp.h>
+>> @@ -2953,3 +2956,75 @@ umode_t mode_strip_sgid(struct mnt_idmap =
+*idmap,
+>> 	return mode & ~S_ISGID;
+>> }
+>> EXPORT_SYMBOL(mode_strip_sgid);
+>> +
+>> +SYSCALL_DEFINE4(getfsxattrat, int, dfd, const char __user *, =
+filename,
+>> +		struct fsxattr __user *, fsx, unsigned int, at_flags)
 >=20
-> diff --git a/include/linux/ima.h b/include/linux/ima.h
-> index 0bae61a15b60..8e29cb4e6a01 100644
-> --- a/include/linux/ima.h
-> +++ b/include/linux/ima.h
-> @@ -32,6 +32,9 @@ static inline void ima_appraise_parse_cmdline(void) {}
-> =C2=A0
-> =C2=A0#ifdef CONFIG_IMA_KEXEC
-> =C2=A0extern void ima_add_kexec_buffer(struct kimage *image);
-> +extern void ima_kexec_post_load(struct kimage *image);
-> +#else
-> +static inline void ima_kexec_post_load(struct kimage *image) {}
-> =C2=A0#endif
-> =C2=A0
-> =C2=A0#else
-> diff --git a/security/integrity/ima/ima_kexec.c
-> b/security/integrity/ima/ima_kexec.c
-> index 704676fa6615..0fa65f91414b 100644
-> --- a/security/integrity/ima/ima_kexec.c
-> +++ b/security/integrity/ima/ima_kexec.c
-> @@ -12,10 +12,14 @@
-> =C2=A0#include <linux/kexec.h>
-> =C2=A0#include <linux/of.h>
-> =C2=A0#include <linux/ima.h>
-> +#include <linux/reboot.h>
-> +#include <asm/page.h>
-> =C2=A0#include "ima.h"
-> =C2=A0
-> =C2=A0#ifdef CONFIG_IMA_KEXEC
-> =C2=A0static struct seq_file ima_kexec_file;
-> +static void *ima_kexec_buffer;
-> +static bool ima_kexec_update_registered;
-> =C2=A0
-> =C2=A0static void ima_reset_kexec_file(struct seq_file *sf)
-> =C2=A0{
-> @@ -183,6 +187,48 @@ void ima_add_kexec_buffer(struct kimage *image)
-> =C2=A0	kexec_dprintk("kexec measurement buffer for the loaded kernel at
-> 0x%lx.\n",
-> =C2=A0		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 kbuf.mem);
-> =C2=A0}
-> +
-> +/*
-> + * Called during kexec execute so that IMA can update the measurement li=
-st.
-> + */
-> +static int ima_update_kexec_buffer(struct notifier_block *self,
-> +				=C2=A0=C2=A0 unsigned long action, void *data)
-> +{
-> +	return NOTIFY_OK;
-> +}
-> +
-> +struct notifier_block update_buffer_nb =3D {
-> +	.notifier_call =3D ima_update_kexec_buffer,
-> +};
-> +
-> +/*
-> + * Create a mapping for the source pages that contain the IMA buffer
-> + * so we can update it later.
-> + */
+> Should the kernel require userspace to pass the size of the fsx =
+buffer?
+> That way we avoid needing to rev the interface when we decide to grow
+> the structure.
 
-Hi Steven,
+Definitely having some extensibility would be good, and there isn't much
+room left today.
 
-It does more than just that.  It also registers a second IMA reboot notifie=
-r.=20
-(Is a second reboot notifier really necessary?)  It seems that the
-ima_reboot_notifier() is executed after this one, otherwise the kexec_execu=
-te
-would be missing.  However, I'm not sure that is guaranteed.
+The struct size change would be handled automatically by the ioctl()
+interface, but not the new syscall interface.
 
-I'm wondering if this patch should be limited to saving the map segments.  =
-In
-any case, using the reboot notifier is relatively new and should at least b=
-e
-reflected here and in the patch description.
+Another option would be to use an xflags to indicate "larger struct"
+and then store the size after the end of the current struct.  It would
+also be possible to use one of the few remaining fields for this, but
+one is earmarked for the DOS flags and/or a bitmask of supported flags,
+and there isn't really any value to it until more fields are needed.
 
-thanks,
+ #define FS_XFLAG_LARGE_STRUCT 0x40000000
 
-Mimi
+ struct fsxattr {
+        __u32           fsx_xflags;     /* xflags field value (get/set) =
+*/
+        __u32           fsx_extsize;    /* extsize field value =
+(get/set)*/
+        __u32           fsx_nextents;   /* nextents field value (get)   =
+*/
+        __u32           fsx_projid;     /* project identifier (get/set) =
+*/
+        __u32           fsx_cowextsize; /* CoW extsize field value =
+(get/set)*/
+        unsigned char   fsx_pad[8];
+        __u32           fsx_fsxattr_size; /* struct size in bytes =
+(get/set) */
+        :
+        /* future fields */
+        :
+ };
 
-> +void ima_kexec_post_load(struct kimage *image)
-> +{
-> +	if (ima_kexec_buffer) {
-> +		kimage_unmap_segment(ima_kexec_buffer);
-> +		ima_kexec_buffer =3D NULL;
-> +	}
-> +
-> +	if (!image->ima_buffer_addr)
-> +		return;
-> +
-> +	ima_kexec_buffer =3D kimage_map_segment(image,
-> +					=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 image->ima_buffer_addr,
-> +					=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 image->ima_buffer_size);
-> +	if (!ima_kexec_buffer) {
-> +		pr_err("Could not map measurements buffer.\n");
-> +		return;
-> +	}
-> +
-> +	if (!ima_kexec_update_registered) {
-> +		register_reboot_notifier(&update_buffer_nb);
-> +		ima_kexec_update_registered =3D true;
-> +	}
-> +}
-> +
-> =C2=A0#endif /* IMA_KEXEC */
-> =C2=A0
-> =C2=A0/*
+Not su
 
+Cheers, Andreas
+
+
+
+
+
+
+--Apple-Mail=_D1D28E5B-2E34-4F06-A340-A87EB42CD305
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
+
+-----BEGIN PGP SIGNATURE-----
+Comment: GPGTools - http://gpgtools.org
+
+iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAme4z7EACgkQcqXauRfM
+H+DMlg//W/63bQNC/XI3qo1NyxMQFunTHhnYqVFQFStkBLA3/XOtyfbKmpsnlKLr
+jK9w1XjwDO8+0kQZ2F+7//daUt9DqS+ZUTe63OtpLcnnZmGkQW7GpCXa09oLRbXZ
+vkti5v1ki5colZRz0muZM7Hm3U304pO1xxzS8fCBm4jxUtL2AdCmSOo9UPEOdN7H
+Y1VK+ZF01cCCfjMXgudXQtIkMudjsaF6Va54vhHjtGz1ap1Y3VqbAkXV3i2emVYb
+bQflRMJ2q/P+HCDoqLQBWt9RTTPYCAipcMWjsibSZ8DpEKGrnVl9nRkUuXt+NfIz
+NDE9dlMnY6dZCW3zlMybiOoJRF+UABnZ62PIsmvRdI034873QgSmTC3JGu3iGxu4
+cZamq2anwU7zLjhKZRLocvFq3RrdWoe1Nm3YR0bX9mTr7T+X8bR2enN/PZjZ8ClO
+WXVVxnwwLmiCTUALx/1oBJXnal4mbGipMlydJshU6TNTpJK2lEFoi2kY5Tl8hP5J
+EewsY4UYyP9iAycLupBu1Z9pJrTCId94MJuHwZYT3snq9weo9+CKrx0rKWruzWAq
+PzjurjT13LOIBdDnsXSom6QhCEpswN1uxec3RwKsbexBcJCZZGVgjE6j8F37DjXi
+ETiuMxfdHDOZ26jidKARVcbJ4k1pN5198hUGf0/yfwBsJeRViBk=
+=oe2t
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_D1D28E5B-2E34-4F06-A340-A87EB42CD305--
