@@ -1,104 +1,162 @@
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 319E81FF7CC
-	for <linux-security-module@vger.kernel.org>; Fri, 21 Feb 2025 20:06:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 897B920DD63
+	for <linux-security-module@vger.kernel.org>; Fri, 21 Feb 2025 20:10:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740168402; cv=none; b=ICQDaPQXg/wZW5xyHqIGGDn0tCWh0KzqqMdN0KP56mkClt4z3Dc1oa0SeEFaHBpV3vdAOp91455uop0x9W3nCpK3WKnKlMVBDTamcYvm02O4jE7gi3YEPRJ44eAzELHNdGO/n5qIO3Th6VFdH4FWst5DzY5VzKn2PhikCcFo/xM=
+	t=1740168639; cv=none; b=nwEf/hqd4ejLrzu4ENMVzjMSoRKbGfIrDBSvY94tWv+cBBIQk2Av8YhX8kQHMeZxizKTLVbleFIQSn/ODrB16ciLLMe1ymycM+bz9mAehXjkKUaYSfr1VST7DtJKMm7pd9W4rH8C+T5iMNZng1KcN/ACRwrueRJKSSw8WnGjcqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740168402; c=relaxed/simple;
-	bh=9Z/mN2YSF6eh8sXWEhYPPWlb7NMi1cNsA4ai6y2hDz8=;
+	s=arc-20240116; t=1740168639; c=relaxed/simple;
+	bh=0rsFWbfgTiXpPgGhvo6Vd//Moya6c6WGDhf5n+zOyIw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TuY+Y84nMGC/fxuywinj99RS4x42uCfTzuyhc52Hw6/ebKMfid/9sOrW2iw5kXHdt3cnG5JeeLYHui/Qmdj/3qPo98Znsor6QXYQdfVMXE6OTRjuqajY4gLjP44xLrmGVHCiFZSLVLXssIn78BXnqaQivpyDcknPId+3GTXw4PY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=RkJrZFTe; arc=none smtp.client-ip=209.85.128.174
+	 To:Cc:Content-Type; b=rflmz6gehkpuqVMZy7OCv9rOCfxCEGp9FgCycvkakcT9KPjX6dPl4wbcDbXoXMNstVk3snv/gWLP83PGYCwze8tKh9WAMiEsybcwS6nlnZg/emZpLq7LoeO8TlQqjCTIhUJy1cKi9zrtHs7Z06C1hyQffclH8zySczfYz2+0kYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Qs/tNZAE; arc=none smtp.client-ip=209.85.128.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="RkJrZFTe"
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6fb8de54da9so15934807b3.3
-        for <linux-security-module@vger.kernel.org>; Fri, 21 Feb 2025 12:06:39 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Qs/tNZAE"
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6fbaa0582a6so25311367b3.1
+        for <linux-security-module@vger.kernel.org>; Fri, 21 Feb 2025 12:10:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1740168399; x=1740773199; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1740168636; x=1740773436; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PAkKzhCP2EY8GRlMH17ObQbxqg/W96HoszdnirU+/Jw=;
-        b=RkJrZFTeQB5lWwsfllhiTRJ/YNpRaL9xE1cby7AO/Relrlr8e1VPNzGXNCWXTibMlt
-         3X3u9LEdQbA6jzwp5o6R2vhMrERPr+CfPYsLv6OGRMehgmmlaTGBnicmw9Vr2fo2acQM
-         GwqKcpihjt3zuldjzr+YUOH85Z1WT99bJ7QFFun9pIrv7wpit4EnZDAIBrCkyrdwNdK5
-         B3M72707OcYnIBPy33p7OWcAsOuKKpGgea4vVCAYZ+XmmAjV0Nsw/cV+DJ4+dUQ74dAf
-         dZuuYXTQHm1L5QB4bCwy0Zi4tHrjS0RhlEgQvqj3zCkZvpJVNwDThEnyM/kzyHDzg4AP
-         Jldw==
+        bh=FaCf3Nlma4jhclSMBPLprOYEntDDJimnOy91mE59VbM=;
+        b=Qs/tNZAELsqHuQ7+DOuWIUa5E2F2cNm7wjrC3bBftcjEn8NoXIFKcXiwf6VAOIe3Fq
+         Lxuey9wekDZTb0w3IqyICX0+GnSJJemN9Rj1bi1An4V7FbdFzT6OWW/ZL37zwqeSpvRy
+         iQPz9aiqExWVgXnRsW7tXYH8tYXJ+/c1jhd8/fCn8KopSOkGoAXWDklHK9kA9AvSD5Ix
+         IY3q4FSRZvVfV4s7iB6NLPsi/F/lsFCZIJfXX9H1fC3tjcUM4kjpFNrFTw+0uLyLOeQP
+         6p9D2/mKlKy3VYTqVxBjDWJcdFCKrZPIGPKkRUFV8eH44A2pls1TAK9UXJI+vSTYY4fD
+         XyIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740168399; x=1740773199;
+        d=1e100.net; s=20230601; t=1740168636; x=1740773436;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PAkKzhCP2EY8GRlMH17ObQbxqg/W96HoszdnirU+/Jw=;
-        b=XN2/uNND9BIarsPCTQFbQsa2KWm0eiTUwMI8dhhkw3qiImdOUN9D0ykAp21lCfYrFO
-         qAoY2gSak/BaLkxU1qV9V6LGq2o9iNNIAfptC6ImGuQLdlWYV8ioAmWXE6nL5pF5gplT
-         337rYswfQshJcWkd54TjJPRzI4XzxVs/YF3Pz6Vf0uyf3PZEwKgdmCqxKiLzOSq1b7iz
-         L3X8Cf24IprvPHdQKSdvzkVyhmOSRQzaQUOpVfk6Bk4uIUd9AUwBV87yQ0HjL1gHKv0S
-         MrNrljwWiCwjhv20eyimjuTpOrJaa9NlpicgiklEkG2yWKrEx9B7NmZuzQKLtznoeCrr
-         5p1A==
-X-Forwarded-Encrypted: i=1; AJvYcCW215Ej0HvzxtLg+MIh2wXrgbXdFp0qsRhdUsjUgDuA6qqiqCCRYhunzD1UUuNXQ8dXkb98EIEFV6q2KlJTusgSnIkMLmA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPy6qz7paTr8LQGQW+VtuO2omvhOn+DXhBsP93hbtqv6bmFHqd
-	gAA/Q7eo4DMn1Rb1f/oHxUouHPY15xlD1HhBPbhGDtX/Wo5llJPF0QwYt1ytkcrihPVBvAlQKQV
-	UhG0f5Zj1bMmYnJQvUNfJegIhebTqaC8Bk0E5
-X-Gm-Gg: ASbGncvkinpQk+ZuWkZDw/iDo431XAhONKkb4gpklZqulE4Rqouk1uEPrjOmZO7vNxu
-	JFA8JH/CskCLuIKoUp2GjZp/hGcc51En+p3/nRF8rvvFkAuCprgdzQPVVQz9E0QeBDnaYU7Es/G
-	aFT1h9qPA=
-X-Google-Smtp-Source: AGHT+IH+bi1IQ67FGfvj6F36iu81ZfMYdTISAGG3tReWwtD8h4lwBO6Mc2ZXwk8ymaJD8f9gOn7AxN97v2x7wWA1TlE=
-X-Received: by 2002:a05:690c:6c05:b0:6f9:acb3:4434 with SMTP id
- 00721157ae682-6fbcc286578mr44334477b3.19.1740168399103; Fri, 21 Feb 2025
- 12:06:39 -0800 (PST)
+        bh=FaCf3Nlma4jhclSMBPLprOYEntDDJimnOy91mE59VbM=;
+        b=W1Np6Mk2a9r4SC8LJmcUZ1xWBzyD2U7e6tEzXp9FgtyPCaJ+q8j0TVCdJifCi2vSlh
+         cIX3Rp+QiZbKCkHJa9/8iSffAkxOgNYgqlZYlJyToMdeI2QW2dJEYkB9LG6fkPEz5wqU
+         6HhVkKLsYog4CnSgdR3lKTKkvaQw4LTmxTDy1ezkRlcPiYW3PLqgFbXxScTym/Tg79nW
+         8ePTnPc5b5Kwr/S2g1R5hU+DndTW8qI28zR7B+prDJ+fJAKjEktJ5HeMIMlPgDujLod3
+         Tzeze5y0kkiRQaOCj54BxnhU6g11Q0mXnAcsrkm9tRz8NfWANkjjuN3c/aOdwZynAAnA
+         E3zw==
+X-Gm-Message-State: AOJu0YxJG92xfy+cMSDF52HbkPEFDx0RkEJEFlkmhIuUyYo2p0IcIF2N
+	HsRE6dmWJnzWsgq+y6U1T1tK/os9geNbdPXJh0sC6FR4YzfPaz875GxJv89v20imnwu2M0r9XVk
+	TyDu09qIUOsXMqWoLT2MpqNY6ZnsrzHqfbgwr
+X-Gm-Gg: ASbGnctqSAl4gstTS6NMlQaLCE/c8TNumO1VQfbtWNRsqrxBqrmN4AbtsaeYoVD0ybv
+	+9EF1dOTmgozJymFDwprmCOySeeMoijii29NK9mPv/wL2wj/tpxgnF0M7jN0JW+9xNPhNzGxVCm
+	IsRjCsMPk=
+X-Google-Smtp-Source: AGHT+IGJ6WUSGWMlvQaaMBPornBmHZRLTtYmy+VqAG/63ZzTIy7EnyeaK4tR60QDpG/AdAkgnXUMxu4c+oIbQpmtkDE=
+X-Received: by 2002:a05:690c:6a0b:b0:6fb:5d74:959d with SMTP id
+ 00721157ae682-6fbb78e24b0mr86105137b3.1.1740168636452; Fri, 21 Feb 2025
+ 12:10:36 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <d5fa8ace-8bc4-4261-bf34-c32e7c948bb8.ref@schaufler-ca.com> <d5fa8ace-8bc4-4261-bf34-c32e7c948bb8@schaufler-ca.com>
-In-Reply-To: <d5fa8ace-8bc4-4261-bf34-c32e7c948bb8@schaufler-ca.com>
+References: <20250220192935.9014-2-stephen.smalley.work@gmail.com>
+In-Reply-To: <20250220192935.9014-2-stephen.smalley.work@gmail.com>
 From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 21 Feb 2025 15:06:28 -0500
-X-Gm-Features: AWEUYZkqEWxJ97T2jz81KFUtk_fM7bnmKZyBYz1-HDNB-UBQ9ufxy2B7oyLLnZg
-Message-ID: <CAHC9VhS-QHMz4Lza2WDXwt6sh6s03U+-12RcaPGJYVLBBprT7Q@mail.gmail.com>
-Subject: Re: [PATCH] lsm,nfs: fix NFS4 memory leak of lsm_context
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	LSM List <linux-security-module@vger.kernel.org>, 
-	Linux NFS Mailing List <linux-nfs@vger.kernel.org>
+Date: Fri, 21 Feb 2025 15:10:24 -0500
+X-Gm-Features: AWEUYZlovKsb92mRh54zinleno1McLdTKKAdDUJL3DfgkvZ0swMtLqj-gMAvJmQ
+Message-ID: <CAHC9VhTXzweNA+h37ZBMjymbuar32tmr4aa9Qphk8JM4ya+y0A@mail.gmail.com>
+Subject: Re: [PATCH] lsm,nfs: fix memory leak of lsm_context
+To: Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc: linux-security-module@vger.kernel.org, linux-nfs@vger.kernel.org, 
+	casey@schaufler-ca.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Feb 21, 2025 at 10:59=E2=80=AFAM Casey Schaufler <casey@schaufler-c=
-a.com> wrote:
+On Thu, Feb 20, 2025 at 2:30=E2=80=AFPM Stephen Smalley
+<stephen.smalley.work@gmail.com> wrote:
 >
-> The NFS4 security label code does not support multiple labels, and
-> is intentionally unaware of which LSM is providing them. It is also
-> the case that currently only one LSM that use security contexts is
-> permitted to be active, as enforced by LSM_FLAG_EXCLUSIVE. Any LSM
-> that receives a release_secctx that is not explicitly designated as
-> for another LSM can safely carry out the release process. The NFS4
-> code identifies the lsm_context as LSM_ID_UNDEF, so allowing the
-> called LSM to perform the release is safe. Additional sophistication
-> will be required when context using LSMs are allowed to be used
-> together.
+> commit b530104f50e8 ("lsm: lsm_context in security_dentry_init_security")
+> did not preserve the lsm id for subsequent release calls, which results
+> in a memory leak. Fix it by saving the lsm id in the nfs4_label and
+> providing it on the subsequent release call.
 >
 > Fixes: b530104f50e8 ("lsm: lsm_context in security_dentry_init_security")
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
 > ---
->  security/apparmor/secid.c | 2 +-
->  security/selinux/hooks.c  | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
+>  fs/nfs/nfs4proc.c    | 7 ++++---
+>  include/linux/nfs4.h | 1 +
+>  2 files changed, 5 insertions(+), 3 deletions(-)
 
-I'm sorry Casey, but Stephen's patch seems like a much better approach to m=
-e.
+Now that we've seen Casey's patch, I believe this patch is the better
+solution and we should get this up to Linus during the v6.14-rcX
+phase.  I've got one minor nitpick (below), but how would you like to
+handle this patch NFS folks?  I'm guessing you would prefer to pull
+this via the NFS tree, but if not let me know and I can pull it via
+the LSM tree (an ACK would be appreciated).
 
-https://lore.kernel.org/linux-security-module/20250220192935.9014-2-stephen=
-.smalley.work@gmail.com/
+Acked-by: Paul Moore <paul@paul-moore.com>
+
+> diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
+> index df9669d4ded7..c0caaec7bd20 100644
+> --- a/fs/nfs/nfs4proc.c
+> +++ b/fs/nfs/nfs4proc.c
+> @@ -133,6 +133,7 @@ nfs4_label_init_security(struct inode *dir, struct de=
+ntry *dentry,
+>         if (err)
+>                 return NULL;
+>
+> +       label->lsmid =3D shim.id;
+>         label->label =3D shim.context;
+>         label->len =3D shim.len;
+>         return label;
+> @@ -145,7 +146,7 @@ nfs4_label_release_security(struct nfs4_label *label)
+>         if (label) {
+>                 shim.context =3D label->label;
+>                 shim.len =3D label->len;
+> -               shim.id =3D LSM_ID_UNDEF;
+> +               shim.id =3D label->lsmid;
+>                 security_release_secctx(&shim);
+>         }
+>  }
+> @@ -6269,7 +6270,7 @@ static int _nfs4_get_security_label(struct inode *i=
+node, void *buf,
+>                                         size_t buflen)
+>  {
+>         struct nfs_server *server =3D NFS_SERVER(inode);
+> -       struct nfs4_label label =3D {0, 0, buflen, buf};
+> +       struct nfs4_label label =3D {0, 0, 0, buflen, buf};
+>
+>         u32 bitmask[3] =3D { 0, 0, FATTR4_WORD2_SECURITY_LABEL };
+>         struct nfs_fattr fattr =3D {
+> @@ -6374,7 +6375,7 @@ static int nfs4_do_set_security_label(struct inode =
+*inode,
+>  static int
+>  nfs4_set_security_label(struct inode *inode, const void *buf, size_t buf=
+len)
+>  {
+> -       struct nfs4_label ilabel =3D {0, 0, buflen, (char *)buf };
+> +       struct nfs4_label ilabel =3D {0, 0, 0, buflen, (char *)buf };
+>         struct nfs_fattr *fattr;
+>         int status;
+>
+> diff --git a/include/linux/nfs4.h b/include/linux/nfs4.h
+> index 71fbebfa43c7..9ac83ca88326 100644
+> --- a/include/linux/nfs4.h
+> +++ b/include/linux/nfs4.h
+> @@ -47,6 +47,7 @@ struct nfs4_acl {
+>  struct nfs4_label {
+>         uint32_t        lfs;
+>         uint32_t        pi;
+> +       u32             lsmid;
+
+I don't think this is a significant problem, but considering that
+lsm_context::id is an int, the lsmid field above should probably be an
+int too.
+
+>         u32             len;
+>         char    *label;
+>  };
+> --
+> 2.47.1
 
 --=20
 paul-moore.com
