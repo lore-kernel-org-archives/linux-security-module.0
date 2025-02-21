@@ -1,230 +1,104 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9DD91EEA56;
-	Fri, 21 Feb 2025 19:42:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 319E81FF7CC
+	for <linux-security-module@vger.kernel.org>; Fri, 21 Feb 2025 20:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740166930; cv=none; b=P6Zva/YceGTy+ijo0agV+PuaDm7nrXsQklbH+2O6xtRreKfOZm0kjK1n55sYPw95DkJKBKPudlCdjbAr+qjA6jgdg1greYWaFY7z9iWIprwZ7ZJ4HfDstUTsnlXXqIdFSf9FbtVvVGV2109tAeKpaPsRLqjQLM5uCx98UcDTGPc=
+	t=1740168402; cv=none; b=ICQDaPQXg/wZW5xyHqIGGDn0tCWh0KzqqMdN0KP56mkClt4z3Dc1oa0SeEFaHBpV3vdAOp91455uop0x9W3nCpK3WKnKlMVBDTamcYvm02O4jE7gi3YEPRJ44eAzELHNdGO/n5qIO3Th6VFdH4FWst5DzY5VzKn2PhikCcFo/xM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740166930; c=relaxed/simple;
-	bh=3jIMrZ1K/HmzHXeblxk0WPzMcv1riI+6h9rN/I7u09c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eDmBjBL2p4wobcoWcRyNvKvqMsrWf1t7Tds1IhF56fSUTUl4uVw2qt+4eRpzOgoTr2WbCsFtnMEy4oVY1LRSWiUKTDoR2U4EkHwKx7lGfhiQ3LDXNPPFBfassIbpNJDc61suLgrIXQGbbDxPXoZAxUE6I297ZoG1H2jmz6rmN0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=EuhPWIK+; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1740168402; c=relaxed/simple;
+	bh=9Z/mN2YSF6eh8sXWEhYPPWlb7NMi1cNsA4ai6y2hDz8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TuY+Y84nMGC/fxuywinj99RS4x42uCfTzuyhc52Hw6/ebKMfid/9sOrW2iw5kXHdt3cnG5JeeLYHui/Qmdj/3qPo98Znsor6QXYQdfVMXE6OTRjuqajY4gLjP44xLrmGVHCiFZSLVLXssIn78BXnqaQivpyDcknPId+3GTXw4PY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=RkJrZFTe; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="EuhPWIK+"
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51LIMekn031848;
-	Fri, 21 Feb 2025 19:41:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=HF5MBi
-	fEh3vVBQDmW+nUvwQ0TG99jUSuezKu0RmcCDg=; b=EuhPWIK+aRWGm8JeAIF68u
-	Ga0pUEP+D1ZGUTeYSOmPFFdSyIbLwlFW49PCWDjWH23QlGARJsxlU/xPEaXYO/p6
-	XMOC86eDsISmiE8+q9ZrSP646Mhh1NgRbzm5xFtU6eAzDJ2PmNdl99R6kRTEAnbK
-	Uqd4yGB57vmbCGw3coJ+A8GuBAs0yjH/7FCRGorcV5P8857E1czOO22FIA4vSIFC
-	fVGf6ZWbeuxm+gi4QxpR0q58HpNUrEL9x9FG8gFGWbkO3ouH0+sfLjV6HVf/pcRb
-	Q/jbGjMOPqlgGo3IzA0Z2XbuEgviCvwFFI3WU3nLbJ1l1rwvEfpVO4hVqn+7FOeg
-	==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 44xgb0cs46-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Feb 2025 19:41:44 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51LJ07Vr029303;
-	Fri, 21 Feb 2025 19:41:44 GMT
-Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44w024svk6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Feb 2025 19:41:44 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51LJfgsD30474992
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 21 Feb 2025 19:41:42 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 74DA65805D;
-	Fri, 21 Feb 2025 19:41:43 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 68A0758059;
-	Fri, 21 Feb 2025 19:41:42 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 21 Feb 2025 19:41:42 +0000 (GMT)
-Message-ID: <6caeab8b-5803-4905-a693-13c0154061fe@linux.ibm.com>
-Date: Fri, 21 Feb 2025 14:41:42 -0500
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="RkJrZFTe"
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6fb8de54da9so15934807b3.3
+        for <linux-security-module@vger.kernel.org>; Fri, 21 Feb 2025 12:06:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1740168399; x=1740773199; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PAkKzhCP2EY8GRlMH17ObQbxqg/W96HoszdnirU+/Jw=;
+        b=RkJrZFTeQB5lWwsfllhiTRJ/YNpRaL9xE1cby7AO/Relrlr8e1VPNzGXNCWXTibMlt
+         3X3u9LEdQbA6jzwp5o6R2vhMrERPr+CfPYsLv6OGRMehgmmlaTGBnicmw9Vr2fo2acQM
+         GwqKcpihjt3zuldjzr+YUOH85Z1WT99bJ7QFFun9pIrv7wpit4EnZDAIBrCkyrdwNdK5
+         B3M72707OcYnIBPy33p7OWcAsOuKKpGgea4vVCAYZ+XmmAjV0Nsw/cV+DJ4+dUQ74dAf
+         dZuuYXTQHm1L5QB4bCwy0Zi4tHrjS0RhlEgQvqj3zCkZvpJVNwDThEnyM/kzyHDzg4AP
+         Jldw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740168399; x=1740773199;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PAkKzhCP2EY8GRlMH17ObQbxqg/W96HoszdnirU+/Jw=;
+        b=XN2/uNND9BIarsPCTQFbQsa2KWm0eiTUwMI8dhhkw3qiImdOUN9D0ykAp21lCfYrFO
+         qAoY2gSak/BaLkxU1qV9V6LGq2o9iNNIAfptC6ImGuQLdlWYV8ioAmWXE6nL5pF5gplT
+         337rYswfQshJcWkd54TjJPRzI4XzxVs/YF3Pz6Vf0uyf3PZEwKgdmCqxKiLzOSq1b7iz
+         L3X8Cf24IprvPHdQKSdvzkVyhmOSRQzaQUOpVfk6Bk4uIUd9AUwBV87yQ0HjL1gHKv0S
+         MrNrljwWiCwjhv20eyimjuTpOrJaa9NlpicgiklEkG2yWKrEx9B7NmZuzQKLtznoeCrr
+         5p1A==
+X-Forwarded-Encrypted: i=1; AJvYcCW215Ej0HvzxtLg+MIh2wXrgbXdFp0qsRhdUsjUgDuA6qqiqCCRYhunzD1UUuNXQ8dXkb98EIEFV6q2KlJTusgSnIkMLmA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPy6qz7paTr8LQGQW+VtuO2omvhOn+DXhBsP93hbtqv6bmFHqd
+	gAA/Q7eo4DMn1Rb1f/oHxUouHPY15xlD1HhBPbhGDtX/Wo5llJPF0QwYt1ytkcrihPVBvAlQKQV
+	UhG0f5Zj1bMmYnJQvUNfJegIhebTqaC8Bk0E5
+X-Gm-Gg: ASbGncvkinpQk+ZuWkZDw/iDo431XAhONKkb4gpklZqulE4Rqouk1uEPrjOmZO7vNxu
+	JFA8JH/CskCLuIKoUp2GjZp/hGcc51En+p3/nRF8rvvFkAuCprgdzQPVVQz9E0QeBDnaYU7Es/G
+	aFT1h9qPA=
+X-Google-Smtp-Source: AGHT+IH+bi1IQ67FGfvj6F36iu81ZfMYdTISAGG3tReWwtD8h4lwBO6Mc2ZXwk8ymaJD8f9gOn7AxN97v2x7wWA1TlE=
+X-Received: by 2002:a05:690c:6c05:b0:6f9:acb3:4434 with SMTP id
+ 00721157ae682-6fbcc286578mr44334477b3.19.1740168399103; Fri, 21 Feb 2025
+ 12:06:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 4/7] ima: kexec: define functions to copy IMA log at
- soft boot
-To: Mimi Zohar <zohar@linux.ibm.com>,
-        steven chen <chenste@linux.microsoft.com>,
-        roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
-        eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
-        code@tyhicks.com, bauermann@kolabnow.com,
-        linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
-        James.Bottomley@HansenPartnership.com, bhe@redhat.com,
-        vgoyal@redhat.com, dyoung@redhat.com
-References: <20250218225502.747963-1-chenste@linux.microsoft.com>
- <20250218225502.747963-5-chenste@linux.microsoft.com>
- <36f8cb5131c51f784fa6e7a062b6318b30c9cc28.camel@linux.ibm.com>
-Content-Language: en-US
-From: Stefan Berger <stefanb@linux.ibm.com>
-In-Reply-To: <36f8cb5131c51f784fa6e7a062b6318b30c9cc28.camel@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: I1dvLk2vrd635lqxmk20m-xkOfn04apu
-X-Proofpoint-ORIG-GUID: I1dvLk2vrd635lqxmk20m-xkOfn04apu
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-02-21_07,2025-02-20_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- malwarescore=0 clxscore=1015 lowpriorityscore=0 suspectscore=0
- impostorscore=0 priorityscore=1501 phishscore=0 adultscore=0 mlxscore=0
- bulkscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2502210134
+References: <d5fa8ace-8bc4-4261-bf34-c32e7c948bb8.ref@schaufler-ca.com> <d5fa8ace-8bc4-4261-bf34-c32e7c948bb8@schaufler-ca.com>
+In-Reply-To: <d5fa8ace-8bc4-4261-bf34-c32e7c948bb8@schaufler-ca.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 21 Feb 2025 15:06:28 -0500
+X-Gm-Features: AWEUYZkqEWxJ97T2jz81KFUtk_fM7bnmKZyBYz1-HDNB-UBQ9ufxy2B7oyLLnZg
+Message-ID: <CAHC9VhS-QHMz4Lza2WDXwt6sh6s03U+-12RcaPGJYVLBBprT7Q@mail.gmail.com>
+Subject: Re: [PATCH] lsm,nfs: fix NFS4 memory leak of lsm_context
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	LSM List <linux-security-module@vger.kernel.org>, 
+	Linux NFS Mailing List <linux-nfs@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Feb 21, 2025 at 10:59=E2=80=AFAM Casey Schaufler <casey@schaufler-c=
+a.com> wrote:
+>
+> The NFS4 security label code does not support multiple labels, and
+> is intentionally unaware of which LSM is providing them. It is also
+> the case that currently only one LSM that use security contexts is
+> permitted to be active, as enforced by LSM_FLAG_EXCLUSIVE. Any LSM
+> that receives a release_secctx that is not explicitly designated as
+> for another LSM can safely carry out the release process. The NFS4
+> code identifies the lsm_context as LSM_ID_UNDEF, so allowing the
+> called LSM to perform the release is safe. Additional sophistication
+> will be required when context using LSMs are allowed to be used
+> together.
+>
+> Fixes: b530104f50e8 ("lsm: lsm_context in security_dentry_init_security")
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> ---
+>  security/apparmor/secid.c | 2 +-
+>  security/selinux/hooks.c  | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 
+I'm sorry Casey, but Stephen's patch seems like a much better approach to m=
+e.
 
-On 2/21/25 2:07 PM, Mimi Zohar wrote:
-> On Tue, 2025-02-18 at 14:54 -0800, steven chen wrote:
->> IMA log is copied to the new Kernel during kexec 'load' using
->> ima_dump_measurement_list().  The log copy at kexec 'load' may result in
->> loss of IMA measurements during kexec soft reboot.  It needs to be copied
->> over during kexec 'execute'.  Setup the needed infrastructure to move the
->> IMA log copy from kexec 'load' to 'execute'.
->>
->> Define a new IMA hook ima_update_kexec_buffer() as a stub function.
->> It will be used to call ima_dump_measurement_list() during kexec
->> 'execute'.
->>
->> Implement ima_kexec_post_load() function to be invoked after the new
->> Kernel image has been loaded for kexec. ima_kexec_post_load() maps the
->> IMA buffer to a segment in the newly loaded Kernel.  It also registers
->> the reboot notifier_block to trigger ima_update_kexec_buffer() at
->> exec 'execute'.
->>
->> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
->> Signed-off-by: steven chen <chenste@linux.microsoft.com>
->> ---
->>   include/linux/ima.h                |  3 ++
->>   security/integrity/ima/ima_kexec.c | 46 ++++++++++++++++++++++++++++++
->>   2 files changed, 49 insertions(+)
->>
->> diff --git a/include/linux/ima.h b/include/linux/ima.h
->> index 0bae61a15b60..8e29cb4e6a01 100644
->> --- a/include/linux/ima.h
->> +++ b/include/linux/ima.h
->> @@ -32,6 +32,9 @@ static inline void ima_appraise_parse_cmdline(void) {}
->>   
->>   #ifdef CONFIG_IMA_KEXEC
->>   extern void ima_add_kexec_buffer(struct kimage *image);
->> +extern void ima_kexec_post_load(struct kimage *image);
->> +#else
->> +static inline void ima_kexec_post_load(struct kimage *image) {}
->>   #endif
->>   
->>   #else
->> diff --git a/security/integrity/ima/ima_kexec.c
->> b/security/integrity/ima/ima_kexec.c
->> index 704676fa6615..0fa65f91414b 100644
->> --- a/security/integrity/ima/ima_kexec.c
->> +++ b/security/integrity/ima/ima_kexec.c
->> @@ -12,10 +12,14 @@
->>   #include <linux/kexec.h>
->>   #include <linux/of.h>
->>   #include <linux/ima.h>
->> +#include <linux/reboot.h>
->> +#include <asm/page.h>
->>   #include "ima.h"
->>   
->>   #ifdef CONFIG_IMA_KEXEC
->>   static struct seq_file ima_kexec_file;
->> +static void *ima_kexec_buffer;
->> +static bool ima_kexec_update_registered;
->>   
->>   static void ima_reset_kexec_file(struct seq_file *sf)
->>   {
->> @@ -183,6 +187,48 @@ void ima_add_kexec_buffer(struct kimage *image)
->>   	kexec_dprintk("kexec measurement buffer for the loaded kernel at
->> 0x%lx.\n",
->>   		      kbuf.mem);
->>   }
->> +
->> +/*
->> + * Called during kexec execute so that IMA can update the measurement list.
->> + */
->> +static int ima_update_kexec_buffer(struct notifier_block *self,
->> +				   unsigned long action, void *data)
->> +{
->> +	return NOTIFY_OK;
->> +}
->> +
->> +struct notifier_block update_buffer_nb = {
->> +	.notifier_call = ima_update_kexec_buffer,
->> +};
->> +
->> +/*
->> + * Create a mapping for the source pages that contain the IMA buffer
->> + * so we can update it later.
->> + */
-> 
-> Hi Steven,
-> 
-> It does more than just that.  It also registers a second IMA reboot notifier.
-> (Is a second reboot notifier really necessary?)  It seems that the
-> ima_reboot_notifier() is executed after this one, otherwise the kexec_execute
-> would be missing.  However, I'm not sure that is guaranteed.
+https://lore.kernel.org/linux-security-module/20250220192935.9014-2-stephen=
+.smalley.work@gmail.com/
 
-By setting .priority = -1 in update_buffer_nb we could ensure that it 
-will be called after the other notifier that does the suspend, so we 
-would be sure that logging suspends before dumping the log to the buffer.
-
-> 
-> I'm wondering if this patch should be limited to saving the map segments.  In
-> any case, using the reboot notifier is relatively new and should at least be
-> reflected here and in the patch description.
-> 
-> thanks,
-> 
-> Mimi
-> 
->> +void ima_kexec_post_load(struct kimage *image)
->> +{
->> +	if (ima_kexec_buffer) {
->> +		kimage_unmap_segment(ima_kexec_buffer);
->> +		ima_kexec_buffer = NULL;
->> +	}
->> +
->> +	if (!image->ima_buffer_addr)
->> +		return;
->> +
->> +	ima_kexec_buffer = kimage_map_segment(image,
->> +					      image->ima_buffer_addr,
->> +					      image->ima_buffer_size);
->> +	if (!ima_kexec_buffer) {
->> +		pr_err("Could not map measurements buffer.\n");
->> +		return;
->> +	}
->> +
->> +	if (!ima_kexec_update_registered) {
->> +		register_reboot_notifier(&update_buffer_nb);
->> +		ima_kexec_update_registered = true;
->> +	}
->> +}
->> +
->>   #endif /* IMA_KEXEC */
->>   
->>   /*
-> 
-
+--=20
+paul-moore.com
