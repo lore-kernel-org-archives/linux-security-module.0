@@ -1,188 +1,111 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A8352505BD;
-	Fri, 21 Feb 2025 21:10:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 784323BBC5
+	for <linux-security-module@vger.kernel.org>; Sat, 22 Feb 2025 00:34:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740172207; cv=none; b=P/rPUe3swjX40r6M1AuZ8A/eNotZAh55k2JQ2eJV5at5FwtaNnlSAGkzwYCZR8A6CpAi538y48Uvygb1FY8XpAlTYTbnOgAi7AiyyglMZ8R7cS2bO3oZv25AmzC3xQPxl2aVCZw0Sz8y8IUL6Mx5wBKiv9ngKsLiKQPykAbQE/8=
+	t=1740184453; cv=none; b=SzFjnEDrmGxY4S0SWRHn9QwLlHRm0jnhgPqPdvtlEyxo3RtfvdiLsHQEmvzVCkGtUbfGuqzLysrSdaXVVO1pgZfEerGWbXNpMGUAhvJ8v+ssxPRDNdXPV5jSSG4ve2cHOg/mAQ/3DqvQoQm/YhU0rjGMMVUPLZHbMcxh02db82o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740172207; c=relaxed/simple;
-	bh=WTpcEnrAfQeUkKdrqVzvIfHmXroYmr4UzluSMK6NQ2w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ImsTbJ/NWvE/V574LXkHKNMlOThFfvtsAeyre9BJR3Whjd5j6okODONeLmDjXVEMIIaWSoVjNT7V1ZIUEeIZGZLDY/5dE3FykPQtZu87A0mB1r9SIA1HLLCHKyV4tvNiT/LfPU+NzsjJ8Juq1Z5GzCgUr60PuqAhT2ebqMHmzLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=VIxqpjej; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+	s=arc-20240116; t=1740184453; c=relaxed/simple;
+	bh=VBQHljTSYFVCaj1bbqPfTOtZckZuFzfefk82naOnO1A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pgB9Aa4MFSsxZeqNhYj0iBUIDZhM2RzE1ofgaLq4R6oTi0LjKXv+lbz2sKffcyVEGuqNNKy5YrvworrcjBuiPfmeZZ6VmLeXaVtBt2y9pQ41xw0sCDQQwPDtx2fN2D1/tLjHXekd3WIb7PVwupz5Ba2Fq4bJTr47/QIE1qkcplE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=OUaLZ8oR; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="VIxqpjej"
-Received: from [10.17.64.59] (unknown [131.107.8.59])
-	by linux.microsoft.com (Postfix) with ESMTPSA id A64022053679;
-	Fri, 21 Feb 2025 13:10:05 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A64022053679
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1740172206;
-	bh=0lziOMlEQrQGXDNHLwwuurA3vZdazKZBrZ/C9W/SZGI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VIxqpjej/OSCHR0ZVlCRJfVuJEX+zyZGmdXuTGtc1kP3oPNhC1FEG99PJyxGUstA5
-	 oN8r/pRyJtT2u2tnzk7FsP3EuVI3zupdoA1Fy2QZ1/YX5lmPBmcQTOftCRMvSqO8VW
-	 NYJ5nOEogIpGUB8LdfY8OMe6IcTCP+p3b+HnvW1s=
-Message-ID: <7903ffe0-75f9-49f8-b638-9a4964897676@linux.microsoft.com>
-Date: Fri, 21 Feb 2025 13:10:04 -0800
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="OUaLZ8oR"
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6f6ae4846c7so23301357b3.1
+        for <linux-security-module@vger.kernel.org>; Fri, 21 Feb 2025 16:34:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1740184450; x=1740789250; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vwm1CmURc5ve7fRU7CIVjr3XJe8XTIamKjt5b8I2oxA=;
+        b=OUaLZ8oRu1P66C9ZZZkX3ynr5GVCRqOCfxm+eS10iyjZ/PQSQVzJcOLZ6xUj2SVdYN
+         M4K8v7SJJNGtsVfIa8UAf/TytFgQB7jB17v0YqxAZeaJ0z7poxTRKJtsLNNfDGLEzCtl
+         seyhz1IBRRwX+if/gK7lWjT9j8r22Ve4Q5tw8y7tH4v0VO86On+zdAarH3tOUkuAZpC+
+         42QHcKAyfH9frZU0Zmd2KD7X742j4GBihhNWnbrr+XZUDJUe8nnJrCAFuMuLqqZIBe++
+         7xlE0daBQ4baD0AJRZFXYr9quFZHlK3q3UVtm8HMqcrK9PO0mdFobh1wMMbzoIxycBMQ
+         K8pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740184450; x=1740789250;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vwm1CmURc5ve7fRU7CIVjr3XJe8XTIamKjt5b8I2oxA=;
+        b=mhxBDxSv7pcRjdRKxbWt2ZiFOkZg2T0gs+tkVOjzxJ2YRUA12MgvfDP7YXUGyHCF2V
+         m8mIIurar31wOgsFZb/edjsmzZiGnmOmQiwY5213v1EjjZbGqPGoFs2XkBGzmO1bu8G2
+         l9ZGPtad7y7Mozs2T6pjCkQi5EcUJBsiKLbcbLP72iA3xnx9Q/Jm+CkI7KS+OUIc7Fhh
+         nBNiL4EphhAQAE1z0OE/PMGTF4LLaG7B7k6qWkTSfvoayFVeJmU6Zw40l9HR6ppQb2dN
+         bq5+lnPU02j0Lqg4+/bGam23EeQJvXEu0LM8zV9ps+n1A1BnmXE2DOshfjAKugqEZly8
+         gmtw==
+X-Forwarded-Encrypted: i=1; AJvYcCVgPrDfEVmXdCrn4XvrzH9m4BdMwjVjaNOJKo+kKiUyRLyV0gQkeiptD21BGV9no3XiOEeSY7DxnuHJDf+O1d/Llsu57F4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCSyx54Lj7ljTvUuvCtYPgaRDTpTqqOfWdm08sVWLpd5l+GHft
+	RDOLHE0zhNox3aEdlZZEtbJYZyVt5s8T/VBuBgDD9RTGmQ7LhnAhZ9peCeFAS7WLtJGIbpSmhJS
+	9SfvLPa/of6jisORkwMzKBh7h3uK7t7v925jw
+X-Gm-Gg: ASbGncsj+XPWhPGRiy9b2vzss+k+os895yyF7ZtjAH3uO9Eo95COcZxymTqRepUVYTs
+	SDzqFtadvHK9XfNiBJ29YoUGPkn7sx7DfPr1Nsl6ZHvgwKCSTtkSo8sqdpwEqeAfrPI/EVAVNZA
+	Hw7dHC4UI=
+X-Google-Smtp-Source: AGHT+IHU8mqrXQveakYlLhZ7AQnDt8Huldya+naR0jPDiYuZo2FksnUyR3yBLKwefOB052PduAKRpiO/vKqO0ObiYCs=
+X-Received: by 2002:a05:690c:3506:b0:6f6:c937:2cf4 with SMTP id
+ 00721157ae682-6fbcc81835dmr37934927b3.23.1740184450404; Fri, 21 Feb 2025
+ 16:34:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 7/7] ima: measure kexec load and exec events as
- critical data
-To: Mimi Zohar <zohar@linux.ibm.com>, stefanb@linux.ibm.com,
- roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
- eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
- code@tyhicks.com, bauermann@kolabnow.com, linux-integrity@vger.kernel.org,
- kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
- James.Bottomley@HansenPartnership.com, bhe@redhat.com, vgoyal@redhat.com,
- dyoung@redhat.com
-References: <20250218225502.747963-1-chenste@linux.microsoft.com>
- <20250218225502.747963-8-chenste@linux.microsoft.com>
- <436c898a39a9bdaa2ab24fc111b50d3c885aa028.camel@linux.ibm.com>
-Content-Language: en-US
-From: steven chen <chenste@linux.microsoft.com>
-In-Reply-To: <436c898a39a9bdaa2ab24fc111b50d3c885aa028.camel@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250211-xattrat-syscall-v3-1-a07d15f898b2@kernel.org> <20250221.ahB8jei2Chie@digikod.net>
+In-Reply-To: <20250221.ahB8jei2Chie@digikod.net>
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 21 Feb 2025 19:33:59 -0500
+X-Gm-Features: AWEUYZkJvdf7eQZPTJrwhKnqZP-Y8wnVSUpipQ3Me6WvrrB1wQej040Y9lsHrww
+Message-ID: <CAHC9VhSnP=j_T30ctVmzQ8TwhD6YFcrWhLbqa_oG3WSAPUPOaA@mail.gmail.com>
+Subject: Re: [PATCH v3] fs: introduce getfsxattrat and setfsxattrat syscalls
+To: Andrey Albershteyn <aalbersh@redhat.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: Richard Henderson <richard.henderson@linaro.org>, Matt Turner <mattst88@gmail.com>, 
+	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Michal Simek <monstr@monstr.eu>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	Naveen N Rao <naveen@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, Yoshinori Sato <ysato@users.sourceforge.jp>, 
+	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
+	"David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
+	Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	Arnd Bergmann <arnd@arndb.de>, linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-m68k@lists.linux-m68k.org, 
+	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, 
+	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-api@vger.kernel.org, linux-arch@vger.kernel.org, 
+	linux-xfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2/20/2025 4:46 PM, Mimi Zohar wrote:
-> On Tue, 2025-02-18 at 14:55 -0800, steven chen wrote:
->> The amount of memory allocated at kexec load, even with the extra memory
->> allocated, might not be large enough for the entire measurement list.  The
->> indeterminate interval between kexec 'load' and 'execute' could exacerbate
->> this problem.
->>
->> Define two new IMA events, 'kexec_load' and 'kexec_execute', to be
->> measured as critical data at kexec 'load' and 'execute' respectively.
->> Report the allocated kexec segment size, IMA binary log size and the
->> runtime measurements count as part of those events.
->>
->> These events, and the values reported through them, serve as markers in
->> the IMA log to verify the IMA events are captured during kexec soft
->> reboot.  The presence of a 'kexec_load' event in between the last two
->> 'boot_aggregate' events in the IMA log implies this is a kexec soft
->> reboot, and not a cold-boot. And the absence of 'kexec_execute' event
->> after kexec soft reboot implies missing events in that window which
->> results in inconsistency with TPM PCR quotes, necessitating a cold boot
->> for a successful remote attestation.
->>
->> The 'kexec_load' event IMA log can be found using the following command:
->> sudo cat /sys/kernel/security/integrity/ima/ascii_runtime_measurements |
->>     grep kexec_load
->>
->> The 'kexec_load' event IMA log can be found using the following command:
-> -> kexec_execute
+On Fri, Feb 21, 2025 at 10:08=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digi=
+kod.net> wrote:
 >
->> sudo cat /sys/kernel/security/integrity/ima/ascii_runtime_measurements |
->>     grep kexec_execute
-> These critical data events are displayed as hex encoded ascii in the
-> ascii_runtime_measurement_list.  Verifying the critical data hash requires calculating the
-> hash of the decoded ascii string.  For example:
->
-> sudo cat /sys/kernel/security/integrity/ima/ascii_runtime_measurements | grep  kexec_load
-> | cut -d' ' -f 6 | xxd -r -p | sha256sum
->
->> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
->> Signed-off-by: steven chen <chenste@linux.microsoft.com>
->> ---
->>   security/integrity/ima/ima.h       |  6 ++++++
->>   security/integrity/ima/ima_kexec.c | 21 +++++++++++++++++++++
->>   security/integrity/ima/ima_queue.c |  5 +++++
->>   3 files changed, 32 insertions(+)
->>
->> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
->> index 4428fcf42167..1452c98242a4 100644
->> --- a/security/integrity/ima/ima.h
->> +++ b/security/integrity/ima/ima.h
->> @@ -240,6 +240,12 @@ void ima_post_key_create_or_update(struct key *keyring, struct key
->> *key,
->>   				   unsigned long flags, bool create);
->>   #endif
->>   
->> +#ifdef CONFIG_IMA_KEXEC
->> +void ima_measure_kexec_event(const char *event_name);
->> +#else
->> +static inline void ima_measure_kexec_event(const char *event_name) {}
->> +#endif
->> +
->>   /*
->>    * The default binary_runtime_measurements list format is defined as the
->>    * platform native format.  The canonical format is defined as little-endian.
->> diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
->> index 6c8c203ad81e..8d0782e51ffa 100644
->> --- a/security/integrity/ima/ima_kexec.c
->> +++ b/security/integrity/ima/ima_kexec.c
->> @@ -17,6 +17,8 @@
->>   #include "ima.h"
->>   
->>   #ifdef CONFIG_IMA_KEXEC
->> +#define IMA_KEXEC_EVENT_LEN 256
->> +
->>   static struct seq_file ima_kexec_file;
->>   static void *ima_kexec_buffer;
->>   static size_t kexec_segment_size;
->> @@ -36,6 +38,24 @@ static void ima_free_kexec_file_buf(struct seq_file *sf)
->>   	ima_reset_kexec_file(sf);
->>   }
->>   
->> +void ima_measure_kexec_event(const char *event_name)
->> +{
->> +	char ima_kexec_event[IMA_KEXEC_EVENT_LEN];
->> +	size_t buf_size = 0;
->> +	long len;
->> +
->> +	buf_size = ima_get_binary_runtime_size();
->> +	len = atomic_long_read(&ima_htable.len);
->> +
->> +	scnprintf(ima_kexec_event, IMA_KEXEC_EVENT_LEN,
->> +		  "kexec_segment_size=%lu;ima_binary_runtime_size=%lu;"
->> +		 "ima_runtime_measurements_count=%ld;",
->> +		 kexec_segment_size, buf_size, len);
->> +
->> +	ima_measure_critical_data("ima_kexec", event_name, ima_kexec_event,
->> +				  strlen(ima_kexec_event), false, NULL, 0);
-> As previously mentioned, scnprintf() returns the length.  No need to use strlen() here.
->
-> Mimi
->
->> +}
->> +
->>   static int ima_alloc_kexec_file_buf(size_t segment_size)
->>   {
->>   	/*
->> @@ -58,6 +78,7 @@ static int ima_alloc_kexec_file_buf(size_t segment_size)
->>   out:
->>   	ima_kexec_file.read_pos = 0;
->>   	ima_kexec_file.count = sizeof(struct ima_kexec_hdr);	/* reserved space */
->> +	ima_measure_kexec_event("kexec_load");
->>   
->>   	return 0;
->>   }
->> diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
->> index 3dfd178d4292..6afb46989cf6 100644
->> --- a/security/integrity/ima/ima_queue.c
->> +++ b/security/integrity/ima/ima_queue.c
->> @@ -241,6 +241,11 @@ static int ima_reboot_notifier(struct notifier_block *nb,
->>   			       unsigned long action,
->>   			       void *data)
->>   {
->> +#ifdef CONFIG_IMA_KEXEC
->> +	if (action == SYS_RESTART && data && !strcmp(data, "kexec reboot"))
->> +		ima_measure_kexec_event("kexec_execute");
->> +#endif
->> +
->>   	ima_measurements_suspend();
->>   
->>   	return NOTIFY_DONE;
+> It looks security checks are missing.  With IOCTL commands, file
+> permissions are checked at open time, but with these syscalls the path
+> is only resolved but no specific access seems to be checked (except
+> inode_owner_or_capable via vfs_fileattr_set).
 
-Thanks, I will update in next version
+Thanks for reviewing the patch and catching this Micka=C3=ABl.  I agree
+with the hooks identified and their placement; it should be fairly
+straightforward with only a few lines added in each case.
 
+--=20
+paul-moore.com
