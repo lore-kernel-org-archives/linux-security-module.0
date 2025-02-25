@@ -1,193 +1,101 @@
-Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C162529CF0;
-	Tue, 25 Feb 2025 12:06:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
+Received: from sonic314-26.consmr.mail.ne1.yahoo.com (sonic314-26.consmr.mail.ne1.yahoo.com [66.163.189.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33BE8140E3C
+	for <linux-security-module@vger.kernel.org>; Tue, 25 Feb 2025 15:58:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.189.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740485213; cv=none; b=qPjTkc1+jcMrhA1QnRF1vQy19O/bXe026NgXHqVOmAplYFZp+PJFu3CKCQMJedFITbPJ9lYZYVEYPUF8E7/fTFKBh9khNEWAnn+3HXTLVFhOXZdTOeBT7vl93LS+uToctVAqeMCOC+CKlRoTYrd/lzmbbEO1fCkXMpUA/1J3t4o=
+	t=1740499124; cv=none; b=kql/nkztwSULMRZPhFqsqpzi/XVZPfksb2iLjghPKWb1GHnAobzhtk3m/lYmqaFUyWqzGH3GMbRxP9EAYlqF62SiLq+kkrjJllwPskYK6RkoIGrrhmPNSMMlOG+cbeOLvvkbcPk3jGAnKl+X5RdoGnBYvVkbrkxjYx8UbdX1+dA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740485213; c=relaxed/simple;
-	bh=Zeua9U34mpIZzVNmoPv424NWh2Wy8ELnVKvzqhinVv0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i03HtnOqg69vlB4K3QIi9IBFrlXB3jWXPvHK5vTWA6IlvwvVe/CMebSUxhPmVX8rsorRIM5bkd8edj4xQALQRDdBsQQVPVsyKdw38k8y+TfAsfZv4/WiD0oatcbgv5L6mRAJBuciUIGZzeAXfwCIZYBsm7ac9UFZDzv0LE7Suh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
-Received: from wind.enjellic.com (localhost [127.0.0.1])
-	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 51PC1Gsg013755;
-	Tue, 25 Feb 2025 06:01:16 -0600
-Received: (from greg@localhost)
-	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 51PC1E2h013753;
-	Tue, 25 Feb 2025 06:01:14 -0600
-Date: Tue, 25 Feb 2025 06:01:14 -0600
-From: "Dr. Greg" <greg@enjellic.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jmorris@namei.org
-Subject: Re: [PATCH v4 2/14] Add TSEM specific documentation.
-Message-ID: <20250225120114.GA13368@wind.enjellic.com>
-Reply-To: "Dr. Greg" <greg@enjellic.com>
-References: <20240826103728.3378-3-greg@enjellic.com> <8642afa96650e02f50709aa3361b62c4@paul-moore.com> <20250117044731.GA31221@wind.enjellic.com> <CAHC9VhTphGpnVNPkm0P=Ndk84z3gpkJeg90EAJiJEyareLUVTA@mail.gmail.com>
+	s=arc-20240116; t=1740499124; c=relaxed/simple;
+	bh=isUJVpB7vLx6ftqAFHOxrSEVKR45s6UkFp0QzJ/3qn4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LwpOXM5LORCfAVLNh+aqWwnVsFyUKNsZgwGpev3672CKAVcvaYn7H1p0VGsrQhVhaK4/wHSNySYziSukd3wkMCgPrceVKx2ceiOZUbsdpACBkinAdLm+VbPn9yNKGll/J0nqLoFKMufGsUBAwpcchDybiMoiTdD9l+10RUqUDog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=qXGctBeX; arc=none smtp.client-ip=66.163.189.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="qXGctBeX"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1740499121; bh=isUJVpB7vLx6ftqAFHOxrSEVKR45s6UkFp0QzJ/3qn4=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=qXGctBeX+2KDiw5xbMXW5I3Cuy1F2XHowMV7DwnqMhYTqvxNigTy9N6M887zwPNuqVTzANR8NP2PwUvT53GCZEfXoye7EI4hOa/YowXBKGzk3b0rFRUe/IbZOZ6v/7wr643VRxn4NXpPWf+aP7oU/jp9CkCKYTAgMIueuFGH3yjrXB4JCtJzc9XvSrdpWpsgox4fR+BHeWLufPEIdQNapvgK1XfZMV47Y0R5hjh1IHDnKB8+1ubyp3vcFMZzGARMRE8vgo/ySAegirLmandrhG0HqsLWPahCkrKpDhlNGHVZ7Cm4gGzWKUheYCLydUw/wjJj/3CrhknQzPLnuP75nQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1740499121; bh=LfHn437Q7eWd6HKSSH65eVOq8vU0XplqAG45FjbGtPM=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=tVPWvA3znc9zWY5RG2YfjRKdDktEDWHfhMIQCzBr4PXsMGVYQgAymLEFaCBB7ZTBX5lzPDrU7wSCHz7Ch8CNjBycCilhCx6xQoVdPkM4SJIXPVJyuV6AkT7fKgek6uTQRpWblhLkQbsHROY+ECKRYFZSpKJlGb6cGNbjZEBZPTRspsEkjjtWTsX7xQVV/8TihdV7cQvNGK+QiWKBRX9JSXSuwPDrfPRpRWxYF+6UCqKhTVwzYyf5VvdrCgtKd6s8lm0XKMdqEB0j+ig4/EQXNT8V3kfg4IaZwVY2tbVwGP2rHjZUDFNM6pP+ggFcX5hoDvgoCQNd8jix12xWIOGjfQ==
+X-YMail-OSG: fzvQ_4cVM1nPtzbGJGoLkfxTfnS6FPl8sn45HBK84msBcbEDONm.FJsfmwmNsVB
+ s8YY8kObUwQ.1cIuPXFhz8_a7l53b51UUcOx_rUyyEFU_iSUTeIZlso_cVf4tl5Up8L4eUFFNBW3
+ 8aJP.i.ulZibjg6ZITeFyVECzDbS1I3A5nIJGjp2yWaU5T5x0ZxB2i5SOCpe0ZeFulAQBSyoRjGE
+ RePKdlcAMX9qBAohC9nB19VG1zsm8rpn49wczv_1UzCS_Y3c.LZvc4pG96Doj.H9sVSvzzUaUmTj
+ HmYPFhIcbKrz2Bxo.JFhZQ2b5MdovEl06zTP7X5ilNaTa7whMP5fLjZvUwsoufz2lmNBc9ShVQ3B
+ S3RraffBZ9NeWO4Xx5zgv3IKQvRdA5w1NKbVX2xFC00KYRK6U8SeLxM9EoxR.tVw3E._0sGfZADm
+ t1W8AHgt.cFz4zpuu10B7kV3azM3DJNhdL9ZfP0fk.gTGwgkKuOoR_._4LrBiArK8.TVgFg3oleX
+ kDRvl_s_sidmNQ.6Z25QNGhiLHkA3Xr.sXx_HhjhET2XlCzVaWIfwiYI1nVTKdyuVpos2KUEA_ZG
+ QDQ4vKQj4l0RklJ8lJR3XU6oM_LcEqXwv5.dHh.deku7bQNYeuKBTmlpMCPvWv1g098sqjucRkII
+ XFpCVaGBla4IddxsxPSmS4VQsacLC._CQoFc9SiUqCPuZRpQNMSviauYOJe6ncPqEQn6QEcpgSmJ
+ GXsKJC4lcSI1A3lW8dWaZn0.d3Lek2NJwaXhsyWsZZlETMkoo4qbAvPVEbSVfY3Zt.zGxCshlkj6
+ SUcbNNiDCeKPsku0DULC_GZdlxbVRRIJmItQbJB7FYHXZ_gKehUt.FRIWy_M0Sldhlo93nFPxB3I
+ hsvsD.sOa8LLEimzzfN2GzrAefFvuajFejMvjU0O6XvlWoAHGOVMpxzfy8kPI4vNNQrqrKVGqeVh
+ E0ofc8tfSaoi8BhF67KcOMqbRAt3WsMgaPuni4ys5Iso0BQPYs_2MmijNQUzRcHVVFB0IG3rxcC7
+ OmAzwpxIEEFETzQBO2WkSffbHraH5Jt4nakV6gu9FaiACg5Ss1lNO_bD0l9O.gpxvlZvmQvRLJIM
+ 8..qydCk8VyRpzNUFB7HkeBvpO16QW9TuMjc6nXLp8ivZrDko2Mvjn7Jo4D.eeViM7vyqxloGEyf
+ S9LZOt8ll_Cav9BepSJDZB6Bb1HJYg.NuBt2jeRbzC42wULv6IGXYV7UzRyzHXnquXHa.RGygqny
+ neBeYMNxVSW5DIi6HeYIcVc5TcXmd0Bb2FAyzxJssEXbRlOyvfMxFYvePhN.KgU39DAWtbvIjzGU
+ xjua81kqfLJjxzUM.EpX_LrKHse3ZLnZpyuji086BLd3.fcvO2uMMGAxNmzqBVklnQOGLnS0rT86
+ BkL4uaRZnQABnyOpW7So19gWAaYaiMs4m_0QMb7Wve8F0YaNdmZwzpFm0wl37QKANHTrk88G2P_b
+ z7Qlq8iLnzixukHID9PmXig.gzxY6z.gb.YytYHNcKOHg6DS8AWUJ0ZIvfGbbsKAWiqb42JGMpaD
+ FvO3_uOX2Lmk6UzOleURjkWKgl5DfeSlHeJ__QZhtuOkBTMoVYqS85rtfrDPe4XDJfOO4c7ueWxr
+ S59ZF6FNjzd7Eh0qDpuZlmmr7gxW7hynwJFaIq.duHcbssp3GnO7aSnJVXTEcXxJBbem4hodLNNv
+ lPuGnrttmZw63COYsx7V5vHV2jLbce9OZ1QZ.FPw.WQ_5hpHagePa4I8piNLwpf8eWQjpYyeK1Z8
+ ownpRWRQa6SD5yEoz7G4TtOIRfBVVN10IgMxNMW9HWiCyLIVaiwreO.rPjrPaIGtAzw41sLDDWPh
+ PA2BlI6xTFbHlD6rBTxKVFk_mZYUt3zFumGMIJ84r3LFr56VHxSpApp_E5irHo63qHbZxRzvWrL8
+ IBOZCGt.ohrctvehJwiufLYJkXXe0N_iVmDDwCFeuaFkgtF_THNRdwQVyroXj8zd1oWY1mCOnYDF
+ zYbRERrZPcQn6JdHMTnMRwW9CS9sHL53RKe7sITwIxTJfmFLsCaYIv3FiEhIoBVZbSzIcjR2xK.R
+ xCVDNrEqepFC41WLGIqpidBVUqYO1IQ0ckPPhhMajQKkDPG5iXBjhTyBnsxIkmxDxpGZ3NIFAhjG
+ DmiXFd7lf4sl.wFx8B99Z10abpVdL_rEvNxtPHkmVYMnj6_FIWvhVF1RTX.OnoplgMgZUiFlGUr1
+ eZOTjPLwNtS1PVSIUiFe0vyvfwhzcOiJ26pf6wU0FS9ImdN1ZC30_sIhCKvHe4MNpUJBX08uzPn.
+ ZyT.w83YjAYhV
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 33680ed3-58ec-4515-93b7-4677c0ac0137
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.ne1.yahoo.com with HTTP; Tue, 25 Feb 2025 15:58:41 +0000
+Received: by hermes--production-gq1-5dd4b47f46-wrqn7 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID f2621ea26d3b9ecd3258da526e13a385;
+          Tue, 25 Feb 2025 15:48:31 +0000 (UTC)
+Message-ID: <2b09859e-e16b-4b58-987c-356d3fffa4fe@schaufler-ca.com>
+Date: Tue, 25 Feb 2025 07:48:31 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhTphGpnVNPkm0P=Ndk84z3gpkJeg90EAJiJEyareLUVTA@mail.gmail.com>
-User-Agent: Mutt/1.4i
-X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Tue, 25 Feb 2025 06:01:16 -0600 (CST)
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/14] Add TSEM specific documentation.
+To: "Dr. Greg" <greg@enjellic.com>, Paul Moore <paul@paul-moore.com>
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+ jmorris@namei.org, Casey Schaufler <casey@schaufler-ca.com>
+References: <20240826103728.3378-3-greg@enjellic.com>
+ <8642afa96650e02f50709aa3361b62c4@paul-moore.com>
+ <20250117044731.GA31221@wind.enjellic.com>
+ <CAHC9VhTphGpnVNPkm0P=Ndk84z3gpkJeg90EAJiJEyareLUVTA@mail.gmail.com>
+ <20250225120114.GA13368@wind.enjellic.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20250225120114.GA13368@wind.enjellic.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.23369 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Tue, Jan 28, 2025 at 05:23:52PM -0500, Paul Moore wrote:
+On 2/25/2025 4:01 AM, Dr. Greg wrote:
+> On Tue, Jan 28, 2025 at 05:23:52PM -0500, Paul Moore wrote:
+>
+> For the record, further documentation of our replies to TSEM technical
+> issues.
+>
+> ...
+>
+> Further, TSEM is formulated on the premise that software teams,
+> as a by product of CI/CD automation and testing, can develop precise
+> descriptions of the security behavior of their workloads.
 
-For the record, further documentation of our replies to TSEM technical
-issues.
+I've said it before, and I'll say it again. This premise is hopelessly
+naive. If it was workable you'd be able to use SELinux and audit2allow
+to create perfect security, and it would have been done 15 years ago.
+The whole idea that you can glean what a software system is *supposed*
+to do from what it *does* flies completely in the face of basic security
+principles.
 
-> On Thu, Jan 16, 2025 at 11:47???PM Dr. Greg <greg@enjellic.com> wrote:
-> > > > +In order to handle modeling of security events in atomic context, the
-> > > > +TSEM implementation maintains caches (magazines) of structures that
-> > > > +are needed to implement the modeling and export of events.  The size
-> > > > +of this cache can be configured independently for each individual
-> > > > +security modeling namespace that is created.  The default
-> > > > +implementation is for a cache size of 32 for internally modeled
-> > > > +namespaces and 128 for externally modeled namespaces.
-> > > > +
-> > > > +By default the root security namespace uses a cache size of 128.  This
-> > > > +value can be configured by the 'tsem_cache' kernel command-line
-> > > > +parameter to an alternate value.
-> >
-> > > I haven't looked at the implementation yet, but I don't understand
-> > > both why a kmem_cache couldn't be used here as well as why this
-> > > implementation detail is deemed significant enough to be mentioned
-> > > in this high level design document.
-> >
-> > TSEM does use kmem_cache allocations for all of its relevant data
-> > structures.
-> >
-> > The use of a kmem_cache, however, does not solve the problem for
-> > security event handlers that are required to run in atomic context.
-> > To address the needs of those handlers you need to serve the
-> > structures out of a pre-allocated magazine that is guaranteed to not
-> > require any memory allocation or sleeping locks.
-
-> This still seems somewhat suspicious as there are a couple of GFP
-> flags that allow for non-blocking allocations in all but a few cases,
-> but I'll defer further discussion of that until I get to the code.  In
-> my opinion, there are still enough red flags in these documentation
-> reviews to keep me from investing the time in reviewing the TSEM code.
-
-As a group, we can state quite affirmatively to the fact that we have
-experience and understanding in use of memory allocation instruction
-flags.  Our use of namespace specific event processing structure
-caches is not driven by unfamiliarity with the use and implications of
-GFP_ATOMIC.
-
-The use of independent structure magazines, for security events
-running in atomic context in a security modeling namespace, is driven
-by the need to prevent security adversaries from placing pressure on
-the global kernel atomic page reserves.
-
-These namespace specific event magazines prevent an adversary from
-waging a memory denial of service attack against the kernel at large.
-Adversaries can only impair their own functionality in a security
-modeling namespace through the use of a synthetic attack workload that
-stresses the availability of atomic context memory.
-
-Further, TSEM is formulated on the premise that software teams,
-as a by product of CI/CD automation and testing, can develop precise
-descriptions of the security behavior of their workloads.  One
-component of that description is the cache depth needed to support
-security event handlers running in atomic context.
-
-Exceeding that cache depth would be a sentinel forensic event for a
-workload.  For anyone unfamiliar with modern IT security
-architectures, a very specific alert on your security dashboard that
-one of the tens of thousands of workloads that are running is doing
-something it shouldn't.
-
-Adversaries really hate to be noticed.
-
-> Regardless, I stand by my previous comment that discussion of these
-> caches may be a bit more detail that is needed in this document, but
-> of course that is your choice.  It's a balancing act between providing
-> enough high level detail to satisfy users and reviewers, and producing
-> a document that is so verbose that the time required to properly
-> review it is prohibitive.
-
-It was our understanding that the administrative guides to a security
-architecture are intended to provide comprehensive information on the
-use and management of the implementation.
-
-We were attempting to be thorough in the description and rationale for
-all the technical aspects of TSEM.  The discourse in
-Documentation/memory-barriers.txt would seem to provide justification
-for intimate detail on important operational issues in the kernel.
-
-> > > > +The 'cache' keyword is used to specify the size of the caches used to
-> > > > +hold pointers to data structures used for the internal modeling of
-> > > > +security events or the export of the security event to external trust
-> > > > +orchestrators.  These pre-allocated structures are used to service
-> > > > +security event hooks that are called while the process is running in
-> > > > +atomic context and thus cannot sleep in order to allocate memory.
-> > > > +
-> > > > +The argument to this keyword is a numeric value specifying the number
-> > > > +of structures that are to be held in reserve for the namespace.
-> > > > +
-> > > > +By default the root security modeling namespace and externally modeled
-> > > > +namespaces have a default value of 128 entries.  An internally modeled
-> > > > +namespace has a default value of 32 entries.  The size requirements of
-> > > > +these caches can be highly dependent on the characteristics of the
-> > > > +modeled workload and may require tuning to the needs of the platform
-> > > > +or workload.
-> >
-> > > Presumably TSEM provides usage statistics somewhere so admins can
-> > > monitor and tune as desired?  If so, it seems like it would be a
-> > > good idea to add a reference here.
-> >
-> > We have trended toward the Linus philosophy of reducing the need to
-> > worry about properly tuning knobs.
-
-> I agree that generally speaking the less tuning knobs to get wrong,
-> the better.  However, that assumes a system that can adjust itself
-> as necessary to ensure a reasonable level of operation.  If TSEM can
-> not dynamically adjust itself you should consider exposing those
-> tunables.
-
-The atomic structure magazine sizes (cache depth) can be set on a per
-namespace basis, including the root modeling namespace.
-
-Our current development tree, on our GitHub site if anyone is
-interested, has simplified the cache sizing by using a single default
-value that is of sufficient size to boot a standard Linux (Debian)
-implementation.
-
-For subordinate modeling namespaces, experience has shown that to be
-more than what is needed, but it greatly simplifies the ability to use
-TSEM 'out of the box'.
-
-We still need to update the documentation to call out this fact and
-note that development teams can adjust this value downward for
-subordinate workloads that require lower levels of atomic event
-reserves, if there is a desire to save memory.  Or upward if a
-workload generates a pathologically large corpus of security events
-that run in atomic context.
-
-One could arguably make this self-tuning by setting a low water mark
-that would trigger the expansion of the depth of the event structure
-caches.  Which would invariably lead to a request to have a tunable to
-set that low water mark....
-
-Not to mention an argument about the performance impacts of locking
-the namespace context to prevent atomic context events from running
-while the event magazines are expanded.
-
-> paul-moore.com
-
-Have a good day.
-
-As always,
-Dr. Greg
-
-The Quixote Project - Flailing at the Travails of Cybersecurity
-              https://github.com/Quixote-Project
