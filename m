@@ -1,126 +1,176 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964524C80
-	for <linux-security-module@vger.kernel.org>; Tue, 25 Feb 2025 00:18:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E70C450FE
+	for <linux-security-module@vger.kernel.org>; Tue, 25 Feb 2025 02:38:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740442741; cv=none; b=p5voFWAKM0LWFr7BCMULuF3lwg2sLCnBySx9uemEgNnw3QC4JHUPd9O7Os/DwJJsdVIDhOE+pNe3qDjWc9kTFYdmedWTzyrIZg+9qNFgomOjz5UcE53ndW9Ng/NWfKmwmyWArYPrtoT80jYsVWl6V9MAbAAIl+eFbVfCiTdDBAE=
+	t=1740451090; cv=none; b=nmgS8h4rhQU8xAE0ykNSt+OET92XDAjEFQLEyv583oqZi7O4p6Utmh6f6UWz+mRXKAAWKUjcEPtnieDlPFrQiz6fp3TvO54tRFdYISFUojx72sVMXeky2XgfUM8DEOHPzk4aP26Gm2cx1XmNPWrN8jjc19LK3HWVdEXiVEsaJj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740442741; c=relaxed/simple;
-	bh=gNeyILjB/QdS85/GU8LJmYJPDXUZn4Dir5gNKqab82c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XN9+6Yd4A+VQelhs5rGv07xagj1FHTZA+5ed+geqPpgcpcxu65PMYGA9kMYmNlOl4X0Fi107Kcdj2KQDdllJnjy7cesb+NSJUCWVrYOqP64KuNhFzEwcFBzvJS4njjaysYQyd8VIOmyQk4YMYPsU0YgQcguZqg3E22Y8xLFsT4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N12SFr2g; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1740451090; c=relaxed/simple;
+	bh=oNdZT9w7aQq5QrNlfacj7MIC7lBCM1O2Jgg5tGeZrlc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jnzPdMFW2XGN75dltoRlfflCQnmfmCIAf8T9i8EyjBYNi0Z+qZ9HK7SPXKPrfdMyYJ2w9+tKV4Vw+CAzxJeSuuQFEhUBZBt7GRS5wtvaXvIDdzOo282KidGum9rs3PM4amPcMDzS+hW9z37mHIjuCKnvO/xtoOGT8t9TArwVGRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=PXiJB1RM; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N12SFr2g"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740442738;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kVAmyR6FHsajLdbtkqXLPF4+Gi6+fbQMI+k10rMIb+Y=;
-	b=N12SFr2gOm7QmEIrlsoHBeiaUabHPgmeXm9UsFC77kYyQtttpzyfakZEJdd2JgYNGcUmc3
-	KriCiOjGJtLxRG0H9RfJAyWXvSkScF0Z9YiFxo68Jygm7J1l4i2AwQjYmeWxlPF4V+aFeF
-	iZ16HQSWJIUxn7Yy04FRiUCKLXn43/g=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-111-T7_wB4RKOL-n5ROr4S-uOw-1; Mon,
- 24 Feb 2025 19:18:54 -0500
-X-MC-Unique: T7_wB4RKOL-n5ROr4S-uOw-1
-X-Mimecast-MFC-AGG-ID: T7_wB4RKOL-n5ROr4S-uOw_1740442732
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AA69619373DC;
-	Tue, 25 Feb 2025 00:18:51 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.127])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6BFF71800358;
-	Tue, 25 Feb 2025 00:18:48 +0000 (UTC)
-Date: Tue, 25 Feb 2025 08:18:44 +0800
-From: Baoquan He <bhe@redhat.com>
-To: steven chen <chenste@linux.microsoft.com>
-Cc: zohar@linux.ibm.com, stefanb@linux.ibm.com,
-	roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
-	eric.snowberg@oracle.com, ebiederm@xmission.com,
-	paul@paul-moore.com, code@tyhicks.com, bauermann@kolabnow.com,
-	linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
-	James.Bottomley@hansenpartnership.com, vgoyal@redhat.com,
-	dyoung@redhat.com
-Subject: Re: [PATCH v8 2/7] kexec: define functions to map and unmap segments
-Message-ID: <Z70MZD+BssRG4R1H@MiWiFi-R3L-srv>
-References: <20250218225502.747963-1-chenste@linux.microsoft.com>
- <20250218225502.747963-3-chenste@linux.microsoft.com>
- <Z7wOPiDfy/vtrkCS@MiWiFi-R3L-srv>
- <658b52e4-a4bb-40fc-a00b-bfdb3bf15b52@linux.microsoft.com>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="PXiJB1RM"
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6f754678c29so45111217b3.0
+        for <linux-security-module@vger.kernel.org>; Mon, 24 Feb 2025 18:38:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1740451087; x=1741055887; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UqK9lSPHR3oAe986F8iXqkMz9AYMYHr6QgwL+NcZdiU=;
+        b=PXiJB1RMf5Ayu1sFntsMseLpkqRBTF4jtusBDoA7lIOaD1hImCEuB98mD7KjihjNEm
+         7fNp/VQCbbklqF+swIeJh6BIUl9R6sM56jyD/ZUgddfOcMyDbhG0GWHimbes3enZW4n8
+         Wi7PKbQqFBPZTQJdcyI+bDt9As46rQkJqFlX+E7f/Y87mPkomV50RT15HLVnOd7+Dzod
+         UlIJsLAfTVYHytm4RjU4qTTJy3MwaGeTBQ6ZBPrM511unJ82cS99ozdSy1CBi1B4kogB
+         ALgwG9OqEUfL4LwlVxlOdSdaUm56MIbb/abk01HTkCEn7e/qAaJBTSsuE4gOyYwdQc5l
+         V4cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740451087; x=1741055887;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UqK9lSPHR3oAe986F8iXqkMz9AYMYHr6QgwL+NcZdiU=;
+        b=VGU2Oo5rH+228L6hHA/QxtEQ1dsHgTDlnfq9WZcwZA+RhoqUNe/+XkV+uYi1sbYzHb
+         4hqMNnNqIr/KdnHBqbJ7ATOtWXyP0H3zGuBsYAVRExu+gLMXQv1l2VDCxP7WFUDq9a2Y
+         HFJM3aOyTUb5h6rBZVyDDn0n4ye9+nv7oWJw4WQ4IGmSlNNgQutl1dF8xbMB/yeKVpS+
+         uGD5zQealRg/Z+oMINmoPb55+hYXtQXuHdhwX8OJYNUHgKKbD1y8SsjwNCrmAE88F4Ip
+         ec1e0fefm1CWDoKh4yyqLKGfKuaTVwCQuNNGUnKaS+gDb9TK5l1ekZLdos7oTPEWGVsO
+         3BSw==
+X-Forwarded-Encrypted: i=1; AJvYcCWG26mLvIcXJuAvRXRX5NZYNB13z+RR5zwaA8Dpl7wAi5XzO7qjvxwRqkgCm1sCDaYYhPFivaQau9qJmKH8Sk/Xpgj00r8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzubq4/nL6m4lbfBXt++qRbH20lDY90DNGVdsXhSxZloV/qFUsx
+	2lSysk1Un1GZMvpfIBhqlLXvPOMzsS3BvhPLdiwNWaA2WxjIkyCBzACxiZA7Tbp0gp3qAeCX2V5
+	kx98xMyfhVwB7pkVbk2tiVmZ043CL6w2xq7MI
+X-Gm-Gg: ASbGncvH2fZvhHUnyy/hNdGYPWyzd5rzAD8GbFhne9z+0q9HUkXLQ5rDpGIqxXMrKL6
+	j+u0DB+WPvIAH0zj75xN3/RngVdL9rtUP3PxTIbpIkOQJ0muZRM3ONCFNDV9zMwEOW9YLu9dhtu
+	bakzsnoKQ=
+X-Google-Smtp-Source: AGHT+IFEtqZjFjUUtEoV6clplX0tg01lvFBOsWs6wVdmIF0VuIZ0SAwc4zHx33tyK9MjmhuD5ygseR4l9mjGvJrZ59E=
+X-Received: by 2002:a05:6902:270a:b0:e57:3c46:fc86 with SMTP id
+ 3f1490d57ef6-e607a56713bmr1172129276.48.1740451087319; Mon, 24 Feb 2025
+ 18:38:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <658b52e4-a4bb-40fc-a00b-bfdb3bf15b52@linux.microsoft.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+References: <20250211-xattrat-syscall-v3-1-a07d15f898b2@kernel.org>
+ <20250221.ahB8jei2Chie@digikod.net> <jvo6uj7ro5czlo5ukw3vtf5mpqgrbuksqq4j63s2i6gwrjpz4m@kghpcqyi7gwb>
+In-Reply-To: <jvo6uj7ro5czlo5ukw3vtf5mpqgrbuksqq4j63s2i6gwrjpz4m@kghpcqyi7gwb>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 24 Feb 2025 21:37:56 -0500
+X-Gm-Features: AQ5f1JrNItPBrIagfKvZGb3Z7zpj-znT5mFIJQvEadvcpFUdxtbR_1MPSlEQmag
+Message-ID: <CAHC9VhRrs=W4JtuphkADPVG9MX8jxQLfmC9=2taj+cfZgNOt3Q@mail.gmail.com>
+Subject: Re: [PATCH v3] fs: introduce getfsxattrat and setfsxattrat syscalls
+To: Andrey Albershteyn <aalbersh@redhat.com>
+Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	Richard Henderson <richard.henderson@linaro.org>, Matt Turner <mattst88@gmail.com>, 
+	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Michal Simek <monstr@monstr.eu>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	Naveen N Rao <naveen@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, Yoshinori Sato <ysato@users.sourceforge.jp>, 
+	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
+	"David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
+	Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	Arnd Bergmann <arnd@arndb.de>, linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-m68k@lists.linux-m68k.org, 
+	linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, 
+	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-api@vger.kernel.org, linux-arch@vger.kernel.org, 
+	linux-xfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 02/24/25 at 03:05pm, steven chen wrote:
-> On 2/23/2025 10:14 PM, Baoquan He wrote:
-> > Hi Steve, Mimi,
-> > 
-> > On 02/18/25 at 02:54pm, steven chen wrote:
-> > > Currently, the mechanism to map and unmap segments to the kimage
-> > > structure is not available to the subsystems outside of kexec.  This
-> > > functionality is needed when IMA is allocating the memory segments
-> > > during kexec 'load' operation.  Implement functions to map and unmap
-> > > segments to kimage.
-> > I am done with the whole patchset understanding. My concern is if this
-> > TPM PCRs content can be carried over through newly introduced KHO. I can
-> > see that these patchset doesn't introduce too much new code changes,
-> > while if many conponents need do this, kexec reboot will be patched all
-> > over its body and become ugly and hard to maintain.
-> > 
-> > Please check Mike Rapoport's v4 patchset to see if IMA can register
-> > itself to KHO and do somthing during 2nd kernel init to restore those
-> > TPM PCRs content to make sure all measurement logs are read correctly.
-> > [PATCH v4 00/14] kexec: introduce Kexec HandOver (KHO)
-> > 
-> > Thanks
-> > Baoquan
-> 
-> Hi Baoquan,
-> 
-> For IMA, it appears that there are no current issues with TPM PCRs after a
-> kernel soft reboot.
+On Mon, Feb 24, 2025 at 11:00=E2=80=AFAM Andrey Albershteyn <aalbersh@redha=
+t.com> wrote:
+> On 2025-02-21 16:08:33, Micka=C3=ABl Sala=C3=BCn wrote:
+> > It looks security checks are missing.  With IOCTL commands, file
+> > permissions are checked at open time, but with these syscalls the path
+> > is only resolved but no specific access seems to be checked (except
+> > inode_owner_or_capable via vfs_fileattr_set).
 
-I mean using KHO to hold in 1st kernel and restore the IMA log in 2nd
-kernel.
+...
 
-> 
-> This patches is used to get currently missed IMA measurements during the
-> kexec process copied to new kernel after the kernel soft reboot. I think
-> it's ok to leave it at current location: it will be easy to maintain for
-> IMA.
+> > On Tue, Feb 11, 2025 at 06:22:47PM +0100, Andrey Albershteyn wrote:
 
-Yeah, but I am saying this patchset increase unnecessary code
-complexity in kexec code maintaining.
+...
 
-> 
-> Overall, for these patches, do you see any major blockers for kexec?
-> 
-> If you have any specific concerns or need further details, please let me
-> know.
+> > > +SYSCALL_DEFINE4(setfsxattrat, int, dfd, const char __user *, filenam=
+e,
+> > > +           struct fsxattr __user *, fsx, unsigned int, at_flags)
+> > > +{
+> > > +   CLASS(fd, dir)(dfd);
+> > > +   struct fileattr fa;
+> > > +   struct path filepath;
+> > > +   int error;
+> > > +   unsigned int lookup_flags =3D 0;
+> > > +
+> > > +   if ((at_flags & ~(AT_SYMLINK_FOLLOW | AT_EMPTY_PATH)) !=3D 0)
+> > > +           return -EINVAL;
+> > > +
+> > > +   if (at_flags & AT_SYMLINK_FOLLOW)
+> > > +           lookup_flags |=3D LOOKUP_FOLLOW;
+> > > +
+> > > +   if (at_flags & AT_EMPTY_PATH)
+> > > +           lookup_flags |=3D LOOKUP_EMPTY;
+> > > +
+> > > +   if (fd_empty(dir))
+> > > +           return -EBADF;
+> > > +
+> > > +   if (copy_fsxattr_from_user(&fa, fsx))
+> > > +           return -EFAULT;
+> > > +
+> > > +   error =3D user_path_at(dfd, filename, lookup_flags, &filepath);
+> > > +   if (error)
+> > > +           return error;
+> > > +
+> > > +   error =3D mnt_want_write(filepath.mnt);
+> > > +   if (!error) {
+> >
+> > security_inode_setattr() should probably be called too.
+>
+> Aren't those checks for something different - inode attributes
+> ATTR_*?
+> (sorry, the naming can't be more confusing)
+>
+> Looking into security_inode_setattr() it seems to expect struct
+> iattr, which works with inode attributes (mode, time, uid/gid...).
+> These new syscalls work with filesystem inode extended flags/attributes
+> FS_XFLAG_* in fsxattr->fsx_xflags. Let me know if I missing
+> something here
 
-I have no concerns for this patchset implementation itself, I saw you using
-vmap to maping the possible scattered source pages smartly and taking
-the mapped buffer pointers to update later duing kexec jumping. That's very
-great and clever method. BUT I am concerned about the solution, if we
-can make use of the existed way of KHO to implement it more simply. Could
-you please do investigation?
+A valid point.  While these are two different operations, with
+different structs/types, I suspect that most LSMs will consider them
+to be roughly equivalent from an access control perspective, which is
+why I felt the existing security_inode_{set,get}attr() hooks seemed
+appropriate.  However, there likely is value in keeping the ATTR and
+FSX operations separate; those LSMs that wish to treat them the same
+can easily do so in their respective LSM callbacks.
 
+With all this in mind, I think it probably makes sense to create two
+new LSM hooks, security_inode_{get,set}fsxattr().  The get hook should
+probably be placed inside vfs_fileattr_get() just before the call to
+the inode's fileattr_get() method, and the set hook should probably be
+placed inside vfs_fileattr_set(), inside the inode lock and after a
+successful call to fileattr_set_prepare().
+
+Does that sound better to everyone?
+
+--=20
+paul-moore.com
