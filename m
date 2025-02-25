@@ -1,149 +1,112 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF7AD1552F5;
-	Tue, 25 Feb 2025 15:59:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89D2718E34A;
+	Tue, 25 Feb 2025 18:35:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740499168; cv=none; b=knpTuebUBAwjmj21VroOkMpOwiQuACfn6ErTPZLNfifJ3FCB6+SYmqaTSSUfk4HfJcJSOEUAw1AZfrKkYjnMBJWIbm69B79pSpy5B+fL3o24oIFXpmiR8rFb6tQ6Qgd1B7Qh1RW+xALo2rtL+ShNXgevABUQg5kE0wRf02BT1M4=
+	t=1740508525; cv=none; b=BvFdyJwH1NGwnBIiW5mMSUMBUmCL6ho3eCGx9waJ/qkdlN50bRBUPnDjKBWnscNuIwA2BZT9fdB8d+wRGDayMPUw2ipd+GJG5J05yyA45yrFtd2zccNMgzRFxjwgElykcyB5UT5nTAFxzuRBPnTacslRSb49tdNNDwtpplVJMm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740499168; c=relaxed/simple;
-	bh=5BKzhjbCX0A+Ckqb9LCw0vp1xrvfcOr/debaeQvehd8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FAyVW2W39+KEXYjtPe5U8/tnWXEhJ1V2ulQknvvW7ut2MPnBHQEYAemejBFz7XnvgkyBXuCAl60/ZGIb8Tc0JukRdqTXqWhNND5o6WWHsz1gVO7rR2vBqRNSa9JGnNkEHXYZEp4SBMBwKn0Tb5XqAi7lULIAAR6id4TRG6LThB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hcOfCPg6; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1740508525; c=relaxed/simple;
+	bh=neE6Y//ifJeGR4oQHArgzrz7Pt53aD02tH8Z1xoqXRs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q2RXSvfCLeuqRQPAli7cpVFj7SN2G6tPc5fpijGJ113p2FOIM+47BelhPrZfyAseIPN651oi8MSYbvYZKBBnB/WNelaXwoo5aC0ubU53R1eKLOhurreuTcV794OKIpHnvtMslYDCfnuSZ/rwNS1CmTQD0VvpSAz500EgBWVRkOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=oGQjoobX; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hcOfCPg6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 377C2C4CEDD;
-	Tue, 25 Feb 2025 15:59:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740499167;
-	bh=5BKzhjbCX0A+Ckqb9LCw0vp1xrvfcOr/debaeQvehd8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hcOfCPg62Mp6p/gGtsnSxwqeC+vKxdWbUHnaP0lhK9+JD4bU00iwT2OXd68fSYasS
-	 cMGHk14Swd2/bs18Mw+XCs/M5g9hO4nFPN0Ad0v9g1xE2A9OCjxI2KFldk5FNdIDjn
-	 6E9m81StJWl7+TqHJObUe/YJwJ7lmLNHRT9OGwEAOMO9UjBY3ljMeb+SDLleZcmrad
-	 7KNBAlXezxSZE8YKAYBXGYKCx63g46BsIA9/Ts0WWq6vzlXJCD9vHcwme0PfK8ESP6
-	 08LqrVwRicdu/SNhfCpUvJXkehDRbEwBSi3DKCbLms+TjzZu3gFvEovMZrnaatKyJs
-	 GmUKFT+3vHHCw==
-Date: Tue, 25 Feb 2025 07:59:26 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Amir Goldstein <amir73il@gmail.com>,
-	Andrey Albershteyn <aalbersh@redhat.com>,
-	Richard Henderson <richard.henderson@linaro.org>,
-	Matt Turner <mattst88@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Michal Simek <monstr@monstr.eu>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
-	Helge Deller <deller@gmx.de>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	Rich Felker <dalias@libc.org>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	"David S . Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, Chris Zankel <chris@zankel.net>,
-	Max Filippov <jcmvbkbc@gmail.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-	sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
-	Linux-Arch <linux-arch@vger.kernel.org>, linux-xfs@vger.kernel.org,
-	Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>,
-	Theodore Ts'o <tytso@mit.edu>
-Subject: Re: [PATCH v3] fs: introduce getfsxattrat and setfsxattrat syscalls
-Message-ID: <20250225155926.GD6265@frogsfrogsfrogs>
-References: <20250211-xattrat-syscall-v3-1-a07d15f898b2@kernel.org>
- <20250221181135.GW21808@frogsfrogsfrogs>
- <CAOQ4uxgyYBFqkq6cQsso4LxJsPJ4uECOdskXmz-nmGhhV5BQWg@mail.gmail.com>
- <20250224-klinke-hochdekoriert-3f6be89005a8@brauner>
- <6b51ffa2-9d67-4466-865e-e703c1243352@app.fastmail.com>
- <20250225-strom-kopflos-32062347cd13@brauner>
- <3c860dc0-ba8d-4324-b286-c160b7d8d2c4@app.fastmail.com>
- <20250225-testfahrt-seilwinde-64e6f44c01ce@brauner>
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="oGQjoobX"
+Received: from [10.17.64.147] (unknown [131.107.1.147])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 95078203CDDE;
+	Tue, 25 Feb 2025 10:35:22 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 95078203CDDE
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1740508523;
+	bh=oAPMpgeQTX575axIRAvAGNwitPSc2FROHu2Kj3FuMr4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=oGQjoobXgkyRRqjRFRYg+q70hz6uhg5zsrVj8sKaiZST2hHQzUfdy24mpz723gJq3
+	 wk6LbK9qyHkwSvnY/nWhMXJ+/pbvW5MV3urcV4jMxmRXdRhzymB2vjTgPaLEvtvDsr
+	 QnlelFhG8GfsJ2T3GYOr1XpVnIav81F+3bT3m/g4=
+Message-ID: <8504fd93-8fff-4fd9-8d2d-26b4e1e84bee@linux.microsoft.com>
+Date: Tue, 25 Feb 2025 10:35:22 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250225-testfahrt-seilwinde-64e6f44c01ce@brauner>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 2/7] kexec: define functions to map and unmap segments
+To: Baoquan He <bhe@redhat.com>
+Cc: zohar@linux.ibm.com, stefanb@linux.ibm.com,
+ roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
+ eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
+ code@tyhicks.com, bauermann@kolabnow.com, linux-integrity@vger.kernel.org,
+ kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org, madvenka@linux.microsoft.com,
+ nramas@linux.microsoft.com, James.Bottomley@hansenpartnership.com,
+ vgoyal@redhat.com, dyoung@redhat.com
+References: <20250218225502.747963-1-chenste@linux.microsoft.com>
+ <20250218225502.747963-3-chenste@linux.microsoft.com>
+ <Z7wOPiDfy/vtrkCS@MiWiFi-R3L-srv>
+ <658b52e4-a4bb-40fc-a00b-bfdb3bf15b52@linux.microsoft.com>
+ <Z70MZD+BssRG4R1H@MiWiFi-R3L-srv>
+Content-Language: en-US
+From: steven chen <chenste@linux.microsoft.com>
+In-Reply-To: <Z70MZD+BssRG4R1H@MiWiFi-R3L-srv>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Feb 25, 2025 at 12:24:08PM +0100, Christian Brauner wrote:
-> On Tue, Feb 25, 2025 at 11:40:51AM +0100, Arnd Bergmann wrote:
-> > On Tue, Feb 25, 2025, at 11:22, Christian Brauner wrote:
-> > > On Tue, Feb 25, 2025 at 09:02:04AM +0100, Arnd Bergmann wrote:
-> > >> On Mon, Feb 24, 2025, at 12:32, Christian Brauner wrote:
-> > >> 
-> > >> The ioctl interface relies on the existing behavior, see
-> > >> 0a6eab8bd4e0 ("vfs: support FS_XFLAG_COWEXTSIZE and get/set of
-> > >> CoW extent size hint") for how it was previously extended
-> > >> with an optional flag/word. I think that is fine for the syscall
-> > >> as well, but should be properly documented since it is different
-> > >> from how most syscalls work.
-> > >
-> > > If we're doing a new system call I see no reason to limit us to a
-> > > pre-existing structure or structure layout.
-> > 
-> > Obviously we could create a new structure, but I also see no
-> > reason to do so. The existing ioctl interface was added in
-> > in 2002 as part of linux-2.5.35 with 16 bytes of padding, half
-> > of which have been used so far.
-> > 
-> > If this structure works for another 23 years before we run out
-> > of spare bytes, I think that's good enough. Building in an
-> > incompatible way to handle potential future contents would
-> > just make it harder to use for any userspace that wants to
-> > use the new syscalls but still needs a fallback to the
-> > ioctl version.
-> 
-> The fact that this structure has existed since the dawn of time doesn't
-> mean it needs to be retained when adding a completely new system call.
-> 
-> People won't mix both. They either switch to the new interface because
-> they want to get around the limitations of the old interface or they
-> keep using the old interface and the associated workarounds.
-> 
-> In another thread they keep arguing about new extensions for Windows
-> that are going to be added to the ioctl interface and how to make it fit
-> into this. That just shows that it's very hard to predict from the
-> amount of past changes how many future changes are going to happen. And
-> if an interface is easy to extend it might well invite new changes that
-> people didn't want to or couldn't make using the old interface.
+On 2/24/2025 4:18 PM, Baoquan He wrote:
+> On 02/24/25 at 03:05pm, steven chen wrote:
+>> On 2/23/2025 10:14 PM, Baoquan He wrote:
+>>> Hi Steve, Mimi,
+>>>
+>>> On 02/18/25 at 02:54pm, steven chen wrote:
+>>>> Currently, the mechanism to map and unmap segments to the kimage
+>>>> structure is not available to the subsystems outside of kexec.  This
+>>>> functionality is needed when IMA is allocating the memory segments
+>>>> during kexec 'load' operation.  Implement functions to map and unmap
+>>>> segments to kimage.
+>>> I am done with the whole patchset understanding. My concern is if this
+>>> TPM PCRs content can be carried over through newly introduced KHO. I can
+>>> see that these patchset doesn't introduce too much new code changes,
+>>> while if many conponents need do this, kexec reboot will be patched all
+>>> over its body and become ugly and hard to maintain.
+>>>
+>>> Please check Mike Rapoport's v4 patchset to see if IMA can register
+>>> itself to KHO and do somthing during 2nd kernel init to restore those
+>>> TPM PCRs content to make sure all measurement logs are read correctly.
+>>> [PATCH v4 00/14] kexec: introduce Kexec HandOver (KHO)
+>>>
+>>> Thanks
+>>> Baoquan
+>> Hi Baoquan,
+>>
+>> For IMA, it appears that there are no current issues with TPM PCRs after a
+>> kernel soft reboot.
+> I mean using KHO to hold in 1st kernel and restore the IMA log in 2nd
+> kernel.
+>
+>> This patches is used to get currently missed IMA measurements during the
+>> kexec process copied to new kernel after the kernel soft reboot. I think
+>> it's ok to leave it at current location: it will be easy to maintain for
+>> IMA.
+> Yeah, but I am saying this patchset increase unnecessary code
+> complexity in kexec code maintaining.
+>
+>> Overall, for these patches, do you see any major blockers for kexec?
+>>
+>> If you have any specific concerns or need further details, please let me
+>> know.
+> I have no concerns for this patchset implementation itself, I saw you using
+> vmap to maping the possible scattered source pages smartly and taking
+> the mapped buffer pointers to update later duing kexec jumping. That's very
+> great and clever method. BUT I am concerned about the solution, if we
+> can make use of the existed way of KHO to implement it more simply. Could
+> you please do investigation?
 
-Agreed, I don't think it's hard to enlarge struct fsxattr in the
-existing ioctl interface; either we figure out how to make the kernel
-fill out the "missing" bytes with an internal getfsxattr call, or we
-make it return some errno if we would be truncating real output due to
-struct size limits and leave a note in the manpage that "EL3HLT means
-use a bigger structure definition"
+Hi Baoquan,
 
-Then both interfaces can plod along for another 30 years. :)
+I will conduct an investigation. Thank you for your comments.
 
---D
+Steven
+
