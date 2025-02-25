@@ -1,112 +1,101 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89D2718E34A;
-	Tue, 25 Feb 2025 18:35:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from mail-ot1-f73.google.com (mail-ot1-f73.google.com [209.85.210.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA401ACEAF
+	for <linux-security-module@vger.kernel.org>; Tue, 25 Feb 2025 19:26:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740508525; cv=none; b=BvFdyJwH1NGwnBIiW5mMSUMBUmCL6ho3eCGx9waJ/qkdlN50bRBUPnDjKBWnscNuIwA2BZT9fdB8d+wRGDayMPUw2ipd+GJG5J05yyA45yrFtd2zccNMgzRFxjwgElykcyB5UT5nTAFxzuRBPnTacslRSb49tdNNDwtpplVJMm4=
+	t=1740511608; cv=none; b=jTedrMeOqRuHb7JcZ3+ZZScg37V+1RmClR5rATo42+ZNsk+XGtmW8i2tfdGGBf8mlamgCpdyKbnKDVEwYQ92tyi/oLEfisENCri52BxNDoNJTvkNShRCPNt8Jc3Cjdqmc8+f0vVGRlCXlA+JcmWQCOP9Ikps7UQr8zrrXJ5ryQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740508525; c=relaxed/simple;
-	bh=neE6Y//ifJeGR4oQHArgzrz7Pt53aD02tH8Z1xoqXRs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q2RXSvfCLeuqRQPAli7cpVFj7SN2G6tPc5fpijGJ113p2FOIM+47BelhPrZfyAseIPN651oi8MSYbvYZKBBnB/WNelaXwoo5aC0ubU53R1eKLOhurreuTcV794OKIpHnvtMslYDCfnuSZ/rwNS1CmTQD0VvpSAz500EgBWVRkOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=oGQjoobX; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+	s=arc-20240116; t=1740511608; c=relaxed/simple;
+	bh=DJlfk6b3RJau9l+w6GknKKnQt/3tbE8gdqZES9yqU5o=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Cfw3TA820SYA5Mr/daTMZMCoqiVOvLby7lW6bBcm8LkRAMMbuL/p7DYw7rKpZ3/KtsC5jeZIpNZNea4eaCu98mTv0lS2eA/9VT0PUEcJxfBqtFYz8fNSQqnWzy3DdbEze11g6Zn6iwP/tEWKM/+f5QArGbx3com3j/lff8CUDWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--paullawrence.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=H4hcWf0Q; arc=none smtp.client-ip=209.85.210.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--paullawrence.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="oGQjoobX"
-Received: from [10.17.64.147] (unknown [131.107.1.147])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 95078203CDDE;
-	Tue, 25 Feb 2025 10:35:22 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 95078203CDDE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1740508523;
-	bh=oAPMpgeQTX575axIRAvAGNwitPSc2FROHu2Kj3FuMr4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oGQjoobXgkyRRqjRFRYg+q70hz6uhg5zsrVj8sKaiZST2hHQzUfdy24mpz723gJq3
-	 wk6LbK9qyHkwSvnY/nWhMXJ+/pbvW5MV3urcV4jMxmRXdRhzymB2vjTgPaLEvtvDsr
-	 QnlelFhG8GfsJ2T3GYOr1XpVnIav81F+3bT3m/g4=
-Message-ID: <8504fd93-8fff-4fd9-8d2d-26b4e1e84bee@linux.microsoft.com>
-Date: Tue, 25 Feb 2025 10:35:22 -0800
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="H4hcWf0Q"
+Received: by mail-ot1-f73.google.com with SMTP id 46e09a7af769-7275bc1e735so3560407a34.3
+        for <linux-security-module@vger.kernel.org>; Tue, 25 Feb 2025 11:26:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740511606; x=1741116406; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DJlfk6b3RJau9l+w6GknKKnQt/3tbE8gdqZES9yqU5o=;
+        b=H4hcWf0Q+oQQQ3tVXB9N28PRzDtT7eVVDRv1gHV3DZQ7xe6LumpB9/MqchQ0yASsxK
+         ly0Hb9Q/SuYmBYIv/YLCE3y9p6G2QUKInZU/RiPPfDLa5f7lHrD6EidAR907TuhHOOBj
+         1DuUMpna10vkjNvGgnJCfGwtkodhzlA00SgxvCpN/JJr/ePRn7LbnO1/bg3rYpLnq560
+         D86JRVZcCmFBBsZ1ZUlV8Uapo9+4uegNmYLNK36Q0GO0D5ZXSPV/O0svVml6lK0ieMb9
+         dZ1fhrCVp8r1VfjjFGIJInlcSD0q70rCkzu8SJShv4FrFXioXz3nV9Xhii2iqZIJMSSW
+         dtmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740511606; x=1741116406;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DJlfk6b3RJau9l+w6GknKKnQt/3tbE8gdqZES9yqU5o=;
+        b=G2FAp4hy128vJLB52eeTKgPXK5DzpozdYB6x57pwBYTRDrJZAvVaV5bi+Y0yWC+0+O
+         ejfrcSYe8oJPCU/ph9J+crJSKEL4YHsFDQGA+z6voLmLDWo/oiIqxpHJkO66YcKbGKSn
+         u5fFbM2bMJSkaQP7kjxATyKiR51SIIqCPlqtYbzofMyaWYU/Ez65gIT437y+XopSlCB7
+         ZgpLQ2cPKt5JfCNSWRMGRCEHBu/gJ/6D64sOAYoDWlgvj6ieSSm2ysoQsl5plOgFO/r/
+         8z93KMNh8Fftku4vWCCeqj1YRTGx7uQEU/dOR1jLai64x85hN3LEjA8ojlRcPDYtJlXK
+         Omtw==
+X-Forwarded-Encrypted: i=1; AJvYcCXiMaz7u/dCm0oJjSMmmvWidbq5iP2dlcz0lcy9RATcD8THscRJjFTUtKQhaKI4ptAMTZTHkZ2MhloY676LfqVyHEiOu0o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeN5hO6rL3FZi4WiTmkt+v16A8nDeTdw1lGdpIV5ua2uZ+88Mj
+	sG+5KyJPcXuIwX4wGVvhMkrAVV7MaMcnMyX2hqJFW4fRdDYoE7el9TOemby81q8JS+x1exYRQfY
+	WfssWq5yviKkgf8ng3Et7n6Ecfg==
+X-Google-Smtp-Source: AGHT+IH42rZCjQxhtGaX41R/FygdO39bmt4VMVb9EHOMyqJQj1A1hd9V5S6V3ciDnhUFtYvqHYTc4Cmq0ZkSclZIm6Q=
+X-Received: from oabxl3.prod.google.com ([2002:a05:6870:9f03:b0:2bc:6c19:c219])
+ (user=paullawrence job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6830:2701:b0:727:26ca:bd2d with SMTP id 46e09a7af769-7274c184410mr11658399a34.3.1740511606242;
+ Tue, 25 Feb 2025 11:26:46 -0800 (PST)
+Date: Tue, 25 Feb 2025 11:26:44 -0800
+In-Reply-To: <CAOQ4uxhxQfFfrpmRS6tOv5ANVug6d8dGx6Hsc7MYYe63sUOpcg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 2/7] kexec: define functions to map and unmap segments
-To: Baoquan He <bhe@redhat.com>
-Cc: zohar@linux.ibm.com, stefanb@linux.ibm.com,
- roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
- eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
- code@tyhicks.com, bauermann@kolabnow.com, linux-integrity@vger.kernel.org,
- kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org, madvenka@linux.microsoft.com,
- nramas@linux.microsoft.com, James.Bottomley@hansenpartnership.com,
- vgoyal@redhat.com, dyoung@redhat.com
-References: <20250218225502.747963-1-chenste@linux.microsoft.com>
- <20250218225502.747963-3-chenste@linux.microsoft.com>
- <Z7wOPiDfy/vtrkCS@MiWiFi-R3L-srv>
- <658b52e4-a4bb-40fc-a00b-bfdb3bf15b52@linux.microsoft.com>
- <Z70MZD+BssRG4R1H@MiWiFi-R3L-srv>
-Content-Language: en-US
-From: steven chen <chenste@linux.microsoft.com>
-In-Reply-To: <Z70MZD+BssRG4R1H@MiWiFi-R3L-srv>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <CAOQ4uxhxQfFfrpmRS6tOv5ANVug6d8dGx6Hsc7MYYe63sUOpcg@mail.gmail.com>
+X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
+Message-ID: <20250225192644.1410948-1-paullawrence@google.com>
+Subject: Re: [PATCH v19 0/4] overlayfs override_creds=off & nested get xattr fix
+From: Paul Lawrence <paullawrence@google.com>
+To: amir73il@gmail.com
+Cc: corbet@lwn.net, dvander@google.com, ebiederm@xmission.com, 
+	john.stultz@linaro.org, kernel-team@android.com, linux-doc@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-unionfs@vger.kernel.org, 
+	luca.boccassi@microsoft.com, miklos@szeredi.hu, paulmoore@microsoft.com, 
+	rdunlap@infradead.org, salyzyn@android.com, sds@tycho.nsa.gov, 
+	selinux@vger.kernel.org, vgoyal@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 2/24/2025 4:18 PM, Baoquan He wrote:
-> On 02/24/25 at 03:05pm, steven chen wrote:
->> On 2/23/2025 10:14 PM, Baoquan He wrote:
->>> Hi Steve, Mimi,
->>>
->>> On 02/18/25 at 02:54pm, steven chen wrote:
->>>> Currently, the mechanism to map and unmap segments to the kimage
->>>> structure is not available to the subsystems outside of kexec.  This
->>>> functionality is needed when IMA is allocating the memory segments
->>>> during kexec 'load' operation.  Implement functions to map and unmap
->>>> segments to kimage.
->>> I am done with the whole patchset understanding. My concern is if this
->>> TPM PCRs content can be carried over through newly introduced KHO. I can
->>> see that these patchset doesn't introduce too much new code changes,
->>> while if many conponents need do this, kexec reboot will be patched all
->>> over its body and become ugly and hard to maintain.
->>>
->>> Please check Mike Rapoport's v4 patchset to see if IMA can register
->>> itself to KHO and do somthing during 2nd kernel init to restore those
->>> TPM PCRs content to make sure all measurement logs are read correctly.
->>> [PATCH v4 00/14] kexec: introduce Kexec HandOver (KHO)
->>>
->>> Thanks
->>> Baoquan
->> Hi Baoquan,
->>
->> For IMA, it appears that there are no current issues with TPM PCRs after a
->> kernel soft reboot.
-> I mean using KHO to hold in 1st kernel and restore the IMA log in 2nd
-> kernel.
->
->> This patches is used to get currently missed IMA measurements during the
->> kexec process copied to new kernel after the kernel soft reboot. I think
->> it's ok to leave it at current location: it will be easy to maintain for
->> IMA.
-> Yeah, but I am saying this patchset increase unnecessary code
-> complexity in kexec code maintaining.
->
->> Overall, for these patches, do you see any major blockers for kexec?
->>
->> If you have any specific concerns or need further details, please let me
->> know.
-> I have no concerns for this patchset implementation itself, I saw you using
-> vmap to maping the possible scattered source pages smartly and taking
-> the mapped buffer pointers to update later duing kexec jumping. That's very
-> great and clever method. BUT I am concerned about the solution, if we
-> can make use of the existed way of KHO to implement it more simply. Could
-> you please do investigation?
+> As I wrote, this is one specific problem that I identified.
+> If you propose a different behavior base on mount flag you should
+> be able to argue that is cannot be exploited to circumvent security
+> access policies, by peaking into cached copies of objects that the user
+> has no access to, or by any other way.
 
-Hi Baoquan,
+> I have no idea how to implement what you want and prove that
+> it is safe.
+> Maybe if you explained the use case in greater details with some
+> examples someone could help you reach a possible solution.
 
-I will conduct an investigation. Thank you for your comments.
+I'm going to wake up this thread one last time to lay it to rest permanently.
+We have now reimplemented our use of overlayfs to no longer need these patches.
+We will no longer be attempting to get this patch set accepted.
 
-Steven
+One issue - remount does not update the mounter credentials, either by default
+or via a flag. I was able to work around this, but it would have been much
+easier had I simply been able to remount with new credentials. (The specific
+use case is that we load sepolicy from a potentially overlaid partition, so the
+original mounter will always have the default kernel domain, which will not be
+suitable once sepolicy is enforced.)
 
+Is this a design decision? Would a patch to set credentials during remount be
+of interest?
+
+Thanks,
+Paul
