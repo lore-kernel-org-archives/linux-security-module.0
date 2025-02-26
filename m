@@ -1,109 +1,96 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A595122425A;
-	Wed, 26 Feb 2025 22:02:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BFE825E82D;
+	Wed, 26 Feb 2025 22:55:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740607344; cv=none; b=jHLzoU8Mk7NlqQd9/iTftNNHJA88SMKod8IxhHXj/Q3SQvhBPPCMPfO+gvuoX4VPJgU167Rap5qjKXO2IW93LJWUSBdj5sIyWfz0JsrmTzL+QhOvlk1x+89IIYb95yE7nYijj6kOwoUNckOCoocWKyuK9HM4wB7tz6+r3il+Vpg=
+	t=1740610518; cv=none; b=HoXE9lFT83GW/nf5SySzNqKZqMAgtXfnJRbi9vdOrmlxNmndwV3g2eL3Uu3QVq/O6WNHVU2gO9oOmQ6gWU3LNBuFfdSVICKRXRsDJjJmF+h7e+koUVoprLuj+wezpC177INNOUOHnPutIG/m1VX4lgzAhsTIckVWjAVScmxvaGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740607344; c=relaxed/simple;
-	bh=HcGovQDGE4BqvsArC5and/FvCf5uqHO7axy7rZfiDQM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Jt1X/LkI2C6RreDOl8sfFDxI6j9RwZnMCDgKj0pQMShxXZPCEOIZyV1f/I+gcythKVLRKB5ZUDelkpOxUS5bUVajfrrELM/dPmWhbUxLM1oRMVHi1+2aMYznI5pToK3HuqtmisPIH24jwEAeB+OsBBMSzTDFBlwq3eV7LN83pTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZmVWKMC3; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1740610518; c=relaxed/simple;
+	bh=3rualdVsZ0rnSLUknJnwEmuB93Nt/mrluRr78WdEdIM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UYpBLJJGHXb1qobUzcTlmwpWucUnzt4MSjdIxUDDv+NDOr38r3Fa/JKaQRE5xgHeQQYfOjKVpxRPsdjUXmyFnwENPjIkA/c8bsveLo9FAvYr2q0t+O2fQBC6J5yiepbp0osAJfEexhIBEFFSaYzvy3LzJqlgu6GbEYRdyrFoxBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UE4RPiIm; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZmVWKMC3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1343EC4AF09;
-	Wed, 26 Feb 2025 22:02:24 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UE4RPiIm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CAF4C4CED6;
+	Wed, 26 Feb 2025 22:55:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740607344;
-	bh=HcGovQDGE4BqvsArC5and/FvCf5uqHO7axy7rZfiDQM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ZmVWKMC3rsbx1KFyxD9w+PJU186QyKnQzHX4Xm8J6JmLWGygsI5SpeZjQWkLUDiDh
-	 wLIwdQwcJb7nlWhki+sK5QSY26E03e2JwPjJANEapXLgpmG7SzGBJJdOvF01qpLwTx
-	 F0CJmSv5Pc5K95kzwufIGYcb9UBzhVaRGRuuTXdlE6CuvNspAa5m3eyWtPFz6hJezl
-	 q+1cGJZ5cxRPYBK80PlETbXWivNaBJ41wgZiR+7cw+zoxoLv5RDVYC/huuWeXg+PES
-	 0O2+Y578qwE5O5WfsSJBH/yrH4EWhJS3ka9O4BzWLZFJ+Q5ZUUme57sM4QqaxisEI3
-	 XSF8lkSFR1jcA==
-Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-855bb9fa914so7837439f.1;
-        Wed, 26 Feb 2025 14:02:24 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU8eDTozv1NF8spQVqpdF2u7o1CRfa6ehblWQCNNQzSSnhlzkWxx+g9WmbdqOt9dXjxfeKP1QmKlhWSjvQ4c8lqpfMFuEgd@vger.kernel.org, AJvYcCVq29IlnEdMlcXgudA4m/huO+gYMP3+BrqJrKpVcxUe0hXIOdnV66mhYMh97CZog4vx3icQ4BeetQ==@vger.kernel.org, AJvYcCXeIUVryhV+LDSjVewiX0qLyCqH6IxdKWgqOVkbP5YrGRKvMeEZjVzEH89TObBvPU/zD4bKSI9h9cHdl7Hv@vger.kernel.org, AJvYcCXiLSbxToyaJnVRg7x+5uQLaDVBVL+6ccmCxY16OI7LRKa2mmuYhjlvbMpLMAiF026KZ+U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAbu+ZOSFnvJ5hLyh8XeoEXQimnrUTWy8eJ00RpMURpFip9TKg
-	PAnSpiD1hruSnkPMoMDtFvrBuaXdMzzukKyEQlTJQP3Ob/1Ku8MVUNgrjxtX/4zbiNQmeUMOpPG
-	6mRTs1z5wqW+jkIl96mvI7zftbks=
-X-Google-Smtp-Source: AGHT+IF56aMtVC9kgzhrEn1BazaQuVa1V57LakSmtHHshyBopSU62FSVL1llGe6JYotFsOu+WB8yT45gFYnnGg9VS9A=
-X-Received: by 2002:a05:6e02:3103:b0:3d2:6f1e:8a4b with SMTP id
- e9e14a558f8ab-3d2cb5151ccmr202103765ab.16.1740607343398; Wed, 26 Feb 2025
- 14:02:23 -0800 (PST)
+	s=k20201202; t=1740610517;
+	bh=3rualdVsZ0rnSLUknJnwEmuB93Nt/mrluRr78WdEdIM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UE4RPiImGNejxCgGvcmt+qoRUzr6PSyoLUkPypdhGaXcKaVH67Z+ogZJ1cvqtZ17H
+	 q4O2UtzyGkJA25bOgFBPVWd9MEuva8LWVqRqiYqMlB9nyXGSvdhypCElfmOqt1FgFS
+	 yZwQD+OFIRr0PdLIL8DrumvaZ5fc2lLIvqufKydh9zHcW2f8QaT1Davb+8b7erL5K+
+	 q14iwyqgXnwdb6Pf8SukIe6AJJ2ISWRUyKFYjbYZvTiPRLeGe+GhQAiOemBEUBr6Xz
+	 XTOeRc8fWokBq1l++rJElbPNZw93bc78zvhxOBuOgAml3aBHxj50A6Fv0Np67VfAJt
+	 GohZrtUQ8jvFQ==
+Date: Wed, 26 Feb 2025 22:55:10 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Ahmad Fatoum <a.fatoum@pengutronix.de>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Fabio Estevam <festevam@denx.de>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Jonathan Corbet <corbet@lwn.net>, Serge Hallyn <serge@hallyn.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Matti Vaittinen <mazziesaccount@gmail.com>,
+	Benson Leung <bleung@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>,
+	Guenter Roeck <groeck@chromium.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	chrome-platform@lists.linux.dev, devicetree@vger.kernel.org,
+	kernel@pengutronix.de
+Subject: Re: [PATCH v3 08/12] regulator: allow user configuration of hardware
+ protection action
+Message-ID: <f3a1ae24-6ee0-43d7-8648-cf25ac139960@sirena.org.uk>
+References: <20250217-hw_protection-reboot-v3-0-e1c09b090c0c@pengutronix.de>
+ <20250217-hw_protection-reboot-v3-8-e1c09b090c0c@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250226003055.1654837-1-bboscaccy@linux.microsoft.com>
- <20250226003055.1654837-2-bboscaccy@linux.microsoft.com> <CAPhsuW7=uALYiLfKfApvSG0V+RV+M20w5x3myTZVLNRyYnBFnQ@mail.gmail.com>
- <CAADnVQJWMBRspP-srQwe8_B1smGG1hs3kVbpeiuYo-0mLWAnUA@mail.gmail.com>
-In-Reply-To: <CAADnVQJWMBRspP-srQwe8_B1smGG1hs3kVbpeiuYo-0mLWAnUA@mail.gmail.com>
-From: Song Liu <song@kernel.org>
-Date: Wed, 26 Feb 2025 14:02:12 -0800
-X-Gmail-Original-Message-ID: <CAPhsuW5Xzv7hsuG9RzO+KdxMXO3JCpC6UOTFDZiYGf_Vnfpo5g@mail.gmail.com>
-X-Gm-Features: AQ5f1JpLtpxSTDy_e-G9cvkC70zZHFez1SttCvfnEJ5lwovdBr4h5ckbHaT__AY
-Message-ID: <CAPhsuW5Xzv7hsuG9RzO+KdxMXO3JCpC6UOTFDZiYGf_Vnfpo5g@mail.gmail.com>
-Subject: Re: [PATCH 1/1] security: Propagate universal pointer data in bpf hooks
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Blaise Boscaccy <bboscaccy@linux.microsoft.com>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, 
-	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
-	LSM List <linux-security-module@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	bpf <bpf@vger.kernel.org>, selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="69+QFFE4FM9qynJX"
+Content-Disposition: inline
+In-Reply-To: <20250217-hw_protection-reboot-v3-8-e1c09b090c0c@pengutronix.de>
+X-Cookie: I've been there.
 
-On Wed, Feb 26, 2025 at 8:00=E2=80=AFAM Alexei Starovoitov
-<alexei.starovoitov@gmail.com> wrote:
->
-> On Tue, Feb 25, 2025 at 11:06=E2=80=AFPM Song Liu <song@kernel.org> wrote=
-:
-> >
-> > On Tue, Feb 25, 2025 at 4:31=E2=80=AFPM Blaise Boscaccy
-> > <bboscaccy@linux.microsoft.com> wrote:
-> > >
-> > > Certain bpf syscall subcommands are available for usage from both
-> > > userspace and the kernel. LSM modules or eBPF gatekeeper programs may
-> > > need to take a different course of action depending on whether or not
-> > > a BPF syscall originated from the kernel or userspace.
-> > >
-> > > Additionally, some of the bpf_attr struct fields contain pointers to
-> > > arbitrary memory. Currently the functionality to determine whether or
-> > > not a pointer refers to kernel memory or userspace memory is exposed
-> > > to the bpf verifier, but that information is missing from various LSM
-> > > hooks.
-> > >
-> > > Here we augment the LSM hooks to provide this data, by simply passing
-> > > the corresponding universal pointer in any hook that contains already
-> > > contains a bpf_attr struct that corresponds to a subcommand that may
-> > > be called from the kernel.
-> >
-> > I think this information is useful for LSM hooks.
-> >
-> > Question: Do we need a full bpfptr_t for these hooks, or just a boolean
-> > "is_kernel or not"?
->
-> +1
-> Just passing the bool should do.
-> Passing uattr is a footgun. Last thing we need is to open up TOCTOU conce=
-rns.
 
-Shall we also replace uattr with bool is_kernel in verifier.c? It appears t=
-o be
-a good cleanup.
+--69+QFFE4FM9qynJX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks,
-Song
+On Mon, Feb 17, 2025 at 09:39:48PM +0100, Ahmad Fatoum wrote:
+> When the core detects permanent regulator hardware failure or imminent
+> power failure of a critical supply, it will call hw_protection_shutdown
+> in an attempt to do a limited orderly shutdown followed by powering off
+> the system.
+
+Not that it matters at this point but
+
+Reviewed-by: Mark Brown <broonie@kernel.org>
+
+--69+QFFE4FM9qynJX
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAme/m80ACgkQJNaLcl1U
+h9BMTQf9EPlgFM5IHJeDldbatcC7CEidjNZXpHX8EVgKK1b4TRFL1eAxjG0TbxD2
+uMRhc02ghjwIGueCDC/fq7Ziivq6rpmWNQc3RBZMXP499VIVnBvSEFYCryeohXkj
+kKdWMjGH468A5J4qa6IiCdzpRJB/lyhyiU0Rjup9YKdpC+LFhjvWR7N4oqAUmzss
+k16nd/Nw3lEs23Kd3FoJ+TfQImtUm3QQ2doQyWcFgbpoO2uOI4X40LXVb6RKLq39
+RtuDh+WWEFjQeByjIrHjQ9HHn4aTpYKE4aqVKRGpwHlWr5pQqfIcyg2NDjUfrBGT
+bdyJw53DkC0StS3yRxrJo3Yp5iQqhg==
+=zpJM
+-----END PGP SIGNATURE-----
+
+--69+QFFE4FM9qynJX--
