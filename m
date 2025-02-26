@@ -1,175 +1,155 @@
-Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34DC62571A7
-	for <linux-security-module@vger.kernel.org>; Wed, 26 Feb 2025 21:19:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D4AC15852E;
+	Wed, 26 Feb 2025 21:21:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740604747; cv=none; b=fNAAx2OkfF52//cDI2W1RqbLpC/+xlG6h21ypLi7GAofqHrxzBM9/8AO6ujR8PM7YAXQR4gPVE1TFeXPCQ8luhoGrJtIBkvEfv1KQvdD10+UOSEQqZvAULpn/5VtatI16fK/f3dlmjM+BuHoltZLUtmDQY4hfQOcspFZaq/6K90=
+	t=1740604879; cv=none; b=R5BwavDgUA1ONXeFS66dP1GMel3tt7TwY0l01fVOd47p7cg3rML0znvxPvG/FsQOgOwhO1qXSAX9+2aFnwdIUgwq+h9eELJrVJnN9o5Gt4ciG1dyHVXIGgTZ2M9habp8pD28349PjB/PAwhOgM2n5J0m5AQpiIw/vuZUHdWz+XM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740604747; c=relaxed/simple;
-	bh=LNhj+DGxktTxB8FdmUWwYvohBv0qL5MVFkUsGguvOds=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=if8Mho9JzE5qgQsY8ImAWVEgrq15fe4jgMC7YBEnDgvKdtVgyiUOtU+Af2k4MHzpzBFZtONRipZ0nkKiKKIHvN4sSEoPIZcH+FlNJTzA+4A4k/QH55fxkq6AzGjLk1kJepFjbgLPxbJoCiRQzTLYbM3/Pjf02Udk9FICB6uK2YQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=a7mbj0e0; arc=none smtp.client-ip=209.85.208.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
+	s=arc-20240116; t=1740604879; c=relaxed/simple;
+	bh=zLo7wWVaM5R8qypum2+FvRZ28uvFQWeV7ih/pD2ZNV4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YJUkh0dLAdsLmOKGCRoONNVkcmzIjFlo9yl1zGcuqb2KUV/eNHR6jgpn5yQMfbh860thQOzzPqJgPEcK1BO3k/oLz3etoXxLVIjnhREFbYmbnQkcuDMouCVwt0b/39gdzlS6AZa+fHOTIu/RYmCSM0KH3Ysqk80b67jdq8f9Dk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e16L/ur4; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="a7mbj0e0"
-Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-5da15447991so134773a12.3
-        for <linux-security-module@vger.kernel.org>; Wed, 26 Feb 2025 13:19:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1740604744; x=1741209544; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=duUSxcKBjL1V2Dc8BDWLklM2H+W6u03EYfGKcvUPxI4=;
-        b=a7mbj0e0x3wPnZxyXBbg90QJ4zh4HzM/nlbK+f0LGFLVBKbKjw3GYl9cJE8yAXD//W
-         BWPaMVnChiGobmYJasvMyJ0SKxpxvhrY8BWGXv6W9V5EjBN65HIECiFlzi01Slxgux+V
-         zts8pyHsQt1U1+QYqfRJUeKm2k/AmK9WIfOLDZlYoRMBdIs3CjBCzYykqyeOwC3hjg8r
-         +1fXBxoPcKkyNsmM7MTNv2LEzYmq/bIVtgdvf8SoUOrclXc/sfuWXk8f8ujw2PFhOZB/
-         ebgkbNXmtbTV/h9oCg8aEdQOU2G4DE0Dygjc/8k77ENbs0ANrUwvebkqnN2BC+4slq8m
-         KOpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740604744; x=1741209544;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=duUSxcKBjL1V2Dc8BDWLklM2H+W6u03EYfGKcvUPxI4=;
-        b=VKu822h6WLmFwRufkRM0HtAKMdYyoCGMzkPbCqllsVeOIqpmUImBkWt6L/judyxbLb
-         CTYNpwD5kUNXfd8QTXlmAAlhGtd8o9LFwCiR1jq86/Eta56z+Fh9fUJKLM8D3Im5z3SV
-         Hq34pX5fGYznJrcYmManTKN0+qCpoN1nBUJ5fZvnfOw8aaTC5SHJnF6R+/6oEzwNtgsj
-         s8ZWagTA/8funPK9EVHFHMDPgKTOb5r38W5pmevXmfU11LhttwKS6V1PSSlCdwmSZcWL
-         b01NZei63/YwZgEOGdUodAIk1sGmJSvT+6FHcVUgw0HarlM50rJKLyWzun2fak+fpSAD
-         JHgA==
-X-Forwarded-Encrypted: i=1; AJvYcCUNyH92qruFSVUpP5+0a4qDhQzsSg7GhSbNWo00Y9gI2NMxsNm8VZ/pd/OxkGWZAtXL54dOODfavp8Mfex+UxvVsTt8x9I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyx/WmdF1/yq+kn8aGEiyRRYdKlF3rvfoMFdpvLpPUKH0dYTYpx
-	R4+/E0HaDnvdzT/FoCrd8rnBl35Gi98oKAa32tgFqhTM5cOYczuzhoJMyl+GasIQ/b3+meeVj3k
-	8bg==
-X-Google-Smtp-Source: AGHT+IHXpHdqdH6Dco/NCDzY1hE8mnVJMoMXwcWuu5mJ6JTz/XtU3cTHMgAzaIvPF9M2oSa24BBCtyIXmpY=
-X-Received: from edbio9.prod.google.com ([2002:a05:6402:2189:b0:5dd:a70d:303a])
- (user=gnoack job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:5d5:b0:5e4:be64:b576
- with SMTP id 4fb4d7f45d1cf-5e4be64b76dmr2204593a12.1.1740604744548; Wed, 26
- Feb 2025 13:19:04 -0800 (PST)
-Date: Wed, 26 Feb 2025 22:18:16 +0100
-In-Reply-To: <20250226211814.31420-2-gnoack@google.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e16L/ur4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9AC2C4CED6;
+	Wed, 26 Feb 2025 21:21:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1740604879;
+	bh=zLo7wWVaM5R8qypum2+FvRZ28uvFQWeV7ih/pD2ZNV4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=e16L/ur4K3bkOEnBsErwPNPTtlNEC3WH7lYw/yGopVRPS+rxhcxlW02Mn9wjMAdMn
+	 N3E+EEZZ5m5tbpE+cuWJnBRkHCHuqQV1Go9KORr2DknI92mSatdIQ8lcvrSXZlJg1Y
+	 YmdkIrcDr4vG4P6R9itnmVwiwNS6/GXM0mpx5+YwwV32sSj3/0Doxkc0BxELPAIcqF
+	 TN0aap/rSp3sJBasKEAPyKF9iCjx3JLf/9Wi+rDp3Cc1LoW/No0uq3nuUNwe879hhM
+	 oQeZSZqQReq325U4kWyjpduKB4pTpDD/p7QNcs2IpbdADV/5JHop6ehSpGKkTk4lvQ
+	 hfscwbVNLrsPQ==
+Date: Wed, 26 Feb 2025 22:21:14 +0100
+From: Alejandro Colomar <alx@kernel.org>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Cc: linux-security-module@vger.kernel.org, 
+	Micka??l Sala??n <mic@digikod.net>, Tahera Fahimi <fahimitahera@gmail.com>, 
+	Tanya Agarwal <tanyaagarwal25699@gmail.com>, linux-man@vger.kernel.org
+Subject: Re: [PATCH 2/2] landlock: Clarify IPC scoping documentation
+Message-ID: <digoltgljbapedxs6bbt7izow344ab34ql5jm3djrivgyeqnrf@7xopiiuzvmhd>
+References: <20250124154445.162841-1-gnoack@google.com>
+ <20250124154445.162841-2-gnoack@google.com>
+ <Z5O44dxg8y-QZV62@google.com>
+ <erjborzfvlvlczeahjt7esghr4v3slgxdht6efftekofxljhiq@mkw2ibzvpvsx>
+ <Z79-87HoTPM94HWf@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250226211814.31420-2-gnoack@google.com>
-X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
-Message-ID: <20250226211814.31420-4-gnoack@google.com>
-Subject: [PATCH v2 1/1] landlock: Clarify IPC scoping documentation
-From: "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
-To: "=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>, Tahera Fahimi <fahimitahera@gmail.com>, 
-	Alejandro Colomar <alx@kernel.org>
-Cc: "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>, Tanya Agarwal <tanyaagarwal25699@gmail.com>, 
-	linux-security-module@vger.kernel.org, 
-	Daniel Burgener <dburgener@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="pwaoz3v7mlkui6ys"
+Content-Disposition: inline
+In-Reply-To: <Z79-87HoTPM94HWf@google.com>
+
+
+--pwaoz3v7mlkui6ys
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+From: Alejandro Colomar <alx@kernel.org>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Cc: linux-security-module@vger.kernel.org, 
+	Micka??l Sala??n <mic@digikod.net>, Tahera Fahimi <fahimitahera@gmail.com>, 
+	Tanya Agarwal <tanyaagarwal25699@gmail.com>, linux-man@vger.kernel.org
+Subject: Re: [PATCH 2/2] landlock: Clarify IPC scoping documentation
+References: <20250124154445.162841-1-gnoack@google.com>
+ <20250124154445.162841-2-gnoack@google.com>
+ <Z5O44dxg8y-QZV62@google.com>
+ <erjborzfvlvlczeahjt7esghr4v3slgxdht6efftekofxljhiq@mkw2ibzvpvsx>
+ <Z79-87HoTPM94HWf@google.com>
+MIME-Version: 1.0
+In-Reply-To: <Z79-87HoTPM94HWf@google.com>
 
-* Clarify terminology
-* Stop mixing the unix(7) and signal(7) aspects in the explanation.
+Hello G=C3=BCnther!
 
-Terminology:
+On Wed, Feb 26, 2025 at 08:52:03PM +0000, G=C3=BCnther Noack wrote:
+> > > > +    not stem from the same or a nested Landlock domain.
+> >=20
+> > This could be read such that send(2) is replaced by connect(2) on a
+> > non-connected datagram socket.  But you want to say that a connect(2)
+> > is implicitly executed before the actual send(2) (which is still
+> > executed, if connect(2) succeeds).
+>=20
+> Thanks, that can indeed be misunderstood.
+>=20
+> > How about this wording?
+> >=20
+> > 	If send(2) is used on a non-connected datagram socket, an
+> > 	implicit connect(2) is executed first, and will be blocked when
+> > 	the remote end does not ....
+>=20
+> I think this would be misleading as well, because the send(2) on the
+> non-connected datagram socket does *not* actually perform an implicit
+> connect(2).  (If it were doing that, the socket would be connected afterw=
+ards,
+> but it isn't.)  But we *do* initiate a communication with a previously un=
+known
+> remote address, just like connect(2), so we enforce the same Landlock pol=
+icy as
+> for connect(2).
 
-* The *IPC Scope* of a Landlock domain is that Landlock domain and its
-  nested domains.
-* An *operation* (e.g., signaling, connecting to abstract UDS) is said to
-  be *scoped within a domain* when the flag for that operation was set at
-  ruleset creation time.  This means that for the purpose of this
-  operation, only processes within the domain's IPC scope are reachable.
+Agreed.
 
-Signed-off-by: G=C3=BCnther Noack <gnoack@google.com>
----
- Documentation/userspace-api/landlock.rst | 45 ++++++++++++------------
- 1 file changed, 22 insertions(+), 23 deletions(-)
+> (Remark, connected datagram sockets sound absurd, because there is no con=
+nection
+> at the network layer. On datagram sockets, connect(2) only fixes the dest=
+ination
+> address so that it can be omitted in subsequent send(2) calls.).
+>=20
+> Rewording it to:
+>=20
+>   A sendto(2) on a non-connected datagram socket is treated as if
+>   it were doing an implicit connect(2) and will be blocked if the
+>   remote end does not stem from the same or a nested Landlock domain.
 
-diff --git a/Documentation/userspace-api/landlock.rst b/Documentation/users=
-pace-api/landlock.rst
-index ad587f53fe41..4832b16deedb 100644
---- a/Documentation/userspace-api/landlock.rst
-+++ b/Documentation/userspace-api/landlock.rst
-@@ -317,33 +317,32 @@ IPC scoping
- -----------
-=20
- Similar to the implicit `Ptrace restrictions`_, we may want to further res=
-trict
--interactions between sandboxes. Each Landlock domain can be explicitly sco=
-ped
--for a set of actions by specifying it on a ruleset.  For example, if a
--sandboxed process should not be able to :manpage:`connect(2)` to a
--non-sandboxed process through abstract :manpage:`unix(7)` sockets, we can
--specify such a restriction with ``LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET``.
--Moreover, if a sandboxed process should not be able to send a signal to a
--non-sandboxed process, we can specify this restriction with
--``LANDLOCK_SCOPE_SIGNAL``.
-+interactions between sandboxes.  Therefore, at ruleset creation time, each
-+Landlock domain can restrict the scope for certain operations, so that the=
-se
-+operations can only reach out to processes within the same Landlock domain=
- or in
-+a nested Landlock domain (the "scope").
-=20
--A sandboxed process can connect to a non-sandboxed process when its domain=
- is
--not scoped. If a process's domain is scoped, it can only connect to socket=
-s
--created by processes in the same scope.
--Moreover, if a process is scoped to send signal to a non-scoped process, i=
-t can
--only send signals to processes in the same scope.
-+The operations which can be scoped are:
-=20
--A connected datagram socket behaves like a stream socket when its domain i=
-s
--scoped, meaning if the domain is scoped after the socket is connected, it =
-can
--still :manpage:`send(2)` data just like a stream socket.  However, in the =
-same
--scenario, a non-connected datagram socket cannot send data (with
--:manpage:`sendto(2)`) outside its scope.
-+``LANDLOCK_SCOPE_SIGNAL``
-+    This limits the sending of signals to target processes which run withi=
-n the
-+    same or a nested Landlock domain.
-=20
--A process with a scoped domain can inherit a socket created by a non-scope=
-d
--process. The process cannot connect to this socket since it has a scoped
--domain.
-+``LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET``
-+    This limits the set of abstract :manpage:`unix(7)` sockets to which we=
- can
-+    :manpage:`connect(2)` to socket addresses which were created by a proc=
-ess in
-+    the same or a nested Landlock domain.
-=20
--IPC scoping does not support exceptions, so if a domain is scoped, no rule=
-s can
--be added to allow access to resources or processes outside of the scope.
-+    A :manpage:`sendto(2)` on a non-connected datagram socket is treated a=
-s if
-+    it were doing an implicit :manpage:`connect(2)` and will be blocked if=
- the
-+    remote end does not stem from the same or a nested Landlock domain.
-+
-+    A :manpage:`sendto(2)` on a socket which was previously connected will=
- not
-+    be restricted.  This works for both datagram and stream sockets.
-+
-+IPC scoping does not support exceptions via :manpage:`landlock_add_rule(2)=
-`.
-+If an operation is scoped within a domain, no rules can be added to allow =
-access
-+to resources or processes outside of the scope.
-=20
- Truncating files
- ----------------
+Sounds good.
+
+> (P.S. I also replaced send(2) with sendto(2), which is a bit more appropr=
+iate in
+> the middle paragraph - you can not actually pass the destination address =
+with
+> send(2), that only works with sendto(2).  I replaced it in the third para=
+graph
+> as well for consistency. It still makes sense IMHO considering that send(=
+2) is a
+> special case of sendto(2).)
+
+Yep, that sounds great.  Thanks!
+
+
+Cheers,
+Alex
+
 --=20
-2.48.1.711.g2feabab25a-goog
+<https://www.alejandro-colomar.es/>
 
+--pwaoz3v7mlkui6ys
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAme/hckACgkQ64mZXMKQ
+wqn5Gg/+NrZ5+QRVvNMQkETQa/XnotfMq4jy+htSVjrsPkfJngllBOsHYSUVVs1Q
+xiGTV/HMHyEjQMQYmFIeYmO3yZXlSkmR20uDiovNJW/kHRDOpq7Qn6uqvJbwnMCW
+h2DoDJi0Unv+/vcO8mrUbvvgAUQLMa6Ld2wCU5I+J7m6BqIyyGKeVz3kpgYJYBX6
+rXwhd4eKlcOFLTs+OlVr+FhmgoS3kzCrMP1McQYsbEFEKrspGjuJP6dELcgvURcA
+itO6498fbR2tzzpclj6cy1o3Jr1p7dFenxTFzkA8hbnq183iI6WZ1LgK9mBaZQDa
+k1/8s+PeBKP7g5a6LtUzhK/UJJs4rSMIdtVM0tX/LOZhs83OIxP495uguzlsWXkD
+Oau++uPbLqMet0VmFCZcJtq6xV1YvExKXBDmZFMxRzYu5OXfx6K8n0y7swi0HW5G
+ZBnCAC5ly+0HE+LOyLdQGJKAObNgxMrObFlkPF+zCByAYRYH0Pxmw4Db0FqJSWz+
+a8daLLpic/VUc3gPwRZAU7nA+x0kj201c8/iVbG3QvREr8ukHqoM+81aPLC5pdEL
+n30LjgREKStz7JnAoLhdwoqYit9mL6JoifNEf337hRwvcip756mSM/xQ1lJ4SmAx
+UqBjziqnYhe3KvLmnBtgWyTiIWlDhHkw9vPl7cEi5ojSh+hAohE=
+=pVPd
+-----END PGP SIGNATURE-----
+
+--pwaoz3v7mlkui6ys--
