@@ -1,156 +1,191 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A19D2222A5;
-	Wed, 26 Feb 2025 20:58:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345FF15852E
+	for <linux-security-module@vger.kernel.org>; Wed, 26 Feb 2025 21:18:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740603484; cv=none; b=GStDsOb7YHwYIIMDzUjijvpsmP76FLnS+mHrHMAHhQtBik6S093LCoSkY6xxt7kom+y14+VeXwt4R001TRYToynGGffDGb1AY7ED7uzEXZDgzQPotAwN29O5dRfyMYr6DG05KX8eL2rcVLZ77Q9cLvSMCY69fHlBskymyFXvB+g=
+	t=1740604732; cv=none; b=p7FKK5wQC74Wi71gnDkEqtXNnmC9Kmle7uZsW5tA+b0vWsNZ6CUNOHQVlIhm4/wrcyqEe9iJKTqGhg33vNlbH9wT2J5CHD1Cn+rStRXRiDh9IuRcPdTuIE/uV+12pIlafYlTFqTaiqOkaNKcvIbnc0+5jqCuvdipseZ0Aj8urHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740603484; c=relaxed/simple;
-	bh=d+rEjcdShj9mni7hXZSIQeqMMZB1x8S3nI6yAimOxu8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u3h5TvI83GY9YQwgVlPwa4qiO7EvICeKcHh+N2OS8MhBbnpNsv8zvkaS9hbL4o7Qc+Gy0P9C5DrZVmkwQHkGy712p7TIZ6kYBF7/xmUmLICW5c9SNb34zbaX1D7TUFOBY8Ma6z7Ybb9j2dRGMfUkh3DT/Uh3jlczr6pSyBddQfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BsFkmmV8; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1740604732; c=relaxed/simple;
+	bh=X20nqFkTMfMq6XxnXPK8V5lwD90N6aAWra99rUjR9P0=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=SnJiIy8cMSvZLyzKWH54iohr+tM0D4+TRcsycoa9O49MtjGumczDiv9YOor2failY39fRGCBDHdYi3+h4SNG1J1JtXzjtbUB1R03MuXUP/Jmtd/GtenAGbk4/QL5CKkdJ+Kd9x8OS2udf9G5dD7i2A3CrtCHxstwpJoSp+cS9mo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FXuMWwCV; arc=none smtp.client-ip=209.85.208.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BsFkmmV8"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01931C4CED6;
-	Wed, 26 Feb 2025 20:58:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740603484;
-	bh=d+rEjcdShj9mni7hXZSIQeqMMZB1x8S3nI6yAimOxu8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BsFkmmV824LzCJm6eiKsxgUFpswzEHUEgH5OjeVtJ9hz19BhsIojXLmApMw910Xwl
-	 KC8EXNt6cSrbXl+YmB7udk13wZVIu4pW+x/5cfYkkEuA/5dB/mWVG2TxifwQ4zd3lJ
-	 JTY+AuI0ZcBijQpbxCUc1Fu/McTYjLZ/XDMfGjWMzXGorJAkykslBkg+d8IN4l8SP2
-	 cYsjTJqsrhJcInJvCvSMc5bnkFPBwwkybKa74A+04jKNFZFFzJJ7TOvxKV6uiEh2w1
-	 +RNkm1BEYlSsj+YblkBnZUisiFV7k59JMItjkDaS8nTUZA0o6CYeMe2U3CTQ3268co
-	 PiYKqsd3YeIlA==
-Date: Wed, 26 Feb 2025 21:57:58 +0100
-From: Alejandro Colomar <alx@kernel.org>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Cc: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
-	linux-security-module@vger.kernel.org, Tahera Fahimi <fahimitahera@gmail.com>, 
-	Tanya Agarwal <tanyaagarwal25699@gmail.com>, Daniel Burgener <dburgener@linux.microsoft.com>, 
-	tools@kernel.org, linux-doc@vger.kernel.org, linux-man@vger.kernel.org
-Subject: Re: [PATCH 1/2] landlock: Minor typo and grammar fixes in IPC
- scoping documentation
-Message-ID: <5xijgm2hkedx2tu6fjt67ozf2rmvjz6z4zvvcvokymc3hlc6of@xqpnvf23ia2s>
-References: <20250124154445.162841-1-gnoack@google.com>
- <20250211.Ree5bu6Eph2p@digikod.net>
- <22olfm76rcgjfs4vrr3adtbznsnz47kaehlr3ljn6e5jkc6waq@ue7azstxlwfv>
- <20250211.ieSoo7Phe5oh@digikod.net>
- <3unkhxarmiddobfjvojx4sdpgitjld26udcagka2ocgrb6c2jc@dcg4w5yk5mut>
- <20250211.oavooPhap9OX@digikod.net>
- <7vl6uylhzgkokl42bz36d5g3krcusqf7mdy4bd7tblcjckatrw@ullu2kblovji>
- <Z794dm_xmViQ_lFF@google.com>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FXuMWwCV"
+Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-5e4becb4582so171661a12.3
+        for <linux-security-module@vger.kernel.org>; Wed, 26 Feb 2025 13:18:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1740604729; x=1741209529; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vB60kpD9YkIPX3mHegNvRGxuQxipw1V9ucaDBv79txE=;
+        b=FXuMWwCVflY4pPg7Ea/LP6qyc+m43ru5BKFXhdOyvh2az65VU6dhGeMu8enCtDLWM9
+         jpZYZkc7m1GNNkLaks6uARx1tsfW5mmWdbQU6RepbT9jiduRC6MG1bN/N3uRqpbWnDfT
+         apHZuJKAs8O/1O4iMBnEGHnX9aqgvCQNdZSDWYUkiXtsFdFIPFfGKuVXX1KAjO7KYils
+         m3pUpe65nhMYDjqiZpwtTq9u2K+ijcSx6XP7+DoDikqRZQwnki/PtK9UZB3RoYcisFU3
+         Ew8fiqAuIJ0BmQw5fLcZ9qSH+uL7KjT0kLECh5MIHqrT4x1TQ48VmiadbIhTaSLA4lVj
+         lbWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740604729; x=1741209529;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vB60kpD9YkIPX3mHegNvRGxuQxipw1V9ucaDBv79txE=;
+        b=MahtIzlWvKh9rBjtf2vxhRQTk69GRjYhEqzFNP++1luuV2/NVfOkLipzJO1FPEKjOc
+         +uGJJq/yQSu0XKPRfwRcCvfQJXSeJsibuiIgKyaf6d6BJrA/DIwqnGQ02RBdJ7vcR2D3
+         YDkHs5+ZRsTlD2fQADZB5XFZAzcM1zbWGyuUPNpUG51g6EyYVYXY/AUbtpUnLjkLRL1j
+         c+e8WimkoKR0ArRf1GfumS3tPGq/PDpzh+JmW9xd70Nz+3AqfVCip/Sk5HCze4w/lZY8
+         d2H15FcNv+BVI7fRDk/FqPoi+lyYVCV/hhPG8128ETc35vpNkDF02av4ktC96Y2jerVJ
+         II2w==
+X-Forwarded-Encrypted: i=1; AJvYcCVMIHyiQeIRsdhK1af2QDktLIknwBtfAjY+WvyfkLjrot6T3u/yz+0mMfYbYNEm2Rgd1fSI0OpwKf/KsE3Uw6rbnotEsQ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywl5nREcNY3A4E3eCOTXQSVH5Mm06SZv+6kf1gUs7eJupRvzl2U
+	iB3ru53/lf+1pjVwQuchAfhGpo+WS+NxjXccPPosrMySEr3BcfEDudC/Xs0Wp4vgSSvBmdsoLAY
+	t1A==
+X-Google-Smtp-Source: AGHT+IEn8y09Zy8TsAqgrYEr7+zi7FI2Sq6nYESVKo7UTkSN8gHtO3Xi4R/D+aQsInprHRsSk5XcarjUB7Q=
+X-Received: from edah39.prod.google.com ([2002:a05:6402:ea7:b0:5e0:a9b0:d3d4])
+ (user=gnoack job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:208a:b0:5e0:2e70:c2af
+ with SMTP id 4fb4d7f45d1cf-5e44a2545e5mr9541871a12.26.1740604729620; Wed, 26
+ Feb 2025 13:18:49 -0800 (PST)
+Date: Wed, 26 Feb 2025 22:18:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="vjox57o22wq4wq6a"
-Content-Disposition: inline
-In-Reply-To: <Z794dm_xmViQ_lFF@google.com>
-
-
---vjox57o22wq4wq6a
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
+Message-ID: <20250226211814.31420-2-gnoack@google.com>
+Subject: [PATCH v2 0/1] landlock: Clarify IPC scoping documentation
+From: "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
+To: "=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>, Tahera Fahimi <fahimitahera@gmail.com>, 
+	Alejandro Colomar <alx@kernel.org>
+Cc: "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>, Tanya Agarwal <tanyaagarwal25699@gmail.com>, 
+	linux-security-module@vger.kernel.org, 
+	Daniel Burgener <dburgener@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Cc: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
-	linux-security-module@vger.kernel.org, Tahera Fahimi <fahimitahera@gmail.com>, 
-	Tanya Agarwal <tanyaagarwal25699@gmail.com>, Daniel Burgener <dburgener@linux.microsoft.com>, 
-	tools@kernel.org, linux-doc@vger.kernel.org, linux-man@vger.kernel.org
-Subject: Re: [PATCH 1/2] landlock: Minor typo and grammar fixes in IPC
- scoping documentation
-References: <20250124154445.162841-1-gnoack@google.com>
- <20250211.Ree5bu6Eph2p@digikod.net>
- <22olfm76rcgjfs4vrr3adtbznsnz47kaehlr3ljn6e5jkc6waq@ue7azstxlwfv>
- <20250211.ieSoo7Phe5oh@digikod.net>
- <3unkhxarmiddobfjvojx4sdpgitjld26udcagka2ocgrb6c2jc@dcg4w5yk5mut>
- <20250211.oavooPhap9OX@digikod.net>
- <7vl6uylhzgkokl42bz36d5g3krcusqf7mdy4bd7tblcjckatrw@ullu2kblovji>
- <Z794dm_xmViQ_lFF@google.com>
-MIME-Version: 1.0
-In-Reply-To: <Z794dm_xmViQ_lFF@google.com>
-
-On Wed, Feb 26, 2025 at 08:24:22PM +0000, G=C3=BCnther Noack wrote:
-> Hello!
 
 Hello!
 
-> On Wed, Feb 12, 2025 at 04:06:06PM +0100, Alejandro Colomar wrote:
-> > So you could really use man9 for internal Landlock stuff.  Even if I
-> > think generated documentation isn't ideal, it's better than nothing.
-> > Being able to use man(1) for reading kernel documentation would still be
-> > a nice feature.
-> >=20
-> > And while I can't run all the linters that I run on hand-written docs on
-> > generated pages (because generated source necessarily triggers many
-> > false positives), I could still run some, which would trigger some
-> > accidents in the docs, and would also detect bugs in the software
-> > translating the docs from one language to another.
-> >=20
-> > So, I'd still recommend you considering man9.
->=20
-> This is different to the BPF helpers; Landlock's existing man pages docum=
-ent
-> user space APIs, and the largest part of the kernel-side .rst documentati=
-on for
-> Landlock also covers only user space.
+Thank you for your feedback, here is the second version.
 
-Huh!  Why does the kernel duplicate what's already in the manual pages?
-Or does it cover other stuff?
+Changes in V2:
 
-> Only a small part of the .rst
-> documentation is about kernel internals.
+* As Micka=C3=ABl already applied the first commit ("Minor typo and grammar=
+ fixes in
+  IPC scoping documentation"), this one is left out here.
 
-Hmmmm.  I expected it would be mostly for kernel internals, but it seems
-my guess was wrong.  :)
+* Applied remarks by Daniel Burgener, Alejandro Colomar and Micka=C3=ABl Sa=
+la=C3=BCn
 
-> If I understood that correctly, section 9 is supposed to be document thin=
-gs that
-> are relevant to kernel developers, right?  So it doesn't sound like the r=
-ight
-> place for the documentation that we have?
+* Replaced reference to send(2) with sendto(2), which is slightly more
+  appropriate in that place.
 
-Yep, that suggestion was due to my wrong idea that the .rst docs were
-mostly kernel internals.
+For your convenience, the range-diff at the bottom shows the diff between t=
+he
+two patch sets (checkpatch.pl complains about it, but it's just in the cove=
+r
+letter).
 
+=E2=80=94G=C3=BCnther
 
-Have a lovely night!
-Alex
+G=C3=BCnther Noack (1):
+  landlock: Clarify IPC scoping documentation
 
->=20
-> =E2=80=94G=C3=BCnther
->=20
+ Documentation/userspace-api/landlock.rst | 45 ++++++++++++------------
+ 1 file changed, 22 insertions(+), 23 deletions(-)
 
+Range-diff against v1:
+1:  7df39814a3a6 < -:  ------------ landlock: Minor typo and grammar fixes =
+in IPC scoping documentation
+2:  c86636efac8d ! 1:  d288be2c7b94 landlock: Clarify IPC scoping documenta=
+tion
+    @@ Commit message
+    =20
+         * The *IPC Scope* of a Landlock domain is that Landlock domain and=
+ its
+           nested domains.
+    -    * An *operation* (e.g., signaling, connecting to abstract UDS) is =
+said
+    -      *to be scoped within a domain* when the flag for that operation =
+was
+    -      *set at ruleset creation time.  This means that for the purpose =
+of
+    -      *this operation, only processes within the domain's IPC scope ar=
+e
+    -      *reachable.
+    +    * An *operation* (e.g., signaling, connecting to abstract UDS) is =
+said to
+    +      be *scoped within a domain* when the flag for that operation was=
+ set at
+    +      ruleset creation time.  This means that for the purpose of this
+    +      operation, only processes within the domain's IPC scope are reac=
+hable.
+    =20
+    -    Cc: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+    -    Cc: Tahera Fahimi <fahimitahera@gmail.com>
+    -    Cc: Tanya Agarwal <tanyaagarwal25699@gmail.com>
+         Signed-off-by: G=C3=BCnther Noack <gnoack@google.com>
+    =20
+      ## Documentation/userspace-api/landlock.rst ##
+    @@ Documentation/userspace-api/landlock.rst: IPC scoping
+     -scenario, a non-connected datagram socket cannot send data (with
+     -:manpage:`sendto(2)`) outside its scope.
+     +``LANDLOCK_SCOPE_SIGNAL``
+    -+    When set, this limits the sending of signals to target processes =
+which run
+    -+    within the same or a nested Landlock domain.
+    ++    This limits the sending of signals to target processes which run =
+within the
+    ++    same or a nested Landlock domain.
+     =20
+     -A process with a scoped domain can inherit a socket created by a non-=
+scoped
+     -process. The process cannot connect to this socket since it has a sco=
+ped
+     -domain.
+     +``LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET``
+    -+    When set, this limits the set of abstract :manpage:`unix(7)` sock=
+ets we can
+    -+    :manpage:`connect(2)` to to socket addresses which were created b=
+y a process
+    -+    in the same or a nested Landlock domain.
+    ++    This limits the set of abstract :manpage:`unix(7)` sockets to whi=
+ch we can
+    ++    :manpage:`connect(2)` to socket addresses which were created by a=
+ process in
+    ++    the same or a nested Landlock domain.
+     =20
+     -IPC scoping does not support exceptions, so if a domain is scoped, no=
+ rules can
+     -be added to allow access to resources or processes outside of the sco=
+pe.
+    -+    A :manpage:`send(2)` on a non-connected datagram socket is treate=
+d like an
+    -+    implicit :manpage:`connect(2)` and will be blocked when the remot=
+e end does
+    -+    not stem from the same or a nested Landlock domain.
+    ++    A :manpage:`sendto(2)` on a non-connected datagram socket is trea=
+ted as if
+    ++    it were doing an implicit :manpage:`connect(2)` and will be block=
+ed if the
+    ++    remote end does not stem from the same or a nested Landlock domai=
+n.
+     +
+    -+    A :manpage:`send(2)` on a socket which was previously connected w=
+ill work.
+    -+    This works for both datagram and stream sockets.
+    ++    A :manpage:`sendto(2)` on a socket which was previously connected=
+ will not
+    ++    be restricted.  This works for both datagram and stream sockets.
+     +
+     +IPC scoping does not support exceptions via :manpage:`landlock_add_ru=
+le(2)`.
+     +If an operation is scoped within a domain, no rules can be added to a=
+llow access
 --=20
-<https://www.alejandro-colomar.es/>
+2.48.1.711.g2feabab25a-goog
 
---vjox57o22wq4wq6a
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAme/gE4ACgkQ64mZXMKQ
-wqkgMhAAswWO3HuGwO8zERusDcb6FffWV8vfhuWuoFmSav2IEKKDw+O993Bzp1+s
-tKhcIhXCPmtyzBMiF3zPUbYokp4oZBIpDnt3RPZlIWkOhl1yJrtpCnPUK/ZdFwOB
-2Qnsij0Doo0ep9NkrLoAQn+/AdviSsy25nwnYA4XFK+H4DzguoXzywJ0ywXWhue+
-qbSwip//bkgPQ9JPfYYPW5g7lgk9kQH2QqIxwtsT/GAA5c20Nz9EH0UYQ8BQU5EC
-sBnXertRmaVgPrhFDHNDiSTYPYMTKxdg9ij+IWIdgx11b3WDBZjKVLa3hdVGQRGK
-rg4d/D++rta1OFcu0fgeABftJVNN3guEuuKbFB9wamNYW5zMC7caoPy9aCg9tjth
-M0hsFLyjqWFbrJ5HH/cV9Vkw7Eqjqoj4BepbzI671MwKKEgLWHwT8pGaVgYY4Ici
-FBgq9Hl0a9jtI14oVMClfvU3zJVE1EJDSAQ9cw4YxsWRxeMeq6HECuYgXBkzyYyO
-mwwmoKvZYBadZWPeKG+bq7wxAE4ZkLsA+NkAeXGqJYLyhsXKM2Y4zGmecez2PPKT
-akj62cOhYh2NYjeCekPIQLBSd2KWONuDyEggx8sNfu+jxzHECYm7tdwsPwZ9Y2j7
-e6XfDsUczMsDb7cjJmaBGOhRqW0+hhjKoflJlV/iYTkW5LcayKo=
-=aCvb
------END PGP SIGNATURE-----
-
---vjox57o22wq4wq6a--
