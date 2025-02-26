@@ -1,314 +1,130 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B165529D0E;
-	Wed, 26 Feb 2025 00:31:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06B5E383A5
+	for <linux-security-module@vger.kernel.org>; Wed, 26 Feb 2025 00:40:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740529878; cv=none; b=t3HopF9W0AHzBWFzyyaPb4wnDUK20UnnsH3AtYy9m+8qone/3Ij0ReHY/k4T1uVhhkN6VmyTAG0LwZE6WUMNrmnR5JS+YXG+37tnysvQZaid6uLHmdsqGvb3zUycovsLwFrobaALBsg30TpHaXqzuAklfFuCXaMBDBQtu8ZJoCs=
+	t=1740530416; cv=none; b=WzBtLSVUrhUsxS2s4Iucav12nxG0gAh8QvOF11iDPDogW7VcV7Tx5em9mBv3Vap8TxHgpzXaXNnr1VlwTTTsNnaFuiVkuqBknGVj8PcanyHxXfFnrgcFYdK5b60X4DOT1MBEVRnjIyjrUpm9AL3LRD2vCLGoviip92cAoKhl1Fk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740529878; c=relaxed/simple;
-	bh=8UHoGjGzzgmYKZDaFOW6LuB7kEhczu8ipFUYfNPI+n8=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=s2eKZrtAHdSwJbeYdo/trggsjI4gPrs1MFG1anAd32HwcsGeR/G09Cb74Vkuf8wEisrkDhAE3xMLgsiJBOIc2hVJvHbKXSF+GGsvezY42UL2rNGzLNOZ56C5Y6rxe/rV/WCk9dpkead4f4J9+S316kgmt+l1Rhy5y8yICUt7Qr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=sCF3xvmv; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+	s=arc-20240116; t=1740530416; c=relaxed/simple;
+	bh=uk2Uim0gU+hjB0BMRQBeSM98fROd/0txsPkca7sCdbo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cgyC8VjHpNtzLusJNgWk/4H01raFlDpdtH/ncsmUj3MuRTMTXO9jDkN+S9pbHNQpfVcmcedX88a5pMNtuEdYgqVYbG+7ie8laL9O2isjAE1NVMDtqcI9TjRO2kPOYZoGe0LkXo14YY1KNiEnI27BtHVznQCRVDsXJVYP3AU0bAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GudRu/hJ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="sCF3xvmv"
-Received: from narnia.corp.microsoft.com (unknown [167.220.2.28])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 6587420460A8;
-	Tue, 25 Feb 2025 16:31:10 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6587420460A8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1740529876;
-	bh=8a8eYD9RmDCD2MPnxf2D1DEviP6BdgV/zUfSvzXz+o0=;
-	h=From:To:Subject:Date:In-Reply-To:References:From;
-	b=sCF3xvmvQrt7QbZWGtaFt9+dgkQ1jVXb3CwqUALWurOv0mnYwnrDwgirNk8XKWxhZ
-	 VvRNCvU2AL5OxtacOXDJCip5+Foso8FZVhCKBus0K6Nu65xTZnh1o2BdVlERL5rH5d
-	 SMRkIIE8530KOG/jXZfSb8udBmdi4f6A3a6iFmDc=
-From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-To: Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>,
-	Ondrej Mosnacek <omosnace@redhat.com>,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org,
-	selinux@vger.kernel.org,
-	bboscaccy@linux.microsoft.com
-Subject: [PATCH 1/1] security: Propagate universal pointer data in bpf hooks
-Date: Tue, 25 Feb 2025 16:30:30 -0800
-Message-ID: <20250226003055.1654837-2-bboscaccy@linux.microsoft.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250226003055.1654837-1-bboscaccy@linux.microsoft.com>
-References: <20250226003055.1654837-1-bboscaccy@linux.microsoft.com>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GudRu/hJ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1740530413;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/fLOI8OoddJLVPbWF8PdboZeiEPg5BhgTCWlbYEUGLE=;
+	b=GudRu/hJjK5P9q7AOo99AbLmZMKbXpmV4DUF/+UpjpCF2gKP6IdiIXga0jBOu3+M1C8rDL
+	MZMQPDW2AtPiUghxT4sJ7fDkMP27uiN57RFHr+Q86f9uShYePNAhiw27VYwirB02YrIRGA
+	gSKfbTwIHJreasvQ5blPNVKD+H/PKx8=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-540--42mYKK8MTS4avnePE08_Q-1; Tue,
+ 25 Feb 2025 19:40:10 -0500
+X-MC-Unique: -42mYKK8MTS4avnePE08_Q-1
+X-Mimecast-MFC-AGG-ID: -42mYKK8MTS4avnePE08_Q_1740530408
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 24DDB180087A;
+	Wed, 26 Feb 2025 00:40:07 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.127])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CFD39300018D;
+	Wed, 26 Feb 2025 00:40:03 +0000 (UTC)
+Date: Wed, 26 Feb 2025 08:39:59 +0800
+From: Baoquan He <bhe@redhat.com>
+To: steven chen <chenste@linux.microsoft.com>
+Cc: zohar@linux.ibm.com, stefanb@linux.ibm.com,
+	roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
+	eric.snowberg@oracle.com, ebiederm@xmission.com,
+	paul@paul-moore.com, code@tyhicks.com, bauermann@kolabnow.com,
+	linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
+	James.Bottomley@hansenpartnership.com, vgoyal@redhat.com,
+	dyoung@redhat.com
+Subject: Re: [PATCH v8 2/7] kexec: define functions to map and unmap segments
+Message-ID: <Z75i31INh5DAfW+R@MiWiFi-R3L-srv>
+References: <20250218225502.747963-1-chenste@linux.microsoft.com>
+ <20250218225502.747963-3-chenste@linux.microsoft.com>
+ <Z7wOPiDfy/vtrkCS@MiWiFi-R3L-srv>
+ <658b52e4-a4bb-40fc-a00b-bfdb3bf15b52@linux.microsoft.com>
+ <Z70MZD+BssRG4R1H@MiWiFi-R3L-srv>
+ <8504fd93-8fff-4fd9-8d2d-26b4e1e84bee@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8504fd93-8fff-4fd9-8d2d-26b4e1e84bee@linux.microsoft.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Certain bpf syscall subcommands are available for usage from both
-userspace and the kernel. LSM modules or eBPF gatekeeper programs may
-need to take a different course of action depending on whether or not
-a BPF syscall originated from the kernel or userspace.
+On 02/25/25 at 10:35am, steven chen wrote:
+> On 2/24/2025 4:18 PM, Baoquan He wrote:
+> > On 02/24/25 at 03:05pm, steven chen wrote:
+> > > On 2/23/2025 10:14 PM, Baoquan He wrote:
+> > > > Hi Steve, Mimi,
+> > > > 
+> > > > On 02/18/25 at 02:54pm, steven chen wrote:
+> > > > > Currently, the mechanism to map and unmap segments to the kimage
+> > > > > structure is not available to the subsystems outside of kexec.  This
+> > > > > functionality is needed when IMA is allocating the memory segments
+> > > > > during kexec 'load' operation.  Implement functions to map and unmap
+> > > > > segments to kimage.
+> > > > I am done with the whole patchset understanding. My concern is if this
+> > > > TPM PCRs content can be carried over through newly introduced KHO. I can
+> > > > see that these patchset doesn't introduce too much new code changes,
+> > > > while if many conponents need do this, kexec reboot will be patched all
+> > > > over its body and become ugly and hard to maintain.
+> > > > 
+> > > > Please check Mike Rapoport's v4 patchset to see if IMA can register
+> > > > itself to KHO and do somthing during 2nd kernel init to restore those
+> > > > TPM PCRs content to make sure all measurement logs are read correctly.
+> > > > [PATCH v4 00/14] kexec: introduce Kexec HandOver (KHO)
+> > > > 
+> > > > Thanks
+> > > > Baoquan
+> > > Hi Baoquan,
+> > > 
+> > > For IMA, it appears that there are no current issues with TPM PCRs after a
+> > > kernel soft reboot.
+> > I mean using KHO to hold in 1st kernel and restore the IMA log in 2nd
+> > kernel.
+> > 
+> > > This patches is used to get currently missed IMA measurements during the
+> > > kexec process copied to new kernel after the kernel soft reboot. I think
+> > > it's ok to leave it at current location: it will be easy to maintain for
+> > > IMA.
+> > Yeah, but I am saying this patchset increase unnecessary code
+> > complexity in kexec code maintaining.
+> > 
+> > > Overall, for these patches, do you see any major blockers for kexec?
+> > > 
+> > > If you have any specific concerns or need further details, please let me
+> > > know.
+> > I have no concerns for this patchset implementation itself, I saw you using
+> > vmap to maping the possible scattered source pages smartly and taking
+> > the mapped buffer pointers to update later duing kexec jumping. That's very
+> > great and clever method. BUT I am concerned about the solution, if we
+> > can make use of the existed way of KHO to implement it more simply. Could
+> > you please do investigation?
+> 
+> Hi Baoquan,
+> 
+> I will conduct an investigation. Thank you for your comments.
 
-Additionally, some of the bpf_attr struct fields contain pointers to
-arbitrary memory. Currently the functionality to determine whether or
-not a pointer refers to kernel memory or userspace memory is exposed
-to the bpf verifier, but that information is missing from various LSM
-hooks.
-
-Here we augment the LSM hooks to provide this data, by simply passing
-the corresponding universal pointer in any hook that contains already
-contains a bpf_attr struct that corresponds to a subcommand that may
-be called from the kernel.
-
-Signed-off-by: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
----
- include/linux/lsm_hook_defs.h |  6 +++---
- include/linux/security.h      | 13 +++++++------
- kernel/bpf/syscall.c          | 10 +++++-----
- security/security.c           | 17 ++++++++++-------
- security/selinux/hooks.c      |  6 +++---
- 5 files changed, 28 insertions(+), 24 deletions(-)
-
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index e2f1ce37c41ef..93e25d526d68d 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -426,14 +426,14 @@ LSM_HOOK(void, LSM_RET_VOID, audit_rule_free, void *lsmrule)
- #endif /* CONFIG_AUDIT */
- 
- #ifdef CONFIG_BPF_SYSCALL
--LSM_HOOK(int, 0, bpf, int cmd, union bpf_attr *attr, unsigned int size)
-+LSM_HOOK(int, 0, bpf, int cmd, union bpf_attr *attr, bpfptr_t uattr, unsigned int size)
- LSM_HOOK(int, 0, bpf_map, struct bpf_map *map, fmode_t fmode)
- LSM_HOOK(int, 0, bpf_prog, struct bpf_prog *prog)
- LSM_HOOK(int, 0, bpf_map_create, struct bpf_map *map, union bpf_attr *attr,
--	 struct bpf_token *token)
-+	 bpfptr_t uattr, struct bpf_token *token)
- LSM_HOOK(void, LSM_RET_VOID, bpf_map_free, struct bpf_map *map)
- LSM_HOOK(int, 0, bpf_prog_load, struct bpf_prog *prog, union bpf_attr *attr,
--	 struct bpf_token *token)
-+	 bpfptr_t uattr, struct bpf_token *token)
- LSM_HOOK(void, LSM_RET_VOID, bpf_prog_free, struct bpf_prog *prog)
- LSM_HOOK(int, 0, bpf_token_create, struct bpf_token *token, union bpf_attr *attr,
- 	 const struct path *path)
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 980b6c207cade..b6d82500b0d31 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -33,6 +33,7 @@
- #include <linux/mm.h>
- #include <linux/sockptr.h>
- #include <linux/bpf.h>
-+#include <linux/bpfptr.h>
- #include <uapi/linux/lsm.h>
- #include <linux/lsm/selinux.h>
- #include <linux/lsm/smack.h>
-@@ -2249,14 +2250,14 @@ struct bpf_map;
- struct bpf_prog;
- struct bpf_token;
- #ifdef CONFIG_SECURITY
--extern int security_bpf(int cmd, union bpf_attr *attr, unsigned int size);
-+extern int security_bpf(int cmd, union bpf_attr *attr, bpfptr_t uattr, unsigned int size);
- extern int security_bpf_map(struct bpf_map *map, fmode_t fmode);
- extern int security_bpf_prog(struct bpf_prog *prog);
- extern int security_bpf_map_create(struct bpf_map *map, union bpf_attr *attr,
--				   struct bpf_token *token);
-+				   bpfptr_t uattr, struct bpf_token *token);
- extern void security_bpf_map_free(struct bpf_map *map);
- extern int security_bpf_prog_load(struct bpf_prog *prog, union bpf_attr *attr,
--				  struct bpf_token *token);
-+				  bpfptr_t uattr, struct bpf_token *token);
- extern void security_bpf_prog_free(struct bpf_prog *prog);
- extern int security_bpf_token_create(struct bpf_token *token, union bpf_attr *attr,
- 				     const struct path *path);
-@@ -2265,7 +2266,7 @@ extern int security_bpf_token_cmd(const struct bpf_token *token, enum bpf_cmd cm
- extern int security_bpf_token_capable(const struct bpf_token *token, int cap);
- #else
- static inline int security_bpf(int cmd, union bpf_attr *attr,
--					     unsigned int size)
-+			       bpfptr_t uattr, unsigned int size)
- {
- 	return 0;
- }
-@@ -2281,7 +2282,7 @@ static inline int security_bpf_prog(struct bpf_prog *prog)
- }
- 
- static inline int security_bpf_map_create(struct bpf_map *map, union bpf_attr *attr,
--					  struct bpf_token *token)
-+					  bpfptr_t uattr, struct bpf_token *token)
- {
- 	return 0;
- }
-@@ -2290,7 +2291,7 @@ static inline void security_bpf_map_free(struct bpf_map *map)
- { }
- 
- static inline int security_bpf_prog_load(struct bpf_prog *prog, union bpf_attr *attr,
--					 struct bpf_token *token)
-+					 bpfptr_t uattr, struct bpf_token *token)
- {
- 	return 0;
- }
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index 2645540ae26a8..255b0dc83b49b 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -1306,7 +1306,7 @@ static bool bpf_net_capable(void)
- 
- #define BPF_MAP_CREATE_LAST_FIELD map_token_fd
- /* called via syscall */
--static int map_create(union bpf_attr *attr)
-+static int map_create(union bpf_attr *attr, bpfptr_t uattr)
- {
- 	const struct bpf_map_ops *ops;
- 	struct bpf_token *token = NULL;
-@@ -1498,7 +1498,7 @@ static int map_create(union bpf_attr *attr)
- 			attr->btf_vmlinux_value_type_id;
- 	}
- 
--	err = security_bpf_map_create(map, attr, token);
-+	err = security_bpf_map_create(map, attr, uattr, token);
- 	if (err)
- 		goto free_map_sec;
- 
-@@ -2947,7 +2947,7 @@ static int bpf_prog_load(union bpf_attr *attr, bpfptr_t uattr, u32 uattr_size)
- 	if (err < 0)
- 		goto free_prog;
- 
--	err = security_bpf_prog_load(prog, attr, token);
-+	err = security_bpf_prog_load(prog, attr, uattr, token);
- 	if (err)
- 		goto free_prog_sec;
- 
-@@ -5773,13 +5773,13 @@ static int __sys_bpf(enum bpf_cmd cmd, bpfptr_t uattr, unsigned int size)
- 	if (copy_from_bpfptr(&attr, uattr, size) != 0)
- 		return -EFAULT;
- 
--	err = security_bpf(cmd, &attr, size);
-+	err = security_bpf(cmd, &attr, uattr, size);
- 	if (err < 0)
- 		return err;
- 
- 	switch (cmd) {
- 	case BPF_MAP_CREATE:
--		err = map_create(&attr);
-+		err = map_create(&attr, uattr);
- 		break;
- 	case BPF_MAP_LOOKUP_ELEM:
- 		err = map_lookup_elem(&attr);
-diff --git a/security/security.c b/security/security.c
-index 143561ebc3e89..350e37c015820 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -5626,7 +5626,8 @@ int security_audit_rule_match(struct lsm_prop *prop, u32 field, u32 op,
-  * security_bpf() - Check if the bpf syscall operation is allowed
-  * @cmd: command
-  * @attr: bpf attribute
-- * @size: size
-+ * @uattr: universal pointer for attr
-+ * @size: size of bpf attribute
-  *
-  * Do a initial check for all bpf syscalls after the attribute is copied into
-  * the kernel. The actual security module can implement their own rules to
-@@ -5634,9 +5635,9 @@ int security_audit_rule_match(struct lsm_prop *prop, u32 field, u32 op,
-  *
-  * Return: Returns 0 if permission is granted.
-  */
--int security_bpf(int cmd, union bpf_attr *attr, unsigned int size)
-+int security_bpf(int cmd, union bpf_attr *attr, bpfptr_t uattr, unsigned int size)
- {
--	return call_int_hook(bpf, cmd, attr, size);
-+	return call_int_hook(bpf, cmd, attr, uattr, size);
- }
- 
- /**
-@@ -5672,6 +5673,7 @@ int security_bpf_prog(struct bpf_prog *prog)
-  * security_bpf_map_create() - Check if BPF map creation is allowed
-  * @map: BPF map object
-  * @attr: BPF syscall attributes used to create BPF map
-+ * @uattr: universal pointer for attr
-  * @token: BPF token used to grant user access
-  *
-  * Do a check when the kernel creates a new BPF map. This is also the
-@@ -5680,15 +5682,16 @@ int security_bpf_prog(struct bpf_prog *prog)
-  * Return: Returns 0 on success, error on failure.
-  */
- int security_bpf_map_create(struct bpf_map *map, union bpf_attr *attr,
--			    struct bpf_token *token)
-+			    bpfptr_t uattr, struct bpf_token *token)
- {
--	return call_int_hook(bpf_map_create, map, attr, token);
-+	return call_int_hook(bpf_map_create, map, attr, uattr, token);
- }
- 
- /**
-  * security_bpf_prog_load() - Check if loading of BPF program is allowed
-  * @prog: BPF program object
-  * @attr: BPF syscall attributes used to create BPF program
-+ * @uattr: universal pointer attribute
-  * @token: BPF token used to grant user access to BPF subsystem
-  *
-  * Perform an access control check when the kernel loads a BPF program and
-@@ -5698,9 +5701,9 @@ int security_bpf_map_create(struct bpf_map *map, union bpf_attr *attr,
-  * Return: Returns 0 on success, error on failure.
-  */
- int security_bpf_prog_load(struct bpf_prog *prog, union bpf_attr *attr,
--			   struct bpf_token *token)
-+			   bpfptr_t uattr, struct bpf_token *token)
- {
--	return call_int_hook(bpf_prog_load, prog, attr, token);
-+	return call_int_hook(bpf_prog_load, prog, attr, uattr, token);
- }
- 
- /**
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 7b867dfec88ba..aaf0a966880cf 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -6866,7 +6866,7 @@ static int selinux_ib_alloc_security(void *ib_sec)
- 
- #ifdef CONFIG_BPF_SYSCALL
- static int selinux_bpf(int cmd, union bpf_attr *attr,
--				     unsigned int size)
-+		       bpfptr_t uattr, unsigned int size)
- {
- 	u32 sid = current_sid();
- 	int ret;
-@@ -6953,7 +6953,7 @@ static int selinux_bpf_prog(struct bpf_prog *prog)
- }
- 
- static int selinux_bpf_map_create(struct bpf_map *map, union bpf_attr *attr,
--				  struct bpf_token *token)
-+				  bpfptr_t uattr, struct bpf_token *token)
- {
- 	struct bpf_security_struct *bpfsec;
- 
-@@ -6976,7 +6976,7 @@ static void selinux_bpf_map_free(struct bpf_map *map)
- }
- 
- static int selinux_bpf_prog_load(struct bpf_prog *prog, union bpf_attr *attr,
--				 struct bpf_token *token)
-+				 bpfptr_t uattr, struct bpf_token *token)
- {
- 	struct bpf_security_struct *bpfsec;
- 
--- 
-2.48.1
+Thanks a lot, Steven.
 
