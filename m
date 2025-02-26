@@ -1,102 +1,106 @@
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55A052755E7
-	for <linux-security-module@vger.kernel.org>; Wed, 26 Feb 2025 20:19:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80E6C2512CF
+	for <linux-security-module@vger.kernel.org>; Wed, 26 Feb 2025 20:24:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740601171; cv=none; b=O9SbOIoVg5HIw39FNP8lDmZqgNs0D4EEPknTPjKIY80YSgx8OWUbwkCkvFIOeNvv3+Ahs23UO+cF64lTQNPyNHoi4oZp9OrKOp3Ow9lJNeV0gRZJGKCDEg3acaBKxz2WD7gtKK9cvZ2COnKFUUO8r9VqPnDvZtZ9RgolBoM9QpI=
+	t=1740601469; cv=none; b=q4wc8ZpsEzUQdADJazhGoSTqdKwjkIVzZ9OJbSUyH74E3Rzp+VLTaTzS49YrhKpY8/DQtCDm9LtpQ1nuDSn4I7s0pq5TCQbbumr6EYFFjoUfrt1an//mNWlH63CgB/GITEHVU7uQgH0TpTEHS7rKq2ZwxsMRSxjNtQy2nqQwyY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740601171; c=relaxed/simple;
-	bh=pRMgXJFWpAts+pU5cfw2qJI3yKgdhqxFVB1HP3y8nVc=;
-	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=LkyvgA9VacKG+seaiFIYuxDnev6ZVf7KUhEf80ZwlSQN6CaApNwjrNl4LFT7TAm05uoXiTlrzHpWXX3cCB5HYwE25PaYJq03cGlKaYjJw+AU0Oy0ymFt/oWK5+NTAlk7D+u3zZr17G9i+dVGn/pd6l3D+AHm95ikjhXvISryYm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=dveIoudK; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1740601469; c=relaxed/simple;
+	bh=iFWhRPyJmvvsiybpf94Dpp37+uigPtTulNHGuHIzrH4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=RuYNKQ22UgIAeZo8qtFdXCWalfN3M02h1gDq8680AZJA+kdaXTrvU6CjcdY3eBGTNF2AkqcKJKdWYnLzr95ac9WfcQa88OXpPgly0mxNip+NJz1U1jqWuMZaiqN/0DvKV71jtOldDR28CzFN2s1qcrOXSP6Oxaijh3FqBIOv484=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0QgPtlq+; arc=none smtp.client-ip=209.85.208.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="dveIoudK"
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4720a115d15so11620541cf.1
-        for <linux-security-module@vger.kernel.org>; Wed, 26 Feb 2025 12:19:30 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0QgPtlq+"
+Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-5e4987b2107so190131a12.0
+        for <linux-security-module@vger.kernel.org>; Wed, 26 Feb 2025 12:24:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1740601169; x=1741205969; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:from:to:cc:subject:date:message-id
+        d=google.com; s=20230601; t=1740601466; x=1741206266; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ghoD3ag/pzPbCtjFY/jPNaeLEDXXel6+TW59rVHfjfk=;
-        b=dveIoudKzKxKugANPB5GGsZegCwMrqDZcYGyKaEojssEcxYPTMjaP6BNUAButblbPy
-         zbS5usrttUNCBSCnB3ybRBs8awJI2cASsu1AEF+JS+RJS3rFCxP3v78pWBlXIgUc33lY
-         6FvP23ZUb7XMbgD86DpwYk3IpYZGNHAnO6yAsuGpixq2myYv0kfg/1voWZ1QGHRC3ytc
-         fglXNgv6NNvGAiRh7rugpzBbWn2iogvJZ8Aa5BCQflLaQP0t+4QVBSz9o62UXeX9RDg8
-         eoYLKcIeaLBnQEO/hfAvUPW1Bw8Firq21NSMkhtvcqEa1xImEcpcz/GumpEqCTKo7Gkh
-         g+cA==
+        bh=j5HjEmf6zI3uVsACPtj0IDjnQzDbyRsoOFTng7ArnK4=;
+        b=0QgPtlq+1UdG1JnAIh9hqFwBlpM2kCzoX+08VRt1+6CNUxV/F/wWJOj3b2Ufh5mQAz
+         L5vTiFlOuMVvRRs8iF3hRRITPemKT/AB1reBKFezUIAL8jM3NzwmP3i6LhRSLO1+MKbB
+         64nervXaaYp6eJL+JYncsi65VMzU7bNzhDem1gOolkKaQD9SzoDvrOgO+9Xuu3FSRILY
+         c+NbWIjUBe2K9WCGB8P4aUpODHq1l0VIHCHdz0+wxzydjdSieezEAYp6v51HClyTXoTs
+         2NrHi8+a8/FSChtNFCuiVBUdeIQtCIXGI2+vpik1+CnG93wZol07rAUt2CSmhoaHYzDG
+         ASJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740601169; x=1741205969;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
+        d=1e100.net; s=20230601; t=1740601466; x=1741206266;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=ghoD3ag/pzPbCtjFY/jPNaeLEDXXel6+TW59rVHfjfk=;
-        b=T+Vqb8N7CgZAABbauinMF88DPfrCRU4I1wwQd4M5OcdwS4+b6NVX+6cn2MMbvlFcvc
-         mNiJQD6RyRfpxLyLKN7+COznkOKS9Mfnw1ifjtl72LKLBCLpiWktHH7+GHOfKvedE36+
-         s0Bs87sdO1hLsZZVYMRSE55pWHrZ44XoYhNQ4ZVzA7ltE0gUPjPdG6UjxsX2alBoRp6Z
-         kAK+VnZrmUB93TOK0lYfajoii0oqFl7MPj0VyPoVBXhgUjCyLYlUuNuoiDxoBLYaXHwh
-         1ze7+BZw06dlYsDTzsHqtuNKiiNDcsxV0AdoV6hdRjV//KNw0WCQN8y3pYvjtkarYGol
-         /tvA==
-X-Forwarded-Encrypted: i=1; AJvYcCWljaf5FpJ37L4ysS/k0FydQlFj2vvAWE65hkrxSQS7a0rcJfFhNQAE62mLDfLrfEvuxBDJBwi42D1UwBH08IzbMHfda1U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNGGtFUcc69QXGCZhaVcZIPREWnwF6GuvvyWubCDhvksBaX9aY
-	OGLyOoykNjMqKx+nF0fw/BCum0QiJ36wU7p6YFjU4OJ3KM23baTSiHBTRxVnrA==
-X-Gm-Gg: ASbGncvwoK3zx7KPd6jEggkkpkAwufT8gD8kz1SjQeL1Zz7hSFX1JMKm6IzuN0Rcxlb
-	+0EqAlVBPq1xM6oydsMPZ9VblL/i8xQkA4JkK0ek2S0d3z/ETgrVRaAKoClY7qQXuMVYKg0FXan
-	j4Bj8v60PsztRobR0twLHt1U5EfBCjAAIndY64wqrAveOcS46az5Wnlngf7XsNsA9w5StXDDqUi
-	YOEkRh8SmCMtUGcYsGl040yozen45IGcOJauURGaHMjE0nJAGWY+wOF3EO7B7Flw8GGDfXf9b8B
-	Dp+eXpGhLHc7jsFYRdjLbXtrM8GdyEuwisvXfU4gc7YRWptm139n5YDgnxZWzeaPglfdpn0=
-X-Google-Smtp-Source: AGHT+IHlD52Lc+Tn+8mhSVeF3cbMWb5L2ojc8igqm9bfmEeYLdqG9MAA2o2DdRWX5V2W073wALgrfQ==
-X-Received: by 2002:ac8:59d0:0:b0:472:521:871a with SMTP id d75a77b69052e-473e55a7432mr13431481cf.23.1740601169160;
-        Wed, 26 Feb 2025 12:19:29 -0800 (PST)
-Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-474691a45d3sm357351cf.8.2025.02.26.12.19.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Feb 2025 12:19:28 -0800 (PST)
-Date: Wed, 26 Feb 2025 15:19:28 -0500
-Message-ID: <4a98d88878a18dd02b3df5822030617a@paul-moore.com>
+        bh=j5HjEmf6zI3uVsACPtj0IDjnQzDbyRsoOFTng7ArnK4=;
+        b=K94iiCRY3aoTkKG86Jb/9u/PhBsEe3U3ovUSDtuFLokg+SZiu8r5YiL2PTAaf1dvIS
+         PrMe7qJEAaaMrAfVk6kzgLM91NaqZMUQuulxKIfC9O0QThLalHoHCy/c9FgQFM9j2upj
+         LiyYdtzCt3pEEa46knz6x/FLJ0YZ4Am+oz4l4WN/kOP8h2UzEcT2bvumvR9PtHhCy6O3
+         NivdaPZrzZAhRPdaC2syZ+wlcIeB6aelKEemTCpc79yHmxGeL+uT202gxlzdBKblYNHB
+         LsXVPL0UihiBHwrla2zA+F5uVfgyQj4his2yANjxmI9JN6tMqqNIdRFg7mWGntLJXSed
+         KwBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVGJL3nDJU9ekRMXmUWSlHT+AOaWKiv6g98mWdNs25yMr8vS0GhHzR9UwjJfQHrFOAHoxayK4vWSU2bHHxvKHyvxDxB0B8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLpeNPU0u0gg/sy1YEuKW1aJoR0lV9CuSdiR6qtQ1rgFQaDz8D
+	0VORDUa1HHu4Sa9/l6CS0GJwZ5aW9T8M9Ge5FVox4wZY9CMux1QT71o36nz0RzaPGj91aPbDc+Z
+	ymQ==
+X-Google-Smtp-Source: AGHT+IFrxoll1MD7UHqls7EiRvzGp8NMB0IfiuwW4ozw145cHL5lQA37kDHTx8jx1EQOGS0Jj44sXGKknIY=
+X-Received: from edben26.prod.google.com ([2002:a05:6402:529a:b0:5e0:40e5:1607])
+ (user=gnoack job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:40ce:b0:5de:dc08:9cc5
+ with SMTP id 4fb4d7f45d1cf-5e4a0d46bccmr6357700a12.7.1740601465988; Wed, 26
+ Feb 2025 12:24:25 -0800 (PST)
+Date: Wed, 26 Feb 2025 20:24:22 +0000
+In-Reply-To: <7vl6uylhzgkokl42bz36d5g3krcusqf7mdy4bd7tblcjckatrw@ullu2kblovji>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=UTF-8 
-Content-Transfer-Encoding: 8bit 
-X-Mailer: pstg-pwork:20250226_1339/pstg-lib:20250226_1339/pstg-pwork:20250226_1339
-From: Paul Moore <paul@paul-moore.com>
-To: Miklos Szeredi <mszeredi@redhat.com>, selinux@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH] selinux: add FILE__WATCH_MOUNTNS
-References: <20250224154836.958915-1-mszeredi@redhat.com>
-In-Reply-To: <20250224154836.958915-1-mszeredi@redhat.com>
+Mime-Version: 1.0
+References: <20250124154445.162841-1-gnoack@google.com> <20250211.Ree5bu6Eph2p@digikod.net>
+ <22olfm76rcgjfs4vrr3adtbznsnz47kaehlr3ljn6e5jkc6waq@ue7azstxlwfv>
+ <20250211.ieSoo7Phe5oh@digikod.net> <3unkhxarmiddobfjvojx4sdpgitjld26udcagka2ocgrb6c2jc@dcg4w5yk5mut>
+ <20250211.oavooPhap9OX@digikod.net> <7vl6uylhzgkokl42bz36d5g3krcusqf7mdy4bd7tblcjckatrw@ullu2kblovji>
+Message-ID: <Z794dm_xmViQ_lFF@google.com>
+Subject: Re: [PATCH 1/2] landlock: Minor typo and grammar fixes in IPC scoping documentation
+From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
+To: Alejandro Colomar <alx@kernel.org>
+Cc: "=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>, linux-security-module@vger.kernel.org, 
+	Tahera Fahimi <fahimitahera@gmail.com>, Tanya Agarwal <tanyaagarwal25699@gmail.com>, 
+	Daniel Burgener <dburgener@linux.microsoft.com>, tools@kernel.org, linux-doc@vger.kernel.org, 
+	linux-man@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Feb 24, 2025 Miklos Szeredi <mszeredi@redhat.com> wrote:
-> 
-> Watching mount namespaces for changes (mount, umount, move mount) was added
-> by previous patches.
-> 
-> This patch adds the file/watch_mountns permission that can be applied to
-> nsfs files (/proc/$$/ns/mnt), making it possible to allow or deny watching
-> a particular namespace for changes.
-> 
-> Suggested-by: Paul Moore <paul@paul-moore.com>
-> Link: https://lore.kernel.org/all/CAHC9VhTOmCjCSE2H0zwPOmpFopheexVb6jyovz92ZtpKtoVv6A@mail.gmail.com/
-> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-> ---
->  security/selinux/hooks.c            | 3 +++
->  security/selinux/include/classmap.h | 2 +-
->  2 files changed, 4 insertions(+), 1 deletion(-)
+Hello!
 
-Thanks Miklos, this looks good to me.  VFS folks / Christian, can you
-merge this into the associated FSNOTIFY_OBJ_TYPE_MNTNS branch you are
-targeting for linux-next?
+On Wed, Feb 12, 2025 at 04:06:06PM +0100, Alejandro Colomar wrote:
+> So you could really use man9 for internal Landlock stuff.  Even if I
+> think generated documentation isn't ideal, it's better than nothing.
+> Being able to use man(1) for reading kernel documentation would still be
+> a nice feature.
+>=20
+> And while I can't run all the linters that I run on hand-written docs on
+> generated pages (because generated source necessarily triggers many
+> false positives), I could still run some, which would trigger some
+> accidents in the docs, and would also detect bugs in the software
+> translating the docs from one language to another.
+>=20
+> So, I'd still recommend you considering man9.
 
-Acked-by: Paul Moore <paul@paul-moore.com>
+This is different to the BPF helpers; Landlock's existing man pages documen=
+t
+user space APIs, and the largest part of the kernel-side .rst documentation=
+ for
+Landlock also covers only user space. Only a small part of the .rst
+documentation is about kernel internals.
 
---
-paul-moore.com
+If I understood that correctly, section 9 is supposed to be document things=
+ that
+are relevant to kernel developers, right?  So it doesn't sound like the rig=
+ht
+place for the documentation that we have?
+
+=E2=80=94G=C3=BCnther
