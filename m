@@ -1,116 +1,102 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34E9F2505C5;
-	Wed, 26 Feb 2025 19:40:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55A052755E7
+	for <linux-security-module@vger.kernel.org>; Wed, 26 Feb 2025 20:19:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740598818; cv=none; b=WIkrBeJmwBa8glVXO0BFNaRmjXMipbjvM7dsieP3AqdfhJdRRr/UGlrXW8CczfoIH0Kbrs64KLvi3vJ2kiQi1sHnyK7y2VXF6+q1Z/zrCvfVKY2LGX6m93pZm0ox40UK+xFAFBMsOuQoTHi2NmHS1wZTIsVwn0zeiqw9GLEQ8QI=
+	t=1740601171; cv=none; b=O9SbOIoVg5HIw39FNP8lDmZqgNs0D4EEPknTPjKIY80YSgx8OWUbwkCkvFIOeNvv3+Ahs23UO+cF64lTQNPyNHoi4oZp9OrKOp3Ow9lJNeV0gRZJGKCDEg3acaBKxz2WD7gtKK9cvZ2COnKFUUO8r9VqPnDvZtZ9RgolBoM9QpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740598818; c=relaxed/simple;
-	bh=IUheWlSSUJ/8vMzGkjBK+S3uf36PkLWD7up/x3PrCag=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=CVXXdmUtSgjhM+nnsPVvCTVE99HP3Cx41bkadTWP1xL4uMvp+Q4qE5o5I5EsRCl1PShUI4FhuljzXQAyFw597Eo8Cn9uLyyQk/1SJrzWn9CQwmfAUb8TmzFLskBBOir8LPYPMq3YGz/LsHaxX6uD5+Q3AovV+SCBOB29TXLYzmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=YkO3EX0R; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+	s=arc-20240116; t=1740601171; c=relaxed/simple;
+	bh=pRMgXJFWpAts+pU5cfw2qJI3yKgdhqxFVB1HP3y8nVc=;
+	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
+	 References:In-Reply-To; b=LkyvgA9VacKG+seaiFIYuxDnev6ZVf7KUhEf80ZwlSQN6CaApNwjrNl4LFT7TAm05uoXiTlrzHpWXX3cCB5HYwE25PaYJq03cGlKaYjJw+AU0Oy0ymFt/oWK5+NTAlk7D+u3zZr17G9i+dVGn/pd6l3D+AHm95ikjhXvISryYm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=dveIoudK; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="YkO3EX0R"
-Received: from narnia (unknown [167.220.2.28])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 8826C2107AAB;
-	Wed, 26 Feb 2025 11:40:11 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 8826C2107AAB
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1740598816;
-	bh=yAUqEIXMpQVqzzO/rrGdO+RRJpFARicVp+JsEMr+UQA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=YkO3EX0R5EzmxjLKaYYWj0JsXC3WdDaznQqsJZsWLBvVMh9IdTgQSyiQWoHwTt32K
-	 bb/rZql6j3R7Nz1hM17MON4RkIg2sC5Nb4mupokc3NeAlEt2cx0+rYWA/Mi4AQ6kt+
-	 kQi1oRRMj71nuHEdS7hlGoqf00zxodC6L/m0GTbQ=
-From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-To: Paul Moore <paul@paul-moore.com>, Song Liu <song@kernel.org>
-Cc: James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
- <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, Andrii
- Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
- Eduard Zingerman <eddyz87@gmail.com>, Yonghong Song
- <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, Stanislav
- Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa
- <jolsa@kernel.org>, Stephen Smalley <stephen.smalley.work@gmail.com>,
- Ondrej Mosnacek <omosnace@redhat.com>,
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org, selinux@vger.kernel.org
-Subject: Re: [PATCH 1/1] security: Propagate universal pointer data in bpf
- hooks
-In-Reply-To: <CAHC9VhS8ST6ODB2pFJTMK4qu8FdM2J=6qEbB=XGxo2ZAZgo1Aw@mail.gmail.com>
-References: <20250226003055.1654837-1-bboscaccy@linux.microsoft.com>
- <20250226003055.1654837-2-bboscaccy@linux.microsoft.com>
- <CAPhsuW7=uALYiLfKfApvSG0V+RV+M20w5x3myTZVLNRyYnBFnQ@mail.gmail.com>
- <CAHC9VhS8ST6ODB2pFJTMK4qu8FdM2J=6qEbB=XGxo2ZAZgo1Aw@mail.gmail.com>
-Date: Wed, 26 Feb 2025 11:40:08 -0800
-Message-ID: <87mse8jy07.fsf@microsoft.com>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="dveIoudK"
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4720a115d15so11620541cf.1
+        for <linux-security-module@vger.kernel.org>; Wed, 26 Feb 2025 12:19:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1740601169; x=1741205969; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ghoD3ag/pzPbCtjFY/jPNaeLEDXXel6+TW59rVHfjfk=;
+        b=dveIoudKzKxKugANPB5GGsZegCwMrqDZcYGyKaEojssEcxYPTMjaP6BNUAButblbPy
+         zbS5usrttUNCBSCnB3ybRBs8awJI2cASsu1AEF+JS+RJS3rFCxP3v78pWBlXIgUc33lY
+         6FvP23ZUb7XMbgD86DpwYk3IpYZGNHAnO6yAsuGpixq2myYv0kfg/1voWZ1QGHRC3ytc
+         fglXNgv6NNvGAiRh7rugpzBbWn2iogvJZ8Aa5BCQflLaQP0t+4QVBSz9o62UXeX9RDg8
+         eoYLKcIeaLBnQEO/hfAvUPW1Bw8Firq21NSMkhtvcqEa1xImEcpcz/GumpEqCTKo7Gkh
+         g+cA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740601169; x=1741205969;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ghoD3ag/pzPbCtjFY/jPNaeLEDXXel6+TW59rVHfjfk=;
+        b=T+Vqb8N7CgZAABbauinMF88DPfrCRU4I1wwQd4M5OcdwS4+b6NVX+6cn2MMbvlFcvc
+         mNiJQD6RyRfpxLyLKN7+COznkOKS9Mfnw1ifjtl72LKLBCLpiWktHH7+GHOfKvedE36+
+         s0Bs87sdO1hLsZZVYMRSE55pWHrZ44XoYhNQ4ZVzA7ltE0gUPjPdG6UjxsX2alBoRp6Z
+         kAK+VnZrmUB93TOK0lYfajoii0oqFl7MPj0VyPoVBXhgUjCyLYlUuNuoiDxoBLYaXHwh
+         1ze7+BZw06dlYsDTzsHqtuNKiiNDcsxV0AdoV6hdRjV//KNw0WCQN8y3pYvjtkarYGol
+         /tvA==
+X-Forwarded-Encrypted: i=1; AJvYcCWljaf5FpJ37L4ysS/k0FydQlFj2vvAWE65hkrxSQS7a0rcJfFhNQAE62mLDfLrfEvuxBDJBwi42D1UwBH08IzbMHfda1U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNGGtFUcc69QXGCZhaVcZIPREWnwF6GuvvyWubCDhvksBaX9aY
+	OGLyOoykNjMqKx+nF0fw/BCum0QiJ36wU7p6YFjU4OJ3KM23baTSiHBTRxVnrA==
+X-Gm-Gg: ASbGncvwoK3zx7KPd6jEggkkpkAwufT8gD8kz1SjQeL1Zz7hSFX1JMKm6IzuN0Rcxlb
+	+0EqAlVBPq1xM6oydsMPZ9VblL/i8xQkA4JkK0ek2S0d3z/ETgrVRaAKoClY7qQXuMVYKg0FXan
+	j4Bj8v60PsztRobR0twLHt1U5EfBCjAAIndY64wqrAveOcS46az5Wnlngf7XsNsA9w5StXDDqUi
+	YOEkRh8SmCMtUGcYsGl040yozen45IGcOJauURGaHMjE0nJAGWY+wOF3EO7B7Flw8GGDfXf9b8B
+	Dp+eXpGhLHc7jsFYRdjLbXtrM8GdyEuwisvXfU4gc7YRWptm139n5YDgnxZWzeaPglfdpn0=
+X-Google-Smtp-Source: AGHT+IHlD52Lc+Tn+8mhSVeF3cbMWb5L2ojc8igqm9bfmEeYLdqG9MAA2o2DdRWX5V2W073wALgrfQ==
+X-Received: by 2002:ac8:59d0:0:b0:472:521:871a with SMTP id d75a77b69052e-473e55a7432mr13431481cf.23.1740601169160;
+        Wed, 26 Feb 2025 12:19:29 -0800 (PST)
+Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
+        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-474691a45d3sm357351cf.8.2025.02.26.12.19.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 12:19:28 -0800 (PST)
+Date: Wed, 26 Feb 2025 15:19:28 -0500
+Message-ID: <4a98d88878a18dd02b3df5822030617a@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=UTF-8 
+Content-Transfer-Encoding: 8bit 
+X-Mailer: pstg-pwork:20250226_1339/pstg-lib:20250226_1339/pstg-pwork:20250226_1339
+From: Paul Moore <paul@paul-moore.com>
+To: Miklos Szeredi <mszeredi@redhat.com>, selinux@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH] selinux: add FILE__WATCH_MOUNTNS
+References: <20250224154836.958915-1-mszeredi@redhat.com>
+In-Reply-To: <20250224154836.958915-1-mszeredi@redhat.com>
 
-Paul Moore <paul@paul-moore.com> writes:
+On Feb 24, 2025 Miklos Szeredi <mszeredi@redhat.com> wrote:
+> 
+> Watching mount namespaces for changes (mount, umount, move mount) was added
+> by previous patches.
+> 
+> This patch adds the file/watch_mountns permission that can be applied to
+> nsfs files (/proc/$$/ns/mnt), making it possible to allow or deny watching
+> a particular namespace for changes.
+> 
+> Suggested-by: Paul Moore <paul@paul-moore.com>
+> Link: https://lore.kernel.org/all/CAHC9VhTOmCjCSE2H0zwPOmpFopheexVb6jyovz92ZtpKtoVv6A@mail.gmail.com/
+> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+> ---
+>  security/selinux/hooks.c            | 3 +++
+>  security/selinux/include/classmap.h | 2 +-
+>  2 files changed, 4 insertions(+), 1 deletion(-)
 
-> On Wed, Feb 26, 2025 at 2:06=E2=80=AFAM Song Liu <song@kernel.org> wrote:
->> On Tue, Feb 25, 2025 at 4:31=E2=80=AFPM Blaise Boscaccy
->> <bboscaccy@linux.microsoft.com> wrote:
->> >
->> > Certain bpf syscall subcommands are available for usage from both
->> > userspace and the kernel. LSM modules or eBPF gatekeeper programs may
->> > need to take a different course of action depending on whether or not
->> > a BPF syscall originated from the kernel or userspace.
->> >
->> > Additionally, some of the bpf_attr struct fields contain pointers to
->> > arbitrary memory. Currently the functionality to determine whether or
->> > not a pointer refers to kernel memory or userspace memory is exposed
->> > to the bpf verifier, but that information is missing from various LSM
->> > hooks.
->> >
->> > Here we augment the LSM hooks to provide this data, by simply passing
->> > the corresponding universal pointer in any hook that contains already
->> > contains a bpf_attr struct that corresponds to a subcommand that may
->> > be called from the kernel.
->>
->> I think this information is useful for LSM hooks.
->
-> I've only looked at it quickly, but so far it seems reasonable.  I'm
-> going to take a closer look today.
->
->> Question: Do we need a full bpfptr_t for these hooks, or just a boolean
->> "is_kernel or not"?
->
-> I may be misunderstanding the patch, but what if we swapped the
-> existing 'union bpf_attr' parameter for a 'bpfptr_t' parameter?  That
-> would allow for both kernel and usermode pointers, complete with a
-> 'is_kernel' flag; or am I missing something (likely)?
->
-> --=20
-> paul-moore.com
+Thanks Miklos, this looks good to me.  VFS folks / Christian, can you
+merge this into the associated FSNOTIFY_OBJ_TYPE_MNTNS branch you are
+targeting for linux-next?
 
-bpfptr_t is just a typedef for a sockptr_t, which contains a void
-pointer and bool, so if we replaced bpf_attr with it, we might lose a
-bit of type safety going that route.
+Acked-by: Paul Moore <paul@paul-moore.com>
 
-In syscall.c a most of the subcommand handlers have a
-
-static int bpf_foo(union bpf_attr *attr, bpfptr_t uattr);
-
-pattern that is used. I was trying to mimic for this patch.
-
-The actual parts where the is_kernel flag gets used currently, is for
-pointer chasing/copy stuff, e.g.
-
-make_bpfptr(attr->insns, uattr.is_kernel)
-make_bpfptr(attr->license, uattr.is_kernel)
-make_bpfptr(attr->fd_array, uattr.is_kernel)
-
-and subcommand structs may contain multiple pointers.
-
--blaise
+--
+paul-moore.com
