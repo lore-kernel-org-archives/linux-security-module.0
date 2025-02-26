@@ -1,148 +1,109 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECF2C2566FB;
-	Wed, 26 Feb 2025 21:51:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A595122425A;
+	Wed, 26 Feb 2025 22:02:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740606690; cv=none; b=SHnefT25KopmAtE2Yf/ha2M/VssUTjsFuSmSXWfUMeHWPrUiR11n28efeEsJkQLlgF31z2gZ/JmcM4rPcWwokT70Zbsh6//BVPXtk3awd5IEjCN1iGKSvyO6dUIZ9BLhOVFFYkzec71FcwDJFytXc3opQW9AhNOx5QnIl58Cnr4=
+	t=1740607344; cv=none; b=jHLzoU8Mk7NlqQd9/iTftNNHJA88SMKod8IxhHXj/Q3SQvhBPPCMPfO+gvuoX4VPJgU167Rap5qjKXO2IW93LJWUSBdj5sIyWfz0JsrmTzL+QhOvlk1x+89IIYb95yE7nYijj6kOwoUNckOCoocWKyuK9HM4wB7tz6+r3il+Vpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740606690; c=relaxed/simple;
-	bh=6K67pLBrn/YSsRyl9yF6Ujvkl7wj/4gfRckCg/PzINw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n63xabZfS5KFyvONP+WX4+Xl45AobRhCcxS0Y2PlCEc3DLewYRpU0SKLNQ3h90GfWEVbuY9GA6VHtGcGv1ctjU/zx8y9lJyBvpaFRYGWejT6QXDMY2LaS9JPgkXoG4yc8NGpplNseotMomGnznbcctB3O5aiqHocTHwutuwxwqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TVFB/wb7; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1740607344; c=relaxed/simple;
+	bh=HcGovQDGE4BqvsArC5and/FvCf5uqHO7axy7rZfiDQM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Jt1X/LkI2C6RreDOl8sfFDxI6j9RwZnMCDgKj0pQMShxXZPCEOIZyV1f/I+gcythKVLRKB5ZUDelkpOxUS5bUVajfrrELM/dPmWhbUxLM1oRMVHi1+2aMYznI5pToK3HuqtmisPIH24jwEAeB+OsBBMSzTDFBlwq3eV7LN83pTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZmVWKMC3; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TVFB/wb7"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F06F8C4CED6;
-	Wed, 26 Feb 2025 21:51:26 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZmVWKMC3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1343EC4AF09;
+	Wed, 26 Feb 2025 22:02:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740606689;
-	bh=6K67pLBrn/YSsRyl9yF6Ujvkl7wj/4gfRckCg/PzINw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TVFB/wb7jb8FtK4eqJjE337jIPwfp2/UVz/Urx3Wrydd4eAjA2CFe2J4Si5btpUbk
-	 vgp9DdL1UoqCW6SJfOBTj3qVpDq5O5FRi2g0kxekuZHRKqBmSLkI4rE2Cz0I/yB4gp
-	 /cZvsqQPusOOb9kOjAhPs88uRO5gYY8vZipho7DZFzecYE8QFehsYS+VHFHlTW0PFu
-	 2i4vlnETsrQYCj4d9M+4hY4lnT5gbcIgGfK836tcv8lD0ca8JKpquOFfzolYT2fqRX
-	 8UBMe4gUMfppH44Fik0n6Dk8zByGZGJrjIL9xlz44S4yf9Tu1Yru3TdQpXHl7bcE61
-	 RiN64xQSr5A7Q==
-Date: Wed, 26 Feb 2025 22:51:24 +0100
-From: Alejandro Colomar <alx@kernel.org>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Cc: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
-	linux-security-module@vger.kernel.org, Tahera Fahimi <fahimitahera@gmail.com>, 
-	Tanya Agarwal <tanyaagarwal25699@gmail.com>, Daniel Burgener <dburgener@linux.microsoft.com>, 
-	tools@kernel.org, linux-doc@vger.kernel.org, linux-man@vger.kernel.org
-Subject: Re: [PATCH 1/2] landlock: Minor typo and grammar fixes in IPC
- scoping documentation
-Message-ID: <7ce2w6p5smgreajaosq7cv23oovzzzrlb3csmkdpo2vbbngnif@du7paargkerx>
-References: <20250124154445.162841-1-gnoack@google.com>
- <20250211.Ree5bu6Eph2p@digikod.net>
- <22olfm76rcgjfs4vrr3adtbznsnz47kaehlr3ljn6e5jkc6waq@ue7azstxlwfv>
- <20250211.ieSoo7Phe5oh@digikod.net>
- <3unkhxarmiddobfjvojx4sdpgitjld26udcagka2ocgrb6c2jc@dcg4w5yk5mut>
- <20250211.oavooPhap9OX@digikod.net>
- <7vl6uylhzgkokl42bz36d5g3krcusqf7mdy4bd7tblcjckatrw@ullu2kblovji>
- <Z794dm_xmViQ_lFF@google.com>
- <5xijgm2hkedx2tu6fjt67ozf2rmvjz6z4zvvcvokymc3hlc6of@xqpnvf23ia2s>
- <Z7-JvY4DP-CswCyF@google.com>
+	s=k20201202; t=1740607344;
+	bh=HcGovQDGE4BqvsArC5and/FvCf5uqHO7axy7rZfiDQM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ZmVWKMC3rsbx1KFyxD9w+PJU186QyKnQzHX4Xm8J6JmLWGygsI5SpeZjQWkLUDiDh
+	 wLIwdQwcJb7nlWhki+sK5QSY26E03e2JwPjJANEapXLgpmG7SzGBJJdOvF01qpLwTx
+	 F0CJmSv5Pc5K95kzwufIGYcb9UBzhVaRGRuuTXdlE6CuvNspAa5m3eyWtPFz6hJezl
+	 q+1cGJZ5cxRPYBK80PlETbXWivNaBJ41wgZiR+7cw+zoxoLv5RDVYC/huuWeXg+PES
+	 0O2+Y578qwE5O5WfsSJBH/yrH4EWhJS3ka9O4BzWLZFJ+Q5ZUUme57sM4QqaxisEI3
+	 XSF8lkSFR1jcA==
+Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-855bb9fa914so7837439f.1;
+        Wed, 26 Feb 2025 14:02:24 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU8eDTozv1NF8spQVqpdF2u7o1CRfa6ehblWQCNNQzSSnhlzkWxx+g9WmbdqOt9dXjxfeKP1QmKlhWSjvQ4c8lqpfMFuEgd@vger.kernel.org, AJvYcCVq29IlnEdMlcXgudA4m/huO+gYMP3+BrqJrKpVcxUe0hXIOdnV66mhYMh97CZog4vx3icQ4BeetQ==@vger.kernel.org, AJvYcCXeIUVryhV+LDSjVewiX0qLyCqH6IxdKWgqOVkbP5YrGRKvMeEZjVzEH89TObBvPU/zD4bKSI9h9cHdl7Hv@vger.kernel.org, AJvYcCXiLSbxToyaJnVRg7x+5uQLaDVBVL+6ccmCxY16OI7LRKa2mmuYhjlvbMpLMAiF026KZ+U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAbu+ZOSFnvJ5hLyh8XeoEXQimnrUTWy8eJ00RpMURpFip9TKg
+	PAnSpiD1hruSnkPMoMDtFvrBuaXdMzzukKyEQlTJQP3Ob/1Ku8MVUNgrjxtX/4zbiNQmeUMOpPG
+	6mRTs1z5wqW+jkIl96mvI7zftbks=
+X-Google-Smtp-Source: AGHT+IF56aMtVC9kgzhrEn1BazaQuVa1V57LakSmtHHshyBopSU62FSVL1llGe6JYotFsOu+WB8yT45gFYnnGg9VS9A=
+X-Received: by 2002:a05:6e02:3103:b0:3d2:6f1e:8a4b with SMTP id
+ e9e14a558f8ab-3d2cb5151ccmr202103765ab.16.1740607343398; Wed, 26 Feb 2025
+ 14:02:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="lhn2yxdv4o5zdxcp"
-Content-Disposition: inline
-In-Reply-To: <Z7-JvY4DP-CswCyF@google.com>
-
-
---lhn2yxdv4o5zdxcp
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
+References: <20250226003055.1654837-1-bboscaccy@linux.microsoft.com>
+ <20250226003055.1654837-2-bboscaccy@linux.microsoft.com> <CAPhsuW7=uALYiLfKfApvSG0V+RV+M20w5x3myTZVLNRyYnBFnQ@mail.gmail.com>
+ <CAADnVQJWMBRspP-srQwe8_B1smGG1hs3kVbpeiuYo-0mLWAnUA@mail.gmail.com>
+In-Reply-To: <CAADnVQJWMBRspP-srQwe8_B1smGG1hs3kVbpeiuYo-0mLWAnUA@mail.gmail.com>
+From: Song Liu <song@kernel.org>
+Date: Wed, 26 Feb 2025 14:02:12 -0800
+X-Gmail-Original-Message-ID: <CAPhsuW5Xzv7hsuG9RzO+KdxMXO3JCpC6UOTFDZiYGf_Vnfpo5g@mail.gmail.com>
+X-Gm-Features: AQ5f1JpLtpxSTDy_e-G9cvkC70zZHFez1SttCvfnEJ5lwovdBr4h5ckbHaT__AY
+Message-ID: <CAPhsuW5Xzv7hsuG9RzO+KdxMXO3JCpC6UOTFDZiYGf_Vnfpo5g@mail.gmail.com>
+Subject: Re: [PATCH 1/1] security: Propagate universal pointer data in bpf hooks
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Blaise Boscaccy <bboscaccy@linux.microsoft.com>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, 
+	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
+	LSM List <linux-security-module@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	bpf <bpf@vger.kernel.org>, selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Cc: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
-	linux-security-module@vger.kernel.org, Tahera Fahimi <fahimitahera@gmail.com>, 
-	Tanya Agarwal <tanyaagarwal25699@gmail.com>, Daniel Burgener <dburgener@linux.microsoft.com>, 
-	tools@kernel.org, linux-doc@vger.kernel.org, linux-man@vger.kernel.org
-Subject: Re: [PATCH 1/2] landlock: Minor typo and grammar fixes in IPC
- scoping documentation
-References: <20250124154445.162841-1-gnoack@google.com>
- <20250211.Ree5bu6Eph2p@digikod.net>
- <22olfm76rcgjfs4vrr3adtbznsnz47kaehlr3ljn6e5jkc6waq@ue7azstxlwfv>
- <20250211.ieSoo7Phe5oh@digikod.net>
- <3unkhxarmiddobfjvojx4sdpgitjld26udcagka2ocgrb6c2jc@dcg4w5yk5mut>
- <20250211.oavooPhap9OX@digikod.net>
- <7vl6uylhzgkokl42bz36d5g3krcusqf7mdy4bd7tblcjckatrw@ullu2kblovji>
- <Z794dm_xmViQ_lFF@google.com>
- <5xijgm2hkedx2tu6fjt67ozf2rmvjz6z4zvvcvokymc3hlc6of@xqpnvf23ia2s>
- <Z7-JvY4DP-CswCyF@google.com>
-MIME-Version: 1.0
-In-Reply-To: <Z7-JvY4DP-CswCyF@google.com>
 
-Hello!
+On Wed, Feb 26, 2025 at 8:00=E2=80=AFAM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+>
+> On Tue, Feb 25, 2025 at 11:06=E2=80=AFPM Song Liu <song@kernel.org> wrote=
+:
+> >
+> > On Tue, Feb 25, 2025 at 4:31=E2=80=AFPM Blaise Boscaccy
+> > <bboscaccy@linux.microsoft.com> wrote:
+> > >
+> > > Certain bpf syscall subcommands are available for usage from both
+> > > userspace and the kernel. LSM modules or eBPF gatekeeper programs may
+> > > need to take a different course of action depending on whether or not
+> > > a BPF syscall originated from the kernel or userspace.
+> > >
+> > > Additionally, some of the bpf_attr struct fields contain pointers to
+> > > arbitrary memory. Currently the functionality to determine whether or
+> > > not a pointer refers to kernel memory or userspace memory is exposed
+> > > to the bpf verifier, but that information is missing from various LSM
+> > > hooks.
+> > >
+> > > Here we augment the LSM hooks to provide this data, by simply passing
+> > > the corresponding universal pointer in any hook that contains already
+> > > contains a bpf_attr struct that corresponds to a subcommand that may
+> > > be called from the kernel.
+> >
+> > I think this information is useful for LSM hooks.
+> >
+> > Question: Do we need a full bpfptr_t for these hooks, or just a boolean
+> > "is_kernel or not"?
+>
+> +1
+> Just passing the bool should do.
+> Passing uattr is a footgun. Last thing we need is to open up TOCTOU conce=
+rns.
 
-On Wed, Feb 26, 2025 at 10:38:05PM +0100, G=C3=BCnther Noack wrote:
-> That duplication is *precisely* the problem we have in Landlock. :)
->=20
-> (If you look at the patch series I've been sending with both the patches =
-sent to
-> linux-security-modules@ and linux-man@, you'll see the duplication,
-> e.g. https://lore.kernel.org/all/20250226211814.31420-2-gnoack@google.com=
-/)
+Shall we also replace uattr with bool is_kernel in verifier.c? It appears t=
+o be
+a good cleanup.
 
-Yeah, I've been looking at those that you've CCd me.  I just thought
-that the user-space part of the documentation was minoritary, and that
-it was part of a much larger documentation that would include many
-internals.  But if most .rst docs are UAPI, then I think it should all
-be burnt down to flames.  :-)
-
-> Documentation of user space APIs is not unusual in the kernel documentati=
-on,
-> there is the entire subdirectory Documentation/userspace-api for it.
-
-Huh!  You're indeed right.  A great percentage of Documentation/ is the
-UAPI.
-
-	alx@debian:~/.../Documentation$ find * -type f \
-					| xargs wc | tail -n1;
-	 110625  453670 3990219 total
-	alx@debian:~/.../Documentation$ find userspace-api/ -type f \
-					| xargs wc | tail -n1;
-	  96501  368382 3411766 total
-
-
-If anyone wants to burn that and send the parts that are missing form
-the manual pages, you're invited.  :-)
-
-
-Have a lovely night!
-Alex
-
---=20
-<https://www.alejandro-colomar.es/>
-
---lhn2yxdv4o5zdxcp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAme/jNUACgkQ64mZXMKQ
-wqlkYQ//VsBlsNKCIsKe5bTf4U3A9mbEm5xQSqJxA7illvfj3konXqRYruxh2nOL
-o+dDzfquukNBkB1R2domugVJY2gQsmnSIMJfdo7KrMMnOpI4ysCH5fVlqWEZ0HPy
-dC5Sd0F25VO5820RojtuOs1DB7714N15bekz78uHD7MIk2CJYhPTQsmD7ElPzLly
-+NTAGMB6CXtIEw5HoKGvWK1xLmJYKlejD5fAtUSHMbSYCoHxdJx6NPtKwVAztTtG
-CPawpYGJ/JVJkTHyXIKHdKrepxA2yi6nL3mjRoM8mhA8wR+g/mPIenUTOOpzvjCj
-BpYQIWyEBWv9+05LM9nn9Mayb20UtpNYa3j3zqKVF0X2GLSDxrX+IKPbBWVFI9z1
-TdWGS/SaevxslWnd0FAgqSVDv5yPTdP0nus1v6aG1rKZgpIXyjIy6ENwkNPpoJ9e
-ulyVOSy/0c1ctmBHZukSfWzhBvAcaC5STYSIIixcyia7gUdpakl2iJwoWwSendL3
-p085uqp2fRr8ZtwPKKrhVU7HunALTvvHWAovp2xJzIgHtVxYpOYLvJ/VYPwvwW4Y
-et7BHgcdyXXYzL2SI3hJTuFW5udGEnWhjXIdOeE30OJY1da2s2PZjMG41qEz14rt
-8I+VhcG8zBzGP2y35Zlnf51HELfvgxTypnb2IWKzscGXb8nDljA=
-=wf07
------END PGP SIGNATURE-----
-
---lhn2yxdv4o5zdxcp--
+Thanks,
+Song
