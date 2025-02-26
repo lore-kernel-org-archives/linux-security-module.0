@@ -1,108 +1,107 @@
-Received: from smtp-bc0a.mail.infomaniak.ch (smtp-bc0a.mail.infomaniak.ch [45.157.188.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20455223329
-	for <linux-security-module@vger.kernel.org>; Wed, 26 Feb 2025 16:32:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF7932248B4
+	for <linux-security-module@vger.kernel.org>; Wed, 26 Feb 2025 19:13:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740587569; cv=none; b=nSLLwRJxfCyr4gYl/Ig/KZmvk77cFo5O5Z+JYBygHmN8QiNEa8otgkkCZCbOAyRkaldJdT8WhKc0L3dQ/J2DvCzq7S2TrvD3wok6RJx7i1rY6aq2WJfgtOf3970qiWt+VagNZOZcxt+I+rzyuzr7b/z6pcslzqBY99u7/e6uVsg=
+	t=1740597241; cv=none; b=miGYQWtsBx7DL2GQpOyqrWkJR36g/GblXGl7IspaPrOfPnNOKQ0YVm8A/mtWrU8/lq0sU42CmUIGa/okalfWDv6CIahexuLe/Q6X4TYzvS7YYchqGtKAjLLdZaCOiMP7yKERaESY9b9ELOTuQuYB29o60qZOORRBwxGx8Fgw9S4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740587569; c=relaxed/simple;
-	bh=ftTCfTSEUWyG3MqWCjadumYHTH3fXvyAmNWMFNbVE8w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=T32InanSkcTqS5BRBglBWFXCWF69i3dFk9Zihsu0d8yXYtFfqJ9vB1oGjayWLI9LAtTusZz3FOCVUqiapg40AKhpeNEpI9voZYPEesyDElWOTS0w0MLy1o9s9Oaipe+0V9wrZvhAwOBUrWVwIwtz54CSmTmMuCAdK7klDnytP58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=MJJlcq0r; arc=none smtp.client-ip=45.157.188.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1740597241; c=relaxed/simple;
+	bh=vHzrEzooH4K8CcIGUei7pRVS17MmHjHrMcmzZoer/Ec=;
+	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
+	 References:In-Reply-To; b=cSM7w6rX3KKFs8tEEXqTuA1ogIyFplPrcAtyyXjxUcKaoDTJwh4icq92CpM2KTS1Ka5wV0yXqGlkgBhdenebjovwphA9dn3XERGZZXy0cLLGMS2CkGiiG6vK9hy3EWdcVp16p2JBjMKIKJGrZ8bBJrQdbkYvp6IXOx7CYkl5ge8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=PrgrgjIB; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="MJJlcq0r"
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Z30PZ5fYSzPcg;
-	Wed, 26 Feb 2025 17:32:34 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1740587554;
-	bh=v9sNy219I6ybcJlLUZTXEhfNT5QcZgghqKh9iitcV7Y=;
-	h=From:To:Cc:Subject:Date:From;
-	b=MJJlcq0rYB41m1+MVWtpUNKeTaU5rIcRj4YaOepZwzqttFTTfGkG0wvbYvmvX4nnK
-	 YffNb9hahywU3XpEKnm+BdUwMxPpVbCbYG/15L/wDfaSZLHaoaTrHziMDxmYwymyA5
-	 9Apwn9qp6jcKVXRHOHnfwNSry5siS5UkwSKkbMAc=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Z30PZ1yFHzqRP;
-	Wed, 26 Feb 2025 17:32:34 +0100 (CET)
-From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	Bharadwaj Raju <bharadwaj.raju777@gmail.com>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
-	Tanya Agarwal <tanyaagarwal25699@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: [GIT PULL] Landlock fix for v6.14-rc5
-Date: Wed, 26 Feb 2025 17:32:29 +0100
-Message-ID: <20250226163229.2132331-1-mic@digikod.net>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="PrgrgjIB"
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-46fa764aac2so1219411cf.1
+        for <linux-security-module@vger.kernel.org>; Wed, 26 Feb 2025 11:13:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1740597238; x=1741202038; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=O/7HubgIS3yguXLFwagiKL0MIanaDsiXeL1ZcDJnpI0=;
+        b=PrgrgjIBDzFyuCW0/BkssmUrWr+ejDo9K2GOMxCGaRhnW6xhcbtTD1JwwVGKLo/83P
+         3dM9rKUsAMq62CVpok1RfQHA2wfcnXMzJ18qMcZcYUdGiwaEKk+ikc6U0hO+hXP5eQ2E
+         NyqwDG/QmtPKzQkkLdTGYwhvbp9CTaW2CN1tiR+JGk13bm+x5+rLq5IqlamFPgOFO8PM
+         HjoHxNDXIv68a/z/4EiqGgLE/s9X5kBDvYWorhxzCCaJ/Ef6jGrbARuL5iiZvdsP0RaR
+         Wk+ZOlH0gvpRUqepXN07eMUzObSySHsdNfhHZlo1wCex2FQyD78d2/r2De4OapeVF9iC
+         RAJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1740597238; x=1741202038;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=O/7HubgIS3yguXLFwagiKL0MIanaDsiXeL1ZcDJnpI0=;
+        b=vXJ3yTZIW1nW2JUG6s9T8Frc5JZer74Yp1qIZKUCmcZvwmhoSfiTEq8MsXWIU+g9WJ
+         S9c8D1l7xH/5toQOPbTgYaySlLSXYm5iS3qfTLbajzWoiMCTB9rPAg3JMJwbIsGy3r1E
+         CrrtkxHUUa+DXLKNeXxl5+F6UGma3aecbxRGhUUtFS31cwrMmkfRl3hsxod5AmDiBGly
+         8uvo9S2HGhiUuEotdnYvQ5tIcozixd2Ue5WF/emdJ+5CXpCr14tcwRQKkL4Q/96TwdAo
+         gsnnmIrH4mT/3FJ/jLcLhYGoI1/x/nabm/r1VUGUbrsZjsPu/CwwFc7Qp/xnLSBvaSB6
+         6ROw==
+X-Forwarded-Encrypted: i=1; AJvYcCU8BhqIetJlOSZyGA0X6ABVbvJw2GJvxRdMdUiDgc6AP2A4YbsztcYl/Pry27Ek5buMRZxzH6iF2LydPfIkMXov7fKNqc8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy89rSEKxAnjIMkpsIPVqKcDRIHBakJJDyefmQRP2nPUFFm6lTu
+	ab2xkE3QOYSioyPP/VHexg4I5FOvyUdlWuZJj1+HNVGNVz0Gu3iiENIBd9p6gw==
+X-Gm-Gg: ASbGncsKyfAgYCekcTD1P5TTjjEnEa5c4r5BhdYZ3EIfKXHXy+7n56OWgwdFGF5zahU
+	HDaJpAvw0kAmr98snD60Ae3x0ruRfotCGgqh066/xNTs01fhz/wP8bhYojjM8ZzTjj6tLVdDSHj
+	WZROSscC7Ge5CaCZLdn4UX+MRpldO6cdfEboj8QVO8ZRTPb8k9EzbVPJtKh5thuoOIRr/eisWG0
+	LC66tsTUPJN7VEtbrBjSLqYRlBIkZbzp02KDiotzcnF60NxXMK/n4LEtCpQ4yxaspb8j/lkl/vY
+	q/94sd9vp2usUjiNtKniOIeHKppojnXKLMxLYaCQXAJwv9QK+/+ZJ6w3ZQ+DEveXUvlrwfA=
+X-Google-Smtp-Source: AGHT+IGZKQ763FRka4tXmeqX9uwcpJ0v96pIEchafXYFD2cwhU7ih42tfW2HHRWzr2HQKaEkzBO+qA==
+X-Received: by 2002:a05:622a:1a07:b0:472:201c:aa45 with SMTP id d75a77b69052e-47377116ed2mr109013401cf.9.1740597237709;
+        Wed, 26 Feb 2025 11:13:57 -0800 (PST)
+Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
+        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-47377e1543csm28407591cf.27.2025.02.26.11.13.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Feb 2025 11:13:57 -0800 (PST)
+Date: Wed, 26 Feb 2025 14:13:56 -0500
+Message-ID: <41cb98ddf724ade0fc529b8c952f3efc@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=UTF-8 
+Content-Transfer-Encoding: 8bit 
+X-Mailer: pstg-pwork:20250226_1339/pstg-lib:20250226_1339/pstg-pwork:20250226_1339
+From: Paul Moore <paul@paul-moore.com>
+To: Luo Gengkun <luogengkun@huaweicloud.com>, peterz@infradead.org
+Cc: mingo@redhat.com, acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com, tglx@linutronix.de, bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, will@kernel.org, jmorris@namei.org, serge@hallyn.com, rostedt@goodmis.org, mhiramat@kernel.org, mathieu.desnoyers@efficios.com, stephen.smalley.work@gmail.com, omosnace@redhat.com, linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-security-module@vger.kernel.org, linux-trace-kernel@vger.kernel.org, selinux@vger.kernel.org, luogengkun@huaweicloud.com
+Subject: Re: [PATCH 1/2] perf: Remove unnecessary parameter of security check
+References: <20241223070650.2810747-2-luogengkun@huaweicloud.com>
+In-Reply-To: <20241223070650.2810747-2-luogengkun@huaweicloud.com>
 
-Hi Linus,
+On Dec 23, 2024 Luo Gengkun <luogengkun@huaweicloud.com> wrote:
+> 
+> It seems that the attr parameter was never been used in security
+> checks since it was first introduced by:
+> 
+> commit da97e18458fb ("perf_event: Add support for LSM and SELinux checks")
+> 
+> so remove it.
+> 
+> Signed-off-by: Luo Gengkun <luogengkun@huaweicloud.com>
+> Reviewed-by: Ingo Molnar <mingo@kernel.org>
+> ---
+>  arch/x86/events/intel/bts.c     |  2 +-
+>  arch/x86/events/intel/core.c    |  2 +-
+>  arch/x86/events/intel/p4.c      |  2 +-
+>  drivers/perf/arm_spe_pmu.c      |  4 ++--
+>  include/linux/lsm_hook_defs.h   |  2 +-
+>  include/linux/perf_event.h      | 10 +++++-----
+>  include/linux/security.h        |  5 ++---
+>  kernel/events/core.c            | 14 +++++++-------
+>  kernel/trace/trace_event_perf.c |  4 ++--
+>  security/security.c             |  5 ++---
+>  security/selinux/hooks.c        |  2 +-
+>  11 files changed, 25 insertions(+), 27 deletions(-)
 
-This PR fixes TCP socket identification, documentation, and tests.
-
-Please pull these changes for v6.14-rc5 .  These commits merge cleanly with
-your master branch.  The kernel code has been tested in the latest linux-next
-releases for two weeks and rebased to update commit messages.
-
-Test coverage for security/landlock is 92.8% of 1035 lines according to
-gcc/gcov-14, and it was the same before this PR.
-
-Regards,
- Mickaël
+Now that we have Ingo's Reviewed-by, I've gone ahead and merged
+patch 1/2 into lsm/dev, thanks everyone!
 
 --
-The following changes since commit a64dcfb451e254085a7daee5fe51bf22959d52d3:
-
-  Linux 6.14-rc2 (2025-02-09 12:45:03 -0800)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-6.14-rc5
-
-for you to fetch changes up to 78332fdb956f18accfbca5993b10c5ed69f00a2c:
-
-  selftests/landlock: Add binaries to .gitignore (2025-02-14 09:23:11 +0100)
-
-----------------------------------------------------------------
-Landlock fix for v6.14-rc5
-
-----------------------------------------------------------------
-Bharadwaj Raju (1):
-      selftests/landlock: Add binaries to .gitignore
-
-Günther Noack (1):
-      landlock: Minor typo and grammar fixes in IPC scoping documentation
-
-Mickaël Salaün (1):
-      selftests/landlock: Enable the new CONFIG_AF_UNIX_OOB
-
-Mikhail Ivanov (3):
-      landlock: Fix non-TCP sockets restriction
-      selftests/landlock: Test TCP accesses with protocol=IPPROTO_TCP
-      selftests/landlock: Test that MPTCP actions are not restricted
-
-Tanya Agarwal (1):
-      landlock: Fix grammar error
-
- Documentation/userspace-api/landlock.rst    |   6 +-
- include/uapi/linux/landlock.h               |   8 +-
- security/landlock/net.c                     |   3 +-
- security/landlock/ruleset.c                 |   2 +-
- tools/testing/selftests/landlock/.gitignore |   2 +
- tools/testing/selftests/landlock/common.h   |   1 +
- tools/testing/selftests/landlock/config     |   3 +
- tools/testing/selftests/landlock/net_test.c | 124 ++++++++++++++++++++++++----
- 8 files changed, 127 insertions(+), 22 deletions(-)
+paul-moore.com
