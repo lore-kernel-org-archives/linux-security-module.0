@@ -1,98 +1,103 @@
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 815B02620D6
-	for <linux-security-module@vger.kernel.org>; Wed, 26 Feb 2025 23:41:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4F82A48
+	for <linux-security-module@vger.kernel.org>; Thu, 27 Feb 2025 00:09:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740613310; cv=none; b=NSQjKzOcTg2cftP/nequPESireGOMrlYncKTAOXqjoFUhSyfZeJFI1mZKdEjt8ei/LNfncmA62ZiHD53HMydtmZUroQ+We704KdKaEtKR8TcOkFEe44CTb53Mt7XlZ0RZpMmQ79H/XndUbu61lDaC79fJnpmwm3Z+UvYGYfLGF4=
+	t=1740614947; cv=none; b=KsXUck56t8tCHUFAPk+wZnjrNjRYZnZr7LthqttrGXmiRpeS4Y8GEJjfV+rYt+9ygbzZ9OBEZ/VBpLhSxdQPoPFBBZ+9eqNkEc/oicsiJ9TE0TvyyoG871KopZcUwoCOcTrlrhOYp8yAbwndFY5GjfW8rxYVE7RleI6oZouHTkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740613310; c=relaxed/simple;
-	bh=JQDAukDOA1SXdHWfiWnXuv4Qp+qpUTG+aOURb/RFTMg=;
+	s=arc-20240116; t=1740614947; c=relaxed/simple;
+	bh=T93EluGlAaxHLNvDA5oGbMjnzf0LzeJetPK/nBd96dY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=laJViOtxmUks7B82zw3/+KaNJHCHcngkrRss3E27up1JIRJmjGF47rLC3/J827B3KCG7+4JwaCDi8/uuPG87+nbSnStvBagwP6aHMT/eKR6P+8n/ezxgAT7QLAxkyxd7JeM5yoVhLzGD98Ere5TVdaeDzwWMgANXFpKzT9Fge4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=f74K/K/a; arc=none smtp.client-ip=209.85.128.177
+	 To:Cc:Content-Type; b=Z6vKb/CSYc0PThO78a2BBNNaTQsLyARSkugduTGpaKum7qDYnwXM71oCD9y4eky/ba+UQF+pb4NmSXTMfTYUCpQq9WDDwFdVidCBv2DPlI2paZEwtoJm84DE/15jqbZT+aUdJVO1VGrUp8YSIjlhMMnlXNXK1bfmBbwMFg0yzb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=KpbkjT6g; arc=none smtp.client-ip=209.85.128.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="f74K/K/a"
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6efe4e3d698so3851717b3.0
-        for <linux-security-module@vger.kernel.org>; Wed, 26 Feb 2025 15:41:48 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="KpbkjT6g"
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6f6c90b51c3so4100567b3.2
+        for <linux-security-module@vger.kernel.org>; Wed, 26 Feb 2025 16:09:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1740613307; x=1741218107; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1740614945; x=1741219745; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=JQDAukDOA1SXdHWfiWnXuv4Qp+qpUTG+aOURb/RFTMg=;
-        b=f74K/K/afzWjWvWsdHxzN/jH61xJHHyuPbfUP001y7a/mX6nUiQ6DZSUR4rQzkAFCx
-         uOFAYRBDM75LJJ3tEtVTkKT7Pfyamp4QYiJxQoBN7PAuBLpEFKsB4bsCIFSC+EyqITA4
-         MSFowOZhYMXT6smdUYfJrBJNAGtzWPePtqkaV+TeW+JQV8A86bZ4NvxrgQQwmhygBwVc
-         4AyCxHkuezll/ele/Euj7pr1pPIBuQgLCodPj+v2Il0IkiTCMNdfBwh8YYMXpiUuZsUg
-         jNsMH1mqRG2FYKB9txR+/jBVrF4PiuwCG7NFcaxSBTrxjJCbTAetHKMw2dcEExoHNhUR
-         hHlQ==
+        bh=fxDDdJmrNTe6UPiTyr082HreUva1ZWAfMMzgjWcC55k=;
+        b=KpbkjT6gLFeHyNS5mt/AAAPUOMl+ChOWhqknh37UBwoU0vLPV7xqftF2F144K5d9jk
+         GO4ylHhEO+GYBc3Tv9TpFVWYXmJikuqtrJ0ytq3pCqS/teaeepgnTPB5pZGzBXZC7m9f
+         bOSsuDGkhmIYFu1/Et7PwZC4S/ja2Rs3aJVo8+4kLpGxAWC9ooWCp7hAOFJi4Z8qSrye
+         g0BcwQJfENKq4mLRdnb3S2h8+LXTI9QFAjAvLYvZO+3JSeGup3+YIUK6ESe4XSDF2rGW
+         lL28NXMY/tFOxggd1yJa0H6xVnA3HN68d9UAgjyOmdRHbc4285UGy/GBX9ctisFWlwkk
+         sMHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740613307; x=1741218107;
+        d=1e100.net; s=20230601; t=1740614945; x=1741219745;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JQDAukDOA1SXdHWfiWnXuv4Qp+qpUTG+aOURb/RFTMg=;
-        b=YROVAWIKfxEGfuFFpr9rVbQQfaXUwX+E3lJhDEzQipHefyK62ZHUkT6odg1i5Etvm6
-         5Zb6dXuTYQO6I/jLUOMZ2RKQBdDTNs8uPZWGo/un29cCWskyhNfx4PAnj4Eiz3Cu0LGW
-         zhbLqBj3x+y8aWgP0JPhXvK96ubYbM4T7HkKRdPLr+gX1TtlrHoEqJhRFEgRZ3xNQ1hx
-         EWug2qMZu11g8lRsszD6bh50A1hRYsAMUephv+xYJ8dF3kWNLeeIYlFD2ySOGa84SwHF
-         EgK+0AHaKqnco56Vh4Zjbus9gQvWA3C9FZYL5XZCX5OPzU9cAoam6z4FZefZDEUCi7AE
-         AQzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXUvM8TYdo6Mzedofk4G49yfIiceSAOOJ6WUNWXfWtr1rUv8EPy/ur7E1URSXgc0G6er4+pKRw7+6fmucgjhfVy8g3+Thg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZMkHpii17QMP6O932Zrp1SPN786q29FQAd/z7mDFu4ua60dqR
-	u4akZw2NPjxN7Dc0b694RkQ2M4XyPO+TwI0mXF4PsZ/bmqvfz1jtFsBSBq5eW6RXgqZEwzUzwi4
-	VOWKCPPmyb0YCP6D6DxtPjpv3M2cqy2f5/rJT
-X-Gm-Gg: ASbGnctzU+FpsC2obNndqT9OLiopZCEemAGoLBlkafkHG91rSU7GkyUPTrTAJYCQ6XD
-	wI+COKTqqf5LweN3GbgNh1Lm+twc5lp2FLU9JtO38LZDpV2EuPc3gO6F1kE/bb9PnCmaQUXVwC6
-	dk/qhLJFo=
-X-Google-Smtp-Source: AGHT+IGemVdA8vFM5APA46NT9uZdRK4EJWAEgmp2/eNiVxXqJ81TXGGCyav4i+lfYJLRLeB/U2Bp2pN4yp0P8tAT1hU=
-X-Received: by 2002:a05:690c:38d:b0:6f6:b646:4f34 with SMTP id
- 00721157ae682-6fd22074377mr57621747b3.30.1740613307514; Wed, 26 Feb 2025
- 15:41:47 -0800 (PST)
+        bh=fxDDdJmrNTe6UPiTyr082HreUva1ZWAfMMzgjWcC55k=;
+        b=eCN049mSMKUWVSu/gd9hiMSLH6vhyLzyzrjNAq4JPjZhjkqs5PvxpGO7IEC1RQBs53
+         dQIo8Lk5q1aDVtE+3vBMm+kRxXsEukwza1Ycztjkgyept6jtq2oY/VG62KDBFDFxE+Et
+         zP6E9gjs29ItmADc3YG2DvQCi4fgCffB1XYHkXN45LZH8zsBpAf7WXU4dWO+dQVAaFsf
+         GzT2B3MAkoMDPA0ixhPEeE9lnlu2J4XGg0AiwsfjI2X6WsJ7LKJoOtl3Vo2fa6SyVA9/
+         ZFo/r0juARyr4o34oZDbtaw8n8FX6rmOB7utt6IJnaAmSsPQwxpjNOKMF4nEmFN2durk
+         DNjA==
+X-Gm-Message-State: AOJu0YxFO0YtoRe571WgiVT3avcgtgvbCcvXeWnMWGFtkCB3LlPGEDHE
+	hkXPnQaSY4w8fIPzb3G4ZsjU7UurEqiEJJEKFyNiCocAUVSJRClb4YqnnvY4f8c8cllZqMMs7tx
+	bQT0m4UhhYXNvzosw229emzD4yP+f/rvbkz5t
+X-Gm-Gg: ASbGncteh78Vn25giUrCdv0KZ2+rjKqLlQj3hh19ZADtO/zYx4BznCoA+WalXIHweqi
+	qtrKxRVAjQPk1WexdAcWtdAQ5PP2rF0jslsuGxT+57UATDlzMHM7fRB/Cff/LYTxaT0yPsYlxYa
+	ho2kw4BvQ=
+X-Google-Smtp-Source: AGHT+IGsDgtv1KuxkNbzExf+EpIsoY+lM5NEnz/rT+LKaBz8EW3XsAlE+HFeGN6cBIjwcOMLp67F3eTv9peKYwEzbGU=
+X-Received: by 2002:a05:690c:6311:b0:6f9:4f93:c805 with SMTP id
+ 00721157ae682-6fd10a18bd9mr89838447b3.21.1740614944849; Wed, 26 Feb 2025
+ 16:09:04 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250131163059.1139617-11-mic@digikod.net> <7ed44e7b0e371302d29be95789cd1a57@paul-moore.com>
- <20250218.aePeer3oole2@digikod.net>
-In-Reply-To: <20250218.aePeer3oole2@digikod.net>
+References: <20241219172859.188117-1-linux@treblig.org> <CAHC9VhQ73qdL2Qf-jOMMVSf=+h-H8K+mz165XZztb5X6XjH11w@mail.gmail.com>
+In-Reply-To: <CAHC9VhQ73qdL2Qf-jOMMVSf=+h-H8K+mz165XZztb5X6XjH11w@mail.gmail.com>
 From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 26 Feb 2025 18:41:36 -0500
-X-Gm-Features: AQ5f1JqWYmxLqpt22zS6kb-r4-IiD-XvgZ__5B9665k_Ga0PZ4Qv98lgbWnYyX4
-Message-ID: <CAHC9VhSo7L8jw2pR9x6KmVCiqucGaRqkuj+RyQXOC6jnQBcQjA@mail.gmail.com>
-Subject: Re: [PATCH v5 10/24] landlock: Add AUDIT_LANDLOCK_DOMAIN and log
- domain status
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Eric Paris <eparis@redhat.com>, =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	"Serge E . Hallyn" <serge@hallyn.com>, Ben Scarlato <akhna@google.com>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Charles Zaffery <czaffery@roblox.com>, 
-	Daniel Burgener <dburgener@linux.microsoft.com>, 
-	Francis Laniel <flaniel@linux.microsoft.com>, James Morris <jmorris@namei.org>, 
-	Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Jorge Lucangeli Obes <jorgelo@google.com>, Kees Cook <kees@kernel.org>, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, Phil Sutter <phil@nwl.cc>, 
-	Praveen K Paladugu <prapal@linux.microsoft.com>, Robert Salvet <robert.salvet@roblox.com>, 
-	Shervin Oloumi <enlightened@google.com>, Song Liu <song@kernel.org>, 
-	Tahera Fahimi <fahimitahera@gmail.com>, Tyler Hicks <code@tyhicks.com>, audit@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Date: Wed, 26 Feb 2025 19:08:52 -0500
+X-Gm-Features: AQ5f1JrBAIqwrkawhZsoxnOQhIVUJoQVq-3y9hl2L-3pD5-ohnf4Qjl11DTqy_w
+Message-ID: <CAHC9VhTuvNuNfeLrR+5b+LOB_kC8a_67EvLPnOJO4vcvkcuMYQ@mail.gmail.com>
+Subject: Re: [PATCH v2] capability: Remove unused has_capability
+To: linux@treblig.org, serge@hallyn.com
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 18, 2025 at 2:21=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@digik=
-od.net> wrote:
+On Thu, Dec 19, 2024 at 1:28=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+ote:
 >
-> Are there guidance about __GFP_NOWARN for audit or other subsystems?
+> On Thu, Dec 19, 2024 at 12:29=E2=80=AFPM <linux@treblig.org> wrote:
+> >
+> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> >
+> > The vanilla has_capability() function has been unused since 2018's
+> > commit dcb569cf6ac9 ("Smack: ptrace capability use fixes")
+> >
+> > Remove it.
+> >
+> > Fixup a comment in security/commoncap.c that referenced it.
+> >
+> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> > ---
+> >  include/linux/capability.h |  5 -----
+> >  kernel/capability.c        | 16 ----------------
+> >  security/commoncap.c       |  9 +++++----
+> >  3 files changed, 5 insertions(+), 25 deletions(-)
+>
+> Now that Serge has the capabilities tree back up and running I'm
+> assuming he will grab this patch, if not just let me know Serge and I
+> can take it.
+>
+> Reviewed-by: Paul Moore <paul@paul-moore.com>
 
-Unfortunately I'm not aware of anything, and I too would be very
-interested in learning if there was some solid guidance around the GFP
-flags as the comment block in gfp_types.h is rather short.
+Bump this thread to make sure Serge sees it ...
 
 --=20
 paul-moore.com
