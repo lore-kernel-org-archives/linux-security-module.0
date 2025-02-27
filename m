@@ -1,119 +1,178 @@
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F5201B423E
-	for <linux-security-module@vger.kernel.org>; Thu, 27 Feb 2025 16:48:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E801A26F465;
+	Thu, 27 Feb 2025 20:41:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740674902; cv=none; b=foro3NTg7fD3kKACgl2p9RXsQh/yHhSL4R2B+mzCE6BfS3OGDtXCA52gbNtfUHGLnbWY6Jg1mLjI8TWHTk5RWI0Y+oGqm/nD7ZQRX2DV5HpYoJGyXrBZYFTckIPQnXn8WC/2rYIHvUtzc2DLTPf+yWORLAtkowi0bp79a7Qo2CY=
+	t=1740688919; cv=none; b=R44srOwG/6hGI6MFdizhcfzPUdHT8B4w5FL0Y4MAh5+0VovjHS7HFSlDZLVpNv12RBuZFtBM5ZQRF0KpmMMHpqKHtFxFU2UjTsBwx2HR2njmO2nM178qD8gPeFBo+ZnxdllHWIXz5b2Gmj9wXzFnsUgsTD+/m7GtWr/dTCTYQ14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740674902; c=relaxed/simple;
-	bh=kjNwow5X4ZZ01USyEwmrs9aAMem57HqtvhZwTRgcBNo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rQ0soWc5IcGadVNxO+fUgXKhE1LxHkI44GKYj7YrcRC1wTkg5wIaaK/3rOY3x5cK9jzPid3XrOlBV7XJ6LdI608tLtg/8opYPzU4ISZf9ZQ0fcb2XG4zgO3CEuKDai0hgfaU/+1hFk9HfTCvzbwjSH0BvuM8qPhg7F7RomowmBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=aFGm/P6E; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1740688919; c=relaxed/simple;
+	bh=toTm+VBOYQ59OnGvbnbG9hh7ctRpGyripY+1Kc9tK+0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=uynv1scFdh1DjZBMjlgPQdk+78gy9OTJKrGo4z1XvXaDU0kZvyG+OvK3xDbSlIcyUJ61mdsx3CH5whly/qi7w7ps4Oo85u2mYHBoQBJEpA8FE7WFwaD3I0sZ8gSROqyoUspL9GzIBYbc/xuQa7ROiOH3yVgbIJ5KUCPDQuEBZj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=GlRhrY3C; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="aFGm/P6E"
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6f6ca9a3425so10725277b3.2
-        for <linux-security-module@vger.kernel.org>; Thu, 27 Feb 2025 08:48:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1740674900; x=1741279700; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3+CwlNOwz6cX/UtBgNuuvuqtR0CZarS1LGfkpgdEQ4w=;
-        b=aFGm/P6EA+fOrqfeuLBh8ZkU2FSqNU5NoCwbJjTQDRL/RTELoynFTZxgrNc5IgVccC
-         uiODXHU85IT/fsY9H1nVeXJ/9xVnZ5wlBFGSaZoKGLGcI02CqfIGLoF/3Slw0W/99xdG
-         ma1IOm9fn6p0hxaAiaV0NLnhYTN+FxZXi4PdMva+leh6+bRooqh3/lME7jeane7CZK7E
-         LJuqf/KaqKBoVuJz/HrVfyF1UT8UwZ6hYwaLD00wTbz8nGIb6BiFauqKJMF1cXShsShf
-         J59OenIJ/umBY/K6bMURTRnu6AVZG8d+2+m2kTVks93Sf7Li51OF7rnoO3Eu0LmAo2yx
-         SoAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740674900; x=1741279700;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3+CwlNOwz6cX/UtBgNuuvuqtR0CZarS1LGfkpgdEQ4w=;
-        b=gbO/M/KUCdrIw50BrvlMEgCLFeqapprfcuslXB2uuqqTtukhyKiz1rGQwavHciUBaN
-         m9VLZlJE9lhoLnFVhj99CiFRFWc6NkpjdyyKR1zFaU+La3624Ph7pA8toYzFI4Ow2+pR
-         PXgwbDm8KXUgee8Ct8nbufnzEWbW92jWa8zcGL7b75KR8jty/WrMwhnoFEmCifOJm+hm
-         e8VRhVDCF2M3T1xGg1L7LgtHQTe6AD0S67K9CxGTdiVSbVBfrZQQGXgi20L0TAediS3u
-         v6ULBH7LW2zWH5hrW++jSsjsNGagJf2ghj0jC+GEVCIg+a31SB3ADEj/VgIVkVronC2A
-         uN/g==
-X-Forwarded-Encrypted: i=1; AJvYcCV2FueFOMHJTaHbCnhBklDnWCKhKR1tNBpC/7HsktRknxlIsWTVakplATxaTKo3DCDyy0+/D1l66FEHmYgwSAGprDzHMck=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyv6OKCfVd5dwJrUK/QyiXfY8W8WrfZA/OadeimmhxckfmhLSrp
-	48jyFSJ30JLbeASe/8l87pqkb/XOvZshIVQerdvghW5fRurdyjD9F4c2GPXLS9/1B5Y7MvKaztt
-	o2B9l/2WRJfgf/w2k3jkV3eFb+PUuc3uVRO9O
-X-Gm-Gg: ASbGncsX2C/OuAYl8sGSFE7mGO2OoJrwQw/I7P1EojwMJqzvp9XNRuSNCWalRrCCA8j
-	HCKvtZKz3p1d+BLMP3YW+wMStWuX9gH+K7c1L8VZpDubbxqP+FWJ+qptuOPfpbOmv06hM9VT+O5
-	BJU2MDn5s=
-X-Google-Smtp-Source: AGHT+IFYI+8SraAdigQGx7lYdH5LUnt1/UBb+qYVnBDFc3+wD7MPjfWvDbf4Mkowsvjayh1/wuUuat9GLQUM9I01TCE=
-X-Received: by 2002:a05:6902:2e0b:b0:e58:aa00:ffe0 with SMTP id
- 3f1490d57ef6-e5e8359551emr21182111276.5.1740674900254; Thu, 27 Feb 2025
- 08:48:20 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="GlRhrY3C"
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51RJs6lB027755;
+	Thu, 27 Feb 2025 20:41:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=5gf2oW
+	EChCVKSlevRHGAWCIEoWOv/4y51kS80LfNMGo=; b=GlRhrY3ClvIbJpQ+8vn42U
+	Bgq1QaiBUslQJ6QGTlybaFjewOovxoNI2qrtV0DNhz2OV/YeItP8NgVaoXKGkbtw
+	mWK6OGK7Cqz1TPmz3WbW6wPcTHuDPMu8b5g7n7ZUXTajUER1w5gkpJKEAjzePM94
+	GcK04PuLH2YLhT/SO22nD2TmcwX7knx29hCXN9irHwEjKYjWx+SNXuq+kNduynAW
+	gJyXPZpGItpRO4xTQU4OZRNM170m+uzi2SJ5BILYIBV1O0JKImSpxl5QQ+CW3f0K
+	m+zDnSohvPBt1HHoSi8KN3QOFGg7fEZ5PJPp5B11TtUd80FbFnHSzIHoJnOezXNw
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 452e4a5kgu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Feb 2025 20:41:23 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51RKfNro026549;
+	Thu, 27 Feb 2025 20:41:23 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 452e4a5kgr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Feb 2025 20:41:22 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51RI5BTv012741;
+	Thu, 27 Feb 2025 20:41:21 GMT
+Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 44yrwt32sa-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Feb 2025 20:41:21 +0000
+Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
+	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51RKfLiT32637492
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 27 Feb 2025 20:41:21 GMT
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id F249858053;
+	Thu, 27 Feb 2025 20:41:20 +0000 (GMT)
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 36D6058043;
+	Thu, 27 Feb 2025 20:41:19 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.31.103.152])
+	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 27 Feb 2025 20:41:19 +0000 (GMT)
+Message-ID: <506e8e58e5236a4525b18d84bafa9aae80b24452.camel@linux.ibm.com>
+Subject: Re: [RFC PATCH v3 00/13] Clavis LSM
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Eric Snowberg <eric.snowberg@oracle.com>,
+        Paul Moore
+ <paul@paul-moore.com>, David Howells <dhowells@redhat.com>,
+        Jarkko
+ Sakkinen <jarkko@kernel.org>
+Cc: "open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        "herbert@gondor.apana.org.au"
+ <herbert@gondor.apana.org.au>,
+        "davem@davemloft.net"
+ <davem@davemloft.net>,
+        Ard Biesheuvel <ardb@kernel.org>, James Morris
+ <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Roberto Sassu
+ <roberto.sassu@huawei.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        "casey@schaufler-ca.com" <casey@schaufler-ca.com>,
+        Stefan Berger
+ <stefanb@linux.ibm.com>,
+        "ebiggers@kernel.org" <ebiggers@kernel.org>,
+        Randy
+ Dunlap <rdunlap@infradead.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+Date: Thu, 27 Feb 2025 15:41:18 -0500
+In-Reply-To: <E20C617B-EA01-4E69-B5E2-31E9AAD6F7A2@oracle.com>
+References: <20241017155516.2582369-1-eric.snowberg@oracle.com>
+	 <c490397315c2704e9ef65c8ad3fefedb239f1997.camel@linux.ibm.com>
+	 <72F52F71-C7F3-402D-8441-3D636A093FE8@oracle.com>
+	 <CAHC9VhRHEw5c+drC=aX4xTqWoQJJZ+qkJ7aHUT5dcu+Q5f7BqA@mail.gmail.com>
+	 <CAHC9VhSJpnaAK1efgs1Uk0Tr3CaDNR1LiDU-t_yDKDQG6J-74Q@mail.gmail.com>
+	 <E20C617B-EA01-4E69-B5E2-31E9AAD6F7A2@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224154836.958915-1-mszeredi@redhat.com> <4a98d88878a18dd02b3df5822030617a@paul-moore.com>
- <CAEjxPJ5V9z87c6pHVRemKxENoNq9TvqpQ3tJpLEbP4QEViZTHQ@mail.gmail.com>
-In-Reply-To: <CAEjxPJ5V9z87c6pHVRemKxENoNq9TvqpQ3tJpLEbP4QEViZTHQ@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 27 Feb 2025 11:48:09 -0500
-X-Gm-Features: AQ5f1JqX1rQ6m62bB5eNpWIdO0cQOPLAxtXa7BRO08xtGHgf2ADpYVSS1Bp8tTM
-Message-ID: <CAHC9VhTVBY7qkNQ-_vUWm_Y5bQ7OREp2hOWmfLizAXJs0f6Rtg@mail.gmail.com>
-Subject: Re: [PATCH] selinux: add FILE__WATCH_MOUNTNS
-To: Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc: Miklos Szeredi <mszeredi@redhat.com>, selinux@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
-	linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: qFjwsqYvnSasWmeKwDVF9xETelCqQs7K
+X-Proofpoint-GUID: h6W6984XJjO07a7_N3AGcB_gqnHG76Tk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-27_07,2025-02-27_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ suspectscore=0 phishscore=0 mlxlogscore=992 spamscore=0 adultscore=0
+ clxscore=1015 priorityscore=1501 bulkscore=0 impostorscore=0
+ malwarescore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502270152
 
-On Thu, Feb 27, 2025 at 10:22=E2=80=AFAM Stephen Smalley
-<stephen.smalley.work@gmail.com> wrote:
-> On Wed, Feb 26, 2025 at 3:19=E2=80=AFPM Paul Moore <paul@paul-moore.com> =
-wrote:
-> > On Feb 24, 2025 Miklos Szeredi <mszeredi@redhat.com> wrote:
-> > >
-> > > Watching mount namespaces for changes (mount, umount, move mount) was=
- added
-> > > by previous patches.
-> > >
-> > > This patch adds the file/watch_mountns permission that can be applied=
- to
-> > > nsfs files (/proc/$$/ns/mnt), making it possible to allow or deny wat=
-ching
-> > > a particular namespace for changes.
-> > >
-> > > Suggested-by: Paul Moore <paul@paul-moore.com>
-> > > Link: https://lore.kernel.org/all/CAHC9VhTOmCjCSE2H0zwPOmpFopheexVb6j=
-yovz92ZtpKtoVv6A@mail.gmail.com/
-> > > Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-> > > ---
-> > >  security/selinux/hooks.c            | 3 +++
-> > >  security/selinux/include/classmap.h | 2 +-
-> > >  2 files changed, 4 insertions(+), 1 deletion(-)
-> >
-> > Thanks Miklos, this looks good to me.  VFS folks / Christian, can you
-> > merge this into the associated FSNOTIFY_OBJ_TYPE_MNTNS branch you are
-> > targeting for linux-next?
-> >
-> > Acked-by: Paul Moore <paul@paul-moore.com>
->
-> I'm not objecting to this patch, but just for awareness, this adds the
-> permission for all file-related classes, including dir(ectory), and we
-> are almost out of space in the access vector at which point we'll need
-> to introduce a file2 class or similar (as with process2).
+On Mon, 2025-01-06 at 17:15 +0000, Eric Snowberg wrote:
+>=20
+> > On Jan 5, 2025, at 8:40=E2=80=AFPM, Paul Moore <paul@paul-moore.com> wr=
+ote:
+> >=20
+> > On Fri, Jan 3, 2025 at 11:48=E2=80=AFPM Paul Moore <paul@paul-moore.com=
+> wrote:
+> > >=20
+> > > Regardless, back to Clavis ... reading quickly through the cover
+> > > letter again, I do somewhat wonder if this isn't better integrated
+> > > into the keyring proper; have you talked to both David and Jarkko
+> > > about this?
+> >=20
+> > I realize I should probably expand on my thinking a bit, especially
+> > since my comment a while regarding LSMs dedicated to enforcing access
+> > control on keys is what was given as a reason for making Clavis a LSM.
+> >=20
+> > I still stand by my comment from over a year ago that I see no reason
+> > why we couldn't support a LSM that enforces access controls on
+> > keyrings/keys.  What gives me pause with the Clavis LSM is that so
+> > much of Clavis is resident in the keyrings themselves, e.g. Clavis
+> > policy ACLs and authorization keys, that it really feels like it
+> > should be part of the keys subsystem and not a LSM.  Yes, existing
+> > LSMs do have LSM specific data that resides outside of the LSM and in
+> > an object's subsystem, but that is usually limited to security
+> > identifiers and similar things, not the LSM's security policy.
 
-Yes, I've been paying closer attention to this over the past several
-years as we start to nudge the permission count limits.  However, as
-you mentioned, this isn't a new concern and we've successfully dealt
-with it in the past.
+Hi Jarkko, David,
 
---=20
-paul-moore.com
+Both Paul's and my main concerns with this patch set is storing policy in t=
+he
+keyring.  We would appreciate your chiming in here about storing key policy=
+ in
+the keyring itself.
+
+thanks,
+
+Mimi
+
+> >=20
+> > That's my current thinking, and why I asked about locating Clavis in
+> > the keys subsystem directly (although I still think better keyring
+> > granularity and a shift towards usage based keyrings is the better
+> > option).  If David and Jarkko are opposed to integrating Clavis into
+> > the keys subsystem we can consider this as a LSM, I'm just not sure
+> > it's the best first option.  Does that make sense?
+>=20
+> Thanks for your feedback Paul.  I have no preference if it is a new LSM=
+=20
+> or not.  My interest is finding the path of least resistance to get this =
+type=20
+> of capability added to mainline code.  Hopefully David and Jarkko will=
+=20
+> provide their opinions.
+
