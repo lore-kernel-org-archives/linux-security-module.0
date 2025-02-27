@@ -1,109 +1,150 @@
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 079EB259493;
-	Thu, 27 Feb 2025 15:22:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABD7C26E650;
+	Thu, 27 Feb 2025 15:42:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740669764; cv=none; b=B4AxDb+dNCa8rFRiqO3SUExGyxg39wojL6ravjj/yIDgWvXyfBS09D5JWD7WQYHdIFrZR/mGyLTRNL6fWKmF2hCEHXejMvVe7WsrvLnG/ahbGTiZj8bO00W/6BM89Zb84rHP8G0/W5xUd8wRsE9Bygn/9hrgzwiSllaJ5AROYaw=
+	t=1740670933; cv=none; b=WsCg6cVl7nnV3UNz4cFD3Nz059KD6OL3+oO/N2Dn6YeeWQ4yxvpTblfVEFJryCWT3fjGHbrp3REqb4zM8VkLIZ/w38wohLWfdsXff+rIYrVK+RMmDMIneBoznq9GIh5gS2UR1ow7bxPPQiG1hCV27VpLwoInief8GYD2M/EAXAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740669764; c=relaxed/simple;
-	bh=1SVxacu8ATtmAP908NS6+KKXwalFxj5EJQoy7daa6ks=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FAEr9ngd0mtMuUi970ChuyGjEtVhDiQe9Q01zLkjTis0QoFR6OvQgkx0g2YJ36bfbrHL2+lRJRV92YoIIStfTFLVG9L9RcWB4JPYV+Sz77en7+95VA7pFNgboYKP/gzad0OBc5j8X13og9ZMaPrIbG6tOZkmlatfRhFYsPrjGPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m5Z+0LQ/; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1740670933; c=relaxed/simple;
+	bh=3jpunIAT4e3NlXpAl9K6jRlP/gp2ZIZ0EvV0Gf6zwGc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=hMzWf/07V4HxPFHHMHQth5/Xw6PcdLD0Ez/goSb6vmhCxnAp9ElwOiXrVx8SE+2Ns13m2Ep9XSI9xiG81doE+6v+ZoFhqfmS9vUtDwtnFxFeYFIPo07u+6hMCmE6aX5D3I+8f6RR507Y80FmscGVQQclBXA6Ix1ml42XMhz5dtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=BW+CAklg; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m5Z+0LQ/"
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2235908a30aso15710155ad.3;
-        Thu, 27 Feb 2025 07:22:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1740669761; x=1741274561; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g7a/cAUhkti68XpQh7UWKw8QuI4mozU9EgVOFOHErTo=;
-        b=m5Z+0LQ/1bQxZP63sf3Ar4qrc7rtQGG6mmp5ZO5aPPlEM7ntfXnkhQnLH6US9fA+gP
-         bMXZb2RiILo+S+a2zCDEtfO6BFbqRaougQvlggUQavWEn/3y8Hc2gl2wXuyZ7CwPeyPj
-         eQFyld2HkPIY33hLPX7+gFGb1L++msVEDQVdt8+O94LAjWZBPClWM2wIvT0f8UGKJA1h
-         HA2g/Fn7A3/wG+CTKg97kV9lSudUnNJ+oCtK6Pdi8+cisrwehxg0FTXeDwT+SjTdJps8
-         dUsuiwQ2sa4KN7Up0RJcsA3MSMiXRx0747EnlTyR0OJjysWVS15PMAx7pfVdgc0Qhc5h
-         llTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740669761; x=1741274561;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=g7a/cAUhkti68XpQh7UWKw8QuI4mozU9EgVOFOHErTo=;
-        b=QCZevnXeO1n6oGMW+WKMav6QNl1HenyErC9+t9EEukBesF0oS97L1b7B93NZbQM4GP
-         BZTTrEM7CHKrG6B4v5vv3lbg7ZmO+ZInER/sZQQ1To5O29RRsu0jMVq69XfxMis6EoAR
-         HGKtq7Oa9CxFoLq3ecS/axuOIgvz/u6Gm0T7KWdd1hdeJH9OOfnn3l2w/dn/l3ssjRhR
-         u5iTHnKqwaFYgqoVIqWGE9rxsnCs3F9xoSVLzQEgy6eL3EV5IBaSELRjKNw7j5n6GIIs
-         Z2pXCWSdRQgweG9aq28xKnYF8IyGdHLcxpV5o2M3Ah7grbSG1pgYDk6xkhv8kmYwQAVp
-         qicQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUJXqg/Z/k/J5Ggeup7/QqN0Iu2au/j5DQbQO0vsfFdlbGxJga2s1waTVt1Xy45YCq8xNAX7npLhg==@vger.kernel.org, AJvYcCUXVHQ3v/PqkoQ43c6eIG6FltBqZhLkiGLwJ6qi/gKvv/VsGqK7+Aj+3cmK7WN4cPND9Ocys0jR8WJ2OeFViBO6qCCDYZXK@vger.kernel.org, AJvYcCXUkz0Ow/YW44Ox84CyxgLIXrXGlHCEovD2ZSJXHdvsEE07xyDI7x6OqbZbBL9spE3Oa9ihU1z1cAzaUnd0@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhbjI3CZyOb2SVoeCOglbn+6RQI2tIUaMLYRGQCA1Sd3UiZEsx
-	MYKr4Nqg4mJ3SGyT7/C7HjLXwBM2eJmoPvZg9tJnyrLEOXx4KMIjRShwMiX2aOBjAMAQ/E3toUK
-	ObVoQDAVHRw4twB0+JF0+XtyWJGI=
-X-Gm-Gg: ASbGncu1Ok6LWtY9LoEAWymmE7mSpuDfkwsVFU4/PmFrNNF0XgcVlua2XN/vaceH4xy
-	5a7iuoAXpBb7Ha2T3e93hVpOyTGQN5aJpByzsKnlF8qF0p1PstFNLbkdIoeX1E8m57W/eC2Ywxk
-	eAwa7gCZc=
-X-Google-Smtp-Source: AGHT+IE+w5fusJYoHQ3wPbckiON8o5BwLP3W2r4hHKOfZZFZkBYr77XbwtHjwHWjmZo9lBiybVv+m3pNyWzdDCAbP74=
-X-Received: by 2002:a17:902:f706:b0:21f:6584:208d with SMTP id
- d9443c01a7336-22320213441mr131908065ad.43.1740669761190; Thu, 27 Feb 2025
- 07:22:41 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="BW+CAklg"
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51R7X61p018108;
+	Thu, 27 Feb 2025 15:41:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=b+Bxbc
+	Zny328vBDeBNuKHl0X5uSvYbJu041HX++8d1c=; b=BW+CAklgFMbwmvwJ90u4Cz
+	mGP1D83BRyX61YNQHEY8kV+H6JQ4YacQTXeG1c78yGqs8Q3t8c4FQxCgveayhtBh
+	9ZJZ8RZEEiva0HfPWBq4mzbjMOf48a9btMSLgtbkPEoi5y/krwOYVAXlGseySA9z
+	pwc4FBoJyKXqcYFAxvQn6gEL7ZK2r2znBEHlNi2NXE9oiyfOo8Bylf1Ow39QxrQ3
+	NgzCQFh5Dg3TsF7aUbQbKt00lieJXTHChOzoOyRJhifPbGl9mDMq98ZcIo2oIsmc
+	S8RoG4cXl+NA0GQqti70Z7ySNzmWTR7a7hqMsbTuPBVUyLLXLGiE6ccvzHXL/IaA
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 452krpab3d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Feb 2025 15:41:42 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51RFZC10020841;
+	Thu, 27 Feb 2025 15:41:41 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 452krpab3b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Feb 2025 15:41:41 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51RFOYFd012131;
+	Thu, 27 Feb 2025 15:41:41 GMT
+Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44ys9ysjqn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 27 Feb 2025 15:41:41 +0000
+Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
+	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51RFfeVx8782300
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 27 Feb 2025 15:41:40 GMT
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id AC38858045;
+	Thu, 27 Feb 2025 15:41:40 +0000 (GMT)
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E248458054;
+	Thu, 27 Feb 2025 15:41:38 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.182.161])
+	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 27 Feb 2025 15:41:38 +0000 (GMT)
+Message-ID: <55acf768b52b47dd9d33fa0486772d8c7ae38779.camel@linux.ibm.com>
+Subject: Re: [PATCH v8 2/7] kexec: define functions to map and unmap segments
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Baoquan He <bhe@redhat.com>, steven chen <chenste@linux.microsoft.com>
+Cc: stefanb@linux.ibm.com, roberto.sassu@huaweicloud.com,
+        roberto.sassu@huawei.com, eric.snowberg@oracle.com,
+        ebiederm@xmission.com, paul@paul-moore.com, code@tyhicks.com,
+        bauermann@kolabnow.com, linux-integrity@vger.kernel.org,
+        kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, madvenka@linux.microsoft.com,
+        nramas@linux.microsoft.com, James.Bottomley@hansenpartnership.com,
+        vgoyal@redhat.com, dyoung@redhat.com,
+        Mike Rapoport <mike.rapoport@gmail.com>
+Date: Thu, 27 Feb 2025 10:41:38 -0500
+In-Reply-To: <Z7wOPiDfy/vtrkCS@MiWiFi-R3L-srv>
+References: <20250218225502.747963-1-chenste@linux.microsoft.com>
+	 <20250218225502.747963-3-chenste@linux.microsoft.com>
+	 <Z7wOPiDfy/vtrkCS@MiWiFi-R3L-srv>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224154836.958915-1-mszeredi@redhat.com> <4a98d88878a18dd02b3df5822030617a@paul-moore.com>
-In-Reply-To: <4a98d88878a18dd02b3df5822030617a@paul-moore.com>
-From: Stephen Smalley <stephen.smalley.work@gmail.com>
-Date: Thu, 27 Feb 2025 10:22:29 -0500
-X-Gm-Features: AQ5f1JpcFANpUeCWvjxniU8h27ug25dYTeV4rnjCDFZymbqEOfkmhYqddoMbtPQ
-Message-ID: <CAEjxPJ5V9z87c6pHVRemKxENoNq9TvqpQ3tJpLEbP4QEViZTHQ@mail.gmail.com>
-Subject: Re: [PATCH] selinux: add FILE__WATCH_MOUNTNS
-To: Paul Moore <paul@paul-moore.com>
-Cc: Miklos Szeredi <mszeredi@redhat.com>, selinux@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
-	linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: Ch4kdlH88UqRX1-HCo1ZOA_UlxSUa3fp
+X-Proofpoint-GUID: 91rmgt_eP3x3zo_lmBXUAyyK5DSmDO87
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-27_06,2025-02-27_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
+ lowpriorityscore=0 spamscore=0 impostorscore=0 priorityscore=1501
+ mlxscore=0 bulkscore=0 mlxlogscore=999 clxscore=1015 suspectscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502270117
 
-On Wed, Feb 26, 2025 at 3:19=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
->
-> On Feb 24, 2025 Miklos Szeredi <mszeredi@redhat.com> wrote:
-> >
-> > Watching mount namespaces for changes (mount, umount, move mount) was a=
-dded
-> > by previous patches.
-> >
-> > This patch adds the file/watch_mountns permission that can be applied t=
-o
-> > nsfs files (/proc/$$/ns/mnt), making it possible to allow or deny watch=
-ing
-> > a particular namespace for changes.
-> >
-> > Suggested-by: Paul Moore <paul@paul-moore.com>
-> > Link: https://lore.kernel.org/all/CAHC9VhTOmCjCSE2H0zwPOmpFopheexVb6jyo=
-vz92ZtpKtoVv6A@mail.gmail.com/
-> > Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-> > ---
-> >  security/selinux/hooks.c            | 3 +++
-> >  security/selinux/include/classmap.h | 2 +-
-> >  2 files changed, 4 insertions(+), 1 deletion(-)
->
-> Thanks Miklos, this looks good to me.  VFS folks / Christian, can you
-> merge this into the associated FSNOTIFY_OBJ_TYPE_MNTNS branch you are
-> targeting for linux-next?
->
-> Acked-by: Paul Moore <paul@paul-moore.com>
+[Cc'ing Mike Rapoport]
 
-I'm not objecting to this patch, but just for awareness, this adds the
-permission for all file-related classes, including dir(ectory), and we
-are almost out of space in the access vector at which point we'll need
-to introduce a file2 class or similar (as with process2).
+On Mon, 2025-02-24 at 14:14 +0800, Baoquan He wrote:
+> Hi Steve, Mimi,
+>=20
+> On 02/18/25 at 02:54pm, steven chen wrote:
+> > Currently, the mechanism to map and unmap segments to the kimage
+> > structure is not available to the subsystems outside of kexec.  This
+> > functionality is needed when IMA is allocating the memory segments
+> > during kexec 'load' operation.  Implement functions to map and unmap
+> > segments to kimage.
+>=20
+> I am done with the whole patchset understanding. My concern is if this
+> TPM PCRs content can be carried over through newly introduced KHO. I can
+> see that these patchset doesn't introduce too much new code changes,
+> while if many conponents need do this, kexec reboot will be patched all
+> over its body and become ugly and hard to maintain.
+>=20
+> Please check Mike Rapoport's v4 patchset to see if IMA can register
+> itself to KHO and do somthing during 2nd kernel init to restore those
+> TPM PCRs content to make sure all measurement logs are read correctly.
+> [PATCH v4 00/14] kexec: introduce Kexec HandOver (KHO)
+
+Hi Baoquan,
+
+I was hoping to look at Mike's patch set before responding, but perhaps it =
+is
+better to respond earlier rather than later with my initial thoughts.
+
+The IMA measurement list isn't stored in contiguous memory, but has to be
+marshalled before being carried across kexec, and then unmarshalled to rest=
+ore
+it after the kexec.  Roberto Sassu has been thinking about changing how the=
+ IMA
+measurement list is stored so marshalling/unmarshalling wouldn't be necessa=
+ry.=20
+Making both this change and using KHO going forward would be a good idea.
+
+However, that sort of change wouldn't be appropriate to backport.  So the
+question comes down to whether being unable to attest the measurement list,
+because the measurements are copied too early at kexec load, but the TPM is
+being extended through kexec exec, is considered a bug.  If that is the cas=
+e,
+then I suggest finish cleaning up and upstreaming this patch set so that it
+could be backported.
+
+thanks,
+
+Mimi
