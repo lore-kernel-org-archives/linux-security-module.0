@@ -1,270 +1,198 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2562124EF86
-	for <linux-security-module@vger.kernel.org>; Fri, 28 Feb 2025 08:30:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B506426E174;
+	Fri, 28 Feb 2025 14:09:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740731448; cv=none; b=meZn6G2gXf/ycGwRB8IxjAYk8Tzw9f8QaXVUVXVrMw4CLP8B1oPiOtxIbZOLBwsEvRMJQDK6vu0v+80TJ6j3NtJ/koIebIO5cF6xjNyCS5JCrSsDaGrjLRbXkiqZNuZWB/0HB1zQHN3oPk2vkYlWlQjuWMk/jUAnQHkPq/9zVBU=
+	t=1740751777; cv=none; b=RcF9fi6mgD8bXQQTnAmLb4LNmdHlEJ/uSHx6168Bks/Opql3j+QqvxLv56tPJQyGFIV4C/q7ArNU3tFdj+B83pHm/PWtMg5+ttRXqUAiA1vl+xd73+vajTyObAURGfa8gHO0EUtxeD3V5+t/ky8F3kMRFp6B3A8Um+h+ccrXRqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740731448; c=relaxed/simple;
-	bh=9JRh0vQu00gcGDgHvqANg3ZiBZ1ZNLJx8nUj+BWm9B0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 In-Reply-To:Content-Type:Content-Disposition; b=bQVukK9eTC3HR85M6ejV7RG8N6ULkCdKaBxXC+UQQDrTeoCfCWkKeJidUZdrHxHSLcHR+a6zNMOTQl65tNUWF0VBv0oaG0P0C30CDaj4A5wi1DAokhP5hP5FPDYY/sd8kkD/SNz+0LkaEgTvC7Gtf213UPdIFp0i3DdWV1bdNTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Dui1sz6N; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1740751777; c=relaxed/simple;
+	bh=qwiwX7ilQe4AxIwbOiZQdwGCH/mPZg+/LA5+GbPnb5U=;
+	h=Message-ID:Subject:From:To:Cc:In-Reply-To:References:Content-Type:
+	 MIME-Version:Date; b=VouxBkWoXTIaJ01NzGtUrbr7b3qNFeS3d5UikIffsYEaF9H0/yOf7uHEQe2TENHUOZsScAC1M1VcEbFwV11QXyJrOLqB9We3Z1lfmrDOaIXoMfVEpQMSVoepibXKjeDRFQggtwpInw2ttdNPUr7cKZRfZgFs27LRwldxCFSukSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=RqFyqPgU; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Dui1sz6N"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1740731445;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IAk7T/agbjQFnKEBQSUNnzMrHpjZ/FADtSxLOMcXTqc=;
-	b=Dui1sz6NBA52u2gWpD/Jv+g8u440V4PvsD6EoEGuq/Ll7p0AYhpNTwHGVZ96KDS+MCI+BG
-	nmnAyQoBXTSDiRxAIUUEvXikd9FOA3L2GXJvbWFiKg9SGqjwySmg1KmYFUCquaqftV+Poi
-	qhHzNfOdmnFIGCJUrXcO88GNm+YxEdg=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-426-bDbIYgDOOnSOauDEkz3gSw-1; Fri, 28 Feb 2025 03:30:43 -0500
-X-MC-Unique: bDbIYgDOOnSOauDEkz3gSw-1
-X-Mimecast-MFC-AGG-ID: bDbIYgDOOnSOauDEkz3gSw_1740731442
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-ab39f65dc10so189115666b.1
-        for <linux-security-module@vger.kernel.org>; Fri, 28 Feb 2025 00:30:43 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740731442; x=1741336242;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IAk7T/agbjQFnKEBQSUNnzMrHpjZ/FADtSxLOMcXTqc=;
-        b=eOsWqpGS9neske4I29bVqgAXSPp4FCMCl9h8BCSiVYGDFd6TEEttTT+3fN23hwdjpr
-         KqpWuLoxBEkb9x96Zc2EivqS/Gap9zeX2mid92s6tNOsRb0SJGao0D2L/l2vQt5iv/vf
-         MCCjj1cRAFiwS4myd6Hx6+oyzJ8TZcWPPnmGS5k2ocrA8SosxxLdgWwAoWI8mh+NHvWD
-         KHB3+awEhsR05r1R0Ka3JzCzpkUF3Wt5b1EQoX9wfsSY5z3bXdEMQ09ooFiMH7Yg2kim
-         xX3d04Z4Ko+Y/gGV18jJVd7wx//AuqNk5CQ0Caeqljs2iEwgJCad/XDLw5TVI/s4m9e0
-         S2iw==
-X-Forwarded-Encrypted: i=1; AJvYcCVb3bhQqFUUtlr2L2d8EIV68s5QjXMrRt8dSQGt5KmJDJJpFj05gs1magTPH4VrXNfMsxqG6bqg55oMBjfHHionj+JW2lY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxN7Uw614f46lo++rfPXQs5h6xvgboPJdGnRkCm5s1909riDoYT
-	zY5g/kBFDXNHMkWCPezeKI0LrfoRRwCZbqdiZrSMQKZVw7FgfoEz/Bo3PltaOy/yhAi6IyodKFp
-	UH8n3brKI+CoAR1R3sUyC1GhvwHGiiLRgXW3Iwnuzs+plhSAWDyvg6Ajk+8KeqHmlU4iU0JT+
-X-Gm-Gg: ASbGnct1X9VhF7AvSWiibXxpPqd9a+gE2qI7BhSZqsqDYr7zXQqU5WGLNTSkkrW5Y3P
-	xGgsJuVFsT3ZDz+vYhaRewDaRH1MA5dlBSCzLe5/8quE0KVpaf/GHzEazu6efDoKNDE70pPInDR
-	/rNAc5WQakarOsVKEQrPu9SxFqcEsuKbht/TpOk4Luv36nchu4tQ5UtW32eFY9158YBf7qOuThU
-	XWgn0jflh5ihFEy1SklTqFjyL3WUU7N0sJudw2hlS/F1aQkIJ6Ac8XL6p2F+6eDTOZUniE2M9kY
-	Y+jRu5JSentDY0uwz9wb0zI948r14Kg9hAo=
-X-Received: by 2002:a17:907:2d08:b0:abf:22cd:9a7e with SMTP id a640c23a62f3a-abf261f5471mr234892366b.30.1740731441911;
-        Fri, 28 Feb 2025 00:30:41 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGZIWf4Mi/ez8uccBE3ejxNf0ox83n9Aynget7e7VbyIxs4sY20lz/2ANqi9H9OCRURVdUpFw==
-X-Received: by 2002:a17:907:2d08:b0:abf:22cd:9a7e with SMTP id a640c23a62f3a-abf261f5471mr234884766b.30.1740731441289;
-        Fri, 28 Feb 2025 00:30:41 -0800 (PST)
-Received: from thinky (ip-217-030-074-039.aim-net.cz. [217.30.74.39])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf0c74c714sm254400566b.124.2025.02.28.00.30.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Feb 2025 00:30:40 -0800 (PST)
-Date: Fri, 28 Feb 2025 09:30:38 +0100
-From: Andrey Albershteyn <aalbersh@redhat.com>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, 
-	Richard Henderson <richard.henderson@linaro.org>, Matt Turner <mattst88@gmail.com>, 
-	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	Michal Simek <monstr@monstr.eu>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Naveen N Rao <naveen@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, 
-	Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, 
-	Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, 
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, "David S. Miller" <davem@davemloft.net>, 
-	Andreas Larsson <andreas@gaisler.com>, Andy Lutomirski <luto@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Arnd Bergmann <arnd@arndb.de>, linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org, 
-	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, 
-	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org, linux-arch@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, 
-	Theodore Tso <tytso@mit.edu>
-Subject: Re: [PATCH v3] fs: introduce getfsxattrat and setfsxattrat syscalls
-Message-ID: <ihkez5xfcuocis7cmipvts2vxnfan2ub5kcpvsrnzm37glwnax@nxp72byvetye>
-References: <20250211-xattrat-syscall-v3-1-a07d15f898b2@kernel.org>
- <20250221181135.GW21808@frogsfrogsfrogs>
- <CAOQ4uxgyYBFqkq6cQsso4LxJsPJ4uECOdskXmz-nmGhhV5BQWg@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="RqFyqPgU"
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 51S6PdnB031358;
+	Fri, 28 Feb 2025 14:09:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=ZlHYAH
+	d+v8kB7zXgWIauJWsRMxKuy43e8Nv9TXFnhUM=; b=RqFyqPgUfhgKOXFJ0rsDX4
+	p/NdL5k3rUXrWw2VgUmuMAr0IqF9jU/mXxvUcNw8baXqrxqHDbKq01WK8Zd/hjhc
+	LOlhaC2zZkLUUxJC2qTiLpIjWmAKLB5xxdUrdtLVF0MxH8eT4UYpo6/Jwcvz15NT
+	BQvT4yX2wIh0NH/E0D+k3951W1+j/18BlRUuSyZJtpD/Tq5fN/sk9UFlllviIv7r
+	OYBqX1+U7ZszZa3krlqdtRvKtfkU1p7EFkFQ1DtHbxLf9VVQtjzdBCRr4sIe4xAw
+	ly4eyTRb4gQP+O33cUeohn6ikqw3eC2vv9f9EbuCvLDom3dxRuF4/eyTwj0DmOaA
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4537v6j1xd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 28 Feb 2025 14:09:04 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 51SDxGMS020959;
+	Fri, 28 Feb 2025 14:09:04 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4537v6j1xa-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 28 Feb 2025 14:09:03 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 51SDiGDU026269;
+	Fri, 28 Feb 2025 14:09:03 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 44yswnxsuq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 28 Feb 2025 14:09:03 +0000
+Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 51SE92Uv25231764
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 28 Feb 2025 14:09:02 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6315D5806A;
+	Fri, 28 Feb 2025 14:09:02 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1F77558061;
+	Fri, 28 Feb 2025 14:09:01 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.61.143])
+	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 28 Feb 2025 14:09:01 +0000 (GMT)
+Message-ID: <c580811716f550ed5d6777db5e143afe4ad06edc.camel@linux.ibm.com>
+Subject: Re: [RFC PATCH v3 00/13] Clavis LSM
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Eric Snowberg <eric.snowberg@oracle.com>,
+        David Howells
+ <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        "open
+ list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
+        David
+ Woodhouse <dwmw2@infradead.org>,
+        "herbert@gondor.apana.org.au"
+ <herbert@gondor.apana.org.au>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        Ard Biesheuvel <ardb@kernel.org>, James Morris <jmorris@namei.org>,
+        "Serge
+ E. Hallyn" <serge@hallyn.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        "casey@schaufler-ca.com" <casey@schaufler-ca.com>,
+        Stefan Berger
+ <stefanb@linux.ibm.com>,
+        "ebiggers@kernel.org" <ebiggers@kernel.org>,
+        Randy
+ Dunlap <rdunlap@infradead.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+In-Reply-To: <CAHC9VhTsZntLdGBV7=4suauS+rzSQv1O4UAoGcy2vEB02wRkoA@mail.gmail.com>
+References: <20241017155516.2582369-1-eric.snowberg@oracle.com>
+	 <c490397315c2704e9ef65c8ad3fefedb239f1997.camel@linux.ibm.com>
+	 <72F52F71-C7F3-402D-8441-3D636A093FE8@oracle.com>
+	 <CAHC9VhRHEw5c+drC=aX4xTqWoQJJZ+qkJ7aHUT5dcu+Q5f7BqA@mail.gmail.com>
+	 <CAHC9VhSJpnaAK1efgs1Uk0Tr3CaDNR1LiDU-t_yDKDQG6J-74Q@mail.gmail.com>
+	 <E20C617B-EA01-4E69-B5E2-31E9AAD6F7A2@oracle.com>
+	 <506e8e58e5236a4525b18d84bafa9aae80b24452.camel@linux.ibm.com>
+	 <CAHC9VhTsZntLdGBV7=4suauS+rzSQv1O4UAoGcy2vEB02wRkoA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAOQ4uxgyYBFqkq6cQsso4LxJsPJ4uECOdskXmz-nmGhhV5BQWg@mail.gmail.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: fXct36hq5pOfbQhymYeOoY0zObjZ8INmQhNO5f7L_mU_1740731442
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+Date: Fri, 28 Feb 2025 09:08:33 -0500
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: AeDZ_ey0lISVUY625VsQIU2sGo9yqqm5
+X-Proofpoint-GUID: ZodbjM8bn3G8bxv9jpetEvBt5Lej-tp7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-02-28_03,2025-02-27_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ mlxlogscore=870 mlxscore=0 phishscore=0 impostorscore=0 lowpriorityscore=0
+ adultscore=0 bulkscore=0 spamscore=0 priorityscore=1501 malwarescore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2502280102
 
-On 2025-02-21 20:15:24, Amir Goldstein wrote:
-> On Fri, Feb 21, 2025 at 7:13 PM Darrick J. Wong <djwong@kernel.org> wrote:
-> >
-> > On Tue, Feb 11, 2025 at 06:22:47PM +0100, Andrey Albershteyn wrote:
-> > > From: Andrey Albershteyn <aalbersh@redhat.com>
-> > >
-> > > Introduce getfsxattrat and setfsxattrat syscalls to manipulate inode
-> > > extended attributes/flags. The syscalls take parent directory fd and
-> > > path to the child together with struct fsxattr.
-> > >
-> > > This is an alternative to FS_IOC_FSSETXATTR ioctl with a difference
-> > > that file don't need to be open as we can reference it with a path
-> > > instead of fd. By having this we can manipulated inode extended
-> > > attributes not only on regular files but also on special ones. This
-> > > is not possible with FS_IOC_FSSETXATTR ioctl as with special files
-> > > we can not call ioctl() directly on the filesystem inode using fd.
-> > >
-> > > This patch adds two new syscalls which allows userspace to get/set
-> > > extended inode attributes on special files by using parent directory
-> > > and a path - *at() like syscall.
-> > >
-> > > Also, as vfs_fileattr_set() is now will be called on special files
-> > > too, let's forbid any other attributes except projid and nextents
-> > > (symlink can have an extent).
-> > >
-> > > CC: linux-api@vger.kernel.org
-> > > CC: linux-fsdevel@vger.kernel.org
-> > > CC: linux-xfs@vger.kernel.org
-> > > Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
-> > > ---
-> > > v1:
-> > > https://lore.kernel.org/linuxppc-dev/20250109174540.893098-1-aalbersh@kernel.org/
-> > >
-> > > Previous discussion:
-> > > https://lore.kernel.org/linux-xfs/20240520164624.665269-2-aalbersh@redhat.com/
-> > >
-> > > XFS has project quotas which could be attached to a directory. All
-> > > new inodes in these directories inherit project ID set on parent
-> > > directory.
-> > >
-> > > The project is created from userspace by opening and calling
-> > > FS_IOC_FSSETXATTR on each inode. This is not possible for special
-> > > files such as FIFO, SOCK, BLK etc. Therefore, some inodes are left
-> > > with empty project ID. Those inodes then are not shown in the quota
-> > > accounting but still exist in the directory. Moreover, in the case
-> > > when special files are created in the directory with already
-> > > existing project quota, these inode inherit extended attributes.
-> > > This than leaves them with these attributes without the possibility
-> > > to clear them out. This, in turn, prevents userspace from
-> > > re-creating quota project on these existing files.
-> > > ---
-> > > Changes in v3:
-> > > - Remove unnecessary "dfd is dir" check as it checked in user_path_at()
-> > > - Remove unnecessary "same filesystem" check
-> > > - Use CLASS() instead of directly calling fdget/fdput
-> > > - Link to v2: https://lore.kernel.org/r/20250122-xattrat-syscall-v2-1-5b360d4fbcb2@kernel.org
-> > > ---
-> > >  arch/alpha/kernel/syscalls/syscall.tbl      |  2 +
-> > >  arch/arm/tools/syscall.tbl                  |  2 +
-> > >  arch/arm64/tools/syscall_32.tbl             |  2 +
-> > >  arch/m68k/kernel/syscalls/syscall.tbl       |  2 +
-> > >  arch/microblaze/kernel/syscalls/syscall.tbl |  2 +
-> > >  arch/mips/kernel/syscalls/syscall_n32.tbl   |  2 +
-> > >  arch/mips/kernel/syscalls/syscall_n64.tbl   |  2 +
-> > >  arch/mips/kernel/syscalls/syscall_o32.tbl   |  2 +
-> > >  arch/parisc/kernel/syscalls/syscall.tbl     |  2 +
-> > >  arch/powerpc/kernel/syscalls/syscall.tbl    |  2 +
-> > >  arch/s390/kernel/syscalls/syscall.tbl       |  2 +
-> > >  arch/sh/kernel/syscalls/syscall.tbl         |  2 +
-> > >  arch/sparc/kernel/syscalls/syscall.tbl      |  2 +
-> > >  arch/x86/entry/syscalls/syscall_32.tbl      |  2 +
-> > >  arch/x86/entry/syscalls/syscall_64.tbl      |  2 +
-> > >  arch/xtensa/kernel/syscalls/syscall.tbl     |  2 +
-> > >  fs/inode.c                                  | 75 +++++++++++++++++++++++++++++
-> > >  fs/ioctl.c                                  | 16 +++++-
-> > >  include/linux/fileattr.h                    |  1 +
-> > >  include/linux/syscalls.h                    |  4 ++
-> > >  include/uapi/asm-generic/unistd.h           |  8 ++-
-> > >  21 files changed, 133 insertions(+), 3 deletions(-)
-> > >
-> >
-> > <cut to the syscall definitions>
-> >
-> > > diff --git a/fs/inode.c b/fs/inode.c
-> > > index 6b4c77268fc0ecace4ac78a9ca777fbffc277f4a..b2dddd9db4fabaf67a6cbf541a86978b290411ec 100644
-> > > --- a/fs/inode.c
-> > > +++ b/fs/inode.c
-> > > @@ -23,6 +23,9 @@
-> > >  #include <linux/rw_hint.h>
-> > >  #include <linux/seq_file.h>
-> > >  #include <linux/debugfs.h>
-> > > +#include <linux/syscalls.h>
-> > > +#include <linux/fileattr.h>
-> > > +#include <linux/namei.h>
-> > >  #include <trace/events/writeback.h>
-> > >  #define CREATE_TRACE_POINTS
-> > >  #include <trace/events/timestamp.h>
-> > > @@ -2953,3 +2956,75 @@ umode_t mode_strip_sgid(struct mnt_idmap *idmap,
-> > >       return mode & ~S_ISGID;
-> > >  }
-> > >  EXPORT_SYMBOL(mode_strip_sgid);
-> > > +
-> > > +SYSCALL_DEFINE4(getfsxattrat, int, dfd, const char __user *, filename,
-> > > +             struct fsxattr __user *, fsx, unsigned int, at_flags)
-> >
-> > Should the kernel require userspace to pass the size of the fsx buffer?
-> > That way we avoid needing to rev the interface when we decide to grow
-> > the structure.
-> >
-> 
-> This makes sense to me, but I see that Andreas proposed other ways,
-> as long as we have a plan on how to extend the struct if we need more space.
-> 
-> Andrey, I am sorry to bring this up in v3, but I would like to request
-> two small changes before merging this API.
-> 
-> This patch by Pali [1] adds fsx_xflags_mask for the filesystem to
-> report the supported set of xflags.
-> 
-> It was argued that we can make this change with the existing ioctl,
-> because it is not going to break xfs_io -c lsattr/chattr, which is fine,
-> but I think that we should merge the fsx_xflags_mask change along
-> with getfsxattrat() which is a new UAPI.
-> 
-> The second request is related to setfsxattrat().
-> With current FS_IOC_FSSETXATTR, IIUC, xfs ignores unsupported
-> fsx_xflags. I think this needs to be fixed before merging setfsxattrat().
-> It's ok that a program calling FS_IOC_FSSETXATTR will not know
-> if unsupported flags will be ignored, because that's the way it is,
-> but I think that setfsxattrat() must return -EINVAL for trying to
-> set unsupported xflags.
-> 
-> As I explained in [2] I think it is fine if FS_IOC_FSSETXATTR
-> will also start returning -EINVAL for unsupported flags, but I would
-> like setfsxattrat() to make that a guarantee.
-> 
-> There was an open question, what does fsx_xflags_mask mean
-> for setfsxattrat() - it is a mask like in inode_set_flags() as Andreas
-> suggested? I think that would be a good idea.
-> 
-> Thanks,
-> Amir.
-> 
-> [1] https://lore.kernel.org/linux-fsdevel/20250216164029.20673-4-pali@kernel.org/
-> [2] https://lore.kernel.org/linux-fsdevel/CAOQ4uxjwQJiKAqyjEmKUnq-VihyeSsxyEy2F+J38NXwrAXurFQ@mail.gmail.com/
-> 
+On Thu, 2025-02-27 at 17:22 -0500, Paul Moore wrote:
+> On Thu, Feb 27, 2025 at 3:41=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.com> =
+wrote:
+> > On Mon, 2025-01-06 at 17:15 +0000, Eric Snowberg wrote:
+> > > > On Jan 5, 2025, at 8:40=E2=80=AFPM, Paul Moore <paul@paul-moore.com=
+> wrote:
+> > > > On Fri, Jan 3, 2025 at 11:48=E2=80=AFPM Paul Moore <paul@paul-moore=
+.com> wrote:
+> > > > >=20
+> > > > > Regardless, back to Clavis ... reading quickly through the cover
+> > > > > letter again, I do somewhat wonder if this isn't better integrate=
+d
+> > > > > into the keyring proper; have you talked to both David and Jarkko
+> > > > > about this?
+> > > >=20
+> > > > I realize I should probably expand on my thinking a bit, especially
+> > > > since my comment a while regarding LSMs dedicated to enforcing acce=
+ss
+> > > > control on keys is what was given as a reason for making Clavis a L=
+SM.
+> > > >=20
+> > > > I still stand by my comment from over a year ago that I see no reas=
+on
+> > > > why we couldn't support a LSM that enforces access controls on
+> > > > keyrings/keys.  What gives me pause with the Clavis LSM is that so
+> > > > much of Clavis is resident in the keyrings themselves, e.g. Clavis
+> > > > policy ACLs and authorization keys, that it really feels like it
+> > > > should be part of the keys subsystem and not a LSM.  Yes, existing
+> > > > LSMs do have LSM specific data that resides outside of the LSM and =
+in
+> > > > an object's subsystem, but that is usually limited to security
+> > > > identifiers and similar things, not the LSM's security policy.
+> >=20
+> > Hi Jarkko, David,
+> >=20
+> > Both Paul's and my main concerns with this patch set is storing policy =
+in the
+> > keyring.  We would appreciate your chiming in here about storing key po=
+licy in
+> > the keyring itself.
+>=20
+> I'd still also like to see some discussion about moving towards the
+> addition of keyrings oriented towards usage instead of limiting
+> ourselves to keyrings that are oriented on the source of the keys.
+> Perhaps I'm missing some important detail which makes this
+> impractical, but it seems like an obvious improvement to me and would
+> go a long way towards solving some of the problems that we typically
+> see with kernel keys.
 
-I'm fine with making Pali's patchset a dependency for this syscall,
-as if vfs_fileattr_set() will start returning EINVAL on unsupported
-flags this syscall will pass it through (ioctls will need to ignore
-it). And as these syscalls use fsxattr anyway the fsx_xflags_mask
-field will be here.
+The proliferation of keyrings won't solve the key usage problem for IMA-
+appraisal.  IMA-appraisal can be used to verify the kexec image, kernel mod=
+ules,
+firwmare, etc, but it also verifies file signatures contained in userspace
+packages.  To support the latter case, keyrings would need to be applicatio=
+n
+specific.  (This version of Clavis doesn't solve the latter key usage for I=
+MA-
+appraisal either.)
 
--- 
-- Andrey
+The keys baked into the kernel are trusted because the kernel itself was si=
+gned
+and verified (secure boot).  Anyone building a kernel can build a key into =
+the
+kernel image, which establishes a "root of trust".  That key can then be us=
+ed to
+verify and load other keys onto the IMA keyring.
 
+The problem is how to safely establish a root of trust without baking the k=
+ey
+into the kernel image and then limiting that trust to specific usages or
+applications.
+
+Mimi
