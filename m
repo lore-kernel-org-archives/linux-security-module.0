@@ -1,35 +1,35 @@
 Received: from server02.seltendoof.de (server02.seltendoof.de [168.119.48.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE0041EB5CB;
-	Sun,  2 Mar 2025 16:07:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05AE41EB9EF;
+	Sun,  2 Mar 2025 16:07:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.48.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740931634; cv=none; b=G2huzP06wyHtke+YS2KXTAZRSr+Md4HmyJDazz2HAnpc6WSJ44nLj2wraIR/8pr5ABfE+lxx7XbQejrx/lTGnCXyYXt5P+Ej+8wxYbm2S5aY6zhVHL4E5Ysa70trtwC8loYLJbgXX1SZwd9/RUy+x9ieIZKCs3qOdQIZ3gF8KL0=
+	t=1740931637; cv=none; b=KaXgUIPxQfASbcfyemA3BxwmtNrXi6NV1cLE3qM15jBCY6wL8V1ADOMcE6Av130tWxxdBpIEz9h0sp5fkzvy1mDGcNxKdJjyy39EwmyEvIhBHCxVR/zx/Pdi7BN0XYWFV0WQF5WonhQnaSdFbgcp5DxVIA7aIp9Vz+7xqYpKl8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740931634; c=relaxed/simple;
-	bh=0EFiP6ygydcKWyW6csJHAZmx3Qp2y0CPOFwjWwSjus4=;
+	s=arc-20240116; t=1740931637; c=relaxed/simple;
+	bh=MRV1BzXFzVKuXXCzfT8MZMYwjH+JUp8WlpwQIsq6O88=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IZxztj8K6itAjEnAQQWLvhYNxg4kk/vECKfKwLR4zQqmNnIuNEZmqDS8Zn+pGrzIYF/HGDUe/Kmtv4VUal0e5Yzm7oKy0p7Zn/eNy4dtHfNCee6XVyzcbD3Rw5tQTHhEceJJt2cFPWy2W3O/RYuvVrSC/rP5GnIOXVcK7MPIz1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=L00+6xuu; arc=none smtp.client-ip=168.119.48.163
+	 MIME-Version:Content-Type; b=lxkUli/Z6yaa0S36/EjBivt5qVvYP73bOPuDORUaNbXuAyOPdqycJboSxIHm8OwdxEYOmpxcbr6gejanJDX5MP6Dk8WcQ4ukaWmA/OYUmmwsLsNxEzZDqQP50UeMMjs4jgS7KrRZyTRg/RVaHj30UvaHDxwPAo08viMPRBgyjWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=msLWUylx; arc=none smtp.client-ip=168.119.48.163
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seltendoof.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="L00+6xuu"
+	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="msLWUylx"
 From: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seltendoof.de;
-	s=2023072701; t=1740931630;
+	s=2023072701; t=1740931634;
 	h=from:from:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=m7tEjDSgKvohdvK6pTN+ndS8THOOnhPlPkLJOHpGmuo=;
-	b=L00+6xuuwiWduCv+ixkmgNqzMue8FepzjU+fPTpLl3F5QZOO27bk7M9wmhhWU8jT4crfSL
-	M/7o09GRptVOm+HsIO9YOzFhbaHCvz9w2ZOEuXxwGv+gKYE2NJQPPMme+A8tlGmNwEs9Hc
-	zPxhTr1xrvSbV+1FwKr4ooR3KG+Nuqah7c8wXDMWW23rsD/wuGMhE+XSSuxU6acEaBKxjU
-	SMoreM+GacqhtPwtqg8XONVAirj0PqdKl+b+IaRgbRc9E8o6K0amJ1WFuaGVHcfzBkbpnz
-	CSZFhosDGBLKiF2l0uokkI6/gp4rmRVY4ARa7sYCKIATyzRBtNmg19WhoyltuQ==
+	bh=KRfdkDgvTkBq7bn29Gpn8MyAqWDeCH+tjzpw5UYm82I=;
+	b=msLWUylxKZrkZloeSFN5bZFcbLSbFE1cttvSkO/sbcFYzOZMJ7QrfX7q/KeJKDTCCqgTwE
+	Cmy7gxyKITqqPUSpsCS7G1MqMRTPEE0rGESChTm4bdOm11qcFfU19VdeWkGdCDRk2erDxx
+	kDdrSiGJC8bqVFfFWelDM4gaS0EX1FJAHjToIV4v7qro8N7Udd/eU2b50vvHw4+nCCyDVp
+	iMV4JdyinVFOmyN1MzYoME93xKcoQ8EPz6PyS8U/d1Bw/PaS5g5Ib0iiqfD+QrZDeUyCFv
+	aH0d4JvaWftIryzqqBPR8zUxtU31fm2LuQe5b2oX22cLwFz/FOLen82uN8NLOQ==
 To: 
 Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
 	Serge Hallyn <serge@hallyn.com>,
@@ -39,18 +39,17 @@ Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
 	linux-kernel@vger.kernel.org,
 	linux-security-module@vger.kernel.org,
 	cocci@inria.fr,
-	Liviu Dudau <liviu.dudau@arm.com>,
-	Boris Brezillon <boris.brezillon@collabora.com>,
-	Steven Price <steven.price@arm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org
-Subject: [PATCH v2 07/11] drm/panthor: reorder capability check last
-Date: Sun,  2 Mar 2025 17:06:43 +0100
-Message-ID: <20250302160657.127253-6-cgoettsche@seltendoof.de>
+	Christian Brauner <brauner@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org,
+	linux-nfs@vger.kernel.org
+Subject: [PATCH v2 09/11] fs: reorder capability check last
+Date: Sun,  2 Mar 2025 17:06:45 +0100
+Message-ID: <20250302160657.127253-8-cgoettsche@seltendoof.de>
 In-Reply-To: <20250302160657.127253-1-cgoettsche@seltendoof.de>
 References: <20250302160657.127253-1-cgoettsche@seltendoof.de>
 Reply-To: cgzones@googlemail.com
@@ -82,26 +81,27 @@ It can lead to three undesired cases:
 
 Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
 Reviewed-by: Serge Hallyn <serge@hallyn.com>
-Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
+Reviewed-by: Christian Brauner <brauner@kernel.org>
 ---
-v2: split from previous patch with unrelated subsystem
----
- drivers/gpu/drm/panthor/panthor_drv.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/fhandle.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/panthor/panthor_drv.c
-index 08136e790ca0..76a10121f8a8 100644
---- a/drivers/gpu/drm/panthor/panthor_drv.c
-+++ b/drivers/gpu/drm/panthor/panthor_drv.c
-@@ -791,7 +791,7 @@ static int group_priority_permit(struct drm_file *file,
- 		return 0;
- 
- 	/* Higher priorities require CAP_SYS_NICE or DRM_MASTER */
--	if (capable(CAP_SYS_NICE) || drm_is_current_master(file))
-+	if (drm_is_current_master(file) || capable(CAP_SYS_NICE))
- 		return 0;
- 
- 	return -EACCES;
+diff --git a/fs/fhandle.c b/fs/fhandle.c
+index 3e092ae6d142..5b77b38f0510 100644
+--- a/fs/fhandle.c
++++ b/fs/fhandle.c
+@@ -303,9 +303,9 @@ static inline int may_decode_fh(struct handle_to_path_ctx *ctx,
+ 	if (ns_capable(root->mnt->mnt_sb->s_user_ns, CAP_SYS_ADMIN))
+ 		ctx->flags = HANDLE_CHECK_PERMS;
+ 	else if (is_mounted(root->mnt) &&
++		 !has_locked_children(real_mount(root->mnt), root->dentry) &&
+ 		 ns_capable(real_mount(root->mnt)->mnt_ns->user_ns,
+-			    CAP_SYS_ADMIN) &&
+-		 !has_locked_children(real_mount(root->mnt), root->dentry))
++			    CAP_SYS_ADMIN))
+ 		ctx->flags = HANDLE_CHECK_PERMS | HANDLE_CHECK_SUBTREE;
+ 	else
+ 		return -EPERM;
 -- 
 2.47.2
 
