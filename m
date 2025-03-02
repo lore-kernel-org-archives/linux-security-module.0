@@ -1,35 +1,35 @@
 Received: from server02.seltendoof.de (server02.seltendoof.de [168.119.48.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 084AF1E3761;
-	Sun,  2 Mar 2025 16:07:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECD041E7C32;
+	Sun,  2 Mar 2025 16:07:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.48.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740931628; cv=none; b=tX7btjRylkYHryrA+Ejyp8zo6WdZwwxamCP6/iIqVnsrFuEVDJVtHUfutqHE80tG+L5zFkt+1xvpDLeQIFuUMhORI+opBvgmu9crTStYsqONzvktAOlvt8dLUWMLbko27nDQzSZoJkKdOHGOyj8SA9g5vhs7Lblmpi8QmY1NM+g=
+	t=1740931629; cv=none; b=LTkhffUlUO81UJpt29xuZXKkpK5mrtC9GEHYQ4JUUlw7g6PjZ2eSXMSv6tSFTv3PVVasczjquY9zwnxbPYIoVI88qbe0guMRb6ak6MPxkL5CoDGt7kCueU2hgWhI6yGRNLkGMxuKw8Uz+VDDLhhH2RugU/1r1UnannoDBAHvwQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740931628; c=relaxed/simple;
-	bh=DwoObYbkc3t6mMKbabMcq7AMLtAfZbBxFbz7lxK4ZC8=;
+	s=arc-20240116; t=1740931629; c=relaxed/simple;
+	bh=OLtEwpQ7kc/v2nO4iZrLWQivq+0Sn82iOiuaRwES+s8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=F0X1s326fOv402WmZZ+Ta8A0sGCVEhCp3KPohGLIHcLKw+HaYSWMSbw8GCs0I0yW5su1GD4WXHYiEx6ne1BD5mmadoTFPhjv60HRDmRz6vD55yZiOMjBkcuoIa9uH8l7Dx5p7s/lWlL/7AIbgJrepd+ZMSInPxy831cIpGfxSZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=rW723r6b; arc=none smtp.client-ip=168.119.48.163
+	 MIME-Version:Content-Type; b=cP4vh+qKsWYNu9yLzgpPg2GDPTl4ta9/VlF7IJDNhsDYUAVQHI6wPE9AVmTYBS5N+8S1avtaqX64yNGH7pq3jMa0TLNMfRbf+8QvsLyPMXwroWGDBgSGYXq0q3As2ZwPoD2/nB3aOQ1/yEqSWn5a6+DVdq4+wtTwV3edYOTw0Bk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=SdoKH+0E; arc=none smtp.client-ip=168.119.48.163
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seltendoof.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="rW723r6b"
+	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="SdoKH+0E"
 From: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seltendoof.de;
-	s=2023072701; t=1740931624;
+	s=2023072701; t=1740931625;
 	h=from:from:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=LtVFyKPYvAG6nPAlnlSRsIED7/Fit5RjlOi+m21VZYs=;
-	b=rW723r6bWSv6qn26AEbrStX87CkVu9G/7vNGrh7xh7Lqn7pp5kWJbhTClYidy6wk+Y+7sd
-	FjPR7nS2CFldQESu5vxVqQRKbzDULfHYgaqGYBjNrElC8Jp/+8E5Ctfj1Nv59jeyJqvS98
-	yhpZrwB0FKmtPiiVuoqWjkBdcS/5eOoj5FPfR9gm5C7XWNjjza4nuEYR9IxTQ0lpuWjwCZ
-	e+OlRPH2PFwomxohnhpClrlM995TmC9Xbrwm+7wdfa0h0OYtxXTqP8FO7MHjgM164WRD/j
-	93uAuVblah5062CFYFw/SQT9UgQc9mpRBtCUpTLTwBR1k7kbipwv85mDQlL9vg==
+	bh=psW6cnDKJDfMxUnzR9ln5khjNnX+9pHtPh2iqMJCG30=;
+	b=SdoKH+0EzYCBj4vtLHksHZyyUfjYZYKyFPGkljGjoi+IHVmwQJ3uge+Qp04jAU2zNFI1/r
+	Dekh52KkrWPJJMvDFFExflW3hppm4mZV0sc15sZZK2HTv6+l5y3KhSCzHU3A5o3qYyULJv
+	MZwMwXtHFShVOr28DbUn+7Ftijj5pjZb7fJH/BtLcuuvkqUnFqwiabiztFppznggEGbSmA
+	6hd3QK1owK3/DJH0JeVy9v3vUAT3hZv04FH+cEaTKd7APURmHNhTWRbHEhkSKYohna2m0j
+	Ej2/5LFCvfcNkzt4mOEXcBtGX4Dy+dqNKXoJTGBtjw9zV0U+RefdjINmHf0O+Q==
 To: 
 Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
 	Serge Hallyn <serge@hallyn.com>,
@@ -39,12 +39,11 @@ Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
 	linux-kernel@vger.kernel.org,
 	linux-security-module@vger.kernel.org,
 	cocci@inria.fr,
-	"Theodore Ts'o" <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	linux-ext4@vger.kernel.org
-Subject: [PATCH v2 03/11] ext4: reorder capability check last
-Date: Sun,  2 Mar 2025 17:06:39 +0100
-Message-ID: <20250302160657.127253-2-cgoettsche@seltendoof.de>
+	Muchun Song <muchun.song@linux.dev>,
+	linux-mm@kvack.org
+Subject: [PATCH v2 04/11] hugetlbfs: reorder capability check last
+Date: Sun,  2 Mar 2025 17:06:40 +0100
+Message-ID: <20250302160657.127253-3-cgoettsche@seltendoof.de>
 In-Reply-To: <20250302160657.127253-1-cgoettsche@seltendoof.de>
 References: <20250302160657.127253-1-cgoettsche@seltendoof.de>
 Reply-To: cgzones@googlemail.com
@@ -77,24 +76,22 @@ It can lead to three undesired cases:
 Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
 Reviewed-by: Serge Hallyn <serge@hallyn.com>
 ---
- fs/ext4/balloc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/hugetlbfs/inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/ext4/balloc.c b/fs/ext4/balloc.c
-index 8042ad873808..c48fd36b2d74 100644
---- a/fs/ext4/balloc.c
-+++ b/fs/ext4/balloc.c
-@@ -649,8 +649,8 @@ static int ext4_has_free_clusters(struct ext4_sb_info *sbi,
- 	/* Hm, nope.  Are (enough) root reserved clusters available? */
- 	if (uid_eq(sbi->s_resuid, current_fsuid()) ||
- 	    (!gid_eq(sbi->s_resgid, GLOBAL_ROOT_GID) && in_group_p(sbi->s_resgid)) ||
--	    capable(CAP_SYS_RESOURCE) ||
--	    (flags & EXT4_MB_USE_ROOT_BLOCKS)) {
-+	    (flags & EXT4_MB_USE_ROOT_BLOCKS) ||
-+	    capable(CAP_SYS_RESOURCE)) {
+diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
+index 0fc179a59830..e36b0e6df720 100644
+--- a/fs/hugetlbfs/inode.c
++++ b/fs/hugetlbfs/inode.c
+@@ -1503,7 +1503,7 @@ static int can_do_hugetlb_shm(void)
+ {
+ 	kgid_t shm_group;
+ 	shm_group = make_kgid(&init_user_ns, sysctl_hugetlb_shm_group);
+-	return capable(CAP_IPC_LOCK) || in_group_p(shm_group);
++	return in_group_p(shm_group) || capable(CAP_IPC_LOCK);
+ }
  
- 		if (free_clusters >= (nclusters + dirty_clusters +
- 				      resv_clusters))
+ static int get_hstate_idx(int page_size_log)
 -- 
 2.47.2
 
