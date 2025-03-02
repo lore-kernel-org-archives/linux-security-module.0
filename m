@@ -1,120 +1,86 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mta-65-225.siemens.flowmailer.net (mta-65-225.siemens.flowmailer.net [185.136.65.225])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0ACC23C9;
-	Sat,  1 Mar 2025 02:20:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B12A2155C96
+	for <linux-security-module@vger.kernel.org>; Sun,  2 Mar 2025 10:36:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.65.225
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740795652; cv=none; b=FOvxZe9g/LGbo/1tU+YGpbH2R4wYqkv359xXUO9fNa6D9VcERXZxcbWjZ+zPitVrPByfW8/kPmg2pekvEcQgckeeOZKz1sBbwIIdEf7VJ9ZHXjBbbPkBmQnWU9MqIpleozvM2fgUsYfbVzf9lNEAoyK3LSOPysPp2WJqgI3q94w=
+	t=1740911821; cv=none; b=W4XWjb5Y4ERgJFOsaZ9LgVE7kdWiidHsfEeRy4cgbTJy0ExMeTN/t13LK2cdWispf0vd2PCWE766BF3l+0gK4lnkONN+stUG+K4+f+zirZbIWxSi9R3PUfUoXc1vHV7FGmipvwjGNLzRBHco06qgYIHwCf1x2kYCPs6cX89qFSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740795652; c=relaxed/simple;
-	bh=wrT0/PVw1RCAufMyi3hB7XHBapGeT8dsQ2+k7DkFsLQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MBsQlTI9b4ajryalF1eMRy6nJChKj97D+UqI3m8V9WCKEjIgUWyvjPl2yJ4sgQYZDg2lAANYZKkR2ErmDYHQsmy4FQ6ZEsag5fTimFQtaCE5huOo0fisQnGjFFCUoYImH5Fa6s/au8yIRihBXEW2VNnPQtTXtALC70Sl0pWA+xo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lCWp+p7j; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1740911821; c=relaxed/simple;
+	bh=9ObLwWetwtzNhXXbgbELVfFkcrYsTXdZou0f7q/WYzY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=HPFem5jxbcCKWogObFF13nau3bDVM6eIQX8DU7c/A2AFKVyumDC4LnT/P2fBHWnZOU+2mZBLcfYF6dQkRW8lQNvR+YNQ9/5P44uTTElBhXNA4r+O67mB8rPOM2BDAFqw/jyNk6TEMxK+dZzHVbO5R0xyeVKTp+u5rXCpyJL06Xk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=arulpandiyan.vadivel@siemens.com header.b=a/4JD3wu; arc=none smtp.client-ip=185.136.65.225
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lCWp+p7j"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B563EC4CED6;
-	Sat,  1 Mar 2025 02:20:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1740795651;
-	bh=wrT0/PVw1RCAufMyi3hB7XHBapGeT8dsQ2+k7DkFsLQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lCWp+p7jm+5O/IKdY1grBUS9ZC9DB0ba/CqRyLpa76Ug4mjY/kS+tc9NsMhOr5ciX
-	 WTpLn4PYXCiEYG/u+m66GszCnWqXAjfCo8XhZqhEdqm2LrEwiu0wcmGLeK4gE7CxQ0
-	 gk+49rIx59510uDm4MO2AH6jM0uZYMFU2wgKqi2S7ObvfvRWXklVF/Tk4jlCTm+KeQ
-	 yoX2iU0SabKwJ7hm1/R3OV6CJEt1zkPiW+2T9Vyv7Vprvuv+LdA/2j8X3w0gVqxaDa
-	 3BpwMmngcTeJl06nAqhMPrXjT5YKN8i3tvKq35NAK4qQtBYvcWtSqccvB5oooxyfZl
-	 /l5EdpJ+SnvgA==
-Date: Sat, 1 Mar 2025 04:20:46 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Mimi Zohar <zohar@linux.ibm.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	David Howells <dhowells@redhat.com>,
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
-	David Woodhouse <dwmw2@infradead.org>,
-	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	Ard Biesheuvel <ardb@kernel.org>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	"casey@schaufler-ca.com" <casey@schaufler-ca.com>,
-	Stefan Berger <stefanb@linux.ibm.com>,
-	"ebiggers@kernel.org" <ebiggers@kernel.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-	"linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
-Subject: Re: [RFC PATCH v3 00/13] Clavis LSM
-Message-ID: <Z8Ju_j8XSIsAu0XA@kernel.org>
-References: <20241017155516.2582369-1-eric.snowberg@oracle.com>
- <c490397315c2704e9ef65c8ad3fefedb239f1997.camel@linux.ibm.com>
- <72F52F71-C7F3-402D-8441-3D636A093FE8@oracle.com>
- <CAHC9VhRHEw5c+drC=aX4xTqWoQJJZ+qkJ7aHUT5dcu+Q5f7BqA@mail.gmail.com>
- <CAHC9VhSJpnaAK1efgs1Uk0Tr3CaDNR1LiDU-t_yDKDQG6J-74Q@mail.gmail.com>
- <E20C617B-EA01-4E69-B5E2-31E9AAD6F7A2@oracle.com>
- <506e8e58e5236a4525b18d84bafa9aae80b24452.camel@linux.ibm.com>
- <CAHC9VhTsZntLdGBV7=4suauS+rzSQv1O4UAoGcy2vEB02wRkoA@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=arulpandiyan.vadivel@siemens.com header.b="a/4JD3wu"
+Received: by mta-65-225.siemens.flowmailer.net with ESMTPSA id 20250302103649b8b3b9d950df8bfb9c
+        for <linux-security-module@vger.kernel.org>;
+        Sun, 02 Mar 2025 11:36:49 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=arulpandiyan.vadivel@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
+ bh=93sRwriU6vMZv4PkYvvaMFg50M9J7+f+RW4GYhOC00k=;
+ b=a/4JD3wux3FQExDa5oORNBeaFq3hX2SN6rEYB42U1mRhXNlmqv1zePd4SBenFJbqDyGloT
+ fzCbV7VvxOL/6SKpS6g7jPHtAAaMTxcrOyJgVcZGHQ3V3i2YIH43yez72l3wvwy3wXT6Qfr7
+ ZPnpxV8R8T3cFuJQf5tLrYXOnU837HeCsFAlAAxiO6kVhYdPE5NgeScgjVFc5E9BlAnx5qwv
+ 3ti6ZAxOJ2Ay0qwPbl86XgulGb5XGrmL/8a4NWj9vijfP7hXNWZ9l+U1NTlj7Km7XO8nElQm
+ qTx3Dz+w/2aZfSwMPggB5rxVy7JR8gebZ9yGbFBVzytF6eQuiQuYxtpQ==;
+From: Arulpandiyan Vadivel <arulpandiyan.vadivel@siemens.com>
+To: linux-security-module@vger.kernel.org
+Cc: cedric.hombourger@siemens.com,
+	srikanth.krishnakar@siemens.com,
+	linux-modules@vger.kernel.org,
+	paul@paul-moore.com,
+	kees@kernel.org,
+	Arulpandiyan Vadivel <arulpandiyan.vadivel@siemens.com>
+Subject: [PATCH V3] loadpin: remove MODULE_COMPRESS_NONE as it is no longer supported
+Date: Sun,  2 Mar 2025 16:08:31 +0530
+Message-Id: <20250302103831.285381-1-arulpandiyan.vadivel@siemens.com>
+In-Reply-To: <202502281136.66F12960A1@keescook>
+References: <202502281136.66F12960A1@keescook>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhTsZntLdGBV7=4suauS+rzSQv1O4UAoGcy2vEB02wRkoA@mail.gmail.com>
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-1328317:519-21489:flowmailer
 
-On Thu, Feb 27, 2025 at 05:22:22PM -0500, Paul Moore wrote:
-> On Thu, Feb 27, 2025 at 3:41 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> > On Mon, 2025-01-06 at 17:15 +0000, Eric Snowberg wrote:
-> > > > On Jan 5, 2025, at 8:40 PM, Paul Moore <paul@paul-moore.com> wrote:
-> > > > On Fri, Jan 3, 2025 at 11:48 PM Paul Moore <paul@paul-moore.com> wrote:
-> > > > >
-> > > > > Regardless, back to Clavis ... reading quickly through the cover
-> > > > > letter again, I do somewhat wonder if this isn't better integrated
-> > > > > into the keyring proper; have you talked to both David and Jarkko
-> > > > > about this?
-> > > >
-> > > > I realize I should probably expand on my thinking a bit, especially
-> > > > since my comment a while regarding LSMs dedicated to enforcing access
-> > > > control on keys is what was given as a reason for making Clavis a LSM.
-> > > >
-> > > > I still stand by my comment from over a year ago that I see no reason
-> > > > why we couldn't support a LSM that enforces access controls on
-> > > > keyrings/keys.  What gives me pause with the Clavis LSM is that so
-> > > > much of Clavis is resident in the keyrings themselves, e.g. Clavis
-> > > > policy ACLs and authorization keys, that it really feels like it
-> > > > should be part of the keys subsystem and not a LSM.  Yes, existing
-> > > > LSMs do have LSM specific data that resides outside of the LSM and in
-> > > > an object's subsystem, but that is usually limited to security
-> > > > identifiers and similar things, not the LSM's security policy.
-> >
-> > Hi Jarkko, David,
-> >
-> > Both Paul's and my main concerns with this patch set is storing policy in the
-> > keyring.  We would appreciate your chiming in here about storing key policy in
-> > the keyring itself.
-> 
-> I'd still also like to see some discussion about moving towards the
-> addition of keyrings oriented towards usage instead of limiting
-> ourselves to keyrings that are oriented on the source of the keys.
-> Perhaps I'm missing some important detail which makes this
-> impractical, but it seems like an obvious improvement to me and would
-> go a long way towards solving some of the problems that we typically
-> see with kernel keys.
+Updated the MODULE_COMPRESS_NONE with MODULE_COMPRESS as it was no longer
+available from kernel modules. As MODULE_COMPRESS and MODULE_DECOMPRESS
+depends on MODULES removing MODULES as well.
 
-I get the theoretical concern but cannot see anything obvious in the
-patch set that would nail into practical concerns. 
+Fixes: c7ff693fa209 ("module: Split modules_install compression and in-kernel decompression")
+Signed-off-by: Arulpandiyan Vadivel <arulpandiyan.vadivel@siemens.com>
+---
+Changes in v3:
+Remove MODULES as suggested
 
-> 
-> -- 
-> paul-moore.com
+Changes in v2:
+Reword the commit message
+Modify logic and add Fixes tag.
+---
+ security/loadpin/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-BR, Jarkko
+diff --git a/security/loadpin/Kconfig b/security/loadpin/Kconfig
+index 848f8b4a60190..aef63d3e30dfa 100644
+--- a/security/loadpin/Kconfig
++++ b/security/loadpin/Kconfig
+@@ -16,7 +16,7 @@ config SECURITY_LOADPIN_ENFORCE
+ 	depends on SECURITY_LOADPIN
+ 	# Module compression breaks LoadPin unless modules are decompressed in
+ 	# the kernel.
+-	depends on !MODULES || (MODULE_COMPRESS_NONE || MODULE_DECOMPRESS)
++	depends on !MODULE_COMPRESS || MODULE_DECOMPRESS
+ 	help
+ 	  If selected, LoadPin will enforce pinning at boot. If not
+ 	  selected, it can be enabled at boot with the kernel parameter
+-- 
+2.39.5
+
