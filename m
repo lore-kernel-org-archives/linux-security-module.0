@@ -1,155 +1,148 @@
-Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6D0D22DFBE
-	for <linux-security-module@vger.kernel.org>; Mon,  3 Mar 2025 15:16:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD01621480C
+	for <linux-security-module@vger.kernel.org>; Mon,  3 Mar 2025 15:29:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741015014; cv=none; b=W7zwJ7FYxlLiJ5r5ESsUjasxVe29SWz1thi25qWBo31IeQq0ELqrYiGHwMvm5yfQxJSOCEBNFqv4NWX5RuWdD51+6iez5qSCq+OJ4LaQEH/lzfunOCNB87PupZpt99u94JyqSCJG4sJj06e4t7oB932LY4ckLnivf4T9ZZpLKpc=
+	t=1741015770; cv=none; b=ZhqB4hqq9vX/WcGMR53Ud5ZifOSaLCif/CDX6H83jaAxvn9l5ufoayIPoCHYk7uBguf3ZTvMWnacbZexCbxznVYb/USavr8tgzpavthrOd1tUp+TFfet1QMtnDcgc1SbMj8MsLcRIiTw8kKdkDaT6qTUl7eC/ew+oA2ZsatDIrs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741015014; c=relaxed/simple;
-	bh=whSfwse+CzD+lc5HrXXiPjYLtcbkpU1/AMOWskLrCkc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=plCSrubkMBdm56WASobzFHFLi7qSHSD9UeLZ6kAlgP/nrn5strTa4nPPJR2EEKxQVqnyePfvN29lvJZQDMdWEsjdz1Hg5Fk/9esatl1XxZSMRD6UswMSiUfth2lcAx/bApYJ/BZCFsT1PbeBGeW2RGgkQMJMWpcHZyi0Sko8ceE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sQv2M/Co; arc=none smtp.client-ip=209.85.208.73
+	s=arc-20240116; t=1741015770; c=relaxed/simple;
+	bh=MKKcNGlAewFS7f9bt0R/djTF9vYsut4/GuVdV/ZajuY=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=FIvOpCGgyrCMmnXAJLEiYQSuZnCyovTwWCEt2/ZUofjgDQGySHgJO8oGkOe47MRI4KBDrGo2uctbC3CO+OsdWyR8n1zAGExXBmKo3GUUg3O6ePNnNbvjuZrN7QuKHc7bakPAmbH+7ECq2RvU++etb9uV8KGbyZolhJUXlzZsoh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=L7pmBRd9; arc=none smtp.client-ip=209.85.221.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sQv2M/Co"
-Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-5e4b6d23a5fso3796543a12.2
-        for <linux-security-module@vger.kernel.org>; Mon, 03 Mar 2025 07:16:52 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="L7pmBRd9"
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3910b93cb1eso429419f8f.1
+        for <linux-security-module@vger.kernel.org>; Mon, 03 Mar 2025 07:29:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741015011; x=1741619811; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=t2t1sEnt16wSt9rfG0sQB8OYPRCFjusvoFC/jYH95vI=;
-        b=sQv2M/CojDDslTVfpNxI52bfe+cBAd8+v9FIelN8I+g4UDNthfnx7oh8aTCScMOSrU
-         4Hxyp6SaNQK4hJRB32fpqUY2oXhIyaX5lLMgP5NpMwmipBBojertK3qropQmLZNvio9Q
-         CDUQCY6O0tMmXeKkWscT+PVldNBgWCq3EGKWEPM7eUngqN3+4sXSsk3mMr3o04UPymFI
-         Y+N/1tSXWdvT2FbnV6m7XhJvMLrVZlYU5fTpYKN3t0NJSpJSBes1zc2q03GlU9ujZZ+d
-         oOY8kwPFPK9RX7HQ7WSBqCO99rTA48FVO+c5Tg4Jz3L8+11bIE6bKfK690bGo+cue0A8
-         nJQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741015011; x=1741619811;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+        d=google.com; s=20230601; t=1741015767; x=1741620567; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=t2t1sEnt16wSt9rfG0sQB8OYPRCFjusvoFC/jYH95vI=;
-        b=YXkndvNv+hVa7mB3ov4vCH4NKNDnHmAMfgT9FvXYU+om6XqKjLevUrcBRO05ycXB/t
-         i2tnqI0fRWb0KzST8bdA96kEYWPmLmH/S4eS6NhuiRwMICkHg90Df7DkTUELej1rbttJ
-         aEkOJFfun8WJue1Hfupa+SBr9pKbQNDK8sywYlGri95dXJf7p804rgao4+luuI+P6c0y
-         PkjxW47RybzOi3Cj26sVawLF04YRwY8TlhU8Nywsi+kM99Zbr1ETfhELK929cG/FaZQn
-         ZrdW58Upy+Ot7C71++Khht/DJo3zMHMhwFWMtbd9tJXGf4tx+ZlNG52aSI0QwKi5S6Fo
-         JydA==
-X-Forwarded-Encrypted: i=1; AJvYcCX8CI75EioWiD3GNx9bMla/1A7QIIBSSPSG5lrvCmwkEZEji5yLBExnM5PkVTvy3thlPeUF/BOCX4+4moodeu5YwT+18iI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7RL5GVRX9GlTP9i9gyU+R0GFty+znhdA67xFiGfWFSXCUZRDz
-	rvQk/+qPquq+6BNzGOSTUUcy1Zi8g7gBmu2JZbchaTqBil0HHK/eJhnnwXsi2UGepEDKrMv3uUE
-	RGg==
-X-Google-Smtp-Source: AGHT+IHv8Ex6U6mYbLpA+FjnPrdbsJ9qL078DbhKo5SjcSNLpXKJW9oWNSjXOMrwLVGErNW98ujv/z3R4Wo=
-X-Received: from edbef6.prod.google.com ([2002:a05:6402:28c6:b0:5dc:110c:e5e2])
- (user=gnoack job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:348a:b0:5e0:9eba:2dd3
- with SMTP id 4fb4d7f45d1cf-5e4d6b037c7mr15747134a12.15.1741015011258; Mon, 03
- Mar 2025 07:16:51 -0800 (PST)
-Date: Mon, 3 Mar 2025 16:16:47 +0100
-In-Reply-To: <tkuk274p54qgwobzwjah2oj6zm3n4anq7giy4uzhprutjvqz6x@dwpa3h4gekxq>
+        bh=rgyyW4sbVGBrzM0W2SDFHnFKoPgMREdNyONofEZmbP8=;
+        b=L7pmBRd9SpAfWp4dUytARr+g7q8DKmiVzshxxqpJHVAp2kP7YkT8ij/CtlmwHOAiu1
+         nXGqDq/l967FcwR00DkwaOHuMMBj9VGre4UNa3zol2cFG0ArsfjPSy2ehNKPaJ9g5hmw
+         E5+uiarfx0sL2e8tqD4XfAWcuFC5VIcWgjssGAkWrA3Rw4o9KEnJRJZv/g8qgrkdAIeI
+         ayZl46fntrxcidLoym4lBaVtV8XLDIPqER5LGB0EDpevk0/v4v6BhkNQzFCJY9WhNKEE
+         KtFU66HNO8JUt1BKdTD4dqjn9gjvFRFObHevztLUbJhzmrZNTsXcMM39eb3d/XN2K/57
+         5lwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741015767; x=1741620567;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rgyyW4sbVGBrzM0W2SDFHnFKoPgMREdNyONofEZmbP8=;
+        b=LIPrWs+P5u9ssdf/OvkGVD2Kt7pjkQkXYrWiOTtwlkUSCP0p5gc/W1E+g5XNYPdqI+
+         lZfv+lVqwgS5JjbKDdbD6moVCPN+VsHEafHpSoLNyS27Q30R4CUInIvei15gQHxtyDli
+         7iedA1HhKzJe5PUyN9HYc2f0DaamTUQYs5iJah+trqEM8gcY3R0CMhVuWWPsunCibt2g
+         wn0LuG0kgzR1oY56I5Bi52/ogIsoKgQG3evjP1gc3DMxWFM93jU0crDHqBykNloU+KWx
+         M71k5qpqkj3WixaZsOnm5tP5NP7I2t0sgP39btPHuILAxB4csl//XjZXgOwzP94zzcy4
+         IKiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVsEc1fKm9TPcHcDWUUUq7NEt03gf03vqksCwMm9w+E1peunqkJc/9qzm8IsZ707iOckgtWPcoFGx4sAMkJItqZpTwxAdc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWriGHlfQgaM+7eOve3VdcSwWGfYf5aNaEh3EJFWbfBi+yCMIN
+	5PDYgADf4yLOmvHYRSRRym0VhJDNuIuGkWJuAKTWLnc/V+NmHsasK2GECzCMUD7q7wRbzNeC5is
+	x2zd4dFRyiti+rg==
+X-Google-Smtp-Source: AGHT+IHxZqB8AydRyo9JQAdZVLt80RVU0cppuHJgioRKDKVGItCNRq1BP4+I+HsxXvl1/JuyUNpaKPc3nCL2TLo=
+X-Received: from wmbfp9.prod.google.com ([2002:a05:600c:6989:b0:43b:c927:5a4d])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a5d:598c:0:b0:390:f0ff:2c1c with SMTP id ffacd0b85a97d-390f0ff3109mr10554386f8f.18.1741015767187;
+ Mon, 03 Mar 2025 07:29:27 -0800 (PST)
+Date: Mon, 03 Mar 2025 15:28:50 +0000
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20250226211814.31420-2-gnoack@google.com> <20250226212911.34502-2-gnoack@google.com>
- <tkuk274p54qgwobzwjah2oj6zm3n4anq7giy4uzhprutjvqz6x@dwpa3h4gekxq>
-Message-ID: <Z8XCm7yp5SES7RjM@google.com>
-Subject: Re: [PATCH v2 1/3] landlock.7: Update description of Landlock rules
-From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
-To: Alejandro Colomar <alx@kernel.org>
-Cc: "=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>, Tahera Fahimi <fahimitahera@gmail.com>, 
-	Tanya Agarwal <tanyaagarwal25699@gmail.com>, linux-security-module@vger.kernel.org, 
-	linux-man@vger.kernel.org, Daniel Burgener <dburgener@linux.microsoft.com>
+X-B4-Tracking: v=1; b=H4sIALHKxWcC/x3MQQqAIBBA0avErBsYlaHoKtEidKqBsFCIQLx70
+ vIt/i+QJalkmLoCSR7NesUG03fgjzXughqawZJlcuRQ46lR0CcJaIIhpmFkYQ+tuJNs+v63ean 1AwMoqFddAAAA
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2500; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=MKKcNGlAewFS7f9bt0R/djTF9vYsut4/GuVdV/ZajuY=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBnxcrOHWOt57dLOyMt5elZ38HuGx89RNWsOntvO
+ mVaCsgJVbiJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZ8XKzgAKCRAEWL7uWMY5
+ Rsi9D/4sbkBkvlmplqLHreKpQpJ+jp0bSSsyajBdb0m33OsdQq3/9YBkITY7C+Fme2CxUmWaMWe
+ tk0CGP0Oz/+x6FxzXbUZUs/cN+MYxQ6w1zSU1IG83IqDptXtyA62gfXpJHksBzW/5NIlGYGBPww
+ 2jusDbx4sSNiveeUqQbhwv1kwDt3lZfl+9Sk7jOkx1m+buFqy3UBIU2Rrfo0vThAQkKQtssTLaS
+ cIl3LbdYDrD0TBZ3j16N3aHlayaaM1O9yZnCfR47rZXJWqbrvH6yInNu13Q9nHtyvt9SxwCAh53
+ K5FT1Mh6DZzh7rynSG2iIngtL1/70OSLRdY6GDeS5xImpTUdIBeRjgyR6kEuo5L1mEV4dltEbb7
+ s+eH9NJVvlzUR6p0kYf+G+irUBusz5wE5tOnwT6zEr4Wj8ypYdZUsZh5b5cOe1A6WLHFcr7c630
+ cT7V/AUIrIld+YKgwGAA6CMGEj1GzuZSPVF+UiG8weaplEFh8zX1blxu2H7BYcT5PpNO3BFi73e
+ O16OjWvIW3S1Ou5L47Sv8s4FKCcuzpheEB1YEyDdLoewhk3rIwgtdM3LVvaW0cS+ftfEJ+w7diC
+ dXgbxEyEUead/4YpWkJ8tGk/PcBgklrb70fgVGV1sFZaWxky5xBO20NM0UUDs8ZA3r8RhkFBjmQ ggL5cu3+uY2kLyA==
+X-Mailer: b4 0.14.1
+Message-ID: <20250303-inline-cred-v1-1-b2527beace76@google.com>
+Subject: [PATCH] cred: rust: mark Credential methods inline
+From: Alice Ryhl <aliceryhl@google.com>
+To: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Christian Brauner <brauner@kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	rust-for-linux@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hello!
+I'm seeing Binder generating calls to methods on Credential such as
+get_secid, inc_ref, and dec_ref without inlining. Since these methods
+are really simple wrappers around C functions, mark the methods to
+inline to avoid generating these useless small functions.
 
-On Fri, Feb 28, 2025 at 10:31:09PM +0100, Alejandro Colomar wrote:
-> Hi,
->=20
-> On Wed, Feb 26, 2025 at 10:29:10PM +0100, G=C3=BCnther Noack wrote:
-> > This brings it up to date with the wording in the kernel documentation.
-> >=20
-> > Signed-off-by: G=C3=BCnther Noack <gnoack@google.com>
->=20
-> I'd like some more justification in the commit message.
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+ rust/kernel/cred.rs | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Adding that. (linking to matching commit in kernel which introduced this)
+diff --git a/rust/kernel/cred.rs b/rust/kernel/cred.rs
+index 81d67789b16f..2599f01e8b28 100644
+--- a/rust/kernel/cred.rs
++++ b/rust/kernel/cred.rs
+@@ -47,6 +47,7 @@ impl Credential {
+     ///
+     /// The caller must ensure that `ptr` is valid and remains valid for the lifetime of the
+     /// returned [`Credential`] reference.
++    #[inline]
+     pub unsafe fn from_ptr<'a>(ptr: *const bindings::cred) -> &'a Credential {
+         // SAFETY: The safety requirements guarantee the validity of the dereference, while the
+         // `Credential` type being transparent makes the cast ok.
+@@ -54,6 +55,7 @@ pub unsafe fn from_ptr<'a>(ptr: *const bindings::cred) -> &'a Credential {
+     }
+ 
+     /// Get the id for this security context.
++    #[inline]
+     pub fn get_secid(&self) -> u32 {
+         let mut secid = 0;
+         // SAFETY: The invariants of this type ensures that the pointer is valid.
+@@ -62,6 +64,7 @@ pub fn get_secid(&self) -> u32 {
+     }
+ 
+     /// Returns the effective UID of the given credential.
++    #[inline]
+     pub fn euid(&self) -> Kuid {
+         // SAFETY: By the type invariant, we know that `self.0` is valid. Furthermore, the `euid`
+         // field of a credential is never changed after initialization, so there is no potential
+@@ -72,11 +75,13 @@ pub fn euid(&self) -> Kuid {
+ 
+ // SAFETY: The type invariants guarantee that `Credential` is always ref-counted.
+ unsafe impl AlwaysRefCounted for Credential {
++    #[inline]
+     fn inc_ref(&self) {
+         // SAFETY: The existence of a shared reference means that the refcount is nonzero.
+         unsafe { bindings::get_cred(self.0.get()) };
+     }
+ 
++    #[inline]
+     unsafe fn dec_ref(obj: core::ptr::NonNull<Credential>) {
+         // SAFETY: The safety requirements guarantee that the refcount is nonzero. The cast is okay
+         // because `Credential` has the same representation as `struct cred`.
 
->=20
-> > ---
-> >  man/man7/landlock.7 | 20 ++++++++++++++++----
-> >  1 file changed, 16 insertions(+), 4 deletions(-)
-> >=20
-> > diff --git a/man/man7/landlock.7 b/man/man7/landlock.7
-> > index c6b7272ea..11f76b072 100644
-> > --- a/man/man7/landlock.7
-> > +++ b/man/man7/landlock.7
-> > @@ -39,13 +39,25 @@ the running kernel must support Landlock and
-> >  it must be enabled at boot time.
-> >  .\"
-> >  .SS Landlock rules
-> > -A Landlock rule describes an action on an object.
-> > -An object is currently a file hierarchy,
-> > -and the related filesystem actions are defined with access rights (see
-> > -.BR landlock_add_rule (2)).
-> > +A Landlock rule describes an action on an object
-> > +which the process intends to perform.
-> >  A set of rules is aggregated in a ruleset,
-> >  which can then restrict the thread enforcing it,
-> >  and its future children.
-> > +.P
-> > +The two existing types of rules are:
-> > +.P
->=20
-> This will trigger a diagnostic due to being redundant before TP.
->=20
-> (Both P and TP are paragraphing macros, so you're theoretically creating
->  an empty paragraph, which is just ignored by groff(1).)
+---
+base-commit: a64dcfb451e254085a7daee5fe51bf22959d52d3
+change-id: 20250303-inline-cred-1d1050785e5c
 
-Thanks, fixed.
+Best regards,
+-- 
+Alice Ryhl <aliceryhl@google.com>
 
-
-> > +.TP
-> > +.B Filesystem rules
-> > +For these rules, the object is a file hierarchy,
-> > +and the related filesystem actions are defined with
-> > +.IR "filesystem access rights" .
-> > +.TP
-> > +.B Network rules (since ABI v4)
->=20
-> Most of the pages use Roman for the parenthetical:
->=20
-> 	$ grep -rn 'BR.*(since' | sort -R | head
-> 	man7/ip.7:782:.BR IP_PKTINFO " (since Linux 2.2)"
-> 	man2/set_mempolicy.2:109:.BR MPOL_F_STATIC_NODES " (since Linux 2.6.26)"
-> 	man2/kexec_load.2:60:.BR KEXEC_PRESERVE_CONTEXT " (since Linux 2.6.27)"
-> 	man2/perf_event_open.2:823:.BR PERF_SAMPLE_REGS_USER " (since Linux 3.7)=
-"
-> 	man2/perf_event_open.2:1522:.BR PERF_SAMPLE_BRANCH_COND " (since Linux 3=
-.16)"
-> 	man7/socket.7:998:.BR SO_TIMESTAMPNS " (since Linux 2.6.22)"
-> 	man2/perf_event_open.2:1537:.BR PERF_SAMPLE_BRANCH_CALL_STACK " (since L=
-inux 4.1)"
-> 	man2/clone.2:1303:.BR EINVAL " (since Linux 3.9)"
-> 	man2/eventfd.2:52:.BR EFD_NONBLOCK " (since Linux 2.6.27)"
-> 	man2/perf_event_open.2:912:.BR PERF_SAMPLE_CGROUP " (since Linux 5.7)"
->=20
-> > +For these rules, the object is a TCP port,
-> > +and the related actions are defined with
-> > +.IR "network access rights" .
-> > +.BR landlock_add_rule (2)).
-
-Removing this stray last line as well, which was left over from an earlier
-version of the text.
-
-=E2=80=94G=C3=BCnther
