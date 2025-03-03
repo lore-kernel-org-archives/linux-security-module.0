@@ -1,145 +1,197 @@
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E60FE2222AA
-	for <linux-security-module@vger.kernel.org>; Mon,  3 Mar 2025 15:30:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BA851F4166;
+	Mon,  3 Mar 2025 15:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741015805; cv=none; b=R2n8tfVg0pdUlKn6XWXF1ImtrLnJ8XMcKSmiiFCk14teYokJUTa1x7tt70NFzL4UCfnSdH6vRHCFtXjfoH7bjhoEx9Yc9hUXNB1h7wk3AMq+Laji770T1akeLAANLKRL0uQxjSFY6bY3cSkmri6ONfnxg/6aD4d9BM1/YXnz/xE=
+	t=1741017124; cv=none; b=nWMkYjy1LXNSbf///UbNfxxzynTwTx52UXH+yLV4nttl8xzIAkHpgY5UCPDxqUHXJrXXpzQBHDEdHO0ibYYNZ8aFq2BJgNRQ6aN49Z+bp1Kfznipqmvpq3af8STSeyFWc9G3197KqtbkOq3tyjiVQ/6YfyY6tgsbpxW7Hk5r1bk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741015805; c=relaxed/simple;
-	bh=M2BzAH/H8oyYfF05WRy1NP/V+lCHnDVMr1BBQkvQmeA=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=cAiCfVII3bTMJMGhm8p57bwCGAUVb7LBunLgFvm1yVaV7ocpV3viIB6PLjncFW8AhoDqg+A6Dtp2ghscxZS5hbXyy3Z2yLcXpywYYqQDF6VuzNLsLycH1N3smuFxfgkcQidL4Fmwwh529Al+m/1o2fh8g6UFmZaZwf2RjM60Lro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gHuZqElN; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+	s=arc-20240116; t=1741017124; c=relaxed/simple;
+	bh=TXkBDRK/q9ay323COZ7tvWye1rqrIFytXJeAG1Pa3Cw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M3OHeg2XkJX12AbOs+ghgoKuZfAH6ZR/rKOYLXo9YPOYE1Py+94/Q3FlVO2M63kH0xozpwlOOLk+iDtNbNwRjEQlHE6DGQwIKQj3BpNn2AbVa68fGtSc8VA4XLLFNicH2FyKVSAN7rtyW4gqQBEykA/D21t7K9SDER0aEC201Ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B/bPQOeJ; arc=none smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gHuZqElN"
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4399a5afc72so20404605e9.3
-        for <linux-security-module@vger.kernel.org>; Mon, 03 Mar 2025 07:30:03 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B/bPQOeJ"
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6e892e0eb74so37681396d6.3;
+        Mon, 03 Mar 2025 07:52:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741015802; x=1741620602; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=caZM8ulAJLpPxwqARELSVOBypouHfuE96bXivT9t7vI=;
-        b=gHuZqElNk7+B+xzkXR6J4FSFUJ454Kscp/eyGI296JQvgklBd1YQWrFAanAwmGAxtt
-         m/MfWtIyp4kJBue7pbglwnu1zCiKIaihhHVqu+CyPRrn2heBU3gv9vjvHo+gukODO8yZ
-         ue2UrdCUgUahdjP2kDipAH8qaQx4Qzw5ZkezQ7YIU5OssdJ5pcHGCTH+UaiwCfgr5Psl
-         4UXij8+XlQgc51l4gkUoNu43BeAc0I4SV8BtbLivwZdDfPSf6orsg9obS4THxHaFOCY2
-         dNIJcRnikGmNZZFMCbky8kK7BCfbcLQKuwHczUruuihZsstKbbsQp9PfXRXeTM7AxFLU
-         zjew==
+        d=gmail.com; s=20230601; t=1741017122; x=1741621922; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zgODL2LlqaxeX8CwqEhnXUZN7OCM3I1jPbEdCi7RTzA=;
+        b=B/bPQOeJoBs9BossLO1l7tsJ1olgeqvdajCHy8RicTZHaAFG4EQaasYFN1r4eSEaUa
+         F/YaMwxrTHjp0boCEk60vSoKPx7Sgu2Nlz8AH5n7kB/WvOPKIity4umAiVXAQGxNlVfy
+         +upaaPfjbFAx/+cNQuemUYEMOHXBikScDtQRrWYGEunOzews7oL17Yb+zPf6p+m1y20s
+         b/6sD/fcYBFTOZVJdzfJ2kvQrWFAXCDpCx/SUghdXITlXOP4TEe7vCgmDAGI8VR/RYpP
+         NrvuGRXqJAr+x5i/gO4EB4MqGQJZtzpK02N4B+vyvBz2LW8WA1Jw+LM1TL/0MQaS9H49
+         v/qQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741015802; x=1741620602;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=caZM8ulAJLpPxwqARELSVOBypouHfuE96bXivT9t7vI=;
-        b=D8otGA4vTy0FJ66yYrkcLmzAgha6gyWLUEJIsAp6iIH/y0ahgf+2X/nR3Rhgd/pamI
-         BpCDl0gWyMn9yZvGixZNYK2/o0w3LmAS2ZV6X5HGwLE17CEESJlzvnEnQykasWveI4PI
-         QVZsuJ6Ewq1XI9FGGCxthufpuW0ak2eq3EwgUYuHxLLZWBbPW+bEo+cbL2s9nhtjxE3/
-         xt6U4oYTSF4m6tparY/ntTQjUoxlxdnSsIUUEguhxDJ48BEh1c/XpKU3WbHz14AHGOZm
-         6lyTE+M1ozZopTKaoKXYj8HkxjTtzS8MarRGg8qy16mVVMTQ1gJk/+pV9Z+LdZcm50ux
-         rgNA==
-X-Forwarded-Encrypted: i=1; AJvYcCXBd5znFqJvcysJe+Rve2kzPEku5B8KiqY1pcpeX9vAZnDZ4DY0yPBbO2hDJe/z8hEo5y5yM1vJ/kIEYbpIZbUraS0nExo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6NSkNavc20wCM9gHlEaai0Be1+bOZy3W8flM4vf7mDbcdE1FI
-	VjaIFwASe8X8z7goc1u1Jms6y1uOWU07DUEi13Hb6DC9wo1SnJlrssLG+7n2gav+OkGMkle13ZW
-	HrMCUSwZznt1EQg==
-X-Google-Smtp-Source: AGHT+IEvrEmSDERvS2qqB+5i1YhcRepLJer3BcvKxJmllJrG/31CCHIMlY5mLja1zC7sgO1IiESOcYeMbOIdmuM=
-X-Received: from wmsp7.prod.google.com ([2002:a05:600c:1d87:b0:439:88bc:d27d])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:3ca8:b0:439:94ef:3766 with SMTP id 5b1f17b1804b1-43ba67606b8mr104598245e9.19.1741015802220;
- Mon, 03 Mar 2025 07:30:02 -0800 (PST)
-Date: Mon, 03 Mar 2025 15:29:58 +0000
+        d=1e100.net; s=20230601; t=1741017122; x=1741621922;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zgODL2LlqaxeX8CwqEhnXUZN7OCM3I1jPbEdCi7RTzA=;
+        b=dNMfB6L/0TdNaA1EfzQeAIdVXkz065f5vww7aJetUAUkMnbw1ByFl/lRR8Zg+J9FIg
+         8qb0LbGz1T3riUX2vsrbmcFtRezZmp9k4mT80ETM3BOtb7AYM6zZneSubAYvebZ6joBr
+         uAhmwXhwbfikhnX2rP4rAaWRmdPKr8vixxD9rzzElbs5vTH37FVq3Y6zqr3f/Zy+pDYZ
+         fUAW9lydVYNLp0oeV/TTezX6EGIim1KKL3MWsbinFwJJ529V9YrnUJz8kAKLq9TxBkUv
+         hYq/0dvp4Yt0Du4+OxFYdJINUQGxiK0vZanNZjWj4sXzlgbYO0PeqnmJXa3BDaX5Wp5s
+         2oVg==
+X-Forwarded-Encrypted: i=1; AJvYcCVxhyb5OjbXtQUCWXTPaPqQv4iLEnZe2znbEpxx4YLAEI4NmbIURfhZKJwPnHud5bnz058dtiQmUkSVb28=@vger.kernel.org, AJvYcCXM2PYGdtnAHbwnwz1ykBm7tE6Brq3gzgxkoeT18vSSAYd5gVJftcWWJIvuyFFNEgJ28nJQHBv73U7B7cmCjXg=@vger.kernel.org, AJvYcCXjCIpEsU/O8i9FYkg7NZdUnMifwnAOI0HsKv22sd0Ba7zEQ5mAJN2fEcW5RdPO416nO5Siz8B0umOyadk9DK23VYlcI62f@vger.kernel.org
+X-Gm-Message-State: AOJu0YybtzQT0LFs6stxSfdkRx0Jf4XRSE7wKw8jYlX/24aLrq5qr/dz
+	83I/vI+dgU6pgpGpRyNY6nw0ezpk1ZrJkhW/h2/AVRXVLQGrC6GX
+X-Gm-Gg: ASbGncvdPIgXHOhZw6h7oo7wjjej4zTHUB8FGepVsW3j4pFz4QjH5ZcijHo+aWbD1OF
+	RdYz88OMrhJJSFL21811xUhr/R11dCxXGkZSQWf8cTmIbjwI0Z+DlXtaU2zB0gFYzFEIojRovhF
+	ehf7XXW5kMDRAPCmcLgcJc2vFAe1fCFu+2xXgAeQH7V6P0OQcn7V38TxRG/3QwBQkM8lScGrQxI
+	dzJKdBZcQfTlvKw1qSknw9/7cum7jwh4M6oFEtbHM7xbjJnUhwTfcsjr0sF4HtcNT6yoFCKb/3y
+	mJKL15F7AKaRolGjFCSRO6aAkGKiARARR5O9Wm587qP6j10aDAQLYyWyPcMDaPwC0xIAAKoUY+0
+	9LJgB7BDaGIiOfq6g4jji2VUzp/GcLwQrn8w=
+X-Google-Smtp-Source: AGHT+IE5IVnIJxyXFVx7tpOdH4W/lDT2DeGNQVPUENuNEB8Z8MUByUOnN42OjvFY47jOgEGrNs7ABQ==
+X-Received: by 2002:ad4:5ba3:0:b0:6d8:ab7e:e554 with SMTP id 6a1803df08f44-6e8a0d84b59mr204179346d6.34.1741017122206;
+        Mon, 03 Mar 2025 07:52:02 -0800 (PST)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e897634904sm54272776d6.19.2025.03.03.07.52.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 07:52:01 -0800 (PST)
+Received: from phl-compute-13.internal (phl-compute-13.phl.internal [10.202.2.53])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 260301200043;
+	Mon,  3 Mar 2025 10:52:01 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-13.internal (MEProxy); Mon, 03 Mar 2025 10:52:01 -0500
+X-ME-Sender: <xms:IdDFZ91qPdm6aUPbaxLwNgZSU-ecpcVbjZe5Y9fPnhmilBaLZJNCkA>
+    <xme:IdDFZ0Eq2x5WFRGS4a-JXZgIY-kN7FSog3L9TnfDELFmRLSDrnPQGmxxVWPPnrWyd
+    Prq1KjZ7ndJBP0obg>
+X-ME-Received: <xmr:IdDFZ967k1T-oUXYOzmJJUYUUO_UI9a60coFYRoCvcKGD2CLKN0C_PoXcQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdelleehgecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
+    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
+    drtghomheqnecuggftrfgrthhtvghrnhephedugfduffffteeutddvheeuveelvdfhleel
+    ieevtdeguefhgeeuveeiudffiedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghl
+    ihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepgh
+    hmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopeduiedpmhho
+    uggvpehsmhhtphhouhhtpdhrtghpthhtoheprghlihgtvghrhihhlhesghhoohhglhgvrd
+    gtohhmpdhrtghpthhtohepphgruhhlsehprghulhdqmhhoohhrvgdrtghomhdprhgtphht
+    thhopehjmhhorhhrihhssehnrghmvghirdhorhhgpdhrtghpthhtohepshgvrhhgvgeshh
+    grlhhlhihnrdgtohhmpdhrtghpthhtohepsghrrghunhgvrheskhgvrhhnvghlrdhorhhg
+    pdhrtghpthhtoheprgigsghovgeskhgvrhhnvghlrdgukhdprhgtphhtthhopehojhgvug
+    grsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehgrghrhiesghgrrhihghhuohdrnhgv
+    thdprhgtphhtthhopegsjhhorhhnfegpghhhsehprhhothhonhhmrghilhdrtghomh
+X-ME-Proxy: <xmx:IdDFZ63dO7ezgty6HQDJa9plS1afYfPJqAC8rzU-P9T70qml9d63Tw>
+    <xmx:IdDFZwGVZmtQ1LCo0D04cx5sDypS-4wErcFaxNUWZjNSfio0qIh26Q>
+    <xmx:IdDFZ7_zXqAwGFKfcYe3YkgmGYBKZL37SPWdYdV8ebcJB-1HGUfypQ>
+    <xmx:IdDFZ9nzHGAPyG7V4_0CQZouCB0Knr2SxAG23YjimbcVJGQaWKqGyw>
+    <xmx:IdDFZ0GWJfKBSGzLUHD9HhyXdA2jfYtIPBymBjvI8UcKyIgAxkpx_3LR>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 3 Mar 2025 10:52:00 -0500 (EST)
+Date: Mon, 3 Mar 2025 07:51:59 -0800
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Jens Axboe <axboe@kernel.dk>, Miguel Ojeda <ojeda@kernel.org>,
+	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cred: rust: mark Credential methods inline
+Message-ID: <Z8XQH0RN858VRWtm@tardis>
+References: <20250303-inline-cred-v1-1-b2527beace76@google.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIAPXKxWcC/x3MQQqAIBBA0avIrBPUSKirRAuZxhoIC7UowrsnL
- d/i/xcSRaYEg3gh0sWJ91ChGwG4urCQ5LkajDKdalUrOWwcSCbCM3J+MN/SetTorO11Z6GGRyT P9z8dp1I+BbTQC2QAAAA=
-X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1936; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=M2BzAH/H8oyYfF05WRy1NP/V+lCHnDVMr1BBQkvQmeA=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBnxcr3q4/f1Eh+mVvx+bWb74mJwFEmQclGeaR4H
- 6BrWuXePv2JAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZ8XK9wAKCRAEWL7uWMY5
- Rg7XEACJZp3zV7TOxcbAhMiyi+QxSwxsKIWm0z5mCiE9+IeVIiRM0mr9KJybwGBBZV6fceHTyNp
- vSNQwqRR1/WawtpXx71vDBrxQP5MbUxLt+b2H4Kk9EwzWacbU6Eevm+w+K5DgoGBaVVWRo+b2Zg
- 5zhx9HCj9GMTYfxU+hBZ/d1atafW/55SrtBEHmU11BdoB1z8U6tcroTNR8IiXBMplyqiffpWE06
- 7c0Yu71HHNE1XF3ZfKLj2rL4TPefriva5oA53IaiAwogzGrDbO3IPiaeovkQz5EUiwh4k0WW3zk
- NXK6vTpRf8uaqm0wnLjLmh400aXX0VhG2Pix6l0pVoz7Ja2ADm334nMpsSVrkXxx1DivW4y41m2
- ic8xg1/6zolmSGUYpkbY1W+ui/MAo/joydXYf5cYMTelD6XSZLQYjQ9DQKwORm5c2BY7KDjAKwH
- fmmP31pv8w4TXNWayRWhNNhOyeRLJkKcjnBUs6wnxzNrIa8RbqHMis0YBz6sGsbVtN+XGc7y/T+
- dqQ5Eh4+cfwj7j4PGGMQjl9/s9IadvAzhZZmiteRiJWXn4duTt57dZ/uR2vCgxwxRgMTzUa/ccj
- uxv3TrbUxPckHCNtGKCB7OP+Q36tKJQhPrIP1/YEa2tsogs3ZIOJ7eq6ZplZZyqR+t50Mvb29AX TAjVN494qVFamCQ==
-X-Mailer: b4 0.14.1
-Message-ID: <20250303-inline-securityctx-v1-1-fb7b9b641fdf@google.com>
-Subject: [PATCH] lsm: rust: mark SecurityCtx methods inline
-From: Alice Ryhl <aliceryhl@google.com>
-To: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	rust-for-linux@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250303-inline-cred-v1-1-b2527beace76@google.com>
 
-I'm seeing Binder generating calls to methods on SecurityCtx such as
-from_secid and drop without inlining. Since these methods are really
-simple wrappers around C functions, mark the methods to inline to avoid
-generating these useless small functions.
+Hi Alice,
 
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
----
- rust/kernel/security.rs | 5 +++++
- 1 file changed, 5 insertions(+)
+On Mon, Mar 03, 2025 at 03:28:50PM +0000, Alice Ryhl wrote:
+> I'm seeing Binder generating calls to methods on Credential such as
 
-diff --git a/rust/kernel/security.rs b/rust/kernel/security.rs
-index 25d2b1ac3833..243211050526 100644
---- a/rust/kernel/security.rs
-+++ b/rust/kernel/security.rs
-@@ -23,6 +23,7 @@ pub struct SecurityCtx {
- 
- impl SecurityCtx {
-     /// Get the security context given its id.
-+    #[inline]
-     pub fn from_secid(secid: u32) -> Result<Self> {
-         // SAFETY: `struct lsm_context` can be initialized to all zeros.
-         let mut ctx: bindings::lsm_context = unsafe { core::mem::zeroed() };
-@@ -35,16 +36,19 @@ pub fn from_secid(secid: u32) -> Result<Self> {
-     }
- 
-     /// Returns whether the security context is empty.
-+    #[inline]
-     pub fn is_empty(&self) -> bool {
-         self.ctx.len == 0
-     }
- 
-     /// Returns the length of this security context.
-+    #[inline]
-     pub fn len(&self) -> usize {
-         self.ctx.len as usize
-     }
- 
-     /// Returns the bytes for this security context.
-+    #[inline]
-     pub fn as_bytes(&self) -> &[u8] {
-         let ptr = self.ctx.context;
-         if ptr.is_null() {
-@@ -61,6 +65,7 @@ pub fn as_bytes(&self) -> &[u8] {
- }
- 
- impl Drop for SecurityCtx {
-+    #[inline]
-     fn drop(&mut self) {
-         // SAFETY: By the invariant of `Self`, this frees a context that came from a successful
-         // call to `security_secid_to_secctx` and has not yet been destroyed by
+I would suggest using impersonal facts to explain why the changes are
+needed. For example, you can show a compile result (with the version of
+rust provided), which has the function callsites, in this way, it'll be
+easy for people to verify this on their own. Thanks!
 
----
-base-commit: a64dcfb451e254085a7daee5fe51bf22959d52d3
-change-id: 20250303-inline-securityctx-6fc1ca669156
+With this changed, feel free to add
 
-Best regards,
--- 
-Alice Ryhl <aliceryhl@google.com>
+Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
 
+Regards,
+Boqun
+
+> get_secid, inc_ref, and dec_ref without inlining. Since these methods
+> are really simple wrappers around C functions, mark the methods to
+> inline to avoid generating these useless small functions.
+> 
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> ---
+>  rust/kernel/cred.rs | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/rust/kernel/cred.rs b/rust/kernel/cred.rs
+> index 81d67789b16f..2599f01e8b28 100644
+> --- a/rust/kernel/cred.rs
+> +++ b/rust/kernel/cred.rs
+> @@ -47,6 +47,7 @@ impl Credential {
+>      ///
+>      /// The caller must ensure that `ptr` is valid and remains valid for the lifetime of the
+>      /// returned [`Credential`] reference.
+> +    #[inline]
+>      pub unsafe fn from_ptr<'a>(ptr: *const bindings::cred) -> &'a Credential {
+>          // SAFETY: The safety requirements guarantee the validity of the dereference, while the
+>          // `Credential` type being transparent makes the cast ok.
+> @@ -54,6 +55,7 @@ pub unsafe fn from_ptr<'a>(ptr: *const bindings::cred) -> &'a Credential {
+>      }
+>  
+>      /// Get the id for this security context.
+> +    #[inline]
+>      pub fn get_secid(&self) -> u32 {
+>          let mut secid = 0;
+>          // SAFETY: The invariants of this type ensures that the pointer is valid.
+> @@ -62,6 +64,7 @@ pub fn get_secid(&self) -> u32 {
+>      }
+>  
+>      /// Returns the effective UID of the given credential.
+> +    #[inline]
+>      pub fn euid(&self) -> Kuid {
+>          // SAFETY: By the type invariant, we know that `self.0` is valid. Furthermore, the `euid`
+>          // field of a credential is never changed after initialization, so there is no potential
+> @@ -72,11 +75,13 @@ pub fn euid(&self) -> Kuid {
+>  
+>  // SAFETY: The type invariants guarantee that `Credential` is always ref-counted.
+>  unsafe impl AlwaysRefCounted for Credential {
+> +    #[inline]
+>      fn inc_ref(&self) {
+>          // SAFETY: The existence of a shared reference means that the refcount is nonzero.
+>          unsafe { bindings::get_cred(self.0.get()) };
+>      }
+>  
+> +    #[inline]
+>      unsafe fn dec_ref(obj: core::ptr::NonNull<Credential>) {
+>          // SAFETY: The safety requirements guarantee that the refcount is nonzero. The cast is okay
+>          // because `Credential` has the same representation as `struct cred`.
+> 
+> ---
+> base-commit: a64dcfb451e254085a7daee5fe51bf22959d52d3
+> change-id: 20250303-inline-cred-1d1050785e5c
+> 
+> Best regards,
+> -- 
+> Alice Ryhl <aliceryhl@google.com>
+> 
