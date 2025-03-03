@@ -1,159 +1,112 @@
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4750D23814F
-	for <linux-security-module@vger.kernel.org>; Mon,  3 Mar 2025 22:55:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0DDA1E991A;
+	Mon,  3 Mar 2025 23:50:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741042512; cv=none; b=SPWi7HoejMFiiQVDRV3jB/83OaIR7+Vp9onzvyztGrH5AImWwTyz9Qvva9s8exF4xJ41U80ixb68HZ40gEWALf8/3++TTAH29pIvSIF3Vh2bDS1CSSx+7oKUgzZr2mh0siyY+qfvqO+vNovqgstny3z/pvpvLuQ2HFENIcrFNvw=
+	t=1741045834; cv=none; b=aOe6dVD5mw1cMyEV8C1I8I0u9HMla0yu5GgcX0+EWGcn4/vopAJnqqxGiCaJTvJW69wneM89gOnRFxX0IdHSkl70zG/J32sysSJlHN0778GW/bqN5cX7c7ry5AsvgOr2GujODeqF2xPBPJyyq/tLVZdsriqAdieArbztQDfZAwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741042512; c=relaxed/simple;
-	bh=FV0AMXP2plgQ+6X5x5sS4h/E9JkH8Jx7ZwLybj2GHcI=;
+	s=arc-20240116; t=1741045834; c=relaxed/simple;
+	bh=ZtN7Vj4cOdhdtn+xFv0fG3ppvVknVymRTUOPHeuqZzs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r6KsUr3/9xYo/7jcNZgLQWNgIpoUdG2c5ccCWBokIgJOS24rnQOsvIZ9IrwHiffxhjntXqMPZ1Hh3aqqP/FBllJC5sVH6SlXGMQYtBV/chEC5m3kXnrpLqWoahDHSJOBeydv0vSP8Huq3JHqA1DeKJp6UqAz00RVJmMyrgAceZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=atuko3OM; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	 To:Cc:Content-Type; b=XYhFRL33E2RfB5Asfe4lObc7Xa52qNFod3INpwXSQ44++CVK7iB0gdCVN/0wcMKxB19o2pVpt6fyeZ2ktkDE+PaOJYe7aIDTmrxoT0kCPbo04K0gvovpGfKWn5Ltg70Bn3V2TWAy9Nlg3IIBIL32gbzeAe6AUU+MC+kxNOSnnNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qtKlThu/; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="atuko3OM"
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6fd6f7a8c84so16864627b3.2
-        for <linux-security-module@vger.kernel.org>; Mon, 03 Mar 2025 14:55:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1741042508; x=1741647308; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JsORS7Y/VoLn8iE6xrSTP5GOFu3anHKEztygS4ARAzc=;
-        b=atuko3OMuoBz3M8LQtPH5T/blMmnfG/pMclyA6oWZsL/vtwG+Q0vl3DoLc+AhhtddT
-         ZgQTKtkenmfV9rf0t5H+Nja4KOJfROLi+nZvlIjd+K3VX47myciX4rJcrLqCoTWzb+nC
-         G3s0fXm75FEizTCevZPrKSK/N6kQ/+g/sEHSEuFUbTwiFCDsLCKV3POnZI1X/8ZZPhc9
-         hLCBxkKTwePc0zGerA9BhVEFCAwD91CZLUAd8iiuwSTNOEsMD8RMxFZ/9Tpj0bMJaKMW
-         93Y0origjL0yPlr9s5ijGsI6eZ6frktvV3kPrp4xiFoz3lmn+MFHQ/QRo+T4eUVsIzBW
-         Wz5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741042508; x=1741647308;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JsORS7Y/VoLn8iE6xrSTP5GOFu3anHKEztygS4ARAzc=;
-        b=VO7iDIxW8kZc3v3Aq6hvvaT8tYhVA68w5OoM0n1y4CtX59jKOCVaSwHWWnqrK+niMK
-         nxQX6tRZ7EPGQxThUxgJ0wr9u8Po7+xrwhzUHcF/nY9CVvCnZeP4ChS1Z6YMqyXzll7H
-         mJPhRs/GP0pzuLjFdgVv+BP1jTAsf5w9J0zm8fzSlSuE2/U9PhsCK9kLNrdLDDy9QPXW
-         0TI8jPMa/PRsDF5FWeGzaF/hnG9SInIGNL4xrlmSJNNw+r46J3yzIKjk4xqGLqiDyJHx
-         P8U3lHdXwb2fVkFsfmkLu0yDwKIrgjUe+OBpznQoM+HW8lrbsyhyGf48BZmeTFdX++9B
-         sbWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW8HMagJ2/tP/KI/ae5tqg7bhQrtirrp6DZnvOeNLRZj/nSL+EBq6NEnLHmGKItCVnZrGoZh6MML4VUJ+f7adLDu7vVm5M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2ZbS8yUqbSR+Jd6wUlOByrwKT4QsLJYmYxuawf8ZshTzY555F
-	8xFkrmsygUEbHsRvgl1LUPLEiXEEBU5+ygJiN6+ugYcNTGqWokBM0UuA2I5KPJDfje4bNKtKFzu
-	C4439XyT72M6STiozAeYbNeVYTHZTHdRtZ0YV
-X-Gm-Gg: ASbGnctm56ONpUK3KnYXhXhRJLD6EPmhYPY154shofDZtCywI55G0ijF3+bVSd6siSs
-	n/QD6B4+BDg8Wr/ioqAnZiEva1UwKhsQQ8s/HaGKBtj4GqUAoOIBwtU7Kf9CVAIAJgaHla7ei11
-	Ak4o73lnXyhnpAwWVKRdF0kaHWmg==
-X-Google-Smtp-Source: AGHT+IE6rf8uW5Ake0yIOw7LcxxwfLNQ7aN2DZQJSmlz7GVUFfcRLmQdGJcdT3Qfu+CP0SMft2VWYj9dKOHeWHzxgUA=
-X-Received: by 2002:a05:690c:3686:b0:6fb:b4e7:1471 with SMTP id
- 00721157ae682-6fd49f9f825mr204154037b3.7.1741042508271; Mon, 03 Mar 2025
- 14:55:08 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qtKlThu/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71258C4CEEA;
+	Mon,  3 Mar 2025 23:50:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741045833;
+	bh=ZtN7Vj4cOdhdtn+xFv0fG3ppvVknVymRTUOPHeuqZzs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=qtKlThu/eL/B1gSFNrBKylcw7uOvXxONL9ifdr+7cy6fn6acrUK9/p0bxRAAAZQE9
+	 b697mUdPnqpRVz8Ki22OowHyXStcf6MIG5Daw4ajJyGGvwXhlK9q+7bmGze0mnGftE
+	 4sypDqoYPFa80rYGlijr9uE3fJbbA49EX9ZBwmPdmL7imlGN4/gd44bfazU/pKIaQY
+	 q/fZkWmqK/TeTBPjysd+Jpbj06IplfITOXXA0Y2pbBioAjRLLgWtGHOnYriPdWM0KV
+	 2O5D7QTKzMnkI2CVO311dw3Flc7HBsHaAra0czrxaxJ3JO6AfOJACy6if9fBNU5EJ+
+	 aTH8H1hqWpJNA==
+Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3d03d2bd7d2so49554425ab.0;
+        Mon, 03 Mar 2025 15:50:33 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU2LEAe9T3DEYZDxt3km8y7vai33WOARbtPLQoTbc16chQLLqLZZr0ati4P0ka5m5b9EQA=@vger.kernel.org, AJvYcCUuldPP5DVswwoDLEbdzWywcTpsQ1U8xKtgKX2tJf+iwbGarY9lUjNbigSBd+YQacXQm930179fkA==@vger.kernel.org, AJvYcCVAcgn5ik7Dg0nalzdJ7usyneLMYjxgigIv72ata49xNSHwtEGUa512Hhu02pAVrP7NuWBWV56LYL3JvW/f@vger.kernel.org, AJvYcCVWSEhmSgXL5FfzySxalNo2A2XZgXo05NUQvH+89185HOFFSfsJ9rsLNATMSpZh7AowMViX+bb3Kz2l7Uy69TFxKgezCosd@vger.kernel.org
+X-Gm-Message-State: AOJu0YwK9ZFkn+5ifHjoP0TLJwZr41hXq3/IjXvlvQvTOahXPhlnxvAj
+	1HVN9nCoGHkVzxZllr518JM5F9hxIZnWNt/ZblIJ2wH91BfSgn7zIJmAtEp/qf9P51CosvZQ+Dq
+	mS760xAR33B8P4jMQcwcSlbTQ/XI=
+X-Google-Smtp-Source: AGHT+IEa2U04jzdtqm9QOxXPelAcw7uaid5QIC7++sbi7K86r+INBEjhOLZdluQ0kal3eyQloIgjX0ZeVZ07G9aOiRo=
+X-Received: by 2002:a05:6e02:1805:b0:3d3:d163:ec84 with SMTP id
+ e9e14a558f8ab-3d3e6e7442fmr131213825ab.10.1741045832644; Mon, 03 Mar 2025
+ 15:50:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250303-inline-securityctx-v1-1-fb7b9b641fdf@google.com>
-In-Reply-To: <20250303-inline-securityctx-v1-1-fb7b9b641fdf@google.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 3 Mar 2025 17:54:57 -0500
-X-Gm-Features: AQ5f1Jr5IfzltzAXVNhmGo-A7qd4NzIh3iaT1pjM1-RaMmUpgWxt70koGP_h_PA
-Message-ID: <CAHC9VhSo3aGsJVd=a3MTeakgU66oTN86oh5sZE8P4ghSk8Rx2g@mail.gmail.com>
-Subject: Re: [PATCH] lsm: rust: mark SecurityCtx methods inline
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250303222416.3909228-1-bboscaccy@linux.microsoft.com> <20250303222416.3909228-2-bboscaccy@linux.microsoft.com>
+In-Reply-To: <20250303222416.3909228-2-bboscaccy@linux.microsoft.com>
+From: Song Liu <song@kernel.org>
+Date: Mon, 3 Mar 2025 15:50:21 -0800
+X-Gmail-Original-Message-ID: <CAPhsuW7RsGErn+Gy-2S6ruyo+j9WmqwxWERh2XoRrWEH7-=e1w@mail.gmail.com>
+X-Gm-Features: AQ5f1Jo2tzFzrgsbmtzBANFmzE1xKVmsW9OnQyVqM5ytF_Pbl82b-R4fsAPb2bo
+Message-ID: <CAPhsuW7RsGErn+Gy-2S6ruyo+j9WmqwxWERh2XoRrWEH7-=e1w@mail.gmail.com>
+Subject: Re: [PATCH 1/1] security: Propagate caller information in bpf hooks
+To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Yonghong Song <yonghong.song@linux.dev>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, selinux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 3, 2025 at 10:30=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> w=
-rote:
+For future patches, please use git-format-patch with --subject-prefix optio=
+n and
+specify target tree (bpf vs. bpf-next vs. bpf-next) and patchset version. F=
+or
+this version of the patchset the subject prefix should be "PATCH v3 bpf-nex=
+t".
+
+On Mon, Mar 3, 2025 at 2:24=E2=80=AFPM Blaise Boscaccy
+<bboscaccy@linux.microsoft.com> wrote:
 >
-> I'm seeing Binder generating calls to methods on SecurityCtx such as
-> from_secid and drop without inlining. Since these methods are really
-> simple wrappers around C functions, mark the methods to inline to avoid
-> generating these useless small functions.
+> Certain bpf syscall subcommands are available for usage from both
+> userspace and the kernel. LSM modules or eBPF gatekeeper programs may
+> need to take a different course of action depending on whether or not
+> a BPF syscall originated from the kernel or userspace.
 >
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> Additionally, some of the bpf_attr struct fields contain pointers to
+> arbitrary memory. Currently the functionality to determine whether or
+> not a pointer refers to kernel memory or userspace memory is exposed
+> to the bpf verifier, but that information is missing from various LSM
+> hooks.
+>
+> Here we augment the LSM hooks to provide this data, by simply passing
+> a boolean flag indicating whether or not the call originated in the
+> kernel, in any hook that contains a bpf_attr struct that corresponds
+> to a subcommand that may be called from the kernel.
+>
+> Signed-off-by: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
 > ---
->  rust/kernel/security.rs | 5 +++++
->  1 file changed, 5 insertions(+)
+>  include/linux/lsm_hook_defs.h                     |  6 +++---
+>  include/linux/security.h                          | 12 ++++++------
+>  kernel/bpf/syscall.c                              | 10 +++++-----
+>  security/security.c                               | 15 +++++++++------
+>  security/selinux/hooks.c                          |  6 +++---
+>  tools/testing/selftests/bpf/progs/rcu_read_lock.c |  3 ++-
+>  .../selftests/bpf/progs/test_cgroup1_hierarchy.c  |  4 ++--
+>  .../selftests/bpf/progs/test_kfunc_dynptr_param.c |  6 +++---
+>  .../testing/selftests/bpf/progs/test_lookup_key.c |  2 +-
+>  .../selftests/bpf/progs/test_ptr_untrusted.c      |  2 +-
+>  .../selftests/bpf/progs/test_task_under_cgroup.c  |  2 +-
+>  .../selftests/bpf/progs/test_verify_pkcs7_sig.c   |  2 +-
 
-While this isn't specific to your patch, Casey's comment about "free"
-vs "release" is something to keep in mind when working on the LSM
-bindings; what happens inside the individual LSMs for a given LSM hook
-can vary quite a bit.
+Please put kernel changes and selftest changes in two
+patches. Other than this:
 
-I also saw a similar Rust patch where a commenter suggested using
-"impersonal facts" in the commit description and I believe that is a
-good idea here as well.
+Acked-by: Song Liu <song@kernel.org>
 
-Beyond those nitpicks, this looks okay to me based on my *extremely*
-limited Rust knowledge.  With the minor requested changes in place,
-would you prefer me to take this via the LSM tree, or would you prefer
-it to go up to Linus via a more Rust-y tree?
-
-> diff --git a/rust/kernel/security.rs b/rust/kernel/security.rs
-> index 25d2b1ac3833..243211050526 100644
-> --- a/rust/kernel/security.rs
-> +++ b/rust/kernel/security.rs
-> @@ -23,6 +23,7 @@ pub struct SecurityCtx {
->
->  impl SecurityCtx {
->      /// Get the security context given its id.
-> +    #[inline]
->      pub fn from_secid(secid: u32) -> Result<Self> {
->          // SAFETY: `struct lsm_context` can be initialized to all zeros.
->          let mut ctx: bindings::lsm_context =3D unsafe { core::mem::zeroe=
-d() };
-> @@ -35,16 +36,19 @@ pub fn from_secid(secid: u32) -> Result<Self> {
->      }
->
->      /// Returns whether the security context is empty.
-> +    #[inline]
->      pub fn is_empty(&self) -> bool {
->          self.ctx.len =3D=3D 0
->      }
->
->      /// Returns the length of this security context.
-> +    #[inline]
->      pub fn len(&self) -> usize {
->          self.ctx.len as usize
->      }
->
->      /// Returns the bytes for this security context.
-> +    #[inline]
->      pub fn as_bytes(&self) -> &[u8] {
->          let ptr =3D self.ctx.context;
->          if ptr.is_null() {
-> @@ -61,6 +65,7 @@ pub fn as_bytes(&self) -> &[u8] {
->  }
->
->  impl Drop for SecurityCtx {
-> +    #[inline]
->      fn drop(&mut self) {
->          // SAFETY: By the invariant of `Self`, this frees a context that=
- came from a successful
->          // call to `security_secid_to_secctx` and has not yet been destr=
-oyed by
->
-> ---
-> base-commit: a64dcfb451e254085a7daee5fe51bf22959d52d3
-> change-id: 20250303-inline-securityctx-6fc1ca669156
->
-> Best regards,
-> --
-> Alice Ryhl <aliceryhl@google.com>
-
---=20
-paul-moore.com
+>  12 files changed, 37 insertions(+), 33 deletions(-)
