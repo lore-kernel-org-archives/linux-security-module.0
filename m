@@ -1,78 +1,102 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64CF7214A66;
-	Mon,  3 Mar 2025 19:04:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E1901FFC60
+	for <linux-security-module@vger.kernel.org>; Mon,  3 Mar 2025 19:45:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741028668; cv=none; b=TYJMVkLyoQklhCe/gOq3AE+2oT13NKH7CRhqscZpcak8Z+kHB7LrHCBRZMpk19d0SkIfvmF4kgBHbjmcyht1aGu6M6kKqfZX2X1MZ59pjb7PCZiZgNHHD6CJqIcPaeI2+2WcjKaLb2QF3oXH/IC/uJ7cgaf4laFcAEsaAXMfE6o=
+	t=1741031131; cv=none; b=fDQaFSm6tFzTKc3w3TOAbsLjBG7Op0KIL96Ae186XnPEogRGqNdA/rH1WL2s15cGM8eeYyiXGrJtIwjl4UavCbZGlXLkAFDv8gzscMey1ipCV4lq+L17JW9izQN4pMPTGlHL5tfHhGUvzi8q7VL+vX/uLULN1/3yMRK0aSRH/b8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741028668; c=relaxed/simple;
-	bh=8LWjj1yF/l6+Nko2dcGTFSkEZL9I6BsHVDOlJmSVy6o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bPGrqLP7NTHqX883HwfmHA5PBrSYwbDMmPwq0CNF/xHT12pXVwkRP30vm2gS+QsDbM7Pz57eZ5pxxa4mfc4oJUHjUwbi689NX7DHwdMGKPjjKiu2MWv/vqg/pMVWf36Mh3DUHiz1z8Wv5MKXRyTb/Ug1sl0sz0nKmuwjnahGnbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gLTA0aWp; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1741031131; c=relaxed/simple;
+	bh=NbmZBK2xkm7K/Ecw8ES6SyLyBZH30wyyvNplWdHDcrY=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=VNXPt2mvl6rYYJYqtKmTizknaDwRlJb06sTc5aST1vy9kpD9B8+BYN1SElbauEHck1ixHQ0vVKMP88zoJtQ9qYa5A01ozWr34BedgBROLWUVo4XMolWVxWsnL4pP0o8oaW3cLUAs2lEJLz+9RkMo4Nqs7Igk2cc9yIgGUiGcYEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tS+omRVA; arc=none smtp.client-ip=209.85.208.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gLTA0aWp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31EB9C4CED6;
-	Mon,  3 Mar 2025 19:04:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741028667;
-	bh=8LWjj1yF/l6+Nko2dcGTFSkEZL9I6BsHVDOlJmSVy6o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gLTA0aWp1PJmysQcPGb5IH62IBT2mqNCpy9v7Q6+ovo7Om05FhNhhV5tOiCWgcNO0
-	 xnXU26aMFijSyIycRCyObC4e+iygvPKnKOilWuErIxU3FkgBdGwonbgm0axassVAD4
-	 RIKFLYITJzwZK2Wbh+PMGVLjj4iEQfU9w7GYpsJlwZGQ4E/5Ad9nSGlPJj1FgiB2Ci
-	 XqGROHu/cjf+8jQlWKOTS3Bu2e4+gcTD6YgIB5gAfgy90PapQrXMf19IJYxHiYiit/
-	 SiBGymKYizRwkxEaFz55Shw0tcwg5Qdr57PDjmzmfDZs0DcYISb9gcES1esOYH6Zyo
-	 XSjrTaopHlWbw==
-Date: Mon, 3 Mar 2025 21:04:24 +0200
-From: Leon Romanovsky <leon@kernel.org>
-To: cgzones@googlemail.com
-Cc: Serge Hallyn <serge@hallyn.com>, Jan Kara <jack@suse.com>,
-	Julia Lawall <Julia.Lawall@inria.fr>,
-	Nicolas Palix <nicolas.palix@imag.fr>, linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, cocci@inria.fr,
-	Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org
-Subject: Re: [PATCH v2 11/11] infiniband: reorder capability check last
-Message-ID: <20250303190424.GB1955273@unreal>
-References: <20250302160657.127253-1-cgoettsche@seltendoof.de>
- <20250302160657.127253-10-cgoettsche@seltendoof.de>
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tS+omRVA"
+Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-5e4c2618332so1303894a12.2
+        for <linux-security-module@vger.kernel.org>; Mon, 03 Mar 2025 11:45:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741031128; x=1741635928; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dsfLGXpV6rQ0o2NY7gVfznfkHxTeDivdFJ9+ifBlQzI=;
+        b=tS+omRVA21xTNzOhmiFxDlANHKgyCfhrUn1kmXze8PLVST78tq9O1sGkaz74UUv1p3
+         vJGE/EEmuMTSQg7OiR08WfSA0Yhguss6aMJVsSGBg56i1u8Bj6wSS5/IRJzVAfWremeH
+         6zRiSW36z1nrvIR0S+suDiZFJ5jmLmQ48XATSAy7h05PbjPZau6bu9J3mLCYaCs4Sc9S
+         ogvZofCd3umOmNcQ+9Qwj8apR+43MxbrYHkACobaYdgLXzsaqqTy09KfAW+BBzuzraEs
+         lgykhypboX3cfNBbKv20iTF3a4D4o3xzqyf+s03mgRCR3jG/FpD/bS7sEPxRWx7oT8On
+         hvWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741031128; x=1741635928;
+        h=content-transfer-encoding:cc:to:from:subject:message-id
+         :mime-version:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dsfLGXpV6rQ0o2NY7gVfznfkHxTeDivdFJ9+ifBlQzI=;
+        b=VSCVbFvVXHhbQQGPTgMyUDsnuHE7rQ5hen5Buy40u4wz1+rsQ4eDimdiaPAWpEeX0P
+         Ggxx2TYjJU00ALAwXOwBNZItFnmwXoGjm88k8w9qXSD6/HDFlIp9eXlwkLCgKojx9s+d
+         46RCO3geWcBTuAP46HTSiRlP3EaCwng6c/r9bJrxiHCb/pM0tK+XVikenfQbMSeKmOYS
+         J0yBFBomaXfkInMilfMcod72QCy3S480h7IC3lk0m0nRLHkFOL5JLEKN69hxP/aY2QIM
+         Lv3btYh5Ao5QLDqZL9Fdngtp1xO5hZDOU8dmMEKarZu4oikzDv0FKoaMl+hF4Rju3ddq
+         63mA==
+X-Forwarded-Encrypted: i=1; AJvYcCX+vPNnYdRiudRXaNuASFI3BSkmU4j4E6fN8Q2cZoAdf2/1PAh/+6B8r8S/4cp+6hACnqkFFdaio2r7v/G04rYgbgrBdJk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/wawMvno1xZwN0gIiYnjQJdIkX7Ue52gxuWS7QtjR8LibLuj5
+	ObZfb/DfE7fqvVgE5ZauamO9rfQLZNXt63yc/9Zf+lkvygMd0TzcqA9CrRRNSmlIQMitPic7HUc
+	/0A==
+X-Google-Smtp-Source: AGHT+IFHklQwejqpmOUxryvT3a8PDCrvJzrEIwH36jW9fRyIFacuGwFmtV12mOCE95wWm07nqhcTyq+O3cg=
+X-Received: from edbfe12.prod.google.com ([2002:a05:6402:390c:b0:5e0:963d:6041])
+ (user=gnoack job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:84e:b0:5dc:cfc5:9305
+ with SMTP id 4fb4d7f45d1cf-5e4d6b4ba4amr13090569a12.25.1741031128668; Mon, 03
+ Mar 2025 11:45:28 -0800 (PST)
+Date: Mon,  3 Mar 2025 20:45:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
+Message-ID: <20250303194510.135506-2-gnoack@google.com>
+Subject: [PATCH v3 0/1] landlock: Clarify IPC scoping documentation
+From: "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>
+To: "=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=" <mic@digikod.net>, Tahera Fahimi <fahimitahera@gmail.com>, 
+	Alejandro Colomar <alx@kernel.org>
+Cc: "=?UTF-8?q?G=C3=BCnther=20Noack?=" <gnoack@google.com>, Tanya Agarwal <tanyaagarwal25699@gmail.com>, 
+	linux-security-module@vger.kernel.org, 
+	Daniel Burgener <dburgener@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250302160657.127253-10-cgoettsche@seltendoof.de>
 
-On Sun, Mar 02, 2025 at 05:06:47PM +0100, Christian G=F6ttsche wrote:
-> From: Christian G=F6ttsche <cgzones@googlemail.com>
->=20
-> capable() calls refer to enabled LSMs whether to permit or deny the
-> request.  This is relevant in connection with SELinux, where a
-> capability check results in a policy decision and by default a denial
-> message on insufficient permission is issued.
-> It can lead to three undesired cases:
->   1. A denial message is generated, even in case the operation was an
->      unprivileged one and thus the syscall succeeded, creating noise.
->   2. To avoid the noise from 1. the policy writer adds a rule to ignore
->      those denial messages, hiding future syscalls, where the task
->      performs an actual privileged operation, leading to hidden limited
->      functionality of that task.
->   3. To avoid the noise from 1. the policy writer adds a rule to permit
->      the task the requested capability, while it does not need it,
->      violating the principle of least privilege.
->=20
-> Signed-off-by: Christian G=F6ttsche <cgzones@googlemail.com>
-> Reviewed-by: Serge Hallyn <serge@hallyn.com>
-> ---
->  drivers/infiniband/hw/mlx5/devx.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
+Hello!
 
-Thanks, applied.
-https://web.git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git/commit/?h=
-=3Dwip/leon-for-next&id=3D3745242ad1e1c07d5990b33764529eb13565db44
+Thank you for your feedback, here is the third version.
+
+Changes in V3:
+
+* Various man page improvements suggested by Alejandro Colomar
+
+* Squashed man page commits 2/3 and 3/3.
+
+* (No changes in the kernel side documentation)
+
+Changes in V2:
+
+* As Micka=C3=ABl already applied the first commit ("Minor typo and grammar=
+ fixes in
+  IPC scoping documentation"), this one is left out here.
+
+* Applied remarks by Daniel Burgener, Alejandro Colomar and Micka=C3=ABl Sa=
+la=C3=BCn
+
+* Replaced reference to send(2) with sendto(2), which is slightly more
+  appropriate in that place.
+
+=E2=80=94G=C3=BCnther
+
+G=C3=BCnther Noack (1):
+  landlock: Clarify IPC scoping documentation
+
+ Documentation/userspace-api/landlock.rst | 45 ++++++++++++------------
+ 1 file changed, 22 insertions(+), 23 deletions(-)
+
