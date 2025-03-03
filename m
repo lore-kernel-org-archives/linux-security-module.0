@@ -1,93 +1,255 @@
-Received: from sonic308-15.consmr.mail.ne1.yahoo.com (sonic308-15.consmr.mail.ne1.yahoo.com [66.163.187.38])
+Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A09214A7F
-	for <linux-security-module@vger.kernel.org>; Mon,  3 Mar 2025 16:24:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.187.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BBA12147F3
+	for <linux-security-module@vger.kernel.org>; Mon,  3 Mar 2025 16:24:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741019050; cv=none; b=d/gWsMN72OTsSFs3vCqXFKr8zA1HSIhjgJqPco3i43h2wcmq4UN3srk2SWzz7aLXx1L7LuatQ1CJQ6PIXArsrnn56b6RRuvDR31O+Cait2jpxTwYzRmY5FW1w75WQDYeKymFCBCt6srxh3R5TcETehJeXzzh47wTyuA2Aq5glKg=
+	t=1741019091; cv=none; b=sFFQOnTKDkIs4dvTYNVpGQlLkVpHfiE0cLRyy2peqXt++sbe6FSGfBT0TCCHcA0RIr7oALOe4yI0f+UGVoBwAf+b/n5Kpw099i+mJ8eBi4unGyoE7knM9fvkFR6OaFyRG2zZU3fasdlsxl4yDl8RYu7+FQTK5phVjZVL29pKLl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741019050; c=relaxed/simple;
-	bh=DjZoDpQx+3a56jQoaSWpqK+uU3hYtW+dmvrFiohaUfY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eUahsdsKZpHALJelidBr0IGhkBHzfPdUbQa1Sgnan95zejMZl2tzchoHAXofdFUry90SoMkI/PTJjPWo69O7kWBJQrzALzTkU2MivRtK5e/JExTKVi5cFHGJ9mLCjH8i11ZMwYOjv/0RKalMEKyxA68rmB/4eRYbrkmBPnoJ0Fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=Vvhx9974; arc=none smtp.client-ip=66.163.187.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1741019091; c=relaxed/simple;
+	bh=jw7/kQA5OwPx9eHYWIvFPKi7vpT4waOduVJmre7wldo=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=tJF+0oDtRCVazXZNEZ+YMncZEC7ZiLZhvwOeGc54sIKrzpdFLEeZWUgklP0WsFPjyJ1BFQlDliFLT/RnXLRRlVRFlY64tVJlwNkuz5mGd7piN33Ep5SNE+QQT609fVvMe79hvTrnfAXvPPO+24yaCyEx7babTTO6w8+DSLFDT28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=un7Mjq0T; arc=none smtp.client-ip=209.85.208.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="Vvhx9974"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1741019041; bh=cJY6YeZRBbInF6N6qIM/vg6kC/xFjdQ1iSja5yMPKy0=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=Vvhx9974QF3JumuIiR9QJndBMYjnAxJVZL+NKWAZmCqEyJOyq3qNnQzALrQ2LWWzsYSocMCyH52Nv2QUgm13ybvL1SUe0OGmj1OscE/EGrSOk4T5LSGs6ahMZlqG3jzbFwPFKfBU05kGokLITfv641HSghan3S8NOhkHw5yxcMVKx5u1htOqdR+9sPovHsPbu4QlGgxTNFPoMahFIi/J/CBPDT3s5zpchgTwOYMVuM3kYq6/g59f2ppj6laA5ufspSJZUbhChdDCmBAo1IjFR076z/hbKCrcDSeK9eW6yhUkzCGW1m6wyiMvpr9AH3AjXcTfgg1HFOGJsx2knT9m8w==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1741019041; bh=AfcOIM6Y3k8ZbpKMLAjVqGuHLJlM2f4H3LeT2LbT1E3=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=g3fIww2ID3RTFPXYtp+31CW2KYP0kVamSdrOW6lCq3PVJD9qvcvQa2M9lmIbDa1f51l6YViwET0W4X9L6Py55/rJ1JKdm1YZ/ZL0GOvVtMwuSxGzXIHpejg4lU0hiJDumwdV5Q6TqwrYg9pOYA6BE9qnn2lwOzeKQZQUpLLGTWKXWdzN09FOAQ7JzmsBDcZfNprvuw1PlXVoWCXCRHXn2mnGZlejNcfJ3YfvCAc2POsZdVyO/2AHX9v6OPsqHLkIsIGDwWbsosMS+Nk2WC6Kg3+fko8oxnp1Pj6HhBXXTXC+9L1xvG1fK+dRW7XEqC7V/UJTMIytQ7cuBS8DiLEK3A==
-X-YMail-OSG: hGfBxGkVM1k4VM0yrKEmEVt3LQ9LqCRqp7OhDBbmHFk04K5GtBGUGC8Us.ucgg2
- 5cwwzwU5VEhZHbKF_.Ro3BSD4kGPvCo0JHgeho24aWBU3UOgW.EOY7n3BWSCB_N124xPGW2dqZrB
- ZeWiLO4eRbM19Q09jY8DKri6m.6qRrpapJfazzr917vvESLpDhKJP20PivHusz.x8lfqragx0G74
- EMoOMYnJwYW6WUBctrV5POyH5oGDZtQGfNCYzy13Tou3LOr.lGy05Px0kzkHGYCQ1fUcili4NOar
- JYvFOORvuzNPTvY_ao6zANrL0eBFBEpR8IxLDgOK0gmiPoYHTK62EHykb_A_nXpZcQ9ub2bpVwz0
- p3VBDQGZ68sP3NGaVzOG8x1ndh2mDgUEofUoBw7e.RG0cN4j38mNPgQYhAxKemJ8U_InjN3X9iAH
- d0KqhEIs.1cjAN4HRqbo5x5nr.k51ASZhwOOBHJBYCZ.bvUE0wL7fkMQKvu0umK445WtMEY6cJ68
- f5ltyjtOweOgiY.EfsjJdvFDuZXKtz9TiYhWPdjHP.4KF_AgRk2T8bsN.LFyvH.cnM6H_dl2towM
- _gYODXTC.ZshOkGRJpDjB4wQwkBcKLH2PqLKQ_Lh_L94S0rtGeuvMGrh1nbSzLQ3Bu65SwYZ4xm0
- bNxSXnlcvOoJ2iWGL1PXlr.Un9d2fUSc2J8VXDSXOweJbSAXxTm5jTFdp4yD_EQByVDjxyUFEimt
- UmAWXxRggbwFb8W0m.P2Nem7u8uaO5lA4E2wzGFliRsJRNQilLIDG3edHYZ.tlNnOsxzEGNSV6kr
- Nbg9l9E00SRt.JRjXRoJJ7bLD_NVVg.R3_xocnxdWj7GFo34PtlmRSOlG9D1vNWdswrIYuSNnoYq
- ZCfH5KRlARcHnuLkpZe2rxKSZ1J7Q8ztwlF0vB4pj7.xrtmc3Ta5mYEQ.GjDB4Qfn2fZXSl19Nt.
- q6p_0mCVNr2xRWeuCVkpCFHRvDvS4o3s1Ah0PxczHRkuIvakw4DtJvLFReMziZ9jPS8ko495D69u
- EiNCIDzK6pAkLtcZDdG7l8XQZqqh3I3929BAgbURPanM2IgsLsa.dmO0wt.lwiUfZnQIx6SCvs6b
- j0SdYixw7TPXgH4npXnn3Foh..1Zzlr4i1zCChGHT3h_56Tf7G1uQWM130c1epng7Hx6uPrsHEJ7
- kWMzNt1Baie1zCPOpP6osSoE2xcDS67mOo_It6VK07AMWc0fV490Y6itNSUt4qx.tSRpjQi.NLsI
- NGdgQWg8sQt0cW8dl7YLMlFTravJdBOrNCN_b_yikR8dQ6mg7Z_p08hw7SeLwakJHv.wfQ.j5x_3
- AIJkWxsX7gFilpMbfumU.CDSQhtdR4pkJlF51kg17mN_Z3yUay91LUDcDut0Qtyrkq.G3RAtbuyW
- 9nYQW5PTmSf6WT0jiLxBgIsvJ7gn5nHSFgXzYcRICI6BA0yAYK4DiWcwB0dI3vfDsQ.hw.8sUiRM
- NuvkOJaoqEnrFYbv.nbGy1FkRtVAC_0PmnEfwkWIlFNcwGPV94sqn29nHezDz.W7c6GIr3Hin_zd
- RlT0buInQTV20H0dcWP3C736hlKZ.y5YeBr2aY0QDbH_9ztgGB3skCeB80IoJEUrAkDGEHOKC8ov
- 1wA8Zjv7eutuV_jcaMs8RxbOS2Lwy2fAOANVismDg8pcP8eA5heTHDIAnxAJhIJsUeoOW9fnatdU
- SUQPlKFXmyzjoES4UWfoJfgFg14ei6HePM4MB617NAkKwl6.fPSiCUYZEbI.TCs1nvZopD5OkFUj
- Kz1LJCQfdaPoVmVk70w_OCIE8SUf71HHfT26sUYkgln8pXPLb3QNMahpGmReek.KH3Ko68SZG5wC
- TbXkkk5Gd7cbTUFg8qI8qRrwxTaCsKA5HSSf6V_AM_tty7Gjy4lnfjgEKb886TgjTIAt3UdDInK0
- Jd6TQjS0MZfd12ERsjHyG_ohKy9SXviGFVq46UVh2U9TBAS0sdG5fGjzc_b1wZKG.vaU96E4K8OM
- GA7bqedlWr4_lHQr3QZjQRnZ8mfK.Gp7qEgHabNVHteBSuaZX.dwm_HELMs_813Nsr8Q7I.0Ztbj
- PQBHrY0afwHPkucEqIHgw0KLQqfO8k0KdGB.gdgFxEcD4vQn9uVAvd9xsMMxOZ_p_VHinCH7yzPK
- 36qacrZ0cyrzSxNGdL.2CgZpaC3cDsmyb38PY.w36moUEIFsPReQ9r.yK5SEKZMBMFwW5d9T.5dB
- ATSmfG5eZ1_.GN85zrQj4PbWh1BvR4Ahm4qzLkMbY0m6GGGTEEpyRh5x55SgPwpFPir_LB6Nj15o
- j8iko49k.62o-
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: eca0b006-803d-4192-acf3-db026be07d72
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Mon, 3 Mar 2025 16:24:01 +0000
-Received: by hermes--production-gq1-75cc957d6c-8gmwz (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID eed0aee7db19a514a6f254863dec36ba;
-          Mon, 03 Mar 2025 16:23:59 +0000 (UTC)
-Message-ID: <cbe48864-6f24-4992-b84a-027473f34617@schaufler-ca.com>
-Date: Mon, 3 Mar 2025 08:23:58 -0800
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="un7Mjq0T"
+Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-5e54bade36dso1375615a12.2
+        for <linux-security-module@vger.kernel.org>; Mon, 03 Mar 2025 08:24:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741019087; x=1741623887; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UEqWLXEew5uRYbyxTZYQ6MgCQaS4BNkNIeAHqm8Uq1k=;
+        b=un7Mjq0T4YAxxYp6VLTHQRRpsub6dg2oZhCSpJ+vlRj+FcZ+D/vq2SI+1NwaR2IeWR
+         w+KOhB/khdmpwZSdiULQuDtx4QyilZg4cLeMYumjfa/R5BKKqj+8hHs7Qgwrsvp01EM9
+         reYpUbQnQpDt2nH2hNCxKl2Wp4wrFRo0Asr07OkrAycZZguRb61LejW++YrkZ+/V0y08
+         10EOClbPY1IYVxFUn3g+EHWJ+QsOg9h9g+UdDEm5vIK8RD41kEqqIQv1TTqpaKKD0cfE
+         rQr6ASceXXHdjlHz4UzhJboLupUEc8EWrlmxAIfG+Jqll0NdQXQfHnUCFtn/mngmO0CO
+         hkDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741019087; x=1741623887;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=UEqWLXEew5uRYbyxTZYQ6MgCQaS4BNkNIeAHqm8Uq1k=;
+        b=kVcm5YZJbF/vhGuNx0vQ4KrBspnAlV/kCcDJvT45+AuvkKKNfNKzYv7yhCcwxuniQh
+         eTTuPe+u4IXJs0kOm7ZW4ORHqV/7H0mmufh3OLzVUCES/EJ+07HABfp8MNTa0mxDAssp
+         BQkWR77gDK/DYk+cIvNbOXq5DGRHYAVS5EbWdGDkFiujuY7H2/IaU3p7zuFNtyQp5PZj
+         fOz4GQXzXGqRU6FT4xGh3M1BVlABZr17mLNBan7XJBoRZgoOdYpT2bnfVRo/10u3c+hO
+         xKQ3JKr26Ov7hZgwftGijASK5HW0OKbgEnLX0+l5c2mzNQnJptALDVmVNwPt2yURFnP/
+         USgw==
+X-Forwarded-Encrypted: i=1; AJvYcCXHJIIztoWcTIcbEEXP3/h432QJnAYll02Bvxk+xcYoBAbBve3ShBSEzhlUZC1AHaEx3b/NL8oqCOpS+4RFHcHYqaz2o4Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/Op44r/3YxNpr3jjTRHTuOrNaEaVVcBJdvHYBcG2KIbnTE+op
+	Tn2kKuTOhDDnlDooobLEYIxSSTo0iisXnzhv0Hs0agdoKS64PH/oW8LRBtNX1p3mt6KaxaDQjLc
+	dSg==
+X-Google-Smtp-Source: AGHT+IHPGxhI2JuHu2Pq9WNx5PLNPYFHLH06yAjoBMoN79g3tVeuwj4rZpgaYAG2cK0qXBWovekAZvCizRA=
+X-Received: from edbef3.prod.google.com ([2002:a05:6402:28c3:b0:5e4:cfa6:790c])
+ (user=gnoack job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:42c2:b0:5de:dd31:1fad
+ with SMTP id 4fb4d7f45d1cf-5e4d6ad45e8mr14731923a12.6.1741019087095; Mon, 03
+ Mar 2025 08:24:47 -0800 (PST)
+Date: Mon, 3 Mar 2025 17:24:45 +0100
+In-Reply-To: <sbib2esl6bev7tqww3rgyykpxorpyaix7dujwwm2pg42egg6an@rdyjnecj5vti>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/14] Add TSEM specific documentation.
-To: "Dr. Greg" <greg@enjellic.com>
-Cc: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org, jmorris@namei.org,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20240826103728.3378-3-greg@enjellic.com>
- <8642afa96650e02f50709aa3361b62c4@paul-moore.com>
- <20250117044731.GA31221@wind.enjellic.com>
- <CAHC9VhTphGpnVNPkm0P=Ndk84z3gpkJeg90EAJiJEyareLUVTA@mail.gmail.com>
- <20250225120114.GA13368@wind.enjellic.com>
- <2b09859e-e16b-4b58-987c-356d3fffa4fe@schaufler-ca.com>
- <20250227121207.GA15116@wind.enjellic.com>
- <b60f2453-9c7a-4e69-9520-8088c09f4070@schaufler-ca.com>
- <20250303101435.GA21445@wind.enjellic.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20250303101435.GA21445@wind.enjellic.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.23369 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Mime-Version: 1.0
+References: <20250226211814.31420-2-gnoack@google.com> <20250226212911.34502-3-gnoack@google.com>
+ <sbib2esl6bev7tqww3rgyykpxorpyaix7dujwwm2pg42egg6an@rdyjnecj5vti>
+Message-ID: <Z8XXzUggsHkRLEqG@google.com>
+Subject: Re: [PATCH v2 2/3] landlock.7: Move over documentation for ABI
+ version 6
+From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
+To: Alejandro Colomar <alx@kernel.org>
+Cc: "=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>, Tahera Fahimi <fahimitahera@gmail.com>, 
+	Tanya Agarwal <tanyaagarwal25699@gmail.com>, linux-security-module@vger.kernel.org, 
+	linux-man@vger.kernel.org, Daniel Burgener <dburgener@linux.microsoft.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 3/3/2025 2:14 AM, Dr. Greg wrote:
->  Flailing at the Travails of Cybersecurity
->               https://github.com/Quixote-Project
+Hello Alejandro!
 
-I give up.
+For context, in this patch set, we have three commits:
 
+  * 1/3 and 2/3 copy documentation from the kernel side unmodified.
+  * 3/3 revises a section about Landlock's "scoped" restriction features.
+
+I thought it would be easier to discuss with the "copy" and "rewrite" parts
+separate, but actually, as you also noticed, 3/3 does rewrite large chunks =
+of
+the 2/3 commit along the way, and it is probably not worth correcting much =
+of
+that wording any more.
+
+Would you prefer if I squashed commits 2/3 and 3/3 into one?
+
+On Fri, Feb 28, 2025 at 10:23:47PM +0100, Alejandro Colomar wrote:
+> On Wed, Feb 26, 2025 at 10:29:11PM +0100, G=C3=BCnther Noack wrote:
+> > With this ABI version, Landlock can restrict outgoing interactions with
+> > higher-privileged Landlock domains through Abstract Unix Domain sockets=
+ and
+> > signals.
+> >=20
+> > Signed-off-by: G=C3=BCnther Noack <gnoack@google.com>
+> > ---
+> >  man/man7/landlock.7 | 69 ++++++++++++++++++++++++++++++++++++++++++++-
+> >  1 file changed, 68 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/man/man7/landlock.7 b/man/man7/landlock.7
+> > index 11f76b072..30dbac73d 100644
+> > --- a/man/man7/landlock.7
+> > +++ b/man/man7/landlock.7
+> > @@ -248,7 +248,8 @@ This access right is available since the fifth vers=
+ion of the Landlock ABI.
+> >  .SS Network flags
+> >  These flags enable to restrict a sandboxed process
+> >  to a set of network actions.
+> > -This is supported since the Landlock ABI version 4.
+> > +.P
+> > +This is supported since Landlock ABI version 4.
+> >  .P
+> >  The following access rights apply to TCP port numbers:
+> >  .TP
+> > @@ -258,6 +259,24 @@ Bind a TCP socket to a local port.
+> >  .B LANDLOCK_ACCESS_NET_CONNECT_TCP
+> >  Connect an active TCP socket to a remote port.
+> >  .\"
+> > +.SS Scope flags
+> > +These flags enable to isolate a sandboxed process from a set of IPC ac=
+tions.
+>=20
+> s/to isolate/isolating/
+>=20
+> AFAIU, to be able to use an infinitive with enable/allow you need a
+> direct object in the sentence.  If there's no direct object, you need a
+> gerund.
+
+Thanks, this is useful.  Changed it to infinitive for now.
+
+FWIW, the same phrases exist on the kernel side as well, unfortunately.
+
+> > +Setting a flag for a ruleset will isolate the Landlock domain
+> > +to forbid connections to resources outside the domain.
+> > +.P
+> > +This is supported since Landlock ABI version 6.
+>=20
+> I'm wondering if we should have this as a parenthetical next to the
+> title, like we usually do with "(since Linux X.Y)".  Don't do it for
+> now, but please consider it for when you have some time.  I'm not saying
+> you should do it though, just that you consider it, and tell me if you
+> agree or not.
+
+I added it to my notes for further revisions,
+I think this would indeed be more appropriate in the man pages.
+
+Is it possible to set the paranthetical without bold as well,
+even in a .SS subsection header?
+
+
+> > +.P
+> > +The following scopes exist:
+> > +.TP
+> > +.B LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET
+> > +Restrict a sandboxed process from connecting to an abstract UNIX socke=
+t
+> > +created by a process outside the related Landlock domain
+> > +(e.g., a parent domain or a non-sandboxed process).
+> > +.TP
+> > +.B LANDLOCK_SCOPE_SIGNAL
+> > +Restrict a sandboxed process from sending a signal
+> > +to another process outside the domain.
+> > +.\"
+> >  .SS Layers of file path access rights
+> >  Each time a thread enforces a ruleset on itself,
+> >  it updates its Landlock domain with a new layer of policy.
+> > @@ -334,6 +353,51 @@ and related syscalls on a target process,
+> >  a sandboxed process should have a subset of the target process rules,
+> >  which means the tracee must be in a sub-domain of the tracer.
+> >  .\"
+> > +.SS IPC scoping
+> > +Similar to the implicit
+> > +.BR "Ptrace restrictions" ,
+> > +we may want to further restrict interactions between sandboxes.
+> > +Each Landlock domain can be explicitly scoped for a set of actions
+> > +by specifying it on a ruleset.
+> > +For example, if a sandboxed process should not be able to
+> > +.BR connect (2)
+> > +to a non-sandboxed process through abstract
+> > +.BR unix (7)
+> > +sockets,
+> > +we can specify such a restriction with
+> > +.BR LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET .
+> > +Moreover, if a sandboxed process should not be able
+> > +to send a signal to a non-sandboxed process,
+> > +we can specify this restriction with
+> > +.BR LANDLOCK_SCOPE_SIGNAL .
+> > +.P
+> > +A sandboxed process can connect to a non-sandboxed process
+> > +when its domain is not scoped.
+>=20
+> Does "its" refer to the sandboxed one or to the non-snadboxed one?
+
+It refers to the sandboxed process.
+
+This correction would be overwritten in the following commit.
+I don't think it's worth fixing any more.
+
+> > +If a process's domain is scoped,
+> > +it can only connect to sockets created by processes in the same scope.
+> > +Moreover,
+> > +If a process is scoped to send signal
+>=20
+> Is this a typo?  s/signal/&s/
+
+It is a typo, copied from kernel documentation.  Oops.
+
+This correction is overwritten in the following commit.
+
+
+> > to a non-scoped process,
+>=20
+> Should we use plural here?
+
+This correction is overwritten in the following commit.
+
+> > +it can only send signals to processes in the same scope.
+> > +.P
+> > +A connected datagram socket behaves like a stream socket
+> > +when its domain is scoped,
+> > +meaning if the domain is scoped after the socket is connected,
+> > +it can still
+> > +.BR send (2)
+> > +data just like a stream socket.
+> > +However, in the same scenario,
+> > +a non-connected datagram socket cannot send data (with
+> > +.BR sendto (2))
+> > +outside its scope.
+> > +.P
+> > +A process with a scoped domain can inherit a socket
+> > +created by a non-scoped process.
+> > +The process cannot connect to this socket since it has a scoped domain=
+.
+> > +.P
+> > +IPC scoping does not support exceptions, so if a domain is scoped,
+>=20
+> Please break after the first ',' too.
+
+Done.
+
+
+> > +no rules can be added to allow access to resources or processes
+>=20
+> Please break after the second 'to'.
+
+Done.
+
+
+> > +outside of the scope.
+
+Thanks for the review,
+=E2=80=94G=C3=BCnther
