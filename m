@@ -1,355 +1,343 @@
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55F5C192B84;
-	Sun,  2 Mar 2025 18:36:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+Received: from wind.enjellic.com (wind.enjellic.com [76.10.64.91])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D27781EE017;
+	Mon,  3 Mar 2025 10:15:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=76.10.64.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1740940570; cv=none; b=tF26zfjt2M61uJtKNIHeIreOfuyfh93sGXoSw4CvTpmdW+iwYy2z1xz3e736A0EmWDEf+MdGM0HkuqKxmHrvjnjlk5buB5HU3AkTW+L02Ws3vhQdeEbo5fXHEKykHVX6h6O+XwevzbadKmHv6xTN7XVxcZAlXu47M3qidouYFCY=
+	t=1740996909; cv=none; b=MWY8jo8By8LhzYDLxTMV7/rITEoOQm7jPHVwcFh2b8gCZynih0PdTmysXWEpzueTNbAUGnUNHy0c4qrY8i1N46Q4ThRY08uUeSZthClJUa2kG5inLhLn6MZaYbkzM4BcELbSYRqYAiLj9076+AQmwihi4Gv+EAhFEvHFce2qdvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1740940570; c=relaxed/simple;
-	bh=ZbM4vpB908yU5sbm23oOuSYF8bAoGUH22z66+pCWk8M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CbvjCdFyQmHicYsAoQTHChlSh4k3IdpCmJNgNT5HuG1rWgUnsx1BIVjn1d8IU7BL1/Z0VcQ9KkQzQmI1t9xWn1uwq0OcwxBqtSkq/bq2pzVF9kR7WG4YUm+BzX8dzJnlfKFSMViz4aKgcvce7Kk74Z7beQSHJKxGA0CzC5CJnH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=PvBIRL06; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="PvBIRL06"
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6fd65f1d262so6630587b3.0;
-        Sun, 02 Mar 2025 10:36:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1740940566; x=1741545366; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w78AW+JcdaAE6GRO3Ac/koXaEdMi8GHrKoemWbN/WZQ=;
-        b=PvBIRL06NYocuTDvWiM4gqxkIjyhhM9MifKVa0tjwF40SQT2SVvr3fo+JjLpkCI91l
-         y3Eu5yH15jdzTl7BdTZtjQiA+BKDNM5Vnv83NCBgjMbnunga6jhERX5ZX8gJon2qOfIN
-         4ckdVglSOcXbhTw3aqxgyMivkJyn5KiM7J5mnUmyWl2PJN2USsddzT+5528Iu/CT1TGi
-         3M2HI7nxYkHuSks14em9OQr8dIed/oQ/T7mnLOPPOTolIiVC+qo+fTqYN6BV7bBEAUV9
-         BACRFSAeZa/XIO4tWVDDtAcfobZ6QNGnOsHG/jjOo3WpAruAE5nmeIFes/VbX2ZeELGQ
-         qnXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1740940566; x=1741545366;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=w78AW+JcdaAE6GRO3Ac/koXaEdMi8GHrKoemWbN/WZQ=;
-        b=vOxcw2pyujZF7r3ujkD/x/dOzB4ODRSpbTH4PDca/Vc6rStJVbPlXJ7kHeYuTuUlfk
-         2HWgodL9x4qxpzmg+E5rpH1u7BHkv7+DXY6JjsX41u4iij0ABlWEkWFsPKNsDSBh/wMN
-         F1i2TvswaRgdGoiWLKsn6KviEv/I/LCMbX8emNdzcPvvalg4WZoUZqcgNjqiILP40/18
-         sWVPd0fkU3jm95pEcQcs0znYypSiCASQo680NZWPRTI2zGJl7gBCnobjNNHRrMBJdE9g
-         LqS0DFwfFVKRW7u5siJyOgD7jXpbn0okz4Rmcv9jg3KXQyozyjkEA96mxJOB06E0hnn8
-         z9FQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUnFCDRPTOEnL0HOprvVRc3calWLPZPX6OIjCkFfo7TeqptA8EWNLza70zleuy0WBLXuusRYokLflEyIQI=@vger.kernel.org, AJvYcCXVvaSgGP2scyVbJSrd6auDQJ+KJwYxaHFjuVs9CtwzMzrz2LPSkkymVtUGlqOmieXasswu6uKjO+HAyLUldvyzCEk64IMU@vger.kernel.org
-X-Gm-Message-State: AOJu0YxL9mLCVMnCEABKPsnsr+7j1sEKBRjAE3m9xSH89leZDcaVqPp6
-	ZSsyNjhtoF6WFQzfHTwmsSUbrrGo0wCvQ2WtN0aAlnyGuZd5tEJLHWoZcgXtl3S2YihJfRq+GX0
-	HEzIk3qHBFLEWDLhTFsYEB0pUA1s=
-X-Gm-Gg: ASbGncvH9liUBdHsyc5bevkqrr0rgJFRej9FpwnNTQ639ClP3Yj8ahHDFH/IO0b9HYi
-	J1giaGa9QK9T1fkKtwGEJJnLYw1EwsQuHBNEcYNywxtOqsO4hvQrEPzBuolTpFMLB1+8hU/Fj+F
-	OxprnC9sL7NCNVm0WNyCQxrW5F
-X-Google-Smtp-Source: AGHT+IFEDFRSLDqxeBHjrQywmijhQmz1FQW1pOjODzRPNakiH9IUDfoup1MSTpVVFPDPENluYnSs00bxRiHrQPHXl9k=
-X-Received: by 2002:a05:690c:3686:b0:6ef:57ad:9d6e with SMTP id
- 00721157ae682-6fd4a0f7944mr148229247b3.15.1740940566042; Sun, 02 Mar 2025
- 10:36:06 -0800 (PST)
+	s=arc-20240116; t=1740996909; c=relaxed/simple;
+	bh=hmx9uRMd6eYBAZLyd2siW8PPU8dUwCzthn0EugXi2Ok=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Mime-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R0y4rk/OFx/aphRUkh0WSd4xd2swPv5HF8Lc5jnhMkG+jBYmnqjOEvXgik9erH37h7BQ2F8Z3OSx/7IdPEhyL4+lrEJZ2O0QdPiRodLyhM+WeMBwhC4zktMu+uXorArzna2kCBferVYy7L6SWGEf5R15X+y0UcfMPqfAkKliF6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com; spf=pass smtp.mailfrom=wind.enjellic.com; arc=none smtp.client-ip=76.10.64.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=enjellic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wind.enjellic.com
+Received: from wind.enjellic.com (localhost [127.0.0.1])
+	by wind.enjellic.com (8.15.2/8.15.2) with ESMTP id 523AEfSb021531;
+	Mon, 3 Mar 2025 04:14:41 -0600
+Received: (from greg@localhost)
+	by wind.enjellic.com (8.15.2/8.15.2/Submit) id 523AEZix021529;
+	Mon, 3 Mar 2025 04:14:35 -0600
+Date: Mon, 3 Mar 2025 04:14:35 -0600
+From: "Dr. Greg" <greg@enjellic.com>
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jmorris@namei.org
+Subject: Re: [PATCH v4 2/14] Add TSEM specific documentation.
+Message-ID: <20250303101435.GA21445@wind.enjellic.com>
+Reply-To: "Dr. Greg" <greg@enjellic.com>
+References: <20240826103728.3378-3-greg@enjellic.com> <8642afa96650e02f50709aa3361b62c4@paul-moore.com> <20250117044731.GA31221@wind.enjellic.com> <CAHC9VhTphGpnVNPkm0P=Ndk84z3gpkJeg90EAJiJEyareLUVTA@mail.gmail.com> <20250225120114.GA13368@wind.enjellic.com> <2b09859e-e16b-4b58-987c-356d3fffa4fe@schaufler-ca.com> <20250227121207.GA15116@wind.enjellic.com> <b60f2453-9c7a-4e69-9520-8088c09f4070@schaufler-ca.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250302160657.127253-1-cgoettsche@seltendoof.de>
- <20250302160657.127253-11-cgoettsche@seltendoof.de> <6f74f18f-ba64-4372-8307-efba97c03bf2@schaufler-ca.com>
-In-Reply-To: <6f74f18f-ba64-4372-8307-efba97c03bf2@schaufler-ca.com>
-From: =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>
-Date: Sun, 2 Mar 2025 19:35:55 +0100
-X-Gm-Features: AQ5f1JpZICwtQ4pPwJ_9PnfHMp-YThZWlCGoAujw1thoqgj05siVdgKD2fL2hJM
-Message-ID: <CAJ2a_DdrhV0pGj1WQ9N201KCY3bp_70zd1eSZ2PD1VOOd6SBrg@mail.gmail.com>
-Subject: Re: [PATCH v2 01/11] coccinelle: Add script to reorder capable() calls
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Serge Hallyn <serge@hallyn.com>, Jan Kara <jack@suse.com>, 
-	Julia Lawall <Julia.Lawall@inria.fr>, Nicolas Palix <nicolas.palix@imag.fr>, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	cocci@inria.fr
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b60f2453-9c7a-4e69-9520-8088c09f4070@schaufler-ca.com>
+User-Agent: Mutt/1.4i
+X-Greylist: Sender passed SPF test, not delayed by milter-greylist-4.2.3 (wind.enjellic.com [127.0.0.1]); Mon, 03 Mar 2025 04:14:41 -0600 (CST)
 
-On Sun, 2 Mar 2025 at 17:53, Casey Schaufler <casey@schaufler-ca.com> wrote=
-:
->
-> On 3/2/2025 8:06 AM, Christian G=C3=B6ttsche wrote:
-> > From: Christian G=C3=B6ttsche <cgzones@googlemail.com>
+On Thu, Feb 27, 2025 at 08:47:43AM -0800, Casey Schaufler wrote:
+
+Good morning, I hope the week is starting well for everyone.
+
+> On 2/27/2025 4:12 AM, Dr. Greg wrote:
+> > On Tue, Feb 25, 2025 at 07:48:31AM -0800, Casey Schaufler wrote:
 > >
-> > capable() calls refer to enabled LSMs whether to permit or deny the
-> > request.  This is relevant in connection with SELinux, where a
-> > capability check results in a policy decision and by default a denial
-> > message on insufficient permission is issued.
-> > It can lead to three undesired cases:
-> >   1. A denial message is generated, even in case the operation was an
-> >      unprivileged one and thus the syscall succeeded, creating noise.
-> >   2. To avoid the noise from 1. the policy writer adds a rule to ignore
-> >      those denial messages, hiding future syscalls, where the task
-> >      performs an actual privileged operation, leading to hidden limited
-> >      functionality of that task.
-> >   3. To avoid the noise from 1. the policy writer adds a rule to permit
-> >      the task the requested capability, while it does not need it,
-> >      violating the principle of least privilege.
->
-> What steps are you taking to ensure that these changes do not
-> negatively impact LSMs other than SELinux? At a glance, I don't
-> see that there is likely to be a problem. I do see a possibility
-> that changes in error returns could break test suites and, more
-> importantly, applications that are careful about using privileged
-> operations.
-
-Checks are only reordered where the current right-hand side is
-side-effect free, e.g. a comparison.
-Whether a branch is taken or not (and thus possible return values)
-should not be affected.
-
-Here is the current output of the script with the false-positives not conve=
-rted:
-
-
-### begin ###
-diff -u -p a/kernel/capability.c b/kernel/capability.c
---- a/kernel/capability.c
-+++ b/kernel/capability.c
-@@ -491,8 +491,8 @@ bool capable_wrt_inode_uidgid(struct mnt
-{
-       struct user_namespace *ns =3D current_user_ns();
-
--       return ns_capable(ns, cap) &&
--              privileged_wrt_inode_uidgid(ns, idmap, inode);
-+       return privileged_wrt_inode_uidgid(ns, idmap, inode) && ns_capable(=
-ns,
-+                                              cap);
-}
-EXPORT_SYMBOL(capable_wrt_inode_uidgid);
-
-diff -u -p a/kernel/pid.c b/kernel/pid.c
---- a/kernel/pid.c
-+++ b/kernel/pid.c
-@@ -662,8 +662,7 @@ static int pid_table_root_permissions(st
-               container_of(head->set, struct pid_namespace, set);
-       int mode =3D table->mode;
-
--       if (ns_capable(pidns->user_ns, CAP_SYS_ADMIN) ||
--           uid_eq(current_euid(), make_kuid(pidns->user_ns, 0)))
-+       if (uid_eq(current_euid(), make_kuid(pidns->user_ns, 0)) ||
-ns_capable(pidns->user_ns, CAP_SYS_ADMIN))
-               mode =3D (mode & S_IRWXU) >> 6;
-       else if (in_egroup_p(make_kgid(pidns->user_ns, 0)))
-               mode =3D (mode & S_IRWXG) >> 3;
-diff -u -p a/kernel/bpf/token.c b/kernel/bpf/token.c
---- a/kernel/bpf/token.c
-+++ b/kernel/bpf/token.c
-@@ -10,7 +10,8 @@
-
-static bool bpf_ns_capable(struct user_namespace *ns, int cap)
-{
--       return ns_capable(ns, cap) || (cap !=3D CAP_SYS_ADMIN &&
-ns_capable(ns, CAP_SYS_ADMIN));
-+       return (cap !=3D CAP_SYS_ADMIN && ns_capable(ns, CAP_SYS_ADMIN))
-|| ns_capable(ns,
-+
-              cap);
-}
-
-bool bpf_token_capable(const struct bpf_token *token, int cap)
-diff -u -p a/debian/linux-headers-6.9.0-rc2+/usr/src/linux-headers-6.9.0-rc=
-2+/include/linux/bpf.h
-b/debian/linux-headers-6.9.0-rc2+/usr/src/linux-headers-6.9.0-rc2+/include/=
-linux/bpf.h
---- a/debian/linux-headers-6.9.0-rc2+/usr/src/linux-headers-6.9.0-rc2+/incl=
-ude/linux/bpf.h
-+++ b/debian/linux-headers-6.9.0-rc2+/usr/src/linux-headers-6.9.0-rc2+/incl=
-ude/linux/bpf.h
-@@ -2715,7 +2715,7 @@ static inline int bpf_obj_get_user(const
-
-static inline bool bpf_token_capable(const struct bpf_token *token, int cap=
-)
-{
--       return capable(cap) || (cap !=3D CAP_SYS_ADMIN && capable(CAP_SYS_A=
-DMIN));
-+       return (cap !=3D CAP_SYS_ADMIN && capable(CAP_SYS_ADMIN)) || capabl=
-e(cap);
-}
-
-static inline void bpf_token_inc(struct bpf_token *token)
-diff -u -p a/drivers/acpi/nfit/core.c b/drivers/acpi/nfit/core.c
---- a/drivers/acpi/nfit/core.c
-+++ b/drivers/acpi/nfit/core.c
-@@ -1285,8 +1285,7 @@ static ssize_t scrub_show(struct device
-               && !test_bit(ARS_CANCEL, &acpi_desc->scrub_flags);
-       rc =3D sysfs_emit(buf, "%d%s", acpi_desc->scrub_count, busy ?
-"+\n" : "\n");
-       /* Allow an admin to poll the busy state at a higher rate */
--       if (busy && capable(CAP_SYS_RAWIO) && !test_and_set_bit(ARS_POLL,
--                               &acpi_desc->scrub_flags)) {
-+       if (busy && !test_and_set_bit(ARS_POLL,
-&acpi_desc->scrub_flags) && capable(CAP_SYS_RAWIO)) {
-               acpi_desc->scrub_tmo =3D 1;
-               mod_delayed_work(nfit_wq, &acpi_desc->dwork, HZ);
-       }
-diff -u -p a/include/linux/bpf.h b/include/linux/bpf.h
---- a/include/linux/bpf.h
-+++ b/include/linux/bpf.h
-@@ -2830,7 +2830,7 @@ static inline int bpf_obj_get_user(const
-
-static inline bool bpf_token_capable(const struct bpf_token *token, int cap=
-)
-{
--       return capable(cap) || (cap !=3D CAP_SYS_ADMIN && capable(CAP_SYS_A=
-DMIN));
-+       return (cap !=3D CAP_SYS_ADMIN && capable(CAP_SYS_ADMIN)) || capabl=
-e(cap);
-}
-
-static inline void bpf_token_inc(struct bpf_token *token)
-diff -u -p a/kernel/user_namespace.c b/kernel/user_namespace.c
---- a/kernel/user_namespace.c
-+++ b/kernel/user_namespace.c
-@@ -1194,8 +1194,7 @@ static bool new_idmap_permitted(const st
-        * (CAP_SETUID or CAP_SETGID) over the parent user namespace.
-        * And the opener of the id file also has the appropriate capability=
-.
-        */
--       if (ns_capable(ns->parent, cap_setid) &&
--           file_ns_capable(file, ns->parent, cap_setid))
-+       if (file_ns_capable(file, ns->parent, cap_setid) &&
-ns_capable(ns->parent, cap_setid))
-               return true;
-
-       return false;
-### end ###
-
->
+> > Good morning, I hope this note finds the week going well for everyone.
 > >
-> > Signed-off-by: Christian G=C3=B6ttsche <cgzones@googlemail.com>
-> > Reviewed-by: Serge Hallyn <serge@hallyn.com>
-> > ---
-> >  MAINTAINERS                                |  1 +
-> >  scripts/coccinelle/api/capable_order.cocci | 98 ++++++++++++++++++++++
-> >  2 files changed, 99 insertions(+)
-> >  create mode 100644 scripts/coccinelle/api/capable_order.cocci
+> >> On 2/25/2025 4:01 AM, Dr. Greg wrote:
+> >>> On Tue, Jan 28, 2025 at 05:23:52PM -0500, Paul Moore wrote:
+> >>>
+> >>> For the record, further documentation of our replies to TSEM technical
+> >>> issues.
+> >>>
+> >>> ...
+> >>>
+> >>> Further, TSEM is formulated on the premise that software teams,
+> >>> as a by product of CI/CD automation and testing, can develop precise
+> >>> descriptions of the security behavior of their workloads.
+
+> >> I've said it before, and I'll say it again. This premise is
+> >> hopelessly naive. If it was workable you'd be able to use SELinux
+> >> and audit2allow to create perfect security, and it would have been
+> >> done 15 years ago.  The whole idea that you can glean what a
+> >> software system is *supposed* to do from what it *does* flies
+> >> completely in the face of basic security principles.
+
+> > You view our work as hopelessly naive because you, and perhaps
+> > others, view it through a 45+ year old lens of classic
+> > subject/object mandatory controls that possess only limited
+> > dimensionality.
+
+> I view your work as hopelessly naive because I've seen the basic idea
+> fail spectacularly so many times. That includes things I have written,
+> such as the Datastate LSM.
+> 
+> ... and don't play the stodgy old fart card on me. I've been working
+> on making the LSM more available to new security models for years.
+
+I'm not playing any cards, I am simply advocating that TSEM needs to
+be viewed through the lens of multi-dimensional numerical modeling, a
+framework that you are uncomfortable with.
+
+To that end.
+
+One of our project advisors, who manages a large containerized
+microservices shop, has been following all of this.  He phoned me and
+questioned if the problem could be that you were viewing TSEM as a
+whole system solution rather than a modeling solution based on
+limited scope modeling.
+
+Just for the record, is it clear that we are working on limited scope
+modeling environments?
+
+With respect to this failing before, could you give us a literature
+citation that we could review that discusses the failure of previous
+systems that were using generative functions to uniquely label each
+security event based on the cryptographic identity of the executable
+code that is generating the event?
+
+To support further discussion, it would be helpful if you could
+document the spectacular failure mode you would anticipate in the
+framework of classical security discussion.
+
+TSEM, like other security architectures, has basically two failure
+modes:
+
+1.) False positives.
+
+2.) False negatives.
+
+3.) Implementation complexity failures.
+
+False negatives are arguably the most dangerous.  Something was
+allowed to occur that should not have been allowed to occur.
+
+When a workload is trained, either a security coefficient for a
+security behavior is generated or it is not.  Thus, when the model is
+enforced, generated coefficients either exist or do not exist in the
+outcome set.
+
+If the coefficient does not exist, there is a chance that this is a
+false positive due to insufficient training coverage.  The correction
+is the same as in other architectures, fold the false positive back
+into the training set.  Until that happens the behavior is constrained
+from occurring.
+
+By definition there are no false negatives, ie. an event that did
+occur but should not have occured, since the only coefficients in the
+training sets are those that are consistent with the training
+behavior.
+
+Implementation complexity focuses on the ability of the technology to
+either be deployed at all, or more importantly, deployed properly due
+to lack of industry skills or infrastructure support.
+
+We would look forward to elaborations on the specific failure modes
+that would occur.
+
+> > We view it through a lens of 10+ years of developing new multi-scale
+> > methods for modeling alpha2-adrenergic receptor antagonists... :-)
+
+> Which is relevant how?
+
+In industry it is referred to as the application of tanslational
+technologies.  The notion that advances beyond current practice in a
+field can achieved by the novel application of methods from other
+technology disciplines.
+
+See my 2017 invited presentation at the NSA's High Confidence Software
+Systems conference.
+
+Also, see the impact of the application of Singular Value
+Decomposition on machine learning and classification.
+
+> > We don't offer this observation just in jest.  If people don't
+> > understand what we mean by this, they should consider the impact that
+> > Singular Value Decomposition methods had when they were brought over
+> > from engineering and applied to machine learning and classification.
 > >
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 8e0736dc2ee0..b1d1c801765b 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -5196,6 +5196,7 @@ F:      include/linux/capability.h
-> >  F:   include/trace/events/capability.h
-> >  F:   include/uapi/linux/capability.h
-> >  F:   kernel/capability.c
-> > +F:   scripts/coccinelle/api/capable_order.cocci
-> >  F:   security/commoncap.c
+> > A quote from John von Neumann, circa 1949, would seem appropriate:
 > >
-> >  CAPELLA MICROSYSTEMS LIGHT SENSOR DRIVER
-> > diff --git a/scripts/coccinelle/api/capable_order.cocci b/scripts/cocci=
-nelle/api/capable_order.cocci
-> > new file mode 100644
-> > index 000000000000..4150d91b0f33
-> > --- /dev/null
-> > +++ b/scripts/coccinelle/api/capable_order.cocci
-> > @@ -0,0 +1,98 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +///
-> > +/// Checks for capable() calls of the left side of a binary expression=
-.
-> > +/// Reordering might avoid needless checks, LSM log messages, and more
-> > +/// restrictive LSM security policies (e.g. SELinux).
-> > +/// Can report false positives if the righthand side contains a nested
-> > +/// capability check or has side effects.
-> > +///
-> > +// Confidence: Moderate
-> > +// Copyright: (C) 2024 Christian G=C3=B6ttsche.
-> > +// Options: --no-includes --include-headers
-> > +// Keywords: capable, ns_capable, sockopt_ns_capable
-> > +//
-> > +
-> > +virtual patch
-> > +virtual context
-> > +virtual org
-> > +virtual report
-> > +
-> > +//----------------------------------------------------------
-> > +//  Pattern to ignore
-> > +//----------------------------------------------------------
-> > +
-> > +@ignore@
-> > +identifier F1 =3D { capable, ns_capable, sockopt_ns_capable };
-> > +identifier F2 =3D { capable, ns_capable, sockopt_ns_capable };
-> > +binary operator op,op1,op2;
-> > +expression E;
-> > +position p;
-> > +@@
-> > +
-> > +(
-> > +F1@p(...) op F2(...)
-> > +|
-> > +E op1 F1@p(...) op2 F2(...)
-> > +)
-> > +
-> > +
-> > +//----------------------------------------------------------
-> > +//  For patch mode
-> > +//----------------------------------------------------------
-> > +
-> > +@ depends on patch@
-> > +identifier F =3D { capable, ns_capable, sockopt_ns_capable };
-> > +binary operator op,op1,op2;
-> > +expression E,E1,E2;
-> > +expression list EL;
-> > +position p !=3D ignore.p;
-> > +@@
-> > +
-> > +(
-> > +-  F@p(EL) op E
-> > ++  E op F(EL)
-> > +|
-> > +-  E1 op1 F@p(EL) op2 E2
-> > ++  E1 op1 E2 op2 F(EL)
-> > +)
-> > +
-> > +
-> > +//----------------------------------------------------------
-> > +//  For context mode
-> > +//----------------------------------------------------------
-> > +
-> > +@r1 depends on !patch exists@
-> > +identifier F =3D { capable, ns_capable, sockopt_ns_capable };
-> > +binary operator op,op1,op2;
-> > +expression E, E1, E2;
-> > +position p !=3D ignore.p;
-> > +@@
-> > +
-> > +(
-> > +*  F@p(...) op E
-> > +|
-> > +*  E1 op1 F@p(...) op2 E2
-> > +)
-> > +
-> > +
-> > +//----------------------------------------------------------
-> > +//  For org mode
-> > +//----------------------------------------------------------
-> > +
-> > +@script:python depends on org@
-> > +p << r1.p;
-> > +@@
-> > +
-> > +cocci.print_main("WARNING opportunity for capable reordering",p)
-> > +
-> > +
-> > +//----------------------------------------------------------
-> > +//  For report mode
-> > +//----------------------------------------------------------
-> > +
-> > +@script:python depends on report@
-> > +p << r1.p;
-> > +@@
-> > +
-> > +msg =3D "WARNING opportunity for capable reordering"
-> > +coccilib.report.print_report(p[0], msg)
+> > "It would appear that we have reached the limits of what is
+> >  possible to achieve with computer technology, although one should be
+> >  careful with such statements, as they tend to sound pretty silly in 5
+> >  years."
+
+> New good ideas can shatter old conceptions. Old bad ideas with a
+> fresh coat of paint and impressive new terminology fail to impress.
+
+Once again, as we noted above, if you could, please forward to the
+list citations that specifically reference failure modes of numerical
+modeling of security events to assist further discussion.
+
+> > If anyone spends time understanding the generative functions that we
+> > are using, particularly the task identity model, they will find that
+> > the coefficients that define the permitted behaviors have far more
+> > specificity, with respect to classifying what a system is *supposed*
+> > to do, than the two, possibly three dimensions of classic
+> > subject/object controls.
+
+> Squirrels are funny rodents. If you model their behavior you will
+> declare that they are herbivores. In California (where many strange
+> and wonderful things happen) squirrels have begun to eat voles, a
+> very carnivorous behavior. If you believe in modeling as a way to
+> identify correct behavior, you have to say that these furry
+> creatures that eat voles are not squirrels.  If, on the other hand,
+> you look at the environment they live in you can see that the loss
+> of native habitat has reduced the available fat calories to the
+> point where survival requires changed behavior. They're still
+> squirrels, and no amount of modeling is going to change that.
+
+Personally, I never thought it would come down to this but here you
+go:
+
+I have a pet squirrel named Rocky that I have owned since it was a pup
+and its mother was killed crossing Douglas County Road 7 in front of
+our house.  He lives in a small kennel in our house.
+
+Every day I take Rocky outside and open the door to his kennel.  Rocky
+runs around the yard twice and then up an oak tree and loads his
+cheeks with acorns.  He comes back to his kennel, eats his acorns and
+falls asleep until the next day.
+
+One night Jay Evil sneaks into the house, abducts Rocky and replaces
+him with his evil squirrel Rabid, who looks exactly like Rocky but
+fell out of a tree on his head when he missed a jump from one branch
+to another and hasn't been right since.
+
+As usual, the next day I take what I think is Rocky out into the front
+yard and open the kennel door.  The faux Rocky runs out into the yard,
+chases down, attacks, kills and begins to eat our German Shepherd
+Max.
+
+Conclusion, this squirrel's behavior is suspicious and should be
+remediated.
+
+TSEM, as a high granularity modeling architecture, would interrupt the
+process when the squirrel began to chase Max.
+
+> > More specifically to the issues you raise.
+> >
+> > Your SeLinux/audit2allow analogy is flawed and isn't a relevant
+> > comparison to what we are implementing.  audit2allow is incapable of
+> > defining a closed set of allowed security behaviors that are
+> > *supposed* to be exhibited by a workload.
+> >
+> > The use of audit2allow only generates what can be considered as
+> > possible permitted exceptions to a security model, after the model has
+> > failed and hopefully before people have simply turned off the
+> > infrastructure in frustration because they needed a working system.
+
+> It's a poor workman who blames his tools. Why haven't audit and
+> audit2allow been enhanced to provide the information necessary to
+> create your analysis?  I suggest that it's because the value has
+> been recognized as unimportant.
+
+You suggest or you have proof?
+
+Once again, audit2allow is a tool for folding false positives back
+into a security model.  Mathematically, it is designed to provide the
+row and column definition of a false positive security violation in an
+access vector matrix.
+
+TSEM creates a high precision bounded training set of known good
+security behaviors from a high dimensionality basis set.  This
+training set is used to constrain subsequent executions of the
+workload on which it was trained.
+
+audit2allow was a tool that was implemented to compensate for
+complexity induced limitations of SeLinux.
+
+TSEM is designed to eliminate the need for such a tool.
+
+> > Unit testing of a workload under TSEM produces a closed set of
+> > high resolution permitted behaviors generated by the normal
+> > functioning of that workload, in other words all of the security
+> > behaviors that are exibited when the workload is doing what it is
+> > *supposed* to do.  TSEM operates under default deny criteria, so
+> > if workload testing is insufficient in coverage, any unexpressed
+> > behaviors will be denied, thus blocking or alerting on any
+> > undesired security behaviors.
+
+> And how is that different from running SELinux in permissive mode?
+
+SeLinux in permissive mode operates after the fact to correct a model
+that was incorrect in its design.
+
+TSEM is designed to produce a high precision definition of what a
+workload should do.  High precision definitions are less prone to
+false positives that have historically proven to be the reason that
+security controls are disabled and thus rendered ineffective, despite
+their technical superiority.
+
+> > I believe our team is unique in these conversations in being the only
+> > group that has ever compiled a kernel with TSEM enabled and actually
+> > spent time running and testing its performance with the trust
+> > orchestrators and modeling tools we provide.  That includes unit
+> > testing of workloads and then running the models developed from those
+> > tests against kernels and application stacks with documented
+> > vulnerabilities.  To determine whether the models can detect
+> > deviations generated by an exploit of those vulnerabilities, from what
+> > the workload is *supposed* to be doing.
+> >
+> > If anyone is interested in building and testing TSEM and can
+> > demonstrate that security behaviors, undesired from its training set,
+> > can escape detection we would certainly embrace an example so we can
+> > review why it is occurring and integrate it into our testing and
+> > development framework.
+
+> Sigh. You keep coming back to a train of logic that is based on a
+> flawed assumption. If you accept that observed behavior describes
+> intended behavior the arguments that follow may be convincing. I,
+> for one, do not accept that assumption.
+
+As I noted above, you operate from a mindset of classic subject/object
+mandatory access controls rather than from the notion of numerically
+modeled security behavior.
+
+Future students of technology will note that Linux moved through three
+phases of security architecture development:
+
+Subject/object based mandatory access controls.
+
+Pathname based controls.
+
+Model based controls.
+
+TSEM is the the first major implementation of the latter type of
+control for the Linux kernel.  We accept resistance to the appearance
+of these types of controls, the same thing happened with pathname
+based controls.  The resistance doesn't mean the technology is
+invalid.
+
+The technology industry is moving towards model based security
+controls, for a variety of reasons, too numerous to be litigated in
+this context, so lets consider just one.
+
+Without question, SeLinux is world class security technology.
+However, by virtue statements of individuals like Kyle Moffett, it is
+designed, by experts, to be implemented, by experts.  That model is
+inconsistent with the world we find ourselves in, both from a
+personnel and a technology context.
+
+Companies that can run well tuned SeLinux implementations, for free,
+turn it off and instead install security solutions, based on behavior
+observation and modeling, that they have to pay significant amounts of
+money for.
+
+TSEM is designed to provide better and more trouble free access to the
+data needed to drive model based workload controls.  Nothing we do
+constrains the ability of anyone to implement an alternate security
+model of their choosing.
+
+Have a good week.
+
+As always,
+Dr. Greg
+
+The Quixote Project - Flailing at the Travails of Cybersecurity
+              https://github.com/Quixote-Project
