@@ -1,162 +1,147 @@
-Received: from mail-ed1-f74.google.com (mail-ed1-f74.google.com [209.85.208.74])
+Received: from sonic303-27.consmr.mail.ne1.yahoo.com (sonic303-27.consmr.mail.ne1.yahoo.com [66.163.188.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 111E7216E35
-	for <linux-security-module@vger.kernel.org>; Mon,  3 Mar 2025 16:36:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C07214A60
+	for <linux-security-module@vger.kernel.org>; Mon,  3 Mar 2025 17:17:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.188.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741019771; cv=none; b=uVAI6n6ZcaOuXyvtaE3amZcNppURmaEzcftfIPpNisKloKmflQtraId2WjEsR7406DZkPzlIE2HkktC4r6NOy1v7vwU4UVpsZtQFJIFXsOVwDPy0JRoyezdPkHmnEHd3pUqd3UzuE1PphTQsJrsCU/HZ8yBsR1SwJh/6mdemNyo=
+	t=1741022243; cv=none; b=GVxwVSWkjiKK4DkqmwuwGs03zeU8HfHrGTvk6lyBXnDxLX84Z1kwEHujN01bPxwKj54bUQal5lCbHV4pvJHLNpNeSHJt7QrrP8d/qTrSIlumtNGl4ob1paD6tqZ072AKxJSq8BZacJbb89mLLvJf9UiYQXDhOQkLU0sAFtoLax8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741019771; c=relaxed/simple;
-	bh=m+qsWvQy9VZamjyvInBUX9ED2KtrFD9XRYoLl8drxLI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=cVQWkGqL4B8qC38JEKWyiUhZmbSbDsqQlTjNaG7X8ZDsrr2Jjnzr0yS39nQgc8AuHecpBzTRQQzbv0rjfmrVJXSc9xKS2xm9S/z/rBwx28ZrP7tUT7ALFbyr0cMDY/T4RGCCEPBcpQ7E7xIbRKqzNwzUSJzB10Nq2Hfd5Jdp5Gs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eUD44ypi; arc=none smtp.client-ip=209.85.208.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
+	s=arc-20240116; t=1741022243; c=relaxed/simple;
+	bh=BXgA2nIW2AynOPt2N6uqtvm+0vS9wlyZmMeLPDYpVfA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h738FCqpIzLY+jvlSCzGHlze7hwvdTVPxHF8LNR4UKo79dKe/hg0GL8qzTn0O8tC/9V6ULGRx7obXLHNwIwouCfxkg52Rh+mrhiutA2VZZ3WiSnI9Np3l7WpGuvMnjKygvzQ9H20DUb+qKV9Kayl71v3rwuc1AALggB0xKnabq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=PVw+qTBL; arc=none smtp.client-ip=66.163.188.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eUD44ypi"
-Received: by mail-ed1-f74.google.com with SMTP id 4fb4d7f45d1cf-5e4c5225b64so4470011a12.2
-        for <linux-security-module@vger.kernel.org>; Mon, 03 Mar 2025 08:36:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741019768; x=1741624568; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Has9DObrFmLTHERGHEyoYUF/Q6CoEY7KVpqCmEV/OQY=;
-        b=eUD44ypizZD+BoBvI6J8e/dJBNzVd0zGeTAZVm9fEzqrV2dSDLUjlEplcttHwpSJEz
-         2FVc2x2L2DYM+7cfV9ni/NSxtFOR0WM6nU11PvJHF5/ylRLaAM9sZ/AhwmH+rOWcli7B
-         oQr1LgGPQT47edmEkJdQL+UiNKRNMH7gsRVB5aDgwzWagJGm3hgWsZ1rXvhEOEdpYy8e
-         8C1qON726Ogs3hSOw+aYShmJMxHkSZ3/SFeTTUkq65b9kz1ygZrHu12XC3wTfV9xkczZ
-         tfCOdPh02J2bJf+HdkQNdtMuj+57L2uZlTZE9oy5JJug62NiUROECpQfM5zsPlNu4QLx
-         Rj9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741019768; x=1741624568;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Has9DObrFmLTHERGHEyoYUF/Q6CoEY7KVpqCmEV/OQY=;
-        b=o56d+c/kpYRZVgaul23U/4J5AGFl2jxKmAMk92FgC7hKKWOlY6nenLqoK/PQOf/A+W
-         b2izoXbfVRTxIxPwTXhJk+D0tQnimrPyWI3kKzkJ1uN7Bm4zz4t1Loagcj+T0J1EUnRZ
-         kOFvy6ZeM8wPQukfFqUW/7+0IzXUwF6jeDz4Hzn69rvN2iYNI9+JOUe1vdSMYPrCDzrj
-         Jhy4sIXJy/DF26Okh5eLc7XDw2mozh4vUDOnlVNH5dlHOeqwclXjLF5vG299yyHUKK0U
-         6nCaUVfd2qZ3J9eosDmOIWYBNebEV6qHEdoJ4n+UjfEZq1UbpFoY94UhL8FS3T1Oa2Kg
-         gmiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWChrHoTAxmTR2Tc1P8a2j78iwgpckdGmulSqDXHaxSdkRPo+vvDl31kb2I7/3UNBJTfys0HNyT6lb/sEYL93848m3zZO8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycLeB/L1AOBlRfV6nfhIw7yvXj3aQbabFD6KPyCA4C1FkyrDKr
-	PnzvJ9LHdKyoE/jsxwrJmZqdlQ3v8X0pWK5gUY3h+6HZ1EhxnuByCq3zosxONJYLQ50SNeQXOgS
-	LrA==
-X-Google-Smtp-Source: AGHT+IFjyYpPHGvJ2rSIA0/Dem7g1zRqyfkTpAh8aDzJ0VFeb6pDbBAl58kaftmR7K4Y2cDcZDu6pNUTJn8=
-X-Received: from edbio6.prod.google.com ([2002:a05:6402:2186:b0:5e5:2d21:7e40])
- (user=gnoack job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:268f:b0:5e0:3f83:92ab
- with SMTP id 4fb4d7f45d1cf-5e4d6b87d70mr14741120a12.30.1741019768416; Mon, 03
- Mar 2025 08:36:08 -0800 (PST)
-Date: Mon, 3 Mar 2025 17:36:06 +0100
-In-Reply-To: <eawpcooc5n4viv2yayt2nblmtnz6mmjixcznrbxputz6ge6w6c@4d46jzm4eego>
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="PVw+qTBL"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1741022234; bh=hP1OnH4rkzfpXtxmBWAtBNXVCk+obvexO9dLD5paXaE=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=PVw+qTBLRv7h3DafcWrSU60VmGFt4PEuwHsJqZ/xktrKHnTm6UV4E6vIMpEFgBm3vQ1Dwx0Khr9+aWEK+84zZ31lUs1yZjvsxiC884aFQWiHNP3Hr2Jl2DHet2V7UZMXM6ODIDuqCLFUQC7Z9VHVrd9M5/tJg0NU04Yw5rvG2/0bD83H9Y3xB4eoSqWQ8s/3SWlfyJXx5C8hVWYJxiQWE9nZ+NuNhU8lof9GmNc601ocF4OweLdN3I3zO67c4eIdOprNUaTpH9RXpRianDJjQ6p+BMDLjP6bX1mX+yBKb8QkRLjkUrHfl2EBUNlrGWLsSOzPdOgadeximP3WK+aSiQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1741022234; bh=7PTzntObKlEmGgecgA4GzS0QCu29vxFORYnzqUyFJdX=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=uV4Rjpin0gHit5ropLfXc4RIm03WSnDpLH9vdeTOoBrrJMU62fmKcrBbrMRY/3TyIrn8TobCrLW38vFvbVCnO8ByHzI/GAZsauhqYxN1JElwLC8qRJ46QwaD8qnV80jQa9N2Tb6VCT5yNwsQLQLRxU3uRvWfVHEIeKwsdLLBX46O/Nha1kABEZwyryqab4dAuHVZbxgRUqtz6v1P+7j4VMaDtUr4QQXgETT4KsCp3Z4BwVStuJ+KQ5H1Hqx8dlc+QqA1ELLvx8eY0VPqghIXUOffZl9E3GowKHw3BRgHKQN+cOzEenqoUlfLyeIhwlMgZPo0Xx31XnFPvAIRs56ywQ==
+X-YMail-OSG: HTl21DIVM1lQ9mcIoLyvb5fjJFVBsKVNSsInMEeqmU38I.wc9azToU82xx1QwPq
+ 7SXqKax1t1Me2yjCLwCE.LDCRg.mwE1EAIRo.2kr5AOQRIqAUmH1WhFfWBgXinHfzRnlt5haIKBs
+ SC_i5_5gAuirVdyIr4dQzBwN4dsSVCSviSHf7xoxCqd6LiaN7Zc.6jVlubOiDb1ck.hw2hHq_vGS
+ 8P38u9bC2pUql.4nTFj0BnTKCyQEivVNFlD1OElMX58x1zIl2pI4hybVlHN4ZgAhnVqMKWqpOQRr
+ xjCjetNO1rg1Fe2fUqSsz_zDnY_FuxsI.TkrzDX_BYIiid1J4db6qJy.R9Gd2_9hf_miBgDBJ0AL
+ gLs98p3tj3AUrFXMRMdK4iqAAu7UB2ar.C6pegNrq.WCU9.79WhVhQ.TR7_LneXqiSBC3GH4itar
+ 9iny3SuOlNOE4XIfgYya0FEXTAmUL_edP4HDrKf449j6jweUTbY2uwEkjFCuw67I9PGH6olNBV6K
+ k6l6gq4eD8wgvzvxoK5GgI49svxgcstsTtVLwGDnB1AjlSidn8neS_s7g_fHt9OrE8YGhS3xqwEG
+ g5La45XZG2Dejo2zKyy7.yIz7r2Ni17w_1B.ImXIrU_Z6cw46L3XtQgUhDScebgmGPKBpq5QGkE7
+ SShPBc.pTF8mKlMFyq9evvEOeQQAHCrQ0hJATTFTAak.LSisDZyORAjoxNIEJ2tBgZ90zG61w7mC
+ SG7ufnfGuKuxMSZmNMSwp02QURH9BjNDbOoqiZhwEg5K.yGp7G38nKNZ2vsJbCrb6B6CpWvkctpt
+ uSVd7lrGzEUDF9kMDuNMv.i2Zn1bAy.KQ1yQXUIK_Qc.Yp4xxVEibYznXV.Qv6q9jPf1Wpww_PrZ
+ mPT7RG9PALHM2yj.ETp5uQnvpZb3MQol_G6cfG.OrtfIUTZP1.mVP5L1F2PZEJAahKW15gji7rOS
+ o7PMPN5TjCB7ExGfYtLFjxfqb7L9OhETQMr1DgpzCJRn_BvSZ2bLtvGroSwwfc31C3IkfN2JuohB
+ vNsHwMMuWkiQputTOyr.beTXyomSgqsumsXYVoL587bw.1iAUXfqTC4f.uCYevihIu2lYu4VzlWc
+ Pnks7LR4Wimy53pMqUQcINi_4SI.B.dpPKlkk6aLE4yAsmpG1aceyzxuOKmDHKMjAm4pmbONSpAA
+ KOmMT9BfSOXZx8pb4lkOMhEqKYoVPoPpWKsUBzjRuzv4Jf7X.5RhL5v9t0A6eJJ22mZKuRPI0XCM
+ yUp.D8A02UtfLkr5bOV86XG6sDkmFmrGbZ7huSjgR.Lf5jFtLkmG0pzmeNZDrFzc.9x3wyxvLTj7
+ jTXqMQum1kwT.IDbBLj1eSxEB3wMzUE.nxJ_h8zWKN8avO.Vrbvcw1bZYx_s12S_H72vbLa1f0A9
+ YwCluZZi_vA68A0hwhcy298a2wvJBBw0qq91qTHY4lOwQjemFkd5UEYFozzOkc_iejU92mogYhoN
+ kxfB7408wn9I21vTH7tFbQlEuNQJgGd6Sa9zPiMrnjxtnReBWGKM27JNPjpE86AIH7tcAh5HU.lc
+ VVXmQLvRMlXwG.e65K5VBwOkSYKm.4A_QP7elyUHdEzNxZYDmxzsZXbW2cMjFXxe7vVFPBWFsIRp
+ aiOfPdJWzik5sevikonD5MgmjX5xLQW8njNggjfB1e96FrzahIkfQxVn0xxP.85YInPdmRssyPtS
+ VAxzEAnrP4oue3UN8q0vplUBHZ8CsudEzs27azW5KUI6CtDqpZ9LFnDkSThXXw5GDeqdiolcO6j4
+ ZcqGQ.aX.3gzEefhzw_A5.tgFLyii_Et4u3LYHslCh03Nh4gJvudj3vUVzQg0kQUhRuydaIQQVgz
+ .NLdNVavz0NHWkTOfnKfu3vczVu5.yvPn_OIRhD6fmLK_LvELmukn0WGuZXlEwLp6_.XLfJBCOL3
+ yjUv_vHonqQn4302avIokAdKsUuvNqj112T.oKli.I8xBca15s0LVqBDVOQqlJx3FpbDMgb8.bKo
+ ySqF34pzOlxvjoqWxNMaEPxjJA5QZnQ4yk2WVEityUzZo8F3KpLlUh_NwCXBG1.V405gqCFoGypu
+ Mh9eb7oB2c5F5fXeqz0W_GtdHryk.e70TzZHWepnEuqeng8L6CF02dov0Q5fYquG8.BgExmBO_sn
+ D5zMALuw4aTMmoPom8I.2uIKOyFBVZejccuMq9wDoBdWQTtUsaYGnOM2u5ifWo0fdiKIuW8wznNd
+ DqjBxKeycElUjzljNByWfKt779EZ9EEi.a9HGQzmmLojJ7Ud4KAWzRVvMihsDqT0pApDo62IobJt
+ BdgzVioKPjHIsOdsASJH3NM2JrZjc
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: d59a7578-59d3-459a-9f1f-6ffd7be991d4
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.ne1.yahoo.com with HTTP; Mon, 3 Mar 2025 17:17:14 +0000
+Received: by hermes--production-gq1-75cc957d6c-f8j6m (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID b8dfcbb99da5a01dcf02892f88cbae8e;
+          Mon, 03 Mar 2025 17:07:01 +0000 (UTC)
+Message-ID: <a5262d73-2b11-4868-9c6b-1c6161808979@schaufler-ca.com>
+Date: Mon, 3 Mar 2025 09:07:00 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250226211814.31420-2-gnoack@google.com> <20250226212911.34502-4-gnoack@google.com>
- <eawpcooc5n4viv2yayt2nblmtnz6mmjixcznrbxputz6ge6w6c@4d46jzm4eego>
-Message-ID: <Z8Xads-6xZcZ-6js@google.com>
-Subject: Re: [PATCH v2 3/3] landlock.7: Clarify IPC scoping documentation in
- line with kernel side
-From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
-To: Alejandro Colomar <alx@kernel.org>
-Cc: "=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>, Tahera Fahimi <fahimitahera@gmail.com>, 
-	Tanya Agarwal <tanyaagarwal25699@gmail.com>, linux-security-module@vger.kernel.org, 
-	linux-man@vger.kernel.org, Daniel Burgener <dburgener@linux.microsoft.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] lsm: rust: mark SecurityCtx methods inline
+To: Alice Ryhl <aliceryhl@google.com>, Paul Moore <paul@paul-moore.com>,
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>,
+ rust-for-linux@vger.kernel.org, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
+References: <20250303-inline-securityctx-v1-1-fb7b9b641fdf@google.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20250303-inline-securityctx-v1-1-fb7b9b641fdf@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.23369 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-Hello Alejandro!
+On 3/3/2025 7:29 AM, Alice Ryhl wrote:
+> I'm seeing Binder generating calls to methods on SecurityCtx such as
+> from_secid and drop without inlining. Since these methods are really
+> simple wrappers around C functions, mark the methods to inline to avoid
+> generating these useless small functions.
+>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> ---
+>  rust/kernel/security.rs | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/rust/kernel/security.rs b/rust/kernel/security.rs
+> index 25d2b1ac3833..243211050526 100644
+> --- a/rust/kernel/security.rs
+> +++ b/rust/kernel/security.rs
+> @@ -23,6 +23,7 @@ pub struct SecurityCtx {
+>  
+>  impl SecurityCtx {
+>      /// Get the security context given its id.
+> +    #[inline]
+>      pub fn from_secid(secid: u32) -> Result<Self> {
+>          // SAFETY: `struct lsm_context` can be initialized to all zeros.
+>          let mut ctx: bindings::lsm_context = unsafe { core::mem::zeroed() };
+> @@ -35,16 +36,19 @@ pub fn from_secid(secid: u32) -> Result<Self> {
+>      }
+>  
+>      /// Returns whether the security context is empty.
+> +    #[inline]
+>      pub fn is_empty(&self) -> bool {
+>          self.ctx.len == 0
+>      }
+>  
+>      /// Returns the length of this security context.
+> +    #[inline]
+>      pub fn len(&self) -> usize {
+>          self.ctx.len as usize
+>      }
+>  
+>      /// Returns the bytes for this security context.
+> +    #[inline]
+>      pub fn as_bytes(&self) -> &[u8] {
+>          let ptr = self.ctx.context;
+>          if ptr.is_null() {
+> @@ -61,6 +65,7 @@ pub fn as_bytes(&self) -> &[u8] {
+>  }
+>  
+>  impl Drop for SecurityCtx {
+> +    #[inline]
+>      fn drop(&mut self) {
+>          // SAFETY: By the invariant of `Self`, this frees a context that came from a successful
+>          // call to `security_secid_to_secctx` and has not yet been destroyed by
 
-On Fri, Feb 28, 2025 at 10:37:17PM +0100, Alejandro Colomar wrote:
-> On Wed, Feb 26, 2025 at 10:29:12PM +0100, G=C3=BCnther Noack wrote:
-> > * Clarify terminology
-> > * Stop mixing the unix(7) and signal(7) aspects in the explanation.
-> >=20
-> > Terminology:
-> >=20
-> > * The *IPC Scope* of a Landlock domain is that Landlock domain and its
-> >   nested domains.
-> >=20
-> > * An *operation* (e.g., signaling, connecting to abstract UDS) is said =
-to
-> >   be *scoped within a domain* when the flag for that operation was set =
-at
-> >   ruleset creation time.  This means that for the purpose of this
-> >   operation, only processes within the domain's IPC scope are reachable=
-.
-> >=20
-> > Link: https://lore.kernel.org/all/20250226211814.31420-4-gnoack@google.=
-com/
-> > Signed-off-by: G=C3=BCnther Noack <gnoack@google.com>
-> > ---
-> >  man/man7/landlock.7 | 73 ++++++++++++++++++++++-----------------------
-> >  1 file changed, 35 insertions(+), 38 deletions(-)
-> >=20
-> > diff --git a/man/man7/landlock.7 b/man/man7/landlock.7
-> > index 30dbac73d..42cd7286f 100644
-> > --- a/man/man7/landlock.7
-> > +++ b/man/man7/landlock.7
-> > @@ -357,46 +357,43 @@ which means the tracee must be in a sub-domain of=
- the tracer.
-> >  Similar to the implicit
-> >  .BR "Ptrace restrictions" ,
-> >  we may want to further restrict interactions between sandboxes.
-> > -Each Landlock domain can be explicitly scoped for a set of actions
-> > -by specifying it on a ruleset.
-> > -For example, if a sandboxed process should not be able to
-> > -.BR connect (2)
-> > -to a non-sandboxed process through abstract
-> > +Therefore, at ruleset creation time,
-> > +each Landlock domain can restrict the scope for certain operations,
-> > +so that these operations can only reach out to processes
-> > +within the same Landlock domain or in a nested Landlock domain (the "s=
-cope").
-> > +.P
-> > +The operations which can be scoped are:
-> > +.P
->=20
-> Redundant P before TP.
+I don't speak rust (well, yet?) so I can't talk about that, but this comment
+has me concerned. Security contexts (secctx) are not destroyed, they are released.
+While SELinux allocates and frees them, Smack maintains a list of contexts that
+is never freed. A call to security_release_secctx() on SELinux "destroys" the
+secctx, but for Smack does not.
 
-Thanks, done.
-
-
-> > [...]
-> >=20
-> > -A sandboxed process can connect to a non-sandboxed process
-> > -when its domain is not scoped.
-> > -If a process's domain is scoped,
-> > -it can only connect to sockets created by processes in the same scope.
-> > -Moreover,
-> > -If a process is scoped to send signal to a non-scoped process,
-> > -it can only send signals to processes in the same scope.
-> > -.P
-> > -A connected datagram socket behaves like a stream socket
-> > -when its domain is scoped,
-> > -meaning if the domain is scoped after the socket is connected,
-> > -it can still
-> > -.BR send (2)
-> > -data just like a stream socket.
-> > -However, in the same scenario,
-> > -a non-connected datagram socket cannot send data (with
-> > -.BR sendto (2))
-> > -outside its scope.
-> > -.P
-> > -A process with a scoped domain can inherit a socket
->=20
-> This text seems to have been added in patch 2/3.  Why is it being
-> removed in the same set?
-
-I attempted to keep the "copy existing documentation" apart from the "rewri=
-te"
-part, but this was maybe a mistake given that this results in throwaway
-corrections.  Should I rather squash them instead?
-
-Thanks for the detailed review,
-=E2=80=94G=C3=BCnther
+>
+> ---
+> base-commit: a64dcfb451e254085a7daee5fe51bf22959d52d3
+> change-id: 20250303-inline-securityctx-6fc1ca669156
+>
+> Best regards,
