@@ -1,178 +1,131 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic303-27.consmr.mail.ne1.yahoo.com (sonic303-27.consmr.mail.ne1.yahoo.com [66.163.188.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30F42259CB4;
-	Tue,  4 Mar 2025 16:15:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8F8427811B
+	for <linux-security-module@vger.kernel.org>; Tue,  4 Mar 2025 17:36:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.188.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741104946; cv=none; b=pwtYwCsgzj5FBwKsClWUal6gR5q8/JQIjEQcmzWJ9g2Q8GvGU6djEFbcT4LUEoShCOZPyl6iShSMEIsLdtqj5mtyc6XDnKirE0dmxRTSAPwD3vjfPF44o9wxhHZkYwPTZMGqj0R8Sv0eEiSLe0YVbASE01dWK+X/uU3ywkpm99c=
+	t=1741109810; cv=none; b=XTm5pGLndJxrN0OYXr8+mz1zWqWFVGEyF/Hv7ONJ7TsExTIqHiC2YIQnhRqE+IkILU+/OXYHPwO/Vjj9N9SyreBB94Mt/4g1vgy58IQfEWU1Fea4pMKnSOY+e9I+offIBYOnnhsrt6gNsGyXMuXKwAzPnuHSyUsSZutlNrXsOaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741104946; c=relaxed/simple;
-	bh=fIpTyWL6ayzFDuJIGBcstdA8O3+/QfyIGVuGPadTW0E=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=YfpZAMl2BAqFplRe6Rspvc2d+PP0Pr9tQco5jTzqxTzTJvkr4jrHNq2kvG/aUut445no4J6QIS3yg8b6YSI2EYnRWWrszlFRgTkwi1UUqHSUUS4DCW8pCuqC01Nm5AAmk3dd2O8Xy0btg/ebe5yWJFgwcOozEglN2Z3UK1Elzzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=enFC4w7i; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1741109810; c=relaxed/simple;
+	bh=s0t9eoZ0UhrtcNtAyJ1l8+SLWcnjMKPt1rsr1i/fWFQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=K0fCFC4HrfFGDB5ygcOPlR1fAPDv7QUcVD16AYEYpxf7GpOhzxyjEfbv7Pk92GhfUpmngTaQIz67OxmjVpayMIkc8viAkpa8tJfA+EtnNCs0FHxLfqCa/CZpcLY2HwWAyj4WuJcE2SLJupLsMxgriaIqSm/4PIp8IfcAD7WcES0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=dhx0STSc; arc=none smtp.client-ip=66.163.188.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="enFC4w7i"
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 524E3Ku9019009;
-	Tue, 4 Mar 2025 16:15:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=+IoJ+2
-	H9c2CFdb09znTxlwvThy3kn7nz7db1xHQkKkM=; b=enFC4w7iAxa7xBJJ50nn5r
-	YHwcsrqCj91bKzXNDMt/lK3Da6qrxKeOdyw55vTS+5tSRh/LCW7VTHne1QB6PDCH
-	E04yAMBr5R0IT1MIh+lsBn12jaenqDXOL0kCAMHHp2uTEbSNtevMf7+6e0dWDjb3
-	0lY9UYLFpaVgOmnxytJ40rCGXSXuXH4TBYq/l7WJhu8JIKDqVnSBaTqC7YQ2TDxY
-	0QahawjYm0acYxmOxim50YEc2M6BG6sI/rWcct/6OOuBbSKYvlDUKuuZPlrWfyX+
-	nVpHiXi756zfn953xIufU7xfTR8gGUa/HI/Lm5pZABYEOnqa+UXBjLdlMmRhLMTg
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4562xpgp2j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Mar 2025 16:15:18 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 524GFI8F012989;
-	Tue, 4 Mar 2025 16:15:18 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4562xpgp2b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Mar 2025 16:15:17 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 524Fxqlx013776;
-	Tue, 4 Mar 2025 16:15:16 GMT
-Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 454e2kp52f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Mar 2025 16:15:16 +0000
-Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
-	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 524GFGpZ53936398
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 4 Mar 2025 16:15:16 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4700E58060;
-	Tue,  4 Mar 2025 16:15:16 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6A27758050;
-	Tue,  4 Mar 2025 16:15:14 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.136.132])
-	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  4 Mar 2025 16:15:14 +0000 (GMT)
-Message-ID: <6828fbeeff42ce962cc0195466760ea136f9c049.camel@linux.ibm.com>
-Subject: Re: [PATCH v8 2/7] kexec: define functions to map and unmap segments
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Baoquan He <bhe@redhat.com>
-Cc: steven chen <chenste@linux.microsoft.com>, stefanb@linux.ibm.com,
-        roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
-        eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
-        code@tyhicks.com, bauermann@kolabnow.com,
-        linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-        madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
-        James.Bottomley@hansenpartnership.com, vgoyal@redhat.com,
-        dyoung@redhat.com, Mike Rapoport
- <mike.rapoport@gmail.com>
-Date: Tue, 04 Mar 2025 11:15:13 -0500
-In-Reply-To: <Z8FDlp8QvnSR58Vd@MiWiFi-R3L-srv>
-References: <20250218225502.747963-1-chenste@linux.microsoft.com>
-	 <20250218225502.747963-3-chenste@linux.microsoft.com>
-	 <Z7wOPiDfy/vtrkCS@MiWiFi-R3L-srv>
-	 <55acf768b52b47dd9d33fa0486772d8c7ae38779.camel@linux.ibm.com>
-	 <Z8FDlp8QvnSR58Vd@MiWiFi-R3L-srv>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="dhx0STSc"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1741109801; bh=q8mQTeBqOlBQmnAfR6SxuXY4R++1kfQAA3Mj2DPK9us=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=dhx0STSc6wlgdxRjv6xqRVlxutu48in418fSHOTSmbbJfvm+Sw9V9jT8LaxqGoOi7pPpTcOK8d7Iaaxud0MZVt0PC4d2Azcfh0zdnaHtDn9CLHNdo2NFhllGaRmgloNGjmyzPAAfGz3XLJIORw8VdsLGz6BlsaJ/RbIyC/ZRSIyZs9HXUfmuAqQpb8WI7yW2xgtjijzvMUBjT+HF9bAT6+5d6vdGujfB7uZIvHnfGjf6hoZpjE3+u0EekCubdoaOav3SC075BWB9NPGRIvUgJj/DrPGvnkvIY7Q+0zNrQSBdLxCmsFzX3nnT6EdeHTKH/R+ZT5lG/k8ExzXFZLtOqg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1741109801; bh=7gPyjyMjpXtuornAcDU8XfzlQZVeOiXSyOFfmL3tr9w=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=FN4+0E62QeFlvDlw43hbeLh0mCKfofVnE4RxqF1MyKXOWVjYtqkFf9o2sYZUtaOpneGgkeuKcYqVBv5OpoTTW1IEMDEstL/+FuX+5XKnSf/UAvCvIcuc7Jvm54mk4eAjgHhvTEJ5rdOrsyEqsGQHYSMFtLV4CBUzWGK2NlTHK7mV8iUP0SvZjWn0E7thoTDY3ieQQMOzb/DYIMjf6WE6DNOsxwYl9M8ZPELbnoRkMq0UdCAwK9dyeV4h0DZzb2Y8bsjf4n49tybGHhO9bSfslqWZ0myA9CVnPLq62/kqBGAagjO6U0gvCM9Ngv9diqQ14UneRDtLE8UeBhbp4KY34Q==
+X-YMail-OSG: q7ijfEsVM1nPMrPeTh.AtTN2gnR9YAQgrH17qWDnbIaeFpeQ55ZCBQOL8xwN8RK
+ 41ut25ZFqhjdxV61AZuZ6soDnwOX0uElw0XfsgZRerl93WBSlnxmDGo17jHf3YoGkD47.a.CseqC
+ HZHNbQ9Qc8QPwXTaV2U3S_mSqaAAbGMf.bEOlQIzUAQYo2utpCjTibrERGcSVIQPB6zz3a5dYVok
+ rNKEBtZwH6gzrGOVETemFpoFCkO1FefJ.Qo5aOYQ5oA1wAB3oqC.YDlZyegww6sKySigJP3qHkdK
+ CahyK7Y1I53J9ii9i1HflYTm0B9lIsCqiqWinsCLP7xZsxxdRs_uTD5.aVXFsIuCHg4zkHkB3sAQ
+ Alp96Joe1NkAhc9F_o7XUAM1h95a05uw0OjGf3POvOkNyCBICWcnGUIuG0CIFu1zUsVdNRHUzuxA
+ qxloE3bg890uvXxBJiwpuw8mtcIwkmPMT8JFaBl6eabZmKrLqck5ZgaD3gyI5uQnj7YT1Wx4iz6h
+ qOBVfOKBk4Ha1PssKvbL9lDxpmwbUJnbGuq1t3z2_lsurF3KfbX64ZEZpsAU1DybScQkaBQJGpts
+ T1E2eLFDN49fhV_WQLgwDj1TBgCHO2pDXXp4d0mK1bLh6yOc6aQywm0d.50HFhUiKXmIVQaNdkoQ
+ 08KZIMZaXQlS_uAocVdBfTUFI3_4FO7q6fjabWYGGzCCNrbNnxcO50LCdzgQ1Ujx4oYUqURsTXDX
+ Na8d4KoYNdnoGJihmLkS_SzSjQGx2I7Z5fOc7Zs6SitnAkUSLDwcolyeyBgZW3vqV4F5YHgGg7EP
+ WujezmrlCNzPJh6HL6IMe6vhuguOMV6Qh83.tTBqD6ykselIrC1aiyIlfgaXb4NAT9AxTho76Y4q
+ NdkKrYqjNPDzDHSdgIoe1pJjE1mcmje0lDnrbH518Y5EsMgOYrhQhdRwQhxnLD9adeHDjPIgo9.q
+ dnhnc.l9ws.CTgScfnFwPTqvnRlBc0ju1BCjinVj8kWrBGjPJoG.b8xJoY7S3sWVRz5RLJflZqrq
+ l.KCBqUUce_aviNNx7.8RaK4KXOT8G5OzefgkSaAoQcgNZL_c7hHmq1SbUm5_xTNoXPYz0wAkoVZ
+ 63bsC6tpSrth5cwy9srPCT.NnuthHSwpEkpflHFwYB6Kbu61QApU6j2mOzahcizrxmgRZAxKTUSo
+ RHgdo34Jj7oC19VkvEeNJ3wNp5hOOj12ig9mDtBtP4FP4e.2vmPeut78BSx3xIQVdMMB0SlvPWYz
+ LdYAyq6Mwd2_Na428n_RR4IRsIsh27xrI2gVSzC40O8RsuKuYY9GYsL5GRHRBvO6MIbnv5J7orgn
+ JC244SgNNF7bhuk2dQo.EQP9vFPNAaKM_na.zsB5e4mkyTJmljs9DNh1M6.OjemWSqLxRAiHB1XM
+ O2824ZyhWJn6tTtTfAoBcGe_ZLYNA0w1JhgwcT7.iBeG3stDcfn0zy9oQwCLCrhhIcuvYKAZH5Y2
+ ivPQOa6mqDNTlt1KzGV0FVsKICHeiBVva2A.QqMdUoc4tBBpTuIqqMR6Z9MX44FwrhPjU4eqwvWe
+ 05xK9kV.gfga.R8az6ygnYeTx8eMvTJ0L3ZIlbKLNN.XmEh8mYvvg.mcoMZffsNQleqAzUF4BNfR
+ PQt_5jBOvQlN9DME_OisGq.A_nmv5f53QiDoPigLn9DTmGCzH5VTauknXk5am2eSdyNn93w2szrt
+ l3cUwoLd_t_BisdcvBVa7_E4oE1MD5cRGQXmZ.2NcLy1817AOHLRrzhUsLlXU6gpNbowlbbHYuO.
+ qfzPeq0n12Xzswdyc0XqEkG0hObGCwKTdfCYuFXWLBM5ZyCH9K3LHFBSpU6nfQJDl2yv8nnspwxz
+ SCGZwAVdMRCTTpZt5M7CiIA47ZtMg7htLCo4KTOZXNO8s4AbpgnMfOG0Pca1dzlIYchMNroP3pPl
+ _cknQjHcdolHp.THENlrtGV4.9rpz3PneLhzoORzQZKcJHKjpdwF5FeGW.XmVBdg.4Fgwf50GKQq
+ ENkvFZ9CjfW3Wg7OsRtz3C3euQVhlexsrh45koZoOGNCwcsDAQ3czj9DKfvoj31UzgjzlZwuKI6P
+ j4VZPqbZTvu7GBZxLqqgwdYuyaxgS6ddRAmaKK5blpTt6nfWxnp1xqP5mBCNzgblnhWyzkQ1d7Ks
+ 24d7dWf3OzFcecMdvtsrsLvKp.yysrOlur14N2w6xC50Vefkf3D_hyUP6DfolxUxHUSRp.1uWfaP
+ 1Ao249BNULnJ56BRQOQYHbYW_E2fV6NQSGoviU52gejE0si_YNyybcaHt8Nk.wz7Bh.Jo4YZpFuJ
+ bIR.OaMbkFmeejmw9gEtL8F8MgGBI
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 988bdb84-7027-48f7-82c0-0bfd78b2cd66
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.ne1.yahoo.com with HTTP; Tue, 4 Mar 2025 17:36:41 +0000
+Received: by hermes--production-gq1-7d5f4447dd-bx5bp (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 1dc123c7904c3395b899a662df8993c7;
+          Tue, 04 Mar 2025 17:36:38 +0000 (UTC)
+Message-ID: <35e0dab4-dc24-4d73-a267-183c73548d62@schaufler-ca.com>
+Date: Tue, 4 Mar 2025 09:36:38 -0800
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: -oBsvbmbJu1H4kuwA-IK6n9CtSiRlunB
-X-Proofpoint-GUID: _0Rk9JlUBxHxaloj8zlUADdSvGWN6oiI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-04_06,2025-03-03_04,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 malwarescore=0
- mlxlogscore=999 spamscore=0 bulkscore=0 priorityscore=1501 adultscore=0
- lowpriorityscore=0 phishscore=0 mlxscore=0 impostorscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503040129
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] lsm: rust: reword "destroy" -> "release" in SecurityCtx
+To: Alice Ryhl <aliceryhl@google.com>, Paul Moore <paul@paul-moore.com>
+Cc: James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+ Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>,
+ rust-for-linux@vger.kernel.org, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
+References: <20250304-secctx-reword-release-v1-1-e8e9a7ff85ba@google.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20250304-secctx-reword-release-v1-1-e8e9a7ff85ba@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.23369 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Fri, 2025-02-28 at 13:03 +0800, Baoquan He wrote:
-> On 02/27/25 at 10:41am, Mimi Zohar wrote:
-> > [Cc'ing Mike Rapoport]
-> >=20
-> > On Mon, 2025-02-24 at 14:14 +0800, Baoquan He wrote:
-> > > Hi Steve, Mimi,
-> > >=20
-> > > On 02/18/25 at 02:54pm, steven chen wrote:
-> > > > Currently, the mechanism to map and unmap segments to the kimage
-> > > > structure is not available to the subsystems outside of kexec.  Thi=
-s
-> > > > functionality is needed when IMA is allocating the memory segments
-> > > > during kexec 'load' operation.  Implement functions to map and unma=
-p
-> > > > segments to kimage.
-> > >=20
-> > > I am done with the whole patchset understanding. My concern is if thi=
-s
-> > > TPM PCRs content can be carried over through newly introduced KHO. I =
-can
-> > > see that these patchset doesn't introduce too much new code changes,
-> > > while if many conponents need do this, kexec reboot will be patched a=
-ll
-> > > over its body and become ugly and hard to maintain.
-> > >=20
-> > > Please check Mike Rapoport's v4 patchset to see if IMA can register
-> > > itself to KHO and do somthing during 2nd kernel init to restore those
-> > > TPM PCRs content to make sure all measurement logs are read correctly=
-.
-> > > [PATCH v4 00/14] kexec: introduce Kexec HandOver (KHO)
-> >=20
-> > Hi Baoquan,
-> >=20
-> > I was hoping to look at Mike's patch set before responding, but perhaps=
- it is
-> > better to respond earlier rather than later with my initial thoughts.
-> >=20
-> > The IMA measurement list isn't stored in contiguous memory, but has to =
-be
-> > marshalled before being carried across kexec, and then unmarshalled to =
-restore
-> > it after the kexec.  Roberto Sassu has been thinking about changing how=
- the IMA
-> > measurement list is stored so marshalling/unmarshalling wouldn't be nec=
-essary.=20
-> > Making both this change and using KHO going forward would be a good ide=
-a.
-> >=20
-> > However, that sort of change wouldn't be appropriate to backport.  So t=
-he
-> > question comes down to whether being unable to attest the measurement l=
-ist,
-> > because the measurements are copied too early at kexec load, but the TP=
-M is
-> > being extended through kexec exec, is considered a bug.  If that is the=
- case,
-> > then I suggest finish cleaning up and upstreaming this patch set so tha=
-t it
-> > could be backported.
->=20
-> Ah, I understand your concern. There are stable kernels or distros
-> kernels which need be taken care of. If then, we can continue to work on
-> polishing this patchset, as you have pointed out, there are still room
-> in this patchset to improve before merging.
+On 3/4/2025 2:31 AM, Alice Ryhl wrote:
+> What happens inside the individual LSMs for a given LSM hook can vary
+> quite a bit, so it is best to use the terminology "release" instead of
+> "destroy" or "free".
+>
+> Suggested-by: Casey Schaufler <casey@schaufler-ca.com>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 
-Thanks, Baoquan!
+Acked-by: Casey Schaufler <casey@schaufler-ca.com>
 
-I've already provided feedback on the IMA related patches.  Hopefully that =
-will
-be it.
-
-Mimi
-
-
+> ---
+> This patch is based on top of:
+> https://lore.kernel.org/all/20250304-inline-securityctx-v2-1-f110f2c6e7ff@google.com/
+> ---
+>  rust/kernel/security.rs | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+>
+> diff --git a/rust/kernel/security.rs b/rust/kernel/security.rs
+> index 24321105052648e150f2875bcfa5ef29f4249516..0c63e9e7e564b7d9d85865e5415dd0464e9a9098 100644
+> --- a/rust/kernel/security.rs
+> +++ b/rust/kernel/security.rs
+> @@ -16,7 +16,7 @@
+>  /// # Invariants
+>  ///
+>  /// The `ctx` field corresponds to a valid security context as returned by a successful call to
+> -/// `security_secid_to_secctx`, that has not yet been destroyed by `security_release_secctx`.
+> +/// `security_secid_to_secctx`, that has not yet been released by `security_release_secctx`.
+>  pub struct SecurityCtx {
+>      ctx: bindings::lsm_context,
+>  }
+> @@ -67,9 +67,8 @@ pub fn as_bytes(&self) -> &[u8] {
+>  impl Drop for SecurityCtx {
+>      #[inline]
+>      fn drop(&mut self) {
+> -        // SAFETY: By the invariant of `Self`, this frees a context that came from a successful
+> -        // call to `security_secid_to_secctx` and has not yet been destroyed by
+> -        // `security_release_secctx`.
+> +        // SAFETY: By the invariant of `Self`, this releases an lsm context that came from a
+> +        // successful call to `security_secid_to_secctx` and has not yet been released.
+>          unsafe { bindings::security_release_secctx(&mut self.ctx) };
+>      }
+>  }
+>
+> ---
+> base-commit: 93f60f16db02f7b52985338f37679095231b6383
+> change-id: 20250304-secctx-reword-release-e26ac4ee7e0b
+>
+> Best regards,
