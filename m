@@ -1,112 +1,264 @@
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A4BD1F4720;
-	Tue,  4 Mar 2025 23:16:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7FCC1FAC4C;
+	Tue,  4 Mar 2025 23:19:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741130199; cv=none; b=aYUo23dJtGXLScFxbjTYfv5JgmZKQBp2twrG2Nzah3Y2EJxiLtOys0nF7ccBk63lR4vub04/rC9GmivFExVg6141d1yf9tl9PTckBiKw/JefnZsgGB2L2haFTPPNKesNsc8C/L8dTksrPWvhI3HAPYnyfJcFATFuGCHccKjRb8Q=
+	t=1741130393; cv=none; b=KxvyRRvWsBuGxG6VcW8BPkiSt7EGQPiYDBKIVzA5dz9yyvWHJBa6rkAUH2983Mtyof9UrsInREUhWl7CXErfWqcsPnuWM16vd/qPeIsIy9pRM5qHZ/d2REY2pw/vbS+AaOSj1+cE8kmO46NKUldUeMi6YdpGsDu0mzZpKCxfQMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741130199; c=relaxed/simple;
-	bh=cb9OSta6wF5whj/MA918wbXvOH75hCeZNhIQYP08PEU=;
+	s=arc-20240116; t=1741130393; c=relaxed/simple;
+	bh=i8SL8gO+OIlTYJRgMlSgO0oRB4ZwIsNjVvyGrMEu5PU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SIkOKDA78jyX/rOlAMOWuw02sQ+YWyndeUP+BIdk6w0+RqA/XBvodpCF2WcFwuaUIbf9bWJ15IG98W3+97pN9KwUvSYKdwuoGFaTxOkpp+Akxooo/w4wXFrpPbasmIgDa4l6D7G6FWI9nFQ8RD102DbkNPB8F9iJV7SioEo8qJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cFnmBLVg; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 To:Cc:Content-Type; b=VWbQh73zwySNUvBm13SzwdZfUDMCugBQWt1S0EVo2oxiXffyhBLzTwvJmN0y0msLVaKh737GRCfIHqXdPtNht5EpZrx50OtgeUws45CMTdhVhnmeIql87PjOGOWTUONLXSlPwlkUGW60vP3rpeCgQzSA9kjYWGcXKONeKE6jH5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AY+qot5n; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cFnmBLVg"
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2f9b8ef4261so1623176a91.1;
-        Tue, 04 Mar 2025 15:16:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741130198; x=1741734998; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RkzGzrZgrbl+n5aUkotTUf87Rh6O+fNtBv0KfcpAk8E=;
-        b=cFnmBLVgdGU4Z6o703obx/5LR+MF80YLavPZelTOxvMfz7+jYvv5Jcx5Rcy0+yBm6I
-         b9AZWOsSG5hN6HM2rr2b0ojHOs6MdXyK212iIHcdPQXsa3XWLj71/pmmPzHgwxaV7vCB
-         lwZ4mBEXO2OzIy/VsxCn3hspBFNVtBVCwaq2VCsMeE6u5rJg7eiPIe58y1rsdiCDst2G
-         ZPCi4AAa8RMmlTb+QJqjRX7x9wmOPlqMmd30nlgDJTchJQK6ou/xCcgsyH4so7cN3Vo3
-         H+0BRyN3yE2nkOjl3zkFMJvrISrCzFHhL8YZEfewgCDyB3Z+IKxeK/arsWyuWK/tUyxP
-         owpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741130198; x=1741734998;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RkzGzrZgrbl+n5aUkotTUf87Rh6O+fNtBv0KfcpAk8E=;
-        b=rvUoP2SC1zlMXsFyTm6/IZqlHMuXj8eter83RG34cifF+IDg55dra2PiX7cTTX9YVG
-         5Dj9Xm6Cgf1ocJNwEGKb0AkK23j1KAodcPRKs1CNo7m/ObWccJPO28IV8+ZzLeo4MAFX
-         tekga/6SqDlkkfOSJmUqvN+Ah08x7Skgx5IxFnp9Xlmad3JC5qhiowzMyH5XgWM7B2RH
-         6RLHBD0LCVyqFIQKw7XXTOh9TTZ6ejC84l5y1y1+Mc97yJsnOhDxfM8XhBZMZKDfh4AR
-         H/MYqlKicCdOai0zCDPtQKbwnymb0b+ilydhX9pP4Tm69RAQ/qO5VJcSxZhzM7+lCZaP
-         Q+ng==
-X-Forwarded-Encrypted: i=1; AJvYcCUkaqEAHBm1cZlcnApVXGteJpZbiaffTXQDoqTMh7WQPkOT2RMKYzDoeUKFAEIp478RkIiH8E8pyI+yJnsykgHOSE21mKlt@vger.kernel.org, AJvYcCUnTTz2dRQXb7S0p8N/DQCVGZ938jGQ/YFtDNMZWttzp4vZk2Z+A2KXI0aSJt7Sxdo57G7MmZiAouXpwkk=@vger.kernel.org, AJvYcCX1BBHUAeCzcPxk3v15ujlS/JrAX1vDUiYKq1KeNIirB3SU8TshNqshVgwzkvqKEtolSnraHFTKHyrv1eDfWGc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw29W1BdporbKAgGl6cuquG9x4BLOccFG37+K+Mz2zJrqH8R3/v
-	AnKxh4+BCd3zVm32MH21RnWkHZ6eSPGSne46Dnb7HApqq0/Ak53PU8EMsG+Cl2OBuL2LCLV03l4
-	sE6/auvmB6AZc3gKNLAw6AiBZnSI=
-X-Gm-Gg: ASbGnctZx59M9R8OPxmV8GE85/vvQ1q6RiXCOXYH2/TTKBeKUIsAxwvPpYLE+dF8FIJ
-	eDivCVi3dzq2pdH63TYMGn1leSog/iuQa4ED/JHFMO1PIdVM04gQfbqgORSEI4ORTHKDp0fvF3b
-	OtUCkzm8lvwQCt7+cDe5gt36xCTA==
-X-Google-Smtp-Source: AGHT+IHW0Mlhxk0bv+5F7LLd/ZgwlqGpqgiebP8yIolkA5CTewQSv22twBSnzC50H8c/gL5JZsFsDcBwzD4LEPfXaMg=
-X-Received: by 2002:a17:90b:4d05:b0:2fe:b77a:2eba with SMTP id
- 98e67ed59e1d1-2ff49718182mr722680a91.1.1741130197642; Tue, 04 Mar 2025
- 15:16:37 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AY+qot5n"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A93F8C4CEE9;
+	Tue,  4 Mar 2025 23:19:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741130393;
+	bh=i8SL8gO+OIlTYJRgMlSgO0oRB4ZwIsNjVvyGrMEu5PU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=AY+qot5nFtHrn4nfwbaT/9+XzyaPP3sz6wnmahpRr6nx4Lg4r8ULLdhC2pW7vPIKc
+	 SAN5iKmwuY8Ehva6O/0G5T3Jmla2ulnwlznXlsE2ubnwa16pMxFurqwa+POlXenbLS
+	 YGQetWtRCHyRo22oijRH+9yC+3o6sz+QaVORQn9awssYzCDw2HmgpF0Fd/kPqt5hiK
+	 R7/CQCLhleU3NJ3Gz7XQF56QUqvbUrY4sKsGPFPyg5U1ICiGkNO1Uu4FwixN6AajBL
+	 B3urex3lv4tzyqVTku8dJmOGZwp7XEGST+1c5nCTgAs0PAzIemkPbPR89RpIGY9L/a
+	 xQfC5rzyBwUuA==
+Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3d2af701446so50769375ab.2;
+        Tue, 04 Mar 2025 15:19:53 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUH1ZeXXnmLbbv6kRLBYy5u9G2a5Vw02YjDKLzX9e75W2QgmZryC/LdSBZD1kXpJBwKgtlZu2kWe8YDxsS3wUpHlsLilcMm@vger.kernel.org, AJvYcCUst5HlRkSFL9s/KF3oClPJhEgIK1rCvy2s54HxSLuWHdzmFxHokeuoehtmzDCzQHx8YzU=@vger.kernel.org, AJvYcCV6QXtGQmqPtqe1zLU60tWRRzNH30nJOvyaZCxh5uJCj0UY4sYDnk3/KHc3eFFwWBPETGmRJTZEVg==@vger.kernel.org, AJvYcCWY8aDyz/U/vgs1hRZcAHUyhy6Bz49ZWUbLWqFG0HYkwq9WZf4Xrvx8/BpjhOnUPv9cOaSN6GCc1beYWuPL@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsqEfvpWU/vsA2C3jDKv2D7Jj6Ao9cfI/g51ow1VgwT/m3+5yj
+	n/CnRl5+G3Ipus6pPERZNgVFyBKbZn3db4uRIbUkjP7l7bi4rD9LytCHVCSDjLl8lcjXB3VCuCb
+	32d5lpkaa+TalHZDNMVwfvwyRF0Q=
+X-Google-Smtp-Source: AGHT+IGms9dqXKMXqsx3hVWMrs+Z8rdj1LzypWR2n2n7rHwNxaraGVvP4jdONEO1NrkicQNJScsH92+aLsVP1+7xLc0=
+X-Received: by 2002:a05:6e02:3f8a:b0:3d3:ce83:527c with SMTP id
+ e9e14a558f8ab-3d42b879d19mr16194865ab.1.1741130392941; Tue, 04 Mar 2025
+ 15:19:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250303-inline-securityctx-v1-1-fb7b9b641fdf@google.com>
- <CAHC9VhSo3aGsJVd=a3MTeakgU66oTN86oh5sZE8P4ghSk8Rx2g@mail.gmail.com>
- <CANiq72=n_cGmrb6+6CH1AbGePy5dRMMFyzAFv6O1VEp8EgKR8w@mail.gmail.com> <CAHC9VhT3DqOeYbC+GCQRgH3NNUiOk6Sh=6fzsFaiHk2LEFbi2g@mail.gmail.com>
-In-Reply-To: <CAHC9VhT3DqOeYbC+GCQRgH3NNUiOk6Sh=6fzsFaiHk2LEFbi2g@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Wed, 5 Mar 2025 00:16:25 +0100
-X-Gm-Features: AQ5f1JrkwHqBIjbP7TRgugbmpbgtur5VfMYkLdAY_NvdioIDeBMjT02OOPGYXig
-Message-ID: <CANiq72=SZv7UPvcZ1NgBtbM72n42b8GqS+rTVjccVZmn4z3SVg@mail.gmail.com>
-Subject: Re: [PATCH] lsm: rust: mark SecurityCtx methods inline
-To: Paul Moore <paul@paul-moore.com>
-Cc: Alice Ryhl <aliceryhl@google.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250304203123.3935371-1-bboscaccy@linux.microsoft.com> <20250304203123.3935371-3-bboscaccy@linux.microsoft.com>
+In-Reply-To: <20250304203123.3935371-3-bboscaccy@linux.microsoft.com>
+From: Song Liu <song@kernel.org>
+Date: Tue, 4 Mar 2025 15:19:41 -0800
+X-Gmail-Original-Message-ID: <CAPhsuW5HJuRYPucfvDbs25un7_D8JJnt=7zNUJ1utY3O_VMeSw@mail.gmail.com>
+X-Gm-Features: AQ5f1Jo9WUD2lq83UkjMIXC2XZlbrUncq1aeaThvdFPiq6BN9fGcI0gy7DMvJMs
+Message-ID: <CAPhsuW5HJuRYPucfvDbs25un7_D8JJnt=7zNUJ1utY3O_VMeSw@mail.gmail.com>
+Subject: Re: [PATCH v4 bpf-next 2/2] selftests/bpf: Add is_kernel parameter to
+ LSM/bpf test programs
+To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Yonghong Song <yonghong.song@linux.dev>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, selinux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 4, 2025 at 10:57=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
+On Tue, Mar 4, 2025 at 12:31=E2=80=AFPM Blaise Boscaccy
+<bboscaccy@linux.microsoft.com> wrote:
 >
-> Thanks.  Yes, I've seen the summary and the recent threads around Rust
-> in the Linux kernel.  I don't want to drag all of that up here, but I
-> will simply say that from the perspective of the LSM framework we're
-> happy to work with the Rust devs to ensure that the LSM framework is
-> well supported with Rust bindings.  However, I will add that my own
-> Rust related efforts are going to be very limited as my understanding
-> of Rust is still frustratingly low; until that improves I'll be
-> reliant on others like Alice and you to submit patches for
-> discussion/acceptance when there are issues.  Thankfully that has
-> proven to work fairly well over the past few months and I would like
-> to see that continue.
+> The security_bpf LSM hook now contains a boolean parameter specifying
+> whether an invocation of the bpf syscall originated from within the
+> kernel. Here, we update the function signature of relevant test
+> programs to include that new parameter.
 >
-> As far as the mechanics of which tree to merge code, I'll probably
-> continue to ask in most cases simply so we are all clear on where the
-> patches will land and how they get up to Linus.  From my perspective
-> there is no harm in asking, and I *really* want to encourage
-> cross-subsystem communication as much as I can; I've been seeing an
-> increasing trend towards compartmentalization across subsystems and I
-> believe the best way to push back against that is to talk a bit more,
-> even if it is just a mundane "my tree or yours?".
+> Signed-off-by: Blaise Boscaccy bboscaccy@linux.microsoft.com
+^^^ The email address is broken.
 
-Definitely agreed on talking more and encouraging more communication,
-so if deciding based on a case-by-case is best for you, I think that
-is good.
+> ---
+>  tools/testing/selftests/bpf/progs/rcu_read_lock.c           | 3 ++-
+>  tools/testing/selftests/bpf/progs/test_cgroup1_hierarchy.c  | 4 ++--
+>  tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c | 6 +++---
+>  tools/testing/selftests/bpf/progs/test_lookup_key.c         | 2 +-
+>  tools/testing/selftests/bpf/progs/test_ptr_untrusted.c      | 2 +-
+>  tools/testing/selftests/bpf/progs/test_task_under_cgroup.c  | 2 +-
+>  tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c   | 2 +-
+>  7 files changed, 11 insertions(+), 10 deletions(-)
 
-And thanks for helping us here in whatever way you can!
+It appears you missed a few of these?
 
-Cheers,
-Miguel
+tools/testing/selftests/bpf/progs/rcu_read_lock.c:SEC("?lsm.s/bpf")
+tools/testing/selftests/bpf/progs/test_cgroup1_hierarchy.c:SEC("lsm/bpf")
+tools/testing/selftests/bpf/progs/test_cgroup1_hierarchy.c:SEC("lsm.s/bpf")
+tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c:SEC("?lsm.s/bpf=
+")
+tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c:SEC("?lsm.s/bpf=
+")
+tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c:SEC("lsm.s/bpf"=
+)
+tools/testing/selftests/bpf/progs/test_libbpf_get_fd_by_id_opts.c:SEC("lsm/=
+bpf_map")
+tools/testing/selftests/bpf/progs/test_lookup_key.c:SEC("lsm.s/bpf")
+tools/testing/selftests/bpf/progs/test_ptr_untrusted.c:SEC("lsm.s/bpf")
+tools/testing/selftests/bpf/progs/test_task_under_cgroup.c:SEC("lsm.s/bpf")
+tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c:SEC("lsm.s/bpf")
+tools/testing/selftests/bpf/progs/token_lsm.c:SEC("lsm/bpf_token_capable")
+tools/testing/selftests/bpf/progs/token_lsm.c:SEC("lsm/bpf_token_cmd")
+tools/testing/selftests/bpf/progs/verifier_global_subprogs.c:SEC("?lsm/bpf"=
+)
+tools/testing/selftests/bpf/progs/verifier_ref_tracking.c:SEC("lsm.s/bpf")
+tools/testing/selftests/bpf/progs/verifier_ref_tracking.c:SEC("lsm.s/bpf")
+tools/testing/selftests/bpf/progs/verifier_ref_tracking.c:SEC("lsm.s/bpf")
+tools/testing/selftests/bpf/progs/verifier_ref_tracking.c:SEC("lsm.s/bpf")
+tools/testing/selftests/bpf/progs/verifier_ref_tracking.c:SEC("lsm.s/bpf")
+tools/testing/selftests/bpf/progs/verifier_ref_tracking.c:SEC("lsm.s/bpf")
+tools/testing/selftests/bpf/progs/verifier_ref_tracking.c:SEC("lsm.s/bpf")
+
+>
+> diff --git a/tools/testing/selftests/bpf/progs/rcu_read_lock.c b/tools/te=
+sting/selftests/bpf/progs/rcu_read_lock.c
+> index ab3a532b7dd6d..f85d0e282f2ae 100644
+> --- a/tools/testing/selftests/bpf/progs/rcu_read_lock.c
+> +++ b/tools/testing/selftests/bpf/progs/rcu_read_lock.c
+> @@ -242,7 +242,8 @@ int inproper_sleepable_helper(void *ctx)
+>  }
+>
+>  SEC("?lsm.s/bpf")
+> -int BPF_PROG(inproper_sleepable_kfunc, int cmd, union bpf_attr *attr, un=
+signed int size)
+> +int BPF_PROG(inproper_sleepable_kfunc, int cmd, union bpf_attr *attr, un=
+signed int size,
+> +            bool is_kernel)
+>  {
+>         struct bpf_key *bkey;
+>
+> diff --git a/tools/testing/selftests/bpf/progs/test_cgroup1_hierarchy.c b=
+/tools/testing/selftests/bpf/progs/test_cgroup1_hierarchy.c
+> index 44628865fe1d4..0e741262138f2 100644
+> --- a/tools/testing/selftests/bpf/progs/test_cgroup1_hierarchy.c
+> +++ b/tools/testing/selftests/bpf/progs/test_cgroup1_hierarchy.c
+> @@ -51,13 +51,13 @@ static int bpf_link_create_verify(int cmd)
+>  }
+>
+>  SEC("lsm/bpf")
+> -int BPF_PROG(lsm_run, int cmd, union bpf_attr *attr, unsigned int size)
+> +int BPF_PROG(lsm_run, int cmd, union bpf_attr *attr, unsigned int size, =
+bool is_kernel)
+>  {
+>         return bpf_link_create_verify(cmd);
+>  }
+>
+>  SEC("lsm.s/bpf")
+> -int BPF_PROG(lsm_s_run, int cmd, union bpf_attr *attr, unsigned int size=
+)
+> +int BPF_PROG(lsm_s_run, int cmd, union bpf_attr *attr, unsigned int size=
+, bool is_kernel)
+>  {
+>         return bpf_link_create_verify(cmd);
+>  }
+> diff --git a/tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c =
+b/tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c
+> index cd4d752bd089c..ce36a55ba5b8b 100644
+> --- a/tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c
+> +++ b/tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c
+> @@ -36,7 +36,7 @@ char _license[] SEC("license") =3D "GPL";
+>
+>  SEC("?lsm.s/bpf")
+>  __failure __msg("cannot pass in dynptr at an offset=3D-8")
+> -int BPF_PROG(not_valid_dynptr, int cmd, union bpf_attr *attr, unsigned i=
+nt size)
+> +int BPF_PROG(not_valid_dynptr, int cmd, union bpf_attr *attr, unsigned i=
+nt size, bool is_kernel)
+>  {
+>         unsigned long val;
+>
+> @@ -46,7 +46,7 @@ int BPF_PROG(not_valid_dynptr, int cmd, union bpf_attr =
+*attr, unsigned int size)
+>
+>  SEC("?lsm.s/bpf")
+>  __failure __msg("arg#0 expected pointer to stack or const struct bpf_dyn=
+ptr")
+> -int BPF_PROG(not_ptr_to_stack, int cmd, union bpf_attr *attr, unsigned i=
+nt size)
+> +int BPF_PROG(not_ptr_to_stack, int cmd, union bpf_attr *attr, unsigned i=
+nt size, bool is_kernel)
+>  {
+>         unsigned long val =3D 0;
+>
+> @@ -55,7 +55,7 @@ int BPF_PROG(not_ptr_to_stack, int cmd, union bpf_attr =
+*attr, unsigned int size)
+>  }
+>
+>  SEC("lsm.s/bpf")
+> -int BPF_PROG(dynptr_data_null, int cmd, union bpf_attr *attr, unsigned i=
+nt size)
+> +int BPF_PROG(dynptr_data_null, int cmd, union bpf_attr *attr, unsigned i=
+nt size, bool is_kernel)
+>  {
+>         struct bpf_key *trusted_keyring;
+>         struct bpf_dynptr ptr;
+> diff --git a/tools/testing/selftests/bpf/progs/test_lookup_key.c b/tools/=
+testing/selftests/bpf/progs/test_lookup_key.c
+> index c73776990ae30..c46077e01a4ca 100644
+> --- a/tools/testing/selftests/bpf/progs/test_lookup_key.c
+> +++ b/tools/testing/selftests/bpf/progs/test_lookup_key.c
+> @@ -23,7 +23,7 @@ extern struct bpf_key *bpf_lookup_system_key(__u64 id) =
+__ksym;
+>  extern void bpf_key_put(struct bpf_key *key) __ksym;
+>
+>  SEC("lsm.s/bpf")
+> -int BPF_PROG(bpf, int cmd, union bpf_attr *attr, unsigned int size)
+> +int BPF_PROG(bpf, int cmd, union bpf_attr *attr, unsigned int size, bool=
+ is_kernel)
+>  {
+>         struct bpf_key *bkey;
+>         __u32 pid;
+> diff --git a/tools/testing/selftests/bpf/progs/test_ptr_untrusted.c b/too=
+ls/testing/selftests/bpf/progs/test_ptr_untrusted.c
+> index 2fdc44e766248..21fce1108a21d 100644
+> --- a/tools/testing/selftests/bpf/progs/test_ptr_untrusted.c
+> +++ b/tools/testing/selftests/bpf/progs/test_ptr_untrusted.c
+> @@ -7,7 +7,7 @@
+>  char tp_name[128];
+>
+>  SEC("lsm.s/bpf")
+> -int BPF_PROG(lsm_run, int cmd, union bpf_attr *attr, unsigned int size)
+> +int BPF_PROG(lsm_run, int cmd, union bpf_attr *attr, unsigned int size, =
+bool is_kernel)
+>  {
+>         switch (cmd) {
+>         case BPF_RAW_TRACEPOINT_OPEN:
+> diff --git a/tools/testing/selftests/bpf/progs/test_task_under_cgroup.c b=
+/tools/testing/selftests/bpf/progs/test_task_under_cgroup.c
+> index 7e750309ce274..18ad24a851c6c 100644
+> --- a/tools/testing/selftests/bpf/progs/test_task_under_cgroup.c
+> +++ b/tools/testing/selftests/bpf/progs/test_task_under_cgroup.c
+> @@ -49,7 +49,7 @@ int BPF_PROG(tp_btf_run, struct task_struct *task, u64 =
+clone_flags)
+>  }
+>
+>  SEC("lsm.s/bpf")
+> -int BPF_PROG(lsm_run, int cmd, union bpf_attr *attr, unsigned int size)
+> +int BPF_PROG(lsm_run, int cmd, union bpf_attr *attr, unsigned int size, =
+bool is_kernel)
+>  {
+>         struct cgroup *cgrp =3D NULL;
+>         struct task_struct *task;
+> diff --git a/tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c b/=
+tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c
+> index 12034a73ee2d2..135665f011c7e 100644
+> --- a/tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c
+> +++ b/tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c
+> @@ -37,7 +37,7 @@ struct {
+>  char _license[] SEC("license") =3D "GPL";
+>
+>  SEC("lsm.s/bpf")
+> -int BPF_PROG(bpf, int cmd, union bpf_attr *attr, unsigned int size)
+> +int BPF_PROG(bpf, int cmd, union bpf_attr *attr, unsigned int size, bool=
+ is_kernel)
+>  {
+>         struct bpf_dynptr data_ptr, sig_ptr;
+>         struct data *data_val;
+> --
+> 2.48.1
+>
