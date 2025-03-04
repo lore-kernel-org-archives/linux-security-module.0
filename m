@@ -1,113 +1,189 @@
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 521DB13AC1
-	for <linux-security-module@vger.kernel.org>; Tue,  4 Mar 2025 22:07:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7499B3597E;
+	Tue,  4 Mar 2025 22:23:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741126071; cv=none; b=uyXYCCrscQX1lYIB/1fqN6UYTxVrIioVjp35DWPpoQIlwaotdnfp33Q4nLpJxayVXLcqyhiS1G9IzLst8F2eTnRHag/ELti8C5HSSsH4bPmx4zjHU7wQYqFVZxx3Hg+SA9aKFpHiD/feFONpmqNGA1ba5khhukDup9RufONzzLQ=
+	t=1741126987; cv=none; b=YvNnIoaI+gxJOECno4Axw3KNSqkLOgzgD3TsgL3hr4199tCiSYlx+pRF/CIHlUrWziDy/cj+6JFlJrwQ4aGRGE/4ExT8bWhZ7qrOKhVlHCXmOTAJZOhW1QUb47RZC/GWh1jP13VhQGXVFQ5/KDkygG/+k13/kW75/F1HSvtHpi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741126071; c=relaxed/simple;
-	bh=rYa8UwAmLiF/ruWm+7Ip+yWVFZ1SaMjS81Bt+resw34=;
-	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=ci7MLb+06keCMMum8lJ40tes2wUkzu6VvL/5eiuzbwPSQzpEZGs6UUihbWD1YdIhmLnUtC47isk79ldrC6xpMXHroOv0j29t7gulaBCBt3Ph6JYuJvDMS8umRTeEUgO6fSXSc1nUs1zyeCV1gzmByJ6hRnJBBQi/ThP0CsRJ68Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ChvdcD5J; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1741126987; c=relaxed/simple;
+	bh=EDaTlL8s7EFTKV867gVON4AEWAHqBXSc9SoE/eEN/qU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KKX0thEYP7kWKhiO+dL3bwuYzlsDmyWqtF/HEgBfhUz9TIxoRg7EiItteTfhDOD/GP2eReaBDb2x3QfmWILO9w+DtlEo00TQau/3Sacfk81fJ5pjfZxSjTyhUhSJC/jgXxjm+m8VkOjLi2aDduvONYpcYxlL8kUTvBkaXK9nxr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QXlroVFN; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ChvdcD5J"
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4750ca77db0so283171cf.3
-        for <linux-security-module@vger.kernel.org>; Tue, 04 Mar 2025 14:07:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1741126069; x=1741730869; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BKFucnJ0eu2hFoCdtrns3nmxFOzTMWGPnJoCE8LE9lg=;
-        b=ChvdcD5JcW6GT82AZREdI9KJI5wMf9FHldqZCztGGm4XN/xNKrW3hnsfaFifNNI8Nk
-         AND4RdlbUJoLC2IoFeTyDYV3SMdMgx9ZD+G25ygZaX09WbFNBFA8tbDaEuuVOPB1T27/
-         0ZPBJfOU/kdBWwIIpcQ12Z5zj0bn85U3qGw3iL5Jk+OfXiNv+b6+pAxGN7CioqxCOn/s
-         c4keFaTd394WdtGQfq4UEGbvuWQXs94As6WtZk4RGoybM+HV5WynToZX24Sr1mFHRVoM
-         WOCe9xHTrzIIhwk5V2TBkZJKptNQ824nv1ih6ccKKb2tzfn79WNS6/bw+06kNKqMUcZQ
-         Ru0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741126069; x=1741730869;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=BKFucnJ0eu2hFoCdtrns3nmxFOzTMWGPnJoCE8LE9lg=;
-        b=fHIClJYbn+YOunR8zqVvB3krDAJmrHRTCT9RtNC9K9bPAFyQTnEREMxySdIpxCHkiX
-         OEbBrUbJ8dGGJVGpX14n8m70tfWq4FOYXeg9WJkA4yn/aXkP4VFiDgNEY1g8Xf38Psno
-         4b6sbrO1KKnq+P71hntJJkBMgJmDTLGNkDKwI8LmvITCRTERApk9fUg/ZO34k05SxoO3
-         orTNFXC098tQdSj/J4dfRsxCnYxWLqXZNcOSoya3W+AF3wKRCPrajgAKTO8AdrMVLHac
-         en8C2PTwtiBQURZGOTyHmCJrNu4B4NYcg9CVN02hHsfSp92gY08p01ojtb8HKGOtveCj
-         Q61Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXslNGcGJTIFvCnFnETGHsbVfmTK64FmHNdJ5IxRCSyQWGjiAyizWqZGd0Me8cwl1gDichVHJGaRk9Q8yG8FxEfQLcg2pI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2JFb5cH+ofNvqCiI2u495zR9z514bqD0aEuO33qsXLw4w5PkF
-	yIjt9LOPgi+7IgUUfAajYGdWyMUH35vSU8aCoXN58U+r9xugIlaSUjpqeB6x6A==
-X-Gm-Gg: ASbGncun6IWcWTZPsbt9/HDFKuYxfoa/yh1dx8J1TRp/rKyCQevoTMJC/toccNxhzOq
-	l4epyrlm8RUBnWKbctpDqYl9BHhgR+S3/xcFTTkX8LiUCwZvzEHxYrq2JF52l67QaB0RED5FHxr
-	xAeKIj/G10k6LDfiIlytd9IJtf4ULSRiDRH16tAm7HHJlcn8C/0axfpjovYzwoWx852zxaIkiht
-	QxF5CkTJ6C/O4O1LseeM/S5kAve5i9soJg2a2/y0rOsF858+gv59y63YrofcbwbMEaqD6z+ou7Z
-	U8cl6umTHSX1gcsTmNBX2vPnRUDCG6aZTIao66amBQ3LUv+I2+WP3pBf4AB8VQmi+W4KF+shxuO
-	KlyQvC+Ia/twzFg==
-X-Google-Smtp-Source: AGHT+IGUzI53OHoAUblYM2qlVQBUsHxaboxVDz0QodPEH5dELjV4Uu9kfywXUTbmN5tYZHwecjh2Aw==
-X-Received: by 2002:a05:622a:cb:b0:471:fc74:100e with SMTP id d75a77b69052e-4750b4682d0mr10512251cf.28.1741126069306;
-        Tue, 04 Mar 2025 14:07:49 -0800 (PST)
-Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-47472431036sm79332581cf.80.2025.03.04.14.07.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 14:07:48 -0800 (PST)
-Date: Tue, 04 Mar 2025 17:07:48 -0500
-Message-ID: <f52b83c88d715ac3ae989427bcc20030@paul-moore.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QXlroVFN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B86B7C4CEE5;
+	Tue,  4 Mar 2025 22:23:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741126987;
+	bh=EDaTlL8s7EFTKV867gVON4AEWAHqBXSc9SoE/eEN/qU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QXlroVFNmbNpIfl+8c8IoweltYy9n1VHi8GYmTF3jMAjnINtqhc/TBQwWJCOHwj5q
+	 TZb5JTA4lXEYIUO9bVrLimmEN7vbT0T5nfXxb9hQb9tEi0mAwBlgIUYs2yLXWvcmf7
+	 C65ZP+HV3CQCW/CZAyeopoFnAbk84kqgJKU+PU4IJFTYc06oOocfGSr1AounpZ6tlW
+	 eHROW6ZlbxDOhsPL7tV/PwSKu5Y13b+QNuDMBNzARuSXo6HrOCM8F0ZJ7VkIAkhk09
+	 2tj1exuNOTBxF6p6GDNwxPA2ShDRQfndbGom1nCDpSpPnYNjjvJWir37zXTXem/bG0
+	 SmGzVBGlTbQrw==
+Date: Wed, 5 Mar 2025 00:23:02 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: steven chen <chenste@linux.microsoft.com>
+Cc: zohar@linux.ibm.com, stefanb@linux.ibm.com,
+	roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
+	eric.snowberg@oracle.com, ebiederm@xmission.com,
+	paul@paul-moore.com, code@tyhicks.com, bauermann@kolabnow.com,
+	linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
+	James.Bottomley@hansenpartnership.com, bhe@redhat.com,
+	vgoyal@redhat.com, dyoung@redhat.com
+Subject: Re: [PATCH v9 2/7] kexec: define functions to map and unmap segments
+Message-ID: <Z8d9RvRWPOADOgsx@kernel.org>
+References: <20250304190351.96975-1-chenste@linux.microsoft.com>
+ <20250304190351.96975-3-chenste@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=UTF-8 
-Content-Transfer-Encoding: 8bit 
-X-Mailer: pstg-pwork:20250304_1539/pstg-lib:20250304_1539/pstg-pwork:20250304_1539
-From: Paul Moore <paul@paul-moore.com>
-To: Alice Ryhl <aliceryhl@google.com>, James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Christian Brauner <brauner@kernel.org>
-Cc: Jens Axboe <axboe@kernel.dk>, Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, "=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, Alice Ryhl <aliceryhl@google.com>
-Subject: Re: [PATCH v2] cred: rust: mark Credential methods inline
-References: <20250304-inline-cred-v2-1-7aa54011bcab@google.com>
-In-Reply-To: <20250304-inline-cred-v2-1-7aa54011bcab@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250304190351.96975-3-chenste@linux.microsoft.com>
 
-On Mar  4, 2025 Alice Ryhl <aliceryhl@google.com> wrote:
+On Tue, Mar 04, 2025 at 11:03:46AM -0800, steven chen wrote:
+> The content of memory segments carried over to the new kernel during the 
+> kexec systemcall can be changed at kexec 'execute' stage, but the size of
+> the memory segments cannot be changed at kexec 'execute' stage.
 > 
-> When you build the kernel using the llvm-19.1.4-rust-1.83.0-x86_64
-> toolchain provided by kernel.org with ARCH=arm64, the following symbols
-> are generated:
+> To copy IMA measurement logs during the kexec operation, IMA needs to 
+> allocate memory at the kexec 'load' stage and map the segments to the 
+> kimage structure. The mapped address will then be used to copy IMA 
+> measurements during the kexec 'execute' stage.
 > 
-> $ nm out-linux/vmlinux | grep ' _R'.*Credential | rustfilt
-> ffffffc0808fc540 T <kernel::cred::Credential>::get_secid
-> ffffffc0808fc588 T <kernel::cred::Credential as kernel::types::AlwaysRefCounted>::dec_ref
-> ffffffc0808fc570 T <kernel::cred::Credential as kernel::types::AlwaysRefCounted>::inc_ref
+> Currently, the mechanism to map and unmap segments to the kimage 
+> structure is not available to subsystems outside of kexec.
+
+How does IMA work with kexec without having this? Just interested
+(and confused). 
+
 > 
-> However, these Rust symbols are trivial wrappers around the functions
-> security_cred_getsecid, get_cred, and put_cred respectively. It doesn't
-> make sense to go through a trivial wrapper for these functions, so mark
-> them inline. Also mark other trivial methods inline to prevent similar
-> cases in the future.
+> Implement kimage_map_segment() to enable IMA to map measurement log list to 
+> the kimage structure during kexec 'load' stage.  This function takes a kimage 
+> pointer, a memory address, and a size, then gathers the
+> source pages within the specified address range, creates an array of page
+> pointers, and maps these to a contiguous virtual address range.  The
+> function returns the start virtual address of this range if successful, or NULL on
+> failure.
 > 
-> After applying this patch, the above command will produce no output.
+> Implement kimage_unmap_segment() for unmapping segments
+> using vunmap().
 > 
-> Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
-> Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
-> Reviewed-by: Christian Brauner <brauner@kernel.org>
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> From: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+> Cc: Eric Biederman <ebiederm@xmission.com>
+> Cc: Baoquan He <bhe@redhat.com> 
+> Cc: Vivek Goyal <vgoyal@redhat.com>
+> Cc: Dave Young <dyoung@redhat.com>
+> Signed-off-by: steven chen <chenste@linux.microsoft.com>
 > ---
-> Changes in v2:
-> - Reword commit message.
-> - Link to v1: https://lore.kernel.org/r/20250303-inline-cred-v1-1-b2527beace76@google.com
-> ---
->  rust/kernel/cred.rs | 5 +++++
->  1 file changed, 5 insertions(+)
+>  include/linux/kexec.h |  6 +++++
+>  kernel/kexec_core.c   | 54 +++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 60 insertions(+)
+> 
+> diff --git a/include/linux/kexec.h b/include/linux/kexec.h
+> index f0e9f8eda7a3..7d6b12f8b8d0 100644
+> --- a/include/linux/kexec.h
+> +++ b/include/linux/kexec.h
+> @@ -467,13 +467,19 @@ extern bool kexec_file_dbg_print;
+>  #define kexec_dprintk(fmt, arg...) \
+>          do { if (kexec_file_dbg_print) pr_info(fmt, ##arg); } while (0)
+>  
+> +extern void *kimage_map_segment(struct kimage *image, unsigned long addr, unsigned long size);
+> +extern void kimage_unmap_segment(void *buffer);
+>  #else /* !CONFIG_KEXEC_CORE */
+>  struct pt_regs;
+>  struct task_struct;
+> +struct kimage;
+>  static inline void __crash_kexec(struct pt_regs *regs) { }
+>  static inline void crash_kexec(struct pt_regs *regs) { }
+>  static inline int kexec_should_crash(struct task_struct *p) { return 0; }
+>  static inline int kexec_crash_loaded(void) { return 0; }
+> +static inline void *kimage_map_segment(struct kimage *image, unsigned long addr, unsigned long size)
+> +{ return NULL; }
+> +static inline void kimage_unmap_segment(void *buffer) { }
+>  #define kexec_in_progress false
+>  #endif /* CONFIG_KEXEC_CORE */
+>  
+> diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
+> index c0bdc1686154..63e4d16b6023 100644
+> --- a/kernel/kexec_core.c
+> +++ b/kernel/kexec_core.c
+> @@ -867,6 +867,60 @@ int kimage_load_segment(struct kimage *image,
+>  	return result;
+>  }
+>  
+> +void *kimage_map_segment(struct kimage *image,
+> +			 unsigned long addr, unsigned long size)
+> +{
+> +	unsigned long eaddr = addr + size;
+> +	unsigned long src_page_addr, dest_page_addr;
+> +	unsigned int npages;
+> +	struct page **src_pages;
+> +	int i;
+> +	kimage_entry_t *ptr, entry;
+> +	void *vaddr = NULL;
+> +
+> +	/*
+> +	 * Collect the source pages and map them in a contiguous VA range.
+> +	 */
+> +	npages = PFN_UP(eaddr) - PFN_DOWN(addr);
+> +	src_pages = kmalloc_array(npages, sizeof(*src_pages), GFP_KERNEL);
+> +	if (!src_pages) {
+> +		pr_err("Could not allocate ima pages array.\n");
+> +		return NULL;
+> +	}
+> +
+> +	i = 0;
+> +	for_each_kimage_entry(image, ptr, entry) {
+> +		if (entry & IND_DESTINATION) {
+> +			dest_page_addr = entry & PAGE_MASK;
+> +		} else if (entry & IND_SOURCE) {
+> +			if (dest_page_addr >= addr && dest_page_addr < eaddr) {
+> +				src_page_addr = entry & PAGE_MASK;
+> +				src_pages[i++] =
+> +					virt_to_page(__va(src_page_addr));
+> +				if (i == npages)
+> +					break;
+> +				dest_page_addr += PAGE_SIZE;
+> +			}
+> +		}
+> +	}
+> +
+> +	/* Sanity check. */
+> +	WARN_ON(i < npages);
+> +
+> +	vaddr = vmap(src_pages, npages, VM_MAP, PAGE_KERNEL);
+> +	kfree(src_pages);
+> +
+> +	if (!vaddr)
+> +		pr_err("Could not map ima buffer.\n");
+> +
+> +	return vaddr;
+> +}
+> +
+> +void kimage_unmap_segment(void *segment_buffer)
+> +{
+> +	vunmap(segment_buffer);
+> +}
+> +
+>  struct kexec_load_limit {
+>  	/* Mutex protects the limit count. */
+>  	struct mutex mutex;
+> -- 
+> 2.25.1
+> 
+> 
 
-Merged into lsm/dev, thanks everyone!
-
---
-paul-moore.com
+BR, Jarkko
