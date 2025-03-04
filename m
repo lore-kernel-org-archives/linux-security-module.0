@@ -1,222 +1,168 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E193C1EA7CE;
-	Tue,  4 Mar 2025 12:54:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 786D02054F7;
+	Tue,  4 Mar 2025 14:06:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741092874; cv=none; b=sbHsYXSF6bYxIE7Th1em/QoRiIFUu5oN/RDsDrdWl4DGLpATy67DeRXw+WC43lTIwQAyt3qiz3GDPIbOn9BD3zvRglTA74OgFi3VlAvFLcyP99wAI2scq9Ib8GDfwuUdEgF8QDj9Z4TWdUkRysefQbKFDkoMY6a0icx9xy/clDs=
+	t=1741097219; cv=none; b=Tb+JHhua23oS6PWngYEfhtgki/GfLov62vKTCaj7fxVYi9RSQHNyEGeLDqHf+IsKxEVyWU9bCABrlU+w73FJvKfewaYvTMcxnuWTN64bLscCeJckk8NAqyTJaM/ANZpPJic/tV0llHxlQfRrenIn7hzPOLjd6vtkcyQ+Fz5lMNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741092874; c=relaxed/simple;
-	bh=HyinxsF89BDo1NSbgsVB0G53ZZrA9ZNM5huh2XiqTQo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=KWBlqjWVILEOeRIckrCCPDkBgtw6XarIyJRZpiaKfZiuBUkkqyaybEm3gr1MS6O/QP32pi7/1qmTSq7FUQjnwJFj7IuGn6jXlg8MsaliyLhSVyydvPzDZfBsyQGFE37mCw7msPv+ZqQxvI3kMAdVhnioNvlRv1NcgE9gSmudTwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=O5lhTMDA; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1741097219; c=relaxed/simple;
+	bh=JrdF0vtV0pwL5L590faoWin/GHpdb7YheXDBmCQex+0=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=TEMebxWFdPEFT506AK9f0xCrE46WdORHpnWDSj7C6mJLE/yuZ+A8q6UhV5QWQ3pbXxEtU6rN4t1RLZr7beklladon7VQ8FYzq4SBQeTB+4w+0dmlKqsj4kjQVYiL1RH18CQbH8GI2DtyWq2BV/azb6CDE65bWOBzoxxwxAY4k9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BOHXvAn/; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="O5lhTMDA"
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5249iOol022691;
-	Tue, 4 Mar 2025 12:53:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=Lav0QD
-	Qn3uzKDyq4Ig1kWXcr+7nIByvHXWzRPJRorA0=; b=O5lhTMDAUDbCKgM9h+X2Kl
-	v9OiUDth8TCYYGw4mmx5UnSZXTowT2eZKpor9AnZiJBJBFbyt1t9z4BL2OV73yhy
-	QyTsP5Lgh94O+EzAmpp9ZDL6I8BiBSSge4q8JVvLqc2YWHl9E4u+SKQclQN6pKOC
-	feLBTiUfbfsbLT8W8lUGk4EXaGr7BqCyyMnHRrF6mnry4U07USs1MkmiuxE5nYDt
-	GJezwxB8meFs2CgnTYQ6ecKd4Nntji+DGpydk3REjL3XIn1fxYmdQeXNhGV/XvV4
-	tY0EqFXvi7D7K+UcJwBlNePcD0uU1UGcECJrqE5hsvj5J0UUnrtmXnvXg0PVPlKQ
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 455ku53x3k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Mar 2025 12:53:24 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 524CHkpg004153;
-	Tue, 4 Mar 2025 12:53:24 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 455ku53x3e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Mar 2025 12:53:24 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5249WBQU025031;
-	Tue, 4 Mar 2025 12:53:23 GMT
-Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 454f91vyjr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Mar 2025 12:53:23 +0000
-Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
-	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 524CrM7x24248876
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 4 Mar 2025 12:53:22 GMT
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7575B5805B;
-	Tue,  4 Mar 2025 12:53:22 +0000 (GMT)
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4D51D5804B;
-	Tue,  4 Mar 2025 12:53:20 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.57.16])
-	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  4 Mar 2025 12:53:20 +0000 (GMT)
-Message-ID: <a1d6ce786256bbade459f98e0b4074e449048fee.camel@linux.ibm.com>
-Subject: Re: [RFC PATCH v3 00/13] Clavis LSM
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Eric Snowberg <eric.snowberg@oracle.com>,
-        David Howells
- <dhowells@redhat.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        "open
- list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
-        David
- Woodhouse <dwmw2@infradead.org>,
-        "herbert@gondor.apana.org.au"
- <herbert@gondor.apana.org.au>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        Ard Biesheuvel <ardb@kernel.org>, James Morris <jmorris@namei.org>,
-        "Serge
- E. Hallyn" <serge@hallyn.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-        "casey@schaufler-ca.com" <casey@schaufler-ca.com>,
-        Stefan Berger
- <stefanb@linux.ibm.com>,
-        "ebiggers@kernel.org" <ebiggers@kernel.org>,
-        Randy
- Dunlap <rdunlap@infradead.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
-Date: Tue, 04 Mar 2025 07:53:19 -0500
-In-Reply-To: <CAHC9VhSzc6N0oBesT8V21xuwB11T7e6V9r0UmiqHXvCg5erkVA@mail.gmail.com>
-References: <20241017155516.2582369-1-eric.snowberg@oracle.com>
-	 <c490397315c2704e9ef65c8ad3fefedb239f1997.camel@linux.ibm.com>
-	 <72F52F71-C7F3-402D-8441-3D636A093FE8@oracle.com>
-	 <CAHC9VhRHEw5c+drC=aX4xTqWoQJJZ+qkJ7aHUT5dcu+Q5f7BqA@mail.gmail.com>
-	 <CAHC9VhSJpnaAK1efgs1Uk0Tr3CaDNR1LiDU-t_yDKDQG6J-74Q@mail.gmail.com>
-	 <E20C617B-EA01-4E69-B5E2-31E9AAD6F7A2@oracle.com>
-	 <506e8e58e5236a4525b18d84bafa9aae80b24452.camel@linux.ibm.com>
-	 <CAHC9VhTsZntLdGBV7=4suauS+rzSQv1O4UAoGcy2vEB02wRkoA@mail.gmail.com>
-	 <c580811716f550ed5d6777db5e143afe4ad06edc.camel@linux.ibm.com>
-	 <CAHC9VhTz6U5rRdbJBWq0_U4BSKTsiGCsaX=LTgisNNoZXZokOA@mail.gmail.com>
-	 <e0e7c0971d42e45c7b4641bd58cb7ea20b36e2e1.camel@linux.ibm.com>
-	 <CAHC9VhSzc6N0oBesT8V21xuwB11T7e6V9r0UmiqHXvCg5erkVA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BOHXvAn/"
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7c2303a56d6so603774485a.3;
+        Tue, 04 Mar 2025 06:06:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741097216; x=1741702016; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I1Muupcpy+OM9bjik9PXq7Ryx61fO0zb5gU8UKxppt8=;
+        b=BOHXvAn/wgFYzHF/EoT8ifAF9R/Ce8Qgd/cIRx566dT1BBmrCjQeoCRPOS/J67Coh3
+         IAoDmwUw2JJoe55mzplzGcIKZrFSCrK+/uPwoS+0JBToJdGLak7UdvwC1jWtRjd1T2Xd
+         s64sHL67ztLTqjiAQCY5Eg5F9x76ddJMO6yFb/IOqC6SMKagaBixdt2za6KfptJgN0HE
+         aYZu/RwB+TF1dQ+IVAheoPRJ6KBn9oDloeYuRLmG8Q6YxPreptcsN8ffNCjZrIrmVYD9
+         tdYgrpFAQWKEz3QPIHODjiBJkgWkK7PwwU7gcM/cD5Z5wxI2j7VPt5jK9ZsXWeGfHGFk
+         aniw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741097216; x=1741702016;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=I1Muupcpy+OM9bjik9PXq7Ryx61fO0zb5gU8UKxppt8=;
+        b=geO1JbCHLz65KWHpHGpqJKlArzDJZ5WYoqKpgOB42RWrnf54vcT3pxnDJvTouKEXHM
+         nhLI/fttR+xLRgbr07y5ehmtq6P3RqrtrzBv6nBZo15NlLWzYZ3kkiF7FPqgx6F/AZri
+         bUAmcYsXujuSxY4ytUOf/WWfNMVyOKQY8o2Td1iOlxh75chIeT+fBjX8MrZ2SxkgUZR1
+         mLpUVtEqZEneGXYkJBT89J2QdPuXaNTdJ7jJVGZhT250mE1qMlQqRdaxSVzlmKUy6xZ2
+         lVSBopZBF2hCbBKa1tsZSEh3xu7wRyPlrmw04KhVJZ8LW5FkLUMHiyRdi7sQE5Cdw3Kh
+         KoMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUsi7dhd3jyjprwl3oyRyrH3Xy3NTVCAyN8tT4onX5vy+AAyvN3kRFWewEQfaTjPRlyS5K4ZYlx@vger.kernel.org, AJvYcCWCQaAfRGTG9uffXl+ViRRNaYu7wr7dU44aJhQV4FlvAkVqqBqvjs22NaOca0M0yLVenJGKn5UO5Xu4RJ/U91v5HLY5yWq1@vger.kernel.org, AJvYcCXucF26VwCuatPgQMDhOZSgymjF3pgfOfIc9PBGkLwmMWC+syEvliXm7SnwUfLpPlzGkMa3CVAhmeiSoEU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyf5jHMVKKaIjtIe8OEzuk6CTm3jhLi0KRGc9/TzaN9vLHS3Okr
+	CZwtdJRfZGT8ov9QMhTRUik2Zvr9AI3JSae/xgaaviljAcs10wlQ
+X-Gm-Gg: ASbGncsYUi0PIEQ+3mabcWAEjUYIIeJz1aqoGiaerwuhFROrzU9QIwkqyLgyWBmyRMt
+	2t365XU224SyMB8lIvfYEdDyeGa0ubxTOH2BYeG45/JJbAH7jaq2wia8zF3365R9YyVe7uCu95W
+	CVsrED3TLX8Y8yZVGWjvZpVanUYA0lkQGnKc2WF7kgFSfdjxjwi0jD6HtZJY5FNZK75LdNCxF0l
+	EmdxJPJj76JK/mOSeqlguLbs7WX9eooIa1epW1UID8ddt9oq/rdvsXJnGJ7rvLDo4DxlTE3zksP
+	id1gmIq1ecf+EUq2wA0VbJcqyYQrcTRisgY74QM2nrpkbsL8PYvxJ+OSzc607T9C/dNrbRFYVnG
+	gKw1IjdhmiW2jev7HJCijqw==
+X-Google-Smtp-Source: AGHT+IGApDbbAFIVP4UAhuK4gruOfc1K42rEtfDe0QgRcGiarlFw8FydgN2j9mXLeJC52LhY80Pv6w==
+X-Received: by 2002:a05:620a:424e:b0:7c0:c1d0:d0b4 with SMTP id af79cd13be357-7c39c60ea81mr2948041985a.40.1741097216179;
+        Tue, 04 Mar 2025 06:06:56 -0800 (PST)
+Received: from localhost (234.207.85.34.bc.googleusercontent.com. [34.85.207.234])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8976cca94sm66581446d6.77.2025.03.04.06.06.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 06:06:55 -0800 (PST)
+Date: Tue, 04 Mar 2025 09:06:55 -0500
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: =?UTF-8?B?Q2hyaXN0aWFuIEfDtnR0c2NoZQ==?= <cgoettsche@seltendoof.de>
+Cc: =?UTF-8?B?Q2hyaXN0aWFuIEfDtnR0c2NoZQ==?= <cgzones@googlemail.com>, 
+ Serge Hallyn <serge@hallyn.com>, 
+ Jan Kara <jack@suse.com>, 
+ Julia Lawall <Julia.Lawall@inria.fr>, 
+ Nicolas Palix <nicolas.palix@imag.fr>, 
+ linux-kernel@vger.kernel.org, 
+ linux-security-module@vger.kernel.org, 
+ cocci@inria.fr, 
+ "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, 
+ Simon Horman <horms@kernel.org>, 
+ Willem de Bruijn <willemb@google.com>, 
+ Mina Almasry <almasrymina@google.com>, 
+ Pavel Begunkov <asml.silence@gmail.com>, 
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+ Christian Hopps <chopps@labn.net>, 
+ Alexander Lobakin <aleksander.lobakin@intel.com>, 
+ netdev@vger.kernel.org
+Message-ID: <67c708ff63eac_257ad92942d@willemb.c.googlers.com.notmuch>
+In-Reply-To: <20250302160657.127253-9-cgoettsche@seltendoof.de>
+References: <20250302160657.127253-1-cgoettsche@seltendoof.de>
+ <20250302160657.127253-9-cgoettsche@seltendoof.de>
+Subject: Re: [PATCH v2 10/11] skbuff: reorder capability check last
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: P-IbRL-M3d-yxwOmiVwyy_AGpbk01k41
-X-Proofpoint-GUID: P5z29jqVGSnxacVJavhV21wsnAx8KUBc
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-04_05,2025-03-03_04,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
- clxscore=1015 mlxscore=0 suspectscore=0 impostorscore=0 bulkscore=0
- mlxlogscore=999 lowpriorityscore=0 spamscore=0 phishscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2503040102
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 2025-03-03 at 17:38 -0500, Paul Moore wrote:
-> On Fri, Feb 28, 2025 at 12:19=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.com>=
- wrote:
-> > On Fri, 2025-02-28 at 11:14 -0500, Paul Moore wrote:
-> > > On Fri, Feb 28, 2025 at 9:09=E2=80=AFAM Mimi Zohar <zohar@linux.ibm.c=
-om> wrote:
-> > > > On Thu, 2025-02-27 at 17:22 -0500, Paul Moore wrote:
->=20
-> ...
->=20
-> > Ok, let's go through different scenarios to see if it would scale.
-> >=20
-> > Scenario 1: Mostly distro signed userspace applications, minimum number=
- of
-> > developer, customer, 3rd party applications.
-> >=20
-> > Scenario 2: Multiple developer, customer, 3rd party applications, signe=
-d by the
-> > same party.
-> >=20
-> > Scenario 3: extreme case - every application signed by different party.
-> >=20
-> > With the minimum case, there would probably be a default key or sets of
-> > permissible keys.  In the extreme case, the number of keyrings would be
-> > equivalent to the number of application/software packages.
->=20
-> Perhaps we're not understanding each other, but my understanding of
-> the above three scenarios is that they are all examples of signed
-> applications where something (likely something in the kernel like IMA)
-> verifies the signature on the application.  While there are going to
-> be differing numbers of keys in each of the three scenarios, I believe
-> they would all be on/linked-to the same usage oriented keyring as they
-> all share the same usage: application signatures.
+Christian G=C3=B6ttsche wrote:
+> From: Christian G=C3=B6ttsche <cgzones@googlemail.com>
+> =
 
-Yes they're all verifying file signatures, but the software packages are fr=
-om
-different sources (e.g. distro, chrome), signed by different keys.  Only a
-particular key should be used to verify the file signatures for a particula=
-r
-application.  The scenarios, described above, are the ratio of distro/singl=
-e
-entity vs. non distro/single entity signed packages, which would correspond=
- to
-the number of keyrings.
+> capable() calls refer to enabled LSMs whether to permit or deny the
+> request.  This is relevant in connection with SELinux, where a
+> capability check results in a policy decision and by default a denial
+> message on insufficient permission is issued.
+> It can lead to three undesired cases:
+>   1. A denial message is generated, even in case the operation was an
+>      unprivileged one and thus the syscall succeeded, creating noise.
+>   2. To avoid the noise from 1. the policy writer adds a rule to ignore=
 
-Clavis limits key usage based on LSM hooks (e.g. kernel modules, kernel ima=
-ge,
-firmware, etc).  It's a good start, but even this probably is not fine enou=
-gh
-granularity.
+>      those denial messages, hiding future syscalls, where the task
+>      performs an actual privileged operation, leading to hidden limited=
 
->=20
-> > > My takeaway from Clavis was that it was more about establishing a set
-> > > of access controls around keys already present in the keyrings and my
-> > > comments about usage/spplication oriented keyrings have been in that
-> > > context.  While the access control policy, regardless of how it is
-> > > implemented, should no doubt incorporate the trust placed in the
-> > > individual keys, how that trust is established is a separate issue
-> > > from access control as far as I'm concerned.
-> >=20
-> > Clavis defined both a mechanism for establishing trust and access contr=
-ol rules.
-> >=20
-> > Clavis defined a single Clavis key to establish trust.  The Clavis poli=
-cy rules
-> > were signed by the Clavis key.  The Clavis policy rules defined the acc=
-ess
-> > control.
->=20
-> Unfortunately I think we're getting a little ambiguous with how we are
-> using the word "trust".  Just as "security" can mean different things
-> depending on context, so can "trust" as the qualities we are trusting
-> will vary depending on context.  I'll leave it at that for now as I
-> believe we are talking about different things in the paragraphs above.
->=20
-> Regardless, I'll also say this regarding Clavis and key/keyring access
-> controls - as implemented, Clavis doesn't look like a LSM to me for
-> the reasons already given.  If all of the various keys subsystem
-> maintainers believe it is the Right Thing To Do inside the keys
-> subsystem then it isn't my place to have a say in that.  I personally
-> believe that doing the work to support usage oriented keyrings before,
-> or while, implementing a Clavis-like mechanism is the better option,
-> but that is a decision for you and the other key maintainers.
+>      functionality of that task.
+>   3. To avoid the noise from 1. the policy writer adds a rule to permit=
 
-"Usage oriented keyrings" similarly implies any key on a particular keyring=
- is
-acceptable.  Without understanding what you mean by "usage oriented keyring=
-s", I
-would assume it would work initially, but eventually it too will not be fin=
-e
-enough granularity.
+>      the task the requested capability, while it does not need it,
+>      violating the principle of least privilege.
+> =
 
-Mimi
+> Signed-off-by: Christian G=C3=B6ttsche <cgzones@googlemail.com>
+> Reviewed-by: Serge Hallyn <serge@hallyn.com>
+
+Similar to Paolo's response to patch 7: these networking patches
+should probably go through net-next.
+
+> ---
+>  net/core/skbuff.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> =
+
+> diff --git a/net/core/skbuff.c b/net/core/skbuff.c
+> index b1c81687e9d8..7ed538e15b56 100644
+> --- a/net/core/skbuff.c
+> +++ b/net/core/skbuff.c
+> @@ -1566,7 +1566,7 @@ int mm_account_pinned_pages(struct mmpin *mmp, si=
+ze_t size)
+>  	unsigned long max_pg, num_pg, new_pg, old_pg, rlim;
+>  	struct user_struct *user;
+>  =
+
+> -	if (capable(CAP_IPC_LOCK) || !size)
+> +	if (!size || capable(CAP_IPC_LOCK))
+>  		return 0;
+
+Not sure that this case is relevant:
+
+Unlike most other capable checks, this does not protect a privileged
+operation and returns with error for unprivileged users.
+
+It offers a shortcut to privileged users to avoid memory accounting,
+but continues in the comon case that the user is not privileged.
+
+So the common case here is to generate denial messages when LSMs are
+enabled. size 0 is not likely, so swapping the order is unlikely to
+significantly change the number of denial messages.
+
+>  =
+
+>  	rlim =3D rlimit(RLIMIT_MEMLOCK);
+> -- =
+
+> 2.47.2
+> =
+
+
+
