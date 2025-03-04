@@ -1,149 +1,114 @@
-Received: from smtp-bc0e.mail.infomaniak.ch (smtp-bc0e.mail.infomaniak.ch [45.157.188.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53C8D1EDA0B
-	for <linux-security-module@vger.kernel.org>; Tue,  4 Mar 2025 20:30:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.14
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4B3E1F8BCC;
+	Tue,  4 Mar 2025 20:31:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741120218; cv=none; b=HNvoJjv5RUA6Ncf48jiAt0LHpTePvUiL3yVwBdFqWv+CjtAZJid5OWWnyGFb2D4qTQesgW12RySa7j9uhOWAfeNsz13kuSeeQ9UrMHccyi+LpV8TYIZxsKBQBD1Z96UT9cvigQL7iCBB03izIxg3Hq6W189YjJINccuzufDtVR4=
+	t=1741120301; cv=none; b=MHnmmcxeBJSsGqfm42Kqeuq48WxjcDHUQgoSTcXFaE3LfeBXbAlKDB8rOwPbY7QJ5h4k4m0x1F50SMASbHecfVYNa/YaVU2a7LBVjR15o61RtLXhUAsbhpa8TpN8DbMQdD2KnEsVLHUJrW/yzmELzYm/aM4DVDso9WHg9N0CufU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741120218; c=relaxed/simple;
-	bh=e/odl25+FmO4wZ1m7JOGgQ5yB3tjL3v7z7nZqEkir+E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jdGjjCsd++kO2gXDuKR9SG4w0yZstC79JU87dsSpGiu3Pfc0sZKXyTJrqZiYVQWCSwbXy+mzkemkx3iAQgI2H+vj5DhRb2Kbp54N13WOfKuDwhOEyMViZ9Zmr/qVRRuy/ZMgMqnQu8nHlU2ORQAGxU8q89tYfMJX2iKMNgDgNzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=psA5Kbnp; arc=none smtp.client-ip=45.157.188.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1741120301; c=relaxed/simple;
+	bh=tkxBDC72eU9MCONsFx4EJyrx8Yqu/GC847nibNDT1No=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=l57qzY2wd/otuZquMkThYoEJdCib8W+RqtG4BoDMgAQISV+HKsJnK6DAO/OcyeK5urD4PnBpvlNPd9H930dMP702saEKpYTkc8pV9B3qEq4hWniPRnMco+yKa5pMQiPQP9TukK76aLj7lf40NFBIH6mYMv5rAIMHKVHBcmnTDEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=XPOvUKPQ; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="psA5Kbnp"
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Z6mWX6khqz60f;
-	Tue,  4 Mar 2025 20:50:48 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1741117848;
-	bh=Gf0MHTMuVe1xP1cNubyAUhVNwqGpdqkMve5JpC+CLcA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=psA5Kbnp/Lwg8L/AkqEWigBYnZbNfkE8T26gQYNUGwzw9b3AIjjVImZBITp5zfzyl
-	 neESjZQ4mrsvPHnKvnyOGJXPgkChBlPkZ/yWCSloHx/9MGtot8ctVBouX/kC2HeCY4
-	 40bwiB53uyUihJ6tTdT18jswww4Smlwx2+Pif4kI=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Z6mWX2VJmz67d;
-	Tue,  4 Mar 2025 20:50:48 +0100 (CET)
-Date: Tue, 4 Mar 2025 20:50:47 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Tingmao Wang <m@maowtm.org>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Jan Kara <jack@suse.cz>, linux-security-module@vger.kernel.org, 
-	Amir Goldstein <amir73il@gmail.com>, Matthew Bobrowski <repnop@google.com>, 
-	linux-fsdevel@vger.kernel.org, Tycho Andersen <tycho@tycho.pizza>
-Subject: Re: [RFC PATCH 6/9] Creating supervisor events for filesystem
- operations
-Message-ID: <20250304.oowung0eiPee@digikod.net>
-References: <cover.1741047969.git.m@maowtm.org>
- <ed5904af2bdab297f4137a43e44363721894f42f.1741047969.git.m@maowtm.org>
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="XPOvUKPQ"
+Received: from narnia.corp.microsoft.com (unknown [167.220.2.28])
+	by linux.microsoft.com (Postfix) with ESMTPSA id D577C210EAF0;
+	Tue,  4 Mar 2025 12:31:32 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D577C210EAF0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1741120299;
+	bh=+5dln2CDLel2QrL5bi52WY7oDDb4ZKz6Vy7qsxHDPVQ=;
+	h=From:To:Subject:Date:From;
+	b=XPOvUKPQzaFkhGBpmdtBZxuyP8g5ZnF5rEirhMBUB9x231bt6/MNtJSnUfe7DiasU
+	 ije1dsOtNENEybY1JejkjPmD6YbcQv3zui3YoZ74Wv8XaoDkKIefpPpAkmfN3BySjR
+	 st9RsPIGK2l4EkB8pMmzBf7dgKJ/JMeYg33zndAA=
+From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+To: Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>,
+	Ondrej Mosnacek <omosnace@redhat.com>,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	selinux@vger.kernel.org,
+	bboscaccy@linux.microsoft.com
+Subject: [PATCH v4 bpf-next 0/2] security: Propagate caller information in bpf hooks
+Date: Tue,  4 Mar 2025 12:30:48 -0800
+Message-ID: <20250304203123.3935371-1-bboscaccy@linux.microsoft.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ed5904af2bdab297f4137a43e44363721894f42f.1741047969.git.m@maowtm.org>
-X-Infomaniak-Routing: alpha
+Content-Transfer-Encoding: 8bit
 
-On Tue, Mar 04, 2025 at 01:13:02AM +0000, Tingmao Wang wrote:
-> NOTE from future me: This implementation which waits for user response
-> while blocking inside the current security_path_* hooks is problematic due
-> to taking exclusive inode lock on the parent directory, and while I have a
-> proposal for a solution, outlined below, I haven't managed to include the
-> code for that in this version of the patch. Thus for this commit in
-> particular I'm probably more looking for suggestions on the approach
-> rather than code review.  Please see the TODO section at the end of this
-> message before reviewing this patch.
+Hello,
 
-This is good for an RFC.
+While trying to implement an eBPF gatekeeper program, we ran into an
+issue whereas the LSM hooks are missing some relevant data.
 
-> 
-> ----
-> 
-> This patch implements a proof-of-concept for modifying the current
-> landlock LSM hooks to send supervisor events and wait for responses, when
-> a supervised layer is involved.
-> 
-> In this design, access requests which would end up being denied by other
-> non-supervised landlock layers (or which would fail the normal inode
-> permission check anyways - but this is currently TODO, I only thought of
-> this afterwards) are denied straight away to avoid pointless supervisor
-> notifications.
+Certain subcommands passed to the bpf() syscall can be invoked from
+either the kernel or userspace. Additionally, some fields in the
+bpf_attr struct contain pointers, and depending on where the
+subcommand was invoked, they could point to either user or kernel
+memory. One example of this is the bpf_prog_load subcommand and its
+fd_array. This data is made available and used by the verifier but not
+made available to the LSM subsystem. This patchset simply exposes that
+information to applicable LSM hooks.
 
-Yes, only denied access should be forwarded to the supervisor.  In
-another patch series we could enable the supervisor to update its layer
-with new rules as well.
+Change list:
+- v3 -> v4
+  - split out selftest changes into a separate patch
+- v2 -> v3
+  - reorder params so that the new boolean flag is the last param
+  - fixup function signatures in bpf selftests
+- v1 -> v2
+  - Pass a boolean flag in lieu of bpfptr_t
 
-The audit patch series should help to properly identify which layer
-denied a request, and to only use the related supervisor.
+Revisions:
+- v3
+  https://lore.kernel.org/bpf/20250303222416.3909228-1-bboscaccy@linux.microsoft.com/
+- v2
+  https://lore.kernel.org/bpf/20250228165322.3121535-1-bboscaccy@linux.microsoft.com/
+- v1
+  https://lore.kernel.org/bpf/20250226003055.1654837-1-bboscaccy@linux.microsoft.com/
 
-> 
-> Currently current_check_access_path only gets the path of the parent
-> directory for create/remove operations, which is not enough for what we
-> want to pass to the supervisor.  Therefore we extend it by passing in any
-> relevant child dentry (but see TODO below - this may not be possible with
-> the proper implementation).
 
-Hmm, I'm not sure this kind of information is required (this is not
-implemented for the audit support).  The supervisor should be fine
-getting only which access is missing, right?
+Blaise Boscaccy (2):
+  security: Propagate caller information in bpf hooks
+  selftests/bpf: Add is_kernel parameter to LSM/bpf test programs
 
-> 
-> This initial implementation doesn't handle links and renames, and for now
-> these operations behave as if no supervisor is present (and thus will be
-> denied, unless it is allowed by the layer rules).  Also note that we can
-> get spurious create requests if the program tries to O_CREAT open an
-> existing file that exists but not in the dcache (from my understanding).
-> 
-> Event IDs (referred to as an opaque cookie in the uapi) are currently
-> generated with a simple `next_event_id++`.  I considered using e.g. xarray
-> but decided to not for this PoC. Suggestions welcome. (Note that we have
-> to design our own event id even if we use an extension of fanotify, as
-> fanotify uses a file descriptor to identify events, which is not generic
-> enough for us)
+ include/linux/lsm_hook_defs.h                     |  6 +++---
+ include/linux/security.h                          | 12 ++++++------
+ kernel/bpf/syscall.c                              | 10 +++++-----
+ security/security.c                               | 15 +++++++++------
+ security/selinux/hooks.c                          |  6 +++---
+ tools/testing/selftests/bpf/progs/rcu_read_lock.c |  3 ++-
+ .../selftests/bpf/progs/test_cgroup1_hierarchy.c  |  4 ++--
+ .../selftests/bpf/progs/test_kfunc_dynptr_param.c |  6 +++---
+ .../testing/selftests/bpf/progs/test_lookup_key.c |  2 +-
+ .../selftests/bpf/progs/test_ptr_untrusted.c      |  2 +-
+ .../selftests/bpf/progs/test_task_under_cgroup.c  |  2 +-
+ .../selftests/bpf/progs/test_verify_pkcs7_sig.c   |  2 +-
+ 12 files changed, 37 insertions(+), 33 deletions(-)
 
-That's another noticable difference with fanotify.  You can add it to
-the next cover letter.
+-- 
+2.48.1
 
-> 
-> ----
-> 
-> TODO:
-> 
-> When testing this I realized that doing it this way means that for the
-> create/delete case, we end up holding an exclusive inode lock on the
-> parent directory while waiting for supervisor to respond (see namei.c -
-> security_path_mknod is called in may_o_create <- lookup_open which has an
-> exclusive lock if O_CREAT is passed), which will prevent all other tasks
-> from accessing that directory (regardless of whether or not they are under
-> landlock).
-
-Could we use a landlock_object to identify this inode instead?
-
-> 
-> This is clearly unacceptable, but since landlock (and also this extension)
-> doesn't actually need a dentry for the child (which is allocated after the
-> inode lock), I think this is not unsolvable.  I'm experimenting with
-> creating a new LSM hook, something like security_pathname_mknod
-> (suggestions welcome), which will be called after we looked up the dentry
-> for the parent (to prevent racing symlinks TOCTOU), but before we take the
-> lock for it.  Such a hook can still take as argument the parent dentry,
-> plus name of the child (instead of a struct path for it).
-> 
-> Suggestions for alternative approaches are definitely welcome!
-> 
-> Signed-off-by: Tingmao Wang <m@maowtm.org>
-> ---
->  security/landlock/fs.c        | 134 ++++++++++++++++++++++++++++++++--
->  security/landlock/supervise.c | 122 +++++++++++++++++++++++++++++++
->  security/landlock/supervise.h | 106 ++++++++++++++++++++++++++-
->  3 files changed, 354 insertions(+), 8 deletions(-)
-> 
-
-[...]
