@@ -1,140 +1,297 @@
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from flow-b4-smtp.messagingengine.com (flow-b4-smtp.messagingengine.com [202.12.124.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7600218D;
-	Tue,  4 Mar 2025 00:04:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FBA923F383;
+	Tue,  4 Mar 2025 01:15:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741046650; cv=none; b=t+GzSeRtYL1IcTJoXr504AELztPKzXq0Fl0Rhgkdzw+eIvEc4HV0DocPhrU7xr9/+b/hTVtZDbSqcw+8NKu09PRXa2TkNThGGYm32tQFZPx5Y9hMCFHgsvcdmLw5TU+MxARTflobsgJeYdOisx3cljaGsrW2K17gXOhBop2Zev4=
+	t=1741050924; cv=none; b=O/yZ8Q14n5VwzQ2uTd1VWnbF5doB8024kBlUDoGoI+6NMtzs5XsEdhAcHYU+50N3XLivkq0pcDLFlaCc9kO/bKxXB9WU0cYJLtCe99YRIWXDXG/hpD2aVyc7x8eszkg1fAA3dmugFkURHfGjrs8b0Ff+Yhi3pOy+eaqFEEpz9wc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741046650; c=relaxed/simple;
-	bh=HXAKX2N9TbcSqNkQkYRPQn7lcR9MtlSeezsuxXMMk7w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sD+KPvwkcZKckmeMzARsaVEhEzW1lDaK9rmPecugvlZGdLmuGXvIf5fAOZTQqEjm3G4qlsb/pV9k1zZ6CGY1TcHEjUZkgr/WWQYHb1vH930bsUfncYPKUZk40LYC+NuYnWveVe7WBbdobaSak/kp+AvwkxcprIhFUjLpPM2Amp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ccMDZCAt; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1741050924; c=relaxed/simple;
+	bh=Fk5+/tO5dJ3tseH1+u3B9uwF/AZw8i7HDnR5PPUuKZo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HDuxOGn+VnJ7zvhJwPsL6keMfV4XMZyNhpVwuvTssKafS5qzP7LYGXQBpkuI9uNf4Y6rKlpVDfzV4LHgo+alnN4MzvRRIJ4YOFB9eZHg6d2eTyZx3WXxOxMV3wFJtK9a60Skm2kErH4PjSUs8hUvou3xFbx917CCs3Oo2JBrFOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=Vw96yu2l; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=2sKQPbqO; arc=none smtp.client-ip=202.12.124.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ccMDZCAt"
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2fd02536660so1129855a91.2;
-        Mon, 03 Mar 2025 16:04:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741046648; x=1741651448; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ysR28s3u8CnmgoTuBfCN0R8kYhifvtml7/f8t3uhNZU=;
-        b=ccMDZCAtVOaZf2Hig1n5VKge7TMlx4dtkdZJOLTwmiV5JqtGcA7QZtmfdOgeb6pAf2
-         0i/yLHmNc64Kvm0E7v8w6snKq++tE6GFFhlmkjQpIwcgE+6n2N14ebE9gn8HyXw2ABhw
-         63YSUyigPGIE6oSviCLcb2PphyP/gNtulB6xDJJQQK5lRaHrUNB+l7y4gTlVxuiRYbmI
-         Pe7euiGNfyc7PVSZz26Fy63Bio0Y6nINb67OFlU/vrf6f0iGW5VWgWzj/18a5EqSDF4H
-         wiNHRqrGtI8EoyCz86s8Dyy/z90kGvSdAejCmcjnLb0v6Q/NBf7BOnmk3G8zXTlW7Add
-         tLxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741046648; x=1741651448;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ysR28s3u8CnmgoTuBfCN0R8kYhifvtml7/f8t3uhNZU=;
-        b=htbHOyg7TJxwsdhMchT5+N3XS+Oeoam89XzszEV3o+au7Nzp5sfiJgFnxZZh/QbXAg
-         d/kDyuClYpIdGmcv4eUlFCVN1OEoEGr8fj1nLS1ONIUaUNCaNQXOwc9eyRoRh7OW6Ehp
-         cs5v1UkQDWOgxixne723QPZNxIdM1KAf5PdWRO6BMrHf21TEzwrn36bZQm8tWHtZbOH9
-         IBxAXB7n9KI4KUicj7MioP+vJEfpC0uwIeMr+/a6gwqMPXxV0jedC0OkRq4Ys4f5Rv9Z
-         E5BAZpYdLtvTnx3x9WbDz+4m3glQgSvrzSceqQZIv7vuM7n4kfwi2lrajuail2fe9Xnz
-         dhZA==
-X-Forwarded-Encrypted: i=1; AJvYcCUWrtb2PmCrTMlgIx5ta6yUcC2gwErB90/5jfzSWrlx0D47gnXrZoAKnsP0K/YnYmLA7Jg10wMvWy6DuzDQPC6rQSrIR1OT@vger.kernel.org, AJvYcCUntojxTX5FhwH8x46h7mIjlpPoHlRkcUyoFa9ghtpMjdlvOrMh+kS0E60fOkvM4STHgQIYvRAbqCqTjt/6kZg=@vger.kernel.org, AJvYcCVQavgiTszOJuBD++sZ7LeTUejM8BV0KRuUkXesk1zeUZ4haXPrM1LQ1mY903uRpXG4uCfPvDbVe+rwyo0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3ztj1WeNLMPjq4w/tLLlsnAfLPDQSZp3Pc9LKT18RNp5pMSil
-	omsIQpchGAqaHdKudYUHJRvPCbxu98xiBlGmHfAPWb4qTfyFH52fu94KNU72PJ7x2EgH0MOOKc6
-	TB4NQSQzmyDsbERW7EstQKruimXo=
-X-Gm-Gg: ASbGnctGrDAPRSWduKAgVclvUbdFVlKGcp6HILJxV9HwmklIKcE82uEOH6klj06DMzp
-	Rzn+V4MXB/clvzkW/u4ZKRrU2BJyrAVXaYQyvgsyQhkdYvPzWRI+nD5377klIhAx+5p6NNDWmJk
-	3Ztk6D8fbnB974lbv2dOGr9OOw1Q==
-X-Google-Smtp-Source: AGHT+IFN+xbOu5QfcgaBgtNPAK4UHIFhRFNtYHlPW6b79kAWFeZjWU+GDc72m/R3caqAAOD/IZViYriJF/YR/9zZ/iQ=
-X-Received: by 2002:a17:90b:3845:b0:2fe:8e19:bcd7 with SMTP id
- 98e67ed59e1d1-2ff3534a3c9mr422621a91.5.1741046647649; Mon, 03 Mar 2025
- 16:04:07 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="Vw96yu2l";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="2sKQPbqO"
+Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
+	by mailflow.stl.internal (Postfix) with ESMTP id 2E4E11D41520;
+	Mon,  3 Mar 2025 20:15:21 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-06.internal (MEProxy); Mon, 03 Mar 2025 20:15:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm1; t=1741050921; x=1741054521; bh=Zj
+	Cl48tKq3D12A6gMxnuJkwcbixmHB+Hu4Gfto/k5u4=; b=Vw96yu2lEbKBtHSW4C
+	3R8c2hfkt0etJT23KMBb85uLvGVRRvWYTJqh0h6RHMWEzvBB6Ut2vbTqwHLIBjz1
+	jy0HvxOUFGNDq9XskFSC3eLpll/4Luxf6f8gCRzkJ8/NwvnHCEdFUstBau5e6WX/
+	r2N4mqDsWh4gsJGE57yghdaiubR5V6wQgSOJl5ulRa6em5vIMwArGuTJVdRP2nTQ
+	VzQmnsQL/ozxeehxoX4b1fJfuLXRN44r850rqmLzuPpI1Rp4J8K7vaXZP1M6X+zE
+	MXwJnVtcyZaDaP6f/zzOmssAWAtwluWtxrl2yullNvpFZ0qkcAeYLxKkIa8zP2ZJ
+	4q/w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1741050921; x=1741054521; bh=ZjCl48tKq3D12A6gMxnuJkwcbixm
+	HB+Hu4Gfto/k5u4=; b=2sKQPbqODreXvZtoizU1BmAOEdP/aK4nNKSm+1PdfcyC
+	Mk/friGK2q6cuVWO9JHMa2JvSmJlLJASilR+6OISLS7W+kJVh+tBoOixhNGE1E1k
+	VIgoE1siPEG+IAkSLJ/IufuN4jqc8zNx6S/aU92KL1EVzQKubzRoMAFDvKMWsp5f
+	mMc/MV4k3OwA2V7CvoSZp+KjbBUF0RmhEYP2kkKpurTeTRLR49QvEwZBqZXoVz9e
+	4pybc397VtzDlkbcKH88C0r47hjZSabnuaSMt9T3Vm4UXVjlAYihZYC02YxT7WqD
+	BbCNKr4Vgur/UzkhT3oDcr7XDvlX0rCTosimfU3cJw==
+X-ME-Sender: <xms:J1TGZ25cB8B2exJeLYvP78-j5eTTqKkeN3ImtJk6bp7D1AAdAUn9Hg>
+    <xme:J1TGZ_5Ki0GoOj02yJae6GA4ebbjmxh7TErpB7oLjveQ2igk7gIGZw7CAvhLnh9vO
+    TpGCwzYYPxPV4dRORY>
+X-ME-Received: <xmr:J1TGZ1d6N2vBWqFx6ZI0H3wIFiJc7AF8jrfHhw7RBwuba8cbvfYLUkc0T9vb4htQjBKYuuKeUYIyZZO7yPszGnW5WEsF52_SuUcOItJJ53jEzNhYnRxSs8M>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutddtieeiucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnegoufhushhpvggtthffohhmrghinhculdegledmnecujfgu
+    rhephffvvefufffkofggtgfgsehtkeertdertdejnecuhfhrohhmpefvihhnghhmrghouc
+    ghrghnghcuoehmsehmrghofihtmhdrohhrgheqnecuggftrfgrthhtvghrnhepgeehtdfh
+    teetvdegteeggfegueekhfejudetfedtffeikeeuffdtheejffejtdefnecuffhomhgrih
+    hnpegthigsvghrshgvtghurhhithihnhgvfihsrdgtohhmpdhgihhthhhusgdrihhonecu
+    vehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhesmhgroh
+    ifthhmrdhorhhgpdhnsggprhgtphhtthhopeelpdhmohguvgepshhmthhpohhuthdprhgt
+    phhtthhopehmihgtseguihhgihhkohgurdhnvghtpdhrtghpthhtohepghhnohgrtghkse
+    hgohhoghhlvgdrtghomhdprhgtphhtthhopehjrggtkhesshhushgvrdgtiidprhgtphht
+    thhopehmsehmrghofihtmhdrohhrghdprhgtphhtthhopehlihhnuhigqdhsvggtuhhrih
+    hthidqmhhoughulhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghm
+    ihhrjeefihhlsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprhgvphhnohhpsehgohhogh
+    hlvgdrtghomhdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtohepthihtghhohesthihtghhohdrphhiiiiirg
+X-ME-Proxy: <xmx:KFTGZzKtoP3dU1MlHGQerNpVR1SbcZisl1Sdd8sawCRVeZAB8aLWcw>
+    <xmx:KFTGZ6JuYJsprBSMiZKyhnw752NFWkRCIt60H_XHHuQgfu1jzrni7w>
+    <xmx:KFTGZ0xDs8UIRgGGOEwIUjGj64s8-xCbTzeT98wzxn-w3eaT5kKlgw>
+    <xmx:KFTGZ-KAd6AcbCrw5XGBwPbIGZNSD08DIkkqhFHHScPMQPifjnIC1w>
+    <xmx:KFTGZy-53J2bBM24duFbANFQgYdICs5mdp3ibuPQBWgm2N6qVFvFj_Cp>
+Feedback-ID: i580e4893:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 3 Mar 2025 20:15:18 -0500 (EST)
+From: Tingmao Wang <m@maowtm.org>
+To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	Jan Kara <jack@suse.cz>
+Cc: Tingmao Wang <m@maowtm.org>,
+	linux-security-module@vger.kernel.org,
+	Amir Goldstein <amir73il@gmail.com>,
+	Matthew Bobrowski <repnop@google.com>,
+	linux-fsdevel@vger.kernel.org,
+	Tycho Andersen <tycho@tycho.pizza>
+Subject: [RFC PATCH 0/9] Landlock supervise: a mechanism for interactive permission requests
+Date: Tue,  4 Mar 2025 01:12:56 +0000
+Message-ID: <cover.1741047969.git.m@maowtm.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250303-inline-securityctx-v1-1-fb7b9b641fdf@google.com> <CAHC9VhSo3aGsJVd=a3MTeakgU66oTN86oh5sZE8P4ghSk8Rx2g@mail.gmail.com>
-In-Reply-To: <CAHC9VhSo3aGsJVd=a3MTeakgU66oTN86oh5sZE8P4ghSk8Rx2g@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 4 Mar 2025 01:03:54 +0100
-X-Gm-Features: AQ5f1JoZtQM3Oja3NDT-Obx7yZMvaxx2kZbpcAlTwOsQb2zyvabJdICtBU9x160
-Message-ID: <CANiq72=n_cGmrb6+6CH1AbGePy5dRMMFyzAFv6O1VEp8EgKR8w@mail.gmail.com>
-Subject: Re: [PATCH] lsm: rust: mark SecurityCtx methods inline
-To: Paul Moore <paul@paul-moore.com>
-Cc: Alice Ryhl <aliceryhl@google.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Paul,
+Landlock supervise: a mechanism for interactive permission requests
 
-On Mon, Mar 3, 2025 at 11:55=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
->
-> Beyond those nitpicks, this looks okay to me based on my *extremely*
-> limited Rust knowledge.  With the minor requested changes in place,
-> would you prefer me to take this via the LSM tree, or would you prefer
-> it to go up to Linus via a more Rust-y tree?
+Hi,
 
-In general, if a subsystem is willing to take Rust-related patches
-through their tree, that is the ideal scenario! So please definitely
-feel free to pick it up on your side (and thanks!); otherwise, I can
-pick it up with your Acked-by.
+I would like to propose an extension to Landlock to support a "supervisor"
+mode, which would enable a user program to sandbox applications (or
+itself) in a dynamic, fine-grained, and potentially temporary way.
+Practically, this makes it easy to give maximal control to the user,
+perhaps in the form of a "just in time" permission prompt.  Read on, or
+check the sandboxer program in the last patch for a "demo".
 
-Some days ago I wrote a summary of the usual discussion we have around
-this (copy-pasting here for convenience):
+To Jan Kara and other fanotify reviewers, I've included you in this patch
+as Mickaël suggested that we could potentially extend and re-use the
+fanotify uapi and code instead of creating an entirely new representation
+for permission requests and mechanism for passing it (as this patch
+currently does).  I've not really thought out how that would work (there
+will probably have to be some extension of the fanotify-fd uapi since
+landlock handles more than FS access), but I think it is a promising idea,
+hence I would like to hear your thoughts if you could spare a moment to
+look at this.  A good outcome could also be that we add the necessary
+hooks so that both this and fanotify (but really fsnotify?) can have _perm
+events for create/delete/rename etc.
 
-    So far, what we have been doing is ask maintainers, first, if they
-    would be willing take the patches themselves -- they are the experts
-    of the subsystem, know what changes are incoming, etc. Some subsystems
-    have done this (e.g. KUnit). That is ideal, because the goal is to
-    scale and allows maintainers to be in full control.
+FS mailing list - I've CC'd this patchset to you too - even though the
+patch doesn't currently touch any FS code, this is very FS related, and
+also, in order to address an inode lock related problem which I will
+mention in patch 6 of this series, future versions of this patch will
+likely need to add a few more LSM hooks.  Especially for that part, but
+also other bits of this project, a pair of eyes from the FS community
+would be very helpful.
 
-    Of course, sometimes maintainers are not fully comfortable doing that,
-    since they may not have the bandwidth, or the setup, or the Rust
-    knowledge. In those cases, we typically ask if they would be willing
-    to have a co-maintainer (i.e. in their entry, e.g. like locking did),
-    or a sub-maintainer (i.e. in a new entry, e.g. like block did), that
-    would take care of the bulk of the work from them.
+To Tycho Andersen -- I'm CC'ing you as you've worked on the seccomp-unotify
+feature which is also quite related, so if you could spare some time for a
+quick review, or provide some suggestions, that would be very appreciated
+:)
 
-    I think that is a nice middle-ground -- the advantage of doing it like
-    that is that you get the benefits of knowing best what is going on
-    without too much work (hopefully), and it may allow you to get more
-    and more involved over time and confident on what is going on with the
-    Rust callers, typical issues that appear, etc. Plus the sub-maintainer
-    gets to learn more about the subsystem, its timelines, procedures,
-    etc., which you may welcome (if you are looking for new people to get
-    involved).
+I'm submitting this series as a non-production-ready, proof-of-concept
+RFC, and I would appreciate feedback on any aspects of the design or
+implementation.  Note that due to the PoC nature of this, I have not
+handled checkpatch.pl errors etc.  I also welcome suggestions for
+alternative names for this feature (e.g. landlock-unotify?
+landlock-perm?).  At this point I'm very keen to hear some initial
+feedback from the community before investing further into polishing this
+patch.
 
-    I think that would be a nice middle-ground. As far as I understand,
-    Andreas would be happy to commit to maintain the Rust side as a
-    sub-maintainer (for instance). He would also need to make sure the
-    tree builds properly with Rust enabled and so on. He already does
-    something similar for Jens. Would that work for you?
+(I've briefly pitched the overall idea to Mickaël, but he has not reviewed
+the patch yet)
 
-    You could take the patches directly with his RoBs or Acked-bys, for
-    instance. Or perhaps it makes more sense to take PRs from him (on the
-    Rust code only, of course), to save you more work. Andreas does not
-    send PRs to anyone yet, but I think it would be a good time for him to
-    start learning how to apply patches himself etc.
 
-    If not, then the last fallback would be putting it in the Rust tree as
-    a sub-entry or similar.
+Why extend landlock?
+--------------------
 
-    I hope that clarifies (and thanks whatever you decide!).
+While this feature could be implemented as its own LSM, I feel like it is
+a natural extension to landlock -- landlock has already defined a set of
+fine-grained access requests with the intention to add more (and not just
+for FS alone), is designed to be an unprivileged, stackable,
+process-scoped, ad-hoc mechanism with no persistent state, which works
+well as a generic API to support a dynamic sandbox, and landlock is
+already doing the path traversal work to evaluate hierarchical filesystem
+rules, which would also be useful for a performant dynamic sandbox
+implementation.
 
-    https://lore.kernel.org/rust-for-linux/CANiq72mpYoig2Ro76K0E-sUtP31fW+0=
-403zYWd6MumCgFKfTDQ@mail.gmail.com/
 
-Cheers,
-Miguel
+Use cases
+---------
+
+I have several potential use cases in mind that will benefit from
+landlock-supervise, for example:
+
+1. A patch to firejail (I have not discussed with the firejail maintainers
+on this yet - wanted to see the reception of this kernel patch first)
+which can leverage landlock in a highly flexible way, prompting the user
+for permission to access "extra" files after the sandbox has started
+(without e.g. having to restart a very stateful GUI program).
+
+This way of using landlock can potentially replace its current approach of
+using bind mounts (as it will allow implementing "blacklists"), allowing
+unprivileged sandbox creation (although need to check with firejail if
+there are other factors preventing this).  This also allows editing
+profiles "live" in a highly interactive way (i.e. the user can choose
+"allow and remember" on a permission request which will also add the newly
+allowed path to a local firejail profile, all automatically)
+
+2. A "protected" mode for common development environments (e.g. VSCode or
+a terminal can be launched "protected") that doesn't compromise on
+ease-of-use.  File access to $PWD at launch can be allowed, and access to
+other places can be allowed ad-hoc by the developer with hopefully one UI
+click.  Since landlock can also be used to restrict network access, such a
+protected mode can also restrict outgoing connections by default (but ask
+the user if they allow it for all or certain processes, on the first
+attempt to connect).
+
+Recently there has been incidents of secret-stealing malware targeting
+developers (on Linux) by social engineering them to open and build/run a
+project. [1]  The hope is that landlock-supervise can drive adoption of
+sandboxes for developers and others by making them more user-friendly.
+
+In addition to the above, I also hope that this would help with landlock
+adoption even in non-interaction-heavy scenarios, by allowing application
+developers the choice to gracefully recover from over-restrictive rulesets
+and collect failure metrics, until they are confident that actually
+blocking non-allowed accesses would not break their application or degrade
+the user experience.
+
+I have more exploration to do regarding applying this to applications, but
+I do have a working proof of concept already (implemented as an
+enhancement to the sandboxer example). Here is a shortened output:
+
+    bash # env LL_FS_RO=/usr:/lib:/bin:/etc:/dev:/proc LL_FS_RW= LL_SUPERVISE=1 ./sandboxer bash -i
+    bash # echo "Hi, $(whoami)!"
+    Hi, root!
+    bash # ls /
+    ------------- Sandboxer access request -------------
+    Process ls[166] (/usr/bin/ls) wants to read
+      /
+    (y)es/(a)lways/(n)o > y
+    ----------------------------------------------------
+    bin
+    boot
+    dev
+    ...
+    usr
+    var
+    bash # echo 'evil' >> /etc/profile
+    (a spurious create request due to current issue with dcache miss is omitted)
+    ------------- Sandboxer access request -------------
+    Process bash[163] (/usr/bin/bash) wants to read/write
+      /etc/profile
+    (y)es/(a)lways/(n)o > n
+    ----------------------------------------------------
+    bash: /etc/profile: Permission denied
+    bash #
+
+
+Alternatives
+------------
+
+I have looked for existing ways to implement the proposed use cases (at
+least for FS access), and three main approaches stand out to me:
+
+1. Fanotify: there is already FAM_OPEN_PERM which waits for an allow/deny
+response from a fanotify listener.  However, it does not currently have
+the equivalent _PERM for file creation, deletion, rename and linking, and
+it is also not designed for unprivileged, process-scoped use (unlike
+landlock).
+
+2. Seccomp-unotify: this can be used to trap all syscalls and give the
+sandbox a chance to allow or deny any one of them. However, a correct,
+TOCTOU-proof implementation will likely require handling a large number of
+fs-related syscalls in user-space, with the sandboxer opening the file or
+carrying out the operation on behalf of the sandboxee.  This is probably
+going to be extremely complex and makes everything less performant.
+
+3. Using a FUSE filesystem which gates access.  This is actually an
+approach taken by an existing sandbox solution - flatpak [2], however it
+requires either tight integration with the application (and thus doesn't
+work well for the mentioned use cases), or if one wants to sandbox a
+program "transparently", SYS_ADMIN to chroot.
+
+
+I've tested that what I have here works with the enhanced sandboxer, but
+have yet to write any self tests or do extensive testing or perf
+measurements.  I have also yet to implement support for supervising tcp
+rules as well as FS refer operations.
+
+Base commit: 78332fdb956f18accfbca5993b10c5ed69f00a2c (tag:
+landlock-6.14-rc5, mic/next)
+
+
+[1]: https://cybersecuritynews.com/beware-of-lazarus-linkedin-recruiting-scam/
+[2]: https://flatpak.github.io/xdg-desktop-portal/docs/documents-and-fuse.html
+
+
+Tingmao Wang (9):
+  Define the supervisor and event structure
+  Refactor per-layer information in rulesets and rules
+  Adds a supervisor reference in the per-layer information
+  User-space API for creating a supervisor-fd
+  Define user structure for events and responses.
+  Creating supervisor events for filesystem operations
+  Implement fdinfo for ruleset and supervisor fd
+  Implement fops for supervisor-fd
+  Enhance the sandboxer example to support landlock-supervise
+
+ include/uapi/linux/landlock.h | 119 ++++++
+ samples/landlock/sandboxer.c  | 759 +++++++++++++++++++++++++++++++++-
+ security/landlock/Makefile    |   2 +-
+ security/landlock/fs.c        | 134 +++++-
+ security/landlock/ruleset.c   |  49 ++-
+ security/landlock/ruleset.h   |  66 +--
+ security/landlock/supervise.c | 194 +++++++++
+ security/landlock/supervise.h | 171 ++++++++
+ security/landlock/syscalls.c  | 621 +++++++++++++++++++++++++++-
+ 9 files changed, 2036 insertions(+), 79 deletions(-)
+ create mode 100644 security/landlock/supervise.c
+ create mode 100644 security/landlock/supervise.h
+
+--
+2.39.5
