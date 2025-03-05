@@ -1,188 +1,162 @@
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0EF84039
-	for <linux-security-module@vger.kernel.org>; Wed,  5 Mar 2025 02:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EC5615ADB4;
+	Wed,  5 Mar 2025 03:27:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741141466; cv=none; b=JJnkbQNkaFlRQcAxIY6oiFpmceBVtxUbdAdXDdkLAGkiS4t4LhZDZU4sNuBzWc35mVRgoAyMKtOb/JCqiroywwL2+S91QqemermMQp9t3kSzfhKs5iVKEhW3EuhjCmQ5znLdlPfbfbFDm3eAuERYYUu1rRshe3D+7xhemJpDl38=
+	t=1741145241; cv=none; b=dzrGtJID98UoetlwAXRQmXmNpr0od+7QX8yoN+mUPNmkfGeqiqVeBQQG/Jj8z9FQVm081Ik8aFSLreMSNjFO6lL5EGinw/8XXHRvvAWqoRbmDvz4NKvZhrm0UxabVUX9/8jTOcGsy7/uwej4VyhDxN662UOm0UsrsTbA+4/TgTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741141466; c=relaxed/simple;
-	bh=AgwFFQtEuifNourVx+tLk3zjZ3DvJgh61y+UczYSgaA=;
+	s=arc-20240116; t=1741145241; c=relaxed/simple;
+	bh=WBgSF4UBZQyZjZW3u3Cq7JSWapQYwqNCP5nk3gjjiYw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UKBaI/ldHP60g9YZED227tL5Fk6nA76fMmiqLlhbNTHDYX7muG1W9SLW+EvYz08lt9Af7chJipdL2jcEL53ZIJVL11i7SM4K4VgkBbKHDPW+YtaNgo7ix3bk65W21M1yBNumpUk+6zjYNuED3uOQPSwoemCakT9kk8WeYJE4eow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=SH5/CTsl; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	 To:Cc:Content-Type; b=Bs/r9IgThnzewbUquimxUSc9+qz/3EDe0bHOvYEBT8DN6AdSc8QrakePpHI+qF2huM0k4pXO8mU4pN6ZoYfgeXCBZ/3lD7ZP537rLuTtSdIUKELtgSM4b1zFCNrxplflDKemCl6uD1aDv81OZwP7HN3OfA6WEdbyzc+Blu96GEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=byv92Paf; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="SH5/CTsl"
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e5dc299deb4so5353128276.1
-        for <linux-security-module@vger.kernel.org>; Tue, 04 Mar 2025 18:24:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1741141464; x=1741746264; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/kMF9Dym4tz6vqOqqczuHDu3SZSd/waaI0Ftwvs+VkU=;
-        b=SH5/CTsl8us9+2w986sr65NUpZPpPNSK8W0gxljx7d9un/pP2Wn5avrgSF4Rw8neKj
-         MZ/dikXkxrRxFzUuOarBejKQzSIeGvrUTqnzzrCSUpIsxQ6SfJNrDprrOIGS/n13bpkP
-         +pqGdxTgQeDBBvk+S83hNU1/WYIYyae/xloIxB6YUQJugyt8KHJ8AnTw+kVAsVcc0yiR
-         ERYZF8ANa1f1tFQJnzbPFeKOMOrlNzAGoD6qj0DgcKX5iYmYAXbkGbgdXUXXFC1jZuR2
-         S3iShZ3chFSLkliWYDwAPaTpy9e9pFvi1qVDfG25dMTj6B7xy4inP7iTfe+W/ICDUHt5
-         z8dQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741141464; x=1741746264;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/kMF9Dym4tz6vqOqqczuHDu3SZSd/waaI0Ftwvs+VkU=;
-        b=BVzFDCP9chWckfZOcuIllBn3R2F+62Ctxq1HEsd/X7Cv/tRfE3s1bGkuMFwu0r45/N
-         P1u6uP7mzsVlABfnm+yU1EOAdSxky9RzIABOvprNEHQP/Mf5h5vI3utFY4y48uONsDCf
-         ii2zjz2wSNbGV43OyVnw0N+Dc/fEZtyB05pAN9glQUdbGyTCPumXLPDe1X6U50vKwV2P
-         b4wVMm04wZ4mohraVHi8u2FcbUd2ZXfjdJA+lw/y45xSoOSgdcWJtysf6QicJWkbd7Em
-         wSduC0ZukYLkr8PXXpWMrn/XcO1ketBZ4wbu78XwFvRAytw2Skt2ELmg2fQbjKjjKzT6
-         Upxw==
-X-Forwarded-Encrypted: i=1; AJvYcCWR93pj8rTNzk0nJsyZQgp92lIJ5FUGa5J/I/6v20rKxfQB2+khc3jtiDwYviiSM8LRE/zesAZvioRdtEo4fU+0+q+y+Ws=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwL7OdIhfL7F1Kskw6Fc9z6mcYW187M7IdGsmKxhhHbuJyx1qUE
-	hEPBfVXRJbgY9npV7OP6zI36BO7YF3wNs4JnXkPkUpxH84oc895DhmKfbTCsrLzza0Gm0GkLqSU
-	UUAA5cgojo1uKb7BLj4W4adPgvpGyHxCSDGJU
-X-Gm-Gg: ASbGncti3fi0qbVRBSRyGK8f/b6xnrKNryUAStAXbrPhSiCNy4rFr9RQyFAKt4txyAA
-	xmoH3H1pD17/gHIQCuUBmitjILhT8C8jJNnHrx6x/6tx3N0qLg95oMC1K5rgNXOHVnBaeHSOtVx
-	HPajQTQLgaHwY+MdgBbReoX4vSOA==
-X-Google-Smtp-Source: AGHT+IFEh6e6KF3avbSlOkT/C8VTB+3rxBE4DMHORzH7o48m83jvAvVGaMqAvJgwUzS2EPoYJl63n61rs2jWoqJVC4M=
-X-Received: by 2002:a05:6902:100f:b0:e5b:4482:a4f7 with SMTP id
- 3f1490d57ef6-e611e1f7a0amr2368591276.12.1741141463666; Tue, 04 Mar 2025
- 18:24:23 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="byv92Paf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1E3CC4CEEA;
+	Wed,  5 Mar 2025 03:27:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741145240;
+	bh=WBgSF4UBZQyZjZW3u3Cq7JSWapQYwqNCP5nk3gjjiYw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=byv92PafIfFYDcTnfanRVxyhE5a2y/G8/OsJmXy5x3ZC86p/RuRN7lfEMeT2doJ+y
+	 boLrZI8D+atx0vFCKjbsj1kXBl0wdkTWijKYzGszaH/OTIRSAnQJ/Ctc3Vl/2KA9Zq
+	 1reiEsh9xWmS4gqNU81uyllj+xsHdpBkwtNWn683Si5TT4JwpKYo8atNiB0kd5ig47
+	 PwU4DUPFi4ISnYU1WrYKBeZY7le/YguWnX8RxR9yvLcFKtFbRz1YuyZKLjUIsb3srn
+	 A3ZVPUuZvai4wUJ9T8liaDCIXf/V01WX7CHoQYDrRsThctYlTj5sXD/KhyZXZ2iRXz
+	 AGTwOJgboRF+w==
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-855fc51bdfcso14386439f.0;
+        Tue, 04 Mar 2025 19:27:20 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUjy6Ovqd4YyDY5u6w5Qn7GlMV5HfxAa34FED1WfUzJXh46KxJjBHdXkvOEz2igxIUbr6BbFkLisw==@vger.kernel.org, AJvYcCV6KlpVHkvuQtKUtxeNCtH7S1ze5ZDFs7Mf9k3A9S9JfPM00GKcITwSie7ntr+LgYbjh+dGbjwk79lP2Fr73aPfXrNLET8k@vger.kernel.org, AJvYcCVPNKvSGlSRqyGhKQeTX0MOK/Do1nk2qtB2WR0R7XxoOSBh4PbZm21Pn+kACnyB8J7VTrLdsAeHZMs4iR5x@vger.kernel.org, AJvYcCVbKo54AbMOypnEHMMydPb7Cn4rhwV/nt9vLT8U8YyvlXJpG6LiylFRJM19jiaNdnPk5oY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNxfvj37yNBnAkdk/Fw8XwgbULxkpRUxht+4OL63LcoDP5bRij
+	BAHLnOsEnlcf29BuD8VKifPgXDMaIyI5fXVm4zi2rYFUSwrQj8NWDQM8kLVQdFv31rAl08pjQX6
+	o6hFjcqJ50mOQCYNUD64VEhdAaz8=
+X-Google-Smtp-Source: AGHT+IHn6wMp+M46MuU+WD/XHhz/bc9tkmv0qmpjdIsOMxu6p4rRCfKMk+gSv53uXz9LW9XURyM5j+m53mcZk7+IsUY=
+X-Received: by 2002:a05:6e02:eca:b0:3d4:2306:fbb6 with SMTP id
+ e9e14a558f8ab-3d42306fde0mr43856365ab.10.1741145240129; Tue, 04 Mar 2025
+ 19:27:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241017155516.2582369-1-eric.snowberg@oracle.com>
- <c490397315c2704e9ef65c8ad3fefedb239f1997.camel@linux.ibm.com>
- <72F52F71-C7F3-402D-8441-3D636A093FE8@oracle.com> <CAHC9VhRHEw5c+drC=aX4xTqWoQJJZ+qkJ7aHUT5dcu+Q5f7BqA@mail.gmail.com>
- <CAHC9VhSJpnaAK1efgs1Uk0Tr3CaDNR1LiDU-t_yDKDQG6J-74Q@mail.gmail.com>
- <E20C617B-EA01-4E69-B5E2-31E9AAD6F7A2@oracle.com> <506e8e58e5236a4525b18d84bafa9aae80b24452.camel@linux.ibm.com>
- <CAHC9VhTsZntLdGBV7=4suauS+rzSQv1O4UAoGcy2vEB02wRkoA@mail.gmail.com>
- <c580811716f550ed5d6777db5e143afe4ad06edc.camel@linux.ibm.com>
- <CAHC9VhTz6U5rRdbJBWq0_U4BSKTsiGCsaX=LTgisNNoZXZokOA@mail.gmail.com>
- <e0e7c0971d42e45c7b4641bd58cb7ea20b36e2e1.camel@linux.ibm.com>
- <CAHC9VhSzc6N0oBesT8V21xuwB11T7e6V9r0UmiqHXvCg5erkVA@mail.gmail.com>
- <a1d6ce786256bbade459f98e0b4074e449048fee.camel@linux.ibm.com>
- <CAHC9VhT27Ge6woKbBExu2nT_cQE79rG+rrgp3nDYjvjcztVQXg@mail.gmail.com>
- <049a04b2e07e9e984ada32277cbbde42bdf7bb1b.camel@linux.ibm.com>
- <CAHC9VhRrko_CdZJg81=s-ShGfusaJqhvrX8+R6STPbMhpnEwCQ@mail.gmail.com> <b464675506fa8d7ccef737d3bcddd0ec26b9b2c3.camel@linux.ibm.com>
-In-Reply-To: <b464675506fa8d7ccef737d3bcddd0ec26b9b2c3.camel@linux.ibm.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 4 Mar 2025 21:24:12 -0500
-X-Gm-Features: AQ5f1Jqpip5THNPkWYuHQHFGVe_RbmHQJEHYfBQMGKSQG1o2BNCOxD9C4D6hUiA
-Message-ID: <CAHC9VhQzALRBZ3mMDL5fmdJepjeHLUz=Tm4xtoLJrL8R6Y0QKg@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 00/13] Clavis LSM
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: Eric Snowberg <eric.snowberg@oracle.com>, David Howells <dhowells@redhat.com>, 
-	Jarkko Sakkinen <jarkko@kernel.org>, 
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>, 
-	David Woodhouse <dwmw2@infradead.org>, 
-	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>, "davem@davemloft.net" <davem@davemloft.net>, 
-	Ard Biesheuvel <ardb@kernel.org>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	"casey@schaufler-ca.com" <casey@schaufler-ca.com>, Stefan Berger <stefanb@linux.ibm.com>, 
-	"ebiggers@kernel.org" <ebiggers@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>, 
-	"keyrings@vger.kernel.org" <keyrings@vger.kernel.org>, 
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, 
-	"linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>, 
-	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+References: <20250304203123.3935371-1-bboscaccy@linux.microsoft.com>
+ <20250304203123.3935371-3-bboscaccy@linux.microsoft.com> <CAPhsuW5HJuRYPucfvDbs25un7_D8JJnt=7zNUJ1utY3O_VMeSw@mail.gmail.com>
+ <87a5a0jotf.fsf@microsoft.com>
+In-Reply-To: <87a5a0jotf.fsf@microsoft.com>
+From: Song Liu <song@kernel.org>
+Date: Tue, 4 Mar 2025 19:27:09 -0800
+X-Gmail-Original-Message-ID: <CAPhsuW6+vrRG57=7sxTjv0J1njJ-H0usx18xx_sWA+U2oZBtDA@mail.gmail.com>
+X-Gm-Features: AQ5f1JpXurhnuKJL8LDxjijcgu3abQTLRKE5g0E4JhCketpuBCOzyM_KnN0EAlI
+Message-ID: <CAPhsuW6+vrRG57=7sxTjv0J1njJ-H0usx18xx_sWA+U2oZBtDA@mail.gmail.com>
+Subject: Re: [PATCH v4 bpf-next 2/2] selftests/bpf: Add is_kernel parameter to
+ LSM/bpf test programs
+To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Yonghong Song <yonghong.song@linux.dev>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, selinux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 4, 2025 at 9:20=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.com> wro=
-te:
-> On Tue, 2025-03-04 at 21:09 -0500, Paul Moore wrote:
-> > On Tue, Mar 4, 2025 at 8:50=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.com>=
- wrote:
-> > > On Tue, 2025-03-04 at 19:19 -0500, Paul Moore wrote:
-> > > > On Tue, Mar 4, 2025 at 7:54=E2=80=AFAM Mimi Zohar <zohar@linux.ibm.=
-com> wrote:
-> > > > > On Mon, 2025-03-03 at 17:38 -0500, Paul Moore wrote:
-> > > > > > On Fri, Feb 28, 2025 at 12:19=E2=80=AFPM Mimi Zohar <zohar@linu=
-x.ibm.com> wrote:
-> > > > > > > On Fri, 2025-02-28 at 11:14 -0500, Paul Moore wrote:
-> > > > > > > > On Fri, Feb 28, 2025 at 9:09=E2=80=AFAM Mimi Zohar <zohar@l=
-inux.ibm.com> wrote:
-> > > > > > > > > On Thu, 2025-02-27 at 17:22 -0500, Paul Moore wrote:
-> > > > > >
-> > > > > > ...
-> > > > > >
-> > > > > > > Ok, let's go through different scenarios to see if it would s=
-cale.
-> > > > > > >
-> > > > > > > Scenario 1: Mostly distro signed userspace applications, mini=
-mum number of
-> > > > > > > developer, customer, 3rd party applications.
-> > > > > > >
-> > > > > > > Scenario 2: Multiple developer, customer, 3rd party applicati=
-ons, signed by the
-> > > > > > > same party.
-> > > > > > >
-> > > > > > > Scenario 3: extreme case - every application signed by differ=
-ent party.
-> > > > > > >
-> > > > > > > With the minimum case, there would probably be a default key =
-or sets of
-> > > > > > > permissible keys.  In the extreme case, the number of keyring=
-s would be
-> > > > > > > equivalent to the number of application/software packages.
-> > > > > >
-> > > > > > Perhaps we're not understanding each other, but my understandin=
-g of
-> > > > > > the above three scenarios is that they are all examples of sign=
-ed
-> > > > > > applications where something (likely something in the kernel li=
-ke IMA)
-> > > > > > verifies the signature on the application.  While there are goi=
-ng to
-> > > > > > be differing numbers of keys in each of the three scenarios, I =
-believe
-> > > > > > they would all be on/linked-to the same usage oriented keyring =
-as they
-> > > > > > all share the same usage: application signatures.
-> > > > >
-> > > > > Yes they're all verifying file signatures, but the software packa=
-ges are from
-> > > > > different sources (e.g. distro, chrome), signed by different keys=
-.
-> > > >
-> > > > Yep.
-> > > >
-> > > > > Only a
-> > > > > particular key should be used to verify the file signatures for a=
- particular
-> > > > > application.
-> > > >
-> > > > That's definitely one access control policy, but I can also envisio=
-n a
-> > > > scenario where I have just one keyring for application signatures w=
-ith
-> > > > multiple keys from multiple vendors.
-> > >
-> > > Having a single keyring with keys from multiple software vendors is t=
-he status
-> > > quo.
-> >
-> > A single keyring with keys from multiple vendors does happen today
-> > yes, but there is no separation based on how those keys are used, e.g.
-> > separate application signature and kernel module signature keyrings.
+On Tue, Mar 4, 2025 at 4:36=E2=80=AFPM Blaise Boscaccy
+<bboscaccy@linux.microsoft.com> wrote:
 >
-> As soon as you add multiple vendors keys on the kernel module signature k=
-eyring,
-> you'll need finer grained access control.
+> Song Liu <song@kernel.org> writes:
+>
+> > On Tue, Mar 4, 2025 at 12:31=E2=80=AFPM Blaise Boscaccy
+> > <bboscaccy@linux.microsoft.com> wrote:
+> >>
+> >> The security_bpf LSM hook now contains a boolean parameter specifying
+> >> whether an invocation of the bpf syscall originated from within the
+> >> kernel. Here, we update the function signature of relevant test
+> >> programs to include that new parameter.
+> >>
+> >> Signed-off-by: Blaise Boscaccy bboscaccy@linux.microsoft.com
+> > ^^^ The email address is broken.
+> >
+>
+> Whoops, appologies, will get that fixed.
+>
+> >> ---
+> >>  tools/testing/selftests/bpf/progs/rcu_read_lock.c           | 3 ++-
+> >>  tools/testing/selftests/bpf/progs/test_cgroup1_hierarchy.c  | 4 ++--
+> >>  tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c | 6 +++--=
+-
+> >>  tools/testing/selftests/bpf/progs/test_lookup_key.c         | 2 +-
+> >>  tools/testing/selftests/bpf/progs/test_ptr_untrusted.c      | 2 +-
+> >>  tools/testing/selftests/bpf/progs/test_task_under_cgroup.c  | 2 +-
+> >>  tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c   | 2 +-
+> >>  7 files changed, 11 insertions(+), 10 deletions(-)
+> >
+> > It appears you missed a few of these?
+> >
+>
+> Some of these don't require any changes. I ran into this as well while do=
+ing a
+> search.
+>
+> These are all accounted for in the patch.
+> > tools/testing/selftests/bpf/progs/rcu_read_lock.c:SEC("?lsm.s/bpf")
+> > tools/testing/selftests/bpf/progs/test_cgroup1_hierarchy.c:SEC("lsm/bpf=
+")
+> > tools/testing/selftests/bpf/progs/test_cgroup1_hierarchy.c:SEC("lsm.s/b=
+pf")
+> > tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c:SEC("?lsm.s=
+/bpf")
+> > tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c:SEC("?lsm.s=
+/bpf")
+> > tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c:SEC("lsm.s/=
+bpf")
+>
+> security_bpf_map wasn't altered, it can't be called from the kernel. No
+> changes needed.
+> > tools/testing/selftests/bpf/progs/test_libbpf_get_fd_by_id_opts.c:SEC("=
+lsm/bpf_map")
+>
+> These are also all accounted for in the patch.
+> > tools/testing/selftests/bpf/progs/test_lookup_key.c:SEC("lsm.s/bpf")
+> > tools/testing/selftests/bpf/progs/test_ptr_untrusted.c:SEC("lsm.s/bpf")
+> > tools/testing/selftests/bpf/progs/test_task_under_cgroup.c:SEC("lsm.s/b=
+pf")
+> > tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c:SEC("lsm.s/bp=
+f")
+>
+> bpf_token_cmd and bpf_token_capabable aren't callable from the kernel,
+> no changes to that hook either currently.
+>
+> > tools/testing/selftests/bpf/progs/token_lsm.c:SEC("lsm/bpf_token_capabl=
+e")
+> > tools/testing/selftests/bpf/progs/token_lsm.c:SEC("lsm/bpf_token_cmd")
+>
+>
+> This program doesn't take any parameters currently.
+> > tools/testing/selftests/bpf/progs/verifier_global_subprogs.c:SEC("?lsm/=
+bpf")
+>
+> These are all naked calls that don't take any explicit parameters.
+> > tools/testing/selftests/bpf/progs/verifier_ref_tracking.c:SEC("lsm.s/bp=
+f")
+> > tools/testing/selftests/bpf/progs/verifier_ref_tracking.c:SEC("lsm.s/bp=
+f")
+> > tools/testing/selftests/bpf/progs/verifier_ref_tracking.c:SEC("lsm.s/bp=
+f")
+> > tools/testing/selftests/bpf/progs/verifier_ref_tracking.c:SEC("lsm.s/bp=
+f")
+> > tools/testing/selftests/bpf/progs/verifier_ref_tracking.c:SEC("lsm.s/bp=
+f")
+> > tools/testing/selftests/bpf/progs/verifier_ref_tracking.c:SEC("lsm.s/bp=
+f")
+> > tools/testing/selftests/bpf/progs/verifier_ref_tracking.c:SEC("lsm.s/bp=
+f")
 
-Maybe.  It depends on your security policy, some solutions might be
-okay with keyring level access control granularity, others may want
-finer grained control.
+Thanks for the explanation. I think we can keep this part as-is.
 
---=20
-paul-moore.com
+Song
