@@ -1,92 +1,97 @@
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25EC37083F;
-	Wed,  5 Mar 2025 00:57:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9107711185;
+	Wed,  5 Mar 2025 01:26:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741136239; cv=none; b=MceP3fym/iPNartbstV4q2hhnMivtHRP3JCpPkfPb+KGsvw0hgN1NvBjVhEhBPlvs1UMqfexqkmRCQ0aUaD/aC/qyJOMikeWopiDi9x//LZBnTDaq4JpWh8J+JZX4LDKju3p4jowKIih+OX+Izd6CXiQUuOI78V2yZ0spZWL88I=
+	t=1741137964; cv=none; b=nD/Z5ovw/QSEJWPmwFIUtanaKMIAhNskDsWNHTfcQ0ZPQHyaJ0af8ReBlG/m17GzWuNPhRy3E89kHEAons6NSa8wHytL2A9tYH3U98zKVrN7y6sj7rGD+BAA1Te4uOgZjiFSu+TqXvMRMgjMNl7HrvRzrZy45IN/iG/UUylM10w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741136239; c=relaxed/simple;
-	bh=Cw16+QQ1NI7Erh4T6tWyLbvcSyeQSbBID6VO+V5dBDU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dUkIBe4+ZA8wSBokwNAI+hcIo/UUF3gTKly2n3M/pYwpRf4j1Fmu/ke32sqV8XRoUzMEqtdUddYJ3cmnQo2aaF1yUJa8j+LvEfRVgj01jwyKbi5ERN2X/Ivnr4Cd4x1pG1cFsJCxqG81VeFfpOarHedHkhFyRucv64/DYritpfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Xq4Wif5f; arc=none smtp.client-ip=13.77.154.182
+	s=arc-20240116; t=1741137964; c=relaxed/simple;
+	bh=cyJfAdufLg+9eRiT4JlIUas7NAJvFa6ffHqtZWHg7YY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=MYECoyPB53apsWESHPHIxL7hC9gvIGBdpWktWBX1cV7ABOmzZoIQyDXb5c/7mmJ03pW6ZhmkWeZTGGSJ07aM/ryd5w721T5FopPHepXFoZiLttr65T7Q4p50tAalf+at/VykQDUTakoJzhemUgJ32pzly7Oo2xlXYO+ye2O2/sM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=YclVKH64; arc=none smtp.client-ip=13.77.154.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Xq4Wif5f"
-Received: from [10.17.64.124] (unknown [131.107.8.124])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 49D90210EAF8;
-	Tue,  4 Mar 2025 16:57:17 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 49D90210EAF8
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="YclVKH64"
+Received: from narnia (unknown [167.220.2.28])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 6B7C2210EAF9;
+	Tue,  4 Mar 2025 17:25:53 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6B7C2210EAF9
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1741136237;
-	bh=u9vQn02/NSDQfKQiARKmi0huzx7fugITS4b2YeoInKQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Xq4Wif5fdHC2k1tO26664vgomhoS0IDrsqqB+zG+wRaMsb68EkOJjwuyYOSFL6gQB
-	 50NFwYoChZbRG0s8O25HsHex7q652dcWhgMIIiMlO2dknDD9NMdI7rVLSQfiOzVnVa
-	 2qF7djP4plkm8kN7DBQWU1iFnssRYaQ8yr9tJlp8=
-Message-ID: <0dadaf7d-c607-43c9-9e82-1decfac0d545@linux.microsoft.com>
-Date: Tue, 4 Mar 2025 16:57:16 -0800
+	s=default; t=1741137962;
+	bh=0ktGKWEegiCPPqEj0r+J7PeMMxQp947aXt6g4Uv8qdk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=YclVKH64wUlKUqvg/dvVsp7eoUdk2XoxcQSAqiGFYiKKhCKSJspMclpOKHfi4yvDp
+	 Gt32X2m0icsmL2gZ/WYmE3tauj5IuLUn1Hx2PjEEYR93VYDqX33QlXfXR6luf1d9Tb
+	 8/5JFavccisPbFuyWc9w/4CDHOWAngzYfGMeEh+o=
+From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+ <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, Andrii
+ Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, Yonghong
+ Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, Stanislav
+ Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa
+ <jolsa@kernel.org>, Stephen Smalley <stephen.smalley.work@gmail.com>,
+ Ondrej Mosnacek <omosnace@redhat.com>,
+ linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, selinux@vger.kernel.org
+Subject: Re: [PATCH v4 bpf-next 2/2] selftests/bpf: Add is_kernel parameter
+ to LSM/bpf test programs
+In-Reply-To: <CAHC9VhS5Gnj98K4fBCq3hDXjmj1Zt9WWqoOiTrwH85CDSTGEYA@mail.gmail.com>
+References: <20250304203123.3935371-1-bboscaccy@linux.microsoft.com>
+ <20250304203123.3935371-3-bboscaccy@linux.microsoft.com>
+ <CAHC9VhS5Gnj98K4fBCq3hDXjmj1Zt9WWqoOiTrwH85CDSTGEYA@mail.gmail.com>
+Date: Tue, 04 Mar 2025 17:25:50 -0800
+Message-ID: <877c54jmjl.fsf@microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 7/7] ima: measure kexec load and exec events as
- critical data
-To: Mimi Zohar <zohar@linux.ibm.com>, stefanb@linux.ibm.com,
- roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
- eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
- code@tyhicks.com, bauermann@kolabnow.com, linux-integrity@vger.kernel.org,
- kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
- James.Bottomley@HansenPartnership.com, bhe@redhat.com, vgoyal@redhat.com,
- dyoung@redhat.com
-References: <20250304190351.96975-1-chenste@linux.microsoft.com>
- <20250304190351.96975-8-chenste@linux.microsoft.com>
- <330dbd19bf0c0fbf34908d4629cbcc548eb9c254.camel@linux.ibm.com>
-Content-Language: en-US
-From: steven chen <chenste@linux.microsoft.com>
-In-Reply-To: <330dbd19bf0c0fbf34908d4629cbcc548eb9c254.camel@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 3/4/2025 4:25 PM, Mimi Zohar wrote:
-> Hi Steven,
+Paul Moore <paul@paul-moore.com> writes:
+
+> On Tue, Mar 4, 2025 at 3:31=E2=80=AFPM Blaise Boscaccy
+> <bboscaccy@linux.microsoft.com> wrote:
+>>
+>> The security_bpf LSM hook now contains a boolean parameter specifying
+>> whether an invocation of the bpf syscall originated from within the
+>> kernel. Here, we update the function signature of relevant test
+>> programs to include that new parameter.
+>>
+>> Signed-off-by: Blaise Boscaccy bboscaccy@linux.microsoft.com
+>> ---
+>>  tools/testing/selftests/bpf/progs/rcu_read_lock.c           | 3 ++-
+>>  tools/testing/selftests/bpf/progs/test_cgroup1_hierarchy.c  | 4 ++--
+>>  tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c | 6 +++---
+>>  tools/testing/selftests/bpf/progs/test_lookup_key.c         | 2 +-
+>>  tools/testing/selftests/bpf/progs/test_ptr_untrusted.c      | 2 +-
+>>  tools/testing/selftests/bpf/progs/test_task_under_cgroup.c  | 2 +-
+>>  tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c   | 2 +-
+>>  7 files changed, 11 insertions(+), 10 deletions(-)
 >
-> On Tue, 2025-03-04 at 11:03 -0800, steven chen wrote:
->> +void ima_measure_kexec_event(const char *event_name)
->> +{
->> +	char ima_kexec_event[IMA_KEXEC_EVENT_LEN];
->> +	size_t buf_size = 0;
->> +	long len;
->> +
->> +	buf_size = ima_get_binary_runtime_size();
->> +	len = atomic_long_read(&ima_htable.len);
->> +
->> +	int n = scnprintf(ima_kexec_event, IMA_KEXEC_EVENT_LEN,
->> +					"kexec_segment_size=%lu;ima_binary_runtime_size=%lu;"
->> +					"ima_runtime_measurements_count=%ld;",
->> +					kexec_segment_size, buf_size, len);
-> Variables should not be defined inline, but at the beginning of the function.
-> After doing that, scripts/checkpatch.pl complains about the formatting.
+> I see that Song requested that the changes in this patch be split out
+> back in the v3 revision, will that cause git bisect issues if patch
+> 1/2 is applied but patch 2/2 is not, or is there some BPF magic that
+> ensures that the selftests will still run properly?
 >
-> Mimi
 
-Hi Mimi,
+So there isn't any type checking in the bpf program's function
+arguments against the LSM hook definitions, so it shouldn't cause any
+build issues. To the best of my knowledge, the new is_kernel boolean
+flag will end up living in r3. None of the current tests reference
+that parameter, so if we bisected and ended up on the previous commit,
+the bpf test programs would in a worst-case scenario simply clobber that
+register, which shouldn't effect any test outcomes unless a test program
+was somehow dependent on an uninitialized value in a scratch register.=20
 
-I will update it in next release.
+-blaise
 
-Thanks,
-
-Steven
-
->> +
->> +	ima_measure_critical_data("ima_kexec", event_name, ima_kexec_event, n, false, NULL, 0);
->> +}
->> +
-
-
+> --=20
+> paul-moore.com
