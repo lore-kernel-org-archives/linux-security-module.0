@@ -1,116 +1,151 @@
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-190d.mail.infomaniak.ch (smtp-190d.mail.infomaniak.ch [185.125.25.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7E0F24A07A
-	for <linux-security-module@vger.kernel.org>; Wed,  5 Mar 2025 16:12:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3918A42AA3
+	for <linux-security-module@vger.kernel.org>; Wed,  5 Mar 2025 16:15:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741191140; cv=none; b=bdFh0MZD8RoOdQSwqOSAJ/7wSeIR63Ig5E9LZXBF2fv6oldoYz5Nsx1AO13A/uNC1BY2/SlFf98sTDFD0KNKEYJ2oEYwHZhdT13JPX3OfBS0ZhaHXv635n+J4JA2P/+d6czBLvz6W8FF6f//2ucC9ugV/Zj4eNoFUASYVMyu17o=
+	t=1741191317; cv=none; b=npTm7eloQBtIv1xX/PpX4QtxsDljiVYrk0wF35XzlNtt8qcj1SoYG3xXl9aJdSxxKwK22VtxsqbD+uHeoXl/tp7uvYhzWpW615k5P8iRSZ1PRS0j9SRPvEbxYt7cPUs+Bkws3SQJqf3i/T29VOMqwYMFZG8XI9aEEao05S+rOnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741191140; c=relaxed/simple;
-	bh=2q39nFob89uGjhIZ3SJiCBavEHz6XphRtukgeM+fPHU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KqUVP4ejTmyLm0jmkoZdbdaFbVLnnRG1VdLZlxP6HhsrMC5b5F2a8HB+UQ+REfd8XK/iOh7Q00Yu90Vlz4/nrE5UfXZ19/gHg1c9QXKV4OepPGEVoZOU5fnwsiTHJtDdQxDp7CF1ryZjDXB+2R+ISmMouxxsRSidRMcEpAUbJa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=GRCmUsk+; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1741191317; c=relaxed/simple;
+	bh=pIpO/sGgffZOuvaq2q5nTstfJhAfEQcyhnbXoKHfr3I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j0APbaEwVod1HehKPFfwqIhJz+ZFZiCJUqSwMhQjRd8HuJOSCPgjR4cSuHvP58/t2OVy0g+L7qkMZMGc0sAVdUYe1XcypOqfdsO3xc37EodWX9LvRhDL6AZqRcpg5LDFvKRoNUnJuCGiMGt1JPLLKqq/tBy5lkSLnW0Frbu7Pvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=EEj+i5tc; arc=none smtp.client-ip=185.125.25.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="GRCmUsk+"
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e6119fc5e9bso1090152276.0
-        for <linux-security-module@vger.kernel.org>; Wed, 05 Mar 2025 08:12:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1741191138; x=1741795938; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HR6v/qJNcz2018VPIy19J59hCQI20OhNaLeBeMvMyms=;
-        b=GRCmUsk+KxmEFI1arAP0wyX/T/tWMTzc9ZJ+oF37MOw5vKZfVPQfE3GS0AImNbqEV1
-         t/WJ2kUcsQ5FaifEqil2ms5vhwPJQ+hEC63dbLxWoLgBqQ6trVqZ7E+zSPAJrxuxa0g7
-         MW+oYixfDflRvccCzn4GSy30B9Ya+nS/f8qDuQuD0CxpbB+bWLdykfDgr9KVSQkJljrN
-         l1y0PRKxER4TdC3RI1kd3hAyKXX42y6Qa+rcMX4VXy1WjHKFMx0rfPllrQhKasdPcE9S
-         9TSKHrYxV5yE1TujVK03fCfYDAsz+IqXT49919qukuVWrrwcJqugFSc1Lpg4PPv5OeQF
-         fEsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741191138; x=1741795938;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HR6v/qJNcz2018VPIy19J59hCQI20OhNaLeBeMvMyms=;
-        b=jPDPEShl4O7kODJB61eH1pQ2X8nIYBJc8qF2NeuPt2ZralRP6jKEiZd0n4npkSLfrx
-         2WAsv0lhhi8kd7JimwPKTLZ80YcLvf1Mdgmxpt+wUgEsNddguxUJRKam9NV3K5APYQct
-         CuVE/1PlIZB+hMcx1ayK6hlXFCYtgf9kAsN5GVCZO877L/th+kcYxoGhFp+X9BqRyrAh
-         BcchpJtuu3cjW7KZdQU79OYugLzvMOGAf31j5+ZuwhIMxMagd6zr3c6nC0M77jJPMiZa
-         K41Sq37FcVGHaJ/IlqMNIdaPQkKfcHHB25H5pYA9IdJ/W6Hb0N1tLrOln8JuBtJ2KaKD
-         DEFA==
-X-Forwarded-Encrypted: i=1; AJvYcCVOTQwVytZtV8oV+Qcq49eOGYmEL+va+hvilUVhOOmdxOadhJxT2apIzgl4qVYqCJtwTBXaavoM3yYLe2ox+nerlg8dedE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMKz5Nivw0kwnfgcBRaKx2xYgjsqriQ/AZ3gKSFAz0JyGs3kJL
-	7eXC/WrzhJc7SLXKpWzqGMs5WAxPBEq/dwb+d0tZY0FZSD6e2k2OS8moTJtBzU2E8EIj/Sugnnf
-	a1BPo5RW5pgJmbXyAmYVwPOvvtyVtWhnV2udh
-X-Gm-Gg: ASbGncuqJ0bES4vok7FXE/CZIUexEgrZ+2/+Di5Jak+UwIEuS6UoRVJ5sbjKV+Ugi7s
-	9jSnZBYnG4u+TH/UZUpbai27txMkCxpYkSkvhD3BLq+LCOIViWhU2Vd8ThbQizxkRVNBf626Q4Y
-	8Z0vBlcFl1vtkxtgsLJ75LeDIHMA==
-X-Google-Smtp-Source: AGHT+IG2+ri9TiG/+pR3y5KkKxoz0d2KVOY8e3WkmBgUHc2qC5BioAV59fgj/NVLtTUT4F32NzzVt7ytF05Eu8bmAsg=
-X-Received: by 2002:a05:6902:1583:b0:e61:1be5:d0ae with SMTP id
- 3f1490d57ef6-e611e196a54mr5413376276.5.1741191137730; Wed, 05 Mar 2025
- 08:12:17 -0800 (PST)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="EEj+i5tc"
+Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10:40ca:feff:fe05:0])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Z7HYm3Zw2zVK7;
+	Wed,  5 Mar 2025 17:09:32 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1741190972;
+	bh=KKGDt/nLgnhpo+poV9GrvakQkNVBTtJnLYA4bSB9DkM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EEj+i5tcx2Z6xdW3LNmAbNEDDdxHvQlSUPzblCUMPTdasbk6TuZ47Vjo54tSxITGF
+	 Fc+/ImQQzaLAMo2Lo9OrbIUr5rY3PrtylwKqLFygVTrfNCWcCgpESkSG4kKizZsoM7
+	 9t45lzvrlhe2xwExJLStpE2YrbEkkkYHPSYdEybE=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Z7HYl3MzfzHJP;
+	Wed,  5 Mar 2025 17:09:31 +0100 (CET)
+Date: Wed, 5 Mar 2025 17:09:30 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Tingmao Wang <m@maowtm.org>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	Jan Kara <jack@suse.cz>, linux-security-module@vger.kernel.org, 
+	Amir Goldstein <amir73il@gmail.com>, Matthew Bobrowski <repnop@google.com>, 
+	linux-fsdevel@vger.kernel.org, Tycho Andersen <tycho@tycho.pizza>, Jann Horn <jannh@google.com>, 
+	Andy Lutomirski <luto@amacapital.net>
+Subject: Re: [RFC PATCH 4/9] User-space API for creating a supervisor-fd
+Message-ID: <20250305.peiLairahj3A@digikod.net>
+References: <cover.1741047969.git.m@maowtm.org>
+ <03d822634936f4c3ac8e4843f9913d1b1fa9d081.1741047969.git.m@maowtm.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250304203123.3935371-1-bboscaccy@linux.microsoft.com>
- <20250304203123.3935371-3-bboscaccy@linux.microsoft.com> <CAHC9VhS5Gnj98K4fBCq3hDXjmj1Zt9WWqoOiTrwH85CDSTGEYA@mail.gmail.com>
- <877c54jmjl.fsf@microsoft.com> <CAHC9VhQO_CVeg0sU_prvQ_Z8c9pSB02K3E5s84pngYN1RcxXGQ@mail.gmail.com>
- <CAPhsuW6RrUiXaQe1HBYOvwUx2GFaA-RKx22955A2StsP2erTeA@mail.gmail.com>
-In-Reply-To: <CAPhsuW6RrUiXaQe1HBYOvwUx2GFaA-RKx22955A2StsP2erTeA@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 5 Mar 2025 11:12:07 -0500
-X-Gm-Features: AQ5f1Jpzk8xNhqaDNcdEV_2AlQwGfaf4RmRxkPjJlwjeTek1OtX3R3sL0LkAbEc
-Message-ID: <CAHC9VhQ1BHXfQSxMMbFtGDb2yVtBvuLD0b34=eSrCAKEtFq=OQ@mail.gmail.com>
-Subject: Re: [PATCH v4 bpf-next 2/2] selftests/bpf: Add is_kernel parameter to
- LSM/bpf test programs
-To: Song Liu <song@kernel.org>
-Cc: Blaise Boscaccy <bboscaccy@linux.microsoft.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Yonghong Song <yonghong.song@linux.dev>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <03d822634936f4c3ac8e4843f9913d1b1fa9d081.1741047969.git.m@maowtm.org>
+X-Infomaniak-Routing: alpha
 
-On Tue, Mar 4, 2025 at 10:32=E2=80=AFPM Song Liu <song@kernel.org> wrote:
-> On Tue, Mar 4, 2025 at 6:14=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
-rote:
-> > On Tue, Mar 4, 2025 at 8:26=E2=80=AFPM Blaise Boscaccy
-> > <bboscaccy@linux.microsoft.com> wrote:
-> > > Paul Moore <paul@paul-moore.com> writes:
-> > > > On Tue, Mar 4, 2025 at 3:31=E2=80=AFPM Blaise Boscaccy
-> > > > <bboscaccy@linux.microsoft.com> wrote:
+On Tue, Mar 04, 2025 at 01:13:00AM +0000, Tingmao Wang wrote:
+> We allow the user to pass in an additional flag to landlock_create_ruleset
+> which will make the ruleset operate in "supervise" mode, with a supervisor
+> attached. We create additional space in the landlock_ruleset_attr
+> structure to pass the newly created supervisor fd back to user-space.
+> 
+> The intention, while not implemented yet, is that the user-space will read
+> events from this fd and write responses back to it.
+> 
+> Note: need to investigate if fd clone on fork() is handled correctly, but
+> should be fine if it shares the struct file. We might also want to let the
+> user customize the flags on this fd, so that they can request no
+> O_CLOEXEC.
+> 
+> NOTE: despite this patch having a new uapi, I'm still very open to e.g.
+> re-using fanotify stuff instead (if that makes sense in the end). This is
+> just a PoC.
 
-...
+The main security risk of this feature is for this FD to leak and be
+used by a sandboxed process to bypass all its restrictions.  This should
+be highlighted in the UAPI documentation.
 
-> Do we need this in the LSM tree before the upcoming merge window?
-> If not, we would prefer to carry it in bpf-next.
+> 
+> Signed-off-by: Tingmao Wang <m@maowtm.org>
+> ---
+>  include/uapi/linux/landlock.h |  10 ++++
+>  security/landlock/syscalls.c  | 102 +++++++++++++++++++++++++++++-----
+>  2 files changed, 98 insertions(+), 14 deletions(-)
+> 
+> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+> index e1d2c27533b4..7bc1eb4859fb 100644
+> --- a/include/uapi/linux/landlock.h
+> +++ b/include/uapi/linux/landlock.h
+> @@ -50,6 +50,15 @@ struct landlock_ruleset_attr {
+>  	 * resources (e.g. IPCs).
+>  	 */
+>  	__u64 scoped;
+> +	/**
+> +	 * @supervisor_fd: Placeholder to store the supervisor file
+> +	 * descriptor when %LANDLOCK_CREATE_RULESET_SUPERVISE is set.
+> +	 */
+> +	__s32 supervisor_fd;
 
-As long as we can send this up to Linus during the upcoming merge
-window I'll be happy; if you feel strongly and want to take it via the
-BPF tree, that's fine by me.  I'm currently helping someone draft a
-patchset to implement the LSM/SELinux access control LSM callbacks for
-the BPF tokens and I'm also working on a fix for the LSM framework
-initialization code, both efforts may land in a development tree
-during the next dev cycle and may cause a merge conflict with Blaise's
-changes.  Not that a merge conflict is a terrible thing that we can't
-work around, but if we can avoid it I'd be much happier :)
+This interface would require the ruleset_attr becoming updatable by the
+kernel, which might be OK in theory but requires current syscall wrapper
+signature update, see sandboxer.c change.  It also creates a FD which
+might not be useful (e.g. if an error occurs before the actual
+enforcement).
 
-Please do make the /is_kernel/kernel/ change I mentioned in patch 1/2,
-and feel free to keep my ACK from this patchset revision.
+I see a few alternatives.  We could just use/extend the ruleset FD
+instead of creating a new one, but because leaking current rulesets is
+not currently a security risk, we should be careful to not change that.
 
-Thanks everyone!
+Another approach, similar to seccomp unotify, is to get a
+"[landlock-domain]" FD returned by the landlock_restrict_self(2) when a
+new LANDLOCK_RESTRICT_SELF_DOMAIN_FD flag is set.  This FD would be a
+reference to the newly created domain, which is more specific than the
+ruleset used to created this domain (and that can be used to create
+other domains).  This domain FD could be used for introspection (i.e.
+to get read-only properties such as domain ID), but being able to
+directly supervise the referenced domain only with this FD would be a
+risk that we should limit.
 
---=20
-paul-moore.com
+What we can do is to implement an IOCTL command for such domain FD that
+would return a supervisor FD (if the LANDLOCK_RESTRICT_SELF_SUPERVISED
+flag was also set).  The key point is to check (one time) that the
+process calling this IOCTL is not restricted by the related domain (see
+the scope helpers).
+
+Relying on IOCTL commands (for all these FD types) instead of read/write
+operations should also limit the risk of these FDs being misused through
+a confused deputy attack (because such IOCTL command would convey an
+explicit intent):
+https://docs.kernel.org/security/credentials.html#open-file-credentials
+https://lore.kernel.org/all/CAG48ez0HW-nScxn4G5p8UHtYy=T435ZkF3Tb1ARTyyijt_cNEg@mail.gmail.com/
+We should get inspiration from seccomp unotify for this too:
+https://lore.kernel.org/all/20181209182414.30862-1-tycho@tycho.ws/
+
+> +	/**
+> +	 * @pad: Unused, must be zero.
+> +	 */
+> +	__u32 pad;
+
+In this case we should pack the struct instead.
+
+>  };
+>  
+>  /*
+> @@ -60,6 +69,7 @@ struct landlock_ruleset_attr {
+>   */
+>  /* clang-format off */
+>  #define LANDLOCK_CREATE_RULESET_VERSION			(1U << 0)
+> +#define LANDLOCK_CREATE_RULESET_SUPERVISE		(1U << 1)
+>  /* clang-format on */
+>  
+>  /**
+
+[...]
