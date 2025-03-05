@@ -1,130 +1,116 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39CE4247DDD
-	for <linux-security-module@vger.kernel.org>; Wed,  5 Mar 2025 13:13:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7E0F24A07A
+	for <linux-security-module@vger.kernel.org>; Wed,  5 Mar 2025 16:12:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741180401; cv=none; b=nqkhTkIELnTgFWY44xtEoDtvbEF4jqZe9AmQq1YyRET4i39e0rrB/61dpaD7D52bPFQZPpOdhEdd1CxLAhB6hpJTiSeXwKMRdo76Isiqv7rWv9U8/XULZqpMDmGzsZP6CYKfhGEFoJ6m2llY5znIrUZAwHhkEs5n4DDv9yrCCGQ=
+	t=1741191140; cv=none; b=bdFh0MZD8RoOdQSwqOSAJ/7wSeIR63Ig5E9LZXBF2fv6oldoYz5Nsx1AO13A/uNC1BY2/SlFf98sTDFD0KNKEYJ2oEYwHZhdT13JPX3OfBS0ZhaHXv635n+J4JA2P/+d6czBLvz6W8FF6f//2ucC9ugV/Zj4eNoFUASYVMyu17o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741180401; c=relaxed/simple;
-	bh=9emQwHWxb8VCLca77hMH9GFlMcpST0gO3AS01KnNkGs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FYGqwvl5zumj9juqqMsxZqu41t6daq4Jl9PjEucW5nx69lLy1fSitFoZGzUAYqleaSn0PPkw3WuU6lAsoI3HFUSZDk3vpsIziL9rQq9UZzCIU5M6SJUZeGd2tq3NtvqheYEO+4v73CfArxNmVdJPD57p4FVIQoIhPTBEiN2Q2eU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mqRKz+N5; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1741191140; c=relaxed/simple;
+	bh=2q39nFob89uGjhIZ3SJiCBavEHz6XphRtukgeM+fPHU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KqUVP4ejTmyLm0jmkoZdbdaFbVLnnRG1VdLZlxP6HhsrMC5b5F2a8HB+UQ+REfd8XK/iOh7Q00Yu90Vlz4/nrE5UfXZ19/gHg1c9QXKV4OepPGEVoZOU5fnwsiTHJtDdQxDp7CF1ryZjDXB+2R+ISmMouxxsRSidRMcEpAUbJa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=GRCmUsk+; arc=none smtp.client-ip=209.85.219.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mqRKz+N5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47707C4CEE2;
-	Wed,  5 Mar 2025 13:13:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741180400;
-	bh=9emQwHWxb8VCLca77hMH9GFlMcpST0gO3AS01KnNkGs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mqRKz+N5wDfN+Mn+ssTLOjb/Y8ySsnFbM9uTT134an/3gqKJEWIWFn8yopltEw+Ka
-	 Gs6jFiDhJmHYvhjrj0Hj9DUcZn3OjEYTYUqnqpQ8jrGkobLm4dA72X7pom4F+5eKL9
-	 p8RShZJQKm2ww44m2QCg7BZt0VYKq8jELCC+Rumj5MrBVetVl9VHgB8VDzUA8XsND+
-	 ccOUuVYgSJKakt7nRhVyB4RhALYjSED5TC8EWXKt99XIqCH4u5ln9TIFtjnTG3blSO
-	 bJwvLuuC+3aq1U/WqRWhigrx1HCQwFqzBvnwXm3NB8mmOOSIbEhJmJ5EYQvP3voZKM
-	 w2d/drfX48yBQ==
-Date: Wed, 5 Mar 2025 14:13:10 +0100
-From: Alejandro Colomar <alx@kernel.org>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Cc: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
-	Tahera Fahimi <fahimitahera@gmail.com>, Tanya Agarwal <tanyaagarwal25699@gmail.com>, 
-	linux-security-module@vger.kernel.org, Daniel Burgener <dburgener@linux.microsoft.com>
-Subject: Re: [PATCH v3 0/1] landlock: Clarify IPC scoping documentation
-Message-ID: <5ke64hfsqorjpnrq347ubtyz6wa6r652kh44n537eeqrhbjy6o@rxl5uv4nyo5w>
-References: <20250303194510.135506-2-gnoack@google.com>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="GRCmUsk+"
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e6119fc5e9bso1090152276.0
+        for <linux-security-module@vger.kernel.org>; Wed, 05 Mar 2025 08:12:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1741191138; x=1741795938; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HR6v/qJNcz2018VPIy19J59hCQI20OhNaLeBeMvMyms=;
+        b=GRCmUsk+KxmEFI1arAP0wyX/T/tWMTzc9ZJ+oF37MOw5vKZfVPQfE3GS0AImNbqEV1
+         t/WJ2kUcsQ5FaifEqil2ms5vhwPJQ+hEC63dbLxWoLgBqQ6trVqZ7E+zSPAJrxuxa0g7
+         MW+oYixfDflRvccCzn4GSy30B9Ya+nS/f8qDuQuD0CxpbB+bWLdykfDgr9KVSQkJljrN
+         l1y0PRKxER4TdC3RI1kd3hAyKXX42y6Qa+rcMX4VXy1WjHKFMx0rfPllrQhKasdPcE9S
+         9TSKHrYxV5yE1TujVK03fCfYDAsz+IqXT49919qukuVWrrwcJqugFSc1Lpg4PPv5OeQF
+         fEsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741191138; x=1741795938;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HR6v/qJNcz2018VPIy19J59hCQI20OhNaLeBeMvMyms=;
+        b=jPDPEShl4O7kODJB61eH1pQ2X8nIYBJc8qF2NeuPt2ZralRP6jKEiZd0n4npkSLfrx
+         2WAsv0lhhi8kd7JimwPKTLZ80YcLvf1Mdgmxpt+wUgEsNddguxUJRKam9NV3K5APYQct
+         CuVE/1PlIZB+hMcx1ayK6hlXFCYtgf9kAsN5GVCZO877L/th+kcYxoGhFp+X9BqRyrAh
+         BcchpJtuu3cjW7KZdQU79OYugLzvMOGAf31j5+ZuwhIMxMagd6zr3c6nC0M77jJPMiZa
+         K41Sq37FcVGHaJ/IlqMNIdaPQkKfcHHB25H5pYA9IdJ/W6Hb0N1tLrOln8JuBtJ2KaKD
+         DEFA==
+X-Forwarded-Encrypted: i=1; AJvYcCVOTQwVytZtV8oV+Qcq49eOGYmEL+va+hvilUVhOOmdxOadhJxT2apIzgl4qVYqCJtwTBXaavoM3yYLe2ox+nerlg8dedE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMKz5Nivw0kwnfgcBRaKx2xYgjsqriQ/AZ3gKSFAz0JyGs3kJL
+	7eXC/WrzhJc7SLXKpWzqGMs5WAxPBEq/dwb+d0tZY0FZSD6e2k2OS8moTJtBzU2E8EIj/Sugnnf
+	a1BPo5RW5pgJmbXyAmYVwPOvvtyVtWhnV2udh
+X-Gm-Gg: ASbGncuqJ0bES4vok7FXE/CZIUexEgrZ+2/+Di5Jak+UwIEuS6UoRVJ5sbjKV+Ugi7s
+	9jSnZBYnG4u+TH/UZUpbai27txMkCxpYkSkvhD3BLq+LCOIViWhU2Vd8ThbQizxkRVNBf626Q4Y
+	8Z0vBlcFl1vtkxtgsLJ75LeDIHMA==
+X-Google-Smtp-Source: AGHT+IG2+ri9TiG/+pR3y5KkKxoz0d2KVOY8e3WkmBgUHc2qC5BioAV59fgj/NVLtTUT4F32NzzVt7ytF05Eu8bmAsg=
+X-Received: by 2002:a05:6902:1583:b0:e61:1be5:d0ae with SMTP id
+ 3f1490d57ef6-e611e196a54mr5413376276.5.1741191137730; Wed, 05 Mar 2025
+ 08:12:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="vcfu2hbzhqvwhuyk"
-Content-Disposition: inline
-In-Reply-To: <20250303194510.135506-2-gnoack@google.com>
-
-
---vcfu2hbzhqvwhuyk
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
+References: <20250304203123.3935371-1-bboscaccy@linux.microsoft.com>
+ <20250304203123.3935371-3-bboscaccy@linux.microsoft.com> <CAHC9VhS5Gnj98K4fBCq3hDXjmj1Zt9WWqoOiTrwH85CDSTGEYA@mail.gmail.com>
+ <877c54jmjl.fsf@microsoft.com> <CAHC9VhQO_CVeg0sU_prvQ_Z8c9pSB02K3E5s84pngYN1RcxXGQ@mail.gmail.com>
+ <CAPhsuW6RrUiXaQe1HBYOvwUx2GFaA-RKx22955A2StsP2erTeA@mail.gmail.com>
+In-Reply-To: <CAPhsuW6RrUiXaQe1HBYOvwUx2GFaA-RKx22955A2StsP2erTeA@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 5 Mar 2025 11:12:07 -0500
+X-Gm-Features: AQ5f1Jpzk8xNhqaDNcdEV_2AlQwGfaf4RmRxkPjJlwjeTek1OtX3R3sL0LkAbEc
+Message-ID: <CAHC9VhQ1BHXfQSxMMbFtGDb2yVtBvuLD0b34=eSrCAKEtFq=OQ@mail.gmail.com>
+Subject: Re: [PATCH v4 bpf-next 2/2] selftests/bpf: Add is_kernel parameter to
+ LSM/bpf test programs
+To: Song Liu <song@kernel.org>
+Cc: Blaise Boscaccy <bboscaccy@linux.microsoft.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Yonghong Song <yonghong.song@linux.dev>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-From: Alejandro Colomar <alx@kernel.org>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Cc: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
-	Tahera Fahimi <fahimitahera@gmail.com>, Tanya Agarwal <tanyaagarwal25699@gmail.com>, 
-	linux-security-module@vger.kernel.org, Daniel Burgener <dburgener@linux.microsoft.com>
-Subject: Re: [PATCH v3 0/1] landlock: Clarify IPC scoping documentation
-References: <20250303194510.135506-2-gnoack@google.com>
-MIME-Version: 1.0
-In-Reply-To: <20250303194510.135506-2-gnoack@google.com>
 
-Hi G=C3=BCnther,
+On Tue, Mar 4, 2025 at 10:32=E2=80=AFPM Song Liu <song@kernel.org> wrote:
+> On Tue, Mar 4, 2025 at 6:14=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
+rote:
+> > On Tue, Mar 4, 2025 at 8:26=E2=80=AFPM Blaise Boscaccy
+> > <bboscaccy@linux.microsoft.com> wrote:
+> > > Paul Moore <paul@paul-moore.com> writes:
+> > > > On Tue, Mar 4, 2025 at 3:31=E2=80=AFPM Blaise Boscaccy
+> > > > <bboscaccy@linux.microsoft.com> wrote:
 
-On Mon, Mar 03, 2025 at 08:45:10PM +0100, G=C3=BCnther Noack wrote:
-> Hello!
->=20
-> Thank you for your feedback, here is the third version.
->=20
-> Changes in V3:
->=20
-> * Various man page improvements suggested by Alejandro Colomar
->=20
-> * Squashed man page commits 2/3 and 3/3.
->=20
-> * (No changes in the kernel side documentation)
+...
 
-Thanks!  Both man-pages patches LGTM and I've applied them both.
+> Do we need this in the LSM tree before the upcoming merge window?
+> If not, we would prefer to carry it in bpf-next.
 
+As long as we can send this up to Linus during the upcoming merge
+window I'll be happy; if you feel strongly and want to take it via the
+BPF tree, that's fine by me.  I'm currently helping someone draft a
+patchset to implement the LSM/SELinux access control LSM callbacks for
+the BPF tokens and I'm also working on a fix for the LSM framework
+initialization code, both efforts may land in a development tree
+during the next dev cycle and may cause a merge conflict with Blaise's
+changes.  Not that a merge conflict is a terrible thing that we can't
+work around, but if we can avoid it I'd be much happier :)
 
-Have a lovely day!
-Alex
+Please do make the /is_kernel/kernel/ change I mentioned in patch 1/2,
+and feel free to keep my ACK from this patchset revision.
 
->=20
-> Changes in V2:
->=20
-> * As Micka=C3=ABl already applied the first commit ("Minor typo and gramm=
-ar fixes in
->   IPC scoping documentation"), this one is left out here.
->=20
-> * Applied remarks by Daniel Burgener, Alejandro Colomar and Micka=C3=ABl =
-Sala=C3=BCn
->=20
-> * Replaced reference to send(2) with sendto(2), which is slightly more
->   appropriate in that place.
->=20
-> =E2=80=94G=C3=BCnther
->=20
-> G=C3=BCnther Noack (1):
->   landlock: Clarify IPC scoping documentation
->=20
->  Documentation/userspace-api/landlock.rst | 45 ++++++++++++------------
->  1 file changed, 22 insertions(+), 23 deletions(-)
->=20
+Thanks everyone!
 
 --=20
-<https://www.alejandro-colomar.es/>
-
---vcfu2hbzhqvwhuyk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEES7Jt9u9GbmlWADAi64mZXMKQwqkFAmfITeYACgkQ64mZXMKQ
-wqlmiQ//XTMYQesbMzo+T6QREHZglKi9Ki43YBMD0ylWc+XSXW5/OrAiACCEy3iJ
-Dg7DpsJduGXZWP2tW4LtjHbYjmOeF8eWQORuzSMMASMLGlJ6zcx942eef/wCuguD
-e6eo/yXGGqh4Tn3fIXBGoHP0scIKMdhWkhOcEJnanDmf7dzKfWpccqFpyJhc83zs
-PKFI6QhR6bc/XOYv6gUTQGte8xDSnjVkVdtM+FGlhzPPZ/lINPVk/LHRhD7tGE2+
-12h8pEIT4zGBxCbOT6G5n5LUmXdX5IJLyc63mj3pCk50JHkWGgRTogP3Ft8OusLb
-YdURlHwx85oO991VRlo5D69EJbEGQ2t9K4NnHnjt+JH8lFjkP18TM4Rw/Tr505xX
-EMiBjkC52IKfhMuz5wRWi9hyKK18QyZdoIhvjEysvC52gM+sXXOcHYkOVINn2nWL
-k3zMW7y/TBfTMu4ayG9Vk+xjePXB8YGOI6vBs74NyxKCDcZJNm+RC9g8DFT7rDD+
-8fMCN/Yxy1uh0/W9i3e27PPZFjMjd7iXeeTiRBINZG+/zDtLraZmQ6De9+D2RUOJ
-wiVjp2rw4TIcsK1rnDFM8Lryb6F86LmFWYo6m7v8KSJfOL/45NvrN9lKnjsYiv2B
-Q8REMtHPszec6Ig8kxX+STdZ+5pMySlDQc1WXVtlZmUnmF7MRVs=
-=0/fX
------END PGP SIGNATURE-----
-
---vcfu2hbzhqvwhuyk--
+paul-moore.com
