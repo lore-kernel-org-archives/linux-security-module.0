@@ -1,317 +1,218 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92DFCBA27;
-	Wed,  5 Mar 2025 00:04:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14C3553AC
+	for <linux-security-module@vger.kernel.org>; Wed,  5 Mar 2025 00:19:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741133089; cv=none; b=cdjTzfpm/TihjoNflUyRUtNwlBBul7EXk+FvRJ+yzrJHaJ1IQjvDVx2uz+dOjryBuyrNizFJyE2Re8t9IFu8YITGCRMARxA7NhQn/gGcmWYIWZXcEopJ1r45ClqDN2iBQSvl12Zjjh9XSf6DxHwdSDMjB+GqcVHGU78el+109zE=
+	t=1741134001; cv=none; b=moKlTicdMYUqnzSN2pkmVvHv55t4TdUZ7rmVmepx7+hGFL5kut26nI6YVp7qkNzRwngWiRQ/7hT9gY7oVJ+YHHBZJo5Nyidf4GkKUUaYRa9meU2sXK3wHOI7jlOqnS6b8Dl/aBp5kENJfoYFSpM85eAB52oIsEteX8rM9hWADVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741133089; c=relaxed/simple;
-	bh=J0pIpJ4/doq2EqpH2y440K4ULKMCrVgpt986B+G+AxQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pg9D83iofU+eqWslIXkx+A4F/Obhz1oMf8QqHpecgAJ2LXMSyXkw4jjYghVWPi1WZVj20/4mUTSdSxDI781SEVmyc+nGs2Uxwy9iTy3tawqm6yBVexiQRy9Nmhz9Gdb2J2gSDm1+IAMb/vvb6NvOrKvesODT01lrTslygOk9eGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=IB/F023T; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+	s=arc-20240116; t=1741134001; c=relaxed/simple;
+	bh=nFmPFrquQ5bomrKpIAorl2f7SP/HswO2qcap7S1MciA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MQtVAGc9LV5ZtrpsV9NW9737QnisTWuh2LDCYc/AlIi8NQwTO0Jale+5DmSwr4Ux89aRgOqzacLjIxvSRVOhxT76y1g/2TZn3Tl5PX/SaqKZZV5WKghm80m7kgNDNwDOPpgWFYirAn4ZqaSpg8AixFEClgdPFK1x2Myz4NeeJro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=VpPwhOjF; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="IB/F023T"
-Received: from [100.70.97.150] (unknown [172.172.34.12])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 33A6A210EAF7;
-	Tue,  4 Mar 2025 16:04:46 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 33A6A210EAF7
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1741133087;
-	bh=Vm+eyPErdPTdzOz2sqKWlY+x6xwan8UqSWEnD6po9JI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=IB/F023TM9NNY/2sQ4a92vO1kCg3LyhufTJgUdcHLSSf1Li25DXfjZQDazrnfZeAe
-	 XHZwm8EuaW5Wmn3xXEUOFWrhCifHH+fYoUM/zCDubAndqBQkKgqkkSsPKFjSDGeoR4
-	 Z3kK37ruT1ItKmUcA+YtWxx0/keUmVTxiDWQZEyI=
-Message-ID: <0a5e586a-9b55-4905-8663-6ef0112aa32d@linux.microsoft.com>
-Date: Tue, 4 Mar 2025 16:04:43 -0800
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="VpPwhOjF"
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6f9625c0fccso56513527b3.1
+        for <linux-security-module@vger.kernel.org>; Tue, 04 Mar 2025 16:19:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1741133998; x=1741738798; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ocfBqfPEo/ZGjFNCT7umNcOBhbM/4xfpitCEs7MgftA=;
+        b=VpPwhOjFNxiBiMmvGTcObTttOW5Dj7bBG+a7vtg2EjkoHTunEEoFT0g+jruYi+R4YD
+         6VXDfklPzlOtM5XODG2rL77Z2kGosFeXNIw12gB2XQ2FOBD5m9EY9AeLrqpXr4osauDK
+         d/Yn4JombAnuBPvbluRvv30nqtxEJ8ZspBhQG7GAMgsmn3cONHz1EON5JJ58i9Ld6j6J
+         BSmpPQx+AqFn20PbH4S/CiBuCWpzSZVQCVBeWbbaJXA47gSa2lbTaBiZ3p8vEsCblzAq
+         jZsb0hD/36mutqj6w8N0llaNorUBnHCrXNhYcxs5GY1wdpYmcyKmtl+1CVxBTyGBKYSB
+         Jo0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741133998; x=1741738798;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ocfBqfPEo/ZGjFNCT7umNcOBhbM/4xfpitCEs7MgftA=;
+        b=p3mogVqr1dIyLn2xgu2DcSZ5wO1vqUrF7Cx43tidoJ/nxvbPZ5M27wPkMJ9oOgSuow
+         P7d+2kbbiDp2VYUM5N3bqkJD/tDjBAF7fNLtcxlSutZDEA3wxa5qTyyQZ/QJmyfSkkus
+         6X8ViAoP348TGogxds3p6hOJ215Qwr4jLv0TuOtv/EbgnCGBsEUMEoytsCBGHedJPpsn
+         pggaN4rJinFNZiIOTNdizZc6aouncvpDLY8aoXzsriI7BFoVuUUqiKhDSDZXPAHjtQZ7
+         5urEB4bQuS0wyySpF6+RPVhOadmzgcHRmRL0oMiY8ADWfC+8vFbVn2I5Th+kPAiR4f+Z
+         Qwbw==
+X-Forwarded-Encrypted: i=1; AJvYcCXNlYvziQR2cfEow9fe2N4nwXKoyzPeaRDD51LVD2ixLQz6h336MivUdvdewk8bf1TyUGWJwuh++jkbL2v/zKsWs1ThfGM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEguSp0d/2lVDpzVD0f6AuLHfzLias4KTndM9y3i5nUI+G1TIK
+	GRy+acfGBIgITA9ql2F7Y99KIZMMdnfsIJFw13PZyIhJa0ZYODVYWNvXkSlcWbR7h/BnVrsaeLR
+	Nj5TZIHbradquc6S9A94exq6zPQXAxYcnvUk8
+X-Gm-Gg: ASbGncsn9nqWDUZlfA7TNLPAATuLyiyEy8K76P+++J5VZm60mBWX9RUh4AAUm/ipGM6
+	QBIX2+r32yoYe/sHAb95hKfvF9oeoI+7++ay72L7ZpYzf34tPXLGRj8llXNl82az6KC1F5TYw8O
+	lVBD1u+uvFkwmP6b7ayY0pjB1zUw==
+X-Google-Smtp-Source: AGHT+IGF/y0geooCPtJRjqZPvENGrM6G/jIaXoX7kcX22U7OqoXPhdA0YA3220WyCrgUujmfozkdhji7akGtDiTRuzs=
+X-Received: by 2002:a05:6902:108f:b0:e60:a2e2:9359 with SMTP id
+ 3f1490d57ef6-e611e19a0bfmr1796526276.3.1741133997973; Tue, 04 Mar 2025
+ 16:19:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] ipe: add errno field to IPE policy load auditing
-To: Fan Wu <wufan@kernel.org>
-Cc: audit@vger.kernel.org, corbet@lwn.net, eparis@redhat.com,
- jmorris@namei.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-security-module@vger.kernel.org, paul@paul-moore.com
-References: <CAKtyLkFyqFCcqUi7TPn9niUwYcHwv8nVq-joKc8kd8tFg58p-Q@mail.gmail.com>
- <1740784265-19829-1-git-send-email-jasjivsingh@linux.microsoft.com>
- <CAKtyLkGV4cGJzbvVUAeLBp=evc_QAWPD8FsskHNVvx-1UZJB-A@mail.gmail.com>
-Content-Language: en-US
-From: Jasjiv Singh <jasjivsingh@linux.microsoft.com>
-In-Reply-To: <CAKtyLkGV4cGJzbvVUAeLBp=evc_QAWPD8FsskHNVvx-1UZJB-A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20241017155516.2582369-1-eric.snowberg@oracle.com>
+ <c490397315c2704e9ef65c8ad3fefedb239f1997.camel@linux.ibm.com>
+ <72F52F71-C7F3-402D-8441-3D636A093FE8@oracle.com> <CAHC9VhRHEw5c+drC=aX4xTqWoQJJZ+qkJ7aHUT5dcu+Q5f7BqA@mail.gmail.com>
+ <CAHC9VhSJpnaAK1efgs1Uk0Tr3CaDNR1LiDU-t_yDKDQG6J-74Q@mail.gmail.com>
+ <E20C617B-EA01-4E69-B5E2-31E9AAD6F7A2@oracle.com> <506e8e58e5236a4525b18d84bafa9aae80b24452.camel@linux.ibm.com>
+ <CAHC9VhTsZntLdGBV7=4suauS+rzSQv1O4UAoGcy2vEB02wRkoA@mail.gmail.com>
+ <c580811716f550ed5d6777db5e143afe4ad06edc.camel@linux.ibm.com>
+ <CAHC9VhTz6U5rRdbJBWq0_U4BSKTsiGCsaX=LTgisNNoZXZokOA@mail.gmail.com>
+ <e0e7c0971d42e45c7b4641bd58cb7ea20b36e2e1.camel@linux.ibm.com>
+ <CAHC9VhSzc6N0oBesT8V21xuwB11T7e6V9r0UmiqHXvCg5erkVA@mail.gmail.com> <a1d6ce786256bbade459f98e0b4074e449048fee.camel@linux.ibm.com>
+In-Reply-To: <a1d6ce786256bbade459f98e0b4074e449048fee.camel@linux.ibm.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 4 Mar 2025 19:19:46 -0500
+X-Gm-Features: AQ5f1Jow_JKN5Wb5BydtWrN3W2PF1ZW0sHwsGmKXbhetUZR51OWtnJRtrsmPv-Q
+Message-ID: <CAHC9VhT27Ge6woKbBExu2nT_cQE79rG+rrgp3nDYjvjcztVQXg@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 00/13] Clavis LSM
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Eric Snowberg <eric.snowberg@oracle.com>, David Howells <dhowells@redhat.com>, 
+	Jarkko Sakkinen <jarkko@kernel.org>, 
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>, 
+	David Woodhouse <dwmw2@infradead.org>, 
+	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>, "davem@davemloft.net" <davem@davemloft.net>, 
+	Ard Biesheuvel <ardb@kernel.org>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	"casey@schaufler-ca.com" <casey@schaufler-ca.com>, Stefan Berger <stefanb@linux.ibm.com>, 
+	"ebiggers@kernel.org" <ebiggers@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>, 
+	"keyrings@vger.kernel.org" <keyrings@vger.kernel.org>, 
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, 
+	"linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>, 
+	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Mar 4, 2025 at 7:54=E2=80=AFAM Mimi Zohar <zohar@linux.ibm.com> wro=
+te:
+> On Mon, 2025-03-03 at 17:38 -0500, Paul Moore wrote:
+> > On Fri, Feb 28, 2025 at 12:19=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.co=
+m> wrote:
+> > > On Fri, 2025-02-28 at 11:14 -0500, Paul Moore wrote:
+> > > > On Fri, Feb 28, 2025 at 9:09=E2=80=AFAM Mimi Zohar <zohar@linux.ibm=
+.com> wrote:
+> > > > > On Thu, 2025-02-27 at 17:22 -0500, Paul Moore wrote:
+> >
+> > ...
+> >
+> > > Ok, let's go through different scenarios to see if it would scale.
+> > >
+> > > Scenario 1: Mostly distro signed userspace applications, minimum numb=
+er of
+> > > developer, customer, 3rd party applications.
+> > >
+> > > Scenario 2: Multiple developer, customer, 3rd party applications, sig=
+ned by the
+> > > same party.
+> > >
+> > > Scenario 3: extreme case - every application signed by different part=
+y.
+> > >
+> > > With the minimum case, there would probably be a default key or sets =
+of
+> > > permissible keys.  In the extreme case, the number of keyrings would =
+be
+> > > equivalent to the number of application/software packages.
+> >
+> > Perhaps we're not understanding each other, but my understanding of
+> > the above three scenarios is that they are all examples of signed
+> > applications where something (likely something in the kernel like IMA)
+> > verifies the signature on the application.  While there are going to
+> > be differing numbers of keys in each of the three scenarios, I believe
+> > they would all be on/linked-to the same usage oriented keyring as they
+> > all share the same usage: application signatures.
+>
+> Yes they're all verifying file signatures, but the software packages are =
+from
+> different sources (e.g. distro, chrome), signed by different keys.
 
+Yep.
 
-On 3/3/2025 2:11 PM, Fan Wu wrote:
-> On Fri, Feb 28, 2025 at 3:11 PM Jasjiv Singh
-> <jasjivsingh@linux.microsoft.com> wrote:
->>
->> Users of IPE require a way to identify when and why an operation fails,
->> allowing them to both respond to violations of policy and be notified
->> of potentially malicious actions on their systems with respect to IPE.
->>
->> This patch introduces a new error field to the AUDIT_IPE_POLICY_LOAD event
->> to log policy loading failures. Currently, IPE only logs successful policy
->> loads, but not failures. Tracking failures is crucial to detect malicious
->> attempts and ensure a complete audit trail for security events.
->>
->> The new error field will capture the following error codes:
->>
->> * 0: no error
->> * -EPERM: Insufficient permission
->> * -EEXIST: Same name policy already deployed
->> * -EBADMSG: policy is invalid
->> * -ENOMEM: out of memory (OOM)
->> * -ERANGE: policy version number overflow
->> * -EINVAL: policy version parsing error
->>
-> 
-> These error codes are not exhaustive. We recently introduced the
-> secondary keyring and platform keyring to sign policy so the policy
-> loading could return -ENOKEY or -EKEYREJECT. And also the update
-> policy can return -ESTALE when the policy version is old.
-> This is my fault that I forgot we should also update the documentation
-> of the newly introduced error codes. Could you please go through the
-> whole loading code and find all possible error codes?  Also this is a
-> good chance to update the current stale function documents.
-> 
-> ...
-> 
+> Only a
+> particular key should be used to verify the file signatures for a particu=
+lar
+> application.
 
-So, I looked into error codes when the policy loads. In ipe_new_policy, 
-the verify_pkcs7_signature can return a lot of errno codes (ex: ENOKEY, 
-EKEYREJECTED, EBADMSG, etc.) while parsing the pkcs7 and other functions 
-as well. Also, In ipe_new_policyfs_node used in new_policy(), I see the same 
-issue with securityfs_create_dir and securityfs_create_file as they 
-return the errno directly from API to. So, what should we return?
+That's definitely one access control policy, but I can also envision a
+scenario where I have just one keyring for application signatures with
+multiple keys from multiple vendors.
 
-For other functions: I have complied the errno list: 
+> Clavis limits key usage based on LSM hooks (e.g. kernel modules, kernel i=
+mage,
+> firmware, etc).  It's a good start, but even this probably is not fine en=
+ough
+> granularity.
 
-* -ENOENT: Policy is not found while updating
-* -EEXIST: Same name policy already deployed
-* -ERANGE: Policy version number overflow
-* -EINVAL: Policy version parsing error
-* -EPERM: Insufficient permission
-* -ESTALE: Policy version is old
-* -ENOMEM: Out of memory (OOM)
-* -EBADMSG: Policy is invalid
+Which is fine, but like I said earlier, it makes far more sense to me
+to move towards usage oriented keyrings and then apply whatever
+additional access control granularity is required to meet a given
+scenario.
 
-- Jasjiv
+It's also worth (re)mentioning that what makes Clavis not-a-LSM in my
+mind is how it is implemented, not necessarily its security goals.  If
+Clavis were to be implemented in such a way that it only relied on
+security/LSM blobs and not keys/keyrings it might be more suitable.
 
->>
->> Signed-off-by: Jasjiv Singh <jasjivsingh@linux.microsoft.com>
->> ---
->>  Documentation/admin-guide/LSM/ipe.rst | 19 ++++++++++++++-----
->>  security/ipe/audit.c                  | 15 ++++++++++++---
->>  security/ipe/fs.c                     | 16 +++++++++++-----
->>  security/ipe/policy_fs.c              | 18 +++++++++++++-----
->>  4 files changed, 50 insertions(+), 18 deletions(-)
->>
->> diff --git a/Documentation/admin-guide/LSM/ipe.rst b/Documentation/admin-guide/LSM/ipe.rst
->> index f93a467db628..5dbf54471fab 100644
->> --- a/Documentation/admin-guide/LSM/ipe.rst
->> +++ b/Documentation/admin-guide/LSM/ipe.rst
->> @@ -423,7 +423,7 @@ Field descriptions:
->>
->>  Event Example::
->>
->> -   type=1422 audit(1653425529.927:53): policy_name="boot_verified" policy_version=0.0.0 policy_digest=sha256:820EEA5B40CA42B51F68962354BA083122A20BB846F26765076DD8EED7B8F4DB auid=4294967295 ses=4294967295 lsm=ipe res=1
->> +   type=1422 audit(1653425529.927:53): policy_name="boot_verified" policy_version=0.0.0 policy_digest=sha256:820EEA5B40CA42B51F68962354BA083122A20BB846F26765076DD8EED7B8F4DB auid=4294967295 ses=4294967295 lsm=ipe res=1 errno=0
->>     type=1300 audit(1653425529.927:53): arch=c000003e syscall=1 success=yes exit=2567 a0=3 a1=5596fcae1fb0 a2=a07 a3=2 items=0 ppid=184 pid=229 auid=4294967295 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=4294967295 comm="python3" exe="/usr/bin/python3.10" key=(null)
->>     type=1327 audit(1653425529.927:53): PROCTITLE proctitle=707974686F6E3300746573742F6D61696E2E7079002D66002E2E
->>
->> @@ -436,11 +436,11 @@ Field descriptions:
->>  +----------------+------------+-----------+---------------------------------------------------+
->>  | Field          | Value Type | Optional? | Description of Value                              |
->>  +================+============+===========+===================================================+
->> -| policy_name    | string     | No        | The policy_name                                   |
->> +| policy_name    | string     | Yes       | The policy_name                                   |
->>  +----------------+------------+-----------+---------------------------------------------------+
->> -| policy_version | string     | No        | The policy_version                                |
->> +| policy_version | string     | Yes       | The policy_version                                |
->>  +----------------+------------+-----------+---------------------------------------------------+
->> -| policy_digest  | string     | No        | The policy hash                                   |
->> +| policy_digest  | string     | Yes       | The policy hash                                   |
->>  +----------------+------------+-----------+---------------------------------------------------+
->>  | auid           | integer    | No        | The login user ID                                 |
->>  +----------------+------------+-----------+---------------------------------------------------+
->> @@ -450,7 +450,16 @@ Field descriptions:
->>  +----------------+------------+-----------+---------------------------------------------------+
->>  | res            | integer    | No        | The result of the audited operation(success/fail) |
->>  +----------------+------------+-----------+---------------------------------------------------+
->> -
->> +| errno          | integer    | No        | The result of the policy error as follows:        |
->> +|                |            |           |                                                   |
->> +|                |            |           | +  0: no error                                    |
->> +|                |            |           | +  -EPERM: Insufficient permission                |
->> +|                |            |           | +  -EEXIST: Same name policy already deployed     |
->> +|                |            |           | +  -EBADMSG: policy is invalid                    |
->> +|                |            |           | +  -ENOMEM: out of memory (OOM)                   |
->> +|                |            |           | +  -ERANGE: policy version number overflow        |
->> +|                |            |           | +  -EINVAL: policy version parsing error          |
->> ++----------------+------------+-----------+---------------------------------------------------+
->>
-> 
-> Might be better to create another table to list all potential erronos.
-> Also please keep the capitalization of sentences consistent.
-> 
->>  1404 AUDIT_MAC_STATUS
->>  ^^^^^^^^^^^^^^^^^^^^^
->> diff --git a/security/ipe/audit.c b/security/ipe/audit.c
->> index f05f0caa4850..8df307bb2bab 100644
->> --- a/security/ipe/audit.c
->> +++ b/security/ipe/audit.c
->> @@ -21,6 +21,8 @@
->>
->>  #define AUDIT_POLICY_LOAD_FMT "policy_name=\"%s\" policy_version=%hu.%hu.%hu "\
->>                               "policy_digest=" IPE_AUDIT_HASH_ALG ":"
->> +#define AUDIT_POLICY_LOAD_FAIL_FMT "policy_name=? policy_version=? "\
->> +                                  "policy_digest=?"
->>  #define AUDIT_OLD_ACTIVE_POLICY_FMT "old_active_pol_name=\"%s\" "\
->>                                     "old_active_pol_version=%hu.%hu.%hu "\
->>                                     "old_policy_digest=" IPE_AUDIT_HASH_ALG ":"
->> @@ -254,16 +256,23 @@ void ipe_audit_policy_activation(const struct ipe_policy *const op,
->>  void ipe_audit_policy_load(const struct ipe_policy *const p)
->>  {
-> 
-> The documentation of this function should also be updated since it is
-> also auditing errors now.
-> 
->>         struct audit_buffer *ab;
->> +       int err = 0;
->>
->>         ab = audit_log_start(audit_context(), GFP_KERNEL,
->>                              AUDIT_IPE_POLICY_LOAD);
->>         if (!ab)
->>                 return;
->>
->> -       audit_policy(ab, AUDIT_POLICY_LOAD_FMT, p);
->> -       audit_log_format(ab, " auid=%u ses=%u lsm=ipe res=1",
->> +       if (!IS_ERR(p)) {
->> +               audit_policy(ab, AUDIT_POLICY_LOAD_FMT, p);
->> +       } else {
->> +               audit_log_format(ab, AUDIT_POLICY_LOAD_FAIL_FMT);
->> +               err = PTR_ERR(p);
->> +       }
->> +
->> +       audit_log_format(ab, " auid=%u ses=%u lsm=ipe res=%d errno=%d",
->>                          from_kuid(&init_user_ns, audit_get_loginuid(current)),
->> -                        audit_get_sessionid(current));
->> +                        audit_get_sessionid(current), !err, err);
->>
->>         audit_log_end(ab);
->>  }
->> diff --git a/security/ipe/fs.c b/security/ipe/fs.c
->> index 5b6d19fb844a..da51264a1d0f 100644
->> --- a/security/ipe/fs.c
->> +++ b/security/ipe/fs.c
->> @@ -141,12 +141,16 @@ static ssize_t new_policy(struct file *f, const char __user *data,
->>         char *copy = NULL;
->>         int rc = 0;
->>
->> -       if (!file_ns_capable(f, &init_user_ns, CAP_MAC_ADMIN))
->> -               return -EPERM;
->> +       if (!file_ns_capable(f, &init_user_ns, CAP_MAC_ADMIN)) {
->> +               rc = -EPERM;
->> +               goto out;
->> +       }
->>
->>         copy = memdup_user_nul(data, len);
->> -       if (IS_ERR(copy))
->> -               return PTR_ERR(copy);
->> +       if (IS_ERR(copy)) {
->> +               rc = PTR_ERR(copy);
->> +               goto out;
->> +       }
->>
->>         p = ipe_new_policy(NULL, 0, copy, len);
->>         if (IS_ERR(p)) {
->> @@ -161,8 +165,10 @@ static ssize_t new_policy(struct file *f, const char __user *data,
->>         ipe_audit_policy_load(p);
->>
->>  out:
->> -       if (rc < 0)
->> +       if (rc < 0) {
->>                 ipe_free_policy(p);
->> +               ipe_audit_policy_load(ERR_PTR(rc));
->> +       }
->>         kfree(copy);
->>         return (rc < 0) ? rc : len;
->>  }
-> 
-> In case of memdup fail, the kfree(copy) will be called with the error
-> pointer. Also how about refactor the code like
-> 
->         ipe_audit_policy_load(p);
->         kfree(copy);
-> 
->         return len;
-> err:
->         ipe_audit_policy_load(ERR_PTR(rc));
->         ipe_free_policy(p);
-> 
->         return rc;
-> 
->> diff --git a/security/ipe/policy_fs.c b/security/ipe/policy_fs.c
->> index 3bcd8cbd09df..5f4a8e92bdcf 100644
->> --- a/security/ipe/policy_fs.c
->> +++ b/security/ipe/policy_fs.c
->> @@ -12,6 +12,7 @@
->>  #include "policy.h"
->>  #include "eval.h"
->>  #include "fs.h"
->> +#include "audit.h"
->>
->>  #define MAX_VERSION_SIZE ARRAY_SIZE("65535.65535.65535")
->>
->> @@ -292,21 +293,28 @@ static ssize_t update_policy(struct file *f, const char __user *data,
->>         char *copy = NULL;
->>         int rc = 0;
->>
->> -       if (!file_ns_capable(f, &init_user_ns, CAP_MAC_ADMIN))
->> -               return -EPERM;
->> +       if (!file_ns_capable(f, &init_user_ns, CAP_MAC_ADMIN)) {
->> +               rc = -EPERM;
->> +               goto out;
->> +       }
->>
->>         copy = memdup_user(data, len);
->> -       if (IS_ERR(copy))
->> -               return PTR_ERR(copy);
->> +       if (IS_ERR(copy)) {
->> +               rc = PTR_ERR(copy);
->> +               goto out;
->> +       }
->>
->>         root = d_inode(f->f_path.dentry->d_parent);
->>         inode_lock(root);
->>         rc = ipe_update_policy(root, NULL, 0, copy, len);
->>         inode_unlock(root);
->>
->> +out:
->>         kfree(copy);
->> -       if (rc)
->> +       if (rc) {
->> +               ipe_audit_policy_load(ERR_PTR(rc));
->>                 return rc;
->> +       }
->>
-> 
-> The above comments also apply to here.
-> 
-> -Fan
-> 
->>         return len;
->>  }
->> --
->> 2.34.1
->>
+> > > > My takeaway from Clavis was that it was more about establishing a s=
+et
+> > > > of access controls around keys already present in the keyrings and =
+my
+> > > > comments about usage/spplication oriented keyrings have been in tha=
+t
+> > > > context.  While the access control policy, regardless of how it is
+> > > > implemented, should no doubt incorporate the trust placed in the
+> > > > individual keys, how that trust is established is a separate issue
+> > > > from access control as far as I'm concerned.
+> > >
+> > > Clavis defined both a mechanism for establishing trust and access con=
+trol rules.
+> > >
+> > > Clavis defined a single Clavis key to establish trust.  The Clavis po=
+licy rules
+> > > were signed by the Clavis key.  The Clavis policy rules defined the a=
+ccess
+> > > control.
+> >
+> > Unfortunately I think we're getting a little ambiguous with how we are
+> > using the word "trust".  Just as "security" can mean different things
+> > depending on context, so can "trust" as the qualities we are trusting
+> > will vary depending on context.  I'll leave it at that for now as I
+> > believe we are talking about different things in the paragraphs above.
+> >
+> > Regardless, I'll also say this regarding Clavis and key/keyring access
+> > controls - as implemented, Clavis doesn't look like a LSM to me for
+> > the reasons already given.  If all of the various keys subsystem
+> > maintainers believe it is the Right Thing To Do inside the keys
+> > subsystem then it isn't my place to have a say in that.  I personally
+> > believe that doing the work to support usage oriented keyrings before,
+> > or while, implementing a Clavis-like mechanism is the better option,
+> > but that is a decision for you and the other key maintainers.
+>
+> "Usage oriented keyrings" similarly implies any key on a particular keyri=
+ng is
+> acceptable.
 
+Yep.
+
+> Without understanding what you mean by "usage oriented keyrings", I
+> would assume it would work initially, but eventually it too will not be f=
+ine
+> enough granularity.
+
+It all depends on what your goals are, but like I said above, it
+really seems to me like this is a good first step which can be
+followed up with additional granularity.
+
+--=20
+paul-moore.com
