@@ -1,132 +1,135 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 493AC2E336F;
-	Wed,  5 Mar 2025 03:32:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47DD41F416D;
+	Wed,  5 Mar 2025 11:40:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741145538; cv=none; b=mnnVqLdEi+VUJQlygFCh/I07Y4bMGVxa6KfenGQwPIqd+mhvwLsiQygSkeopextwl6D/sXUTtnMKhScEOxoAHwaTrGQgB2UCE0ZyNRsrUAxCfF/XlJj3Ei105qlJu4a0KaI2f1rChAcIGTqL0W0FVfgu2xBETxUvf14iz6SY2RI=
+	t=1741174804; cv=none; b=laBcePFDTFOyPjIXLuOzC8YyYhaLr9G7sl2cafZ7NylRJbAJsKoClI82ahqdEdhKyuIr/vp3eKTlZs2+FuPN8k5Fl6/ewqPPrNzj69N/rFiJredtTy+SuV4E4a9c7GGixBLdaI+A+GEqz5j6ZX6xbLu5g14TMv4+qh0WDW9RWuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741145538; c=relaxed/simple;
-	bh=kaI2BVUhINYk4BdEgl++NddAmElmr4QujrUOFdMOkak=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XF9Ucjli7pJaFvHSyhtf1uyjL0Kei3dQyofVzA4ssurWq5a2EFmozV5GB2pzkR4uUVvyt5Ht2vXj2dj7V8/TcKTI1t58lq/xbei1hPwgt0o6plURcg9shdPKkQBr3lzbQRafOTiwgIGTrafq+N8rJ0pHCNPam2dqpnWuHIXFtWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B9l84r44; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1741174804; c=relaxed/simple;
+	bh=3du4Vh0sMLXdjfQ6YEWUdnO0O4zpGTmTPbz3ghs/piI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=eSAT7/Dcig3yybQqYjtxW1xjk5s2KM92157rDJXcdHTsdDk8/CjR/1fKV/v2qwGo8N5b32N3fShyVTdXwxItYwYSiQpJXcyGp07Zx5QRzTv5y6qTqzN63lbQUiA6APavxQYvtiZpS4nod94gVZ/CVqxaiKdflFangFir/mlPFeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=K8FdW9LQ; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B9l84r44"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09ACDC4CEF0;
-	Wed,  5 Mar 2025 03:32:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741145538;
-	bh=kaI2BVUhINYk4BdEgl++NddAmElmr4QujrUOFdMOkak=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=B9l84r44Wsq2yEmyzrYB+dzzSta324wsaXDS4wjRQFT7wwkdl8CtxFkJm/SGrtWMf
-	 lCb4xzZCxf6Z/7SynSMZEzxOMey198P1zoyPtMdjiAuszCmMmkOa2cw2PRtqJqe6p3
-	 HUfICiwdQCa5IVfxQakx7zCht0G3xK/9b0/nDrxRfWUGE2VgzOniaR9xD8m3RSN6MY
-	 50wrb2kGyMSh8XqwUG+lI7vbRJg6lBjAdDFhP3d/kEf4ZkI1eSykCwzCm88ATeG+1Z
-	 o8sggsRnyGjYqfRJKcK0t6YbVHTQgodUl8bKNnsS7OcJAm3K4v8dMsPK2eSUxSQPzh
-	 9p8DuoYPqagOw==
-Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3d3cb06d947so1476195ab.0;
-        Tue, 04 Mar 2025 19:32:17 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWEk7WBmARBIfHHJiNYq7T9nrQKskFNjHd+OfZ7m0VVsciM8kO5KsbvcYjhwS/ZVmzm+eo=@vger.kernel.org, AJvYcCWr4oHGzrHHufmqpraCCR6mjPaq7xkFECnboTvqyI6LH5vkFDVDlxnr2K4Q1SRFL1yjBZ1bSd5ZCg==@vger.kernel.org, AJvYcCWw4GD2alGvn+3eZKAQxiKvrQJ4LvrnuqcdjEp7ims1xE+VMGy9uxPolJ6fiupdue2NrkVA1SjDWCLCUYWRu1Kkyj6LHlhK@vger.kernel.org, AJvYcCXUM7ep86J2JjDIkw7IQmp0kk5yezp8pZhn8p8BWukdFlfRLSkcmOSF7Py8xD/OjqQyboxvGgUQaklFuX7Y@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyq6Cg7BfcHOvMhLh5IfcsJACPf6ttyvD0gS2POdljDFPyhsfMg
-	Cbkn7lTZcso6e8/O2IRnXanvQT5U6z4rWW6g0Vk5SMeAK6Z5WF7UCwpuIjc4Y5sPO6Ir4t2wnM4
-	eOgiOqkxirsGbjfxVyo26qFC0k8k=
-X-Google-Smtp-Source: AGHT+IHa/AFZ5A9CSZsNzwQ5FS3bMQFVRd6JOBQxQshlk659zsVgBdB1d4ayWcmlcEOafi/x8H7reqf1OG4ZlE5pQWo=
-X-Received: by 2002:a05:6e02:eca:b0:3d4:2306:fbb6 with SMTP id
- e9e14a558f8ab-3d42306fde0mr43980215ab.10.1741145537315; Tue, 04 Mar 2025
- 19:32:17 -0800 (PST)
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="K8FdW9LQ"
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 525BUeBD018854;
+	Wed, 5 Mar 2025 11:34:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=OEHbrE
+	wynpPoc/PQYISTWGJJizTmVH8mOpEoVx0LCqA=; b=K8FdW9LQ442qJW1CW823GB
+	PSOP9e7mXMs9QQG9u0vY7suMNgvUeZP0ae+2oWLzSHj4Y6r7RgBruhl3B6piqY6u
+	hLtzIPs4I2sy7SSmjmvp9sMG32CShVibq/04dHGhh8eXxsR2BK3onyzPlzqbRcxS
+	l2in6zKu22i2JQE5KNelkaaozpWkt+aD3dM5leROSrwiANHUgV1xqyWckcA2LR3U
+	we/+8K+OeuphwOcU6j9ylXj6lnr7C7Hd5v2DoD81TE+IgzCC5g0XL2CthQap0vEH
+	yvycPjUdAB2t9yPvv56Hp/vzTNOz2pol2OLX5E+G81GAsbtUE8zWukWENT75EQHw
+	==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4562xpn6b9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Mar 2025 11:34:36 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 525AmSWv008929;
+	Wed, 5 Mar 2025 11:34:34 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 454cxyjnxp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Mar 2025 11:34:34 +0000
+Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 525BYYiO24511044
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 5 Mar 2025 11:34:34 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3DC9B5803F;
+	Wed,  5 Mar 2025 11:34:34 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 263B758063;
+	Wed,  5 Mar 2025 11:34:33 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.124.31])
+	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed,  5 Mar 2025 11:34:33 +0000 (GMT)
+Message-ID: <d9c6cd2a5e27df0fbc5ccb5f2945c33b2dbe34ae.camel@linux.ibm.com>
+Subject: Re: [PATCH v9 1/7] ima: copy only complete measurement records
+ across kexec
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: steven chen <chenste@linux.microsoft.com>, stefanb@linux.ibm.com,
+        roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
+        eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
+        code@tyhicks.com, bauermann@kolabnow.com,
+        linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
+        James.Bottomley@HansenPartnership.com, bhe@redhat.com,
+        vgoyal@redhat.com, dyoung@redhat.com
+Date: Wed, 05 Mar 2025 06:34:32 -0500
+In-Reply-To: <3aadae5d35af3f984b9e8bc548d73bb878d666bd.camel@linux.ibm.com>
+References: <20250304190351.96975-1-chenste@linux.microsoft.com>
+	 <20250304190351.96975-2-chenste@linux.microsoft.com>
+	 <3aadae5d35af3f984b9e8bc548d73bb878d666bd.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250304203123.3935371-1-bboscaccy@linux.microsoft.com>
- <20250304203123.3935371-3-bboscaccy@linux.microsoft.com> <CAHC9VhS5Gnj98K4fBCq3hDXjmj1Zt9WWqoOiTrwH85CDSTGEYA@mail.gmail.com>
- <877c54jmjl.fsf@microsoft.com> <CAHC9VhQO_CVeg0sU_prvQ_Z8c9pSB02K3E5s84pngYN1RcxXGQ@mail.gmail.com>
-In-Reply-To: <CAHC9VhQO_CVeg0sU_prvQ_Z8c9pSB02K3E5s84pngYN1RcxXGQ@mail.gmail.com>
-From: Song Liu <song@kernel.org>
-Date: Tue, 4 Mar 2025 19:32:06 -0800
-X-Gmail-Original-Message-ID: <CAPhsuW6RrUiXaQe1HBYOvwUx2GFaA-RKx22955A2StsP2erTeA@mail.gmail.com>
-X-Gm-Features: AQ5f1JqaM5K5MwU1XON5P30qZGJCmC1zwPxswjHN82TpVqqjA9oZU_jj-70Kavs
-Message-ID: <CAPhsuW6RrUiXaQe1HBYOvwUx2GFaA-RKx22955A2StsP2erTeA@mail.gmail.com>
-Subject: Re: [PATCH v4 bpf-next 2/2] selftests/bpf: Add is_kernel parameter to
- LSM/bpf test programs
-To: Paul Moore <paul@paul-moore.com>
-Cc: Blaise Boscaccy <bboscaccy@linux.microsoft.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Yonghong Song <yonghong.song@linux.dev>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: bZRj979JBHaiqKCOApV6k42MuXH5lncF
+X-Proofpoint-GUID: bZRj979JBHaiqKCOApV6k42MuXH5lncF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-05_04,2025-03-05_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 malwarescore=0
+ mlxlogscore=999 spamscore=0 bulkscore=0 priorityscore=1501 adultscore=0
+ lowpriorityscore=0 phishscore=0 mlxscore=0 impostorscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2503050093
 
-On Tue, Mar 4, 2025 at 6:14=E2=80=AFPM Paul Moore <paul@paul-moore.com> wro=
-te:
->
-> On Tue, Mar 4, 2025 at 8:26=E2=80=AFPM Blaise Boscaccy
-> <bboscaccy@linux.microsoft.com> wrote:
-> > Paul Moore <paul@paul-moore.com> writes:
-> > > On Tue, Mar 4, 2025 at 3:31=E2=80=AFPM Blaise Boscaccy
-> > > <bboscaccy@linux.microsoft.com> wrote:
-> > >>
-> > >> The security_bpf LSM hook now contains a boolean parameter specifyin=
-g
-> > >> whether an invocation of the bpf syscall originated from within the
-> > >> kernel. Here, we update the function signature of relevant test
-> > >> programs to include that new parameter.
-> > >>
-> > >> Signed-off-by: Blaise Boscaccy bboscaccy@linux.microsoft.com
-> > >> ---
-> > >>  tools/testing/selftests/bpf/progs/rcu_read_lock.c           | 3 ++-
-> > >>  tools/testing/selftests/bpf/progs/test_cgroup1_hierarchy.c  | 4 ++-=
--
-> > >>  tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c | 6 +++=
----
-> > >>  tools/testing/selftests/bpf/progs/test_lookup_key.c         | 2 +-
-> > >>  tools/testing/selftests/bpf/progs/test_ptr_untrusted.c      | 2 +-
-> > >>  tools/testing/selftests/bpf/progs/test_task_under_cgroup.c  | 2 +-
-> > >>  tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c   | 2 +-
-> > >>  7 files changed, 11 insertions(+), 10 deletions(-)
-> > >
-> > > I see that Song requested that the changes in this patch be split out
-> > > back in the v3 revision, will that cause git bisect issues if patch
-> > > 1/2 is applied but patch 2/2 is not, or is there some BPF magic that
-> > > ensures that the selftests will still run properly?
-> > >
-> >
-> > So there isn't any type checking in the bpf program's function
-> > arguments against the LSM hook definitions, so it shouldn't cause any
-> > build issues. To the best of my knowledge, the new is_kernel boolean
-> > flag will end up living in r3. None of the current tests reference
-> > that parameter, so if we bisected and ended up on the previous commit,
-> > the bpf test programs would in a worst-case scenario simply clobber tha=
-t
-> > register, which shouldn't effect any test outcomes unless a test progra=
-m
-> > was somehow dependent on an uninitialized value in a scratch register.
->
-> Esh.  With that in mind, I'd argue that the two patches really should
-> just be one patch as you did before.  The patches are both pretty
-> small and obviously related so it really shouldn't be an issue.
->
-> However, since we need this patchset in order to properly implement
-> BPF signature verification I'm not going to make a fuss if Song feels
-> strongly that the selftest changes should be split into their own
-> patch.
+On Tue, 2025-03-04 at 21:08 -0500, Mimi Zohar wrote:
+> On Tue, 2025-03-04 at 11:03 -0800, steven chen wrote:
+> >=20
+> >  - Compared the memory size allocated with memory size of the entire=
+=20
+> >    measurement record. Copy only complete measurement records if there=
+=20
+> >    is enough memory. If there is not enough memory, it will not copy
+> >    any IMA measurement records, and this situation will result in a=20
+> >    failure of remote attestation.
+>=20
+> In discussions with Tushar, I was very clear that as many measurement rec=
+ords as
+> possible should be carried over to the kexec'ed kernel.  The main change =
+between
+> v8 and v9 was to make sure the last record copied was a complete record.
 
-On second thought, I think it makes sense to merge the two patches.
+Steven, let me clarify=C2=A0my comment on v8.  The patch description said,
 
-Blasie, please update 1/2 based on Paul's comment, merge the two
-patches, and resend. You can keep my Acked-by.
+"Separate allocating the buffer and copying the measurement records into
+separate functions in order to allocate the buffer at kexec 'load' and copy=
+ the
+measurements at kexec 'execute'."
 
-Do we need this in the LSM tree before the upcoming merge window?
-If not, we would prefer to carry it in bpf-next.
+The intention is fine, but it also did other things:
+- only copied a full last measurement
+- if there wasn't enough room, it didn't copy any measurement records.
 
-Thanks,
-Song
+Copying a full last measurement should be a separate, new patch to simplify
+review.  I'm asking you to separate that change from the rest of the patch,=
+ so
+that it can be back ported independently of the rest of the patch set.
+
+When splitting the function "that allocates the buffer and copies the
+measurement records into separate functions", please make sure it still cop=
+ies
+as many measurement records as possible.
+
+thanks,
+
+Mimi
