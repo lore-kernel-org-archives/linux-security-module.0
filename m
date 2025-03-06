@@ -1,64 +1,157 @@
-Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [185.125.25.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 373A825D52E
-	for <linux-security-module@vger.kernel.org>; Thu,  6 Mar 2025 18:06:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B30812063DD
+	for <linux-security-module@vger.kernel.org>; Thu,  6 Mar 2025 21:04:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741284381; cv=none; b=b2StB0No4MdenVwJZ2+QtN0BVqRyWFJO/dib8/TTBHb0AsdhlC6AQki/6hJWdN0oK1whqGRmMiFORuzWmjcQJ7omRwPiCJy4riFUvhG9KfKLTMTWRwr8h70m+uJqTNhfeQ7pVEEs9RV5HqIZpj1HOG8hGpTkBqfYSG3mb4tj48w=
+	t=1741295099; cv=none; b=OIERAsvbXG9BsDneMZdOH3r3zPgSYcCTXNrR5Jg4AalFIBYp9QyPbVi7n1HDOvgjUvJ3fSnAPv0LQuV+hK9VjjmkDnu2ocwQHH6ml2+2SSJ0asOlRrcipLI/Gktpu8VYIE1qc5So1GOSVq+rF6SvwwUO8CtOjkfIvqK0QOfFung=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741284381; c=relaxed/simple;
-	bh=rN+WqF4ILqJj0LqnvdMi65ZXBQQSJKmc3PIJcPSLZ8k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=F5OQycn2QvS5osPrEITBHTTOJS2iFkC8ZspDge0s2RaChQB+E2Ux0eCY/O/wPf74lG1NP9nRrTzdtchVd7ufZKyr3g56THFIS6lYImRpWdD6lzrx8jI+oQH362JBnJWEt3S/ZnWBBts6W66oOIL20YmWrud6oY8No7dHt66TpBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=K1FqGkKD; arc=none smtp.client-ip=185.125.25.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1741295099; c=relaxed/simple;
+	bh=Nj2QFBrpHz0Lh47urVE+cW9CIyWI1Nb2IUjO2CbnzX0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l3FOMCOaBMlO8ufzqhr8ymfwuy0kqsMtJTzzs3VOzry8/qH2DKuS210rcm45Esl7jfmOJ86dyASnaH9h0E8xUlT9cwA/kEoddh51N4XBh6QkGJBlm27H789vTiuIG/pDW8pgMHLRsX14SR5pOI62pYoMCLBtqkvsT3yq2D9kz0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=YltvuVnM; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3mhVIk2G; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=oBMmmfZ2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=vC01rrix; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="K1FqGkKD"
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Z7y5q488LzQ9K;
-	Thu,  6 Mar 2025 19:06:07 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1741284367;
-	bh=3JI5Rcw04EKLLqRlbpDufnmcpPAmiwm0as3R8IpscuE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=K1FqGkKDoe08mla0xewYU4bwIYrb2ndBOmxVoSE0BOIpdxSsFBx2KyuMMv7zO4v9J
-	 vd86adf8Nz8h3uF6Vck3qJ9eo3MVfarHYmB9hpMxLb4R8dmAEGYMu2grJFVjLibJ9S
-	 o+5SnZhetXSHF9ifJAzLbGSHkeBUriCqOZZY18/k=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Z7y5q1MpRzH5Q;
-	Thu,  6 Mar 2025 19:06:07 +0100 (CET)
-From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To: Kees Cook <kees@kernel.org>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] samples/check-exec: Fix script name
-Date: Thu,  6 Mar 2025 19:05:58 +0100
-Message-ID: <20250306180559.1289243-1-mic@digikod.net>
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="YltvuVnM";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3mhVIk2G";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="oBMmmfZ2";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="vC01rrix"
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A0FEE211BA;
+	Thu,  6 Mar 2025 21:04:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1741295095; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SEfD/S78jblpj8bnba4wTWc+TRyowQZzkbMJH3ro3ZI=;
+	b=YltvuVnMyv6clPiw2LKyB1vqb4NRm/buyOHJ+M0ehSsSsNnMAkFGHre1Wf5nZ82b+VT+a9
+	+k2jVRsKtBfqzUHkLg+Gx4qO3JdA5u/e930w4otjJbEp98EFbVlN9impx2aqz/hktBh/9U
+	WCGAMNEXx7qQljbwCtSKRAwSilIFBgQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1741295095;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SEfD/S78jblpj8bnba4wTWc+TRyowQZzkbMJH3ro3ZI=;
+	b=3mhVIk2GiPU7Wpn9hRDbvyBCa72VApjPO6KGAnGGTh2/0on9dNXFH5HAwfEOowLJJM0yI5
+	PnzGUXylwinDgXDA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=oBMmmfZ2;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=vC01rrix
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1741295094; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SEfD/S78jblpj8bnba4wTWc+TRyowQZzkbMJH3ro3ZI=;
+	b=oBMmmfZ2BDwQtTsVdUdHw69utxB5tbGygBj9ZjmpWzAk7ayDzEX/trzJed5gMBJ7SZYGP1
+	R0yjo07cdyrG/6RPL8qARDeK6Bw2AJZmQutlyUbvWlXjxufKK+z4J2Dnt/mIogwFMiddVe
+	mNuc/pkzhso0Oji4Z9GPGi+dENyV1o8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1741295094;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SEfD/S78jblpj8bnba4wTWc+TRyowQZzkbMJH3ro3ZI=;
+	b=vC01rrixjeoZjLKo30QbgWoYk7ksOvCdYW+k0SjkEVEIKqQGVjsYxpmZq9y1ZHDTPQoPmv
+	yGoijhO99hIHUgBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9429E13676;
+	Thu,  6 Mar 2025 21:04:54 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id WAyoI/YNymfceAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 06 Mar 2025 21:04:54 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 4461FA087F; Thu,  6 Mar 2025 22:04:54 +0100 (CET)
+Date: Thu, 6 Mar 2025 22:04:54 +0100
+From: Jan Kara <jack@suse.cz>
+To: Tingmao Wang <m@maowtm.org>
+Cc: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Jan Kara <jack@suse.cz>, linux-security-module@vger.kernel.org, 
+	Amir Goldstein <amir73il@gmail.com>, Matthew Bobrowski <repnop@google.com>, 
+	linux-fsdevel@vger.kernel.org, Tycho Andersen <tycho@tycho.pizza>
+Subject: Re: [RFC PATCH 0/9] Landlock supervise: a mechanism for interactive
+ permission requests
+Message-ID: <7hpktxh4s6pho2cgoi6x7ptzimqrgflgbztrmtnamstpuefooj@orahctcwxqxm>
+References: <cover.1741047969.git.m@maowtm.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1741047969.git.m@maowtm.org>
+X-Rspamd-Queue-Id: A0FEE211BA
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_LAST(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	FREEMAIL_CC(0.00)[digikod.net,google.com,suse.cz,vger.kernel.org,gmail.com,tycho.pizza];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.01
+X-Spam-Flag: NO
 
-run-script-ask.sh had an incorrect file extension.  This helper script
-is not used by kselftests.
+On Tue 04-03-25 01:12:56, Tingmao Wang wrote:
+> Alternatives
+> ------------
+> 
+> I have looked for existing ways to implement the proposed use cases (at
+> least for FS access), and three main approaches stand out to me:
+> 
+> 1. Fanotify: there is already FAM_OPEN_PERM which waits for an allow/deny
+> response from a fanotify listener.  However, it does not currently have
+> the equivalent _PERM for file creation, deletion, rename and linking, and
+> it is also not designed for unprivileged, process-scoped use (unlike
+> landlock).
 
-Cc: Kees Cook <kees@kernel.org>
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
----
- samples/check-exec/{run-script-ask.inc => run-script-ask.sh} | 0
- 1 file changed, 0 insertions(+), 0 deletions(-)
- rename samples/check-exec/{run-script-ask.inc => run-script-ask.sh} (100%)
+As Amir wrote, arbitration of creation / deletion / ... is not a principial
+problem for fanotify and we plan to go in that direction anyway for HSM
+usecase. However adjusting fanotify permission events for a per-process
+scope and for unpriviledged users is a fundamental difference to how
+fanotify is designed to work (it watches filesystem objects, not processes
+and actions they do) and so I don't think that would be a great fit. Also I
+don't see fanotify expanding in the networking area as the concepts are
+rather different there :).
 
-diff --git a/samples/check-exec/run-script-ask.inc b/samples/check-exec/run-script-ask.sh
-similarity index 100%
-rename from samples/check-exec/run-script-ask.inc
-rename to samples/check-exec/run-script-ask.sh
+								Honza
+
 -- 
-2.48.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
