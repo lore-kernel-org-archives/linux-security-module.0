@@ -1,134 +1,100 @@
-Received: from mx.swemel.ru (mx.swemel.ru [95.143.211.150])
+Received: from outgoing1.cpt4.host-h.net (outgoing1.cpt4.host-h.net [197.189.247.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16D6920408A
-	for <linux-security-module@vger.kernel.org>; Thu,  6 Mar 2025 22:52:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.143.211.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D38B9202F7C
+	for <linux-security-module@vger.kernel.org>; Thu,  6 Mar 2025 23:05:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=197.189.247.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741301547; cv=none; b=mtycSGlrY8hsajkrLTDOo1dcP26/knMcN52cagoaRYbzCgoMYRpApmx2NR6n/cs0bu9CcGTnGUQ6OZIJLIUxoahy5V6VSgi2q/2bExRBMQXw+/TldEZYrPvEjdonpcyU2vvpI8VUuhqcS82pbJ2zl/+A20ormZ78iwLYJFhqAV0=
+	t=1741302347; cv=none; b=rKefMxBhU1ckZ+vezi28Az7+D9EoVYc6dRE03QSP64RlR3OsPAgCLW20mWKUtEfBsUmZs/V8iZSj4YemGNL9TGUiG2zXZX4maWUxTbBXV1PpPl5d1IMIp2+DjgXX5Eg3kTFmFzzLb74w7OR7CxXEsFxxNlDVmzxN5a2EG+OKeJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741301547; c=relaxed/simple;
-	bh=s29hAu3o5AIjEq8hz9TNADtyrBBY1ellMHPlbEFWKjE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LyaAdZHWZmjrwU9Mkcm5dNPMgyvxBYl7mWvsj7D0CoOSeT0k+UttRBQtPlAT0PZu6zg9HqgWCkLMYfojN2Y/YGF+EyMDmI+LeDsdpf5JMvn30OocMR8COMaKQP2s8+9BxvYDG41A5DT6crPjFQExO115XFekjJn6uKyB6VQNYSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru; spf=pass smtp.mailfrom=swemel.ru; dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b=P8qusKEh; arc=none smtp.client-ip=95.143.211.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=swemel.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=swemel.ru
+	s=arc-20240116; t=1741302347; c=relaxed/simple;
+	bh=UOdy1uc1Ja6Ouzx9Gp3orqw2OLpxN4Hd+lHG4CKFzvE=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ot4D9M7CCzxR968Nrd9Q5pbtx0C3X17ANAJUn+slgVvPY7Oi1f7ZTgkoJkwA2q47Yo+59KDTvlM2+OzVCchVgwk6qTEHJ43v5jrPttiPUwiQMuTAO4Axk9SVoGANVtKhRYcCRza0vVc3WMg2f0r1z1Qb+V11oJ13wrH6Jr7pSMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=delugo.co.za; spf=pass smtp.mailfrom=delugo.co.za; dkim=pass (2048-bit key) header.d=delugo.co.za header.i=@delugo.co.za header.b=fwtHEr3Z; arc=none smtp.client-ip=197.189.247.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=delugo.co.za
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=delugo.co.za
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=swemel.ru header.i=@swemel.ru header.b="P8qusKEh"
-From: Konstantin Andreev <andreev@swemel.ru>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=swemel.ru; s=mail;
-	t=1741301007;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zf4VwUOlXB6jjWOFBW7pFx6FBHAXresnCyqaXANAmGA=;
-	b=P8qusKEhL5AQzFmVG5EDVgt0uall1CwxtSDflyGxZ0sGCvS+A/RbteBcb2Aj3TqqFloOVp
-	CQryMmdQ/GtGs0pJeoB8PRkSNkZAS30gx1EBGgYw7rf7LlpczNm6/pUItUxOMT2bhIMmxt
-	JdCE30Di1A+1gKDxhIDumZZpZhkcYCM=
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: linux-security-module@vger.kernel.org
-Subject: [PATCH 1/2] smack: fix bug: unprivileged task can create labels
-Date: Fri,  7 Mar 2025 01:43:02 +0300
-Message-ID: <20250306224317.416365-2-andreev@swemel.ru>
-In-Reply-To: <20250306224317.416365-1-andreev@swemel.ru>
-References: <20250306224317.416365-1-andreev@swemel.ru>
+	dkim=pass (2048-bit key) header.d=delugo.co.za header.i=@delugo.co.za header.b="fwtHEr3Z"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=delugo.co.za; s=xneelo; h=Content-Transfer-Encoding:Content-Type:
+	MIME-Version:Message-ID:Date:Subject:To:From:Reply-To:sender:cc:bcc:
+	in-reply-to:references; bh=UOdy1uc1Ja6Ouzx9Gp3orqw2OLpxN4Hd+lHG4CKFzvE=; b=fw
+	tHEr3ZSIHOwWIKEPebj9JS/+1ME3VusP1PwAkr9QLCLgpZ26gXwTRHCALYHepdjE4w/mxDsDfk8QT
+	Vi2GAOtA7/Bd2t6uBpDyIG/tZx8hXZTMCw5DPTcJaeqUtKIBeJ3fL0Ls5SRATOdb6+72+nEPnnoYG
+	7+1Wj/2m6Z2JmQzam6DXLgyuQT9qHqv4zW3jkSK5+AVWrCLrMCwkBGBxb/rSKLe7XZaFORZJ12Kvi
+	QW6qJ7wNRljmW8A8aVFr9gBXNMqwBse0K3Un2afZSqvta3o8PGKSGysDL4K+WTM4R45lN3p03ZzsK
+	5Wan3D+ygOnudzr7z/a9QemxSfFvbXeg==;
+Received: from www46.cpt3.host-h.net ([197.221.14.46])
+	by antispam1-cpt4.host-h.net with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <orders@delugo.co.za>)
+	id 1tqKHb-001Ufq-UV
+	for linux-security-module@vger.kernel.org; Fri, 07 Mar 2025 01:05:41 +0200
+Received: from [104.192.5.240] (helo=delugo.co.za)
+	by www46.cpt3.host-h.net with esmtpsa (TLS1.2:ECDHE_SECP521R1__RSA_SHA512__AES_256_GCM:256)
+	(Exim 4.98)
+	(envelope-from <orders@delugo.co.za>)
+	id 1tqK54-0000000Dm2d-2zgk
+	for linux-security-module@vger.kernel.org;
+	Fri, 07 Mar 2025 00:52:43 +0200
+Reply-To: barry@investorstrustco.net
+From: Barry <orders@delugo.co.za>
+To: linux-security-module@vger.kernel.org
+Subject: Re: The Business Loan/financing.1
+Date: 06 Mar 2025 22:52:41 +0000
+Message-ID: <20250306223012.65CEFDE1D0C500F3@delugo.co.za>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-Authenticated-Sender: orders@delugo.co.za
+X-Virus-Scanned: Clear
+X-SpamExperts-Domain: delugo.co.za
+X-SpamExperts-Username: 
+Authentication-Results: host-h.net; auth=pass (login) smtp.auth=@delugo.co.za
+X-SpamExperts-Outgoing-Class: unsure
+X-SpamExperts-Outgoing-Evidence: Combined (0.75)
+X-Recommended-Action: accept
+X-Filter-ID: Pt3MvcO5N4iKaDQ5O6lkdGlMVN6RH8bjRMzItlySaT+5DhM0jw86KsbkaGfFMuQCPUtbdvnXkggZ
+ 3YnVId/Y5jcf0yeVQAvfjHznO7+bT5zVMa2hcQPbXPlbMCsY+hkkq9cT4r4LC0gkQwZss7ZfdvSI
+ QWGhDYOqY2O5fqfx9M7XFT0qB5tFv92nRX4mJdp7UUlLXMUeAXT7hcGmFUnSlv0+BnD7wi70qQBB
+ Bsu5GMahLqLPt2D6hJ605Bnjj1q6iCsJyqSmvP2BysP8HrSPvrHARmuVDmgPGNNuts+ba30rnvUy
+ zoTfAGEbL5I354EAw8VSKe5hYjiYkc7xjE70WreMPUhTBWui6U/2qinoPDthn6sps0oXop0Wpl2m
+ +lnlLYyKfoR+hbZIJAc+0m+mU5EyYYf7TmlI3iEcqXK4A61ChHMQHCMEWTX9HEhwSP4/MSl+mev0
+ M9cO0xP2892D0fA6hpTapNg/3VwnapSOnzMvfUiXer9Hk+cBCIH95/C9L4QFy0eB/isP83e9uHLE
+ BeHTPI/rzJIRbhotX0RECi6mGIdkjXgJzNr4g6HQm7Ihb/f3QhLRbOgisvi5VU9eNCzoJDM55WJG
+ VWcFLzKvCHLdZh03ExTqDquACpNsmDrlcntZzD+8euQ3PTJH+fGZGHMcN6qoXPjenLhIOF1oeRYQ
+ IKkaWXerM1u+fwXJu+tuGEDHQue2QZHF055tGS+SvSlfJF3VFFhgaOmHSC78Ngi9P+5Lf0oV1WuF
+ nNMdSZz/eBksJ0GzgEY832zb4/bETantKr6+crm+rffkaQ6ZgOhecDS00P8Fc8OWE6jtCYt+lNx7
+ b76pl5pevnFznkcIx8H+6Fv7XKRVCdPrl4S6mURwxc3o2KyPRa0Vg6NfcXRhctgzcDoFd+96Xw4Q
+ UNtTnX41RgS4hAw4xf8QWxdHHi13boj4UU49ILZd2HDXpRdrzviI9CRCIiamRgyDQudwNxUd81Og
+ MWXFNTBQD09QdRCR27r9HYUzziTFhEVK8LUg5R4IAJ8DqZLMftAhiZ5VBhI+iM6gPdcRK2u+Vqin
+ 8bA0g/W+lOecImzPxJzzUQScBEigpxA1CSufo+L91Hr9qg==
+X-Report-Abuse-To: spam@antispamquarantine.host-h.net
+X-Complaints-To: abuse@antispammaster.host-h.net
 
-If an unprivileged task is allowed to relabel itself
-(/smack/relabel-self is not empty),
-it can freely create new labels by writing their
-names into own /proc/PID/attr/smack/current
+Hello,
 
-This occurs because do_setattr() imports
-the provided label in advance,
-before checking "relabel-self" list.
+My name is Barry at Investment Consult, we are a consultancy and
+brokerage Firm specializing in Growth Financial Loan and joint
+partnership venture. We specialize in investments in all Private
+and public sectors in a broad range of areas within our Financial
+Investment Services.
 
-This change ensures that the "relabel-self" list
-is checked before importing the label.
+ We are experts in financial and operational management, due
+diligence and capital planning in all markets and industries. Our
+Investors wish to invest in any viable Project presented by your
+Management after reviews on your Business Project Presentation
+Plan.
 
-Fixes: 38416e53936e ("Smack: limited capability for changing process label")
-Signed-off-by: Konstantin Andreev <andreev@swemel.ru>
----
- security/smack/smack_lsm.c | 41 +++++++++++++++++++++++++-------------
- 1 file changed, 27 insertions(+), 14 deletions(-)
+ We look forward to your Swift response. We also offer commission
+to consultants and brokers for any partnership referrals.
 
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 99833168604e..95a614ae4c9c 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -3732,8 +3732,8 @@ static int do_setattr(u64 attr, void *value, size_t size)
- 	struct task_smack *tsp = smack_cred(current_cred());
- 	struct cred *new;
- 	struct smack_known *skp;
--	struct smack_known_list_elem *sklep;
--	int rc;
-+	char *labelstr;
-+	int rc = 0;
- 
- 	if (!smack_privileged(CAP_MAC_ADMIN) && list_empty(&tsp->smk_relabel))
- 		return -EPERM;
-@@ -3744,28 +3744,41 @@ static int do_setattr(u64 attr, void *value, size_t size)
- 	if (attr != LSM_ATTR_CURRENT)
- 		return -EOPNOTSUPP;
- 
--	skp = smk_import_entry(value, size);
--	if (IS_ERR(skp))
--		return PTR_ERR(skp);
-+	labelstr = smk_parse_smack(value, size);
-+	if (IS_ERR(labelstr))
-+		return PTR_ERR(labelstr);
- 
- 	/*
- 	 * No process is ever allowed the web ("@") label
- 	 * and the star ("*") label.
- 	 */
--	if (skp == &smack_known_web || skp == &smack_known_star)
--		return -EINVAL;
-+	if (labelstr[1] == '\0' /* '@', '*' */) {
-+		const char c = labelstr[0];
-+
-+		if (c == *smack_known_web .smk_known ||
-+		    c == *smack_known_star.smk_known) {
-+			rc = -EPERM;
-+			goto free_labelstr;
-+		}
-+	}
- 
- 	if (!smack_privileged(CAP_MAC_ADMIN)) {
--		rc = -EPERM;
-+		const struct smack_known_list_elem *sklep;
- 		list_for_each_entry(sklep, &tsp->smk_relabel, list)
--			if (sklep->smk_label == skp) {
--				rc = 0;
--				break;
--			}
--		if (rc)
--			return rc;
-+			if (strcmp(sklep->smk_label->smk_known, labelstr) == 0)
-+				goto free_labelstr;
-+		rc = -EPERM;
- 	}
- 
-+free_labelstr:
-+	kfree(labelstr);
-+	if (rc)
-+		return -EPERM;
-+
-+	skp = smk_import_entry(value, size);
-+	if (IS_ERR(skp))
-+		return PTR_ERR(skp);
-+
- 	new = prepare_creds();
- 	if (new == NULL)
- 		return -ENOMEM;
--- 
-2.43.0
-
+ Regards,
+Barry
+Senior Broker
