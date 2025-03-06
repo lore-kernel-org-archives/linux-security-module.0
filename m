@@ -1,236 +1,166 @@
-Received: from flow-a5-smtp.messagingengine.com (flow-a5-smtp.messagingengine.com [103.168.172.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3718E71750;
-	Thu,  6 Mar 2025 03:05:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 795CB19C554
+	for <linux-security-module@vger.kernel.org>; Thu,  6 Mar 2025 06:35:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741230317; cv=none; b=lbm/XMVzYJjh2WDld8Sob93vo9pliQFxh+kf8onv1w7cOAaCBp/gyP86Fd+iPSyw4+bc7UXeeHS+UVTUzo/AXQtTd6Xv9dhmICpD/AQrVBWaWOc1dNugS1+PqaLT7nJ8+N+pzcbE8sQ+tg94Qv7lpCc3TNNNxqHX1vhfnz8ypF4=
+	t=1741242934; cv=none; b=CaVAjd3LZeuCmSnS8OcANyiDVNBinkhhPXpskJL2yg3+Cf7Oi1kCCQhWunRIcU2B7Wj0UhvLq8sSqxLAWZbrwBWNw/BV91ZYZ9e2u3bTuE3oCPoMm+VbSfBIWV3MspNm3HOAY9enNPRFyXT9b3GZzlt2mRVZ1+dUDLBmowiJDls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741230317; c=relaxed/simple;
-	bh=Pxwyzri2GM2yUHUgbYv3Xp1eV72YcYuVv2N42169ACM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S7b9C6dRQKvpr7mmqle6JNbbmS1CtAGTivX2f7tGjw9KVGBqb9ra0wm/NP/e1stuP/fDY9HctPUmJXc1LqA5ot7PbR9J3Zmx4ZBhfBD5q3krjwkBtd2+pD7+YjuWskYtk3QhsNcwGBv4yGdKZOJCai7zfQ9YhfJpuArv287lVOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=RhWqiidL; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=b2JHio1A; arc=none smtp.client-ip=103.168.172.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
+	s=arc-20240116; t=1741242934; c=relaxed/simple;
+	bh=OgVi8LZ/avO7r/TihguE885iMoKtcusZUL+VQwbS8dk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=hGHY/YE46NebRmjC4F084cob+VwGVvO0FkUakupD1Qi/GYvh38xGSwmba2uXvp72QXQ3tw5aA90rUtAbMIj2zddv/JnF5NuqC0mTxLuNHAjYGRDUVMr9N2Z9Yt/DQuQYhzuCNSyj4awduiONqbctFT9tGP0MGwyZxd7tMTmXIsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NkXkKx12; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="RhWqiidL";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="b2JHio1A"
-Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
-	by mailflow.phl.internal (Postfix) with ESMTP id 282FC201CA0;
-	Wed,  5 Mar 2025 22:05:14 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-02.internal (MEProxy); Wed, 05 Mar 2025 22:05:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1741230314;
-	 x=1741233914; bh=RV6FGVU5EOhEOsaf3C+TNkQPc3d03MQkNh9/s6KmRAE=; b=
-	RhWqiidLc3gF08m6v3BILp4u0ieOBjpHpxoWQimzo7ohCj2HVHm0znYzZlbsug8H
-	doXU8xcrfnxWr1GNvmEgz5ZVryMEt90JyhUY97sV0cb7c8HWXccPXB/cYAt2gToZ
-	MM8SlJFcCHcR4u5Keculyek8yDyNq3Aj3Vkd4xKBlZzpOCiQvcO46btRQRDMQTCT
-	9D+u9Fs9EN5son27tLFc9Rt0rKPFFEqG5gGUni8M7J9Jc6Z5z7mVeLng3DptFFhf
-	vLMhjKyn9rX8SzGZ2rb+1s33Vqf36bX8brtpgBUkBhauScdKc1kuMFdPbYN5Xf8Y
-	fRhX4T2t82L7epNcvFsNsw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1741230314; x=
-	1741233914; bh=RV6FGVU5EOhEOsaf3C+TNkQPc3d03MQkNh9/s6KmRAE=; b=b
-	2JHio1AFI0Z4nKJFT1VgUB4eEFjssulSQqbSnOnNPk3O6JjBe70ty8B8YRTYbd4V
-	dyjSRAJGu9+uIc2nVRVHyAHFKP0trwV3AlNPFrgFeTqW2IvInMC688YMKaSEk12h
-	+WPBJJzdhhIykkdvmlHjz8qhFJAc+FYVDJx1zTcgl/UrOlbUp9qENeDGD1207Uoa
-	hc4QItHNRqCcaL0Z6b7PMlun1YFHvyh9KRSvDSLbUxWalnpEY6x/FreSFr0TJOTp
-	/r9NaJLIVZ3bHU0xZyuucZmI0S/UChVsX1hpKCWhzE/aKPr2iZ6hK3rxQcf7lJO6
-	AIYcoFOhgeGEpfG+NsixQ==
-X-ME-Sender: <xms:6RDJZ7hJZlsyOa6wwd9nkpdYsGPL9MNCeCQo44ZvYgla1ik1Uj_nig>
-    <xme:6RDJZ4DPXp4FeiKsnyvtCm1z3LgugFMXoaLPxK6DKs02q6hrlH9YKbZZexfZFivix
-    89fMcKnUDz_iIPZlMQ>
-X-ME-Received: <xmr:6RDJZ7GxK949goqpO6J9jdQji878udN7ed-oxYBdZzKb7yhFkGuodys9GDh48BHUWzmyr9FtVzOpZAhMfx3deNX4UVJfPrw8oaLDGq5K-Tdr3pfp5WTy9WHQ9eI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutdeiiedtucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddt
-    vdejnecuhfhrohhmpefvihhnghhmrghoucghrghnghcuoehmsehmrghofihtmhdrohhrgh
-    eqnecuggftrfgrthhtvghrnhepudekvefhgeevvdevieehvddvgefhgeelgfdugeeftedv
-    keeigfeltdehgeeghffgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrg
-    hilhhfrhhomhepmhesmhgrohifthhmrdhorhhgpdhnsggprhgtphhtthhopeekpdhmohgu
-    vgepshhmthhpohhuthdprhgtphhtthhopehmihgtseguihhgihhkohgurdhnvghtpdhrtg
-    hpthhtohepghhnohgrtghksehgohhoghhlvgdrtghomhdprhgtphhtthhopehjrggtkhes
-    shhushgvrdgtiidprhgtphhtthhopehlihhnuhigqdhsvggtuhhrihhthidqmhhoughulh
-    gvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghmihhrjeefihhlsehg
-    mhgrihhlrdgtohhmpdhrtghpthhtoheprhgvphhnohhpsehgohhoghhlvgdrtghomhdprh
-    gtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-    pdhrtghpthhtohepthihtghhohesthihtghhohdrphhiiiiirg
-X-ME-Proxy: <xmx:6RDJZ4QaT2xkkR60vUK8Kdq3pR5VQmPsjDR8j25tClMSL4CxkSOMcQ>
-    <xmx:6RDJZ4ymdFUY6kfOm6uQoNqKO2FaYvt-dID7GN1MRqPquvbcqrIKow>
-    <xmx:6RDJZ-5NQ6KyJ-Bc3NeO65x5OgGibVrtuIHZnAfOd2PCxmg0xAIqqw>
-    <xmx:6RDJZ9yTsTx2x79eUf52Yhj4zckIXaU799LKuWnkBQUK6iEU55YPJQ>
-    <xmx:6hDJZ3rEJqf_ld5PzwHfRRBIpnYOMcAD0edfJUv97Qh43LXUAHPt_rBL>
-Feedback-ID: i580e4893:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 5 Mar 2025 22:05:11 -0500 (EST)
-Message-ID: <fbb8e557-0b63-4bbe-b8ac-3f7ba2983146@maowtm.org>
-Date: Thu, 6 Mar 2025 03:05:10 +0000
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NkXkKx12"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43bc38bb6baso1214995e9.3
+        for <linux-security-module@vger.kernel.org>; Wed, 05 Mar 2025 22:35:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741242931; x=1741847731; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Mx4eXhc4yqpVhI7TdTQuRC9iguxZspH9NuwtaHcC+Lc=;
+        b=NkXkKx121iIVwRfnvL2NV5bLufVR3G63SPc2p4TvkVzVlrqSAO8fwb7sdoMK0GT32C
+         ilASo1O5JK5ny5ODedT2PQkBlTEz9WDqL3Uw3WLQIupKoBZxhobysE7kPRTQY1s9kqa0
+         rk9rvPMv44zRlZlAtGDG7EGQo/5pLiwA8PvxRhYa/g0txZI2zYLfYnN7xk2WsQQZvLOT
+         Vy0eQ+j+Ktk57PekxQCGydsr068OdVmEtWspEdI+gb60MMdV+jfL1SZEn8lDPMasLGpH
+         keu9Rve6CedfwPt/S7sg02dFwD7XQyy23x+MZIoajVllLg+CMTeADiVW/3vHx85yVG83
+         LgwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741242931; x=1741847731;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Mx4eXhc4yqpVhI7TdTQuRC9iguxZspH9NuwtaHcC+Lc=;
+        b=DVP4V1qXrso1QYsm6msaCFzs3FtY/sXXDnc/tmTJlyji+JjwowQPpa5q348sb8USwn
+         kgAoEa9hDnMXHY/HR1cGJDt2KvmpfGNrDJfVig5otLF+8wzxWEu85wFVJFcI8kptdtGx
+         nyDYAoyR674VBFnWyH05jgEzC1RPOZfRfKFnCT1yVYxhbbjTJ870rGfeozF6cXBwymBV
+         MjbLJ2nE5x3PKTtKGMIsZ2C4+IXDrMT04xYdV76A2LEdacZ2+yaj0NepSiO+W4P2QphT
+         joRqsfEu/t5jdqLBsU45gPDuXgaLxr7c5pFNnqsh6/qiNEGblIlkXuR8T2pKaan1YtWn
+         m+RA==
+X-Forwarded-Encrypted: i=1; AJvYcCWxoluW/nOXcQBLr921pZnfMKOf+tfkKRIQMxiIJ62jRatfBIIyY+cp2L/cIBVlCLQbHT0ypOqA21Y/fGt47HOjK9dgQGU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3iMYGvYN1Tlkv6F3Zs1EE9dkRnXQBXj0Rr1KgIaswL7irW3Vv
+	g06Ofuo5nk5WuKuCOKghpj8p8O4Nf1MM5Bq55vWjAum3x+vWNzhabCbENV2/4bM=
+X-Gm-Gg: ASbGncvA8mLAHgn6OP3x5jlfTV0rR6hAa2IKk9Sy9DkT5nxwFh3PNJXbQG2DWFiQmkz
+	iGPEthocPk33fJD9df6zjf2EtiCsK1cKP8yzwcrS2MBJBkh/cKsy0NEkbYXInsVuAJyNlaHFuC0
+	viFXYRLgFuD/z0Tc4/IxR88/mTL2ymj4DrWUxpH48mw3lWiWP3EzgXrbqBIDimuDyoMFJCIUyrb
+	l6Ei3JNH5AzDVyeulJd7WAWf0rfxt5AhRfOwaHLv/4n2X7VBimmFGghOldoQQ7HWOsyR04VkMt2
+	QvPDx/Tqmmr1Fwi/k+S0HTxIfnATbqiZoA/hedIbVVye952U+Q==
+X-Google-Smtp-Source: AGHT+IEldEFBJ6GcJ/9AsmwidDi0MW22pFoTiX1DY3pYgmQW8PLpDd7QMPBO5UsdG2P8Z7W4b9nJlQ==
+X-Received: by 2002:a05:600c:1551:b0:43b:cb0c:3556 with SMTP id 5b1f17b1804b1-43bd2af49cemr38379685e9.28.1741242930569;
+        Wed, 05 Mar 2025 22:35:30 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43bdd8c314asm9415525e9.10.2025.03.05.22.35.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Mar 2025 22:35:30 -0800 (PST)
+Date: Thu, 6 Mar 2025 09:35:26 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, steven chen <chenste@linux.microsoft.com>,
+	zohar@linux.ibm.com, stefanb@linux.ibm.com,
+	roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
+	eric.snowberg@oracle.com, ebiederm@xmission.com,
+	paul@paul-moore.com, code@tyhicks.com, bauermann@kolabnow.com,
+	linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+	madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
+	James.Bottomley@hansenpartnership.com, bhe@redhat.com,
+	vgoyal@redhat.com, dyoung@redhat.com
+Subject: Re: [PATCH v9 2/7] kexec: define functions to map and unmap segments
+Message-ID: <7bde870f-07eb-48a6-8b8d-edac57640775@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 5/9] Define user structure for events and responses.
-To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
- Jan Kara <jack@suse.cz>, linux-security-module@vger.kernel.org,
- Amir Goldstein <amir73il@gmail.com>, Matthew Bobrowski <repnop@google.com>,
- linux-fsdevel@vger.kernel.org, Tycho Andersen <tycho@tycho.pizza>
-References: <cover.1741047969.git.m@maowtm.org>
- <cde6bbf0b52710b33170f2787fdcb11538e40813.1741047969.git.m@maowtm.org>
- <20250304.eichiDu9iu4r@digikod.net>
-Content-Language: en-US, en-GB
-From: Tingmao Wang <m@maowtm.org>
-In-Reply-To: <20250304.eichiDu9iu4r@digikod.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250304190351.96975-3-chenste@linux.microsoft.com>
 
-On 3/4/25 19:49, Mickaël Salaün wrote:
-> On Tue, Mar 04, 2025 at 01:13:01AM +0000, Tingmao Wang wrote:
-[...]
->> +	/**
->> +	 * @cookie: Opaque identifier to be included in the response.
->> +	 */
->> +	__u32 cookie;
-> 
-> I guess we could use a __u64 index counter per layer instead.  That
-> would also help to order requests if they are treated by different
-> supervisor threads.
+Hi steven,
 
-I don't immediately see a use for ordering requests (if we get more than 
-one event at once, they are coming from different threads anyway so 
-there can't be any dependencies between them, and the supervisor threads 
-can use timestamps), but I think making it a __u64 is probably a good 
-idea regardless, as it means we don't have to do some sort of ID 
-allocation, and can just increment an atomic.
+kernel test robot noticed the following build warnings:
 
->> +};
->> +
->> +struct landlock_supervise_event {
->> +	struct landlock_supervise_event_hdr hdr;
->> +	__u64 access_request;
->> +	__kernel_pid_t accessor;
->> +	union {
->> +		struct {
->> +			/**
->> +			 * @fd1: An open file descriptor for the file (open,
->> +			 * delete, execute, link, readdir, rename, truncate),
->> +			 * or the parent directory (for create operations
->> +			 * targeting its child) being accessed.  Must be
->> +			 * closed by the reader.
->> +			 *
->> +			 * If this points to a parent directory, @destname
->> +			 * will contain the target filename. If @destname is
->> +			 * empty, this points to the target file.
->> +			 */
->> +			int fd1;
->> +			/**
->> +			 * @fd2: For link or rename requests, a second file
->> +			 * descriptor for the target parent directory.  Must
->> +			 * be closed by the reader.  @destname contains the
->> +			 * destination filename.  This field is -1 if not
->> +			 * used.
->> +			 */
->> +			int fd2;
-> 
-> Can we just use one FD but identify the requested access instead and
-> send one event for each, like for the audit patch series?
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-I haven't managed to read or test out the audit patch yet (I will do), 
-but I think having the ability to specifically tell whether the child is 
-trying to move / rename / create a hard link of an existing file, and 
-what it's trying to use as destination, might be useful (either for 
-security, or purely for UX)?
+url:    https://github.com/intel-lab-lkp/linux/commits/steven-chen/ima-copy-only-complete-measurement-records-across-kexec/20250305-031719
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-integrity.git next-integrity
+patch link:    https://lore.kernel.org/r/20250304190351.96975-3-chenste%40linux.microsoft.com
+patch subject: [PATCH v9 2/7] kexec: define functions to map and unmap segments
+config: x86_64-randconfig-161-20250306 (https://download.01.org/0day-ci/archive/20250306/202503061449.gbVGafZc-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
 
-For example, imagine something trying to link or move ~/.ssh/id_ecdsa to 
-/tmp/innocent-tmp-file then read the latter. The supervisor can warn the 
-user on the initial link attempt, and the shenanigan will probably be 
-stopped there (although still, being able to say "[program] wants to 
-link ~/.ssh/id_ecdsa to /tmp/innocent-tmp-file" seems better than just 
-"[program] wants to create a link for ~/.ssh/id_ecdsa"), but even if 
-somehow this ends up allowed, later on for the read request it could say 
-something like
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202503061449.gbVGafZc-lkp@intel.com/
 
-	[program] wants to read /tmp/innocent-tmp-file
-	    (previously moved from ~/.ssh/id_ecdsa)
+smatch warnings:
+kernel/kexec_core.c:896 kimage_map_segment() error: uninitialized symbol 'dest_page_addr'.
 
-Maybe this is a bit silly, but there might be other use cases for 
-knowing the exact details of a rename/link request, either for 
-at-the-time decision making, or tracking stuff for future requests?
+vim +/dest_page_addr +896 kernel/kexec_core.c
 
-I will try out the audit patch to see how things like these appears in 
-the log before commenting further on this. Maybe there is a way to 
-achieve this while still simplifying the event structure?
+bf06eab7ae0f04 steven chen 2025-03-04  870  void *kimage_map_segment(struct kimage *image,
+bf06eab7ae0f04 steven chen 2025-03-04  871  			 unsigned long addr, unsigned long size)
+bf06eab7ae0f04 steven chen 2025-03-04  872  {
+bf06eab7ae0f04 steven chen 2025-03-04  873  	unsigned long eaddr = addr + size;
+bf06eab7ae0f04 steven chen 2025-03-04  874  	unsigned long src_page_addr, dest_page_addr;
+bf06eab7ae0f04 steven chen 2025-03-04  875  	unsigned int npages;
+bf06eab7ae0f04 steven chen 2025-03-04  876  	struct page **src_pages;
+bf06eab7ae0f04 steven chen 2025-03-04  877  	int i;
+bf06eab7ae0f04 steven chen 2025-03-04  878  	kimage_entry_t *ptr, entry;
+bf06eab7ae0f04 steven chen 2025-03-04  879  	void *vaddr = NULL;
+bf06eab7ae0f04 steven chen 2025-03-04  880  
+bf06eab7ae0f04 steven chen 2025-03-04  881  	/*
+bf06eab7ae0f04 steven chen 2025-03-04  882  	 * Collect the source pages and map them in a contiguous VA range.
+bf06eab7ae0f04 steven chen 2025-03-04  883  	 */
+bf06eab7ae0f04 steven chen 2025-03-04  884  	npages = PFN_UP(eaddr) - PFN_DOWN(addr);
+bf06eab7ae0f04 steven chen 2025-03-04  885  	src_pages = kmalloc_array(npages, sizeof(*src_pages), GFP_KERNEL);
+bf06eab7ae0f04 steven chen 2025-03-04  886  	if (!src_pages) {
+bf06eab7ae0f04 steven chen 2025-03-04  887  		pr_err("Could not allocate ima pages array.\n");
+bf06eab7ae0f04 steven chen 2025-03-04  888  		return NULL;
+bf06eab7ae0f04 steven chen 2025-03-04  889  	}
+bf06eab7ae0f04 steven chen 2025-03-04  890  
+bf06eab7ae0f04 steven chen 2025-03-04  891  	i = 0;
+bf06eab7ae0f04 steven chen 2025-03-04  892  	for_each_kimage_entry(image, ptr, entry) {
+bf06eab7ae0f04 steven chen 2025-03-04  893  		if (entry & IND_DESTINATION) {
+bf06eab7ae0f04 steven chen 2025-03-04  894  			dest_page_addr = entry & PAGE_MASK;
 
-> 
->> +			/**
->> +			 * @destname: A filename for a file creation target.
->> +			 *
->> +			 * If either of fd1 or fd2 points to a parent
->> +			 * directory rather than the target file, this is the
->> +			 * NULL-terminated name of the file that will be
->> +			 * newly created.
->> +			 *
->> +			 * Counting the NULL terminator, this field will
->> +			 * contain one or more NULL padding at the end so
->> +			 * that the length of the whole struct
->> +			 * landlock_supervise_event is a multiple of 8 bytes.
->> +			 *
->> +			 * This is a variable length member, and the length
->> +			 * including the terminating NULL(s) can be derived
->> +			 * from hdr.length - offsetof(struct
->> +			 * landlock_supervise_event, destname).
->> +			 */
->> +			char destname[];
-> 
-> I'd prefer to avoid sending file names for now.  I don't think it's
-> necessary, and that could encourage supervisors to filter access
-> according to names.
->
+Is the first entry always IND_DESTINATION?
 
-This is also motivated by the potential UX I'm thinking of. For example, 
-if a newly installed application tries to create ~/.app-name, it will be 
-much more reassuring and convenient to the user if we can show something 
-like
+bf06eab7ae0f04 steven chen 2025-03-04  895  		} else if (entry & IND_SOURCE) {
+bf06eab7ae0f04 steven chen 2025-03-04 @896  			if (dest_page_addr >= addr && dest_page_addr < eaddr) {
+                                                                    ^^^^^^^^^^^^^^
+otherwise this is uninitialized
 
-	[program] wants to mkdir ~/.app-name. Allow this and future
-	access to the new directory?
+bf06eab7ae0f04 steven chen 2025-03-04  897  				src_page_addr = entry & PAGE_MASK;
+bf06eab7ae0f04 steven chen 2025-03-04  898  				src_pages[i++] =
+bf06eab7ae0f04 steven chen 2025-03-04  899  					virt_to_page(__va(src_page_addr));
+bf06eab7ae0f04 steven chen 2025-03-04  900  				if (i == npages)
+bf06eab7ae0f04 steven chen 2025-03-04  901  					break;
+bf06eab7ae0f04 steven chen 2025-03-04  902  				dest_page_addr += PAGE_SIZE;
+bf06eab7ae0f04 steven chen 2025-03-04  903  			}
+bf06eab7ae0f04 steven chen 2025-03-04  904  		}
+bf06eab7ae0f04 steven chen 2025-03-04  905  	}
+bf06eab7ae0f04 steven chen 2025-03-04  906  
+bf06eab7ae0f04 steven chen 2025-03-04  907  	/* Sanity check. */
+bf06eab7ae0f04 steven chen 2025-03-04  908  	WARN_ON(i < npages);
+bf06eab7ae0f04 steven chen 2025-03-04  909  
+bf06eab7ae0f04 steven chen 2025-03-04  910  	vaddr = vmap(src_pages, npages, VM_MAP, PAGE_KERNEL);
+bf06eab7ae0f04 steven chen 2025-03-04  911  	kfree(src_pages);
+bf06eab7ae0f04 steven chen 2025-03-04  912  
+bf06eab7ae0f04 steven chen 2025-03-04  913  	if (!vaddr)
+bf06eab7ae0f04 steven chen 2025-03-04  914  		pr_err("Could not map ima buffer.\n");
+bf06eab7ae0f04 steven chen 2025-03-04  915  
+bf06eab7ae0f04 steven chen 2025-03-04  916  	return vaddr;
+bf06eab7ae0f04 steven chen 2025-03-04  917  }
 
-rather than just "[program] wants to mkdir under ~". (The "Allow this 
-and future access to the new directory" bit is made possible by the 
-supervisor knowing the name of the file/directory being created, and can 
-remember them / write them out to a persistent profile etc)
-
-Note that this is just the filename under the dir represented by fd - 
-this isn't a path or anything that can be subject to symlink-related 
-attacks, etc.  If a program calls e.g.
-mkdirat or openat (dfd -> "/some/", pathname="dir/stuff", O_CREAT)
-my understanding is that fd1 will point to /some/dir, and destname would 
-be "stuff"
-
-Actually, in case your question is "why not send a fd to represent the 
-newly created file, instead of sending the name" -- I'm not sure whether 
-you can open even an O_PATH fd to a non-existent file.
-
->> +		};
->> +		struct {
->> +			__u16 port;
->> +		};
->> +	};
->> +};
->> +
-> 
-> [...]
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
