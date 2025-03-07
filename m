@@ -1,100 +1,173 @@
-Received: from outgoing1.cpt4.host-h.net (outgoing1.cpt4.host-h.net [197.189.247.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D38B9202F7C
-	for <linux-security-module@vger.kernel.org>; Thu,  6 Mar 2025 23:05:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=197.189.247.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EBEF17C21E
+	for <linux-security-module@vger.kernel.org>; Fri,  7 Mar 2025 02:46:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741302347; cv=none; b=rKefMxBhU1ckZ+vezi28Az7+D9EoVYc6dRE03QSP64RlR3OsPAgCLW20mWKUtEfBsUmZs/V8iZSj4YemGNL9TGUiG2zXZX4maWUxTbBXV1PpPl5d1IMIp2+DjgXX5Eg3kTFmFzzLb74w7OR7CxXEsFxxNlDVmzxN5a2EG+OKeJg=
+	t=1741315618; cv=none; b=eJx6M5r7IHA8jif/DeHHksGZLjVxckNzfEWpYVviP3/VhQXo/zT+w7YBk/+2NvbuB5JbYG2688XTiZ/2IuH4FQLVudIvKfTT04WocB2WRK8DrHyuzFNUg019H5+oqoQxyNjUPNaCN+a2sx0vNOBPirqfNrzevHHgtoDSreTdIKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741302347; c=relaxed/simple;
-	bh=UOdy1uc1Ja6Ouzx9Gp3orqw2OLpxN4Hd+lHG4CKFzvE=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ot4D9M7CCzxR968Nrd9Q5pbtx0C3X17ANAJUn+slgVvPY7Oi1f7ZTgkoJkwA2q47Yo+59KDTvlM2+OzVCchVgwk6qTEHJ43v5jrPttiPUwiQMuTAO4Axk9SVoGANVtKhRYcCRza0vVc3WMg2f0r1z1Qb+V11oJ13wrH6Jr7pSMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=delugo.co.za; spf=pass smtp.mailfrom=delugo.co.za; dkim=pass (2048-bit key) header.d=delugo.co.za header.i=@delugo.co.za header.b=fwtHEr3Z; arc=none smtp.client-ip=197.189.247.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=delugo.co.za
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=delugo.co.za
+	s=arc-20240116; t=1741315618; c=relaxed/simple;
+	bh=YEYXLGg/CsKOrCincve+KY8W009xIGLNHMSjNI16DOw=;
+	h=From:To:CC:Date:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=DewBJe/lHtgNconz4L3djYS8PitPYF8CkEQKkiEx4FrQbAL4/z/2bnjMa3XBq01OTyzMoRorT5Tw6NKpVRnTwcg7bmwuLITrPkqgmsCwhNj2/7t2TscWvcVxKF0leIuvGKLlotAfQw2QJge6WKMbTuF7GJXfsY+6/uAUSrJPqns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=FuWqQjbw; arc=none smtp.client-ip=209.85.219.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=delugo.co.za header.i=@delugo.co.za header.b="fwtHEr3Z"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=delugo.co.za; s=xneelo; h=Content-Transfer-Encoding:Content-Type:
-	MIME-Version:Message-ID:Date:Subject:To:From:Reply-To:sender:cc:bcc:
-	in-reply-to:references; bh=UOdy1uc1Ja6Ouzx9Gp3orqw2OLpxN4Hd+lHG4CKFzvE=; b=fw
-	tHEr3ZSIHOwWIKEPebj9JS/+1ME3VusP1PwAkr9QLCLgpZ26gXwTRHCALYHepdjE4w/mxDsDfk8QT
-	Vi2GAOtA7/Bd2t6uBpDyIG/tZx8hXZTMCw5DPTcJaeqUtKIBeJ3fL0Ls5SRATOdb6+72+nEPnnoYG
-	7+1Wj/2m6Z2JmQzam6DXLgyuQT9qHqv4zW3jkSK5+AVWrCLrMCwkBGBxb/rSKLe7XZaFORZJ12Kvi
-	QW6qJ7wNRljmW8A8aVFr9gBXNMqwBse0K3Un2afZSqvta3o8PGKSGysDL4K+WTM4R45lN3p03ZzsK
-	5Wan3D+ygOnudzr7z/a9QemxSfFvbXeg==;
-Received: from www46.cpt3.host-h.net ([197.221.14.46])
-	by antispam1-cpt4.host-h.net with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <orders@delugo.co.za>)
-	id 1tqKHb-001Ufq-UV
-	for linux-security-module@vger.kernel.org; Fri, 07 Mar 2025 01:05:41 +0200
-Received: from [104.192.5.240] (helo=delugo.co.za)
-	by www46.cpt3.host-h.net with esmtpsa (TLS1.2:ECDHE_SECP521R1__RSA_SHA512__AES_256_GCM:256)
-	(Exim 4.98)
-	(envelope-from <orders@delugo.co.za>)
-	id 1tqK54-0000000Dm2d-2zgk
-	for linux-security-module@vger.kernel.org;
-	Fri, 07 Mar 2025 00:52:43 +0200
-Reply-To: barry@investorstrustco.net
-From: Barry <orders@delugo.co.za>
-To: linux-security-module@vger.kernel.org
-Subject: Re: The Business Loan/financing.1
-Date: 06 Mar 2025 22:52:41 +0000
-Message-ID: <20250306223012.65CEFDE1D0C500F3@delugo.co.za>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="FuWqQjbw"
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6e8f4c50a8fso10549276d6.1
+        for <linux-security-module@vger.kernel.org>; Thu, 06 Mar 2025 18:46:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1741315615; x=1741920415; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:user-agent
+         :references:in-reply-to:message-id:date:cc:to:from:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rt0sh+iXDwTk92DHQ0mAKFAW9RB3PuEnSeOiB/9VL1E=;
+        b=FuWqQjbw3bleVbiTxE2Nk++EiZch5q88L6qp/N12jiPd/QJgZQIpRA7UWr4ztV150x
+         g6E3VTvMfm0s8UFo60DTY70lCj+2UhdwCAEmJJCvszfs8rOrWsxpqey0PqV2OI49GZO8
+         cVzDLZPI5w82SzqtetIy0qZKI8sHIIiefnlnLiNyN/b6lSuIrwBsa4R+ORrj0wjashjd
+         achPZsMj5eYiOJdoA6kUWQWCiRWZZTUTHUGIp42+YEr/z5AnVka3meSW9OW2gklcXeyV
+         9BVd3hIhZc2UP7XDe1cJ1+5cjupwbdBeefrSAoOd2JhXH4zVey4I1LsQy8gUGXF/PazS
+         iWVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741315615; x=1741920415;
+        h=content-transfer-encoding:mime-version:subject:user-agent
+         :references:in-reply-to:message-id:date:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rt0sh+iXDwTk92DHQ0mAKFAW9RB3PuEnSeOiB/9VL1E=;
+        b=mD6xyI611klfrCtdBXJXouo31jPIX3017mU9aq8N+vjwpGcrM0O2ZpRDVW8qGk0XX+
+         /yuQRr2NDIUgYQ7VeY0xQdR03mKBrF5fSkhhgtl/W53o5+yzjsxfblQzVq4r/oYdXdUt
+         SYHSRqY2ZrluxQVXSLiXDueQ37mfvNCuEygMDQyiTBu4JiPI/UqjxmUYRInosa3Z+vDm
+         brJ2qxwpRyufQVTf6YDdEgY1hcNsSTCKjtiQ/rk3/1QJ7126dJaF3TqIhnmDaiUKbJPn
+         Weplu+UuwQ4svYWYTFqghGsWT/HIdms25oJt/7dLgc1Sr49dZ5DC6XUtADQuDWB6fIpt
+         spjA==
+X-Forwarded-Encrypted: i=1; AJvYcCWq4oKTNHSLWyAFFoOXrS3ckAi0DISSRyn+7pLWFP/zoytgnlxG3TeS5vzo+TyC/MXsLiWDiRVYiw2zHzVrCsuxzmlNNMw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNz6R/ZvPoQ9EQI6fswKjoyR0rk5pXERp3qTGGXZJmwCFqI/KC
+	nn6d4mfQ2oAX+qNxARixBczvXfTNe48eJMlrWQ5U7G8oanvBrzuIuS9/5P6vTS76STRyryFw+tc
+	=
+X-Gm-Gg: ASbGnctMQD4sSQkkwRla29uY1N5fgvFIsFoY8lvA5w18+WcnLGuRjuyIcypxZh24Ywx
+	mgAEu8d7Ppkks+fUfUvRrO4xMWxLuDL8lQ1S9Kn+G0RdhhBLf8Sf/6TQpkoyKKh0bb7L90nOW2f
+	KA5u90OxrGaXqpljvT9CTEwszG+W34DVi5yadhbWvL63QBD2Lk5DHGtb8zKUBGNM0ss5dMku9zO
+	9QnxNKKBdBj6d2Mf2C0y473Jj7+yNHBxQUywZluHvHZfFrWBt+xrxSMCkqVLA3XhxEi5sMT5lqS
+	uUUrpwLzovWSsLxhpo2Y+loVWW4EQ+t/NLui5nR40d4KkmwhspOPtfUyjX2pUH8L68pRmLvXtXz
+	lJkaEI0G909Oh6x665pw=
+X-Google-Smtp-Source: AGHT+IGN6nnpAum+jUxAhktZIXBBlDfUMfEpdXCUFvRXot6sALexlQzFAHfqQmACtG8oGghU6a73MQ==
+X-Received: by 2002:a05:6214:500f:b0:6e4:4011:9df7 with SMTP id 6a1803df08f44-6e9005f79a2mr19925486d6.16.1741315614964;
+        Thu, 06 Mar 2025 18:46:54 -0800 (PST)
+Received: from [192.168.7.16] (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8f7182af0sm14044486d6.119.2025.03.06.18.46.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Mar 2025 18:46:54 -0800 (PST)
+From: Paul Moore <paul@paul-moore.com>
+To: Eric Snowberg <eric.snowberg@oracle.com>
+CC: Mimi Zohar <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>, Jarkko Sakkinen <jarkko@kernel.org>, "open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>, David Woodhouse <dwmw2@infradead.org>, <herbert@gondor.apana.org.au>, <davem@davemloft.net>, Ard Biesheuvel <ardb@kernel.org>, James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, <casey@schaufler-ca.com>, Stefan Berger <stefanb@linux.ibm.com>, <ebiggers@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, open list <linux-kernel@vger.kernel.org>, <keyrings@vger.kernel.org>, <linux-crypto@vger.kernel.org>, <linux-efi@vger.kernel.org>, <linux-integrity@vger.kernel.org>
+Date: Thu, 06 Mar 2025 21:46:52 -0500
+Message-ID: <1956e7f9d60.28a7.85c95baa4474aabc7814e68940a78392@paul-moore.com>
+In-Reply-To: <EB757F96-E152-4EAB-B3F7-75C1DBE3A03B@oracle.com>
+References: <20241017155516.2582369-1-eric.snowberg@oracle.com>
+ <c490397315c2704e9ef65c8ad3fefedb239f1997.camel@linux.ibm.com>
+ <72F52F71-C7F3-402D-8441-3D636A093FE8@oracle.com>
+ <CAHC9VhRHEw5c+drC=aX4xTqWoQJJZ+qkJ7aHUT5dcu+Q5f7BqA@mail.gmail.com>
+ <CAHC9VhSJpnaAK1efgs1Uk0Tr3CaDNR1LiDU-t_yDKDQG6J-74Q@mail.gmail.com>
+ <E20C617B-EA01-4E69-B5E2-31E9AAD6F7A2@oracle.com>
+ <506e8e58e5236a4525b18d84bafa9aae80b24452.camel@linux.ibm.com>
+ <CAHC9VhTsZntLdGBV7=4suauS+rzSQv1O4UAoGcy2vEB02wRkoA@mail.gmail.com>
+ <c580811716f550ed5d6777db5e143afe4ad06edc.camel@linux.ibm.com>
+ <CAHC9VhTz6U5rRdbJBWq0_U4BSKTsiGCsaX=LTgisNNoZXZokOA@mail.gmail.com>
+ <FD501FB8-72D2-4B10-A03A-F52FC5B67646@oracle.com>
+ <CAHC9VhR961uTFueovLXXaOf-3ZAnvQCWOTfw-wCRuAKOKPAOKw@mail.gmail.com>
+ <73B78CE7-1BB8-4065-9EBA-FB69E327725E@oracle.com>
+ <CAHC9VhRMUkzLVT5GT5c5hgpfaaKubzcPOTWFDpOmhNne0sswPA@mail.gmail.com>
+ <1A222B45-FCC4-4BBD-8E17-D92697FE467D@oracle.com>
+ <CAHC9VhTObTee95SwZ+C4EwPotovE9R3vy0gVXf+kATtP3vfXrg@mail.gmail.com>
+ <EB757F96-E152-4EAB-B3F7-75C1DBE3A03B@oracle.com>
+User-Agent: AquaMail/1.54.1 (build: 105401536)
+Subject: Re: [RFC PATCH v3 00/13] Clavis LSM
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-Authenticated-Sender: orders@delugo.co.za
-X-Virus-Scanned: Clear
-X-SpamExperts-Domain: delugo.co.za
-X-SpamExperts-Username: 
-Authentication-Results: host-h.net; auth=pass (login) smtp.auth=@delugo.co.za
-X-SpamExperts-Outgoing-Class: unsure
-X-SpamExperts-Outgoing-Evidence: Combined (0.75)
-X-Recommended-Action: accept
-X-Filter-ID: Pt3MvcO5N4iKaDQ5O6lkdGlMVN6RH8bjRMzItlySaT+5DhM0jw86KsbkaGfFMuQCPUtbdvnXkggZ
- 3YnVId/Y5jcf0yeVQAvfjHznO7+bT5zVMa2hcQPbXPlbMCsY+hkkq9cT4r4LC0gkQwZss7ZfdvSI
- QWGhDYOqY2O5fqfx9M7XFT0qB5tFv92nRX4mJdp7UUlLXMUeAXT7hcGmFUnSlv0+BnD7wi70qQBB
- Bsu5GMahLqLPt2D6hJ605Bnjj1q6iCsJyqSmvP2BysP8HrSPvrHARmuVDmgPGNNuts+ba30rnvUy
- zoTfAGEbL5I354EAw8VSKe5hYjiYkc7xjE70WreMPUhTBWui6U/2qinoPDthn6sps0oXop0Wpl2m
- +lnlLYyKfoR+hbZIJAc+0m+mU5EyYYf7TmlI3iEcqXK4A61ChHMQHCMEWTX9HEhwSP4/MSl+mev0
- M9cO0xP2892D0fA6hpTapNg/3VwnapSOnzMvfUiXer9Hk+cBCIH95/C9L4QFy0eB/isP83e9uHLE
- BeHTPI/rzJIRbhotX0RECi6mGIdkjXgJzNr4g6HQm7Ihb/f3QhLRbOgisvi5VU9eNCzoJDM55WJG
- VWcFLzKvCHLdZh03ExTqDquACpNsmDrlcntZzD+8euQ3PTJH+fGZGHMcN6qoXPjenLhIOF1oeRYQ
- IKkaWXerM1u+fwXJu+tuGEDHQue2QZHF055tGS+SvSlfJF3VFFhgaOmHSC78Ngi9P+5Lf0oV1WuF
- nNMdSZz/eBksJ0GzgEY832zb4/bETantKr6+crm+rffkaQ6ZgOhecDS00P8Fc8OWE6jtCYt+lNx7
- b76pl5pevnFznkcIx8H+6Fv7XKRVCdPrl4S6mURwxc3o2KyPRa0Vg6NfcXRhctgzcDoFd+96Xw4Q
- UNtTnX41RgS4hAw4xf8QWxdHHi13boj4UU49ILZd2HDXpRdrzviI9CRCIiamRgyDQudwNxUd81Og
- MWXFNTBQD09QdRCR27r9HYUzziTFhEVK8LUg5R4IAJ8DqZLMftAhiZ5VBhI+iM6gPdcRK2u+Vqin
- 8bA0g/W+lOecImzPxJzzUQScBEigpxA1CSufo+L91Hr9qg==
-X-Report-Abuse-To: spam@antispamquarantine.host-h.net
-X-Complaints-To: abuse@antispammaster.host-h.net
+Content-Type: text/plain; format=flowed; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+On March 6, 2025 5:29:36 PM Eric Snowberg <eric.snowberg@oracle.com> wrote:
+>> On Mar 5, 2025, at 6:12 PM, Paul Moore <paul@paul-moore.com> wrote:
+>>
+>> On Wed, Mar 5, 2025 at 4:30 PM Eric Snowberg <eric.snowberg@oracle.com> wrote:
+>>>> On Mar 4, 2025, at 5:23 PM, Paul Moore <paul@paul-moore.com> wrote:
+>>>> On Tue, Mar 4, 2025 at 9:47 AM Eric Snowberg <eric.snowberg@oracle.com> wrote:
+>>>>>> On Mar 3, 2025, at 3:40 PM, Paul Moore <paul@paul-moore.com> wrote:
+>>>>>> On Fri, Feb 28, 2025 at 12:52 PM Eric Snowberg <eric.snowberg@oracle.com> 
+>>>>>> wrote:
+>>>>>>>> On Feb 28, 2025, at 9:14 AM, Paul Moore <paul@paul-moore.com> wrote:
+>>>>>>>> On Fri, Feb 28, 2025 at 9:09 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
+>>>>>>>>> On Thu, 2025-02-27 at 17:22 -0500, Paul Moore wrote:
+>>>>>>>>>>
+>>>>>>>>>> I'd still also like to see some discussion about moving towards the
+>>>>>>>>>> addition of keyrings oriented towards usage instead of limiting
+>>>>>>>>>> ourselves to keyrings that are oriented on the source of the keys.
+>>>>>>>>>> Perhaps I'm missing some important detail which makes this
+>>>>>>>>>> impractical, but it seems like an obvious improvement to me and would
+>>>>>>>>>> go a long way towards solving some of the problems that we typically
+>>>>>>>>>> see with kernel keys.
+>>>>>>>
+>>>>>>> The intent is not to limit ourselves to the source of the key.  The main
+>>>>>>> point of Clavis is to allow the end-user to determine what kernel keys
+>>>>>>> they want to trust and for what purpose, irrespective of the originating
+>>>>>>> source (.builtin_trusted, .secondary, .machine, or .platform). If we could
+>>>>>>> go back in time, individual keyrings could be created that are oriented
+>>>>>>> toward usage.   The idea for introducing Clavis is to bridge what we
+>>>>>>> have today with kernel keys and allow them to be usage based.
+>>>>>>
+>>>>>> While it is unlikely that the current well known keyrings could be
+>>>>>> removed, I see no reason why new usage oriented keyrings could not be
+>>>>>> introduced.  We've seen far more significant shifts in the kernel over
+>>>>>> the years.
+>>>>>
+>>>>> Could you further clarify how a usage oriented keyring would work?  For
+>>>>> example, if a kernel module keyring was added, how would the end-user
+>>>>> add keys to it while maintaining a root of trust?
+>>>>
+>>>> Consider it an exercise left to the reader :)
+>>>>
+>>>> I imagine there are different ways one could do that, either using
+>>>> traditional user/group/capability permissions and/or LSM permissions,
+>>>> it would depend on the environment and the security goals of the
+>>>> overall system.
+>>>
+>>> These keys are used by the Lockdown LSM to provide signature
+>>> validation.
+>>>
+>>> I realize the contents that follow in this paragraph is outside the
+>>> boundary of mainline kernel code.  Every distro that wants their
+>>> shim signed must explain how their kernel enforces lockdown
+>>> mode.  The minimum requirement is lockdown in integrity mode.
+>>> Also, the expectation is lockdown enforcement continues on
+>>> through a kexec.
+>>
+>> I personally find it very amusing the UEFI Secure Boot shim is reliant
+>> on an unmaintained and only marginally supported LSM, Lockdown.  Has
+>> anyone recently verified that Lockdown's protections are still intact
+>> and comprehensive enough to be worthwhile?  Sorry, this is a bit of a
+>> digression, but since you were the one to bring up Lockdown I thought
+>> it would be important to mention that I don't have much faith that it
+>> is still working to the same level as it originally was intended.  I
+>> have a TODO list item to draft a policy around deprecating
+>> unmaintained LSMs after an extended period of time, and once that is
+>> in place if we don't have a qualified maintainer for Lockdown it will
+>> likely fall into the deprecation process (whatever that may be).
+>
+> Does this mean Microsoft will begin signing shims in the future without
+> the lockdown requirement?
 
-My name is Barry at Investment Consult, we are a consultancy and
-brokerage Firm specializing in Growth Financial Loan and joint
-partnership venture. We specialize in investments in all Private
-and public sectors in a broad range of areas within our Financial
-Investment Services.
+That's not a question I can answer, you'll need to discuss that with the 
+UEFI SB people.
 
- We are experts in financial and operational management, due
-diligence and capital planning in all markets and industries. Our
-Investors wish to invest in any viable Project presented by your
-Management after reviews on your Business Project Presentation
-Plan.
+--
+paul-moore.com
 
- We look forward to your Swift response. We also offer commission
-to consultants and brokers for any partnership referrals.
 
- Regards,
-Barry
-Senior Broker
+
