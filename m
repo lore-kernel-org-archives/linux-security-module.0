@@ -1,126 +1,148 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E710212D9E;
-	Fri,  7 Mar 2025 10:32:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55EEC21ABAC;
+	Fri,  7 Mar 2025 14:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741343556; cv=none; b=J5RZVtaeeH6lZTM0Thv0WU3ZuCaIt8zzHQ+2HGl9fDMnml6jh970Ypv/lPAwTKXXIa+hmsQI9y8lPqwUsW6xmh5N1igfJoMKMFE8YK0ohxU/FRsIPkBTtXkYAoKQhlHnW0bEIWNQndyIS4uxoE/wi+BBnKJgk/76XvqGJe5cfs0=
+	t=1741356955; cv=none; b=C0tEDs6F1SZ0TcxeiWYjHQQDPu70H5RiSUqhxGw05tFNHqzD3xxqDkmnL4rwuIwXPv3GaIIl192OiO492U/ygCA2ORDUAk63rPBvk6r/b+hC4DBMMIqJzto3V2urXK7rI3AcK1T2OXNb9mnPMI/uFoRVp3SY4rFMMzeaqW3wWog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741343556; c=relaxed/simple;
-	bh=eaFXM5ndfzcSejieQgyRUMqCp/DYjdcvdOcHWt4mbqA=;
+	s=arc-20240116; t=1741356955; c=relaxed/simple;
+	bh=taP3F99W38M9kOmq3WxGykgtM2k764o1KKtTPDuFYV0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RN0+toRod4soHC5nY1R9JEVDxF2tpm34Rb2Eo6UJ99DdaSPA+Gm5R+xG3b+R72p4uHRMKtkIJtnYlvdNp6g2QbrifX3A+WxSeyHXcuIukIZ6H09JN8dKjUdVT5vbgpxO9xGQJLQid25JHlkbFCIyEXPW62lCOEvOZmCxrXNyEYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AhkRhXrI; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=XL3YoXqTXWWykz7p0TgIJriEyzpp9QoZREMZEJU06k9YnlBR49jsgb5puH5T++7et9fiUnVxPkEweviddcMt8FYpEbuIw0Gv492RrPchwdq5SFsrSIyYfVryzi9qAIJ2KIovYdJKpi3Y6rD1i3y8bRW52X6k7G0sXmY4Qn5w+W0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hd9xcTAo; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AhkRhXrI"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741343554; x=1772879554;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=eaFXM5ndfzcSejieQgyRUMqCp/DYjdcvdOcHWt4mbqA=;
-  b=AhkRhXrINTsEbCMqNiN4yFC31JdFwVb2eHsOt1k4Ty4eHZGBpiePPqhR
-   3DtNyoLIIjWPR/4ZZojwBs//cyCLCLZNVjp/4azVifGKFYjsWi0J9K9aN
-   H9COqt54Yub9EzoQGLQuOpbS42o21YGb9nVIzC0RlbPCUqKPHMq8mkPLw
-   fWzLI2wlc8MbbSuhi7e8BW6rXVpvwhHTsAutaUghIZxF0gSrGJ6oyB6P+
-   iC17JYY/qTsDOInn4o/yq8KzHfVtzjFJ316GeWC6pXKyD3gfDeBQxI+nT
-   23EznovhfQMiEGDwLt067r1zZnM9ES1n/E529ucH4Rxnn+CKWZEDvSEdT
-   w==;
-X-CSE-ConnectionGUID: WszuDZ7SQmSCaPVEwIXZtw==
-X-CSE-MsgGUID: qRXUyq91QU2C6RRECqDJeg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="53023630"
-X-IronPort-AV: E=Sophos;i="6.14,228,1736841600"; 
-   d="scan'208";a="53023630"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 02:32:34 -0800
-X-CSE-ConnectionGUID: fIAv12/HSamVvCAGlF+p9A==
-X-CSE-MsgGUID: n3eYZvM/Qzy8b6cjiZJCfw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,228,1736841600"; 
-   d="scan'208";a="119117900"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by fmviesa006.fm.intel.com with ESMTP; 07 Mar 2025 02:32:32 -0800
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tqV0A-0000Jf-1P;
-	Fri, 07 Mar 2025 10:32:23 +0000
-Date: Fri, 7 Mar 2025 18:32:04 +0800
-From: kernel test robot <lkp@intel.com>
-To: Max Kellermann <max.kellermann@ionos.com>, serge@hallyn.com,
-	paul@paul-moore.com, jmorris@namei.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev,
-	Max Kellermann <max.kellermann@ionos.com>
-Subject: Re: [PATCH] security/commoncap: don't assume "setid" if all ids are
- identical
-Message-ID: <202503071808.FE4vwUc4-lkp@intel.com>
-References: <20250306082615.174777-1-max.kellermann@ionos.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hd9xcTAo"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43bc6a6aaf7so14810025e9.2;
+        Fri, 07 Mar 2025 06:15:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741356951; x=1741961751; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=kFwKmzBhAxlpLaATkDCjvlsMFFHGTZg+V5EA1F4aNnw=;
+        b=Hd9xcTAoga5Fn636t00mkP+Xpff9ItuZ6+LoQs6zX68nAba9u0hKsYfo0PZm+Gov6W
+         S9q38Yo2t2+v1UcqBlbDLa4CXPDrkfZKCHWHuCeIqhFzEbYG/u0KhjPqG97Jw+rbMRcP
+         aTggIjXse9XLpUbsY43VO9p/6GWCCFijUEOHVcEeyMdeEdWvAi23kbyilFl3KKDNuTHS
+         INwnV0BCZeutx3KaCy8JgAaOknuoXZGfE3nfv47OwZo+xzFrInF2n0oJaJczufldDFQZ
+         8uocFDvPLzsUw30icorFaK7GfKa2ITZXgIL9xzvDx3qg/6k80mKFvQlD2KDTgrocNvri
+         UH3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741356951; x=1741961751;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kFwKmzBhAxlpLaATkDCjvlsMFFHGTZg+V5EA1F4aNnw=;
+        b=AbP7J7jYFYcJjpl7yPAgEY4N4y1yUaztC1o/6HpcCEHh5nc8cDOpvNGUcCAJGwz4NU
+         b86KQzfbMond490q8KS4P/9Mlw64VNBAP2oEeeFKsPSdBnE/fIOzBMnhjDhA2wpq4JBR
+         ehSMu9e3jNnTM1AXvkdwNbcUjbgI8hbztK2nknE9Rs5YCFpyzejA9DTyr8GVO/kcyazO
+         SYkex85vwYlwcNM3ORjx/N2EgpALNGGr/y8Ir4GQmHi7h1xkKogxkGOrUXADQpfJhXfA
+         E9nCvLAJnYKU4sdlVYul5H4O49jm/ZclsmAC3Fm3Bpjviofb6jOuZK3nMbHAGOavrNHi
+         e6gg==
+X-Forwarded-Encrypted: i=1; AJvYcCVn3d/HUKLxOS+T1RMSN8k48Dh6vHxyulU7699GaUAZpFN1hk4jYFFcom5mbl/kvc79+CQPkgW4TdqyYtLx@vger.kernel.org, AJvYcCWQuthK10kN7KaKxuUATubkpzw9VaWbgD60psvZsa3Z93M0Xm0+XhIDX34FPImUflm4r77nIw==@vger.kernel.org, AJvYcCXMXOgP75a7npwGuqpYhdCByy3QHKCe0WJCwNTXdGkpT2YaESDq4dQatLcWfzz55L9uRyO/JLXOptWXGrPVqg3cj0/4lzDj@vger.kernel.org
+X-Gm-Message-State: AOJu0YztgE9HQKX2PVJ1DbCpPfZ5+Q0CLH+ElY9Zet7LyIOXPO8Sakxv
+	JukbX8zX32NFWiOtDccOwmwx8jF+R4UzkcVJZE2VANw0w5mfrBUT/t1bGMjI
+X-Gm-Gg: ASbGncv6RUS813ckTGNB0NxJ4sy6wV1jEjbXyjkZZ3gq1rk0nxNkSnlO+W2K0l8ztse
+	B8d0EjW9Efp2s11cWL/W1Pvlg7QiB9xIdU4D+WbetwCiKY6FdzcFWpqFQSOXo3GIplX7DNSIpqp
+	MsdnnfNDVHj52ReRByK6ZBTCpuxyBwssYADApdds/6p2f9O9UZ+wotrPNq+CgUUxAgwa8i1ArZl
+	gzzbC1zVLL4k/X4xi02YiF6q2B5zafq/JHokRBAWs+EBdFxWC7tInFmVKcC4vu7QKijzUOVE6lR
+	JHfd9QniyLJRaDFJKTGxC0OD38ms3bl9XZL/sY2st5uWzg==
+X-Google-Smtp-Source: AGHT+IEeQbp0KPTtaRkHZdgqyWieJ4Lpbt+72nb/jjZnESc+t/wQXHMLHCm49p2mTJWtWxtSzfV9sg==
+X-Received: by 2002:a05:600c:548c:b0:439:8bc3:a697 with SMTP id 5b1f17b1804b1-43c5a5e4f54mr26703145e9.4.1741356951169;
+        Fri, 07 Mar 2025 06:15:51 -0800 (PST)
+Received: from localhost ([2a00:79e1:abd:a201:48ff:95d2:7dab:ae81])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3912c0193bfsm5536881f8f.55.2025.03.07.06.15.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Mar 2025 06:15:50 -0800 (PST)
+Date: Fri, 7 Mar 2025 15:15:44 +0100
+From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: Eric Paris <eparis@redhat.com>, Paul Moore <paul@paul-moore.com>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	"Serge E . Hallyn" <serge@hallyn.com>,
+	Ben Scarlato <akhna@google.com>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	Charles Zaffery <czaffery@roblox.com>,
+	Daniel Burgener <dburgener@linux.microsoft.com>,
+	Francis Laniel <flaniel@linux.microsoft.com>,
+	James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
+	Jeff Xu <jeffxu@google.com>,
+	Jorge Lucangeli Obes <jorgelo@google.com>,
+	Kees Cook <kees@kernel.org>,
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+	Matt Bobrowski <mattbobrowski@google.com>,
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
+	Phil Sutter <phil@nwl.cc>,
+	Praveen K Paladugu <prapal@linux.microsoft.com>,
+	Robert Salvet <robert.salvet@roblox.com>,
+	Shervin Oloumi <enlightened@google.com>, Song Liu <song@kernel.org>,
+	Tahera Fahimi <fahimitahera@gmail.com>,
+	Tyler Hicks <code@tyhicks.com>, audit@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v5 02/24] landlock: Add unique ID generator
+Message-ID: <20250307.db38587e80e7@gnoack.org>
+References: <20250131163059.1139617-1-mic@digikod.net>
+ <20250131163059.1139617-3-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250306082615.174777-1-max.kellermann@ionos.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250131163059.1139617-3-mic@digikod.net>
 
-Hi Max,
+On Fri, Jan 31, 2025 at 05:30:37PM +0100, Mickaël Salaün wrote:
+> --- /dev/null
+> +++ b/security/landlock/id.c
+> +static atomic64_t next_id = ATOMIC64_INIT(COUNTER_PRE_INIT);
+> +
+> +static void __init init_id(atomic64_t *const counter, const u32 random_32bits)
+> +{
+> +	u64 init;
+> +
+> +	/*
+> +	 * Ensures sure 64-bit values are always used by user space (or may
+> +	 * fail with -EOVERFLOW), and makes this testable.
+> +	 */
+> +	init = 1ULL << 32;
+> +
+> +	/*
+> +	 * Makes a large (2^32) boot-time value to limit ID collision in logs
+> +	 * from different boots, and to limit info leak about the number of
+> +	 * initially (relative to the reader) created elements (e.g. domains).
+> +	 */
+> +	init += random_32bits;
+> +
+> +	/* Sets first or ignores.  This will be the first ID. */
+> +	atomic64_cmpxchg(counter, COUNTER_PRE_INIT, init);
 
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on pcmoore-selinux/next]
-[also build test WARNING on linus/master v6.14-rc5 next-20250306]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Max-Kellermann/security-commoncap-don-t-assume-setid-if-all-ids-are-identical/20250306-162826
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git next
-patch link:    https://lore.kernel.org/r/20250306082615.174777-1-max.kellermann%40ionos.com
-patch subject: [PATCH] security/commoncap: don't assume "setid" if all ids are identical
-config: arc-allnoconfig (https://download.01.org/0day-ci/archive/20250307/202503071808.FE4vwUc4-lkp@intel.com/config)
-compiler: arc-elf-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250307/202503071808.FE4vwUc4-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503071808.FE4vwUc4-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> security/commoncap.c:865: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
-    * Are all user/group ids in both cred instances identical?
+It feels like this should always need to succeed.  Or to say it the
+other way around: If this cmpxchg were to fail, the guarantees from
+your commit message would be broken.  Maybe it would be worth handling
+that error case in a more direct way?
 
 
-vim +865 security/commoncap.c
+> +static void __init test_init_once(struct kunit *const test)
+> +{
+> +	const u64 first_init = 1ULL + U32_MAX;
+> +	atomic64_t counter = ATOMIC64_INIT(COUNTER_PRE_INIT);
+> +
+> +	init_id(&counter, 0);
+> +	KUNIT_EXPECT_EQ(test, atomic64_read(&counter), first_init);
+> +
+> +	init_id(&counter, ~0);
+> +	KUNIT_EXPECT_EQ(test, atomic64_read(&counter), first_init);
 
-   863	
-   864	/**
- > 865	 * Are all user/group ids in both cred instances identical?
-   866	 *
-   867	 * It can be used after __is_setuid() / __is_setgid() to check whether
-   868	 * this is really a set*id operation or whether both processes just
-   869	 * have differing real/effective ids.  It is safe to keep differing
-   870	 * real/effective ids in "unsafe" program execution.
-   871	 */
-   872	static bool has_identical_uids_gids(const struct cred *a, const struct cred *b)
-   873	{
-   874		return uid_eq(a->uid, b->uid) &&
-   875			gid_eq(a->gid, b->gid) &&
-   876			uid_eq(a->suid, b->suid) &&
-   877			gid_eq(a->sgid, b->sgid) &&
-   878			uid_eq(a->euid, b->euid) &&
-   879			gid_eq(a->egid, b->egid) &&
-   880			uid_eq(a->fsuid, b->fsuid) &&
-   881			gid_eq(a->fsgid, b->fsgid);
-   882	}
-   883	
+Maybe we can annotate this with an explanatory message,
+to make it slightly clearer that this is the point of the test:
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+KUNIT_EXPECT_EQ_MSG(test, atomic64_read(&counter), first_init,
+    "should still have the same value after the subsequent init_id()");
+
+–Günther
