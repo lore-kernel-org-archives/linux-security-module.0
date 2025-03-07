@@ -1,81 +1,97 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C39C31A23B0;
-	Fri,  7 Mar 2025 21:47:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FE0F2580DE;
+	Fri,  7 Mar 2025 22:03:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741384061; cv=none; b=NInKWJkKU1YXSB1IdzKpOPz2as8jZXDLUHQAda/3/YXbryi8oX9Y7v+qCeBj3dd1DIXZXuN8PNOnkrgXeXlTsN2bAom0STj9FHZTQhbJx7K+a5m7O+NDqIMmLpNATM7rdGD2T2h6p4BH+zXjTIiv4BfDfclnVRHljf2BL+sr4yE=
+	t=1741385040; cv=none; b=M5UsvYLo/3djCNkrISZ31VVCKFAaw4CnKCEJM8PxGvQKH636g/LoRWax/6XVZ87Scq5iBiW814imdPSJ6ut19yDfPiCSZ4RlgGvwDJr5OnjqNQ8WFl7XMVaTiX5PO+rIyc5RdBPLqE1Kq4qmjr1w8xN3LppAvwDwc1KhBYuUXts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741384061; c=relaxed/simple;
-	bh=PgozwpVvDw4x6kQAljVRZ/c6g7ZLJ2jt4q+YmNhYcYs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YvCmBHRPwDpPoJuWCnK5tXVPYnqKTEGAok5UbRwrqiyNy+NcvPHcl94FKD6iEMZrqvdsVIKdQNK54v+0vp+X4SSe0yWqaDxoa8JwOKChXSEUcBZZzs2kcrZuVI4hJNM6g9mYl/2U8i4hy3Med/xzcxDZg9YYQnxc8BuEyiImavQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ABFCTAkC; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1741385040; c=relaxed/simple;
+	bh=JPnc25OT31Ab5OA7MLwFfd7k805GfDNT0ZgWCR8SxOI=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=RFVLqp+bvch8f7TtTRM2vBQzIgqie/4dvoeuC2aKGOoIwm2ha9l1ELrJ7+o+uQqTmdedVROF5Zhxy1tnf8uEHjuo41eYW0ik43Oa+fH2cZkQzbsWpAeeBbapOObmVqYAfeBufGeVoUpfOygazqIcdns4HxoVAa/xL52Ql0GZrS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=HWf5hds1; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ABFCTAkC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74122C4CED1;
-	Fri,  7 Mar 2025 21:47:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741384060;
-	bh=PgozwpVvDw4x6kQAljVRZ/c6g7ZLJ2jt4q+YmNhYcYs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ABFCTAkCYJGDl7FT/DQX1FAtSH/kxO34MMqrkJWriQ/XiHRvGlyrvhNCEYYOw4Kwc
-	 pAoDJx/I0fmQQoUdmubibw67HoOrTYK7Yi2iZfKIDNNO4QvQWMaxh6AZAjyfRVpzY6
-	 BvsOgKcTl0+ct+tyl5HJ0vtFaz4zEAwvR6mQ3QNEFRgMMCMelE74JDdpj3Srx5S1CA
-	 8WFjIu1M8gnuHczMjRVGEgtYuhjb6lN/LLqIbo4RZelseSE+XOVlceePJChzCc5HJM
-	 lgZcuHK+EnbrCo9xPTNH7z+vZPernPPsD6qo/2e8bOyR+FjsVZxL5X0z6h57p4o5kP
-	 akC34nyieVQDA==
-Date: Fri, 7 Mar 2025 22:47:34 +0100
-From: Nathan Chancellor <nathan@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, llvm@lists.linux.dev,
-	linux-hardening@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH] hardening: Enable i386 FORTIFY_SOURCE on Clang 16+
-Message-ID: <20250307214734.GA2871848@ax162>
-References: <20250303214929.work.499-kees@kernel.org>
- <174111064321.3934933.4843198067758331073.b4-ty@kernel.org>
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="HWf5hds1"
+Received: by linux.microsoft.com (Postfix, from userid 1212)
+	id C9FA521104A3; Fri,  7 Mar 2025 14:03:57 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C9FA521104A3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1741385037;
+	bh=lT16XPDsR04UwqlTf9Lwom2ss3+hCCwOumdIbeh1ykQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=HWf5hds1MM9buJtIuiWA6hLCE4dmrH4284q8CTfG8x4briqY7ieAy/Rz2GqLuBNKY
+	 lI1N3HwywwD+cO7I7/kosGHAIcu1vGcdIvW8dn4W/uNPZSs9Qk4XAwQKAKRlhcf1Nf
+	 1oYEqYBpl/NrYjPcnnjaEnGvBPnzkJ4TFFUMyrP8=
+From: Jasjiv Singh <jasjivsingh@linux.microsoft.com>
+To: corbet@lwn.net,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	eparis@redhat.com,
+	paul@paul-moore.com
+Cc: linux-doc@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	audit@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jasjiv Singh <jasjivsingh@linux.microsoft.com>
+Subject: [PATCH v4 0/1] ipe: add errno field to IPE policy load auditing
+Date: Fri,  7 Mar 2025 14:03:54 -0800
+Message-Id: <1741385035-22090-1-git-send-email-jasjivsingh@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <174111064321.3934933.4843198067758331073.b4-ty@kernel.org>
 
-On Tue, Mar 04, 2025 at 09:50:44AM -0800, Kees Cook wrote:
-> On Mon, 03 Mar 2025 13:49:37 -0800, Kees Cook wrote:
-> > The i386 regparm bug exposed with FORTIFY_SOURCE with Clang was fixed
-> > in Clang 16[1].
-> > 
-> > 
-> 
-> Applied to for-next/hardening, thanks!
-> 
-> [1/1] hardening: Enable i386 FORTIFY_SOURCE on Clang 16+
->       https://git.kernel.org/kees/c/3e5820429980
+Hello,
 
-Turns out this is actually incomplete based on my testing, I see the
-following warnings with ARCH=i386 allmodconfig with all supported clang
-versions:
+When deployment of a new IPE policy fails, there is no audit trail.
+The failure is written to stderr, but not to the system log. So,
+users of IPE require a way to identify when and why an operation fails,
+allowing them to both respond to violations of policy and be notified
+of potentially malicious actions on their systems with respect to IPE.
 
-  warning: unsafe strcpy() usage lacked '__write_overflow' symbol in lib/test_fortify/write_overflow-strcpy-lit.c
-  warning: unsafe strcpy() usage lacked '__write_overflow' symbol in lib/test_fortify/write_overflow-strcpy.c
+Previous Postings
+-----------------
+v3: https://lore.kernel.org/linux-security-module/1740784265-19829-1-git-send-email-jasjivsingh@linux.microsoft.com/
+v2: https://lore.kernel.org/linux-security-module/1740696377-3986-1-git-send-email-jasjivsingh@linux.microsoft.com/
+v1: https://lore.kernel.org/linux-security-module/1739569319-22015-1-git-send-email-jasjivsingh@linux.microsoft.com/
 
-We also need to drop '-ffreestanding' from arch/x86/Makefile (which Nick
-has mentioned in [1]). Time to revive [2]? :) or just do it in this
-patch, since it sounds like there was no regression with GCC?
+Changelog
+---------
 
-[1]: https://github.com/ClangBuiltLinux/linux/issues/1583#issuecomment-1123016466
-[2]: https://lore.kernel.org/20200817220212.338670-5-ndesaulniers@google.com/
+v4:
+* added a seperate errno table to IPE AUDIT_IPE_POLICY_LOAD documentation.
+* fixed error code handling that happens when memdup_user_nul is called
+  in new_policy() and update_policy().
+* added additional errno documentation to new_policy(), update_policy(),
+  ipe_new_policy() and ipe_update_policy().
+* added ENOKEY and EKEYREJECTED to IPE errno table documentation.
 
-Cheers,
-Nathan
+v3:
+* used ERR_PTR(rc) directly rather than assigning to struct ipe_policy.
+* removed unnecessary var from update_policy().
+* removed unnecessary error handling from update_policy().
+
+v2:
+* added additional IPE audit log information to commit to show the errno case.
+* changed log format from AUDIT_POLICY_LOAD_NULL_FMT to
+  AUDIT_POLICY_LOAD_FAIL_FMT.
+* removed unnecessary res var from ipe_audit_policy_load().
+* handled security fs failure case in new_policy() and update_policy().
+* handled insufficent failure case in new_policy() and update_policy().
+
+Jasjiv Singh (1):
+  ipe: add errno field to IPE policy load auditing
+
+ Documentation/admin-guide/LSM/ipe.rst | 69 +++++++++++++++++++--------
+ security/ipe/audit.c                  | 21 ++++++--
+ security/ipe/fs.c                     | 19 ++++++--
+ security/ipe/policy.c                 | 11 ++++-
+ security/ipe/policy_fs.c              | 29 ++++++++---
+ 5 files changed, 111 insertions(+), 38 deletions(-)
+
+-- 
+2.34.1
+
