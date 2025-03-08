@@ -1,39 +1,41 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01213323D;
-	Sat,  8 Mar 2025 02:47:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E35951758B;
+	Sat,  8 Mar 2025 03:44:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741402033; cv=none; b=HyBHdzqCc3WcyEDmPadtNUKSGvg83FbXpCKklJhLg0RQ5vFJhwqU0Fvgr1OJIn9v2gzTbTuni3U2cWDDJxI70VzvbtkgDEVOoumh9K3epvzp/SQnF3N6inL+7Fja0moey0Za4sxOTDh9yRSP4mOZeRXUjUGr1k54plHp659r4yY=
+	t=1741405495; cv=none; b=qODQxJzeK21bIr8t90piOHgKA2x8lA4SZ65bnoHf+MdO1DPCbc/AnW85VqN+7IRggAEod5G+6dXNQ7W/mYZJ54AsD7TzOC1WyygZwTEGyDvU7BNPq+wrmrz9AQyskzy38Ffkqy4UeU6t38trZLAE5MXasj0YvYV1aaOPh0sThy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741402033; c=relaxed/simple;
-	bh=5cdZLxJnq6R8e9bUBQI6oyxbuFAODFCfWGehIsbGSwA=;
+	s=arc-20240116; t=1741405495; c=relaxed/simple;
+	bh=9FXqXEgPrSCUdss8mDXDjVLyF7i2swbdCmkkvaXmW1A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SCtQldZCeLwDolJAzDLHonQQM6v7Cpaa+3oSuP3pXlG2+5oFWvj1QBMsh0W+5M4wsYqdjJBO+u9LNcxU5OK6bMTuN5wGDqIlyJU/LooJaPkONbOCjfMPdQBjZD581g7YpnhhiHzCV2xJgY3hyzbfxNdSGc2dcgG3dGI9xp5kGWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vBPSdq8r; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=KXobNatvN35Z9m8IuNQpusnTsnn1lPuj8p+cOWeD5IxOIWmA3x6ZjTlWmSButziuKPVs9tTvtNyvtPBY3tqRx7jfx0eZxBU+JGjRoYrMIrumx/A1lemUWOv9K2q0OCDi2UtiICdRWrwNgYxG8P4kUvoQvsQkjtbIHGil7XoqHs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SDYEpfkv; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vBPSdq8r"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CC79C4CED1;
-	Sat,  8 Mar 2025 02:47:11 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SDYEpfkv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 340BFC4CED1;
+	Sat,  8 Mar 2025 03:44:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741402032;
-	bh=5cdZLxJnq6R8e9bUBQI6oyxbuFAODFCfWGehIsbGSwA=;
+	s=k20201202; t=1741405494;
+	bh=9FXqXEgPrSCUdss8mDXDjVLyF7i2swbdCmkkvaXmW1A=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vBPSdq8rpqH6IZwr8EG2o/r+RNjHe+AGHpm+jX0Fl/jPfapJdRTvFYQoHhggnvinR
-	 hrGteWfIEM6XznJ0U3f70e2AP77JLiRXqVm3sJzGxIdX3Qo/40yUCxzvxEUscwlLf7
-	 BQzbCp61vmybz3QDIw9OS5iw/lnK3+y0FY1CQsvZIlV7uZqxU5uHqJe6ZGgXw0jCZW
-	 EFB733A75t3c2nixgAAMarWQrZImZHhbwalU+dnuvk0/+zLmujY5hqEg5fF+e3s8Xk
-	 YDZk6QGtbjn02cLnwz8dD+pvXCsKkuJOpo7yX+GHtE0M5KIU5ohTWymuuCzeQh5+wE
-	 7EXFj2l92JWPw==
-Date: Sat, 8 Mar 2025 02:47:08 +0000
+	b=SDYEpfkv1LnTuakx0Jefgl82P7kqsmINLdpgFAwvNUt9dtEMj84obMfxepV0tK/as
+	 DwiGHIzea7o56O4Ug8PfBYvqIFl+QCZjrHS4lvD8udn+Y39NzYbCRfzHatK7XLp8mb
+	 NYLGzTFxwfnVqM0mffjsBxprAJRINN5nWyEUSSiZ1NMsZzV5FJbp00BEEjW9q0AUW0
+	 dJ+t97GkpnIZaKlKKMHQkC8v8Hsi0ksOUk3o5LKd14rOL32x7k6BmP4X+CW4WkLVf4
+	 5HCVM7RxlvSy5J693GMJzF6rT4Tlb37gI4rYKgrlitggQjkXprzB3tPWtm1JFMecSM
+	 jOEBCndUXpf6g==
+Date: Sat, 8 Mar 2025 03:44:50 +0000
 From: sergeh@kernel.org
 To: Paul Moore <paul@paul-moore.com>
-Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH] MAINTAINERS: add an explicit credentials entry
-Message-ID: <Z8uvrJRfu4-0lk-I@lei>
-References: <20250304222304.214704-2-paul@paul-moore.com>
- <CAHC9VhRW4Be+uBbtgCRvSkUj1-CtYFZ9jbD9MZM70i7GhF624Q@mail.gmail.com>
+Cc: linux@treblig.org, serge@hallyn.com,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] capability: Remove unused has_capability
+Message-ID: <Z8u9MhM450tD3lYe@lei>
+References: <20241219172859.188117-1-linux@treblig.org>
+ <CAHC9VhQ73qdL2Qf-jOMMVSf=+h-H8K+mz165XZztb5X6XjH11w@mail.gmail.com>
+ <CAHC9VhTuvNuNfeLrR+5b+LOB_kC8a_67EvLPnOJO4vcvkcuMYQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -43,59 +45,41 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhRW4Be+uBbtgCRvSkUj1-CtYFZ9jbD9MZM70i7GhF624Q@mail.gmail.com>
+In-Reply-To: <CAHC9VhTuvNuNfeLrR+5b+LOB_kC8a_67EvLPnOJO4vcvkcuMYQ@mail.gmail.com>
 
-On Fri, Mar 07, 2025 at 12:13:08PM -0500, Paul Moore wrote:
-> On Tue, Mar 4, 2025 at 5:23 PM Paul Moore <paul@paul-moore.com> wrote:
+On Wed, Feb 26, 2025 at 07:08:52PM -0500, Paul Moore wrote:
+> On Thu, Dec 19, 2024 at 1:28 PM Paul Moore <paul@paul-moore.com> wrote:
 > >
-> > The lack of an explicit credential (kernel/cred.c) entry has caused
-> > confusion in the past among new, and not-so-new developers, about where
-> > to send credential patches for discussion and merging.  Those patches
-> > that are sent can often rot on the mailing lists for months as there
-> > is no clear maintainer tasked with reviewing and merging patches.
+> > On Thu, Dec 19, 2024 at 12:29 PM <linux@treblig.org> wrote:
+> > >
+> > > From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> > >
+> > > The vanilla has_capability() function has been unused since 2018's
+> > > commit dcb569cf6ac9 ("Smack: ptrace capability use fixes")
+> > >
+> > > Remove it.
+> > >
+> > > Fixup a comment in security/commoncap.c that referenced it.
+> > >
+> > > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> > > ---
+> > >  include/linux/capability.h |  5 -----
+> > >  kernel/capability.c        | 16 ----------------
+> > >  security/commoncap.c       |  9 +++++----
+> > >  3 files changed, 5 insertions(+), 25 deletions(-)
 > >
-> > I'm volunteering for the cred maintainer role to try and reduce the
-> > confusion and help cred patches find their way up to Linus' tree.  As
-> > there generally aren't a lot of cred patches I'll start with simply
-> > folding them into the LSM tree, but if this changes I'll setup a
-> > dedicated cred tree.
+> > Now that Serge has the capabilities tree back up and running I'm
+> > assuming he will grab this patch, if not just let me know Serge and I
+> > can take it.
 > >
-> > Signed-off-by: Paul Moore <paul@paul-moore.com>
-> > ---
-> >  MAINTAINERS | 8 ++++++++
-> >  1 file changed, 8 insertions(+)
+> > Reviewed-by: Paul Moore <paul@paul-moore.com>
 > 
-> I haven't seen any objections, or any other volunteers, so I'm going
-> to go ahead and merge this to send up to Linus during the upcoming
-> merge window.
+> Bump this thread to make sure Serge sees it ...
 
-Sorry, I managed to not take my personal laptop charger with me
-on a trip this week, fell behind.
+d'oh, sorry, yes
 
-I'm very happy with you as the maintainer, but I do volunteer to
-try and step in here, if that works.
+Acked-by: Serge Hallyn <serge@hallyn.com>
 
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 896a307fa065..68e4656c15ea 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -6139,6 +6139,14 @@ L:       linux-input@vger.kernel.org
-> >  S:     Maintained
-> >  F:     drivers/hid/hid-creative-sb0540.c
-> >
-> > +CREDENTIALS
-> > +M:     Paul Moore <paul@paul-moore.com>
-> > +L:     linux-security-module@vger.kernel.org
-> > +S:     Supported
-> > +T:     git https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git
-> > +F:     include/linux/cred.h
-> > +F:     kernel/cred.c
-> > +
-> >  INTEL CRPS COMMON REDUNDANT PSU DRIVER
-> >  M:     Ninad Palsule <ninad@linux.ibm.com>
-> >  L:     linux-hwmon@vger.kernel.org
-> > --
-> > 2.48.1
-> 
-> -- 
-> paul-moore.com
+I will apply this now.
+
+-serge
