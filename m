@@ -1,85 +1,104 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E35951758B;
-	Sat,  8 Mar 2025 03:44:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7769157E6B;
+	Sat,  8 Mar 2025 04:29:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741405495; cv=none; b=qODQxJzeK21bIr8t90piOHgKA2x8lA4SZ65bnoHf+MdO1DPCbc/AnW85VqN+7IRggAEod5G+6dXNQ7W/mYZJ54AsD7TzOC1WyygZwTEGyDvU7BNPq+wrmrz9AQyskzy38Ffkqy4UeU6t38trZLAE5MXasj0YvYV1aaOPh0sThy0=
+	t=1741408174; cv=none; b=E/L1ZzlURiYCIenQyU0WPnm1q1Ne+h7zyUeg8UlJsQPvkty9R2sEBAZH2MB2lz0d+Q5xHrPnE6ELmn2au/WT+vSrk7PT3p4q2lYXo1PuHME7aGt5w+VRDAf6UbcDwirxGQQF115WddIf3/nafmzPAMDwo5Z1lfosYHX5BFdRiX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741405495; c=relaxed/simple;
-	bh=9FXqXEgPrSCUdss8mDXDjVLyF7i2swbdCmkkvaXmW1A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KXobNatvN35Z9m8IuNQpusnTsnn1lPuj8p+cOWeD5IxOIWmA3x6ZjTlWmSButziuKPVs9tTvtNyvtPBY3tqRx7jfx0eZxBU+JGjRoYrMIrumx/A1lemUWOv9K2q0OCDi2UtiICdRWrwNgYxG8P4kUvoQvsQkjtbIHGil7XoqHs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SDYEpfkv; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1741408174; c=relaxed/simple;
+	bh=1j0h8OtnNFUQUxMM67AhFj6DZDQadLIty5DwtZAN0gA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=RwWXHiBxrf26yJQeEKESpGRVHxUmGBUjzy7HByBbwdICZ7iFL+UH6R9+OAbjqxiI60iuivLy6CeMl5E69gpu/IPzVkLnyg05D4axtLOt/qBE2zNdKtT7tHaguoUle6+IFJC5N5ubI6kh+f7OwUDgbrFx5Qb9dybWP+eUne3B+fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aCoXdW56; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SDYEpfkv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 340BFC4CED1;
-	Sat,  8 Mar 2025 03:44:53 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aCoXdW56"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F857C4CEE0;
+	Sat,  8 Mar 2025 04:29:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741405494;
-	bh=9FXqXEgPrSCUdss8mDXDjVLyF7i2swbdCmkkvaXmW1A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SDYEpfkv1LnTuakx0Jefgl82P7kqsmINLdpgFAwvNUt9dtEMj84obMfxepV0tK/as
-	 DwiGHIzea7o56O4Ug8PfBYvqIFl+QCZjrHS4lvD8udn+Y39NzYbCRfzHatK7XLp8mb
-	 NYLGzTFxwfnVqM0mffjsBxprAJRINN5nWyEUSSiZ1NMsZzV5FJbp00BEEjW9q0AUW0
-	 dJ+t97GkpnIZaKlKKMHQkC8v8Hsi0ksOUk3o5LKd14rOL32x7k6BmP4X+CW4WkLVf4
-	 5HCVM7RxlvSy5J693GMJzF6rT4Tlb37gI4rYKgrlitggQjkXprzB3tPWtm1JFMecSM
-	 jOEBCndUXpf6g==
-Date: Sat, 8 Mar 2025 03:44:50 +0000
-From: sergeh@kernel.org
-To: Paul Moore <paul@paul-moore.com>
-Cc: linux@treblig.org, serge@hallyn.com,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] capability: Remove unused has_capability
-Message-ID: <Z8u9MhM450tD3lYe@lei>
-References: <20241219172859.188117-1-linux@treblig.org>
- <CAHC9VhQ73qdL2Qf-jOMMVSf=+h-H8K+mz165XZztb5X6XjH11w@mail.gmail.com>
- <CAHC9VhTuvNuNfeLrR+5b+LOB_kC8a_67EvLPnOJO4vcvkcuMYQ@mail.gmail.com>
+	s=k20201202; t=1741408173;
+	bh=1j0h8OtnNFUQUxMM67AhFj6DZDQadLIty5DwtZAN0gA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=aCoXdW56Waja8rloem07n/T3Z7He8K+oR7T1mJD4URQe3svc+xvFjmXeygCCIN4RR
+	 NtXp46sMWm5cF0wtlYVV4PeQfWfqfSeJJ9iXzaeNtcg2vSScVL/83h9fRGTmV5qoLu
+	 O27qNhKKg/Rvw63W35dINW/lbJqhSUoxYV03aAUQ/ndCjBY/O5vmov7yGwi0Au59ev
+	 RyTZ/rgjKuw6Za/lwfjyD6ymSzeyd2gjOKfvLe7nVsH6+K/x+UdGt9kPeYvEWdRzgI
+	 xBSVWnOc+iBNyCjp5IxYUMd/gzvWVAFv6B0t6My7v9dybY/HhiBM1Ld20XDeaHPHPj
+	 UvkdhkzTx+u6g==
+From: Kees Cook <kees@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Kees Cook <kees@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	linux-kernel@vger.kernel.org,
+	x86@kernel.org,
+	linux-hardening@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: [PATCH v2 2/2] hardening: Enable i386 FORTIFY_SOURCE on Clang 16+
+Date: Fri,  7 Mar 2025 20:29:26 -0800
+Message-Id: <20250308042929.1753543-2-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250308041950.it.402-kees@kernel.org>
+References: <20250308041950.it.402-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1479; i=kees@kernel.org; h=from:subject; bh=1j0h8OtnNFUQUxMM67AhFj6DZDQadLIty5DwtZAN0gA=; b=owGbwMvMwCVmps19z/KJym7G02pJDOmnjy9tfzHvTKpM+hK2b+J5vOv2PAw7sqQl3eIp82zzy swUOcc5HaUsDGJcDLJiiixBdu5xLh5v28Pd5yrCzGFlAhnCwMUpABPxX8nIsLFw08RJ9znbA7MM p5wqX/ps1mqPYMG3P0KZ5jUFC/2K0WP4Z/lqcRG/xMFPd68G1ujb3eS+cibMd+VsK8kCFb9/Bke msgAA
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhTuvNuNfeLrR+5b+LOB_kC8a_67EvLPnOJO4vcvkcuMYQ@mail.gmail.com>
 
-On Wed, Feb 26, 2025 at 07:08:52PM -0500, Paul Moore wrote:
-> On Thu, Dec 19, 2024 at 1:28 PM Paul Moore <paul@paul-moore.com> wrote:
-> >
-> > On Thu, Dec 19, 2024 at 12:29 PM <linux@treblig.org> wrote:
-> > >
-> > > From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> > >
-> > > The vanilla has_capability() function has been unused since 2018's
-> > > commit dcb569cf6ac9 ("Smack: ptrace capability use fixes")
-> > >
-> > > Remove it.
-> > >
-> > > Fixup a comment in security/commoncap.c that referenced it.
-> > >
-> > > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> > > ---
-> > >  include/linux/capability.h |  5 -----
-> > >  kernel/capability.c        | 16 ----------------
-> > >  security/commoncap.c       |  9 +++++----
-> > >  3 files changed, 5 insertions(+), 25 deletions(-)
-> >
-> > Now that Serge has the capabilities tree back up and running I'm
-> > assuming he will grab this patch, if not just let me know Serge and I
-> > can take it.
-> >
-> > Reviewed-by: Paul Moore <paul@paul-moore.com>
-> 
-> Bump this thread to make sure Serge sees it ...
+The i386 regparm bug exposed with FORTIFY_SOURCE with Clang was fixed
+in Clang 16[1].
 
-d'oh, sorry, yes
+Link: https://github.com/llvm/llvm-project/commit/c167c0a4dcdb998affb2756ce76903a12f7d8ca5 [1]
+Signed-off-by: Kees Cook <kees@kernel.org>
+---
+ arch/x86/Makefile          | 2 +-
+ security/Kconfig.hardening | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Acked-by: Serge Hallyn <serge@hallyn.com>
+diff --git a/arch/x86/Makefile b/arch/x86/Makefile
+index d25ed25fb7d9..917459d1ad40 100644
+--- a/arch/x86/Makefile
++++ b/arch/x86/Makefile
+@@ -137,7 +137,7 @@ ifeq ($(CONFIG_X86_32),y)
+         include $(srctree)/arch/x86/Makefile_32.cpu
+         KBUILD_CFLAGS += $(cflags-y)
+ 
+-    ifeq ($(CONFIG_CC_IS_CLANG),y)
++    ifneq ($(call clang-min-version, 160000),y)
+         # temporary until string.h is fixed
+         KBUILD_CFLAGS += -ffreestanding
+     endif
+diff --git a/security/Kconfig.hardening b/security/Kconfig.hardening
+index 23ffb0d7c845..c17366ce8224 100644
+--- a/security/Kconfig.hardening
++++ b/security/Kconfig.hardening
+@@ -286,7 +286,7 @@ config FORTIFY_SOURCE
+ 	bool "Harden common str/mem functions against buffer overflows"
+ 	depends on ARCH_HAS_FORTIFY_SOURCE
+ 	# https://github.com/llvm/llvm-project/issues/53645
+-	depends on !CC_IS_CLANG || !X86_32
++	depends on !X86_32 || !CC_IS_CLANG || CLANG_VERSION >= 160000
+ 	help
+ 	  Detect overflows of buffers in common string and memory functions
+ 	  where the compiler can determine and validate the buffer sizes.
+-- 
+2.34.1
 
-I will apply this now.
-
--serge
