@@ -1,101 +1,103 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D3BDC2FA;
-	Sat,  8 Mar 2025 09:19:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DAA4D528;
+	Sat,  8 Mar 2025 12:29:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741425559; cv=none; b=oTcIULLNGnenquPGw6GZkIfIFge+qp3ln17fbRKyHGE+FSQ/ud8s+uJ1yLr/LKgV++JY47zLsC9fO6x5GmA/tj485Fi4Y4/76o9fOnEvlcfGQhQS2frBGqVVv+AqVKr3ZkXtpDeKBjbxIcVhE/ACb/pArNMublwIAPZJzdGyudc=
+	t=1741436967; cv=none; b=eeRKEuATxrTqIS2Y6m5vfPKwc6ME9vFko1MrkmuaMvQmXE8gZVL2EsCSWa3+seZwqDJjAMqL9DZa+TIYONlNhmpRBDQtn4ZMGBJbT7K/Dbg8b3YPddc7SssKGPbQnyHjMFy4rtallyKaDSqu6m0stMODtc9u+8x974YYgYKnYPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741425559; c=relaxed/simple;
-	bh=Ieg1q79Hcv6gSb0ZE6qA+0UrSjfMW6nYXnbS6hAMk+8=;
+	s=arc-20240116; t=1741436967; c=relaxed/simple;
+	bh=IhaxkifnhpsrsORjzS9wgFiE3rx1yAxDAbOLByYxRq0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t1OGHvsksf9jsW3rDaUJJfOtfbOmU26lg7IG074SOOv0BZPVUuA3iggXr/9j0cAq0uBtlTb0qPq4J0XdIlM2ASHt7Cfm6IlwaWcfxf3ufhWikQaxDF0IYZr1Tn7gYmuPf9+nfAZ6+RGwRNa32RpcwdyNED6UqhOr3IBy5w41UiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fAp6aWmJ; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=XCvEK05eYMO5vcoC39asETNmTmTQNcIJM1hKe3EJswRmfIczMFlpbgU5Jv97EIfeMHw+KzkxLhdykPx3RCskoMeZ8PrJryaI1BFqPWLEXKvuQeWaAyAOKYxIk4GD+B6j4d5oGbRqqcjI3PO/2Y6KPqUi/4nPSIW500IuGOKOcI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=jqyHr69v; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fAp6aWmJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C07A8C4CEE0;
-	Sat,  8 Mar 2025 09:19:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741425558;
-	bh=Ieg1q79Hcv6gSb0ZE6qA+0UrSjfMW6nYXnbS6hAMk+8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fAp6aWmJeivv6QyATp3ReT0ECaz2v6QFa3bsz/ovFWr3P+gEO4WtTdj9mBb3shHbG
-	 sOZ/QBpqyAfGeXLYW/guDzyOtAVVgIad1IDo+HlSY2AD++IGSIZb+S9NMIhLQ9yBvj
-	 ba9CnPWx108dFCY4g5EcusV2QgUtt3I2kk/aPfK+0DpSPc4wYcWoaL1rhC35yUG553
-	 s9cvwBs9YypMHs7zMhiaICdpOZcKulSrRaldeQYmz7LDMfMp1zVfDayZ5YSGbrAbk5
-	 OkN36DTGyCgIlCvXOf/26IQWbjnSECMAf0Nf4/zLP2wS9+uiKRA8NfWYQL0yGoixQa
-	 U2HMR6oX+G1ag==
-Date: Sat, 8 Mar 2025 10:19:11 +0100
-From: Nathan Chancellor <nathan@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org,
-	x86@kernel.org, linux-hardening@vger.kernel.org,
-	linux-security-module@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH v2 2/2] hardening: Enable i386 FORTIFY_SOURCE on Clang 16+
-Message-ID: <20250308091911.GB707537@ax162>
-References: <20250308041950.it.402-kees@kernel.org>
- <20250308042929.1753543-2-kees@kernel.org>
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="jqyHr69v"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=EXlQXUiLdWnzgegzXlB07qgX7dan9uvz07XLUHH+YpM=; b=jqyHr69vkcwsq7iG
+	xO6IcYePXX/n8RLPuGZOElm//YKd4RNJPv5XqBOmReZjirhOMqfar1C0F+MpJF7mIf4ZA648X+a1w
+	hB0xUPPmHU4KYQCqeEeLjna06LDZ4LqKKYcUrMPY0HyzA65zfNHYWofWast6awH+EegrLy/jkCl5E
+	QUrPicDVLlPdhDi+7ZbgEK7O20miVSKoTr/HsJwnD09bYiju7eE3If8YRxRK6SJ5xvvKDYkc1ce4l
+	L2MUNq/dB5o6VviTCRlaBJvIeYRByNJUJ4xs9PbXV1HjOH14y60keZVU8LdvHHUyUoh3e843XG56o
+	y9Xy3Bqt52B/S+6rHw==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1tqtIj-003b96-2N;
+	Sat, 08 Mar 2025 12:29:09 +0000
+Date: Sat, 8 Mar 2025 12:29:09 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: sergeh@kernel.org
+Cc: Paul Moore <paul@paul-moore.com>, serge@hallyn.com,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] capability: Remove unused has_capability
+Message-ID: <Z8w4FWl03gHYggPp@gallifrey>
+References: <20241219172859.188117-1-linux@treblig.org>
+ <CAHC9VhQ73qdL2Qf-jOMMVSf=+h-H8K+mz165XZztb5X6XjH11w@mail.gmail.com>
+ <CAHC9VhTuvNuNfeLrR+5b+LOB_kC8a_67EvLPnOJO4vcvkcuMYQ@mail.gmail.com>
+ <Z8u9MhM450tD3lYe@lei>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250308042929.1753543-2-kees@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z8u9MhM450tD3lYe@lei>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 12:29:01 up 303 days, 23:43,  1 user,  load average: 0.00, 0.00,
+ 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-On Fri, Mar 07, 2025 at 08:29:26PM -0800, Kees Cook wrote:
-> The i386 regparm bug exposed with FORTIFY_SOURCE with Clang was fixed
-> in Clang 16[1].
+* sergeh@kernel.org (sergeh@kernel.org) wrote:
+> On Wed, Feb 26, 2025 at 07:08:52PM -0500, Paul Moore wrote:
+> > On Thu, Dec 19, 2024 at 1:28 PM Paul Moore <paul@paul-moore.com> wrote:
+> > >
+> > > On Thu, Dec 19, 2024 at 12:29 PM <linux@treblig.org> wrote:
+> > > >
+> > > > From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> > > >
+> > > > The vanilla has_capability() function has been unused since 2018's
+> > > > commit dcb569cf6ac9 ("Smack: ptrace capability use fixes")
+> > > >
+> > > > Remove it.
+> > > >
+> > > > Fixup a comment in security/commoncap.c that referenced it.
+> > > >
+> > > > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> > > > ---
+> > > >  include/linux/capability.h |  5 -----
+> > > >  kernel/capability.c        | 16 ----------------
+> > > >  security/commoncap.c       |  9 +++++----
+> > > >  3 files changed, 5 insertions(+), 25 deletions(-)
+> > >
+> > > Now that Serge has the capabilities tree back up and running I'm
+> > > assuming he will grab this patch, if not just let me know Serge and I
+> > > can take it.
+> > >
+> > > Reviewed-by: Paul Moore <paul@paul-moore.com>
+> > 
+> > Bump this thread to make sure Serge sees it ...
 > 
-> Link: https://github.com/llvm/llvm-project/commit/c167c0a4dcdb998affb2756ce76903a12f7d8ca5 [1]
-> Signed-off-by: Kees Cook <kees@kernel.org>
+> d'oh, sorry, yes
+> 
+> Acked-by: Serge Hallyn <serge@hallyn.com>
+> 
+> I will apply this now.
 
-Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+Thanks!
 
-> ---
->  arch/x86/Makefile          | 2 +-
->  security/Kconfig.hardening | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/x86/Makefile b/arch/x86/Makefile
-> index d25ed25fb7d9..917459d1ad40 100644
-> --- a/arch/x86/Makefile
-> +++ b/arch/x86/Makefile
-> @@ -137,7 +137,7 @@ ifeq ($(CONFIG_X86_32),y)
->          include $(srctree)/arch/x86/Makefile_32.cpu
->          KBUILD_CFLAGS += $(cflags-y)
->  
-> -    ifeq ($(CONFIG_CC_IS_CLANG),y)
-> +    ifneq ($(call clang-min-version, 160000),y)
->          # temporary until string.h is fixed
->          KBUILD_CFLAGS += -ffreestanding
->      endif
-> diff --git a/security/Kconfig.hardening b/security/Kconfig.hardening
-> index 23ffb0d7c845..c17366ce8224 100644
-> --- a/security/Kconfig.hardening
-> +++ b/security/Kconfig.hardening
-> @@ -286,7 +286,7 @@ config FORTIFY_SOURCE
->  	bool "Harden common str/mem functions against buffer overflows"
->  	depends on ARCH_HAS_FORTIFY_SOURCE
->  	# https://github.com/llvm/llvm-project/issues/53645
-> -	depends on !CC_IS_CLANG || !X86_32
-> +	depends on !X86_32 || !CC_IS_CLANG || CLANG_VERSION >= 160000
->  	help
->  	  Detect overflows of buffers in common string and memory functions
->  	  where the compiler can determine and validate the buffer sizes.
-> -- 
-> 2.34.1
-> 
+Dave
+
+> -serge
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
