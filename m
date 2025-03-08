@@ -1,226 +1,113 @@
-Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [185.125.25.10])
+Received: from smtp-42ab.mail.infomaniak.ch (smtp-42ab.mail.infomaniak.ch [84.16.66.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6644615B54C
-	for <linux-security-module@vger.kernel.org>; Sat,  8 Mar 2025 18:50:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 969E2155316
+	for <linux-security-module@vger.kernel.org>; Sat,  8 Mar 2025 18:57:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741459815; cv=none; b=L0vHht8ICh3RM4kpxxCmwQt8xzeWySYqFzPuAFaoEIelYbZ+AjWTvTTE6Ur02uWHUHyX+V0y3sYEmVRDzAYFlORSN6ofgwDQyGUy6Fbs4S6GdWMHUYXUJK0qmSzHH+2c/yVkrFBfRkE1JG0nkXQmc6CmpqwbOlK21Fiz7RwDjKM=
+	t=1741460226; cv=none; b=sjIEFBIsOWGCHOKwoetGCSPrCt7dDiuUFb2YVEdPl+ZB87mMPYGCBDviFaoB910Z5nLq9MmTTyBTzg2ex2bM2x5iltN219cFvcZUWGVcJNgOWHhxIiiLgKIZvjYSkD8UP6wqI+b1UjDP/Pqjse9kYcYqlIN0b+MV+K9Sx6byqcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741459815; c=relaxed/simple;
-	bh=KYgdmaFLVxr4Nl1672jOHSH4mVTZf+6+AlybgZlnzJc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aqSehGK5e4tfhA5DphPRM1Zr/r3adgaRFA9S/luUS/pj8VpeVvChZEh6/FcNy+hklwPpsSiQQESbgmdOCZHk/t2m4IvnpTC++8+wDKWyEkJzIESEKUXN6iwcF0qdkTrImtwpuj9ygcjBxEigNJJfX4iX3h6oPAs3Obu8kGWmyBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=aUqX/Ixj; arc=none smtp.client-ip=185.125.25.10
+	s=arc-20240116; t=1741460226; c=relaxed/simple;
+	bh=wh7NMuVU/yeJzdTWiZ9PoAv+sFHlABIYCbgQhOV7TIo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rNINhO+Nh1f6dRAgHwGSfEgciqMXLcrkg4dSyqbsstEapKRNKarQXpVKjrBAJPT2EfSJusEaNok7dOwIq8r2LvUHv91ZqFrnv9T7zLV5UlbzAZQZFwpgFLkAG4OjPtSZ6vT35V45m+CYGqFjvrE81LN9ZsCDnC/C8gtA7mHR7LE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=k/JDseeW; arc=none smtp.client-ip=84.16.66.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="aUqX/Ixj"
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Z9BsS6JV8zNrt;
-	Sat,  8 Mar 2025 19:44:44 +0100 (CET)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="k/JDseeW"
+Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10:40ca:feff:fe05:1])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Z9C7f0MkyzTqY;
+	Sat,  8 Mar 2025 19:57:02 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1741459484;
-	bh=w+iB3Ja2zMoCMbnIyQGhhP5gE1y+T8FmeGt8Bxld6jA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=aUqX/IxjbdUnsw8qS1fKlpM/OtrETjXdizkvKVl+kitbzI47tWrBVIPhLeN158XT9
-	 3GAA5KzThdNlwdIWVdCTlARtHPeJXQTIHWmRtKP8pwvQSssM4CcRa3JwBD4WLAJKDa
-	 bA+64M0VIg8sFESmERAQv5hXCKQ+LjdW2YZn9QY0=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Z9BsS11vTzsl6;
-	Sat,  8 Mar 2025 19:44:44 +0100 (CET)
-From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To: Eric Paris <eparis@redhat.com>,
-	Paul Moore <paul@paul-moore.com>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	"Serge E . Hallyn" <serge@hallyn.com>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	Ben Scarlato <akhna@google.com>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	Charles Zaffery <czaffery@roblox.com>,
-	Daniel Burgener <dburgener@linux.microsoft.com>,
-	Francis Laniel <flaniel@linux.microsoft.com>,
-	James Morris <jmorris@namei.org>,
-	Jann Horn <jannh@google.com>,
-	Jeff Xu <jeffxu@google.com>,
-	Jorge Lucangeli Obes <jorgelo@google.com>,
-	Kees Cook <kees@kernel.org>,
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-	Matt Bobrowski <mattbobrowski@google.com>,
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
-	Phil Sutter <phil@nwl.cc>,
-	Praveen K Paladugu <prapal@linux.microsoft.com>,
-	Robert Salvet <robert.salvet@roblox.com>,
-	Shervin Oloumi <enlightened@google.com>,
-	Song Liu <song@kernel.org>,
-	Tahera Fahimi <fahimitahera@gmail.com>,
-	Tingmao Wang <m@maowtm.org>,
-	Tyler Hicks <code@tyhicks.com>,
-	audit@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: [PATCH v6 08/26] landlock: Identify domain execution crossing
-Date: Sat,  8 Mar 2025 19:44:04 +0100
-Message-ID: <20250308184422.2159360-9-mic@digikod.net>
-In-Reply-To: <20250308184422.2159360-1-mic@digikod.net>
-References: <20250308184422.2159360-1-mic@digikod.net>
+	s=20191114; t=1741460221;
+	bh=XYCSheedmEb88n/QdCp4PW7LeCxkFSk6I5N6pk+GSbA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=k/JDseeW1ho0TNElASkEPkR0kTvxiDpgsfffLpBay0nnxLGuphlJXAombq9a+vLt2
+	 pLE3hf492YE0Kqmdd4tt5jfw3utvXd9FCx65HxrWjx6ld5AujnNCxh7AD7nQzjIr+r
+	 MXu7+L6z55q02+v4KcFC1A4dmYETlNnmIamrzdB8=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Z9C7d0JLyzk3x;
+	Sat,  8 Mar 2025 19:57:01 +0100 (CET)
+Date: Sat, 8 Mar 2025 19:57:00 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Tingmao Wang <m@maowtm.org>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	Jan Kara <jack@suse.cz>, linux-security-module@vger.kernel.org, 
+	Amir Goldstein <amir73il@gmail.com>, Matthew Bobrowski <repnop@google.com>, 
+	linux-fsdevel@vger.kernel.org, Tycho Andersen <tycho@tycho.pizza>, 
+	Christian Brauner <brauner@kernel.org>, Kees Cook <kees@kernel.org>, Jeff Xu <jeffxu@google.com>, 
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, Francis Laniel <flaniel@linux.microsoft.com>, 
+	Matthieu Buffet <matthieu@buffet.re>
+Subject: Re: [RFC PATCH 0/9] Landlock supervise: a mechanism for interactive
+ permission requests
+Message-ID: <20250308.uCiaz4Thah7O@digikod.net>
+References: <cover.1741047969.git.m@maowtm.org>
+ <20250304.Choo7foe2eoj@digikod.net>
+ <f6ef02c3-ad22-4dc6-b584-93276509dbeb@maowtm.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <f6ef02c3-ad22-4dc6-b584-93276509dbeb@maowtm.org>
 X-Infomaniak-Routing: alpha
 
-Extend struct landlock_cred_security with a domain_exec bitmask to
-identify which Landlock domain were created by the current task's bprm.
-This is reset on each execve(2) call.
+On Thu, Mar 06, 2025 at 02:57:13AM +0000, Tingmao Wang wrote:
+> On 3/4/25 19:48, Mickaël Salaün wrote:
+> 
+> > Thanks for this RFC, this is very promising!
+> 
+> Hi Mickaël - thanks for the prompt review and for your support! I have read
+> your replies and have some thoughts already, but I kept getting distracted
+> by other stuff and so haven't had much chance to express them.  I will
+> address some first today and some more over the weekend.
+> 
+> > Another interesting use case is to trace programs and get an
+> > unprivileged "permissive" mode to quickly create sandbox policies.
+> 
+> Yes that would also be a good use. I thought of this initially but was
+> thinking "I guess you can always do that with audit" but if we have landlock
+> supervise maybe that would be an easier thing for tools to build upon...?
 
-Cc: Günther Noack <gnoack@google.com>
-Cc: Paul Moore <paul@paul-moore.com>
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Link: https://lore.kernel.org/r/20250308184422.2159360-9-mic@digikod.net
----
+Both approaches are valuable.  The supervisor one would be unprivileged,
+could get access to more information including O_PATH FD's, but it is
+much slower and relies on user space monitoring code.
 
-Changes since v5:
-- Add documentation and pack struct landlock_cred_security to minimize
-  struct landlock_file_security.
+> 
+> > As discussed, I was thinking about whether or not it would be possible
+> > to use the fanotify interface (e.g. fanotify_init(), fanotify FD...),
+> > but looking at your code, I think it would mostly increase complexity.
+> > There are also the issue with the Landlock semantic (e.g. access rights)
+> > which does not map 1:1 to the fanotify one.  A last thing is that
+> > fanotify is deeply tied to the VFS.  So, unless someone has a better
+> > idea, let's continue with your approach.
+> 
+> That sounds sensible - I will keep going with the current direction of a
+> landlock-specific uapi. (happy to revisit should other people have
+> suggestions)
+> 
+> > Android's SDCardFS is another example of such use.
+> 
+> Interesting - seems like it was deprecated for reasons unrelated to security
+> though.
 
-Changes since v4:
-- New patch.
----
- security/landlock/cred.c     | 26 ++++++++++++++++++++++----
- security/landlock/cred.h     | 32 +++++++++++++++++++++++++++++++-
- security/landlock/syscalls.c |  5 +++++
- 3 files changed, 58 insertions(+), 5 deletions(-)
+Yes, Android first used FUSE, then SDCardFS, then FUSE again, but the
+goal has been the same:
+https://source.android.com/docs/core/storage/scoped
 
-diff --git a/security/landlock/cred.c b/security/landlock/cred.c
-index db9fe7d906ba..a22756fe3b71 100644
---- a/security/landlock/cred.c
-+++ b/security/landlock/cred.c
-@@ -4,8 +4,10 @@
-  *
-  * Copyright © 2017-2020 Mickaël Salaün <mic@digikod.net>
-  * Copyright © 2018-2020 ANSSI
-+ * Copyright © 2025 Microsoft Corporation
-  */
- 
-+#include <linux/binfmts.h>
- #include <linux/cred.h>
- #include <linux/lsm_hooks.h>
- 
-@@ -17,11 +19,12 @@
- static void hook_cred_transfer(struct cred *const new,
- 			       const struct cred *const old)
- {
--	struct landlock_ruleset *const old_dom = landlock_cred(old)->domain;
-+	const struct landlock_cred_security *const old_llcred =
-+		landlock_cred(old);
- 
--	if (old_dom) {
--		landlock_get_ruleset(old_dom);
--		landlock_cred(new)->domain = old_dom;
-+	if (old_llcred->domain) {
-+		landlock_get_ruleset(old_llcred->domain);
-+		*landlock_cred(new) = *old_llcred;
- 	}
- }
- 
-@@ -40,10 +43,25 @@ static void hook_cred_free(struct cred *const cred)
- 		landlock_put_ruleset_deferred(dom);
- }
- 
-+#ifdef CONFIG_AUDIT
-+
-+static int hook_bprm_creds_for_exec(struct linux_binprm *const bprm)
-+{
-+	/* Resets for each execution. */
-+	landlock_cred(bprm->cred)->domain_exec = 0;
-+	return 0;
-+}
-+
-+#endif /* CONFIG_AUDIT */
-+
- static struct security_hook_list landlock_hooks[] __ro_after_init = {
- 	LSM_HOOK_INIT(cred_prepare, hook_cred_prepare),
- 	LSM_HOOK_INIT(cred_transfer, hook_cred_transfer),
- 	LSM_HOOK_INIT(cred_free, hook_cred_free),
-+
-+#ifdef CONFIG_AUDIT
-+	LSM_HOOK_INIT(bprm_creds_for_exec, hook_bprm_creds_for_exec),
-+#endif /* CONFIG_AUDIT */
- };
- 
- __init void landlock_add_cred_hooks(void)
-diff --git a/security/landlock/cred.h b/security/landlock/cred.h
-index fdbbaf66d151..cf38caf77adc 100644
---- a/security/landlock/cred.h
-+++ b/security/landlock/cred.h
-@@ -9,17 +9,47 @@
- #ifndef _SECURITY_LANDLOCK_CRED_H
- #define _SECURITY_LANDLOCK_CRED_H
- 
-+#include <linux/container_of.h>
- #include <linux/cred.h>
- #include <linux/init.h>
- #include <linux/rcupdate.h>
- 
- #include "access.h"
-+#include "limits.h"
- #include "ruleset.h"
- #include "setup.h"
- 
-+/**
-+ * struct landlock_cred_security - Credential security blob
-+ *
-+ * This structure is packed to minimize the size of struct
-+ * landlock_file_security.  However, it is always aligned in the LSM cred blob,
-+ * see lsm_set_blob_size().
-+ */
- struct landlock_cred_security {
-+	/**
-+	 * @domain: Immutable ruleset enforced on a task.
-+	 */
- 	struct landlock_ruleset *domain;
--};
-+
-+#ifdef CONFIG_AUDIT
-+	/**
-+	 * @domain_exec: Bitmask identifying the domain layers that were enforced by
-+	 * the current task's executed file (i.e. no new execve(2) since
-+	 * landlock_restrict_self(2)).
-+	 */
-+	u16 domain_exec;
-+#endif /* CONFIG_AUDIT */
-+} __packed;
-+
-+#ifdef CONFIG_AUDIT
-+
-+/* Makes sure all layer executions can be stored. */
-+static_assert(BITS_PER_TYPE(typeof_member(struct landlock_cred_security,
-+					  domain_exec)) >=
-+	      LANDLOCK_MAX_NUM_LAYERS);
-+
-+#endif /* CONFIG_AUDIT */
- 
- static inline struct landlock_cred_security *
- landlock_cred(const struct cred *cred)
-diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
-index a9760d252fc2..5129981fec8b 100644
---- a/security/landlock/syscalls.c
-+++ b/security/landlock/syscalls.c
-@@ -496,5 +496,10 @@ SYSCALL_DEFINE2(landlock_restrict_self, const int, ruleset_fd, const __u32,
- 	/* Replaces the old (prepared) domain. */
- 	landlock_put_ruleset(new_llcred->domain);
- 	new_llcred->domain = new_dom;
-+
-+#ifdef CONFIG_AUDIT
-+	new_llcred->domain_exec |= 1 << (new_dom->num_layers - 1);
-+#endif /* CONFIG_AUDIT */
-+
- 	return commit_creds(new_cred);
- }
--- 
-2.48.1
+> 
+> > One of the main suggestion would be to align with the audit patch series
+> > semantic and the defined "blockers":
+> > https://lore.kernel.org/all/20250131163059.1139617-1-mic@digikod.net/
+> > I'll send another series soon.
+> 
+> I will have a read of the existing audit series - are you planning
+> significant changes to it in the next one?
 
+Not significant changes but still some that hook changes that might
+require a rebase.  I just sent v6, you'll find it applied here:
+https://web.git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/log/?h=next
