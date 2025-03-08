@@ -1,38 +1,38 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E36A166F0C;
-	Sat,  8 Mar 2025 09:17:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D3BDC2FA;
+	Sat,  8 Mar 2025 09:19:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741425473; cv=none; b=fW4bujYhYNm17n0WUxcX8/PXEELqDp6yg5Flhc0kOW91pAoiLKyOqfAg0WgM864XF2YwhB5GnbC0g+qcyDF+Vipmwkmmn6SEP4IaIRESj2Htm8grIEGYUM77vK5Mrj/fVr9cEWoa753MqDDHrtHAZtAdJ1jKuA/JPRPn9Q7KgHs=
+	t=1741425559; cv=none; b=oTcIULLNGnenquPGw6GZkIfIFge+qp3ln17fbRKyHGE+FSQ/ud8s+uJ1yLr/LKgV++JY47zLsC9fO6x5GmA/tj485Fi4Y4/76o9fOnEvlcfGQhQS2frBGqVVv+AqVKr3ZkXtpDeKBjbxIcVhE/ACb/pArNMublwIAPZJzdGyudc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741425473; c=relaxed/simple;
-	bh=8yWi5YlMaRusNxN05xdETgqejjnPLkH6v1+Nb4QMNMU=;
+	s=arc-20240116; t=1741425559; c=relaxed/simple;
+	bh=Ieg1q79Hcv6gSb0ZE6qA+0UrSjfMW6nYXnbS6hAMk+8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oFK9P8MJIg3bwnO7ifGtyAHz60sN4HmwnAipqMGC/X/wusA5WiIBrwCTXSud18wtyp2eFcGQQjsbBhF8R1USwMOC+jcHdgL+WrZPlum5v5fBBYAgeMksTgGZE+cMf+wQD6yBUEGgrrX0jZ92Zge4yup0pfpflz10wt4VY5opwMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pxHZjqa0; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=t1OGHvsksf9jsW3rDaUJJfOtfbOmU26lg7IG074SOOv0BZPVUuA3iggXr/9j0cAq0uBtlTb0qPq4J0XdIlM2ASHt7Cfm6IlwaWcfxf3ufhWikQaxDF0IYZr1Tn7gYmuPf9+nfAZ6+RGwRNa32RpcwdyNED6UqhOr3IBy5w41UiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fAp6aWmJ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pxHZjqa0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0378DC4CEE0;
-	Sat,  8 Mar 2025 09:17:48 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fAp6aWmJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C07A8C4CEE0;
+	Sat,  8 Mar 2025 09:19:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741425472;
-	bh=8yWi5YlMaRusNxN05xdETgqejjnPLkH6v1+Nb4QMNMU=;
+	s=k20201202; t=1741425558;
+	bh=Ieg1q79Hcv6gSb0ZE6qA+0UrSjfMW6nYXnbS6hAMk+8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pxHZjqa0vNuPBfsrKJbkd2lA7ZBGEVwI7vkXvyMRN0i6OES6/rhurb/+xjy578AI7
-	 c3TNheYp2fA8Ol561+ddzIH5kbo2UsddYb3pSVCwg9jpQhHv7PzMKs9yGhdfYGwwtu
-	 2OpxkcQj4MR1tjPREXiUforCyN9BKwhF76nzO0rjIN2O0+NF2rpKPgK4jcKeYg6+P3
-	 Naq74Ex70/LNqoES+3a25WwdbPgBPuCKIc+mp4UZowh5RrthTNJv6SZ/JTrMUHZXk1
-	 2Xtja7rgabNeM9qVkVIUl3F81SeoCPnlSQ/AZBcnHJhHRWsvUi/M49jRZqvkDBNKJ2
-	 z3AE9HhMymizw==
-Date: Sat, 8 Mar 2025 10:17:46 +0100
+	b=fAp6aWmJeivv6QyATp3ReT0ECaz2v6QFa3bsz/ovFWr3P+gEO4WtTdj9mBb3shHbG
+	 sOZ/QBpqyAfGeXLYW/guDzyOtAVVgIad1IDo+HlSY2AD++IGSIZb+S9NMIhLQ9yBvj
+	 ba9CnPWx108dFCY4g5EcusV2QgUtt3I2kk/aPfK+0DpSPc4wYcWoaL1rhC35yUG553
+	 s9cvwBs9YypMHs7zMhiaICdpOZcKulSrRaldeQYmz7LDMfMp1zVfDayZ5YSGbrAbk5
+	 OkN36DTGyCgIlCvXOf/26IQWbjnSECMAf0Nf4/zLP2wS9+uiKRA8NfWYQL0yGoixQa
+	 U2HMR6oX+G1ag==
+Date: Sat, 8 Mar 2025 10:19:11 +0100
 From: Nathan Chancellor <nathan@kernel.org>
 To: Kees Cook <kees@kernel.org>
 Cc: Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	Dave Hansen <dave.hansen@linux.intel.com>,
 	"H. Peter Anvin" <hpa@zytor.com>,
 	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
 	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
@@ -40,12 +40,12 @@ Cc: Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
 	Nick Desaulniers <ndesaulniers@google.com>,
 	Bill Wendling <morbo@google.com>,
 	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
+	x86@kernel.org, linux-hardening@vger.kernel.org,
 	linux-security-module@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH v2 1/2] x86/build: Remove -ffreestanding on i386 with GCC
-Message-ID: <20250308091746.GA707537@ax162>
+Subject: Re: [PATCH v2 2/2] hardening: Enable i386 FORTIFY_SOURCE on Clang 16+
+Message-ID: <20250308091911.GB707537@ax162>
 References: <20250308041950.it.402-kees@kernel.org>
- <20250308042929.1753543-1-kees@kernel.org>
+ <20250308042929.1753543-2-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -54,48 +54,48 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250308042929.1753543-1-kees@kernel.org>
+In-Reply-To: <20250308042929.1753543-2-kees@kernel.org>
 
-On Fri, Mar 07, 2025 at 08:29:25PM -0800, Kees Cook wrote:
-> The use of -ffreestanding is a leftover that is only needed for certain
-> versions of Clang. Adjust this to be Clang-only. A later patch will make
-> this a versioned check.
+On Fri, Mar 07, 2025 at 08:29:26PM -0800, Kees Cook wrote:
+> The i386 regparm bug exposed with FORTIFY_SOURCE with Clang was fixed
+> in Clang 16[1].
 > 
+> Link: https://github.com/llvm/llvm-project/commit/c167c0a4dcdb998affb2756ce76903a12f7d8ca5 [1]
 > Signed-off-by: Kees Cook <kees@kernel.org>
-
-This could also adjust the comment but it is probably not that big of a
-deal since the "temporary" is already pretty stale.
 
 Reviewed-by: Nathan Chancellor <nathan@kernel.org>
 
 > ---
-> Cc: Nathan Chancellor <nathan@kernel.org>
-> Cc: Nick Desaulniers <nick.desaulniers+lkml@gmail.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> Cc: x86@kernel.org
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> ---
->  arch/x86/Makefile | 2 ++
->  1 file changed, 2 insertions(+)
+>  arch/x86/Makefile          | 2 +-
+>  security/Kconfig.hardening | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 > 
 > diff --git a/arch/x86/Makefile b/arch/x86/Makefile
-> index 5b773b34768d..d25ed25fb7d9 100644
+> index d25ed25fb7d9..917459d1ad40 100644
 > --- a/arch/x86/Makefile
 > +++ b/arch/x86/Makefile
-> @@ -137,8 +137,10 @@ ifeq ($(CONFIG_X86_32),y)
+> @@ -137,7 +137,7 @@ ifeq ($(CONFIG_X86_32),y)
 >          include $(srctree)/arch/x86/Makefile_32.cpu
 >          KBUILD_CFLAGS += $(cflags-y)
 >  
-> +    ifeq ($(CONFIG_CC_IS_CLANG),y)
+> -    ifeq ($(CONFIG_CC_IS_CLANG),y)
+> +    ifneq ($(call clang-min-version, 160000),y)
 >          # temporary until string.h is fixed
 >          KBUILD_CFLAGS += -ffreestanding
-> +    endif
->  
->      ifeq ($(CONFIG_STACKPROTECTOR),y)
->          ifeq ($(CONFIG_SMP),y)
+>      endif
+> diff --git a/security/Kconfig.hardening b/security/Kconfig.hardening
+> index 23ffb0d7c845..c17366ce8224 100644
+> --- a/security/Kconfig.hardening
+> +++ b/security/Kconfig.hardening
+> @@ -286,7 +286,7 @@ config FORTIFY_SOURCE
+>  	bool "Harden common str/mem functions against buffer overflows"
+>  	depends on ARCH_HAS_FORTIFY_SOURCE
+>  	# https://github.com/llvm/llvm-project/issues/53645
+> -	depends on !CC_IS_CLANG || !X86_32
+> +	depends on !X86_32 || !CC_IS_CLANG || CLANG_VERSION >= 160000
+>  	help
+>  	  Detect overflows of buffers in common string and memory functions
+>  	  where the compiler can determine and validate the buffer sizes.
 > -- 
 > 2.34.1
 > 
