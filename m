@@ -1,174 +1,265 @@
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2066.outbound.protection.outlook.com [40.107.236.66])
+Received: from smtp-8faa.mail.infomaniak.ch (smtp-8faa.mail.infomaniak.ch [83.166.143.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C3601DE2AA;
-	Sat,  8 Mar 2025 18:06:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741457193; cv=fail; b=S60nsU0nuhSLGcLbruOkLzucjkR0RclKFmbIozkat7Ukc9cdrNiUb83kUo4ihqeObEG6GbKulUXxs60s2OFqlF3uEOz/ruwJkdpzfoHf5ulrRfT4qxBf81CngidqHCbuWg0HwEnk4GBshGmgykYftZ56ImpYdiGKhKTZ14ZCgIY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741457193; c=relaxed/simple;
-	bh=tet0mrLOE43Yv6Zabb94f2b0+v113wzaAaRJp1BHEY4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oZ8f/HnKavNYcHqyJPOO42/wt0/f5anKSOyrgOVOjoXrsxpRWhiquUElpLVRd8ZeH9ehcMIWgrncjhnvVMO0iaksR+i45bL+LABgAnFzW6Ha7pKeX1Bj6/iuhgZm6Q7PNiguIt+9y/uBwY8x1yJamSBL0LypCHQs4aal6BtL3Pc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=tuj3+/w4; arc=fail smtp.client-ip=40.107.236.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C84F61DE4E7
+	for <linux-security-module@vger.kernel.org>; Sat,  8 Mar 2025 18:44:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741459484; cv=none; b=Ke7W7bszu51aXSag/JHjRQWKXgE3XCzVzVYKaysMlbkDz5umQz3wuE7kyELuVagJEJp2KbFxuhDDuVgyPShLS8pU1ffmsGRU0+RfpH2moRetm9qYxUiQHqHgAru9/CT03eoRS7lhnLPiG9gWG/x26qv+0ZCftFxvZyEAIBmBYGE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741459484; c=relaxed/simple;
+	bh=XQRFwxmgfRwMhCfd4XHml0+Vhv2G7q0dSz5XCxpAZrM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IpJ6ptBlL+cr4QZRgK0NF85VOgRJtYr1dLzLKg8gdmIXSKuAhHTT9EJCP14kW5T4VFiGzMlannNjUfcRcpSI9/4J9+uhNsB/eAkmThaACCrkoOikltMm7Bb9Eub8n75yNS5Yh3XzX+bk4/7LAsJKuh0PEd8OuRq1dwhqmcKSrEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=BsUvalJf; arc=none smtp.client-ip=83.166.143.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="tuj3+/w4"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lUVKyWNh+YSfXSp1kfhKRBQ9REoe5FuofbPjECoR2TUi2Qrf73Y0jpFNfMTSuJ8woDU/dkB3jDa3Di5r5s/RTBEnPvVz1gx/HSgi7ZZGJjlPswiAyKgDd6Hkqprdon/IgZdPublg2N37d7x1r18saviu8BpfnsMzAzrLSnrRR90Ylz0wwYVsDkgb7OyZqW4HjAQnML6vF6D1irlLqy13NcFh4ThaXG0TuBr+iHsl72qaBafU4fZ9vFrBaX1TAkA2QMSltND/magCKZXOMa0eONf2YQAYMLWf5jTdW+n4LIllSn4HH/ysDzmTuyNzTtbZ58XjQuXkFmUHV55JGx84Gw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=o1medgm5reqhvzPIuzfqZ1D+yg5lK4XtPffDVdRzmps=;
- b=MPEsBrYAPy1PWBhQx76s55mcSbrrIZG71qfMvIJpxUk3KHWU6PoURvM26fc7tBGCePrXlEz4QOW7SYoxAZKmwccGHqIIqsD3s6B2LxfGMro+Y6hnIZ+l5kohyJvrDvG/b47kAy56X0Bq5U6OwDOThHxmIEXVbJtBDV/OwQo9xr07FKI3TnYFiA/1Ol+dk9ufNqHJBVgu7uTC2lPtYN1p+jdrKqAhH/M32jg7EO6b6CYzUzYYJ0rHPkhA9OjyYO7e1cl4zxPTjw9S6CZLf5A/22eWpis+JtR7IQFNDG0PUw2pqdOxb2LzogqJRmcsZ5RgI0rPZRp5++eTvfC9k+uKyg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=o1medgm5reqhvzPIuzfqZ1D+yg5lK4XtPffDVdRzmps=;
- b=tuj3+/w41AvVnhe/MQbtR+tDyQ2z7eF7Ur9Ijt59v0TgyDCkHncTIHH2Y0+dsJf+LX2vOF+Y+IWPuigctEVjLlYv9q2tzxAxFlrmTsdYhff8rUEMNTiQ1D48OhmZJez7tUg0OW9A/FbIR+JBaUoq+zOBazp57vLhHd29mUGDXZneoauLCqDvcTP01P1aFMUXuAkBJrkOxf+O5h9StB7jWmsnwNY/1BOodyuug5vCJypxqlJUU7c0p+n2USAWU/bOLP3SobDhh5ss0g3Lew2AGpt6nFPtzv+h5e0QLrsUYEAd6fO9nwSQUsXmqd2q04ez445gcNs1VaNiTkxj3Y6ObQ==
-Received: from DM6PR02CA0106.namprd02.prod.outlook.com (2603:10b6:5:1f4::47)
- by CYXPR12MB9388.namprd12.prod.outlook.com (2603:10b6:930:e8::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.24; Sat, 8 Mar
- 2025 18:06:27 +0000
-Received: from DS3PEPF000099DD.namprd04.prod.outlook.com
- (2603:10b6:5:1f4:cafe::b0) by DM6PR02CA0106.outlook.office365.com
- (2603:10b6:5:1f4::47) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8511.24 via Frontend Transport; Sat,
- 8 Mar 2025 18:06:27 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- DS3PEPF000099DD.mail.protection.outlook.com (10.167.17.199) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8511.15 via Frontend Transport; Sat, 8 Mar 2025 18:06:27 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Sat, 8 Mar 2025
- 10:06:17 -0800
-Received: from sw-mtx-036.mtx.nbulabs.nvidia.com (10.126.231.35) by
- rnnvmail201.nvidia.com (10.129.68.8) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Sat, 8 Mar 2025 10:06:17 -0800
-From: Parav Pandit <parav@nvidia.com>
-To: <linux-rdma@vger.kernel.org>, <linux-security-module@vger.kernel.org>
-CC: <ebiederm@xmission.com>, Parav Pandit <parav@nvidia.com>
-Subject: [PATCH] RDMA/uverbs: Fix CAP_NET_RAW check for flow create in user namespace
-Date: Sat, 8 Mar 2025 20:06:02 +0200
-Message-ID: <20250308180602.129663-1-parav@nvidia.com>
-X-Mailer: git-send-email 2.26.2
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="BsUvalJf"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Z9BsF4mqvzPl1;
+	Sat,  8 Mar 2025 19:44:33 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1741459473;
+	bh=w4fcp7RxZrlDVZrfYcTugj+wIPVn1nBTu6gy1bbd7hY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=BsUvalJfR+M0AdGEnj4WCa3ivKCKap1oe1ho9fxsYOBYRBv5HZCSs5Eon/FDvQOw+
+	 HytHooTA/N/qyalWj5B4DlC5O3IQQGawbd62ZQFUi+rCwIEFjY5widRaZg7Vz3zZIs
+	 LEUHxquAixU22TXxVh+qyCbaf/is1nOJzGIP0ORI=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Z9BsD5Nqgzpkl;
+	Sat,  8 Mar 2025 19:44:32 +0100 (CET)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: Eric Paris <eparis@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	"Serge E . Hallyn" <serge@hallyn.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	Ben Scarlato <akhna@google.com>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	Charles Zaffery <czaffery@roblox.com>,
+	Daniel Burgener <dburgener@linux.microsoft.com>,
+	Francis Laniel <flaniel@linux.microsoft.com>,
+	James Morris <jmorris@namei.org>,
+	Jann Horn <jannh@google.com>,
+	Jeff Xu <jeffxu@google.com>,
+	Jorge Lucangeli Obes <jorgelo@google.com>,
+	Kees Cook <kees@kernel.org>,
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+	Matt Bobrowski <mattbobrowski@google.com>,
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
+	Phil Sutter <phil@nwl.cc>,
+	Praveen K Paladugu <prapal@linux.microsoft.com>,
+	Robert Salvet <robert.salvet@roblox.com>,
+	Shervin Oloumi <enlightened@google.com>,
+	Song Liu <song@kernel.org>,
+	Tahera Fahimi <fahimitahera@gmail.com>,
+	Tingmao Wang <m@maowtm.org>,
+	Tyler Hicks <code@tyhicks.com>,
+	audit@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH v6 00/26] Landlock audit support
+Date: Sat,  8 Mar 2025 19:43:56 +0100
+Message-ID: <20250308184422.2159360-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS3PEPF000099DD:EE_|CYXPR12MB9388:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1e3850c7-63f4-4a0a-9c11-08dd5e6bf223
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?/bHy3rqE9qKP9HB/i0gfJmLBbPSREE2mCidNkAc5YxXSToOuz8+nJTI812On?=
- =?us-ascii?Q?7VNn5dDUsIixKn/c7Uba8Dj3h+XkeDAUK0AP9MDCXG1wRAJqcaL50gXqw9uF?=
- =?us-ascii?Q?u5uZjMMKnjD9+TrzN9bQh5VYfs4BwDrwdHasSgdyG07PbJIVv1fkWklbeF4j?=
- =?us-ascii?Q?J9NPSVSV/aulu8HuHWQ7AnTWpZDhGPS4vEGYkeXwAChcv1RiD7mTOX4pU2Mz?=
- =?us-ascii?Q?pJbnO16hwFYH6p0EobzAyjs2HMX5jgP1Q7HnSe1yoaUXm5GGMiZqNqV+YnHK?=
- =?us-ascii?Q?kZsiwUIrTXjY6WEa0cpUduunMJpSGS7eYHeN9NGWO2Lrcmzeq7VOGl2RdlES?=
- =?us-ascii?Q?VWoiLYFiz6dMMPhRvd5OLwRuxl5S/IkgZ0j4deQAf9rEAuBxVCbmN0UavmiL?=
- =?us-ascii?Q?WuOmL5kKjYXt/kz3lWsvkN9wdk+ofuLKiQGynvMkrEp+WPe0CcjsD+4wS9ee?=
- =?us-ascii?Q?yL0fxm0OYH/9fNcboLsFrEXX6IaG7z8sCx9g00rDEw4yBevANbffsGCB9yul?=
- =?us-ascii?Q?+Z9zr5ItY0HqbT+ecMUheFd8cIsnIvelcGdi2CPvi1/T1wXy3kHFNZNQtj3k?=
- =?us-ascii?Q?sGOokD5reMig4HMwoTQYGH2ccHfNA+btOlXPlj7bd8WN1dH5jBFHyu8vfWhJ?=
- =?us-ascii?Q?8M2Zt5tmUDAuWsIFxNGUqSXvaEgPOngTVmONg9nF6EPkE3xa30PNbS1CfiLk?=
- =?us-ascii?Q?5zPmK3b3OhxdFmALdDk7Z4wIAtpvJRpu+qVwI2z2gxpGKjI50VMVLun7Krlx?=
- =?us-ascii?Q?2TYkJcXw5a9Uk8zpwp7n/jcD5g+eG6+RGsYv6A5toljrkqbKltKXZRxbprEg?=
- =?us-ascii?Q?HfSUlxC9Sf7f1E/91ondl7Vx0LUJQWUdNIOqXjpoqdM3qEoxyL3b/vszbaiX?=
- =?us-ascii?Q?7p93toG8t5Mj0z0UzLfuL9L1gEE2Q/j+3bCswPOggya0bHEKIjj/97JI093O?=
- =?us-ascii?Q?cej51/aLHm0SyUZZzqWwWFEjV/pTv+Q0rqnQDS93wty/Rhb7JpkiMu1eKPL1?=
- =?us-ascii?Q?94zGc4AfcSKIOqvI9wNVdjxWCYYN4lMlJZeTT1/1hji05Q/JFoD0ZF7E0slg?=
- =?us-ascii?Q?9E/ulu3ekwgPFlIgmXcbMPiL00Ww7uYWOvhUQBPtp4r5VBxCrZcxN5hoUwp7?=
- =?us-ascii?Q?YhlXO/KJgQRMRgRGsWZUtM9ua7c7Pa4pfucRpEJuRJr2EANf+anCzg/zf3LH?=
- =?us-ascii?Q?rcRA/sYjzU449NQEndLOomDvXaLko2aGef6VyUuh+4d2ctJG/8z46O9izCUj?=
- =?us-ascii?Q?tcOhetsAHCwbJ9ZW1npU0auryjIv2HKVXPrBJqXgs0VVAi7AMDUMs35P7x1n?=
- =?us-ascii?Q?D3o8GLa+9IuNdrrT/8QiYWYxHAimLk6LouCMD/uirWCaRiYXuh6kmuodUeMl?=
- =?us-ascii?Q?G3B9Wi6vTyZburUVRGLleaJujjkuLW6zCMfjyT8ZWw+Rf+TboB1yznSbdCLW?=
- =?us-ascii?Q?eyFZID+7koInR71pA4ofBtPjM9BQLw8t8doYogw3fldbbcrGILSUwA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(376014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Mar 2025 18:06:27.1847
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1e3850c7-63f4-4a0a-9c11-08dd5e6bf223
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS3PEPF000099DD.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYXPR12MB9388
+X-Infomaniak-Routing: alpha
 
-A process running in a non-init user namespace possesses the
-CAP_NET_RAW capability. However, the patch cited in the fixes
-tag checks the capability in the default init user namespace.
-Because of this, when the process was started by Podman in a
-non-default user namespace, the flow creation failed.
+Hi,
 
-Fix this issue by checking the CAP_NET_RAW networking capability
-in the owner user namespace that created the network namespace.
+This patch series adds audit support to Landlock.
 
-This change is similar to the following cited patches.
+Logging denied requests is useful for different use cases:
+- sysadmins: to look for users' issues,
+- security experts: to detect attack attempts,
+- power users: to understand denials,
+- developers: to ease sandboxing support and get feedback from users.
 
-commit 5e1fccc0bfac ("net: Allow userns root control of the core of the network stack.")
-commit 52e804c6dfaa ("net: Allow userns root to control ipv4")
-commit 59cd7377660a ("net: openvswitch: allow conntrack in non-initial user namespace")
-commit 0a3deb11858a ("fs: Allow listmount() in foreign mount namespace")
-commit dd7cb142f467 ("fs: relax permissions for listmount()")
+Because of its unprivileged nature, Landlock can compose standalone
+security policies (i.e. domains).  To make logs useful, they need to
+contain the most relevant Landlock domain that denied an action, and the
+reason of such denial.  This translates to the latest nested domain and
+the related blockers: missing access rights or other kind of
+restrictions.
 
-Fixes: c938a616aadb ("IB/core: Add raw packet QP type")
-Signed-off-by: Parav Pandit <parav@nvidia.com>
+# Main changes from previous version
 
----
-I would like to have feedback from the LSM experts to make sure this
-fix is correct. Given the widespread usage of the capable() call,
-it makes me wonder if the patch right.
+Renamed the landlock_restrict_self(2) flags to improve clarity and
+consistency, and slightly change the semantic of the first one:
+- LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF: do not log denied access
+  caused by a task with the same executable (i.e. before any new
+  execve(2));
+- LANDLOCK_RESTRICT_SELF_LOG_CROSS_EXEC_ON: log denied access for
+  processes resulting from an execve(2), which is not the case by
+  default.
+- LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF: do not log denied access
+  from future nested domains.
 
-Secondly, I wasn't able to determine which primary namespace (such as
-mount or IPC, etc.) to consider for the CAP_IPC_LOCK capability.
-(not directly related to this patch, but as concept)
----
- drivers/infiniband/core/uverbs_cmd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+These new LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF and
+LANDLOCK_RESTRICT_SELF_LOG_CROSS_EXEC_ON are not incompatible anymore.
 
-diff --git a/drivers/infiniband/core/uverbs_cmd.c b/drivers/infiniband/core/uverbs_cmd.c
-index 5ad14c39d48c..8d6615f390f5 100644
---- a/drivers/infiniband/core/uverbs_cmd.c
-+++ b/drivers/infiniband/core/uverbs_cmd.c
-@@ -3198,7 +3198,7 @@ static int ib_uverbs_ex_create_flow(struct uverbs_attr_bundle *attrs)
- 	if (cmd.comp_mask)
- 		return -EINVAL;
- 
--	if (!capable(CAP_NET_RAW))
-+	if (!ns_capable(current->nsproxy->net_ns->user_ns, CAP_NET_RAW))
- 		return -EPERM;
- 
- 	if (cmd.flow_attr.flags >= IB_FLOW_ATTR_FLAGS_RESERVED)
+Make it possible to set LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF
+without ruleset/domain.  This bit is now stored directly in the Landlock
+credentials, not a potential related domain.
+
+Moved audit data declarations to not impact allowed requests.
+
+Added new tests and improved previous ones.  I'm still working on new
+tests but the kernel code should not change much with the next versions.
+I'd still like to align as much as possible with other LSM logs
+regarding the logged objects: e.g. in a link action, should we log the
+dir's path or the file's dentry?
+
+# Design
+
+Log records are created for any denied actions caused by a Landlock
+policy, which means that a well-sandboxed applications should not log
+anything except for unattended access requests that might be the result
+of attacks or bugs.
+
+However, sandbox tools creating restricted environments could lead to
+abundant log entries because the sandboxed processes may not be aware of
+the related restrictions.  To avoid log spam, the
+landlock_restrict_self(2) syscall gets new flags to not log denials
+related to this specific domain.  Except for well-understood exceptions,
+these flags should not be set.  Indeed, applications sandboxing
+themselves should only try to bypass their own sandbox if they are
+compromised, which should ring a bell thanks to log events.
+
+When an action is denied, the related Landlock domain ID is specified.
+If this domain was not previously described in a log record, one is
+created.  This record contains the domain ID, its creation time, and
+informations about the process that enforced the restriction (at the
+time of the call to landlock_restrict_self): PID, UID, executable path,
+and name (comm).
+
+This new approach also brings building blocks for an upcoming
+unprivileged introspection interface.  The unique Landlock IDs will be
+useful to tie audit log entries to running processes, and to get
+properties of the related Landlock domains.  This will replace the
+previously logged ruleset properties.
+
+# Samples
+
+Here are two examples of log events (see serial numbers):
+
+$ LL_FS_RO=/ LL_FS_RW=/ LL_SCOPED=s LL_FORCE_LOG=1 ./sandboxer kill 1
+
+  type=LANDLOCK_ACCESS msg=audit(1729738800.268:30): domain=1a6fdc66f blockers=scope.signal opid=1 ocomm="systemd"
+  type=LANDLOCK_DOMAIN msg=audit(1729738800.268:30): domain=1a6fdc66f status=allocated mode=enforcing pid=286 uid=0 exe="/root/sandboxer" comm="sandboxer"
+  type=SYSCALL msg=audit(1729738800.268:30): arch=c000003e syscall=62 success=no exit=-1 [..] ppid=272 pid=286 auid=0 uid=0 gid=0 [...] comm="kill" [...]
+  type=PROCTITLE msg=audit(1729738800.268:30): proctitle=6B696C6C0031
+  type=LANDLOCK_DOMAIN msg=audit(1729738800.324:31): domain=1a6fdc66f status=deallocated denials=1
+
+$ LL_FS_RO=/ LL_FS_RW=/tmp LL_FORCE_LOG=1 ./sandboxer sh -c "echo > /etc/passwd"
+
+  type=LANDLOCK_ACCESS msg=audit(1729738800.221:33): domain=1a6fdc679 blockers=fs.write_file path="/dev/tty" dev="devtmpfs" ino=9
+  type=LANDLOCK_DOMAIN msg=audit(1729738800.221:33): domain=1a6fdc679 status=allocated mode=enforcing pid=289 uid=0 exe="/root/sandboxer" comm="sandboxer"
+  type=SYSCALL msg=audit(1729738800.221:33): arch=c000003e syscall=257 success=no exit=-13 [...] ppid=272 pid=289 auid=0 uid=0 gid=0 [...] comm="sh" [...]
+  type=PROCTITLE msg=audit(1729738800.221:33): proctitle=7368002D63006563686F203E202F6574632F706173737764
+  type=LANDLOCK_ACCESS msg=audit(1729738800.221:34): domain=1a6fdc679 blockers=fs.write_file path="/etc/passwd" dev="vda2" ino=143821
+  type=SYSCALL msg=audit(1729738800.221:34): arch=c000003e syscall=257 success=no exit=-13 [...] ppid=272 pid=289 auid=0 uid=0 gid=0 [...] comm="sh" [...]
+  type=PROCTITLE msg=audit(1729738800.221:34): proctitle=7368002D63006563686F203E202F6574632F706173737764
+  type=LANDLOCK_DOMAIN msg=audit(1729738800.261:35): domain=1a6fdc679 status=deallocated denials=2
+
+# Previous versions
+
+v5: https://lore.kernel.org/r/20250131163059.1139617-1-mic@digikod.net
+v4: https://lore.kernel.org/r/20250108154338.1129069-1-mic@digikod.net
+v3: https://lore.kernel.org/r/20241122143353.59367-1-mic@digikod.net
+v2: https://lore.kernel.org/r/20241022161009.982584-1-mic@digikod.net
+v1: https://lore.kernel.org/r/20230921061641.273654-1-mic@digikod.net
+
+Regards,
+
+Mickaël Salaün (26):
+  lsm: Add audit_log_lsm_data() helper
+  landlock: Add unique ID generator
+  landlock: Move domain hierarchy management
+  landlock: Prepare to use credential instead of domain for filesystem
+  landlock: Prepare to use credential instead of domain for network
+  landlock: Prepare to use credential instead of domain for scope
+  landlock: Prepare to use credential instead of domain for fowner
+  landlock: Identify domain execution crossing
+  landlock: Add AUDIT_LANDLOCK_ACCESS and log ptrace denials
+  landlock: Add AUDIT_LANDLOCK_DOMAIN and log domain status
+  landlock: Log mount-related denials
+  landlock: Log file-related denials
+  landlock: Log truncate and IOCTL denials
+  landlock: Log TCP bind and connect denials
+  landlock: Log scoped denials
+  landlock: Add LANDLOCK_RESTRICT_SELF_LOG_*_EXEC_* flags
+  landlock: Add LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF
+  samples/landlock: Enable users to log sandbox denials
+  selftests/landlock: Add test for invalid ruleset file descriptor
+  selftests/landlock: Extend tests for landlock_restrict_self(2)'s flags
+  selftests/landlock: Add tests for audit flags and domain IDs
+  selftests/landlock: Test audit with restrict flags
+  selftests/landlock: Add audit tests for ptrace
+  selftests/landlock: Add audit tests for abstract unix socket scoping
+  selftests/landlock: Add audit tests for filesystem
+  landlock: Add audit documentation
+
+ Documentation/admin-guide/LSM/index.rst       |   1 +
+ Documentation/admin-guide/LSM/landlock.rst    | 158 ++++++
+ Documentation/security/landlock.rst           |  13 +-
+ Documentation/userspace-api/landlock.rst      |   9 +-
+ MAINTAINERS                                   |   1 +
+ include/linux/lsm_audit.h                     |   8 +
+ include/uapi/linux/audit.h                    |   4 +-
+ include/uapi/linux/landlock.h                 |  33 ++
+ samples/landlock/sandboxer.c                  |  37 +-
+ security/landlock/.kunitconfig                |   2 +
+ security/landlock/Makefile                    |   5 +
+ security/landlock/access.h                    |  23 +
+ security/landlock/audit.c                     | 519 ++++++++++++++++++
+ security/landlock/audit.h                     |  77 +++
+ security/landlock/cred.c                      |  26 +-
+ security/landlock/cred.h                      |  89 ++-
+ security/landlock/domain.c                    | 264 +++++++++
+ security/landlock/domain.h                    | 157 ++++++
+ security/landlock/fs.c                        | 275 ++++++++--
+ security/landlock/fs.h                        |  35 +-
+ security/landlock/id.c                        | 251 +++++++++
+ security/landlock/id.h                        |  25 +
+ security/landlock/limits.h                    |   4 +
+ security/landlock/net.c                       |  74 ++-
+ security/landlock/ruleset.c                   |  33 +-
+ security/landlock/ruleset.h                   |  47 +-
+ security/landlock/setup.c                     |   2 +
+ security/landlock/syscalls.c                  |  72 ++-
+ security/landlock/task.c                      | 239 +++++---
+ security/lsm_audit.c                          |  27 +-
+ tools/testing/kunit/configs/all_tests.config  |   2 +
+ tools/testing/selftests/landlock/Makefile     |   6 +-
+ tools/testing/selftests/landlock/audit.h      | 425 ++++++++++++++
+ tools/testing/selftests/landlock/audit_test.c | 460 ++++++++++++++++
+ tools/testing/selftests/landlock/base_test.c  |  84 ++-
+ tools/testing/selftests/landlock/common.h     |  19 +
+ tools/testing/selftests/landlock/config       |   1 +
+ tools/testing/selftests/landlock/fs_test.c    | 455 +++++++++++++++
+ .../testing/selftests/landlock/ptrace_test.c  | 140 +++++
+ .../landlock/scoped_abstract_unix_test.c      | 121 ++++
+ .../selftests/landlock/wait-pipe-sandbox.c    | 131 +++++
+ 41 files changed, 4123 insertions(+), 231 deletions(-)
+ create mode 100644 Documentation/admin-guide/LSM/landlock.rst
+ create mode 100644 security/landlock/audit.c
+ create mode 100644 security/landlock/audit.h
+ create mode 100644 security/landlock/domain.c
+ create mode 100644 security/landlock/domain.h
+ create mode 100644 security/landlock/id.c
+ create mode 100644 security/landlock/id.h
+ create mode 100644 tools/testing/selftests/landlock/audit.h
+ create mode 100644 tools/testing/selftests/landlock/audit_test.c
+ create mode 100644 tools/testing/selftests/landlock/wait-pipe-sandbox.c
+
+
+base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
 -- 
-2.26.2
+2.48.1
 
