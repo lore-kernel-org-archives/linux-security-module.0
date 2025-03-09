@@ -1,45 +1,52 @@
-Received: from smtp-bc0a.mail.infomaniak.ch (smtp-bc0a.mail.infomaniak.ch [45.157.188.10])
+Received: from smtp-42a9.mail.infomaniak.ch (smtp-42a9.mail.infomaniak.ch [84.16.66.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8574E188CB1
-	for <linux-security-module@vger.kernel.org>; Sat,  8 Mar 2025 19:15:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83AB61A2399
+	for <linux-security-module@vger.kernel.org>; Sun,  9 Mar 2025 09:41:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741461323; cv=none; b=HdLrlXogyvH70F6acVbEhnrr3aXY/vCfzlttUt7a4WcfVttpIp/yZn/LdFei2AfPq34EuwPRit5qGoNMQBlUvpAsQDUbtJBqsho6qX9g12VrRU7wWyEIwWUfTR16vglbh6Nh0kjbJfrHF3alYbVjCKhiZiR880bcV5oQN5wxRqc=
+	t=1741513312; cv=none; b=Tkuen711UrdzSwKuUDzIMTnNOv72uw3jL1oDHgknsNk/OSW8KweQIE1gr9OkzQQxqozAbLPItEn0fq3rUrUmMOsN3N85X4XXAo/k/lTZ/OlKIy54xR8LXtQ6HvuO9SSQlQ3sdFo+Ke8r/y1YhuPywuFpdjYZsl/IceAT/dxCToQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741461323; c=relaxed/simple;
-	bh=VDCJKutHmSz/5La3lz5PJbl5ZWBxk4kyfp1yUDlRlpc=;
+	s=arc-20240116; t=1741513312; c=relaxed/simple;
+	bh=1sV88catGBLBt67g4ta/h4L5l4cH+JnasGAkXXakRb4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kV7ASfL+L95H47ZJ5HcuM4ddiARzrknSAIrTy95J00dewppUmlZZ6DTThEcb1l4+XNQB+EZfJxoj1Q/KgdUpQaN46FXXBI6nRS/KdGH0zwxeFxhHZY/jxjWPmzB8vqPLzg7ASH23OYPRaq2QxpLYR7lnmFRnum5sKUgeiX2i2V0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=BLVTFt2X; arc=none smtp.client-ip=45.157.188.10
+	 Content-Type:Content-Disposition:In-Reply-To; b=OwaBCHpEO8RmmEEDdGmREhOeyb1mRwrzq/j/WHo3bfNp0bj8TskEeBNCfSGNvWl71olDZDq22Q8u1LkBx8Ulr4Yop6DiplExJzc+ggJ7s1Zccj+Hp9rO4hrut3aWuHLF0n9JLhp8UaCBL/R+CfnmTDF9MdwN6Z1u7HaK9dHm+zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=t9aE+AIC; arc=none smtp.client-ip=84.16.66.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="BLVTFt2X"
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Z9CXl6Yp7zXym;
-	Sat,  8 Mar 2025 20:15:19 +0100 (CET)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="t9aE+AIC"
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Z9ZmV0Xg1zCBg;
+	Sun,  9 Mar 2025 10:41:46 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1741461319;
-	bh=XzFUGkJEyiyA873F6Twj4a/Wg9Xdpy8nIyVORKhmS1w=;
+	s=20191114; t=1741513305;
+	bh=x6XlMZAJyO6mfNKQu0BsQoXE/LYgw7nuIaIwpx1cXzs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BLVTFt2XFfysAMI/1yqUt95oesseticqQI8pvPmO9xnAgz7Ci3YBe1k/jF03ZszUS
-	 CnNSCOXyi9SdmL465HkgK6qUfuBBIds0IukvKjJFhWQUbQjpfe6xZznzmPijb8N+VY
-	 wsW1NErIxuEweBPa2Q8ABjCEqR2hvWss+OGWIdSE=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Z9CXl303Tz47r;
-	Sat,  8 Mar 2025 20:15:19 +0100 (CET)
-Date: Sat, 8 Mar 2025 20:15:18 +0100
+	b=t9aE+AICsBRV/plyXsP7UM4rnGKYiATycGLIm2DUv/g99vQsLvplSwY6AybBDDWuu
+	 XwkBHfPMH0OOEnyLcaJkfmHIBfCO0KaiK2mOQ1SxsPLtyG8EpXT5nTDlYMHjx5TSb/
+	 pQt243xocyHRJD3zUHX6LbvfthlXy5jsJ0DUeJHU=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Z9ZmS02L1z5LZ;
+	Sun,  9 Mar 2025 10:41:43 +0100 (CET)
+Date: Sun, 9 Mar 2025 10:41:42 +0100
 From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Jan Kara <jack@suse.cz>
-Cc: Tingmao Wang <m@maowtm.org>, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, linux-security-module@vger.kernel.org, 
-	Amir Goldstein <amir73il@gmail.com>, Matthew Bobrowski <repnop@google.com>, 
-	linux-fsdevel@vger.kernel.org, Tycho Andersen <tycho@tycho.pizza>
-Subject: Re: [RFC PATCH 0/9] Landlock supervise: a mechanism for interactive
- permission requests
-Message-ID: <20250308.Ce9iqu4evooL@digikod.net>
-References: <cover.1741047969.git.m@maowtm.org>
- <7hpktxh4s6pho2cgoi6x7ptzimqrgflgbztrmtnamstpuefooj@orahctcwxqxm>
+To: Eric Paris <eparis@redhat.com>, Paul Moore <paul@paul-moore.com>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, "Serge E . Hallyn" <serge@hallyn.com>
+Cc: Ben Scarlato <akhna@google.com>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Charles Zaffery <czaffery@roblox.com>, 
+	Daniel Burgener <dburgener@linux.microsoft.com>, Francis Laniel <flaniel@linux.microsoft.com>, 
+	James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Jorge Lucangeli Obes <jorgelo@google.com>, Kees Cook <kees@kernel.org>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, Phil Sutter <phil@nwl.cc>, 
+	Praveen K Paladugu <prapal@linux.microsoft.com>, Robert Salvet <robert.salvet@roblox.com>, 
+	Shervin Oloumi <enlightened@google.com>, Song Liu <song@kernel.org>, 
+	Tahera Fahimi <fahimitahera@gmail.com>, Tingmao Wang <m@maowtm.org>, Tyler Hicks <code@tyhicks.com>, 
+	audit@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v6 00/26] Landlock audit support
+Message-ID: <20250309.iug3oocuJohL@digikod.net>
+References: <20250308184422.2159360-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -48,39 +55,50 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <7hpktxh4s6pho2cgoi6x7ptzimqrgflgbztrmtnamstpuefooj@orahctcwxqxm>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250308184422.2159360-1-mic@digikod.net>
 X-Infomaniak-Routing: alpha
 
-On Thu, Mar 06, 2025 at 10:04:54PM +0100, Jan Kara wrote:
-> On Tue 04-03-25 01:12:56, Tingmao Wang wrote:
-> > Alternatives
-> > ------------
-> > 
-> > I have looked for existing ways to implement the proposed use cases (at
-> > least for FS access), and three main approaches stand out to me:
-> > 
-> > 1. Fanotify: there is already FAM_OPEN_PERM which waits for an allow/deny
-> > response from a fanotify listener.  However, it does not currently have
-> > the equivalent _PERM for file creation, deletion, rename and linking, and
-> > it is also not designed for unprivileged, process-scoped use (unlike
-> > landlock).
+On Sat, Mar 08, 2025 at 07:43:56PM +0100, Mickaël Salaün wrote:
+> Hi,
 > 
-> As Amir wrote, arbitration of creation / deletion / ... is not a principial
-> problem for fanotify and we plan to go in that direction anyway for HSM
-> usecase. However adjusting fanotify permission events for a per-process
-> scope and for unpriviledged users is a fundamental difference to how
-> fanotify is designed to work (it watches filesystem objects, not processes
-> and actions they do) and so I don't think that would be a great fit. Also I
-> don't see fanotify expanding in the networking area as the concepts are
-> rather different there :).
+> This patch series adds audit support to Landlock.
+> 
+> Logging denied requests is useful for different use cases:
+> - sysadmins: to look for users' issues,
+> - security experts: to detect attack attempts,
+> - power users: to understand denials,
+> - developers: to ease sandboxing support and get feedback from users.
+> 
+> Because of its unprivileged nature, Landlock can compose standalone
+> security policies (i.e. domains).  To make logs useful, they need to
+> contain the most relevant Landlock domain that denied an action, and the
+> reason of such denial.  This translates to the latest nested domain and
+> the related blockers: missing access rights or other kind of
+> restrictions.
+> 
+> # Main changes from previous version
+> 
+> Renamed the landlock_restrict_self(2) flags to improve clarity and
+> consistency, and slightly change the semantic of the first one:
+> - LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF: do not log denied access
+>   caused by a task with the same executable (i.e. before any new
+>   execve(2));
+> - LANDLOCK_RESTRICT_SELF_LOG_CROSS_EXEC_ON: log denied access for
+>   processes resulting from an execve(2), which is not the case by
+>   default.
+> - LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF: do not log denied access
+>   from future nested domains.
+> 
+> These new LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF and
+> LANDLOCK_RESTRICT_SELF_LOG_CROSS_EXEC_ON are not incompatible anymore.
 
-Yes, I agree.  We should take inspiration from the fanonify interface
-though.
+As you can see in the patches, it's not
+LANDLOCK_RESTRICT_SELF_LOG_CROSS_EXEC_ON but
+LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON now.  I think "new_exec" makes
+more sense than "cross_exec", especially compared to "same_exec", but
+I'm open to suggestions.
 
-> 
-> 								Honza
-> 
-> -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
-> 
+Anyway, this patch series should land Monday in linux-next.  In the
+meantime you can find it here:
+https://web.git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/log/?h=next
