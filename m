@@ -1,65 +1,31 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D37014D2BB;
-	Sun,  9 Mar 2025 14:19:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A9C81FB3;
+	Sun,  9 Mar 2025 15:28:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741529981; cv=none; b=Kp7ikBZl5lNDhhphKsxF1nfhZlpHC6Oux8yC+SGzXmIrrv34/ZrUhI1bhbbFI6EhJq8ELDJPa8Qr9cKZUt1IaihH5nqlpIAawXixs9ZyQqophGeWKY7yGOvrr3b7jj5W0lbbm3GfG8FyFbMc+K8mr7l+goGF5s+0LKUWhpB6wns=
+	t=1741534115; cv=none; b=WZFNVvwpArGoqYVfy74REy2ZYUjWwZv+hCLZEcwr1ez0PqSi1lCzPSb21x4W0vonplXmmwtwdTR8Uik6+JP2N/6Tqifj9e8iejQcFv+UOA/qBcCqSPOZaXyOVUmRyKmv+ZFnmFCuglaxzgIPiM8XH6Iot01FqRPJeAXIo6Jf7O4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741529981; c=relaxed/simple;
-	bh=dgmnH3jivN7gBSE9ew8+WzchO37Kp9I0JWQg3tBMeRw=;
+	s=arc-20240116; t=1741534115; c=relaxed/simple;
+	bh=GLqJn90NpOB3NVZWTuF9R7824jnA7oFHGKAlTXcxvW0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T14d/0qBPL/mMpfiANt0K+0WoJd3Ot1P0MQbdEAjFMubL4q1iJcSyWqkSJZ+SzRDMvqGieKeolOuPkaNGPJml5k7FFTKKbptZuxQTTaUfp7ZG8MByFjnTCoUj2eVurrvB5milC7SitXusczwokadyDNcblZ42MYb2cU+Pq+FADg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CxNC00Xq; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CxNC00Xq"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741529979; x=1773065979;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=dgmnH3jivN7gBSE9ew8+WzchO37Kp9I0JWQg3tBMeRw=;
-  b=CxNC00XqB36xH3tER6VeebLEn8qwsamyKhW09Uiz5mrbUf+wkN2/iA0+
-   i0Spgsb5rsDk/803CGOaEu9v4bIugvslX8lTVnmCpgdxm8ho5MDdhapHs
-   InXgVRDHfD1iXiegousSyZBlbEfKB1tUjqrHXFIrJFUHMoAwQo5WkKKxC
-   1PChPYPCzu+BYDyW98xBZU3FsPZYq2vL9BXEjD9l/0L2kmYQUyggRnoGJ
-   4cy0QXN2V/UL5TFVbxSsxUN5jDcpodAgTiUHAGYuM26Bd77zc+5qg8UPS
-   hyMbS1sf+I0igrcGFl4YaPvAzx6vfUOBtVPwfXlua3HZjN8nXZrTYrg/u
-   Q==;
-X-CSE-ConnectionGUID: Xo3X5dVJT+eTLSwBSQUZzQ==
-X-CSE-MsgGUID: yiyKIoJPS/WBllnawuHWkQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11368"; a="42643655"
-X-IronPort-AV: E=Sophos;i="6.14,234,1736841600"; 
-   d="scan'208";a="42643655"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Mar 2025 07:19:38 -0700
-X-CSE-ConnectionGUID: BNvV+1E6QbGX8CO5DjlLYQ==
-X-CSE-MsgGUID: knhpWfGvQTiTukVADQAlmQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="120286375"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by orviesa007.jf.intel.com with ESMTP; 09 Mar 2025 07:19:35 -0700
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1trHV3-0003Aq-0U;
-	Sun, 09 Mar 2025 14:19:30 +0000
-Date: Sun, 9 Mar 2025 22:18:58 +0800
-From: kernel test robot <lkp@intel.com>
-To: Casey Schaufler <casey@schaufler-ca.com>, paul@paul-moore.com,
-	eparis@redhat.com, linux-security-module@vger.kernel.org,
-	audit@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, jmorris@namei.org,
-	serge@hallyn.com, keescook@chromium.org,
-	john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-	stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
-	selinux@vger.kernel.org
-Subject: Re: [PATCH v2 6/6] Audit: Add record for multiple object contexts
-Message-ID: <202503092246.du8fixfZ-lkp@intel.com>
-References: <20250307183701.16970-7-casey@schaufler-ca.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LYdmfakJz1dc0MILW38Iy34ey1GzqrasC5I57rIXrLr4VxZHm2znoQj702ZeS690loIDWXtZpbHS0j1i0FhENZ4jXCzWHoGlLSv7sAlWvMm5t/BpHgriEME3dwiHoqKtnR11+tVxGWnbQatIo0COkOMrJsjgt35i5dhrFBmaGuI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id 5F8B33F3; Sun,  9 Mar 2025 10:19:07 -0500 (CDT)
+Date: Sun, 9 Mar 2025 10:19:07 -0500
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Max Kellermann <max.kellermann@ionos.com>,
+	Andy Lutomirski <luto@kernel.org>
+Cc: serge@hallyn.com, paul@paul-moore.com, jmorris@namei.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] security/commoncap: don't assume "setid" if all ids are
+ identical
+Message-ID: <20250309151907.GA178120@mail.hallyn.com>
+References: <20250306082615.174777-1-max.kellermann@ionos.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -68,47 +34,75 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250307183701.16970-7-casey@schaufler-ca.com>
+In-Reply-To: <20250306082615.174777-1-max.kellermann@ionos.com>
 
-Hi Casey,
+On Thu, Mar 06, 2025 at 09:26:15AM +0100, Max Kellermann wrote:
+> If a program enables `NO_NEW_PRIVS` and sets up
+> differing real/effective/saved/fs ids, the effective ids are
+> downgraded during exec because the kernel believes it should "get no
+> more than they had, and maybe less".
+> 
+> I believe it is safe to keep differing ids even if `NO_NEW_PRIVS` is
+> set.  The newly executed program doesn't get any more, but there's no
+> reason to give it less.
+> 
+> This is different from "set[ug]id/setpcap" execution where privileges
+> may be raised; here, the assumption that it's "set[ug]id" if
+> effective!=real is too broad.
+> 
+> If we verify that all user/group ids remain as they were, we can
+> safely allow the new program to keep them.
 
-kernel test robot noticed the following build errors:
+Thanks, it's an interesting point.  Seems to mainly depend on what users
+of the feature have come to expect.
 
-[auto build test ERROR on pcmoore-selinux/next]
-[also build test ERROR on linus/master v6.14-rc5 next-20250307]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Andy, what do you think?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Casey-Schaufler/Audit-Create-audit_stamp-structure/20250308-024950
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git next
-patch link:    https://lore.kernel.org/r/20250307183701.16970-7-casey%40schaufler-ca.com
-patch subject: [PATCH v2 6/6] Audit: Add record for multiple object contexts
-config: x86_64-kexec (https://download.01.org/0day-ci/archive/20250309/202503092246.du8fixfZ-lkp@intel.com/config)
-compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250309/202503092246.du8fixfZ-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503092246.du8fixfZ-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> ld.lld: error: undefined symbol: lsm_objctx_cnt
-   >>> referenced by audit.c:2312 (kernel/audit.c:2312)
-   >>>               vmlinux.o:(audit_log_object_context)
---
->> ld.lld: error: undefined symbol: lsm_active_cnt
-   >>> referenced by audit.c:2329 (kernel/audit.c:2329)
-   >>>               vmlinux.o:(audit_log_object_context)
-   >>> referenced by audit.c:2329 (kernel/audit.c:2329)
-   >>>               vmlinux.o:(audit_log_object_context)
---
->> ld.lld: error: undefined symbol: lsm_idlist
-   >>> referenced by audit.c:2330 (kernel/audit.c:2330)
-   >>>               vmlinux.o:(audit_log_object_context)
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+> ---
+>  security/commoncap.c | 23 ++++++++++++++++++++++-
+>  1 file changed, 22 insertions(+), 1 deletion(-)
+> 
+> diff --git a/security/commoncap.c b/security/commoncap.c
+> index 58a0c1c3e409..057a7400ef7d 100644
+> --- a/security/commoncap.c
+> +++ b/security/commoncap.c
+> @@ -861,6 +861,26 @@ static inline bool __is_setuid(struct cred *new, const struct cred *old)
+>  static inline bool __is_setgid(struct cred *new, const struct cred *old)
+>  { return !gid_eq(new->egid, old->gid); }
+>  
+> +/**
+> + * Are all user/group ids in both cred instances identical?
+> + *
+> + * It can be used after __is_setuid() / __is_setgid() to check whether
+> + * this is really a set*id operation or whether both processes just
+> + * have differing real/effective ids.  It is safe to keep differing
+> + * real/effective ids in "unsafe" program execution.
+> + */
+> +static bool has_identical_uids_gids(const struct cred *a, const struct cred *b)
+> +{
+> +	return uid_eq(a->uid, b->uid) &&
+> +		gid_eq(a->gid, b->gid) &&
+> +		uid_eq(a->suid, b->suid) &&
+> +		gid_eq(a->sgid, b->sgid) &&
+> +		uid_eq(a->euid, b->euid) &&
+> +		gid_eq(a->egid, b->egid) &&
+> +		uid_eq(a->fsuid, b->fsuid) &&
+> +		gid_eq(a->fsgid, b->fsgid);
+> +}
+> +
+>  /*
+>   * 1) Audit candidate if current->cap_effective is set
+>   *
+> @@ -940,7 +960,8 @@ int cap_bprm_creds_from_file(struct linux_binprm *bprm, const struct file *file)
+>  	 *
+>  	 * In addition, if NO_NEW_PRIVS, then ensure we get no new privs.
+>  	 */
+> -	is_setid = __is_setuid(new, old) || __is_setgid(new, old);
+> +	is_setid = (__is_setuid(new, old) || __is_setgid(new, old)) &&
+> +		!has_identical_uids_gids(new, old);
+>  
+>  	if ((is_setid || __cap_gained(permitted, new, old)) &&
+>  	    ((bprm->unsafe & ~LSM_UNSAFE_PTRACE) ||
+> -- 
+> 2.47.2
