@@ -1,143 +1,72 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773981537A7;
-	Sun,  9 Mar 2025 11:12:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE33240849;
+	Sun,  9 Mar 2025 13:08:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741518768; cv=none; b=dw8vVuLw0RdgggPwc65vBA4Oq76Fei2OnUbVKXuWyxM2bXEpxIhJQbWYAmBhlFQnFSdlVLWS62Eiispp63hIXO/biNgqCp/08hS+KEbNuKnu2cVQjYMMXmmB90bQSJE+UeKoUILuTmXxolpurlYCBr+0tciyrCAFF7RhyZxNOnw=
+	t=1741525695; cv=none; b=H23IHbeSsQjbAEfj9cjLK+9l7cWE/RafWJOWScYJfE2R40E9oO9uQE3T+t+b8NarLUo3UGOuFTABv1ovdo4c4O1GW3dP4Bwf0aEh+D4mK9EmjVVah6+73rebaNv5Sz2mi3CWe+CIiW/mm3NqT+RPNq/cZ1R1HIJKCbD6htcY1Vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741518768; c=relaxed/simple;
-	bh=R1/ra110SempN8LYaPUNnLAkhoOs41pIzMor/3d07BQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KpzagQZ4q1fl8g6QL/Y5wI7Tx2zeyylH0HMvB4/O5rFIBGOF/RuRAjkaZpMhRJELKR1bZkuR01b7LFb1KUOeLVH6gDX3JDHg2TA3quBfYo+3yATvJil8DWCn9huow4xG6cBjKwn2FxiCwfQT2O9Z3RqwlKDY5m3y/VXa8893sTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y4+RH5HL; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1741525695; c=relaxed/simple;
+	bh=1xvCgkzPAesc6rhz6X5pleeBpHyMzBKI2nr/j8pTbxw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=WA7brfY3MvF+ealKxf7lSKZMBiJouGtpWn7+1f8X1tUEeFqJvK+nhXUEfR8baOvqUl8+gyGgFeMncCD4OUpf7skvPKXaMkxDNgI+1x4eW5Mkw2IlivYealukAyaTuBQgfr5nKgMsOOvOdwp87//aJ+Lz9/O4c6iwamTaoInvdwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NDO6+16N; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y4+RH5HL"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43cf628cb14so746035e9.1;
-        Sun, 09 Mar 2025 04:12:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741518765; x=1742123565; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=pLoLQv1oy3J8TFf2ZoD9HQxdL8JjlROz1Fj/a+R3JZU=;
-        b=Y4+RH5HL1EMOsWbU7+Fnnn0jpgZNU87rNUbvI5XKl2mFha6Pgkf/CDTJMF8S8eR2wX
-         6Bb8WpvNNQJxC2jH5TwSD//7OH+PndPocL4tyVTR29KavvHye0UHMTD8N+Vpjy1pqO7D
-         s3//uNkr1CPcRshuzUp0ZJ3+U094lcoH5Io51hXr3Ej7SgEHrGpHT9LjE5NA5Ip2nOiT
-         L3gBJmrVE1ZIeNuZIICkk94ORql7634Wv47PXrRX2u9Sj/7nlSdQBewq4xJC3cV9a46I
-         tP4JmfaoqoAFNAgFuNL1Uy9iCq4rfBLabQv56rJcvsKy3PZmqFbcNUGxi06IO653U13j
-         pzQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741518765; x=1742123565;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pLoLQv1oy3J8TFf2ZoD9HQxdL8JjlROz1Fj/a+R3JZU=;
-        b=CG5jAJi6kO4QP/iUMteSIeu880khnRoCdy7wyz/o8p4tt5QfWRBACsT57KThMOUtMm
-         Nhgg/tOZbkmRZzBsqf2OJjXkQKkBSAV5D1H+57vB6uPjsMzlxWPMrybYuUw32LmyjTLQ
-         yCy+KKcm/zvm2UH54jwyTNOF+xORHGmkRGngqKFvCdVIi1m/ZdUJhU4QZn8sqrgBG27Q
-         sYfxH93g67JnMTCuGLjlmzJRgMxBSkfGrY+f86Yi+qDEJq+r/js6QR647LzEkwZc8rrh
-         MU4CurWVP/CRZltTzMFtPugzgIS+q6KT5Yrba0oejSGQft8UbUqAp4eJqORAtqQ5l9KX
-         OvOw==
-X-Forwarded-Encrypted: i=1; AJvYcCVv/ncGfgZCN7KJt0IieOCCgYe62QC9buRH97Df8jg/kxd0yBKKW8bFJZ7dFAdmCSDBrthe8ZNotYGZwh50g/GJYGxbBsk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbHCVWrQReGiBF7GtI2Ah1Pd8c+OhPokxRSCgkdFCuLHyFCCmU
-	POJpwF4ZUkZMG8z5IuhzjdhFwutY0s9fw6IZhRptnormdiAnuRhwMh6Muw==
-X-Gm-Gg: ASbGncu0NFiCwmnWUEUc/H82z8SRRL64fgYtAMMKE61zPZSZKUN5Szc0YJ7TPDgokJA
-	kWc9uWfRl4FkxjI9FL0FwDj72FpmesMZwe2dDFbQZTREfeU9ugT+vOFAlACQPKsqSQfw+rE5dOl
-	w06BoFZNrEc9Z1izO7dq2W7VlZsGUSwoEt4VWW0xf4PHHjwQASK+ERm8TN+UwgOahnEChBJIcT4
-	Q03FdsdmV4gjN+dxUACkklPOxznqPbXlRG+yEsUSubZxuxe6dCF8TGavVW156NgR/M8RONC5eed
-	oZBlUW7lkh2G6fJFBbfabqvW7g04ud5L0PIqI24XMQ==
-X-Google-Smtp-Source: AGHT+IG3/C8RXlmkY2CUPmeYDdxB6zY0IIjtYLFX1U9txnudgTJDegFVLenHDSK9U88TwDD2wtedcw==
-X-Received: by 2002:a05:600c:354b:b0:439:4b23:9e8e with SMTP id 5b1f17b1804b1-43ce4ab02eamr36510695e9.3.1741518764241;
-        Sun, 09 Mar 2025 04:12:44 -0700 (PDT)
-Received: from localhost ([2a02:168:59f0:1:b0ab:dd5e:5c82:86b0])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43ceaac390bsm44649605e9.35.2025.03.09.04.12.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 09 Mar 2025 04:12:43 -0700 (PDT)
-Date: Sun, 9 Mar 2025 12:12:39 +0100
-From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To: Paul Moore <paul@paul-moore.com>
-Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH] MAINTAINERS: add an explicit credentials entry
-Message-ID: <20250309.5ddca2aac3f6@gnoack.org>
-References: <20250304222304.214704-2-paul@paul-moore.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NDO6+16N"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56219C4CEE3;
+	Sun,  9 Mar 2025 13:08:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741525694;
+	bh=1xvCgkzPAesc6rhz6X5pleeBpHyMzBKI2nr/j8pTbxw=;
+	h=Date:From:To:Cc:Subject:From;
+	b=NDO6+16Nf0vxEPCVQU2dLRyyUnrvlH6hwoW8j0pv/joPiX9pwmDBBwyQXWT3slRW1
+	 1a4Dd8f0tJQGwLVzY+DPtbdDkKquMbz8SAG6L9M7oZiVEDiwYe2JsuQZBD0aNaKEjX
+	 66Xz/Q4e9Q5v9VuVWeZgQZ5HF5jpKhtXarZ3yyiJuKoJXPA6LBLBM4L2bRVVkwiIj8
+	 D3LpP1s3qtrCHNAdoe3Io8rMD3GpRRxhU2xC8kfknHGA2k2wgVF4jRp9MYSLaOXikm
+	 aK2vSQ8BDSwfXE5NkSo/OXp7vIOrKjd8rSO8ivySQOQARJvGO/w3cWqdpKVMBtp+Cu
+	 pgP+nBnt1yO8w==
+Date: Sun, 9 Mar 2025 13:08:10 +0000
+From: sergeh@kernel.org
+To: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Cc: Paul Moore <paul@paul-moore.com>
+Subject: [PATCH] MAINTAINERS: add Serge Hallyn as maintainer for creds
+Message-ID: <Z82Sug-XLC1r5wKE@lei>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250304222304.214704-2-paul@paul-moore.com>
 
-Hello Paul and Serge!
+Also add the documentation file as suggested by G�nther Noack.
 
-On Tue, Mar 04, 2025 at 05:23:05PM -0500, Paul Moore wrote:
-> The lack of an explicit credential (kernel/cred.c) entry has caused
-> confusion in the past among new, and not-so-new developers, about where
-> to send credential patches for discussion and merging.  Those patches
-> that are sent can often rot on the mailing lists for months as there
-> is no clear maintainer tasked with reviewing and merging patches.
-> 
-> I'm volunteering for the cred maintainer role to try and reduce the
-> confusion and help cred patches find their way up to Linus' tree.  As
-> there generally aren't a lot of cred patches I'll start with simply
-> folding them into the LSM tree, but if this changes I'll setup a
-> dedicated cred tree.
-> 
-> Signed-off-by: Paul Moore <paul@paul-moore.com>
-> ---
->  MAINTAINERS | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 896a307fa065..68e4656c15ea 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -6139,6 +6139,14 @@ L:	linux-input@vger.kernel.org
->  S:	Maintained
->  F:	drivers/hid/hid-creative-sb0540.c
->  
-> +CREDENTIALS
-> +M:	Paul Moore <paul@paul-moore.com>
-> +L:	linux-security-module@vger.kernel.org
-> +S:	Supported
-> +T:	git https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git
-> +F:	include/linux/cred.h
-> +F:	kernel/cred.c
+Signed-off-by: Serge Hallyn <sergeh@kernel.org>
+---
+ MAINTAINERS | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Maybe also add the documentation:
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 68e4656c15ea..54b47bfc4abd 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -6141,11 +6141,13 @@ F:	drivers/hid/hid-creative-sb0540.c
+ 
+ CREDENTIALS
+ M:	Paul Moore <paul@paul-moore.com>
++R:	Serge Hallyn <sergeh@kernel.org>
+ L:	linux-security-module@vger.kernel.org
+ S:	Supported
+ T:	git https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git
+ F:	include/linux/cred.h
+ F:	kernel/cred.c
 +F:	Documentation/security/credentials.rst
+ 
+ INTEL CRPS COMMON REDUNDANT PSU DRIVER
+ M:	Ninad Palsule <ninad@linux.ibm.com>
+-- 
+2.34.1
 
-This documents the prepare_creds()/commit_creds()/abort_creds()
-"transactional" API that tasks should use to change credentials.
-
-> +
->  INTEL CRPS COMMON REDUNDANT PSU DRIVER
->  M:	Ninad Palsule <ninad@linux.ibm.com>
->  L:	linux-hwmon@vger.kernel.org
-> -- 
-> 2.48.1
-> 
-
-Acked-by: Günther Noack <gnoack3000@gmail.com>
-
-Thank you both for stepping up to establish a clearer ownership for
-credentials!  There is a need for authoritative decisions in that
-area, and it has been difficult to find the right contacts for
-credentials on earlier patches as well, such as:
-
-https://lore.kernel.org/all/20240805-remove-cred-transfer-v2-0-a2aa1d45e6b8@google.com/
-(patch by Jann Horn: "get rid of cred_transfer")
-
-https://lore.kernel.org/all/20250221184417.27954-2-gnoack3000@gmail.com/
-(patch by me, multithreaded Landlock enablement)
-
-Thanks,
-–Günther
