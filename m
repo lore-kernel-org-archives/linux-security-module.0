@@ -1,108 +1,128 @@
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+Received: from flow-a2-smtp.messagingengine.com (flow-a2-smtp.messagingengine.com [103.168.172.137])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A9C81FB3;
-	Sun,  9 Mar 2025 15:28:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F420FEC5;
+	Mon, 10 Mar 2025 00:39:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741534115; cv=none; b=WZFNVvwpArGoqYVfy74REy2ZYUjWwZv+hCLZEcwr1ez0PqSi1lCzPSb21x4W0vonplXmmwtwdTR8Uik6+JP2N/6Tqifj9e8iejQcFv+UOA/qBcCqSPOZaXyOVUmRyKmv+ZFnmFCuglaxzgIPiM8XH6Iot01FqRPJeAXIo6Jf7O4=
+	t=1741567144; cv=none; b=t5aPtE9goiRBAHy/FGQEA+cxkhaJohPKoEy1PFvjVkzjPAHDpI+6VL8abSpWab0mytsh+k6o/n/KExsB5kfgzEL0ZzHsy0HXKJ5V4JIvNWf1VIipMDNEdw9xMjoQMdIcXOELOoPKKbUhGGNBvsrx2I86PsH+K2M3r1w17PPiJ9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741534115; c=relaxed/simple;
-	bh=GLqJn90NpOB3NVZWTuF9R7824jnA7oFHGKAlTXcxvW0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LYdmfakJz1dc0MILW38Iy34ey1GzqrasC5I57rIXrLr4VxZHm2znoQj702ZeS690loIDWXtZpbHS0j1i0FhENZ4jXCzWHoGlLSv7sAlWvMm5t/BpHgriEME3dwiHoqKtnR11+tVxGWnbQatIo0COkOMrJsjgt35i5dhrFBmaGuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id 5F8B33F3; Sun,  9 Mar 2025 10:19:07 -0500 (CDT)
-Date: Sun, 9 Mar 2025 10:19:07 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Max Kellermann <max.kellermann@ionos.com>,
-	Andy Lutomirski <luto@kernel.org>
-Cc: serge@hallyn.com, paul@paul-moore.com, jmorris@namei.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] security/commoncap: don't assume "setid" if all ids are
- identical
-Message-ID: <20250309151907.GA178120@mail.hallyn.com>
-References: <20250306082615.174777-1-max.kellermann@ionos.com>
+	s=arc-20240116; t=1741567144; c=relaxed/simple;
+	bh=Zk4IqK1YHB9anjvH68tavax4aim4PEEvHsx5aPzZjIA=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=P+eUh2wLnRXApfPckCnB6RzCOJN5KPD5lAtcl6+NPpfMO0vzEU107GlQDI4JFmXTtfkZXQouQBpigiYBfFFmQal+HR9t+zMGeXcMVsyXlHNbmtFhKMqcIJUjZur/OC2lW8cXOl64kbF60fiIVP2VrmxNLEcoU9thRfLKZEQUnzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=Iy2kGHDo; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=O13pG5ib; arc=none smtp.client-ip=103.168.172.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="Iy2kGHDo";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="O13pG5ib"
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailflow.phl.internal (Postfix) with ESMTP id CE0582014BD;
+	Sun,  9 Mar 2025 20:39:00 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Sun, 09 Mar 2025 20:39:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1741567140;
+	 x=1741570740; bh=16H3GijOciCT5RbTq7UWlPSfyCJ0ENdD3BiXCL8prKo=; b=
+	Iy2kGHDo5auF/qCUKt+wGKPv4ePSIevjkOQy/yKF2wyPgXdJ8SIbcdW2ixUt0CuC
+	sew1Tqe8J7KIupUMTOk0Ok+OD4+4aFc/Sq+o5Fh04AQVgB6Z8PycJszhHan1XBqK
+	7ARVXQEdCSRPDv8hW0WpiJt5LccQA1PUZVZ+EOjVHAVFGh3UFTGAq8y8wgCI3c6R
+	CYXWZLMzHZOVhbYLjZk2qoS1muqRmryZHztVKBABzOQziWlOZ9Fa31v+8u9ETTRA
+	8i+R5HWHaLyRO5uMWZ1r2/UKW5ABdh5S5ccCoXKt7C8T5lSjcRB7h3yQP1VuMB1x
+	pzSqxFb/f1x30ExD5hTbUw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1741567140; x=
+	1741570740; bh=16H3GijOciCT5RbTq7UWlPSfyCJ0ENdD3BiXCL8prKo=; b=O
+	13pG5ibMu3lyoh4+lBu2lCsHHpyIyA0sKvXjGXpxqk8NSAFbbth1qxMqes+GNMzY
+	OfQZN1lhPQJ2jKlwfqpgONc/nUp0Gn3kUrbUeQTm1ZGLAALl3/GgY5/Vu51J/T2Y
+	hN9apSRhGGd8zQt6kLhg8DYtYlw4VpFxsmPrWyxxoHaY0i7ET6/06h+XEUWsoxVZ
+	ZxxOx0i6nYHS8bTqtYsVhBCmHaiz3n2tHEhzurj6/nyD4h2GPrXpNNtPoHv3P8wz
+	bUljydPYo+xKoV8bvO5POTPr1S7+hTZ5MhS2fSWyJpLKlVXCJ7hu+nzv+UmG6dsp
+	CwTdvdTxANvWwa5zL+seA==
+X-ME-Sender: <xms:pDTOZ7bnTeA0P548iQWBMsfAG-if2Ej5USRZ3p5djf8a5ZhlAwd7Uw>
+    <xme:pDTOZ6ZIFzcp6wkrNLUXT1iaKUYRR6ZQlBpcvG_ONi5BfGmWTWB8RjaTEkE3Nt_FX
+    styVVdwg-KaPzETvIY>
+X-ME-Received: <xmr:pDTOZ99ql0Rgg3LXBzj7f25RT52mGNx9ElAVgYrj3RZISvrqht5_C_gmoslO0i3_3ieOQW9Y3g20zl9sG8Vpl1zOAIjAyPZwEjixZu7Pd_rOPv_s0x79kVBO6sc>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduudejleefucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepkfffgggfhffuvfevfhgjtgfgsehtkeertddt
+    vdejnecuhfhrohhmpefvihhnghhmrghoucghrghnghcuoehmsehmrghofihtmhdrohhrgh
+    eqnecuggftrfgrthhtvghrnhepvdegudeugfdujefgtdetffdujeejleeliedukeeujedu
+    heetgffhgedvteevffeunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrg
+    hilhhfrhhomhepmhesmhgrohifthhmrdhorhhgpdhnsggprhgtphhtthhopeduvddpmhho
+    uggvpehsmhhtphhouhhtpdhrtghpthhtohepmhhitgesughighhikhhougdrnhgvthdprh
+    gtphhtthhopehgnhhorggtkhesghhoohhglhgvrdgtohhmpdhrtghpthhtohepjhgrtghk
+    sehsuhhsvgdrtgiipdhrtghpthhtoheplhhinhhugidqshgvtghurhhithihqdhmohguuh
+    hlvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegrmhhirhejfehilhes
+    ghhmrghilhdrtghomhdprhgtphhtthhopehrvghpnhhophesghhoohhglhgvrdgtohhmpd
+    hrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhr
+    ghdprhgtphhtthhopehthigthhhosehthigthhhordhpihiiiigrpdhrtghpthhtohepsg
+    hrrghunhgvrheskhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:pDTOZxpH9GoIb4Y2o0BSfLBvi6xt4WX6xP1Dai78k8L_OHrbXsQ8wg>
+    <xmx:pDTOZ2pmH1YCk2iJAjIsNhSGNxtt5ZJYjDh4QhSW74ydD1AS2ZTSaA>
+    <xmx:pDTOZ3RzALj1yLLhf5QCEZzssk2Eo8HU7q8aKXedysog1JUfW2snWA>
+    <xmx:pDTOZ-rxeDmdfJxk56Oo7ZxRZ5GdFXjsRNLWG3tPJfVY-LMPT1GU5A>
+    <xmx:pDTOZ11icSVYnhj4TvuXOGS6n93YQ7i6zlSxF7ATOv0FyHMJD7_S6viV>
+Feedback-ID: i580e4893:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 9 Mar 2025 20:38:58 -0400 (EDT)
+Message-ID: <17fc58b6-18cf-4c5c-9060-3198ac65bf8c@maowtm.org>
+Date: Mon, 10 Mar 2025 00:38:57 +0000
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250306082615.174777-1-max.kellermann@ionos.com>
+User-Agent: Mozilla Thunderbird
+From: Tingmao Wang <m@maowtm.org>
+Subject: Re: [RFC PATCH 2/9] Refactor per-layer information in rulesets and
+ rules
+To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Cc: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+ Jan Kara <jack@suse.cz>, linux-security-module@vger.kernel.org,
+ Amir Goldstein <amir73il@gmail.com>, Matthew Bobrowski <repnop@google.com>,
+ linux-fsdevel@vger.kernel.org, Tycho Andersen <tycho@tycho.pizza>,
+ Christian Brauner <brauner@kernel.org>, Kees Cook <kees@kernel.org>,
+ Jann Horn <jannh@google.com>, Andy Lutomirski <luto@amacapital.net>
+References: <cover.1741047969.git.m@maowtm.org>
+ <6e8887f204c9fbe7470e61876bc597932a8f74d9.1741047969.git.m@maowtm.org>
+ <20250304.aiGhah9lohh5@digikod.net>
+ <4e0ed692-50e7-4665-962b-3cc1694e441a@maowtm.org>
+ <20250306.aeth4Thaepae@digikod.net>
+Content-Language: en-US
+In-Reply-To: <20250306.aeth4Thaepae@digikod.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Mar 06, 2025 at 09:26:15AM +0100, Max Kellermann wrote:
-> If a program enables `NO_NEW_PRIVS` and sets up
-> differing real/effective/saved/fs ids, the effective ids are
-> downgraded during exec because the kernel believes it should "get no
-> more than they had, and maybe less".
+On 3/8/25 18:57, Mickaël Salaün wrote:
+[...]
+> Yes, we could put the access rights in the hierarchy, but that would
+> involve walking through the hierarchy to know if Landlock should
+> actually handle (i.e. allow or potentially deny) an access request.
+> Landlock is designed in a way that makes legitimate/allowed access as
+> fast as possible (there is still room for improvement though).  In the
+> case of the supervisor feature, it should mainly be used to dynamically
+> allow access which are statically denied for one layer.  And because it
+> will require a round trip to user space anyway, the performance impact
+> of putting the supervisor pointer in landlock_hierarchy is negligible.
 > 
-> I believe it is safe to keep differing ids even if `NO_NEW_PRIVS` is
-> set.  The newly executed program doesn't get any more, but there's no
-> reason to give it less.
-> 
-> This is different from "set[ug]id/setpcap" execution where privileges
-> may be raised; here, the assumption that it's "set[ug]id" if
-> effective!=real is too broad.
-> 
-> If we verify that all user/group ids remain as they were, we can
-> safely allow the new program to keep them.
+> Initially the purpose of landlock_hierarchy was to be able to compare
+> domains (for ptrace and later scope restrictions), whereas the
+> landlock_ruleset is to store immutable data (without references) when
+> used as a domain.  With the audit feature, the landlock_hierarchy will
+> also contain domain's shared/mutable states and pointers that should
+> only be rarely accessed (i.e. only for denials).  So, in a nutshell
+> landlock_ruleset as a domain should stay minimal and improve data
+> locality to speed up allowed access requests.
 
-Thanks, it's an interesting point.  Seems to mainly depend on what users
-of the feature have come to expect.
-
-Andy, what do you think?
-
-> Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
-> ---
->  security/commoncap.c | 23 ++++++++++++++++++++++-
->  1 file changed, 22 insertions(+), 1 deletion(-)
-> 
-> diff --git a/security/commoncap.c b/security/commoncap.c
-> index 58a0c1c3e409..057a7400ef7d 100644
-> --- a/security/commoncap.c
-> +++ b/security/commoncap.c
-> @@ -861,6 +861,26 @@ static inline bool __is_setuid(struct cred *new, const struct cred *old)
->  static inline bool __is_setgid(struct cred *new, const struct cred *old)
->  { return !gid_eq(new->egid, old->gid); }
->  
-> +/**
-> + * Are all user/group ids in both cred instances identical?
-> + *
-> + * It can be used after __is_setuid() / __is_setgid() to check whether
-> + * this is really a set*id operation or whether both processes just
-> + * have differing real/effective ids.  It is safe to keep differing
-> + * real/effective ids in "unsafe" program execution.
-> + */
-> +static bool has_identical_uids_gids(const struct cred *a, const struct cred *b)
-> +{
-> +	return uid_eq(a->uid, b->uid) &&
-> +		gid_eq(a->gid, b->gid) &&
-> +		uid_eq(a->suid, b->suid) &&
-> +		gid_eq(a->sgid, b->sgid) &&
-> +		uid_eq(a->euid, b->euid) &&
-> +		gid_eq(a->egid, b->egid) &&
-> +		uid_eq(a->fsuid, b->fsuid) &&
-> +		gid_eq(a->fsgid, b->fsgid);
-> +}
-> +
->  /*
->   * 1) Audit candidate if current->cap_effective is set
->   *
-> @@ -940,7 +960,8 @@ int cap_bprm_creds_from_file(struct linux_binprm *bprm, const struct file *file)
->  	 *
->  	 * In addition, if NO_NEW_PRIVS, then ensure we get no new privs.
->  	 */
-> -	is_setid = __is_setuid(new, old) || __is_setgid(new, old);
-> +	is_setid = (__is_setuid(new, old) || __is_setgid(new, old)) &&
-> +		!has_identical_uids_gids(new, old);
->  
->  	if ((is_setid || __cap_gained(permitted, new, old)) &&
->  	    ((bprm->unsafe & ~LSM_UNSAFE_PTRACE) ||
-> -- 
-> 2.47.2
+That makes total sense - I will move the supervisor pointer to 
+landlock_hierarchy and drop this change in the next version.
