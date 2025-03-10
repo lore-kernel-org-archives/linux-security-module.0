@@ -1,230 +1,166 @@
-Received: from flow-a2-smtp.messagingengine.com (flow-a2-smtp.messagingengine.com [103.168.172.137])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 390811CD15;
-	Mon, 10 Mar 2025 00:41:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.137
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EDBD1DE899;
+	Mon, 10 Mar 2025 07:29:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741567294; cv=none; b=WaRXR8E0fXfkVF/J79BOI0D4kuUyHbhlRffYTGn8S+l4k4VpmjoA4q9dAVvs1OOu88OROFlQiqKTQmAHYAkXVIcrnNebArhJXcO0HvXGZhvb0potPJ2UkLJlZn/fHLnbPfjbYiUN0a+0lzjk8SpTyZ5zTmIuk18IZlpX4yIPeeU=
+	t=1741591757; cv=none; b=iBHGGE0tydyzSl1vd/kZlET8zVq5qegN6owI8kk6sIGDzFd1HfAJmIlWgwtxz3tZR1scXkfXcHotK9D6V6rVDbiEiwArCFBhca7DMAhPbfi/heNV8JQuB7o2e44aK+MRmR1D+hrMhpFp+f2uiBji5h8HlQTeJ2zCLelR8AYx938=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741567294; c=relaxed/simple;
-	bh=C0lIOYeQxK4BOGgbfxQ5Qw90gmHSfcZXG5ZasD9/0IA=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=YQ369jbOBXEPt1ZRqHyrjgTInAuwhtQuVMxno/7ryntGXsLLA5MZXv26vEbiVe9SKYhR9NwTt606b+BiKEYUtOPwFCTds39WYkMFRd9QkokuvvRc3VnnmZxg35/pW7zURgkbIIrnSgIrEMyJDEw4NqntCHQOCpp1jEf+nDxdxfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=Jo1uNrxp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=iG/NNq5A; arc=none smtp.client-ip=103.168.172.137
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
+	s=arc-20240116; t=1741591757; c=relaxed/simple;
+	bh=Qak3hDPimj5StjXL2unXWZ3LseUEHQB49RxyNvafENM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VGpV7Sab2Z78RauVW0Kx8uIQ3OJidXFABVUOLLg6p8hBMfTzaHuqDQTuzIPWVliVQQfZH+L8LM1SVGvZzjWZtkZo5vj+eDsB3Z1ucSct/EFRtgBmlZ85pZTUKiCJ72TPBEPlAtriC1N8916et5rRzGobhIEBuBWu7bAg3BX6YHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HadvyXvv; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="Jo1uNrxp";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="iG/NNq5A"
-Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
-	by mailflow.phl.internal (Postfix) with ESMTP id 59E84201205;
-	Sun,  9 Mar 2025 20:41:31 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-11.internal (MEProxy); Sun, 09 Mar 2025 20:41:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1741567291;
-	 x=1741570891; bh=PXc7HL+oK3BydLoUL+4If3m8tkgn/qEjXBfFPyzRVHI=; b=
-	Jo1uNrxp5Hcn/1wFJn5cjxcpHzny3Hs3EefK6KsL8aZRXi1fkgwtFNlpYaoD55Uv
-	znBZ8b1vo1PqI02XPvjBVLooJB1bRK/qqDZs4OupZbjvetLUnK5/eaD8UAeox31p
-	GnZJlmsdiiB3tq5ROedRb1BYsmdZ4o9hL5QCPuqKVKfUVa/QtlDpMpQR+6lPCBK6
-	YoA6dTXfCI7Fo5n5uTFsURns2Apt0wYOEnbI3k68cqX2OxeAhhh2OrPdHL8ENf9w
-	AFvEohDVZ7sj3fwI26unNHmh57R6O8LFTjdfENEJMHpJZGfKlzOco7cUJS9w92hF
-	rZRtdt5lCh6fKZf4qRT4+A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1741567291; x=
-	1741570891; bh=PXc7HL+oK3BydLoUL+4If3m8tkgn/qEjXBfFPyzRVHI=; b=i
-	G/NNq5A1wucONX8Ib4bTqsu3o+uVXFfizTiEhOgCYbrQutiQWkHEEMKXHQq4Od7B
-	SnBZ9JpIRCJbY2tsv4wikYlMPpwARjcET2E2hn9xwM7FnKUVbMHjlzLj7/Wu+TQ8
-	cyPjHhMKOO+pdTpHSA9hVrkXPj8YyvSRAveH6rFpt8u2l9Y9kL215byau4cf8+92
-	BpPeQqgzGpGTo0W1Ge2FZZLfhbuuBvCE+F9F1qktGduxZerPkpGfsgtJT4ERYhCH
-	42+SEkxLcWB5rEw+z3uVACtVgcV0r58GJ+NcX5xgt4VVG1Yyxo4Cqd2PiR/dsndD
-	UwLtp8s0qsgOxv9B5GLyQ==
-X-ME-Sender: <xms:OjXOZ35lqW8BMU2CeaOQPArq5gnQlDBRg8oB2wUbFOB8Egc8nJxT6w>
-    <xme:OjXOZ86GbdgM0T2tOVoQiTL94fElwUHOdVwzdAsnmTPhi5psljOr5DTA6M4wvsYL3
-    kvo69BJjHtCFTr64Y8>
-X-ME-Received: <xmr:OjXOZ-fRB2__C-mYL3M7G9pHegWGvhCYo-K_6FGAis1I5_sbatxiD-DPlZbP6blh6jTIMBlppJaNpa5zUji_HODrO_qrrJotZ9eXNBU0Iq6vvNR7ADo4vAC2KMo>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduudejledvucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepkfffgggfhffuvfevfhgjtgfgsehtkeertddt
-    vdejnecuhfhrohhmpefvihhnghhmrghoucghrghnghcuoehmsehmrghofihtmhdrohhrgh
-    eqnecuggftrfgrthhtvghrnhepjeefgfeghfejuefhheeigedvteetudeiudefvefhhefg
-    gfffhfetudefteevudffnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhush
-    htvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmsehmrghofihtmhdr
-    ohhrghdpnhgspghrtghpthhtohepuddtpdhmohguvgepshhmthhpohhuthdprhgtphhtth
-    hopehmihgtseguihhgihhkohgurdhnvghtpdhrtghpthhtohepghhnohgrtghksehgohho
-    ghhlvgdrtghomhdprhgtphhtthhopehjrggtkhesshhushgvrdgtiidprhgtphhtthhope
-    hlihhnuhigqdhsvggtuhhrihhthidqmhhoughulhgvsehvghgvrhdrkhgvrhhnvghlrdho
-    rhhgpdhrtghpthhtoheprghmihhrjeefihhlsehgmhgrihhlrdgtohhmpdhrtghpthhtoh
-    eprhgvphhnohhpsehgohhoghhlvgdrtghomhdprhgtphhtthhopehlihhnuhigqdhfshgu
-    vghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthihtghhohesth
-    ihtghhohdrphhiiiiirgdprhgtphhtthhopehjrghnnhhhsehgohhoghhlvgdrtghomh
-X-ME-Proxy: <xmx:OjXOZ4JVwWRIXPXtslpij9Vmsd7PlHHnxSyGBXjI-4uF7wm9AVV5hQ>
-    <xmx:OjXOZ7L4P2UmtMle_4mmVRbqSOcQi-0Uy2A2R-Jo8yogdR5w-CIw5w>
-    <xmx:OjXOZxxsq7b59JnzHrpMRlaGU99SMNqv0LyisJacFQIMa2o06nyaqw>
-    <xmx:OjXOZ3LBiy6PcVdADJAx2_qVbArdVE8j0ejnGJq57g7EZV6Mj645Fw>
-    <xmx:OzXOZ4pgnhb5XhvVdWxsOp5_8kOzLjrhw8MZxTzQR4p1axMVHame6CwN>
-Feedback-ID: i580e4893:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 9 Mar 2025 20:41:29 -0400 (EDT)
-Message-ID: <8f4abea4-d453-4dfe-be02-7a712f90d1a0@maowtm.org>
-Date: Mon, 10 Mar 2025 00:41:28 +0000
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HadvyXvv"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741591755; x=1773127755;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Qak3hDPimj5StjXL2unXWZ3LseUEHQB49RxyNvafENM=;
+  b=HadvyXvvzoE0kE8JZcP18RnX40MQ6mHSsBUe8hpJdwzuq0YTovPJa7e5
+   NuuyJX1iCQemm9wDxy/JdrbgLDLyZVPhFmsck9caNhNdT82+Db0ByPhVE
+   iJ+VbtM9VVPSMr/vqlLlZRlrVUKNQ/AvXdQmbI85XbIFbtrNDQRsBauFS
+   69xIQdLYGSeN+YJhQ5Hapo33tekH1UKp7dGpxarzvPbp1YpegpTG7W0gP
+   jx2bI1K+Pd+oSCvfEFmS2LRTsUEt9BfmOWVzk+PTXQYd1k6zWPZ9xG1RJ
+   p3StqCNrxbqxd536hjoxghcJTxEjGzcZoRajAF/W2mA7xIdKey8RyG99X
+   g==;
+X-CSE-ConnectionGUID: AnpRggNnRaKzY/YQmgNdWg==
+X-CSE-MsgGUID: PgsmNOmEStOKOvk6YzCyig==
+X-IronPort-AV: E=McAfee;i="6700,10204,11368"; a="42708309"
+X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
+   d="scan'208";a="42708309"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Mar 2025 00:29:14 -0700
+X-CSE-ConnectionGUID: 5XQOV+CbTGWX4IlFp3+DGQ==
+X-CSE-MsgGUID: odNCYfjnQouvfxfLHhZOqw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,235,1736841600"; 
+   d="scan'208";a="157120741"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by orviesa001.jf.intel.com with ESMTP; 10 Mar 2025 00:29:11 -0700
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1trXZK-0003wM-0q;
+	Mon, 10 Mar 2025 07:29:01 +0000
+Date: Mon, 10 Mar 2025 15:26:35 +0800
+From: kernel test robot <lkp@intel.com>
+To: Casey Schaufler <casey@schaufler-ca.com>, paul@paul-moore.com,
+	eparis@redhat.com, linux-security-module@vger.kernel.org,
+	audit@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, jmorris@namei.org, serge@hallyn.com,
+	keescook@chromium.org, john.johansen@canonical.com,
+	penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
+	linux-kernel@vger.kernel.org, selinux@vger.kernel.org
+Subject: Re: [PATCH v2 6/6] Audit: Add record for multiple object contexts
+Message-ID: <202503101524.XYSVbXHw-lkp@intel.com>
+References: <20250307183701.16970-7-casey@schaufler-ca.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Tingmao Wang <m@maowtm.org>
-Subject: Re: [RFC PATCH 4/9] User-space API for creating a supervisor-fd
-To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
- Jan Kara <jack@suse.cz>, linux-security-module@vger.kernel.org,
- Amir Goldstein <amir73il@gmail.com>, Matthew Bobrowski <repnop@google.com>,
- linux-fsdevel@vger.kernel.org, Tycho Andersen <tycho@tycho.pizza>,
- Jann Horn <jannh@google.com>, Andy Lutomirski <luto@amacapital.net>
-References: <cover.1741047969.git.m@maowtm.org>
- <03d822634936f4c3ac8e4843f9913d1b1fa9d081.1741047969.git.m@maowtm.org>
- <20250305.peiLairahj3A@digikod.net>
-Content-Language: en-US
-In-Reply-To: <20250305.peiLairahj3A@digikod.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250307183701.16970-7-casey@schaufler-ca.com>
 
-On 3/5/25 16:09, Mickaël Salaün wrote:
-> On Tue, Mar 04, 2025 at 01:13:00AM +0000, Tingmao Wang wrote:
->> We allow the user to pass in an additional flag to landlock_create_ruleset
->> which will make the ruleset operate in "supervise" mode, with a supervisor
->> attached. We create additional space in the landlock_ruleset_attr
->> structure to pass the newly created supervisor fd back to user-space.
->>
->> The intention, while not implemented yet, is that the user-space will read
->> events from this fd and write responses back to it.
->>
->> Note: need to investigate if fd clone on fork() is handled correctly, but
->> should be fine if it shares the struct file. We might also want to let the
->> user customize the flags on this fd, so that they can request no
->> O_CLOEXEC.
->>
->> NOTE: despite this patch having a new uapi, I'm still very open to e.g.
->> re-using fanotify stuff instead (if that makes sense in the end). This is
->> just a PoC.
-> 
-> The main security risk of this feature is for this FD to leak and be
-> used by a sandboxed process to bypass all its restrictions.  This should
-> be highlighted in the UAPI documentation.
-> 
->>
->> Signed-off-by: Tingmao Wang <m@maowtm.org>
->> ---
->>   include/uapi/linux/landlock.h |  10 ++++
->>   security/landlock/syscalls.c  | 102 +++++++++++++++++++++++++++++-----
->>   2 files changed, 98 insertions(+), 14 deletions(-)
->>
->> diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
->> index e1d2c27533b4..7bc1eb4859fb 100644
->> --- a/include/uapi/linux/landlock.h
->> +++ b/include/uapi/linux/landlock.h
->> @@ -50,6 +50,15 @@ struct landlock_ruleset_attr {
->>   	 * resources (e.g. IPCs).
->>   	 */
->>   	__u64 scoped;
->> +	/**
->> +	 * @supervisor_fd: Placeholder to store the supervisor file
->> +	 * descriptor when %LANDLOCK_CREATE_RULESET_SUPERVISE is set.
->> +	 */
->> +	__s32 supervisor_fd;
-> 
-> This interface would require the ruleset_attr becoming updatable by the
-> kernel, which might be OK in theory but requires current syscall wrapper
-> signature update, see sandboxer.c change.  It also creates a FD which
-> might not be useful (e.g. if an error occurs before the actual
-> enforcement).
-> 
-> I see a few alternatives.  We could just use/extend the ruleset FD
-> instead of creating a new one, but because leaking current rulesets is
-> not currently a security risk, we should be careful to not change that.
-> 
-> Another approach, similar to seccomp unotify, is to get a
-> "[landlock-domain]" FD returned by the landlock_restrict_self(2) when a
-> new LANDLOCK_RESTRICT_SELF_DOMAIN_FD flag is set.  This FD would be a
-> reference to the newly created domain, which is more specific than the
-> ruleset used to created this domain (and that can be used to create
-> other domains).  This domain FD could be used for introspection (i.e.
-> to get read-only properties such as domain ID), but being able to
-> directly supervise the referenced domain only with this FD would be a
-> risk that we should limit.
-> 
-> What we can do is to implement an IOCTL command for such domain FD that
-> would return a supervisor FD (if the LANDLOCK_RESTRICT_SELF_SUPERVISED
-> flag was also set).  The key point is to check (one time) that the
-> process calling this IOCTL is not restricted by the related domain (see
-> the scope helpers).
+Hi Casey,
 
-Is LANDLOCK_RESTRICT_SELF_DOMAIN_FD part of your (upcoming?) 
-introspection patch? (thinking about when will someone pass that only 
-and not LANDLOCK_RESTRICT_SELF_SUPERVISED, or vice versa)
+kernel test robot noticed the following build errors:
 
-By the way, is it alright to conceptually relate the supervisor to a 
-domain? It really would be a layer inside a domain - the domain could 
-have earlier or later layers which can deny access without supervision, 
-or the supervisor for earlier layers can deny access first. Therefore 
-having supervisor fd coming out of the ruleset felt sensible to me at first.
+[auto build test ERROR on pcmoore-selinux/next]
+[also build test ERROR on linus/master v6.14-rc6 next-20250307]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Also, isn't "check that process calling this IOCTL is not restricted by 
-the related domain" and the fact that the IOCTL is on the domain fd, 
-which is a return value of landlock_restrict_self, kind of 
-contradictory?  I mean it is a sensible check, but that kind of 
-highlights that this interface is slightly awkward - basically all 
-callers are forced to have a setup where the child sends the domain fd 
-back to the parent.
+url:    https://github.com/intel-lab-lkp/linux/commits/Casey-Schaufler/Audit-Create-audit_stamp-structure/20250308-024950
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git next
+patch link:    https://lore.kernel.org/r/20250307183701.16970-7-casey%40schaufler-ca.com
+patch subject: [PATCH v2 6/6] Audit: Add record for multiple object contexts
+config: s390-randconfig-r073-20250310 (https://download.01.org/0day-ci/archive/20250310/202503101524.XYSVbXHw-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250310/202503101524.XYSVbXHw-lkp@intel.com/reproduce)
 
-> 
-> Relying on IOCTL commands (for all these FD types) instead of read/write
-> operations should also limit the risk of these FDs being misused through
-> a confused deputy attack (because such IOCTL command would convey an
-> explicit intent):
-> https://docs.kernel.org/security/credentials.html#open-file-credentials
-> https://lore.kernel.org/all/CAG48ez0HW-nScxn4G5p8UHtYy=T435ZkF3Tb1ARTyyijt_cNEg@mail.gmail.com/
-> We should get inspiration from seccomp unotify for this too:
-> https://lore.kernel.org/all/20181209182414.30862-1-tycho@tycho.ws/
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503101524.XYSVbXHw-lkp@intel.com/
 
-I think in the seccomp unotify case the problem arises from what the 
-setuid binary thinks is just normal data getting interpreted by the 
-kernel as a fd, and thus having different effect if the attacker writes 
-it vs. if the suid app writes it.  In our case I *think* we should be 
-alright, but maybe we should go with ioctl anyway... However, how does 
-using netlink messages (a suggestion from a different thread) affect 
-this (if we do end up using it)?  Would we have to do netlink msgs via 
-IOCTL?
+All errors (new ones prefixed by >>):
+
+   s390x-linux-ld: kernel/audit.o: in function `audit_log_object_context':
+>> kernel/audit.c:2312:(.text+0x2da6): undefined reference to `lsm_objctx_cnt'
+>> s390x-linux-ld: kernel/audit.c:2329:(.text+0x30d2): undefined reference to `lsm_active_cnt'
+   s390x-linux-ld: kernel/audit.c:(.text+0x3108): undefined reference to `lsm_active_cnt'
+>> s390x-linux-ld: kernel/audit.c:2330:(.text+0x313e): undefined reference to `lsm_idlist'
+>> s390x-linux-ld: kernel/audit.c:2312:(.text+0x32f2): undefined reference to `lsm_objctx_cnt'
+   s390x-linux-ld: kernel/audit.c:2312:(.text+0x330a): undefined reference to `lsm_objctx_cnt'
+   s390x-linux-ld: kernel/audit.c:2329:(.text+0x33a4): undefined reference to `lsm_active_cnt'
+   s390x-linux-ld: kernel/audit.c:2329:(.text+0x33bc): undefined reference to `lsm_active_cnt'
 
 
->> +	/**
->> +	 * @pad: Unused, must be zero.
->> +	 */
->> +	__u32 pad;
-> 
-> In this case we should pack the struct instead.
-> 
->>   };
->>   
->>   /*
->> @@ -60,6 +69,7 @@ struct landlock_ruleset_attr {
->>    */
->>   /* clang-format off */
->>   #define LANDLOCK_CREATE_RULESET_VERSION			(1U << 0)
->> +#define LANDLOCK_CREATE_RULESET_SUPERVISE		(1U << 1)
->>   /* clang-format on */
->>   
->>   /**
-> 
-> [...]
+vim +2312 kernel/audit.c
 
+  2303	
+  2304	int audit_log_object_context(struct audit_buffer *ab, struct lsm_prop *prop)
+  2305	{
+  2306		int i;
+  2307		int rc;
+  2308		int error = 0;
+  2309		char *space = "";
+  2310		struct lsm_context context;
+  2311	
+> 2312		if (lsm_objctx_cnt < 2) {
+  2313			error = security_lsmprop_to_secctx(prop, &context,
+  2314							   LSM_ID_UNDEF);
+  2315			if (error < 0) {
+  2316				if (error != -EINVAL)
+  2317					goto error_path;
+  2318				return error;
+  2319			}
+  2320			audit_log_format(ab, " obj=%s", context.context);
+  2321			security_release_secctx(&context);
+  2322			return 0;
+  2323		}
+  2324		audit_log_format(ab, " obj=?");
+  2325		error = audit_buffer_aux_new(ab, AUDIT_MAC_OBJ_CONTEXTS);
+  2326		if (error)
+  2327			goto error_path;
+  2328	
+> 2329		for (i = 0; i < lsm_active_cnt; i++) {
+> 2330			if (!lsm_idlist[i]->objctx)
+  2331				continue;
+  2332			rc = security_lsmprop_to_secctx(prop, &context,
+  2333							lsm_idlist[i]->id);
+  2334			if (rc < 0) {
+  2335				audit_log_format(ab, "%sobj_%s=?", space,
+  2336						 lsm_idlist[i]->name);
+  2337				if (rc != -EINVAL)
+  2338					audit_panic("error in audit_log_object_context");
+  2339				error = rc;
+  2340			} else {
+  2341				audit_log_format(ab, "%sobj_%s=%s", space,
+  2342						 lsm_idlist[i]->name, context.context);
+  2343				security_release_secctx(&context);
+  2344			}
+  2345			space = " ";
+  2346		}
+  2347	
+  2348		audit_buffer_aux_end(ab);
+  2349		return error;
+  2350	
+  2351	error_path:
+  2352		audit_panic("error in audit_log_object_context");
+  2353		return error;
+  2354	}
+  2355	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
