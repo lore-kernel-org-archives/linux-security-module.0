@@ -1,104 +1,208 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29605215178;
-	Mon, 10 Mar 2025 23:07:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B67C51DE3D2
+	for <linux-security-module@vger.kernel.org>; Mon, 10 Mar 2025 23:42:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741648036; cv=none; b=lq58Lsi5YrdP/YYexMsfofgz7B4G4wbfdSUn82ubf20q3nugRws4b5Q3NeZj3wNgbtKC98IjkyWn3TRBOGwpP5ux7xpg+VtwMVbhlA56dFPGtf5ml3IvJZ1uz97dpT4HPgwBDgmZMehEUqPRZaRkfbheqvnVfuGRqDk3tmt41pQ=
+	t=1741650167; cv=none; b=qgfkst+I+NLOMPDVDF0gKtMTTZiEshQcnb+tqHIdVRn0gd5Wrx7EwVN4OF+rfGiuDPoYzIYzT8ANGU2+z0+DDExUQFdbFYg4G5uAu6+YJNUS8eNvhhIKjN8/vr26FhmP8p97Zxpljs+laAvZf4W6+UX57Q4nja5mZVlKdzl8XQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741648036; c=relaxed/simple;
-	bh=JzhS4McBCXjeRJuYeYTZgfxnWCyjSgVLpimnfD+mmyE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bZYH012fFrljRxBz95dKYfZeYM40Dh4PS44R4iHwM7Q6ozgixt1ugXj7ZZ89ObQXwRXHirtlpKmKQCpoRIVIgbccEaohVtE+RKoZx/yR28GwH4H4DDtbxhe9LZ6/cQUgJo3w7muJwNcghc409ahJIXHMbhdbXvf0PcRWyjt1lf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HC4R/bVg; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1741650167; c=relaxed/simple;
+	bh=JxuXhLpw/80PTBGVg/ckucoINOjXMwDODaIi6cAO9A0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tKBT8a9FFkPQ4rrWmAj/AqaL2gANiEwQ/uWw+NoKMOCES36rdnswgv06+RR5E8JOlqwwjXLeTr0bcafwSBiCRRzsGoy1+37S7yzoErvQy/Yc3WKZf4b/+4mjaSwXSQhD419o3OX4/o5c6prsKPZEoW9+B8Rm8y3AWkdBcaC1K2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=FvdBAA5N; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HC4R/bVg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DE7FC4CEEE;
-	Mon, 10 Mar 2025 23:07:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741648035;
-	bh=JzhS4McBCXjeRJuYeYTZgfxnWCyjSgVLpimnfD+mmyE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=HC4R/bVgS04ua943xHOA3HnT1R36+PVPLwCxfIJ/A2Qa4uUpf/lcl8O4Fh/9ofcwt
-	 lEtXgTCbZRzVc8P6/OmDCikU1PJMvs1EKJCrIAkUuk7wvl71xRnn8wc3p5C/zKdN3z
-	 SO2Oj5eqNdEZIWAxGLV2oqJ07h1BGZj0IgnMqFFxRRnOAtOmZsuFvU5jAw1Oe4/iHU
-	 smHhU3vmFG5OpKlBNPw5nBvQ+9VX/ryY+IPkTAtEAUXDIH/tX0L18L3pnoEt18PyMl
-	 y/MKiHyFttCrWCJ5uWhKvyAE8E+prNN7airBvfEpM9gSZZ7SUmJfj2yUlLGWdaI87s
-	 HHEunfdnj3FXA==
-Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3ce886a2d5bso37033675ab.1;
-        Mon, 10 Mar 2025 16:07:15 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV//8YCSuoc0E6flup9mbWe19qesP+WVFDnVit7xUNH0in+5oN1GPZsjmYBGLyVFToavtZmOU9d9GQ8b46u@vger.kernel.org, AJvYcCVVLLu1ND1EjLXVKKnCpE6gDkYNSFhRiFXCsTTzfblxYBP8VFp+LvF/35A3zxKV3kSAFS45Xr5S+v5i3ZDzL4f/@vger.kernel.org, AJvYcCW5h26k5NhnumwAgvuLGBDeSMRItXwy6KTc7cgajgwpBKcMSo6VAXig2gidYwbORtxOc87CXNf8sA==@vger.kernel.org, AJvYcCWEHJhPO/l2AKMTtELbgPC36Bnd/xVHHwQB0R0LiJ6mOU0Sp4u1dlJlTuHzItqwiWz5e6A=@vger.kernel.org, AJvYcCXrSCTfYllbnOZIWtxZNdPu3Or8nJlyqvv2Py+GWRqQPomFsWvX7WQmYU0Obadb4+IaWlqDwuYkP2P1EEqrfJWrWcqLvyvh@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5qbPGzL8DnMpJPEwa+AVR9mfXXN7sVU3PR3dI82faf6BfLIko
-	9AgfE+0sO8Vqxm8cBofilW9fWPQ/7W8CB95AUQjX+rXaQhccQhZFlxP/F64057MMxojgaBt1FNA
-	DZ7oZzQFEPYFfTXw3QrIOi5Y/81Q=
-X-Google-Smtp-Source: AGHT+IFrFz33eGKzI6s8UK47W59xeivzvMS0xnZMkw/8Y5TyTKHEvMj13/Tm3Rsh4y/BtKJnusgx8XmIFiJNB7O3RjI=
-X-Received: by 2002:a05:6e02:219c:b0:3d0:10a6:99aa with SMTP id
- e9e14a558f8ab-3d44187c249mr177397255ab.4.1741648034716; Mon, 10 Mar 2025
- 16:07:14 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="FvdBAA5N"
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2232aead377so23248575ad.0
+        for <linux-security-module@vger.kernel.org>; Mon, 10 Mar 2025 16:42:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1741650165; x=1742254965; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Ab8d9IYp+L/Y7BybUEqkqbfBF3I8gaslBc0ZaUbIpYc=;
+        b=FvdBAA5NJuZxHNgBsyVmNtdgX4/Aj/wxoZU7fjfJ7qxPXnLJ6Bh3iYdArkLhXUwfGs
+         H7uHe9C04ilnCHPKzRPF+bhMsMjuWpRBsYHW8ZEvlRG8kYIAG2DRUlA8DKivtnQlUvNT
+         Azx10ThnYGCJ8mKlKalGH0qswK+iGOD0eMATZ7CRIaF/GRgVt0pyDTPNbs6L+305VlCn
+         XkhSYYLy1RgRVMd17OSPZSklJLj4bDbMNAcKyJhvOOAVMz5dzr6oepxyKv3B0bsXq5Wb
+         nzMLxdnIdwYOyTYikiPJaU/a5Nhn6t4Xath5txtrQt8T2vC+fcm22vlNz0z1PtskhutP
+         OTKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741650165; x=1742254965;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ab8d9IYp+L/Y7BybUEqkqbfBF3I8gaslBc0ZaUbIpYc=;
+        b=sA8WK/dQ1kfb0yikDIQ2BRIxU7qFFgOUgI/T6A70zjcK1t0hU097dZuD6Goa2jNtxy
+         nSldTuGLmESrnLPIkVkmzBd5ASL4xuY0GPeGzrAGHrsmOR1xqSIbwmNu8B3Y5QMsjqYb
+         MTx5oEf9bKPLnNkOsbmoPXPPiKWnDhew5WyuGMlFRX9HH/vg2iJifJyka0k54z2sLFyu
+         mG1GJilzdf2SVEpKlbLv30chlO2uUIb/ffUy1NDjLMmWm43P2zfWMys4hizdHH6jOT/o
+         g4oy2IXoiJYttWIiQdtP+w2SfNzHkjpJnoZUljIPPTm/QrlHKgKNSzhweErwJU5T3CJq
+         /mog==
+X-Forwarded-Encrypted: i=1; AJvYcCUU3bHzcgTGzLLsU3uCOPyU/UFn7E5+RoRo8uLpWofV3g/ZFN03gdcdUwt4dFMLTwfksi0CPlvh3cU+oDR++5V45WyToA4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcCkcxQjOcJpt/VMqXewmvAs/2k84txUwf2sbJBGKUlIOJncFl
+	tgjbXMoE9ueOw1Ocn1V52uAYyargv8AeYI1vNrZJQ0uoSlif8NCzMVxYDKADfTE=
+X-Gm-Gg: ASbGncu8HP2kl5F7Tk9xdH2kBrRIqO9SbCYEKgLkYoWikCBetSB9wxmACWBLA+PHiUD
+	3vaRgwBO84A9KXodsCTUo/y/vfyQ07RMqcxUVKuXXOlUVlmnn3aktzzQulRYQgB5RrVB6oVPnm1
+	jSeIchlBrN7od9TYR60i/v3G+3s3l3Y32iLXyLlNFRrOEwnLe/wPk0svu6q7EmvgwNy5kUOv/O4
+	LizjYv/dZIDYdCKamZBrxn6VOrUrRKHN6Jf8O5MEOTdGmWqijnaNwF/isZEllLBmdPBIVh60rvp
+	cRXrVU1CNB/OgF43ab8+clB9uOE7WjRxbVeDM0zVycG4wb1j4Dysq78kVBoyf8GNU6BYi9nR0er
+	cG4z4exW96VDgJfBe+Hr6
+X-Google-Smtp-Source: AGHT+IFCbwV2RdF4GgghwFF8KjVEm6A3kyIa03pE5ShRGOJCv6PPUl+0sK6W7IyV2pwWHicIvH4jtg==
+X-Received: by 2002:a17:902:ce89:b0:21f:164d:93fe with SMTP id d9443c01a7336-22428c0d524mr240131555ad.53.1741650164955;
+        Mon, 10 Mar 2025 16:42:44 -0700 (PDT)
+Received: from dread.disaster.area (pa49-186-89-135.pa.vic.optusnet.com.au. [49.186.89.135])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-224109e8642sm84307995ad.72.2025.03.10.16.42.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Mar 2025 16:42:44 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.98)
+	(envelope-from <david@fromorbit.com>)
+	id 1trmld-0000000BUzA-12Pp;
+	Tue, 11 Mar 2025 10:42:41 +1100
+Date: Tue, 11 Mar 2025 10:42:41 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>, cve@kernel.org,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	linux-security-module@vger.kernel.org,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: CVE-2025-21830: landlock: Handle weird files
+Message-ID: <Z8948cR5aka4Cc5g@dread.disaster.area>
+References: <2025030611-CVE-2025-21830-da64@gregkh>
+ <20250310.ooshu9Cha2oo@digikod.net>
+ <2025031034-savanna-debit-eb8e@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250310221737.821889-1-bboscaccy@linux.microsoft.com> <20250310221737.821889-3-bboscaccy@linux.microsoft.com>
-In-Reply-To: <20250310221737.821889-3-bboscaccy@linux.microsoft.com>
-From: Song Liu <song@kernel.org>
-Date: Mon, 10 Mar 2025 16:07:03 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW4cCkWGnJfxJvBd498iTd3-hMXLg=s7S68vdgPVhdtqCA@mail.gmail.com>
-X-Gm-Features: AQ5f1JpWun0dhnGTqBIlLHHy-G5NiP7iX2I9xNN_D-pdziA3qrPPEBFmfrg3y98
-Message-ID: <CAPhsuW4cCkWGnJfxJvBd498iTd3-hMXLg=s7S68vdgPVhdtqCA@mail.gmail.com>
-Subject: Re: [PATCH v7 bpf-next 2/2] selftests/bpf: Add a kernel flag test for
- LSM bpf hook
-To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Yonghong Song <yonghong.song@linux.dev>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, 
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Xu Kuohai <xukuohai@huawei.com>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, bpf@vger.kernel.org, 
-	selinux@vger.kernel.org, linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2025031034-savanna-debit-eb8e@gregkh>
 
-On Mon, Mar 10, 2025 at 3:18=E2=80=AFPM Blaise Boscaccy
-<bboscaccy@linux.microsoft.com> wrote:
->
-> This test exercises the kernel flag added to security_bpf by
-> effectively blocking light-skeletons from loading while allowing
-> normal skeletons to function as-is. Since this should work with any
-> arbitrary BPF program, an existing program from LSKELS_EXTRA was
-> used as a test payload.
->
-> Signed-off-by: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-[...]
-> +
-> +       /* Test with skel. This should pass the gatekeeper */
-> +       skel =3D kfunc_call_test__open_and_load();
-> +       if (!ASSERT_OK_PTR(skel, "skel"))
-> +               goto close_prog;
-> +
-> +       /* Test with lskel. This should fail due to blocking kernel-based=
- bpf() invocations */
-> +       lskel =3D kfunc_call_test_lskel__open_and_load();
-> +       if (!ASSERT_ERR_PTR(lskel, "lskel"))
-> +               goto close_prog;
+[cc linux-fsdevel]
 
-This goto is not necessary. But I don't think we need v8 just for this.
+On Mon, Mar 10, 2025 at 03:36:04PM +0100, Greg Kroah-Hartman wrote:
+> On Mon, Mar 10, 2025 at 01:00:50PM +0100, Mickaël Salaün wrote:
+> > Hi Greg,
+> > 
+> > FYI, I don't think this patch fixes a security issue.  If attackers can
+> > corrupt a filesystem, then they should already be able to harm the whole
+> > system.
+> > 
+> > The commit description might be a bit confusing, but from an access
+> > control point of view, the filesystem on which we spotted this issue
+> > (bcachefs) does not allow to open weird files (but they are still
+> > visible, hence this patch) and I guess it would be the same for other
+> > filesystems, right?  I'm not sure how a weird file could be used by user
+> > space.  See
+> > https://lore.kernel.org/all/Zpc46HEacI%2Fwd7Rg@dread.disaster.area/
+> > 
+> > The goal of this fix was mainly to not warn about a bcachefs issue (and
+> > avoid related syzkaller report for Landlock), and to harden Landlock in
+> > case other filesystems have this kind of bug.
+> 
+> It was issue a CVE because the reviewers thought that it was a way to
+> circumvent the landlock permission checks, based on the changelog text
+> (note, creating a "corrupted filesystem" is quite easy to get many Linux
+> systems to auto-mount it, so those types of issues do get assigned
+> CVEs.)
 
-Acked-by: Song Liu <song@kernel.org>
+That's an argument straight from the security theatre.
 
-> +
-> +close_prog:
-> +       if (skel)
-> +               kfunc_call_test__destroy(skel);
-> +       if (lskel)
-> +               kfunc_call_test_lskel__destroy(lskel);
+> If you all do not think this meets the definition of a vulnerability as
+> defined by CVE.org as:
+> 	An instance of one or more weaknesses in a Product that can be
+> 	exploited, causing a negative impact to confidentiality, integrity, or
+> 	availability; a set of conditions or behaviors that allows the
+> 	violation of an explicit or implicit security policy.
 
-[...]
+Yes, so shall we follow this reasoning based on untrusted user
+auto-mounts of untrusted devices to it's logical conclusion?
+
+If an untrusted user is in control of the filesystem image, then
+they don't need to corrupt the filesystem image to subvert the
+system. They can just change the permissions on files, change ACLs,
+change security xattrs (selinux, landlock, smack, etc),
+replace the contents of file data (e.g. trojan executables), etc.
+
+The filesystem will not flag *any* of these shenanigans as they
+don't involve actually corrupting the filesystem structure. IOWs,
+the kernel filesystem code can function perfectly and bug free, yet
+the system can be silently compromised through the hole punched in
+the *implicitly trusted security information under user control* in
+the fs image.
+
+This is a "trusted device contains trusted security information"
+model deficiency, not a filesystem implementation issue. The CVE
+worthy issue here is that the security model is violated by the
+untrusted automounts, not by how the filesystem reacts to the
+security model violation that has already occurred.
+
+Further, the kernel (and therefore the filesystem implemenation)
+cannot prevent untrusted user device auto-mounts, so this must be
+considered a system level vulnerability that requires userspace
+policy and implementation changes to mitigate.
+
+We've tried for years to get userspace to adopt a more
+security-aware model for untrusted devices, but have made pretty
+much no progress. Filesystem developers have ended up with their
+userspace filesystem packages shipping udisks rules to turn off
+automounting of those filesystem types for application that use
+udisks for this stuff. That catches -some- of the automounting
+behaviour, but not all of it. And we can't do anything else without
+changes to the wider userspace/distro policies around user
+automounting of untrusted devices.
+
+IOWs, to prevent these "corrupted filesystem causes issues" from
+being considered security issues, we need userspace to stop
+violating the kernel trust model for persistent security information
+storage.
+
+Greg, you have the ability to issue a CVE that will require
+downstream distros to fix userspace-based vulnerabilities if they
+want various certifications. You have the power to force downstream
+distros to -change their security model policies- for the wider
+good.
+
+We could knock out this whole class of vulnerability in one CVE:
+issue a CVE considering the auto-mounting of untrusted filesystem
+images as a *critical system vulnerability*. This can only be solved
+by changing the distro policies and implementations that allow this
+dangerous behaviour to persist.
+
+We've suggested many relatively user friendly ways this can be
+handled in the past (e.g. device fingerprinting via libblkid (which
+it kinda already does) and prompting the user to allow/deny devices
+with an unknown fingerprint). The simplest policy fix is to simply
+disallow auto-mount of removable devices by default across the
+entire distro.
+
+If distros want to close that kernel CVE then they have to, at
+minimum, turn off device auto-mount by default across the entire
+distro.
+
+At worst, this makes the reason you give for filesystem corruption
+issues being considered CVE worthy go away completely.
+
+At best, we get full distro level integration of efficient,
+persistent untrusted device handling at the desktop interfaces.
+That would be a win for -everyone-, not just the distro people who
+have to handle kernel CVEs....
+
+If we want filesystem corruption CVEs to be any other than security
+theatre, then use we should be using the kernel CVE powers for the
+reason they were obtained in the first place. i.e. to force
+downstream distros to address issues they would otherwise ignore to
+help make our linux systems more reliable and secure.
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
