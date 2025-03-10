@@ -1,102 +1,77 @@
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E597A1DFFD
-	for <linux-security-module@vger.kernel.org>; Mon, 10 Mar 2025 21:37:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C7FB1D63ED;
+	Mon, 10 Mar 2025 21:46:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741642623; cv=none; b=etLavlg0jn6b+O9CaaDWR23FIW0W1JyczXmh9STLzjZwgabnM0rtZWSSQWP+q60k8XAjQ40qFlUtpqa9QaWvaoSGVft6bRFR9+CVBmuZWCYEyGU3bH4gUdcGwGeBdw5xE2fhqzS98AsuUPK1KJQglBadpAYb0EyeLGXX4ygL8hA=
+	t=1741643215; cv=none; b=K3lIbaTCsSoA7OZ6b7vkX8iJCUWmKmZiPkMZ40+6osTyqb5QOlT++i7qGFzaNot+qxH9TYKh1axkRbtw1xLo09U+CrwXSJC/hK+UEOvlIE2zX/0Kr5iC/CtFeydiTgFumYmveTbCM4/VWR1NfC1yWMIfFk21Yzn9fVE+lN7NR78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741642623; c=relaxed/simple;
-	bh=ZffuVoKhYwkGsNLqoMxxm9ynreiXL0B3SKGY2kRVw4g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rdI0Blk0Tu3g4SSeRtmieoOCYeG18KVkOxg/K3KXJcD7lCcZYpqeWkb+8tnBu7bTXsKysWvVDxtChYrq/IQiMmH0NDDqy0pozdo3Wp9p4QQI6oG/QEGKU/0CBdtjCUzGL4cojqCz/MUGljPxhh0jTSxbkGi+apuJMTxvnuwLWKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=VO4vBSUa; arc=none smtp.client-ip=209.85.219.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="VO4vBSUa"
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e589c258663so4187846276.1
-        for <linux-security-module@vger.kernel.org>; Mon, 10 Mar 2025 14:37:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1741642621; x=1742247421; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gy7RJJZ2+g4pp45KhfK/pE9AJmevdwLrlbqK7A52AiU=;
-        b=VO4vBSUa5swLa3Z0+xq/whMa2b/cXq70dG0qRMODBvn16TgYAmCbxzu4g9iz9jEj5B
-         o7AQoZQE0IAXn7HPtCy72SxSPwvoIejeMTTGReRYbfywoWL9jvJpcMIwZGx3/5n90agI
-         i11OWEacsO5uZOWVXoVsTVN49wFdi5uTGPIr65I2k9accZL0aTxedwAc9vR5naXx5RYB
-         qhjZjQqvP00OL34X5WGFdi3A3VH3Usv0qnYhbI4Kdjw3Wnt4fFgxDCtq1v++gkjfrTP4
-         7WfBenhlWGJn+vSi8HZGnXwAQIV51c+7TmhERxZPZugjh/c9DKsVXDLNCK/2fFrDel/X
-         py8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741642621; x=1742247421;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gy7RJJZ2+g4pp45KhfK/pE9AJmevdwLrlbqK7A52AiU=;
-        b=aWkzOF4Q52nK2hluKF7H/4Yatkko/hLLmWaYRY+XhLrFRjdJMWLva6wWcXu1nEzTt0
-         aBSla0rYuwedXpJhNzNJ41iiSESsrK4qeZyAI1J92Q3BumTdbORdlQSpMDFfSxc5WzWW
-         lzuuuh7S56yD6drce+euP3/qyVK4L8CaY69qTYaBbimSeP6qa3tG/GeVpo2tMftWOAd4
-         E4+IDgcynurif288IIVhb6nGhs2lZIgikYFkcj8435jqE3s/ECQqAf6+146XoTkX1oeh
-         4IrjJxQ8P9KyX0dxfiXHkuL7mssjr3d93pesl9tTHRLFOd79if/bM1O9uR/0ZgSBOXYn
-         SDGA==
-X-Forwarded-Encrypted: i=1; AJvYcCU+/MEAqDB8nmi3nzTDuLm3fHmGeX2/2JwlMC6xnqiJ4Il3g08j/x7p3VsxahNxPA7ReXMmyexCuxi3Bpv4jeF249IvdFo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxE+taUw5Dty8XqYMclmhdxpMNjTmwVlFalOJTPNoZVUu6Ye3x7
-	Li9J+tYPt+nlzKl6M/5dfuA7te3Y5a6OUTNzhfHF+MYOcI+v0Ygh1rhTKIvJt2r4gPTtRD9B6XJ
-	Rzu+FYIFeT1JSg1pwxFgd5Nh1eGPQ31iwUzIn09uUMnWt8Sw=
-X-Gm-Gg: ASbGncu8iEKRAJsfS6P+ZUfbX5NfGSHWuYTYzo02+M7xSaPYzOCkjnvhKYGUN9GzoU8
-	2VO+9g6irIcTJdFy82KkUht19KU5iOHV+Q56rh8bCWHuT6Gy+p+u4YghhgWFAicf7XrFa315L82
-	xFYmrggyznpfXzRoAXNikEeCAe7g==
-X-Google-Smtp-Source: AGHT+IEABKnfIsajujJa9LtUyHzaHv1YlxNSFKNY9reAZnJdFRjFzK8//H8LPSIFRZ3SJpDoJEMId/3T2DG4O3sxnsE=
-X-Received: by 2002:a05:6902:220d:b0:e5b:43e1:2e84 with SMTP id
- 3f1490d57ef6-e635c121f9emr22237146276.5.1741642620692; Mon, 10 Mar 2025
- 14:37:00 -0700 (PDT)
+	s=arc-20240116; t=1741643215; c=relaxed/simple;
+	bh=NKDzj9L6JZj8+6yS6hJWjHEFEY5ssOW60gAzYyk4KI8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tyYP9l44WkETsn2IsQpt1//ul5FCaErTGURTxyPZ94tLMUoxVNvpmYsnxwj+nb6BAfDM/RX0tBpSkcsNEe2ttIocb1qBW4qnu8SM0N+AhzgzmFz5tGV8Z6XUj6XszMchW5hGkJydm6DYvAEdd66AnxxAHZiCOXkl9jRA4P/SOC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id 3FA5E14DC; Mon, 10 Mar 2025 16:46:50 -0500 (CDT)
+Date: Mon, 10 Mar 2025 16:46:50 -0500
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Parav Pandit <parav@nvidia.com>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>,
+	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>,
+	"ebiederm@xmission.com" <ebiederm@xmission.com>
+Subject: Re: [PATCH] RDMA/uverbs: Fix CAP_NET_RAW check for flow create in
+ user namespace
+Message-ID: <20250310214650.GB195898@mail.hallyn.com>
+References: <20250308180602.129663-1-parav@nvidia.com>
+ <20250310133110.GA190312@mail.hallyn.com>
+ <CY8PR12MB71956080B3EDF49B2090E636DCD62@CY8PR12MB7195.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Z82Sug-XLC1r5wKE@lei> <f44bad6065bbf45c02dc7caf90ed0e7e@paul-moore.com>
- <20250310213237.GA195898@mail.hallyn.com>
-In-Reply-To: <20250310213237.GA195898@mail.hallyn.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 10 Mar 2025 17:36:54 -0400
-X-Gm-Features: AQ5f1JoA1yAFuUk_pWTCCQXK_vbLp2GoCURFNTHFh0-PEifsu_ff6RzwzZJnk80
-Message-ID: <CAHC9VhTSdq=zrkmipZJjTMcudbyvHJeq+XR3Td7mr7cEn+GDEA@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: add Serge Hallyn as maintainer for creds
-To: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: sergeh@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CY8PR12MB71956080B3EDF49B2090E636DCD62@CY8PR12MB7195.namprd12.prod.outlook.com>
 
-On Mon, Mar 10, 2025 at 5:32=E2=80=AFPM Serge E. Hallyn <serge@hallyn.com> =
-wrote:
-> On Mon, Mar 10, 2025 at 03:58:41PM -0400, Paul Moore wrote:
-> > On Mar  9, 2025 sergeh@kernel.org wrote:
+On Mon, Mar 10, 2025 at 02:47:53PM +0000, Parav Pandit wrote:
+> Hi,
+> 
+> > From: Serge E. Hallyn <serge@hallyn.com>
+> > Sent: Monday, March 10, 2025 7:01 PM
+> > 
+> > On Sat, Mar 08, 2025 at 08:06:02PM +0200, Parav Pandit wrote:
+> > > A process running in a non-init user namespace possesses the
+> > > CAP_NET_RAW capability. However, the patch cited in the fixes tag
+> > > checks the capability in the default init user namespace.
+> > > Because of this, when the process was started by Podman in a
+> > > non-default user namespace, the flow creation failed.
 > > >
-> > > Also add the documentation file as suggested by G=C3=BCnther Noack.
-> > >
-> > > Signed-off-by: Serge Hallyn <sergeh@kernel.org>
-> > > ---
-> > >  MAINTAINERS | 2 ++
-> > >  1 file changed, 2 insertions(+)
-> >
-> > I adjusted the subject line to reflect that you chose the reviewer role=
-,
-> > but otherwise this looks good, merged into lsm/dev.  Thanks!
->
-> Oh, did I?  I went back and forth, and actually *intended* M, but must
-> have left my git index out of sorts :)  No problem - reviewer probably
-> makes more sense.
+> > > Fix this issue by checking the CAP_NET_RAW networking capability in
+> > > the owner user namespace that created the network namespace.
+> > 
+> > Hi,
+> > 
+> > you say
+> > 
+> >  > Fix this issue by checking the CAP_NET_RAW networking capability  > in the
+> > owner user namespace that created the network namespace.
+> > 
+> > But in fact you are checking the CAP_NET_RAW against the user's network
+> > namespace.  
+> I didn't understand your comment.
+> The fix takes the current process's network namespace by referring to current->nsproxy->net_ns.
+> Each net ns has its owning user namespace who has created it.
+> So the patch is checking caps in the such user namespace.
+> 
+> Can you please elaborate?
 
-The patch you posted to the mailing list had "R:" before your name :)
+It looks like it got straightened out later with Eric's reply.  Please
+let me know if that's not the case.
 
-I'm happy either way, if you would prefer a "M:" just let me know and
-I can update the commit.
-
---=20
-paul-moore.com
+-serge
