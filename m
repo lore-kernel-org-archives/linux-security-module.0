@@ -1,42 +1,81 @@
-Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [185.125.25.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1318A22A807
-	for <linux-security-module@vger.kernel.org>; Mon, 10 Mar 2025 12:00:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F83A22170B;
+	Mon, 10 Mar 2025 13:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741608065; cv=none; b=qQOfG7OVxakVM6cvb+nMgvagwez9oC4TFoaGVgh11PNwVfRjnT8iFb0CO7NseOBqGXXm9GM7drjICBzf11yLCu4Avnzje1srXmsuZl7uiE6x5huK2Bshb6W5JwziCQumATQKzdhmJJtwwoBaiEnDwAPfe8IpLfd6tq727FbE/Jk=
+	t=1741611876; cv=none; b=HhdDo4ScN2GWpjUZzKWFTifYhbN/JsOMVTAAjPrnL5DO8hoos9lWVHWw2I4ksws1Xr/8JoAzhYfcmg7cgx31JZwZJ4HPVyVlnRkQN1Tfz7pYXJaUNknILCAD9wWIdX0/qiakaMvy48C4R/7UczXOluEIZQgzvvzqfdNOH7ZpKKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741608065; c=relaxed/simple;
-	bh=5to7xJ4RvK1ErywFRZV2ft01RdlvEKbvsFSZz75BXgU=;
+	s=arc-20240116; t=1741611876; c=relaxed/simple;
+	bh=MRIqdJjth7q4rC+R2rNFK723Fwf8fSj4srhXO5Unusg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gan/qzPTkzTv47XdHZ9ngYZxWLZLtnHGtNaVC8nv/yHWqJxKxToBeJ6oM4O2NXhOVK3D/ASuP5/6k+h3QGEeHLkeX5enFFNyEx4MI0IdYlZLk60mLVf7yhvD67JceRbEZlOZesNmQo1eOwlpC9iztnbc6SX2dk3JptATKwU75ZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Unn8M+HJ; arc=none smtp.client-ip=185.125.25.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	 Content-Type:Content-Disposition:In-Reply-To; b=G3ktQFKWm/HKaIeaYNdKIgFpj3Oc24uA1XGJ7D/dpRIXkDFQBGpvHH7auXOhJkUh87kMOdvk4ClFgDcRYL2nxB3HCFXn/FvbpT+zAhXAs/BUklKHe7+cOHReue5gIgJ0mEK8Rn+jzoz/OGtdkO0lIq6kCBoEBNK6ai7UeWfeTIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iM+SNotq; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Unn8M+HJ"
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ZBFpX51b2zxG5;
-	Mon, 10 Mar 2025 13:00:52 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1741608052;
-	bh=zxZzhG+vZe9nrM+OlOIs19dFolMtjMMIUGdmnFWrTJc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Unn8M+HJn0G8q4T6Ajkcv3VxD3F0I4uYFYLv7CnHTeOEr3QOkfgMdmgsfdbTca/Jl
-	 Fptc+MEKDZBmKlk2Nh8WRPQf+9NQ+1sDJ+bOInovL2Jcj4nGGmQR4FKroposmzxT6m
-	 RTyTosdpW0vLrffdTk21eiuirW52IgZfwYDQjCdw=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4ZBFpX0FYjzRJ;
-	Mon, 10 Mar 2025 13:00:51 +0100 (CET)
-Date: Mon, 10 Mar 2025 13:00:50 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: cve@kernel.org, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	linux-security-module@vger.kernel.org, Kent Overstreet <kent.overstreet@linux.dev>, 
-	Dave Chinner <david@fromorbit.com>, linux-bcachefs@vger.kernel.org
-Subject: Re: CVE-2025-21830: landlock: Handle weird files
-Message-ID: <20250310.ooshu9Cha2oo@digikod.net>
-References: <2025030611-CVE-2025-21830-da64@gregkh>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iM+SNotq"
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-30bfc8faef9so22783301fa.1;
+        Mon, 10 Mar 2025 06:04:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741611872; x=1742216672; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=3K7OcR09rEfJh9DFN1wj/M3SwMYinK3/xaauKUodjYw=;
+        b=iM+SNotqfAc+FDNKLdTtPpswlt8hzkm11rtBCFPfZ4lM1wTcO4HwzqKul8p0MZg4ZZ
+         A0LZ5ggeD/vzkrh9uOqsWyhf4BgdLojoJYrDClLFFEHEdLaWdwvvWSJdeMIwDiemiRxA
+         FDS7bksWmUtM93brUSyrdsi7awZ5IGgLsNXHFJSye8tVu2jFq8dkjrN0iDcl/YVcNXtB
+         4U3muRh1LhV5CJLHOTdFs8vjnI6Zws0vDxW+4xRTGzxCWNZv9y0MnfXpzvbliCkaiAJw
+         JlWBLYLIkSqmIqlFDSt8JfwZxzb5QqBB92oIPJn9HNxL7AMX8Sl1xKMv6cvQ+IbJ2kGc
+         IRcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741611872; x=1742216672;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3K7OcR09rEfJh9DFN1wj/M3SwMYinK3/xaauKUodjYw=;
+        b=BXSSN3QS7mqAdkMmOfVvgUZGDlw56z1zWZKH4oeyCp52/yj+5vk0/8K1yyOJLCpxve
+         KVO36Sao31dd8t6Rsmjy5R0ECR8f4nl7krPVWaClR2//WZ++rvWKj4K4fjmMguJGVqtY
+         mlMUE0M6DA1rwRXIc4W+hCJPmWBQ4Vk8cEKmL+KqTVoKtMNc24D3Ayzywc9eyDxv1GTd
+         7hR+P0ooNC/7UrmYq78PTd4xXgLWxSDjy4l8P83piF+DeNkzD7t2CzWkhKsXXLOOfJ/t
+         Hp1PAdvTa7aH53K5JWWNPDYVbYLLMQjjZBoauf6c84aa+r2xffshsBOTWnAW6QAqwawT
+         HSZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU96dpnwuFYiA3piI+PWzY2FN/9RfYaRGXfHu3nTnAbHuizc+3UbisVPDspJMHYagUOX3zIME7kemI/OsA=@vger.kernel.org, AJvYcCWV6CiS4F/d4XhP5iLDJSHrcxYh8FAYFVGkKWAcIp9iDMoeOOvrhS0E8Yx719ZVFgpLWLVFDsrCPsT72B/3WwHoxAokwKSI@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUdFbeBz9jDPFz4D0m24GOai4UErHna0z8W68HQC7ktueQdtlw
+	vKFj98jwp+XUpDG8CB7mttTKZ0Lq2wFk7z+m0YBbJxyrbjfJC4gJ
+X-Gm-Gg: ASbGncsuz5a+4LKQN4Kh/+EH1OZhz79nYXmNXR2PUiqqgA8z3qWRbUlTswKTZu5KnO1
+	3JBtiGzQW96rSxKDx03JiNXcWJuHboHALC9ybJcteBwXn6wr4DfBpc3dn13L+s0OPCLv7jEe4kC
+	Bxoqqli3WqmN8ozaADsny4N61QoFMajSb88uxXLa42ixLlhg54yvx8L5TYlScbmJjz0qaoW8e2x
+	Ty2sJn2duh0Gb3Fkx+xPfJata2PIY8O4x7afvsRzTmgu50m8jDIDfcikABF9w6sYzn+NzlEsoi/
+	3Ur7Do75dV8bLLqP21hOtsn92G2E0tzxVb3u0sHjZedQrblP/xv5
+X-Google-Smtp-Source: AGHT+IEdfHviVl8qv73NLqnbG5LMKxIjf1w+f+nIk6opcs2/kJ6jxk6indLGkIKxAROrKC0+KlNNuw==
+X-Received: by 2002:a05:6512:ba6:b0:545:a2f:22ba with SMTP id 2adb3069b0e04-54990ec1b80mr4453322e87.37.1741611871880;
+        Mon, 10 Mar 2025 06:04:31 -0700 (PDT)
+Received: from localhost ([2a02:168:59f0:1:b0ab:dd5e:5c82:86b0])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ac2523d940csm641944666b.178.2025.03.10.06.04.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 10 Mar 2025 06:04:29 -0700 (PDT)
+Date: Mon, 10 Mar 2025 14:04:23 +0100
+From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To: Paul Moore <paul@paul-moore.com>,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	sergeh@kernel.org
+Cc: David Howells <dhowells@redhat.com>, Kees Cook <keescook@chromium.org>,
+	Paul Moore <paul@paul-moore.com>,
+	linux-security-module@vger.kernel.org,
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+	Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org,
+	Peter Newman <peternewman@google.com>
+Subject: Re: [RFC 1/2] landlock: Multithreading support for
+ landlock_restrict_self()
+Message-ID: <20250310.990b29c809af@gnoack.org>
+References: <20250221184417.27954-2-gnoack3000@gmail.com>
+ <20250221184417.27954-3-gnoack3000@gmail.com>
+ <20250227.Aequah6Avieg@digikod.net>
+ <20250228.b3794e33d5c0@gnoack.org>
+ <20250304.aroh3Aifiiz9@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -46,85 +85,84 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <2025030611-CVE-2025-21830-da64@gregkh>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <20250304.aroh3Aifiiz9@digikod.net>
 
-Hi Greg,
+Hello Paul and Serge!
 
-FYI, I don't think this patch fixes a security issue.  If attackers can
-corrupt a filesystem, then they should already be able to harm the whole
-system.
+On Tue, Mar 04, 2025 at 09:25:51PM +0100, Mickaël Salaün wrote:
+> On Fri, Feb 28, 2025 at 06:33:55PM +0100, Günther Noack wrote:
+> > Hello!
+> > 
+> > Thanks for the review!
+> > 
+> > I'm adding David Howells to this thread as well.  David, maybe you can
+> > help us and suggest a appropriate way to update the struct cred across
+> > multiple threads?
 
-The commit description might be a bit confusing, but from an access
-control point of view, the filesystem on which we spotted this issue
-(bcachefs) does not allow to open weird files (but they are still
-visible, hence this patch) and I guess it would be the same for other
-filesystems, right?  I'm not sure how a weird file could be used by user
-space.  See
-https://lore.kernel.org/all/Zpc46HEacI%2Fwd7Rg@dread.disaster.area/
+Paul and Serge, since you are volunteering to take ownership of
+credentials, maybe you can advise on what is the best approach here?
 
-The goal of this fix was mainly to not warn about a bcachefs issue (and
-avoid related syzkaller report for Landlock), and to harden Landlock in
-case other filesystems have this kind of bug.
+To summarize the approaches that I have been discussing with Mickaël:
 
-Anyway, always good to backport such fix.
+Approach 1: Use the creds API thread-by-thread (implemented here)
 
-Regards,
- Mickaël
+  * Each task calls prepare_creds() and commit_creds() on its own, in
+    line with the way the API is designed to be used (from a single
+    task).
+  * Task work gets scheduled with a pseudo-signal and the task that
+    invoked the syscall is waiting for all of them to return.
+  * Task work can fail at the beginning due to prepare_creds(), in
+    which case all tasks have to abort_creds(). Additional
+    synchronization is needed for that.
 
-On Thu, Mar 06, 2025 at 05:08:13PM +0100, Greg Kroah-Hartman wrote:
-> Description
-> ===========
-> 
-> In the Linux kernel, the following vulnerability has been resolved:
-> 
-> landlock: Handle weird files
-> 
-> A corrupted filesystem (e.g. bcachefs) might return weird files.
-> Instead of throwing a warning and allowing access to such file, treat
-> them as regular files.
-> 
-> The Linux kernel CVE team has assigned CVE-2025-21830 to this issue.
-> 
-> 
-> Affected and fixed versions
-> ===========================
-> 
-> 	Issue introduced in 5.13 with commit cb2c7d1a1776057c9a1f48ed1250d85e94d4850d and fixed in 6.1.129 with commit 7d6121228959ddf44a4b9b6a177384ac7854e2f9
-> 	Issue introduced in 5.13 with commit cb2c7d1a1776057c9a1f48ed1250d85e94d4850d and fixed in 6.6.76 with commit 39bb3d56f1c351e76bb18895d0e73796e653d5c1
-> 	Issue introduced in 5.13 with commit cb2c7d1a1776057c9a1f48ed1250d85e94d4850d and fixed in 6.12.13 with commit 2569e65d2eb6ac1afe6cb6dfae476afee8b6771a
-> 	Issue introduced in 5.13 with commit cb2c7d1a1776057c9a1f48ed1250d85e94d4850d and fixed in 6.13.2 with commit 0fde195a373ab1267e60baa9e1a703a97e7464cd
-> 	Issue introduced in 5.13 with commit cb2c7d1a1776057c9a1f48ed1250d85e94d4850d and fixed in 6.14-rc1 with commit 49440290a0935f428a1e43a5ac8dc275a647ff80
-> 
-> Please see https://www.kernel.org for a full list of currently supported
-> kernel versions by the kernel community.
-> 
-> Unaffected versions might change over time as fixes are backported to
-> older supported kernel versions.  The official CVE entry at
-> 	https://cve.org/CVERecord/?id=CVE-2025-21830
-> will be updated if fixes are backported, please check that for the most
-> up to date information about this issue.
-> 
-> 
-> Affected files
-> ==============
-> 
-> The file(s) affected by this issue are:
-> 	security/landlock/fs.c
-> 
-> 
-> Mitigation
-> ==========
-> 
-> The Linux kernel CVE team recommends that you update to the latest
-> stable kernel version for this, and many other bugfixes.  Individual
-> changes are never tested alone, but rather are part of a larger kernel
-> release.  Cherry-picking individual commits is not recommended or
-> supported by the Linux kernel community at all.  If however, updating to
-> the latest release is impossible, the individual changes to resolve this
-> issue can be found at these commits:
-> 	https://git.kernel.org/stable/c/7d6121228959ddf44a4b9b6a177384ac7854e2f9
-> 	https://git.kernel.org/stable/c/39bb3d56f1c351e76bb18895d0e73796e653d5c1
-> 	https://git.kernel.org/stable/c/2569e65d2eb6ac1afe6cb6dfae476afee8b6771a
-> 	https://git.kernel.org/stable/c/0fde195a373ab1267e60baa9e1a703a97e7464cd
-> 	https://git.kernel.org/stable/c/49440290a0935f428a1e43a5ac8dc275a647ff80
+  Drawback: We need to grab the system-global task lock to prevent new
+  thread creation and also grab the per-process signal lock to prevent
+  races with other creds accesses, for the entire time as we wait for
+  each task to do the task work.
+
+Approach 2: Attempt to do the prepare_creds() step in the calling task.
+
+  * Would use an API similar to what keyctl uses for the
+    parent-process update.
+  * This side-steps the credentials update API as it is documented in
+    Documentation, using the cred_alloc_blank() helper and replicating
+    some prepare_creds() logic.
+
+  Drawback: This would introduce another use of the cred_alloc_blank()
+  API (and the cred_transfer LSM hook), which would otherwise be
+  reasonable to delete if we can remove the keyctl use case.
+  (https://lore.kernel.org/all/20240805-remove-cred-transfer-v2-0-a2aa1d45e6b8@google.com/)
+
+Approach 3: Store Landlock domains outside of credentials altogether
+
+  * We could also store a task's Landlock domain as a pointer in the
+    per-task security blob, and refcount these.  We would need to make
+    sure that they get newly referenced and updated in the same
+    scenarios as they do within struct cred today.
+  * We could then guard accesses to a task's Landlock domain with a
+    more classic locking mechanism.  This would make it possible to
+    update the Landlock domain of all tasks in a process without
+    having to go through pseudo-signals.
+
+  Drawbacks:
+  * Would have to make sure that the Landlock domain the task's LSM
+    blob behaves exactly the same as before in the struct cred.
+  * Potentially slower to access Landlock domains that are guarded by
+    a mutex.
+
+I'd be interested to hear your opinion on how we should best approach
+this.
+
+P.S. This is probably already clear to everyone who read this far, but
+the problem that creds can't be updated across tasks has already lead
+to other difficult APIs and also bleeds into user-level interfaces
+such as the setuid() family of syscalls as well as capability
+updating.  Both of these are solved from user space through the signal
+hack documented in nptl(7), which is used in glibc for setuid()-style
+calls and in libpsx for capabilities and Landlock's Go library.  If we
+had a working way to do these cross-thread updates in the kernel, that
+would simplify these userspace implementations.  (There are more links
+in the cover letter at the top of this thread.)
+
+Thanks,
+–Günther
