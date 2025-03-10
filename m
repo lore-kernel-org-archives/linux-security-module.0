@@ -1,168 +1,104 @@
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F83A22170B;
-	Mon, 10 Mar 2025 13:04:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A842206B2;
+	Mon, 10 Mar 2025 13:31:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741611876; cv=none; b=HhdDo4ScN2GWpjUZzKWFTifYhbN/JsOMVTAAjPrnL5DO8hoos9lWVHWw2I4ksws1Xr/8JoAzhYfcmg7cgx31JZwZJ4HPVyVlnRkQN1Tfz7pYXJaUNknILCAD9wWIdX0/qiakaMvy48C4R/7UczXOluEIZQgzvvzqfdNOH7ZpKKw=
+	t=1741613476; cv=none; b=pPSJCzHYjN19kvsCj2jwRfaTpc5rO8hyAPDSXgQar9frPzu/Ks5GZzhu4Jkf2q39a+HvryCw4EXcskkSgxYhDe6jrz8rZfGxdPGI5WlzjpeerK6cC24O52hGWH1S+hhzoho7OxDR6nx8CMEkLDrSUf0eSkpXdW4xqWOSfxtqtOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741611876; c=relaxed/simple;
-	bh=MRIqdJjth7q4rC+R2rNFK723Fwf8fSj4srhXO5Unusg=;
+	s=arc-20240116; t=1741613476; c=relaxed/simple;
+	bh=PHey9c3fSFb5c0rKUPTi+1g/2zVV9QZ1kXG7mABqo/A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G3ktQFKWm/HKaIeaYNdKIgFpj3Oc24uA1XGJ7D/dpRIXkDFQBGpvHH7auXOhJkUh87kMOdvk4ClFgDcRYL2nxB3HCFXn/FvbpT+zAhXAs/BUklKHe7+cOHReue5gIgJ0mEK8Rn+jzoz/OGtdkO0lIq6kCBoEBNK6ai7UeWfeTIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iM+SNotq; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iM+SNotq"
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-30bfc8faef9so22783301fa.1;
-        Mon, 10 Mar 2025 06:04:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741611872; x=1742216672; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=3K7OcR09rEfJh9DFN1wj/M3SwMYinK3/xaauKUodjYw=;
-        b=iM+SNotqfAc+FDNKLdTtPpswlt8hzkm11rtBCFPfZ4lM1wTcO4HwzqKul8p0MZg4ZZ
-         A0LZ5ggeD/vzkrh9uOqsWyhf4BgdLojoJYrDClLFFEHEdLaWdwvvWSJdeMIwDiemiRxA
-         FDS7bksWmUtM93brUSyrdsi7awZ5IGgLsNXHFJSye8tVu2jFq8dkjrN0iDcl/YVcNXtB
-         4U3muRh1LhV5CJLHOTdFs8vjnI6Zws0vDxW+4xRTGzxCWNZv9y0MnfXpzvbliCkaiAJw
-         JlWBLYLIkSqmIqlFDSt8JfwZxzb5QqBB92oIPJn9HNxL7AMX8Sl1xKMv6cvQ+IbJ2kGc
-         IRcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741611872; x=1742216672;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3K7OcR09rEfJh9DFN1wj/M3SwMYinK3/xaauKUodjYw=;
-        b=BXSSN3QS7mqAdkMmOfVvgUZGDlw56z1zWZKH4oeyCp52/yj+5vk0/8K1yyOJLCpxve
-         KVO36Sao31dd8t6Rsmjy5R0ECR8f4nl7krPVWaClR2//WZ++rvWKj4K4fjmMguJGVqtY
-         mlMUE0M6DA1rwRXIc4W+hCJPmWBQ4Vk8cEKmL+KqTVoKtMNc24D3Ayzywc9eyDxv1GTd
-         7hR+P0ooNC/7UrmYq78PTd4xXgLWxSDjy4l8P83piF+DeNkzD7t2CzWkhKsXXLOOfJ/t
-         Hp1PAdvTa7aH53K5JWWNPDYVbYLLMQjjZBoauf6c84aa+r2xffshsBOTWnAW6QAqwawT
-         HSZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU96dpnwuFYiA3piI+PWzY2FN/9RfYaRGXfHu3nTnAbHuizc+3UbisVPDspJMHYagUOX3zIME7kemI/OsA=@vger.kernel.org, AJvYcCWV6CiS4F/d4XhP5iLDJSHrcxYh8FAYFVGkKWAcIp9iDMoeOOvrhS0E8Yx719ZVFgpLWLVFDsrCPsT72B/3WwHoxAokwKSI@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUdFbeBz9jDPFz4D0m24GOai4UErHna0z8W68HQC7ktueQdtlw
-	vKFj98jwp+XUpDG8CB7mttTKZ0Lq2wFk7z+m0YBbJxyrbjfJC4gJ
-X-Gm-Gg: ASbGncsuz5a+4LKQN4Kh/+EH1OZhz79nYXmNXR2PUiqqgA8z3qWRbUlTswKTZu5KnO1
-	3JBtiGzQW96rSxKDx03JiNXcWJuHboHALC9ybJcteBwXn6wr4DfBpc3dn13L+s0OPCLv7jEe4kC
-	Bxoqqli3WqmN8ozaADsny4N61QoFMajSb88uxXLa42ixLlhg54yvx8L5TYlScbmJjz0qaoW8e2x
-	Ty2sJn2duh0Gb3Fkx+xPfJata2PIY8O4x7afvsRzTmgu50m8jDIDfcikABF9w6sYzn+NzlEsoi/
-	3Ur7Do75dV8bLLqP21hOtsn92G2E0tzxVb3u0sHjZedQrblP/xv5
-X-Google-Smtp-Source: AGHT+IEdfHviVl8qv73NLqnbG5LMKxIjf1w+f+nIk6opcs2/kJ6jxk6indLGkIKxAROrKC0+KlNNuw==
-X-Received: by 2002:a05:6512:ba6:b0:545:a2f:22ba with SMTP id 2adb3069b0e04-54990ec1b80mr4453322e87.37.1741611871880;
-        Mon, 10 Mar 2025 06:04:31 -0700 (PDT)
-Received: from localhost ([2a02:168:59f0:1:b0ab:dd5e:5c82:86b0])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ac2523d940csm641944666b.178.2025.03.10.06.04.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Mar 2025 06:04:29 -0700 (PDT)
-Date: Mon, 10 Mar 2025 14:04:23 +0100
-From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To: Paul Moore <paul@paul-moore.com>,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	sergeh@kernel.org
-Cc: David Howells <dhowells@redhat.com>, Kees Cook <keescook@chromium.org>,
-	Paul Moore <paul@paul-moore.com>,
-	linux-security-module@vger.kernel.org,
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-	Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org,
-	Peter Newman <peternewman@google.com>
-Subject: Re: [RFC 1/2] landlock: Multithreading support for
- landlock_restrict_self()
-Message-ID: <20250310.990b29c809af@gnoack.org>
-References: <20250221184417.27954-2-gnoack3000@gmail.com>
- <20250221184417.27954-3-gnoack3000@gmail.com>
- <20250227.Aequah6Avieg@digikod.net>
- <20250228.b3794e33d5c0@gnoack.org>
- <20250304.aroh3Aifiiz9@digikod.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=XKZmMcYJIUiwHjm8Wde6s1sIzGbNenlPvjeFgCDaDqg8ndp3afQFiOG4DfZQqTLSzI+vnoiGcQUG2ZrOGwQd3tkUEhiosQSejHOKUcBTewUXUgxDOitSozTb+N2zrRq/5afrMAFGWgdggnyTDAXJjDT49hJu8PQEpRPAI1qY8+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id B1681160E; Mon, 10 Mar 2025 08:31:10 -0500 (CDT)
+Date: Mon, 10 Mar 2025 08:31:10 -0500
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Parav Pandit <parav@nvidia.com>
+Cc: linux-rdma@vger.kernel.org, linux-security-module@vger.kernel.org,
+	ebiederm@xmission.com
+Subject: Re: [PATCH] RDMA/uverbs: Fix CAP_NET_RAW check for flow create in
+ user namespace
+Message-ID: <20250310133110.GA190312@mail.hallyn.com>
+References: <20250308180602.129663-1-parav@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250304.aroh3Aifiiz9@digikod.net>
+In-Reply-To: <20250308180602.129663-1-parav@nvidia.com>
 
-Hello Paul and Serge!
+On Sat, Mar 08, 2025 at 08:06:02PM +0200, Parav Pandit wrote:
+> A process running in a non-init user namespace possesses the
+> CAP_NET_RAW capability. However, the patch cited in the fixes
+> tag checks the capability in the default init user namespace.
+> Because of this, when the process was started by Podman in a
+> non-default user namespace, the flow creation failed.
+> 
+> Fix this issue by checking the CAP_NET_RAW networking capability
+> in the owner user namespace that created the network namespace.
 
-On Tue, Mar 04, 2025 at 09:25:51PM +0100, Mickaël Salaün wrote:
-> On Fri, Feb 28, 2025 at 06:33:55PM +0100, Günther Noack wrote:
-> > Hello!
-> > 
-> > Thanks for the review!
-> > 
-> > I'm adding David Howells to this thread as well.  David, maybe you can
-> > help us and suggest a appropriate way to update the struct cred across
-> > multiple threads?
+Hi,
 
-Paul and Serge, since you are volunteering to take ownership of
-credentials, maybe you can advise on what is the best approach here?
+you say
 
-To summarize the approaches that I have been discussing with Mickaël:
+ > Fix this issue by checking the CAP_NET_RAW networking capability
+ > in the owner user namespace that created the network namespace.
 
-Approach 1: Use the creds API thread-by-thread (implemented here)
+But in fact you are checking the CAP_NET_RAW against the user's
+network namespace.  That is usually not the same thing, although
+it is possible that in this case it is.
 
-  * Each task calls prepare_creds() and commit_creds() on its own, in
-    line with the way the API is designed to be used (from a single
-    task).
-  * Task work gets scheduled with a pseudo-signal and the task that
-    invoked the syscall is waiting for all of them to return.
-  * Task work can fail at the beginning due to prepare_creds(), in
-    which case all tasks have to abort_creds(). Additional
-    synchronization is needed for that.
+What is cmd.flow_id?  Is that guaranteed to represent something in
+the current process' network namespace?  Or is it possible that a
+user without privilege in his user namespace could unshare userns+netns
+but then cause this fn to be called against a flow in the original
+network namespace?
 
-  Drawback: We need to grab the system-global task lock to prevent new
-  thread creation and also grab the per-process signal lock to prevent
-  races with other creds accesses, for the entire time as we wait for
-  each task to do the task work.
-
-Approach 2: Attempt to do the prepare_creds() step in the calling task.
-
-  * Would use an API similar to what keyctl uses for the
-    parent-process update.
-  * This side-steps the credentials update API as it is documented in
-    Documentation, using the cred_alloc_blank() helper and replicating
-    some prepare_creds() logic.
-
-  Drawback: This would introduce another use of the cred_alloc_blank()
-  API (and the cred_transfer LSM hook), which would otherwise be
-  reasonable to delete if we can remove the keyctl use case.
-  (https://lore.kernel.org/all/20240805-remove-cred-transfer-v2-0-a2aa1d45e6b8@google.com/)
-
-Approach 3: Store Landlock domains outside of credentials altogether
-
-  * We could also store a task's Landlock domain as a pointer in the
-    per-task security blob, and refcount these.  We would need to make
-    sure that they get newly referenced and updated in the same
-    scenarios as they do within struct cred today.
-  * We could then guard accesses to a task's Landlock domain with a
-    more classic locking mechanism.  This would make it possible to
-    update the Landlock domain of all tasks in a process without
-    having to go through pseudo-signals.
-
-  Drawbacks:
-  * Would have to make sure that the Landlock domain the task's LSM
-    blob behaves exactly the same as before in the struct cred.
-  * Potentially slower to access Landlock domains that are guarded by
-    a mutex.
-
-I'd be interested to hear your opinion on how we should best approach
-this.
-
-P.S. This is probably already clear to everyone who read this far, but
-the problem that creds can't be updated across tasks has already lead
-to other difficult APIs and also bleeds into user-level interfaces
-such as the setuid() family of syscalls as well as capability
-updating.  Both of these are solved from user space through the signal
-hack documented in nptl(7), which is used in glibc for setuid()-style
-calls and in libpsx for capabilities and Landlock's Go library.  If we
-had a working way to do these cross-thread updates in the kernel, that
-would simplify these userspace implementations.  (There are more links
-in the cover letter at the top of this thread.)
-
-Thanks,
-–Günther
+> 
+> This change is similar to the following cited patches.
+> 
+> commit 5e1fccc0bfac ("net: Allow userns root control of the core of the network stack.")
+> commit 52e804c6dfaa ("net: Allow userns root to control ipv4")
+> commit 59cd7377660a ("net: openvswitch: allow conntrack in non-initial user namespace")
+> commit 0a3deb11858a ("fs: Allow listmount() in foreign mount namespace")
+> commit dd7cb142f467 ("fs: relax permissions for listmount()")
+> 
+> Fixes: c938a616aadb ("IB/core: Add raw packet QP type")
+> Signed-off-by: Parav Pandit <parav@nvidia.com>
+> 
+> ---
+> I would like to have feedback from the LSM experts to make sure this
+> fix is correct. Given the widespread usage of the capable() call,
+> it makes me wonder if the patch right.
+> 
+> Secondly, I wasn't able to determine which primary namespace (such as
+> mount or IPC, etc.) to consider for the CAP_IPC_LOCK capability.
+> (not directly related to this patch, but as concept)
+> ---
+>  drivers/infiniband/core/uverbs_cmd.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/infiniband/core/uverbs_cmd.c b/drivers/infiniband/core/uverbs_cmd.c
+> index 5ad14c39d48c..8d6615f390f5 100644
+> --- a/drivers/infiniband/core/uverbs_cmd.c
+> +++ b/drivers/infiniband/core/uverbs_cmd.c
+> @@ -3198,7 +3198,7 @@ static int ib_uverbs_ex_create_flow(struct uverbs_attr_bundle *attrs)
+>  	if (cmd.comp_mask)
+>  		return -EINVAL;
+>  
+> -	if (!capable(CAP_NET_RAW))
+> +	if (!ns_capable(current->nsproxy->net_ns->user_ns, CAP_NET_RAW))
+>  		return -EPERM;
+>  
+>  	if (cmd.flow_attr.flags >= IB_FLOW_ATTR_FLAGS_RESERVED)
+> -- 
+> 2.26.2
+> 
