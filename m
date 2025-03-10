@@ -1,104 +1,71 @@
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A842206B2;
-	Mon, 10 Mar 2025 13:31:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8836A22ACF2
+	for <linux-security-module@vger.kernel.org>; Mon, 10 Mar 2025 13:49:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741613476; cv=none; b=pPSJCzHYjN19kvsCj2jwRfaTpc5rO8hyAPDSXgQar9frPzu/Ks5GZzhu4Jkf2q39a+HvryCw4EXcskkSgxYhDe6jrz8rZfGxdPGI5WlzjpeerK6cC24O52hGWH1S+hhzoho7OxDR6nx8CMEkLDrSUf0eSkpXdW4xqWOSfxtqtOQ=
+	t=1741614569; cv=none; b=dekRuUerHMi4tfPLSJsNoeKkNw32sZuErSiVLyxrKhYaNZKCNg+gBvMNCcVYhsII+cLik41Fkf/jZtmi2uGJ4yBNt/WWPZbcleZ3lAI2Xuk4rjzDxm+5MGl33wr/NAt1FyiEPVczG1gNltT8bzefHqi26YuWqMKuuQL4Wmi51hk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741613476; c=relaxed/simple;
-	bh=PHey9c3fSFb5c0rKUPTi+1g/2zVV9QZ1kXG7mABqo/A=;
+	s=arc-20240116; t=1741614569; c=relaxed/simple;
+	bh=/+jV31PTgw6aqTRc8C6RU/6dvmmCJ1MpYAbbhnWUjPw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XKZmMcYJIUiwHjm8Wde6s1sIzGbNenlPvjeFgCDaDqg8ndp3afQFiOG4DfZQqTLSzI+vnoiGcQUG2ZrOGwQd3tkUEhiosQSejHOKUcBTewUXUgxDOitSozTb+N2zrRq/5afrMAFGWgdggnyTDAXJjDT49hJu8PQEpRPAI1qY8+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id B1681160E; Mon, 10 Mar 2025 08:31:10 -0500 (CDT)
-Date: Mon, 10 Mar 2025 08:31:10 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Parav Pandit <parav@nvidia.com>
-Cc: linux-rdma@vger.kernel.org, linux-security-module@vger.kernel.org,
-	ebiederm@xmission.com
-Subject: Re: [PATCH] RDMA/uverbs: Fix CAP_NET_RAW check for flow create in
- user namespace
-Message-ID: <20250310133110.GA190312@mail.hallyn.com>
-References: <20250308180602.129663-1-parav@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=o1876vN2acDgv4nrBIJNe01fzHJde/H6sFOkHvUtR0XpoHdltWWec/eRH1nHRC+lD0zsjexwoqG8KZbhcbOS5fb5O98KZynHHpE4NbeuUmmCqkbqhGBT4Rz9nlgV5N4OSTCRzW4lJpc5nZkWw8Socd8CWKYdN+JVzPKuI4LlPPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ibhBt64B; arc=none smtp.client-ip=95.215.58.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ibhBt64B"
+Date: Mon, 10 Mar 2025 09:49:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741614561;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=p/YTv0hHn4G4Scu3ATutypohlkwvEToRHT1q3tOxv1M=;
+	b=ibhBt64Bnx5dGjlh8qWaTtLQT4Lz408q33Aqcf4PYL8ztkoC3S5CZA7zWXODC5KvXuXmdT
+	9acI5JMEQsAOzU2TBViyk45087/40QkzGXrXFWLUTTKl/CyuWlEbTO+qe0fe9/nFuycmqC
+	rCRruIPipMxWkv0xrWwzHq0RQ2u3N/s=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, cve@kernel.org, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, linux-security-module@vger.kernel.org, 
+	Dave Chinner <david@fromorbit.com>, linux-bcachefs@vger.kernel.org
+Subject: Re: CVE-2025-21830: landlock: Handle weird files
+Message-ID: <k7toamo7fd647262axepi5qut2axylrx4rew66jdlw5wmyog3h@3ivphkt2xkxr>
+References: <2025030611-CVE-2025-21830-da64@gregkh>
+ <20250310.ooshu9Cha2oo@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250308180602.129663-1-parav@nvidia.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250310.ooshu9Cha2oo@digikod.net>
+X-Migadu-Flow: FLOW_OUT
 
-On Sat, Mar 08, 2025 at 08:06:02PM +0200, Parav Pandit wrote:
-> A process running in a non-init user namespace possesses the
-> CAP_NET_RAW capability. However, the patch cited in the fixes
-> tag checks the capability in the default init user namespace.
-> Because of this, when the process was started by Podman in a
-> non-default user namespace, the flow creation failed.
+On Mon, Mar 10, 2025 at 01:00:50PM +0100, Mickaël Salaün wrote:
+> Hi Greg,
 > 
-> Fix this issue by checking the CAP_NET_RAW networking capability
-> in the owner user namespace that created the network namespace.
+> FYI, I don't think this patch fixes a security issue.  If attackers can
+> corrupt a filesystem, then they should already be able to harm the whole
+> system.
+> 
+> The commit description might be a bit confusing, but from an access
+> control point of view, the filesystem on which we spotted this issue
+> (bcachefs) does not allow to open weird files (but they are still
+> visible, hence this patch) and I guess it would be the same for other
+> filesystems, right?  I'm not sure how a weird file could be used by user
+> space.  See
+> https://lore.kernel.org/all/Zpc46HEacI%2Fwd7Rg@dread.disaster.area/
+> 
+> The goal of this fix was mainly to not warn about a bcachefs issue (and
+> avoid related syzkaller report for Landlock), and to harden Landlock in
+> case other filesystems have this kind of bug.
 
-Hi,
-
-you say
-
- > Fix this issue by checking the CAP_NET_RAW networking capability
- > in the owner user namespace that created the network namespace.
-
-But in fact you are checking the CAP_NET_RAW against the user's
-network namespace.  That is usually not the same thing, although
-it is possible that in this case it is.
-
-What is cmd.flow_id?  Is that guaranteed to represent something in
-the current process' network namespace?  Or is it possible that a
-user without privilege in his user namespace could unshare userns+netns
-but then cause this fn to be called against a flow in the original
-network namespace?
-
-> 
-> This change is similar to the following cited patches.
-> 
-> commit 5e1fccc0bfac ("net: Allow userns root control of the core of the network stack.")
-> commit 52e804c6dfaa ("net: Allow userns root to control ipv4")
-> commit 59cd7377660a ("net: openvswitch: allow conntrack in non-initial user namespace")
-> commit 0a3deb11858a ("fs: Allow listmount() in foreign mount namespace")
-> commit dd7cb142f467 ("fs: relax permissions for listmount()")
-> 
-> Fixes: c938a616aadb ("IB/core: Add raw packet QP type")
-> Signed-off-by: Parav Pandit <parav@nvidia.com>
-> 
-> ---
-> I would like to have feedback from the LSM experts to make sure this
-> fix is correct. Given the widespread usage of the capable() call,
-> it makes me wonder if the patch right.
-> 
-> Secondly, I wasn't able to determine which primary namespace (such as
-> mount or IPC, etc.) to consider for the CAP_IPC_LOCK capability.
-> (not directly related to this patch, but as concept)
-> ---
->  drivers/infiniband/core/uverbs_cmd.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/infiniband/core/uverbs_cmd.c b/drivers/infiniband/core/uverbs_cmd.c
-> index 5ad14c39d48c..8d6615f390f5 100644
-> --- a/drivers/infiniband/core/uverbs_cmd.c
-> +++ b/drivers/infiniband/core/uverbs_cmd.c
-> @@ -3198,7 +3198,7 @@ static int ib_uverbs_ex_create_flow(struct uverbs_attr_bundle *attrs)
->  	if (cmd.comp_mask)
->  		return -EINVAL;
->  
-> -	if (!capable(CAP_NET_RAW))
-> +	if (!ns_capable(current->nsproxy->net_ns->user_ns, CAP_NET_RAW))
->  		return -EPERM;
->  
->  	if (cmd.flow_attr.flags >= IB_FLOW_ATTR_FLAGS_RESERVED)
-> -- 
-> 2.26.2
-> 
+Agreed - why was a CVE assigned?
