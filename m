@@ -1,260 +1,251 @@
-Received: from flow-b1-smtp.messagingengine.com (flow-b1-smtp.messagingengine.com [202.12.124.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 884BD199FBA;
-	Tue, 11 Mar 2025 22:03:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17B1A264FA7
+	for <linux-security-module@vger.kernel.org>; Tue, 11 Mar 2025 22:10:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741730610; cv=none; b=G7qmJwUPQG1ediAam1MYdNg6FiTA6uBx5opc1L8zt/GZqDZCqwv5Bl7znWqaOPOJBv0sO3LhXpNZGsQsdbBqmUfLWsuMxMBz81F3p+PsO8YG598AM0AZi2qjF4VHaJYlq6SJu10gHAowxekc1nVMmJCuOzsQAL3mxwBItsA4orQ=
+	t=1741731021; cv=none; b=sgjeNVc63qj5M5wxDKCJM/88rD8BeaiWzIBvrbORRruvjdMp0rA+XYH6cHeNzoiEY1tgD2qKj2HdLZOcaP/BkOv+vfZN2KwLCcfw2OTLpzfc/dPsbmhtXSpNv6aoDhMPKi2V/Op81VWW/pEVDwkairwTO8P4P99wvC5tKp0LjQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741730610; c=relaxed/simple;
-	bh=ngzYOMR4Yeu236yAf99OkFggrkSyXGDT7Wb8w52zW6U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NFWjSdrVkP3u07/UwE3pTA+f2z4SsxSglRbA394IUuzuajs9AehGPKSTEUsGmD6ByL2Pd1w+HtEeyz6MLuzSm4L4WX6SG6eo95VhNA/MNkgg223pebQ9kx+5aQz6/NnWxwHkYrmoeqKTSwVUmyDtnbpU2bxjWN3tFSX6J7PLpl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=hf8Zw2Dd; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Sicd/PNh; arc=none smtp.client-ip=202.12.124.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
+	s=arc-20240116; t=1741731021; c=relaxed/simple;
+	bh=s82bErdX4EnYnwudyQnjNihkbyWdccqlmxsD8uaxjzA=;
+	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
+	 References:In-Reply-To; b=VR9xZujRip+IJpeXW22yOYgrMAmok4wndRcy9NOIqzv0W1C0YQXeafaCUG+gLYb5Z4g7lfir396L8n/Afmi0XaXQG8GA3s127+GAYgtGkfTWXF87WVt8EiTm5BHYtGsJ38BtMzcn59j6x/st7A1bxhSz9LIMx9oO0nh4b3jA7/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ZeROWN3j; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="hf8Zw2Dd";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Sicd/PNh"
-Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
-	by mailflow.stl.internal (Postfix) with ESMTP id 1037B1D412D4;
-	Tue, 11 Mar 2025 18:03:27 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-08.internal (MEProxy); Tue, 11 Mar 2025 18:03:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1741730606;
-	 x=1741734206; bh=ttQ3JYdaSOR5HSN+qJQiy55frn4OsFjKyNiYQp/8OTg=; b=
-	hf8Zw2DdrOLh45Z/sdZiDBOAi2+SVIIBPAR5j2aEIXCoQeqqNWWSj2rZJCJHvah2
-	SZxSymFib2FUoGASrYDZaImnvif39ZJYoZQ7clXZ5/PKqE5Ze/5c62Gnf85iTzQf
-	rjYAKykSE30/9DRrn3CMsILc2HoKOBZV8akc72JskuaFOdmBiLpLIMLDZTk+9JAo
-	nfXuZAHm8yc1DOpyT9SOWFGvfBlmdyjhMp1AgKKrBR4Nw+ehbEyMOXQ8K27Hz3b2
-	JnNne1P7XvBlMv9kb76waWo5JA1j3EfXS7YD12b07x+4HnqksK5HPsHamLssIizr
-	IhiKo2djOByJI73G+CYdbQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1741730606; x=
-	1741734206; bh=ttQ3JYdaSOR5HSN+qJQiy55frn4OsFjKyNiYQp/8OTg=; b=S
-	icd/PNhBh3P+ubP58dZ2+43YKigxjBjKOnxLjQX56HUH/+Hq0/ByYIcfGeDvqK3o
-	nu2S1m3sxFU6Q73zoG2WSdfdkspd3xzQxko+PCKJ4nTdcXKcTx1Smzm+ni3X7TGk
-	k1czSDjZDLYy/nQxRPsbR8T6UuTX/5jK49VQwuVmTGTe+kS/YcAJTa0TyeHt69Oz
-	Kx0JdTq2Nhi2YgSQrPTH8eN8gUo/Xx0bZYOiJW4EDDKjGyQ2YCUB/80kipFYdu2p
-	RJJblZmmTijOWA3BrP4OseqqW3+xPkNPtIIblo9deMnOX7AP1909mv8Xi4EsNO6Q
-	E2aCVhRVaAjKigp7ecEDw==
-X-ME-Sender: <xms:K7PQZxwfXrnqRJcqAf20W__-UFwOKpGzY6O0NxNxhUSsdImV0bMu1g>
-    <xme:K7PQZxSDzLprUJSP3JWiD2VucfQ0s4qM3RAMnhoAPgPiSweqNol6myI7ZmFyMACnn
-    fY7acBgGcqyoKWJ4Iw>
-X-ME-Received: <xmr:K7PQZ7UfqGzvHOTGH0NvvvbqFMAAY4MTTFm8oiAOXz6y3osn35STAc5NvR2D9Vf4YwZH34v_gpIhNzsbw1lwWoW2KovXPB0kLFuibKbd_H-pjjBcl8GqsYuC>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduvdeffeegucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddt
-    vdejnecuhfhrohhmpefvihhnghhmrghoucghrghnghcuoehmsehmrghofihtmhdrohhrgh
-    eqnecuggftrfgrthhtvghrnhepudekvefhgeevvdevieehvddvgefhgeelgfdugeeftedv
-    keeigfeltdehgeeghffgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrg
-    hilhhfrhhomhepmhesmhgrohifthhmrdhorhhgpdhnsggprhgtphhtthhopeduledpmhho
-    uggvpehsmhhtphhouhhtpdhrtghpthhtohepshhonhhgsehkvghrnhgvlhdrohhrghdprh
-    gtphhtthhopehmihgtseguihhgihhkohgurdhnvghtpdhrtghpthhtohepsghrrghunhgv
-    rheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghmihhrjeefihhlsehgmhgrihhlrd
-    gtohhmpdhrtghpthhtohepghhnohgrtghksehgohhoghhlvgdrtghomhdprhgtphhtthho
-    pehjrggtkhesshhushgvrdgtiidprhgtphhtthhopehlihhnuhigqdhsvggtuhhrihhthi
-    dqmhhoughulhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhgvphhn
-    ohhpsehgohhoghhlvgdrtghomhdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlse
-    hvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:K7PQZziK0cX1YaC9SYzQ9lLXUQWwg4_KGx1l0P171rI_beugbVs8JQ>
-    <xmx:K7PQZzDuSbRL3ADZPuTnrWWtEQugcibJleUw8oIgdRGORc8y4wH6XQ>
-    <xmx:K7PQZ8ImoOQSLUlFKM6Im9KP4wAh3jx8TWiyoAdKUoM2qXdvsf1Qeg>
-    <xmx:K7PQZyBeeKQ94xgyIicEVCglGZoh4yO0ZK41UPpumaDjsMH0gztuNQ>
-    <xmx:LrPQZ1xc9JtxfufnOibbY1NjKRAg1w-zK8g2VFQnMueDbJXVTk7ZGGy->
-Feedback-ID: i580e4893:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 11 Mar 2025 18:03:21 -0400 (EDT)
-Message-ID: <c6e67ee5-9f85-44f4-a27c-97e10942ff57@maowtm.org>
-Date: Tue, 11 Mar 2025 22:03:19 +0000
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ZeROWN3j"
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7c3c4ff7d31so694838185a.1
+        for <linux-security-module@vger.kernel.org>; Tue, 11 Mar 2025 15:10:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1741731018; x=1742335818; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MZbs1+jjEWPFGCPeM1YxxvgtUsuRoKlEODhhpfoVXGs=;
+        b=ZeROWN3jxcSN1N2oDgGI0CHcg5m1zZONDG63Jyfdl4nFb6YC+fQBNckLgn8fvi1ijP
+         +Bdl+G2m0ECx2iMRSRLQ+sBwJL81HvvRVyY6ibvryIMi5Q0kFu1zcCG9QlYeX1Hm6tUN
+         u8W6ezTN4tx5cPYMgALEIBH9B3VsAvlt1gVTGPwmuE+XzH+i/eg85unVEY5IHyS1W74e
+         YSZFA6/RtJbpU5DII/f0azB5iUbEP040NWEqx7RKg7+YWgXkuCEP2Co/0s3APoSJJVrd
+         j/Zty6iG60HyJYYjmZdZteFJdA3/xr6jNFCOiug6ppNVvUKVY9Cx5Oc6MTq+Sld0nYNc
+         okXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741731018; x=1742335818;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=MZbs1+jjEWPFGCPeM1YxxvgtUsuRoKlEODhhpfoVXGs=;
+        b=Ldm7q3Co3/a8B4Wv6l91ii7nueoAVoq/ZKwzhCGtowfp8IKQOYpcZZpSABLxfIYfb9
+         n7M3dQjM9cS5NAfmE+3WjhSZlAgGrBNnYiQObt4Mnj+4889GC/BFBUHT458K6fJCrfzI
+         r9GKLYvYc6tjAIwZ0u0YeAUpwEteiSod3lm1U8raf98cvhkeBSGf/fQD6zbDU/APM4Jn
+         C0VgBEpA4uboIPPkaE8OWbz9lgf3i1kGCs2YyzgohxOoCFsf9AsqzT+LLFiU69CCrbsJ
+         XIAcAj6Rb7RslHh6BPi7C/OHVSWBI0Vzub0haS3LKYxS1Gr/pq8f8drS8iy9vhAVJsn5
+         WK/A==
+X-Forwarded-Encrypted: i=1; AJvYcCVTC0mmf46X5hY2hWcCiyWkyMF4q+7yGHnUB7zq2yEq8M+TMLz+H4a1hlvdZB8EM0hjdN4zuURhzzjMwh9wnXEaEl7SVUw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz71wkL9bdQ3rubZbSOQrfFjwNvr7oVH3wx8oIemZ367o8yqrUt
+	YFCVGm47BYJPOZmhEhlqld5i78U7q5j7f3s2duKzhvYvCwR5o06aFDEEOpvmJEfUrTj2BfTpAcc
+	=
+X-Gm-Gg: ASbGnctPe3aFlZNHuKTqJ7PfXeGskTOaONsjRzwV1brYPrFEJ2GzjRZYej4QRxomR1W
+	gqpXTKYf9Q490knWiSK/Bw7GAbgNtkTiJr8xM1pU/yYMo/e1jntb9f0KSQ5iUAGu6sijVC00VGB
+	qFu5CiDxMrlpAiOuVykm6I0GE9bkG+gBW73bF4l6oJrIAdwu1k52m1VXJ0kr5MznMO2LL3oekGe
+	8oqxykF9lPro7GqgKjDD+Hsu8VPdCUjkeP0/UWWz+kBsEge6OC5hfU/Pw1D0XtE7ScKg+4UWgFg
+	6D267KecDleL2+w6TPD3zAhLiCn/MwYpAfbPfxchn+V9OPkhtC+kK3WTYdGp4k0ijJ3QyOo+h8G
+	IFv8SmmtMu/+YUQ==
+X-Google-Smtp-Source: AGHT+IGFZPAT0kHC3BGKnrQivfKI9s04TeiLH9YTKILncNYseYqOotHyhPpnjK2DmpS6MSuaSilbUw==
+X-Received: by 2002:a05:6214:250e:b0:6e8:f3c3:9806 with SMTP id 6a1803df08f44-6e9005bc9camr276668786d6.4.1741731017866;
+        Tue, 11 Mar 2025 15:10:17 -0700 (PDT)
+Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
+        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6e8f716ee35sm76607796d6.96.2025.03.11.15.10.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 11 Mar 2025 15:10:17 -0700 (PDT)
+Date: Tue, 11 Mar 2025 18:10:16 -0400
+Message-ID: <005f7425114b4e6b82dacdaf4dd37777@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/9] Landlock supervise: a mechanism for interactive
- permission requests
-To: Song Liu <song@kernel.org>, =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?=
- <mic@digikod.net>, Christian Brauner <brauner@kernel.org>
-Cc: Amir Goldstein <amir73il@gmail.com>, =?UTF-8?Q?G=C3=BCnther_Noack?=
- <gnoack@google.com>, Jan Kara <jack@suse.cz>,
- linux-security-module@vger.kernel.org, Matthew Bobrowski
- <repnop@google.com>, linux-fsdevel@vger.kernel.org,
- Tycho Andersen <tycho@tycho.pizza>, Kees Cook <kees@kernel.org>,
- Jeff Xu <jeffxu@google.com>,
- Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
- Francis Laniel <flaniel@linux.microsoft.com>,
- Matthieu Buffet <matthieu@buffet.re>, Paul Moore <paul@paul-moore.com>,
- Kentaro Takeda <takedakn@nttdata.co.jp>,
- Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
- John Johansen <john.johansen@canonical.com>
-References: <cover.1741047969.git.m@maowtm.org>
- <20250304.Choo7foe2eoj@digikod.net>
- <f6ef02c3-ad22-4dc6-b584-93276509dbeb@maowtm.org>
- <CAOQ4uxjz4tGmW3DH3ecBvXEnacQexgM86giXKqoHFGzwzT33bA@mail.gmail.com>
- <1e009b28-1e6b-4b8c-9934-b768cde63c2b@maowtm.org>
- <20250311.Ti7bi9ahshuu@digikod.net>
- <CAPhsuW4YXGFY___8x7my4tUbgyp5N4FHSQpJpKgEDK6r0vphAA@mail.gmail.com>
-Content-Language: en-US
-From: Tingmao Wang <m@maowtm.org>
-In-Reply-To: <CAPhsuW4YXGFY___8x7my4tUbgyp5N4FHSQpJpKgEDK6r0vphAA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=UTF-8 
+Content-Transfer-Encoding: 8bit 
+X-Mailer: pstg-pwork:20250311_1754/pstg-lib:20250311_1754/pstg-pwork:20250311_1754
+From: Paul Moore <paul@paul-moore.com>
+To: Jasjiv Singh <jasjivsingh@linux.microsoft.com>, corbet@lwn.net, jmorris@namei.org, serge@hallyn.com, eparis@redhat.com
+Cc: linux-doc@vger.kernel.org, linux-security-module@vger.kernel.org, audit@vger.kernel.org, linux-kernel@vger.kernel.org, Jasjiv Singh <jasjivsingh@linux.microsoft.com>
+Subject: Re: [PATCH RFC v4 1/1] ipe: add errno field to IPE policy load  auditing
+References: <1741385035-22090-2-git-send-email-jasjivsingh@linux.microsoft.com>
+In-Reply-To: <1741385035-22090-2-git-send-email-jasjivsingh@linux.microsoft.com>
 
-On 3/11/25 20:58, Song Liu wrote:
-> On Tue, Mar 11, 2025 at 12:28 PM Mickaël Salaün <mic@digikod.net> wrote:
->>
->> On Tue, Mar 11, 2025 at 12:42:05AM +0000, Tingmao Wang wrote:
->>> On 3/6/25 17:07, Amir Goldstein wrote:
->>> [...]
->>>>
->>>> w.r.t sharing infrastructure with fanotify, I only looked briefly at
->>>> your patches
->>>> and I have only a vague familiarity with landlock, so I cannot yet form an
->>>> opinion whether this is a good idea, but I wanted to give you a few more
->>>> data points about fanotify that seem relevant.
->>>>
->>>> 1. There is already some intersection of fanotify and audit lsm via the
->>>> fanotify_response_info_audit_rule extension for permission
->>>> events, so it's kind of a precedent of using fanotify to aid an lsm
->>>>
->>>> 2. See this fan_pre_modify-wip branch [1] and specifically commit
->>>>     "fanotify: introduce directory entry pre-modify permission events"
->>>> I do have an intention to add create/delete/rename permission events.
->>>> Note that the new fsnotify hooks are added in to do_ vfs helpers, not very
->>>> far from the security_path_ lsm hooks, but not exactly in the same place
->>>> because we want to fsnotify hooks to be before taking vfs locks, to allow
->>>> listener to write to filesystem from event context.
->>>> There are different semantics than just ALLOW/DENY that you need,
->>>> therefore, only if we move the security_path_ hooks outside the
->>>> vfs locks, our use cases could use the same hooks
->>>
->>> Hi Amir,
->>>
->>> (this is a slightly long message - feel free to respond at your convenience,
->>> thank you in advance!)
->>>
->>> Thanks a lot for mentioning this branch, and for the explanation! I've had a
->>> look and realized that the changes you have there will be very useful for
->>> this patch, and in fact, I've already tried a worse attempt of this (not
->>> included in this patch series yet) to create some security_pathname_ hooks
->>> that takes the parent struct path + last name as char*, that will be called
->>> before locking the parent.  (We can't have an unprivileged supervisor cause
->>> a directory to be locked indefinitely, which will also block users outside
->>> of the landlock domain)
->>>
->>> I'm not sure if we can move security_path tho, because it takes the dentry
->>> of the child as an argument, and (I think at least for create / mknod /
->>> link) that dentry is only created after locking.  Hence the proposal for
->>> separate security_pathname_ hooks.  A search shows that currently AppArmor
->>> and TOMOYO (plus Landlock) uses the security_path_ hooks that would need
->>> changing, if we move it (and we will have to understand if the move is ok to
->>> do for the other two LSMs...)
->>>
->>> However, I think it would still make a lot of sense to align with fsnotify
->>> here, as you have already made the changes that I would need to do anyway
->>> should I implement the proposed new hooks.  I think a sensible thing might
->>> be to have the extra LSM hooks be called alongside fsnotify_(re)name_perm -
->>> following the pattern of what currently happens with fsnotify_open_perm
->>> (i.e. security_file_open called first, then fsnotify_open_perm right after).
+On Mar  7, 2025 Jasjiv Singh <jasjivsingh@linux.microsoft.com> wrote:
 > 
-> I think there is a fundamental difference between LSM hooks and fsnotify,
-> so putting fsnotify behind some LSM hooks might be weird. Specifically,
-> LSM hooks are always global. If a LSM attaches to a hook, say
-> security_file_open, it will see all the file open calls in the system. On the
-> other hand, each fsnotify rule only applies to a group, so that one fanotify
-> handler doesn't touch files watched by another fanotify handler. Given this
-> difference, I am not sure how fsnotify LSM hooks should look like.
+> Users of IPE require a way to identify when and why an operation fails,
+> allowing them to both respond to violations of policy and be notified
+> of potentially malicious actions on their systems with respect to IPE.
 > 
-> Does this make sense?
-
-To clarify, I wasn't suggesting that we put one hook _behind_ another 
-("behind" in the sense of one calling the other), just that the place 
-that calls the new fsnotify_name_perm/fsnotify_rename_perm hook (in 
-Amir's WIP branch) could also be made to call some new LSM hooks in 
-addition to fsnotify (i.e. security_pathname_create/delete/rename).
-
-My understanding of the current code is that VFS calls security_... and 
-fsnotify_... unconditionally, and the fsnotify_... functions figure out 
-who needs to be notified.
-
+> This patch introduces a new error field to the AUDIT_IPE_POLICY_LOAD event
+> to log policy loading failures. Currently, IPE only logs successful policy
+> loads, but not failures. Tracking failures is crucial to detect malicious
+> attempts and ensure a complete audit trail for security events.
 > 
->> Yes, I think it would make sense to use the same hooks for fanotify and
->> other security subsystems, or at least to share them.  It would improve
->> consistency across different Linux subsystems and simplify changes and
->> maintenance where these hooks are called.
-
-Mickaël - I'm not sure what you mean by "the same hook" - do you mean 
-the relevant VFS functions could call both fsnotify and LSM hooks?
-
+> The new error field will capture the following error codes:
 > 
-> [...]
+> * -ENOKEY: Key used to sign the IPE policy not found in the keyring
+> * -ESTALE: Attempting to update an IPE policy with an older version
+> * -EKEYREJECTED: IPE signature verification failed
+> * -ENOENT: Policy was deleted while updating
+> * -EEXIST: Same name policy already deployed
+> * -ERANGE: Policy version number overflow
+> * -EINVAL: Policy version parsing error
+> * -EPERM: Insufficient permission
+> * -ENOMEM: Out of memory (OOM)
+> * -EBADMSG: Policy is invalid
 > 
->>> --
->>>
->>> For Mickaël,
->>>
->>> Would you be on board with changing Landlock to use the new hooks as
->>> mentioned above?  My thinking is that it shouldn't make any difference in
->>> terms of security - Landlock permissions for e.g. creating/deleting files
->>> are based on the parent, and in fact except for link and rename, the
->>> hook_path_ functions in Landlock don't even use the dentry argument.  If
->>> you're happy with the general direction of this, I can investigate further
->>> and test it out etc.  This change might also reduce the impact of Landlock
->>> on non-landlocked processes, if we avoid holding exclusive inode lock while
->>> evaluating rules / traversing paths...? (Just a thought, not measured)
+> Here are some examples of the updated audit record types:
 > 
-> I think the filter for process/thread is usually faster than the filter for
-> file/path/subtree? Therefore, it is better for landlock to check the filter for
-> process/thread first. Did I miss/misunderstand something?
->
+> AUDIT_IPE_POLICY_LOAD(1422):
+> audit:  AUDIT1422 policy_name="Test_Policy" policy_version=0.0.1
+> policy_digest=sha256:84EFBA8FA71E62AE0A537FAB962F8A2BD1053964C4299DCA
+> 92BFFF4DB82E86D3 auid=1000 ses=3 lsm=ipe res=1 errno=0
+> 
+> The above record shows a new policy has been successfully loaded into
+> the kernel with the policy name, version, and hash with the errno=0.
+> 
+> AUDIT_IPE_POLICY_LOAD(1422) with error:
+> 
+> audit: AUDIT1422 policy_name=? policy_version=? policy_digest=?
+> auid=1000 ses=3 lsm=ipe res=0 errno=-74
+> 
+> The above record shows a policy load failure due to an invalid policy
+> (-EBADMSG).
+> 
+> Signed-off-by: Jasjiv Singh <jasjivsingh@linux.microsoft.com>
+> ---
+>  Documentation/admin-guide/LSM/ipe.rst | 69 +++++++++++++++++++--------
+>  security/ipe/audit.c                  | 21 ++++++--
+>  security/ipe/fs.c                     | 19 ++++++--
+>  security/ipe/policy.c                 | 11 ++++-
+>  security/ipe/policy_fs.c              | 29 ++++++++---
+>  5 files changed, 111 insertions(+), 38 deletions(-)
 
-Sorry, I should have clarified that the "impact" I'm talking about here 
-isn't referring to directly the time it takes for landlock to decide if 
-an access is allowed or not - in a non-landlocked process, the landlock 
-hooks already returns really early and fast.  However, I'm thinking of a 
-situation where a landlocked process makes lots of create/delete etc 
-requests on a directory, and landlock does need to do some work (e.g. 
-path traversal) to decide those access.  Because the 
-security_path_mknod/unlink/... hooks are called in the VFS from a place 
-where it is holding an exclusive lock on the directory (for O_CREAT'ing 
-a child or other directory modification cases), when landlock is working 
-out an access by the landlocked process, no other tasks will be able to 
-read/write the directory (they will be blocked on the lock), even if 
-their access have nothing to do with landlock.
+...
 
-I should add that this is probably just a very minor impact: the user 
-space can't cause the dir to be blocked for arbitrary amount of time, at 
-worst slowing everyone else down by a bit if it deliberately creates 
-lots of layers (max 16) each with lots of rules (the ruleset evaluation 
-is O(log(#rules) * dir_depth)). I didn't measure it, it's just something 
-that occurred to me that could be improved by using new hooks that 
-aren't called with inode locks held.
+> diff --git a/security/ipe/audit.c b/security/ipe/audit.c
+> index f05f0caa4850..ac9d68b68b8b 100644
+> --- a/security/ipe/audit.c
+> +++ b/security/ipe/audit.c
+> @@ -21,6 +21,8 @@
+>  
+>  #define AUDIT_POLICY_LOAD_FMT "policy_name=\"%s\" policy_version=%hu.%hu.%hu "\
+>  			      "policy_digest=" IPE_AUDIT_HASH_ALG ":"
+> +#define AUDIT_POLICY_LOAD_FAIL_FMT "policy_name=? policy_version=? "\
+> +				   "policy_digest=?"
 
-Kind regards,
-Tingmao
+This should probably be AUDIT_POLICY_LOAD_NULL_FMT to be consistent with
+the other IPE audit format macros, e.g. AUDIT_OLD_ACTIVE_POLICY_NULL_FMT.
 
-> Thanks,
-> Song
-> 
-> 
-> 
-> 
->> This looks reasonable.  As long as the semantic does not change it
->> should be good and Landlock tests should pass.  That would also require
->> other users of this hook to make sure it works for them too.  If it is
->> not the case, I guess we could add an alternative hooks with different
->> properties.  However, see the issue and the alternative approach below.
->>
+> diff --git a/security/ipe/fs.c b/security/ipe/fs.c
+> index 5b6d19fb844a..db18636470bf 100644
+> --- a/security/ipe/fs.c
+> +++ b/security/ipe/fs.c
+> @@ -133,6 +133,8 @@ static ssize_t getenforce(struct file *f, char __user *data,
+>   * * %-ERANGE			- Policy version number overflow
+>   * * %-EINVAL			- Policy version parsing error
+>   * * %-EEXIST			- Same name policy already deployed
+> + * * %-ENOKEY			- Key used to sign the IPE policy not found in the keyring
+> + * * %-EKEYREJECTED		- IPE signature verification failed
+>   */
+>  static ssize_t new_policy(struct file *f, const char __user *data,
+>  			  size_t len, loff_t *offset)
+> @@ -141,12 +143,17 @@ static ssize_t new_policy(struct file *f, const char __user *data,
+>  	char *copy = NULL;
+>  	int rc = 0;
+>  
+> -	if (!file_ns_capable(f, &init_user_ns, CAP_MAC_ADMIN))
+> -		return -EPERM;
+> +	if (!file_ns_capable(f, &init_user_ns, CAP_MAC_ADMIN)) {
+> +		rc = -EPERM;
+> +		goto out;
+> +	}
+>  
+>  	copy = memdup_user_nul(data, len);
+> -	if (IS_ERR(copy))
+> -		return PTR_ERR(copy);
+> +	if (IS_ERR(copy)) {
+> +		rc = PTR_ERR(copy);
+> +		copy = NULL;
+> +		goto out;
+> +	}
+>  
+>  	p = ipe_new_policy(NULL, 0, copy, len);
+>  	if (IS_ERR(p)) {
+> @@ -161,8 +168,10 @@ static ssize_t new_policy(struct file *f, const char __user *data,
+>  	ipe_audit_policy_load(p);
+>  
+>  out:
+> -	if (rc < 0)
+> +	if (rc < 0) {
+>  		ipe_free_policy(p);
+> +		ipe_audit_policy_load(ERR_PTR(rc));
+> +	}
+>  	kfree(copy);
+>  	return (rc < 0) ? rc : len;
+>  }
 
+I'm going to suggest putting the audit calls closer together to help
+ease maintainence, e.g.:
+
+  out:
+    if (rc) {
+	    ipe_audit_policy_load(ERR_PTR(rc));
+	    ipe_free_policy(p);
+    } else
+	    ipe_audit_policy_load(p);
+
+> diff --git a/security/ipe/policy_fs.c b/security/ipe/policy_fs.c
+> index 3bcd8cbd09df..b70d2518b182 100644
+> --- a/security/ipe/policy_fs.c
+> +++ b/security/ipe/policy_fs.c
+> @@ -292,21 +299,29 @@ static ssize_t update_policy(struct file *f, const char __user *data,
+>  	char *copy = NULL;
+>  	int rc = 0;
+>  
+> -	if (!file_ns_capable(f, &init_user_ns, CAP_MAC_ADMIN))
+> -		return -EPERM;
+> +	if (!file_ns_capable(f, &init_user_ns, CAP_MAC_ADMIN)) {
+> +		rc = -EPERM;
+> +		goto out;
+> +	}
+>  
+>  	copy = memdup_user(data, len);
+> -	if (IS_ERR(copy))
+> -		return PTR_ERR(copy);
+> +	if (IS_ERR(copy)) {
+> +		rc = PTR_ERR(copy);
+> +		copy = NULL;
+> +		goto out;
+> +	}
+>  
+>  	root = d_inode(f->f_path.dentry->d_parent);
+>  	inode_lock(root);
+>  	rc = ipe_update_policy(root, NULL, 0, copy, len);
+>  	inode_unlock(root);
+>  
+> +out:
+>  	kfree(copy);
+> -	if (rc)
+> +	if (rc) {
+> +		ipe_audit_policy_load(ERR_PTR(rc));
+>  		return rc;
+> +	}
+>  
+>  	return len;
+>  }
+
+I don't really like how your auditing failure in one function and
+success in a different function, that looks fragile.  Unfortunately,
+I don't see a quick/easy fix for that right now so I guess this is
+okay, but something to keep in mind for the future.
+
+--
+paul-moore.com
