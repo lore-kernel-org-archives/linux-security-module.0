@@ -1,301 +1,206 @@
-Received: from fout-b8-smtp.messagingengine.com (fout-b8-smtp.messagingengine.com [202.12.124.151])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD6F226461D;
-	Tue, 11 Mar 2025 20:10:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50F1D23F378;
+	Tue, 11 Mar 2025 20:59:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741723853; cv=none; b=l+jN6cTnpHvGes52hsOIFTr8+qzhMlyZ0YgzSZtyILUL4CiafSINUBUxYZl3t6puUUcCEwJ6q6x272JDsYi+1rKVrnPZtcdhySn+Wuvin/x+YwXP/HuGUrPQngVnMv31yrM68AE+JRB50qYE3IOG5wKFnBnoKmHK959iJKQQ73Y=
+	t=1741726750; cv=none; b=aTccXIrvia8XGEY0mwhie7WBXhOyNdSWzrfpYaB/gFk6bkjNVCooZYvYv8V1qbHSXDu9ftEknJO65pV8a/7AQE5rg9rNp+R7pIxo+mwCLoIaxEvTtQdsMjSQ/x2eXrk0jdqXusCI07hNSAOYhc06B1/SE7CGXVx4L+qEi33flbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741723853; c=relaxed/simple;
-	bh=2MU0gOYAL/ai1oWU9O2tTiuHC/o/Cc/YKJUuJ8iS1lQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ru8Mql8adWun7BI8HBYF0B733F+6y990fEFUrlGv0VmxtKqcvBWUXrkyPF0JoQrWSngzIIG3bgpKaY/scyUxnHbxGL19CBs+5vFMHK3iaXfCoNn4/QaP73Bvwj6oXo1I1XmUyeT8jESgac0jdR2ZSKvDL0GBtSyArH/gkT2C/xc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=invisiblethingslab.com; spf=pass smtp.mailfrom=invisiblethingslab.com; dkim=pass (2048-bit key) header.d=invisiblethingslab.com header.i=@invisiblethingslab.com header.b=BZi98jxf; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=6vfl1PVv; arc=none smtp.client-ip=202.12.124.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=invisiblethingslab.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=invisiblethingslab.com
+	s=arc-20240116; t=1741726750; c=relaxed/simple;
+	bh=0xRMvRm4vCrR3Z1ccNJo+c6Xs7IGImXOfqk7Fe1kZzY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kO3k0b6gODqudC5yP6kI25Ue4my76jayZ2SSNQ1pOFcYjy2UNTLu4HQ58W2hmXVRF7i6Koe1AjeLvtH5GCWq5CWifIy/MMAp+79WdAx63II1Df+HLTq8TvkXlo8/XUjxNsn5Hb0QeMHmpayK4cd70LyZpShaVroUBfodiyfkz54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BqgI8vXg; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=invisiblethingslab.com header.i=@invisiblethingslab.com header.b="BZi98jxf";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="6vfl1PVv"
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfout.stl.internal (Postfix) with ESMTP id A6C19114017B;
-	Tue, 11 Mar 2025 16:10:49 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-09.internal (MEProxy); Tue, 11 Mar 2025 16:10:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	invisiblethingslab.com; h=cc:cc:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1741723849;
-	 x=1741810249; bh=dn6QEOnD/tFlEnChhXNqBB9U+ce/1qeKFhAwsK9Uy24=; b=
-	BZi98jxfQtouISgnCnqrOtpQ8ZP0B7BLAWsjSefJEnd28c+1pMDGjSS4KnOGRfUS
-	keIegsc8bFfmaupCVT8zNI7QfAVzHhLUYre0z06SL/SWIFWKWeSUCEKSrCOBYGa+
-	/zhNVURO7IEF/YH/hgQPOM16Lhtzr2fPK4zguCa0zXp+Ilt3nR5r7b0hXDJGXIiK
-	6dBUPbh1DMdONAWg4b9odPr+OoAqgj5zuiB/lV5MCuxqCISaG2dLa+3wu9C12xQj
-	vLP9F2yWSvtIJqAlZZJIQsvNNIEmCx4KbER3cunE74XHGIOuMgrOwTgk5FDjDlXw
-	Zd94rKl2GAMGtPzSnfY8Ig==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1741723849; x=1741810249; bh=dn6QEOnD/tFlEnChhXNqBB9U+ce/1qeKFhA
-	wsK9Uy24=; b=6vfl1PVvhTz2fdi7T1Lf+MWdKU8z+ZxzIcWez9NHo8ogGHbbW55
-	JJGP1m2xRcS/EWWyyFYfkxfHix9DfPq1/amZ0QOuu8FqzvuAzR3ZDRzHGA2FM7vq
-	VWzHNXo6InlQ7ytyTB5PVa0Ozveo00fAB0OkWESafNNCaWvyWyfaJwhl9GOvCnA6
-	UJ33yxBpZtk9tYinRYnR2PODx23xsJjzWp704A4uic++GGxXjHxNqL2k3SZeAGS4
-	k0qKerJPE5Ym4JWDoUfuHDKrEoOSP00jgym+C1B5nb590Imf6+DRU4WB6uKU/5lp
-	b0qiO3XZuu1yDlyRmrF0Lg1KdoK9vq967wg==
-X-ME-Sender: <xms:yZjQZ_XmFq0oPFW2vk5kLzLA6iNx12Zs56KqtJMhMbSAZzGpwO9SCw>
-    <xme:yZjQZ3mQEu4HjMGGxq3KqvU2ESIlqmgE8vyfkXwWHq3NDSiviPyQbJkGy_bKOR2Cs
-    cTkWcsXT2J-GUg>
-X-ME-Received: <xmr:yZjQZ7aRoCBuMWnxwEW2KDu9XVYX2oOARsk0Qm6vtVX-tLtIn1HOaAaTjsMUdJPk7mu1kv7To_rhyuYYjwA5Tj1XRLPBKdJSyWlhKdEc0u_nvt4t>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduvdefudeiucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpeffhf
-    fvvefukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeffvghmihcuofgrrhhivgcu
-    qfgsvghnohhurhcuoeguvghmihesihhnvhhishhisghlvghthhhinhhgshhlrggsrdgtoh
-    hmqeenucggtffrrghtthgvrhhnpeduieelfeeutedvleehueetffejgeejgeffkeelveeu
-    leeukeejjeduffetjeekteenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpeguvghmihesihhnvhhishhisghlvghthhhinhhgshhlrggsrdgtohhm
-    pdhnsggprhgtphhtthhopedutddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepug
-    grvhhiugesfhhrohhmohhrsghithdrtghomhdprhgtphhtthhopegtvhgvsehkvghrnhgv
-    lhdrohhrghdprhgtphhtthhopehgnhhorggtkhesghhoohhglhgvrdgtohhmpdhrtghpth
-    htohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthht
-    ohepkhgvnhhtrdhovhgvrhhsthhrvggvtheslhhinhhugidruggvvhdprhgtphhtthhope
-    hlihhnuhigqdgstggrtghhvghfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
-    thhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtoheplhhinhhugidqshgvtghurhhithihqdhmohguuhhlvgesvhhgvghrrdhkvghr
-    nhgvlhdrohhrghdprhgtphhtthhopehmihgtseguihhgihhkohgurdhnvght
-X-ME-Proxy: <xmx:yZjQZ6X68pOFZIQqyS43YVNuJzbP3wFDAI0HyFLViWWjbuExNl8Y4w>
-    <xmx:yZjQZ5m6BK60oH1rgDCHa2CLAAK6zKGS5YU3D4KYhTh8zvgDvgU3LA>
-    <xmx:yZjQZ3eFm4sIYtHSbZdHvX1VhrfoOI56PwVYbyaJPmtzGaYk0yyEUQ>
-    <xmx:yZjQZzFPctnw2opqxmdsOVFnDSe3KePKbfA_PYmhz2YXP-DIMrX5wg>
-    <xmx:yZjQZyclY7bNXpxll-i3mHhy8SOtoFVJyUpLGm-4vUGRnNV4XMKoXnao>
-Feedback-ID: iac594737:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 11 Mar 2025 16:10:48 -0400 (EDT)
-Date: Tue, 11 Mar 2025 16:10:42 -0400
-From: Demi Marie Obenour <demi@invisiblethingslab.com>
-To: Dave Chinner <david@fromorbit.com>
-Cc: cve@kernel.org, gnoack@google.com, gregkh@linuxfoundation.org,
-	kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, mic@digikod.net,
-	Demi Marie Obenour <demiobenour@gmail.com>
-Subject: Re: Unprivileged filesystem mounts
-Message-ID: <Z9CYzjpQUH8Bn4AL@itl-email>
-References: <Z8948cR5aka4Cc5g@dread.disaster.area>
- <20250311021957.2887-1-demi@invisiblethingslab.com>
- <Z8_Q4nOR5X3iZq3j@dread.disaster.area>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BqgI8vXg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5D37C4CEEF;
+	Tue, 11 Mar 2025 20:59:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741726749;
+	bh=0xRMvRm4vCrR3Z1ccNJo+c6Xs7IGImXOfqk7Fe1kZzY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=BqgI8vXgFuu5YOiB/k2w2+EMQwDkK24fWnWhzNYrZHkQzhOGCKYOn13ssQrb9/IRM
+	 rpDPazIeHPoHfKlAFQJnBLIeL7RPXLSF4cvDiCC5ef0DaJTkRdlU4rgrvNwNnRiaxm
+	 Og+Sd4sh9VRcW53HOWuytoXKY4sizxLs7jkE7XGDR4eRW7OxTU8yfffhv5Gn5WhjnW
+	 Nu1PZvTZtgZKTYo+Tg6+N9yA+nT3juhhhyA6TQR5wUTZQLKBEJrBKFPWfhy390YBk9
+	 Unra8dOHEBmbMvYdvAW2d1Dnzfk0efKiNbKDzh3QN3NKaK9piMbT5uXeaXADpeoDtb
+	 yAV6yE5usV69g==
+Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3d3db3b68a7so49043765ab.0;
+        Tue, 11 Mar 2025 13:59:09 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW8W/AnT5r5F753MRThmwwK+D/UKOq9zO+PYJ2/wh1uaO1nGZsGFZdfMR2T9vSoWvJXtpkFPCnjVgJuAOqkqotYGyRcgJTh@vger.kernel.org, AJvYcCXr26frWBUxs27pRUjMHjIAAsFFNWpWZx8T1I+5BfTi4KXCLSWnsF/vAj3vSOxd0gi52Q6GgFQE7Y2WfegC@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXw4Tagk1Ttq9LX9FFcyh2LoeNlH/RthTB3T6wu1V5Og09mL+z
+	uKSmXbKo1mdmv01yPhZ4PjaTDMpmzjAyRFd5yo3UXQAmylK61klbo4wYfckfeCFyTC674Nd+ED/
+	C9G+3wd6toVPQGhE1AFo/QO3dqo4=
+X-Google-Smtp-Source: AGHT+IFcqLpAQEN4TNjzJWix5Q/CgWY1Co/fQT+HcrZxnc7I85sHG0VvKAL2EUYPw9pz8Se7djX9/F2+77JT1Uijbc8=
+X-Received: by 2002:a05:6e02:1d8d:b0:3d3:e287:3e7a with SMTP id
+ e9e14a558f8ab-3d441962873mr197868225ab.19.1741726749030; Tue, 11 Mar 2025
+ 13:59:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Hn1Vze6VEWfM0U7H"
-Content-Disposition: inline
-In-Reply-To: <Z8_Q4nOR5X3iZq3j@dread.disaster.area>
-
-
---Hn1Vze6VEWfM0U7H
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+References: <cover.1741047969.git.m@maowtm.org> <20250304.Choo7foe2eoj@digikod.net>
+ <f6ef02c3-ad22-4dc6-b584-93276509dbeb@maowtm.org> <CAOQ4uxjz4tGmW3DH3ecBvXEnacQexgM86giXKqoHFGzwzT33bA@mail.gmail.com>
+ <1e009b28-1e6b-4b8c-9934-b768cde63c2b@maowtm.org> <20250311.Ti7bi9ahshuu@digikod.net>
+In-Reply-To: <20250311.Ti7bi9ahshuu@digikod.net>
+From: Song Liu <song@kernel.org>
+Date: Tue, 11 Mar 2025 13:58:57 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW4YXGFY___8x7my4tUbgyp5N4FHSQpJpKgEDK6r0vphAA@mail.gmail.com>
+X-Gm-Features: AQ5f1Joc0GXD_ObvgOc0-61aoLMx6VfogWzLg5XLq1-76F2qnHpXXDg8tfSl408
+Message-ID: <CAPhsuW4YXGFY___8x7my4tUbgyp5N4FHSQpJpKgEDK6r0vphAA@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/9] Landlock supervise: a mechanism for interactive
+ permission requests
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: Tingmao Wang <m@maowtm.org>, Christian Brauner <brauner@kernel.org>, 
+	Amir Goldstein <amir73il@gmail.com>, =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	Jan Kara <jack@suse.cz>, linux-security-module@vger.kernel.org, 
+	Matthew Bobrowski <repnop@google.com>, linux-fsdevel@vger.kernel.org, 
+	Tycho Andersen <tycho@tycho.pizza>, Kees Cook <kees@kernel.org>, Jeff Xu <jeffxu@google.com>, 
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
+	Francis Laniel <flaniel@linux.microsoft.com>, Matthieu Buffet <matthieu@buffet.re>, 
+	Paul Moore <paul@paul-moore.com>, Kentaro Takeda <takedakn@nttdata.co.jp>, 
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, 
+	John Johansen <john.johansen@canonical.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Date: Tue, 11 Mar 2025 16:10:42 -0400
-From: Demi Marie Obenour <demi@invisiblethingslab.com>
-To: Dave Chinner <david@fromorbit.com>
-Cc: cve@kernel.org, gnoack@google.com, gregkh@linuxfoundation.org,
-	kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, mic@digikod.net,
-	Demi Marie Obenour <demiobenour@gmail.com>
-Subject: Re: Unprivileged filesystem mounts
 
-On Tue, Mar 11, 2025 at 04:57:54PM +1100, Dave Chinner wrote:
-> On Mon, Mar 10, 2025 at 10:19:57PM -0400, Demi Marie Obenour wrote:
-> > People have stuff to get done.  If you disallow unprivileged filesystem
-> > mounts, they will just use sudo (or equivalent) instead.
->=20
-> I am not advocating that we disallow mounting of untrusted devices.
->=20
-> > The problem is
-> > not that users are mounting untrusted filesystems.  The problem is that
-> > mounting untrusted filesystems is unsafe.
->=20
-> > Making untrusted filesystems safe to mount is the only solution that
-> > lets users do what they actually need to do. That means either actually
-> > fixing the filesystem code,
->=20
-> Yes, and the point I keep making is that we cannot provide that
-> guarantee from the kernel for existing filesystems. We cannot detect
-> all possible malicous tampering situations without cryptogrpahically
-> secure verification, and we can't generate full trust from nothing.
+On Tue, Mar 11, 2025 at 12:28=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@digi=
+kod.net> wrote:
+>
+> On Tue, Mar 11, 2025 at 12:42:05AM +0000, Tingmao Wang wrote:
+> > On 3/6/25 17:07, Amir Goldstein wrote:
+> > [...]
+> > >
+> > > w.r.t sharing infrastructure with fanotify, I only looked briefly at
+> > > your patches
+> > > and I have only a vague familiarity with landlock, so I cannot yet fo=
+rm an
+> > > opinion whether this is a good idea, but I wanted to give you a few m=
+ore
+> > > data points about fanotify that seem relevant.
+> > >
+> > > 1. There is already some intersection of fanotify and audit lsm via t=
+he
+> > > fanotify_response_info_audit_rule extension for permission
+> > > events, so it's kind of a precedent of using fanotify to aid an lsm
+> > >
+> > > 2. See this fan_pre_modify-wip branch [1] and specifically commit
+> > >    "fanotify: introduce directory entry pre-modify permission events"
+> > > I do have an intention to add create/delete/rename permission events.
+> > > Note that the new fsnotify hooks are added in to do_ vfs helpers, not=
+ very
+> > > far from the security_path_ lsm hooks, but not exactly in the same pl=
+ace
+> > > because we want to fsnotify hooks to be before taking vfs locks, to a=
+llow
+> > > listener to write to filesystem from event context.
+> > > There are different semantics than just ALLOW/DENY that you need,
+> > > therefore, only if we move the security_path_ hooks outside the
+> > > vfs locks, our use cases could use the same hooks
+> >
+> > Hi Amir,
+> >
+> > (this is a slightly long message - feel free to respond at your conveni=
+ence,
+> > thank you in advance!)
+> >
+> > Thanks a lot for mentioning this branch, and for the explanation! I've =
+had a
+> > look and realized that the changes you have there will be very useful f=
+or
+> > this patch, and in fact, I've already tried a worse attempt of this (no=
+t
+> > included in this patch series yet) to create some security_pathname_ ho=
+oks
+> > that takes the parent struct path + last name as char*, that will be ca=
+lled
+> > before locking the parent.  (We can't have an unprivileged supervisor c=
+ause
+> > a directory to be locked indefinitely, which will also block users outs=
+ide
+> > of the landlock domain)
+> >
+> > I'm not sure if we can move security_path tho, because it takes the den=
+try
+> > of the child as an argument, and (I think at least for create / mknod /
+> > link) that dentry is only created after locking.  Hence the proposal fo=
+r
+> > separate security_pathname_ hooks.  A search shows that currently AppAr=
+mor
+> > and TOMOYO (plus Landlock) uses the security_path_ hooks that would nee=
+d
+> > changing, if we move it (and we will have to understand if the move is =
+ok to
+> > do for the other two LSMs...)
+> >
+> > However, I think it would still make a lot of sense to align with fsnot=
+ify
+> > here, as you have already made the changes that I would need to do anyw=
+ay
+> > should I implement the proposed new hooks.  I think a sensible thing mi=
+ght
+> > be to have the extra LSM hooks be called alongside fsnotify_(re)name_pe=
+rm -
+> > following the pattern of what currently happens with fsnotify_open_perm
+> > (i.e. security_file_open called first, then fsnotify_open_perm right af=
+ter).
 
-Why is it not possible to provide that guarantee?  I'm not concerned
-about infinite loops or deadlocks.  Is there a reason it is not possible
-to prevent memory corruption?
+I think there is a fundamental difference between LSM hooks and fsnotify,
+so putting fsnotify behind some LSM hooks might be weird. Specifically,
+LSM hooks are always global. If a LSM attaches to a hook, say
+security_file_open, it will see all the file open calls in the system. On t=
+he
+other hand, each fsnotify rule only applies to a group, so that one fanotif=
+y
+handler doesn't touch files watched by another fanotify handler. Given this
+difference, I am not sure how fsnotify LSM hooks should look like.
 
-> The typical desktop policy of "probe and automount any device that
-> is plugged in" prevents the user from examining the device to
-> determine if it contains what it is supposed to contain.  The user
-> is not given any opportunity to device if trust is warranted before
-> the kernel filesystem parser running in ring 0 is exposed to the
-> malicious image.
->=20
-> That's the fundamental policy problem we need to address: the user
-> and/or admin is not in control of their own security because
-> application developers and/or distro maintainers have decided they
-> should not have a choice.
->=20
-> In this situation, the choice of what to do *must* fall to the user,
-> but the argument for "filesystem corruption is a CVE-worthy bug" is
-> that the choice has been taken away from the user. That's what I'm
-> saying needs to change - the choice needs to be returned to the
-> user...
+Does this make sense?
 
-I am 100% in favor of not automounting filesystems without user
-interaction, but that only means that an exploit will require user
-interaction.  Users need to get things done, and if their task requires
-them to a not-fully-trusted filesystem image, then that is what they
-will do, and they will typically do it in the most obvious way possible.
-That most obvious way needs to be a safe way, and it needs to have good
-enough performance that users don't go around looking for an unsafe way.
+> Yes, I think it would make sense to use the same hooks for fanotify and
+> other security subsystems, or at least to share them.  It would improve
+> consistency across different Linux subsystems and simplify changes and
+> maintenance where these hooks are called.
 
-> > or running it in a sufficiently tight
-> > sandbox that vulnerabilities in it are of too low importance to matter.
-> > libguestfs+FUSE is the most obvious way to do this, but the performance
-> > might not be enough for distros to turn it on.
->=20
-> Yes, I have advocated for that to be used for desktop mounts in the
-> past. Similarly, I have also advocated for liblinux + FUSE to be
-> used so that the kernel filesystem code is used but run from a
-> userspace context where the kernel cannot be compromised.
->=20
-> I have also advocated for user removable devices to be encrypted by
-> default. The act of the user unlocking the device automatically
-> marks it as trusted because undetectable malicious tampering is
-> highly unlikely.
+[...]
 
-That is definitely a good idea.
+> > --
+> >
+> > For Micka=C3=ABl,
+> >
+> > Would you be on board with changing Landlock to use the new hooks as
+> > mentioned above?  My thinking is that it shouldn't make any difference =
+in
+> > terms of security - Landlock permissions for e.g. creating/deleting fil=
+es
+> > are based on the parent, and in fact except for link and rename, the
+> > hook_path_ functions in Landlock don't even use the dentry argument.  I=
+f
+> > you're happy with the general direction of this, I can investigate furt=
+her
+> > and test it out etc.  This change might also reduce the impact of Landl=
+ock
+> > on non-landlocked processes, if we avoid holding exclusive inode lock w=
+hile
+> > evaluating rules / traversing paths...? (Just a thought, not measured)
 
-> I have also advocated for a device registry that records removable
-> device signatures and whether the user trusted them or not so that
-> they only need to be prompted once for any given removable device
-> they use.
->=20
-> There are *many* potential user-friendly solutions to the problem,
-> but they -all- lie in the domain of userspace applications and/or
-> policies. This is *not* a problem more or better code in the kernel
-> can solve.
+I think the filter for process/thread is usually faster than the filter for
+file/path/subtree? Therefore, it is better for landlock to check the filter=
+ for
+process/thread first. Did I miss/misunderstand something?
 
-It is certainly possible to make a memory safe implementation of amy
-filesystem.  If the current implementation can't prevent memory
-corruption if a malicious filesystem is mounted, that is a
-characteristic of the implementation.
+Thanks,
+Song
 
-> Kees and Co keep telling us we should be making changes that make it
-> harder (or compeltely prevent) entire classes of vulnerabilities
-> from being exploited. Yet every time we suggest that a more secure
-> policy should be applied to automounting filesystems to prevent
-> system compromise on device hotplug, nobody seems to be willing to
-> put security first.
 
-Not automounting filesystems on hotplug is a _part_ of the solution.
-It cannot be the _entire_ solution.  Users sometimes need to be able to
-interact with untrusted filesystem images with a reasonable speed.
 
-> > For ext4 and F2FS, if there is a vulnerability that can be exploited by
-> > a malicious filesystem image, it is a verified boot bypass for Chrome OS
-> > and Android, respectively. Verified boot is a security boundary for
-> > both of them,
->=20
-> How does one maliciously corrupt the root filesystem on an Android
-> phone? How many security boundaries have to be violated before
-> an attacker can directly modify the physical storage underlying the
-> read-only system partition?
->=20
-> Again, if the attacker has device modification capability, why
-> would they bother trying to perform a complex filesystem
-> corruption attack during boot when they can simply modify what
-> runs on startup?
->=20
-> And is this a real attack vector that Android must defend against,
-> why isn't that device and filesystem image cryptographically signed
-> and verified at boot time to prevent such attacks? That will prevent
-> the entire class of malicious tampering exploits completely without
-> having to care about undiscovered filesystem bugs - that's a much
-> more robust solution from a verified boot and system security
-> perspective...
 
-On both Android and ChromeOS, the root filesystem is a dm-verity volume,
-and the Merkle tree hash is either signed or is part of the signed
-kernel image.  The signed kernel image is itself verified by the
-bootloader.  Therefore, the root filesystem cannot be tampered with.
-
-However, the root filesystem is not the only filesystem image that must
-be mounted.  There is also a writable data volume, and that _cannot_ be
-signed because it contains user data.  It is encrypted, but part of the
-threat model for both Android and ChromeOS is an attacker who has gained
-root or even kernel code execution and wants to retain their access
-across device reboots.  They can't tamper with the kernel or root
-filesystem, and privileged userspace treats the data on the writable
-filesystem as untrusted.  However, the attacker can replace the writable
-filesystem image with anything they want, so the if they can craft an
-image that gains kernel code execution the next time the system boots,
-they have successfully obtained persistance.
-
-Also, at least Google Pixels support updating the OS via the bootloader.
-The bootloader checks that the image was signed by the OS vendor
-(generally, but not always, Google), and I believe it also checks for
-downgrade attacks.  However, this means of updating the OS doesn't
-wipe user data.  This means that if an attacker has gained code
-execution with root or even kernel privileges, updating the OS to a
-version that has patched the vulnerability the attacker used will revoke
-their access.  The same is true if the attacker used USB for their
-exploit and the reboot happens after the user has unplugged the USB
-device.
-
-Furthermore, on UEFI systems the EFI System Partition cannot be
-cryptographically protected as the firmware does not support this.
-
-> > so just forward syzbot reports to their respective
-> > security teams and let them do the jobs they are paid to do.
->=20
-> Security teams don't fix "syzbot bugs"; they are typically the
-> people that run syzbot instances. It's the developers who then
-> have to triage and fix the issues that are found, so that's who the
-> bug reports should go to (and do). And just because syzbot finds an
-> issue, that doesn't make it a security issue - all it is is another
-> bug found by another automated test suite that needs fixing.
-
-Browser vendors consider many kinds of memory unsafety problems to be
-exploitable until and unless proven otherwise.  My understanding is that
-experience has proven them to be correct in this regard.
---=20
-Sincerely,
-Demi Marie Obenour (she/her/hers)
-Invisible Things Lab
-
---Hn1Vze6VEWfM0U7H
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEopQtqVJW1aeuo9/sszaHOrMp8lMFAmfQmMsACgkQszaHOrMp
-8lPrig/+Og5RxJBoq0Y6y0OklxfT6sQYX65AxmdYbIzuL/mLpKpdwlIQWQtAa/Gw
-teeqI+W7PJEU4NXoWMuJkbZ0llDbsmaQMuaJ7nVQ5jW9IQDYImQl9fvaNmRqSEDZ
-0PVJ9jUNN+DdczL3XrOMi/Ky+okUtJd/PqAWeV9P6MVTxei7dDcJYxybas3m79NA
-kJu1o1BmJQiyOffe3opNT53foASN6PjsJObHzy8Z5F7CmVc+kkr4JLKYht7ri4Vu
-dhfkgot/6mQBZfM5Cc+/hBu0TQEgQ7SKE5EZAzStuQNuFTvvS5tdUYaxFVcqDRhN
-qK4vg4T/fTO8Ex7nXIlBK5jrlx5t9xemzTjOzJnhK2sy3SEtdpwLA1Gwz3G1c9Dt
-KOTT0LBxUr0lRqmr/pmNt5LAaVkzFnuQLCr77cIrQoXmQ9fQpH/QRt0HawtEsFFx
-mW1uni2weXdjq662ThnMRwqJjSZ+Jz6CBEgUy+EDhonv5PVosj1ZTjIVcEeBXHy+
-gYxlt9x6xoyNR6yOkYnTU4BEKErJK/5B+H4rpM9F6OhAwIWiT1q9Mt8TbOZrUpRJ
-EiLnx2Kse98Yl1p9CfQQeW5Ede4kCPsL76V7JCZ1PSkSBYu1+xthJv6PHO+HtszL
-7tAvaML25fyQvdx8l1WImskc1tewv3HVNHPisMYKv7OJcKgak4Q=
-=dfMM
------END PGP SIGNATURE-----
-
---Hn1Vze6VEWfM0U7H--
+> This looks reasonable.  As long as the semantic does not change it
+> should be good and Landlock tests should pass.  That would also require
+> other users of this hook to make sure it works for them too.  If it is
+> not the case, I guess we could add an alternative hooks with different
+> properties.  However, see the issue and the alternative approach below.
+>
