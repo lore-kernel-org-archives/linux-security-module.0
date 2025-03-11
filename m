@@ -1,207 +1,97 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A13C24394B;
-	Tue, 11 Mar 2025 11:01:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01B121DE2C7;
+	Tue, 11 Mar 2025 11:31:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741690915; cv=none; b=tp+CeNbeS5T2qQq+omih806JQgfPac5TqpbnNSNhJ08prJ8hOZcMb7EEO/cKlk6qIxJs/ZsAoxjw25fQdsjceuIH/LGr18dA4Rrbjml7vGoZwy/PCY0zNXwuY/79B+8936NTUAyS+aQpuXE5Z5+74ZUOMTF+zWTnNe8REdFols4=
+	t=1741692667; cv=none; b=kWU4Q6mh8nHmsx61Ov0CpgUnOYBc83l8SHmEF13VuS94JJh+NCY9as4LlMq4/DTSKuTKhJt8+kauk65QKCASN3DAoLVz0f15kbTy4DFZoq1S/riU3cBMY1zILfRUJev/znePteup/oLAobbRfd80g7Twumgtjra+4A1Ir3q99OY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741690915; c=relaxed/simple;
-	bh=bzG5empnqjfqOndH97Rq0Q6/H40g6JtmHmBet6dPs6U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i3/F80CUGhZTPtQ/TK64RkdyHitDdDW/0WPpzYd3f29dfT2nbzV8npzXQRwOv7vcGargk3RodEvbdJCx9l2LOunXEFTPxI4upcrxAFIyEblHCR9LTMe3NQPB9DB487u8UnDo6sWkyrHl9RjMfeS4xsQhEz/3FOCjYwi5t7r/Ils=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KCCm3a5z; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1741692667; c=relaxed/simple;
+	bh=IoRaI11noVTRO3MlIxVWAXDvfucnsch2p98lQAzFy6c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jIL6QhT/c4yweH07qtOlYIX23NABFYRLUig0FngWq0pSl0o4oxkc5JEf/I58+PmptTFXrooZU0QbPBuSq9anFAB/iNX5h8O2DH7MK7yqXGZTb3c4IFLkqOLpSBpq5kjjA7aAatkxa8es64WRy9TSg1NGLhsJ9A6OZLeW9J5PKyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OkJSPrSV; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KCCm3a5z"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFE14C4CEE9;
-	Tue, 11 Mar 2025 11:01:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741690914;
-	bh=bzG5empnqjfqOndH97Rq0Q6/H40g6JtmHmBet6dPs6U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KCCm3a5z6BhW/8D+wIydNCz0NaGAwnMbzp7oUZdXh3zrUDL+L+a7oWQpu/V+JQP/u
-	 Uj1omE//IQ1UOU5B8E5ke4Nhrgm8rp+ldrGXkmWJyh7r7jGCQjTAkk+Nu7buniBG57
-	 WXolEagNXpQeRd6hOTumioP1rTMNxoTlbVrT9OXPZZ2BtSEVygoSr5uMFNEMGPc1lL
-	 f5l75Rl4qcDsyaJLnu71a6BLiDQkzZO1WSzVLEhje6+i+zUvrWFt+F4WIZcAp+BMQp
-	 Qxa04/zpkdVZde4udT3D/6iXbH+05BUk3fI+Bubeh41MjDff3iiFW6U5/mKcACQ56d
-	 k9e7nCope6Few==
-Date: Tue, 11 Mar 2025 12:01:48 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Demi Marie Obenour <demi@invisiblethingslab.com>, cve@kernel.org, 
-	gnoack@google.com, gregkh@linuxfoundation.org, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, mic@digikod.net, Demi Marie Obenour <demiobenour@gmail.com>
-Subject: Re: Unprivileged filesystem mounts
-Message-ID: <20250311-desillusionieren-goldfisch-0c2ce3194e68@brauner>
-References: <Z8948cR5aka4Cc5g@dread.disaster.area>
- <20250311021957.2887-1-demi@invisiblethingslab.com>
- <Z8_Q4nOR5X3iZq3j@dread.disaster.area>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OkJSPrSV"
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-39140bd6317so1914763f8f.1;
+        Tue, 11 Mar 2025 04:31:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741692664; x=1742297464; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4w3dWTcO0ek704yH3PQq7wHDG4p/yn9ajswVcE2xISg=;
+        b=OkJSPrSVtRTJp0S7CNec6h+GnFBHkQ0OUJ30oUixOPZlzSv0GsqjuPYGOTmYv1mdak
+         1wFJIRwYHuRCamTdwhptWAg5nFkaYC7Ab3ozlchu/Bor2mfL0FuC4HgCEH8vEko65ELL
+         VvEH2mhWIjnkp7XDbE5or7/V9QcXYB92FT8EUKXE9xrg+OnHRRoPWQ5z7mdBGNDr7Gkz
+         IbzHTaoQNdnOU5tMcrnLlmK3jC+fJwleB+ZbCVlFvHlOMpY4EJ2H1zpvEAYsU2ipNGI0
+         cJmrDSZNVusxHbU/QF5XieSzzQW62f843nNfxXM4/iBoHU2xQYA2giLXGOO6nekY3/f3
+         +ygA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741692664; x=1742297464;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4w3dWTcO0ek704yH3PQq7wHDG4p/yn9ajswVcE2xISg=;
+        b=ulb2/iAv63xgys/pR83K+WoJpmQfSbQBPg18WXx16+FmjWjXHdz3Y0WNuTnJO5+6mW
+         4tdukwKDHJsZcsHXri8DDWa9Lfvp7In10Slv2MIKP5MhR0lFZ/fa9CEn2w1CEpScohjD
+         /dlWYmnvF/FzJDuonz2nyKbSOPDrT+/hVFJhd41/loWJGjmw4FJ+3Ya2r5cv+e9g769G
+         5kAeW33ecUzxHDpxokB/ZbIU/8S2eL0sezQHTYyoor+CRqwjRn1lrlIzDnMW2x6/I1Ef
+         jCfB52Sf6xhRKgYXQ145P8Jos6Ddr3BElxHRKuN9J2EKUJUv3R6IWUyacaLbb5CC/NNp
+         lnsA==
+X-Forwarded-Encrypted: i=1; AJvYcCUYFgQ19tjyzmW+u5TGA3SqHJ6IBpCAM/KyB+1ZcrA8Sp0ruTtrEXcHj23yn5fi0AWo88J/i2HdOw==@vger.kernel.org, AJvYcCUwDYzXj/uZLNXSVKoClNpnPNGgiAIYZgYOu78YIUam5zhWZ1lpjFGC1Phd3F0vetd7LtcnIuK/jhPnWxllCvTG@vger.kernel.org, AJvYcCV/enF+VABaB089Q49wFeqH3bWiMOPGwL/Jx79bYEYY2gNCJ98hgsjB1j4869Svhaum9AU=@vger.kernel.org, AJvYcCVARtfaRrF1EJgOHVsk4jKFNr3W4gHvj+I8pc4/5I7KvJ68oW6wUSCjS+Y7u3HLdrnPNWJKWWj17dksYIWk@vger.kernel.org, AJvYcCVoLIa5UZ/IKnz6HdX/AJmVbtJqGhz9bgJQyLoBW9g+sVp1GGz67PAQMj2BSgcLkLsqKCP7bWWxyoBogqYGNSLlJdlLB4y4@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7qofynwxHp6+9qRxf/qOCUcmfWC3Ktofvu1XSody/v/VY5VGj
+	2REb3tuhuice2US4+0Z8IlikQK1TtSfQTcpJwhZBybxXeiMiaXPFKhcJLZaAoCfVZXJYq8YbxGA
+	6EsTbuzF+plzidQy/KEbnyne1cxI=
+X-Gm-Gg: ASbGncuyo78P7i+vv7BwkQe8uLlKkfSMpl2l7hKEU338bhr0KWfpTNzzB5Ox6nFT6Il
+	sE9lDALhuSmT559zBK1Fyk/atmgEWSD9Q5L0f69Nk7VlyLdW8w7iOyaYoXmI0WtqgvM+qjvBQbm
+	EqODW3WEIBfXN3QuIYp+y9lA96Hg==
+X-Google-Smtp-Source: AGHT+IGe87XZZVJaKirtZvvivYUORISGTO6tR32KWWxfSIu3ZPSnyn/0hEdR/rUZWxsG3CGlbmQA1XqzLn/cM7RvOTI=
+X-Received: by 2002:a05:6000:1f8f:b0:390:f6aa:4e80 with SMTP id
+ ffacd0b85a97d-39132de2a58mr15607923f8f.53.1741692662531; Tue, 11 Mar 2025
+ 04:31:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Z8_Q4nOR5X3iZq3j@dread.disaster.area>
+References: <20250310221737.821889-1-bboscaccy@linux.microsoft.com>
+ <20250310221737.821889-3-bboscaccy@linux.microsoft.com> <CAPhsuW4cCkWGnJfxJvBd498iTd3-hMXLg=s7S68vdgPVhdtqCA@mail.gmail.com>
+In-Reply-To: <CAPhsuW4cCkWGnJfxJvBd498iTd3-hMXLg=s7S68vdgPVhdtqCA@mail.gmail.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 11 Mar 2025 12:30:51 +0100
+X-Gm-Features: AQ5f1JqKIc1OB9cpJnnWo32OpJeOl2OMwIm1txCqFuyol4JlRHW5vV2C9u8eQL0
+Message-ID: <CAADnVQK9UiOoNxR6TE6Oc2SnEJ2i5Jt6pmvrviZ6OrNJhbyV+g@mail.gmail.com>
+Subject: Re: [PATCH v7 bpf-next 2/2] selftests/bpf: Add a kernel flag test for
+ LSM bpf hook
+To: Song Liu <song@kernel.org>
+Cc: Blaise Boscaccy <bboscaccy@linux.microsoft.com>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, 
+	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
+	Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, 
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Xu Kuohai <xukuohai@huawei.com>, LKML <linux-kernel@vger.kernel.org>, 
+	LSM List <linux-security-module@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
+	selinux@vger.kernel.org, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 11, 2025 at 04:57:54PM +1100, Dave Chinner wrote:
-> On Mon, Mar 10, 2025 at 10:19:57PM -0400, Demi Marie Obenour wrote:
-> > People have stuff to get done.  If you disallow unprivileged filesystem
-> > mounts, they will just use sudo (or equivalent) instead.
-> 
-> I am not advocating that we disallow mounting of untrusted devices.
-> 
-> > The problem is
-> > not that users are mounting untrusted filesystems.  The problem is that
-> > mounting untrusted filesystems is unsafe.
-> 
-> > Making untrusted filesystems safe to mount is the only solution that
-> > lets users do what they actually need to do. That means either actually
-> > fixing the filesystem code,
-> 
-> Yes, and the point I keep making is that we cannot provide that
-> guarantee from the kernel for existing filesystems. We cannot detect
-> all possible malicous tampering situations without cryptogrpahically
-> secure verification, and we can't generate full trust from nothing.
-> 
-> The typical desktop policy of "probe and automount any device that
-> is plugged in" prevents the user from examining the device to
-> determine if it contains what it is supposed to contain.  The user
-> is not given any opportunity to device if trust is warranted before
-> the kernel filesystem parser running in ring 0 is exposed to the
-> malicious image.
-> 
-> That's the fundamental policy problem we need to address: the user
-> and/or admin is not in control of their own security because
-> application developers and/or distro maintainers have decided they
-> should not have a choice.
-> 
-> In this situation, the choice of what to do *must* fall to the user,
-> but the argument for "filesystem corruption is a CVE-worthy bug" is
-> that the choice has been taken away from the user. That's what I'm
-> saying needs to change - the choice needs to be returned to the
-> user...
-> 
-> > or running it in a sufficiently tight
-> > sandbox that vulnerabilities in it are of too low importance to matter.
-> > libguestfs+FUSE is the most obvious way to do this, but the performance
-> > might not be enough for distros to turn it on.
-> 
-> Yes, I have advocated for that to be used for desktop mounts in the
-> past. Similarly, I have also advocated for liblinux + FUSE to be
-> used so that the kernel filesystem code is used but run from a
-> userspace context where the kernel cannot be compromised.
-> 
-> I have also advocated for user removable devices to be encrypted by
-> default. The act of the user unlocking the device automatically
-> marks it as trusted because undetectable malicious tampering is
-> highly unlikely.
-> 
-> I have also advocated for a device registry that records removable
-> device signatures and whether the user trusted them or not so that
-> they only need to be prompted once for any given removable device
-> they use.
-> 
-> There are *many* potential user-friendly solutions to the problem,
-> but they -all- lie in the domain of userspace applications and/or
-> policies. This is *not* a problem more or better code in the kernel
-> can solve.
+On Tue, Mar 11, 2025 at 12:07=E2=80=AFAM Song Liu <song@kernel.org> wrote:
+> > +       lskel =3D kfunc_call_test_lskel__open_and_load();
+> > +       if (!ASSERT_ERR_PTR(lskel, "lskel"))
+> > +               goto close_prog;
+>
+> This goto is not necessary. But I don't think we need v8 just for this.
 
-Strongly agree.
-
-> 
-> Kees and Co keep telling us we should be making changes that make it
-> harder (or compeltely prevent) entire classes of vulnerabilities
-> from being exploited. Yet every time we suggest that a more secure
-> policy should be applied to automounting filesystems to prevent
-> system compromise on device hotplug, nobody seems to be willing to
-> put security first.
-
-I agree with Dave here a lot.
-
-The case where arbitrary devices stuck into a laptop (e.g., USB sticks)
-are mounted isn't solved by making a filesystem mountable unprivileged.
-The mounted device cannot show up in the global mount namespace
-somewhere since the user doesn't own the initial mount+user namespace.
-So it's pointless. In other words, there's filesystem level checks and
-mount namespace based checks. Circumventing that restriction means that
-any user can just mount the device at any location in the global mount
-namespace and therefore simply overmount other stuff.
-
-The other thing is whether or not a filesystem is allowed to be mounted
-by an unprivileged user namespaces. That is not a policy decision the
-kernel can make, should make, or has to make. This is a road to security
-disaster.
-
-The new mount api has built-in
-delegation capabilities for exactly this reason and use-case so the
-kernel doesn't have to do that. Policy like that belongs into userspace. 
-The new mount api makes it possible for userspace to correctly and
-safely delegate any filesystem mount to unprivileged users. It's e.g.,
-heavily used by bpf to make bpffs and thus bpf usable by unprivileged
-userspace and containers.
-
-There's a generic API for this already that we presented on in [1] at
-LSFMM 2023. This has proper security policies in place when and how it
-is allowed even for a user not in a user namespace to mount an arbitrary
-filesystem (device or no device-based).
-
-    NAME
-    systemd-mountfsd.service, systemd-mountfsd - Disk Image File System Mount Service
-    
-    SYNOPSIS
-    systemd-mountfsd.service
-    
-    /usr/lib/systemd/systemd-mountfsd
-    
-    DESCRIPTION
-    systemd-mountfsd is a system service that dissects disk images, and
-    returns mount file descriptors for the file systems contained therein to
-    clients, via a Varlink IPC API.
-    
-    The disk images provided must contain a raw file system image or must
-    follow the Discoverable Partitions Specification[1]. Before mounting any
-    file systems authenticity of the disk image is established in one or a
-    combination of the following ways:
-    
-    1. If the disk image is located in a regular file in one of the
-       directories /var/lib/machines/, /var/lib/portables/,
-       /var/lib/extensions/, /var/lib/confexts/ or their counterparts in the
-       /etc/, /run/, /usr/lib/ it is assumed to be trusted.
-    
-    2. If the disk image contains a Verity enabled disk image, along with a
-       signature partition with a key in the kernel keyring or in
-       /etc/verity.d/ (and related directories) the disk image is considered
-       trusted.
-
-    This service provides one Varlink[2] service:
-    io.systemd.MountFileSystem which accepts a file descriptor to a
-    regular file or block device, and returns a number of file
-    descriptors referring to an fsmount() file descriptor the client may
-    then attach to a path of their choice.
-    
-    The returned mounts are automatically allowlisted in the
-    per-user-namespace allowlist maintained by
-    systemd-nsresourced.service(8).
-
-    The file systems are automatically fsck(8)'ed before mounting.
-
-    NOTES
-    1. Discoverable Partitions Specification
-       https://uapi-group.org/specifications/specs/discoverable_partitions_specification/
-
-    2. Varlink
-       https://varlink.org/
-
-This work has now also been expanded to cover plain directory trees and
-will be available in the next release.
-
-It is currently part of systemd but like with a lot of other such tools
-they are available standalone for non-systemd systems and if not that
-can be done.
-
-[1]: https://youtu.be/RbMhupT3Dk4?si=pIGH5XPPUJ0m6bi0
+I left goto as-is while applying.
+I felt all error handling being consistent this way is cleaner.
