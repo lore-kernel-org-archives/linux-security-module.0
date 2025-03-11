@@ -1,212 +1,151 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFBF5322E;
-	Tue, 11 Mar 2025 12:45:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0AAB79C2;
+	Tue, 11 Mar 2025 13:01:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741697132; cv=none; b=Sr3TsrAEq5GOfHsVy7y3h24Z0ta3GNFHuUrDkEyOPj0jT8BCv9S5M+DVt1/Fz4gvgg/fQOEJzQBCNuOFC/J4HQZDbBLEXBzwAbUGNnTSBoMNjlbRoOv7iHjmrwWfkkTWhfHpP93yIT5ubMbpnOQAlOSisRrol49FdXITtWEoeyg=
+	t=1741698101; cv=none; b=tzZ0zur138pwh7y4G3FoGsn8yOQrMqzAlnfdVA6T6GfPbC0I1uK+cWmYBiigNCubwJF8yvnP38M0pSc7Q7pfqdGNa0BB91Sweh3J+wyTjYx44TwkbXH7LnzzXyQSgLu1G8rn0/Csxm184vTA3zl+vuag7MOcC+xtiiR8aWvdOcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741697132; c=relaxed/simple;
-	bh=xj+1D8ksPdQzwEBRN8cYEqDzhY/NBmBySm0XVKszDaQ=;
+	s=arc-20240116; t=1741698101; c=relaxed/simple;
+	bh=86qljTNKcpfLMMwKr6/TcqZr8utFYJuA8zUTHEROJ1s=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=XgxmyxGp/BOytAXqaja963nQSHDu7iXH1gMGUMClgBOdXidqMG+qpCqeatVELC0jPn7E5Z5dnmw1gofK/7d72zvjmM0+U+cYfmROoogyvP9pz71xKjZMAoqL8B5ZRGnW+gaKkp35QWkEqbB+QCNqVTBxOXF8M6PJwAP7Jd2HwU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=a180Wzog; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	 Content-Type:MIME-Version; b=lmqbwKiLNzz/Rl7DOh27cIpqlj4/SUWb6ksSlT1bI7XoeIukOGAIHBRQbmajF+Pq5dNwozMABbxZ3KjSgvi8AgW86Rhl8oBtK3mk1Uzinh5lc5RSb7b75qs+zB7fSDmBaqH1A5G4pMRum1vMjPUjW1roKCuxqMhnwI5zsH49Sko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=sOpOk5nW; arc=none smtp.client-ip=198.37.111.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="a180Wzog"
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52B9vOFU005892;
-	Tue, 11 Mar 2025 12:44:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=kmXfpt
-	VW9q2WaIV8tj2ijtdDlxZ/5KSD1Ekbp7i9cuM=; b=a180WzogI/vru5HC+uWMdy
-	vh3s3wLkFb93WWzLc2wsiU2I+SWifbCbHVeayXonBY59goNuwa5nDdGbcoPlJ4DG
-	fs7fwONjAvw3ObzU0SrEa0mNRgIRz0nGvmuVobFJrQE4yZBK/KsHTf0Gc/zabgJ2
-	NajFQFNIyj9WThcO+u2fiKND7u+MmFXZhuxfUxM//GuY/BB+KtT239lR88Hzp6n2
-	PROjIeFw23xRC0bNt5n+Y35unxLE7UcjzvtUHtOHXeroinrnDwsFUSN95PNR2aDp
-	3jCVQHGYQ5NlDporctugz61HWAPa5fDnxB272zQV7TB5o+HA09m8Mlm4IQlRnv+Q
-	==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45a78quw37-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Mar 2025 12:44:37 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52BCN9E0006941;
-	Tue, 11 Mar 2025 12:44:36 GMT
-Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 45907t4ct0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 11 Mar 2025 12:44:36 +0000
-Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
-	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52BCiZWA12124844
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 11 Mar 2025 12:44:36 GMT
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B303A5804B;
-	Tue, 11 Mar 2025 12:44:35 +0000 (GMT)
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DED3F58055;
-	Tue, 11 Mar 2025 12:44:33 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.163.116])
-	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 11 Mar 2025 12:44:33 +0000 (GMT)
-Message-ID: <631f326006226e23f4f755fd32255792f6514a90.camel@linux.ibm.com>
-Subject: Re: [PATCH v9 1/7] ima: copy only complete measurement records
- across kexec
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: steven chen <chenste@linux.microsoft.com>, Baoquan He <bhe@redhat.com>
-Cc: stefanb@linux.ibm.com, roberto.sassu@huaweicloud.com,
-        roberto.sassu@huawei.com, eric.snowberg@oracle.com,
-        ebiederm@xmission.com, paul@paul-moore.com, code@tyhicks.com,
-        bauermann@kolabnow.com, linux-integrity@vger.kernel.org,
-        kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, madvenka@linux.microsoft.com,
-        nramas@linux.microsoft.com, James.Bottomley@hansenpartnership.com,
-        vgoyal@redhat.com, dyoung@redhat.com
-Date: Tue, 11 Mar 2025 08:44:33 -0400
-In-Reply-To: <69f43be0ed70eee45d3d9d9ac2aeaf39def5770a.camel@linux.ibm.com>
-References: <20250304190351.96975-1-chenste@linux.microsoft.com>
-	 <20250304190351.96975-2-chenste@linux.microsoft.com>
-	 <Z8g+uhZQ6totYLmp@MiWiFi-R3L-srv>
-	 <fe6e3c1333a50d66dc876b5a196d3491170802a8.camel@linux.ibm.com>
-	 <8bc74dd8-ecd0-44ad-88a2-8b36fa61100a@linux.microsoft.com>
-	 <69f43be0ed70eee45d3d9d9ac2aeaf39def5770a.camel@linux.ibm.com>
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="sOpOk5nW"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1741698097;
+	bh=86qljTNKcpfLMMwKr6/TcqZr8utFYJuA8zUTHEROJ1s=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=sOpOk5nWnEtdbha2068zanwpAVEVsFoJIoQb0Vj/gET9FujcMR+qDQN/A+rA6mBzs
+	 V/VDwRLvVjo+MRCtI38URG6Opn9RJmnKxgKQnUVw5Kg/CGGMnCSljOsE6WVhuAacQ6
+	 Q7tG6WBh3XP85tRMgjLoXwwbWw44IISiuDchjh1M=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 1667D1C030C;
+	Tue, 11 Mar 2025 09:01:37 -0400 (EDT)
+Message-ID: <814a257530ad5e8107ce5f48318ab43a3ef1f783.camel@HansenPartnership.com>
+Subject: Re: apparmor NULL pointer dereference on resume [efivarfs]
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Christian Brauner <brauner@kernel.org>, Ard Biesheuvel <ardb@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Ryan Lee <ryan.lee@canonical.com>, 
+ Malte =?ISO-8859-1?Q?Schr=F6der?= <malte.schroeder@tnxip.de>,
+ linux-security-module@vger.kernel.org, apparmor
+ <apparmor@lists.ubuntu.com>, linux-efi@vger.kernel.org, John Johansen
+ <john.johansen@canonical.com>, "jk@ozlabs.org" <jk@ozlabs.org>, 
+ linux-fsdevel@vger.kernel.org
+Date: Tue, 11 Mar 2025 09:01:36 -0400
+In-Reply-To: <20250311-visite-rastplatz-d1fdb223dc10@brauner>
+References: <e54e6a2f-1178-4980-b771-4d9bafc2aa47@tnxip.de>
+	 <CAKCV-6s3_7RzDfo_yGQj9ndf4ZKw_Awf8oNc6pYKXgDTxiDfjw@mail.gmail.com>
+	 <465d1d23-3b36-490e-b0dd-74889d17fa4c@tnxip.de>
+	 <CAKCV-6uuKo=RK37GhM+fV90yV9sxBFqj0s07EPSoHwVZdDWa3A@mail.gmail.com>
+	 <ea97dd9d1cb33e28d6ca830b6bff0c2ece374dbe.camel@HansenPartnership.com>
+	 <CAMj1kXGLXbki1jezLgzDGE7VX8mNmHKQ3VLQPq=j5uAyrSomvQ@mail.gmail.com>
+	 <20250311-visite-rastplatz-d1fdb223dc10@brauner>
+Autocrypt: addr=James.Bottomley@HansenPartnership.com;
+ prefer-encrypt=mutual;
+ keydata=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
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+User-Agent: Evolution 3.50.3 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: LKRc30FZcYrokCVrh36qHk1wdT_YHYkV
-X-Proofpoint-ORIG-GUID: LKRc30FZcYrokCVrh36qHk1wdT_YHYkV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-11_02,2025-03-11_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
- spamscore=0 adultscore=0 mlxlogscore=999 phishscore=0 priorityscore=1501
- lowpriorityscore=0 malwarescore=0 bulkscore=0 suspectscore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503110080
 
-On Thu, 2025-03-06 at 21:51 -0500, Mimi Zohar wrote:
-> On Thu, 2025-03-06 at 14:45 -0800, steven chen wrote:
-> > On 3/5/2025 4:27 AM, Mimi Zohar wrote:
-> > > On Wed, 2025-03-05 at 20:08 +0800, Baoquan He wrote:
-> > > > On 03/04/25 at 11:03am, steven chen wrote:
-> > > > > Carrying the IMA measurement list across kexec requires allocatin=
-g a
-> > > > > buffer and copying the measurement records.  Separate allocating =
-the
-> > > > > buffer and copying the measurement records into separate function=
-s in
-> > > > > order to allocate the buffer at kexec 'load' and copy the measure=
-ments
-> > > > > at kexec 'execute'.
-> > > > >=20
-> > > > > This patch includes the following changes:
-> > > > I don't know why one patch need include so many changes. From below=
- log,
-> > > > it should be split into separate patches. It may not need to make o=
-ne
-> > > > patch to reflect one change, we should at least split and wrap seve=
-ral
-> > > > kind of changes to ease patch understanding and reviewing. My perso=
-nal
-> > > > opinion.
-> > > Agreed, well explained.
-> > >=20
-> > > Mimi
-> > >=20
-> > > > >   - Refactor ima_dump_measurement_list() to move the memory alloc=
-ation
-> > > > >     to a separate function ima_alloc_kexec_file_buf() which alloc=
-ates
-> > > > >     buffer of size 'kexec_segment_size' at kexec 'load'.
-> > > > >   - Make the local variable ima_kexec_file in ima_dump_measuremen=
-t_list()
-> > > > >     a local static to the file, so that it can be accessed from
-> > > > >     ima_alloc_kexec_file_buf(). Compare actual memory required to=
- ensure
-> > > > >     there is enough memory for the entire measurement record.
-> > > > >   - Copy only complete measurement records.
-> > > > >   - Make necessary changes to the function ima_add_kexec_buffer()=
- to call
-> > > > >     the above two functions.
-> > > > >   - Compared the memory size allocated with memory size of the en=
-tire
-> > > > >     measurement record. Copy only complete measurement records if=
- there
-> > > > >     is enough memory. If there is not enough memory, it will not =
-copy
-> > > > >     any IMA measurement records, and this situation will result i=
-n a
-> > > > >     failure of remote attestation.
-> > > > >=20
-> > > > > Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
-> > > > > Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-> > > > > Signed-off-by: steven chen <chenste@linux.microsoft.com>
+On Tue, 2025-03-11 at 09:45 +0100, Christian Brauner wrote:
+> On Tue, Mar 11, 2025 at 08:16:34AM +0100, Ard Biesheuvel wrote:
+> > (cc Al Viro)
 > >=20
-> > I will split this patch into the following two patches:
+> > On Mon, 10 Mar 2025 at 22:49, James Bottomley
+> > <James.Bottomley@hansenpartnership.com> wrote:
+[...]
+> > > The problem comes down to the superblock functions not being able
+> > > to get the struct vfsmount for the superblock (because it isn't
+> > > even allocated until after they've all been called).=C2=A0 The
+> > > assumption I was operating under was that provided I added
+> > > O_NOATIME to prevent the parent directory being updated, passing
+> > > in a NULL mnt for the purposes of iterating the directory dentry
+> > > was safe.=C2=A0 What apparmour is trying to do is look up the idmap
+> > > for the mount point to do one of its checks.
+> > >=20
+> > > There are two ways of fixing this that I can think of.=C2=A0 One woul=
+d
+> > > be exporting a function that lets me dig the vfsmount out of
+> > > s_mounts and use that (it's well hidden in the internals of
+> > > fs/mount.h, so I suspect this might not be very acceptable) or to
+> > > get mnt_idmap to return
+>=20
+> Nope, please don't.
+>=20
+> > > &nop_mnt_idmap if the passed in mnt is NULL.=C2=A0 I'd lean towards
+> > > the latter, but I'm cc'ing fsdevel to see what others think.
+>=20
+> A struct path with mount NULL and dentry !=3D NULL is guaranteed to bit
+> us in the ass in other places. That's the bug.
+>=20
+> > >=20
 > >=20
-> >  =C2=A0 =C2=A0 ima: define and call ima_alloc_kexec_file_buf
-> >  =C2=A0=C2=A0=C2=A0 ima: copy measurement records as much as possible a=
-cross kexec
+> >=20
+> > Al spotted the same issue based on a syzbot report [0]
+> >=20
+> > [0] https://lore.kernel.org/all/20250310235831.GL2023217@ZenIV/
 >=20
-> Steven, breaking up code into patches is in order to simplify patch revie=
-w.=20
-> This is done by limiting each patch to a single "logical change" [1].  Fo=
-r
-> example, the change below has nothing to do with "separate allocating the=
- buffer
-> and copying the measurement records into separate functions".
+> efivars as written only has a single global superblock and it doesn't
+> support idmapped mounts and I don't see why it ever would.
+
+So that's not quite true: efivarfs currently supports uid and gid
+mapping as mount options, which certainly looks like they were designed
+to allow a second mount in a user directory.  I've no idea what the
+actual use case for this is, but if I go for a single superblock, any
+reconfigure with new uid/gid would become globally effective (change
+every current mount) because they're stored in the superblock
+information.
+
+So what is the use case for this uid/gid parameter?  If no-one can
+remember and no-one actually uses it, perhaps the whole config path can
+be simplified by getting rid of the options?  Even if there is a use
+case, if it's single mount only then we can still go with a global
+superblock.
+
+> But since efivars does only ever have a single global superblock, one
+> possibility is to an internal superblock that always exits and is
+> resurfaced whenever userspace mounts efivarfs. That's essentially the
+> devtmpfs model.
 >=20
->         /* This is an append-only list, no need to hold the RCU read lock=
- */
->         list_for_each_entry_rcu(qe, &ima_measurements, later, true) {
-> -               if (file.count < file.size) {
-> +               entry_size +=3D ima_get_binary_runtime_entry_size(qe->ent=
-ry);=20
-> +               if (entry_size <=3D segment_size) {
->                         khdr.count++;
-> -                       ima_measurements_show(&file, qe);
-> +                       ima_measurements_show(&ima_kexec_file, qe);
->                 } else {
->                         ret =3D -EINVAL;
-> +                       pr_err("IMA log file is too big for Kexec buf\n")=
-;
->                         break;
->                 }
->         }
+> Then you can stash:
 >=20
-> The original code potentially copied a partial last measurement record, n=
-ot a
-> complete measurement record.  For ease of review, the above change is fin=
-e, but
-> it needs to be a separate patch.
+> static struct vfsmount *efivarfs_mnt;
 >=20
-> Patches:
-> 1. ima: copy only complete measurement records across kexec
-> 2. ima: define and call ima_alloc_kexec_file_buf()
+> globally and use that in efivarfs_pm_notify() to fill in struct path.
 
-Steven,
+I didn't see devtmpfs when looking for examples, since it's hiding
+outside of the fs/ directory.  However, it does seem to be a bit legacy
+nasty as an example to copy.  However, I get the basics: we'd
+instantiate the mnt and superblock on init (stashing mnt in the sfi so
+the notifier gets it).  Then we can do the variable population on
+reconfigure, just in case an EFI system doesn't want to mount efivarfs
+to save memory.
 
-The alternative would be to revert using ima_get_binary_runtime_entry_size(=
-) and
-simply use "ima_kexec_file.count < ima_kexec_file.size".  Only
-ima_kexec_file.size would be initialized in ima_alloc_kexec_buf().  The res=
-t
-would remain in ima_dump_measurement_list().  get_binary_runtime_size() wou=
-ldn't
-need to be made global.
+I can code that up if I can get an answer to the uid/gid parameter
+question above.
 
-To further simplify the patch review, first define a separate patch to just
-rename the seq_file "file" to "ima_kexec_file".
+Regards,
 
-Mimi
+James
+
