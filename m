@@ -1,112 +1,176 @@
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E37825DD00
-	for <linux-security-module@vger.kernel.org>; Tue, 11 Mar 2025 15:14:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B372825F964;
+	Tue, 11 Mar 2025 15:55:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741706063; cv=none; b=CFWyWWFMCtepDMg3HnDoEMG41b/FHisfAg3CHGAAP+sPWDxfG62eOGYzM9N7T9Np8u6GnLPVb1wPdp9QIjO5KZXzdCAP7TgoMeMzDVnAbTmEs7UTPdBirtZSZbfdnpi7R9Myht9zl/TQw3FHmatGfq5NFsFbTFCeeKbNe+r+4R8=
+	t=1741708522; cv=none; b=nMUKUv2O3OWXX/TtR4oiOaG68dj9YCvFjAiBFw2u5h/C98rNC6F5FQFBOiz59WOh6gwf5k1rvBCScr1fttL4EFFTcx6BvpVaxOL4lWUl5plUzjYGX9DdhhlTdL+o1yVED3b21XbxIZKA1TVhm+IKFhAZ3xS6krb9cbYfqMmwTGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741706063; c=relaxed/simple;
-	bh=iBv0SBI0u0mqJ2hLDa+I/+nk5rpoHMCvlmD4u1xS/9E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nAvE7gwPQFDBqozTB/MFAwDNytoCwVKkPpbxSzMqJ8Z+8kBZpAozeAq6uZ9EwPAoWCXukkhHDenaIjaqKKnWJ7fKJpytXgDftz822Qo0Rq5/UNSc//ffRvb94vjdNVfDA+k1/tASuL/GBxb/WmzLKxf5ShiCPa1yvNKu2cdbF2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=PpvvgpV/; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1741708522; c=relaxed/simple;
+	bh=1G4VOJML/1ZMCLJfxNfbAz9mTQYKqipKdhXoRlUnunA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OMYirhL4TIV/kjcAGLopbhUI+4vvx6F4sJ2ZDL+E+T/Cu1opT9HQT6221UCAQtUzm4CUPsDU3urohpQcpU+5Gqu+6Mgz76l+6dpAE7T9FGg1iphfiYBaQRVlY83U2awe2yNn8mCnZawKmrxq6Vj406K76dTAuSP6EZawfNUla68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ruPa3/dj; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="PpvvgpV/"
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7c55b53a459so160924885a.3
-        for <linux-security-module@vger.kernel.org>; Tue, 11 Mar 2025 08:14:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1741706060; x=1742310860; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Evy3i/UzIkhyI0KxEccbdCNHkQedTc8R4M/ZChk2KNY=;
-        b=PpvvgpV/NLuHfdiYMspZ6IHKTAu+rOTZU1Nh0B0YZZQXC95ea57I2qaodMMNZA2t+b
-         B47Mm8OukEQe+CM/hMinDhRl8iJ4n6/DOroAR5tnxl5Pg574dWV+uaGrhUXC4Jtt7zS4
-         S3xyjcgTBqT5UonvENBQPoQIj4mbmi86rwEvvUBuwQHCjT8SLtIotGtu8gHTgnuZi8Bm
-         cwEV0MXxUQmTNZEizpc1Q2/sdMhizV4PQNVvIOqcGu+ONEEOZPuzHFcBLXqdo4Rq2C02
-         gyPcGxCKEv3tSt5G8sgLdWDABZE2FQC6HBnBnhP3TO8a8otKmlOCNTcRFGV174I4JJ36
-         CsWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741706060; x=1742310860;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Evy3i/UzIkhyI0KxEccbdCNHkQedTc8R4M/ZChk2KNY=;
-        b=Uji+JAIpOCh2ztmGImvpSI/9Rrn6RGPsAAZKQwdK9GVmdagKlH6PFwWy+iqXHfUmsX
-         2tSMZAHMW5stRFTAoCu4soTvvtPy5El8M7u9xUbEcgmxH5n/5cOYc2ZoL84CmZlYCrOf
-         N3F4pjBw4aL9NqWlsFZUROTtv705bf3P0GJrZN4T4Eur4Rcu3ijJkFjRhCB/wsLlZsZB
-         /tcIr0Fy97kBnrf0oHCTTM81luPypXA01Yt8n5/vCBFSvI5y/CI+t4plPzJneXrGrC/i
-         6RiE44JD/SEW1RNO89QvHI/1oUaojn4V+K3FQXRVdLPbqV1zMqinFYR3TzFXfwP5MfIt
-         cY4w==
-X-Forwarded-Encrypted: i=1; AJvYcCUZ9izxwdccouIR4MnMiusVAi+PxYBXU6qeV2k4+z0ew15x7vZ3S79nBm1AlwBM+XO6r1GKrnGD4Vf3qA+gY/Q/fEn2YK8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyV/+mtiyyENylIk+/uuKcNqJQ4aAIj3r6TynVpMgVA3uRLr7dR
-	Mwrc8BCtkjygRmKbxO1r4Cgm50DsssoSohN6TGY/GILawEnK+Tevc/5icnCsloo5p8RmZfu0qkc
-	ncXb9vBF6hqB3eiUfFX5IYoek7+/cjRWRaxZ0
-X-Gm-Gg: ASbGncuxVe4y+f3Slj3OCjRNIjsrctugsOaZ2qOm6l9MnJAFrO3uF03HypO17EHNk+D
-	yJLrP0neUzOZvOmfUwq5TYDBhkZAx+684IIybU7axk7wlB1SaN6+K6hI4u6CQNn23bFMgaholDX
-	mDVgDZv3qF5CXtJsRfBNWxDnm00A==
-X-Google-Smtp-Source: AGHT+IFSa2EhAAeUGu4Iit9E0/qpbd2+7yC/0N9EYTysdPGCdpU8ni/m9o25fyB0KM5SpgmA8E6N/2aHbDADMxT2F18=
-X-Received: by 2002:a05:620a:618e:b0:7c5:4c49:76a5 with SMTP id
- af79cd13be357-7c54c4981admr1323514285a.12.1741706060070; Tue, 11 Mar 2025
- 08:14:20 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ruPa3/dj"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D9B0C4CEE9;
+	Tue, 11 Mar 2025 15:55:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741708522;
+	bh=1G4VOJML/1ZMCLJfxNfbAz9mTQYKqipKdhXoRlUnunA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ruPa3/djqKjIM8rFDlTLMPH8u7gMkiXxhowQ3QaSJPGd6WJmeISHbcC1Ej8iYchV1
+	 Qt19ooH1Gs+eyghfwg1R9rOgAR/Z9j/JaB6Bo+6TteK4befrabD1feqqAb+oR4KhuI
+	 oRqPiES3GfHelfKMEb7APuLjdplG5PiCMy67itar+I52ulZD7FWC0d0ZDHNGbfuwl9
+	 ENGVRG8+bN5EB79wLl/3oz0kcCHt6g+aF67F8v1sMxkcrSvVFoAQx81ZfBcX6p5W4r
+	 9jBgPWAxi53LVle3c2nImLIV19cqx/mFWjRm8b+ODEPkul/sQKIoPaZgjvNpGoFvDU
+	 5iU6ClOmES+Gw==
+Date: Tue, 11 Mar 2025 16:55:16 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: Ard Biesheuvel <ardb@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Ryan Lee <ryan.lee@canonical.com>, Malte =?utf-8?B?U2NocsO2ZGVy?= <malte.schroeder@tnxip.de>, 
+	linux-security-module@vger.kernel.org, apparmor <apparmor@lists.ubuntu.com>, linux-efi@vger.kernel.org, 
+	John Johansen <john.johansen@canonical.com>, "jk@ozlabs.org" <jk@ozlabs.org>, linux-fsdevel@vger.kernel.org
+Subject: Re: apparmor NULL pointer dereference on resume [efivarfs]
+Message-ID: <20250311-trunk-farben-fe36bebe233a@brauner>
+References: <e54e6a2f-1178-4980-b771-4d9bafc2aa47@tnxip.de>
+ <CAKCV-6s3_7RzDfo_yGQj9ndf4ZKw_Awf8oNc6pYKXgDTxiDfjw@mail.gmail.com>
+ <465d1d23-3b36-490e-b0dd-74889d17fa4c@tnxip.de>
+ <CAKCV-6uuKo=RK37GhM+fV90yV9sxBFqj0s07EPSoHwVZdDWa3A@mail.gmail.com>
+ <ea97dd9d1cb33e28d6ca830b6bff0c2ece374dbe.camel@HansenPartnership.com>
+ <CAMj1kXGLXbki1jezLgzDGE7VX8mNmHKQ3VLQPq=j5uAyrSomvQ@mail.gmail.com>
+ <20250311-visite-rastplatz-d1fdb223dc10@brauner>
+ <814a257530ad5e8107ce5f48318ab43a3ef1f783.camel@HansenPartnership.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240801171747.3155893-1-kpsingh@kernel.org> <20250311133731.GB17395@linux-l9pv.suse>
-In-Reply-To: <20250311133731.GB17395@linux-l9pv.suse>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 11 Mar 2025 11:14:08 -0400
-X-Gm-Features: AQ5f1Jqr4_hVE1x1R6hZKxzTP8FN-7YzAhoE2LEe81DYBasZfYzjWj8gWtHnCQg
-Message-ID: <CAHC9VhQxhe6Gqjzri+SXi_OdW_7tSM06A7M9_O=FPef1AsuTkA@mail.gmail.com>
-Subject: Re: [PATCH] init/main.c: Initialize early LSMs after arch code
-To: joeyli <jlee@suse.com>
-Cc: KP Singh <kpsingh@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, bp@alien8.de, sfr@canb.auug.org.au, 
-	peterz@infradead.org, nathan@kernel.org, Jiri Kosina <JKosina@suse.cz>, 
-	Michal Suchanek <msuchanek@suse.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <814a257530ad5e8107ce5f48318ab43a3ef1f783.camel@HansenPartnership.com>
 
-On Tue, Mar 11, 2025 at 9:37=E2=80=AFAM joeyli <jlee@suse.com> wrote:
->
-> Hi KP,
->
-> On Thu, Aug 01, 2024 at 07:17:47PM +0200, KP Singh wrote:
-> > With LSMs using static calls, early_lsm_init needs to wait for setup_ar=
-ch
-> > for architecture specific functionality which includes jump tables and
-> > static calls to be initialized.
-> >
-> > This only affects "early LSMs" i.e. only lockdown when
-> > CONFIG_SECURITY_LOCKDOWN_LSM_EARLY is set.
-> >
-> > Fixes: 2732ad5ecd5b ("lsm: replace indirect LSM hook calls with static =
-calls")
-> > Signed-off-by: KP Singh <kpsingh@kernel.org>
->
-> I have tested acpi table override function by
-> CONFIG_ACPI_TABLE_OVERRIDE_VIA_BUILTIN_INITRD option. As this patch
-> description, the early LSM can NOT lockdown acpi table override in early
-> boot stage now.
+On Tue, Mar 11, 2025 at 09:01:36AM -0400, James Bottomley wrote:
+> On Tue, 2025-03-11 at 09:45 +0100, Christian Brauner wrote:
+> > On Tue, Mar 11, 2025 at 08:16:34AM +0100, Ard Biesheuvel wrote:
+> > > (cc Al Viro)
+> > > 
+> > > On Mon, 10 Mar 2025 at 22:49, James Bottomley
+> > > <James.Bottomley@hansenpartnership.com> wrote:
+> [...]
+> > > > The problem comes down to the superblock functions not being able
+> > > > to get the struct vfsmount for the superblock (because it isn't
+> > > > even allocated until after they've all been called).  The
+> > > > assumption I was operating under was that provided I added
+> > > > O_NOATIME to prevent the parent directory being updated, passing
+> > > > in a NULL mnt for the purposes of iterating the directory dentry
+> > > > was safe.  What apparmour is trying to do is look up the idmap
+> > > > for the mount point to do one of its checks.
+> > > > 
+> > > > There are two ways of fixing this that I can think of.  One would
+> > > > be exporting a function that lets me dig the vfsmount out of
+> > > > s_mounts and use that (it's well hidden in the internals of
+> > > > fs/mount.h, so I suspect this might not be very acceptable) or to
+> > > > get mnt_idmap to return
+> > 
+> > Nope, please don't.
+> > 
+> > > > &nop_mnt_idmap if the passed in mnt is NULL.  I'd lean towards
+> > > > the latter, but I'm cc'ing fsdevel to see what others think.
+> > 
+> > A struct path with mount NULL and dentry != NULL is guaranteed to bit
+> > us in the ass in other places. That's the bug.
+> > 
+> > > > 
+> > > 
+> > > 
+> > > Al spotted the same issue based on a syzbot report [0]
+> > > 
+> > > [0] https://lore.kernel.org/all/20250310235831.GL2023217@ZenIV/
+> > 
+> > efivars as written only has a single global superblock and it doesn't
+> > support idmapped mounts and I don't see why it ever would.
+> 
+> So that's not quite true: efivarfs currently supports uid and gid
+> mapping as mount options, which certainly looks like they were designed
+> to allow a second mount in a user directory.  I've no idea what the
+> actual use case for this is, but if I go for a single superblock, any
+> reconfigure with new uid/gid would become globally effective (change
+> every current mount) because they're stored in the superblock
+> information.
+> 
+> So what is the use case for this uid/gid parameter?  If no-one can
+> remember and no-one actually uses it, perhaps the whole config path can
+> be simplified by getting rid of the options?  Even if there is a use
+> case, if it's single mount only then we can still go with a global
+> superblock.
 
-It's been years since I've had to an ACPI DSDT override, but just so
-I'm clear, this replacement table needs to be bundled in the initrd,
-yes?  Assuming that's the case, I think that's likely okay as anyone
-who cares enough about kernel integrity to run Lockdown should also be
-protecting the kernel/initrd with a firmware and bootloader chain that
-ensures only authorized images are booted.  If the user doesn't put
-any protections in place to ensure only authorized kernels/initrds are
-booted, Lockdown is a bit silly anyway.
+So efivarfs uses get_tree_single(). That means that only a single
+superblock of the filesystem type efivarfs can ever exist on the system.
 
-> Do you have any plan to fix the early lockdown LSM? Or I missed any fix
-> patch in kernel mailing list?
+If efivars is mounted multiple times it will be the exact same
+superblock that's used. IOW, mounting efivars multiple times is akin to
+a bind-mount. It would be a bit ugly but it could be done by making sure
+that any uid/gid changes are reflected. But see below.
 
---=20
-paul-moore.com
+> 
+> > But since efivars does only ever have a single global superblock, one
+> > possibility is to an internal superblock that always exits and is
+> > resurfaced whenever userspace mounts efivarfs. That's essentially the
+> > devtmpfs model.
+> > 
+> > Then you can stash:
+> > 
+> > static struct vfsmount *efivarfs_mnt;
+> > 
+> > globally and use that in efivarfs_pm_notify() to fill in struct path.
+> 
+> I didn't see devtmpfs when looking for examples, since it's hiding
+> outside of the fs/ directory.  However, it does seem to be a bit legacy
+> nasty as an example to copy.  However, I get the basics: we'd
+> instantiate the mnt and superblock on init (stashing mnt in the sfi so
+> the notifier gets it).  Then we can do the variable population on
+> reconfigure, just in case an EFI system doesn't want to mount efivarfs
+> to save memory.
+> 
+> I can code that up if I can get an answer to the uid/gid parameter
+> question above.
+
+I have some questions. efivarfs registers efivarfs_pm_notify even before
+a superblock exists in efivarfs_init_fs_context(). That's called during
+fd_context = fsopen("efivarfs") before a superblock even exists:
+
+(1) Is it guaranteed that efivarfs_pm_notify() is only called once a
+    superblock exists?
+
+(2) Is it guaranteed that efivarfs_pm_notify() is only called when and
+    while a mount for the superblock exists?
+
+If the question to either one of those is "no" then the global
+vfsmount hack will not help.
+
+From reading efivarfs_pm_notify() it looks like the answer to (1) is
+"yes" because you're dereferencing sfi->sb->s_root in
+efivarfs_pm_notify().
+
+But I'm not at all certain that (2) isn't a "no" and that
+efivarfs_pm_notify() can be called before a mount exists. IOW, once
+fsconfig(FSCONFIG_CMD_CREATE) is called the notifier seems ready and
+registered but userspace isn't forced to call fsmount(fd_fs) at all.
+
+They could just not to do it for whatever reason but the notifier should
+already be able to run.
+
+Another question is whether the superblock can be freed while
+efivarfs_pm_notify() is running? I think that can't happen because
+blocking_notifier_chain_unregister(&efivar_ops_nh, &sfi->nb) will block
+in efivarfs_kill_sb() until all outstanding calls to
+efivarfs_pm_notify() are finished?
+
+If (2) isn't guranteed then efivarfs_pm_notify() needs to be rewritten
+without relying on files because there's no guarantee that a mount
+exists at all.
