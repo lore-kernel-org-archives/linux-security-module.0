@@ -1,251 +1,141 @@
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from flow-b3-smtp.messagingengine.com (flow-b3-smtp.messagingengine.com [202.12.124.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17B1A264FA7
-	for <linux-security-module@vger.kernel.org>; Tue, 11 Mar 2025 22:10:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60FFD14F117;
+	Tue, 11 Mar 2025 23:18:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741731021; cv=none; b=sgjeNVc63qj5M5wxDKCJM/88rD8BeaiWzIBvrbORRruvjdMp0rA+XYH6cHeNzoiEY1tgD2qKj2HdLZOcaP/BkOv+vfZN2KwLCcfw2OTLpzfc/dPsbmhtXSpNv6aoDhMPKi2V/Op81VWW/pEVDwkairwTO8P4P99wvC5tKp0LjQ0=
+	t=1741735137; cv=none; b=k+ijuTrwv5OdrvqnHkAD54gEqjrNz1NDG7xDAqHksOgfj7L6D0hRqJ4a0Lpn1NOELOW3gxybsfLTatJ8CcWKou/NwdGeimyPJCpRD4zploDONeh08wJmhLKGzcnNNCLcj0N83oevk6cOCHjvVMjW32mQB9mnDVXkWPukJJkBXks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741731021; c=relaxed/simple;
-	bh=s82bErdX4EnYnwudyQnjNihkbyWdccqlmxsD8uaxjzA=;
-	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=VR9xZujRip+IJpeXW22yOYgrMAmok4wndRcy9NOIqzv0W1C0YQXeafaCUG+gLYb5Z4g7lfir396L8n/Afmi0XaXQG8GA3s127+GAYgtGkfTWXF87WVt8EiTm5BHYtGsJ38BtMzcn59j6x/st7A1bxhSz9LIMx9oO0nh4b3jA7/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ZeROWN3j; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1741735137; c=relaxed/simple;
+	bh=BTSwDeUVq9UPDpqm8BsNvk6ciNap3kvZUI0Bdc1MGYA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ha4WxABfzkt6uWHpOyuto/Jyklcn3AMH6jE/NtaLTkVe/SSpOgeXtSBMNHx+RmAd6CWr8IG51WdaPuTXWCKvG/pjH94LfPuSkh8UnlDcM6WpOnk4OaGIJAqEKFiwhhgYNaU3EtuHvg9lh9pZgaTThIuZKltlHtTvbBtKkuOnjEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=R33NVmO7; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=H9wdx+rP; arc=none smtp.client-ip=202.12.124.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ZeROWN3j"
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7c3c4ff7d31so694838185a.1
-        for <linux-security-module@vger.kernel.org>; Tue, 11 Mar 2025 15:10:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1741731018; x=1742335818; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MZbs1+jjEWPFGCPeM1YxxvgtUsuRoKlEODhhpfoVXGs=;
-        b=ZeROWN3jxcSN1N2oDgGI0CHcg5m1zZONDG63Jyfdl4nFb6YC+fQBNckLgn8fvi1ijP
-         +Bdl+G2m0ECx2iMRSRLQ+sBwJL81HvvRVyY6ibvryIMi5Q0kFu1zcCG9QlYeX1Hm6tUN
-         u8W6ezTN4tx5cPYMgALEIBH9B3VsAvlt1gVTGPwmuE+XzH+i/eg85unVEY5IHyS1W74e
-         YSZFA6/RtJbpU5DII/f0azB5iUbEP040NWEqx7RKg7+YWgXkuCEP2Co/0s3APoSJJVrd
-         j/Zty6iG60HyJYYjmZdZteFJdA3/xr6jNFCOiug6ppNVvUKVY9Cx5Oc6MTq+Sld0nYNc
-         okXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741731018; x=1742335818;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=MZbs1+jjEWPFGCPeM1YxxvgtUsuRoKlEODhhpfoVXGs=;
-        b=Ldm7q3Co3/a8B4Wv6l91ii7nueoAVoq/ZKwzhCGtowfp8IKQOYpcZZpSABLxfIYfb9
-         n7M3dQjM9cS5NAfmE+3WjhSZlAgGrBNnYiQObt4Mnj+4889GC/BFBUHT458K6fJCrfzI
-         r9GKLYvYc6tjAIwZ0u0YeAUpwEteiSod3lm1U8raf98cvhkeBSGf/fQD6zbDU/APM4Jn
-         C0VgBEpA4uboIPPkaE8OWbz9lgf3i1kGCs2YyzgohxOoCFsf9AsqzT+LLFiU69CCrbsJ
-         XIAcAj6Rb7RslHh6BPi7C/OHVSWBI0Vzub0haS3LKYxS1Gr/pq8f8drS8iy9vhAVJsn5
-         WK/A==
-X-Forwarded-Encrypted: i=1; AJvYcCVTC0mmf46X5hY2hWcCiyWkyMF4q+7yGHnUB7zq2yEq8M+TMLz+H4a1hlvdZB8EM0hjdN4zuURhzzjMwh9wnXEaEl7SVUw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz71wkL9bdQ3rubZbSOQrfFjwNvr7oVH3wx8oIemZ367o8yqrUt
-	YFCVGm47BYJPOZmhEhlqld5i78U7q5j7f3s2duKzhvYvCwR5o06aFDEEOpvmJEfUrTj2BfTpAcc
-	=
-X-Gm-Gg: ASbGnctPe3aFlZNHuKTqJ7PfXeGskTOaONsjRzwV1brYPrFEJ2GzjRZYej4QRxomR1W
-	gqpXTKYf9Q490knWiSK/Bw7GAbgNtkTiJr8xM1pU/yYMo/e1jntb9f0KSQ5iUAGu6sijVC00VGB
-	qFu5CiDxMrlpAiOuVykm6I0GE9bkG+gBW73bF4l6oJrIAdwu1k52m1VXJ0kr5MznMO2LL3oekGe
-	8oqxykF9lPro7GqgKjDD+Hsu8VPdCUjkeP0/UWWz+kBsEge6OC5hfU/Pw1D0XtE7ScKg+4UWgFg
-	6D267KecDleL2+w6TPD3zAhLiCn/MwYpAfbPfxchn+V9OPkhtC+kK3WTYdGp4k0ijJ3QyOo+h8G
-	IFv8SmmtMu/+YUQ==
-X-Google-Smtp-Source: AGHT+IGFZPAT0kHC3BGKnrQivfKI9s04TeiLH9YTKILncNYseYqOotHyhPpnjK2DmpS6MSuaSilbUw==
-X-Received: by 2002:a05:6214:250e:b0:6e8:f3c3:9806 with SMTP id 6a1803df08f44-6e9005bc9camr276668786d6.4.1741731017866;
-        Tue, 11 Mar 2025 15:10:17 -0700 (PDT)
-Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6e8f716ee35sm76607796d6.96.2025.03.11.15.10.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Mar 2025 15:10:17 -0700 (PDT)
-Date: Tue, 11 Mar 2025 18:10:16 -0400
-Message-ID: <005f7425114b4e6b82dacdaf4dd37777@paul-moore.com>
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="R33NVmO7";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="H9wdx+rP"
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailflow.stl.internal (Postfix) with ESMTP id 2D5C21D41267;
+	Tue, 11 Mar 2025 19:18:53 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-07.internal (MEProxy); Tue, 11 Mar 2025 19:18:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1741735133;
+	 x=1741738733; bh=crRX9uE+ooOi0V96Xu/LVXF8iKiANj0u/9DiYRjeUUE=; b=
+	R33NVmO79gQ3N1/zbl38kymGXlM0XMrqmgHk9qC4HAdT00alctgR0fcs9mrnXIjS
+	IZ0/cK5WB+2R8q+KomYrohAhv3ul85J5iZA3O5sPd6kpSWlQ5eb6tuIVO8Xjly5R
+	9bmNKVM47fjmsdTMEVENUVoq3RyzmiKfD9gaqAX0D7AN58Vp4IfojpUX+Bt2icox
+	I/HWuz5oYsdz39J5kwjYFphY7JxKFLTwKqHq2r/8LF0t5yi78dmLMBzV2E2LDoA/
+	zgRr+kX5APXRxCXBS5mvjBHp/X2WxEiPdevuZLQfRR7c3zVzS98DJjAzJXV8F2lJ
+	QHKmUxTBIHIlJAIPBqQ7cQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1741735133; x=
+	1741738733; bh=crRX9uE+ooOi0V96Xu/LVXF8iKiANj0u/9DiYRjeUUE=; b=H
+	9wdx+rPqmmry9qevd5In2rFNVsNKO/Yqf7n+WzyYDhC/3GkEa0CfOSNNHCi0IMiq
+	MbrzHhW6Tc7vo2Z4FAWAZxkofR5SHAaoqFnl5nyPA1ePGjB0efsvZ9t7QaCmtaGi
+	EvSFkewFdXIq2q6dNYFpavlbRW27ftlMj0sYfn9zUT7X3FxLXxDAzLEpmc4K3jwW
+	GIu429U7QxIOtCaTHncmaN4/Isiu8SpgOCzooNRP0j1tp0t+xuCuTcV9HHnXeyEp
+	M5OFV58zVd0Chi5CkzbVKk05seqC82D/nNlaYENxIPqRh4wYbb9cJtewqxHGnk7y
+	5aTzZQY1wpSfUDR1hyyjA==
+X-ME-Sender: <xms:3MTQZwrPsmiKejzJRzUZMs7bu2aMG-UGvkWVVRM7RrKTRl9tzdZ_EA>
+    <xme:3MTQZ2o_UwtgpU9XxQhQlWgiPMB7UlKdEqHDpoI_KkcpE1lPNBXLE30qcn-RrMxyD
+    ElZHvZvwS8WysCHQV0>
+X-ME-Received: <xmr:3MTQZ1OUg_YmJn90ofjpTslIszpuaRTSfBu_ysdepS-67qZfk9A3tiErosQo0LdV6_k8aZtu6Cnyff9JuubDa_zGFvlw-DYB_yc9Q45rjfch_rFmoECTY8My>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduvdefgeelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddt
+    vdejnecuhfhrohhmpefvihhnghhmrghoucghrghnghcuoehmsehmrghofihtmhdrohhrgh
+    eqnecuggftrfgrthhtvghrnhepudekvefhgeevvdevieehvddvgefhgeelgfdugeeftedv
+    keeigfeltdehgeeghffgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrg
+    hilhhfrhhomhepmhesmhgrohifthhmrdhorhhgpdhnsggprhgtphhtthhopeekpdhmohgu
+    vgepshhmthhpohhuthdprhgtphhtthhopehmihgtseguihhgihhkohgurdhnvghtpdhrtg
+    hpthhtohepghhnohgrtghksehgohhoghhlvgdrtghomhdprhgtphhtthhopehjrggtkhes
+    shhushgvrdgtiidprhgtphhtthhopehlihhnuhigqdhsvggtuhhrihhthidqmhhoughulh
+    gvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghmihhrjeefihhlsehg
+    mhgrihhlrdgtohhmpdhrtghpthhtoheprhgvphhnohhpsehgohhoghhlvgdrtghomhdprh
+    gtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+    pdhrtghpthhtohepthihtghhohesthihtghhohdrphhiiiiirg
+X-ME-Proxy: <xmx:3MTQZ34lsCj0emFBvVp9gRmBzOCKwPQkfwh6Sy4viUevCpIu3aepuQ>
+    <xmx:3MTQZ_7uGqWcngwBfhoyGAhJdkQgjPNEPGREI8FkQnl6ycluR0NEAA>
+    <xmx:3MTQZ3iSPpY791yiazrdpKrWOAx1tPTf9T2l3tmm5fzf0Bz7qSGGhQ>
+    <xmx:3MTQZ56-ebniW9vwoRqHp1-OJ-1YEWjq2H2rLJZVVkYZBmiz31WyHQ>
+    <xmx:3MTQZ1T-VKVCl3MvHz1oJyKwMN7gwbmI8yoBSWbP6U_fgmj5mAC00ozu>
+Feedback-ID: i580e4893:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 11 Mar 2025 19:18:51 -0400 (EDT)
+Message-ID: <63681c08-dd9e-4f8f-9c41-f87762ea536c@maowtm.org>
+Date: Tue, 11 Mar 2025 23:18:49 +0000
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=UTF-8 
-Content-Transfer-Encoding: 8bit 
-X-Mailer: pstg-pwork:20250311_1754/pstg-lib:20250311_1754/pstg-pwork:20250311_1754
-From: Paul Moore <paul@paul-moore.com>
-To: Jasjiv Singh <jasjivsingh@linux.microsoft.com>, corbet@lwn.net, jmorris@namei.org, serge@hallyn.com, eparis@redhat.com
-Cc: linux-doc@vger.kernel.org, linux-security-module@vger.kernel.org, audit@vger.kernel.org, linux-kernel@vger.kernel.org, Jasjiv Singh <jasjivsingh@linux.microsoft.com>
-Subject: Re: [PATCH RFC v4 1/1] ipe: add errno field to IPE policy load  auditing
-References: <1741385035-22090-2-git-send-email-jasjivsingh@linux.microsoft.com>
-In-Reply-To: <1741385035-22090-2-git-send-email-jasjivsingh@linux.microsoft.com>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 5/9] Define user structure for events and responses.
+To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+Cc: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+ Jan Kara <jack@suse.cz>, linux-security-module@vger.kernel.org,
+ Amir Goldstein <amir73il@gmail.com>, Matthew Bobrowski <repnop@google.com>,
+ linux-fsdevel@vger.kernel.org, Tycho Andersen <tycho@tycho.pizza>
+References: <cover.1741047969.git.m@maowtm.org>
+ <cde6bbf0b52710b33170f2787fdcb11538e40813.1741047969.git.m@maowtm.org>
+ <20250304.eichiDu9iu4r@digikod.net>
+ <fbb8e557-0b63-4bbe-b8ac-3f7ba2983146@maowtm.org>
+ <543c242b-0850-4398-804c-961470275c9e@maowtm.org>
+ <20250311.laiGhooquu1p@digikod.net>
+Content-Language: en-US
+From: Tingmao Wang <m@maowtm.org>
+In-Reply-To: <20250311.laiGhooquu1p@digikod.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mar  7, 2025 Jasjiv Singh <jasjivsingh@linux.microsoft.com> wrote:
+On 3/11/25 19:28, Mickaël Salaün wrote:
+> On Mon, Mar 10, 2025 at 12:39:04AM +0000, Tingmao Wang wrote:
+>> On 3/6/25 03:05, Tingmao Wang wrote:
+>> [...]
+>>> This is also motivated by the potential UX I'm thinking of. For example,
+>>> if a newly installed application tries to create ~/.app-name, it will be
+>>> much more reassuring and convenient to the user if we can show something
+>>> like
+>>>
+>>>       [program] wants to mkdir ~/.app-name. Allow this and future
+>>>       access to the new directory?
+>>>
+>>> rather than just "[program] wants to mkdir under ~". (The "Allow this
+>>> and future access to the new directory" bit is made possible by the
+>>> supervisor knowing the name of the file/directory being created, and can
+>>> remember them / write them out to a persistent profile etc)
+>>
+>> Another significant motivation, which I forgot to mention, is to auto-grant
+>> access to newly created files/sockets etc under things like /tmp,
+>> $XDG_RUNTIME_DIR, or ~/Downloads.
 > 
-> Users of IPE require a way to identify when and why an operation fails,
-> allowing them to both respond to violations of policy and be notified
-> of potentially malicious actions on their systems with respect to IPE.
-> 
-> This patch introduces a new error field to the AUDIT_IPE_POLICY_LOAD event
-> to log policy loading failures. Currently, IPE only logs successful policy
-> loads, but not failures. Tracking failures is crucial to detect malicious
-> attempts and ensure a complete audit trail for security events.
-> 
-> The new error field will capture the following error codes:
-> 
-> * -ENOKEY: Key used to sign the IPE policy not found in the keyring
-> * -ESTALE: Attempting to update an IPE policy with an older version
-> * -EKEYREJECTED: IPE signature verification failed
-> * -ENOENT: Policy was deleted while updating
-> * -EEXIST: Same name policy already deployed
-> * -ERANGE: Policy version number overflow
-> * -EINVAL: Policy version parsing error
-> * -EPERM: Insufficient permission
-> * -ENOMEM: Out of memory (OOM)
-> * -EBADMSG: Policy is invalid
-> 
-> Here are some examples of the updated audit record types:
-> 
-> AUDIT_IPE_POLICY_LOAD(1422):
-> audit:  AUDIT1422 policy_name="Test_Policy" policy_version=0.0.1
-> policy_digest=sha256:84EFBA8FA71E62AE0A537FAB962F8A2BD1053964C4299DCA
-> 92BFFF4DB82E86D3 auid=1000 ses=3 lsm=ipe res=1 errno=0
-> 
-> The above record shows a new policy has been successfully loaded into
-> the kernel with the policy name, version, and hash with the errno=0.
-> 
-> AUDIT_IPE_POLICY_LOAD(1422) with error:
-> 
-> audit: AUDIT1422 policy_name=? policy_version=? policy_digest=?
-> auid=1000 ses=3 lsm=ipe res=0 errno=-74
-> 
-> The above record shows a policy load failure due to an invalid policy
-> (-EBADMSG).
-> 
-> Signed-off-by: Jasjiv Singh <jasjivsingh@linux.microsoft.com>
-> ---
->  Documentation/admin-guide/LSM/ipe.rst | 69 +++++++++++++++++++--------
->  security/ipe/audit.c                  | 21 ++++++--
->  security/ipe/fs.c                     | 19 ++++++--
->  security/ipe/policy.c                 | 11 ++++-
->  security/ipe/policy_fs.c              | 29 ++++++++---
->  5 files changed, 111 insertions(+), 38 deletions(-)
+> What do you mean?  What is not currently possible?
 
-...
+It is not currently possible with landlock to say "I will allow this 
+application access to create and open new file/folders under this 
+directory, change or delete the files it creates, but not touch any 
+existing files". Landlock supervisor can make this possible (keeping 
+track via its own state to allow future requests on the new file, or 
+modifying the domain if we support that), but for that the supervisor 
+has to know what file the application tried to create, hence motivating 
+sending filename.
 
-> diff --git a/security/ipe/audit.c b/security/ipe/audit.c
-> index f05f0caa4850..ac9d68b68b8b 100644
-> --- a/security/ipe/audit.c
-> +++ b/security/ipe/audit.c
-> @@ -21,6 +21,8 @@
->  
->  #define AUDIT_POLICY_LOAD_FMT "policy_name=\"%s\" policy_version=%hu.%hu.%hu "\
->  			      "policy_digest=" IPE_AUDIT_HASH_ALG ":"
-> +#define AUDIT_POLICY_LOAD_FAIL_FMT "policy_name=? policy_version=? "\
-> +				   "policy_digest=?"
+(I can see this kind of policy being applied to dirs like /tmp or my 
+Downloads folder. $XDG_RUNTIME_DIR is also a sensible place for this 
+behaviour due to the common pattern of creating a lock/pid file/socket 
+there, although on second thought a GUI sandbox probably will want to 
+create a private copy of that dir anyway for each app, to do dbus 
+filtering etc)
 
-This should probably be AUDIT_POLICY_LOAD_NULL_FMT to be consistent with
-the other IPE audit format macros, e.g. AUDIT_OLD_ACTIVE_POLICY_NULL_FMT.
-
-> diff --git a/security/ipe/fs.c b/security/ipe/fs.c
-> index 5b6d19fb844a..db18636470bf 100644
-> --- a/security/ipe/fs.c
-> +++ b/security/ipe/fs.c
-> @@ -133,6 +133,8 @@ static ssize_t getenforce(struct file *f, char __user *data,
->   * * %-ERANGE			- Policy version number overflow
->   * * %-EINVAL			- Policy version parsing error
->   * * %-EEXIST			- Same name policy already deployed
-> + * * %-ENOKEY			- Key used to sign the IPE policy not found in the keyring
-> + * * %-EKEYREJECTED		- IPE signature verification failed
->   */
->  static ssize_t new_policy(struct file *f, const char __user *data,
->  			  size_t len, loff_t *offset)
-> @@ -141,12 +143,17 @@ static ssize_t new_policy(struct file *f, const char __user *data,
->  	char *copy = NULL;
->  	int rc = 0;
->  
-> -	if (!file_ns_capable(f, &init_user_ns, CAP_MAC_ADMIN))
-> -		return -EPERM;
-> +	if (!file_ns_capable(f, &init_user_ns, CAP_MAC_ADMIN)) {
-> +		rc = -EPERM;
-> +		goto out;
-> +	}
->  
->  	copy = memdup_user_nul(data, len);
-> -	if (IS_ERR(copy))
-> -		return PTR_ERR(copy);
-> +	if (IS_ERR(copy)) {
-> +		rc = PTR_ERR(copy);
-> +		copy = NULL;
-> +		goto out;
-> +	}
->  
->  	p = ipe_new_policy(NULL, 0, copy, len);
->  	if (IS_ERR(p)) {
-> @@ -161,8 +168,10 @@ static ssize_t new_policy(struct file *f, const char __user *data,
->  	ipe_audit_policy_load(p);
->  
->  out:
-> -	if (rc < 0)
-> +	if (rc < 0) {
->  		ipe_free_policy(p);
-> +		ipe_audit_policy_load(ERR_PTR(rc));
-> +	}
->  	kfree(copy);
->  	return (rc < 0) ? rc : len;
->  }
-
-I'm going to suggest putting the audit calls closer together to help
-ease maintainence, e.g.:
-
-  out:
-    if (rc) {
-	    ipe_audit_policy_load(ERR_PTR(rc));
-	    ipe_free_policy(p);
-    } else
-	    ipe_audit_policy_load(p);
-
-> diff --git a/security/ipe/policy_fs.c b/security/ipe/policy_fs.c
-> index 3bcd8cbd09df..b70d2518b182 100644
-> --- a/security/ipe/policy_fs.c
-> +++ b/security/ipe/policy_fs.c
-> @@ -292,21 +299,29 @@ static ssize_t update_policy(struct file *f, const char __user *data,
->  	char *copy = NULL;
->  	int rc = 0;
->  
-> -	if (!file_ns_capable(f, &init_user_ns, CAP_MAC_ADMIN))
-> -		return -EPERM;
-> +	if (!file_ns_capable(f, &init_user_ns, CAP_MAC_ADMIN)) {
-> +		rc = -EPERM;
-> +		goto out;
-> +	}
->  
->  	copy = memdup_user(data, len);
-> -	if (IS_ERR(copy))
-> -		return PTR_ERR(copy);
-> +	if (IS_ERR(copy)) {
-> +		rc = PTR_ERR(copy);
-> +		copy = NULL;
-> +		goto out;
-> +	}
->  
->  	root = d_inode(f->f_path.dentry->d_parent);
->  	inode_lock(root);
->  	rc = ipe_update_policy(root, NULL, 0, copy, len);
->  	inode_unlock(root);
->  
-> +out:
->  	kfree(copy);
-> -	if (rc)
-> +	if (rc) {
-> +		ipe_audit_policy_load(ERR_PTR(rc));
->  		return rc;
-> +	}
->  
->  	return len;
->  }
-
-I don't really like how your auditing failure in one function and
-success in a different function, that looks fragile.  Unfortunately,
-I don't see a quick/easy fix for that right now so I guess this is
-okay, but something to keep in mind for the future.
-
---
-paul-moore.com
