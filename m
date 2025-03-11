@@ -1,104 +1,171 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-bc09.mail.infomaniak.ch (smtp-bc09.mail.infomaniak.ch [45.157.188.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D35978F5D
-	for <linux-security-module@vger.kernel.org>; Tue, 11 Mar 2025 13:37:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04FA925A653
+	for <linux-security-module@vger.kernel.org>; Tue, 11 Mar 2025 14:33:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741700260; cv=none; b=QE6rAw6//pWCQUtySYcOHZ+QctmX3w2YkCSEBcvQoLDO0nfLdWMLaUw0Jc+4Uy8NIvgy964TLTfXmLQUc/PHVom/GFHrSrjzqZtcAD9uncmCLX/MVTpWBdeWSo0Ivbv1WBeSWSOaxAZJVTpeZR0EgjZkn0hF8RiI5KsggBfC8PM=
+	t=1741703588; cv=none; b=MJVU23izCNx3DzjVgNgAf7taz9Fm7rCJtqG8riem7pz8whDsa7ABY5C4ry97KKLSXfY9eTSfkgtwM00wM2H9QYz8U2aaHgTdXPMEje6Tq1zUSoikZ6GrjL3RU9H5I8JgTQCkjbdr/cfU9Oo6NpGirDvt4gAY/jNC00iFNF5UtPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741700260; c=relaxed/simple;
-	bh=Fv9bgoCj8T1HxxYViA2cy8fyVV76Oxipu9JiKde52II=;
+	s=arc-20240116; t=1741703588; c=relaxed/simple;
+	bh=SDDAXoqsqgExN7f0hzwwey7bsU0+LraGSsZgPodTofU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PE07zxl/ERNZcegRPHbtx83Kji9b0bmQTL2PNRnuWwZ1jzwRlO9unJlPbUQNv3SVqNTgriTKzm3Z06XxsUfp9S1l1A4oQrzXAvDzftsD3pPnxLBwHSHhjFRKqFdSzXcCLkLwxbAKpGiBM60+cnHKwaIylI0YrLGIthwbHUx8h/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=BzbxxUSY; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=VYWvmPJtz+odeGHi7fjCMI4fiGhMwbsity7nElH4f/lxWata5Jbg92t1hPMEFMphtk06mhG0CzmCOMN6eGGDETo9rqs4Z8+2Tm3cg49BQz9/4G8UQL5/Hf9llxRImLQ8kTb5linhfiuHO7KjsPT+Cc5F9jdFs6Ap1ThkoJEYjqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Hg0EY7KV; arc=none smtp.client-ip=45.157.188.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="BzbxxUSY"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43948f77f1aso32720785e9.0
-        for <linux-security-module@vger.kernel.org>; Tue, 11 Mar 2025 06:37:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1741700257; x=1742305057; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+qLMXMTwOhKieWEK80byf0Odi49jjdtVmyVqKoQf3GM=;
-        b=BzbxxUSYSUmdIkiO3hE/W4w7/6gj7nY00+KonJs7Y5Z3oRQ95RkoEhuBus/I9B58yn
-         SPJaV+jYARBV4MVi6+OtOqa2WTMa66Jas49pXHblsymQDcLDA6ejl8MN/Ml3Q/1ukHAd
-         5JGkTFCGl3qUJyr/JpWO8XATbfSnmq9e6bg4KMj8qOvsf1onOUNPEH60bMfHqgBfTQIU
-         XbpJLHDru8weALQMN57aJi/t/ZNJ9dLsn00WJATQz3vqMzd+M/jA68CwUI9ZLcZU0HtE
-         +JupquyaKhHiSA6i1BO8oqbqW1C8BgCWVD/CwXKPtVE3H9/XlRrsLWHA4QiyXulqJ+Vj
-         BDAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741700257; x=1742305057;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+qLMXMTwOhKieWEK80byf0Odi49jjdtVmyVqKoQf3GM=;
-        b=O+Aic1jp3iyboQRdtVmuboeKB42yEVoQ0oIod+t04RdVekyfunkdxEt9Zsl3wC1zzf
-         Y35oC4WRiPN5GvPWcy+crpqRrlUjIwSHWQfHk+e0xUunCi5dYzfODpQrSddg8y2m6iUh
-         8c+5fiD5vE9WxebZSaA52HonsQvQXZdiCAy1Lrt5/mgpbXqNKolCbarZy7n3A7/Sl0rY
-         0alVZqNMmpZOHWE/TrMRZJtWlHiQ3NL2MYv8oHNb2i/XfjghoIR9JlsohH6RNlaWUpzm
-         TSfezixQFkCKKYqav04m8udMG1+9rJdnQpWq4D5nSKMhlJCda8XckIglKAdLJ40GzWZK
-         vnfA==
-X-Forwarded-Encrypted: i=1; AJvYcCXKs5qxxTgcMKBiasBuN4I4EozTDyb9XQFVj5SoERZ5MJL2+Vtgkp2efk2BuCvTehv+x+0WB9HeWqsrA7MhqZMdLnPXISI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoUIqvOQshwkUS6oqKK6RXLtUCaF44V3rbGeATAU/GCnQpuGxl
-	LF+0p+xvP1Eq9hU5KVKbE7MeI+hgrpVoNhxgFD5OIVCK67Ba2Klw6MyAL6y4uKauLw9G63jiDtK
-	i
-X-Gm-Gg: ASbGncu0+InaeIgiPmVu7eS6Jl213dYpqkE5EpMI8jIAzGuw4G41jKligK02QKIKkky
-	lHli+hvO+AzYojQMSyaXLT3dm/GxHy8xCGoJpUhWNKUOg6lrA5p/t+HYMcIZyOaFnW7aFTHPGmK
-	PT40H4FwbTJGG4zCVM8SW9ue9ixEc0XeE9gqRDWrM1yHuH2UucCplX/EIK40iqYLjoT1+NbDKUG
-	op6Lfcp/e/i0Se5Qi1Rg75os6kNzpd9IUoEaKypW9ZN6g11aW/nl8DfQwvEiiqTfTmQW/tUCbAh
-	1qkZJMTeLC9Y6ufZoJ8vIaxI3Nv7NSUYyg4t
-X-Google-Smtp-Source: AGHT+IHnMSDX5ZaXtJ2dFla7HDmAssBc1J7kBf27eQZe4BxrcsGOSqTZlUY9mpGYXqZde/4Zg6VzWA==
-X-Received: by 2002:a05:6000:402a:b0:391:2c0c:126b with SMTP id ffacd0b85a97d-39132d531c3mr15248738f8f.23.1741700256551;
-        Tue, 11 Mar 2025 06:37:36 -0700 (PDT)
-Received: from linux-l9pv.suse ([124.11.22.254])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af2810c348esm9560597a12.45.2025.03.11.06.37.34
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 11 Mar 2025 06:37:36 -0700 (PDT)
-Date: Tue, 11 Mar 2025 21:37:31 +0800
-From: joeyli <jlee@suse.com>
-To: KP Singh <kpsingh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
-	paul@paul-moore.com, bp@alien8.de, sfr@canb.auug.org.au,
-	peterz@infradead.org, nathan@kernel.org,
-	Jiri Kosina <JKosina@suse.cz>, Michal Suchanek <msuchanek@suse.com>
-Subject: Re: [PATCH] init/main.c: Initialize early LSMs after arch code
-Message-ID: <20250311133731.GB17395@linux-l9pv.suse>
-References: <20240801171747.3155893-1-kpsingh@kernel.org>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Hg0EY7KV"
+Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10:40ca:feff:fe05:1])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ZBx7W2svnzPw3;
+	Tue, 11 Mar 2025 15:32:55 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1741703575;
+	bh=2YaIPQV3+DbYwSfcD/whlGeuuxi/uei3xpiA8a5+614=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Hg0EY7KVZr1ApFtnd/GAt7n68atO6ULLYkeN+FJ6eIaZNUS2cNYoTHL/RPWaXgNS9
+	 Wz7mfId0x0dwjq5N7fVjW8RnncOxImFwxlT3ZtpSzPVISNqd676yS+eMCeSbWpm7mb
+	 qohwJrlT3KMgK6Pu26RRGbZCnn/BhDL4Vs3Npdo8=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4ZBx7V4tKgzhL7;
+	Tue, 11 Mar 2025 15:32:54 +0100 (CET)
+Date: Tue, 11 Mar 2025 15:32:53 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
+Cc: Paul Moore <paul@paul-moore.com>, sergeh@kernel.org, 
+	David Howells <dhowells@redhat.com>, Kees Cook <keescook@chromium.org>, 
+	linux-security-module@vger.kernel.org, Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, 
+	Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org, 
+	Peter Newman <peternewman@google.com>
+Subject: Re: [RFC 1/2] landlock: Multithreading support for
+ landlock_restrict_self()
+Message-ID: <20250311.aefai7vo6huW@digikod.net>
+References: <20250221184417.27954-2-gnoack3000@gmail.com>
+ <20250221184417.27954-3-gnoack3000@gmail.com>
+ <20250227.Aequah6Avieg@digikod.net>
+ <20250228.b3794e33d5c0@gnoack.org>
+ <20250304.aroh3Aifiiz9@digikod.net>
+ <20250310.990b29c809af@gnoack.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240801171747.3155893-1-kpsingh@kernel.org>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250310.990b29c809af@gnoack.org>
+X-Infomaniak-Routing: alpha
 
-Hi KP,
-
-On Thu, Aug 01, 2024 at 07:17:47PM +0200, KP Singh wrote:
-> With LSMs using static calls, early_lsm_init needs to wait for setup_arch
-> for architecture specific functionality which includes jump tables and
-> static calls to be initialized.
+On Mon, Mar 10, 2025 at 02:04:23PM +0100, Günther Noack wrote:
+> Hello Paul and Serge!
 > 
-> This only affects "early LSMs" i.e. only lockdown when
-> CONFIG_SECURITY_LOCKDOWN_LSM_EARLY is set.
+> On Tue, Mar 04, 2025 at 09:25:51PM +0100, Mickaël Salaün wrote:
+> > On Fri, Feb 28, 2025 at 06:33:55PM +0100, Günther Noack wrote:
+> > > Hello!
+> > > 
+> > > Thanks for the review!
+> > > 
+> > > I'm adding David Howells to this thread as well.  David, maybe you can
+> > > help us and suggest a appropriate way to update the struct cred across
+> > > multiple threads?
 > 
-> Fixes: 2732ad5ecd5b ("lsm: replace indirect LSM hook calls with static calls")
-> Signed-off-by: KP Singh <kpsingh@kernel.org>
+> Paul and Serge, since you are volunteering to take ownership of
+> credentials, maybe you can advise on what is the best approach here?
+> 
+> To summarize the approaches that I have been discussing with Mickaël:
+> 
+> Approach 1: Use the creds API thread-by-thread (implemented here)
+> 
+>   * Each task calls prepare_creds() and commit_creds() on its own, in
+>     line with the way the API is designed to be used (from a single
+>     task).
+>   * Task work gets scheduled with a pseudo-signal and the task that
+>     invoked the syscall is waiting for all of them to return.
+>   * Task work can fail at the beginning due to prepare_creds(), in
+>     which case all tasks have to abort_creds(). Additional
+>     synchronization is needed for that.
+> 
+>   Drawback: We need to grab the system-global task lock to prevent new
+>   thread creation and also grab the per-process signal lock to prevent
+>   races with other creds accesses, for the entire time as we wait for
+>   each task to do the task work.
 
-I have tested acpi table override function by
-CONFIG_ACPI_TABLE_OVERRIDE_VIA_BUILTIN_INITRD option. As this patch
-description, the early LSM can NOT lockdown acpi table override in early
-boot stage now. 
+In other words, this approach blocks all threads from the same process.
 
-Do you have any plan to fix the early lockdown LSM? Or I missed any fix
-patch in kernel mailing list?
+> 
+> Approach 2: Attempt to do the prepare_creds() step in the calling task.
+> 
+>   * Would use an API similar to what keyctl uses for the
+>     parent-process update.
+>   * This side-steps the credentials update API as it is documented in
+>     Documentation, using the cred_alloc_blank() helper and replicating
+>     some prepare_creds() logic.
+> 
+>   Drawback: This would introduce another use of the cred_alloc_blank()
+>   API (and the cred_transfer LSM hook), which would otherwise be
+>   reasonable to delete if we can remove the keyctl use case.
+>   (https://lore.kernel.org/all/20240805-remove-cred-transfer-v2-0-a2aa1d45e6b8@google.com/)
 
-Thanks a lot!
-Joey Lee
+cred_alloc_blank() was designed to avoid dealing with -ENOMEM, which is
+a required property for this Landlock TSYNC feature (i.e. atomic and
+consistent synchronization).
+
+I think it would make sense to replace most of the
+key_change_session_keyring() code with a new cred_transfer() helper that
+will memcpy the old cred to the new, increment the appropriate ref
+counters, and call security_transfer_creds().  We could then use this
+helper in Landlock too.
+
+To properly handle race conditions with a thread changing its own
+credentials, we would need a new LSM hook called by commit_creds().
+For the Landlock implementation, this hook would check if the process is
+being Landlocked+TSYNC and return -ERESTARTNOINTR if it is the case.
+The newly created task_work would then be free to update each thread's
+credentials while only blocking the calling thread (which is also a
+required feature).
+
+Alternatively, instead of a new LSM hook, commit_creds() could check
+itself a new group leader's flag set if all the credentials from the
+calling process are being updated, and return -ERESTARTNOINTR in this
+case.
+
+> 
+> Approach 3: Store Landlock domains outside of credentials altogether
+> 
+>   * We could also store a task's Landlock domain as a pointer in the
+>     per-task security blob, and refcount these.  We would need to make
+>     sure that they get newly referenced and updated in the same
+>     scenarios as they do within struct cred today.
+>   * We could then guard accesses to a task's Landlock domain with a
+>     more classic locking mechanism.  This would make it possible to
+>     update the Landlock domain of all tasks in a process without
+>     having to go through pseudo-signals.
+> 
+>   Drawbacks:
+>   * Would have to make sure that the Landlock domain the task's LSM
+>     blob behaves exactly the same as before in the struct cred.
+>   * Potentially slower to access Landlock domains that are guarded by
+>     a mutex.
+
+This would not work because the kernel (including LSM hooks) uses
+credentials to check access.
+
+> 
+> I'd be interested to hear your opinion on how we should best approach
+> this.
+> 
+> P.S. This is probably already clear to everyone who read this far, but
+> the problem that creds can't be updated across tasks has already lead
+> to other difficult APIs and also bleeds into user-level interfaces
+> such as the setuid() family of syscalls as well as capability
+> updating.  Both of these are solved from user space through the signal
+> hack documented in nptl(7), which is used in glibc for setuid()-style
+> calls and in libpsx for capabilities and Landlock's Go library.  If we
+> had a working way to do these cross-thread updates in the kernel, that
+> would simplify these userspace implementations.  (There are more links
+> in the cover letter at the top of this thread.)
+> 
+> Thanks,
+> –Günther
+> 
