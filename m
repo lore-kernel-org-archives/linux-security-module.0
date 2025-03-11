@@ -1,243 +1,119 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B930622170A;
-	Tue, 11 Mar 2025 08:45:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D6812222CA
+	for <linux-security-module@vger.kernel.org>; Tue, 11 Mar 2025 10:50:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741682722; cv=none; b=O4LMA2SNCE1zO86nvAyndKkSas9ED/Ult7EcnaLQoZRxNL3dDdEXqXSzaW7PUk4kkAS/6BmBbtvey7lpoceaGpT2HAY+6vLrC3nJtRRQcZVa961VXZVBASYRiIdHTwHILBE+Eit4Es3ew/q8zQzT+SNo9As9epPh8aUM9ShcKS8=
+	t=1741690242; cv=none; b=uY+vX3vqwrnZHdIKNIsz8/emG/3WyNHfRjFnJCQvmY7sWPKKg504qKWVsO5vyAVEt4SuYP/l27+A901a4FLCWs3zPElO3ayx+ep53162nJUIq368ast0fUyHEsVm+C/ZJdbBbgsPZouiWWa6jRgYfV+WJ2ejM/vrazhA74bpAYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741682722; c=relaxed/simple;
-	bh=N9ti5RiaRpT1tNwEt+6s4aMLX61sSMleWeCRdLu0vRo=;
+	s=arc-20240116; t=1741690242; c=relaxed/simple;
+	bh=nBjZf1u2hN6gZjA+s1zUBKo47rkKQYdv7n5EbBsACOw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gp2CN+k3xFj3fJbdV8LMB/CYW953gCRDQEIWytF85UXrbcsAoDAEEE0vOjFCyjNXfr09f/RZXHbvBu1RDX53iHZwDXebyPhtkeTW+wbFvK3b0fQCOjMMWl+uRtIvcTkoT3CggFZGsa68GRKrrcZOnitZJd/lJg1a9LYAPSK8fr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=khDC3Qmn; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=cF2nBmejnCNlWmA/a0Mr3eawBFZ0FtuiybEIDMQfDr9L2VnCBuOoJPm+XgVy33z4ycMpZRViUw6c6g0ygkDb4U9Yp8wbr3AaNHGtEpprqjmtcXczDc6VXlqcQob/K1cqpToG/I2dPgPTItFCqNPYbs9uqe+NgyiYRHIoJ3bXwA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kUWdCtrC; arc=none smtp.client-ip=91.218.175.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="khDC3Qmn"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84B58C4CEE9;
-	Tue, 11 Mar 2025 08:45:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741682722;
-	bh=N9ti5RiaRpT1tNwEt+6s4aMLX61sSMleWeCRdLu0vRo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=khDC3QmnMIrnmmb1FPIFzpqN2IXIOe5NEH+HOQMDiRHJED8T9m48iO7iURB2C0IZV
-	 NttRgvepFzWc9A4WmwzjIsOaNNshl1mn57huVuTDkFFyv+/FF+aq4HwTWJP/GfnGwb
-	 gmLnOer9xktPRV/L52o4cFPfIRJi4IVgCJ5b0Yy3wzU2qHZbLrj5BxM/vT89NpQ3KQ
-	 4x7AzLUiJhv+MJHnWxdy2gaEZCy3FRc9InwsJGQgsFypG+zsMmU7STyzWc/JziZxBL
-	 mwOdokGqFI78p3PEimv19fBivjHY3CTDO/ctjNGgo2pE9GDlx1Za10juRUZ5+TAWIW
-	 Zt9Rs2luR2qMg==
-Date: Tue, 11 Mar 2025 09:45:16 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Ard Biesheuvel <ardb@kernel.org>, 
-	James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Ryan Lee <ryan.lee@canonical.com>, 
-	Malte =?utf-8?B?U2NocsO2ZGVy?= <malte.schroeder@tnxip.de>, linux-security-module@vger.kernel.org, 
-	apparmor <apparmor@lists.ubuntu.com>, linux-efi@vger.kernel.org, 
-	John Johansen <john.johansen@canonical.com>, "jk@ozlabs.org" <jk@ozlabs.org>, linux-fsdevel@vger.kernel.org
-Subject: Re: apparmor NULL pointer dereference on resume [efivarfs]
-Message-ID: <20250311-visite-rastplatz-d1fdb223dc10@brauner>
-References: <e54e6a2f-1178-4980-b771-4d9bafc2aa47@tnxip.de>
- <CAKCV-6s3_7RzDfo_yGQj9ndf4ZKw_Awf8oNc6pYKXgDTxiDfjw@mail.gmail.com>
- <465d1d23-3b36-490e-b0dd-74889d17fa4c@tnxip.de>
- <CAKCV-6uuKo=RK37GhM+fV90yV9sxBFqj0s07EPSoHwVZdDWa3A@mail.gmail.com>
- <ea97dd9d1cb33e28d6ca830b6bff0c2ece374dbe.camel@HansenPartnership.com>
- <CAMj1kXGLXbki1jezLgzDGE7VX8mNmHKQ3VLQPq=j5uAyrSomvQ@mail.gmail.com>
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kUWdCtrC"
+Date: Tue, 11 Mar 2025 06:50:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741690228;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1V5hJ26I6gRazId7fU1hqBzw/DYCVhVzgNLV64nnxIo=;
+	b=kUWdCtrCYHZ/Nsbw96YfEbwlWjxrxmpU3RzuRBC8TxiqsfxnYbo5qqQtfQEV8GlZ5+KJVk
+	MkruHhXGvV9HRpwxBXFR7e0DypxATHE/Dqo7DegRNnw4KWwRWfHzd+ZbZ49yBJrjG1sxZm
+	CiFOrrqTukhTsg0Uly/5e3lDp2FWBHE=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, cve@kernel.org, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, linux-security-module@vger.kernel.org, 
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: CVE-2025-21830: landlock: Handle weird files
+Message-ID: <aopeucbzl6v5ptrprc6fz4xpn65ccfg34wl4qiblwvmkkrjx5k@u22nfnxieipc>
+References: <2025030611-CVE-2025-21830-da64@gregkh>
+ <20250310.ooshu9Cha2oo@digikod.net>
+ <2025031034-savanna-debit-eb8e@gregkh>
+ <Z8948cR5aka4Cc5g@dread.disaster.area>
+ <33m2msv3elqbviurca3ayebwzfzzjenh472b246gf7hbkfjk25@sl7plpwvpxig>
+ <Z8-7CH7mwJtxpgyx@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMj1kXGLXbki1jezLgzDGE7VX8mNmHKQ3VLQPq=j5uAyrSomvQ@mail.gmail.com>
+In-Reply-To: <Z8-7CH7mwJtxpgyx@dread.disaster.area>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Mar 11, 2025 at 08:16:34AM +0100, Ard Biesheuvel wrote:
-> (cc Al Viro)
+On Tue, Mar 11, 2025 at 03:24:40PM +1100, Dave Chinner wrote:
+> On Mon, Mar 10, 2025 at 10:09:22PM -0400, Kent Overstreet wrote:
+> > On Tue, Mar 11, 2025 at 10:42:41AM +1100, Dave Chinner wrote:
+> > If user mounts are enabled, that comes with UID mapping, and device
+> > nodes disabled - no?
 > 
-> On Mon, 10 Mar 2025 at 22:49, James Bottomley
-> <James.Bottomley@hansenpartnership.com> wrote:
-> >
-> > On Mon, 2025-03-10 at 12:57 -0700, Ryan Lee wrote:
-> > > On Wed, Mar 5, 2025 at 1:47 PM Malte Schröder
-> > > <malte.schroeder@tnxip.de> wrote:
-> > > >
-> > > > On 05/03/2025 20:22, Ryan Lee wrote:
-> > > > > On Wed, Mar 5, 2025 at 11:11 AM Malte Schröder
-> > > > > <malte.schroeder@tnxip.de> wrote:
-> > > > > > Hi,
-> > > > > >
-> > > > > > I hope this is the right place to report this. Since 6.14-rc1
-> > > > > > ff. resume
-> > > > > > from hibernate does not work anymore. Now I finally managed to
-> > > > > > get dmesg
-> > > > > > from when this happens (Console is frozen, but managed to login
-> > > > > > via
-> > > > > > network). If I read that trace correctly there seems to be some
-> > > > > > interaction with apparmor. I retried with apparmor disabled and
-> > > > > > the
-> > > > > > issue didn't trigger.
-> > > > > Also CC'ing the AppArmor-specific mailing list in this reply.
-> > > > >
-> > > > > > I am happy to provide more data if required.
-> > > > > Could you try to reproduce this NULL pointer dereference with a
-> > > > > clean
-> > > > > kernel with debug info (that I'd be able to access the source
-> > > > > code of)
-> > > > > and send a symbolized stacktrace processed with
-> > > > > scripts/decode_stacktrace.sh?
-> > > >
-> > > > Sure. Result using plain v6.14-rc5:
-> > > >
-> > > > [  142.014428] BUG: kernel NULL pointer dereference, address:
-> > > > 0000000000000018
-> > > > [  142.014429] #PF: supervisor read access in kernel mode
-> > > > [  142.014431] #PF: error_code(0x0000) - not-present page
-> > > > [  142.014432] PGD 0 P4D 0
-> > > > [  142.014433] Oops: Oops: 0000 [#1] PREEMPT SMP NOPTI
-> > > > [  142.014436] CPU: 4 UID: 0 PID: 6833 Comm: systemd-sleep Not
-> > > > tainted
-> > > > 6.14.0-rc5 #1
-> > > > [  142.014437] Hardware name: To Be Filled By O.E.M. X570
-> > > > Extreme4/X570
-> > > > Extreme4, BIOS P5.60 01/18/2024
-> > > > [  142.014439] RIP: 0010:apparmor_file_open
-> > > > (./include/linux/mount.h:78
-> > > > (discriminator 2) ./include/linux/fs.h:2781 (discriminator 2)
-> > > > security/apparmor/lsm.c:483 (discriminator 2))
-> > > > [ 142.014442] Code: c5 00 08 00 00 0f 85 4b 01 00 00 4c 89 e9 31 c0
-> > > > f6
-> > > > c1 02 0f 85 fd 00 00 00 48 8b 87 88 00 00 00 4c 8d b7 88 00 00 00
-> > > > 48 89
-> > > > fd <48> 8b 40 18 48 8b 4f 70 0f b7 11 48 89 c7 66 89 54 24 04 48 8b
-> > > > 51
-> > > > All code
-> > > > ========
-> > > >    0:    c5 00 08                 (bad)
-> > > >    3:    00 00                    add    %al,(%rax)
-> > > >    5:    0f 85 4b 01 00 00        jne    0x156
-> > > >    b:    4c 89 e9                 mov    %r13,%rcx
-> > > >    e:    31 c0                    xor    %eax,%eax
-> > > >   10:    f6 c1 02                 test   $0x2,%cl
-> > > >   13:    0f 85 fd 00 00 00        jne    0x116
-> > > >   19:    48 8b 87 88 00 00 00     mov    0x88(%rdi),%rax
-> > > >   20:    4c 8d b7 88 00 00 00     lea    0x88(%rdi),%r14
-> > > >   27:    48 89 fd                 mov    %rdi,%rbp
-> > > >   2a:*    48 8b 40 18              mov    0x18(%rax),%rax        <-
-> > > > -
-> > > > trapping instruction
-> > > >   2e:    48 8b 4f 70              mov    0x70(%rdi),%rcx
-> > > >   32:    0f b7 11                 movzwl (%rcx),%edx
-> > > >   35:    48 89 c7                 mov    %rax,%rdi
-> > > >   38:    66 89 54 24 04           mov    %dx,0x4(%rsp)
-> > > >   3d:    48                       rex.W
-> > > >   3e:    8b                       .byte 0x8b
-> > > >   3f:    51                       push   %rcx
-> > > >
-> > > > Code starting with the faulting instruction
-> > > > ===========================================
-> > > >    0:    48 8b 40 18              mov    0x18(%rax),%rax
-> > > >    4:    48 8b 4f 70              mov    0x70(%rdi),%rcx
-> > > >    8:    0f b7 11                 movzwl (%rcx),%edx
-> > > >    b:    48 89 c7                 mov    %rax,%rdi
-> > > >    e:    66 89 54 24 04           mov    %dx,0x4(%rsp)
-> > > >   13:    48                       rex.W
-> > > >   14:    8b                       .byte 0x8b
-> > > >   15:    51                       push   %rcx
-> > > > [  142.014443] RSP: 0018:ffffb9ef7189bc50 EFLAGS: 00010246
-> > > > [  142.014445] RAX: 0000000000000000 RBX: ffff95eb5e555b00 RCX:
-> > > > 0000000000000300
-> > > > [  142.014446] RDX: ffff95f838227538 RSI: 00000000002ba677 RDI:
-> > > > ffff95e992be2a00
-> > > > [  142.014447] RBP: ffff95e992be2a00 R08: ffff95f838227520 R09:
-> > > > 0000000000000002
-> > > > [  142.014447] R10: ffff95ea72241d00 R11: 0000000000000001 R12:
-> > > > 0000000000000010
-> > > > [  142.014448] R13: 0000000000000300 R14: ffff95e992be2a88 R15:
-> > > > ffff95e95a6034e0
-> > > > [  142.014449] FS:  00007f74ab6cf880(0000)
-> > > > GS:ffff95f838200000(0000)
-> > > > knlGS:0000000000000000
-> > > > [  142.014450] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > > > [  142.014451] CR2: 0000000000000018 CR3: 00000002473b6000 CR4:
-> > > > 0000000000f50ef0
-> > > > [  142.014452] PKRU: 55555554
-> > > > [  142.014453] Call Trace:
-> > > > [  142.014454]  <TASK>
-> > > > [  142.014456] ? __die_body (arch/x86/kernel/dumpstack.c:421)
-> > > > [  142.014459] ? page_fault_oops (arch/x86/mm/fault.c:710)
-> > > > [  142.014460] ? __lock_acquire (kernel/locking/lockdep.c:?
-> > > > kernel/locking/lockdep.c:5174)
-> > > > [  142.014462] ? local_lock_acquire
-> > > > (./include/linux/local_lock_internal.h:29 (discriminator 1))
-> > > > [  142.014465] ? do_user_addr_fault (arch/x86/mm/fault.c:?)
-> > > > [  142.014467] ? exc_page_fault
-> > > > (./arch/x86/include/asm/irqflags.h:37
-> > > > ./arch/x86/include/asm/irqflags.h:92 arch/x86/mm/fault.c:1488
-> > > > arch/x86/mm/fault.c:1538)
-> > > > [  142.014468] ? asm_exc_page_fault
-> > > > (./arch/x86/include/asm/idtentry.h:623)
-> > > > [  142.014471] ? apparmor_file_open (./include/linux/mount.h:78
-> > > > (discriminator 2) ./include/linux/fs.h:2781 (discriminator 2)
-> > > > security/apparmor/lsm.c:483 (discriminator 2))
-> > > > [  142.014472] security_file_open (security/security.c:?)
-> > > > [  142.014474] do_dentry_open (fs/open.c:934)
-> > > > [  142.014476] kernel_file_open (fs/open.c:1201)
-> > > > [  142.014477] efivarfs_pm_notify (fs/efivarfs/super.c:505)
-> > >
-> > > I traced the NULL dereference down to efivarfs_pm_notify creating a
-> > > struct path with a NULL .mnt pointer which is then passed into
-> > > kernel_file_open, which then invokes the LSM file_open security hook,
-> > > where AppArmor is not expecting a path that has a NULL .mnt pointer.
-> > > The code in question was introduced in b5d1e6ee761a (efivarfs: add
-> > > variable resync after hibernation).
-> > >
-> > > I have sent in a patch to the AppArmor mailing list at
-> > > https://lists.ubuntu.com/archives/apparmor/2025-March/013545.html
-> > > which should give improved diagnostics for this case happening again.
-> > > My understanding is that path .mnt pointers generally should not be
-> > > NULL, but I do not know what an appropriate (non-NULL) value for that
-> > > pointer should be, as I am not familiar with the efivarfs subsystem.
-> >
-> > The problem comes down to the superblock functions not being able to
-> > get the struct vfsmount for the superblock (because it isn't even
-> > allocated until after they've all been called).  The assumption I was
-> > operating under was that provided I added O_NOATIME to prevent the
-> > parent directory being updated, passing in a NULL mnt for the purposes
-> > of iterating the directory dentry was safe.  What apparmour is trying
-> > to do is look up the idmap for the mount point to do one of its checks.
-> >
-> > There are two ways of fixing this that I can think of.  One would be
-> > exporting a function that lets me dig the vfsmount out of s_mounts and
-> > use that (it's well hidden in the internals of fs/mount.h, so I suspect
-> > this might not be very acceptable) or to get mnt_idmap to return
+> Not necessarily. Those security mechanisms are all optional mount
+> options under userspace control....
 
-Nope, please don't.
+Well, if someone's being an idiot, that's on them and not something I'm
+going to argue about :) Uidmapping has been around for plenty long
+enough for userspace to start using it.
 
-> > &nop_mnt_idmap if the passed in mnt is NULL.  I'd lean towards the
-> > latter, but I'm cc'ing fsdevel to see what others think.
-
-A struct path with mount NULL and dentry != NULL is guaranteed to bit us
-in the ass in other places. That's the bug.
-
-> >
 > 
+> > Out of curiosity, what's keeping us from saying "user mounts are
+> > generally expected to be safe" for XFS?
 > 
-> Al spotted the same issue based on a syzbot report [0]
+> What does "generally expected to be safe" actually mean?
 > 
-> [0] https://lore.kernel.org/all/20250310235831.GL2023217@ZenIV/
+> If be "safe" you mean "won't crash the kernel if the structure has
+> been altered in detectable ways with", then we already largely tick
+> that box. However, there are whole classes of DOS attacks that are
+> very difficult to detect without rigorous, expensive runtime
+> checking (e.g. loops in btree pointers).
 
-efivars as written only has a single global superblock and it doesn't
-support idmapped mounts and I don't see why it ever would.
+btree nodes don't change depth, so just recording the level of a node
+and validating it trivially defeats that. bcachefs has that in its on
+disk format, but if you don't have that then that might be a problem -
+you'd at least need to know a priori the depth of the root node.
 
-But since efivars does only ever have a single global superblock, one
-possibility is to an internal superblock that always exits and is
-resurfaced whenever userspace mounts efivarfs. That's essentially the
-devtmpfs model.
+> Hence while we catch almost all the the obvious out-of-bounds
+> corruptions within an object, detecting corruptions that require
+> spanning a largely unbound number of objects to detect are not
+> handled at all. I can corrupt a filesystem to induce an endless
+> btree search loop like this pretty easily with a little bit of
+> xfs_db magic. Yup, we even provide the tools to make doing stuff
+> like this easy...
 
-Then you can stash:
+*nod*
 
-static struct vfsmount *efivarfs_mnt;
+In bcachefs, we right now have no way to cleanly detect "filesystem is
+actually full, disk accounting info is wrong" so - that means corruption
+causes allocations to get stuck. That one is fixable, and I'm going to
+have to at some point since syzbot knows how to trigger it :)
 
-globally and use that in efivarfs_pm_notify() to fill in struct path.
+> If by "safe" you mean "can detect all cases where a metadata field
+> or file data has been tampered with", then XFS is completely unsafe
+> and should not be used.
+> 
+> We can't detect that a malicious actor has changed something like a
+> file permission field or the contents of a security xattr.  To do
+> that requires cryptographically secure signatures of metadata
+> objects and file data. We do not have that sort of feature in the
+> on-disk format. We expect users that need protection from such
+> tampering will use an envrypted block device to prevent malicious
+> actors from being able to mutate the filesystem structure in this
+> way.
+
+Yeah, but that's the less interesting case to me. Not uninteresting,
+since "I don't fully trust my block device" is a real scenario with
+network attached storage. But generally, the tampering would be done by
+the user that did the mount - so perhaps we need to find some new nudges
+to make uidmapping of user mounts required?
+
+That could be done in util-linux...
