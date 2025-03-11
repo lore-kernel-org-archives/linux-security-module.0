@@ -1,106 +1,152 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71AD71EF087;
-	Tue, 11 Mar 2025 23:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34D6D233159;
+	Tue, 11 Mar 2025 23:45:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741735423; cv=none; b=CfdjuenIL3yk4b/cWu7Yc/vrMVc6tdmG1LcAHDuCLA4cJc3kGm+aSjBoSVCoMJ523lENb2wVGEbHwdCr3gZgZZyLQz1pstUy9sYKSo8w1J60FSN1obos5hVvmi9BeqaV26wPyN95HVOOQQjtmIN0QKKH3F6bivyEkwakJiGwyWQ=
+	t=1741736714; cv=none; b=D237k7aFQksmWsW99kPWBADvjxdZnPk1ojY1WoUIrNh+0xiBCMqg5cn1FwrctVMaEUdnRv6l0q1/t7A5m+eFo8CHmyprcNMurLkpLX5MbmRzmZoKce8Q5XVuBtE4iqz3rXxhUzGL0QvEyYq6PakgcZHj/vvRxFks0Nzi+9EUSGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741735423; c=relaxed/simple;
-	bh=1c4nORsM3kHkHPY3YDwsODM3vgceCesqpOnjPI4HjSY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KlaYVdDi7DSeeUqmRNfgaZeiFnOLVIN5UfXjdvijqKrt9fAugF0KQYFtaR12hgQlUOM/e0J8nmecHJaAT9jXdWZ8c191j+hSt78TGTjdY6mH28a6XVFHdDP5xVF4sZafar9kYsYmoX//NWUWbt432lweziirri2gVo//97VJZFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RRd28xlM; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1741736714; c=relaxed/simple;
+	bh=WJxfrA9P0lTPif/rSZgxPJY3TmY+1BcIVavMPTrLyVY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ij5EaZs87/9g0yVwflHTvtJ0qKRfCt7UhiwfyYXmKGAdMid1+XIqINAKSb3qlrnsS5eOQePUvyrhqZcxoBN+KZwrl0bslz17ppoCyhZ5x7U9kwt6D3x1ejud4yV5mVfEDyY5hup7pNHgdQgX7+jvve9hvF4smm4Zb8XGJUMe+8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=QbnG89nP; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RRd28xlM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6EABC4CEEF;
-	Tue, 11 Mar 2025 23:23:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741735422;
-	bh=1c4nORsM3kHkHPY3YDwsODM3vgceCesqpOnjPI4HjSY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=RRd28xlM/3XWqa5EKMacWeDb6zTqIKJvWIe7lwk3F+gwNV3StpKVAguGWCmT+/s7P
-	 Z4t5YHLSk4jR3VcsKAiRLxAPHZ/9DTIGQF9QJYsYUzgXXD2vxcpNyHzL9edhhuzrj7
-	 fr/pQ1eq0oFZBRFehpvB2k1/96K7QoHypROryHvGPOpiHY41SrxEwY3Gpjf9Nc4uBw
-	 TSIRoF7YWEjm4tmQWkZy5gTdG1pItA59FaCqstUg/rZ+YTouxTOX83p8+oRK9KsSHY
-	 pwilBoBe7UL1bAt5GrVBznUcwrTig01MExqF/wru2yi3oqJzbMTiYBYK6RlAoaI1O6
-	 XVPH7TDA0gxxA==
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3d439f01698so1282715ab.1;
-        Tue, 11 Mar 2025 16:23:42 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVOhRFNG7lnj71z1v4Aa/6SZN89BINS1p8UkNRq3OVsSKfv13UugdhQqs1ni8mHmAqHozabJV7I0zv1JYC0@vger.kernel.org, AJvYcCWU0mR3RitwYjOVPvpIjWmSo7APJrf4jvVblhwHB1IWj12sBYur/lmOL/YGziAj+3h+WcNV7XuCuoiEXN4QmEZfFqlsL34t@vger.kernel.org
-X-Gm-Message-State: AOJu0YwskhIUMFW0FVBvcT44b58baU1R1BpKOUBOJPaAtlXpA4YVmyMf
-	jeIRPuxXtoMvsjk//PaxDp54nx6lrWXJtqahFfRX4JTign/K+4zpWMBb+2meYsPl7pI8faKTiHt
-	jQy5Rxu/4iQKnRhUkcdq2+nTJf/c=
-X-Google-Smtp-Source: AGHT+IE2KY686o1GqGq2o0w9GqRc5dcso+bwdKxvv7E3OPoQZojU8H8Kb+hWWrp5C2i0/sqayJbZU6KTxpQCNQvoiI4=
-X-Received: by 2002:a05:6e02:2207:b0:3d3:f15e:8e23 with SMTP id
- e9e14a558f8ab-3d4691b938cmr65752745ab.10.1741735422249; Tue, 11 Mar 2025
- 16:23:42 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="QbnG89nP"
+Received: from [10.17.64.106] (unknown [131.107.1.170])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 31B3D2045FE6;
+	Tue, 11 Mar 2025 16:45:12 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 31B3D2045FE6
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1741736712;
+	bh=glSiauzVyj5TpLPTPm8NokxVZzNbbmHbEu15WDGOzEM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=QbnG89nPuznMR4y1um2+WpeUgFAWN+cSKpbbFCY0CZ6BbVtYRj36XwUOl2La2ZtgM
+	 qHDla5pUHmQcAVc3ubJSgLl1id0h/ReIkhzSDMOu2kmXmu5NZaeDI/EzqlGPhjmgld
+	 jRd56jOpbDqDoh9kSebk1g7Khjhgqd1s/amhakBw=
+Message-ID: <a952eaa2-faf4-4312-87bd-7cb6a9100df5@linux.microsoft.com>
+Date: Tue, 11 Mar 2025 16:45:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1741047969.git.m@maowtm.org> <20250304.Choo7foe2eoj@digikod.net>
- <f6ef02c3-ad22-4dc6-b584-93276509dbeb@maowtm.org> <CAOQ4uxjz4tGmW3DH3ecBvXEnacQexgM86giXKqoHFGzwzT33bA@mail.gmail.com>
- <1e009b28-1e6b-4b8c-9934-b768cde63c2b@maowtm.org> <20250311.Ti7bi9ahshuu@digikod.net>
- <CAPhsuW4YXGFY___8x7my4tUbgyp5N4FHSQpJpKgEDK6r0vphAA@mail.gmail.com> <c6e67ee5-9f85-44f4-a27c-97e10942ff57@maowtm.org>
-In-Reply-To: <c6e67ee5-9f85-44f4-a27c-97e10942ff57@maowtm.org>
-From: Song Liu <song@kernel.org>
-Date: Tue, 11 Mar 2025 16:23:30 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW5XNE67LoRjX335iFwCSnZ_QLYCwMxbZtj_cSn=0xMy6Q@mail.gmail.com>
-X-Gm-Features: AQ5f1Jp_HbBeztuuPTCMHnqFDUncNRHhbQysJhpo1jC6a0hrlpxzjXUpqnT-soQ
-Message-ID: <CAPhsuW5XNE67LoRjX335iFwCSnZ_QLYCwMxbZtj_cSn=0xMy6Q@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/9] Landlock supervise: a mechanism for interactive
- permission requests
-To: Tingmao Wang <m@maowtm.org>
-Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	Christian Brauner <brauner@kernel.org>, Amir Goldstein <amir73il@gmail.com>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, Jan Kara <jack@suse.cz>, 
-	linux-security-module@vger.kernel.org, Matthew Bobrowski <repnop@google.com>, 
-	linux-fsdevel@vger.kernel.org, Tycho Andersen <tycho@tycho.pizza>, 
-	Kees Cook <kees@kernel.org>, Jeff Xu <jeffxu@google.com>, 
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
-	Francis Laniel <flaniel@linux.microsoft.com>, Matthieu Buffet <matthieu@buffet.re>, 
-	Paul Moore <paul@paul-moore.com>, Kentaro Takeda <takedakn@nttdata.co.jp>, 
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, 
-	John Johansen <john.johansen@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 1/7] ima: copy only complete measurement records across
+ kexec
+To: Mimi Zohar <zohar@linux.ibm.com>, Baoquan He <bhe@redhat.com>
+Cc: stefanb@linux.ibm.com, roberto.sassu@huaweicloud.com,
+ roberto.sassu@huawei.com, eric.snowberg@oracle.com, ebiederm@xmission.com,
+ paul@paul-moore.com, code@tyhicks.com, bauermann@kolabnow.com,
+ linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
+ linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+ madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
+ James.Bottomley@hansenpartnership.com, vgoyal@redhat.com, dyoung@redhat.com
+References: <20250304190351.96975-1-chenste@linux.microsoft.com>
+ <20250304190351.96975-2-chenste@linux.microsoft.com>
+ <Z8g+uhZQ6totYLmp@MiWiFi-R3L-srv>
+ <fe6e3c1333a50d66dc876b5a196d3491170802a8.camel@linux.ibm.com>
+ <8bc74dd8-ecd0-44ad-88a2-8b36fa61100a@linux.microsoft.com>
+ <69f43be0ed70eee45d3d9d9ac2aeaf39def5770a.camel@linux.ibm.com>
+ <631f326006226e23f4f755fd32255792f6514a90.camel@linux.ibm.com>
+Content-Language: en-US
+From: steven chen <chenste@linux.microsoft.com>
+In-Reply-To: <631f326006226e23f4f755fd32255792f6514a90.camel@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Mar 11, 2025 at 3:03=E2=80=AFPM Tingmao Wang <m@maowtm.org> wrote:
-[...]
-> >
-> > I think there is a fundamental difference between LSM hooks and fsnotif=
-y,
-> > so putting fsnotify behind some LSM hooks might be weird. Specifically,
-> > LSM hooks are always global. If a LSM attaches to a hook, say
-> > security_file_open, it will see all the file open calls in the system. =
-On the
-> > other hand, each fsnotify rule only applies to a group, so that one fan=
-otify
-> > handler doesn't touch files watched by another fanotify handler. Given =
-this
-> > difference, I am not sure how fsnotify LSM hooks should look like.
-> >
-> > Does this make sense?
+On 3/11/2025 5:44 AM, Mimi Zohar wrote:
+> On Thu, 2025-03-06 at 21:51 -0500, Mimi Zohar wrote:
+>> On Thu, 2025-03-06 at 14:45 -0800, steven chen wrote:
+>>> On 3/5/2025 4:27 AM, Mimi Zohar wrote:
+>>>> On Wed, 2025-03-05 at 20:08 +0800, Baoquan He wrote:
+>>>>> On 03/04/25 at 11:03am, steven chen wrote:
+>>>>>> Carrying the IMA measurement list across kexec requires allocating a
+>>>>>> buffer and copying the measurement records.  Separate allocating the
+>>>>>> buffer and copying the measurement records into separate functions in
+>>>>>> order to allocate the buffer at kexec 'load' and copy the measurements
+>>>>>> at kexec 'execute'.
+>>>>>>
+>>>>>> This patch includes the following changes:
+>>>>> I don't know why one patch need include so many changes. From below log,
+>>>>> it should be split into separate patches. It may not need to make one
+>>>>> patch to reflect one change, we should at least split and wrap several
+>>>>> kind of changes to ease patch understanding and reviewing. My personal
+>>>>> opinion.
+>>>> Agreed, well explained.
+>>>>
+>>>> Mimi
+>>>>
+>>>>>>    - Refactor ima_dump_measurement_list() to move the memory allocation
+>>>>>>      to a separate function ima_alloc_kexec_file_buf() which allocates
+>>>>>>      buffer of size 'kexec_segment_size' at kexec 'load'.
+>>>>>>    - Make the local variable ima_kexec_file in ima_dump_measurement_list()
+>>>>>>      a local static to the file, so that it can be accessed from
+>>>>>>      ima_alloc_kexec_file_buf(). Compare actual memory required to ensure
+>>>>>>      there is enough memory for the entire measurement record.
+>>>>>>    - Copy only complete measurement records.
+>>>>>>    - Make necessary changes to the function ima_add_kexec_buffer() to call
+>>>>>>      the above two functions.
+>>>>>>    - Compared the memory size allocated with memory size of the entire
+>>>>>>      measurement record. Copy only complete measurement records if there
+>>>>>>      is enough memory. If there is not enough memory, it will not copy
+>>>>>>      any IMA measurement records, and this situation will result in a
+>>>>>>      failure of remote attestation.
+>>>>>>
+>>>>>> Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
+>>>>>> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+>>>>>> Signed-off-by: steven chen <chenste@linux.microsoft.com>
+>>> I will split this patch into the following two patches:
+>>>
+>>>       ima: define and call ima_alloc_kexec_file_buf
+>>>       ima: copy measurement records as much as possible across kexec
+>> Steven, breaking up code into patches is in order to simplify patch review.
+>> This is done by limiting each patch to a single "logical change" [1].  For
+>> example, the change below has nothing to do with "separate allocating the buffer
+>> and copying the measurement records into separate functions".
+>>
+>>          /* This is an append-only list, no need to hold the RCU read lock */
+>>          list_for_each_entry_rcu(qe, &ima_measurements, later, true) {
+>> -               if (file.count < file.size) {
+>> +               entry_size += ima_get_binary_runtime_entry_size(qe->entry);
+>> +               if (entry_size <= segment_size) {
+>>                          khdr.count++;
+>> -                       ima_measurements_show(&file, qe);
+>> +                       ima_measurements_show(&ima_kexec_file, qe);
+>>                  } else {
+>>                          ret = -EINVAL;
+>> +                       pr_err("IMA log file is too big for Kexec buf\n");
+>>                          break;
+>>                  }
+>>          }
+>>
+>> The original code potentially copied a partial last measurement record, not a
+>> complete measurement record.  For ease of review, the above change is fine, but
+>> it needs to be a separate patch.
+>>
+>> Patches:
+>> 1. ima: copy only complete measurement records across kexec
+>> 2. ima: define and call ima_alloc_kexec_file_buf()
+> Steven,
 >
-> To clarify, I wasn't suggesting that we put one hook _behind_ another
-> ("behind" in the sense of one calling the other), just that the place
-> that calls the new fsnotify_name_perm/fsnotify_rename_perm hook (in
-> Amir's WIP branch) could also be made to call some new LSM hooks in
-> addition to fsnotify (i.e. security_pathname_create/delete/rename).
+> The alternative would be to revert using ima_get_binary_runtime_entry_size() and
+> simply use "ima_kexec_file.count < ima_kexec_file.size".  Only
+> ima_kexec_file.size would be initialized in ima_alloc_kexec_buf().  The rest
+> would remain in ima_dump_measurement_list().  get_binary_runtime_size() wouldn't
+> need to be made global.
 >
-> My understanding of the current code is that VFS calls security_... and
-> fsnotify_... unconditionally, and the fsnotify_... functions figure out
-> who needs to be notified.
+> To further simplify the patch review, first define a separate patch to just
+> rename the seq_file "file" to "ima_kexec_file".
+>
+> Mimi
 
-Yes, VFS calls security_* and fsnotify_* unconditionally. In this sense,
-fsnotify can be implemented as a LSM. But fsnotify also supports some
-non-security use cases. So it will be weird to implement it as a LSM.
+Hi Mimi,
+
+I will work on it.
 
 Thanks,
-Song
 
-[...]
+Steven
+
