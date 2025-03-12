@@ -1,105 +1,119 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-190d.mail.infomaniak.ch (smtp-190d.mail.infomaniak.ch [185.125.25.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 178EB1A256B
-	for <linux-security-module@vger.kernel.org>; Wed, 12 Mar 2025 11:32:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C573C23F36C
+	for <linux-security-module@vger.kernel.org>; Wed, 12 Mar 2025 11:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741779162; cv=none; b=nggWifubvhg8Z3il9nU6iaA+cmiPSyCaAVpsOenQDRQQNW2N6eygOiev0BDb9Ymxek2qxCOfqHq36G58JlWzjDRHe1mhY6cl5lFnUGpIWmOnZDhm3dpYrDdE+66b4Mt7YNgNGhTdimS9iSyeUn+efyJyXVTleyP3ndXnTRLVA5Y=
+	t=1741780192; cv=none; b=fyoJpcQRlXJVsSzzxGF7TbZ3oMqGq3EJjjTqIy1weHbyPlFaL4ZOCgmQM11vUOyrQun1fEgPPfVasjir/TsZ0uIrUTnSq4bKI8Pf15pwjgzBOFtp2R0PKJ9UBQHRO2Hrs5kcjwyuCHETKRtCyyZY4K88g84VBWS9i+JWzE+oTjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741779162; c=relaxed/simple;
-	bh=hB7cbA7EyRC+l9Gia5ItRMy3LSkB6vp0fujxrdtaHIc=;
+	s=arc-20240116; t=1741780192; c=relaxed/simple;
+	bh=+mMmTVdZzs8xN4brEzKMTRsvfKzOqUqVXDEoX0o8ZkU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rDx9tp8A8JyB1NPA6ZTdP3eDTvVYMLzjv8ieqMbnxeHJ+5ra21Xdmj+fLNGGWDBWgE3NHkqZq9eXMjf1mAkFDzTjtDRPUGP7m9uzNho/pu9tYS3FL5aQ4gDJiEaMpqBIJUJLD1Egk2EqqHUEEl9WTnUfOFDPSlAeBZkZWlCKAcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rmL6SMsO; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZEd39Fk6mWBG80KD/qDuXy6K8O174KQ2385+cGy6bSTYPK10A+3IFt0bjDNfbwk5ijROQcGwesXqwCzgk/v25b4oG4O4lU97MrE9EZ5irc/jywLiB1TlPvELWhZuY8chYu5nlZOPdqYufysc93k/Fmn6trFIBJMow+tZnKLSDZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=pnHxY4Ck; arc=none smtp.client-ip=185.125.25.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rmL6SMsO"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3912c09be7dso3603844f8f.1
-        for <linux-security-module@vger.kernel.org>; Wed, 12 Mar 2025 04:32:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741779158; x=1742383958; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=w3nFEoLpFF9YtTM0gdngJeq+IrxApmUKsC02THXL5Nw=;
-        b=rmL6SMsOlKFJqP1f5WmpK5Xh422oaXTPM9EXlQEpaNIfGlZSIxTQ09jbifjdYFZhjB
-         UNdiuGTkbgMLN1E58mhhQhu34LctOEw+t432jZcWeF3G0a2mtFogvp766p1J5Pf5y5RC
-         zL62Be+8bqeyE0afVmCKi28QN71xp52Z3MQm3t9NxBaPPK32g3dAr5jk9DmLeLbsj4hk
-         VqjI2JFPTgkb1tVtj9tZ3cvEIzmZCowbxRVJoWAkbieQUaVpHqw2q4qQ273D1/OWMNnE
-         0Jq2R+XsZ0WgI6/yMr1Z/y+8nqK9orvelgJjjc1n1oH+VI0T431VP2XjVSA5204c/YZf
-         tTTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741779158; x=1742383958;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=w3nFEoLpFF9YtTM0gdngJeq+IrxApmUKsC02THXL5Nw=;
-        b=cCrz+X22UmR6dAa5Fja/x6OlSBSjMim8rMcYChzCFm2WDPqxqF+1PYcMwImXs1jhmb
-         QKi/FN5buFtS0lD8qANUUmFtAHUdKnI5/oG6LSjzr72BMq+gfk9fDeNuOyA4OC98g5J0
-         CM+4nMA+XpzQbPOMdXcdiPKrGSPH2sf+bdNvRxggaXuzZ9hgL2VkVjqHRlcT7OzNvOXD
-         opM7w3ZTTprMQjigmi6ssvlV/BKVm91VyZ9Xt1f9nrnSspy+YjQS2f+2ZxNh5qAQuPKe
-         wczvDFnFCLirQ8ROfj1wQAeX9US8332N7dopwAjGiABrNoSPCx3tQ7pO11hV4LxIweoS
-         ZGhQ==
-X-Gm-Message-State: AOJu0YzzlJxZV3b1aNZOC26X3pXuX9DcV0an21sz91s/4EVeA8jcD62m
-	sTDMLM2on7DPq6h/+YtP+y0bxbCBr1oRkoM+fbZtJIUDiMgfhii6o41r81rt/b4=
-X-Gm-Gg: ASbGncujQY1pDzZwBowM2d5UQMnKaDQb25G/BUhEMaGMv4MPjruvm2cxzIRJr6VPYUG
-	KyxfwKgtKBk7oJ08Mvglw/HJNUYtDgmr3qim0Jzdn6shEj2JersPfxrZO40v/QANS3DpZ0a+uIv
-	IwVU8washjv2aVZ1YHwd2ZLTeRql42TIhcoSWy7pbTfdPsj6YfZQpatztlqQR27KccpKq4VU58B
-	Bio07DJtzfmO8m0GYMlgcweMGoVVtUb4dS87HcIZYq6lY+5cYtwV04WtV3aSdvQ13S+rmzkfre7
-	4591RKlpJP9WZGwZPFkt91vX3kdEnXZFqFOIZl13oZpVI9xW6A==
-X-Google-Smtp-Source: AGHT+IGtmxBoSDmmngQTkogsSff4+yQy9CBM8kT4DVnLREQSOZYAQrOn51uqevokUlFDQK4fZ6Ax8Q==
-X-Received: by 2002:a05:6000:1f8f:b0:391:304f:34e7 with SMTP id ffacd0b85a97d-39132d985f6mr18882223f8f.44.1741779158367;
-        Wed, 12 Mar 2025 04:32:38 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3912c1037b4sm21003703f8f.92.2025.03.12.04.32.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 04:32:37 -0700 (PDT)
-Date: Wed, 12 Mar 2025 14:32:33 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: linux-security-module@vger.kernel.org,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>
-Subject: Re: [bug report] landlock: Add AUDIT_LANDLOCK_DOMAIN and log domain
- status
-Message-ID: <323222e6-f15e-4950-ade4-181e46b46469@stanley.mountain>
-References: <2425110b-b5ca-4b33-bf75-e6fca0b0de63@stanley.mountain>
- <20250312.ungooTh8Iotu@digikod.net>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="pnHxY4Ck"
+Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10:40ca:feff:fe05:1])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ZCTSp1D2vzT0T;
+	Wed, 12 Mar 2025 12:49:46 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1741780186;
+	bh=QsMaPBu1IdHzdlDOxIMhl0ux6i83ae+8laogwKMHg4A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pnHxY4CkcbNWRlhF+0O04kIcRmdPYDbpgI+WOpzOfWHvSLy7lTggqVebTowzFqwE3
+	 LCle8bhFRwogHcVtA/FFLQrSTJEBuumvjl3dkpFsS23OOGMNZQNhzEKxrv+wn1oNOC
+	 vUAdikjehEJdBJwLV4lPqFD7UWSXxCxAWODt9MyA=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4ZCTSn3XYtzPvN;
+	Wed, 12 Mar 2025 12:49:45 +0100 (CET)
+Date: Wed, 12 Mar 2025 12:49:44 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Tingmao Wang <m@maowtm.org>
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	Jan Kara <jack@suse.cz>, linux-security-module@vger.kernel.org, 
+	Amir Goldstein <amir73il@gmail.com>, Matthew Bobrowski <repnop@google.com>, 
+	linux-fsdevel@vger.kernel.org, Tycho Andersen <tycho@tycho.pizza>, 
+	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+Subject: Re: [RFC PATCH 5/9] Define user structure for events and responses.
+Message-ID: <20250312.uo7QuoiZ7iu1@digikod.net>
+References: <cover.1741047969.git.m@maowtm.org>
+ <cde6bbf0b52710b33170f2787fdcb11538e40813.1741047969.git.m@maowtm.org>
+ <20250304.eichiDu9iu4r@digikod.net>
+ <fbb8e557-0b63-4bbe-b8ac-3f7ba2983146@maowtm.org>
+ <543c242b-0850-4398-804c-961470275c9e@maowtm.org>
+ <20250311.laiGhooquu1p@digikod.net>
+ <63681c08-dd9e-4f8f-9c41-f87762ea536c@maowtm.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250312.ungooTh8Iotu@digikod.net>
+In-Reply-To: <63681c08-dd9e-4f8f-9c41-f87762ea536c@maowtm.org>
+X-Infomaniak-Routing: alpha
 
-On Wed, Mar 12, 2025 at 11:50:31AM +0100, Micka�l Sala�n wrote:
-> On Wed, Mar 12, 2025 at 11:33:29AM +0300, Dan Carpenter wrote:
-> > Hello Micka�l Sala�n,
+On Tue, Mar 11, 2025 at 11:18:49PM +0000, Tingmao Wang wrote:
+> On 3/11/25 19:28, Mickaël Salaün wrote:
+> > On Mon, Mar 10, 2025 at 12:39:04AM +0000, Tingmao Wang wrote:
+> > > On 3/6/25 03:05, Tingmao Wang wrote:
+> > > [...]
+> > > > This is also motivated by the potential UX I'm thinking of. For example,
+> > > > if a newly installed application tries to create ~/.app-name, it will be
+> > > > much more reassuring and convenient to the user if we can show something
+> > > > like
+> > > > 
+> > > >       [program] wants to mkdir ~/.app-name. Allow this and future
+> > > >       access to the new directory?
+> > > > 
+> > > > rather than just "[program] wants to mkdir under ~". (The "Allow this
+> > > > and future access to the new directory" bit is made possible by the
+> > > > supervisor knowing the name of the file/directory being created, and can
+> > > > remember them / write them out to a persistent profile etc)
+> > > 
+> > > Another significant motivation, which I forgot to mention, is to auto-grant
+> > > access to newly created files/sockets etc under things like /tmp,
+> > > $XDG_RUNTIME_DIR, or ~/Downloads.
 > > 
-> > Commit 96cc6f48a8e4 ("landlock: Add AUDIT_LANDLOCK_DOMAIN and log
-> > domain status") from Mar 8, 2025 (linux-next), leads to the following
-> > Smatch static checker warning:
-> > 
-> > 	security/landlock/domain.c:66 get_current_exe()
-> > 	warn: 'size' unsigned <= 0
+> > What do you mean?  What is not currently possible?
 > 
-> Hi,
-> 
-> Thanks for the report, I'll fix this issue.
-> 
-> I'm using Smatch's kchecker (commit f4f26f80d4f3) but I didn't get this
-> warning.  I tried with and without build_kernel_data.sh but I get the same
-> result. Which command are you using?
-> 
+> It is not currently possible with landlock to say "I will allow this
+> application access to create and open new file/folders under this directory,
+> change or delete the files it creates, but not touch any existing files".
+> Landlock supervisor can make this possible (keeping track via its own state
+> to allow future requests on the new file, or modifying the domain if we
+> support that), but for that the supervisor has to know what file the
+> application tried to create, hence motivating sending filename.
 
-Ah.  Sorry, this is an unpublished warning.  It's not far off from being
-good enough to release.  I'll dust it off and publish it later this week.
+This capability would be at least inconsistent, and dangerous at worse,
+because of policy inconsistencies over time.  A sandbox policy should be
+seen over several invocations of the same sandbox.  See related deny
+listing issues: https://github.com/landlock-lsm/linux/issues/28
 
-regards,
-dan carpenter
+Let's say a first instance of the sandbox can create files and access
+them, but not other existing files in the same directory.  A second
+instance of this sandbox would not be able to access the files the same
+application created, so it will not be able to clean them if required.
+That could be OK in the case of the ~/Downloads directory but I think it
+would be weird for users to not be able to open their previous
+downloaded files from the browser, whereas it was allowed before.
 
+For such use case, if we want to avoid new browser instances to access
+old downloaded files, I'd recommand to create a new download directory
+per browser/sandbox launch.
+
+> 
+> (I can see this kind of policy being applied to dirs like /tmp or my
+> Downloads folder. $XDG_RUNTIME_DIR is also a sensible place for this
+> behaviour due to the common pattern of creating a lock/pid file/socket
+> there, although on second thought a GUI sandbox probably will want to create
+> a private copy of that dir anyway for each app, to do dbus filtering etc)
+
+An $XDG_RUNTIME_DIR per sandbox looks reasonable, but in practice we
+also need secure proxies/portals to still share some user's resources.
+This part should be implemented in user space because the kernel doesn't
+know about this semantic (e.g. DBus requests).
