@@ -1,271 +1,127 @@
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+Received: from sonic311-30.consmr.mail.ne1.yahoo.com (sonic311-30.consmr.mail.ne1.yahoo.com [66.163.188.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4565F236A8B;
-	Wed, 12 Mar 2025 12:26:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCB7E1D5176
+	for <linux-security-module@vger.kernel.org>; Wed, 12 Mar 2025 16:35:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.188.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741782384; cv=none; b=g5kEnZuv0wfoefNHeeJgtSXaSVA4V7Yu+HcgpqFsOd3/Wzslgnofv1dWdImK2wkIzNJgYjXEtlpwk5J/TpYEWHzWFs8WwwmM/0NZ1ysgf5qVoEUPCWJ22MsKClNAnOFOg47XxRcVPGY7NsJ1CCqejVbe565S1m1e8WoGv1TFuZ4=
+	t=1741797341; cv=none; b=Wk/R/awbpoVb8G0widZe9awCXk972WtdblJPMw24m25CG/C8GIj1Zlc/9m9iVCCs7wuMWfkZDH5J7ckdUcpduBEIKJ56oyyGMK7fkhcCXatYWhb1dwtnIu8/1mf+quHZS3msx7r9RBA1kw4DtKloxDVmi5F/ddlVrbri0rQNg3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741782384; c=relaxed/simple;
-	bh=+S5IFxoaulHkrOYysVTZsSuDESUj9x2lAoqd9xgjh9Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ffldQGRADNvrf2e54XFTvBnw891zgODeYaRAA4LA32dL//6KUX6QUONX8M7YKXr3Wkh6sqd4jozGVXk+AYwOMgTRunN3mnf42D7VK59hW9PKbPzRk4qHehMQFt23CGSOEMMm+sikb8G80ondk7v8lxfcKb0KqjQe5T26Gm0STMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BlMQQ/CP; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1741797341; c=relaxed/simple;
+	bh=1PHUVzzaiBYgz5npELLE/NTHEwbh0ZgAFoEjtFfjE7M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PqnHYHJuq+L75PRvojY7ggYzJ9Js65A3kxSk8+hHDYI2ZxTiwej8igc5QN34CiynH97xLPNZYPzZhMEn/xGNz3C/jIiuQgkJXdIzWyRnUGKuiJFEUSoOHzlNYbaIa4IteX+C+Zs6wB5kV+KnEFJLXNPkUC/i8QnxQCahHV2BOP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=I3aqfiI/; arc=none smtp.client-ip=66.163.188.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BlMQQ/CP"
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5dca468c5e4so12839078a12.1;
-        Wed, 12 Mar 2025 05:26:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741782380; x=1742387180; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dFe2sOveZKBWE9gAu2WL/9uvR3gMDz4Pu1TP5mW2XBA=;
-        b=BlMQQ/CPB3Gzs0x+hRMBZHrj9MHIBsqL6wMSMVJR8KwbUirFx4OEslLIQajnvKKLHh
-         xqmbOFttgFxiyEL0yBwcxuiOpTvjlaNwS+sILLO2pcgIIESx+fG5nAtziVYchrhoCA83
-         d/jMXZZ0ZhJkhhhh2Sd4J+6P3pTVmgB5rWP8xnAKvgSVMTCWiwWoEoLpzDRcf/KLITky
-         hrAzyT51tRnV9p1kGQA6tNU8s0//sUTtlYIvYxRL7MgvkOdbr4ZzHKcqGxlC2bkH2mjx
-         bLg6yCWXS2nPGF6GF+JjhFxQtSAVK3oF9CYvMhGc9Y8SMEQA7GB3io9Ozi5OzBOXbUJi
-         uROA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741782380; x=1742387180;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dFe2sOveZKBWE9gAu2WL/9uvR3gMDz4Pu1TP5mW2XBA=;
-        b=tVFWqAh6xp9moVuGhve9+X2klt5WJO50VfOb6IhvaOsSOESxLugW9pEza3yctW32k8
-         DpvNqQ5mbjNdSJsVbtFVLPyIkwU/JNnU9DBgE1NrR0s3hk0OhkEbFphxhoAXYnJqWAKP
-         uF5cY8xSmvPS/QO9LAgVnqloO/dgfKNp24H6Ywx4EBIwteZ0283uk2mQwsY2nkj0fJPh
-         QamXm+dNK+XaGlem3l6zKlEOwG7WRoHSMmZqVTXW2NmLCQZK+4dvWsn3dC6vXBwDa1Ux
-         I4d/gYK/jqu7TSCeNNGbY+4qk20QnHElqnbXnwpdn6OJY67i1NPHxUS2dv90jMB3JRrH
-         8gQg==
-X-Forwarded-Encrypted: i=1; AJvYcCVZ86gh6rWrR32YhYpgKI667q5UHQtrfBVdJWSKMgV6/3iXozd/rnYW0DNtHiJbW7cd/2IxprzGjXaC0BcP@vger.kernel.org, AJvYcCWpo5V0msYpe4K1/2BsH2Rwn9SS4/8M7nKDcq14PsdudGmIrVdAizSXGT/IFoHpvHBJ3VGvVX0oVMKiO7hTe3HPw4YFOW9y@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPtZXXpixJ8Z0WpwpCzzhglPhTS2AWPFynBTeqrXziTjBnjbgN
-	M3Df1UxzCML1enYHDTzlLB/tLBddiO+giKv3C79LgPJDAU3Suq/NxYVPW6Mj3PiMlkxdwz4NjDa
-	PwccZi7WEK0uik407mqUV6j9G/Jg=
-X-Gm-Gg: ASbGncuoEvWICQDlFRuWhvOb5GFclo+DTGWLhko9XtFSIwHG2uTV+k52ey+9fFFSU37
-	16bOaTTO45MX/LdjoB1w8HIuqzdrFyRsjShFAkiTjsZDU+BJT6Pdu/TYA7LOK0ptshBoViV3R/v
-	Dxbvm8xfD1HBFhf/6YyXc+UtWnpA==
-X-Google-Smtp-Source: AGHT+IGz6WljhO0FY//SkK/6uCInDqHyKjR+Ac2u9tqcTPIInkMm5tol8ItxWs4BA32CK83EyrBX18QvUwVaPAu2ABY=
-X-Received: by 2002:a17:907:1b05:b0:ac2:8a4:b9db with SMTP id
- a640c23a62f3a-ac2525f4065mr2385386466b.16.1741782379985; Wed, 12 Mar 2025
- 05:26:19 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="I3aqfiI/"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1741797332; bh=OnFLpODjASut6A2ge/hSbA7JxNiRbK+quw7LVPBuPjQ=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=I3aqfiI/P8bggg+jeqq3joVHbOIbSSrhwjB1+0mzENlkn/XV5bVygBHYnBTtfHNxOtzllspiczvOM4y7yWF6gTb7BqmrVAb/quUOZ+wwG+QAT0OK26isntaW3T3CKpIc+dNXPzX0J5A6f0CjjGd6JL2FnRPmDvJHEpJypzl8suMiZuq5sIhrb1BYB/jZnSW/BNajkYS3NLIHecwnbMDMn666AdjPuD4/Xq1etU7xpSofepkU5Vo663FB+ApMpS79MqwoNX09yoc24FjU/VMrJnROSIChxUawJbDH3jvUsrTW982eZmtIJF+qI4GTWePMEX93SMSxej7j3RfnH6MMxw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1741797332; bh=D7YnPpxqCeVBV0qeTReMZr/mNe71lVBpbTrzrVc8Znb=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=T7KPkLGvD4RwcQqYE9umfyIKGr+DQ8gVVou6ri1P7k90GH5ZaG1sMPu6cmvKtb5anXOWmVDNZvYuwxUvJ0X3ceYMExDwoU5RKarG1YkVePdgYmA9Q4QyxXW7ctPi0EiORxcn0yi+j5JvAmf/eSz6cdkaGXH6MKoRsPIiPB7aT3ZQKF2owKE/1Zy2S5vKoYMct5EU/jjsDmMU4TE8PA53MxDqZF04hhZcsnYEfIB+ebz3vgDvuQeoSfmrQ/tH94K3WLB0T/CWMffA7zkXclE9jFS6zNus7tUTVG3lBzolwwgbKuD6jW1fKO5SnjknxiifTbJkao9oZuAYoxeVW41PWQ==
+X-YMail-OSG: RbMg4TkVM1k3QwwOLn1yX1o8S_h0P2Bfgjer_3a8VMZXiGVFNPamtif0tsGI8E_
+ Mz_S4Dj5nYV3rv2YwJAK1Bru1If5aPt_6idnfGmvE1K088N5AloItOl25l2BgK5ZZV4sRlijDLk5
+ 8pN3R1lpO5ZmM6ZqPGfSzBqFKAuzmUVyeSfPC7B2OakOwUNy8DQDxvaEaAiDWYZ8NbTrSVUc7gXr
+ wrRO7BcFOQbiXIwCwiqks8Aspr.pt32ehoSuHyQNaLMTCHU5dz3uxRoHpNv3715rI.VhnpowuMUG
+ _cfORFs2rhemXDEnOYqfIlYCCN9g1U_.Jj72TiORuoa6cDIR5QUB.bZL4dap1ym2UNrQFXO2zqem
+ YjdUXba.xrfQ_kPrN_3crm.DlrB40p1_wL21bukPryzulK0TkvZ_3NRdorg3i8FJZm..6fbubpt9
+ xk5RYwXJFXlGoPAks.nBdznX5A424eOBEava6WtJBhkJFT398WZ7ssgo_XN77aEQlaPeaA_uP3i5
+ TSkaidFGJvtKTWbTTXHu80Wlo6OE4XAcO.kLj2qWHlr6OOGxa9Dd74l4lMh3FUrF6SRLd.bSiYHo
+ 8LHWC63pp8452SnfspTaWWuwMLbQbC2MbUEi99hwWPZvCiEn3c8WWYjdz5dvXdoncYmred7ZznYe
+ hJ7AuaT0Qvv18K6XGoJpdbZg0C3pOyIRhpKAaL4JHcLT4jI884NHv3FoZL.sk4f54RZh4yYnYVRP
+ VlY305KnWVFSyOTA5NWxfCzUnW0pBHKP3pUMGMy6Y.IkXxJqHqpXk6TmgHrQtGrKlDkRIqwath1h
+ I.bWQuXOeI6kX3Qj4t0DMczGxoUUwn3mWNJ.m9U2M3nw1hZGAqfLI04UWkgMVOfOyotohgXhS35n
+ cj1H_o.M9vDGVrmjJ64De2mkWNrBLDSP6BESu9JRIYler9gjdYmyYozy0JUN1JIJpblrTvwC9F0H
+ LBgCmZbESz072CWlNlai1OyhJWfBm5f90Z1mGaSnCuI94sBPlMV3FLdhymc2T6Ts9DFNR2BcOzFj
+ W.wyFds7eLnWaTqiB116hd6CjGYejbDdh5uRZMQwm8IERPDb3QkO0iBfncCrl5Dj1os_qvW8gdGG
+ mr2SvZr9RJW7IkPJPPH9c9fRt91.DZJX6x4XgDoKGkLx61Qu0WXOeIl0ii2z_xg5mSzQ43hACDBW
+ Ek0kEKOK2.bIK6vYfARXSgWq7X7Y9QNrRNCROJCsxm.9cqb5ny9yeM7TyRacIARHKfJhfWibCBWW
+ rcBp0HaDLJiu6.6v7yOEZyK9hTziRq174eR9NaEbUG4jHCeIKP462npJgtrue9BdpcoKj3klIpJd
+ 2xADG4R9bu.ZEql5.CHUuaE.nnpzXLptVF5SQ7JLKkq_vQoj7xodcacp4lxaTdmO.8jIRCMoZa_H
+ Yq7Xgu7GRXnnihMVBOFK8CRbbhL8syWR.Sdp7Bk4LOB9Yhn_rRmYI0j13DThMtLcf7JZKOpNPhkU
+ gETrZecFcwvqeuzV8T0sCtgTOarB3cqLax6CJEIJad4QffRwQXAqGFGuwuqL_vzkJ9tCPAxtpHFK
+ _Q1kqBI3Tzfb2wTPIEwz8JS8AfLN1cmrcgNcGVSd0.5Xx9ejQiox8v8h.pvOTsEZD06XZpL4JxvH
+ nPNNzSprwxRAl3h9XwyMrn_BRWtlOvmrqeccYIsmFrtigqLZwSNDtGnCb6qTvy0VnAsHf0meF4H7
+ UHgdoLqVskZDT7xc2Yu4bO2pj869BrMFE2RvwedB0BoT1WtMfyY8X242msltzUkklAlT_zA6LL2y
+ Ks0sZCEw7GVFGnhIe5YSxUogU5pZQTEvPdBVS2TPRPczoVDnm6xovhTmM0nOLX76Tzq8jRFUadUk
+ DC09RupPs.Ox2W244ov4SUcaejumLZntayubPIbe6ZMG1YxSX6rGKoSs0U9.HTGq2b9xx27HP2LU
+ Vs02mSf42Pn0GQi.AlpWDb2ZcjzSXPVdW2B6YUp8sjsdjDwZzt4vPZyVWfyVpr5d5GNhx8udTRFC
+ udfH9hgT2e8nRKFZ9B3qCUvd3.tjr0Mem0ngN8ggyN_1e8a83Wx6cdH4yJSb.Rxk3rZ8gDk20WFB
+ 90S8tu1.DFCto12b_5bnT2vDDm6mabjEh2YcjBL5egm6mMRhORizXJsgVo.SEj_dgYGr8YxcAYxq
+ IsEzVcROrfCdpMU5jDP0EIQMCHfWARVRaaJMwp46wH6gFDpyE4DjPTfudN44jBHLosNzDMbFHcVR
+ IBU29Su1xJqvi2QX85Rm_wvRPoVHWoJyre7utkeiD4N1cgEjIXfSD4TltL34scyZcDSK4xerOPdK
+ 3ZBAB
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: ee1fbb01-4f62-4b6b-bacc-2cce61442f64
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.ne1.yahoo.com with HTTP; Wed, 12 Mar 2025 16:35:32 +0000
+Received: by hermes--production-gq1-7d5f4447dd-jx67d (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 05fa7ba5da5c0e0eaa57f438ffca73d3;
+          Wed, 12 Mar 2025 16:35:31 +0000 (UTC)
+Message-ID: <b0bb8c6b-0e68-4c71-8476-9f8b0f229dbe@schaufler-ca.com>
+Date: Wed, 12 Mar 2025 09:35:30 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1741047969.git.m@maowtm.org> <20250304.Choo7foe2eoj@digikod.net>
- <f6ef02c3-ad22-4dc6-b584-93276509dbeb@maowtm.org> <CAOQ4uxjz4tGmW3DH3ecBvXEnacQexgM86giXKqoHFGzwzT33bA@mail.gmail.com>
- <1e009b28-1e6b-4b8c-9934-b768cde63c2b@maowtm.org>
-In-Reply-To: <1e009b28-1e6b-4b8c-9934-b768cde63c2b@maowtm.org>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 12 Mar 2025 13:26:08 +0100
-X-Gm-Features: AQ5f1JqI0toqoIEZPMBdO5gcT6EIqdR9pQE4ZELMDP38nUAVA6eda8UjLjB_fRI
-Message-ID: <CAOQ4uxhgQ8h2m9fPHe8nFO8+WSqFGSKB9TdSKWz5dE6ax4tb5Q@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/9] Landlock supervise: a mechanism for interactive
- permission requests
-To: Tingmao Wang <m@maowtm.org>
-Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, Jan Kara <jack@suse.cz>, 
-	linux-security-module@vger.kernel.org, Matthew Bobrowski <repnop@google.com>, 
-	linux-fsdevel@vger.kernel.org, Tycho Andersen <tycho@tycho.pizza>, 
-	Christian Brauner <brauner@kernel.org>, Kees Cook <kees@kernel.org>, Jeff Xu <jeffxu@google.com>, 
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
-	Francis Laniel <flaniel@linux.microsoft.com>, Matthieu Buffet <matthieu@buffet.re>, 
-	Song Liu <song@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] smack: fix two bugs in setting task label
+To: Konstantin Andreev <andreev@swemel.ru>
+Cc: linux-security-module@vger.kernel.org,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20250306224317.416365-1-andreev@swemel.ru>
+ <b3b4585b-c9f3-4c87-9a9b-bc4137ecea47@schaufler-ca.com>
+ <593b1df7-062b-4751-a8b8-6e83f7091987@swemel.ru>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <593b1df7-062b-4751-a8b8-6e83f7091987@swemel.ru>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.23435 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Tue, Mar 11, 2025 at 1:42=E2=80=AFAM Tingmao Wang <m@maowtm.org> wrote:
+On 3/12/2025 2:30 AM, Konstantin Andreev wrote:
+> Casey Schaufler, 11/03/2025:
+>> On 3/6/2025 2:43 PM, Konstantin Andreev wrote:
+>>> These two patches have distinct subjects,
+>>> but work on the same object,
+>>>    security/smack/smack_lsm.c`do_setattr()
+>>> and the second patch partially overwrites first,
+>>> so I combine them in a series.
+>>>
+>>> Konstantin Andreev (2):
+>>>    smack: fix bug: unprivileged task can create labels
+>>>    smack: fix bug: setting task label silently ignores input garbage
+>>
+>> There is a problem with this change. Some applications include a
+>> trailing '\0' when writing to /proc/self/attr/smack/current, which
+>> fails with this change. It may not be "correct", but it is expected.
 >
-> On 3/6/25 17:07, Amir Goldstein wrote:
-> [...]
-> >
-> > w.r.t sharing infrastructure with fanotify, I only looked briefly at
-> > your patches
-> > and I have only a vague familiarity with landlock, so I cannot yet form=
- an
-> > opinion whether this is a good idea, but I wanted to give you a few mor=
-e
-> > data points about fanotify that seem relevant.
-> >
-> > 1. There is already some intersection of fanotify and audit lsm via the
-> > fanotify_response_info_audit_rule extension for permission
-> > events, so it's kind of a precedent of using fanotify to aid an lsm
-> >
-> > 2. See this fan_pre_modify-wip branch [1] and specifically commit
-> >    "fanotify: introduce directory entry pre-modify permission events"
-> > I do have an intention to add create/delete/rename permission events.
-> > Note that the new fsnotify hooks are added in to do_ vfs helpers, not v=
-ery
-> > far from the security_path_ lsm hooks, but not exactly in the same plac=
-e
-> > because we want to fsnotify hooks to be before taking vfs locks, to all=
-ow
-> > listener to write to filesystem from event context.
-> > There are different semantics than just ALLOW/DENY that you need,
-> > therefore, only if we move the security_path_ hooks outside the
-> > vfs locks, our use cases could use the same hooks
+> Understood. Given this, for any "label"
+> three input variants should be accepted:
 >
-> Hi Amir,
+>   "label"    (5 bytes)
+>   "label\0"  (6 bytes)
+>   "label\n"  (6 bytes)
 >
-> (this is a slightly long message - feel free to respond at your
-> convenience, thank you in advance!)
+> but not
 >
-> Thanks a lot for mentioning this branch, and for the explanation! I've
-> had a look and realized that the changes you have there will be very
-> useful for this patch, and in fact, I've already tried a worse attempt
-> of this (not included in this patch series yet) to create some
-> security_pathname_ hooks that takes the parent struct path + last name
-> as char*, that will be called before locking the parent.  (We can't have
-> an unprivileged supervisor cause a directory to be locked indefinitely,
-> which will also block users outside of the landlock domain)
+>   "label\0\n"
+
+I agree that this should not be accepted.
+
+>   "label\n\0"
+
+It's sloppy, but I can see a someone using strlen() + 1 inappropriately.
+This should be accepted.
+
+>   etc...
 >
-> I'm not sure if we can move security_path tho, because it takes the
-> dentry of the child as an argument, and (I think at least for create /
-> mknod / link) that dentry is only created after locking.  Hence the
-> proposal for separate security_pathname_ hooks.  A search shows that
-> currently AppArmor and TOMOYO (plus Landlock) uses the security_path_
-> hooks that would need changing, if we move it (and we will have to
-> understand if the move is ok to do for the other two LSMs...)
+> right?
 >
-> However, I think it would still make a lot of sense to align with
-> fsnotify here, as you have already made the changes that I would need to
-> do anyway should I implement the proposed new hooks.  I think a sensible
-> thing might be to have the extra LSM hooks be called alongside
-> fsnotify_(re)name_perm - following the pattern of what currently happens
-> with fsnotify_open_perm (i.e. security_file_open called first, then
-> fsnotify_open_perm right after).
+> Thank you for paying attention.
+
+I'm the maintainer, paying attention is why I get the big bucks.
+... ok, in truth, I don't get paid anything, but it's the principle.
+
+> -- 
+> Konstantin Andreev
 >
-> What's your thought on this? Do you think it would be a good idea to
-> have LSM hook equivalents of the fsnotify (re)name perm hooks / fanotify
-> pre-modify events?
->
-
-No clear answer but some data points:
-
-The fanotify permission hooks (formerly fsnotify_perm) used to be inside
-security_file_{open,permission} so when I started looking at dir modificati=
-on
-permission events I started to try using the security_path_ hooks, but as t=
-he
-work progressed I found that fsnotify hooks have different
-requirements (no locks).
-
-Later, we found out that the existing fsnotify permission hooks have differ=
-ent
-needs than the existing security hooks (for pre-content events), so after:
-
-1cda52f1b4611 fsnotify, lsm: Decouple fsnotify from lsm
-
-fanotify is not using any LSM hooks and not dependent on CONFIG_SECURITY.
-
-Mentally, I do find it easy for fsnotify and security hook to be next
-to each other,
-unless there is a reason to do it otherwise, because from vfs POV they
-are mostly
-the same, but note that my branch implements the new fsnotify hooks actuall=
-y as
-scopes (for sb_write_srcu) and in some cases as other people have mentioned
-on this thread, the security hooks need to be inside the vfs locks,
-while the fsnotify
-hooks need to be outside of the locks.
-
-> Also, do you have a rough estimate of when you would upstream the
-> fa/fsnotify changes? (asking just to get an idea of things, not trying
-> to rush or anything :) I suspect this supervise patch would take a while
-> anyway)
->
-
-Besides my time to work on this, these patches are waiting for some
-other things.
-
-One is that I was waiting with promoting those patches until pre-content pa=
-tches
-got merged and that took longer than expected and even now there may
-need to be follow ups in the next cycle.
-
-Another thing is that these patches rely on the sb_write_srcu design concep=
-t
-which is pretty intrusive to vfs, so I still need to sell this to vfs peopl=
-e.
-I am going to make another shot of an elevator pitch at LSFMM in two weeks,
-If we get past this design hurdle, the rest of the work will depend on
-how much time I can spend on it.
-
-I do *want* to  make the patches in time for the 2025 LTS kernel, but it ma=
-y
-not be a realistic goal.
-
-One thing that helped a lot with pushing pre-content events is that Meta
-already had a production use case for it.
-
-I do not know of anyone else that requested the pre-directory-modify
-hooks (besides myself), so that may make the sale a bit harder.
-If there is someone out there that does need the pre-directory-modify
-hooks now would be a good time to speak up.
-
-> If you think the general idea is right, here are some further questions
-> I have:
->
-> I think going by this approach any error return from
-> security_pathname_mknod (or in fact, fsnotify_name_perm) when called in
-> the open O_CREAT code path would end up becoming a -EROFS.  Can we turn
-> the bool got_write in open_last_lookups into an int to store any error
-> from mnt_want_write_parent, and return it if lookup_open returns -EROFS?
-
-IIUC you mean like this:
-
-               err =3D mnt_want_write_parent(&nd->path, MAY_CREATE,
-                                                  &res, &idx);
-               if (err && err !=3D -EROFS)
-                       return err;
-               got_write =3D !err;
-               /*
-                * do _not_ fail yet - ....
-
-Yes, I think that is better, because the logic in the comment only
-applies to EROFS.
-
->   This is so that the user space still gets an -EACCESS on create
-> denials by landlock (and in fact, if fanotify denies a create maybe we
-> want it to return the correct errno also?). Maybe there is a better way,
-> this is just my first though...
->
-> I also noticed that you don't currently have fsnotify hook calls for
-> link (although it does end up invoking the name_perm hook on the dest
-> with MAY_CREATE).  I want to propose also changing do_linkat to (pass
-> the right flags to filename_create_srcu -> mnt_want_write_parent to)
-> call the security_pathname_link hook (instead of the LSM hook it would
-> normally call for a creation event in this proposal) that is basically
-> like security_path_link, except passing the destination as a dir/name
-> pair, and without holding vfs lock (still passing in the dentry of the
-> source itself), to enable landlock to handle link requests separately.
-> Do you think this is alright?  (Maybe the code would be a bit convoluted
-> if written verbatim from this logic, maybe there is a better way, but
-> the general idea is hopefully right)
-
-I am not sure I understand your question.
-fsnotify does not need to know this is a LINK and not CREATE.
-I do not know what the requirements of other LSMs for those hooks,
-so hard to say if it is ok to move those hooks but my guess is not ok.
-
->
-> btw, side question, I see that you added srcu read sections around the
-> events - I'm not familiar with rcu/locking usage in vfs but is this for
-> preventing e.g. changing the mount in some way (but still allowing
-> access / changes to the directory)?
->
-
-No. this is meant to accommodate fsnotify_wait_handle_events()
-(see last patch) - wait for in-flight modifications to complete without blo=
-cking
-new modifications. That's the concept that I need to sell to vfs people.
-
-Thanks,
-Amir.
