@@ -1,69 +1,71 @@
 Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4633B1E9B3E
-	for <linux-security-module@vger.kernel.org>; Wed, 12 Mar 2025 21:22:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C93C61EF096
+	for <linux-security-module@vger.kernel.org>; Wed, 12 Mar 2025 21:22:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741814577; cv=none; b=KwcXxxWINkf1XGRdxW5AKtTGawF16SebK4XecKi1SYWXJS9CJt8BTea9+Sz/hOn3tXkMsaFeybO2R8j4iIaCRr/gZEdVtwFZpFL20MKYOmdt7xgMYfEkKKh70Aiogktwd2RhGMAu54SCJXTGTSHuHKRNYDTY2uGDrehD/jQElso=
+	t=1741814578; cv=none; b=En/eY50jz3xkSMcIchmMC7l93P/ZCfRPJ8M/KMS9OqNYSXMobppdUu9tzemnlgTnjR7y0+h+Xi6sfAVWGlbtUV4cvtC/1mEk9x4SWGsWT+P9irvJU4tscc6jBagg+WKV/BFz4wGbN0LKz8GRi4Unr9uLEA8jSfe6qv0DHD5mgUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741814577; c=relaxed/simple;
-	bh=6cBhe/0J0x7XG16Ij8KWWPYPemaK8pVTxylYk+O6p0E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=H7hH8QYwDxwuF7I+1b1KZsZxV8z1MaPKEhuzKfkTs7wRi/8P+s6NNWRCXvUXNtBl11sDGvO92RCMn9lFJxNu++XiPa/jyYS2ZikN9cl3LUJaeqvujAGGPmvj58zoCeIMogWviTh9NOPjHWUbSj8ic4H3F0d1f5Tgpj3VdX9fES8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=HyGcuxw2; arc=none smtp.client-ip=185.125.188.123
+	s=arc-20240116; t=1741814578; c=relaxed/simple;
+	bh=mvIFvWIp9NnNpqjlb78s7uPPK/9pOen0F/aXj53TS9k=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=QmTSagEwQ2cU7IJjryhI3JOFUWyBFhPyzJqbMM09M8x+hpEYDNSYrM3xG5Zz/wXzjkMeHK9G+pXNheyYsg61GaqQ+rrZB+63Q/zbPtdYKyOkVXwReWKW2a3uybwC1xni8uofjT3v9RzD7qlD4fu2OXT/AWPA+Z9p/P1FGns/c5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=uI6awYxi; arc=none smtp.client-ip=185.125.188.123
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="HyGcuxw2"
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com [209.85.216.71])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="uI6awYxi"
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 5E4363F6FE
-	for <linux-security-module@vger.kernel.org>; Wed, 12 Mar 2025 21:22:44 +0000 (UTC)
+	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id F222D3F2C0
+	for <linux-security-module@vger.kernel.org>; Wed, 12 Mar 2025 21:22:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1741814564;
-	bh=UYHE7PfrFzAetCRzPVVNsPinECVfo2Zm0WG/ZDMIyJE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version;
-	b=HyGcuxw2WVxK/+P+1a2tGfC211wxeIptyQto0MTo4Sz9qbVXStMHLM2LBYKqURoZ4
-	 Kt6NIVGWWeBnbQPly22DDz8P/GIOqyfZtXTOoeAQ4s9zZ94OlLVVWRVRQ4JTDk1CvM
-	 7mQDw/D2kdsZWkaCOKWkge0kTLkaIbV4zVrAe2TiS8C02wvmAMTDKh9WVXqkJSn/ih
-	 BI5ql+kemD+hEhJ1x8C8Fa3ymBY5dOFmjZ3hHil4LO+IoHLfCyYsnDWfQ+FlLpgZHf
-	 NCoGoPvS5xChb/hZkKfyvGAgKVSl27unjlQjSu6YIxFiqmqlpmAvTHPgTqjjGVqJpK
-	 MWJtuVMZOMA0Q==
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2ff798e8c90so478550a91.1
-        for <linux-security-module@vger.kernel.org>; Wed, 12 Mar 2025 14:22:44 -0700 (PDT)
+	s=20210705; t=1741814566;
+	bh=JJCUu0nnTlIAwhQtLazst1i1S2GtJ41RAYnP5gniTzw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version;
+	b=uI6awYxim82/z5f5cvID+u84PqHGP29jae936qURO6TZh3kPt3VKdd6QkBG0BPfDN
+	 nUFwZr5tefTaOWSeS2C1nLfySfDhDJYGEOMPcNLyo1JercStvR0sjcr8JcA3BSP8CK
+	 CXfGsdg1q9o4/fLkUpopNjz8jQFiSWePp5XRQ71WBH3tEa46uHhl24Z4Tk0xb6yvNP
+	 VGn10AfZCM+I28zcs3gUYpiRDmr/i5RXMMN9X4f7mX78WGGTZha8SQN7PG23HA38h/
+	 cJTkaQFJ0AFxLq54T1zwnCLYIE7CCBh9gYTmcOsNK5LZUHECkkY8JzkQWJrF+Y0+Jh
+	 h412IuCb3sapA==
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-22406ee0243so3064025ad.3
+        for <linux-security-module@vger.kernel.org>; Wed, 12 Mar 2025 14:22:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741814562; x=1742419362;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UYHE7PfrFzAetCRzPVVNsPinECVfo2Zm0WG/ZDMIyJE=;
-        b=ipYMc+71uldPbAtjuOmqM56Q6wDMsFeeggWN/+nA75/ScA42K/ePfcRUzJ+8Rxm/5/
-         gxuobhxb50iKR0ACkm0cjGXvWP3FxbmP55ZmlfLz8Tjgdldq6WlAXiVe3ts+0bxGObzi
-         Ye0f8pLj6/px24mXExtKxg13wOTv4VPzQSf9c560l+EQW1OP2AQcvyeVXySHK5i60Xjn
-         Kdgk0jLnWA1Ec8WLTPggI30A2WI7vJaVi4NkbkI9dui6N3XUSHq3c25p7OvDpYxLJayT
-         txV7vWK8rfFSA/gjRcsPd4IQRxqzWPhzdgBsvmW85KDLsrozKBjmI+M8LhJujHr+aEJJ
-         AlnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWL49gbRJN86BBdJnqh8Wn2BEXR9ZsIHzW00XRee+RTkpefZZO3Xagz22Cntm/R6LXrlUfSMCKE8MROjKMSi8fnG5zvGKE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTqszXXGPHs70dAzWEf1RPzhtTytpunsMv8W6mv1D/THZH0/Zc
-	wb4n/QVTaOoasVf/x9uvBRHQnckxF+sGWWl766xMbabbhW642U4mHdwbpvioe1zIKkxfi8peCvz
-	nC5qth3e4rNCARCVYdrFHmveS24TN3vaJbg2eSLxxOXybMQODAKFlMDEN4QoqWQ3gQJPZ+5aWcj
-	qAaiTZhzGVbk90GA==
-X-Gm-Gg: ASbGncv4wNqYdz6ozsehF6U026Ik5TLzHcbMbRy/XZbzrvNc3KWvFOqdvbP2FRHgbrV
-	MAZLsn2uLYDYmsP4G6Qer79tztT/QQMEekKSMtNviB0bd4VwExYLRBTKJq94vqp+aBkG1qWZp8s
-	w7+QHHT/cC9tit7aKqVwdwwJy0+n594Hxq2wDI96lDmkg1QRMttcnMzV39AVsdy5O3hf2QUAFR3
-	Va7NH5mXXE8KufRPXPBpB7lTJtdbl4Uh7+8bN0sdQ2eSsCzXq91SYYsk/tDVbMMbVLhULOnc7Lr
-	9xsfkD2EbrY+8IR1UDRK942Hrf0QLE82/2ms43mC0szqnl2q1chV18AMqOXqBNXM3HGhb88=
-X-Received: by 2002:a17:90b:1d8c:b0:2ee:f677:aa14 with SMTP id 98e67ed59e1d1-2ff7ce6ff9dmr33955131a91.13.1741814562177;
-        Wed, 12 Mar 2025 14:22:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IESqd74aQLaRYMlhUC52mOCTMPtX58VJpqPHYNlhWsmVgCtfWUR4bux5MtYAMon8vBiSS29gA==
-X-Received: by 2002:a17:90b:1d8c:b0:2ee:f677:aa14 with SMTP id 98e67ed59e1d1-2ff7ce6ff9dmr33955108a91.13.1741814561871;
-        Wed, 12 Mar 2025 14:22:41 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1741814564; x=1742419364;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JJCUu0nnTlIAwhQtLazst1i1S2GtJ41RAYnP5gniTzw=;
+        b=DVIuA8iTcq+oYZWAmxCIBcygX8d2MnxT0Ff5qqFmqhwK6IW9hQrzVbhtbbPvYSfmBr
+         deeBfqZruTuyUfa1/++gqtvyj8xoIEJMdviQhkdEhkiERn3jQlHjuV96Cga3H9NPBrL2
+         lEyTERlZ8BONVJUYDJi1YG9u9lPlFA3AmxuWGL2ru4edmYGyCsQI4Y47Gj0j9G5t3z/H
+         v5Stdf9TU6H5pO3GgMX7yBUtFxsVd8ui+DlZxtKrTrYpcFYnBLs1M7/Z6rijkMNnchF9
+         GHSTTJTr8s83f6rkOOiP7fPlJzQmiv3rQdWkxBpd7jRxcu6O8lNULenhAEDbE320CPA8
+         FNRw==
+X-Forwarded-Encrypted: i=1; AJvYcCWKXsat7pKOISCDic/xHaI5PsxiD7xjDAWFjZRImFSxFrFI549dpT561+OPPTEFpaKR/HceNYqrXC23qhxI1cEgf8jMtwc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywi9BYedKRfc4eSsRTk9Q7Xt7rq6Fvon6sOotP8P/Lq2l9RapTN
+	V+ARkks1XRDaMa3rRFPpLpHQbtm292Fwy6vIMA/cbE2siJNyEpSWsdn9jL8nw7I4XajtF4hAVIu
+	YBeWXYOtykN4mfwzWNzS4s69/S9P3rbTRNAK7sLDCfirYwrJxfeOEVW+jhTvycYDWh+TmUk7gdJ
+	SJ2hbboV/IJ8iSDw==
+X-Gm-Gg: ASbGnctlv9abvfvVMJfmGHERWD3iMbOa/y2tAUvdEs6aQVi50rztRiVYqaFEB+/6CSg
+	bOjDmLaT29i1zqA6OTctqv0XP50VCvdt8JhTmBAYsJ6gdKUeSraurk6WCxHM13wL6hRlL8J2EjJ
+	EIf7Sm5burDlHu70NK3jEGbwyj5ZssSrZOP1ezwGLiBbdyKjzqOdrxe8fXS7NgrrDJ5Qh9pVBJg
+	hxZp1XAaP6xf095NfuTb0/ismUeI6LgI1l8nrrxjDFnjPurjEidzIRzmZuJYDpoFNUev+6rX0Cg
+	H+v71MtEz5uybPR1qkgtfV1wrrNxrT1UY5M5Eq8d9+9mMHIbuMcgAqm0GE4z/i08lJ9rXXk=
+X-Received: by 2002:a17:902:ea07:b0:224:a79:5fe4 with SMTP id d9443c01a7336-2242888681cmr334106855ad.2.1741814564404;
+        Wed, 12 Mar 2025 14:22:44 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFjVvzREwSOFKw0Hfsl/h89sadLsPdTTQZ/I/XFETV/GwxC6RNVuLWxGdk5FbZ6Djc3RCsmNQ==
+X-Received: by 2002:a17:902:ea07:b0:224:a79:5fe4 with SMTP id d9443c01a7336-2242888681cmr334106495ad.2.1741814564101;
+        Wed, 12 Mar 2025 14:22:44 -0700 (PDT)
 Received: from ryan-lee-laptop-13-amd.. (c-76-103-38-92.hsd1.ca.comcast.net. [76.103.38.92])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301190b98b7sm2353887a91.32.2025.03.12.14.22.39
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-301190b98b7sm2353887a91.32.2025.03.12.14.22.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 14:22:41 -0700 (PDT)
+        Wed, 12 Mar 2025 14:22:43 -0700 (PDT)
 From: Ryan Lee <ryan.lee@canonical.com>
 To: linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
@@ -85,10 +87,12 @@ Cc: Ryan Lee <ryan.lee@canonical.com>,
 	Casey Schaufler <casey@schaufler-ca.com>,
 	Kentaro Takeda <takedakn@nttdata.co.jp>,
 	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Subject: [RFC PATCH 0/6] fs, lsm: mediate O_PATH fd creation in file_open hook
-Date: Wed, 12 Mar 2025 14:21:40 -0700
-Message-ID: <20250312212148.274205-1-ryan.lee@canonical.com>
+Subject: [RFC PATCH 1/6] fs: invoke LSM file_open hook in do_dentry_open for O_PATH fds as well
+Date: Wed, 12 Mar 2025 14:21:41 -0700
+Message-ID: <20250312212148.274205-2-ryan.lee@canonical.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250312212148.274205-1-ryan.lee@canonical.com>
+References: <20250312212148.274205-1-ryan.lee@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -97,33 +101,35 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Calls to the openat(2) family of syscalls are mediated by the file_open LSM
-hook, but the opening of O_PATH file descriptors completely bypasses LSM
-mediation, preventing LSMs from initializing LSM file security context
-blobs for such file descriptors for use in other mediation hooks.
+Currently, opening O_PATH file descriptors completely bypasses the LSM
+infrastructure. Invoking the LSM file_open hook for O_PATH fds will
+be necessary for e.g. mediating the fsmount() syscall.
 
-This patchset enables mediation of O_PATH file descriptors through the
-file_open hook and updates the LSMs using that hook to unconditionally
-allow creation of O_PATH fds, in order to preserve the existing behavior.
-However, the LSM patches are primarily meant as a starting point for
-discussions on how each one wants to handle O_PATH fd creation.
+Signed-off-by: Ryan Lee <ryan.lee@canonical.com>
+---
+ fs/open.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-Ryan Lee (6):
-  fs: invoke LSM file_open hook in do_dentry_open for O_PATH fds as well
-  apparmor: explicitly skip mediation of O_PATH file descriptors
-  landlock: explicitly skip mediation of O_PATH file descriptors
-  selinux: explicitly skip mediation of O_PATH file descriptors
-  smack: explicitly skip mediation of O_PATH file descriptors
-  tomoyo: explicitly skip mediation of O_PATH file descriptors
-
- fs/open.c                  |  7 ++++++-
- security/apparmor/lsm.c    | 10 ++++++++++
- security/landlock/fs.c     |  8 ++++++++
- security/selinux/hooks.c   |  5 +++++
- security/smack/smack_lsm.c |  4 ++++
- security/tomoyo/file.c     |  4 ++++
- 6 files changed, 37 insertions(+), 1 deletion(-)
-
+diff --git a/fs/open.c b/fs/open.c
+index 30bfcddd505d..0f8542bf6cd4 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -921,8 +921,13 @@ static int do_dentry_open(struct file *f,
+ 	if (unlikely(f->f_flags & O_PATH)) {
+ 		f->f_mode = FMODE_PATH | FMODE_OPENED;
+ 		file_set_fsnotify_mode(f, FMODE_NONOTIFY);
+ 		f->f_op = &empty_fops;
+-		return 0;
++		/*
++		 * do_o_path in fs/namei.c unconditionally invokes path_put
++		 * after this function returns, so don't path_put the path
++		 * upon LSM rejection of O_PATH opening
++		 */
++		return security_file_open(f);
+ 	}
+ 
+ 	if ((f->f_mode & (FMODE_READ | FMODE_WRITE)) == FMODE_READ) {
 -- 
 2.43.0
 
+base-kernel: v6.14-rc6
