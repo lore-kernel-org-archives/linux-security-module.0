@@ -1,32 +1,31 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34D6D233159;
-	Tue, 11 Mar 2025 23:45:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BFF442A82
+	for <linux-security-module@vger.kernel.org>; Wed, 12 Mar 2025 07:14:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741736714; cv=none; b=D237k7aFQksmWsW99kPWBADvjxdZnPk1ojY1WoUIrNh+0xiBCMqg5cn1FwrctVMaEUdnRv6l0q1/t7A5m+eFo8CHmyprcNMurLkpLX5MbmRzmZoKce8Q5XVuBtE4iqz3rXxhUzGL0QvEyYq6PakgcZHj/vvRxFks0Nzi+9EUSGo=
+	t=1741763680; cv=none; b=Ph2IoRWLg9RpPBF//Q5tymgIIo53Sz0ep9V3drWoVDknED2mHMoMW9SuDErLaTo2Yt64ZNYfCykwEMv6sSJLzFkWP5QCxjtg62R5U/Vou6KTvx80ZvFzK+ObbxUxFZDonoqROJtPfJTx+9lHLuC1VFrP8UQOtmIBdFtlcWZkW20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741736714; c=relaxed/simple;
-	bh=WJxfrA9P0lTPif/rSZgxPJY3TmY+1BcIVavMPTrLyVY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ij5EaZs87/9g0yVwflHTvtJ0qKRfCt7UhiwfyYXmKGAdMid1+XIqINAKSb3qlrnsS5eOQePUvyrhqZcxoBN+KZwrl0bslz17ppoCyhZ5x7U9kwt6D3x1ejud4yV5mVfEDyY5hup7pNHgdQgX7+jvve9hvF4smm4Zb8XGJUMe+8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=QbnG89nP; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="QbnG89nP"
-Received: from [10.17.64.106] (unknown [131.107.1.170])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 31B3D2045FE6;
-	Tue, 11 Mar 2025 16:45:12 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 31B3D2045FE6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1741736712;
-	bh=glSiauzVyj5TpLPTPm8NokxVZzNbbmHbEu15WDGOzEM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=QbnG89nPuznMR4y1um2+WpeUgFAWN+cSKpbbFCY0CZ6BbVtYRj36XwUOl2La2ZtgM
-	 qHDla5pUHmQcAVc3ubJSgLl1id0h/ReIkhzSDMOu2kmXmu5NZaeDI/EzqlGPhjmgld
-	 jRd56jOpbDqDoh9kSebk1g7Khjhgqd1s/amhakBw=
-Message-ID: <a952eaa2-faf4-4312-87bd-7cb6a9100df5@linux.microsoft.com>
-Date: Tue, 11 Mar 2025 16:45:11 -0700
+	s=arc-20240116; t=1741763680; c=relaxed/simple;
+	bh=sSuXucqGa5rkQU4fOEm6Bhetn9RgoxFmKIs/Lh26dSo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=D/6AYSoCsKtatD17OifuukVj3zdLNTD3tpiZZSjqISct6/Ln728hj0GzxWiYsRybH3uyH7k7a6JRyV/ZIba65OHg5hy+RjM0TFRSOduG5hpAvMmeBV1qawivQvJepjOCoPMJX2V062cwmComA1+stP+xKsZ3Kd853vi4U5CGtWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 52C6KYAV072241;
+	Wed, 12 Mar 2025 15:20:34 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 52C6KQSZ072184
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Wed, 12 Mar 2025 15:20:34 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <5d683299-fc53-4763-be49-9a91325a832c@I-love.SAKURA.ne.jp>
+Date: Wed, 12 Mar 2025 15:20:25 +0900
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -34,119 +33,46 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 1/7] ima: copy only complete measurement records across
- kexec
-To: Mimi Zohar <zohar@linux.ibm.com>, Baoquan He <bhe@redhat.com>
-Cc: stefanb@linux.ibm.com, roberto.sassu@huaweicloud.com,
- roberto.sassu@huawei.com, eric.snowberg@oracle.com, ebiederm@xmission.com,
- paul@paul-moore.com, code@tyhicks.com, bauermann@kolabnow.com,
- linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
- madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
- James.Bottomley@hansenpartnership.com, vgoyal@redhat.com, dyoung@redhat.com
-References: <20250304190351.96975-1-chenste@linux.microsoft.com>
- <20250304190351.96975-2-chenste@linux.microsoft.com>
- <Z8g+uhZQ6totYLmp@MiWiFi-R3L-srv>
- <fe6e3c1333a50d66dc876b5a196d3491170802a8.camel@linux.ibm.com>
- <8bc74dd8-ecd0-44ad-88a2-8b36fa61100a@linux.microsoft.com>
- <69f43be0ed70eee45d3d9d9ac2aeaf39def5770a.camel@linux.ibm.com>
- <631f326006226e23f4f755fd32255792f6514a90.camel@linux.ibm.com>
+Subject: Re: [RFC PATCH 0/9] Landlock supervise: a mechanism for interactive
+ permission requests
+To: Tingmao Wang <m@maowtm.org>
+References: <cover.1741047969.git.m@maowtm.org>
 Content-Language: en-US
-From: steven chen <chenste@linux.microsoft.com>
-In-Reply-To: <631f326006226e23f4f755fd32255792f6514a90.camel@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Cc: linux-security-module <linux-security-module@vger.kernel.org>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <cover.1741047969.git.m@maowtm.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Virus-Status: clean
+X-Anti-Virus-Server: fsav303.rs.sakura.ne.jp
 
-On 3/11/2025 5:44 AM, Mimi Zohar wrote:
-> On Thu, 2025-03-06 at 21:51 -0500, Mimi Zohar wrote:
->> On Thu, 2025-03-06 at 14:45 -0800, steven chen wrote:
->>> On 3/5/2025 4:27 AM, Mimi Zohar wrote:
->>>> On Wed, 2025-03-05 at 20:08 +0800, Baoquan He wrote:
->>>>> On 03/04/25 at 11:03am, steven chen wrote:
->>>>>> Carrying the IMA measurement list across kexec requires allocating a
->>>>>> buffer and copying the measurement records.  Separate allocating the
->>>>>> buffer and copying the measurement records into separate functions in
->>>>>> order to allocate the buffer at kexec 'load' and copy the measurements
->>>>>> at kexec 'execute'.
->>>>>>
->>>>>> This patch includes the following changes:
->>>>> I don't know why one patch need include so many changes. From below log,
->>>>> it should be split into separate patches. It may not need to make one
->>>>> patch to reflect one change, we should at least split and wrap several
->>>>> kind of changes to ease patch understanding and reviewing. My personal
->>>>> opinion.
->>>> Agreed, well explained.
->>>>
->>>> Mimi
->>>>
->>>>>>    - Refactor ima_dump_measurement_list() to move the memory allocation
->>>>>>      to a separate function ima_alloc_kexec_file_buf() which allocates
->>>>>>      buffer of size 'kexec_segment_size' at kexec 'load'.
->>>>>>    - Make the local variable ima_kexec_file in ima_dump_measurement_list()
->>>>>>      a local static to the file, so that it can be accessed from
->>>>>>      ima_alloc_kexec_file_buf(). Compare actual memory required to ensure
->>>>>>      there is enough memory for the entire measurement record.
->>>>>>    - Copy only complete measurement records.
->>>>>>    - Make necessary changes to the function ima_add_kexec_buffer() to call
->>>>>>      the above two functions.
->>>>>>    - Compared the memory size allocated with memory size of the entire
->>>>>>      measurement record. Copy only complete measurement records if there
->>>>>>      is enough memory. If there is not enough memory, it will not copy
->>>>>>      any IMA measurement records, and this situation will result in a
->>>>>>      failure of remote attestation.
->>>>>>
->>>>>> Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
->>>>>> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
->>>>>> Signed-off-by: steven chen <chenste@linux.microsoft.com>
->>> I will split this patch into the following two patches:
->>>
->>>       ima: define and call ima_alloc_kexec_file_buf
->>>       ima: copy measurement records as much as possible across kexec
->> Steven, breaking up code into patches is in order to simplify patch review.
->> This is done by limiting each patch to a single "logical change" [1].  For
->> example, the change below has nothing to do with "separate allocating the buffer
->> and copying the measurement records into separate functions".
->>
->>          /* This is an append-only list, no need to hold the RCU read lock */
->>          list_for_each_entry_rcu(qe, &ima_measurements, later, true) {
->> -               if (file.count < file.size) {
->> +               entry_size += ima_get_binary_runtime_entry_size(qe->entry);
->> +               if (entry_size <= segment_size) {
->>                          khdr.count++;
->> -                       ima_measurements_show(&file, qe);
->> +                       ima_measurements_show(&ima_kexec_file, qe);
->>                  } else {
->>                          ret = -EINVAL;
->> +                       pr_err("IMA log file is too big for Kexec buf\n");
->>                          break;
->>                  }
->>          }
->>
->> The original code potentially copied a partial last measurement record, not a
->> complete measurement record.  For ease of review, the above change is fine, but
->> it needs to be a separate patch.
->>
->> Patches:
->> 1. ima: copy only complete measurement records across kexec
->> 2. ima: define and call ima_alloc_kexec_file_buf()
-> Steven,
->
-> The alternative would be to revert using ima_get_binary_runtime_entry_size() and
-> simply use "ima_kexec_file.count < ima_kexec_file.size".  Only
-> ima_kexec_file.size would be initialized in ima_alloc_kexec_buf().  The rest
-> would remain in ima_dump_measurement_list().  get_binary_runtime_size() wouldn't
-> need to be made global.
->
-> To further simplify the patch review, first define a separate patch to just
-> rename the seq_file "file" to "ima_kexec_file".
->
-> Mimi
+On 2025/03/04 10:12, Tingmao Wang wrote:
+>     bash # env LL_FS_RO=/usr:/lib:/bin:/etc:/dev:/proc LL_FS_RW= LL_SUPERVISE=1 ./sandboxer bash -i
+>     bash # echo "Hi, $(whoami)!"
+>     Hi, root!
+>     bash # ls /
+>     ------------- Sandboxer access request -------------
+>     Process ls[166] (/usr/bin/ls) wants to read
+>       /
+>     (y)es/(a)lways/(n)o > y
+>     ----------------------------------------------------
+>     bin
+>     boot
+>     dev
+>     ...
+>     usr
+>     var
+>     bash # echo 'evil' >> /etc/profile
+>     (a spurious create request due to current issue with dcache miss is omitted)
+>     ------------- Sandboxer access request -------------
+>     Process bash[163] (/usr/bin/bash) wants to read/write
+>       /etc/profile
+>     (y)es/(a)lways/(n)o > n
+>     ----------------------------------------------------
+>     bash: /etc/profile: Permission denied
+>     bash #
 
-Hi Mimi,
+Please check TOMOYO, for TOMOYO is already doing it.
 
-I will work on it.
-
-Thanks,
-
-Steven
+https://tomoyo.sourceforge.net/2.6/chapter-7.html#7.3
 
