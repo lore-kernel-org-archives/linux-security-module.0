@@ -1,186 +1,105 @@
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E7E223BD19
-	for <linux-security-module@vger.kernel.org>; Wed, 12 Mar 2025 10:58:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 178EB1A256B
+	for <linux-security-module@vger.kernel.org>; Wed, 12 Mar 2025 11:32:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741777097; cv=none; b=fokEwfanFNl4qgqVYrBAlHwtDfDqPKyWqmmXXXmavTC0l2kIm0tJmf4c51EFRe5sToiEGqXA+/sdHzmqZV67ew4lorM2GLwFZ9wDsWgYQZSqPntVmfGnjtSc8uiAOXLMCFCfgVXaTrlNRK3IFerc/A7VqjvPpNCFa3GQ7lUZmEk=
+	t=1741779162; cv=none; b=nggWifubvhg8Z3il9nU6iaA+cmiPSyCaAVpsOenQDRQQNW2N6eygOiev0BDb9Ymxek2qxCOfqHq36G58JlWzjDRHe1mhY6cl5lFnUGpIWmOnZDhm3dpYrDdE+66b4Mt7YNgNGhTdimS9iSyeUn+efyJyXVTleyP3ndXnTRLVA5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741777097; c=relaxed/simple;
-	bh=mXV5OYfAFUQilviwt+OsHOkLq5LO7nYJj/htmMMPRos=;
+	s=arc-20240116; t=1741779162; c=relaxed/simple;
+	bh=hB7cbA7EyRC+l9Gia5ItRMy3LSkB6vp0fujxrdtaHIc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WDoUFVjB3Aixwhw0cZKH5PexchzPtRFY8W1Ev1fDyvWs5AZEhNo9doIHe6Qxk2Rs+HlRe8yO0xpHz3v0U72fvO8l46O1K7IVciIYKL2zenn5pdI2NA8PR927tJeUyaeRz72GdIDKFjSKsZz2idkHQq7Lvbj1FukXGn4mFk5vBI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=3X9HiRBl; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=iJ+d0lOa; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=3X9HiRBl; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=iJ+d0lOa; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+	 Content-Type:Content-Disposition:In-Reply-To; b=rDx9tp8A8JyB1NPA6ZTdP3eDTvVYMLzjv8ieqMbnxeHJ+5ra21Xdmj+fLNGGWDBWgE3NHkqZq9eXMjf1mAkFDzTjtDRPUGP7m9uzNho/pu9tYS3FL5aQ4gDJiEaMpqBIJUJLD1Egk2EqqHUEEl9WTnUfOFDPSlAeBZkZWlCKAcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rmL6SMsO; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="3X9HiRBl";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="iJ+d0lOa";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="3X9HiRBl";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="iJ+d0lOa"
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 8FD2F1F388;
-	Wed, 12 Mar 2025 10:58:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741777092; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8+umskFxp6WnyrlSTt3Hx9vE8lHgvRaR9WZhhrughL4=;
-	b=3X9HiRBlwpqcm/I5dDdyFbDKcHB/DGQL4m7L42vzESgDOwOwLuvVqqZSd23N0cLb4PTaVc
-	24Ats9RK6o8dZPHZ8BTPIzR3go6Pw+tI+mFAMCNnGxh/+qJIAjGBdvJEzlXsWSau01vd2f
-	AmutiHnYhJs2UoytghfWMDOFhmGT8uk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741777092;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8+umskFxp6WnyrlSTt3Hx9vE8lHgvRaR9WZhhrughL4=;
-	b=iJ+d0lOarwEkd2m+k/ix6vix9tIrSroThco19lAvqVyTDBiI+M95favbBMQPJ9bZUoKDVe
-	bA8voWp1e9TChDDw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=3X9HiRBl;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=iJ+d0lOa
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741777092; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8+umskFxp6WnyrlSTt3Hx9vE8lHgvRaR9WZhhrughL4=;
-	b=3X9HiRBlwpqcm/I5dDdyFbDKcHB/DGQL4m7L42vzESgDOwOwLuvVqqZSd23N0cLb4PTaVc
-	24Ats9RK6o8dZPHZ8BTPIzR3go6Pw+tI+mFAMCNnGxh/+qJIAjGBdvJEzlXsWSau01vd2f
-	AmutiHnYhJs2UoytghfWMDOFhmGT8uk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741777092;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8+umskFxp6WnyrlSTt3Hx9vE8lHgvRaR9WZhhrughL4=;
-	b=iJ+d0lOarwEkd2m+k/ix6vix9tIrSroThco19lAvqVyTDBiI+M95favbBMQPJ9bZUoKDVe
-	bA8voWp1e9TChDDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 79097132CB;
-	Wed, 12 Mar 2025 10:58:12 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id QAuHHcRo0WdsMQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 12 Mar 2025 10:58:12 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 30A48A08CF; Wed, 12 Mar 2025 11:58:12 +0100 (CET)
-Date: Wed, 12 Mar 2025 11:58:12 +0100
-From: Jan Kara <jack@suse.cz>
-To: Tingmao Wang <m@maowtm.org>
-Cc: Amir Goldstein <amir73il@gmail.com>, 
-	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Jan Kara <jack@suse.cz>, linux-security-module@vger.kernel.org, 
-	Matthew Bobrowski <repnop@google.com>, linux-fsdevel@vger.kernel.org, 
-	Tycho Andersen <tycho@tycho.pizza>, Christian Brauner <brauner@kernel.org>, 
-	Kees Cook <kees@kernel.org>, Jeff Xu <jeffxu@google.com>, 
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, Francis Laniel <flaniel@linux.microsoft.com>, 
-	Matthieu Buffet <matthieu@buffet.re>, Song Liu <song@kernel.org>
-Subject: Re: [RFC PATCH 0/9] Landlock supervise: a mechanism for interactive
- permission requests
-Message-ID: <zofgalxomiykhani3etqcynxm3lfr7632ott5oow2oqafb2cwp@h3vswipvzajm>
-References: <cover.1741047969.git.m@maowtm.org>
- <20250304.Choo7foe2eoj@digikod.net>
- <f6ef02c3-ad22-4dc6-b584-93276509dbeb@maowtm.org>
- <CAOQ4uxjz4tGmW3DH3ecBvXEnacQexgM86giXKqoHFGzwzT33bA@mail.gmail.com>
- <1e009b28-1e6b-4b8c-9934-b768cde63c2b@maowtm.org>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rmL6SMsO"
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3912c09be7dso3603844f8f.1
+        for <linux-security-module@vger.kernel.org>; Wed, 12 Mar 2025 04:32:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741779158; x=1742383958; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=w3nFEoLpFF9YtTM0gdngJeq+IrxApmUKsC02THXL5Nw=;
+        b=rmL6SMsOlKFJqP1f5WmpK5Xh422oaXTPM9EXlQEpaNIfGlZSIxTQ09jbifjdYFZhjB
+         UNdiuGTkbgMLN1E58mhhQhu34LctOEw+t432jZcWeF3G0a2mtFogvp766p1J5Pf5y5RC
+         zL62Be+8bqeyE0afVmCKi28QN71xp52Z3MQm3t9NxBaPPK32g3dAr5jk9DmLeLbsj4hk
+         VqjI2JFPTgkb1tVtj9tZ3cvEIzmZCowbxRVJoWAkbieQUaVpHqw2q4qQ273D1/OWMNnE
+         0Jq2R+XsZ0WgI6/yMr1Z/y+8nqK9orvelgJjjc1n1oH+VI0T431VP2XjVSA5204c/YZf
+         tTTg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741779158; x=1742383958;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=w3nFEoLpFF9YtTM0gdngJeq+IrxApmUKsC02THXL5Nw=;
+        b=cCrz+X22UmR6dAa5Fja/x6OlSBSjMim8rMcYChzCFm2WDPqxqF+1PYcMwImXs1jhmb
+         QKi/FN5buFtS0lD8qANUUmFtAHUdKnI5/oG6LSjzr72BMq+gfk9fDeNuOyA4OC98g5J0
+         CM+4nMA+XpzQbPOMdXcdiPKrGSPH2sf+bdNvRxggaXuzZ9hgL2VkVjqHRlcT7OzNvOXD
+         opM7w3ZTTprMQjigmi6ssvlV/BKVm91VyZ9Xt1f9nrnSspy+YjQS2f+2ZxNh5qAQuPKe
+         wczvDFnFCLirQ8ROfj1wQAeX9US8332N7dopwAjGiABrNoSPCx3tQ7pO11hV4LxIweoS
+         ZGhQ==
+X-Gm-Message-State: AOJu0YzzlJxZV3b1aNZOC26X3pXuX9DcV0an21sz91s/4EVeA8jcD62m
+	sTDMLM2on7DPq6h/+YtP+y0bxbCBr1oRkoM+fbZtJIUDiMgfhii6o41r81rt/b4=
+X-Gm-Gg: ASbGncujQY1pDzZwBowM2d5UQMnKaDQb25G/BUhEMaGMv4MPjruvm2cxzIRJr6VPYUG
+	KyxfwKgtKBk7oJ08Mvglw/HJNUYtDgmr3qim0Jzdn6shEj2JersPfxrZO40v/QANS3DpZ0a+uIv
+	IwVU8washjv2aVZ1YHwd2ZLTeRql42TIhcoSWy7pbTfdPsj6YfZQpatztlqQR27KccpKq4VU58B
+	Bio07DJtzfmO8m0GYMlgcweMGoVVtUb4dS87HcIZYq6lY+5cYtwV04WtV3aSdvQ13S+rmzkfre7
+	4591RKlpJP9WZGwZPFkt91vX3kdEnXZFqFOIZl13oZpVI9xW6A==
+X-Google-Smtp-Source: AGHT+IGtmxBoSDmmngQTkogsSff4+yQy9CBM8kT4DVnLREQSOZYAQrOn51uqevokUlFDQK4fZ6Ax8Q==
+X-Received: by 2002:a05:6000:1f8f:b0:391:304f:34e7 with SMTP id ffacd0b85a97d-39132d985f6mr18882223f8f.44.1741779158367;
+        Wed, 12 Mar 2025 04:32:38 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3912c1037b4sm21003703f8f.92.2025.03.12.04.32.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Mar 2025 04:32:37 -0700 (PDT)
+Date: Wed, 12 Mar 2025 14:32:33 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: linux-security-module@vger.kernel.org,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>
+Subject: Re: [bug report] landlock: Add AUDIT_LANDLOCK_DOMAIN and log domain
+ status
+Message-ID: <323222e6-f15e-4950-ade4-181e46b46469@stanley.mountain>
+References: <2425110b-b5ca-4b33-bf75-e6fca0b0de63@stanley.mountain>
+ <20250312.ungooTh8Iotu@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <1e009b28-1e6b-4b8c-9934-b768cde63c2b@maowtm.org>
-X-Rspamd-Queue-Id: 8FD2F1F388
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	FREEMAIL_CC(0.00)[gmail.com,digikod.net,google.com,suse.cz,vger.kernel.org,tycho.pizza,kernel.org,huawei-partners.com,linux.microsoft.com,buffet.re];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250312.ungooTh8Iotu@digikod.net>
 
-On Tue 11-03-25 00:42:05, Tingmao Wang wrote:
-> On 3/6/25 17:07, Amir Goldstein wrote:
-> [...]
+On Wed, Mar 12, 2025 at 11:50:31AM +0100, Mickaël Salaün wrote:
+> On Wed, Mar 12, 2025 at 11:33:29AM +0300, Dan Carpenter wrote:
+> > Hello Mickaël Salaün,
 > > 
-> > w.r.t sharing infrastructure with fanotify, I only looked briefly at
-> > your patches
-> > and I have only a vague familiarity with landlock, so I cannot yet form an
-> > opinion whether this is a good idea, but I wanted to give you a few more
-> > data points about fanotify that seem relevant.
+> > Commit 96cc6f48a8e4 ("landlock: Add AUDIT_LANDLOCK_DOMAIN and log
+> > domain status") from Mar 8, 2025 (linux-next), leads to the following
+> > Smatch static checker warning:
 > > 
-> > 1. There is already some intersection of fanotify and audit lsm via the
-> > fanotify_response_info_audit_rule extension for permission
-> > events, so it's kind of a precedent of using fanotify to aid an lsm
-> > 
-> > 2. See this fan_pre_modify-wip branch [1] and specifically commit
-> >    "fanotify: introduce directory entry pre-modify permission events"
-> > I do have an intention to add create/delete/rename permission events.
-> > Note that the new fsnotify hooks are added in to do_ vfs helpers, not very
-> > far from the security_path_ lsm hooks, but not exactly in the same place
-> > because we want to fsnotify hooks to be before taking vfs locks, to allow
-> > listener to write to filesystem from event context.
-> > There are different semantics than just ALLOW/DENY that you need,
-> > therefore, only if we move the security_path_ hooks outside the
-> > vfs locks, our use cases could use the same hooks
+> > 	security/landlock/domain.c:66 get_current_exe()
+> > 	warn: 'size' unsigned <= 0
 > 
-> Hi Amir,
+> Hi,
 > 
-> (this is a slightly long message - feel free to respond at your convenience,
-> thank you in advance!)
+> Thanks for the report, I'll fix this issue.
 > 
-> Thanks a lot for mentioning this branch, and for the explanation! I've had a
-> look and realized that the changes you have there will be very useful for
-> this patch, and in fact, I've already tried a worse attempt of this (not
-> included in this patch series yet) to create some security_pathname_ hooks
-> that takes the parent struct path + last name as char*, that will be called
-> before locking the parent.  (We can't have an unprivileged supervisor cause
-> a directory to be locked indefinitely, which will also block users outside
-> of the landlock domain)
+> I'm using Smatch's kchecker (commit f4f26f80d4f3) but I didn't get this
+> warning.  I tried with and without build_kernel_data.sh but I get the same
+> result. Which command are you using?
+> 
 
-Well, but if you call the hook before locking the parent isn't your hook
-prone to TOCTOU races? I mean you call the hook do your stuff in it and
-then before the parent is locked, the whole directory hierarchy can get
-reorganized (from another process) without you knowing... So I'm not sure
-which guarantees you can provide for such hooks.
+Ah.  Sorry, this is an unpublished warning.  It's not far off from being
+good enough to release.  I'll dust it off and publish it later this week.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+regards,
+dan carpenter
+
