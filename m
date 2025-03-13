@@ -1,201 +1,177 @@
-Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [84.16.66.168])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49F9E763F8
-	for <linux-security-module@vger.kernel.org>; Thu, 13 Mar 2025 14:59:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 801771684B4
+	for <linux-security-module@vger.kernel.org>; Thu, 13 Mar 2025 17:34:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741877961; cv=none; b=Qzb7HZC0TBATniPJlD8k5ZBSc0lmrMGZUxNNVPX78IO3TgkjMn4rQOBL9xmJVyO4vhy3cIVIyzbb8sfBosudRSTp9U4gypnryOhjP7u8V0Ztzd1BZZnoR3Bvygh3t2BAolFKYvNBJfYbQv5+CXBDjf8SVCCqULgKT495+npZ7q8=
+	t=1741887292; cv=none; b=FNYYdwa/KELz591nJ2rTD6SCj+GE6DhXbtrpGtNlMVzJ8Y2WxXUfqvlVr1iTubq/nd8xbvCl3M08pEniTwPAyod9EivLPsN+HpxoK1o37LMqgBSYrafXunlHIKfl03HWlgi5gdWcdVz2U+f7gJPSN36q+WTYA12Nj9pQSyOc6sI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741877961; c=relaxed/simple;
-	bh=5liuPlBqcaflDWW/TPdi7YXsdgu4Qktt64p67vZjWFA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WR8bWFKGRAcKkYcL8lWgHscioLKeBUsvPBNgOcotNhuiUlNcdryS6ltc8XOUcorq77nivsufuGtyiK/PKpQJ2HiNpyEK6Xe/bNiri3SVCpwi7n0Qk55rK8oEwtRHhu/Ze6291DUfJzvVsjiEGx+T9Wdtr9r3jKpKjUhqL+Nq2gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=mtIUYoTt; arc=none smtp.client-ip=84.16.66.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1741887292; c=relaxed/simple;
+	bh=X9jGp/lGksz3grpthwFKZ40t1B2yEAFWn9jNtB3eNUE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bUjzDXIwJ1xHRPdruCGdFfdkafIrFV01ZgXv+bzP0fCjfO7YrjssFXTE7aE1MR0Cz7PzifYvFFcEg66jBkmAU2C7PpQ4ytFzE/MH1XX8hs5AsGWeJagZPMcmB5sd+eOLmRnA/TioiCBhFSGSXgIHEkxv0s4BhWMIAbktbdsfze8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NF5oSxYh; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=fNE+eAsM; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NF5oSxYh; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=fNE+eAsM; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="mtIUYoTt"
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ZD9cr1zkCzC2d;
-	Thu, 13 Mar 2025 15:59:08 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1741877948;
-	bh=0Gf1DhgQRyBiPnPBQsXXR7n45nbxbcPvMlsb2hmwO+s=;
-	h=From:To:Cc:Subject:Date:From;
-	b=mtIUYoTtQ0tdNQjqeBvqnicNw6dpqGUbj8D4veT61dES8X6IhDRLYCShmU6ku9M4v
-	 IBmZw2jJOwXSbpA9FPw1LwoBgq7nGkAhUer8/aTj5n/NzUoq7WPzj/I6bqdulSAAir
-	 cNXi7s/oYO7ToWmSzvA/LReu/2VlyZztzjCTriRE=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4ZD9cq3ZlSzD7B;
-	Thu, 13 Mar 2025 15:59:07 +0100 (CET)
-From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To: Paul Moore <paul@paul-moore.com>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	"Serge E . Hallyn" <serge@hallyn.com>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	Jann Horn <jannh@google.com>,
-	Jeff Xu <jeffxu@google.com>,
-	Kees Cook <kees@kernel.org>,
-	Tahera Fahimi <fahimitahera@gmail.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NF5oSxYh";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="fNE+eAsM";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NF5oSxYh";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="fNE+eAsM"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 9E0F821175;
+	Thu, 13 Mar 2025 17:34:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1741887288; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=X5teZExJXtoF+96+S6qe8NpWsv7WJatzt6RrVYXYHBQ=;
+	b=NF5oSxYhGFyGwdpf6IL4tASTw/cWbZJWcliXVLkrXdHg+4JujDlXEBaO3f2HSSRRdc5iIo
+	2IVyA53IZGnKA2dYZ8LFRJISNXNlUP7KwGeyTtpbJChPUI0WZgVxtXuzuKsipUQ6tnMOKH
+	yOXnNN47Wv8HmGvK1NZTkrjCZ8fyikI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1741887288;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=X5teZExJXtoF+96+S6qe8NpWsv7WJatzt6RrVYXYHBQ=;
+	b=fNE+eAsMXQ+H2dbtYrNx0j1oKMhJk7ek+S8DnKDluUJQL9OLWR8bvMhaQIWV9x95rccIWy
+	OrGBMjqB4UVi9cDQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1741887288; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=X5teZExJXtoF+96+S6qe8NpWsv7WJatzt6RrVYXYHBQ=;
+	b=NF5oSxYhGFyGwdpf6IL4tASTw/cWbZJWcliXVLkrXdHg+4JujDlXEBaO3f2HSSRRdc5iIo
+	2IVyA53IZGnKA2dYZ8LFRJISNXNlUP7KwGeyTtpbJChPUI0WZgVxtXuzuKsipUQ6tnMOKH
+	yOXnNN47Wv8HmGvK1NZTkrjCZ8fyikI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1741887288;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=X5teZExJXtoF+96+S6qe8NpWsv7WJatzt6RrVYXYHBQ=;
+	b=fNE+eAsMXQ+H2dbtYrNx0j1oKMhJk7ek+S8DnKDluUJQL9OLWR8bvMhaQIWV9x95rccIWy
+	OrGBMjqB4UVi9cDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8BF8D137BA;
+	Thu, 13 Mar 2025 17:34:48 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Gor7IDgX02f3QgAAD6G6ig
+	(envelope-from <nstange@suse.de>); Thu, 13 Mar 2025 17:34:48 +0000
+From: Nicolai Stange <nstange@suse.de>
+To: Mimi Zohar <zohar@linux.ibm.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: Eric Snowberg <eric.snowberg@oracle.com>,
+	linux-integrity@vger.kernel.org,
 	linux-security-module@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>
-Subject: [RFC PATCH v1] landlock: Allow signals between threads of the same process
-Date: Thu, 13 Mar 2025 15:59:04 +0100
-Message-ID: <20250313145904.3238184-1-mic@digikod.net>
+	linux-kernel@vger.kernel.org,
+	Nicolai Stange <nstange@suse.de>
+Subject: [RFC PATCH v1 0/7] ima: get rid of hard dependency on SHA-1
+Date: Thu, 13 Mar 2025 18:33:32 +0100
+Message-ID: <20250313173339.3815589-1-nstange@suse.de>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+X-Spam-Score: -1.30
+X-Spamd-Result: default: False [-1.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[linux.ibm.com,huawei.com,gmail.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[nist.gov:url,imap1.dmz-prg2.suse.org:helo];
+	TAGGED_RCPT(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Because Linux credentials are managed per thread, user space relies on
-some hack to synchronize credential update across threads from the same
-process.  This is required by the Native POSIX Threads Library and
-implemented by set*id(2) wrappers and libcap(3) to use tgkill(2) to
-synchronize threads.  See nptl(7) and libpsx(3).  Furthermore, some
-runtimes like Go do not enable developers to have control over threads
-[1].
+Hi all,
 
-To avoid potential issues, and because threads are not security
-boundaries, let's relax the Landlock signal scoping to always allow
-signals sent between threads of the same process.  This exception is
-similar to the __ptrace_may_access() one.
+if no SHA-1 implementation was available to the kernel, IMA init would
+currently fail, rendering the whole subsystem unusable.
 
-hook_file_set_fowner() now checks if the target task is part of the same
-process as the caller.  If this is the case, then the related signal
-triggered by the socket will always be allowed.
+This patch series is an attempt to make SHA-1 availability non-mandatory
+for IMA. The main motivation is that NIST announced to sunset SHA-1 by
+2030 ([1]), whereby any attempt to instantiate it when booted in FIPS mode
+would have to be made to fail with -ENOENT. As this does potentially have
+an impact on lifetimes for FIPS certifications issued today, distros might
+be interested in disabling SHA-1 downstream soon already.
 
-Scoping of abstract UNIX sockets is not changed because kernel objects
-(e.g. sockets) should be tied to their creator's domain at creation
-time.
+Anyway, making IMA to work without a SHA-1 implementation available is not
+so straightforward, mainly due to that established scheme to substitute
+padded SHA-1 template hashes for PCR banks with unmapped/unavailable algos.
+There is some userspace around expecting that existing behavior, e.g. the
+ima_measurement command from ([2]), and breaking that in certain scenarios
+is inevitable.
 
-Note that creating one Landlock domain per thread puts each of these
-threads (and their future children) in their own scope, which is
-probably not what users expect, especially in Go where we do not control
-threads.  However, being able to drop permissions on all threads should
-not be restricted by signal scoping.  We are working on a way to make it
-possible to atomically restrict all threads of a process with the same
-domain [2].
+I tried to make it the least painful possible, and I think I arrived at
+a not completely unreasonable solution in the end, but wouldn't be too
+surprised if you had a different stance on that. So I would be curious
+about your feedback on whether this is a route worth pursuing any further.
+FWIW, the most controversial parts are probably
+ - [1/7] ima: don't expose runtime_measurements for unsupported hashes
+ - [6/7] ima: invalidate unsupported PCR banks once at first use
 
-Closes: https://github.com/landlock-lsm/go-landlock/issues/36
-Fixes: 54a6e6bbf3be ("landlock: Add signal scoping")
-Fixes: c8994965013e ("selftests/landlock: Test signal scoping for threads")
-Depends-on: 26f204380a3c ("fs: Fix file_set_fowner LSM hook inconsistencies")
-Link: https://pkg.go.dev/kernel.org/pub/linux/libs/security/libcap/psx [1]
-Link: https://github.com/landlock-lsm/linux/issues/2 [2]
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Günther Noack <gnoack@google.com>
-Cc: Paul Moore <paul@paul-moore.com>
-Cc: Serge Hallyn <serge@hallyn.com>
-Cc: Tahera Fahimi <fahimitahera@gmail.com>
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Link: https://lore.kernel.org/r/20250313145904.3238184-1-mic@digikod.net
----
+Note that I haven't tested this series thoroughly yet -- for the time being
+I only ran a couple of brief smoke tests in a VM w/o a TPM  (w/ and w/o
+SHA-1 disabled of course).
 
-I'm still not sure how we could reliably detect if the running kernel
-has this fix or not, especially in Go.
----
- security/landlock/fs.c                        | 22 +++++++++++++++----
- security/landlock/task.c                      | 12 ++++++++++
- .../selftests/landlock/scoped_signal_test.c   |  2 +-
- 3 files changed, 31 insertions(+), 5 deletions(-)
+Many thanks!
 
-diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-index 71b9dc331aae..47c862fe14e4 100644
---- a/security/landlock/fs.c
-+++ b/security/landlock/fs.c
-@@ -27,7 +27,9 @@
- #include <linux/mount.h>
- #include <linux/namei.h>
- #include <linux/path.h>
-+#include <linux/pid.h>
- #include <linux/rcupdate.h>
-+#include <linux/sched/signal.h>
- #include <linux/spinlock.h>
- #include <linux/stat.h>
- #include <linux/types.h>
-@@ -1630,15 +1632,27 @@ static int hook_file_ioctl_compat(struct file *file, unsigned int cmd,
- 
- static void hook_file_set_fowner(struct file *file)
- {
--	struct landlock_ruleset *new_dom, *prev_dom;
-+	struct fown_struct *fown = file_f_owner(file);
-+	struct landlock_ruleset *new_dom = NULL;
-+	struct landlock_ruleset *prev_dom;
-+	struct task_struct *p;
- 
- 	/*
- 	 * Lock already held by __f_setown(), see commit 26f204380a3c ("fs: Fix
- 	 * file_set_fowner LSM hook inconsistencies").
- 	 */
--	lockdep_assert_held(&file_f_owner(file)->lock);
--	new_dom = landlock_get_current_domain();
--	landlock_get_ruleset(new_dom);
-+	lockdep_assert_held(&fown->lock);
-+
-+	/*
-+	 * Always allow sending signals between threads of the same process.  This
-+	 * ensures consistency with hook_task_kill().
-+	 */
-+	p = pid_task(fown->pid, fown->pid_type);
-+	if (!same_thread_group(p, current)) {
-+		new_dom = landlock_get_current_domain();
-+		landlock_get_ruleset(new_dom);
-+	}
-+
- 	prev_dom = landlock_file(file)->fown_domain;
- 	landlock_file(file)->fown_domain = new_dom;
- 
-diff --git a/security/landlock/task.c b/security/landlock/task.c
-index dc7dab78392e..4578ce6e319d 100644
---- a/security/landlock/task.c
-+++ b/security/landlock/task.c
-@@ -13,6 +13,7 @@
- #include <linux/lsm_hooks.h>
- #include <linux/rcupdate.h>
- #include <linux/sched.h>
-+#include <linux/sched/signal.h>
- #include <net/af_unix.h>
- #include <net/sock.h>
- 
-@@ -264,6 +265,17 @@ static int hook_task_kill(struct task_struct *const p,
- 		/* Dealing with USB IO. */
- 		dom = landlock_cred(cred)->domain;
- 	} else {
-+		/*
-+		 * Always allow sending signals between threads of the same process.
-+		 * This is required for process credential changes by the Native POSIX
-+		 * Threads Library and implemented by the set*id(2) wrappers and
-+		 * libcap(3) with tgkill(2).  See nptl(7) and libpsx(3).
-+		 *
-+		 * This exception is similar to the __ptrace_may_access() one.
-+		 */
-+		if (same_thread_group(p, current))
-+			return 0;
-+
- 		dom = landlock_get_current_domain();
- 	}
- 	dom = landlock_get_applicable_domain(dom, signal_scope);
-diff --git a/tools/testing/selftests/landlock/scoped_signal_test.c b/tools/testing/selftests/landlock/scoped_signal_test.c
-index 475ee62a832d..767f117703b7 100644
---- a/tools/testing/selftests/landlock/scoped_signal_test.c
-+++ b/tools/testing/selftests/landlock/scoped_signal_test.c
-@@ -281,7 +281,7 @@ TEST(signal_scoping_threads)
- 	/* Restricts the domain after creating the first thread. */
- 	create_scoped_domain(_metadata, LANDLOCK_SCOPE_SIGNAL);
- 
--	ASSERT_EQ(EPERM, pthread_kill(no_sandbox_thread, 0));
-+	ASSERT_EQ(0, pthread_kill(no_sandbox_thread, 0));
- 	ASSERT_EQ(1, write(thread_pipe[1], ".", 1));
- 
- 	ASSERT_EQ(0, pthread_create(&scoped_thread, NULL, thread_func, NULL));
+Nicolai
 
-base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
+[1] https://www.nist.gov/news-events/news/2022/12/nist-retires-sha-1-cryptographic-algorithm
+[2] https://github.com/linux-integrity/ima-evm-utils.git
+
+Nicolai Stange (7):
+  ima: don't expose runtime_measurements for unsupported hashes
+  ima: always create runtime_measurements sysfs file for ima_hash
+  ima: move INVALID_PCR() to ima.h
+  ima: track the set of PCRs ever extended
+  tpm: enable bank selection for PCR extend
+  ima: invalidate unsupported PCR banks once at first use
+  ima: make SHA1 non-mandatory
+
+ drivers/char/tpm/tpm-interface.c      | 29 +++++++++-
+ drivers/char/tpm/tpm.h                |  3 +-
+ drivers/char/tpm/tpm2-cmd.c           | 29 +++++++++-
+ include/linux/tpm.h                   |  3 +
+ security/integrity/ima/Kconfig        | 14 +++++
+ security/integrity/ima/ima.h          |  9 +++
+ security/integrity/ima/ima_crypto.c   | 83 ++++++++++++++++-----------
+ security/integrity/ima/ima_fs.c       | 41 +++++++------
+ security/integrity/ima/ima_policy.c   |  5 +-
+ security/integrity/ima/ima_queue.c    | 26 ++++++++-
+ security/integrity/ima/ima_template.c |  7 +++
+ 11 files changed, 190 insertions(+), 59 deletions(-)
+
 -- 
-2.48.1
+2.47.1
 
