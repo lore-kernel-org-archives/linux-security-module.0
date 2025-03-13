@@ -1,112 +1,201 @@
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [84.16.66.168])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B883A267725
-	for <linux-security-module@vger.kernel.org>; Thu, 13 Mar 2025 12:29:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49F9E763F8
+	for <linux-security-module@vger.kernel.org>; Thu, 13 Mar 2025 14:59:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741868986; cv=none; b=RIk1WKdvHRMW90zSpoMWZYHVe4coYeCamw8XbydyqBgSUG2i3WSK66NKSLPPQ/6M8k9jZsgDRD9ZvO89YQ64o86elb4Xgtvkbsgc3CaAY4FceQAgHjeJEQJSNbtZF8a481e3BSgPz+GBKFBOlqRIMVuZcn1KOUD1w3jLt0bJhg0=
+	t=1741877961; cv=none; b=Qzb7HZC0TBATniPJlD8k5ZBSc0lmrMGZUxNNVPX78IO3TgkjMn4rQOBL9xmJVyO4vhy3cIVIyzbb8sfBosudRSTp9U4gypnryOhjP7u8V0Ztzd1BZZnoR3Bvygh3t2BAolFKYvNBJfYbQv5+CXBDjf8SVCCqULgKT495+npZ7q8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741868986; c=relaxed/simple;
-	bh=1g+NyktzSKK2XkKOy3k13nywcL9Mhib0LiUglpwfgZw=;
-	h=From:To:CC:Date:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=A4afzzsHUwLk/Y8NZigZYUM18OabACV/MCkfgZ5D0UdILutk7iygJAWNS+IKfVpZV0Vw5muzy9u2Jxh1cy9kwURRq0SwXxmFRSUH+7pRtYfqaq0J8O3sziyDJuJbpjQCoiF0HSfbfrcWXtCKI3ogYn2KUdKzhKStnot/fcgN0XU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=CQWub/lC; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1741877961; c=relaxed/simple;
+	bh=5liuPlBqcaflDWW/TPdi7YXsdgu4Qktt64p67vZjWFA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WR8bWFKGRAcKkYcL8lWgHscioLKeBUsvPBNgOcotNhuiUlNcdryS6ltc8XOUcorq77nivsufuGtyiK/PKpQJ2HiNpyEK6Xe/bNiri3SVCpwi7n0Qk55rK8oEwtRHhu/Ze6291DUfJzvVsjiEGx+T9Wdtr9r3jKpKjUhqL+Nq2gc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=mtIUYoTt; arc=none smtp.client-ip=84.16.66.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="CQWub/lC"
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6e8fca43972so8659686d6.1
-        for <linux-security-module@vger.kernel.org>; Thu, 13 Mar 2025 05:29:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1741868982; x=1742473782; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:user-agent
-         :references:in-reply-to:message-id:date:cc:to:from:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7Zwf41u2oqw87EX3fkunUasMCQRwAQQeTNbOgyP9FzA=;
-        b=CQWub/lC8wNKB1Yhwx5NObbw85YNuo9VstX4QF7oFij3y04I4Ugh+rPvM188+fNxux
-         mJwhLF/AAjVpSEo+4QeZCQpxSTqlodQNJHsTrmSvAiQe5Usfrp8q/polQIRVqYyCjMBA
-         FrL1OxfapIpq9Bbn7F0kXk7Uwab2MmbFLowUAhdl/VPv+rs+2Bm4a5Hg4G+2f8dmJUUC
-         IBQvwMVxy/e1w3SV7cOF3wM6ba+iW9/zOVojPMYumqAvpWsbHvYf4Rh0Yu87z8+nl7PQ
-         7LHuuchejJduzP5pjXxYV2vdfHRX4WTFaSL6cdYWvGC3RCAqvRHIzcZQV4Jkxi5NnT6W
-         4x6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741868982; x=1742473782;
-        h=content-transfer-encoding:mime-version:subject:user-agent
-         :references:in-reply-to:message-id:date:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7Zwf41u2oqw87EX3fkunUasMCQRwAQQeTNbOgyP9FzA=;
-        b=BOsn/rpwtPhAbQg3qU+vhgNkO3PmqR/NVl1oTOCtrcU1MyhtqjQKDgOavvRnrPaCBi
-         49TxXKgbFVvGW+q/C9UAqoBS2O8IUszN4Z8Nj/XNUuIPMPVgxVqcyvh8SXqiLDIjzbLu
-         uPqiyXoGAdjSBwudoYMnF8Kfhft5dsPajSbX6ZEpBRUoU5g9I3LXdTfJ4yPv+uIUGGsu
-         hPN9J1LKznf0J+u1rQMzzkYtQcMery92FzdHpzoIffWY25MaobxndTioJeLdxGgY6BnR
-         gKbzicTmRMPu5JtzbmG76fS/YJNTxahsmy+CMQAU82aNg/OoivxCLZHaYRw+gx3xziDG
-         9byA==
-X-Forwarded-Encrypted: i=1; AJvYcCUKR9SfBjtSpeKJEWOCwoSt9LQ6QNaOvv9CWWyjH6rWQjrO6qmN5hHZVOAFfRaRjrxAnO68WuxIGQM2NcF+cfvBuJMeKi0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxr9/MClnC3FMHtNuyFdVGtwLqT/ss6ukKf24uoC/u0Bp2bo8k1
-	Jjc3XI8mF9+Z8LPSKX82b/HDNtJ7GNAkBhwxS7yxRQyIG9KiST4FIU0hpPO+MA==
-X-Gm-Gg: ASbGncsIVLbFr1x3qr2YOl2aNzj6LG4CQ5Jhmo107ofzut+o3p+QxFyjdQZbeafUMZq
-	2O6QdeVaUJ0Q/MIrUudEx8ZqHZOIyfqEvU1AJMVFyLCAYxCm8GsDO5qInuTqA3g0ADQ8TWs/k1R
-	76iPr61kAslcutgOp16coHQyiiFji/lJfnilMgqjDBjco4fn4+eAHBti8ZawGX5QYoVAzC/RSH+
-	cU+AGLlrx0dbt7V1M/OJsw3k5RmWASCVus9w1XKRseMWiPZ/p8QDb5x2Gkftq8sISOwSGw18fDc
-	RKZmngumuuXsw7L6PsWVqtzv2niKKB4JD49YotfvBfHp8hcIcqAERnGXfjVJ+HcyyGAiAgbwGBI
-	jAdHZ+r72RvXQ47LuJlE=
-X-Google-Smtp-Source: AGHT+IFnv2N7W3t0ayHxjjtCyn9mUUoe/Hxh3K5QKhmpW8fJk7aFYPPODamWfDzX3U1KP5rz9GLzbQ==
-X-Received: by 2002:ad4:4eed:0:b0:6e8:9957:e705 with SMTP id 6a1803df08f44-6e9006752e0mr464948326d6.34.1741868982415;
-        Thu, 13 Mar 2025 05:29:42 -0700 (PDT)
-Received: from [192.168.7.16] (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6eade24eabesm8979316d6.67.2025.03.13.05.29.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 13 Mar 2025 05:29:42 -0700 (PDT)
-From: Paul Moore <paul@paul-moore.com>
-To: Casey Schaufler <casey@schaufler-ca.com>, <eparis@redhat.com>, <linux-security-module@vger.kernel.org>, <audit@vger.kernel.org>
-CC: <jmorris@namei.org>, <serge@hallyn.com>, <keescook@chromium.org>, <john.johansen@canonical.com>, <penguin-kernel@i-love.sakura.ne.jp>, <stephen.smalley.work@gmail.com>, <linux-kernel@vger.kernel.org>, <selinux@vger.kernel.org>
-Date: Thu, 13 Mar 2025 08:29:36 -0400
-Message-ID: <1958f7b4780.28a7.85c95baa4474aabc7814e68940a78392@paul-moore.com>
-In-Reply-To: <5ea749e38c39e783741bdd0491a1338d@paul-moore.com>
-References: <20250307183701.16970-5-casey@schaufler-ca.com>
- <5ea749e38c39e783741bdd0491a1338d@paul-moore.com>
-User-Agent: AquaMail/1.54.1 (build: 105401536)
-Subject: Re: [PATCH v2 4/6] Audit: Add record for multiple task security contexts
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="mtIUYoTt"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ZD9cr1zkCzC2d;
+	Thu, 13 Mar 2025 15:59:08 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1741877948;
+	bh=0Gf1DhgQRyBiPnPBQsXXR7n45nbxbcPvMlsb2hmwO+s=;
+	h=From:To:Cc:Subject:Date:From;
+	b=mtIUYoTtQ0tdNQjqeBvqnicNw6dpqGUbj8D4veT61dES8X6IhDRLYCShmU6ku9M4v
+	 IBmZw2jJOwXSbpA9FPw1LwoBgq7nGkAhUer8/aTj5n/NzUoq7WPzj/I6bqdulSAAir
+	 cNXi7s/oYO7ToWmSzvA/LReu/2VlyZztzjCTriRE=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4ZD9cq3ZlSzD7B;
+	Thu, 13 Mar 2025 15:59:07 +0100 (CET)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: Paul Moore <paul@paul-moore.com>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	"Serge E . Hallyn" <serge@hallyn.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	Jann Horn <jannh@google.com>,
+	Jeff Xu <jeffxu@google.com>,
+	Kees Cook <kees@kernel.org>,
+	Tahera Fahimi <fahimitahera@gmail.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>
+Subject: [RFC PATCH v1] landlock: Allow signals between threads of the same process
+Date: Thu, 13 Mar 2025 15:59:04 +0100
+Message-ID: <20250313145904.3238184-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed; charset="us-ascii"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
+Because Linux credentials are managed per thread, user space relies on
+some hack to synchronize credential update across threads from the same
+process.  This is required by the Native POSIX Threads Library and
+implemented by set*id(2) wrappers and libcap(3) to use tgkill(2) to
+synchronize threads.  See nptl(7) and libpsx(3).  Furthermore, some
+runtimes like Go do not enable developers to have control over threads
+[1].
 
-On March 12, 2025 7:51:36 PM Paul Moore <paul@paul-moore.com> wrote:
-> On Mar  7, 2025 Casey Schaufler <casey@schaufler-ca.com> wrote:
+To avoid potential issues, and because threads are not security
+boundaries, let's relax the Landlock signal scoping to always allow
+signals sent between threads of the same process.  This exception is
+similar to the __ptrace_may_access() one.
 
-...
+hook_file_set_fowner() now checks if the target task is part of the same
+process as the caller.  If this is the case, then the related signal
+triggered by the socket will always be allowed.
 
->
->> diff --git a/include/linux/security.h b/include/linux/security.h
->> index 540894695c4b..79a9bf4a7cdd 100644
->> --- a/include/linux/security.h
->> +++ b/include/linux/security.h
->> @@ -168,6 +168,7 @@ struct lsm_prop {
->>
->> extern const char *const lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1];
->> extern u32 lsm_active_cnt;
->> +extern u32 lsm_subjctx_cnt;
->
-> I'm not loving this.  More below, but I'd really like to hide some of
-> this detail inside a LSM API/hook if possible.
+Scoping of abstract UNIX sockets is not changed because kernel objects
+(e.g. sockets) should be tied to their creator's domain at creation
+time.
 
-Thinking more about this I think we can't go with a LSM_MAX_PROPS, or 
-similar determined at build time since we have the ability to toggle LSMs 
-at boot.  Need to think on this some more, but the answer is going to have 
-to be a variable and not a #define.
+Note that creating one Landlock domain per thread puts each of these
+threads (and their future children) in their own scope, which is
+probably not what users expect, especially in Go where we do not control
+threads.  However, being able to drop permissions on all threads should
+not be restricted by signal scoping.  We are working on a way to make it
+possible to atomically restrict all threads of a process with the same
+domain [2].
 
-The LSM init work I'm doing right now directly impacts this, and I'm in the 
-final stages now. Let me see what looks reasonable and I'll get back to you.
+Closes: https://github.com/landlock-lsm/go-landlock/issues/36
+Fixes: 54a6e6bbf3be ("landlock: Add signal scoping")
+Fixes: c8994965013e ("selftests/landlock: Test signal scoping for threads")
+Depends-on: 26f204380a3c ("fs: Fix file_set_fowner LSM hook inconsistencies")
+Link: https://pkg.go.dev/kernel.org/pub/linux/libs/security/libcap/psx [1]
+Link: https://github.com/landlock-lsm/linux/issues/2 [2]
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Günther Noack <gnoack@google.com>
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: Serge Hallyn <serge@hallyn.com>
+Cc: Tahera Fahimi <fahimitahera@gmail.com>
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
+Link: https://lore.kernel.org/r/20250313145904.3238184-1-mic@digikod.net
+---
 
---
-paul-moore.com
->
+I'm still not sure how we could reliably detect if the running kernel
+has this fix or not, especially in Go.
+---
+ security/landlock/fs.c                        | 22 +++++++++++++++----
+ security/landlock/task.c                      | 12 ++++++++++
+ .../selftests/landlock/scoped_signal_test.c   |  2 +-
+ 3 files changed, 31 insertions(+), 5 deletions(-)
 
+diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+index 71b9dc331aae..47c862fe14e4 100644
+--- a/security/landlock/fs.c
++++ b/security/landlock/fs.c
+@@ -27,7 +27,9 @@
+ #include <linux/mount.h>
+ #include <linux/namei.h>
+ #include <linux/path.h>
++#include <linux/pid.h>
+ #include <linux/rcupdate.h>
++#include <linux/sched/signal.h>
+ #include <linux/spinlock.h>
+ #include <linux/stat.h>
+ #include <linux/types.h>
+@@ -1630,15 +1632,27 @@ static int hook_file_ioctl_compat(struct file *file, unsigned int cmd,
+ 
+ static void hook_file_set_fowner(struct file *file)
+ {
+-	struct landlock_ruleset *new_dom, *prev_dom;
++	struct fown_struct *fown = file_f_owner(file);
++	struct landlock_ruleset *new_dom = NULL;
++	struct landlock_ruleset *prev_dom;
++	struct task_struct *p;
+ 
+ 	/*
+ 	 * Lock already held by __f_setown(), see commit 26f204380a3c ("fs: Fix
+ 	 * file_set_fowner LSM hook inconsistencies").
+ 	 */
+-	lockdep_assert_held(&file_f_owner(file)->lock);
+-	new_dom = landlock_get_current_domain();
+-	landlock_get_ruleset(new_dom);
++	lockdep_assert_held(&fown->lock);
++
++	/*
++	 * Always allow sending signals between threads of the same process.  This
++	 * ensures consistency with hook_task_kill().
++	 */
++	p = pid_task(fown->pid, fown->pid_type);
++	if (!same_thread_group(p, current)) {
++		new_dom = landlock_get_current_domain();
++		landlock_get_ruleset(new_dom);
++	}
++
+ 	prev_dom = landlock_file(file)->fown_domain;
+ 	landlock_file(file)->fown_domain = new_dom;
+ 
+diff --git a/security/landlock/task.c b/security/landlock/task.c
+index dc7dab78392e..4578ce6e319d 100644
+--- a/security/landlock/task.c
++++ b/security/landlock/task.c
+@@ -13,6 +13,7 @@
+ #include <linux/lsm_hooks.h>
+ #include <linux/rcupdate.h>
+ #include <linux/sched.h>
++#include <linux/sched/signal.h>
+ #include <net/af_unix.h>
+ #include <net/sock.h>
+ 
+@@ -264,6 +265,17 @@ static int hook_task_kill(struct task_struct *const p,
+ 		/* Dealing with USB IO. */
+ 		dom = landlock_cred(cred)->domain;
+ 	} else {
++		/*
++		 * Always allow sending signals between threads of the same process.
++		 * This is required for process credential changes by the Native POSIX
++		 * Threads Library and implemented by the set*id(2) wrappers and
++		 * libcap(3) with tgkill(2).  See nptl(7) and libpsx(3).
++		 *
++		 * This exception is similar to the __ptrace_may_access() one.
++		 */
++		if (same_thread_group(p, current))
++			return 0;
++
+ 		dom = landlock_get_current_domain();
+ 	}
+ 	dom = landlock_get_applicable_domain(dom, signal_scope);
+diff --git a/tools/testing/selftests/landlock/scoped_signal_test.c b/tools/testing/selftests/landlock/scoped_signal_test.c
+index 475ee62a832d..767f117703b7 100644
+--- a/tools/testing/selftests/landlock/scoped_signal_test.c
++++ b/tools/testing/selftests/landlock/scoped_signal_test.c
+@@ -281,7 +281,7 @@ TEST(signal_scoping_threads)
+ 	/* Restricts the domain after creating the first thread. */
+ 	create_scoped_domain(_metadata, LANDLOCK_SCOPE_SIGNAL);
+ 
+-	ASSERT_EQ(EPERM, pthread_kill(no_sandbox_thread, 0));
++	ASSERT_EQ(0, pthread_kill(no_sandbox_thread, 0));
+ 	ASSERT_EQ(1, write(thread_pipe[1], ".", 1));
+ 
+ 	ASSERT_EQ(0, pthread_create(&scoped_thread, NULL, thread_func, NULL));
+
+base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
+-- 
+2.48.1
 
