@@ -1,196 +1,110 @@
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2053.outbound.protection.outlook.com [40.107.244.53])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3709E139D1B;
-	Thu, 13 Mar 2025 05:09:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.53
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741842546; cv=fail; b=KduC9MaEGZx9PtbgTsVHFJtomFYifx5Mzc7kZksLFlutrSN/bSs39sVVS4XREoe660nDBGWY291GD7NxzY6ohHG1uBJbINRRYW+2kDzzvlHNhljUq5jicA3wI3Bt/GqPgybhuGv8T1nqF0amY+kPm7yfa5OaM97UvjlWZv3nBjI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741842546; c=relaxed/simple;
-	bh=YrLDiffC0zy+wyHt2oX56LdD+CfZfwV+Sfzfy6l92uA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MHN+Px06pVn1wjBNu6khE4mZLPnVvzAu8FUU2rsCuxCXMqen+i+ISjdQQX7ytrNi7SK3kDs6z+5FslI+pXjbAjgLan+BCa5N8Er8J5DyNnKo4gX0mrzTIrCpgpFDGSE9oJzjQAhGYIer3f2RnAEb+yD99Q0rWlvmOJuTv0niSgo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=WZt2AgsT; arc=fail smtp.client-ip=40.107.244.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 488E4262D16;
+	Thu, 13 Mar 2025 08:50:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741855843; cv=none; b=fzTKEv3KsfIGOCWiV+VtRwFgfVO8I8b8gsmtpPashAyzLp28x2/9ELplkhIP9MuY4H6squzA9KpWtp7FTtTB2JeFm1Go7jfMXlRV1QqjOqupJbi85xeb2A8fq57hvViOM0PV8EJRkOLYXjZEQie4bQtGnJ4TysLBObFVV8t37hY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741855843; c=relaxed/simple;
+	bh=AaLGvCMflk/8nmpvfygkfLg+3xhOY9lgQwRoQdX2ybU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Li1OuxCkhrTdRwUfvoc4WQPxO7S7Noo/VKDiB/giMVPcBdndE5L6u2anqGYQX1YjcI3/ceYOvThdVpJZgL2Usc603UQLMzuxJgqM2u3BNWIOJvC7liJ7uaTsq2dtf8f9+fHySY/I030wQS2lszMhHvZsbxdPwsj57GqXwA9Wt2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dmO3jUKm; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="WZt2AgsT"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Pf8FRSiz+VW1mQ8wDlXSvR7ipC+rsMtzAZNeR1OxyMBEtKIc+tR+8ql3XOd1P4xd+KLc0mHg8wl9du9zxLSUU3W2JD/1QtezMsJMEKVKb3BaUVfNq+0bSLfYZf/x7dNb3BEppHnhONSUTjjmD4NXA/UchoveutxyrFLNakhz/GqTa++ETu9HVoF9OiiwQ2NU3/W21w+RZ9vFZ9GsNyLjkfy1hjkMKydDKGu9oFtZq756Ll10gcUhHjsCS3oOeJJbkBItc7Qaar7LeEw4B/TvFEuoBpuD6jaraC2B55OTqe8sydV5z++KHXGKdlSRjFsW4XvjlYHVq7dJ9K8V7iy6Rw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qsfSEkqY2DlxB6s42A+IIo33t1DnYs7yS8QmRStSKQ0=;
- b=FvX8+BzN9akak1Mm+1lzMAThieiEsUAb5LcgE4V1A7ftT+aK7zbXXoj/1nBNwuEMYrglnBYtTDydHbYik+Oib+LZwZcS2kPC9Mg0lZBG/aQgV0WWRMxjdQ5ZOk4ML1nRrhkt0LPM7b1nW0XEw6x08sMy6evSc8UOE5OCBJDp+TDvFZvnr9Z25oJqOmGHiaWvAWrQjTVr/7IGi1FcIH3uqeP31CVYhSs11GJmKz8LCj/q7AQlw4FrVZM7OdKKNAKnFjIhsBfIz9G0t5i3d7Ov7LJ7VpxkoZ2EJLlWRpII80VRmKPsKuOLGcurEkzsE7IU0P5ONY7CYBVsSLKJk1cLwg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qsfSEkqY2DlxB6s42A+IIo33t1DnYs7yS8QmRStSKQ0=;
- b=WZt2AgsTyjfL2ZoK5lqY371WM1NzCPik1m0HKBlr0/McjcgHi4HZ4vze8CvxE40EONpn+I8h6jsQCgxzcUX1n9SXSOcXVanO9Tqe1e+c/AKmtu5eLs78tB4kSMaF+KprSis9NPVrQrrU9loFiXx8rKOAC83v+3f21THypFFSyvgPJaktsVgHSR9pPpO/UCY4ByzjtTGe+oxYGWbN8zn97/DLKT1m2yK8kuLFnCf0+KCnRXwwM1Xx+VYx/33ulBcBBjCLyug1OHdGsr/1RIQ7e4ZibeN0tymDsC7+OlPcKyTZQ3Z5a+TBuC+yWvDO1aqkdwT82YWgrJpZICrz4rdoyw==
-Received: from SJ0PR03CA0200.namprd03.prod.outlook.com (2603:10b6:a03:2ef::25)
- by SN7PR12MB6864.namprd12.prod.outlook.com (2603:10b6:806:263::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Thu, 13 Mar
- 2025 05:09:01 +0000
-Received: from SJ1PEPF00002320.namprd03.prod.outlook.com
- (2603:10b6:a03:2ef:cafe::9e) by SJ0PR03CA0200.outlook.office365.com
- (2603:10b6:a03:2ef::25) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.26 via Frontend Transport; Thu,
- 13 Mar 2025 05:09:00 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- SJ1PEPF00002320.mail.protection.outlook.com (10.167.242.86) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8534.20 via Frontend Transport; Thu, 13 Mar 2025 05:09:00 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 12 Mar
- 2025 22:08:47 -0700
-Received: from sw-mtx-036.mtx.nbulabs.nvidia.com (10.126.231.35) by
- rnnvmail201.nvidia.com (10.129.68.8) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Wed, 12 Mar 2025 22:08:46 -0700
-From: Parav Pandit <parav@nvidia.com>
-To: <linux-rdma@vger.kernel.org>, <linux-security-module@vger.kernel.org>
-CC: <ebiederm@xmission.com>, <serge@hallyn.com>, <leonro@nvidia.com>,
-	<jgg@nvidia.com>, Parav Pandit <parav@nvidia.com>
-Subject: [PATCH] RDMA/uverbs: Consider capability of the process that opens the file
-Date: Thu, 13 Mar 2025 07:08:32 +0200
-Message-ID: <20250313050832.113030-1-parav@nvidia.com>
-X-Mailer: git-send-email 2.26.2
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dmO3jUKm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FB19C4CEEB;
+	Thu, 13 Mar 2025 08:50:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741855843;
+	bh=AaLGvCMflk/8nmpvfygkfLg+3xhOY9lgQwRoQdX2ybU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dmO3jUKmBVspgoGdMHJ6GCTqbnJmH88g3j1T8G5EAl0THm9yLOFaue5sqRj5OvulL
+	 JDFz0riU11zg/X78iwbTarr4TvFmfK8DLqSfW3eTe6WB8kL6Es42n6O3tlpkHbZAK/
+	 MddO4H7+nAkEsGBtjkyOaEPQGzf99i47IvgYSdPnrbUs4nUDEiD7dXUj7+ljxhekex
+	 WIblD0DPkQSvW7b4+4lYaNNABQnwgyKp9/zbAcNER9k3wtivj85pEii/P8wzA8SRLt
+	 D19EmWaE9tfDyJ7ywnhhFy5RIha0IUNNb88eI8PbrBIswq/SKVNbBt/+G+QCiEvSIQ
+	 5jMpnYmgMMg6w==
+Date: Thu, 13 Mar 2025 09:50:31 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Al Viro <viro@zeniv.linux.org.uk>, Ryan Lee <ryan.lee@canonical.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
+	Jan Kara <jack@suse.cz>, John Johansen <john.johansen@canonical.com>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, Casey Schaufler <casey@schaufler-ca.com>, 
+	Kentaro Takeda <takedakn@nttdata.co.jp>, Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Subject: Re: [RFC PATCH 1/6] fs: invoke LSM file_open hook in do_dentry_open
+ for O_PATH fds as well
+Message-ID: <20250313-dompteur-dachten-bb695fcbebf1@brauner>
+References: <20250312212148.274205-1-ryan.lee@canonical.com>
+ <20250312212148.274205-2-ryan.lee@canonical.com>
+ <20250312213714.GT2023217@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00002320:EE_|SN7PR12MB6864:EE_
-X-MS-Office365-Filtering-Correlation-Id: 567e9ac7-6ba9-41da-0670-08dd61ed2ac4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?z43wsIq8F0gNdE+DCpUwVACO52dl2hojL2T236yVkKA/lUs70hQpUWCMlbPm?=
- =?us-ascii?Q?q3G8DfDkCCPyccVXcBS2N3uDdY2JYjyF34YMpby0xAZ3eGCCgNbVUqxdtj52?=
- =?us-ascii?Q?Vo7sFkKvsg36r9zf269WmkNJnyBmrKKd+YCsjSWYheRSvYSqozxx8iI0211Q?=
- =?us-ascii?Q?zZhRGoi8RAfUUkHzNut0IsaScDJ45IhDl9ty0f2szlus/r1TOF+SkuxZK2rV?=
- =?us-ascii?Q?sHXruP8Zl+WUSMh1xv6BcVfKBFeSC6XFsv7qSs1x1um52rhC1FT7fZuYlRkB?=
- =?us-ascii?Q?alwQ5lBsKP/8bvghmLQEzZ/P2YqtlPqflsBKD+37FDNUl8oOByEY7uLAQRES?=
- =?us-ascii?Q?wn0ecyAyOwK2DQUBhHJobDnGYmGw4rF/oLXe5od/86OZOkVZM30kO7WVB2sH?=
- =?us-ascii?Q?orqPGyk018d+LuG3JK86nis0JQ4QHcqF7IRqF0C0LpsweVzxTaZ20KFLhOnP?=
- =?us-ascii?Q?Wak4YFF+DqPfkkfifpsfJunncztykIjKrNU2w+HgPB20shEfBWeMEVnxEUzd?=
- =?us-ascii?Q?zhrS2BxFBBZTq0LU6/mo0n/aYrJyqG83aLokNeqLEacQBvSU8qHi6Cx9riua?=
- =?us-ascii?Q?gH4Dmrdj+Vjn6lCY3iOMEPpSkbtkbS3BpYErbRiENTMXlokicfceCg2W4Iy8?=
- =?us-ascii?Q?Xwx3U+aSTeiH11rqVuxXJwqckCuUCU5bqHBBDXp6bryRHuL2XPtN9iDsZk+E?=
- =?us-ascii?Q?2yrFlJf2clWOy6UInTymvW6Z/NIr693I5gbeZyc71Df4mpK2HqO7vbLBNPAf?=
- =?us-ascii?Q?MCokvdocsLMdyyGhBblb4Ftmp9ZNCjubSN0gLLBP40w9h6cCCHs+1JkIPaLN?=
- =?us-ascii?Q?bUJtxR9/2jFYVf3/n4+1BdZwqtDgQG6IMfM7i028MstHc1SfsKgVJ8zJIGnR?=
- =?us-ascii?Q?Z3nsRGArNZV5WDJy34TbVq7bbB64RpddMcQMKmqDlwHX1TbE2U4Z18Oala1Y?=
- =?us-ascii?Q?9XxsPKv+2uY5xXzIaehijDt9A2gpUCnEqFpz7yzIWmSWBwkFZqfpUuKyOKNF?=
- =?us-ascii?Q?HB4Nho6ISU0TDSOew4eabgH9AL5+T8rckgrGT3Z/n+eByfpkF1pkVpPH/qxR?=
- =?us-ascii?Q?/+EOH6OZ66RO6QbH8dzrCfKRtiFJWjPnx3FyrlWqGk+Uqm/gRwax1to2g2b6?=
- =?us-ascii?Q?5o9Xbl/JLHuiuwcCo/W7dGi0/mvtSDlsHwz4AsFoYGpI5W+KnifUHyqcuEm8?=
- =?us-ascii?Q?HJvX7McM+43G6Ikjct/xNwdF495Cfv3Mhf3ywtwPMAZtxkj1csxfWO4wL21h?=
- =?us-ascii?Q?hb9/g6G7PZzfAsPu0GdPsHyFi1j1sCNdieI6RXt/xNTtM5VS5YZoJv1c98G1?=
- =?us-ascii?Q?EO0ihmyiw8iF3bSpAC/uxqw3Ltoh9uzho+a4weZV9pld987Yg/hkM1rNXY+i?=
- =?us-ascii?Q?kfJmQasOs4bN83bXD/DTbXueSMSA4zf4iRAGS/NquvDpSCLrYeKF++h5a1j9?=
- =?us-ascii?Q?0ve7j6T5ndzCJX02uuLNLV1VM9TJKk75YETCe0kHiTnMS732ftgw+g=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2025 05:09:00.7705
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 567e9ac7-6ba9-41da-0670-08dd61ed2ac4
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00002320.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6864
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250312213714.GT2023217@ZenIV>
 
-Currently, the capability check is done on the current process which
-may have the CAP_NET_RAW capability, but such process may not have
-opened the file. A file may could have been opened by a lesser
-privilege process that does not possess the CAP_NET_RAW capability.
+On Wed, Mar 12, 2025 at 09:37:14PM +0000, Al Viro wrote:
+> On Wed, Mar 12, 2025 at 02:21:41PM -0700, Ryan Lee wrote:
+> > Currently, opening O_PATH file descriptors completely bypasses the LSM
+> > infrastructure. Invoking the LSM file_open hook for O_PATH fds will
+> > be necessary for e.g. mediating the fsmount() syscall.
 
-To avoid such situations, perform the capability checks against
-the file's credentials. This approach ensures that the capabilities
-of the process that opened the file are enforced.
+LSM mediation for the mount api should be done by adding appropriate
+hooks to the new mount api.
 
-Fixes: c938a616aadb ("IB/core: Add raw packet QP type")
-Signed-off-by: Parav Pandit <parav@nvidia.com>
-Suggested-by: Eric W. Biederman <ebiederm@xmission.com>
+> > 
+> > Signed-off-by: Ryan Lee <ryan.lee@canonical.com>
+> > ---
+> >  fs/open.c | 7 ++++++-
+> >  1 file changed, 6 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/open.c b/fs/open.c
+> > index 30bfcddd505d..0f8542bf6cd4 100644
+> > --- a/fs/open.c
+> > +++ b/fs/open.c
+> > @@ -921,8 +921,13 @@ static int do_dentry_open(struct file *f,
+> >  	if (unlikely(f->f_flags & O_PATH)) {
+> >  		f->f_mode = FMODE_PATH | FMODE_OPENED;
+> >  		file_set_fsnotify_mode(f, FMODE_NONOTIFY);
+> >  		f->f_op = &empty_fops;
+> > -		return 0;
+> > +		/*
+> > +		 * do_o_path in fs/namei.c unconditionally invokes path_put
+> > +		 * after this function returns, so don't path_put the path
+> > +		 * upon LSM rejection of O_PATH opening
+> > +		 */
+> > +		return security_file_open(f);
+> 
+> Unconditional path_put() in do_o_path() has nothing to do with that -
+> what gets dropped there is the reference acquired there; the reference
+> acquired (and not dropped) here is the one that went into ->f_path.
+> Since you are leaving FMODE_OPENED set, you will have __fput() drop
+> that reference.
+> 
+> Basically, you are simulating behaviour on the O_DIRECT open of
+> something that does not support O_DIRECT - return an error, with
+> ->f_path and FMODE_OPENED left in place.
+> 
+> Said that, what I do not understand is the point of that exercise -
+> why does LSM need to veto anything for those and why is security_file_open()
 
----
+I really think this is misguided. This should be done via proper hooks
+into apis that use O_PATH file descriptors for specific purposes but not
+for the generic open() path.
 
-Eric,
+> the right place for such checks?
 
-Shouldn't we check the capabilities of the process that opened the
-file and also the current process that is issuing the create_flow()
-ioctl? This way, the minimum capabilities of both processes are
-considered.
+It isn't.
 
----
- drivers/infiniband/core/uverbs_cmd.c  | 2 +-
- drivers/infiniband/core/uverbs_main.c | 2 +-
- include/rdma/uverbs_types.h           | 1 +
- 3 files changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/infiniband/core/uverbs_cmd.c b/drivers/infiniband/core/uverbs_cmd.c
-index 96d639e1ffa0..e028454bcd7e 100644
---- a/drivers/infiniband/core/uverbs_cmd.c
-+++ b/drivers/infiniband/core/uverbs_cmd.c
-@@ -3217,7 +3217,7 @@ static int ib_uverbs_ex_create_flow(struct uverbs_attr_bundle *attrs)
- 	if (cmd.comp_mask)
- 		return -EINVAL;
- 
--	if (!capable(CAP_NET_RAW))
-+	if (!file_ns_capable(attrs->ufile->filp, &init_user_ns, CAP_NET_RAW))
- 		return -EPERM;
- 
- 	if (cmd.flow_attr.flags >= IB_FLOW_ATTR_FLAGS_RESERVED)
-diff --git a/drivers/infiniband/core/uverbs_main.c b/drivers/infiniband/core/uverbs_main.c
-index 973fe2c7ef53..8e5ee702e9f8 100644
---- a/drivers/infiniband/core/uverbs_main.c
-+++ b/drivers/infiniband/core/uverbs_main.c
-@@ -993,7 +993,7 @@ static int ib_uverbs_open(struct inode *inode, struct file *filp)
- 	srcu_read_unlock(&dev->disassociate_srcu, srcu_key);
- 
- 	setup_ufile_idr_uobject(file);
--
-+	file->filp = filp;
- 	return stream_open(inode, filp);
- 
- err_module:
-diff --git a/include/rdma/uverbs_types.h b/include/rdma/uverbs_types.h
-index 26ba919ac245..06f57d28d349 100644
---- a/include/rdma/uverbs_types.h
-+++ b/include/rdma/uverbs_types.h
-@@ -181,6 +181,7 @@ struct ib_uverbs_file {
- 	struct xarray		idr;
- 
- 	struct mutex disassociation_lock;
-+	struct file *filp;
- };
- 
- extern const struct uverbs_obj_type_class uverbs_idr_class;
--- 
-2.26.2
-
+> 
+> The second part is particularly interesting...
