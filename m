@@ -1,221 +1,196 @@
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2053.outbound.protection.outlook.com [40.107.244.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C763F1F3BBD
-	for <linux-security-module@vger.kernel.org>; Wed, 12 Mar 2025 23:51:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741823503; cv=none; b=PiJxm74Q/1v41As4joF6/KAVNEwwrRyzB3WDcHXtjYT3WyzCBjwbf1KQujWZU+QE7x+PEraZY2MaW36dVH1hv7xwbueHli66i0XwTGzWPpIcE9sIrAakESV9XarXTBH/Mg3ZjCJoxXsfMMG0sBsMHp+1hAHVU4q/Q2t8ZrQG4G0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741823503; c=relaxed/simple;
-	bh=OqK4+EI0TbzhbvaQRc8UpdLTwB+tY8fTMAJuj3Y4hzo=;
-	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=ezRC/AAZ4vc0dTyG0h9bBpFqSrBRyuOJTDZrTBCXsCkj/FVM2iwQY0jMSO4NmQ3N8Y/1q7ihDsbJPpP71Ry4oLO4Ftjec7MSmMmJE0pq6gidFeWaGjQFPcS/v/oMni6RgXxLnVJuzamTPi/mKz+gaQA+uPDySlqdxd1ud4blACQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Evv093QN; arc=none smtp.client-ip=209.85.219.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3709E139D1B;
+	Thu, 13 Mar 2025 05:09:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741842546; cv=fail; b=KduC9MaEGZx9PtbgTsVHFJtomFYifx5Mzc7kZksLFlutrSN/bSs39sVVS4XREoe660nDBGWY291GD7NxzY6ohHG1uBJbINRRYW+2kDzzvlHNhljUq5jicA3wI3Bt/GqPgybhuGv8T1nqF0amY+kPm7yfa5OaM97UvjlWZv3nBjI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741842546; c=relaxed/simple;
+	bh=YrLDiffC0zy+wyHt2oX56LdD+CfZfwV+Sfzfy6l92uA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MHN+Px06pVn1wjBNu6khE4mZLPnVvzAu8FUU2rsCuxCXMqen+i+ISjdQQX7ytrNi7SK3kDs6z+5FslI+pXjbAjgLan+BCa5N8Er8J5DyNnKo4gX0mrzTIrCpgpFDGSE9oJzjQAhGYIer3f2RnAEb+yD99Q0rWlvmOJuTv0niSgo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=WZt2AgsT; arc=fail smtp.client-ip=40.107.244.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Evv093QN"
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6e8f43c1fa0so4684646d6.3
-        for <linux-security-module@vger.kernel.org>; Wed, 12 Mar 2025 16:51:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1741823499; x=1742428299; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HxlYmbTsB88Ix/oaEHJZoio3VHyIr3ksQERJyVTw4bA=;
-        b=Evv093QNcDQqsE7ZwfMOQOk6wQ6pnItsC2+RyPv/F4HzhGynZsQ1YtMlLPr0+N8JKZ
-         rU7ZbRX18N581teTBS4FH3XX8h7MBIB0mBNyGlacJCgacGuTxgMmUJYlAop8g6Z+X1w8
-         SIb2iQPv2VG90GhLQPS0pktyCIQAzFPb37ZZjTnpdN7piLU6PFLkXKLNM4sWrewX1kpc
-         fB1K9woFBrzsQhuqElTwMdiwrstFgwmixCGaiFQz7j6++BIv4WToynCoa3ECaQVuXoov
-         f/p6dxMc6+vHr0UIbAKYJp84wW3mSWVgX7UX6QA1AVM6ZhUk79j4EU4KG9BNanaM6LMw
-         v+cA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741823499; x=1742428299;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=HxlYmbTsB88Ix/oaEHJZoio3VHyIr3ksQERJyVTw4bA=;
-        b=ZeIqQkN+TQnLcbTx1PSC+kZ9DYIiBz2hlaW3NYLom97wAZhJzrGZ4unTLhpBHAnMS3
-         qHw2taYnqdtymBK8gen3sEDXeuK1XEJMZd2jeTQLi3qJNuc4YhQUkVwIzK5jFEXraHNk
-         jJq4D1DkHkNULjRijAQp2S/qyYfT2yAPooOckUgOiPngxg1IB367mMP0SEHNI2AU06Lp
-         GFzPqToNNCHo97qWo+Mb1CwmYzObKvjN8Y5yUQ6huH/p+bEC5z17SDmq03s6b4sTrSFy
-         Y/2S9VRXnq1iw8OcdOieyTKhldHcnQx8c37LFUm5UMItqZvnyqYpCXQPbJi39htwNS1H
-         Mz1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUwdUYjR/8R9W+9tuj8tAyIPcVluComl82cw5kPg1Jwp8CLzm8bhBxskgzduMjIpgbMnqjddFpzxQgNxRlVLbo11C9Mgzg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0pdUMTwCB9YAwZxcvmzHEKrmp/D7wg8RAMG37+HypdyR9XYGF
-	j7E4/bG9MmOxpCF20iJs0tz20Ygi/PQkv8PCrnl3nufN81gc3aTINPRBpnjFwg==
-X-Gm-Gg: ASbGnctAgbsHiYzsuFY3uzYeDjYzdUzrWSf7GZWAeGpvnB1S6yTx/ciG1IyMpoiULfp
-	dscNaM4L9mVR1mAMQv/fco711v+oEJAsHfoNQSKiYuUqW0Jg0x1EfE9Iz89Nz91L7XqqPM7jFEO
-	zr0tTIVsiIkdx88b08QkaOo4mx2O88vAlPR9CBnybKDczwLlCGqImT2pRagobYNWZY0aagOX7fp
-	j7EnC0IDZzgq0bSVH3+uqzO0lkTvuVCTNMkbkMmp30+taP+NnAEl5A8tTr3D0MzBxprEzW5Yly5
-	bNSJjVdm2ryAUdGYo4EFliAVJBdcPpYUtiUex44xsDWl7JVXq6yVO2GsmDHyu6lhyYuArKnA2uW
-	+HwN1sIaXqqqn3A==
-X-Google-Smtp-Source: AGHT+IFlyR/GAqSTyYhAIKsmF0zsCtOyT1xvl6rvyoCreNYLYVbRsQ3f/WRhdPpglFjVH6KtCvTPRw==
-X-Received: by 2002:a05:6214:c83:b0:6e8:f0f8:67f7 with SMTP id 6a1803df08f44-6e9005f7742mr372102726d6.16.1741823499484;
-        Wed, 12 Mar 2025 16:51:39 -0700 (PDT)
-Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6eade236776sm1858186d6.49.2025.03.12.16.51.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Mar 2025 16:51:39 -0700 (PDT)
-Date: Wed, 12 Mar 2025 19:51:38 -0400
-Message-ID: <f64ab132bdc436ec70ded81f83324f15@paul-moore.com>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="WZt2AgsT"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Pf8FRSiz+VW1mQ8wDlXSvR7ipC+rsMtzAZNeR1OxyMBEtKIc+tR+8ql3XOd1P4xd+KLc0mHg8wl9du9zxLSUU3W2JD/1QtezMsJMEKVKb3BaUVfNq+0bSLfYZf/x7dNb3BEppHnhONSUTjjmD4NXA/UchoveutxyrFLNakhz/GqTa++ETu9HVoF9OiiwQ2NU3/W21w+RZ9vFZ9GsNyLjkfy1hjkMKydDKGu9oFtZq756Ll10gcUhHjsCS3oOeJJbkBItc7Qaar7LeEw4B/TvFEuoBpuD6jaraC2B55OTqe8sydV5z++KHXGKdlSRjFsW4XvjlYHVq7dJ9K8V7iy6Rw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qsfSEkqY2DlxB6s42A+IIo33t1DnYs7yS8QmRStSKQ0=;
+ b=FvX8+BzN9akak1Mm+1lzMAThieiEsUAb5LcgE4V1A7ftT+aK7zbXXoj/1nBNwuEMYrglnBYtTDydHbYik+Oib+LZwZcS2kPC9Mg0lZBG/aQgV0WWRMxjdQ5ZOk4ML1nRrhkt0LPM7b1nW0XEw6x08sMy6evSc8UOE5OCBJDp+TDvFZvnr9Z25oJqOmGHiaWvAWrQjTVr/7IGi1FcIH3uqeP31CVYhSs11GJmKz8LCj/q7AQlw4FrVZM7OdKKNAKnFjIhsBfIz9G0t5i3d7Ov7LJ7VpxkoZ2EJLlWRpII80VRmKPsKuOLGcurEkzsE7IU0P5ONY7CYBVsSLKJk1cLwg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qsfSEkqY2DlxB6s42A+IIo33t1DnYs7yS8QmRStSKQ0=;
+ b=WZt2AgsTyjfL2ZoK5lqY371WM1NzCPik1m0HKBlr0/McjcgHi4HZ4vze8CvxE40EONpn+I8h6jsQCgxzcUX1n9SXSOcXVanO9Tqe1e+c/AKmtu5eLs78tB4kSMaF+KprSis9NPVrQrrU9loFiXx8rKOAC83v+3f21THypFFSyvgPJaktsVgHSR9pPpO/UCY4ByzjtTGe+oxYGWbN8zn97/DLKT1m2yK8kuLFnCf0+KCnRXwwM1Xx+VYx/33ulBcBBjCLyug1OHdGsr/1RIQ7e4ZibeN0tymDsC7+OlPcKyTZQ3Z5a+TBuC+yWvDO1aqkdwT82YWgrJpZICrz4rdoyw==
+Received: from SJ0PR03CA0200.namprd03.prod.outlook.com (2603:10b6:a03:2ef::25)
+ by SN7PR12MB6864.namprd12.prod.outlook.com (2603:10b6:806:263::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.27; Thu, 13 Mar
+ 2025 05:09:01 +0000
+Received: from SJ1PEPF00002320.namprd03.prod.outlook.com
+ (2603:10b6:a03:2ef:cafe::9e) by SJ0PR03CA0200.outlook.office365.com
+ (2603:10b6:a03:2ef::25) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.26 via Frontend Transport; Thu,
+ 13 Mar 2025 05:09:00 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ SJ1PEPF00002320.mail.protection.outlook.com (10.167.242.86) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8534.20 via Frontend Transport; Thu, 13 Mar 2025 05:09:00 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 12 Mar
+ 2025 22:08:47 -0700
+Received: from sw-mtx-036.mtx.nbulabs.nvidia.com (10.126.231.35) by
+ rnnvmail201.nvidia.com (10.129.68.8) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Wed, 12 Mar 2025 22:08:46 -0700
+From: Parav Pandit <parav@nvidia.com>
+To: <linux-rdma@vger.kernel.org>, <linux-security-module@vger.kernel.org>
+CC: <ebiederm@xmission.com>, <serge@hallyn.com>, <leonro@nvidia.com>,
+	<jgg@nvidia.com>, Parav Pandit <parav@nvidia.com>
+Subject: [PATCH] RDMA/uverbs: Consider capability of the process that opens the file
+Date: Thu, 13 Mar 2025 07:08:32 +0200
+Message-ID: <20250313050832.113030-1-parav@nvidia.com>
+X-Mailer: git-send-email 2.26.2
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=UTF-8 
-Content-Transfer-Encoding: 8bit 
-X-Mailer: pstg-pwork:20250312_1930/pstg-lib:20250312_1930/pstg-pwork:20250312_1930
-From: Paul Moore <paul@paul-moore.com>
-To: Casey Schaufler <casey@schaufler-ca.com>, casey@schaufler-ca.com, eparis@redhat.com, linux-security-module@vger.kernel.org, audit@vger.kernel.org
-Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org, john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org, selinux@vger.kernel.org
-Subject: Re: [PATCH v2 6/6] Audit: Add record for multiple object contexts
-References: <20250307183701.16970-7-casey@schaufler-ca.com>
-In-Reply-To: <20250307183701.16970-7-casey@schaufler-ca.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00002320:EE_|SN7PR12MB6864:EE_
+X-MS-Office365-Filtering-Correlation-Id: 567e9ac7-6ba9-41da-0670-08dd61ed2ac4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?z43wsIq8F0gNdE+DCpUwVACO52dl2hojL2T236yVkKA/lUs70hQpUWCMlbPm?=
+ =?us-ascii?Q?q3G8DfDkCCPyccVXcBS2N3uDdY2JYjyF34YMpby0xAZ3eGCCgNbVUqxdtj52?=
+ =?us-ascii?Q?Vo7sFkKvsg36r9zf269WmkNJnyBmrKKd+YCsjSWYheRSvYSqozxx8iI0211Q?=
+ =?us-ascii?Q?zZhRGoi8RAfUUkHzNut0IsaScDJ45IhDl9ty0f2szlus/r1TOF+SkuxZK2rV?=
+ =?us-ascii?Q?sHXruP8Zl+WUSMh1xv6BcVfKBFeSC6XFsv7qSs1x1um52rhC1FT7fZuYlRkB?=
+ =?us-ascii?Q?alwQ5lBsKP/8bvghmLQEzZ/P2YqtlPqflsBKD+37FDNUl8oOByEY7uLAQRES?=
+ =?us-ascii?Q?wn0ecyAyOwK2DQUBhHJobDnGYmGw4rF/oLXe5od/86OZOkVZM30kO7WVB2sH?=
+ =?us-ascii?Q?orqPGyk018d+LuG3JK86nis0JQ4QHcqF7IRqF0C0LpsweVzxTaZ20KFLhOnP?=
+ =?us-ascii?Q?Wak4YFF+DqPfkkfifpsfJunncztykIjKrNU2w+HgPB20shEfBWeMEVnxEUzd?=
+ =?us-ascii?Q?zhrS2BxFBBZTq0LU6/mo0n/aYrJyqG83aLokNeqLEacQBvSU8qHi6Cx9riua?=
+ =?us-ascii?Q?gH4Dmrdj+Vjn6lCY3iOMEPpSkbtkbS3BpYErbRiENTMXlokicfceCg2W4Iy8?=
+ =?us-ascii?Q?Xwx3U+aSTeiH11rqVuxXJwqckCuUCU5bqHBBDXp6bryRHuL2XPtN9iDsZk+E?=
+ =?us-ascii?Q?2yrFlJf2clWOy6UInTymvW6Z/NIr693I5gbeZyc71Df4mpK2HqO7vbLBNPAf?=
+ =?us-ascii?Q?MCokvdocsLMdyyGhBblb4Ftmp9ZNCjubSN0gLLBP40w9h6cCCHs+1JkIPaLN?=
+ =?us-ascii?Q?bUJtxR9/2jFYVf3/n4+1BdZwqtDgQG6IMfM7i028MstHc1SfsKgVJ8zJIGnR?=
+ =?us-ascii?Q?Z3nsRGArNZV5WDJy34TbVq7bbB64RpddMcQMKmqDlwHX1TbE2U4Z18Oala1Y?=
+ =?us-ascii?Q?9XxsPKv+2uY5xXzIaehijDt9A2gpUCnEqFpz7yzIWmSWBwkFZqfpUuKyOKNF?=
+ =?us-ascii?Q?HB4Nho6ISU0TDSOew4eabgH9AL5+T8rckgrGT3Z/n+eByfpkF1pkVpPH/qxR?=
+ =?us-ascii?Q?/+EOH6OZ66RO6QbH8dzrCfKRtiFJWjPnx3FyrlWqGk+Uqm/gRwax1to2g2b6?=
+ =?us-ascii?Q?5o9Xbl/JLHuiuwcCo/W7dGi0/mvtSDlsHwz4AsFoYGpI5W+KnifUHyqcuEm8?=
+ =?us-ascii?Q?HJvX7McM+43G6Ikjct/xNwdF495Cfv3Mhf3ywtwPMAZtxkj1csxfWO4wL21h?=
+ =?us-ascii?Q?hb9/g6G7PZzfAsPu0GdPsHyFi1j1sCNdieI6RXt/xNTtM5VS5YZoJv1c98G1?=
+ =?us-ascii?Q?EO0ihmyiw8iF3bSpAC/uxqw3Ltoh9uzho+a4weZV9pld987Yg/hkM1rNXY+i?=
+ =?us-ascii?Q?kfJmQasOs4bN83bXD/DTbXueSMSA4zf4iRAGS/NquvDpSCLrYeKF++h5a1j9?=
+ =?us-ascii?Q?0ve7j6T5ndzCJX02uuLNLV1VM9TJKk75YETCe0kHiTnMS732ftgw+g=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Mar 2025 05:09:00.7705
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 567e9ac7-6ba9-41da-0670-08dd61ed2ac4
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00002320.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6864
 
-On Mar  7, 2025 Casey Schaufler <casey@schaufler-ca.com> wrote:
-> 
-> Create a new audit record AUDIT_MAC_OBJ_CONTEXTS.
-> An example of the MAC_OBJ_CONTEXTS (1424) record is:
-> 
->     type=MAC_OBJ_CONTEXTS[1424]
->     msg=audit(1601152467.009:1050):
->     obj_selinux=unconfined_u:object_r:user_home_t:s0
-> 
-> When an audit event includes a AUDIT_MAC_OBJ_CONTEXTS record
-> the "obj=" field in other records in the event will be "obj=?".
-> An AUDIT_MAC_OBJ_CONTEXTS record is supplied when the system has
-> multiple security modules that may make access decisions based
-> on an object security context.
-> 
-> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-> ---
->  include/linux/audit.h      |  7 ++++-
->  include/linux/lsm_hooks.h  |  3 +++
->  include/linux/security.h   |  1 +
->  include/uapi/linux/audit.h |  1 +
->  kernel/audit.c             | 53 +++++++++++++++++++++++++++++++++++++-
->  kernel/auditsc.c           | 45 ++++++++------------------------
->  security/security.c        |  3 +++
->  security/selinux/hooks.c   |  1 +
->  security/smack/smack_lsm.c |  1 +
->  9 files changed, 79 insertions(+), 36 deletions(-)
-> 
-> diff --git a/include/linux/audit.h b/include/linux/audit.h
-> index ee3e2ce70c45..0b17acf459f2 100644
-> --- a/include/linux/audit.h
-> +++ b/include/linux/audit.h
-> @@ -186,8 +186,10 @@ extern void		    audit_log_path_denied(int type,
->  						  const char *operation);
->  extern void		    audit_log_lost(const char *message);
->  
-> +extern int audit_log_object_context(struct audit_buffer *ab,
-> +				    struct lsm_prop *prop);
+Currently, the capability check is done on the current process which
+may have the CAP_NET_RAW capability, but such process may not have
+opened the file. A file may could have been opened by a lesser
+privilege process that does not possess the CAP_NET_RAW capability.
 
-Less is more, "audit_log_obj_ctx()" to match "audit_log_subj_ctx()".
+To avoid such situations, perform the capability checks against
+the file's credentials. This approach ensures that the capabilities
+of the process that opened the file are enforced.
 
->  extern int audit_log_subject_context(struct audit_buffer *ab,
-> -				     struct lsm_prop *blob);
-> +				     struct lsm_prop *prop);
+Fixes: c938a616aadb ("IB/core: Add raw packet QP type")
+Signed-off-by: Parav Pandit <parav@nvidia.com>
+Suggested-by: Eric W. Biederman <ebiederm@xmission.com>
 
-Do that back in patch 5/6 please.
+---
 
-> diff --git a/kernel/audit.c b/kernel/audit.c
-> index f0c1f0c0b250..054776f29327 100644
-> --- a/kernel/audit.c
-> +++ b/kernel/audit.c
-> @@ -1116,7 +1116,6 @@ static int is_audit_feature_set(int i)
->  	return af.features & AUDIT_FEATURE_TO_MASK(i);
->  }
->  
-> -
->  static int audit_get_feature(struct sk_buff *skb)
->  {
->  	u32 seq;
-> @@ -2302,6 +2301,58 @@ int audit_log_task_context(struct audit_buffer *ab)
->  }
->  EXPORT_SYMBOL(audit_log_task_context);
->  
-> +int audit_log_object_context(struct audit_buffer *ab, struct lsm_prop *prop)
-> +{
-> +	int i;
-> +	int rc;
-> +	int error = 0;
-> +	char *space = "";
-> +	struct lsm_context context;
-> +
-> +	if (lsm_objctx_cnt < 2) {
-> +		error = security_lsmprop_to_secctx(prop, &context,
-> +						   LSM_ID_UNDEF);
-> +		if (error < 0) {
-> +			if (error != -EINVAL)
-> +				goto error_path;
-> +			return error;
-> +		}
-> +		audit_log_format(ab, " obj=%s", context.context);
-> +		security_release_secctx(&context);
-> +		return 0;
-> +	}
-> +	audit_log_format(ab, " obj=?");
-> +	error = audit_buffer_aux_new(ab, AUDIT_MAC_OBJ_CONTEXTS);
-> +	if (error)
-> +		goto error_path;
-> +
-> +	for (i = 0; i < lsm_active_cnt; i++) {
-> +		if (!lsm_idlist[i]->objctx)
-> +			continue;
-> +		rc = security_lsmprop_to_secctx(prop, &context,
-> +						lsm_idlist[i]->id);
-> +		if (rc < 0) {
-> +			audit_log_format(ab, "%sobj_%s=?", space,
-> +					 lsm_idlist[i]->name);
-> +			if (rc != -EINVAL)
-> +				audit_panic("error in audit_log_object_context");
-> +			error = rc;
-> +		} else {
-> +			audit_log_format(ab, "%sobj_%s=%s", space,
-> +					 lsm_idlist[i]->name, context.context);
-> +			security_release_secctx(&context);
-> +		}
-> +		space = " ";
-> +	}
-> +
-> +	audit_buffer_aux_end(ab);
-> +	return error;
-> +
-> +error_path:
-> +	audit_panic("error in audit_log_object_context");
-> +	return error;
-> +}
+Eric,
 
-Let's follow the same code pattern as suggested for the subject.
+Shouldn't we check the capabilities of the process that opened the
+file and also the current process that is issuing the create_flow()
+ioctl? This way, the minimum capabilities of both processes are
+considered.
 
-> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-> index d98ce7097a2d..82470862ea81 100644
-> --- a/kernel/auditsc.c
-> +++ b/kernel/auditsc.c
-> @@ -1780,15 +1756,16 @@ static void audit_log_exit(void)
->  						  axs->target_sessionid[i],
->  						  &axs->target_ref[i],
->  						  axs->target_comm[i]))
-> -				call_panic = 1;
-> +			call_panic = 1;
->  	}
->  
->  	if (context->target_pid &&
->  	    audit_log_pid_context(context, context->target_pid,
->  				  context->target_auid, context->target_uid,
->  				  context->target_sessionid,
-> -				  &context->target_ref, context->target_comm))
-> -			call_panic = 1;
-> +				  &context->target_ref,
-> +				  context->target_comm))
-> +		call_panic = 1;
+---
+ drivers/infiniband/core/uverbs_cmd.c  | 2 +-
+ drivers/infiniband/core/uverbs_main.c | 2 +-
+ include/rdma/uverbs_types.h           | 1 +
+ 3 files changed, 3 insertions(+), 2 deletions(-)
 
-Thank you for both of the indent fixes above.
+diff --git a/drivers/infiniband/core/uverbs_cmd.c b/drivers/infiniband/core/uverbs_cmd.c
+index 96d639e1ffa0..e028454bcd7e 100644
+--- a/drivers/infiniband/core/uverbs_cmd.c
++++ b/drivers/infiniband/core/uverbs_cmd.c
+@@ -3217,7 +3217,7 @@ static int ib_uverbs_ex_create_flow(struct uverbs_attr_bundle *attrs)
+ 	if (cmd.comp_mask)
+ 		return -EINVAL;
+ 
+-	if (!capable(CAP_NET_RAW))
++	if (!file_ns_capable(attrs->ufile->filp, &init_user_ns, CAP_NET_RAW))
+ 		return -EPERM;
+ 
+ 	if (cmd.flow_attr.flags >= IB_FLOW_ATTR_FLAGS_RESERVED)
+diff --git a/drivers/infiniband/core/uverbs_main.c b/drivers/infiniband/core/uverbs_main.c
+index 973fe2c7ef53..8e5ee702e9f8 100644
+--- a/drivers/infiniband/core/uverbs_main.c
++++ b/drivers/infiniband/core/uverbs_main.c
+@@ -993,7 +993,7 @@ static int ib_uverbs_open(struct inode *inode, struct file *filp)
+ 	srcu_read_unlock(&dev->disassociate_srcu, srcu_key);
+ 
+ 	setup_ufile_idr_uobject(file);
+-
++	file->filp = filp;
+ 	return stream_open(inode, filp);
+ 
+ err_module:
+diff --git a/include/rdma/uverbs_types.h b/include/rdma/uverbs_types.h
+index 26ba919ac245..06f57d28d349 100644
+--- a/include/rdma/uverbs_types.h
++++ b/include/rdma/uverbs_types.h
+@@ -181,6 +181,7 @@ struct ib_uverbs_file {
+ 	struct xarray		idr;
+ 
+ 	struct mutex disassociation_lock;
++	struct file *filp;
+ };
+ 
+ extern const struct uverbs_obj_type_class uverbs_idr_class;
+-- 
+2.26.2
 
---
-paul-moore.com
