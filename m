@@ -1,238 +1,107 @@
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D251D5AB5
-	for <linux-security-module@vger.kernel.org>; Thu, 13 Mar 2025 17:35:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EE861EA7C9;
+	Thu, 13 Mar 2025 21:51:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741887335; cv=none; b=NChCZxy/T+kI7MCt7DROE7xFkyYsB1ERwTijbIg0Ju4GlBaAfpO8Oq3W+muHo3YbUWauLAMHEI/+VbrVYk+rOfmUpz26lFhwe1KoRSMCMv1aNSaEZEepSeEiKQz9taeyKQPkMusWEQNbXcn6oUDv8ofZLzHsDHE8QhWemBssUjc=
+	t=1741902671; cv=none; b=G3jhcM/DssXGv2bFxuFB7ZeaufbP387Wf1ZmabB03PPociKhoqaC3ADj4qvfKWSrs0RaO+VMk0lRJXI8twMs5B6D/2kv2ysIqHGEQ+igK8GbOsn/bCtqKlAmQggooX7vTx2ap08BeLkljmxcu5LwVUlW+2DPLFqY7LxQ74xTtK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741887335; c=relaxed/simple;
-	bh=vQdoq9CEvtCoxe0/XgIj7OuZW3qXJ4NL8kAMzq1rRbM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aR57/3JsemVybuBv45uiunh52o1aOg2EQbmwg9233x30dyY40qtN74R7ygq33QFxNUe5r3Q+xso2obDe28gncypfMGUBIOnUhF0L8iuu3v3iXfwKKc7z1b6MX5FwwN/NllexxmbFCAM4oxcKwoO+sjWTxYIdDMgOJNMERJgjTzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=y1NGj7YI; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=0CctoGQm; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=y1NGj7YI; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=0CctoGQm; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+	s=arc-20240116; t=1741902671; c=relaxed/simple;
+	bh=r8GYZdVLSHLLvs9dPvnIxJkn4vAA2uVbJuheWRdrC70=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=cAxQyljo4YQGDwTU3+ZTxNQt7HvLdGAiYWmMGY0d+wcN1FswvF0YHa7f6u/47+ZmO1Cnq39/qeC2hpsC4WAtVQkNP5LqfFJ1J4dv/7uKlKOR8AEafnayFuAeRocQCiHM/kmUodfugefNTTLCCzPF81PTBFXWKgcsbM2QvNmpUWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=JjVFvH4C; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="y1NGj7YI";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0CctoGQm";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="y1NGj7YI";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0CctoGQm"
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 712A01F76B;
-	Thu, 13 Mar 2025 17:35:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1741887332; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AssL4APWosYRwux5Sl/5PXBGFriuHOGNHF7c4W1mHz4=;
-	b=y1NGj7YI236QfMjWfjyv7LrwSGiLStdfqnuRlM/CfAdhXKWKN4iTh2TRCrHzstePyZi12z
-	+jPHKtd85Q3xbppcEPJoFHJ0lt4wfypY2T3zUTirUov+7hJc6c1pcTe1z9M99oouxg3cE+
-	33y7xP7FMuqZBEhC8J2ZIqGLP+JiiAU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1741887332;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AssL4APWosYRwux5Sl/5PXBGFriuHOGNHF7c4W1mHz4=;
-	b=0CctoGQmht81QUlHsTv3wXnswkFWaKpZaDxclDD902ge4IuSoD8+Egh84CnLffg3g3M+9p
-	gGX9yD+fq9CwKVDQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1741887332; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AssL4APWosYRwux5Sl/5PXBGFriuHOGNHF7c4W1mHz4=;
-	b=y1NGj7YI236QfMjWfjyv7LrwSGiLStdfqnuRlM/CfAdhXKWKN4iTh2TRCrHzstePyZi12z
-	+jPHKtd85Q3xbppcEPJoFHJ0lt4wfypY2T3zUTirUov+7hJc6c1pcTe1z9M99oouxg3cE+
-	33y7xP7FMuqZBEhC8J2ZIqGLP+JiiAU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1741887332;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AssL4APWosYRwux5Sl/5PXBGFriuHOGNHF7c4W1mHz4=;
-	b=0CctoGQmht81QUlHsTv3wXnswkFWaKpZaDxclDD902ge4IuSoD8+Egh84CnLffg3g3M+9p
-	gGX9yD+fq9CwKVDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6105E137BA;
-	Thu, 13 Mar 2025 17:35:32 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id uzqGFmQX02cwQwAAD6G6ig
-	(envelope-from <nstange@suse.de>); Thu, 13 Mar 2025 17:35:32 +0000
-From: Nicolai Stange <nstange@suse.de>
-To: Mimi Zohar <zohar@linux.ibm.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Cc: Eric Snowberg <eric.snowberg@oracle.com>,
-	linux-integrity@vger.kernel.org,
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="JjVFvH4C"
+Received: by linux.microsoft.com (Postfix, from userid 1212)
+	id ECF0A2033430; Thu, 13 Mar 2025 14:51:08 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com ECF0A2033430
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1741902668;
+	bh=DtiL37rJshdH3nDzTNYky8y+4UT+y6qABeaJMa2+kyI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=JjVFvH4CYjQYYUTtgvPTUsar/0SHPJPdbvQ5wkYi+BcRY2kdterFycC49BBKZ35Iv
+	 bYAEpyFlhBcObWw180/f6svjXpvfjwDJ3Iyvhz+wRsuCNJs7QLJgGmBMnqNftgbgyz
+	 5pKhmainICM8czn7gyIY+5+Vw+K/i0ZVcGItQo34=
+From: Jasjiv Singh <jasjivsingh@linux.microsoft.com>
+To: corbet@lwn.net,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	eparis@redhat.com,
+	paul@paul-moore.com
+Cc: linux-doc@vger.kernel.org,
 	linux-security-module@vger.kernel.org,
+	audit@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Nicolai Stange <nstange@suse.de>
-Subject: [RFC PATCH v1 7/7] ima: make SHA1 non-mandatory
-Date: Thu, 13 Mar 2025 18:33:39 +0100
-Message-ID: <20250313173339.3815589-8-nstange@suse.de>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250313173339.3815589-1-nstange@suse.de>
-References: <20250313173339.3815589-1-nstange@suse.de>
+	Jasjiv Singh <jasjivsingh@linux.microsoft.com>
+Subject: [PATCH v5 0/1] ipe: add errno field to IPE policy load auditing
+Date: Thu, 13 Mar 2025 14:51:00 -0700
+Message-Id: <1741902661-31767-1-git-send-email-jasjivsingh@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-5.30 / 50.00];
-	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[linux.ibm.com,huawei.com,gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com]
-X-Spam-Score: -5.30
-X-Spam-Flag: NO
 
-For CONFIG_IMA_COMPAT_FALLBACK_TPM_EXTEND=n, SHA-1 is not a hard
-requirement anymore. Make ima_init_crypto() continue on SHA-1
-instantiation errors.
+Hello,
 
-Note that the configure ima_hash must still be available. If that
-happened to be set to SHA-1 and SHA-1 was missing, then IMA would
-still fail to initialize.
+When deployment of a new IPE policy fails, there is no audit trail.
+The failure is written to stderr, but not to the system log. So,
+users of IPE require a way to identify when and why an operation fails,
+allowing them to both respond to violations of policy and be notified
+of potentially malicious actions on their systems with respect to IPE.
 
-Signed-off-by: Nicolai Stange <nstange@suse.de>
----
- security/integrity/ima/ima_crypto.c | 60 ++++++++++++++---------------
- 1 file changed, 28 insertions(+), 32 deletions(-)
+Previous Postings
+-----------------
+v4: https://lore.kernel.org/linux-security-module/1741385035-22090-2-git-send-email-jasjivsingh@linux.microsoft.com/
+v3: https://lore.kernel.org/linux-security-module/1740784265-19829-1-git-send-email-jasjivsingh@linux.microsoft.com/
+v2: https://lore.kernel.org/linux-security-module/1740696377-3986-1-git-send-email-jasjivsingh@linux.microsoft.com/
+v1: https://lore.kernel.org/linux-security-module/1739569319-22015-1-git-send-email-jasjivsingh@linux.microsoft.com/
 
-diff --git a/security/integrity/ima/ima_crypto.c b/security/integrity/ima/ima_crypto.c
-index 118ea15d737b..f68435f2679f 100644
---- a/security/integrity/ima/ima_crypto.c
-+++ b/security/integrity/ima/ima_crypto.c
-@@ -147,56 +147,51 @@ int __init ima_init_crypto(void)
- 		goto out;
- 	}
- 
-+	ima_algo_array[ima_hash_algo_idx].tfm = ima_shash_tfm;
-+	ima_algo_array[ima_hash_algo_idx].algo = ima_hash_algo;
-+
-+	if (ima_hash_algo != HASH_ALGO_SHA1) {
-+		ima_algo_array[ima_sha1_idx].tfm =
-+			ima_alloc_tfm(HASH_ALGO_SHA1);
-+		if (IS_ERR(ima_algo_array[ima_sha1_idx].tfm)) {
-+#if IS_ENABLED(CONFIG_IMA_COMPAT_FALLBACK_TPM_EXTEND)
-+			/*
-+			 * For backwards compatible fallback PCR
-+			 * extension, SHA1 is the fallback for missing
-+			 * algos.
-+			 */
-+			rc = PTR_ERR(ima_algo_array[ima_sha1_idx].tfm);
-+			goto out_array;
-+#endif
-+			ima_algo_array[ima_sha1_idx].tfm = NULL;
-+			ima_unsupported_tpm_banks_mask |= BIT(ima_sha1_idx);
-+		}
-+		ima_algo_array[ima_sha1_idx].algo = HASH_ALGO_SHA1;
-+	}
-+
- 	for (i = 0; i < NR_BANKS(ima_tpm_chip); i++) {
- 		algo = ima_tpm_chip->allocated_banks[i].crypto_id;
- 		ima_algo_array[i].algo = algo;
- 
-+		/* Initialized separately above. */
-+		if (i == ima_hash_algo_idx || i == ima_sha1_idx)
-+			continue;
-+
- 		/* unknown TPM algorithm */
- 		if (algo == HASH_ALGO__LAST) {
- 			ima_unsupported_tpm_banks_mask |= BIT(i);
- 			continue;
- 		}
- 
--		if (algo == ima_hash_algo) {
--			ima_algo_array[i].tfm = ima_shash_tfm;
--			continue;
--		}
--
- 		ima_algo_array[i].tfm = ima_alloc_tfm(algo);
- 		if (IS_ERR(ima_algo_array[i].tfm)) {
--			if (algo == HASH_ALGO_SHA1) {
--				rc = PTR_ERR(ima_algo_array[i].tfm);
--				ima_algo_array[i].tfm = NULL;
--				goto out_array;
--			}
--
- 			ima_algo_array[i].tfm = NULL;
- 			ima_unsupported_tpm_banks_mask |= BIT(i);
- 		}
- 	}
- 
--	if (ima_sha1_idx >= NR_BANKS(ima_tpm_chip)) {
--		if (ima_hash_algo == HASH_ALGO_SHA1) {
--			ima_algo_array[ima_sha1_idx].tfm = ima_shash_tfm;
--		} else {
--			ima_algo_array[ima_sha1_idx].tfm =
--						ima_alloc_tfm(HASH_ALGO_SHA1);
--			if (IS_ERR(ima_algo_array[ima_sha1_idx].tfm)) {
--				rc = PTR_ERR(ima_algo_array[ima_sha1_idx].tfm);
--				goto out_array;
--			}
--		}
--
--		ima_algo_array[ima_sha1_idx].algo = HASH_ALGO_SHA1;
--	}
--
--	if (ima_hash_algo_idx >= NR_BANKS(ima_tpm_chip) &&
--	    ima_hash_algo_idx != ima_sha1_idx) {
--		ima_algo_array[ima_hash_algo_idx].tfm = ima_shash_tfm;
--		ima_algo_array[ima_hash_algo_idx].algo = ima_hash_algo;
--	}
--
- 	return 0;
-+#if IS_ENABLED(CONFIG_IMA_COMPAT_FALLBACK_TPM_EXTEND)
- out_array:
- 	for (i = 0; i < NR_BANKS(ima_tpm_chip) + ima_extra_slots; i++) {
- 		if (!ima_algo_array[i].tfm ||
-@@ -206,6 +201,7 @@ int __init ima_init_crypto(void)
- 		crypto_free_shash(ima_algo_array[i].tfm);
- 	}
- 	kfree(ima_algo_array);
-+#endif
- out:
- 	crypto_free_shash(ima_shash_tfm);
- 	return rc;
+Changelog
+---------
+
+v5:
+* changed audit log format from AUDIT_POLICY_LOAD_FAIL_FMT to
+  AUDIT_POLICY_LOAD_NULL_FMT.
+* added success case in IPE policy errno documentation.
+* removed unnecessary errno documentation in new_policy(),
+  update_policy(), ipe_new_policy() and ipe_update_policy(). 
+* merged success and failed case together in new_policy() for easy
+  maintenance.
+
+v4:
+* added a seperate errno table to IPE AUDIT_IPE_POLICY_LOAD documentation.
+* fixed error code handling that happens when memdup_user_nul is called
+  in new_policy() and update_policy().
+* added additional errno documentation to new_policy(), update_policy(),
+  ipe_new_policy() and ipe_update_policy().
+* added ENOKEY and EKEYREJECTED to IPE errno table documentation.
+
+v3:
+* used ERR_PTR(rc) directly rather than assigning to struct ipe_policy.
+* removed unnecessary var from update_policy().
+* removed unnecessary error handling from update_policy().
+
+v2:
+* added additional IPE audit log information to commit to show the errno case.
+* changed log format from AUDIT_POLICY_LOAD_NULL_FMT to
+  AUDIT_POLICY_LOAD_FAIL_FMT.
+* removed unnecessary res var from ipe_audit_policy_load().
+* handled security fs failure case in new_policy() and update_policy().
+* handled insufficent failure case in new_policy() and update_policy().
+
+Jasjiv Singh (1):
+  ipe: add errno field to IPE policy load auditing
+
+ Documentation/admin-guide/LSM/ipe.rst | 69 +++++++++++++++++++--------
+ security/ipe/audit.c                  | 19 ++++++--
+ security/ipe/fs.c                     | 25 ++++++----
+ security/ipe/policy.c                 | 17 ++++---
+ security/ipe/policy_fs.c              | 28 ++++++++---
+ 5 files changed, 113 insertions(+), 45 deletions(-)
+
 -- 
-2.47.1
+2.34.1
 
