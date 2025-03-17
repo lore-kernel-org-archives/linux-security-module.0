@@ -1,127 +1,89 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E3D1448E0;
-	Sun, 16 Mar 2025 19:20:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3018C191499
+	for <linux-security-module@vger.kernel.org>; Mon, 17 Mar 2025 08:36:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742152801; cv=none; b=MhtWG0CevJKviiMbKqQCAjAxMqc51yJ7kj9+DJJVCvRDeKrlqu8KTuBJeRwLjvY4YX3QkUVspf5Iuz3I8mlTeHjl2pOT4mMcVSb1S/4L1WH5mDxoNMfjEhLPsr2YMcn+HnB4jd3KVxTrP5j4Z2TdtoCWneIpeti+4rva1RyPBgk=
+	t=1742200602; cv=none; b=IZxYzFWqc8zpcgPX0lbUnFxthfxe91KPDINZjRVwUE5esvPnF2ZeLYTRlWa5+v+FZonhHzABK6yFLdtg+4huFcfHJCb3TWo1fcnZHoAbL0wk5zEH3ab4zJEKUH9NPBGXRFsiAwXMczDZ1vIt4F56tY2QikxhPEzeo4QHBlNSlQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742152801; c=relaxed/simple;
-	bh=3zkdgl+5fRrhnPfnmcyMUK5BRIeYR/RPL0KOX8K6Tnw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fMctrV6Ktv5UVUWKGQXi3/b6J/gaJcdesPu9ZnAIfsm1gxKnN2qA75PXfZY7K8voA7xm255ytQLkXx+3QXa9RE9x9z62HmQqN3HSODPW/LvDPx+5GuGiMJEl3YmnD7wOrbKBCJMws3+6F1ULh349ae4+aRmNWk3WCAavlxngLys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=czsWyEhX; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1742200602; c=relaxed/simple;
+	bh=4Ja7e6U9yNhl+JrvSpvm42lU4+p2vsE/X83W7rD/14Q=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=DY4tyYJG9KqscRaBzzhbEtUI+2N7hGmKyPDgIfVWiTd0RC2JqnZ1TavgQZ5WEaygbJRO6O0msyhwLMj4IO9EZtaqyW3FeDvLIq8oK7BPltA01Te41wFXrwnqE5mX68IT2Sa2o9GMne44IAvPI7K7AHJTe7l8JravRNILYb0BOig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eddK+4vj; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="czsWyEhX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 036AAC4CEEA;
-	Sun, 16 Mar 2025 19:20:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742152801;
-	bh=3zkdgl+5fRrhnPfnmcyMUK5BRIeYR/RPL0KOX8K6Tnw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=czsWyEhXjjZY0TtC8wPpv5LKIp2OCAf7pOt3CrSe31wlUO5Z7Ao8BMbbscV49KdjA
-	 ZsdPAvxOQCPbwaW6qZXXJoYDUCKxC2CfCJ6ahJOEZBccP6DEv4dhaScImFS+JrTU3H
-	 nimLyH9/m8pMB1Gj6XMCwiZ5hyJxxW5kycDn8tkC352A5nIoDxZ8xikRmVuJ0Fzdcj
-	 jYCvSiE0/W2UQczp8PMzQXkidkAdypCRnkvayBavp20eYA/YbyOs+1vepwtvQelssF
-	 KP87YNetnokcEc+JfRRwg8pEpnrS6zJqZYfNfpoFkszM+3pU3AZipA1ZMWntBgg2Dm
-	 nZBj0Ynu4tb0Q==
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-549946c5346so3847643e87.2;
-        Sun, 16 Mar 2025 12:20:00 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVQCWziY6FucEasu0A4cN1P3FVRiOOuoVgZSBqxvTbhLRvU8TgOPrUG2TtrBAd8P48Ud8ArGUpPxNA=@vger.kernel.org, AJvYcCWdaaY/XqlOj/FK398TfOTKjbtUPa6ZWbkp6h8r5PmdwkYlo0bHlWz0FK/yrtKPG4Km1lzwMpR9SHGaY3G2aA==@vger.kernel.org, AJvYcCWpsYnIefjsOx9MYZCS/huyuMxeYW+vxE2y1feB+LhexfgPFJ6mF17v+2h0zp8vzZcxOh/9/qKMwsMjdSkaBUKZpfpGATc7@vger.kernel.org
-X-Gm-Message-State: AOJu0YyueBMTwYwefQ+3z2b+QaVDal/xhn5ylRjf/X5hPs5eBrVf4DBe
-	73+UKCGGxX/d6MgaE8nIPBx+/uAGuSKzzVHc03TW14OU77RkZdkv4pEfweRDwIZQeYatfSZrBuf
-	uU1IyKyfeHx2o1EhFreR1xlBMOxw=
-X-Google-Smtp-Source: AGHT+IGcfsGWidxv9sRAkkFQzKwjpDHZOVE300xVnp+qPdHtQRaXTm3nUv0t/PqqXA0WFmss8SFP1FVNTS2rHPoZVhY=
-X-Received: by 2002:a05:6512:4029:b0:549:b0f3:43a2 with SMTP id
- 2adb3069b0e04-549c392511amr3793918e87.40.1742152799381; Sun, 16 Mar 2025
- 12:19:59 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eddK+4vj"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1742200600;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Gb2tWkutFdwW0BrIFMtAs6rVWFa189SNP9nOSQ9SGtg=;
+	b=eddK+4vjnHZbAl2sLhTnFFxoUP5Y0sWhYN4SSbZeOsyQZ+unWVlVYc2654uVKuIBFaVlWd
+	J+EL5AVXk/OBv3ptgeB4hicvHG25UqZ4Jcyy4DDlWhzbock04fnmpb5t1EkrLJJKethTcj
+	gi7PS5/bKLlCRRE6ria33iNMjYollgA=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-331-32CXKvvsP7OKdn_3Vs2QiA-1; Mon,
+ 17 Mar 2025 04:36:36 -0400
+X-MC-Unique: 32CXKvvsP7OKdn_3Vs2QiA-1
+X-Mimecast-MFC-AGG-ID: 32CXKvvsP7OKdn_3Vs2QiA_1742200594
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BF3961955DCD;
+	Mon, 17 Mar 2025 08:36:32 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.61])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 420DF1955DCD;
+	Mon, 17 Mar 2025 08:36:26 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20250314160543.605055-1-arnd@kernel.org>
+References: <20250314160543.605055-1-arnd@kernel.org>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: dhowells@redhat.com, Boris Brezillon <bbrezillon@kernel.org>,
+    Arnaud Ebalard <arno@natisbad.org>,
+    Srujana Challa <schalla@marvell.com>,
+    Herbert Xu <herbert@gondor.apana.org.au>,
+    "David S. Miller" <davem@davemloft.net>,
+    Jarkko Sakkinen <jarkko@kernel.org>,
+    Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+    "Serge E.
+ Hallyn" <serge@hallyn.com>,
+    "Justin M. Forbes" <jforbes@fedoraproject.org>,
+    "Jason A. Donenfeld" <Jason@zx2c4.com>,
+    Arnd Bergmann <arnd@arndb.de>, Rosen Penev <rosenp@gmail.com>,
+    Ard Biesheuvel <ardb@kernel.org>,
+    James Bottomley <James.Bottomley@HansenPartnership.com>,
+    linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+    keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH] [v2] crypto: lib/Kconfig: hide library options
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAKCV-6s3_7RzDfo_yGQj9ndf4ZKw_Awf8oNc6pYKXgDTxiDfjw@mail.gmail.com>
- <465d1d23-3b36-490e-b0dd-74889d17fa4c@tnxip.de> <CAKCV-6uuKo=RK37GhM+fV90yV9sxBFqj0s07EPSoHwVZdDWa3A@mail.gmail.com>
- <ea97dd9d1cb33e28d6ca830b6bff0c2ece374dbe.camel@HansenPartnership.com>
- <CAMj1kXGLXbki1jezLgzDGE7VX8mNmHKQ3VLQPq=j5uAyrSomvQ@mail.gmail.com>
- <20250311-visite-rastplatz-d1fdb223dc10@brauner> <814a257530ad5e8107ce5f48318ab43a3ef1f783.camel@HansenPartnership.com>
- <7bdcc2c5d8022d2f1a7ec23c0351f7816d4464c8.camel@HansenPartnership.com>
- <20250315-allemal-fahrbahn-9afc7bc0008d@brauner> <bad92b18f389256d26a886b2b0706d04c8c6c336.camel@HansenPartnership.com>
- <20250316-vergibt-hausrat-b23d525a1d24@brauner> <b2086c64d47463a019ac9fc9e5d7ee7f70becc8d.camel@HansenPartnership.com>
-In-Reply-To: <b2086c64d47463a019ac9fc9e5d7ee7f70becc8d.camel@HansenPartnership.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Sun, 16 Mar 2025 20:19:48 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXEsO4qmnkX32Ht-V1uD18raf-9PpwpPhvwf7ebX_cHWFg@mail.gmail.com>
-X-Gm-Features: AQ5f1JrQSfOpiTTW16QAGjedBBidhMNR_3UN8YFpWBBxFs47qYn47cz-oLlz-6I
-Message-ID: <CAMj1kXEsO4qmnkX32Ht-V1uD18raf-9PpwpPhvwf7ebX_cHWFg@mail.gmail.com>
-Subject: Re: [RFC 1/1] fix NULL mnt [was Re: apparmor NULL pointer dereference
- on resume [efivarfs]]
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Ryan Lee <ryan.lee@canonical.com>, =?UTF-8?Q?Malte_Schr=C3=B6der?= <malte.schroeder@tnxip.de>, 
-	linux-security-module@vger.kernel.org, apparmor <apparmor@lists.ubuntu.com>, 
-	linux-efi@vger.kernel.org, John Johansen <john.johansen@canonical.com>, 
-	"jk@ozlabs.org" <jk@ozlabs.org>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2106119.1742200585.1@warthog.procyon.org.uk>
+Date: Mon, 17 Mar 2025 08:36:25 +0000
+Message-ID: <2106120.1742200585@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Sun, 16 Mar 2025 at 15:26, James Bottomley
-<James.Bottomley@hansenpartnership.com> wrote:
->
-> On Sun, 2025-03-16 at 07:46 +0100, Christian Brauner wrote:
-> > On Sat, Mar 15, 2025 at 02:41:43PM -0400, James Bottomley wrote:
-> [...]
-> > > However, there's another problem: the mntput after kernel_file_open
-> > > may synchronously call cleanup_mnt() (and thus deactivate_super())
-> > > if the open fails because it's marked MNT_INTERNAL, which is caused
-> > > by SB_KERNMOUNT.  I fixed this just by not passing the SB_KERNMOUNT
-> > > flag, which feels a bit hacky.
-> >
-> > It actually isn't. We know that vfs_kern_mount() will always
-> > resurface the single superblock that's exposed to userspace because
-> > we've just taken a reference to it earlier in efivarfs_pm_notify().
-> > So that SB_KERNMOUNT flag is ignored because no new superblock is
-> > allocated. It would only matter if we'd end up allocating a new
-> > superblock which we never do.
->
-> I agree with the above: fc->sb_flags never propagates to the existing
-> superblock.  However, nothing propagates the superblock flags back to
-> fc->sb_flags either.  The check in vfs_create_mount() is on fc-
-> >sb_flags.  Since the code is a bit hard to follow I added a printk on
-> the path.mnt flags and sure enough it comes back with MNT_INTERNAL when
-> SB_KERNMOUNT is set.
->
-> > And if we did it would be a bug because the superblock we allocate
-> > could be reused at any time if a userspace task mounts efivarfs
-> > before efivarfs_pm_notify() has destroyed it (or the respective
-> > workqueue). But that superblock would then have SB_KERNMOUNT for
-> > something that's not supposed to be one.
->
-> True, but the flags don't propagate to the superblock, so no bug.
->
-> > And whether or not that helper mount has MNT_INTERNAL is immaterial
-> > to what you're doing here afaict.
->
-> I think the problem is the call chain mntput() -> mntput_no_expire()
-> which directly calls cleanup_mnt() -> deactivate_super() if that flag
-> is set.  Though I don't see that kernel_file_open() could ever fail
-> except for some catastrophic reason like out of memory, so perhaps it
-> isn't worth quibbling about.
->
-> > So not passing the SB_KERNMOUNT flag is the right thing (see devtmpfs
-> > as well). You could slap a comment in here explaining that we never
-> > allocate a new superblock so it's clear to people not familiar with
-> > this particular code.
->
-> OK, so you agree that the code as written looks correct? Even if we
-> don't necessarily quite agree on why.
->
+Arnd Bergmann <arnd@kernel.org> wrote:
 
-Thanks for making progress on this. It would be nice if we could fix
-this before the v6.14 release, given that the code in question was
-introduced this cycle.
+> -	depends on CRYPTO_LIB_CHACHA20POLY1305 = y
+> +	select CRYPTO_LIB_CHACHA20POLY1305
 
-And there's another suggestion from Al, to use inode_lock_nested() to
-work around the lockdep warning. I can take care of that one, unless
-you prefer to do it yourself?
+Doesn't that allow CRYPTO_LIB_CHACHA20POLY1305=m?
+
+David
+
