@@ -1,126 +1,126 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 146471B412B;
-	Mon, 17 Mar 2025 08:57:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F3931459F7;
+	Mon, 17 Mar 2025 09:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742201822; cv=none; b=TyslbrCAm49VgrUk3tpqBBy/HmiNDUMcnThhxxzoXKg0RkhQoDffbwKaCjIkf1MQRlauwNGHeEpra55FYzLCqzm8X5HwlHPWxfACwTorw6CBZks2Q8bChuF+714PK4J7cScSkXVZTBKiblbglFkOAzLAFj4cPh8+xiL51stmkUQ=
+	t=1742202314; cv=none; b=SMmyx8F/kqyI3iyaglDBHHyb803zhskZQ+ccjJeVsWUQkakG+vErXdrkjGW1IqUArhuPZFmg4XBzdnZmPxqO6FZVwnbaYCqSSXrDtD/cVgwOmc26bluAjiRFKqSmIHARSINxtRNUWe62YH6WOB2Vrs5fghaRr0uudL/OHguxktc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742201822; c=relaxed/simple;
-	bh=ywlphlxpwCbbPyYcOlpQM+tQkwstJ8CoKCBbl1Omctg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BDRVANsfAM+DmaTsm9jlPtGXm6csWt54a1Rqqt1PIBYBM6VCAVoMCOyZncBJbgxxdhL1hNaa43yKuqSStZz/qNiXi7c3hKTtQRR6yk7kV8NoD7oNlBgPZ4oBLIdImIBBsT49INCnj+MVdeg8pdd40t2ToWVVVc74U9oAPJnMx3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=njcCKsv9; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1742202314; c=relaxed/simple;
+	bh=ZEfliQgNQrLF7tY2vcgoRTEhUSXIQ1hj1kWo0r1NaX0=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=ka60I/yLnB47P0f94XS4ko+r3CScydyXFzeEPQ27X6xVipolXg/4kuniLP9KbcLXwuSrZ+ebcJ3ywtGogPHAGBb0RmIhJRpU7ub+3h5lMnIIZYQNk8147Cpn3/fmVhIfCC78TUSB82pJqnKBDy+EgASXz8g7KZ5lQsW4XF1EPQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=B+dVnSYS; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=mNHS9VnD; arc=none smtp.client-ip=103.168.172.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="njcCKsv9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C619C4CEE3;
-	Mon, 17 Mar 2025 08:56:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742201821;
-	bh=ywlphlxpwCbbPyYcOlpQM+tQkwstJ8CoKCBbl1Omctg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=njcCKsv9iXfeuAqtf22Aoj3cXDpO82NMV6YXnb4cMRONWBaOjoS/BLaMzhGLK3984
-	 o43sWUkgw8B/ofiiaaUm85Y2LF0+YyJu+U27im+JEzUTgxY6xqeea40663LJ4Z6vIT
-	 oncktrJDsZBd6JB7bB1YQMxzgXxELEf4Xt3SbiyX1CprO33Y+14dw2KbkIxArKwnA6
-	 RzzUy5rF9z19lBw3EKvDedt2AsZtLG6eyk4UlSQSJgvEmKVzBvl42OsUVd4h+wSzyM
-	 hMmt/xy4aHOj5aINlORD20C3Ki8x3f8jhz+QCZSFX3RV7W2I+ljVTwH+LXdbzsyc/D
-	 7hQs4reau5ihQ==
-Date: Mon, 17 Mar 2025 09:56:54 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: Ard Biesheuvel <ardb@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Ryan Lee <ryan.lee@canonical.com>, Malte =?utf-8?B?U2NocsO2ZGVy?= <malte.schroeder@tnxip.de>, 
-	linux-security-module@vger.kernel.org, apparmor <apparmor@lists.ubuntu.com>, linux-efi@vger.kernel.org, 
-	John Johansen <john.johansen@canonical.com>, "jk@ozlabs.org" <jk@ozlabs.org>, linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC 1/1] fix NULL mnt [was Re: apparmor NULL pointer
- dereference on resume [efivarfs]]
-Message-ID: <20250317-luftdicht-mehrweg-aab410542864@brauner>
-References: <CAKCV-6uuKo=RK37GhM+fV90yV9sxBFqj0s07EPSoHwVZdDWa3A@mail.gmail.com>
- <ea97dd9d1cb33e28d6ca830b6bff0c2ece374dbe.camel@HansenPartnership.com>
- <CAMj1kXGLXbki1jezLgzDGE7VX8mNmHKQ3VLQPq=j5uAyrSomvQ@mail.gmail.com>
- <20250311-visite-rastplatz-d1fdb223dc10@brauner>
- <814a257530ad5e8107ce5f48318ab43a3ef1f783.camel@HansenPartnership.com>
- <7bdcc2c5d8022d2f1a7ec23c0351f7816d4464c8.camel@HansenPartnership.com>
- <20250315-allemal-fahrbahn-9afc7bc0008d@brauner>
- <bad92b18f389256d26a886b2b0706d04c8c6c336.camel@HansenPartnership.com>
- <20250316-vergibt-hausrat-b23d525a1d24@brauner>
- <b2086c64d47463a019ac9fc9e5d7ee7f70becc8d.camel@HansenPartnership.com>
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="B+dVnSYS";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="mNHS9VnD"
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 01A3C11401CB;
+	Mon, 17 Mar 2025 05:05:11 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-07.internal (MEProxy); Mon, 17 Mar 2025 05:05:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1742202310;
+	 x=1742288710; bh=q8c2oruT3loXTDs3xgE5+1RGIsl+fzW/HgjFl2dlsyw=; b=
+	B+dVnSYS6oyZiYouTxS49g/zc13WQdELKK0Sm7nFv4M17gx2S4OfgrIS9VfnyTAd
+	bmdo30q7D4lxU1ZMEnHwuYp5TsZufcHw/FQU82UlSt+PbuIPfYVd1PJg0Brd8qfT
+	R7w9eOsH2s+r/7gIFeXl99A5RIrAzkZe7hoeBrMBCS/Rrn9D5EUlgYTLePENrpLy
+	twTBJdMyJN/JnGbEMQFGhXzoEhZm9vbf6QVaqITUCtUo5Eqv++3vQ3xT1e/K8jd7
+	0/NclXbXW9S/4ffBEPd9feWSAJZ4t/jceSIIquqSF0rfq1RKrd/g36AqmPRqTmkT
+	WgQEszCe+dLub17WYf5sCA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1742202310; x=
+	1742288710; bh=q8c2oruT3loXTDs3xgE5+1RGIsl+fzW/HgjFl2dlsyw=; b=m
+	NHS9VnD6SB1gbsu8ldfa8g9LeZUW+C0f4g/sH5ne39TS87KyPjH1R3CHIA8lfMqz
+	/qXTPHjnybjxReAgDD6JZw6uhTibb5y9XzBEMlnqMMYj9rlpRyhsirzgMsTqfNqz
+	L50fo2/znu/Bkwf7Gc42W8poE34DaprROTowYikbmM2qMaI59uExNOYHEc3Mk7dA
+	8CzUS2lllVU8/pjhHEPgX8HKltFiTDNt9t/9nxHxaFLIeDYrv3HbpFtO3XyjI/jk
+	5931H5OVkXb2ESQN1skcoqz+GrUb4nW2AVnI0R655gJovwlDEyNEAC162DQ/qsTb
+	6S9DixN49uKbn0AL7mNqQ==
+X-ME-Sender: <xms:xeXXZ8iZs9fL00IeZ7_t6z13sNVpKJqT2InpvgT0ICU3No31Uo4VgA>
+    <xme:xeXXZ1BG-K-T36sKnMYOTNIy7vAhe3sHMx4zyDJ9QQfeURx3P_kI3LqZtwrYhiTuu
+    IX1A0Hb_ZZW2JrR1hE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddufeeluddtucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
+    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
+    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
+    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
+    vddtpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegurghvvghmsegurghvvghmlh
+    hofhhtrdhnvghtpdhrtghpthhtohepjhhfohhrsggvshesfhgvughorhgrphhrohhjvggt
+    thdrohhrghdprhgtphhtthhopehrohhsvghnphesghhmrghilhdrtghomhdprhgtphhtth
+    hopehhvghrsggvrhhtsehgohhnughorhdrrghprghnrgdrohhrghdrrghupdhrtghpthht
+    ohepshgvrhhgvgeshhgrlhhlhihnrdgtohhmpdhrtghpthhtohepjhgrmhgvshdrsghoth
+    htohhmlhgvhieshhgrnhhsvghnphgrrhhtnhgvrhhshhhiphdrtghomhdprhgtphhtthho
+    pegrrhgusgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghrnhgusehkvghrnhgvlh
+    drohhrghdprhgtphhtthhopegssghrvgiiihhllhhonheskhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:xeXXZ0EoAiWS1UrsccSVFe3OgXt6PV8LyaooFUFZbJnKWtgljS4z5A>
+    <xmx:xeXXZ9T15HBDPYBO7BFp7FsmgXKKq_n5P4gfad3-s5pxeIWkQ0jQZg>
+    <xmx:xeXXZ5znDHpEBa62saNZ3feGCCGJQn7wZm_HRw3eh77rKHPgQPZ9ng>
+    <xmx:xeXXZ75hS9ykx9nVAmrW33_4xN3Z_REnHVQYr0JiPz4bZWY1Kgpc7A>
+    <xmx:xuXXZyHz7phn6HslI9mlTvZk9B4SA6RSrPg-n9sxD_gs3z6y92Ey5Qzf>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 1C3F92220072; Mon, 17 Mar 2025 05:05:09 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b2086c64d47463a019ac9fc9e5d7ee7f70becc8d.camel@HansenPartnership.com>
+Date: Mon, 17 Mar 2025 10:04:48 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Herbert Xu" <herbert@gondor.apana.org.au>,
+ "David Howells" <dhowells@redhat.com>
+Cc: "Arnd Bergmann" <arnd@kernel.org>,
+ "'bbrezillon@kernel.org'" <bbrezillon@kernel.org>,
+ "Arnaud Ebalard" <arno@natisbad.org>, "Srujana Challa" <schalla@marvell.com>,
+ "David S . Miller" <davem@davemloft.net>,
+ "Jarkko Sakkinen" <jarkko@kernel.org>, "Paul Moore" <paul@paul-moore.com>,
+ "James Morris" <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+ "Justin M. Forbes" <jforbes@fedoraproject.org>,
+ "Jason A . Donenfeld" <Jason@zx2c4.com>, "Rosen Penev" <rosenp@gmail.com>,
+ "Ard Biesheuvel" <ardb@kernel.org>,
+ "James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
+ linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+ keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
+Message-Id: <5d23903c-7d95-4f3f-975a-7f2fbd70e12e@app.fastmail.com>
+In-Reply-To: <Z9ffUVmGlpXdh4jO@gondor.apana.org.au>
+References: <20250314160543.605055-1-arnd@kernel.org>
+ <2106120.1742200585@warthog.procyon.org.uk>
+ <Z9ffUVmGlpXdh4jO@gondor.apana.org.au>
+Subject: Re: [PATCH] [v2] crypto: lib/Kconfig: hide library options
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On Sun, Mar 16, 2025 at 10:26:12AM -0400, James Bottomley wrote:
-> On Sun, 2025-03-16 at 07:46 +0100, Christian Brauner wrote:
-> > On Sat, Mar 15, 2025 at 02:41:43PM -0400, James Bottomley wrote:
-> [...]
-> > > However, there's another problem: the mntput after kernel_file_open
-> > > may synchronously call cleanup_mnt() (and thus deactivate_super())
-> > > if the open fails because it's marked MNT_INTERNAL, which is caused
-> > > by SB_KERNMOUNT.  I fixed this just by not passing the SB_KERNMOUNT
-> > > flag, which feels a bit hacky.
-> > 
-> > It actually isn't. We know that vfs_kern_mount() will always
-> > resurface the single superblock that's exposed to userspace because
-> > we've just taken a reference to it earlier in efivarfs_pm_notify().
-> > So that SB_KERNMOUNT flag is ignored because no new superblock is
-> > allocated. It would only matter if we'd end up allocating a new
-> > superblock which we never do.
-> 
-> I agree with the above: fc->sb_flags never propagates to the existing
-> superblock.  However, nothing propagates the superblock flags back to
-> fc->sb_flags either.  The check in vfs_create_mount() is on fc-
-> >sb_flags.  Since the code is a bit hard to follow I added a printk on
-> the path.mnt flags and sure enough it comes back with MNT_INTERNAL when
-> SB_KERNMOUNT is set.
-> 
-> > And if we did it would be a bug because the superblock we allocate
-> > could be reused at any time if a userspace task mounts efivarfs
-> > before efivarfs_pm_notify() has destroyed it (or the respective
-> > workqueue). But that superblock would then have SB_KERNMOUNT for
-> > something that's not supposed to be one.
-> 
-> True, but the flags don't propagate to the superblock, so no bug.
+On Mon, Mar 17, 2025, at 09:37, Herbert Xu wrote:
+> On Mon, Mar 17, 2025 at 08:36:25AM +0000, David Howells wrote:
+>> Arnd Bergmann <arnd@kernel.org> wrote:
+>> 
+>> > -	depends on CRYPTO_LIB_CHACHA20POLY1305 = y
+>> > +	select CRYPTO_LIB_CHACHA20POLY1305
+>> 
+>> Doesn't that allow CRYPTO_LIB_CHACHA20POLY1305=m?
+>
+> Not unless BIG_KEYS is tristate or under a tristate.
 
-SB_KERNMOUNT does propagate to the superblock if it is newly allocated
-via sget_fc(): alloc_super(fc->fs_type, fc->sb_flags, user_ns);
+Right, or if it selects something that has a dependency.
 
-But you misunderstood. "If we did it" means "If efivarfs_pm_notify()
-somehow were to allocate a new superblock (which it doesn't) then having
-SB_KERNMOUNT raised on the newly allocated superblock would be bug
-because the superblock could be reused by userspace mounting efivars.
+Before commit 17ec3e71ba79 ("crypto: lib/Kconfig - Hide arch
+options from user"), CRYPTO_LIB_CHACHA20POLY1305 had a
+dependency on CONFIG_CRYPTO, so with CRYPTO=m, the 'select CRYPTO_LIB_CHACHA20POLY1305' in BIG_KEYS would result in
+CRYPTO_LIB_CHACHA20POLY1305=m.
 
-So removing it is the correct thing in either case. It's just confusing
-to anyone maintaining that code thinking that it'd be possible for a
-superblock to resurface with SB_KERNMOUNT.
-
-> 
-> > And whether or not that helper mount has MNT_INTERNAL is immaterial
-> > to what you're doing here afaict.
-> 
-> I think the problem is the call chain mntput() -> mntput_no_expire()
-> which directly calls cleanup_mnt() -> deactivate_super() if that flag
-> is set.  Though I don't see that kernel_file_open() could ever fail
-> except for some catastrophic reason like out of memory, so perhaps it
-> isn't worth quibbling about.
-
-Not what I'm saying. Not having MNT_INTERNAL is paramount to not
-deadlocking but by not having it you're not losing anything.
-
-> 
-> > So not passing the SB_KERNMOUNT flag is the right thing (see devtmpfs
-> > as well). You could slap a comment in here explaining that we never
-> > allocate a new superblock so it's clear to people not familiar with
-> > this particular code.
-> 
-> OK, so you agree that the code as written looks correct? Even if we
-> don't necessarily quite agree on why.
-
-We agree but you just misunderstood. :)
+     Arnd
