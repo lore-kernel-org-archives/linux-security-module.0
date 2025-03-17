@@ -1,82 +1,126 @@
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 218A7191499;
-	Mon, 17 Mar 2025 08:38:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 146471B412B;
+	Mon, 17 Mar 2025 08:57:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742200697; cv=none; b=SFQR4ll12xlo2PWtEb5jo8bJ4TAm4NauU6y992h3MtyozDIA8nDAc9ni7JBlAcnU7we5C9HYIPTTsvWgZnMfG4vbzRI0jlJdITSiafiSHivLhaCoWituHqtnBXVKwjHmMZ+JPWKQjEdh1bhpl6+0FhQeZcQ7XpJCtUzEJSRXdYg=
+	t=1742201822; cv=none; b=TyslbrCAm49VgrUk3tpqBBy/HmiNDUMcnThhxxzoXKg0RkhQoDffbwKaCjIkf1MQRlauwNGHeEpra55FYzLCqzm8X5HwlHPWxfACwTorw6CBZks2Q8bChuF+714PK4J7cScSkXVZTBKiblbglFkOAzLAFj4cPh8+xiL51stmkUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742200697; c=relaxed/simple;
-	bh=dMzg72mEZDLFiIPXdcTBs7j1MpK5PLCIGj6NmCPAtqg=;
+	s=arc-20240116; t=1742201822; c=relaxed/simple;
+	bh=ywlphlxpwCbbPyYcOlpQM+tQkwstJ8CoKCBbl1Omctg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hF8WdwdqIsvr1UJOwvTbkSWWH2c415MSmMMrbp4ikI6gukGlvO8iyzDfOVB77TJ31aYthok45gkrY8OpI2nd3t1qupZi+f+AM7sPZSCcgVvgg/+hBDVre8FOSfCKCE1pwPYUYFQIFidZ5mxu+fFrfIQL542zMk5ZTnhgO0HLCj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=O2FV0QQp; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+	 Content-Type:Content-Disposition:In-Reply-To; b=BDRVANsfAM+DmaTsm9jlPtGXm6csWt54a1Rqqt1PIBYBM6VCAVoMCOyZncBJbgxxdhL1hNaa43yKuqSStZz/qNiXi7c3hKTtQRR6yk7kV8NoD7oNlBgPZ4oBLIdImIBBsT49INCnj+MVdeg8pdd40t2ToWVVVc74U9oAPJnMx3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=njcCKsv9; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="O2FV0QQp"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=VVEFn4AmBFVNIX018FJKpX39wiUCm2VR+K5QazM5gIg=; b=O2FV0QQpQfGXqFvK0HJCcdatDq
-	ZAVxkgqyDlnpZeBs+8wF1TeQD1AyjhWoeokuyrnatlDLOBLT+dbuhMYFI5nf54zaAm+vvCWn9BACd
-	tgFJm8SJNjWzC53E+GfHoBiFxipeYwdzB5L0C7+SDTvPnZ9Zf2t+hmdotnlJIP0Vxhfh8fH4aLJDG
-	yi/96ONWeXJ1w37BtzJATRb6DjZim/BSfn5ReE1PdhwrkvYnK9dSEOL6Asr0mydep6KkEVpvliBcg
-	AMAyIw3wNVyhpCiAVhGSclpmf2BBXR6iPUs3xsZz/HFgBv0URVq00ZfaT0b3V0dDK/35KLIKNcTAG
-	w61H+ALg==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1tu5yb-007UcZ-2O;
-	Mon, 17 Mar 2025 16:37:38 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Mon, 17 Mar 2025 16:37:37 +0800
-Date: Mon, 17 Mar 2025 16:37:37 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: David Howells <dhowells@redhat.com>
-Cc: Arnd Bergmann <arnd@kernel.org>,
-	Boris Brezillon <bbrezillon@kernel.org>,
-	Arnaud Ebalard <arno@natisbad.org>,
-	Srujana Challa <schalla@marvell.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	"Justin M. Forbes" <jforbes@fedoraproject.org>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Arnd Bergmann <arnd@arndb.de>, Rosen Penev <rosenp@gmail.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-	keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH] [v2] crypto: lib/Kconfig: hide library options
-Message-ID: <Z9ffUVmGlpXdh4jO@gondor.apana.org.au>
-References: <20250314160543.605055-1-arnd@kernel.org>
- <2106120.1742200585@warthog.procyon.org.uk>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="njcCKsv9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C619C4CEE3;
+	Mon, 17 Mar 2025 08:56:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742201821;
+	bh=ywlphlxpwCbbPyYcOlpQM+tQkwstJ8CoKCBbl1Omctg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=njcCKsv9iXfeuAqtf22Aoj3cXDpO82NMV6YXnb4cMRONWBaOjoS/BLaMzhGLK3984
+	 o43sWUkgw8B/ofiiaaUm85Y2LF0+YyJu+U27im+JEzUTgxY6xqeea40663LJ4Z6vIT
+	 oncktrJDsZBd6JB7bB1YQMxzgXxELEf4Xt3SbiyX1CprO33Y+14dw2KbkIxArKwnA6
+	 RzzUy5rF9z19lBw3EKvDedt2AsZtLG6eyk4UlSQSJgvEmKVzBvl42OsUVd4h+wSzyM
+	 hMmt/xy4aHOj5aINlORD20C3Ki8x3f8jhz+QCZSFX3RV7W2I+ljVTwH+LXdbzsyc/D
+	 7hQs4reau5ihQ==
+Date: Mon, 17 Mar 2025 09:56:54 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: Ard Biesheuvel <ardb@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Ryan Lee <ryan.lee@canonical.com>, Malte =?utf-8?B?U2NocsO2ZGVy?= <malte.schroeder@tnxip.de>, 
+	linux-security-module@vger.kernel.org, apparmor <apparmor@lists.ubuntu.com>, linux-efi@vger.kernel.org, 
+	John Johansen <john.johansen@canonical.com>, "jk@ozlabs.org" <jk@ozlabs.org>, linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC 1/1] fix NULL mnt [was Re: apparmor NULL pointer
+ dereference on resume [efivarfs]]
+Message-ID: <20250317-luftdicht-mehrweg-aab410542864@brauner>
+References: <CAKCV-6uuKo=RK37GhM+fV90yV9sxBFqj0s07EPSoHwVZdDWa3A@mail.gmail.com>
+ <ea97dd9d1cb33e28d6ca830b6bff0c2ece374dbe.camel@HansenPartnership.com>
+ <CAMj1kXGLXbki1jezLgzDGE7VX8mNmHKQ3VLQPq=j5uAyrSomvQ@mail.gmail.com>
+ <20250311-visite-rastplatz-d1fdb223dc10@brauner>
+ <814a257530ad5e8107ce5f48318ab43a3ef1f783.camel@HansenPartnership.com>
+ <7bdcc2c5d8022d2f1a7ec23c0351f7816d4464c8.camel@HansenPartnership.com>
+ <20250315-allemal-fahrbahn-9afc7bc0008d@brauner>
+ <bad92b18f389256d26a886b2b0706d04c8c6c336.camel@HansenPartnership.com>
+ <20250316-vergibt-hausrat-b23d525a1d24@brauner>
+ <b2086c64d47463a019ac9fc9e5d7ee7f70becc8d.camel@HansenPartnership.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <2106120.1742200585@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b2086c64d47463a019ac9fc9e5d7ee7f70becc8d.camel@HansenPartnership.com>
 
-On Mon, Mar 17, 2025 at 08:36:25AM +0000, David Howells wrote:
-> Arnd Bergmann <arnd@kernel.org> wrote:
+On Sun, Mar 16, 2025 at 10:26:12AM -0400, James Bottomley wrote:
+> On Sun, 2025-03-16 at 07:46 +0100, Christian Brauner wrote:
+> > On Sat, Mar 15, 2025 at 02:41:43PM -0400, James Bottomley wrote:
+> [...]
+> > > However, there's another problem: the mntput after kernel_file_open
+> > > may synchronously call cleanup_mnt() (and thus deactivate_super())
+> > > if the open fails because it's marked MNT_INTERNAL, which is caused
+> > > by SB_KERNMOUNT.  I fixed this just by not passing the SB_KERNMOUNT
+> > > flag, which feels a bit hacky.
+> > 
+> > It actually isn't. We know that vfs_kern_mount() will always
+> > resurface the single superblock that's exposed to userspace because
+> > we've just taken a reference to it earlier in efivarfs_pm_notify().
+> > So that SB_KERNMOUNT flag is ignored because no new superblock is
+> > allocated. It would only matter if we'd end up allocating a new
+> > superblock which we never do.
 > 
-> > -	depends on CRYPTO_LIB_CHACHA20POLY1305 = y
-> > +	select CRYPTO_LIB_CHACHA20POLY1305
+> I agree with the above: fc->sb_flags never propagates to the existing
+> superblock.  However, nothing propagates the superblock flags back to
+> fc->sb_flags either.  The check in vfs_create_mount() is on fc-
+> >sb_flags.  Since the code is a bit hard to follow I added a printk on
+> the path.mnt flags and sure enough it comes back with MNT_INTERNAL when
+> SB_KERNMOUNT is set.
 > 
-> Doesn't that allow CRYPTO_LIB_CHACHA20POLY1305=m?
+> > And if we did it would be a bug because the superblock we allocate
+> > could be reused at any time if a userspace task mounts efivarfs
+> > before efivarfs_pm_notify() has destroyed it (or the respective
+> > workqueue). But that superblock would then have SB_KERNMOUNT for
+> > something that's not supposed to be one.
+> 
+> True, but the flags don't propagate to the superblock, so no bug.
 
-Not unless BIG_KEYS is tristate or under a tristate.
+SB_KERNMOUNT does propagate to the superblock if it is newly allocated
+via sget_fc(): alloc_super(fc->fs_type, fc->sb_flags, user_ns);
 
-Cheers,
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+But you misunderstood. "If we did it" means "If efivarfs_pm_notify()
+somehow were to allocate a new superblock (which it doesn't) then having
+SB_KERNMOUNT raised on the newly allocated superblock would be bug
+because the superblock could be reused by userspace mounting efivars.
+
+So removing it is the correct thing in either case. It's just confusing
+to anyone maintaining that code thinking that it'd be possible for a
+superblock to resurface with SB_KERNMOUNT.
+
+> 
+> > And whether or not that helper mount has MNT_INTERNAL is immaterial
+> > to what you're doing here afaict.
+> 
+> I think the problem is the call chain mntput() -> mntput_no_expire()
+> which directly calls cleanup_mnt() -> deactivate_super() if that flag
+> is set.  Though I don't see that kernel_file_open() could ever fail
+> except for some catastrophic reason like out of memory, so perhaps it
+> isn't worth quibbling about.
+
+Not what I'm saying. Not having MNT_INTERNAL is paramount to not
+deadlocking but by not having it you're not losing anything.
+
+> 
+> > So not passing the SB_KERNMOUNT flag is the right thing (see devtmpfs
+> > as well). You could slap a comment in here explaining that we never
+> > allocate a new superblock so it's clear to people not familiar with
+> > this particular code.
+> 
+> OK, so you agree that the code as written looks correct? Even if we
+> don't necessarily quite agree on why.
+
+We agree but you just misunderstood. :)
