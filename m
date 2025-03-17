@@ -1,167 +1,234 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3738318BC3D;
-	Mon, 17 Mar 2025 12:38:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C51FDEED6;
+	Mon, 17 Mar 2025 18:26:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742215095; cv=none; b=pEjwyYJ8FEcAaSTBjxLiD3hZyECOwZurraOexCg2PfBkXcXO9RKAwJsfx4XOZKm5+YargBx0q+S5rjmGrABzpVAg5NXIKc+zlD6eO8sj8SqLhrfBp8ZCm5m6ob271nO4JnXjewDfkWjkDvMe8nmzIiKRnJElBgwrg0eHCk6WAPA=
+	t=1742235990; cv=none; b=lW6DVpjhjgzBHyNBENHLZ94MeQuLqLhZvTJ6kN8/D/BKYs1lSgzF/ZYr9YKvz/iM9Ow7x/LFbcSL84jvTd1c5rs2rlWutqrIUvV3NeFRdXvNp7WcMrtsFczU1IW/7edmxJm/CpwUR1MEQEggfPD1YdhJ+n/8W/m4tZzaGbxbGhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742215095; c=relaxed/simple;
-	bh=NNOOVTyWPirOiqEpb0K268B1ZkWd7p9GAsy4D2XpjfM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fhSwliFxyg2U5urXaBPX08Nx4mzJg49ltfc0VyhUe8iY97jhAQaL0xa/F1Fm6o4ZvJomfsYzR1F4NTfmPAk6IljAHjp8YlOgaCTvWJx3I22gLF5KIeTSKXVYrLqIEIogZUW7Fa7IQMRVGYc4gc8PLoGKW5VWlyQC7Smt51qZNlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V3x4cKBH; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1742235990; c=relaxed/simple;
+	bh=+++DQafxWKb80y1XK+8h/f8b+FTVjPzib9hddsHz5uw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=m3+bLAGrRjZ9RsrEtcVLjZ6VfrYQNtnZ6/bbo+SoQEUJn4IfH+n9YOv7/l1Ku1EttYGS5zkVQSzMeAgmhILubs3EygYyL6UJcv0HFNIAAtenmGyU+gIm+U265+3q3v/t67BL5G8yCClo2Lh5hazPFDjNd5Mwp54fKaU0iTImPQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=BByOTodA; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V3x4cKBH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02CDCC4CEE3;
-	Mon, 17 Mar 2025 12:38:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742215094;
-	bh=NNOOVTyWPirOiqEpb0K268B1ZkWd7p9GAsy4D2XpjfM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=V3x4cKBHl3uHHz0Azu5+brr25Bewu/N15j4gUBCyRubmwfKw/5mDHDTACXzC/LF/e
-	 wWUF3WIzrpbJV15wFKsPrj4ohKfTRErPmAnTzmq9p8yDsl0MOjb92r4brIeVDfWn5d
-	 3BgqWnil8sTtT20qK1pbeJ4lxSbwh3dQ5uwzJ3Nfn4Wk163gEletDvrhvepudSeNxV
-	 vT4CliY/umh+JA2LNq/mg+1dA0UbEuPGNPnPZqEz+5bFLR6n80i0aK5gN1toAXIei7
-	 IYGmAqqftshQVJ+8wpl1ZbE69pwqjFPvA9L/4P4onyBPGqYlFFR5FGRnmnjWAnly4I
-	 TlHA+FKdSGeOw==
-Date: Mon, 17 Mar 2025 14:38:10 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Boris Brezillon <bbrezillon@kernel.org>,
-	Arnaud Ebalard <arno@natisbad.org>,
-	Srujana Challa <schalla@marvell.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	"Justin M. Forbes" <jforbes@fedoraproject.org>,
-	"Jason A. Donenfeld" <Jason@zx2c4.com>,
-	Arnd Bergmann <arnd@arndb.de>, Rosen Penev <rosenp@gmail.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-	keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH] [v2] crypto: lib/Kconfig: hide library options
-Message-ID: <Z9gXsj0D5XmC6G2B@kernel.org>
-References: <20250314160543.605055-1-arnd@kernel.org>
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="BByOTodA"
+Received: from [10.17.64.108] (unknown [131.107.147.236])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 0A1392033446;
+	Mon, 17 Mar 2025 11:26:28 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0A1392033446
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1742235988;
+	bh=qp2xI3QTzUgxM5S5rM6E+Zs1aGPEVZUMHtXpZqPzgJc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=BByOTodA2rsY66J+N49CcTYDbbdQti49s8SiLd+O0iAQ/vkj9vEDbkudszCWMlzAv
+	 REYofXu+RdkvOhLCXd8vJdqNR8M0UDacd78xKnx917rsICHJnLBgyiPkFi3MvbcVo1
+	 j+Leqq9h3DNiQ/nogyjoxpsr/Sk8M3XJCpuimjkc=
+Message-ID: <30eea6c2-cc42-4836-ad70-ccae99b3afda@linux.microsoft.com>
+Date: Mon, 17 Mar 2025 11:26:27 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250314160543.605055-1-arnd@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 2/7] kexec: define functions to map and unmap segments
+To: Baoquan He <bhe@redhat.com>
+Cc: Jarkko Sakkinen <jarkko@kernel.org>, zohar@linux.ibm.com,
+ stefanb@linux.ibm.com, roberto.sassu@huaweicloud.com,
+ roberto.sassu@huawei.com, eric.snowberg@oracle.com, ebiederm@xmission.com,
+ paul@paul-moore.com, code@tyhicks.com, bauermann@kolabnow.com,
+ linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
+ linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+ madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
+ James.Bottomley@hansenpartnership.com, vgoyal@redhat.com, dyoung@redhat.com
+References: <20250304190351.96975-1-chenste@linux.microsoft.com>
+ <20250304190351.96975-3-chenste@linux.microsoft.com>
+ <Z8d9RvRWPOADOgsx@kernel.org>
+ <97c27a30-a5ee-4825-ab7e-82dcddedd688@linux.microsoft.com>
+ <Z8hCl4piQ1Sfpi7h@MiWiFi-R3L-srv>
+Content-Language: en-US
+From: steven chen <chenste@linux.microsoft.com>
+In-Reply-To: <Z8hCl4piQ1Sfpi7h@MiWiFi-R3L-srv>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Mar 14, 2025 at 05:05:32PM +0100, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> Any driver that needs these library functions should already be selecting
-> the corresponding Kconfig symbols, so there is no real point in making
-> these visible.
-> 
-> The original patch that made these user selectable described problems
-> with drivers failing to select the code they use, but for consistency
-> it's better to always use 'select' on a symbol than to mix it with
-> 'depends on'.
-> 
-> Fixes: e56e18985596 ("lib/crypto: add prompts back to crypto libraries")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-> v2: add the missing 'select' statements
-> ---
->  drivers/crypto/marvell/Kconfig | 4 ++--
->  lib/crypto/Kconfig             | 8 ++++----
->  security/keys/Kconfig          | 2 +-
->  3 files changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/crypto/marvell/Kconfig b/drivers/crypto/marvell/Kconfig
-> index 4c25a78ab3ed..aa269abb0499 100644
-> --- a/drivers/crypto/marvell/Kconfig
-> +++ b/drivers/crypto/marvell/Kconfig
-> @@ -24,7 +24,7 @@ config CRYPTO_DEV_OCTEONTX_CPT
->  	tristate "Support for Marvell OcteonTX CPT driver"
->  	depends on ARCH_THUNDER || COMPILE_TEST
->  	depends on PCI_MSI && 64BIT
-> -	depends on CRYPTO_LIB_AES
-> +	select CRYPTO_LIB_AES
->  	select CRYPTO_SKCIPHER
->  	select CRYPTO_HASH
->  	select CRYPTO_AEAD
-> @@ -41,10 +41,10 @@ config CRYPTO_DEV_OCTEONTX2_CPT
->  	tristate "Marvell OcteonTX2 CPT driver"
->  	depends on ARCH_THUNDER2 || COMPILE_TEST
->  	depends on PCI_MSI && 64BIT
-> -	depends on CRYPTO_LIB_AES
->  	depends on NET_VENDOR_MARVELL
->  	select OCTEONTX2_MBOX
->  	select CRYPTO_DEV_MARVELL
-> +	select CRYPTO_LIB_AES
->  	select CRYPTO_SKCIPHER
->  	select CRYPTO_HASH
->  	select CRYPTO_AEAD
-> diff --git a/lib/crypto/Kconfig b/lib/crypto/Kconfig
-> index 17322f871586..798972b29b68 100644
-> --- a/lib/crypto/Kconfig
-> +++ b/lib/crypto/Kconfig
-> @@ -63,7 +63,7 @@ config CRYPTO_LIB_CHACHA_INTERNAL
->  	select CRYPTO_LIB_CHACHA_GENERIC if CRYPTO_ARCH_HAVE_LIB_CHACHA=n
->  
->  config CRYPTO_LIB_CHACHA
-> -	tristate "ChaCha library interface"
-> +	tristate
->  	select CRYPTO
->  	select CRYPTO_LIB_CHACHA_INTERNAL
->  	help
-> @@ -93,7 +93,7 @@ config CRYPTO_LIB_CURVE25519_INTERNAL
->  	select CRYPTO_LIB_CURVE25519_GENERIC if CRYPTO_ARCH_HAVE_LIB_CURVE25519=n
->  
->  config CRYPTO_LIB_CURVE25519
-> -	tristate "Curve25519 scalar multiplication library"
-> +	tristate
->  	select CRYPTO
->  	select CRYPTO_LIB_CURVE25519_INTERNAL
->  	help
-> @@ -132,7 +132,7 @@ config CRYPTO_LIB_POLY1305_INTERNAL
->  	select CRYPTO_LIB_POLY1305_GENERIC if CRYPTO_ARCH_HAVE_LIB_POLY1305=n
->  
->  config CRYPTO_LIB_POLY1305
-> -	tristate "Poly1305 library interface"
-> +	tristate
->  	select CRYPTO
->  	select CRYPTO_LIB_POLY1305_INTERNAL
->  	help
-> @@ -141,7 +141,7 @@ config CRYPTO_LIB_POLY1305
->  	  is available and enabled.
->  
->  config CRYPTO_LIB_CHACHA20POLY1305
-> -	tristate "ChaCha20-Poly1305 AEAD support (8-byte nonce library version)"
-> +	tristate
->  	select CRYPTO_LIB_CHACHA
->  	select CRYPTO_LIB_POLY1305
->  	select CRYPTO_LIB_UTILS
-> diff --git a/security/keys/Kconfig b/security/keys/Kconfig
-> index abb03a1b2a5c..d4f5fc1e7263 100644
-> --- a/security/keys/Kconfig
-> +++ b/security/keys/Kconfig
-> @@ -60,7 +60,7 @@ config BIG_KEYS
->  	bool "Large payload keys"
->  	depends on KEYS
->  	depends on TMPFS
-> -	depends on CRYPTO_LIB_CHACHA20POLY1305 = y
-> +	select CRYPTO_LIB_CHACHA20POLY1305
->  	help
->  	  This option provides support for holding large keys within the kernel
->  	  (for example Kerberos ticket caches).  The data may be stored out to
-> -- 
-> 2.39.5
-> 
-> 
+On 3/5/2025 4:24 AM, Baoquan He wrote:
+> On 03/04/25 at 04:55pm, steven chen wrote:
+>> On 3/4/2025 2:23 PM, Jarkko Sakkinen wrote:
+>>> On Tue, Mar 04, 2025 at 11:03:46AM -0800, steven chen wrote:
+>>>> The content of memory segments carried over to the new kernel during the
+>>>> kexec systemcall can be changed at kexec 'execute' stage, but the size of
+>>>> the memory segments cannot be changed at kexec 'execute' stage.
+>>>>
+>>>> To copy IMA measurement logs during the kexec operation, IMA needs to
+>>>> allocate memory at the kexec 'load' stage and map the segments to the
+>>>> kimage structure. The mapped address will then be used to copy IMA
+>>>> measurements during the kexec 'execute' stage.
+>>>>
+>>>> Currently, the mechanism to map and unmap segments to the kimage
+>>>> structure is not available to subsystems outside of kexec.
+>>> How does IMA work with kexec without having this? Just interested
+>>> (and confused).
+>> Currently, all IMA-related operations during a soft reboot, such as memory
+>> allocation and IMA log list copy, are handled in the kexec 'load' stage, so
+>> the map/unmap mechanism is not required.
+>>
+>> The new design separates these two operations into different stages: memory
+>> allocation remains in the kexec 'load' stage, while the IMA log list copy is
+>> moved to the kexec 'execute' stage. Therefore, the map/unmap mechanism is
+>> introduced.
+> I think the log can be improved. About the found problem and solution
+> part, we possible can describe them like below:
+>
+> ===
+> Currently, the kernel behaviour of kexec load is the IMA measurements
+> log is fetched from TPM PCRs and stored into buffer and hold. When
+> kexec reboot is triggered, the stored log buffer is carried over to the
+> 2nd kernel. However, the time gap between kexec load and kexec reboot
+> could be very long. Then those new events extended into TPM PCRs during
+> the time window misses the chance to be carried over to 2nd kernel. This
+> results in mismatch between TPM PCR quotes and the actual IMA measurements
+> list after kexec reboot, which in turn results in remote attestation
+> failure.
+>
+> To solve this problem, the new design is to defer the reading TPM PCRs
+> content out into kexec buffer to kexec reboot phase. While still
+> allocating the necessary buffer at kexec load time because it's not
+> appropriate to allocate memory at kexec reboot moment.
+> ===
+>
+> It may still need be improved, just for your reference. You can change
+> and add more detail needed and add them into your log.
+>
+>> Please refer to "[PATCH v9 0/7] ima: kexec: measure events between kexec
+>> load and execute" for the reason why to add this.
+>>
+>> Steven
+>>
+>>>> Implement kimage_map_segment() to enable IMA to map measurement log list to
+>>>> the kimage structure during kexec 'load' stage.  This function takes a kimage
+>>>> pointer, a memory address, and a size, then gathers the
+>>>> source pages within the specified address range, creates an array of page
+>>>> pointers, and maps these to a contiguous virtual address range.  The
+>>>> function returns the start virtual address of this range if successful, or NULL on
+>>>> failure.
+>>>>
+>>>> Implement kimage_unmap_segment() for unmapping segments
+>>>> using vunmap().
+>>>>
+>>>> From: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+>>>> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+>>>> Cc: Eric Biederman <ebiederm@xmission.com>
+>>>> Cc: Baoquan He <bhe@redhat.com>
+>>>> Cc: Vivek Goyal <vgoyal@redhat.com>
+>>>> Cc: Dave Young <dyoung@redhat.com>
+>>>> Signed-off-by: steven chen <chenste@linux.microsoft.com>
+>>>> ---
+>>>>    include/linux/kexec.h |  6 +++++
+>>>>    kernel/kexec_core.c   | 54 +++++++++++++++++++++++++++++++++++++++++++
+>>>>    2 files changed, 60 insertions(+)
+>>>>
+>>>> diff --git a/include/linux/kexec.h b/include/linux/kexec.h
+>>>> index f0e9f8eda7a3..7d6b12f8b8d0 100644
+>>>> --- a/include/linux/kexec.h
+>>>> +++ b/include/linux/kexec.h
+>>>> @@ -467,13 +467,19 @@ extern bool kexec_file_dbg_print;
+>>>>    #define kexec_dprintk(fmt, arg...) \
+>>>>            do { if (kexec_file_dbg_print) pr_info(fmt, ##arg); } while (0)
+>>>> +extern void *kimage_map_segment(struct kimage *image, unsigned long addr, unsigned long size);
+>>>> +extern void kimage_unmap_segment(void *buffer);
+>>>>    #else /* !CONFIG_KEXEC_CORE */
+>>>>    struct pt_regs;
+>>>>    struct task_struct;
+>>>> +struct kimage;
+>>>>    static inline void __crash_kexec(struct pt_regs *regs) { }
+>>>>    static inline void crash_kexec(struct pt_regs *regs) { }
+>>>>    static inline int kexec_should_crash(struct task_struct *p) { return 0; }
+>>>>    static inline int kexec_crash_loaded(void) { return 0; }
+>>>> +static inline void *kimage_map_segment(struct kimage *image, unsigned long addr, unsigned long size)
+>>>> +{ return NULL; }
+>>>> +static inline void kimage_unmap_segment(void *buffer) { }
+>>>>    #define kexec_in_progress false
+>>>>    #endif /* CONFIG_KEXEC_CORE */
+>>>> diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
+>>>> index c0bdc1686154..63e4d16b6023 100644
+>>>> --- a/kernel/kexec_core.c
+>>>> +++ b/kernel/kexec_core.c
+>>>> @@ -867,6 +867,60 @@ int kimage_load_segment(struct kimage *image,
+>>>>    	return result;
+>>>>    }
+>>>> +void *kimage_map_segment(struct kimage *image,
+>>>> +			 unsigned long addr, unsigned long size)
+>>>> +{
+>>>> +	unsigned long eaddr = addr + size;
+>>>> +	unsigned long src_page_addr, dest_page_addr;
+>>>> +	unsigned int npages;
+>>>> +	struct page **src_pages;
+>>>> +	int i;
+>>>> +	kimage_entry_t *ptr, entry;
+>>>> +	void *vaddr = NULL;
+> When adding a new function, it's suggested to take the reverse xmas tree
+> style for local variable ordering usually.
+>
+>>>> +
+>>>> +	/*
+>>>> +	 * Collect the source pages and map them in a contiguous VA range.
+>>>> +	 */
+>>>> +	npages = PFN_UP(eaddr) - PFN_DOWN(addr);
+>>>> +	src_pages = kmalloc_array(npages, sizeof(*src_pages), GFP_KERNEL);
+>>>> +	if (!src_pages) {
+>>>> +		pr_err("Could not allocate ima pages array.\n");
+>>>> +		return NULL;
+>>>> +	}
+>>>> +
+>>>> +	i = 0;
+>>>> +	for_each_kimage_entry(image, ptr, entry) {
+>>>> +		if (entry & IND_DESTINATION) {
+>>>> +			dest_page_addr = entry & PAGE_MASK;
+>>>> +		} else if (entry & IND_SOURCE) {
+>>>> +			if (dest_page_addr >= addr && dest_page_addr < eaddr) {
+>>>> +				src_page_addr = entry & PAGE_MASK;
+>>>> +				src_pages[i++] =
+>>>> +					virt_to_page(__va(src_page_addr));
+>>>> +				if (i == npages)
+>>>> +					break;
+>>>> +				dest_page_addr += PAGE_SIZE;
+>>>> +			}
+>>>> +		}
+>>>> +	}
+>>>> +
+>>>> +	/* Sanity check. */
+>>>> +	WARN_ON(i < npages);
+>>>> +
+>>>> +	vaddr = vmap(src_pages, npages, VM_MAP, PAGE_KERNEL);
+>>>> +	kfree(src_pages);
+>>>> +
+>>>> +	if (!vaddr)
+>>>> +		pr_err("Could not map ima buffer.\n");
+>>>> +
+>>>> +	return vaddr;
+>>>> +}
+>>>> +
+>>>> +void kimage_unmap_segment(void *segment_buffer)
+>>>> +{
+>>>> +	vunmap(segment_buffer);
+>>>> +}
+>>>> +
+>>>>    struct kexec_load_limit {
+>>>>    	/* Mutex protects the limit count. */
+>>>>    	struct mutex mutex;
+>>>> -- 
+>>>> 2.25.1
+>>>>
+>>>>
+>>> BR, Jarkko
+>>
+Hi Baoquan,
 
-Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
+Thanks for your comments. I will update it in next version.
 
-BR, Jarkko
+Steven
+
