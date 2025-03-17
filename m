@@ -1,234 +1,167 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C51FDEED6;
-	Mon, 17 Mar 2025 18:26:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742235990; cv=none; b=lW6DVpjhjgzBHyNBENHLZ94MeQuLqLhZvTJ6kN8/D/BKYs1lSgzF/ZYr9YKvz/iM9Ow7x/LFbcSL84jvTd1c5rs2rlWutqrIUvV3NeFRdXvNp7WcMrtsFczU1IW/7edmxJm/CpwUR1MEQEggfPD1YdhJ+n/8W/m4tZzaGbxbGhA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742235990; c=relaxed/simple;
-	bh=+++DQafxWKb80y1XK+8h/f8b+FTVjPzib9hddsHz5uw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m3+bLAGrRjZ9RsrEtcVLjZ6VfrYQNtnZ6/bbo+SoQEUJn4IfH+n9YOv7/l1Ku1EttYGS5zkVQSzMeAgmhILubs3EygYyL6UJcv0HFNIAAtenmGyU+gIm+U265+3q3v/t67BL5G8yCClo2Lh5hazPFDjNd5Mwp54fKaU0iTImPQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=BByOTodA; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2042.outbound.protection.outlook.com [40.107.92.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77481F9DA;
+	Mon, 17 Mar 2025 19:31:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1742239915; cv=fail; b=iCUPzMTeZeBOpqVpBumhyLXlUQZOrresXS/hy5qzEwfHzFqz7PM5h3TjCUaTp6nmQ6OG2YGVOJmzCweVDVAgZw2R4wzfCC0oeXqPJxDpImKetO6q+iVWURLb2qAcd9m5TGj0ijFo3QsvJF3dUJkY+lIi/eMMVl5GUDZ/IUHc+L4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1742239915; c=relaxed/simple;
+	bh=bU/de9RAlKvWs4Vemdfm7JRuBeg/vHh6vtgpST+TkRg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=UQhgGi0UtLYpWcEgjJJyVbH+79ZQ3uQPpdXh7VBocKMPK2/juoSVhu1EIWubhJFR+kDtWNRzmFC0yaRPBXDwuqpyGV7JE3xa5orkSuSrHa4b0SLqdBYHMGkSe7qT14cl7dym+htChfHHLyXC2WJOcIe1jiqsmdVW+ePElT5Kenc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=LvXX3mpY; arc=fail smtp.client-ip=40.107.92.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="BByOTodA"
-Received: from [10.17.64.108] (unknown [131.107.147.236])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 0A1392033446;
-	Mon, 17 Mar 2025 11:26:28 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0A1392033446
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1742235988;
-	bh=qp2xI3QTzUgxM5S5rM6E+Zs1aGPEVZUMHtXpZqPzgJc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BByOTodA2rsY66J+N49CcTYDbbdQti49s8SiLd+O0iAQ/vkj9vEDbkudszCWMlzAv
-	 REYofXu+RdkvOhLCXd8vJdqNR8M0UDacd78xKnx917rsICHJnLBgyiPkFi3MvbcVo1
-	 j+Leqq9h3DNiQ/nogyjoxpsr/Sk8M3XJCpuimjkc=
-Message-ID: <30eea6c2-cc42-4836-ad70-ccae99b3afda@linux.microsoft.com>
-Date: Mon, 17 Mar 2025 11:26:27 -0700
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="LvXX3mpY"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=wu8XXnsi/GxVUJoBXCJjgjTF+nUDtwhhD5P9vU+RaUzJAlhJYTkERcgzyGzfUNbFtFFSnmRrct7qOcmJ4ukHqlvjLDBT5fG0Zyr2HPbriY7p0lomS3AZkedTMk+MMriOZaymWwvSE0EMZ/jRaOsteGIJOtFpnHbh44pASQO/VGZeTc5rLIgllFuxtEydaQeRFrtsVHxXZw9TZz4jJcwaXGububFYaaEWOKUkX6q5pdrvI9hYSkD93yk3KktfKwF20stVtCBr7uhT4CQZodNfSnzPzkBfYFD1uexp72CHEuWHzRjMUpUj7RR2pX+zdwbEZ/dAhTwJkCVieJAyGKERYw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=f2CPJHgzRrOptJvHBnqRNhUzXDSQ6/+Cyg93/ICAWWg=;
+ b=MVZCBZeqmHo0C/5Fs1rIEerxrtyMmchrAMecO6e8m0umUH/URu2aAcnTMVIBfu86O42rMn/flosNXJ05/GGg5BrOQ4YIqROEMNSrRc3brqS5ehNJvmtthYVDDaZjxNZmTaeVS+q4IwSwh46dOWetjzssOAHjTMmp29FtF0nXt58pbk14b3VJJL78g1EMqZ5+PytM7eo3E8GnUTdHAPAa7lz5ro77qGuwKtGZfkOSnW5Y4B2+4UsdgYkOriv0j4VmYEx7EPDiqXo8G0zsMNOysIXxl/kD3PfSmkO0LMTPMWzVemo8Q6I5Uk7ujgyNIfZIeYTRFTI0pB7f9jE12CozrA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=f2CPJHgzRrOptJvHBnqRNhUzXDSQ6/+Cyg93/ICAWWg=;
+ b=LvXX3mpYBi/slVKE37LpVM9t1911J3szNN7uaZMnw1b03LvnlvfZuqmSm6WPd4xBwL9T/JJRYO/8Hwlmh/n2/QWNMVx97+HLULy/+Xf0Kfmg2lL+OOB9zcs1OGvlbSEmJFP3y22FfQnEgk/wxuZB2jh8uLA3nWrFLUHUfakf4NSOieASVGfaCdkqhswofg/YI1yi1OR0znI58xsZQtpmpfx0B18tfts5emvc78jjWnk6xilRanvYYfOVp7Nqhm3Q67jOG5/ll+/l2lq4a/PO8y+Jk5oyF+Pv4jTf6abMxJV3+MR5XeHdv3R7Gu+VLhnlZYVvxIUOo6KBLpAsrP2peA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by DS0PR12MB6656.namprd12.prod.outlook.com (2603:10b6:8:d2::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.33; Mon, 17 Mar
+ 2025 19:31:50 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8534.031; Mon, 17 Mar 2025
+ 19:31:49 +0000
+Date: Mon, 17 Mar 2025 16:31:48 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Parav Pandit <parav@nvidia.com>
+Cc: linux-rdma@vger.kernel.org, linux-security-module@vger.kernel.org,
+	ebiederm@xmission.com, serge@hallyn.com, leonro@nvidia.com
+Subject: Re: [PATCH] RDMA/uverbs: Consider capability of the process that
+ opens the file
+Message-ID: <20250317193148.GU9311@nvidia.com>
+References: <20250313050832.113030-1-parav@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250313050832.113030-1-parav@nvidia.com>
+X-ClientProxiedBy: BN9P220CA0016.NAMP220.PROD.OUTLOOK.COM
+ (2603:10b6:408:13e::21) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 2/7] kexec: define functions to map and unmap segments
-To: Baoquan He <bhe@redhat.com>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>, zohar@linux.ibm.com,
- stefanb@linux.ibm.com, roberto.sassu@huaweicloud.com,
- roberto.sassu@huawei.com, eric.snowberg@oracle.com, ebiederm@xmission.com,
- paul@paul-moore.com, code@tyhicks.com, bauermann@kolabnow.com,
- linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
- madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
- James.Bottomley@hansenpartnership.com, vgoyal@redhat.com, dyoung@redhat.com
-References: <20250304190351.96975-1-chenste@linux.microsoft.com>
- <20250304190351.96975-3-chenste@linux.microsoft.com>
- <Z8d9RvRWPOADOgsx@kernel.org>
- <97c27a30-a5ee-4825-ab7e-82dcddedd688@linux.microsoft.com>
- <Z8hCl4piQ1Sfpi7h@MiWiFi-R3L-srv>
-Content-Language: en-US
-From: steven chen <chenste@linux.microsoft.com>
-In-Reply-To: <Z8hCl4piQ1Sfpi7h@MiWiFi-R3L-srv>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|DS0PR12MB6656:EE_
+X-MS-Office365-Filtering-Correlation-Id: ead92e9d-9b19-4b71-573a-08dd658a5cfc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?6YM+8NFqnbdaqCeYSMQUiXA150Rw0ZSpkXmIt3wtLo5NjD82HbaTqClbQlNY?=
+ =?us-ascii?Q?4raTtfNIK/xGeGbH+amg2rLfDFluTbTOuv2v7TszrE2hVynZ39uA2kh9Pl9w?=
+ =?us-ascii?Q?crr0mIlzxdRgbXKOvUBmbtQ5T6FIvc6FF2UILfAqb54Rpq1MqE6C3XYxqjC7?=
+ =?us-ascii?Q?ZBZqisKLhFoo2T/L77dw+PxAKWMSn8H3clqvVBvDBLKdlv3D/x4Yy9buxPGQ?=
+ =?us-ascii?Q?X1k5fiiVQnVY8JPos/DtFHrZvqvGJLNqkIiUtSZ/YlsfyPMM6TsQVFPA1UIK?=
+ =?us-ascii?Q?XMmijmBn0ZIQUWIpQ0oGIbqm/TBi+Y/8auSWoRfTjoVpX3bbZ+8DgJBvZ9GJ?=
+ =?us-ascii?Q?svFAx9UtQg5yTVUPT4mgt1cO/kvfyn4aDlrOrGKd0hXLE7DH84E+YU9JCFlt?=
+ =?us-ascii?Q?ma/bP82Dop+75BOescEBUOlXofDqiVZeSB8juUJQ63i/+94bvDX6WBiSDesa?=
+ =?us-ascii?Q?afvZW+qYReyxZxNWbLltVTGG8H0v1wZZv7tWx3vgeF4MEra+C8RPvMOVpCeB?=
+ =?us-ascii?Q?g5EbU1j0QW40Ea7kK+mo87Pdxi5aL0OOCpbmyxhs9qPM4zrDKIGU4SiFEnLA?=
+ =?us-ascii?Q?t/3xzG1ZV0UWWCjsd/xs2geO90dZz04gNPAV/lwS5l+X7mB5tiZ7DgysCJRM?=
+ =?us-ascii?Q?PMsXaSlYi9VP48+zgLdt4R91SojkX02t+oSOiByKLtOaUDPZVUQnR2wxmKKe?=
+ =?us-ascii?Q?2k1jndqpdvQjK7mXZnYDhAARqn4oGcVivLDhYyzn/ZaQcI9A3OxOHgMuXrl/?=
+ =?us-ascii?Q?xG9ITMoFnQX46u/crB4XoVZL4QJqy8uz3BpZ/P+xdIeFNQGK82vRmruFlMA7?=
+ =?us-ascii?Q?Y+gt6+2vm+bZbx2wiwMLDcT8Zkw8GbgfJBaPqOKBsQSbac0eQ0/ccnijhB9V?=
+ =?us-ascii?Q?IWCx8/UbHzZC3XvKWNf3ciMQjdBF/PP6HP1vZsojPQyGvxxAj+7WD184o1MD?=
+ =?us-ascii?Q?kz94wSiFGwh4EkYWAH3ec9YWnJP4vcnx4EaD423zjqF5pzaVLsEg4oUKsRIC?=
+ =?us-ascii?Q?ikf7ugjCteT1gUHA6uMLhFeKavNZfSZUqXhnncwHPEHy7Wvj91G3gSzD2Cm7?=
+ =?us-ascii?Q?UtLkMq3+Wl0SB2ptLYkSTkmvqCaePJS6Wqu4sFErOicLoBexh910Oj81razh?=
+ =?us-ascii?Q?V4QpI3RzAS6kS8Gsc7MHjzxrbOJVfUpooz24d5xTHxYUG9ULLm7Y1mgd02UJ?=
+ =?us-ascii?Q?2Nwly0ff1MQMmUtUg0wnW5DeRH2ARixH3U+aSHEo/VNaiw+frm2yfwP3Lu11?=
+ =?us-ascii?Q?eE63srUbmnOZUCmGYxfG7KguvAvmUhH5kAxT6FDnqqGptnqp2x4grJt56rte?=
+ =?us-ascii?Q?6JTTdLDwApXjqhGWziiRhua8DpvabRMa+tIIGj33QGVODRMoahx0TCUdtwqg?=
+ =?us-ascii?Q?Z8srnCgjh81OXiLz/OtbF78oujfH?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?pq5mzNRpavWtD2u5w5R2VNuXDzzmtEW008gqhfH/NmO2dqj/g2OdqqD9e7J1?=
+ =?us-ascii?Q?T6NFJ+6amQLla4GUR6muHf/fbuhOtHqOUQvNGUUJXHeNwBYtg2PV1YXT4DTF?=
+ =?us-ascii?Q?v1nQMOcf0dFRfpiO2A3lY08k+hJTltup+2O3dnXMSRx21dCt6wxZgqvLkxFc?=
+ =?us-ascii?Q?11GeY/sdfJgR+HrXmLJAg+YFWJLZU7BHlgB+rQkUigIDfZJlCyQZLBcDZOSZ?=
+ =?us-ascii?Q?UKSUP4+JH5ud6X0SBVRXU6lz15S5W+pQP5Y240Jje+9aMbcM4bc1KN/ikh4S?=
+ =?us-ascii?Q?8GXvgDAU4nU9OKvSijXdcAwYw9L+HeFbtVAkd8QHyqdjSAyyiqWf5BbTjvkd?=
+ =?us-ascii?Q?Yz8JHL4FAbwicI3H713ad3POP9xCCYPiDnuqtIDAq2F1VxaaI9XEA/UBMzKg?=
+ =?us-ascii?Q?TG/BscWmywIeXjTaXTkzI/dh+vdJFsyRwaU5Kb23O9NisZAVbzZMp7EXlmX/?=
+ =?us-ascii?Q?Mu8Et/Jil3fj/a8MaEfPxEa6jNF+wCRMDn/KqBYxUJHGaf2aOt59xMh93XoL?=
+ =?us-ascii?Q?5YJvnXz1++qqpXBmbj8xq1fb14FRffzWuJ5XMfoyclJ7CYP3NgAvTkodvTTU?=
+ =?us-ascii?Q?DHDuo43w8CGSbXsmj+aLzh91+teVdfw3xwoFRwn1rxFM+YPwI03ue3HtgU7W?=
+ =?us-ascii?Q?UqKIPylFEYX8nv/b4+2qp0u3UjYujF5rLOcYQPOKVJZPWUhGGD8IxnhDnAkV?=
+ =?us-ascii?Q?3zXL1KFQ6YeJr/e8wiyoZE6YB7nYwjrZbOhg6S12z+tmFZbZGTDlW3g1bmS3?=
+ =?us-ascii?Q?0ljTIdAZkfXrtuqd1ZPnM0953jRu5g7vNWv1AwYohtRpyd9xw4e3FaMF3kNv?=
+ =?us-ascii?Q?ZpylDqBBQkeXEvGnoO5zdmfHjGxQZlKMTE3IDZL9FVpuoOlpEDHkJ37cqyhM?=
+ =?us-ascii?Q?WQrCIUrdXPUF+wUCgZhj/pIdtGvOFPN1fvGWM9IYV4Vtcor+7njxdadQMQed?=
+ =?us-ascii?Q?qgiuAxTBMfxro7uwJ0BU5J0qy9tK7dqzW0W1WT06B4C4I20qzrowk1OMG3zs?=
+ =?us-ascii?Q?59UmRb7wGxXqL7naMYn5tKpq15hCWRC+N1HLrPwY8V2qk1VOhlEY1WUeiZmT?=
+ =?us-ascii?Q?752/0oLyVck/O/2jqIDr7FuNfnRj90JzCH/u3/27vZT4HMTYdiRvD05F/AP1?=
+ =?us-ascii?Q?ukVDJRv4zGjxqbsSMnENEUAX96fr8p89IxLnKwUNdtfIK+vdaaER5aINipeW?=
+ =?us-ascii?Q?oHSAkgY4saZo5FaaLTrClHKhzJ6F31KLP2+Wf0bJn9EKBW9Q8570O8/zkSWe?=
+ =?us-ascii?Q?kv2mGgUCa6jj1dU23Vt815N6ilkT+3L18wab03gRmWGYXGHy+NZ2GII8kTcn?=
+ =?us-ascii?Q?9eS3pKFuPtrKkyLugIjmOypH8IVKMsNj1w59FXc9t/6gv9ykNP/EEmKCaAPu?=
+ =?us-ascii?Q?ZAIxnFox73cFp5B77ClbTpnbh59gYGjZhQDza91TJrRvvhUmDeKZTSskrq/E?=
+ =?us-ascii?Q?rsehG6dD7D7JmwddsCUe2tY5QcP5HmMgO02UIfgHdO8q7e/UmsAU3BdQ5jln?=
+ =?us-ascii?Q?e1e0+w0SNq8IFs5VGBB0Bpt2YzjaE3Be8RwZG4BOHIsWQ8d9TjDe3+HQAGve?=
+ =?us-ascii?Q?p62ScS/+QACwWK9hYf/5MYPSm9jVkLzHZEf1REM1?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ead92e9d-9b19-4b71-573a-08dd658a5cfc
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Mar 2025 19:31:49.7727
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: BfsYeBVXcy6bZbZs1RtD0LpfskoESfXE8M5dqdyoz0ELG38Ui6qpp6nKuTUjXSaX
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB6656
 
-On 3/5/2025 4:24 AM, Baoquan He wrote:
-> On 03/04/25 at 04:55pm, steven chen wrote:
->> On 3/4/2025 2:23 PM, Jarkko Sakkinen wrote:
->>> On Tue, Mar 04, 2025 at 11:03:46AM -0800, steven chen wrote:
->>>> The content of memory segments carried over to the new kernel during the
->>>> kexec systemcall can be changed at kexec 'execute' stage, but the size of
->>>> the memory segments cannot be changed at kexec 'execute' stage.
->>>>
->>>> To copy IMA measurement logs during the kexec operation, IMA needs to
->>>> allocate memory at the kexec 'load' stage and map the segments to the
->>>> kimage structure. The mapped address will then be used to copy IMA
->>>> measurements during the kexec 'execute' stage.
->>>>
->>>> Currently, the mechanism to map and unmap segments to the kimage
->>>> structure is not available to subsystems outside of kexec.
->>> How does IMA work with kexec without having this? Just interested
->>> (and confused).
->> Currently, all IMA-related operations during a soft reboot, such as memory
->> allocation and IMA log list copy, are handled in the kexec 'load' stage, so
->> the map/unmap mechanism is not required.
->>
->> The new design separates these two operations into different stages: memory
->> allocation remains in the kexec 'load' stage, while the IMA log list copy is
->> moved to the kexec 'execute' stage. Therefore, the map/unmap mechanism is
->> introduced.
-> I think the log can be improved. About the found problem and solution
-> part, we possible can describe them like below:
->
-> ===
-> Currently, the kernel behaviour of kexec load is the IMA measurements
-> log is fetched from TPM PCRs and stored into buffer and hold. When
-> kexec reboot is triggered, the stored log buffer is carried over to the
-> 2nd kernel. However, the time gap between kexec load and kexec reboot
-> could be very long. Then those new events extended into TPM PCRs during
-> the time window misses the chance to be carried over to 2nd kernel. This
-> results in mismatch between TPM PCR quotes and the actual IMA measurements
-> list after kexec reboot, which in turn results in remote attestation
-> failure.
->
-> To solve this problem, the new design is to defer the reading TPM PCRs
-> content out into kexec buffer to kexec reboot phase. While still
-> allocating the necessary buffer at kexec load time because it's not
-> appropriate to allocate memory at kexec reboot moment.
-> ===
->
-> It may still need be improved, just for your reference. You can change
-> and add more detail needed and add them into your log.
->
->> Please refer to "[PATCH v9 0/7] ima: kexec: measure events between kexec
->> load and execute" for the reason why to add this.
->>
->> Steven
->>
->>>> Implement kimage_map_segment() to enable IMA to map measurement log list to
->>>> the kimage structure during kexec 'load' stage.  This function takes a kimage
->>>> pointer, a memory address, and a size, then gathers the
->>>> source pages within the specified address range, creates an array of page
->>>> pointers, and maps these to a contiguous virtual address range.  The
->>>> function returns the start virtual address of this range if successful, or NULL on
->>>> failure.
->>>>
->>>> Implement kimage_unmap_segment() for unmapping segments
->>>> using vunmap().
->>>>
->>>> From: Tushar Sugandhi <tusharsu@linux.microsoft.com>
->>>> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
->>>> Cc: Eric Biederman <ebiederm@xmission.com>
->>>> Cc: Baoquan He <bhe@redhat.com>
->>>> Cc: Vivek Goyal <vgoyal@redhat.com>
->>>> Cc: Dave Young <dyoung@redhat.com>
->>>> Signed-off-by: steven chen <chenste@linux.microsoft.com>
->>>> ---
->>>>    include/linux/kexec.h |  6 +++++
->>>>    kernel/kexec_core.c   | 54 +++++++++++++++++++++++++++++++++++++++++++
->>>>    2 files changed, 60 insertions(+)
->>>>
->>>> diff --git a/include/linux/kexec.h b/include/linux/kexec.h
->>>> index f0e9f8eda7a3..7d6b12f8b8d0 100644
->>>> --- a/include/linux/kexec.h
->>>> +++ b/include/linux/kexec.h
->>>> @@ -467,13 +467,19 @@ extern bool kexec_file_dbg_print;
->>>>    #define kexec_dprintk(fmt, arg...) \
->>>>            do { if (kexec_file_dbg_print) pr_info(fmt, ##arg); } while (0)
->>>> +extern void *kimage_map_segment(struct kimage *image, unsigned long addr, unsigned long size);
->>>> +extern void kimage_unmap_segment(void *buffer);
->>>>    #else /* !CONFIG_KEXEC_CORE */
->>>>    struct pt_regs;
->>>>    struct task_struct;
->>>> +struct kimage;
->>>>    static inline void __crash_kexec(struct pt_regs *regs) { }
->>>>    static inline void crash_kexec(struct pt_regs *regs) { }
->>>>    static inline int kexec_should_crash(struct task_struct *p) { return 0; }
->>>>    static inline int kexec_crash_loaded(void) { return 0; }
->>>> +static inline void *kimage_map_segment(struct kimage *image, unsigned long addr, unsigned long size)
->>>> +{ return NULL; }
->>>> +static inline void kimage_unmap_segment(void *buffer) { }
->>>>    #define kexec_in_progress false
->>>>    #endif /* CONFIG_KEXEC_CORE */
->>>> diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
->>>> index c0bdc1686154..63e4d16b6023 100644
->>>> --- a/kernel/kexec_core.c
->>>> +++ b/kernel/kexec_core.c
->>>> @@ -867,6 +867,60 @@ int kimage_load_segment(struct kimage *image,
->>>>    	return result;
->>>>    }
->>>> +void *kimage_map_segment(struct kimage *image,
->>>> +			 unsigned long addr, unsigned long size)
->>>> +{
->>>> +	unsigned long eaddr = addr + size;
->>>> +	unsigned long src_page_addr, dest_page_addr;
->>>> +	unsigned int npages;
->>>> +	struct page **src_pages;
->>>> +	int i;
->>>> +	kimage_entry_t *ptr, entry;
->>>> +	void *vaddr = NULL;
-> When adding a new function, it's suggested to take the reverse xmas tree
-> style for local variable ordering usually.
->
->>>> +
->>>> +	/*
->>>> +	 * Collect the source pages and map them in a contiguous VA range.
->>>> +	 */
->>>> +	npages = PFN_UP(eaddr) - PFN_DOWN(addr);
->>>> +	src_pages = kmalloc_array(npages, sizeof(*src_pages), GFP_KERNEL);
->>>> +	if (!src_pages) {
->>>> +		pr_err("Could not allocate ima pages array.\n");
->>>> +		return NULL;
->>>> +	}
->>>> +
->>>> +	i = 0;
->>>> +	for_each_kimage_entry(image, ptr, entry) {
->>>> +		if (entry & IND_DESTINATION) {
->>>> +			dest_page_addr = entry & PAGE_MASK;
->>>> +		} else if (entry & IND_SOURCE) {
->>>> +			if (dest_page_addr >= addr && dest_page_addr < eaddr) {
->>>> +				src_page_addr = entry & PAGE_MASK;
->>>> +				src_pages[i++] =
->>>> +					virt_to_page(__va(src_page_addr));
->>>> +				if (i == npages)
->>>> +					break;
->>>> +				dest_page_addr += PAGE_SIZE;
->>>> +			}
->>>> +		}
->>>> +	}
->>>> +
->>>> +	/* Sanity check. */
->>>> +	WARN_ON(i < npages);
->>>> +
->>>> +	vaddr = vmap(src_pages, npages, VM_MAP, PAGE_KERNEL);
->>>> +	kfree(src_pages);
->>>> +
->>>> +	if (!vaddr)
->>>> +		pr_err("Could not map ima buffer.\n");
->>>> +
->>>> +	return vaddr;
->>>> +}
->>>> +
->>>> +void kimage_unmap_segment(void *segment_buffer)
->>>> +{
->>>> +	vunmap(segment_buffer);
->>>> +}
->>>> +
->>>>    struct kexec_load_limit {
->>>>    	/* Mutex protects the limit count. */
->>>>    	struct mutex mutex;
->>>> -- 
->>>> 2.25.1
->>>>
->>>>
->>> BR, Jarkko
->>
-Hi Baoquan,
+On Thu, Mar 13, 2025 at 07:08:32AM +0200, Parav Pandit wrote:
+> Currently, the capability check is done on the current process which
+> may have the CAP_NET_RAW capability, but such process may not have
+> opened the file. A file may could have been opened by a lesser
+> privilege process that does not possess the CAP_NET_RAW capability.
 
-Thanks for your comments. I will update it in next version.
+> To avoid such situations, perform the capability checks against
+> the file's credentials. This approach ensures that the capabilities
+> of the process that opened the file are enforced.
+> 
+> Fixes: c938a616aadb ("IB/core: Add raw packet QP type")
+> Signed-off-by: Parav Pandit <parav@nvidia.com>
+> Suggested-by: Eric W. Biederman <ebiederm@xmission.com>
+> 
+> ---
+> 
+> Eric,
+> 
+> Shouldn't we check the capabilities of the process that opened the
+> file and also the current process that is issuing the create_flow()
+> ioctl? This way, the minimum capabilities of both processes are
+> considered.
 
-Steven
+I would say no, that is not our model in RDMA. The process that opens
+the file is irrelevant. We only check the current system call context
+for capability, much like any other systemcall.
 
+Jason
