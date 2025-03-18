@@ -1,33 +1,33 @@
-Received: from smtp-190b.mail.infomaniak.ch (smtp-190b.mail.infomaniak.ch [185.125.25.11])
+Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [185.125.25.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC58C19B3CB
-	for <linux-security-module@vger.kernel.org>; Tue, 18 Mar 2025 16:15:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D9F0210F6D
+	for <linux-security-module@vger.kernel.org>; Tue, 18 Mar 2025 16:15:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742314504; cv=none; b=LcPl5vgyyXOGQjUPF2/QsAAWRGXFMosAXp+i6KWoNOe89TFpBsb/2jj3Qm/9Uj3uqbwuvqddm7r9XZCib7eqeQX26hdgsGHDbNn9lJ6IGxUZrbcNRFuppNN7qTL4qFh5TUeU0bc5vdeDN+7DYm0FmmWxnGaB46GuheoNBq0dbSM=
+	t=1742314505; cv=none; b=PoLjdf4cldm/SpoBpVwWGyrmlZrvkuEsz2aWIoyY0R6IzaaOyGRqemY0TX9GjkAix55/t68mzPpbc+XU6MrXAl3KnG+NfeUbLHKFtdFzuLb2gwPBNXo2p/Wz3lTHDXIZL5guUUcsGnBZjfmq195dNtdj+i35ajzpUicadaJ3yXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742314504; c=relaxed/simple;
-	bh=/fE7qseGju2TMqWFuKyjlpp63PRsN4eYb5EwM78duLg=;
+	s=arc-20240116; t=1742314505; c=relaxed/simple;
+	bh=+jsbZE09sFbnqsbp9iUkpYGeJQyb0fNC/hr1RqK0xOU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Rhn2UxjiTB5GKJ+rCWN9tIxAmuWZQQJk+O6D5T+BlJR5C1rwFO4hGuiSvKVp3970m2vr2bbZs6AUxWvx/XvF+RcL86RPurrZvzt7jAyat7S7FNQtpMgKcbgnZDzBCF/FDcnyIpt17CZWuLrmiD83vpu5LCtzFMl0pPGEFb02QxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Q02HUP6q; arc=none smtp.client-ip=185.125.25.11
+	 MIME-Version:Content-Type; b=gxqWBVLncTWh/ussZ1WYrIZ9J1d12Eu4c1MyTrPKB8Y8DtYQhAZIDFdyY91YpHnt3DE7nbnHQaChOdtTy7JpenPLtHC380oamthLP8ypTv8teznCcxZ7p5xnK0bzOq5vmfovs/+ebaC+DVQY5a1UFoVsQLVmk015wocdr01xNHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=bkG1iSRV; arc=none smtp.client-ip=185.125.25.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Q02HUP6q"
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ZHH3y4hbtzLN8;
-	Tue, 18 Mar 2025 17:14:54 +0100 (CET)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="bkG1iSRV"
+Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ZHH4001wyzMg7;
+	Tue, 18 Mar 2025 17:14:56 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1742314494;
-	bh=+j0LtoVt3OIepcXloA9LXUklWtBjzkuGwi8atd/2Zjo=;
+	s=20191114; t=1742314495;
+	bh=eVR89nHy+SMCXHmKZ7A2eqpWJRHyf58wP1OCT4R3BfI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Q02HUP6qI21NCNDU/VSar566Bv0FCf8Y7TPP/lR500B89bwKszx3ZqO02PDskma+K
-	 +SSy589eYK0C/6rq7PI2AwFiitRk7CIhvAfU5/FNcrDVCHk/xCjIfBR0qprQs9lWdS
-	 YP6SbmyKVaIhIqdgh9PE6Ewt1dhlVJUMV1jDn39M=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4ZHH3y0863zy9;
-	Tue, 18 Mar 2025 17:14:54 +0100 (CET)
+	b=bkG1iSRVl/52MgwNDm13ctUztFsadboorHOU9JffPO3c40dbfLOhvS+X9b9c8ym3h
+	 d6AAlZl33DcTcg5F8iPbGRiJfrCCyaFKJwLeNkhXxoapjI8b/0plf/Yah57V3tgm6y
+	 H5ANSTcMtJvWZkv6fl5KeQKV0KVtiSF36s0teAaY=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4ZHH3z2KYPzXHC;
+	Tue, 18 Mar 2025 17:14:55 +0100 (CET)
 From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To: Dan Carpenter <dan.carpenter@linaro.org>,
 	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
@@ -44,9 +44,9 @@ Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	linux-kernel@vger.kernel.org,
 	linux-security-module@vger.kernel.org,
 	stable@vger.kernel.org
-Subject: [PATCH v2 3/8] landlock: Add erratum for TCP fix
-Date: Tue, 18 Mar 2025 17:14:38 +0100
-Message-ID: <20250318161443.279194-4-mic@digikod.net>
+Subject: [PATCH v2 4/8] landlock: Prepare to add second errata
+Date: Tue, 18 Mar 2025 17:14:39 +0100
+Message-ID: <20250318161443.279194-5-mic@digikod.net>
 In-Reply-To: <20250318161443.279194-1-mic@digikod.net>
 References: <20250318161443.279194-1-mic@digikod.net>
 Precedence: bulk
@@ -59,45 +59,50 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
 
-Add erratum for the TCP socket identification fixed with commit
-854277e2cc8c ("landlock: Fix non-TCP sockets restriction").
+Potentially include errata for Landlock ABI v5 (Linux 6.10) and v6
+(Linux 6.12).  That will be useful for the following signal scoping
+erratum.
 
-Fixes: 854277e2cc8c ("landlock: Fix non-TCP sockets restriction")
+As explained in errata.h, this commit should be backportable without
+conflict down to ABI v5.  It must then not include the errata/abi-6.h
+file.
+
+Fixes: 54a6e6bbf3be ("landlock: Add signal scoping")
 Cc: Günther Noack <gnoack@google.com>
-Cc: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
 Cc: stable@vger.kernel.org
 Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Link: https://lore.kernel.org/r/20250318161443.279194-4-mic@digikod.net
+Link: https://lore.kernel.org/r/20250318161443.279194-5-mic@digikod.net
 ---
 
 Changes since v1:
 - New patch.
 ---
- security/landlock/errata/abi-4.h | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
- create mode 100644 security/landlock/errata/abi-4.h
+ security/landlock/errata.h | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/security/landlock/errata/abi-4.h b/security/landlock/errata/abi-4.h
-new file mode 100644
-index 000000000000..c052ee54f89f
---- /dev/null
-+++ b/security/landlock/errata/abi-4.h
-@@ -0,0 +1,15 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
+diff --git a/security/landlock/errata.h b/security/landlock/errata.h
+index f26b28b9873d..8e626accac10 100644
+--- a/security/landlock/errata.h
++++ b/security/landlock/errata.h
+@@ -63,6 +63,18 @@ static const struct landlock_erratum landlock_errata_init[] __initconst = {
+ #endif
+ #undef LANDLOCK_ERRATA_ABI
+ 
++#define LANDLOCK_ERRATA_ABI 5
++#if __has_include("errata/abi-5.h")
++#include "errata/abi-5.h"
++#endif
++#undef LANDLOCK_ERRATA_ABI
 +
-+/**
-+ * DOC: erratum_1
-+ *
-+ * Erratum 1: TCP socket identification
-+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+ *
-+ * This fix addresses an issue where IPv4 and IPv6 stream sockets (e.g., SMC,
-+ * MPTCP, or SCTP) were incorrectly restricted by TCP access rights during
-+ * :manpage:`bind(2)` and :manpage:`connect(2)` operations. This change ensures
-+ * that only TCP sockets are subject to TCP access rights, allowing other
-+ * protocols to operate without unnecessary restrictions.
-+ */
-+LANDLOCK_ERRATUM(1)
++#define LANDLOCK_ERRATA_ABI 6
++#if __has_include("errata/abi-6.h")
++#include "errata/abi-6.h"
++#endif
++#undef LANDLOCK_ERRATA_ABI
++
+ /*
+  * For each new erratum, we need to include all the ABI files up to the impacted
+  * ABI to make all potential future intermediate errata easy to backport.
 -- 
 2.48.1
 
