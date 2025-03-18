@@ -1,141 +1,344 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 096F8207670
-	for <linux-security-module@vger.kernel.org>; Tue, 18 Mar 2025 10:14:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B16B82040B3
+	for <linux-security-module@vger.kernel.org>; Tue, 18 Mar 2025 10:26:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742292899; cv=none; b=ppZbodtA8IQhtoBHdlaBJ9Se113FiEFYU+6EkW63iuNxaSCczBKwfdtKbcbdnS15fI3pqXT4O/1+w0I9JQYeBqRy6YG+UENC5PfQ0KxydeGIEElKfKof7dArNDmYi/oBQlff6ciZkz5e3bhz31woUmoB+s155F9dnEApw0X+yac=
+	t=1742293598; cv=none; b=E28thbNX+xGewy2irZmIjQin+Qvk/20JB5MhrFvRpVWNJOh2U7AXc2xZi98DHiEWt5fqczHhSCq7bEF5GWDjJ6Th0M463zi3vrv2sghMDLgnfv3IE7USebNPEqI1pJVw3zOksynksLvHip76H1sKXKt+EFzHpKDD0Ve95ecDaWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742292899; c=relaxed/simple;
-	bh=qgbreH565IsTmANQ6jcuU4QnCgPcSjS+1zqr0JjRNEs=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=k1/k3kfYB9gr3yw5fGiBW1FgLd/SLGeUL362qj6FHQiUlKmWNVGMkJB8iFFA9sEkPB0YKer+Cm8vcK7iysjUP0c+I85zziwuVY0/0D9dvvkJQZn5ebF6jWyR5NunMpXEb7s6wsTqJZLVsff3iR69XemDCKv9P5LSCjbat3h2n38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=iK/2x/Ve; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1742293598; c=relaxed/simple;
+	bh=d443GZHLIjyOHbwUIJXFj/9ONIblaesMaI+S/z2lvJU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=akHolRrP3u6yTUMZpzHaRldxCCPR00uL2oLIX0iU+QxuRpLHaoZX4Vu3jkdT6UA+m31pplzpkYZiOQP/EX4PJP3QbHw2tuPnWj9eV8mSlE9wQkNWvQEpf4Vonjhbqug7JQHwY5nJRgBhuRDpCtknZf5OwPD/jtQnrgeGr9/CDkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=M9VN8PW+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=eZXlKSKu; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=F7NYgtTx; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=JnfNmivV; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="iK/2x/Ve"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742292893;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=N2pxJRjJyW1cw5QoeNfYeEt/Fo+VzjEblG5ngppUQIU=;
-	b=iK/2x/Vec32+BDcv+IdOAW+0ivTmAFkqPupY9jpGuPTIgETbV1xbbdFsfE1aJZDSYFi16H
-	VtTfg4yNtRc+Lu2IU3q+h2jKDmlYEhyfz0kAPbuAf/XcoEZvlwH7wPuyYSc+HbtZLYZzDm
-	IIY9T4Wq0F+cWnOH7aZUrSdwEWUxlho=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-383-CGAihJ3WNlyH7E1GrkaaBw-1; Tue,
- 18 Mar 2025 06:14:51 -0400
-X-MC-Unique: CGAihJ3WNlyH7E1GrkaaBw-1
-X-Mimecast-MFC-AGG-ID: CGAihJ3WNlyH7E1GrkaaBw_1742292890
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="M9VN8PW+";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="eZXlKSKu";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="F7NYgtTx";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="JnfNmivV"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1AE83195608B;
-	Tue, 18 Mar 2025 10:14:50 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.61])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E9FFD19560AD;
-	Tue, 18 Mar 2025 10:14:46 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-cc: dhowells@redhat.com, Kees Cook <kees@kernel.org>,
-    Greg KH <gregkh@linuxfoundation.org>,
-    Josh Drake <josh@delphoslabs.com>,
-    Suraj Sonawane <surajsonawane0215@gmail.com>,
-    keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-    security@kernel.org, stable@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: [PATCH] keys: Fix UAF in key_put()
+	by smtp-out2.suse.de (Postfix) with ESMTPS id F1AC81F855;
+	Tue, 18 Mar 2025 10:26:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1742293594; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=i0I3UsFYcaS2dm2ZcPh5elewe1bTBvCDoMwY2kyHX3c=;
+	b=M9VN8PW+acb5kR2M6xBE94BR+t0UUUDNbZ7Xn8L8ZxsZybqqhPyqV1POVVoZLPd4A/qwt1
+	ta/9dDYjxDORCg/o9W2lbWoIbWdhRKXDOZihyiuGaxgWlykMl/Bx9ZyzMmjSzQlvx0qo2a
+	EOJKwuCb7oPKtggOl4iT6GlaPa9l2bw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1742293594;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=i0I3UsFYcaS2dm2ZcPh5elewe1bTBvCDoMwY2kyHX3c=;
+	b=eZXlKSKurBrmNfQmPj1rw2RQjDK6Di7cPfCe21DTlfz1hA72C9zQN2m1LKHzRCWzM2n2yN
+	fW06rojRUF0l3YAg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1742293593; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=i0I3UsFYcaS2dm2ZcPh5elewe1bTBvCDoMwY2kyHX3c=;
+	b=F7NYgtTxFAXa5IpbkrwIRehanFn3z3V1i1lQcc6lt7ubbeSRloW620yJL0LKxjuonBPvqV
+	/ZL4SKK2QuFZZqHbUEo1yEqjVEB9RKDp8lvlnFGGNR9BHAw9Hi0WT9wEj3vUFnVqigdQT4
+	9rMqqpPmCsn9cUEcGx8c13WvMNV/fck=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1742293593;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=i0I3UsFYcaS2dm2ZcPh5elewe1bTBvCDoMwY2kyHX3c=;
+	b=JnfNmivV14h/Ot5Bkw17pqyKA9rRmx/StTcJ7sodZICiw0NkyXSILu4Bi01wdzuGXXE4bp
+	SFcCzx+4LcRUb0BA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B4BDD1379A;
+	Tue, 18 Mar 2025 10:26:33 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Gl7aKllK2WeVNgAAD6G6ig
+	(envelope-from <nstange@suse.de>); Tue, 18 Mar 2025 10:26:33 +0000
+From: Nicolai Stange <nstange@suse.de>
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Nicolai Stange <nstange@suse.de>,  Roberto Sassu
+ <roberto.sassu@huawei.com>,  Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+  Eric Snowberg <eric.snowberg@oracle.com>,
+  linux-integrity@vger.kernel.org,  linux-security-module@vger.kernel.org,
+  linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v1 6/7] ima: invalidate unsupported PCR banks once
+ at first use
+In-Reply-To: <34ebd15aae07402d19279ef4286197112c4afc01.camel@linux.ibm.com>
+	(Mimi Zohar's message of "Mon, 17 Mar 2025 21:46:43 -0400")
+References: <20250313173339.3815589-1-nstange@suse.de>
+	<20250313173339.3815589-7-nstange@suse.de>
+	<34ebd15aae07402d19279ef4286197112c4afc01.camel@linux.ibm.com>
+Date: Tue, 18 Mar 2025 11:26:33 +0100
+Message-ID: <87zfhik52e.fsf@>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2477453.1742292884.1@warthog.procyon.org.uk>
-Date: Tue, 18 Mar 2025 10:14:45 +0000
-Message-ID: <2477454.1742292885@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Level: 
+X-Spamd-Result: default: False [-0.60 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	INVALID_MSGID(1.70)[];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	TAGGED_RCPT(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[suse.de,huawei.com,gmail.com,oracle.com,vger.kernel.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email]
+X-Spam-Score: -0.60
+X-Spam-Flag: NO
 
-From: Hillf Danton <hdanton@sina.com>
-    
-Once a key's reference count has been reduced to 0, the garbage collector
-thread may destroy it at any time and so key_put() is not allowed to touch
-the key after that point.  The most key_put() is normally allowed to do is
-to touch key_gc_work as that's a static global variable.
+Mimi Zohar <zohar@linux.ibm.com> writes:
 
-However, in an effort to speed up the reclamation of quota, this is now
-done in key_put() once the key's usage is reduced to 0 - but now the code
-is looking at the key after the deadline, which is forbidden.
+> On Thu, 2025-03-13 at 18:33 +0100, Nicolai Stange wrote:
+>> Normally IMA would extend a template hash of each bank's associated
+>> algorithm into a PCR. However, if a bank's hash algorithm is unavailable
+>> to the kernel at IMA init time, it would fallback to extending padded
+>> SHA1 hashes instead.
+>>=20
+>> That is, if e.g. SHA-256 was missing at IMA init, it would extend padded
+>> SHA1 template hashes into a PCR's SHA-256 bank.
+>>=20
+>> The ima_measurement command (marked as experimental) from ima-evm-utils
+>> would accordingly try both variants when attempting to verify a measurem=
+ent
+>> list against PCRs. keylime OTOH doesn't seem to -- it expects the templa=
+te
+>> hash type to match the PCR bank algorithm. I would argue that for the
+>> latter case, the fallback scheme could potentially cause hard to debug
+>> verification failures.
+>>=20
+>> There's another problem with the fallback scheme: right now, SHA-1
+>> availability is a hard requirement for IMA, and it would be good for a
+>> number of reasons to get rid of that. However, if SHA-1 is not available=
+ to
+>> the kernel, it can hardly provide padded SHA-1 template hashes for PCR
+>> banks with unsupported algos.
+>>=20
+>> There are several more or less reasonable alternatives possible, among
+>> them are:
+>> a.) Instead of padded SHA-1, use padded/truncated ima_hash template
+>>     hashes.
+>> b.) Record every event as a violation, i.e. extend unsupported banks
+>>     with 0xffs.
+>> c.) Don't extend unsupported banks at all.
+>> d.) Invalidate unsupported banks only once (e.g. with 0xffs) at first
+>>     use.
+>>=20
+>> a.) would make verification from tools like ima_measurement nearly
+>>     impossible, as it would have to guess or somehow determine ima_hash.
+>> b.) would still put an significant and unnecessary burden on tools like
+>>     ima_measurement, because it would then have to exercise three
+>>     possible variants on the measurement list:
+>>     - the template hash matches the bank algorithm,
+>>     - the template hash is padded SHA-1,
+>>     - the template hash is all-ones.
+>> c.) is a security risk, because the bank would validate an empty
+>>     measurement list.
+>>=20
+>> AFAICS, d.) is the best option to proceed, as it allows for determining
+>> from the PCR bank value in O(1) whether the bank had been maintained by
+>> IMA or not and also, it would not validate any measurement list (except
+>> one with a single violation entry at the head).
+>
 
-Fix this on an expedited basis[*] by taking a ref on the key->user struct
-and caching the key length before dropping the refcount so that we can
-reduce the quota afterwards if we dropped the last ref.
+Hi Mimi,
 
-[*] This is going to hurt key_put() performance, so a better way is
-probably necessary, such as sticking the dead key onto a queue for the
-garbage collector to pick up rather than having it scan the serial number
-registry.
+> What a pleasure reviewing your patch set.  Nicely organized.  Well writte=
+n patch
+> descriptions.
 
-Fixes: 9578e327b2b4 ("keys: update key quotas in key_put()")
-Reported-by: syzbot+6105ffc1ded71d194d6d@syzkaller.appspotmail.com
-Tested-by: syzbot+6105ffc1ded71d194d6d@syzkaller.appspotmail.com
-Suggested-by: Hillf Danton <hdanton@sina.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Jarkko Sakkinen <jarkko@kernel.org>
-cc: Kees Cook <kees@kernel.org>
-cc: keyrings@vger.kernel.org
-cc: stable@vger.kernel.org # v6.10+
----
- security/keys/key.c |   19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+thank you :)
 
-diff --git a/security/keys/key.c b/security/keys/key.c
-index 3d7d185019d3..1e6028492355 100644
---- a/security/keys/key.c
-+++ b/security/keys/key.c
-@@ -645,21 +645,30 @@ EXPORT_SYMBOL(key_reject_and_link);
-  */
- void key_put(struct key *key)
- {
-+	int quota_flag;
-+	unsigned short len;
-+	struct key_user *user;
-+
- 	if (key) {
- 		key_check(key);
- 
-+		quota_flag = test_bit(KEY_FLAG_IN_QUOTA, &key->flags);
-+		len = key->quotalen;
-+		user = key->user;
-+		refcount_inc(&user->usage);
- 		if (refcount_dec_and_test(&key->usage)) {
- 			unsigned long flags;
- 
- 			/* deal with the user's key tracking and quota */
--			if (test_bit(KEY_FLAG_IN_QUOTA, &key->flags)) {
--				spin_lock_irqsave(&key->user->lock, flags);
--				key->user->qnkeys--;
--				key->user->qnbytes -= key->quotalen;
--				spin_unlock_irqrestore(&key->user->lock, flags);
-+			if (quota_flag) {
-+				spin_lock_irqsave(&user->lock, flags);
-+				user->qnkeys--;
-+				user->qnbytes -= len;
-+				spin_unlock_irqrestore(&user->lock, flags);
- 			}
- 			schedule_work(&key_gc_work);
- 		}
-+		key_user_put(user);
- 	}
- }
- EXPORT_SYMBOL(key_put);
+> Currently with the SHA1 hash algorithm, whether it is being extended into=
+ the
+> TPM or not, the measurement list is complete.  Relying on the ima_hash in=
+ the
+> current kernel and the subsequent kexec'ed kernel should be fine, assumin=
+g if
+> they're different hash algorithms both TPM banks are enabled.  Otherwise,=
+ the
+> measurement lists will be incomplete.
 
+Yes. However with your comment I'm now realizing there's an issue if the
+set of supported hash algorithms differs between the previous and the
+next, kexeced kernel -- something I admittedly hadn't thought of before.
+
+The current behavior as implemented in this RFC is that an unsupported
+PCR bank would get invalidated *once* upon first use, i.e. extended once
+with e.g. all 0xFEs. (Note that the actual patch implements invalidation
+with all 0xFFs, for the choice of the exact invalidation value see
+below). The idea is that
+a.) tools could easily recognize this by comparing the PCR bank value
+    against constant HASH(00 .. 00 | fe ... fe)
+b.) and they would fail to verify any non-trivial event log against such
+    a PCR bank if they did not do that comparison ahead.
+
+In order to implement this invalidate-once logic, there's that
+ima_extended_pcrs_mask you asked about in reply to [3/7], the
+preparatory patch for [4/7] ("ima: track the set of PCRs ever
+extended"). As the set of PCRs ever to be found in any policy rule
+cannot be predicted, their unsupported banks cannot get invalidated once
+at __init. Hence this inalidate-at-first-extend logic, which needs that
+tracking of PCRs ever extended as maintained in ima_extended_pcrs_mask.
+
+Upon kexec, the current patchset attempts to restore the
+ima_extended_pcrs_mask from the previous kernel by walking through the
+measurement list, setting a bit for each PCR found in any event.
+
+Now consider the following:
+- some hash algorithm is supported by the initially booted kernel,
+- but not in the subsequently kexeced one.
+
+The initially booted kernel would not invalidate the given hash
+algorithm's bank for any PCR, and the kexeced one would neither, because
+it would restore the ima_extended_pcrs_mask from the initially booted
+one. However, the kexeced kernel would also not extend any further
+events into the now unsupported PCR banks then. That means that these
+PCR banks would happily verify a measurement list truncated to the point
+before the kexec, which is of course bad.
+
+
+I can see two ways around this:
+a.) Give up on the invalidate-once scheme, unconditionally invalidate
+    unsupported banks (with 0xfe .. fe) for every new measurement list
+    entry.
+
+b.) Make the kexeced kernel to read back PCR banks it doesn't support
+    from the TPM at __init and see if they had been invalidated by the
+    previous kernel. Set the bit in ima_extended_pcrs_mask *only* if so.
+    That is, invalidate unsupported and not yet invalidated PCR banks
+    upon first use.
+
+    Also, make it read PCR banks it does support and refrain from
+    further extending any found to have been invalidated before (for all
+    PCRs mentioned in the measurement list). That is, leave previously
+    invalidated PCR banks alone.
+
+Going with a.) would mean that verifiers would not be able to recognize
+in O(1) anymore that some bank was unsupported and had not been
+maintained by the kernel. It would still be possible to figure in linear
+time whether neither of the kernels in a kexec chain covered by a single
+measurement list did support a given PCR bank hash.
+
+For implementing b.), one would have to store a table of precomputed
+HASH(00 .. 00 | fe .. fe) values for every recognized hash possible in
+.rodata for comparison purposes, i.e. for every entry in
+tpm2_hash_map[5] at least -- after all, the whole point is to deal with
+hashes for which no implementation is available to the kernel, so these
+values cannot get computed dynamically at runtime.
+
+With that, if the initially booted kernel did not support some hash
+algorithm, it would be recognizable by verifiers in O(1) time.
+
+If the initially booted kernel did support a given hash, but a
+subsequent kernel in the kexec chain would not, the PCR would get
+invalidated by the latter. This sitatuation cannot be detected at all
+(with reasonable effort) from the final PCR hash bank value alone and
+verification against it would fail then. Perhaps it's noteworthy that
+this is true with any possible scheme, including the currently
+implemented one extending with padded SHA1 into unsupported banks.
+
+
+I think that the decision about what to do now boils down to whether
+there's any value in verifiers being able to tell that a PCR bank had
+been unsupported and not been maintained rather than to simply fail its
+verification if attempted.
+
+If it is not important, or linear time + the additional implementation
+complexity burden at the verifier side is acceptable, the much simpler
+a.) would do.
+
+Otherwise I could give implementing b.) a try and see how bad the
+resulting code would get.
+
+What do you think?
+
+
+> This patch set introduces a new definition of integrity violation. Previo=
+usly it
+> was limited to open-writers and ToMToU integrity violations.  Now it coul=
+d also
+> mean no kernel hash algorithm available.  Unfortunately some attestation
+> services simply ignore integrity violations.
+
+Yeah, there's indeed an ambiguity. I think the right thing to do is to
+make measurement lists unverifiable against unsupported banks and would
+propose to use 0xfe ... fe for the associated invalidations instead of
+the 0xff .. ff used for violation events already.
+
+Thanks a lot!
+
+Nicolai
+
+
+>>=20
+>> So implement d.). As it potentially breaks existing userspace, i.e.
+>> the current implementation of ima_measurement, put it behind a Kconfig
+>> option, "IMA_COMPAT_FALLBACK_TPM_EXTEND". If set to "y", the original
+>> behavior of extending with padded SHA-1 is retained. Otherwise the new
+>> scheme to invalidate unsupported PCR banks once upon their first extensi=
+on
+>> from IMA is implemented instead. As ima_measurement is marked as
+>> experimental and I find it unlikely that other existing tools depend on
+>> the padded SHA-1 fallback scheme, make the IMA_COMPAT_FALLBACK_TPM_EXTEND
+>> Kconfig option default to "n".
+>>=20
+>> For IMA_COMPAT_FALLBACK_TPM_EXTEND=3Dn,
+>> - make ima_calc_field_array_hash() to fill the digests corresponding to
+>>   banks with unsupported hash algorithms with 0xffs,
+>> - make ima_pcr_extend() to extend these into the unsupported PCR banks o=
+nly
+>>   upon the PCR's first usage, skip them on subsequent updates and
+>> - let ima_init_ima_crypto() help it with that by populating the new
+>>   ima_unsupported_tpm_banks_mask with one bit set for each bank with
+>>   an unavailable hash algorithm at init.
+>>=20
+>> [1] https://github.com/linux-integrity/ima-evm-utils
+>>=20
+>> Signed-off-by: Nicolai Stange <nstange@suse.de>
+>> ---
+
+--=20
+SUSE Software Solutions Germany GmbH, Frankenstra=C3=9Fe 146, 90461 N=C3=BC=
+rnberg, Germany
+GF: Ivo Totev, Andrew McDonald, Werner Knoblich
+(HRB 36809, AG N=C3=BCrnberg)
