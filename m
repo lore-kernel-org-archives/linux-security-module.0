@@ -1,170 +1,145 @@
-Received: from smtp-8fad.mail.infomaniak.ch (smtp-8fad.mail.infomaniak.ch [83.166.143.173])
+Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE357199384
-	for <linux-security-module@vger.kernel.org>; Tue, 18 Mar 2025 16:25:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC368212FB3;
+	Tue, 18 Mar 2025 20:30:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742315115; cv=none; b=bZ7tCPuCr+OR4nCH+P3rdCmjlWDyxFLazaG0qSoJIeu1Sf9onCIjEsAcWJ/ufs+Tggz9zEP0rv5HarlZiKW2ZnBmZ0/58HtlQF7OSfe9QmY+JYS2jMNAMrj/Hw80nvkftqct+8osY+v8hugna+dA4HPyskH1DXCEclCxY/DnZGw=
+	t=1742329805; cv=none; b=CqjskmnBahroaOoqWzSk34flvl1nZWkyyPLtIwHgsnZbzn2rx+l1SRQIEqZxxyllKjx1qzl9zLMoeInCOVTb0USOOQ7VxiXA9I9lcnZ3qrKVqU2RZCkQ97+e9UXgQsY9REmivGSIMVL2B8cXRPBNZAArAIBajnQlc0dm8j3m3fc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742315115; c=relaxed/simple;
-	bh=1RBQDWdg9iqGvv/I8EHH0aO+3nGkCQlJ4bPcUmMPXMk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qv3/BGFeSq07heDaU/MPW0qfc413FWhCsWrs6rGQYRug91FZ0vHN98Tt35wjqynEkGnMa5jk3JGo2cH1KH5Xv7q09MyY3w0BRXoOAfJGOtq/iuDlCVMYcBj7wNW5E2uPFeOqVlY/WEkITsvjeh21y1eC0nJjYWnIOP9KpNuiZEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=AtQWLK2a; arc=none smtp.client-ip=83.166.143.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="AtQWLK2a"
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ZHH430h2gzNVb;
-	Tue, 18 Mar 2025 17:14:59 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1742314498;
-	bh=UXiF1shysFn1yAggDsS2yy31i7H9y6GM9Q6og25J/a8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=AtQWLK2a8FehgvCIPa1WSAp0oS8elnTUkjuBHiHIZWk1wxzl3VO39T9W/DYInyvy3
-	 job2vgIOJWXug4BI2og36NXKCfeXEWbQkD+jQGiPeGGLbYIqOzOmqFq8u9R99qlQ/H
-	 JBRN7ZS93l7mS1DwttsbbGeOZBXbyudFRrxhrt4Q=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4ZHH421zMMz3kM;
-	Tue, 18 Mar 2025 17:14:58 +0100 (CET)
-From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To: Dan Carpenter <dan.carpenter@linaro.org>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	Paul Moore <paul@paul-moore.com>,
-	"Serge E . Hallyn" <serge@hallyn.com>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	Christian Brauner <brauner@kernel.org>,
-	Jann Horn <jannh@google.com>,
-	Jeff Xu <jeffxu@google.com>,
-	Kees Cook <kees@kernel.org>,
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
-	Tahera Fahimi <fahimitahera@gmail.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH v2 6/8] selftests/landlock: Split signal_scoping_threads tests
-Date: Tue, 18 Mar 2025 17:14:41 +0100
-Message-ID: <20250318161443.279194-7-mic@digikod.net>
-In-Reply-To: <20250318161443.279194-1-mic@digikod.net>
-References: <20250318161443.279194-1-mic@digikod.net>
+	s=arc-20240116; t=1742329805; c=relaxed/simple;
+	bh=DNQ/LFt+8y0Rt4wm+QWBs6cIPiYxhh5zCXUFhT87qIQ=;
+	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
+	 Content-Type:Subject; b=V5HAqm70Q6QLMCTowOwsoXlQ9WcFwhQWUCVpsH7hHJv8h42R35mePVNM8J383CRX1+b6dW86xfRVxbi8RBcNZbnJ6p8/7fI6S0OhIuft7jmv4APHDgxsnh31jGchMHoq5i8NZku/6rEWINfMzujpmpj8YNkXE2B/w8yyGD1rH6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
+Received: from in02.mta.xmission.com ([166.70.13.52]:41312)
+	by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1tud74-000r2i-Hx; Tue, 18 Mar 2025 14:00:34 -0600
+Received: from ip72-198-198-28.om.om.cox.net ([72.198.198.28]:47254 helo=email.froward.int.ebiederm.org.xmission.com)
+	by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1tud72-006mRP-TT; Tue, 18 Mar 2025 14:00:33 -0600
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Parav Pandit <parav@nvidia.com>,  "linux-rdma@vger.kernel.org"
+ <linux-rdma@vger.kernel.org>,  "linux-security-module@vger.kernel.org"
+ <linux-security-module@vger.kernel.org>,  "serge@hallyn.com"
+ <serge@hallyn.com>,  Leon Romanovsky <leonro@nvidia.com>
+References: <20250313050832.113030-1-parav@nvidia.com>
+	<20250317193148.GU9311@nvidia.com>
+	<CY8PR12MB7195C6D8CCE062CFD9D0174CDCDE2@CY8PR12MB7195.namprd12.prod.outlook.com>
+	<20250318112049.GC9311@nvidia.com>
+Date: Tue, 18 Mar 2025 15:00:15 -0500
+In-Reply-To: <20250318112049.GC9311@nvidia.com> (Jason Gunthorpe's message of
+	"Tue, 18 Mar 2025 08:20:49 -0300")
+Message-ID: <87ldt2yur4.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+Content-Type: text/plain
+X-XM-SPF: eid=1tud72-006mRP-TT;;;mid=<87ldt2yur4.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=72.198.198.28;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX1/5OJ+Cv2L3+h3cPE3hRy8+P55pe98Gl2A=
+X-Spam-Level: 
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+	*      [score: 0.5000]
+	*  0.7 XMSubLong Long Subject
+	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+	*      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
+	*  0.0 XM_B_AI_SPAM_COMBINATION Email matches multiple AI-related
+	*      patterns
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Jason Gunthorpe <jgg@nvidia.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 420 ms - load_scoreonly_sql: 0.03 (0.0%),
+	signal_user_changed: 10 (2.4%), b_tie_ro: 9 (2.1%), parse: 0.82 (0.2%),
+	 extract_message_metadata: 11 (2.7%), get_uri_detail_list: 1.60 (0.4%),
+	 tests_pri_-2000: 15 (3.5%), tests_pri_-1000: 2.3 (0.5%),
+	tests_pri_-950: 1.16 (0.3%), tests_pri_-900: 0.95 (0.2%),
+	tests_pri_-90: 111 (26.5%), check_bayes: 110 (26.1%), b_tokenize: 6
+	(1.5%), b_tok_get_all: 58 (13.7%), b_comp_prob: 2.6 (0.6%),
+	b_tok_touch_all: 40 (9.5%), b_finish: 0.82 (0.2%), tests_pri_0: 256
+	(60.9%), check_dkim_signature: 0.48 (0.1%), check_dkim_adsp: 2.4
+	(0.6%), poll_dns_idle: 0.71 (0.2%), tests_pri_10: 1.91 (0.5%),
+	tests_pri_500: 7 (1.6%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH] RDMA/uverbs: Consider capability of the process that
+ opens the file
+X-SA-Exim-Connect-IP: 166.70.13.52
+X-SA-Exim-Rcpt-To: leonro@nvidia.com, serge@hallyn.com, linux-security-module@vger.kernel.org, linux-rdma@vger.kernel.org, parav@nvidia.com, jgg@nvidia.com
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-SA-Exim-Scanned: No (on out01.mta.xmission.com); SAEximRunCond expanded to false
 
-Split signal_scoping_threads tests into signal_scoping_thread_before
-and signal_scoping_thread_after.
+Jason Gunthorpe <jgg@nvidia.com> writes:
 
-Use local variables for thread synchronization.  Fix exported function.
-Replace some asserts with expects.
+> On Tue, Mar 18, 2025 at 03:43:07AM +0000, Parav Pandit wrote:
+>
+>> > I would say no, that is not our model in RDMA. The process that opens the file
+>> > is irrelevant. We only check the current system call context for capability,
+>> > much like any other systemcall.
+>> >
+>> Eric explained the motivation [1] and [2] for this fix is:
+>> A lesser privilege process A opens the fd (currently caps are not
+>> checked), passes the fd to a higher privilege process B.
+>
+>> And somehow let process B pass the needed capabilities check for
+>> resource creation, after which process A continue to use the
+>> resource without capability.
+>
+> Yes, I'd say that is fine within our model, and may even be desirable
+> in some cases.
+>
+> We don't use a file descriptor linked security model, it is always
+> secured based on the individual ioctl system call. The file descriptor
+> is just a way to route the system calls.
+>
+> The "setuid cat" risk is interesting, but we are supposed to be
+> preventing that by using ioctl, no 'cat' program is going to randomly
+> execute ioctls on stdout.
 
-Fixes: c8994965013e ("selftests/landlock: Test signal scoping for threads")
-Cc: Günther Noack <gnoack@google.com>
-Cc: Tahera Fahimi <fahimitahera@gmail.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Link: https://lore.kernel.org/r/20250318161443.279194-7-mic@digikod.net
----
+I guess I see a few places where inifiniband uses ioctl.
 
-Changes since v1:
-- New patch.
----
- .../selftests/landlock/scoped_signal_test.c   | 49 +++++++++++++------
- 1 file changed, 34 insertions(+), 15 deletions(-)
+There are also a lot of places where inifinband uses raw read/write on
+file descriptors.  I think last time I looked infiniband wasn't even using
+ioctl.
 
-diff --git a/tools/testing/selftests/landlock/scoped_signal_test.c b/tools/testing/selftests/landlock/scoped_signal_test.c
-index 767f117703b7..d313cb626225 100644
---- a/tools/testing/selftests/landlock/scoped_signal_test.c
-+++ b/tools/testing/selftests/landlock/scoped_signal_test.c
-@@ -249,47 +249,66 @@ TEST_F(scoped_domains, check_access_signal)
- 		_metadata->exit_code = KSFT_FAIL;
- }
- 
--static int thread_pipe[2];
--
- enum thread_return {
- 	THREAD_INVALID = 0,
- 	THREAD_SUCCESS = 1,
- 	THREAD_ERROR = 2,
- };
- 
--void *thread_func(void *arg)
-+static void *thread_sync(void *arg)
- {
-+	const int pipe_read = *(int *)arg;
- 	char buf;
- 
--	if (read(thread_pipe[0], &buf, 1) != 1)
-+	if (read(pipe_read, &buf, 1) != 1)
- 		return (void *)THREAD_ERROR;
- 
- 	return (void *)THREAD_SUCCESS;
- }
- 
--TEST(signal_scoping_threads)
-+TEST(signal_scoping_thread_before)
- {
--	pthread_t no_sandbox_thread, scoped_thread;
-+	pthread_t no_sandbox_thread;
- 	enum thread_return ret = THREAD_INVALID;
-+	int thread_pipe[2];
- 
- 	drop_caps(_metadata);
- 	ASSERT_EQ(0, pipe2(thread_pipe, O_CLOEXEC));
- 
--	ASSERT_EQ(0,
--		  pthread_create(&no_sandbox_thread, NULL, thread_func, NULL));
-+	ASSERT_EQ(0, pthread_create(&no_sandbox_thread, NULL, thread_sync,
-+				    &thread_pipe[0]));
- 
--	/* Restricts the domain after creating the first thread. */
-+	/* Enforces restriction after creating the thread. */
- 	create_scoped_domain(_metadata, LANDLOCK_SCOPE_SIGNAL);
- 
--	ASSERT_EQ(0, pthread_kill(no_sandbox_thread, 0));
--	ASSERT_EQ(1, write(thread_pipe[1], ".", 1));
--
--	ASSERT_EQ(0, pthread_create(&scoped_thread, NULL, thread_func, NULL));
--	ASSERT_EQ(0, pthread_kill(scoped_thread, 0));
--	ASSERT_EQ(1, write(thread_pipe[1], ".", 1));
-+	EXPECT_EQ(0, pthread_kill(no_sandbox_thread, 0));
-+	EXPECT_EQ(1, write(thread_pipe[1], ".", 1));
- 
- 	EXPECT_EQ(0, pthread_join(no_sandbox_thread, (void **)&ret));
- 	EXPECT_EQ(THREAD_SUCCESS, ret);
-+
-+	EXPECT_EQ(0, close(thread_pipe[0]));
-+	EXPECT_EQ(0, close(thread_pipe[1]));
-+}
-+
-+TEST(signal_scoping_thread_after)
-+{
-+	pthread_t scoped_thread;
-+	enum thread_return ret = THREAD_INVALID;
-+	int thread_pipe[2];
-+
-+	drop_caps(_metadata);
-+	ASSERT_EQ(0, pipe2(thread_pipe, O_CLOEXEC));
-+
-+	/* Enforces restriction before creating the thread. */
-+	create_scoped_domain(_metadata, LANDLOCK_SCOPE_SIGNAL);
-+
-+	ASSERT_EQ(0, pthread_create(&scoped_thread, NULL, thread_sync,
-+				    &thread_pipe[0]));
-+
-+	EXPECT_EQ(0, pthread_kill(scoped_thread, 0));
-+	EXPECT_EQ(1, write(thread_pipe[1], ".", 1));
-+
- 	EXPECT_EQ(0, pthread_join(scoped_thread, (void **)&ret));
- 	EXPECT_EQ(THREAD_SUCCESS, ret);
- 
--- 
-2.48.1
+Now maybe using an ioctl is the best you can do at this point, because
+of some backwards compatibility. 
+
+> You would not say that if process B creates a CAP_NET_RAW socket FD
+> and passes it to process A without CAP_NET_RAW then A should not be
+> able to use the FD.
+
+But that is exactly what the infiniband security check were are talking
+about appears to be doing.  It is using the credentials of process A
+and failing after it was passed by process B.
+
+> The same principle holds here too, the object handles scoped inside
+> the FD should have the same kind of security properties as a normal FD
+> would.
+
+Which is fine as far as I understand it is fine.  The creation check is
+what we were talking about.
+
+Taking from your example above.  If process B with CAP_NET_RAW creates a
+FD for opening queue pairs and passes it to process A without
+CAP_NET_RAW then A is not able to create queue pairs.
+
+That is what the code in
+drivers/infiniband/core/ubvers_cmd.c:create_qp() currenty says.
+
+That is what has us confused.  Exactly the kind of thing you said should
+not be happening is happening.
+
+Eric
 
