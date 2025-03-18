@@ -1,170 +1,228 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48498171658
-	for <linux-security-module@vger.kernel.org>; Tue, 18 Mar 2025 11:37:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C105204080
+	for <linux-security-module@vger.kernel.org>; Tue, 18 Mar 2025 11:54:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742297860; cv=none; b=tPgAzINM6pKxJ0054EbCm+JRfMKIb/JLQfoLTgC0uu6eelcA7/jXch9JVYRdKOcwJDsm7X5lTA2H1vidPKHQ3/xrjB5tewqgaX3g0XlEzgYGkBkcc+4mmmQanqmIfxMR9Mh0TwCHPE/8u05bJu0dpUCBrw1r/TwqOkmCFmpuIdk=
+	t=1742298862; cv=none; b=JwXrjCGJajMYhADLdiKm1XsjTDUPenXWQHZ1xGLdPzvEn/HWjffHzzgOkUFid5T7SzJf8VrF/KKHyopGZ8oa2+uurQ3pWykPzZNKzR2GGXgKM/TJPCIWflmLTku42fJjXXBtYIJkhcdhqL92QkrzdPGZS3IxDVBQfVp6+G4Bs4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742297860; c=relaxed/simple;
-	bh=X5AEPegJnCWTJZdvz//Ircoe285+jfO/V3sdiCOHHa0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MQ0Tp7OSQYTzsHIxm4ci8GUi9mUMvLv3E8LxWJLfNDXQqWAJFI3SfR+zt/U4LnPeWe/pLDifRsNEWLInj8h5Wmxu9cHvrnTUOAozJTNjrmnKMBG1ega1nXGaOO3KLAhyiXCpYm1kHU4HqFZnN0n9C0quJA47tf8YO82LiLTzNpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=brUpgllX; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1742298862; c=relaxed/simple;
+	bh=EqZUIlLw/jwO3LBiJCfM7y3AEPTrVCIp8EAM4HXXbZc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=s/tjL7eHdcS8ehtFswzOhu3p2+5Pw5dj/XUi/V9zI9fuWT0mXFkR3g3krIo2wVeYRHAYh/gD4N6rS4Xjxv9/P+eVQATDrGDCzV9/gPr7mZSzptIJXQJVb3wFlLGVijAYSPu+JEApOm+nHht8D1SL14zoErI/Qs9ndSF9vXFjHOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Baa749my; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=0mxJ8sxS; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Baa749my; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=0mxJ8sxS; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="brUpgllX"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742297857;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=11ZNprjj242fLpLRxnWb0Up6kO5h/hr5oXZeYOIssMQ=;
-	b=brUpgllXcVg6lf7SWKUb+CqZ5MLBpOih3EXl1LLKTHJxAhQsuAXQkNE0Hf794NRZjUwUqx
-	YgIziJ6wR116jTLaK08V6llht5aKd8Ych2Xp/j3dKWkLMckJ8+la8oNuyzwJWciM1th7Pb
-	ur2Jx9hkMgCmcQHV675wry0EkR4IdtQ=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-575-0MmHvMWaPjaNHVL7QiWrIQ-1; Tue,
- 18 Mar 2025 07:37:34 -0400
-X-MC-Unique: 0MmHvMWaPjaNHVL7QiWrIQ-1
-X-Mimecast-MFC-AGG-ID: 0MmHvMWaPjaNHVL7QiWrIQ_1742297853
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Baa749my";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0mxJ8sxS";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Baa749my";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0mxJ8sxS"
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 08E4E19560A1;
-	Tue, 18 Mar 2025 11:37:33 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.32.255])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 00DCB18001EF;
-	Tue, 18 Mar 2025 11:37:28 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Tue, 18 Mar 2025 12:37:00 +0100 (CET)
-Date: Tue, 18 Mar 2025 12:36:55 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: David Howells <dhowells@redhat.com>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>, Kees Cook <kees@kernel.org>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Josh Drake <josh@delphoslabs.com>,
-	Suraj Sonawane <surajsonawane0215@gmail.com>,
-	keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-	security@kernel.org, stable@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] keys: Fix UAF in key_put()
-Message-ID: <20250318113655.GB14792@redhat.com>
-References: <2477454.1742292885@warthog.procyon.org.uk>
- <20250318112245.GA14792@redhat.com>
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 78B631F827;
+	Tue, 18 Mar 2025 11:54:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1742298855; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/0UG6kzBcoboMdXZNxJy/iqEM0YPu9mcSX4Ke+dMoOs=;
+	b=Baa749my6eY5grgndtwI1dabG5fks6tB8JzqAkZp/RQpdgC/tORs2slvdYzCPHWvMmfGbb
+	y+2CoDn0TDuMgV3qRzY+jkChO2b/pidk5B+J+h6cIrDzvw9Xut/M7myMDxrdXCOwCrQRHE
+	jMMHww3n8FsY3pSXJQstoxB7qPMRUd8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1742298855;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/0UG6kzBcoboMdXZNxJy/iqEM0YPu9mcSX4Ke+dMoOs=;
+	b=0mxJ8sxSQ0i9BRvuDKeO8nV+QJxBiz2xQdczKjWtwSZg9CHIL/chnpQBrXo9XWSUH1smxo
+	Bu91/xkTyNW+hpAw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=Baa749my;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=0mxJ8sxS
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1742298855; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/0UG6kzBcoboMdXZNxJy/iqEM0YPu9mcSX4Ke+dMoOs=;
+	b=Baa749my6eY5grgndtwI1dabG5fks6tB8JzqAkZp/RQpdgC/tORs2slvdYzCPHWvMmfGbb
+	y+2CoDn0TDuMgV3qRzY+jkChO2b/pidk5B+J+h6cIrDzvw9Xut/M7myMDxrdXCOwCrQRHE
+	jMMHww3n8FsY3pSXJQstoxB7qPMRUd8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1742298855;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/0UG6kzBcoboMdXZNxJy/iqEM0YPu9mcSX4Ke+dMoOs=;
+	b=0mxJ8sxSQ0i9BRvuDKeO8nV+QJxBiz2xQdczKjWtwSZg9CHIL/chnpQBrXo9XWSUH1smxo
+	Bu91/xkTyNW+hpAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 30F5B1379A;
+	Tue, 18 Mar 2025 11:54:15 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id L4CMCude2WcHUwAAD6G6ig
+	(envelope-from <nstange@suse.de>); Tue, 18 Mar 2025 11:54:15 +0000
+From: Nicolai Stange <nstange@suse.de>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: Nicolai Stange <nstange@suse.de>,  Mimi Zohar <zohar@linux.ibm.com>,
+  Roberto Sassu <roberto.sassu@huawei.com>,  Dmitry Kasatkin
+ <dmitry.kasatkin@gmail.com>,  Jarkko Sakkinen <jarkko@kernel.org>,  Eric
+ Snowberg <eric.snowberg@oracle.com>,  linux-integrity@vger.kernel.org,
+  linux-security-module@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v1 0/7] ima: get rid of hard dependency on SHA-1
+In-Reply-To: <d01f5ae9654ca07aa93cb061b21b79ff5c83aa79.camel@huaweicloud.com>
+	(Roberto Sassu's message of "Tue, 18 Mar 2025 12:00:54 +0100")
+References: <20250313173339.3815589-1-nstange@suse.de>
+	<d01f5ae9654ca07aa93cb061b21b79ff5c83aa79.camel@huaweicloud.com>
+Date: Tue, 18 Mar 2025 12:54:14 +0100
+Message-ID: <87pliek109.fsf@>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250318112245.GA14792@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Level: 
+X-Spamd-Result: default: False [-0.81 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	INVALID_MSGID(1.70)[];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[suse.de,linux.ibm.com,huawei.com,gmail.com,kernel.org,oracle.com,vger.kernel.org];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[huaweicloud.com:email,suse.de:dkim]
+X-Spam-Score: -0.81
+X-Spamd-Bar: /
+X-Rspamd-Queue-Id: 78B631F827
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Flag: NO
 
-Either way... I know nothing about security/key, but grep -w key_put
-finds
+Roberto Sassu <roberto.sassu@huaweicloud.com> writes:
 
- *  When it is no longer required, the key should be released using::
-
-	void key_put(struct key *key);
-
-    Or::
-
-	void key_ref_put(key_ref_t key_ref);
-
-    These can be called from interrupt context.
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-in Documentation/security/keys/core.rst
-
-and since key_user_put() takes key_user_lock with irqs enabled,
-key_put()->key_user_put() doesn't look correct...
-
-Oleg.
-
-On 03/18, Oleg Nesterov wrote:
+> On Thu, 2025-03-13 at 18:33 +0100, Nicolai Stange wrote:
+>> Hi all,
+>>=20
+>> if no SHA-1 implementation was available to the kernel, IMA init would
+>> currently fail, rendering the whole subsystem unusable.
+>>=20
+>> This patch series is an attempt to make SHA-1 availability non-mandatory
+>> for IMA. The main motivation is that NIST announced to sunset SHA-1 by
+>> 2030 ([1]), whereby any attempt to instantiate it when booted in FIPS mo=
+de
+>> would have to be made to fail with -ENOENT. As this does potentially have
+>> an impact on lifetimes for FIPS certifications issued today, distros mig=
+ht
+>> be interested in disabling SHA-1 downstream soon already.
+>>=20
+>> Anyway, making IMA to work without a SHA-1 implementation available is n=
+ot
+>> so straightforward, mainly due to that established scheme to substitute
+>> padded SHA-1 template hashes for PCR banks with unmapped/unavailable alg=
+os.
+>> There is some userspace around expecting that existing behavior, e.g. the
+>> ima_measurement command from ([2]), and breaking that in certain scenari=
+os
+>> is inevitable.
+>>=20
+>> I tried to make it the least painful possible, and I think I arrived at
+>> a not completely unreasonable solution in the end, but wouldn't be too
+>> surprised if you had a different stance on that. So I would be curious
+>> about your feedback on whether this is a route worth pursuing any furthe=
+r.
+>> FWIW, the most controversial parts are probably
+>>  - [1/7] ima: don't expose runtime_measurements for unsupported hashes
+>>  - [6/7] ima: invalidate unsupported PCR banks once at first use
+>>=20
+>> Note that I haven't tested this series thoroughly yet -- for the time be=
+ing
+>> I only ran a couple of brief smoke tests in a VM w/o a TPM  (w/ and w/o
+>> SHA-1 disabled of course).
 >
-> On 03/18, David Howells wrote:
-> >
-> > --- a/security/keys/key.c
-> > +++ b/security/keys/key.c
-> > @@ -645,21 +645,30 @@ EXPORT_SYMBOL(key_reject_and_link);
-> >   */
-> >  void key_put(struct key *key)
-> >  {
-> > +	int quota_flag;
-> > +	unsigned short len;
-> > +	struct key_user *user;
-> > +
-> >  	if (key) {
-> >  		key_check(key);
-> >
-> > +		quota_flag = test_bit(KEY_FLAG_IN_QUOTA, &key->flags);
-> > +		len = key->quotalen;
-> > +		user = key->user;
-> > +		refcount_inc(&user->usage);
-> >  		if (refcount_dec_and_test(&key->usage)) {
-> >  			unsigned long flags;
-> >
-> >  			/* deal with the user's key tracking and quota */
-> > -			if (test_bit(KEY_FLAG_IN_QUOTA, &key->flags)) {
-> > -				spin_lock_irqsave(&key->user->lock, flags);
-> > -				key->user->qnkeys--;
-> > -				key->user->qnbytes -= key->quotalen;
-> > -				spin_unlock_irqrestore(&key->user->lock, flags);
-> > +			if (quota_flag) {
-> > +				spin_lock_irqsave(&user->lock, flags);
-> > +				user->qnkeys--;
-> > +				user->qnbytes -= len;
-> > +				spin_unlock_irqrestore(&user->lock, flags);
-> >  			}
-> >  			schedule_work(&key_gc_work);
-> >  		}
-> > +		key_user_put(user);
->
-> Do we really need the unconditional refcount_inc / key_user_put ?
->
-> 	void key_put(struct key *key)
-> 	{
-> 		if (key) {
-> 			struct key_user *user = NULL;
-> 			unsigned short len;
->
-> 			key_check(key);
->
-> 			if (test_bit(KEY_FLAG_IN_QUOTA, &key->flags)) {
-> 				len = key->quotalen;
-> 				user = key->user;
-> 				refcount_inc(&user->usage);
-> 			}
->
-> 			if (refcount_dec_and_test(&key->usage)) {
-> 				unsigned long flags;
->
-> 				/* deal with the user's key tracking and quota */
-> 				if (user) {
-> 					spin_lock_irqsave(&user->lock, flags);
-> 					user->qnkeys--;
-> 					user->qnbytes -= len;
-> 					spin_unlock_irqrestore(&user->lock, flags);
-> 				}
-> 				schedule_work(&key_gc_work);
-> 			}
->
-> 			if (user)
-> 				key_user_put(user);
-> 		}
-> 	}
->
-> looks a bit more clear/simple to me...
->
-> Oleg.
 
+Hi Roberto,
+
+> thanks a lot for the patches. Still didn't go through them, but if I
+> understood correctly you assume that the SHA1 PCR bank would be still
+> seen by IMA.
+>
+> In light of deprecation of SHA1, is this assumption correct?
+
+yes, the assumption made here is that a SHA-1 TPM bank might exist and
+is visible to IMA, but that the kernel would not have a working SHA-1
+implementation available.
+
+>
+> I would expect that TPM manufacturers or even the TPM driver would
+> change to fullfill that.
+>
+> I guess the first stage would be making sure that the SHA1 PCR bank is
+> unusable at the TPM driver level. A first thought would be to extend
+> the SHA1 PCR bank with a random value at boot (or earlier), so that the
+> remote attestation would never work on that PCR bank. At that point, I
+> would probably go further and not expose the SHA1 PCR bank at all, so
+> you would have less problems on IMA side.
+
+I would like to note in this context that from my POV there's nothing
+really special about SHA-1 when compared to any other potential TPM bank
+hash algos the kernel doesn't have an implementation for. That is, if a
+TPM implemented say SHA3-256 and the kernel did not have an
+implementation of that built-in, it would be a very similar situation as
+far as IMA is concerned, i.e. it would have to get handled somehow.
+
+Thanks!
+
+Nicolai
+
+>
+> The second stage would probably be that the TPM firmware would be
+> updated, not allowing the SHA1 PCR bank to be allocated.
+>
+> Other than that, sure, also actions need to be done to remove SHA1
+> support in IMA (will look at your patches).
+>
+>>=20
+>> [1] https://www.nist.gov/news-events/news/2022/12/nist-retires-sha-1-cry=
+ptographic-algorithm
+>> [2] https://github.com/linux-integrity/ima-evm-utils.git
+>>=20
+
+--=20
+SUSE Software Solutions Germany GmbH, Frankenstra=C3=9Fe 146, 90461 N=C3=BC=
+rnberg, Germany
+GF: Ivo Totev, Andrew McDonald, Werner Knoblich
+(HRB 36809, AG N=C3=BCrnberg)
