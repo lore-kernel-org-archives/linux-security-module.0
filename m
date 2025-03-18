@@ -1,33 +1,33 @@
-Received: from smtp-42ab.mail.infomaniak.ch (smtp-42ab.mail.infomaniak.ch [84.16.66.171])
+Received: from smtp-bc0b.mail.infomaniak.ch (smtp-bc0b.mail.infomaniak.ch [45.157.188.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7678C210F56
-	for <linux-security-module@vger.kernel.org>; Tue, 18 Mar 2025 16:15:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6859521146C
+	for <linux-security-module@vger.kernel.org>; Tue, 18 Mar 2025 16:15:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742314510; cv=none; b=pTcPWioDv7Ps9dqgC3YoQjIS9XEL3/8OoX/hcDC6zDF66LvHS6lVg+rx1tQD3RZS1qLGgdCKbYfD9WOeRE7RIV9yzPKQeh8Xosl/IWzuhy/DAl6MwRAPCfw6eDiZQu6ZsV2xOYUrLANezvgQLASn8rf6BVL6aoRrzVE9P524Upc=
+	t=1742314510; cv=none; b=ASL1Pu3Qi6wM2dYxszA5JnjIlxP+46JLC8f2gPKZNqPJYRK1nUEO/Z2bYwzCAyF+3IJWZ3vyxYyF9shvvhGjrUiPejc0x7Qa0/Mq/UtvTauVgL1EvJ0NM3oO3AuWC/tA4zi3n+gr6Z3prwJ8KT29ZsgfPl1hEzv5EmXe9fgINIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1742314510; c=relaxed/simple;
-	bh=0qP5GqU6hxuBeipAIyWwTfxwmBhEYf4pOhwFrWR3+XI=;
+	bh=SWUFyclMEDRn/vERlm7WudHu+qwRw8rij0FmLjXeJwA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qn8ytUyIURMiszQNhB+zAFt4G/IO9/Tmr38bYvCueJvKHAt/AyYbfhZgUxTmX1RuZ2rogYkNiSul0mE579uJIuvyA7TGVFjFhPtMvJTFDHsNHxxCOEwyqq3wh/PVD/1rLwuv/MhqL9D+BIoPnrFRW8n80ZdxJoouqOu/WbaYxsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=HWN0BOVA; arc=none smtp.client-ip=84.16.66.171
+	 MIME-Version:Content-Type; b=kFuX8PvA8KoAZjYKIK+xKKUZannY8Ob2W2JnCIgStP4Ats9LW3RrNb486sSSyvM3rnMN0AzNG4a7rPYOARn/eZquKvutG7KhljZSiZsMZlFTbnXQ9A4mLdnUXMZnxyXjs/uKgILAnVR7lxOs9I2+hqIieS1aDf5ud6QL11rufBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=TPpgldlJ; arc=none smtp.client-ip=45.157.188.11
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="HWN0BOVA"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="TPpgldlJ"
 Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ZHH4421P9zLJx;
-	Tue, 18 Mar 2025 17:15:00 +0100 (CET)
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ZHH41410czKmb;
+	Tue, 18 Mar 2025 17:14:57 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1742314500;
-	bh=c7lbP1EQsl0DIIQZtCoH5DqcB56sY5n99Bx2F2IcBNo=;
+	s=20191114; t=1742314497;
+	bh=dKAVrbb92NHt/wrbgBJH5t1iGYU5WOEUkcj7GfcPvjc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=HWN0BOVAcXwF63j7W5D86BoY5uwFDnbZUuid85Sfcj3FLLI0sMmGbEEF0aLui1QQd
-	 85Es3LH1fczTdZF0U5srAyiKMxC5/zo9VmvrfhTYYywWKU04SwqEYFNmEagpIjsMvE
-	 RyYqITeV2AYVSjrOidM3wj9K5lwAAsGxVpezuZek=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4ZHH434bfBzVqL;
-	Tue, 18 Mar 2025 17:14:59 +0100 (CET)
+	b=TPpgldlJQqtwWlGXhLAdvAQDZNcA19DXMGLjYAYxZdYTgPcuoEpD/8KW/Ns6h9dLK
+	 XFOKGoC/4wwqB6Kh7jq8grgT335ZzN6LFtiwomwy7VNQF7E9OVhEi8NuFD1DN9B2ae
+	 QzxWVUcCTUkH9K14XqK5mOJoSAXCd73HTYrHTwJw=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4ZHH404t2nzTlH;
+	Tue, 18 Mar 2025 17:14:56 +0100 (CET)
 From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To: Dan Carpenter <dan.carpenter@linaro.org>,
 	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
@@ -44,9 +44,9 @@ Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	linux-kernel@vger.kernel.org,
 	linux-security-module@vger.kernel.org,
 	stable@vger.kernel.org
-Subject: [PATCH v2 7/8] selftests/landlock: Add a new test for setuid()
-Date: Tue, 18 Mar 2025 17:14:42 +0100
-Message-ID: <20250318161443.279194-8-mic@digikod.net>
+Subject: [PATCH v2 5/8] landlock: Always allow signals between threads of the same process
+Date: Tue, 18 Mar 2025 17:14:40 +0100
+Message-ID: <20250318161443.279194-6-mic@digikod.net>
 In-Reply-To: <20250318161443.279194-1-mic@digikod.net>
 References: <20250318161443.279194-1-mic@digikod.net>
 Precedence: bulk
@@ -59,139 +59,179 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
 
-The new signal_scoping_thread_setuid tests check that the libc's
-setuid() function works as expected even when a thread is sandboxed with
-scoped signal restrictions.
+Because Linux credentials are managed per thread, user space relies on
+some hack to synchronize credential update across threads from the same
+process.  This is required by the Native POSIX Threads Library and
+implemented by set*id(2) wrappers and libcap(3) to use tgkill(2) to
+synchronize threads.  See nptl(7) and libpsx(3).  Furthermore, some
+runtimes like Go do not enable developers to have control over threads
+[1].
 
-Before the signal scoping fix, this test would have failed with the
-setuid() call:
+To avoid potential issues, and because threads are not security
+boundaries, let's relax the Landlock (optional) signal scoping to always
+allow signals sent between threads of the same process.  This exception
+is similar to the __ptrace_may_access() one.
 
-  [pid    65] getpid()                    = 65
-  [pid    65] tgkill(65, 66, SIGRT_1)     = -1 EPERM (Operation not permitted)
-  [pid    65] futex(0x40a66cdc, FUTEX_WAKE_PRIVATE, 1) = 0
-  [pid    65] setuid(1001)                = 0
+hook_file_set_fowner() now checks if the target task is part of the same
+process as the caller.  If this is the case, then the related signal
+triggered by the socket will always be allowed.
 
-After the fix, tgkill(2) is successfully leveraged to synchronize
-credentials update across threads:
+Scoping of abstract UNIX sockets is not changed because kernel objects
+(e.g. sockets) should be tied to their creator's domain at creation
+time.
 
-  [pid    65] getpid()                    = 65
-  [pid    65] tgkill(65, 66, SIGRT_1)     = 0
-  [pid    66] <... read resumed>0x40a65eb7, 1) = ? ERESTARTSYS (To be restarted if SA_RESTART is set)
-  [pid    66] --- SIGRT_1 {si_signo=SIGRT_1, si_code=SI_TKILL, si_pid=65, si_uid=1000} ---
-  [pid    66] getpid()                    = 65
-  [pid    66] setuid(1001)                = 0
-  [pid    66] futex(0x40a66cdc, FUTEX_WAKE_PRIVATE, 1) = 0
-  [pid    66] rt_sigreturn({mask=[]})     = 0
-  [pid    66] read(3,  <unfinished ...>
-  [pid    65] setuid(1001)                = 0
+Note that creating one Landlock domain per thread puts each of these
+threads (and their future children) in their own scope, which is
+probably not what users expect, especially in Go where we do not control
+threads.  However, being able to drop permissions on all threads should
+not be restricted by signal scoping.  We are working on a way to make it
+possible to atomically restrict all threads of a process with the same
+domain [2].
 
-Test coverage for security/landlock is 92.9% of 1053 lines according to
-gcc/gcov-14.
+Add erratum for signal scoping.
 
+Closes: https://github.com/landlock-lsm/go-landlock/issues/36
+Fixes: 54a6e6bbf3be ("landlock: Add signal scoping")
 Fixes: c8994965013e ("selftests/landlock: Test signal scoping for threads")
+Depends-on: 26f204380a3c ("fs: Fix file_set_fowner LSM hook inconsistencies")
+Link: https://pkg.go.dev/kernel.org/pub/linux/libs/security/libcap/psx [1]
+Link: https://github.com/landlock-lsm/linux/issues/2 [2]
 Cc: Günther Noack <gnoack@google.com>
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: Serge Hallyn <serge@hallyn.com>
 Cc: Tahera Fahimi <fahimitahera@gmail.com>
 Cc: stable@vger.kernel.org
+Acked-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Mickaël Salaün <mic@digikod.net>
-Link: https://lore.kernel.org/r/20250318161443.279194-8-mic@digikod.net
+Link: https://lore.kernel.org/r/20250318161443.279194-6-mic@digikod.net
 ---
 
 Changes since v1:
-- New patch.
+- Add Acked-by Christian.
+- Add Landlock erratum.
+- Update subject.
 ---
- tools/testing/selftests/landlock/common.h     |  1 +
- .../selftests/landlock/scoped_signal_test.c   | 59 +++++++++++++++++++
- 2 files changed, 60 insertions(+)
+ security/landlock/errata/abi-6.h              | 19 ++++++++++++++++
+ security/landlock/fs.c                        | 22 +++++++++++++++----
+ security/landlock/task.c                      | 12 ++++++++++
+ .../selftests/landlock/scoped_signal_test.c   |  2 +-
+ 4 files changed, 50 insertions(+), 5 deletions(-)
+ create mode 100644 security/landlock/errata/abi-6.h
 
-diff --git a/tools/testing/selftests/landlock/common.h b/tools/testing/selftests/landlock/common.h
-index 6064c9ac0532..076a9a625c98 100644
---- a/tools/testing/selftests/landlock/common.h
-+++ b/tools/testing/selftests/landlock/common.h
-@@ -41,6 +41,7 @@ static void _init_caps(struct __test_metadata *const _metadata, bool drop_all)
- 		CAP_MKNOD,
- 		CAP_NET_ADMIN,
- 		CAP_NET_BIND_SERVICE,
-+		CAP_SETUID,
- 		CAP_SYS_ADMIN,
- 		CAP_SYS_CHROOT,
- 		/* clang-format on */
+diff --git a/security/landlock/errata/abi-6.h b/security/landlock/errata/abi-6.h
+new file mode 100644
+index 000000000000..df7bc0e1fdf4
+--- /dev/null
++++ b/security/landlock/errata/abi-6.h
+@@ -0,0 +1,19 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++
++/**
++ * DOC: erratum_2
++ *
++ * Erratum 2: Scoped signal handling
++ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
++ *
++ * This fix addresses an issue where signal scoping was overly restrictive,
++ * preventing sandboxed threads from signaling other threads within the same
++ * process if they belonged to different domains.  Because threads are not
++ * security boundaries, user space might assume that any thread within the same
++ * process can send signals between themselves (see :manpage:`nptl(7)` and
++ * :manpage:`libpsx(3)`).  Consistent with :manpage:`ptrace(2)` behavior, direct
++ * interaction between threads of the same process should always be allowed.
++ * This change ensures that any thread is allowed to send signals to any other
++ * thread within the same process, regardless of their domain.
++ */
++LANDLOCK_ERRATUM(2)
+diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+index 71b9dc331aae..47c862fe14e4 100644
+--- a/security/landlock/fs.c
++++ b/security/landlock/fs.c
+@@ -27,7 +27,9 @@
+ #include <linux/mount.h>
+ #include <linux/namei.h>
+ #include <linux/path.h>
++#include <linux/pid.h>
+ #include <linux/rcupdate.h>
++#include <linux/sched/signal.h>
+ #include <linux/spinlock.h>
+ #include <linux/stat.h>
+ #include <linux/types.h>
+@@ -1630,15 +1632,27 @@ static int hook_file_ioctl_compat(struct file *file, unsigned int cmd,
+ 
+ static void hook_file_set_fowner(struct file *file)
+ {
+-	struct landlock_ruleset *new_dom, *prev_dom;
++	struct fown_struct *fown = file_f_owner(file);
++	struct landlock_ruleset *new_dom = NULL;
++	struct landlock_ruleset *prev_dom;
++	struct task_struct *p;
+ 
+ 	/*
+ 	 * Lock already held by __f_setown(), see commit 26f204380a3c ("fs: Fix
+ 	 * file_set_fowner LSM hook inconsistencies").
+ 	 */
+-	lockdep_assert_held(&file_f_owner(file)->lock);
+-	new_dom = landlock_get_current_domain();
+-	landlock_get_ruleset(new_dom);
++	lockdep_assert_held(&fown->lock);
++
++	/*
++	 * Always allow sending signals between threads of the same process.  This
++	 * ensures consistency with hook_task_kill().
++	 */
++	p = pid_task(fown->pid, fown->pid_type);
++	if (!same_thread_group(p, current)) {
++		new_dom = landlock_get_current_domain();
++		landlock_get_ruleset(new_dom);
++	}
++
+ 	prev_dom = landlock_file(file)->fown_domain;
+ 	landlock_file(file)->fown_domain = new_dom;
+ 
+diff --git a/security/landlock/task.c b/security/landlock/task.c
+index dc7dab78392e..4578ce6e319d 100644
+--- a/security/landlock/task.c
++++ b/security/landlock/task.c
+@@ -13,6 +13,7 @@
+ #include <linux/lsm_hooks.h>
+ #include <linux/rcupdate.h>
+ #include <linux/sched.h>
++#include <linux/sched/signal.h>
+ #include <net/af_unix.h>
+ #include <net/sock.h>
+ 
+@@ -264,6 +265,17 @@ static int hook_task_kill(struct task_struct *const p,
+ 		/* Dealing with USB IO. */
+ 		dom = landlock_cred(cred)->domain;
+ 	} else {
++		/*
++		 * Always allow sending signals between threads of the same process.
++		 * This is required for process credential changes by the Native POSIX
++		 * Threads Library and implemented by the set*id(2) wrappers and
++		 * libcap(3) with tgkill(2).  See nptl(7) and libpsx(3).
++		 *
++		 * This exception is similar to the __ptrace_may_access() one.
++		 */
++		if (same_thread_group(p, current))
++			return 0;
++
+ 		dom = landlock_get_current_domain();
+ 	}
+ 	dom = landlock_get_applicable_domain(dom, signal_scope);
 diff --git a/tools/testing/selftests/landlock/scoped_signal_test.c b/tools/testing/selftests/landlock/scoped_signal_test.c
-index d313cb626225..d8bf33417619 100644
+index 475ee62a832d..767f117703b7 100644
 --- a/tools/testing/selftests/landlock/scoped_signal_test.c
 +++ b/tools/testing/selftests/landlock/scoped_signal_test.c
-@@ -253,6 +253,7 @@ enum thread_return {
- 	THREAD_INVALID = 0,
- 	THREAD_SUCCESS = 1,
- 	THREAD_ERROR = 2,
-+	THREAD_TEST_FAILED = 3,
- };
+@@ -281,7 +281,7 @@ TEST(signal_scoping_threads)
+ 	/* Restricts the domain after creating the first thread. */
+ 	create_scoped_domain(_metadata, LANDLOCK_SCOPE_SIGNAL);
  
- static void *thread_sync(void *arg)
-@@ -316,6 +317,64 @@ TEST(signal_scoping_thread_after)
- 	EXPECT_EQ(0, close(thread_pipe[1]));
- }
+-	ASSERT_EQ(EPERM, pthread_kill(no_sandbox_thread, 0));
++	ASSERT_EQ(0, pthread_kill(no_sandbox_thread, 0));
+ 	ASSERT_EQ(1, write(thread_pipe[1], ".", 1));
  
-+struct thread_setuid_args {
-+	int pipe_read, new_uid;
-+};
-+
-+void *thread_setuid(void *ptr)
-+{
-+	const struct thread_setuid_args *arg = ptr;
-+	char buf;
-+
-+	if (read(arg->pipe_read, &buf, 1) != 1)
-+		return (void *)THREAD_ERROR;
-+
-+	/* libc's setuid() should update all thread's credentials. */
-+	if (getuid() != arg->new_uid)
-+		return (void *)THREAD_TEST_FAILED;
-+
-+	return (void *)THREAD_SUCCESS;
-+}
-+
-+TEST(signal_scoping_thread_setuid)
-+{
-+	struct thread_setuid_args arg;
-+	pthread_t no_sandbox_thread;
-+	enum thread_return ret = THREAD_INVALID;
-+	int pipe_parent[2];
-+	int prev_uid;
-+
-+	disable_caps(_metadata);
-+
-+	/* This test does not need to be run as root. */
-+	prev_uid = getuid();
-+	arg.new_uid = prev_uid + 1;
-+	EXPECT_LT(0, arg.new_uid);
-+
-+	ASSERT_EQ(0, pipe2(pipe_parent, O_CLOEXEC));
-+	arg.pipe_read = pipe_parent[0];
-+
-+	/* Capabilities must be set before creating a new thread. */
-+	set_cap(_metadata, CAP_SETUID);
-+	ASSERT_EQ(0, pthread_create(&no_sandbox_thread, NULL, thread_setuid,
-+				    &arg));
-+
-+	/* Enforces restriction after creating the thread. */
-+	create_scoped_domain(_metadata, LANDLOCK_SCOPE_SIGNAL);
-+
-+	EXPECT_NE(arg.new_uid, getuid());
-+	EXPECT_EQ(0, setuid(arg.new_uid));
-+	EXPECT_EQ(arg.new_uid, getuid());
-+	EXPECT_EQ(1, write(pipe_parent[1], ".", 1));
-+
-+	EXPECT_EQ(0, pthread_join(no_sandbox_thread, (void **)&ret));
-+	EXPECT_EQ(THREAD_SUCCESS, ret);
-+
-+	clear_cap(_metadata, CAP_SETUID);
-+	EXPECT_EQ(0, close(pipe_parent[0]));
-+	EXPECT_EQ(0, close(pipe_parent[1]));
-+}
-+
- const short backlog = 10;
- 
- static volatile sig_atomic_t signal_received;
+ 	ASSERT_EQ(0, pthread_create(&scoped_thread, NULL, thread_func, NULL));
 -- 
 2.48.1
 
