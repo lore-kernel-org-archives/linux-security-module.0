@@ -1,162 +1,82 @@
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA80C206F06
-	for <linux-security-module@vger.kernel.org>; Tue, 18 Mar 2025 22:12:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADFE32063FE;
+	Tue, 18 Mar 2025 22:51:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742335926; cv=none; b=XFts0V9jGqLrMiI26blpeRY4J4AGvT9wwdceCC9d9asWIzkxtCECwk3HSuFIRDuklGtxGs4TZlJ3egdc8o7RANLtdaqgaZY1/qZeJ8z7KkKZ1rtN4rHE+9KUE5xA/jh9s3Kq3XB0Htrb2wOvA2dNUBAEig6WqNmi8LbQKtchCe4=
+	t=1742338270; cv=none; b=tvCMKqQ1Syxbemqll4tXsmZM8ZWUmSN3itv1E05/+S2TOnc/TCZdYINYEOsZK8sCW53Q4OyEWJlJrGCgDz0NIJhZDWDhU6nwANeFpfyzCV3/6ilP/Y/ODg1eqq4rBfPF32dvQG2ygRGIB34HLMRL3Gh9OWNT5trZr6krufYLEWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742335926; c=relaxed/simple;
-	bh=9d3EbaMoYysDxaknxbHqaz2DgcYC2l3wa8cV1wVoKeE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=omtaLuwwPddba30VVD4NCUqHDEQjwkuxsIHE3AWWJnEZvWltpfnfbsDhJkKyYt5UhIToFCbbYnN0JGzIQkL91x2yocPzsLGIyDytFaW1+MHz9PK3Lfls+CB3LtStqq2BtFEtMS30hYNVE1wgnjQWy/WoEawgZtw6CSO8p/FkSD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from trampoline.thunk.org (pool-173-48-82-222.bstnma.fios.verizon.net [173.48.82.222])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 52IMBSSr025381
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Mar 2025 18:11:29 -0400
-Received: by trampoline.thunk.org (Postfix, from userid 15806)
-	id 284D02E010B; Tue, 18 Mar 2025 18:11:28 -0400 (EDT)
-Date: Tue, 18 Mar 2025 18:11:28 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Demi Marie Obenour <demi@invisiblethingslab.com>
-Cc: Dave Chinner <david@fromorbit.com>, cve@kernel.org, gnoack@google.com,
-        gregkh@linuxfoundation.org, kent.overstreet@linux.dev,
-        linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, mic@digikod.net,
-        Demi Marie Obenour <demiobenour@gmail.com>
-Subject: Re: Unprivileged filesystem mounts
-Message-ID: <20250318221128.GA1040959@mit.edu>
-References: <Z8948cR5aka4Cc5g@dread.disaster.area>
- <20250311021957.2887-1-demi@invisiblethingslab.com>
- <Z8_Q4nOR5X3iZq3j@dread.disaster.area>
- <Z9CYzjpQUH8Bn4AL@itl-email>
+	s=arc-20240116; t=1742338270; c=relaxed/simple;
+	bh=VVmm5qJe9dwbIlANjI3AgRxkODh8ApI2KbJHlCI9RWE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lVIvvGpP6QdcuaOylcAZ/OE1XxOkizGoiwWC27ChS9CZRPCLms0b8WUZO5W+rr2kK2Ar3JnUGcfbpfwsQ0yZKqSgpWAZVEL80D4ytPQUGxSt60VV/WEkvJbbKoMTA+PQxRNRwYA4rciNuxclTMYQx4wPGmobTFp/h65JA6D8XeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EAVDKK6G; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EAVDKK6G"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C4B0C4CEDD;
+	Tue, 18 Mar 2025 22:51:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742338269;
+	bh=VVmm5qJe9dwbIlANjI3AgRxkODh8ApI2KbJHlCI9RWE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=EAVDKK6GABD21xIzzH9iJVgp1KnvrfqdT4YJm5+2kpXcQKgTL6b4Y3hx9MfH+UxBf
+	 43EUwBQ0IL7Eb+ntiEhlrgc/W9R04WEsWDNGij+pW0LYB0j0mMTziPF98xy5wvD9Km
+	 j6dTJ7e2hhlchC7gSiBg1a8c+csTpz6HTN1bkG2uxGBTFteZDeUeWDzMbq01l4q/6r
+	 uC0gVNDCnMV89hh96fPbMMFYPiIjzTcUmp/E3LQXir5TGZoOu55t+nKb2fEwyzB4H3
+	 Ed942wyMfdicPT5mELzQU+ToF9b2Okjzo/66yYTe+9Bs4FpCxvdkq8Kt04EJujXex1
+	 VHy/ZQVa56rLw==
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e5dc299deb4so5999757276.1;
+        Tue, 18 Mar 2025 15:51:09 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVnvTknItmz/PQrYzL/4wE9DXWhhnWwPak97i9pi2OdNwKk7LvpSJNpxYKNbv3r5pJYgRjIlGeSyQXJTJoIMtd2x4oE92U8@vger.kernel.org, AJvYcCWBrYP4cmLoc4mr2DsTWTWp3ewwE669RxIsz3cGcVXJNaQ2TLhtutsFXaffcduwvD47oSPXrA==@vger.kernel.org, AJvYcCX93M5ege5Oi4SA1KNXrZGULlBokhgQV81KXAw3rx0JluuPdWK8dfjfZYvW3NZQB+Ss8npuCRt0pu2XZovB@vger.kernel.org, AJvYcCXHCmQS+oHUAgcp6QYN1InMGAtyTwuDKLZZ835t9WRo7JShxEcwL3STFE/5rAYK3Mo059bJsB07OLZD@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6qXP5/YJYwjJaWTnMtSiJcR58ywoJKWvJU57/hY+z3mpDdp3l
+	0jDWUV5p/GgNO1PczxyRZuO7+KTTzU06oeAp+eopy7iENaKIlz4f3VyfPlW/tl+Hcg+vnSkIAYW
+	RdjZbrnny2hSHlksY2rzuaUppGPE=
+X-Google-Smtp-Source: AGHT+IHtWrWG9q14SFtqmCK3AD8VjveTzse+0ACAXhWDDSbBM11VEK9SbV1XqbYGyrMXedtzt9WqakWtI5DtyrpKZ2g=
+X-Received: by 2002:a05:6902:1b83:b0:e63:6715:4d72 with SMTP id
+ 3f1490d57ef6-e667b446649mr766504276.42.1742338268586; Tue, 18 Mar 2025
+ 15:51:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z9CYzjpQUH8Bn4AL@itl-email>
+References: <1741902661-31767-1-git-send-email-jasjivsingh@linux.microsoft.com>
+ <1741902661-31767-2-git-send-email-jasjivsingh@linux.microsoft.com>
+ <CAKtyLkGuRraMbArSQCGxb+m5p+M8G5WZCTHk-7dKVfQd2EJYxw@mail.gmail.com> <CAHC9VhRPU1C1-B=PUwUcheOmYhSDzHJMmcpg3j9z0DPiMOHydg@mail.gmail.com>
+In-Reply-To: <CAHC9VhRPU1C1-B=PUwUcheOmYhSDzHJMmcpg3j9z0DPiMOHydg@mail.gmail.com>
+From: Fan Wu <wufan@kernel.org>
+Date: Tue, 18 Mar 2025 15:50:57 -0700
+X-Gmail-Original-Message-ID: <CAKtyLkFRpu5n_Bp5Fm=VcKrBcXKeapZM8=4pRs7y65=6WhmTpg@mail.gmail.com>
+X-Gm-Features: AQ5f1JrWQ7_DK8jvagvgBhzrdsf8P0o9soiY5JDo-E1dwIaB-x1ELuRlLKyfMww
+Message-ID: <CAKtyLkFRpu5n_Bp5Fm=VcKrBcXKeapZM8=4pRs7y65=6WhmTpg@mail.gmail.com>
+Subject: Re: [PATCH v5 1/1] ipe: add errno field to IPE policy load auditing
+To: Paul Moore <paul@paul-moore.com>
+Cc: Fan Wu <wufan@kernel.org>, Jasjiv Singh <jasjivsingh@linux.microsoft.com>, corbet@lwn.net, 
+	jmorris@namei.org, serge@hallyn.com, eparis@redhat.com, 
+	linux-doc@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	audit@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 11, 2025 at 04:10:42PM -0400, Demi Marie Obenour wrote:
-> 
-> Why is it not possible to provide that guarantee?  I'm not concerned
-> about infinite loops or deadlocks.  Is there a reason it is not possible
-> to prevent memory corruption?
+On Mon, Mar 17, 2025 at 2:04=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+ote:
+>
+> On Mon, Mar 17, 2025 at 4:59=E2=80=AFPM Fan Wu <wufan@kernel.org> wrote:
+> > On Thu, Mar 13, 2025 at 2:51=E2=80=AFPM Jasjiv Singh
+> > <jasjivsingh@linux.microsoft.com> wrote:
+> > >
+...
+> >
+> > I don't see any other issue, if there is no objection from the audit
+> > folks, I will pull this into ipe's tree.
+>
+> No objections from me.
+>
+> --
+> paul-moore.com
 
-Companies and users are willing to pay to improve performance for file
-systems.  q(For example, we have been working for Cloud services that
-are interested in improving the performance of their first party
-database products using the fact with cloud emulated block devices, we
-can guarantee that 16k write won't be torn, and this can resul;t in
-significant database performance.)
+This patch is in ipe/next now.
 
-However, I have *yet* to see any company willing to invest in
-hardening file systems against maliciously modified file system
-images.  We can debate how much it might cost it to harden a file
-system, but given how much companies are willing to pay --- zero ---
-it's mostly an academic question.
-
-In addition, if someone made a file system which is guaranteed to be
-safe, but it had massive performance regressions relative other file
-systems --- it's unclear how many users or system administrators would
-use it.  And we've seen that --- there are known mitigations for CPU
-cache attacks which are so expensive, that companies or end users have
-chosen not to enable them.  Yes, there are some security folks who
-believe that security is the most important thing, uber alles.
-Unfortunately, those people tend not to be the ones writing the checks
-or authorizing hiring budgets.
-
-That being said, if someone asked me if it was best way to invest
-software development dollars --- I'd say no.  Don't get me wrong, if
-someone were to give me some minions tasked to harden ext4, I know how
-I could keep them busy and productive.  But a more cost effective way
-of addressing the "untrusted file sytem problem" would be:
-
-(a) Run a forced fsck to check the file system for inconsistency
-before letting the file system be mounted.
-
-(b) Mount the file system in a virtual machine, and then make it
-available to the host using something like 9pfs.  9pfs is very simple
-file system which is easy to validate, and it's a strategy used by
-gVisor's file system gopher.
-
-These two approaches are complementary, with (a) being easier, and (b)
-probably a bit more robust from a security perspective, but it a bit
-more work --- with both providing a layered approach.
-
-> > In this situation, the choice of what to do *must* fall to the user,
-> > but the argument for "filesystem corruption is a CVE-worthy bug" is
-> > that the choice has been taken away from the user. That's what I'm
-> > saying needs to change - the choice needs to be returned to the
-> > user...
-
-Users can alwayus do stupid things.  For example, they could download
-a random binary from the web, then execute it.  We've seen very
-popular software which is instaled via "curl <URL> | bash".  Should we
-therefore call bash be a CVE-vulnerability?
-
-Realistically, this is probably a far bigger vulnerability if we're
-talking about stupid user tricks.  ("But.... but... but... users need
-to be able to install software" --- we can't stop them from piping the
-output of curl into bash.)  Which is another reason why I don't really
-blame the VP's that are making funding decisions; it's not clear that
-the ROI of funding file system security hardening is the best way to
-spend a company's dollars.  Remember, Zuckerburg has been quoted as
-saying that he's laying off engineers so his company can buy more
-GPU's, we know that funding is not infinite.  Every company is making
-ROI decisions; you might not agree with the decisions, but trust me,
-they're making them.
-
-But if some company would like to invest software engineering effort
-in addition features or perform security hardening --- they should
-contact me, and I'd be happy to chat.  We have weekly ext4 video
-conference calls, and I'm happy to collaborate with companies have a
-business interest in seeing some feature get pursued.  There *have*
-been some that are security related --- fscrypt and fsverity were both
-implemented for ext4 first, in support of Android and ChromeOS's
-security use cases.  But in practice this has been the exception, and
-not the rule.
-
-> Not automounting filesystems on hotplug is a _part_ of the solution.
-> It cannot be the _entire_ solution.  Users sometimes need to be able to
-> interact with untrusted filesystem images with a reasonable speed.
-
-Running fsck on a file system *before* automounting file systems would
-be a pretty decent start towards a solution.  Is it perfect?  No.  But
-it would provide a huge amount of protection.
-
-Note that this won't help if you have a malicious hardware that
-*pretends* to be a USB storage device, but which doens't behave a like
-a honest storage device.  For example, reading a particular sector
-with one data at time T, and a different data at time T+X, with no
-intervening writes.  There is no real defense to this attack, since
-there is no way that you can authentiate the external storage device;
-you could have a registry of USB vendor and model id's, but a device
-can always lie about its id numbers.
-
-If you are worried about this kind of attack, the only thing you can
-do is to prevent external USB devices from being attached.  This *is*
-something that you can do with Chrome and Android enterprise security
-policies, and, I've talked to a bank's senior I/T leader that chose to
-put epoxy in their desktop, to mitigate aginst a whole *class* of USB
-security attacks.
-
-Like everything else, security and usability and performance and costs
-are all engineering tradeoffs.  So what works for one use case and
-threat model won't be optimal for another, just as fscrypt works well
-for Android and ChromeOS, but it doesn't necessarily work well for
-other use cases (where I might recommed dm-crypt instead).
-
-Cheers,
-
-					- Ted
-
+-Fan
