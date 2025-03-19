@@ -1,149 +1,283 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 562851D90C8
-	for <linux-security-module@vger.kernel.org>; Wed, 19 Mar 2025 15:57:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 947DFF9DA;
+	Wed, 19 Mar 2025 16:27:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742399881; cv=none; b=eYt4pw7wVNlJj/+B5S0uZ7hSGkz4G/ef5HXiozQN6ni38jCGv1e87xLmQyvsIfDfvN4vjngTavJyqL6WaFZDpEWa4XI/7dv40cc2+OiUIpurzOVRMzLnSmL/1RRthhd2hMNJpm10N96Nl0SOLhTC1RtX1MTIe8WVe1x77hJ3Eho=
+	t=1742401657; cv=none; b=upEgeqTp7guWawPW2MZ6X3Uwn6Qvg6rZXZ68AzPtrV5yGVoI9L5S9BmQAA2nrV/CB46EyT3f/XCfRo1gTd5/Vqlm4ZRW04e1hpn7Y8U71GRYrPFuL1lib52Z5whVuR65ZI8fOiWG5hU9SZ3DovooPq4UPA+4n2LHqkeuVP023Sg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742399881; c=relaxed/simple;
-	bh=cOsMuKQb/lrh4fcleFooX/435gcJm2O9x2FsdEwNYhw=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=tWRlvuiWuSlMNpYsuqZODaYi8yCneT9imEH+AylVPo6IigrcmtA695+icM7P9OsyvPSnFJWc5VFN2oO9siDZRdztdt7SortxxoJmsrrqxv/Jh8wZAGEMxndKV0Y6Ack2Y7aYAonx7vaZ01Ldp48hE4uV81SJDmSszwuYfFX/2Jc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CllSvl11; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1742401657; c=relaxed/simple;
+	bh=SWfsc17TUrY2u5iw7D2KRMtBHupkWqcA/TWWZohBDYA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=LV5hPpGYkYf9CFO1UqQF8Ypi4KbV7HpcvQHDShBW+bBlmGg+0n/srCdDu0OkXsfD7CitDMZ2XXSJDGyARg/9B30+JKV4dPRtqis04+gg8ALqMslk76yX7S/RNiRsqyrk1cTWmjHZI5mmMomKJCJsDCiKGOFsm4cqC/BZUUaEiow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=mbvGsgbI; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CllSvl11"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742399878;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Affn6rQXpyfnc4W7xuXIRA+WTecDnyyFD3YVzC9nu9M=;
-	b=CllSvl11DKteN5c0QavQIkmlmickdLjRVHgqgWvNlxso54+5vljoIpdsL6865jwiSybVLE
-	GsrOoysrFVtU71WjulcShaBnzD2CMZWObO5Mkb2w7msVODMP65N5W/D5D+PMnzts6kWJzI
-	qXJ+kClJKWL/rhROh9fKLPZFIbrjZNI=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-172-PX7psVPgMs6i5X2X72TBFg-1; Wed,
- 19 Mar 2025 11:57:53 -0400
-X-MC-Unique: PX7psVPgMs6i5X2X72TBFg-1
-X-Mimecast-MFC-AGG-ID: PX7psVPgMs6i5X2X72TBFg_1742399871
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6926E19560BB;
-	Wed, 19 Mar 2025 15:57:51 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.61])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8C68D1956094;
-	Wed, 19 Mar 2025 15:57:47 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-cc: dhowells@redhat.com, Kees Cook <kees@kernel.org>,
-    Oleg Nesterov <oleg@redhat.com>,
-    Greg KH <gregkh@linuxfoundation.org>,
-    Josh Drake <josh@delphoslabs.com>,
-    Suraj Sonawane <surajsonawane0215@gmail.com>,
-    keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
-    security@kernel.org, stable@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: [PATCH v2] keys: Fix UAF in key_put()
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="mbvGsgbI"
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52J9ASqe014501;
+	Wed, 19 Mar 2025 16:27:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=sZYTAl
+	ykF2FnSrFAp20+Ku9prCRhz16lr5GBVRpvJb8=; b=mbvGsgbI93DbUq2TznRg6H
+	44nYtDHbUmqPbyg6F2egoQD1aL4OZKHLRMAevkuzJwtLkLmI7zYpPj2Wo2ivAWPh
+	hseuZloN9HOipgDIVm8mg2huK9qArKwCUQt/SMCdj9O/5djOhxSJtyqwiXVCb0eX
+	btRthzgr1gGx8ViLC4QQ7L9A7QS5CjeVN4umUMb/GEHfETzxghYhEM9VU147e+0X
+	H7PH6mhQKGPN28CBex6N8tQSYm6hYgbDwZGHTUQUMF6Jc+51KkTUEQglYmbzSAsK
+	O5uXqucb0ne0mzmVwEnmNr3HZTwsgsy5tdj9CZM7tXaGL/R3XIjiUfAlCe7dfGCg
+	==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45fg0pvxrq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Mar 2025 16:27:10 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52JG89Lf012341;
+	Wed, 19 Mar 2025 16:27:09 GMT
+Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45dmvp2k0h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Mar 2025 16:27:09 +0000
+Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
+	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52JGR9mL14025338
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 19 Mar 2025 16:27:09 GMT
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 401F95805C;
+	Wed, 19 Mar 2025 16:27:09 +0000 (GMT)
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 65F6B58054;
+	Wed, 19 Mar 2025 16:27:07 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.177.219])
+	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 19 Mar 2025 16:27:07 +0000 (GMT)
+Message-ID: <447b1bf7b31e936ab959b8ba13f09a9c25bb3977.camel@linux.ibm.com>
+Subject: Re: [PATCH v10 2/8] ima: define and call ima_alloc_kexec_file_buf()
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Baoquan He <bhe@redhat.com>, steven chen <chenste@linux.microsoft.com>
+Cc: stefanb@linux.ibm.com, roberto.sassu@huaweicloud.com,
+        roberto.sassu@huawei.com, eric.snowberg@oracle.com,
+        ebiederm@xmission.com, paul@paul-moore.com, code@tyhicks.com,
+        bauermann@kolabnow.com, linux-integrity@vger.kernel.org,
+        kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, madvenka@linux.microsoft.com,
+        nramas@linux.microsoft.com, James.Bottomley@hansenpartnership.com,
+        vgoyal@redhat.com, dyoung@redhat.com
+Date: Wed, 19 Mar 2025 12:27:06 -0400
+In-Reply-To: <Z9p7rwXqjB3vjCpj@MiWiFi-R3L-srv>
+References: <20250318010448.954-1-chenste@linux.microsoft.com>
+	 <20250318010448.954-3-chenste@linux.microsoft.com>
+	 <Z9p7rwXqjB3vjCpj@MiWiFi-R3L-srv>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2874580.1742399866.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 19 Mar 2025 15:57:46 +0000
-Message-ID: <2874581.1742399866@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: KCpjc3unk0l9_sdrT7WYIOPKHGIIcEOU
+X-Proofpoint-ORIG-GUID: KCpjc3unk0l9_sdrT7WYIOPKHGIIcEOU
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-19_06,2025-03-19_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxscore=0
+ bulkscore=0 suspectscore=0 spamscore=0 adultscore=0 clxscore=1015
+ impostorscore=0 mlxlogscore=999 priorityscore=1501 lowpriorityscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2503190111
 
-    =
+On Wed, 2025-03-19 at 16:09 +0800, Baoquan He wrote:
+> On 03/17/25 at 06:04pm, steven chen wrote:
+> > Carrying the IMA measurement list across kexec requires allocating a
+> > buffer and copying the measurement records.  Separate allocating the
+> > buffer and copying the measurement records into separate functions in
+> > order to allocate the buffer at kexec 'load' and copy the measurements
+> > at kexec 'execute'.
+> >=20
+> > This patch includes the following changes:
+> >  - Refactor ima_dump_measurement_list() to move the memory allocation
+> >    to a separate function ima_alloc_kexec_file_buf() which allocates
+> >    buffer of size 'kexec_segment_size' at kexec 'load'.
+> >  - Make the local variable ima_kexec_file in ima_dump_measurement_list(=
+)
+> >    a local static to the file, so that it can be accessed from=20
+> >    ima_alloc_kexec_file_buf().
+> >  - Make necessary changes to the function ima_add_kexec_buffer() to cal=
+l
+> >    the above two functions.
+>=20
+> We may not need above details about code change because it's not so
+> difficult to get them from patch.
 
-Once a key's reference count has been reduced to 0, the garbage collector
-thread may destroy it at any time and so key_put() is not allowed to touch
-the key after that point.  The most key_put() is normally allowed to do is
-to touch key_gc_work as that's a static global variable.
+Agreed.  The changes don't even reflect the current patch.  Please remove t=
+he
+entire section.
 
-However, in an effort to speed up the reclamation of quota, this is now
-done in key_put() once the key's usage is reduced to 0 - but now the code
-is looking at the key after the deadline, which is forbidden.
+>=20
+> >=20
+> > Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+> > Signed-off-by: steven chen <chenste@linux.microsoft.com>
+> > ---
+> >  security/integrity/ima/ima_kexec.c | 67 +++++++++++++++++++++++++-----
+> >  1 file changed, 56 insertions(+), 11 deletions(-)
+> >=20
+> > diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/im=
+a/ima_kexec.c
+> > index 8567619889d1..45170e283272 100644
+> > --- a/security/integrity/ima/ima_kexec.c
+> > +++ b/security/integrity/ima/ima_kexec.c
+> > @@ -15,6 +15,48 @@
+> >  #include "ima.h"
+> > =20
+> >  #ifdef CONFIG_IMA_KEXEC
+> > +static struct seq_file ima_kexec_file;
+> > +
+> > +static void ima_reset_kexec_file(struct seq_file *sf)
+> > +{
+> > +	sf->buf =3D NULL;
+> > +	sf->size =3D 0;
+> > +	sf->read_pos =3D 0;
+> > +	sf->count =3D 0;
+> > +}
+> > +
+> > +static void ima_free_kexec_file_buf(struct seq_file *sf)
+> > +{
+> > +	vfree(sf->buf);
+> > +	ima_reset_kexec_file(sf);
+> > +}
+> > +
+> > +static int ima_alloc_kexec_file_buf(size_t segment_size)
+> > +{
+> > +	/*
+> > +	 * kexec 'load' may be called multiple times.
+> > +	 * Free and realloc the buffer only if the segment_size is
+> > +	 * changed from the previous kexec 'load' call.
+> > +	 */
+> > +	if (ima_kexec_file.buf && ima_kexec_file.size =3D=3D segment_size)
+> > +		goto out;
 
-Fix this by using a flag to indicate that a key can be gc'd now rather tha=
-n
-looking at the key's refcount in the garbage collector.
+The call to ima_reset_kexec_file() in ima_add_kexec_buffer() resets
+ima_kexec_file.buf() hiding the fact that the above test always fails and f=
+alls
+through.  As a result, 'buf' is always being re-allocated.
 
-Fixes: 9578e327b2b4 ("keys: update key quotas in key_put()")
-Reported-by: syzbot+6105ffc1ded71d194d6d@syzkaller.appspotmail.com
-Signed-off-by: David Howells <dhowells@redhat.com>
-Tested-by: syzbot+6105ffc1ded71d194d6d@syzkaller.appspotmail.com
-cc: Jarkko Sakkinen <jarkko@kernel.org>
-cc: Oleg Nesterov <oleg@redhat.com>
-cc: Kees Cook <kees@kernel.org>
-cc: Hillf Danton <hdanton@sina.com>,
-cc: keyrings@vger.kernel.org
-Cc: stable@vger.kernel.org # v6.10+
----
- include/linux/key.h |    1 +
- security/keys/gc.c  |    4 +++-
- security/keys/key.c |    2 ++
- 3 files changed, 6 insertions(+), 1 deletion(-)
+> > +
+> > +	ima_free_kexec_file_buf(&ima_kexec_file);
+> > +
+> > +	/* segment size can't change between kexec load and execute */
+> > +	ima_kexec_file.buf =3D vmalloc(segment_size);
+> > +	if (!ima_kexec_file.buf)
+> > +		return -ENOMEM;
+> > +
+> > +	ima_kexec_file.size =3D segment_size;
+> > +
+> > +out:
+> > +	ima_kexec_file.read_pos =3D 0;
+> > +	ima_kexec_file.count =3D sizeof(struct ima_kexec_hdr);	/* reserved sp=
+ace */
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >  /*
+> >   * Copy the measurement list to the allocated memory
+> >   * compare the size of IMA measurement list with the size of the alloc=
+ated memory
+> > @@ -26,23 +68,16 @@
+> >  static int ima_dump_measurement_list(unsigned long *buffer_size, void =
+**buffer,
+> >  				     unsigned long segment_size)
+> >  {
+> > -	struct seq_file ima_kexec_file;
+> >  	struct ima_queue_entry *qe;
+> >  	struct ima_kexec_hdr khdr;
+> >  	int ret =3D 0;
+> > =20
+> >  	/* segment size can't change between kexec load and execute */
+> > -	ima_kexec_file.buf =3D vmalloc(segment_size);
+> >  	if (!ima_kexec_file.buf) {
+> > -		ret =3D -ENOMEM;
+> > -		goto out;
+> > +		pr_err("Kexec file buf not allocated\n");
+> > +		return -EINVAL;
+> >  	}
+> > =20
+> > -	ima_kexec_file.file =3D NULL;
+> > -	ima_kexec_file.size =3D segment_size;
+> > -	ima_kexec_file.read_pos =3D 0;
+> > -	ima_kexec_file.count =3D sizeof(khdr);	/* reserved space */
+> > -
+> >  	memset(&khdr, 0, sizeof(khdr));
+> >  	khdr.version =3D 1;
+> >  	/* This is an append-only list, no need to hold the RCU read lock */
+> > @@ -79,8 +114,6 @@ static int ima_dump_measurement_list(unsigned long *=
+buffer_size, void **buffer,
+> >  	*buffer_size =3D ima_kexec_file.count;
+> >  	*buffer =3D ima_kexec_file.buf;
+> >  out:
+> > -	if (ret =3D=3D -EINVAL)
+> > -		vfree(ima_kexec_file.buf);
+> >  	return ret;
+> >  }
+> > =20
+> > @@ -119,6 +152,12 @@ void ima_add_kexec_buffer(struct kimage *image)
+> >  		return;
+> >  	}
+> > =20
+> > +	ret =3D ima_alloc_kexec_file_buf(kexec_segment_size);
+> > +	if (ret < 0) {
+> > +		pr_err("Not enough memory for the kexec measurement buffer.\n");
+> > +		return;
+> > +	}
+> > +
+> >  	ima_dump_measurement_list(&kexec_buffer_size, &kexec_buffer,
+> >  				  kexec_segment_size);
+> >  	if (!kexec_buffer) {
+> > @@ -140,6 +179,12 @@ void ima_add_kexec_buffer(struct kimage *image)
+> >  	image->ima_buffer_size =3D kexec_segment_size;
+> >  	image->ima_buffer =3D kexec_buffer;
+> > =20
+> > +	/*
+> > +	 * kexec owns kexec_buffer after kexec_add_buffer() is called
+> > +	 * and it will vfree() that buffer.
+> > +	 */
+> > +	ima_reset_kexec_file(&ima_kexec_file);
+>=20
+> I can't see why we need call ima_reset_kexec_file() here. If we need
+> reuse the buffer, we will reset the needed fields at the end of
+> ima_alloc_kexec_file_buf(). Not sure if I miss anything.
 
-diff --git a/include/linux/key.h b/include/linux/key.h
-index 074dca3222b9..ba05de8579ec 100644
---- a/include/linux/key.h
-+++ b/include/linux/key.h
-@@ -236,6 +236,7 @@ struct key {
- #define KEY_FLAG_ROOT_CAN_INVAL	7	/* set if key can be invalidated by roo=
-t without permission */
- #define KEY_FLAG_KEEP		8	/* set if key should not be removed */
- #define KEY_FLAG_UID_KEYRING	9	/* set if key is a user or user session ke=
-yring */
-+#define KEY_FLAG_FINAL_PUT	10	/* set if final put has happened on key */
- =
+Without ima_reset_kexec_file(), calling 'kexec load' consecutively without
+"kexec -s -e" in between fails.
 
- 	/* the key type and key description string
- 	 * - the desc is used to match a key against search criteria
-diff --git a/security/keys/gc.c b/security/keys/gc.c
-index 7d687b0962b1..f27223ea4578 100644
---- a/security/keys/gc.c
-+++ b/security/keys/gc.c
-@@ -218,8 +218,10 @@ static void key_garbage_collector(struct work_struct =
-*work)
- 		key =3D rb_entry(cursor, struct key, serial_node);
- 		cursor =3D rb_next(cursor);
- =
+# kexec -s -l /boot/vmlinuz-`uname -r` --initrd=3D/boot/initramfs-`uname -r=
+`.img --reuse-cmdline
+# kexec -s -l /boot/vmlinuz-`uname -r` --initrd=3D/boot/initramfs-`uname -r=
+`.img --reuse-cmdline
+Killed
 
--		if (refcount_read(&key->usage) =3D=3D 0)
-+		if (test_bit(KEY_FLAG_FINAL_PUT, &key->flags)) {
-+			smp_mb(); /* Clobber key->user after FINAL_PUT seen. */
- 			goto found_unreferenced_key;
-+		}
- =
+As mentioned above, the call to ima_reset_kexec_file() resets
+ima_kexec_file.buf, so the segment size test always fails and the memory is
+being allocated.
 
- 		if (unlikely(gc_state & KEY_GC_REAPING_DEAD_1)) {
- 			if (key->type =3D=3D key_gc_dead_keytype) {
-diff --git a/security/keys/key.c b/security/keys/key.c
-index 3d7d185019d3..7198cd2ac3a3 100644
---- a/security/keys/key.c
-+++ b/security/keys/key.c
-@@ -658,6 +658,8 @@ void key_put(struct key *key)
- 				key->user->qnbytes -=3D key->quotalen;
- 				spin_unlock_irqrestore(&key->user->lock, flags);
- 			}
-+			smp_mb(); /* key->user before FINAL_PUT set. */
-+			set_bit(KEY_FLAG_FINAL_PUT, &key->flags);
- 			schedule_work(&key_gc_work);
- 		}
- 	}
+Mimi
+
+>=20
+> static int ima_alloc_kexec_file_buf(size_t segment_size)
+> {
+> ......
+> out:
+>         ima_kexec_file.read_pos =3D 0;
+>         ima_kexec_file.count =3D sizeof(struct ima_kexec_hdr);    /* rese=
+rved space */
+>=20
+>         return 0;
+> }
+>=20
+>=20
 
