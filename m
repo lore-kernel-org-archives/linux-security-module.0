@@ -1,234 +1,312 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED567D2FB;
-	Wed, 19 Mar 2025 13:47:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2798A21D596;
+	Wed, 19 Mar 2025 14:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742392071; cv=none; b=tNmz2mvjrZjjUNjvX0gUgU2FQNeNXRHtIIm5ybHVR7Hybx9+wl5RZGKh8aA3Nl/3CinGEZ/0aHSzufViXrusuELhQy+M9ioVotmJrfVHa2TR+eixHhJ8n9wWAANwybPBG5lRqNz+HTntc8lM8DYO3TyN/nkV6WQSWViz29NAr0A=
+	t=1742396170; cv=none; b=U2l8hGZnLtLCDhbI5W9LPX2f7RK9pzoY2k25AXk6Jno4fCtIqK2eTdRSarpI2OzJBDDDznit1aYOsMBCB6AGKzJi8OEiew5p+5gOfVduXGrb5VhdhF7fMM2JB3KKmNULqXp23l/ZyDZygzDlTroVyiDR1tObvIY/FiofsU88ClI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742392071; c=relaxed/simple;
-	bh=+A/gnFa3tJXba6oQjNpasyUiGoJgAi65ZnKOzeviY7E=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=G8ntMERBWT9oNJbS20gx366xKytpn2573EqW9rXbNWZrb9KPLm5j/IkVgR+npmNt3tMIq8UPs6wjaDnyiUV575htcpupRfSR/GhW4h+y64/s8KKZOxgowDiUUkTutM9Ma2pkPoq4rtYTF3XoirA/cZTcqCqvh6YzZ+Tg6VMB+Og=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=hhQtIAD8; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1742396170; c=relaxed/simple;
+	bh=fJ3F0yiZWpnOp2Nq8Bm3nwRNQRkQKyKmPX7nnAGXLv8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R24cyh3zyfOK6IIU2BJGjX0jPZq9E4x02js05Z97FOZOg6VLGpOXrY5/da5WpY0cAZZCYzWmmFY2jntUu02kcVpdxfM6kYf4p/DbEwrWttehrmenS4esLBQTiqMxI1SNJ+k8vjL82Yn86vrJPA8uenSvXH7KaFYToSWf7Ph+Y8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=invisiblethingslab.com; spf=pass smtp.mailfrom=invisiblethingslab.com; dkim=pass (2048-bit key) header.d=invisiblethingslab.com header.i=@invisiblethingslab.com header.b=I0P8fEZ7; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=wXasLh0C; arc=none smtp.client-ip=202.12.124.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=invisiblethingslab.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=invisiblethingslab.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="hhQtIAD8"
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52JCwqVm027756;
-	Wed, 19 Mar 2025 13:42:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=hibXXx
-	1/tkAqZb4o1JLhcDjbMgUARFxDE4ALNQxZcMc=; b=hhQtIAD8t4t2WtJ4l0UN/C
-	5NV/Aw7WCrcUSBJoAAJ1S0DeWBVe8Evn1Sx3Yl1A62jZ/NUfw+/ozdKRfFi7VvTR
-	GE707mtlFKQN2iR1AlgzL895bvB5ezBSj4X/OQS7I2WMKc/csnZuzXfHpkiMHZtd
-	IL2Ty4eRzZkUiGys36HiHyg6ox4QNY5q/5cCbH+aKNG51l3CNzFGSRjQDUVbP0hD
-	TGeMmLL3lQ9cqVmOH/SIUIjCaXYNg94aautZM5sXA2+8//XVsLxizbDcPQpWnNox
-	Nw/VFlvPXU+gR0OeiVm8fGmASgZI0Eo2Qt8VonNJ6+KQ9yDiKcBFDr6+dSTDuNLg
-	==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45fa8pe72u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Mar 2025 13:42:17 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52JBMNMB023214;
-	Wed, 19 Mar 2025 13:42:16 GMT
-Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 45dp3ksndp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Mar 2025 13:42:16 +0000
-Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
-	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52JDgFUU26083906
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 19 Mar 2025 13:42:15 GMT
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6FE2258057;
-	Wed, 19 Mar 2025 13:42:15 +0000 (GMT)
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 48B9658061;
-	Wed, 19 Mar 2025 13:42:14 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.177.219])
-	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 19 Mar 2025 13:42:14 +0000 (GMT)
-Message-ID: <255e75954d9418e2658a6eba6879804c31b3713f.camel@linux.ibm.com>
-Subject: Re: [PATCH v10 1/8] ima: rename variable the ser_file "file" to
- "ima_kexec_file"
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: steven chen <chenste@linux.microsoft.com>, stefanb@linux.ibm.com,
-        roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
-        eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
-        code@tyhicks.com, bauermann@kolabnow.com,
-        linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
-        James.Bottomley@HansenPartnership.com, bhe@redhat.com,
-        vgoyal@redhat.com, dyoung@redhat.com
-Date: Wed, 19 Mar 2025 09:42:13 -0400
-In-Reply-To: <20250318010448.954-2-chenste@linux.microsoft.com>
-References: <20250318010448.954-1-chenste@linux.microsoft.com>
-	 <20250318010448.954-2-chenste@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	dkim=pass (2048-bit key) header.d=invisiblethingslab.com header.i=@invisiblethingslab.com header.b="I0P8fEZ7";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="wXasLh0C"
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id CEC7C2540234;
+	Wed, 19 Mar 2025 10:56:03 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-10.internal (MEProxy); Wed, 19 Mar 2025 10:56:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	invisiblethingslab.com; h=cc:cc:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1742396163;
+	 x=1742482563; bh=6YtNAy6HBfsyucG2rvA4CF+wsGauxsNRU9FKvC0/25E=; b=
+	I0P8fEZ7Te6/fmNHSvma2ma4o3KZl7xibq7+WBYcevRbRMqWYXQH+SLBOe2mPVIB
+	nrtvAufJI4WjVrJJ/pjMY3lb2v2bwlQ1iI/kqpTMGvXB2B/fY5Did42fTCdlZBGZ
+	dExdWLr2ujBT2Zq7/MtEAiSRyFcKyobGTCydjaVWz5MtWT41gAcV2X/grmNWuy0o
+	p3Fy9QgMfN3ghOUgZVV4pDE+LgXcdd4cSMIB3XJXiRjN5+UiOopBxPY7E3NTAkY7
+	/V3KUEPxNDkLxrhAQL01s4P5qk+g7lvwQOrFVwCQUUiF/GaVGmDBGDECOnfZeXNR
+	zX7esmNwD/nZR2fB2lRqjA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1742396163; x=1742482563; bh=6YtNAy6HBfsyucG2rvA4CF+wsGauxsNRU9F
+	KvC0/25E=; b=wXasLh0C6wlK8Db10HpqaXvAZpHubQmGV6opRrkLP1H75vnKChi
+	0GG7l2jQI7fwSBQ8VNoJMSNdb6KNm1PrjR3VVoZ+AD6K7M37lUgKGKQSZWM002bw
+	kQhdP+1uCX48Fgpx0254MyM8nIcVxH2GoqGaZG8OW6E87ik9MVdLjY1iPJ4mppnc
+	SnEWIU/KBECMCeh7bnDvLTc+bWATvxc1Mrl6bwrH+C6NB0UO+5aqu1Zuffppx0CI
+	T2JOL5rGn96zHHnF+ShRGNG97gcnFnCojasQdsXuvFNjL86u4MspQYVFOJFgKLv9
+	9bnYhD8K9Ow/rSCZTDzF8z7enOrCD5I4yZA==
+X-ME-Sender: <xms:A9vaZ7RnSNY02nEqV1hyrQOySEmJsob6Iyx-XVn8-lsjY7T8t-W8og>
+    <xme:A9vaZ8z75UMAMWlpnYOiiEdBORXWQ-MDUMIuzBLq1R2c3EJeJIW-2oEGF8ydPETJl
+    xvgZue4XP2ZEuc>
+X-ME-Received: <xmr:A9vaZw3WlYjSFGNuPoawng7kBIsf59frkYCpUsioIpYbvcgzqAAU_fhAfdTA8Lbge5sqm4fMv6r9UVOYNjjslHdwhnr22c4yOp45iXimelU5X78k>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddugeehieefucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpeffhf
+    fvvefukfhfgggtuggjsehgtderredttddvnecuhfhrohhmpeffvghmihcuofgrrhhivgcu
+    qfgsvghnohhurhcuoeguvghmihesihhnvhhishhisghlvghthhhinhhgshhlrggsrdgtoh
+    hmqeenucggtffrrghtthgvrhhnpeduieelfeeutedvleehueetffejgeejgeffkeelveeu
+    leeukeejjeduffetjeekteenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
+    grihhlfhhrohhmpeguvghmihesihhnvhhishhisghlvghthhhinhhgshhlrggsrdgtohhm
+    pdhnsggprhgtphhtthhopedutddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepug
+    grvhhiugesfhhrohhmohhrsghithdrtghomhdprhgtphhtthhopegtvhgvsehkvghrnhgv
+    lhdrohhrghdprhgtphhtthhopehgnhhorggtkhesghhoohhglhgvrdgtohhmpdhrtghpth
+    htohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthht
+    ohepkhgvnhhtrdhovhgvrhhsthhrvggvtheslhhinhhugidruggvvhdprhgtphhtthhope
+    hlihhnuhigqdgstggrtghhvghfshesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphht
+    thhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtg
+    hpthhtoheplhhinhhugidqshgvtghurhhithihqdhmohguuhhlvgesvhhgvghrrdhkvghr
+    nhgvlhdrohhrghdprhgtphhtthhopehmihgtseguihhgihhkohgurdhnvght
+X-ME-Proxy: <xmx:A9vaZ7A9-6RclAM5pIHAvhRBh5ExBrhP_2-wmjR0OFxpgoFz9thkcQ>
+    <xmx:A9vaZ0go6bICdLT_Mm7qKXyEtM6ZLApvB-zHv_lV_yNPO6rAR6i9lQ>
+    <xmx:A9vaZ_pyvbpGcS4o_NrRF2lKc_i_p9hDHrYch1oXASrdrIsaKIz1vw>
+    <xmx:A9vaZ_ghDPW_Hc6jOWrmcUbajlRJNmDNL-qcl3xgKelXZtN2IRUUNA>
+    <xmx:A9vaZ5ZcihA2eqyE0NqXT1reBPLXNYAHL0WzUrUx8JC0PKUaBYvWixpL>
+Feedback-ID: iac594737:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 19 Mar 2025 10:56:02 -0400 (EDT)
+Date: Wed, 19 Mar 2025 10:55:39 -0400
+From: Demi Marie Obenour <demi@invisiblethingslab.com>
+To: Dave Chinner <david@fromorbit.com>
+Cc: cve@kernel.org, gnoack@google.com, gregkh@linuxfoundation.org,
+	kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, mic@digikod.net,
+	Demi Marie Obenour <demiobenour@gmail.com>
+Subject: Re: Unprivileged filesystem mounts
+Message-ID: <Z9rbDdLr0ai-UFE_@itl-email>
+References: <Z8948cR5aka4Cc5g@dread.disaster.area>
+ <20250311021957.2887-1-demi@invisiblethingslab.com>
+ <Z8_Q4nOR5X3iZq3j@dread.disaster.area>
+ <Z9CYzjpQUH8Bn4AL@itl-email>
+ <Z9kC7MKTGS_RB-2Q@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: S3orxwh3KxQBkV_RUEJ9W7ZkTdvzT8VT
-X-Proofpoint-ORIG-GUID: S3orxwh3KxQBkV_RUEJ9W7ZkTdvzT8VT
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-19_05,2025-03-19_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
- mlxscore=0 spamscore=0 malwarescore=0 priorityscore=1501 impostorscore=0
- adultscore=0 phishscore=0 mlxlogscore=999 lowpriorityscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2503190092
-
-Fix spelling: set_file
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="gJn/WH0kaLCMp1ft"
+Content-Disposition: inline
+In-Reply-To: <Z9kC7MKTGS_RB-2Q@dread.disaster.area>
 
 
-On Mon, 2025-03-17 at 18:04 -0700, steven chen wrote:
-> The name of the local variable "file" of type seq_file defined in the
-> ima_dump_measurement_list function is too generic. To better reflect the
-> purpose of the variable, rename it to "ima_kexec_file". This change will=
-=20
-> help improve code readability and maintainability by making the variable'=
-s
-> role more explicit.
+--gJn/WH0kaLCMp1ft
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Date: Wed, 19 Mar 2025 10:55:39 -0400
+From: Demi Marie Obenour <demi@invisiblethingslab.com>
+To: Dave Chinner <david@fromorbit.com>
+Cc: cve@kernel.org, gnoack@google.com, gregkh@linuxfoundation.org,
+	kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, mic@digikod.net,
+	Demi Marie Obenour <demiobenour@gmail.com>
+Subject: Re: Unprivileged filesystem mounts
 
-The reason for making the variable name change is the variable scope.
-
--> Before making the function local seq_file "file" variable global, rename=
- it
-to ima_kexec_file.
-
+On Tue, Mar 18, 2025 at 04:21:48PM +1100, Dave Chinner wrote:
+> On Tue, Mar 11, 2025 at 04:10:42PM -0400, Demi Marie Obenour wrote:
+> > On Tue, Mar 11, 2025 at 04:57:54PM +1100, Dave Chinner wrote:
+> > > On Mon, Mar 10, 2025 at 10:19:57PM -0400, Demi Marie Obenour wrote:
+> > > > People have stuff to get done.  If you disallow unprivileged filesy=
+stem
+> > > > mounts, they will just use sudo (or equivalent) instead.
+> > >=20
+> > > I am not advocating that we disallow mounting of untrusted devices.
+> > >=20
+> > > > The problem is
+> > > > not that users are mounting untrusted filesystems.  The problem is =
+that
+> > > > mounting untrusted filesystems is unsafe.
+> > >=20
+> > > > Making untrusted filesystems safe to mount is the only solution that
+> > > > lets users do what they actually need to do. That means either actu=
+ally
+> > > > fixing the filesystem code,
+> > >=20
+> > > Yes, and the point I keep making is that we cannot provide that
+> > > guarantee from the kernel for existing filesystems. We cannot detect
+> > > all possible malicous tampering situations without cryptogrpahically
+> > > secure verification, and we can't generate full trust from nothing.
+> >=20
+> > Why is it not possible to provide that guarantee?  I'm not concerned
+> > about infinite loops or deadlocks.  Is there a reason it is not possible
+> > to prevent memory corruption?
 >=20
-> The variable ima_kexec_file is indeed the memory allocated for copying IM=
-A
-> measurement records. The ima_dump_measurement_list function calculates th=
-e=20
-> actual memory occupied by the IMA logs and compares it with the allocated=
-=20
-> memory. If there is enough memory, it copies all IMA measurement records;=
-=20
-> otherwise, it does not copy any records, which would result in a failure
-> of remote attestation.
-
-This paragraph is not applicable to the patch change.
-
+> You're asking me to prove that the on-disk filesystem format parsing
+> implementation is 100% provably correct. Not only that, you're
+> wanting me to say that journal replay copying incomplete,
+> unverifiable structure fragments over the top of existing disk
+> structures is 100% provably correct.
 >=20
-> Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
-> Signed-off-by: steven chen <chenste@linux.microsoft.com>
-> ---
->  security/integrity/ima/ima_kexec.c | 39 ++++++++++++++++++------------
->  1 file changed, 24 insertions(+), 15 deletions(-)
+> I am the person whole architected the existing metadata validation
+> infrastructure that XFS uses, and so I know it's limitations in
+> intimate detail. It is, by far, the closest thing we have to
+> complete runtime metadata validation in any Linux filesystem
+> (except maybe bcachefs), but it is nowhere near able to detect and
+> prevent 100% of potential structure corruptions.
 >=20
-> diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/=
-ima_kexec.c
-> index 9d45f4d26f73..8567619889d1 100644
-> --- a/security/integrity/ima/ima_kexec.c
-> +++ b/security/integrity/ima/ima_kexec.c
-> @@ -15,33 +15,41 @@
->  #include "ima.h"
-> =20
->  #ifdef CONFIG_IMA_KEXEC
-> +/*
-> + * Copy the measurement list to the allocated memory
-> + * compare the size of IMA measurement list with the size of the allocat=
-ed memory
-> + *    if the size of the allocated memory is not less than the size of I=
-MA measurement list
-> + *        copy the measurement list to the allocated memory.
-> + *    else
-> + *        return error
-> + */
+> It is *far from trivial* to validate all the weird corner cases that
+> exist in the on-disk format that have evolved over the last 3
+> decades. For the first 15 years of development, almost zero thought
+> was given to runtime validation of the on-disk format. People even
+> fought against introducing it at all. And despite this, we still
+> have to support the on-disk functionality those old, difficult to
+> validate, persistent structures describe.
+>=20
+> [ And then there's some other random memory corruption bug in the
+> code, and all bets are off... ]
+>=20
+> IOWs, no filesystem developer is ever going to give you a guarantee
+> that a filesystem implementation is free from memory corruption bugs
+> unless they've designed and implemented from the ground up to be
+> 100% safe from such issues. No such filesystem exists in the kernel,
+> and it will probably be years away before anything may exist to fill
+> that gap.
 
-Please minimize patch changes.  Before posting, please look at the patch(s)=
- and
-remove anything not applicable to it.  In this case, the comment is not
-applicable to the variable name change.
+That makes sense. =20
 
-thanks,
+> > > The typical desktop policy of "probe and automount any device that
+> > > is plugged in" prevents the user from examining the device to
+> > > determine if it contains what it is supposed to contain.  The user
+> > > is not given any opportunity to device if trust is warranted before
+> > > the kernel filesystem parser running in ring 0 is exposed to the
+> > > malicious image.
+> > >=20
+> > > That's the fundamental policy problem we need to address: the user
+> > > and/or admin is not in control of their own security because
+> > > application developers and/or distro maintainers have decided they
+> > > should not have a choice.
+> > >=20
+> > > In this situation, the choice of what to do *must* fall to the user,
+> > > but the argument for "filesystem corruption is a CVE-worthy bug" is
+> > > that the choice has been taken away from the user. That's what I'm
+> > > saying needs to change - the choice needs to be returned to the
+> > > user...
+> >=20
+> > I am 100% in favor of not automounting filesystems without user
+> > interaction, but that only means that an exploit will require user
+> > interaction.  Users need to get things done, and if their task requires
+> > them to a not-fully-trusted filesystem image, then that is what they
+> > will do, and they will typically do it in the most obvious way possible.
+> > That most obvious way needs to be a safe way, and it needs to have good
+> > enough performance that users don't go around looking for an unsafe way.
+>=20
+> Well, yes, that is obvious, and not a point of contention at all,
+> as is evidenced by the list of solutions to this problem I outlined.
 
-Mimi
- =20
->  static int ima_dump_measurement_list(unsigned long *buffer_size, void **=
-buffer,
->  				     unsigned long segment_size)
->  {
-> +	struct seq_file ima_kexec_file;
->  	struct ima_queue_entry *qe;
-> -	struct seq_file file;
->  	struct ima_kexec_hdr khdr;
->  	int ret =3D 0;
-> =20
->  	/* segment size can't change between kexec load and execute */
-> -	file.buf =3D vmalloc(segment_size);
-> -	if (!file.buf) {
-> +	ima_kexec_file.buf =3D vmalloc(segment_size);
-> +	if (!ima_kexec_file.buf) {
->  		ret =3D -ENOMEM;
->  		goto out;
->  	}
-> =20
-> -	file.file =3D NULL;
-> -	file.size =3D segment_size;
-> -	file.read_pos =3D 0;
-> -	file.count =3D sizeof(khdr);	/* reserved space */
-> +	ima_kexec_file.file =3D NULL;
-> +	ima_kexec_file.size =3D segment_size;
-> +	ima_kexec_file.read_pos =3D 0;
-> +	ima_kexec_file.count =3D sizeof(khdr);	/* reserved space */
-> =20
->  	memset(&khdr, 0, sizeof(khdr));
->  	khdr.version =3D 1;
->  	/* This is an append-only list, no need to hold the RCU read lock */
->  	list_for_each_entry_rcu(qe, &ima_measurements, later, true) {
-> -		if (file.count < file.size) {
-> +		if (ima_kexec_file.count < ima_kexec_file.size) {
->  			khdr.count++;
-> -			ima_measurements_show(&file, qe);
-> +			ima_measurements_show(&ima_kexec_file, qe);
->  		} else {
->  			ret =3D -EINVAL;
->  			break;
-> @@ -55,23 +63,24 @@ static int ima_dump_measurement_list(unsigned long *b=
-uffer_size, void **buffer,
->  	 * fill in reserved space with some buffer details
->  	 * (eg. version, buffer size, number of measurements)
->  	 */
-> -	khdr.buffer_size =3D file.count;
-> +	khdr.buffer_size =3D ima_kexec_file.count;
->  	if (ima_canonical_fmt) {
->  		khdr.version =3D cpu_to_le16(khdr.version);
->  		khdr.count =3D cpu_to_le64(khdr.count);
->  		khdr.buffer_size =3D cpu_to_le64(khdr.buffer_size);
->  	}
-> -	memcpy(file.buf, &khdr, sizeof(khdr));
-> +	memcpy(ima_kexec_file.buf, &khdr, sizeof(khdr));
-> =20
->  	print_hex_dump_debug("ima dump: ", DUMP_PREFIX_NONE, 16, 1,
-> -			     file.buf, file.count < 100 ? file.count : 100,
-> +			     ima_kexec_file.buf, ima_kexec_file.count < 100 ?
-> +			     ima_kexec_file.count : 100,
->  			     true);
-> =20
-> -	*buffer_size =3D file.count;
-> -	*buffer =3D file.buf;
-> +	*buffer_size =3D ima_kexec_file.count;
-> +	*buffer =3D ima_kexec_file.buf;
->  out:
->  	if (ret =3D=3D -EINVAL)
-> -		vfree(file.buf);
-> +		vfree(ima_kexec_file.buf);
->  	return ret;
->  }
-> =20
+What kind of performance do the existing solutions (libguestfs, lklfuse)
+have?
 
+> > > > or running it in a sufficiently tight
+> > > > sandbox that vulnerabilities in it are of too low importance to mat=
+ter.
+> > > > libguestfs+FUSE is the most obvious way to do this, but the perform=
+ance
+> > > > might not be enough for distros to turn it on.
+> > >=20
+> > > Yes, I have advocated for that to be used for desktop mounts in the
+> > > past. Similarly, I have also advocated for liblinux + FUSE to be
+> > > used so that the kernel filesystem code is used but run from a
+> > > userspace context where the kernel cannot be compromised.
+> > >=20
+> > > I have also advocated for user removable devices to be encrypted by
+> > > default. The act of the user unlocking the device automatically
+> > > marks it as trusted because undetectable malicious tampering is
+> > > highly unlikely.
+> >=20
+> > That is definitely a good idea.
+> >=20
+> > > I have also advocated for a device registry that records removable
+> > > device signatures and whether the user trusted them or not so that
+> > > they only need to be prompted once for any given removable device
+> > > they use.
+> > >=20
+> > > There are *many* potential user-friendly solutions to the problem,
+> > > but they -all- lie in the domain of userspace applications and/or
+> > > policies. This is *not* a problem more or better code in the kernel
+> > > can solve.
+> >=20
+> > It is certainly possible to make a memory safe implementation of amy
+> > filesystem.
+>=20
+> Spoken like a True Expert.
+
+I am saying this in the sense of "it is possible to make a memory safe
+implementation of *anything*, unless that thing exposes a memory unsafe
+API.".  It's a generic statement about programs in general.  It does not
+imply that doing so is practical.
+
+> > If the current implementation can't prevent memory
+> > corruption if a malicious filesystem is mounted, that is a
+> > characteristic of the implementation.
+>=20
+> Ah, now I see what you are trying to do. You're building a strawman
+> around memory corruption that you can use the argument "we need to
+> reimplement everything in Rust" to knock down.
+>=20
+> Sorry, not playing that game.
+
+There are other options, like "run the filesystem in a tightly sandboxed
+userspace process, especially compiled through WebAssembly".  The
+difficulty is making them sufficiently performant for distributions to
+actually use them.
+
+> > However, the root filesystem is not the only filesystem image that must
+> > be mounted.  There is also a writable data volume, and that _cannot_ be
+> > signed because it contains user data.  It is encrypted, but part of the
+> > threat model for both Android and ChromeOS is an attacker who has gained
+> > root or even kernel code execution and wants to retain their access
+> > across device reboots. They can't tamper with the kernel or root
+> > filesystem, and privileged userspace treats the data on the writable
+> > filesystem as untrusted.  However, the attacker can replace the writable
+> > filesystem image with anything they want,
+>=20
+> And therein lies the attack a fielsystem implementation can't defend
+> against: the attacker can rewrite the unencrypted block device to
+> contain anything they want, and that will then pass verification on
+> the next boot. Perhaps that's the class of storage attack you should
+> seek to prevent, not try to slap bandaids over trust model
+> violations or insinuate the only solution is to rewrite complex
+> subsystems in Rust....
+
+The Chrome OS and Android threat models require that they remain secure
+no matter what the contents of the unsigned block device actually are,
+even if they are completely malicious.
+--=20
+Sincerely,
+Demi Marie Obenour (she/her/hers)
+Invisible Things Lab
+
+--gJn/WH0kaLCMp1ft
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEopQtqVJW1aeuo9/sszaHOrMp8lMFAmfa2vMACgkQszaHOrMp
+8lOcpA//UMgEPqZkVnreLSPBSJyFUb1QUNe7uIl5vUbwNEjrTXdonIfAaBRg2jIv
+j7/nRxdbUDCQG0gZc9Gd8mWnZlZVi2lrjcYMzyUEfPV/eX+dGyB03xmUTWgPRiqU
+NMgnGAcLNHy647kXfzHoP2F/B3Wt8+MRK4rSMKZH7PnwyoyVR8xAd2BrMRRyUYb+
+uBKDhl7n2Knf+OzS9N/ZUdy6ABlkqetszR1OP6a8hOaKnG/He/Z1hZyIZSTWd3xH
+sW2mQEoXXtUJyHQUs72/PLfWeuDs/m2q6cABtX/JGDtH013WY06m9OUGLgDGkVt3
+3rtnxBmEnf09pWyOsvoDDD7mFaVogFb5c9f4jWyo7IBtGSAykmFXUh3pLfS6GJfk
+ccUZDhDQs4Ro9G+IBa9JmV9/avqxVSMPeuX/Wm2DCNfPbjyUV6Q3CVWlhffXs77d
+K7c5Rpkc4yeYUkEGiZDlbCYcJcMcSqEgZq/FqO+OkG7kpKwPwXgl/DZ8/e4mB77R
+EC470TjjJHYGlrsdwVF9eB3b0Fc8x0gow5BJOA01qcFAVy6gQPcKjA3ejbGCu2xW
+TrQEQGiWw4LuqJTQ7v9v2VnZn61Zy4GkIiPBH2iE+V6uTfuuRmT8X/FH3IhFovPB
+DQIdXvu16oy7CLmmU2Sd4CEwrRpUB/YEeCqOehK4nSiGVgz4WnQ=
+=JTKC
+-----END PGP SIGNATURE-----
+
+--gJn/WH0kaLCMp1ft--
