@@ -1,45 +1,44 @@
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83AE522A4D1
-	for <linux-security-module@vger.kernel.org>; Thu, 20 Mar 2025 16:01:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25CB21EB198;
+	Thu, 20 Mar 2025 16:14:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742486463; cv=none; b=TS5m3fydEei5mE4z/KaL4SradUgzAleX76vfSnXsi85Ij0FwHyk1I4d20CFfCD0wC9fwN6jbJn0tvsuzP5/kK3Bg+kYj+c3B8TrU5EqGl746BHsMhSRqQJQf/is4GwNjL9X7IsOTzX6ex0w7CDNeQtz9XZoFqt16QHyzCNQKABg=
+	t=1742487261; cv=none; b=WSnQ5pg2hPDVcyfutVN6K6gT2AS+jn6s3+D0/C3ZeIRrjhtycYFV5UwKfje2qCzUOfwP6GgO6IJmhZJEUZI59nnWBx7mOU9+GV9g4yvnQkSlpv3urqWgE//VDR/Fte1UHsoVgY40wmqKOlykkvAl48yW1u3Zj1CLJZpBfiEhxl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742486463; c=relaxed/simple;
-	bh=1fZq+9+qN2dWTF6h8mSKQAqErBdbQnc7JZJTp9ov+pA=;
+	s=arc-20240116; t=1742487261; c=relaxed/simple;
+	bh=Fn9pXh4lxMLX31zHxont+zvhZMtgvYJNY46WZiexzOk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bKyTgr40dQZErtJb9bcqo3kRsm2MwC5Suui22v9UFCKOTZ8IWiSPBgIZMeegehkvMfGTgiMfFRn/YbFCrc6qcsNmTZvxs03ZJ8n1EHJUQY5D4g7Celd6G4XIEkmcraH/Hn7dr5/SKTpVgJbyhTPpq3y9d4Dx7bKbKrVDJG+fmYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from trampoline.thunk.org (pool-173-48-82-222.bstnma.fios.verizon.net [173.48.82.222])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 52KG0P6K013712
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 20 Mar 2025 12:00:26 -0400
-Received: by trampoline.thunk.org (Postfix, from userid 15806)
-	id 974C42E010B; Thu, 20 Mar 2025 12:00:25 -0400 (EDT)
-Date: Thu, 20 Mar 2025 12:00:25 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Demi Marie Obenour <demi@invisiblethingslab.com>
-Cc: Dave Chinner <david@fromorbit.com>, cve@kernel.org, gnoack@google.com,
-        gregkh@linuxfoundation.org, kent.overstreet@linux.dev,
-        linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, mic@digikod.net,
-        Demi Marie Obenour <demiobenour@gmail.com>
-Subject: Re: Unprivileged filesystem mounts
-Message-ID: <20250320160025.GE1079074@mit.edu>
-References: <Z8948cR5aka4Cc5g@dread.disaster.area>
- <20250311021957.2887-1-demi@invisiblethingslab.com>
- <Z8_Q4nOR5X3iZq3j@dread.disaster.area>
- <Z9CYzjpQUH8Bn4AL@itl-email>
- <20250318221128.GA1040959@mit.edu>
- <Z9sCcbZ7sdBgbX77@itl-email>
- <20250319212517.GB1079074@mit.edu>
- <Z9u1L_2o71uEiU4g@itl-email>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LQiXs+DokYkdvbmnz8yu8RvnAJv4UVLF50aJBaGinYVjKg6VAQGPcet+3rklUl0tND1vLiU+DnMlRPW2q7BLg8S4zzeWGGRX7yMHqIm9R5hhUzFOQibcckc6Ivu4K9Um4CIQDKVyIVLoejyxteU/Fe/zqhFx1I3O4AP5QkPDPNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OtN0CmcP; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OtN0CmcP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16672C4CEDD;
+	Thu, 20 Mar 2025 16:14:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742487260;
+	bh=Fn9pXh4lxMLX31zHxont+zvhZMtgvYJNY46WZiexzOk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OtN0CmcP94HKckc21kYxVbm0rKzb5PNwwH6AGGvLJuxusGlWt+Lhc4u3hA+tGm+F7
+	 F6XXRQj9URQEhixVOSFtaqTm9LqiQAjBOZTE+GMug+v+PhFa6k/j7LyDLhdbeYIPNV
+	 oc/YXnNoeMFFyuNZW6MH9fyETelTonxUavVNSYDfrurTuvsAcN3hEOdQ1/51q1KdCV
+	 0Lpsi8wqyZCw4uzKv8FPCD9btVS00zr1/E8odwGnlG+K5b2sxeQOy5sE+uBnFhN0ET
+	 28L7UtAD0sY46SbQsn7NyBOMmN+hgjtsqNSc7ThA+wO9V2NuUqgAUefy4elzBVael6
+	 aoMg1DBUyELhg==
+Date: Thu, 20 Mar 2025 18:14:15 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Kees Cook <kees@kernel.org>, Oleg Nesterov <oleg@redhat.com>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	Josh Drake <josh@delphoslabs.com>,
+	Suraj Sonawane <surajsonawane0215@gmail.com>,
+	keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
+	security@kernel.org, stable@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] keys: Fix UAF in key_put()
+Message-ID: <Z9w-10St-WYpSnKC@kernel.org>
+References: <2874581.1742399866@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -48,61 +47,92 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z9u1L_2o71uEiU4g@itl-email>
+In-Reply-To: <2874581.1742399866@warthog.procyon.org.uk>
 
-On Thu, Mar 20, 2025 at 02:26:41AM -0400, Demi Marie Obenour wrote:
-> The L4 family of microkernels, and especially seL4, show that
-> microkernels do not need to be slow.
+On Wed, Mar 19, 2025 at 03:57:46PM +0000, David Howells wrote:
+>     
+> Once a key's reference count has been reduced to 0, the garbage collector
+> thread may destroy it at any time and so key_put() is not allowed to touch
+> the key after that point.  The most key_put() is normally allowed to do is
+> to touch key_gc_work as that's a static global variable.
+> 
+> However, in an effort to speed up the reclamation of quota, this is now
+> done in key_put() once the key's usage is reduced to 0 - but now the code
+> is looking at the key after the deadline, which is forbidden.
+> 
+> Fix this by using a flag to indicate that a key can be gc'd now rather than
+> looking at the key's refcount in the garbage collector.
+> 
+> Fixes: 9578e327b2b4 ("keys: update key quotas in key_put()")
+> Reported-by: syzbot+6105ffc1ded71d194d6d@syzkaller.appspotmail.com
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> Tested-by: syzbot+6105ffc1ded71d194d6d@syzkaller.appspotmail.com
+> cc: Jarkko Sakkinen <jarkko@kernel.org>
+> cc: Oleg Nesterov <oleg@redhat.com>
+> cc: Kees Cook <kees@kernel.org>
+> cc: Hillf Danton <hdanton@sina.com>,
+> cc: keyrings@vger.kernel.org
+> Cc: stable@vger.kernel.org # v6.10+
+> ---
+>  include/linux/key.h |    1 +
+>  security/keys/gc.c  |    4 +++-
+>  security/keys/key.c |    2 ++
+>  3 files changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/key.h b/include/linux/key.h
+> index 074dca3222b9..ba05de8579ec 100644
+> --- a/include/linux/key.h
+> +++ b/include/linux/key.h
+> @@ -236,6 +236,7 @@ struct key {
+>  #define KEY_FLAG_ROOT_CAN_INVAL	7	/* set if key can be invalidated by root without permission */
+>  #define KEY_FLAG_KEEP		8	/* set if key should not be removed */
+>  #define KEY_FLAG_UID_KEYRING	9	/* set if key is a user or user session keyring */
+> +#define KEY_FLAG_FINAL_PUT	10	/* set if final put has happened on key */
+>  
+>  	/* the key type and key description string
+>  	 * - the desc is used to match a key against search criteria
+> diff --git a/security/keys/gc.c b/security/keys/gc.c
+> index 7d687b0962b1..f27223ea4578 100644
+> --- a/security/keys/gc.c
+> +++ b/security/keys/gc.c
+> @@ -218,8 +218,10 @@ static void key_garbage_collector(struct work_struct *work)
+>  		key = rb_entry(cursor, struct key, serial_node);
+>  		cursor = rb_next(cursor);
+>  
+> -		if (refcount_read(&key->usage) == 0)
+> +		if (test_bit(KEY_FLAG_FINAL_PUT, &key->flags)) {
+> +			smp_mb(); /* Clobber key->user after FINAL_PUT seen. */
 
-With all due respect to folks who have wrked on L4 and its derivatives,
-L4 is a research prototype.  The gap between a research prototype and
-something that can actually be used in wide variety of use cases, from
-smart watches, to mainframes, is... large.
+test_bit() is already atomic.
 
-If some company is willing to fund such work, I'd be very interested
-to see what they can come up with.  I will note that Google has tried
-dabbling in this space with Fuchsia, and getting to something that can
-actually be shipped in a product has been a very long road.  To their
-credit, they have managed to do this for a version of Nest Hub, but
-most people would say that it is very far from being suitable for
-Android or Chrome OS, and supprting data center workloads was
-explicitly a non-goal by the Fuschia team.
+https://docs.kernel.org/core-api/wrappers/atomic_bitops.html
 
-See [1] for more details.  In 2018, it was reported that Google had
-over 100 engineers working on Fuchsia starting in 2016, with the hopes
-that it would be ready "in 5 years".  Per [2], apparently in 2024
-Fuschia "is not dead", but work has slowed and there aren't as many
-people working on it.  (Disclosure: I work at Google but all of my
-recent knowledge about Fuchsia comes from news reports; the last time
-I talked to anyone on the Fuchsia team was well before COVID.)
+>  			goto found_unreferenced_key;
+> +		}
+>  
+>  		if (unlikely(gc_state & KEY_GC_REAPING_DEAD_1)) {
+>  			if (key->type == key_gc_dead_keytype) {
+> diff --git a/security/keys/key.c b/security/keys/key.c
+> index 3d7d185019d3..7198cd2ac3a3 100644
+> --- a/security/keys/key.c
+> +++ b/security/keys/key.c
+> @@ -658,6 +658,8 @@ void key_put(struct key *key)
+>  				key->user->qnbytes -= key->quotalen;
+>  				spin_unlock_irqrestore(&key->user->lock, flags);
+>  			}
+> +			smp_mb(); /* key->user before FINAL_PUT set. */
+> +			set_bit(KEY_FLAG_FINAL_PUT, &key->flags);
 
-[1] https://www.bloomberg.com/news/articles/2018-07-19/google-team-is-said-to-plot-android-successor-draw-skepticism
-[2] https://www.reddit.com/r/Fuchsia/comments/1g7x2vs/what_happened_to_fuchsia/
+Ditto.
 
-> I do agree that making a microkernel-based OS fast is hard, but on
-> the other hand, running an entire Linux VM just to host a single
-> application isn't exactly an efficient use of resources either.
+Nit: I'm just thinking should the name imply more like that "now
+key_put() is actually done". E.g., even something like KEY_FLAG_PUT_DONE
+would be more self-descriptive.
 
-Well, if you want to try to make a business case to VP's with
-estimates of how many engineers this would require, probably in a
-sustained effort taking at least 5 to 10 years, I cordially invite you
-to make the attempt.  :-)
+>  			schedule_work(&key_gc_work);
+>  		}
+>  	}
+> 
+> 
 
-Given how cheap hardware has been geting, running multiple VM's on an
-Android phone or a ChromeOS laptop might not actally be that
-expensive, relative to the cost of the required number of software
-engineers for some of the alternatives we've discussed on this thread.
-There are ways that you can share the read-only text pages for the
-kernel, etc., to optimize the overhead of the VM, for exaple.
-
-It is also much easier to collavorate with SOC designers to create
-hardware optimizations for a VM abstraction, as compared to creating
-hardwae optmizations for a software-level OS abstraction such as a
-container or microkernel task.  So I don't think it's a safe
-assumption that VM overheads will always be unacceptable relative to
-the alternatives.
-
-Cheers,
-
-					- Ted
-
+BR, Jarkko
