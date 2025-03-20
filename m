@@ -1,33 +1,33 @@
 Received: from smtp-8fa8.mail.infomaniak.ch (smtp-8fa8.mail.infomaniak.ch [83.166.143.168])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 696F1221573
-	for <linux-security-module@vger.kernel.org>; Thu, 20 Mar 2025 19:07:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD432227EB1
+	for <linux-security-module@vger.kernel.org>; Thu, 20 Mar 2025 19:07:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742497658; cv=none; b=C169sW9r5ww2WXo+xHIynwfb8GZUigVVv385CyHXo3bByJIcxFE+xYWG/bXeQ2LjSA+8KTs7rBxyT5PH0NG6kbaHYQKe5FpVDRsSa6Nlb1kbjwM695RwvtKOk3DePJpdYn3iQpFbbzpT+eNkDdw8XR2bTzvllGFclFkegg6KSog=
+	t=1742497661; cv=none; b=cvFi3OwbZwmH3oPpy21dgpo6b5X2+QR858pwHIJ3Ymhd7Qni2hMqxzCGyUw8h4O0KyNAx27dCv8ZqCmQMdQPv9ycbozU1FtQobkTOXisH7tILBudgfCPOTPnT5OQeWWV1UVuZcZMhtnawFecs3/m6i+yTN58P3xPsyexfbZKzQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742497658; c=relaxed/simple;
-	bh=4APA0yd3c+w7p33UrZkR+u3PdFp86U0HE/ww9K2v2Ug=;
+	s=arc-20240116; t=1742497661; c=relaxed/simple;
+	bh=TS7HZ1tKjXQnVztsV6C3ej4LWIVlk+jcfBJsAi/DHNE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NE9cUJ0kL+rUGmyaikriwuKZbRvZDgk7vIEoaHmG4SNF0ojmLst2YzlYlu0hyh7tbOh6WZ0NmzZg2S7WL3rqOaQjEAK+CVBrYYKZ2nSKD/ffiBMHPBjhkIf5ya5FwFzMmdiedEpVXUlqwfDxY/6JGStOZKJOXyTGJ+8kNfwHV8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=t8sb4QrQ; arc=none smtp.client-ip=83.166.143.168
+	 MIME-Version:Content-Type; b=Mmp5nG+RHkZcE7GyqsSM7acA5EEw3SlMrKVqugqU9TeLgGkKJCvAgXJS/2pPKSPVEixStHmhRLD+PeY50769iRXksPQoIctZAiZDyrp8iPrUsxuznTGBcBmSuYqmxhCpWHF+XTfs8cA2HGKEl3ufdsiCnjjCe7d5qEchm85o2Qc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=UGaKNES8; arc=none smtp.client-ip=83.166.143.168
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="t8sb4QrQ"
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246b])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ZJZp56XQFzwgX;
-	Thu, 20 Mar 2025 20:07:25 +0100 (CET)
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="UGaKNES8"
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ZJZpJ6gqNznK;
+	Thu, 20 Mar 2025 20:07:36 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1742497645;
-	bh=zr5gmFSYD1tD7fpfRv2XYUIy9g8rF8FEdaY+2pUts9w=;
+	s=20191114; t=1742497656;
+	bh=Iln42cUtkMn9/d1YlfuMQNlo3p0jfKXK7NGjwJaBbRE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=t8sb4QrQAnScemqm3VR/dsDjqAgP/joYvY+9TJHKGKtYbZCjNsHrg7R248bPi4WXU
-	 2+B5vOcKw3ss65jdzQ1Dl3VinBLjcpwF9oezlD+gHjL8w837FUkGICFhWi+Ir7lcBt
-	 RSkx/AdBz/HUbsbnq3A40ZAU2ENEBxROhHzNz4o0=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4ZJZp46cCTzPnK;
-	Thu, 20 Mar 2025 20:07:24 +0100 (CET)
+	b=UGaKNES8SylO8RlSkJ12HpR/gWSiAHZBzLgEGTvBLBrQCmSh8Mu/s/5E6hdmvz5MA
+	 h1w/65fflI1P6ArcUU/hFKB1cYyY42mwU5AblTckejO6RT1HGxDtF7zWzIKUU3+geh
+	 cIJxjFzHe/YgnYtMqY3hb1r20ix5d8sDRJBD6PTA=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4ZJZpJ1F4WzCsL;
+	Thu, 20 Mar 2025 20:07:36 +0100 (CET)
 From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 To: Eric Paris <eparis@redhat.com>,
 	Paul Moore <paul@paul-moore.com>,
@@ -59,9 +59,9 @@ Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	audit@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH v7 01/28] lsm: Add audit_log_lsm_data() helper
-Date: Thu, 20 Mar 2025 20:06:50 +0100
-Message-ID: <20250320190717.2287696-2-mic@digikod.net>
+Subject: [PATCH v7 08/28] landlock: Identify domain execution crossing
+Date: Thu, 20 Mar 2025 20:06:57 +0100
+Message-ID: <20250320190717.2287696-9-mic@digikod.net>
 In-Reply-To: <20250320190717.2287696-1-mic@digikod.net>
 References: <20250320190717.2287696-1-mic@digikod.net>
 Precedence: bulk
@@ -74,117 +74,153 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Infomaniak-Routing: alpha
 
-Extract code from dump_common_audit_data() into the audit_log_lsm_data()
-helper. This helps reuse common LSM audit data while not abusing
-AUDIT_AVC records because of the common_lsm_audit() helper.
+Extend struct landlock_cred_security with a domain_exec bitmask to
+identify which Landlock domain were created by the current task's bprm.
+The whole bitmask is reset on each execve(2) call.
 
-Cc: Casey Schaufler <casey@schaufler-ca.com>
-Cc: James Morris <jmorris@namei.org>
-Cc: Serge E. Hallyn <serge@hallyn.com>
-Acked-by: Paul Moore <paul@paul-moore.com>
-Depends-on: 7ccbe076d987 ("lsm: Only build lsm_audit.c if CONFIG_SECURITY and CONFIG_AUDIT are set")
+Cc: Günther Noack <gnoack@google.com>
+Cc: Paul Moore <paul@paul-moore.com>
 Signed-off-by: Mickaël Salaün <mic@digikod.net>
 ---
 
+Changes since v5:
+- Add documentation and pack struct landlock_cred_security to minimize
+  struct landlock_file_security.
+
 Changes since v4:
-- Add Depends-on tag.
-
-Changes since v3:
-- Rebase on top of the v6.13's get_task_comm() fix.
-- Add Acked-by Paul.
-
-Changes since v1:
-- Fix commit message (spotted by Paul).
-- Constify dump_common_audit_data()'s and audit_log_lsm_data()'s "a"
-  argument.
-- Fix build without CONFIG_NET: see previous patch.
+- New patch.
 ---
- include/linux/lsm_audit.h |  8 ++++++++
- security/lsm_audit.c      | 27 ++++++++++++++++++---------
- 2 files changed, 26 insertions(+), 9 deletions(-)
+ security/landlock/cred.c     | 26 ++++++++++++++++++++++----
+ security/landlock/cred.h     | 32 +++++++++++++++++++++++++++++++-
+ security/landlock/syscalls.c |  5 +++++
+ 3 files changed, 58 insertions(+), 5 deletions(-)
 
-diff --git a/include/linux/lsm_audit.h b/include/linux/lsm_audit.h
-index e13d2f947b51..bddd694f7c4c 100644
---- a/include/linux/lsm_audit.h
-+++ b/include/linux/lsm_audit.h
-@@ -132,6 +132,9 @@ void common_lsm_audit(struct common_audit_data *a,
- 	void (*pre_audit)(struct audit_buffer *, void *),
- 	void (*post_audit)(struct audit_buffer *, void *));
+diff --git a/security/landlock/cred.c b/security/landlock/cred.c
+index db9fe7d906ba..a22756fe3b71 100644
+--- a/security/landlock/cred.c
++++ b/security/landlock/cred.c
+@@ -4,8 +4,10 @@
+  *
+  * Copyright © 2017-2020 Mickaël Salaün <mic@digikod.net>
+  * Copyright © 2018-2020 ANSSI
++ * Copyright © 2025 Microsoft Corporation
+  */
  
-+void audit_log_lsm_data(struct audit_buffer *ab,
-+			const struct common_audit_data *a);
-+
- #else /* CONFIG_AUDIT */
++#include <linux/binfmts.h>
+ #include <linux/cred.h>
+ #include <linux/lsm_hooks.h>
  
- static inline void common_lsm_audit(struct common_audit_data *a,
-@@ -140,6 +143,11 @@ static inline void common_lsm_audit(struct common_audit_data *a,
+@@ -17,11 +19,12 @@
+ static void hook_cred_transfer(struct cred *const new,
+ 			       const struct cred *const old)
  {
+-	struct landlock_ruleset *const old_dom = landlock_cred(old)->domain;
++	const struct landlock_cred_security *const old_llcred =
++		landlock_cred(old);
+ 
+-	if (old_dom) {
+-		landlock_get_ruleset(old_dom);
+-		landlock_cred(new)->domain = old_dom;
++	if (old_llcred->domain) {
++		landlock_get_ruleset(old_llcred->domain);
++		*landlock_cred(new) = *old_llcred;
+ 	}
  }
  
-+static inline void audit_log_lsm_data(struct audit_buffer *ab,
-+			const struct common_audit_data *a)
+@@ -40,10 +43,25 @@ static void hook_cred_free(struct cred *const cred)
+ 		landlock_put_ruleset_deferred(dom);
+ }
+ 
++#ifdef CONFIG_AUDIT
++
++static int hook_bprm_creds_for_exec(struct linux_binprm *const bprm)
 +{
++	/* Resets for each execution. */
++	landlock_cred(bprm->cred)->domain_exec = 0;
++	return 0;
 +}
 +
- #endif /* CONFIG_AUDIT */
++#endif /* CONFIG_AUDIT */
++
+ static struct security_hook_list landlock_hooks[] __ro_after_init = {
+ 	LSM_HOOK_INIT(cred_prepare, hook_cred_prepare),
+ 	LSM_HOOK_INIT(cred_transfer, hook_cred_transfer),
+ 	LSM_HOOK_INIT(cred_free, hook_cred_free),
++
++#ifdef CONFIG_AUDIT
++	LSM_HOOK_INIT(bprm_creds_for_exec, hook_bprm_creds_for_exec),
++#endif /* CONFIG_AUDIT */
+ };
  
- #endif
-diff --git a/security/lsm_audit.c b/security/lsm_audit.c
-index 52db886dbba8..a61c7ebdb6a7 100644
---- a/security/lsm_audit.c
-+++ b/security/lsm_audit.c
-@@ -189,16 +189,13 @@ static inline void print_ipv4_addr(struct audit_buffer *ab, __be32 addr,
- }
+ __init void landlock_add_cred_hooks(void)
+diff --git a/security/landlock/cred.h b/security/landlock/cred.h
+index eb691130dd67..3bf18551d7b8 100644
+--- a/security/landlock/cred.h
++++ b/security/landlock/cred.h
+@@ -10,17 +10,47 @@
+ #ifndef _SECURITY_LANDLOCK_CRED_H
+ #define _SECURITY_LANDLOCK_CRED_H
  
- /**
-- * dump_common_audit_data - helper to dump common audit data
-+ * audit_log_lsm_data - helper to log common LSM audit data
-  * @ab : the audit buffer
-  * @a : common audit data
-- *
-  */
--static void dump_common_audit_data(struct audit_buffer *ab,
--				   struct common_audit_data *a)
-+void audit_log_lsm_data(struct audit_buffer *ab,
-+			const struct common_audit_data *a)
- {
--	char comm[sizeof(current->comm)];
--
- 	/*
- 	 * To keep stack sizes in check force programmers to notice if they
- 	 * start making this union too large!  See struct lsm_network_audit
-@@ -206,9 +203,6 @@ static void dump_common_audit_data(struct audit_buffer *ab,
- 	 */
- 	BUILD_BUG_ON(sizeof(a->u) > sizeof(void *)*2);
++#include <linux/container_of.h>
+ #include <linux/cred.h>
+ #include <linux/init.h>
+ #include <linux/rcupdate.h>
  
--	audit_log_format(ab, " pid=%d comm=", task_tgid_nr(current));
--	audit_log_untrustedstring(ab, get_task_comm(comm, current));
--
- 	switch (a->type) {
- 	case LSM_AUDIT_DATA_NONE:
- 		return;
-@@ -431,6 +425,21 @@ static void dump_common_audit_data(struct audit_buffer *ab,
- 	} /* switch (a->type) */
- }
+ #include "access.h"
++#include "limits.h"
+ #include "ruleset.h"
+ #include "setup.h"
  
 +/**
-+ * dump_common_audit_data - helper to dump common audit data
-+ * @ab : the audit buffer
-+ * @a : common audit data
++ * struct landlock_cred_security - Credential security blob
++ *
++ * This structure is packed to minimize the size of struct
++ * landlock_file_security.  However, it is always aligned in the LSM cred blob,
++ * see lsm_set_blob_size().
 + */
-+static void dump_common_audit_data(struct audit_buffer *ab,
-+				   const struct common_audit_data *a)
-+{
-+	char comm[sizeof(current->comm)];
+ struct landlock_cred_security {
++	/**
++	 * @domain: Immutable ruleset enforced on a task.
++	 */
+ 	struct landlock_ruleset *domain;
+-};
 +
-+	audit_log_format(ab, " pid=%d comm=", task_tgid_nr(current));
-+	audit_log_untrustedstring(ab, get_task_comm(comm, current));
-+	audit_log_lsm_data(ab, a);
-+}
++#ifdef CONFIG_AUDIT
++	/**
++	 * @domain_exec: Bitmask identifying the domain layers that were enforced by
++	 * the current task's executed file (i.e. no new execve(2) since
++	 * landlock_restrict_self(2)).
++	 */
++	u16 domain_exec;
++#endif /* CONFIG_AUDIT */
++} __packed;
 +
- /**
-  * common_lsm_audit - generic LSM auditing function
-  * @a:  auxiliary audit data
++#ifdef CONFIG_AUDIT
++
++/* Makes sure all layer executions can be stored. */
++static_assert(BITS_PER_TYPE(typeof_member(struct landlock_cred_security,
++					  domain_exec)) >=
++	      LANDLOCK_MAX_NUM_LAYERS);
++
++#endif /* CONFIG_AUDIT */
+ 
+ static inline struct landlock_cred_security *
+ landlock_cred(const struct cred *cred)
+diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+index cf9e0483e542..b7b268f43a3b 100644
+--- a/security/landlock/syscalls.c
++++ b/security/landlock/syscalls.c
+@@ -510,5 +510,10 @@ SYSCALL_DEFINE2(landlock_restrict_self, const int, ruleset_fd, const __u32,
+ 	/* Replaces the old (prepared) domain. */
+ 	landlock_put_ruleset(new_llcred->domain);
+ 	new_llcred->domain = new_dom;
++
++#ifdef CONFIG_AUDIT
++	new_llcred->domain_exec |= 1 << (new_dom->num_layers - 1);
++#endif /* CONFIG_AUDIT */
++
+ 	return commit_creds(new_cred);
+ }
 -- 
 2.49.0
 
