@@ -1,154 +1,172 @@
-Received: from smtp-190c.mail.infomaniak.ch (smtp-190c.mail.infomaniak.ch [185.125.25.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B895A22687B
-	for <linux-security-module@vger.kernel.org>; Thu, 20 Mar 2025 21:06:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F40E3215162
+	for <linux-security-module@vger.kernel.org>; Thu, 20 Mar 2025 21:36:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742504776; cv=none; b=NPkXT9UDeZKR2d76tRzc8Ba7nwwNaTkUckh6XkVvjiR10TuIMEMpXBtOTQujmlaUBNfNqXxpjAlCsjzuPVl8pTqbu+nXJgrg3jtnyAjAMVaH9ECQSKJZyyonJgHs7nc9ezTVCqwC4TpCx6MhrdtrlKzjA1WUUoR4nIS1KVXsfl0=
+	t=1742506614; cv=none; b=sA1ygxNqyyO+cEXUih8yQ17s0KJYcoUwXwUi4Ahw5okP51XX0RDuS92A1fvc6EFTYWiVPzmp41avus4nKLPSeXSk59S2LH8lrtTDDXdGYdl1MWyBvk/xiZAoOrBr8znxNnxg577X1wimT7R+1dBP+QhhwmaS6gkNupk+5r5aUyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742504776; c=relaxed/simple;
-	bh=8YK8gEtI06y+pQqv1+lAtw4gYDT6ElW3udJy3zGarU4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NQEuSQag4iHrSPx6MJpY6K+BDYkCvBVMZ8QWt/j1VcjPgNr2Q1xLHG9LGZtYtAPAh+eDB3VxwmL+u0GDFMT49jwEsWal6AGpbN1vmuvFQQErnirfVZ3+flhY4VhN4LE4l3l7/Rkql1ru9DHpTbXdg8OvFH9BaqSpWrRyCzgsxG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=FE1P8bHf; arc=none smtp.client-ip=185.125.25.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1742506614; c=relaxed/simple;
+	bh=7T7mCRUv80WJKGWdZte/WL6i1IdpqsfOrUhZIxZ6UZg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kUkm6EBELkniq4iGP5OqYb2Kpnd0zuMGFNPHBVChZVQmSdykF9ulHsGoxITwXU4xFLB891Gh6gA//gMBnrBPW+g7x9M7xUhsrH1JDGggjDtb9BeDnOPJLHwkCxHWhiXp6jU5Ln9DhGM58POhhGhIJhPLFJ1o2TnX2Z0r6JWpOhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=A8xoPFKR; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="FE1P8bHf"
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246b])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ZJdR54jhVzSDT;
-	Thu, 20 Mar 2025 22:06:09 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1742504769;
-	bh=x7Mh94NSn2KPNj8EF1RUEY7NFZ+qiXAJyN6mSl93rjc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FE1P8bHfxN0R5WczBQNWdcS8S+Ok+e58SMwG1H0UderYlXfoRXdlIQehwexs3+1wh
-	 tX9zfF8Odwc2AoJgNnCjkqo53zjpJgZGXN3gk+NJHQLCDlKOM1SKryzizP8xtuOoGn
-	 GKclc3thjvIBJslQeAY9vyH8Qnak6OnCnHOPL2Qo=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4ZJdR43X8DzYZl;
-	Thu, 20 Mar 2025 22:06:08 +0100 (CET)
-Date: Thu, 20 Mar 2025 22:06:07 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Paul Moore <paul@paul-moore.com>, 
-	"Serge E . Hallyn" <serge@hallyn.com>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Kees Cook <kees@kernel.org>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
-	Tahera Fahimi <fahimitahera@gmail.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v2 5/8] landlock: Always allow signals between threads of
- the same process
-Message-ID: <20250320.zahqueisoeT6@digikod.net>
-References: <20250318161443.279194-1-mic@digikod.net>
- <20250318161443.279194-6-mic@digikod.net>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="A8xoPFKR"
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e461015fbd4so983276276.2
+        for <linux-security-module@vger.kernel.org>; Thu, 20 Mar 2025 14:36:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1742506612; x=1743111412; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qyZVutv4Kbo86NuPvlmJO48TrYySdnlCPpx5adkmTKs=;
+        b=A8xoPFKRuuU0iDFj+64CmEKGuRy7UI+o8numXiGZBrB1qZaQig54zyNUWIs48zcaNW
+         qDzdwjiFBuFJ4w/m8HqkIC4DeyZFl+N9MGDI9mzLJo6/MfwFr0dJUBshs7SxZBa22ZUs
+         gnWjQMYbo8qV7Ob4Gy3b7oFEQNcDHw98qdAgHLgPlMANHfZti0uDEnVommBDn79yz6Dc
+         NNHl7zw6zX0RlLuDpBXzaYLXAiZIusFopRY8Up/GVj35kvkyFo3klhMawZqxBmjdrbM9
+         sUVNCcJH2BBRu5nNveg7N0wNarnO1zmSR34fe0yOMQlHlTFcgqlj8vB157tekDh7RRiP
+         a7kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742506612; x=1743111412;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qyZVutv4Kbo86NuPvlmJO48TrYySdnlCPpx5adkmTKs=;
+        b=grHdQRj4Iu9hdZQOwxJCkBUz9TL4IF5Wza3Y8nno6V7wD8/dNoXuU+uVLzLVkvmPke
+         8vvBaJmpGfIeILHk+PubqknsuEaSsn+dvjha206eUAFTxrOFlwHMjl9BS21sg7Zk2ZnI
+         JVDUpQ84+KNVSVfgFwahHtH6G6fkxFD1hGJ7qlIA5ZeAV2WSvcur9nldt6ym2pkVjR9u
+         QhzYDHVlxrMiHqxhVDoc0K7a2NB7QzvCksAlg+zQGNXwENkedyHCPYD4rKuF+CDwFKPt
+         NNMZv8TocxSALITF1jOIYDvtGpyG4EJZLEXhYGjpfApxXEI865q7A3uhO4xsxzoVNZjo
+         Aggw==
+X-Forwarded-Encrypted: i=1; AJvYcCUjlK+UdDbhuC171El3w4OmTsQ5vqw8NcGXdbVoYewaJMS+z0on0xxGcRC9R9MWTDycJCaalB5eQ05tdbAzs70AXDBoj7g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqvOsC3TlkYShU2UAVdxMHf52c9VpxtIVeVvR1c1guBHGi0llW
+	X4/pfQgFgvCMeOFnOF0yqw7XXRAnlqCrx8HndpuRPEJCmeUezYzHrIKfg79W0kmuy63sGjH0w5E
+	bthaLwrupPOL0boy/tGcEP5Yaf2VLVJV2LN81
+X-Gm-Gg: ASbGncuWrqafm0KZXtTL0UWi8g9WkEJ6VW1U6wftj5IAVlHlfgyUHyYVXgD/SHGeOzQ
+	BoyDuG4/iqN3EkcKO7o3A0AMboFUy8DZOpvZdCj9mMYxjJL4L4nFwxHQaeMrP239QfuoaH+VTtN
+	nyumF/P/iKqSzdJcIbaU8bznqHww==
+X-Google-Smtp-Source: AGHT+IFJ/8y4nRYG0B8A5J8ib2VPKClvoRy8JxYCkiIoEvg+R5jg8fqFBWw5SyaibbYjeIOB5RlLC8ykklezHgslACQ=
+X-Received: by 2002:a05:690c:296:b0:6fe:b88e:4d82 with SMTP id
+ 00721157ae682-700bacfbab5mr12941147b3.28.1742506611920; Thu, 20 Mar 2025
+ 14:36:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250318161443.279194-6-mic@digikod.net>
-X-Infomaniak-Routing: alpha
+References: <20241017155516.2582369-1-eric.snowberg@oracle.com>
+ <c490397315c2704e9ef65c8ad3fefedb239f1997.camel@linux.ibm.com>
+ <72F52F71-C7F3-402D-8441-3D636A093FE8@oracle.com> <CAHC9VhRHEw5c+drC=aX4xTqWoQJJZ+qkJ7aHUT5dcu+Q5f7BqA@mail.gmail.com>
+ <CAHC9VhSJpnaAK1efgs1Uk0Tr3CaDNR1LiDU-t_yDKDQG6J-74Q@mail.gmail.com>
+ <E20C617B-EA01-4E69-B5E2-31E9AAD6F7A2@oracle.com> <506e8e58e5236a4525b18d84bafa9aae80b24452.camel@linux.ibm.com>
+ <CAHC9VhTsZntLdGBV7=4suauS+rzSQv1O4UAoGcy2vEB02wRkoA@mail.gmail.com>
+ <c580811716f550ed5d6777db5e143afe4ad06edc.camel@linux.ibm.com>
+ <CAHC9VhTz6U5rRdbJBWq0_U4BSKTsiGCsaX=LTgisNNoZXZokOA@mail.gmail.com>
+ <FD501FB8-72D2-4B10-A03A-F52FC5B67646@oracle.com> <CAHC9VhR961uTFueovLXXaOf-3ZAnvQCWOTfw-wCRuAKOKPAOKw@mail.gmail.com>
+ <73B78CE7-1BB8-4065-9EBA-FB69E327725E@oracle.com> <CAHC9VhRMUkzLVT5GT5c5hgpfaaKubzcPOTWFDpOmhNne0sswPA@mail.gmail.com>
+ <1A222B45-FCC4-4BBD-8E17-D92697FE467D@oracle.com> <CAHC9VhTObTee95SwZ+C4EwPotovE9R3vy0gVXf+kATtP3vfXrg@mail.gmail.com>
+ <EB757F96-E152-4EAB-B3F7-75C1DBE3A03B@oracle.com> <1956e7f9d60.28a7.85c95baa4474aabc7814e68940a78392@paul-moore.com>
+ <A3A29FB9-E015-4C87-B5F0-190A4C779CB3@oracle.com>
+In-Reply-To: <A3A29FB9-E015-4C87-B5F0-190A4C779CB3@oracle.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 20 Mar 2025 17:36:41 -0400
+X-Gm-Features: AQ5f1JqQwO9cUQQ6QCKvqyhp93snLVhEFtem_HInBr_dfTdWSHM5DQ2eAF2fppc
+Message-ID: <CAHC9VhQMN6cgWbxdAgBNffpCAo=ogGdm4qBGS_kKdDmiT8b3cw@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 00/13] Clavis LSM
+To: Eric Snowberg <eric.snowberg@oracle.com>
+Cc: Mimi Zohar <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>, 
+	Jarkko Sakkinen <jarkko@kernel.org>, 
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>, 
+	David Woodhouse <dwmw2@infradead.org>, 
+	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>, "davem@davemloft.net" <davem@davemloft.net>, 
+	Ard Biesheuvel <ardb@kernel.org>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	"casey@schaufler-ca.com" <casey@schaufler-ca.com>, Stefan Berger <stefanb@linux.ibm.com>, 
+	"ebiggers@kernel.org" <ebiggers@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>, 
+	"keyrings@vger.kernel.org" <keyrings@vger.kernel.org>, 
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, 
+	"linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>, 
+	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 18, 2025 at 05:14:40PM +0100, Mickaël Salaün wrote:
-> Because Linux credentials are managed per thread, user space relies on
-> some hack to synchronize credential update across threads from the same
-> process.  This is required by the Native POSIX Threads Library and
-> implemented by set*id(2) wrappers and libcap(3) to use tgkill(2) to
-> synchronize threads.  See nptl(7) and libpsx(3).  Furthermore, some
-> runtimes like Go do not enable developers to have control over threads
-> [1].
-> 
-> To avoid potential issues, and because threads are not security
-> boundaries, let's relax the Landlock (optional) signal scoping to always
-> allow signals sent between threads of the same process.  This exception
-> is similar to the __ptrace_may_access() one.
-> 
-> hook_file_set_fowner() now checks if the target task is part of the same
-> process as the caller.  If this is the case, then the related signal
-> triggered by the socket will always be allowed.
-> 
-> Scoping of abstract UNIX sockets is not changed because kernel objects
-> (e.g. sockets) should be tied to their creator's domain at creation
-> time.
-> 
-> Note that creating one Landlock domain per thread puts each of these
-> threads (and their future children) in their own scope, which is
-> probably not what users expect, especially in Go where we do not control
-> threads.  However, being able to drop permissions on all threads should
-> not be restricted by signal scoping.  We are working on a way to make it
-> possible to atomically restrict all threads of a process with the same
-> domain [2].
-> 
-> Add erratum for signal scoping.
-> 
-> Closes: https://github.com/landlock-lsm/go-landlock/issues/36
-> Fixes: 54a6e6bbf3be ("landlock: Add signal scoping")
-> Fixes: c8994965013e ("selftests/landlock: Test signal scoping for threads")
-> Depends-on: 26f204380a3c ("fs: Fix file_set_fowner LSM hook inconsistencies")
-> Link: https://pkg.go.dev/kernel.org/pub/linux/libs/security/libcap/psx [1]
-> Link: https://github.com/landlock-lsm/linux/issues/2 [2]
-> Cc: Günther Noack <gnoack@google.com>
-> Cc: Paul Moore <paul@paul-moore.com>
-> Cc: Serge Hallyn <serge@hallyn.com>
-> Cc: Tahera Fahimi <fahimitahera@gmail.com>
-> Cc: stable@vger.kernel.org
-> Acked-by: Christian Brauner <brauner@kernel.org>
-> Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> Link: https://lore.kernel.org/r/20250318161443.279194-6-mic@digikod.net
+On Thu, Mar 20, 2025 at 12:29=E2=80=AFPM Eric Snowberg <eric.snowberg@oracl=
+e.com> wrote:
+> > On Mar 6, 2025, at 7:46=E2=80=AFPM, Paul Moore <paul@paul-moore.com> wr=
+ote:
+> > On March 6, 2025 5:29:36 PM Eric Snowberg <eric.snowberg@oracle.com> wr=
+ote:
 
-> index 71b9dc331aae..47c862fe14e4 100644
-> --- a/security/landlock/fs.c
-> +++ b/security/landlock/fs.c
-> @@ -27,7 +27,9 @@
->  #include <linux/mount.h>
->  #include <linux/namei.h>
->  #include <linux/path.h>
-> +#include <linux/pid.h>
->  #include <linux/rcupdate.h>
-> +#include <linux/sched/signal.h>
->  #include <linux/spinlock.h>
->  #include <linux/stat.h>
->  #include <linux/types.h>
-> @@ -1630,15 +1632,27 @@ static int hook_file_ioctl_compat(struct file *file, unsigned int cmd,
->  
->  static void hook_file_set_fowner(struct file *file)
->  {
-> -	struct landlock_ruleset *new_dom, *prev_dom;
-> +	struct fown_struct *fown = file_f_owner(file);
-> +	struct landlock_ruleset *new_dom = NULL;
-> +	struct landlock_ruleset *prev_dom;
-> +	struct task_struct *p;
->  
->  	/*
->  	 * Lock already held by __f_setown(), see commit 26f204380a3c ("fs: Fix
->  	 * file_set_fowner LSM hook inconsistencies").
->  	 */
-> -	lockdep_assert_held(&file_f_owner(file)->lock);
-> -	new_dom = landlock_get_current_domain();
-> -	landlock_get_ruleset(new_dom);
-> +	lockdep_assert_held(&fown->lock);
-> +
-> +	/*
-> +	 * Always allow sending signals between threads of the same process.  This
-> +	 * ensures consistency with hook_task_kill().
-> +	 */
-> +	p = pid_task(fown->pid, fown->pid_type);
-> +	if (!same_thread_group(p, current)) {
+...
 
-There is a missing pointer check.  I'll apply this:
+> >> Does this mean Microsoft will begin signing shims in the future withou=
+t
+> >> the lockdown requirement?
+> >
+> > That's not a question I can answer, you'll need to discuss that with th=
+e UEFI SB people.
+>
+> Based on your previous lockdown comments, I thought you might have
+> some new information.  Having lockdown enforcement has always been
+> a requirement to get a shim signed by Microsoft.
 
--       if (!same_thread_group(p, current)) {
-+       if (!p || !same_thread_group(p, current)) {
+I want to address two things, the first, and most important, is that
+while I am currently employed by Microsoft, I do not speak for
+Microsoft and the decisions and actions I take as an upstream Linux
+kernel maintainer are not vetted by Microsoft in any way.  I think you
+will find that many upstream kernel maintainers operate in a similar
+way for a variety of very good reasons.
 
-> +		new_dom = landlock_get_current_domain();
-> +		landlock_get_ruleset(new_dom);
-> +	}
-> +
->  	prev_dom = landlock_file(file)->fown_domain;
->  	landlock_file(file)->fown_domain = new_dom;
->  
+The second issue is that my main focus is on ensuring we have a
+secure, safe, and well maintained LSM subsystem within the upstream
+Linux kernel.  While I do care about downstream efforts, e.g. UEFI
+Secure Boot, those efforts are largely outside the scope of the
+upstream Linux kernel and not my first concern.  If the developer
+groups who are focused on things like UEFI SB want to rely on
+functionality within the upstream Linux kernel they should be prepared
+to stand up and contribute/maintain those features or else they may go
+away at some point in the future.  In very blunt terms, contribute
+upstream or Lockdown dies.
+
+However, let me be clear that I consider deprecation and removal of a
+LSM to be an option of last resort.  My preference would be to find a
+capable maintainer, or two, that would be willing to take on a
+maintenance role for the LSM in question.  Luckily I think we may have
+some people who are interested in doing so for the Lockdown LSM,
+hopefully you'll see something on-list in the near future.
+
+> The alternative "usage-oriented keyring" approach you've suggested
+> wouldn't align with the threat model that lockdown aims to achieve.
+
+That's a Lockdown problem, or more specifically a problem for the
+people who are freeloading on the Lockdown LSM and expecting it to be
+maintained without contributing anything meaningful.
+
+> For
+> a distro-based kernel, I don't see the value in pursuing such an approach=
+.
+
+So you've said.  I disagree, but we've already had that discussion,
+let's agree to not waste any more time repeating ourselves.
+
+> With Clavis, I attempted to develop
+> an approach that would meet the lockdown threat model requirements
+> while allowing the end user to control key usage as they deem fit.
+
+As mentioned previously, the design/implementation choices you made
+for Clavis means it is better suited for inclusion in the key
+subsystem and not as a standalone LSM.  If you wanted to
+redesign/rework Clavis to stick to the traditional LSM security blobs
+perhaps that is something we could consider as a LSM, but it's
+probably worth seeing if David and Jarkko have any interest in
+including Clavis functionality in the key subsystem first.
+
+--=20
+paul-moore.com
