@@ -1,184 +1,93 @@
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A00501FFC7B
-	for <linux-security-module@vger.kernel.org>; Fri, 21 Mar 2025 10:24:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F071F09A8;
+	Fri, 21 Mar 2025 11:07:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742552678; cv=none; b=X8WcQgHe3a46ZcClmAj9XPN1fUFomBW66IcBGNPFMfDt3msXi2zANLDnhN0ZXsdxBVygpnWKrj91SeUGbndpqGmPPeBX46TF8r5C8+Q9MlSgHgQqu0FHoteRAJebI6XdzEAOtTXzWqk9dvh4kfm+0swOapitRHsGkyspQFNcwH0=
+	t=1742555228; cv=none; b=QhQV7OaslktZxOw7fyYnrldCnY6kwsbqWoUIE4QfanGpsIERBNV9eF2qo93NchQ95o5iNZwSc26he16IYqLd4dXxNyToS2Yh+2/mNuM3KeA7ibRzOw7/UXys8RY0v2YndNYCXssmUyqLMLlsFmbJ7xrSRUlIKcBQKOaMAd9d4TM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742552678; c=relaxed/simple;
-	bh=A/rBJDhv1XB34siYUPkh+pGlsLysi6s+22W0AZ77jJM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nEOq3vlDFlIybc/p9UGd3OSDlVnM5IugFWpwXIYZNoiTqHTdwvhGycMwER6ZHbEx53rQ1dou4hQwNARGhcjpvyetjJUHyx7gKJZxehldfu3pMJwxW8997IjmWihh4laDLTEoT00kK6uY3Nlw8fDtbPWtSVi4TxANv8vIwjtEiKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=NXNPrr1U; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=NXNPrr1U; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	s=arc-20240116; t=1742555228; c=relaxed/simple;
+	bh=Mhh/jGWYISEYVoqjjfMvQsP+f47HccIZcoa+4NXdSv4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jgdaH1tr/SMUZDde9CpuoZIeRkF01O6MWYcrwjmIM2Tzo5CLZ2ZouxK3THWS6EtvwBXfIeNnOVsLjGTJiPuMkbk6f9ZB6IzZvSWA77v2Hn6sVgjjWqoztdLHJMLPq3XN5L4o9If1dv64vakFmQndpOTULzSOkLgb259m5iNcDWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=Q+l5nEw6; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="NXNPrr1U";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="NXNPrr1U"
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 857E31FB99;
-	Fri, 21 Mar 2025 10:24:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1742552668; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zvAEo4UohrjBSNtMLm9Rxs56hJ4BwIGsQOlr5elEyEE=;
-	b=NXNPrr1UQjC5HlnBga1V0HYjqq72+uveDL8eKtsIMwZg51d6iAb0uRZvQa2F5JYiNGfcrF
-	rym60vM2o8FDKcV26eqTAwMuPyoyhuL0n/95DSjV99YrS8+MViLwHOP/dq3p7JQwmU4in2
-	ceHZvq9qMaxoX2zupavhBlxqH+HtxHU=
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1742552668; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zvAEo4UohrjBSNtMLm9Rxs56hJ4BwIGsQOlr5elEyEE=;
-	b=NXNPrr1UQjC5HlnBga1V0HYjqq72+uveDL8eKtsIMwZg51d6iAb0uRZvQa2F5JYiNGfcrF
-	rym60vM2o8FDKcV26eqTAwMuPyoyhuL0n/95DSjV99YrS8+MViLwHOP/dq3p7JQwmU4in2
-	ceHZvq9qMaxoX2zupavhBlxqH+HtxHU=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0331813A68;
-	Fri, 21 Mar 2025 10:24:27 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id WCReOVs+3WcvLQAAD6G6ig
-	(envelope-from <nik.borisov@suse.com>); Fri, 21 Mar 2025 10:24:27 +0000
-From: Nikolay Borisov <nik.borisov@suse.com>
-To: linux-security-module@vger.kernel.org
-Cc: paul@paul-moore.com,
-	serge@hallyn.com,
-	kees@kernel.org,
-	linux-kernel@vger.kernel.org,
-	kirill.shutemov@linux.intel.com,
-	linux-coco@lists.linux.dev,
-	Nikolay Borisov <nik.borisov@suse.com>
-Subject: [PATCH 1/2] lockdown: Switch implementation to using bitmap
-Date: Fri, 21 Mar 2025 12:24:20 +0200
-Message-ID: <20250321102422.640271-2-nik.borisov@suse.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250321102422.640271-1-nik.borisov@suse.com>
-References: <20250321102422.640271-1-nik.borisov@suse.com>
+	dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="Q+l5nEw6"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=QaVaGTW9001ipjEXlA8GyMzu/EmEw5sG37WJJlONmRY=; b=Q+l5nEw6J1yFdrA0OhHKhMVOvR
+	Gmm3ANZ6LAIFPJnjXRfP+URq4Pq6n7BA1UEYRClGMl+fTiDFu2JHjQyAl4FJPjUwvbDBJ6u9Ac/ZZ
+	4/DKfIkPM+ydObrWzuprHtlQxQnBjG0qDRKGUh9EsE/T0cgG3whsD4Dk2bEIH5vi2lseYiBbOYeUG
+	/ymaEm75aJ3JLTYXj3L2gHxZqNu2b12pinjSUrAQ0wrPmAKFLK/tOQ/OJFKDJpUhd8AuWhcwT+xgB
+	Vwp4dwFJSjfHAkjzeMpEUOuW44aw5XeB9Gg2cqESbze3bLE1/+Ps7AdutuIuiLQNm6Kehh4FWDrIa
+	fc1axgUg==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1tvaCp-0090Ez-16;
+	Fri, 21 Mar 2025 19:06:28 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Fri, 21 Mar 2025 19:06:27 +0800
+Date: Fri, 21 Mar 2025 19:06:27 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Boris Brezillon <bbrezillon@kernel.org>,
+	Arnaud Ebalard <arno@natisbad.org>,
+	Srujana Challa <schalla@marvell.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	David Howells <dhowells@redhat.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	"Justin M. Forbes" <jforbes@fedoraproject.org>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Arnd Bergmann <arnd@arndb.de>, Rosen Penev <rosenp@gmail.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+	keyrings@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH] [v2] crypto: lib/Kconfig: hide library options
+Message-ID: <Z91IMz8bXE8_T-3r@gondor.apana.org.au>
+References: <20250314160543.605055-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Score: -6.80
-X-Spamd-Result: default: False [-6.80 / 50.00];
-	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:mid,suse.com:email];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250314160543.605055-1-arnd@kernel.org>
 
-Tracking the lockdown at the depth granularity rather than at the
-individual is somewhat inflexible as it provides an "all or nothing"
-approach. Instead there are use cases where it  will be useful to be
-able to lockdown individual features - TDX for example wants to disable
-access to just /dev/mem.
+On Fri, Mar 14, 2025 at 05:05:32PM +0100, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> Any driver that needs these library functions should already be selecting
+> the corresponding Kconfig symbols, so there is no real point in making
+> these visible.
+> 
+> The original patch that made these user selectable described problems
+> with drivers failing to select the code they use, but for consistency
+> it's better to always use 'select' on a symbol than to mix it with
+> 'depends on'.
+> 
+> Fixes: e56e18985596 ("lib/crypto: add prompts back to crypto libraries")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+> v2: add the missing 'select' statements
+> ---
+>  drivers/crypto/marvell/Kconfig | 4 ++--
+>  lib/crypto/Kconfig             | 8 ++++----
+>  security/keys/Kconfig          | 2 +-
+>  3 files changed, 7 insertions(+), 7 deletions(-)
 
-To accommodate this use case switch the internal implementation to using
-a bitmap so that individual lockdown features can be turned on. At the
-same time retain the existing semantic where
-INTEGRITY_MAX/CONFIDENTIALITY_MAX are treated as wildcards meaning "lock
-everything below me".
-
-Signed-off-by: Nikolay Borisov <nik.borisov@suse.com>
----
- security/lockdown/lockdown.c | 19 ++++++++++++-------
- 1 file changed, 12 insertions(+), 7 deletions(-)
-
-diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
-index cf83afa1d879..5014d18c423f 100644
---- a/security/lockdown/lockdown.c
-+++ b/security/lockdown/lockdown.c
-@@ -10,12 +10,13 @@
-  * 2 of the Licence, or (at your option) any later version.
-  */
- 
-+#include <linux/bitmap.h>
- #include <linux/security.h>
- #include <linux/export.h>
- #include <linux/lsm_hooks.h>
- #include <uapi/linux/lsm.h>
- 
--static enum lockdown_reason kernel_locked_down;
-+static DECLARE_BITMAP(kernel_locked_down, LOCKDOWN_CONFIDENTIALITY_MAX);
- 
- static const enum lockdown_reason lockdown_levels[] = {LOCKDOWN_NONE,
- 						 LOCKDOWN_INTEGRITY_MAX,
-@@ -26,10 +27,15 @@ static const enum lockdown_reason lockdown_levels[] = {LOCKDOWN_NONE,
-  */
- static int lock_kernel_down(const char *where, enum lockdown_reason level)
- {
--	if (kernel_locked_down >= level)
--		return -EPERM;
- 
--	kernel_locked_down = level;
-+	if (level > LOCKDOWN_CONFIDENTIALITY_MAX)
-+		return -EINVAL;
-+
-+	if (level == LOCKDOWN_INTEGRITY_MAX || level == LOCKDOWN_CONFIDENTIALITY_MAX)
-+		bitmap_set(kernel_locked_down, 1, level);
-+	else
-+		bitmap_set(kernel_locked_down, level, 1);
-+
- 	pr_notice("Kernel is locked down from %s; see man kernel_lockdown.7\n",
- 		  where);
- 	return 0;
-@@ -62,13 +68,12 @@ static int lockdown_is_locked_down(enum lockdown_reason what)
- 		 "Invalid lockdown reason"))
- 		return -EPERM;
- 
--	if (kernel_locked_down >= what) {
-+	if (test_bit(what, kernel_locked_down)) {
- 		if (lockdown_reasons[what])
- 			pr_notice_ratelimited("Lockdown: %s: %s is restricted; see man kernel_lockdown.7\n",
- 				  current->comm, lockdown_reasons[what]);
- 		return -EPERM;
- 	}
--
- 	return 0;
- }
- 
-@@ -105,7 +110,7 @@ static ssize_t lockdown_read(struct file *filp, char __user *buf, size_t count,
- 		if (lockdown_reasons[level]) {
- 			const char *label = lockdown_reasons[level];
- 
--			if (kernel_locked_down == level)
-+			if (test_bit(level, kernel_locked_down))
- 				offset += sprintf(temp+offset, "[%s] ", label);
- 			else
- 				offset += sprintf(temp+offset, "%s ", label);
+Patch applied.  Thanks.
 -- 
-2.43.0
-
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
