@@ -1,37 +1,58 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C70501F3B8F
-	for <linux-security-module@vger.kernel.org>; Fri, 21 Mar 2025 10:24:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A00501FFC7B
+	for <linux-security-module@vger.kernel.org>; Fri, 21 Mar 2025 10:24:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742552672; cv=none; b=EtAiscIengjsk03swT6dNKvhnlp9cw8CTtalOUehrx2dWxBdPa7ZDNXAM1+aNkDH/mWyJz0AGT6TJlS5iBGmf7qeBOoHKdlybCgP5sLuUthF/LEjOI5bieB9d3tLP9GMiT4xdr0psmW/GxlWoObjwhIbxNJYt4A+mrSnqQcpjuc=
+	t=1742552678; cv=none; b=X8WcQgHe3a46ZcClmAj9XPN1fUFomBW66IcBGNPFMfDt3msXi2zANLDnhN0ZXsdxBVygpnWKrj91SeUGbndpqGmPPeBX46TF8r5C8+Q9MlSgHgQqu0FHoteRAJebI6XdzEAOtTXzWqk9dvh4kfm+0swOapitRHsGkyspQFNcwH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742552672; c=relaxed/simple;
-	bh=3L1k6EZ6HqN4Jr58ja35SAAQN7Ikbs1lTiTV/MxSrZM=;
+	s=arc-20240116; t=1742552678; c=relaxed/simple;
+	bh=A/rBJDhv1XB34siYUPkh+pGlsLysi6s+22W0AZ77jJM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=G8qJKOnxZ1Xij2cIje6STo4JivBRseWGM2HBuzwnIqkEHZyPnA8zE8Z49H3SE+C4hHifSggyzyBD2utifH7wZgVzFYBpu9aofFPk/eGZHRos5F9ubcq08N5Z29R+Y+SZ6SBttK3VsY86An4NJ1BooPrhnvgDthhQCTuQMSTZSwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; arc=none smtp.client-ip=195.135.223.130
+	 MIME-Version; b=nEOq3vlDFlIybc/p9UGd3OSDlVnM5IugFWpwXIYZNoiTqHTdwvhGycMwER6ZHbEx53rQ1dou4hQwNARGhcjpvyetjJUHyx7gKJZxehldfu3pMJwxW8997IjmWihh4laDLTEoT00kK6uY3Nlw8fDtbPWtSVi4TxANv8vIwjtEiKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=NXNPrr1U; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=NXNPrr1U; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="NXNPrr1U";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="NXNPrr1U"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 28C5421A45;
-	Fri, 21 Mar 2025 10:24:29 +0000 (UTC)
-Authentication-Results: smtp-out1.suse.de;
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 857E31FB99;
+	Fri, 21 Mar 2025 10:24:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1742552668; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zvAEo4UohrjBSNtMLm9Rxs56hJ4BwIGsQOlr5elEyEE=;
+	b=NXNPrr1UQjC5HlnBga1V0HYjqq72+uveDL8eKtsIMwZg51d6iAb0uRZvQa2F5JYiNGfcrF
+	rym60vM2o8FDKcV26eqTAwMuPyoyhuL0n/95DSjV99YrS8+MViLwHOP/dq3p7JQwmU4in2
+	ceHZvq9qMaxoX2zupavhBlxqH+HtxHU=
+Authentication-Results: smtp-out2.suse.de;
 	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1742552668; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zvAEo4UohrjBSNtMLm9Rxs56hJ4BwIGsQOlr5elEyEE=;
+	b=NXNPrr1UQjC5HlnBga1V0HYjqq72+uveDL8eKtsIMwZg51d6iAb0uRZvQa2F5JYiNGfcrF
+	rym60vM2o8FDKcV26eqTAwMuPyoyhuL0n/95DSjV99YrS8+MViLwHOP/dq3p7JQwmU4in2
+	ceHZvq9qMaxoX2zupavhBlxqH+HtxHU=
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 99D3213A2C;
-	Fri, 21 Mar 2025 10:24:28 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0331813A68;
+	Fri, 21 Mar 2025 10:24:27 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 2PZ8Ilw+3WcvLQAAD6G6ig
-	(envelope-from <nik.borisov@suse.com>); Fri, 21 Mar 2025 10:24:28 +0000
+	id WCReOVs+3WcvLQAAD6G6ig
+	(envelope-from <nik.borisov@suse.com>); Fri, 21 Mar 2025 10:24:27 +0000
 From: Nikolay Borisov <nik.borisov@suse.com>
 To: linux-security-module@vger.kernel.org
 Cc: paul@paul-moore.com,
@@ -41,9 +62,9 @@ Cc: paul@paul-moore.com,
 	kirill.shutemov@linux.intel.com,
 	linux-coco@lists.linux.dev,
 	Nikolay Borisov <nik.borisov@suse.com>
-Subject: [PATCH 2/2] lockdown/kunit: Introduce kunit tests
-Date: Fri, 21 Mar 2025 12:24:21 +0200
-Message-ID: <20250321102422.640271-3-nik.borisov@suse.com>
+Subject: [PATCH 1/2] lockdown: Switch implementation to using bitmap
+Date: Fri, 21 Mar 2025 12:24:20 +0200
+Message-ID: <20250321102422.640271-2-nik.borisov@suse.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250321102422.640271-1-nik.borisov@suse.com>
 References: <20250321102422.640271-1-nik.borisov@suse.com>
@@ -54,134 +75,110 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Spamd-Result: default: False [-4.00 / 50.00];
+X-Spam-Score: -6.80
+X-Spamd-Result: default: False [-6.80 / 50.00];
 	REPLY(-4.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU]
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:mid,suse.com:email];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[]
 X-Spam-Flag: NO
-X-Spam-Score: -4.00
-X-Rspamd-Queue-Id: 28C5421A45
-X-Rspamd-Pre-Result: action=no action;
-	module=replies;
-	Message is reply to one we originated
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 X-Spam-Level: 
 
-Add a bunch of tests to ensure lockdown's conversion to bitmap hasn't
-regressed it.
+Tracking the lockdown at the depth granularity rather than at the
+individual is somewhat inflexible as it provides an "all or nothing"
+approach. Instead there are use cases where it  will be useful to be
+able to lockdown individual features - TDX for example wants to disable
+access to just /dev/mem.
+
+To accommodate this use case switch the internal implementation to using
+a bitmap so that individual lockdown features can be turned on. At the
+same time retain the existing semantic where
+INTEGRITY_MAX/CONFIDENTIALITY_MAX are treated as wildcards meaning "lock
+everything below me".
 
 Signed-off-by: Nikolay Borisov <nik.borisov@suse.com>
 ---
- security/lockdown/Kconfig         |  5 +++
- security/lockdown/Makefile        |  1 +
- security/lockdown/lockdown.c      |  5 ++-
- security/lockdown/lockdown_test.c | 55 +++++++++++++++++++++++++++++++
- 4 files changed, 65 insertions(+), 1 deletion(-)
- create mode 100644 security/lockdown/lockdown_test.c
+ security/lockdown/lockdown.c | 19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
 
-diff --git a/security/lockdown/Kconfig b/security/lockdown/Kconfig
-index e84ddf484010..5fb750da1f8c 100644
---- a/security/lockdown/Kconfig
-+++ b/security/lockdown/Kconfig
-@@ -6,6 +6,11 @@ config SECURITY_LOCKDOWN_LSM
- 	  Build support for an LSM that enforces a coarse kernel lockdown
- 	  behaviour.
- 
-+config SECURITY_LOCKDOWN_LSM_TEST
-+	tristate "Test lockdown functionality" if !KUNIT_ALL_TESTS
-+	depends on SECURITY_LOCKDOWN_LSM && KUNIT
-+	default KUNIT_ALL_TESTS
-+
- config SECURITY_LOCKDOWN_LSM_EARLY
- 	bool "Enable lockdown LSM early in init"
- 	depends on SECURITY_LOCKDOWN_LSM
-diff --git a/security/lockdown/Makefile b/security/lockdown/Makefile
-index e3634b9017e7..f35d90e39f1c 100644
---- a/security/lockdown/Makefile
-+++ b/security/lockdown/Makefile
-@@ -1 +1,2 @@
- obj-$(CONFIG_SECURITY_LOCKDOWN_LSM) += lockdown.o
-+obj-$(CONFIG_SECURITY_LOCKDOWN_LSM_TEST) += lockdown_test.o
 diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
-index 5014d18c423f..412184121279 100644
+index cf83afa1d879..5014d18c423f 100644
 --- a/security/lockdown/lockdown.c
 +++ b/security/lockdown/lockdown.c
-@@ -25,7 +25,10 @@ static const enum lockdown_reason lockdown_levels[] = {LOCKDOWN_NONE,
- /*
-  * Put the kernel into lock-down mode.
+@@ -10,12 +10,13 @@
+  * 2 of the Licence, or (at your option) any later version.
   */
--static int lock_kernel_down(const char *where, enum lockdown_reason level)
-+#if !IS_ENABLED(CONFIG_KUNIT)
-+static
-+#endif
-+int lock_kernel_down(const char *where, enum lockdown_reason level)
- {
  
- 	if (level > LOCKDOWN_CONFIDENTIALITY_MAX)
-diff --git a/security/lockdown/lockdown_test.c b/security/lockdown/lockdown_test.c
-new file mode 100644
-index 000000000000..0b4184a40111
---- /dev/null
-+++ b/security/lockdown/lockdown_test.c
-@@ -0,0 +1,55 @@
-+#include <linux/security.h>
-+#include <kunit/test.h>
++#include <linux/bitmap.h>
+ #include <linux/security.h>
+ #include <linux/export.h>
+ #include <linux/lsm_hooks.h>
+ #include <uapi/linux/lsm.h>
+ 
+-static enum lockdown_reason kernel_locked_down;
++static DECLARE_BITMAP(kernel_locked_down, LOCKDOWN_CONFIDENTIALITY_MAX);
+ 
+ static const enum lockdown_reason lockdown_levels[] = {LOCKDOWN_NONE,
+ 						 LOCKDOWN_INTEGRITY_MAX,
+@@ -26,10 +27,15 @@ static const enum lockdown_reason lockdown_levels[] = {LOCKDOWN_NONE,
+  */
+ static int lock_kernel_down(const char *where, enum lockdown_reason level)
+ {
+-	if (kernel_locked_down >= level)
+-		return -EPERM;
+ 
+-	kernel_locked_down = level;
++	if (level > LOCKDOWN_CONFIDENTIALITY_MAX)
++		return -EINVAL;
 +
-+int lock_kernel_down(const char *where, enum lockdown_reason level);
++	if (level == LOCKDOWN_INTEGRITY_MAX || level == LOCKDOWN_CONFIDENTIALITY_MAX)
++		bitmap_set(kernel_locked_down, 1, level);
++	else
++		bitmap_set(kernel_locked_down, level, 1);
 +
-+static void lockdown_test_invalid_level(struct kunit *test)
-+{
-+	KUNIT_EXPECT_EQ(test, -EINVAL, lock_kernel_down("TEST", LOCKDOWN_CONFIDENTIALITY_MAX+1));
-+}
-+
-+static void lockdown_test_depth_locking(struct kunit *test)
-+{
-+	KUNIT_EXPECT_EQ(test, 0, lock_kernel_down("TEST", LOCKDOWN_INTEGRITY_MAX));
-+	for (int i = 1; i < LOCKDOWN_INTEGRITY_MAX; i++) {
-+		KUNIT_EXPECT_EQ_MSG(test, -EPERM, security_locked_down(i), "at i=%d", i);
-+	}
-+
-+	KUNIT_EXPECT_EQ(test, -EPERM, security_locked_down(LOCKDOWN_INTEGRITY_MAX));
-+}
-+
-+static void lockdown_test_individual_level(struct kunit *test)
-+{
-+	KUNIT_EXPECT_EQ(test, 0, lock_kernel_down("TEST", LOCKDOWN_PERF));
-+	KUNIT_EXPECT_EQ(test, -EPERM, security_locked_down(LOCKDOWN_PERF));
-+	/* Ensure adjacent levels are untouched */
-+	KUNIT_EXPECT_EQ(test, 0, security_locked_down(LOCKDOWN_TRACEFS));
-+	KUNIT_EXPECT_EQ(test, 0, security_locked_down(LOCKDOWN_DBG_READ_KERNEL));
-+}
-+
-+static void lockdown_test_no_downgrade(struct kunit *test)
-+{
-+	KUNIT_EXPECT_EQ(test, 0, lock_kernel_down("TEST", LOCKDOWN_CONFIDENTIALITY_MAX));
-+	KUNIT_EXPECT_EQ(test, 0, lock_kernel_down("TEST", LOCKDOWN_INTEGRITY_MAX));
-+	/*
-+	 * Ensure having locked down to a lower leve after a higher level
-+	 * lockdown nothing is lost
-+	 */
-+	KUNIT_EXPECT_EQ(test, -EPERM, security_locked_down(LOCKDOWN_TRACEFS));
-+}
-+
-+static struct kunit_case lockdown_tests[] = {
-+	KUNIT_CASE(lockdown_test_invalid_level),
-+	KUNIT_CASE(lockdown_test_depth_locking),
-+	KUNIT_CASE(lockdown_test_individual_level),
-+	KUNIT_CASE(lockdown_test_no_downgrade),
-+	{}
-+};
-+
-+static struct kunit_suite lockdown_test_suite = {
-+	.name = "lockdown test",
-+	.test_cases = lockdown_tests,
-+};
-+kunit_test_suite(lockdown_test_suite);
-+
-+MODULE_LICENSE("GPL");
+ 	pr_notice("Kernel is locked down from %s; see man kernel_lockdown.7\n",
+ 		  where);
+ 	return 0;
+@@ -62,13 +68,12 @@ static int lockdown_is_locked_down(enum lockdown_reason what)
+ 		 "Invalid lockdown reason"))
+ 		return -EPERM;
+ 
+-	if (kernel_locked_down >= what) {
++	if (test_bit(what, kernel_locked_down)) {
+ 		if (lockdown_reasons[what])
+ 			pr_notice_ratelimited("Lockdown: %s: %s is restricted; see man kernel_lockdown.7\n",
+ 				  current->comm, lockdown_reasons[what]);
+ 		return -EPERM;
+ 	}
+-
+ 	return 0;
+ }
+ 
+@@ -105,7 +110,7 @@ static ssize_t lockdown_read(struct file *filp, char __user *buf, size_t count,
+ 		if (lockdown_reasons[level]) {
+ 			const char *label = lockdown_reasons[level];
+ 
+-			if (kernel_locked_down == level)
++			if (test_bit(level, kernel_locked_down))
+ 				offset += sprintf(temp+offset, "[%s] ", label);
+ 			else
+ 				offset += sprintf(temp+offset, "%s ", label);
 -- 
 2.43.0
 
