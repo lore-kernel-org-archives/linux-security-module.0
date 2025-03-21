@@ -1,128 +1,113 @@
-Received: from gardel.0pointer.net (gardel.0pointer.net [85.214.157.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A500B1E5739;
-	Fri, 21 Mar 2025 08:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.157.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B43FF1F1512
+	for <linux-security-module@vger.kernel.org>; Fri, 21 Mar 2025 10:24:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742546403; cv=none; b=nmNvGY+QS9hzRn1Txjrzz10LnfWVLKMivxMe1ssWNrBdpanuYLY/7v2L9ljHe/7j3f0M0VOGFIGpjIeJ7mxYYz9USNcqCY1ZZdMAf/D+P+hZp3aI4S5W+FlvlaB3mY6MsMpuIXAW435lzOUzo13Q+jzfyMGaCQ50R60SAL1mdcY=
+	t=1742552672; cv=none; b=O48h0WSF6Y/PtrVQKRomTOBbOTJeqZWdaPaluqApGsMBaOUq1dLc3w4Rn1Oz8+IJhqF/o7CngWIyv1Yah0sdgIlib9Oy0chFh7k5m3NNOkGHWSgTp7SUwaBqx72ZnmUKGwVCOlAqsvnFuJEL/r4v8p7QeNF6cDZ2cWLXpcYCZIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742546403; c=relaxed/simple;
-	bh=EsV15d4XaElLZh9cc7vhzqYzwZExX7m6h/piCJGD2Ls=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KkdEbJVzxIj/f6+47TBmgcu5JwE5OTTTVE58GQ0iab/A8y3Ber2QFwf7CWkdH0RYctzVIytZxQnywOqM7J5JfiHWtrXn9/UsxhoeSUfjtffqjUOBV9TkHf7fdOyYAsDBL34LfarAUNZViO4hhNKHYk0k2r4WH8JdZimCmMywbig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0pointer.de; spf=pass smtp.mailfrom=0pointer.de; arc=none smtp.client-ip=85.214.157.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0pointer.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0pointer.de
-Received: from gardel-login.0pointer.net (gardel-mail [IPv6:2a01:238:43ed:c300:10c3:bcf3:3266:da74])
-	by gardel.0pointer.net (Postfix) with ESMTP id 17EDFE80188;
-	Fri, 21 Mar 2025 09:39:57 +0100 (CET)
-Received: by gardel-login.0pointer.net (Postfix, from userid 1000)
-	id 50FF3160206; Fri, 21 Mar 2025 09:39:55 +0100 (CET)
-Date: Fri, 21 Mar 2025 09:39:55 +0100
-From: Lennart Poettering <mzxreary@0pointer.de>
-To: lee joey <joeyli.kernel@gmail.com>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Eric Snowberg <eric.snowberg@oracle.com>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	joeyli <jlee@suse.com>
-Subject: Re: [PATCH] Revert "integrity: Do not load MOK and MOKx when secure
- boot be disabled"
-Message-ID: <Z90l26ADmS87tu0k@gardel-login>
-References: <Z9wDxeRQPhTi1EIS@gardel-login>
- <CAGLnvc_eyLEasc4tKYnYp2c1M+YYRxaoXt2BmJ3kgAec6YTmzg@mail.gmail.com>
+	s=arc-20240116; t=1742552672; c=relaxed/simple;
+	bh=zSxV7n0+Ibej/HcUkLb/Ni7Bj2XB10ovlpZxrPUW51M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=j8QmZ5mHGvZadEWP2vh139MH3Ol3INOPX7KQVX7eQhm5Wjftaf30aXPudSP+9qoAV3UwFhtOnlpyajT4ok7ygrCBy6UCYYFEHqaEdl+L/kpxJ87AsDptz9LGMWAGlbEWDgXf487VR0kTGaL0z/9q9wuNU3hk47WzGqSV7+flkKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=lzlkxGZN; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=lzlkxGZN; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="lzlkxGZN";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="lzlkxGZN"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E308F1F805;
+	Fri, 21 Mar 2025 10:24:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1742552667; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=Dn2O2mmtl/xizoePRAGekbdgff6shdA/fkvJ7bqBsKI=;
+	b=lzlkxGZNwo8w14o926SUBTewMCCvqlifMGei91n0KQ+C62t8Cmm3+68rC7HO5oCgCCFQwY
+	SAFrHl71vOH7sDC3qWwF1rhfrMLm/TIGUi0pu7LWTn4pI3g2H7MXPxPLtV3gZOvMq9X+hf
+	eFQ4snQXqav6EoFhcSYkX7za60SZkiw=
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1742552667; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=Dn2O2mmtl/xizoePRAGekbdgff6shdA/fkvJ7bqBsKI=;
+	b=lzlkxGZNwo8w14o926SUBTewMCCvqlifMGei91n0KQ+C62t8Cmm3+68rC7HO5oCgCCFQwY
+	SAFrHl71vOH7sDC3qWwF1rhfrMLm/TIGUi0pu7LWTn4pI3g2H7MXPxPLtV3gZOvMq9X+hf
+	eFQ4snQXqav6EoFhcSYkX7za60SZkiw=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 527B213A2C;
+	Fri, 21 Mar 2025 10:24:27 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id +nQQEVs+3WcvLQAAD6G6ig
+	(envelope-from <nik.borisov@suse.com>); Fri, 21 Mar 2025 10:24:27 +0000
+From: Nikolay Borisov <nik.borisov@suse.com>
+To: linux-security-module@vger.kernel.org
+Cc: paul@paul-moore.com,
+	serge@hallyn.com,
+	kees@kernel.org,
+	linux-kernel@vger.kernel.org,
+	kirill.shutemov@linux.intel.com,
+	linux-coco@lists.linux.dev,
+	Nikolay Borisov <nik.borisov@suse.com>
+Subject: [PATCH 0/2] Allow individual features to be locked down
+Date: Fri, 21 Mar 2025 12:24:19 +0200
+Message-ID: <20250321102422.640271-1-nik.borisov@suse.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGLnvc_eyLEasc4tKYnYp2c1M+YYRxaoXt2BmJ3kgAec6YTmzg@mail.gmail.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:mid];
+	RCVD_TLS_ALL(0.00)[]
+X-Spam-Score: -2.80
+X-Spam-Flag: NO
 
-On Fr, 21.03.25 15:13, lee joey (joeyli.kernel@gmail.com) wrote:
+This simple change allows usecases where someone might want to  lock only specific
+feature at a finer granularity than integrity/confidentiality levels allows.
+The first likely user of this is the CoCo subsystem where certain features will be
+disabled.
 
-> Hi Lennart,
->
-> Lennart Poettering <mzxreary@0pointer.de> 於 2025年3月20日 週四 下午8:02寫道：
-> >
-> > This reverts commit 92ad19559ea9a8ec6f158480934ae26ebfe2c14f.
-> >
-> > This original commit this reverts creates a strange situation: it
-> > ensures more restrictive behaviour if SecureBoot is off then when it
-> > is on, which is the opposite of what one would expect.
-> >
-> > Typically, one would expect that if SB is off the validation of
-> > resources during the pre-kernel and kernel initialization is less
-> > restrictive, not more restrictive. But this check turned the world on
-> > its head.
-> >
->
-> SB off means that the chain of trust is broken. Which means that all
-> mechanisms rely on SB are non-secure. Meanwhile, if the integrity of kernel
-> can be guaranteed by other mechanism (e.g. TPM), then mok should not
-> be loaded when SB off.
+Nikolay Borisov (2):
+  lockdown: Switch implementation to using bitmap
+  lockdown/kunit: Introduce kunit tests
 
-Why not? as you say, chain of trust is broken: the kernel itself is
-not immediately integrity protected and neither is the firmware. Hence
-filtering out keys in this case is really pointless.
-
-> > I'd like to ask for this commit to be reverted. If SB is on all bets are
-> > off regarding integrity of boot loaders and stuff, hence it makes no
-> > sense to be restrictive here: you cannot regain integrity once you gave
-> > it up once, hence if all bets are off anyway we might as well import any
-> > Mok keys passed to us into the kernel keyring.
-> >
-> > Or to say this differently: if an attacker got control of the pre-kernel
-> > boot phase they might as well patch around in the firmware apis to make
-> > the kernel believe it is in SB mode even if it is not. Hence the check
-> > carries no value. It doesn't protect anything in any effective way.
->
-> If this is the case, the check of MokListTrustedRT can also be
-> removed.
-
-I think it makes sense to honour explicit knobs, such as
-MokListTrustedRT: It has a very clear meaning: it indicates whether to
-import the keys or not.
-
-This is quite different from SB state, which is not explicit about
-importing keys at all, it just indicates whether firmware level
-validation of signatures is done or not.
-
-> All mok can directly be added to machine keyring then link with
-> secondary keyring.
-> Because attacker can create MokListTrusted/MokListTrusted variables to cheat
-> bootloader or kernel. The check of MokListTrustedRT is useless.
-
-Yeah, it does not carry immediate security value if SB is off. But it
-does allow finer-grained control by pre-boot code of how the kernel
-later sets up things. Hence I'd keep it.
-
-> > You might wonder what signed dm-verity gives me if I have SB off. If
-> > we authenticate the boot phase up to Linux userspace via TPM-based PCR
-> > policies (i.e. measured boot) we can be sure of the boot integrity
-> > without having to rely on SB. But then we'd still like to use
-> > dm-verity based code signing for userspace.
->
-> hm... I am a bit confused. So, this patch can help the above
-> scenario?
-
-The revert I posted will allow us to populate the kernel keyring used
-for dm-verity signature checks from pre-boot even if SB is off. Via
-local or remote attestation during boot we can later validate this
-chosen boot path, and hence can a-posteriori validate that everything
-is OK even if the a-priori SB check is not done. But once we have
-validated that we then have the key in the kernel keyring for later
-dm-verity validations, which is all we wanted.
-
-Lennart
+ security/lockdown/Kconfig         |  5 +++
+ security/lockdown/Makefile        |  1 +
+ security/lockdown/lockdown.c      | 24 +++++++++-----
+ security/lockdown/lockdown_test.c | 55 +++++++++++++++++++++++++++++++
+ 4 files changed, 77 insertions(+), 8 deletions(-)
+ create mode 100644 security/lockdown/lockdown_test.c
 
 --
-Lennart Poettering, Berlin
+2.43.0
+
