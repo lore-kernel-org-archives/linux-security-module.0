@@ -1,131 +1,80 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 140DB8BF8;
-	Sat, 22 Mar 2025 21:43:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 218461FFC40
+	for <linux-security-module@vger.kernel.org>; Sun, 23 Mar 2025 06:53:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742679797; cv=none; b=KqS4/bmh8Axed1XSEg62dCrxER8Kh+AZSQ52NpzBE/5fug3ZEAHQGo3nAmtKaBx2YXxM2ns6Wy9z162EEKelCAGfsGyYq6fpWfVsJqyb1/s2W3gG2qmNME/i1s0LbNSbjSQtr4riewU6vmy0XOb85lxjQ2wSFWmuPkNfvPONtW8=
+	t=1742712785; cv=none; b=Q578y0rDgz85pjT9CAz+z/QyattscOIhwynlNiKRTw4qlQ5TlgYAJdi7hCRs9vb7JBD4D8KUAzuM9nO0lxmgddY336DeShOHxCvo3ZfBlIfOxyQwVYRSqlyHQBYQDCtvldeotUdxZ+49YG+oYVrpUGCmY/w7cb7WS+IIzHYJ4FM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742679797; c=relaxed/simple;
-	bh=5bCoGZGcAjvnQ2yuOtHVcGZyivQ/TivOd5Z/SZ0HmkQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=auVkzcxUc5sIjMNsMeWaQF1UagCGNXJpBKeiA81gAbid9LVY/jxD5XSnR+qz3sF1setr5Ei06Qc6nR8jyx0wpeCHMOimglyJQTYssNDx3OrOGe0UCXCCcK/kM5fjv0vbbMqBDwe8KfSWxgxiXbRPBJJUw2ZuHSsu673qSDEk7dE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U9nNlh4P; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U9nNlh4P"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB3D4C4CEDD;
-	Sat, 22 Mar 2025 21:43:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1742679796;
-	bh=5bCoGZGcAjvnQ2yuOtHVcGZyivQ/TivOd5Z/SZ0HmkQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=U9nNlh4PT1t55mkfZ07SkYx3a9oZkB0wlBt/BcqXQ5g5mbU7NfQDLBsIBuBkOy8hz
-	 Ax7tPzyD3i9MeloGdh4FgfERxIDBnvXGLupANF/THnDRDfUrcTTQkhwo+ys16y9/Ub
-	 NgxZzRuaJB59wqs0OhIaLRZnD3YYBCJRQRc70bCA0r6Gp4EroQ9AMmhQwsOoRPuzCR
-	 BDcNMlP/8h8gKE9/KpQRqCKufspTm2LpmtVyn0ZJSVCJZSJ5CO58qSRMa74rW5AfwB
-	 B5soMw2usoooapZZ7PHYIbjUbur2Kox2JIxSUFE7u0Hi6Mp0aP0HvOWVVtvqCOVmow
-	 J08+B4P2DUHVQ==
-Date: Sat, 22 Mar 2025 23:43:12 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Paul Moore <paul@paul-moore.com>
-Cc: Blaise Boscaccy <bboscaccy@linux.microsoft.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	David Howells <dhowells@redhat.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>, Shuah Khan <shuah@kernel.org>,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Jan Stancek <jstancek@redhat.com>, Neal Gompa <neal@gompa.dev>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, bpf@vger.kernel.org,
-	llvm@lists.linux.dev, nkapron@google.com, teknoraver@meta.com,
-	roberto.sassu@huawei.com, xiyou.wangcong@gmail.com
-Subject: Re: [RFC PATCH security-next 0/4] Introducing Hornet LSM
-Message-ID: <Z98u8BAMJKqUiojn@kernel.org>
-References: <20250321164537.16719-1-bboscaccy@linux.microsoft.com>
- <Z97xvUul1ObkmulE@kernel.org>
- <CAHC9VhQ4a4Dinq+WLxM88KqJF8ruQ_rOdQx7UNrKcJqTpGGG+w@mail.gmail.com>
- <CAHC9VhSfPz4fYU-YxxQ++3OP_hqtiD=J9fJXyUHmcj8NHd1pZQ@mail.gmail.com>
+	s=arc-20240116; t=1742712785; c=relaxed/simple;
+	bh=Bf7yka2w1VVpUuX6J7h+vWCKWalB2ArNcjPpVEqVGZc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=eKiW2cSTnmxxjZ+Q+E/HmFl0MyEYx4NhdB96XA44Y25mHNXFXbTKevoG4r+39fHdA7eiPA6IpEMMdyWJ7u9orEKf6UyyFqaWu30ekh5Y4qrxp7qmDwxdU76U4R5epbbX9AVJOw3PQOfYpgcee7jbL6cQon2qzOTP2Ky5PwnzW4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-85b34bd03c4so429234739f.3
+        for <linux-security-module@vger.kernel.org>; Sat, 22 Mar 2025 23:53:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742712783; x=1743317583;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uuTtDdQllfqVQdTnY1GFjo08/XepPL02PHTKNSl5Nyk=;
+        b=Vcz9oRWWr0HbG2R1tB8a/T4VFddf4ZTfyPu+BWhi18oGp2120qkneJCgMixpwX9dO9
+         0pb409VhyjHuAfmEi/sCW6SRx0t3tly2WjzL2hbsazjLj2Fjiqkljj4AbM9pwDMq3uQ5
+         jBFxAz5KyoWHjkRpbNXb5S537k2Cf4SxHA9wLbPXEnqfII+8npz3MmPniPPQ5oM4Ejix
+         RAaAllMfIaA2hBwOVzNRBLOWl7sJ6FBezh5WEYDyUQ0xjc0yPlVwCsxkIUYTYWNCOUyQ
+         hDiQZnr99FY+LDN1YjzRuJrEleg/9gMrgGHluisjM+sBh1EAPjsBEO/lspoenhb0FdXC
+         ClxA==
+X-Forwarded-Encrypted: i=1; AJvYcCVWES56DVOfxlf8vz2bm4OGBdaZucjwVKPzHtIZpzTzjNxNCtciRmo7JWyrCuDU5hbqS9WqOm5PYNMsbcLnd4104pe/2yM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNHHhLGnTmVkMsX2hDpdmuI1DyQnaShP27pcb7qTwh3vgoojtq
+	quYe4ckr2K9nlEMyGcUTdqnTJTbr1g7Fv7flabcK0MrrQkqtenynFgjR3Y8uMWO9KfVasbuvYpL
+	iJU+pC3uMwuyMHNsWivS0u9ZrOhs2YdmCMI6w3a/V2fAYUBzP332Zrp0=
+X-Google-Smtp-Source: AGHT+IFomXej1RrN6WELV4Qii9/yxfjxlWnmlmMb+ysYA1j31F3Z04e+3d3vMyCUXzjVvvz9y1wv7XB/R6rxL+wT2R6HvXmksUMF
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHC9VhSfPz4fYU-YxxQ++3OP_hqtiD=J9fJXyUHmcj8NHd1pZQ@mail.gmail.com>
+X-Received: by 2002:a05:6e02:378c:b0:3d3:cdb0:a227 with SMTP id
+ e9e14a558f8ab-3d5960f4d68mr77368565ab.9.1742712783188; Sat, 22 Mar 2025
+ 23:53:03 -0700 (PDT)
+Date: Sat, 22 Mar 2025 23:53:03 -0700
+In-Reply-To: <6707499c.050a0220.1139e6.0017.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67dfafcf.050a0220.31a16b.0058.GAE@google.com>
+Subject: Re: [syzbot] [net] INFO: rcu detected stall in sys_getdents64
+From: syzbot <syzbot+17bc8c5157022e18da8b@syzkaller.appspotmail.com>
+To: apparmor-owner@lists.ubuntu.com, apparmor@lists.ubuntu.com, 
+	edumazet@google.com, jmorris@namei.org, john.johansen@canonical.com, 
+	john@apparmor.net, kuba@kernel.org, kuniyu@amazon.com, 
+	linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
+	paul@paul-moore.com, penguin-kernel@i-love.sakura.ne.jp, razor@blackwall.org, 
+	serge@hallyn.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, Mar 22, 2025 at 04:48:14PM -0400, Paul Moore wrote:
-> On Sat, Mar 22, 2025 at 4:44 PM Paul Moore <paul@paul-moore.com> wrote:
-> >
-> > On Sat, Mar 22, 2025 at 1:22 PM Jarkko Sakkinen <jarkko@kernel.org> wrote:
-> > > On Fri, Mar 21, 2025 at 09:45:02AM -0700, Blaise Boscaccy wrote:
-> > > > This patch series introduces the Hornet LSM.
-> > > >
-> > > > Hornet takes a simple approach to light-skeleton-based eBPF signature
-> > >
-> > > Can you define "light-skeleton-based" before using the term.
-> > >
-> > > This is the first time in my life when I hear about it.
-> >
-> > I was in the same situation a few months ago when I first heard about it :)
-> >
-> > Blaise can surely provide a much better answer that what I'm about to
-> > write, but since Blaise is going to be at LSFMMBPF this coming week I
-> > suspect he might not have a lot of time to respond to email in the
-> > next few days so I thought I would do my best to try and answer :)
-> >
-> > An eBPF "light skeleton" is basically a BPF loader program and while
-> > I'm sure there are several uses for a light skeleton, or lskel for
-> > brevity, the single use case that we are interested in here, and the
-> > one that Hornet deals with, is the idea of using a lskel to enable
-> > signature verification of BPF programs as it seems to be the one way
-> > that has been deemed acceptable by the BPF maintainers.
-> >
-> > Once again, skipping over a lot of details, the basic idea is that you
-> > take your original BPF program (A), feed it into a BPF userspace tool
-> > to encapsulate the original program A into a BPF map and generate a
-> > corresponding light skeleton BPF program (B), and then finally sign
-> > the resulting binary containing the lskel program (B) and map
-> > corresponding to the original program A.
-> 
-> Forgive me, I mixed up my "A" and "B" above :/
-> 
-> > At runtime, the lskel binary
-> > is loaded into the kernel, and if Hornet is enabled, the signature of
-> > both the lskel program A and original program B is verified.
-> 
-> ... and I did again here
-> 
-> > If the
-> > signature verification passes, lskel program A performs the necessary
-> > BPF CO-RE transforms on BPF program A stored in the BPF map and then
-> > attempts to load the original BPF program B, all from within the
-> > kernel, and with the map frozen to prevent tampering from userspace.
-> 
-> ... and once more here because why not? :)
+syzbot suspects this issue was fixed by commit:
 
-No worries I was able to decipher this :-)
+commit e759e1e4a4bd2926d082afe56046a90224433a31
+Author: Eric Dumazet <edumazet@google.com>
+Date:   Wed Jan 29 14:27:26 2025 +0000
 
-> 
-> > Hopefully that helps fill in some gaps until someone more
-> > knowledgeable can provide a better answer and/or correct any mistakes
-> > in my explanation above ;)
-> 
-> -- 
-> paul-moore.com
+    net: revert RTNL changes in unregister_netdevice_many_notify()
 
-BR, Jarkko
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1084f004580000
+start commit:   fc20a3e57247 Merge tag 'for-linus-6.12a-rc2-tag' of git://..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ba92623fdea824c9
+dashboard link: https://syzkaller.appspot.com/bug?extid=17bc8c5157022e18da8b
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=135f7d27980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1483b380580000
+
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: net: revert RTNL changes in unregister_netdevice_many_notify()
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
