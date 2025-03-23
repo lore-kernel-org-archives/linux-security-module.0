@@ -1,78 +1,78 @@
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E7AB1519B5
-	for <linux-security-module@vger.kernel.org>; Sun, 23 Mar 2025 14:10:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF079152E12
+	for <linux-security-module@vger.kernel.org>; Sun, 23 Mar 2025 14:10:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742739026; cv=none; b=CUN5BmZDTZSJ9BpDdMeB15OehnKM/V+SilOraOjS5JQBQh8c2gg2B6HRjlTM6Bq8VGVgIOXP96KT6904jnEa1BmTesiKTrsiT33sHhqNp2cbLjDxZLQ89oBRdbhVIvDDX6fzrd5G+tc63/ILXGYCEJ9Cr6dfsW7r5gH9sduIGmQ=
+	t=1742739027; cv=none; b=deihdt8WDCZV/P1mgU1D98nVi546JOkqG4YJVPM3nO8YHXLSSRmPGcbo3NoqhvDSh7sj1ZPoDxgJgL1CeQd/S6Oyo2Tgr3nZCY39MGbHOQfyda4HxxievW3SLkRhMHkYjQXdSLK3fOdbs8vSYvVjInU0PzuFSVuNsvxDdFzmBPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742739026; c=relaxed/simple;
-	bh=cZDI1XugvOeFP1ILeyqBbilL5frkSex2NgY1F2eJUqc=;
+	s=arc-20240116; t=1742739027; c=relaxed/simple;
+	bh=T0PoZeJmBgvjPiLh0/yVeEy/YsIJz7XgpipDRZ7o+xA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MyyLmkkytdQmPYuMrzf6zE7bTbabP21NGzH897nUV8o9pO9rKccCoBsBF7G7I/RkQgHwImNpYH0nIe3i6WrFjkKABDd/1z2NSCFrXBUHFOjnDO4gm4fpfg3ERnRm++udRP4rKZgIWct4xsfCPtpEZ4K1jZZkigwRdC2xBnJdjRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NDEYx4LN; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=8ryjcKdK; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NDEYx4LN; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=8ryjcKdK; arc=none smtp.client-ip=195.135.223.130
+	 MIME-Version; b=roO4cV2Dk1P7exXob3+E+9/wG/FZ5e4m3qyIdqLezAF8rv7ur6b8G+asS8/aI6HhKBrLk+NzUfYiCeEOvOlmGUIm61R8s9XAiIdpMj2d8CtvOtI0IkLH//89SsbyOO876foVA6KtG3+ahHAmpwGi89RDfaYzrXgXqUgsffasGKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=af9Skywd; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=fEaqYM7p; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=af9Skywd; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=fEaqYM7p; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NDEYx4LN";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="8ryjcKdK";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NDEYx4LN";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="8ryjcKdK"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="af9Skywd";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="fEaqYM7p";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="af9Skywd";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="fEaqYM7p"
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id B10D5211AC;
-	Sun, 23 Mar 2025 14:10:14 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 73DA51F45B;
+	Sun, 23 Mar 2025 14:10:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1742739014; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1742739010; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=44tClsKTm9qmPcLEvqqp56Ijx7dz9J8weJK+foMELhc=;
-	b=NDEYx4LNQFAiTAxZlRwM5/hYCLbqi0q7sCz458jI+YSiv5G/nEPErewHCGSzqy+6CSVNqE
-	chfmTfY7bhRepUPXIOIVjGhll6Z1J0ivE2dr7oEngja5JKoJgZ2cV+wvLjzLihtEV1I/nF
-	sgdeoedVeyNIi8UJBlpmaw3/VRDOcUs=
+	bh=6Gqo9YcEkZlK70DQeUhxU0UqBpCo/yuzbSGr69XBndA=;
+	b=af9SkywdZnsxzeiMGsZrJEsgiFMJioTSuNYeImu9XsRw10ozI47azfiqA3WZdHwMkgx9Gd
+	8b3xTKjUgH7iPgS+LTDZESPZbHFWBn5LdonlPyMNkdVJX+2XtyL/HNEr1neaoduhjWRzt8
+	7HmFkfnBboG/oApyQIr7r3Qbzy6yOas=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1742739014;
+	s=susede2_ed25519; t=1742739010;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=44tClsKTm9qmPcLEvqqp56Ijx7dz9J8weJK+foMELhc=;
-	b=8ryjcKdKMwkaz/4Nmgh4Mw7FJn0WbXjy4tQeelLvgK2BZIFJ63wG2TW09tAFCL+oASzmql
-	cUReLFKp8WAbnyDQ==
-Authentication-Results: smtp-out1.suse.de;
+	bh=6Gqo9YcEkZlK70DQeUhxU0UqBpCo/yuzbSGr69XBndA=;
+	b=fEaqYM7pa2WkjdfntrjHQedwlt5ukTkZkKJ67L63U6onJxlhVgrk6WdcKrU2R2dR2Axb/7
+	WMeQXwr8VeFrydDw==
+Authentication-Results: smtp-out2.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1742739014; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1742739010; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=44tClsKTm9qmPcLEvqqp56Ijx7dz9J8weJK+foMELhc=;
-	b=NDEYx4LNQFAiTAxZlRwM5/hYCLbqi0q7sCz458jI+YSiv5G/nEPErewHCGSzqy+6CSVNqE
-	chfmTfY7bhRepUPXIOIVjGhll6Z1J0ivE2dr7oEngja5JKoJgZ2cV+wvLjzLihtEV1I/nF
-	sgdeoedVeyNIi8UJBlpmaw3/VRDOcUs=
+	bh=6Gqo9YcEkZlK70DQeUhxU0UqBpCo/yuzbSGr69XBndA=;
+	b=af9SkywdZnsxzeiMGsZrJEsgiFMJioTSuNYeImu9XsRw10ozI47azfiqA3WZdHwMkgx9Gd
+	8b3xTKjUgH7iPgS+LTDZESPZbHFWBn5LdonlPyMNkdVJX+2XtyL/HNEr1neaoduhjWRzt8
+	7HmFkfnBboG/oApyQIr7r3Qbzy6yOas=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1742739014;
+	s=susede2_ed25519; t=1742739010;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=44tClsKTm9qmPcLEvqqp56Ijx7dz9J8weJK+foMELhc=;
-	b=8ryjcKdKMwkaz/4Nmgh4Mw7FJn0WbXjy4tQeelLvgK2BZIFJ63wG2TW09tAFCL+oASzmql
-	cUReLFKp8WAbnyDQ==
+	bh=6Gqo9YcEkZlK70DQeUhxU0UqBpCo/yuzbSGr69XBndA=;
+	b=fEaqYM7pa2WkjdfntrjHQedwlt5ukTkZkKJ67L63U6onJxlhVgrk6WdcKrU2R2dR2Axb/7
+	WMeQXwr8VeFrydDw==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9F1821339F;
-	Sun, 23 Mar 2025 14:10:14 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 61F9B1339F;
+	Sun, 23 Mar 2025 14:10:10 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 9umXJUYW4GemPAAAD6G6ig
-	(envelope-from <nstange@suse.de>); Sun, 23 Mar 2025 14:10:14 +0000
+	id 97S6FkIW4GeiPAAAD6G6ig
+	(envelope-from <nstange@suse.de>); Sun, 23 Mar 2025 14:10:10 +0000
 From: Nicolai Stange <nstange@suse.de>
 To: Mimi Zohar <zohar@linux.ibm.com>,
 	Roberto Sassu <roberto.sassu@huawei.com>,
@@ -84,9 +84,9 @@ Cc: Eric Snowberg <eric.snowberg@oracle.com>,
 	linux-security-module@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Nicolai Stange <nstange@suse.de>
-Subject: [RFC PATCH v2 08/13] ima: track the set of PCRs ever extended
-Date: Sun, 23 Mar 2025 15:09:06 +0100
-Message-ID: <20250323140911.226137-9-nstange@suse.de>
+Subject: [RFC PATCH v2 06/13] ima: move INVALID_PCR() to ima.h
+Date: Sun, 23 Mar 2025 15:09:04 +0100
+Message-ID: <20250323140911.226137-7-nstange@suse.de>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250323140911.226137-1-nstange@suse.de>
 References: <20250323140911.226137-1-nstange@suse.de>
@@ -105,9 +105,9 @@ X-Spamd-Result: default: False [-5.30 / 50.00];
 	MID_CONTAINS_FROM(1.00)[];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.997];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
 	MIME_GOOD(-0.10)[text/plain];
-	URIBL_BLOCKED(0.00)[suse.de:mid,suse.de:email,imap1.dmz-prg2.suse.org:helo];
+	URIBL_BLOCKED(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:email];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
 	FUZZY_BLOCKED(0.00)[rspamd.com];
 	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
@@ -128,108 +128,54 @@ X-Spamd-Result: default: False [-5.30 / 50.00];
 X-Spam-Flag: NO
 X-Spam-Level: 
 
-Right now, PCR banks with unsupported hash algorithms are getting
-invalidated over and over again for each new measurement list entry
-recorded.
-
-A subsequent patch will make IMA to invalidate PCR banks associated with
-unsupported hash algorithms only once at a PCR's first use. To prepare for
-that, make it track the set of PCRs ever extended.
-
-Maintain the set of touched PCRs in an unsigned long bitmask,
-'ima_extended_pcrs_mask'.
-
-Amend the IMA_INVALID_PCR() #define to check that a given PCR can get
-represented in that bitmask. Note that this is only for improving code
-maintainablity, it does not actually constain the set of allowed PCR
-indices any further.
-
-Make ima_pcr_extend() to maintain the ima_extended_pcrs_mask, i.e. to set
-the currently extented PCR's corresponding bit.
-
-Note that at this point there's no provision to restore the
-ima_extended_pcrs_mask value after kexecs yet, that will be the subject of
-later patches.
+Make the INVALID_PCR() #define available to other compilation units
+by moving it from ima_policy.c to ima.h and renaming it to
+IMA_INVALID_PCR() in the course.
 
 Signed-off-by: Nicolai Stange <nstange@suse.de>
 ---
- security/integrity/ima/ima.h       |  8 ++++++--
- security/integrity/ima/ima_queue.c | 17 +++++++++++++----
- 2 files changed, 19 insertions(+), 6 deletions(-)
+ security/integrity/ima/ima.h        | 4 ++++
+ security/integrity/ima/ima_policy.c | 5 +----
+ 2 files changed, 5 insertions(+), 4 deletions(-)
 
 diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 1158a7b8bf6b..f99b1f81b35c 100644
+index a4f284bd846c..1158a7b8bf6b 100644
 --- a/security/integrity/ima/ima.h
 +++ b/security/integrity/ima/ima.h
-@@ -20,6 +20,7 @@
- #include <linux/hash.h>
- #include <linux/tpm.h>
- #include <linux/audit.h>
-+#include <linux/minmax.h>
- #include <crypto/hash_info.h>
- 
- #include "../integrity.h"
-@@ -62,6 +63,8 @@ extern int ima_hash_algo_idx __ro_after_init;
- extern int ima_extra_slots __ro_after_init;
- extern struct ima_algo_desc *ima_algo_array __ro_after_init;
- 
-+extern unsigned long ima_extended_pcrs_mask;
-+
- extern int ima_appraise;
- extern struct tpm_chip *ima_tpm_chip;
- extern const char boot_aggregate_name[];
-@@ -198,8 +201,9 @@ struct ima_iint_cache {
+@@ -198,6 +198,10 @@ struct ima_iint_cache {
  	struct ima_digest_data *ima_hash;
  };
  
--#define IMA_INVALID_PCR(a) (((a) < 0) || \
--	(a) >= (sizeof_field(struct ima_iint_cache, measured_pcrs) * 8))
-+#define IMA_INVALID_PCR(a) (((a) < 0) ||				    \
-+	(a) >= (8 * min(sizeof_field(struct ima_iint_cache, measured_pcrs), \
-+			sizeof(ima_extended_pcrs_mask))))
- 
- 
++#define IMA_INVALID_PCR(a) (((a) < 0) || \
++	(a) >= (sizeof_field(struct ima_iint_cache, measured_pcrs) * 8))
++
++
  extern struct lsm_blob_sizes ima_blob_sizes;
-diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
-index 0cc1189446a8..6e8a7514d9f6 100644
---- a/security/integrity/ima/ima_queue.c
-+++ b/security/integrity/ima/ima_queue.c
-@@ -51,6 +51,11 @@ static DEFINE_MUTEX(ima_extend_list_mutex);
-  */
- static bool ima_measurements_suspended;
  
-+/*
-+ * Set of PCRs ever extended by IMA.
-+ */
-+unsigned long ima_extended_pcrs_mask;
-+
- /* lookup up the digest value in the hash table, and return the entry */
- static struct ima_queue_entry *ima_lookup_digest_entry(u8 *digest_value,
- 						       int pcr)
-@@ -144,15 +149,19 @@ unsigned long ima_get_binary_runtime_size(void)
+ static inline struct ima_iint_cache *
+diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+index 128fab897930..d9e4210ea814 100644
+--- a/security/integrity/ima/ima_policy.c
++++ b/security/integrity/ima/ima_policy.c
+@@ -48,9 +48,6 @@
+ #define HASH		0x0100
+ #define DONT_HASH	0x0200
  
- static int ima_pcr_extend(struct tpm_digest *digests_arg, int pcr)
- {
--	int result = 0;
-+	int result;
+-#define INVALID_PCR(a) (((a) < 0) || \
+-	(a) >= (sizeof_field(struct ima_iint_cache, measured_pcrs) * 8))
+-
+ int ima_policy_flag;
+ static int temp_ima_appraise;
+ static int build_ima_appraise __ro_after_init;
+@@ -1855,7 +1852,7 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+ 			ima_log_string(ab, "pcr", args[0].from);
  
- 	if (!ima_tpm_chip)
--		return result;
-+		return 0;
- 
- 	result = tpm_pcr_extend(ima_tpm_chip, pcr, digests_arg);
--	if (result != 0)
-+	if (result != 0) {
- 		pr_err("Error Communicating to TPM chip, result: %d\n", result);
--	return result;
-+		return result;
-+	}
-+
-+	ima_extended_pcrs_mask |= BIT(pcr);
-+	return 0;
- }
- 
- /*
+ 			result = kstrtoint(args[0].from, 10, &entry->pcr);
+-			if (result || INVALID_PCR(entry->pcr))
++			if (result || IMA_INVALID_PCR(entry->pcr))
+ 				result = -EINVAL;
+ 			else
+ 				entry->flags |= IMA_PCR;
 -- 
 2.49.0
 
