@@ -1,113 +1,177 @@
-Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA0B136E;
-	Sun, 23 Mar 2025 17:25:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E58F507
+	for <linux-security-module@vger.kernel.org>; Sun, 23 Mar 2025 19:39:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742750723; cv=none; b=k10ytSAfsZGRQgRofBvRyllRrLGZD2W5BP/l6Rjj81D+KdLgRYUVkNZ8/8eZmBBPT5FJmAiIaROftPH0zf6N4BWB1h+HwXjGNMjfrWag9Hfwr4B1IIiZjcUX66/oHnxbnL0njNHT5nsAM2ZMUWYHf/fkjAQ1UqbGHY+QktgcUP0=
+	t=1742758787; cv=none; b=JRt1hkOX/dXCPXtzDaFkYCWld++7Kx/NTgh7cOm8aJamjlU6lu2RvynnsLGYrd1WL2uE6vKOPjGG9onuoirplE3V1dH2y0fs5Rhy+hFIXrxL7epskcPIEbWSTMACRNU4TRjMOPXgC7BN+scvgHHHRoTXyezabCyaZvS16ogE0cA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742750723; c=relaxed/simple;
-	bh=3/sdFDcSkElWIwIhxPhTXlK+rCZ0Y4GcwxBGAn4B3GM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=j2TmkvjPm60xrNmKp7jf65Cr6QsuVI+Nzztf9KFi7ncul0kj8mvaEmKVxyhpODnx4lqLAQIB53gmP54h3eOAq0okqUtNXRhMl+K/NEPFFC9iUuXXDy0bQ7OFImXdpRiAbbbkksg578vaJetKk0Y4OuHFfw6XToUjgE8o8mPzSUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=H6VAYzva; arc=none smtp.client-ip=198.37.111.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+	s=arc-20240116; t=1742758787; c=relaxed/simple;
+	bh=C5M9FZxGke4NbdCrsCnEAwe8igTxj8Rkhg3YFuac+xY=;
+	h=Date:Message-ID:From:To:Cc:Subject; b=pnxSdKEnYFQc9MH1EZuWL49w19AsGPY8HI2HlooJqdVMD64GPpIwuqwykORnS/nLTkNPJGq+fY4SAkLhE3jP/W8ATvdWfxy/gKyiNpk77XRVIw3RM622XNum8zapZO8NE9KSGinJ4W2AkWvmRzNBesPNUTCwCrzuqF99B4SQ8Dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=QR84Nsil; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="H6VAYzva"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1742750719;
-	bh=3/sdFDcSkElWIwIhxPhTXlK+rCZ0Y4GcwxBGAn4B3GM=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=H6VAYzvacTKQMikDEJb8KTabkHLc27pMnz32YZYM9EONOl5uQXgsLAFYi34mDpqD2
-	 j6Q+mqT8RgJ/GYxfVP8aS6iuoP9mNucYcTwnEECar0OyODaSwU3RNG637vou96/H2L
-	 mbgWNU/wkTFjSr8pPxbGn1pF6jyA+X2rppn406dw=
-Received: from [10.101.7.56] (ip-185-104-139-74.ptr.icomera.net [185.104.139.74])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 9DA8A1C0211;
-	Sun, 23 Mar 2025 13:25:18 -0400 (EDT)
-Message-ID: <300575957cee207c4191b8bc70219d13d467fdd7.camel@HansenPartnership.com>
-Subject: Re: [RFC PATCH v2 10/13] tpm: authenticate tpm2_pcr_read()
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Nicolai Stange <nstange@suse.de>, Mimi Zohar <zohar@linux.ibm.com>, 
- Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin
- <dmitry.kasatkin@gmail.com>
-Cc: Eric Snowberg <eric.snowberg@oracle.com>, Jarkko Sakkinen
-	 <jarkko@kernel.org>, linux-integrity@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Sun, 23 Mar 2025 13:25:15 -0400
-In-Reply-To: <20250323140911.226137-11-nstange@suse.de>
-References: <20250323140911.226137-1-nstange@suse.de>
-	 <20250323140911.226137-11-nstange@suse.de>
-Autocrypt: addr=James.Bottomley@HansenPartnership.com;
- prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3 
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="QR84Nsil"
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-477282401b3so19482851cf.1
+        for <linux-security-module@vger.kernel.org>; Sun, 23 Mar 2025 12:39:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1742758783; x=1743363583; darn=vger.kernel.org;
+        h=subject:cc:to:from:message-id:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m/9M2NmeSWUFErM1HWVWZj3fEsB3g8mWCeObHDD8N58=;
+        b=QR84NsilarWnf2npCDsjB8L774soPwubXBJOsMHjVOStPDs24nsKXzkayc8xhgTKTd
+         owE4HK57GdOjX+pUR0bkWHcypiT3Vbtc+Lbtna9kj6QYuWaf3qWbNO1ZvzFOMfoZZ3Uc
+         fQpRcCgMakJBtMB44UC/C0zbvrNyKRJcsO3+oRWOG3+BeioMcJVhMWWMAU25CtVRY2af
+         DUHutTGKPSucvaaaUrxoa0+EAorrxAXSoQXRE8H/GvckkWqP6Fyr/MUBEfF+sjig648W
+         GOr2zSE6fM1JvjyVmvxGK1Gp71n712WXfxpuRlCEFXak5RvTBDgMVCZLwW8IW2zy+4sM
+         eGjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742758783; x=1743363583;
+        h=subject:cc:to:from:message-id:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=m/9M2NmeSWUFErM1HWVWZj3fEsB3g8mWCeObHDD8N58=;
+        b=eSGCAw3ZnSGQiE+1GDwt1bxKxE92KXwyI9dJeBclb3355IwCZrTZoMhjISTtj2n3AR
+         B1mLR/3Awy4pQ0XwVDutFiOzs+1OCWDKYgmeDufL54jR99PMAAZ4IylTOZ/srVwe/PyK
+         +rJqvQHYypKN1yuOP69UNkSNxPzjT0TV7+NNGioQA1sBTMt4C76RvS7OwBJUE5FCd3Ib
+         QOAFz+mAdWszvL8PVn0tDaPeRzXuGzQEOtiCb7HTd0HNb69tb4lgXLkgDALS5A/dq480
+         4YJBiveya7VlVCqaH253djsltADuJoVQc4qGKf0frPTAwuL17pPUev5E5h9hfUEQ5m7v
+         F03Q==
+X-Gm-Message-State: AOJu0YxjsszFu+QhKvfP2iZKtspSK5xyJLS/womfaoBUixzDIQUp3wyq
+	c8znsSFFFi+cE8LwUTN58N01gkU1bGJ3IiERVRjObUBQX2xurhwMWkKMy27bdg==
+X-Gm-Gg: ASbGncuiMSgAskXp5rVkrwVVeseXRZnlYfRwTXKBjB+k/Yr1uBclt/3PFuU4tTE3N3n
+	U5AkkgmCGvXfn29Joa1Cv9+lud4ijJo/qqeeD/4axfy9/gGldb0w/5UJzo6+iaIxB0VLLj7F0rQ
+	FhiIDEPvUbuq7rgLJiiOX9FsrVTuFSCZYh6EF4WJEtQ/bECcTtvcvSgfdbJqvXEj9DrZKzBv4hT
+	LKMBW21qZc0hK0bU+lDztgvoxE9OhamN6Hmvpas+ywUTbgb61SGlFGjERa2cJvTgHn0hfS+PEIr
+	bzMiICC9boOyxTpDg5Og9j7D+QdUl69rjrb014T4nJZ/r6YFU+D9rhAaBWNorgLTX+XwbzGJSF3
+	uJOBQGk5xvDLL+Q==
+X-Google-Smtp-Source: AGHT+IHahVX7B5lRciT5ZQupqUnDxS9OGp3103z9xfJu3fR8xW0gMUGFEgUXjuKJoEJI/iSxu93o+A==
+X-Received: by 2002:a05:6214:2a4f:b0:6e4:7307:51c6 with SMTP id 6a1803df08f44-6eb3f35b4fcmr155940236d6.34.1742758783513;
+        Sun, 23 Mar 2025 12:39:43 -0700 (PDT)
+Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
+        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6eb3ef1f5d8sm34480356d6.45.2025.03.23.12.39.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Mar 2025 12:39:42 -0700 (PDT)
+Date: Sun, 23 Mar 2025 15:39:42 -0400
+Message-ID: <795b758412f3cb7dc64777a6fde9c16c@paul-moore.com>
+From: Paul Moore <paul@paul-moore.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] lsm/lsm-pr-20250323
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
 
-On Sun, 2025-03-23 at 15:09 +0100, Nicolai Stange wrote:
-> PCR reads aren't currently authenticated even with
-> CONFIG_TCG_TPM2_HMAC=3Dy yet.
+Linus,
 
-The reason being TPM2_PCR_Read can only support an audit session, so it
-has even more overhead than the usual HMAC session for something you
-don't care about and because no-one relies on plain reads anyway,
-relying entities use quotes.
+Here is the LSM framework pull request for the Linux v6.15 merge window,
+the highlights are below:
 
-> It is probably desirable though, as e.g. IMA does some PCR reads to
-> form the cumulative boot digest subsequently extended into PCR 10 (an
-> operation which *is* authenticated).
+- Various minor updates to the LSM Rust bindings
 
-Could you elaborate on what security properties this adds?  I can't see
-any form of attack that could be done by altering the boot aggregate:
-either the relying party cares, in which case it will quote the boot
-log and arrive at its own value, or it doesn't, in which case the value
-in the log is superfluous.
+  Changes include marking trivial Rust bindings as inlines and comment
+  tweaks to better reflect the LSM hooks.
 
-> +		/*
-> +		 * Exclusivity is not needed, but set in the
-> response.
-> +		 * Set it here too, so that the HMAC verification
-> +		 * won't fail.
-> +		 */
-> +		tpm_buf_append_hmac_session(chip, &buf,
-> TPM2_SA_AUDIT
-> +					    |
-> TPM2_SA_AUDIT_EXCLUSIVE,
-> +					    NULL, 0);
+- Add LSM/SELinux access controls to io_uring_allowed()
 
-Exclusivity here requires no other command be unaudited between the
-session starting and now.  That means that with the lazy flush scheme
-you have a reasonable chance of this being violated and triggering an
-error on the command.
+  Similar to the io_uring_disabled sysctl, add a LSM hook to
+  io_uring_allowed() to enable LSMs a simple way to enforce security
+  policy on the use of io_uring.  This pull request includes SELinux
+  support for this new control using the io_uring/allowed permission.
 
-Additionally, the response will only have the exclusive flag set if the
-above condition (no other unaudited command since session start) is
-true, which it might not be.  The problem you're having is that
-tpm2_auth_check_hmac_response() uses the command session flags to
-calculate the rpHash, which is a useful short cut because for non-audit
-sessions they're always the same.  If you want to use audit sessions,
-you have to teach it to dig the response session flags out of the
-header and use them instead.
+- Remove an unused parameter from the security_perf_event_open() hook
 
-Regards,
+  The perf_event_attr struct parameter was not used by any currently
+  supported LSMs, remove it from the hook.
 
-James
+- Add an explicit MAINTAINERS entry for the credentials code
 
+  We've seen problems in the past where patches to the credentials
+  code sent by non-maintainers would often languish on the lists for
+  multiple months as there was no one explicitly tasked with the
+  responsibility of reviewing and/or merging credentials related code.
+
+  Considering that most of the code under security/ has a vested
+  interest in ensuring that the credentials code is well maintained,
+  I'm volunteering to look after the credentials code and Serge Hallyn
+  has also volunteered to step up as an official reviewer.  I posted
+  the MAINTAINERS update as a RFC to LKML in hopes that someone else
+  would jump up with an "I'll do it!", but beyond Serge it was all
+  crickets.
+
+- Update Stephen Smalley's old email address to prevent confusion
+
+  This includes a corresponding update to the mailmap file.
+
+Please merge,
+-Paul
+
+--
+The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
+
+  Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/lsm.git
+    tags/lsm-pr-20250323
+
+for you to fetch changes up to 65b796acea1e5efc13eb29fdb4638fd26deabc17:
+
+  mailmap: map Stephen Smalley's old email addresses
+    (2025-03-10 16:06:24 -0400)
+
+----------------------------------------------------------------
+lsm/stable-6.15 PR 20250323
+----------------------------------------------------------------
+
+Alice Ryhl (3):
+      lsm,rust: mark SecurityCtx methods inline
+      lsm,rust: reword "destroy" -> "release" in SecurityCtx
+      cred,rust: mark Credential methods inline
+
+Hamza Mahfooz (2):
+      io_uring: refactor io_uring_allowed()
+      io_uring,lsm,selinux: add LSM hooks for io_uring_setup()
+
+Luo Gengkun (1):
+      perf: Remove unnecessary parameter of security check
+
+Paul Moore (2):
+      lsm: fix a missing security_uring_allowed() prototype
+      MAINTAINERS: add an explicit credentials entry
+
+Stephen Smalley (2):
+      lsm: remove old email address for Stephen Smalley
+      mailmap: map Stephen Smalley's old email addresses
+
+sergeh@kernel.org (1):
+      MAINTAINERS: add Serge Hallyn as a credentials reviewer
+
+ .mailmap                            |    2 ++
+ MAINTAINERS                         |   10 ++++++++++
+ arch/x86/events/intel/bts.c         |    2 +-
+ arch/x86/events/intel/core.c        |    2 +-
+ arch/x86/events/intel/p4.c          |    2 +-
+ drivers/perf/arm_spe_pmu.c          |    4 ++--
+ include/linux/lsm_audit.h           |    2 +-
+ include/linux/lsm_hook_defs.h       |    3 ++-
+ include/linux/perf_event.h          |   10 +++++-----
+ include/linux/security.h            |   10 +++++++---
+ io_uring/io_uring.c                 |   21 ++++++++++++++-------
+ kernel/events/core.c                |   14 +++++++-------
+ kernel/trace/trace_event_perf.c     |    4 ++--
+ rust/kernel/cred.rs                 |    5 +++++
+ rust/kernel/security.rs             |   12 ++++++++----
+ security/lsm_audit.c                |    2 +-
+ security/security.c                 |   17 ++++++++++++++---
+ security/selinux/hooks.c            |   16 +++++++++++++++-
+ security/selinux/include/classmap.h |    2 +-
+ 19 files changed, 99 insertions(+), 41 deletions(-)
+
+--
+paul-moore.com
