@@ -1,157 +1,96 @@
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 953D51A23A4
-	for <linux-security-module@vger.kernel.org>; Sun, 23 Mar 2025 19:39:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD4D53B1A4;
+	Sun, 23 Mar 2025 20:35:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742758790; cv=none; b=mKJ0My7uzI3tSHG7V1oN+3k6asP/Bk7n8DbRjCE6l4bGUxCXR/M181LaBwhBf5Z0y4CSfe8QGmuXetx4TFtr7i+TQZnV0gL28vshosBHTQFjE6FVsur0lOwcLQaQlDTuLu4wfQueI/UfFE6mGh59mqsBlfuezKmLGEKPuP41+Nk=
+	t=1742762152; cv=none; b=aaQZQRliO7mUhWL32YYCRjxMLvuq9tV6oplLgI+J7Z8z4hSMCq/3ZvOaR6EkzWORVVzKjIdTZqsLnMx04erShKAXGcJf1NmHOARDUh4uWOx+27UbyZ4800TPIdf+fLK5EiXYn9gyZIwMIt63NTBjmwtF4CdHY921x0SCykwVZas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742758790; c=relaxed/simple;
-	bh=BRhRgkSB7z8P4IHCJlBDVXeM2viBX2/9Xb1lcpWRG/4=;
-	h=Date:Message-ID:From:To:Cc:Subject; b=ptm4LSVf9X7LGZizAEHmu/nk769Mv0Gql2fE4jH/rjfqQKQST7H00KWkUA80prQRdTtsf3yoRlgfsSLxW37Zk8q6llL71+G1tkEjgwQNsO3jpIQBPSetZfwAIRnJGqoMBzca0TIEmK4PW/WBYpnejuFMYiVJUtDLkvyIsSVIm+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Yym9Ydqw; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1742762152; c=relaxed/simple;
+	bh=xHXZy8w9I0XLOj4xlizPUlTNg89hck9OKd3WPhMQbRc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pjv3zoDdKJUoctvHPWHJYG1LiwP8DpmfyTDloFthrCt1+WWdzutmj7mEqinhax5zXDjpvPD53K6AiJHdqf3UPl3Q+1E1oOjSTQZbbEVYespafBI+GuaIxmR78wvBWFZBDNaCF/Bzdy1piPWRBo5pdrZ6geB1KmGvJS4N5Mumwok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZkoccYn9; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Yym9Ydqw"
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6ecf0e07954so12004126d6.1
-        for <linux-security-module@vger.kernel.org>; Sun, 23 Mar 2025 12:39:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1742758787; x=1743363587; darn=vger.kernel.org;
-        h=subject:cc:to:from:message-id:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sj8XaZt6/KwWc/WKs2MV1ArCjqHhkM5gbAr6nIVV+nc=;
-        b=Yym9YdqwszVjWGhaHCgAJJ8NUcRth6VAtnVM+Q0Mp5M9EvRMYVyBcK5p3gq9+yZHJD
-         DATekxC3wjJFcZiz9Y/6zpTvB6OKYhKYpuQiOefOyDmVjg7Wq7j4IBiRVjBIm4lt4qlK
-         jDW/Lc0Rc6OduNIbKmktTeh/GXE2echYW/5P1v/uDghE5ibE0GlF1v5CRuzm08MYkdk+
-         jNLLaqKSgxiW8IiTqug0XnyGv5/uRM4QrOAeypIh1Pph6xad1cQy46+FKlSZac8UeO1R
-         k/VoDky08zxdAhEXloe2HeoaSl65Ig4jgvAoAhfG1FurfNXnSZMJ3+OLFxcOQsjhJFSk
-         PKww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742758787; x=1743363587;
-        h=subject:cc:to:from:message-id:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sj8XaZt6/KwWc/WKs2MV1ArCjqHhkM5gbAr6nIVV+nc=;
-        b=f1wGvo4yLycOh2z1e0NT8Kot7Enndjm+m+h9EX20YcEDvjrkL4qj1HsCho1Qu2MIyT
-         dSLnM/GaX7ZsQoZLRfRFSVDPodCtgjyUnUtFN45G2deB8ZOq22e/AlYJi23RaEyTqXq3
-         pDTXvOtnRuQLqE11AC+ZsutOgan9RPpd/IhdD/kuJU4EtMOtXsueEAcsJUeZVWEywGgr
-         neQm6brD1k3bevD5fpmDQ4CU/dsX5lSe0VViK+gLTLMeJuQHk7vhTcTan9h6LCvTwCTG
-         smIZ+Zt/tvdVorfdlGu3s5P3cCAMXrYT/9JLRhANGwPeMyYc34K0ftz1y2P0W52fwREM
-         P9BA==
-X-Forwarded-Encrypted: i=1; AJvYcCWgr/DUx/6W6hG1WNZrAhTvILS42LQxvGHgitBvkAnSUh8UixSFphzEU8DHjvckT9J+Lidur9fnplYMp8amaL1UEnwHx+I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6dq4+zel5NYLQ6WzCtkXTHTPvfl6jrr2b7QW0LFa/Bo9o2vmb
-	CrGe6hmmWPCjZVurYTumxh2NTlPX3uuXxsVLR5mWivJwrgcn0EaOR3f5vllbYg==
-X-Gm-Gg: ASbGncuDvXismlncUPjBqGnok7Gu8MZs+kRyrx5Cjo5KVrB0UzH4Itv+k/MxYLd4vrk
-	ksQkU3I9u1EyckzN85j/BYBug6qbZA3yS86Ae+/NMWP7ZOax63IwuMbUhRbWw4R6JFRcloXIYQU
-	2j+eRwXPUL17BwJT/mwOOtpYTiqg0+d+xeMoKBFYGxSAxbkwE90EFu4QNyOF8ITXjLV9Q2uAuql
-	/GUEUzo/UX8hTqoBiWWNh/sPeODqNjSKO4u9z0VezQeeKhFyaQPokeXaQWyMd59lUJaG0Nh2CB8
-	kZkPLIulo0/MeRvbxLxSTxs8mf3ZHAJ3PMqPmiL+QDUA7a014FsZuzlU1c3dkpxM+FyS2RGu1ki
-	M+vmyeuliZSKviw==
-X-Google-Smtp-Source: AGHT+IFAB3x6FnMVEWde6N6oN5wX7FeWdrMvjooBIQDCq5DitsfBHMnP2NiIDwyIcMgkV3xbnKNvtQ==
-X-Received: by 2002:a05:6214:d47:b0:6e5:bc9:95f8 with SMTP id 6a1803df08f44-6eb3f2e8b39mr186523896d6.17.1742758787490;
-        Sun, 23 Mar 2025 12:39:47 -0700 (PDT)
-Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6eb3ef0ed51sm34743946d6.6.2025.03.23.12.39.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Mar 2025 12:39:47 -0700 (PDT)
-Date: Sun, 23 Mar 2025 15:39:46 -0400
-Message-ID: <d0ade43454dee9c00689f03e8d9bd32a@paul-moore.com>
-From: Paul Moore <paul@paul-moore.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: selinux@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] selinux/selinux-pr-20250323
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZkoccYn9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2621C4CEE2;
+	Sun, 23 Mar 2025 20:35:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742762152;
+	bh=xHXZy8w9I0XLOj4xlizPUlTNg89hck9OKd3WPhMQbRc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZkoccYn9iIrnnlLXqjtafwV9zsCmc0ozjZtyQUhSKYUbChF9wxU/j/wm2oCukWkHT
+	 p4XX8xe8UG+WG9GODgGVSq9yBKEpoR3TGtSHtV6NpQ8ZEiUUO6fXklLTzoxPTMtvtS
+	 nVoa6/Yqk2RemzQNBcQ/cSF9Be9OtkJ04BC2i3xyg/HnUgnhbM7vYJIyOr+BQqagZQ
+	 R8H7VRsYxis1fcGJ2Qsg5zathbThPxtljSZibljavLOZRtJ+yJ7IOtyUYpYuhqVy1i
+	 iIIZPehScuXcxwDxbf0C5QxB7lLhQ5F6rL8ISpEZGukZn4n2H+msmjHJFan8LmqPzt
+	 9bIhLX4oyOXKA==
+Date: Sun, 23 Mar 2025 22:35:47 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Nicolai Stange <nstange@suse.de>
+Cc: Mimi Zohar <zohar@linux.ibm.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	linux-integrity@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v2 10/13] tpm: authenticate tpm2_pcr_read()
+Message-ID: <Z-Bwo_ZHwYDgwh0X@kernel.org>
+References: <20250323140911.226137-1-nstange@suse.de>
+ <20250323140911.226137-11-nstange@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250323140911.226137-11-nstange@suse.de>
 
-Linus,
+On Sun, Mar 23, 2025 at 03:09:08PM +0100, Nicolai Stange wrote:
+> PCR reads aren't currently authenticated even with CONFIG_TCG_TPM2_HMAC=y
+> yet.
+> 
+> It is probably desirable though, as e.g. IMA does some PCR reads to form
+> the cumulative boot digest subsequently extended into PCR 10 (an operation
+> which *is* authenticated).
+> 
+> Furthermore, a subsequent patch will make IMA to skip certain PCR bank
+> re-invalidations (which are implemented with extensions) upon kexec based
+> on the value read back at boot. In order to not weaken the overall
+> security posture in this case, it will be required to establish the same
+> level of trust into PCR reads as there is already for the extensions.
+> 
+> Make tpm2_pcr_read() to protect the command with a HMAC auth session,
+> using the already existing infrastructure.
+> 
+> As the TPM2_PCR_Read command doesn't have any authorizations defined, and
+> neither of TPM2_SA_ENCRYPT/TPM2_SA_DECRYPT is needed, use TPM2_SA_AUDIT,
+> even though no auditing functionality is actually being required. Since
+> the TPM will set TPM2_SA_AUDIT_EXCLUSIVE in its response with this
+> single-use session, set it upfront so that tpm_buf_check_hmac_response()
+> would expect it for the HMAC verification.
+> 
+> Now that tpm2_pcr_read() depends on the driver's session infrastructure,
+> note that the first call to tpm2_pcr_read() at init time gets issued from
+>   tpm_chip_bootstrap() -> tpm_get_pcr_allocation()
+>   -> tpm2_get_pcr_allocation() -> tpm2_init_bank_info()
+>   -> tpm2_pcr_read()
+> after
+>   tpm_chip_bootstrap() -> tpm_auto_startup() -> tpm2_auto_startup()
+>   -> tpm2_sessions_init(),
+> so there won't be any issues with that.
+> 
+> Signed-off-by: Nicolai Stange <nstange@suse.de>
 
-Here is the SELinux pull request for the Linux v6.15 merge window, the
-highlights are below:
+Please write a better commit message. There's extra words like 'yet'.
 
-- Add additional SELinux access controls for kernel file reads/loads
+And e.g., subsequent patch means nothing in the commit log.  Please
+don't use such terminology.
 
-  The SELinux kernel file read/load access controls were never updated
-  beyond the initial kernel module support, this pull request adds
-  support for firmware, kexec, policies, and x.509 certificates.
+Not going to waste my life reading this.
 
-- Add support for wildcards in network interface names
-
-  There are a number of userspace tools which auto-generate network
-  interface names using some pattern of <XXXX>-<NN> where <XXXX> is
-  a fixed string, e.g. "podman", and <NN> is a increasing counter.
-  Supporting wildcards in the SELinux policy for network interfaces
-  simplifies the policy associted with these interfaces.
-
-- Fix a potential problem in the kernel read file SELinux code
-
-  SELinux should always check the file label in the
-  security_kernel_read_file() LSM hook, regardless of if the file is
-  being read in chunks.  Unfortunately, the existing code only
-  considered the file label on the first chunk; this pull request
-  fixes this problem.
-  
-  There is more detail in the individual commit, but thankfully the
-  existing code didn't expose a bug due to multi-stage reads only
-  taking place in one driver, and that driver loading a file type
-  that isn't targeted by the SELinux policy.
-
-- Fix the subshell error handling in the example policy loader
-
-  Minor fix to SELinux example policy loader in scripts/selinux due
-  to an undesired interaction with subshells and errexit.
-
-Please merge,
--Paul
-
---
-The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
-
-  Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
-    tags/selinux-pr-20250323
-
-for you to fetch changes up to a3d3043ef24ac750f05a164e48f3d0833ebf0252:
-
-  selinux: get netif_wildcard policycap from policy instead of cache
-    (2025-03-17 16:22:04 -0400)
-
-----------------------------------------------------------------
-selinux/stable-6.15 PR 20250323
-----------------------------------------------------------------
-
-"Kipp N. Davis" (1):
-      selinux: add permission checks for loading other kinds of kernel
-         files
-
-Christian Göttsche (2):
-      selinux: support wildcard network interface names
-      selinux: get netif_wildcard policycap from policy instead of cache
-
-Paul Moore (1):
-      selinux: always check the file label in selinux_kernel_read_file()
-
-Tanya Agarwal (1):
-      selinux: fix spelling error
-
-Tim Schumacher (1):
-      selinux: Chain up tool resolving errors in install_policy.sh
-
- scripts/selinux/install_policy.sh          |   15 ++---
- security/selinux/avc.c                     |    2 
- security/selinux/hooks.c                   |   58 +++++++++++++++++----
- security/selinux/include/classmap.h        |    4 +
- security/selinux/include/policycap.h       |    1 
- security/selinux/include/policycap_names.h |    1 
- security/selinux/include/security.h        |    8 ++
- security/selinux/ss/services.c             |   15 ++++-
- 8 files changed, 79 insertions(+), 25 deletions(-)
-
---
-paul-moore.com
+BR, Jarkko 
