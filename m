@@ -1,116 +1,148 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59BDC10A3E
-	for <linux-security-module@vger.kernel.org>; Mon, 24 Mar 2025 11:01:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90D6628E7
+	for <linux-security-module@vger.kernel.org>; Mon, 24 Mar 2025 11:45:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742814069; cv=none; b=FN0T21jcvSrEmR5/eO8SCrJ1uzwjg/DYojRgJHNnuXlJtKRlNV3ntF8cqGuqQ4IuWAmJTfLLDbMm3FYmw9dUDp6ndCENkX5SFgu9H+n3njLmjbNIKGySpJztp5ZX9kGPKe+YSm0dEDbr9Tu0EfQyvQ555BaA/CjgWbS7Xgnmxcc=
+	t=1742816762; cv=none; b=VNcra6GyhzB3iK2L99Tfxco76uvAzaYtAvxoGyMZ2FN0XvchRv8zidOw85JcTaGloXKV1LPHxP9AJ4OFxSabuvmgPFUHjqtlPAJ1BZAgUTu+6ZTaKgZ2khNIvTa86qI36PdmyF5ojiZi0zAgYevvPu0QiZxbNvXLmMKs9+aNxZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742814069; c=relaxed/simple;
-	bh=LDsJSlPtXgnODZ+ldr2KxIShTemz/tVXnReb9HkLtQ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HjriscD84wrC0h1C8F3rlS1Y5CePgGBofOB2XrHQtyU2veIV7qjxUY05rTFRS6RGlmQnojev80IBgwTrU75iwvwsjL0d57kbnCZV8oWMcUEW/asHlMYqTaA4gHymSXxugIIxDK+c4D6H30jQfZgGuVTMLOCiO35lpcprKsHGM6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AN3M0QlX; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AN3M0QlX"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1742814066;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+PS69gZ7L0QPn+MJNrvH0ZaDSrgaKGsoM7m8BjefV88=;
-	b=AN3M0QlXDNfhSoNzw4Il9YlZe4tTiwiGypkGd7gNQsWq8B/YAvFUd8Ya1FSAvxQMpoUGQ7
-	I/airx1/33EvVydIm3Xj1vLjuQVYsxYWzPIc5bIeSqrl40hR2pUpGw9NaZBXMWO/9mUjfc
-	hbqAoR75ZmLTyswgbNtV2ASm9D6RcBo=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-515-uB3P39bgPWWtQdZfxMmeVA-1; Mon,
- 24 Mar 2025 07:01:02 -0400
-X-MC-Unique: uB3P39bgPWWtQdZfxMmeVA-1
-X-Mimecast-MFC-AGG-ID: uB3P39bgPWWtQdZfxMmeVA_1742814060
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 09060196B370;
-	Mon, 24 Mar 2025 11:01:00 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.24])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CC52719560AD;
-	Mon, 24 Mar 2025 11:00:56 +0000 (UTC)
-Date: Mon, 24 Mar 2025 19:00:47 +0800
-From: Baoquan He <bhe@redhat.com>
-To: steven chen <chenste@linux.microsoft.com>
-Cc: zohar@linux.ibm.com, stefanb@linux.ibm.com,
-	roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
-	eric.snowberg@oracle.com, ebiederm@xmission.com,
-	paul@paul-moore.com, code@tyhicks.com, bauermann@kolabnow.com,
-	linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
-	James.Bottomley@hansenpartnership.com, vgoyal@redhat.com,
-	dyoung@redhat.com
-Subject: Re: [PATCH v10 6/8] ima: kexec: move IMA log copy from kexec load to
- execute
-Message-ID: <Z+E7X6LuQ82q1i5V@MiWiFi-R3L-srv>
-References: <20250318010448.954-1-chenste@linux.microsoft.com>
- <20250318010448.954-7-chenste@linux.microsoft.com>
- <Z9t4LVpE470DMBYU@MiWiFi-R3L-srv>
- <3d7b5e06-5166-46bb-89dc-a0b95ca7c767@linux.microsoft.com>
+	s=arc-20240116; t=1742816762; c=relaxed/simple;
+	bh=RuvTY0MXdUWGMtTK1dtLu3HRybmF3ohRXGzY2FReOjA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HSOVw/fk9A5JayLMcd0Pz7Ed0BeHIwJzKmUmoUNk179hqPUot2qW1otFPX6lRoU+4a2+Eqh4MBMSVRqdf59kFT8SUWftQVjQRn45nUwsQDpwVmBnONU5Kz8rpRxIAthd8DMhVJT+P+fIQz9wXHnXgpl5KVwPAzsGUBq6tdxaezQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 52OAhRLr090735;
+	Mon, 24 Mar 2025 19:43:27 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 52OAhQcN090732
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Mon, 24 Mar 2025 19:43:27 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <898462aa-8e5e-47ed-9a76-69e4acfbab07@I-love.SAKURA.ne.jp>
+Date: Mon, 24 Mar 2025 19:43:27 +0900
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3d7b5e06-5166-46bb-89dc-a0b95ca7c767@linux.microsoft.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/9] Landlock supervise: a mechanism for interactive
+ permission requests
+To: Tingmao Wang <m@maowtm.org>
+Cc: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+References: <cover.1741047969.git.m@maowtm.org>
+ <5d683299-fc53-4763-be49-9a91325a832c@I-love.SAKURA.ne.jp>
+ <5cff3b2b-998d-4dbe-897d-7622d07f6791@maowtm.org>
+Content-Language: en-US
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <5cff3b2b-998d-4dbe-897d-7622d07f6791@maowtm.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Anti-Virus-Server: fsav401.rs.sakura.ne.jp
+X-Virus-Status: clean
 
-On 03/21/25 at 09:23am, steven chen wrote:
-> On 3/19/2025 7:06 PM, Baoquan He wrote:
-> > On 03/17/25 at 06:04pm, steven chen wrote:
-> > ...snip...
-> > > ---
-> > >   kernel/kexec_file.c                | 10 ++++++
-> > >   security/integrity/ima/ima_kexec.c | 51 ++++++++++++++++++------------
-> > >   2 files changed, 40 insertions(+), 21 deletions(-)
-> > > 
-> > > diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-> > > index 606132253c79..ab449b43aaee 100644
-> > > --- a/kernel/kexec_file.c
-> > > +++ b/kernel/kexec_file.c
-> > > @@ -201,6 +201,13 @@ kimage_validate_signature(struct kimage *image)
-> > >   }
-> > >   #endif
-> > > +static void kimage_file_post_load(struct kimage *image)
-> > > +{
-> > > +#ifdef CONFIG_IMA_KEXEC
-> > > +	ima_kexec_post_load(image);
-> > > +#endif
-> > > +}
-> > > +
-> > >   /*
-> > >    * In file mode list of segments is prepared by kernel. Copy relevant
-> > >    * data from user space, do error checking, prepare segment list
-> > > @@ -428,6 +435,9 @@ SYSCALL_DEFINE5(kexec_file_load, int, kernel_fd, int, initrd_fd,
-> > >   	kimage_terminate(image);
-> > > +	if (!(flags & KEXEC_FILE_ON_CRASH))
-> > > +		kimage_file_post_load(image);
-> > machine_kexec_post_load() is called by both kexec_load and kexec_file_load,
-> > we should use it to do things post load, but not introducing another
-> > kimage_file_post_load().
-> 
-> Hi Baoquan,
-> 
-> Could you give me more detail about this?
+Hello.
 
-I mean machine_kexec_post_load() is the place where post load operations
-are done, including kexec_load and kexec_file_load. There's no need to
-specifically introduce a kimage_file_post_load() to do post load
-operaton for kexec_file_load.
+On 2025/03/24 10:58, Tingmao Wang wrote:
+> Hi Tetsuo,
+> 
+> Thanks for commenting on this RFC and thanks for mentioning TOMOYO - I wasn't
+> aware that another LSM has a similar permission prompting mechanism already
+> (and in fact, I only recently found out AppArmor / Ubuntu has also built
+> something like this [1], although AFAIK it's not upstream'd to mainland Linux,
+> and the current implementation may be somewhat coupled with Snap?), and this
+> is valuable and interesting for me to know :)
+
+I mentioned TOMOYO as an example of how to implement a supervisor feature, for
+there is a pitfall when involving userspace. What is important for implementing
+a supervisor feature is how to avoid deadlocks, for userspace might unexpectedly
+pause due to page fault events. If the supervisor process is blocked due to a
+page fault event, the process which is requesting some access is also blocked.
+
+> 
+> I've tried out TOMOYO and it seems quite applicable to the "firejail-like
+> dynamic sandbox" use case (i.e. use cases #1 in the cover letter) I initially
+> wanted to enable, and so I would like to investigate this further.  If you
+> don't mind, I would like to ask, have you built / are you aware of any
+> end-user-facing GUI for tomoyo-queryd?  There is one on GitHub by someone
+> else [2], but I'm wondering if you have tried to, or thought about building
+> a UI that's a bit richer (e.g. like the one in [1]).
+
+Thank you. TOMOYO's tools is implemented as CUI-only for minimizing dependency.
+I wasn't aware of [2].
+
+> 
+> I've looked into the TOMOYO query protocol and I was thinking that, if I do
+> end up building something for this purpose, it could perhaps support TOMOYO
+> as a "backend" (and in fact that would be usable with the current feature in
+> TOMOYO already, whereas a landlock-based one would depend on this patch).
+> But if you have already tried something like this I would of course want to
+> know beforehand :)
+
+Since TOMOYO does not use audit subsystem, the format of query is essentially
+the format of access logs. Just invoking immediately before rejecting an access
+request. Quite simple approach. ;-)
+
+> 
+> btw, maybe this is just me not looking hard enough, but is there a git (or
+> similar) repository for the user space programs (tomoyo-tools)? I tried to
+> search online but so far I only found source tarballs, including the pages
+> on sourceforge, and I'm wondering if there is a place with latest development
+> branches.
+
+There is no git tree. Only subversion repository
+( https://sourceforge.net/p/tomoyo/svn/HEAD/tree/ ) is available.
+
+> 
+> I want to perhaps submit some patches to the user-space tools (I assume they
+> should go to tomoyo-dev-en?) if that's welcome.
+
+Welcomed.
+
+> 
+> -- 
+> 
+> With that said, I should clarify that I think this supervisor feature is still
+> valuable for landlock even knowing the existing TOMOYO query feature.
+
+For landlock, I guess you assume that the supervisor process is not blocked
+(because landlock is intended for subset of userspace processes), but what if
+the supervisor process tries something that will be blocked by landlock
+(e.g. spawning a userspace program in landlock-controlled environment) ?
+Is there a guarantee that the supervisor process can never request something
+that will be blocked by landlock itself (or other security modules that are
+active) ?
+
+Use of GUI tends to introduce multi-threaded or multi-processed program or
+invoke unexpected system call that will block the supervisor process itself.
+I consider that TOMOYO can't provide proof of deadlock-free in GUI. Therefore,
+tomoyo-queryd runs as a single-threaded-single-processed program.
+
+> The intention is not to duplicate what TOMOYO already does, but to offer
+> flexibility for landlock users and feature parity (with TOMOYO and things like
+> seccomp-unotify), and allows program sandboxing themselves (or other children)
+> with landlock more flexibility.  The second use case mentioned in the cover
+> letter would benefit from this (and a user-level / system-wide sandbox program
+> can also choose to leverage this, potentially running unprivileged etc).  I
+> will try and prototype a more interesting example to validate the practicality
+> (most importantly UX) and use in the cover letter for the next series.  (Will
+> also rename the series title to just "Landlock supervise" to avoid sounding
+> like interactive permission requests are a new thing)
+
+I hope that my experience helps your implementation.
+
+> 
+> Kind regards,
+> Tingmao
+> 
+> [1]: https://discourse.ubuntu.com/t/ubuntu-desktop-s-24-10-dev-cycle-part-5-introducing-permissions-prompting/47963
+> [2]: https://github.com/Intika-Linux-Firewall/Tomoyo-Application-Firewall
 
