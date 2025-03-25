@@ -1,129 +1,63 @@
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB9231DE8A0
-	for <linux-security-module@vger.kernel.org>; Tue, 25 Mar 2025 23:02:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC0E81B4247;
+	Tue, 25 Mar 2025 23:16:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742943755; cv=none; b=QKEs+eSLe6EjhQB0EZMrSns5ziM9HqgbGP55A4zMnnOZgGQT39c89+jBlODwI0aaxzht5ToFZbxcVkoVkowf8lpQ1yKVtUtKeIcnoPJ7e6+0NhgOjpaenNjMEyNyJimrp1xMHOmQmYfI0D2rlbpZiPCgBg5zt4j8Nb9R/nKrHeI=
+	t=1742944586; cv=none; b=uklxk7eLg0KngpsGt5iDruQ0JtWmBSqdJUMX6Q9SPPu74fTzjTBmAiSiNivFs36zKzxuTXkcwvwFJ34Yw3orS214x+Eqt3nA+n7p7/DoDAeFv9apP6/lnzZoYHIosW8NcLErEyeE8g/r620/6rnl2x0A69Zll98ll8OrY2fKlzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742943755; c=relaxed/simple;
-	bh=rvtaKCacTd+dMFEwCfsS4KnID/jFXOuQd2z1cHSbJkM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WBz25SMdETstxJtjkdBLH7xBZbTy0x5FrG0Eq40YkUaWoM7t+daHFyR0Ias+50zgnJMSMB51a9vUjRLhxea5KJD6M2Zz4dlJ+PkJlgHP8LYk06gpGTM4NfqiWSMNPRK5QtrtdXmiXcq9fIVwmTg4wyWhA91rL5djaovo3kn4rHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=XpBMVYfS; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+	s=arc-20240116; t=1742944586; c=relaxed/simple;
+	bh=X3qvrbQnIW1UWG0xrD9ejZfEJ0k/ydduTQAJYzJ8cuc=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=Qt6oD0qBFjadYDxI/dwK3MUfQo581mBC8KGwt0Qy+Lr/Pz70iimQb7pfmXlUTZRw7ksOgsjEEttBOitpRS0OfYEbaZBa84KlixILUrC7gj9zEAXNodeom6FhKKjsxZdIc8ohB9glLyYz6kT3OEXCrMPSmlZTmjNEGVI74S3EJOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T6qLaBpM; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="XpBMVYfS"
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5dccaaca646so663595a12.0
-        for <linux-security-module@vger.kernel.org>; Tue, 25 Mar 2025 16:02:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1742943752; x=1743548552; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=qpbsUEYRhF7ODaqFjujOp9s2YRkxd4ZLPAugypnEK7A=;
-        b=XpBMVYfS71SljWlHyNX4qN+MQOCcaZe0ZecCfyhVU4pPVEjlKFE9F/0MC6NG2fdiOM
-         /ALHDLvrPoJoFN+FO3w8AqYX/FpmWNYH3kw82Ck1hIFoPo6C9TybY7VkOdVvX4CjV1Nv
-         tXLYlRknQvDdE6z9XDy4Egjrczgr+LIzDFPNU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742943752; x=1743548552;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qpbsUEYRhF7ODaqFjujOp9s2YRkxd4ZLPAugypnEK7A=;
-        b=WTgO9nT5QqzePHnr1k2t2QjOIfhvMsJh0+AdaRY5WjAqdhtS/mnv8LniB0gLoZRApE
-         Si4HPFhSa9PytxPKdq61a96Sa06mONS1uyW8qpEwaxrHpBatQteQ5UhX6gXh6RdCMoDk
-         m+Hj+21ZZBLHSpY5n0zTu9R3fbQz9Gn610XWz/yZhWUXkRqlnF57CVMB8wgnyoF/6f5g
-         rKN9qjU5fBhBzHKcTRH6YyDJvWuK+8t6VI3GKJD6uDlCqsikIG4std9IzeFA1QzIRJQL
-         bsi9jcVcLLXCQ7DsabQYdH3TMwXz5sRH/oIDQryiz1b23eW0g5Q2aFm31JrFDDTslrMd
-         su8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVRMCTOYjCeZuBIc3OogQci836dc0fBEZtfvdfrpy5ZpkyTXE0QwPHBysexmqnVCq5BIhGC2klmW+rw5EAaEeXTwwHryq0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzI1hWTxQn4ENwEbjenvuvcfs5tYKghllrbD9ToS7171xqsaucZ
-	mpR/aQKiWLtokNwjTw0f8rWPp+BCMbDzXqaRnj8wElJgHFaT8leRhF/baq0P5CWLBeUERXAzeNj
-	kJQrIlQ==
-X-Gm-Gg: ASbGncs4M5YuuW+XURGtWJ0jfd3Ajsp0mJWnhsVuWeMZsfcxO++Bot6xVniRJ2I3wAX
-	OhjQRjBS5Ya5zs6AoI2nhoqbsZWV7zVy7D2f7hqJwRMe8neCoxZYkOBFwIt+xIBU/SCOVgq6ZOo
-	3gMMf/AGruzDl2Cy+FwydPmSHjEhV21g91Up90YaMOyU2aPMqTKwkOt+vO2fIpkZHnOl+KvkE8t
-	y8CX65FNYb/OYUypQshgFCRItxRJwwYMeSdDbaxwM4UgouA6/7RRCZqA+ehnQxdp9NMm43QnytY
-	CWxPcU/ZzJ5+XmOQImVeYPbQ0osT1RiNdpzhT1YuXCr0eOPW3FzmVNU9iMswiaJlCu7YxMNdIy3
-	p1ftk2Mr1kPkCZOWHoK6eM9hmzt83kw==
-X-Google-Smtp-Source: AGHT+IF6F5QkXzYuL38d+Z/gh90YPXHtPGuhQtjlbbkhxEDIY9jA9hv7Qmk0wAxF1GXLp/NzIfB8ig==
-X-Received: by 2002:a05:6402:350f:b0:5e5:ba77:6f42 with SMTP id 4fb4d7f45d1cf-5ed4349a3b5mr1560491a12.4.1742943751710;
-        Tue, 25 Mar 2025 16:02:31 -0700 (PDT)
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ebcd0c7759sm8374131a12.51.2025.03.25.16.02.29
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Mar 2025 16:02:30 -0700 (PDT)
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ac297cbe017so61812066b.0
-        for <linux-security-module@vger.kernel.org>; Tue, 25 Mar 2025 16:02:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVdyh/+Hfi80DrEaeXIA5nDMEvzTbvCCzUIg4+EsjXAbCRW27mY/AWmf8DwhHNoicm3NHRGvPctFE5WuCOcc3iM1xAWXG4=@vger.kernel.org
-X-Received: by 2002:a17:906:81d6:b0:ac6:e42a:fb4c with SMTP id
- a640c23a62f3a-ac6e42afbbbmr77412666b.9.1742943749513; Tue, 25 Mar 2025
- 16:02:29 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T6qLaBpM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 725ACC4CEE4;
+	Tue, 25 Mar 2025 23:16:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1742944585;
+	bh=X3qvrbQnIW1UWG0xrD9ejZfEJ0k/ydduTQAJYzJ8cuc=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=T6qLaBpMMdnQADhdfgtF5LmrxGGL7r+tSgUgkqIUKyhxiNH1NMLW8uli5YSjzPWDL
+	 cjUbCwCfrBChB1Ds3Z7tFxYxiAE1Dktpu7m5cySzTUODKlGPqp720mE1Vzet+W3vVP
+	 PjfU8ipl5u0r/buZkuuc6pE0RB6ZgtYrkLZNjivuM47AwaXdk9sJkITey4t4/lccRn
+	 bKSE0SqgSVyaN4/udo+08uOacuMg2xR6bDL4S08pe9Gsd1eRf42SZs42+YwnN+kmY9
+	 H+TfsO88ZTYfiMLzf+n6ne7/dliPC48D7JzTOYu8gDhOeoAj3ygZ5aVqF2XsvLiq3p
+	 Dc0OTxIQVS09g==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB232380DBFC;
+	Tue, 25 Mar 2025 23:17:02 +0000 (UTC)
+Subject: Re: [GIT PULL] selinux/selinux-pr-20250323
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <d0ade43454dee9c00689f03e8d9bd32a@paul-moore.com>
+References: <d0ade43454dee9c00689f03e8d9bd32a@paul-moore.com>
+X-PR-Tracked-List-Id: <selinux.vger.kernel.org>
+X-PR-Tracked-Message-Id: <d0ade43454dee9c00689f03e8d9bd32a@paul-moore.com>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux-pr-20250323
+X-PR-Tracked-Commit-Id: a3d3043ef24ac750f05a164e48f3d0833ebf0252
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 59c017ce9ec77953ca5198b41d4101f57dd4af0d
+Message-Id: <174294462147.770882.14434427249406038583.pr-tracker-bot@kernel.org>
+Date: Tue, 25 Mar 2025 23:17:01 +0000
+To: Paul Moore <paul@paul-moore.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, selinux@vger.kernel.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <d0ade43454dee9c00689f03e8d9bd32a@paul-moore.com>
-In-Reply-To: <d0ade43454dee9c00689f03e8d9bd32a@paul-moore.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 25 Mar 2025 16:02:13 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjbahY4JjLCXNT4o3xVq2cejqBG69z+MNfHsN9FQBnbOw@mail.gmail.com>
-X-Gm-Features: AQ5f1Jq6H2w1UwofX9xTNQfWxTgnnyE_4keu9omt7uh5If6fR9mM7-LXzR1V2TI
-Message-ID: <CAHk-=wjbahY4JjLCXNT4o3xVq2cejqBG69z+MNfHsN9FQBnbOw@mail.gmail.com>
-Subject: Re: [GIT PULL] selinux/selinux-pr-20250323
-To: Paul Moore <paul@paul-moore.com>
-Cc: selinux@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 
-On Sun, 23 Mar 2025 at 12:39, Paul Moore <paul@paul-moore.com> wrote:
->
-> - Add additional SELinux access controls for kernel file reads/loads
->
->   The SELinux kernel file read/load access controls were never updated
->   beyond the initial kernel module support, this pull request adds
->   support for firmware, kexec, policies, and x.509 certificates.
+The pull request you sent on Sun, 23 Mar 2025 15:39:46 -0400:
 
-Honestly, is there a *reason* for this, or is this just some misguided
-"for completeness" issue?
+> https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git tags/selinux-pr-20250323
 
-Because dammit, adding more complexity to the security rules isn't a
-feature, and isn't security. It's just theater.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/59c017ce9ec77953ca5198b41d4101f57dd4af0d
 
-And it adds completely pointless extra cases making the different
-cases use artificially different code.
+Thank you!
 
-The commit message doesn't actually make any mention of *why* any of
-this would be a good idea.
-
-I've pulled this, but honestly, I think all those new cases should be
-removed, and if people object to us having "LOADING_MODULE" for other
-kinds of reads, then I think the fix should be to just rename it to
-"KERNEL_LOAD" or whatever.
-
-Because dammit, this "make security interfaces more complicated just
-because" needs to STOP.
-
-We are literally wasting enormous amounts of time in the security
-layers - I regularly see the lsm and selinux layers spending *more*
-time on security than the actual operation takes because the security
-people have written random code without taking performance into
-account - and I need to see *reasons* for adding more crap in this
-area, not "let's expand" with no actual reason given.
-
-So I really think that commit needs to be either reverted or explained
-very clearly why user policy _needs_ to care for the difference
-between a module load and a firmware image load.
-
-Because I think any such explanation is likely complete BS. The
-difference between loading modules and loading firmware usually would
-boil down to "different hardware does things differently". There's no
-obvious reason why one should be considered different from another
-from a security standpoint.
-
-               Linus
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
