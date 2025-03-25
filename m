@@ -1,87 +1,138 @@
-Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC4FDDDA9
-	for <linux-security-module@vger.kernel.org>; Tue, 25 Mar 2025 18:18:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87196BA50;
+	Tue, 25 Mar 2025 19:35:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742926686; cv=none; b=akNsHszJ56e7uFE1sGnRIE5XjxU/95Wua+tOAQpObKv25MRlQuObQAz1kJyq8mrm5bQCqulztE6uTpdPel1wsH+qauyn/dZ2GJ6byZpd8nIatt3dEZdAgdeFpDIqFJHwiqE7ecgs36EtTl1IjKMkRLriRunf6Gld9DNjj5mx1jY=
+	t=1742931349; cv=none; b=r4Gm3A6swrZpg0O0e4Es08xcoq1S4PldKz5phiHtM5x5dKtgQ3JRcKcGjQpBfIm7WsPWvMjD0DfyO3a/5pa14ixpbZW+jKeuB4gHN/j94Z3ZtftEta7F3ZwWO6imnLaA11XYu4vrOGcWUygFx1DRaZs0U4NHq6uQHHLz9c1QmEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742926686; c=relaxed/simple;
-	bh=/4+bLAd5YIoSfto7uBkSvM5inHnQsWrkg2NKoQTN1ps=;
+	s=arc-20240116; t=1742931349; c=relaxed/simple;
+	bh=GQ1usWDY/9UJHM3rPLJhK3PbcVc8D/tocEAt9WKi4i4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qJi17HgYcSqw/qz/Rwk48AQgm8LLhUQ6Ou/5hbzV+oQVBLZePTlEjg0aZ7SCoQ8pbO5dN70U1YJ01T2BMuMnf+oAm18ya2HpyhoRYioo/B7riij7sChFZXuwDcSvqhKqIrocX6lS+s8Yk2pZV93zSESsCSa5CQKztxwey3QHQqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=cAhb6xx5; arc=none smtp.client-ip=209.85.166.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=lPzkNYwW+aJuLccJQYz+qE64tOvNWIV1xHACB4GZvRB93bbpm5czwcyMUqGvA4OjnLhY+3uYJV0nWueq1OX/brHECVMpsVPrr0Cd8wFR5g7nBqHtP2lWXPxKVuIB+hwx+TRc2sxQJ6OlqnaQz0l/WmhgCaG3+lkK6enrMku8es8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jKryXs5+; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="cAhb6xx5"
-Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-85e14ce87ceso3694839f.1
-        for <linux-security-module@vger.kernel.org>; Tue, 25 Mar 2025 11:18:04 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jKryXs5+"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43cf06eabdaso55784885e9.2;
+        Tue, 25 Mar 2025 12:35:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1742926684; x=1743531484; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/4+bLAd5YIoSfto7uBkSvM5inHnQsWrkg2NKoQTN1ps=;
-        b=cAhb6xx5/FqYSdd/1pORUOfxDXuZwjI1+wO/qNjf+5iOaxo5aH6OrERWlUwDuyLJxz
-         VKCHKuRLynpMWRS0zezpKRoORVHrqW/R7Y+YDgw9karI/FqV/q15HB11/8XpAn9SK2bP
-         m/NPF0zyV73OYAN0tWiQJvRCSrf0Jgqrziu9qNDjPz9ss1hTIqsnRx4tw97dZBol3kiv
-         57gmth1WbMErq9QcPwMjCvFiiXaQqgKUpbMzBgdUhs8E6H3UdfuQrape7k5yPTaGJ4Ky
-         5IQiS22e7hQsHmDDGnP30mYfnghmmT46fk28Bnrtzo154xFqt15ve1u4/V2wMI10bh3N
-         jvxg==
+        d=gmail.com; s=20230601; t=1742931346; x=1743536146; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=grP25x16Wo7Fb4WipDbMu3jz9s4iEFrXl9o03iMXH6Q=;
+        b=jKryXs5+gxYgzmq9Y4ElM3e4dfbgxa3u4QCMZAc1xt4CUKkvHCf4fI099vVUzjUA/r
+         yHx4w6WTAVWz9Tv6/j9C9ksiBPHql9h/4TuCyit4jNvsdGojDA5xNx7h1wm1nUWk5mmN
+         taKlySfXhUzGcNJSNv7nPm+gwDBnqm0opEBnV1WUx78mkNIf6A54xRFiOy0faQ5h+7nG
+         w0x+BJrln5LDvZwoLloFv509U3X+XS3OmTHtuebT49xDU4mfiLRqo8idKZ4znYp/FUfJ
+         tdtBX3I/bkij9DJT6R9r9HnZngiCrb/lx7L5nPPkAWF+ohleFzpSEOoZhMm0dA1/xUtI
+         ACsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742926684; x=1743531484;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/4+bLAd5YIoSfto7uBkSvM5inHnQsWrkg2NKoQTN1ps=;
-        b=j5OOJflD+Q35iatXtNInNVZNDCZ0xhgXRpAT+hRhQRsnXojN8JGgIqLFR1ix5MFdxh
-         +hSZ1enqfIweYM3s+hDoTTmR6621QZ2/rg2+CrTQRUsqCKkaVSkiCjuptihPCuZvRvA/
-         7sxNZlftZYBsQF/T6I1oUrmFqOlUNImvfVFbwa8uws8BCJ97N8DmmGkc23xqiCVuh59D
-         UtcaSAzzyq2QB+YrZ2IWLwrdoE9s/aObD9Toga2HTU2JaeQGCv2zAp17M6FZ1ubZa8YY
-         +/8v+AveD8vD71Cg4THAr2KZ78ZUH0ea2godr4Bk5s7OZ6yCtDgzFiDtwdpn5/f28RC2
-         f7PA==
-X-Forwarded-Encrypted: i=1; AJvYcCXHX/fqXC+ZNc9zbICP/sLW0PgTd27R05eN4ZQKdhK6y6CRsTq/zXERiUjZC/xm2HEBwLJdCY6r9TKJa9zBCXhRGTNYq78=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywAfV1cJpaWOnxsPtgr/vnOorG70tJ/SzQqMCgomg83QuAMfrk
-	rYuF8psibxXspUKu5qL3l439ux6UyGZoAhvM3amJzB6meViTbyVqOMpdySDZ4Y4=
-X-Gm-Gg: ASbGncu1kTkk5f3nBd6H+ZTSLENHeamBiqbuK+2psb0cT9HVw17aiKhq1OKazxmmRN1
-	E7adA6Ty5/M3lGsAoNrPqncOC2cDZbhQ6Vpy2P/WheOtG08U+mFi3qNfZeFsQIhmG4+K8otioRZ
-	gMga4n/XxHfM7cUx7RYlV9sw5mj+NUAA0q2qRdZLyD3K7XMRAWeL/O+ZA0NvNEG6dkQh5h1iPBU
-	ZOCiLsmREEszu1BMjysti2O4w/PYjlkISOrCjx7nE5E+TyIjncWuRN9xBl9bLj3Wqp68ArLX3A+
-	fo+/LlD0XwxrVnJRbV68RaiVVw==
-X-Google-Smtp-Source: AGHT+IHerZJCcUba5+2uQMpJ6FxRljVNwdYl2gum46dsHYwuSY7HzXegJqiAeVDE22k7LOpkVelMjg==
-X-Received: by 2002:a05:6602:b8f:b0:85b:36cc:201b with SMTP id ca18e2360f4ac-85e751c2403mr101382339f.2.1742926683683;
-        Tue, 25 Mar 2025 11:18:03 -0700 (PDT)
-Received: from CMGLRV3 ([2a09:bac5:8152:1b37::2b6:1])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-85e2bc13d74sm217164439f.11.2025.03.25.11.18.02
+        d=1e100.net; s=20230601; t=1742931346; x=1743536146;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=grP25x16Wo7Fb4WipDbMu3jz9s4iEFrXl9o03iMXH6Q=;
+        b=U6hdHclnX5zZBmvr3bwAMWXBg8UICs0x6ueoAORQNuZfNgjnySzhfYhTPRbKLTT8Dl
+         XNd+zPW0Sxa9NO47zfOQ/c00t0RhTH1jGkh71t4nOnmCOtOG9fCCIfs1bw0MR8SF4CGi
+         tiCGwSF+owFEnYNzusMJePbp4iYGczAnhVjzXvgTAACxlL6BRikLyALbinq0H9VV0ws5
+         5fBXx7oDQWqbkG2vJ82Yq0SPZyDt/8RjXxAUHBiz6GV+L6EM2bncC2qULG1lA/acD1Dg
+         R8uadUiPW/WgHlwGTQdEI4qQqopkiF8s5rzZdlFnL3PJ3fKIvNfHo+jDPP7/5BAiUeV+
+         CeCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUAGrSc/EA5Owh7WwL/Ya0eYciEWpWMCbOHcCt80Y6fFrpVvg8oh1hM+0yxqRDe/h6YIkClGMNM/zVGoSJCqK5iiNqlMLRx@vger.kernel.org, AJvYcCUuiZJ3miKZt+3cid0AJO/kCi5I+6WVDTQwn5yV6MR6slyH+AjV61fhs/o6467uTCaydBKFFUHCfd2f8/kS@vger.kernel.org, AJvYcCVuYmJlH+sFWWbotQTaD9SGX+boMD2oHdNdvLLnj6oAOUxlObSVm8UWHC7oHlXiJiWR0IgS+w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQknC4x0Nhz9Y1ttMPFzv/JKWzNsgCZ8Zb5NX5NlzXLZ1LEwcD
+	B1dbbRXRSn4ZxoEw+HYfOeEP0f9IEAJG5SaqpIa0AscqoDlVE/SJ
+X-Gm-Gg: ASbGncvVd4qbWA0DhxsYMIKlOD0JAmn5P3rT6Z/OLNmDusnzmY9P0IPHyK6hlIAFsgY
+	5f0XgB2mGHUtfUVEO++bUoTf0K06iTp/YaFT+ORLp9mKO3DKtxYafQQCj+JyKjvtQ7U7QGqj4mG
+	q5s8SVn447IKGTxwB6FsSefiegirX0rroDx1dV1JbG6NlnDO8/L3X4sLRsl3bmpi4k817SwTmv0
+	OYcHkYFdsj2Zi6hYlibBcRI+FHikg3itk1X0ig9buGa/e7wPQvdJlFAGPXnWMghoonXpNCFX256
+	9x0wJk4cqEDhLCQiiT5ymzZfx5dIDyS1G6ikxoeiVQ35uTL2fQBQFRqkoTECYtc1SNhno4c=
+X-Google-Smtp-Source: AGHT+IGFskIGDs/TGx5glreuMOfmCRl15OlzDlLN6YqYkZAEgIdWGB3N8EyqUjMnpcrTDfnZD8yA0Q==
+X-Received: by 2002:a5d:5f8c:0:b0:390:e7c1:59c4 with SMTP id ffacd0b85a97d-3997f90123cmr17136626f8f.13.1742931345512;
+        Tue, 25 Mar 2025 12:35:45 -0700 (PDT)
+Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43d4fd9f058sm159064355e9.28.2025.03.25.12.35.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Mar 2025 11:18:03 -0700 (PDT)
-Date: Tue, 25 Mar 2025 13:18:00 -0500
-From: Frederick Lawler <fred@cloudflare.com>
-To: Mimi Zohar <zohar@linux.ibm.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>
-Cc: Eric Snowberg <eric.snowberg@oracle.com>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-ima-devel@lists.sourceforge.net,
-	linux-integrity@vger.kernel.org,
-	linux-ima-user@lists.sourceforge.net,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-team@cloudfalre.com
-Subject: Re: [PATCH] ima: process_measurement() needlessly takes inode_lock()
- on MAY_READ
-Message-ID: <Z-LzWCbROAI2H2Dx@CMGLRV3>
-References: <20250325181616.79540-2-fred@cloudflare.com>
+        Tue, 25 Mar 2025 12:35:45 -0700 (PDT)
+Date: Tue, 25 Mar 2025 20:35:43 +0100
+From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: Eric Paris <eparis@redhat.com>, Paul Moore <paul@paul-moore.com>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	"Serge E . Hallyn" <serge@hallyn.com>,
+	Ben Scarlato <akhna@google.com>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	Charles Zaffery <czaffery@roblox.com>,
+	Daniel Burgener <dburgener@linux.microsoft.com>,
+	Francis Laniel <flaniel@linux.microsoft.com>,
+	James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
+	Jeff Xu <jeffxu@google.com>,
+	Jorge Lucangeli Obes <jorgelo@google.com>,
+	Kees Cook <kees@kernel.org>,
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+	Matt Bobrowski <mattbobrowski@google.com>,
+	Matthieu Buffet <matthieu@buffet.re>,
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
+	Phil Sutter <phil@nwl.cc>,
+	Praveen K Paladugu <prapal@linux.microsoft.com>,
+	Robert Salvet <robert.salvet@roblox.com>,
+	Shervin Oloumi <enlightened@google.com>, Song Liu <song@kernel.org>,
+	Tahera Fahimi <fahimitahera@gmail.com>, Tingmao Wang <m@maowtm.org>,
+	Tyler Hicks <code@tyhicks.com>, audit@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v7 01/28] lsm: Add audit_log_lsm_data() helper
+Message-ID: <20250325.3932dbc7b476@gnoack.org>
+References: <20250320190717.2287696-1-mic@digikod.net>
+ <20250320190717.2287696-2-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250325181616.79540-2-fred@cloudflare.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250320190717.2287696-2-mic@digikod.net>
 
-My mistake, this is PATCH v2. I forgot to change the subject in git
-send-email. I can resend if that's needed.
+On Thu, Mar 20, 2025 at 08:06:50PM +0100, Mickaël Salaün wrote:
+> diff --git a/security/lsm_audit.c b/security/lsm_audit.c
+> index 52db886dbba8..a61c7ebdb6a7 100644
+> --- a/security/lsm_audit.c
+> +++ b/security/lsm_audit.c
+> @@ -431,6 +425,21 @@ static void dump_common_audit_data(struct audit_buffer *ab,
+>  	} /* switch (a->type) */
+>  }
+>  
+> +/**
+> + * dump_common_audit_data - helper to dump common audit data
+> + * @ab : the audit buffer
+> + * @a : common audit data
+> + */
+
+I was tempted to remark on the unusual documentation style with the
+extra space before the colon, but I see that it has prior art in the
+same file...
+
+> +static void dump_common_audit_data(struct audit_buffer *ab,
+> +				   const struct common_audit_data *a)
+> +{
+> +	char comm[sizeof(current->comm)];
+> +
+> +	audit_log_format(ab, " pid=%d comm=", task_tgid_nr(current));
+> +	audit_log_untrustedstring(ab, get_task_comm(comm, current));
+> +	audit_log_lsm_data(ab, a);
+> +}
+> +
+>  /**
+>   * common_lsm_audit - generic LSM auditing function
+>   * @a:  auxiliary audit data
+> -- 
+> 2.49.0
+> 
+
+Reviewed-by: Günther Noack <gnoack3000@gmail.com>
 
