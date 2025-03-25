@@ -1,116 +1,129 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2197A269D04;
-	Tue, 25 Mar 2025 22:27:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB9231DE8A0
+	for <linux-security-module@vger.kernel.org>; Tue, 25 Mar 2025 23:02:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742941667; cv=none; b=qIup1Qhy2+9Rzyy2okgpboEiMNYlaC3+uIsn5SeClO2I123bX5jk/BGgz/hJEm2s7gjX2K0CN6J4FWDJIOe6U/i2q1EQ3yhqPnmIp7vduN3reMfj0a+aUBfpaxPhi9vC7IChlpSYsnl/T9JvaN1QNxqU/Kd9d+yv1olwMn9X6o0=
+	t=1742943755; cv=none; b=QKEs+eSLe6EjhQB0EZMrSns5ziM9HqgbGP55A4zMnnOZgGQT39c89+jBlODwI0aaxzht5ToFZbxcVkoVkowf8lpQ1yKVtUtKeIcnoPJ7e6+0NhgOjpaenNjMEyNyJimrp1xMHOmQmYfI0D2rlbpZiPCgBg5zt4j8Nb9R/nKrHeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742941667; c=relaxed/simple;
-	bh=I6Bh2Pj6j0LoG+gyB+9U4Am8CJTmsjj3+N2uNJx+TkM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k6gznCpay4J1C0P44S+BOYY2BU2EKpR54ZzSPcSZbJsZnuwQMa0AGoZmIODpJByV6xkHBculQ41HAvughlzuqYhKc9ysTq/O+GgEkBd8csnFrIHpnN6WLTJIuia8SpG6wbAoi9jbzDmphHD8gzMlEgH9UWus5gFIHaalCYGQVoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Ys7MDF98; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+	s=arc-20240116; t=1742943755; c=relaxed/simple;
+	bh=rvtaKCacTd+dMFEwCfsS4KnID/jFXOuQd2z1cHSbJkM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WBz25SMdETstxJtjkdBLH7xBZbTy0x5FrG0Eq40YkUaWoM7t+daHFyR0Ias+50zgnJMSMB51a9vUjRLhxea5KJD6M2Zz4dlJ+PkJlgHP8LYk06gpGTM4NfqiWSMNPRK5QtrtdXmiXcq9fIVwmTg4wyWhA91rL5djaovo3kn4rHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=XpBMVYfS; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Ys7MDF98"
-Received: from [10.17.64.173] (unknown [131.107.8.109])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 3AD04204E596;
-	Tue, 25 Mar 2025 15:27:45 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3AD04204E596
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1742941665;
-	bh=yu+zl6twDuJmGCQvb+BJhKb1ZJUDVREmR4BMuDWngzo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Ys7MDF98d7F6l7lO9UCnXF/KFQKz7cXYNKkmxX7+w/ntWkDq23pjCzvFEabp0ldlI
-	 yZr6ADwe2o1JSR5oVDNsw3uMxSyxVLVT+h+iKf2UIUheJgaUP+FqcD3CVAFghPZ4WW
-	 GBj5l4/HREsMBvqHdkzChu8fcboRIvH/w57jXdeU=
-Message-ID: <6583378c-55ee-4192-a95f-ebaf3f708bbb@linux.microsoft.com>
-Date: Tue, 25 Mar 2025 15:27:44 -0700
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="XpBMVYfS"
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5dccaaca646so663595a12.0
+        for <linux-security-module@vger.kernel.org>; Tue, 25 Mar 2025 16:02:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1742943752; x=1743548552; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=qpbsUEYRhF7ODaqFjujOp9s2YRkxd4ZLPAugypnEK7A=;
+        b=XpBMVYfS71SljWlHyNX4qN+MQOCcaZe0ZecCfyhVU4pPVEjlKFE9F/0MC6NG2fdiOM
+         /ALHDLvrPoJoFN+FO3w8AqYX/FpmWNYH3kw82Ck1hIFoPo6C9TybY7VkOdVvX4CjV1Nv
+         tXLYlRknQvDdE6z9XDy4Egjrczgr+LIzDFPNU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1742943752; x=1743548552;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qpbsUEYRhF7ODaqFjujOp9s2YRkxd4ZLPAugypnEK7A=;
+        b=WTgO9nT5QqzePHnr1k2t2QjOIfhvMsJh0+AdaRY5WjAqdhtS/mnv8LniB0gLoZRApE
+         Si4HPFhSa9PytxPKdq61a96Sa06mONS1uyW8qpEwaxrHpBatQteQ5UhX6gXh6RdCMoDk
+         m+Hj+21ZZBLHSpY5n0zTu9R3fbQz9Gn610XWz/yZhWUXkRqlnF57CVMB8wgnyoF/6f5g
+         rKN9qjU5fBhBzHKcTRH6YyDJvWuK+8t6VI3GKJD6uDlCqsikIG4std9IzeFA1QzIRJQL
+         bsi9jcVcLLXCQ7DsabQYdH3TMwXz5sRH/oIDQryiz1b23eW0g5Q2aFm31JrFDDTslrMd
+         su8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVRMCTOYjCeZuBIc3OogQci836dc0fBEZtfvdfrpy5ZpkyTXE0QwPHBysexmqnVCq5BIhGC2klmW+rw5EAaEeXTwwHryq0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzI1hWTxQn4ENwEbjenvuvcfs5tYKghllrbD9ToS7171xqsaucZ
+	mpR/aQKiWLtokNwjTw0f8rWPp+BCMbDzXqaRnj8wElJgHFaT8leRhF/baq0P5CWLBeUERXAzeNj
+	kJQrIlQ==
+X-Gm-Gg: ASbGncs4M5YuuW+XURGtWJ0jfd3Ajsp0mJWnhsVuWeMZsfcxO++Bot6xVniRJ2I3wAX
+	OhjQRjBS5Ya5zs6AoI2nhoqbsZWV7zVy7D2f7hqJwRMe8neCoxZYkOBFwIt+xIBU/SCOVgq6ZOo
+	3gMMf/AGruzDl2Cy+FwydPmSHjEhV21g91Up90YaMOyU2aPMqTKwkOt+vO2fIpkZHnOl+KvkE8t
+	y8CX65FNYb/OYUypQshgFCRItxRJwwYMeSdDbaxwM4UgouA6/7RRCZqA+ehnQxdp9NMm43QnytY
+	CWxPcU/ZzJ5+XmOQImVeYPbQ0osT1RiNdpzhT1YuXCr0eOPW3FzmVNU9iMswiaJlCu7YxMNdIy3
+	p1ftk2Mr1kPkCZOWHoK6eM9hmzt83kw==
+X-Google-Smtp-Source: AGHT+IF6F5QkXzYuL38d+Z/gh90YPXHtPGuhQtjlbbkhxEDIY9jA9hv7Qmk0wAxF1GXLp/NzIfB8ig==
+X-Received: by 2002:a05:6402:350f:b0:5e5:ba77:6f42 with SMTP id 4fb4d7f45d1cf-5ed4349a3b5mr1560491a12.4.1742943751710;
+        Tue, 25 Mar 2025 16:02:31 -0700 (PDT)
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com. [209.85.218.48])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ebcd0c7759sm8374131a12.51.2025.03.25.16.02.29
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Mar 2025 16:02:30 -0700 (PDT)
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ac297cbe017so61812066b.0
+        for <linux-security-module@vger.kernel.org>; Tue, 25 Mar 2025 16:02:29 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVdyh/+Hfi80DrEaeXIA5nDMEvzTbvCCzUIg4+EsjXAbCRW27mY/AWmf8DwhHNoicm3NHRGvPctFE5WuCOcc3iM1xAWXG4=@vger.kernel.org
+X-Received: by 2002:a17:906:81d6:b0:ac6:e42a:fb4c with SMTP id
+ a640c23a62f3a-ac6e42afbbbmr77412666b.9.1742943749513; Tue, 25 Mar 2025
+ 16:02:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 6/8] ima: kexec: move IMA log copy from kexec load to
- execute
-To: Baoquan He <bhe@redhat.com>
-Cc: zohar@linux.ibm.com, stefanb@linux.ibm.com,
- roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
- eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
- code@tyhicks.com, bauermann@kolabnow.com, linux-integrity@vger.kernel.org,
- kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org, madvenka@linux.microsoft.com,
- nramas@linux.microsoft.com, James.Bottomley@hansenpartnership.com,
- vgoyal@redhat.com, dyoung@redhat.com
-References: <20250318010448.954-1-chenste@linux.microsoft.com>
- <20250318010448.954-7-chenste@linux.microsoft.com>
- <Z9t4LVpE470DMBYU@MiWiFi-R3L-srv>
- <3d7b5e06-5166-46bb-89dc-a0b95ca7c767@linux.microsoft.com>
- <Z+E7X6LuQ82q1i5V@MiWiFi-R3L-srv>
-Content-Language: en-US
-From: steven chen <chenste@linux.microsoft.com>
-In-Reply-To: <Z+E7X6LuQ82q1i5V@MiWiFi-R3L-srv>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <d0ade43454dee9c00689f03e8d9bd32a@paul-moore.com>
+In-Reply-To: <d0ade43454dee9c00689f03e8d9bd32a@paul-moore.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 25 Mar 2025 16:02:13 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjbahY4JjLCXNT4o3xVq2cejqBG69z+MNfHsN9FQBnbOw@mail.gmail.com>
+X-Gm-Features: AQ5f1Jq6H2w1UwofX9xTNQfWxTgnnyE_4keu9omt7uh5If6fR9mM7-LXzR1V2TI
+Message-ID: <CAHk-=wjbahY4JjLCXNT4o3xVq2cejqBG69z+MNfHsN9FQBnbOw@mail.gmail.com>
+Subject: Re: [GIT PULL] selinux/selinux-pr-20250323
+To: Paul Moore <paul@paul-moore.com>
+Cc: selinux@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 3/24/2025 4:00 AM, Baoquan He wrote:
-> On 03/21/25 at 09:23am, steven chen wrote:
->> On 3/19/2025 7:06 PM, Baoquan He wrote:
->>> On 03/17/25 at 06:04pm, steven chen wrote:
->>> ...snip...
->>>> ---
->>>>    kernel/kexec_file.c                | 10 ++++++
->>>>    security/integrity/ima/ima_kexec.c | 51 ++++++++++++++++++------------
->>>>    2 files changed, 40 insertions(+), 21 deletions(-)
->>>>
->>>> diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
->>>> index 606132253c79..ab449b43aaee 100644
->>>> --- a/kernel/kexec_file.c
->>>> +++ b/kernel/kexec_file.c
->>>> @@ -201,6 +201,13 @@ kimage_validate_signature(struct kimage *image)
->>>>    }
->>>>    #endif
->>>> +static void kimage_file_post_load(struct kimage *image)
->>>> +{
->>>> +#ifdef CONFIG_IMA_KEXEC
->>>> +	ima_kexec_post_load(image);
->>>> +#endif
->>>> +}
->>>> +
->>>>    /*
->>>>     * In file mode list of segments is prepared by kernel. Copy relevant
->>>>     * data from user space, do error checking, prepare segment list
->>>> @@ -428,6 +435,9 @@ SYSCALL_DEFINE5(kexec_file_load, int, kernel_fd, int, initrd_fd,
->>>>    	kimage_terminate(image);
->>>> +	if (!(flags & KEXEC_FILE_ON_CRASH))
->>>> +		kimage_file_post_load(image);
->>> machine_kexec_post_load() is called by both kexec_load and kexec_file_load,
->>> we should use it to do things post load, but not introducing another
->>> kimage_file_post_load().
->> Hi Baoquan,
->>
->> Could you give me more detail about this?
-> I mean machine_kexec_post_load() is the place where post load operations
-> are done, including kexec_load and kexec_file_load. There's no need to
-> specifically introduce a kimage_file_post_load() to do post load
-> operaton for kexec_file_load.
+On Sun, 23 Mar 2025 at 12:39, Paul Moore <paul@paul-moore.com> wrote:
+>
+> - Add additional SELinux access controls for kernel file reads/loads
+>
+>   The SELinux kernel file read/load access controls were never updated
+>   beyond the initial kernel module support, this pull request adds
+>   support for firmware, kexec, policies, and x.509 certificates.
 
-Hi Baoquan,
+Honestly, is there a *reason* for this, or is this just some misguided
+"for completeness" issue?
 
-Updating the machine_kexec_post_load() API to carry flags would indeed 
-require changes to multiple files. This approach involves the condition 
-check if (!(flags & KEXEC_FILE_ON_CRASH)) and ensuring that the flags 
-are properly passed and handled across the relevant file
+Because dammit, adding more complexity to the security rules isn't a
+feature, and isn't security. It's just theater.
 
-if just adding a API kimage_file_post_load() here, it is much easy and 
-clean, right?
+And it adds completely pointless extra cases making the different
+cases use artificially different code.
 
-How do you think?
+The commit message doesn't actually make any mention of *why* any of
+this would be a good idea.
 
-Thanks,
+I've pulled this, but honestly, I think all those new cases should be
+removed, and if people object to us having "LOADING_MODULE" for other
+kinds of reads, then I think the fix should be to just rename it to
+"KERNEL_LOAD" or whatever.
 
-Steven
+Because dammit, this "make security interfaces more complicated just
+because" needs to STOP.
 
+We are literally wasting enormous amounts of time in the security
+layers - I regularly see the lsm and selinux layers spending *more*
+time on security than the actual operation takes because the security
+people have written random code without taking performance into
+account - and I need to see *reasons* for adding more crap in this
+area, not "let's expand" with no actual reason given.
+
+So I really think that commit needs to be either reverted or explained
+very clearly why user policy _needs_ to care for the difference
+between a module load and a firmware image load.
+
+Because I think any such explanation is likely complete BS. The
+difference between loading modules and loading firmware usually would
+boil down to "different hardware does things differently". There's no
+obvious reason why one should be considered different from another
+from a security standpoint.
+
+               Linus
