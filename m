@@ -1,109 +1,116 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AAD913633F;
-	Tue, 25 Mar 2025 19:37:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2197A269D04;
+	Tue, 25 Mar 2025 22:27:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742931430; cv=none; b=rVsJ0Nw4GZX4r8OKYSUdX2pMIOxCcNSUkyAUj1KnMXzTuadAoZaYBO57xqYpLCY3EKabznknpKi8TXsbtJOmDleBJFOBlAgvTVzwP5aViBqflF/dNa415MBps9hiA20YGlvGLERoBqEM3VJkYq6/e6YXgG/A+PIbShkj+W+aong=
+	t=1742941667; cv=none; b=qIup1Qhy2+9Rzyy2okgpboEiMNYlaC3+uIsn5SeClO2I123bX5jk/BGgz/hJEm2s7gjX2K0CN6J4FWDJIOe6U/i2q1EQ3yhqPnmIp7vduN3reMfj0a+aUBfpaxPhi9vC7IChlpSYsnl/T9JvaN1QNxqU/Kd9d+yv1olwMn9X6o0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742931430; c=relaxed/simple;
-	bh=uthNjXBoXkAGwHsnyFmQnHx+HwMrTRlPfgpjVBvqb3Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Co7AGaLdSnHTdX8hGpfKHt074OJUA3AaYzc61CgPuFQt4rYY/2N+eaPzhinPOMQbCSlPeClG0km0u+5u0U8hEJBto1t5rHWFmXto4eVBSGGZUWF8kt/QNYQVQ500gFxJuZPLMF0FeShec+3oGJQ0affHgpZ6Oa1EVztInqmRzzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZP8kv4tk; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1742941667; c=relaxed/simple;
+	bh=I6Bh2Pj6j0LoG+gyB+9U4Am8CJTmsjj3+N2uNJx+TkM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k6gznCpay4J1C0P44S+BOYY2BU2EKpR54ZzSPcSZbJsZnuwQMa0AGoZmIODpJByV6xkHBculQ41HAvughlzuqYhKc9ysTq/O+GgEkBd8csnFrIHpnN6WLTJIuia8SpG6wbAoi9jbzDmphHD8gzMlEgH9UWus5gFIHaalCYGQVoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Ys7MDF98; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZP8kv4tk"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43cef035a3bso42590315e9.1;
-        Tue, 25 Mar 2025 12:37:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1742931427; x=1743536227; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=rH4vDDOqAIrVKZRAgJWmuhvlSdSlkAEZ46YZCOWscpc=;
-        b=ZP8kv4tkYh+WCHmAiFNO8CpRzBCCUrMguwlCo5QnknvzqhSBgUZdxmHZ92TsamZhrN
-         GSteVHRjXDYoFDpEIwWufBsPnNlchMKQWK740CIM17kgE11jBS+hRy1A14c4XSjk68ic
-         o6qV7Aw/axNIFs9Db/BnRI9TQu4N3wzn7NqVlYGZefLzqBgmSJvZ02CAjfQjy1x0+TB4
-         Z61Or9SwyVSx0tpm6in6K3CPVLqhr1ekWqQpPtCpfEpyL7PIMjAIdktVT98O27IVZ7qs
-         56+v1pTgKVnQROUU24/SgVT8kLUIe7Uq3g5Ysb0XFyu+oanlS/pIxnMGxiCVga/nVUsq
-         UWVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1742931427; x=1743536227;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rH4vDDOqAIrVKZRAgJWmuhvlSdSlkAEZ46YZCOWscpc=;
-        b=VKkk20joQFoau/vffW9xoZBH0SXdSTccZO4GbAUFaun6e0EOXos8Mcxou+H3c6wtgC
-         wUaCCbnwuusG8pZH7MUatnexSHQA19DAfF5oil6y9o5z7/j0IFeu2kZlxsOmGViEJMF1
-         IK5Y1sd5BwmwgVmEmK8uCosUsef/MlyAMy58njCC9qeNOmGRNfxVf/VodvL1tvw92EoN
-         DF7AklJdBhEIkYW+W/OLujRa3YLiOWvQbi5pVSnYo5tfp5xxokX2u6zJB/h0IKFcxn3r
-         wLKQij9UgzeMOxMRGZ3Q2lr+e5gQUv/HB8HR8eb9ejFzSjH5yfV05fwETw2zFFtgOf7g
-         r8sg==
-X-Forwarded-Encrypted: i=1; AJvYcCWm17WXRbjKLz9K265hIswAirbzQllQwIuBUGIYAXld8dwJkS+ns0POh1+zx1Ck1Fow8+GTzw==@vger.kernel.org, AJvYcCX+yQTkt3Y/a1ji63kkQwXNsebsgrOsOH0eFvVWodQrqjwebEQzGPdljfJ8JjAT8jX0NbxXIdNBovLaofZ3@vger.kernel.org, AJvYcCXmeGmsSZ8Zc8qT/Jnajb7EDcKJ9nBjBOM83AFWffq4o4eW2CKFh3P0WP+EZf3TUFA8tulP9blkH4SNwxjMhtMKyfmSxNKF@vger.kernel.org
-X-Gm-Message-State: AOJu0YyP5fU/LWH14IDSZ/BI0rERw4tlGEZaQ6BessvxuVQAmcg+MDYH
-	Vn7VsP6K2QgvYiFb1P4nDg/C8fqe4KDseDImvah4z+erEHesCRha
-X-Gm-Gg: ASbGncuP7FHBg9HBIAsZr/9SDPdxUHQcp6L2v/TcPYajsx/at6uxXTBQjFoKZyV3v3z
-	uchHg48OgDfHK9Qkd7/vOwu1neZf9ZMHeRTCE16pkDgCvo+QNRRzIPVqheDfWwPU5GtxTTXNS1p
-	CwmnMfsD0ZsEjjyjOA+fJMZp0VP2WVhAwT8uZj5fgc5VNkveEQqYqY4xPSTYO5H5TbBKAFW3/zw
-	W8e5c1i/xuAUjL1YGdPFr5t9Skgx8J6UQdRqMuQbG19cEexX2KWNgqVEvM55ed6Hdrs2CR0ssrW
-	LCbXbHT/fVE2Y3uUCrYsoTYqSv2B8+YxTU3bA3V8d6Mj21KPYEqxr893jFHwXBIJlQswZpQ=
-X-Google-Smtp-Source: AGHT+IFw1NFR+crAxRcNWPmKUDM5DyrL5IeJVqh0zoYri/CvcsnKkABhXy2mkwDNvRPMfbvA77BJ1g==
-X-Received: by 2002:a05:600c:4ec7:b0:43c:fb36:d296 with SMTP id 5b1f17b1804b1-43d50a3c159mr133322765e9.25.1742931427201;
-        Tue, 25 Mar 2025 12:37:07 -0700 (PDT)
-Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43d6eab9d0fsm19968985e9.1.2025.03.25.12.37.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Mar 2025 12:37:06 -0700 (PDT)
-Date: Tue, 25 Mar 2025 20:37:05 +0100
-From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: Eric Paris <eparis@redhat.com>, Paul Moore <paul@paul-moore.com>,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	"Serge E . Hallyn" <serge@hallyn.com>,
-	Ben Scarlato <akhna@google.com>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	Charles Zaffery <czaffery@roblox.com>,
-	Daniel Burgener <dburgener@linux.microsoft.com>,
-	Francis Laniel <flaniel@linux.microsoft.com>,
-	James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
-	Jeff Xu <jeffxu@google.com>,
-	Jorge Lucangeli Obes <jorgelo@google.com>,
-	Kees Cook <kees@kernel.org>,
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-	Matt Bobrowski <mattbobrowski@google.com>,
-	Matthieu Buffet <matthieu@buffet.re>,
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
-	Phil Sutter <phil@nwl.cc>,
-	Praveen K Paladugu <prapal@linux.microsoft.com>,
-	Robert Salvet <robert.salvet@roblox.com>,
-	Shervin Oloumi <enlightened@google.com>, Song Liu <song@kernel.org>,
-	Tahera Fahimi <fahimitahera@gmail.com>, Tingmao Wang <m@maowtm.org>,
-	Tyler Hicks <code@tyhicks.com>, audit@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v7 03/28] landlock: Move domain hierarchy management
-Message-ID: <20250325.706d2d207107@gnoack.org>
-References: <20250320190717.2287696-1-mic@digikod.net>
- <20250320190717.2287696-4-mic@digikod.net>
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Ys7MDF98"
+Received: from [10.17.64.173] (unknown [131.107.8.109])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 3AD04204E596;
+	Tue, 25 Mar 2025 15:27:45 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3AD04204E596
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1742941665;
+	bh=yu+zl6twDuJmGCQvb+BJhKb1ZJUDVREmR4BMuDWngzo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Ys7MDF98d7F6l7lO9UCnXF/KFQKz7cXYNKkmxX7+w/ntWkDq23pjCzvFEabp0ldlI
+	 yZr6ADwe2o1JSR5oVDNsw3uMxSyxVLVT+h+iKf2UIUheJgaUP+FqcD3CVAFghPZ4WW
+	 GBj5l4/HREsMBvqHdkzChu8fcboRIvH/w57jXdeU=
+Message-ID: <6583378c-55ee-4192-a95f-ebaf3f708bbb@linux.microsoft.com>
+Date: Tue, 25 Mar 2025 15:27:44 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250320190717.2287696-4-mic@digikod.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 6/8] ima: kexec: move IMA log copy from kexec load to
+ execute
+To: Baoquan He <bhe@redhat.com>
+Cc: zohar@linux.ibm.com, stefanb@linux.ibm.com,
+ roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
+ eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
+ code@tyhicks.com, bauermann@kolabnow.com, linux-integrity@vger.kernel.org,
+ kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org, madvenka@linux.microsoft.com,
+ nramas@linux.microsoft.com, James.Bottomley@hansenpartnership.com,
+ vgoyal@redhat.com, dyoung@redhat.com
+References: <20250318010448.954-1-chenste@linux.microsoft.com>
+ <20250318010448.954-7-chenste@linux.microsoft.com>
+ <Z9t4LVpE470DMBYU@MiWiFi-R3L-srv>
+ <3d7b5e06-5166-46bb-89dc-a0b95ca7c767@linux.microsoft.com>
+ <Z+E7X6LuQ82q1i5V@MiWiFi-R3L-srv>
+Content-Language: en-US
+From: steven chen <chenste@linux.microsoft.com>
+In-Reply-To: <Z+E7X6LuQ82q1i5V@MiWiFi-R3L-srv>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Mar 20, 2025 at 08:06:52PM +0100, Mickaël Salaün wrote:
-> Create a new domain.h file containing the struct landlock_hierarchy
-> definition and helpers.  This type will grow with audit support.  This
-> also prepares for a new domain type.
-> 
-> Cc: Günther Noack <gnoack@google.com>
-> Signed-off-by: Mickaël Salaün <mic@digikod.net>
+On 3/24/2025 4:00 AM, Baoquan He wrote:
+> On 03/21/25 at 09:23am, steven chen wrote:
+>> On 3/19/2025 7:06 PM, Baoquan He wrote:
+>>> On 03/17/25 at 06:04pm, steven chen wrote:
+>>> ...snip...
+>>>> ---
+>>>>    kernel/kexec_file.c                | 10 ++++++
+>>>>    security/integrity/ima/ima_kexec.c | 51 ++++++++++++++++++------------
+>>>>    2 files changed, 40 insertions(+), 21 deletions(-)
+>>>>
+>>>> diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
+>>>> index 606132253c79..ab449b43aaee 100644
+>>>> --- a/kernel/kexec_file.c
+>>>> +++ b/kernel/kexec_file.c
+>>>> @@ -201,6 +201,13 @@ kimage_validate_signature(struct kimage *image)
+>>>>    }
+>>>>    #endif
+>>>> +static void kimage_file_post_load(struct kimage *image)
+>>>> +{
+>>>> +#ifdef CONFIG_IMA_KEXEC
+>>>> +	ima_kexec_post_load(image);
+>>>> +#endif
+>>>> +}
+>>>> +
+>>>>    /*
+>>>>     * In file mode list of segments is prepared by kernel. Copy relevant
+>>>>     * data from user space, do error checking, prepare segment list
+>>>> @@ -428,6 +435,9 @@ SYSCALL_DEFINE5(kexec_file_load, int, kernel_fd, int, initrd_fd,
+>>>>    	kimage_terminate(image);
+>>>> +	if (!(flags & KEXEC_FILE_ON_CRASH))
+>>>> +		kimage_file_post_load(image);
+>>> machine_kexec_post_load() is called by both kexec_load and kexec_file_load,
+>>> we should use it to do things post load, but not introducing another
+>>> kimage_file_post_load().
+>> Hi Baoquan,
+>>
+>> Could you give me more detail about this?
+> I mean machine_kexec_post_load() is the place where post load operations
+> are done, including kexec_load and kexec_file_load. There's no need to
+> specifically introduce a kimage_file_post_load() to do post load
+> operaton for kexec_file_load.
 
-Reviewed-by: Günther Noack <gnoack3000@gmail.com>
+Hi Baoquan,
+
+Updating the machine_kexec_post_load() API to carry flags would indeed 
+require changes to multiple files. This approach involves the condition 
+check if (!(flags & KEXEC_FILE_ON_CRASH)) and ensuring that the flags 
+are properly passed and handled across the relevant file
+
+if just adding a API kimage_file_post_load() here, it is much easy and 
+clean, right?
+
+How do you think?
+
+Thanks,
+
+Steven
+
