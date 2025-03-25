@@ -1,120 +1,227 @@
-Received: from sonic311-30.consmr.mail.ne1.yahoo.com (sonic311-30.consmr.mail.ne1.yahoo.com [66.163.188.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FCD718024
-	for <linux-security-module@vger.kernel.org>; Tue, 25 Mar 2025 17:01:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.188.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69D4825F986;
+	Tue, 25 Mar 2025 17:10:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742922100; cv=none; b=KkJqys1klyAwFXRFFRhT9d2Pgld6ddQINNhwV4kQ1l3gGMU+xeK3W2uQ4I8eqtizRf4akVk5N2e6Lf9TV6Cpm4q/5p3WG0MyHZWhQjDN8L9M/B9CbHziITLlWpveSS5p8FWMJwoiVGydOffjGlAuzbIVvjb0KwcCayhCheeTlrQ=
+	t=1742922612; cv=none; b=phBxi3S2+xlTfZzLFgB13/MP6AJvSdgoJYIK6wEL5sBuHJnVlxBAc4Zz2EyOXI3DSVaTPZz8Q/cZ5SciTQs0YpAEhTp7vkWJ53XNc+Hy0vX3R5PExhAAc00DQznbpy6TyUjEYBp37MbZBHdLGMCZWO9WyzBnfLKRt3hV2fkcKiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742922100; c=relaxed/simple;
-	bh=jS67oAesz1Y8NauC3CC0XT71C2aVOdBEhvuvi52kWMg=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type:
-	 References; b=XbN9kV/bER3JT7b4uGZCf+ha+ys8+G4fU07Rl0erOMG353pJgsxKbnU82Z0Jhmix8vBxaLAXdQqT04E3c6hu1NdEEuuhELorAS0vFK5qpBL3Gn7JXx64Hv/7hky/CkQi73cosOPZ7wWQ7c2MSyCYpXxxfcGjxKY7pqwBZL67tgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=e29ojos+; arc=none smtp.client-ip=66.163.188.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1742922612; c=relaxed/simple;
+	bh=w9BBWOgSO/rGkVzgU/ZNodDjACEIv3l9gGHZ2yNZ4Kk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=i6PJcS4OcZNlO/4B6r9XSSvw6QvVtgsIjesG1xLVzdiOpR9Gt0VCrvRpwzJ6bDXsS7itEIm5hNpCzOdkgjAR7C/yqSweGlTgEnecNcvKE5HJTqBLkTCzY/E8V6GhMbA66YQEH2xq6e814/xn/0nKvPcpKXaq9fqwxrPIZ+PMbwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=MZCgjoVe; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="e29ojos+"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1742922097; bh=IdykXTVI7p69c2IyaMS+lYXEfvBTHgFMPP9Erx27P4c=; h=Date:To:Cc:From:Subject:References:From:Subject:Reply-To; b=e29ojos+ss6yCAgP73oW0bvidnQySAyulJ2vJnOIIlfrXC/hsAoXu4q1cn4XihFpABlkLA7NAHk6Jq8SaQrc2npUg4SK64YnQS0FN6Z+hZm7Pbe13QjaX18//BOo6UeTagLcIHx+QnuYReeLPVgXbhidKABaUlo4+AQ4Lo5grl+RUN1QEX7/jJtq4uvrr7011/o/RUCTXrJY14PvW5mCjk8FJfOoPevEzdoa2C0tZyV69E6RvrV1HqKDTJ2budKQhKheMZ8XfsjbNdGKt055jQEmGBGKNuwhj6+TTdgi+14GYK6ObceOR/i+mX239SU39Be9LYLMcOZzWW5dVo1vJQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1742922097; bh=K/1o+bFzeleqH+jipe0QFZBxxtY/J9dTHO3j65EWGK5=; h=X-Sonic-MF:Date:To:From:Subject:From:Subject; b=gDRLkd+akpftsitH44hammQfiP64casyrrnW8L2El6Bhu88/B6jxdTl3cO8JeCDmhA9bn/9N+rfDKmJwzPHKycV/cGTdlG7nh3RhuWc1TK9gOOxTmMwD9RUxp+chRJ4ys8kxySP2vtB1yLdBmiG6/HPwd15wAovJue98fTweYn4mxvNGELcFoty76aam6m4+bRw25UU0JWhL8tH2n6qOXLsSkJzCnIUPJsfIrCCj8+JwED9DH0guEjbN/J4/63HNLYNn4aawbWjL67c/pLHP3flhfZO6AzXIYhF//keLy5kHJgds3rK5J/JhHHzPlaXZLK918g6OLHBZ+htsp5oNIg==
-X-YMail-OSG: hh8J610VM1nn8Q7n2Y0stMAoO0augQKmaIrHkmErDYZt7wtQyW3SQ472oFrbEdL
- 172vHTm6gsX6GkSiBt5xzb.4WC2nlSkUTPuT8NCt_Wd2RJXWPT7jUN64X6a7JIMzqOflZODcLu0m
- frtHIYnjtHNlnfU1_YKz48.44WUApWeXErcbYj2H3M.OpXqFQKuK6Wn2VuhORh8nRXl9rWO9FTGb
- MPT3lVjR5B5hmIn2xB1LlZVg7puXQndIrSsklIAm82aEDYcFQeh3a456DxDfTAkymRHRM1RInI2Y
- gdoB55ixNUGexCYPsqfpHrQNZG7jJNwWAq_2xU4Ax4UNCR22Zqu.rrfCAQow7PzuR6SJ1UVppGB0
- _lHYMqiHP4A3zYnmut2urA0tx5dXV08irSB2RV_0.N1R8S3Yiw4I5NfkBBfoS.qC4DsEoOCA_r_Y
- Edz_epOVydesNXsQF.l8xRP_eSy7c0X9g3KxNJeBCKLgXDg9XpHEy2cAN8N3a18TqPZlAWtv.agk
- qKA_N4P26nxGwnHRqYwDtx8GifL7YvSSfXth8KWE90k7bgdzaUYO2Ull8J0ECiBuhfPQMDFKHIrb
- ETIUWr1jKaMND._PFX4j6E6KFDr1Vj.4b0nf.XmRkUbcu50xPZUfVczPtBjWGlpsWEIYRKg7VcIs
- ewI6J8zsttK54RzO5HSbjV3x7kzPYsDkYQ1Pulgt0WB8rxnZ1XDMIJLzMBHob6l0SsES1zzvtLjX
- G2_EfAXB6VhuYmmSfZJh.F1YrlnXotjUUv9lQwGCQt_veKn89NOJ4j_rzN_08UOBl5cUAyBrdLO3
- AWYsM2LCnAXdWU2blQ1Jx.ELIIIJg8NA1.Ixi_lp7iDibtc1ABci46MrfEEi7HnyO8Ecdb2AlnAH
- G1Vl.0Rb.kpP_xn05o893LewqRyv9DsHy8M1tjlN9BLH_TWeVfDSakxT8UUiefCIUpdqG91BQMNj
- AJb7WcWnHQ5S3NPViV1F6rfPg23qVHiOg2PVlK2d6D5dL51HQXunFDLsvmO47A6WThZhNG2lnpUG
- 12zCeCXNTcr.z5Sbg5O404sYPHGRCT30gixj6QYo4IhjcpybVh0ZRmIsCKxe01njBxQDQZfn6hQ8
- rbB_mvHpVsEyyNbpUSnV4YfO4DnIvsVXrcWrVvD51tVSbPrc6awbDXI7knaNEBqK39Lq_.I_9_od
- AguP702uuI7PwPQCIeKaq7C7XyQTZ3OTGXoquT00I002RDVqzgiB.TxWJ_VhE5pT7iBl1lxKKqVc
- ECWUAi8KuUMmDPqXUl.JzNGl3LYdhyZc8c3b.gk3cfEYv.iy.HejHFpTU_qzZruqjU_cTvjzRH3N
- OZtmkO7z7csyxOM_jvjhIX8AtAJP2evmC_NP4O1bngIX2YG9ktfxGf.LnhlbRWFntzQ2Ck4KOlIN
- 26AAUqaf8IgXKO2mcp7nizf2UsRQf2Gu6pr7IarlyMatzsaLXjh7VBWd4hl9B80.DtOo.7ROaSLf
- phyt6T99ZzdrbcoJ4xu.Jty07IPPEpreDrUPviB0ckLJ9mezlmv_hqQqxLBWDsDWza04gRCpH_if
- 1zR_4Cl9ReXCrSkfoPlhISMbPGhfywGq_QC2qODNrlHjncuwK4ZSCK48VsFUB3WfMRdNhCucyE0d
- 0P.fnON.S299u1WlCCP6o1F5BxAnHxvP9yMt4A4VrRZ40EGTLW9qhy7kIWkX0Boc4_q7o56lRH7i
- WlLCJ8j4AZ7K6SGv0p3hQQsYRRtl8XFnJ1qsGc8wcs4I.eqPq6J2VjZOCThL41RqqJtiD1M3wpGa
- kJaDQLAF_1Vr6R8omJZfojQ9uIDa2NU9V_l4kbuuN7V0r93pRP3swyPBPMXytxBPtYMp7QdLKM1D
- L8TcVrsqj97YI1X70oK82IteSsjWIuz6qhEeO6Fr1gfR_Ub9pGHDZHB.LfUJoNN2pmyIWjF_esuu
- f.X9.2vmoVNYSSWb3AUM3XaYIKuq1vXHkpJ3rLLmaEP7Z3wIhWXOE0G1kVGtKoTWT21XPry8oEFP
- dL.Pda8LeZCpzyPAnMJRH_5zrayqwVvDZnCsEgK7.loH.uNMe93kj5hVwUcM1RL92AD0_7FdQAlR
- W0K.Rk1yUDrRlfMcPR8K2yPms6AespA0nw4sj5pO.CJ2FtqSjvKRx6V6EJThkAntGkfEuwbb1DV4
- OHNEryIONgrRg63e048KkFWjOZ13fAn3KIypmm2Hug1fsdsid4HaBRjh4kvosCxgyCS9I5z5iJJm
- Z5_0KsdFt8ZdRJ6toeOL7DQQ.OebtnUKCzr0MN.d3sC1W0QKVndEzeKNOfTi7e1cQRJdXHewS1ym
- 0axDhl84NF3B5DUKDL9lFCw--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 18af2867-df7f-47b9-ba43-8f57eb44f25f
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.ne1.yahoo.com with HTTP; Tue, 25 Mar 2025 17:01:37 +0000
-Received: by hermes--production-gq1-5c477bf655-s8xr7 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 4653def2fdc5d2c09a7af09c5b8d8672;
-          Tue, 25 Mar 2025 16:41:21 +0000 (UTC)
-Message-ID: <8040a0e7-2121-4389-88e5-c6f209bfca0a@schaufler-ca.com>
-Date: Tue, 25 Mar 2025 09:41:19 -0700
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="MZCgjoVe"
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52P9Qx7f024088;
+	Tue, 25 Mar 2025 17:09:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=ffp4PO
+	3ojizHrqbGvLCBZPWbAyU8EVjNnz0/qg/oYMM=; b=MZCgjoVeNKgKaWIv+9jkVp
+	eq281PhuIQaUasCOFkjLqhi2QOIQ6BB1oJFGAz5WWqHlx8gNBs8e+nfgJupKP6ez
+	FAbcV6iq9eNwGrC1AKD9wZ4ZFP2I61TtAj/6Rr0G1vvs2T3ybEIp4oSjC7quNTdF
+	eJ8F+EV53LEcqQA/p+RkcPsX7eUIyGlYV7QWr/fguJ5wle2EziPcY+cyxhgJ66DR
+	4EUtr0G9kWvPs8mUGZ1QvMSW+AMQYoar85aVos/j298TdsQXru3g5+Mj4iQcrz5Q
+	4fU18vFCO/tffURNtdTqYSlT6dJkQzwQPb71L68FcrU3hj/bk/8xzAQMehV1Gxxw
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45kekyw25c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Mar 2025 17:09:56 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52PGrEK4007426;
+	Tue, 25 Mar 2025 17:09:55 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45kekyw258-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Mar 2025 17:09:55 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52PFr3q2025455;
+	Tue, 25 Mar 2025 17:09:55 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45j7x04jct-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Mar 2025 17:09:55 +0000
+Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
+	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52PH9sSf14549736
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 25 Mar 2025 17:09:54 GMT
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9DE1A58059;
+	Tue, 25 Mar 2025 17:09:54 +0000 (GMT)
+Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 70B1658055;
+	Tue, 25 Mar 2025 17:09:53 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.132.195])
+	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 25 Mar 2025 17:09:53 +0000 (GMT)
+Message-ID: <3cd5975b7a5773e1d3f1017c35b2e48222eb2d4a.camel@linux.ibm.com>
+Subject: Re: [RFC PATCH v2 08/13] ima: track the set of PCRs ever extended
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Nicolai Stange <nstange@suse.de>,
+        Roberto Sassu
+ <roberto.sassu@huawei.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc: Eric Snowberg <eric.snowberg@oracle.com>,
+        Jarkko Sakkinen
+ <jarkko@kernel.org>,
+        James Bottomley
+ <James.Bottomley@HansenPartnership.com>,
+        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date: Tue, 25 Mar 2025 13:09:53 -0400
+In-Reply-To: <20250323140911.226137-9-nstange@suse.de>
+References: <20250323140911.226137-1-nstange@suse.de>
+	 <20250323140911.226137-9-nstange@suse.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LSM List <linux-security-module@vger.kernel.org>,
- Linux kernel mailing list <linux-kernel@vger.kernel.org>,
- Casey Schaufler <casey@schaufler-ca.com>,
- konstantin Andreev <andreev@swemel.ru>
-From: Casey Schaufler <casey@schaufler-ca.com>
-Subject: [GIT PULL] Smack patches for 6.15
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-References: <8040a0e7-2121-4389-88e5-c6f209bfca0a.ref@schaufler-ca.com>
-X-Mailer: WebService/1.1.23533 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 7nH4B76iea20nszB2qiZHx8Mze8BcI6Q
+X-Proofpoint-GUID: OtCSeARAVbLVoC1eupEewqNkvIguZTV9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-25_07,2025-03-25_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
+ adultscore=0 impostorscore=0 malwarescore=0 spamscore=0 bulkscore=0
+ mlxlogscore=999 mlxscore=0 lowpriorityscore=0 priorityscore=1501
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2503250119
 
-Hello Linus,
+On Sun, 2025-03-23 at 15:09 +0100, Nicolai Stange wrote:
+> Right now, PCR banks with unsupported hash algorithms are getting
+> invalidated over and over again for each new measurement list entry
+> recorded.
+>=20
+> A subsequent patch will make IMA to invalidate PCR banks associated with
+> unsupported hash algorithms only once at a PCR's first use. To prepare fo=
+r
+> that, make it track the set of PCRs ever extended.
+>=20
+> Maintain the set of touched PCRs in an unsigned long bitmask,
+> 'ima_extended_pcrs_mask'.
+>=20
+> Amend the IMA_INVALID_PCR() #define to check that a given PCR can get
+> represented in that bitmask. Note that this is only for improving code
+> maintainablity, it does not actually constain the set of allowed PCR
+> indices any further.
+>=20
+> Make ima_pcr_extend() to maintain the ima_extended_pcrs_mask, i.e. to set
+> the currently extented PCR's corresponding bit.
+>=20
+> Note that at this point there's no provision to restore the
+> ima_extended_pcrs_mask value after kexecs yet, that will be the subject o=
+f
+> later patches.
+>=20
+> Signed-off-by: Nicolai Stange <nstange@suse.de>
 
-Here is the Smack pull request for v6.15.
+Hi Nicolai,
 
-This is a larger set of patches than usual. It consists of
-a set of build clean-ups, a rework of error handling in setting
-up CIPSO label specification and a bug fix in network labeling.
-All have been tested and in next for some time.
+IMA extends measurements in the default TPM PCR based on the Kconfig
+CONFIG_IMA_MEASURE_PCR_IDX option.  Normally that is set to PCR 10.  The IM=
+A
+policy rules may override the default PCR with a per policy rule specific P=
+CR.
 
-The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
+INVALID_PCR() checks the IMA policy rule specified is a valid PCR register.
 
-  Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
+Is the purpose of this patch to have a single per TPM bank violation or mul=
+tiple
+violations, one for each PCR used within the TPM bank?
 
-are available in the Git repository at:
+thanks,
 
-  https://github.com/cschaufler/smack-next tags/Smack-for-6.15
+Mimi
 
-for you to fetch changes up to a158a937d864d0034fea14913c1f09c6d5f574b8:
-
-  smack: recognize ipv4 CIPSO w/o categories (2025-02-16 14:17:55 -0800)
-
-----------------------------------------------------------------
-Smack patches for v6.15
-
-----------------------------------------------------------------
-Casey Schaufler (1):
-      Smack: fix typos and spelling errors
-
-Konstantin Andreev (5):
-      smack: dont compile ipv6 code unless ipv6 is configured
-      smack: ipv4/ipv6: tcp/dccp/sctp: fix incorrect child socket label
-      smack: remove /smack/logging if audit is not configured
-      smack: Revert "smackfs: Added check catlen"
-      smack: recognize ipv4 CIPSO w/o categories
-
- security/smack/smack.h        | 20 +++++++++++++-------
- security/smack/smack_access.c |  6 ++++--
- security/smack/smack_lsm.c    | 40 ++++++++++++----------------------------
- security/smack/smackfs.c      | 29 ++++++++++++++---------------
- 4 files changed, 43 insertions(+), 52 deletions(-)
+> ---
+>  security/integrity/ima/ima.h       |  8 ++++++--
+>  security/integrity/ima/ima_queue.c | 17 +++++++++++++----
+>  2 files changed, 19 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+> index 1158a7b8bf6b..f99b1f81b35c 100644
+> --- a/security/integrity/ima/ima.h
+> +++ b/security/integrity/ima/ima.h
+> @@ -20,6 +20,7 @@
+>  #include <linux/hash.h>
+>  #include <linux/tpm.h>
+>  #include <linux/audit.h>
+> +#include <linux/minmax.h>
+>  #include <crypto/hash_info.h>
+> =20
+>  #include "../integrity.h"
+> @@ -62,6 +63,8 @@ extern int ima_hash_algo_idx __ro_after_init;
+>  extern int ima_extra_slots __ro_after_init;
+>  extern struct ima_algo_desc *ima_algo_array __ro_after_init;
+> =20
+> +extern unsigned long ima_extended_pcrs_mask;
+> +
+>  extern int ima_appraise;
+>  extern struct tpm_chip *ima_tpm_chip;
+>  extern const char boot_aggregate_name[];
+> @@ -198,8 +201,9 @@ struct ima_iint_cache {
+>  	struct ima_digest_data *ima_hash;
+>  };
+> =20
+> -#define IMA_INVALID_PCR(a) (((a) < 0) || \
+> -	(a) >=3D (sizeof_field(struct ima_iint_cache, measured_pcrs) * 8))
+> +#define IMA_INVALID_PCR(a) (((a) < 0) ||				    \
+> +	(a) >=3D (8 * min(sizeof_field(struct ima_iint_cache, measured_pcrs), \
+> +			sizeof(ima_extended_pcrs_mask))))
+> =20
+> =20
+>  extern struct lsm_blob_sizes ima_blob_sizes;
+> diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/=
+ima_queue.c
+> index 0cc1189446a8..6e8a7514d9f6 100644
+> --- a/security/integrity/ima/ima_queue.c
+> +++ b/security/integrity/ima/ima_queue.c
+> @@ -51,6 +51,11 @@ static DEFINE_MUTEX(ima_extend_list_mutex);
+>   */
+>  static bool ima_measurements_suspended;
+> =20
+> +/*
+> + * Set of PCRs ever extended by IMA.
+> + */
+> +unsigned long ima_extended_pcrs_mask;
+> +
+>  /* lookup up the digest value in the hash table, and return the entry */
+>  static struct ima_queue_entry *ima_lookup_digest_entry(u8 *digest_value,
+>  						       int pcr)
+> @@ -144,15 +149,19 @@ unsigned long ima_get_binary_runtime_size(void)
+> =20
+>  static int ima_pcr_extend(struct tpm_digest *digests_arg, int pcr)
+>  {
+> -	int result =3D 0;
+> +	int result;
+> =20
+>  	if (!ima_tpm_chip)
+> -		return result;
+> +		return 0;
+> =20
+>  	result =3D tpm_pcr_extend(ima_tpm_chip, pcr, digests_arg);
+> -	if (result !=3D 0)
+> +	if (result !=3D 0) {
+>  		pr_err("Error Communicating to TPM chip, result: %d\n", result);
+> -	return result;
+> +		return result;
+> +	}
+> +
+> +	ima_extended_pcrs_mask |=3D BIT(pcr);
+> +	return 0;
+>  }
+> =20
+>  /*
 
