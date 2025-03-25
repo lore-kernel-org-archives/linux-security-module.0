@@ -1,179 +1,120 @@
-Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic311-30.consmr.mail.ne1.yahoo.com (sonic311-30.consmr.mail.ne1.yahoo.com [66.163.188.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BB412E339B;
-	Tue, 25 Mar 2025 17:01:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FCD718024
+	for <linux-security-module@vger.kernel.org>; Tue, 25 Mar 2025 17:01:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.188.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742922089; cv=none; b=G10GeKC6DKTfP7PdaxzVv9zsWI03svSU7TZKBCw+Q96vsNkhJ6/p1MI9ddsCyhIFMvC1rbOxXudpbxYone2Z5OaYnc67OVPLtxK39x6awttLF42ZcmF59Qh1PXCr2/BV3z/04ajM3ck4lB56/XC6CleLPem+EEAwi1ii3TvKpSI=
+	t=1742922100; cv=none; b=KkJqys1klyAwFXRFFRhT9d2Pgld6ddQINNhwV4kQ1l3gGMU+xeK3W2uQ4I8eqtizRf4akVk5N2e6Lf9TV6Cpm4q/5p3WG0MyHZWhQjDN8L9M/B9CbHziITLlWpveSS5p8FWMJwoiVGydOffjGlAuzbIVvjb0KwcCayhCheeTlrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742922089; c=relaxed/simple;
-	bh=4hzZb9JEzCVAK6mXROmkBBNUCC+Z2V6igSqYiSTZu80=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=hZ5nxPXOH82y5YsFLdW6TvHTt+3e1KJi2Q8Sc48WszMBQERclST/wKUlEd2ZhJvUq/6jcL5cjaQoiE+BXOL1cBfnbSGJjGytfsfcONwjJ9D6xMKxpz5knSmarGk7cwt/ubYQCfDu7CDkYNfRZeQ+XVLw3IAeVUqqoPJh+13WuW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout11.his.huawei.com (SkyGuard) with ESMTPS id 4ZMblt0KwGz1HBjV;
-	Wed, 26 Mar 2025 01:00:58 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id EBFA51402DA;
-	Wed, 26 Mar 2025 01:01:22 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwCnXeBZ4eJnCIvSBA--.48204S2;
-	Tue, 25 Mar 2025 18:01:22 +0100 (CET)
-Message-ID: <c1185901c99091a29a865f7a862bc979873301ad.camel@huaweicloud.com>
-Subject: Re: [PATCH] ima: process_measurement() needlessly takes
- inode_lock() on MAY_READ
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Frederick Lawler <fred@cloudflare.com>
-Cc: Mimi Zohar <zohar@linux.ibm.com>, Dmitry Kasatkin
- <dmitry.kasatkin@gmail.com>, Roberto Sassu <roberto.sassu@huawei.com>, Eric
- Snowberg <eric.snowberg@oracle.com>, James Morris
- <james.l.morris@oracle.com>, "Serge E. Hallyn" <serge@hallyn.com>,
- linux-ima-devel@lists.sourceforge.net, 
- linux-ima-user@lists.sourceforge.net,
- linux-security-module@vger.kernel.org,  linux-kernel@vger.kernel.org,
- linux-team@cloudflare.com
-Date: Tue, 25 Mar 2025 18:01:09 +0100
-In-Reply-To: <Z-Lc5WxW7NRA6AiT@CMGLRV3>
-References: <20250325155934.4120184-1-fred@cloudflare.com>
-	 <ed260472-c07e-4172-b389-deb8e92f416f@huaweicloud.com>
-	 <Z-Lc5WxW7NRA6AiT@CMGLRV3>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1742922100; c=relaxed/simple;
+	bh=jS67oAesz1Y8NauC3CC0XT71C2aVOdBEhvuvi52kWMg=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type:
+	 References; b=XbN9kV/bER3JT7b4uGZCf+ha+ys8+G4fU07Rl0erOMG353pJgsxKbnU82Z0Jhmix8vBxaLAXdQqT04E3c6hu1NdEEuuhELorAS0vFK5qpBL3Gn7JXx64Hv/7hky/CkQi73cosOPZ7wWQ7c2MSyCYpXxxfcGjxKY7pqwBZL67tgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=e29ojos+; arc=none smtp.client-ip=66.163.188.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="e29ojos+"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1742922097; bh=IdykXTVI7p69c2IyaMS+lYXEfvBTHgFMPP9Erx27P4c=; h=Date:To:Cc:From:Subject:References:From:Subject:Reply-To; b=e29ojos+ss6yCAgP73oW0bvidnQySAyulJ2vJnOIIlfrXC/hsAoXu4q1cn4XihFpABlkLA7NAHk6Jq8SaQrc2npUg4SK64YnQS0FN6Z+hZm7Pbe13QjaX18//BOo6UeTagLcIHx+QnuYReeLPVgXbhidKABaUlo4+AQ4Lo5grl+RUN1QEX7/jJtq4uvrr7011/o/RUCTXrJY14PvW5mCjk8FJfOoPevEzdoa2C0tZyV69E6RvrV1HqKDTJ2budKQhKheMZ8XfsjbNdGKt055jQEmGBGKNuwhj6+TTdgi+14GYK6ObceOR/i+mX239SU39Be9LYLMcOZzWW5dVo1vJQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1742922097; bh=K/1o+bFzeleqH+jipe0QFZBxxtY/J9dTHO3j65EWGK5=; h=X-Sonic-MF:Date:To:From:Subject:From:Subject; b=gDRLkd+akpftsitH44hammQfiP64casyrrnW8L2El6Bhu88/B6jxdTl3cO8JeCDmhA9bn/9N+rfDKmJwzPHKycV/cGTdlG7nh3RhuWc1TK9gOOxTmMwD9RUxp+chRJ4ys8kxySP2vtB1yLdBmiG6/HPwd15wAovJue98fTweYn4mxvNGELcFoty76aam6m4+bRw25UU0JWhL8tH2n6qOXLsSkJzCnIUPJsfIrCCj8+JwED9DH0guEjbN/J4/63HNLYNn4aawbWjL67c/pLHP3flhfZO6AzXIYhF//keLy5kHJgds3rK5J/JhHHzPlaXZLK918g6OLHBZ+htsp5oNIg==
+X-YMail-OSG: hh8J610VM1nn8Q7n2Y0stMAoO0augQKmaIrHkmErDYZt7wtQyW3SQ472oFrbEdL
+ 172vHTm6gsX6GkSiBt5xzb.4WC2nlSkUTPuT8NCt_Wd2RJXWPT7jUN64X6a7JIMzqOflZODcLu0m
+ frtHIYnjtHNlnfU1_YKz48.44WUApWeXErcbYj2H3M.OpXqFQKuK6Wn2VuhORh8nRXl9rWO9FTGb
+ MPT3lVjR5B5hmIn2xB1LlZVg7puXQndIrSsklIAm82aEDYcFQeh3a456DxDfTAkymRHRM1RInI2Y
+ gdoB55ixNUGexCYPsqfpHrQNZG7jJNwWAq_2xU4Ax4UNCR22Zqu.rrfCAQow7PzuR6SJ1UVppGB0
+ _lHYMqiHP4A3zYnmut2urA0tx5dXV08irSB2RV_0.N1R8S3Yiw4I5NfkBBfoS.qC4DsEoOCA_r_Y
+ Edz_epOVydesNXsQF.l8xRP_eSy7c0X9g3KxNJeBCKLgXDg9XpHEy2cAN8N3a18TqPZlAWtv.agk
+ qKA_N4P26nxGwnHRqYwDtx8GifL7YvSSfXth8KWE90k7bgdzaUYO2Ull8J0ECiBuhfPQMDFKHIrb
+ ETIUWr1jKaMND._PFX4j6E6KFDr1Vj.4b0nf.XmRkUbcu50xPZUfVczPtBjWGlpsWEIYRKg7VcIs
+ ewI6J8zsttK54RzO5HSbjV3x7kzPYsDkYQ1Pulgt0WB8rxnZ1XDMIJLzMBHob6l0SsES1zzvtLjX
+ G2_EfAXB6VhuYmmSfZJh.F1YrlnXotjUUv9lQwGCQt_veKn89NOJ4j_rzN_08UOBl5cUAyBrdLO3
+ AWYsM2LCnAXdWU2blQ1Jx.ELIIIJg8NA1.Ixi_lp7iDibtc1ABci46MrfEEi7HnyO8Ecdb2AlnAH
+ G1Vl.0Rb.kpP_xn05o893LewqRyv9DsHy8M1tjlN9BLH_TWeVfDSakxT8UUiefCIUpdqG91BQMNj
+ AJb7WcWnHQ5S3NPViV1F6rfPg23qVHiOg2PVlK2d6D5dL51HQXunFDLsvmO47A6WThZhNG2lnpUG
+ 12zCeCXNTcr.z5Sbg5O404sYPHGRCT30gixj6QYo4IhjcpybVh0ZRmIsCKxe01njBxQDQZfn6hQ8
+ rbB_mvHpVsEyyNbpUSnV4YfO4DnIvsVXrcWrVvD51tVSbPrc6awbDXI7knaNEBqK39Lq_.I_9_od
+ AguP702uuI7PwPQCIeKaq7C7XyQTZ3OTGXoquT00I002RDVqzgiB.TxWJ_VhE5pT7iBl1lxKKqVc
+ ECWUAi8KuUMmDPqXUl.JzNGl3LYdhyZc8c3b.gk3cfEYv.iy.HejHFpTU_qzZruqjU_cTvjzRH3N
+ OZtmkO7z7csyxOM_jvjhIX8AtAJP2evmC_NP4O1bngIX2YG9ktfxGf.LnhlbRWFntzQ2Ck4KOlIN
+ 26AAUqaf8IgXKO2mcp7nizf2UsRQf2Gu6pr7IarlyMatzsaLXjh7VBWd4hl9B80.DtOo.7ROaSLf
+ phyt6T99ZzdrbcoJ4xu.Jty07IPPEpreDrUPviB0ckLJ9mezlmv_hqQqxLBWDsDWza04gRCpH_if
+ 1zR_4Cl9ReXCrSkfoPlhISMbPGhfywGq_QC2qODNrlHjncuwK4ZSCK48VsFUB3WfMRdNhCucyE0d
+ 0P.fnON.S299u1WlCCP6o1F5BxAnHxvP9yMt4A4VrRZ40EGTLW9qhy7kIWkX0Boc4_q7o56lRH7i
+ WlLCJ8j4AZ7K6SGv0p3hQQsYRRtl8XFnJ1qsGc8wcs4I.eqPq6J2VjZOCThL41RqqJtiD1M3wpGa
+ kJaDQLAF_1Vr6R8omJZfojQ9uIDa2NU9V_l4kbuuN7V0r93pRP3swyPBPMXytxBPtYMp7QdLKM1D
+ L8TcVrsqj97YI1X70oK82IteSsjWIuz6qhEeO6Fr1gfR_Ub9pGHDZHB.LfUJoNN2pmyIWjF_esuu
+ f.X9.2vmoVNYSSWb3AUM3XaYIKuq1vXHkpJ3rLLmaEP7Z3wIhWXOE0G1kVGtKoTWT21XPry8oEFP
+ dL.Pda8LeZCpzyPAnMJRH_5zrayqwVvDZnCsEgK7.loH.uNMe93kj5hVwUcM1RL92AD0_7FdQAlR
+ W0K.Rk1yUDrRlfMcPR8K2yPms6AespA0nw4sj5pO.CJ2FtqSjvKRx6V6EJThkAntGkfEuwbb1DV4
+ OHNEryIONgrRg63e048KkFWjOZ13fAn3KIypmm2Hug1fsdsid4HaBRjh4kvosCxgyCS9I5z5iJJm
+ Z5_0KsdFt8ZdRJ6toeOL7DQQ.OebtnUKCzr0MN.d3sC1W0QKVndEzeKNOfTi7e1cQRJdXHewS1ym
+ 0axDhl84NF3B5DUKDL9lFCw--
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 18af2867-df7f-47b9-ba43-8f57eb44f25f
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.ne1.yahoo.com with HTTP; Tue, 25 Mar 2025 17:01:37 +0000
+Received: by hermes--production-gq1-5c477bf655-s8xr7 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 4653def2fdc5d2c09a7af09c5b8d8672;
+          Tue, 25 Mar 2025 16:41:21 +0000 (UTC)
+Message-ID: <8040a0e7-2121-4389-88e5-c6f209bfca0a@schaufler-ca.com>
+Date: Tue, 25 Mar 2025 09:41:19 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:GxC2BwCnXeBZ4eJnCIvSBA--.48204S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxXry5uw1rGr1rZryfAFyDtrb_yoW5uFyfp3
-	y8Ka1IyF4DKry2kr9rtws0vr4vv3ykGF4UJws5ZF18A3s5Xr1vqr15tayY9FyfXrn5A3Wa
-	vF4Ygr43Zan0vFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
-	v3UUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQASBGfiVd0JSQACsY
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: LSM List <linux-security-module@vger.kernel.org>,
+ Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+ Casey Schaufler <casey@schaufler-ca.com>,
+ konstantin Andreev <andreev@swemel.ru>
+From: Casey Schaufler <casey@schaufler-ca.com>
+Subject: [GIT PULL] Smack patches for 6.15
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+References: <8040a0e7-2121-4389-88e5-c6f209bfca0a.ref@schaufler-ca.com>
+X-Mailer: WebService/1.1.23533 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Tue, 2025-03-25 at 11:42 -0500, Frederick Lawler wrote:
-> On Tue, Mar 25, 2025 at 05:30:32PM +0100, Roberto Sassu wrote:
-> > On 3/25/2025 4:58 PM, Frederick Lawler wrote:
-> > > On IMA policy update, if a measure rule exists in the policy,
-> > > IMA_MEASURE is set for ima_policy_flags which makes the violation_che=
-ck
-> > > variable always true. Coupled with a no-action on MAY_READ for a
-> > > FILE_CHECK call, we're always taking the inode_lock().
-> > >=20
-> > > This becomes a performance problem for extremely heavy read-only work=
-loads.
-> > > Therefore, prevent this only in the case there's no action to be take=
-n.
-> > >=20
-> > > Signed-off-by: Frederick Lawler <fred@cloudflare.com>
-> > > ---
-> > >   security/integrity/ima/ima_main.c | 2 +-
-> > >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > >=20
-> > > diff --git a/security/integrity/ima/ima_main.c b/security/integrity/i=
-ma/ima_main.c
-> > > index 2aebb7984437..78921e69ee14 100644
-> > > --- a/security/integrity/ima/ima_main.c
-> > > +++ b/security/integrity/ima/ima_main.c
-> > > @@ -181,7 +181,7 @@ static int process_measurement(struct file *file,=
- char *buf, loff_t size,
-> > >   	action =3D ima_get_action(inode, mask, func, &pcr);
-> > >   	violation_check =3D ((func =3D=3D FILE_CHECK || func =3D=3D MMAP_C=
-HECK) &&
-> > >   			   (ima_policy_flag & IMA_MEASURE));
-> > > -	if (!action && !violation_check)
-> > > +	if (!action && (mask =3D=3D MAY_READ || !violation_check))
-> > >   		return 0;
-> >=20
->=20
-> Hi Roberto,
->=20
-> > Hi Frederick
-> >=20
-> > thanks, nice catch!
-> >=20
-> > Thinking... in fact you are saying that there are conditions for which
-> > ima_rdwr_violation_check() does nothing.
-> >=20
-> > For better clarity, I would add the conditions for which we are doing a
-> > violation check in violation_check directly. So that, one can just go t=
-o the
-> > function and see that in fact nothing special is done other than doing =
-the
-> > same checks in advance before taking the lock (the conditions you are
-> > checking on are immutable, so it is fine).
-> >=20
-> > So, it is not a write, and the file is not being measured (this would b=
-e a
-> > bit redundant given that we are checking anyway !action).
-> >=20
-> > Thanks
-> >=20
->=20
-> The ima_rdwr_violation_check() call takes a action & IMA_MEASURE
-> argument anyway.
->=20
-> My initial thought was to replace ima_flag_policy & IMA_MEASURE with
-> action & IMA_MEASURE there, but I wasn't sure if there was a race
-> problem that the ima_rdwr_violation_check() is trying to catch for the no=
-n
-> FILE_CHECK cases.
+Hello Linus,
 
-Let's keep as it is for now.
+Here is the Smack pull request for v6.15.
 
-> Otherwise, I think the checks in the ima_rdwr_violation_check() demand th=
-e lock,
-> and therefore we can't just move them out to that violation_check
-> variable--unless I'm missing something. As for other conditions, I think
-> it's _just_ the MAY_READ we care about.
+This is a larger set of patches than usual. It consists of
+a set of build clean-ups, a rework of error handling in setting
+up CIPSO label specification and a bug fix in network labeling.
+All have been tested and in next for some time.
 
-Yes, of course.
+The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
 
-I meant, since in ima_rdwr_violation_check() there is:
+  Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
 
+are available in the Git repository at:
 
-if (mode & FMODE_WRITE)
-...
-else if (... && must_measure)
+  https://github.com/cschaufler/smack-next tags/Smack-for-6.15
 
+for you to fetch changes up to a158a937d864d0034fea14913c1f09c6d5f574b8:
 
-which don't need to be under lock, then I would have modified
-violation_check to:
+  smack: recognize ipv4 CIPSO w/o categories (2025-02-16 14:17:55 -0800)
 
-	violation_check =3D ((func =3D=3D FILE_CHECK || func =3D=3D MMAP_CHECK ||
-			    func =3D=3D MMAP_CHECK_REQPROT) &&
-			   (ima_policy_flag & IMA_MEASURE)) &&
-			   ((action & IMA_MEASURE) || (mask & MAY_WRITE));
+----------------------------------------------------------------
+Smack patches for v6.15
 
-Roberto
+----------------------------------------------------------------
+Casey Schaufler (1):
+      Smack: fix typos and spelling errors
 
-> Is what you're suggesting to move the check mask =3D=3D MAY_READ to inste=
-ad be in
-> that violation_check variable than the branch?
->=20
-> > Roberto
-> >=20
-> > >   	must_appraise =3D action & IMA_APPRAISE;
-> >=20
->=20
-> Thanks,
-> Fred
+Konstantin Andreev (5):
+      smack: dont compile ipv6 code unless ipv6 is configured
+      smack: ipv4/ipv6: tcp/dccp/sctp: fix incorrect child socket label
+      smack: remove /smack/logging if audit is not configured
+      smack: Revert "smackfs: Added check catlen"
+      smack: recognize ipv4 CIPSO w/o categories
+
+ security/smack/smack.h        | 20 +++++++++++++-------
+ security/smack/smack_access.c |  6 ++++--
+ security/smack/smack_lsm.c    | 40 ++++++++++++----------------------------
+ security/smack/smackfs.c      | 29 ++++++++++++++---------------
+ 4 files changed, 43 insertions(+), 52 deletions(-)
 
