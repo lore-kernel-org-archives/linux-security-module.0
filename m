@@ -1,84 +1,239 @@
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+Received: from smtp-bc0e.mail.infomaniak.ch (smtp-bc0e.mail.infomaniak.ch [45.157.188.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E8FE36124;
-	Wed, 26 Mar 2025 10:14:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F070D1C84BE
+	for <linux-security-module@vger.kernel.org>; Wed, 26 Mar 2025 11:52:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742984101; cv=none; b=Zi3PLL8Sg+uhDy6HVXCS9SM9IFmVCPeoH7Lv7LxpVBn9DIDTYw89WmEq57g3fMhRvGA1iWWP2hEPZ1WNIHOrMYtMgMgsUM5bx9EGCo7W1kr7fruYfKaIO+UDLcxP74SziFJ7l261suss0N60IlGsTJddTCsPhR4so2dZdW+155w=
+	t=1742989936; cv=none; b=NOGHYqYm2sxksMdyiSS4nxJ+yDuC4njEr6b1LURz6xk4UgZfOcDoQ0bQhJnwxQvSGhFKjlOmpQvsL8n+R7+bD0eGo7bBFHIG1Wzw0C9M2Fz6U3NEsJeXjPmIKJicybbGpwq8U7v8WugrIYOuSEGjjfUbxLtdDBSvPYG2jiVIFV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742984101; c=relaxed/simple;
-	bh=kXaKKpHXSslrbwHTWT5CPLZBU7qrIImltiwwUCWX1DA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W/UkQJ0uZ3JkxL4jXzZA8JI/aTaBsxdo3T4VhvmheYBI1IyfuInfcEfL20fWWsGHiRQsSYMYFqHOdHQtUPX4epF3+CywAXfBmdoNmN9w6J139rpG5sRfvtx3v0UHSctnkoFMHb4bdx6wibMEcBpzlbxDrlwQ3n2hgAmdZw9P7rA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTPS id 4ZN2Gy10QbzsRwR;
-	Wed, 26 Mar 2025 17:55:54 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id 7FC691400DD;
-	Wed, 26 Mar 2025 17:56:14 +0800 (CST)
-Received: from [10.221.98.126] (unknown [10.221.98.126])
-	by APP1 (Coremail) with SMTP id LxC2BwDna0o1z+NnTirkBA--.50162S2;
-	Wed, 26 Mar 2025 10:56:14 +0100 (CET)
-Message-ID: <b39bc11b-11d6-4847-9afd-0e8ead173af8@huaweicloud.com>
-Date: Wed, 26 Mar 2025 10:56:02 +0100
+	s=arc-20240116; t=1742989936; c=relaxed/simple;
+	bh=8cyDx9wVP/Gy2xluNiBapMP4xm1cu9Oyl4Ndi5zL45E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ajdJld67fHNlgCHK6xqk7id9gi7bClLd3x6mA6+q1CGhgfNEGRiZ14IQrR8FrV+1l7UAEIduvZzVyK4glyRueRrkV3ovw37U/k5sHGJfMNVqFZGdCSycDzFIjM4sDrW8yAYR47MnU8keiF6ZlmdWHXmfWoVJ1A5vKAITLOLDsy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=0wvB8FyH; arc=none smtp.client-ip=45.157.188.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="0wvB8FyH"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ZN4s00QK7zC9p;
+	Wed, 26 Mar 2025 12:52:04 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1742989923;
+	bh=SCpArMTAtLmBGImoCXFsMK89FrGt8j+KSIC6OMtvA1M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=0wvB8FyHGIvCZCra4QbCqRIFs1M37LGJb5M8pAiWmZWgl/ylVXkAKlWe4ix6jY8id
+	 jAciPlX98Sn9na1bE57WBdftcs+r8+PsDijqrox7b4w1GzHF7RrG0A4YwNGd8qjjqf
+	 6rvYOpfnwDqqbtXX+BoEvPO3m/rgSYi500+0QP1A=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4ZN4rz06gdzS4t;
+	Wed, 26 Mar 2025 12:52:02 +0100 (CET)
+Date: Wed, 26 Mar 2025 12:51:59 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: kernel test robot <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Paul Moore <paul@paul-moore.com>, 
+	Serge Hallyn <serge@hallyn.com>, Tahera Fahimi <fahimitahera@gmail.com>, 
+	Christian Brauner <brauner@kernel.org>, linux-security-module@vger.kernel.org, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Kees Cook <kees@kernel.org>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2 5/8] landlock: Always allow signals between threads of
+ the same process
+Message-ID: <20250326.yee0ba6Yai3m@digikod.net>
+References: <20250318161443.279194-6-mic@digikod.net>
+ <202503261534.22d970e8-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ima: process_measurement() needlessly takes inode_lock()
- on MAY_READ
-To: Frederick Lawler <fred@cloudflare.com>, Mimi Zohar <zohar@linux.ibm.com>,
- Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
- Roberto Sassu <roberto.sassu@huawei.com>
-Cc: Eric Snowberg <eric.snowberg@oracle.com>,
- "Serge E. Hallyn" <serge@hallyn.com>, linux-ima-devel@lists.sourceforge.net,
- linux-integrity@vger.kernel.org, linux-ima-user@lists.sourceforge.net,
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-team@cloudfalre.com
-References: <20250325181616.79540-2-fred@cloudflare.com>
- <Z-LzWCbROAI2H2Dx@CMGLRV3>
-Content-Language: en-US
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-In-Reply-To: <Z-LzWCbROAI2H2Dx@CMGLRV3>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:LxC2BwDna0o1z+NnTirkBA--.50162S2
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYs7kC6x804xWl14x267AKxVW8JVW5JwAF
-	c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
-	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xv
-	wVC0I7IYx2IY6xkF7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjc
-	xK6I8E87Iv6xkF7I0E14v26r4j6r4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40E
-	FcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr
-	0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY
-	04v7MxAIw28IcxkI7VAKI48JMxAqzxv26xkF7I0En4kS14v26r1q6r43MxC20s026xCaFV
-	Cjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWl
-	x4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r
-	1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_
-	JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcS
-	sGvfC2KfnxnUUI43ZEXa7IU1zuWJUUUUU==
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgATBGfjp1oCQgAAss
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <202503261534.22d970e8-lkp@intel.com>
+X-Infomaniak-Routing: alpha
 
-On 3/25/2025 7:18 PM, Frederick Lawler wrote:
-> My mistake, this is PATCH v2. I forgot to change the subject in git
-> send-email. I can resend if that's needed.
+Thanks for the report.
 
-No problem. However, let's change:
+I assumed __f_setown() was only called in an RCU read-side critical section but
+that's not the case (e.g. fcntl_dirnotify).  I moved the pid_task() call in a
+dedicated function to protect it with an RCU guard.  Here is the new hunk:
 
-mask & MAY_WRITE
 
-with
+@@ -1628,21 +1630,46 @@ static int hook_file_ioctl_compat(struct file *file, unsigned int cmd,
+        return -EACCES;
+ }
 
-file->f_mode & FMODE_WRITE
+-static void hook_file_set_fowner(struct file *file)
++/*
++ * Always allow sending signals between threads of the same process.  This
++ * ensures consistency with hook_task_kill().
++ */
++static bool control_current_fowner(struct fown_struct *const fown)
+ {
+-       struct landlock_ruleset *new_dom, *prev_dom;
++       struct task_struct *p;
 
-Thanks
+        /*
+         * Lock already held by __f_setown(), see commit 26f204380a3c ("fs: Fix
+         * file_set_fowner LSM hook inconsistencies").
+         */
+-       lockdep_assert_held(&file_f_owner(file)->lock);
+-       new_dom = landlock_get_current_domain();
+-       landlock_get_ruleset(new_dom);
++       lockdep_assert_held(&fown->lock);
++
++       /*
++        * Some callers (e.g. fcntl_dirnotify) may not be in an RCU read-side
++        * critical section.
++        */
++       guard(rcu)();
++       p = pid_task(fown->pid, fown->pid_type);
++       if (!p)
++               return true;
++
++       return !same_thread_group(p, current);
++}
++
++static void hook_file_set_fowner(struct file *file)
++{
++       struct landlock_ruleset *prev_dom;
++       struct landlock_ruleset *new_dom = NULL;
++
++       if (control_current_fowner(file_f_owner(file))) {
++               new_dom = landlock_get_current_domain();
++               landlock_get_ruleset(new_dom);
++       }
++
+        prev_dom = landlock_file(file)->fown_domain;
+        landlock_file(file)->fown_domain = new_dom;
 
-Roberto
+-       /* Called in an RCU read-side critical section. */
++       /* May be called in an RCU read-side critical section. */
+        landlock_put_ruleset_deferred(prev_dom);
+ }
 
+
+This other report gives more details:
+https://lore.kernel.org/all/202503261510.f9652c11-lkp@intel.com/
+
+
+On Wed, Mar 26, 2025 at 03:51:50PM +0800, kernel test robot wrote:
+> 
+> 
+> Hello,
+> 
+> kernel test robot noticed "Oops:general_protection_fault,probably_for_non-canonical_address#:#[##]SMP_KASAN" on:
+> 
+> commit: b9fb5bfdb361fd6d945c09c93d351740310a26c7 ("[PATCH v2 5/8] landlock: Always allow signals between threads of the same process")
+> url: https://github.com/intel-lab-lkp/linux/commits/Micka-l-Sala-n/landlock-Move-code-to-ease-future-backports/20250319-003737
+> patch link: https://lore.kernel.org/all/20250318161443.279194-6-mic@digikod.net/
+> patch subject: [PATCH v2 5/8] landlock: Always allow signals between threads of the same process
+> 
+> in testcase: trinity
+> version: trinity-x86_64-ba2360ed-1_20241228
+> with following parameters:
+> 
+> 	runtime: 300s
+> 	group: group-03
+> 	nr_groups: 5
+> 
+> 
+> 
+> config: x86_64-randconfig-005-20250325
+> compiler: gcc-12
+> test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
+> 
+> (please refer to attached dmesg/kmsg for entire log/backtrace)
+> 
+> 
+> we noticed the issue happens randomly (35 times out of 200 runs as below).
+> but parent keeps clean.
+> 
+> 
+> 37897789c51dd898 b9fb5bfdb361fd6d945c09c93d3
+> ---------------- ---------------------------
+>        fail:runs  %reproduction    fail:runs
+>            |             |             |
+>            :200         18%          35:200   dmesg.KASAN:null-ptr-deref_in_range[#-#]
+>            :200         18%          35:200   dmesg.Kernel_panic-not_syncing:Fatal_exception
+>            :200         18%          35:200   dmesg.Oops:general_protection_fault,probably_for_non-canonical_address#:#[##]SMP_KASAN
+>            :200         18%          35:200   dmesg.RIP:hook_file_set_fowner
+> 
+> 
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <oliver.sang@intel.com>
+> | Closes: https://lore.kernel.org/oe-lkp/202503261534.22d970e8-lkp@intel.com
+> 
+> 
+> [  354.738531][  T222]
+> [  355.199494][  T222] [main] 2245715 iterations. [F:1644455 S:601688 HI:11581]
+> [  355.199514][  T222]
+> [  355.934630][  T222] [main] 2273938 iterations. [F:1665198 S:609188 HI:11581]
+> [  355.934650][  T222]
+> [  356.308897][ T3147] Oops: general protection fault, probably for non-canonical address 0xdffffc0000000151: 0000 [#1] SMP KASAN
+> [  356.309510][ T3147] KASAN: null-ptr-deref in range [0x0000000000000a88-0x0000000000000a8f]
+> [  356.309910][ T3147] CPU: 1 UID: 65534 PID: 3147 Comm: trinity-c2 Not tainted 6.14.0-rc5-00005-gb9fb5bfdb361 #1 145c38dc5407add8933da653ccf9cf31d58da93c
+> [  356.310560][ T3147] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+> [ 356.311050][ T3147] RIP: 0010:hook_file_set_fowner (kbuild/src/consumer/include/linux/sched/signal.h:707 (discriminator 9) kbuild/src/consumer/security/landlock/fs.c:1651 (discriminator 9)) 
+> [ 356.311345][ T3147] Code: 49 8b 7c 24 50 65 4c 8b 25 e7 e4 0c 7e e8 52 63 33 ff 48 ba 00 00 00 00 00 fc ff df 48 8d b8 88 0a 00 00 48 89 f9 48 c1 e9 03 <80> 3c 11 00 0f 85 7e 02 00 00 49 8d bc 24 88 0a 00 00 4c 8b a8 88
+> All code
+> ========
+>    0:	49 8b 7c 24 50       	mov    0x50(%r12),%rdi
+>    5:	65 4c 8b 25 e7 e4 0c 	mov    %gs:0x7e0ce4e7(%rip),%r12        # 0x7e0ce4f4
+>    c:	7e 
+>    d:	e8 52 63 33 ff       	call   0xffffffffff336364
+>   12:	48 ba 00 00 00 00 00 	movabs $0xdffffc0000000000,%rdx
+>   19:	fc ff df 
+>   1c:	48 8d b8 88 0a 00 00 	lea    0xa88(%rax),%rdi
+>   23:	48 89 f9             	mov    %rdi,%rcx
+>   26:	48 c1 e9 03          	shr    $0x3,%rcx
+>   2a:*	80 3c 11 00          	cmpb   $0x0,(%rcx,%rdx,1)		<-- trapping instruction
+>   2e:	0f 85 7e 02 00 00    	jne    0x2b2
+>   34:	49 8d bc 24 88 0a 00 	lea    0xa88(%r12),%rdi
+>   3b:	00 
+>   3c:	4c                   	rex.WR
+>   3d:	8b                   	.byte 0x8b
+>   3e:	a8 88                	test   $0x88,%al
+> 
+> Code starting with the faulting instruction
+> ===========================================
+>    0:	80 3c 11 00          	cmpb   $0x0,(%rcx,%rdx,1)
+>    4:	0f 85 7e 02 00 00    	jne    0x288
+>    a:	49 8d bc 24 88 0a 00 	lea    0xa88(%r12),%rdi
+>   11:	00 
+>   12:	4c                   	rex.WR
+>   13:	8b                   	.byte 0x8b
+>   14:	a8 88                	test   $0x88,%al
+> [  356.312254][ T3147] RSP: 0018:ffffc9000883fd20 EFLAGS: 00010002
+> [  356.312556][ T3147] RAX: 0000000000000000 RBX: ffff88816ee4c700 RCX: 0000000000000151
+> [  356.312933][ T3147] RDX: dffffc0000000000 RSI: 0000000000000000 RDI: 0000000000000a88
+> [  356.313310][ T3147] RBP: ffffc9000883fd48 R08: 0000000000000000 R09: 0000000000000000
+> [  356.313687][ T3147] R10: 0000000000000000 R11: 0000000000000000 R12: ffff88814f0c8000
+> [  356.314063][ T3147] R13: ffff88814f92b700 R14: ffff888161e71450 R15: ffff888161e71408
+> [  356.314440][ T3147] FS:  00007f3c72136740(0000) GS:ffff8883af000000(0000) knlGS:0000000000000000
+> [  356.314879][ T3147] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [  356.315194][ T3147] CR2: 00007f3c708bd000 CR3: 0000000165606000 CR4: 00000000000406f0
+> [  356.315573][ T3147] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> [  356.315950][ T3147] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> [  356.316334][ T3147] Call Trace:
+> [  356.316498][ T3147]  <TASK>
+> [ 356.316645][ T3147] ? show_regs (kbuild/src/consumer/arch/x86/kernel/dumpstack.c:479) 
+> [ 356.316859][ T3147] ? die_addr (kbuild/src/consumer/arch/x86/kernel/dumpstack.c:421 kbuild/src/consumer/arch/x86/kernel/dumpstack.c:460) 
+> [ 356.317066][ T3147] ? exc_general_protection (kbuild/src/consumer/arch/x86/kernel/traps.c:751 kbuild/src/consumer/arch/x86/kernel/traps.c:693) 
+> [ 356.317349][ T3147] ? asm_exc_general_protection (kbuild/src/consumer/arch/x86/include/asm/idtentry.h:574) 
+> 
+> 
+> The kernel config and materials to reproduce are available at:
+> https://download.01.org/0day-ci/archive/20250326/202503261534.22d970e8-lkp@intel.com
+> 
+> 
+> 
+> -- 
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
+> 
+> 
