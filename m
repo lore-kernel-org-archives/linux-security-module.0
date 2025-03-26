@@ -1,179 +1,143 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic313-14.consmr.mail.ne1.yahoo.com (sonic313-14.consmr.mail.ne1.yahoo.com [66.163.185.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 959681F17E8;
-	Wed, 26 Mar 2025 14:48:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA9726AD0
+	for <linux-security-module@vger.kernel.org>; Wed, 26 Mar 2025 14:57:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.185.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743000503; cv=none; b=GfHUDBqjDfY1XAY/HeCaBOoa4WeRpaqiE12x4eNhjmaRLf2ImBVeIKzPrwDu5IWoJdnqCqqLDTHT6f9sr6SEqNYYOJpoO5B5KSsjUut16Srev1bNBKKsOSkfVtDv+zZ719BuQ1i/OQc3ZVKLjIQfZ2LD516dquGU5yTZYMTATm8=
+	t=1743001078; cv=none; b=ZHvuAONv1Aml2CPPt2ex1PIADfGFFFKGsAZi3mw+YItaIgF09iLbcHrG3iEmjRFOcN/QESQ+JVLZrZ1BQk/sJ4Yee4rOluwiNSz31l4p0kVky1u6j3FNiLwQI7cjRUuVG0ctDY8/zR2G8j1LoRe2T0xbtwvlc9MLx5ZskQdrS2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743000503; c=relaxed/simple;
-	bh=UAEk/9kPjvmga7GcKmw9nqNKziWIzKa6VIdrotiYH1Q=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=WIA87rseTzqH4uG7tX14Imkyc4SkFhAM//RheGSkF/6RHqqGWkVvMH6hDJZ2HjEndLN9Hck+PXiuTnNKxaId9dHnRVfeVKkH2NsPJ0UqzcauRZFm4dYRgIm28akh0gaf1BJhPL1rLuT35azLDIAEhiWdrLEz1TmVHQTVxyyRrxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=rzvUdXHd; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1743001078; c=relaxed/simple;
+	bh=exv5Wd+eewQMayU5CJaut22C+m8Jzxi/ThRV8Id15Qk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pYY4n1bgw8L0oqB3ftRao/ql0UIUttGONBXDOHhRst3Hed7Xoet+etqPK3lzFgNxkM0oHa4RhnaxRjQo8SUf8SKDFsdsHj6T9f5/QT+g4GQYVw4B8sQ+EsdtH2cuASmqKHYHhlqd66oyzsaWPOhNEsRDjEVAX47Z7bPVuvIBavw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=Kn7oAQyX; arc=none smtp.client-ip=66.163.185.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="rzvUdXHd"
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52QC54MX027698;
-	Wed, 26 Mar 2025 14:48:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=ra3A8m
-	93pQeCibvdnnrnUW2lYYCiD9gyKANCUrrYnd4=; b=rzvUdXHdZYW3ij3j5uSmJJ
-	JHB6vAdmcXjefkYQyhAiR1gNhH25z+9O0Rr2UuChClLwUMHbmaCruylVa+NVkt+y
-	SLiYd5Eyu6Nyxp8awe76V6qWmkrwKSveHCSPgn2KvfmPxYbXxqNTNfbmJ6RjNPaT
-	CY0MYHkYmvtIbwa/MDYBVC8HkySZOTbo9DAr0FCRLTzX9p2Vt9s18yFimJhIypkg
-	VeNsvT210FOXmHieH3+KOzXqklff9DF/gE7+tQC4Vv2R4hvytRzvCQuBH5hSRbFr
-	3OPWW3hVzLYWZjThQV3LZHAszgb3NncE5bBRzeDFUeGif+d8Iurp/nXZRcCeJL/Q
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45kbjx3h12-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Mar 2025 14:48:04 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52QElRYA028748;
-	Wed, 26 Mar 2025 14:48:03 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45kbjx3h0x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Mar 2025 14:48:03 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52QEjtUf020639;
-	Wed, 26 Mar 2025 14:48:02 GMT
-Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45j8hp0s9c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Mar 2025 14:48:02 +0000
-Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
-	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52QEm2Q929557450
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 26 Mar 2025 14:48:02 GMT
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 2B46758065;
-	Wed, 26 Mar 2025 14:48:02 +0000 (GMT)
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7DAB358056;
-	Wed, 26 Mar 2025 14:48:01 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.116.195])
-	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 26 Mar 2025 14:48:01 +0000 (GMT)
-Message-ID: <4efc3cd7521eb1aef435af2b02a9a112f049c0f2.camel@linux.ibm.com>
-Subject: Re: [RFC PATCH v2 02/13] ima: always create runtime_measurements
- sysfs file for ima_hash
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Nicolai Stange <nstange@suse.de>
-Cc: Roberto Sassu <roberto.sassu@huawei.com>,
-        Dmitry Kasatkin
- <dmitry.kasatkin@gmail.com>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        James Bottomley
- <James.Bottomley@HansenPartnership.com>,
-        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date: Wed, 26 Mar 2025 10:48:01 -0400
-In-Reply-To: <87wmcboqg4.fsf@>
-References: <20250323140911.226137-1-nstange@suse.de>
-	 <20250323140911.226137-3-nstange@suse.de>
-	 <35d199c2a09e9215aad715c97a6702dd04be4a98.camel@linux.ibm.com>
-	 <fbd87f01b5463e399900df8dcb094a9039bd589f.camel@linux.ibm.com>
-	 <87wmcboqg4.fsf@>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="Kn7oAQyX"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1743001075; bh=edSQWyJIbHxEQY7kDkt5m8uNXpnowVSyw4X2RefTDEQ=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=Kn7oAQyX3LQkDujintSS6WMPbLbFfqx+uUl+txcyPWBAY/XSWJLgQYmNBwd1sJyy+0DbJkZex7Zi8pCRs1+wCHqEHLTf8P9yK14b+6xwdl5dqVNTSGfvCY5ItSIyrjEejR6zKVVpPT9Z4NadZK9GTEYrw6nWmJ/EK2zmV1fYaUI92i/e4e0RiW7I/ld6aToPk9olGxA0CoHar4ph6sMGYPu27xQk8tV6q6mHAK4IsiezHeFLZ4io2Ei0Tq8c2+ILFVkLte9iWAxRLyRloOr14vlcMKXYREC1lYjdNZAqCJaskYxauDSqXHxQ4LNsEEfi0EZJjhX+Mjuso8EQrJ2XRA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1743001075; bh=qUZwwiXdqNDjulSLo1nrFVA/6+WE+UQNhELVP4j1Cq8=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=DOa65X926qz3PKdl4Nl9dJGF5F2ZGZVLnywRXG01OhujRBpFnd1vozK6Z6ma2WSWuveVyzO8OomMWK4UNa46ZlD3pAi4wiLPDYaDSsKg/rbNUH6DePONaUp7Rd+noy5sSNAp9gtyXSc1AY1N/D9MJzlh+7bTqhnKiVJ46MoVNy3lJmlgINMqPOsgqXUQFcG0UbMV1ZR8CbC+Z0kmSjQ92dst9UCq2zT18oBs+26aVve2HAZNjA2T1a2vaaI0o+uSpG56SkX/Tr5LJ3VSRSQAEMnEo8IQkxfeDGg8G0cpXjbq/9nolcdMupxHcE6pItnk+WUj1Ozn9N8/h2Xp/N7Fug==
+X-YMail-OSG: S52zud8VM1k0bDiH9z4vTJRHaQvs6lYhmhKL3OC3tdFo0J4IosFYzYtN4tUTQgk
+ qs6PhsXoji6WtW2QhYMqH8_j0bYlO6ZZWJyqohF85bPXisH3ATrfVyc5b6qJ9Zc_j5uKMWs2qRzv
+ CmutXd5KUTG6DqpLT9y9MJTsRm7wH4zMYAhhuFXPxJX0hMTgvlHhHMKv7mZHzU_L_byhGeC9n4nk
+ IVIaFGYBuDTgTsL.4skKMN3d8dJWYEUgjyzEo8_6OWebQ6q7hJoDsnUJXtyjipCgGgZ_E8a3JXda
+ 8ojtI5zeMGHhGNSUSqnIlzPnLhmUbOB9s4BFqnWVFK9cVnXRwZOEVj8u3ENAPhOjAt6Vb6vQGGeO
+ gEeEs0KU_HreOFgPr9tK_uoymsPNfKqAK6qCcBeEj_Szgz8qLvCAmEr8UMn7.q_373iqOP6TphUB
+ AS30MpuI55RADwsO2fVpCsYE4M_bUrY6XKmbYb6drlqrVZgN8747IiikCjw81ZnUsAZM5X5RLFfX
+ dsz48yt8m_ykJdpWA.v73XGczWrIPHfcKgqGcImPGtWr3KS.oHYO5NtPlzy6nBO46.GK4ZRzYD7f
+ oN1Tri5fuOtba80PgKlCGWrH2gT6z_GCXqH5IkqwajoW7PdyvrqX_raNFlo6eVlXZdTGHYDCPA_K
+ s3jhuqvRLrEj2fkISgEyOv1CKQtifJksC.yAsEw38zA6JmPCBiwWIz._SJUxlX2QJIITEueIVaF.
+ rqFyb.0aIoiyMkdxIPYPkMnXZKRfxGgiulgzaBJ7dlHpLUNjtvThBZodPnHKk9pFUtwNGWjBmsad
+ e31KwCoUnmrW7KZai7I709osjZwjqXbfH.u1AFzNcuIhFmHeOE5ot6UYs9njwaDsyRu4L9NDI66O
+ yEZHq3UcLOhKgJI2lp93_qRevmqDi8LAGRr5aETMnQFLe7o_voNejwGfpcmjp6_8PVVXL2Rotz5D
+ 8V6fA7FEbatvSMLYVAAVBC9DDl9TxUNTerRcI5X185ZCSoPoB0ZRiX_nY.Yg89LkHMfoo__Pjahg
+ BvW3sbruPJV0OdxKoQhqSzUJ3bVYc8gv1jfkWIE7hRoZQwogqKxY309HpyIv5QCEn.msukwDpIaG
+ rXGtcgV7pyAfsEuNdGrKUBcNn5eG0qYhLOmFjiZ0XgagVhtwYb47En.e8hiBcu8H8Gaq2C9OxHr1
+ .h32MfGjomz89pMJEkzOdkrFGOZgVM3Bw4Woi8XvbjikIOxJL5COh5425xgYymmd6OkzVIzAsNBJ
+ AcLAaEqCsSYo639ZF73IcWfp4sPitdkX3SIigWKhr1QLiaEkhZauHoaxp6h.Gsm34wQD48GjJDBc
+ XCNHPOWymty90Q9PfSunfwc3htRKH5e4MIyYmw.Wyip7c3xRR5O4n.TEzjf2DgCSRCSD1auQ_L3j
+ qKg_4qpoZ4x3xEeO16Cv_qsM9PYkt8GUI7.nROfQJkQK0as0DaTbUdXqOEr78GNZBmdgWivZKcFG
+ 6ubxqKRZcuJWnsOyaWCDAOIOJtBKlYhLvjWs8IS162WiXpCAUvXCcsBrkKpZN9MBab6hTIIoBXb8
+ MtdNF8mcWDVW_Us5rv_Ju..OAlqEPDIZM6di17ZmW0zdmr7I7eD1RA92i6On471YeSU_nAB0HXit
+ pZpSpwIOsFujcvhxO1E5YX0rtiZxmMNA9aav.8z3NmLWK_hQxbG8OUS7ddfjOpXzAWeCvbtye3xu
+ lZDZrRSg9fJscJxQtEXYDuQuC_1aXaq7cdXJUvrKlMV6x3ZCDYqBsWjWEhhxO0wozjGyHGO9uHes
+ M9eD8U_O_gaasTjNVebcrWhvH6rwsAHY3VzZvp2w7JLcHjsA9vRJ7780247_TW3vimsOMN.Vp6zE
+ zcP64orcYRQrZ8kMxPhdVIzRbqLxkgCW.3y8G84XaVynV892BgdeYJl6FqZkIMv_wJ95RZmdlpDT
+ B.TH.0_K._exf_76o5dB0nnYsetAp.BaYMhKaQVc2pNRRUFXLgZ_uoKTG3nDI.I4c.peAe8B9aHI
+ TOndCOVfvJT66kybH0e0zqYF.7zVLWEpu6T3JMa.EH_ML798DzKSXmQnZ7ESpd7gOPuLAWlUMY3A
+ tGpdx6AHR896CeFnC3n.HUPw2BzEFHcDFwgsLUtLDprpF5fiKBRvd29TlADyH7A5kHlmYbzTjWAV
+ 26DkEuKpILVy36k.sVQ3K5dp1XLFcC.Zd.tYhRN0P7oGbn_FHXBXPl5Cytyki9HsV2v0SdkxJex_
+ 3cWq2TSw.ADFQp8vK8pt6iD0EqpzPu61pfEg-
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 29969114-1e5d-42ed-aa9c-e2f60df9c6f7
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.ne1.yahoo.com with HTTP; Wed, 26 Mar 2025 14:57:55 +0000
+Received: by hermes--production-gq1-5c477bf655-cprz5 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 369724ad237849deda3651c5f1ab10e1;
+          Wed, 26 Mar 2025 14:57:50 +0000 (UTC)
+Message-ID: <aeceeebb-c207-43fb-999f-f7ffdeffd513@schaufler-ca.com>
+Date: Wed, 26 Mar 2025 07:57:48 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 5zsxOVmxvPCqrxxr9yrGke_BeyLFpOQa
-X-Proofpoint-ORIG-GUID: JcTprj394txHKd6TmrZrvg7pEjc3SURu
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-26_07,2025-03-26_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- priorityscore=1501 lowpriorityscore=0 phishscore=0 spamscore=0
- clxscore=1015 bulkscore=0 adultscore=0 suspectscore=0 malwarescore=0
- mlxlogscore=999 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2503260088
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/5] LSM: security_lsmblob_to_secctx module selection
+To: Fan Wu <wufan@kernel.org>
+Cc: paul@paul-moore.com, eparis@redhat.com,
+ linux-security-module@vger.kernel.org, audit@vger.kernel.org,
+ jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
+ john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+ stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+ selinux@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
+References: <20250319222744.17576-1-casey@schaufler-ca.com>
+ <20250319222744.17576-3-casey@schaufler-ca.com>
+ <CAKtyLkGGbB8yeWo3V4y2cMfcB=GyxLHtcH4HkGJQ7KZ_jz=XeA@mail.gmail.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <CAKtyLkGGbB8yeWo3V4y2cMfcB=GyxLHtcH4HkGJQ7KZ_jz=XeA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.23533 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Wed, 2025-03-26 at 14:46 +0100, Nicolai Stange wrote:
-> Mimi Zohar <zohar@linux.ibm.com> writes:
->=20
-> > On Wed, 2025-03-26 at 09:21 +0100, Nicolai Stange wrote:
-> > > Mimi Zohar <zohar@linux.ibm.com> writes:
-> > >=20
-> > > > On Sun, 2025-03-23 at 15:09 +0100, Nicolai Stange wrote:
->=20
-> > > > "ima_hash" is the default file hash algorithm.  Re-using it as the =
-default
-> > > > complete measurement list assumes that the subsequent kexec'ed kern=
-els configure
-> > > > and define it as the default file hash algorithm as well, which mig=
-ht not be the
-> > > > case.
-> > >=20
-> > > I don't really see why the ima_hashes would have to match between kex=
-ecs
-> > > for this to work -- all events' template hashes are getting recreated
-> > > from scratch anyway after kexec (ima_restore_measurement_list() ->
-> > > ima_calc_field_array_hash()).
-> > >=20
-> > > That is, if ima_hash=3Dsha256 first, and ima_hash=3Dsha384 after kexe=
-c, one
-> > > would have *runtime_measurements_sha256 first and
-> > > *runtime_measurements_sha384 after kexec. And both had exclusively
-> > > template hashes of their respective algo in them each.
-> > >=20
-> > > What am I missing?
-> >=20
-> > Your solution would work nicely, if the "ima_hash" algorithm could be g=
-uaranteed
-> > to be built into the kernel.  It's highly unlikely someone would choose=
- a hash
-> > algorithm not built into kernel, but it is possible.  hash_setup() only=
- verifies
-> > that the hash algorithm is a valid name.
->=20
-> But ima_init_ima_crypto(), hence the whole IMA __init, would fail if
-> ima_hash was unavailable at __init time?
+On 3/25/2025 4:44 PM, Fan Wu wrote:
+> On Wed, Mar 19, 2025 at 7:50 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> Add a parameter lsmid to security_lsmblob_to_secctx() to identify which
+>> of the security modules that may be active should provide the security
+>> context. If the value of lsmid is LSM_ID_UNDEF the first LSM providing
+>> a hook is used. security_secid_to_secctx() is unchanged, and will
+>> always report the first LSM providing a hook.
+>>
+>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> ..
+>> diff --git a/security/security.c b/security/security.c
+>> index 143561ebc3e8..55f9c7ad3f89 100644
+>> --- a/security/security.c
+>> +++ b/security/security.c
+>> @@ -4312,6 +4312,7 @@ EXPORT_SYMBOL(security_ismaclabel);
+>>   * security_secid_to_secctx() - Convert a secid to a secctx
+>>   * @secid: secid
+>>   * @cp: the LSM context
+>> + * @lsmid: which security module to report
+>>   *
+>>   * Convert secid to security context.  If @cp is NULL the length of the
+>>   * result will be returned, but no data will be returned.  This
+>> @@ -4338,9 +4339,17 @@ EXPORT_SYMBOL(security_secid_to_secctx);
+>>   *
+>>   * Return: Return length of data on success, error on failure.
+>>   */
+>> -int security_lsmprop_to_secctx(struct lsm_prop *prop, struct lsm_context *cp)
+>> +int security_lsmprop_to_secctx(struct lsm_prop *prop, struct lsm_context *cp,
+>> +                              int lsmid)
+>>  {
+>> -       return call_int_hook(lsmprop_to_secctx, prop, cp);
+>> +       struct lsm_static_call *scall;
+>> +
+>> +       lsm_for_each_hook(scall, lsmprop_to_secctx) {
+>> +               if (lsmid != 0 && lsmid != scall->hl->lsmid->id)
+> It took me some time to figure out why if LSM_ID_UNDEF is passed the
+> first LSM providing a hook is used, might be better to change it to:
+>
+>                if (lsmid != LSM_ID_UNDEF && lsmid != scall->hl->lsmid->id)
 
-Thanks for pointing that out!  Now I understand why just selecting SHA256 i=
-s
-sufficient.
+Thank you. That change will be in v4.
 
-Mimi
-
->=20
-> > Either fix hash_setup() to guarantee that the chosen hash algorithm is =
-built
-> > into the kernel or use the CONFIG_IMA_DEFAULT_HASH and add a Kconfig to=
- select
-> > the hash algorithm.  This would be in lieu of v2 05/13.
-> >=20
-> > > > Drop this patch.
-> > >=20
-> > > Fine by me, but just to confirm, in case there's no TPM attached and
-> > > SHA1 was disabled, there would be no /sys/*/*runtime_measurement* at =
-all
-> > > then. Is that Ok?
-> >=20
-> > Of course not.  :)
-> >=20
-> > > ima_hash was chosen here only, because after this series, it will be =
-the
-> > > only single algorithm guaranteed to be available.
-> >=20
-> > With the proposed changes to "[RFC PATCH v2 05/13] ima: select CRYPTO_S=
-HA256
-> > from Kconfig', SHA256 would be added to the "extra" measurements if the=
- TPM
-> > SHA256 bank is disabled.
->=20
->=20
-
+>
+> Otherwise, it works as described. I'm working on adding a new IPE
+> property based on SELinux file labels, and this just came up as I
+> needed it. Thank you.
+>
+> Tested-by: Fan Wu <wufan@kernel.org>
+>
+>> +                       continue;
+>> +               return scall->hl->hook.lsmprop_to_secctx(prop, cp);
+>> +       }
+>> +       return LSM_RET_DEFAULT(lsmprop_to_secctx);
+>>  }
+>>  EXPORT_SYMBOL(security_lsmprop_to_secctx);
+>>
+>> --
+>> 2.47.0
+>>
+>>
