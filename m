@@ -1,67 +1,58 @@
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 741D82561A2
-	for <linux-security-module@vger.kernel.org>; Wed, 26 Mar 2025 19:40:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 289C71F4736
+	for <linux-security-module@vger.kernel.org>; Wed, 26 Mar 2025 20:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743018041; cv=none; b=hrHlGnN5YUbM24aVWqD1rVsFvaq5co67yOmdNIUW3SCC5ka5Qm2wy6UyTqDWU0/9+rHvOFf42LvwiHmZ1ITKdqMzLCswvesxbRGYBAqwdC5A+yweRi4sY4uIyOYmZfklLt7wZouiZDXxXyQrcE4SuMvZvs2L0jC+Z9hmuYltpN0=
+	t=1743022093; cv=none; b=Ilas9UzW50dNguQEX5oPuMrUd/wHTH5Ps0jGAc7h8ZfHEQia68/ZCemonNxP59gI/eBmstOlW6auqtREmB2dexMWFQGb3KsoLMJ+ddgs4x33xoTaZ90CqTgKxe7akJ8RsOZry738XUDNdSZMXzGAHaqZS2YU7pzep3nw7OuSIcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743018041; c=relaxed/simple;
-	bh=6JmmSbRQ8MpL+89HMfAzj2vUP7QBs0D+i13dt/VsGmg=;
+	s=arc-20240116; t=1743022093; c=relaxed/simple;
+	bh=lkwNgZSqUlm9DJirk/oVV9tPmlsUXC77j/zjRQBf3B8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nFosiIxoeqfShy+mhshLgAvgC7wozsriv8q0ixs0x0WIs9hgMgEeUFhxpwdM/IVuu+jeELahwN57grYrvJExL0XLpzU+yu82QYxiyEaQpjnl4ModKQp1bGV+Oe9CrIIwESkKu54xMPiIVxnjW4MRnvLuRcROhMOwSeCvvR/rjNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=RcLxu09W; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+	 To:Cc:Content-Type; b=cr5YoUrcQAOTQdwX6zaZuTvyU9hzbTGiRTHFQO10Xn5QqeafVlZJA7WepyWhIdP/9nqfV7drMmjz4+vZ1vqnUMkG4/p5t+9/TPvjC/B6aC96RfIT8619v38akTqshZCAIKII4gP76aqOQRNac8jscfq802tLbMyor54ucpLWUbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=F6X62d2+; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="RcLxu09W"
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ac289147833so38397966b.2
-        for <linux-security-module@vger.kernel.org>; Wed, 26 Mar 2025 12:40:39 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="F6X62d2+"
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e5ad75ca787so319009276.0
+        for <linux-security-module@vger.kernel.org>; Wed, 26 Mar 2025 13:48:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1743018037; x=1743622837; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=YTnx5GpAo0KL0E3TtxHMmgaX5DlYUN52FQs+TSmcpSY=;
-        b=RcLxu09WxsKH8GB5HRO67X5F/6OuKRnuZvhKok9QsexNcUFSW6Rmn2t0Ty5nXszw/5
-         RAm/SEdA5qvPiudPe7nP4KqSFoWyk+LHpME68see2CnpqSE/dsI6F0WNMzy1gRfey9M6
-         /OBCvpoK8BHxmGJhuQy3pm4tVLLY9QE1YQKkE=
+        d=paul-moore.com; s=google; t=1743022091; x=1743626891; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2KugdLRUS2IB/bWcBImczTBUF8xvxY/0i4eovnJ/pJc=;
+        b=F6X62d2+OJfKCwhsA6Vh+qLbkDeDYnzecTxBZ15ubeyfAk61vWwZ84hUXEwJ7g2BYW
+         oEM8vlHrNHVSukS3R+XmA9xwuEelzlnX/Vv/l36Z1qZp1i4O+S7SYuIaQ0qMbjVTxQRY
+         9VUAfCQFo2HslAoLchRsXyWDpKfzSLpOYPyFiHKdFEj11TZF9GXxwAiszDzgqhhHkM8K
+         pq+S4P2Csytc9k1Sw9nrc2g39a/1uaUl2LhAICIHHMb+xua1adF41MvYD2vPn2GYZVj0
+         IVpVAwg//tQ+u268GeHltkrFYbQpmmlfg8Xk90bsrpmEX3rWqar989mwT3nMQK4jWLN0
+         F92A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743018037; x=1743622837;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YTnx5GpAo0KL0E3TtxHMmgaX5DlYUN52FQs+TSmcpSY=;
-        b=Jm3p327ZeyGOIYs5n1FBWiZ9C+ZKVUKVT/GPYdmspkjT5g29OER5HIl3Rdztt5smBI
-         gH3WnUL4jqPIVn8mtORYkgPhrB5jb4jvwuT09/9MJO+d7pdgCwNLfmWVxaqMz5P4P9uZ
-         64mqb7Ei3OX9OESD35rf43EsMs8jUGw2VRyyyOReOjY16idnoXHEUygRCvKsPIxM90KZ
-         +WzOQdBwbfdDaICHwYVGfuBILKfA8AbiR82s+E52rGxoxBZe6jv/ASuO2Wh0eY+icl4e
-         3VTvIXYIrQL2j0Y06hFItuOyMMyPebXlhjf7CZMKGMIlmSlV2PHXPtMUHwQnD1tW8BLq
-         uU+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVQz4eZYehGlvfwh7tkOp8XZ1T4gfn8+fhIZQWiC6CJLDSbbbiUdsz6vDNO81iy4iGPGYTYkGkEjwqTcwvUTWc+NgFjCA8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5BIVzIh9HNpe74xXUFAhG4QmlxTDuFJBW9caEtjc+LO5CEDxR
-	9cTV/jEB6KVk+tzAUZlIGxXR0S/fNmzWQXo9Xok4Sn5jE645/B1+4x+3gb2DsqFaVbzETUs68LQ
-	QsnIlVQ==
-X-Gm-Gg: ASbGnctAh8q0yIZAQB451SQ6oXwsc25eTW/q8PZpv9/TH4TdRZUiAZITSNnKA3NCqjr
-	RtsCIauWhmeDYhHwcI94UfyNW9dhL8ggxZaRSjEyET9QB9GL4+XZGG0+2qsT/ayX0FNWnndJulO
-	H17TNYVTKjjlDJS4MhyQTyPMz6tVg5aKCumuZLhTVWk6HQI40mh35L45IzShzWLDtiw15S0lbzh
-	/gqDD5zWOge8Io4NQi3BdXsZAahGoGFW5OEKL0Yn4yoXYaalWY90mgw/4sYE7vaqQsmU5VopbaV
-	rkwug1kNhF/UkyTNwnefh3OGF26VNmGmbGNzhYHL5yquYPCdVvYnwjcmCJCwMH+Zc+d9xrcAWGn
-	zBTd3X0qULFV2qdiZX10=
-X-Google-Smtp-Source: AGHT+IH60Cs2kx5zQemCMY4uhVJ1oH6kAL0EzxlHc5P1Bq0nocuarWYoK5u/7TYNeT+90vrJvBz8yQ==
-X-Received: by 2002:a17:906:c102:b0:ac6:d160:e39e with SMTP id a640c23a62f3a-ac6faef4ae2mr60619666b.31.1743018037400;
-        Wed, 26 Mar 2025 12:40:37 -0700 (PDT)
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com. [209.85.218.53])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3efd48021sm1088514066b.168.2025.03.26.12.40.36
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Mar 2025 12:40:36 -0700 (PDT)
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ac2dfdf3c38so32189866b.3
-        for <linux-security-module@vger.kernel.org>; Wed, 26 Mar 2025 12:40:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVvVZWtsp4nHXJo0OowchMHZZZMB5b3gz5b2inX5DJUtzbPogxZAzbauMFjRNhvQmS6pQaJTrWj4yhCy1lGY1gc/3sMYOk=@vger.kernel.org
-X-Received: by 2002:a17:906:d553:b0:abf:641a:5727 with SMTP id
- a640c23a62f3a-ac6fae44e6fmr66686466b.7.1743018036263; Wed, 26 Mar 2025
- 12:40:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1743022091; x=1743626891;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2KugdLRUS2IB/bWcBImczTBUF8xvxY/0i4eovnJ/pJc=;
+        b=i/aVQZIZhRYXO1uieXQdzy8uwInkJ4yXJshsHKXT/CzEvgxetBJo/5VftvqXATcJmE
+         bkEd5uQ9gs9Az8mWSvKlUgBYWIASio2b+Wq5DvmmrCK29MhfLROWIjGgZ68B3Rv8vBFm
+         u7F3YcB3R5QOfiaCCxP/32KIj0dQzPLhpI9E9Cz9h0aSBXIoW3YJxh09vbnrQG3WVDaS
+         zcGXyrOicBm8NYdTiz8KVd7KCozW5kr4rE/0uu+h4G9nO4Tj0RzgxRXBaaMDsfOuAmLG
+         CA/++H6FYG5xaf/U3T+nUFeVwVV9BPPw7vxIB6qnt1+Bqe+y21j9iihajqLlfn5tWx5y
+         EYxw==
+X-Forwarded-Encrypted: i=1; AJvYcCWfKuCRj1VArqJ69jkdJmixEOwQNu6dzT5XMn6+1p6+DSkv4wG8dvmHXGCQydnDpxc0FKwcmmLetFjvrvamxnRZ47+npBY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgtHU09M+iefMKMwzMRf4JRYAosGOec7mHoIrYDcUenc+B2KY+
+	x/61YyQG/d2H+Vl9Oc5IcupU/yyEMjAtatbZWaDQM8K4GLnpbzgsqGHlLn5rUOhntd/ZCFhwJO4
+	bNub5iGzUTzakIapgb8YOz1MlIZpnUQFbaMf/
+X-Gm-Gg: ASbGnctq1LsycTmaLijmCXOOL6rh8/veKce6fzLocH2UV0cUP7QeYQUqB4Di0EMuirG
+	QlaihnUNfJmVGwgb/mn5kY8IQaGDjxii+JA+3MFS74cplk22+/YzEOyTkxCL8IhFLjC41BIyEHQ
+	FCYTnrX3x9Opu1qUCCxhhM4TMgqw==
+X-Google-Smtp-Source: AGHT+IH2jQrsJDcBGNU0CPjcKd4UHxAwQucgB3nqCzI3sVup8fdoHxy8f+YJtEB/KLQhTPeRracAiI//nfAKZ0B6MVY=
+X-Received: by 2002:a05:6902:2808:b0:e5b:32f5:e38c with SMTP id
+ 3f1490d57ef6-e692ecfbe45mr7747622276.8.1743022090883; Wed, 26 Mar 2025
+ 13:48:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -69,65 +60,62 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <d0ade43454dee9c00689f03e8d9bd32a@paul-moore.com>
- <CAHk-=wjbahY4JjLCXNT4o3xVq2cejqBG69z+MNfHsN9FQBnbOw@mail.gmail.com> <CAHC9VhRExVqdhHqs0njs7NY6bFg0BfcE-gMpS30HW9O7MSDfWQ@mail.gmail.com>
-In-Reply-To: <CAHC9VhRExVqdhHqs0njs7NY6bFg0BfcE-gMpS30HW9O7MSDfWQ@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 26 Mar 2025 12:40:20 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wi9m8-_3cywQCohJQEQtuQ+teS4gOtBkWZrhFWzNy-5_A@mail.gmail.com>
-X-Gm-Features: AQ5f1JoV2NGzR0LooAp6oXwmVVp2SH1Bo3tIPZjlGoykS6sG1BTk0PCL13rM5D8
-Message-ID: <CAHk-=wi9m8-_3cywQCohJQEQtuQ+teS4gOtBkWZrhFWzNy-5_A@mail.gmail.com>
+ <CAHk-=wjbahY4JjLCXNT4o3xVq2cejqBG69z+MNfHsN9FQBnbOw@mail.gmail.com>
+ <CAHC9VhRExVqdhHqs0njs7NY6bFg0BfcE-gMpS30HW9O7MSDfWQ@mail.gmail.com> <CAHk-=wi9m8-_3cywQCohJQEQtuQ+teS4gOtBkWZrhFWzNy-5_A@mail.gmail.com>
+In-Reply-To: <CAHk-=wi9m8-_3cywQCohJQEQtuQ+teS4gOtBkWZrhFWzNy-5_A@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 26 Mar 2025 16:48:00 -0400
+X-Gm-Features: AQ5f1JqLL8hQNV93T465HG7TmuUvsJm2aGb-Tsdg4Dg6IQiLpz7nTzcvVAy5xw4
+Message-ID: <CAHC9VhT3D7X=4SpO5xbYm=JUwJqTa7tn=J6QMDBV96c7VBUw4g@mail.gmail.com>
 Subject: Re: [GIT PULL] selinux/selinux-pr-20250323
-To: Paul Moore <paul@paul-moore.com>, "Cameron K. Williams" <ckwilliams.work@gmail.com>, 
-	"Kipp N. Davis" <kippndavis.work@gmx.com>, Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc: selinux@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "Cameron K. Williams" <ckwilliams.work@gmail.com>, "Kipp N. Davis" <kippndavis.work@gmx.com>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, selinux@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 26 Mar 2025 at 11:36, Paul Moore <paul@paul-moore.com> wrote:
+On Wed, Mar 26, 2025 at 3:40=E2=80=AFPM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> On Wed, 26 Mar 2025 at 11:36, Paul Moore <paul@paul-moore.com> wrote:
+> >
+> > From my perspective this is largely a continuation of our discussion
+> > last April, and considering that you ignored my response then, I'm not
+> > sure typing out a meaningful reply here is a good use of my time.
 >
-> From my perspective this is largely a continuation of our discussion
-> last April, and considering that you ignored my response then, I'm not
-> sure typing out a meaningful reply here is a good use of my time.
+> What you are saying is that I have complained about added overhead
+> before, and you aren't even willing to explain why new code was added?
 
-What you are saying is that I have complained about added overhead
-before, and you aren't even willing to explain why new code was added?
+My comment is simply that you have a habit of disrespecting the work
+done in the security/ space (e.g. "security theater"), and despite
+explaining how that behavior is detrimental you seemingly choose to
+ignore these concerns and repeat the same tired language.
 
-> Anyone who is interested can find that thread on lore, unfortunately
-> much of my response still applies.
+If you want to have a discussion about something substantive, I would
+suggest refraining from insulting those you want to engage.
 
-That thread was similar in that yes, it was complaining about extra
-overhead of the lsm code. Not just me, btw.
+> In other words: why were new policy entries added? The commit message
+> and the list explains what the commit *does*, but doesn't explain
+> *why* it does it.
 
-But your respose doesn't make sense. I asked for *why* this was added.
-You're saying "I am not going to answer because you've complained
-about other overhead before".
+Looking at the pre-patched code one can see that SELinux only enforced
+access controls on kernel module loading; other operations such as
+kexec images, firmware, policy, etc. were not originally included.  As
+this happened back in the v4.x time frame I would have to go dig
+through the archives to provide a fully accurate reasoning as to why
+SELinux only concerned itself with kernel module loading at that point
+in time.  However, speaking solely from memory, I believe that the
+initial focus was limited to modules simply because that was the area
+of largest concern at the time, and many of the other file types were
+not yet gated by the LSM hooks.  Moving forward to the recent pull
+request, the LSM hooks do have the ability to gate these additional
+file types, and for a LSM such as SELinux that aims to provide
+comprehensive access controls, adding support for enforcing controls
+on these additional file types is a logical thing to do and consistent
+with our other work.  The fact that these changes didn't happen at the
+same time as the enabling support for the other file types is likely
+due to an ongoing challenge we face where we sometimes fail to keep
+current with all facets of kernel development.
 
-I actually went and tried to find the discussion on the mailing lists,
-and nowhere *there* did I find an explanation for why this was done
-either.
-
-In other words: why were new policy entries added? The commit message
-and the list explains what the commit *does*, but doesn't explain
-*why* it does it.
-
-I'm cc'ing the other people involved, exactly *because* we've had the
-whole discussion before, and because I want to see explanations for
-*why* new policy hooks are added to the security layers.
-
-I really think that "policy hooks just because policy hooks" is not
-acceptable. And the reason it's not acceptable is exactly the fact
-that we have a bad history of various random policies becoming
-problematic over time.
-
-There needs to be a *reason* for a policy hook stated. Not "there are
-no matching policy hooks".
-
-And I do not see why firmware loading should be a policy issue if the
-kernel code that initiated the firmware load (ie the module load that
-*was* checked for policy) was already done.
-
-Do I believe this particular case is going to be a performance issue? No.
-
-Do I strongly feel that any additional hooks need *EXPLANATIONS*? Hell yes.
-
-                 Linus
+--=20
+paul-moore.com
