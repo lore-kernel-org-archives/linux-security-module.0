@@ -1,215 +1,179 @@
-Received: from smtp-1908.mail.infomaniak.ch (smtp-1908.mail.infomaniak.ch [185.125.25.8])
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1C9D1F460E
-	for <linux-security-module@vger.kernel.org>; Wed, 26 Mar 2025 14:40:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 959681F17E8;
+	Wed, 26 Mar 2025 14:48:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743000009; cv=none; b=phUmF7IsjKAUtFa6Z6PvxMWnr14YTmyD+6uSbD3Qar5oL3tB32egmZcmEgveP8sPNlDgagZkZHj7WHl9bcYKqn1P49rxzYd5irtK2riNUMVDMhVOhIBygs+Knd2nj9EpTXOM9zSZp+XEFdjNaIp/e0qe4VFwrEuX+OYFBbRvGW0=
+	t=1743000503; cv=none; b=GfHUDBqjDfY1XAY/HeCaBOoa4WeRpaqiE12x4eNhjmaRLf2ImBVeIKzPrwDu5IWoJdnqCqqLDTHT6f9sr6SEqNYYOJpoO5B5KSsjUut16Srev1bNBKKsOSkfVtDv+zZ719BuQ1i/OQc3ZVKLjIQfZ2LD516dquGU5yTZYMTATm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743000009; c=relaxed/simple;
-	bh=Je6jIPQlNYcygiBnrdGBr/5i5tczgfxM94a9ZGZ8VR4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q8DCRNNNhbjBWPDxYfG6c0+3LTO9VeMUrcmZdXNb2mM1oB8tXjON0qutuW2cPZzifXdbLnUnOGqbSVXGPH4q+UMO0aQXZxdCxE1oanYc+o6HQPcVe3O9MZ9WqXOk30a/E/dydZZDWbQugL2Yk1njZNzZkHtNJpvuG9JJXSf1LoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=nSNLGDtP; arc=none smtp.client-ip=185.125.25.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1743000503; c=relaxed/simple;
+	bh=UAEk/9kPjvmga7GcKmw9nqNKziWIzKa6VIdrotiYH1Q=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=WIA87rseTzqH4uG7tX14Imkyc4SkFhAM//RheGSkF/6RHqqGWkVvMH6hDJZ2HjEndLN9Hck+PXiuTnNKxaId9dHnRVfeVKkH2NsPJ0UqzcauRZFm4dYRgIm28akh0gaf1BJhPL1rLuT35azLDIAEhiWdrLEz1TmVHQTVxyyRrxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=rzvUdXHd; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="nSNLGDtP"
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ZN8Zh53ftzK8M;
-	Wed, 26 Mar 2025 15:39:56 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1742999996;
-	bh=Ee6WM5hOboIrFjp6HQ1++MdgSgW/hPwQWJw0pcA+KJs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nSNLGDtP8UkUix6osSyxaUQq1PnGxhV1lUBF0nceldjnJsgpsNfq9wTT1j+6IvX3Q
-	 IUdWqxTpHn46R3QAZaP1LhfN37uFdQ0q0tDo+jLEM2tRUOyIiY2ka4MgJnjHRWVrfx
-	 FtrjoT7+ByVZwEJ0C0p9nQPMrPorWIdpNBGDLN0I=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4ZN8Zg6DDszYXr;
-	Wed, 26 Mar 2025 15:39:55 +0100 (CET)
-Date: Wed, 26 Mar 2025 15:39:53 +0100
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: kernel test robot <oliver.sang@intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Paul Moore <paul@paul-moore.com>, 
-	Serge Hallyn <serge@hallyn.com>, Tahera Fahimi <fahimitahera@gmail.com>, 
-	Christian Brauner <brauner@kernel.org>, linux-security-module@vger.kernel.org
-Subject: Re: [linux-next:master] [landlock]  9d65581539:
- WARNING:suspicious_RCU_usage
-Message-ID: <20250326.kahl1Beesoh8@digikod.net>
-References: <202503261510.f9652c11-lkp@intel.com>
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="rzvUdXHd"
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52QC54MX027698;
+	Wed, 26 Mar 2025 14:48:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=ra3A8m
+	93pQeCibvdnnrnUW2lYYCiD9gyKANCUrrYnd4=; b=rzvUdXHdZYW3ij3j5uSmJJ
+	JHB6vAdmcXjefkYQyhAiR1gNhH25z+9O0Rr2UuChClLwUMHbmaCruylVa+NVkt+y
+	SLiYd5Eyu6Nyxp8awe76V6qWmkrwKSveHCSPgn2KvfmPxYbXxqNTNfbmJ6RjNPaT
+	CY0MYHkYmvtIbwa/MDYBVC8HkySZOTbo9DAr0FCRLTzX9p2Vt9s18yFimJhIypkg
+	VeNsvT210FOXmHieH3+KOzXqklff9DF/gE7+tQC4Vv2R4hvytRzvCQuBH5hSRbFr
+	3OPWW3hVzLYWZjThQV3LZHAszgb3NncE5bBRzeDFUeGif+d8Iurp/nXZRcCeJL/Q
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45kbjx3h12-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Mar 2025 14:48:04 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52QElRYA028748;
+	Wed, 26 Mar 2025 14:48:03 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45kbjx3h0x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Mar 2025 14:48:03 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52QEjtUf020639;
+	Wed, 26 Mar 2025 14:48:02 GMT
+Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 45j8hp0s9c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Mar 2025 14:48:02 +0000
+Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
+	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52QEm2Q929557450
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 26 Mar 2025 14:48:02 GMT
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2B46758065;
+	Wed, 26 Mar 2025 14:48:02 +0000 (GMT)
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7DAB358056;
+	Wed, 26 Mar 2025 14:48:01 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.116.195])
+	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 26 Mar 2025 14:48:01 +0000 (GMT)
+Message-ID: <4efc3cd7521eb1aef435af2b02a9a112f049c0f2.camel@linux.ibm.com>
+Subject: Re: [RFC PATCH v2 02/13] ima: always create runtime_measurements
+ sysfs file for ima_hash
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Nicolai Stange <nstange@suse.de>
+Cc: Roberto Sassu <roberto.sassu@huawei.com>,
+        Dmitry Kasatkin
+ <dmitry.kasatkin@gmail.com>,
+        Eric Snowberg <eric.snowberg@oracle.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        James Bottomley
+ <James.Bottomley@HansenPartnership.com>,
+        linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date: Wed, 26 Mar 2025 10:48:01 -0400
+In-Reply-To: <87wmcboqg4.fsf@>
+References: <20250323140911.226137-1-nstange@suse.de>
+	 <20250323140911.226137-3-nstange@suse.de>
+	 <35d199c2a09e9215aad715c97a6702dd04be4a98.camel@linux.ibm.com>
+	 <fbd87f01b5463e399900df8dcb094a9039bd589f.camel@linux.ibm.com>
+	 <87wmcboqg4.fsf@>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <202503261510.f9652c11-lkp@intel.com>
-X-Infomaniak-Routing: alpha
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 5zsxOVmxvPCqrxxr9yrGke_BeyLFpOQa
+X-Proofpoint-ORIG-GUID: JcTprj394txHKd6TmrZrvg7pEjc3SURu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-26_07,2025-03-26_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ priorityscore=1501 lowpriorityscore=0 phishscore=0 spamscore=0
+ clxscore=1015 bulkscore=0 adultscore=0 suspectscore=0 malwarescore=0
+ mlxlogscore=999 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502280000 definitions=main-2503260088
 
-Thanks, I replied here:
-https://lore.kernel.org/all/20250326.yee0ba6Yai3m@digikod.net/
+On Wed, 2025-03-26 at 14:46 +0100, Nicolai Stange wrote:
+> Mimi Zohar <zohar@linux.ibm.com> writes:
+>=20
+> > On Wed, 2025-03-26 at 09:21 +0100, Nicolai Stange wrote:
+> > > Mimi Zohar <zohar@linux.ibm.com> writes:
+> > >=20
+> > > > On Sun, 2025-03-23 at 15:09 +0100, Nicolai Stange wrote:
+>=20
+> > > > "ima_hash" is the default file hash algorithm.  Re-using it as the =
+default
+> > > > complete measurement list assumes that the subsequent kexec'ed kern=
+els configure
+> > > > and define it as the default file hash algorithm as well, which mig=
+ht not be the
+> > > > case.
+> > >=20
+> > > I don't really see why the ima_hashes would have to match between kex=
+ecs
+> > > for this to work -- all events' template hashes are getting recreated
+> > > from scratch anyway after kexec (ima_restore_measurement_list() ->
+> > > ima_calc_field_array_hash()).
+> > >=20
+> > > That is, if ima_hash=3Dsha256 first, and ima_hash=3Dsha384 after kexe=
+c, one
+> > > would have *runtime_measurements_sha256 first and
+> > > *runtime_measurements_sha384 after kexec. And both had exclusively
+> > > template hashes of their respective algo in them each.
+> > >=20
+> > > What am I missing?
+> >=20
+> > Your solution would work nicely, if the "ima_hash" algorithm could be g=
+uaranteed
+> > to be built into the kernel.  It's highly unlikely someone would choose=
+ a hash
+> > algorithm not built into kernel, but it is possible.  hash_setup() only=
+ verifies
+> > that the hash algorithm is a valid name.
+>=20
+> But ima_init_ima_crypto(), hence the whole IMA __init, would fail if
+> ima_hash was unavailable at __init time?
 
-The other report wasn't the same but both are now fixed.
+Thanks for pointing that out!  Now I understand why just selecting SHA256 i=
+s
+sufficient.
 
-On Wed, Mar 26, 2025 at 04:00:12PM +0800, kernel test robot wrote:
-> 
-> hi, Mickaël Salaün,
-> 
-> we just reported a random
-> "Oops:general_protection_fault,probably_for_non-canonical_address#:#[##]SMP_KASAN"
-> issue in
-> https://lore.kernel.org/all/202503261534.22d970e8-lkp@intel.com/
-> 
-> now we noticed this commit is also in linux-next/master.
-> 
-> we don't have enough knowledge to check the difference, but we found a
-> persistent issue for this commit.
-> 
-> 6d9ac5e4d70eba3e 9d65581539252fdb1666917a095
-> ---------------- ---------------------------
->        fail:runs  %reproduction    fail:runs
->            |             |             |
->            :6          100%           6:6     dmesg.WARNING:suspicious_RCU_usage
->            :6          100%           6:6     dmesg.boot_failures
->            :6          100%           6:6     dmesg.kernel/pid.c:#suspicious_rcu_dereference_check()usage
-> 
-> below full report FYI.
-> 
-> 
-> Hello,
-> 
-> kernel test robot noticed "WARNING:suspicious_RCU_usage" on:
-> 
-> commit: 9d65581539252fdb1666917a09549c13090fe9e5 ("landlock: Always allow signals between threads of the same process")
-> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
-> 
-> [test failed on linux-next/master eb4bc4b07f66f01618d9cb1aa4eaef59b1188415]
-> 
-> in testcase: trinity
-> version: trinity-x86_64-ba2360ed-1_20241228
-> with following parameters:
-> 
-> 	runtime: 300s
-> 	group: group-00
-> 	nr_groups: 5
-> 
-> 
-> 
-> config: x86_64-randconfig-101-20250325
-> compiler: gcc-12
-> test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
-> 
-> (please refer to attached dmesg/kmsg for entire log/backtrace)
-> 
-> 
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <oliver.sang@intel.com>
-> | Closes: https://lore.kernel.org/oe-lkp/202503261510.f9652c11-lkp@intel.com
-> 
-> 
-> [  166.893101][ T3747] WARNING: suspicious RCU usage
-> [  166.893462][ T3747] 6.14.0-rc5-00006-g9d6558153925 #1 Not tainted
-> [  166.893895][ T3747] -----------------------------
-> [  166.894239][ T3747] kernel/pid.c:414 suspicious rcu_dereference_check() usage!
-> [  166.894747][ T3747]
-> [  166.894747][ T3747] other info that might help us debug this:
-> [  166.894747][ T3747]
-> [  166.895450][ T3747]
-> [  166.895450][ T3747] rcu_scheduler_active = 2, debug_locks = 1
-> [  166.896030][ T3747] 3 locks held by trinity-c2/3747:
-> [ 166.896415][ T3747] #0: ffff888114a5a930 (&group->mark_mutex){+.+.}-{4:4}, at: fcntl_dirnotify (include/linux/sched/mm.h:332 include/linux/sched/mm.h:386 include/linux/fsnotify_backend.h:279 fs/notify/dnotify/dnotify.c:329) 
-> [ 166.897165][ T3747] #1: ffff888148bbea60 (&mark->lock){+.+.}-{3:3}, at: fcntl_dirnotify (fs/notify/dnotify/dnotify.c:349) 
-> [ 166.897831][ T3747] #2: ffff888108a53220 (&f_owner->lock){....}-{3:3}, at: __f_setown (fs/fcntl.c:137) 
-> [  166.898481][ T3747]
-> [  166.898481][ T3747] stack backtrace:
-> [  166.898901][ T3747] CPU: 0 UID: 65534 PID: 3747 Comm: trinity-c2 Not tainted 6.14.0-rc5-00006-g9d6558153925 #1
-> [  166.898908][ T3747] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
-> [  166.898912][ T3747] Call Trace:
-> [  166.898916][ T3747]  <TASK>
-> [ 166.898921][ T3747] dump_stack_lvl (lib/dump_stack.c:123) 
-> [ 166.898932][ T3747] lockdep_rcu_suspicious (kernel/locking/lockdep.c:6848) 
-> [ 166.898945][ T3747] pid_task (kernel/pid.c:414 (discriminator 11)) 
-> [ 166.898954][ T3747] hook_file_set_fowner (security/landlock/fs.c:1651 (discriminator 9)) 
-> [ 166.898963][ T3747] security_file_set_fowner (arch/x86/include/asm/atomic.h:23 (discriminator 4) include/linux/atomic/atomic-arch-fallback.h:457 (discriminator 4) include/linux/jump_label.h:262 (discriminator 4) security/security.c:3062 (discriminator 4)) 
-> [ 166.898969][ T3747] __f_setown (fs/fcntl.c:145) 
-> [ 166.898980][ T3747] fcntl_dirnotify (fs/notify/dnotify/dnotify.c:233 fs/notify/dnotify/dnotify.c:371) 
-> [ 166.898996][ T3747] do_fcntl (fs/fcntl.c:539) 
-> [ 166.899002][ T3747] ? f_getown (fs/fcntl.c:448) 
-> [ 166.899007][ T3747] ? check_prev_add (kernel/locking/lockdep.c:3862) 
-> [ 166.899011][ T3747] ? do_syscall_64 (arch/x86/entry/common.c:102) 
-> [ 166.899023][ T3747] ? syscall_exit_to_user_mode (include/linux/entry-common.h:361 kernel/entry/common.c:220) 
-> [ 166.899038][ T3747] __x64_sys_fcntl (fs/fcntl.c:591 fs/fcntl.c:576 fs/fcntl.c:576) 
-> [ 166.899050][ T3747] do_syscall_64 (arch/x86/entry/common.c:52 arch/x86/entry/common.c:83) 
-> [ 166.899062][ T3747] ? find_held_lock (kernel/locking/lockdep.c:5341) 
-> [ 166.899072][ T3747] ? __lock_release+0x10b/0x440 
-> [ 166.899076][ T3747] ? __task_pid_nr_ns (include/linux/rcupdate.h:347 include/linux/rcupdate.h:880 kernel/pid.c:514) 
-> [ 166.899082][ T3747] ? reacquire_held_locks (kernel/locking/lockdep.c:5502) 
-> [ 166.899087][ T3747] ? lockdep_hardirqs_on (kernel/locking/lockdep.c:4470) 
-> [ 166.899093][ T3747] ? do_syscall_64 (arch/x86/entry/common.c:102) 
-> [ 166.899099][ T3747] ? do_syscall_64 (arch/x86/entry/common.c:102) 
-> [ 166.899111][ T3747] ? syscall_exit_to_user_mode (include/linux/entry-common.h:361 kernel/entry/common.c:220) 
-> [ 166.899119][ T3747] ? lockdep_hardirqs_on_prepare (kernel/locking/lockdep.c:469 kernel/locking/lockdep.c:4409) 
-> [ 166.899124][ T3747] ? do_syscall_64 (arch/x86/entry/common.c:102) 
-> [ 166.899129][ T3747] ? lockdep_hardirqs_on (kernel/locking/lockdep.c:4470) 
-> [ 166.899134][ T3747] ? do_syscall_64 (arch/x86/entry/common.c:102) 
-> [ 166.899139][ T3747] ? do_int80_emulation (arch/x86/include/asm/atomic.h:23 include/linux/atomic/atomic-arch-fallback.h:457 include/linux/jump_label.h:262 arch/x86/entry/common.c:230) 
-> [ 166.899149][ T3747] entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130) 
-> [  166.899155][ T3747] RIP: 0033:0x7f55ad007719
-> [ 166.899159][ T3747] Code: 08 89 e8 5b 5d c3 66 2e 0f 1f 84 00 00 00 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d b7 06 0d 00 f7 d8 64 89 01 48
-> All code
-> ========
->    0:	08 89 e8 5b 5d c3    	or     %cl,-0x3ca2a418(%rcx)
->    6:	66 2e 0f 1f 84 00 00 	cs nopw 0x0(%rax,%rax,1)
->    d:	00 00 00 
->   10:	90                   	nop
->   11:	48 89 f8             	mov    %rdi,%rax
->   14:	48 89 f7             	mov    %rsi,%rdi
->   17:	48 89 d6             	mov    %rdx,%rsi
->   1a:	48 89 ca             	mov    %rcx,%rdx
->   1d:	4d 89 c2             	mov    %r8,%r10
->   20:	4d 89 c8             	mov    %r9,%r8
->   23:	4c 8b 4c 24 08       	mov    0x8(%rsp),%r9
->   28:	0f 05                	syscall
->   2a:*	48 3d 01 f0 ff ff    	cmp    $0xfffffffffffff001,%rax		<-- trapping instruction
->   30:	73 01                	jae    0x33
->   32:	c3                   	ret
->   33:	48 8b 0d b7 06 0d 00 	mov    0xd06b7(%rip),%rcx        # 0xd06f1
->   3a:	f7 d8                	neg    %eax
->   3c:	64 89 01             	mov    %eax,%fs:(%rcx)
->   3f:	48                   	rex.W
-> 
-> Code starting with the faulting instruction
-> ===========================================
->    0:	48 3d 01 f0 ff ff    	cmp    $0xfffffffffffff001,%rax
->    6:	73 01                	jae    0x9
->    8:	c3                   	ret
->    9:	48 8b 0d b7 06 0d 00 	mov    0xd06b7(%rip),%rcx        # 0xd06c7
->   10:	f7 d8                	neg    %eax
->   12:	64 89 01             	mov    %eax,%fs:(%rcx)
->   15:	48                   	rex.W
-> [  166.899164][ T3747] RSP: 002b:00007ffff6eefb48 EFLAGS: 00000246 ORIG_RAX: 0000000000000048
-> [  166.899168][ T3747] RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00007f55ad007719
-> [  166.899172][ T3747] RDX: 0000000000000027 RSI: 0000000000000402 RDI: 0000000000000043
-> [  166.899174][ T3747] RBP: 00007f55ab92f058 R08: 0000000099999999 R09: 00000000377dd000
-> [  166.899177][ T3747] R10: 0000000084848484 R11: 0000000000000246 R12: 0000000000000048
-> [  166.899180][ T3747] R13: 00007f55acf036c0 R14: 00007f55ab92f058 R15: 00007f55ab92f000
-> [  166.899203][ T3747]  </TASK>
-> 
-> 
-> The kernel config and materials to reproduce are available at:
-> https://download.01.org/0day-ci/archive/20250326/202503261510.f9652c11-lkp@intel.com
-> 
-> 
-> 
-> -- 
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
-> 
-> 
+Mimi
+
+>=20
+> > Either fix hash_setup() to guarantee that the chosen hash algorithm is =
+built
+> > into the kernel or use the CONFIG_IMA_DEFAULT_HASH and add a Kconfig to=
+ select
+> > the hash algorithm.  This would be in lieu of v2 05/13.
+> >=20
+> > > > Drop this patch.
+> > >=20
+> > > Fine by me, but just to confirm, in case there's no TPM attached and
+> > > SHA1 was disabled, there would be no /sys/*/*runtime_measurement* at =
+all
+> > > then. Is that Ok?
+> >=20
+> > Of course not.  :)
+> >=20
+> > > ima_hash was chosen here only, because after this series, it will be =
+the
+> > > only single algorithm guaranteed to be available.
+> >=20
+> > With the proposed changes to "[RFC PATCH v2 05/13] ima: select CRYPTO_S=
+HA256
+> > from Kconfig', SHA256 would be added to the "extra" measurements if the=
+ TPM
+> > SHA256 bank is disabled.
+>=20
+>=20
+
