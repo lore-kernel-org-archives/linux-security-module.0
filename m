@@ -1,95 +1,94 @@
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 537B7189919
-	for <linux-security-module@vger.kernel.org>; Wed, 26 Mar 2025 09:46:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59CB61AF0C7
+	for <linux-security-module@vger.kernel.org>; Wed, 26 Mar 2025 09:56:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1742982361; cv=none; b=JrhZaQgbOFh2bjKcLQclpDzYWx59dQ1680VGqn2URQzQiN8XuayNe4YtQK5F2T7I0Me2jnmDOtNE3B1GfM/7WC5oK6kgs1TksFkA2VJZf0/7zvrJAoAz6eM2DdKuuj6VU5jGzmJvOcyJy1ZIb1DoEQW6xuTGHVcv6hb3MH/pyNw=
+	t=1742982968; cv=none; b=iEhZ2d6oPAFZmMpOeCWQe7fvMrWf8BwmE0ceLiKcZ8HZKPTTPrRIlwnd7mbdT458pSl/6VJ2orJj/xmi0vnTdHLkDibvOP8BjmXSE6IY51x1eV6TRCGlGET05XAqix0VlhNpPxBIGQOxXVo8UyRLeF/Nl1tSnVIIosj8OZVyn4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1742982361; c=relaxed/simple;
-	bh=xrQALF0xZASC9lAzNDjlGBs1HM4EQBjOhLb9lRIB3q0=;
+	s=arc-20240116; t=1742982968; c=relaxed/simple;
+	bh=wVei9JOwEWOYgm/JalL6QgMkM57oclEqhIfwU2xCgUs=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=q8jy5nrDulhHBBS4UUPBlm30Sf1rc836NSUmxgHNPDzd3M7biKz/n4LaL++kZKKcUEaZ5QdEDGKZVN+2yxHUrcYjHi4uzc1Ei5CeiMEfSc6ByZIONMfsPv0M1vQsDVbxmwYDxQ8rxgzZp7c2VRwqmAhTfwNk1J7UeA47+6A+PMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=SK/madfa; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=6/f1qHXt; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=AO80ImJI; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=oBobONKO; arc=none smtp.client-ip=195.135.223.130
+	 MIME-Version:Content-Type; b=gYeYDKiB0jdt1yG3iQQ01b9joPbEaUX+Ljo9nSON23gw12rFY4DfOB3j5kdR2RKH2pXr+VhGNpCprnTCgDcDXZg1bKEsryO/smmT0aAmeenrp5wuZurRu54/MToxaabQO+yPXv4cxgPzrFbaa4buJ9jRJTDjz5RKAAyFVrMrujU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GGQ9DGo1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=81/qTr3x; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GGQ9DGo1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=81/qTr3x; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="SK/madfa";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="6/f1qHXt";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="AO80ImJI";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="oBobONKO"
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GGQ9DGo1";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="81/qTr3x";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GGQ9DGo1";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="81/qTr3x"
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id DDF4E21179;
-	Wed, 26 Mar 2025 09:45:57 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 7504721164;
+	Wed, 26 Mar 2025 09:56:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1742982358; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1742982964; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=yEWux97G+JgMR2PuanuTwss4e9Ijl0dgxvw3Gu2V5es=;
-	b=SK/madfar9BpCWtIJ03hVqbDl6MPi+zZJJyTnFnLRCKTaC3yRlZeL72aZRJ6JXoYhfdesG
-	rWSSShP6Vfdmf9xSl1JNwKmmF3jImPpQpiHkQ35vT38Bp6SFDUT33iuPkbSo9zACZQ8RJB
-	IyTmt7v2oecwWHdLF9KZPqWvJI7ma6I=
+	bh=Xk93waxRhnduMRjz5Sx0DPymopyidmm+ilySXgLSCcI=;
+	b=GGQ9DGo1/AhxjsdcHCG1vbrnfxQio672lyagU+m/FBUL4Xdk+0Gc79iE2d33soXKZa14Qz
+	GyBa/n6mZtVStK86wG8C496OFWwAue9SXTQhjtMkm8ynYi9nUnLw1oex3Gs1jcjjr0Nuid
+	ICt37so0k1Vgrf3fFF7jPk4LVenmzZM=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1742982358;
+	s=susede2_ed25519; t=1742982964;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=yEWux97G+JgMR2PuanuTwss4e9Ijl0dgxvw3Gu2V5es=;
-	b=6/f1qHXtdxCLwH3Ea3F8ZDOJNecVF8rzvOrMm2xuLR1r3i8hd3CO1lr+rZ9Kq8KE7NEZTB
-	f/Pe6yXwf9nzTuAQ==
+	bh=Xk93waxRhnduMRjz5Sx0DPymopyidmm+ilySXgLSCcI=;
+	b=81/qTr3xm3H0dXeJOvjrbLTsXWxP7oTdBojntQuD3YCbdS0ItE+TpBGaQspNHIshhwP2Um
+	Dj4Ks9be1O/mVlCA==
 Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=AO80ImJI;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=oBobONKO
+	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1742982357; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1742982964; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=yEWux97G+JgMR2PuanuTwss4e9Ijl0dgxvw3Gu2V5es=;
-	b=AO80ImJIaDXtTkLrSDBtnF2p/4ZftnNh3LGY3J0VLlJSurGzuW/Ei26aTteq3CwOB1LdR+
-	vYEAcY8Spi/k8apowjVa1W/VlaKi31Y/b0Fcq+hmR+cdls+saCmDPR3oeOoiz6lSQV7f87
-	5nqBILwnfzL+DMdFCtcoeXbaB1XNJuU=
+	bh=Xk93waxRhnduMRjz5Sx0DPymopyidmm+ilySXgLSCcI=;
+	b=GGQ9DGo1/AhxjsdcHCG1vbrnfxQio672lyagU+m/FBUL4Xdk+0Gc79iE2d33soXKZa14Qz
+	GyBa/n6mZtVStK86wG8C496OFWwAue9SXTQhjtMkm8ynYi9nUnLw1oex3Gs1jcjjr0Nuid
+	ICt37so0k1Vgrf3fFF7jPk4LVenmzZM=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1742982357;
+	s=susede2_ed25519; t=1742982964;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=yEWux97G+JgMR2PuanuTwss4e9Ijl0dgxvw3Gu2V5es=;
-	b=oBobONKOTS7L4WLiticidbETpD/OSDYPgaB3tzjLVWupUvMNltTcJlOcXfy4VLeQSkAbYw
-	cIo/ehfo9FZg7+Ag==
+	bh=Xk93waxRhnduMRjz5Sx0DPymopyidmm+ilySXgLSCcI=;
+	b=81/qTr3xm3H0dXeJOvjrbLTsXWxP7oTdBojntQuD3YCbdS0ItE+TpBGaQspNHIshhwP2Um
+	Dj4Ks9be1O/mVlCA==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 912D11374A;
-	Wed, 26 Mar 2025 09:45:57 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2FEF21374A;
+	Wed, 26 Mar 2025 09:56:04 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 7DSvIdXM42fnaQAAD6G6ig
-	(envelope-from <nstange@suse.de>); Wed, 26 Mar 2025 09:45:57 +0000
+	id 5pVyCjTP42fsbAAAD6G6ig
+	(envelope-from <nstange@suse.de>); Wed, 26 Mar 2025 09:56:04 +0000
 From: Nicolai Stange <nstange@suse.de>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Nicolai Stange <nstange@suse.de>,  Mimi Zohar <zohar@linux.ibm.com>,
-  Roberto Sassu <roberto.sassu@huawei.com>,  Dmitry Kasatkin
- <dmitry.kasatkin@gmail.com>,  Eric Snowberg <eric.snowberg@oracle.com>,
-  James Bottomley <James.Bottomley@hansenpartnership.com>,
-  linux-integrity@vger.kernel.org,  linux-security-module@vger.kernel.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v2 07/13] tpm: enable bank selection for PCR extend
-In-Reply-To: <Z-Bx_-EvcfCzWqr7@kernel.org> (Jarkko Sakkinen's message of "Sun,
-	23 Mar 2025 22:41:35 +0200")
+To: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Nicolai Stange <nstange@suse.de>,  Roberto Sassu
+ <roberto.sassu@huawei.com>,  Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+  Eric Snowberg <eric.snowberg@oracle.com>,  Jarkko Sakkinen
+ <jarkko@kernel.org>,  James Bottomley
+ <James.Bottomley@HansenPartnership.com>,  linux-integrity@vger.kernel.org,
+  linux-security-module@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v2 08/13] ima: track the set of PCRs ever extended
+In-Reply-To: <3cd5975b7a5773e1d3f1017c35b2e48222eb2d4a.camel@linux.ibm.com>
+	(Mimi Zohar's message of "Tue, 25 Mar 2025 13:09:53 -0400")
 References: <20250323140911.226137-1-nstange@suse.de>
-	<20250323140911.226137-8-nstange@suse.de>
-	<Z-Bx_-EvcfCzWqr7@kernel.org>
-Date: Wed, 26 Mar 2025 10:45:57 +0100
-Message-ID: <87h63gp1ka.fsf@>
+	<20250323140911.226137-9-nstange@suse.de>
+	<3cd5975b7a5773e1d3f1017c35b2e48222eb2d4a.camel@linux.ibm.com>
+Date: Wed, 26 Mar 2025 10:56:03 +0100
+Message-ID: <874izgp13g.fsf@>
 User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
@@ -99,105 +98,84 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-X-Spamd-Result: default: False [-0.81 / 50.00];
+X-Spam-Score: -0.60
+X-Spamd-Result: default: False [-0.60 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	INVALID_MSGID(1.70)[];
 	SUSPICIOUS_RECIPS(1.50)[];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	MID_RHS_NOT_FQDN(0.50)[];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
 	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
 	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
 	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
 	FREEMAIL_ENVRCPT(0.00)[gmail.com];
 	RCVD_TLS_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_SEVEN(0.00)[10];
+	TO_DN_SOME(0.00)[];
 	FROM_EQ_ENVFROM(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[suse.de,linux.ibm.com,huawei.com,gmail.com,oracle.com,hansenpartnership.com,vger.kernel.org];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_CC(0.00)[suse.de,huawei.com,gmail.com,oracle.com,kernel.org,HansenPartnership.com,vger.kernel.org];
+	RCVD_COUNT_TWO(0.00)[2];
 	TAGGED_RCPT(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:email,suse.de:dkim]
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,imap1.dmz-prg2.suse.org:helo]
 X-Spam-Flag: NO
-X-Spamd-Bar: /
-X-Rspamd-Queue-Id: DDF4E21179
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Score: -0.81
 X-Spam-Level: 
 
-Jarkko Sakkinen <jarkko@kernel.org> writes:
+Mimi Zohar <zohar@linux.ibm.com> writes:
 
-> On Sun, Mar 23, 2025 at 03:09:05PM +0100, Nicolai Stange wrote:
->> The existing tpm_pcr_extend() extends all of a PCR's allocated banks with
->> the corresponding digest from the provided digests[] argument.
->
-> Why not "just" tpm_pcr_extend(). We don't have a concept of
-> "non-existing tpm_pcr_extend()".
->
-> "tpm_pcr_extend() extends the allocated PCR banks ..."
->
-> or something.
-
-Right.
-
-
+> On Sun, 2025-03-23 at 15:09 +0100, Nicolai Stange wrote:
+>> Right now, PCR banks with unsupported hash algorithms are getting
+>> invalidated over and over again for each new measurement list entry
+>> recorded.
 >>=20
->> An upcoming code change to IMA will introduce the need to skip over those
->
-> Don't talk about upcoming code changes. Just explain why IMA depends on
-> the change.
-
-Ok.
-
-
->> banks it does not have a hash algorithm implementation available for.
+>> A subsequent patch will make IMA to invalidate PCR banks associated with
+>> unsupported hash algorithms only once at a PCR's first use. To prepare f=
+or
+>> that, make it track the set of PCRs ever extended.
 >>=20
->> Introduce tpm_pcr_extend_sel() to support this.
+>> Maintain the set of touched PCRs in an unsigned long bitmask,
+>> 'ima_extended_pcrs_mask'.
 >>=20
->> tpm_pcr_extend_sel() also expects a digests[] array, always being the
->> number of allocated PCR banks in size, just as it's the case for the
->> existing tpm_pcr_extend(). In addition to that however, it takes a
->> 'banks_skip_mask', and will skip the extension of any bank having its
->> corresponding bit set there.
+>> Amend the IMA_INVALID_PCR() #define to check that a given PCR can get
+>> represented in that bitmask. Note that this is only for improving code
+>> maintainablity, it does not actually constain the set of allowed PCR
+>> indices any further.
+>>=20
+>> Make ima_pcr_extend() to maintain the ima_extended_pcrs_mask, i.e. to set
+>> the currently extented PCR's corresponding bit.
+>>=20
+>> Note that at this point there's no provision to restore the
+>> ima_extended_pcrs_mask value after kexecs yet, that will be the subject =
+of
+>> later patches.
 >>=20
 >> Signed-off-by: Nicolai Stange <nstange@suse.de>
->> ---
->>  drivers/char/tpm/tpm-interface.c | 29 +++++++++++++++++++++++++++--
->>  drivers/char/tpm/tpm.h           |  3 ++-
->>  drivers/char/tpm/tpm2-cmd.c      | 29 +++++++++++++++++++++++++++--
->>  include/linux/tpm.h              |  3 +++
->>  4 files changed, 59 insertions(+), 5 deletions(-)
->>=20
->> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-int=
-erface.c
->> index b1daa0d7b341..88b4496de1df 100644
->> --- a/drivers/char/tpm/tpm-interface.c
->> +++ b/drivers/char/tpm/tpm-interface.c
->> @@ -314,6 +314,26 @@ EXPORT_SYMBOL_GPL(tpm_pcr_read);
->>   */
->>  int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
->>  		   struct tpm_digest *digests)
->> +{
->> +	return tpm_pcr_extend_sel(chip, pcr_idx, digests, 0);
->> +}
->> +EXPORT_SYMBOL_GPL(tpm_pcr_extend);
 >
-> I'd add just an extra argument to tpm_pcr_extend().
+> Hi Nicolai,
+>
+> IMA extends measurements in the default TPM PCR based on the Kconfig
+> CONFIG_IMA_MEASURE_PCR_IDX option.  Normally that is set to PCR 10.  The =
+IMA
+> policy rules may override the default PCR with a per policy rule
+> specific PCR.
 
-Perfect, will do.
+Yes, that matches my understanding.
+
+
+> INVALID_PCR() checks the IMA policy rule specified is a valid PCR registe=
+r.
+>
+> Is the purpose of this patch to have a single per TPM bank violation or m=
+ultiple
+> violations, one for each PCR used within the TPM bank?
+
+One for each PCR individually, issued when a given PCR is being
+referenced for the first time from some IMA event.
 
 Thanks!
 
