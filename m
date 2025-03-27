@@ -1,248 +1,169 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from flow-a3-smtp.messagingengine.com (flow-a3-smtp.messagingengine.com [103.168.172.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C7A13B2A4;
-	Thu, 27 Mar 2025 21:13:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E177C1CCB21;
+	Thu, 27 Mar 2025 21:38:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743109997; cv=none; b=c2KdwSLXP9K3+OHn/USovQkhSLEy8Nm49StS2iFwje2rLqjC3BHjkAbnuA9qkE+hKOQDFs4cSAK7zLqlpA8d3aSgL+pFV0AGst5XELQ5aRGckmtXMrE+EAbgxHgjfTA9W1cCsDPyxUR00rPMSCkfr9AAb/7gnMEMUZAIMWdUCzU=
+	t=1743111506; cv=none; b=YnK+UtQ4M+JnlI1d4VzZ4vwGJxkXhUHHjdHayerjSW066w/tL4RFOBpA8vCMPDHRZZaDFuVAwEyaDNbEQX4kVKF6uJXw8LAOOF64RSVcZ4Rz2/ysQsjVQpMC4ZPdJky5SyXUNMJ7FeXs641aiRunH9dcq96m+5qYPLL7AUcsMx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743109997; c=relaxed/simple;
-	bh=UMe20iZUuagLPcGXISw0+QA+ECxOrxToOggTG9tCl7c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oNOTV/cT/GY2aJ5Kjyacm2I8GB1Hly37RK6gSkMEcS+Cxtpdj7YJJjJG2y9jJ41pnea4cp5NNRTQAs4zBbd0DLDlLLIYNgNrKSuc8J5ynMPmJOvAORPtFq5uKF1XpqqSn5GVKOzS4oM5Y0VtZOL8An+pBG6tqVGYeV5xNbPCvvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pjEZiBD8; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1743111506; c=relaxed/simple;
+	bh=qEEsWxmDu2SraV5a65CHrYEKOhjSn8vVjEBpRvl/OAQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=iVoyVlAs935NL6+BDwDHUzt7VQwN8/JowKrnPBUKtw0T5rf1IgQihX0dhal1K3cJeM6qd+rT/jv0/x1bZc8+/yaNe9dqkSL9BjqVOH5FXU47NNqBUgpAz5EkMuczhmn7BkkkXv/d/DUziu2Nug+2d5Ssp0kgoAfxnE/Dm6cpVWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=RoYqd2hM; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=mBa1uEfO; arc=none smtp.client-ip=103.168.172.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pjEZiBD8"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBC4EC4CEE8;
-	Thu, 27 Mar 2025 21:13:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743109997;
-	bh=UMe20iZUuagLPcGXISw0+QA+ECxOrxToOggTG9tCl7c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pjEZiBD8e0ystDPIxq5rYB0BhzyFxROf/Ryj0zF5OUcIL6U1NSR+ohFVoWx75A5O1
-	 zUDoz9NmZeNhN/ml8TDozSK+FHArIgNzTxMJisrUKKp0QrJDSE/48Gm/7w9gYMhpsC
-	 0cjmF7vuhAtNHlUTYpDxoSTAP2NIVeQICKV+KIimhR/fvFSexTVvShIeniU2H9xu1t
-	 lHLCiQ6glh0GSWZ9t6y1BCD9rlFIlXjQRsKBMmV5eyX9HujEsmEI+WN4RIPfT1OqXc
-	 wkwp1dgNkF3j8gBSpRl+CYes246BZH+3WMNbFuFYx4I5178EjPlyXmTihrByrFKRp0
-	 bGdzAIry8bGnQ==
-Received: by pali.im (Postfix)
-	id 9561981B; Thu, 27 Mar 2025 22:13:01 +0100 (CET)
-Date: Thu, 27 Mar 2025 22:13:01 +0100
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Andrey Albershteyn <aalbersh@redhat.com>,
-	Richard Henderson <richard.henderson@linaro.org>,
-	Matt Turner <mattst88@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Michal Simek <monstr@monstr.eu>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
-	Helge Deller <deller@gmx.de>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	Rich Felker <dalias@libc.org>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	"David S. Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, Chris Zankel <chris@zankel.net>,
-	Max Filippov <jcmvbkbc@gmail.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>,
-	Arnd Bergmann <arnd@arndb.de>, Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-alpha@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-	sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
-	linux-arch@vger.kernel.org, selinux@vger.kernel.org,
-	Andrey Albershteyn <aalbersh@kernel.org>, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v4 0/3] fs: introduce getfsxattrat and setfsxattrat
- syscalls
-Message-ID: <20250327211301.kdsohqou3s242coa@pali>
-References: <20250321-xattrat-syscall-v4-0-3e82e6fb3264@kernel.org>
- <CAOQ4uxjQDUg8HFG+mSxMkR54zen7nC2jttzOKqh13Bx-uosh3Q@mail.gmail.com>
- <20250323103234.2mwhpsbigpwtiby4@pali>
- <CAOQ4uxiTKhGs1H-w1Hv-+MqY284m92Pvxfem0iWO+8THdzGvuA@mail.gmail.com>
- <20250327192629.ivnarhlkfbhbzjcl@pali>
- <CAOQ4uxhJ53h+1AjtF4B64onqvRfZsJ3n1OFikyJpXAPTyX45iQ@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="RoYqd2hM";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="mBa1uEfO"
+Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
+	by mailflow.phl.internal (Postfix) with ESMTP id D99FA201E89;
+	Thu, 27 Mar 2025 17:38:22 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-02.internal (MEProxy); Thu, 27 Mar 2025 17:38:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1743111502;
+	 x=1743115102; bh=Rsm2ZPE2+P/FMcLCyzyCdEQTiLTQl/3wdDa8zkMU5Ho=; b=
+	RoYqd2hMS9LXXbA4vV7EExpWAiGP8M1JlAfUyhctgTpuijC0wKoSCcjl5F/c+w2t
+	IDZNmVcOS82pqzNYqdsN9oe4wQan5ptjeTYcDfp+ZcDvFNtphif4hxgCQ9FrlkoS
+	izBl5AtOEDLb9GyxD1vuGKnyag2nj0nyZM0eNyFuw4CMywZ8nb0VZGLAuX7D4AlE
+	bJ44zlNOJGSVqmPwmRbgjubTDXdoIY4/RTucK6LbUM6mk0YM1uxsQtqdI5yv9Y6z
+	nxwYM9ljGHIepwtIffVkMDEPsv7toO/gwQoFYUzqLOzsBsn2qZ+7/UrC6oB5OoLl
+	nFJ0w+Q2oHImJZ6iDleRPw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1743111502; x=
+	1743115102; bh=Rsm2ZPE2+P/FMcLCyzyCdEQTiLTQl/3wdDa8zkMU5Ho=; b=m
+	Ba1uEfOq7f23NGqW+MED+U9Qu651tolg89tM7iZCdd5LP2pE9Mxzd9xRUQ5nisLx
+	VXXlm4XvvJEQXepNjsO8J6hsRq2D4O1CSDtj+8WOrM8uPEBswwLpSEdVBcxhcBCG
+	59LxTGBBz7kmVD/1RmOzF5wkJMX8ABXUJ5nSgSez31miA+ICilZd44vkROpi/3zE
+	H1oH6s5rjpaXeCKK9OKCGsFAv5lz+1xa3u1/5Aohm2wdCztH+J8aX2w1weMebLwx
+	PmXqCNn1DU7sSXLqsYlKHB32eFZEZFjMROZSOnxBdhwdielqYfPHYRiASQNiJPSh
+	MplSdZmw+mPn5H+dI/wnw==
+X-ME-Sender: <xms:TsXlZ7blf9qKtsZ0qaJIke1IfjjzphRfmmApT86nXZl3egPpNRD4xA>
+    <xme:TsXlZ6ZulNBN6HqMqdRVg9Zaft4CeJsGYo6Ls-z1q_3KmqskwicS1UYxM3zw4OBYE
+    pbLV0_gBbpa010ExJw>
+X-ME-Received: <xmr:TsXlZ9-YBBf-L0j1-M-245-IvsF8hfF3BllgjUBndy87kTEKR0zHYSJbW9wiONW9dwd4xDcm6Qtihcv5EM0wLl0HUig>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduieelheduucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpefhvf
+    evufffkffojghfgggtgfesthekredtredtjeenucfhrhhomhepvfhinhhgmhgrohcuhggr
+    nhhguceomhesmhgrohifthhmrdhorhhgqeenucggtffrrghtthgvrhhnpeeiieeggeehtd
+    ffieffhfekueffhefhveeugfdvkeejkeehvdettdfgvdeghfdujeenucevlhhushhtvghr
+    ufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmsehmrghofihtmhdrohhrgh
+    dpnhgspghrtghpthhtohephedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhhi
+    tgesughighhikhhougdrnhgvthdprhgtphhtthhopegruhguihhtsehvghgvrhdrkhgvrh
+    hnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqshgvtghurhhithihqdhmohguuh
+    hlvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehmsehmrghofihtmhdr
+    ohhrgh
+X-ME-Proxy: <xmx:TsXlZxrdxIInc7Y2-VThr2tOUTNGfZ6NdznP1_JLGBkmOu7dcoiukg>
+    <xmx:TsXlZ2pEsyh5Ua1F3b5MxSNwNCY9PXhl09yzgx1fpDQgDd5WtabHhA>
+    <xmx:TsXlZ3T5aeKVqf3jO6cfu4Ml0SI7YSAE-xN5POaL3yKM1bAbLkJhGg>
+    <xmx:TsXlZ-r_yp65imzZy78-unSSpRQMnPjs0lJBL-AjJmxxPPDCgoNYgQ>
+    <xmx:TsXlZ920tgx76ZXg11LmT6pG7m1KZpfRy-_l6EADZa0ZWfjvgL_wtaG5>
+Feedback-ID: i580e4893:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 27 Mar 2025 17:38:21 -0400 (EDT)
+From: Tingmao Wang <m@maowtm.org>
+To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+Cc: audit@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v7 09/28] landlock: Add AUDIT_LANDLOCK_ACCESS and log ptrace denials
+Date: Thu, 27 Mar 2025 21:38:05 +0000
+Message-ID: <20250327213807.12964-1-m@maowtm.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250320190717.2287696-10-mic@digikod.net>
+References: <20250320190717.2287696-10-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxhJ53h+1AjtF4B64onqvRfZsJ3n1OFikyJpXAPTyX45iQ@mail.gmail.com>
-User-Agent: NeoMutt/20180716
 
-On Thursday 27 March 2025 21:57:34 Amir Goldstein wrote:
-> On Thu, Mar 27, 2025 at 8:26 PM Pali Rohár <pali@kernel.org> wrote:
-> >
-> > On Thursday 27 March 2025 12:47:02 Amir Goldstein wrote:
-> > > On Sun, Mar 23, 2025 at 11:32 AM Pali Rohár <pali@kernel.org> wrote:
-> > > >
-> > > > On Sunday 23 March 2025 09:45:06 Amir Goldstein wrote:
-> > > > > On Fri, Mar 21, 2025 at 8:50 PM Andrey Albershteyn <aalbersh@redhat.com> wrote:
-> > > > > >
-> > > > > > This patchset introduced two new syscalls getfsxattrat() and
-> > > > > > setfsxattrat(). These syscalls are similar to FS_IOC_FSSETXATTR ioctl()
-> > > > > > except they use *at() semantics. Therefore, there's no need to open the
-> > > > > > file to get an fd.
-> > > > > >
-> > > > > > These syscalls allow userspace to set filesystem inode attributes on
-> > > > > > special files. One of the usage examples is XFS quota projects.
-> > > > > >
-> > > > > > XFS has project quotas which could be attached to a directory. All
-> > > > > > new inodes in these directories inherit project ID set on parent
-> > > > > > directory.
-> > > > > >
-> > > > > > The project is created from userspace by opening and calling
-> > > > > > FS_IOC_FSSETXATTR on each inode. This is not possible for special
-> > > > > > files such as FIFO, SOCK, BLK etc. Therefore, some inodes are left
-> > > > > > with empty project ID. Those inodes then are not shown in the quota
-> > > > > > accounting but still exist in the directory. This is not critical but in
-> > > > > > the case when special files are created in the directory with already
-> > > > > > existing project quota, these new inodes inherit extended attributes.
-> > > > > > This creates a mix of special files with and without attributes.
-> > > > > > Moreover, special files with attributes don't have a possibility to
-> > > > > > become clear or change the attributes. This, in turn, prevents userspace
-> > > > > > from re-creating quota project on these existing files.
-> > > > > >
-> > > > > > Christian, if this get in some mergeable state, please don't merge it
-> > > > > > yet. Amir suggested these syscalls better to use updated struct fsxattr
-> > > > > > with masking from Pali Rohár patchset, so, let's see how it goes.
-> > > > >
-> > > > > Andrey,
-> > > > >
-> > > > > To be honest I don't think it would be fair to delay your syscalls more
-> > > > > than needed.
-> > > >
-> > > > I agree.
-> > > >
-> > > > > If Pali can follow through and post patches on top of your syscalls for
-> > > > > next merge window that would be great, but otherwise, I think the
-> > > > > minimum requirement is that the syscalls return EINVAL if fsx_pad
-> > > > > is not zero. we can take it from there later.
-> > > >
-> > > > IMHO SYS_getfsxattrat is fine in this form.
-> > > >
-> > > > For SYS_setfsxattrat I think there are needed some modifications
-> > > > otherwise we would have problem again with backward compatibility as
-> > > > is with ioctl if the syscall wants to be extended in future.
-> > > >
-> > > > I would suggest for following modifications for SYS_setfsxattrat:
-> > > >
-> > > > - return EINVAL if fsx_xflags contains some reserved or unsupported flag
-> > > >
-> > > > - add some flag to completely ignore fsx_extsize, fsx_projid, and
-> > > >   fsx_cowextsize fields, so SYS_setfsxattrat could be used just to
-> > > >   change fsx_xflags, and so could be used without the preceding
-> > > >   SYS_getfsxattrat call.
-> > > >
-> > > > What do you think about it?
-> > >
-> > > I think all Andrey needs to do now is return -EINVAL if fsx_pad is not zero.
-> > >
-> > > You can use this later to extend for the semantics of flags/fields mask
-> > > and we can have a long discussion later on what this semantics should be.
-> > >
-> > > Right?
-> > >
-> > > Amir.
-> >
-> > It is really enough?
-> 
-> I don't know. Let's see...
-> 
-> > All new extensions later would have to be added
-> > into fsx_pad fields, and currently unused bits in fsx_xflags would be
-> > unusable for extensions.
-> 
-> I am working under the assumption that the first extension would be
-> to support fsx_xflags_mask and from there, you could add filesystem
-> flags support checks and then new flags. Am I wrong?
-> 
-> Obviously, fsx_xflags_mask would be taken from fsx_pad space.
-> After that extension is implemented, calling SYS_setfsxattrat() with
-> a zero fsx_xflags_mask would be silly for programs that do not do
-> the legacy get+set.
-> 
-> So when we introduce  fsx_xflags_mask, we could say that a value
-> of zero means that the mask is not being checked at all and unknown
-> flags in set syscall are ignored (a.k.a legacy ioctl behavior).
-> 
-> Programs that actually want to try and set without get will have to set
-> a non zero fsx_xflags_mask to do something useful.
+Hi Mickaël,
 
-Here we need to also solve the problem that without GET call we do not
-have valid values for fsx_extsize, fsx_projid, and fsx_cowextsize. So
-maybe we would need some flag in fsx_pad that fsx_extsize, fsx_projid,
-or fsx_cowextsize are ignored/masked.
+On 3/20/25 19:06, Mickaël Salaün wrote:
+[...]
+> +static struct landlock_hierarchy *
+> +get_hierarchy(const struct landlock_ruleset *const domain, const size_t layer)
+> +{
+> +	struct landlock_hierarchy *hierarchy = domain->hierarchy;
+> +	ssize_t i;
+> +
+> +	if (WARN_ON_ONCE(layer >= domain->num_layers))
+> +		return hierarchy;
+> +
+> +	for (i = domain->num_layers - 1; i > layer; i--) {
+> +		if (WARN_ON_ONCE(!hierarchy->parent))
+> +			break;
+> +
+> +		hierarchy = hierarchy->parent;
+> +	}
+> +
+> +	return hierarchy;
+> +}
+> +
+> +#ifdef CONFIG_SECURITY_LANDLOCK_KUNIT_TEST
+> +
+> +static void test_get_hierarchy(struct kunit *const test)
+> +{
+> +	struct landlock_hierarchy dom0_hierarchy = {
+> +		.id = 10,
+> +	};
+> +	struct landlock_hierarchy dom1_hierarchy = {
+> +		.parent = &dom0_hierarchy,
+> +		.id = 20,
+> +	};
+> +	struct landlock_hierarchy dom2_hierarchy = {
+> +		.parent = &dom1_hierarchy,
+> +		.id = 30,
+> +	};
+> +	struct landlock_ruleset dom2 = {
+> +		.hierarchy = &dom2_hierarchy,
+> +		.num_layers = 3,
+> +	};
+> +
+> +	KUNIT_EXPECT_EQ(test, 10, get_hierarchy(&dom2, 0)->id);
+> +	KUNIT_EXPECT_EQ(test, 20, get_hierarchy(&dom2, 1)->id);
+> +	KUNIT_EXPECT_EQ(test, 30, get_hierarchy(&dom2, 2)->id);
+> +	KUNIT_EXPECT_EQ(test, 30, get_hierarhy(&dom2, -1)->id);
 
-> I don't think this is great.
-> I would rather that the first version of syscalls will require the mask
-> and will always enforce filesystems supported flags.
+This causes a warning from WARN_ON_ONCE(layer >= domain->num_layers)
+when running this test, I guess because layer is unsigned.  Should it
+be ssize_t, if this is an expected usage?
 
-It is not great... But what about this? In a first step (part of this
-syscall patch series) would be just a check that fsx_pad is zero.
-Non-zero will return -EINVAL.
+------------[ cut here ]------------
+WARNING: CPU: 7 PID: 145 at security/landlock/audit.c:142 get_hierarchy (security/landlock/audit.c:142)
+Modules linked in:
+CPU: 7 UID: 0 PID: 145 Comm: kunit_try_catch Tainted: G                 N  6.14.0-next-20250326-dev-00004-g4e57edc3e062-dirty #5 PREEMPT(undef)
+Tainted: [N]=TEST
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+RIP: 0010:get_hierarchy (security/landlock/audit.c:142)
+Code: 83 e8 02 e8 18 00 84 c0 75 02 0f 0b 48 83 c4 08 48 89 d8 5b 41 5c 41 5e 5d c3 48 c7 c7 00 f3 21 83 e8 e2 e7 18 00 84 c0 75 e2 <0f> 0b eb de 48 89 75 e0 e8 a1 a9 a7 ff 48 8b 75 e0 e9 76 ff ff ff
+// snip //
+Call Trace:
+ <TASK>
+test_get_hierarchy (security/landlock/audit.c:178 (discriminator 5))
+? test_get_denied_layer (security/landlock/audit.c:158)
+? lock_repin_lock (kernel/locking/lockdep.c:5649 kernel/locking/lockdep.c:5978)
+? __lock_acquire (kernel/locking/lockdep.c:4675 kernel/locking/lockdep.c:5189)
+? _raw_spin_unlock_irqrestore (./include/linux/spinlock_api_smp.h:151 kernel/locking/spinlock.c:194)
+? find_held_lock (kernel/locking/lockdep.c:5348)
+? trace_irq_enable (./include/trace/events/preemptirq.h:40 (discriminator 17))
+? trace_hardirqs_on (kernel/trace/trace_preemptirq.c:80)
+? kvm_clock_get_cycles (./arch/x86/include/asm/preempt.h:95 arch/x86/kernel/kvmclock.c:80 arch/x86/kernel/kvmclock.c:86)
+? ktime_get_ts64 (kernel/time/timekeeping.c:318 (discriminator 4) kernel/time/timekeeping.c:335 (discriminator 4) kernel/time/timekeeping.c:907 (discriminator 4))
+kunit_try_run_case (lib/kunit/test.c:400 lib/kunit/test.c:443)
+? kunit_try_run_case_cleanup (lib/kunit/test.c:430)
 
-In next changes would added fsx_filter bit field, which for each
-fsx_xflags and also for fsx_extsize, fsx_projid, and fsx_cowextsize
-fields would add a new bit flag which would say (when SET) that the
-particular thing has to be ignored.
-
-So when fsx_pad is all-zeros then fsx_filter (first field in fsx_pad)
-would say that nothing in fsx_xflags, fsx_extsize, fsx_projid, and
-fsx_cowextsize is ignored, and hence behave like before.
-
-And when something in fsx_pad/fsx_filter is set then it says which
-fields are ignored/filtered-out.
-
-> If you can get those patches (on top of current series) posted and
-> reviewed in time for the next merge window, including consensus
-> on the actual semantics, that would be the best IMO.
-
-I think that this starting to be more complicated to rebase my patches
-in a way that they do not affect IOCTL path but implement it properly
-for new syscall path. It does not sounds like a trivial thing which I
-would finish in merge window time and having proper review and consensus
-on this.
-
-> But I am just preparing a plan B in case you do not have time to
-> work on the patches or if consensus on the API extensions is not
-> reached on time.
-> 
-> I think that for plan B, the minimum is to verify zero pad field and
-> that is something that this syscall has to do anyway, because this
-> is the way that backward compact APIs work.
-> 
-> If you want the syscall to always return -EINVAL for setting xflags
-> that are currently undefined I agree that would be nice as well.
-> 
-> Thanks,
-> Amir.
