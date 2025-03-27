@@ -1,68 +1,58 @@
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F0462576
-	for <linux-security-module@vger.kernel.org>; Thu, 27 Mar 2025 01:21:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39AD670838
+	for <linux-security-module@vger.kernel.org>; Thu, 27 Mar 2025 03:28:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743038463; cv=none; b=KxkxdAbjhZi+gkUFULCJsTP8/v/DPq7cn3Isc6Je49Ot2Ekl13SYJ/LLIGwf1Ad3fWGJFnlM7IEDJcfpXX+0XoQnPAXjusD7u6OtNd3OQlZ9Tn704XU2l1fqePdVZbLz38BOYQzWURnN2LZEKpeDcnWdmHlQlvkGIhdiozb2iNc=
+	t=1743046097; cv=none; b=VofMgDMcZDyx5Rb3XiTFWDbnZaq5V85yY0r+Ve8a3NoHKz137eSBFvxCHUQ688387tcykwdHUBGW9u/55sL7WZQS7jVI6VNZ5evyzmp9Q4vAC99DTDO+wASn8350RVLZv6eo1Rn3ZbAz8/ZOi6ozfQyJ5aG7xbsDc/sIh5kctpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743038463; c=relaxed/simple;
-	bh=rkxtS5suWD5Evz+m11GQWGobt3dWkXZJA9nOgREsdpE=;
+	s=arc-20240116; t=1743046097; c=relaxed/simple;
+	bh=KOVnteOSYGMuX/fuEdTCskNxSepC6g2ivttGd3p/tAw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kq8bQIjL7249Y0vetAedGW/q2VgRiZyPUGoKm2RQ+KfD41GJ9SDDcz8GA27IE3EkgloKdHxWXZmQn3dVo0KoQfS0J2slYI3UO0BIoRTBGatNiWzO1qw1YIvQbd0rf2OQRnEe2MkF5qGtHAxNuF3X4lvcLH5HU8KsRBdqTp/U/F8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=fO0lC0Q5; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+	 To:Cc:Content-Type; b=A4b6ryOQjLsbwzvVp0kLTB/TTCVafGQyDupgBf1qFklgImYQ3h1NogUCEogAcX1QbUcy1MP09aIOtZr4B96RfkqleYkaofCMCi0UgOvckcqcGTxGbvJTRA9+ctpxa3x98Nwo3zt86s8W+htwi3GsTcROBfZ3giskCeaBFiM3De8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Cg/I/Jy5; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="fO0lC0Q5"
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5ec9d24acfbso2787480a12.0
-        for <linux-security-module@vger.kernel.org>; Wed, 26 Mar 2025 18:21:00 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Cg/I/Jy5"
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5498c5728aeso4202e87.0
+        for <linux-security-module@vger.kernel.org>; Wed, 26 Mar 2025 20:28:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1743038459; x=1743643259; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1743046093; x=1743650893; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mI0EdooEMFFqAW+WoUqWF95O/QEtZzQxFpMruePbYtw=;
-        b=fO0lC0Q5L7yl7BoWFzBl5s8MdxZCFE7o7aOt/C3TcVHso3WPBWeVNkAi/HS3g3GJk1
-         ZHLjHRtkPAnHRHgdY576UtwsSsKyvhpn0JfbHDD0M9yVggBFp39i5Bk+IHCu7Yi0Ootz
-         WTaoBDttKVa7MmH+vuxUVgX4d5fVMs4Bun1qw=
+        bh=KOVnteOSYGMuX/fuEdTCskNxSepC6g2ivttGd3p/tAw=;
+        b=Cg/I/Jy5pK5twBUNtl1PT4ZWHCKzzkxNiR3kiri1KS38V1jdvmYgHqwwY3HKWuECfZ
+         mdrW0FQ/7aWNh0rQ5Keno8mx59A6cLsGErm6TAuQ1h1Iu+tVXvEGZkZAuWgrER2+qlTh
+         2gWqDuVbFX+T0ZFsppTX6WDuqIzSgPBaDc2HIcisIzWBAHF6ETzhv1O1936RpeMbD6vF
+         2LmAt4/4QgUWyZy/Av0ij8slMPSM6hj8Tv1aJQfeLRwcCang6Wbhql17J+W+NmYSJM3u
+         sa4cWArWfl+vKdl5kzUdSOI1/Bx8VRyjIRgPVz7wgNoQYK1wVYAh7Dv5XNOvBB1poDQ8
+         D3sw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743038459; x=1743643259;
+        d=1e100.net; s=20230601; t=1743046093; x=1743650893;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=mI0EdooEMFFqAW+WoUqWF95O/QEtZzQxFpMruePbYtw=;
-        b=mrwdN3K37FIRIL/+WxFWr/DRZAAT3UTigRekvHpfxhoC7pdiymLdj0aiNKkifATpeL
-         pjVdct69UGBMr+UnOLngltkBMelAexTIDfIM7mDl1jWjVDA55X/9MrZuqFm5NKONT1ip
-         fLxg7XHRIFIFMFYV8jJj09PDAyMYF1s259sXVRrK/d1438zKVhr5eOPUogwOP/f1sXA5
-         WDkCtlpST/E0n6w9LLnnMx6LRgJwJAltYpSWFo8GCQJGzjhJwxqsDAeG02AoVVo+oTHi
-         pSjB0shE8u2JWYWDWbKcwJWvd2KsLmzSAcRSkAyFQ2HrJ7pTQD9494kI7rUYDm+9sOt9
-         83bA==
-X-Forwarded-Encrypted: i=1; AJvYcCUz0vysSnnVCc2ZkI5ZlO+xeZ3u94FU9nrZQODORhkoaVxDg7YGlUiECxFJ5fGYtJCecYlv48UicRtc4mreMbq6k3Xx+D0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMCdmlXibZptv5AGMEJrx5QSH2hyVeL3zUZql4IqtTg5TNNZ/a
-	AFCNCxJWzaIsAWFgiIZkNomtq7/WgKZx5nViNS8GQGoYVFXS6BlbmbtPOq546lAN3iMNwQdhiUZ
-	4oTM=
-X-Gm-Gg: ASbGnctIU3PUCjjDUxseOUvWYtBq78zn7QxyJfM/OCc4MeQ4g9YrB1576q3lQ+E4AMD
-	BV4pmIvly16OeTdrqpx6oRAgYD0ZzDZMO5kUEbQAIi1DWyKQEbdhoaJqidJMrnu8XJom67MzDAO
-	8Y/yJLTWcPlgukXNnGI1KMP7p2mu1s3bJh2ZUQEwDQJx9pRb1PkDjrY09jHjVf4szk8QKPLQ2dA
-	xE9zDcfPJ/+NxgN6N2KEqla859HvF1WK/Ihc9VrFHO6AWin5zhKZ8/2Bs/JyMwG44cgHe7Quikj
-	x0iiLELZp7AP1Pk1QP4lWcEEUk08j4e1orT0+AlSOu9Ys5eg/eDhY7n4F+M01vxZqYXyx7tzEbu
-	8BxT6VOnaKK8HxH2tJIE=
-X-Google-Smtp-Source: AGHT+IGvieoxVV2f6rCh1ntnXMaDJxBuZC4HbWcRPZG2qlEMyaNcduWac6z/4xjoprHbgIxEB13icQ==
-X-Received: by 2002:a05:6402:42ce:b0:5db:7353:2b5c with SMTP id 4fb4d7f45d1cf-5ed8a3d3a08mr1663749a12.11.1743038459099;
-        Wed, 26 Mar 2025 18:20:59 -0700 (PDT)
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com. [209.85.218.46])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ebcd0c74b9sm10153901a12.62.2025.03.26.18.20.57
-        for <linux-security-module@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Mar 2025 18:20:58 -0700 (PDT)
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ac2aeada833so89859266b.0
-        for <linux-security-module@vger.kernel.org>; Wed, 26 Mar 2025 18:20:57 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUh/anD+hkj9jz2/jJ0nBMLUgzCPZilfsRfVpzONOhQyFPhIcJVzUzYdSL8YbSZFPrYvUs20MlCSeoGo2+7C7QLMOwF0ig=@vger.kernel.org
-X-Received: by 2002:a17:906:c106:b0:ac2:b813:ac25 with SMTP id
- a640c23a62f3a-ac6e0a48dc3mr490833166b.14.1743038457610; Wed, 26 Mar 2025
- 18:20:57 -0700 (PDT)
+        bh=KOVnteOSYGMuX/fuEdTCskNxSepC6g2ivttGd3p/tAw=;
+        b=eW0ohQMh3aB1imvoZgwzWrPjxeO9Vnp/ZnaKaQiUYgeBM/0WGs5cakX6zxBWoe3JnF
+         undvSqKv9SSdKW+sDZebPD1GUIS4OiMsBPlfDJRyGlxCsFaGTIj62D9K9ezZHbfW5kxp
+         vVB0ga8YAz6bMyEUW5vw2BfvO0mLdCiC6xZ1+m6Izpjqobog2XPoS9xga1NY4z9yvkzx
+         C4Jhjd060LW45w9Bz5S6PKw+lEV4tcwLv2rJg/hbYW+8FrHJS3xAh8QSh7bs30g9wDwL
+         BjFzuB9v8Nn+VrDZHZytJTTtAjugyAQVuKQvSuEedZw7rshrc9MS1ZUttTZyuby9pPEi
+         PMwA==
+X-Forwarded-Encrypted: i=1; AJvYcCUu/BCUNMO5UE3EtM23qjJ5aWnmkvsu9fmDcy/fRqZINkrlEsgjr1A+v/LVnARX/5pXKSkpE7XsTLEaMD+a8Qs7UtVbIuE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzhka23KAz291uMTrDF5R1SQP/B9IVTFM2Q784xO57f9EsnUIK2
+	wfrt8zpnuaPIFZHaSpsTRqF2GlSCMDa8fy0BYpw+ioe20GhXiK1kKSE7Q2YEZrA/pd2Bu3KypDa
+	7Usv4L137BIhLGs7j4nSWivp2WuM3LTlZCslr
+X-Gm-Gg: ASbGncv6MT5ahg5YX8U4IQApQbkVqoj9KfHcPjHwdM4lirqpvdmYYtlVk4lg80oT3xg
+	/eYtutILdNCjvHgtjcGkh0TfaHw1t3nw3XiQgN3UPYdB+egrsY3Gf/EAZ1hJ9wmcpkwSJ0YEGVH
+	mZr0jakIUdEWDVbYuCMiq/DIfK8A==
+X-Google-Smtp-Source: AGHT+IHYYFlkLGcHWQC0DZtFRzC5jMavP2eA8uXYZeFMCn/56q0uV8KxVI27nSwI2Vfa/40Osf6iwX3o7rurFC2Hu5o=
+X-Received: by 2002:ac2:41d6:0:b0:543:e3c3:5a5e with SMTP id
+ 2adb3069b0e04-54b02ce7e5dmr108762e87.4.1743046093026; Wed, 26 Mar 2025
+ 20:28:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -76,15 +66,15 @@ References: <d0ade43454dee9c00689f03e8d9bd32a@paul-moore.com>
  <CAHC9VhT3D7X=4SpO5xbYm=JUwJqTa7tn=J6QMDBV96c7VBUw4g@mail.gmail.com>
  <CAHk-=wiH3hoPTxX3=xTRzRuCwktf3pNzFWP45-x6AwoVAjUsUQ@mail.gmail.com>
  <CAHC9VhT5G6W7g9pB3VM6W7wCEJjWfYSUWNgWF+rRiQ4ZQbGMEQ@mail.gmail.com>
- <CAHk-=whwQhJtafHN4B1w-z2Gno__xLHS4NouKKHrYNTYa8kz3g@mail.gmail.com> <CA+zpnLeK2Ecj1mBod2rFe4ymd9eXiJkbyYwFh4Yrmck3DVB2SA@mail.gmail.com>
-In-Reply-To: <CA+zpnLeK2Ecj1mBod2rFe4ymd9eXiJkbyYwFh4Yrmck3DVB2SA@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 26 Mar 2025 18:20:41 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiBH8FBL+pnXui8O-FSdyoG-yX81mUF9bsZcC6rR5ZtgQ@mail.gmail.com>
-X-Gm-Features: AQ5f1JrMmGY1WBP2YbkNsM86xUUFOzf4O7ZMelOhzvZwerRqYfGCFS_CQ-gr9m8
-Message-ID: <CAHk-=wiBH8FBL+pnXui8O-FSdyoG-yX81mUF9bsZcC6rR5ZtgQ@mail.gmail.com>
+ <CAHk-=whwQhJtafHN4B1w-z2Gno__xLHS4NouKKHrYNTYa8kz3g@mail.gmail.com>
+ <CA+zpnLeK2Ecj1mBod2rFe4ymd9eXiJkbyYwFh4Yrmck3DVB2SA@mail.gmail.com> <CAHk-=wiBH8FBL+pnXui8O-FSdyoG-yX81mUF9bsZcC6rR5ZtgQ@mail.gmail.com>
+In-Reply-To: <CAHk-=wiBH8FBL+pnXui8O-FSdyoG-yX81mUF9bsZcC6rR5ZtgQ@mail.gmail.com>
+From: =?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>
+Date: Thu, 27 Mar 2025 14:27:55 +1100
+X-Gm-Features: AQ5f1JrSrI1sSPE5BcoiSUfwnk9rwhlC2MDfagzcey65ot5pl-LSswhH_GbvS50
+Message-ID: <CA+zpnLe_AOpS_F1UBNOvN3YRswUSy_3=0jjUAy4GPxEHYumD0g@mail.gmail.com>
 Subject: Re: [GIT PULL] selinux/selinux-pr-20250323
-To: =?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Paul Moore <paul@paul-moore.com>, "Cameron K. Williams" <ckwilliams.work@gmail.com>, 
 	"Kipp N. Davis" <kippndavis.work@gmx.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
 	selinux@vger.kernel.org, linux-security-module@vger.kernel.org, 
@@ -92,35 +82,22 @@ Cc: Paul Moore <paul@paul-moore.com>, "Cameron K. Williams" <ckwilliams.work@gma
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, 26 Mar 2025 at 18:06, Thi=C3=A9baud Weksteen <tweek@google.com> wro=
-te:
->
-> Taking one example from this merge request: kexec image loading.
+On Thu, Mar 27, 2025 at 12:21=E2=80=AFPM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+> [...]
+> the firmware loading is done by random processes.
 
-So this is the kind of "why" I was looking for.
+That is not quite right. If you look at commit 581dd6983034 [1], when
+a firmware is about to be loaded, the kernel credentials are used. It
+is therefore possible to grant this permission to the corresponding
+security context (in our policy that would be the "kernel" domain).
 
-> Currently, any process which has CAP_SYS_BOOT can use kexec to replace
-> the existing kernel. Android has 5 processes with CAP_SYS_BOOT, only 1
-> of which needs kexec functionality [1]. By using these new
-> permissions, we will ensure that this process is able to call kexec,
-> while prohibiting other processes. SELinux provides us strong, kernel
-> enforced guarantees which can be checked at policy compile time.
-> Extending on this, we will use this patchset to guarantee that kernels
-> and ramdisks executed by kexec come from known, good sources.
->
-> The other hooks are of similar value to Android.
+To be honest, I don't think this particular distinction applies to
+Android, but I can imagine IoT devices with smaller/stricter policies
+wishing to enforce this (e.g., device boot without a policy, loads its
+drivers and firmware, loads a policy that enforces no more firmware
+loading).
 
-Now explain to me how the firmware loading hook works, not some
-hand-wavy "similar value" thing.
+Thanks
 
-Because it seems entirely bogus. Exactly because the context of
-firmware loading is *not* something you can depend on. There is no
-"one special process" that has firmware loading capabilities.
-
-I'm looking at selinux_kernel_load_data() in particular, where you
-don't even pass it a file at all, so it's not like it could check for
-"is this file integrity-protected" or anything like that. It seems to
-literally say "can this process load firmware", and as I've explained,
-the firmware loading is done by random processes.
-
-               Linus
+[1] https://lore.kernel.org/all/20220502004952.3970800-1-tweek@google.com/
