@@ -1,121 +1,173 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 251EF24C082;
-	Wed, 26 Mar 2025 23:44:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF54D4A06
+	for <linux-security-module@vger.kernel.org>; Thu, 27 Mar 2025 00:43:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743032679; cv=none; b=CuyaGhr9PFjIw/7guNCkl/1Sc7VHojRUbd3dpPVgjPAhmg1pouezsml/tYKUbUgIuVmSNXAs6vSXEvvmPbwp+SdIERo9XsslSBYSZMtQB+Rqw/d7uGR4S8SJlLWg2A3D0D2gicscFuwYBo10FzUOuAhjy0rjiYfHWUWNz0Y/npQ=
+	t=1743036207; cv=none; b=k3zrtz5COL/nuh6KhM95lifBpF4MLRhpjyco5uFBC96Rgkyyj+aEKu1eNnmXtB3DvRfg5qVn51bQZNXMP3jhh3Kb+5qXFbFEwd1MB7YmHc6yJWtbKznnCNfp9MpQ1/1owwvYw9RHOKr+iRrAs77VkeWz5/NLG0+eT9hgJXb0P/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743032679; c=relaxed/simple;
-	bh=D1apogL4fCUbwrUIBOk7sBJ0HDf+NbhOpks7NTMIzdM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=MuiUvgw2c18odf1YDg5A68k+pcReLOrqTXD2jgF54FLXXRAPLCzoY7FUDJIoQYhmnzkbZw3Zy6ctLodqHYLue5VdTpgd19Nkr8phPzbUqfYLdA4IuUOj+0f/bXRS3mVb+04X8Eyh7mU5H1ly863B7GWIQKh07beZzwTW1W2/zp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=MD36ZbOf; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1743036207; c=relaxed/simple;
+	bh=ZRIq5Khg6Aq51ijIbZoX9tnJGrHj5zAm9JiOUOAN7GI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qDRhtGjNXfObRlUHysyw350iLdnNQ440aomeHDP30QJbpCG4MoIFtH/mBXOKRCW3sxfK3ZslUIMVF/RkrYF4Aw/wSNPYVa/3kRJ7orA8OIBsZU8EPNdbKKDuCLGKEGPeL8K44RmucwHmAgbxI4H5KL3CNC8mMHSEGrD5aXYtzbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=bYx+M2L0; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="MD36ZbOf"
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52QLF1Nt008791;
-	Wed, 26 Mar 2025 23:44:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=Pb0iPc
-	dEeHebXeBafq6Cz5IsD8ru0VAgrLo98xb9RWo=; b=MD36ZbOfUkPrFh5VqvRb7v
-	+Kt2tEfGngQGbB4KcQ126tLOG4YYdJWL3Com+ciIHdHK+1QXL92XGb06MMAOz0kS
-	fdxKcbXQpA8ptNlQ9nhWiOutiRk5eDBLjr/moSQ6wSejDISOsYb4YKF8wmcZ1B9+
-	/upSEo/DPU1iXFrTJKRTNL81Ct7PPlvkaf7TLth0drdpuFqBPy3TAyzwA8G5r6Pc
-	Y2MHc4tXmKeASyZL8RD1W1QfSUY2f9O7Y/+NBlglnA4s4e4SvsyD9GCzKHGtA9BR
-	CD7mFmYMc4xMeoI1JJLCX7QhE8SZjq5jb/ZQGL7azqipu6q8qoNlpBzmw1/z/LrA
-	==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45mk0qatqb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Mar 2025 23:44:10 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52QN7oei009737;
-	Wed, 26 Mar 2025 23:44:09 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 45j9rktmv5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Mar 2025 23:44:09 +0000
-Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52QNi8JM30737142
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 26 Mar 2025 23:44:08 GMT
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 87A7658059;
-	Wed, 26 Mar 2025 23:44:08 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B48D65805D;
-	Wed, 26 Mar 2025 23:44:06 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.98.130])
-	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 26 Mar 2025 23:44:06 +0000 (GMT)
-Message-ID: <af61537d6d4b293813f86c4b55dcfe15a3139085.camel@linux.ibm.com>
-Subject: Re: [PATCH v10 6/8] ima: kexec: move IMA log copy from kexec load
- to execute
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: steven chen <chenste@linux.microsoft.com>, Baoquan He <bhe@redhat.com>
-Cc: stefanb@linux.ibm.com, roberto.sassu@huaweicloud.com,
-        roberto.sassu@huawei.com, eric.snowberg@oracle.com,
-        ebiederm@xmission.com, paul@paul-moore.com, code@tyhicks.com,
-        bauermann@kolabnow.com, linux-integrity@vger.kernel.org,
-        kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, madvenka@linux.microsoft.com,
-        nramas@linux.microsoft.com, James.Bottomley@hansenpartnership.com,
-        vgoyal@redhat.com, dyoung@redhat.com
-Date: Wed, 26 Mar 2025 19:44:06 -0400
-In-Reply-To: <2d2ea573-1ddd-44b4-8ba3-4ae86313d63f@linux.microsoft.com>
-References: <20250318010448.954-1-chenste@linux.microsoft.com>
-	 <20250318010448.954-7-chenste@linux.microsoft.com>
-	 <Z9t4LVpE470DMBYU@MiWiFi-R3L-srv>
-	 <3d7b5e06-5166-46bb-89dc-a0b95ca7c767@linux.microsoft.com>
-	 <Z+E7X6LuQ82q1i5V@MiWiFi-R3L-srv>
-	 <6583378c-55ee-4192-a95f-ebaf3f708bbb@linux.microsoft.com>
-	 <Z+NmLtn0vojVYJ3H@MiWiFi-R3L-srv>
-	 <2d2ea573-1ddd-44b4-8ba3-4ae86313d63f@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="bYx+M2L0"
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ac2bb7ca40bso82028066b.3
+        for <linux-security-module@vger.kernel.org>; Wed, 26 Mar 2025 17:43:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1743036203; x=1743641003; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jSEHvwzqc6+vX4GGSMAkuMZSYs/NqElnjSu4FwXASbM=;
+        b=bYx+M2L0MxVP0sWVxHHZDYjHj3OInTySgvHZgZp92f5IJTNEelBV2aJY3yb2WdAfFF
+         5EaZ/vmu2Uj8NpvPcYBZlvMj0fjlPgoYlRqXVdf8K5HhriVivH9eqyxLJObj98vXOw2F
+         RNaE3Y1C/AO/bgsuwlj1IyDzdGLZsEYF6WjnM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743036203; x=1743641003;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jSEHvwzqc6+vX4GGSMAkuMZSYs/NqElnjSu4FwXASbM=;
+        b=anJFm1AkGhh0p1p8waDZfx/1AfqX16PSd5hdcnUO9/9NSz+TvaMiILks21n4iEIBrw
+         iVfJlwJmLM2aubol6ME3zuWYcmQ1tAlTcYYeGmTpyokSc8Rbq5/4OFOHGPhCHfPPwufr
+         lraJ73cV/wyU75f9+28wM7bSx+butzTgOReJ4HOAdQ3LtjotsnKMKKXosJ227Cqd9o0e
+         x9OTxK5RAGdUIxqvztArrkqBwQcpPQReyEXqp6/4Ppby2vQKF1P/6ZLkp2xWI2qDSnnv
+         yXVJiNxcr/fL69VwJjWFB9vfHumvwP60ZnBwEvXDR9MYxRw3i0v6eICJW4nfTZVIHQBs
+         vACg==
+X-Forwarded-Encrypted: i=1; AJvYcCUIwFg3jvmomoSdTH696oWQp5YsZCAesgrVIfX0jOFxstvWxR5OowIhhQL2JSrPk5pI4H42JdgOS+XBAgPZ0PIwOFj1MbQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHiEEplNo6eMc+96xxzRuFVPf8CoMOcjOuQ1RTfOnpL+iqCaAu
+	MuQZSIadVqaVIOVa5FRrlnDXNrykh5jT2SSu7vRVyCl5H3T3ReqLJaM7AjnV21Fy2PID7MmeL0n
+	R+U0=
+X-Gm-Gg: ASbGncv30BIJ9vQDw/iBFwnIZn/VULju55aCDZ3E5sJnJlTdSTeqnrTkq4sQU9qxk9m
+	MKmbPYmWfORbBF9L96jVu1Shx0SGPDfXZFX6myXrUq5GdaUAQPZ4AFBkWbbP4k/qu+2JevBMm0D
+	H4dymQ7sH53In8O2j7vuzMjob40sQDCtVsqdFtxP3JnSnOBkENoiPRqRdbOjTl2rVbSszxWnofT
+	A2X5EfS97Zqtqnno9YSqEJv6e7C1CxKjnYSZ0ieQYrsFaxgwj1AJiYsXZMDxVa6P74/yzuS5Z2M
+	xVqOvl8+WfQOERZ3eP3++Lh238IzsYH4xuAS/r3DkhzqBQPSxN76exx+mB9P4VCkCjk4fYTrnD+
+	8K41HrYNxFWQWCq1X4lQ=
+X-Google-Smtp-Source: AGHT+IGY9pIA8YxzBMWSRgqtN7b+Ajlti05TwiNah62nfNCAioZfb3dBaIPSB4d+753TlwvIYFh60A==
+X-Received: by 2002:a17:907:3f8e:b0:ac3:f0a3:582e with SMTP id a640c23a62f3a-ac6fb122392mr159750466b.41.1743036202866;
+        Wed, 26 Mar 2025 17:43:22 -0700 (PDT)
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com. [209.85.218.46])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac3efd47fd6sm1120894366b.162.2025.03.26.17.43.22
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Mar 2025 17:43:22 -0700 (PDT)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ac2a9a74d9cso72552466b.1
+        for <linux-security-module@vger.kernel.org>; Wed, 26 Mar 2025 17:43:22 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU43jzBnjyVMX9zPfthtXSavwemRdF3qomcMSCGXnJxR7g7/BXTLN/iDjH3f+08op2sR+ARnTh1AyGyusiIG2QorYnWz3o=@vger.kernel.org
+X-Received: by 2002:a17:907:2d89:b0:ac3:4487:6a99 with SMTP id
+ a640c23a62f3a-ac6fb17334cmr105428866b.47.1743036201761; Wed, 26 Mar 2025
+ 17:43:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 7gAqfQEYtFE5MeYFzlmWitnjt9waQDRW
-X-Proofpoint-ORIG-GUID: 7gAqfQEYtFE5MeYFzlmWitnjt9waQDRW
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-26_09,2025-03-26_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- priorityscore=1501 phishscore=0 mlxscore=0 mlxlogscore=665 impostorscore=0
- malwarescore=0 adultscore=0 bulkscore=0 clxscore=1015 spamscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2503260146
+References: <d0ade43454dee9c00689f03e8d9bd32a@paul-moore.com>
+ <CAHk-=wjbahY4JjLCXNT4o3xVq2cejqBG69z+MNfHsN9FQBnbOw@mail.gmail.com>
+ <CAHC9VhRExVqdhHqs0njs7NY6bFg0BfcE-gMpS30HW9O7MSDfWQ@mail.gmail.com>
+ <CAHk-=wi9m8-_3cywQCohJQEQtuQ+teS4gOtBkWZrhFWzNy-5_A@mail.gmail.com>
+ <CAHC9VhT3D7X=4SpO5xbYm=JUwJqTa7tn=J6QMDBV96c7VBUw4g@mail.gmail.com>
+ <CAHk-=wiH3hoPTxX3=xTRzRuCwktf3pNzFWP45-x6AwoVAjUsUQ@mail.gmail.com> <CAHC9VhT5G6W7g9pB3VM6W7wCEJjWfYSUWNgWF+rRiQ4ZQbGMEQ@mail.gmail.com>
+In-Reply-To: <CAHC9VhT5G6W7g9pB3VM6W7wCEJjWfYSUWNgWF+rRiQ4ZQbGMEQ@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 26 Mar 2025 17:43:05 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whwQhJtafHN4B1w-z2Gno__xLHS4NouKKHrYNTYa8kz3g@mail.gmail.com>
+X-Gm-Features: AQ5f1JonWSEl5Zs00Hyi9Ae5fBcyzdZ-fy95HrSDL7P0Ss4g7AbqUZAXwxAg-nE
+Message-ID: <CAHk-=whwQhJtafHN4B1w-z2Gno__xLHS4NouKKHrYNTYa8kz3g@mail.gmail.com>
+Subject: Re: [GIT PULL] selinux/selinux-pr-20250323
+To: Paul Moore <paul@paul-moore.com>
+Cc: "Cameron K. Williams" <ckwilliams.work@gmail.com>, "Kipp N. Davis" <kippndavis.work@gmx.com>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, selinux@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, 26 Mar 2025 at 16:03, Paul Moore <paul@paul-moore.com> wrote:
+>
+> On Wed, Mar 26, 2025 at 5:06=E2=80=AFPM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> > That's insane. So explain to me why you added what looks like
+> > completely insane policy hooks.
+>
+> In the security_kernel_read_file() LSM hook, the SELinux callback
+> examines if the current task has the ability to perform the designated
+> read operation on file A.  Loading a kernel module and loading its
+> associated firmware are two events inside the kernel with the current
+> task loading data from two different files, each with potentially
+> different security properties, and we want to perform an access check
+> on each file to ensure it is permitted under the security policy
+> defined by the admin.
 
-> > Hmm, it's easier, while maybe not good. We should not repeatedly
-> > introduce similar things into codes. Here, it's similar as
-> > what kexec_apply_relocations() and arch_kexec_apply_relocations() are
-> > doing.
-> >=20
-> > int machine_kexec_post_load(struct kimage *image)
+What this tells me is that there wasn't actually any real ask for
+this, and you're trying to make up arguments for a silly patch.
 
-(As discussed) just as kexec_apply_relocation calls
-arch_kexec_apply_relocations().  Name this function kexec_post_load() and c=
-all
-machine_kexec_post_load().
+First off, "loading a module" and then "the module loads the firmware"
+file are *not* two distinct things with distinct security properties.
 
-Mimi
+The module DOES NOT WORK without the firmware file. So the argument
+that they are independent action is complete nonsense. If you don't
+trust the firmware, then don't load the module. It's that simple.
 
-> > {
-> > #ifdef CONFIG_IMA_KEXEC
-> >          ima_kexec_post_load(image);
-> > #endif
-> > 	return arch_machine_kexec_post_load();
-> > }
->=20
+Second, your argument that there are different tasks involved is true,
+but no, that doesn't mean that there are "potentially different
+security properties".
+
+Why? Because as mentioned, loading the module very much implies having
+to be able to load the firmware for it - but yes, the firmware loading
+might actually happen _later_ and in a different and completely
+independent context.
+
+In particular, drivers can do their firmware loads at various random times.
+
+Yes, one common situation is that they do it during module load, for
+example, in which case it would be done in the same context that the
+module load itself happened.
+
+But it's *also* common that it is done asynchronously while scanning
+for devices.
+
+Or done when the device is opened.
+
+Or the firmware file is reloaded when the system resumes from suspend,
+because the device lost all its context, so now it's reloading
+something that it loaded earlier in a very *different* context, and
+that had better not start randomly failing resulting in basically
+impossible-to-debug resume problems.
+
+In other words, the context of actual firmware loading is pretty much
+random. It isn't necessarily tied to the module loading, but it *also*
+isn't necessarily tied to a particular other actor.
+
+So any argument that depends on the context of the firmware load is
+bogus a priori. Since there isn't some well-defined context the load
+happens in, any policy based on such a context is garbage.
+
+To put it bluntly, your whole argument for why separate policy makes
+sense seems completely made-up and has no actual reality behind it.
+
+It also very much sounds like this change was *not* triggered by
+anybody actually needing it, and as in fact sounds like just "let's
+pattern-match and do the same thing for these things that look similar
+but aren't".
+
+This is *EXACTLY* the kind of thing that I think the security layers
+should absolutely NOT DO.
+
+You should not add nonsensical policy hooks "just because".
+
+Security policy needs to have some thought behind it, not be some
+mindless random thing. And there should have been a documented case of
+people needing it.
+
+This is literally why I was asking for the reasoning behind that
+patch. The patch looked nonsensical. And I have not at all been
+convinced otherwise.
+
+                     Linus
