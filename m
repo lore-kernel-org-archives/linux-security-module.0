@@ -1,58 +1,68 @@
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39AD670838
-	for <linux-security-module@vger.kernel.org>; Thu, 27 Mar 2025 03:28:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4F3218C345
+	for <linux-security-module@vger.kernel.org>; Thu, 27 Mar 2025 04:09:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743046097; cv=none; b=VofMgDMcZDyx5Rb3XiTFWDbnZaq5V85yY0r+Ve8a3NoHKz137eSBFvxCHUQ688387tcykwdHUBGW9u/55sL7WZQS7jVI6VNZ5evyzmp9Q4vAC99DTDO+wASn8350RVLZv6eo1Rn3ZbAz8/ZOi6ozfQyJ5aG7xbsDc/sIh5kctpQ=
+	t=1743048596; cv=none; b=Qj8Hn8SaMJMzBqgjhscVXoVlF+cMPdvn0DWF5iLUZv4SKjZABjA9S4xmLkRlwNBpJ28gCteYoIvOI/oXaMAIwpcPFDcTkZ28aEO3XsJRRDy5CyKPgez1GSLW1ycWAAhyvEyWVWqNMcypC9sODQTdMqTqQlvVUpWb5IycNwTfMTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743046097; c=relaxed/simple;
-	bh=KOVnteOSYGMuX/fuEdTCskNxSepC6g2ivttGd3p/tAw=;
+	s=arc-20240116; t=1743048596; c=relaxed/simple;
+	bh=Lz1FQLkO9pjDr4w82/Pd95GcHEkMkqv3nNZh8P0KAio=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A4b6ryOQjLsbwzvVp0kLTB/TTCVafGQyDupgBf1qFklgImYQ3h1NogUCEogAcX1QbUcy1MP09aIOtZr4B96RfkqleYkaofCMCi0UgOvckcqcGTxGbvJTRA9+ctpxa3x98Nwo3zt86s8W+htwi3GsTcROBfZ3giskCeaBFiM3De8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Cg/I/Jy5; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	 To:Cc:Content-Type; b=IUTylKPhN3SK0W7jy2s/7hqgA7j7Mij3gCt3lO1XoLQLpyNOSFSPGIqnn71GOEIX2vTHAK28U2IJnYQaZbaevMTRt7yjb6gnb/NzIEPMdHP2VulUnNYINEi3OX4M2a4pcDv/vNsusyQECPQXbZCW5x2QZqmDjKwFA+lTArwLfjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=UFYMplWH; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Cg/I/Jy5"
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5498c5728aeso4202e87.0
-        for <linux-security-module@vger.kernel.org>; Wed, 26 Mar 2025 20:28:14 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="UFYMplWH"
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5e5dce099f4so683665a12.1
+        for <linux-security-module@vger.kernel.org>; Wed, 26 Mar 2025 21:09:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1743046093; x=1743650893; darn=vger.kernel.org;
+        d=linux-foundation.org; s=google; t=1743048593; x=1743653393; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KOVnteOSYGMuX/fuEdTCskNxSepC6g2ivttGd3p/tAw=;
-        b=Cg/I/Jy5pK5twBUNtl1PT4ZWHCKzzkxNiR3kiri1KS38V1jdvmYgHqwwY3HKWuECfZ
-         mdrW0FQ/7aWNh0rQ5Keno8mx59A6cLsGErm6TAuQ1h1Iu+tVXvEGZkZAuWgrER2+qlTh
-         2gWqDuVbFX+T0ZFsppTX6WDuqIzSgPBaDc2HIcisIzWBAHF6ETzhv1O1936RpeMbD6vF
-         2LmAt4/4QgUWyZy/Av0ij8slMPSM6hj8Tv1aJQfeLRwcCang6Wbhql17J+W+NmYSJM3u
-         sa4cWArWfl+vKdl5kzUdSOI1/Bx8VRyjIRgPVz7wgNoQYK1wVYAh7Dv5XNOvBB1poDQ8
-         D3sw==
+        bh=eOWeEw9Pu7F8nbiAXPD7wEj/kT9XBFmAh+hzKHsE59g=;
+        b=UFYMplWHcT/n51H474rCtmkH+GU+5sQmsVm+h20tHQ4tuHqlPC7aqumCG8uQbkwGXG
+         soC3iVjNatW+NTuW+Oyv2Lg7BPbx/2M19rnEwwAL1alZSJG1jqtmUHHt+DPK/YQlCXq/
+         ISOV8cFIf4hj5cWY975vBn+RFV+gtX1+hlu+M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743046093; x=1743650893;
+        d=1e100.net; s=20230601; t=1743048593; x=1743653393;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=KOVnteOSYGMuX/fuEdTCskNxSepC6g2ivttGd3p/tAw=;
-        b=eW0ohQMh3aB1imvoZgwzWrPjxeO9Vnp/ZnaKaQiUYgeBM/0WGs5cakX6zxBWoe3JnF
-         undvSqKv9SSdKW+sDZebPD1GUIS4OiMsBPlfDJRyGlxCsFaGTIj62D9K9ezZHbfW5kxp
-         vVB0ga8YAz6bMyEUW5vw2BfvO0mLdCiC6xZ1+m6Izpjqobog2XPoS9xga1NY4z9yvkzx
-         C4Jhjd060LW45w9Bz5S6PKw+lEV4tcwLv2rJg/hbYW+8FrHJS3xAh8QSh7bs30g9wDwL
-         BjFzuB9v8Nn+VrDZHZytJTTtAjugyAQVuKQvSuEedZw7rshrc9MS1ZUttTZyuby9pPEi
-         PMwA==
-X-Forwarded-Encrypted: i=1; AJvYcCUu/BCUNMO5UE3EtM23qjJ5aWnmkvsu9fmDcy/fRqZINkrlEsgjr1A+v/LVnARX/5pXKSkpE7XsTLEaMD+a8Qs7UtVbIuE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzhka23KAz291uMTrDF5R1SQP/B9IVTFM2Q784xO57f9EsnUIK2
-	wfrt8zpnuaPIFZHaSpsTRqF2GlSCMDa8fy0BYpw+ioe20GhXiK1kKSE7Q2YEZrA/pd2Bu3KypDa
-	7Usv4L137BIhLGs7j4nSWivp2WuM3LTlZCslr
-X-Gm-Gg: ASbGncv6MT5ahg5YX8U4IQApQbkVqoj9KfHcPjHwdM4lirqpvdmYYtlVk4lg80oT3xg
-	/eYtutILdNCjvHgtjcGkh0TfaHw1t3nw3XiQgN3UPYdB+egrsY3Gf/EAZ1hJ9wmcpkwSJ0YEGVH
-	mZr0jakIUdEWDVbYuCMiq/DIfK8A==
-X-Google-Smtp-Source: AGHT+IHYYFlkLGcHWQC0DZtFRzC5jMavP2eA8uXYZeFMCn/56q0uV8KxVI27nSwI2Vfa/40Osf6iwX3o7rurFC2Hu5o=
-X-Received: by 2002:ac2:41d6:0:b0:543:e3c3:5a5e with SMTP id
- 2adb3069b0e04-54b02ce7e5dmr108762e87.4.1743046093026; Wed, 26 Mar 2025
- 20:28:13 -0700 (PDT)
+        bh=eOWeEw9Pu7F8nbiAXPD7wEj/kT9XBFmAh+hzKHsE59g=;
+        b=TGieoFYDJfBBNEwSbqvEEp0JGt7bCRu2is5ItQOjiaTHBuuHhBPGU3jnFusao3qOEa
+         DrRv+Oj36TIBvDrPQc9350WnJ+MxClv01RUtN/ClNHZpmOYbJ82PIO5oN1qjLcTOqFRc
+         AmVt1E4gem5wb4rAHY0MUNfKCpTYWdBtb+3+vQWGJMyAMlLXxUSAPXQkiBL5YTvQiW77
+         Dxo2aBndYjUBGlhtxFS38LuRDKNPKpcJ0YpW8oFfymuRw0asBG10Ppo87lXCSURUN7gI
+         KE16k/xgoeeib2nu5RzuX2ZCeW0RJRD7flgttW/n/fcXzTqIA8cpu4rci81obeGxWVGH
+         X00Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXPHCb1V3ZwsYX8O+HbWRQcVuPvpcJWTkMqwOv89nj6bmGowKPMjwwxRnukZoRMg7rFuzczk0bZZ2hy11Xmftgg96+WdgQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzj4mOPWs8O0TXTqBrAlWqYBG3/MJApuKO+tZu6Kp5D25lNzt+s
+	51WqeNC7UoU+9l2Gt1k5ereEotsU5PLIS8eqrPDzVBoMIf6sT0w95xAcXaBVKUDOsWi3XXXXqKw
+	xK94=
+X-Gm-Gg: ASbGnctXeg35TuYcX6IozmSwarUfUcFtRoeGAB2LfFvQUje3XC1PFeLSrnMtfCGhkHi
+	zB7rgV6wXoKVLsRXSYIM5sOQKyv5ewFYaMeq37ENGrtvUsgEQV/h8ykaQG2mBjrtHANddTbC05a
+	sJe9vHKs758MhDpukAjijofE1khKTovg34zcEyZzUY0dzey5LefIA8fy5xF/1Lo546v+rpi6h1J
+	K8wAVg828hlohnal2O3AVrdBESUg7g2JbOaxVpIp/43rD3VGK2MOlOE3Y2waV7reycAjYHAsUsp
+	D7g9gp3gUfpglZSjbKs4s84VDxBm3W+ewMYlDsvg+Ah8P4CyZeP736MUQFnFc4NCBD0Y7/q2s+9
+	dByUMdL3DE567lZepO4U=
+X-Google-Smtp-Source: AGHT+IFzWJ1ItJdf7G8Sns0fEGoF45QfnRNHdrz2xErr+D3kc65zZnmndpwn5leulR5riYBU8ZRXuQ==
+X-Received: by 2002:a05:6402:2753:b0:5eb:ca98:3d3d with SMTP id 4fb4d7f45d1cf-5ed8f20ab63mr1840761a12.22.1743048592674;
+        Wed, 26 Mar 2025 21:09:52 -0700 (PDT)
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com. [209.85.218.54])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5ebccfb4471sm10552130a12.47.2025.03.26.21.09.50
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Mar 2025 21:09:51 -0700 (PDT)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ac25520a289so82362266b.3
+        for <linux-security-module@vger.kernel.org>; Wed, 26 Mar 2025 21:09:50 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWKEH8lDI3Bz61mrRt/OEWRzgnt2TQ6t/rVxOU3Wxan/FWcC0Ir4FOvzwdqnfXUhEeNAuS0lzsrSBvfnwSglm0YYslcPRU=@vger.kernel.org
+X-Received: by 2002:a17:906:c10d:b0:abf:69e6:438b with SMTP id
+ a640c23a62f3a-ac6fae622dfmr169188166b.9.1743048590150; Wed, 26 Mar 2025
+ 21:09:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -67,14 +77,16 @@ References: <d0ade43454dee9c00689f03e8d9bd32a@paul-moore.com>
  <CAHk-=wiH3hoPTxX3=xTRzRuCwktf3pNzFWP45-x6AwoVAjUsUQ@mail.gmail.com>
  <CAHC9VhT5G6W7g9pB3VM6W7wCEJjWfYSUWNgWF+rRiQ4ZQbGMEQ@mail.gmail.com>
  <CAHk-=whwQhJtafHN4B1w-z2Gno__xLHS4NouKKHrYNTYa8kz3g@mail.gmail.com>
- <CA+zpnLeK2Ecj1mBod2rFe4ymd9eXiJkbyYwFh4Yrmck3DVB2SA@mail.gmail.com> <CAHk-=wiBH8FBL+pnXui8O-FSdyoG-yX81mUF9bsZcC6rR5ZtgQ@mail.gmail.com>
-In-Reply-To: <CAHk-=wiBH8FBL+pnXui8O-FSdyoG-yX81mUF9bsZcC6rR5ZtgQ@mail.gmail.com>
-From: =?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>
-Date: Thu, 27 Mar 2025 14:27:55 +1100
-X-Gm-Features: AQ5f1JrSrI1sSPE5BcoiSUfwnk9rwhlC2MDfagzcey65ot5pl-LSswhH_GbvS50
-Message-ID: <CA+zpnLe_AOpS_F1UBNOvN3YRswUSy_3=0jjUAy4GPxEHYumD0g@mail.gmail.com>
+ <CA+zpnLeK2Ecj1mBod2rFe4ymd9eXiJkbyYwFh4Yrmck3DVB2SA@mail.gmail.com>
+ <CAHk-=wiBH8FBL+pnXui8O-FSdyoG-yX81mUF9bsZcC6rR5ZtgQ@mail.gmail.com> <CA+zpnLe_AOpS_F1UBNOvN3YRswUSy_3=0jjUAy4GPxEHYumD0g@mail.gmail.com>
+In-Reply-To: <CA+zpnLe_AOpS_F1UBNOvN3YRswUSy_3=0jjUAy4GPxEHYumD0g@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 26 Mar 2025 21:09:33 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgJ0gzYJD+MghfVW-YeGLW6sLU5soFY13KWmPAxobk5Mw@mail.gmail.com>
+X-Gm-Features: AQ5f1Jphh6bvpH_hyDGYydwiPutImRu0h5mKD_G1WlOxtBvFwB1PFPSAJ7TmHxU
+Message-ID: <CAHk-=wgJ0gzYJD+MghfVW-YeGLW6sLU5soFY13KWmPAxobk5Mw@mail.gmail.com>
 Subject: Re: [GIT PULL] selinux/selinux-pr-20250323
-To: Linus Torvalds <torvalds@linux-foundation.org>
+To: =?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>
 Cc: Paul Moore <paul@paul-moore.com>, "Cameron K. Williams" <ckwilliams.work@gmail.com>, 
 	"Kipp N. Davis" <kippndavis.work@gmx.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
 	selinux@vger.kernel.org, linux-security-module@vger.kernel.org, 
@@ -82,22 +94,20 @@ Cc: Paul Moore <paul@paul-moore.com>, "Cameron K. Williams" <ckwilliams.work@gma
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 27, 2025 at 12:21=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> [...]
-> the firmware loading is done by random processes.
+On Wed, 26 Mar 2025 at 20:28, Thi=C3=A9baud Weksteen <tweek@google.com> wro=
+te:
+>
+> That is not quite right. If you look at commit 581dd6983034 [1], when
+> a firmware is about to be loaded, the kernel credentials are used.
 
-That is not quite right. If you look at commit 581dd6983034 [1], when
-a firmware is about to be loaded, the kernel credentials are used. It
-is therefore possible to grant this permission to the corresponding
-security context (in our policy that would be the "kernel" domain).
+Ahh, that's good, at least there's no "random state" to check.
 
-To be honest, I don't think this particular distinction applies to
-Android, but I can imagine IoT devices with smaller/stricter policies
-wishing to enforce this (e.g., device boot without a policy, loads its
-drivers and firmware, loads a policy that enforces no more firmware
-loading).
+But it does still mean that the security check is pointless - there
+aren't any other credentials that would validly be used for firmware
+loading, so what was the point of checking them again?
 
-Thanks
+In fact, the commit you point to was made exactly *because* the kind
+of pointless and wrong security checks that I'm complaining about were
+done, wasn't it?
 
-[1] https://lore.kernel.org/all/20220502004952.3970800-1-tweek@google.com/
+                    Linus
