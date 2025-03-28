@@ -1,207 +1,191 @@
-Received: from smtp-190c.mail.infomaniak.ch (smtp-190c.mail.infomaniak.ch [185.125.25.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 370E12AEED
-	for <linux-security-module@vger.kernel.org>; Fri, 28 Mar 2025 16:35:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D74DB19992C
+	for <linux-security-module@vger.kernel.org>; Fri, 28 Mar 2025 16:37:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743179724; cv=none; b=ldaKd56YR/+nB2OiMMcGwiMXpXxw/tIhK88QhfLd7g2TZXPEBkoz0YO3O/bFZXcPA3pd5Ncw/fKy5onIeHQf/KLYOPZerOR+Qi5MrPzDp2uy/w2MHGaWRCjEEB5wTFZLh5033VlLQZJ7cp5NSo+oKDgknhMxTAXlHCK42GZFFZM=
+	t=1743179837; cv=none; b=rCVbzQGKFWoRvW8P8dTjpA0cpLU/lT4WUCPPHefrBFVdGrSCVGBJzpE4dlBIfr2B6sP30NEx3q6TGVUU90qPPWkxHhhFf+KNXpik/T008j7CPk1rEmYMGsJNxvBJUqmEOhG+wE0J4zSdUqoVsNKbcdYwpBUXSoyatWKtFI8HFRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743179724; c=relaxed/simple;
-	bh=LrpiumgRdPeVgBHNini5NzHlvZIBU/PqzD4xZ8EA9cI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Sp2lpKim6TPcilhOpXWFZAG9EqVnwcER5PSvhcm01rHOyAb8zv5Sq0iBg0qkQk0RnjOYCapeoYezHSVZBQ5yk9aUPmjadyE3brJul6fwcpWz72KGSy69zeEQ3U4V/tFQXqcXlY23LqGF0uWhIGyzYL3dKxsU1bD7QAuH/hoW+0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=1cWQagqo; arc=none smtp.client-ip=185.125.25.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1743179837; c=relaxed/simple;
+	bh=ULl5UK3oFQ9q/cNxlRCfD7aZE+LrB+LLXHDwmSrUIFk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XJbKiEcmcHa3xy3+pb3IDz+ycoKWChCo8o7rYlOetMGQNUYUuxKj4YilbpiQppGLpvgAJDYf8O+zMyteT585d9DnQRzSo6D1LDcB7W+JulHyT4+uUMSLdkQndLrbPSk8aJKwlBbr643dNkAYDHkDEhW1mruN/2bgrIp/WKgVrZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=WuszY+IF; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="1cWQagqo"
-Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ZPQrX0JKDzQJJ;
-	Fri, 28 Mar 2025 17:26:20 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1743179179;
-	bh=x70xaAnPvbRQ79Zp27BbQFS5aKWtHXbO5ZYCLXGtkwI=;
-	h=From:To:Cc:Subject:Date:From;
-	b=1cWQagqokvElMxnUDfBv7ecCtaf5erEKgQVjg1Cnoqnhr6bhXsswPYw5RGIVRXzdf
-	 VBpz+3u0Ie0jl9W3Z0fgvwX/33k6YkFrxUAhdnsRC35VI083BUy4jBl/6fmRkGs7Zl
-	 e+7gV+lTKAHoVAZ3Ey29LPj7gcv9TveKYr7fvQ6w=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4ZPQrV6nHZzq5f;
-	Fri, 28 Mar 2025 17:26:18 +0100 (CET)
-From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	Charles Zaffery <czaffery@roblox.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Daniel Burgener <dburgener@linux.microsoft.com>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	Jeff Xu <jeffxu@google.com>,
-	Matthieu Buffet <matthieu@buffet.re>,
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
-	Paul Moore <paul@paul-moore.com>,
-	Praveen K Paladugu <prapal@linux.microsoft.com>,
-	Robert Salvet <robert.salvet@roblox.com>,
-	Tahera Fahimi <fahimitahera@gmail.com>,
-	Tingmao Wang <m@maowtm.org>,
-	Tyler Hicks <code@tyhicks.com>,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: [GIT PULL] Landlock update for v6.15-rc1
-Date: Fri, 28 Mar 2025 17:26:10 +0100
-Message-ID: <20250328162610.621810-1-mic@digikod.net>
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="WuszY+IF"
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ac28e66c0e1so357780766b.0
+        for <linux-security-module@vger.kernel.org>; Fri, 28 Mar 2025 09:37:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1743179832; x=1743784632; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=hXVkC5ZKzdf5MGzGMM5XBmod+0oYx5WgsNgrWhdrxzo=;
+        b=WuszY+IFRYLrwTCKlxLwT2vYEFY9Qa7r3qpARqHP9UbeLOtNEpgQR+z8h2LWI8BhvB
+         UMhje5s7bXhbUrtyEy72VEj0OF2+afuUaQiBnruU/NEgxH4mu/MTbdgD1kI+qenAyjE9
+         2//3NgcVi4JT0YEx9mI1Sy2pAY+kFs2odygP8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743179832; x=1743784632;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hXVkC5ZKzdf5MGzGMM5XBmod+0oYx5WgsNgrWhdrxzo=;
+        b=FM0mxrO+pWwaYNq/I+ZWQaZjWdxfQxVBQa6MjI1lPwdAPFHzfcQnbdo5xQuEJfhHQ2
+         46qljMDaNyJLqDC6Q1zfWW0WoPAb7of5h/krxoz5jefb1oazCbMb510I/M3sOP9u7WNE
+         ssVDXN2T/Fh6eURKNJ0oiW120f7N+6H23ZFqZo2ACGTJIpC1pUtE7sqh/7LMBr038yp4
+         zOrdNRqAjCansWksiwEcC8Ief62F4D7WrJ5T4ie9XLYZzhjNrVbGDaGO3yXLYAh4kTZ1
+         +5OovVL/Z8WeimeXtuYklzq+O93ooUsrCy7vC5hkkoob+PrM9e2Vi9nctNSnMGe8QxR0
+         +ngQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUyAHN3i5qG/NsBMF3QzbW4cu0K2zwAfGmRMvLkrDJjtgwUhEt5BUWHjoX6qmaTnQkEiI476+8eC2RUs3MV+cSVu/krCqk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrqElWtxzuNeVnYOI+dJNJFTmNRFJqVYUEAlPLlb5GHtpnqoJ/
+	3RzbtlalcunVldD88EIy3dwilgG7PhRhs3meLwLB0x7y/0TFfRELBgel1Ma8MA5E7ISni7e+b/C
+	CfnI=
+X-Gm-Gg: ASbGncvIxCGGf7Lglg64+j5Qec8ScvudLR9ra+ew4Isqh1GTjNWPmdE5yOgwDEQnhTv
+	3DXYSxJ+eLCVm8QX7tz4rObxTAXUQpJH8zxIITO+iwQPAiYKG1FQCtXjxCrsTPi222geoSASL9s
+	h8CdL0PyNSRO97n5jZm/eH5hao9YKscXb3BKEdOnO6Gpv8qYtP153T/wrXVL2mkjP6JOFa28kfv
+	rblygOoHt5i+kFBN3ehWr+U7vI7Z0dJ2x4kK81hPBKwyg3UDm/1WEGg+MFlAN/XT/dEVY7r+Wtd
+	UtyJXS26qSY7ECY/1ImYsQ+h+kTbI36g9UVMsCc6ONkO0pzXW86c6uvCwylp8Hi2kRSPJcfo5bs
+	YPeRKZ+Ku0VCkDzIAnm0=
+X-Google-Smtp-Source: AGHT+IHGhoCujPx841RIy1wX5PacSO9Y9fNunnHSjda/Y02eGcWrFgYblGdyGmjPjZVBtbNlAkvQgQ==
+X-Received: by 2002:a17:907:1b06:b0:ac3:c4a9:7f89 with SMTP id a640c23a62f3a-ac6fb15708amr844474166b.54.1743179832273;
+        Fri, 28 Mar 2025 09:37:12 -0700 (PDT)
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com. [209.85.218.49])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac719697af0sm186706566b.144.2025.03.28.09.37.11
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Mar 2025 09:37:11 -0700 (PDT)
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ac29af3382dso376375366b.2
+        for <linux-security-module@vger.kernel.org>; Fri, 28 Mar 2025 09:37:11 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUwIci4jw0Ae3lmFBtdPTxGjlof9Ln67sBqI9hrP5ccs9eEe2Yic3iYdCH8Cl+o/DKPotHMyn1y86g7WbWIt1wtCnD+NZI=@vger.kernel.org
+X-Received: by 2002:a17:906:f5a4:b0:ac2:a089:f47c with SMTP id
+ a640c23a62f3a-ac6fb14f400mr900112466b.55.1743179831124; Fri, 28 Mar 2025
+ 09:37:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+References: <d0ade43454dee9c00689f03e8d9bd32a@paul-moore.com>
+ <CAHk-=wjbahY4JjLCXNT4o3xVq2cejqBG69z+MNfHsN9FQBnbOw@mail.gmail.com>
+ <CAHC9VhRExVqdhHqs0njs7NY6bFg0BfcE-gMpS30HW9O7MSDfWQ@mail.gmail.com>
+ <CAHk-=wi9m8-_3cywQCohJQEQtuQ+teS4gOtBkWZrhFWzNy-5_A@mail.gmail.com>
+ <CAHC9VhT3D7X=4SpO5xbYm=JUwJqTa7tn=J6QMDBV96c7VBUw4g@mail.gmail.com>
+ <CAHk-=wiH3hoPTxX3=xTRzRuCwktf3pNzFWP45-x6AwoVAjUsUQ@mail.gmail.com>
+ <CAHC9VhT5G6W7g9pB3VM6W7wCEJjWfYSUWNgWF+rRiQ4ZQbGMEQ@mail.gmail.com>
+ <CAHk-=whwQhJtafHN4B1w-z2Gno__xLHS4NouKKHrYNTYa8kz3g@mail.gmail.com>
+ <CA+zpnLeK2Ecj1mBod2rFe4ymd9eXiJkbyYwFh4Yrmck3DVB2SA@mail.gmail.com>
+ <CAHk-=wiBH8FBL+pnXui8O-FSdyoG-yX81mUF9bsZcC6rR5ZtgQ@mail.gmail.com>
+ <CA+zpnLe_AOpS_F1UBNOvN3YRswUSy_3=0jjUAy4GPxEHYumD0g@mail.gmail.com>
+ <CAHk-=wgJ0gzYJD+MghfVW-YeGLW6sLU5soFY13KWmPAxobk5Mw@mail.gmail.com>
+ <CABXk95AqgpqGtjzK2o=mxWJg5RUZG80dAEaKF9JdUT6n5eFENQ@mail.gmail.com>
+ <CAHk-=wh1refm6JkAB__TmC8OBJyNdH2DmNQAbvcL=tKepkHrYw@mail.gmail.com>
+ <CAEjxPJ6XnBmbzH44YVQxxv8WOyPN7N81fpj7OYonEOTB=rn6wg@mail.gmail.com>
+ <CAHk-=wguzgJu4p_khuEXKHmh-6abSN7xLJdCTuyVEfjsopY7iQ@mail.gmail.com>
+ <CAHk-=wh4H3j3TYWn6KSgznUsOXz8vfHMOfTNmFvjGr=hwULWsw@mail.gmail.com>
+ <CAEjxPJ4fzoONpiy3z8QOZ55w35=WfWQ+hiTg24LMEHPpnaC87Q@mail.gmail.com>
+ <CAHk-=wjbSRL7LM7CvckB+goQdUokMa_6G-iirdbtxrFSFe3mfA@mail.gmail.com> <CAEjxPJ4Np-_LeSQOPxRQggZjWxpJRhZm++XuEwNbMyUkZCvYjw@mail.gmail.com>
+In-Reply-To: <CAEjxPJ4Np-_LeSQOPxRQggZjWxpJRhZm++XuEwNbMyUkZCvYjw@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Fri, 28 Mar 2025 09:36:54 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whoXr5GCHZsarzUKELLMAtcw0Qpmz_i+nenCVtBY1iBig@mail.gmail.com>
+X-Gm-Features: AQ5f1JqbOiFjnRTugzf_SGU5_AiyByHDa4dcIekBVrd5UWSkoiVxUwvn-Twr2CY
+Message-ID: <CAHk-=whoXr5GCHZsarzUKELLMAtcw0Qpmz_i+nenCVtBY1iBig@mail.gmail.com>
+Subject: Re: [GIT PULL] selinux/selinux-pr-20250323
+To: Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc: Jeffrey Vander Stoep <jeffv@google.com>, =?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>, 
+	Paul Moore <paul@paul-moore.com>, "Cameron K. Williams" <ckwilliams.work@gmail.com>, 
+	"Kipp N. Davis" <kippndavis.work@gmx.com>, selinux@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Nick Kralevich <nnk@google.com>, Kees Cook <kees@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Linus,
+On Fri, 28 Mar 2025 at 06:23, Stephen Smalley
+<stephen.smalley.work@gmail.com> wrote:
+>
+> Yes, thank you. I think it would be easy enough to make that change to
+> selinux_inode_permission() and to clear that inode flag on file
+> relabels (e.g. in selinux_inode_post_setxattr() and
+> inode_invalidate_secctx()).
 
-This PR brings two main changes to Landlock:
-* A signal scoping fix with a new interface for user space to know if it
-  is compatible with the running kernel.
-* Audit support to give visibility on why access requests are denied,
-  including the origin of the security policy, missing access rights,
-  and description of object(s).  This was designed to limit log spam as
-  much as possible while still alerting about unexpected blocked access.
+So the thing that *really* made me go "I don't know how to do this in
+the security layer" is not so much the relabeling - that should be
+easy to handle by just clearing the bit, as you say.
 
-With these changes come new and improved documentation, and a lot of new
-tests.
+And I wasn't even so much worried about policy changes that would
+globally change meaning of existing labels:
 
-Please pull these changes for v6.15-rc1 .  These commits merge cleanly
-with your master branch.  Most kernel code has been tested in the latest
-linux-next releases for a few weeks and recently rebased to apply fixes.
+> Not as sure about handling policy reloads
+> / boolean changes at runtime without also caching the policy sequence
+> number in the inode too so that can be compared.
 
-syzkaller has been running for a few months on a private instance with
-these changes.  The upstream project can now also test them:
-https://github.com/google/syzkaller/pull/5851
+Yeah, a sequence number seems like an obvious solution, even if it
+might be a bit awkward to find a place to store it that doesn't
+pollute the cache. The reason it would be _so_ nice to not call the
+security hooks at all in this path is that I think we otherwise can do
+all the inode security lookups by just looking at the very beginning
+of the inode (that's why we do that IOP_FASTPERM thing - just to avoid
+touching other cachelines). But if it avoids the
+security_inode_permission() call, it would definitely be a win even
+with a cache miss.
 
-Test coverage with Kselftest for master:security/landlock is 93.6% of
-1525 lines according to gcc/gcov-14, and it was 92.6% of 1115 lines
-before this PR.
+> Further, I'm unclear
+> on how to implement this in a manner that works with the LSM stacking
+> support,
 
-Regards,
- Mickaël
+So *this* was what made me go "I don't know how to to this AT ALL",
+along with the fact that the rule for the bit would have to be that it
+would be true for *all* execution contexts.
 
---
-The following changes since commit 7eb172143d5508b4da468ed59ee857c6e5e01da6:
+IOW, it's a very different thing from the usual security hook calls,
+in that instead of saying "is this access ok for the current context",
+the bit setting would have to say "this lookup is ok for _all_ calling
+contexts for this inode for _all_ of the nested security things".
 
-  Linux 6.14-rc5 (2025-03-02 11:48:20 -0800)
+The sequence number approach should take care of any races, so that
+part isn't a huge problem: just set the inode sequence number early,
+before doing any of the checks. And then only set the bit at the end
+if every stacked security layer says "yeah, this inode doesn't have
+extra lookup rules as far as I'm concerned". So if any of the rules
+changed in the meantime, the sequence number means that the bit won't
+take effect. So that part should be fine.
 
-are available in the Git repository at:
+But the "this inode doesn't have extra lookup rules" part is what
+needs low-level knowledge about how all the security models work. And
+it really would have to be true in all contexts - ie across different
+namespaces etc.
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-6.15-rc1
+(Note the "extra" part: the VFS layer deals with all the *normal* Unix
+rules, including ACL, of course. So it's literally just about "are
+there security hook rules that then limit things _beyond_ those
+standard permission rules")
 
-for you to fetch changes up to 8e2dd47b10e77452733eae23cc83078fa29c1e9a:
+It might be worth noting that this call site is special for the VFS
+anyway: it *looks* like a normal security hook, but "may_lookup()" is
+literally *only* used for directories, and *only* used for "can I do
+name lookup in this".
 
-  landlock: Add audit documentation (2025-03-26 13:59:49 +0100)
+So if it helps the security layers, that case could be made into its
+own specialized hook entirely, even if it would require basically
+duplicating up "inode_permission()" that is currently used for both
+the lookup case and for "generic" inode permission checking.
 
-----------------------------------------------------------------
-Landlock update for v6.15-rc1
+For example, I do know that SElinux turns the VFS layer permission
+mask (it things like "MAY_EXEC") into its own masks that are different
+for files and for directories (so MAY_EXEC becomes DIR__SEARCH for
+SElinux for directories, but FILE__EXECUTE for when doing 'execve()'
+on a file).
 
-----------------------------------------------------------------
-Günther Noack (1):
-      landlock: Clarify IPC scoping documentation
+And so that's an example of something we could short-circuit here,
+because *all* we care about is that DIR__SEARCH thing, and we know
+that statically.
 
-Mickaël Salaün (35):
-      landlock: Move code to ease future backports
-      landlock: Add the errata interface
-      landlock: Add erratum for TCP fix
-      landlock: Prepare to add second errata
-      landlock: Always allow signals between threads of the same process
-      selftests/landlock: Split signal_scoping_threads tests
-      selftests/landlock: Add a new test for setuid()
-      lsm: Add audit_log_lsm_data() helper
-      landlock: Add unique ID generator
-      landlock: Move domain hierarchy management
-      landlock: Prepare to use credential instead of domain for filesystem
-      landlock: Prepare to use credential instead of domain for network
-      landlock: Prepare to use credential instead of domain for scope
-      landlock: Prepare to use credential instead of domain for fowner
-      landlock: Identify domain execution crossing
-      landlock: Add AUDIT_LANDLOCK_ACCESS and log ptrace denials
-      landlock: Add AUDIT_LANDLOCK_DOMAIN and log domain status
-      landlock: Log mount-related denials
-      landlock: Log file-related denials
-      landlock: Factor out IOCTL hooks
-      landlock: Log truncate and IOCTL denials
-      landlock: Log TCP bind and connect denials
-      landlock: Log scoped denials
-      landlock: Add LANDLOCK_RESTRICT_SELF_LOG_*_EXEC_* flags
-      landlock: Add LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF
-      samples/landlock: Enable users to log sandbox denials
-      selftests/landlock: Add test for invalid ruleset file descriptor
-      selftests/landlock: Extend tests for landlock_restrict_self(2)'s flags
-      selftests/landlock: Add tests for audit flags and domain IDs
-      selftests/landlock: Test audit with restrict flags
-      selftests/landlock: Add audit tests for ptrace
-      selftests/landlock: Add audit tests for abstract UNIX socket scoping
-      selftests/landlock: Add audit tests for filesystem
-      selftests/landlock: Add audit tests for network
-      landlock: Add audit documentation
+But I know selinux better than any other of the security models, so I
+don't know what *any* of the others do (and honestly, the selinux code
+I don't know that well - I've looked at it a lot, but I've really only
+ever looked at it in the "I'm looking at profiles, is there anything
+obvious I can do about this" sense).
 
- Documentation/admin-guide/LSM/index.rst            |   1 +
- Documentation/admin-guide/LSM/landlock.rst         | 158 ++++++
- Documentation/security/landlock.rst                |  13 +-
- Documentation/userspace-api/landlock.rst           |  72 ++-
- MAINTAINERS                                        |   1 +
- include/linux/lsm_audit.h                          |   8 +
- include/uapi/linux/audit.h                         |   4 +-
- include/uapi/linux/landlock.h                      |  35 ++
- samples/landlock/sandboxer.c                       |  37 +-
- security/landlock/.kunitconfig                     |   2 +
- security/landlock/Makefile                         |   5 +
- security/landlock/access.h                         |  25 +-
- security/landlock/audit.c                          | 522 ++++++++++++++++++
- security/landlock/audit.h                          |  76 +++
- security/landlock/cred.c                           |  28 +-
- security/landlock/cred.h                           |  92 +++-
- security/landlock/domain.c                         | 264 +++++++++
- security/landlock/domain.h                         | 174 ++++++
- security/landlock/errata.h                         |  99 ++++
- security/landlock/errata/abi-4.h                   |  15 +
- security/landlock/errata/abi-6.h                   |  19 +
- security/landlock/fs.c                             | 321 ++++++++---
- security/landlock/fs.h                             |  40 +-
- security/landlock/id.c                             | 251 +++++++++
- security/landlock/id.h                             |  25 +
- security/landlock/limits.h                         |   7 +-
- security/landlock/net.c                            |  78 ++-
- security/landlock/ruleset.c                        |  30 +-
- security/landlock/ruleset.h                        |  48 +-
- security/landlock/setup.c                          |  40 +-
- security/landlock/setup.h                          |   3 +
- security/landlock/syscalls.c                       |  99 +++-
- security/landlock/task.c                           | 257 ++++++---
- security/lsm_audit.c                               |  27 +-
- tools/testing/kunit/configs/all_tests.config       |   2 +
- tools/testing/selftests/landlock/.gitignore        |   1 +
- tools/testing/selftests/landlock/Makefile          |   6 +-
- tools/testing/selftests/landlock/audit.h           | 472 ++++++++++++++++
- tools/testing/selftests/landlock/audit_test.c      | 551 +++++++++++++++++++
- tools/testing/selftests/landlock/base_test.c       | 130 ++++-
- tools/testing/selftests/landlock/common.h          |  20 +
- tools/testing/selftests/landlock/config            |   1 +
- tools/testing/selftests/landlock/fs_test.c         | 594 +++++++++++++++++++++
- tools/testing/selftests/landlock/net_test.c        | 132 +++++
- tools/testing/selftests/landlock/ptrace_test.c     | 140 +++++
- .../selftests/landlock/scoped_abstract_unix_test.c | 111 ++++
- .../selftests/landlock/scoped_signal_test.c        | 108 +++-
- .../testing/selftests/landlock/wait-pipe-sandbox.c | 131 +++++
- 48 files changed, 4960 insertions(+), 315 deletions(-)
- create mode 100644 Documentation/admin-guide/LSM/landlock.rst
- create mode 100644 security/landlock/audit.c
- create mode 100644 security/landlock/audit.h
- create mode 100644 security/landlock/domain.c
- create mode 100644 security/landlock/domain.h
- create mode 100644 security/landlock/errata.h
- create mode 100644 security/landlock/errata/abi-4.h
- create mode 100644 security/landlock/errata/abi-6.h
- create mode 100644 security/landlock/id.c
- create mode 100644 security/landlock/id.h
- create mode 100644 tools/testing/selftests/landlock/audit.h
- create mode 100644 tools/testing/selftests/landlock/audit_test.c
- create mode 100644 tools/testing/selftests/landlock/wait-pipe-sandbox.c
+                 Linus
