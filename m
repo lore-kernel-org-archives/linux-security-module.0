@@ -1,81 +1,160 @@
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+Received: from smtp-bc09.mail.infomaniak.ch (smtp-bc09.mail.infomaniak.ch [45.157.188.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89F7913DBA0;
-	Fri, 28 Mar 2025 04:13:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA9C817A302
+	for <linux-security-module@vger.kernel.org>; Fri, 28 Mar 2025 10:33:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743135202; cv=none; b=ILJ4jGjdKehPIhysPbHBXHl8TktekGD8kqKEw3Bpq5y3GYkEoM5Ey3l2TEx65lQiTKq4Yt4eTEWNDXgVLrtnsJyNUgpm36Z5fwdWtxH1WrwEEu3sySyimBG/yx7Cs/5RvFh38Ytxyuarm0INqfTjBlgN7i0RxCmMWpzJoeb5ark=
+	t=1743158015; cv=none; b=JSgHWb4OTaCimWDHArXDuC06AuKo1a0dADXwvlJimQ2KN6e8mJdePPqoUtbtRaf7ESCdDJAHxCVlYGyGjwKKhQqH0snKJ74odjDLle2fn6lZXPEW01aXWAWeUYKQrnYY7c2lG8DJkSYjPeztP+QidqbA+C8ONVuKWl3j2DsOE18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743135202; c=relaxed/simple;
-	bh=8A5Q+rFYUfFh648zPnskEaGlBBRmaERMSC6OmS+ijio=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=MuNPF7Gi3DZM0WcKdbz76+lbBzCrRq6TlYcjQdpYkFc6naa/tPJZtGbwq7rucI80sVoTMGb4caZeywu8dMBaAMQJZZJqDRY0kBzi2Yycn/9gu/PP4kjYE7HOvW5dYDPTE3BUFpyhVgHz3A/7cKteaqXLSwFGinp+kg4yfiLL0tM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id 18DAA780; Thu, 27 Mar 2025 23:07:26 -0500 (CDT)
-Date: Thu, 27 Mar 2025 23:07:26 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: torvalds@linux-foundation.org
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Paul Moore <paul@paul-moore.com>
-Subject: [GIT PULL] capabilities update for 6.15
-Message-ID: <20250328040726.GA423659@mail.hallyn.com>
+	s=arc-20240116; t=1743158015; c=relaxed/simple;
+	bh=x2e4qnIWrwIBG0j4W+5WT1W+v5MPlz50IWf7emFarRs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p2qmgyFFv1VUHqIlASCAqkXjWVIS+5p3llkBWt/oZEZqKQCuZoKM2wK5b3nhzjIJ6yBgrEwfvh+FP9UEp7a5yA4VqakAJ+J4Rx0T086+wwGLsiqK7UW+aX/gesucNsOaJIm2e4z3NvdPLuOEX/L0SeDCfJ1mFZkZ55n/Cf3AM4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=d4rrCeae; arc=none smtp.client-ip=45.157.188.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="d4rrCeae"
+Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10:40ca:feff:fe05:0])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ZPH1H2NqFzVfJ;
+	Fri, 28 Mar 2025 11:33:23 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1743158003;
+	bh=ZRMeNlcXNIbn1nJwecKQQoqD89P0pz802GFL11P7xo0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=d4rrCeaeECs4meKGwPt7Wp3nMmR1RwXM+Vy+28uAjIlMObqbr/+B5EwjVDAfb6dy0
+	 o4C2LVSasTtrBPaaQszpmUtor98nBKIuG7IhZdYOvYHOYTkPFRBSM9r6mvXnKvxjtb
+	 yCypmxnt6aRKFmnB296GOlblJVEby4rR7RMiJJok=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4ZPH1G0ZHMzJhb;
+	Fri, 28 Mar 2025 11:33:21 +0100 (CET)
+Date: Fri, 28 Mar 2025 11:33:21 +0100
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Tingmao Wang <m@maowtm.org>, 
+	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
+	Alessandro Carminati <acarmina@redhat.com>, Guenter Roeck <linux@roeck-us.net>, 
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: audit@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Subject: Re: [PATCH v7 09/28] landlock: Add AUDIT_LANDLOCK_ACCESS and log
+ ptrace denials
+Message-ID: <20250328.Ahc0thi6CaiJ@digikod.net>
+References: <20250320190717.2287696-10-mic@digikod.net>
+ <20250327213807.12964-1-m@maowtm.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250327213807.12964-1-m@maowtm.org>
+X-Infomaniak-Routing: alpha
 
-Hi Linus,
+On Thu, Mar 27, 2025 at 09:38:05PM +0000, Tingmao Wang wrote:
+> Hi Mickaël,
 
-this PR just contains one patch to drop an unused helper.  Please merge.
+Hi, thanks for the report.
 
-thanks,
--serge
+> 
+> On 3/20/25 19:06, Mickaël Salaün wrote:
+> [...]
+> > +static struct landlock_hierarchy *
+> > +get_hierarchy(const struct landlock_ruleset *const domain, const size_t layer)
+> > +{
+> > +	struct landlock_hierarchy *hierarchy = domain->hierarchy;
+> > +	ssize_t i;
+> > +
+> > +	if (WARN_ON_ONCE(layer >= domain->num_layers))
+> > +		return hierarchy;
+> > +
+> > +	for (i = domain->num_layers - 1; i > layer; i--) {
+> > +		if (WARN_ON_ONCE(!hierarchy->parent))
+> > +			break;
+> > +
+> > +		hierarchy = hierarchy->parent;
+> > +	}
+> > +
+> > +	return hierarchy;
+> > +}
+> > +
+> > +#ifdef CONFIG_SECURITY_LANDLOCK_KUNIT_TEST
+> > +
+> > +static void test_get_hierarchy(struct kunit *const test)
+> > +{
+> > +	struct landlock_hierarchy dom0_hierarchy = {
+> > +		.id = 10,
+> > +	};
+> > +	struct landlock_hierarchy dom1_hierarchy = {
+> > +		.parent = &dom0_hierarchy,
+> > +		.id = 20,
+> > +	};
+> > +	struct landlock_hierarchy dom2_hierarchy = {
+> > +		.parent = &dom1_hierarchy,
+> > +		.id = 30,
+> > +	};
+> > +	struct landlock_ruleset dom2 = {
+> > +		.hierarchy = &dom2_hierarchy,
+> > +		.num_layers = 3,
+> > +	};
+> > +
+> > +	KUNIT_EXPECT_EQ(test, 10, get_hierarchy(&dom2, 0)->id);
+> > +	KUNIT_EXPECT_EQ(test, 20, get_hierarchy(&dom2, 1)->id);
+> > +	KUNIT_EXPECT_EQ(test, 30, get_hierarchy(&dom2, 2)->id);
+> > +	KUNIT_EXPECT_EQ(test, 30, get_hierarchy(&dom2, -1)->id);
+> 
+> This causes a warning from WARN_ON_ONCE(layer >= domain->num_layers)
+> when running this test, I guess because layer is unsigned.
 
---
+Interestingly this doesn't make the test to fail (because the result is
+still correct), nor to show up when using tools/testing/kunit/kunit.py,
+which is why I didn't see that.
 
-The following changes since commit 2014c95afecee3e76ca4a56956a936e23283f05b:
+> Should it
+> be ssize_t, if this is an expected usage?
 
-  Linux 6.14-rc1 (2025-02-02 15:39:26 -0800)
+The get_hierarchy() code is correct, and the KUnit test is correct too.
+Using a ssize_t would introduce a bug.
 
-are available in the Git repository at:
+The issue is that I wanted to test a case that should never happen,
+hence the WARN_ON_ONCE().
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/sergeh/linux.git tags/caps-pr-20250327
+I guess the best "fix" for now would be to remove the KUnit test with
+-1, but there is a new KUnit feature to hide this kind of warning:
+https://lore.kernel.org/linux-kselftest/20250313114329.284104-1-acarmina@redhat.com/
+It is currently in linux-next, but I'm not sure it will be merged in
+Linux 6.15 .
 
-for you to fetch changes up to 4ae89b1fe7c2e37a8f2ea39765e4c40c9d42a101:
+For now I'll keep this commit but I'll send a fix/update to either
+remove the test or use the new DEFINE_SUPPRESSED_WARNING macros
+depending on its merge status.
 
-  capability: Remove unused has_capability (2025-03-07 22:03:09 -0600)
-
-----------------------------------------------------------------
-Capabilities update for 6.15
-
-This branch contains one patch:
-
-    capability: Remove unused has_capability
-
-This removes a helper function whose last user (smack) stopped using
-it in 2018.
-
-This has been in linux-next for most of the the last cycle with no
-apparent issues.  It is available at:
-
-git@git.kernel.org/pub/scm/linux/kernel/git/sergeh/linux.git #caps-20250327
-
-on top of commit 2014c95afecee3e76ca4a56956a936e23283f05b (tag: v6.14-rc1)
-
-----------------------------------------------------------------
-Dr. David Alan Gilbert (1):
-      capability: Remove unused has_capability
-
- include/linux/capability.h |  5 -----
- kernel/capability.c        | 16 ----------------
- security/commoncap.c       |  9 +++++----
- 3 files changed, 5 insertions(+), 25 deletions(-)
+> 
+> ------------[ cut here ]------------
+> WARNING: CPU: 7 PID: 145 at security/landlock/audit.c:142 get_hierarchy (security/landlock/audit.c:142)
+> Modules linked in:
+> CPU: 7 UID: 0 PID: 145 Comm: kunit_try_catch Tainted: G                 N  6.14.0-next-20250326-dev-00004-g4e57edc3e062-dirty #5 PREEMPT(undef)
+> Tainted: [N]=TEST
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+> RIP: 0010:get_hierarchy (security/landlock/audit.c:142)
+> Code: 83 e8 02 e8 18 00 84 c0 75 02 0f 0b 48 83 c4 08 48 89 d8 5b 41 5c 41 5e 5d c3 48 c7 c7 00 f3 21 83 e8 e2 e7 18 00 84 c0 75 e2 <0f> 0b eb de 48 89 75 e0 e8 a1 a9 a7 ff 48 8b 75 e0 e9 76 ff ff ff
+> // snip //
+> Call Trace:
+>  <TASK>
+> test_get_hierarchy (security/landlock/audit.c:178 (discriminator 5))
+> ? test_get_denied_layer (security/landlock/audit.c:158)
+> ? lock_repin_lock (kernel/locking/lockdep.c:5649 kernel/locking/lockdep.c:5978)
+> ? __lock_acquire (kernel/locking/lockdep.c:4675 kernel/locking/lockdep.c:5189)
+> ? _raw_spin_unlock_irqrestore (./include/linux/spinlock_api_smp.h:151 kernel/locking/spinlock.c:194)
+> ? find_held_lock (kernel/locking/lockdep.c:5348)
+> ? trace_irq_enable (./include/trace/events/preemptirq.h:40 (discriminator 17))
+> ? trace_hardirqs_on (kernel/trace/trace_preemptirq.c:80)
+> ? kvm_clock_get_cycles (./arch/x86/include/asm/preempt.h:95 arch/x86/kernel/kvmclock.c:80 arch/x86/kernel/kvmclock.c:86)
+> ? ktime_get_ts64 (kernel/time/timekeeping.c:318 (discriminator 4) kernel/time/timekeeping.c:335 (discriminator 4) kernel/time/timekeeping.c:907 (discriminator 4))
+> kunit_try_run_case (lib/kunit/test.c:400 lib/kunit/test.c:443)
+> ? kunit_try_run_case_cleanup (lib/kunit/test.c:430)
+> 
+> 
