@@ -1,60 +1,60 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 370641E1DF2;
-	Fri, 28 Mar 2025 20:40:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81A271EB5CC;
+	Fri, 28 Mar 2025 20:40:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743194443; cv=none; b=I5jLSsh+Pnzq4izXp7anRiG70MGCQW2zO6XVl7PyFSAYrr0FtaxrIFsP/z6H/hB2e2mDxYK6mtzOh4y8erwYKZhVILJgI+jKiqxAgiffLho+OxLe4yAmNXdxPTbzcqoV3btdRGy48GemL0AfksOzrUt8FA669bybDenZKeyGVm8=
+	t=1743194452; cv=none; b=rOFx6boqBomJwZGR8+GCjNdcQvT725JP81lQPhHPg8qvWVoBS0pmRvYvRo8xhz6qi+c+XYpr4ExhXhSG+aNMSToTRKLfTwgVRWa4LjHY8y+Gtkdo6vc0PTqGzTsMaKH30Hzw0kUvmLlnCypIEUjENge9VWQo9w3kWeOxMS55zac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743194443; c=relaxed/simple;
-	bh=ncihD0lhW2KBFEoypj5EzB9ByWM7hHBhWcf8IrSwVqc=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=JMD76Ak0cmbeDvw6nuLYMx2Mih+lYsa3J7n49Gp27te2wQfsxYsVtJW8wp5sM3ZzEX1sNPqKgaJepwfWNRCmMkq8OvjxWPobP/cvo/MsUuoY5S271a6JSE/m7YxhhNwxHACbpI+kc1PtqC8rejE0upLRut0aH0/Gr0mbObTCvQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j9/BMxYb; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1743194452; c=relaxed/simple;
+	bh=fvB4ZDaCr4JUn2R87z4nGq75oVjZiNL3gVDNMsTp9TY=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=SQW7akYrroefhOFkAWbRbWpuwLJ6SCFKFWXa+/E887VePRoE+2A1o+5gboWz003B+H5crT/H++rEtyI9DDAeoXl9LY18wgQi9S0TdmSCz+dqfLxGblDVqrTGxGfWtnEBXCpzQdiH7fCsUfiUepVRqqucjNW9PxxgmYjXJM7zbok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BsgiIN+i; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j9/BMxYb"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1068AC4CEE9;
-	Fri, 28 Mar 2025 20:40:43 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BsgiIN+i"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06AA8C4CEE4;
+	Fri, 28 Mar 2025 20:40:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1743194443;
-	bh=ncihD0lhW2KBFEoypj5EzB9ByWM7hHBhWcf8IrSwVqc=;
+	s=k20201202; t=1743194452;
+	bh=fvB4ZDaCr4JUn2R87z4nGq75oVjZiNL3gVDNMsTp9TY=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=j9/BMxYbZ46LjCUPeLe4Y6eCTkEN110MUHm9aPyJ0gFG7slURM9Eq4SzNhcc5a6tD
-	 Xog4OffH5NLs3c7dFPr8iHdWDMSE052Z/4bO8/5T4uNK7rVVyPvQwy/G9HXVlXs3dF
-	 pEFt603xiASX31YhB29XIjMuJF8Nyu0u0GWrj9IWlCBCPPrpC50yu8qdL+a2MyfLrT
-	 fI7YAG+RpdewsRnVb0EDThXymLFnPDdtJGNksTbqrhic8naPD47cBn7IRIhvpJVGpT
-	 sDuqOzOQgHvlZWVsLPnYk8X4ZbpqOZWTCfMemY49iwYuXAlqIsygcE1UgVl9XGlqOd
-	 QkZHD8vzvhqHw==
+	b=BsgiIN+ig+dz417TTzvTeXmyicMZBVsK+0FlTbwiuhgPGgs+CJC7EGAeAhYz9QC6E
+	 AdnP9IT5WQ1NZAmV9JJATHZeX51ChG4nz4j4e5R4nOm14yGqTMOnfdfP4LADnt1OhM
+	 QI7eyave2Ze9SRaSj8OqtZtAoExp9j7mcYQsc0p5gXbJfDcE2ZNcUgE+u783tHNaHU
+	 fHwcp4MjDRETqaDYAHeJFY4imaA28JGbVTRHIU+9qbQktf5SrcJA8SW+JdyJTjW9g3
+	 7mSVb3HbABOgm35/SqkNAgX+2pgnEEgJ0vnFaB+vnq7g+3W1Q7gNS3hYGXMSzGHwPb
+	 57vaWeky027Aw==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id BC410380AA79;
-	Fri, 28 Mar 2025 20:41:20 +0000 (UTC)
-Subject: Re: [GIT PULL] IPE update for 6.15
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE0493805D89;
+	Fri, 28 Mar 2025 20:41:29 +0000 (UTC)
+Subject: Re: [GIT PULL] capabilities update for 6.15
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <CAKtyLkFq-4vHbinAjsTyxU=BTNR-yFfy-i0nvLSF_xWQ-awrMQ@mail.gmail.com>
-References: <CAKtyLkFq-4vHbinAjsTyxU=BTNR-yFfy-i0nvLSF_xWQ-awrMQ@mail.gmail.com>
+In-Reply-To: <20250328040726.GA423659@mail.hallyn.com>
+References: <20250328040726.GA423659@mail.hallyn.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAKtyLkFq-4vHbinAjsTyxU=BTNR-yFfy-i0nvLSF_xWQ-awrMQ@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/wufan/ipe.git tags/ipe-pr-20250324
-X-PR-Tracked-Commit-Id: 6df401a2ee4a91f4fd1095507d6f461f1082d814
+X-PR-Tracked-Message-Id: <20250328040726.GA423659@mail.hallyn.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/sergeh/linux.git tags/caps-pr-20250327
+X-PR-Tracked-Commit-Id: 4ae89b1fe7c2e37a8f2ea39765e4c40c9d42a101
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: f174ac5ba2d0c77b406b3f73bdcde819d6ed6704
-Message-Id: <174319447952.2953471.1534786961974387875.pr-tracker-bot@kernel.org>
-Date: Fri, 28 Mar 2025 20:41:19 +0000
-To: Fan Wu <wufan@kernel.org>
-Cc: torvalds@linux-foundation.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, Randy Dunlap <rdunlap@infradead.org>
+X-PR-Merge-Commit-Id: 78fb88eca684ed6f09f01a232c925b6da75d8131
+Message-Id: <174319448825.2953471.83879462561571097.pr-tracker-bot@kernel.org>
+Date: Fri, 28 Mar 2025 20:41:28 +0000
+To: "Serge E. Hallyn" <serge@hallyn.com>
+Cc: torvalds@linux-foundation.org, linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, "Dr. David Alan Gilbert" <linux@treblig.org>, Paul Moore <paul@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Mon, 24 Mar 2025 13:50:23 -0700:
+The pull request you sent on Thu, 27 Mar 2025 23:07:26 -0500:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/wufan/ipe.git tags/ipe-pr-20250324
+> git://git.kernel.org/pub/scm/linux/kernel/git/sergeh/linux.git tags/caps-pr-20250327
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/f174ac5ba2d0c77b406b3f73bdcde819d6ed6704
+https://git.kernel.org/torvalds/c/78fb88eca684ed6f09f01a232c925b6da75d8131
 
 Thank you!
 
