@@ -1,84 +1,157 @@
-Received: from mail-ej1-f74.google.com (mail-ej1-f74.google.com [209.85.218.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4004D1FDE31
-	for <linux-security-module@vger.kernel.org>; Tue,  1 Apr 2025 11:51:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A745020C01C;
+	Tue,  1 Apr 2025 15:50:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743508265; cv=none; b=nonlKkJRQT7lL79hnBW93pqfVPC4ooecTdFyhhHNT55y1YZqyvLZx3xz1YunEIv9fihKtraZFMeX7Al916yfD0fgJ4LN6PlFOTa22dGjamW7bQ/6sYtLv/5lpAmXwFcdXcKnGVhXtCmf9FU4LbVle8KVn7UclRohx26HfidXvBA=
+	t=1743522607; cv=none; b=SJCENRdJmh35YbAPUHqn2FjecI2WbLEYj8DaZMZGv+PdRclomPnuPPYbWlPSkiOVqrqCfCWJjkyqtVCJspZyb/GxjdwCfow4XpL+0Xg7fkinRJ8eSDTX/XJLKaLcraC6TJb+J+moD0AFdjSDoV1kovnIyY+Cl6CH5rGlSgMh3DU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743508265; c=relaxed/simple;
-	bh=7lu+faxgJ+/AZ7tZp6LGCqh6omIcZni9UQEQ/b+J42g=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=DUN1pB6bqD/HGzyQ7pnXx8vAWO4CIgAmxncbfHZaCa5F04zZGKFQK6To8Bz5h6Zg6PtevRaOiW+kL7RWMgM5IDqohZVtsYEJCVYQhJgFxS3qyVHlV3pPiJJpkbdrxNHe/XhqGA36mCNpd1aJv7jdzwohio10CpkGOsOSTXAfvdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Pzr0vbMQ; arc=none smtp.client-ip=209.85.218.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
+	s=arc-20240116; t=1743522607; c=relaxed/simple;
+	bh=1hkJIObXU6D6g/m6PDf5eOhm8XieoCe72AgLZFtJ1tY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pQkjyyS2S9n3iHrYGp2lXYTjJfEwowWt+DXuiLuJQOKDcVr3A6oemgHOIZimLciIotYhoIIA68ZiCM4cHv1e4eJlQytsGmUCETsz/MPHPxlgTGOuZ7DoVLXzKLoZ3cn2wTVVlZNa4OMhkr09yn7bWTcNWqErJDWlcAq7FdQ/ajA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pg9hd6bO; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Pzr0vbMQ"
-Received: by mail-ej1-f74.google.com with SMTP id a640c23a62f3a-ac6caf952d7so493787066b.3
-        for <linux-security-module@vger.kernel.org>; Tue, 01 Apr 2025 04:51:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1743508262; x=1744113062; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8pBVgAem9FC0rH3wMYWeLDrWN3cdewUzW+os4Ei4bz0=;
-        b=Pzr0vbMQbTM+uXPnScLFP/na/uODJXG1G40Pfu8tnTf87i4Fwg456dHGzm8QjsjvQ0
-         q0Lr5F6nI2nQJo5lzWVPl5wWqOv8SDnUficI/sjz5FW3JnxVadnx1qWh1Nfa9JQsh0wE
-         TqkK1IPZpk7gX8NHGmPENMWEnacI8qAr264eMLo6OFo3svdEkiV598auHX9MEmaQ9H3f
-         K6PV52Fu/+hSSl69D/71DKHNtNv0oYbp/n2Wev24cY7wFwFkVWM2gzjTqerzBOw+Vjxg
-         v759I0YpuR+6gtfvD6yZZxraDYWcDG8oTMSEdoOFQL8nGGx45jp8BLh7NHSxQO+f3tNm
-         aYBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1743508262; x=1744113062;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=8pBVgAem9FC0rH3wMYWeLDrWN3cdewUzW+os4Ei4bz0=;
-        b=iInYK49EQNKsG4jvquv8jMDQDQY9OVr3/sAhw2uqBxDQkpaWMv5JqwQnrmK+CRVVL3
-         M5R9qm3pCbH9XUWKcMchlMNjTiSp3eRi312EHeLb+Z/eaPEBjXolDRmPnSmiYvyS3/kK
-         cO0huFGDNEjksgnLLvEMnACRAOdRF+Dt+1oCcydt5w1iPSO4QucdPfettccHosG5mrnG
-         6wx10ouKHYCri87bcaElxLyncxxu6At6x1XpSJu9OGShef3pZB8/34hiSMM8X/BqM1Bu
-         QL1nMXxXdJYzvx876TbSSoh+7eCvR/Lpl68vypOiGUALFt0W2TOoJ4vY4tOt1x1erjpB
-         OuLw==
-X-Gm-Message-State: AOJu0YxDDspbdXSDaCz1tZQ4l0spZ4U8MDqGmJpSYvRfpO959IZcXtyT
-	DhIy/8cJMYv5EAwyeetx3d1wCX7JdH647eVvNoX5kYhcTdACEOhK4kbzNiAR2O4WFY5AOM0gJtX
-	GwA==
-X-Google-Smtp-Source: AGHT+IHdQDjFgga+BR8eXdMw0JGotQMidOuBAtmiwZSZB8obZpajOwyGV708iWH39BSofIXX0maNc93z9c0=
-X-Received: from edty18.prod.google.com ([2002:aa7:ccd2:0:b0:5ea:8712:459a])
- (user=gnoack job=prod-delivery.src-stubby-dispatcher) by 2002:a17:907:9693:b0:ac1:f003:be08
- with SMTP id a640c23a62f3a-ac73898d67dmr1181976766b.12.1743508262712; Tue, 01
- Apr 2025 04:51:02 -0700 (PDT)
-Date: Tue, 1 Apr 2025 11:51:00 +0000
-In-Reply-To: <20250331104709.897062-1-mic@digikod.net>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pg9hd6bO"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CFFEC4CEE4;
+	Tue,  1 Apr 2025 15:50:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1743522607;
+	bh=1hkJIObXU6D6g/m6PDf5eOhm8XieoCe72AgLZFtJ1tY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Pg9hd6bOaGA/LYOFZN8mY4c003tZBqGisSy1eGSSPOnbpvECWNvOgduhC3WV48xYp
+	 mzn/SLSFf8UozljIiONEJAh1yqrMkNGkPlDuXflY8TprZ3FeTfabYNro4cwehZWBhx
+	 aaaOauK6U+4vud+mQfyTDqL8OIyJEW5/FuhabMNYjH98UkDm01FORoRs7vcZzJZVrH
+	 Pi/ff8O/1EUuU1AOzgdLPQfUj/EfCSei+ij4B8QYBY58MsTjdmaSkG4UiH3GHWb/T0
+	 ORw0oMtC/KKdafl0LcV6605G+s7nkKpYuhXOo6JyRvCEki5c5wdOYjX36z5Wp3UHkh
+	 B59gg6SPSZewg==
+Date: Tue, 1 Apr 2025 18:50:02 +0300
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, David Howells <dhowells@redhat.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>, Shuah Khan <shuah@kernel.org>,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Jan Stancek <jstancek@redhat.com>, Neal Gompa <neal@gompa.dev>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, bpf@vger.kernel.org,
+	llvm@lists.linux.dev, nkapron@google.com, teknoraver@meta.com,
+	roberto.sassu@huawei.com, xiyou.wangcong@gmail.com
+Subject: Re: [RFC PATCH security-next 0/4] Introducing Hornet LSM
+Message-ID: <Z-wLKhlfJ5EQqvJC@kernel.org>
+References: <20250321164537.16719-1-bboscaccy@linux.microsoft.com>
+ <Z97xvUul1ObkmulE@kernel.org>
+ <871puc7wb8.fsf@microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <67e919bf.050a0220.1547ec.00a0.GAE@google.com> <20250331104709.897062-1-mic@digikod.net>
-Message-ID: <Z-vTJPowPSqcBmmD@google.com>
-Subject: Re: [PATCH v1] landlock: Remove incorrect warning
-From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
-To: "=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>
-Cc: linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, Paul Moore <paul@paul-moore.com>, 
-	syzbot+8bca99e91de7e060e4ea@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <871puc7wb8.fsf@microsoft.com>
 
-On Mon, Mar 31, 2025 at 12:47:07PM +0200, Micka=C3=ABl Sala=C3=BCn wrote:
-> landlock_put_hierarchy() can be called when an error occurs in
-> landlock_merge_ruleset() due to insufficient memory.  In this case, the
-> domain's audit details might not have been allocated yet, which would
-> cause landlock_free_hierarchy_details() to print a warning (but still
-> safely handle this case).
->=20
-> We could keep the WARN_ON_ONCE(!hierarchy) but it's not worth it for
-> this kind of function, so let's remove it entirely.
+On Mon, Mar 31, 2025 at 01:57:15PM -0700, Blaise Boscaccy wrote:
+> There are two flavors of skeletons, normal skeletons, and light
+> skeletons. Normal skeletons utilize relocation logic that lives in
+> libbpf, and the relocations/instruction rewriting happen in userspace.
+> The second flavor, light skeletons, uses a small eBPF program that
+> contains the relocation lookup logic. As it's running in in the kernel,
+> it unpacks the target program, peforms the instruction rewriting, and
+> loads the target program. Light skeletons are currently utilized for
+> some drivers, and BPF_PRELOAD functionionality since they can operate
+> without userspace.
+> 
+> Light skeletons were recommended on various mailing list discussions as
+> the preffered path to performing signature verification. There are some
+> PoCs floating around that used light-skeletons in concert with
+> fs-verity/IMA and eBPF LSMs. We took a slightly different approach to
+> Hornet, by utilizing the existing PCKS#7 signing scheme that is used for
+> kernel modules.
 
-Reviewed-by: G=C3=BCnther Noack <gnoack@google.com>
+Right, because in the normal skeletons relocation logic remains
+unsigned?
 
--G=C3=BCnther
+I have to admit I don't fully cope how the relocation process translates
+into eBPF program but I do get how it is better for signatures if it
+does :-)
+
+> 
+> >> verification. Signature data can be easily generated for the binary
+> >
+> > s/easily//
+> >
+> > Useless word having no measure.
+> >
+> 
+> Ack, thanks.
+> 
+> 
+> >> data that is generated via bpftool gen -L. This signature can be
+> >
+> > I have no idea what that command does.
+> >
+> > "Signature data can be generated for the binary data as follows:
+> >
+> > bpftool gen -L
+> >
+> > <explanation>"
+> >
+> > Here you'd need to answer to couple of unknowns:
+> >
+> > 1. What is in exact terms "signature data"?
+> 
+> That is a PKCS#7 signature of a data buffer containing the raw
+> instructions of an eBPF program, followed by the initial values of any
+> maps used by the program. 
+
+Got it, thanks. This motivates to refine my TPM2 asymmetric keys
+series so that TPM2 could anchor these :-)
+
+https://lore.kernel.org/linux-integrity/20240528210823.28798-1-jarkko@kernel.org/
+
+
+> 
+> > 2. What does "bpftool gen -L" do?
+> >
+> 
+> eBPF programs often have 2 parts. An orchestrator/loader program that
+> provides load -> attach/run -> i/o -> teardown logic and the in-kernel
+> program.
+> 
+> That command is used to generate a skeleton which can be used by the
+> orchestrator prgoram. Skeletons get generated as a C header file, that
+> contains various autogenerated functions that open and load bpf programs
+> as decribed above. That header file ends up being included in a
+> userspace orchestrator program or possibly a kernel module.
+
+I did read the man page now too, but thanks for the commentary!
+
+> 
+> > This feedback maps to other examples too in the cover letter.
+> >
+> > BR, Jarkko
+> 
+> 
+> I'll rework this with some definitions of the eBPF subsystem jargon
+> along with your suggestions.
+
+Yeah, you should be able to put the gist a factor better to nutshell :-)
+
+> 
+> -blaise
+
+BR, Jarkko
