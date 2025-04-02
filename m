@@ -1,547 +1,112 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 025F5239089
-	for <linux-security-module@vger.kernel.org>; Wed,  2 Apr 2025 13:55:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F21D52E3385
+	for <linux-security-module@vger.kernel.org>; Wed,  2 Apr 2025 20:38:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743602110; cv=none; b=tjO0oyFUq781TUWbD4GoKIWNvOHd7HI59iZnF+hn9SOG2WPiG8eyGM+NFEdeCeoIFjPjlbcjajRC780yUbAzG4tF8O8/vc/LmX1UjKbJresea0X1wHnVPYQaV+ukU6jBGZlX2v3+g+JPWY8r+SDHOZioZcaOnBUDx/gXgd5DVF0=
+	t=1743626325; cv=none; b=UHlJQLCjCpHzbfllCjG3cSWDTxokpeYHeSmMKS4XHAfpvJjXrRDKgKEfGY8IPmDrd3aTVNccfOl4368ssO+kY7gOJyAdw9A7Hi0lPBzO3vwui5ooa/2cmOFrrK2T0jtuTovYT5vo9q0du/JLsOulNPA8pN3sgOs8SOxwVZbuKZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743602110; c=relaxed/simple;
-	bh=m+4WUt+2eUA4Y0IY8E1gYRvWKxzjaiIk0V11Kg0m+eg=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=gL7ZHmZgvs2gZgx70NVGL6NMrGf5su0kW5JKqlBrSJTuVCciGEil1v4v2fx4PwMcjAU9RJiElclrfhodFIgtlq7seIeqJF1DS/cTrigcYc1FI3nxRqRTE0EoOQePVwz9uskgSZEfZtBNNi0QuItnJYzTV6EI3JkUXgfMVS7tMAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c8LZsC1t; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1743626325; c=relaxed/simple;
+	bh=/T2pmxRuRYT5dmM8afSa07afxTtwCQy7pymfkWfY2mA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P69X6Tz000fnzFaQuzY/em1wcyxH0KXFPQfkTY9ZL+SyJHobDcxjz5tB6sqWLSpb16jj9meux2KHydl210Wg+WM0Q3PwDJaT9g7/9eYxwDCkriGix6uGAIw5+N7MIJpKt8Q2XmiYcRSKW0LPZxiNlRdjEfVARoF2gfIPaqBxLqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=DR9Imalm; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c8LZsC1t"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1743602106;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GCVRglk682zuGWx1it2xlUFAApb+6qhs9/A+9RgEAvI=;
-	b=c8LZsC1tjgmtlRMN6+uK0I2nVzOAE9TUrcyye+PURM1DWKpf2Y1eXj/pPtvNHpfoHr+6Ta
-	qhs+9LOXd6zNeG12NBfaQY0TEs5mtdnFsy+e09VCTOAtsKSWZPMlpquBw6KC/sBtdKpX+d
-	ghQC+qrDLJf93NORRxeqfp88+ot4vDY=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-593-Kd9SwUDXNu-ebyzkXu_1YA-1; Wed,
- 02 Apr 2025 09:54:49 -0400
-X-MC-Unique: Kd9SwUDXNu-ebyzkXu_1YA-1
-X-Mimecast-MFC-AGG-ID: Kd9SwUDXNu-ebyzkXu_1YA_1743602088
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 07AAC180886D;
-	Wed,  2 Apr 2025 13:54:48 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.40])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C707D19560AD;
-	Wed,  2 Apr 2025 13:54:44 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20250402085257.728844-1-jarkko@kernel.org>
-References: <20250402085257.728844-1-jarkko@kernel.org>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: dhowells@redhat.com, keyrings@vger.kernel.org,
-    Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
-    Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-    "Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org,
-    linux-security-module@vger.kernel.org
-Subject: Re: [RFC PATCH v3] KEYS: Add a list for unreferenced keys
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="DR9Imalm"
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e6df32ad351so179207276.2
+        for <linux-security-module@vger.kernel.org>; Wed, 02 Apr 2025 13:38:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1743626323; x=1744231123; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nhuc3Y3hp1dqy1B8GUo1mAHuHRbRWFPLzCIoduBmsXk=;
+        b=DR9ImalmaLXp8R9dfeDeuvwpamKzX91NUAKDdRYYH3sJBQkRd7UVOw43ICXVClqhhS
+         AwpTD0vSszAK+NXzkWJavjk3AV+rfY4pJGVjy6qgICV5l1GLZlx7k5TpnUuUkaPKev8P
+         LHJmGM7AGBOTn6h+D1wfVbECODKHYez5TomwpznXCR1d30L+4/aGxsqP7AMGZElDpdPN
+         gIvV3FTr+5hb52A8GQaEsLgj2YsriTJD1dWsU2bcxB2NEPrdxiLDUsSn8rg3lB1ttjJC
+         1A+qkAcPuvSlvLUncNwpP7fK8+pgaARWSHx8j1Q7XoDXPqjLMe5Lh81eDTmeNNUY0EIP
+         oekA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1743626323; x=1744231123;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nhuc3Y3hp1dqy1B8GUo1mAHuHRbRWFPLzCIoduBmsXk=;
+        b=C4a57f9pI9679MCLkRp32SwAajEhivLdgs7Bbo/0lRJ8KM9kG4A5v4Bbk8FbekNOKA
+         +RB5AeIn91EDr7DMBmGn/6rT22+sjOPuRI+Y2+S+wOwHaIFWex6+je1Pq9p9DWr+q7Kl
+         XCnuu8N8fpq3cLXkb90azOaeTu8Nly/SIfobtuNpHBIKtcZYdoou65krGckedxD0Zrzx
+         9DZJHEPOJhQ/1KCwK01J4+UPv6eruUgQbOht0IeJ6M6H80ZXkz+5Pbj17IwLQdD+IPYd
+         /g0b8S8hLPixBzFgeUzMVpu93gIWtazxFDhiWM1LQIbH5I8P2V8Teq5vdtV4SifPi5YL
+         9Weg==
+X-Forwarded-Encrypted: i=1; AJvYcCXk8AS/N5rFnhjxBIscttvWu6fp0KMmJIg3mvXl1BdAQwPso1AK06j1+RoDE54G5XM+0deQzLUhHp3hjZYAOfveZLsffyE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0BAFJKT+b/ukB3VJBIZQygodNurrpVQyOUrkheyaNX228fszs
+	Lv3oaTPVVWYwubQjWi4HflEnTccQYEurT2z7ioWeJD9QDynoMeRd+KmnGxb9Ugorxaltm2XxAjf
+	7huQeoin9getVE5BHOHlFQcWBbLoPiFQbrTCr
+X-Gm-Gg: ASbGncvGlyA6YxwrKX43tvgFgW5EsN8Cqz4y0+92CeKlYpx9dpZEFm4iudfnSK3vnDU
+	6cdtWwe44HhSRuEfU9cTTxmI329QPkmcCLtaSfRJepWayjXD/Su1wB+vi+8ZiWc13Jqb6WauNIz
+	u4XmUSUsp3ET5Y5S6oE8d4MVxC6g==
+X-Google-Smtp-Source: AGHT+IFHjJsKKyqKBvb9el7hYxrLzC+Gwwmb3s7tqGC6agBs4p5NAHg8LnYnKViFVGx9xCuT5y4YM4gD9uoG2SB3AwU=
+X-Received: by 2002:a05:6902:2681:b0:e6d:ee69:dd3f with SMTP id
+ 3f1490d57ef6-e6e0a0ffb22mr170729276.5.1743626322975; Wed, 02 Apr 2025
+ 13:38:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <797520.1743602083.1@warthog.procyon.org.uk>
+References: <d0ade43454dee9c00689f03e8d9bd32a@paul-moore.com>
+ <CAHk-=wjbahY4JjLCXNT4o3xVq2cejqBG69z+MNfHsN9FQBnbOw@mail.gmail.com>
+ <CAHC9VhRExVqdhHqs0njs7NY6bFg0BfcE-gMpS30HW9O7MSDfWQ@mail.gmail.com>
+ <CAHk-=wi9m8-_3cywQCohJQEQtuQ+teS4gOtBkWZrhFWzNy-5_A@mail.gmail.com>
+ <CAHC9VhT3D7X=4SpO5xbYm=JUwJqTa7tn=J6QMDBV96c7VBUw4g@mail.gmail.com>
+ <CAHk-=wiH3hoPTxX3=xTRzRuCwktf3pNzFWP45-x6AwoVAjUsUQ@mail.gmail.com>
+ <CAHC9VhT5G6W7g9pB3VM6W7wCEJjWfYSUWNgWF+rRiQ4ZQbGMEQ@mail.gmail.com>
+ <CAHk-=whwQhJtafHN4B1w-z2Gno__xLHS4NouKKHrYNTYa8kz3g@mail.gmail.com>
+ <CA+zpnLeK2Ecj1mBod2rFe4ymd9eXiJkbyYwFh4Yrmck3DVB2SA@mail.gmail.com>
+ <CAHk-=wiBH8FBL+pnXui8O-FSdyoG-yX81mUF9bsZcC6rR5ZtgQ@mail.gmail.com>
+ <CA+zpnLe_AOpS_F1UBNOvN3YRswUSy_3=0jjUAy4GPxEHYumD0g@mail.gmail.com>
+ <CAHk-=wgJ0gzYJD+MghfVW-YeGLW6sLU5soFY13KWmPAxobk5Mw@mail.gmail.com>
+ <CABXk95AqgpqGtjzK2o=mxWJg5RUZG80dAEaKF9JdUT6n5eFENQ@mail.gmail.com>
+ <CAHk-=wh1refm6JkAB__TmC8OBJyNdH2DmNQAbvcL=tKepkHrYw@mail.gmail.com>
+ <CAEjxPJ6XnBmbzH44YVQxxv8WOyPN7N81fpj7OYonEOTB=rn6wg@mail.gmail.com>
+ <CAHk-=wguzgJu4p_khuEXKHmh-6abSN7xLJdCTuyVEfjsopY7iQ@mail.gmail.com>
+ <CAHk-=wh4H3j3TYWn6KSgznUsOXz8vfHMOfTNmFvjGr=hwULWsw@mail.gmail.com>
+ <CAEjxPJ4fzoONpiy3z8QOZ55w35=WfWQ+hiTg24LMEHPpnaC87Q@mail.gmail.com>
+ <CAHk-=wjbSRL7LM7CvckB+goQdUokMa_6G-iirdbtxrFSFe3mfA@mail.gmail.com>
+ <CAEjxPJ4Np-_LeSQOPxRQggZjWxpJRhZm++XuEwNbMyUkZCvYjw@mail.gmail.com> <CAHC9VhS9xYg5_EaX83hyNX4EMr=c4EaDZ7N=+opv6BA6iZo+mg@mail.gmail.com>
+In-Reply-To: <CAHC9VhS9xYg5_EaX83hyNX4EMr=c4EaDZ7N=+opv6BA6iZo+mg@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 2 Apr 2025 16:38:31 -0400
+X-Gm-Features: ATxdqUFyEHJS9PY6K5iY-ZrkT1ocLYPu6GuqP6AaEak7oZcZydsPhJOMs8z_xUM
+Message-ID: <CAHC9VhSpYBxkGxL0r-58q8-+CcX6tQxQeqmn0T1NNiDGXo=0DA@mail.gmail.com>
+Subject: Re: [GIT PULL] selinux/selinux-pr-20250323
+To: Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Jeffrey Vander Stoep <jeffv@google.com>, 
+	=?UTF-8?Q?Thi=C3=A9baud_Weksteen?= <tweek@google.com>, 
+	"Cameron K. Williams" <ckwilliams.work@gmail.com>, "Kipp N. Davis" <kippndavis.work@gmx.com>, 
+	selinux@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Nick Kralevich <nnk@google.com>, Kees Cook <kees@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Date: Wed, 02 Apr 2025 14:54:43 +0100
-Message-ID: <797521.1743602083@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Jarkko Sakkinen <jarkko@kernel.org> wrote:
-
-> Add an isolated list for unreferenced keys, thereby splitting key
-> deletion as separate phase, after the reaping cycle. This makes the
-> whole process more safe, as these two distinct tasks don't intervene
-> each other. As an effect, KEY_FLAG_FINAL_PUT is no longer needed.
+On Fri, Mar 28, 2025 at 11:06=E2=80=AFAM Paul Moore <paul@paul-moore.com> w=
+rote:
 >
-> Since `security/keys/proc.c` reserves key_serial_lock for variable
-> amount of time, `rb_erase()` cannot be done within `key_put()` by using
-> IRQ saving/restoring versions of the spin lock functions. For the same
-> reason, the key needs to co-exist both in the tree and in the list for
-> period of time.
->
-> Therefore, split the union in `struct key` into separate `serial_node`
-> and `graveyard_link` fields, and introduce a separate lock for the
-> graveyard, which is locked and unlocked using IRQ saving/restoring
-> versions of the locking routines.
+> ... I do have some other ideas that should
+> allow us to drop the bulk of the SELinux AVC calls while doing path
+> walks that I'm going to try today/soon.  I'll obviously report back if
+> it works out.
 
-Splitting the union seems reasonable.
+For those who are interested, here is a link to the patch that
+demonstrates what I was talking about earlier, with some performance
+measurements using allmodconfig on Linux v6.14.
 
-However, you need to be very careful extracting keys from the serial tree
-outside of the gc loop:
+https://lore.kernel.org/selinux/20250402203052.237444-2-paul@paul-moore.com
 
- (1) The serial tree walking loop assumes that it can keep a pointer to th=
-e
-     key it is currently examining without holding any locks.  I think thi=
-s is
-     probably not a problem for your patch as you're doing the removal in =
-the
-     same work item.
-
- (2) We have to deal with put keys belonging to a key type that's undergoi=
-ng
-     removal.  That might not be a problem as we can just get rid of them
-     directly - but we have to deal with the RCU implications and may need=
- to
-     call synchronize_rcu() again after calling key_gc_graveyard().
-
- (3) We still have to deal with a new key_put() happening immediately afte=
-r
-     you've done the rb_erase() calls.  I think it's probably worth still
-     skipping the evaluation of the key state if the refcount is 0 (if we'=
-re
-     getting rid of the FINAL_PUT flag).  We might be holding up key
-     insertion, after all.
-
-This brings me on to another though:  Should key_serial_lock be a seqlock?
-And should the gc use RCU + read_seqlock() and insertion write_seqlock()?
-
-And further, should we have an 'active keys' list to search instead of
-searching the RCU tree?  Your patch here might then move the put key from =
-the
-active list to the graveyard list - though it's better if it doesn't as th=
-e
-garbage collector can then walk the active list without the need for a loc=
-k
-except to remove a key.  Attached is an incomplete move in that direction.
-
-David
----
-keys: Have key_put() add dead key to a graveyard list [INCOMPLETE]
-
-diff --git a/include/linux/key.h b/include/linux/key.h
-index 074dca3222b9..2a095a32dc42 100644
---- a/include/linux/key.h
-+++ b/include/linux/key.h
-@@ -195,10 +195,9 @@ enum key_state {
- struct key {
- 	refcount_t		usage;		/* number of references */
- 	key_serial_t		serial;		/* key serial number */
--	union {
--		struct list_head graveyard_link;
--		struct rb_node	serial_node;
--	};
-+	struct rb_node		serial_node;
-+	struct list_head	active_link;	/* Next key in key_active_keys */
-+	struct key		*next_dead;	/* Next key in key_graveyard */
- #ifdef CONFIG_KEY_NOTIFICATIONS
- 	struct watch_list	*watchers;	/* Entities watching this key for changes *=
-/
- #endif
-diff --git a/security/keys/gc.c b/security/keys/gc.c
-index 7d687b0962b1..2152d2f50ca7 100644
---- a/security/keys/gc.c
-+++ b/security/keys/gc.c
-@@ -20,6 +20,8 @@ unsigned key_gc_delay =3D 5 * 60;
-  */
- static void key_garbage_collector(struct work_struct *work);
- DECLARE_WORK(key_gc_work, key_garbage_collector);
-+extern struct key *key_graveyard;
-+DEFINE_SPINLOCK(key_graveyard_lock);
- =
-
- /*
-  * Reaper for links from keyrings to dead keys.
-@@ -132,14 +134,40 @@ void key_gc_keytype(struct key_type *ktype)
- /*
-  * Garbage collect a list of unreferenced, detached keys
-  */
--static noinline void key_gc_unused_keys(struct list_head *keys)
-+static noinline void key_gc_unused_keys(void)
- {
--	while (!list_empty(keys)) {
--		struct key *key =3D
--			list_entry(keys->next, struct key, graveyard_link);
-+	struct key *graveyard, *key;
-+
-+	spin_lock_irq(&key_graveyard_lock);
-+	graveyard =3D key_graveyard;
-+	key_graveyard =3D NULL;
-+	spin_unlock_irq(&key_graveyard_lock);
-+
-+	/* Make the keys inaccessible and remove them from the gc check list. */
-+	spin_lock(&key_serial_lock);
-+	for (key =3D graveyard; key; key =3D key->next_dead) {
-+		rb_erase(&key->serial_node, &key_serial_tree);
-+		list_del(&key->active_link);
-+		if (need_resched()) {
-+			spin_lock(&key_serial_lock);
-+			cond_resched();
-+			spin_unlock(&key_serial_lock);
-+		}
-+	}
-+	spin_unlock(&key_serial_lock);
-+
-+	/* Make sure that all pending keyring payload destructions are
-+	 * fulfilled and that people aren't now looking at dead or dying keys
-+	 * that they don't have a reference upon or a link to.
-+	 */
-+	kdebug("gc sync");
-+	synchronize_rcu();
-+
-+	while (graveyard) {
-+		struct key *key =3D graveyard;
- 		short state =3D key->state;
- =
-
--		list_del(&key->graveyard_link);
-+		graveyard =3D key->next_dead;
- =
-
- 		kdebug("- %u", key->serial);
- 		key_check(key);
-@@ -177,7 +205,6 @@ static noinline void key_gc_unused_keys(struct list_he=
-ad *keys)
-  */
- static void key_garbage_collector(struct work_struct *work)
- {
--	static LIST_HEAD(graveyard);
- 	static u8 gc_state;		/* Internal persistent state */
- #define KEY_GC_REAP_AGAIN	0x01	/* - Need another cycle */
- #define KEY_GC_REAPING_LINKS	0x02	/* - We need to reap links */
-@@ -186,8 +213,7 @@ static void key_garbage_collector(struct work_struct *=
-work)
- #define KEY_GC_REAPING_DEAD_3	0x40	/* - We need to reap dead keys */
- #define KEY_GC_FOUND_DEAD_KEY	0x80	/* - We found at least one dead key */
- =
-
--	struct rb_node *cursor;
--	struct key *key;
-+	struct list_head *cursor, *next;
- 	time64_t new_timer, limit, expiry;
- =
-
- 	kenter("[%lx,%x]", key_gc_flags, gc_state);
-@@ -206,36 +232,71 @@ static void key_garbage_collector(struct work_struct=
- *work)
- =
-
- 	new_timer =3D TIME64_MAX;
- =
-
--	/* As only this function is permitted to remove things from the key
--	 * serial tree, if cursor is non-NULL then it will always point to a
--	 * valid node in the tree - even if lock got dropped.
-+	/* If we have a key type that's being removed, go through and make all
-+	 * its keys unavailable.  At this point, only keyctl_read() and
-+	 * /proc/keys should be looking at keys of this type.
- 	 */
--	spin_lock(&key_serial_lock);
--	cursor =3D rb_first(&key_serial_tree);
-+	if (gc_state & KEY_GC_REAPING_DEAD_1) {
-+		for (cursor =3D smp_load_acquire(&key_active_list.next);
-+		     /* key_active_list.next before key->active_link.next */
-+		     cursor !=3D &key_active_list;
-+		     cursor =3D next) {
-+			struct key *key =3D list_entry(cursor, struct key, active_link);
-+
-+			next =3D cursor->next;
-+			if (key->type !=3D key_gc_dead_keytype)
-+				continue;
-+
-+			spin_lock(&key_serial_lock);
-+			rb_erase(&key->serial_node, &key_serial_tree);
-+			list_del_init(&key->active_link);
-+			spin_unlock(&key_serial_lock);
-+
-+			kdebug("destroy key %d", key->serial);
-+			down_write(&key->sem);
-+			key->type =3D &key_type_dead;
-+			if (key_gc_dead_keytype->destroy)
-+				key_gc_dead_keytype->destroy(key);
-+			memset(&key->payload, KEY_DESTROY, sizeof(key->payload));
-+			up_write(&key->sem);
-+		}
-+	}
- =
-
--continue_scanning:
--	while (cursor) {
--		key =3D rb_entry(cursor, struct key, serial_node);
--		cursor =3D rb_next(cursor);
-+	/* As only this function is permitted to remove things from the active
-+	 * key list, if cursor is non-NULL then it will always point to a valid
-+	 * node in the tree.  No locking is required to scan the tree.
-+	 */
-+	for (cursor =3D smp_load_acquire(&key_active_list.next); /* active.next =
-before key->next */
-+	     cursor !=3D &key_active_list;
-+	     cursor =3D cursor->next) {
-+		struct key *key =3D list_entry(cursor, struct key, active_link);
-+		const struct key_type *type =3D key->type;
- =
-
-+		cond_resched();
- 		if (refcount_read(&key->usage) =3D=3D 0)
--			goto found_unreferenced_key;
-+			continue; /* Presumably it's in the graveyard. */
- =
-
- 		if (unlikely(gc_state & KEY_GC_REAPING_DEAD_1)) {
--			if (key->type =3D=3D key_gc_dead_keytype) {
-+			if (type =3D=3D key_gc_dead_keytype) {
- 				gc_state |=3D KEY_GC_FOUND_DEAD_KEY;
- 				set_bit(KEY_FLAG_DEAD, &key->flags);
- 				key->perm =3D 0;
--				goto skip_dead_key;
--			} else if (key->type =3D=3D &key_type_keyring &&
--				   key->restrict_link) {
--				goto found_restricted_keyring;
-+				continue;
-+			}
-+			if (type =3D=3D &key_type_keyring &&
-+			    key->restrict_link) {
-+				/* We found a restricted keyring and need to
-+				 * update the restriction if it is associated
-+				 * with the dead key type.
-+				 */
-+				keyring_restriction_gc(key, key_gc_dead_keytype);
-+				continue;
- 			}
- 		}
- =
-
- 		expiry =3D key->expiry;
- 		if (expiry !=3D TIME64_MAX) {
--			if (!(key->type->flags & KEY_TYPE_INSTANT_REAP))
-+			if (!(type->flags & KEY_TYPE_INSTANT_REAP))
- 				expiry +=3D key_gc_delay;
- 			if (expiry > limit && expiry < new_timer) {
- 				kdebug("will expire %x in %lld",
-@@ -245,32 +306,35 @@ static void key_garbage_collector(struct work_struct=
- *work)
- 		}
- =
-
- 		if (unlikely(gc_state & KEY_GC_REAPING_DEAD_2))
--			if (key->type =3D=3D key_gc_dead_keytype)
-+			if (type =3D=3D key_gc_dead_keytype)
- 				gc_state |=3D KEY_GC_FOUND_DEAD_KEY;
- =
-
--		if ((gc_state & KEY_GC_REAPING_LINKS) ||
--		    unlikely(gc_state & KEY_GC_REAPING_DEAD_2)) {
--			if (key->type =3D=3D &key_type_keyring)
--				goto found_keyring;
-+		/* If we have a keyring and we need to check the payload for
-+		 * links to dead or expired keys.  We don't flag another reap
-+		 * immediately as we have to wait for the old payload to be
-+		 * destroyed by RCU before we can reap the keys to which it
-+		 * refers.
-+		 */
-+		if (((gc_state & KEY_GC_REAPING_LINKS) ||
-+		     unlikely(gc_state & KEY_GC_REAPING_DEAD_2)) &&
-+		    type =3D=3D &key_type_keyring) {
-+			keyring_gc(key, limit);
-+			continue;
- 		}
- =
-
--		if (unlikely(gc_state & KEY_GC_REAPING_DEAD_3))
--			if (key->type =3D=3D key_gc_dead_keytype)
--				goto destroy_dead_key;
--
--	skip_dead_key:
--		if (spin_is_contended(&key_serial_lock) || need_resched())
--			goto contended;
--	}
--
--contended:
--	spin_unlock(&key_serial_lock);
--
--maybe_resched:
--	if (cursor) {
--		cond_resched();
--		spin_lock(&key_serial_lock);
--		goto continue_scanning;
-+		/* PASS 3: If we have a dead key that's still referenced, reset
-+		 * its type and destroy its payload with its semaphore held.
-+		 */
-+		if (unlikely(gc_state & KEY_GC_REAPING_DEAD_3) &&
-+		    key->type =3D=3D key_gc_dead_keytype) {
-+			kdebug("destroy key %d", key->serial);
-+			down_write(&key->sem);
-+			key->type =3D &key_type_dead;
-+			if (key_gc_dead_keytype->destroy)
-+				key_gc_dead_keytype->destroy(key);
-+			memset(&key->payload, KEY_DESTROY, sizeof(key->payload));
-+			up_write(&key->sem);
-+		}
- 	}
- =
-
- 	/* We've completed the pass.  Set the timer if we need to and queue a
-@@ -284,20 +348,9 @@ static void key_garbage_collector(struct work_struct =
-*work)
- 		key_schedule_gc(new_timer);
- 	}
- =
-
--	if (unlikely(gc_state & KEY_GC_REAPING_DEAD_2) ||
--	    !list_empty(&graveyard)) {
--		/* Make sure that all pending keyring payload destructions are
--		 * fulfilled and that people aren't now looking at dead or
--		 * dying keys that they don't have a reference upon or a link
--		 * to.
--		 */
--		kdebug("gc sync");
--		synchronize_rcu();
--	}
--
--	if (!list_empty(&graveyard)) {
-+	if (key_graveyard) {
- 		kdebug("gc keys");
--		key_gc_unused_keys(&graveyard);
-+		key_gc_unused_keys();
- 	}
- =
-
- 	if (unlikely(gc_state & (KEY_GC_REAPING_DEAD_1 |
-@@ -325,48 +378,4 @@ static void key_garbage_collector(struct work_struct =
-*work)
- 		schedule_work(&key_gc_work);
- 	kleave(" [end %x]", gc_state);
- 	return;
--
--	/* We found an unreferenced key - once we've removed it from the tree,
--	 * we can safely drop the lock.
--	 */
--found_unreferenced_key:
--	kdebug("unrefd key %d", key->serial);
--	rb_erase(&key->serial_node, &key_serial_tree);
--	spin_unlock(&key_serial_lock);
--
--	list_add_tail(&key->graveyard_link, &graveyard);
--	gc_state |=3D KEY_GC_REAP_AGAIN;
--	goto maybe_resched;
--
--	/* We found a restricted keyring and need to update the restriction if
--	 * it is associated with the dead key type.
--	 */
--found_restricted_keyring:
--	spin_unlock(&key_serial_lock);
--	keyring_restriction_gc(key, key_gc_dead_keytype);
--	goto maybe_resched;
--
--	/* We found a keyring and we need to check the payload for links to
--	 * dead or expired keys.  We don't flag another reap immediately as we
--	 * have to wait for the old payload to be destroyed by RCU before we
--	 * can reap the keys to which it refers.
--	 */
--found_keyring:
--	spin_unlock(&key_serial_lock);
--	keyring_gc(key, limit);
--	goto maybe_resched;
--
--	/* We found a dead key that is still referenced.  Reset its type and
--	 * destroy its payload with its semaphore held.
--	 */
--destroy_dead_key:
--	spin_unlock(&key_serial_lock);
--	kdebug("destroy key %d", key->serial);
--	down_write(&key->sem);
--	key->type =3D &key_type_dead;
--	if (key_gc_dead_keytype->destroy)
--		key_gc_dead_keytype->destroy(key);
--	memset(&key->payload, KEY_DESTROY, sizeof(key->payload));
--	up_write(&key->sem);
--	goto maybe_resched;
- }
-diff --git a/security/keys/internal.h b/security/keys/internal.h
-index 2cffa6dc8255..2e0179315a01 100644
---- a/security/keys/internal.h
-+++ b/security/keys/internal.h
-@@ -87,6 +87,9 @@ extern struct rb_root key_serial_tree;
- extern spinlock_t key_serial_lock;
- extern struct mutex key_construction_mutex;
- extern wait_queue_head_t request_key_conswq;
-+extern struct list_head key_active_list;
-+extern struct key *key_graveyard;
-+extern spinlock_t key_graveyard_lock;
- =
-
- extern void key_set_index_key(struct keyring_index_key *index_key);
- extern struct key_type *key_type_lookup(const char *type);
-diff --git a/security/keys/key.c b/security/keys/key.c
-index 3d7d185019d3..8990b1956780 100644
---- a/security/keys/key.c
-+++ b/security/keys/key.c
-@@ -18,6 +18,7 @@
- =
-
- struct kmem_cache *key_jar;
- struct rb_root		key_serial_tree; /* tree of keys indexed by serial */
-+LIST_HEAD(key_active_list); /* List of active keys, entries deleted by gc=
- only */
- DEFINE_SPINLOCK(key_serial_lock);
- =
-
- struct rb_root	key_user_tree; /* tree of quota records indexed by UID */
-@@ -165,6 +166,15 @@ static inline void key_alloc_serial(struct key *key)
- 	rb_link_node(&key->serial_node, parent, p);
- 	rb_insert_color(&key->serial_node, &key_serial_tree);
- =
-
-+	/* Add the key to the front of the live list so that the garbage
-+	 * collector can see it (as list_add() with a barrier).
-+	 */
-+	key->active_link.prev =3D &key_active_list;
-+	key->active_link.next =3D key_active_list.next;
-+	key->active_link.next->prev =3D &key->active_link;
-+	/* Write key->active_link.next before key_active_list.next. */
-+	smp_store_release(key_active_list.next, key);
-+
- 	spin_unlock(&key_serial_lock);
- 	return;
- =
-
-@@ -651,14 +661,22 @@ void key_put(struct key *key)
- 		if (refcount_dec_and_test(&key->usage)) {
- 			unsigned long flags;
- =
-
--			/* deal with the user's key tracking and quota */
-+			local_irq_save(flags);
-+
- 			if (test_bit(KEY_FLAG_IN_QUOTA, &key->flags)) {
--				spin_lock_irqsave(&key->user->lock, flags);
-+				spin_lock(&key->user->lock);
- 				key->user->qnkeys--;
- 				key->user->qnbytes -=3D key->quotalen;
--				spin_unlock_irqrestore(&key->user->lock, flags);
-+				spin_unlock(&key->user->lock);
- 			}
-+
-+			spin_lock(&key_graveyard_lock);
-+			key->next_dead =3D key_graveyard;
-+			key_graveyard =3D key;
-+			spin_unlock(&key_graveyard_lock);
-+
- 			schedule_work(&key_gc_work);
-+			local_irq_restore(flags);
- 		}
- 	}
- }
-
+--=20
+paul-moore.com
