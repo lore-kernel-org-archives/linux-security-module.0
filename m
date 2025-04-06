@@ -1,230 +1,140 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24FDF1F561C;
-	Fri,  4 Apr 2025 21:56:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06F292AEF5;
+	Sun,  6 Apr 2025 04:28:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1743803781; cv=none; b=Lz78dk9C79kfbTyZqiVQhWB44WFYq0e2UKb5c++pFplHK6B388WJCykY5kv7mhzO05BOfMUX6TM1k8n2zLdi6aaMsieB3uxjKpAVj/TeyfT/x+HP3fLdFC4yUKygkgwz0pU+5kFEl6NbfTcdkk76ZdxekDwkd8h+Y0dTZBUQQPo=
+	t=1743913720; cv=none; b=MvB3RrCi/MmlIzovRY0nU4TNaEdGuuqXylNgxCF0MlBMwW+AF2SAhW2/h0r9vQXd1Q7LcJ3vP77ZzQu0sYZfKtOyKKXsziBYaLs6kphlptJTPM4RYX+4tDYjFT1P+CBkvU9rMgzmFvY+jeamX9QnWanrZfN5UN2m61F1RonJcC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1743803781; c=relaxed/simple;
-	bh=vErPsP1f8OmYiisdnHrct0dtflgIUFAowO74VEc7nxw=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gQeoHphkPt7LmjDLNt28NRUJs3HEd5ay1cVAVnMeHlU4F+omRIx7MkLyftHMJ3cFXpSDm2aN9w6M1XhdT810fRk38FUER9UDNZBh5JQGdtEbQMgwBMO0bE5XHYihr1AUYIwlLYXKsElZMRjmfhqN1ik/b667pzOsXtG33tPW+rk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=rAplIJIH; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+	s=arc-20240116; t=1743913720; c=relaxed/simple;
+	bh=4BH94r9eFHWd7jK1gh/ArWcfPCsUQZMfgHuoqE5hS94=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LjZk9JjR4Yvbs0FKr831KTBps7VKG19zARsDUXwdhxm1eyKjsliPhlkJsKBU8Mo5j4NS05reIsy0aP/nKEvX57s8VRXmSNLF6WTW7Wre6gpM02vN7dqer5Gom/tdJ9ZmvAM+2UE20cRhvbW0OBDsV/L2wHUgM5SqHVCY9Q2d9Jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R4equr5S; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="rAplIJIH"
-Received: from narnia.corp.microsoft.com (unknown [167.220.2.28])
-	by linux.microsoft.com (Postfix) with ESMTPSA id AD18F2027DF5;
-	Fri,  4 Apr 2025 14:56:11 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com AD18F2027DF5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1743803779;
-	bh=szwO3lNn6ZvHTun2QxjXczTlSkLfwthZiFQZw/CTTCs=;
-	h=From:To:Subject:Date:In-Reply-To:References:From;
-	b=rAplIJIHi/Zplgew6qOSq6wvSVcFUimFRjEpCxx7UTU38iNMEH6lWl5b35PRyUpJ9
-	 I8MdHmDRlB7VQpD6nSbStvhRXJA8bYmkUDsIPGGl9nHxJzDYf+UMXzus8NLF0+Qp9I
-	 48cnH38StUwNcg/74AMQjLeTfLssXmflcfHow84g=
-From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-To: Jonathan Corbet <corbet@lwn.net>,
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R4equr5S"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1743913719; x=1775449719;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=4BH94r9eFHWd7jK1gh/ArWcfPCsUQZMfgHuoqE5hS94=;
+  b=R4equr5SQ1KHsLtMq8WXDlmeyZiPX3MpxZ4xVwRpd3AHN8sYJTO4uVS7
+   58vYOnaP5i5fEz2OaopowPQDE+fSXqCOn2qZrI8k+LyBlcF7S44FLT8y+
+   Ur+J/Q7FxkjyknrUkQLZ6tv2DRsPy9Nd4KGfasaG7zsWUI1p26iMLUKyd
+   B2qQT84TFRlGnC6thAFYoqIjrhT6Vn4vmxjOLLdSgXN0Wr+o+Omx0DRuP
+   YhBl+WFq8bNbhqIEt1uBm7LivzUiTAMnPi6k313EFl28jmZiJ51LSsn+c
+   /Z+w2i84eMX/40RAFG1A7QG14JeLHvjq0c1rGFdoUjD4nHbcA7eBlQWHd
+   Q==;
+X-CSE-ConnectionGUID: BiwFMpqNR1GuNxWs2Pi9PQ==
+X-CSE-MsgGUID: 2Kc/7TV6RQSHKWdeiZeidw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11395"; a="56681021"
+X-IronPort-AV: E=Sophos;i="6.15,192,1739865600"; 
+   d="scan'208";a="56681021"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Apr 2025 21:28:38 -0700
+X-CSE-ConnectionGUID: 1bedKDMXRJKqCrYs7nazqw==
+X-CSE-MsgGUID: acvAGZQMQzmFa8Oa3eIpPg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,192,1739865600"; 
+   d="scan'208";a="158617337"
+Received: from lkp-server01.sh.intel.com (HELO b207828170a5) ([10.239.97.150])
+  by fmviesa001.fm.intel.com with ESMTP; 05 Apr 2025 21:28:31 -0700
+Received: from kbuild by b207828170a5 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u1HcT-0002RH-1k;
+	Sun, 06 Apr 2025 04:28:29 +0000
+Date: Sun, 6 Apr 2025 12:27:29 +0800
+From: kernel test robot <lkp@intel.com>
+To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>,
+	Jonathan Corbet <corbet@lwn.net>,
 	David Howells <dhowells@redhat.com>,
 	Herbert Xu <herbert@gondor.apana.org.au>,
 	"David S. Miller" <davem@davemloft.net>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
 	"Serge E. Hallyn" <serge@hallyn.com>,
 	Masahiro Yamada <masahiroy@kernel.org>,
 	Nathan Chancellor <nathan@kernel.org>,
 	Nicolas Schier <nicolas@fjasle.eu>,
-	Shuah Khan <shuah@kernel.org>,
-	=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
 	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
 	Bill Wendling <morbo@google.com>,
 	Justin Stitt <justinstitt@google.com>,
-	Blaise Boscaccy <bboscaccy@linux.microsoft.com>,
 	Jarkko Sakkinen <jarkko@kernel.org>,
-	Jan Stancek <jstancek@redhat.com>,
-	Neal Gompa <neal@gompa.dev>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	keyrings@vger.kernel.org,
-	linux-crypto@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kbuild@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	bpf@vger.kernel.org,
-	llvm@lists.linux.dev,
-	nkapron@google.com,
-	teknoraver@meta.com,
-	roberto.sassu@huawei.com,
-	xiyou.wangcong@gmail.com
-Subject: [PATCH v2 security-next 4/4] selftests/hornet: Add a selftest for the Hornet LSM
-Date: Fri,  4 Apr 2025 14:54:53 -0700
-Message-ID: <20250404215527.1563146-5-bboscaccy@linux.microsoft.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250404215527.1563146-1-bboscaccy@linux.microsoft.com>
-References: <20250404215527.1563146-1-bboscaccy@linux.microsoft.com>
+	Jan Stancek <jstancek@redhat.com>, Neal Gompa <neal@gompa.dev>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+	linux-security-module@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, bpf@vger.kernel.org,
+	llvm@lists.linux.dev
+Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org
+Subject: Re: [PATCH v2 security-next 1/4] security: Hornet LSM
+Message-ID: <202504061441.FMnrO665-lkp@intel.com>
+References: <20250404215527.1563146-2-bboscaccy@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250404215527.1563146-2-bboscaccy@linux.microsoft.com>
 
-This selftest contains a testcase that utilizes light skeleton eBPF
-loaders. One version of the light skeleton is signed with the
-autogenerated module signing key, another is not. A test driver
-attempts to load the programs. With Hornet enabled, the signed version
-should successfully be loaded, and the unsigned version should fail.
+Hi Blaise,
 
-Signed-off-by: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
----
- tools/testing/selftests/Makefile             |  1 +
- tools/testing/selftests/hornet/Makefile      | 51 ++++++++++++++++++++
- tools/testing/selftests/hornet/loader.c      | 21 ++++++++
- tools/testing/selftests/hornet/trivial.bpf.c | 33 +++++++++++++
- 4 files changed, 106 insertions(+)
- create mode 100644 tools/testing/selftests/hornet/Makefile
- create mode 100644 tools/testing/selftests/hornet/loader.c
- create mode 100644 tools/testing/selftests/hornet/trivial.bpf.c
+kernel test robot noticed the following build errors:
 
-diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-index 8daac70c2f9d..fce32ee4de32 100644
---- a/tools/testing/selftests/Makefile
-+++ b/tools/testing/selftests/Makefile
-@@ -41,6 +41,7 @@ TARGETS += ftrace
- TARGETS += futex
- TARGETS += gpio
- TARGETS += hid
-+TARGETS += hornet
- TARGETS += intel_pstate
- TARGETS += iommu
- TARGETS += ipc
-diff --git a/tools/testing/selftests/hornet/Makefile b/tools/testing/selftests/hornet/Makefile
-new file mode 100644
-index 000000000000..93da70f41d40
---- /dev/null
-+++ b/tools/testing/selftests/hornet/Makefile
-@@ -0,0 +1,51 @@
-+# SPDX-License-Identifier: GPL-2.0
-+include ../../../build/Build.include
-+include ../../../scripts/Makefile.arch
-+include ../../../scripts/Makefile.include
-+
-+CLANG ?= clang
-+CFLAGS := -g -O2 -Wall
-+BPFTOOL ?= bpftool
-+SCRIPTSDIR := $(abspath ../../../../scripts/hornet)
-+TOOLSDIR := $(abspath ../../..)
-+LIBDIR := $(TOOLSDIR)/lib
-+BPFDIR := $(LIBDIR)/bpf
-+TOOLSINCDIR := $(TOOLSDIR)/include
-+APIDIR := $(TOOLSINCDIR)/uapi
-+CERTDIR := $(abspath ../../../../certs)
-+
-+TEST_GEN_PROGS_EXTENDED := loader
-+TEST_GEN_PROGS := signed_loader
-+TEST_PROGS := fail_loader
-+TEST_GEN_FILES := vmlinux.h loader.h trivial.bin trivial.bpf.o
-+$(TEST_GEN_PROGS): LDLIBS += -lbpf
-+$(TEST_GEN_PROGS): $(TEST_GEN_FILES)
-+
-+include ../lib.mk
-+
-+BPF_CFLAGS := -target bpf \
-+              -D__TARGET_ARCH_$(ARCH) \
-+              -I/usr/include/$(shell uname -m)-linux-gnu \
-+               $(KHDR_INCLUDES)
-+vmlinux.h:
-+	$(BPFTOOL) btf dump file /sys/kernel/btf/vmlinux format c > vmlinux.h
-+
-+trivial.bpf.o: trivial.bpf.c vmlinux.h
-+	$(CLANG) $(CFLAGS) $(BPF_CFLAGS) -c $< -o $@
-+
-+loader.h: trivial.bpf.o
-+	$(BPFTOOL) gen skeleton -L $< name trivial > $@
-+
-+trivial.bin: loader.h
-+	$(SCRIPTSDIR)/extract-skel.sh $< $@
-+
-+loader: loader.c loader.h
-+	$(CC) $(CFLAGS) -I$(LIBDIR) -I$(APIDIR) $< -o $@ -lbpf
-+
-+fail_loader: fail_loader.c loader.h
-+	$(CC) $(CFLAGS) -I$(LIBDIR) -I$(APIDIR) $< -o $@ -lbpf
-+
-+signed_loader: trivial.bin loader fail_loader
-+	$(SCRIPTSDIR)/sign-ebpf sha256 $(CERTDIR)/signing_key.pem  $(CERTDIR)/signing_key.x509 \
-+		trivial.bin loader signed_loader
-+	chmod u+x $@
-diff --git a/tools/testing/selftests/hornet/loader.c b/tools/testing/selftests/hornet/loader.c
-new file mode 100644
-index 000000000000..9a43bb012d1b
---- /dev/null
-+++ b/tools/testing/selftests/hornet/loader.c
-@@ -0,0 +1,21 @@
-+// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
-+
-+#include <stdio.h>
-+#include <unistd.h>
-+#include <stddef.h>
-+#include <sys/resource.h>
-+#include <bpf/libbpf.h>
-+#include <errno.h>
-+#include  "loader.h"
-+
-+int main(int argc, char **argv)
-+{
-+	struct trivial *skel;
-+
-+	skel = trivial__open_and_load();
-+	if (!skel)
-+		return -1;
-+
-+	trivial__destroy(skel);
-+	return 0;
-+}
-diff --git a/tools/testing/selftests/hornet/trivial.bpf.c b/tools/testing/selftests/hornet/trivial.bpf.c
-new file mode 100644
-index 000000000000..d38c5b53ff93
---- /dev/null
-+++ b/tools/testing/selftests/hornet/trivial.bpf.c
-@@ -0,0 +1,33 @@
-+// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
-+
-+#include "vmlinux.h"
-+
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_tracing.h>
-+#include <bpf/bpf_core_read.h>
-+
-+char LICENSE[] SEC("license") = "Dual BSD/GPL";
-+
-+int monitored_pid = 0;
-+
-+SEC("tracepoint/syscalls/sys_enter_unlinkat")
-+int handle_enter_unlink(struct trace_event_raw_sys_enter *ctx)
-+{
-+	char filename[128] = { 0 };
-+	struct task_struct *task;
-+	unsigned long start_time = 0;
-+	int pid = bpf_get_current_pid_tgid() >> 32;
-+	char *pathname_ptr = (char *) BPF_CORE_READ(ctx, args[1]);
-+
-+	bpf_probe_read_str(filename, sizeof(filename), pathname_ptr);
-+	task = (struct task_struct *)bpf_get_current_task();
-+	start_time = BPF_CORE_READ(task, start_time);
-+
-+	bpf_printk("BPF triggered unlinkat by PID: %d, start_time %ld. pathname = %s",
-+		   pid, start_time, filename);
-+
-+	if (monitored_pid == pid)
-+		bpf_printk("target pid found");
-+
-+	return 0;
-+}
+[auto build test ERROR on shuah-kselftest/next]
+[also build test ERROR on shuah-kselftest/fixes herbert-cryptodev-2.6/master herbert-crypto-2.6/master masahiroy-kbuild/for-next masahiroy-kbuild/fixes v6.14]
+[cannot apply to linus/master next-20250404]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Blaise-Boscaccy/security-Hornet-LSM/20250405-055741
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest.git next
+patch link:    https://lore.kernel.org/r/20250404215527.1563146-2-bboscaccy%40linux.microsoft.com
+patch subject: [PATCH v2 security-next 1/4] security: Hornet LSM
+config: sh-allmodconfig (https://download.01.org/0day-ci/archive/20250406/202504061441.FMnrO665-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250406/202504061441.FMnrO665-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504061441.FMnrO665-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from security/hornet/hornet_lsm.c:10:
+>> security/hornet/hornet_lsm.c:221:38: error: initialization of 'int (*)(struct bpf_prog *, union bpf_attr *, struct bpf_token *)' from incompatible pointer type 'int (*)(struct bpf_prog *, union bpf_attr *, struct bpf_token *, bool)' {aka 'int (*)(struct bpf_prog *, union bpf_attr *, struct bpf_token *, _Bool)'} [-Wincompatible-pointer-types]
+     221 |         LSM_HOOK_INIT(bpf_prog_load, hornet_bpf_prog_load),
+         |                                      ^~~~~~~~~~~~~~~~~~~~
+   include/linux/lsm_hooks.h:136:35: note: in definition of macro 'LSM_HOOK_INIT'
+     136 |                 .hook = { .NAME = HOOK }                \
+         |                                   ^~~~
+   security/hornet/hornet_lsm.c:221:38: note: (near initialization for 'hornet_hooks[0].hook.bpf_prog_load')
+     221 |         LSM_HOOK_INIT(bpf_prog_load, hornet_bpf_prog_load),
+         |                                      ^~~~~~~~~~~~~~~~~~~~
+   include/linux/lsm_hooks.h:136:35: note: in definition of macro 'LSM_HOOK_INIT'
+     136 |                 .hook = { .NAME = HOOK }                \
+         |                                   ^~~~
+
+
+vim +221 security/hornet/hornet_lsm.c
+
+   219	
+   220	static struct security_hook_list hornet_hooks[] __ro_after_init = {
+ > 221		LSM_HOOK_INIT(bpf_prog_load, hornet_bpf_prog_load),
+   222	};
+   223	
+
 -- 
-2.48.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
