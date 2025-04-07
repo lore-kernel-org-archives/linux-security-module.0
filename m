@@ -1,112 +1,103 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F2012550CE;
-	Mon,  7 Apr 2025 21:10:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 016261EF0A1
+	for <linux-security-module@vger.kernel.org>; Mon,  7 Apr 2025 21:33:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744060241; cv=none; b=VSX5s+LHk7p95W5H1hZAxVHGvZaUYejdehCV9xfzu1v7Xvn5sTdEe4pfz7e2onEpfqJf1DXISLnouvvEaEHfVcwSdZq7/LnK72vATSbz+gEZtc6W6Go5XMxl5KQpW9/RdpEdg6j73tFzPy+0jFF4AUPCB4aOgPMiTudy8tbQ9I4=
+	t=1744061642; cv=none; b=Z9uTnbFxTM75bLzWVaxfo7190px3HUVfEhpRDfe4tQ3BjLMiwKDX26hlAqbZBg4KNk7TV+sqbALRG/kxDyQ9/8ScqulEY5IWSX0j0hmJiQ1cSWzfxnaEp++cVlSMyHV55kKsjYmmKaUY+wToPY5ufNRCgNjWi0M9ZF4av2TK5PM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744060241; c=relaxed/simple;
-	bh=brpFVo8UvhI+dLDZkVYf5Q8wXfm0uRTbp38j5NZgP3E=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=sgY2q3rbb3o8nWuikuVh+TendZDZK9Wxmlm7ynCQRJUIUkhkwGOo56Jpr57zfDMxf7EpgHSp0rYKaWC2/oA2+HLeP8+EPzMnjnIDW/RwzBKcKL+nnK3enWInK6F52sho7amrMo/saGKzuk8FCIfZbcM5PXv5Y9QNVpp1TyBo7s0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jv74tbaW; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1744061642; c=relaxed/simple;
+	bh=c1iUpbhcrXzPl8Azbq+GjxoxxV7VV/BdFZJ0L+31bsE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sk6AaiJGcJkDJwrnc8WXKam0kQXcj5L1VVPo6AgMt08kIvnBKbsNVIE3anE3ceUgp2A/lobgs3pjER3YZvOWaVoCYQPqzZg3PjzmV24PIUxVdsy3nxeIeB0KUIZpffccCSNLKXKzL25ezorJfUSpW1lq96WIigQhMiKlyWVZBe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=dfZQRy89; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jv74tbaW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE84FC4CEED;
-	Mon,  7 Apr 2025 21:10:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744060240;
-	bh=brpFVo8UvhI+dLDZkVYf5Q8wXfm0uRTbp38j5NZgP3E=;
-	h=From:Date:Subject:To:Cc:From;
-	b=Jv74tbaW1z9GlbmKwjUV0u8B8UcWwmKx90JyTHWha8Undg21FQgQZlUqC1PnWgard
-	 hvgv5MDmOjCK1YgSj/aDbgUDsrCyMeKJsyEWzIjThaIvlBBSk95aqSvKyFWJbzzp55
-	 X6Rx2IobOHpM1/0+dkyD4Lh1t/MitCn/0iQKF6njpsulHqHvQlOsVM6g1TII7Vc4kV
-	 +pPDsP8mfDZlkVIiMQT4XYT8CsgVxKb1lhhav++rwT2/07+tDMcJheqSPT7wEdweP+
-	 GGRBK1MGaW5vTMof7VQwwwAvsbaXStldI25Td/rH+tgdFIYiSnISs7c/zB41Bvx27X
-	 IIBlxWvGK4/rw==
-From: Mark Brown <broonie@kernel.org>
-Date: Mon, 07 Apr 2025 21:57:32 +0100
-Subject: [PATCH] gcc-plugins: Disable GCC plugins for compile test builds
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="dfZQRy89"
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ac298c8fa50so817443166b.1
+        for <linux-security-module@vger.kernel.org>; Mon, 07 Apr 2025 14:33:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1744061638; x=1744666438; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ypbOCgQfA8w2KdlopYIWQGlt+OxpNY3XdMomop2Fvk4=;
+        b=dfZQRy89UQxnn5a8yKYYkbPuEyiGMUlg6c9qtJ5M/zpJSajErcgPQfbUls4bGL7DMr
+         Rsku9FTJDrN2o0y9b+un/p4rFp/WX8LeeyXY8u5dHjCg5iBAaY7z7imlEwbFvaCuiFiU
+         AH/RNM4MA0t+ZHOT6CXsKinruIRIkx7956eTs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744061638; x=1744666438;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ypbOCgQfA8w2KdlopYIWQGlt+OxpNY3XdMomop2Fvk4=;
+        b=BEBwZqjip+5TUXiWmx5gwYMaFZGi8qMOWfSfKVQffLBYJRmoTeu3EPm6HEvW2+5wlj
+         EiCLH76qFjA6nZJuIpOY1sljhE5g5WblG0GOQw5KoognguY4tKdGGwi90bxXXV9kf+7c
+         DP39hXt+95JL+IRX6chIMzx/b8D0qXT1+bJnpuCwDS6jKbdAycY+KkQwUdhbTgzAnry0
+         LaTz3DPzQMBBDV+LI/hGQ/c1Lc/cd8OfTLNHT3RWXQP+brjd0ruvY80hEPXMpyAsG3p6
+         mJaENiYe9OaJeEpAJadoR4T57laIL5Tlpb8kTQeG0SchZTlkErxS6K9dZqnwoBQPeqxn
+         phPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVgRtRla00wjrVLlh2r6teJFd4Lzj4CKwrx/yrIyX/8ePr5aXdQh5FZ/48+h1AjDuEbM8EiYuDrbRGHwJ7oB61o9na4PrA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykyY+nuyuUFt8n3X3wB/fsrIDWkuvjk8By/7TmaVsE+NXfhydI
+	oehhXfTm1NBposTFI/zjOrnzkmIo4n7lZWCil6vAP4d4EOc/vdTv6JdJsZDGrVP6irwKpkTp/pS
+	hEkY=
+X-Gm-Gg: ASbGnct7c9rEbo5I4Ykov6Zn9yPTKXz37BK0zAkD/IPZerAGGfuMnZ3YErOV5hsPP6/
+	24ulFTqdoKhLra1fAdiJ/aRyYAr2OkNcp4vfoxM9QDco/QU5xTbeb3OldLo4svZPySADVX9KCup
+	des4fhH9v4Yar9jZEvmhXmILGvbB3gfTDmfFf4XkWMmUA9LG0VzElQNAVN3PK3yenc+C+7m+13H
+	kywqj/QdGywrMyjKQ/Yd2lA1W1+f78hVhDVRYCnoJ+ojD2kIwL8OFOqUUkwyamArllIPUEYdGQR
+	MVfl7N++QIajjTS62zlyQPWCCbpGWO7vMtChMMfuyHLUR+sc9r0SOpow0MQ8DhCUKDbUwdDzRT/
+	u3/NSTTW28Yg9kBnyWxY=
+X-Google-Smtp-Source: AGHT+IE2nIaQoJqirhiFnLFxrRzCiV87ncuRtIKxCJYseMFy8hjh27ajXgQ1+KuvJ5tjHFB6lVPSaw==
+X-Received: by 2002:a17:906:bc49:b0:ac7:e80a:c709 with SMTP id a640c23a62f3a-ac7e80ac8b9mr655598766b.6.1744061638059;
+        Mon, 07 Apr 2025 14:33:58 -0700 (PDT)
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com. [209.85.218.49])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac7bfe5d3d8sm806414966b.31.2025.04.07.14.33.57
+        for <linux-security-module@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 07 Apr 2025 14:33:57 -0700 (PDT)
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ac2bfcd2a70so645919166b.0
+        for <linux-security-module@vger.kernel.org>; Mon, 07 Apr 2025 14:33:57 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXSu76V2oEGB7WpVN5aced4rQklj9oZFEkrhTLJWuWrfgu+CKSlEIEVP7AUDdEVGUPEOvkNchzyAzY9UeL6rDa4c0kKwtc=@vger.kernel.org
+X-Received: by 2002:a17:907:3d87:b0:abf:6aa4:924c with SMTP id
+ a640c23a62f3a-ac7d17747cfmr1256778866b.17.1744061636768; Mon, 07 Apr 2025
+ 14:33:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250407-kbuild-disable-gcc-plugins-v1-1-5d46ae583f5e@kernel.org>
-X-B4-Tracking: v=1; b=H4sIADs89GcC/x3MSwqDMBAA0KvIrDswauunVyku8pnGwRAlg0UQ7
- 27o8m3eCcpZWOFdnZD5JyprKqgfFbjZpMAovhgaal70pB4Xu0v06EWNjYzBOdziHiQpDj3VxnQ
- 0OttCCbbMXzn++We6rhuXJoY4bAAAAA==
-X-Change-ID: 20250407-kbuild-disable-gcc-plugins-8701aa609cb3
-To: Linus Torvalds <torvalds@linux-foundation.org>, 
- Kees Cook <kees@kernel.org>, 
- =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
- =?utf-8?q?G=C3=BCnther_Noack?= <gnoack@google.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-hardening@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
- Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-c25d1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2028; i=broonie@kernel.org;
- h=from:subject:message-id; bh=brpFVo8UvhI+dLDZkVYf5Q8wXfm0uRTbp38j5NZgP3E=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBn9D9NFa1CcYWHR9Jafm0V3+B0BSeBSppLOL80Eo13
- /5YKXmqJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZ/Q/TQAKCRAk1otyXVSH0FVlB/
- 9bzbJ3wzNgGnwSOkcK0bI+lv9NfuUW1TYwntVoPd5trP2im1S0pkznBsxarhFp7KFhCigYv3oV1PK1
- skwMSW2P4lHUVETiN4CgpawF9G7gpGljTiyZd41ZR5Lq+5MUG4//lRJSPUNcY7Jd+V6iknh285jdYZ
- hsNMkwQYwq/7OamiB8djDkOKMXr/uBDEN/8+btNrvy7hWl8DLQl5RBUUPvqqaWp8zcf4nDamKNstce
- MXTcp6nPt0vF0HaY8D0vRaoaiEt6u6XL8UYFAnn8Wmtl129GdHzO3Geiy4NceIz1qK1lfVq/YEeKgX
- x29r3FWVa3t11pD0SjtdoU1TnksOE9
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+References: <20250407-kbuild-disable-gcc-plugins-v1-1-5d46ae583f5e@kernel.org>
+In-Reply-To: <20250407-kbuild-disable-gcc-plugins-v1-1-5d46ae583f5e@kernel.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 7 Apr 2025 14:33:40 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjTbWiYwfj2wF9iP8SSVk2A_cZFDr5hu1bgU_PfxhyiiA@mail.gmail.com>
+X-Gm-Features: ATxdqUGKkDY0PVxsE-mkdFJ1IAX_JWpY62Qh1ZEnaMl7fepQQaa7Zys4sYl5c8g
+Message-ID: <CAHk-=wjTbWiYwfj2wF9iP8SSVk2A_cZFDr5hu1bgU_PfxhyiiA@mail.gmail.com>
+Subject: Re: [PATCH] gcc-plugins: Disable GCC plugins for compile test builds
+To: Mark Brown <broonie@kernel.org>
+Cc: Kees Cook <kees@kernel.org>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	Arnd Bergmann <arnd@arndb.de>, linux-hardening@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-In current mainline x86_64 allmodconfig builds done with tuxmake GCC 13
-and GCC 14 toolchains (which are Debian ones packaged up into containers)
-generate ICEs in landlock:
+On Mon, 7 Apr 2025 at 14:10, Mark Brown <broonie@kernel.org> wrote:
+>
+> Arnd bisected this to c56f649646ec ("landlock: Log mount-related
+> denials") but that commit is fairly obviously not really at fault here,
+> most likely this is an issue in the plugin.  Given how disruptive having
+> key configs like this failing let's disable the plugins for compile test
+> builds until a fix is found.
 
-Event                            | Plugins
-PLUGIN_FINISH_TYPE               | randomize_layout_plugin
-PLUGIN_FINISH_DECL               | randomize_layout_plugin
-PLUGIN_ATTRIBUTES                | latent_entropy_plugin randomize_layout_plugin
-PLUGIN_START_UNIT                | latent_entropy_plugin stackleak_plugin
-PLUGIN_ALL_IPA_PASSES_START      | randomize_layout_plugin
-/build/stage/linux/security/landlock/fs.c: In function ‘hook_file_ioctl_common’:
-/build/stage/linux/security/landlock/fs.c:1745:61: internal compiler error: in c
-ount_type_elements, at expr.cc:7075
- 1745 |                         .u.op = &(struct lsm_ioctlop_audit) {
-      |                                                             ^
+I'm not against this, but I do want to bring up the "are the plugins
+worth having at all" discussion again.
 
-Arnd bisected this to c56f649646ec ("landlock: Log mount-related
-denials") but that commit is fairly obviously not really at fault here,
-most likely this is an issue in the plugin.  Given how disruptive having
-key configs like this failing let's disable the plugins for compile test
-builds until a fix is found.
+They've been a pain before. Afaik, the actual useful cases are now
+done by actual real compiler support (and by clang, at that).
 
-Suggested-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- scripts/gcc-plugins/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Who actually *uses* the gcc plugins? They just worry me in general,
+and this is not the first time they have caused ICE problems.
 
-diff --git a/scripts/gcc-plugins/Kconfig b/scripts/gcc-plugins/Kconfig
-index e383cda05367..29b03c136165 100644
---- a/scripts/gcc-plugins/Kconfig
-+++ b/scripts/gcc-plugins/Kconfig
-@@ -7,6 +7,7 @@ config HAVE_GCC_PLUGINS
- 
- menuconfig GCC_PLUGINS
- 	bool "GCC plugins"
-+	depends on !COMPILE_TEST
- 	depends on HAVE_GCC_PLUGINS
- 	depends on CC_IS_GCC
- 	depends on $(success,test -e $(shell,$(CC) -print-file-name=plugin)/include/plugin-version.h)
-
----
-base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
-change-id: 20250407-kbuild-disable-gcc-plugins-8701aa609cb3
-
-Best regards,
--- 
-Mark Brown <broonie@kernel.org>
-
+            Linus
