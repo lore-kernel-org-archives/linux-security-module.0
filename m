@@ -1,407 +1,223 @@
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2053.outbound.protection.outlook.com [40.107.243.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EDC52309A3
-	for <linux-security-module@vger.kernel.org>; Mon,  7 Apr 2025 10:25:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744021525; cv=none; b=GTK5RPWH13GLYN1kfDhtcxZm9djIi2cY9Ykymd2t6o3so8ogi1vaglXNQUxqzOQtokN7tar973a9NllsPtrDQHV5EcO51ku14XtPLgyDlddCTpJwC3wldCUFm/B00UUh4Qq8nvJO+pvHwXSStoTG6GBGwHHTyLdftaJJlGd8JVs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744021525; c=relaxed/simple;
-	bh=vSDemQYLMUHcIJkwJO9z5VQsVFcRzmyxRV+CEHYxJHg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=LBU10YP2QRcZdcRx52S4zRGKsj6YFEOU9odVTdP+pPXWPmtMmJ0ABibXxWCccN1Vf+4C0kkzj+jyU5m52gEQwVwgjQ/BMKaOBpn7PkqboE1dmn5feCSU3XCCdppK8/n5UjQhUa6WlK90Sy+Gs6gNRVIyXIV5slSUDov6va+sHk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=h5KuDKWu; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 683EA235375;
+	Mon,  7 Apr 2025 11:16:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744024601; cv=fail; b=aH65yadJGX5RFuydOplEalyixl1q1kRzfz1BRloI+ubs+FJRHNKKLYvb5I98XiJ0KaMpOL/LP+OIy9smQrgm03kbW+q4vyV4OZu71n7mfHh7S1BmDJlAdLK9Xd5fWLCYB/IEDtzJxU84aSCjUWv8ZET/pYQR8ue/nAyXCASi6uo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744024601; c=relaxed/simple;
+	bh=tXqNH5435dzVwJnZbH3jDFKxEfEolurygK02w4vzSXM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Axm9UGWxyQHqRgIbEMwcWBMDJldb+xo1AhuEQIZX8p1FypOJ+ZCOQePHdPLXr2bhvy89Z/zPgw1eRctA5mTLwsjqT81vmInDeImqXJalqXpiB3FR5vTNDv/mxbrXDO0CbdkwHvfwZiJpvMvkK1zcRKcy7xSqhVMHp066sCwtlbc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=uES1Mf5F; arc=fail smtp.client-ip=40.107.243.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="h5KuDKWu"
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250407102515euoutp0188847589b04943400ce0ed1872e575fc~0AlPq5pnj1372213722euoutp01X
-	for <linux-security-module@vger.kernel.org>; Mon,  7 Apr 2025 10:25:15 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250407102515euoutp0188847589b04943400ce0ed1872e575fc~0AlPq5pnj1372213722euoutp01X
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1744021515;
-	bh=b3jgyVp1WjN2SrubGqhVVTXB2JDlKhP+xrKg9JphgZ4=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=h5KuDKWullgi+IaAkSRDP9tCbqgTDw4z+IVG4ZfQdQWISQd6ETSjbL52gTUSgdF41
-	 2wA2lmlPJgN5tFs7jO6kO7ELxmz29qnTRR2ic4MWFgK+DmEQRHbEvynGcUcdu7cEVF
-	 S1R5eXD+N12ZspGHgzmf8vDdcryY+oEkkAXitMQ4=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20250407102514eucas1p2aef29515258e8838adfaf55e376ecd90~0AlPMhH8R2818528185eucas1p2M;
-	Mon,  7 Apr 2025 10:25:14 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges3new.samsung.com (EUCPMTA) with SMTP id 25.51.20397.A08A3F76; Mon,  7
-	Apr 2025 11:25:14 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250407102514eucas1p1b297b7b6012a5ece4ccdca8e0e2c7956~0AlOy9QZ71016810168eucas1p1J;
-	Mon,  7 Apr 2025 10:25:14 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20250407102514eusmtrp219560910c2e30d5fd2b8b60a88672a1d~0AlOx593Q0851708517eusmtrp2g;
-	Mon,  7 Apr 2025 10:25:14 +0000 (GMT)
-X-AuditID: cbfec7f5-ed1d670000004fad-03-67f3a80aee56
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id 2B.EE.19654.A08A3F76; Mon,  7
-	Apr 2025 11:25:14 +0100 (BST)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250407102512eusmtip1209425bd8b7d21207fdae8bf927b7790~0AlNlkBQ82831628316eusmtip1n;
-	Mon,  7 Apr 2025 10:25:12 +0000 (GMT)
-Message-ID: <32c1e996-ac34-496f-933e-a266b487da1a@samsung.com>
-Date: Mon, 7 Apr 2025 12:25:11 +0200
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="uES1Mf5F"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ld5/mA6fY0L5OX/WeqQ9vGMp6Uh6PeGqao9X8z7EILLOHBkUVM5tXL/O84k4agh9Id5Prooyg1G9lQXw/cnpuHTV8m3bg2GkLWTKlJU40NbmQ98qMGI5Kr1rbFpk73awGatOyeaedHBMZhBrAHTaifsRV9o1qcAN39QM4YEXrA4AAvgacXYoRhjBebogNWme9eAq23q7N5KGi6T7LiZmgnwXF0kAjSchV5PTfSPg2XEX7qk+VC/3YIRwTfArLM8cuLM5U009QM4jPsE0LYJz3CgOwTy/H67Uw5Z+tgru6fcRC+xV3J3VNz4S3XOaQWRv1o4YiyB+xAvS2P0JtWFxwQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tXqNH5435dzVwJnZbH3jDFKxEfEolurygK02w4vzSXM=;
+ b=QMpBlRwxwDYArMnx1PUjbrRgMR8/Jk5UORVePNM0Ehdsq4zBlwmzgDCdxI7I+vVlqMUIN8cwAEEf45TDhS0y5z+aSgFn+mp27nmoub08hozNCrveHz9G72TwE5twhbFoKhY/Ce/OHrU4Ae6WMED5dxI+iG9jgVY+2O+vGklOz0Dplpbpl63ZKnPBn18nDrAiXNP+vvIkO0FsghLKUa73ZzD+O9x+skBnOGlVtQZ5GYXKG2U5UEaAD3rWYVlQBNj6I8XOnowjOKPuipm4M564cQycijAAShWy1HLgeR8YWCFsPO2nl84Z6knQbxwnlC1sJvXbDU8g+BMyNGjXHG1sRw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tXqNH5435dzVwJnZbH3jDFKxEfEolurygK02w4vzSXM=;
+ b=uES1Mf5FDL9kE63o1yZOoNqP+9d3kHPVz82ITaHQNTyUE7S4YbGFmHBg0Wl/wu0AXGpsFu8KM1VTqUlBR0I79iHfisQR9bcFJYRy8Rp5+TgBNSxmb+4aXbczZIqe8TtBAuG+Oc3sutGAjxVfRV5GaqlF22p0nLqCcPdsYPrBL/9mjz3pBun1j/R2TTOyHK9vOD6VTezXJLcmScKH2hSPHaGb3ukLh6KiDnR6p+P8Ns5Ezk3VHKDsPz6Pocj2wBhyFAvxaZ7poRBTuoNr/s28OYZ/CQmxMZFaYYWAIdl67JdxGCdcJcWEuXja4GRmBErFnp4kHDykBrALU2acgsuGcA==
+Received: from CY8PR12MB7195.namprd12.prod.outlook.com (2603:10b6:930:59::11)
+ by CY5PR12MB6323.namprd12.prod.outlook.com (2603:10b6:930:20::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8606.33; Mon, 7 Apr
+ 2025 11:16:36 +0000
+Received: from CY8PR12MB7195.namprd12.prod.outlook.com
+ ([fe80::c06c:905a:63f8:9cd]) by CY8PR12MB7195.namprd12.prod.outlook.com
+ ([fe80::c06c:905a:63f8:9cd%5]) with mapi id 15.20.8606.033; Mon, 7 Apr 2025
+ 11:16:35 +0000
+From: Parav Pandit <parav@nvidia.com>
+To: "Serge E. Hallyn" <serge@hallyn.com>, Jason Gunthorpe <jgg@nvidia.com>
+CC: "Eric W. Biederman" <ebiederm@xmission.com>, "linux-rdma@vger.kernel.org"
+	<linux-rdma@vger.kernel.org>, "linux-security-module@vger.kernel.org"
+	<linux-security-module@vger.kernel.org>, Leon Romanovsky <leonro@nvidia.com>
+Subject: RE: [PATCH] RDMA/uverbs: Consider capability of the process that
+ opens the file
+Thread-Topic: [PATCH] RDMA/uverbs: Consider capability of the process that
+ opens the file
+Thread-Index:
+ AQHbk9YLoK1pT4atn0WpWWxcsGvDt7N3vsYAgACIALCAAIEngIAAkUBrgAAxToCAGipgUIAAC8yAgAMUPoCAAV/nEA==
+Date: Mon, 7 Apr 2025 11:16:35 +0000
+Message-ID:
+ <CY8PR12MB7195987AD22775DBBA7FD3B5DCAA2@CY8PR12MB7195.namprd12.prod.outlook.com>
+References: <20250313050832.113030-1-parav@nvidia.com>
+ <20250317193148.GU9311@nvidia.com>
+ <CY8PR12MB7195C6D8CCE062CFD9D0174CDCDE2@CY8PR12MB7195.namprd12.prod.outlook.com>
+ <20250318112049.GC9311@nvidia.com>
+ <87ldt2yur4.fsf@email.froward.int.ebiederm.org>
+ <20250318225709.GC9311@nvidia.com>
+ <CY8PR12MB7195B7FAA54E7E0264D28BAEDCA92@CY8PR12MB7195.namprd12.prod.outlook.com>
+ <20250404151347.GC1336818@nvidia.com>
+ <20250406141501.GA481691@mail.hallyn.com>
+In-Reply-To: <20250406141501.GA481691@mail.hallyn.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CY8PR12MB7195:EE_|CY5PR12MB6323:EE_
+x-ms-office365-filtering-correlation-id: 14204dc9-46fc-47a6-1349-08dd75c5a8e5
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|10070799003|366016|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?4WjKw2r2FJw/HpUnXM5L0v/CFQsRb7RHY+HQsCWP4W09heMQcOCFPvK10Zgh?=
+ =?us-ascii?Q?6S4jQ9wNYNY/X+aPab/4VG6PStWyfTv9hVZ+UfWQEnnmJWcZZ99I6OFPiMvN?=
+ =?us-ascii?Q?ngf+P+1245Onqq37RVOm5VUH/qGV2QgtWAB1TXxoSZDYzXT1XSZdqCOXjMww?=
+ =?us-ascii?Q?+3oGBwsJMSajhcc4HcAxo/YHbYz4qGEBuHzOeZxqtxciKZxtNFfuCrq+Fsp4?=
+ =?us-ascii?Q?Qwyn7zAwjjkt/nAKRQ4z95TgwmvybNRRg98cLRvwTr7lEu4/2XtQUo0lqkBQ?=
+ =?us-ascii?Q?kdKf2toiX0kZseXhGZGSIbH35Rsvpil/qcuzK19RElvNRQ6Nm4NuIzEGdWPW?=
+ =?us-ascii?Q?elBvDIMDt2v2TwxEDpEgWG8x2fX8nvbcWBNGVWMA3ysINjUu4Sxtt+auUTYP?=
+ =?us-ascii?Q?MaMXgbA1Y6jDppuuljealh1G9oLiET2fYgpNkRTap2iyAaTbekzDPnXh1FYo?=
+ =?us-ascii?Q?rmqsjcC576tNOPifzBkeQZ8jPXKI3KohQ0NgBq38k2ViduGXSKZJeLq4AQFT?=
+ =?us-ascii?Q?Kn9v7pcSbm2+SinDjs7fT9N4T9v1aeSvjQiLQeSnX4Ab6JxV9xJHXDMygrWR?=
+ =?us-ascii?Q?Yq3e41wEh7iMZIwI4VLXBlJGAiqyA9StoZ1kLgLmDLLu9esDHelV3pgcFdvj?=
+ =?us-ascii?Q?poemoee3Id+sNnAfKkU98chbyAOngIjkDVQLW8+qN/vTOWv+z7DJ82oU32Sr?=
+ =?us-ascii?Q?RGXO3m3ExU0ZeixZpe8FnVbMq3YG470S4iFLlf6nZe+sJt2YoxKI5IeUfuv9?=
+ =?us-ascii?Q?ywBOPZLsB2s5FOqhztJEVvivt2rfoheISb/EGbt2JpyPHMQtCgwR8j61aGeE?=
+ =?us-ascii?Q?E8Gtb4AL6vH/3AItjNep7B2f1ZKI30dcxbQK7L1HyUyBLLsqImnBkRHLaPGp?=
+ =?us-ascii?Q?hQuP2xqVaV+QxcAT7vC8l8s4vhQDqG97kjv4viYnPWJzMBtL+mR/AvQ9IKYU?=
+ =?us-ascii?Q?lnckU5D88Pmy5A2d1F70yrPdL+Jq4+9fdhx5lNSpyPjrMCAT4fe81p0UJ2se?=
+ =?us-ascii?Q?ZPrNsaCCQl7/q2HMEWglzFZuSVA/CySRxRhoHRvAHSZGgonAdn5fzuJU0kz3?=
+ =?us-ascii?Q?BvisoovJ+JRcyu5PwnY+j6JsyOwrFXcTTiVe36sFg6E9ieFYwY8c6dDk3Tnw?=
+ =?us-ascii?Q?3pe5FZUCmtKn1sq7IHHS2FyK8cOwqGHgPS1hOH77XKF9pGCl7N0afqCftIlj?=
+ =?us-ascii?Q?aEkcl5S3x1IWSNvDh7phuSzeHW4w5WT8F4rnU2i0OsY1iYyGKMWiH6alx4C+?=
+ =?us-ascii?Q?4dehk9PyfObvrU8LPRMS4YcvT0t2CgrvHd/717Sqnln2auA9LBNnupvI+eyj?=
+ =?us-ascii?Q?qlBctbfu9ZlEhARriDERrjQbzpEPz6dNlfqoUuqPTnC6OFMVGitKn9xAc9vZ?=
+ =?us-ascii?Q?pcHlM7FOoOKvpZJYGSoGBQOlMzsW/refKBg/51Hf7I7amntcOaR9zJngNXU2?=
+ =?us-ascii?Q?miv6CYFazovAupkcoV9DhuFW8XjKOK7m?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR12MB7195.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(10070799003)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?WWimiNYaH9axBlwqxLvfn0RMk7YAtCT2mi9wSWZw4Di1YQegrz8u14rSOULf?=
+ =?us-ascii?Q?NlV1Ppsk5lHPpubemYDEcMfo1cvKAcU9nzFHwENOgqFolCmdiZsDAH5LWslO?=
+ =?us-ascii?Q?7Otv8LF81vsAJkoJOjqZYk7NU3X00bEakYlqR1AyeBiyI6UPaTas74WHfVL2?=
+ =?us-ascii?Q?lyKVr5/ZC8UxNN7Dd7ZHkXyK1ZaejGcbTO1dDHyqF1cVNBBQmKu1CuKraKFt?=
+ =?us-ascii?Q?B4B0uJtauJ7PdaD225ZNZlsnM+Ty3vaJ4ZG/0Mfnk8IRjgqnZJt837K2M4vV?=
+ =?us-ascii?Q?srp01VPddIE8XWMqcwpVVd++zZi748FeaUnGPie2GRN1MlGsgCCmiS/IEqt4?=
+ =?us-ascii?Q?M/ASmH+MGm/33ZdT9PVNC/BH2IJR/frmOWhZu7RPyk+doQd64ekjsMwV5tOw?=
+ =?us-ascii?Q?Njzu/isqNLXPgv7MjUHIMl+bTBCwtuvnPVEK6XKnHQbeMpjtWRnb8KijSshC?=
+ =?us-ascii?Q?dXGy8ihgs8Uuo5HOSQm7Z9ZSSO1O40ioGVc89BS+AxvrXvMX1O6/C9JHu5hK?=
+ =?us-ascii?Q?Cx0+Sg5+Vq4Ib+aWCTJF3KEXLpmwOh0k6vjDaqpBUzF1rUiPx69FMYiBqLwS?=
+ =?us-ascii?Q?AHbwVGhBipOOJ3lKoabgjaVDw2nEJcRKU/dceilpavWVCyeQu3d8c5WRrU/1?=
+ =?us-ascii?Q?cstng2CaCtpAcxHjzrjrPkUsicJu+3W2iUkGgP1NfpYf9T6nYI6yvY7N+9rW?=
+ =?us-ascii?Q?cCzBarD0XFh9PBjWsrpLgcLOic6T+p0gK/1O5AA6wNjRtjsHadkJFpHlsZj2?=
+ =?us-ascii?Q?byCmdGhA1pL3jJI3W7q4hftFBesmsFsScxnmeFwoCMv9WysM+JrMXLLQm+pd?=
+ =?us-ascii?Q?NJVCU9R6lDv06vMQpKK75rS+Z8IksOfQ1D2uF9aWYTmQNsHwyVZgdSpBBJf1?=
+ =?us-ascii?Q?g5Odbs4FlFSunRjRpnmi+bgkWuYEweqpd1Xk6SkKNx4ajPyL+/kZDJMICyZA?=
+ =?us-ascii?Q?5U7UYof647JeyzlP+i3NzDAgvYGFU71tDrrwNNEXV8SPP/ABgBk4d7H1uWcu?=
+ =?us-ascii?Q?qs5wtvlhXilu4tiN7HOqtdvrjqQ0lpwoVZOrSf0fWbPveBlF/sT76yy6A+Da?=
+ =?us-ascii?Q?caQWzYkxUoL3KLqOWnL1AQP1lIZse+GEMbXFAwleONXaDIBr8KOm/ySQWfQ1?=
+ =?us-ascii?Q?h63A/Fg/EPPXnEbMPLB44wIbmx5gSEMK05PXZsWaL96UC52iTYkfbDbWmj14?=
+ =?us-ascii?Q?lp7syDTLhPkwKtG9gMiJbb8+YhLSQXDO6w240XC+NBMHl6/Jx1XOMCi23ivN?=
+ =?us-ascii?Q?GiJC69bWdexxDHIbg7KXiCRmQfeR7xdH8+qa8D9DFJIXO4sPXll8bZz4I6VG?=
+ =?us-ascii?Q?TDLLGkzy5A08CHxfq13snnhGqYGhrwb5rfBHWb825rto++ORIrIfsuuTcwQ6?=
+ =?us-ascii?Q?eBslIRIYrds2IRYMCucdciEr93puxFNmy0+BUd7asbb4+RoVgFI4G8yRr1BS?=
+ =?us-ascii?Q?3X++jl9HdEmI2pplPeRFUF887LA5D0GJteF7hENkGVy5TpRB9bptb9FJsfUV?=
+ =?us-ascii?Q?wpZuptMAO9eiehYj4yk/Il+u4PJyWeu67+y6N5lY5dbKRwvZ8Fw2HA2oHceE?=
+ =?us-ascii?Q?C+fVC8cwiEya2U3nIrYRL5n0x6k0Sgqf0FLpBwiVg/T+ABaV61XSSbMc8F+L?=
+ =?us-ascii?Q?s4dnDjYgi4bC6Z1I1s4nXzc=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7] KEYS: Add a list for unreferenced keys
-To: Jarkko Sakkinen <jarkko@kernel.org>, keyrings@vger.kernel.org
-Cc: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>, stable@vger.kernel.org,
-	David Howells <dhowells@redhat.com>, Lukas Wunner <lukas@wunner.de>, Ignat
-	Korchagin <ignat@cloudflare.com>, Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>, Peter Huewe <peterhuewe@gmx.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Paul Moore <paul@paul-moore.com>, James
-	Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, James
-	Bottomley <James.Bottomley@HansenPartnership.com>, Mimi Zohar
-	<zohar@linux.ibm.com>, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <20250407023918.29956-1-jarkko@kernel.org>
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sf1CTZRzv2d69e7dr9jJAnhhIzuAOlSGm8XSSB2XdW9dRncllHsjQ14Hx
-	wzap9K9FMHJgrP3hYKNc87jICwQaO5JAQ2Bz4OahErDJ7rh544cEtKwGF8bLO4v/Pt/P9/P5
-	fr7f5x6CK67BY4mi0tO0slReLMWFmG0w5EoRNgcVu9rHE1CjuxJDv1WsYKhmNg71fenkofY6
-	ApmGNADpQzqAGuodALVeucRBnd4KHPkmQxzkcA3y0Z2rjTharJ3C0XRAgjx6A4bme0N85L7t
-	4iNz+xRAX6uH8Mwoasmkwynr9+McanEpj7JdT6RGuw9TF/ROnOq4fA6ndJbrgKr96xg1cqsV
-	p1p6pgG10HsPp4IdW6j6ahuP6gx6sHee+UCYcZwuLvqYVqbuzxcW3l1uwU4NH/q05/EkTw36
-	X9MCAQHJPdDg8PO0QEiIyWYAZ87pAVv8AaDX2s1niyCA13wj2BOLI1AZbnwHoP0HZ9iyBKCj
-	8hucUYnI/dCoq1pzEARGPg8ffPUeS0fAmw3+9UHRZAL0TdTzGRy5Jm9r6+IxOIrMgjeM5zFm
-	Jpds4sF/7mvWRVwyBk74L3IYjJNpUDuvXc8SkOlwRWMIaxLg550mLmOG5KoAzjVbeOzaB+CA
-	/S5gcSSctVv5LI6Dj39ihjKGagDNK75woQNQHZgIO/ZBr2sZZ87hksnwytVUls6Cno4FwNCQ
-	3ATH5iPYJTZBvc3AZWkR/EIjZtVJ0Ghv/S/2l9sjXB2QGje8i3HDmcYN5xj/zzUD7DKIoctV
-	JQpa9UIp/YlMJS9RlZcqZMfKSjrA2n8dWrU/6gLNs0uyPsAhQB+ABFcaJXrJ+btCLDouP3OW
-	VpYdVZYX06o+ICEwaYzIcq1KISYV8tP0hzR9ilY+6XIIQayag295NLZ3R8G+CrHsTGpvC53x
-	MCF2c3/D+UZr8hsuU+FHWqfbLxvcPLwzqbF64OKNlBLrm0UFwwsnsvgCT9P25byumb1IE5EY
-	Ny3pPyGLHeg2x794su2BP/Dc8MEcyVD7mKHmyDjicWixJSb3KUtkfPeOg5zVPVOFGT/Oa+N3
-	H/7sz7Rp15FXQedkOuGNXrzTpk2pmwtubfE6LriB/ucmnX7r368kuU3feryybYq6iaPvHkjO
-	qZzLfD174eTNFXPrrV21M5fyRfe2jT6MOJT3tC8hS5I7mhmf+7L67O6uwejUsd7s+29PORPt
-	GkXPr6GC/Oj0SVv2+06J6dm3Aju1OWVVUkxVKE/bzlWq5P8CdAPWnB4EAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprDKsWRmVeSWpSXmKPExsVy+t/xu7pcKz6nG8w8wm4x53wLi8W7pt8s
-	Ft2vZCwO9Z1itdjYz2Ex+3Qbo8WknxMYLWbOOMFosW79YiaLrXea2Czu3/vJZHHi3DF2i8u7
-	5rBZfOh5xGbx4rm0xe1J01ks3u77yW5x/sI5dosFGx8xWsxtOM3mIOLxcfYENo8tK28yeXz4
-	GOex7YCqx7XdkR7TJp1i89i0qpPNY8KiA4wePd+TPS6dXcfmsXbvC0aP9/uusnl83iTnMaN9
-	G6vH1s+3WQL4o/RsivJLS1IVMvKLS2yVog0tjPQMLS30jEws9QyNzWOtjEyV9O1sUlJzMstS
-	i/TtEvQyrvxay1JwJrRi7/97rA2MR1y7GDk5JARMJE48b2HvYuTiEBJYyihx8etqdoiEjMTJ
-	aQ2sELawxJ9rXWwQRe8ZJZbe3QiW4BWwk5g1oZWli5GDg0VAReLpxBCIsKDEyZlPWEBsUQF5
-	ifu3ZoDNFAYq37BhB1iriICjxOFZvSwgM5kFlrNKfL6ynA0kISRgJrF1+UIwm1lAXOLWk/lM
-	IDabgKFE19susDingLnE77bp7BA1ZhJdW7sYIWx5ieats5knMArNQnLHLCSjZiFpmYWkZQEj
-	yypGkdTS4tz03GIjveLE3OLSvHS95PzcTYzAZLLt2M8tOxhXvvqod4iRiYPxEKMEB7OSCK/l
-	qU/pQrwpiZVVqUX58UWlOanFhxhNgWExkVlKNDkfmM7ySuINzQxMDU3MLA1MLc2MlcR52a6c
-	TxMSSE8sSc1OTS1ILYLpY+LglGpgWnnH/us/sRcRwYwfz+r+ERFdHjyd8caPNOZlW1Wvzl91
-	nGdB7LN8PqZNHOJbtAW+lH4zrRGvyDq4/nlDBOPhjl8SAn4Bd9ysLcQf5Qf8PuGy6Op3wQWS
-	sq6xDeIH7wRUW3PkSfH7/jnYHnCk+8SGWdvXWTaWqX3P1vgi6zbbfMnypgiV9dUSOppe5zMO
-	RxV1rbn2X/B031Gxr+eydn2b5r9i1pMrJUWP3jQvEXv4ZmaAzYoTi+OTA3ec8N99tExC4XJH
-	hs/RW4vM7rff3XV8oVHucdGGsj9G28rj9128nLP6ukvplKrLScJ2YSfetp532tGq+nTth8Nf
-	Ft3IDKv//2WCNoeSbZGf+M3Iag/B10osxRmJhlrMRcWJAPsw/hivAwAA
-X-CMS-MailID: 20250407102514eucas1p1b297b7b6012a5ece4ccdca8e0e2c7956
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250407102514eucas1p1b297b7b6012a5ece4ccdca8e0e2c7956
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20250407102514eucas1p1b297b7b6012a5ece4ccdca8e0e2c7956
-References: <20250407023918.29956-1-jarkko@kernel.org>
-	<CGME20250407102514eucas1p1b297b7b6012a5ece4ccdca8e0e2c7956@eucas1p1.samsung.com>
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CY8PR12MB7195.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 14204dc9-46fc-47a6-1349-08dd75c5a8e5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Apr 2025 11:16:35.8691
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: RQ2yRXCJ5USNKJbjNCtICRFnVSvCnHm9JRVLXIuTXmzyZVEu03D7OmpXKkQy4BPJKXs04Cx8xLeQTYNu87HwhQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6323
 
-On 07.04.2025 04:39, Jarkko Sakkinen wrote:
-> From: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
+> From: Serge E. Hallyn <serge@hallyn.com>
+> Sent: Sunday, April 6, 2025 7:45 PM
+>=20
+> On Fri, Apr 04, 2025 at 12:13:47PM -0300, Jason Gunthorpe wrote:
+> > On Fri, Apr 04, 2025 at 02:53:30PM +0000, Parav Pandit wrote:
+> > > To summarize,
+> > >
+> > > 1. A process can open an RDMA resource (such as a raw QP, raw flow
+> > > entry, or similar 'raw' resource) through the fd using ioctl(), if it=
+ has the
+> appropriate capability, which in this case is CAP_NET_RAW.
+> > > This is similar to a process that opens a raw socket.
+> > >
+> > > 2. Given that RDMA uses ioctl() for resource creation, there isn't a
+> > > security concern surrounding the read()/write() system calls.
+> > >
+> > > 3. If process A, which does not have CAP_NET_RAW, passes the opened
+> > > fd to another privileged process B, which has CAP_NET_RAW, process B
+> can open the raw RDMA resource.
+> > > This is still within the kernel-defined security boundary, similar to=
+ a raw
+> socket.
+> > >
+> > > 4. If process A, which has the CAP_NET_RAW capability, passes the fil=
+e
+> descriptor to Process B, which does not have CAP_NET_RAW, Process B will
+> not be able to open the raw RDMA resource.
+> > >
+> > > Do we agree on this Eric?
+> >
+> > This is our model, I consider it uAPI, so I don't belive we can change
+> > it without an extreme reason..
+> >
+> > > 5. the process's capability check should be done in the right user
+> namespace.
+> > > (instead of current in default user ns).
+> > > The right user namespace is the one which created the net namespace.
+> > > This is because rdma networking resources are governed by the net
+> namespace.
+> >
+> > This all makes my head hurt. The right user namespace is the one that
+> > is currently active for the invoking process, I couldn't understand
+> > why we have net namespaces refer to user namespaces :\
+>=20
+> A user at any time can create a new user namespace, without creating a ne=
+w
+> network namespace, and have privilege in that user namespace, over
+> resources owned by the user namespace.
 >
-> Add an isolated list of unreferenced keys to be queued for deletion, and
-> try to pin the keys in the garbage collector before processing anything.
-> Skip unpinnable keys.
+=20
+> So if a user can create a new user namespace, then say "hey I have
+> CAP_NET_ADMIN over current_user_ns, so give me access to the RDMA
+> resources belonging to my current_net_ns", that's a problem.
+>=20
+> So that's why the check should be ns_capable(device->net->user-ns,
+> CAP_NET_ADMIN) and not ns_capable(current_user_ns, CAP_NET_ADMIN).
 >
-> Use this list for blocking the reaping process during the teardown:
->
-> 1. First off, the keys added to `keys_graveyard` are snapshotted, and the
->     list is flushed. This the very last step in `key_put()`.
-> 2. `key_put()` reaches zero. This will mark key as busy for the garbage
->     collector.
-> 3. `key_garbage_collector()` will try to increase refcount, which won't go
->     above zero. Whenever this happens, the key will be skipped.
->
-> Cc: stable@vger.kernel.org # v6.1+
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>
+Given the check is of the process (and hence user and net ns) and not of th=
+e rdma device itself,
+Shouldn't we just check,
 
-This patch landed in today's linux-next as commit b0d023797e3e ("keys: 
-Add a list for unreferenced keys"). In my tests I found that it triggers 
-the following lockdep issue:
+ns_capable(current->nsproxy->user_ns, ...)
 
-================================
-WARNING: inconsistent lock state
-6.15.0-rc1-next-20250407 #15630 Not tainted
---------------------------------
-inconsistent {SOFTIRQ-ON-W} -> {IN-SOFTIRQ-W} usage.
-ksoftirqd/3/32 [HC0[0]:SC1[1]:HE1:SE0] takes:
-c13fdd68 (key_serial_lock){+.?.}-{2:2}, at: key_put+0x74/0x128
-{SOFTIRQ-ON-W} state was registered at:
-   lock_acquire+0x134/0x384
-   _raw_spin_lock+0x38/0x48
-   key_alloc+0x2fc/0x4d8
-   keyring_alloc+0x40/0x90
-   system_trusted_keyring_init+0x50/0x7c
-   do_one_initcall+0x68/0x314
-   kernel_init_freeable+0x1c0/0x224
-   kernel_init+0x1c/0x12c
-   ret_from_fork+0x14/0x28
-irq event stamp: 234
-hardirqs last  enabled at (234): [<c0cb7060>] 
-_raw_spin_unlock_irqrestore+0x5c/0x60
-hardirqs last disabled at (233): [<c0cb6dd0>] 
-_raw_spin_lock_irqsave+0x64/0x68
-softirqs last  enabled at (42): [<c013bcd8>] handle_softirqs+0x328/0x520
-softirqs last disabled at (47): [<c013bf10>] run_ksoftirqd+0x40/0x68
-
-other info that might help us debug this:
-  Possible unsafe locking scenario:
-
-        CPU0
-        ----
-   lock(key_serial_lock);
-   <Interrupt>
-     lock(key_serial_lock);
-
-  *** DEADLOCK ***
-
-1 lock held by ksoftirqd/3/32:
-  #0: c137c040 (rcu_callback){....}-{0:0}, at: rcu_core+0x4d0/0x14a4
-
-stack backtrace:
-CPU: 3 UID: 0 PID: 32 Comm: ksoftirqd/3 Not tainted 
-6.15.0-rc1-next-20250407 #15630 PREEMPT
-Hardware name: Samsung Exynos (Flattened Device Tree)
-Call trace:
-  unwind_backtrace from show_stack+0x10/0x14
-  show_stack from dump_stack_lvl+0x68/0x88
-  dump_stack_lvl from print_usage_bug.part.0+0x24c/0x270
-  print_usage_bug.part.0 from mark_lock.part.0+0xc20/0x129c
-  mark_lock.part.0 from __lock_acquire+0xafc/0x2970
-  __lock_acquire from lock_acquire+0x134/0x384
-  lock_acquire from _raw_spin_lock+0x38/0x48
-  _raw_spin_lock from key_put+0x74/0x128
-  key_put from put_cred_rcu+0x20/0xd0
-  put_cred_rcu from rcu_core+0x478/0x14a4
-  rcu_core from handle_softirqs+0x130/0x520
-  handle_softirqs from run_ksoftirqd+0x40/0x68
-  run_ksoftirqd from smpboot_thread_fn+0x17c/0x330
-  smpboot_thread_fn from kthread+0x138/0x25c
-  kthread from ret_from_fork+0x14/0x28
-Exception stack(0xf090dfb0 to 0xf090dff8)
-...
-
-To fix this issue I had to change all calls around key_serial_lock and 
-key_graveyard_lock spinlocks with the irqsave/irqrestore variants (in 
-security/keys/key.c and security/keys/gc.c), but I'm not sure if this is 
-desired solution.
-
-> ---
-> v7:
-> - Fixed multiple definitions (from rebasing, sorry).
-> v6:
-> - Rebase went wrong in v5.
-> v5:
-> - Rebased on top of v6.15-rc
-> - Updated commit message to explain how spin lock and refcount
->    isolate the time window in key_put().
-> v4:
-> - Pin the key while processing key type teardown. Skip dead keys.
-> - Revert key_gc_graveyard back key_gc_unused_keys.
-> - Rewrote the commit message.
-> - "unsigned long flags" declaration somehow did make to the previous
->    patch (sorry).
-> v3:
-> - Using spin_lock() fails since key_put() is executed inside IRQs.
->    Using spin_lock_irqsave() would neither work given the lock is
->    acquired for /proc/keys. Therefore, separate the lock for
->    graveyard and key_graveyard before reaping key_serial_tree.
-> v2:
-> - Rename key_gc_unused_keys as key_gc_graveyard, and re-document the
->    function.
-> ---
->   include/linux/key.h      |  7 ++-----
->   security/keys/gc.c       | 40 ++++++++++++++++++++++++----------------
->   security/keys/internal.h |  5 +++++
->   security/keys/key.c      |  7 +++++--
->   4 files changed, 36 insertions(+), 23 deletions(-)
->
-> diff --git a/include/linux/key.h b/include/linux/key.h
-> index ba05de8579ec..c50659184bdf 100644
-> --- a/include/linux/key.h
-> +++ b/include/linux/key.h
-> @@ -195,10 +195,8 @@ enum key_state {
->   struct key {
->   	refcount_t		usage;		/* number of references */
->   	key_serial_t		serial;		/* key serial number */
-> -	union {
-> -		struct list_head graveyard_link;
-> -		struct rb_node	serial_node;
-> -	};
-> +	struct list_head	graveyard_link; /* key->usage == 0 */
-> +	struct rb_node		serial_node;
->   #ifdef CONFIG_KEY_NOTIFICATIONS
->   	struct watch_list	*watchers;	/* Entities watching this key for changes */
->   #endif
-> @@ -236,7 +234,6 @@ struct key {
->   #define KEY_FLAG_ROOT_CAN_INVAL	7	/* set if key can be invalidated by root without permission */
->   #define KEY_FLAG_KEEP		8	/* set if key should not be removed */
->   #define KEY_FLAG_UID_KEYRING	9	/* set if key is a user or user session keyring */
-> -#define KEY_FLAG_FINAL_PUT	10	/* set if final put has happened on key */
->   
->   	/* the key type and key description string
->   	 * - the desc is used to match a key against search criteria
-> diff --git a/security/keys/gc.c b/security/keys/gc.c
-> index f27223ea4578..0a3beb68633c 100644
-> --- a/security/keys/gc.c
-> +++ b/security/keys/gc.c
-> @@ -189,6 +189,7 @@ static void key_garbage_collector(struct work_struct *work)
->   	struct rb_node *cursor;
->   	struct key *key;
->   	time64_t new_timer, limit, expiry;
-> +	unsigned long flags;
->   
->   	kenter("[%lx,%x]", key_gc_flags, gc_state);
->   
-> @@ -206,21 +207,35 @@ static void key_garbage_collector(struct work_struct *work)
->   
->   	new_timer = TIME64_MAX;
->   
-> +	spin_lock_irqsave(&key_graveyard_lock, flags);
-> +	list_splice_init(&key_graveyard, &graveyard);
-> +	spin_unlock_irqrestore(&key_graveyard_lock, flags);
-> +
-> +	list_for_each_entry(key, &graveyard, graveyard_link) {
-> +		spin_lock(&key_serial_lock);
-> +		kdebug("unrefd key %d", key->serial);
-> +		rb_erase(&key->serial_node, &key_serial_tree);
-> +		spin_unlock(&key_serial_lock);
-> +	}
-> +
->   	/* As only this function is permitted to remove things from the key
->   	 * serial tree, if cursor is non-NULL then it will always point to a
->   	 * valid node in the tree - even if lock got dropped.
->   	 */
->   	spin_lock(&key_serial_lock);
-> +	key = NULL;
->   	cursor = rb_first(&key_serial_tree);
->   
->   continue_scanning:
-> +	key_put(key);
->   	while (cursor) {
->   		key = rb_entry(cursor, struct key, serial_node);
->   		cursor = rb_next(cursor);
-> -
-> -		if (test_bit(KEY_FLAG_FINAL_PUT, &key->flags)) {
-> -			smp_mb(); /* Clobber key->user after FINAL_PUT seen. */
-> -			goto found_unreferenced_key;
-> +		/* key_get(), unless zero: */
-> +		if (!refcount_inc_not_zero(&key->usage)) {
-> +			key = NULL;
-> +			gc_state |= KEY_GC_REAP_AGAIN;
-> +			goto skip_dead_key;
->   		}
->   
->   		if (unlikely(gc_state & KEY_GC_REAPING_DEAD_1)) {
-> @@ -274,6 +289,7 @@ static void key_garbage_collector(struct work_struct *work)
->   		spin_lock(&key_serial_lock);
->   		goto continue_scanning;
->   	}
-> +	key_put(key);
->   
->   	/* We've completed the pass.  Set the timer if we need to and queue a
->   	 * new cycle if necessary.  We keep executing cycles until we find one
-> @@ -286,6 +302,10 @@ static void key_garbage_collector(struct work_struct *work)
->   		key_schedule_gc(new_timer);
->   	}
->   
-> +	spin_lock(&key_graveyard_lock);
-> +	list_splice_init(&key_graveyard, &graveyard);
-> +	spin_unlock(&key_graveyard_lock);
-> +
->   	if (unlikely(gc_state & KEY_GC_REAPING_DEAD_2) ||
->   	    !list_empty(&graveyard)) {
->   		/* Make sure that all pending keyring payload destructions are
-> @@ -328,18 +348,6 @@ static void key_garbage_collector(struct work_struct *work)
->   	kleave(" [end %x]", gc_state);
->   	return;
->   
-> -	/* We found an unreferenced key - once we've removed it from the tree,
-> -	 * we can safely drop the lock.
-> -	 */
-> -found_unreferenced_key:
-> -	kdebug("unrefd key %d", key->serial);
-> -	rb_erase(&key->serial_node, &key_serial_tree);
-> -	spin_unlock(&key_serial_lock);
-> -
-> -	list_add_tail(&key->graveyard_link, &graveyard);
-> -	gc_state |= KEY_GC_REAP_AGAIN;
-> -	goto maybe_resched;
-> -
->   	/* We found a restricted keyring and need to update the restriction if
->   	 * it is associated with the dead key type.
->   	 */
-> diff --git a/security/keys/internal.h b/security/keys/internal.h
-> index 2cffa6dc8255..4e3d9b322390 100644
-> --- a/security/keys/internal.h
-> +++ b/security/keys/internal.h
-> @@ -63,9 +63,14 @@ struct key_user {
->   	int			qnbytes;	/* number of bytes allocated to this user */
->   };
->   
-> +extern struct list_head key_graveyard;
-> +extern spinlock_t key_graveyard_lock;
-> +
->   extern struct rb_root	key_user_tree;
->   extern spinlock_t	key_user_lock;
->   extern struct key_user	root_key_user;
-> +extern struct list_head	key_graveyard;
-> +extern spinlock_t	key_graveyard_lock;
->   
->   extern struct key_user *key_user_lookup(kuid_t uid);
->   extern void key_user_put(struct key_user *user);
-> diff --git a/security/keys/key.c b/security/keys/key.c
-> index 7198cd2ac3a3..7511f2017b6b 100644
-> --- a/security/keys/key.c
-> +++ b/security/keys/key.c
-> @@ -22,6 +22,8 @@ DEFINE_SPINLOCK(key_serial_lock);
->   
->   struct rb_root	key_user_tree; /* tree of quota records indexed by UID */
->   DEFINE_SPINLOCK(key_user_lock);
-> +LIST_HEAD(key_graveyard);
-> +DEFINE_SPINLOCK(key_graveyard_lock);
->   
->   unsigned int key_quota_root_maxkeys = 1000000;	/* root's key count quota */
->   unsigned int key_quota_root_maxbytes = 25000000; /* root's key space quota */
-> @@ -658,8 +660,9 @@ void key_put(struct key *key)
->   				key->user->qnbytes -= key->quotalen;
->   				spin_unlock_irqrestore(&key->user->lock, flags);
->   			}
-> -			smp_mb(); /* key->user before FINAL_PUT set. */
-> -			set_bit(KEY_FLAG_FINAL_PUT, &key->flags);
-> +			spin_lock_irqsave(&key_graveyard_lock, flags);
-> +			list_add_tail(&key->graveyard_link, &key_graveyard);
-> +			spin_unlock_irqrestore(&key_graveyard_lock, flags);
->   			schedule_work(&key_gc_work);
->   		}
->   	}
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+This ensures current network namespace's owning user ns is consulted.
+=20
+> -serge
