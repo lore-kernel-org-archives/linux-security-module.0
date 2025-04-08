@@ -1,103 +1,164 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C236823DE;
-	Mon,  7 Apr 2025 22:02:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F01AF21D581
+	for <linux-security-module@vger.kernel.org>; Tue,  8 Apr 2025 01:35:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744063340; cv=none; b=DpFl13cp8vXE8hCcwzYeX80gzmB89bxw5zIhak1UlGluczH4lJ0yrCZTFTxTyd364o4tt0CbhOa4N5kH5jipdRKwu6nwC0NkntFUSk7v5qlb2fAQ6lHpi/G0pCYD3d5hbjHKGbowURHvZOceptnVr3BaJ5iwp6RQGrEWQSh1s8o=
+	t=1744076111; cv=none; b=GyzLLY1rfoxzR4yJCx/6NZ0dEYDrhDRQIlPpF0JaQrR6iQrqtjAZlJrlObscQ69YyhAPlzyoNLzIJQ1I7lYtIlhEH88Pb66Gl5oHQpCxfs3M+RTrw3t7Mye+YsTm8CAdRFUhuR4PM3ah3SOcngTsnbMiS/VrP0zEKjnSSAVhN5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744063340; c=relaxed/simple;
-	bh=/4WGk6kSr8LKKFwu6dzWcmgp0DckK2KU9bDoF1Fe3XE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MZCcAFmgQn7lzVpk5lf3nLFKseWiieYCA/D9uK1HlYlNIG2Qdnmx4GC02pVwaAArnYaYv+m7nKClwCHnaT72FqSKAnlGRpRweuL5JN5dq2u0ftmt447RW8ISC/qQdQeNTxacvrRhziexP1/UWud3cpNLbHvQfNxl6Hdu+BKxpNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=abIzyW9Z; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1744076111; c=relaxed/simple;
+	bh=UzJzuG6mawXDt2lg66B7/EZDQHiqmaU6CjBKqdUBOTY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G4Gon6VEGkOoPVk8hCHg8AmosrsA+fLqR1T7Pj5x30nqW9xm7SfVrNCxLnSCFdx9tSZ3gSZ9o5MvSNn6yJoxYa8HOgLIaWgosnKt+YQkepbXQLmUDX2YebY4ZnMBUQB+nYD1sD2hZ77t1A/7WHagOb0NM7QN9w28wDpCAR/jBpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=KmNpvg9Q; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="abIzyW9Z"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EDDDC4CEDD;
-	Mon,  7 Apr 2025 22:02:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744063339;
-	bh=/4WGk6kSr8LKKFwu6dzWcmgp0DckK2KU9bDoF1Fe3XE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=abIzyW9Zkbud1gngvmI5WfdQn1IgbCOEqr5RaAXnmDb4onbzTAQEiFgU4QxxBIJ4s
-	 j7D4g7WfoIfQvhb4Oh7n9gnUGvl21Ngmh+V0yCLQkVVur3CBp9h6u4z5VxwyV2C0/5
-	 g7eppUEarOJH76yIXNAprZCsi3YSTBHTI9ha3LMbtrpHK54/8NdRFmFFLzFJScKqqN
-	 ECrwAkFYj73uOqUKrmv/xiS/StqHyypHqPzL0lm1ZXY+FXpmDDYiBkqKZdITLGj0rG
-	 HIKr03lt3vuwpOzRSEb0ezOdBD+3djOzP+s8FqAZD/5sbLY9VQX/V2CxsMxk2LsznH
-	 KsXSKuNNin5Cw==
-Date: Mon, 7 Apr 2025 23:02:15 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Kees Cook <kees@kernel.org>,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	Arnd Bergmann <arnd@arndb.de>, linux-hardening@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>
-Subject: Re: [PATCH] gcc-plugins: Disable GCC plugins for compile test builds
-Message-ID: <8cbe0cac-2952-47b6-9b0d-1400aec0bf25@sirena.org.uk>
-References: <20250407-kbuild-disable-gcc-plugins-v1-1-5d46ae583f5e@kernel.org>
- <CAHk-=wjTbWiYwfj2wF9iP8SSVk2A_cZFDr5hu1bgU_PfxhyiiA@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="KmNpvg9Q"
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6ff4faf858cso38016527b3.2
+        for <linux-security-module@vger.kernel.org>; Mon, 07 Apr 2025 18:35:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1744076109; x=1744680909; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FqYTSM1FJCMjPZR8TM1fd1KRA6QF3QSY/HArlDQ7k74=;
+        b=KmNpvg9QQg7BJIuyLYnliYgTUgkMAC/Bu+lgqmMEHSXen7KvKmMzFELZxU4BSyo8L8
+         xhQJgL/O2RKMlrAFBVc4l3GMVAofsgqKcnYVUncLbmRR22TgyQea8lf39hAhD04gnASj
+         5wftt4wj55s+z24XNVQTqnhbBodJ+DEg5/sbuD3BzdKRCVZN6VRWqXhvCpNE3BdMZFbu
+         FzR5YxhWAda+NrqmE0sg9ikcBNRlKjgniDCmlHmd+hDfcADsSJ2iBNrSNnJwCEEZ0yBR
+         1jY3ZQxdmeShrPNXdWZsXi2+V+uwbKNFbwUlWB99actm5Y2MUyNdjnsnsTcfztjN2+KR
+         2szg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744076109; x=1744680909;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FqYTSM1FJCMjPZR8TM1fd1KRA6QF3QSY/HArlDQ7k74=;
+        b=dfjwxyOrVvt5XQtkmUiPzlVdX4mgwb9VuX+C60wBsuPwf52+uKbsFQat2JbNWtWa6W
+         1CGVsMtErP0Jr+r2ykRFWOYWG76nwexxAw8jyEL3FUmg/YPtdIJJuyf7LdevvNijld9e
+         eJMyv8PuJfWfwBZbdQo3b76Cdc89f/shgBPsN+rUlWEUkurioh0g7i1+G7jiCEu/0KGk
+         rMwd4BxlI6n4BgVbJRB3W3e2EXMGJYhBxR+w69A1wV8r0KtjnVRCgmHb0z2SIchF/6iS
+         /mHKDX0xy8woHpCoqvi/5RJ57e4vqNKpQz92/HbaBK+OIk4eBLVFWpdVmLZ/jS9ExP3a
+         LaFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXEkrC7/KLP5tuWVcb6RKAJDHi/klKkXpvbu4xgvlWm9L0wCTNHxplTmWaML1E+59mBZSGI8G5VdHNPNQ+wnMEW/UlAs64=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyw/QGi34BEqTyNtgBQMtQrQADw59XjGqUYzS/WgZHXXWe8uyND
+	zlIk8sP19uPhVj9v7vJlIT93qSEn5fxmCYkl+FEC1BdhaIttMzk34RRA37QVxH9k9H35ZDEmlnX
+	CxIHCpYyioJ2cH4TACDoDUF9+OmxRPic2gy0i
+X-Gm-Gg: ASbGncsTDfLKDCEGuJmGfz2xZSTiCrZxOR/G3dyWDGJDOyJv+0GS9VJiyk4ovn9141F
+	sBBsdJPFJkAtOPUYsxJ/aSkXgWm7vogblsZETMp6j/cNEsANLSg7J3dvkza4oUgV6usgVYHqk75
+	AG18Dv+CF35/SGHSRq6SkOEdAaezRpimkZzrTd
+X-Google-Smtp-Source: AGHT+IGoUzeM8HMuTr1NGJvPb8jIlKfrqtqlOQ2FpYfKI0PmIIhhs/TRzx73rkt7iCRa1VGrIOSWdhBV02vnAqQGDHc=
+X-Received: by 2002:a05:690c:4d8a:b0:703:b278:db30 with SMTP id
+ 00721157ae682-703e310896emr240899877b3.4.1744076108806; Mon, 07 Apr 2025
+ 18:35:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="NwExeGW9LH0vNNUp"
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wjTbWiYwfj2wF9iP8SSVk2A_cZFDr5hu1bgU_PfxhyiiA@mail.gmail.com>
-X-Cookie: Meester, do you vant to buy a duck?
+References: <20250407231823.95927-1-kuniyu@amazon.com> <20250407231823.95927-3-kuniyu@amazon.com>
+In-Reply-To: <20250407231823.95927-3-kuniyu@amazon.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 7 Apr 2025 21:34:57 -0400
+X-Gm-Features: ATxdqUGY33CqhAhJH11kZ7E-OTlreVGoamoyxPdGrvFZsT_Af-mUeIimwX5FK90
+Message-ID: <CAHC9VhQCS-TfSL4cMfBu2GszHS8DVE05Z6FH-zPXV=EiH4ZHdg@mail.gmail.com>
+Subject: Re: [PATCH v1 net-next 2/4] net: Retire DCCP.
+To: Kuniyuki Iwashima <kuniyu@amazon.com>, selinux@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, 
+	Casey Schaufler <casey@schaufler-ca.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	David Ahern <dsahern@kernel.org>, Neal Cardwell <ncardwell@google.com>, 
+	Willem de Bruijn <willemb@google.com>, Pablo Neira Ayuso <pablo@netfilter.org>, 
+	Jozsef Kadlecsik <kadlec@netfilter.org>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Kuniyuki Iwashima <kuni1840@gmail.com>, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Apr 7, 2025 at 7:19=E2=80=AFPM Kuniyuki Iwashima <kuniyu@amazon.com=
+> wrote:
+>
+> DCCP was orphaned in 2021 by commit 054c4610bd05 ("MAINTAINERS: dccp:
+> move Gerrit Renker to CREDITS"), which noted that the last maintainer
+> had been inactive for five years.
+>
+> In recent years, it has become a playground for syzbot, and most changes
+> to DCCP have been odd bug fixes triggered by syzbot.  Apart from that,
+> the only changes have been driven by treewide or networking API updates
+> or adjustments related to TCP.
+>
+> Thus, in 2023, we announced we would remove DCCP in 2025 via commit
+> b144fcaf46d4 ("dccp: Print deprecation notice.").
+>
+> Since then, only one individual has contacted the netdev mailing list. [0=
+]
+>
+> There is ongoing research for Multipath DCCP.  The repository is hosted
+> on GitHub [1], and development is not taking place through the upstream
+> community.  While the repository is published under the GPLv2 license,
+> the scheduling part remains proprietary, with a LICENSE file [2] stating:
+>
+>   "This is not Open Source software."
+>
+> The researcher mentioned a plan to address the licensing issue, upstream
+> the patches, and step up as a maintainer, but there has been no further
+> communication since then.
+>
+> Maintaining DCCP for a decade without any real users has become a burden.
+>
+> Therefore, it's time to remove it.
+>
+> Removing DCCP will also provide significant benefits to TCP.  It allows
+> us to freely reorganize the layout of struct inet_connection_sock, which
+> is currently shared with DCCP, and optimize it to reduce the number of
+> cachelines accessed in the TCP fast path.
+>
+> Note that we leave uAPI headers alone for userspace programs.
+>
+> Link: https://lore.kernel.org/netdev/20230710182253.81446-1-kuniyu@amazon=
+.com/T/#u #[0]
+> Link: https://github.com/telekom/mp-dccp #[1]
+> Link: https://github.com/telekom/mp-dccp/blob/mpdccp_v03_k5.10/net/dccp/n=
+on_gpl_scheduler/LICENSE #[2]
+> Signed-off-by: Kuniyuki Iwashima <kuniyu@amazon.com>
 
---NwExeGW9LH0vNNUp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Adding the LSM and SELinux lists for obvious reasons, as well as Casey
+directly since he maintains Smack and I don't see him on the To/CC
+line.
 
-On Mon, Apr 07, 2025 at 02:33:40PM -0700, Linus Torvalds wrote:
-> On Mon, 7 Apr 2025 at 14:10, Mark Brown <broonie@kernel.org> wrote:
+For those that weren't on the original posting, the lore link is below:
+https://lore.kernel.org/all/20250407231823.95927-1-kuniyu@amazon.com
 
-> > Arnd bisected this to c56f649646ec ("landlock: Log mount-related
-> > denials") but that commit is fairly obviously not really at fault here,
-> > most likely this is an issue in the plugin.  Given how disruptive having
-> > key configs like this failing let's disable the plugins for compile test
-> > builds until a fix is found.
+> diff --git a/security/selinux/include/classmap.h b/security/selinux/inclu=
+de/classmap.h
+> index 04a9b480885e..5665aa5e7853 100644
+> --- a/security/selinux/include/classmap.h
+> +++ b/security/selinux/include/classmap.h
+> @@ -127,8 +127,6 @@ const struct security_class_mapping secclass_map[] =
+=3D {
+>         { "key",
+>           { "view", "read", "write", "search", "link", "setattr", "create=
+",
+>             NULL } },
+> -       { "dccp_socket",
+> -         { COMMON_SOCK_PERMS, "node_bind", "name_connect", NULL } },
+>         { "memprotect", { "mmap_zero", NULL } },
+>         { "peer", { "recv", NULL } },
+>         { "capability2", { COMMON_CAP2_PERMS, NULL } },
 
-> I'm not against this, but I do want to bring up the "are the plugins
-> worth having at all" discussion again.
+A quick question for the rest of the SELinux folks: the DCCP code is
+going away, so we won't be performing any of the access checks listed
+above, and there will be no way to get a "dccp_socket" object, but do
+we want to preserve the class/perms simply to quiet the warning when
+loading existing policies?
 
-> They've been a pain before. Afaik, the actual useful cases are now
-> done by actual real compiler support (and by clang, at that).
+Personally I'm not too bothered by those warnings, I see them fairly
+regularly for a few classes/perms on my test systems, but thought it
+was worth having a quick discussion on this one since it is a bit
+different.
 
-> Who actually *uses* the gcc plugins? They just worry me in general,
-> and this is not the first time they have caused ICE problems.
-
-There was a bit of discussion of that on IRC which didn't summon up huge
-enthusiasm for them.  Arnd noted that:
-
-    https://github.com/nyrahul/linux-kernel-configs
-
-indicates that Talos 1.9.1 uses latent_entropy (but we didn't check how
-accurate that survey is).  He also noted that GCC_PLUGIN_SANCOV is
-obsolete as of GCC 6 (!) and both CC_HAVE_STACKPROTECTOR_TLS and
-GCC_PLUGIN_STRUCTLEAK_BYREF_ALL as of GCC 12, Ard indicated he wasn't
-worried about loosing CC_HAVE_STACKPROTECTOR_TLS.
-
---NwExeGW9LH0vNNUp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmf0S2YACgkQJNaLcl1U
-h9Bsjwf8DugHLbBoWvF0qOUkI8O6UnAzYv2laisq1JEdRzmgVk+lPLamsjJuTwAC
-99LlD9yp1ZCNdTkNBWgZkWGv4qCOYqnC3wowU0aP0OJOUUHkGaSfprmDbCJr6otD
-yJXm13aomzsyFY6ah9368UVoGHKAZpsvNRr8q1c+FM5myM7W2iNUmy86uR8Gu5Y/
-wrp5T3AkMX+F58VIi6n6XLZjp7xxMc19j0osLF+MgAosaUfy3djgDhPomVAUp58r
-FeR5hlIMb6TbmucPC8Mdxommt4gqUJhfZi3CZZH4cT6pKh7ryhvkJ5H2MzaDnYmI
-uez22860AYJD6fBPaPpNyToVS6oonA==
-=otop
------END PGP SIGNATURE-----
-
---NwExeGW9LH0vNNUp--
+--=20
+paul-moore.com
