@@ -1,121 +1,84 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8CF722AE76;
-	Tue,  8 Apr 2025 20:37:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3B9B241CA3;
+	Tue,  8 Apr 2025 23:32:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744144650; cv=none; b=LgDBz/tv6Ey0P9Wau+JUQqrJdKNRVvk4OiufwW/fsjBfM246rko8UrHQlkUY+5KsaGkHIrWz6wJTZrFy/GRov2lGE/+yDYlp0+lq7JKOiXSEVuwmuh/mVw+i3X0m7o0ERJtzFojkVqeW+KPFnMPIz//nDajyKz0mlFBShDTH+2o=
+	t=1744155149; cv=none; b=nkL7TBtNlkUjOeoOIm8iXweYKW7ObXuBxU7AG2yxWQJz5QKni1NIpLhZ06a9eLEAd6XZvubKJ0Na+sHk4Bs0lMJbLSLCLyGTR+wxDtFztaYm+3HKKxSFYWN/JjPgwTzUCvk0d+w0jqyEDXXao1ZeTs7YUVCQD2HwlI5f1Czqykc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744144650; c=relaxed/simple;
-	bh=Jgwkt5NOumKoCt3v7LCMsS2bOUorP3HUBUfty04iFRE=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=QMGxtI9Xg1T/3mECMauFn2DyadiaJ5WFPsNGyBaSs9sR+YFbBFOy8FHbxqfgjsr0rIGc3J29fKW4NgqBz5Xyz+pkGCDMtU3XNxUWEYXwB2HyAWAhEEnT+nlZrTyyHqos7WfZtyBRXxsH3bDwXPTYiWZ4X6v3J0oasxJEPGwWK0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U6R423Vf; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1744155149; c=relaxed/simple;
+	bh=Q+AcuJne3fhoPeKc78N+Oumu9qRoE+Wd2GfNYZkijHU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BZSg5oOn4sa9N5iwVBiX274/kbkTyv+pqIKWvp2JRK9rwOAgu/S6Tmh9KBLQSXZgSRWSjAy75P/ntNVBYklpJw+Ip6H2Hrbp+BoVevF+j00WFIOnc7EdkvxmRtKdIrelRjDsSxY1lt2IIyzxUMhIhzZddSRCbVQTGxj3L3iU5g0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UKoXifSR; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U6R423Vf"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F5F6C4CEE5;
-	Tue,  8 Apr 2025 20:37:29 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UKoXifSR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B07EC4CEE5;
+	Tue,  8 Apr 2025 23:32:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744144649;
-	bh=Jgwkt5NOumKoCt3v7LCMsS2bOUorP3HUBUfty04iFRE=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=U6R423Vf5m5vIXPLlj+iJWAw9EG9Wh/YA+nBLb+ZVkFHwaA8clBjr2KZRXobuOAP7
-	 d/vEA7OqfEU36jdvUZBR7GQYmFtGK75P5hNs7nNglFf9NkbJnLBESCV6ap79AW6m83
-	 4872B+/AZss3mqrnJBkfpJKzrrol6XN3MVUS7CinRhOlFkLXK1VAtjVAnupSBvI3SE
-	 3XabzuYAiCD3JKJowNi8dzuocakioTOX1u90OspM4wAy6CMt+KhXqg0nsn+J7EU5hA
-	 qgDAXWoLPPtZmRzskPtI3o55G1atYXe4dxuiMPCKf2JVTLFdCNd08iFC8djvJCIc6f
-	 YyQjI9fI/D2Ew==
-Date: Tue, 08 Apr 2025 13:37:25 -0700
+	s=k20201202; t=1744155149;
+	bh=Q+AcuJne3fhoPeKc78N+Oumu9qRoE+Wd2GfNYZkijHU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UKoXifSRxYmM9ZjShK1Gpp6l3RTgqw77F2Tf22/m2hoM0a4/AUXqrLSUetAVjKPk4
+	 hKy44VWLbZoq6vX/fPN25Xw7AL+CiCOMfRMlTj8PhWXhEFhP4xD1W69ZMmjNo8XH5d
+	 uepYNkKKeuwwZvTKE7jzsG4f+QACbf8RYDwsrtVnr/WNzt8dhN9nj4TzVPsLJDXXYw
+	 gXP1hdam+4dmoKxnBA1nX3MAqNe/Z1RoRDRh04Cbfu+elRDvCdYzui4bsdetNYhndK
+	 OLlAEPwbKyoNTeMGQBwDAWUA3QCDxHG2biv63GW09N7aMvAkyq44gEaPDUhs2hB/p+
+	 KnY0WpO2EnO1A==
+Date: Tue, 8 Apr 2025 16:32:24 -0700
 From: Kees Cook <kees@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
- Linus Torvalds <torvalds@linux-foundation.org>
-CC: =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
- =?ISO-8859-1?Q?G=FCnther_Noack?= <gnoack@google.com>,
- linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-security-module@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	Arnd Bergmann <arnd@arndb.de>, linux-hardening@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
 Subject: Re: [PATCH] gcc-plugins: Disable GCC plugins for compile test builds
-User-Agent: K-9 Mail for Android
-In-Reply-To: <08393aa3-05a3-4e3f-8004-f374a3ec4b7e@app.fastmail.com>
-References: <20250407-kbuild-disable-gcc-plugins-v1-1-5d46ae583f5e@kernel.org> <CAHk-=wjTbWiYwfj2wF9iP8SSVk2A_cZFDr5hu1bgU_PfxhyiiA@mail.gmail.com> <8cbe0cac-2952-47b6-9b0d-1400aec0bf25@sirena.org.uk> <08393aa3-05a3-4e3f-8004-f374a3ec4b7e@app.fastmail.com>
-Message-ID: <482D3DA9-7336-4D36-8758-4F8DB48EA8B9@kernel.org>
+Message-ID: <202504081630.4CE88E855@keescook>
+References: <20250407-kbuild-disable-gcc-plugins-v1-1-5d46ae583f5e@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250407-kbuild-disable-gcc-plugins-v1-1-5d46ae583f5e@kernel.org>
 
+On Mon, Apr 07, 2025 at 09:57:32PM +0100, Mark Brown wrote:
+> In current mainline x86_64 allmodconfig builds done with tuxmake GCC 13
+> and GCC 14 toolchains (which are Debian ones packaged up into containers)
+> generate ICEs in landlock:
+> 
+> Event                            | Plugins
+> PLUGIN_FINISH_TYPE               | randomize_layout_plugin
+> PLUGIN_FINISH_DECL               | randomize_layout_plugin
+> PLUGIN_ATTRIBUTES                | latent_entropy_plugin randomize_layout_plugin
+> PLUGIN_START_UNIT                | latent_entropy_plugin stackleak_plugin
+> PLUGIN_ALL_IPA_PASSES_START      | randomize_layout_plugin
+> /build/stage/linux/security/landlock/fs.c: In function ‘hook_file_ioctl_common’:
+> /build/stage/linux/security/landlock/fs.c:1745:61: internal compiler error: in c
+> ount_type_elements, at expr.cc:7075
+>  1745 |                         .u.op = &(struct lsm_ioctlop_audit) {
+>       |                                                             ^
+> 
+> Arnd bisected this to c56f649646ec ("landlock: Log mount-related
+> denials") but that commit is fairly obviously not really at fault here,
+> most likely this is an issue in the plugin.  Given how disruptive having
+> key configs like this failing let's disable the plugins for compile test
+> builds until a fix is found.
 
+Looks like this is a randstruct bug. We'll need to disable that one for
+now (rather than all plugins).
 
-On April 8, 2025 2:22:52 AM PDT, Arnd Bergmann <arnd@arndb=2Ede> wrote:
->On Tue, Apr 8, 2025, at 00:02, Mark Brown wrote:
->> On Mon, Apr 07, 2025 at 02:33:40PM -0700, Linus Torvalds wrote:
->>> On Mon, 7 Apr 2025 at 14:10, Mark Brown <broonie@kernel=2Eorg> wrote:
->>
->>> > Arnd bisected this to c56f649646ec ("landlock: Log mount-related
->>> > denials") but that commit is fairly obviously not really at fault he=
-re,
->>> > most likely this is an issue in the plugin=2E  Given how disruptive =
-having
->>> > key configs like this failing let's disable the plugins for compile =
-test
->>> > builds until a fix is found=2E
->>
->>> I'm not against this, but I do want to bring up the "are the plugins
->>> worth having at all" discussion again=2E
->>
->>> They've been a pain before=2E Afaik, the actual useful cases are now
->>> done by actual real compiler support (and by clang, at that)=2E
->>
->>> Who actually *uses* the gcc plugins? They just worry me in general,
->>> and this is not the first time they have caused ICE problems=2E
->>
->> There was a bit of discussion of that on IRC which didn't summon up hug=
-e
->> enthusiasm for them=2E  Arnd noted that:
->>
->>     https://github=2Ecom/nyrahul/linux-kernel-configs
->>
->> indicates that Talos 1=2E9=2E1 uses latent_entropy (but we didn't check=
- how
->> accurate that survey is)=2E
-
-The early RNG for small machines remains pretty bad, so I can understand w=
-anting to keep that around=2E For bigger machines it's not as much of a ben=
-efit=2E
-
->Talos also uses stackleak=2E I also see that alpine and qubes have the
->same two gcc plugins enabled=2E
-
-Yeah, stackleak has no viable alternative=2E It's effectively init_on_free=
- for stack=2E It's be nice if there were a way to do this with upstream com=
-pilers (track call depth)=2E
-
->On the other hand none of the other 60 distros on that list use any
->plugins, and most of those kernels appear to be built with a compiler
->that doesn't support plugins=2E A few notable ones (Arch, Fedora
->CoreOS 35, RHEL 9) in the list have CONFIG_GCC_PLUGINS=3Dy but then
->don't enable any of them=2E
->
->>  He also noted that GCC_PLUGIN_SANCOV is
->> obsolete as of GCC 6 (!) and both CC_HAVE_STACKPROTECTOR_TLS and
->> GCC_PLUGIN_STRUCTLEAK_BYREF_ALL as of GCC 12, Ard indicated he wasn't
->> worried about loosing CC_HAVE_STACKPROTECTOR_TLS=2E
->
->I've drafted patches to remove these three now: even if we're
->only moving from gcc-5 to gcc-8 as the minimum supported version,
->I don't think there is much intersection between users of those
->plugins and those that are stuck on gcc-11 or earlier=2E
-
-I have no problem removing sanconv (no longer needed), structleak (zero-in=
-it is more complete), and stackprot-tls (assuming it really is supported af=
-ter GCC 12?)
+I can reproduce this for GCC 14, but I can't reproduce this with GCC
+13. Which minor release is failing for you? My GCC 13 is:
+gcc (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0
 
 -Kees
 
---=20
+-- 
 Kees Cook
