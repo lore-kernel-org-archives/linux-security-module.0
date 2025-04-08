@@ -1,191 +1,150 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FF90263F3B
-	for <linux-security-module@vger.kernel.org>; Tue,  8 Apr 2025 08:18:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7026264A98;
+	Tue,  8 Apr 2025 09:23:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744100299; cv=none; b=APKyzAvjrdvcAJBI0hgEZHUlzkFwTccW+PwpHgzK7oDDBGB44AImcFpy8WmpvA7VGgI0Cr4EKstyJ2V9t07wjRYhNlkXokqSgsqm33VaVM+GyqpmulQa5Pei1DVdlNHxtW2aQhhhzZrKAz92EcY6467Tfj+me1lIxsTmpTDLlyI=
+	t=1744104202; cv=none; b=frJVJKQrx0/vricWnABDKWclR/qP/Q28y9fX2yxK5jV0ztslEmdB9U0+Djw4mZCrDOwTmSkupsdgtoFHAjxmYJo9JhaRI2Vom3K2yBwZGH1zqi5itv91dbPIYmURSNTnZvhjd2mqsPtKe+wrhjTFznOASBQjgWx6P6pIEyFYbXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744100299; c=relaxed/simple;
-	bh=DRNhU2h+B4ZdLrvsVlkxLYvUwaC5Fcd47IHep+PJz2o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jBHIkMf1+dBwKtP7d39PI5jvoddgR7h65j/3pFA4RA6odmyU8dHH46NMFNu9efQr1C+QR0ExK1RPbPWvAk7GfeSqDf0TzPYeTZkRMs9pucgWH0T/IhyJFnwAOzzqrN3Klgl6Ybbgt4Mc5NDSWL1FsP/1sqBY0OeUhfrKLwfyVRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Toe+IKGs; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1744104202; c=relaxed/simple;
+	bh=TmR/0z7qOdbQJh5BzlGPXNobyhBL1J7fuSAD4uQxkQg=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=Cht8ubE69+2Dgcfl3ZnY9ViMbk0AGwqYTI7rEocIcwEjT1itC5jMNbVNXoF+nD7q0WoLUae6UCaf9dBbtTRGX04bpjZrT82qqL8mfChKUOaaOGSz4aeqeEXtNxYj97Gr/YYpo8vx5osfGPkbC+6D4wRmUvU6Q5BxgWjOXgSvozs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=YUGrFE6c; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=eEls9xHu; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Toe+IKGs"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744100295;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uQxplJhydpviqVb1B4QEZ7X9+ziF7j6kDx0tdlIHN5A=;
-	b=Toe+IKGsjCRsYRq7EqQ7QkKWWmTvZuxy01fGC7XNVMOo5QeeozPn9LNDMH6kGdssElO3aw
-	wY333DqpP8MFQma9Ad1WUpcCauH4rNesJ/Aoa5PCl+xan8ZRIyi+leC5jiczoXJHCks7BP
-	eheVks4LgNLUKEfq1+VmjxFX6l7rAwA=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-692-sTwf1nzMP9iGt5b-Dnwl9Q-1; Tue,
- 08 Apr 2025 04:18:10 -0400
-X-MC-Unique: sTwf1nzMP9iGt5b-Dnwl9Q-1
-X-Mimecast-MFC-AGG-ID: sTwf1nzMP9iGt5b-Dnwl9Q_1744100288
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A97031955DCC;
-	Tue,  8 Apr 2025 08:18:07 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.61])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 17CC8195609D;
-	Tue,  8 Apr 2025 08:18:04 +0000 (UTC)
-Date: Tue, 8 Apr 2025 16:18:00 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Mimi Zohar <zohar@linux.ibm.com>
-Cc: steven chen <chenste@linux.microsoft.com>, stefanb@linux.ibm.com,
-	roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
-	eric.snowberg@oracle.com, ebiederm@xmission.com,
-	paul@paul-moore.com, code@tyhicks.com, bauermann@kolabnow.com,
-	linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
-	James.Bottomley@hansenpartnership.com, vgoyal@redhat.com,
-	dyoung@redhat.com
-Subject: Re: [PATCH v11 2/9] ima: define and call ima_alloc_kexec_file_buf()
-Message-ID: <Z/TbuF47dg7zUpsm@MiWiFi-R3L-srv>
-References: <20250402124725.5601-1-chenste@linux.microsoft.com>
- <20250402124725.5601-3-chenste@linux.microsoft.com>
- <a293ed27094f7fa7a36f1641a9e6b17a49e26fa0.camel@linux.ibm.com>
- <Z/SoekIdreYI3uBZ@MiWiFi-R3L-srv>
- <36e244edd96a51f0749d54811c9567f954680a39.camel@linux.ibm.com>
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="YUGrFE6c";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="eEls9xHu"
+Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
+	by mailfout.phl.internal (Postfix) with ESMTP id ABE26138014C;
+	Tue,  8 Apr 2025 05:23:18 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-12.internal (MEProxy); Tue, 08 Apr 2025 05:23:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1744104198;
+	 x=1744190598; bh=lkUJ8TgO3ooNDZY0G1GBRHyyAS9TWfqRd6Szv2PjLyo=; b=
+	YUGrFE6cju58jVKO1KkDFmeuF2owX0fjBHC/bhbeghn2yC1UOqCLnnstPyEoT4G6
+	JuJr1RKyrN4CNwkjZX50i38xy1jIy4TQHJlMaoDYpfEWB7luuNFiJH0+JwPV+6hw
+	ZnW6lRTqBE+j58EgoWN9euADHwazBdujrDG9pj0BE3taz+9tiv8X1Qk1WXibAox2
+	4s7+jibrdjobG3HbxL8eHM5b9m4hrPx6uUzTlnbGiIkI55iUbEdD58IzZFU2Scr4
+	BNPSXbzx6SWvJVXkSUbYuVIA2yuop/022o0P+OEj0SQV7Es98fLHH+hR9D44edOg
+	dv/x1gJ0/9WX+Mo6Njc8AA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1744104198; x=
+	1744190598; bh=lkUJ8TgO3ooNDZY0G1GBRHyyAS9TWfqRd6Szv2PjLyo=; b=e
+	Els9xHuDDQlhi4oUB0+qIo3rwL5nqnHZGhlihMthRVVB97orxMZHS06o/IrOMd3t
+	K5DVb8vKzK1yMYyY7bbJuh9yG1yCZxT/QXMj0NSlQ7jBez2f03xBhJRP6wMfGOYe
+	Iryqdyzz1/zR7CVlYSJnEjFGeBpfOBEJbSlpDVXMfZ51n4ICzgyyDb++96g94Bac
+	MB+/DF9PGsjG8rVPx9MIitWwut4PmOtti6PQr6XmLT/9YheX7n6VMREDStZ4Shz8
+	vlQtYq4CBLKpTBmzd1HhAQYrboMg+bAR6cAYYaM3vZqLBWcQ1Db+D4ZUPeY2epKL
+	r9oRmI86ZOaFyLMZgo1cg==
+X-ME-Sender: <xms:Buv0Z5v3mg_Qnws88A6GcwiDfTbx7q8IqN-Y1CtY0qiNaH4YnwZ3pA>
+    <xme:Buv0ZyfLStQtYduitttDbT2YpDRTTT_tOYhDgbl3PHAqd8eGV06rtyknrLB7tSeCY
+    hwYipnAXPRQGkLPtOY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtddvjedvucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
+    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
+    gsrdguvgeqnecuggftrfgrthhtvghrnhepgefgjedujedvieejgeelgfdthfduffeiteef
+    udeghfffkeejfeehtdejfeejteefnecuffhomhgrihhnpehgihhthhhusgdrtghomhenuc
+    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnuges
+    rghrnhgusgdruggvpdhnsggprhgtphhtthhopeelpdhmohguvgepshhmthhpohhuthdprh
+    gtphhtthhopehmihgtseguihhgihhkohgurdhnvghtpdhrtghpthhtohepghhnohgrtghk
+    sehgohhoghhlvgdrtghomhdprhgtphhtthhopegrrhgusgeskhgvrhhnvghlrdhorhhgpd
+    hrtghpthhtohepsghrohhonhhivgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgv
+    vghssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehtohhrvhgrlhgusheslhhinhhugi
+    dqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheplhhinhhugidqhhgrrhguvghn
+    ihhnghesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvg
+    hrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhs
+    vggtuhhrihhthidqmhhoughulhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:Buv0Z8zhsacruqlaxm7DRqwQQx4uXWDDUbpvm-dTIL5Yy8Vwuf3HBw>
+    <xmx:Buv0ZwPYjYwGPS9TI7cT90g_ucXLe9nPwY_6QUImVsVFp5PfjKu7Ig>
+    <xmx:Buv0Z59vf0FKcY21Y5ouQRC8r9kYlwKoa5Sl7VfMyPtQoxeWwqDltQ>
+    <xmx:Buv0ZwX9BauKZWKsQ-5FTelze0y59_NhGPB8QF6kCJ7zt9mQE6oazQ>
+    <xmx:Buv0Z9VvkNJgs0Fjx7WLD-pvnqWQd3rSvCTTjTPvuw8RbF20YsvkK-gH>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 12EBB2220073; Tue,  8 Apr 2025 05:23:17 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <36e244edd96a51f0749d54811c9567f954680a39.camel@linux.ibm.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+X-ThreadId: T00187b92ccd5616f
+Date: Tue, 08 Apr 2025 11:22:52 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Mark Brown" <broonie@kernel.org>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>
+Cc: "Kees Cook" <kees@kernel.org>,
+ =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+ linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-security-module@vger.kernel.org, "Ard Biesheuvel" <ardb@kernel.org>
+Message-Id: <08393aa3-05a3-4e3f-8004-f374a3ec4b7e@app.fastmail.com>
+In-Reply-To: <8cbe0cac-2952-47b6-9b0d-1400aec0bf25@sirena.org.uk>
+References: 
+ <20250407-kbuild-disable-gcc-plugins-v1-1-5d46ae583f5e@kernel.org>
+ <CAHk-=wjTbWiYwfj2wF9iP8SSVk2A_cZFDr5hu1bgU_PfxhyiiA@mail.gmail.com>
+ <8cbe0cac-2952-47b6-9b0d-1400aec0bf25@sirena.org.uk>
+Subject: Re: [PATCH] gcc-plugins: Disable GCC plugins for compile test builds
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-On 04/08/25 at 01:03am, Mimi Zohar wrote:
-> On Tue, 2025-04-08 at 12:39 +0800, Baoquan He wrote:
-> > On 04/08/25 at 12:07am, Mimi Zohar wrote:
-> > > On Wed, 2025-04-02 at 05:47 -0700, steven chen wrote:
-> > > > In the current implementation, the ima_dump_measurement_list() API is 
-> > > > called during the kexec "load" phase, where a buffer is allocated and 
-> > > > the measurement records are copied. Due to this, new events added after
-> > > > kexec load but before kexec execute are not carried over to the new kernel
-> > > > during kexec operation
-> > > 
-> > > Repeating this here is unnecessary.
-> > > > 
-> > > > To allow the buffer allocation and population to be separated into distinct
-> > > > steps, make the function local seq_file "ima_kexec_file" to a file variable.
-> > > 
-> > > This change was already made in [PATCH v11 1/9] ima: rename variable the
-> > > set_file "file" to "ima_kexec_file".  Please remove.
-> > > 
-> > > > 
-> > > > Carrying the IMA measurement list across kexec requires allocating a
-> > > > buffer and copying the measurement records.  Separate allocating the
-> > > > buffer and copying the measurement records into separate functions in
-> > > > order to allocate the buffer at kexec 'load' and copy the measurements
-> > > > at kexec 'execute'.
-> > > > 
-> > > > Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-> > > > Signed-off-by: steven chen <chenste@linux.microsoft.com>
-> > > > ---
-> > > >  security/integrity/ima/ima_kexec.c | 46 +++++++++++++++++++++++-------
-> > > >  1 file changed, 35 insertions(+), 11 deletions(-)
-> > > > 
-> > > > diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
-> > > > index 650beb74346c..b12ac3619b8f 100644
-> > > > --- a/security/integrity/ima/ima_kexec.c
-> > > > +++ b/security/integrity/ima/ima_kexec.c
-> > > > @@ -15,26 +15,46 @@
-> > > >  #include "ima.h"
-> > > >  
-> > > >  #ifdef CONFIG_IMA_KEXEC
-> > > > +static struct seq_file ima_kexec_file;
-> > > > +
-> > > > +static void ima_free_kexec_file_buf(struct seq_file *sf)
-> > > > +{
-> > > > +	vfree(sf->buf);
-> > > > +	sf->buf = NULL;
-> > > > +	sf->size = 0;
-> > > > +	sf->read_pos = 0;
-> > > > +	sf->count = 0;
-> > > > +}
-> > > > +
-> > > > +static int ima_alloc_kexec_file_buf(size_t segment_size)
-> > > > +{
-> > > > +	ima_free_kexec_file_buf(&ima_kexec_file);
-> > > 
-> > > After moving the vfree() here at this stage in the patch set, the IMA
-> > > measurement list fails to verify when doing two consecutive "kexec -s -l"
-> > > with/without a "kexec -s -u" in between.  Only after "ima: kexec: move IMA log
-> > > copy from kexec load to execute" the IMA measurement list verifies properly with
-> > > the vfree() here.
-> > 
-> > I also noticed this, patch 7 will remedy this. Put patch 7 just after
-> > this patch or squash it into this patch?
-> > 
-> > [PATCH v11 7/9] ima: verify if the segment size has changed
-> 
-> I'm glad you noticed this too!  I've been staring at it for a while, not knowing
-> what to do.
-> 
-> "ima: verify if the segment size has changed" is new to v11.  It was originally
-> part of this patch.  My comment on v10 was:
-> 
-> The call to ima_reset_kexec_file() in ima_add_kexec_buffer() resets
-> ima_kexec_file.buf() hiding the fact that the above test always fails and falls
-> through.  As a result, 'buf' is always being re-allocated.
-> 
-> and
-> 
-> Instead of adding and then removing the ima_reset_kexec_file() call from
-> ima_add_kexec_buffer(), defer adding the segment size test to when it is
-> actually possible for the segment size to change. Please make the segment size
-> test as a separate patch.
-> 
-> ima_reset_kexec_file() will then only be called by ima_free_kexec_file_buf().
-> Inline the ima_reset_kexec_file() code in ima_free_kexec_file_buf().
+On Tue, Apr 8, 2025, at 00:02, Mark Brown wrote:
+> On Mon, Apr 07, 2025 at 02:33:40PM -0700, Linus Torvalds wrote:
+>> On Mon, 7 Apr 2025 at 14:10, Mark Brown <broonie@kernel.org> wrote:
+>
+>> > Arnd bisected this to c56f649646ec ("landlock: Log mount-related
+>> > denials") but that commit is fairly obviously not really at fault here,
+>> > most likely this is an issue in the plugin.  Given how disruptive having
+>> > key configs like this failing let's disable the plugins for compile test
+>> > builds until a fix is found.
+>
+>> I'm not against this, but I do want to bring up the "are the plugins
+>> worth having at all" discussion again.
+>
+>> They've been a pain before. Afaik, the actual useful cases are now
+>> done by actual real compiler support (and by clang, at that).
+>
+>> Who actually *uses* the gcc plugins? They just worry me in general,
+>> and this is not the first time they have caused ICE problems.
+>
+> There was a bit of discussion of that on IRC which didn't summon up huge
+> enthusiasm for them.  Arnd noted that:
+>
+>     https://github.com/nyrahul/linux-kernel-configs
+>
+> indicates that Talos 1.9.1 uses latent_entropy (but we didn't check how
+> accurate that survey is).
 
-Thanks for deliberating on this and the details sharing, Mimi.
+Talos also uses stackleak. I also see that alpine and qubes have the
+same two gcc plugins enabled.
 
-It could be fine if we add note in patch 2 log to mention the possible
-failure. With my understanding, commit/patch bisectable means it won't
-break compiling and block the testing. The failure you are concerned
-about is not a blocker, right? And people won't back port partial
-patches of this series.
+On the other hand none of the other 60 distros on that list use any
+plugins, and most of those kernels appear to be built with a compiler
+that doesn't support plugins. A few notable ones (Arch, Fedora
+CoreOS 35, RHEL 9) in the list have CONFIG_GCC_PLUGINS=y but then
+don't enable any of them.
 
-Nore sure if there's another better way we can take or detour.
+>  He also noted that GCC_PLUGIN_SANCOV is
+> obsolete as of GCC 6 (!) and both CC_HAVE_STACKPROTECTOR_TLS and
+> GCC_PLUGIN_STRUCTLEAK_BYREF_ALL as of GCC 12, Ard indicated he wasn't
+> worried about loosing CC_HAVE_STACKPROTECTOR_TLS.
 
-Thanks
-Baoquan
-> 
-> > 
-> > > 
-> > > > +
-> > > > +	/* segment size can't change between kexec load and execute */
-> > > > +	ima_kexec_file.buf = vmalloc(segment_size);
-> > > > +	if (!ima_kexec_file.buf)
-> > > > +		return -ENOMEM;
-> > > > +
-> > > > +	ima_kexec_file.size = segment_size;
-> > > > +	ima_kexec_file.read_pos = 0;
-> > > > +	ima_kexec_file.count = sizeof(struct ima_kexec_hdr);	/* reserved space */
-> > > > +
-> > > > +	return 0;
-> > > > +}
-> > > > +
-> > > 
-> > 
-> > 
-> 
+I've drafted patches to remove these three now: even if we're
+only moving from gcc-5 to gcc-8 as the minimum supported version,
+I don't think there is much intersection between users of those
+plugins and those that are stuck on gcc-11 or earlier.
 
+      Arnd
