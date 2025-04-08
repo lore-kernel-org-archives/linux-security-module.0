@@ -1,164 +1,196 @@
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F01AF21D581
-	for <linux-security-module@vger.kernel.org>; Tue,  8 Apr 2025 01:35:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 721A51A9B3E
+	for <linux-security-module@vger.kernel.org>; Tue,  8 Apr 2025 02:24:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744076111; cv=none; b=GyzLLY1rfoxzR4yJCx/6NZ0dEYDrhDRQIlPpF0JaQrR6iQrqtjAZlJrlObscQ69YyhAPlzyoNLzIJQ1I7lYtIlhEH88Pb66Gl5oHQpCxfs3M+RTrw3t7Mye+YsTm8CAdRFUhuR4PM3ah3SOcngTsnbMiS/VrP0zEKjnSSAVhN5M=
+	t=1744079052; cv=none; b=EeF6wVRnERM7E/ZadbbC4awA3UkPad3HWOHsC2VZ1QWY66gWvZNm0/eVp02YQOy25So4/Be38HKRV1TNidwlapk60Zy1I5SFJKc6hsV4NLe0LotTL+c9dFBckDScFsi6obLksxRzrbm3kbJI2XYiEnNyhfkOOzEXe7U06YsSMmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744076111; c=relaxed/simple;
-	bh=UzJzuG6mawXDt2lg66B7/EZDQHiqmaU6CjBKqdUBOTY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G4Gon6VEGkOoPVk8hCHg8AmosrsA+fLqR1T7Pj5x30nqW9xm7SfVrNCxLnSCFdx9tSZ3gSZ9o5MvSNn6yJoxYa8HOgLIaWgosnKt+YQkepbXQLmUDX2YebY4ZnMBUQB+nYD1sD2hZ77t1A/7WHagOb0NM7QN9w28wDpCAR/jBpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=KmNpvg9Q; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1744079052; c=relaxed/simple;
+	bh=MdkpQCnMo49opJex7OZUG+NIbeQFZNJQY/fbJ6jtgho=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZgCsII9RBqpR9dI3Z/WOKD/CT9LYIwjOImCCZTpsbkXU8ZW4JF6S2jE6prFt/SldXy95duUXvb8C7ZdDPEtBgsX3MY4PhS22j+VqTRMkJnTR1+0d3eq/xXFyaI9loQOM0B4Pt9YFZIFnumiKCfO8rwS2OEzelh2iP0SfZMq9l6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OD1W9KMo; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="KmNpvg9Q"
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6ff4faf858cso38016527b3.2
-        for <linux-security-module@vger.kernel.org>; Mon, 07 Apr 2025 18:35:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1744076109; x=1744680909; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FqYTSM1FJCMjPZR8TM1fd1KRA6QF3QSY/HArlDQ7k74=;
-        b=KmNpvg9QQg7BJIuyLYnliYgTUgkMAC/Bu+lgqmMEHSXen7KvKmMzFELZxU4BSyo8L8
-         xhQJgL/O2RKMlrAFBVc4l3GMVAofsgqKcnYVUncLbmRR22TgyQea8lf39hAhD04gnASj
-         5wftt4wj55s+z24XNVQTqnhbBodJ+DEg5/sbuD3BzdKRCVZN6VRWqXhvCpNE3BdMZFbu
-         FzR5YxhWAda+NrqmE0sg9ikcBNRlKjgniDCmlHmd+hDfcADsSJ2iBNrSNnJwCEEZ0yBR
-         1jY3ZQxdmeShrPNXdWZsXi2+V+uwbKNFbwUlWB99actm5Y2MUyNdjnsnsTcfztjN2+KR
-         2szg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744076109; x=1744680909;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FqYTSM1FJCMjPZR8TM1fd1KRA6QF3QSY/HArlDQ7k74=;
-        b=dfjwxyOrVvt5XQtkmUiPzlVdX4mgwb9VuX+C60wBsuPwf52+uKbsFQat2JbNWtWa6W
-         1CGVsMtErP0Jr+r2ykRFWOYWG76nwexxAw8jyEL3FUmg/YPtdIJJuyf7LdevvNijld9e
-         eJMyv8PuJfWfwBZbdQo3b76Cdc89f/shgBPsN+rUlWEUkurioh0g7i1+G7jiCEu/0KGk
-         rMwd4BxlI6n4BgVbJRB3W3e2EXMGJYhBxR+w69A1wV8r0KtjnVRCgmHb0z2SIchF/6iS
-         /mHKDX0xy8woHpCoqvi/5RJ57e4vqNKpQz92/HbaBK+OIk4eBLVFWpdVmLZ/jS9ExP3a
-         LaFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXEkrC7/KLP5tuWVcb6RKAJDHi/klKkXpvbu4xgvlWm9L0wCTNHxplTmWaML1E+59mBZSGI8G5VdHNPNQ+wnMEW/UlAs64=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyw/QGi34BEqTyNtgBQMtQrQADw59XjGqUYzS/WgZHXXWe8uyND
-	zlIk8sP19uPhVj9v7vJlIT93qSEn5fxmCYkl+FEC1BdhaIttMzk34RRA37QVxH9k9H35ZDEmlnX
-	CxIHCpYyioJ2cH4TACDoDUF9+OmxRPic2gy0i
-X-Gm-Gg: ASbGncsTDfLKDCEGuJmGfz2xZSTiCrZxOR/G3dyWDGJDOyJv+0GS9VJiyk4ovn9141F
-	sBBsdJPFJkAtOPUYsxJ/aSkXgWm7vogblsZETMp6j/cNEsANLSg7J3dvkza4oUgV6usgVYHqk75
-	AG18Dv+CF35/SGHSRq6SkOEdAaezRpimkZzrTd
-X-Google-Smtp-Source: AGHT+IGoUzeM8HMuTr1NGJvPb8jIlKfrqtqlOQ2FpYfKI0PmIIhhs/TRzx73rkt7iCRa1VGrIOSWdhBV02vnAqQGDHc=
-X-Received: by 2002:a05:690c:4d8a:b0:703:b278:db30 with SMTP id
- 00721157ae682-703e310896emr240899877b3.4.1744076108806; Mon, 07 Apr 2025
- 18:35:08 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OD1W9KMo"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744079048;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K7shp0i8xV6W4sEMIfoyEtGIoaU0RHBOh45LNxxy8wY=;
+	b=OD1W9KMoJbw9AcFui1abBTsTYzqPwPRubYygmae/7BLQsWikmQq/Lva1fG5YRuKNYwanfm
+	CNuRe0C4wfaFP1+DPAdzN3NbyCy/UJpkOO37UHo3cFxsEe+X0ulJKV0yMl40HKyyejahLe
+	QfgltisL8kztjW30SixWTeEiGAFMxSM=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-475-fVNTxx_CPL6CJ9AhxUkyVA-1; Mon,
+ 07 Apr 2025 22:24:04 -0400
+X-MC-Unique: fVNTxx_CPL6CJ9AhxUkyVA-1
+X-Mimecast-MFC-AGG-ID: fVNTxx_CPL6CJ9AhxUkyVA_1744079042
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0CEC01956048;
+	Tue,  8 Apr 2025 02:24:01 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.61])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 71DE6180B48C;
+	Tue,  8 Apr 2025 02:23:58 +0000 (UTC)
+Date: Tue, 8 Apr 2025 10:23:53 +0800
+From: Baoquan He <bhe@redhat.com>
+To: steven chen <chenste@linux.microsoft.com>
+Cc: zohar@linux.ibm.com, stefanb@linux.ibm.com,
+	roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
+	eric.snowberg@oracle.com, ebiederm@xmission.com,
+	paul@paul-moore.com, code@tyhicks.com, bauermann@kolabnow.com,
+	linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
+	James.Bottomley@hansenpartnership.com, vgoyal@redhat.com,
+	dyoung@redhat.com
+Subject: Re: [PATCH v11 1/9] ima: rename variable the set_file "file" to
+ "ima_kexec_file"
+Message-ID: <Z/SIudAyHVspsTa4@MiWiFi-R3L-srv>
+References: <20250402124725.5601-1-chenste@linux.microsoft.com>
+ <20250402124725.5601-2-chenste@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250407231823.95927-1-kuniyu@amazon.com> <20250407231823.95927-3-kuniyu@amazon.com>
-In-Reply-To: <20250407231823.95927-3-kuniyu@amazon.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 7 Apr 2025 21:34:57 -0400
-X-Gm-Features: ATxdqUGY33CqhAhJH11kZ7E-OTlreVGoamoyxPdGrvFZsT_Af-mUeIimwX5FK90
-Message-ID: <CAHC9VhQCS-TfSL4cMfBu2GszHS8DVE05Z6FH-zPXV=EiH4ZHdg@mail.gmail.com>
-Subject: Re: [PATCH v1 net-next 2/4] net: Retire DCCP.
-To: Kuniyuki Iwashima <kuniyu@amazon.com>, selinux@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, 
-	Casey Schaufler <casey@schaufler-ca.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	David Ahern <dsahern@kernel.org>, Neal Cardwell <ncardwell@google.com>, 
-	Willem de Bruijn <willemb@google.com>, Pablo Neira Ayuso <pablo@netfilter.org>, 
-	Jozsef Kadlecsik <kadlec@netfilter.org>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Kuniyuki Iwashima <kuni1840@gmail.com>, netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250402124725.5601-2-chenste@linux.microsoft.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Mon, Apr 7, 2025 at 7:19=E2=80=AFPM Kuniyuki Iwashima <kuniyu@amazon.com=
-> wrote:
->
-> DCCP was orphaned in 2021 by commit 054c4610bd05 ("MAINTAINERS: dccp:
-> move Gerrit Renker to CREDITS"), which noted that the last maintainer
-> had been inactive for five years.
->
-> In recent years, it has become a playground for syzbot, and most changes
-> to DCCP have been odd bug fixes triggered by syzbot.  Apart from that,
-> the only changes have been driven by treewide or networking API updates
-> or adjustments related to TCP.
->
-> Thus, in 2023, we announced we would remove DCCP in 2025 via commit
-> b144fcaf46d4 ("dccp: Print deprecation notice.").
->
-> Since then, only one individual has contacted the netdev mailing list. [0=
-]
->
-> There is ongoing research for Multipath DCCP.  The repository is hosted
-> on GitHub [1], and development is not taking place through the upstream
-> community.  While the repository is published under the GPLv2 license,
-> the scheduling part remains proprietary, with a LICENSE file [2] stating:
->
->   "This is not Open Source software."
->
-> The researcher mentioned a plan to address the licensing issue, upstream
-> the patches, and step up as a maintainer, but there has been no further
-> communication since then.
->
-> Maintaining DCCP for a decade without any real users has become a burden.
->
-> Therefore, it's time to remove it.
->
-> Removing DCCP will also provide significant benefits to TCP.  It allows
-> us to freely reorganize the layout of struct inet_connection_sock, which
-> is currently shared with DCCP, and optimize it to reduce the number of
-> cachelines accessed in the TCP fast path.
->
-> Note that we leave uAPI headers alone for userspace programs.
->
-> Link: https://lore.kernel.org/netdev/20230710182253.81446-1-kuniyu@amazon=
-.com/T/#u #[0]
-> Link: https://github.com/telekom/mp-dccp #[1]
-> Link: https://github.com/telekom/mp-dccp/blob/mpdccp_v03_k5.10/net/dccp/n=
-on_gpl_scheduler/LICENSE #[2]
-> Signed-off-by: Kuniyuki Iwashima <kuniyu@amazon.com>
+On 04/02/25 at 05:47am, steven chen wrote:
+> The current kernel behavior is IMA measurements snapshot is taken at
+> kexec 'load' and not at kexec 'execute'. IMA log is then carried
+> over to the new kernel after kexec 'execute'. However, the time gap
+> between kexec load and kexec reboot can be very long. During this
+> time window, new events extended into TPM PCRs miss the chance
+> to be carried over to the second kernel.
+>  
+> To address the above, the following approach is proposed:
+>   - Allocate the necessary buffer during the kexec load phase.
+>   - Populate this buffer with the IMA measurements during
+>     the kexec execute phase.
+> 
+> In the current implementation, a local variable "file" of type seq_file
+> is used in the API ima_dump_measurement_list() to store the IMA measurements
+> to be carried over across kexec system call. To make this buffer accessible
+> at kexec 'execute' time, rename it to "ima_kexec_file" before making it
+> a file variable to better reflect its purpose.
+> 
+> Renaming the local variable "file" of type seq_file defined in the 
+> ima_dump_measurement_list function to "ima_kexec_file" will improve code
+> readability and maintainability by making the variable's role more explicit.
 
-Adding the LSM and SELinux lists for obvious reasons, as well as Casey
-directly since he maintains Smack and I don't see him on the To/CC
-line.
+Seems it's clearer with below paragraph to replace the whole log:
 
-For those that weren't on the original posting, the lore link is below:
-https://lore.kernel.org/all/20250407231823.95927-1-kuniyu@amazon.com
+=====
+Rename the local variable "file" of type seq_file defined in the 
+ima_dump_measurement_list function to "ima_kexec_file" to improve code
+readability and maintainability by making the variable's role more explicit.
+=====
 
-> diff --git a/security/selinux/include/classmap.h b/security/selinux/inclu=
-de/classmap.h
-> index 04a9b480885e..5665aa5e7853 100644
-> --- a/security/selinux/include/classmap.h
-> +++ b/security/selinux/include/classmap.h
-> @@ -127,8 +127,6 @@ const struct security_class_mapping secclass_map[] =
-=3D {
->         { "key",
->           { "view", "read", "write", "search", "link", "setattr", "create=
-",
->             NULL } },
-> -       { "dccp_socket",
-> -         { COMMON_SOCK_PERMS, "node_bind", "name_connect", NULL } },
->         { "memprotect", { "mmap_zero", NULL } },
->         { "peer", { "recv", NULL } },
->         { "capability2", { COMMON_CAP2_PERMS, NULL } },
+The code change looks good to me.
 
-A quick question for the rest of the SELinux folks: the DCCP code is
-going away, so we won't be performing any of the access checks listed
-above, and there will be no way to get a "dccp_socket" object, but do
-we want to preserve the class/perms simply to quiet the warning when
-loading existing policies?
 
-Personally I'm not too bothered by those warnings, I see them fairly
-regularly for a few classes/perms on my test systems, but thought it
-was worth having a quick discussion on this one since it is a bit
-different.
+> 
+> Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
+> Signed-off-by: steven chen <chenste@linux.microsoft.com>
+> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
 
---=20
-paul-moore.com
+If there's code change in patch content, the reviewing tag should be
+reset so that reviewing is taken again on the new change.
+
+> ---
+>  security/integrity/ima/ima_kexec.c | 31 +++++++++++++++---------------
+>  1 file changed, 16 insertions(+), 15 deletions(-)
+> 
+> diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
+> index 9d45f4d26f73..650beb74346c 100644
+> --- a/security/integrity/ima/ima_kexec.c
+> +++ b/security/integrity/ima/ima_kexec.c
+> @@ -18,30 +18,30 @@
+>  static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
+>  				     unsigned long segment_size)
+>  {
+> +	struct seq_file ima_kexec_file;
+>  	struct ima_queue_entry *qe;
+> -	struct seq_file file;
+>  	struct ima_kexec_hdr khdr;
+>  	int ret = 0;
+>  
+>  	/* segment size can't change between kexec load and execute */
+> -	file.buf = vmalloc(segment_size);
+> -	if (!file.buf) {
+> +	ima_kexec_file.buf = vmalloc(segment_size);
+> +	if (!ima_kexec_file.buf) {
+>  		ret = -ENOMEM;
+>  		goto out;
+>  	}
+>  
+> -	file.file = NULL;
+> -	file.size = segment_size;
+> -	file.read_pos = 0;
+> -	file.count = sizeof(khdr);	/* reserved space */
+> +	ima_kexec_file.file = NULL;
+> +	ima_kexec_file.size = segment_size;
+> +	ima_kexec_file.read_pos = 0;
+> +	ima_kexec_file.count = sizeof(khdr);	/* reserved space */
+>  
+>  	memset(&khdr, 0, sizeof(khdr));
+>  	khdr.version = 1;
+>  	/* This is an append-only list, no need to hold the RCU read lock */
+>  	list_for_each_entry_rcu(qe, &ima_measurements, later, true) {
+> -		if (file.count < file.size) {
+> +		if (ima_kexec_file.count < ima_kexec_file.size) {
+>  			khdr.count++;
+> -			ima_measurements_show(&file, qe);
+> +			ima_measurements_show(&ima_kexec_file, qe);
+>  		} else {
+>  			ret = -EINVAL;
+>  			break;
+> @@ -55,23 +55,24 @@ static int ima_dump_measurement_list(unsigned long *buffer_size, void **buffer,
+>  	 * fill in reserved space with some buffer details
+>  	 * (eg. version, buffer size, number of measurements)
+>  	 */
+> -	khdr.buffer_size = file.count;
+> +	khdr.buffer_size = ima_kexec_file.count;
+>  	if (ima_canonical_fmt) {
+>  		khdr.version = cpu_to_le16(khdr.version);
+>  		khdr.count = cpu_to_le64(khdr.count);
+>  		khdr.buffer_size = cpu_to_le64(khdr.buffer_size);
+>  	}
+> -	memcpy(file.buf, &khdr, sizeof(khdr));
+> +	memcpy(ima_kexec_file.buf, &khdr, sizeof(khdr));
+>  
+>  	print_hex_dump_debug("ima dump: ", DUMP_PREFIX_NONE, 16, 1,
+> -			     file.buf, file.count < 100 ? file.count : 100,
+> +			     ima_kexec_file.buf, ima_kexec_file.count < 100 ?
+> +			     ima_kexec_file.count : 100,
+>  			     true);
+>  
+> -	*buffer_size = file.count;
+> -	*buffer = file.buf;
+> +	*buffer_size = ima_kexec_file.count;
+> +	*buffer = ima_kexec_file.buf;
+>  out:
+>  	if (ret == -EINVAL)
+> -		vfree(file.buf);
+> +		vfree(ima_kexec_file.buf);
+>  	return ret;
+>  }
+>  
+> -- 
+> 2.25.1
+> 
+
