@@ -1,94 +1,71 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8F391ADC6D;
-	Wed,  9 Apr 2025 12:19:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD95172767;
+	Wed,  9 Apr 2025 13:49:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744201197; cv=none; b=QLrRbFv97sAI+1JwIPMlowrR9++R7XLFBK1KjQ12B1Ii6FyBRJzQmUDHXXHROHDmbYpK0Z5oHB6v21uwCqEvhZ/W1+p8ekGeJbNYpQ1ZQARkAqpFaonwSyW1JqNad/TuPPFlVWMSzpoNly9uorNYfTZlYvNVzlH7TTKmoACMrfs=
+	t=1744206592; cv=none; b=W0LERsmoTTw1d5HcQ2lI3ZmA9rmzYrk6WX7BIIxwQEA61+hSzxVRlSvlszhmGQVQsAJYGpU4P+TiLleMth5M4veWpLoS5lw5HN3HvetAOQAmvzU3uX5vd4MA/VYZt0sm5TlPd/G+Pua/0kqM3s/IC5ZEguTfshjEIwLFZ+KwoRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744201197; c=relaxed/simple;
-	bh=m/80E9i8ulXdJI2miubeNh/kmc7nNlwcgFgZf7ctjmg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AyQ4yPUHs8Dtg9w/rQhjoSify7M9z7KwLnxQ5Z5qrsuFbEf+O6jevxDq3x6PA2BhMigaECnXtTl/dNSfNXWskr9XPHjIyjXnPNrKrYZwakDJKaJasT6u5nAZoYuEMc1ErS1vdvVDkIGCorguLv1KiY7YD1pAfgVuhdEUjAm3cuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BgorUO4d; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1744206592; c=relaxed/simple;
+	bh=OYf0UFBbqCo6CLjwr/J0wXSIXXNTgsDA387uekNdmbM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QmT/2/CeGgyOk69sxdJ1qajyjbkVI5VhMG5xrZuKZm+5NuojkMz7nHN+0c2zOOAVboSwUkTgwvrV/NlrR0v71XbSKUdgmNjzKtTK2dZHggahUq5oyoVwM90YVkRJpXZFNJFmoEb5liwBZVGC6xxduoRfKfFBLCRG6Hs48iWMsl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cVSQyr4B; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BgorUO4d"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5ACCC4CEE3;
-	Wed,  9 Apr 2025 12:19:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cVSQyr4B"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1401C4CEE2;
+	Wed,  9 Apr 2025 13:49:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744201197;
-	bh=m/80E9i8ulXdJI2miubeNh/kmc7nNlwcgFgZf7ctjmg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BgorUO4duAWGYmnW52jt9dKAN0odOKAwcCjxRC0ERkaHc0JvtqFjWMH38bzBOViNF
-	 /Pu8Ncm+XGTnpJDHI+em1ALoVQPDv7dA5HROlObPPT+XMqljvqp5FuV+vk+fp7X/RI
-	 WRVJF4zO9OJUWrndLA9ewsZlLO66JN/NqGf9Sz84XNxaAKBClNukq82S+yLs+y0GW8
-	 4UsvpKZevAuI1sW44YUOyKhPTufcKfjIZNHcna9hnaDKH9xRhPPPOuzxz9lNfRucTf
-	 CIQtKyaGSWmoeRrGr9rs7l21tAXodg3xIsjuG378C3op5UWkB9USITxVUFaNP8ZfoC
-	 QSH/qaUY8FNRw==
-Date: Wed, 9 Apr 2025 13:19:53 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	Arnd Bergmann <arnd@arndb.de>, linux-hardening@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH] gcc-plugins: Disable GCC plugins for compile test builds
-Message-ID: <db50faff-7290-4193-b861-f60e36f1d1e3@sirena.org.uk>
-References: <20250407-kbuild-disable-gcc-plugins-v1-1-5d46ae583f5e@kernel.org>
- <202504081630.4CE88E855@keescook>
+	s=k20201202; t=1744206591;
+	bh=OYf0UFBbqCo6CLjwr/J0wXSIXXNTgsDA387uekNdmbM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cVSQyr4BdDbHE8rV74/CAaqbtv7GyM+/pVrJwUzI4IqJzZAF66B+gmUBYt8a3/RQM
+	 IiHpKUggEXL90TVqWcy9UBD9aSESTsdZ97ir4BhqBMa7fk3Tb18I4mVpNW1yx3bLLn
+	 HycTOI76+iw64G6yLcP3yjt7JiWUMftkKEw2UQhzG8dzMepKVIi+vTIarqnmeNCgpI
+	 JgxTG86DF/s3Nt1vxrAZKJ1ni2Kxk659yUbpBCCbJLBicWnSVNWjxIMhMA6H0uzrB6
+	 ZLvcaPo+Au4Z9pPM//ub6dnTbFrBB4FCOcIVzkM7CN2ZS8aQh+FSrRgqX10ca86KwZ
+	 xMpsL0zjQ17cQ==
+Date: Wed, 9 Apr 2025 06:49:49 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Kuniyuki Iwashima <kuniyu@amazon.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
+ <horms@kernel.org>, David Ahern <dsahern@kernel.org>, "Neal Cardwell"
+ <ncardwell@google.com>, Willem de Bruijn <willemb@google.com>, "Pablo Neira
+ Ayuso" <pablo@netfilter.org>, Jozsef Kadlecsik <kadlec@netfilter.org>, Paul
+ Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge E.
+ Hallyn" <serge@hallyn.com>, Casey Schaufler <casey@schaufler-ca.com>,
+ Kuniyuki Iwashima <kuni1840@gmail.com>, <netdev@vger.kernel.org>,
+ <selinux@vger.kernel.org>, <linux-security-module@vger.kernel.org>
+Subject: Re: [PATCH v2 net-next 0/4] net: Retire DCCP socket.
+Message-ID: <20250409064949.6c992d15@kernel.org>
+In-Reply-To: <20250409003014.19697-1-kuniyu@amazon.com>
+References: <20250409003014.19697-1-kuniyu@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="SrCMCOVGy31wp5e6"
-Content-Disposition: inline
-In-Reply-To: <202504081630.4CE88E855@keescook>
-X-Cookie: Words must be weighed, not counted.
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Tue, 8 Apr 2025 17:29:07 -0700 Kuniyuki Iwashima wrote:
+> As announced by commit b144fcaf46d4 ("dccp: Print deprecation
+> notice."), it's time to remove DCCP socket.
+> 
+> The patch 2 removes net/dccp, LSM code, doc, and etc, leaving
+> DCCP netfilter modules.
+> 
+> The patch 3 unexports shared functions for DCCP, and the patch 4
+> renames tcp_or_dccp_get_hashinfo() to tcp_get_hashinfo().
+> 
+> We can do more cleanup; for example, remove IPPROTO_TCP checks in
+> __inet6?_check_established(), remove __module_get() for twsk,
+> remove timewait_sock_ops.twsk_destructor(), etc, but it will be
+> more of TCP stuff, so I'll defer to a later series.
 
---SrCMCOVGy31wp5e6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Tue, Apr 08, 2025 at 04:32:24PM -0700, Kees Cook wrote:
-> On Mon, Apr 07, 2025 at 09:57:32PM +0100, Mark Brown wrote:
-
-> > Arnd bisected this to c56f649646ec ("landlock: Log mount-related
-> > denials") but that commit is fairly obviously not really at fault here,
-> > most likely this is an issue in the plugin.  Given how disruptive having
-> > key configs like this failing let's disable the plugins for compile test
-> > builds until a fix is found.
-
-> Looks like this is a randstruct bug. We'll need to disable that one for
-> now (rather than all plugins).
-
-Note that the patch is only disabling for build coverage builds where
-the resulting binaries generally aren't going to actually be run.
-
-> I can reproduce this for GCC 14, but I can't reproduce this with GCC
-> 13. Which minor release is failing for you? My GCC 13 is:
-> gcc (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0
-
-Should have been x86_64-linux-gnu-gcc (Debian 13.3.0-5) 13.3.0.
-
---SrCMCOVGy31wp5e6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmf2ZegACgkQJNaLcl1U
-h9BgFwf8DwMSvZItKBSkQNtRQf00KF9aE+KT0RnfsGtWAo+NxKHRJKuddjh2f7gw
-CfHIyNvg6/4Z1uZEO1DoLhMio8RDq2D9qQHBYNWtBzUBnfq6RoT8pBbaKhm6Ymqn
-qZ2EIPig291hUkzYznDjJWo1n5wRmFZlvA/mujSYRiVuNHzrh1xSloqFbRv65V2e
-QDt6tIvKVp8AeZbz10porVbG1dr652zUe1UM/K9AOujwKRhnjQU/gyLOO/i0Ms9S
-Bs3UoebRaNStzM/wdMwiy8ifweGneGGpr9dgf6EezX3JrEXfvUShX54AscZsgBMG
-P0Ila2VRl478coX5cuJinYj6KLsCLQ==
-=JKz2
------END PGP SIGNATURE-----
-
---SrCMCOVGy31wp5e6--
+So it builds now but appears to break 1/3rd of the selftests :)
+-- 
+pw-bot: cr
