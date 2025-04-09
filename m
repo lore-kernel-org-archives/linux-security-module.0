@@ -1,113 +1,100 @@
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A3CD433AD
-	for <linux-security-module@vger.kernel.org>; Wed,  9 Apr 2025 15:47:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39D361D798E;
+	Wed,  9 Apr 2025 17:29:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744213678; cv=none; b=dUZ3RrAciS848/5EdPK+Ne34vqbDcRpDYY/F67AA+mG+42NxmLclfyv8dh5cM0COxkVBLaN0aydev/NU/gQemv5xUiEYbDbLmSjMaA/dxclkXbztE5d3vWpulnc5QcxPU4N2v4Qf0skQlNp91kw29IPNQFtChAJ4xe0s9W1UYi4=
+	t=1744219756; cv=none; b=TQn/lwqo2y8M7LSussbgp94yLiIiwxu6eypuWjQFQi1YUqjjywCozZq2pofqRgSMtZ5NK0m61ESaflwlDno9vfPxlOug4UAN2Z5xdcUVp6dTc5ByFmKvfkfCVe5L4CZvKtiADTb/M6TJ5fd6RK+OdjJjFtxdYe7jBiVJb6+Njb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744213678; c=relaxed/simple;
-	bh=jCABnoSlxxQFUAs31j2dDgPFt6TkJT+wt4+DPGFWvNU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XlWo3RrWwbzoNeRNcttVdr+P2zdp7R9HlhkQYbCO2vS8OkKN5kkE1MXpstjaZOQZ4RJVGWCyrOlkBZkHuZsUrAr6d2bYGJMdPZPXeSLqiOy9JjiCvN3V/g1cJFEShLclTSCH+sgmAnDPkrm5hMw2xxnNs1kE81srTt24BZahJdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=NcjWJWu0; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	s=arc-20240116; t=1744219756; c=relaxed/simple;
+	bh=aTuSCwgdVaBUdeNe9t4AGglX0jBWeFaVwB7NThEqaW4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JRq2VYBAPeUSON/sNQMjYkOQ8EEWYvSj6clfvOPGmz6fdWM5WAYQAz1rdZHAHD16l4O/0UjfcquAs1smk45cYdbuBGISivhQrl0RZF759KGPrL3QlJjcLUwTStSTpZ03Y3Niw7ISidi54P6BMuenkvz64XumNb4T9n8dNRdYcv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YTmGi3lV; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="NcjWJWu0"
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-abbb12bea54so333773966b.0
-        for <linux-security-module@vger.kernel.org>; Wed, 09 Apr 2025 08:47:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1744213674; x=1744818474; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nJ9MrfmGdx/admoRpqYzf488HmvpMXteQ9lPzY9ZRZc=;
-        b=NcjWJWu0hBJ4jLMMtJRQd3oRap+p2iwKT3zT5My4fmBktQ2b0Sc/RaVLhiDYAD5g2h
-         dPYhQFKbebUs8LWyykZPTdG16uiiIx0/PCJuUeZrnC0oblph+7jbXfoX5FD751Zx7UQ4
-         qyF2nWCMdH0Pf9KTa4JHLCr+Tv6LhW0YvOdSV8EEXbOZQvwE3I3Q5usya3M3Z8joErJ1
-         +oW9mjIVJAXpkimmRSr0V2GJ9aFG0WHhj0PUQLQFA20iVsKLN0qFh2YljjnyRzEPYliJ
-         RZFMeLZE63H/2ZLdkEmoDDXGenjl8K1+tpfGachRL14Tthc/ezvuzQtJvZU4n5EpM1Lv
-         dKdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744213674; x=1744818474;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nJ9MrfmGdx/admoRpqYzf488HmvpMXteQ9lPzY9ZRZc=;
-        b=uE/Hw0Bg2I8xOqRKu2XFhKNtfVlqqQDeBRQCactxffQneZQwXoVkmWsqRi2H78QeM6
-         le03zUkFfYFVNa+RxRJixk8w4KqWgxMUKxdnEogJQX7sSQKgL4B1lof1VAtcoMrdMex9
-         d+LmEj9wb8xfZOWDIo16A6ybjinnbeUUPeDv5yOQifpguf3Npw1a7jZIgnE+qyAuEMzz
-         qWMAeo8dKhqxQXxiCt/FF148YXkD1lJGStxefktghitUzMvJTYb2xlj67/aPNT6k2DZo
-         SFO3nWAqIxfm77oOww2y2A8EPuUeHgBvSG+n1v3w4tgRgg/BQmsOdJ2rIZ9RDL6VAjDM
-         ZKqQ==
-X-Gm-Message-State: AOJu0Yx3Kh122jjzVe8mDzG3at7hqOU4+Swo7+Ecyf2bo5lhf2qj5TUk
-	TFlfoSCaXzkTRJXoR+WiN3t26SdyXq6K3t1qXLWMll/fNzIxutfa7luUBixw83k=
-X-Gm-Gg: ASbGncvcYVyTrsjaI3LLLG9pWfW55BqRGLz2LxZmBQhmIWUfDS42uhtBmmS6UK11Ksz
-	t2QrzrH0APFBmgb6mvR3CMBz9wCY41jD/IPONDyTaNwuLov9yBEcgjS7iJBsqq3pL9GJIVjlJJF
-	IF6bADBam0MjO81CfgtWs23q+2TD+jf7kaLxakTVsoEvCja2MGaOfxyTiHixFerusdonuT26jPf
-	zv635MtfH9gViBfIpyOCVXx0viKyqeLDim9unq1etB4h0JTC28saMRCB+Q/EogeoT63ld52KYke
-	4qLphPQDNZIZMiNpDSNA5g+UryUTlXZcoLhXiKZGWQl8Cw==
-X-Google-Smtp-Source: AGHT+IHo0do0fKxRZomTsqBtbKndZIYZugYhxWasrmrbi70luUu4m++JfZsaxZzQDLqrDx2E46ZGJA==
-X-Received: by 2002:a17:907:2cc4:b0:ac7:391a:e158 with SMTP id a640c23a62f3a-aca9d73ab50mr270802066b.59.1744213674410;
-        Wed, 09 Apr 2025 08:47:54 -0700 (PDT)
-Received: from [192.168.0.20] ([212.21.133.214])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1ce7317sm114172666b.177.2025.04.09.08.47.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Apr 2025 08:47:54 -0700 (PDT)
-Message-ID: <00b29ba9-e886-4464-be39-731789cef72b@suse.com>
-Date: Wed, 9 Apr 2025 18:47:52 +0300
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YTmGi3lV"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9FF2C4CEE2;
+	Wed,  9 Apr 2025 17:29:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744219755;
+	bh=aTuSCwgdVaBUdeNe9t4AGglX0jBWeFaVwB7NThEqaW4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YTmGi3lVc8lAJ7l+7nribuRCxGGy6ixSsGRHywtuKdAwydgpiOpQBMz36b55bravA
+	 7Z7FfYQBFctJ28bUyPzUEz66ugNBjwfVRtyMGCPBP+hYe3TMOFt668Fu/YKwMi70IN
+	 ML2u4iXkF6D8/+wAxPu0pgbnBTUSiO9cjaj07uFfRXcGYw87YQaIoeS2IzHqXnvRkN
+	 rL8ifwB31XgrUtuOO7FdZvIys3K5jVD/nfl2alMbfP5t4nVy6TYjSpzSJHaZrnT808
+	 iTD1H9s4XpZhv3sGMVApIPKYCSMxbpHVpHbDjqqRx047wizhe4lFmyNST30mmFYMpC
+	 o3t2T+Xj0BpZw==
+Date: Wed, 9 Apr 2025 18:29:10 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Kees Cook <kees@kernel.org>,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	Arnd Bergmann <arnd@arndb.de>, linux-hardening@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH] gcc-plugins: Disable GCC plugins for compile test builds
+Message-ID: <a9a459c2-674d-43dc-9e27-41de0471f602@sirena.org.uk>
+References: <20250407-kbuild-disable-gcc-plugins-v1-1-5d46ae583f5e@kernel.org>
+ <202504081630.4CE88E855@keescook>
+ <db50faff-7290-4193-b861-f60e36f1d1e3@sirena.org.uk>
+ <CAHk-=wjc+piYyUw36s4ttEkY32jVkxhRtyrt431wew7XcDS2Qg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] Allow individual features to be locked down
-To: Dan Williams <dan.j.williams@intel.com>, Paul Moore <paul@paul-moore.com>
-Cc: linux-security-module@vger.kernel.org, serge@hallyn.com, kees@kernel.org,
- linux-kernel@vger.kernel.org, kirill.shutemov@linux.intel.com,
- linux-coco@lists.linux.dev
-References: <20250321102422.640271-1-nik.borisov@suse.com>
- <CAHC9VhSpgzde_xRiu9FApg59w6sR1FUWW-Pf7Ya6XG9eFHwTqQ@mail.gmail.com>
- <67f69600ed221_71fe2946f@dwillia2-xfh.jf.intel.com.notmuch>
-From: Nikolay Borisov <nik.borisov@suse.com>
-Content-Language: en-US
-In-Reply-To: <67f69600ed221_71fe2946f@dwillia2-xfh.jf.intel.com.notmuch>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="oKNkIFplktdD+Ua3"
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjc+piYyUw36s4ttEkY32jVkxhRtyrt431wew7XcDS2Qg@mail.gmail.com>
+X-Cookie: Words must be weighed, not counted.
 
 
+--oKNkIFplktdD+Ua3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 9.04.25 г. 18:45 ч., Dan Williams wrote:
-> Paul Moore wrote:
->> On Fri, Mar 21, 2025 at 6:24 AM Nikolay Borisov <nik.borisov@suse.com> wrote:
->>>
->>> This simple change allows usecases where someone might want to  lock only specific
->>> feature at a finer granularity than integrity/confidentiality levels allows.
->>> The first likely user of this is the CoCo subsystem where certain features will be
->>> disabled.
->>>
->>> Nikolay Borisov (2):
->>>    lockdown: Switch implementation to using bitmap
->>>    lockdown/kunit: Introduce kunit tests
->>
->> Hi Nikolay,
->>
->> Thanks for the patches!  With the merge window opening in a few days,
->> it is too late to consider this for the upcoming merge window so
->> realistically this patchset is two weeks out and I'm hopeful we'll
->> have a dedicated Lockdown maintainer by then so I'm going to defer the
->> ultimate decision on acceptance to them.
-> 
-> The patches in this thread proposed to selectively disable /dev/mem
-> independent of all the other lockdown mitigations. That goal can be
-> achieved with more precision with this proposed patch:
-> 
-> http://lore.kernel.org/67f5b75c37143_71fe2949b@dwillia2-xfh.jf.intel.com.notmuch
+On Wed, Apr 09, 2025 at 08:33:03AM -0700, Linus Torvalds wrote:
+> On Wed, 9 Apr 2025 at 05:20, Mark Brown <broonie@kernel.org> wrote:
 
+> > Note that the patch is only disabling for build coverage builds where
+> > the resulting binaries generally aren't going to actually be run.
 
-True, however I think increasing the granularity of the lockdown 
-subsystem merits its own discussion, notwithstanding COCO use case.
+> Well, there's a reason we do build coverage - we also want to test
+> that the non-build coverage case builds.
+
+> And it's not actually obvious that it does - it's in fact rather
+> likely that the gcc plugin is broken in general, and it just so
+> happens that it's the build bots that find it.
+
+Sadly it seems like the build bots didn't find it, or at least if they
+found it they didn't identify it well enough to end up with reporting
+the issue to someone who'd fix it.  I ran into it because I do
+allmodconfig builds as part of applying things since both you and
+Stephen do them and that exploded in my face at -rc1.
+
+> Which is why I honestly would prefer to just disable the plugins in general.
+
+> Because the problem is the plugin, not the build coverage.
+
+Well, yes.
+
+--oKNkIFplktdD+Ua3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmf2rmYACgkQJNaLcl1U
+h9Drxwf9H5il27jRBILGP+QjSU3+3p74WMPdhqaddbNGK7u2LIRaE3653IOe/zI/
+EHFZ2lvQxP9nb3jSqlWEaQkz8GgjnVdMubj4wYF8NAR6vQ25W1X0ui1ao+WVKPNV
+zJimWUhXcAT3vNtTH9ZPxr3lYKgYQJucYByZZAcdwuQW7TGExzeC4wafP4lcSYBQ
+T9FXHkEDftAVUuQcqzcvJsq6+XiP9A1t7AF9ZjWYnRoivh/zqVohiCv6R12kmwEG
+joITwRhpu+IKdxrR5MMQ4YgxLLT+QSA4793r6mZwhJKC9MWxtfpglr2/Vs2djkH1
+Ow15XFZbcP3jZzDfV4dl/hzjw/D+wg==
+=JNPu
+-----END PGP SIGNATURE-----
+
+--oKNkIFplktdD+Ua3--
