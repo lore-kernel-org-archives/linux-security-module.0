@@ -1,71 +1,71 @@
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D062147F3
-	for <linux-security-module@vger.kernel.org>; Wed,  9 Apr 2025 21:55:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB8582899
+	for <linux-security-module@vger.kernel.org>; Wed,  9 Apr 2025 22:31:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744235713; cv=none; b=Oex/3GfH6E31cRWuPB6I7VICCGA+tQZ/3efKl2/87FEQy/hMrrHH+jwFra04P3rcDteHhM14xB698IM0T3gW12UqoanAvREhOcQp63S8aZMuPpHXxXXpnKAnIfkp9U2zo1v1krjuFqoNIFKxvdR3TIXlnELiKwpK8Of+LxD9c4M=
+	t=1744237893; cv=none; b=pYAjTWW5ooJfC91U3soMHnOKV5keLy/vL5yeHLZafh/S6YFCM5O6+KY6vDX3YLFSGnYvPfFIs6Djv5d5bFigGeSYyGWlG4rlmLonV2Tx3XprTmKos+SPh4yXPRHfdU7FmLbWnRVpN+ac+n4wP317Vo2yZNAeaWhhfmKQ6Bw+J54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744235713; c=relaxed/simple;
-	bh=NgCLzGIpE6sK5tDppclVks0xtdgtNbHJZPJX63o4pXs=;
+	s=arc-20240116; t=1744237893; c=relaxed/simple;
+	bh=SWdd9RTpM42vC5ZNMkrzCkNmTgWrjK/TrQBHQAK+k78=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AqWjGI2kOGAl3aqk4qaHyGgv2H+fA4rsksezsSHNuau53z2vmqmG3Dx+P+08wVxllhnZZc5XOh7vbs2hAi24qL3+0raMb3tA16mkcoPi9VjluqDn9Tkx234Z37ip2/QRVr8Q4rGJBTwbHqu33SB3JjsDl6wAEgcDuuhC86oFCC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=APHJia6r; arc=none smtp.client-ip=209.85.128.174
+	 To:Cc:Content-Type; b=JMn0aWGibSVZojjqgI2GKPCExKqU0/fugT46pwNFG/WnA2lIoF7+loBRW4TW9XThSt02Ety0PzWWY7QPXjb2dpVGRfeGECBc1+mFQQKxZTc+oHoCPgDGQWMEXZgOpvdJ7LaxKek0VCMaWYauTPm/jjRoxtKB+Wx3VBtBkFfYRJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=f88vYIWx; arc=none smtp.client-ip=209.85.128.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="APHJia6r"
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6febf391132so1740277b3.1
-        for <linux-security-module@vger.kernel.org>; Wed, 09 Apr 2025 14:55:11 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="f88vYIWx"
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6feab7c5f96so2124167b3.3
+        for <linux-security-module@vger.kernel.org>; Wed, 09 Apr 2025 15:31:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1744235710; x=1744840510; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1744237890; x=1744842690; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3BzfnLoFkzfih57uE/uB+rGIEl0CKJHJOVcHtFoCVd4=;
-        b=APHJia6rymXcKBfKIZ54DZoTBCUxzLuENVmnwmL3UUDAMfsL4v6R8f+571c5bcCRKy
-         1TyNCMyxASbG8t/BpNGWObZEZzKatQN5o8SyCTSR+DiU5WoN5QLWiqxW2cXjLY5cntSL
-         qD3gR/Kz3CmsAwykFIUDvE4DFTm2DEbd53oKGUlwMKMIAYhSMS0s6CAXyFn0Oqo8Vu/0
-         OOOIC6L9j+ajHmyfRygImMy8QN5fyE1Yq0pPtYbI/kxqNbKq0I63V79hv8XZ/UpHuPmg
-         vVjkSNF/PkY8G1ANnp5owFIfBrVePsNHkv+aHrfVI/kl4eF4d43X+TlsYHJahJlO+QdY
-         5M9A==
+        bh=D4woi2xGlWCHzrCPzebUyPEdkLsFWCOIqQ/998TUZGI=;
+        b=f88vYIWx6yMftnd776OavRz+1EofjrnydXgO/syIDFz1ghNDulCEA25vE+/8QaUgTz
+         GFR9FTkJ03I6fy1Pn845QnV5CYVOn8n1gAX2CWkA8/ZZ7aQPGml/PSoi5lW47fwSxGUy
+         Bgx1lBkxncvLN9Qv3jumcRtx6RegLeOkbA7FCe33D703ojORT0+3Ip9wT3ummy6en2Sf
+         Rjoqdu54u+lHIdsIcRU1vF5H9Uw3jpUx8QBcf51M3C9jck/LdF00S564FrLwlGJ47W8S
+         TCbaRBv1G64Ie/9tulIuGTFejZkj/Tp/jtLlJ/JJgQVBCNy2nDgQR39CkaJJCBdX6VZX
+         hZ0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744235710; x=1744840510;
+        d=1e100.net; s=20230601; t=1744237890; x=1744842690;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3BzfnLoFkzfih57uE/uB+rGIEl0CKJHJOVcHtFoCVd4=;
-        b=BBDcsC/ArviWz7yBKyE6jLaXOpLUAM7wY7w00un/PXtosIyl4z+axzuJM7aaKIm/Qk
-         iSTC3eZL5HI5Q6DG743V+AGpDjhPq4xlOrxz8KtXS1sFQSEogjDRxHw5Qr0CBqN5zYj/
-         uyrMqAVsEW3kwPTOuwScXrgaTFka0uxfSj+x7gI3foRLG8zK0aLmPzrqrgjabw/ZebmO
-         kW/4KfKxAsXS13Q2YyHTkxAZGcKsyG4c/jMsa1/IAKLqQk5bJs21BHK9Hy7uPCQiPGbp
-         2R8gD/+3cprjA10rNjxIVgH5loF2R/R7HdZEsimvbFxbY018SSco/lKjVPdNGfJKjr4h
-         97ow==
-X-Gm-Message-State: AOJu0YzpF1UwKOlaVkGtniIDxqtCrGFblhe3liqnZ6MrtvjCQEiyZbf2
-	zEzq38DKmR0TP0gl551068rLaBDHB7mGTvZLcxbr3tU6HoEN7n5xrUSDNiuUC8piBuGIlJbO0RY
-	FWGbDtwHyU8SD1nud6Ku+cfm1sYPW1rPdgGYa
-X-Gm-Gg: ASbGncucBUd5kUGqQmS4qaE7VhiVm/IxWLMKBc5HobosHvSMesWyV9TNSgR5eqmxlWL
-	W2+8LWDzkrEVO9xQYGITzudGIDL4ybeg+4SO+i7PYWFQSJu8YlMx59d92GwjIDG4U1SFHXi3KdR
-	YIXVqrPaZuDD/0MF4culfjew==
-X-Google-Smtp-Source: AGHT+IHnLh0Wm5MhR/M9zp8F7sUZoLW7BhmbCXHVzZF2t+qG34NaJR9geNaTITGyvyIncasI0zxF+X/b8eO4m+0T4O4=
-X-Received: by 2002:a05:690c:30a:b0:6fb:4648:3425 with SMTP id
- 00721157ae682-70549e80da0mr6788057b3.16.1744235710398; Wed, 09 Apr 2025
- 14:55:10 -0700 (PDT)
+        bh=D4woi2xGlWCHzrCPzebUyPEdkLsFWCOIqQ/998TUZGI=;
+        b=TmGQkXrv7dzbtR1gZhFbTcqiPx5LsajEa/ZTShlsdpkOkJGMSRaT83IPFaYsqcs3lu
+         woutOg7G504iBu1dPt2Do7LdAaP/WFXtUMTHEip++p46c9LD4ck4/78/oEz/1BHl7ft6
+         yrBfNjd0R3p6ABiMbm161C5dRTtUNCGhzivqXzTfl5yWpm89bTk/8PJIvjHqvZkpp0lB
+         lsfMS37bufXMi4BYq28UCfXpAYgagfnp5azCOoaxuBMdFb6TuHqip2q3HOq2wohLBRSE
+         iRVRBDdBFdGm5l9Oc7ABLOgBp8qK7YhIQ7AHEG7y4D4SokDcRYkJbeb4x+ULQfx5ErnU
+         72FA==
+X-Gm-Message-State: AOJu0YzAGtAn7E4ar/SlvlNyr/WewfL50DaGFWsKT5YABndj1ZnNNH7d
+	c+vWP0DSj1yDUi7IwemAMG1QG1f7Qh+jo8wxG61zp97G1zkai2FnK2bt6eDjBUkeECFLgYZDc/6
+	VDEz3KDi8qvqwX62qH9DIMJ5CzQq1GzEcfDLh
+X-Gm-Gg: ASbGnctC4hZGdjeni9qygrYzPKdkAz1OyzCB80AhcNEfrqe2L/g7mG3OQSY5OzoGtHh
+	A/fgMv5x0TcMJNp3G+GA7XpNaRt9HjeQuFigaWqPG8/FH7pJjybF98PHRBBKAhKXrsJtGDktQQD
+	bW4j8P9VZRhCBa/zCJSvxqQZFL0Q7UN7m6
+X-Google-Smtp-Source: AGHT+IHxj+xJhKVAVZeidbydD08JnIVI+V9xRkPwJ88AD9pQb4gyRiYQ0vkLQ7TS1/g0pr0/pAEfyoXjrdjyN8nC7i4=
+X-Received: by 2002:a05:690c:4906:b0:6d4:4a0c:fcf0 with SMTP id
+ 00721157ae682-70549eccfd8mr9140947b3.20.1744237890543; Wed, 09 Apr 2025
+ 15:31:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250409185019.238841-31-paul@paul-moore.com> <20250409185019.238841-34-paul@paul-moore.com>
- <202504091422.13DA5BED@keescook>
-In-Reply-To: <202504091422.13DA5BED@keescook>
+References: <20250409185019.238841-31-paul@paul-moore.com> <20250409185019.238841-35-paul@paul-moore.com>
+ <202504091435.E172A67C6@keescook>
+In-Reply-To: <202504091435.E172A67C6@keescook>
 From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 9 Apr 2025 17:54:59 -0400
-X-Gm-Features: ATxdqUHmF-DbkQ9SoQgZu9u9N9waCVDbm9Wxk8rKX44Sx6e78bebd2A7FbC6x9M
-Message-ID: <CAHC9VhRPpNfjao0j7BfuS7s5xya-PPOE8_5DZkN1pVvucnVWSg@mail.gmail.com>
-Subject: Re: [RFC PATCH 03/29] lsm: simplify prepare_lsm() and rename to lsm_prep_single()
+Date: Wed, 9 Apr 2025 18:31:18 -0400
+X-Gm-Features: ATxdqUF58K2osiGI0aRmIUdrzsTIM0H-CerRYW_6JWr-DyWGlRBbjMVguJ_NTOQ
+Message-ID: <CAHC9VhS0Nc_uYMDfmaiQPV9fDwRcB_4wHGvXhEDi0AFpLXeXQQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 04/29] lsm: simplify ordered_lsm_init() and rename to lsm_init_ordered()
 To: Kees Cook <kees@kernel.org>
 Cc: linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org, 
 	selinux@vger.kernel.org, John Johansen <john.johansen@canonical.com>, 
@@ -77,117 +77,70 @@ Cc: linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 9, 2025 at 5:30=E2=80=AFPM Kees Cook <kees@kernel.org> wrote:
-> On Wed, Apr 09, 2025 at 02:49:48PM -0400, Paul Moore wrote:
+On Wed, Apr 9, 2025 at 5:38=E2=80=AFPM Kees Cook <kees@kernel.org> wrote:
+>
+> On Wed, Apr 09, 2025 at 02:49:49PM -0400, Paul Moore wrote:
 > > One part of a larger effort to cleanup the LSM framework initialization
 > > code.
 >
-> This commit log needs improvement. i.e. explain what and why:
+> Again, needs a better commit log.
 
-Yeah, it's bad, see the cover letter, the commit descriptions were
-explicitly mentioned as needing improvement.  You'll likely see a few
-other patches with let's just say "less than good" commit
-descriptions.  I basically go through and add/edit/fix-up commit
-descriptions while things are compiling, tests are running, etc. and
-with the number of patches in this patchset I didn't make enough
-passes through the list to get beyond some generic text in a lot of
-the patches.
+See my previous comments as well as the cover letter for the reason why.
 
-I simply wanted to get this patchset out as a RFC as it had been
-mentioned to a few people offline and I wanted to get some feedback
-from the individual LSM maintainers who might be affected by moving
-the initcalls out of the individual LSMs and into the framework.
-
-> The execution flow through lsm_allowed(), prepare_lsm(), and
-> lsm_set_blob_sizes() is a bit convoluted. Merge the logic of all three
-> into a single new function, lsm_prep_single().
->
+> > diff --git a/security/lsm_init.c b/security/lsm_init.c
+> > index dffa8dc2da36..407429688f1b 100644
+> > --- a/security/lsm_init.c
+> > +++ b/security/lsm_init.c
+> > @@ -32,6 +32,12 @@ static __initdata bool debug;
+> >                       pr_info(__VA_ARGS__);                           \
+> >       } while (0)
 > >
-> > Signed-off-by: Paul Moore <paul@paul-moore.com>
-> > ---
-> >  security/lsm_init.c | 103 ++++++++++++++++++--------------------------
-> >  1 file changed, 43 insertions(+), 60 deletions(-)
+> > +#define lsm_order_for_each(iter)                                     \
+> > +     for ((iter) =3D ordered_lsms; *(iter); (iter)++)
+> > +#define lsm_early_for_each_raw(iter)                                 \
+> > +     for ((iter) =3D __start_early_lsm_info;                          =
+ \
+> > +          (iter) < __end_early_lsm_info; (iter)++)
+>
+> The longer I look at this patch the longer I think it needs to be broken
+> up into a few separate patches, but they would be relatively small, like
+> this one: replace iter loops with iter macros.
 
-...
+Fair point, done.
 
-> > @@ -151,51 +135,50 @@ static void __init lsm_set_blob_size(int *need, i=
-nt *lbs)
-> >       *need =3D offset;
-> >  }
+> > @@ -340,10 +304,23 @@ static void __init ordered_lsm_init(void)
+> >       } else
+> >               ordered_lsm_parse(builtin_lsm_order, "builtin");
 > >
-> > -static void __init lsm_set_blob_sizes(struct lsm_blob_sizes *needed)
-> > +/**
-> > + * lsm_prep_single - Prepare the LSM framework for a new LSM
-> > + * @lsm: LSM definition
-> > + */
-> > +static void __init lsm_prep_single(struct lsm_info *lsm)
+> > -     for (lsm =3D ordered_lsms; *lsm; lsm++)
+> > +     lsm_order_for_each(lsm) {
+> >               lsm_prep_single(*lsm);
+> > +     }
+> >
+> > -     report_lsm_order();
+> > +     pr_info("initializing lsm=3D");
+> > +     lsm_early_for_each_raw(early) {
+> > +             if (is_enabled(early))
+> > +                     pr_cont("%s%s",
+> > +                             early =3D=3D __start_early_lsm_info ? "" =
+: ",",
+> > +                             early->name);
+> > +     }
+> > +     lsm_order_for_each(lsm) {
+> > +             if (is_enabled(*lsm))
+> > +                     pr_cont("%s%s",
+> > +                             lsm =3D=3D ordered_lsms ? "" : ",", (*lsm=
+)->name);
+> > +     }
 >
-> Nit-pick on naming: why shorten "prepare"?
+> report_lsm_order()'s use of "first" needs to stay here or you don't get
+> the right comma/no-comma behavior. It's not about the lsm, it's about
+> whether "first" got incremented. Perhaps "count" might be a better name
+> for "first".
 
-My fingers are lazy?
+Sure, I'll just put the "first" code back, it all gets changed later
+in the patchset anyway, no need to worry about long term stuff in this
+snippet.
 
-> > +     /* Register the LSM blob sizes. */
-> > +     blobs =3D lsm->blobs;
-> > +     lsm_set_blob_size(&blobs->lbs_cred, &blob_sizes.lbs_cred);
-> > +     lsm_set_blob_size(&blobs->lbs_file, &blob_sizes.lbs_file);
-> > +     lsm_set_blob_size(&blobs->lbs_ib, &blob_sizes.lbs_ib);
-> > +     /* inode blob gets an rcu_head in addition to LSM blobs. */
-> > +     if (blobs->lbs_inode && blob_sizes.lbs_inode =3D=3D 0)
-> > +             blob_sizes.lbs_inode =3D sizeof(struct rcu_head);
-> > +     lsm_set_blob_size(&blobs->lbs_inode, &blob_sizes.lbs_inode);
-> > +     lsm_set_blob_size(&blobs->lbs_ipc, &blob_sizes.lbs_ipc);
-> > +     lsm_set_blob_size(&blobs->lbs_key, &blob_sizes.lbs_key);
-> > +     lsm_set_blob_size(&blobs->lbs_msg_msg, &blob_sizes.lbs_msg_msg);
-> > +     lsm_set_blob_size(&blobs->lbs_perf_event, &blob_sizes.lbs_perf_ev=
-ent);
-> > +     lsm_set_blob_size(&blobs->lbs_sock, &blob_sizes.lbs_sock);
-> > +     lsm_set_blob_size(&blobs->lbs_superblock, &blob_sizes.lbs_superbl=
-ock);
-> > +     lsm_set_blob_size(&blobs->lbs_task, &blob_sizes.lbs_task);
-> > +     lsm_set_blob_size(&blobs->lbs_tun_dev, &blob_sizes.lbs_tun_dev);
-> > +     lsm_set_blob_size(&blobs->lbs_xattr_count,
-> > +                       &blob_sizes.lbs_xattr_count);
-> > +     lsm_set_blob_size(&blobs->lbs_bdev, &blob_sizes.lbs_bdev);
->
-> Another refactoring idea I saw recently from the sysctl subsystem was
-> turning these named "same things" into an array with enum names, so
-> instead of &blobs->lbs_ipc, &blobs->lbs_key, they can still have useful
-> names but also be iterated in a loop:
->
-> enum lsm_blob_types {
->         LSM_BLOB_IPC,
->         LSM_BLOB_KEY,
->         ...
->         LSM_BLOB_MAX
-> };
-> ...
->         for (i =3D 0; i < ARRAY_SIZE(blobs->lbs); i++) {
->                 lsm_set_blob_size(&blobs->lbs[i], &blob_sizes[i]);
-
-Cool idea, but let's leave that as future work since it is going to
-start stretching across security.c for the allocators (and in xattr
-count stuff) and this patchset is already more expansive than I would
-like.
-
-> > @@ -499,7 +482,7 @@ int __init early_security_init(void)
-> >       for (lsm =3D __start_early_lsm_info; lsm < __end_early_lsm_info; =
-lsm++) {
-> >               if (!lsm->enabled)
-> >                       lsm->enabled =3D &lsm_enabled_true;
-> > -             prepare_lsm(lsm);
-> > +             lsm_prep_single(lsm);
-> >               initialize_lsm(lsm);
-> >       }
->
-> Regardless, this looks correct to me. With or without renaming the
-> function:
-
-Thanks, I appreciate the review.
-
-> Reviewed-by: Kees Cook <kees@kernel.org>
->
-> --
-> Kees Cook
-
---
+--=20
 paul-moore.com
