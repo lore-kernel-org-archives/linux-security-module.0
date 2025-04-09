@@ -1,207 +1,110 @@
-Received: from smtp-fw-9106.amazon.com (smtp-fw-9106.amazon.com [207.171.188.206])
+Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDC9126AF6;
-	Wed,  9 Apr 2025 00:32:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.188.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11C5E1D90C8;
+	Wed,  9 Apr 2025 05:44:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744158751; cv=none; b=YVc78N47N43PliUF4lDWqphMml9kQbdCTJnI2g1xsffX1HwEsITKnjDOD66u9q9JZPd+SpjGBJAzFV5wQpzC4uKZ4ke5tTX2SWY+LWeyVnBHjM/RsMFZnRoUQ1M69iNLa8thUDncLdGsvXClUYuK/kD3kX80H6VZX5Xn4TmfSQc=
+	t=1744177454; cv=none; b=MbeLzWKe3W2BjscZpT4UHxrvxMVzScrVJ8QVO5eA6P4GJaosA87blA1yG32bY20BxqYC1uL0v+MB8Wy6iVRuHcueX1x1RCRmtcL/ThOcjJSScwOGsgrXYevTqCKM7Bzz5JbXlRL0NGJlK9acaH+vnfvVuKQM9wfBjNKQuHPXhb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744158751; c=relaxed/simple;
-	bh=Wjo7zaf/2eJQlNtPQf299lx7i2pW1ib1d6Jua15gID0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=olTJ4a0bmvB4aBQgH700JJQoh2S2P0YQrOur6EdS8PVihzDdwROrcJLGf6/24j+r0by4jqHB6PiIpO5R14wh+SOjH5dDjaJ75XYuhPmiNi0HCIQJzbHvA1EWktgyIaIeooCg74v0dAg6h0ymRc7xQ5WgrpxnxjQauQTV8SlXS4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=e7IbFliP; arc=none smtp.client-ip=207.171.188.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+	s=arc-20240116; t=1744177454; c=relaxed/simple;
+	bh=lEYsufm0+7mvYuVM3gBjDtCxGFGACrLKvzyGryCbAnI=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=rOOz0AuZauoWeHj6mhr+r1jGGsw4wdG82mHcDWSsxhoGD5pOSOA9bFRFhNiSEm3MYz5qJvHNYQQdvldUp/Onhvbygblj05jMyQTDWENVPMlHacDScSz+7b4b5gsyosRxEtiU3PaZxmvorlWFTiBF3RX7d98X+nlGxcWO5lKMNQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=YAtUPhmF; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Z8iuNanf; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="e7IbFliP"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1744158750; x=1775694750;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=LBEMm5OooTEDmVd7oh39SDGI97foq73Nnmjcv8TLzPw=;
-  b=e7IbFliPFKWQpU69pLTd66teVcpCVXDx1g8b3WnkqvxeKfrtKt/R2a06
-   Q7eqWNKd0MZahLyGuF8tnaQ+MUfEmaLu75jUNF+knt5GVHAg2L2eH+bnt
-   ZwFWJvFyDAz0joJe11P8WgUQLUswiscvGcckVbiM9wzqKDJPGt3BaryJU
-   g=;
-X-IronPort-AV: E=Sophos;i="6.15,199,1739836800"; 
-   d="scan'208";a="814495650"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-9106.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Apr 2025 00:32:29 +0000
-Received: from EX19MTAUWB002.ant.amazon.com [10.0.7.35:11950]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.8.63:2525] with esmtp (Farcaster)
- id a0e848c7-fe84-4151-88d1-f988161098c3; Wed, 9 Apr 2025 00:32:28 +0000 (UTC)
-X-Farcaster-Flow-ID: a0e848c7-fe84-4151-88d1-f988161098c3
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Wed, 9 Apr 2025 00:32:26 +0000
-Received: from 6c7e67bfbae3.amazon.com (10.106.100.5) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Wed, 9 Apr 2025 00:32:21 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
-	<edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>
-CC: Simon Horman <horms@kernel.org>, David Ahern <dsahern@kernel.org>, "Neal
- Cardwell" <ncardwell@google.com>, Willem de Bruijn <willemb@google.com>,
-	"Pablo Neira Ayuso" <pablo@netfilter.org>, Jozsef Kadlecsik
-	<kadlec@netfilter.org>, Paul Moore <paul@paul-moore.com>, James Morris
-	<jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Casey Schaufler
-	<casey@schaufler-ca.com>, Kuniyuki Iwashima <kuniyu@amazon.com>, Kuniyuki
- Iwashima <kuni1840@gmail.com>, <netdev@vger.kernel.org>,
-	<selinux@vger.kernel.org>, <linux-security-module@vger.kernel.org>
-Subject: [PATCH v2 net-next 4/4] tcp: Rename tcp_or_dccp_get_hashinfo().
-Date: Tue, 8 Apr 2025 17:29:11 -0700
-Message-ID: <20250409003014.19697-5-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250409003014.19697-1-kuniyu@amazon.com>
-References: <20250409003014.19697-1-kuniyu@amazon.com>
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="YAtUPhmF";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Z8iuNanf"
+Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
+	by mailfout.phl.internal (Postfix) with ESMTP id C548B1380123;
+	Wed,  9 Apr 2025 01:44:09 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-12.internal (MEProxy); Wed, 09 Apr 2025 01:44:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1744177449;
+	 x=1744263849; bh=2rvvqH5wXGrIeZGfrzLbu4zZifmWg0jaJShmK4jU5Nc=; b=
+	YAtUPhmFi1ZU66qtkugwlCiKlphA4Y8eFVXCQVTHTXw0MRUKVNmK8qZffsu+N+SW
+	twzJ9GZkSGRjEb4QCtxAvoo+HJYHw1Pn4wVy+rklo/IM9N8ZSAO7gsZ4ikZNGbiE
+	IddMkcCvFMSXG5TdR4FXSuDiVeZXeq6EGFEXmoR05UEVIJFIbWjlqKbnJXDrIuPW
+	TbGT1D78GewxBIs/r4AcIYa1SByQagJoNCYl+/Eig2NLIy1zivd0w5ArZd3HzdTu
+	KD8r/730ykG9i4UowNM+8xZtlsq9L0vd4VvABgF8hFnE7C5sux8RnXhN5d0OmwrZ
+	5ULgIjMioKGe5l1TIPm65Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1744177449; x=
+	1744263849; bh=2rvvqH5wXGrIeZGfrzLbu4zZifmWg0jaJShmK4jU5Nc=; b=Z
+	8iuNanf5/GSIPKG7mcIeYVIe0cQRfKSO1eW1nEpIH2qgZsF8oW/isDI+qwSRAceB
+	mlJxguvHPBF0yP6WQDKeVZSunmOrNfPKN0OPmbkvxOKMkcktfFTY3m4FWxzZ97C5
+	hMBZJ5vPKnRiBogSyTZWMYK6hMjK31M4PfLRG4pCvE+cma7sbcwor0wEAEkTYQTW
+	DA00WcwRK2dTuTlJGZfPlADVsrguJRLoHLW6SF/7dPibvyZ55M6/DqcocGK+rJ0X
+	RCiCSRn0n6QQL87B6zw6Uy5X4yPn1+LPKYz25YP9e5HjsZD3QGb3okgSbLx/PP9a
+	M52b7bgZhBOuH/fRklAsA==
+X-ME-Sender: <xms:KQn2Zx8vQeVL5gRSAgrdBLyizYmOW1D8zwKlXt2IQ_QB8fNdBci93Q>
+    <xme:KQn2Z1sGocdtkZ3CTqUSJA_xVvgCJjynmHuuRqIPZY8u2pAbZG0jHUa_5-XLOwncb
+    45VeFcPQ-0DyJtbpoY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtdehudekucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
+    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
+    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
+    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
+    kedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhhitgesughighhikhhougdrnh
+    gvthdprhgtphhtthhopehgnhhorggtkhesghhoohhglhgvrdgtohhmpdhrtghpthhtohep
+    sghrohhonhhivgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgvvghssehkvghrnh
+    gvlhdrohhrghdprhgtphhtthhopehtohhrvhgrlhgusheslhhinhhugidqfhhouhhnuggr
+    thhiohhnrdhorhhgpdhrtghpthhtoheplhhinhhugidqhhgrrhguvghnihhnghesvhhgvg
+    hrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhg
+    vghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhsvggtuhhrihhthi
+    dqmhhoughulhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:KQn2Z_DOiWjcg553ukFV597umIgqqXTJBzDkms_TnTgcwpvfGlqqsQ>
+    <xmx:KQn2Z1covHxfamwQ5Yxey7uAhHoH1n22acJtaJLsHXV-_de8qg5RzA>
+    <xmx:KQn2Z2Mb0wa4n0gSlgUubVn-kGp_54ImLjUsA3Cw0VIwTqQfUKyySg>
+    <xmx:KQn2Z3k3qCyiG6lBwKk5YAZhZEfkKh9C9-XgLECBn5vcWCOz_UYs2Q>
+    <xmx:KQn2Z03RjPxEO6ywmwKR3EpSREnhgrcnJ30ykf2PDUGBBqDGwRSd7KjH>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 1C9F42220073; Wed,  9 Apr 2025 01:44:09 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-ThreadId: T00187b92ccd5616f
+Date: Wed, 09 Apr 2025 07:43:38 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Kees Cook" <kees@kernel.org>, "Mark Brown" <broonie@kernel.org>
+Cc: "Linus Torvalds" <torvalds@linux-foundation.org>,
+ =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+ linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-security-module@vger.kernel.org
+Message-Id: <a379dc7d-5bb0-415b-b690-1c2d9106d7ca@app.fastmail.com>
+In-Reply-To: <202504081630.4CE88E855@keescook>
+References: 
+ <20250407-kbuild-disable-gcc-plugins-v1-1-5d46ae583f5e@kernel.org>
+ <202504081630.4CE88E855@keescook>
+Subject: Re: [PATCH] gcc-plugins: Disable GCC plugins for compile test builds
 Content-Type: text/plain
-X-ClientProxiedBy: EX19D042UWA004.ant.amazon.com (10.13.139.16) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+Content-Transfer-Encoding: 7bit
 
-DCCP was removed, so tcp_or_dccp_get_hashinfo() should be renamed.
+On Wed, Apr 9, 2025, at 01:32, Kees Cook wrote:
 
-Let's rename it to tcp_get_hashinfo().
+> I can reproduce this for GCC 14, but I can't reproduce this with GCC
+> 13. Which minor release is failing for you? My GCC 13 is:
+> gcc (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0
 
-Signed-off-by: Kuniyuki Iwashima <kuniyu@amazon.com>
----
- include/net/inet_hashtables.h   |  3 +--
- net/ipv4/inet_connection_sock.c |  9 +++++----
- net/ipv4/inet_hashtables.c      | 14 +++++++-------
- 3 files changed, 13 insertions(+), 13 deletions(-)
+I see it with "x86_64-linux-gnu-gcc-12 (Debian 12.2.0-14) 12.2.0"
+(cross-compiling from arm64).
 
-diff --git a/include/net/inet_hashtables.h b/include/net/inet_hashtables.h
-index d172b64a6320..4564b5d348b1 100644
---- a/include/net/inet_hashtables.h
-+++ b/include/net/inet_hashtables.h
-@@ -175,9 +175,8 @@ struct inet_hashinfo {
- 	bool				pernet;
- } ____cacheline_aligned_in_smp;
- 
--static inline struct inet_hashinfo *tcp_or_dccp_get_hashinfo(const struct sock *sk)
-+static inline struct inet_hashinfo *tcp_get_hashinfo(const struct sock *sk)
- {
--	/* TODO: rename function */
- 	return sock_net(sk)->ipv4.tcp_death_row.hashinfo;
- }
- 
-diff --git a/net/ipv4/inet_connection_sock.c b/net/ipv4/inet_connection_sock.c
-index a195203e7eef..20915895bdaa 100644
---- a/net/ipv4/inet_connection_sock.c
-+++ b/net/ipv4/inet_connection_sock.c
-@@ -330,7 +330,7 @@ inet_csk_find_open_port(const struct sock *sk, struct inet_bind_bucket **tb_ret,
- 			struct inet_bind2_bucket **tb2_ret,
- 			struct inet_bind_hashbucket **head2_ret, int *port_ret)
- {
--	struct inet_hashinfo *hinfo = tcp_or_dccp_get_hashinfo(sk);
-+	struct inet_hashinfo *hinfo = tcp_get_hashinfo(sk);
- 	int i, low, high, attempt_half, port, l3mdev;
- 	struct inet_bind_hashbucket *head, *head2;
- 	struct net *net = sock_net(sk);
-@@ -512,10 +512,10 @@ void inet_csk_update_fastreuse(struct inet_bind_bucket *tb,
-  */
- int inet_csk_get_port(struct sock *sk, unsigned short snum)
- {
--	struct inet_hashinfo *hinfo = tcp_or_dccp_get_hashinfo(sk);
- 	bool reuse = sk->sk_reuse && sk->sk_state != TCP_LISTEN;
- 	bool found_port = false, check_bind_conflict = true;
- 	bool bhash_created = false, bhash2_created = false;
-+	struct inet_hashinfo *hinfo = tcp_get_hashinfo(sk);
- 	int ret = -EADDRINUSE, port = snum, l3mdev;
- 	struct inet_bind_hashbucket *head, *head2;
- 	struct inet_bind2_bucket *tb2 = NULL;
-@@ -1022,9 +1022,10 @@ static bool reqsk_queue_unlink(struct request_sock *req)
- 	bool found = false;
- 
- 	if (sk_hashed(sk)) {
--		struct inet_hashinfo *hashinfo = tcp_or_dccp_get_hashinfo(sk);
--		spinlock_t *lock = inet_ehash_lockp(hashinfo, req->rsk_hash);
-+		struct inet_hashinfo *hashinfo = tcp_get_hashinfo(sk);
-+		spinlock_t *lock;
- 
-+		lock = inet_ehash_lockp(hashinfo, req->rsk_hash);
- 		spin_lock(lock);
- 		found = __sk_nulls_del_node_init_rcu(sk);
- 		spin_unlock(lock);
-diff --git a/net/ipv4/inet_hashtables.c b/net/ipv4/inet_hashtables.c
-index d1960701a3b4..da85cc30e382 100644
---- a/net/ipv4/inet_hashtables.c
-+++ b/net/ipv4/inet_hashtables.c
-@@ -176,7 +176,7 @@ void inet_bind_hash(struct sock *sk, struct inet_bind_bucket *tb,
-  */
- static void __inet_put_port(struct sock *sk)
- {
--	struct inet_hashinfo *hashinfo = tcp_or_dccp_get_hashinfo(sk);
-+	struct inet_hashinfo *hashinfo = tcp_get_hashinfo(sk);
- 	struct inet_bind_hashbucket *head, *head2;
- 	struct net *net = sock_net(sk);
- 	struct inet_bind_bucket *tb;
-@@ -215,7 +215,7 @@ EXPORT_SYMBOL(inet_put_port);
- 
- int __inet_inherit_port(const struct sock *sk, struct sock *child)
- {
--	struct inet_hashinfo *table = tcp_or_dccp_get_hashinfo(sk);
-+	struct inet_hashinfo *table = tcp_get_hashinfo(sk);
- 	unsigned short port = inet_sk(child)->inet_num;
- 	struct inet_bind_hashbucket *head, *head2;
- 	bool created_inet_bind_bucket = false;
-@@ -668,7 +668,7 @@ static bool inet_ehash_lookup_by_sk(struct sock *sk,
-  */
- bool inet_ehash_insert(struct sock *sk, struct sock *osk, bool *found_dup_sk)
- {
--	struct inet_hashinfo *hashinfo = tcp_or_dccp_get_hashinfo(sk);
-+	struct inet_hashinfo *hashinfo = tcp_get_hashinfo(sk);
- 	struct inet_ehash_bucket *head;
- 	struct hlist_nulls_head *list;
- 	spinlock_t *lock;
-@@ -740,7 +740,7 @@ static int inet_reuseport_add_sock(struct sock *sk,
- 
- int __inet_hash(struct sock *sk, struct sock *osk)
- {
--	struct inet_hashinfo *hashinfo = tcp_or_dccp_get_hashinfo(sk);
-+	struct inet_hashinfo *hashinfo = tcp_get_hashinfo(sk);
- 	struct inet_listen_hashbucket *ilb2;
- 	int err = 0;
- 
-@@ -785,7 +785,7 @@ int inet_hash(struct sock *sk)
- 
- void inet_unhash(struct sock *sk)
- {
--	struct inet_hashinfo *hashinfo = tcp_or_dccp_get_hashinfo(sk);
-+	struct inet_hashinfo *hashinfo = tcp_get_hashinfo(sk);
- 
- 	if (sk_unhashed(sk))
- 		return;
-@@ -873,7 +873,7 @@ inet_bind2_bucket_find(const struct inet_bind_hashbucket *head, const struct net
- struct inet_bind_hashbucket *
- inet_bhash2_addr_any_hashbucket(const struct sock *sk, const struct net *net, int port)
- {
--	struct inet_hashinfo *hinfo = tcp_or_dccp_get_hashinfo(sk);
-+	struct inet_hashinfo *hinfo = tcp_get_hashinfo(sk);
- 	u32 hash;
- 
- #if IS_ENABLED(CONFIG_IPV6)
-@@ -901,7 +901,7 @@ static void inet_update_saddr(struct sock *sk, void *saddr, int family)
- 
- static int __inet_bhash2_update_saddr(struct sock *sk, void *saddr, int family, bool reset)
- {
--	struct inet_hashinfo *hinfo = tcp_or_dccp_get_hashinfo(sk);
-+	struct inet_hashinfo *hinfo = tcp_get_hashinfo(sk);
- 	struct inet_bind_hashbucket *head, *head2;
- 	struct inet_bind2_bucket *tb2, *new_tb2;
- 	int l3mdev = inet_sk_bound_l3mdev(sk);
--- 
-2.49.0
-
+     Arnd
