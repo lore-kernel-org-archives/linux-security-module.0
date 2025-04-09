@@ -1,61 +1,61 @@
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A13D427C851
-	for <linux-security-module@vger.kernel.org>; Wed,  9 Apr 2025 18:53:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A795627C178
+	for <linux-security-module@vger.kernel.org>; Wed,  9 Apr 2025 18:53:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744224832; cv=none; b=acupARbHlB0Qtem5rvjPMYKZoVInLztc78wNxjFZiIuZbbBA/xJWQIFicNHTdrhUk4fEQs7XHoyT/IiaLSas8J5STBGVXeyfzAWW+CB5XcvgVTW9bWpTiaaCcy0CUNv3eBMsXufaTesZaN4YsntYSzP9e0KHFeubeXouB+8AES0=
+	t=1744224832; cv=none; b=BEVWcPxjvy7VaiVhOP+ZkjfiIx3VakEJNia/PLOYKxet57zy5nIRHhDVMFOMBPKJnA/R70OmrDTnmLUMyay2mBFYW9eVu4t2jXhm9BqyZpGMlD+mdyzI9xBHRLsRI7GkiFCA7xeRPelXuvRBWec5+reGsLzIk9egd8eJgqdEPuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1744224832; c=relaxed/simple;
-	bh=ncP3ipv/bV6iSyC9l86b4mFrIDnsVn2iRTu/Di2SXUk=;
+	bh=AVkJRjtNhqXhyUlfGVNTrUMP8tB9qm5nbyF0thgK/JU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=P/MpZQrcAd1+65a7mIgHOrkJA9gPxiMp/lRSKOupjlvTDJZwvE0pfufgTAx+ArfSpkT03RHld8VgOJdyY/72nyk7BHYGf9GqP8TOnDh41yI6Qi/nK9O78K8ddBnjlzTxAFD6FpoTaIij1wT5HrYRRWOotxKBl7YhiUT8T23CiH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=W/LggYET; arc=none smtp.client-ip=209.85.219.41
+	 MIME-Version; b=SMihUjJmLDrT3Q4nBePGQMMzjoiz7rTOoKpN1vCEuswC7IVzdX3ja1LOmgvlU8A2jSXOiBnJwNsQXITjMs/pAfWa9146X3Uag8mlsI4UsTc9NU60gOWxYD7wXBclTT+fquVEdkcgfrm5AIg9P3+l4zBqZUcj7gkaYRvPVBc/p24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=HdD5mXjx; arc=none smtp.client-ip=209.85.219.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="W/LggYET"
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6f0ad74483fso60584286d6.1
-        for <linux-security-module@vger.kernel.org>; Wed, 09 Apr 2025 11:53:50 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="HdD5mXjx"
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6ed0cc5eca4so11765676d6.1
+        for <linux-security-module@vger.kernel.org>; Wed, 09 Apr 2025 11:53:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1744224829; x=1744829629; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1744224828; x=1744829628; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5sXS9/0vT6l4p41gXbqSfGFGiz2UswVqMs3yG5LFyNk=;
-        b=W/LggYETnLpTLb0g9Ue+wdRfslprOAjhBy0PNhyciVkcc/uALWRtz5g0h04B5rZFLx
-         YxOEpPJ2bGxIdC5Sn573x7txiQoOtn8AEwsFwiuNYVwsfgsmOBUvPaO0gESZmmG8duMZ
-         4l+ECvAUg9uWuVzaV3wOMr0rVsVmL/benCYs4E9Ym7YWmh0+g0Nc55vX4pU5Cf0CGpbG
-         yLUJSVJTyuDvyHstM/GSThZiYwW+6bN3U/p/cBzjO6Pbn+YfjDx1YERKjPNZjpAOMHDn
-         4weI12tTh1AV5ueWM/8KryXOZqh0PpLn2bip5BjQIv1SgbLOp7wI095LHGtP/cPbHkj7
-         DLEQ==
+        bh=VKO29QV8yek+caUxIhnywepsP3FQanTvQ8hfSVxZoMM=;
+        b=HdD5mXjxQX7FsbEwP4WkXckCmmwws0HYW4RfZHgTC0lM1ZzVOfcb1JaeSzOf/q+9YF
+         I91aL0epn9KJhTeYe2caGurMjA3cQpbvou43oBTUv67LuGaALhv8Zp8DUIDsvC4iXYRL
+         bZSQE0qAiFq0YUALIXdVMrDfAwF5LO2gYKmnr/Har6pbItTvnth02ZfWu1pUZw/PnMq3
+         1QSocebQiJSexpE+efqfkhdXHzrXtCI39mTZF2WSL6W8Zgk55pw4eaGMSmmX+sdpfT5l
+         d7IJL+X8sHIKc1AyMU1Cn+BFEfT/VprrvbkKaIDKx4/tZ+hosUMjew2Kfgx7liweTGvR
+         NWhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744224829; x=1744829629;
+        d=1e100.net; s=20230601; t=1744224828; x=1744829628;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5sXS9/0vT6l4p41gXbqSfGFGiz2UswVqMs3yG5LFyNk=;
-        b=valWmx8n9WP6ZIWnYB4p7sXir8802TWAkzEc4eNPyeSFfq7AyTMt0crRBuwYje8YvU
-         OFnME+JI24Iw219ELR/jcPDNVacA0P3j1MxHn8bFk2ubwb9aK50eQUeByqq4wFB+qTzo
-         w3x1AhpEewjcknphIYo9IvBiBRIdpbs2FvYTChs7rhlB/368LfbqkxZ7JCvfti83a8z0
-         +3JPzhCyRIbnb4taVFqWIPMaYDz/35Wx17aXcdFZA/yyxCxEa8qyKEn8STCwGRkUn+PG
-         6l4OGq8YDm5zkuAfEBAPJ4P0Q+z0RNRaKvRKHj3dq7ID2/jGqS4xB2z0Y81fHsu5Jizd
-         NHLA==
-X-Gm-Message-State: AOJu0YzcAkfVnjySuMqXv7oFatjuvZR7LyT+FFEf+/Hli5r5yU36UKXo
-	Th2wuz46vqCsS02n5hAokecL9Q1dTMDIiq2m+oQwgj/CHwqvKc8WZWSRM9OD7vRYKatb1rhytVk
+        bh=VKO29QV8yek+caUxIhnywepsP3FQanTvQ8hfSVxZoMM=;
+        b=Xxb7WrC4BdRvjjB3bRAV+lYNP15pEo8ZPgvYm4v+8p6N670xibasBPnYHan7H5ODRm
+         ZdRkZNqon3GN7+LJXmT/0wJskpYwPXBuPjGcrjdv555M2OzEcAZH/i11CdcKxQsz1NGH
+         dwoUN3QQmVUgLo4CXgHCqnxruA544+EARstkdPJHB6PVOcZ016DEdIzECKpqimY4dGIl
+         QvG9cCQe+DgKKgd0oDAspFboeVlzgto/3+6vCJaQdWvZXe0aKMV2Swp4XtPerrD6mLDc
+         X6iUtDJZSEb0+FwmAzfK6JqchxMt1y5K2kxmMhUYNH5URu86PPSEruqe9rET2i5RwOOk
+         XcHw==
+X-Gm-Message-State: AOJu0YzeRMzh38Klnck/1wS45+iNz30mHIvhtwolMWkghyVLlv6RmXmw
+	2CHgFetyHX+S75CAn54H/WyL2ycPdffwDnSFH8E2Gyfrcy289zt7jH2CVK5qbwva+AdyS69w67c
 	=
-X-Gm-Gg: ASbGncu3Tc6nJAvvhWQsRVh7V61rKpcZFEY+E/eR3ULj3c5JuHXga54XLVpcISlbkMN
-	d08IAZRCsNaSqnohe1mTH+y+6ocsQG9cauzi4Pu0HXhekDHBuIITqUh5wSG4LefyOnK6BwZsJUL
-	r/A7VY+qQ2RV4poQ2TUPEdgjpRGc3MWOF0VjwrJ7NM+QsGMASTlw0mzZoncBj18licl1/pX/Fzs
-	l1/wG8YQAFIJ+X9OFROuFZJg33ntGbncDqsDXI7/Djj9AvNUd8DDQByhT3duZpWmqeWzoudw0sm
-	VfRglw3ndqadScMjDS7NsxpZh2nhzReTV+4QypMYc+LpwMaINie4fRpvU+d8DbJ6cG2AIzVsMXN
-	NpHmRl97oWcYL0FkEQhgi
-X-Google-Smtp-Source: AGHT+IGikOQWcj33KIm5rOskseWH/Yr6wXc7U+ofTbx3SIVskx7NHnm6yUKGbKIPuI6qNIrMd7NHZA==
-X-Received: by 2002:a05:6214:d8d:b0:6e8:f166:b19e with SMTP id 6a1803df08f44-6f0e5a7764fmr726926d6.17.1744224829253;
-        Wed, 09 Apr 2025 11:53:49 -0700 (PDT)
+X-Gm-Gg: ASbGncskj3cshB9M6tiTmVefz1q20CGsWUZu0jX7a7RL65hO1a1cGjPfq5dCTbS5tB6
+	imNBmev6bkNw7HjXkVHD3iuBjLeLgKmw64dfQKj1YvreS5nkTyRwqGh9evoPHmF1EYfM42a9cce
+	Pw1ApMVzdjzHxqM2z23a9uf1f5U8EMk/LuBCpcSRbuIaaEfr3QQPh2UKpYjOicBzfETAHGxQco9
+	46X6FyauwtDqkBuqxClkaKsOFcQ5V0LkXvWPeyRIt2vsKp8wpLoks6Fq8daqlr1tMMG5WsWpIEt
+	s5fNzD2nsE2ebM8DfIVFbIJlBunesmqjqjqyXtGGr0/zBoIml1biOC4aIjx/Vx3eXVdhVuo/4Rw
+	0Djd0TOIgAw==
+X-Google-Smtp-Source: AGHT+IGKMAYZQN2V76MHT3Js6gITRLB6/iF8KnmrzKiRhKmZSw8tQwBa3BrqLH4QaSEYiEHiRDo1lw==
+X-Received: by 2002:ad4:5993:0:b0:6ea:d503:6cfd with SMTP id 6a1803df08f44-6f0e4d04e59mr9943876d6.19.1744224828399;
+        Wed, 09 Apr 2025 11:53:48 -0700 (PDT)
 Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6f0de95f8besm10578896d6.10.2025.04.09.11.53.48
+        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6f0de98088dsm10479746d6.58.2025.04.09.11.53.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Wed, 09 Apr 2025 11:53:48 -0700 (PDT)
 From: Paul Moore <paul@paul-moore.com>
@@ -72,9 +72,9 @@ Cc: John Johansen <john.johansen@canonical.com>,
 	Micah Morton <mortonm@chromium.org>,
 	Casey Schaufler <casey@schaufler-ca.com>,
 	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Subject: [RFC PATCH 21/29] tomoyo: move initcalls to the LSM framework
-Date: Wed,  9 Apr 2025 14:50:06 -0400
-Message-ID: <20250409185019.238841-52-paul@paul-moore.com>
+Subject: [RFC PATCH 20/29] smack: move initcalls to the LSM framework
+Date: Wed,  9 Apr 2025 14:50:05 -0400
+Message-ID: <20250409185019.238841-51-paul@paul-moore.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250409185019.238841-31-paul@paul-moore.com>
 References: <20250409185019.238841-31-paul@paul-moore.com>
@@ -84,59 +84,110 @@ List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1727; i=paul@paul-moore.com; h=from:subject; bh=ncP3ipv/bV6iSyC9l86b4mFrIDnsVn2iRTu/Di2SXUk=; b=owEBbQKS/ZANAwAIAeog8tqXN4lzAcsmYgBn9sHoju/juiH/zVZi9WwQKm+CMvHYUamYCfM6H 9mASMylxUOJAjMEAAEIAB0WIQRLQqjPB/KZ1VSXfu/qIPLalzeJcwUCZ/bB6AAKCRDqIPLalzeJ c/WbEADf0j6M1iz4BcrNyNfco3AIMMOUeG94gDrwdaYGx0kQ26rRMWRKjyseQ6+Kn6ZAJzATNzT SHBx+ON6VTqMHm8cVtMET2Es0dOVG8ZBf7NF2e4WPP5KfROq7OI7YGMzZLBhHP/UOilArfMT5Iy GqMpA8Hx1LEoC2rxvxtZqVcLMuiBWW7jn4ta/L/0+W25JAmhHY4+G+HFXOFOuCDxPy/4Ru2X33F oMA0GQQVsTWKRIZSBRZZNHrLGWNYHoSGYRNygbf25G3AbE3pvr+Kg4mmtdi61IXtFriUEIMVzHB V57rkGShdnV88dG3FM2farEGXWwkB0hsTLDkWxmH8PL0KyRqvKEYM81U/dpg/Od0qW1IdD+hUy6 oPiRuvdBounRwNQTK0GCGvbY+Ub49xOvgI09tg9Dw8sDFlNdT7kfV9DjIYPsDKYBkMxuhFDTI0Z +vFa0rb3awovFPra5a9LA2EViyasxmzDUP+C1ukFdc3MhmPPFNuc4dsb9QqsbujhNzhpMrGj1TH WHOawO5bhZ5mtdPKoNQgB5yf2GLZcwHH9YPhMlNINkFcNnyTTjjEBF8P774dYasB9ReTykiyZ5Y 42Cb7gikVJg8rbZF5aWuyOgsSvLtnrFG1zeg+c3TnwQ7diJx8j+mXG5ZN5zqBaJiLphX4tNu/dV bvkltXm/UQgAU4A==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2917; i=paul@paul-moore.com; h=from:subject; bh=AVkJRjtNhqXhyUlfGVNTrUMP8tB9qm5nbyF0thgK/JU=; b=owEBbQKS/ZANAwAIAeog8tqXN4lzAcsmYgBn9sHiys+u8M003Mml32kBFN+BOJZVTyVEBEHBj 0HLFBNfBdKJAjMEAAEIAB0WIQRLQqjPB/KZ1VSXfu/qIPLalzeJcwUCZ/bB4gAKCRDqIPLalzeJ cym7D/0cO1r1L2sdyvHjCYfW98sk0Zr7C2IQOTybQtrf3CEyTX556gVxI7u0yaAGyFGJ7wTyBiN Tv0iaPq/MEstauti5dq5iOAcgZxmM8JqBbaTF489G2jODPQPZ0DRe2JKeV1PIJbW7z4LS4vNXMh sXuDOClT5cLJxPAZXK1jMLMmV38TB7tXZz3dXnNsLpil/tEqosw2iuthX/TOKNRfb+20vqty7mL AsnKQ+0egsonYJQu5BcLeurySXBfjqRuRcwjvsV6+4/QlM1wdVVo8wndbwKV9dkwlFh5GjEoN1d ztu8QcE0aq/LbEl5XZlhJrHf7V2w4kYwCHhMVihgf3YgHh+r3CPSqDqv1y3uVWnd9ydS9zW1uOL mltFax4XfE2WNeDrykY3vGPbHUri7vXIZCR90dj5/l1v+QnxKaq2j9/XNYPqaX6QInu+sGbWJO/ y/tugf9vWo1UGmXX5ClBR/zoiaiS40Y3TLKtjoITmpR1tQf9mJSpsug3eg32YbEr/nvzZEfXjz4 ITIvHlRUeOj0osAi3wx/lnSY+4uTspUFQDECDNPVBt2jZAHji2sDJxwZNFQseJZKkFAzW9MUtsL 9ItubyJeodzYOvxKi5bery3E5E/aKgaB/cWcMfTacaaKyGa0+wJxqKAG1apKl3pjPYd4oNgJy9j OyuqAL+gWyw8Byg==
 X-Developer-Key: i=paul@paul-moore.com; a=openpgp; fpr=7100AADFAE6E6E940D2E0AD655E45A5AE8CA7C8A
 Content-Transfer-Encoding: 8bit
 
+As the LSM framework only supports one LSM initcall callback for each
+initcall type, the init_smk_fs() and smack_nf_ip_init() functions were
+wrapped with a new function, smack_initcall() that is registered with
+the LSM framework.
+
 Signed-off-by: Paul Moore <paul@paul-moore.com>
 ---
- security/tomoyo/common.h        | 2 ++
- security/tomoyo/securityfs_if.c | 4 +---
- security/tomoyo/tomoyo.c        | 1 +
- 3 files changed, 4 insertions(+), 3 deletions(-)
+ security/smack/smack.h           |  6 ++++++
+ security/smack/smack_lsm.c       | 16 ++++++++++++++++
+ security/smack/smack_netfilter.c |  4 +---
+ security/smack/smackfs.c         |  4 +---
+ 4 files changed, 24 insertions(+), 6 deletions(-)
 
-diff --git a/security/tomoyo/common.h b/security/tomoyo/common.h
-index 0e8e2e959aef..3b2a97d10a5d 100644
---- a/security/tomoyo/common.h
-+++ b/security/tomoyo/common.h
-@@ -924,6 +924,8 @@ struct tomoyo_task {
+diff --git a/security/smack/smack.h b/security/smack/smack.h
+index bf6a6ed3946c..709e0d6cd5e1 100644
+--- a/security/smack/smack.h
++++ b/security/smack/smack.h
+@@ -275,6 +275,12 @@ struct smk_audit_info {
+ #endif
+ };
  
- /********** Function prototypes. **********/
- 
-+int tomoyo_interface_init(void);
++/*
++ * Initialization
++ */
++int init_smk_fs(void);
++int smack_nf_ip_init(void);
 +
- bool tomoyo_address_matches_group(const bool is_ipv6, const __be32 *address,
- 				  const struct tomoyo_group *group);
- bool tomoyo_compare_number_union(const unsigned long value,
-diff --git a/security/tomoyo/securityfs_if.c b/security/tomoyo/securityfs_if.c
-index 7e69747b2f77..33933645f5b9 100644
---- a/security/tomoyo/securityfs_if.c
-+++ b/security/tomoyo/securityfs_if.c
-@@ -233,7 +233,7 @@ static void __init tomoyo_create_entry(const char *name, const umode_t mode,
-  *
-  * Returns 0.
+ /*
+  * These functions are in smack_access.c
   */
--static int __init tomoyo_interface_init(void)
-+int __init tomoyo_interface_init(void)
- {
- 	struct tomoyo_domain_info *domain;
- 	struct dentry *tomoyo_dir;
-@@ -269,5 +269,3 @@ static int __init tomoyo_interface_init(void)
- 	tomoyo_load_builtin_policy();
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index e09b33fed5f0..80b129a0c92c 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -5277,6 +5277,21 @@ static __init int smack_init(void)
  	return 0;
  }
--
--fs_initcall(tomoyo_interface_init);
-diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
-index ed0f7b052a85..a015cf0c4a00 100644
---- a/security/tomoyo/tomoyo.c
-+++ b/security/tomoyo/tomoyo.c
-@@ -617,4 +617,5 @@ DEFINE_LSM(tomoyo) = {
- 	.flags = LSM_FLAG_LEGACY_MAJOR,
- 	.blobs = &tomoyo_blob_sizes,
- 	.init = tomoyo_init,
-+	.initcall_fs = tomoyo_interface_init,
+ 
++static int smack_initcall(void)
++{
++	int rc, rc_tmp;
++
++	rc_tmp = init_smk_fs();
++	if (rc_tmp)
++		rc = rc_tmp;
++
++	rc_tmp = smack_nf_ip_init();
++	if (!rc && rc_tmp)
++		rc = rc_tmp;
++
++	return rc;
++}
++
+ /*
+  * Smack requires early initialization in order to label
+  * all processes and objects when they are created.
+@@ -5286,4 +5301,5 @@ DEFINE_LSM(smack) = {
+ 	.flags = LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
+ 	.blobs = &smack_blob_sizes,
+ 	.init = smack_init,
++	.initcall_device = smack_initcall,
  };
+diff --git a/security/smack/smack_netfilter.c b/security/smack/smack_netfilter.c
+index 8fd747b3653a..17ba578b1308 100644
+--- a/security/smack/smack_netfilter.c
++++ b/security/smack/smack_netfilter.c
+@@ -68,7 +68,7 @@ static struct pernet_operations smack_net_ops = {
+ 	.exit = smack_nf_unregister,
+ };
+ 
+-static int __init smack_nf_ip_init(void)
++int __init smack_nf_ip_init(void)
+ {
+ 	if (smack_enabled == 0)
+ 		return 0;
+@@ -76,5 +76,3 @@ static int __init smack_nf_ip_init(void)
+ 	printk(KERN_DEBUG "Smack: Registering netfilter hooks\n");
+ 	return register_pernet_subsys(&smack_net_ops);
+ }
+-
+-__initcall(smack_nf_ip_init);
+diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
+index 90a67e410808..d33dd0368807 100644
+--- a/security/smack/smackfs.c
++++ b/security/smack/smackfs.c
+@@ -2980,7 +2980,7 @@ static struct vfsmount *smackfs_mount;
+  * Returns true if we were not chosen on boot or if
+  * we were chosen and filesystem registration succeeded.
+  */
+-static int __init init_smk_fs(void)
++int __init init_smk_fs(void)
+ {
+ 	int err;
+ 	int rc;
+@@ -3023,5 +3023,3 @@ static int __init init_smk_fs(void)
+ 
+ 	return err;
+ }
+-
+-__initcall(init_smk_fs);
 -- 
 2.49.0
 
