@@ -1,63 +1,63 @@
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D09F527C875
-	for <linux-security-module@vger.kernel.org>; Wed,  9 Apr 2025 18:53:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04B1B278149
+	for <linux-security-module@vger.kernel.org>; Wed,  9 Apr 2025 18:53:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744224840; cv=none; b=Nf9QWKnt62sG6Ton3kDptmzqiPUcrohKzfMA8WcS4NaelusrHrVVedIS/RWEHUlZgPGSjI/nfd6WWLvYYZLvwcpZ0x+lxp8QV//FciiyUh8IzzRUM8HbiSbNo+FW55V5SdO8bGNGJkejkSp5EOizj73FQoj46xWd7nsdZO3RHPU=
+	t=1744224840; cv=none; b=F03ov4GF11a5r+cPhkpetfvosR8PyP6CL8rZ7Nm6EObwVCFkLc8xOYo3yoJdXa4cn61xD9b2Z2xzvU5QYofGizRLls/XZrEijQbesoWADIAseOg3uEJ7tq6d++82XELVw0vEes1KEUNQvN6fbI5NHolivWg/HeGlbTDgdDZ/y7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1744224840; c=relaxed/simple;
-	bh=sA9hFu6yxQ2fxu1Aay8jzwhRLhp2Y5W1l64str1QuyU=;
+	bh=EOhKFjWPk2W+JME5T82mhmndtBkKJ4lU4BvvjUFikbE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=juxzVeJ+R6oG46Ze7M89pRhe7yVFxsRUogefvnw3iUIJcuAeNp8b18N0LkGxfmL+rg9SaqUBshxLywjN2jvANEBi5zExiAwJWkrQg+R4HmSyonP30U0FpLi4Nw2K7uXbKMzuzwPkuPoBBdHdKoeMTo8EAo4TYcHjafQisSbL+b4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=bgyjikM+; arc=none smtp.client-ip=209.85.222.176
+	 MIME-Version; b=bH1VocAS9Guk1RB1+kqTqV0pK2EtYzH5qU7g/GLQCwZnnNDUmzE1G0fX5fECQL/xL216eTFVLt2lTfWD9ow9UXdVFFn6Oj5Ob2agJQe86wj+SWkPCvJMStJjU6v3mbv9x7UDNMmNhAXuEytGke4wruf4iPB7Fz8WkN4qC2CbY/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=CsTLtt5V; arc=none smtp.client-ip=209.85.219.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="bgyjikM+"
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7c7913bab2cso2735785a.0
-        for <linux-security-module@vger.kernel.org>; Wed, 09 Apr 2025 11:53:57 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="CsTLtt5V"
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6e8f06e13a4so11159366d6.0
+        for <linux-security-module@vger.kernel.org>; Wed, 09 Apr 2025 11:53:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore.com; s=google; t=1744224836; x=1744829636; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9KR59u0DidL2Cq6sqSkjIG2B+LoZiP5bmcIUOEIwRHY=;
-        b=bgyjikM+OFLpE0YMQHFfu9QNy6oJeOBYGupE/r/53iq8Oeuc4Bzjk0A1cu/H2m5IrV
-         4qu43tGhzcRyV1xX0zBmg7QxsrUXyAy1rQ4j5P7PoK+chyH+gegLmjd7snziF1XhMVCq
-         hGP/FZ4/B8SHFSs+0+LbUsqHeNooPekHJyjxI/Zw0NAhGLii7X+CtBurJ8iNESQWsG74
-         72O+XKc+UVEiTmlS4xHmUwozctVgygmS/OsQ8DKen5XmEPeWbHNxqqvnmgaIz3C5byph
-         9xcUbwn04MZGT1mrhHIn9FEXRvdyUdjwYB/szI1tIAX81h8rq7mX51UdIRwpyklRywl6
-         Dr3A==
+        bh=FznqwKTb5apAKN7+PdryvYkHD8cDOK5T7aoHaw7NUu0=;
+        b=CsTLtt5Vw0RXkken0N8YjsPORF8mLyHFZ0YXh/8IbHm44jrOdpKe6MDn6jvI2WPG2w
+         w86XA9Ia6zquksFtR5r0aErwZLEfDVxGkqhgWtWF453+g+4wkWtEbweADVmhwcbFMwmn
+         SD/LsqvvLZdZQpVVBX/N/kSplrKirdbSHXlbdisQQQBoGQV81GnJKiiU+ijmfzl/GahL
+         J+dP/AM6JbH7WRIAWHnnbq8cFgR+ibIqocWO5F3mfehzv1vxIQ9HvGmsQhIsQHSiEKTi
+         +oWF1vf24K1MsMuUZsSHmyNyuF2wNOHrFOQdYF3AjitEh85qtBD5AYVWNukCziwlwyx8
+         PyQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1744224836; x=1744829636;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9KR59u0DidL2Cq6sqSkjIG2B+LoZiP5bmcIUOEIwRHY=;
-        b=WRmE5bFjmNC9dpyQp5Uv0buTf+flnhXpYPsdiCIFsmPuUerhLDNtq3yk+OLGNxm23W
-         N7F5SfJo4C+vVF1ZBCwSIGzj4PQFvrFmkQ65HZaR3RFujHmxgyQYqVMPL4SXMASi2jEF
-         xDJAdD003GPgaf8Oaqw2VvBJD/G69fRaT/xu2FA8Uht3WqBrmI/JLuE3B6Gagudgls/d
-         vgPRR3yIDcJlwHLLWtnpinomlaJ2uQbGJv8G+B7RtjbQdjQ7Bc6okrpUXS7lXFZN8jzq
-         xrwHaGdOGcVHt80xmjdac1NHWj8c9llJ/unDsmTnhRn0DZnSBk70Jno3eQRPO8FJuJ2f
-         7qig==
-X-Gm-Message-State: AOJu0YwS7r9gZyoQ8Dt2Kxo8bPyH2OmpEaG6bZyW3kLCEfYef/z/liLs
-	gd4HgFnyfiW5v6T2uWplqHQSyc3QsuNOviC8wz6x5G3MESHS2vgJ2i407zFlC1yqNcCaqJH/l7c
+        bh=FznqwKTb5apAKN7+PdryvYkHD8cDOK5T7aoHaw7NUu0=;
+        b=wlKfYytGhiYGBi2BoTyJSE8aORS8WZPg++QgxlWONNKy02r9fmUMZPjd26YAywyuhw
+         8bxtPB6NW4oTaCW00HtKEWKCkq7psjP9RO2VYJoZZiHEFy6hL3cs76SC0MIyjHtNjOiG
+         J8KMBaiK7oXIm9ZeFDRORYeMQIlQpsZ+dQAmW6JU7prygK6/+Fsk4x32pn5xfOZBU30K
+         UuN49+fnYu9w2lhYf/qC7Pf4m13WhiMtZTv/2apvbrUMFJ0ayzebhuNHCIAPoUTyUlP8
+         nFMIvzCQBC08UiHAppU24B+7SIHPdJ3MR80QqLq3wJpA6i2TaLPnFp5O6hj0zikF962X
+         gbeA==
+X-Gm-Message-State: AOJu0YzPIPK7g0FgrHCbO1kUNzRN7UKF7+Eh2QG9uePemZmDYrrRHkKZ
+	l/JvemWOgY4S8lyJvv/xmvtWQCqiJTiYcNZyzmCCikNiBmWzz3W/r85+qKrwM/l9fSOW/ucO2CA
 	=
-X-Gm-Gg: ASbGnct2Jt9Kn5vdfh26JszCmolHP1SieG6sMyJxhc9mnzfHKwfsIs/bDPXdO6izSig
-	L+VpkiXmFhokAkqox4+iFGoUurL3tKgeS546wQoolpHM+Xgw+s4zMSxMFxgHNdkzDl5LB0Y/9sy
-	7/h0izilzy4s/z2Y5qmn3O3NQqQZvVD9hUEfW7jSv4NA/hrxYMyqkHSJOXY5hrl+9nUll8ID6wb
-	TbciCwbt5zvuiH4/bKZgMmxbVBW4CGf/2DXwvvIl5DjxEg9uKGOsmHT3nx4jNsgfzqVofUiC0TH
-	iMebIy6c490P9+4MEXx6GhjghZq7B3+rLn9IWnoH0T5jdf9Y1mGMutl8HK1gWgFzQxYOxYc4VYd
-	cwJP7uWFNgA==
-X-Google-Smtp-Source: AGHT+IEmXwh8PMSvwNhNQdoQ5rDpIlhn0mK3qwkmY7f14ZzwIUqabp/1BQUBWzRJalPwMdRa9xnctA==
-X-Received: by 2002:a05:620a:19a7:b0:7c5:5d4b:e63c with SMTP id af79cd13be357-7c79dea5a60mr531660085a.47.1744224836571;
-        Wed, 09 Apr 2025 11:53:56 -0700 (PDT)
+X-Gm-Gg: ASbGncsUlhMANIL9fxAuQx4yGeQfVrLnbtt2S5AogYtAkj0oTSAfoA5dgpyz/VXpAqm
+	Nyno3nQ3rsUkAJX+CSgoLgqfnBaJw3dm/+ByybxSfXvMFosVCbaOOlFBJgkm/BSYXZdU0Peozav
+	dR06w9d/3qWni7fNXwJOpQvevAMqCGLZhPBTkt/Pdef7ZCgQ7L3grW2n9z45RdJhEa61egI/RUR
+	GYG3njIW+3QiuPFvjOve6z1JJxL3W5lZAXf57qaua4mqKtto2AJAc+R2H3Tpmty+CqRdpZtSQkR
+	1nnH+ES4EMks6euVHfrHIPiKvPNlczhre9WLCGzl1UskRg+xHdRj4ThKd8c5XMc/5w4aFrvsngg
+	RDy7A+S1ZXA==
+X-Google-Smtp-Source: AGHT+IFcpDIpn9yzoagNWWHWb0KRZQDu1+LHtagATeLv2Xto1aKeAbvvTuZ3Ieu6WEHXP5eExSlB2Q==
+X-Received: by 2002:a0c:da0b:0:b0:6e1:715f:cdf5 with SMTP id 6a1803df08f44-6f0e4cd95d2mr9685806d6.15.1744224835695;
+        Wed, 09 Apr 2025 11:53:55 -0700 (PDT)
 Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c7a11e69edsm105421785a.91.2025.04.09.11.53.56
+        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6f0de95fdd1sm10572126d6.18.2025.04.09.11.53.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Apr 2025 11:53:56 -0700 (PDT)
+        Wed, 09 Apr 2025 11:53:55 -0700 (PDT)
 From: Paul Moore <paul@paul-moore.com>
 To: linux-security-module@vger.kernel.org,
 	linux-integrity@vger.kernel.org,
@@ -72,9 +72,9 @@ Cc: John Johansen <john.johansen@canonical.com>,
 	Micah Morton <mortonm@chromium.org>,
 	Casey Schaufler <casey@schaufler-ca.com>,
 	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Subject: [RFC PATCH 29/29] lsm: add support for counting lsm_prop support among LSMs
-Date: Wed,  9 Apr 2025 14:50:14 -0400
-Message-ID: <20250409185019.238841-60-paul@paul-moore.com>
+Subject: [RFC PATCH 28/29] lsm: add a LSM_STARTED_ALL notification event
+Date: Wed,  9 Apr 2025 14:50:13 -0400
+Message-ID: <20250409185019.238841-59-paul@paul-moore.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250409185019.238841-31-paul@paul-moore.com>
 References: <20250409185019.238841-31-paul@paul-moore.com>
@@ -84,285 +84,43 @@ List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=9758; i=paul@paul-moore.com; h=from:subject; bh=sA9hFu6yxQ2fxu1Aay8jzwhRLhp2Y5W1l64str1QuyU=; b=owEBbQKS/ZANAwAIAeog8tqXN4lzAcsmYgBn9sIcbMe8gohBFeR3748PsPRVkHOc/35km4sRr I+9MXZ3tJKJAjMEAAEIAB0WIQRLQqjPB/KZ1VSXfu/qIPLalzeJcwUCZ/bCHAAKCRDqIPLalzeJ c4/uD/48/3OekZ3eSzC6s+GQ38Lz8gFwBEBQXwZfWDx4Z1h9kquTi1sintb3X0IFq1CfzBBqFA6 y6eseRq9oGNJonBBx00VC2bzZZuRFX7Rg10xgqa8e0uJHZkkfkbhrfqdOyBJ8lp22q6SGlgPqAc XPs/4Xs06gaAr7X4exV5MlPZpCcF8s9Clut0U7AnKlvto8kveg7GqZGwzIuFS6PKbVR5sYcZeDM T1UCg2UFX9D2+3uE2Jw5oYiJzDZn2xADu/qUjM1PX1+qLR+uBAT78IrcQtPOTWAzOZRvwuASHXI rzTBhjBnAxsNVDbDRXjLLZdeB80DNvgPfzqR0Yat8NsV4XJw5RR8Adl2Eh0iFM8u01HM6peWT+3 PXp96C3U8l1CJ1QjSbKdm457X7WRLuG+eUi+TNjB2rMaqLx7m9zitKws6JlPEowEHfjeLyPsfx1 TNFGHId3NEb0RVu0Q3/M7W+D5mbht/dyssffxWW0cloE1QGx5YSe/Eu/theLopGUSjDpN6SXeGd 6JAFzEuI6HMP5j7AUaEuCZlcKlRuAkcyk1yGjOktAje7rDWt83sJaonWtxbDa0VznMe4LjqTU52 2bq33T5mdM9+u4ivtA194VQYHulJvdLbgDn1edrR1fA+ZVfOYk9wcgwVLhRleuX2Yri/H19wySv hd0P0WTYrfaDJEw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=974; i=paul@paul-moore.com; h=from:subject; bh=EOhKFjWPk2W+JME5T82mhmndtBkKJ4lU4BvvjUFikbE=; b=owEBbQKS/ZANAwAIAeog8tqXN4lzAcsmYgBn9sIVMDPtmaBS3eTRatijsag/DCisyb4Lmzoy2 Rs47FQHppuJAjMEAAEIAB0WIQRLQqjPB/KZ1VSXfu/qIPLalzeJcwUCZ/bCFQAKCRDqIPLalzeJ c/RFD/4o3uzOvFwpzkMnP8y/Ozb/Np5gbUiHvWCt3vtNSOHqvzf0kuvVf7K5dmKldtN9VG7Fezu fWYpsoGhZq1z49oePGfOIAM4XWj0xIayB/J7ufugfCI31/BQHMPk34mgdIpFiRlFjMTJD1KFpWg ZYWf+18CAuYoS9wIZmHMJlsCWtYzYOXy/ahoakG3nmIJ4Z+GmMq+ofY3qFV4zo2Eo6v+61VGyNZ Uq6hHMbSW2PfT0Is3JBP2lOhMOmnFKkhRKKCwDoLihPwYTIQdtu+qaK7y8LC7ucVTU0cAXT6RGL eFpYPjQJaKBmUvbBLfxv5Tc42Uv7cWQ+q1qfZo5bHyN48RutQHFZVbvJ1D7JWF0vsgj114lQaeZ m7Mu4Gms3TrcFwXePRReawxy9shpXmPvBOZQxu1ZRpfm9M+jkSy6x4QzBNaWT5LogVX85zm3m8A 7ibswbi2ktT2WSqTN3qF9mYhOoMAKnaEGmvyWG/7hPZTAHtTZx9SMnExdo1qacaqvgfKszoEnqK IGORQ4NgoeRN3eDQ//A1nhOVv5t2+yBkmRYY36PlyByhrLMSyspPDATpYz+WAEnV70rUObVJ8Xe BYGN0lmKkTl2Eketjbl9HRhYZkElCMGP+VjXuLOBTTDLVDMDDP4fF1NBNSYKygjirwv9SRmxVEc osl1Vp92YTaoFUg==
 X-Developer-Key: i=paul@paul-moore.com; a=openpgp; fpr=7100AADFAE6E6E940D2E0AD655E45A5AE8CA7C8A
 Content-Transfer-Encoding: 8bit
 
-Add two new variables, lsm_count_prop_subj and lsm_count_prop_obj, to
-count the number of lsm_prop entries for subjects and objects across all
-of the enabled LSMs.  Future patches will use this to continue the
-conversion towards the lsm_prop struct.
+Add a new LSM notifier event, LSM_STARTED_ALL, which is fired once at
+boot when all of the LSMs have been started.
 
 Signed-off-by: Paul Moore <paul@paul-moore.com>
 ---
- include/linux/lsm_hooks.h         | 6 ++++++
- security/apparmor/lsm.c           | 1 +
- security/bpf/hooks.c              | 1 +
- security/commoncap.c              | 1 +
- security/integrity/evm/evm_main.c | 1 +
- security/integrity/ima/ima_main.c | 1 +
- security/ipe/ipe.c                | 1 +
- security/landlock/setup.c         | 1 +
- security/loadpin/loadpin.c        | 1 +
- security/lockdown/lockdown.c      | 1 +
- security/lsm.h                    | 4 ++++
- security/lsm_init.c               | 6 ++++++
- security/safesetid/lsm.c          | 1 +
- security/security.c               | 3 +++
- security/selinux/hooks.c          | 1 +
- security/smack/smack_lsm.c        | 1 +
- security/tomoyo/tomoyo.c          | 1 +
- security/yama/yama_lsm.c          | 1 +
- 18 files changed, 33 insertions(+)
+ include/linux/security.h | 1 +
+ security/lsm_init.c      | 1 +
+ 2 files changed, 2 insertions(+)
 
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 0d2c2a017ffc..5bc144c5f685 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -71,16 +71,22 @@ struct lsm_static_calls_table {
- 	#undef LSM_HOOK
- } __packed __randomize_layout;
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 8aac21787a9f..a0ff4fc69375 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -85,6 +85,7 @@ struct timezone;
  
-+#define LSM_ID_FLG_NONE			0x00000000
-+#define LSM_ID_FLG_PROP_SUBJ		0x00000001
-+#define LSM_ID_FLG_PROP_OBJ		0x00000002
-+
- /**
-  * struct lsm_id - Identify a Linux Security Module.
-  * @lsm: name of the LSM, must be approved by the LSM maintainers
-  * @id: LSM ID number from uapi/linux/lsm.h
-+ * @flags: LSM flags, see LSM_ID_FLG_XXX
-  *
-  * Contains the information that identifies the LSM.
-  */
- struct lsm_id {
- 	const char *name;
- 	u64 id;
-+	u32 flags;
+ enum lsm_event {
+ 	LSM_POLICY_CHANGE,
++	LSM_STARTED_ALL,
  };
  
- /*
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index 2fefaab6349f..db8592bed189 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -1428,6 +1428,7 @@ struct lsm_blob_sizes apparmor_blob_sizes __ro_after_init = {
- static const struct lsm_id apparmor_lsmid = {
- 	.name = "apparmor",
- 	.id = LSM_ID_APPARMOR,
-+	.flags = LSM_ID_FLG_PROP_SUBJ,
- };
- 
- static struct security_hook_list apparmor_hooks[] __ro_after_init = {
-diff --git a/security/bpf/hooks.c b/security/bpf/hooks.c
-index 40efde233f3a..c72df6ff69f7 100644
---- a/security/bpf/hooks.c
-+++ b/security/bpf/hooks.c
-@@ -18,6 +18,7 @@ static struct security_hook_list bpf_lsm_hooks[] __ro_after_init = {
- static const struct lsm_id bpf_lsmid = {
- 	.name = "bpf",
- 	.id = LSM_ID_BPF,
-+	.flags = LSM_ID_FLG_PROP_SUBJ | LSM_ID_FLG_PROP_OBJ,
- };
- 
- static int __init bpf_lsm_init(void)
-diff --git a/security/commoncap.c b/security/commoncap.c
-index e04aa4f50eaf..fab692104c87 100644
---- a/security/commoncap.c
-+++ b/security/commoncap.c
-@@ -1479,6 +1479,7 @@ int cap_mmap_addr(unsigned long addr)
- static const struct lsm_id capability_lsmid = {
- 	.name = "capability",
- 	.id = LSM_ID_CAPABILITY,
-+	.flags = LSM_ID_FLG_NONE,
- };
- 
- static struct security_hook_list capability_hooks[] __ro_after_init = {
-diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-index 770d0411da2b..b3a3324f48b1 100644
---- a/security/integrity/evm/evm_main.c
-+++ b/security/integrity/evm/evm_main.c
-@@ -1162,6 +1162,7 @@ static struct security_hook_list evm_hooks[] __ro_after_init = {
- static const struct lsm_id evm_lsmid = {
- 	.name = "evm",
- 	.id = LSM_ID_EVM,
-+	.flags = LSM_ID_FLG_NONE,
- };
- 
- static int __init init_evm_lsm(void)
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 1687badafb48..d98e7815175b 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -1237,6 +1237,7 @@ static struct security_hook_list ima_hooks[] __ro_after_init = {
- static const struct lsm_id ima_lsmid = {
- 	.name = "ima",
- 	.id = LSM_ID_IMA,
-+	.flags = LSM_ID_FLG_NONE,
- };
- 
- static int __init init_ima_lsm(void)
-diff --git a/security/ipe/ipe.c b/security/ipe/ipe.c
-index 71644748ed56..7d9cdbc3d23a 100644
---- a/security/ipe/ipe.c
-+++ b/security/ipe/ipe.c
-@@ -24,6 +24,7 @@ static struct lsm_blob_sizes ipe_blobs __ro_after_init = {
- static const struct lsm_id ipe_lsmid = {
- 	.name = "ipe",
- 	.id = LSM_ID_IPE,
-+	.flags = LSM_ID_FLG_NONE,
- };
- 
- struct ipe_superblock *ipe_sb(const struct super_block *sb)
-diff --git a/security/landlock/setup.c b/security/landlock/setup.c
-index 47dac1736f10..5c8d5693c4c7 100644
---- a/security/landlock/setup.c
-+++ b/security/landlock/setup.c
-@@ -25,6 +25,7 @@ bool landlock_initialized __ro_after_init = false;
- const struct lsm_id landlock_lsmid = {
- 	.name = LANDLOCK_NAME,
- 	.id = LSM_ID_LANDLOCK,
-+	.flags = LSM_ID_FLG_NONE,
- };
- 
- struct lsm_blob_sizes landlock_blob_sizes __ro_after_init = {
-diff --git a/security/loadpin/loadpin.c b/security/loadpin/loadpin.c
-index 273ffbd6defe..05a842c36fd8 100644
---- a/security/loadpin/loadpin.c
-+++ b/security/loadpin/loadpin.c
-@@ -211,6 +211,7 @@ static int loadpin_load_data(enum kernel_load_data_id id, bool contents)
- static const struct lsm_id loadpin_lsmid = {
- 	.name = "loadpin",
- 	.id = LSM_ID_LOADPIN,
-+	.flags = LSM_ID_FLG_NONE,
- };
- 
- static struct security_hook_list loadpin_hooks[] __ro_after_init = {
-diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
-index 8d46886d2cca..a2396b67bfe4 100644
---- a/security/lockdown/lockdown.c
-+++ b/security/lockdown/lockdown.c
-@@ -79,6 +79,7 @@ static struct security_hook_list lockdown_hooks[] __ro_after_init = {
- static const struct lsm_id lockdown_lsmid = {
- 	.name = "lockdown",
- 	.id = LSM_ID_LOCKDOWN,
-+	.flags = LSM_ID_FLG_NONE,
- };
- 
- static int __init lockdown_lsm_init(void)
-diff --git a/security/lsm.h b/security/lsm.h
-index c432dc0c5e30..d1d54540da98 100644
---- a/security/lsm.h
-+++ b/security/lsm.h
-@@ -24,6 +24,10 @@ extern bool lsm_debug;
- extern unsigned int lsm_count;
- extern const struct lsm_id *lsm_idlist[];
- 
-+/* LSM property configuration */
-+extern unsigned int lsm_count_prop_subj;
-+extern unsigned int lsm_count_prop_obj;
-+
- /* LSM blob configuration */
- extern struct lsm_blob_sizes blob_sizes;
- 
+ struct dm_verity_digest {
 diff --git a/security/lsm_init.c b/security/lsm_init.c
-index cad6d243a2a6..c2ef4db055db 100644
+index c0881407ca3f..cad6d243a2a6 100644
 --- a/security/lsm_init.c
 +++ b/security/lsm_init.c
-@@ -6,6 +6,7 @@
- #define pr_fmt(fmt) "LSM: " fmt
+@@ -553,6 +553,7 @@ static int __init security_initcall_late(void)
  
- #include <linux/init.h>
-+#include <linux/lsm_count.h>
- #include <linux/lsm_hooks.h>
+ 	rc = lsm_initcall(late);
+ 	lsm_pr_dbg("all enabled LSMs fully activated\n");
++	call_blocking_lsm_notifier(LSM_STARTED_ALL, NULL);
  
- #include "lsm.h"
-@@ -189,6 +190,11 @@ static void __init lsm_order_append(struct lsm_info *lsm, const char *src)
- 	lsm_order[lsm_count] = lsm;
- 	lsm_idlist[lsm_count++] = lsm->id;
- 
-+	if (lsm->id->flags & LSM_ID_FLG_PROP_SUBJ)
-+		lsm_count_prop_subj++;
-+	if (lsm->id->flags & LSM_ID_FLG_PROP_OBJ)
-+		lsm_count_prop_obj++;
-+
- 	lsm_pr_dbg("enabling LSM %s:%s\n", src, lsm->id->name);
+ 	return rc;
  }
- 
-diff --git a/security/safesetid/lsm.c b/security/safesetid/lsm.c
-index d5fb949050dd..ac25674376fe 100644
---- a/security/safesetid/lsm.c
-+++ b/security/safesetid/lsm.c
-@@ -265,6 +265,7 @@ static int safesetid_task_fix_setgroups(struct cred *new, const struct cred *old
- static const struct lsm_id safesetid_lsmid = {
- 	.name = "safesetid",
- 	.id = LSM_ID_SAFESETID,
-+	.flags = LSM_ID_FLG_NONE,
- };
- 
- static struct security_hook_list safesetid_security_hooks[] = {
-diff --git a/security/security.c b/security/security.c
-index cbd544d71093..2b9dde02f4de 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -78,6 +78,9 @@ bool lsm_debug __ro_after_init;
- unsigned int lsm_count __ro_after_init;
- const struct lsm_id *lsm_idlist[MAX_LSM_COUNT];
- 
-+unsigned int lsm_count_prop_subj __ro_after_init;
-+unsigned int lsm_count_prop_obj __ro_after_init;
-+
- struct lsm_blob_sizes blob_sizes;
- 
- struct kmem_cache *lsm_file_cache;
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 95b2399b1f4d..1dc4b3987af4 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -7200,6 +7200,7 @@ static int selinux_uring_allowed(void)
- static const struct lsm_id selinux_lsmid = {
- 	.name = "selinux",
- 	.id = LSM_ID_SELINUX,
-+	.flags = LSM_ID_FLG_PROP_SUBJ | LSM_ID_FLG_PROP_OBJ,
- };
- 
- /*
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 80b129a0c92c..d04667a42f91 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -5042,6 +5042,7 @@ struct lsm_blob_sizes smack_blob_sizes __ro_after_init = {
- static const struct lsm_id smack_lsmid = {
- 	.name = "smack",
- 	.id = LSM_ID_SMACK,
-+	.flags = LSM_ID_FLG_PROP_SUBJ | LSM_ID_FLG_PROP_OBJ,
- };
- 
- static struct security_hook_list smack_hooks[] __ro_after_init = {
-diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
-index a015cf0c4a00..0a030cbdf424 100644
---- a/security/tomoyo/tomoyo.c
-+++ b/security/tomoyo/tomoyo.c
-@@ -547,6 +547,7 @@ static void tomoyo_task_free(struct task_struct *task)
- static const struct lsm_id tomoyo_lsmid = {
- 	.name = "tomoyo",
- 	.id = LSM_ID_TOMOYO,
-+	.flags = LSM_ID_FLG_NONE,
- };
- 
- /* tomoyo_hooks is used for registering TOMOYO. */
-diff --git a/security/yama/yama_lsm.c b/security/yama/yama_lsm.c
-index 38b21ee0c560..e4a6cf663177 100644
---- a/security/yama/yama_lsm.c
-+++ b/security/yama/yama_lsm.c
-@@ -419,6 +419,7 @@ static int yama_ptrace_traceme(struct task_struct *parent)
- static const struct lsm_id yama_lsmid = {
- 	.name = "yama",
- 	.id = LSM_ID_YAMA,
-+	.flags = LSM_ID_FLG_NONE,
- };
- 
- static struct security_hook_list yama_hooks[] __ro_after_init = {
 -- 
 2.49.0
 
