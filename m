@@ -1,215 +1,114 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6321A265CDA
-	for <linux-security-module@vger.kernel.org>; Wed,  9 Apr 2025 15:18:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12D271DFFD;
+	Wed,  9 Apr 2025 15:22:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744211935; cv=none; b=axb3dfws5uIe/Dm//+TNzJMF/9ZpSGCzgcOKiKjOskM2v1kOGJCLyhEVltI9Ko1TBGxCJkN2g5b2x/7cqegfsRp/7VLFJPplk8uycCG4Dj3yXBjtxMtwrpt/e1/BzKuY8NAHHP5Xy9bB1zeMh4mWs0lnW/MrhGjbneobHsOgwGs=
+	t=1744212175; cv=none; b=BeoMfYr8BOurpN3hLw60yROh8+qlcu2FAQAHjDvQhYkjf5LOknmZfKiqr+tj4LLk7lKW0kI/GdDOg+79Zjs7woyiamu5GS/yJguWN04s8WNinMK0nx8aCxGGDOGdFstakWvZTXOhqapq7xPezRBqYNQDlASVXTbO+ajVH2hRF2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744211935; c=relaxed/simple;
-	bh=neMBjAfQvFLiQGn9l5qtqonTP5JJPsOXzqJ5oJj7+S4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CiZHr+dQW1BIda42T6SlXKKres1HtIbfI7jaeXYIQ5EVBDQ5q+JhUxVxBv5dbSNc5k/QT+AO2uWB6chWGTRTeHRgdfT1GmYxWmOmzDjK5Q/jByssnpaf+IdaGJUoYroVn2/jI8O1lGktopB1QZQtYSvQBDQ/O6R6S5fQuNP+iSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Atepkl2u; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	s=arc-20240116; t=1744212175; c=relaxed/simple;
+	bh=oHhieYQ3u7Cu2t63oLzNOJtR2CvzcHlG6+SSCnb0daE=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=qp4PPY5aTP+eCm3ZXWvb71sBC56LMnOVy+mENd4IzTGrFTRS1wr6NVoLbPuYmRnyrI13xIIsakWfEJHPpvnOR9qG22qzCf8NgR0HVUdLuYy425yn3WYVPk7Pn7gidPfDiGQbIXB4RuO2btKcWxPse7QznkKdmLwLswmoxRJz36M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=AOmDrUh7; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=GPuN3Mpt; arc=none smtp.client-ip=202.12.124.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Atepkl2u"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-39d83782ef6so584640f8f.0
-        for <linux-security-module@vger.kernel.org>; Wed, 09 Apr 2025 08:18:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1744211931; x=1744816731; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DIx/sSq+dGHJdaQfwcLez7458y2PCQ4hjTFY5rQhv8A=;
-        b=Atepkl2u9GX51rJ2+jWMMqOMHlA9CXIlv49qKsofXECfyjR0DLODgfDJawseVW3rUK
-         R1fQaui7q83fZ+okdNeopcdse1LgvWMTrucG68fh40jjfIaeP411TRMoCoeP027/qBzD
-         BogwmZml5sAfgkz+3t1iVNrDhLHXVi2yOrX0MlCj+/1g4SOPjH0VN7DO/zTKa14+zLHu
-         MXZccbUheQo7HA3F9yewKDK0lRPjqAbQAKL1juiYdW+QaqdpMZgxASkMwxdLY/B7s9pq
-         uRqvyz6IyT5GRI40qc4dTXKW080YzxpuB6Bov7F/aBu0bpmo1XrvavtKhzTVkacgB+Dg
-         0I4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744211931; x=1744816731;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DIx/sSq+dGHJdaQfwcLez7458y2PCQ4hjTFY5rQhv8A=;
-        b=uC1xb5nHv8hJzWcuMZ4Vtrc/dmEr1pU2pMADFBf75ZxRQGvHLD467t8cXd1hSmB86g
-         4QSeGmmuG7n5TF6tKUFTD3LgcXY7VHVidNwwpPIGKHoktkffPHrzRTl8NcODxlwZ2hqY
-         /CpEfYdfhkWDweb6+fq1f3XlO8to2WorvOE7Dl9Gkg1cM2NpMRGvwZlCnQlV4zNh6zdO
-         KMr9mdDtueevaO7GlAJv1N5Ynmt0cuhjt9W1El3OuL2/RpTIHqvCtPWCpvIAI2uLyukI
-         PovQFIuZk0/cnwehyvS7O6H53xmvhumAhKstvnN9YVQa4jrIW002tEeYT7j4MYmwfpFH
-         PVmA==
-X-Gm-Message-State: AOJu0YwfRpPNbvbO7Trj7FfndEPEPK/SwOp42y20MBvzpRcrZDCgvGP/
-	ROJuoqpJnHMfQS/WUwayYU267Qd3dx9F7Pb9zHWEzdfM466hz9ldAsbyIiapfL4=
-X-Gm-Gg: ASbGnct2/NeuOiC3KyyqMDId9ytewTn3YwTsHsWKhu4bNYA8dGaVa1YChp1EkwamL0j
-	RHeVjgTwaJu+uImzvZFxICHoHfqwzc7B+CLSTojKbVNtWibavvlWXaTPQ/s5zyrKSwzkdV22IDJ
-	7Vs/2UsnS49X/uhpP98lmAxAmNLtWPBiyhNMnZZjAonvAUkTzwX5NuEXF6hCbtt6B9nBjF60jcP
-	07hAYhJRn5+bgHT3DrLYbSUjGTEWJ/HMu/9Xc7M/66ogvT6zM+X9qE2dNpkEla3YlbpGBJvKNWv
-	Am9yevGsBO2ibWlpGM7pI2H3RXHlzqylm3bwtO4Z5S2z1Q==
-X-Google-Smtp-Source: AGHT+IH0W2q+QLXgY50bsUbLBMvi45RCcTvwgobZWuIbFNKFA/xqikUTmik8xCbwlkIbPAogtMZxiA==
-X-Received: by 2002:a5d:64cf:0:b0:391:865:5a93 with SMTP id ffacd0b85a97d-39d87ff0a02mr3195457f8f.22.1744211930617;
-        Wed, 09 Apr 2025 08:18:50 -0700 (PDT)
-Received: from [192.168.0.20] ([212.21.133.214])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39d894001a4sm1916107f8f.98.2025.04.09.08.18.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Apr 2025 08:18:50 -0700 (PDT)
-Message-ID: <472d6a3e-2d87-438f-b75b-c0e4eb0141d9@suse.com>
-Date: Wed, 9 Apr 2025 18:18:49 +0300
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="AOmDrUh7";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GPuN3Mpt"
+Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
+	by mailfout.stl.internal (Postfix) with ESMTP id BE95F1140103;
+	Wed,  9 Apr 2025 11:22:51 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-12.internal (MEProxy); Wed, 09 Apr 2025 11:22:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1744212171;
+	 x=1744298571; bh=yuZmCfMgXvUIwnN64SS6KHwYGRZR2iDiBQ5BByDgfC8=; b=
+	AOmDrUh7XyQFaF71lhNUncQsvyBm47GhwBH4kyZMcnkf32xsGlUC/3wrupVT2/Xw
+	a8X8UGLuY50Oik+Oh41Swd3x22bhopkiHMZdMdmuohXMzFYbxCsHvpIQtHxEGUsx
+	3Ebx9upr4MxF6EofMqgER6GiUHFCiVTlJmTDSlvrLNaTPfW2MRpL4SuC8ovUnXcD
+	dZ/iCWOCVFZ3nETKSIivJ6xrEAsN9x3U3HoKjvk+wPvuVnhM5y7Atg3y+LATJqaM
+	qydic/ZF0Lc7MmIW3TezxPkeSzObNrhV6ei9XGU2FEugdub35EXsbV0o2TWsEyHl
+	7/5pvclCD7c9IiNOS+WdVA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1744212171; x=
+	1744298571; bh=yuZmCfMgXvUIwnN64SS6KHwYGRZR2iDiBQ5BByDgfC8=; b=G
+	PuN3MptOcgZsxMfLQo58bRd2AMCrUesuWg/eku17kgi8FLV60UZNVpoqKaE85qww
+	awPEoUz10vDSVfnOmj+1qgBiWRDN9Q6FEJQrD1PLxClB5XuLRUddYUc4dLqStPkg
+	sXp6sqacS9nyL7G5sPAAaq204VOCg3rPYq7V1BBIOTrkrS69uVBoB9Ac+BWTbY2G
+	kaBdyCLjJGIouCsS/szBeutxGB2Rt44F18+WRTa74nKyWHkwa60pLNIZ34TlEJ+B
+	ASdcbOxW4L0roj/CfXe7nQbgWxhdDqiuiZNzk7W0hp5/oWcK7XvOBJWtDX1hWQop
+	dmsgn/Hgh6fVGMu6a9bzQ==
+X-ME-Sender: <xms:ypD2Z2hFzCQmWNRxy5wrLq3ZRWrIKEubaDQJSQZtU_rbOgpYdo59ag>
+    <xme:ypD2Z3AZK6Wr1AXl7Uz37-aICMvPpa25TTFr9wU7flGxlnEa_jYqSl634x1THxuye
+    WMZol6ZeRsx96skosE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvtdeifeehucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
+    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
+    gsrdguvgeqnecuggftrfgrthhtvghrnhepfefhheetffduvdfgieeghfejtedvkeetkeej
+    feekkeelffejteevvdeghffhiefhnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenuc
+    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnuges
+    rghrnhgusgdruggvpdhnsggprhgtphhtthhopeduuddpmhhouggvpehsmhhtphhouhhtpd
+    hrtghpthhtohepmhhitgesughighhikhhougdrnhgvthdprhgtphhtthhopehgnhhorggt
+    khesghhoohhglhgvrdgtohhmpdhrtghpthhtohepshgvrhhgvgeshhgrlhhlhihnrdgtoh
+    hmpdhrtghpthhtohepsghrohhonhhivgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
+    ghhushhtrghvohgrrhhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkvggvsheskh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhmohhrrhhishesnhgrmhgvihdrohhrghdp
+    rhgtphhtthhopehprghulhesphgruhhlqdhmohhorhgvrdgtohhmpdhrtghpthhtoheplh
+    hinhhugidqhhgrrhguvghnihhnghesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:ypD2Z-HM1Jaauxrekc682Rtj3ZlKjI-kN-NFgTtRAekkCKy6usoaTA>
+    <xmx:ypD2Z_TN_Kq7WORQXyjLWgLeVHbV9BK-KAGkn-mXmtszLe9MDXAL6Q>
+    <xmx:ypD2Zzyt4J_OaP0dS0q8U7N2CH5sEMt1IglS6wLzMz748xrn7_FXwA>
+    <xmx:ypD2Z95GhCo_c5_jGbyZ0h-JyyAB-sbu7qbEp7mLk4I3Lj9n0r9TpQ>
+    <xmx:y5D2Z5DQnlum0O2xoKsPYQTUqYsQnat8Z0-A3qb7hBBSYGAN4QhwdUyn>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 9595F2220073; Wed,  9 Apr 2025 11:22:50 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] lockdown: Switch implementation to using bitmap
-To: sergeh@kernel.org
-Cc: linux-security-module@vger.kernel.org, paul@paul-moore.com,
- serge@hallyn.com, kees@kernel.org, linux-kernel@vger.kernel.org,
- kirill.shutemov@linux.intel.com, linux-coco@lists.linux.dev
-References: <20250321102422.640271-1-nik.borisov@suse.com>
- <20250321102422.640271-2-nik.borisov@suse.com> <Z93NW3za1ilzVxLK@lei>
-Content-Language: en-US
-From: Nikolay Borisov <nik.borisov@suse.com>
-In-Reply-To: <Z93NW3za1ilzVxLK@lei>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-ThreadId: T281fa94f3e1ea3ab
+Date: Wed, 09 Apr 2025 17:22:30 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Kees Cook" <kees@kernel.org>
+Cc: "Mark Brown" <broonie@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ "Paul Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>, linux-hardening@vger.kernel.org,
+ linux-security-module@vger.kernel.org,
+ =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+ linux-kernel@vger.kernel.org
+Message-Id: <37bccc57-01b2-46ab-b973-ad52590f4ca2@app.fastmail.com>
+In-Reply-To: <20250409151154.work.872-kees@kernel.org>
+References: <20250409151154.work.872-kees@kernel.org>
+Subject: Re: [PATCH] hardening: Disable GCC randstruct for COMPILE_TEST
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
+On Wed, Apr 9, 2025, at 17:11, Kees Cook wrote:
+> There is a GCC crash bug in the randstruct for latest GCC versions that
+> is being tickled by landlock[1]. Temporarily disable GCC randstruct for
+> COMPILE_TEST builds to unbreak CI systems for the coming -rc2. This can
+> be restored once the bug is fixed.
+>
+> Suggested-by: Mark Brown <broonie@kernel.org>
+> Link: 
+> https://lore.kernel.org/all/20250407-kbuild-disable-gcc-plugins-v1-1-5d46ae583f5e@kernel.org/ 
+> [1]
+> Signed-off-by: Kees Cook <kees@kernel.org>
 
-
-On 21.03.25 г. 22:34 ч., sergeh@kernel.org wrote:
-> On Fri, Mar 21, 2025 at 12:24:20PM +0200, Nikolay Borisov wrote:
->> Tracking the lockdown at the depth granularity rather than at the
->> individual is somewhat inflexible as it provides an "all or nothing"
->> approach. Instead there are use cases where it  will be useful to be
->> able to lockdown individual features - TDX for example wants to disable
->> access to just /dev/mem.
->>
->> To accommodate this use case switch the internal implementation to using
->> a bitmap so that individual lockdown features can be turned on. At the
->> same time retain the existing semantic where
->> INTEGRITY_MAX/CONFIDENTIALITY_MAX are treated as wildcards meaning "lock
->> everything below me".
->>
->> Signed-off-by: Nikolay Borisov <nik.borisov@suse.com>
-> 
-> Reviewed-by: Serge Hallyn <sergeh@kernel.org>
-> 
-> but one comment below
-> 
->> ---
->>   security/lockdown/lockdown.c | 19 ++++++++++++-------
->>   1 file changed, 12 insertions(+), 7 deletions(-)
->>
->> diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
->> index cf83afa1d879..5014d18c423f 100644
->> --- a/security/lockdown/lockdown.c
->> +++ b/security/lockdown/lockdown.c
->> @@ -10,12 +10,13 @@
->>    * 2 of the Licence, or (at your option) any later version.
->>    */
->>   
->> +#include <linux/bitmap.h>
->>   #include <linux/security.h>
->>   #include <linux/export.h>
->>   #include <linux/lsm_hooks.h>
->>   #include <uapi/linux/lsm.h>
->>   
->> -static enum lockdown_reason kernel_locked_down;
->> +static DECLARE_BITMAP(kernel_locked_down, LOCKDOWN_CONFIDENTIALITY_MAX);
->>   
->>   static const enum lockdown_reason lockdown_levels[] = {LOCKDOWN_NONE,
->>   						 LOCKDOWN_INTEGRITY_MAX,
->> @@ -26,10 +27,15 @@ static const enum lockdown_reason lockdown_levels[] = {LOCKDOWN_NONE,
->>    */
->>   static int lock_kernel_down(const char *where, enum lockdown_reason level)
->>   {
->> -	if (kernel_locked_down >= level)
->> -		return -EPERM;
->>   
->> -	kernel_locked_down = level;
->> +	if (level > LOCKDOWN_CONFIDENTIALITY_MAX)
->> +		return -EINVAL;
->> +
->> +	if (level == LOCKDOWN_INTEGRITY_MAX || level == LOCKDOWN_CONFIDENTIALITY_MAX)
->> +		bitmap_set(kernel_locked_down, 1, level);
->> +	else
->> +		bitmap_set(kernel_locked_down, level, 1);
->> +
->>   	pr_notice("Kernel is locked down from %s; see man kernel_lockdown.7\n",
->>   		  where);
->>   	return 0;
->> @@ -62,13 +68,12 @@ static int lockdown_is_locked_down(enum lockdown_reason what)
->>   		 "Invalid lockdown reason"))
->>   		return -EPERM;
->>   
->> -	if (kernel_locked_down >= what) {
->> +	if (test_bit(what, kernel_locked_down)) {
->>   		if (lockdown_reasons[what])
->>   			pr_notice_ratelimited("Lockdown: %s: %s is restricted; see man kernel_lockdown.7\n",
->>   				  current->comm, lockdown_reasons[what]);
->>   		return -EPERM;
->>   	}
->> -
->>   	return 0;
->>   }
->>   
->> @@ -105,7 +110,7 @@ static ssize_t lockdown_read(struct file *filp, char __user *buf, size_t count,
-> 
-> Context here is:
-> 
-> static ssize_t lockdown_read(struct file *filp, char __user *buf, size_t count,
->                               loff_t *ppos)
-> {
->          char temp[80] = "";
->          int i, offset = 0;
-> 
->          for (i = 0; i < ARRAY_SIZE(lockdown_levels); i++) {
->                  enum lockdown_reason level = lockdown_levels[i];
-> 
-> ...
-> 
->>   		if (lockdown_reasons[level]) {
->>   			const char *label = lockdown_reasons[level];
->>   
->> -			if (kernel_locked_down == level)
->> +			if (test_bit(level, kernel_locked_down))
-> 
-> Right now this is still just looping over the lockdown_levels, and so
-> it can't get longer than "none [integrity] [confidentiality]" which fits
-> easily into the 80 chars of temp.  But I'm worried that someone will
-> change this loop i a way that violates that.  Could you just switch
-> this to a snprintf that checks its result for < 0 and >= n , or some
-> other sanity check?
-
-How about the following:
-
-diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
-index 412184121279..47b47c4f7b98 100644
---- a/security/lockdown/lockdown.c
-+++ b/security/lockdown/lockdown.c
-@@ -114,9 +114,9 @@ static ssize_t lockdown_read(struct file *filp, char __user *buf, size_t count,
-                         const char *label = lockdown_reasons[level];
-  
-                         if (test_bit(level, kernel_locked_down))
--                               offset += sprintf(temp+offset, "[%s] ", label);
-+                               offset += snprintf(temp+offset, 80-offset, "[%s] ", label);
-                         else
--                               offset += sprintf(temp+offset, "%s ", label);
-+                               offset += snprintf(temp+offset, 80-offset, "%s ", label);
-                 }
-         }
-
-It prevents buffer overflow but doesn't prevent buffer truncation.
-
-> 
->>   				offset += sprintf(temp+offset, "[%s] ", label);
->>   			else
->>   				offset += sprintf(temp+offset, "%s ", label);
->> -- 
->> 2.43.0
->>
-
+Acked-by: Arnd Bergmann <arnd@arndb.de>
