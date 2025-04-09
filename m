@@ -1,63 +1,63 @@
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98C7627C17F
-	for <linux-security-module@vger.kernel.org>; Wed,  9 Apr 2025 18:53:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 001EC27C879
+	for <linux-security-module@vger.kernel.org>; Wed,  9 Apr 2025 18:53:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744224837; cv=none; b=haMgkRoMMwjTpp3Snd1TCTFTwa81vFCA8bKSvb0JwFY11CQYdgUGr+oaW2VA4FcNkFS9T7ox0EPuYUaxzszSL3HG49q4ouhSzpKZVYrYfOcSExmWBvCtEFcdY5J+pzGdgByzP/HOVi12GAteKAmcSCb+/3ewOeO3vLc4v5pyiNU=
+	t=1744224838; cv=none; b=Rka47xxIuv2yPK1aefuMHfqe/exWbYtZWMrJvQBxK2Vdzf8LD1RgMvlQ4Kwamp96+O8fhcwqbusb9OfDyhyV8jxGZKQjEIZ+YJxGlB6eCt2eux7sUbymyFVYcEjajoXbAmY1ZH0js4WIyrdNtrmdbC/qkpBnPcGVF74zDZX4RyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744224837; c=relaxed/simple;
-	bh=qSinNT/tx+AFMXq4mOAmrQ6OXexHwQ1Obc6kW4yKz08=;
+	s=arc-20240116; t=1744224838; c=relaxed/simple;
+	bh=PrN0eKET272MqYvpyKfbTsLvpxVkWcKMDEl17osJyFs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dAu2Y615/4j+a0QP+fUnbkfL6Jp7sxnEeq/WPFzeCSyBMTOOz/pMkU86zGVC6SRISEeREwtBdmJPkuTAtZlvfSfFjAjsaiZ/iP++nr8HVMGZm4pk65zm/h7soTLpiNgF9Ajab4Ljo6fD11av209my/s6yhYThtoI/L7W34oFD9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=clA59IMI; arc=none smtp.client-ip=209.85.160.179
+	 MIME-Version; b=F36ak99d8W7+60XGO5bQdl8lsQHQTsKWV/F7f28eARNTy+R6JYOPaZ9Y9EwpdV9hURQbVy6UZgsSQppZy6SWGvcAboJQv6xCi+T3xp70MJMYezREuRTdTBvRT7wUOzOJshBuQuGN6gGfFGslvE6qAwNjSrCC3M0r45SijJ51vPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=EaUXia/m; arc=none smtp.client-ip=209.85.219.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="clA59IMI"
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4774193fdffso101585881cf.1
-        for <linux-security-module@vger.kernel.org>; Wed, 09 Apr 2025 11:53:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="EaUXia/m"
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6ecf0e07947so658276d6.0
+        for <linux-security-module@vger.kernel.org>; Wed, 09 Apr 2025 11:53:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1744224833; x=1744829633; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1744224835; x=1744829635; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=R7F+J7CLv0Q7TKcdsCSnDPPpdWK10ZRyc/PbHcMRk/Y=;
-        b=clA59IMIgKYjNos5GixO2LJYlqJetGzTF/hrk4AB51BarPU6I/c9yhJS4W18YI3sP/
-         WnNH/HN1C79cnJbiRG8H3hobHJTbeTJ7M3IzQ+7OFiRJrJOrUSDfYAgHI5SPzmOXgYQ8
-         blfTgS0FPP9IW4s7BOLyx8R2P7zp2iR/jVRVGQGRSpIBMz2nW0V54HIiY2W/lXpUc8R0
-         zC53Sc97pfWO6r+rqr0EgO/1oVHMV4oea62fl7YliUdK8ct4NXBmlj2FQkLOv01kxO52
-         18enDS+JEmTUGNSh2xLvvEIfXEOW1ffMaLmAJ4iQ4K/CYMVgFr0gqwV3g2uqMeI9c/if
-         hPmg==
+        bh=kATB6b7rfxqvL0cXzYWVDgnxVdpmTKsX9O+BlcwUWW0=;
+        b=EaUXia/mBZVBBhMbdBNZAkAPkmW7/V4qQNNoRW38C/gpwjTPI3XAjv1+eAp2pi4MCa
+         crVlwFOgSI9Bfx/czxKa3I4QSdPW6BS5M1ama8uPcWQJ9yHHZvQ7745Cy59oUtBVq2O1
+         /Ppqg7TnrX/i4eBahJckgJO7fBfF6aF9L4uaiJRDtUHr+ZnuJdtBYLymQ88WTEAQ1NnZ
+         B4QuopTZlr+cVU6wilY9hjtVaNd6wjskpE9JyZzCU5WQEW6rVlvjxPx3hpqdAkirhz54
+         hOi0DIfnLCgveSd+9YwXXhvrkHKcyTsqDc5lSEJq+/A6Eh+Edo39x5gjqyTMklAAVp9N
+         y0sA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744224833; x=1744829633;
+        d=1e100.net; s=20230601; t=1744224835; x=1744829635;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=R7F+J7CLv0Q7TKcdsCSnDPPpdWK10ZRyc/PbHcMRk/Y=;
-        b=ZNIkbjebU0eYxWOhBtxyFNBQGNuuH6tjUHRH5Ojgu6P18tm6mDrzDoEZ0KLcammP6g
-         yAb6GcPPoY0EZMcmPVlPUCkat2Y/rraQNsRk475wgayDYZy5OjRWmr9RuorIedryWY9z
-         GidXx3b8rYX2RHDXRIbYEER2YGAeJ9OA904exnzZCbQW8bpdfi73yEVngwTJysK+kNll
-         zWsK2Kywj2siYuRiodajvr/dyb66fb/0sG/7PgnhrYAVb2ib+02Y1cI0FBWERTnS/QJ9
-         /22m5sAW3wracNfRhj4KeT7faBIk31fircd5CfvK3TMUAKToqAmYZcYwJZuDc5fmpMBK
-         B9pA==
-X-Gm-Message-State: AOJu0YxyvT+/NmnZOg+6Ar7U6dkS9+K9LRDseU7tZyGVQhF96KGk59kC
-	1ck82TjLNP3NyX9FQ+TvuNTCQdXLRtVn/mWPabiIMZ4MrQttqEnIE3hdY+IX1gnaGNXDPs5DJoc
+        bh=kATB6b7rfxqvL0cXzYWVDgnxVdpmTKsX9O+BlcwUWW0=;
+        b=kRA3HIPo3LzvodcmhsnFSZbpOnRdxyy/BbkTNNpz/O/9Amvk9chdWZ85nCfR9f2qTG
+         QPTfFflnxoHTQeZn9ZzyjVKlyKazoEPDBFf6wlkVxarvLfAy9TdcrY0LUvb4V2HXrTCU
+         Ekgy+2kXgd3wH6tUAnogmZ0Aal7S5jfWueicDSDp18uDQNXbBoXNmoSvYPzwaawduJy4
+         +7sfJnjbRFF4cf97DWO9uIZNa7zgeNVnFQ1RmXB3DSXJvV2bS47eYd93B0Ao5JCQUluI
+         F8k/w35x8R0mOlVKsyGEjqKKIO0xFzTZ30f1ZU9Ui0Rte+8rU5N8Ce3tyR1TLrknBU+s
+         kmQQ==
+X-Gm-Message-State: AOJu0YyosAP94MsgY5uuXjnl4oYTr5Wc0Xxc2vR5V0dR6K9xWlH9pRqR
+	vHKSgFK4xOLPYxhBHmEzGVhJ0TfgByZB7NziFWERD/vLjpX75CRLylAtQcd3C5w7d9ca4z12muI
 	=
-X-Gm-Gg: ASbGnct/POAzL2Tx/t3bJ5kecpqGx0k6ucR3BINIT55NiKSG0Wy5vTuKK5+YJf6MwhN
-	YgnyKvu/chA0gcSkcf5fxH1d3EUMn3txQqc3ocGwkPTxtEOtuuHUb08ZL+qaL9fdbOQeKbavHoQ
-	GZyCnRzYX3o5sJjVZP/AuUi0wB96zf2OwBvO37lN5NkPBoSEK6hSXusQTcZthmOivFYQc4sZjj0
-	XnxGphekOx9/Omxm+pzGjd2uULwLGdLgLuVxs7pRc68QOrt+ItBh+MfisdMoSmhf1pvIGyvVpPP
-	kBGh9rLXxL6yBN1xYQByapC6MBpv586NcVDr/5xYQslff938n6mw5c+kv3lD5BsLRZXnka7276S
-	v8YDaw1KZ5w==
-X-Google-Smtp-Source: AGHT+IH8j+L3/WyowCHdZ+Lpg6i+z+njJlPi3PEm69Uk5bk5N1/ViqjQ2L4JUW0jWazX/KM5DcXLPw==
-X-Received: by 2002:ac8:7dd1:0:b0:476:aa36:d674 with SMTP id d75a77b69052e-479600c0adamr57068541cf.28.1744224832898;
-        Wed, 09 Apr 2025 11:53:52 -0700 (PDT)
+X-Gm-Gg: ASbGncvNoLd1fsJt+s0bBGTqCzOZ5WGaaVvOk5VzQBT5lxeLHvXSBSogA5ReCccBmKH
+	m3oOqr4VprWQtel+f6bBjCjq9J521ibO1Tcg2zIy6Fwed1/LlXCcJVUSZDw1a8psD5htdCpbp8N
+	dd9V41RvAwlr+227PtubX5SHdi+5F9KXjKR4O+t09DvxmukjGuf1TrBB+Xqf/ouatI7ru5EKw9W
+	ZARSXM0nYOETy20uQGHwbwNCLu/iTDwvLPBUN2l5A0yC0uK52PMPBR7OqS/cBMw7IaPGbv0r8Tr
+	Cw6690teuUGzLKDvapNCTFaC1d6xe0KDvLb6FwRFGfhG9iJgnfjxt9IWvNbRpQbb1SqoWgknW68
+	gVHWLkQHflQ==
+X-Google-Smtp-Source: AGHT+IEemC50KA/WyRHDEgLiWRsHI0RRXRXGr8ZGg4VJ6LThazDHrCCsoVbGLWt+McOXildVKh51Lw==
+X-Received: by 2002:ad4:504c:0:b0:6e2:383f:4acd with SMTP id 6a1803df08f44-6f0e4c7f873mr9893526d6.7.1744224834852;
+        Wed, 09 Apr 2025 11:53:54 -0700 (PDT)
 Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-47964ef799csm10296181cf.77.2025.04.09.11.53.52
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c7a10ba74bsm106575785a.30.2025.04.09.11.53.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Apr 2025 11:53:52 -0700 (PDT)
+        Wed, 09 Apr 2025 11:53:54 -0700 (PDT)
 From: Paul Moore <paul@paul-moore.com>
 To: linux-security-module@vger.kernel.org,
 	linux-integrity@vger.kernel.org,
@@ -72,9 +72,9 @@ Cc: John Johansen <john.johansen@canonical.com>,
 	Micah Morton <mortonm@chromium.org>,
 	Casey Schaufler <casey@schaufler-ca.com>,
 	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Subject: [RFC PATCH 25/29] ima,evm: move initcalls to the LSM framework
-Date: Wed,  9 Apr 2025 14:50:10 -0400
-Message-ID: <20250409185019.238841-56-paul@paul-moore.com>
+Subject: [RFC PATCH 27/29] lsm: consolidate all of the LSM framework initcalls
+Date: Wed,  9 Apr 2025 14:50:12 -0400
+Message-ID: <20250409185019.238841-58-paul@paul-moore.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250409185019.238841-31-paul@paul-moore.com>
 References: <20250409185019.238841-31-paul@paul-moore.com>
@@ -84,434 +84,110 @@ List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=13008; i=paul@paul-moore.com; h=from:subject; bh=qSinNT/tx+AFMXq4mOAmrQ6OXexHwQ1Obc6kW4yKz08=; b=owEBbQKS/ZANAwAIAeog8tqXN4lzAcsmYgBn9sIBY2NMysmrJycfEVkky+9RGdUyFZimt4PfU HcMklsmSqGJAjMEAAEIAB0WIQRLQqjPB/KZ1VSXfu/qIPLalzeJcwUCZ/bCAQAKCRDqIPLalzeJ cynREACJKuiuDtFmEhBelYW8gr2pM/SehiGMWVwHzORAOnCmMiu9oHKiCqLsa5CakgfcyHC9tcb 28T4o0cS7gxWQpppRBSy43MKe2KDxz656x77UztAuHhOYubdyvSlC+ReR+8TXwQr25NIYR/nX9N v6DkWGCjAHKNsi1rYzDq1E3CDuuwLAUp20gFA3UjTI1e8wPXxSsGPu+i6z8vVMKkNOkQRr9mfBJ zU1G4sOVPH76SThD1rR7foAq9i4n5pjTHrKF9Ym4Chk7wx8yAOB5nyOQRTKVB7ocPB8hdHRMAQG PvKPK/Rmd9XaLmjSrixc9Wh9/0B4xVE7WoOZfuTx+LJupJV0hbFSjh2nO2ie78NMtdN5XiIUlRB qBYZyPqBM7rYt8Eze12OTDnJVXX1IzxWgz61JW9iVIAmVojR0fVb2Ya83L1Nvl2hROX1ERtg8fk 3vvMD2s9gIFEm8dbKVRDVKiXisVASvkyfO8/RPFis5T8ETeKRUMhKMeq7EZ8lVVdtzKj+CtedM/ Dnud8+m82aiIH4V3mMaqLgQiEH/xeaxQT2LFaxnv+bgfFfo+bMbmcNyRIu4+LvVfkoPiVhTWa2H ydhBe1wcsqFQEKtxUUB4m1x9wx3rPn4eu5L7IsEmN6zQYtP3IpR7mFCoHVPYo50NkbeDfr6NywE TW+wngHjRR/U5kw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2798; i=paul@paul-moore.com; h=from:subject; bh=PrN0eKET272MqYvpyKfbTsLvpxVkWcKMDEl17osJyFs=; b=owEBbQKS/ZANAwAIAeog8tqXN4lzAcsmYgBn9sIPi3POvhOt2pY5xdpdJT2VBGb5TQ6QlFVu1 pjLw27Jb26JAjMEAAEIAB0WIQRLQqjPB/KZ1VSXfu/qIPLalzeJcwUCZ/bCDwAKCRDqIPLalzeJ c7h1D/9bnJjmcuDTeSIQESIabJvH4KNhWLg4YzqOI/sU8P+OAvAW7fF2SD4n390qfH0v9MO3hli 830/HKjpk5NAZv2hVj2JqZWrnBR0zYcanselNm5d7k1Bc0p3bmN7R4fnZm0Nyoy5JkKWCvjjMtZ TGFshBhE5jvFEqb9W7Szs8A+qM4Nt9B2NqZkSfwN5+AsJvxesBoqg7675a3tDgXSHw8BzpuSun3 uRl7gIkgxptSXQzt9+KSnFCCwUF71Lz/MiaHFlLKo99amklfPsB83bArpDtCWInojRVEIk/f2v4 gpXAlIlW+WyPiSlGXevb1fXcV9GAQTpQfAsK+vaf2nH3S6o7yfPz6c1wC8nZHCRWbxQUooli1r0 Ica4Iby3EtavtMxdvz0tcCnkaw/dgUyXG/L1dQkKzSwVLzQOwaiw2NuoQUk7YMcC0CpCE9s6K9H EtqUPxUSowPjKd3YIbUuAwcV9EX2BfeVv7SPz+GsYA0uZ73K2zfargaKf3YgQ/1azVOWz4aXVRl kaW+5shHpKmTm77tcclL4NbryLowtMgXKah6v7HwzRZ4IevAtF9khPYVTvRzed29qxS+LYLtiFA LFS4LZ2BIlUEAxZEuumoYSH8Jvo5/q8V5MTHiME/8vf0lTZkEKsZKU3oKPY/UfEDr9TW3gTxZf8 N5K4JluwMBddtow==
 X-Developer-Key: i=paul@paul-moore.com; a=openpgp; fpr=7100AADFAE6E6E940D2E0AD655E45A5AE8CA7C8A
 Content-Transfer-Encoding: 8bit
 
-This patch converts IMA and EVM to use the LSM frameworks's initcall
-mechanism.  There were two challenges to doing this conversion: the
-first simply being the number of initcalls across IMA and EVM, and the
-second was the number of resources shared between the two related,
-yet independent LSMs.
-
-The first problem was resolved by the creation of two new functions,
-integrity_device_init() and integrity_late_init(), with each focused on
-calling all of the various IMA/EVM initcalls for a single initcall type.
-The second problem was resolved by registering both of these new
-functions as initcalls for each LSM and including code in each
-registered initcall to ensure it only executes once.
+The LSM framework itself registers a small number of initcalls, this
+patch converts these initcalls into the new initcall mechanism.
 
 Signed-off-by: Paul Moore <paul@paul-moore.com>
 ---
- security/integrity/Makefile                   |  2 +-
- security/integrity/evm/evm_main.c             |  7 +-
- security/integrity/iint.c                     |  4 +-
- security/integrity/ima/ima_main.c             |  7 +-
- security/integrity/ima/ima_mok.c              |  4 +-
- security/integrity/initcalls.c                | 97 +++++++++++++++++++
- security/integrity/initcalls.h                | 23 +++++
- .../integrity/platform_certs/load_ipl_s390.c  |  4 +-
- .../integrity/platform_certs/load_powerpc.c   |  4 +-
- security/integrity/platform_certs/load_uefi.c |  4 +-
- .../platform_certs/machine_keyring.c          |  4 +-
- .../platform_certs/platform_keyring.c         | 14 ++-
- 12 files changed, 147 insertions(+), 27 deletions(-)
- create mode 100644 security/integrity/initcalls.c
- create mode 100644 security/integrity/initcalls.h
+ security/inode.c    |  3 +--
+ security/lsm.h      |  4 ++++
+ security/lsm_init.c | 14 ++++++++++++--
+ security/min_addr.c |  5 +++--
+ 4 files changed, 20 insertions(+), 6 deletions(-)
 
-diff --git a/security/integrity/Makefile b/security/integrity/Makefile
-index 92b63039c654..6ea330ea88b1 100644
---- a/security/integrity/Makefile
-+++ b/security/integrity/Makefile
-@@ -5,7 +5,7 @@
- 
- obj-$(CONFIG_INTEGRITY) += integrity.o
- 
--integrity-y := iint.o
-+integrity-y := iint.o initcalls.o
- integrity-$(CONFIG_INTEGRITY_AUDIT) += integrity_audit.o
- integrity-$(CONFIG_INTEGRITY_SIGNATURE) += digsig.o
- integrity-$(CONFIG_INTEGRITY_ASYMMETRIC_KEYS) += digsig_asymmetric.o
-diff --git a/security/integrity/evm/evm_main.c b/security/integrity/evm/evm_main.c
-index db8e324ed4e6..770d0411da2b 100644
---- a/security/integrity/evm/evm_main.c
-+++ b/security/integrity/evm/evm_main.c
-@@ -25,6 +25,7 @@
- #include <crypto/hash.h>
- #include <crypto/hash_info.h>
- #include <crypto/utils.h>
-+#include "../initcalls.h"
- #include "evm.h"
- 
- int evm_initialized;
-@@ -1112,7 +1113,7 @@ void __init evm_load_x509(void)
- }
+diff --git a/security/inode.c b/security/inode.c
+index f687e22e6809..671c66c147bc 100644
+--- a/security/inode.c
++++ b/security/inode.c
+@@ -375,7 +375,7 @@ static const struct file_operations lsm_ops = {
+ };
  #endif
  
--static int __init init_evm(void)
-+int __init init_evm(void)
+-static int __init securityfs_init(void)
++int __init securityfs_init(void)
  {
- 	int error;
- 	struct list_head *pos, *q;
-@@ -1179,6 +1180,6 @@ DEFINE_LSM(evm) = {
- 	.init = init_evm_lsm,
- 	.order = LSM_ORDER_LAST,
- 	.blobs = &evm_blob_sizes,
-+	.initcall_device = integrity_device_init,
-+	.initcall_late = integrity_late_init,
- };
--
--late_initcall(init_evm);
-diff --git a/security/integrity/iint.c b/security/integrity/iint.c
-index 068ac6c2ae1e..a4b88d67ff43 100644
---- a/security/integrity/iint.c
-+++ b/security/integrity/iint.c
-@@ -11,6 +11,7 @@
+ 	int retval;
+ 
+@@ -394,4 +394,3 @@ static int __init securityfs_init(void)
+ #endif
+ 	return 0;
+ }
+-core_initcall(securityfs_init);
+diff --git a/security/lsm.h b/security/lsm.h
+index 8ecb66896646..c432dc0c5e30 100644
+--- a/security/lsm.h
++++ b/security/lsm.h
+@@ -35,4 +35,8 @@ extern struct kmem_cache *lsm_inode_cache;
+ int lsm_cred_alloc(struct cred *cred, gfp_t gfp);
+ int lsm_task_alloc(struct task_struct *task);
+ 
++/* LSM framework initializers */
++int securityfs_init(void);
++int min_addr_init(void);
++
+ #endif /* _LSM_H_ */
+diff --git a/security/lsm_init.c b/security/lsm_init.c
+index 75eb0cc82869..c0881407ca3f 100644
+--- a/security/lsm_init.c
++++ b/security/lsm_init.c
+@@ -485,7 +485,12 @@ int __init security_init(void)
   */
+ static int __init security_initcall_pure(void)
+ {
+-	return lsm_initcall(pure);
++	int rc_adr, rc_lsm;
++
++	rc_adr = min_addr_init();
++	rc_lsm = lsm_initcall(pure);
++
++	return (rc_adr ? rc_adr : rc_lsm);
+ }
+ pure_initcall(security_initcall_pure);
+ 
+@@ -503,7 +508,12 @@ early_initcall(security_initcall_early);
+  */
+ static int __init security_initcall_core(void)
+ {
+-	return lsm_initcall(core);
++	int rc_sfs, rc_lsm;
++
++	rc_sfs = securityfs_init();
++	rc_lsm = lsm_initcall(core);
++
++	return (rc_sfs ? rc_sfs : rc_lsm);
+ }
+ core_initcall(security_initcall_core);
+ 
+diff --git a/security/min_addr.c b/security/min_addr.c
+index df1bc643d886..40714bdeefbe 100644
+--- a/security/min_addr.c
++++ b/security/min_addr.c
+@@ -4,6 +4,8 @@
  #include <linux/security.h>
- #include "integrity.h"
-+#include "initcalls.h"
+ #include <linux/sysctl.h>
  
- struct dentry *integrity_dir;
- 
-@@ -42,7 +43,7 @@ void __init integrity_load_keys(void)
- 		evm_load_x509();
- }
- 
--static int __init integrity_fs_init(void)
-+int __init integrity_fs_init(void)
- {
- 	integrity_dir = securityfs_create_dir("integrity", NULL);
- 	if (IS_ERR(integrity_dir)) {
-@@ -58,4 +59,3 @@ static int __init integrity_fs_init(void)
- 	return 0;
- }
- 
--late_initcall(integrity_fs_init)
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index 55a4f08a2565..1687badafb48 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -27,6 +27,7 @@
- #include <linux/fs.h>
- #include <linux/iversion.h>
- #include <linux/evm.h>
-+#include "../initcalls.h"
- 
- #include "ima.h"
- 
-@@ -1180,7 +1181,7 @@ static int ima_kernel_module_request(char *kmod_name)
- 
- #endif /* CONFIG_INTEGRITY_ASYMMETRIC_KEYS */
- 
--static int __init init_ima(void)
-+int __init init_ima(void)
- {
- 	int error;
- 
-@@ -1255,6 +1256,6 @@ DEFINE_LSM(ima) = {
- 	.init = init_ima_lsm,
- 	.order = LSM_ORDER_LAST,
- 	.blobs = &ima_blob_sizes,
-+	.initcall_device = integrity_device_init,
-+	.initcall_late = integrity_late_init,
++#include "lsm.h"
++
+ /* amount of vm to protect from userspace access by both DAC and the LSM*/
+ unsigned long mmap_min_addr;
+ /* amount of vm to protect from userspace using CAP_SYS_RAWIO (DAC) */
+@@ -54,11 +56,10 @@ static const struct ctl_table min_addr_sysctl_table[] = {
+ 	},
  };
--
--late_initcall(init_ima);	/* Start IMA after the TPM is available */
-diff --git a/security/integrity/ima/ima_mok.c b/security/integrity/ima/ima_mok.c
-index 95cc31525c57..4374fb6cc66d 100644
---- a/security/integrity/ima/ima_mok.c
-+++ b/security/integrity/ima/ima_mok.c
-@@ -14,6 +14,7 @@
- #include <linux/init.h>
- #include <linux/slab.h>
- #include <keys/system_keyring.h>
-+#include "../initcalls.h"
  
- 
- struct key *ima_blacklist_keyring;
-@@ -21,7 +22,7 @@ struct key *ima_blacklist_keyring;
- /*
-  * Allocate the IMA blacklist keyring
-  */
--static __init int ima_mok_init(void)
-+int __init ima_mok_init(void)
+-static int __init init_mmap_min_addr(void)
++int __init min_addr_init(void)
  {
- 	struct key_restriction *restriction;
+ 	register_sysctl_init("vm", min_addr_sysctl_table);
+ 	update_mmap_min_addr();
  
-@@ -46,4 +47,3 @@ static __init int ima_mok_init(void)
- 		panic("Can't allocate IMA blacklist keyring.");
  	return 0;
  }
--device_initcall(ima_mok_init);
-diff --git a/security/integrity/initcalls.c b/security/integrity/initcalls.c
-new file mode 100644
-index 000000000000..de39754a1c2c
---- /dev/null
-+++ b/security/integrity/initcalls.c
-@@ -0,0 +1,97 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Platform certificate / keyring initcalls
-+ *
-+ */
-+
-+#include <linux/init.h>
-+
-+#include "initcalls.h"
-+
-+/**
-+ * integrity_device_init - device_initcalls for IMA/EVM
-+ *
-+ * This helper function wraps all of the device_initcalls for both IMA and EVM.
-+ * It can be called multiple times, e.g. once from IMA and once from EVM,
-+ * without problem as it maintains an internal static state variable which
-+ * ensures that any setup/initialization is only done once.
-+ */
-+int __init integrity_device_init(void)
-+{
-+	int rc = 0, rc_tmp;
-+	static bool setup = false;
-+
-+	if (setup)
-+		return 0;
-+	setup = true;
-+
-+#if defined(CONFIG_INTEGRITY_PLATFORM_KEYRING)
-+	rc_tmp = platform_keyring_init();
-+	if (!rc && rc_tmp)
-+		rc = rc_tmp;
-+#endif
-+
-+#if defined(CONFIG_INTEGRITY_MACHINE_KEYRING)
-+	rc_tmp = machine_keyring_init();
-+	if (!rc && rc_tmp)
-+		rc = rc_tmp;
-+#endif
-+
-+#if defined(CONFIG_IMA_BLACKLIST_KEYRING)
-+	rc_tmp = ima_mok_init();
-+	if (!rc && rc_tmp)
-+		rc = rc_tmp;
-+#endif
-+
-+	return rc;
-+}
-+
-+/**
-+ * integrity_late_init - late_initcalls for IMA/EVM
-+ *
-+ * This helper function wraps all of the late_initcalls for both IMA and EVM.
-+ * It can be called multiple times, e.g. once from IMA and once from EVM,
-+ * without problem as it maintains an internal static state variable which
-+ * ensures that any setup/initialization is only done once.
-+ */
-+int __init integrity_late_init(void)
-+{
-+	int rc = 0, rc_tmp;
-+	static bool setup = false;
-+
-+	if (setup)
-+		return 0;
-+	setup = true;
-+
-+#if defined(CONFIG_LOAD_UEFI_KEYS)
-+	rc_tmp = load_uefi_certs();
-+	if (!rc && rc_tmp)
-+		rc = rc_tmp;
-+#endif
-+
-+#if defined(CONFIG_LOAD_IPL_KEYS)
-+	rc_tmp = load_ipl_certs();
-+	if (!rc && rc_tmp)
-+		rc = rc_tmp;
-+#endif
-+
-+#if defined(CONFIG_LOAD_PPC_KEYS)
-+	rc_tmp = load_powerpc_certs();
-+	if (!rc && rc_tmp)
-+		rc = rc_tmp;
-+#endif
-+
-+	rc_tmp = integrity_fs_init();
-+	if (!rc && rc_tmp)
-+		rc = rc_tmp;
-+
-+	rc_tmp = init_ima();
-+	if (!rc && rc_tmp)
-+		rc = rc_tmp;
-+
-+	rc_tmp = init_evm();
-+	if (!rc && rc_tmp)
-+		rc = rc_tmp;
-+
-+	return rc;
-+}
-diff --git a/security/integrity/initcalls.h b/security/integrity/initcalls.h
-new file mode 100644
-index 000000000000..dce16abb3b8a
---- /dev/null
-+++ b/security/integrity/initcalls.h
-@@ -0,0 +1,23 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+
-+#ifndef PLATFORM_CERTS_INITCALLS_H
-+#define PLATFORM_CERTS_INITCALLS_H
-+
-+int machine_keyring_init(void);
-+int platform_keyring_init(void);
-+
-+int load_uefi_certs(void);
-+int load_ipl_certs(void);
-+int load_powerpc_certs(void);
-+
-+int integrity_fs_init(void);
-+
-+int init_ima(void);
-+int init_evm(void);
-+
-+int ima_mok_init(void);
-+
-+int integrity_device_init(void);
-+int integrity_late_init(void);
-+
-+#endif
-diff --git a/security/integrity/platform_certs/load_ipl_s390.c b/security/integrity/platform_certs/load_ipl_s390.c
-index c7c381a9ddaa..3bf91d925614 100644
---- a/security/integrity/platform_certs/load_ipl_s390.c
-+++ b/security/integrity/platform_certs/load_ipl_s390.c
-@@ -10,12 +10,13 @@
- #include <keys/system_keyring.h>
- #include <asm/boot_data.h>
- #include "../integrity.h"
-+#include "../initcalls.h"
- 
- /*
-  * Load the certs contained in the IPL report created by the machine loader
-  * into the platform trusted keyring.
-  */
--static int __init load_ipl_certs(void)
-+int __init load_ipl_certs(void)
- {
- 	void *ptr, *end;
- 	unsigned int len;
-@@ -33,4 +34,3 @@ static int __init load_ipl_certs(void)
- 	}
- 	return 0;
- }
--late_initcall(load_ipl_certs);
-diff --git a/security/integrity/platform_certs/load_powerpc.c b/security/integrity/platform_certs/load_powerpc.c
-index c85febca3343..2904559e485b 100644
---- a/security/integrity/platform_certs/load_powerpc.c
-+++ b/security/integrity/platform_certs/load_powerpc.c
-@@ -14,6 +14,7 @@
- #include <asm/secvar.h>
- #include "keyring_handler.h"
- #include "../integrity.h"
-+#include "../initcalls.h"
- 
- #define extract_esl(db, data, size, offset)	\
- 	do { db = data + offset; size = size - offset; } while (0)
-@@ -56,7 +57,7 @@ static __init void *get_cert_list(u8 *key, unsigned long keylen, u64 *size)
-  * keyring and the blacklisted X.509 cert SHA256 hashes into the blacklist
-  * keyring.
-  */
--static int __init load_powerpc_certs(void)
-+int __init load_powerpc_certs(void)
- {
- 	void *db = NULL, *dbx = NULL, *data = NULL;
- 	void *trustedca;
-@@ -156,4 +157,3 @@ static int __init load_powerpc_certs(void)
- 
- 	return rc;
- }
--late_initcall(load_powerpc_certs);
-diff --git a/security/integrity/platform_certs/load_uefi.c b/security/integrity/platform_certs/load_uefi.c
-index d1fdd113450a..52c180704674 100644
---- a/security/integrity/platform_certs/load_uefi.c
-+++ b/security/integrity/platform_certs/load_uefi.c
-@@ -12,6 +12,7 @@
- #include <keys/system_keyring.h>
- #include "../integrity.h"
- #include "keyring_handler.h"
-+#include "../initcalls.h"
- 
- /*
-  * On T2 Macs reading the db and dbx efi variables to load UEFI Secure Boot
-@@ -157,7 +158,7 @@ static int __init load_moklist_certs(void)
-  * keyring and the UEFI blacklisted X.509 cert SHA256 hashes into the blacklist
-  * keyring.
-  */
--static int __init load_uefi_certs(void)
-+int __init load_uefi_certs(void)
- {
- 	efi_guid_t secure_var = EFI_IMAGE_SECURITY_DATABASE_GUID;
- 	efi_guid_t mok_var = EFI_SHIM_LOCK_GUID;
-@@ -235,4 +236,3 @@ static int __init load_uefi_certs(void)
- 
- 	return rc;
- }
--late_initcall(load_uefi_certs);
-diff --git a/security/integrity/platform_certs/machine_keyring.c b/security/integrity/platform_certs/machine_keyring.c
-index a401640a63cd..b49eb2bab7a2 100644
---- a/security/integrity/platform_certs/machine_keyring.c
-+++ b/security/integrity/platform_certs/machine_keyring.c
-@@ -7,8 +7,9 @@
- 
- #include <linux/efi.h>
- #include "../integrity.h"
-+#include "../initcalls.h"
- 
--static __init int machine_keyring_init(void)
-+int __init machine_keyring_init(void)
- {
- 	int rc;
- 
-@@ -19,7 +20,6 @@ static __init int machine_keyring_init(void)
- 	pr_notice("Machine keyring initialized\n");
- 	return 0;
- }
--device_initcall(machine_keyring_init);
- 
- void __init add_to_machine_keyring(const char *source, const void *data, size_t len)
- {
-diff --git a/security/integrity/platform_certs/platform_keyring.c b/security/integrity/platform_certs/platform_keyring.c
-index bcafd7387729..84a8e4309f06 100644
---- a/security/integrity/platform_certs/platform_keyring.c
-+++ b/security/integrity/platform_certs/platform_keyring.c
-@@ -13,6 +13,7 @@
- #include <linux/err.h>
- #include <linux/slab.h>
- #include "../integrity.h"
-+#include "../initcalls.h"
- 
- /**
-  * add_to_platform_keyring - Add to platform keyring without validation.
-@@ -37,10 +38,12 @@ void __init add_to_platform_keyring(const char *source, const void *data,
- 		pr_info("Error adding keys to platform keyring %s\n", source);
- }
- 
--/*
-- * Create the trusted keyrings.
-+/**
-+ * platform_keyring_init - Create the trusted keyrings.
-+ *
-+ * Must be initialised before we try and load the keys into the keyring.
-  */
--static __init int platform_keyring_init(void)
-+int __init platform_keyring_init(void)
- {
- 	int rc;
- 
-@@ -51,8 +54,3 @@ static __init int platform_keyring_init(void)
- 	pr_notice("Platform Keyring initialized\n");
- 	return 0;
- }
--
--/*
-- * Must be initialised before we try and load the keys into the keyring.
-- */
--device_initcall(platform_keyring_init);
+-pure_initcall(init_mmap_min_addr);
 -- 
 2.49.0
 
