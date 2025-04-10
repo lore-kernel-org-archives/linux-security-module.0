@@ -1,135 +1,220 @@
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58E472853F5
-	for <linux-security-module@vger.kernel.org>; Thu, 10 Apr 2025 13:53:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89FA728A41B;
+	Thu, 10 Apr 2025 14:11:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744293199; cv=none; b=mJvw5P+gARdPDP8O4p1sD7lFnFtu6b5tOodN2IoJ36FzalqeeMrEITAs/RbBvcumkn16PASDkPFcAZvv8mAhbaTMT28hQy5f7TkQOadx1b7cP2gQlKgOXXMFJw0VhEqaehEBUCOrgUmZwTzkoW52SzlOze4/IkM3zpFRkJ2+Lio=
+	t=1744294313; cv=none; b=DxWUZa7A3Wz9xts/kmqxVnfqVFbKdf3OoOJqcapbdQQ3uui92WkbFUKZTpMNZurPC3yoUrYLoe5MMENLkbmCLTAjKsRZ42+D3Hqf06LKVHecV9JYL0YpY5KH+2FAW5wBCWWlXnjTUMUKEszmy296Kgzfyu8Nxg7nN4CbBd5egGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744293199; c=relaxed/simple;
-	bh=6EzNCLAlf1iloxVtrXjGElQcW7269jazRrghVzl9gM8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=EsQEXUBhQR/AOFm9681j12kHWKAoV8y/2+FZqLb48PH6WcaBs0e15wayWRuR+5TmoT9EWTjEn0pT35+EOoQWjm2+R6hMKhACyH2zt7bpUuGQucaHkATGRidNF/rRUfJ+tb4jpsX33X85N0pP+txkWxLHTFcwYUvqb088VA7TtLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HDd0cqKH; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
+	s=arc-20240116; t=1744294313; c=relaxed/simple;
+	bh=EvFKfky52vbvM+wEEGE8NveTZMqOTVIS8k3QKbbtTZo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=N5gcS9TIpte91+o62/ktLVQjF0ijYk/xKQcVRe3zn4WqNKEOFeZx1pHEo7ae6L33otR1XpY1KbLvBlukUNfheYnWXn1eBpqmiNY+8JOSCOMOoHRreSsL6y0aEPgCDlXiHAUJvoE8dT9tRjF+6IK4lyc3ZtAAGTohO7uj+hTaf9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=STHC8Vd7; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HDd0cqKH"
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2ff8340d547so793408a91.2
-        for <linux-security-module@vger.kernel.org>; Thu, 10 Apr 2025 06:53:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744293196; x=1744897996; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=y4wxcHUnCCezh6nWr6RFH2iv1Y8IeCzojzwMbdNb4Do=;
-        b=HDd0cqKHGtPrIPrD3zaBYMCfjaq0/jDRlkSiDB73JzjB0UBHODNk9a3ToIcIcWqe7W
-         fv0+pYJUjE9TAiXXhDVSySGegZUoKXhfjljrlVuSruuOJc0pq6kffB7El9RfXwtMDP7J
-         gf2MRN5X1xzPMUmrWBNH7tiTsdhbj7wIHRtFnLu9CInE5QZnyAh4z8INRoxpeG+tkMjV
-         QsrMN45AKpwqQazIHPuCshcCx4XBDQ/mmxOdtRRas9iE38FKpeRMGEXel6aFCd/91cMh
-         UU6Yz70trLPM9SMB/Tnr5+AyDoxot2o9cxPh9zdjUXBd5lyBi8XTScMlfCH24mC8ZLiu
-         Kv9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744293196; x=1744897996;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=y4wxcHUnCCezh6nWr6RFH2iv1Y8IeCzojzwMbdNb4Do=;
-        b=XSRVUNmfN/PTPjn1/ADF4VGIIcYYUHXHA1HMKH6KysO1syWT24PlxIGJ7zFtiE0KUq
-         HndHQ9iOg4UaRiyFhXpo+7ZEwE6foM71QTHaW8L2mU4or5ek5OhHjrX83T1jxfzG3B+u
-         hqBAbgoGjINg2XbGsNn/cHrpZTk9EOZ5Pqa30o9D4BczTV0cKl7QpOM0TuSzFbo0j4Av
-         6iP5V59Nj6J7bISt0AlhwUtBA7j4kqNZixIdVVlze/HqOG5AFNRCIRUnMr4XbAvtB7hy
-         ZQd5Pn7sJTyPpALhgEBBV+U/20w515sT3ikYy244wnjGdpMdZR/5ME4jD9soVTTecNQl
-         4UhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXfl2o0RspKSB5q7IFC7UIyX/FdBWEEusXPF8OxGzdEx2Nm0G6OxLgkfNCEtBBth9CG3VnCtjszVGFRbQnazSgP8BR20/4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxGsY13TipeVLxcI7YG5ypC0+5T/AgzIRBHsslXMNe10UNcEMo
-	DEQYJGHBKHhHFBzcWOdyLUrxb2IjhvA+o3h9M3ln7dQ0BV6WM9nO3S2pQZFlrjAdkQusceaerUb
-	NTBdeZECtxGfH4moRDL4T7Q==
-X-Google-Smtp-Source: AGHT+IGEOFVmeMKiNYyGdVgVnjUwRuQMOBh3p67Kck++ZyIayxkYnmKh+TTYDv35m8GZuGIZaSBy6hjI9GDfCfcztg==
-X-Received: from pjbtb11.prod.google.com ([2002:a17:90b:53cb:b0:301:1ea9:63b0])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90a:d2ce:b0:2ee:f440:53ed with SMTP id 98e67ed59e1d1-3072ba1f6e0mr4252531a91.31.1744293196650;
- Thu, 10 Apr 2025 06:53:16 -0700 (PDT)
-Date: Thu, 10 Apr 2025 06:53:15 -0700
-In-Reply-To: <Z_eEfjrkspAt4ACP@infradead.org>
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="STHC8Vd7"
+Received: from [100.70.200.180] (unknown [20.1.194.235])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 08FA62114D81;
+	Thu, 10 Apr 2025 07:11:48 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 08FA62114D81
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1744294310;
+	bh=BWbmMbT74Sn7SqaSDZAyAFKEL0RW1KrKKLxHKERd89Y=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=STHC8Vd7L34139AsmAyauJpLmZYgvBtIRXy/VamhTZgHJvxW/gIalruqNdVHSTXQB
+	 vQWTNgyRHU8fwPKdVhRWubSzYL4iRWCx2ULcGRFgEimMvmVCqWuATr7BF0eHfuDBa4
+	 c1bqXcyCOYoZ43yTOLlQkqcQJW/sJXQnd/qQpMRQ=
+Message-ID: <1e176b0c-13a2-42bd-8879-b22f459a04de@linux.microsoft.com>
+Date: Thu, 10 Apr 2025 07:11:47 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250408112402.181574-1-shivankg@amd.com> <20250408112402.181574-6-shivankg@amd.com>
- <Z_eEfjrkspAt4ACP@infradead.org>
-Message-ID: <diqz4iyw5dis.fsf@ackerleytng-ctop.c.googlers.com>
-Subject: Re: [PATCH RFC v7 5/8] KVM: guest_memfd: Make guest mem use guest mem
- inodes instead of anonymous inodes
-From: Ackerley Tng <ackerleytng@google.com>
-To: Christoph Hellwig <hch@infradead.org>, Shivank Garg <shivankg@amd.com>
-Cc: seanjc@google.com, david@redhat.com, vbabka@suse.cz, willy@infradead.org, 
-	akpm@linux-foundation.org, shuah@kernel.org, pbonzini@redhat.com, 
-	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, pvorel@suse.cz, 
-	bfoster@redhat.com, tabba@google.com, vannapurve@google.com, 
-	chao.gao@intel.com, bharata@amd.com, nikunj@amd.com, michael.day@amd.com, 
-	yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com, 
-	michael.roth@amd.com, aik@amd.com, jgg@nvidia.com, kalyazin@amazon.com, 
-	peterx@redhat.com, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-coco@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 3/9] kexec: define functions to map and unmap segments
+To: Baoquan He <bhe@redhat.com>
+Cc: zohar@linux.ibm.com, stefanb@linux.ibm.com,
+ roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
+ eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
+ code@tyhicks.com, bauermann@kolabnow.com, linux-integrity@vger.kernel.org,
+ kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org, madvenka@linux.microsoft.com,
+ nramas@linux.microsoft.com, James.Bottomley@hansenpartnership.com,
+ vgoyal@redhat.com, dyoung@redhat.com
+References: <20250402124725.5601-1-chenste@linux.microsoft.com>
+ <20250402124725.5601-4-chenste@linux.microsoft.com>
+ <Z/STl3Jjt4/gMQHL@MiWiFi-R3L-srv>
+Content-Language: en-US
+From: steven chen <chenste@linux.microsoft.com>
+In-Reply-To: <Z/STl3Jjt4/gMQHL@MiWiFi-R3L-srv>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Christoph Hellwig <hch@infradead.org> writes:
-
-> On Tue, Apr 08, 2025 at 11:23:59AM +0000, Shivank Garg wrote:
->> From: Ackerley Tng <ackerleytng@google.com>
->> 
->> Using guest mem inodes allows us to store metadata for the backing
->> memory on the inode. Metadata will be added in a later patch to support
->> HugeTLB pages.
->> 
->> Metadata about backing memory should not be stored on the file, since
->> the file represents a guest_memfd's binding with a struct kvm, and
->> metadata about backing memory is not unique to a specific binding and
->> struct kvm.
->> 
->> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
->> Signed-off-by: Fuad Tabba <tabba@google.com>
->> Signed-off-by: Shivank Garg <shivankg@amd.com>
->> ---
->>  include/uapi/linux/magic.h |   1 +
->>  virt/kvm/guest_memfd.c     | 133 +++++++++++++++++++++++++++++++------
->>  2 files changed, 113 insertions(+), 21 deletions(-)
->> 
->> <snip>
->>  
->> +static struct inode *kvm_gmem_inode_make_secure_inode(const char *name,
->> +						      loff_t size, u64 flags)
->> +{
->> +	const struct qstr qname = QSTR_INIT(name, strlen(name));
->> +	struct inode *inode;
->> +	int err;
->> +
->> +	inode = alloc_anon_inode(kvm_gmem_mnt->mnt_sb);
->> +	if (IS_ERR(inode))
->> +		return inode;
->> +
->> +	err = security_inode_init_security_anon(inode, &qname, NULL);
->> +	if (err) {
->> +		iput(inode);
->> +		return ERR_PTR(err);
->> +	}
+On 4/7/2025 8:10 PM, Baoquan He wrote:
+> On 04/02/25 at 05:47am, steven chen wrote:
+>> Currently, the kernel behavior during kexec load is to fetch the IMA
+>> measurements logs and store logs in kernel memory. When a kexec reboot is
+>> triggered, these stored logs in the kernel memory are carried over to the
+>> second kernel. However, the time gap between kexec load and kexec reboot
+>> can be very long. During this time window, new events extended into TPM
+>> PCRs miss the chance to be carried over to the second kernel. This results
+>> in a mismatch between TPM PCR quotes and the actual IMA measurements list
+>> after kexec reboot, leading to remote attestation failure.
+>>
+>> To solve this problem, the new design defers reading the IMA measurements
+>> logs into the kexec buffer to the kexec reboot phase, while still allocating
+>> the necessary buffer at kexec load time because it is not appropriate to
+>> allocate memory at the kexec reboot moment.
+>>
+>> The content of memory segments carried over to the new kernel during the
+>> kexec system call can be changed at the kexec 'execute' stage, but the size
+>> of the memory segments cannot be changed at the kexec 'execute' stage.
+>>
+>> To copy IMA measurement logs during the kexec operation, IMA allocates
+>> memory at the kexec 'load' stage and map the segments to the kimage
+>> structure. The mapped address will then be used to copy IMA measurements
+>> during the kexec 'execute' stage.
+>>
+>> Currently, the mechanism to map and unmap segments to the kimage structure
+>> is not available to subsystems outside of kexec.
+> There's no need to describe the plan of the whole series. From my point
+> of view, the first few patches are prepared for later change. We can
+> just mention this, and briefly tell what it's doing if it's complicated.
+> For log of this patch, I would go with:
 >
-> So why do other alloc_anon_inode callers not need
-> security_inode_init_security_anon?
+> ====
+> Implement kimage_map_segment() to enable IMA to map the measurement log
+> list to the kimage structure during the kexec 'load' stage. This function
+> gathers the source pages within the specified address range, and maps them
+> to a contiguous virtual address range.
+>
+> This is a preparation for later usage.
+> ====
+>
+> Other than this, the code change looks good to me.
 
-Thanks for this tip!
+Hi Baoquan,
 
-When I did this refactoring, I was just refactoring
-anon_inode_create_getfile(), to set up the guest_memfd inode and file in
-separate stages, and anon_inode_create_getfile() was already using
-security_inode_init_security_anon().
+Thanks for your comments. Will update in next version.
 
-In the next revision I can remove this call.
+Steven
 
-Is it too late to remove the call to security_inode_init_security_anon()
-though? IIUC it is used by LSMs, which means security modules may
-already be assuming this call?
+>> Implement kimage_map_segment() to enable IMA to map the measurement log
+>> list to the kimage structure during the kexec 'load' stage. This function
+>> takes a kimage pointer, a memory address, and a size, then gathers the
+>> source pages within the specified address range, creates an array of page
+>> pointers, and maps these to a contiguous virtual address range. The
+>> function returns the start virtual address of this range if successful,
+>> or NULL on failure.
+>>
+>> Implement kimage_unmap_segment() for unmapping segments using vunmap().
+>>
+>> From: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+>> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+>> Cc: Eric Biederman <ebiederm@xmission.com>
+>> Cc: Baoquan He <bhe@redhat.com>
+>> Cc: Vivek Goyal <vgoyal@redhat.com>
+>> Cc: Dave Young <dyoung@redhat.com>
+>> Signed-off-by: steven chen <chenste@linux.microsoft.com>
+>> Acked-by: Baoquan He <bhe@redhat.com>
+>> ---
+>>   include/linux/kexec.h |  6 +++++
+>>   kernel/kexec_core.c   | 54 +++++++++++++++++++++++++++++++++++++++++++
+>>   2 files changed, 60 insertions(+)
+>>
+>> diff --git a/include/linux/kexec.h b/include/linux/kexec.h
+>> index f0e9f8eda7a3..7d6b12f8b8d0 100644
+>> --- a/include/linux/kexec.h
+>> +++ b/include/linux/kexec.h
+>> @@ -467,13 +467,19 @@ extern bool kexec_file_dbg_print;
+>>   #define kexec_dprintk(fmt, arg...) \
+>>           do { if (kexec_file_dbg_print) pr_info(fmt, ##arg); } while (0)
+>>   
+>> +extern void *kimage_map_segment(struct kimage *image, unsigned long addr, unsigned long size);
+>> +extern void kimage_unmap_segment(void *buffer);
+>>   #else /* !CONFIG_KEXEC_CORE */
+>>   struct pt_regs;
+>>   struct task_struct;
+>> +struct kimage;
+>>   static inline void __crash_kexec(struct pt_regs *regs) { }
+>>   static inline void crash_kexec(struct pt_regs *regs) { }
+>>   static inline int kexec_should_crash(struct task_struct *p) { return 0; }
+>>   static inline int kexec_crash_loaded(void) { return 0; }
+>> +static inline void *kimage_map_segment(struct kimage *image, unsigned long addr, unsigned long size)
+>> +{ return NULL; }
+>> +static inline void kimage_unmap_segment(void *buffer) { }
+>>   #define kexec_in_progress false
+>>   #endif /* CONFIG_KEXEC_CORE */
+>>   
+>> diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
+>> index c0bdc1686154..a5e378e1dc7f 100644
+>> --- a/kernel/kexec_core.c
+>> +++ b/kernel/kexec_core.c
+>> @@ -867,6 +867,60 @@ int kimage_load_segment(struct kimage *image,
+>>   	return result;
+>>   }
+>>   
+>> +void *kimage_map_segment(struct kimage *image,
+>> +			 unsigned long addr, unsigned long size)
+>> +{
+>> +	unsigned long src_page_addr, dest_page_addr = 0;
+>> +	unsigned long eaddr = addr + size;
+>> +	kimage_entry_t *ptr, entry;
+>> +	struct page **src_pages;
+>> +	unsigned int npages;
+>> +	void *vaddr = NULL;
+>> +	int i;
+>> +
+>> +	/*
+>> +	 * Collect the source pages and map them in a contiguous VA range.
+>> +	 */
+>> +	npages = PFN_UP(eaddr) - PFN_DOWN(addr);
+>> +	src_pages = kmalloc_array(npages, sizeof(*src_pages), GFP_KERNEL);
+>> +	if (!src_pages) {
+>> +		pr_err("Could not allocate ima pages array.\n");
+>> +		return NULL;
+>> +	}
+>> +
+>> +	i = 0;
+>> +	for_each_kimage_entry(image, ptr, entry) {
+>> +		if (entry & IND_DESTINATION) {
+>> +			dest_page_addr = entry & PAGE_MASK;
+>> +		} else if (entry & IND_SOURCE) {
+>> +			if (dest_page_addr >= addr && dest_page_addr < eaddr) {
+>> +				src_page_addr = entry & PAGE_MASK;
+>> +				src_pages[i++] =
+>> +					virt_to_page(__va(src_page_addr));
+>> +				if (i == npages)
+>> +					break;
+>> +				dest_page_addr += PAGE_SIZE;
+>> +			}
+>> +		}
+>> +	}
+>> +
+>> +	/* Sanity check. */
+>> +	WARN_ON(i < npages);
+>> +
+>> +	vaddr = vmap(src_pages, npages, VM_MAP, PAGE_KERNEL);
+>> +	kfree(src_pages);
+>> +
+>> +	if (!vaddr)
+>> +		pr_err("Could not map ima buffer.\n");
+>> +
+>> +	return vaddr;
+>> +}
+>> +
+>> +void kimage_unmap_segment(void *segment_buffer)
+>> +{
+>> +	vunmap(segment_buffer);
+>> +}
+>> +
+>>   struct kexec_load_limit {
+>>   	/* Mutex protects the limit count. */
+>>   	struct mutex mutex;
+>> -- 
+>> 2.25.1
+>>
+
