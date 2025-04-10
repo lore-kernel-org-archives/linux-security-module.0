@@ -1,255 +1,121 @@
-Received: from sonic311-29.consmr.mail.ne1.yahoo.com (sonic311-29.consmr.mail.ne1.yahoo.com [66.163.188.210])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21E3B28CF48
-	for <linux-security-module@vger.kernel.org>; Thu, 10 Apr 2025 14:23:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.188.210
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D1E81EB1AA;
+	Thu, 10 Apr 2025 15:33:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744295022; cv=none; b=rCU7jy+UuPu2rN/50iGmqxUKqz9/26ApXHIDZ1+Gwve1jjaLN5bhhB7DTqAv0d+zx34W035sem6eXeOls0QADTcOL8FVrQszGCc9AeZtj/RpFjZqdF3sHkKx///MQG67+SpORwaDpbC+h2hnT2upKfQC/tRQhHJdwqrAOpGLTq0=
+	t=1744299206; cv=none; b=XP7wD5bX0xDtpMJyPBxi10VWBYANdLKBsJSd0LTEWm7Fxir2xh/+q8McM+0Aq0qmKp6feuR92mPB/qmMdfUd6kjr+tk9f3ATKbPja26VBqbOw3z/0ykEWyYFbS4sYhtP9LXPnQploKoZDjFeRBeXekhIgX/dOKzZ/VvPU6ZYDN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744295022; c=relaxed/simple;
-	bh=DlhBjDC589ymMPZwvNxVKrOMQcIGogUm/W7kQ61OZvs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O0sdwh5zrMbUYOHp4HNDnGViJrrQirptASXv06ePcU5mkPt1ORTpffkDIVtCzA/x0zqZrGk/jrgQNsotaDSpGYfxhfJSP3H0mu7HKGSIim9s7C/MemmGmK+rLZBMwLFevbr1irVDPwmPboGDGytAmEWWVGiiQtf00NbzPP6t6bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=MlxOY5vR; arc=none smtp.client-ip=66.163.188.210
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1744299206; c=relaxed/simple;
+	bh=rqS2mgSGGMtXh0MDTyHoB5+bCseRAIgyQhVryVg3D+M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OUvJOf3KbP2Xq/Bq9i1ryTt2XR2idi8Db8ZndmtKxEtIXN9z2GGvpZ9/Epg9uu46i2b1V3wf6/g6RiMTcodASAM7Ap/zYTIhTVDwDMRFXE9wd603IkQiHQI1ZTpJH1ZKH/mywc38FthUKECnBQkWuCYT92+zEJlUEXt19IjL/YI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BXsKzcVy; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="MlxOY5vR"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1744295001; bh=bHL+4Fsshn+gJrmHLJBnHewFXwt2kD1aPUfieqqyVkg=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=MlxOY5vR86su0eWjJu+nFbwOnVhN+KmxEiu+wE3UWaCcbUeo9J/t+4+ewMqc/yU8mKTMWGgmO6/g8Iae8ctlfyGHRvojO1on8eAT9491LYxHT5jJ4c4mD2bS7aSMpG6MTFwtxTj5RmCBLW7E7k86pLxOgDiJzEzqqLJbwE8Lhio/OUNNzFNa4yXvusrbYBe0HiayZL9YhBRiNmfuWQ5XsqYXcQz93cIXNHTnvUb5cp6oOjS0k3m32j0ZtFWxqOFVguC47SNcNyB+so4ZULJd2WGcsVBO6pbEFkuYx67hVvy5W4zR5fTeaViVpBCxnnUk55fM176onBuJ2IKMcypMrg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1744295001; bh=dP0asaFaoXhlE6SISQyD5RLgW6bGcgNyINR741koXp0=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=cCoi12wqBQ3siEZdYNV2jY2VbiPAazy1BmM9k00LlZQuAg722ha+wM9n/AB9gQsrteYJfIWV80VeESkWCW6V/Uexf2Jap3IIsQXabhZqOUeSBECqt3JqpEKBaEAFu5XVQr5EaxpMDpXXtSgnuXjkJXjVbUXQyU7u1/38kGZhd130w1EJfBi/x5BDaFn/BfdzD37E+2Pr57xWB+lioiAdnBXMyFyBTnhqXPUthvQpulWgBCgCp4NKo+8pQSjQ8Jbv6bTARtrJPE52WqUjvPI5HYzPh45DhRifeo5fgQgojJXfrMy8Ub/tZR1Yh8hJurAkzOEVmq7HIIdC+dBrtcIF2A==
-X-YMail-OSG: jF3N4MQVM1lAyrTcBqDkUTbH56uin0g36bVYWwtDfy3_hqqeRFQ7v9n.W.teM10
- Wy0Ia867G8Dw2EER73qHTtOu5cjlWixnHyjf6K5t3DC_STqzr.UrD45OtC7dv9SujlpWMsZajWA1
- _TxbMSVAxsu2Bsf9nId0b_ZLl8fLlc47JmqB2hSHcIcSprQ2dgpzNShsm5.Jw1kjmWI.CQLAOLgU
- yskQYu67JcfQp_Yg9lS4SYhdY9Ve68nEmpPg8re5zwEwIiU.BruzJVNBsgSHLo7UA9PKnnQVhC5i
- BcI8W2TiyKyaqq_8oo_b8xCxhwNSUEm78NhNwO5DZVlp9FmFbVK6cnoyS0lR8qMiAUbqnQ98V_.8
- hXFLXuhhp8br8HhXPaYrfsRYU_s1e7Z_FEsxLFIWqN6ByOsa3XBpDVHZtSp0LnCh5WRKvF57rNlj
- yESDv7VQzMjbt2xmcN4TIWvX6fkLUF09o02pKwfPDrKEj7pRqtIVu2Bs8Rjmcw959KPtuWOq7V_5
- kBaeWC5H6ILlyRZQbSjdTXCks_Jn1r_0gM039OLAXMzzpYw1rlcdI3lkgJl5qNetT5IghNo8D.ZZ
- lWk07bhPKgEgLIpqGRo04ISJ0MH837NzOxt2uh7SmZHl8B7xiswmlj2WLOdvtLg_5eoVKAtyJ8o8
- JaSEO6fbHZzZz2BH7Bd6uUMC9EqsvnlXb3YJTY6sKaIrT9y6zblGdfVqJ9TJPWdKARhNkarfFPuT
- WjnpDvO.SXv_3Q4jrDWL8cyVcCfYJAoApAa0kb3zPdT6AqNQvmTADiFGdHo6YnU7Ydlw2PRClxKZ
- NbWYbz_9UC.VqA57ws6chleRlwMNyd788hB.ickKqv4mBTtlYzm8p9Q35l0aL5RyyEHlDHEvMEas
- IE.TxgUKj5eSTuL7V_AZyHxwGAWDLwJpTm.9s0i8eFdpbWgykadySHey0pH1an2U8FIJqaIizWqX
- hsvGO6o3SBsJeg0eFg2MHO0vbch9n4DPQQO.4R8Xi8BGzTCC71LYHPE1C3mg3n_n3Vws6e6IUwGP
- 6jUlbjbpTSZxUgclO8lLxYhfl3NjSNPqcyir5CREhg7dVYI_qfJDFzhx029NApXDZDUHGQJt7wJk
- eMayyBBy4GqLskHJdWuqH33x89hDc1WcXpE.kARqpU5hdldAj8Jlvhg_beRXzglboYz9RH.r34ME
- 12YnFw_u9iUeDbkJjj3C3_.8_a8oU9lHz7NDtqIfQ3Jnqd9osTA8Z91y4kr9cl9UisIgR5hbIoCj
- Gb7KWU4yF5HsAOjuXSB.ZAGSPKY6npCh7_aiLJP0AXxJQmfY9f_Q1w2j0zyr6O_oq7au4mYEhgCJ
- l.N4g940yUFysQQPNQpmWomu6.67VHClS9eYIAi_4AgsOMt2s.qakEAe9d5d.ZjGLtqwm6J7hpq7
- XLU_Cj0ppVbzBjvfX8fRFDnPxrINEXMMU8YQdkgROQ4la4QpV.Z_IiaYD.qygkHsuZuvpR4xecIX
- vQSDdD3ifjH7xHNZVwQ.zUhAQWUaDjH3O.TbPQ6WiD8thBFm7rqt5v0crBv0UeuBeYvHBSE3U1CU
- TX1eOLk4q54z4fYZykxySgEF.047CvxuC1gmFf6Wq3GNJYWJ9_xcAMtki7HXzl.ODBxOeYOB.EiT
- ToUoVa1cujeU6SBTVeA0D6B5jN3mO80Vfl26gs.PyoC6jvE62ZLJhP.JDE1nZYBqelP5eBKTM9TD
- UVCQFkmkbMc09GSvAd2Ygf35jrmsfcLJu.HpMBYLxFPT7phly3oW.fxQPo.cBdYkA0.OxwwgpfE7
- D0yl5m1.jh6zyEdjavSWincm7IBGyy.gmDMcVsnJ6cith.7IvNO.Pz_lkXchlEfMHx7WFym6ANDS
- uiGiSLapo72g6FQust9TrnHwD7MZiLPzI5xxLyRrZ4f7H_MkTyNexNb_Mp9b6OAq1YIcdW6nQYmH
- GXfAAripwEWJhumUEKHnH4Pzbnb6zPQzYZBhsojVXV5qvV4RtdbLdVJdL6322PNvUn8JYzXAF6fB
- eS4sW4Dcm6mCq8ZapC6mszuowobBc5jISizs9VUPS07jWW2u1JbzrogzSFDYm75qkak49iM.uOhB
- CZVVo1fX_3MnemxFTOsJj1VvCA.xMYb7BoNboq03WkE570tjW9LcOfQMibwr9Pq0jEkAt6v3RNqf
- Z_sLoqnW6YsSwCNJPo8vhROEb8iaQiBB5sdajRi7wKfifsAjLUN6LvincxZMTQfY5f26Hjoj9Mnw
- RFJVStAiHKSwKbxsyCb7HX.ZttGwmBBNPshQbIYRK7ZtCH_5uy653.74yrqt6grtH2v9y3pfGLTl
- QBkQWVlWCagHLqfdTDXHJz0B4pawPUModug--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 1ee793a3-13b3-4062-ac31-5d88ddecf6b5
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.ne1.yahoo.com with HTTP; Thu, 10 Apr 2025 14:23:21 +0000
-Received: by hermes--production-gq1-6f8bfcd964-pbc56 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID ee5e9965a808f684b189ecfde41e6d54;
-          Thu, 10 Apr 2025 14:13:11 +0000 (UTC)
-Message-ID: <1c13537f-b088-464c-87ee-3e81fb909f92@schaufler-ca.com>
-Date: Thu, 10 Apr 2025 07:13:11 -0700
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BXsKzcVy"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43cfba466b2so10427125e9.3;
+        Thu, 10 Apr 2025 08:33:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744299203; x=1744904003; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=mufWQBCfhfh0Dd1cBFQEeIzlzzUVdMj6j6jZsR61Hv0=;
+        b=BXsKzcVyPz5yiV8SQeIFnAxdzZKQqytkvAQHR9yn62Wffw+P8vN2zkKT3EOTQnmN2N
+         ckKfkBdragTyTRoEbTh7vdmfRxjcLfQPey8/V3aMzapMFP3KJ3SvuyBs6zGT+iaDA5tF
+         5B1bifiMPOa5t7djwVStlEKPt8PFDUeYxhL9RlC3gxMYl1pSf3h940ny/BkPBzt7Q72J
+         hIBDPIwFYiQe7L1EsUXhDmyfj1RB4Q/L+/Ko+LwYFok/LcIrmtwdfQZXOa4MoiNP7BbS
+         yNlZtN+c3wU8M36Bxl439KuuwX301AGNil+yChXORjpw4fQ8VZVSO7DgxMSObg+nPGwL
+         cJDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744299203; x=1744904003;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mufWQBCfhfh0Dd1cBFQEeIzlzzUVdMj6j6jZsR61Hv0=;
+        b=UNeJJywidGN07Vh7iDG/W17Bwx7mmlxx+ToktMU3Pbt7JddNjhWgieGYKDoUc8v8D6
+         YnWecMEmTRwc/Rz9sk8k/PmXgQ+sb4CYT5WTbMnn3gzaPuzoUGh6GrkV/LfhPc53VaeL
+         pMPFSRaLvnOg4P5erPNdj57mHuC/4Dv8OwwrJMQn4ze/TcYgF9I/ZmqvKi/iQeWeCMB4
+         Cw7CjEN0tkkc8m7XiVh1w8fXMr9QMG61rC2b7ZQNz0+ctizB806IFD8/F/0CDrw7UftB
+         kQKejIkkHtLegpa9bwkd6hIGky7qdWf/qwIAyEgfFo/xUnNxBMpAqY3+LPJhwYK16gna
+         O+eA==
+X-Forwarded-Encrypted: i=1; AJvYcCVuShI7wDFmjha823aKXFoU9UwBtTEaEZxR609EwEn9xQX7056qTeUiv0Wlsij13JYo43A6sMCdMoui0qIZ@vger.kernel.org, AJvYcCW3MhqI7h3IBZCmTeHsZ9tq3pBAyrTkvboMma8CzMceEpQIu437g55YpxasBzzepOYRdQO+OI1fWYHbACky@vger.kernel.org, AJvYcCWjaJVEoLTTPT7O1sw8KUqFFBTN+Ei75lci7+BMvqI+XucASGWaqzdxEwSaYknKhKWJscDf6NIgF/g9addJLyubA+9aLQec@vger.kernel.org, AJvYcCX1X7weWfKCjElCHOTUiXCU9rP7UA3EU3n4/IeLcQU+iJgEI86MrOKqGkT5gEN6r3ej/gxcuVWDwTCk30sy7R4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2pHfP/dH8CLQPoZ7ekeGwWUv3/r8E4emK5ALZaSY5X4PujJtx
+	Lui2IpiHpo3iUNVrws4peuzvDhcReMohynP+faKC86sYenJqsRCU
+X-Gm-Gg: ASbGncumS1KCYCt26TeDz//Ae/toAjkgEcehklhwhfUGQskTFcLINAyTOS1iQAfcKNB
+	ld3v/LQNTG0XxTEsVjUoj1NCxfXX6i8yNu1fmKPLrcssCR+NyZXEQ18vjYcqrUHPKpRVtRYuvXO
+	TGl9fP2X/2T+PCFp+TxpKk9aWTwP0GsDbkyCi5+HoTv64fUdUVZbCJn2UUQWpVntAmxlRyIDJvW
+	bUxSgkqZUMU+C7QPZvTIR5W2/rq1CH5UAY/XfdgI31teEkaK4rXkAENI34JhI+PglHVOeIPo19K
+	6c5F3r+yTNyoLvt3gjXkeCi2bPRjIdI8U52MfEpPZt5S9n4MTyDjJpNnzwAMXs2QLnI=
+X-Google-Smtp-Source: AGHT+IErpYp47RaPcYNUotAQy19lNREpqUTjnBlbW3tbQQAJj+KKVW6iLFYXKxgBNzOHVVtZNPx5rg==
+X-Received: by 2002:a05:600c:a087:b0:43c:fb95:c752 with SMTP id 5b1f17b1804b1-43f2d7ae775mr43635555e9.3.1744299202992;
+        Thu, 10 Apr 2025 08:33:22 -0700 (PDT)
+Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43f2075fc6dsm59209915e9.28.2025.04.10.08.33.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Apr 2025 08:33:22 -0700 (PDT)
+Date: Thu, 10 Apr 2025 17:33:21 +0200
+From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To: WangYuli <wangyuli@uniontech.com>
+Cc: mic@digikod.net, gnoack@google.com, paul@paul-moore.com,
+	jmorris@namei.org, serge@hallyn.com, kees@kernel.org,
+	masahiroy@kernel.org, nathan@kernel.org, nicolas@fjasle.eu,
+	linux-security-module@vger.kernel.org,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	linux-hardening@vger.kernel.org, linux-kbuild@vger.kernel.org
+Subject: Re: [Bug Report] A compilation failure occurs when landlock and
+ RANDSTRUCT are combined with GCC 14.2.0.
+Message-ID: <20250410.926dbc57c00b@gnoack.org>
+References: <337D5D4887277B27+3c677db3-a8b9-47f0-93a4-7809355f1381@uniontech.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/29] Rework the LSM initialization
-To: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org,
- linux-integrity@vger.kernel.org, selinux@vger.kernel.org
-Cc: John Johansen <john.johansen@canonical.com>,
- Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>,
- Fan Wu <wufan@kernel.org>, =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?=
- <mic@digikod.net>, =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
- Kees Cook <kees@kernel.org>, Micah Morton <mortonm@chromium.org>,
- Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20250409185019.238841-31-paul@paul-moore.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20250409185019.238841-31-paul@paul-moore.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.23665 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <337D5D4887277B27+3c677db3-a8b9-47f0-93a4-7809355f1381@uniontech.com>
 
-On 4/9/2025 11:49 AM, Paul Moore wrote:
-> This is one of those patchsets that started out small and then quickly
-> expanded to what you see here.  I will warn you that some of the
-> individual patches are a bit ugly to look at, but I believe the end
-> result is much cleaner than what we have now, fixes some odd/undesirable
-> behavior on boot, and enables some new functionality.
->
-> The most obvious changes are the extraction of the LSM notifier and
-> initialization code out of security/security.c and into their own files,
-> security/lsm_notifier.c and security/lsm_init.c.  While not strictly
-> necessary, I think we can all agree that security/security.c has grown
-> to be a bit of a mess, and these are two bits of functionality which
-> can be extracted out into their own files without too much fuss.  I
-> personally find this to be a nice quality-of-life improvement, and while
-> I'm open to keeping everything in security.c, the argument for doing so
-> is going to need to be *very* persuasive.
+Hello!
 
-It's something I've considered doing as part of the stacking work,
-but that I have eschewed in the spirit of churn reduction. I've no
-problem with it.
+On Thu, Apr 10, 2025 at 04:11:15PM +0800, WangYuli wrote:
+> [ Compilation failure log: ]
+> 
+> *** WARNING *** there are active plugins, do not report this as a bug unless
+> you can reproduce it without enabling an
+> y plugins.
+> Event                            | Plugins
+> PLUGIN_FINISH_TYPE               | randomize_layout_plugin
+> PLUGIN_FINISH_DECL               | randomize_layout_plugin
+> PLUGIN_ATTRIBUTES                | latent_entropy_plugin
+> randomize_layout_plugin
+> PLUGIN_START_UNIT                | latent_entropy_plugin stackleak_plugin
+> PLUGIN_ALL_IPA_PASSES_START      | randomize_layout_plugin
+> security/landlock/fs.c:In function ‘hook_file_ioctl_common’:
+> security/landlock/fs.c:1745:61:internal compiler error: in
+> count_type_elements, at expr.cc:7075
+> 1745 |                         .u.op = &(struct lsm_ioctlop_audit) {
+>      |                                                             ^
+> 0x7f27fa6bdca7 __libc_start_call_main
+>        ../sysdeps/nptl/libc_start_call_main.h:58
+> 0x7f27fa6bdd64 __libc_start_main_impl
+>        ../csu/libc-start.c:360
+> Please submit a full bug report, with preprocessed source (by using
+> -freport-bug).
+> Please include the complete backtrace with any bug report.
+> See <file:///usr/share/doc/gcc-14/README.Bugs> for instructions.
+> make[4]: *** [scripts/Makefile.build:203: security/landlock/fs.o] Error 1
+> make[3]: *** [scripts/Makefile.build:461: security/landlock] Error 2
+> make[2]: *** [scripts/Makefile.build:461: security] Error 2
 
-> The other significant change is moving all of the LSM initcalls into the
-> LSM framework.  While I've always pushed to keep the LSM framework as
-> minimal as possible, there are some things that we really can't defer to
-> the individual LSMs and with the LSM framework responsible for enabling
-> or disabling the individual LSMs at boot, I believe management and
-> execution of the LSM initcalls needs to be handled in the framework as
-> well.  Not only does this move ensure that we aren't running initcalls
-> for LSMs which are disabled, it also provides us with a convenient spot
-> to signal when all of the LSMs have been actived (see the LSM_STARTED_ALL
-> patch towards the end of the patchset).  This is not a feature we
-> currently need, but I'm aware of some future work that does require this
-> so I thought it would be good to think about it now while doing this
-> work.
->
-> Related to the LSM_STARTED_ALL patch, the final patch in this series
-> adds support for LSMs to indicate if they provide lsm_prop values for
-> subjects and/or objects.  Casey needs this functionality for his recent
-> audit changes, and I personally find the counting approach presented
-> here to be ... less ugly I guess?
+Thank you for the report!
 
-The flags approach works for me. I was going to propose adding a call
-audit_lsm_secctx() that LSMs would call to identify that a secctx was
-being supported, but I had considered the flag approach as well. As for
-ugly, I can't say one way or the other.
+This is in my understanding a duplicate of the discussion in
+https://lore.kernel.org/all/20250407-kbuild-disable-gcc-plugins-v1-1-5d46ae583f5e@kernel.org/
 
-> This patchset is marked as a RFC for a number of reasons: additional
-> testing is required, the commit descriptions could benefit from some
-> extra attention, and I still have hopes that some of the individual
-> patches could be cleaned up a bit (I still like the end result, but how
-> we get there could be improved).  I would really appreciate if the
-> individual LSM maintainers could give this a quick look, especially
-> the individual LSM patches that move the initcalls into the LSM
-> framework as some of those are non-trivial.
-
-General comments:
-
-Adjacent patches with no more commit message than "cleanup" should
-be combined, as that message is telling me "these aren't the changes
-you're looking for".
-
-And about that. I believe that missing or uninformative commit messages
-are on your list of things that displease you. You will need to improve
-them to get them past yourself. :)
-
-There's a lot of churn here due to unnecessary name changes. I can't
-say they're unjustified, but the patch set is bigger than it needs to
-be, and more disruptive.
-
-I haven't tested it, but I don't see any substantial problems so far.
-
->   Mimi and Roberto, the
-> IMA/EVM work here was particularly "fun"; from what I've seen thus far
-> it appears to work correctly, but I have no idea if that code is good
-> or bad from you perspective.  It's perfectly okay if you want to
-> reject the approach taken in IMA/EVM, but we do need to move the
-> initcalls up to the LSM framework, so please suggest some code that
-> would allow us to do that for IMA/EVM.
->
-> --
-> Paul Moore (29):
->       lsm: split the notifier code out into lsm_notifier.c
->       lsm: split the init code out into lsm_init.c
->       lsm: simplify prepare_lsm() and rename to lsm_prep_single()
->       lsm: simplify ordered_lsm_init() and rename to lsm_init_ordered()
->       lsm: replace the name field with a pointer to the lsm_id struct
->       lsm: cleanup and normalize the LSM order symbols naming
->       lsm: rework lsm_active_cnt and lsm_idlist[]
->       lsm: get rid of the lsm_names list and do some cleanup
->       lsm: cleanup and normalize the LSM enabled functions
->       lsm: cleanup the LSM blob size code
->       lsm: cleanup initialize_lsm() and rename to lsm_init_single()
->       lsm: cleanup the LSM ordered parsing
->       lsm: fold lsm_init_ordered() into security_init()
->       lsm: add missing function header comment blocks in lsm_init.c
->       lsm: cleanup the debug and console output in lsm_init.c
->       lsm: output available LSMs when debugging
->       lsm: introduce an initcall mechanism into the LSM framework
->       loadpin: move initcalls to the LSM framework
->       ipe: move initcalls to the LSM framework
->       smack: move initcalls to the LSM framework
->       tomoyo: move initcalls to the LSM framework
->       safesetid: move initcalls to the LSM framework
->       apparmor: move initcalls to the LSM framework
->       lockdown: move initcalls to the LSM framework
->       ima,evm: move initcalls to the LSM framework
->       selinux: move initcalls to the LSM framework
->       lsm: consolidate all of the LSM framework initcalls
->       lsm: add a LSM_STARTED_ALL notification event
->       lsm: add support for counting lsm_prop support among LSMs
->
->  include/linux/lsm_hooks.h                            |   73 -
->  include/linux/security.h                             |    3 
->  security/Makefile                                    |    2 
->  security/apparmor/apparmorfs.c                       |    4 
->  security/apparmor/crypto.c                           |    4 
->  security/apparmor/include/apparmorfs.h               |    2 
->  security/apparmor/include/crypto.h                   |    1 
->  security/apparmor/lsm.c                              |   12 
->  security/bpf/hooks.c                                 |    3 
->  security/commoncap.c                                 |    3 
->  security/inode.c                                     |   29 
->  security/integrity/Makefile                          |    2 
->  security/integrity/evm/evm_main.c                    |   10 
->  security/integrity/iint.c                            |    4 
->  security/integrity/ima/ima_main.c                    |   10 
->  security/integrity/ima/ima_mok.c                     |    4 
->  security/integrity/initcalls.c                       |   97 +
->  security/integrity/initcalls.h                       |   23 
->  security/integrity/platform_certs/load_ipl_s390.c    |    4 
->  security/integrity/platform_certs/load_powerpc.c     |    4 
->  security/integrity/platform_certs/load_uefi.c        |    4 
->  security/integrity/platform_certs/machine_keyring.c  |    4 
->  security/integrity/platform_certs/platform_keyring.c |   14 
->  security/ipe/fs.c                                    |    4 
->  security/ipe/ipe.c                                   |    4 
->  security/ipe/ipe.h                                   |    2 
->  security/landlock/setup.c                            |    3 
->  security/loadpin/loadpin.c                           |   16 
->  security/lockdown/lockdown.c                         |    6 
->  security/lsm.h                                       |   46 
->  security/lsm_init.c                                  |  566 ++++++++++
->  security/lsm_notifier.c                              |   31 
->  security/lsm_syscalls.c                              |    8 
->  security/min_addr.c                                  |    5 
->  security/safesetid/lsm.c                             |    4 
->  security/safesetid/lsm.h                             |    2 
->  security/safesetid/securityfs.c                      |    3 
->  security/security.c                                  |  620 -----------
->  security/selinux/Makefile                            |    2 
->  security/selinux/hooks.c                             |   12 
->  security/selinux/ibpkey.c                            |    5 
->  security/selinux/include/audit.h                     |    5 
->  security/selinux/include/initcalls.h                 |   19 
->  security/selinux/initcalls.c                         |   50 
->  security/selinux/netif.c                             |    5 
->  security/selinux/netlink.c                           |    5 
->  security/selinux/netnode.c                           |    5 
->  security/selinux/netport.c                           |    5 
->  security/selinux/selinuxfs.c                         |    5 
->  security/selinux/ss/services.c                       |   26 
->  security/smack/smack.h                               |    6 
->  security/smack/smack_lsm.c                           |   19 
->  security/smack/smack_netfilter.c                     |    4 
->  security/smack/smackfs.c                             |    4 
->  security/tomoyo/common.h                             |    2 
->  security/tomoyo/securityfs_if.c                      |    4 
->  security/tomoyo/tomoyo.c                             |    4 
->  security/yama/yama_lsm.c                             |    3 
->  58 files changed, 1102 insertions(+), 724 deletions(-)
->
+–Günther
