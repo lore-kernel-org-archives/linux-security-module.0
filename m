@@ -1,196 +1,162 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B35A1EE02F;
-	Thu, 10 Apr 2025 19:47:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1895290BB5
+	for <linux-security-module@vger.kernel.org>; Thu, 10 Apr 2025 20:53:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744314475; cv=none; b=V3v3zH56b1g04pmEwjj/7qiRDqG1sOlmYHXxplNNturgnU3/W3Z/hAWPO5CcgdWp/sl+gwptW/zD04qZv5ifyN4iD8HEgjNuoknbttA6+V6gNq492xCEfsOHrvweN/6cT79CtSmgEKRHDbPX1fzsKHrjjNn4EznL1i7Xvf/zj/k=
+	t=1744318388; cv=none; b=VRKexcVc8DGSUNrv36Lj02cI0/Rv/+QhPoE2XAqtSlkOXC32SS7BQ00sjth46z1LfkQGwb+XJPBlq8LKw/xHYPVPnW+tbR52lJYcoTAsmX3lZ6rJDSHEesCuYeVKb/OzmUcO5+4PwHjX+Gg6K/ROPZxEInjRfn0QW7ZotnsOIjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744314475; c=relaxed/simple;
-	bh=3vq9IfT+coLy3S0xB0lkBwcw/X7RYkV6rTC8tZQpm8k=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Ppq+/JREanFfvk88AritrD/5P/0zgpI+u8skUHGcT35I9WO6BwR+3PsUZbOIozCdI7rNpgsAe09hVkgHCJfaPMPIghv6ttQ5GslMORUcZfMQQTLkRYuQv5B/wP/RZO/x0TncS3uNI5Fmumc+TxvNUsGCK1Ya5dxwvPH/9Wq9V/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=H/7jrECt; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1744318388; c=relaxed/simple;
+	bh=H0u3vX5VsY8JiV57FEEEPi314b0Fhehwq879pYiM8lQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rDt8pJ0uLCD2uGSxcXPvTg6KgTuZxKRzTNzIwKL4ZRkD+/tNP7kolKio1JdUEpypvGcdwUqCMvca7nIbqs4av2+52p2vZPPtVGk7pbN/XX1EbmSsbhrfJ8KzEOp2cI8lfgr2DMCfUxh3dNgYQxOsNOiMSYuH6YTowI/czKLWvXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=F/PtC338; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="H/7jrECt"
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53AJeNL2018133;
-	Thu, 10 Apr 2025 19:47:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=Ym5t2H
-	BCUys4CJouuMEi1f6kxfT8lHW6yUI2giZDpJY=; b=H/7jrECtafdhFxMAWv/jdf
-	Vj3b1FxjH7kfpzpEvD/2bgKCWfRI/dE8w4hburlcKcJ8Txke/0w5tNrGXf10Ap4f
-	ldD/F70TQxoDpEO4IIFz9biUPt0pK+RdwmEDX4hge1Oj5GQeAgoEwx2i4cIDX9co
-	4P76CwzJYc5wlKGYyA1F5r0ajVEOHXaS3chYAXFV7xU1/buXM77qK7GhlrlYwSib
-	mbtZsPirZGX2IqYJiuiPpi7S0pUH7toZb3PmNFz3H94upcqTcmtQZLw/Mut67AwW
-	jdm8d67LHqDeXtX7FfQQ2CSUdni6lS3Ikj60/KWt+1TSPkbZl+5yPa4uygWnMyog
-	==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 45x6ca53st-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Apr 2025 19:47:28 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53AJ0CCK024651;
-	Thu, 10 Apr 2025 19:47:27 GMT
-Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 45ueutqwfw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Apr 2025 19:47:27 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53AJlR6d31589090
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 10 Apr 2025 19:47:27 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4165558055;
-	Thu, 10 Apr 2025 19:47:27 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5D64358043;
-	Thu, 10 Apr 2025 19:47:26 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.31.96.173])
-	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 10 Apr 2025 19:47:26 +0000 (GMT)
-Message-ID: <80c8323c5ba2698cf4352e9d64eb8517250955d6.camel@linux.ibm.com>
-Subject: Re: [PATCH v11 8/9] ima: make the kexec extra memory configurable
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: steven chen <chenste@linux.microsoft.com>, Baoquan He <bhe@redhat.com>,
-        Lakshmi Ramasubramanian <nramas@linux.microsoft.com>
-Cc: stefanb@linux.ibm.com, roberto.sassu@huaweicloud.com,
-        roberto.sassu@huawei.com, eric.snowberg@oracle.com,
-        ebiederm@xmission.com, paul@paul-moore.com, code@tyhicks.com,
-        bauermann@kolabnow.com, linux-integrity@vger.kernel.org,
-        kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, madvenka@linux.microsoft.com,
-        James.Bottomley@hansenpartnership.com, vgoyal@redhat.com,
-        dyoung@redhat.com
-Date: Thu, 10 Apr 2025 15:47:26 -0400
-In-Reply-To: <692121f5-fc17-45b5-b4c0-c4393bb05bc4@linux.microsoft.com>
-References: <20250402124725.5601-1-chenste@linux.microsoft.com>
-	 <20250402124725.5601-9-chenste@linux.microsoft.com>
-	 <Z/eVWQw3z7yyzyxb@MiWiFi-R3L-srv>
-	 <8b5e5495-4b11-4acc-8df1-fb94b2a34f0f@linux.microsoft.com>
-	 <8120a7b1eafaa5452981484671e841a7a7872877.camel@linux.ibm.com>
-	 <692121f5-fc17-45b5-b4c0-c4393bb05bc4@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="F/PtC338"
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e637edaa652so997024276.1
+        for <linux-security-module@vger.kernel.org>; Thu, 10 Apr 2025 13:53:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1744318385; x=1744923185; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=krwoQzIfIMwcctI32444l9PXwjI42QUcJLibz6Sa1no=;
+        b=F/PtC338bdrBJPdlcUyRrnaMhtSu2bGeafLD7l6gCMIm1oUwOChmCswfmbMKKgMlCJ
+         wfvQ1ABPJpwLuyR7txwmjZ+cz88V2QlfoWrPXMtAXjLsautFaLp9V4tWmOujGEcfHwgK
+         MtkTYRFzAgCOc1eRZ2tQqcbMNkK5KHa+fbzLlg3dUfVinSrJNl8JtIAGYJis3nt9bvoN
+         CSqBvdwJS1cAvcTnM1XwDx58DTs492Dugj3G/o3eo9+MunZJ7tGfYrWWlgS2XZeLwcj1
+         QqrDHiEFZSmIPGL6nRwb7wB0xfS6uaqC+kASsY5ES3je/Ojzk9C1x4QoxMlRpPnaFlGj
+         UXcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744318385; x=1744923185;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=krwoQzIfIMwcctI32444l9PXwjI42QUcJLibz6Sa1no=;
+        b=Mp1vKogx8qWMRRVtC9Ovu91ux8w07QMbZnIptbnQskY1qgVU+TkPf9LT48FKBnBPTL
+         tps/x6gbkPG/eVGW6EUU8+5fv/AS5iPiKvDPJAz0EoSKGmmAwN0Km0qcRl4o2ifS8sjL
+         8EVWcSzAxcxqzwMxVdrlx/TQN7wcH+bO1Pq3ojc1uBKFeX4Va5SNUZhkLdkMqo1RRhLO
+         NerOEf7lXB5/U3vO1YDgWiafXasT5SywPf1IbzaGLyc765el4NXKvNn4+eOPeiUk5B8u
+         HN3EBQCjHKfWIdmXclvsup+JfbWMEVUl7EQmW00OAs1cPJpQlLZAkYJbt8gQ5Zy/JEvO
+         O/ZA==
+X-Gm-Message-State: AOJu0YwJvcMbVc5WvcMxv+02nrucul5i7KrCb4rNpclB+TNmH/NfKD/7
+	2Uid6bwtn00uH9GRisVCzf346QNW2MCC4NrVssJF+yxJfRltKO3JbiVKm8omtjN42NaC6//sHWT
+	REdpvKGPFNsP7lv899v8GSfuX/J71HkY/gTz5
+X-Gm-Gg: ASbGncsiIF8JngOBAkYSZvLZDuv1GtWoG6UklJszMAxrEd2YTf468r9yEnEUxpYwtEW
+	OU6H2rXndVWHMFIlbuOXJfk7QzfoOXgU63SucPvz2h/d794H27XtnwSB+5zQBNQXq6NBKT66sqs
+	8rYJqhwL2usEtyBhHRh4Tt4w==
+X-Google-Smtp-Source: AGHT+IFXHNys0Vus65ea3Y/4NyU5LsKY5+XwkeWSZndll+T+IMEQQ87WU9qeAi5e/zuv/55SqI008xJ/mLuSjAC3hoU=
+X-Received: by 2002:a05:6902:240e:b0:e6e:1892:6288 with SMTP id
+ 3f1490d57ef6-e704df7a0dfmr714330276.16.1744318385560; Thu, 10 Apr 2025
+ 13:53:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: s8_Ot0gv62iN1FhFfWFNmq5-4qh7VQcq
-X-Proofpoint-ORIG-GUID: s8_Ot0gv62iN1FhFfWFNmq5-4qh7VQcq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-10_05,2025-04-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- mlxlogscore=999 phishscore=0 mlxscore=0 priorityscore=1501 suspectscore=0
- adultscore=0 bulkscore=0 spamscore=0 clxscore=1015 impostorscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502280000 definitions=main-2504100137
+References: <20250409185019.238841-31-paul@paul-moore.com> <20250409185019.238841-48-paul@paul-moore.com>
+ <202504091406.0A86DE05@keescook>
+In-Reply-To: <202504091406.0A86DE05@keescook>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 10 Apr 2025 16:52:54 -0400
+X-Gm-Features: ATxdqUFLySLsnQc7LikhtxNtcIk3wiotiSA5wvDMv50VG9dh8rCpFsiLKa6iTXk
+Message-ID: <CAHC9VhQ=D30C4WfGCMDDvXTrTd8iX7=c8pwDW8wKF+nEydP0_Q@mail.gmail.com>
+Subject: Re: [RFC PATCH 17/29] lsm: introduce an initcall mechanism into the
+ LSM framework
+To: Kees Cook <kees@kernel.org>
+Cc: linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org, 
+	selinux@vger.kernel.org, John Johansen <john.johansen@canonical.com>, 
+	Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	Fan Wu <wufan@kernel.org>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	Micah Morton <mortonm@chromium.org>, Casey Schaufler <casey@schaufler-ca.com>, 
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2025-04-10 at 11:49 -0700, steven chen wrote:
-> On 4/10/2025 11:04 AM, Mimi Zohar wrote:
-> > On Thu, 2025-04-10 at 09:59 -0700, steven chen wrote:
-> > > On 4/10/2025 2:54 AM, Baoquan He wrote:
-> > > > On 04/02/25 at 05:47am, steven chen wrote:
-> > > > > The extra memory allocated for carrying the IMA measurement list =
-across
-> > > > > kexec is hard-coded as half a PAGE.  Make it configurable.
-> > > > >=20
-> > > > > Define a Kconfig option, IMA_KEXEC_EXTRA_MEMORY_KB, to configure =
-the
-> > > > > extra memory (in kb) to be allocated for IMA measurements added d=
-uring
-> > > > > kexec soft reboot.  Ensure the default value of the option is set=
- such
-> > > > > that extra half a page of memory for additional measurements is a=
-llocated
-> > > > > for the additional measurements.
-> > > > >=20
-> > > > > Update ima_add_kexec_buffer() function to allocate memory based o=
-n the
-> > > > > Kconfig option value, rather than the currently hard-coded one.
-> > > > >=20
-> > > > > Suggested-by: Stefan Berger <stefanb@linux.ibm.com>
-> > > > > Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-> > > > > Signed-off-by: steven chen <chenste@linux.microsoft.com>
-> > > > > Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-> > > > > Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-> > > > > ---
-> > > > >    security/integrity/ima/Kconfig     | 10 ++++++++++
-> > > > >    security/integrity/ima/ima_kexec.c | 16 +++++++++++-----
-> > > > >    2 files changed, 21 insertions(+), 5 deletions(-)
-> > > > >=20
-> > > > > diff --git a/security/integrity/ima/Kconfig b/security/integrity/=
-ima/Kconfig
-> > > > > index 475c32615006..d73c96c3c1c9 100644
-> > > > > --- a/security/integrity/ima/Kconfig
-> > > > > +++ b/security/integrity/ima/Kconfig
-> > > > > @@ -321,4 +321,14 @@ config IMA_DISABLE_HTABLE
-> > > > >    	help
-> > > > >    	   This option disables htable to allow measurement of duplic=
-ate records.
-> > > > >   =20
-> > > > > +config IMA_KEXEC_EXTRA_MEMORY_KB
-> > > > > +	int "Extra memory for IMA measurements added during kexec soft =
-reboot"
-> > > > > +	depends on IMA_KEXEC
-> > > > > +	default 0
-> > > > Usually a new Kconfig item which accepts a range should define the =
-range
-> > > > boundary, otherwise it's not clear to people how large or how small=
- it
-> > > > can be set. For example, can I set it as value of 1<<40? We should =
-at
-> > > > least estimate a possible upper limit for it for other people's
-> > > > reference. My personal opinion.
-> > > Hi Baoquan,
-> > >=20
-> > > How about I set range 2-40? Default set as 2, same as the fixed setti=
-ng.
-> > 0, the current default, sets the "extra" memory to the existing "extra =
-half a
-> > page of memory for the additional measurements".  For backwards compati=
-bility,
-> > please do not change this.
-> >=20
-> > The requirement for a larger "extra" measurement is coming from Microso=
-ft. If
-> > this isn't any longer a requirement, we could drop this patch.  Lakshmi=
-, do you
-> > have any thoughts on this?
->=20
-> How about the range set as 0-40 and the default as 0?
->=20
-> We (Microsoft) are ok with 0 as the default.
+On Wed, Apr 9, 2025 at 5:16=E2=80=AFPM Kees Cook <kees@kernel.org> wrote:
+> On Wed, Apr 09, 2025 at 02:50:02PM -0400, Paul Moore wrote:
+> > Currently the individual LSMs register their own initcalls, and while
+> > this should be harmless, it can be wasteful in the case where a LSM
+> > is disabled at boot as the initcall will still be executed.  This
+> > patch introduces support for managing the initcalls in the LSM
+> > framework, and future patches will convert the existing LSMs over to
+> > this new mechanism.
+> >
+> > Only initcall types which are used by the current in-tree LSMs are
+> > supported, additional initcall types can easily be added in the future
+> > if needed.
+> >
+> > Signed-off-by: Paul Moore <paul@paul-moore.com>
+> > ---
+> >  include/linux/lsm_hooks.h | 33 ++++++++++++---
+> >  security/lsm_init.c       | 89 +++++++++++++++++++++++++++++++++++++++
+> >  2 files changed, 117 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> > index a7ecb0791a0f..0d2c2a017ffc 100644
+> > --- a/include/linux/lsm_hooks.h
+> > +++ b/include/linux/lsm_hooks.h
+> > @@ -148,13 +148,36 @@ enum lsm_order {
+> >       LSM_ORDER_LAST =3D 1,     /* This is only for integrity. */
+> >  };
+> >
+> > +/**
+> > + * struct lsm_info - Define an individual LSM for the LSM framework.
+> > + * @id: LSM name/ID info
+> > + * @order: ordering with respect to other LSMs, optional
+> > + * @flags: descriptive flags, optional
+> > + * @blobs: LSM blob sharing, optional
+> > + * @enabled: controlled by CONFIG_LSM, optional
+> > + * @init: LSM specific initialization routine
+> > + * @initcall_pure: LSM callback for initcall_pure() setup, optional
+> > + * @initcall_early: LSM callback for early_initcall setup, optional
+> > + * @initcall_core: LSM callback for core_initcall() setup, optional
+> > + * @initcall_subsys: LSM callback for subsys_initcall() setup, optiona=
+l
+> > + * @initcall_fs: LSM callback for fs_initcall setup, optional
+> > + * @nitcall_device: LSM callback for device_initcall() setup, optional
+> > + * @initcall_late: LSM callback for late_initcall() setup, optional
+> > + */
+>
+> Yay! Proper kerndoc. :)
 
-Thanks, fine.
+ ;)
 
->=20
-> Thanks
->=20
-> > > > The rest looks good to me.
-> > > >=20
-> > > >=20
-> > > > > +	help
-> > > > > +	  IMA_KEXEC_EXTRA_MEMORY_KB determines the extra memory to be
-> > > > > +	  allocated (in kb) for IMA measurements added during kexec sof=
-t reboot.
-> > > > > +	  If set to the default value of 0, an extra half page of memor=
-y for those
-> > > > > +	  additional measurements will be allocated.
-> > > > > +
-> > > > >    endif
-> > > > ...snip...
-> > >=20
-> > >=20
->=20
->=20
+> > +/**
+> > + * security_initcall_late - Run the LSM late initcalls
+> > + */
+> > +static int __init security_initcall_late(void)
+> > +{
+> > +     int rc;
+> > +
+> > +     rc =3D lsm_initcall(late);
+> > +     lsm_pr_dbg("all enabled LSMs fully activated\n");
+> > +
+> > +     return rc;
+> > +}
+> > +late_initcall(security_initcall_late);
+>
+> You'd need a new place for the lsm_pr_dbg, but these are all just
+> copy/paste. These could be macro-ified too?
 
+If we didn't want to move the other LSM framework initcalls into these
+initcalls (yes, I prefer it this way), or add the LSM_STARTED_ADD
+event at the end, I would tend to agree with you.  Let's leave it
+as-is for now, if something changes in the future wrt to any of things
+above we can revisit this.
+
+I'm also somewhat hopeful that this work will bring attention to the
+different initcall types/levels that are in use by various LSMs, I
+suspect there are a few LSMs which are currently using multiple
+initcall types that could be consolidated into one.  That's not
+something I wanted to tackle in this patchset, but if we could reduce
+the number of initcall types that we use in the LSM subsystem as a
+whole this may not really be an issue of any significance ...
+
+--=20
+paul-moore.com
