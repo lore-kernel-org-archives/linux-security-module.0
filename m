@@ -1,95 +1,97 @@
-Received: from smtp-190d.mail.infomaniak.ch (smtp-190d.mail.infomaniak.ch [185.125.25.13])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70CE91F098E;
-	Thu, 10 Apr 2025 17:15:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 944F41F098E;
+	Thu, 10 Apr 2025 17:24:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744305316; cv=none; b=q8SpQWrIr8Panl0/du2eSoLj/2AJb71KC195tBnJHvLn4S9jAT4NkPW2xSqKC8Kg7FPN2K5Y20sKqZSgq6QvVCLtiu/VEcAKAjuVYtre9lRz6h66yA1+Y6lypVN1hDNPBomsLVSQEq49KxQbBIuGuWZCo/4hnYevu2VGGZrom+c=
+	t=1744305854; cv=none; b=B3Y6uIkchB4v2UL0z9rrqNVgTQe2HW3lhgu0Ht+wO2VbSkQzAM6roKapCr/wJYDmfoJElJraoduHlqjstOeI/+EpiO/hAK3Ta68kam6TyVZtGhwketB+Z0WYaC2kmpD5+LsygpGw7x107HQzypmsRGl9ZknU4lh0+BSPU2KW5Oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744305316; c=relaxed/simple;
-	bh=5ALi35vEit4jVHRzo8LeambbTx8yrl8l/InF5c4WZFg=;
+	s=arc-20240116; t=1744305854; c=relaxed/simple;
+	bh=LytjVK/uTAfK1ATja76akWBApQICg4D2IClyyAxnKiM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EJpbnLiBzHeJUlhAf4bnLmUQQIAJ0+zS+Q+yw0BJ1ZXpgl87fjGACQYIckXOFT9DdHOMO5HG4y1SiyqKmm4Y7IG7xePxYUL2jAxZjUUD5Ci1rXSA7V05LFGaBTFhgqnY8PD2IcgLwkm+KmgrgN7pRzC++7y3NF33sRQrqjFFYPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=YhVO7C0V; arc=none smtp.client-ip=185.125.25.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	 Content-Type:Content-Disposition:In-Reply-To; b=kTMrqbgrpAPkPbOyKnRgWr1QtLCIkF4O4a93d7zuTGtqjmuPD7JsVbJmjpcBsjRuhOX0pqdFfD/PsnWx6++E+fMKX4aMr99c9FqaK1TybhH+QgKdkwCWCvvvJCZYaCdxu8fc0ayDSDf/Pcg30C4Pk/nuIjuHJ3X4FYV0he2YLyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=st7Ba1Lu; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="YhVO7C0V"
-Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10:40ca:feff:fe05:0])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ZYR5N2RkVzRrv;
-	Thu, 10 Apr 2025 19:05:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1744304712;
-	bh=99/RXn0MLXP28oZE7oH//4zXPYGjhypiJ2KEDAnW5jY=;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="st7Ba1Lu"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29FAAC4CEEA;
+	Thu, 10 Apr 2025 17:24:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744305854;
+	bh=LytjVK/uTAfK1ATja76akWBApQICg4D2IClyyAxnKiM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YhVO7C0VCVvGv88HbYg1tzpR68jC1nUpEH4nZu9RLIEdBnfWuR31wMGRNxygWgat4
-	 521h/Iqu0TWwGaapfFXgJiNZU9W9F+5fTN0LmIcreCktxLw4Za9Ioq/a8kv5C6Owyc
-	 LqfdaNEhYLjB63V/PuQNZzBabLv92RIpOgmvON5k=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4ZYR5L4hcJz8vc;
-	Thu, 10 Apr 2025 19:05:10 +0200 (CEST)
-Date: Thu, 10 Apr 2025 19:05:09 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack3000@gmail.com>
-Cc: WangYuli <wangyuli@uniontech.com>, gnoack@google.com, 
-	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, kees@kernel.org, 
-	masahiroy@kernel.org, nathan@kernel.org, nicolas@fjasle.eu, 
-	linux-security-module@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	linux-hardening@vger.kernel.org, linux-kbuild@vger.kernel.org
-Subject: Re: [Bug Report] A compilation failure occurs when landlock and
- RANDSTRUCT are combined with GCC 14.2.0.
-Message-ID: <20250410.Ahkoo7ihae8a@digikod.net>
-References: <337D5D4887277B27+3c677db3-a8b9-47f0-93a4-7809355f1381@uniontech.com>
- <20250410.926dbc57c00b@gnoack.org>
+	b=st7Ba1LuzVZa0v54c9Ukc2WUdpZnIkKxlfeukTkFvSwLPgVfrDsskz1HCRHKJQ0T7
+	 uMSXiewUUu9WBVsQ/8Pjt22rGUmOdeb7hmG4uKGTYR2WX3JqwccflfNdC6oG0cu7XV
+	 cwlKJfsSwQSpZ7ywbAmDv5zWTvPU2SgrZnMjcaE/9DB5r9KZg+RSoTblyxRnjQv5iw
+	 2N85PRGR6SkAy2O/Znz0ys7TnbfNo9rmHMm8bgR+lCv1lQYMj/yQf6LAr65+6mN8a2
+	 NEg9CZAW62k7agS6GwhSs763Yw+J/F5oHCEu7MJr7KGZoscDny/YkmwI0KVN/V4rAA
+	 quhT8VvqDf9tg==
+Date: Thu, 10 Apr 2025 17:24:08 +0000
+From: sergeh@kernel.org
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Kees Cook <kees@kernel.org>,
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+	linux-integrity@vger.kernel.org, zohar@linux.ibm.com
+Subject: Re: Credentials not fully initialized before bprm_check LSM hook
+Message-ID: <Z_f-uBGhBq9CYmaw@lei>
+References: <fb9f7900d411a3ab752759d818c3da78e2f8f0f1.camel@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250410.926dbc57c00b@gnoack.org>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <fb9f7900d411a3ab752759d818c3da78e2f8f0f1.camel@huaweicloud.com>
 
-On Thu, Apr 10, 2025 at 05:33:21PM +0200, Günther Noack wrote:
-> Hello!
+On Thu, Apr 10, 2025 at 01:47:07PM +0200, Roberto Sassu wrote:
+> Hi everyone
 > 
-> On Thu, Apr 10, 2025 at 04:11:15PM +0800, WangYuli wrote:
-> > [ Compilation failure log: ]
-> > 
-> > *** WARNING *** there are active plugins, do not report this as a bug unless
-> > you can reproduce it without enabling an
-> > y plugins.
-> > Event                            | Plugins
-> > PLUGIN_FINISH_TYPE               | randomize_layout_plugin
-> > PLUGIN_FINISH_DECL               | randomize_layout_plugin
-> > PLUGIN_ATTRIBUTES                | latent_entropy_plugin
-> > randomize_layout_plugin
-> > PLUGIN_START_UNIT                | latent_entropy_plugin stackleak_plugin
-> > PLUGIN_ALL_IPA_PASSES_START      | randomize_layout_plugin
-> > security/landlock/fs.c:In function ‘hook_file_ioctl_common’:
-> > security/landlock/fs.c:1745:61:internal compiler error: in
-> > count_type_elements, at expr.cc:7075
-> > 1745 |                         .u.op = &(struct lsm_ioctlop_audit) {
-> >      |                                                             ^
-> > 0x7f27fa6bdca7 __libc_start_call_main
-> >        ../sysdeps/nptl/libc_start_call_main.h:58
-> > 0x7f27fa6bdd64 __libc_start_main_impl
-> >        ../csu/libc-start.c:360
-> > Please submit a full bug report, with preprocessed source (by using
-> > -freport-bug).
-> > Please include the complete backtrace with any bug report.
-> > See <file:///usr/share/doc/gcc-14/README.Bugs> for instructions.
-> > make[4]: *** [scripts/Makefile.build:203: security/landlock/fs.o] Error 1
-> > make[3]: *** [scripts/Makefile.build:461: security/landlock] Error 2
-> > make[2]: *** [scripts/Makefile.build:461: security] Error 2
+> recently I discovered a problem in the implementation of our IMA
+> bprm_check hook, in particular when the policy is matched against the
+> bprm credentials (to be committed later during execve().
 > 
-> Thank you for the report!
+> Before commit 56305aa9b6fab ("exec: Compute file based creds only
+> once"), bprm_fill_uid() was called in prepare_binprm() and filled the
+> euid/egid before calling security_bprm_check(), which in turns calls
+> IMA.
 > 
-> This is in my understanding a duplicate of the discussion in
-> https://lore.kernel.org/all/20250407-kbuild-disable-gcc-plugins-v1-1-5d46ae583f5e@kernel.org/
+> After that commit, bprm_fill_uid() was moved to begin_new_exec(), which
+> is when the last interpreter is found.
+> 
+> The consequence is that IMA still sees the not yet ready credentials
+> and an IMA rule like:
+> 
+> measure func=CREDS_CHECK euid=0
 
-Yes, a new patch has been submitted:
-https://lore.kernel.org/all/20250409151154.work.872-kees@kernel.org/
+"IMA still sees" at which point exactly?
+
+Do I understand right that the problem is that ima's version of
+security_bprm_creds_for_exec() needs to run after
+bprm_creds_from_file()?
+
+Given that Eric's commit message said that no bprm handlers use
+the uid, it seems it should be safe to just move that?
+
+> will not be matched for sudo-like applications.
+> 
+> It does work however with SELinux, because it computes the transition
+> before IMA in the bprm_creds_for_exec hook.
+> 
+> Since IMA needs to be involved for each execution in the chain of
+> interpreters, we cannot move to the bprm_creds_from_file hook.
+> 
+> How do we solve this problem? The commit mentioned that it is an
+> optimization, so probably would not be too hard to partially revert it
+> (and keeping what is good).
+> 
+> Thanks
+> 
+> Roberto
+> 
