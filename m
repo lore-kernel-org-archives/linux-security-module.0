@@ -1,55 +1,62 @@
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCEAA1EEA4B;
-	Thu, 10 Apr 2025 08:42:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 186E820CCD9
+	for <linux-security-module@vger.kernel.org>; Thu, 10 Apr 2025 09:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744274565; cv=none; b=t1dYfIhxqPGsYtSelUwuonuO9+/d8xb1S6rHX+Yiuec33ASVbUwVLA3L2aDKWHJgy6NZoGECkaQRz+DfoWwY8eGLgnCQnfgstfIOz52mGEER1dS26jVeccOv4v+d+mu+vBlYMUT4ktnwnl3WMtNtLAFtWtiNjFzrUcBsPvQTYSU=
+	t=1744278891; cv=none; b=jzvzdZbAZpiCQNi99jIlQ+rCwnYfxtoXDcJuTofeRGRjtIpHKlIYjI3INE0yN88YtHGFQyQaBKuPdgv5vtnndfhzCQ3SC+kbUpwyfIV3LhUNDmCtOay5SsF8t366P4zh+KQIdrfZa3060pzay5UmRVKQxScr3Ap0cgJU34QXwQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744274565; c=relaxed/simple;
-	bh=YSmAOLgssT6PQvheoyK0ouFbkX6lGlFzsxSSLWhx52U=;
+	s=arc-20240116; t=1744278891; c=relaxed/simple;
+	bh=e8pssY7zMOIxbmYX6eTCFTk3ZdlqMN7WT1Tmj47w+Bk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r4/VuDQ871OUiLkue89BIcY6jRoU58y/E5ZEElxpQ8tlgswp5zUZ6td4n/uHsLjmczwKH2e6JvTMCvYxkOmbHzb7zf4Wn9TWKygbOrXRq6Fy3jzxrivLx/xp3sXuxJhSsgcTAtLSz8WEHkKsls0EfCHn7TIFi94JXbmFDRDYBTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FRyNJ6g0; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=ncl/T2XPWFzaXcDbRPx/WWIQpBgKCfZE7YF9UxduzhTs67EXeoR4knP/WZ4yWtB9amF0BNCxZlPSXxA3m6gS83PEX5pn9WCuNoFfig1JWTiYw9Nbmw3kFOp9azltYzQihaOW16sfZpqxLHXWkTo2JcTNMEZuKUd6uir9Jp/qGQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VAY6Tu8X; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FRyNJ6g0"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=apfyLXFp4mpz8/dTquQGt331FyDN8GShWvECUqUQnXk=; b=FRyNJ6g0TgK3lFVFJDAty4Vx+p
-	2GcIpX8aKtInetRLFajhT2MuxsfmdrzK67aUwOV9vSE+Yz4dBDmlhgRDLppTAuV8JQhVKje7BUCqA
-	hGTO7t7XISNyoKPEPiH3DJ0WXN6VEgzN5oBFS6faIcwmNj/7yYXy1rRF43TD7n+jOb95oZWLtLBoS
-	gDmgjhtKkfTxeiM9NUTtd6xrQyAMa1b67WdDTvbB8k3orQmxjG438aeY1h1A68CedZ64W1K+3q89j
-	M4mSlBRNYhjTelrdyhg5ALuuo+uQ9Ltb0u32W92KPAFXuzTk21vifJIW0tTxmGRzDRM+KlajnjheL
-	uZHFTJEw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1u2nUc-00000009n15-09rJ;
-	Thu, 10 Apr 2025 08:42:38 +0000
-Date: Thu, 10 Apr 2025 01:42:38 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Shivank Garg <shivankg@amd.com>
-Cc: seanjc@google.com, david@redhat.com, vbabka@suse.cz,
-	willy@infradead.org, akpm@linux-foundation.org, shuah@kernel.org,
-	pbonzini@redhat.com, ackerleytng@google.com, paul@paul-moore.com,
-	jmorris@namei.org, serge@hallyn.com, pvorel@suse.cz,
-	bfoster@redhat.com, tabba@google.com, vannapurve@google.com,
-	chao.gao@intel.com, bharata@amd.com, nikunj@amd.com,
-	michael.day@amd.com, yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com,
-	thomas.lendacky@amd.com, michael.roth@amd.com, aik@amd.com,
-	jgg@nvidia.com, kalyazin@amazon.com, peterx@redhat.com,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
-	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	linux-coco@lists.linux.dev
-Subject: Re: [PATCH RFC v7 5/8] KVM: guest_memfd: Make guest mem use guest
- mem inodes instead of anonymous inodes
-Message-ID: <Z_eEfjrkspAt4ACP@infradead.org>
-References: <20250408112402.181574-1-shivankg@amd.com>
- <20250408112402.181574-6-shivankg@amd.com>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VAY6Tu8X"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744278889;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FBjnDHe05jMrdyAmjlXqvilcIE/JjsVNiTKFB4wAT6A=;
+	b=VAY6Tu8XgBaEPKM1vN8rWbloQFWOkC8/aMukSsuUK/XxwDnXqluOTMy4kGMkmS1wthzb+a
+	xi9Is/VZNw9AdYZ0RpYJpbQJX0fqCiQMeRixiR3g/93vp3oXzu80n6i9mJ8lHyND85pzy7
+	DWC34c6ZOQvcDYNXKJFogKjkpa5UCqA=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-80-IMCN5vjAMv-jci4TsADYlw-1; Thu,
+ 10 Apr 2025 05:54:44 -0400
+X-MC-Unique: IMCN5vjAMv-jci4TsADYlw-1
+X-Mimecast-MFC-AGG-ID: IMCN5vjAMv-jci4TsADYlw_1744278882
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2C7A1180AF53;
+	Thu, 10 Apr 2025 09:54:41 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.38])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 848791828AA5;
+	Thu, 10 Apr 2025 09:54:38 +0000 (UTC)
+Date: Thu, 10 Apr 2025 17:54:33 +0800
+From: Baoquan He <bhe@redhat.com>
+To: steven chen <chenste@linux.microsoft.com>
+Cc: zohar@linux.ibm.com, stefanb@linux.ibm.com,
+	roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
+	eric.snowberg@oracle.com, ebiederm@xmission.com,
+	paul@paul-moore.com, code@tyhicks.com, bauermann@kolabnow.com,
+	linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
+	James.Bottomley@hansenpartnership.com, vgoyal@redhat.com,
+	dyoung@redhat.com
+Subject: Re: [PATCH v11 8/9] ima: make the kexec extra memory configurable
+Message-ID: <Z/eVWQw3z7yyzyxb@MiWiFi-R3L-srv>
+References: <20250402124725.5601-1-chenste@linux.microsoft.com>
+ <20250402124725.5601-9-chenste@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -58,137 +65,60 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250408112402.181574-6-shivankg@amd.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20250402124725.5601-9-chenste@linux.microsoft.com>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Tue, Apr 08, 2025 at 11:23:59AM +0000, Shivank Garg wrote:
-> From: Ackerley Tng <ackerleytng@google.com>
+On 04/02/25 at 05:47am, steven chen wrote:
+> The extra memory allocated for carrying the IMA measurement list across
+> kexec is hard-coded as half a PAGE.  Make it configurable.
 > 
-> Using guest mem inodes allows us to store metadata for the backing
-> memory on the inode. Metadata will be added in a later patch to support
-> HugeTLB pages.
+> Define a Kconfig option, IMA_KEXEC_EXTRA_MEMORY_KB, to configure the
+> extra memory (in kb) to be allocated for IMA measurements added during
+> kexec soft reboot.  Ensure the default value of the option is set such
+> that extra half a page of memory for additional measurements is allocated
+> for the additional measurements.
 > 
-> Metadata about backing memory should not be stored on the file, since
-> the file represents a guest_memfd's binding with a struct kvm, and
-> metadata about backing memory is not unique to a specific binding and
-> struct kvm.
+> Update ima_add_kexec_buffer() function to allocate memory based on the
+> Kconfig option value, rather than the currently hard-coded one.
 > 
-> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
-> Signed-off-by: Fuad Tabba <tabba@google.com>
-> Signed-off-by: Shivank Garg <shivankg@amd.com>
+> Suggested-by: Stefan Berger <stefanb@linux.ibm.com>
+> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+> Signed-off-by: steven chen <chenste@linux.microsoft.com>
+> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
 > ---
->  include/uapi/linux/magic.h |   1 +
->  virt/kvm/guest_memfd.c     | 133 +++++++++++++++++++++++++++++++------
->  2 files changed, 113 insertions(+), 21 deletions(-)
+>  security/integrity/ima/Kconfig     | 10 ++++++++++
+>  security/integrity/ima/ima_kexec.c | 16 +++++++++++-----
+>  2 files changed, 21 insertions(+), 5 deletions(-)
 > 
-> diff --git a/include/uapi/linux/magic.h b/include/uapi/linux/magic.h
-> index bb575f3ab45e..169dba2a6920 100644
-> --- a/include/uapi/linux/magic.h
-> +++ b/include/uapi/linux/magic.h
-> @@ -103,5 +103,6 @@
->  #define DEVMEM_MAGIC		0x454d444d	/* "DMEM" */
->  #define SECRETMEM_MAGIC		0x5345434d	/* "SECM" */
->  #define PID_FS_MAGIC		0x50494446	/* "PIDF" */
-> +#define GUEST_MEMORY_MAGIC	0x474d454d	/* "GMEM" */
+> diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
+> index 475c32615006..d73c96c3c1c9 100644
+> --- a/security/integrity/ima/Kconfig
+> +++ b/security/integrity/ima/Kconfig
+> @@ -321,4 +321,14 @@ config IMA_DISABLE_HTABLE
+>  	help
+>  	   This option disables htable to allow measurement of duplicate records.
 >  
->  #endif /* __LINUX_MAGIC_H__ */
-> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-> index 88453b040926..002328569c9e 100644
-> --- a/virt/kvm/guest_memfd.c
-> +++ b/virt/kvm/guest_memfd.c
-> @@ -1,12 +1,17 @@
->  // SPDX-License-Identifier: GPL-2.0
-> +#include <linux/fs.h>
-> +#include <linux/mount.h>
->  #include <linux/backing-dev.h>
->  #include <linux/falloc.h>
->  #include <linux/kvm_host.h>
-> +#include <linux/pseudo_fs.h>
->  #include <linux/pagemap.h>
->  #include <linux/anon_inodes.h>
->  
->  #include "kvm_mm.h"
->  
-> +static struct vfsmount *kvm_gmem_mnt;
-> +
->  struct kvm_gmem {
->  	struct kvm *kvm;
->  	struct xarray bindings;
-> @@ -312,6 +317,38 @@ static pgoff_t kvm_gmem_get_index(struct kvm_memory_slot *slot, gfn_t gfn)
->  	return gfn - slot->base_gfn + slot->gmem.pgoff;
->  }
->  
-> +static const struct super_operations kvm_gmem_super_operations = {
-> +	.statfs		= simple_statfs,
-> +};
-> +
-> +static int kvm_gmem_init_fs_context(struct fs_context *fc)
-> +{
-> +	struct pseudo_fs_context *ctx;
-> +
-> +	if (!init_pseudo(fc, GUEST_MEMORY_MAGIC))
-> +		return -ENOMEM;
-> +
-> +	ctx = fc->fs_private;
-> +	ctx->ops = &kvm_gmem_super_operations;
-> +
-> +	return 0;
-> +}
-> +
-> +static struct file_system_type kvm_gmem_fs = {
-> +	.name		 = "kvm_guest_memory",
-> +	.init_fs_context = kvm_gmem_init_fs_context,
-> +	.kill_sb	 = kill_anon_super,
-> +};
-> +
-> +static void kvm_gmem_init_mount(void)
-> +{
-> +	kvm_gmem_mnt = kern_mount(&kvm_gmem_fs);
-> +	BUG_ON(IS_ERR(kvm_gmem_mnt));
-> +
-> +	/* For giggles. Userspace can never map this anyways. */
-> +	kvm_gmem_mnt->mnt_flags |= MNT_NOEXEC;
-> +}
-> +
->  static struct file_operations kvm_gmem_fops = {
->  	.open		= generic_file_open,
->  	.release	= kvm_gmem_release,
-> @@ -321,11 +358,13 @@ static struct file_operations kvm_gmem_fops = {
->  void kvm_gmem_init(struct module *module)
->  {
->  	kvm_gmem_fops.owner = module;
-> +
-> +	kvm_gmem_init_mount();
->  }
->  
->  void kvm_gmem_exit(void)
->  {
-> -
-> +	kern_unmount(kvm_gmem_mnt);
->  }
->  
->  static int kvm_gmem_migrate_folio(struct address_space *mapping,
-> @@ -407,11 +446,79 @@ static const struct inode_operations kvm_gmem_iops = {
->  	.setattr	= kvm_gmem_setattr,
->  };
->  
-> +static struct inode *kvm_gmem_inode_make_secure_inode(const char *name,
-> +						      loff_t size, u64 flags)
-> +{
-> +	const struct qstr qname = QSTR_INIT(name, strlen(name));
-> +	struct inode *inode;
-> +	int err;
-> +
-> +	inode = alloc_anon_inode(kvm_gmem_mnt->mnt_sb);
-> +	if (IS_ERR(inode))
-> +		return inode;
-> +
-> +	err = security_inode_init_security_anon(inode, &qname, NULL);
-> +	if (err) {
-> +		iput(inode);
-> +		return ERR_PTR(err);
-> +	}
+> +config IMA_KEXEC_EXTRA_MEMORY_KB
+> +	int "Extra memory for IMA measurements added during kexec soft reboot"
+> +	depends on IMA_KEXEC
+> +	default 0
 
-So why do other alloc_anon_inode callers not need
-security_inode_init_security_anon?
+Usually a new Kconfig item which accepts a range should define the range
+boundary, otherwise it's not clear to people how large or how small it
+can be set. For example, can I set it as value of 1<<40? We should at
+least estimate a possible upper limit for it for other people's
+reference. My personal opinion.
+
+The rest looks good to me.
+
+
+> +	help
+> +	  IMA_KEXEC_EXTRA_MEMORY_KB determines the extra memory to be
+> +	  allocated (in kb) for IMA measurements added during kexec soft reboot.
+> +	  If set to the default value of 0, an extra half page of memory for those
+> +	  additional measurements will be allocated.
+> +
+>  endif
+...snip...
 
