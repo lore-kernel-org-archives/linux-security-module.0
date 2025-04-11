@@ -1,327 +1,110 @@
-Received: from smtp-bc08.mail.infomaniak.ch (smtp-bc08.mail.infomaniak.ch [45.157.188.8])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7B90278E41
-	for <linux-security-module@vger.kernel.org>; Fri, 11 Apr 2025 10:55:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCC2921D58E
+	for <linux-security-module@vger.kernel.org>; Fri, 11 Apr 2025 15:59:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744368943; cv=none; b=O15l60LHIo8/4JSjh2+mIIhw6A3f+JSDndiiat7McwiOBkfEoweGa3sL5t1ggTiTVKwgB36rzEkvED2q3KkFKLTyznskQfPJ0rBXJcaW7YDx8yGfJdhwvm3VxV/VIFVyKcUmi4xCvdhprmYuMSO/EcWR8qatwh1LmBE87tr2EhI=
+	t=1744387169; cv=none; b=fP9gbGlF+vu4F325Ixdh+mA2l8Fv47gwAYKMfumltRDb9TAhkt0YDZUcazONtEbKRbOKcB8877X5aK5/IiWtKBSasFRbwyEg64+f0hBTG0JJzCy4O5XaQNjV8YK+Ybr23ROLZDEGt2/nN7XrAQyVi+YNX6CLjOVJ5r8jYWv5gL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744368943; c=relaxed/simple;
-	bh=8S4Jk9iscNFCKf+wuNW/E0AgL/WAW1VtRt+gKX41yYc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jW+EtLeEW8ANAZEqYCMoAQ2Zfe9B1gmW/QTDbanhw4Y4JvvAHrSM5cJS8+Gx+XXZ6I0RB9/uvQFz3SdYbqnnLns+1JjfbABVClGXB+GMvzPr7xSaoDCYLCf05txnw/PhD12IXyns0f2jAc+kBYgPo+q+yxoZJpZ/XI2DCBryDa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=J69WFbgD; arc=none smtp.client-ip=45.157.188.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1744387169; c=relaxed/simple;
+	bh=fZlIPKzYCfS3JWZkzUhx6xvi3UjrSnLayoxpbPfvozY=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=JwEDDNQ0y6Thg+QFIuMPcBgYhBrANz61fRwxrC00JZ7aLBNt46qPl9FGxiqy7dlkFJwIkpgpmmI5rHJn3wDmtQp0+64SnHw1h47vw201i5xOESHIDYnOCSbISzV5n1VnZbb4mZtpmFAKq/LmlN+eF+5maOU9W4+jrviddwthoq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IL/SIY/g; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="J69WFbgD"
-Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ZYtrQ2wlJzBpd;
-	Fri, 11 Apr 2025 12:55:34 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1744368934;
-	bh=EA36yU94bkXA5d/tEsOH0wBIh/yRqDzhGCFcHdU0PrE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=J69WFbgDmZeN8ZvS26/OSqFyhbCzx6qd7MItslOhgoSlvu68ufYVwlZykzLcOts+Y
-	 Tv+XcWYksrjjDa8evLqcxpvWuOB7C1DzqbZGeqOErRY7lRypML3ljwN/MR37Pp3nH1
-	 fi+a887bneDqeCLerhrnQaVT1nEzS9Z4BrWuKvBM=
-Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4ZYtrP3GzZzjxh;
-	Fri, 11 Apr 2025 12:55:33 +0200 (CEST)
-Date: Fri, 11 Apr 2025 12:55:32 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Tingmao Wang <m@maowtm.org>
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Jan Kara <jack@suse.cz>, linux-security-module@vger.kernel.org, 
-	Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org, Jann Horn <jannh@google.com>, 
-	Andy Lutomirski <luto@amacapital.net>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
-Subject: Re: [RFC PATCH 4/9] User-space API for creating a supervisor-fd
-Message-ID: <20250411.aim5yoox5Que@digikod.net>
-References: <cover.1741047969.git.m@maowtm.org>
- <03d822634936f4c3ac8e4843f9913d1b1fa9d081.1741047969.git.m@maowtm.org>
- <20250305.peiLairahj3A@digikod.net>
- <8f4abea4-d453-4dfe-be02-7a712f90d1a0@maowtm.org>
- <20250311.ieX5eex4ieka@digikod.net>
- <c96a0cc8-6231-4ca9-94a7-2dbf8de9cdaf@maowtm.org>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IL/SIY/g"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744387166;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1YGwsbANdm5+UipwPPrI05eTBmxw+TZxLni/YQ7Hx4Q=;
+	b=IL/SIY/g3kzpdAXIkl74EWFUklhozEz4GQiU51RNAIp9qt+dSBkl6FJib9ehbj2yhPGbI7
+	om3O0Wp/VyXiraisA9PFwdGBbgUQJLGtf5huTvyAlkVgXR7+p2NDKwEKj1tMW7WLPeu0bG
+	uUoODAOvQRZv8b1LxH07TLOn/n5UFzc=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-652-1LNp5UCTODWVVEnUWP054A-1; Fri,
+ 11 Apr 2025 11:59:23 -0400
+X-MC-Unique: 1LNp5UCTODWVVEnUWP054A-1
+X-Mimecast-MFC-AGG-ID: 1LNp5UCTODWVVEnUWP054A_1744387160
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 743D21801A00;
+	Fri, 11 Apr 2025 15:59:19 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.40])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 62EF11808882;
+	Fri, 11 Apr 2025 15:59:13 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <20250407125801.40194-1-jarkko@kernel.org>
+References: <20250407125801.40194-1-jarkko@kernel.org>
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: dhowells@redhat.com, keyrings@vger.kernel.org,
+    Jarkko Sakkinen <jarkko.sakkinen@opinsys.com>,
+    stable@vger.kernel.org, Lukas Wunner <lukas@wunner.de>,
+    Ignat Korchagin <ignat@cloudflare.com>,
+    Herbert Xu <herbert@gondor.apana.org.au>,
+    "David S. Miller" <davem@davemloft.net>,
+    Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+    Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+    "Serge E.
+ Hallyn" <serge@hallyn.com>,
+    James Bottomley <James.Bottomley@HansenPartnership.com>,
+    Mimi Zohar <zohar@linux.ibm.com>, linux-crypto@vger.kernel.org,
+    linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+    linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v8] KEYS: Add a list for unreferenced keys
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c96a0cc8-6231-4ca9-94a7-2dbf8de9cdaf@maowtm.org>
-X-Infomaniak-Routing: alpha
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2426185.1744387151.1@warthog.procyon.org.uk>
+Date: Fri, 11 Apr 2025 16:59:11 +0100
+Message-ID: <2426186.1744387151@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Wed, Mar 26, 2025 at 12:06:11AM +0000, Tingmao Wang wrote:
-> On 3/11/25 19:28, Mickaël Salaün wrote:
-> > On Mon, Mar 10, 2025 at 12:41:28AM +0000, Tingmao Wang wrote:
-> > > On 3/5/25 16:09, Mickaël Salaün wrote:
-> > > > On Tue, Mar 04, 2025 at 01:13:00AM +0000, Tingmao Wang wrote:
-> > > > > We allow the user to pass in an additional flag to landlock_create_ruleset
-> > > > > which will make the ruleset operate in "supervise" mode, with a supervisor
-> > > > > attached. We create additional space in the landlock_ruleset_attr
-> > > > > structure to pass the newly created supervisor fd back to user-space.
-> > > > > 
-> > > > > The intention, while not implemented yet, is that the user-space will read
-> > > > > events from this fd and write responses back to it.
-> > > > > 
-> > > > > Note: need to investigate if fd clone on fork() is handled correctly, but
-> > > > > should be fine if it shares the struct file. We might also want to let the
-> > > > > user customize the flags on this fd, so that they can request no
-> > > > > O_CLOEXEC.
-> > > > > 
-> > > > > NOTE: despite this patch having a new uapi, I'm still very open to e.g.
-> > > > > re-using fanotify stuff instead (if that makes sense in the end). This is
-> > > > > just a PoC.
-> > > > 
-> > > > The main security risk of this feature is for this FD to leak and be
-> > > > used by a sandboxed process to bypass all its restrictions.  This should
-> > > > be highlighted in the UAPI documentation.
-> 
-> In particular, if for some reason the supervisor does a fork without exec,
-> it must close this fd in the "about-to-be-untrusted" child.
+Jarkko Sakkinen <jarkko@kernel.org> wrote:
 
-Yes...
+> +	spin_lock_irqsave(&key_graveyard_lock, flags);
+> +	list_splice_init(&key_graveyard, &graveyard);
+> +	spin_unlock_irqrestore(&key_graveyard_lock, flags);
 
-> 
-> (I wonder if it would be worth enforcing that the child calling
-> landlock_restrict_self must not have any open supervisor fd that can
-> supervise its own domain (returning an error if it does), but that can be
-> difficult to implement so nevermind)
+I would wrap this bit in a check to see if key_graveyard is empty so that we
+can avoid disabling irqs and taking the lock if the graveyard is empty.
 
-That would mean that a call can fail according to the caller's context
-(e.g. FDs), which is not good for reproducibility (i.e. not idempotent).
+> +		if (!refcount_inc_not_zero(&key->usage)) {
 
-Being able to tie a supervisor FD to a set of rulesets and then to a set
-of domains is interesting too.  We might want to also add a "cookie"
-value when creating a ruleset for the supervisor to identify which
-ruleset it received a request from.
+Sorry, but eww.  You're going to wangle the refcount twice on every key on the
+system every time the gc does a pass.  Further, in some cases inc_not_zero is
+not the fastest op in the world.
 
-I was also thinking about pidfd, but they do not refer to a domain but
-to a process (which may be sandboxed several times).  I found a better
-idea, see below.
+> +			spin_lock_irqsave(&key_graveyard_lock, flags);
+> +			list_add_tail(&key->graveyard_link, &key_graveyard);
+> +			spin_unlock_irqrestore(&key_graveyard_lock, flags);
+>  			schedule_work(&key_gc_work);
 
-> 
-> > > > 
-> > > > > 
-> > > > > Signed-off-by: Tingmao Wang <m@maowtm.org>
-> > > > > ---
-> > > > >    include/uapi/linux/landlock.h |  10 ++++
-> > > > >    security/landlock/syscalls.c  | 102 +++++++++++++++++++++++++++++-----
-> > > > >    2 files changed, 98 insertions(+), 14 deletions(-)
-> > > > > 
-> > > > > diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
-> > > > > index e1d2c27533b4..7bc1eb4859fb 100644
-> > > > > --- a/include/uapi/linux/landlock.h
-> > > > > +++ b/include/uapi/linux/landlock.h
-> > > > > @@ -50,6 +50,15 @@ struct landlock_ruleset_attr {
-> > > > >    	 * resources (e.g. IPCs).
-> > > > >    	 */
-> > > > >    	__u64 scoped;
-> > > > > +	/**
-> > > > > +	 * @supervisor_fd: Placeholder to store the supervisor file
-> > > > > +	 * descriptor when %LANDLOCK_CREATE_RULESET_SUPERVISE is set.
-> > > > > +	 */
-> > > > > +	__s32 supervisor_fd;
-> > > > 
-> > > > This interface would require the ruleset_attr becoming updatable by the
-> > > > kernel, which might be OK in theory but requires current syscall wrapper
-> > > > signature update, see sandboxer.c change.  It also creates a FD which
-> > > > might not be useful (e.g. if an error occurs before the actual
-> > > > enforcement).
-> > > > 
-> > > > I see a few alternatives.  We could just use/extend the ruleset FD
-> > > > instead of creating a new one, but because leaking current rulesets is
-> > > > not currently a security risk, we should be careful to not change that.
-> > > > 
-> > > > Another approach, similar to seccomp unotify, is to get a
-> > > > "[landlock-domain]" FD returned by the landlock_restrict_self(2) when a
-> > > > new LANDLOCK_RESTRICT_SELF_DOMAIN_FD flag is set.  This FD would be a
-> > > > reference to the newly created domain, which is more specific than the
-> > > > ruleset used to created this domain (and that can be used to create
-> > > > other domains).  This domain FD could be used for introspection (i.e.
-> > > > to get read-only properties such as domain ID), but being able to
-> > > > directly supervise the referenced domain only with this FD would be a
-> > > > risk that we should limit.
-> > > > 
-> > > > What we can do is to implement an IOCTL command for such domain FD that
-> > > > would return a supervisor FD (if the LANDLOCK_RESTRICT_SELF_SUPERVISED
-> > > > flag was also set).  The key point is to check (one time) that the
-> > > > process calling this IOCTL is not restricted by the related domain (see
-> > > > the scope helpers).
-> > > 
-> > > Is LANDLOCK_RESTRICT_SELF_DOMAIN_FD part of your (upcoming?) introspection
-> > > patch? (thinking about when will someone pass that only and not
-> > > LANDLOCK_RESTRICT_SELF_SUPERVISED, or vice versa)
-> > 
-> > I don't plan to work on such LANDLOCK_RESTRICT_SELF_DOMAIN_FD flag for
-> > now, but the introspection feature(s) would help for this supervisor
-> > feature.
-> > 
-> > > 
-> > > By the way, is it alright to conceptually relate the supervisor to a domain?
-> > > It really would be a layer inside a domain - the domain could have earlier
-> > > or later layers which can deny access without supervision, or the supervisor
-> > > for earlier layers can deny access first. Therefore having supervisor fd
-> > > coming out of the ruleset felt sensible to me at first.
-> > 
-> > Good question.  I've been using the name "domain" to refer to the set of
-> > restrictions enforced on a set of processes, but these restrictions are
-> > composed of inherited ones plus the latest layer.  In this case, a
-> > domain FD should refer to all the restrictions, but the supervisor FD
-> > should indeed only refer to the latest layer of a domain (created by
-> > landlock_restrict_self).
-> > 
-> > > 
-> > > Also, isn't "check that process calling this IOCTL is not restricted by the
-> > > related domain" and the fact that the IOCTL is on the domain fd, which is a
-> > > return value of landlock_restrict_self, kind of contradictory?  I mean it is
-> > > a sensible check, but that kind of highlights that this interface is
-> > > slightly awkward - basically all callers are forced to have a setup where
-> > > the child sends the domain fd back to the parent.
-> > 
-> > I agree that its confusing.  I'd like to avoid the ruleset to gain any
-> > control on domains after they are created.
-> > 
-> > Another approach would be to create a supervisor FD with the
-> > landlock_create_ruleset() syscall, and pass this FD to the ruleset,
-> > potentially with landlock_add_rule() calls to only request this
-> > supervisor when matching specific rules (that could potentially be
-> > catch-all rules)?
-> 
-> Maybe passing in a fd per landlock_add_rule calls, and thus potentially
-> allowing different supervisor fd tied to different rules in the same
-> ruleset, is a bit overkill (as now each rule needs to store a supervisor
-> pointer?) and I don't really see the use of it.
+This is going to enable and disable interrupts twice and that can be
+expensive, depending on the arch.  I wonder if it would be better to do:
 
-I though about this approach too but being able to update the domain
-with new rules would be more useful and powerful.
+			local_irq_save(flags);
+			spin_lock(&key_graveyard_lock);
+			list_add_tail(&key->graveyard_link, &key_graveyard);
+			spin_unlock(&key_graveyard_lock);
+			schedule_work(&key_gc_work);
+			local_irq_restore(flags);
 
-> I think it would be better
-> to just pass it once in the landlock_ruleset_attr, which gets around the
-> signature having const for the ruleset_attr problem. (I'm also open to the
-> ioctl on domain fd idea, but I'm slightly wary of making this more
-> complicated then necessary for the user space, as it now has to set up a
-> socket (?) and pass a fd with scm_rights (?))
+David
 
-OK, here is another proposal: supervisor rulesets and supervisee FDs.
-The idea is to add a new flag to landlock_restrict_self(2) to created a
-ruleset marked as "supervisor".  This ruleset could not be passed to
-landlock_restrict_self(2), but a dedicated IOCTL would create a
-supervisee file descriptor.  This supervisee could be passed to a
-landlock_ruleset_attr to created a supervised ruleset.
-
-This approach is interesting because it makes it explicit the access
-rights which are handled by the supervisor, which enables us to only
-supervise a set of actions and update the supervisor ruleset with
-landlock_add_rule(2).
-
-Another interesting property is that because we have at least two file
-descriptors for a supervisor, it's easy to create a ruleset supervisor
-in process A and then only pass a supervisee FD to process B.  A leaked
-supervisee FD could not give more privileges, and it is unlikely that a
-supervisor FD is passed to process B because it could not be usable as a
-supervisee and should then be detected early in the development cycle.
-
-> 
-> The other aspect of this is whether we want to have the supervisor mark
-> specific rules as supervised, rather than having all denied access (from
-> this layer) result in a supervisor invocation.  I also don't think this is
-> necessary, as denials are supposed to be "abnormal" in some sense, and I
-> would imagine most supervisors would want to find out about these (at least
-> to print/show a warning of some sort, if it knows that the requested access
-> is bad).  If a supervisor really wants to have the kernel just "silently"
-> (from its perspective, but maybe there would be audit logs) deny any access
-> outside of some known rules, it can also create a nested, unsupervised
-> landlock domain that has the right effect. Avoiding having some sort of
-> tri-state rules would simplify implementation, I imagine.
-
-Because this supervisor use case is mainly about sandboxing programs
-which may not be aware of such restrictions, they could legitimately
-request a lot of time the same denied actions.  To avoid overloading the
-supervisor, we need a way to filter such requests.  But being able to
-initially get these request would be useful too, which is why being able
-to dynamically update the supervisor ruleset is interesting.
-
-> 
-> > 
-> > Overall, my main concern about this patch series is that the supervisor
-> > could get a lot of requests, which will make the sandbox unusable
-> > because always blocked by some thread/process.  This latest approach and
-> > the ability to update the domain somehow could make it workable.
-> > 
-> > > 
-> > > > 
-> > > > Relying on IOCTL commands (for all these FD types) instead of read/write
-> > > > operations should also limit the risk of these FDs being misused through
-> > > > a confused deputy attack (because such IOCTL command would convey an
-> > > > explicit intent):
-> > > > https://docs.kernel.org/security/credentials.html#open-file-credentials
-> > > > https://lore.kernel.org/all/CAG48ez0HW-nScxn4G5p8UHtYy=T435ZkF3Tb1ARTyyijt_cNEg@mail.gmail.com/
-> > > > We should get inspiration from seccomp unotify for this too:
-> > > > https://lore.kernel.org/all/20181209182414.30862-1-tycho@tycho.ws/
-> > > 
-> > > I think in the seccomp unotify case the problem arises from what the setuid
-> > > binary thinks is just normal data getting interpreted by the kernel as a fd,
-> > > and thus having different effect if the attacker writes it vs. if the suid
-> > > app writes it.  In our case I *think* we should be alright, but maybe we
-> > > should go with ioctl anyway...
-> > 
-> > I don't see why Jann's attack scenario could work for this Landlock
-> > supervisor too.  The main point that it the read/write interfaces are
-> > used by a lot of different FDs, and we may not need them.
-> > 
-> > > However, how does using netlink messages (a
-> > > suggestion from a different thread) affect this (if we do end up using it)?
-> > > Would we have to do netlink msgs via IOCTL?
-> > 
-> > Because all requests should be synchronous, one IOCTL could be used to
-> > both acknowledge a previous event (or just start) and read the next one.
-> > 
-> > I was thinking about an IOCTL with these arguments:
-> > 1. supervisor FD
-> > 2. (extensible) IOCTL command (see PIDFD_GET_INFO for instance)
-> > 3. pointer to a fixed-size control structure
-> > 
-> > The fixed-size control structure could contain:
-> > - handled access rights, used to only get event related to specific
-> >    access.
-> > - flags, to specify which kind of FD we would like to get (e.g. only
-> >    directory FD, pidfd...)
-> > - fd[6]: an array of received file descriptors.
-> > - pointer to a variable-size data buffer that would contain all the
-> >    records (e.g. source dir FD, source file name, destination dir FD,
-> >    destination file name) for one event, potentially formatted with NLA.
-> > - the size of this buffer
-> > 
-> > I'm not sure about the content of this buffer and the NLA format, and
-> > the related API might not be usable without netlink sockets though.
-> > Taking inspiration from the fanotify message format is another option.
-> > 
-> > > 
-> > > 
-> > > > > +	/**
-> > > > > +	 * @pad: Unused, must be zero.
-> > > > > +	 */
-> > > > > +	__u32 pad;
-> > > > 
-> > > > In this case we should pack the struct instead.
-> > > > 
-> > > > >    };
-> > > > >    /*
-> > > > > @@ -60,6 +69,7 @@ struct landlock_ruleset_attr {
-> > > > >     */
-> > > > >    /* clang-format off */
-> > > > >    #define LANDLOCK_CREATE_RULESET_VERSION			(1U << 0)
-> > > > > +#define LANDLOCK_CREATE_RULESET_SUPERVISE		(1U << 1)
-> > > > >    /* clang-format on */
-> > > > >    /**
-> > > > 
-> > > > [...]
-> > > 
-> > > 
-> 
-> 
