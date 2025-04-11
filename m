@@ -1,130 +1,133 @@
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B70E02980AE;
-	Fri, 11 Apr 2025 08:35:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22BBF1C5F09;
+	Fri, 11 Apr 2025 09:07:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744360537; cv=none; b=DdlES6tkI1V3eVAlvh4ad94dYITViWpSnWCDOh+zpoMIGs6euzW2Zl/X1JLAm6oRmpseY+dF3IZgqBYFgk6F4DSj1HLwQP2h7gIkh9LlsMnR+ghMiyq5PvvoiMXbsmOO02J+LYHEpjjCFf5aZW0FUzgjlP0KVWx2dDUVxut5f+o=
+	t=1744362472; cv=none; b=QNydIlDvqIA/GhtCZKybYzvM0ejp75j2/YO9AnD0/mXihl7GFC66qOdLHxK62NloTNJrwmyXqo0FqfadVO4s1wPP7UjejUf68VY9kSrnQBNuqkG5np1pKdILrBkq8tGkiB3ArjqWU+wlMXTXT1N0pP3Pmavz9SmDs28QZIdphW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744360537; c=relaxed/simple;
-	bh=IMFF4gsFIW+Xo+Q1Z/FeUWv0CGqiTVKx30ut9GDruI4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SnVNYpSfGtLLMWZ1uKW0EXiWlTDJEalfi9R9ufCfleeiw72UvnSg94Hp91/NvsCeFscdgFFmSFS/vF/QP9fhO+9j8XlnNHib4rXuJf0nhEsUp7LnQMQ5Zhl4mzd6P5Wbb3r8YQJSmRpqEk09YgQlXWSAy8eWVzVgdRBzJw1AVr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iLawreZ+; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iLawreZ+"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43cf848528aso12963395e9.2;
-        Fri, 11 Apr 2025 01:35:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744360534; x=1744965334; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=JeZ1VCswI7QX1GjP0qXY6ng0b/NdREuqFUKOgDA2mwM=;
-        b=iLawreZ+sB3eD1v4tNQkTu+xZg0PUiuzBhFhDpI5z8v1dSFlWl+cu/KsS09lxqz+7W
-         WoLVwJe93HG5NGWRNyxSby4pPf95tGYE4ELrF9pt+0+BNsxT4qollLrIXQpdzWppKYWv
-         pAY215D/uXlfGUfXiQB0Rs59Qpq+IeP3GGlPqn2enXDyIcNs8NzAjC33Mcy/yyWDrkWP
-         aYDKL8l2E13JJc+k2haSiTVkTP0ZkvRuz1jhosyd4OL8htuRKh03BU+uAjXZtT6fuqRy
-         fCUkvFhxu2LZvnTj6McROzHNUtgZdVo5OdjZDyTMPrfp5TdlSqjyVd06iD7jljDBqOfW
-         0Lyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744360534; x=1744965334;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JeZ1VCswI7QX1GjP0qXY6ng0b/NdREuqFUKOgDA2mwM=;
-        b=Q8BkO1qEVHEWM4GVGvO2ubVvYxP4F3nSBzouxf/RCr+w04j37a3eROVwaqeuTLOq2e
-         AEmQCcEc8coeQW1ctQL6ZL3c6U4elmFzVIzUFegIH/l/rLcO6ZSVFBkRkxmnRglm4sq2
-         5oQrFyGS3HPYQKqW7OdC4K4FlvttPCR764OoTFK0sGfbGveOg3Qwya4HrAEKW7rwJr33
-         RoQlrrQKYD1rWaGY+TokD6sS8jlHCpO8r+bfvp4TV7inLqBjiI9OIOlnVd3ApLZZSf9b
-         Hcfie1RuyfsT33pn+1OcUP2BXhIdqtTFm27W4C8N4eiPG6PHwsGWK2pHcUEFOL8fmSDD
-         pcFg==
-X-Forwarded-Encrypted: i=1; AJvYcCVN7lIA2t+wU1NXGWZAqHQo39z3d3gQWEwLFuSP+3L2MmuIrrF8PduN87hpxXUDJCDTk4h0ULzBPej/Lnz6VPj5/fKCFYL2@vger.kernel.org, AJvYcCWaUxr+o+TbTJYPL/Ffhc6h9JbRd7sUFYj1CLQ0wApAlpsHuHRd4sGcJJEZdcDGWH68xFqYZhFAlLzX2q4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWkPLABNhhPzzDeErcO/6OemyYwV92EsUKk1BYOmuwselfhze7
-	+LoPWzWhNdrb89ntHZq5Uh5ifebDcGYlwkdz3ewlNE3q5q2thYhS
-X-Gm-Gg: ASbGncuozknLy8B3IBAUmJ9M2TADSIRVuyeG5lxZ7KcGF+dM+K7deTLnIq5nGwaUlpi
-	ObabxaKHLIWZt21jSjOJZgXF6gXjwQKimEnARvLqnSpx6aoFwT1Sn5d2pk5VBnPBJA3KNvQHYb3
-	9/5HRFyXRupiI/zMDRZ4J13r7ghRCzUoZOLIXOncciB8OMA1eByxitI19t93uwwu00y6zw0kcCo
-	3VXtyDSpJislSmOg6Zlv9aeZDPdv2v3pNKeXOBhDI/c3CdKZMdOIFFMcV3Jpkxf4ustc/JzumFo
-	wjH9kUH0hgFITUrwdncpWnuSp0RU9bD34l9KsXbCZxX86XPHO1NQ3O58+n0zo9rpcVw=
-X-Google-Smtp-Source: AGHT+IHZ7/aIl27D+/wmqNZfCbOR61KOSE41AnWgPK7HD6QuxRb4Z5v5AwM0WQcQhNmjp3l0KD6IOA==
-X-Received: by 2002:a05:600c:470d:b0:43c:fa24:873e with SMTP id 5b1f17b1804b1-43f3a93d162mr11919975e9.13.1744360533734;
-        Fri, 11 Apr 2025 01:35:33 -0700 (PDT)
-Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43f233a2f71sm75974325e9.15.2025.04.11.01.35.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Apr 2025 01:35:33 -0700 (PDT)
-Date: Fri, 11 Apr 2025 10:35:31 +0200
-From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>,
-	Paul Moore <paul@paul-moore.com>
-Subject: Re: [PATCH v1 1/3] landlock: Log the TGID of the domain creator
-Message-ID: <20250411.3c94c5c9e6bb@gnoack.org>
-References: <20250410171725.1265860-1-mic@digikod.net>
+	s=arc-20240116; t=1744362472; c=relaxed/simple;
+	bh=Jo2tAz7jSOJP2ymYZNDVVXeqvPedMX0dp5rX56/2HEA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=gvt+kv7tDSAPT50eJzobtavBPIHO1fiATDb2Cn0ehMtO8ZBgZRRGWo88hbmVfWPnt0iEaGILYInAp0tBRAdPt4gE57CAfxKyNk7DU5/6eT9k5DdPyKnZRCb87mFiNgSHa7Hxqe7foOAKYbV3qXiC6vJIXqdIDh+bQitu7xlWAnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout12.his.huawei.com (SkyGuard) with ESMTPS id 4ZYrRb5fGTzsRr2;
+	Fri, 11 Apr 2025 17:07:23 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.47])
+	by mail.maildlp.com (Postfix) with ESMTP id B0E651402F6;
+	Fri, 11 Apr 2025 17:07:45 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP1 (Coremail) with SMTP id LxC2BwA3vUvX2_hnBgnbBQ--.19774S2;
+	Fri, 11 Apr 2025 10:07:45 +0100 (CET)
+Message-ID: <bbc39aec812383f836ad51bc91b013fa8de8a410.camel@huaweicloud.com>
+Subject: Re: Credentials not fully initialized before bprm_check LSM hook
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: sergeh@kernel.org
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
+ <brauner@kernel.org>, Kees Cook <kees@kernel.org>, Paul Moore
+ <paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge E. Hallyn"
+ <serge@hallyn.com>, "Eric W. Biederman" <ebiederm@xmission.com>, 
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org,  linux-security-module@vger.kernel.org,
+ linux-integrity@vger.kernel.org,  zohar@linux.ibm.com
+Date: Fri, 11 Apr 2025 11:07:31 +0200
+In-Reply-To: <Z_f-uBGhBq9CYmaw@lei>
+References: <fb9f7900d411a3ab752759d818c3da78e2f8f0f1.camel@huaweicloud.com>
+	 <Z_f-uBGhBq9CYmaw@lei>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250410171725.1265860-1-mic@digikod.net>
+X-CM-TRANSID:LxC2BwA3vUvX2_hnBgnbBQ--.19774S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7tryrCr15ZrWrAw43Zw1DZFb_yoW8tr4kpF
+	WftF15tF4vgrySkr12q3WUXayayrZ5G398Jr98WFy5u3yDGr1vkrWxt3y5uFy5GrWrK3W2
+	yay3ZwnavFyDC3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
+	v3UUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAPBGf4v18BWQAAst
 
-On Thu, Apr 10, 2025 at 07:17:21PM +0200, Mickaël Salaün wrote:
-> As for other Audit's "pid" fields, Landlock should use the task's TGID
-> instead of its TID.  Fix this issue by keeping a reference to the TGID
-> of the domain creator.
-> 
-> Existing tests already check for the PID but only with the thread group
-> leader, so always the TGID.  A following patch adds dedicated tests for
-> non-leader thread.
-> 
-> Remove the current_real_cred() check which does not make sense because
-> we only reference a struct pid, whereas a previous version did reference
-> a struct cred instead.
-> 
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Günther Noack <gnoack@google.com>
-> Cc: Paul Moore <paul@paul-moore.com>
-> Signed-off-by: Mickaël Salaün <mic@digikod.net>
-> ---
->  security/landlock/domain.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/security/landlock/domain.c b/security/landlock/domain.c
-> index bae2e9909013..a647b68e8d06 100644
-> --- a/security/landlock/domain.c
-> +++ b/security/landlock/domain.c
-> @@ -16,6 +16,7 @@
->  #include <linux/path.h>
->  #include <linux/pid.h>
->  #include <linux/sched.h>
-> +#include <linux/signal.h>
->  #include <linux/uidgid.h>
->  
->  #include "access.h"
-> @@ -99,8 +100,7 @@ static struct landlock_details *get_current_details(void)
->  		return ERR_PTR(-ENOMEM);
->  
->  	memcpy(details->exe_path, path_str, path_size);
-> -	WARN_ON_ONCE(current_cred() != current_real_cred());
-> -	details->pid = get_pid(task_pid(current));
-> +	details->pid = get_pid(task_tgid(current));
->  	details->uid = from_kuid(&init_user_ns, current_uid());
->  	get_task_comm(details->comm, current);
->  	return details;
-> -- 
-> 2.49.0
-> 
+On Thu, 2025-04-10 at 17:24 +0000, sergeh@kernel.org wrote:
+> On Thu, Apr 10, 2025 at 01:47:07PM +0200, Roberto Sassu wrote:
+> > Hi everyone
+> >=20
+> > recently I discovered a problem in the implementation of our IMA
+> > bprm_check hook, in particular when the policy is matched against the
+> > bprm credentials (to be committed later during execve().
+> >=20
+> > Before commit 56305aa9b6fab ("exec: Compute file based creds only
+> > once"), bprm_fill_uid() was called in prepare_binprm() and filled the
+> > euid/egid before calling security_bprm_check(), which in turns calls
+> > IMA.
+> >=20
+> > After that commit, bprm_fill_uid() was moved to begin_new_exec(), which
+> > is when the last interpreter is found.
+> >=20
+> > The consequence is that IMA still sees the not yet ready credentials
+> > and an IMA rule like:
+> >=20
+> > measure func=3DCREDS_CHECK euid=3D0
+>=20
+> "IMA still sees" at which point exactly?
 
-Ah, a classic! Good catch finding this early enough for 6.15!
+IMA sees the credentials in bprm->cred prepared with
+prepare_bprm_creds(), where the euid/egid are taken from the current
+process.
 
-Reviewed-by: Günther Noack <gnoack3000@gmail.com>
+> Do I understand right that the problem is that ima's version of
+> security_bprm_creds_for_exec() needs to run after
+> bprm_creds_from_file()?
+
+IMA's version of security_bprm_check(). security_bprm_creds_for_exec()
+is for checking scripts executed by the interpreters with execveat()
+and the AT_EXECVE_CHECK flag.
+
+Uhm, it would not be technically a problem to move the IMA hook later,
+but it would miss the intermediate binary search steps, which are
+visible with security_bprm_check().
+
+> Given that Eric's commit message said that no bprm handlers use
+> the uid, it seems it should be safe to just move that?
+
+Well, we just found one :)
+
+Thanks
+
+Roberto
+
+> > will not be matched for sudo-like applications.
+> >=20
+> > It does work however with SELinux, because it computes the transition
+> > before IMA in the bprm_creds_for_exec hook.
+> >=20
+> > Since IMA needs to be involved for each execution in the chain of
+> > interpreters, we cannot move to the bprm_creds_from_file hook.
+> >=20
+> > How do we solve this problem? The commit mentioned that it is an
+> > optimization, so probably would not be too hard to partially revert it
+> > (and keeping what is good).
+> >=20
+> > Thanks
+> >=20
+> > Roberto
+> >=20
+
