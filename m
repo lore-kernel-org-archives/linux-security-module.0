@@ -1,117 +1,103 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0CBE2367BC;
-	Sat, 12 Apr 2025 14:11:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31FC839FCE
+	for <linux-security-module@vger.kernel.org>; Sun, 13 Apr 2025 19:25:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744467074; cv=none; b=W7BH6fFZOgcfNbI1ndf/3zugZ6EhMUopAgK/C2X1aSFcFm0E2nAhzAJOiyviArFV+FoQsAwvSIJzDXMEaV+Hf5j4m06fmXLGi+oE0d3VtFzi7nB0o8zKvqLlzsdhiZgWvRIDcsgLw9qCoOPNgA8PmOHFJQeIKI41XdcL8JE9wqI=
+	t=1744572321; cv=none; b=D+cyfqhmgAMPpJkRwAN+kA+0CpPN3ea0xDleZ5M8tFLpTE5dbRnK1R05Q+2gY+5WAYG+fqfzbcI3ApcW2xWYSQa1B6Kxxu1VW4Otss8UD5IRDvZIEshrhDUlSWUhPmRVVd002QGK7U2sAcudlOlicprJl6LEvawVPzn5/NMF2eA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744467074; c=relaxed/simple;
-	bh=6UupgWJqX74K4rb42t9zk7pR4gsrJNFwzwL4a7gqYCw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=QuxKJC1Xd2yQsgMJrPOGmEo9tG5LWJvaXQiBz0b04jfWf0tyf6x7Y+LPP37ST3J3BCD9f4IlrPUll69/aBq7MkLvk+l66OCoLF7p2Cf1kggENjqnYyjafcl3Cm/QyxNruWpyIcRpfU+BD0vrko2iw4+IEJX/1cEOCGspRZZPnmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=RRMoS31T; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+	s=arc-20240116; t=1744572321; c=relaxed/simple;
+	bh=cgoVDjX9IT6EtA89494TbMxqJl0RE2iUlZQmz+9vkuQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=asynN7nu1ICOeSzUkEJ2txLy9iplGcW8XXXi2Sl4V0Fo49cp/5oMBDusnlMi2aLmbqtYAls+PJYoqSWjpcfNk6zejsB1RzdLCTXjVeQTaHzL60HVi78CQZvq30E3xIo+zRGf/z8mKJ8HvIBtN58cAn6ZNR52ou8FGub8yqSsSIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=B5aFJFzI; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="RRMoS31T"
-Received: from narnia (unknown [167.220.2.28])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 7A2A321165B8;
-	Sat, 12 Apr 2025 07:11:04 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7A2A321165B8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1744467072;
-	bh=pTnd2Oc8i8/ma8A52qza9zwPziCRMHwOGThxeMcufiE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=RRMoS31T422OQGTx+ALxBabnWUobD2SGOF9kKhtax/Q9kNBsnMTF30iIo6s62oUcd
-	 9hayyqT4XBOzTiMuXmDqpBpb3kjYL34C0pagTkdwl+BsCNobtK8HIYmwSTpnWM72sc
-	 7MbXa9/e4EXJcrbLuqpTIOI03a2CVhMn3o5hgH1k=
-From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Matteo Croce
- <technoboy85@gmail.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, David Howells <dhowells@redhat.com>,
- Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller"
- <davem@davemloft.net>, Paul Moore <paul@paul-moore.com>, James Morris
- <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Masahiro Yamada
- <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nicolas
- Schier <nicolas@fjasle.eu>, Shuah Khan <shuah@kernel.org>, =?utf-8?Q?Mick?=
- =?utf-8?Q?a=C3=ABl_Sala=C3=BCn?=
- <mic@digikod.net>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Nick
- Desaulniers
- <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>,
- Justin Stitt <justinstitt@google.com>, Jarkko Sakkinen
- <jarkko@kernel.org>, Jan Stancek <jstancek@redhat.com>, Neal Gompa
- <neal@gompa.dev>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, keyrings@vger.kernel.org, Linux
- Crypto Mailing List <linux-crypto@vger.kernel.org>, LSM List
- <linux-security-module@vger.kernel.org>, Linux Kbuild mailing list
- <linux-kbuild@vger.kernel.org>, "open list:KERNEL SELFTEST FRAMEWORK"
- <linux-kselftest@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
- clang-built-linux <llvm@lists.linux.dev>, nkapron@google.com, Matteo Croce
- <teknoraver@meta.com>, Roberto Sassu <roberto.sassu@huawei.com>, Cong Wang
- <xiyou.wangcong@gmail.com>
-Subject: Re: [PATCH v2 security-next 1/4] security: Hornet LSM
-In-Reply-To: <CAADnVQJ5VaXVN=L+0ygEWJkMtPZnqAVEoeFiLBvikntX0zD49w@mail.gmail.com>
-References: <20250404215527.1563146-1-bboscaccy@linux.microsoft.com>
- <20250404215527.1563146-2-bboscaccy@linux.microsoft.com>
- <CAADnVQJyNRZVLPj_nzegCyo+BzM1-whbnajotCXu+GW+5-=P6w@mail.gmail.com>
- <CAFnufp1erGboUtRaqLoKC48c+9jmqzEfFW8W46xt77JMC0PFpQ@mail.gmail.com>
- <CAADnVQJ5VaXVN=L+0ygEWJkMtPZnqAVEoeFiLBvikntX0zD49w@mail.gmail.com>
-Date: Sat, 12 Apr 2025 07:11:01 -0700
-Message-ID: <87plhhjwqy.fsf@microsoft.com>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="B5aFJFzI"
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e6e09fb66c7so3028267276.2
+        for <linux-security-module@vger.kernel.org>; Sun, 13 Apr 2025 12:25:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1744572319; x=1745177119; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dq26RbuqV8heXEFnUrcIAdRGV+/86EMAIyh2oJSHIJI=;
+        b=B5aFJFzIKjGgXqlYYGH9NShbk9/0aVER7GR/KLHODSF3YXlVT5Tl4PBcjBE8oOBNDr
+         ce2RM71SZ6CD9tS48a+ZrU7dTa0RPp4+8+/mq31ZWrT0inYfuVjCw4hS/+DgC+FqynIW
+         njlgGNKNgsje5t4K7E6BaT+QafjClfA5/m+qA/Hj0VwVun53bWFXefAywPhpy32s9LX8
+         1/y7piHBf9qCOWRXqAFgqy71SEJaDbgHBs0Xh0Bg2/kfdI/shMLNLUb1MqE4dvBXhduF
+         Mov1ms2gv9DOsMWpFTcqB9dKqYbukayUsfgdUqgKW5yCgUpaBgpAXSqjJlowg10Sa9UG
+         Ahnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744572319; x=1745177119;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dq26RbuqV8heXEFnUrcIAdRGV+/86EMAIyh2oJSHIJI=;
+        b=waM1seoKBwJgpMEfUqv7mhBfWFoNRj/wURU7sL+tzp8NRFjqQf2+v3lGll5CtTKwb7
+         PAV0oSl4aVJI7BzT5Li5ufALnGYjfMjy4N9NR4fCL2x7hZm7UzUUpDBX0yKPtkG6HmVg
+         8ViBd1yaBzCG4YZ9eFIcF0yOh1EuRI2pafhfCi0/l5d8lnifpIDIQ4+y1qWopFCnaZnk
+         ioOQTruu8Hs5NFFmOGXbfV6lCPma7GIJsOQQRp7IMB6b8oK2PlScmoaVDTohfInQWs3V
+         /sJTUx9Evn3oWghyxsL82tPf8DJR6opDf1ZGM18fdVNC2tUstgr9JlDcuKNqGgDT41ro
+         dr0w==
+X-Gm-Message-State: AOJu0YyObe0tOWvLGyRjsTMBOpD7sHKcAcO4HAK51JNJYM+dDIa14Ezk
+	S66EENL312Qo5vwdiXlevgTxVoni5kZU9TlM9EUU2UOyie7YwWHl0+E/rEE9dUdeqaQZqXWDRU9
+	oseI8Ewwiqgs8dA42jSP/vGHh5ZLn+zMpCS5L
+X-Gm-Gg: ASbGncumg4q2bgVPehNqfnRLZVNpp0kf4794sNSJu7Al3U/VxUfIzJjYhSOyjCjqdEV
+	QD82sZaq/ZRO1dWpoeUZhdFG0H95XsSkyZ6wpg4Tp5G+Pc6y41//Rw6ZduX4V8cU71CHnjKqinL
+	CrDdizPl3NG0zzFz9/ERFxOH6Z4lz2FNBF
+X-Google-Smtp-Source: AGHT+IEK3FZOyF5DkkCwjbI6gGNlgoKbpro7f3xzWGq57ut4TKBLbfWVw1Qp6lUKEtjw+o5HwzHf67W/QIFHUN1a7Do=
+X-Received: by 2002:a05:690c:4901:b0:6f9:b0a6:6a15 with SMTP id
+ 00721157ae682-70559ab718cmr165647647b3.38.1744572318910; Sun, 13 Apr 2025
+ 12:25:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20250321102422.640271-1-nik.borisov@suse.com> <CAHC9VhSpgzde_xRiu9FApg59w6sR1FUWW-Pf7Ya6XG9eFHwTqQ@mail.gmail.com>
+In-Reply-To: <CAHC9VhSpgzde_xRiu9FApg59w6sR1FUWW-Pf7Ya6XG9eFHwTqQ@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Sun, 13 Apr 2025 15:25:08 -0400
+X-Gm-Features: ATxdqUFFPMWUt_uYVOB3P94cPJvgJmNzGSw0uhdEvSDjwZkXZa-eQQ48N-qvI6I
+Message-ID: <CAHC9VhS97RWMYmCOQVCZPUUCxdMXPMzM3R0z_U4zJQNe40M4BA@mail.gmail.com>
+Subject: Re: [PATCH 0/2] Allow individual features to be locked down
+To: Nikolay Borisov <nik.borisov@suse.com>
+Cc: linux-security-module@vger.kernel.org, serge@hallyn.com, kees@kernel.org, 
+	linux-kernel@vger.kernel.org, kirill.shutemov@linux.intel.com, 
+	linux-coco@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
-
-> On Fri, Apr 11, 2025 at 5:30=E2=80=AFPM Matteo Croce <technoboy85@gmail.c=
-om> wrote:
->>
->> Il giorno sab 12 apr 2025 alle ore 02:19 Alexei Starovoitov
->> <alexei.starovoitov@gmail.com> ha scritto:
->>
->> Similar to what I proposed here?
->>
->> https://lore.kernel.org/bpf/20211203191844.69709-2-mcroce@linux.microsof=
-t.com/
-> ...
->> @@ -1346,6 +1346,8 @@ union bpf_attr {
->>   __aligned_u64 fd_array; /* array of FDs */
->>   __aligned_u64 core_relos;
->>   __u32 core_relo_rec_size; /* sizeof(struct bpf_core_relo) */
->> + __aligned_u64 signature; /* instruction's signature */
->> + __u32 sig_len; /* signature size */
+On Fri, Mar 21, 2025 at 5:13=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+ote:
+> On Fri, Mar 21, 2025 at 6:24=E2=80=AFAM Nikolay Borisov <nik.borisov@suse=
+.com> wrote:
+> >
+> > This simple change allows usecases where someone might want to  lock on=
+ly specific
+> > feature at a finer granularity than integrity/confidentiality levels al=
+lows.
+> > The first likely user of this is the CoCo subsystem where certain featu=
+res will be
+> > disabled.
+> >
+> > Nikolay Borisov (2):
+> >   lockdown: Switch implementation to using bitmap
+> >   lockdown/kunit: Introduce kunit tests
 >
-> Well, yeah, two fields are obvious.
-> But not like that link from 2021.
-> KP proposed them a year later in 2022 on top of lskel
-> which was much closer to be acceptable.
-> We need to think it through and complete the work,
-> since there are various ways to do it.
-> For example, lskel has a map and a prog.
-> A signature in a prog may cover both, but
-> not necessary it's a good design.
-> A signature for the map plus a signature for the prog
-> that is tied to a map might be a better option.
-> At map creation time the contents can be checked,
-> the map is frozen, and then the verifier can proceed
-> with prog's signature checking.
-> lskel doesn't support all the bpf feature yet, so we need
-> to make sure that the signature verification process
-> is extensible when lskel gains new features.
+> Hi Nikolay,
 >
-> Attaching was also brought up at lsfmm.
-> Without checking the attach point the whole thing is quite
-> questionable from security pov.
+> Thanks for the patches!  With the merge window opening in a few days,
+> it is too late to consider this for the upcoming merge window so
+> realistically this patchset is two weeks out and I'm hopeful we'll
+> have a dedicated Lockdown maintainer by then so I'm going to defer the
+> ultimate decision on acceptance to them.
 
-That statement is quite questionable. Yes, IIRC you brought that up. And
-again, runtime policy enforcement has nothing to do with proving code
-provenance. They are completely independent concerns.
+FYI, I expect we'll see something on the mailing list related to this soon.
 
-That would be akin to saying that having locks on a door is questionable
-without having surveillance cameras installed.
+--=20
+paul-moore.com
