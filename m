@@ -1,202 +1,186 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D72615575C;
-	Mon, 14 Apr 2025 20:56:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7CED1DF962;
+	Mon, 14 Apr 2025 21:04:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744664218; cv=none; b=V0XcodPzBThM5j8OxvAAxiPm3uRbDuevIvq+esVRjg8YTXDJCDcSL9w5/A+JSu298tT/uMlfILA99WiO4Y3QjDEmqk58BXQmrl0i3bczYZz0N9lVttqk2awkOt5QHNFzjSpEcmT0dxKajDht58N1swK/AxVqBdEzQnv+BZtn5k8=
+	t=1744664660; cv=none; b=gg0tdbUM3gnksf6A3qf6rA57YRdgpaIAQf5d61WzVWFpZS9HYRDX0QR9LAgMkyLdh8E2OjizQFLBZtllgmOJLxweGyz41+s1t6goaCvgnKykfePHsugKD5R9azSNno0ZPBlYH81NJegQeW9QEO+eMADqxGSkdzYLzKnei8/7GR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744664218; c=relaxed/simple;
-	bh=59DG5cicG2nYVNl6LJKyYhu1RhtD/HerSJsdOedeqQw=;
+	s=arc-20240116; t=1744664660; c=relaxed/simple;
+	bh=/kMmR3/aCBr6gqrr9IbjWqrz3oTfnW6UJ3YNWHF6aNM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QXQBy45UPvIRgsrtn5rTxLk+qG75o/n2kD8ErdAFbaLQ94ip1JGPcZ/j4ZcbWv/stBEuO1wYe4Vhq/VD17X+LRLYfINKQFMoykoyDqke6ZZ2qQj8E5WLQzeGYKQYYlJOchRRgAS10JlxPMRU9ivxm9gCuhKwe8Y5FX26aXgFq4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PzVuOzT4; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 To:Cc:Content-Type; b=QAg3ITT4xWAapcW7BF8aiRFTOj9S6n6HpHcqWti7ZhDNfzHe41QWiTUu/T4roJhrpq4iEQNzMbskox3br9CUYwQFgEBHZJuJgnhz5KfEvvxkmmrjGYriQeKNKvqYAcMI8mPdYRXR3ZLBHh1xe+kkNASmDkr1LCM5enPMJAOxLSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q854v39l; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PzVuOzT4"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43cef035a3bso34860245e9.1;
-        Mon, 14 Apr 2025 13:56:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744664215; x=1745269015; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0TcZJJNpo591s6xoFqHx75vVN+ieiVBofj1AeFVZgrg=;
-        b=PzVuOzT4fBc3xml+NOLwoW9AiewIoYrS+AxPuBw9aMZ9YWSkvyhtYH5dbkEcxo9B/r
-         stCTCKdhU6cqHLXeJiBXBkiMtIrhuF3k/vMSy8ODhxN3RPXEpsFjmBvo6NiOnteZsY9S
-         cIOsOjogeKhejhCT+nIln6A01Xc8laP6ev2w5BYOQ8uXr7ca6+SgBrOYhD53WYP+hQ1X
-         Wnxv3oMQpYTyD79JFQKzkeBMAlTS2Clw002OQkDFtBMEJRvqyDrMlKSYWz7oCuwDw9hY
-         NFEJIxwtzmA7aAcpkR4iJzXxPgHuAwEhflTa0rHSlvLxnxHtBmbTR+uBMMiWGe22/ZAz
-         3Zzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744664215; x=1745269015;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0TcZJJNpo591s6xoFqHx75vVN+ieiVBofj1AeFVZgrg=;
-        b=tZrmNXe46eokoYjTG44XVIOnhNkXWlK2so+m6PCs8Go8r/FuVvNLeK3x+bgMkv562o
-         pc/8hP6NTs4Jw6ddC2Jz/MWRYcsgoMcEUkATBN8vrNWSlZwKk6f3R3HlwrOD3kLM1VLT
-         Uq0ckhdd6aerUVozyXkixtlIclUtmDfhjlabgOgDQ4KcsnFBjk7+GRQRRS9Ub5yP55Xx
-         Cik2Cc9UX/Sy08Tx9DAPeKj3l5DTVqaMXXrdAAEH9bPs31se4XD4uDf4IkSHqviBD98F
-         gqZUwfTEftQB9sNgC2h8nXWABPQbbxAFtj+P1D3ZX83R1cJT3UV5H32GDfjkcbITBIm+
-         MkTg==
-X-Forwarded-Encrypted: i=1; AJvYcCUQ9hRL9ZHFtEmEhx0PCz+tXcRrmfUnmgNzFJKWM1cuFr3MufTEg16j0FHJEYeG2Q65Xi0UswvKfr1a4xCx@vger.kernel.org, AJvYcCUfdgssTDPX71N7y301jCn1TkjTDoIIMo1WuoXZB47aEcadi2NdabZgqfwl9tAd4vsSoDNNM42DFFdJ@vger.kernel.org, AJvYcCUieUCHc+1uAli+HuXiX2E88609zdYIO0lRa7RemaxO0wgByl6IXc471sNJR61L3FfrmL1NBD8b+RE=@vger.kernel.org, AJvYcCV1YGDrP+Q1nCGtZGbgaiRGaJ210lhswG12tMAj6WdYjzmGoVZcWq6np/RxMpnbhGNOdme+fLNnDzYaCeJbp+Tw@vger.kernel.org, AJvYcCVBzcKFsErzncqZdn8MMjDFOde6rGP0khGNYqSqveOmbdqTflrYMrD5fQa/cWpvYTRy5uk=@vger.kernel.org, AJvYcCVhTCSJbRfrBAeJlHNCnFZCALarOCy5yspY12xRmPvY1F0dINepdRpkReQ2s9plQYQCqaW9irGlmBJ525b3@vger.kernel.org, AJvYcCWAyPnL43WxtqznTx1ipljrLwzQFoVUVO2hZiGosULE/+HewMmwIWubylOrH8Ki3R3Ld6F6flRkmrUVDM5aoHsFO+VkS4Vf@vger.kernel.org, AJvYcCWfLxqOvdm3PUs9B6nftTkGZDzyOla2vPDkfdsZy6vspO7SAukbJqB86Q23gHZ3elWkTsncod8TOiGFizlQ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxryvs4wzvwZkYD+l4tgCl+58jbqSdGGiJS2lSvRDiKMkMbiwyF
-	pVShQXrUij/TMISUhWhRgahLVPHm5sZO5/CXEJtVft8hX8WDeuWy82+91nC5SD7B2dLKGYrK+yr
-	RvHGbiIp1cx6lO70z3ep9icQ3CHU=
-X-Gm-Gg: ASbGncvPZF5bgBGOEPZ0oXaZYAyVJ+sjN8ATMcLqUZaPH33PWqWvKWNw29xtgscgxnK
-	RVzgKd1B2t4/Rcq7npXlk1yQdPdIx90V7b0Nf9BjEBRH8zuaMMKJHfWSPlGvIRUmLv4K4FYiAD2
-	KhqK1gV6h+IGQgNoBYqP/gWst2uWd2lTP27xFE+Q==
-X-Google-Smtp-Source: AGHT+IFcREG/4yFEmC+ZxV8s2QA/5bd3ZV1RNpvIrg2UOkqeg3XFOew6fBn8aG27bqWGkg7Xi5BfChdrPFBmpTvrP3w=
-X-Received: by 2002:a7b:ce16:0:b0:43c:fabf:9146 with SMTP id
- 5b1f17b1804b1-43f4aafa80dmr58064325e9.17.1744664214557; Mon, 14 Apr 2025
- 13:56:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q854v39l"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24AABC4CEE5;
+	Mon, 14 Apr 2025 21:04:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744664660;
+	bh=/kMmR3/aCBr6gqrr9IbjWqrz3oTfnW6UJ3YNWHF6aNM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=q854v39lOHRFCRldRR5okc2pYWSToevpLynlcxSzkWx+ixgvzbv11cSJTu7KX0AVm
+	 D9vXue0YCPXtoxY50bLSG6udSV5nQmMj89hlKDociv5R820cNtNyKoCQyO/X72G6kX
+	 L843omoegemhu9OKbFjCxlDXW4ZLUKy26kmVNyaGrocOc+coDMz/JJiKPTgpXG44Dr
+	 8LwFVKlrUsqa5VeMNBAUcqhm1OpEJKpPA5/fe14JoI9cCgpE45jUXx7VtcEjp88mhl
+	 aFlYgYSW1mpeCanzO9W7QfIpFhGz3SDQcnc/Rw9+Xx7iKTAfAgc6F5fEEP+EisUA8f
+	 PHKxFKeimrx8A==
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e53ef7462b6so4613310276.3;
+        Mon, 14 Apr 2025 14:04:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU6Y4+jkyDVSoWGuBtMwMxmOojPHpNuRc2bwqaHRN2V9VEkTmkKOo50Cggjjn77cJNcBS6aTXDhWjBslMld2y0=@vger.kernel.org, AJvYcCXnkXgFeuY7QhhlxI1HbAFzq3lIF6qCcWzZexNwOfV7gmeK7vknGL87yEn0KjO2HULbYLFxOkGf0g==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqLtlwupm1tKGMSOp0wb4zOQCHK8v0Qm+k0qVnI5oNFBeiT9ZN
+	86bHWIAYo5nZ0cGJ81cMvn8HPXTHlTX7xbo5GVM6gr4GHhSaeVOI5IJ7kFUNWDPacfHxAU99KPD
+	HeUfzFO6g+78h/8CVhBNvrUKP2k8=
+X-Google-Smtp-Source: AGHT+IHt4YRN2kpPHFLSp4blfMyhlknml4TGUKUN/WIObMEJdiJ6sBZcaltdRF3A1GpTp8dpeOVHfFZtVLz3TFY8+ZA=
+X-Received: by 2002:a25:3f81:0:b0:e6e:1d4c:b34d with SMTP id
+ 3f1490d57ef6-e704deee80cmr16743790276.4.1744664659451; Mon, 14 Apr 2025
+ 14:04:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250404215527.1563146-1-bboscaccy@linux.microsoft.com>
- <20250404215527.1563146-2-bboscaccy@linux.microsoft.com> <CAADnVQJyNRZVLPj_nzegCyo+BzM1-whbnajotCXu+GW+5-=P6w@mail.gmail.com>
- <87semdjxcp.fsf@microsoft.com>
-In-Reply-To: <87semdjxcp.fsf@microsoft.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Mon, 14 Apr 2025 13:56:42 -0700
-X-Gm-Features: ATxdqUHCb53j5ciFtAcQCnJkNA0yls1KzsDz-H40EWEXDT9mEyWFo_Dj8Pa3eyk
-Message-ID: <CAADnVQ+JGfwRgsoe2=EHkXdTyQ8ycn0D9nh1k49am++4oXUPHg@mail.gmail.com>
-Subject: Re: [PATCH v2 security-next 1/4] security: Hornet LSM
-To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, David Howells <dhowells@redhat.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Shuah Khan <shuah@kernel.org>, 
-	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+References: <20250409185019.238841-31-paul@paul-moore.com> <20250409185019.238841-51-paul@paul-moore.com>
+In-Reply-To: <20250409185019.238841-51-paul@paul-moore.com>
+From: Fan Wu <wufan@kernel.org>
+Date: Mon, 14 Apr 2025 14:04:07 -0700
+X-Gmail-Original-Message-ID: <CAKtyLkGWtiRRcxvA9vJSuwnS+bmikKpwHYOWkSYiFOToPFAt0g@mail.gmail.com>
+X-Gm-Features: ATxdqUF3ZOFosRk8lZl6cthQpodOGpWi1kcGkYEBFVIm0bmEIdnTgAsfPKxXAbs
+Message-ID: <CAKtyLkGWtiRRcxvA9vJSuwnS+bmikKpwHYOWkSYiFOToPFAt0g@mail.gmail.com>
+Subject: Re: [RFC PATCH 20/29] smack: move initcalls to the LSM framework
+To: Paul Moore <paul@paul-moore.com>
+Cc: linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org, 
+	selinux@vger.kernel.org, John Johansen <john.johansen@canonical.com>, 
+	Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	Fan Wu <wufan@kernel.org>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
 	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
-	Jan Stancek <jstancek@redhat.com>, Neal Gompa <neal@gompa.dev>, 
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	keyrings@vger.kernel.org, 
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>, 
-	LSM List <linux-security-module@vger.kernel.org>, 
-	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
-	clang-built-linux <llvm@lists.linux.dev>, nkapron@google.com, 
-	Matteo Croce <teknoraver@meta.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Cong Wang <xiyou.wangcong@gmail.com>
+	Kees Cook <kees@kernel.org>, Micah Morton <mortonm@chromium.org>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Apr 12, 2025 at 6:58=E2=80=AFAM Blaise Boscaccy
-<bboscaccy@linux.microsoft.com> wrote:
+On Wed, Apr 9, 2025 at 11:53=E2=80=AFAM Paul Moore <paul@paul-moore.com> wr=
+ote:
 >
-> TAlexei Starovoitov <alexei.starovoitov@gmail.com> writes:
+> As the LSM framework only supports one LSM initcall callback for each
+> initcall type, the init_smk_fs() and smack_nf_ip_init() functions were
+> wrapped with a new function, smack_initcall() that is registered with
+> the LSM framework.
 >
-> > On Fri, Apr 4, 2025 at 2:56=E2=80=AFPM Blaise Boscaccy
-> > <bboscaccy@linux.microsoft.com> wrote:
-> >> +
-> >> +static int hornet_find_maps(struct bpf_prog *prog, struct hornet_maps=
- *maps)
-> >> +{
-> >> +       struct bpf_insn *insn =3D prog->insnsi;
-> >> +       int insn_cnt =3D prog->len;
-> >> +       int i;
-> >> +       int err;
-> >> +
-> >> +       for (i =3D 0; i < insn_cnt; i++, insn++) {
-> >> +               if (insn[0].code =3D=3D (BPF_LD | BPF_IMM | BPF_DW)) {
-> >> +                       switch (insn[0].src_reg) {
-> >> +                       case BPF_PSEUDO_MAP_IDX_VALUE:
-> >> +                       case BPF_PSEUDO_MAP_IDX:
-> >> +                               err =3D add_used_map(maps, insn[0].imm=
-);
-> >> +                               if (err < 0)
-> >> +                                       return err;
-> >> +                               break;
-> >> +                       default:
-> >> +                               break;
-> >> +                       }
-> >> +               }
-> >> +       }
-> >
-> > ...
-> >
-> >> +               if (!map->frozen) {
-> >> +                       attr.map_fd =3D fd;
-> >> +                       err =3D kern_sys_bpf(BPF_MAP_FREEZE, &attr, si=
-zeof(attr));
-> >
-> > Sorry for the delay. Still swamped after conferences and the merge wind=
-ow.
-> >
+> Signed-off-by: Paul Moore <paul@paul-moore.com>
+> ---
+>  security/smack/smack.h           |  6 ++++++
+>  security/smack/smack_lsm.c       | 16 ++++++++++++++++
+>  security/smack/smack_netfilter.c |  4 +---
+>  security/smack/smackfs.c         |  4 +---
+>  4 files changed, 24 insertions(+), 6 deletions(-)
 >
-> No worries.
+> diff --git a/security/smack/smack.h b/security/smack/smack.h
+> index bf6a6ed3946c..709e0d6cd5e1 100644
+> --- a/security/smack/smack.h
+> +++ b/security/smack/smack.h
+> @@ -275,6 +275,12 @@ struct smk_audit_info {
+>  #endif
+>  };
 >
-> > Above are serious layering violations.
-> > LSMs should not be looking that deep into bpf instructions.
+> +/*
+> + * Initialization
+> + */
+> +int init_smk_fs(void);
+> +int smack_nf_ip_init(void);
+> +
+>  /*
+>   * These functions are in smack_access.c
+>   */
+> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+> index e09b33fed5f0..80b129a0c92c 100644
+> --- a/security/smack/smack_lsm.c
+> +++ b/security/smack/smack_lsm.c
+> @@ -5277,6 +5277,21 @@ static __init int smack_init(void)
+>         return 0;
+>  }
 >
-> These aren't BPF internals; this is data passed in from
-> userspace. Inspecting userspace function inputs is definitely within the
-> purview of an LSM.
+> +static int smack_initcall(void)
+> +{
+> +       int rc, rc_tmp;
+> +
+> +       rc_tmp =3D init_smk_fs();
+> +       if (rc_tmp)
+> +               rc =3D rc_tmp;
+> +
+> +       rc_tmp =3D smack_nf_ip_init();
+> +       if (!rc && rc_tmp)
+> +               rc =3D rc_tmp;
+> +
+> +       return rc;
+> +}
+> +
+>  /*
+>   * Smack requires early initialization in order to label
+>   * all processes and objects when they are created.
+> @@ -5286,4 +5301,5 @@ DEFINE_LSM(smack) =3D {
+>         .flags =3D LSM_FLAG_LEGACY_MAJOR | LSM_FLAG_EXCLUSIVE,
+>         .blobs =3D &smack_blob_sizes,
+>         .init =3D smack_init,
+> +       .initcall_device =3D smack_initcall,
+>  };
+> diff --git a/security/smack/smack_netfilter.c b/security/smack/smack_netf=
+ilter.c
+> index 8fd747b3653a..17ba578b1308 100644
+> --- a/security/smack/smack_netfilter.c
+> +++ b/security/smack/smack_netfilter.c
+> @@ -68,7 +68,7 @@ static struct pernet_operations smack_net_ops =3D {
+>         .exit =3D smack_nf_unregister,
+>  };
 >
-> Lskel signature verification doesn't actually need a full disassembly,
-> but it does need all the maps used by the lskel. Due to API design
-> choices, this unfortunately requires disassembling the program to see
-> which array indexes are being used.
+> -static int __init smack_nf_ip_init(void)
+> +int __init smack_nf_ip_init(void)
+>  {
+>         if (smack_enabled =3D=3D 0)
+>                 return 0;
+> @@ -76,5 +76,3 @@ static int __init smack_nf_ip_init(void)
+>         printk(KERN_DEBUG "Smack: Registering netfilter hooks\n");
+>         return register_pernet_subsys(&smack_net_ops);
+>  }
+> -
+> -__initcall(smack_nf_ip_init);
+> diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
+> index 90a67e410808..d33dd0368807 100644
+> --- a/security/smack/smackfs.c
+> +++ b/security/smack/smackfs.c
+> @@ -2980,7 +2980,7 @@ static struct vfsmount *smackfs_mount;
+>   * Returns true if we were not chosen on boot or if
+>   * we were chosen and filesystem registration succeeded.
+>   */
+> -static int __init init_smk_fs(void)
+> +int __init init_smk_fs(void)
+>  {
+>         int err;
+>         int rc;
+> @@ -3023,5 +3023,3 @@ static int __init init_smk_fs(void)
 >
-> > Calling into sys_bpf from LSM is plain nack.
-> >
+>         return err;
+>  }
+> -
+> -__initcall(init_smk_fs);
+> --
+> 2.49.0
 >
-> kern_sys_bpf is an EXPORT_SYMBOL, which means that it should be callable
-> from a module.
 
-It's a leftover.
-kern_sys_bpf() is not something that arbitrary kernel
-modules should call.
-It was added to work for cases where kernel modules
-carry their own lskels.
-That use case is gone, so EXPORT_SYMBOL will be removed.
+I'm getting the following WARNING:
 
-> Lskels without frozen maps are vulnerable to a TOCTOU
-> attack from a sufficiently privileged user. Lskels currently pass
-> unfrozen maps into the kernel, and there is nothing stopping someone
-> from modifying them between BPF_PROG_LOAD and BPF_PROG_RUN.
->
-> > The verification of module signatures is a job of the module loading pr=
-ocess.
-> > The same thing should be done by the bpf system.
-> > The signature needs to be passed into sys_bpf syscall
-> > as a part of BPF_PROG_LOAD command.
-> > It probably should be two new fields in union bpf_attr
-> > (signature and length),
-> > and the whole thing should be processed as part of the loading
-> > with human readable error reported back through the verifier log
-> > in case of signature mismatch, etc.
-> >
->
-> I don't necessarily disagree, but my main concern with this is that
-> previous code signing patchsets seem to get gaslit or have the goalposts
-> moved until they die or are abandoned.
+WARNING: modpost: vmlinux: section mismatch in reference:
+smack_initcall+0xb (section: .text) -> init_smk_fs (section:
+.init.text)
+WARNING: modpost: vmlinux: section mismatch in reference:
+smack_initcall+0x16 (section: .text) -> smack_nf_ip_init (section:
+.init.text)
+WARNING: modpost: vmlinux: section mismatch in reference:
+smack_initcall+0x27 (section: .text) -> smack_nf_ip_init (section:
+.init.text)
 
-Previous attempts to add signing failed because
-1. It's a difficult problem to solve
-2. people only cared about their own narrow use case and not
-considering the needs of bpf ecosystem as a whole.
+I guess "__init" is missed for smack_initcall?
 
-> Are you saying that at this point, you would be amenable to an in-tree
-> set of patches that enforce signature verification of lskels during
-> BPF_PROG_LOAD that live in syscall.c,
-
-that's the only way to do it.
-
-> without adding extra non-code
-> signing requirements like attachment point verification, completely
-> eBPF-based solutions, or rich eBPF-based program run-time policy
-> enforcement?
-
-Those are secondary considerations that should also be discussed.
-Not necessarily a blocker.
+-Fan
