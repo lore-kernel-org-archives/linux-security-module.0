@@ -1,307 +1,131 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DE6A23BF91;
-	Tue, 15 Apr 2025 19:08:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD4D324BBF5
+	for <linux-security-module@vger.kernel.org>; Tue, 15 Apr 2025 20:26:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744744131; cv=none; b=p7cvhgvahEe6jZzfe98wtRev97PAHGeULPQpZJyAHVO45E+u2drjOWQegd9TLUp+8DfhBpMO7VJCp5t8w2/X6wpVju/Ab9jyqykHj4jyaxLm5GQKbpB/GBdvRzcOgDAXEqs+4zdsLQLrm2NWrx0IkRaj6plcNVWQHqvFDRMYLjU=
+	t=1744748799; cv=none; b=d07v+79o3ygiQHbKbBUjjcAEpQ4pTW6ZU/Ux3zlS39C84BpDl0tYcJH8XY44JckvAWPkrvJgIP4MpV9rMf08i2tCS0KUJ9EaHwyb7+QE0Dfca/Bc2g+XqOzuKHpYShPqYYpPKAzQQjZz4Y8hN0VuKsmO92pDypSS97cReI5VeWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744744131; c=relaxed/simple;
-	bh=4eWiV3xFSoCwxXhSUAmK+LTrSgb/zidrUlBszwJv2G8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Hb7afgbbjEhWEb0AmUqoz5zWtFpNGLxeALnBXsfP3OOkrHVCvPLY7seb6+/sochTlS4B7ZAqhkgL3iBl0C2zMCi3BQc9gLp3p+syd5qeO+Ib4DwbZbBvm4/9YctXRJgEY26lgn8y6AZv7vMCz0V7eMjRo66bOl9N0YvNr0EMlTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=AS9yEFHC; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+	s=arc-20240116; t=1744748799; c=relaxed/simple;
+	bh=pvhdq1iT6xGsvgus+UKN3OsBlAAH0DtpK3RlifG8BJM=;
+	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
+	 Content-Type; b=DZmTjBuDMHb42tlxZ9c2r1NhUAj1QhvEOd6RguCnsl/XrwIoxcSbZ6hq9mjPPvGxmKSslN/m3E3L7IQ6Uoyy0nk1xZlVQsV2OqFMiGqCZr5nkUFUExSU8SjZhdyrFrIfpi11LFObLg1w8etIJPQuMO2axq6wMXxIBrsDOGltcvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=XLDo79tU; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="AS9yEFHC"
-Received: from narnia (unknown [167.220.2.28])
-	by linux.microsoft.com (Postfix) with ESMTPSA id C6928210C44B;
-	Tue, 15 Apr 2025 12:08:36 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C6928210C44B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1744744124;
-	bh=BdAKgQD8XvssHU2ejUtRgPSTUQI3oZF7Hbk69mY3whE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=AS9yEFHCRtFQdy/Co3VaXp6LM+zR5raFycED9EFImPEQbvThLkYHd3TPauwA8DfN6
-	 4+MYqpFx6UrSh/E11pLyX0OFZ9wJmP7h3Vmy18TWalhknx2D+noUDWNvn5ftisxJJF
-	 0pDGP7uDpemcGPaz7+EFXOweCPdLu0+b8gWD20LU=
-From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, David Howells <dhowells@redhat.com>,
- Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller"
- <davem@davemloft.net>, Paul Moore <paul@paul-moore.com>, James Morris
- <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Masahiro Yamada
- <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nicolas
- Schier <nicolas@fjasle.eu>, Shuah Khan <shuah@kernel.org>, =?utf-8?Q?Mick?=
- =?utf-8?Q?a=C3=ABl_Sala=C3=BCn?=
- <mic@digikod.net>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Nick
- Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling
- <morbo@google.com>, Justin Stitt <justinstitt@google.com>, Jarkko Sakkinen
- <jarkko@kernel.org>, Jan Stancek <jstancek@redhat.com>, Neal Gompa
- <neal@gompa.dev>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, keyrings@vger.kernel.org, Linux
- Crypto Mailing List <linux-crypto@vger.kernel.org>, LSM List
- <linux-security-module@vger.kernel.org>, Linux Kbuild mailing list
- <linux-kbuild@vger.kernel.org>, "open list:KERNEL SELFTEST FRAMEWORK"
- <linux-kselftest@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
- clang-built-linux <llvm@lists.linux.dev>, nkapron@google.com, Matteo Croce
- <teknoraver@meta.com>, Roberto Sassu <roberto.sassu@huawei.com>, Cong Wang
- <xiyou.wangcong@gmail.com>
-Subject: Re: [PATCH v2 security-next 1/4] security: Hornet LSM
-In-Reply-To: <87a58hjune.fsf@microsoft.com>
-References: <20250404215527.1563146-1-bboscaccy@linux.microsoft.com>
- <20250404215527.1563146-2-bboscaccy@linux.microsoft.com>
- <CAADnVQJyNRZVLPj_nzegCyo+BzM1-whbnajotCXu+GW+5-=P6w@mail.gmail.com>
- <87semdjxcp.fsf@microsoft.com>
- <CAADnVQ+JGfwRgsoe2=EHkXdTyQ8ycn0D9nh1k49am++4oXUPHg@mail.gmail.com>
- <87friajmd5.fsf@microsoft.com>
- <CAADnVQKb3gPBFz+n+GoudxaTrugVegwMb8=kUfxOea5r2NNfUA@mail.gmail.com>
- <87a58hjune.fsf@microsoft.com>
-Date: Tue, 15 Apr 2025 12:08:34 -0700
-Message-ID: <874iypjl8t.fsf@microsoft.com>
+	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="XLDo79tU"
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-22580c9ee0aso63987405ad.2
+        for <linux-security-module@vger.kernel.org>; Tue, 15 Apr 2025 13:26:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1744748795; x=1745353595; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=75O+xckdYXwHr1AtIxgXc+6DXaHjIxC/DyVy3zDpIz0=;
+        b=XLDo79tUWtsSyOg3xIXO22NF80KF+kIkz56BKthwC91b4eFF7bJO0jyzCHuTI262xE
+         SGBooLKeSiFXReSSauJuw0Bqedg/QneFBy5IpgixbWcYzF/E4kgFlhshdVgaUe6aWUMi
+         vJx+bgEA9kQ23l4FtxT9Z/PXaFZNURfI1kQW08KruJp1maHDt6x2fTyKZ7GYzc6okJvY
+         kiP/IhTjuDDuQLS6lp+BxCYaoKxNQekkNdOVb+60IfUdRCZbFUOeKkMSWDKS0kB8bm32
+         UGxMxfXzN3SSB++/LG2qlT6dyhle6Go0XLRAyz3IiiVWrjZh8LajjCztPmwhvlN8o0jb
+         exIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744748795; x=1745353595;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=75O+xckdYXwHr1AtIxgXc+6DXaHjIxC/DyVy3zDpIz0=;
+        b=OEkXMWFsRuGSYIj1RHdqh7ZN2AI0RYUgTzEhjciTo/UKV35DQvoXFLllqM4jk1LCeD
+         fWhE8GFcbhkBkYYnUkQS7EZtv/cckQbcLSOfUAZF5zY0tZcvlDDduBC8dzb+8CLqtPIf
+         t5WUNLgGzRZJwkbsGxmojEyqEir0R3BC6ANQEI0rdkIvqgGFA1EaP+vdC1LUHHSS5Nyc
+         NvoG3skhiD03Flc2HV9WK6NzPUKLtvi64ptBwEXPvPbXoWENk9WQCcNoPBtT8F79VJg6
+         5LzPclz3IbJvSiXkIrybmAUPFAbTSMd23ZCbWe1pT0FUM9MX2xJs3Hmo1NvaZEjL3Oe6
+         VfPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWZxsXXW+bdRE6BjcxF3iCiId9wvmLVYvo30WS5QHNuasdMQ3CoAPbtyyyb3goTaf2qKV/MIMs/1FDUeQaC0Ghxu+qy2cc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw//CRZqyrDg9rs8FVQYVt0wTEnZ3tFaCcNn581A0/78fjb9ZjQ
+	NxYuwNBjEp383wupBe3oznopRoaTds46KJx035tRYpluoA90udilsPDwwl/g/FE=
+X-Gm-Gg: ASbGncsOW8dZq/wPXws9c8GnUQx2Kfv/vODg9HAnSCwqXi414AWb+JivLUJD+kj/V9f
+	ajaeU4SDdFi74nuhsBaZSjfe5yrnxA4Pn+W4kp/Il58iivt92jwxSKOV/hQ0aSNaXcCyGfsPmJn
+	mVimRGB7G81K/cGRsAi+dFdvp5YHtuT/OpgLnVyyzhLnm6NKZ56i0ix53KPBi0P3Pl2IcLk/Lw0
+	vQL1RWFqHPBNnKfMVgDg6l+USoiYTpPeYcy7rqyX3kij7oXIwfOiYeV1v0jbwIZL/rfofWGLp36
+	K6umqAVaKiN9YPtXOlhv/YKS5mFUlEErMA==
+X-Google-Smtp-Source: AGHT+IGZO5UAvPkrrKwYYPSXRVF2GgYYFWa7uULNbD4bFXFpfMPqMwk2vBYgwS4j3xl5itHBc4XrIg==
+X-Received: by 2002:a17:902:cec9:b0:216:2bd7:1c2f with SMTP id d9443c01a7336-22c318bd3a5mr7320125ad.18.1744748794919;
+        Tue, 15 Apr 2025 13:26:34 -0700 (PDT)
+Received: from localhost ([50.145.13.30])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7c93ad2sm122460825ad.115.2025.04.15.13.26.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Apr 2025 13:26:34 -0700 (PDT)
+Date: Tue, 15 Apr 2025 13:26:34 -0700 (PDT)
+X-Google-Original-Date: Tue, 15 Apr 2025 13:26:31 PDT (-0700)
+Subject:     Re: [PATCH] gcc-plugins: Disable GCC plugins for compile test builds
+In-Reply-To: <20250407-kbuild-disable-gcc-plugins-v1-1-5d46ae583f5e@kernel.org>
+CC: Linus Torvalds <torvalds@linux-foundation.org>, kees@kernel.org, mic@digikod.net,
+  gnoack@google.com, Arnd Bergmann <arnd@arndb.de>, linux-hardening@vger.kernel.org,
+  linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, broonie@kernel.org
+From: Palmer Dabbelt <palmer@dabbelt.com>
+To: broonie@kernel.org
+Message-ID: <mhng-812ee330-2f86-4561-8b88-cbb6a51f8515@palmer-ri-x1c9a>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Blaise Boscaccy <bboscaccy@linux.microsoft.com> writes:
+On Mon, 07 Apr 2025 13:57:32 PDT (-0700), broonie@kernel.org wrote:
+> In current mainline x86_64 allmodconfig builds done with tuxmake GCC 13
+> and GCC 14 toolchains (which are Debian ones packaged up into containers)
+> generate ICEs in landlock:
+>
+> Event                            | Plugins
+> PLUGIN_FINISH_TYPE               | randomize_layout_plugin
+> PLUGIN_FINISH_DECL               | randomize_layout_plugin
+> PLUGIN_ATTRIBUTES                | latent_entropy_plugin randomize_layout_plugin
+> PLUGIN_START_UNIT                | latent_entropy_plugin stackleak_plugin
+> PLUGIN_ALL_IPA_PASSES_START      | randomize_layout_plugin
+> /build/stage/linux/security/landlock/fs.c: In function ‘hook_file_ioctl_common’:
+> /build/stage/linux/security/landlock/fs.c:1745:61: internal compiler error: in c
+> ount_type_elements, at expr.cc:7075
+>  1745 |                         .u.op = &(struct lsm_ioctlop_audit) {
+>       |                                                             ^
+>
+> Arnd bisected this to c56f649646ec ("landlock: Log mount-related
+> denials") but that commit is fairly obviously not really at fault here,
+> most likely this is an issue in the plugin.  Given how disruptive having
+> key configs like this failing let's disable the plugins for compile test
+> builds until a fix is found.
+>
+> Suggested-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> ---
+>  scripts/gcc-plugins/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/scripts/gcc-plugins/Kconfig b/scripts/gcc-plugins/Kconfig
+> index e383cda05367..29b03c136165 100644
+> --- a/scripts/gcc-plugins/Kconfig
+> +++ b/scripts/gcc-plugins/Kconfig
+> @@ -7,6 +7,7 @@ config HAVE_GCC_PLUGINS
+>
+>  menuconfig GCC_PLUGINS
+>  	bool "GCC plugins"
+> +	depends on !COMPILE_TEST
+>  	depends on HAVE_GCC_PLUGINS
+>  	depends on CC_IS_GCC
+>  	depends on $(success,test -e $(shell,$(CC) -print-file-name=plugin)/include/plugin-version.h)
+>
+> ---
+> base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+> change-id: 20250407-kbuild-disable-gcc-plugins-8701aa609cb3
+>
+> Best regards,
 
-> Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
->
->> On Mon, Apr 14, 2025 at 5:32=E2=80=AFPM Blaise Boscaccy
->> <bboscaccy@linux.microsoft.com> wrote:
->>>
->>> Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
->>>
->>> > On Sat, Apr 12, 2025 at 6:58=E2=80=AFAM Blaise Boscaccy
->>> > <bboscaccy@linux.microsoft.com> wrote:
->>> >>
->>> >> TAlexei Starovoitov <alexei.starovoitov@gmail.com> writes:
->>> >>
->>> >> > On Fri, Apr 4, 2025 at 2:56=E2=80=AFPM Blaise Boscaccy
->>> >> > <bboscaccy@linux.microsoft.com> wrote:
->>> >> >> +
->>> >> >> +static int hornet_find_maps(struct bpf_prog *prog, struct hornet=
-_maps *maps)
->>> >> >> +{
->>> >> >> +       struct bpf_insn *insn =3D prog->insnsi;
->>> >> >> +       int insn_cnt =3D prog->len;
->>> >> >> +       int i;
->>> >> >> +       int err;
->>> >> >> +
->>> >> >> +       for (i =3D 0; i < insn_cnt; i++, insn++) {
->>> >> >> +               if (insn[0].code =3D=3D (BPF_LD | BPF_IMM | BPF_D=
-W)) {
->>> >> >> +                       switch (insn[0].src_reg) {
->>> >> >> +                       case BPF_PSEUDO_MAP_IDX_VALUE:
->>> >> >> +                       case BPF_PSEUDO_MAP_IDX:
->>> >> >> +                               err =3D add_used_map(maps, insn[0=
-].imm);
->>> >> >> +                               if (err < 0)
->>> >> >> +                                       return err;
->>> >> >> +                               break;
->>> >> >> +                       default:
->>> >> >> +                               break;
->>> >> >> +                       }
->>> >> >> +               }
->>> >> >> +       }
->>> >> >
->>> >> > ...
->>> >> >
->>> >> >> +               if (!map->frozen) {
->>> >> >> +                       attr.map_fd =3D fd;
->>> >> >> +                       err =3D kern_sys_bpf(BPF_MAP_FREEZE, &att=
-r, sizeof(attr));
->>> >> >
->>> >> > Sorry for the delay. Still swamped after conferences and the merge=
- window.
->>> >> >
->>> >>
->>> >> No worries.
->>> >>
->>> >> > Above are serious layering violations.
->>> >> > LSMs should not be looking that deep into bpf instructions.
->>> >>
->>> >> These aren't BPF internals; this is data passed in from
->>> >> userspace. Inspecting userspace function inputs is definitely within=
- the
->>> >> purview of an LSM.
->>> >>
->>> >> Lskel signature verification doesn't actually need a full disassembl=
-y,
->>> >> but it does need all the maps used by the lskel. Due to API design
->>> >> choices, this unfortunately requires disassembling the program to see
->>> >> which array indexes are being used.
->>> >>
->>> >> > Calling into sys_bpf from LSM is plain nack.
->>> >> >
->>> >>
->>> >> kern_sys_bpf is an EXPORT_SYMBOL, which means that it should be call=
-able
->>> >> from a module.
->>> >
->>> > It's a leftover.
->>> > kern_sys_bpf() is not something that arbitrary kernel
->>> > modules should call.
->>> > It was added to work for cases where kernel modules
->>> > carry their own lskels.
->>> > That use case is gone, so EXPORT_SYMBOL will be removed.
->>> >
->>>
->>> I'm not following that at all. You recommended using module-based lskels
->>> to get around code signing requirements at lsfmmbpf and now you want to
->>> nuke that entire feature? And further, skel_internal will no longer be
->>> usable from within the kernel and bpf_preload is no longer going to be
->>> supported?
->
-> The eBPF dev community has spent what, 4-5 years on this, with little to
-> no progress. I have little faith that this is going to progress on your
-> end in a timely manner or at all, and frankly we (and others) needed
-> this yesterday. Hornet has zero impact on the bpf subsystem, yet you
-> seem viscerally opposed to us doing this. Why are you trying to stop us
-> from securing our cloud?
->
->>
->> It was exported to modules to run lskel-s from modules.
->> It's bpf internal api, but seeing how you want to abuse it
->> the feature has to go. Sadly.
->>
+This one's been biting me too.  It manifests for me on gcc-12 and gcc-13 
+(both locally built toolchains off the release branches, cross compiling 
+for RISC-V).
 
-In the interest of not harming downstream users that possibly rely on
-BPF_PRELOAD, it would be completely fine on our end to not call
-kern_sys_bpf since maps can easily be frozen in userspace by the
-loader. I'd prefer LSMs to be not mutating things if at all possible as
-well.
-
-If we agreed to not call that function so-as you can keep that
-feature for everyone, would you be ammenable to a simple patch in
-skel_internal.h that freezes maps? e.g
-
-
-diff --git a/tools/lib/bpf/skel_internal.h b/tools/lib/bpf/skel_internal.h
-index 4d5fa079b5d6..51e72dc23062 100644
---- a/tools/lib/bpf/skel_internal.h
-+++ b/tools/lib/bpf/skel_internal.h
-@@ -263,6 +263,17 @@ static inline int skel_map_delete_elem(int fd, const v=
-oid *key)
-        return skel_sys_bpf(BPF_MAP_DELETE_ELEM, &attr, attr_sz);
- }
-=20
-+static inline int skel_map_freeze(int fd)
-+{
-+       const size_t attr_sz =3D offsetofend(union bpf_attr, map_fd);
-+       union bpf_attr attr;
-+
-+       memset(&attr, 0, attr_sz);
-+       attr.map_fd =3D fd;
-+
-+       return skel_sys_bpf(BPF_MAP_FREEZE, &attr, attr_sz);
-+}
-+
- static inline int skel_map_get_fd_by_id(__u32 id)
- {
-        const size_t attr_sz =3D offsetofend(union bpf_attr, flags);
-@@ -327,6 +338,13 @@ static inline int bpf_load_and_run(struct bpf_load_and=
-_run_opts *opts)
-                goto out;
-        }
-=20
-+       err =3D skel_map_freeze(map_fd);
-+       if (err < 0) {
-+               opts->errstr =3D "failed to freeze map";
-+               set_err;
-+               goto out;
-+       }
-+
-        memset(&attr, 0, prog_load_attr_sz);
-        attr.prog_type =3D BPF_PROG_TYPE_SYSCALL;
-        attr.insns =3D (long) opts->insns;
-
->>> >> Lskels without frozen maps are vulnerable to a TOCTOU
->>> >> attack from a sufficiently privileged user. Lskels currently pass
->>> >> unfrozen maps into the kernel, and there is nothing stopping someone
->>> >> from modifying them between BPF_PROG_LOAD and BPF_PROG_RUN.
->>> >>
->>> >> > The verification of module signatures is a job of the module loadi=
-ng process.
->>> >> > The same thing should be done by the bpf system.
->>> >> > The signature needs to be passed into sys_bpf syscall
->>> >> > as a part of BPF_PROG_LOAD command.
->>> >> > It probably should be two new fields in union bpf_attr
->>> >> > (signature and length),
->>> >> > and the whole thing should be processed as part of the loading
->>> >> > with human readable error reported back through the verifier log
->>> >> > in case of signature mismatch, etc.
->>> >> >
->>> >>
->>> >> I don't necessarily disagree, but my main concern with this is that
->>> >> previous code signing patchsets seem to get gaslit or have the goalp=
-osts
->>> >> moved until they die or are abandoned.
->>> >
->>> > Previous attempts to add signing failed because
->>> > 1. It's a difficult problem to solve
->>> > 2. people only cared about their own narrow use case and not
->>> > considering the needs of bpf ecosystem as a whole.
->>> >
->>> >> Are you saying that at this point, you would be amenable to an in-tr=
-ee
->>> >> set of patches that enforce signature verification of lskels during
->>> >> BPF_PROG_LOAD that live in syscall.c,
->>> >
->>> > that's the only way to do it.
->>> >
->>>
->>> So the notion of forcing people into writing bpf-based gatekeeper progr=
-ams
->>> is being abandoned? e.g.
->>>
->>> https://lore.kernel.org/bpf/bqxgv2tqk3hp3q3lcdqsw27btmlwqfkhyg6kohsw7lw=
-dgbeol7@nkbxnrhpn7qr/#t
->>> https://lore.kernel.org/bpf/61aae2da8c7b0_68de0208dd@john.notmuch/
->>
->> Not abandoned.
->> bpf-based tuning of load conditions is still necessary.
->> The bpf_prog_load command will check the signature only.
->> It won't start rejecting progs that don't have a signature.
->> For that a one liner bpf-lsm or C-based lsm would be needed
->> to address your dont-trust-root use case.
->>
->
-> Since this will require an LSM no matter what, there is zero reason for
-> us not to proceed with Hornet. If or when you actually figure out how to
-> sign an lskel and upstream updated LSM hooks, I can always rework Hornet
-> to use that instead.
->
->>>
->>> >> without adding extra non-code
->>> >> signing requirements like attachment point verification, completely
->>> >> eBPF-based solutions, or rich eBPF-based program run-time policy
->>> >> enforcement?
->>> >
->>> > Those are secondary considerations that should also be discussed.
->>> > Not necessarily a blocker.
->>>
->>> Again, I'm confused here since you recently stated this whole thing
->>> was "questionable" without attachment point verification.
->>
->> Correct.
->> For fentry prog type the attachment point is checked during the load,
->> but for tracepoints it's not, and anyone who is claiming that
->> their system is secure because the tracepoint prog was signed
->> is simply clueless in how bpf works.
->
-> No one is making that claim, although I do appreciate the lovely
-> ad-hominem attack and absolutist standpoint. It's not like we invented
-> code signing last week. All we are trying to do is make our cloud
-> ever-so-slightly more secure and share the results with the community.
->
-> The attack vectors I'm looking at are things like CVE-2021-33200. ACLs
-> for attachment points do nothing to stop that whereas code signing is a
-> possible countermeasure. This kind of thing is probably a non-issue with
-> your private cloud, but it's a very real issue with publicly accessible
-> ones.=20=20
+Tested-by: Palmer Dabbelt <palmer@rivosinc.com>
