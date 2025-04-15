@@ -1,40 +1,40 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B80F8148832;
-	Tue, 15 Apr 2025 20:41:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97149126C02;
+	Tue, 15 Apr 2025 20:42:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744749671; cv=none; b=oCpkcDEcOSLFAk2yC2zSb2ZfK2g6FhZpyUrBuZZ8SboGV9LcdpNXPsoxX+ZSGbSi6/+n8qEmZm73Z38D/mmdvGu7mMe/baUeBNPjku3lrlgCA+g5ps9pPaNccDLIA9VWghSftpSvuNlYLsKPwtr/ElxCtvfLKjMePrc6h0oVMgI=
+	t=1744749722; cv=none; b=JpgN32wEKoU4zjmb/oLBjoWB2yW9zsUASi3irhyKJcBX7hX663M2ieFThqzmLiywydvZUGxjz34KpH3ORuRV7LKjGDaj7a54FW7I8z/AE1owEC9xvsdIzlEmw2YpUIClpkGiqyOJ9Kx+6hhzuKbgvIrkJ9TuOWF4c/+fF92fS7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744749671; c=relaxed/simple;
-	bh=Xujmcf0MnaYNwA9Y83KJUGceRZYh862QHOOGs5sRFF8=;
+	s=arc-20240116; t=1744749722; c=relaxed/simple;
+	bh=opheAtX//x+lw5vt44IeJqSekfCNd1b79Q3bJ8mQAq4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q4Z5RIKLPDDeT5ScJrQ0Y1tJrjAz6thbYbG9VNBnPG9DHMPck8y8sejw0TqDNrxlMWjC6jSSCYPaRzW1QRJrT4/BkauAdEBd/3YchikkxJ1skQKbrxobxbLImRQwDwA6mx7SdeoFFF0hYyuShCeDhiPH7b+MvA/SMGGDGJVe3QU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KMZvbxGn; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=WaufDXnf9KzUzXu0LEMzCX2ap1tNbUGQ+XLT5oZAFdzxBWbCQV+iq8P61rlBxAhKwcsrzJldiwfzV+1niPRlDlFZ5hzqPhGBX9OgOjMSCj841bUfATEzLlTE7veRevfhM2Eudfk3o5CTvdOvvOgkVoHFmpMm1PkJqfzQms2oDXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tS795/B+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KMZvbxGn"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D789C4CEE7;
-	Tue, 15 Apr 2025 20:41:09 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tS795/B+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F36F1C4CEE7;
+	Tue, 15 Apr 2025 20:42:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744749671;
-	bh=Xujmcf0MnaYNwA9Y83KJUGceRZYh862QHOOGs5sRFF8=;
+	s=k20201202; t=1744749722;
+	bh=opheAtX//x+lw5vt44IeJqSekfCNd1b79Q3bJ8mQAq4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KMZvbxGnAcU/0LhQBLa/9BG47ab2wYqs+9twySee2VkeuUqYMg2zZz2W5I7tnVZGb
-	 p/tZv+4onoyVbP0dcOW3If88TGWnOROMEo5rv2zLERfhOM87kGa8qk/Gud3x6+5foy
-	 y+6yThVG+3JjHbM5Rtnt/UQKUy7Kfu2PBgVdTGZb9wNYShV3AHrywI90oXVsZAkO7c
-	 rWo1a+39SLw2NGQqESlntZAGeaLcY5+uRWyxg+KXr6vTjV7OeH3iMW/qxjowc7l4H/
-	 0n8GXwiEYMCcVr2CteqLs8s/JB1rPO/GbolK7xNdkQB7GfMKJ7Gn5x+J51M2FpQ7D5
-	 SbhSpNkan01PQ==
-Date: Tue, 15 Apr 2025 21:41:06 +0100
-From: Mark Brown <broonie@kernel.org>
+	b=tS795/B+hWHKeS4pVkotwTwgDOco6yG4cFPSfgDl9HS8AThg0GV8hjjIPLl+ntx9G
+	 CTugkMjpXUHFco2pmHxhxhcH3702TJht2Ko/0IxiritIioztt9nMeQ90MxkcCJwvVY
+	 9/IP/cTXg7bHBn+BPg/05cHs4YVZRUSnpE6+NUgqyW4iRcBpfZRwpjWmaW+Cgw7KYj
+	 KvAe6vNXB95NMh8eECHxBF8DdjlUDonOxkL10KntzGi/wH1qLp8VP0unDTdgbCWGIi
+	 PWizGgWdC5yvpYPGIlg5l0RGwn7EDt1V66jwhTdHI2P3kwk7/onGGqxBW4j9aww3eb
+	 WDzOWWFJDy6Fw==
+Date: Tue, 15 Apr 2025 13:41:58 -0700
+From: Kees Cook <kees@kernel.org>
 To: Palmer Dabbelt <palmer@dabbelt.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, kees@kernel.org,
+Cc: broonie@kernel.org, Linus Torvalds <torvalds@linux-foundation.org>,
 	mic@digikod.net, gnoack@google.com, Arnd Bergmann <arnd@arndb.de>,
 	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
 	linux-security-module@vger.kernel.org
 Subject: Re: [PATCH] gcc-plugins: Disable GCC plugins for compile test builds
-Message-ID: <2a4a73bc-03a7-4bac-9d56-dad85df3e1b8@sirena.org.uk>
+Message-ID: <202504151341.C84890628@keescook>
 References: <20250407-kbuild-disable-gcc-plugins-v1-1-5d46ae583f5e@kernel.org>
  <mhng-812ee330-2f86-4561-8b88-cbb6a51f8515@palmer-ri-x1c9a>
 Precedence: bulk
@@ -43,51 +43,69 @@ List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="AOZwQ0Y3QWlsCkP6"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 In-Reply-To: <mhng-812ee330-2f86-4561-8b88-cbb6a51f8515@palmer-ri-x1c9a>
-X-Cookie: 10.0 times 0.1 is hardly ever 1.0.
-
-
---AOZwQ0Y3QWlsCkP6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
 On Tue, Apr 15, 2025 at 01:26:34PM -0700, Palmer Dabbelt wrote:
 > On Mon, 07 Apr 2025 13:57:32 PDT (-0700), broonie@kernel.org wrote:
-
 > > In current mainline x86_64 allmodconfig builds done with tuxmake GCC 13
 > > and GCC 14 toolchains (which are Debian ones packaged up into containers)
 > > generate ICEs in landlock:
-
+> > 
+> > Event                            | Plugins
+> > PLUGIN_FINISH_TYPE               | randomize_layout_plugin
+> > PLUGIN_FINISH_DECL               | randomize_layout_plugin
+> > PLUGIN_ATTRIBUTES                | latent_entropy_plugin randomize_layout_plugin
+> > PLUGIN_START_UNIT                | latent_entropy_plugin stackleak_plugin
+> > PLUGIN_ALL_IPA_PASSES_START      | randomize_layout_plugin
+> > /build/stage/linux/security/landlock/fs.c: In function ‘hook_file_ioctl_common’:
+> > /build/stage/linux/security/landlock/fs.c:1745:61: internal compiler error: in c
+> > ount_type_elements, at expr.cc:7075
+> >  1745 |                         .u.op = &(struct lsm_ioctlop_audit) {
+> >       |                                                             ^
+> > 
+> > Arnd bisected this to c56f649646ec ("landlock: Log mount-related
+> > denials") but that commit is fairly obviously not really at fault here,
+> > most likely this is an issue in the plugin.  Given how disruptive having
+> > key configs like this failing let's disable the plugins for compile test
+> > builds until a fix is found.
+> > 
+> > Suggested-by: Arnd Bergmann <arnd@arndb.de>
+> > Signed-off-by: Mark Brown <broonie@kernel.org>
+> > ---
+> >  scripts/gcc-plugins/Kconfig | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/scripts/gcc-plugins/Kconfig b/scripts/gcc-plugins/Kconfig
+> > index e383cda05367..29b03c136165 100644
+> > --- a/scripts/gcc-plugins/Kconfig
+> > +++ b/scripts/gcc-plugins/Kconfig
+> > @@ -7,6 +7,7 @@ config HAVE_GCC_PLUGINS
+> > 
+> >  menuconfig GCC_PLUGINS
+> >  	bool "GCC plugins"
+> > +	depends on !COMPILE_TEST
+> >  	depends on HAVE_GCC_PLUGINS
+> >  	depends on CC_IS_GCC
+> >  	depends on $(success,test -e $(shell,$(CC) -print-file-name=plugin)/include/plugin-version.h)
+> > 
+> > ---
+> > base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+> > change-id: 20250407-kbuild-disable-gcc-plugins-8701aa609cb3
+> > 
+> > Best regards,
+> 
 > This one's been biting me too.  It manifests for me on gcc-12 and gcc-13
 > (both locally built toolchains off the release branches, cross compiling for
 > RISC-V).
-
+> 
 > Tested-by: Palmer Dabbelt <palmer@rivosinc.com>
 
-Kees has a narrower workaround for this:
+Thanks! This is fixed differently in -next:
 
-    https://lore.kernel.org/all/20250409151154.work.872-kees@kernel.org/
+https://web.git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/commit/?h=for-linus/hardening&id=1ded828affa35f4b216e99f53d8d031a392f2b0a
 
-It's in -next but not pending-fixes, I'm not sure what the plan is for
-getting this into mainline - Kees?  The commit log mentions getting it
-in for -rc2 so I think the plan is to merge it as a fix.
-
---AOZwQ0Y3QWlsCkP6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmf+xGEACgkQJNaLcl1U
-h9DFPwf+OYdfGrLD201NbAP7h2V0BlTol84qBYkpfizT6XKl3d7Qw0OkYMOND+em
-080if3UDivFR1Nr5i4oJ+JIyt4/1VZTteBrHiXJQABlpCw4EwIcUMGjNN1troCYK
-/fLl0X65CZBD6ESJ+HKh61xd4mJi/vZToOmYA9jrqwFOg/42lSjJmAeS6bdFI5Nc
-nEPDxsA5XgXleiWA6Zh0h7yxwq9RajtfXQuaa3qafu92v+PRcxflpElhpW+HPc0n
-IJFxd+gnsB7DFmUubz1HXPenOqixhj0KuSLdxgWlOOhjP/9AJ2YgcsbZAk/HHZoI
-5l01qe6SGWDCOtpvRM86iY1szKLVEA==
-=y8aF
------END PGP SIGNATURE-----
-
---AOZwQ0Y3QWlsCkP6--
+-- 
+Kees Cook
