@@ -1,188 +1,176 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCD0422CBC0;
-	Wed, 16 Apr 2025 02:11:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from smtp-bc0a.mail.infomaniak.ch (smtp-bc0a.mail.infomaniak.ch [45.157.188.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C216A20DD40
+	for <linux-security-module@vger.kernel.org>; Wed, 16 Apr 2025 15:47:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744769471; cv=none; b=oHsFLMnznOdFmd+xt7986aGd7Od7UTRpwmNmMttzVUgjAtcL0C3+6JGTs13N39nNXKbBa5m7dDi/G285e0RbZEIdEUtvkuLXMQXY6eOFz1e2qQRx144KewrXiEHYJWeF87fzncVYcRmrf14rsWt9Igtus4N1XZ3oPIUQQxA2rvo=
+	t=1744818458; cv=none; b=UMkZ6FKvnuy7hUbOf6oFnh1zj7nsEU8quAG9GpH5eZjzlfakW1M/m7qY2ABWXlFFmr7IG9Vsqc+v7o4tPP++W7NGnej9UjPni6GVNL1ZSF7iPIDBaBD7LvxUsErPyLyQ22g1QdNYeZVIYap4Hf+wuGeNW4uh5lGC180sg1VKspA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744769471; c=relaxed/simple;
-	bh=ffNVumNNzibg0xJPpXD0uAwH/3c4Wdagte83KjcfPh0=;
+	s=arc-20240116; t=1744818458; c=relaxed/simple;
+	bh=/t7zi7W5MnM3aezDK42mrtqpBH5BECfU2Qm1L2hCkVU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GYsIzP7xPEX3RCaDAODk+BYxqk/zgOGRF80qJJDDFXAQkoyO328zB4OlfhshUVHaRbvjgFwINr1aHQVN5lKWD131/vAeCrHHRUwqL3Sdbfs/b16o1f3Ke4oAW+ZO8vQaBoPmerMu5JjvuER+G+QiXZowio+p2+GLJuiMNUs9Ces=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=hDHbq664; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+	 MIME-Version:Content-Type; b=RCM/rgH86IIBmZhD2aj7C+OYeuADO9MIgHuu0pxdTJgJU/g6uAPHNNrqPSlX67ooAVO5raMV9jyAD2SOEXDv5zT3RZ23XX49Xyqy9cbwOJWT3njpk4Txx7SLLIJH6JTxohDn5+/jhFQTuGqTCbHaLYM35MsSY43Mw9v+qqXjRNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=cKjQDgYu; arc=none smtp.client-ip=45.157.188.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="hDHbq664"
-Received: from DESKTOP-VOT081N.hsd1.ga.comcast.net (unknown [172.200.70.13])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 75584210C454;
-	Tue, 15 Apr 2025 19:11:07 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 75584210C454
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1744769469;
-	bh=fIsmlRXuRD6e0m8s5WNAAshbrvr1fK/O1O2BL80DgZ4=;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="cKjQDgYu"
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Zd54v4MyFzYSS;
+	Wed, 16 Apr 2025 17:47:27 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1744818447;
+	bh=qOAwZ0d5pf1XWzOHa2a243qOkDeO0hPUMoUtrvmWtko=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hDHbq664DBvUAF2DJufkf1HH7gmF57STA2q+k7xNIhziyNrtmyB8be+VmmqwyaUxV
-	 85Zwm/SMsCkQ7UX4ns3iYDCqdKG1r1O9jSMZsisVmN3Wa3fgm+beN2gw0mAw7xWqJi
-	 2M3c1dg2HccloHqneWijwTRmJWk2lnXGmYIa4uzM=
-From: steven chen <chenste@linux.microsoft.com>
-To: zohar@linux.ibm.com,
-	stefanb@linux.ibm.com,
-	roberto.sassu@huaweicloud.com,
-	roberto.sassu@huawei.com,
-	eric.snowberg@oracle.com,
-	ebiederm@xmission.com,
-	paul@paul-moore.com,
-	code@tyhicks.com,
-	bauermann@kolabnow.com,
-	linux-integrity@vger.kernel.org,
-	kexec@lists.infradead.org,
+	b=cKjQDgYurF6JwjptZqp6l5j7BcjP89dAGgz+W9VPzzdaDPOhpb9wWtWFA5g6eTl/b
+	 Zb2YvUgk5eXdZFvDatuFAqiCgM9sY+uDmEn8w0wZH06Xz6q2H07hw6IKUBCj0bLK8J
+	 gngUVt7hwg5ZaiktWny7IB2P6zzGKBineEGHqTy0=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Zd54v0T9hzpJQ;
+	Wed, 16 Apr 2025 17:47:27 +0200 (CEST)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
 	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: madvenka@linux.microsoft.com,
-	nramas@linux.microsoft.com,
-	James.Bottomley@HansenPartnership.com,
-	bhe@redhat.com,
-	vgoyal@redhat.com,
-	dyoung@redhat.com
-Subject: [PATCH v12 9/9] ima: measure kexec load and exec events as critical data
-Date: Tue, 15 Apr 2025 19:10:27 -0700
-Message-ID: <20250416021028.1403-10-chenste@linux.microsoft.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250416021028.1403-1-chenste@linux.microsoft.com>
-References: <20250416021028.1403-1-chenste@linux.microsoft.com>
+	linux-kernel@vger.kernel.org,
+	Paul Moore <paul@paul-moore.com>
+Subject: [PATCH v1 2/3] landlock: Fix documentation for landlock_restrict_self(2)
+Date: Wed, 16 Apr 2025 17:47:12 +0200
+Message-ID: <20250416154716.1799902-2-mic@digikod.net>
+In-Reply-To: <20250416154716.1799902-1-mic@digikod.net>
+References: <20250416154716.1799902-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
-From: Steven Chen <chenste@linux.microsoft.com>
+Fix, deduplicate, and improve rendering of landlock_restrict_self(2)'s
+flags documentation.
 
-The amount of memory allocated at kexec load, even with the extra memory
-allocated, might not be large enough for the entire measurement list.  The
-indeterminate interval between kexec 'load' and 'execute' could exacerbate
-this problem.
+The flags are now rendered like the syscall's parameters and
+description.
 
-Define two new IMA events, 'kexec_load' and 'kexec_execute', to be 
-measured as critical data at kexec 'load' and 'execute' respectively.
-Report the allocated kexec segment size, IMA binary log size and the
-runtime measurements count as part of those events.
-
-These events, and the values reported through them, serve as markers in
-the IMA log to verify the IMA events are captured during kexec soft
-reboot.  The presence of a 'kexec_load' event in between the last two
-'boot_aggregate' events in the IMA log implies this is a kexec soft
-reboot, and not a cold-boot. And the absence of 'kexec_execute' event
-after kexec soft reboot implies missing events in that window which
-results in inconsistency with TPM PCR quotes, necessitating a cold boot
-for a successful remote attestation.
-
-These critical data events are displayed as hex encoded ascii in the
-ascii_runtime_measurement_list.  Verifying the critical data hash requires 
-calculating the hash of the decoded ascii string.  
-
-For example, to verify the 'kexec_load' data hash:
-
-sudo cat /sys/kernel/security/integrity/ima/ascii_runtime_measurements 
-| grep  kexec_load | cut -d' ' -f 6 | xxd -r -p | sha256sum
-
-
-To verify the 'kexec_execute' data hash:
-
-sudo cat /sys/kernel/security/integrity/ima/ascii_runtime_measurements 
-| grep kexec_execute | cut -d' ' -f 6 | xxd -r -p | sha256sum
-
-Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-Signed-off-by: Steven Chen <chenste@linux.microsoft.com>
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Günther Noack <gnoack@google.com>
+Cc: Paul Moore <paul@paul-moore.com>
+Signed-off-by: Mickaël Salaün <mic@digikod.net>
 ---
- security/integrity/ima/ima.h       |  6 ++++++
- security/integrity/ima/ima_kexec.c | 21 +++++++++++++++++++++
- security/integrity/ima/ima_queue.c |  5 +++++
- 3 files changed, 32 insertions(+)
+ include/uapi/linux/landlock.h | 61 +++++++++++++++++++++--------------
+ security/landlock/syscalls.c  | 12 +++----
+ 2 files changed, 42 insertions(+), 31 deletions(-)
 
-diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
-index 24d09ea91b87..34815baf5e21 100644
---- a/security/integrity/ima/ima.h
-+++ b/security/integrity/ima/ima.h
-@@ -240,6 +240,12 @@ void ima_post_key_create_or_update(struct key *keyring, struct key *key,
- 				   unsigned long flags, bool create);
- #endif
+diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
+index 9a4b64be9869..8b2a1dc5c70b 100644
+--- a/include/uapi/linux/landlock.h
++++ b/include/uapi/linux/landlock.h
+@@ -69,31 +69,42 @@ struct landlock_ruleset_attr {
+ #define LANDLOCK_CREATE_RULESET_ERRATA			(1U << 1)
+ /* clang-format on */
  
-+#ifdef CONFIG_IMA_KEXEC
-+void ima_measure_kexec_event(const char *event_name);
-+#else
-+static inline void ima_measure_kexec_event(const char *event_name) {}
-+#endif
-+
- /*
-  * The default binary_runtime_measurements list format is defined as the
-  * platform native format.  The canonical format is defined as little-endian.
-diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
-index d1c9d369ba08..38cb2500f4c3 100644
---- a/security/integrity/ima/ima_kexec.c
-+++ b/security/integrity/ima/ima_kexec.c
-@@ -17,6 +17,8 @@
- #include "ima.h"
- 
- #ifdef CONFIG_IMA_KEXEC
-+#define IMA_KEXEC_EVENT_LEN 256
-+
- static bool ima_kexec_update_registered;
- static struct seq_file ima_kexec_file;
- static size_t kexec_segment_size;
-@@ -31,6 +33,24 @@ static void ima_free_kexec_file_buf(struct seq_file *sf)
- 	sf->count = 0;
- }
- 
-+void ima_measure_kexec_event(const char *event_name)
-+{
-+	char ima_kexec_event[IMA_KEXEC_EVENT_LEN];
-+	size_t buf_size = 0;
-+	long len;
-+	int n;
-+
-+	buf_size = ima_get_binary_runtime_size();
-+	len = atomic_long_read(&ima_htable.len);
-+
-+	n = scnprintf(ima_kexec_event, IMA_KEXEC_EVENT_LEN,
-+		      "kexec_segment_size=%lu;ima_binary_runtime_size=%lu;"
-+		      "ima_runtime_measurements_count=%ld;",
-+		      kexec_segment_size, buf_size, len);
-+
-+	ima_measure_critical_data("ima_kexec", event_name, ima_kexec_event, n, false, NULL, 0);
-+}
-+
- static int ima_alloc_kexec_file_buf(size_t segment_size)
- {
- 	/*
-@@ -53,6 +73,7 @@ static int ima_alloc_kexec_file_buf(size_t segment_size)
- out:
- 	ima_kexec_file.read_pos = 0;
- 	ima_kexec_file.count = sizeof(struct ima_kexec_hdr);	/* reserved space */
-+	ima_measure_kexec_event("kexec_load");
- 
- 	return 0;
- }
-diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
-index 83d53824aa98..590637e81ad1 100644
---- a/security/integrity/ima/ima_queue.c
-+++ b/security/integrity/ima/ima_queue.c
-@@ -241,6 +241,11 @@ static int ima_reboot_notifier(struct notifier_block *nb,
- 			       unsigned long action,
- 			       void *data)
- {
-+#ifdef CONFIG_IMA_KEXEC
-+	if (action == SYS_RESTART && data && !strcmp(data, "kexec reboot"))
-+		ima_measure_kexec_event("kexec_execute");
-+#endif
-+
- 	ima_measurements_suspend();
- 
- 	return NOTIFY_DONE;
+-/*
+- * sys_landlock_restrict_self() flags:
+- *
+- * - %LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF: Do not create any log related to the
+- *   enforced restrictions.  This should only be set by tools launching unknown
+- *   or untrusted programs (e.g. a sandbox tool, container runtime, system
+- *   service manager).  Because programs sandboxing themselves should fix any
+- *   denied access, they should not set this flag to be aware of potential
+- *   issues reported by system's logs (i.e. audit).
+- * - %LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON: Explicitly ask to continue
+- *   logging denied access requests even after an :manpage:`execve(2)` call.
+- *   This flag should only be set if all the programs than can legitimately be
+- *   executed will not try to request a denied access (which could spam audit
+- *   logs).
+- * - %LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF: Do not create any log related
+- *   to the enforced restrictions coming from future nested domains created by
+- *   the caller or its descendants.  This should only be set according to a
+- *   runtime configuration (i.e. not hardcoded) by programs launching other
+- *   unknown or untrusted programs that may create their own Landlock domains
+- *   and spam logs.  The main use case is for container runtimes to enable users
+- *   to mute buggy sandboxed programs for a specific container image.  Other use
+- *   cases include sandboxer tools and init systems.  Unlike
+- *   %LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF,
+- *   %LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF does not impact the requested
+- *   restriction (if any) but only the future nested domains.
++/**
++ * DOC: landlock_restrict_self_flags
++ *
++ * **Flags**
++ *
++ * %LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF
++ *     Do not create any log related to the enforced restrictions.  This should
++ *     only be set by tools launching unknown or untrusted programs (e.g. a
++ *     sandbox tool, container runtime, system service manager).  Because
++ *     programs sandboxing themselves should fix any denied access, they should
++ *     not set this flag to be aware of potential issues reported by system's
++ *     logs (i.e. audit).
++ *
++ * %LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON
++ *     Explicitly ask to continue logging denied access requests even after an
++ *     :manpage:`execve(2)` call.  This flag should only be set if all the
++ *     programs than can legitimately be executed will not try to request a
++ *     denied access (which could spam audit logs).
++ *
++ * %LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF
++ *     Do not create any log related to the enforced restrictions coming from
++ *     future nested domains created by the caller or its descendants.  This
++ *     should only be set according to a runtime configuration (i.e. not
++ *     hardcoded) by programs launching other unknown or untrusted programs that
++ *     may create their own Landlock domains and spam logs.  The main use case
++ *     is for container runtimes to enable users to mute buggy sandboxed
++ *     programs for a specific container image.  Other use cases include
++ *     sandboxer tools and init systems.  Unlike
++ *     ``LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF``,
++ *     ``LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF`` does not impact the
++ *     requested restriction (if any) but only the future nested domains.
++ *
++ *     It is allowed to only pass the
++ *     ``LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF`` flag with a @ruleset_fd
++ *     value of -1.
++ *
+  */
+ /* clang-format off */
+ #define LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF		(1U << 0)
+diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+index 9515dc92b99f..b9561e3417ae 100644
+--- a/security/landlock/syscalls.c
++++ b/security/landlock/syscalls.c
+@@ -451,18 +451,15 @@ SYSCALL_DEFINE4(landlock_add_rule, const int, ruleset_fd,
+  * @ruleset_fd: File descriptor tied to the ruleset to merge with the target.
+  * @flags: Supported values:
+  *
+- * - %LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF
+- * - %LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON
+- * - %LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF
++ *         - %LANDLOCK_RESTRICT_SELF_LOG_SAME_EXEC_OFF
++ *         - %LANDLOCK_RESTRICT_SELF_LOG_NEW_EXEC_ON
++ *         - %LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF
+  *
+  * This system call enables to enforce a Landlock ruleset on the current
+  * thread.  Enforcing a ruleset requires that the task has %CAP_SYS_ADMIN in its
+  * namespace or is running with no_new_privs.  This avoids scenarios where
+  * unprivileged tasks can affect the behavior of privileged children.
+  *
+- * It is allowed to only pass the %LANDLOCK_RESTRICT_SELF_LOG_SUBDOMAINS_OFF
+- * flag with a @ruleset_fd value of -1.
+- *
+  * Possible returned errors are:
+  *
+  * - %EOPNOTSUPP: Landlock is supported by the kernel but disabled at boot time;
+@@ -474,6 +471,9 @@ SYSCALL_DEFINE4(landlock_add_rule, const int, ruleset_fd,
+  *   %CAP_SYS_ADMIN in its namespace.
+  * - %E2BIG: The maximum number of stacked rulesets is reached for the current
+  *   thread.
++ *
++ * .. kernel-doc:: include/uapi/linux/landlock.h
++ *     :identifiers: landlock_restrict_self_flags
+  */
+ SYSCALL_DEFINE2(landlock_restrict_self, const int, ruleset_fd, const __u32,
+ 		flags)
 -- 
-2.43.0
+2.49.0
 
