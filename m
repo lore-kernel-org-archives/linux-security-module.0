@@ -1,133 +1,95 @@
-Received: from smtp-42ab.mail.infomaniak.ch (smtp-42ab.mail.infomaniak.ch [84.16.66.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3711620468D
-	for <linux-security-module@vger.kernel.org>; Wed, 16 Apr 2025 15:54:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.171
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E32884E1C;
+	Wed, 16 Apr 2025 17:31:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744818859; cv=none; b=Ui4UPVyr+IoDAIu0G1Pi9ffqVzVo3j8XA4ZWYVd2RvfW38qCUQnyRDkuXpzOWlYUgrob0e8zZVp7kHtMMwe4NPlbsvMJ5qBTsLn4IddjHEAwHK2xdJ79yl7RraAFumqmNd/Kgwn6z3ZFlSkIJhkFQ7akNesTQAVrEc2HycvBU44=
+	t=1744824691; cv=none; b=D112bay0m7XE+Vj/hkzkE9hZPnuUGUwfGZ2xTZipyOp3LYwMVcpZRUH+pnjEbJfZva1suW8uQj6sB94tv2xyZmdnzK711dqhzkNFbLIRmnjhKP/O2uuvv7+r8A20fBHAVw+7S0tUQDUzY4DsfFhN5NLW8VVqp8vKkR6ZAoaOZMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744818859; c=relaxed/simple;
-	bh=SPaowd3M9aDqKiZKIBNnytaz2NDh9ecsBk9EiQI6dBM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DtL2fRzp8VDuDjtGkzvfk9dT7mnAW6Xzw7eNq0WljQ3DjYPDj+d03EgeOXoAq8XFk0cQrb8ASV+9MdWIVBtdAtCSOmEgMc3RzWkbq76/sEjb424Xj/7OaO2UjiqyJ0DVpBMFEsXQJyOf6rQvfqnJLwetKmVdkBq1BL7DKkFr/UY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=wgwhIN+O; arc=none smtp.client-ip=84.16.66.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1744824691; c=relaxed/simple;
+	bh=5Pv3Hc0R8ZXL+oH8n2b7z3OtCOacHKIR1ANqXH+K9c0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Z6xAiaGvNQheyQ613Gf8n2WutwhQB4Ggf/OdQ9ZWAejineJRBApQhgWc3kPaOzvAb9+pl5V+zXfDL33JkEkj+Ub/Kwc6kz9o+vEh27VTA5OxVJPRTGd+i46sezK5If3i7vEs8J4bohK+yf8Jje/gFqSX/zb20N+OYJniVzMq8dE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=TJVRAyam; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="wgwhIN+O"
-Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10:40ca:feff:fe05:0])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Zd54t2pwdz4qL;
-	Wed, 16 Apr 2025 17:47:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1744818446;
-	bh=1IakuJWFboristJ2VRu+w4JaTAaJExvweOFRahrjCIc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=wgwhIN+OO4VHCeiAphfE5zWHH3mQGy0liyRaOcvVTU1QWZcLIWgMn5sLJngUWsSXD
-	 9dLWMaWK91RNnrn8bl9T6yT2l/tGSrTKlhcmPZqVM3gY/6C9DwUeeuxMQpNdfIe0ii
-	 xv1THFE1J3O+YBZ7xgIPbNdSVRg969raQTeO2B14=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Zd54s6DH1zQXK;
-	Wed, 16 Apr 2025 17:47:25 +0200 (CEST)
-From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Paul Moore <paul@paul-moore.com>
-Subject: [PATCH v1 1/3] landlock: Fix documentation for landlock_create_ruleset(2)
-Date: Wed, 16 Apr 2025 17:47:11 +0200
-Message-ID: <20250416154716.1799902-1-mic@digikod.net>
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="TJVRAyam"
+Received: from narnia (unknown [167.220.2.28])
+	by linux.microsoft.com (Postfix) with ESMTPSA id CA0032052508;
+	Wed, 16 Apr 2025 10:31:20 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com CA0032052508
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1744824689;
+	bh=b7cZx62sBqiNAK+Z5g1uUfPSpgmxvu8T11NIoXrTY/o=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=TJVRAyamNt8PTaChjPR4KaTuMaecAOHx9O2mwAnlkPR9lulk07gjnRGoxXT/5rHwB
+	 ZlrItUV1NU7JpKbyzk/UEEXb1e+ROAv34a6ZYR5OoptpDpkfF+e1fJEz/jPiDVMnTN
+	 ekQqoaiXnzkMd9ip4K/kRhdBVUggBCaWt16+ZVoo=
+From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, David Howells <dhowells@redhat.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller"
+ <davem@davemloft.net>, Paul Moore <paul@paul-moore.com>, James Morris
+ <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Masahiro Yamada
+ <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nicolas
+ Schier <nicolas@fjasle.eu>, Shuah Khan <shuah@kernel.org>, =?utf-8?Q?Mick?=
+ =?utf-8?Q?a=C3=ABl_Sala=C3=BCn?=
+ <mic@digikod.net>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Nick
+ Desaulniers
+ <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>,
+ Justin Stitt <justinstitt@google.com>, Jarkko Sakkinen
+ <jarkko@kernel.org>, Jan Stancek <jstancek@redhat.com>, Neal Gompa
+ <neal@gompa.dev>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>, keyrings@vger.kernel.org, Linux
+ Crypto Mailing List <linux-crypto@vger.kernel.org>, LSM List
+ <linux-security-module@vger.kernel.org>, Linux Kbuild mailing list
+ <linux-kbuild@vger.kernel.org>, "open list:KERNEL SELFTEST FRAMEWORK"
+ <linux-kselftest@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+ clang-built-linux <llvm@lists.linux.dev>, nkapron@google.com, Matteo Croce
+ <teknoraver@meta.com>, Roberto Sassu <roberto.sassu@huawei.com>, Cong Wang
+ <xiyou.wangcong@gmail.com>
+Subject: Re: [PATCH v2 security-next 1/4] security: Hornet LSM
+In-Reply-To: <CAADnVQ+LMAnyT4yV5iuJ=vswgtUu97cHKnvysipc6o7HZfEbUA@mail.gmail.com>
+References: <20250404215527.1563146-1-bboscaccy@linux.microsoft.com>
+ <20250404215527.1563146-2-bboscaccy@linux.microsoft.com>
+ <CAADnVQJyNRZVLPj_nzegCyo+BzM1-whbnajotCXu+GW+5-=P6w@mail.gmail.com>
+ <87semdjxcp.fsf@microsoft.com>
+ <CAADnVQ+JGfwRgsoe2=EHkXdTyQ8ycn0D9nh1k49am++4oXUPHg@mail.gmail.com>
+ <87friajmd5.fsf@microsoft.com>
+ <CAADnVQKb3gPBFz+n+GoudxaTrugVegwMb8=kUfxOea5r2NNfUA@mail.gmail.com>
+ <87a58hjune.fsf@microsoft.com>
+ <CAADnVQ+LMAnyT4yV5iuJ=vswgtUu97cHKnvysipc6o7HZfEbUA@mail.gmail.com>
+Date: Wed, 16 Apr 2025 10:31:18 -0700
+Message-ID: <87y0w0hv2x.fsf@microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+Content-Type: text/plain
 
-Move and fix the flags documentation, and improve formatting.
+Alexei Starovoitov <alexei.starovoitov@gmail.com> writes:
 
-It makes more sense and it eases maintenance to document syscall flags
-in landlock.h, where they are defined.  This is already the case for
-landlock_restrict_self(2)'s flags.
+> History repeats itself.
+> 1. the problem is hard.
+> 2. you're only interested in addressing your own use case.
+> There is no end-to-end design here and no attempt to
+> think it through how it will work for others.
+>
 
-The flags are now rendered like the syscall's parameters and
-description.
+Well, I suppose anything worth doing is going to be hard :)
 
-Cc: Günther Noack <gnoack@google.com>
-Cc: Paul Moore <paul@paul-moore.com>
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
----
- include/uapi/linux/landlock.h | 14 +++++++++-----
- security/landlock/syscalls.c  | 15 +++++++--------
- 2 files changed, 16 insertions(+), 13 deletions(-)
+The end-to-end design for this is the same end-to-end design that exists
+for signing kernel modules today. We envisioned it working for others
+the same way module signing works for others. 
 
-diff --git a/include/uapi/linux/landlock.h b/include/uapi/linux/landlock.h
-index d9d0cb827117..9a4b64be9869 100644
---- a/include/uapi/linux/landlock.h
-+++ b/include/uapi/linux/landlock.h
-@@ -53,12 +53,16 @@ struct landlock_ruleset_attr {
- 	__u64 scoped;
- };
- 
--/*
-- * sys_landlock_create_ruleset() flags:
-+/**
-+ * DOC: landlock_create_ruleset_flags
-+ *
-+ * **Flags**
-+ *
-+ * %LANDLOCK_CREATE_RULESET_VERSION
-+ *     Get the highest supported Landlock ABI version (starting at 1).
-  *
-- * - %LANDLOCK_CREATE_RULESET_VERSION: Get the highest supported Landlock ABI
-- *   version.
-- * - %LANDLOCK_CREATE_RULESET_ERRATA: Get a bitmask of fixed issues.
-+ * %LANDLOCK_CREATE_RULESET_ERRATA
-+ *     Get a bitmask of fixed issues for the current Landlock ABI version.
-  */
- /* clang-format off */
- #define LANDLOCK_CREATE_RULESET_VERSION			(1U << 0)
-diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
-index 54a9f29e6ebb..9515dc92b99f 100644
---- a/security/landlock/syscalls.c
-+++ b/security/landlock/syscalls.c
-@@ -169,20 +169,16 @@ const int landlock_abi_version = 7;
-  *        the new ruleset.
-  * @size: Size of the pointed &struct landlock_ruleset_attr (needed for
-  *        backward and forward compatibility).
-- * @flags: Supported value:
-+ * @flags: Supported values:
-+ *
-  *         - %LANDLOCK_CREATE_RULESET_VERSION
-  *         - %LANDLOCK_CREATE_RULESET_ERRATA
-  *
-  * This system call enables to create a new Landlock ruleset, and returns the
-  * related file descriptor on success.
-  *
-- * If @flags is %LANDLOCK_CREATE_RULESET_VERSION and @attr is NULL and @size is
-- * 0, then the returned value is the highest supported Landlock ABI version
-- * (starting at 1).
-- *
-- * If @flags is %LANDLOCK_CREATE_RULESET_ERRATA and @attr is NULL and @size is
-- * 0, then the returned value is a bitmask of fixed issues for the current
-- * Landlock ABI version.
-+ * If %LANDLOCK_CREATE_RULESET_VERSION or %LANDLOCK_CREATE_RULESET_ERRATA is
-+ * set, then @attr must be NULL and @size must be 0.
-  *
-  * Possible returned errors are:
-  *
-@@ -191,6 +187,9 @@ const int landlock_abi_version = 7;
-  * - %E2BIG: @attr or @size inconsistencies;
-  * - %EFAULT: @attr or @size inconsistencies;
-  * - %ENOMSG: empty &landlock_ruleset_attr.handled_access_fs.
-+ *
-+ * .. kernel-doc:: include/uapi/linux/landlock.h
-+ *     :identifiers: landlock_create_ruleset_flags
-  */
- SYSCALL_DEFINE3(landlock_create_ruleset,
- 		const struct landlock_ruleset_attr __user *const, attr,
--- 
-2.49.0
+> Hacking into bpf internal objects like maps is not acceptable.
 
+We've heard your concerns about kern_sys_bpf and we agree that the LSM
+should not be calling it. The proposal in this email should meet both of
+our needs
+https://lore.kernel.org/bpf/874iypjl8t.fsf@microsoft.com/
+
+
+-blaise
