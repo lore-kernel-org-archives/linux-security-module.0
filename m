@@ -1,163 +1,115 @@
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72ABE19CC05
-	for <linux-security-module@vger.kernel.org>; Thu, 17 Apr 2025 00:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3F1C1547C9;
+	Thu, 17 Apr 2025 01:10:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744849224; cv=none; b=NnwXnB1nEIAZO4JVAn+uMYIo0hfAl9IHPpmfCfqB7dJdWl7ed30xL+UAbZq2F/UbJ7xiZr60EJvcbe0fBAch8HzQ1/7OhDQF7zRHFl4JhlLLEsEw0KRqLxRW/pHTnWrhuHBw9ZcxweA5BRbY+QFWD+LybZIkyZ6hoxSJrYzN0dY=
+	t=1744852208; cv=none; b=qA6Pda2msgauAxAqtpQfdfHyTxdxS1a4H3Gv41ZBWdgkdNpxxzVlUCH7ttTKMxjUzrLxgPn/hTWcTSL2mtzheL+BVO1WfCvJ5hZS/e/knq/kiu2adCmEmtwXmzW/8opVgkeEiK5X+YjKNxV0bL+PtzuiUQHDf45DDrnw4oIR5Cs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744849224; c=relaxed/simple;
-	bh=VP42e3JZfKvbDI0ooyfOHhztdSFzkob0S0fpP+PH/Ik=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Encxy3XfB/1YUiHSB/ALDjAf5lSu+eqOCko9v2WBCMKV2gS4yokL6vWOkIyhJOpj8emAZMin7/77QVMgnJx0WWgzERU4E+94LUT26GeNCtggoMF4GsHB/sIsDXxXON4Mzftt1yrzFJtt/SiCNmUlo00sMLK199WZTq/hRgDY2u4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=F4zrrPWI; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1744852208; c=relaxed/simple;
+	bh=sCk4s2BEvqzj6Ctkri/ogbGb7GtmwjvsewhjBHtEO70=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kz4SvGp531L9HMUkO0o8Yp4SOGBXlWPbf8BSaMjARdialJrRKe/XsqLDYX+kPhwG3inCC1e6L1T7DBehWlMH/+byuzNgkgBWt9SNutXJWodH/ajUBqf+hEpjwZP0Wi13VMWUeo/pXgkO+2Z3YsC+EJ1MWEhT/Azk/mVSJo+zsyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=n86RXRgp; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="F4zrrPWI"
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-22c33e4fdb8so2380265ad.2
-        for <linux-security-module@vger.kernel.org>; Wed, 16 Apr 2025 17:20:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1744849220; x=1745454020; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9d1zeenHo/WIdiHzlhPJ54CYp3ToWYLsArkbPVUXbsw=;
-        b=F4zrrPWIcguk6SioFjSVXIiXyEy1gtu7ZE2ypRomNPScixTqH2uAXuJ9jTZf87VCmk
-         Mh9p5vWCdxKR50xcZujHBmV1mC8RMhGpB6PBuX9zBON0wbo7Oa+J5Rbs2UzVH8zJnS1v
-         MhTTbEvU9KnUTXI/4VTdZIJ1DjLslX+pb9z10=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744849220; x=1745454020;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9d1zeenHo/WIdiHzlhPJ54CYp3ToWYLsArkbPVUXbsw=;
-        b=kzxcXFJ+4LNvwGdANENpT3xBfQG9n50qsxuxS69fWh8bFPWgqEoSrNf0RCNXNZtJk2
-         aa03o/ONlawn4ZGx4cDt5zre6/vKj3U7TRQct/SIcAkoCG2Etn07sbXh/Ju6lS7nsneq
-         nsADuk/TEm0NjvZ/XhES94Tsg7wVrfV1SrB2eg95o7bQRn9PTTlZGpRW58cldvIqLUfl
-         VF3HuE8EMyp9ypGaDyQD+K3qN2IIkLwtOl2g+OrKMC+h/2rfTN0+QYVOBPEddcQ9cN01
-         ccmWpyfR4DTwOt+vBJ1Cx9IEq1bnrF/uNiP//Vx0Ozi0vOi1oe+zZrD/rv7++gxyKyYZ
-         L9Qg==
-X-Forwarded-Encrypted: i=1; AJvYcCXdDLW/yTROlWLZYsK8Zpl5+LCGww7c+7g9/PFUJJwPcFt4N3Sm2p7PKT+6E4SttvnFGM8c1gGV5LeRxF3y4+8JX1xsCSs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwP8H82yUNWv3CyW0rRz5i625CyFTw45qUzSgN44SJL8DFduUDp
-	hdxZrKMMzEOQqqeC2Ar/G6pBEitfvwGSeAumLa9ZYgqs+WSRKqKBfuwjc4B2Ug==
-X-Gm-Gg: ASbGnctiWf89jkIs76LoaRXT39q90huEnelwzrHODXmiV62fCMHjgPmANIDC5/7eDjq
-	zpgqvl27zBDXulyMv8H8i843B4TlHJ8U2X2hGvaEOxquT0SP46DeL2mY2YAqQAjOOz0Uq7LaRqy
-	fX2GVs9MOBxNsaJ+nVwCq7Kxyh1HR/8JE8wD9vCKbC5fYUHZ1uRjhlDQj3xt4xbaA40DN0y4v4d
-	Kt1nn2oAuRShiuQd+RzodrZ5X0t30odNJnHtkdc9syH+p4eABOrr7jABSGkuNZg0+IHCe3HWhL7
-	uvBZ6Iv0vVa8BmgC2OIlJSm1MfiLOTnfdxfVSQcIdvTYw4ckN9+61SUN/Msm8NLjiNsNm2CR1Zv
-	d5tSlCZdVI3Ykx2GOEgLUvo1I+oT6+Qhi
-X-Google-Smtp-Source: AGHT+IFzYIV/9mXR0m0O/AxlmrF16OfOBFQ+0jrJUZKzp7v11JEoGIiIxamuwnoqAODi21WwPq6gSg==
-X-Received: by 2002:a17:903:19cf:b0:223:f9a4:3f99 with SMTP id d9443c01a7336-22c3591883bmr62046785ad.29.1744849220600;
-        Wed, 16 Apr 2025 17:20:20 -0700 (PDT)
-Received: from li-cloudtop.c.googlers.com.com (132.197.125.34.bc.googleusercontent.com. [34.125.197.132])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22c33f1cd87sm20719205ad.73.2025.04.16.17.20.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Apr 2025 17:20:20 -0700 (PDT)
-From: Li Li <dualli@chromium.org>
-To: dualli@google.com,
-	corbet@lwn.net,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	donald.hunter@gmail.com,
-	gregkh@linuxfoundation.org,
-	arve@android.com,
-	tkjos@android.com,
-	maco@android.com,
-	joel@joelfernandes.org,
-	brauner@kernel.org,
-	cmllamas@google.com,
-	surenb@google.com,
-	omosnace@redhat.com,
-	shuah@kernel.org,
-	arnd@arndb.de,
-	masahiroy@kernel.org,
-	bagasdotme@gmail.com,
-	horms@kernel.org,
-	tweek@google.com,
-	paul@paul-moore.com,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	netdev@vger.kernel.org,
-	selinux@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	hridya@google.com
-Cc: smoreland@google.com,
-	ynaffit@google.com,
-	kernel-team@android.com
-Subject: [PATCH RESEND v17 3/3] binder: transaction report binder_features flag
-Date: Wed, 16 Apr 2025 17:20:04 -0700
-Message-ID: <20250417002005.2306284-4-dualli@chromium.org>
-X-Mailer: git-send-email 2.49.0.805.g082f7c87e0-goog
-In-Reply-To: <20250417002005.2306284-1-dualli@chromium.org>
-References: <20250417002005.2306284-1-dualli@chromium.org>
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="n86RXRgp"
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53GLW826019008;
+	Thu, 17 Apr 2025 01:09:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=ah/lLz
+	BmfOIHy5wOwIFiZy+sp117fbDDGICRD88/xh8=; b=n86RXRgper66X0nQGr/SIC
+	rYc7HochvI/iHrEML50CySpLEsaptWcfK7HSgDf7O8qS6C/zNnQPxwfo4pgb6+eX
+	AkQxleDMoK8rlIxBFadOqGo2jcEr4rie3dbIIax0MMF++ZMn6pd0zad6QNsvFpZx
+	/0fSVrfPEJLBVnApDjCByVBoqWCvNyqec4O5LUGn4DvyKYCUyG7xKmK24f0qfszi
+	hQAonjj02jIGh2uAOBqZQy5tHmE96XC2phK+ohnOB0X9wmvLcUwp4SoheHCcLnKg
+	2b1tARm921vHxIxNAf0JizkFpHIPUNgWVtNyCYPGmfBx29Pn784UoflR7LhTwiSQ
+	==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 462mhu0r9h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Apr 2025 01:09:28 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53GNSmTf010392;
+	Thu, 17 Apr 2025 01:09:27 GMT
+Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4604qkaym2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 17 Apr 2025 01:09:27 +0000
+Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
+	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53H19QBm24380138
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 17 Apr 2025 01:09:27 GMT
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 96C895805F;
+	Thu, 17 Apr 2025 01:09:26 +0000 (GMT)
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DADCF5805A;
+	Thu, 17 Apr 2025 01:09:24 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 17 Apr 2025 01:09:24 +0000 (GMT)
+Message-ID: <4a2f7fde-99ee-4bcd-a97d-fe0db418fd5f@linux.ibm.com>
+Date: Wed, 16 Apr 2025 21:09:24 -0400
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 0/9] ima: kexec: measure events between kexec load and
+ execute
+To: steven chen <chenste@linux.microsoft.com>, zohar@linux.ibm.com,
+        roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
+        eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
+        code@tyhicks.com, bauermann@kolabnow.com,
+        linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
+        James.Bottomley@HansenPartnership.com, bhe@redhat.com,
+        vgoyal@redhat.com, dyoung@redhat.com
+References: <20250416021028.1403-1-chenste@linux.microsoft.com>
+Content-Language: en-US
+From: Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <20250416021028.1403-1-chenste@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=Hvd2G1TS c=1 sm=1 tr=0 ts=680054c8 cx=c_pps a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=yMhMjlubAAAA:8 a=VnNF1IyMAAAA:8 a=KXIcZCm0EDoHl9fo71cA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: j6fdTeznLc-rslj-Y7d3L1utxejtCVup
+X-Proofpoint-GUID: j6fdTeznLc-rslj-Y7d3L1utxejtCVup
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-16_09,2025-04-15_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
+ lowpriorityscore=0 spamscore=0 mlxlogscore=999 suspectscore=0
+ malwarescore=0 bulkscore=0 clxscore=1015 impostorscore=0 mlxscore=0
+ phishscore=0 priorityscore=1501 classifier=spam authscore=0 adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504170006
 
-From: Li Li <dualli@google.com>
 
-Add a flag to binder_features to indicate that the transaction report
-feature via generic netlink is available.
 
-Signed-off-by: Li Li <dualli@google.com>
----
- drivers/android/binderfs.c                                | 8 ++++++++
- .../selftests/filesystems/binderfs/binderfs_test.c        | 1 +
- 2 files changed, 9 insertions(+)
+On 4/15/25 10:10 PM, steven chen wrote:
+> From: Steven Chen <chenste@linux.microsoft.com>
+> 
+> The current kernel behavior is IMA measurements snapshot is taken at
+> kexec 'load' and not at kexec 'execute'.  IMA log is then carried
+> over to the new kernel after kexec 'execute'.
+> 
+> Currently, the kernel behavior during kexec load is to fetch the IMA
+> measurements log from TPM PCRs and store it in a buffer. When a kexec
+> reboot is triggered, this stored log buffer is carried over to the second
+> kernel. However, the time gap between kexec load and kexec reboot can be
+> very long. During this time window, new events extended into TPM PCRs miss
+> the chance to be carried over to the second kernel. This results in
+> mismatch between TPM PCR quotes and the actual IMA measurements list after
+> kexec soft reboot, which in turn results in remote attestation failure.
 
-diff --git a/drivers/android/binderfs.c b/drivers/android/binderfs.c
-index 98da8c4eea59..bf9c3becca1e 100644
---- a/drivers/android/binderfs.c
-+++ b/drivers/android/binderfs.c
-@@ -59,6 +59,7 @@ struct binder_features {
- 	bool oneway_spam_detection;
- 	bool extended_error;
- 	bool freeze_notification;
-+	bool transaction_report;
- };
- 
- static const struct constant_table binderfs_param_stats[] = {
-@@ -76,6 +77,7 @@ static struct binder_features binder_features = {
- 	.oneway_spam_detection = true,
- 	.extended_error = true,
- 	.freeze_notification = true,
-+	.transaction_report = true,
- };
- 
- static inline struct binderfs_info *BINDERFS_SB(const struct super_block *sb)
-@@ -619,6 +621,12 @@ static int init_binder_features(struct super_block *sb)
- 	if (IS_ERR(dentry))
- 		return PTR_ERR(dentry);
- 
-+	dentry = binderfs_create_file(dir, "transaction_report",
-+				      &binder_features_fops,
-+				      &binder_features.transaction_report);
-+	if (IS_ERR(dentry))
-+		return PTR_ERR(dentry);
-+
- 	return 0;
- }
- 
-diff --git a/tools/testing/selftests/filesystems/binderfs/binderfs_test.c b/tools/testing/selftests/filesystems/binderfs/binderfs_test.c
-index 81db85a5cc16..39a68078a79b 100644
---- a/tools/testing/selftests/filesystems/binderfs/binderfs_test.c
-+++ b/tools/testing/selftests/filesystems/binderfs/binderfs_test.c
-@@ -65,6 +65,7 @@ static int __do_binderfs_test(struct __test_metadata *_metadata)
- 		"oneway_spam_detection",
- 		"extended_error",
- 		"freeze_notification",
-+		"transaction_report",
- 	};
- 
- 	change_mountns(_metadata);
--- 
-2.49.0.805.g082f7c87e0-goog
+Tested-by: Stefan Berger <stefanb@linux.ibm.com> # ppc64/kvm
 
