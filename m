@@ -1,196 +1,158 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64C3C1E9905;
-	Sun, 20 Apr 2025 13:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A4561547F5;
+	Sun, 20 Apr 2025 13:49:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745154629; cv=none; b=SC1R/ROERJ4lhXLAw3ezc95bnIOHoCMG5W6SdKQdHQHvkAhYO8loxWAtaLrQ97SD7wVK2W1BsvZiSE3w5tygmtvE27/rANqqu7wIeRV8Q7tk/aLONWKLmOhv3D6mRYuP8+vg/JWfvzAiHVaTJIF2lfoyYr5xt0XuklKUoqLwan0=
+	t=1745156969; cv=none; b=cfNRbE49gmiIE0vGdmNIq4pLNoqNUuIt8GmOiL99FPF8ja4Habi+R7lqb+tvne78eSuWkYja2xdyE9rDNeYd50yadYZgJp7gWigBlWIWz0bG5+qGHqM4CaAccKmgrm2KdolXYcqpkaZ7JYI+eCrPzXdCPGH/oAk3IH0tkNtw97g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745154629; c=relaxed/simple;
-	bh=zNNlBENvsCMoov/hDU2BXQexFpYKj/CEPuIGt83kohw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qpx3e5de93TkDWRPXhZFALrrTpqGuQM1VGSQqkh88ZohIRpL/0QJVHk0wJyhNRreEA5YOigOf0THtjpqQKX4MokaMY/wH1tKsA/0/7jzmjDff3cRMoBAioe5LmrRqN7n7th23h4TlV52mWSwyjtchozOO2x7fi5aAssexRmw5B0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=pHx/vc/N; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="pHx/vc/N"
-Received: from [100.70.200.26] (unknown [172.200.70.35])
-	by linux.microsoft.com (Postfix) with ESMTPSA id DACD921165A5;
-	Sun, 20 Apr 2025 06:10:25 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com DACD921165A5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1745154627;
-	bh=v8/kjfMBX5j8otcEjoEy9F00J/rSQ+ksJRgSx0LzXFY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=pHx/vc/NZF4cnSWNIalzxFIb81vkZ06zt+dIWhi+JXx6jLz53S9tgyJir/YVKLwwf
-	 iWeQDP1iuyZ+YGDvQFdV14T7ikZPiervu0iRYlmO7wFtxh5C5uZFCkgC/WUix0HTjn
-	 EfXaB0QH27xlDR2BK3JPVWLxifSMYg3/yoqgs+A0=
-Message-ID: <193deea5-c1b4-4189-a5a0-a3e29841225a@linux.microsoft.com>
-Date: Sun, 20 Apr 2025 06:10:23 -0700
+	s=arc-20240116; t=1745156969; c=relaxed/simple;
+	bh=DLCRum1j+uHsCNSbtRf4xnepYYS1d+9YpIjX/kzl8OA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fIGwd0uWf10s+UAJkc1dbkHjuAg9wJ47RL6r8yivo9w27evez2FseWb9f8ooYc76lnWbjAqgRiK/ubaqHxQfaFxr2iym2If13v/g6lZsQLCMfOpAjcWO+rSwGp0vy4vTeNHaT9U6TcEYc5MsC1JSihxXComp1BiC6EJtOg3Ps9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id 1D85220D; Sun, 20 Apr 2025 08:41:44 -0500 (CDT)
+Date: Sun, 20 Apr 2025 08:41:44 -0500
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Parav Pandit <parav@nvidia.com>
+Cc: "sergeh@kernel.org" <sergeh@kernel.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>,
+	Leon Romanovsky <leonro@nvidia.com>
+Subject: Re: [PATCH] RDMA/uverbs: Consider capability of the process that
+ opens the file
+Message-ID: <20250420134144.GA575032@mail.hallyn.com>
+References: <CY8PR12MB7195C6D8CCE062CFD9D0174CDCDE2@CY8PR12MB7195.namprd12.prod.outlook.com>
+ <20250318112049.GC9311@nvidia.com>
+ <87ldt2yur4.fsf@email.froward.int.ebiederm.org>
+ <20250318225709.GC9311@nvidia.com>
+ <CY8PR12MB7195B7FAA54E7E0264D28BAEDCA92@CY8PR12MB7195.namprd12.prod.outlook.com>
+ <20250404151347.GC1336818@nvidia.com>
+ <20250406141501.GA481691@mail.hallyn.com>
+ <CY8PR12MB7195987AD22775DBBA7FD3B5DCAA2@CY8PR12MB7195.namprd12.prod.outlook.com>
+ <Z_PlWIj3N2L6nPaD@lei>
+ <CY8PR12MB7195E57FD82E93DB34976CA0DCB92@CY8PR12MB7195.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 9/9] ima: measure kexec load and exec events as
- critical data
-To: Baoquan He <bhe@redhat.com>
-Cc: zohar@linux.ibm.com, stefanb@linux.ibm.com,
- roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
- eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
- code@tyhicks.com, bauermann@kolabnow.com, linux-integrity@vger.kernel.org,
- kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org, madvenka@linux.microsoft.com,
- nramas@linux.microsoft.com, James.Bottomley@hansenpartnership.com,
- vgoyal@redhat.com, dyoung@redhat.com
-References: <20250416021028.1403-1-chenste@linux.microsoft.com>
- <20250416021028.1403-10-chenste@linux.microsoft.com>
- <aAIWcwzuht+GCn29@MiWiFi-R3L-srv>
-Content-Language: en-US
-From: steven chen <chenste@linux.microsoft.com>
-In-Reply-To: <aAIWcwzuht+GCn29@MiWiFi-R3L-srv>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CY8PR12MB7195E57FD82E93DB34976CA0DCB92@CY8PR12MB7195.namprd12.prod.outlook.com>
 
-On 4/18/2025 2:08 AM, Baoquan He wrote:
-> On 04/15/25 at 07:10pm, steven chen wrote:
->> From: Steven Chen <chenste@linux.microsoft.com>
->>
->> The amount of memory allocated at kexec load, even with the extra memory
->> allocated, might not be large enough for the entire measurement list.  The
->> indeterminate interval between kexec 'load' and 'execute' could exacerbate
->> this problem.
->>
->> Define two new IMA events, 'kexec_load' and 'kexec_execute', to be
->> measured as critical data at kexec 'load' and 'execute' respectively.
->> Report the allocated kexec segment size, IMA binary log size and the
->> runtime measurements count as part of those events.
->>
->> These events, and the values reported through them, serve as markers in
->> the IMA log to verify the IMA events are captured during kexec soft
->> reboot.  The presence of a 'kexec_load' event in between the last two
->> 'boot_aggregate' events in the IMA log implies this is a kexec soft
->> reboot, and not a cold-boot. And the absence of 'kexec_execute' event
->> after kexec soft reboot implies missing events in that window which
->> results in inconsistency with TPM PCR quotes, necessitating a cold boot
->> for a successful remote attestation.
->>
->> These critical data events are displayed as hex encoded ascii in the
->> ascii_runtime_measurement_list.  Verifying the critical data hash requires
->> calculating the hash of the decoded ascii string.
->>
->> For example, to verify the 'kexec_load' data hash:
->>
->> sudo cat /sys/kernel/security/integrity/ima/ascii_runtime_measurements
->> | grep  kexec_load | cut -d' ' -f 6 | xxd -r -p | sha256sum
->>
->>
->> To verify the 'kexec_execute' data hash:
->>
->> sudo cat /sys/kernel/security/integrity/ima/ascii_runtime_measurements
->> | grep kexec_execute | cut -d' ' -f 6 | xxd -r -p | sha256sum
->>
->> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
->    ^^^^^
->> Signed-off-by: Steven Chen <chenste@linux.microsoft.com>
->    ^^^^^
-Hi Baoquan,
+On Sun, Apr 20, 2025 at 12:30:37PM +0000, Parav Pandit wrote:
+> 
+> 
+> > From: sergeh@kernel.org <sergeh@kernel.org>
+> > Sent: Monday, April 7, 2025 8:17 PM
+> > 
+> > On Mon, Apr 07, 2025 at 11:16:35AM +0000, Parav Pandit wrote:
+> > > > From: Serge E. Hallyn <serge@hallyn.com>
+> > > > Sent: Sunday, April 6, 2025 7:45 PM
+> > > >
+> > > > On Fri, Apr 04, 2025 at 12:13:47PM -0300, Jason Gunthorpe wrote:
+> > > > > On Fri, Apr 04, 2025 at 02:53:30PM +0000, Parav Pandit wrote:
+> > > > > > To summarize,
+> > > > > >
+> > > > > > 1. A process can open an RDMA resource (such as a raw QP, raw
+> > > > > > flow entry, or similar 'raw' resource) through the fd using
+> > > > > > ioctl(), if it has the
+> > > > appropriate capability, which in this case is CAP_NET_RAW.
+> > > > > > This is similar to a process that opens a raw socket.
+> > > > > >
+> > > > > > 2. Given that RDMA uses ioctl() for resource creation, there
+> > > > > > isn't a security concern surrounding the read()/write() system calls.
+> > > > > >
+> > > > > > 3. If process A, which does not have CAP_NET_RAW, passes the
+> > > > > > opened fd to another privileged process B, which has
+> > > > > > CAP_NET_RAW, process B
+> > > > can open the raw RDMA resource.
+> > > > > > This is still within the kernel-defined security boundary,
+> > > > > > similar to a raw
+> > > > socket.
+> > > > > >
+> > > > > > 4. If process A, which has the CAP_NET_RAW capability, passes
+> > > > > > the file
+> > > > descriptor to Process B, which does not have CAP_NET_RAW, Process B
+> > > > will not be able to open the raw RDMA resource.
+> > > > > >
+> > > > > > Do we agree on this Eric?
+> > > > >
+> > > > > This is our model, I consider it uAPI, so I don't belive we can
+> > > > > change it without an extreme reason..
+> > > > >
+> > > > > > 5. the process's capability check should be done in the right
+> > > > > > user
+> > > > namespace.
+> > > > > > (instead of current in default user ns).
+> > > > > > The right user namespace is the one which created the net namespace.
+> > > > > > This is because rdma networking resources are governed by the
+> > > > > > net
+> > > > namespace.
+> > > > >
+> > > > > This all makes my head hurt. The right user namespace is the one
+> > > > > that is currently active for the invoking process, I couldn't
+> > > > > understand why we have net namespaces refer to user namespaces :\
+> > > >
+> > > > A user at any time can create a new user namespace, without creating
+> > > > a new network namespace, and have privilege in that user namespace,
+> > > > over resources owned by the user namespace.
+> > > >
+> > >
+> > > > So if a user can create a new user namespace, then say "hey I have
+> > > > CAP_NET_ADMIN over current_user_ns, so give me access to the RDMA
+> > > > resources belonging to my current_net_ns", that's a problem.
+> > > >
+> > > > So that's why the check should be ns_capable(device->net->user-ns,
+> > > > CAP_NET_ADMIN) and not ns_capable(current_user_ns,
+> > CAP_NET_ADMIN).
+> > > >
+> > > Given the check is of the process (and hence user and net ns) and not
+> > > of the rdma device itself, Shouldn't we just check,
+> > >
+> > > ns_capable(current->nsproxy->user_ns, ...)
+> > >
+> > > This ensures current network namespace's owning user ns is consulted.
+> > 
+> > No, it does not.  If I do
+> > 
+> > unshare -U
+> > 
+> > then current->nsproxy->user_ns is not my current network namespace's
+> > owning user ns.
+> >
+> It should be current->nsproxy->net->user_ns.
+> This ensures that it is always current network namespace's owning user ns is considered.
+> Right?
+> 
+> Sorry for the late response.
+> I wasn't well for few days followed by backlog.
 
-I will add Co-developed-by tag in next version.
+Hi,
 
-Thanks,
+That will depend on exactly what you're checking permissions for.
+It looks like ib_uverbs_ex_create_flow() gets passed a
+uverbs_attr_bundle pointer that has a context which holds the
+thing you're actually checking permissions towards?  And I'm
+assuming that that thing is actually a file?  So again, if the
+task can create the "thing" first, then unshare its network
+namespace, then cause this permission to be checked, or if
+it can accept a file over unix socket or whatever that someone
+else opened, then current->nsproxy->net->user_ns may *not* be
+relevant.  If, however, the flow, later on, will ensure that
+any actions are only relevant in the current network namespace,
+then you are correct.
 
-Steven
->> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
->> ---
->>   security/integrity/ima/ima.h       |  6 ++++++
->>   security/integrity/ima/ima_kexec.c | 21 +++++++++++++++++++++
->>   security/integrity/ima/ima_queue.c |  5 +++++
->>   3 files changed, 32 insertions(+)
-> Acked-by: Baoquan He <bhe@redhat.com>
->
->> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
->> index 24d09ea91b87..34815baf5e21 100644
->> --- a/security/integrity/ima/ima.h
->> +++ b/security/integrity/ima/ima.h
->> @@ -240,6 +240,12 @@ void ima_post_key_create_or_update(struct key *keyring, struct key *key,
->>   				   unsigned long flags, bool create);
->>   #endif
->>   
->> +#ifdef CONFIG_IMA_KEXEC
->> +void ima_measure_kexec_event(const char *event_name);
->> +#else
->> +static inline void ima_measure_kexec_event(const char *event_name) {}
->> +#endif
->> +
->>   /*
->>    * The default binary_runtime_measurements list format is defined as the
->>    * platform native format.  The canonical format is defined as little-endian.
->> diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
->> index d1c9d369ba08..38cb2500f4c3 100644
->> --- a/security/integrity/ima/ima_kexec.c
->> +++ b/security/integrity/ima/ima_kexec.c
->> @@ -17,6 +17,8 @@
->>   #include "ima.h"
->>   
->>   #ifdef CONFIG_IMA_KEXEC
->> +#define IMA_KEXEC_EVENT_LEN 256
->> +
->>   static bool ima_kexec_update_registered;
->>   static struct seq_file ima_kexec_file;
->>   static size_t kexec_segment_size;
->> @@ -31,6 +33,24 @@ static void ima_free_kexec_file_buf(struct seq_file *sf)
->>   	sf->count = 0;
->>   }
->>   
->> +void ima_measure_kexec_event(const char *event_name)
->> +{
->> +	char ima_kexec_event[IMA_KEXEC_EVENT_LEN];
->> +	size_t buf_size = 0;
->> +	long len;
->> +	int n;
->> +
->> +	buf_size = ima_get_binary_runtime_size();
->> +	len = atomic_long_read(&ima_htable.len);
->> +
->> +	n = scnprintf(ima_kexec_event, IMA_KEXEC_EVENT_LEN,
->> +		      "kexec_segment_size=%lu;ima_binary_runtime_size=%lu;"
->> +		      "ima_runtime_measurements_count=%ld;",
->> +		      kexec_segment_size, buf_size, len);
->> +
->> +	ima_measure_critical_data("ima_kexec", event_name, ima_kexec_event, n, false, NULL, 0);
->> +}
->> +
->>   static int ima_alloc_kexec_file_buf(size_t segment_size)
->>   {
->>   	/*
->> @@ -53,6 +73,7 @@ static int ima_alloc_kexec_file_buf(size_t segment_size)
->>   out:
->>   	ima_kexec_file.read_pos = 0;
->>   	ima_kexec_file.count = sizeof(struct ima_kexec_hdr);	/* reserved space */
->> +	ima_measure_kexec_event("kexec_load");
->>   
->>   	return 0;
->>   }
->> diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
->> index 83d53824aa98..590637e81ad1 100644
->> --- a/security/integrity/ima/ima_queue.c
->> +++ b/security/integrity/ima/ima_queue.c
->> @@ -241,6 +241,11 @@ static int ima_reboot_notifier(struct notifier_block *nb,
->>   			       unsigned long action,
->>   			       void *data)
->>   {
->> +#ifdef CONFIG_IMA_KEXEC
->> +	if (action == SYS_RESTART && data && !strcmp(data, "kexec reboot"))
->> +		ima_measure_kexec_event("kexec_execute");
->> +#endif
->> +
->>   	ima_measurements_suspend();
->>   
->>   	return NOTIFY_DONE;
->> -- 
->> 2.43.0
->>
+I just can't tell in this flow.  I"ll try to find some time to
+track it down more.
 
+-serge
