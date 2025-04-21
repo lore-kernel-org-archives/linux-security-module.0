@@ -1,142 +1,186 @@
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B234F3596D;
-	Mon, 21 Apr 2025 17:22:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90F3F1EA7E9
+	for <linux-security-module@vger.kernel.org>; Mon, 21 Apr 2025 18:52:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745256167; cv=none; b=QkKeWpQynJN4MwUuKvhB7RrCz2v0big/pRdMTs4bTjN2DOOCz8aVJvLCBoJbxuEoN60OcX6EK5flFoCHcxh8DIhLuCHYttiW44vdjoEoTjuELf2lyjkgTkujMscQHPc7HWdowFR4v2Z7QnfySViuHEQXmJuvynksWtYey4v595U=
+	t=1745261573; cv=none; b=CUACBG5Z1zbmKyGiHwzCEhRsJYCx+SjP+gt1MPMpr8JQtALJL6WRGQRC2r5CqlGx1h2gt+GqnOfAsfyzjkHfo4sONHEdlE/9UsMNOsfTrkU7A/FpndAscBZ3DTnngzP/6Tsjv37pJaPNT3cD5L0FY4KgZyKn29SeKTRXdwYjV28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745256167; c=relaxed/simple;
-	bh=fP+W/vIgFBy+IEp5u2LmhOpmrpySu4SezCI2Fv2z23k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ff8CarXRPVRhtID4KKWmf7F5DpexRbpXmB0U3MHtUVhieoocwFm3BIBrYJb+A/1YKlwzY8f3reMIf4UH3ufSCAZ0uVKeGEu32ELtVxfZejcobA++14gtP/pzJy65sGZ65nIatuiGxZ/PbsoVcLyJf0YDo+lqH67eQRbnZmvHsmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id 4B264A9F; Mon, 21 Apr 2025 12:22:36 -0500 (CDT)
-Date: Mon, 21 Apr 2025 12:22:36 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Parav Pandit <parav@nvidia.com>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>, Jason Gunthorpe <jgg@nvidia.com>,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>,
-	Leon Romanovsky <leonro@nvidia.com>
-Subject: Re: [PATCH] RDMA/uverbs: Consider capability of the process that
- opens the file
-Message-ID: <20250421172236.GA583385@mail.hallyn.com>
-References: <20250317193148.GU9311@nvidia.com>
- <CY8PR12MB7195C6D8CCE062CFD9D0174CDCDE2@CY8PR12MB7195.namprd12.prod.outlook.com>
- <20250318112049.GC9311@nvidia.com>
- <87ldt2yur4.fsf@email.froward.int.ebiederm.org>
- <20250318225709.GC9311@nvidia.com>
- <CY8PR12MB7195B7FAA54E7E0264D28BAEDCA92@CY8PR12MB7195.namprd12.prod.outlook.com>
- <20250421031320.GA579226@mail.hallyn.com>
- <CY8PR12MB7195E4A0C6E019F10222B543DCB82@CY8PR12MB7195.namprd12.prod.outlook.com>
- <20250421130024.GA582222@mail.hallyn.com>
- <CY8PR12MB71955204622F18B2C3437BCBDCB82@CY8PR12MB7195.namprd12.prod.outlook.com>
+	s=arc-20240116; t=1745261573; c=relaxed/simple;
+	bh=MAT6Ew2gJpdMJ8irAU8emiSANZdL6DjJHNFxnFPsi3c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tQ7tChs/atfN5HItoeIXXj0wmWA9Q/bBCyvsTyRMOaFIILM/8f+BNP9HPf0uLp6qJieXEG2RNi0s+r+nElciyDeqf201njESkiGGAmPZ+QIzkz7SDtHgdxeGeexhCi6v3JxrZ5+y3vzkBGUCfPDDB/z3FAsnqGQfe5NUljfX3vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=QBgCCfBd; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="QBgCCfBd"
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-7053f85f059so32388307b3.2
+        for <linux-security-module@vger.kernel.org>; Mon, 21 Apr 2025 11:52:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1745261569; x=1745866369; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lz3xUPpEUe/pX3Hqv/1lT4GmPjs/7L4gms/heykjQds=;
+        b=QBgCCfBdZ+Y261pLXknquCzeKzGiOf6WfhHPt2eOubBqKoeSWNCbuZat5VWRZCmHlB
+         p2hdRfZ9LQz+qqYLKmUZnysoVo6VJm0QITXShrmVsSbBQlNpMSbNNDYIgqXTk/H3SeIY
+         zOJyFN9d8HNrYCjZCDNLCAfP+NjkuPDlV9j9qqlD/ajZT0Js+JT0H/Ks4qRmenSCErF5
+         xWnQrw9zxvS4qe0ZcMmmKhXs8m6D3fpToPJ1nW7T2WH8DSGv1hH0DDNyfsIXnemSobv2
+         gpMvWmjckK4tIFu8T38+ZUQMNq1L4dhqn2XHhUUFpzqtxP/PNx5QcfWoOswf6z8muSS6
+         YgMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745261569; x=1745866369;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lz3xUPpEUe/pX3Hqv/1lT4GmPjs/7L4gms/heykjQds=;
+        b=S8RdxYQ3njSS0sSvRbsJ6LflTTrONnIw5eUUvo1UlkPUIio89lFidiaK5A/01BPzX6
+         hEOB9UQm6evtuJ4aRguDb3TDrmBAKYzPIEYESbbzm7ASmVduDERL0JWt0S6fdLpyX0Io
+         IsqZLrxbIUpF8hJJVvipGGZ7le/KpnKkM+4FQfBEfY2hPH2IDHw9NLDSd6EbbTxcCg4h
+         BZ26h6VI2XV+D6E7q04Fq/ehEuQHlvHfI/viLdwhVMA82y/hDxSAETSipZzAbcdob9r6
+         H+AqoQ6XK5lgz5IqLthl0SPxrK1v1iLWXW9EXBgA/u9n86ufZ9wdkXRfIZJ1IqSllmsn
+         pOEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU25/0h7/2nnwS0P3fuDHzch+8ACFM9mB5MECFk7jaOP04xpo4PfiBV+WWIPuTIxtgHkQFXisqaZWfogkhzqJBZfsQY2xc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6KK/7cnHP6juM4y+XdATSIWWr9lCUGRiBgck0jEfksOp5NfaM
+	IhDc1mTTQIs1CIOSv+OsCP/2vb6bHvKPdPyRPoZmWIMjtUR3U8JiZhNPzMgsgFh7fVbT1Mxdwld
+	z++DUo6QgWKIfwrJ4FbGNdrcQOruFJfgmH8m9
+X-Gm-Gg: ASbGnctrnhLdzrc9pOUyCrz6wargJu6tj4YS1Ohq6r3IIWl+VMSXBg6WfFZWMTFZI42
+	0QAWSFHJTJBfZGNDhw3FyHJ1ROUHEqk86vD0G12NlMpvB5ujvmSWHLl0ETCsCWKi9XMbANA1s2U
+	2+T6A0An5NSgSP047yBF1HvA==
+X-Google-Smtp-Source: AGHT+IEuH9hzO8L5xENmqEA5+rCv5QU5f2RwWDzAiO15hUKUo3LnS3Mbacdqm494PthrNYTv96+oKoVST5i5x+eAlHw=
+X-Received: by 2002:a05:690c:648a:b0:6fe:abff:cb17 with SMTP id
+ 00721157ae682-706ccda15f4mr176888017b3.26.1745261569456; Mon, 21 Apr 2025
+ 11:52:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CY8PR12MB71955204622F18B2C3437BCBDCB82@CY8PR12MB7195.namprd12.prod.outlook.com>
+References: <20250404215527.1563146-1-bboscaccy@linux.microsoft.com>
+ <20250404215527.1563146-2-bboscaccy@linux.microsoft.com> <64859c5c8fd969186c1997a340ed6307e2c70f06.camel@HansenPartnership.com>
+In-Reply-To: <64859c5c8fd969186c1997a340ed6307e2c70f06.camel@HansenPartnership.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 21 Apr 2025 14:52:38 -0400
+X-Gm-Features: ATxdqUEW2UYysWiho25YbREtPd_DwN7ErCdbG2Ug5RajPR5M9exUr19Bmcv_5Vs
+Message-ID: <CAHC9VhSu_tn6d2A4-CYQn_Kr4mdRKEBXLabbPkLZuwQcC2KhJA@mail.gmail.com>
+Subject: Re: [PATCH v2 security-next 1/4] security: Hornet LSM
+To: James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: Blaise Boscaccy <bboscaccy@linux.microsoft.com>, Jonathan Corbet <corbet@lwn.net>, 
+	David Howells <dhowells@redhat.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	"David S. Miller" <davem@davemloft.net>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Shuah Khan <shuah@kernel.org>, 
+	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
+	Jan Stancek <jstancek@redhat.com>, Neal Gompa <neal@gompa.dev>, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, keyrings@vger.kernel.org, 
+	linux-crypto@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	bpf@vger.kernel.org, llvm@lists.linux.dev, nkapron@google.com, 
+	teknoraver@meta.com, roberto.sassu@huawei.com, xiyou.wangcong@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Apr 21, 2025 at 01:33:45PM +0000, Parav Pandit wrote:
-> 
-> 
-> > From: Serge E. Hallyn <serge@hallyn.com>
-> > Sent: Monday, April 21, 2025 6:30 PM
-> > 
-> > On Mon, Apr 21, 2025 at 11:04:57AM +0000, Parav Pandit wrote:
-> > >
-> > > > From: Serge E. Hallyn <serge@hallyn.com>
-> > > > Sent: Monday, April 21, 2025 8:43 AM
-> > > >
-> > > > On Fri, Apr 04, 2025 at 02:53:30PM +0000, Parav Pandit wrote:
-> > > > > Hi Eric, Jason,
-> > > >
-> > > > Hi,
-> > > >
-> > > > I'm jumping back up the thread as I think this email best details
-> > > > the things I'm confused about :)  Three questions below in two different
-> > stanzas.
-> > > >
-> > > > > To summarize,
-> > > > >
-> > > > > 1. A process can open an RDMA resource (such as a raw QP, raw flow
-> > > > > entry, or similar 'raw' resource) through the fd using ioctl(), if
-> > > > > it has the
-> > > > appropriate capability, which in this case is CAP_NET_RAW.
-> > > >
-> > > > Why does it need CAP_NET_RAW to create the resource, if the resource
-> > > > won't be usable by a process without CAP_NET_RAW later anyway?
-> > > Once the resource is created, and the fd is shared (like a raw socket fd), it
-> > will be usable by a process without CAP_NET_RAW.
-> > > Is that a concern? If yes, how is it solved for raw socket fd? It appears to me
-> > that it is not.
-> > >
-> > > > Is that legacy
-> > > > for the read/write (vs ioctl) case?
-> > > No.
-> > >
-> > > > Or is it to limit the number of opened resources?  Or some other
-> > > > reason?
-> > > >
-> > > The resource enables to do raw operation, hence the capability check of the
-> > process for having NET_RAW cap.
-> > 
-> > Ok, so it seems to me that
-> > 
-> > 1. the create should check ns_capable(current->nsproxy->net->user_ns,
-> > CAP_NET_RAW) 
-> I believe this is sufficient as this create call happens through the ioctl().
-> But more question on #3.
-> 
-> > 2. the read/write are a known escape, eventually to be
-> > removed?
-> Write should be deprecated eventually.
-> Jason mentioned that write() can be compiled out of kernel.
-> I guess it needs new compile time config flag around [1].
-> 
-> [1] https://elixir.bootlin.com/linux/v6.14.3/source/drivers/infiniband/core/uverbs_main.c#L1037
-> 
-> > 3. the ioctl should check file_ns_capable(attrs->ufile->filp->f_cred->user_ns,
-> > CAP_NET_RAW)
-> > 
-> > Two notes about (3).  First, note that it's different from what you had.
-> > It explicitly checks that the caller has CAP_NET_RAW against the net
-> > namespace that was used to open the file.  
-> How is the net namespace linked in #3?
-> Is it because when file was opened, the rdma device was accessible in a given net ns?
-> But again the net ns explicitly not accessed in #3.
+On Sat, Apr 19, 2025 at 2:43=E2=80=AFPM James Bottomley
+<James.Bottomley@hansenpartnership.com> wrote:
+> On Fri, 2025-04-04 at 14:54 -0700, Blaise Boscaccy wrote:
+> [...]
+> > diff --git a/include/linux/kernel_read_file.h
+> > b/include/linux/kernel_read_file.h
+> > index 90451e2e12bd..7ed9337be542 100644
+> > --- a/include/linux/kernel_read_file.h
+> > +++ b/include/linux/kernel_read_file.h
+> > @@ -14,6 +14,7 @@
+> >       id(KEXEC_INITRAMFS, kexec-initramfs)    \
+> >       id(POLICY, security-policy)             \
+> >       id(X509_CERTIFICATE, x509-certificate)  \
+> > +     id(EBPF, ebpf)                          \
+>
+> This causes a BUILD_BUG_ON for me in security/selinux/hooks.c with
+> CONFIG_SECURITY_SELINUX=3Dy because READING_MAX_ID and LOADING_MAX_ID
+> become 8.
+>
+> Below is what I had to do to get the compile to work.
 
-I'll have to look around and see if we can deduce the netns from elsewhere,
-the device perhaps.  But IIUC the file's user_ns should be the one for
-which we checked that it has CAP_NET_RAW over the actual net->user_ns,
-so if you have CAP_NET_RAW in that user_ns, then you're good.  Where it
-*could* get wonky is if the opener was in a parent userns of the net->userns.
-In that case the file's userns will be sufficient to access the net, but
-we could end up denying access from a privileged process in its child
-user_ns, that is, potentially, the net->userns.
+That code was updated during the v6.15 merge window, depending on what
+kernel sources Blaise is using for development it's possible he didn't
+bump into this even if he was building with SELinux enabled.
 
-> > Second, I'm suggesting this
-> > because Jason does keep saying that ioctl is supposed to solve the missing
-> > permission check.  
-> I don't understand how ioctl() is replacement to capability ns_capable() check.
+Otherwise the changes below look reasonable to me.
 
-I'm assuming the ioctl system call handler does the check.  I'll double-check.
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index e7a7dcab81db..9a7ed0b4b08d 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -4133,7 +4133,7 @@ static int selinux_kernel_read_file(struct file *fi=
+le,
+>  {
+>         int rc =3D 0;
+>
+> -       BUILD_BUG_ON_MSG(READING_MAX_ID > 7,
+> +       BUILD_BUG_ON_MSG(READING_MAX_ID > 8,
+>                          "New kernel_read_file_id introduced; update SELi=
+nux!");
+>
+>         switch (id) {
+> @@ -4158,6 +4158,10 @@ static int selinux_kernel_read_file(struct file *f=
+ile,
+>                 rc =3D selinux_kernel_load_from_file(file,
+>                                                 SYSTEM__X509_CERTIFICATE_=
+LOAD);
+>                 break;
+> +       case READING_EBPF:
+> +               rc =3D selinux_kernel_load_from_file(file,
+> +                                               SYSTEM__EBPF_LOAD);
+> +               break;
+>         default:
+>                 break;
+>         }
+> @@ -4169,7 +4173,7 @@ static int selinux_kernel_load_data(enum kernel_loa=
+d_data_id id, bool contents)
+>  {
+>         int rc =3D 0;
+>
+> -       BUILD_BUG_ON_MSG(LOADING_MAX_ID > 7,
+> +       BUILD_BUG_ON_MSG(LOADING_MAX_ID > 8,
+>                          "New kernel_load_data_id introduced; update SELi=
+nux!");
+>
+>         switch (id) {
+> @@ -4195,6 +4199,10 @@ static int selinux_kernel_load_data(enum kernel_lo=
+ad_data_id id, bool contents)
+>                 rc =3D selinux_kernel_load_from_file(NULL,
+>                                                 SYSTEM__X509_CERTIFICATE_=
+LOAD);
+>                 break;
+> +       case LOADING_EBPF:
+> +               rc =3D selinux_kernel_load_from_file(NULL,
+> +                                                  SYSTEM__EBPF_LOAD);
+> +               break;
+>         default:
+>                 break;
+>         }
+> diff --git a/security/selinux/include/classmap.h b/security/selinux/inclu=
+de/classmap.h
+> index 04a9b480885e..671db23451df 100644
+> --- a/security/selinux/include/classmap.h
+> +++ b/security/selinux/include/classmap.h
+> @@ -65,7 +65,7 @@ const struct security_class_mapping secclass_map[] =3D =
+{
+>           { "ipc_info", "syslog_read", "syslog_mod", "syslog_console",
+>             "module_request", "module_load", "firmware_load",
+>             "kexec_image_load", "kexec_initramfs_load", "policy_load",
+> -           "x509_certificate_load", NULL } },
+> +           "x509_certificate_load", "ebpf_load", NULL } },
+>         { "capability", { COMMON_CAP_PERMS, NULL } },
+>         { "filesystem",
+>           { "mount", "remount", "unmount", "getattr", "relabelfrom",
+>
 
-> Do you mean to delete the capable() call itself?
-> I likely misunderstood..
-> 
-> > If it really is felt that no permission check should be
-> > needed, that's a different discussion.  I've just been trying to figure out where
-> > the state should be tracked.
-> > 
-> > -serge
+--=20
+paul-moore.com
