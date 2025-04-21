@@ -1,166 +1,271 @@
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52CCD38DE9;
-	Mon, 21 Apr 2025 14:18:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32430184;
+	Mon, 21 Apr 2025 15:17:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745245137; cv=none; b=OGkxlDv9K8r4dhQVDDzzM7sjxMKJY+I6X8yu7MvzjkW7aRW2t0hW7XL+IRg+eLZqisKojUpW05nGiuxc0e2h0Ojsfn2YsblSxKqQfez5R5z8Z1ci7GdTjBkht8ny0tBX2CXDiuB6fahFGEF3OttpyxIis4t1bjPkZ3Q9rJHJ6GE=
+	t=1745248641; cv=none; b=QUpUvWZOSypTIobkMcDNS7XCb7K9n//QMOr4Gpv75lyX6uVeU+8oEyFNRWhtg6JYmcCSy6k0VXdyHqpKH0EdnI1uzXvUc8gKh6Heo3uIpmwxr8FoyWWeo2IJr2cELJSKMUp8s5UfVcDjUy7EShWVaDgZcyIomYcwPH1uHXyJYQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745245137; c=relaxed/simple;
-	bh=uqPZ8pSWA+KC9OH2B0rYCnAcm3U6jLzNWKwsq1ZwBLA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=XPV/twVOwsMUY0wkrHFnYXFtIqFl+PlWWhJR94oKTiWC50wF0jQYY6oTPC5SazPq3Mh7CLAPO6Y8m0TbJZ6JFGyVL8eG7jfSjSj/CUVVV/Ri72mGKZsocNRUkqRLXkIODE5Jro+GdCO1S5B7PMyqmUYIx6+EBw+QFVGybgm7AZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=O80hEzTW; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1745248641; c=relaxed/simple;
+	bh=gExts8hN026UkLytr9zkYUmL6B8PuMW88zMsupQBzlc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=acFRIfyBGjci9iAGXVDr4abvJHNVExS3dDdpqRn5as07RUIWivQGXmqA3XELIKyWVdknYbelNZ0C+0JRR0XIbqTyaSXs2EgMBKYE7u8XSwjuPPEEp0Bf7WQpFfZ3fYZWwM2O/GFR8nRfCoT/vhAQE3eqQkICDaUStGgWgPFEViY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kfiwpdZo; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="O80hEzTW"
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53LA3wqL007572;
-	Mon, 21 Apr 2025 14:18:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=FVXVAV
-	Bj9dt951RNAVxr15KnbP6+CzPRiqjlfAwfQ0U=; b=O80hEzTWZD+OojTOtaDHFb
-	kmnfSXPv7ucP6tFzwx5wt1hukvsPqkVjQH4F19oYqZBPsWJG7+lr9LzxzmZ/W22b
-	Jph91gyn4LfxFVoOFnp/h9fYYMVA7yNgs8hlN/usdM9mtYPzwTgaB133o0edN98e
-	CiKdPw4FA5xz6GoLtrbSo3dIHAc/18n9RfJDREM1PFFsZzKMNcNnFOQuy+JUuFNp
-	NQ/KR/vnCaK40smO2DUl9mkAgVdn5BRW+MkRKc41MxhiPJwsR9J7jpIxb6zFVKxu
-	uSCY2m/fbaBjKAakvfWPmMW2Tn69qTk09JOZYI1OxP0SP/7TXBJ7+M+rSA/puTEA
-	==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 465kxj8ybc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 21 Apr 2025 14:18:26 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53LAl6iR032526;
-	Mon, 21 Apr 2025 14:18:24 GMT
-Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 464phyetsk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 21 Apr 2025 14:18:24 +0000
-Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
-	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53LEINNN17891846
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 21 Apr 2025 14:18:24 GMT
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CEFF258063;
-	Mon, 21 Apr 2025 14:18:23 +0000 (GMT)
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 127A358059;
-	Mon, 21 Apr 2025 14:18:22 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.21.104])
-	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 21 Apr 2025 14:18:21 +0000 (GMT)
-Message-ID: <ef18ae186cd17431b9ff6b8a443b63fd6fb78b98.camel@linux.ibm.com>
-Subject: Re: [PATCH v12 3/9] kexec: define functions to map and unmap
- segments
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Baoquan He <bhe@redhat.com>, steven chen <chenste@linux.microsoft.com>
-Cc: stefanb@linux.ibm.com, roberto.sassu@huaweicloud.com,
-        roberto.sassu@huawei.com, eric.snowberg@oracle.com,
-        ebiederm@xmission.com, paul@paul-moore.com, code@tyhicks.com,
-        bauermann@kolabnow.com, linux-integrity@vger.kernel.org,
-        kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, madvenka@linux.microsoft.com,
-        nramas@linux.microsoft.com, James.Bottomley@hansenpartnership.com,
-        vgoyal@redhat.com, dyoung@redhat.com
-Date: Mon, 21 Apr 2025 10:18:21 -0400
-In-Reply-To: <dcde124baec01318e661f5430ce8a008a6d196c0.camel@linux.ibm.com>
-References: <20250416021028.1403-1-chenste@linux.microsoft.com>
-	 <20250416021028.1403-4-chenste@linux.microsoft.com>
-	 <aAHW4O9qAKzaoa+O@MiWiFi-R3L-srv>
-	 <dcde124baec01318e661f5430ce8a008a6d196c0.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kfiwpdZo"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18CA5C4CEE4;
+	Mon, 21 Apr 2025 15:17:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745248640;
+	bh=gExts8hN026UkLytr9zkYUmL6B8PuMW88zMsupQBzlc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kfiwpdZoQHWUxxruVQBYPK45hGSCKgLQvZ9Lk31PbdjCvCGKsN+jz64gG0u6hSj7T
+	 62Aitl1Wwg7HaNq1s5URC8ekBv3VXtB+EuYQPro2DGCSnLBfqTO3kNxoKS9r0jdIdj
+	 jNjmv0kRVyQj5rxRd7haMXhuA+HRyrxA5nLUDZtv38wlQPFJKqQXmIQSQQEVrbaYi+
+	 vCLIra4epM8Pl/ZHYvjeZe1U8L2Rx+BLOX12mcY6WgJOi3gehTsTb7McIG/jX3Jjvc
+	 vPdetHf9nvdJxvGCHgdbIJhdYkm9HCPGX7KZb4x5ds7zlVlbP0gguIkJSmbEhSFbf1
+	 oxUA7SuohlpWw==
+Date: Mon, 21 Apr 2025 16:17:13 +0100
+From: Simon Horman <horms@kernel.org>
+To: Li Li <dualli@chromium.org>
+Cc: dualli@google.com, corbet@lwn.net, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	donald.hunter@gmail.com, gregkh@linuxfoundation.org,
+	arve@android.com, tkjos@android.com, maco@android.com,
+	joel@joelfernandes.org, brauner@kernel.org, cmllamas@google.com,
+	surenb@google.com, omosnace@redhat.com, shuah@kernel.org,
+	arnd@arndb.de, masahiroy@kernel.org, bagasdotme@gmail.com,
+	tweek@google.com, paul@paul-moore.com, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, netdev@vger.kernel.org,
+	selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+	hridya@google.com, smoreland@google.com, ynaffit@google.com,
+	kernel-team@android.com
+Subject: Re: [PATCH RESEND v17 2/3] binder: report txn errors via generic
+ netlink
+Message-ID: <20250421151713.GP2789685@horms.kernel.org>
+References: <20250417002005.2306284-1-dualli@chromium.org>
+ <20250417002005.2306284-3-dualli@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: cikbJN6PF9hmHh0Nsj6AtPTZQGoZiaoI
-X-Proofpoint-ORIG-GUID: cikbJN6PF9hmHh0Nsj6AtPTZQGoZiaoI
-X-Authority-Analysis: v=2.4 cv=HLDDFptv c=1 sm=1 tr=0 ts=680653b2 cx=c_pps a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=bLk-5xynAAAA:8 a=yMhMjlubAAAA:8 a=PtDNVHqPAAAA:8 a=20KFwNOVAAAA:8
- a=As6bdjLyCJmV0PnI7e4A:9 a=QEXdDO2ut3YA:10 a=zSyb8xVVt2t83sZkrLMb:22 a=BpimnaHY1jUKGyF_4-AF:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-21_06,2025-04-21_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- mlxlogscore=999 mlxscore=0 lowpriorityscore=0 clxscore=1015
- impostorscore=0 adultscore=0 spamscore=0 phishscore=0 bulkscore=0
- priorityscore=1501 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502280000
- definitions=main-2504210109
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250417002005.2306284-3-dualli@chromium.org>
 
-On Mon, 2025-04-21 at 09:51 -0400, Mimi Zohar wrote:
-> On Fri, 2025-04-18 at 12:36 +0800, Baoquan He wrote:
-> > On 04/15/25 at 07:10pm, steven chen wrote:
-> > > From: Steven Chen <chenste@linux.microsoft.com>
-> >  ^^^^^^
->=20
-> As James Bottomley previously explained[1], if you haven't made any chang=
-es to
-> Tushar's patch, then the very first line of the patch description would b=
-e
-> "From: Tushar Sugandhi <tusharsu@linux.microsoft.com>" followed by a blan=
-k line.
-> If there is a minor change, you would add "<your email address>: explanat=
-ion".
-> For example:
->=20
-> Steven Chen <chenste@linux.microsoft.com>: modified patch description
+On Wed, Apr 16, 2025 at 05:20:03PM -0700, Li Li wrote:
+> From: Li Li <dualli@google.com>
+> 
+> Introduce generic netlink messages into the binder driver so that the
+> Linux/Android system administration processes can listen to important
+> events and take corresponding actions, like stopping a broken app from
+> attacking the OS by sending huge amount of spamming binder transactions.
+> 
+> The binder netlink sources and headers are automatically generated from
+> the corresponding binder netlink YAML spec. Don't modify them directly.
+> 
+> Signed-off-by: Li Li <dualli@google.com>
 
-To clarify: This line would be included below with your Signed-off-by tag.
+Hi Li Li,
 
->=20
-> [1]
-> https://lore.kernel.org/lkml/58e70121aaee33679ac295847197c1e5511b2a81.cam=
-el@HansenPartnership.com/
->=20
-> > >=20
-> > > Implement kimage_map_segment() to enable IMA to map the measurement l=
-og=20
-> > > list to the kimage structure during the kexec 'load' stage. This func=
-tion
-> > > gathers the source pages within the specified address range, and maps=
- them
-> > > to a contiguous virtual address range.
-> > >=20
-> > > This is a preparation for later usage.
-> > >=20
-> > > Implement kimage_unmap_segment() for unmapping segments using vunmap(=
-).
-> > >=20
-> > > From: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-> >   ^^^^^^
->=20
-> Neither "Author:" nor "From:" belong here.  Please remove.
->=20
-> > > Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-> >   ^^^^^^^
->=20
-> Having Tushar's "Signed-off-by" tag and yours below indicate that you mod=
-ified
-> the original author's patch.
+> diff --git a/drivers/android/binder.c b/drivers/android/binder.c
 
-To clarify: "Just" having Tushar's "Signed-off-by" tag and yours below indi=
-cate
-that you modified the original author's patch.
+...
 
->=20
-> > > Cc: Eric Biederman <ebiederm@xmission.com>
-> > > Cc: Baoquan He <bhe@redhat.com>=20
-> > > Cc: Vivek Goyal <vgoyal@redhat.com>
-> > > Cc: Dave Young <dyoung@redhat.com>
-> > > Signed-off-by: steven chen <chenste@linux.microsoft.com>
-> >   ^^^^^
-> >=20
-> > The signing on this patch is a little confusing. I can't see who is the
-> > real author, who is the co-author, between you and Tushar. You may need
-> > to refer to Documentation/process/5.Posting.rst to make that clear.
-> >=20
-> > > Acked-by: Baoquan He <bhe@redhat.com>
+>  static void binder_transaction(struct binder_proc *proc,
+>  			       struct binder_thread *thread,
+>  			       struct binder_transaction_data *tr, int reply,
+> @@ -3683,10 +3764,14 @@ static void binder_transaction(struct binder_proc *proc,
+>  		return_error_line = __LINE__;
+>  		goto err_copy_data_failed;
+>  	}
+> -	if (t->buffer->oneway_spam_suspect)
+> +	if (t->buffer->oneway_spam_suspect) {
+>  		tcomplete->type = BINDER_WORK_TRANSACTION_ONEWAY_SPAM_SUSPECT;
+> -	else
+> +		if (binder_netlink_enabled(proc, BINDER_FLAG_SPAM))
+> +			binder_netlink_report(context, BR_ONEWAY_SPAM_SUSPECT,
+> +					      reply, t);
+> +	} else {
+>  		tcomplete->type = BINDER_WORK_TRANSACTION_COMPLETE;
+> +	}
+>  	t->work.type = BINDER_WORK_TRANSACTION;
+>  
+>  	if (reply) {
+> @@ -3736,8 +3821,12 @@ static void binder_transaction(struct binder_proc *proc,
+>  		 * process and is put in a pending queue, waiting for the target
+>  		 * process to be unfrozen.
+>  		 */
+> -		if (return_error == BR_TRANSACTION_PENDING_FROZEN)
+> +		if (return_error == BR_TRANSACTION_PENDING_FROZEN) {
+>  			tcomplete->type = BINDER_WORK_TRANSACTION_PENDING;
+> +			if (binder_netlink_enabled(proc, BINDER_FLAG_ASYNC_FROZEN))
+> +				binder_netlink_report(context, return_error,
+> +						      reply, t);
+> +		}
+>  		binder_enqueue_thread_work(thread, tcomplete);
+>  		if (return_error &&
+>  		    return_error != BR_TRANSACTION_PENDING_FROZEN)
+> @@ -3799,6 +3888,10 @@ static void binder_transaction(struct binder_proc *proc,
+
+The code preceding this hunk looks like this:
+
+err_alloc_tcomplete_failed:
+	if (trace_binder_txn_latency_free_enabled())
+		binder_txn_latency_free(t);
+	kfree(t);
+	binder_stats_deleted(BINDER_STAT_TRANSACTION);
+err_alloc_t_failed:
+err_bad_todo_list:
+err_bad_call_stack:
+err_empty_call_stack:
+err_dead_binder:
+err_invalid_target_handle:
+	if (target_node) {
+		binder_dec_node(target_node, 1, 0);
+		binder_dec_node_tmpref(target_node);
+	}
+
+1. The labels err_bad_todo_list, err_bad_call_stack,
+   err_empty_call_stack, and err_invalid_target_handle may
+   be jumped to before t is initialised.
+
+2. In the err_alloc_tcomplete_failed label t is kfree'd.
+
+However, the call to binder_netlink_report below will dereference t.
+
+Flagged by Smatch.
+
+>  		binder_dec_node_tmpref(target_node);
+>  	}
+>  
+> +	if (binder_netlink_enabled(proc, BINDER_FLAG_FAILED))
+> +		binder_netlink_report(context, return_error,
+> +				      reply, t);
+> +
+>  	binder_debug(BINDER_DEBUG_FAILED_TRANSACTION,
+>  		     "%d:%d transaction %s to %d:%d failed %d/%d/%d, code %u size %lld-%lld line %d\n",
+>  		     proc->pid, thread->pid, reply ? "reply" :
+
+...
+
+> +/**
+> + * binder_nl_report_setup_doit() - netlink .doit handler
+> + * @skb:	the metadata struct passed from netlink driver
+> + * @info:	the generic netlink struct passed from netlink driver
+> + *
+> + * Implements the .doit function to process binder netlink commands.
+> + */
+> +int binder_nl_report_setup_doit(struct sk_buff *skb, struct genl_info *info)
+> +{
+> +	struct binder_context *context = NULL;
+> +	struct binder_device *device;
+> +	struct binder_proc *proc;
+> +	u32 flags, pid;
+> +	bool found;
+> +	void *hdr;
+> +	int ret;
+> +
+> +	ret = security_binder_setup_report(current_cred());
+> +	if (ret < 0) {
+> +		NL_SET_ERR_MSG(info->extack, "Permission denied");
+> +		return ret;
+> +	}
+> +
+> +	if (nla_len(info->attrs[BINDER_A_CMD_CONTEXT])) {
+> +		/* Search the specified binder context */
+> +		hlist_for_each_entry(device, &binder_devices, hlist) {
+> +			if (!nla_strcmp(info->attrs[BINDER_A_CMD_CONTEXT],
+> +					device->context.name)) {
+> +				context = &device->context;
+> +				break;
+> +			}
+> +		}
+> +
+> +		if (!context) {
+> +			NL_SET_ERR_MSG(info->extack, "Invalid binder context");
+> +			return -EINVAL;
+> +		}
+> +	}
+> +
+> +	pid = nla_get_u32(info->attrs[BINDER_A_CMD_PID]);
+> +	flags = nla_get_u32(info->attrs[BINDER_A_CMD_FLAGS]);
+> +
+> +	if (!pid) {
+> +		if (!context) {
+> +			NL_SET_ERR_MSG(info->extack,
+> +				       "Invalid binder context and pid");
+> +			return -EINVAL;
+> +		}
+> +
+> +		/* Set the global flags for the whole binder context */
+> +		context->report_flags = flags;
+> +	} else {
+> +		/* Set the per-process flags */
+> +		found = false;
+> +		mutex_lock(&binder_procs_lock);
+> +		hlist_for_each_entry(proc, &binder_procs, proc_node) {
+> +			if (proc->pid == pid
+> +			    && (proc->context == context || !context)) {
+> +				proc->report_flags = flags;
+> +				found = true;
+> +			}
+> +		}
+> +		mutex_unlock(&binder_procs_lock);
+> +
+> +		if (!found) {
+> +			NL_SET_ERR_MSG_FMT(info->extack,
+> +					   "Invalid binder report pid %u",
+> +					   pid);
+> +			return -EINVAL;
+> +		}
+> +	}
+
+Within the above conditions it is assumed that context may be NULL.
+
+> +
+> +	skb = genlmsg_new(GENLMSG_DEFAULT_SIZE, GFP_KERNEL);
+> +	if (!skb) {
+> +		pr_err("Failed to alloc binder netlink reply message\n");
+> +		return -ENOMEM;
+> +	}
+> +
+> +	hdr = genlmsg_iput(skb, info);
+> +	if (!hdr)
+> +		goto free_skb;
+> +
+> +	if (nla_put_string(skb, BINDER_A_CMD_CONTEXT, context->name) ||
+
+But here context is dereferenced unconditionally.
+This does not seem consistent.
+
+Flagged by Smatch.
+
+> +	    nla_put_u32(skb, BINDER_A_CMD_PID, pid) ||
+> +	    nla_put_u32(skb, BINDER_A_CMD_FLAGS, flags))
+> +		goto cancel_skb;
+> +
+> +	genlmsg_end(skb, hdr);
+> +
+> +	if (genlmsg_reply(skb, info)) {
+> +		pr_err("Failed to send binder netlink reply message\n");
+> +		return -EFAULT;
+> +	}
+> +
+> +	return 0;
+> +
+> +cancel_skb:
+> +	pr_err("Failed to add reply attributes to binder netlink message\n");
+> +	genlmsg_cancel(skb, hdr);
+> +free_skb:
+> +	pr_err("Free binder netlink reply message on error\n");
+> +	nlmsg_free(skb);
+> +	ret = -EMSGSIZE;
+> +
+> +	return ret;
+> +}
+
+...
