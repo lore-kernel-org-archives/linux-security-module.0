@@ -1,145 +1,118 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0CAA1EF090;
-	Mon, 21 Apr 2025 20:13:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFF191EFFBB;
+	Mon, 21 Apr 2025 20:41:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745266388; cv=none; b=snZ3DF1Q7Ri4bUZR3oE13o4gZHsCl85yusITwP2qf8RtCxVd/UGsN5Nm7fRh4YrlM9JBRH5qiY6IC2rVHF4ARTwMw4D5AlwDr/IH//sznoJPwiay2l7R35YruSTHU6B1rtcr3IcfP3KhhNBh9lklqU3LRYeAuOOK26J/gCJ9wQ0=
+	t=1745268065; cv=none; b=cVEOvG9czqlAZPSGrYNyY3zZFhKqlukHVeNyj3KOzFBxx+kP9gTLnrZhRGdWMVHpPFBXfbHxqPAJ874iE/oKx5xGaBBNc7XLz89HyaG+RMBQIR1/jqH8YaWPyR8B3wDceoU68XhTMmOTrw41GYFl3PkeitLCuHNkK4vgIHPF8mk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745266388; c=relaxed/simple;
-	bh=KuPglRXXva+tRt/1RLlrTkqN4JV8/fN1ppPKTXytjUk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oKB5HQHt4FlOOsFz2zy6+Mvj67FKk62ZPilJvETQqwYGmHRWT6i0OxYgL3jUjG3CIMcL6bfno8YKhI1kyRK/QF382cA63rgxp/R973aFCv3U+bKutPWlmYqOTKoBJlYbVCGACVVo1jwS0AyYHyjqMeuuCFqUFZRWv1J6Jp5mf6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F0+rLbLe; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1745268065; c=relaxed/simple;
+	bh=k/KvvdmYqnq20t4QpYKRC5H2tOPmgmWGmQI2x5qrhVI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=l+9LH9s8fvOmTL7uj3WJifE4qLeGCdUGphfZ2zcOZ2KXysTSjLFenSiLJj1ldimmjhlBnQi6NkmedzwYk7u1tMPC9bK8Lwcr5wBLSaWXaOtX2uIqCcI8OUk/LDDCoEdnf3WlZFgd/vRtTGqel/IzXNY853+z9JhQDzBwUirtRXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=ZYBrkbU/; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F0+rLbLe"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-39c1ef4ae3aso2595004f8f.1;
-        Mon, 21 Apr 2025 13:13:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745266385; x=1745871185; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KuPglRXXva+tRt/1RLlrTkqN4JV8/fN1ppPKTXytjUk=;
-        b=F0+rLbLeNxQmLiUHq6UehsU1hKKU5uiV/66bpZ/3eECH/iIVwfQdG+MkziMC3tk5NV
-         tf/EDEhNkM3qC0gkYwOCifXrWe6G4I2hwFWx8zhDnEuXKhv+mx/ohAAtjriveQeGVDWf
-         q1jWR5WB1asYQoUIrE+VGDGINRf3DA4iKYrapgPPE44L6lzh716WQjawxJEFxKCs1SG/
-         cUawQO8uKiqxEcnM8VNkRm+frBR/6PjV7XUd8HScSsU5WJrnoll612b0d+dqemz0nwC6
-         Gq2QWH9fK6Ku3s7sOVVcbvKcGuu5oPYBh6If6yErVXbGfnLpRw7bQ198mazKUch43GAL
-         83fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745266385; x=1745871185;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KuPglRXXva+tRt/1RLlrTkqN4JV8/fN1ppPKTXytjUk=;
-        b=SKgBrUGZSH7a6hLyWp5pu5+Qr3QIv5E1qrrHU8Mgt6ydMGHDdbO4jFcC1GasnDq/6g
-         repBvstjIQGJeh8/8Bat+OtWY4bC/yv4g9Adr9kwRlDxb4cSNwPanc60IE4Ulcc/Pi7V
-         yqoLgj/70sjKsoZq0XA82cO2PX/NbqA2RFWo6X7Zdk45cPF9ayP4YjkrmrX+rYJk4Yi5
-         JdWPahs/0GHEy48DyVptWN0xvPLdZkrEJcna0z746YIUmxf7mhtgRkkEfCj5vTh4nFgz
-         8Rsj1DOU60983UGazl70rO6n6xypiTHxEDMzmmAf4gGD2lrgBfct7iJvnDR83N1h9iGz
-         zaUg==
-X-Forwarded-Encrypted: i=1; AJvYcCV8u6r+03YZDmt7EbER9u44Wn6SsGTmz4jtAUWxvbttFp31XvWj1XltYqWl9AyiBCrdwDJx5XqFUUtlUz6t@vger.kernel.org, AJvYcCWB4vwcbu5eKUokyhVxsQ40Phy2doFob1PhEK2sp1OXCU65fNWXC7rpZCbtfqftBCO5xqU=@vger.kernel.org, AJvYcCWH+T3xX3e7fZQMPdhY4idcK72UEPRI4VishyR239cIqpM/DKiydhzxy0tupOgRlGuoAGCWNaO18j8ztsTY@vger.kernel.org, AJvYcCWXsMKeBPw+9TLCsJHBnCQ7xtEfOD/gGgfwGwUmznoGlVGfUrJY0tbMlcJnc6Hn8do1IixhhYvUmn8W@vger.kernel.org, AJvYcCWbSRf4UQc1mN6qA31CseskaHRSwIr/Fzd9wJtmikk3thFfRjYKS9Fc9V6nfHkOk8x2RAaBMAusBgwu95/r@vger.kernel.org, AJvYcCWmdIQaOxVg0PPa+NqVqRtvTW+qUb1TBj6WDh9tbKLVtvUkP+KGUEx9zOWNV4A/tOhvgPO3JjBMtyT6IXtOHODMbnzvYr27@vger.kernel.org, AJvYcCX1f2eas/YJS4C48ZN0GwEw+bD1oZHLfHy/liBMr7NIPWdlJSIRTP9jm4cZRsmhd3XKwHHPWqRCtLE=@vger.kernel.org, AJvYcCXE0Dzfu1SXnGdwNdwwrXYZGUkG1u9xe73H2o9gOHKH7pMO45DL24HoweEsd3qw/fVDFVEI6MXyvBE4NzUlJ/td@vger.kernel.org
-X-Gm-Message-State: AOJu0YzORCojolxKqUy2dXwYqWrVqVGtya7MGaM+OF1b6JfMzewYNrhu
-	5UgRUQ+7z2suCA5vapa/tGShlCiIgDjxa05zGcvqC67lDszC2EtXC9rEjO6Yqb8B4egKF3gmZKB
-	I4QPoZrYqQPvhXlLZjrRYtR7HmP8=
-X-Gm-Gg: ASbGncuS1MKLmCN1hoOmym+I2gItZ9QV3rXmxoUvLvK/YysQv/jdkBcHvPNgyzc1Ydb
-	jdZBRl48OGjztfJkvcYVvV7Caa/2mrkKPcnDzxsKoXmqS6qyorg90mvCeW6ZlhSDYdDiX4OuwJd
-	yZmqbEkts8qirQs5RSJSNEZq3cKwSuXVX5KmZiQg==
-X-Google-Smtp-Source: AGHT+IENKQ7OPTDyXPDMm1eLtepnMBhG5YwiFzhKG6wQNnttfR2T/r01wwOVnACt/7hy7lkYefJ9i7RiLoFp/wuHfL0=
-X-Received: by 2002:a05:6000:2285:b0:39e:cbca:74cf with SMTP id
- ffacd0b85a97d-39efbd5a34bmr10154288f8f.6.1745266384670; Mon, 21 Apr 2025
- 13:13:04 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="ZYBrkbU/"
+Received: from [100.70.226.168] (unknown [172.172.34.12])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 2D1FE203B867;
+	Mon, 21 Apr 2025 13:40:57 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 2D1FE203B867
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1745268060;
+	bh=g0iye+uMwzSnSSeghwU6QTJxGHXm0NSZS7e1/drAZPU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ZYBrkbU/LFFdjvk6DLcNcYdLDKhhaGSQR/VM+5s0eBYMJ1WmqQvw2jeEg+kjCCJcr
+	 mAZrX5xhGwPSSokj4TSa6TuNWe4itLJKu6yqKfDtdvb6ksfjPB/Ztl36SqHC6mcAdR
+	 PVjR03iqBgEl8blRnYvobIEdJlyW2oh2xpSBveQM=
+Message-ID: <a9e3713f-4edf-479c-8be1-fe5b3dc22866@linux.microsoft.com>
+Date: Mon, 21 Apr 2025 13:40:56 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250404215527.1563146-1-bboscaccy@linux.microsoft.com>
- <20250404215527.1563146-2-bboscaccy@linux.microsoft.com> <CAADnVQJyNRZVLPj_nzegCyo+BzM1-whbnajotCXu+GW+5-=P6w@mail.gmail.com>
- <87semdjxcp.fsf@microsoft.com> <CAADnVQ+JGfwRgsoe2=EHkXdTyQ8ycn0D9nh1k49am++4oXUPHg@mail.gmail.com>
- <87friajmd5.fsf@microsoft.com> <CAADnVQKb3gPBFz+n+GoudxaTrugVegwMb8=kUfxOea5r2NNfUA@mail.gmail.com>
- <87a58hjune.fsf@microsoft.com> <CAADnVQ+LMAnyT4yV5iuJ=vswgtUu97cHKnvysipc6o7HZfEbUA@mail.gmail.com>
- <87y0w0hv2x.fsf@microsoft.com>
-In-Reply-To: <87y0w0hv2x.fsf@microsoft.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Mon, 21 Apr 2025 13:12:53 -0700
-X-Gm-Features: ATxdqUHHcxXreT9hXAZ5WwrofB06M_gd4QuHmZEieMGyBqtir206iJME0ypgG-U
-Message-ID: <CAADnVQKF+B_YYwOCFsPBbrTBGKe4b22WVJFb8C0PHGmRAjbusQ@mail.gmail.com>
-Subject: Re: [PATCH v2 security-next 1/4] security: Hornet LSM
-To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, David Howells <dhowells@redhat.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Shuah Khan <shuah@kernel.org>, 
-	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
-	Jan Stancek <jstancek@redhat.com>, Neal Gompa <neal@gompa.dev>, 
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	keyrings@vger.kernel.org, 
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>, 
-	LSM List <linux-security-module@vger.kernel.org>, 
-	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
-	clang-built-linux <llvm@lists.linux.dev>, nkapron@google.com, 
-	Matteo Croce <teknoraver@meta.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Cong Wang <xiyou.wangcong@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 3/9] kexec: define functions to map and unmap segments
+To: Mimi Zohar <zohar@linux.ibm.com>, Baoquan He <bhe@redhat.com>
+Cc: stefanb@linux.ibm.com, roberto.sassu@huaweicloud.com,
+ roberto.sassu@huawei.com, eric.snowberg@oracle.com, ebiederm@xmission.com,
+ paul@paul-moore.com, code@tyhicks.com, bauermann@kolabnow.com,
+ linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
+ linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+ madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
+ James.Bottomley@hansenpartnership.com, vgoyal@redhat.com, dyoung@redhat.com
+References: <20250416021028.1403-1-chenste@linux.microsoft.com>
+ <20250416021028.1403-4-chenste@linux.microsoft.com>
+ <aAHW4O9qAKzaoa+O@MiWiFi-R3L-srv>
+ <dcde124baec01318e661f5430ce8a008a6d196c0.camel@linux.ibm.com>
+ <ef18ae186cd17431b9ff6b8a443b63fd6fb78b98.camel@linux.ibm.com>
+Content-Language: en-US
+From: steven chen <chenste@linux.microsoft.com>
+In-Reply-To: <ef18ae186cd17431b9ff6b8a443b63fd6fb78b98.camel@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Apr 16, 2025 at 10:31=E2=80=AFAM Blaise Boscaccy
-<bboscaccy@linux.microsoft.com> wrote:
+On 4/21/2025 7:18 AM, Mimi Zohar wrote:
+> On Mon, 2025-04-21 at 09:51 -0400, Mimi Zohar wrote:
+>> On Fri, 2025-04-18 at 12:36 +0800, Baoquan He wrote:
+>>> On 04/15/25 at 07:10pm, steven chen wrote:
+>>>> From: Steven Chen <chenste@linux.microsoft.com>
+>>>   ^^^^^^
+>> As James Bottomley previously explained[1], if you haven't made any changes to
+>> Tushar's patch, then the very first line of the patch description would be
+>> "From: Tushar Sugandhi <tusharsu@linux.microsoft.com>" followed by a blank line.
+>> If there is a minor change, you would add "<your email address>: explanation".
+>> For example:
+>>
+>> Steven Chen <chenste@linux.microsoft.com>: modified patch description
+> To clarify: This line would be included below with your Signed-off-by tag.
 >
-> > Hacking into bpf internal objects like maps is not acceptable.
->
-> We've heard your concerns about kern_sys_bpf and we agree that the LSM
-> should not be calling it. The proposal in this email should meet both of
-> our needs
-> https://lore.kernel.org/bpf/874iypjl8t.fsf@microsoft.com/
+>> [1]
+>> https://lore.kernel.org/lkml/58e70121aaee33679ac295847197c1e5511b2a81.camel@HansenPartnership.com/
+>>
+>>>> Implement kimage_map_segment() to enable IMA to map the measurement log
+>>>> list to the kimage structure during the kexec 'load' stage. This function
+>>>> gathers the source pages within the specified address range, and maps them
+>>>> to a contiguous virtual address range.
+>>>>
+>>>> This is a preparation for later usage.
+>>>>
+>>>> Implement kimage_unmap_segment() for unmapping segments using vunmap().
+>>>>
+>>>> From: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+>>>    ^^^^^^
+>> Neither "Author:" nor "From:" belong here.  Please remove.
+>>
+>>>> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+>>>    ^^^^^^^
+>> Having Tushar's "Signed-off-by" tag and yours below indicate that you modified
+>> the original author's patch.
+> To clarify: "Just" having Tushar's "Signed-off-by" tag and yours below indicate
+> that you modified the original author's patch.
 
-kern_sys_bpf was one example of a layering violation.
-Calling bpf_map_get() and
-map->ops->map_lookup_elem() from a module is not ok either.
+Hi Mimi,
 
-lskel doing skel_map_freeze is not solving the issue.
-It is still broken from TOCTOU pov.
-freeze only makes a map readonly to user space.
-Any program can still read/write it.
-That's why freeze wasn't done back then when lskel was introduced.
-There is still work to do to make signing practical.
-One needs to think of libbpf equivalent loaders in golang and rust.
-The solution has to work for them too.
-In that sense bpf signing is not analogous to kernel module signing.
-Programs are not distributed as elf files.
-elf is an intermediate step in a build process.
-bpftool takes elf and generates skel or lskel and
-user space does #include <skel.h>
-to access maps and global variables directly.
-See how systemd does it.
-bpf progs are part of various skel.h-s in there.
-systemd is also using an old style bpf progs written in bpf assembly.
-We need to figure out how to make them signed too.
+I will update it in next version.
 
-The signing problem is big and difficult.
-It will take time to figure out all these challenges.
-Introduction of lskel back in 2021 was the first step towards signing
-(as the commit log clearly states).
-lskel approach is likely a solution for a large class of bpf users,
-but not for all. It won't work for bpftrace and bcc.
-lskel loading is also opaque.
-The verifier errors are not propagated from the loader prog back to the use=
-r.
-To load normal skeleton the user space can do:
-LIBBPF_OPTS(bpf_object_open_opts, opts);
-opts.kernel_log_buf =3D my_verifier_log_buf;
-myskel__open_opts(&opts);
-There is no __open_opts() equivalent for lskel.
-It needs to be fixed before we can recommend lksel as a solution
-to signing.
+Just wandering are you done reviewing or still need more time?
+
+Thanks,
+
+Steven
+
+>>>> Cc: Eric Biederman <ebiederm@xmission.com>
+>>>> Cc: Baoquan He <bhe@redhat.com>
+>>>> Cc: Vivek Goyal <vgoyal@redhat.com>
+>>>> Cc: Dave Young <dyoung@redhat.com>
+>>>> Signed-off-by: steven chen <chenste@linux.microsoft.com>
+>>>    ^^^^^
+>>>
+>>> The signing on this patch is a little confusing. I can't see who is the
+>>> real author, who is the co-author, between you and Tushar. You may need
+>>> to refer to Documentation/process/5.Posting.rst to make that clear.
+>>>
+>>>> Acked-by: Baoquan He <bhe@redhat.com>
+
+
