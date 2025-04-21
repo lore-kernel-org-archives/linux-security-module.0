@@ -1,152 +1,212 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70E7A1FC3;
-	Mon, 21 Apr 2025 00:09:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B5F54C8F
+	for <linux-security-module@vger.kernel.org>; Mon, 21 Apr 2025 02:09:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745194147; cv=none; b=E+mJqWmgbaUmr1EsmucqHQ801XAPMEAFNi3NqGtRMGzbEZbbBHmq1CcPiVcMl9eH4CCNniCVqMjbROd2qAf+ka050Fn6+1qhMZ6Vh97i4z2HeKovuaG6LuQmQrUKz92S81e7f4curRQ8wXlooTivOMa5aHtoiBY1Bs+xBwS2chQ=
+	t=1745201370; cv=none; b=OLqIz9ProtN0TRCl3N3+r5qqp5MXSjYKInRcxXgFCn9lLAkXA2TlupJwZ9VsgtMTQzAWFF2Ee5pE7DVJWas+4an8mC+1GiYyZqyCsTGLAfpLr9koWVZcs8iODOKQg33MgOtYSxE9RF/kyD8TEhWlUgz87wBHkXD+cStLx/+Fb54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745194147; c=relaxed/simple;
-	bh=73r5FMCoous/Yv7eGdB0ylag+M+nG1yEkQkhm2rpO24=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=NVL7arHZS0JxZTzW83p+gbe2eWE5kEB/m4UiosCz6JD0scq/HnKVwDH62JoEjygsbotog7tEhWfC8YzUwJSbjeLgIIMxm1MIgXcAK7ZIqMCfQmFWSG2Jg5azoSY/OH1w9tPjnDgCyxLLtqVblHCI7hRJJc0PNOJXu7ViQQAURXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c0wwbIdD; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1745201370; c=relaxed/simple;
+	bh=8665lUcagk6SBaoe799Wqq8bT+Js0KNMGAIWgtHXrB8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qgfqQs+zqFCtiDlJ5/e+zKkA4WaiESsE1CD7CWZc2lPgn3BQNj0wOq2AAdI12UcYaChqLIz5dOcp1bqDv9Lo8EMKu2ZisLCeyaSvuVwwKEOtoxM9pOkZm+KA1fEiQ8p4zMX8DYWR5FDYst3g9r7xR4rDjc2rpzCQd/zsk68GLYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Q/uveT18; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c0wwbIdD"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA970C4CEE2;
-	Mon, 21 Apr 2025 00:09:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745194145;
-	bh=73r5FMCoous/Yv7eGdB0ylag+M+nG1yEkQkhm2rpO24=;
-	h=From:To:Cc:Subject:Date:From;
-	b=c0wwbIdD2eYVcQ6h0+OsN0X8w5wM8JBJ3euIsCEqFqhjNU8msMulS4kPBt7fqVYXU
-	 RVgWWcJImlzNOsGjB66yKj8eV/1YuH1DEu8X7qE8MkF5hPajOqLaWyGn0cgpwAKj5e
-	 dfueWAN3TeF/IWJPQF8CV79WK1tZGN3NwXVcSTq+6r/pZMQP6C20T7hi7pemic2kO5
-	 0sQ4LTmcI93v8hWUoA3kde/iZZWiPaHBQ7Hn+5QXpk8WGdM+dY+hbF3qU1G6cbNunM
-	 x/a0U/twMnNFr75k9ZxHMQsiAdRuH+6t1azVgOWtt6y2yNMjbIVf0tMIHFNWczDxYh
-	 lLael80Atb5Lw==
-From: Kees Cook <kees@kernel.org>
-To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-Cc: Kees Cook <kees@kernel.org>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Mark Brown <broonie@kernel.org>,
-	WangYuli <wangyuli@uniontech.com>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH] landlock: Work around randstruct unnamed static initializer support
-Date: Sun, 20 Apr 2025 17:08:59 -0700
-Message-Id: <20250421000854.work.572-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Q/uveT18"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745201367;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=656yZBycWTbOcI/QDkiraTK+o6zkkKhUlNx/4jNdMZQ=;
+	b=Q/uveT18ob0kT/xdNkWH4eSfrARBjiIncIQvZ75y7URBlFC2AI3J6wb5BkA4VDegU42UOT
+	vIcQToBMkcbb4ygjpT/UsWH6WjoVTSwjUTl6hn7HchS5haoYemCdSyIgH7myVcMQxWoJT4
+	47NP3e9goICVA9SSoTLosWDvviO60kA=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-627-pYxh_6rgOYKb0DbUIMnJ8w-1; Sun,
+ 20 Apr 2025 22:09:22 -0400
+X-MC-Unique: pYxh_6rgOYKb0DbUIMnJ8w-1
+X-Mimecast-MFC-AGG-ID: pYxh_6rgOYKb0DbUIMnJ8w_1745201360
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 373B31800446;
+	Mon, 21 Apr 2025 02:09:20 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.5])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C4A2B19560A3;
+	Mon, 21 Apr 2025 02:09:16 +0000 (UTC)
+Date: Mon, 21 Apr 2025 10:09:12 +0800
+From: Baoquan He <bhe@redhat.com>
+To: steven chen <chenste@linux.microsoft.com>
+Cc: zohar@linux.ibm.com, stefanb@linux.ibm.com,
+	roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
+	eric.snowberg@oracle.com, ebiederm@xmission.com,
+	paul@paul-moore.com, code@tyhicks.com, bauermann@kolabnow.com,
+	linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
+	James.Bottomley@hansenpartnership.com, vgoyal@redhat.com,
+	dyoung@redhat.com
+Subject: Re: [PATCH v12 3/9] kexec: define functions to map and unmap segments
+Message-ID: <aAWoyExy0UMyxaoI@fedora>
+References: <20250416021028.1403-1-chenste@linux.microsoft.com>
+ <20250416021028.1403-4-chenste@linux.microsoft.com>
+ <aAHW4O9qAKzaoa+O@MiWiFi-R3L-srv>
+ <95d249ef-bfb3-431f-b633-8b3de383e067@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3923; i=kees@kernel.org; h=from:subject:message-id; bh=73r5FMCoous/Yv7eGdB0ylag+M+nG1yEkQkhm2rpO24=; b=owGbwMvMwCVmps19z/KJym7G02pJDBmsPbOfGkyVlrxSeH/qgi9rd92/pvxC/IuL5qXNs1+s5 Z2trxSt0FHKwiDGxSArpsgSZOce5+Lxtj3cfa4izBxWJpAhDFycAjCRHB9Ghu6r7xV2X1HaasK/ 6XrjP4dc1VyZ65vEnpbdSivt/Z9dc5zhn5mjrIf9j/O8PVpZk+zevAqemJtR6BL6+Zx9pv27/de 2cgAA
-X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <95d249ef-bfb3-431f-b633-8b3de383e067@linux.microsoft.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Unnamed static initializers aren't supported by the randstruct GCC
-plugin. Quoting the plugin, "set up a bogus anonymous struct field
-designed to error out on unnamed struct initializers as gcc provides
-no other way to detect such code". That is exactly what happens
-with the landlock code, so adjust the static initializers for structs
-lsm_ioctlop_audit and landlock_request that contain a randomized structure
-(struct path) to use named variables, which avoids the intentional
-GCC crashes:
+On 04/20/25 at 05:30am, steven chen wrote:
+> On 4/17/2025 9:36 PM, Baoquan He wrote:
+> > On 04/15/25 at 07:10pm, steven chen wrote:
+> > > From: Steven Chen <chenste@linux.microsoft.com>
+> >   ^^^^^^
+> > > Implement kimage_map_segment() to enable IMA to map the measurement log
+> > > list to the kimage structure during the kexec 'load' stage. This function
+> > > gathers the source pages within the specified address range, and maps them
+> > > to a contiguous virtual address range.
+> > > 
+> > > This is a preparation for later usage.
+> > > 
+> > > Implement kimage_unmap_segment() for unmapping segments using vunmap().
+> > > 
+> > > From: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+> >    ^^^^^^
+> > > Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
+> >    ^^^^^^^
+> > > Cc: Eric Biederman <ebiederm@xmission.com>
+> > > Cc: Baoquan He <bhe@redhat.com>
+> > > Cc: Vivek Goyal <vgoyal@redhat.com>
+> > > Cc: Dave Young <dyoung@redhat.com>
+> > > Signed-off-by: steven chen <chenste@linux.microsoft.com>
+> >    ^^^^^
+> > 
+> > The signing on this patch is a little confusing. I can't see who is the
+> > real author, who is the co-author, between you and Tushar. You may need
+> > to refer to Documentation/process/5.Posting.rst to make that clear.
+> 
+> Hi Baoquan,
+> 
+> From my understanding, if there is no change from the original author patch,
+> need to add
+> From tag and Signed-off-by tag; otherwise, if there are changes,
+> Signed-off-by can be used.
 
-security/landlock/fs.c: In function 'hook_file_ioctl_common':
-security/landlock/fs.c:1745:61: internal compiler error: in count_type_elements, at expr.cc:7092
- 1745 |                         .u.op = &(struct lsm_ioctlop_audit) {
-      |                                                             ^
+If you don't change a patch, you can add your Signed-off-by when
+posting. However, the From decides who is the real author. There's no
+way to have two From on one patch. My personal understanding.
 
-security/landlock/fs.c: In function 'log_fs_change_topology_path':
-security/landlock/fs.c:1379:65: internal compiler error: in count_type_elements, at expr.cc:7092
- 1379 |         landlock_log_denial(subject, &(struct landlock_request) {
-      |                                                                 ^
-
-We went 8 years before tripping over this! With this patch landed,
-we can enable COMPILE_TEST builds with the randstruct GCC plugin again.
-
-Reported-by: "Dr. David Alan Gilbert" <linux@treblig.org>
-Closes: https://lore.kernel.org/lkml/Z_PRaKx7q70MKgCA@gallifrey/
-Reported-by: Mark Brown <broonie@kernel.org>
-Closes: https://lore.kernel.org/lkml/20250407-kbuild-disable-gcc-plugins-v1-1-5d46ae583f5e@kernel.org/
-Reported-by: WangYuli <wangyuli@uniontech.com>
-Closes: https://lore.kernel.org/lkml/337D5D4887277B27+3c677db3-a8b9-47f0-93a4-7809355f1381@uniontech.com/
-Signed-off-by: Kees Cook <kees@kernel.org>
----
-Cc: "Mickaël Salaün" <mic@digikod.net>
-Cc: "Günther Noack" <gnoack@google.com>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Paul Moore <paul@paul-moore.com>
-Cc: James Morris <jmorris@namei.org>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: <linux-security-module@vger.kernel.org>
----
- security/landlock/fs.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
-
-diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-index 6fee7c20f64d..b2818afb0503 100644
---- a/security/landlock/fs.c
-+++ b/security/landlock/fs.c
-@@ -1376,14 +1376,14 @@ static void
- log_fs_change_topology_path(const struct landlock_cred_security *const subject,
- 			    size_t handle_layer, const struct path *const path)
- {
--	landlock_log_denial(subject, &(struct landlock_request) {
-+	struct landlock_request request = {
- 		.type = LANDLOCK_REQUEST_FS_CHANGE_TOPOLOGY,
--		.audit = {
--			.type = LSM_AUDIT_DATA_PATH,
--			.u.path = *path,
--		},
-+		.audit.type = LSM_AUDIT_DATA_PATH,
- 		.layer_plus_one = handle_layer + 1,
--	});
-+	};
-+	request.audit.u.path = *path;
-+
-+	landlock_log_denial(subject, &request);
- }
- 
- static void log_fs_change_topology_dentry(
-@@ -1720,6 +1720,7 @@ static int hook_file_truncate(struct file *const file)
- static int hook_file_ioctl_common(const struct file *const file,
- 				  const unsigned int cmd, const bool is_compat)
- {
-+	struct lsm_ioctlop_audit audit_log;
- 	access_mask_t allowed_access = landlock_file(file)->allowed_access;
- 
- 	/*
-@@ -1738,14 +1739,13 @@ static int hook_file_ioctl_common(const struct file *const file,
- 				  is_masked_device_ioctl(cmd))
- 		return 0;
- 
-+	audit_log.path = file->f_path;
-+	audit_log.cmd = cmd;
- 	landlock_log_denial(landlock_cred(file->f_cred), &(struct landlock_request) {
- 		.type = LANDLOCK_REQUEST_FS_ACCESS,
- 		.audit = {
- 			.type = LSM_AUDIT_DATA_IOCTL_OP,
--			.u.op = &(struct lsm_ioctlop_audit) {
--				.path = file->f_path,
--				.cmd = cmd,
--			},
-+			.u.op = &audit_log,
- 		},
- 		.all_existing_optional_access = _LANDLOCK_ACCESS_FS_OPTIONAL,
- 		.access = LANDLOCK_ACCESS_FS_IOCTL_DEV,
--- 
-2.34.1
+> 
+> Steven
+> 
+> > > Acked-by: Baoquan He <bhe@redhat.com>
+> > > ---
+> > >   include/linux/kexec.h |  6 +++++
+> > >   kernel/kexec_core.c   | 54 +++++++++++++++++++++++++++++++++++++++++++
+> > >   2 files changed, 60 insertions(+)
+> > > 
+> > > diff --git a/include/linux/kexec.h b/include/linux/kexec.h
+> > > index f0e9f8eda7a3..7d6b12f8b8d0 100644
+> > > --- a/include/linux/kexec.h
+> > > +++ b/include/linux/kexec.h
+> > > @@ -467,13 +467,19 @@ extern bool kexec_file_dbg_print;
+> > >   #define kexec_dprintk(fmt, arg...) \
+> > >           do { if (kexec_file_dbg_print) pr_info(fmt, ##arg); } while (0)
+> > > +extern void *kimage_map_segment(struct kimage *image, unsigned long addr, unsigned long size);
+> > > +extern void kimage_unmap_segment(void *buffer);
+> > >   #else /* !CONFIG_KEXEC_CORE */
+> > >   struct pt_regs;
+> > >   struct task_struct;
+> > > +struct kimage;
+> > >   static inline void __crash_kexec(struct pt_regs *regs) { }
+> > >   static inline void crash_kexec(struct pt_regs *regs) { }
+> > >   static inline int kexec_should_crash(struct task_struct *p) { return 0; }
+> > >   static inline int kexec_crash_loaded(void) { return 0; }
+> > > +static inline void *kimage_map_segment(struct kimage *image, unsigned long addr, unsigned long size)
+> > > +{ return NULL; }
+> > > +static inline void kimage_unmap_segment(void *buffer) { }
+> > >   #define kexec_in_progress false
+> > >   #endif /* CONFIG_KEXEC_CORE */
+> > > diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
+> > > index c0bdc1686154..a5e378e1dc7f 100644
+> > > --- a/kernel/kexec_core.c
+> > > +++ b/kernel/kexec_core.c
+> > > @@ -867,6 +867,60 @@ int kimage_load_segment(struct kimage *image,
+> > >   	return result;
+> > >   }
+> > > +void *kimage_map_segment(struct kimage *image,
+> > > +			 unsigned long addr, unsigned long size)
+> > > +{
+> > > +	unsigned long src_page_addr, dest_page_addr = 0;
+> > > +	unsigned long eaddr = addr + size;
+> > > +	kimage_entry_t *ptr, entry;
+> > > +	struct page **src_pages;
+> > > +	unsigned int npages;
+> > > +	void *vaddr = NULL;
+> > > +	int i;
+> > > +
+> > > +	/*
+> > > +	 * Collect the source pages and map them in a contiguous VA range.
+> > > +	 */
+> > > +	npages = PFN_UP(eaddr) - PFN_DOWN(addr);
+> > > +	src_pages = kmalloc_array(npages, sizeof(*src_pages), GFP_KERNEL);
+> > > +	if (!src_pages) {
+> > > +		pr_err("Could not allocate ima pages array.\n");
+> > > +		return NULL;
+> > > +	}
+> > > +
+> > > +	i = 0;
+> > > +	for_each_kimage_entry(image, ptr, entry) {
+> > > +		if (entry & IND_DESTINATION) {
+> > > +			dest_page_addr = entry & PAGE_MASK;
+> > > +		} else if (entry & IND_SOURCE) {
+> > > +			if (dest_page_addr >= addr && dest_page_addr < eaddr) {
+> > > +				src_page_addr = entry & PAGE_MASK;
+> > > +				src_pages[i++] =
+> > > +					virt_to_page(__va(src_page_addr));
+> > > +				if (i == npages)
+> > > +					break;
+> > > +				dest_page_addr += PAGE_SIZE;
+> > > +			}
+> > > +		}
+> > > +	}
+> > > +
+> > > +	/* Sanity check. */
+> > > +	WARN_ON(i < npages);
+> > > +
+> > > +	vaddr = vmap(src_pages, npages, VM_MAP, PAGE_KERNEL);
+> > > +	kfree(src_pages);
+> > > +
+> > > +	if (!vaddr)
+> > > +		pr_err("Could not map ima buffer.\n");
+> > > +
+> > > +	return vaddr;
+> > > +}
+> > > +
+> > > +void kimage_unmap_segment(void *segment_buffer)
+> > > +{
+> > > +	vunmap(segment_buffer);
+> > > +}
+> > > +
+> > >   struct kexec_load_limit {
+> > >   	/* Mutex protects the limit count. */
+> > >   	struct mutex mutex;
+> > > -- 
+> > > 2.43.0
+> > > 
+> 
 
