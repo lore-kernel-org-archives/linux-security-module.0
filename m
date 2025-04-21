@@ -1,137 +1,165 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B1F22F2E;
-	Mon, 21 Apr 2025 21:44:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1411A221FB3
+	for <linux-security-module@vger.kernel.org>; Mon, 21 Apr 2025 22:04:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745271867; cv=none; b=TM0EnkDBberlXOhGmU6PIgROVsdpH9tkOEnPPYtaPrbxVrdlADeQmE7kn3HRvFuxeAvC3eYCbItgbsH+hd/K5lWI9z7kVFLlXavC+sh/fOuxRSG5oEhw//fBcr+XSX2LHwd6w4Cxt4aDNcw50JlSvrEedFyZKdcxpPWhule0LYY=
+	t=1745273049; cv=none; b=BfgC7p4tWuEdMLpsqFqmnMwiOhGrG9wbqWVe7nDZEmYUx94mPqyWGERK84fugiP66azG5XbdGb6zMK6j3Kvm5OnPID/m4MGqO8VCmZUFp8Y8CaaQ6vHtT/aHO7urZGPFx1ceg8/xfnO9R+rD6rjQp6vYBtgBXRRM2SlSh5o7xqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745271867; c=relaxed/simple;
-	bh=PT5gupkicFt2esXi8ztZd0p0piQA/lhlpgm4nsM6Gak=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZcBBZ2i19nGtLZrikHGuGAo+TrU4tOiQ84qQP7jJQBC7kR1IDjIVuA6ROr5rcUCODYCzr6V5knjWadl/qmQ5k/ghSdr7VG/0PZH4ceD9aaonKp62cqKAUiUSGujTTcKNMk5FyYPsBNiHICwOI7ZA05MsVBr9wWtV3QAPY1gYJnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=GbSjsjQD; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+	s=arc-20240116; t=1745273049; c=relaxed/simple;
+	bh=+muycKiBaV5UQqyraI1xwjnbIAioVU0Qup0KnvqWYU8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VAAxUTad/NaM6hnk5lNi6twMDzbL67/wIcRLrOQMRAsDhiqYfMsACPDSbZ/rMC4w2S2Pbc2obmxz2yMRqnKlWEe4uDlTFwOuBNaWmoTDsmEdRiCuGjyO3nqRRFZPi7EB0jb6KCsJL/ZwtP+M9lj8R7vd0Ns9hh1AIZ5h0ssbLWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=TM0jYe6K; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="GbSjsjQD"
-Received: from [100.70.160.93] (unknown [172.172.34.12])
-	by linux.microsoft.com (Postfix) with ESMTPSA id EC27F20BCAD1;
-	Mon, 21 Apr 2025 14:44:22 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com EC27F20BCAD1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1745271865;
-	bh=aqS4FuLxGEljkPeVAmETGzCYTa7oTLpRxOsxhZi2z6I=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=GbSjsjQDyLZCMRTA1svAS4y/9qHUB+OZmR0RALHX7CiHBX0SfVDQF2KvSK/aRO5Eh
-	 iS4wa32R1E8AI+ZpHnNY6B7Yxbxk2a+kpdOHCMOyvB+YEfqMVPxAavxLO747qIkUzH
-	 PLMsOCr0PoA0zODXoafNJko3zm3p9RoVwF3oMBj4=
-Message-ID: <2434013a-72d2-450d-a043-fcea916ef22d@linux.microsoft.com>
-Date: Mon, 21 Apr 2025 14:44:21 -0700
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="TM0jYe6K"
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e60b75f87aaso3011336276.2
+        for <linux-security-module@vger.kernel.org>; Mon, 21 Apr 2025 15:04:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1745273046; x=1745877846; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zJkBF2Iq9gEiEg9l+Unpndzsq5ns/iefqc51nXn2fRQ=;
+        b=TM0jYe6KZQyjxuohb24LcAj0BwGkJx71bYweV1zBZAi5uSods9LE7nYSYB1weQAJyA
+         Asb3SNeaVe0WNePwYwLlc587gtrepTlWlFyQI7UVxBJV6w4goVbXoPrJ0DFzCTjj3yT9
+         gfR7Oo7ioVNRFiJGTyzI0VvU8FKpw//ZJh9tYCUKeTlAvD+xzihdwZSTl7dig7sbgpVp
+         ZpM8Sd01p7AgiTdwukFEyS2IwOVYdrtBnZk98SewZ8NkMNAuq4Iio5UMOAA+xWWLJ7Sw
+         /r7LHhjsmDL9n9lv1o0MmTvFgCOzTZcDqqKACG77tU57Y3oHtX8pnnQALz81AvoNuz9G
+         fsbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745273046; x=1745877846;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zJkBF2Iq9gEiEg9l+Unpndzsq5ns/iefqc51nXn2fRQ=;
+        b=k+j2dj9inZSHMXj2wrprcmoVFFcAuGn5pcby58UhZAU7FVwC1GeQFz26qaITwN3HGF
+         cItVZjglxX80jBgncqhxR216y5kRrT9CaSSkoQf5RvrONY4UrHgH+Na6FqgpavRKFNGW
+         H2A/UuFCU6iU8/KR6wo+fIUwsNPWQk2CHFY+qXhpI5dF85w5pvw0vBdzYqcCQHFLE7ii
+         43a6KHgvE9ramxpOh2IQZIrPb3DsMzqQIFaf6JhSM4cygumUm765tDdIjIFJFqc+CMu9
+         b6tGRW4yXoO5xrWZ9SD+vzvHICKo1M75cHjFSlA340ogIqvv2GT501bAXPeSL1/975tl
+         cS4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXygWc4M3Ng8iXSqVHu8Ybz08a1AFHPgypIpVbEH/njPO74bxGSw4zwY/40Xj82++a2wqwIA7CZScFpdQjj0+2q5mA57xo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgpNC8sVB90TTsVnFNPtc1tczm3S9XVtxwNn75LiCclLyEyfx8
+	eSstqsYohk+loE7JnyJ6kKiYhDWRFo9Y2aN+3uvDfR+K4mHqjjayYwtop+gTIktZwtMetokyDcA
+	XBwWbzpD3gOeDUx2HuIdieJLbHLj3nI2RYjaS
+X-Gm-Gg: ASbGncsIjNpWnMUFNAWBB0is58BhiV4OpuKw0WGDF0sSfUrFZQKl94l1HErXfZGVyK4
+	y6WpXdNNz8QIyX5KRGt1uFL3yzTpx4e1durK8nnMAmDBhYrVBPNrBTG1rQUEimQUmqpOYUyZ5Uk
+	Kd5xTYMJMwUeji8PqGjCGfbA==
+X-Google-Smtp-Source: AGHT+IFjErmdtD9yYgSCvg50nxSRhAaGxDl0MNp2zLoVowjSrOfaMAYKD0cmZ307fSWsTGOXpc7lz6KmktYrMh1O/kc=
+X-Received: by 2002:a05:690c:380a:b0:706:aedf:4d91 with SMTP id
+ 00721157ae682-706cccfa7f8mr180651297b3.14.1745273045751; Mon, 21 Apr 2025
+ 15:04:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v12 3/9] kexec: define functions to map and unmap segments
-To: Mimi Zohar <zohar@linux.ibm.com>, Baoquan He <bhe@redhat.com>
-Cc: stefanb@linux.ibm.com, roberto.sassu@huaweicloud.com,
- roberto.sassu@huawei.com, eric.snowberg@oracle.com, ebiederm@xmission.com,
- paul@paul-moore.com, code@tyhicks.com, bauermann@kolabnow.com,
- linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
- madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
- James.Bottomley@hansenpartnership.com, vgoyal@redhat.com, dyoung@redhat.com
-References: <20250416021028.1403-1-chenste@linux.microsoft.com>
- <20250416021028.1403-4-chenste@linux.microsoft.com>
- <aAHW4O9qAKzaoa+O@MiWiFi-R3L-srv>
- <dcde124baec01318e661f5430ce8a008a6d196c0.camel@linux.ibm.com>
- <ef18ae186cd17431b9ff6b8a443b63fd6fb78b98.camel@linux.ibm.com>
- <a9e3713f-4edf-479c-8be1-fe5b3dc22866@linux.microsoft.com>
- <6c3aca6815edf25828bad6f0b4587a040ada03c5.camel@linux.ibm.com>
-Content-Language: en-US
-From: steven chen <chenste@linux.microsoft.com>
-In-Reply-To: <6c3aca6815edf25828bad6f0b4587a040ada03c5.camel@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250404215527.1563146-1-bboscaccy@linux.microsoft.com>
+ <20250404215527.1563146-2-bboscaccy@linux.microsoft.com> <CAADnVQJyNRZVLPj_nzegCyo+BzM1-whbnajotCXu+GW+5-=P6w@mail.gmail.com>
+ <87semdjxcp.fsf@microsoft.com> <CAADnVQ+JGfwRgsoe2=EHkXdTyQ8ycn0D9nh1k49am++4oXUPHg@mail.gmail.com>
+ <87friajmd5.fsf@microsoft.com> <CAADnVQKb3gPBFz+n+GoudxaTrugVegwMb8=kUfxOea5r2NNfUA@mail.gmail.com>
+ <87a58hjune.fsf@microsoft.com> <CAADnVQ+LMAnyT4yV5iuJ=vswgtUu97cHKnvysipc6o7HZfEbUA@mail.gmail.com>
+ <87y0w0hv2x.fsf@microsoft.com> <CAADnVQKF+B_YYwOCFsPBbrTBGKe4b22WVJFb8C0PHGmRAjbusQ@mail.gmail.com>
+In-Reply-To: <CAADnVQKF+B_YYwOCFsPBbrTBGKe4b22WVJFb8C0PHGmRAjbusQ@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 21 Apr 2025 18:03:54 -0400
+X-Gm-Features: ATxdqUFcqFjq20jX5yxtvOH3DHCD3LQ0LRd6y2kU6Qtvx6XNCs0BPjy44J04_l4
+Message-ID: <CAHC9VhS0kQf1mdrvdrs4F675ZbGh9Yw8r2noZqDUpOxRYoTL8Q@mail.gmail.com>
+Subject: Re: [PATCH v2 security-next 1/4] security: Hornet LSM
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Blaise Boscaccy <bboscaccy@linux.microsoft.com>, Jonathan Corbet <corbet@lwn.net>, 
+	David Howells <dhowells@redhat.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	"David S. Miller" <davem@davemloft.net>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Shuah Khan <shuah@kernel.org>, 
+	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
+	Jan Stancek <jstancek@redhat.com>, Neal Gompa <neal@gompa.dev>, 
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	keyrings@vger.kernel.org, 
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>, 
+	LSM List <linux-security-module@vger.kernel.org>, 
+	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
+	clang-built-linux <llvm@lists.linux.dev>, nkapron@google.com, 
+	Matteo Croce <teknoraver@meta.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	Cong Wang <xiyou.wangcong@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 4/21/2025 2:35 PM, Mimi Zohar wrote:
-> On Mon, 2025-04-21 at 13:40 -0700, steven chen wrote:
->> On 4/21/2025 7:18 AM, Mimi Zohar wrote:
->>> On Mon, 2025-04-21 at 09:51 -0400, Mimi Zohar wrote:
->>>> On Fri, 2025-04-18 at 12:36 +0800, Baoquan He wrote:
->>>>> On 04/15/25 at 07:10pm, steven chen wrote:
->>>>>> From: Steven Chen <chenste@linux.microsoft.com>
->>>>>    ^^^^^^
->>>> As James Bottomley previously explained[1], if you haven't made any changes to
->>>> Tushar's patch, then the very first line of the patch description would be
->>>> "From: Tushar Sugandhi <tusharsu@linux.microsoft.com>" followed by a blank line.
->>>> If there is a minor change, you would add "<your email address>: explanation".
->>>> For example:
->>>>
->>>> Steven Chen <chenste@linux.microsoft.com>: modified patch description
->>> To clarify: This line would be included below with your Signed-off-by tag.
->>>
->>>> [1]
->>>> https://lore.kernel.org/lkml/58e70121aaee33679ac295847197c1e5511b2a81.camel@HansenPartnership.com/
->>>>
->>>>>> Implement kimage_map_segment() to enable IMA to map the measurement log
->>>>>> list to the kimage structure during the kexec 'load' stage. This function
->>>>>> gathers the source pages within the specified address range, and maps them
->>>>>> to a contiguous virtual address range.
->>>>>>
->>>>>> This is a preparation for later usage.
->>>>>>
->>>>>> Implement kimage_unmap_segment() for unmapping segments using vunmap().
->>>>>>
->>>>>> From: Tushar Sugandhi <tusharsu@linux.microsoft.com>
->>>>>     ^^^^^^
->>>> Neither "Author:" nor "From:" belong here.  Please remove.
->>>>
->>>>>> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
->>>>>     ^^^^^^^
->>>> Having Tushar's "Signed-off-by" tag and yours below indicate that you modified
->>>> the original author's patch.
->>> To clarify: "Just" having Tushar's "Signed-off-by" tag and yours below indicate
->>> that you modified the original author's patch.
->> Hi Mimi,
->>
->> I will update it in next version.
-> Sigh, after reviewing your discussion with Baoquan, I'm not sure whether my
-> comment this morning added more confusion.
->
-> Option 1: Include a single "From:" line at the very top to change the author
-> from yourself to someone else.  The following from line would make Tushar the
-> patch author:  From: Tushar Sugandhi <tusharsu@linux.microsoft.com>
->
-> In addition, any minor changes you made should be added before your Signed-off-
-> by tag.  For example: Steven Chen <chenste@linux.microsoft.com>: modified patch
-> description
->
-> Option 2: As mentioned previously and now discussed with Baoquan, adding "Co-
-> developed-by:"
->
->> Just wandering are you done reviewing or still need more time?
-> Yes, I just finished reviewing/testing.  The patch descriptions are looking much
-> better.  As Baoquan reminded you, please remember to update the "ima: define and
-> call ima_alloc_kexec_file_buf()" patch description.
->
-> thanks,
->
-> Mimi
-Thanks a lot!
->>>>>> Cc: Eric Biederman <ebiederm@xmission.com>
->>>>>> Cc: Baoquan He <bhe@redhat.com>
->>>>>> Cc: Vivek Goyal <vgoyal@redhat.com>
->>>>>> Cc: Dave Young <dyoung@redhat.com>
->>>>>> Signed-off-by: steven chen <chenste@linux.microsoft.com>
->>>>>     ^^^^^
->>>>>
->>>>> The signing on this patch is a little confusing. I can't see who is the
->>>>> real author, who is the co-author, between you and Tushar. You may need
->>>>> to refer to Documentation/process/5.Posting.rst to make that clear.
->>>>>
->>>>>> Acked-by: Baoquan He <bhe@redhat.com>
+On Mon, Apr 21, 2025 at 4:13=E2=80=AFPM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+> On Wed, Apr 16, 2025 at 10:31=E2=80=AFAM Blaise Boscaccy
+> <bboscaccy@linux.microsoft.com> wrote:
+> >
+> > > Hacking into bpf internal objects like maps is not acceptable.
+> >
+> > We've heard your concerns about kern_sys_bpf and we agree that the LSM
+> > should not be calling it. The proposal in this email should meet both o=
+f
+> > our needs
+> > https://lore.kernel.org/bpf/874iypjl8t.fsf@microsoft.com/
 
+...
 
+> Calling bpf_map_get() and
+> map->ops->map_lookup_elem() from a module is not ok either.
+
+A quick look uncovers code living under net/ which calls into these APIs.
+
+> lskel doing skel_map_freeze is not solving the issue.
+> It is still broken from TOCTOU pov.
+> freeze only makes a map readonly to user space.
+> Any program can still read/write it.
+
+When you say "any program" you are referring to any BPF program loaded
+into the kernel, correct?  At least that is my understanding of
+"freezing" a BPF map, while userspace is may be unable to modify the
+map's contents, it is still possible for a BPF program to modify it.
+If I'm mistaken, I would appreciate a pointer to a correct description
+of map freezing.
+
+Assuming the above is correct, that a malicious bit of code running in
+kernel context could cause mischief, isn't a new concern, and in fact
+it is one of the reasons why Hornet is valuable.  Hornet allows
+admins/users to have some assurance that the BPF programs they load
+into their system come from a trusted source (trusted not to
+intentionally do Bad Things in the kernel) and haven't been modified
+to do Bad Things (like modify lskel maps).
+
+> One needs to think of libbpf equivalent loaders in golang and rust.
+...
+> systemd is also using an old style bpf progs written in bpf assembly.
+
+I've briefly talked with Blaise about the systemd issue in particular,
+and I believe there are some relatively easy ways to work around the
+ELF issue in the current version of Hornet.  I know Blaise is tied up
+for the next couple of days on another fire, but I'm sure the next
+revision will have a solution for this.
+
+> Introduction of lskel back in 2021 was the first step towards signing
+> (as the commit log clearly states).
+> lskel approach is likely a solution for a large class of bpf users,
+> but not for all. It won't work for bpftrace and bcc.
+
+As most everyone on the To/CC line already knows, Linux kernel
+development is often iterative.  Not only is it easier for the kernel
+devs to develop and review incremental additions to functionality, it
+also enables a feedback loop where users can help drive the direction
+of the functionality as it is built.  I view Hornet as an iterative
+improvement, building on the lskel concept, that helps users towards
+their goal of load time verification of code running inside the
+kernel.  Hornet, as currently described, may not be the solution for
+everything, but it can be the solution for something that users are
+desperately struggling with today and as far as I'm concerned, that is
+a good thing worth supporting.
+
+--=20
+paul-moore.com
