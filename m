@@ -1,65 +1,65 @@
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 151562820C6
-	for <linux-security-module@vger.kernel.org>; Tue, 22 Apr 2025 19:34:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E5502989A0
+	for <linux-security-module@vger.kernel.org>; Tue, 22 Apr 2025 19:53:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745350500; cv=none; b=REMeKWRfTNEN+ya9epFG+Fvl0bZJ8eCNuQ9Jq+GGW44/6d711ziDgXjEVObRdGWX3l/aIRLnihNocydXfq+AvD19MQjVXinfHLIAv6aQjRSKcI0mkjN15yJPc4219txg7YIc0tdUdRs5lj6Bl8Hp83yiSGn2vlj96xKAPSROwhc=
+	t=1745351601; cv=none; b=cW+ST9qiv5eeUfH9anbXqOVMPIgXFblYZvI/Pebj8QuEqkGF9rxgPIvc40waazdXyNx7qi4mSxkhHgM7zqI3Tv/EciTec6qDX43XGCHQXZfJmw/IdOyqfTKixT+XbTw0WPp5twEvZTRyL6yRTm8lUiYf5wkBnyoh87qY+r2Sz9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745350500; c=relaxed/simple;
-	bh=4tnZMN55DZmrCG4zNi9F7Y/HI3ARmqLqBfDB/B0Tt5I=;
+	s=arc-20240116; t=1745351601; c=relaxed/simple;
+	bh=PWxS3vH5MIya4Y1XE+8v8lo5FbaHNORUq5X/mTmli3w=;
 	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=U09zRc8GP9I4kvvJLbrcMTMH0rsDJ9gW3dkMlv9bxFsCwyQORfBCS27bXoJXkZjQLIkx6Z1nHkTqH/2AMd5Qj7DNttG8qg7cnvD/FGB32LAumcf85EO0Zjl7ZjRMn2r0pgSsbBKvbjCX+iYXMa12e15u38z2kosb6++MalY8HmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=XwPJVMKp; arc=none smtp.client-ip=209.85.160.180
+	 References:In-Reply-To; b=AMB+BrNsNYgmTtBt7/mZIexO/Fxs+G49g64Acf20vUoV0yQEbcUnrFXho2RJ7kh7zmc+doU1BEnKnBgALoTk+p4h+tUP0kTdzk91pGQQ+bh4meTVaSM+fZed+/luwjL4iaYwwO6DdHpv0JriVkZl8JpBAXBpE/HaVNgQruMH82M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=M1u1LZv/; arc=none smtp.client-ip=209.85.222.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="XwPJVMKp"
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-476a1acf61eso52537331cf.1
-        for <linux-security-module@vger.kernel.org>; Tue, 22 Apr 2025 12:34:58 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="M1u1LZv/"
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7c55b53a459so565590185a.3
+        for <linux-security-module@vger.kernel.org>; Tue, 22 Apr 2025 12:53:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1745350498; x=1745955298; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1745351598; x=1745956398; darn=vger.kernel.org;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :mime-version:message-id:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=UgMOi5bYMQGhj+CTXzVuh1219rLi/oMk41tK038pDbM=;
-        b=XwPJVMKpxFLThF1PurCy4LBhTA+lDWJDxcfTUHWKU9zy1A1kJuYCesKXTfout0UL8v
-         eQ5vqo7/KK87q2jqqAoeSbmaZ1PAkgOyJUJvO0z9dZDumYzd4uutSMp+b2JuPLkEJxms
-         7JVq+PsJEzNfwoNDbJ7sXXsEMkrX/9ePhcH2KXpdx4e24sjLYLvSSEwdU+QDO6ibijQf
-         JjujJ9cGTpjXI2IJ3IGW6Nplk/aBCjMzZx5UPBvVSq3e8m/6o3denv6Le8HPbF8RGZfl
-         LIuKIlwNzuSANKoVDhQuDueF1hQ8+6Tb0O60ebR/uIu90D8CpiSqf7aaJjdTqXv6b/1M
-         e57A==
+        bh=CJeE91ey+OTutpPH1TtR3ZwONivHtJTNBwvGlSaUkMA=;
+        b=M1u1LZv/B+p9P6GfqdJpTV4miwwvNgvGpmyz/5iakgkEjio6TocDjohtYBZoB2UMfd
+         w9vP4WMQ5WZ7KSDQU8yoR2KRoeSHjjAo0g180MqZOpzKyCwNSwBpqqYnv4gbrrFSqYz3
+         KzH9yqve2hUuGUUuPv7vUjtRjifLU8KdE1K1HMtznM0WGxp8gMyu0Qz7JR/ar9PZhMbt
+         3kiAXjW/59iRAL6KgQ9n98xdlnuLV1/MtDskV68gM7P72tgF/+fhbEC/yr9u9+QAk/2z
+         qXJVN1SvxnKNREjS9Ae+A4ZacN2dzag6dOUbsJ14WxK5HqCD8xBV0X7jPi5MkQOXEOOj
+         /STw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745350498; x=1745955298;
+        d=1e100.net; s=20230601; t=1745351598; x=1745956398;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=UgMOi5bYMQGhj+CTXzVuh1219rLi/oMk41tK038pDbM=;
-        b=GYUVCgNeJyshD5F1cod7fT6P5zQPLHrVhd3KaEASpFCuXq5/TpYVHJs4XuW2gPxoab
-         lDRz8fTM/Jnv0VpW59D/FpBOqJh6QEHmkAfTXoJr5i+44l7v7bcfGVigauHjlBGzfKmu
-         m9yTMC1w+cCfVqlhAsryAPunWvQhq8h5uXB8/FXIM+OO1HTrjc4KkcTu/wfmdA0P1M1u
-         kqQ5Ry96KGfwmFaJc0dTS95Xah2gMW1h5JLqVOCjjOp0JzZWWI75aMUASp7Un64VZYoS
-         t3+ajnY9ulOWAnMfNE9b5bGoBQDWOsuz8ZPSb55DbsBUc8PPmqzbuIkv7zagsvN8ia4Z
-         ljEg==
-X-Forwarded-Encrypted: i=1; AJvYcCX+rjZwdVEjcYtgwqYPsK5CpJ4BuNLO3ZdhJV06AV81d41NBaDOenOT+GgGYXJ/iln53pSkB6tqOEVcI3dCDAF8IJm8880=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJsBMgWEQbSIf8dTRrFHoDN50L2nU5HHyYYoxqKyX6JWLcf6it
-	CXhjhpu+h0i7ZUAmTn33PVV0qGNNqWNuFdu9JSXLE7nORyvbsogwqV/vRbvhjg==
-X-Gm-Gg: ASbGncuTTQewtG1NPPs08bVddt8/MzqS7OsDy/45Wo6/INdTQttb58T/QaJIzogIjYM
-	fXZVkrvDNWIKs0pS77IQ9QESMBEc5/cstEhP109LsETiiEBHZdezimcuXqDepCLbDGcYW6K/JXh
-	uTGQgWbrhQ7lgTrYmISmcPQl5qmRVWJVIWSFn+YndKPzxKV2fbNbqKOc12w59sMZ7t8wDcjAW6f
-	TKHsM4Zds+t7dJW9ypLrcyL+F04ca0onJVXxXqnDQ9zoRBP9FDT3PabIIr4BQBmKwHDn0c36TuV
-	fFadzDFWbLbOlnmcKQ8n2AHRTMZLoKp8NegaSQeKr3Xy2rQ7+IgL1vyXQkGw8P4wAp/1UWliQWG
-	ENzInDqUr9w==
-X-Google-Smtp-Source: AGHT+IFycseQfg0kLwO4oxZG5+JgJxP4IyeOiqkyzoi025zQHA29IXH0mAeKzb30l8qKo1jAzVjZdA==
-X-Received: by 2002:a05:622a:1825:b0:476:903a:b7f0 with SMTP id d75a77b69052e-47aec4d11b7mr278155631cf.49.1745350497903;
-        Tue, 22 Apr 2025 12:34:57 -0700 (PDT)
+        bh=CJeE91ey+OTutpPH1TtR3ZwONivHtJTNBwvGlSaUkMA=;
+        b=Ua9bTVUpkxE+rxtJNsKwxAGjfoZx9GK02HC3vJyOdhn5eAXtVplSsW62EJpcUkkJEL
+         Akm7BX7Uk8oqdYt6b3Phe49mL1el3jjj+YbAcyfNkCcwSFNa9sN1RD2R41Uyi0uqS4Rw
+         IVzDac7tbAwz84P2i1KlB4nkb+SKOQCB1ZZ5mhZg5JNlx/apCh29gRX1XMxtOsb6qHq1
+         GRtUyUReUxoBevQGNAwCtr2gcVmOM7fdEC/xCGwg5RqWdxD40I5dju2mXOYkOZljSVqV
+         d83QZ+RXWh9muRynRlWA7DAVBYo2UcFbbRbTCdBYc7u27js47DpZ+9gE8o0atwJdFYP3
+         q9WA==
+X-Forwarded-Encrypted: i=1; AJvYcCUDFGDYbHUADMSSqLvUupQ+iKG5WP9SbCgAjgaLlGdYg54sn5huuaoBW0IHhkk+jvqe2mD7VbZUs75azeH4SLwMEGgJyRg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBPCsdHeOMvYj+UwxnPfd6MKGE0MQu8cQCFe8Cn4hu7zFua6DV
+	3PhNCMkRzyR5Yr2qGNzdTB/r76z2dZUCuOC7CIkCVEE1fgdHgj0H7rAxV4f8cg==
+X-Gm-Gg: ASbGncu1tqu7BP1UbBrg6VQ55WkyBLuBxshQA1t9Oa+s+fxm8oxvTTcO2f17bgJAX64
+	ByFFO/Ai4ir5nZvhobaNvjCrDAIile7BTH+EnwUqUExbfpDMOeHX2B0Vjk7Vp6h8yK818vLdtMZ
+	NGoIU5TTGeSJ8o+UK55ssL0lbyEjdgKyeN1PYhaGtL37fO6RP/LhK1w8xMqfaA/SN3Hc54TfPHQ
+	Kfcd/EZ6Bmpz9LqAW67LUlivZmVor1mXPh121s1quxjuO1Mz4xNHfbMSuR9+uLvaLG0j7uN5/K0
+	dOMwPxA3vxkC+sGMBv7hLHBPuseXlPlsCfmoUuynR5gMX7+nXTNhzPoa0G93lS42UMj3i5zutEl
+	97gI+UTH78A==
+X-Google-Smtp-Source: AGHT+IEGx7RCSCPaBRlt4UyCxjeo8v0BkqRfujpf5izCF+XU0PoqJ0u/vaTxrHfxrjXPAyu1zRaLhw==
+X-Received: by 2002:a05:620a:40d4:b0:7c8:4634:51d3 with SMTP id af79cd13be357-7c92805f620mr2982740285a.55.1745351597988;
+        Tue, 22 Apr 2025 12:53:17 -0700 (PDT)
 Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-47ae9ce2653sm59106831cf.58.2025.04.22.12.34.57
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c925a6e7b4sm594526685a.4.2025.04.22.12.53.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Apr 2025 12:34:57 -0700 (PDT)
-Date: Tue, 22 Apr 2025 15:34:57 -0400
-Message-ID: <90ae0b3c6c151950c3a4547f4ad9ad0f@paul-moore.com>
+        Tue, 22 Apr 2025 12:53:17 -0700 (PDT)
+Date: Tue, 22 Apr 2025 15:53:17 -0400
+Message-ID: <973cedc0d38496b2096992bf68c72e67@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -71,23 +71,58 @@ Content-Transfer-Encoding: 8bit
 X-Mailer: pstg-pwork:20250422_1524/pstg-lib:20250422_1524/pstg-pwork:20250422_1524
 From: Paul Moore <paul@paul-moore.com>
 To: Song Liu <song@kernel.org>, linux-security-module@vger.kernel.org
-Cc: jmorris@namei.org, serge@hallyn.com, kernel-team@meta.com, Song Liu <song@kernel.org>
-Subject: Re: [PATCH] lsm: Move security_netlink_send to under  CONFIG_SECURITY_NETWORK
-References: <20250421225250.2544754-1-song@kernel.org>
-In-Reply-To: <20250421225250.2544754-1-song@kernel.org>
+Cc: jmorris@namei.org, serge@hallyn.com, kernel-team@meta.com, Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>, Song Liu <song@kernel.org>
+Subject: Re: [PATCH] lsm: make SECURITY_PATH always enabled
+References: <20250422184407.3257964-1-song@kernel.org>
+In-Reply-To: <20250422184407.3257964-1-song@kernel.org>
 
-On Apr 21, 2025 Song Liu <song@kernel.org> wrote:
+On Apr 22, 2025 Song Liu <song@kernel.org> wrote:
 > 
-> security_netlink_send() is a networking hook, so it fits better under
-> CONFIG_SECURITY_NETWORK.
+> Only TOMOYO needed CONFIG_SECURITY_PATH when it was introduced. But now,
+> AppArmor, EVM, IMA and LandLock also need it. And kernels are likely built
+> with at least one of these enabled if CONFIG_SECURITY is enabled. Let's
+> simplify the dependency.
 > 
+> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 > Signed-off-by: Song Liu <song@kernel.org>
 > ---
->  include/linux/security.h | 12 ++++++------
->  security/security.c      | 36 ++++++++++++++++++------------------
->  2 files changed, 24 insertions(+), 24 deletions(-)
+> This was initially proposed in [1], but got Nacked by Paul.
 
-Looks reasonable, merged into lsm/dev, thanks.
+I chose not to merge the patch with the following comment:
+
+ "If a Kconfig option is only needed by a subset of LSMs, which is the
+  case for CONFIG_SECURITY_PATH, it should remain a build-time option."
+
+... and that reasoning still sounds reasonable to me today.
+
+> ... but it is really up to the LSMs to decide how
+> they use struct path.
+
+LSMs are currently free to select CONFIG_SECURITY_PATH as needed.  In
+fact, if you look any modern Linux tree you'll see that TOMOYO, AppArmor,
+Landlock, IMA, and EVM all select CONFIG_SECURITY_PATH based on their
+individual Kconfig settings.
+
+> The separation of CONFIG_SECURITY and CONFIG_SECURITY_PATH has actually
+> caused confusion. In some of our early kernels, we enabled CONFIG_SECURITY
+> but not CONFIG_SECURITY_PATH. Now, we have to add separate logic in user
+> space to deal with missing CONFIG_SECURITY_PATH in these systems.
+
+I'm sorry that you made some Kconfig choices on a production kernel that
+you now regret, but that doesn't change things from an upstream
+perspective.  The exception of course would be if there was a LSM that
+*required* CONFIG_SECURITY_PATH but did not enable it or mark it as a
+dependency in the LSM's Kconfig.  It doesn't sound like that is the case
+here, but please let me know if that was the root cause so we can work
+with the individual LSM to fix the associated Kconfig.
+
+As you likely know, the LSM subsystem as a whole (framework and
+individual LSMs) is often criticized over various performance impacts;
+one of the easiest ways to limit the impact of the LSM on overall system
+performance is to remove LSM hooks that are not needed.  Keeping the
+CONFIG_SECURITY_PATH hooks as-is and allowing individual LSMs to opt-in
+as needed is a reasonable balance between providing the necessary LSM
+hook support and limiting performance impacts.
 
 --
 paul-moore.com
