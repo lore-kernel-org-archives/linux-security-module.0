@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D49342397BE;
-	Tue, 22 Apr 2025 02:16:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D4025DD10;
+	Tue, 22 Apr 2025 02:17:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745288185; cv=none; b=LOllEG60vRcLec/L91fZ1RNu1qll5DE+s8Oicp8gLibd8bcHCKbOjiOdCh/q/eEMNR0CHTyWzltpNnktC1nV/J6iurK40XKEuPH5Pl1fk7JCe038l4A5ZhiUag392TgvMF81q3vWVlaRKyW4E5AiIABrfJVAvorEQG7lTpFk1PY=
+	t=1745288250; cv=none; b=K6fQQxb9ULXyRIx1zOZgL4aDBKHzZGS6yUCThWZB8V9GO1igIPRWymAwg4FYTMO4hHetAerGO3RZqSjqUdd//Usw6ZyJN58JAcPxkyTWmwjNJTwXDDV8sBnbMzrTviOliuuZnnT3CnsLKAIf/hH2aId91ugUp8dCPT45UpgUv58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745288185; c=relaxed/simple;
-	bh=0238oT80ZRbDUPcDv23xV+rQAWCGsjssH4Cychfl15Y=;
+	s=arc-20240116; t=1745288250; c=relaxed/simple;
+	bh=/+VZRm3/buXWZ1BaneQ7NrztphF6dAQs1rQhAbV6Ct4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=PWUbnZcyuYoTB7gm5Pzq5FWGM+RwDDpJl0jKgzJUxHy0ovWgxz241lgrkCfA98U5h9dBZ37Nup4Gt/NnZqz6d+pSTEJ3PKcAlhYubBg3NXBTzEz650ic2PvTdUb0Y78nQUvAn0Vwp4/FFfhVXSrU531Q8Um8o5NM2/0/atwX6BQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sAJdgTPg; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=J79J3l7/rpX50xyce81tSbpJgsK3Khu+fhhOlG76KU4hOnqEvGq1BHZRClMJFOn0Lu6h3DKt4lvWd3enHHBQCNkxxSxEv8BoUOpMSrWRbC4NBg4RG6qfvYWR1dn6roP2vchvCstyXHPUqbfLSY0oOFpwHLZPf/fRVTNUXzAzxBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N09J6kBQ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sAJdgTPg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AED8C4CEE4;
-	Tue, 22 Apr 2025 02:16:24 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N09J6kBQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45F72C4CEE4;
+	Tue, 22 Apr 2025 02:17:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745288185;
-	bh=0238oT80ZRbDUPcDv23xV+rQAWCGsjssH4Cychfl15Y=;
+	s=k20201202; t=1745288250;
+	bh=/+VZRm3/buXWZ1BaneQ7NrztphF6dAQs1rQhAbV6Ct4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=sAJdgTPgK18vDD0lpWULXcrgp4KStFYJaC0XT3INz3fgTKtfuu5DxxyLaW881IBdc
-	 QgOYYtgtpL0ej4DrK+GeG8rQ/Iu+dlosWmGzFtWSYUAb68uGa0Kfmib+pFU+XaqukV
-	 oIZ0VF4cjVHZEcuA/c/HyT+fDlvYqySi4a8QIZUybQTwAQHkH/YMV06CHH4fYFnH2o
-	 KrUpI+z0bCdO5sBNNgsb5YXok6PFI+6RWouiCZTEVzM3vBK5Yjd3N45eestCUciNsr
-	 8eTQM6RrmezqoRJe1vL3BzcJEIgoJig4tlUleHsWooco8VBtqmp88Rj9E9YbE6mvcx
-	 ehC+mRQ9ww4Ew==
+	b=N09J6kBQWcRC9Ap0OGyWk/7PpXPGqP3TVrmVOr/feivl0wdt5S326vIvuFmzJCOEX
+	 Qox3rONZBTs8EroItfyM1i9osZ63MEVYVMLufZlNnurkuVF8j05DryuLX95FBDiLrn
+	 XlzxAEuU02OCfgUWC/Ouek61DEH2dobgonKN7m+w63gUJds3pQWLbSUYRoqEtDithm
+	 UWnGYtl4DoNgceB0Yy8iwy7pJ9KkRDOefC5H4kI1wKIbZ2zsS9m3YLYRuRNlMTFOgm
+	 pmSkvrAYZVyCtEVXiVeLiEa/pY1vtlktqg1zIwYgMWYLGeKpmeSYijeG7WzVMiL0PZ
+	 Hj+0+ThVI6BPw==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -39,12 +39,12 @@ Cc: Kees Cook <kees@kernel.org>,
 	mic@digikod.net,
 	linux-hardening@vger.kernel.org,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.14 19/30] hardening: Disable GCC randstruct for COMPILE_TEST
-Date: Mon, 21 Apr 2025 22:15:39 -0400
-Message-Id: <20250422021550.1940809-19-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.12 16/23] hardening: Disable GCC randstruct for COMPILE_TEST
+Date: Mon, 21 Apr 2025 22:16:56 -0400
+Message-Id: <20250422021703.1941244-16-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250422021550.1940809-1-sashal@kernel.org>
-References: <20250422021550.1940809-1-sashal@kernel.org>
+In-Reply-To: <20250422021703.1941244-1-sashal@kernel.org>
+References: <20250422021703.1941244-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.14.3
+X-stable-base: Linux 6.12.24
 Content-Transfer-Encoding: 8bit
 
 From: Kees Cook <kees@kernel.org>
@@ -77,10 +77,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/security/Kconfig.hardening b/security/Kconfig.hardening
-index b56e001e0c6a9..10be745c13ba5 100644
+index c9d5ca3d8d08d..2b219bc26fe56 100644
 --- a/security/Kconfig.hardening
 +++ b/security/Kconfig.hardening
-@@ -311,7 +311,7 @@ config CC_HAS_RANDSTRUCT
+@@ -310,7 +310,7 @@ config CC_HAS_RANDSTRUCT
  
  choice
  	prompt "Randomize layout of sensitive kernel structures"
