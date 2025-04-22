@@ -1,327 +1,477 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE09296D0A
-	for <linux-security-module@vger.kernel.org>; Tue, 22 Apr 2025 17:25:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6BF02820C6
+	for <linux-security-module@vger.kernel.org>; Tue, 22 Apr 2025 18:44:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745342721; cv=none; b=MupTQ+rQsr8RgvZ2+3riHAvQTcALay+xsn5kkVS/33kj4Xzae6Xtj+B/+W48zaIYv0/8fVnUxDz2REXO+oeOfEql5LUN1bN4I1HYdTJs2mq9m1xkH5nU75Mql7zOR+aLRb19ZjmsLT7/Kg3V46O9b6uFFX2hWF1wtE6SFr9q2ZI=
+	t=1745347455; cv=none; b=bmnn6c3YtIjEcgBm7OOkFIEB4b4CXwzeBjmidL6ah7fWEBRvus/EhoTx9QmotD6WBMV/+v61zjxQjdVchbTQ1DVv2fdLjFJ025V/BYPtHPMhZlcxCaM+Nbrbc6g3zQfJ3TdUvpNRX0NFRg349zcLzJpqGdpLs+Z6CSOOw4YqJUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745342721; c=relaxed/simple;
-	bh=4eFT+ddUgf/MynCnAqV2xPC+DUEYZuUSd9SxFogWjGQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gZga452ZHEabvH02c26ZcGWbEOO87rzvNqTxXA2PzEBzrG0bs83drjQ4LkGiu8ptbk34/AWr44f9RJfrM8szyVkn8oUuMxL/k+4RzzVLsnGF9pkdW6epx9uq8FRZyYNHo1KgqwHq+CPCpdvayqj1OGcYhG+Dipto+iQL4tuoZB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DLIaGPcK; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1745347455; c=relaxed/simple;
+	bh=TaFOTeoZkL5EIyVhT1ePQUIeah6tp+xL/udcy4t3JrE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E+3SgInyyE9mgB5pwUMI5uXsVTZKsn/N45TAssp2Yulllb6J5Rc9+GNijVylzAcy1rus7lIDHwT8lQPLBsvt9o3lsGLVdj6MDu1yOH1AfEof5mK+oiz+NPg+DvMKYbt6fcPtY7BfJP5kga31+8W5B3TZbCocJ6bNVzperA4YA6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hmA6Mfxf; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DLIaGPcK"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1745342718;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=AlsF8bB7mLO6h5yOJV7f9wu/vSQAYRdULalqxfc/a/E=;
-	b=DLIaGPcKbiXApFaiJLVagcaxseMbNQJG8nbvN7/7XKRprlOiILIwG8EVGNpKjvlYdAop6t
-	vF6XPb1gKVFhTwL1+QF3j8EwDI34SuyVghh/rXTYaPmRBDN51ga51QcDLz4gp3GRbGKCIk
-	v6io7ljMi4OUNNupSlHLCqFjhjhiPxY=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-622-rZy5jrZZNHqTZ6FXrvKu6g-1; Tue, 22 Apr 2025 13:25:16 -0400
-X-MC-Unique: rZy5jrZZNHqTZ6FXrvKu6g-1
-X-Mimecast-MFC-AGG-ID: rZy5jrZZNHqTZ6FXrvKu6g_1745342715
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43d08915f61so30136335e9.2
-        for <linux-security-module@vger.kernel.org>; Tue, 22 Apr 2025 10:25:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745342715; x=1745947515;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=AlsF8bB7mLO6h5yOJV7f9wu/vSQAYRdULalqxfc/a/E=;
-        b=t2/53vTG1EMYPWiBGRh6q3O19V/BDS9r3qvAqCam3bPTOwEF2jBdguj6i4PbDfNaXC
-         /LNI0yARW6VNeEWXr4CV+lVsxIN0XuQrsaYv2lAWar1RhcGpMPROmk3BIptSF4G7nMT8
-         nm0NZc+KJiFOlJ/FviOkStK1pURXE4GA0JZZEkFey0HejVWwTOld5puIPzmpAG4Bd2fY
-         V1D1RPGgufNFlq8d/BIFGHaggSZ1Vsh8EyBHUfmPcZ7yBRtFe+59ZQKiHch5E1YBRR8m
-         XCSvf7RNqqaXf58zM0n0xK10P1ugFbQFikz6bNbEs4oAWBfSMCF6Am2qpCaq2Cje9Tc9
-         WlRg==
-X-Forwarded-Encrypted: i=1; AJvYcCWRP0aiHBfxer9wZQWVe8r8goEUL9XUqn82c0v1cGIi2Sn/c3FFsWtXDXdOxHwlVJQ4Fad57GRcK+3NSU+/43jmvrKM4l0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeOdQn6nxcFMnaorWQ+CpZH9OPGacOqCsg2LjiFwYqqIqpf7yx
-	+y7kKLlmLWszaCEQ/fjDe//9CKtzWKEKVWNWhgPaiDLSVs/08g7ptwq9YGml9WKhNrLt7OdPWyh
-	E83x6iAv5oBm6gJaNgngUbHBnjQ8zctabsExXIF7EmZRs1/FewHCjU8Ry6zb+NbLqyKENRE365A
-	==
-X-Gm-Gg: ASbGncskdxjorCE8keGJzrT2bhgDOm70u0MhKzp3LvtAqj6OxVp/E358pOIZKQUZ4Oe
-	l7Mch3JfatVf2Q1B6YgqqT6FBpyUik/aMTBKh0hP8UiX9nzt7IHBbuFY3W+1CLw9ZJ+kO4nCnWj
-	g/CKV70GXGGlJtPuQIQNlt1s2LahGA6ozc7bOlRuueZinKMnmJaflPjEvqjwEm+57VekgNCGX+B
-	I1uGc1XtxYoQOsJ8a5XRLAVqcnnmE4CMn/SYsJ9jab5nAKo/BCZKnEN0n9FILMyl5BwjqxEJt0l
-	t35lElnnrD8/VrMvrk6B/It/A3UGa9KT70crF1DI/S+8WFkDO9PkQYsiWc//B6x7n+++0Zzlnf6
-	KLCjfr7sxrGnRuEZ21cStK5ft2LGYL5z8V16h
-X-Received: by 2002:a05:600c:3154:b0:43d:36c:f24 with SMTP id 5b1f17b1804b1-4406ab97d6amr138565735e9.13.1745342715334;
-        Tue, 22 Apr 2025 10:25:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGFktvjOJw9MtQ957iwKCDYuBMP9s5b2E7h4EADLtf2ryrYEiq0M4Q5bYb99jVnuXjG8D4LoA==
-X-Received: by 2002:a05:600c:3154:b0:43d:36c:f24 with SMTP id 5b1f17b1804b1-4406ab97d6amr138565515e9.13.1745342714950;
-        Tue, 22 Apr 2025 10:25:14 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c731:8700:3969:7786:322:9641? (p200300cbc73187003969778603229641.dip0.t-ipconnect.de. [2003:cb:c731:8700:3969:7786:322:9641])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4406d6db10csm180519755e9.27.2025.04.22.10.25.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Apr 2025 10:25:14 -0700 (PDT)
-Message-ID: <b9e5fa41-62fd-4b3d-bb2d-24ae9d3c33da@redhat.com>
-Date: Tue, 22 Apr 2025 19:25:12 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hmA6Mfxf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA23CC4CEE9;
+	Tue, 22 Apr 2025 18:44:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745347454;
+	bh=TaFOTeoZkL5EIyVhT1ePQUIeah6tp+xL/udcy4t3JrE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=hmA6MfxfzWCTdgUIxA1pZuHExIivPyKCb8lwBdzt0n6/P3DEPIV+Y/ltVHDGmznsd
+	 5iXFAsxXqHEI54gHXDfENL00oBVJoethEv71ROx9zUTTjp7kyRDq24RuLbPZqAOEMQ
+	 rRm0NqkmhK38tcVBlaYs9iMRSzq88k2ydwxL8/VVIWxGqc1uTiAyWtPTqVP2tU2Av/
+	 XhNbnLqxorDemUCq5iAcUxvrmcVP4Tz1bsZYllhId45ATzpZPUre+C6KbBmQVKP4l5
+	 t0mdJuYK57Ve+lD5w/pm5G4sYdIE8z5xUkACFXtNxwg/1rHg7/y1pr6MczDN0DUxko
+	 eMA2dVNsq7TAw==
+From: Song Liu <song@kernel.org>
+To: linux-security-module@vger.kernel.org
+Cc: paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	kernel-team@meta.com,
+	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+	Song Liu <song@kernel.org>
+Subject: [PATCH] lsm: make SECURITY_PATH always enabled
+Date: Tue, 22 Apr 2025 11:44:07 -0700
+Message-ID: <20250422184407.3257964-1-song@kernel.org>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v7 3/8] security: Export
- security_inode_init_security_anon for KVM guest_memfd
-To: Christoph Hellwig <hch@infradead.org>, Shivank Garg <shivankg@amd.com>
-Cc: seanjc@google.com, vbabka@suse.cz, willy@infradead.org,
- akpm@linux-foundation.org, shuah@kernel.org, pbonzini@redhat.com,
- ackerleytng@google.com, paul@paul-moore.com, jmorris@namei.org,
- serge@hallyn.com, pvorel@suse.cz, bfoster@redhat.com, tabba@google.com,
- vannapurve@google.com, chao.gao@intel.com, bharata@amd.com, nikunj@amd.com,
- michael.day@amd.com, yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com,
- thomas.lendacky@amd.com, michael.roth@amd.com, aik@amd.com, jgg@nvidia.com,
- kalyazin@amazon.com, peterx@redhat.com, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- linux-security-module@vger.kernel.org, kvm@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-coco@lists.linux.dev,
- =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>,
- Paul Moore <paul@paul-moore.com>
-References: <20250408112402.181574-1-shivankg@amd.com>
- <20250408112402.181574-4-shivankg@amd.com> <Z_eEUrkyq1NApL1U@infradead.org>
-From: David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <Z_eEUrkyq1NApL1U@infradead.org>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: _8jNihO81bgNzs1B9-23SaHsvjgeWP2OyRtbpglYjoQ_1745342715
-X-Mimecast-Originator: redhat.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 10.04.25 10:41, Christoph Hellwig wrote:
-> On Tue, Apr 08, 2025 at 11:23:57AM +0000, Shivank Garg wrote:
->> KVM guest_memfd is implementing its own inodes to store metadata for
->> backing memory using a custom filesystem. This requires the ability to
->> initialize anonymous inode using security_inode_init_security_anon().
->>
->> As guest_memfd currently resides in the KVM module, we need to export this
->> symbol for use outside the core kernel. In the future, guest_memfd might be
->> moved to core-mm, at which point the symbols no longer would have to be
->> exported. When/if that happens is still unclear.
-> 
-> This really should be a EXPORT_SYMBOL_GPL, if at all.
-> 
-> But you really should look into a new interface in anon_inode.c that
-> can be reused instead of duplicating anonymouns inode logic in kvm.ko.
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-I assume you mean combining the alloc_anon_inode()+
-security_inode_init_security_anon(), correct?
+Only TOMOYO needed CONFIG_SECURITY_PATH when it was introduced. But now,
+AppArmor, EVM, IMA and LandLock also need it. And kernels are likely built
+with at least one of these enabled if CONFIG_SECURITY is enabled. Let's
+simplify the dependency.
 
-I can see mm/secretmem.c doing the same thing, so agreed that
-we're duplicating it.
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Signed-off-by: Song Liu <song@kernel.org>
 
-
-Regarding your other mail, I am also starting to wonder where/why
-we want security_inode_init_security_anon(). At least for
-mm/secretmem.c, it was introduced by:
-
-commit 2bfe15c5261212130f1a71f32a300bcf426443d4
-Author: Christian Göttsche <cgzones@googlemail.com>
-Date:   Tue Jan 25 15:33:04 2022 +0100
-
-     mm: create security context for memfd_secret inodes
-     
-     Create a security context for the inodes created by memfd_secret(2) via
-     the LSM hook inode_init_security_anon to allow a fine grained control.
-     As secret memory areas can affect hibernation and have a global shared
-     limit access control might be desirable.
-     
-     Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
-     Signed-off-by: Paul Moore <paul@paul-moore.com>
-
-
-In combination with Paul's review comment [1]
-
-"
-This seems reasonable to me, and I like the idea of labeling the anon
-inode as opposed to creating a new set of LSM hooks.  If we want to
-apply access control policy to the memfd_secret() fds we are going to
-need to attach some sort of LSM state to the inode, we might as well
-use the mechanism we already have instead of inventing another one.
-"
-
-
-IIUC, we really only want security_inode_init_security_anon() when there
-might be interest to have global access control.
-
-
-Given that guest_memfd already shares many similarities with guest_memfd
-(e.g., pages not swappable/migratable) and might share even more in the future
-(e.g., directmap removal), I assume that we want the same thing for guest_memfd.
-
-
-Would something like the following seem reasonable? We should be adding some
-documentation for the new function, and I wonder if S_PRIVATE should actually
-be cleared for secretmem + guest_memfd (I have no idea what this "fs-internal" flag
-affects).
-
- From 782a6053268d8a2bddf90ba18c008495b0791710 Mon Sep 17 00:00:00 2001
-From: David Hildenbrand <david@redhat.com>
-Date: Tue, 22 Apr 2025 19:22:00 +0200
-Subject: [PATCH] tmp
-
-Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
-  fs/anon_inodes.c   | 20 ++++++++++++++------
-  include/linux/fs.h |  1 +
-  mm/secretmem.c     |  9 +--------
-  3 files changed, 16 insertions(+), 14 deletions(-)
 
-diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
-index 583ac81669c24..ea51fd582deb4 100644
---- a/fs/anon_inodes.c
-+++ b/fs/anon_inodes.c
-@@ -55,17 +55,18 @@ static struct file_system_type anon_inode_fs_type = {
-  	.kill_sb	= kill_anon_super,
-  };
-  
--static struct inode *anon_inode_make_secure_inode(
--	const char *name,
--	const struct inode *context_inode)
-+static struct inode *anon_inode_make_secure_inode(struct super_block *s,
-+		const char *name, const struct inode *context_inode,
-+		bool fs_internal)
-  {
-  	struct inode *inode;
-  	int error;
-  
--	inode = alloc_anon_inode(anon_inode_mnt->mnt_sb);
-+	inode = alloc_anon_inode(s);
-  	if (IS_ERR(inode))
-  		return inode;
--	inode->i_flags &= ~S_PRIVATE;
-+	if (!fs_internal)
-+		inode->i_flags &= ~S_PRIVATE;
-  	error =	security_inode_init_security_anon(inode, &QSTR(name),
-  						  context_inode);
-  	if (error) {
-@@ -75,6 +76,12 @@ static struct inode *anon_inode_make_secure_inode(
-  	return inode;
-  }
-  
-+struct inode *alloc_anon_secure_inode(struct super_block *s, const char *name)
-+{
-+	return anon_inode_make_secure_inode(s, name, NULL, true);
-+}
-+EXPORT_SYMBOL_GPL(alloc_anon_secure_inode);
+This was initially proposed in [1], but got Nacked by Paul. However, I
+still think this change makes sense. This is because the definition of
+"pathname based access control" is not clear. For example,
+security_path_notify, security_sb_mount, security_move_mount are enabled
+by CONFIG_SECURITY, but they all use struct path, and thus are "path
+based access control". Yes, there is a difference between "path based"
+and "pathname based", but it is really up to the LSMs to decide how
+they use struct path. TOMOYO uses d_abosolute_path on security_sb_mount,
+while LandLock does path walk with dget_parent() and follow_up().
+
+The separation of CONFIG_SECURITY and CONFIG_SECURITY_PATH has actually
+caused confusion. In some of our early kernels, we enabled CONFIG_SECURITY
+but not CONFIG_SECURITY_PATH. Now, we have to add separate logic in user
+space to deal with missing CONFIG_SECURITY_PATH in these systems.
+
+Given the vague definition and real world issue, I think we should just
+merge CONFIG_SECURITY and CONFIG_SECURITY_PATH.
+
+PS: [1] doesn't build with CONFIG_SECURITY=n case. This issue is fixed in
+this version.
+
+[1] https://lore.kernel.org/linux-security-module/678aa43f-28b6-410d-8890-b8d4e3261807@I-love.SAKURA.ne.jp/
+---
+ arch/mips/configs/loongson2k_defconfig |   1 -
+ arch/mips/configs/loongson3_defconfig  |   1 -
+ include/linux/lsm_hook_defs.h          |   2 -
+ include/linux/security.h               | 174 ++++++++++++-------------
+ kernel/bpf/bpf_lsm.c                   |   2 -
+ kernel/trace/bpf_trace.c               |   2 -
+ security/Kconfig                       |   9 --
+ security/apparmor/Kconfig              |   1 -
+ security/integrity/evm/Kconfig         |   1 -
+ security/integrity/ima/Kconfig         |   1 -
+ security/landlock/Kconfig              |   1 -
+ security/security.c                    |   2 -
+ security/tomoyo/Kconfig                |   1 -
+ 13 files changed, 86 insertions(+), 112 deletions(-)
+
+diff --git a/arch/mips/configs/loongson2k_defconfig b/arch/mips/configs/loongson2k_defconfig
+index 4b7f914d01d0..fb149d2f3ef5 100644
+--- a/arch/mips/configs/loongson2k_defconfig
++++ b/arch/mips/configs/loongson2k_defconfig
+@@ -325,7 +325,6 @@ CONFIG_NLS_UTF8=y
+ CONFIG_SECURITY=y
+ CONFIG_SECURITYFS=y
+ CONFIG_SECURITY_NETWORK=y
+-CONFIG_SECURITY_PATH=y
+ CONFIG_SECURITY_SELINUX=y
+ CONFIG_SECURITY_SELINUX_BOOTPARAM=y
+ CONFIG_SECURITY_SELINUX_DISABLE=y
+diff --git a/arch/mips/configs/loongson3_defconfig b/arch/mips/configs/loongson3_defconfig
+index 98844b457b7f..84fdbc6fdace 100644
+--- a/arch/mips/configs/loongson3_defconfig
++++ b/arch/mips/configs/loongson3_defconfig
+@@ -376,7 +376,6 @@ CONFIG_NLS_UTF8=y
+ CONFIG_SECURITY=y
+ CONFIG_SECURITYFS=y
+ CONFIG_SECURITY_NETWORK=y
+-CONFIG_SECURITY_PATH=y
+ CONFIG_SECURITY_SELINUX=y
+ CONFIG_SECURITY_SELINUX_BOOTPARAM=y
+ CONFIG_DEFAULT_SECURITY_DAC=y
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index bf3bbac4e02a..b2c21e5f6fbd 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -87,7 +87,6 @@ LSM_HOOK(int, -EOPNOTSUPP, dentry_init_security, struct dentry *dentry,
+ LSM_HOOK(int, 0, dentry_create_files_as, struct dentry *dentry, int mode,
+ 	 struct qstr *name, const struct cred *old, struct cred *new)
+ 
+-#ifdef CONFIG_SECURITY_PATH
+ LSM_HOOK(int, 0, path_unlink, const struct path *dir, struct dentry *dentry)
+ LSM_HOOK(int, 0, path_mkdir, const struct path *dir, struct dentry *dentry,
+ 	 umode_t mode)
+@@ -107,7 +106,6 @@ LSM_HOOK(int, 0, path_rename, const struct path *old_dir,
+ LSM_HOOK(int, 0, path_chmod, const struct path *path, umode_t mode)
+ LSM_HOOK(int, 0, path_chown, const struct path *path, kuid_t uid, kgid_t gid)
+ LSM_HOOK(int, 0, path_chroot, const struct path *path)
+-#endif /* CONFIG_SECURITY_PATH */
+ 
+ /* Needed for inode based security check */
+ LSM_HOOK(int, 0, path_notify, const struct path *path, u64 mask,
+diff --git a/include/linux/security.h b/include/linux/security.h
+index cc9b54d95d22..5012a1926f57 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -581,6 +581,24 @@ void security_bdev_free(struct block_device *bdev);
+ int security_bdev_setintegrity(struct block_device *bdev,
+ 			       enum lsm_integrity_type type, const void *value,
+ 			       size_t size);
++int security_path_unlink(const struct path *dir, struct dentry *dentry);
++int security_path_mkdir(const struct path *dir, struct dentry *dentry, umode_t mode);
++int security_path_rmdir(const struct path *dir, struct dentry *dentry);
++int security_path_mknod(const struct path *dir, struct dentry *dentry, umode_t mode,
++			unsigned int dev);
++void security_path_post_mknod(struct mnt_idmap *idmap, struct dentry *dentry);
++int security_path_truncate(const struct path *path);
++int security_path_symlink(const struct path *dir, struct dentry *dentry,
++			  const char *old_name);
++int security_path_link(struct dentry *old_dentry, const struct path *new_dir,
++		       struct dentry *new_dentry);
++int security_path_rename(const struct path *old_dir, struct dentry *old_dentry,
++			 const struct path *new_dir, struct dentry *new_dentry,
++			 unsigned int flags);
++int security_path_chmod(const struct path *path, umode_t mode);
++int security_path_chown(const struct path *path, kuid_t uid, kgid_t gid);
++int security_path_chroot(const struct path *path);
 +
-  static struct file *__anon_inode_getfile(const char *name,
-  					 const struct file_operations *fops,
-  					 void *priv, int flags,
-@@ -88,7 +95,8 @@ static struct file *__anon_inode_getfile(const char *name,
-  		return ERR_PTR(-ENOENT);
-  
-  	if (make_inode) {
--		inode =	anon_inode_make_secure_inode(name, context_inode);
-+		inode =	anon_inode_make_secure_inode(anon_inode_mnt->mnt_sb,
-+						     name, context_inode, false);
-  		if (IS_ERR(inode)) {
-  			file = ERR_CAST(inode);
-  			goto err;
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 016b0fe1536e3..0fded2e3c661a 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3550,6 +3550,7 @@ extern int simple_write_begin(struct file *file, struct address_space *mapping,
-  extern const struct address_space_operations ram_aops;
-  extern int always_delete_dentry(const struct dentry *);
-  extern struct inode *alloc_anon_inode(struct super_block *);
-+extern struct inode *alloc_anon_secure_inode(struct super_block *, const char *);
-  extern int simple_nosetlease(struct file *, int, struct file_lease **, void **);
-  extern const struct dentry_operations simple_dentry_operations;
-  
-diff --git a/mm/secretmem.c b/mm/secretmem.c
-index 1b0a214ee5580..c0e459e58cb65 100644
---- a/mm/secretmem.c
-+++ b/mm/secretmem.c
-@@ -195,18 +195,11 @@ static struct file *secretmem_file_create(unsigned long flags)
-  	struct file *file;
-  	struct inode *inode;
-  	const char *anon_name = "[secretmem]";
--	int err;
-  
--	inode = alloc_anon_inode(secretmem_mnt->mnt_sb);
-+	inode = alloc_anon_secure_inode(secretmem_mnt->mnt_sb, anon_name);
-  	if (IS_ERR(inode))
-  		return ERR_CAST(inode);
-  
--	err = security_inode_init_security_anon(inode, &QSTR(anon_name), NULL);
--	if (err) {
--		file = ERR_PTR(err);
--		goto err_free_inode;
--	}
+ #else /* CONFIG_SECURITY */
+ 
+ /**
+@@ -1603,6 +1621,74 @@ static inline int security_bdev_setintegrity(struct block_device *bdev,
+ 	return 0;
+ }
+ 
++static inline int security_path_unlink(const struct path *dir, struct dentry *dentry)
++{
++	return 0;
++}
++
++static inline int security_path_mkdir(const struct path *dir, struct dentry *dentry,
++				      umode_t mode)
++{
++	return 0;
++}
++
++static inline int security_path_rmdir(const struct path *dir, struct dentry *dentry)
++{
++	return 0;
++}
++
++static inline int security_path_mknod(const struct path *dir, struct dentry *dentry,
++				      umode_t mode, unsigned int dev)
++{
++	return 0;
++}
++
++static inline void security_path_post_mknod(struct mnt_idmap *idmap,
++					    struct dentry *dentry)
++{ }
++
++static inline int security_path_truncate(const struct path *path)
++{
++	return 0;
++}
++
++static inline int security_path_symlink(const struct path *dir, struct dentry *dentry,
++					const char *old_name)
++{
++	return 0;
++}
++
++static inline int security_path_link(struct dentry *old_dentry,
++				     const struct path *new_dir,
++				     struct dentry *new_dentry)
++{
++	return 0;
++}
++
++static inline int security_path_rename(const struct path *old_dir,
++				       struct dentry *old_dentry,
++				       const struct path *new_dir,
++				       struct dentry *new_dentry,
++				       unsigned int flags)
++{
++	return 0;
++}
++
++static inline int security_path_chmod(const struct path *path, umode_t mode)
++{
++	return 0;
++}
++
++static inline int security_path_chown(const struct path *path, kuid_t uid, kgid_t gid)
++{
++	return 0;
++}
++
++static inline int security_path_chroot(const struct path *path)
++{
++	return 0;
++}
++
+ #endif	/* CONFIG_SECURITY */
+ 
+ #if defined(CONFIG_SECURITY) && defined(CONFIG_WATCH_QUEUE)
+@@ -2029,94 +2115,6 @@ static inline void security_skb_classify_flow(struct sk_buff *skb,
+ 
+ #endif	/* CONFIG_SECURITY_NETWORK_XFRM */
+ 
+-#ifdef CONFIG_SECURITY_PATH
+-int security_path_unlink(const struct path *dir, struct dentry *dentry);
+-int security_path_mkdir(const struct path *dir, struct dentry *dentry, umode_t mode);
+-int security_path_rmdir(const struct path *dir, struct dentry *dentry);
+-int security_path_mknod(const struct path *dir, struct dentry *dentry, umode_t mode,
+-			unsigned int dev);
+-void security_path_post_mknod(struct mnt_idmap *idmap, struct dentry *dentry);
+-int security_path_truncate(const struct path *path);
+-int security_path_symlink(const struct path *dir, struct dentry *dentry,
+-			  const char *old_name);
+-int security_path_link(struct dentry *old_dentry, const struct path *new_dir,
+-		       struct dentry *new_dentry);
+-int security_path_rename(const struct path *old_dir, struct dentry *old_dentry,
+-			 const struct path *new_dir, struct dentry *new_dentry,
+-			 unsigned int flags);
+-int security_path_chmod(const struct path *path, umode_t mode);
+-int security_path_chown(const struct path *path, kuid_t uid, kgid_t gid);
+-int security_path_chroot(const struct path *path);
+-#else	/* CONFIG_SECURITY_PATH */
+-static inline int security_path_unlink(const struct path *dir, struct dentry *dentry)
+-{
+-	return 0;
+-}
 -
-  	file = alloc_file_pseudo(inode, secretmem_mnt, "secretmem",
-  				 O_RDWR, &secretmem_fops);
-  	if (IS_ERR(file))
+-static inline int security_path_mkdir(const struct path *dir, struct dentry *dentry,
+-				      umode_t mode)
+-{
+-	return 0;
+-}
+-
+-static inline int security_path_rmdir(const struct path *dir, struct dentry *dentry)
+-{
+-	return 0;
+-}
+-
+-static inline int security_path_mknod(const struct path *dir, struct dentry *dentry,
+-				      umode_t mode, unsigned int dev)
+-{
+-	return 0;
+-}
+-
+-static inline void security_path_post_mknod(struct mnt_idmap *idmap,
+-					    struct dentry *dentry)
+-{ }
+-
+-static inline int security_path_truncate(const struct path *path)
+-{
+-	return 0;
+-}
+-
+-static inline int security_path_symlink(const struct path *dir, struct dentry *dentry,
+-					const char *old_name)
+-{
+-	return 0;
+-}
+-
+-static inline int security_path_link(struct dentry *old_dentry,
+-				     const struct path *new_dir,
+-				     struct dentry *new_dentry)
+-{
+-	return 0;
+-}
+-
+-static inline int security_path_rename(const struct path *old_dir,
+-				       struct dentry *old_dentry,
+-				       const struct path *new_dir,
+-				       struct dentry *new_dentry,
+-				       unsigned int flags)
+-{
+-	return 0;
+-}
+-
+-static inline int security_path_chmod(const struct path *path, umode_t mode)
+-{
+-	return 0;
+-}
+-
+-static inline int security_path_chown(const struct path *path, kuid_t uid, kgid_t gid)
+-{
+-	return 0;
+-}
+-
+-static inline int security_path_chroot(const struct path *path)
+-{
+-	return 0;
+-}
+-#endif	/* CONFIG_SECURITY_PATH */
+-
+ #ifdef CONFIG_KEYS
+ #ifdef CONFIG_SECURITY
+ 
+diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
+index 0a59df1c550a..e4b00a8897b1 100644
+--- a/kernel/bpf/bpf_lsm.c
++++ b/kernel/bpf/bpf_lsm.c
+@@ -329,7 +329,6 @@ BTF_ID(func, bpf_lsm_kernel_module_request)
+ BTF_ID(func, bpf_lsm_kernel_read_file)
+ BTF_ID(func, bpf_lsm_kernfs_init_security)
+ 
+-#ifdef CONFIG_SECURITY_PATH
+ BTF_ID(func, bpf_lsm_path_unlink)
+ BTF_ID(func, bpf_lsm_path_mkdir)
+ BTF_ID(func, bpf_lsm_path_rmdir)
+@@ -339,7 +338,6 @@ BTF_ID(func, bpf_lsm_path_link)
+ BTF_ID(func, bpf_lsm_path_rename)
+ BTF_ID(func, bpf_lsm_path_chmod)
+ BTF_ID(func, bpf_lsm_path_chown)
+-#endif /* CONFIG_SECURITY_PATH */
+ 
+ BTF_ID(func, bpf_lsm_mmap_file)
+ BTF_ID(func, bpf_lsm_netlink_send)
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index 187dc37d61d4..e93f77c086ba 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -936,9 +936,7 @@ BTF_ID(func, security_file_permission)
+ BTF_ID(func, security_inode_getattr)
+ BTF_ID(func, security_file_open)
+ #endif
+-#ifdef CONFIG_SECURITY_PATH
+ BTF_ID(func, security_path_truncate)
+-#endif
+ BTF_ID(func, vfs_truncate)
+ BTF_ID(func, vfs_fallocate)
+ BTF_ID(func, dentry_open)
+diff --git a/security/Kconfig b/security/Kconfig
+index 4816fc74f81e..07b3c74981a6 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -129,15 +129,6 @@ config SECURITY_NETWORK_XFRM
+ 	  IPSec.
+ 	  If you are unsure how to answer this question, answer N.
+ 
+-config SECURITY_PATH
+-	bool "Security hooks for pathname based access control"
+-	depends on SECURITY
+-	help
+-	  This enables the security hooks for pathname based access control.
+-	  If enabled, a security module can use these hooks to
+-	  implement pathname based access controls.
+-	  If you are unsure how to answer this question, answer N.
+-
+ config INTEL_TXT
+ 	bool "Enable Intel(R) Trusted Execution Technology (Intel(R) TXT)"
+ 	depends on HAVE_INTEL_TXT
+diff --git a/security/apparmor/Kconfig b/security/apparmor/Kconfig
+index 64cc3044a42c..f7c196ffbf93 100644
+--- a/security/apparmor/Kconfig
++++ b/security/apparmor/Kconfig
+@@ -3,7 +3,6 @@ config SECURITY_APPARMOR
+ 	bool "AppArmor support"
+ 	depends on SECURITY && NET
+ 	select AUDIT
+-	select SECURITY_PATH
+ 	select SECURITYFS
+ 	select SECURITY_NETWORK
+ 	default n
+diff --git a/security/integrity/evm/Kconfig b/security/integrity/evm/Kconfig
+index 861b3bacab82..fba9ee359bc9 100644
+--- a/security/integrity/evm/Kconfig
++++ b/security/integrity/evm/Kconfig
+@@ -6,7 +6,6 @@ config EVM
+ 	select CRYPTO_HMAC
+ 	select CRYPTO_SHA1
+ 	select CRYPTO_HASH_INFO
+-	select SECURITY_PATH
+ 	default n
+ 	help
+ 	  EVM protects a file's security extended attributes against
+diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
+index 475c32615006..b98bfe9efd0c 100644
+--- a/security/integrity/ima/Kconfig
++++ b/security/integrity/ima/Kconfig
+@@ -8,7 +8,6 @@ config IMA
+ 	select CRYPTO_HMAC
+ 	select CRYPTO_SHA1
+ 	select CRYPTO_HASH_INFO
+-	select SECURITY_PATH
+ 	select TCG_TPM if HAS_IOMEM
+ 	select TCG_TIS if TCG_TPM && X86
+ 	select TCG_CRB if TCG_TPM && ACPI
+diff --git a/security/landlock/Kconfig b/security/landlock/Kconfig
+index 3f1493402052..b7bb22471867 100644
+--- a/security/landlock/Kconfig
++++ b/security/landlock/Kconfig
+@@ -4,7 +4,6 @@ config SECURITY_LANDLOCK
+ 	bool "Landlock support"
+ 	depends on SECURITY
+ 	select SECURITY_NETWORK
+-	select SECURITY_PATH
+ 	help
+ 	  Landlock is a sandboxing mechanism that enables processes to restrict
+ 	  themselves (and their future children) by gradually enforcing
+diff --git a/security/security.c b/security/security.c
+index fb57e8fddd91..dbfe95eb3064 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -1878,7 +1878,6 @@ int security_inode_init_security_anon(struct inode *inode,
+ 			     context_inode);
+ }
+ 
+-#ifdef CONFIG_SECURITY_PATH
+ /**
+  * security_path_mknod() - Check if creating a special file is allowed
+  * @dir: parent directory
+@@ -2092,7 +2091,6 @@ int security_path_chroot(const struct path *path)
+ {
+ 	return call_int_hook(path_chroot, path);
+ }
+-#endif /* CONFIG_SECURITY_PATH */
+ 
+ /**
+  * security_inode_create() - Check if creating a file is allowed
+diff --git a/security/tomoyo/Kconfig b/security/tomoyo/Kconfig
+index 1e0dd1a6d0b0..ab8a5aaa301b 100644
+--- a/security/tomoyo/Kconfig
++++ b/security/tomoyo/Kconfig
+@@ -4,7 +4,6 @@ config SECURITY_TOMOYO
+ 	depends on SECURITY
+ 	depends on NET
+ 	select SECURITYFS
+-	select SECURITY_PATH
+ 	select SECURITY_NETWORK
+ 	default n
+ 	help
 -- 
-2.49.0
-
-
-[1] https://lore.kernel.org/lkml/CAHC9VhSdGeZ9x-0Hvk9mE=YMXbpk-tC5Ek+uGFGq5U+51qjChw@mail.gmail.com/
-
--- 
-Cheers,
-
-David / dhildenb
+2.47.1
 
