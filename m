@@ -1,477 +1,93 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6BF02820C6
-	for <linux-security-module@vger.kernel.org>; Tue, 22 Apr 2025 18:44:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 151562820C6
+	for <linux-security-module@vger.kernel.org>; Tue, 22 Apr 2025 19:34:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745347455; cv=none; b=bmnn6c3YtIjEcgBm7OOkFIEB4b4CXwzeBjmidL6ah7fWEBRvus/EhoTx9QmotD6WBMV/+v61zjxQjdVchbTQ1DVv2fdLjFJ025V/BYPtHPMhZlcxCaM+Nbrbc6g3zQfJ3TdUvpNRX0NFRg349zcLzJpqGdpLs+Z6CSOOw4YqJUo=
+	t=1745350500; cv=none; b=REMeKWRfTNEN+ya9epFG+Fvl0bZJ8eCNuQ9Jq+GGW44/6d711ziDgXjEVObRdGWX3l/aIRLnihNocydXfq+AvD19MQjVXinfHLIAv6aQjRSKcI0mkjN15yJPc4219txg7YIc0tdUdRs5lj6Bl8Hp83yiSGn2vlj96xKAPSROwhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745347455; c=relaxed/simple;
-	bh=TaFOTeoZkL5EIyVhT1ePQUIeah6tp+xL/udcy4t3JrE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E+3SgInyyE9mgB5pwUMI5uXsVTZKsn/N45TAssp2Yulllb6J5Rc9+GNijVylzAcy1rus7lIDHwT8lQPLBsvt9o3lsGLVdj6MDu1yOH1AfEof5mK+oiz+NPg+DvMKYbt6fcPtY7BfJP5kga31+8W5B3TZbCocJ6bNVzperA4YA6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hmA6Mfxf; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1745350500; c=relaxed/simple;
+	bh=4tnZMN55DZmrCG4zNi9F7Y/HI3ARmqLqBfDB/B0Tt5I=;
+	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
+	 References:In-Reply-To; b=U09zRc8GP9I4kvvJLbrcMTMH0rsDJ9gW3dkMlv9bxFsCwyQORfBCS27bXoJXkZjQLIkx6Z1nHkTqH/2AMd5Qj7DNttG8qg7cnvD/FGB32LAumcf85EO0Zjl7ZjRMn2r0pgSsbBKvbjCX+iYXMa12e15u38z2kosb6++MalY8HmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=XwPJVMKp; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hmA6Mfxf"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA23CC4CEE9;
-	Tue, 22 Apr 2025 18:44:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745347454;
-	bh=TaFOTeoZkL5EIyVhT1ePQUIeah6tp+xL/udcy4t3JrE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=hmA6MfxfzWCTdgUIxA1pZuHExIivPyKCb8lwBdzt0n6/P3DEPIV+Y/ltVHDGmznsd
-	 5iXFAsxXqHEI54gHXDfENL00oBVJoethEv71ROx9zUTTjp7kyRDq24RuLbPZqAOEMQ
-	 rRm0NqkmhK38tcVBlaYs9iMRSzq88k2ydwxL8/VVIWxGqc1uTiAyWtPTqVP2tU2Av/
-	 XhNbnLqxorDemUCq5iAcUxvrmcVP4Tz1bsZYllhId45ATzpZPUre+C6KbBmQVKP4l5
-	 t0mdJuYK57Ve+lD5w/pm5G4sYdIE8z5xUkACFXtNxwg/1rHg7/y1pr6MczDN0DUxko
-	 eMA2dVNsq7TAw==
-From: Song Liu <song@kernel.org>
-To: linux-security-module@vger.kernel.org
-Cc: paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	kernel-team@meta.com,
-	Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-	Song Liu <song@kernel.org>
-Subject: [PATCH] lsm: make SECURITY_PATH always enabled
-Date: Tue, 22 Apr 2025 11:44:07 -0700
-Message-ID: <20250422184407.3257964-1-song@kernel.org>
-X-Mailer: git-send-email 2.47.1
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="XwPJVMKp"
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-476a1acf61eso52537331cf.1
+        for <linux-security-module@vger.kernel.org>; Tue, 22 Apr 2025 12:34:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1745350498; x=1745955298; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UgMOi5bYMQGhj+CTXzVuh1219rLi/oMk41tK038pDbM=;
+        b=XwPJVMKpxFLThF1PurCy4LBhTA+lDWJDxcfTUHWKU9zy1A1kJuYCesKXTfout0UL8v
+         eQ5vqo7/KK87q2jqqAoeSbmaZ1PAkgOyJUJvO0z9dZDumYzd4uutSMp+b2JuPLkEJxms
+         7JVq+PsJEzNfwoNDbJ7sXXsEMkrX/9ePhcH2KXpdx4e24sjLYLvSSEwdU+QDO6ibijQf
+         JjujJ9cGTpjXI2IJ3IGW6Nplk/aBCjMzZx5UPBvVSq3e8m/6o3denv6Le8HPbF8RGZfl
+         LIuKIlwNzuSANKoVDhQuDueF1hQ8+6Tb0O60ebR/uIu90D8CpiSqf7aaJjdTqXv6b/1M
+         e57A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745350498; x=1745955298;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=UgMOi5bYMQGhj+CTXzVuh1219rLi/oMk41tK038pDbM=;
+        b=GYUVCgNeJyshD5F1cod7fT6P5zQPLHrVhd3KaEASpFCuXq5/TpYVHJs4XuW2gPxoab
+         lDRz8fTM/Jnv0VpW59D/FpBOqJh6QEHmkAfTXoJr5i+44l7v7bcfGVigauHjlBGzfKmu
+         m9yTMC1w+cCfVqlhAsryAPunWvQhq8h5uXB8/FXIM+OO1HTrjc4KkcTu/wfmdA0P1M1u
+         kqQ5Ry96KGfwmFaJc0dTS95Xah2gMW1h5JLqVOCjjOp0JzZWWI75aMUASp7Un64VZYoS
+         t3+ajnY9ulOWAnMfNE9b5bGoBQDWOsuz8ZPSb55DbsBUc8PPmqzbuIkv7zagsvN8ia4Z
+         ljEg==
+X-Forwarded-Encrypted: i=1; AJvYcCX+rjZwdVEjcYtgwqYPsK5CpJ4BuNLO3ZdhJV06AV81d41NBaDOenOT+GgGYXJ/iln53pSkB6tqOEVcI3dCDAF8IJm8880=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJsBMgWEQbSIf8dTRrFHoDN50L2nU5HHyYYoxqKyX6JWLcf6it
+	CXhjhpu+h0i7ZUAmTn33PVV0qGNNqWNuFdu9JSXLE7nORyvbsogwqV/vRbvhjg==
+X-Gm-Gg: ASbGncuTTQewtG1NPPs08bVddt8/MzqS7OsDy/45Wo6/INdTQttb58T/QaJIzogIjYM
+	fXZVkrvDNWIKs0pS77IQ9QESMBEc5/cstEhP109LsETiiEBHZdezimcuXqDepCLbDGcYW6K/JXh
+	uTGQgWbrhQ7lgTrYmISmcPQl5qmRVWJVIWSFn+YndKPzxKV2fbNbqKOc12w59sMZ7t8wDcjAW6f
+	TKHsM4Zds+t7dJW9ypLrcyL+F04ca0onJVXxXqnDQ9zoRBP9FDT3PabIIr4BQBmKwHDn0c36TuV
+	fFadzDFWbLbOlnmcKQ8n2AHRTMZLoKp8NegaSQeKr3Xy2rQ7+IgL1vyXQkGw8P4wAp/1UWliQWG
+	ENzInDqUr9w==
+X-Google-Smtp-Source: AGHT+IFycseQfg0kLwO4oxZG5+JgJxP4IyeOiqkyzoi025zQHA29IXH0mAeKzb30l8qKo1jAzVjZdA==
+X-Received: by 2002:a05:622a:1825:b0:476:903a:b7f0 with SMTP id d75a77b69052e-47aec4d11b7mr278155631cf.49.1745350497903;
+        Tue, 22 Apr 2025 12:34:57 -0700 (PDT)
+Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
+        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-47ae9ce2653sm59106831cf.58.2025.04.22.12.34.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Apr 2025 12:34:57 -0700 (PDT)
+Date: Tue, 22 Apr 2025 15:34:57 -0400
+Message-ID: <90ae0b3c6c151950c3a4547f4ad9ad0f@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=UTF-8 
+Content-Transfer-Encoding: 8bit 
+X-Mailer: pstg-pwork:20250422_1524/pstg-lib:20250422_1524/pstg-pwork:20250422_1524
+From: Paul Moore <paul@paul-moore.com>
+To: Song Liu <song@kernel.org>, linux-security-module@vger.kernel.org
+Cc: jmorris@namei.org, serge@hallyn.com, kernel-team@meta.com, Song Liu <song@kernel.org>
+Subject: Re: [PATCH] lsm: Move security_netlink_send to under  CONFIG_SECURITY_NETWORK
+References: <20250421225250.2544754-1-song@kernel.org>
+In-Reply-To: <20250421225250.2544754-1-song@kernel.org>
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+On Apr 21, 2025 Song Liu <song@kernel.org> wrote:
+> 
+> security_netlink_send() is a networking hook, so it fits better under
+> CONFIG_SECURITY_NETWORK.
+> 
+> Signed-off-by: Song Liu <song@kernel.org>
+> ---
+>  include/linux/security.h | 12 ++++++------
+>  security/security.c      | 36 ++++++++++++++++++------------------
+>  2 files changed, 24 insertions(+), 24 deletions(-)
 
-Only TOMOYO needed CONFIG_SECURITY_PATH when it was introduced. But now,
-AppArmor, EVM, IMA and LandLock also need it. And kernels are likely built
-with at least one of these enabled if CONFIG_SECURITY is enabled. Let's
-simplify the dependency.
+Looks reasonable, merged into lsm/dev, thanks.
 
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Signed-off-by: Song Liu <song@kernel.org>
-
----
-
-This was initially proposed in [1], but got Nacked by Paul. However, I
-still think this change makes sense. This is because the definition of
-"pathname based access control" is not clear. For example,
-security_path_notify, security_sb_mount, security_move_mount are enabled
-by CONFIG_SECURITY, but they all use struct path, and thus are "path
-based access control". Yes, there is a difference between "path based"
-and "pathname based", but it is really up to the LSMs to decide how
-they use struct path. TOMOYO uses d_abosolute_path on security_sb_mount,
-while LandLock does path walk with dget_parent() and follow_up().
-
-The separation of CONFIG_SECURITY and CONFIG_SECURITY_PATH has actually
-caused confusion. In some of our early kernels, we enabled CONFIG_SECURITY
-but not CONFIG_SECURITY_PATH. Now, we have to add separate logic in user
-space to deal with missing CONFIG_SECURITY_PATH in these systems.
-
-Given the vague definition and real world issue, I think we should just
-merge CONFIG_SECURITY and CONFIG_SECURITY_PATH.
-
-PS: [1] doesn't build with CONFIG_SECURITY=n case. This issue is fixed in
-this version.
-
-[1] https://lore.kernel.org/linux-security-module/678aa43f-28b6-410d-8890-b8d4e3261807@I-love.SAKURA.ne.jp/
----
- arch/mips/configs/loongson2k_defconfig |   1 -
- arch/mips/configs/loongson3_defconfig  |   1 -
- include/linux/lsm_hook_defs.h          |   2 -
- include/linux/security.h               | 174 ++++++++++++-------------
- kernel/bpf/bpf_lsm.c                   |   2 -
- kernel/trace/bpf_trace.c               |   2 -
- security/Kconfig                       |   9 --
- security/apparmor/Kconfig              |   1 -
- security/integrity/evm/Kconfig         |   1 -
- security/integrity/ima/Kconfig         |   1 -
- security/landlock/Kconfig              |   1 -
- security/security.c                    |   2 -
- security/tomoyo/Kconfig                |   1 -
- 13 files changed, 86 insertions(+), 112 deletions(-)
-
-diff --git a/arch/mips/configs/loongson2k_defconfig b/arch/mips/configs/loongson2k_defconfig
-index 4b7f914d01d0..fb149d2f3ef5 100644
---- a/arch/mips/configs/loongson2k_defconfig
-+++ b/arch/mips/configs/loongson2k_defconfig
-@@ -325,7 +325,6 @@ CONFIG_NLS_UTF8=y
- CONFIG_SECURITY=y
- CONFIG_SECURITYFS=y
- CONFIG_SECURITY_NETWORK=y
--CONFIG_SECURITY_PATH=y
- CONFIG_SECURITY_SELINUX=y
- CONFIG_SECURITY_SELINUX_BOOTPARAM=y
- CONFIG_SECURITY_SELINUX_DISABLE=y
-diff --git a/arch/mips/configs/loongson3_defconfig b/arch/mips/configs/loongson3_defconfig
-index 98844b457b7f..84fdbc6fdace 100644
---- a/arch/mips/configs/loongson3_defconfig
-+++ b/arch/mips/configs/loongson3_defconfig
-@@ -376,7 +376,6 @@ CONFIG_NLS_UTF8=y
- CONFIG_SECURITY=y
- CONFIG_SECURITYFS=y
- CONFIG_SECURITY_NETWORK=y
--CONFIG_SECURITY_PATH=y
- CONFIG_SECURITY_SELINUX=y
- CONFIG_SECURITY_SELINUX_BOOTPARAM=y
- CONFIG_DEFAULT_SECURITY_DAC=y
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index bf3bbac4e02a..b2c21e5f6fbd 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -87,7 +87,6 @@ LSM_HOOK(int, -EOPNOTSUPP, dentry_init_security, struct dentry *dentry,
- LSM_HOOK(int, 0, dentry_create_files_as, struct dentry *dentry, int mode,
- 	 struct qstr *name, const struct cred *old, struct cred *new)
- 
--#ifdef CONFIG_SECURITY_PATH
- LSM_HOOK(int, 0, path_unlink, const struct path *dir, struct dentry *dentry)
- LSM_HOOK(int, 0, path_mkdir, const struct path *dir, struct dentry *dentry,
- 	 umode_t mode)
-@@ -107,7 +106,6 @@ LSM_HOOK(int, 0, path_rename, const struct path *old_dir,
- LSM_HOOK(int, 0, path_chmod, const struct path *path, umode_t mode)
- LSM_HOOK(int, 0, path_chown, const struct path *path, kuid_t uid, kgid_t gid)
- LSM_HOOK(int, 0, path_chroot, const struct path *path)
--#endif /* CONFIG_SECURITY_PATH */
- 
- /* Needed for inode based security check */
- LSM_HOOK(int, 0, path_notify, const struct path *path, u64 mask,
-diff --git a/include/linux/security.h b/include/linux/security.h
-index cc9b54d95d22..5012a1926f57 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -581,6 +581,24 @@ void security_bdev_free(struct block_device *bdev);
- int security_bdev_setintegrity(struct block_device *bdev,
- 			       enum lsm_integrity_type type, const void *value,
- 			       size_t size);
-+int security_path_unlink(const struct path *dir, struct dentry *dentry);
-+int security_path_mkdir(const struct path *dir, struct dentry *dentry, umode_t mode);
-+int security_path_rmdir(const struct path *dir, struct dentry *dentry);
-+int security_path_mknod(const struct path *dir, struct dentry *dentry, umode_t mode,
-+			unsigned int dev);
-+void security_path_post_mknod(struct mnt_idmap *idmap, struct dentry *dentry);
-+int security_path_truncate(const struct path *path);
-+int security_path_symlink(const struct path *dir, struct dentry *dentry,
-+			  const char *old_name);
-+int security_path_link(struct dentry *old_dentry, const struct path *new_dir,
-+		       struct dentry *new_dentry);
-+int security_path_rename(const struct path *old_dir, struct dentry *old_dentry,
-+			 const struct path *new_dir, struct dentry *new_dentry,
-+			 unsigned int flags);
-+int security_path_chmod(const struct path *path, umode_t mode);
-+int security_path_chown(const struct path *path, kuid_t uid, kgid_t gid);
-+int security_path_chroot(const struct path *path);
-+
- #else /* CONFIG_SECURITY */
- 
- /**
-@@ -1603,6 +1621,74 @@ static inline int security_bdev_setintegrity(struct block_device *bdev,
- 	return 0;
- }
- 
-+static inline int security_path_unlink(const struct path *dir, struct dentry *dentry)
-+{
-+	return 0;
-+}
-+
-+static inline int security_path_mkdir(const struct path *dir, struct dentry *dentry,
-+				      umode_t mode)
-+{
-+	return 0;
-+}
-+
-+static inline int security_path_rmdir(const struct path *dir, struct dentry *dentry)
-+{
-+	return 0;
-+}
-+
-+static inline int security_path_mknod(const struct path *dir, struct dentry *dentry,
-+				      umode_t mode, unsigned int dev)
-+{
-+	return 0;
-+}
-+
-+static inline void security_path_post_mknod(struct mnt_idmap *idmap,
-+					    struct dentry *dentry)
-+{ }
-+
-+static inline int security_path_truncate(const struct path *path)
-+{
-+	return 0;
-+}
-+
-+static inline int security_path_symlink(const struct path *dir, struct dentry *dentry,
-+					const char *old_name)
-+{
-+	return 0;
-+}
-+
-+static inline int security_path_link(struct dentry *old_dentry,
-+				     const struct path *new_dir,
-+				     struct dentry *new_dentry)
-+{
-+	return 0;
-+}
-+
-+static inline int security_path_rename(const struct path *old_dir,
-+				       struct dentry *old_dentry,
-+				       const struct path *new_dir,
-+				       struct dentry *new_dentry,
-+				       unsigned int flags)
-+{
-+	return 0;
-+}
-+
-+static inline int security_path_chmod(const struct path *path, umode_t mode)
-+{
-+	return 0;
-+}
-+
-+static inline int security_path_chown(const struct path *path, kuid_t uid, kgid_t gid)
-+{
-+	return 0;
-+}
-+
-+static inline int security_path_chroot(const struct path *path)
-+{
-+	return 0;
-+}
-+
- #endif	/* CONFIG_SECURITY */
- 
- #if defined(CONFIG_SECURITY) && defined(CONFIG_WATCH_QUEUE)
-@@ -2029,94 +2115,6 @@ static inline void security_skb_classify_flow(struct sk_buff *skb,
- 
- #endif	/* CONFIG_SECURITY_NETWORK_XFRM */
- 
--#ifdef CONFIG_SECURITY_PATH
--int security_path_unlink(const struct path *dir, struct dentry *dentry);
--int security_path_mkdir(const struct path *dir, struct dentry *dentry, umode_t mode);
--int security_path_rmdir(const struct path *dir, struct dentry *dentry);
--int security_path_mknod(const struct path *dir, struct dentry *dentry, umode_t mode,
--			unsigned int dev);
--void security_path_post_mknod(struct mnt_idmap *idmap, struct dentry *dentry);
--int security_path_truncate(const struct path *path);
--int security_path_symlink(const struct path *dir, struct dentry *dentry,
--			  const char *old_name);
--int security_path_link(struct dentry *old_dentry, const struct path *new_dir,
--		       struct dentry *new_dentry);
--int security_path_rename(const struct path *old_dir, struct dentry *old_dentry,
--			 const struct path *new_dir, struct dentry *new_dentry,
--			 unsigned int flags);
--int security_path_chmod(const struct path *path, umode_t mode);
--int security_path_chown(const struct path *path, kuid_t uid, kgid_t gid);
--int security_path_chroot(const struct path *path);
--#else	/* CONFIG_SECURITY_PATH */
--static inline int security_path_unlink(const struct path *dir, struct dentry *dentry)
--{
--	return 0;
--}
--
--static inline int security_path_mkdir(const struct path *dir, struct dentry *dentry,
--				      umode_t mode)
--{
--	return 0;
--}
--
--static inline int security_path_rmdir(const struct path *dir, struct dentry *dentry)
--{
--	return 0;
--}
--
--static inline int security_path_mknod(const struct path *dir, struct dentry *dentry,
--				      umode_t mode, unsigned int dev)
--{
--	return 0;
--}
--
--static inline void security_path_post_mknod(struct mnt_idmap *idmap,
--					    struct dentry *dentry)
--{ }
--
--static inline int security_path_truncate(const struct path *path)
--{
--	return 0;
--}
--
--static inline int security_path_symlink(const struct path *dir, struct dentry *dentry,
--					const char *old_name)
--{
--	return 0;
--}
--
--static inline int security_path_link(struct dentry *old_dentry,
--				     const struct path *new_dir,
--				     struct dentry *new_dentry)
--{
--	return 0;
--}
--
--static inline int security_path_rename(const struct path *old_dir,
--				       struct dentry *old_dentry,
--				       const struct path *new_dir,
--				       struct dentry *new_dentry,
--				       unsigned int flags)
--{
--	return 0;
--}
--
--static inline int security_path_chmod(const struct path *path, umode_t mode)
--{
--	return 0;
--}
--
--static inline int security_path_chown(const struct path *path, kuid_t uid, kgid_t gid)
--{
--	return 0;
--}
--
--static inline int security_path_chroot(const struct path *path)
--{
--	return 0;
--}
--#endif	/* CONFIG_SECURITY_PATH */
--
- #ifdef CONFIG_KEYS
- #ifdef CONFIG_SECURITY
- 
-diff --git a/kernel/bpf/bpf_lsm.c b/kernel/bpf/bpf_lsm.c
-index 0a59df1c550a..e4b00a8897b1 100644
---- a/kernel/bpf/bpf_lsm.c
-+++ b/kernel/bpf/bpf_lsm.c
-@@ -329,7 +329,6 @@ BTF_ID(func, bpf_lsm_kernel_module_request)
- BTF_ID(func, bpf_lsm_kernel_read_file)
- BTF_ID(func, bpf_lsm_kernfs_init_security)
- 
--#ifdef CONFIG_SECURITY_PATH
- BTF_ID(func, bpf_lsm_path_unlink)
- BTF_ID(func, bpf_lsm_path_mkdir)
- BTF_ID(func, bpf_lsm_path_rmdir)
-@@ -339,7 +338,6 @@ BTF_ID(func, bpf_lsm_path_link)
- BTF_ID(func, bpf_lsm_path_rename)
- BTF_ID(func, bpf_lsm_path_chmod)
- BTF_ID(func, bpf_lsm_path_chown)
--#endif /* CONFIG_SECURITY_PATH */
- 
- BTF_ID(func, bpf_lsm_mmap_file)
- BTF_ID(func, bpf_lsm_netlink_send)
-diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-index 187dc37d61d4..e93f77c086ba 100644
---- a/kernel/trace/bpf_trace.c
-+++ b/kernel/trace/bpf_trace.c
-@@ -936,9 +936,7 @@ BTF_ID(func, security_file_permission)
- BTF_ID(func, security_inode_getattr)
- BTF_ID(func, security_file_open)
- #endif
--#ifdef CONFIG_SECURITY_PATH
- BTF_ID(func, security_path_truncate)
--#endif
- BTF_ID(func, vfs_truncate)
- BTF_ID(func, vfs_fallocate)
- BTF_ID(func, dentry_open)
-diff --git a/security/Kconfig b/security/Kconfig
-index 4816fc74f81e..07b3c74981a6 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -129,15 +129,6 @@ config SECURITY_NETWORK_XFRM
- 	  IPSec.
- 	  If you are unsure how to answer this question, answer N.
- 
--config SECURITY_PATH
--	bool "Security hooks for pathname based access control"
--	depends on SECURITY
--	help
--	  This enables the security hooks for pathname based access control.
--	  If enabled, a security module can use these hooks to
--	  implement pathname based access controls.
--	  If you are unsure how to answer this question, answer N.
--
- config INTEL_TXT
- 	bool "Enable Intel(R) Trusted Execution Technology (Intel(R) TXT)"
- 	depends on HAVE_INTEL_TXT
-diff --git a/security/apparmor/Kconfig b/security/apparmor/Kconfig
-index 64cc3044a42c..f7c196ffbf93 100644
---- a/security/apparmor/Kconfig
-+++ b/security/apparmor/Kconfig
-@@ -3,7 +3,6 @@ config SECURITY_APPARMOR
- 	bool "AppArmor support"
- 	depends on SECURITY && NET
- 	select AUDIT
--	select SECURITY_PATH
- 	select SECURITYFS
- 	select SECURITY_NETWORK
- 	default n
-diff --git a/security/integrity/evm/Kconfig b/security/integrity/evm/Kconfig
-index 861b3bacab82..fba9ee359bc9 100644
---- a/security/integrity/evm/Kconfig
-+++ b/security/integrity/evm/Kconfig
-@@ -6,7 +6,6 @@ config EVM
- 	select CRYPTO_HMAC
- 	select CRYPTO_SHA1
- 	select CRYPTO_HASH_INFO
--	select SECURITY_PATH
- 	default n
- 	help
- 	  EVM protects a file's security extended attributes against
-diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
-index 475c32615006..b98bfe9efd0c 100644
---- a/security/integrity/ima/Kconfig
-+++ b/security/integrity/ima/Kconfig
-@@ -8,7 +8,6 @@ config IMA
- 	select CRYPTO_HMAC
- 	select CRYPTO_SHA1
- 	select CRYPTO_HASH_INFO
--	select SECURITY_PATH
- 	select TCG_TPM if HAS_IOMEM
- 	select TCG_TIS if TCG_TPM && X86
- 	select TCG_CRB if TCG_TPM && ACPI
-diff --git a/security/landlock/Kconfig b/security/landlock/Kconfig
-index 3f1493402052..b7bb22471867 100644
---- a/security/landlock/Kconfig
-+++ b/security/landlock/Kconfig
-@@ -4,7 +4,6 @@ config SECURITY_LANDLOCK
- 	bool "Landlock support"
- 	depends on SECURITY
- 	select SECURITY_NETWORK
--	select SECURITY_PATH
- 	help
- 	  Landlock is a sandboxing mechanism that enables processes to restrict
- 	  themselves (and their future children) by gradually enforcing
-diff --git a/security/security.c b/security/security.c
-index fb57e8fddd91..dbfe95eb3064 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1878,7 +1878,6 @@ int security_inode_init_security_anon(struct inode *inode,
- 			     context_inode);
- }
- 
--#ifdef CONFIG_SECURITY_PATH
- /**
-  * security_path_mknod() - Check if creating a special file is allowed
-  * @dir: parent directory
-@@ -2092,7 +2091,6 @@ int security_path_chroot(const struct path *path)
- {
- 	return call_int_hook(path_chroot, path);
- }
--#endif /* CONFIG_SECURITY_PATH */
- 
- /**
-  * security_inode_create() - Check if creating a file is allowed
-diff --git a/security/tomoyo/Kconfig b/security/tomoyo/Kconfig
-index 1e0dd1a6d0b0..ab8a5aaa301b 100644
---- a/security/tomoyo/Kconfig
-+++ b/security/tomoyo/Kconfig
-@@ -4,7 +4,6 @@ config SECURITY_TOMOYO
- 	depends on SECURITY
- 	depends on NET
- 	select SECURITYFS
--	select SECURITY_PATH
- 	select SECURITY_NETWORK
- 	default n
- 	help
--- 
-2.47.1
-
+--
+paul-moore.com
