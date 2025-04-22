@@ -1,133 +1,184 @@
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59658293449;
-	Tue, 22 Apr 2025 16:29:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A4FD2980A0
+	for <linux-security-module@vger.kernel.org>; Tue, 22 Apr 2025 16:49:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745339390; cv=none; b=kxBlFTWwWAW/2mxqCvoyf4+iNuoRWu6zxo3Hi31cVN7pRD4ZzeRq3hKy8OCOUpO48dMb2XnRVoTSi+bbGtCGqjk/QV3cYZ62o/KcxILwlTIC5BGqG4OV5m6ZWE3h7JIQm9QKbah13PQOX6HKiXdeebr3A/QT3WdXeW9vuvVVPe4=
+	t=1745340567; cv=none; b=ZGyUPjt3f2O9skhKb3Qj7Hr7/W9utiphEZmhuuwZJHH8tr7WBJB16Fp7nndhqrxLidKKAiejdS/ts2ZAiKWDgZvHGhzeszRJpmZ9CRqZSPsufKoch8biiTE4Zl2raURDXqpBey3lKHtj5ovADl0DhOqtRSJ5ZcLwnRxu03kC9xU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745339390; c=relaxed/simple;
-	bh=EukGHIN1+n05+tQ+74EpnEJVdZ6YLqbhZchKXtA1AMc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=elAzPlNsNbcZnJTPnji17rlQQVty23QEI+JOwxDdzmJf4iQKYQIhXw+2w7RqUjBLb5pzTGXVSrmdskQ+HyTB/NX6O+arZdp/Dtjh/TGntNbcRbiG6Lw3Cavu5qSGOPZIzM8ngnnIcsyhojEEcOuL05GumNh67opCyM3dPGtYAyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id 595ECC10; Tue, 22 Apr 2025 11:29:43 -0500 (CDT)
-Date: Tue, 22 Apr 2025 11:29:43 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>, Parav Pandit <parav@nvidia.com>,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>,
-	Leon Romanovsky <leonro@nvidia.com>
-Subject: Re: [PATCH] RDMA/uverbs: Consider capability of the process that
- opens the file
-Message-ID: <20250422162943.GA589534@mail.hallyn.com>
-References: <20250318225709.GC9311@nvidia.com>
- <CY8PR12MB7195B7FAA54E7E0264D28BAEDCA92@CY8PR12MB7195.namprd12.prod.outlook.com>
- <20250421031320.GA579226@mail.hallyn.com>
- <CY8PR12MB7195E4A0C6E019F10222B543DCB82@CY8PR12MB7195.namprd12.prod.outlook.com>
- <20250421130024.GA582222@mail.hallyn.com>
- <CY8PR12MB71955204622F18B2C3437BCBDCB82@CY8PR12MB7195.namprd12.prod.outlook.com>
- <20250421172236.GA583385@mail.hallyn.com>
- <20250422124640.GI823903@nvidia.com>
- <20250422131433.GA588503@mail.hallyn.com>
- <20250422161127.GO823903@nvidia.com>
+	s=arc-20240116; t=1745340567; c=relaxed/simple;
+	bh=1zm/ifLFoyueirmbO4F+dQ+4rpCflNI54FJ6BvufTFg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Jz0MuESs4+Qys7q045nG8vZdIMQp5hR9qKK51CsFrwiD9CCAkzl4CMWjA6UrJujXf14VEmTphufG2S/H3Iuq1OSrhnwvQFcRV17/8GpBmGTw5U5nwi+xdyzpzkUhfK+k2xpzlocn6zQ2heZjIs9LRhOmzS+9BiypfGoQmTAHGoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dIqLbq9J; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dIqLbq9J"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745340564;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=lHSkROXmhzxaxiTJB2Sts+hoXg6Enh4N97MVVPj8jow=;
+	b=dIqLbq9JlcpPnCKW6Zp0RuWXD/Kz+s1vIVIM02M/TmSkQTMRdrePCJ9ObYKn7jUCOzzX9u
+	qKZZLVbqqemf+xoT24KAomegaZjM3ORChmgnQfvK6FM615NPJ/YZbvZtUJepWfWDhFIib7
+	cjqHiankvapIi8oHsZpFvFWN8szUk8E=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-183-RI3s-rqtP-aUNn09Z3ljbg-1; Tue, 22 Apr 2025 12:49:19 -0400
+X-MC-Unique: RI3s-rqtP-aUNn09Z3ljbg-1
+X-Mimecast-MFC-AGG-ID: RI3s-rqtP-aUNn09Z3ljbg_1745340558
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-39979ad285bso2431362f8f.2
+        for <linux-security-module@vger.kernel.org>; Tue, 22 Apr 2025 09:49:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745340557; x=1745945357;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=lHSkROXmhzxaxiTJB2Sts+hoXg6Enh4N97MVVPj8jow=;
+        b=jS4dS8/eKXi0WUcnieMH4iynJ3/acPcS+1E4+KQiDIYQjM3pRN/KjFlS1Mah86yi5c
+         4vE2Ra12oTXY3j1/gJyP3T9kT2pbVvF2F5Wcowkx6KXCz/eh8BmCoSTClGK5as8y7Z8C
+         g2cYT8kWulDcox7rEvLDUXp6VgMiOOFVs9lug+bYm1EE9Ubdr8jou+6HAhAacRV4amH1
+         k0Hi9y9TeSryAiqfFgKxcx8A3l6IrosENP+EutyxmL/MDUd3BbxkPFLn2bDT5cLyIsC5
+         8CprN+VMBZFcHn7KnlvWhC5acAa66RFG3HgjwQJsjEU7dpu8sK4h/j/pSadjjHE6w+us
+         JXYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUcq1+u6sUugHSm1DF5NRe3AsD3LDSQ5Gd645tfpk8gX/ay/ZwlES2KKSdEzbPUK4DVp8WmxJPfgex6wxI0NgwBMBb80JE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxP6G8QoWZyfX/oy0qwCdYbeJ0p+zbZH8f07Zm3nSdPKkAUJdfT
+	frlwCJ8qr6wJAiX3Bz1knhO9iwjfqHRLQKKWOEr2dNXGGwfbVUZd//EFo8kgnGRrQjPjebMRose
+	5CrCi/4ZC2l3jT4Gb3Hx42darP1lFitmsuZno4+KqPoCXMVijqH8vCc2ZcP8G41KqACmqV6AC2Q
+	==
+X-Gm-Gg: ASbGncuy3aExqNPNk5nayW2oEIbl3ig7cpMHQJFb23eGMEgxTGfxURksr35/pUv/Muh
+	SGgyG1bcxjCljlwPJ5VPsx+9ZCnkzYH7gynkYFGaJpHUM0+IYmtXvz9yOH6pYZ+Lfx2LCbYKV7L
+	jcdCdMAVRMAeItfJV1CsGflsSsDVx8+U0g1eYWQiWa9gh0tWNncjhp8W/GKvH10uaqxfxdSrXFo
+	aG5m3MZ9iBUAAq5dcg/bEBdwBYL+haQ1fUPSRK5fwzzHweqdzJoHJR3RC4ouvLY7g7nR+IYFPkD
+	MXW+9w4DD3DwCLp86x2dqwhtxAufKCX0gDJ3jqx5
+X-Received: by 2002:a05:6000:381:b0:38f:2413:2622 with SMTP id ffacd0b85a97d-39efbad7f42mr14397228f8f.47.1745340557498;
+        Tue, 22 Apr 2025 09:49:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGDoEgp+mnqvCe0AHRP0Rn4FhZOt0+ug+zdFUDxNDueLDOx4k3ra4nj9Co+7VRKKBDx5ofTWw==
+X-Received: by 2002:a05:6000:381:b0:38f:2413:2622 with SMTP id ffacd0b85a97d-39efbad7f42mr14397208f8f.47.1745340557066;
+        Tue, 22 Apr 2025 09:49:17 -0700 (PDT)
+Received: from [192.168.3.141] (p5b0c62cd.dip0.t-ipconnect.de. [91.12.98.205])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39efa4330bfsm15769041f8f.23.2025.04.22.09.49.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Apr 2025 09:49:16 -0700 (PDT)
+Message-ID: <1bee5078-5cc4-43b7-993c-f1e57a9bf534@redhat.com>
+Date: Tue, 22 Apr 2025 18:49:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250422161127.GO823903@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v7 3/8] security: Export
+ security_inode_init_security_anon for KVM guest_memfd
+To: Shivank Garg <shivankg@amd.com>, Paul Moore <paul@paul-moore.com>
+Cc: seanjc@google.com, vbabka@suse.cz, willy@infradead.org,
+ akpm@linux-foundation.org, shuah@kernel.org, pbonzini@redhat.com,
+ ackerleytng@google.com, jmorris@namei.org, serge@hallyn.com, pvorel@suse.cz,
+ bfoster@redhat.com, tabba@google.com, vannapurve@google.com,
+ chao.gao@intel.com, bharata@amd.com, nikunj@amd.com, michael.day@amd.com,
+ yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com,
+ michael.roth@amd.com, aik@amd.com, jgg@nvidia.com, kalyazin@amazon.com,
+ peterx@redhat.com, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+ kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-coco@lists.linux.dev
+References: <20250408112402.181574-1-shivankg@amd.com>
+ <20250408112402.181574-4-shivankg@amd.com>
+ <CAHC9VhRFBOC=cZB+Dm00cshwBSBaK6amv+=XFLPF0Bub0gHN+Q@mail.gmail.com>
+ <b98f7b78-1834-4fa0-b79c-d5ac562e4809@amd.com>
+From: David Hildenbrand <david@redhat.com>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <b98f7b78-1834-4fa0-b79c-d5ac562e4809@amd.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: 2inVgLxz1bS2piah2j33vMwG1lvRVOHrymZ8QCWzHCU_1745340558
+X-Mimecast-Originator: redhat.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Apr 22, 2025 at 01:11:27PM -0300, Jason Gunthorpe wrote:
-> On Tue, Apr 22, 2025 at 08:14:33AM -0500, Serge E. Hallyn wrote:
-> > Hi Jason,
-> > 
-> > On Tue, Apr 22, 2025 at 09:46:40AM -0300, Jason Gunthorpe wrote:
-> > > On Mon, Apr 21, 2025 at 12:22:36PM -0500, Serge E. Hallyn wrote:
-> > > > > > 1. the create should check ns_capable(current->nsproxy->net->user_ns,
-> > > > > > CAP_NET_RAW) 
-> > > > > I believe this is sufficient as this create call happens through the ioctl().
-> > > > > But more question on #3.
-> > > 
-> > > I think this is the right one to use everywhere.
-> > 
-> > It's the right one to use when creating resources, but when later using
-> > them, since below you say that the resource should in fact be tied to
-> > the creator's network namespace, that means that checking
-> > current->nsproxy->net->user_ns would have nothing to do with the
-> > resource being used, right?
+On 11.04.25 08:07, Shivank Garg wrote:
+> Hi Paul,
 > 
-> Yes, in that case you'd check something stored in the uobject.
+> On 4/10/2025 1:49 AM, Paul Moore wrote:
+>> On Tue, Apr 8, 2025 at 7:25 AM Shivank Garg <shivankg@amd.com> wrote:
+>>>
+>>> KVM guest_memfd is implementing its own inodes to store metadata for
+>>> backing memory using a custom filesystem. This requires the ability to
+>>> initialize anonymous inode using security_inode_init_security_anon().
+>>>
+>>> As guest_memfd currently resides in the KVM module, we need to export this
+>>> symbol for use outside the core kernel. In the future, guest_memfd might be
+>>> moved to core-mm, at which point the symbols no longer would have to be
+>>> exported. When/if that happens is still unclear.
+>>
+>> Can you help me understand the timing just a bit more ... do you
+>> expect the move to the core MM code to happen during the lifetime of
+>> this patchset, or is it just some hand-wavy "future date"?  No worries
+>> either way, just trying to understand things a bit better.
+> 
+> I am not sure about it, any ideas David?
 
-Perfect, that's exactly the kind of thing I was looking for.  Thanks.
+Sorry for the late reply.
 
-> This happens sort of indirectly, for instance an object may become
-> associated with a netdevice and the netdevice is linked to a net
-> namespace. Eg we should do route lookups relative to that associated
-> net devices's namespaces.
-> 
-> I'm not sure we have a capable like check like that though.
-> 
-> > > Even in goofy cases like passing a FD between processes with different
-> > > net namespaces, the expectation is that objects can be created
-> > > relative to net namespace of the process calling the ioctl, and then
-> > > accessed by the other process in the other namespace.
-> > 
-> > So when earlier it was said that uverbs was switching from read/write
-> > to ioctl so that permissions could be checked, that is not actually
-> > the case? 
-> 
-> I don't quite know what you mean here?
-> 
-> read/write has a security problem in that you can pass a FD to a
-> setuid program as its stdout and have that setuid program issue a
-> write() to trigger a kernel operation using it's elevated
-> privilege. This is not possible with ioctl.
-> 
-> When this bug was discovered the read/write path started calling
-> ib_safe_file_access() which blanket disallows *any* credential change
-> from open() to write().
-> 
-> ioctl removes this excessive restriction and we are back to
-> per-process checks.
-> 
-> > The intent is for a privileged task to create the
-> > resource and be able to pass it to any task in any namespace with any
-> > or no privilege and have that task be able to use it with the
-> > opener's original privilege, just as with read/write?
-> 
-> Yes. The permissions affiliate with the object contained inside the
-> FD, not the FD itself. The FD is just a container and a way to route
-> system calls.
-> 
-> > I was trying last night to track down where the uverb ioctls are doing 
-> > permission checks, but failing to find it.  I see where the
-> > pbundle->method_elm->handler gets dereferenced, but not where those
-> > are defined.
-> 
-> There are very few permission checks. Most boil down to implicit
-> things, like we have a netdevice relative to current's net namespace
-> and we need to find a gid table index for that netdevice. We don't
-> actually need to do anything special here as the ifindex code
-> automatically validates the namespaces and struct net_device * are
-> globally unique.
-> 
-> Similarly with route lookups and things, once we validated the net
-> device objects are supposed to remain bound to it.
-> 
-> The cases like cap_net_raw are one time checks at creation time that
-> modify the devices' rules for processing the queues. The devices check
-> the creation property of the queue when processing the queue.
+Hand-wavy future date after this series. Elliot was working on this, but 
+IIRC he now has a new job and might no longer be able to work on this.
 
-Thank you for the detailed explanation.
+Ackerley+Patrick started looking into this, and will likely require it 
+for other guest_memfd features (hugetlb support, directmap removal).
 
--serge
+-- 
+Cheers,
+
+David / dhildenb
+
