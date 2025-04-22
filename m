@@ -1,137 +1,111 @@
-Received: from fhigh-a8-smtp.messagingengine.com (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1080D27CCE2;
-	Tue, 22 Apr 2025 12:53:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D37720C490;
+	Tue, 22 Apr 2025 13:14:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745326422; cv=none; b=n3Fwx/BewUl2W/TmghgOKBNpqmP3u3NmvKskqBjgyRQv+Kyd7i0KyobRaMqtW5lrzFIgw3gbjRRx4iLAymF3T9hCaz/iXnj89/ndxCsiCLVdFogooknIiZwPYy9E13fnLeB0XfKG2173kWDYCGwoH1h/AWBG5mJEVAtxw4FSAh8=
+	t=1745327679; cv=none; b=fzyI0iCidPwNJCmXSRZn0diZ3SYYeWkBf9kP4KEK6RZvu6ttY/VfOgXZDPq+4V9Oc7Ab06bXtwasyeczpHfY4pYCg/xnybn0johl2Jtwb8yQ/Er3LSNcJ3L2PmPNhGWbFDqarL9D20wkUU6Dh8LFck2OSsNkP7VfeZOQTLdnMgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745326422; c=relaxed/simple;
-	bh=ia1z1SeD0etI3VfTHM25UQEl6UhcRMtzL98yLTEoM1w=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=O6RYxyk0e6wW0n9OoBpWCEggp7lYJ5Dus0uBw3o/SlXV2JzYZgp+MP74y8AcRcctUmjROIWfPACyGtSW7U1SYhq+OQDrObasbthnY6P52SK/9h198M8eJAK4jg6K1GoXLfFKp3J3vda3wNRi++nEUbn47RyRYmYQqA/6nkIZu1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=IqnjCbjF; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=bFiHs6KN; arc=none smtp.client-ip=103.168.172.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="IqnjCbjF";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="bFiHs6KN"
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id DBEDB114028A;
-	Tue, 22 Apr 2025 08:53:38 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-05.internal (MEProxy); Tue, 22 Apr 2025 08:53:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1745326418;
-	 x=1745412818; bh=1Sj1ihnNRf66WWMPWwcQKoe0OJ6klzue0Chv96p60Wo=; b=
-	IqnjCbjFjSdZ1WFoir/zRvMtYIyUzBpHCXTgEecy96GZ6Gjv6muuQpuGGGW0pKXo
-	0PGZdZ7EHmzfFu1XiIEeOSpDl9GihIMZfusKDRhdDxkyuLiESQP5yrLRVjzq+nxX
-	ofjVshganaMv2/lCSClLz0BAWxp4T3IqFHpH4jGeP0w5I53U+ZTPiHVs3Ei8Mtl5
-	x5dRHD+c0sGDPTzVFqClk6Qy/ZV0/4utxuMNWze5EHHMrILKDots3SrMivEl80vE
-	yMsw/3EBt8a46haOGtFil/SD+hfjyV84vYJaMiZuIV98fhiQ/HtEynWJH9oT+FOD
-	jZ5JW5Bb/9MR/Wcli00wLw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1745326418; x=
-	1745412818; bh=1Sj1ihnNRf66WWMPWwcQKoe0OJ6klzue0Chv96p60Wo=; b=b
-	FiHs6KN947ldMEQ69Oj0wj5upbQTpAdRboK9U6ZFyPp6gbPXQ4AdZ6HufF42+S/W
-	cOszYl4SM9mj9ZMdDlXvSgPlAnD9quBz+BlNKxNol9p63xXBFGUdaTi1t0x3e7tv
-	xuU7dm26d9+rggjVjwak+M/OTf6uUMgGcQLWxvrJ//0LQFBydEctbYSb84UWAfEM
-	zxmAOonnIFdmbiHCQUw3uDWsbOuou3FMj4X4uLAP/hShP0wBXIYyCZvJuwn5iNio
-	mn2kZpsurTKCeCl00n87q3zealmY5yOdhZZoHsMQY3jSwsHfzPywczJ0dNzdE7io
-	/v+aeHJqPjo2e53OlCQEg==
-X-ME-Sender: <xms:UZEHaE96bj1ZVN7f1RN1Wa4O6u0oJLNJxWLtY-NSavEntYw7N3RInQ>
-    <xme:UZEHaMspt_SfTs2ZKmAWisHUIpyNBA5_HTEUNI7h9uzL_vziP_s2cTNbmqb3AbbES
-    eFh5whszKlMP5XVerE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvgeefjeelucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertder
-    tdejnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
-    gsrdguvgeqnecuggftrfgrthhtvghrnhepkedvuefhiedtueeijeevtdeiieejfeelveff
-    feelkeeiteejffdvkefgteeuhffgnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenuc
-    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnuges
-    rghrnhgusgdruggvpdhnsggprhgtphhtthhopedufedpmhhouggvpehsmhhtphhouhhtpd
-    hrtghpthhtohepmhhitgesughighhikhhougdrnhgvthdprhgtphhtthhopehgnhhorggt
-    khesghhoohhglhgvrdgtohhmpdhrtghpthhtohepshgvrhhgvgeshhgrlhhlhihnrdgtoh
-    hmpdhrtghpthhtohepsghrohhonhhivgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
-    khgvvghssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehtohhrvhgrlhgusheslhhinh
-    hugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepjhhmohhrrhhishesnhgr
-    mhgvihdrohhrghdprhgtphhtthhopehprghulhesphgruhhlqdhmohhorhgvrdgtohhmpd
-    hrtghpthhtoheplhhinhhugiesthhrvggslhhighdrohhrgh
-X-ME-Proxy: <xmx:UZEHaKCFDUrniirq-iHmmMml4LzsmocgvwW5NTsKH2syJ0GCR2zl-w>
-    <xmx:UZEHaEcRM-K9ixwlKIW6qKuAqNTBjz_XadMmclI-4bGUU_v-p5yB1g>
-    <xmx:UZEHaJPp--w8CexHYmvXZTT_0pcMA2lueFqZyW3RtmgsA_MjrKevzg>
-    <xmx:UZEHaOkhh4lUl_dFRmKtJCRmpOrYoswm9HcWeFvWOnmCzQml037V9g>
-    <xmx:UpEHaI9LPDzwEb7gCGcc6HEDpwZ_hkKDfk8zBT5G2Wqm5MkO2LKC-EhZ>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 84AB62220073; Tue, 22 Apr 2025 08:53:37 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1745327679; c=relaxed/simple;
+	bh=SuCyOEailZA9fhsZw85JkpSQD5jDz5qBD9X1wpxcvBo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NdArjWylsdiZhdGEFGBzbaOVm22+KCzPTmtalpH1B0eUoEhO0NanUKueWTwRT74b8mjJPcMGZIfmPhGB0bRtFN91El6GkRK+vVdsEUtZzxkCUO1emuENRriGvYqEefx3QLTLwVqhlxI/Ahs4YjaQs9SqhUYjcV8AHPUfG1c+GsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id 5EAAB4A4; Tue, 22 Apr 2025 08:14:33 -0500 (CDT)
+Date: Tue, 22 Apr 2025 08:14:33 -0500
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>, Parav Pandit <parav@nvidia.com>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>,
+	Leon Romanovsky <leonro@nvidia.com>
+Subject: Re: [PATCH] RDMA/uverbs: Consider capability of the process that
+ opens the file
+Message-ID: <20250422131433.GA588503@mail.hallyn.com>
+References: <20250318112049.GC9311@nvidia.com>
+ <87ldt2yur4.fsf@email.froward.int.ebiederm.org>
+ <20250318225709.GC9311@nvidia.com>
+ <CY8PR12MB7195B7FAA54E7E0264D28BAEDCA92@CY8PR12MB7195.namprd12.prod.outlook.com>
+ <20250421031320.GA579226@mail.hallyn.com>
+ <CY8PR12MB7195E4A0C6E019F10222B543DCB82@CY8PR12MB7195.namprd12.prod.outlook.com>
+ <20250421130024.GA582222@mail.hallyn.com>
+ <CY8PR12MB71955204622F18B2C3437BCBDCB82@CY8PR12MB7195.namprd12.prod.outlook.com>
+ <20250421172236.GA583385@mail.hallyn.com>
+ <20250422124640.GI823903@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: T9298f45962bf681a
-Date: Tue, 22 Apr 2025 14:53:05 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- "Kees Cook" <kees@kernel.org>
-Cc: linux <linux@treblig.org>, "Mark Brown" <broonie@kernel.org>,
- WangYuli <wangyuli@uniontech.com>,
- =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
- "Paul Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>,
- "Linus Torvalds" <torvalds@linux-foundation.org>,
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org
-Message-Id: <ccdfe9c0-7c28-4ecf-a7da-95c9a20eead7@app.fastmail.com>
-In-Reply-To: <20250422.eetheiPu6aiH@digikod.net>
-References: <20250421000854.work.572-kees@kernel.org>
- <20250422.eetheiPu6aiH@digikod.net>
-Subject: Re: [PATCH] landlock: Work around randstruct unnamed static initializer
- support
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250422124640.GI823903@nvidia.com>
 
-On Tue, Apr 22, 2025, at 14:25, Micka=C3=ABl Sala=C3=BCn wrote:
-> On Sun, Apr 20, 2025 at 05:08:59PM -0700, Kees Cook wrote:
->> Unnamed static initializers aren't supported by the randstruct GCC
->> plugin. Quoting the plugin, "set up a bogus anonymous struct field
->> designed to error out on unnamed struct initializers as gcc provides
->> no other way to detect such code". That is exactly what happens
->> with the landlock code, so adjust the static initializers for structs
->> lsm_ioctlop_audit and landlock_request that contain a randomized stru=
-cture
->> (struct path) to use named variables, which avoids the intentional
->> GCC crashes:
->
-> This is not a sustainable solution.  Could we fix the plugin instead?
-> This new Landlock change may be the first to trigger this plugin bug b=
-ut
-> it will probably not be the last to use unnamed static initializers.
-> Forbidding specific C constructs should be documented.
+Hi Jason,
 
-I think the version from Kees' patch looks more readable than
-the version with the compound literal, so it certainly seems appropriate
-as an immediate regression fix, even if it's possible to fix the
-plugin later.
+On Tue, Apr 22, 2025 at 09:46:40AM -0300, Jason Gunthorpe wrote:
+> On Mon, Apr 21, 2025 at 12:22:36PM -0500, Serge E. Hallyn wrote:
+> > > > 1. the create should check ns_capable(current->nsproxy->net->user_ns,
+> > > > CAP_NET_RAW) 
+> > > I believe this is sufficient as this create call happens through the ioctl().
+> > > But more question on #3.
+> 
+> I think this is the right one to use everywhere.
 
->> We went 8 years before tripping over this!=20
+It's the right one to use when creating resources, but when later using
+them, since below you say that the resource should in fact be tied to
+the creator's network namespace, that means that checking
+current->nsproxy->net->user_ns would have nothing to do with the
+resource being used, right?
 
-Right, it's probably enough to revisit the plugin code after
-it happens again.
+> > > > 3. the ioctl should check file_ns_capable(attrs->ufile->filp->f_cred->user_ns,
+> > > > CAP_NET_RAW)
+> > > > 
+> > > > Two notes about (3).  First, note that it's different from what you had.
+> > > > It explicitly checks that the caller has CAP_NET_RAW against the net
+> > > > namespace that was used to open the file.  
+> > > How is the net namespace linked in #3?
+> > > Is it because when file was opened, the rdma device was accessible in a given net ns?
+> > > But again the net ns explicitly not accessed in #3.
+> > 
+> > I'll have to look around and see if we can deduce the netns from elsewhere,
+> > the device perhaps.  But IIUC the file's user_ns should be the one for
+> > which we checked that it has CAP_NET_RAW over the actual net->user_ns,
+> > so if you have CAP_NET_RAW in that user_ns, then you're good.  Where it
+> > *could* get wonky is if the opener was in a parent userns of the net->userns.
+> > In that case the file's userns will be sufficient to access the net, but
+> > we could end up denying access from a privileged process in its child
+> > user_ns, that is, potentially, the net->userns.
+> 
+> We should never be taking any security check from the struct file.
+> 
+> All security checks are only done on current in rdma, the context of
+> the file opener must contribute nothing. The file opener could have
+> had more privilege than the child process somehow, and that extra
+> privilege should not leak into the child.
+> 
+> Even in goofy cases like passing a FD between processes with different
+> net namespaces, the expectation is that objects can be created
+> relative to net namespace of the process calling the ioctl, and then
+> accessed by the other process in the other namespace.
 
->> Closes: https://lore.kernel.org/lkml/337D5D4887277B27+3c677db3-a8b9-4=
-7f0-93a4-7809355f1381@uniontech.com/
->> Signed-off-by: Kees Cook <kees@kernel.org>
+So when earlier it was said that uverbs was switching from read/write
+to ioctl so that permissions could be checked, that is not actually
+the case?  The intent is for a privileged task to create the
+resource and be able to pass it to any task in any namespace with any
+or no privilege and have that task be able to use it with the
+opener's original privilege, just as with read/write?
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+> Objects should and do become bound to the net namespaces that created
+> them, just not the FD.
+
+I was trying last night to track down where the uverb ioctls are doing 
+permission checks, but failing to find it.  I see where the
+pbundle->method_elm->handler gets dereferenced, but not where those
+are defined.
