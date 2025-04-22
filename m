@@ -1,131 +1,133 @@
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EEDA15098F
-	for <linux-security-module@vger.kernel.org>; Tue, 22 Apr 2025 16:28:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59658293449;
+	Tue, 22 Apr 2025 16:29:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745339305; cv=none; b=vFZpIeKJEZS9R73SSXgxkLYBviXYa3SmPJHx4k5I2mOTlvZGcJH0BDTPbpz53M2fMMqsgeWhlT9Go8BsiuqpvuT44UEFSsfLJgodbSMOEZuinWA6ldqNAMlTrNRvJ6/MLjOosscZL2yG2occ8el+LeTRBSY7RqpAv/YEP72UomI=
+	t=1745339390; cv=none; b=kxBlFTWwWAW/2mxqCvoyf4+iNuoRWu6zxo3Hi31cVN7pRD4ZzeRq3hKy8OCOUpO48dMb2XnRVoTSi+bbGtCGqjk/QV3cYZ62o/KcxILwlTIC5BGqG4OV5m6ZWE3h7JIQm9QKbah13PQOX6HKiXdeebr3A/QT3WdXeW9vuvVVPe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745339305; c=relaxed/simple;
-	bh=j+iWAa0suooh/9BbheNTpR15KyC7Wrafy4/wZyt0F8w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mZtWOYbm7n5ZlPhin7nG7abopvrJSoKBoIu2oFO+dGHXvCWnL81jy+btUqZhJCNg28sdMfbn0WXu6PLZ+0Awy7E6DuVPKhw+3ODvCnymVQeXaMnf3HHKmNVdcuWgcG6VPYc5TDu2w/FTJIXnfAZgUE+CEO6M9GC2HkfKsEQhDoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=gOmHCpRH; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="gOmHCpRH"
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6ff4faf858cso37799987b3.2
-        for <linux-security-module@vger.kernel.org>; Tue, 22 Apr 2025 09:28:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1745339302; x=1745944102; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EQ/h+SRKg3HKK8qDeGxWSA4UTfkR8SBnHYf8ziXdKBc=;
-        b=gOmHCpRHyfwMjWGfVsBTu+W5AOcjKiVXVkKzWE0yS9nwwqCiXnUami/1nRwoUELhPD
-         Rv4LStcEtWNyIhMjSP/OVcN2xVH04PH94WYY5AlOtcK17zU8OW3ghM5z0g82LgS3SMiR
-         Rfn77PJkuatFRUy90V2HUhiwzt7M1fNuxKYNgba/rNqztu/6DKZZsiYqS1LjTKhHWotY
-         de3JCT5+S++6HJ4recCKxQ5C2NPuZ6dSi3MidLzYxJHA1Mj9tMKkasGLWH9ek7eyxW1J
-         ZYcCAz56IVvuPhGt1lkZSbahlybyBgSaJume5Cj3xB6N7b45KgNARDxCxI+W6xeBushM
-         NqJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745339302; x=1745944102;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EQ/h+SRKg3HKK8qDeGxWSA4UTfkR8SBnHYf8ziXdKBc=;
-        b=isFcXPKpsvp3CaEH6i1Mwi6NRK1Bd3vD6v/k6XVxyLIlpCHetslMlWgrnFfdb8BdAi
-         zxSNaZEgEnDfqm5MXrv/cr63+Qome9TOs/TZBMkqddU649sS73FUOmLwWNeiKWlV526U
-         H3RE1KU9yyLNE4SduKGpCxiqd1yaVyVlPklge1c6ruS7Y3C7Vg2X2vBW9M+5f2ZaZVSA
-         MoPO2FzlD+PRoDSSjAWcdSS9+HPkZoeqHYrYHzV6M50IWSSFraJ5rMuhacjWaqyG+PhL
-         Vuzgg0AN284V8sRnTGCu/1RwRYLNxi2dvWhyY6F29ATYWsEOhmMHmRSYtmFYCU/7Bipw
-         z5Fg==
-X-Forwarded-Encrypted: i=1; AJvYcCUSpGdCqTTQ6Q9Nl10GI5DJXO6in21+Dnu95mOwu1aOPxLDLY0CJqZ5Zany0LcSHHsAnxellnxXYS1hXx6lvN3FYE8Hsgs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1okT4tcga2KcqY5wmVY5Nnh6BWLscEMEUMB50KFSZLr0iewS0
-	MDvsdOdIFdGsrHeK3yz7DigATExTeFHQQlb0dcIHClCyHEia7rYKtaTyhq8jmAaofKWWCDgvowW
-	I+hcVdgEgmnXJXUkj4NUPS8GQfnFMjgWhcVpO
-X-Gm-Gg: ASbGncsqnCirP1lGYF4yDNJyKc4ETm3yTaKzj9HIerA65Bfna1tzgySxYGqR0Dgey8K
-	rBgQb8oIaWWIbAzAnEcAs+jc9mmmvZaOwE2USUD6IQRtxE3u11Gm6kSSRJ2nLfBeaJElnbtrLN0
-	p07xWcfB9y9pgiDGUgI4o8Fg==
-X-Google-Smtp-Source: AGHT+IFQDSL/ncnLOWK5LRznb2NXOaof3/0NlcAW1YBboG+fEljKszmHQmxJ1eEYy42tv3YqfQtVf9ZlPwKPijpnNCE=
-X-Received: by 2002:a05:690c:4443:b0:6fe:bf9d:5de6 with SMTP id
- 00721157ae682-706ccb04f2emr232424337b3.0.1745339302344; Tue, 22 Apr 2025
- 09:28:22 -0700 (PDT)
+	s=arc-20240116; t=1745339390; c=relaxed/simple;
+	bh=EukGHIN1+n05+tQ+74EpnEJVdZ6YLqbhZchKXtA1AMc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=elAzPlNsNbcZnJTPnji17rlQQVty23QEI+JOwxDdzmJf4iQKYQIhXw+2w7RqUjBLb5pzTGXVSrmdskQ+HyTB/NX6O+arZdp/Dtjh/TGntNbcRbiG6Lw3Cavu5qSGOPZIzM8ngnnIcsyhojEEcOuL05GumNh67opCyM3dPGtYAyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
+Received: by mail.hallyn.com (Postfix, from userid 1001)
+	id 595ECC10; Tue, 22 Apr 2025 11:29:43 -0500 (CDT)
+Date: Tue, 22 Apr 2025 11:29:43 -0500
+From: "Serge E. Hallyn" <serge@hallyn.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>, Parav Pandit <parav@nvidia.com>,
+	"Eric W. Biederman" <ebiederm@xmission.com>,
+	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>,
+	Leon Romanovsky <leonro@nvidia.com>
+Subject: Re: [PATCH] RDMA/uverbs: Consider capability of the process that
+ opens the file
+Message-ID: <20250422162943.GA589534@mail.hallyn.com>
+References: <20250318225709.GC9311@nvidia.com>
+ <CY8PR12MB7195B7FAA54E7E0264D28BAEDCA92@CY8PR12MB7195.namprd12.prod.outlook.com>
+ <20250421031320.GA579226@mail.hallyn.com>
+ <CY8PR12MB7195E4A0C6E019F10222B543DCB82@CY8PR12MB7195.namprd12.prod.outlook.com>
+ <20250421130024.GA582222@mail.hallyn.com>
+ <CY8PR12MB71955204622F18B2C3437BCBDCB82@CY8PR12MB7195.namprd12.prod.outlook.com>
+ <20250421172236.GA583385@mail.hallyn.com>
+ <20250422124640.GI823903@nvidia.com>
+ <20250422131433.GA588503@mail.hallyn.com>
+ <20250422161127.GO823903@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250416213206.26060-2-kernel@o1oo11oo.de> <CAHC9VhS=jWEZqb3MqCtUAJhY9ci8d_N4H6CqWsYU0YmEG=8_yA@mail.gmail.com>
- <c1eb852b-f8aa-4ab0-9579-19eb0d383cb9@o1oo11oo.de>
-In-Reply-To: <c1eb852b-f8aa-4ab0-9579-19eb0d383cb9@o1oo11oo.de>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 22 Apr 2025 12:28:11 -0400
-X-Gm-Features: ATxdqUHPzGOFeKXTqUOAMaQToBxYYiJZ5vV_2qPozFgBaVAUE1O_hbEaQPAua4U
-Message-ID: <CAHC9VhQ2NWr3-zQ8mnQEOV9KzY6A_Vd7AR8uzp5ZZ-FLhkG=yQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] lsm: Add Rust bindings with example LSM
-To: Lukas Fischer <kernel@o1oo11oo.de>
-Cc: James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250422161127.GO823903@nvidia.com>
 
-On Tue, Apr 22, 2025 at 7:22=E2=80=AFAM Lukas Fischer <kernel@o1oo11oo.de> =
-wrote:
-> On 21.04.25 21:09, Paul Moore wrote:
-> > Thanks for sharing this Lukas.  My Rust knowledge is still far too
-> > basic to offer any constructive review of the Rust code, but I'm happy
-> > to see some effort being put into looking at what would be required to
-> > support a LSM written in Rust.
->
-> Hi Paul,
->
-> that's alright, I was mainly asking the Rust for Linux contributors for f=
-eedback
-> on that, but I wanted to keep you in the loop as well.
->
-> > It isn't clear to me if this is simply an exercise in seeing what
-> > Rust/C interfaces would be needed to implement a Rust based LSM, or if
-> > you ultimately have a LSM you would like to submit upstream and this
-> > is the necessary groundwork so you can implement it in Rust.  Unless
-> > it is the latter, I'm not sure this is something that is a candidate
-> > for merging into the upstream Linux kernel as we don't merge "demo"
-> > type LSMs.  If you are intending to develop a proper LSM, we do have
-> > some guidelines that may help explain what is expected:
-> >
-> > * https://github.com/LinuxSecurityModule/kernel/blob/main/README.md
-> thanks for the feedback, I guess I was missing some context in the initia=
-l mail.
-> The LSM I'm using it for in my thesis is more of a research testbed (or "=
-demo"),
-> so I never intended to upstream that. Since I still needed to create bind=
-ings to
-> implement that in Rust, I figured I would post them to the lists to get s=
-ome
-> feedback and to get things started in case someone wants to implement an =
-actual
-> upstreamed LSM in Rust in the future. This is why I marked this "RFC PATC=
-H", it
-> is not intended for upstreaming, only for feedback.
->
-> If there is interest in it, I might polish the bindings after the thesis,=
- so
-> that they can be properly used for an actual LSM. In the state they are
-> currently in they do allow writing an LSM in Rust, but not in a way a saf=
-e Rust
-> abstraction should.
+On Tue, Apr 22, 2025 at 01:11:27PM -0300, Jason Gunthorpe wrote:
+> On Tue, Apr 22, 2025 at 08:14:33AM -0500, Serge E. Hallyn wrote:
+> > Hi Jason,
+> > 
+> > On Tue, Apr 22, 2025 at 09:46:40AM -0300, Jason Gunthorpe wrote:
+> > > On Mon, Apr 21, 2025 at 12:22:36PM -0500, Serge E. Hallyn wrote:
+> > > > > > 1. the create should check ns_capable(current->nsproxy->net->user_ns,
+> > > > > > CAP_NET_RAW) 
+> > > > > I believe this is sufficient as this create call happens through the ioctl().
+> > > > > But more question on #3.
+> > > 
+> > > I think this is the right one to use everywhere.
+> > 
+> > It's the right one to use when creating resources, but when later using
+> > them, since below you say that the resource should in fact be tied to
+> > the creator's network namespace, that means that checking
+> > current->nsproxy->net->user_ns would have nothing to do with the
+> > resource being used, right?
+> 
+> Yes, in that case you'd check something stored in the uobject.
 
-Thanks for the background, that's helpful.  If anything changes and
-you decide that you do want to implement a proper LSM in Rust and
-propose it for upstream inclusion please let me know.
+Perfect, that's exactly the kind of thing I was looking for.  Thanks.
 
---=20
-paul-moore.com
+> This happens sort of indirectly, for instance an object may become
+> associated with a netdevice and the netdevice is linked to a net
+> namespace. Eg we should do route lookups relative to that associated
+> net devices's namespaces.
+> 
+> I'm not sure we have a capable like check like that though.
+> 
+> > > Even in goofy cases like passing a FD between processes with different
+> > > net namespaces, the expectation is that objects can be created
+> > > relative to net namespace of the process calling the ioctl, and then
+> > > accessed by the other process in the other namespace.
+> > 
+> > So when earlier it was said that uverbs was switching from read/write
+> > to ioctl so that permissions could be checked, that is not actually
+> > the case? 
+> 
+> I don't quite know what you mean here?
+> 
+> read/write has a security problem in that you can pass a FD to a
+> setuid program as its stdout and have that setuid program issue a
+> write() to trigger a kernel operation using it's elevated
+> privilege. This is not possible with ioctl.
+> 
+> When this bug was discovered the read/write path started calling
+> ib_safe_file_access() which blanket disallows *any* credential change
+> from open() to write().
+> 
+> ioctl removes this excessive restriction and we are back to
+> per-process checks.
+> 
+> > The intent is for a privileged task to create the
+> > resource and be able to pass it to any task in any namespace with any
+> > or no privilege and have that task be able to use it with the
+> > opener's original privilege, just as with read/write?
+> 
+> Yes. The permissions affiliate with the object contained inside the
+> FD, not the FD itself. The FD is just a container and a way to route
+> system calls.
+> 
+> > I was trying last night to track down where the uverb ioctls are doing 
+> > permission checks, but failing to find it.  I see where the
+> > pbundle->method_elm->handler gets dereferenced, but not where those
+> > are defined.
+> 
+> There are very few permission checks. Most boil down to implicit
+> things, like we have a netdevice relative to current's net namespace
+> and we need to find a gid table index for that netdevice. We don't
+> actually need to do anything special here as the ifindex code
+> automatically validates the namespaces and struct net_device * are
+> globally unique.
+> 
+> Similarly with route lookups and things, once we validated the net
+> device objects are supposed to remain bound to it.
+> 
+> The cases like cap_net_raw are one time checks at creation time that
+> modify the devices' rules for processing the queues. The devices check
+> the creation property of the queue when processing the queue.
+
+Thank you for the detailed explanation.
+
+-serge
