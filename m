@@ -1,124 +1,94 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A930A139D;
-	Mon, 21 Apr 2025 23:48:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D49342397BE;
+	Tue, 22 Apr 2025 02:16:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745279337; cv=none; b=tWYf9sOgFxNtT4R+OX7GSp9LLzhyiMIyej+p0WGmRhGVIdW31dB3PBVtvYZWY+GNCp6zJOyeWhX0hNDcYz2q66gOQi7OH3aP6dvmVmN5ZQCSXTeP11d3uwv48qQ1FisX8NKnFtj+dC04tpWgYbXE61tJ8LXeA+iu6IrNQUjMwJI=
+	t=1745288185; cv=none; b=LOllEG60vRcLec/L91fZ1RNu1qll5DE+s8Oicp8gLibd8bcHCKbOjiOdCh/q/eEMNR0CHTyWzltpNnktC1nV/J6iurK40XKEuPH5Pl1fk7JCe038l4A5ZhiUag392TgvMF81q3vWVlaRKyW4E5AiIABrfJVAvorEQG7lTpFk1PY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745279337; c=relaxed/simple;
-	bh=HfVBTitlqw37llnfFhy3ubEbFd6ASiMSxBhfGkJ/7oQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IbYIl4qkdmHwlixZgMf/5b1D+vf0kN4VNp+vxzlN7Qmsay9hSEfhz60ooBYPjtyLTkZM5DjXa90qex58PpL2RfaDDVFcqoa5MANiTqB6t2vuZ9OvQE8oV92J2FiqP2xnUigUA3l1oQCVSAgSipgGNsYqsWt2Lr7A1dq/4LB5KN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=beZYmPkT; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1745288185; c=relaxed/simple;
+	bh=0238oT80ZRbDUPcDv23xV+rQAWCGsjssH4Cychfl15Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=PWUbnZcyuYoTB7gm5Pzq5FWGM+RwDDpJl0jKgzJUxHy0ovWgxz241lgrkCfA98U5h9dBZ37Nup4Gt/NnZqz6d+pSTEJ3PKcAlhYubBg3NXBTzEz650ic2PvTdUb0Y78nQUvAn0Vwp4/FFfhVXSrU531Q8Um8o5NM2/0/atwX6BQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sAJdgTPg; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="beZYmPkT"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43cfe574976so32919635e9.1;
-        Mon, 21 Apr 2025 16:48:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745279334; x=1745884134; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HfVBTitlqw37llnfFhy3ubEbFd6ASiMSxBhfGkJ/7oQ=;
-        b=beZYmPkTDaoIVp156oTuImnq2Z11gH8geshaAedO+07CxJ0Dt46eXiRXmtCDaOe1i0
-         7vAOqgGCDOMup2nko7cq/Zai1AY4SoPF/6Z7tAQ1PeMyDKTlim2MCuFWxwBFTKlCdrlw
-         xj1ANWHmAUIxFoP0V3DeXwMuls0G9pZQ2LXzpZ6LNfrRiiiZcVw2yOpjrfHsx3lGEbQk
-         uPyD6yEz9mffFXlOpYLwWasW5sNoN92oXNbz8tP/TQRfhgCbtmS64VpDZCEakalr+t4k
-         JI/NJIS1fttypKa/IiWdu8iKlwg+hnIESuN/ctJ9Wp+YAERSO/D497yvn0nZHzAJq9x0
-         pDtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745279334; x=1745884134;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HfVBTitlqw37llnfFhy3ubEbFd6ASiMSxBhfGkJ/7oQ=;
-        b=mkjoagBaYqQB4ws/rkJlXpOY9d6oOWOr1gI0XH8qtNiS/9sNCNCDnQ0btoPTWS4H3p
-         GnJFy4jrGkO17g5bOM85PxzSqI6hHUYe8mjpevcAkeQ7w0Izuk2NDwHCIz5jG6sUtk3u
-         95IKlxUnvQpAspgRNH7vaWImrGKvcD/8S7NkO45jfBoQAIXjPWFF46Fr69s/X6HvpOdT
-         yT1JJ9nyMMr0YhlE7B03cQRJIfVVRh3KLv8z8T5uUo2Oqv7jt+roxw5oGLuZqE1NcXu1
-         RDTzT0R+GeWspwMnOU/0o4SJ8fSSixU6fUnJbukTtJPhykQ8O1bBchYz1oysl4oWqSPl
-         CNvA==
-X-Forwarded-Encrypted: i=1; AJvYcCUJQ4IRKGshK0C4A+2roZ62HPzYm46C9nt/BEi20x0nt1tcJ9fMroCjUiRvQmrDDHgft3B1/Xd9akJ/xJY/FD+KCzWY6tsR@vger.kernel.org, AJvYcCUgp5LYWzHkb4wbRoGe802KEMZd+OkvlM+fKHT9gu8tEoLkTeJk0WuuOjwNGOIGeCR2318YU2hGcXM=@vger.kernel.org, AJvYcCW4gs6DwI2kPeWXI7HEU6gJhoUVN9yzOG2ltgG/eq1YoNOV+twRTWVsalmhEWuELwSdCDVC4vlMkX81@vger.kernel.org, AJvYcCW8xlX/C4rk+aAR43EUK3O0B1FfaFMGUrHRgf8TUyOKmbLOz/4Y6+irZrXzI5q6rH+ZjNE=@vger.kernel.org, AJvYcCWO+0JRTI+uOSMD9yESp5WiGHIMhh7qywri1+HCEXLu2OPzriI77LgdEaqKHoASdOW+8hdF9BXgUiWklGrP@vger.kernel.org, AJvYcCWXLdsUEPAjtZAvjRMIVRMbm1Eb8vEMdcel7qnZqBVKZcx3+ZO7CICX+HDf3qMleyLxnDQ5BlnQi8SAaMMf@vger.kernel.org, AJvYcCXL2S19HBif7x4ZNRCPq311lRafpOAF4vYXb/FWS9V0gttkFvlYPhVDARNkGybfh9/rPlVL174gYTCzyXTj@vger.kernel.org, AJvYcCXg7xopgp4Ri1hi+xEqoGsPXYAslytxSG986CQ5BYRX7G9t7otbirskp+q18wXerP6tRr5TNM7l6Y/LGUMX6vlL@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywep8W9MKdwzlJsZ1ClvCnFCoOPfipnj4ighf1gsNdK6hrb18Id
-	gHo6a84oTrUIwgvdfVWm4z29UXCAdeNBOXWiyXWqIZA0VZB/pjq3I28M0YDqiexh50zVHGcCBZp
-	4Pv935D4svJriNbFXmyHt/YGxYoU=
-X-Gm-Gg: ASbGncvbkb4+rL3IEyVuTjWR4VPGgbaaqncGwgywo9TRRitRvKKC/8pI6OpWu99Xd7e
-	JFO0oWyynHezGMWQDZqVQ9csE4lIFwRAhItCSVAGj4BhJVJMSTEmU5p4oW/bVzdT4ww0I
-X-Google-Smtp-Source: AGHT+IEXBshZFqY/Fm57erlfCKXrxXtVpOr0Raqyk+6rCL7tzyvjIoEz5K9J8PoMsndTW79fhqMVLoXuyIzCeovcuR0=
-X-Received: by 2002:a05:6000:4282:b0:39c:1257:feb8 with SMTP id
- ffacd0b85a97d-39efbb0a99emr10401061f8f.56.1745279333918; Mon, 21 Apr 2025
- 16:48:53 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sAJdgTPg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AED8C4CEE4;
+	Tue, 22 Apr 2025 02:16:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745288185;
+	bh=0238oT80ZRbDUPcDv23xV+rQAWCGsjssH4Cychfl15Y=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=sAJdgTPgK18vDD0lpWULXcrgp4KStFYJaC0XT3INz3fgTKtfuu5DxxyLaW881IBdc
+	 QgOYYtgtpL0ej4DrK+GeG8rQ/Iu+dlosWmGzFtWSYUAb68uGa0Kfmib+pFU+XaqukV
+	 oIZ0VF4cjVHZEcuA/c/HyT+fDlvYqySi4a8QIZUybQTwAQHkH/YMV06CHH4fYFnH2o
+	 KrUpI+z0bCdO5sBNNgsb5YXok6PFI+6RWouiCZTEVzM3vBK5Yjd3N45eestCUciNsr
+	 8eTQM6RrmezqoRJe1vL3BzcJEIgoJig4tlUleHsWooco8VBtqmp88Rj9E9YbE6mvcx
+	 ehC+mRQ9ww4Ew==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Kees Cook <kees@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Sasha Levin <sashal@kernel.org>,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	mic@digikod.net,
+	linux-hardening@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.14 19/30] hardening: Disable GCC randstruct for COMPILE_TEST
+Date: Mon, 21 Apr 2025 22:15:39 -0400
+Message-Id: <20250422021550.1940809-19-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250422021550.1940809-1-sashal@kernel.org>
+References: <20250422021550.1940809-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250404215527.1563146-1-bboscaccy@linux.microsoft.com>
- <20250404215527.1563146-2-bboscaccy@linux.microsoft.com> <CAADnVQJyNRZVLPj_nzegCyo+BzM1-whbnajotCXu+GW+5-=P6w@mail.gmail.com>
- <87semdjxcp.fsf@microsoft.com> <CAADnVQ+JGfwRgsoe2=EHkXdTyQ8ycn0D9nh1k49am++4oXUPHg@mail.gmail.com>
- <87friajmd5.fsf@microsoft.com> <CAADnVQKb3gPBFz+n+GoudxaTrugVegwMb8=kUfxOea5r2NNfUA@mail.gmail.com>
- <87a58hjune.fsf@microsoft.com> <CAADnVQ+LMAnyT4yV5iuJ=vswgtUu97cHKnvysipc6o7HZfEbUA@mail.gmail.com>
- <87y0w0hv2x.fsf@microsoft.com> <CAADnVQKF+B_YYwOCFsPBbrTBGKe4b22WVJFb8C0PHGmRAjbusQ@mail.gmail.com>
- <CAHC9VhS0kQf1mdrvdrs4F675ZbGh9Yw8r2noZqDUpOxRYoTL8Q@mail.gmail.com>
-In-Reply-To: <CAHC9VhS0kQf1mdrvdrs4F675ZbGh9Yw8r2noZqDUpOxRYoTL8Q@mail.gmail.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Mon, 21 Apr 2025 16:48:42 -0700
-X-Gm-Features: ATxdqUFvJ5JqiHZwXYEgBfCPoKBSXKlaJ9eXRgCVajk_7W-Bdt-DhPnVxLR_eG0
-Message-ID: <CAADnVQK7kyBso6bNEtNyC6zTBDuBv-K-c4a9KBVid+B405VX6Q@mail.gmail.com>
-Subject: Re: [PATCH v2 security-next 1/4] security: Hornet LSM
-To: Paul Moore <paul@paul-moore.com>
-Cc: Blaise Boscaccy <bboscaccy@linux.microsoft.com>, Jonathan Corbet <corbet@lwn.net>, 
-	David Howells <dhowells@redhat.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	"David S. Miller" <davem@davemloft.net>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Shuah Khan <shuah@kernel.org>, 
-	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
-	Jan Stancek <jstancek@redhat.com>, Neal Gompa <neal@gompa.dev>, 
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	keyrings@vger.kernel.org, 
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>, 
-	LSM List <linux-security-module@vger.kernel.org>, 
-	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
-	clang-built-linux <llvm@lists.linux.dev>, nkapron@google.com, 
-	Matteo Croce <teknoraver@meta.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Cong Wang <xiyou.wangcong@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.14.3
+Content-Transfer-Encoding: 8bit
 
-On Mon, Apr 21, 2025 at 3:04=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
->
-> On Mon, Apr 21, 2025 at 4:13=E2=80=AFPM Alexei Starovoitov
-> <alexei.starovoitov@gmail.com> wrote:
-> > On Wed, Apr 16, 2025 at 10:31=E2=80=AFAM Blaise Boscaccy
-> > <bboscaccy@linux.microsoft.com> wrote:
-> > >
-> > > > Hacking into bpf internal objects like maps is not acceptable.
-> > >
-> > > We've heard your concerns about kern_sys_bpf and we agree that the LS=
-M
-> > > should not be calling it. The proposal in this email should meet both=
- of
-> > > our needs
-> > > https://lore.kernel.org/bpf/874iypjl8t.fsf@microsoft.com/
->
-> ...
->
-> > Calling bpf_map_get() and
-> > map->ops->map_lookup_elem() from a module is not ok either.
->
-> A quick look uncovers code living under net/ which calls into these APIs.
+From: Kees Cook <kees@kernel.org>
 
-and your point is ?
+[ Upstream commit f5c68a4e84f9feca3be578199ec648b676db2030 ]
 
-Again, Nack to hacking into bpf internals from LSM,
-module or kernel subsystem.
+There is a GCC crash bug in the randstruct for latest GCC versions that
+is being tickled by landlock[1]. Temporarily disable GCC randstruct for
+COMPILE_TEST builds to unbreak CI systems for the coming -rc2. This can
+be restored once the bug is fixed.
+
+Suggested-by: Mark Brown <broonie@kernel.org>
+Link: https://lore.kernel.org/all/20250407-kbuild-disable-gcc-plugins-v1-1-5d46ae583f5e@kernel.org/ [1]
+Acked-by: Mark Brown <broonie@kernel.org>
+Acked-by: Arnd Bergmann <arnd@arndb.de>
+Link: https://lore.kernel.org/r/20250409151154.work.872-kees@kernel.org
+Signed-off-by: Kees Cook <kees@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ security/Kconfig.hardening | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/security/Kconfig.hardening b/security/Kconfig.hardening
+index b56e001e0c6a9..10be745c13ba5 100644
+--- a/security/Kconfig.hardening
++++ b/security/Kconfig.hardening
+@@ -311,7 +311,7 @@ config CC_HAS_RANDSTRUCT
+ 
+ choice
+ 	prompt "Randomize layout of sensitive kernel structures"
+-	default RANDSTRUCT_FULL if COMPILE_TEST && (GCC_PLUGINS || CC_HAS_RANDSTRUCT)
++	default RANDSTRUCT_FULL if COMPILE_TEST && CC_HAS_RANDSTRUCT
+ 	default RANDSTRUCT_NONE
+ 	help
+ 	  If you enable this, the layouts of structures that are entirely
+-- 
+2.39.5
+
