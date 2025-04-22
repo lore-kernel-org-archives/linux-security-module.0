@@ -1,184 +1,215 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp-1909.mail.infomaniak.ch (smtp-1909.mail.infomaniak.ch [185.125.25.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A4FD2980A0
-	for <linux-security-module@vger.kernel.org>; Tue, 22 Apr 2025 16:49:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0F3F293B78;
+	Tue, 22 Apr 2025 17:19:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745340567; cv=none; b=ZGyUPjt3f2O9skhKb3Qj7Hr7/W9utiphEZmhuuwZJHH8tr7WBJB16Fp7nndhqrxLidKKAiejdS/ts2ZAiKWDgZvHGhzeszRJpmZ9CRqZSPsufKoch8biiTE4Zl2raURDXqpBey3lKHtj5ovADl0DhOqtRSJ5ZcLwnRxu03kC9xU=
+	t=1745342357; cv=none; b=mDhTvRqWPi1RjSiy3tIDjTUwa7mQmSqb0WtYT8mo+rKYg4VD0wwFswU2itMf6JqpnYzH1eWVnT0RGgt3wBl+XbWQF55CG3AT+UU//aHP5ttBZlny2Bc1koMr35WXseuTW2GZk9YLsKUbv6ncj8xBepF5JROmbFjP6AMgzBTXg3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745340567; c=relaxed/simple;
-	bh=1zm/ifLFoyueirmbO4F+dQ+4rpCflNI54FJ6BvufTFg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jz0MuESs4+Qys7q045nG8vZdIMQp5hR9qKK51CsFrwiD9CCAkzl4CMWjA6UrJujXf14VEmTphufG2S/H3Iuq1OSrhnwvQFcRV17/8GpBmGTw5U5nwi+xdyzpzkUhfK+k2xpzlocn6zQ2heZjIs9LRhOmzS+9BiypfGoQmTAHGoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dIqLbq9J; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1745342357; c=relaxed/simple;
+	bh=t35hlQuDtvfHPTHDg0CvjqyOvwh0pkrGfRx7H9Y7c98=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KdIyz31LWJYCH29wX72xcK+F0atdkPEL2nVROFHwTgmSu5LzIcsa9Nx5lJKV4hOootNYnXvAPaGwtzpVV+XuOlqwia3zDNKlB+xKATJ7LHMcE/wZNPQYxcBgt5dp8vUzzIyTHv9kUh1h1i3bSlXn9F4RecG/G5pGJXYya2wbJcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=csqOyEo8; arc=none smtp.client-ip=185.125.25.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dIqLbq9J"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1745340564;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=lHSkROXmhzxaxiTJB2Sts+hoXg6Enh4N97MVVPj8jow=;
-	b=dIqLbq9JlcpPnCKW6Zp0RuWXD/Kz+s1vIVIM02M/TmSkQTMRdrePCJ9ObYKn7jUCOzzX9u
-	qKZZLVbqqemf+xoT24KAomegaZjM3ORChmgnQfvK6FM615NPJ/YZbvZtUJepWfWDhFIib7
-	cjqHiankvapIi8oHsZpFvFWN8szUk8E=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-183-RI3s-rqtP-aUNn09Z3ljbg-1; Tue, 22 Apr 2025 12:49:19 -0400
-X-MC-Unique: RI3s-rqtP-aUNn09Z3ljbg-1
-X-Mimecast-MFC-AGG-ID: RI3s-rqtP-aUNn09Z3ljbg_1745340558
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-39979ad285bso2431362f8f.2
-        for <linux-security-module@vger.kernel.org>; Tue, 22 Apr 2025 09:49:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745340557; x=1745945357;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=lHSkROXmhzxaxiTJB2Sts+hoXg6Enh4N97MVVPj8jow=;
-        b=jS4dS8/eKXi0WUcnieMH4iynJ3/acPcS+1E4+KQiDIYQjM3pRN/KjFlS1Mah86yi5c
-         4vE2Ra12oTXY3j1/gJyP3T9kT2pbVvF2F5Wcowkx6KXCz/eh8BmCoSTClGK5as8y7Z8C
-         g2cYT8kWulDcox7rEvLDUXp6VgMiOOFVs9lug+bYm1EE9Ubdr8jou+6HAhAacRV4amH1
-         k0Hi9y9TeSryAiqfFgKxcx8A3l6IrosENP+EutyxmL/MDUd3BbxkPFLn2bDT5cLyIsC5
-         8CprN+VMBZFcHn7KnlvWhC5acAa66RFG3HgjwQJsjEU7dpu8sK4h/j/pSadjjHE6w+us
-         JXYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUcq1+u6sUugHSm1DF5NRe3AsD3LDSQ5Gd645tfpk8gX/ay/ZwlES2KKSdEzbPUK4DVp8WmxJPfgex6wxI0NgwBMBb80JE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxP6G8QoWZyfX/oy0qwCdYbeJ0p+zbZH8f07Zm3nSdPKkAUJdfT
-	frlwCJ8qr6wJAiX3Bz1knhO9iwjfqHRLQKKWOEr2dNXGGwfbVUZd//EFo8kgnGRrQjPjebMRose
-	5CrCi/4ZC2l3jT4Gb3Hx42darP1lFitmsuZno4+KqPoCXMVijqH8vCc2ZcP8G41KqACmqV6AC2Q
-	==
-X-Gm-Gg: ASbGncuy3aExqNPNk5nayW2oEIbl3ig7cpMHQJFb23eGMEgxTGfxURksr35/pUv/Muh
-	SGgyG1bcxjCljlwPJ5VPsx+9ZCnkzYH7gynkYFGaJpHUM0+IYmtXvz9yOH6pYZ+Lfx2LCbYKV7L
-	jcdCdMAVRMAeItfJV1CsGflsSsDVx8+U0g1eYWQiWa9gh0tWNncjhp8W/GKvH10uaqxfxdSrXFo
-	aG5m3MZ9iBUAAq5dcg/bEBdwBYL+haQ1fUPSRK5fwzzHweqdzJoHJR3RC4ouvLY7g7nR+IYFPkD
-	MXW+9w4DD3DwCLp86x2dqwhtxAufKCX0gDJ3jqx5
-X-Received: by 2002:a05:6000:381:b0:38f:2413:2622 with SMTP id ffacd0b85a97d-39efbad7f42mr14397228f8f.47.1745340557498;
-        Tue, 22 Apr 2025 09:49:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGDoEgp+mnqvCe0AHRP0Rn4FhZOt0+ug+zdFUDxNDueLDOx4k3ra4nj9Co+7VRKKBDx5ofTWw==
-X-Received: by 2002:a05:6000:381:b0:38f:2413:2622 with SMTP id ffacd0b85a97d-39efbad7f42mr14397208f8f.47.1745340557066;
-        Tue, 22 Apr 2025 09:49:17 -0700 (PDT)
-Received: from [192.168.3.141] (p5b0c62cd.dip0.t-ipconnect.de. [91.12.98.205])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39efa4330bfsm15769041f8f.23.2025.04.22.09.49.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Apr 2025 09:49:16 -0700 (PDT)
-Message-ID: <1bee5078-5cc4-43b7-993c-f1e57a9bf534@redhat.com>
-Date: Tue, 22 Apr 2025 18:49:14 +0200
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="csqOyEo8"
+Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10:40ca:feff:fe05:0])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Zhpqr2rSDzYGH;
+	Tue, 22 Apr 2025 19:19:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1745342344;
+	bh=GsNBQQ/0jgUnK4M3pOOre1/bTfSk8iwc/ssxVA4CQTA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=csqOyEo8MaRVFS4xclpqckzIVytITwa+bLw3V+sKYSDC+Wy1F+CfQY2zR2QHq/bkK
+	 kNgmhXJ4GX143muDMoz1vO/Mp7gSo7bSLEB7YnIQprxxI+p7YVHs3TakuGmq54NNsC
+	 nzadJMSBa7zYIA8TyhKdgMVDSAu4R5Go6jNtDyD0=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Zhpqq4Vf1z1rG;
+	Tue, 22 Apr 2025 19:19:03 +0200 (CEST)
+Date: Tue, 22 Apr 2025 19:19:02 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
+Cc: willemdebruijn.kernel@gmail.com, gnoack3000@gmail.com, 
+	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, 
+	yusongping@huawei.com, artem.kuzin@huawei.com, konstantin.meskhidze@huawei.com, 
+	Paul Moore <paul@paul-moore.com>
+Subject: Re: [RFC PATCH v3 00/19] Support socket access-control
+Message-ID: <20250422.iesaivaj8Aeb@digikod.net>
+References: <20240904104824.1844082-1-ivanov.mikhail1@huawei-partners.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v7 3/8] security: Export
- security_inode_init_security_anon for KVM guest_memfd
-To: Shivank Garg <shivankg@amd.com>, Paul Moore <paul@paul-moore.com>
-Cc: seanjc@google.com, vbabka@suse.cz, willy@infradead.org,
- akpm@linux-foundation.org, shuah@kernel.org, pbonzini@redhat.com,
- ackerleytng@google.com, jmorris@namei.org, serge@hallyn.com, pvorel@suse.cz,
- bfoster@redhat.com, tabba@google.com, vannapurve@google.com,
- chao.gao@intel.com, bharata@amd.com, nikunj@amd.com, michael.day@amd.com,
- yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com,
- michael.roth@amd.com, aik@amd.com, jgg@nvidia.com, kalyazin@amazon.com,
- peterx@redhat.com, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
- kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-coco@lists.linux.dev
-References: <20250408112402.181574-1-shivankg@amd.com>
- <20250408112402.181574-4-shivankg@amd.com>
- <CAHC9VhRFBOC=cZB+Dm00cshwBSBaK6amv+=XFLPF0Bub0gHN+Q@mail.gmail.com>
- <b98f7b78-1834-4fa0-b79c-d5ac562e4809@amd.com>
-From: David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <b98f7b78-1834-4fa0-b79c-d5ac562e4809@amd.com>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 2inVgLxz1bS2piah2j33vMwG1lvRVOHrymZ8QCWzHCU_1745340558
-X-Mimecast-Originator: redhat.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240904104824.1844082-1-ivanov.mikhail1@huawei-partners.com>
+X-Infomaniak-Routing: alpha
 
-On 11.04.25 08:07, Shivank Garg wrote:
-> Hi Paul,
+Hi Mikhail.  Could you please send a new version taking into account the
+reviews?
+
+This series should support audit by logging socket creation denials and
+extending audit_log_lsm_data().  You can get inspiration from the format
+used by audit_net_cb() but without the number to text translation, that
+can be handled by auditd if needed.  New tests should check these new
+audit logs.
+
+
+On Wed, Sep 04, 2024 at 06:48:05PM +0800, Mikhail Ivanov wrote:
+> Hello! This is v3 RFC patch dedicated to socket protocols restriction.
 > 
-> On 4/10/2025 1:49 AM, Paul Moore wrote:
->> On Tue, Apr 8, 2025 at 7:25 AM Shivank Garg <shivankg@amd.com> wrote:
->>>
->>> KVM guest_memfd is implementing its own inodes to store metadata for
->>> backing memory using a custom filesystem. This requires the ability to
->>> initialize anonymous inode using security_inode_init_security_anon().
->>>
->>> As guest_memfd currently resides in the KVM module, we need to export this
->>> symbol for use outside the core kernel. In the future, guest_memfd might be
->>> moved to core-mm, at which point the symbols no longer would have to be
->>> exported. When/if that happens is still unclear.
->>
->> Can you help me understand the timing just a bit more ... do you
->> expect the move to the core MM code to happen during the lifetime of
->> this patchset, or is it just some hand-wavy "future date"?  No worries
->> either way, just trying to understand things a bit better.
+> It is based on the landlock's mic-next branch on top of v6.11-rc1 kernel
+> version.
 > 
-> I am not sure about it, any ideas David?
-
-Sorry for the late reply.
-
-Hand-wavy future date after this series. Elliot was working on this, but 
-IIRC he now has a new job and might no longer be able to work on this.
-
-Ackerley+Patrick started looking into this, and will likely require it 
-for other guest_memfd features (hugetlb support, directmap removal).
-
--- 
-Cheers,
-
-David / dhildenb
-
+> Objective
+> =========
+> Extend Landlock with a mechanism to restrict any set of protocols in
+> a sandboxed process.
+> 
+> Closes: https://github.com/landlock-lsm/linux/issues/6
+> 
+> Motivation
+> ==========
+> Landlock implements the `LANDLOCK_RULE_NET_PORT` rule type, which provides
+> fine-grained control of actions for a specific protocol. Any action or
+> protocol that is not supported by this rule can not be controlled. As a
+> result, protocols for which fine-grained control is not supported can be
+> used in a sandboxed system and lead to vulnerabilities or unexpected
+> behavior.
+> 
+> Controlling the protocols used will allow to use only those that are
+> necessary for the system and/or which have fine-grained Landlock control
+> through others types of rules (e.g. TCP bind/connect control with
+> `LANDLOCK_RULE_NET_PORT`, UNIX bind control with
+> `LANDLOCK_RULE_PATH_BENEATH`).
+> 
+> Consider following examples:
+> * Server may want to use only TCP sockets for which there is fine-grained
+>   control of bind(2) and connect(2) actions [1].
+> * System that does not need a network or that may want to disable network
+>   for security reasons (e.g. [2]) can achieve this by restricting the use
+>   of all possible protocols.
+> 
+> [1] https://lore.kernel.org/all/ZJvy2SViorgc+cZI@google.com/
+> [2] https://cr.yp.to/unix/disablenetwork.html
+> 
+> Implementation
+> ==============
+> This patchset adds control over the protocols used by implementing a
+> restriction of socket creation. This is possible thanks to the new type
+> of rule - `LANDLOCK_RULE_SOCKET`, that allows to restrict actions on
+> sockets, and a new access right - `LANDLOCK_ACCESS_SOCKET_CREATE`, that
+> corresponds to creating user space sockets. The key in this rule is a pair
+> of address family and socket type (Cf. socket(2)).
+> 
+> The right to create a socket is checked in the LSM hook, which is called
+> in the __sock_create method. The following user space operations are
+> subject to this check: socket(2), socketpair(2), io_uring(7).
+> 
+> In the case of connection-based socket types,
+> `LANDLOCK_ACCESS_SOCKET_CREATE` does not restrict the actions that result
+> in creation of sockets used for messaging between already existing
+> endpoints (e.g. accept(2), setsockopt(2) with option
+> `SCTP_SOCKOPT_PEELOFF`).
+> 
+> Current limitations
+> ===================
+> `SCTP_SOCKOPT_PEELOFF` should not be restricted (see test
+> socket_creation.sctp_peeloff).
+> 
+> SCTP socket can be connected to a multiple endpoints (one-to-many
+> relation). Calling setsockopt(2) on such socket with option
+> `SCTP_SOCKOPT_PEELOFF` detaches one of existing connections to a separate
+> UDP socket. This detach is currently restrictable.
+> 
+> Code coverage
+> =============
+> Code coverage(gcov) report with the launch of all the landlock selftests:
+> * security/landlock:
+> lines......: 93.5% (794 of 849 lines)
+> functions..: 95.5% (106 of 111 functions)
+> 
+> * security/landlock/socket.c:
+> lines......: 100.0% (33 of 33 lines)
+> functions..: 100.0% (4 of 4 functions)
+> 
+> General changes v2->v3
+> ======================
+> * Implementation
+>   * Accepts (AF_INET, SOCK_PACKET) as an alias for (AF_PACKET, SOCK_PACKET).
+>   * Adds check to not restrict kernel sockets.
+>   * Fixes UB in pack_socket_key().
+>   * Refactors documentation.
+> * Tests
+>   * Extends variants of `protocol` fixture with every protocol that can be
+>     used to create user space sockets.
+>   * Adds 5 new tests:
+>     * 3 tests to check socketpair(2), accept(2) and sctp_peeloff
+>       restriction.
+>     * 1 test to check restriction of kernel sockets.
+>     * 1 test to check AF_PACKET aliases.
+> * Documentation
+>   * Updates Documentation/userspace-api/landlock.rst.
+> * Commits
+>   * Rebases on mic-next.
+>   * Refactors commits.
+> 
+> Previous versions
+> =================
+> v2: https://lore.kernel.org/all/20240524093015.2402952-1-ivanov.mikhail1@huawei-partners.com/
+> v1: https://lore.kernel.org/all/20240408093927.1759381-1-ivanov.mikhail1@huawei-partners.com/
+> 
+> Mikhail Ivanov (19):
+>   landlock: Support socket access-control
+>   landlock: Add hook on socket creation
+>   selftests/landlock: Test basic socket restriction
+>   selftests/landlock: Test adding a rule with each supported access
+>   selftests/landlock: Test adding a rule for each unknown access
+>   selftests/landlock: Test adding a rule for unhandled access
+>   selftests/landlock: Test adding a rule for empty access
+>   selftests/landlock: Test overlapped restriction
+>   selftests/landlock: Test creating a ruleset with unknown access
+>   selftests/landlock: Test adding a rule with family and type outside
+>     the range
+>   selftests/landlock: Test unsupported protocol restriction
+>   selftests/landlock: Test that kernel space sockets are not restricted
+>   selftests/landlock: Test packet protocol alias
+>   selftests/landlock: Test socketpair(2) restriction
+>   selftests/landlock: Test SCTP peeloff restriction
+>   selftests/landlock: Test that accept(2) is not restricted
+>   samples/landlock: Replace atoi() with strtoull() in
+>     populate_ruleset_net()
+>   samples/landlock: Support socket protocol restrictions
+>   landlock: Document socket rule type support
+> 
+>  Documentation/userspace-api/landlock.rst      |   46 +-
+>  include/uapi/linux/landlock.h                 |   61 +-
+>  samples/landlock/sandboxer.c                  |  135 ++-
+>  security/landlock/Makefile                    |    2 +-
+>  security/landlock/limits.h                    |    4 +
+>  security/landlock/ruleset.c                   |   33 +-
+>  security/landlock/ruleset.h                   |   45 +-
+>  security/landlock/setup.c                     |    2 +
+>  security/landlock/socket.c                    |  137 +++
+>  security/landlock/socket.h                    |   19 +
+>  security/landlock/syscalls.c                  |   66 +-
+>  tools/testing/selftests/landlock/base_test.c  |    2 +-
+>  tools/testing/selftests/landlock/common.h     |   13 +
+>  tools/testing/selftests/landlock/config       |   47 +
+>  tools/testing/selftests/landlock/net_test.c   |   11 -
+>  .../testing/selftests/landlock/socket_test.c  | 1013 +++++++++++++++++
+>  16 files changed, 1593 insertions(+), 43 deletions(-)
+>  create mode 100644 security/landlock/socket.c
+>  create mode 100644 security/landlock/socket.h
+>  create mode 100644 tools/testing/selftests/landlock/socket_test.c
+> 
+> 
+> base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
+> -- 
+> 2.34.1
+> 
+> 
