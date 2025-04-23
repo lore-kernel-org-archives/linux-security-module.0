@@ -1,135 +1,102 @@
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from smtp-bc0d.mail.infomaniak.ch (smtp-bc0d.mail.infomaniak.ch [45.157.188.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34EC8288C9A;
-	Wed, 23 Apr 2025 18:22:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5E37244686
+	for <linux-security-module@vger.kernel.org>; Wed, 23 Apr 2025 18:55:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745432539; cv=none; b=nU0IBRkTbazHRlCuetOxbfZfQ3jIk0opplDcMVfPS2334PYWQNLnALiXqWWNVnGHZBCELCXDivzu76bNad9GKLxXTtoLOS3AlWZ4StQvjvx7Ae9NmX91S64l/JlRpCbLmP6bPYPeAhL0aB6HwY5k+nRy6xLUsTpV9/g2Co9PZuY=
+	t=1745434520; cv=none; b=bgXGfQSSvFtv3eyseif93p2Y5/JxpF+TRSrZVuAx9MqlJzt+uLsycuLJFK/mz9PV0v9yKL7GFyaJXGl3kqxQ7qrDIO5Ydi1n1n0hANuiUJ2E0enxAznFuICqQT+MfEZ1UnYMcmpmc+AcZj+c2HUNV3p+OYzaspqe8QHCiBkwu7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745432539; c=relaxed/simple;
-	bh=PWWju0lVKK/tapHVY9eYrl1sK2Ap+YQ8ODhkeluNm5o=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=tbezS8ogWr9v0TwqpkzIvI9wQkF2vbHuiN11SEscwYy75hTPdoH6HM9WIxoYBqzlGbERYSbxALK4XnoxZrR0Zb5LXe3hGxLhaUqSQ/SRuOpv2CeqV/lFwMia/WHjM7kRyEsq7YvELWcXVfOM91ZaM6LaPxjjwQq8cHSkYL30hks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=YIcrqmnP; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+	s=arc-20240116; t=1745434520; c=relaxed/simple;
+	bh=H+qfChid8MZRcIUe+CmM5TpMvrRUtQpTYrMmvncAATU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OOJ50T4lxY+QzlQZCWvA7aSsC8dXLJTunI2D3a0CfBW6iiSDGY4ZNOw6FS6tqId/9bPyHgztt59gVtGDwbhqtroICG4sMqoLgNxNh5rOAq+8doB6sxQDPwIJqGumjNqjAQdv9Y7dm5fVXAtGZJ6snodyBiI4wZgwpTez6ALqmt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=kZBPfPkT; arc=none smtp.client-ip=45.157.188.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="YIcrqmnP"
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53NFWbV4007064;
-	Wed, 23 Apr 2025 18:21:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=PWWju0
-	lVKK/tapHVY9eYrl1sK2Ap+YQ8ODhkeluNm5o=; b=YIcrqmnPhBckVUR2GZ0zar
-	vBrmDagpuzE3c3vtkrP/3AS9A3YKYRB6ThBNg/nS0TBrvUIa7znPvvmQlHMDsWtj
-	PG2194ADUFFSJs19Ov4A3Zqvr5MXmNzjOhp8P8p6XtbDL63PvJH7aFzi2izGZvOu
-	eavpRUQ9IBToSThhxDpxt/N95l4XQNBVoUDSFqczmpTL+/1qJubSYhsPCgIuzRcq
-	5cHNh3KMiBnzmDxxJFbrPPlMOiVkPgiVIXaCvKqayafVXihWOmWPu8IOH+cYGVOd
-	TJtHiHWxM6D/Cmz/xNuiIZGzxd6vAaJ5hjbqTA1/rMNfZPPAZwvkms1p+D723x4w
-	==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 466psnv3bh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Apr 2025 18:21:48 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53NEwVKq001305;
-	Wed, 23 Apr 2025 18:21:47 GMT
-Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 466jfxvann-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Apr 2025 18:21:47 +0000
-Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
-	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53NILko323200312
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 23 Apr 2025 18:21:46 GMT
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8482058055;
-	Wed, 23 Apr 2025 18:21:46 +0000 (GMT)
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E74A458063;
-	Wed, 23 Apr 2025 18:21:44 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.31.96.173])
-	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 23 Apr 2025 18:21:44 +0000 (GMT)
-Message-ID: <ce242647f121c90047b491fbe7305603dcfec6fd.camel@linux.ibm.com>
-Subject: Re: [PATCH v13 3/9] kexec: define functions to map and unmap
- segments
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: steven chen <chenste@linux.microsoft.com>, stefanb@linux.ibm.com,
-        roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
-        eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
-        code@tyhicks.com, bauermann@kolabnow.com,
-        linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
-        James.Bottomley@HansenPartnership.com, bhe@redhat.com,
-        vgoyal@redhat.com, dyoung@redhat.com
-Date: Wed, 23 Apr 2025 14:21:44 -0400
-In-Reply-To: <99e18151-2866-4646-8532-3d10d63279b9@linux.microsoft.com>
-References: <20250421222516.9830-1-chenste@linux.microsoft.com>
-	 <20250421222516.9830-4-chenste@linux.microsoft.com>
-	 <f2f4a873489b28d3baa4ac1f6073a49fe888d120.camel@linux.ibm.com>
-	 <99e18151-2866-4646-8532-3d10d63279b9@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="kZBPfPkT"
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ZjSY01rfxzCKV;
+	Wed, 23 Apr 2025 20:38:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1745433508;
+	bh=/4V+XPxzzcoQzqWEANF53l/uZ/DfVypkRjYToFa1+Tg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kZBPfPkTIuPicmAjA3eASpg/zXg6FIyfr8TCyCodBjtgYXRwXkGrxBC8DaWpaUcPO
+	 ffL2qCzc9tgSMsZ+wfqi6BEW3ONXUkJ5QlXW8lhFfi1g7I2J8+XTWV0gxy0on3wDOt
+	 l+WhKfSv1yCHiBilm2Un3YCrDm/NTo1BJPBW6uDc=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4ZjSXy4Ym9z2Z6;
+	Wed, 23 Apr 2025 20:38:26 +0200 (CEST)
+Date: Wed, 23 Apr 2025 20:38:25 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Kees Cook <kees@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux <linux@treblig.org>, 
+	Mark Brown <broonie@kernel.org>, WangYuli <wangyuli@uniontech.com>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] landlock: Work around randstruct unnamed static
+ initializer support
+Message-ID: <20250423.phe6choh9AiN@digikod.net>
+References: <20250421000854.work.572-kees@kernel.org>
+ <20250422.eetheiPu6aiH@digikod.net>
+ <ccdfe9c0-7c28-4ecf-a7da-95c9a20eead7@app.fastmail.com>
+ <202504220756.4DD4BAD@keescook>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: H_6UjrJAn-ekq9km0DL4j7ghNYsSHKdm
-X-Authority-Analysis: v=2.4 cv=BIezrEQG c=1 sm=1 tr=0 ts=68092fbc cx=c_pps a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17 a=IkcTkHD0fZMA:10 a=XR8D0OoHHMoA:10 a=VnNF1IyMAAAA:8 a=D4UNMVMJWTiIgZffb2gA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDIzMDEyNyBTYWx0ZWRfX6apwzi04KfUn D31XsCfRues7E9xY4+jvJThcr8o30g8jPw8EserUGcyB+lelLdo5Bd8b9gcRZ2W4buyC0Cw3Mf9 4g47DjR5t4cxrNDpAo3DS43MIScIwVqYKw52VEtQJoVspAT5Gz987DBQNLrOxejoniJXxzBH/zB
- XZQiJKUfnVr/aCIFGogwAbMNL5gPc/EEHcPNqe4ReRvj+Lc8wWboie68vsTrDUh1BilYCXasP/I wVAkK/5gt7pUQqP3l/He9O7g3lX96bkwktJODA+SBYFYYOPrJtfDhR23qhjau4Arn0quNseHhP0 ugRiJvGnO5VMSRDpfW10npIo0R7RsjYk/o6jt+WSOzNHkfmXgJQx2TMMg8ooHFoCk4sXQ1T5iBC
- 0grY+/IKSbcowHvfoIqPBcFTX6HtWWIGj5OA7offpBmfY3lEXF9j2Nj7Q4NMi4bpAQgKti+E
-X-Proofpoint-ORIG-GUID: H_6UjrJAn-ekq9km0DL4j7ghNYsSHKdm
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.680,FMLib:17.12.80.40
- definitions=2025-04-23_10,2025-04-22_01,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 mlxscore=0 phishscore=0 malwarescore=0 clxscore=1015
- suspectscore=0 lowpriorityscore=0 spamscore=0 adultscore=0 bulkscore=0
- mlxlogscore=924 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2504230127
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <202504220756.4DD4BAD@keescook>
+X-Infomaniak-Routing: alpha
 
-On Wed, 2025-04-23 at 08:29 -0700, steven chen wrote:
-[ ... ]=20
->=20
-> Hi Mimi,
->=20
-> Could you help to add
-> Tested-by tag for this patch set: "Tested-by: Stefan Berger=20
-> <stefanb@linux.ibm.com> # ppc64/kvm"
+On Tue, Apr 22, 2025 at 07:59:07AM -0700, Kees Cook wrote:
+> On Tue, Apr 22, 2025 at 02:53:05PM +0200, Arnd Bergmann wrote:
+> > On Tue, Apr 22, 2025, at 14:25, Mickaël Salaün wrote:
+> > > On Sun, Apr 20, 2025 at 05:08:59PM -0700, Kees Cook wrote:
+> > >> Unnamed static initializers aren't supported by the randstruct GCC
+> > >> plugin. Quoting the plugin, "set up a bogus anonymous struct field
+> > >> designed to error out on unnamed struct initializers as gcc provides
+> > >> no other way to detect such code". That is exactly what happens
+> > >> with the landlock code, so adjust the static initializers for structs
+> > >> lsm_ioctlop_audit and landlock_request that contain a randomized structure
+> > >> (struct path) to use named variables, which avoids the intentional
+> > >> GCC crashes:
+> > >
+> > > This is not a sustainable solution.  Could we fix the plugin instead?
+> > > This new Landlock change may be the first to trigger this plugin bug but
+> > > it will probably not be the last to use unnamed static initializers.
+> > > Forbidding specific C constructs should be documented.
+> > 
+> > I think the version from Kees' patch looks more readable than
+> > the version with the compound literal, so it certainly seems appropriate
+> > as an immediate regression fix, even if it's possible to fix the
+> > plugin later.
+> > 
+> > >> We went 8 years before tripping over this! 
+> > 
+> > Right, it's probably enough to revisit the plugin code after
+> > it happens again.
+> 
+> Yeah, that's my thinking as well.
+> 
+> > >> Closes: https://lore.kernel.org/lkml/337D5D4887277B27+3c677db3-a8b9-47f0-93a4-7809355f1381@uniontech.com/
+> > >> Signed-off-by: Kees Cook <kees@kernel.org>
+> > 
+> > Acked-by: Arnd Bergmann <arnd@arndb.de>
+> 
+> Thanks! Mickaël, are you good with this for now, and if so, do you want
+> to carry it or shall I?
 
-Already done.
-
-> Reviewed-by tags "Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>" to=
-=20
-> patch 1, 5, 6, 9.
-
-I'm pretty sure that Stefan added his Reviewed-by tags to the entire patch =
-set.
-As soon as we hear back from him, I'll add his tags.
-
-Mimi
-
->=20
-> Thanks a lot.
->=20
-> Hi Stefen,
->=20
-> Thanks for your help all the time and sorry missing tags to show your wor=
-k.
->=20
-> Sorry again,
->=20
-> Steven
->=20
->=20
-
+I don't like this kind of change but I'm OK with it if it comes with
+documentation explaining what construct should not be used in the kernel
+(and even better, updating checkpatch.pl accordingly), or if it's a
+temporary workaround and someone is working on fixing the plugin.  Are
+you or someone else working on it?  In the meantime, feel free to carry
+this patch.
