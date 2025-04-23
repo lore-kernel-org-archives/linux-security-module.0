@@ -1,152 +1,131 @@
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 166A91EFFB9
-	for <linux-security-module@vger.kernel.org>; Wed, 23 Apr 2025 14:58:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8F2728CF4F
+	for <linux-security-module@vger.kernel.org>; Wed, 23 Apr 2025 15:10:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745420314; cv=none; b=gegh5b1jG/orbujfD3Df6hEPaBMGc3/CuXInpYPs9GqonAIAUdizINzYQ1beTif37prUWLjwW9B8yNyUhX+1LTKkZ1/IxR06MPqGBaUYU4p1eV4qchuZLaIEfpOVrKLzoIhmCyW9G3HliBHw4drqgOL8LyfmfEGG91cPc+RTBbs=
+	t=1745421043; cv=none; b=hGMsgsTk4nB4fg/Lo3KqnyBaKT3aAeunC4YJdEIN3m0uKbgBaZB5ZBafFY64MMPvOLTfFRNFTn2hnZe5eynZ8k9HJ3Q8ewqchEUIkPbm2pcP3iQhiu9oUz98sQ3n0VL7z+gRvwimv9qkrW6EZfT/bGMg14XEzRRULpu7kAkBauo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745420314; c=relaxed/simple;
-	bh=dfltnVDi73/5hTrWgOjN45WtUPQNs0TGxn/zfAFbiQI=;
+	s=arc-20240116; t=1745421043; c=relaxed/simple;
+	bh=uFV3fDxHeTVor0I1L/M53Jf1QkJJii9mgN/m4+mnqe0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eFqk5fEtSSFdsgMXdYrTL5Q99zgQ7yrprPFPwTuzKZzz1l5vkNNreF6Ce8NFn4FhDmiPcZgx6QGmmFEi03S829pv3eYTvW/MuEhHFnuHw/HsD593Cp00tBmwNJThI1x8U9lm0TDRCPONql3LDzWO+A6b4jIiPuZ7zIa8Nar6M7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=bZzYCZ+T; arc=none smtp.client-ip=209.85.219.179
+	 To:Cc:Content-Type; b=SbEW64S46LEd1p+xfp71neDIsRa+C65HP3BDtelCaeXqVuoJqaWdex06o6Rz8Me80Uy7DuyaRQzBXpfI/snfiNWoAq6NT5TE/PR49ck9/QJO3zok0V8bwu8hirDv9acpD+Y7CcbjClrVNRdUA3+0DvfBz5cH8zPPzQAPqvJlskE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=BV467kOY; arc=none smtp.client-ip=209.85.219.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="bZzYCZ+T"
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e728cd7150dso3995437276.3
-        for <linux-security-module@vger.kernel.org>; Wed, 23 Apr 2025 07:58:31 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="BV467kOY"
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e53a91756e5so5390873276.1
+        for <linux-security-module@vger.kernel.org>; Wed, 23 Apr 2025 08:10:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1745420311; x=1746025111; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1745421041; x=1746025841; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qrb4cp6hW0fCVaaBrIzlwgSSHEadSZhLW+hKEQ5hufU=;
-        b=bZzYCZ+TmRLi3ogRZKOu2SDAhb0XKNKOPMt4v2TPEjrf6nYYU1iOePcyHvphB+KMPk
-         Fv+Jnk5zXNLtUQoy9xRHv2mX2NjYaHMkCA0m/7R9G3HXqFiLS+sodLK6eV0LWvnYttGk
-         K1IXpXiFQystUEpLGcGFVdoWJxs2E5HXpVjkl0JI6T6XA29MSHm7mSFMldsummoEMbeB
-         8EeKEYRIBSL0Ga6+mR8FA2nvWiuwVL0WOpNnF1qK87LaGvBoZXdQnuRO5AxAadtfYuBt
-         rQowGJ4kzyAOvwQq+msNuV288Mx4E+JIngkNeM9WRYMqhIGjkGdZfTd3GQB7O6F18W6R
-         zhrw==
+        bh=ppDTLRNI5D/DHlJ104+9klrOmugo96Z4EzkqmTSr+tw=;
+        b=BV467kOYvg9v1zan0/6j+x47F8k96sTz/PYM0TdS2w+WeWy7o3I1OK3YpPMw2RYbPn
+         YBo32qVaE2CpT/F0kqYkX6ESu30MQ5Zs4SVO6Ngktc83G8A9DZ52LypKy6vxTaZRnDXv
+         nCvVf9KcnMy3bFIrmJSvtCa5JU5K5bavjj3/uG/IgXj26dO++/pnJtPQzyTlTur5U5E4
+         M27BjyuJxCnK+1YTgD8oA2zvnQoEkgi2Yr8lPHPA/hYOeURaQ2HMRRPT45VNgrE6JOba
+         JVDZYlvx1cuiQ5EbAJTRGFyV9ytozEWODCcZLDQ6CJLlgX0C1fzENfaWaSI3Jc1TGnDg
+         AhnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745420311; x=1746025111;
+        d=1e100.net; s=20230601; t=1745421041; x=1746025841;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qrb4cp6hW0fCVaaBrIzlwgSSHEadSZhLW+hKEQ5hufU=;
-        b=nBIKNRSfJPPfO8JTMpm8g5jK7JeOY2y4YEaEH0+r3pIWEGZ8jmgfyfDRIpQ4dJCJQA
-         fACKGFdAFK5mSvmb1h6RydmnxJvscIDRHtE4XfQO12gilTR7QgpHAIY7VG41ISTvwVA8
-         psBqj/dFo0y9ph4MD5rTIqk0TmuRCaBLHDZ/2RK/JXOKwuBVPK1hunRQYbvqQGI8vXl5
-         Terysls0ELFyW0JawqsZ56BcN7BEMuIgec1IgkSWYm9L7IUD8s+234cqh8SNu3mYHtFw
-         iajLjuYFtsPl0dYJAdbIHxlK/95KCiKiUQgk9khXfbR+nniwfVcsd6GCW6qN3rhcHYZI
-         OmOg==
-X-Forwarded-Encrypted: i=1; AJvYcCX9LvIA/qHKK7+lvtCtHKI6A7MQlOSgfIP9BqA95k8C3s2i6JMdrDrDbZyRXxNUM64gp/lgFUDFQdVlkr69kJbxpW+P8T4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXDbAEW7B5O7ZVihhNMq+dd8leUBFYNYf8hOWu4DeIR8nJ2G45
-	OkFDIcspjXGq/M9Wp7qRtgiHBQeFOMjGFJcpU4gH1OqzMcejqHNYxcwOoKZADLQeJs7bqSOG0NP
-	ndshXxB21rcTO4Ty7Ddg6Jv1bdXQJUhBzHx7M
-X-Gm-Gg: ASbGncun5FRaLgtYG7cDXjJwObnLH0lBWDu1tBMjrpkBjitJt+7P9fYQv9bts52kHO8
-	TwzooGDFqQbMxRU5ZZrTDvMM7Qs62svxDrC5Gwibu+srZ4BINZc/jeTzoocvcPWJle2iOy//DTc
-	7JUWYBk6jWS9hYU7Hu9bPtGg==
-X-Google-Smtp-Source: AGHT+IG/fceHlLAvfRTRS0P2WxVYWY6W2qpcAP7O5FgVfhVAPQQlK7YTjIHBvDEGerQ6YAtAZn4/7289fAM+NKp9VmU=
-X-Received: by 2002:a05:6902:2783:b0:e6d:e429:1d70 with SMTP id
- 3f1490d57ef6-e7297db6ddcmr28402430276.12.1745420310961; Wed, 23 Apr 2025
- 07:58:30 -0700 (PDT)
+        bh=ppDTLRNI5D/DHlJ104+9klrOmugo96Z4EzkqmTSr+tw=;
+        b=gP49rT8VeiXZ8b75jgWK0CuClHVjHt8P2FW19Iyqc5JO9pgM9rdEnRD2vrfA3kgK67
+         Besf7AkzQV2Po38C8GIQ0fpAiWTNLyGlYmm29865MRs5jBElHDHTBppu9PimP2Sn00pz
+         rLl+1oaRyjYib4FYuwBStX2h3/LLDFKhA0EeZimBfCLSfA9igPoe7SX4MRfGikpBStre
+         EvStgA9ldq+mzWJHNX3Jijrn/dTbodBnnY3TpCW6KbM3Wbt6/Ji+Xppyl3DO2Z05deYa
+         e6GO7dde7QehsFPKC3JEgJOsA134qvKZ3+aCvoJKF/fdvFu6KNNdfbNkVpLuBpxvv1SD
+         2PUA==
+X-Forwarded-Encrypted: i=1; AJvYcCXNtZANYT/8UexhqPnN6ajGvmmtfZpt9ttMVOITAQFt0GufoJzGsmPefosa6AV5HZnKRdj3D9k5uesyzRnAO3qFgpXN/JU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywpy570DlAZAPw5uPHrrHenVZbZ/lH+ugAI2d97E2XQR0Nk+ia6
+	9AyjZ9AutosGM0KPb77+E+CjnbYwu8UFaciqtASt82sJQKhEM7eypNOgSM4U08qO2yV0Fklhbsi
+	g46h1n29rfrCZndAGt3bIEaLNiBa5iQ/m/wqV
+X-Gm-Gg: ASbGncth3XTpJJQeTJ0m68Wk31HnsGpCDhdodIPq0KD3CRbys5CbQURH8BId+txR7tV
+	PGGRh6VCKx7XPotF3SoWThTgL1PZaOcrR5NEPilvtfJ6poTCDWW+SHT0lLAk86RepaPzFKDk+xo
+	MQyMG1cq95ly/5/X7PXNl1ky2oNRx2IegJ
+X-Google-Smtp-Source: AGHT+IHNlf00p8r3DHcmCpgY+IFBhYtAhRgyVsFb6FFk96MPIernB0HKWY5qgWQbLL58D4kTom9itSs/0uIOQcHE5fg=
+X-Received: by 2002:a05:690c:6801:b0:6fd:33a5:59a with SMTP id
+ 00721157ae682-706ccd1a5ccmr309843197b3.18.1745421040868; Wed, 23 Apr 2025
+ 08:10:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250422184407.3257964-1-song@kernel.org> <973cedc0d38496b2096992bf68c72e67@paul-moore.com>
- <3897DD89-5B9F-4257-B273-A4DDEDACD56B@fb.com> <CAHC9VhShOxu4Q9yV3tkST3P9SoiL3j3ET_O4_cPAV1ES5usd-A@mail.gmail.com>
- <60CAF154-DADA-4C46-ADE8-403318EFDDAD@fb.com>
-In-Reply-To: <60CAF154-DADA-4C46-ADE8-403318EFDDAD@fb.com>
+References: <20250404215527.1563146-1-bboscaccy@linux.microsoft.com>
+ <20250404215527.1563146-2-bboscaccy@linux.microsoft.com> <CAADnVQJyNRZVLPj_nzegCyo+BzM1-whbnajotCXu+GW+5-=P6w@mail.gmail.com>
+ <87semdjxcp.fsf@microsoft.com> <CAADnVQ+JGfwRgsoe2=EHkXdTyQ8ycn0D9nh1k49am++4oXUPHg@mail.gmail.com>
+ <87friajmd5.fsf@microsoft.com> <CAADnVQKb3gPBFz+n+GoudxaTrugVegwMb8=kUfxOea5r2NNfUA@mail.gmail.com>
+ <87a58hjune.fsf@microsoft.com> <CAADnVQ+LMAnyT4yV5iuJ=vswgtUu97cHKnvysipc6o7HZfEbUA@mail.gmail.com>
+ <87y0w0hv2x.fsf@microsoft.com> <CAADnVQKF+B_YYwOCFsPBbrTBGKe4b22WVJFb8C0PHGmRAjbusQ@mail.gmail.com>
+ <2bd95ca78e836db0775da8237792e8448b8eec62.camel@HansenPartnership.com>
+In-Reply-To: <2bd95ca78e836db0775da8237792e8448b8eec62.camel@HansenPartnership.com>
 From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 23 Apr 2025 10:58:20 -0400
-X-Gm-Features: ATxdqUGIrGhiiUI_OOkro4NEtNvkQJEdJfDP0J4FKH1Yfox7zDBJm77MX47eWtQ
-Message-ID: <CAHC9VhRQzEGvMxyZY5Ke+GFYHr9OOF=-cTVqsK14=cfGJwy1bQ@mail.gmail.com>
-Subject: Re: [PATCH] lsm: make SECURITY_PATH always enabled
-To: Song Liu <songliubraving@meta.com>
-Cc: Song Liu <song@kernel.org>, 
-	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, 
-	"jmorris@namei.org" <jmorris@namei.org>, "serge@hallyn.com" <serge@hallyn.com>, Kernel Team <kernel-team@meta.com>, 
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Date: Wed, 23 Apr 2025 11:10:29 -0400
+X-Gm-Features: ATxdqUEil0O912atUTQeKlUUv4Sfsc4c76L7yegeINodkXYOkWCpNQ86Ynaeoaw
+Message-ID: <CAHC9VhTi6+CHD9OtWj5=pPDrtwF+S9yfBOKqghe=9wXmd7jrxA@mail.gmail.com>
+Subject: Re: [PATCH v2 security-next 1/4] security: Hornet LSM
+To: James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, 
+	Blaise Boscaccy <bboscaccy@linux.microsoft.com>, Jonathan Corbet <corbet@lwn.net>, 
+	David Howells <dhowells@redhat.com>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	"David S. Miller" <davem@davemloft.net>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Shuah Khan <shuah@kernel.org>, 
+	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, Jarkko Sakkinen <jarkko@kernel.org>, 
+	Jan Stancek <jstancek@redhat.com>, Neal Gompa <neal@gompa.dev>, 
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	keyrings@vger.kernel.org, 
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>, 
+	LSM List <linux-security-module@vger.kernel.org>, 
+	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
+	clang-built-linux <llvm@lists.linux.dev>, nkapron@google.com, 
+	Matteo Croce <teknoraver@meta.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	Cong Wang <xiyou.wangcong@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 23, 2025 at 12:57=E2=80=AFAM Song Liu <songliubraving@meta.com>=
- wrote:
-> > On Apr 22, 2025, at 2:13=E2=80=AFPM, Paul Moore <paul@paul-moore.com> w=
-rote:
->
+On Wed, Apr 23, 2025 at 10:12=E2=80=AFAM James Bottomley
+<James.Bottomley@hansenpartnership.com> wrote:
+> On Mon, 2025-04-21 at 13:12 -0700, Alexei Starovoitov wrote:
 > [...]
+> > Calling bpf_map_get() and
+> > map->ops->map_lookup_elem() from a module is not ok either.
 >
-> >>
-> >> However, I don't think existing CONFIG_SECURITY_* are doing the right
-> >> things. Among all the configs, CONFIG_SECURITY_PATH is the most awkwar=
-d
-> >> to me. Say , if we have CONFIG_SECURITY_PATH, shouldn't we also have
-> >> CONFIG_SECURITY_INODE? IOW, something like:
-> >>
-> >> #ifdef CONFIG_SECURITY_INODE
-> >> int security_inode_rmdir(struct inode *dir, struct dentry *dentry);
-> >> #endif
-> >>
-> >> #ifdef CONFIG_SECURITY_PATH
-> >> int security_path_rmdir(struct inode *dir, struct dentry *dentry);
-> >> #endif
-> >
-> > Without putting much thought into what would fall under
-> > CONFIG_SECURITY_INODE, I think it would be interesting to see what
-> > hooks one might be able to make conditional on such a Kconfig knob.
-> > Using security_inode_permission() as a simple test, it looks like only
-> > SELinux and Smack provide implementations, spot checks on a few other
-> > security_*inode*() hooks shows similar, or even more limited, results.
-> >
-> > You would need to spend some time to determine what LSM hooks are used
-> > by which LSMs and adjust their Kconfigs appropriately for the new
-> > CONFIG_SECURITY_INODE knob, but if you do that then I think that would
-> > be okay.
+> I don't understand this objection.  The program just got passed in to
+> bpf_prog_load() as a set of attributes which, for a light skeleton,
+> directly contain the code as a blob and have the various BTF
+> relocations as a blob in a single element array map.  I think everyone
+> agrees that the integrity of the program would be compromised by
+> modifications to the relocations, so the security_bpf_prog_load() hook
+> can't make an integrity determination without examining both.  If the
+> hook can't use the bpf_maps.. APIs directly is there some other API it
+> should be using to get the relocations, or are you saying that the
+> security_bpf_prog_load() hook isn't fit for purpose and it should be
+> called after the bpf core has loaded the relocations so they can be
+> provided to the hook as an argument?
 >
-> Well, I was hoping to simplify the CONFIGs by removing one. So I am
-> not sure whether adding a new CONFIG is the right thing to do.
+> The above, by the way, is independent of signing, because it applies to
+> any determination that might be made in the security_bpf_prog_load()
+> hook regardless of purpose.
 
-Ah, in that case I suspect you're going to be disappointed as I'm
-fairly confident we don't want to consolidate the inode and path based
-hooks under one Kconfig knob at this point in time.  If anything, I
-think there may be some value in adding an inode Kconfig as described
-above, which I realize isn't your original goal, but still ... :)
-
-> >> OR, maybe we should just remove security_inode_rmdir(), and users of
-> >> security_inode_rmdir() can just use security_path_rmdir() instead?
-> >
-> > Those two LSM hooks are called from slightly different places in the
-> > codepath which has an impact on their environment.  For example, the
-> > inode variant doesn't have to deal with directory inodes that don't
-> > have a defined rmdir op, whereas the path variant does; the inode
-> > variant doesn't have to worry about S_KERNEL_FILE files, the inode
-> > variant has a refcount'd and locked dentry, etc.  Moving an existing
-> > LSM, especially complex ones, from one LSM hook to another, is a
-> > delicate operation and might not be worth it for such a small return.
->
-> Given there is pushback when a new LSM hook is added, I assume
-> removing a hook (or merge two hooks into one) may be a good move.
-> Well, it is totally possible that I underestimated the complexity of
-> the work.
-
-The funny thing is that the difficulty in adding LSM hooks is one of
-the main reasons why I am so hesitant to remove an existing hook; you
-can consider it as perhaps an unintended consequence of a general
-hostility towards the LSM.
-
-Regardless of the above, yes, there can be a lot of complexity
-involved in adding, modifying, or consolidating LSM hooks as there can
-be decades worth of assumptions both in the LSMs and in the caller
-that need to be considered for each change.  Of course that doesn't
-mean such change can't happen - we have plenty of examples where it
-has - but such changes are often more complicated than they appear.
+I've also been worrying that some of the unspoken motivation behind
+the objection is simply that Hornet is not BPF.  If/when we get to a
+point where Hornet is sent up to Linus and Alexei's objection to the
+Hornet LSM inspecting BPF maps stands, it seems as though *any* LSM,
+including BPF LSMs, would need to be prevented from accessing BPF
+maps.  I'm fairly certain no one wants to see it come to that.
 
 --=20
 paul-moore.com
