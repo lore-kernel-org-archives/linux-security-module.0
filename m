@@ -1,199 +1,101 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp-bc0d.mail.infomaniak.ch (smtp-bc0d.mail.infomaniak.ch [45.157.188.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A9057C9F
-	for <linux-security-module@vger.kernel.org>; Thu, 24 Apr 2025 17:45:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C2D9291175
+	for <linux-security-module@vger.kernel.org>; Thu, 24 Apr 2025 19:15:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745516716; cv=none; b=osDOjdRUQBobpA+eu8XRHRjZSfo/o3Aq6/McvLiGIq6lOX7nJPuAkSbJbwNbcLwqpjDR+0PKLcndpOroBHupRgGt9L1STJM/U/X39zCQOrJ87tPhPRvQKuJHBLHU50w3KhiIvZfHsM8cedEyisRo5r+1fWIQu1OvJhHhTiVVqs0=
+	t=1745522120; cv=none; b=WHvhZHKAq1wAKi3ebK0CZTqi+0bRvFADj91NNlvzxzCdSmNwvlTEbRJFGrGV7d2JlTNmvMoISkIB7VPJuGYs2Un7EvGUrz0c2LJsDI1LIqb2thEakCAxG0/AK8qo+D2o4D8v/BmzvSUf+qYLhZhz60n3OMyge0Ps5ThBYnIhGGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745516716; c=relaxed/simple;
-	bh=nuhY4mNQtbqLil9CN9WkICD/oYDC6db0CLuLTFGNXWw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 In-Reply-To:Content-Type:Content-Disposition; b=EH3red0CbRaxRLtx3mghKf7CTaYYx55kR2k3FXrnZ1StcwKMFy9RL2fJewxHOJlYjLPTemL4oHK9d2kGeiUQQE2KbaSantFNGBWuYqTpcyF+4PYAFcXxKRaxpV4Ilt9uTSSG2EdwLo3rk9NcBnIG4Y87zM6ojQrjBva25dJfsdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KNyuyAFP; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1745522120; c=relaxed/simple;
+	bh=6FaFvY8Ll3PltdEEdKEHjLwIeMKq9+dnJtsXptluj9A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=P6nS1K7WSekvb/7eHPdRXYE4I98+yLB07cCdctTuDJGPS7TxkYR7lsm6OfyZQ2RJPp4XrMI+IX9+sW+x6htpYLqrJesnMf1GEuTAQOSy/RP0JYpiD+5ILsSPs8CTGOZNh/PCBCa5TxjOF5PhTAz0jVfXPC8b3nh7GjQN7+iPeJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=Z7pOzkkk; arc=none smtp.client-ip=45.157.188.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KNyuyAFP"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1745516713;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JSMzO6fx79vdlfqdO8dlMyzHm6+/LG9Oml+3X61fg04=;
-	b=KNyuyAFPKSmrU8PDUd966TFD5IebcEbd8aiiNWakeBYlO/S+uLT/jn9zqsQOC3cTxWQvSo
-	UAcofNob++U2TnoHpaYQtG4HNaC+7VxLmpuQpcuJ0tjUtmBk3YYtAvTyU7qq4lxkVGosUU
-	s8Y2JLBEfU2rbUyvlqhv/IqNYdlegXY=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-177-hTTJS943NEOmJ4j0LskKug-1; Thu, 24 Apr 2025 13:45:10 -0400
-X-MC-Unique: hTTJS943NEOmJ4j0LskKug-1
-X-Mimecast-MFC-AGG-ID: hTTJS943NEOmJ4j0LskKug_1745516709
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-ac710ace217so89446666b.1
-        for <linux-security-module@vger.kernel.org>; Thu, 24 Apr 2025 10:45:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745516709; x=1746121509;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JSMzO6fx79vdlfqdO8dlMyzHm6+/LG9Oml+3X61fg04=;
-        b=g0gJ57uh6pZuLJYA49cxqoTrQxVpIRDleboRsljyZTQePYYVograk1EXFvkBljJGGd
-         4NghQ4fu30Ytr+SEsSR8KA65fGu8d4MtP0QpxGxhWZowaeDdj6cPVnfGhzIn+cG0eBui
-         tui29AsZ7hd1u3VqKw87uOFEgKIEVNHPL5goZblM8hLH6A7qF1Q9yuvkAhIHBUg2f1z5
-         mQ+dPd+OeDyaW03e9XBSGmqHs2i0SRHZBkmEJQZEH07cq81aqM5kuRP8OwUmePWgFxuz
-         vc/hKwqfMUJ5RN/J6+UbMxaNuoeBUS3Mbx+doMtj7ug83k8OFsBpexGmxN68JZoacX8p
-         +s+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXF6+Kg7EqOiiNi1g3vpPyT98x0QYL9j5Bsia9Y+tvACiZyPSDNWK3Rgkw5mMoy3iwt9UWRJtbelr0GfOT24Aj8QehqTqQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxatpF9eZtUE5hG21RqLX28l1G0Z4U5nF9RpNWVpGXW8E4+U1M+
-	tZcXddpZTEGyqDp7pN4iE/dQF+TlzVvUFsW3TDATVzCVyiFjt7sFCewHSBzxIx+1H1mU9V0gbex
-	moGbDQe5OyZ+euIWjIIYEa/5GCQCoY9QvZjmau3O7jnbFlk+5SPTPDJWKbgK2foYkoSOecQgO
-X-Gm-Gg: ASbGncsrUcfTu9k4qGzYoiGyTC1i/N2pHxCdurD5vy02CnmdCbuEbgZSKZLe/MDAQIr
-	JJ1Jrx6kTuubPi9sFtwENvoOGSoAcj8xvzA+0fAZG4u8Md3FRLh43iE55HOq7uNT5hnWCXstHta
-	C9uCLDmeaiDLS3SNHkTwYBPyP0DrgT2UsPt8lwArvIfTQB7OF+ZyqMRl74oXodL2XnOY4ydXgjW
-	eh49mDEWyZPTeh2S6Fa9FD0dND9m2OSaksPc4NSiLFGCEgrt3dh+zSJYP7HmWLFvruUHSRa5fBH
-	XSWFnYRIpp2+rJxZ51gKPNJmI86fevg=
-X-Received: by 2002:a17:907:9412:b0:acb:3a0d:8a82 with SMTP id a640c23a62f3a-ace6b450a49mr51591266b.32.1745516708685;
-        Thu, 24 Apr 2025 10:45:08 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFTh+3uHoEBQ4GmOFk2Iro9cQNDST88N03Da5siOmOBhQ6S/NryZGUQ9nV3zdizG2WhZyWkCg==
-X-Received: by 2002:a17:907:9412:b0:acb:3a0d:8a82 with SMTP id a640c23a62f3a-ace6b450a49mr51586866b.32.1745516708167;
-        Thu, 24 Apr 2025 10:45:08 -0700 (PDT)
-Received: from thinky (ip-217-030-074-039.aim-net.cz. [217.30.74.39])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace5989b173sm140418466b.59.2025.04.24.10.45.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Apr 2025 10:45:07 -0700 (PDT)
-Date: Thu, 24 Apr 2025 19:45:06 +0200
-From: Andrey Albershteyn <aalbersh@redhat.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, 
-	Richard Henderson <richard.henderson@linaro.org>, Matt Turner <mattst88@gmail.com>, 
-	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	Michal Simek <monstr@monstr.eu>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Naveen N Rao <naveen@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, 
-	Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, 
-	Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, 
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, "David S. Miller" <davem@davemloft.net>, 
-	Andreas Larsson <andreas@gaisler.com>, Andy Lutomirski <luto@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org, 
-	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, 
-	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org, linux-arch@vger.kernel.org, 
-	linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v4 3/3] fs: introduce getfsxattrat and setfsxattrat
- syscalls
-Message-ID: <oprhbm2vcqpveaf6smetfl2zacntntzqlakysys73zx3gnougi@zy7bo43bh5ef>
-References: <20250321-xattrat-syscall-v4-0-3e82e6fb3264@kernel.org>
- <20250321-xattrat-syscall-v4-3-3e82e6fb3264@kernel.org>
- <20250422-abbekommen-begierde-bcf48dd74a2e@brauner>
- <rbzlwvecvrp4xawwp5nywdq6wp5hgjhrtrabpszv74xmfqbj4f@x7v6eqfc5gcd>
- <20250424-zuspielen-luxus-3d49b600c3bf@brauner>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="Z7pOzkkk"
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Zk56Z2GrbzGG0;
+	Thu, 24 Apr 2025 21:06:14 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1745521574;
+	bh=AJZuZQVgkQN5VFPhVIHuyE8h71pNG+lc4Di/0XENLWs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Z7pOzkkkqBzDSNrOUdAlbEdfGCo0uFcjrbWoLZTBMznCCG/U0lS6djbh0k/BoW1AQ
+	 IcnMaGEcKrnhGrumBREP/UsP7NoyIF1HjBpDYdrWwqno0r+InMnNTGlknOFUoyjYCa
+	 PINyC0Db0mOsfMRtB7B/AailT8Jm7vECLsL9vpqs=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Zk56Y4PFWz9W4;
+	Thu, 24 Apr 2025 21:06:13 +0200 (CEST)
+From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	Charles Zaffery <czaffery@roblox.com>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	Jeff Xu <jeffxu@google.com>,
+	Paul Moore <paul@paul-moore.com>,
+	Robert Salvet <robert.salvet@roblox.com>,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: [GIT PULL] Landlock fix for v6.15-rc4
+Date: Thu, 24 Apr 2025 21:06:04 +0200
+Message-ID: <20250424190604.1007961-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250424-zuspielen-luxus-3d49b600c3bf@brauner>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: jriJX59mKsMzi2dVED3cfYkp8_xvgc4OdPPkV3XZEo8_1745516709
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Infomaniak-Routing: alpha
 
-On 2025-04-24 11:06:07, Christian Brauner wrote:
-> On Wed, Apr 23, 2025 at 11:53:25AM +0200, Jan Kara wrote:
-> > On Tue 22-04-25 16:59:02, Christian Brauner wrote:
-> > > On Fri, Mar 21, 2025 at 08:48:42PM +0100, Andrey Albershteyn wrote:
-> > > > From: Andrey Albershteyn <aalbersh@redhat.com>
-> > > > 
-> > > > Introduce getfsxattrat and setfsxattrat syscalls to manipulate inode
-> > > > extended attributes/flags. The syscalls take parent directory fd and
-> > > > path to the child together with struct fsxattr.
-> > > > 
-> > > > This is an alternative to FS_IOC_FSSETXATTR ioctl with a difference
-> > > > that file don't need to be open as we can reference it with a path
-> > > > instead of fd. By having this we can manipulated inode extended
-> > > > attributes not only on regular files but also on special ones. This
-> > > > is not possible with FS_IOC_FSSETXATTR ioctl as with special files
-> > > > we can not call ioctl() directly on the filesystem inode using fd.
-> > > > 
-> > > > This patch adds two new syscalls which allows userspace to get/set
-> > > > extended inode attributes on special files by using parent directory
-> > > > and a path - *at() like syscall.
-> > > > 
-> > > > CC: linux-api@vger.kernel.org
-> > > > CC: linux-fsdevel@vger.kernel.org
-> > > > CC: linux-xfs@vger.kernel.org
-> > > > Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
-> > > > Acked-by: Arnd Bergmann <arnd@arndb.de>
-> > ...
-> > > > +		struct fsxattr __user *, ufsx, size_t, usize,
-> > > > +		unsigned int, at_flags)
-> > > > +{
-> > > > +	struct fileattr fa = {};
-> > > > +	struct path filepath;
-> > > > +	int error;
-> > > > +	unsigned int lookup_flags = 0;
-> > > > +	struct filename *name;
-> > > > +	struct fsxattr fsx = {};
-> > > > +
-> > > > +	BUILD_BUG_ON(sizeof(struct fsxattr) < FSXATTR_SIZE_VER0);
-> > > > +	BUILD_BUG_ON(sizeof(struct fsxattr) != FSXATTR_SIZE_LATEST);
-> > > > +
-> > > > +	if ((at_flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH)) != 0)
-> > > > +		return -EINVAL;
-> > > > +
-> > > > +	if (!(at_flags & AT_SYMLINK_NOFOLLOW))
-> > > > +		lookup_flags |= LOOKUP_FOLLOW;
-> > > > +
-> > > > +	if (at_flags & AT_EMPTY_PATH)
-> > > > +		lookup_flags |= LOOKUP_EMPTY;
-> > > > +
-> > > > +	if (usize > PAGE_SIZE)
-> > > > +		return -E2BIG;
-> > > > +
-> > > > +	if (usize < FSXATTR_SIZE_VER0)
-> > > > +		return -EINVAL;
-> > > > +
-> > > > +	name = getname_maybe_null(filename, at_flags);
-> > > > +	if (!name) {
-> > > 
-> > > This is broken as it doesn't handle AT_FDCWD correctly. You need:
-> > > 
-> > >         name = getname_maybe_null(filename, at_flags);
-> > >         if (IS_ERR(name))
-> > >                 return PTR_ERR(name);
-> > > 
-> > >         if (!name && dfd >= 0) {
-> > > 		CLASS(fd, f)(dfd);
-> > 
-> > Ah, you're indeed right that if dfd == AT_FDCWD and filename == NULL, the
-> > we should operate on cwd but we'd bail with error here. I've missed that
-> > during my review. But as far as I've checked the same bug is there in
-> > path_setxattrat() and path_getxattrat() so we should fix this there as
-> > well?
-> 
-> Yes, please!
-> 
+Linus,
 
-Thanks for the review, Christian. I will fix issues you noticed as
-suggested. I see that Jan already sent fix for path_[s|g]etxattrat()
-so won't do anything here.
+This PR fixes some Landlock audit issues, add related tests, and updates
+documentation.
 
--- 
-- Andrey
+Please pull these changes for v6.15-rc4 .  These commits merge cleanly
+with your master branch.  They have been been tested in the latest
+linux-next releases.
 
+Test coverage for security/landlock is 93.6% of 1524 lines according to
+gcc/gcov-14, and it was 93.6% of 1525 lines before this PR.
+
+Regards,
+ Mickaël
+
+--
+The following changes since commit 0af2f6be1b4281385b618cb86ad946eded089ac8:
+
+  Linux 6.15-rc1 (2025-04-06 13:11:33 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-6.15-rc4
+
+for you to fetch changes up to 47ce2af848b7301d8571f0e01a0d7c7162d51e4a:
+
+  landlock: Update log documentation (2025-04-17 11:09:10 +0200)
+
+----------------------------------------------------------------
+Landlock fix for v6.15-rc4
+
+----------------------------------------------------------------
+Mickaël Salaün (7):
+      landlock: Remove incorrect warning
+      landlock: Log the TGID of the domain creator
+      selftests/landlock: Factor out audit fixture in audit_test
+      selftests/landlock: Add PID tests for audit records
+      landlock: Fix documentation for landlock_create_ruleset(2)
+      landlock: Fix documentation for landlock_restrict_self(2)
+      landlock: Update log documentation
+
+ include/uapi/linux/landlock.h                 |  87 ++++++++++-----
+ security/landlock/domain.c                    |   4 +-
+ security/landlock/domain.h                    |   2 +-
+ security/landlock/syscalls.c                  |  27 +++--
+ tools/testing/selftests/landlock/audit.h      |  21 ++--
+ tools/testing/selftests/landlock/audit_test.c | 154 +++++++++++++++++++++++---
+ tools/testing/selftests/landlock/fs_test.c    |   3 +-
+ 7 files changed, 226 insertions(+), 72 deletions(-)
