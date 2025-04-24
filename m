@@ -1,95 +1,63 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BD761E5B95;
-	Thu, 24 Apr 2025 19:27:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D24B1F1506;
+	Thu, 24 Apr 2025 20:08:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745522823; cv=none; b=faExlepASy+Y7HzkBghPo+kQJnL0yvpWAwcc4ZocourKS+EVKmS16ao6GJu4dmE7h7c/L9nErezymF7/w/JCqYxOSJ7M4bntCC/vIzMBayZRxTzKxIboCCR3Jd8U3+6LwelVqis/RLd4e6rLNZp2yR0FGBlEMKS60e6qUf+z1AU=
+	t=1745525308; cv=none; b=EAYwEtCsgOc1DfTDC9U0MWHBfvMYI7E7fqdxD+X9Pp86KgJvAVqHhcEcORQ9guzK7S9Ir3vUBreWruvG42tYTEsX3SvbQBQKtX6DwX8WNO/bpgIEKw6wCPKPQGM6alzYazjCBSHCi2Wzs/peLpe2tVTC3x9uFRMZPkSWArwwKt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745522823; c=relaxed/simple;
-	bh=FbQNuNG+a+QwOTzKXpP9P0iAjBjElMqiAwdzMsfzOMI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Vonm3GWGNuyBM1wZ37kPbJNkTRIFvCsO1JUCovabuOpHI4RpYJbdl33W8RcKP7t/XZtGVm9Ovj/BEkpHAkME+8yGUtdp01MOevB0cIBpkdt6o6Yl9aBlRSggrL0DNXqQbeGHaS4LXO2zvguYGuggVcPnt8dOkRIMonrjSyAi3qg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=iCwNa1Pw; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+	s=arc-20240116; t=1745525308; c=relaxed/simple;
+	bh=4K3kIsscvUs1FBK2+HXIZ6woR/C8WkogIkCy257rIZ8=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=aBF2iU7nzKlbdz5v1bdQjzVoeqLqj6gXKqnKOwKZQ5znsW8Ag9jfpNcq4dOs6umcxOjd8K49rzATxnYQsMhAtQ5p09haq0SfILoxhdk3r+x5hP84qBrvsbXRs/WcuMIS+ikFdRhNrxbLSVOnUDhM2hkt0+Ml7FKIRKy4oy9K6vQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nofd5bdg; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="iCwNa1Pw"
-Received: from [100.70.202.48] (unknown [172.200.70.35])
-	by linux.microsoft.com (Postfix) with ESMTPSA id C9726211308C;
-	Thu, 24 Apr 2025 12:26:59 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C9726211308C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1745522821;
-	bh=74cZhWXIm6DNK3Mg2kUV74aTfyWRc7iRAWJvXq6yXtI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=iCwNa1PwnNR0onB/ijUlvcweRa6CXTmWKW14JsO29ycskZ7nGodrZpYFyGzH9k9V4
-	 Sdk8+5Ymip2FoMrWkmBxEIDODYBWY+4iSWanqiEWUPN4Atf0HypxCtZ5KUIiX4oTmi
-	 88xcyWJpxjt5nND9W+FXauji5KZmGss+dee/xv9Y=
-Message-ID: <8909e6a6-4f3a-49a7-a3fe-f6ab9d925aaf@linux.microsoft.com>
-Date: Thu, 24 Apr 2025 12:26:57 -0700
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nofd5bdg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C360C4CEE3;
+	Thu, 24 Apr 2025 20:08:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745525308;
+	bh=4K3kIsscvUs1FBK2+HXIZ6woR/C8WkogIkCy257rIZ8=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=nofd5bdgU2uXANF5ZqaXRqzoP0mYBtoBYKwrZu1qRNKv/4PmsbGI1jqA+FmdCAfkP
+	 vtMGsys1d+ofXzahzkBTpho+fgrSTOe0MH/Jvl/K7AzwnDRkffXSPUjnB9btEyFPxv
+	 EsOviwKNYOWbWYQ1Apau3km6hurM+KTDYGa43wHeF5RagEUmENtTzgkZ2XlAMzk8XH
+	 jbKfVJ1hK0o0bs6d36b67m97nhF1yX9SYMuUI7HgLF9/sd0FEIkvrpSOEBtFJO1Kh7
+	 cSdFz9jngWb42KIp2jRY9wu9oWLi5wPd5XyBaP/rMI41ELl0nwgLiYquODI9sDR57F
+	 G/5rdNwdKzEZQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAEA1380CFD9;
+	Thu, 24 Apr 2025 20:09:07 +0000 (UTC)
+Subject: Re: [GIT PULL] Landlock fix for v6.15-rc4
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20250424190604.1007961-1-mic@digikod.net>
+References: <20250424190604.1007961-1-mic@digikod.net>
+X-PR-Tracked-List-Id: <linux-security-module.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20250424190604.1007961-1-mic@digikod.net>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-6.15-rc4
+X-PR-Tracked-Commit-Id: 47ce2af848b7301d8571f0e01a0d7c7162d51e4a
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 30e268185e59c3d5a1233416a2135cfda5630644
+Message-Id: <174552534659.3476198.5187636448615049069.pr-tracker-bot@kernel.org>
+Date: Thu, 24 Apr 2025 20:09:06 +0000
+To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>, Charles Zaffery <czaffery@roblox.com>, =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>, Jeff Xu <jeffxu@google.com>, Paul Moore <paul@paul-moore.com>, Robert Salvet <robert.salvet@roblox.com>, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v13 0/9] ima: kexec: measure events between kexec load and
- execute
-To: Baoquan He <bhe@redhat.com>
-Cc: zohar@linux.ibm.com, stefanb@linux.ibm.com,
- roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
- eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
- code@tyhicks.com, bauermann@kolabnow.com, linux-integrity@vger.kernel.org,
- kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org, madvenka@linux.microsoft.com,
- nramas@linux.microsoft.com, James.Bottomley@hansenpartnership.com,
- vgoyal@redhat.com, dyoung@redhat.com
-References: <20250421222516.9830-1-chenste@linux.microsoft.com>
- <aApMnEl1Xzarmimn@fedora>
-Content-Language: en-US
-From: steven chen <chenste@linux.microsoft.com>
-In-Reply-To: <aApMnEl1Xzarmimn@fedora>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 4/24/2025 7:37 AM, Baoquan He wrote:
-> Hi Steven,
->
-> Could you test below code and post a formal patch to not copy
-> measurement list buffer to kdump kernel? Below log is just for your
-> reference, please feel free to modify or rephrase.
->
-> ===
-> Kdump kernel doesn't need IMA to do integrity measurement.
-> Hence the measurement list in 1st kernel doesn't need to be copied to
-> kdump kenrel.
->
-> Here skip allocating buffer for measurement list copying if loading
-> kdump kernel. Then there won't be the later handling related to
-> ima_kexec_buffer.
-> ===
->
-> diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
-> index 38cb2500f4c3..7362f68f2d8b 100644
-> --- a/security/integrity/ima/ima_kexec.c
-> +++ b/security/integrity/ima/ima_kexec.c
-> @@ -146,6 +146,9 @@ void ima_add_kexec_buffer(struct kimage *image)
->   	void *kexec_buffer = NULL;
->   	int ret;
->   
-> +	if (image->type == KEXEC_TYPE_CRASH)
-> +		return;
-> +
->   	/*
->   	 * Reserve extra memory for measurements added during kexec.
->   	 */
+The pull request you sent on Thu, 24 Apr 2025 21:06:04 +0200:
 
-Hi Baoquan,
+> https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-6.15-rc4
 
-I will work on it and I will post a patch after this patch set merged.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/30e268185e59c3d5a1233416a2135cfda5630644
 
-Thanks,
+Thank you!
 
-Steven
-
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
