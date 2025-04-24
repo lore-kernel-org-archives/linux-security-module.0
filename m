@@ -1,101 +1,131 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F69B2DF68
-	for <linux-security-module@vger.kernel.org>; Thu, 24 Apr 2025 14:37:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27BAC27456;
+	Thu, 24 Apr 2025 14:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745505453; cv=none; b=IKZoCY6l3JybPVgcobl1j4iqhFs+Zb0aHcBFFGhyLz/Hatun/AEQGMzYmF418fr3demZjsbSwMgARWVGJdLJ9Km49xZJk6/N3gfCzYKL2OaNE7mZ0aCdD41tNZ8Sg5C5WeBGmXTDwI4rGGG9u9cAGcgaoKXZpnbUtURpverYHAA=
+	t=1745506570; cv=none; b=hi43qZ0A+nHwEMeJEHLVJ76Z2bCfUzJiTzKhkc7lvaOWhkfaMKsfW5GdlK062C2ZxwKbEZv55H0TvXbJFvTc0B61NxPUzbzi7EYNoREkpJFkGzjFdbCZSKyUYx+kjgpr1Q8LHN6/4bFegwCY1mzzR2+xK0miiOi93+P9Q/1ZRRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745505453; c=relaxed/simple;
-	bh=MF8yM0hDLJMunXliqAKRJc3PoReh69CIks5Rz58mYHI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bwb+mbmgeTvkfOPs0hFU5MBYQoYu9hyZUBQiOC/X0BW6q0pFhFPpePIpLVl6AT62pZ48B6UOBA7HOEwn+iskutD380L9jMoL6G6mNMcaIxiM+zCKAYzFeDAdaHPQxzPf86IURk6yNiCAiClNBAtDjIiVzlkN6SOSTfaXGJ37ipM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V5d28GnC; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1745506570; c=relaxed/simple;
+	bh=XVQ6Vlt4NNJnu1Z1vtdE/XWsTaunsynSA+99ZYAMqk8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iOZeJfoPN76oBKDTZ3vsTSIJJbwuUOSP7T5HRw0PG3n6FRNpOkjbvtEBWiFTYYNV3kI3YERajr503S+pzgFkQXMGjUD1GNDWuqvn+ja47VlGH0jTYtFHckiDws6NZmRKYmuZkfUm6H9/4J1h1SYybD5a0LC19XJKJgKDvJ9HUsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JFFGk6oZ; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V5d28GnC"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1745505450;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bYUUd0z6A0+ZkWdTi7S3yGhP4LTb46IOeiMEmdUvozc=;
-	b=V5d28GnCJ1B5HkE4QgoPSFIJSHN/O9yYmrmDmiDVkNP3v76fTgAlsG9ofC/bLCzYaeAluG
-	8qhbpRoynVQkHKfHQtAzZzbZGeeedAL9lFSKMcTMBbabz4hFIuO1V3Jw+bHya8EwXA/xrO
-	emElCBYg7j0sA25hejEmifvfFcJjojs=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-145-pZpKcBiLNymKpzeyzdU94w-1; Thu,
- 24 Apr 2025 10:37:26 -0400
-X-MC-Unique: pZpKcBiLNymKpzeyzdU94w-1
-X-Mimecast-MFC-AGG-ID: pZpKcBiLNymKpzeyzdU94w_1745505444
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2090718004A7;
-	Thu, 24 Apr 2025 14:37:23 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.62])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CAFAC18002AD;
-	Thu, 24 Apr 2025 14:37:20 +0000 (UTC)
-Date: Thu, 24 Apr 2025 22:37:16 +0800
-From: Baoquan He <bhe@redhat.com>
-To: steven chen <chenste@linux.microsoft.com>
-Cc: zohar@linux.ibm.com, stefanb@linux.ibm.com,
-	roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
-	eric.snowberg@oracle.com, ebiederm@xmission.com,
-	paul@paul-moore.com, code@tyhicks.com, bauermann@kolabnow.com,
-	linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
-	James.Bottomley@hansenpartnership.com, vgoyal@redhat.com,
-	dyoung@redhat.com
-Subject: Re: [PATCH v13 0/9] ima: kexec: measure events between kexec load
- and execute
-Message-ID: <aApMnEl1Xzarmimn@fedora>
-References: <20250421222516.9830-1-chenste@linux.microsoft.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JFFGk6oZ"
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-30384072398so1080571a91.0;
+        Thu, 24 Apr 2025 07:56:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745506568; x=1746111368; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XVQ6Vlt4NNJnu1Z1vtdE/XWsTaunsynSA+99ZYAMqk8=;
+        b=JFFGk6oZ/yusOYM5nsvQMNFT0RPrpeFmnd6IbMvfWBKKb4jIF50W7Ukx7DZj2ZC68I
+         r8t/Wjc9TSPQ8rUIhVT9znL9/76jrL14L/MBCr0WEVTY6DtC6Ew0zxHO6dAw9YajOwOn
+         HzB1sxraWG0ekdG/X4NIkjog93YmFQbTBKbs3TF6L9/qf80h/IYA6nGb5dtmMD6zK1mm
+         SjuwrZDud3UXN7zqpLbCbCF2pAK35qosEOPScDLN7k8d+OBeAhCrYEdF6rM9zKPHoH+a
+         ys9DJNq5Oe69xN9PVbBJeJq/7fIn3adAWOwbDEjHq+XsM5vieUZStI70FU9pwSD1S8Bg
+         EQ1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745506568; x=1746111368;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XVQ6Vlt4NNJnu1Z1vtdE/XWsTaunsynSA+99ZYAMqk8=;
+        b=q08gK8j8HXzGFAO5tutUTFQY5cmAi65O8lApflxbyfnSaBU74QmJmNNJQxJsYDYWOu
+         9OnQ2r8HoCY9TqAudO5WiI3zR/gfTBlo0lvLcVALIhiorF2++qgUjyhdqErRQ1Dga4C/
+         shQYN1XH5rjXl8OncEFG+tdZXHeW+zv8vPW8DR9O8c33joCUiDo2U//uDkQL6JUqA9cD
+         nd74eLmXvXykBdLNbBNlNzDF771S1iNIvTHbQS41DBJCQ/sEkZfYJcckWsAKp0+/9TdY
+         CxOra7OGIamxAtX1fr8ghJbL0f5cZouboqCLlWn+FjsLSeq5SWTsyZ8Or7u9pv8oNJQi
+         ki0A==
+X-Forwarded-Encrypted: i=1; AJvYcCV9j9FXjLWCDFPClSo8gZnaP3DImoUvGy5+73WS9CKyWxzTuN55azaqc8mdwtj5xducegC/8760IXcd1Ts3@vger.kernel.org, AJvYcCVChdttNW7AdH64E+ovBnD76zs8MQMrgGk+DXNMEKD2fgNnhrf7yG13aBOZjTjZlmLovFO0zaySQMr6vMHVZi75i3kKAAC5@vger.kernel.org, AJvYcCVSdKDVWOHkcHzMCIoHDo2s+Nwo7qPYwuQ78StylsdCVCpUcHz+Zd/mMWHm+iAIrKv+OX82tZkhHA==@vger.kernel.org, AJvYcCW40nNjeJCHL1K4GYgw/9Wy4+XJtc7FgkLzvzAywJHLjSYesc6j2XqZbGobcDs75GZQfDoK8fneigBWa43r@vger.kernel.org
+X-Gm-Message-State: AOJu0YwW/ltkwV3kiVOBGOp8645Uqog3eBDnZ4CnP8Mr5rGJvDypZRKy
+	I9cGX4nzK2jXvSk8gMQn/343ARzDEpbxJ0hVIurQyN+pSd2Rx3PO4cL5hqTC8AMg3dRWCzxEHw+
+	zkCW4unYmnAqab3+pAFaWyHSfxls=
+X-Gm-Gg: ASbGnctQ7w5HdCtkAnRvMjtWv9mTT9iRbbIyEX4zQmUrcLj6unUXG+HdqoOiLIu77Rz
+	AFsK+7klE4N3v15hvWvd8RtcOP940ZIw8SSctYSYbzRgRh3QBQaMgkwJ9EAtL/YK3s4S9oJVdmP
+	DzWnUe9cizvpHK2DVY48zNWA==
+X-Google-Smtp-Source: AGHT+IEbFCGCJlB5vwHS30qkE4/L+5bhyu8cj/YTejcSzM6Yxuwz6SugUsZP/CZ0O2+4bpe4a837ytsYPYIeG9Uw/1Q=
+X-Received: by 2002:a17:90b:2d4f:b0:2fa:e9b:33b8 with SMTP id
+ 98e67ed59e1d1-309ed2a3af4mr5112037a91.18.1745506568259; Thu, 24 Apr 2025
+ 07:56:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250421222516.9830-1-chenste@linux.microsoft.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+References: <20250424124644.4413-1-stephen.smalley.work@gmail.com>
+ <2025042427-hardship-captive-4d7b@gregkh> <CAEjxPJ5LGH_Vyf2KCL0HNwa-U70GVAOVvyFMnhpnzi-CEKvC5w@mail.gmail.com>
+In-Reply-To: <CAEjxPJ5LGH_Vyf2KCL0HNwa-U70GVAOVvyFMnhpnzi-CEKvC5w@mail.gmail.com>
+From: Stephen Smalley <stephen.smalley.work@gmail.com>
+Date: Thu, 24 Apr 2025 10:55:56 -0400
+X-Gm-Features: ATxdqUFne-6xhD2JUQrYbdPmY5HUdNSqZkJv09bxOacTWyu64a6h6ZIhT5E-DvE
+Message-ID: <CAEjxPJ4C7ritSqF0mE+2rczKJHdUTNGs5_RDx3PHKcg_rQQV4w@mail.gmail.com>
+Subject: Re: [PATCH] vfs,shmem,kernfs: fix listxattr to include security.* xattrs
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: paul@paul-moore.com, omosnace@redhat.com, 
+	linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
+	Tejun Heo <tj@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Hugh Dickins <hughd@google.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Steven,
+On Thu, Apr 24, 2025 at 9:53=E2=80=AFAM Stephen Smalley
+<stephen.smalley.work@gmail.com> wrote:
+>
+> On Thu, Apr 24, 2025 at 9:12=E2=80=AFAM Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Thu, Apr 24, 2025 at 08:46:43AM -0400, Stephen Smalley wrote:
+> > > The vfs has long had a fallback to obtain the security.* xattrs from =
+the
+> > > LSM when the filesystem does not implement its own listxattr, but
+> > > shmem/tmpfs and kernfs later gained their own xattr handlers to suppo=
+rt
+> > > other xattrs. Unfortunately, as a side effect, tmpfs and kernfs-based
+> > > filesystems like sysfs no longer return the synthetic security.* xatt=
+r
+> > > names via listxattr unless they are explicitly set by userspace or
+> > > initially set upon inode creation after policy load. coreutils has
+> > > recently switched from unconditionally invoking getxattr for security=
+.*
+> > > for ls -Z via libselinux to only doing so if listxattr returns the xa=
+ttr
+> > > name, breaking ls -Z of such inodes.
+> > >
+> > > Before:
+> > > $ getfattr -m.* /run/initramfs
+> > > <no output>
+> > > $ getfattr -m.* /sys/kernel/fscaps
+> > > <no output>
+> > >
+> > > After:
+> > > $ getfattr -m.* /run/initramfs
+> > > security.selinux
+> > > $ getfattr -m.* /sys/kernel/fscaps
+> > > security.selinux
+> > >
+> > > Link: https://lore.kernel.org/selinux/CAFqZXNtF8wDyQajPCdGn=3DiOawX4y=
+77ph0EcfcqcUUj+T87FKyA@mail.gmail.com/
+> > > Link: https://lore.kernel.org/selinux/20250423175728.3185-2-stephen.s=
+malley.work@gmail.com/
+> > > Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> >
+> > As this "changed" in the past, shouldn't it have a "Fixes:" tag?
+>
+> Yes, I'll add that on v2. Also appears that it doesn't quite correctly
+> handle the case where listxattr() is called with size =3D=3D 0 to probe
+> for the required size.
 
-Could you test below code and post a formal patch to not copy
-measurement list buffer to kdump kernel? Below log is just for your
-reference, please feel free to modify or rephrase. 
-
-===
-Kdump kernel doesn't need IMA to do integrity measurement.
-Hence the measurement list in 1st kernel doesn't need to be copied to
-kdump kenrel.
-
-Here skip allocating buffer for measurement list copying if loading
-kdump kernel. Then there won't be the later handling related to
-ima_kexec_buffer.
-===
-
-diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
-index 38cb2500f4c3..7362f68f2d8b 100644
---- a/security/integrity/ima/ima_kexec.c
-+++ b/security/integrity/ima/ima_kexec.c
-@@ -146,6 +146,9 @@ void ima_add_kexec_buffer(struct kimage *image)
- 	void *kexec_buffer = NULL;
- 	int ret;
- 
-+	if (image->type == KEXEC_TYPE_CRASH)
-+		return;
-+
- 	/*
- 	 * Reserve extra memory for measurements added during kexec.
- 	 */
-
+And doesn't correctly handle the case where the list size exceeds the
+original buffer size. On second look, this can be done more simply and
+safely in simple_xattr_list() itself, avoiding the need to modify
+shmem/tmpfs and kernfs. I'll submit an updated patch.
