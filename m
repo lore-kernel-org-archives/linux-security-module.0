@@ -1,129 +1,148 @@
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E6AC1FFC5E
-	for <linux-security-module@vger.kernel.org>; Wed, 23 Apr 2025 21:23:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FED1210F5A;
+	Thu, 24 Apr 2025 09:06:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745443437; cv=none; b=FW1nVMo9fMVMx61W+v63O7Bbcy7PtawH+retXZ3vi9aXHHKWnzr3ZH3Xc1W63G3nyytSFgoNWvnwwjdlK4QfN+Z5H+D07FTLiw6JiTAJc37M4N2fZB+UydhBU4XmnEOMxdDbvGbmLkzWQxw0wSU2v0WMt4CCExabAF9YAksvJwM=
+	t=1745485582; cv=none; b=DVkg+p5KTiuu7hbo0J270jYBlHaaA5sQLXR2MSAqbbf+iPojEN1KXE5nz2m0KdlloqR3Az+1k9+n50cVr/PwRqHvIRZ1RbYGsAH3fm04jJxyDspoNijz+7xs78TCwjS2U1CfuvyqGHDmGgHf0RGHKchBbReRSXp1ioPk0m54Q/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745443437; c=relaxed/simple;
-	bh=j68s0BqHqfQMhfQdnFcDlIulnyHNA6voNvT4hSq9XIM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EhubIee9bC9TK08eDneXAWfZAalV0s5634tOnVoaajdeFw9LRvnoi78kkPUIYeVZq2NSMTSFoTk/vs72368lc8lniZSt+Qypn9C81EtikRMiBlFrtBW7oqOFCyr9YISFLVD/OoysE4p1+9iwWH1C5qUYIHv+WLeZdm7HCong/l8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=BdVu/d48; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1745485582; c=relaxed/simple;
+	bh=g6bxeBGFz+ZfAiISf78nYF5d6OuqVi+zKYMYmkzuYww=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HK3T3zdIGDpGO/TCXAxWRf0iQ/zar0OLW4YFttAblOUqXirChYvfmI8uemjkoQnmB6Vb3JnpDDLRlHt/MQVAv4OdHrWLF9sIeVyQmLcJCpCAkh54AH3oLhumaQtjEc8H20yVMyUPIJyfy3E+2mYHzKTMOazaBeYbpRqxd4/g8Mo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qPzQ2EtO; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="BdVu/d48"
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e53a91756e5so271823276.1
-        for <linux-security-module@vger.kernel.org>; Wed, 23 Apr 2025 14:23:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1745443434; x=1746048234; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mb4NHCSVvmkdZLxza7aTUlyAvx0ukX1L+Ka8Awp7BkQ=;
-        b=BdVu/d481IjENhE8562qKDfUHBZpy/WQWbXhm2hsS8w27q2iVrgVfxpz+zimYDmQby
-         R1InPwmzhFA3JQMjpbDpkmOTuy4whpFhy9J/OYqBOOAzkcxCoU6Y+1ax2XOIL5bQKrnH
-         shKTEHnErO0gUx29bzUekrQ6zCglg7ulTncKJFsEdnqKDd6oGVkZLrRIFCmu3AWLfoQf
-         emDsImvsCczRgn1tnsaF1Vxgj2tNllXWo3eZyMvGWGSxCqZorADJ08cyV4UZrLhKd0wy
-         PCNeOd0iwxGUMsn6mK7COGdVvJJTzzyxAX2kVjIA56Bsw7Fxqr3EL/8WwFvUTHaUhZaF
-         6QQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745443434; x=1746048234;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mb4NHCSVvmkdZLxza7aTUlyAvx0ukX1L+Ka8Awp7BkQ=;
-        b=MdQU5NUQndXnSNodTMc7BCISObfc1jWetJOYl3ju8ChC1vWwPZti3mvb2jfUwbHVII
-         5vYG+TQRxmHqyLADjJvH+0KPhaOk0zvn5qvLQvL/a2VG8x2rpJXmVqRDUh348/NEy/Bw
-         n1xCI9V5r+v0esc/X/H+kHIgQ8uuy0USHnpI6zcDxnouZ4RSQI570Qfjm+uhZmPHa34Y
-         6MbYO3NQPMPO2ojP8lgJh/s7WXgulQ+Uet93kxlj91eV+DCNW2BIQjyqb/9VKQCFFbrN
-         Y+Oc1ZBCRdsUtI0BD7OwR9/ChV8/1vriH0/89gq6jwAneTHu+n4tkwUugIYSWiIn1ZEh
-         5daA==
-X-Forwarded-Encrypted: i=1; AJvYcCVSPj072FbkERIsM04q3L3KkTLRCSP+ofcesQl4vPRkyyurGuKpdR7OSaqGOQbuUrXBvDJAr25k0ZyeqBnggBr4iO5qSoE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBu8tFATDUUaBSIw0hq3HUSiZ1gkZLMQRxDQGSx32o7W/bczfB
-	cNDPjPf+gtPWeE/BuyDXdsGEkNZumaqX+DMwxlG8UYW4ujy/yihNN/HS6wFM8uJEBxUfrkyXXJx
-	q7iTx0Pc29HxJdaL0paXMgd/vmdNKr8Lf/xZq
-X-Gm-Gg: ASbGncvWGaxd9BHhCTCgGNhf6y8c2aruh0dS7JqmJVHC8L2gAo68MsjuHAt/go41B0A
-	lOFmHdYKYcqmVp1CU78S7n8oXj43qba2bb6VLwPMgl+Qne2oGradwB+sHflwS3zBkpo5PnwK4q7
-	GR9grjpLUfSR4z8uDFG7dTTg==
-X-Google-Smtp-Source: AGHT+IHD1kvpatchYxwvexNkCpoFGQKa38HTYci3MfO2fZxpph3zet/su09KoKAjFic00mXXNtjgXiEzjHmJrAWHfc8=
-X-Received: by 2002:a05:6902:268a:b0:e65:8252:58d0 with SMTP id
- 3f1490d57ef6-e7303511847mr582473276.6.1745443434172; Wed, 23 Apr 2025
- 14:23:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qPzQ2EtO"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF029C4CEEB;
+	Thu, 24 Apr 2025 09:06:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745485581;
+	bh=g6bxeBGFz+ZfAiISf78nYF5d6OuqVi+zKYMYmkzuYww=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qPzQ2EtOhRHjvqeIqmfEs41n41+fPOpo5wVb0WXRA0Y64JK63Z0piOH/6q1TuKDwD
+	 WTI9c9BorspnKyVAu3DQkYsACDPHLJTqVVPTN6kTMVKEScUaCBv3GdtHESuUO5NqC6
+	 pqjqzGFZkOK5FpMLm1+UNv77/mYGep1Zag5d47x0b6vZpoHTEkoNH1VrlBp4U0AaKU
+	 qsF/Vn2vnRvvp1Kn7/YXcOkrtYa0w4Ynlqq5gkE0B8hjxnGwh/iyaywzNfxrIZA9z+
+	 2pzSBGKxX+TFKn8wOJih4WXcFzFXNu3Sjb1AkS/krSZea9kudjKkOe+16Pk7titbWK
+	 ch3/3zyDdzWnA==
+Date: Thu, 24 Apr 2025 11:06:07 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Jan Kara <jack@suse.cz>
+Cc: Andrey Albershteyn <aalbersh@redhat.com>, 
+	Richard Henderson <richard.henderson@linaro.org>, Matt Turner <mattst88@gmail.com>, 
+	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	Michal Simek <monstr@monstr.eu>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	Naveen N Rao <naveen@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, 
+	Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, 
+	Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, 
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, "David S. Miller" <davem@davemloft.net>, 
+	Andreas Larsson <andreas@gaisler.com>, Andy Lutomirski <luto@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+	Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org, 
+	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, 
+	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org, linux-arch@vger.kernel.org, 
+	linux-xfs@vger.kernel.org
+Subject: Re: [PATCH v4 3/3] fs: introduce getfsxattrat and setfsxattrat
+ syscalls
+Message-ID: <20250424-zuspielen-luxus-3d49b600c3bf@brauner>
+References: <20250321-xattrat-syscall-v4-0-3e82e6fb3264@kernel.org>
+ <20250321-xattrat-syscall-v4-3-3e82e6fb3264@kernel.org>
+ <20250422-abbekommen-begierde-bcf48dd74a2e@brauner>
+ <rbzlwvecvrp4xawwp5nywdq6wp5hgjhrtrabpszv74xmfqbj4f@x7v6eqfc5gcd>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250422184407.3257964-1-song@kernel.org> <973cedc0d38496b2096992bf68c72e67@paul-moore.com>
- <3897DD89-5B9F-4257-B273-A4DDEDACD56B@fb.com> <CAHC9VhShOxu4Q9yV3tkST3P9SoiL3j3ET_O4_cPAV1ES5usd-A@mail.gmail.com>
- <60CAF154-DADA-4C46-ADE8-403318EFDDAD@fb.com> <CAHC9VhRQzEGvMxyZY5Ke+GFYHr9OOF=-cTVqsK14=cfGJwy1bQ@mail.gmail.com>
- <8F162586-EB42-4CFA-B97E-314AF2FDB830@fb.com>
-In-Reply-To: <8F162586-EB42-4CFA-B97E-314AF2FDB830@fb.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 23 Apr 2025 17:23:43 -0400
-X-Gm-Features: ATxdqUHW1i43wa1AQU56Um-5036Sd2tzEV8wwXzSdD6TwQNiE9tEVLbpuscZA8A
-Message-ID: <CAHC9VhTAQMU-HA1rFbtKVRY1=RaVwyxof3i4dtAPMvOg8u4uWw@mail.gmail.com>
-Subject: Re: [PATCH] lsm: make SECURITY_PATH always enabled
-To: Song Liu <songliubraving@meta.com>
-Cc: Song Liu <song@kernel.org>, 
-	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>, 
-	"jmorris@namei.org" <jmorris@namei.org>, "serge@hallyn.com" <serge@hallyn.com>, Kernel Team <kernel-team@meta.com>, 
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <rbzlwvecvrp4xawwp5nywdq6wp5hgjhrtrabpszv74xmfqbj4f@x7v6eqfc5gcd>
 
-On Wed, Apr 23, 2025 at 4:54=E2=80=AFPM Song Liu <songliubraving@meta.com> =
-wrote:
-> > On Apr 23, 2025, at 7:58=E2=80=AFAM, Paul Moore <paul@paul-moore.com> w=
-rote:
->
-> [...]
->
-> >>> Without putting much thought into what would fall under
-> >>> CONFIG_SECURITY_INODE, I think it would be interesting to see what
-> >>> hooks one might be able to make conditional on such a Kconfig knob.
-> >>> Using security_inode_permission() as a simple test, it looks like onl=
-y
-> >>> SELinux and Smack provide implementations, spot checks on a few other
-> >>> security_*inode*() hooks shows similar, or even more limited, results=
-.
-> >>>
-> >>> You would need to spend some time to determine what LSM hooks are use=
-d
-> >>> by which LSMs and adjust their Kconfigs appropriately for the new
-> >>> CONFIG_SECURITY_INODE knob, but if you do that then I think that woul=
-d
-> >>> be okay.
-> >>
-> >> Well, I was hoping to simplify the CONFIGs by removing one. So I am
-> >> not sure whether adding a new CONFIG is the right thing to do.
-> >
-> > Ah, in that case I suspect you're going to be disappointed as I'm
-> > fairly confident we don't want to consolidate the inode and path based
-> > hooks under one Kconfig knob at this point in time.  If anything, I
-> > think there may be some value in adding an inode Kconfig as described
-> > above, which I realize isn't your original goal, but still ... :)
->
-> I am thinking whether it is possible to have each LSM selects required
-> hooks, and only enable those at compile time. OTOH, my primary focus is
-> BPF LSM, so these optimizations matter little for my use cases.
+On Wed, Apr 23, 2025 at 11:53:25AM +0200, Jan Kara wrote:
+> On Tue 22-04-25 16:59:02, Christian Brauner wrote:
+> > On Fri, Mar 21, 2025 at 08:48:42PM +0100, Andrey Albershteyn wrote:
+> > > From: Andrey Albershteyn <aalbersh@redhat.com>
+> > > 
+> > > Introduce getfsxattrat and setfsxattrat syscalls to manipulate inode
+> > > extended attributes/flags. The syscalls take parent directory fd and
+> > > path to the child together with struct fsxattr.
+> > > 
+> > > This is an alternative to FS_IOC_FSSETXATTR ioctl with a difference
+> > > that file don't need to be open as we can reference it with a path
+> > > instead of fd. By having this we can manipulated inode extended
+> > > attributes not only on regular files but also on special ones. This
+> > > is not possible with FS_IOC_FSSETXATTR ioctl as with special files
+> > > we can not call ioctl() directly on the filesystem inode using fd.
+> > > 
+> > > This patch adds two new syscalls which allows userspace to get/set
+> > > extended inode attributes on special files by using parent directory
+> > > and a path - *at() like syscall.
+> > > 
+> > > CC: linux-api@vger.kernel.org
+> > > CC: linux-fsdevel@vger.kernel.org
+> > > CC: linux-xfs@vger.kernel.org
+> > > Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
+> > > Acked-by: Arnd Bergmann <arnd@arndb.de>
+> ...
+> > > +		struct fsxattr __user *, ufsx, size_t, usize,
+> > > +		unsigned int, at_flags)
+> > > +{
+> > > +	struct fileattr fa = {};
+> > > +	struct path filepath;
+> > > +	int error;
+> > > +	unsigned int lookup_flags = 0;
+> > > +	struct filename *name;
+> > > +	struct fsxattr fsx = {};
+> > > +
+> > > +	BUILD_BUG_ON(sizeof(struct fsxattr) < FSXATTR_SIZE_VER0);
+> > > +	BUILD_BUG_ON(sizeof(struct fsxattr) != FSXATTR_SIZE_LATEST);
+> > > +
+> > > +	if ((at_flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH)) != 0)
+> > > +		return -EINVAL;
+> > > +
+> > > +	if (!(at_flags & AT_SYMLINK_NOFOLLOW))
+> > > +		lookup_flags |= LOOKUP_FOLLOW;
+> > > +
+> > > +	if (at_flags & AT_EMPTY_PATH)
+> > > +		lookup_flags |= LOOKUP_EMPTY;
+> > > +
+> > > +	if (usize > PAGE_SIZE)
+> > > +		return -E2BIG;
+> > > +
+> > > +	if (usize < FSXATTR_SIZE_VER0)
+> > > +		return -EINVAL;
+> > > +
+> > > +	name = getname_maybe_null(filename, at_flags);
+> > > +	if (!name) {
+> > 
+> > This is broken as it doesn't handle AT_FDCWD correctly. You need:
+> > 
+> >         name = getname_maybe_null(filename, at_flags);
+> >         if (IS_ERR(name))
+> >                 return PTR_ERR(name);
+> > 
+> >         if (!name && dfd >= 0) {
+> > 		CLASS(fd, f)(dfd);
+> 
+> Ah, you're indeed right that if dfd == AT_FDCWD and filename == NULL, the
+> we should operate on cwd but we'd bail with error here. I've missed that
+> during my review. But as far as I've checked the same bug is there in
+> path_setxattrat() and path_getxattrat() so we should fix this there as
+> well?
 
-Ignoring for a moment just how awkward it would be to have a Kconfig
-value for each LSM, it is important to remember that LSMs are still
-selectable at system boot (assuming they have been built into the
-kernel), so there will always be the potential for "empty" LSM hooks
-on any given system boot.
-
-Like I said before, I'm open to someone exploring the addition of new
-LSM Kconfig knobs to provide greater granularity about which hooks are
-enabled at build time, however, these new knobs will both need to make
-sense from a logical grouping perspective as well as have a meaningful
-impact on the enabled hooks across the current in-tree LSMs.
-
---=20
-paul-moore.com
+Yes, please!
