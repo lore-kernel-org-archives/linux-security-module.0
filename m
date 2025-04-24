@@ -1,142 +1,199 @@
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECBF91552FD;
-	Thu, 24 Apr 2025 15:44:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A9057C9F
+	for <linux-security-module@vger.kernel.org>; Thu, 24 Apr 2025 17:45:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745509450; cv=none; b=a5pZPRTwBzplhYc4u4HeGs4gga5Ly6GZt/34JgdkBVR6+b+Rp6hzkIi6TbmTCnzInDChInJpWsJt+vESip1iknpHf688mUQ0DFiQNcr0y/AYYvIcoDkFDd9s2Hszm0dlNONgi2wlp7I9a0AsrhRFfgaCc+6+xkOdgBTwlvlZqQc=
+	t=1745516716; cv=none; b=osDOjdRUQBobpA+eu8XRHRjZSfo/o3Aq6/McvLiGIq6lOX7nJPuAkSbJbwNbcLwqpjDR+0PKLcndpOroBHupRgGt9L1STJM/U/X39zCQOrJ87tPhPRvQKuJHBLHU50w3KhiIvZfHsM8cedEyisRo5r+1fWIQu1OvJhHhTiVVqs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745509450; c=relaxed/simple;
-	bh=NKYBJGRW3NLditWJHCd6B3AWhUotnr3wjlWIP9wQJYg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NFu9XKtvUykS2uPnr920C7Lr6NtHv53hvC7NzlURoOx0pz58z93K9GeAXuHf9X+mN8XkYNALO3whOHeYllAmiR/G1+DHDgJeQ5Mqj9/I11zTqxxYfuIGgV/lQNwnWAV16vMQeeHpJqU6c/XLRGD/OGGJjjV//ssms7fkew09HBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DTerlyrt; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1745516716; c=relaxed/simple;
+	bh=nuhY4mNQtbqLil9CN9WkICD/oYDC6db0CLuLTFGNXWw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 In-Reply-To:Content-Type:Content-Disposition; b=EH3red0CbRaxRLtx3mghKf7CTaYYx55kR2k3FXrnZ1StcwKMFy9RL2fJewxHOJlYjLPTemL4oHK9d2kGeiUQQE2KbaSantFNGBWuYqTpcyF+4PYAFcXxKRaxpV4Ilt9uTSSG2EdwLo3rk9NcBnIG4Y87zM6ojQrjBva25dJfsdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KNyuyAFP; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DTerlyrt"
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-3015001f862so1070224a91.3;
-        Thu, 24 Apr 2025 08:44:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745509448; x=1746114248; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NKYBJGRW3NLditWJHCd6B3AWhUotnr3wjlWIP9wQJYg=;
-        b=DTerlyrtWRQ5hYGtlySTEqR9HwevJDDbtp3vKshLcJT8wdp1i88GMQUQVTz4+lpoxR
-         nMvJQJhQu9lxgXizHjc3fzE5oGJG7jsUkiA3R5StaKQS3nVn51ahxldwRdyEyW/5HiYg
-         VF4k0F5aWpv1pyjMAAuvRxHUhF5xzs0EuwzbJCj8twsWoKzbqce5a57tndR/Pim7lAmy
-         IVQH6k4GbLXYXH5grjKysgR2TwZCQb2a4PDqcXub9KLe5Iemh9Dd7BsstSmko74oPZTH
-         EkmY9KnCUd0Jk/bmcaNJzS8XbZ7fOn3dinvQ3ZUxnu88YvCbTrJbAIDsROz4TPYS4Gwr
-         AjjQ==
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KNyuyAFP"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745516713;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JSMzO6fx79vdlfqdO8dlMyzHm6+/LG9Oml+3X61fg04=;
+	b=KNyuyAFPKSmrU8PDUd966TFD5IebcEbd8aiiNWakeBYlO/S+uLT/jn9zqsQOC3cTxWQvSo
+	UAcofNob++U2TnoHpaYQtG4HNaC+7VxLmpuQpcuJ0tjUtmBk3YYtAvTyU7qq4lxkVGosUU
+	s8Y2JLBEfU2rbUyvlqhv/IqNYdlegXY=
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
+ [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-177-hTTJS943NEOmJ4j0LskKug-1; Thu, 24 Apr 2025 13:45:10 -0400
+X-MC-Unique: hTTJS943NEOmJ4j0LskKug-1
+X-Mimecast-MFC-AGG-ID: hTTJS943NEOmJ4j0LskKug_1745516709
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-ac710ace217so89446666b.1
+        for <linux-security-module@vger.kernel.org>; Thu, 24 Apr 2025 10:45:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745509448; x=1746114248;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NKYBJGRW3NLditWJHCd6B3AWhUotnr3wjlWIP9wQJYg=;
-        b=v9q+nde9IUa6+WrA5cT2RmsxtTA3ylBTn1qDEsPJZC8B35QtlvzpHRPmqVURlar+gr
-         HWbJV2Ibu2RAsZpGjmVo44LJX12Tv4Xr41CTARTstAXAqbS6UsTp8ZnD6cPfxGIknXXI
-         aZRfPlGAV9ILoJX+eTg+9LjE3uB1koPcedgxMvikbGf4O56anJUoLbs75i3oWJFzWJn5
-         WxrsCpd2EjHZUjAj6ZXXlwzhGNsupt3NU1JqkW3ht6ulSuIIhuP8s5UuSK66Z8MgtXL4
-         Iskv07yjjVHOkaW8Ka2qInaI41kBhV5Mc8MiiTFe+sLPscJzCYq37L5lhrFDgueYzstY
-         Y2NA==
-X-Forwarded-Encrypted: i=1; AJvYcCUXgAHQad9PtPqZaMg7MR9iecQB9Qb+AsA4wFzM1aAFsZJsZGBoQSyfATz+yO0KHQDvwXTaLMibBsTXYm/p@vger.kernel.org, AJvYcCUa356jozzhqTwrcJrreYeu0Ot0Awygdr7Dsl+h60nVTTk23W/7dcXxbl0y67WqC6sZ1HWmdJWdjw==@vger.kernel.org, AJvYcCUfOnLd/4BUtI5jjgqMtnsQSY2pFRQNAFLjQho77+5bz8rjrZOFYxix4798dBx2mw//TXTC7ElLrHWZQWVI@vger.kernel.org, AJvYcCVoh51co39Vr0S78Q3+uUkoxynHkewFMOIuOArVOW14ITNpZfrBOmJY9t8lkZIV54B1AaYXGw1M0FMIK5wnpU96H+fyxPRx@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0+42pRZBY6AEX2pvcpF8sDhy4TvUewxi2H9nx9kJKwGBKltu+
-	mDaKDk5gYzFzUDJYh4P4FsRha8s/2+Iwl+CHbvPwB482eq8mzhimlZBVwq8V/bFEgOoWi7DmISN
-	lhjgnnlHVgWtjN5gPYJd1JJLj0c0rVawj2Qo=
-X-Gm-Gg: ASbGncucVVDLhuIpRxIk4XjOrIqtkep+DNayIQTMdhAoG0C7g2SP5SvmucLjX/SeR8D
-	cIN+bpQ+qjHCIUTyRM1d4iDekD2B5Tewmo/L51ITvCyCA7NhXMwCJXcpRI3r2c0qi8A9ptitnvn
-	3VW0hxE2HBPLuVZZhLSmI4p+xv0SaQ36Zy
-X-Google-Smtp-Source: AGHT+IExkOfI5k5BNcG7WP0dv3ff3ZjZnNG+ANJn4rp1JjEbkTgLNnWinqdWCZ12YxP21dwWCmISmEhEEildeIz1PSs=
-X-Received: by 2002:a17:90b:1f90:b0:2ee:aed2:c15c with SMTP id
- 98e67ed59e1d1-309ed3521b0mr4687662a91.28.1745509448048; Thu, 24 Apr 2025
- 08:44:08 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1745516709; x=1746121509;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JSMzO6fx79vdlfqdO8dlMyzHm6+/LG9Oml+3X61fg04=;
+        b=g0gJ57uh6pZuLJYA49cxqoTrQxVpIRDleboRsljyZTQePYYVograk1EXFvkBljJGGd
+         4NghQ4fu30Ytr+SEsSR8KA65fGu8d4MtP0QpxGxhWZowaeDdj6cPVnfGhzIn+cG0eBui
+         tui29AsZ7hd1u3VqKw87uOFEgKIEVNHPL5goZblM8hLH6A7qF1Q9yuvkAhIHBUg2f1z5
+         mQ+dPd+OeDyaW03e9XBSGmqHs2i0SRHZBkmEJQZEH07cq81aqM5kuRP8OwUmePWgFxuz
+         vc/hKwqfMUJ5RN/J6+UbMxaNuoeBUS3Mbx+doMtj7ug83k8OFsBpexGmxN68JZoacX8p
+         +s+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXF6+Kg7EqOiiNi1g3vpPyT98x0QYL9j5Bsia9Y+tvACiZyPSDNWK3Rgkw5mMoy3iwt9UWRJtbelr0GfOT24Aj8QehqTqQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxatpF9eZtUE5hG21RqLX28l1G0Z4U5nF9RpNWVpGXW8E4+U1M+
+	tZcXddpZTEGyqDp7pN4iE/dQF+TlzVvUFsW3TDATVzCVyiFjt7sFCewHSBzxIx+1H1mU9V0gbex
+	moGbDQe5OyZ+euIWjIIYEa/5GCQCoY9QvZjmau3O7jnbFlk+5SPTPDJWKbgK2foYkoSOecQgO
+X-Gm-Gg: ASbGncsrUcfTu9k4qGzYoiGyTC1i/N2pHxCdurD5vy02CnmdCbuEbgZSKZLe/MDAQIr
+	JJ1Jrx6kTuubPi9sFtwENvoOGSoAcj8xvzA+0fAZG4u8Md3FRLh43iE55HOq7uNT5hnWCXstHta
+	C9uCLDmeaiDLS3SNHkTwYBPyP0DrgT2UsPt8lwArvIfTQB7OF+ZyqMRl74oXodL2XnOY4ydXgjW
+	eh49mDEWyZPTeh2S6Fa9FD0dND9m2OSaksPc4NSiLFGCEgrt3dh+zSJYP7HmWLFvruUHSRa5fBH
+	XSWFnYRIpp2+rJxZ51gKPNJmI86fevg=
+X-Received: by 2002:a17:907:9412:b0:acb:3a0d:8a82 with SMTP id a640c23a62f3a-ace6b450a49mr51591266b.32.1745516708685;
+        Thu, 24 Apr 2025 10:45:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFTh+3uHoEBQ4GmOFk2Iro9cQNDST88N03Da5siOmOBhQ6S/NryZGUQ9nV3zdizG2WhZyWkCg==
+X-Received: by 2002:a17:907:9412:b0:acb:3a0d:8a82 with SMTP id a640c23a62f3a-ace6b450a49mr51586866b.32.1745516708167;
+        Thu, 24 Apr 2025 10:45:08 -0700 (PDT)
+Received: from thinky (ip-217-030-074-039.aim-net.cz. [217.30.74.39])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace5989b173sm140418466b.59.2025.04.24.10.45.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Apr 2025 10:45:07 -0700 (PDT)
+Date: Thu, 24 Apr 2025 19:45:06 +0200
+From: Andrey Albershteyn <aalbersh@redhat.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, 
+	Richard Henderson <richard.henderson@linaro.org>, Matt Turner <mattst88@gmail.com>, 
+	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	Michal Simek <monstr@monstr.eu>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	Naveen N Rao <naveen@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, 
+	Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, 
+	Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, 
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, "David S. Miller" <davem@davemloft.net>, 
+	Andreas Larsson <andreas@gaisler.com>, Andy Lutomirski <luto@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+	Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org, 
+	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, 
+	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org, linux-arch@vger.kernel.org, 
+	linux-xfs@vger.kernel.org
+Subject: Re: [PATCH v4 3/3] fs: introduce getfsxattrat and setfsxattrat
+ syscalls
+Message-ID: <oprhbm2vcqpveaf6smetfl2zacntntzqlakysys73zx3gnougi@zy7bo43bh5ef>
+References: <20250321-xattrat-syscall-v4-0-3e82e6fb3264@kernel.org>
+ <20250321-xattrat-syscall-v4-3-3e82e6fb3264@kernel.org>
+ <20250422-abbekommen-begierde-bcf48dd74a2e@brauner>
+ <rbzlwvecvrp4xawwp5nywdq6wp5hgjhrtrabpszv74xmfqbj4f@x7v6eqfc5gcd>
+ <20250424-zuspielen-luxus-3d49b600c3bf@brauner>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250424124644.4413-1-stephen.smalley.work@gmail.com>
- <2025042427-hardship-captive-4d7b@gregkh> <CAEjxPJ5LGH_Vyf2KCL0HNwa-U70GVAOVvyFMnhpnzi-CEKvC5w@mail.gmail.com>
- <CAEjxPJ4C7ritSqF0mE+2rczKJHdUTNGs5_RDx3PHKcg_rQQV4w@mail.gmail.com>
-In-Reply-To: <CAEjxPJ4C7ritSqF0mE+2rczKJHdUTNGs5_RDx3PHKcg_rQQV4w@mail.gmail.com>
-From: Stephen Smalley <stephen.smalley.work@gmail.com>
-Date: Thu, 24 Apr 2025 11:43:57 -0400
-X-Gm-Features: ATxdqUFYwUVwbOLgKuPMj0VkvJRIPCYIatOOHAVWcZMu6tTjFJjA7nGJQgros6k
-Message-ID: <CAEjxPJ4i3fN8qtuY2TRiWRqy+sY3-nV_FYc4uzD-h2ZxAF-M2A@mail.gmail.com>
-Subject: Re: [PATCH] vfs,shmem,kernfs: fix listxattr to include security.* xattrs
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: paul@paul-moore.com, omosnace@redhat.com, 
-	linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
-	Tejun Heo <tj@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Hugh Dickins <hughd@google.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250424-zuspielen-luxus-3d49b600c3bf@brauner>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: jriJX59mKsMzi2dVED3cfYkp8_xvgc4OdPPkV3XZEo8_1745516709
+X-Mimecast-Originator: redhat.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Thu, Apr 24, 2025 at 10:55=E2=80=AFAM Stephen Smalley
-<stephen.smalley.work@gmail.com> wrote:
->
-> On Thu, Apr 24, 2025 at 9:53=E2=80=AFAM Stephen Smalley
-> <stephen.smalley.work@gmail.com> wrote:
-> >
-> > On Thu, Apr 24, 2025 at 9:12=E2=80=AFAM Greg Kroah-Hartman
-> > <gregkh@linuxfoundation.org> wrote:
-> > >
-> > > On Thu, Apr 24, 2025 at 08:46:43AM -0400, Stephen Smalley wrote:
-> > > > The vfs has long had a fallback to obtain the security.* xattrs fro=
-m the
-> > > > LSM when the filesystem does not implement its own listxattr, but
-> > > > shmem/tmpfs and kernfs later gained their own xattr handlers to sup=
-port
-> > > > other xattrs. Unfortunately, as a side effect, tmpfs and kernfs-bas=
-ed
-> > > > filesystems like sysfs no longer return the synthetic security.* xa=
-ttr
-> > > > names via listxattr unless they are explicitly set by userspace or
-> > > > initially set upon inode creation after policy load. coreutils has
-> > > > recently switched from unconditionally invoking getxattr for securi=
-ty.*
-> > > > for ls -Z via libselinux to only doing so if listxattr returns the =
-xattr
-> > > > name, breaking ls -Z of such inodes.
-> > > >
-> > > > Before:
-> > > > $ getfattr -m.* /run/initramfs
-> > > > <no output>
-> > > > $ getfattr -m.* /sys/kernel/fscaps
-> > > > <no output>
-> > > >
-> > > > After:
-> > > > $ getfattr -m.* /run/initramfs
-> > > > security.selinux
-> > > > $ getfattr -m.* /sys/kernel/fscaps
-> > > > security.selinux
-> > > >
-> > > > Link: https://lore.kernel.org/selinux/CAFqZXNtF8wDyQajPCdGn=3DiOawX=
-4y77ph0EcfcqcUUj+T87FKyA@mail.gmail.com/
-> > > > Link: https://lore.kernel.org/selinux/20250423175728.3185-2-stephen=
-.smalley.work@gmail.com/
-> > > > Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-> > >
-> > > As this "changed" in the past, shouldn't it have a "Fixes:" tag?
-> >
-> > Yes, I'll add that on v2. Also appears that it doesn't quite correctly
-> > handle the case where listxattr() is called with size =3D=3D 0 to probe
-> > for the required size.
->
-> And doesn't correctly handle the case where the list size exceeds the
-> original buffer size. On second look, this can be done more simply and
-> safely in simple_xattr_list() itself, avoiding the need to modify
-> shmem/tmpfs and kernfs. I'll submit an updated patch.
+On 2025-04-24 11:06:07, Christian Brauner wrote:
+> On Wed, Apr 23, 2025 at 11:53:25AM +0200, Jan Kara wrote:
+> > On Tue 22-04-25 16:59:02, Christian Brauner wrote:
+> > > On Fri, Mar 21, 2025 at 08:48:42PM +0100, Andrey Albershteyn wrote:
+> > > > From: Andrey Albershteyn <aalbersh@redhat.com>
+> > > > 
+> > > > Introduce getfsxattrat and setfsxattrat syscalls to manipulate inode
+> > > > extended attributes/flags. The syscalls take parent directory fd and
+> > > > path to the child together with struct fsxattr.
+> > > > 
+> > > > This is an alternative to FS_IOC_FSSETXATTR ioctl with a difference
+> > > > that file don't need to be open as we can reference it with a path
+> > > > instead of fd. By having this we can manipulated inode extended
+> > > > attributes not only on regular files but also on special ones. This
+> > > > is not possible with FS_IOC_FSSETXATTR ioctl as with special files
+> > > > we can not call ioctl() directly on the filesystem inode using fd.
+> > > > 
+> > > > This patch adds two new syscalls which allows userspace to get/set
+> > > > extended inode attributes on special files by using parent directory
+> > > > and a path - *at() like syscall.
+> > > > 
+> > > > CC: linux-api@vger.kernel.org
+> > > > CC: linux-fsdevel@vger.kernel.org
+> > > > CC: linux-xfs@vger.kernel.org
+> > > > Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
+> > > > Acked-by: Arnd Bergmann <arnd@arndb.de>
+> > ...
+> > > > +		struct fsxattr __user *, ufsx, size_t, usize,
+> > > > +		unsigned int, at_flags)
+> > > > +{
+> > > > +	struct fileattr fa = {};
+> > > > +	struct path filepath;
+> > > > +	int error;
+> > > > +	unsigned int lookup_flags = 0;
+> > > > +	struct filename *name;
+> > > > +	struct fsxattr fsx = {};
+> > > > +
+> > > > +	BUILD_BUG_ON(sizeof(struct fsxattr) < FSXATTR_SIZE_VER0);
+> > > > +	BUILD_BUG_ON(sizeof(struct fsxattr) != FSXATTR_SIZE_LATEST);
+> > > > +
+> > > > +	if ((at_flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH)) != 0)
+> > > > +		return -EINVAL;
+> > > > +
+> > > > +	if (!(at_flags & AT_SYMLINK_NOFOLLOW))
+> > > > +		lookup_flags |= LOOKUP_FOLLOW;
+> > > > +
+> > > > +	if (at_flags & AT_EMPTY_PATH)
+> > > > +		lookup_flags |= LOOKUP_EMPTY;
+> > > > +
+> > > > +	if (usize > PAGE_SIZE)
+> > > > +		return -E2BIG;
+> > > > +
+> > > > +	if (usize < FSXATTR_SIZE_VER0)
+> > > > +		return -EINVAL;
+> > > > +
+> > > > +	name = getname_maybe_null(filename, at_flags);
+> > > > +	if (!name) {
+> > > 
+> > > This is broken as it doesn't handle AT_FDCWD correctly. You need:
+> > > 
+> > >         name = getname_maybe_null(filename, at_flags);
+> > >         if (IS_ERR(name))
+> > >                 return PTR_ERR(name);
+> > > 
+> > >         if (!name && dfd >= 0) {
+> > > 		CLASS(fd, f)(dfd);
+> > 
+> > Ah, you're indeed right that if dfd == AT_FDCWD and filename == NULL, the
+> > we should operate on cwd but we'd bail with error here. I've missed that
+> > during my review. But as far as I've checked the same bug is there in
+> > path_setxattrat() and path_getxattrat() so we should fix this there as
+> > well?
+> 
+> Yes, please!
+> 
 
-Submitted here,
-https://lore.kernel.org/selinux/20250424152822.2719-1-stephen.smalley.work@=
-gmail.com/
+Thanks for the review, Christian. I will fix issues you noticed as
+suggested. I see that Jan already sent fix for path_[s|g]etxattrat()
+so won't do anything here.
 
-Sorry I forgot the Fixes tag again but added it in a reply.
+-- 
+- Andrey
+
