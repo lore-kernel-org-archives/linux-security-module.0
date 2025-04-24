@@ -1,63 +1,67 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D24B1F1506;
-	Thu, 24 Apr 2025 20:08:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 647FE284667;
+	Thu, 24 Apr 2025 22:00:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745525308; cv=none; b=EAYwEtCsgOc1DfTDC9U0MWHBfvMYI7E7fqdxD+X9Pp86KgJvAVqHhcEcORQ9guzK7S9Ir3vUBreWruvG42tYTEsX3SvbQBQKtX6DwX8WNO/bpgIEKw6wCPKPQGM6alzYazjCBSHCi2Wzs/peLpe2tVTC3x9uFRMZPkSWArwwKt0=
+	t=1745532016; cv=none; b=KQgZ6y9mmRSLBg8fvJu4T/ozK9NGmHvAxsADTSqd+pjcuE897Q+Mg7dSmQuszNJA3AZZcur9O0YCib0ObswUHH3ZEEs8LhWlb4wq9zoJRqkOR5sejp0qnGZJNkY5jFXNzc3MliPZBz8z82ByXhBSzufsMQzd7KV5Q0Otvpri378=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745525308; c=relaxed/simple;
-	bh=4K3kIsscvUs1FBK2+HXIZ6woR/C8WkogIkCy257rIZ8=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=aBF2iU7nzKlbdz5v1bdQjzVoeqLqj6gXKqnKOwKZQ5znsW8Ag9jfpNcq4dOs6umcxOjd8K49rzATxnYQsMhAtQ5p09haq0SfILoxhdk3r+x5hP84qBrvsbXRs/WcuMIS+ikFdRhNrxbLSVOnUDhM2hkt0+Ml7FKIRKy4oy9K6vQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nofd5bdg; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1745532016; c=relaxed/simple;
+	bh=a/wFP0xUnLGA+zM60c4z/FtF0A5FfD/mDoBmte12bWw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=EhZYf0EsiBnCZqB1cIVhju/3b4Jr4F2Zd5BkQz/lKM9Xpq1LUBELob557p9HSHs+4+ZyrxDOtZ1lcJmDOJjnga0/2QOTrtVf6VCv3vt9d0OpQmz7CBfhHuJc/NQuXGl/JKqXhLKJeRJ2EchMWnT2rCA2gMPh35XrXOjy0VNb8oY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=fBtWwVeK; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nofd5bdg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C360C4CEE3;
-	Thu, 24 Apr 2025 20:08:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745525308;
-	bh=4K3kIsscvUs1FBK2+HXIZ6woR/C8WkogIkCy257rIZ8=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=nofd5bdgU2uXANF5ZqaXRqzoP0mYBtoBYKwrZu1qRNKv/4PmsbGI1jqA+FmdCAfkP
-	 vtMGsys1d+ofXzahzkBTpho+fgrSTOe0MH/Jvl/K7AzwnDRkffXSPUjnB9btEyFPxv
-	 EsOviwKNYOWbWYQ1Apau3km6hurM+KTDYGa43wHeF5RagEUmENtTzgkZ2XlAMzk8XH
-	 jbKfVJ1hK0o0bs6d36b67m97nhF1yX9SYMuUI7HgLF9/sd0FEIkvrpSOEBtFJO1Kh7
-	 cSdFz9jngWb42KIp2jRY9wu9oWLi5wPd5XyBaP/rMI41ELl0nwgLiYquODI9sDR57F
-	 G/5rdNwdKzEZQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAEA1380CFD9;
-	Thu, 24 Apr 2025 20:09:07 +0000 (UTC)
-Subject: Re: [GIT PULL] Landlock fix for v6.15-rc4
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20250424190604.1007961-1-mic@digikod.net>
-References: <20250424190604.1007961-1-mic@digikod.net>
-X-PR-Tracked-List-Id: <linux-security-module.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20250424190604.1007961-1-mic@digikod.net>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-6.15-rc4
-X-PR-Tracked-Commit-Id: 47ce2af848b7301d8571f0e01a0d7c7162d51e4a
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 30e268185e59c3d5a1233416a2135cfda5630644
-Message-Id: <174552534659.3476198.5187636448615049069.pr-tracker-bot@kernel.org>
-Date: Thu, 24 Apr 2025 20:09:06 +0000
-To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>, Charles Zaffery <czaffery@roblox.com>, =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>, Jeff Xu <jeffxu@google.com>, Paul Moore <paul@paul-moore.com>, Robert Salvet <robert.salvet@roblox.com>, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="fBtWwVeK"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
+	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=ffwIMD2NRdX6rwLrp+1FPuSdWtGY9X4PK864VNYjd9Y=; b=fBtWwVeKOi8hu501AMGlbzwOMO
+	s4UhTitH6OYyhMC88W64c3iMXCf1T1JrPeI7B6HykDKMeYwXpLQOhX3AdjwOut9cNxgT+mujQhsFv
+	xrhXZoLPD4hBXJKStZHaCpjJL4AveUVvWoEkewsIshSAhcHNYIZA1ijsDiPJYLuttE1fMdpLBy7Z4
+	ELtUaXPapatQJ0NNSaKsXcin3IqInw48OVToct4wMPj5M03sVgzw5Rw/v+GTqol1TJG2rJZkYZMS2
+	3bBEGLO+7NSE2sCImyLHaZyjLJNX6+iEeSjDFd41sncVNLmojsD9CbRphAuIdCPQmKbgwKLyZjrZa
+	MBXUQ3qQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1u84c7-00000001LtQ-2mJr;
+	Thu, 24 Apr 2025 22:00:11 +0000
+Date: Thu, 24 Apr 2025 23:00:11 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: linux-security-module@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+Subject: [WTF][landlock] d_is_negative(fd_file(f)->f_path.dentry) ???
+Message-ID: <20250424220011.GJ2023217@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-The pull request you sent on Thu, 24 Apr 2025 21:06:04 +0200:
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git tags/landlock-6.15-rc4
+static int get_path_from_fd(const s32 fd, struct path *const path)
+{
+...
+        if ((fd_file(f)->f_op == &ruleset_fops) ||
+            (fd_file(f)->f_path.mnt->mnt_flags & MNT_INTERNAL) ||
+            (fd_file(f)->f_path.dentry->d_sb->s_flags & SB_NOUSER) ||
+            d_is_negative(fd_file(f)->f_path.dentry) ||
+            IS_PRIVATE(d_backing_inode(fd_file(f)->f_path.dentry)))
+                return -EBADFD;
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/30e268185e59c3d5a1233416a2135cfda5630644
+	Folks, could somebody explain how exactly can an opened file
+come to have a _negative_ dentry?  And if you have found a way for that
+to happen, why didn't you report the arseloads of NULL pointer dereference
+bugs that would expose, along with assorted memory corruptors, etc.?
 
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+	Normally I would just quietly rip the bogus check out, but on
+the off-chance that somebody _has_ found a bug that would cause that,
+I would prefer to check with those who had added the check in the first
+place.
