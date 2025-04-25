@@ -1,240 +1,212 @@
-Received: from sonic313-15.consmr.mail.ne1.yahoo.com (sonic313-15.consmr.mail.ne1.yahoo.com [66.163.185.38])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out02.mta.xmission.com (out02.mta.xmission.com [166.70.13.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A0DB199E84
-	for <linux-security-module@vger.kernel.org>; Fri, 25 Apr 2025 17:21:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.185.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8FF61F76A8;
+	Fri, 25 Apr 2025 17:35:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745601676; cv=none; b=M/J6cncutM3loWeRIirgVeOhyJeQ4Tp/GEL/5OAzPUYoaSvuXkrmd1seWDptXI7e1zta8IBulFrjmZSswxTdxXZxS/WGXk+XrhQTooo6zBqgTA7R9tfI6wSEmUMwF18MofpK0LPph6D1x37d/LL3OtfWiz68gUVB1oENCO70T+U=
+	t=1745602508; cv=none; b=Ds4MxxA3tOdh+Fj0Lf3Ka34HwreLfU32gymHJkeUcm7OS+vgyJLB+gKfvXQMM+zoRE/wDPpphux6fP/JOA+JKMkAV2xDObVJK6aFYoHAz94lKzQlChOUuhcgtOrrxoylW6SfBfVMsGY5PvHeIRkUJADKaOxA+97xg7DgV4P9lng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745601676; c=relaxed/simple;
-	bh=yePzdq35Z7LksvggzxgbBt2Xl46ejOYJdpbHjfPs0kQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lKzE3XxpRkGg+1nSGeZ0YGvoi0upYM6ut2mMjP2t5hWgxWO44KXZXFAi5+X469cYyV6jaekEKfrqKkHEmI/JDIs265pGjWoM0D7YvZCf7MukNDMZY9DN0P3uokFpLcthbpnnJ19It7tual2jEgiuft1TsJmmliOZQ4SMM+3bo4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=FoySpbvR; arc=none smtp.client-ip=66.163.185.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="FoySpbvR"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1745601666; bh=keseLyNAzEGWWSwvxw93PFtqBMGnHxHVrNrPDyui0OU=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=FoySpbvRdHg8u9S6f+vcbH5pFA6RjIjMGk83W2XAhd1NgABquENAMGF+PVknyzgY30QbQWOBh893h7ByUET9TjlcSuBXcRspO2wxoDLBgoWM8EmWqQ2N8PEPJQJvsJWH/rYio3n5gMA3tyEfFTWeuZgtJT2WsTNii3nN5bCEHvvmgE6/LyoIULcMuoQ4C0RMPZlEYQLzVLqIxLHhjsTdu8FnzGqlIrt/3x4flQ0uL181i3vQUY/ja2mU6s6nGqDVWwBqBhYBg7g+EBNm0xcg4Ep1X02dhOB+TNJuUviUHdoeLTCsYimBkvKD/1zbTrEx7zckPFNAQ0ue6ifclKSTjw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1745601666; bh=yoTGxhmN4dHjj7qw6I4rqrbwCIpbXRyfangIjkIqac9=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=dFwdQNu6HtKR7M5zz040tvlDBX+SrPTpU7IDyw+4x0ACCX59aFkCzqWM9inwUWR8TDbPJ+m9SiU8GGD6z4V7rp9NzpO7kaQk2/oDxnQHS4m1/MqlY29dq+pFTDSGDOOcuZadLJRcENubKZ9Hg0e4VKvXwd7m6/lkPLERRnUtWiwc8n8kdgatojLpLMoxWSmKZZsS5yWngmDr1tRB/e6qbcBTPPI3Jos81pFuU3E5tg29w1ga6ATU828k5txjig3Q9Ei2Ob6pqSZk3nIb7BYsicsBCen2p+UAMbK/Ac6cFTl6UYVSHXNCr6TqlHh+YTimeG9PsHALPoCWiRhnEHzWkg==
-X-YMail-OSG: NrO6AaAVM1md0Q_sun8kK7ZBFVwVG42H_EeT8gUMJkAyoB9qnGwd4B8SJknWO4r
- Yflh2GbqmfbM_2cczXUvYdO.Ja.FrQRLgNiEI35zSKx3UAArkb5DzUOKyJ1cszcI3ncjg4JlUXAH
- o5ZLPKJRKu9J76YKNxQZPp49BYSXw6RIougiSlzcgHnWarbLN71R81GomzgOYldicYx7A6llBXg_
- sjrEOu9c8mFjYaLxMHWKQ3UN9NlUMHOl7V63Zx.opxPbvilFBSpc0IPeVC6C0capYogKz0w44..G
- YkFG4S.0zXd.dS7KxDPeh3Vmy4QJ_C5XZV1LviI2mtqn5TzClu1I.yyes6wxTfnT_sjfviXpYCH4
- pb22VwvtApCR.MvU7dkc_yTO3d6cZw0CDBLvG.HCMedOV7PYu30UrFNAGp9jpb9cvS21IDc48zl2
- 9hfD3Eak8bynJKRtLJyE2vpJt7E96et7Ir5MuUx3nzVQs23HA9wM.2_BFy7531JgLQTBXpSH3nMe
- CeRysrTOEiYc.F.VXh9NZ9_faIN0QsnL7LfWQHbz0gCBuLmtaMfG_Mp6XXp6h8b6mhbxR38WWC9H
- hjAWT.Ppxtesn1ee_NlBrTSiRV6xRAeWmKL5toBV2YQVI7Knjdoed8sIOj39K2TdQmI9267kZuix
- _RjuwcP_KnJJEnHx.wwcQH1JKF2fFMYAVog2MSZjNt4_3pG5J0k9hrDlZb.zBLtjhSK8x0NxZck_
- nGZKmJPVqKa0M8k3K8ikhFs5B23e._MlP1C47Pa_xp3p3OmkG5LnpwryBjoTerV.OJZLwJKR3nBm
- xiLJ.Wbhq7Flt5yTUMmSbbUWBpUCQQw7GW42bOP9Uc1ZV3MI1Dj9JkvXD3KJd7tBcnoDNHcJlh7F
- g3D.SVl5BBzcH1xMA_QnHh1qrSYsH6AT6.7SpSuZSNdLE_2btkfLt_uiMuVloWHZJuVUFnju7mzQ
- DI6RqLCCGONZC.HW0183zqkOwlA2AjLEyxWHWt8Bb6MN5U0X3_tSb9Xj9jEfqxBaKHvfvMn_TLNf
- 2BQQBvsEF.B_G5daH9CvXrAqJr6J61DHm5RtkTVCRXMg9.brgGuDQ_qJK.bwNwTg2lrPl6Jl7jFK
- iTkoVWGtGBiYrwqkKh2ekxnYKSZ1BA8efbpK7fMCMTSQ1bfKElQqYOfXUzGxKOTmLJ_1NRLB9iCp
- KctxIuaM6jJNMkDawmqkTRk9jFHGmn1N142.kT5m17ASusGS.4FnmEBS5hsPTp7PcmyyIgMyB2Td
- nuwesM6sImJim6N19KLNxN7YURipCxMp0jqc1.2FS5Y1CCp.xLlPkS4B_O5TidDfiyLXrgY_P_zW
- UZGwQ2diUOUt.V1uhAOBikm7JzW9YezfEDOD77H0Gy7Tm4vhbg_O6782rHsKoAnFZEL.Tf95StfL
- MsHOsKGo_Q5eQ89FtPdQSNaVA96hDvC7n4pcyMbLgr5bGpUUzVd_Xh.xHPDtTQneZBYpilg0uhxN
- lmR5EnIF4Jt2zHx6Qs5Zm.lszGbjtYIU_1zfOYUAyxtvmHN4anb8keosBBQTEce69S2NeMnxTNhE
- cRqVKrohF2R1OhF4gLOZLGnVRwKj1fETPLOT1xzrDCDzeqOnPZE.1FHD0kRkt3Nj3vU_a5kIgbro
- XAYR4svYVAwa3SdimX9W.qNwXAOKpk1enIatcAbcj8fkieWXWpIcmoLntqLEI3FsoxXxhxD1.WMI
- 3BaW_FJhXzz1keU8p3y8IXfMvmrKlEheyr7Q1BwQr8hEAlY__7P8Yj_cOE.X0qFJE4c.dfietGcW
- BvBZggaJ0VoSdvu_vtl2iANICXUoQs52QdViYNOGHVBkg58lc.8Q1jHpl.MUYJzGbdg0NLNz4eXT
- RnX0ch_K2G_dSZsoweBDly8oq6Z6_CnxR7jjUWwAu8wkn1Ltum8WzCmtLFvJgA9LZOaCjxCofx62
- 2hr7phqQRuWKpNWMZyjFL9XgpvP7Uy_rk2NZwa.Rh62oDG8BVQEdBM89P8aeIbnqkFa2NhccL1OR
- 9Ozt.hls3F7vzIK_eHZEBRF3M3pr.PZZYHPjvyYNeVJYfpyIuX.OcsPg764OUzJOMa43orXhNS4K
- 3owHkulGGEtz4ix_m_sIj9g_Wrhfafu1JF2i_RmvDcu9y3YzbagTrXn2GUwk8fh_TMLjrTQkASpq
- 4BVd1339sYkwtOYZ1MHm9zvNNs1Lji9L2c1zL6XKBgr8M6bBDzu5PGNZpy7MJx2gLsrjgPUifq5O
- W7MSSjnROAXwzws6gRzfUNUMFG6Lyq.doIiEoRVNBLZnmyQ--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 58421644-9a9e-4c1b-b5b1-015a27889dce
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.ne1.yahoo.com with HTTP; Fri, 25 Apr 2025 17:21:06 +0000
-Received: by hermes--production-gq1-74d64bb7d7-2dlqg (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 382c63824636e912791305cbab0917b5;
-          Fri, 25 Apr 2025 17:21:01 +0000 (UTC)
-Message-ID: <184c3ed7-5581-4bdf-99ea-083e28e530a8@schaufler-ca.com>
-Date: Fri, 25 Apr 2025 10:21:00 -0700
+	s=arc-20240116; t=1745602508; c=relaxed/simple;
+	bh=Jod3jvEqvnUFb/rKkYTYamqLS14smKBuX57O2hEOnhA=;
+	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
+	 Content-Type:Subject; b=bH+4AJZGCMCKF520KduhZ6rivOgyrsyODIYdBIUBvk7sNGy/3uzxm0rkKphE+0DOe05lIecOlnUS2ImcJ9pBxyehYG/VPioG+doVUgK9pHhk9PZSoqe1vAgGAumdU5ta7sKVjI7fYJllso80LJTJarA1hf+6x0VfhBh7bN0Lzrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
+Received: from in01.mta.xmission.com ([166.70.13.51]:33412)
+	by out02.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1u8Mx4-005dXj-DV; Fri, 25 Apr 2025 11:35:02 -0600
+Received: from ip72-198-198-28.om.om.cox.net ([72.198.198.28]:52424 helo=email.froward.int.ebiederm.org.xmission.com)
+	by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1u8Mx3-0022Zw-C7; Fri, 25 Apr 2025 11:35:02 -0600
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>,  Parav Pandit <parav@nvidia.com>,
+  "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+  "linux-security-module@vger.kernel.org"
+ <linux-security-module@vger.kernel.org>,  Leon Romanovsky
+ <leonro@nvidia.com>
+References: <87msc6khn7.fsf@email.froward.int.ebiederm.org>
+	<CY8PR12MB71955CC99FD7D12E3774BA54DCBA2@CY8PR12MB7195.namprd12.prod.outlook.com>
+	<20250423164545.GM1648741@nvidia.com>
+	<CY8PR12MB7195D5ED46D8E920A5281393DC852@CY8PR12MB7195.namprd12.prod.outlook.com>
+	<20250424141347.GS1648741@nvidia.com>
+	<CY8PR12MB7195F2A210D670E07EC14DE9DC842@CY8PR12MB7195.namprd12.prod.outlook.com>
+	<20250425132930.GB1804142@nvidia.com>
+	<20250425140144.GB610516@mail.hallyn.com>
+	<20250425142429.GC1804142@nvidia.com>
+	<87h62ci7ec.fsf@email.froward.int.ebiederm.org>
+	<20250425162102.GA2012301@nvidia.com>
+Date: Fri, 25 Apr 2025 12:34:21 -0500
+In-Reply-To: <20250425162102.GA2012301@nvidia.com> (Jason Gunthorpe's message
+	of "Fri, 25 Apr 2025 13:21:02 -0300")
+Message-ID: <875xisf8ma.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fs/xattr.c: fix simple_xattr_list to always include
- security.* xattrs
-To: Stephen Smalley <stephen.smalley.work@gmail.com>,
- Christian Brauner <brauner@kernel.org>
-Cc: paul@paul-moore.com, omosnace@redhat.com, selinux@vger.kernel.org,
- linux-security-module@vger.kernel.org,
- Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20250424152822.2719-1-stephen.smalley.work@gmail.com>
- <20250425-einspannen-wertarbeit-3f0c939525dc@brauner>
- <CAEjxPJ4vntQ5cCo_=KN0d+5FDPRwStjXUimE4iHXJkz9oeuVCw@mail.gmail.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CAEjxPJ4vntQ5cCo_=KN0d+5FDPRwStjXUimE4iHXJkz9oeuVCw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.23737 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain
+X-XM-SPF: eid=1u8Mx3-0022Zw-C7;;;mid=<875xisf8ma.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=72.198.198.28;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX1/bIEDBgRt27auvnDnaqMbLo4oZIvmUpKQ=
+X-Spam-Level: **
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+	*      [score: 0.5000]
+	*  0.7 XMSubLong Long Subject
+	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+	*  1.7 FUZZY_CREDIT BODY: Attempt to obfuscate words in spam
+	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+	*      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
+	*  0.2 XM_B_SpammyWords One or more commonly used spammy words
+	*  0.0 XM_B_AI_SPAM_COMBINATION Email matches multiple AI-related
+	*      patterns
+	*  0.4 FVGT_m_MULTI_ODD Contains multiple odd letter combinations
+X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: **;Jason Gunthorpe <jgg@nvidia.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 532 ms - load_scoreonly_sql: 0.06 (0.0%),
+	signal_user_changed: 14 (2.6%), b_tie_ro: 12 (2.2%), parse: 1.78
+	(0.3%), extract_message_metadata: 19 (3.5%), get_uri_detail_list: 2.9
+	(0.5%), tests_pri_-2000: 15 (2.9%), tests_pri_-1000: 2.5 (0.5%),
+	tests_pri_-950: 1.31 (0.2%), tests_pri_-900: 1.04 (0.2%),
+	tests_pri_-90: 71 (13.3%), check_bayes: 69 (13.0%), b_tokenize: 10
+	(1.9%), b_tok_get_all: 9 (1.6%), b_comp_prob: 4.0 (0.7%),
+	b_tok_touch_all: 41 (7.8%), b_finish: 1.16 (0.2%), tests_pri_0: 392
+	(73.7%), check_dkim_signature: 0.76 (0.1%), check_dkim_adsp: 3.0
+	(0.6%), poll_dns_idle: 1.18 (0.2%), tests_pri_10: 2.4 (0.4%),
+	tests_pri_500: 8 (1.5%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH] RDMA/uverbs: Consider capability of the process that
+ opens the file
+X-SA-Exim-Connect-IP: 166.70.13.51
+X-SA-Exim-Rcpt-To: leonro@nvidia.com, linux-security-module@vger.kernel.org, linux-rdma@vger.kernel.org, parav@nvidia.com, serge@hallyn.com, jgg@nvidia.com
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-SA-Exim-Scanned: No (on out02.mta.xmission.com); SAEximRunCond expanded to false
 
-On 4/25/2025 8:14 AM, Stephen Smalley wrote:
-> On Fri, Apr 25, 2025 at 5:20 AM Christian Brauner <brauner@kernel.org> wrote:
->> On Thu, Apr 24, 2025 at 11:28:20AM -0400, Stephen Smalley wrote:
->>> The vfs has long had a fallback to obtain the security.* xattrs from the
->>> LSM when the filesystem does not implement its own listxattr, but
->>> shmem/tmpfs and kernfs later gained their own xattr handlers to support
->>> other xattrs. Unfortunately, as a side effect, tmpfs and kernfs-based
->> This change is from 2011. So no living soul has ever cared at all for
->> at least 14 years. Surprising that this is an issue now.
-> Prior to the coreutils change noted in [1], no one would have had
-> reason to notice. I might also be wrong about the point where it was
-> first introduced - I didn't verify via testing the old commit, just
-> looked for when tmpfs gained its own xattr handlers that didn't call
-> security_inode_listsecurity().
+Jason Gunthorpe <jgg@nvidia.com> writes:
+
+> On Fri, Apr 25, 2025 at 10:32:27AM -0500, Eric W. Biederman wrote:
+>> > That seems like splitting nits. Can I do current->XXX->user_ns and get
+>> > different answers? Sounds like yes?
+>> 
+>> Totally.
+>> 
+>> current->cred->user_ns (aka current_user_ns) is the what the process
+>> has.
 >
-> [1] https://lore.kernel.org/selinux/CAEjxPJ6ocwsAAdT8cHGLQ77Z=+HOXg2KkaKNP8w9CruFj2ChoA@mail.gmail.com/T/#t
+> Well, this is the head hurty bit. "cred->user_ns" is not what the
+> process "has" if the kernel is checking resource->netns->user_ns for
+> the capability checks and ignores cred->user_ns?
+
+resource->net->user_ns CAP_XXXX is what the process needs.
+
+current->cred->user_ns and current->cred->cap_effective
+are what the process has.
+
+> How does a userspace process actually know what its current
+> capabilties are? Like how does it tell if CAP_NET_XX is actually
+> available?
+
+It looks in current->cred.  In current->cred it finds bits
+set in cap_effective, and a user_ns.
+
+Ultimately all capable calls make their way down into
+cap_capable_helper.  The cap_capable_helper checks to see if the user
+namespace that is wanted (aka from the resource) matches the cred's user
+namespace.  If the namespaces match then the bits in cap_effective
+are checked.
+
+There are a few more checks that make nested user namespaces work.
+
+
+> What about something like CAP_SYS_RAWIO? I don't think we would ever
+> make that a per-userns thing, but as a thought experiment, do we check
+> current->XXX->user_ns or still check ibdev->netns->XX->user_ns?
 >
->>> filesystems like sysfs no longer return the synthetic security.* xattr
->>> names via listxattr unless they are explicitly set by userspace or
->>> initially set upon inode creation after policy load. coreutils has
->>> recently switched from unconditionally invoking getxattr for security.*
->>> for ls -Z via libselinux to only doing so if listxattr returns the xattr
->>> name, breaking ls -Z of such inodes.
->> So no xattrs have been set on a given inode and we lie to userspace by
->> listing them anyway. Well ok then.
-> SELinux has always returned a result for getxattr(...,
-> "security.selinux", ...) regardless of whether one has been set by
-> userspace or fetched from backing store because it assigns a label to
-> all inodes for use in permission checks, regardless.
 
-Smack has the same behavior. Any strict subject+object+access scheme
-can be expected to do this.
+Oh.  CAP_SYS_RAWIO is totally is something you can have.  In fact
+the first process in a user namespace starts out with CAP_SYS_RAWIO.
+That said it is CAP_SYS_RAWIO with respect to the user namespace.
 
-> And likewise returned "security.selinux" in listxattr() for all inodes
-> using either the vfs fallback or in the per-filesystem handlers prior
-> to the introduction of xattr handlers for tmpfs and later
-> sysfs/kernfs. SELinux labels were always a bit different than regular
-> xattrs; the original implementation didn't use xattrs but we were
-> directed to use them instead of our own MAC labeling scheme.
+What would be almost certainly be a bug is for any permission check
+to be relaxed to ns_capable(resource->user_ns, CAP_SYS_RAWIO).
 
-There aren't a complete set of "rules" for filesystems supporting
-xattrs. As a result, LSMs have to be creative when a filesystem does
-not cooperate, or does so in a peculiar manner.
+>> > Is it the kernel's struct ib_device? It has a netns that is captured
+>> > at its creation time.
+>> 
+>> Yes.  Very much so.
+>
+> Okay.. And looking at this more we actually check that the process
+> that opens /dev/../uverbsX has the same net_ns as the ib_device:
 
+At which point I see how different the ib_device model is from
+everything else..
 
->>> Before:
->>> $ getfattr -m.* /run/initramfs
->>> <no output>
->>> $ getfattr -m.* /sys/kernel/fscaps
->>> <no output>
->>> $ setfattr -n user.foo /run/initramfs
->>> $ getfattr -m.* /run/initramfs
->>> user.foo
->>>
->>> After:
->>> $ getfattr -m.* /run/initramfs
->>> security.selinux
->>> $ getfattr -m.* /sys/kernel/fscaps
->>> security.selinux
->>> $ setfattr -n user.foo /run/initramfs
->>> $ getfattr -m.* /run/initramfs
->>> security.selinux
->>> user.foo
->>>
->>> Link: https://lore.kernel.org/selinux/CAFqZXNtF8wDyQajPCdGn=iOawX4y77ph0EcfcqcUUj+T87FKyA@mail.gmail.com/
->>> Link: https://lore.kernel.org/selinux/20250423175728.3185-2-stephen.smalley.work@gmail.com/
->>> Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
->>> ---
->>>  fs/xattr.c | 24 ++++++++++++++++++++++++
->>>  1 file changed, 24 insertions(+)
->>>
->>> diff --git a/fs/xattr.c b/fs/xattr.c
->>> index 02bee149ad96..2fc314b27120 100644
->>> --- a/fs/xattr.c
->>> +++ b/fs/xattr.c
->>> @@ -1428,6 +1428,15 @@ static bool xattr_is_trusted(const char *name)
->>>       return !strncmp(name, XATTR_TRUSTED_PREFIX, XATTR_TRUSTED_PREFIX_LEN);
->>>  }
->>>
->>> +static bool xattr_is_maclabel(const char *name)
->>> +{
->>> +     const char *suffix = name + XATTR_SECURITY_PREFIX_LEN;
->>> +
->>> +     return !strncmp(name, XATTR_SECURITY_PREFIX,
->>> +                     XATTR_SECURITY_PREFIX_LEN) &&
->>> +             security_ismaclabel(suffix);
->>> +}
->>> +
->>>  /**
->>>   * simple_xattr_list - list all xattr objects
->>>   * @inode: inode from which to get the xattrs
->>> @@ -1460,6 +1469,17 @@ ssize_t simple_xattr_list(struct inode *inode, struct simple_xattrs *xattrs,
->>>       if (err)
->>>               return err;
->>>
->>> +     err = security_inode_listsecurity(inode, buffer, remaining_size);
->> Is that supposed to work with multiple LSMs?
+ib_dev only sometimes belongs to a network namespace
+(ib_devices_shared_netns).  The rest of time they are independent of the
+network namespaces.
+
+I don't know what an infiniband character device refers to.  Is it an
+attachment of a physical cable to the box like a netdevice?  Is it an
+infiniband queue-pair?
+
+Given that the character device names aren't properly attached to a
+network namespace it seems reasonable to ensure that you can only
+open infiniband devices that are in your network-namespace (when
+that is enabled).
+
+The names (device major and minor) not living in a network namespace
+mean that there can be problems for CRIU to migrate a infiniband device,
+as it's device major and minor number are not guaranteed to be
+available.  Perhaps that doesn't matter, as the name you open is on a
+filesystem.  *Shrug*
+
+> static int ib_uverbs_open(struct inode *inode, struct file *filp)
+> {
+> 	if (!rdma_dev_access_netns(ib_dev, current->nsproxy->net_ns)) {
+> 		ret = -EPERM;
+>
+
+> bool rdma_dev_access_netns(const struct ib_device *dev, const struct net *net)
+> {
+> 	return (ib_devices_shared_netns ||
+> 		net_eq(read_pnet(&dev->coredev.rdma_net), net));
+>
+> So you can say we 'captured' the net_ns into the FD as there is some
+> struct file->....->ib_dev->..->net_ns that does not change
+>
+> Thus ib_dev->...->user_ns is going to always be the user_ns of the
+> netns of the process that opened the FD.
 
 Nope.
 
->> Afaict, bpf is always active and has a hook for this.
->> So the LSMs trample over each other filling the buffer?
+There is no check against current->cred->user_ns.  So the check has
+nothing to do with the credentials of the process that opened the
+character device.
 
-The bpf hook exists, but had better be a NOP if either SELinux
-or Smack is active. There are multiple cases where bpf, with its
-"all hooks defined" strategy can disrupt system behavior. The bpf
-LSM was known to be unsafe in this regard when it was accepted.
+> So.. hopefully final question.. When we are in a system call context
+> and want to check CAP_NET_XX should we also require that the current
+> process has the same net ns as the ib_dev?
 
-> There are a number of residual challenges to supporting full stacking
-> of arbitrary LSMs; this is just one instance. Why one would stack
-> SELinux with Smack though I can't imagine, and that's the only
-> combination that would break (and already doesn't work, so no change
-> here).
+I want to say in general only for opening the ib_device.
 
-There's an amusing scenario where one can use Smack to separate SELinux
-containers, but it requires patches that I've been pushing slowly up the
-mountain for quite some time. The change to inode_listsecurity hooks
-won't be too bad, although I admit I've missed it so far. The change to
-security_inode_listsecurity() is going to be a bit awkward, but no more
-(or less) so than what needs done for security_secid_to_secctx().
+I don't know what to say for the case where ib_devices_shared_netns is
+true.  In that case the ib_device doesn't have a network namespace at
+all, so at best it would appear to be a nonsense check.
 
->>> +     if (err < 0)
->>> +             return err;
->>> +
->>> +     if (buffer) {
->>> +             if (remaining_size < err)
->>> +                     return -ERANGE;
->>> +             buffer += err;
->>> +     }
->>> +     remaining_size -= err;
->> Really unpleasant code duplication in here. We have xattr_list_one() for
->> that. security_inode_listxattr() should probably receive a pointer to
->> &remaining_size?
-> Not sure how to avoid the duplication, but willing to take it inside
-> of security_inode_listsecurity() and change its hook interface if
-> desired.
+I think you need to restrict the relaxation to the case where
+ib_devices_shared_netns is false.
 
->
->>> +
->>>       read_lock(&xattrs->lock);
->>>       for (rbp = rb_first(&xattrs->rb_root); rbp; rbp = rb_next(rbp)) {
->>>               xattr = rb_entry(rbp, struct simple_xattr, rb_node);
->>> @@ -1468,6 +1488,10 @@ ssize_t simple_xattr_list(struct inode *inode, struct simple_xattrs *xattrs,
->>>               if (!trusted && xattr_is_trusted(xattr->name))
->>>                       continue;
->>>
->>> +             /* skip MAC labels; these are provided by LSM above */
->>> +             if (xattr_is_maclabel(xattr->name))
->>> +                     continue;
->>> +
->>>               err = xattr_list_one(&buffer, &remaining_size, xattr->name);
->>>               if (err)
->>>                       break;
->>> --
->>> 2.49.0
->>>
+The network stack in general uses netlink to talk to network devices
+(sockets are another matter), so this whole using character devices
+to talk to devices is very weird to me.
+
+Eric
