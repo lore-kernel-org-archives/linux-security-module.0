@@ -1,243 +1,204 @@
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2072.outbound.protection.outlook.com [40.107.92.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3430F1FCD1F;
-	Fri, 25 Apr 2025 18:35:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.72
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745606138; cv=fail; b=EeNwY7xwwn4naD+v4o3Qi2zOrVvFVQDZC3NkHHE36Mjhq22lx+7ZrcpTTf6Gj27nhfHmGl0VmsUGiX86YmjZAziv3S2IPcOa/M/IrVA1BRjxaVwEMoPm85pTuU41deBXOqFLraI+Cvlx9mcRUeaOXNpdfv2EomSphgcA8m26ncM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745606138; c=relaxed/simple;
-	bh=v+qpOoQCXXQlpZay3MaXevZq30vT1uo8VsHIi/Ytcjg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=sgYz8lWq6e2Kf6xIKTvEFC4Y0wYSRE9Hhy++zua7WwhcRvOALCWWxvANHRysZjMIHw1FotpvouWqCyGwcipNov4j8Tae4Fp7aPbBIJDqsSkqb4fDM/CIngCgw7U9Wrl6nEKK7tj1zwFdw4YxSlS9fb+D/T6Q+gEeJYypuHTGuas=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=TxOfTOOM; arc=fail smtp.client-ip=40.107.92.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C68EA21CC49;
+	Fri, 25 Apr 2025 21:44:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745617494; cv=none; b=k2ztJtthrrQ3Yi64HfONB9zPZI93wrf6STc5TQeFMsmLVFGVc3oaeMnD49dx+anpzYyJ9+BRrOsCfG3NYJOL7P7YyokhjhKOXomdbEuQpc6RGTVMyQMEC1G6tzGcw0KEO8j0+au+azMErLBleISUnP+SDuje9dQrMuNXb+O0MU0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745617494; c=relaxed/simple;
+	bh=1vYY0G6paJDxqTAFql3Fe/ZoYlYAWMsKFG17ZpHlpB4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=usXlNaPpU+GGl3BJAqPCxJek93fQharcQEjuc5B6y8OY6sujyw4qgEffhQiS0vXtI4FqWJ0V9pQWMvmDK1R3A0eAWBtgRQ9pB5mYhQtSn8Ewp4izbXJ54NygdB0nayp1QJIapjLrccSyMIIF8wI4plnRx3jrrhx6aqEVsWqIt4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=VVfli0Z9; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="TxOfTOOM"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZCsqFCiylsgxXLkMVVZiBmHJbZdKyZtV83nBOo4v08QnnlVsnrcSuKo+bt1m49J65WHaFCmqLuLpr5IkNUbpjktEnn22BzjR3eYL9VbIVF32dAO0upzRsHQadGcHAHCmtlsSmm2KGtch15TlhUbPoT2WJKnGVOF8mUv8fnzfmjR+94zVtoB8/Y/gVuCSbxym3ljM4kdt7+AMqWblDAzp+2QmkEwfLL//l2jkw3L5NVOo0DMOgOQvMBc0m0qREMYkyMpqID6OdV7B97XSEE2GHlqOHtaIBFluTPGrKd9YgERr7Cbbf0LuiinA63Ks5rcuV5Hy0lh3siyeqSCt0JouBw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=djpcF+klDRxuM9QsoVZ7c1ze7pr5t+6G4UFwIorz24s=;
- b=O5GSHSB1/txs5+N+rP0CgdNUbUlQZpktFKUf4bqruME3y98IxdIC+rBjOn5UXvlGObetZrjR+7AN8MOVC4NPqccck0tN8ikrH4tdak9YQI5dI6AhSAI2irPAqQZdlH0NYESYn0/AvXqH2LmJPTSSDUOUsgsibJt4uy/59pK1Yfa2MaUGt1rPeuBAIaUUBw5bDgjifyU9u9gCoZRQc0R55SKQHVLXgK+UG4nnW5CYge+j07KtuvK8OWIYAIP6mt9vyVHel05LbyPA14uCfA+osTKi/zZLtoKOB9JDaYE6SfO6RLV+kot3ysBViX2KiIfyk994Ng9QK647EqA7mkRRQg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=djpcF+klDRxuM9QsoVZ7c1ze7pr5t+6G4UFwIorz24s=;
- b=TxOfTOOMkUmAxNOHbn57+H+fLkya+8czMxJp9Gwl8TpvH9LOGV72potceBQDqynycXOqM3bdvs52JgJZ2yGf+zsOjv/HCHKEyX+DkTP01MFGCdWsmcQ/s1Jt9/Hxi7jAnVBMUr25BUZy0oo6jsZKH8LznQj7IKJa9CUKy4TKYFybnHvIA6459DapdJmmJqkkMh/3gBfNAheIpYGLX9faWGbRnpEHPzwNUN5/l1A5o1bQJwAABKbIcQJn/dLXVVo16NXm/kyCghHbmsX7p6k5AouTRGS54UIwAUICY95VIsqGaU6hgj5VREuS+IH0rTdi6rmJcyeadbAGEPyr1ztxhw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by PH7PR12MB7210.namprd12.prod.outlook.com (2603:10b6:510:205::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.26; Fri, 25 Apr
- 2025 18:35:30 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8678.025; Fri, 25 Apr 2025
- 18:35:30 +0000
-Date: Fri, 25 Apr 2025 15:35:29 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>, Parav Pandit <parav@nvidia.com>,
-	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>,
-	Leon Romanovsky <leonro@nvidia.com>
-Subject: Re: [PATCH] RDMA/uverbs: Consider capability of the process that
- opens the file
-Message-ID: <20250425183529.GB2012301@nvidia.com>
-References: <20250423164545.GM1648741@nvidia.com>
- <CY8PR12MB7195D5ED46D8E920A5281393DC852@CY8PR12MB7195.namprd12.prod.outlook.com>
- <20250424141347.GS1648741@nvidia.com>
- <CY8PR12MB7195F2A210D670E07EC14DE9DC842@CY8PR12MB7195.namprd12.prod.outlook.com>
- <20250425132930.GB1804142@nvidia.com>
- <20250425140144.GB610516@mail.hallyn.com>
- <20250425142429.GC1804142@nvidia.com>
- <87h62ci7ec.fsf@email.froward.int.ebiederm.org>
- <20250425162102.GA2012301@nvidia.com>
- <875xisf8ma.fsf@email.froward.int.ebiederm.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <875xisf8ma.fsf@email.froward.int.ebiederm.org>
-X-ClientProxiedBy: BL1PR13CA0099.namprd13.prod.outlook.com
- (2603:10b6:208:2b9::14) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="VVfli0Z9"
+Received: from narnia (unknown [172.172.34.12])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 0FD7420BCAD1;
+	Fri, 25 Apr 2025 14:44:43 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0FD7420BCAD1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1745617492;
+	bh=RLcGrvY/Ji6RfwBGa0SDop5ZSdaFF8Vony2mUDrwhz8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=VVfli0Z9/uOSWmD2zYfgd/ELGgJQhQObtxaSQgX4AL7uZlqTSEwxa/QkcFRUrFG4L
+	 KJe067jmKGvAEhgwx3y2k+RRnXnuiRFkSXZNrkzp+VuQoskURv0DCiZeNXTaiElj12
+	 7XOVymm5fhm6nTTtITxxB973eE6OhvwrFoFeXnVA=
+From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+To: James Bottomley <James.Bottomley@HansenPartnership.com>, Alexei
+ Starovoitov <alexei.starovoitov@gmail.com>, KP Singh <kpsingh@google.com>,
+ Paul Moore <paul@paul-moore.com>, Daniel Borkmann <daniel@iogearbox.net>
+Cc: Jonathan Corbet <corbet@lwn.net>, David Howells <dhowells@redhat.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller"
+ <davem@davemloft.net>, Paul Moore <paul@paul-moore.com>, James Morris
+ <jmorris@namei.org>, "Serge
+ E. Hallyn" <serge@hallyn.com>, Masahiro Yamada <masahiroy@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>,
+ Shuah Khan <shuah@kernel.org>, =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=
+ <mic@digikod.net>, =?utf-8?Q?G=C3=BCnther?=
+ Noack <gnoack@google.com>, Nick Desaulniers
+ <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>,
+ Justin Stitt <justinstitt@google.com>, Jarkko Sakkinen
+ <jarkko@kernel.org>, Jan Stancek <jstancek@redhat.com>, Neal Gompa
+ <neal@gompa.dev>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>, keyrings@vger.kernel.org, Linux
+ Crypto Mailing List <linux-crypto@vger.kernel.org>, LSM List
+ <linux-security-module@vger.kernel.org>, Linux Kbuild mailing list
+ <linux-kbuild@vger.kernel.org>, "open list:KERNEL SELFTEST FRAMEWORK"
+ <linux-kselftest@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+ clang-built-linux <llvm@lists.linux.dev>, nkapron@google.com, Matteo Croce
+ <teknoraver@meta.com>, Roberto Sassu <roberto.sassu@huawei.com>, Cong Wang
+ <xiyou.wangcong@gmail.com>
+Subject: Re: [PATCH v2 security-next 1/4] security: Hornet LSM
+In-Reply-To: <6e086e29d258839e42ef7a83b38571d1882eb77d.camel@HansenPartnership.com>
+References: <20250404215527.1563146-1-bboscaccy@linux.microsoft.com>
+ <20250404215527.1563146-2-bboscaccy@linux.microsoft.com>
+ <CAADnVQJyNRZVLPj_nzegCyo+BzM1-whbnajotCXu+GW+5-=P6w@mail.gmail.com>
+ <87semdjxcp.fsf@microsoft.com>
+ <CAADnVQ+JGfwRgsoe2=EHkXdTyQ8ycn0D9nh1k49am++4oXUPHg@mail.gmail.com>
+ <87friajmd5.fsf@microsoft.com>
+ <CAADnVQKb3gPBFz+n+GoudxaTrugVegwMb8=kUfxOea5r2NNfUA@mail.gmail.com>
+ <87a58hjune.fsf@microsoft.com>
+ <CAADnVQ+LMAnyT4yV5iuJ=vswgtUu97cHKnvysipc6o7HZfEbUA@mail.gmail.com>
+ <87y0w0hv2x.fsf@microsoft.com>
+ <CAADnVQKF+B_YYwOCFsPBbrTBGKe4b22WVJFb8C0PHGmRAjbusQ@mail.gmail.com>
+ <2bd95ca78e836db0775da8237792e8448b8eec62.camel@HansenPartnership.com>
+ <CAADnVQJ6SRePz7yc5x3BAz7q-e8DVYq=vRdahxCZ4XzpWtnYpQ@mail.gmail.com>
+ <6e086e29d258839e42ef7a83b38571d1882eb77d.camel@HansenPartnership.com>
+Date: Fri, 25 Apr 2025 14:44:10 -0700
+Message-ID: <87bjsjlxw5.fsf@microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|PH7PR12MB7210:EE_
-X-MS-Office365-Filtering-Correlation-Id: 36f6c66d-bb8a-4cb8-b952-08dd8427f4c9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?8luR3pXGvYN2y8PYOrV8KhGTHEcKEK44gF9NYY0bi0qsfTBODUaMWaik70j3?=
- =?us-ascii?Q?J3787VHtlLN27aVHvShzgv8MXaNwwHe2pcYWwGWbmaWtiICRyYyRkfwGmin6?=
- =?us-ascii?Q?sNoi1gum/vpfpmxqvfqhXqNdsxilYZZEZnwf+j3FNoGaB+BCf7VhgBF1a55S?=
- =?us-ascii?Q?gwuDL+8K+6E8QWogiw6P2o0xOAdaVkeVj+SAogmQXdULLjt52FE5keojY0Me?=
- =?us-ascii?Q?QdvR/Ro/NmQdHnbtK0qBAUXU+N2SRD3X9nYjjX8qKIEDjb4BHT4s0FOOxjAi?=
- =?us-ascii?Q?SF/ZdTW27ZNuNtZe3IaQ5ZTNsauSdTfokt7VQG4Brp/iS1aBn2dvHWXlcE2Y?=
- =?us-ascii?Q?Pqgq8kqrRoakLPmVrhckx7+F9AmoxGPROIrGoaxStCU73lnsFlF+IukYHYRj?=
- =?us-ascii?Q?gWHioHVx5ud4xjifnNzenykdli2OCGc9njlsTgl0nErUi3n60bd/okCGYaqN?=
- =?us-ascii?Q?0mrQY2K2zeNCFivKd6knc8wZbKFm0AIt0ozgP2G+mUfmFYLg0f7zyB1NakZc?=
- =?us-ascii?Q?XW4AN8sKp0pk8oS0nhEuP0kw0VeBvliE8uEwkJ3jhq2xSDEPQfDApHgQiCkd?=
- =?us-ascii?Q?6yEE5vJABw9njRUyvMMW8lLkgIrS+VnMEWlwclQ2FnMzzEYpG1Mlqllj+CqX?=
- =?us-ascii?Q?zVOpTpKYtlPzj8NwEEAHajzfk57yrCGASjtmvhGe9ris/kNSceH+Gwea8iPD?=
- =?us-ascii?Q?s5ZPAhilRaNrldcDFUpmFWhCVuHgGo31sWstQlr0agxarURxGhD+7iOSCeGM?=
- =?us-ascii?Q?mcE5lv7Cgu34imkBfNi24aHZ74V9LPJuWbUk6fbGtJlulbWjK8QMP6yvfokM?=
- =?us-ascii?Q?+FFNgae70LZuAZ0Dd2TNlnp8kH+cKgzS03lfI+f+GrmOLUmmW/yNoHyVlem1?=
- =?us-ascii?Q?li+B+/egwts0iIOmzdmRWVMEIIlD9rUTSojwKtzFQxG/K0pLtQf/Wag0nKVM?=
- =?us-ascii?Q?TtGeS4YC6SWd8tvnEAB9hImfa46ZPwiHJ4p1CFpjAqNtzBHt0ZAL7bGzUh/C?=
- =?us-ascii?Q?XXGHWtnEjGjlsXbKwtvBUV5ZveOTsfTlL4nWhlkFMoLYUrDRb/M6YvXt2Hoj?=
- =?us-ascii?Q?euNOjkX+++flUO7IGCFDQybD8WgKjzOZeaujw9q0+AZZ3MnTeu1+R4dc43q0?=
- =?us-ascii?Q?bL27+oMyrle+zQbwiLf20g8Y9YrwGq4xovG0DIwqDMtVulZehBWe3Z8rldRs?=
- =?us-ascii?Q?DL5AQpEToAivsfSYVtWJORWZhU0bqPVAzQXobiLDJc93ZsyR07yIh8ap/IRZ?=
- =?us-ascii?Q?TqQhE3s1Y4yB23g21hq/eEwBQcmWFYzs57NwwB2fMNVCPm/PNQwkc/0yXzHM?=
- =?us-ascii?Q?qX6hNl9NKqKt3Ucoa5Cd9voPtpBQqD77CPqqkk4kb6MLPVdw5tQrXosRc2Db?=
- =?us-ascii?Q?+176zUkUraXmbpVyZ7jPx7IXuSl40XiRqQhXPR+Ez0nUDCwL0fFaPqMQJKbF?=
- =?us-ascii?Q?ZD5J9g0XzW8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?FIs2agIRNRgIAB1zpgzBdz00I/wJy8jbODJvTLnPLJVBZGfTMzX1sItQh8u/?=
- =?us-ascii?Q?WHr5+m8bV9kYf8dHal54AfLDCePDo+VVLXFSYE3+hne9lDkCHKloLWxLxEQw?=
- =?us-ascii?Q?KZf9xweahGZST4O2jn4ok7fVjbSN5CZkXK1ftXZaYb1HKKll1c6gmQBhGE5a?=
- =?us-ascii?Q?zldaKdcMqrgPqSJyVhgy7V4y1nWsBXgikyfino5O0sCOEM8gGcYnvWCja5/h?=
- =?us-ascii?Q?kG674OXcbLNK31r42vSzt5/1bIK9e51mPdg0PSi91J38GG8Dzy7MtmvlgSdn?=
- =?us-ascii?Q?4sKDdVlwqL8EQlRw8T5ks3x6hKwiIqr29aHQxrMW9iLVd8D5MYlnkkpElOsh?=
- =?us-ascii?Q?Gt5poD9TVa1YIIyw8bAClaX1Txp/PRxCXoQ0jCAD4tWvKL6ggZaahqhUiXD1?=
- =?us-ascii?Q?mSJo/o4At0oMJc8uwPCwiIcNIBTBZ9U1x7ONC6HeCeIot5fTtfY0DdLuoNt1?=
- =?us-ascii?Q?KIYI1eKfu/SextIf3/aXn4v8J8M0N8gX/5Ty+o5C3zdAh8431oKbn8/C/QFn?=
- =?us-ascii?Q?+7Y9O67bfW3+dA6L1FlvWGSHhZ1LR16g7UEn4ufGtkS0q3GiIjcosiAP18Mt?=
- =?us-ascii?Q?Zk4qYTLo47HuCiDQKIBXqGItPcee8KC5j7IdJORNvEhem5FRuWgZPRcv3oU0?=
- =?us-ascii?Q?NPQpPXV+5irjb5hVHerwVQbM6+Oncd1b28Igj6Ro3Axiaqi7eHGNLqCZj/GJ?=
- =?us-ascii?Q?vLxg3PGTda2C5L2HzQfXiHRpUBEBjyHrOJyJOFJOPxkYm59k0BNYS8P8mG+P?=
- =?us-ascii?Q?/RgVmeFRoBEDNgOQ4fKzYqWDCRjNjrIcVtAQUugLphnymXo8weJkA0/lK7sp?=
- =?us-ascii?Q?XyNIgQgtkC4LC4mR4JHKBpy/9nc8o+21SaIJZh6vayLgtpc7QZnWE0cuGm1e?=
- =?us-ascii?Q?GpH6JOupWvSDKFN0DM+mpfcB9/558V+vaGPYB0IcmTu02oN/cHh6aSOJ8rZm?=
- =?us-ascii?Q?eQNCRl7RneHz3nfqfyjCiFfmEJMP6YrJ/9CYgp7HJ35OJ7q0j+VMcC3OQC6c?=
- =?us-ascii?Q?T4bR6NQCAvMMdpW8/HiIWERYoUZVxdKN+1nWAlJDfOH0k7VtaorVJhyf283c?=
- =?us-ascii?Q?d+aCBDNwf36Zx6cjStYqNao/ns0QJpDzVgBnEXr29O+B5KnhIig7gFzMjTu+?=
- =?us-ascii?Q?6Ev3h6+viNQS14e6ha8ldGfNJM0dxMHzEUT9vgJEap+QqwFM/EWq9aKH2r5l?=
- =?us-ascii?Q?3GJY7xVDP2TP83BlwKm0Vq12Qdz2AU+TdnKO4yEZvEvUT+/NZjK9APGC7IFl?=
- =?us-ascii?Q?rfK+EULc8dYzd1sBx3Nx2/TL8iV03douW+ShbT1Pyv9d5AcRXn1TI78U1NgA?=
- =?us-ascii?Q?nessnPaWUXPfH7nQQGaOEkIh6uojYI8jwPa2DYXf41/x3smrEZe5+wFf5LHJ?=
- =?us-ascii?Q?A8XUSYoQHc/Rx127TknnhorHJw9S5gVp9lZ2MeUYZeQYbQY0tsh4X0Nf950t?=
- =?us-ascii?Q?RUDF6lWmoP4cfy1vJV+zOGgGeGoD4oFTfZ90TpnIPkdgNKconR+DeLVDJoPr?=
- =?us-ascii?Q?+UGQi4uV3PKbcFPOIbKLdRl/vx29AlJkR26HVur/Zx+gPenPEkjZxzuSBt2W?=
- =?us-ascii?Q?aIOAo97h5Jw5XJVg2IJl7Ic7kThgN7ZR8NFby0GI?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 36f6c66d-bb8a-4cb8-b952-08dd8427f4c9
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Apr 2025 18:35:30.4224
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: D9jl5aJPhqowct1uNzYTfq+m0aZUEAZF8WuC4bLncePMwDMJSk/9R0D3MjRcDocu
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7210
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Apr 25, 2025 at 12:34:21PM -0500, Eric W. Biederman wrote:
-> > What about something like CAP_SYS_RAWIO? I don't think we would ever
-> > make that a per-userns thing, but as a thought experiment, do we check
-> > current->XXX->user_ns or still check ibdev->netns->XX->user_ns?
-> >
-> 
-> Oh.  CAP_SYS_RAWIO is totally is something you can have.  In fact
-> the first process in a user namespace starts out with CAP_SYS_RAWIO.
-> That said it is CAP_SYS_RAWIO with respect to the user namespace.
-> 
-> What would be almost certainly be a bug is for any permission check
-> to be relaxed to ns_capable(resource->user_ns, CAP_SYS_RAWIO).
+James Bottomley <James.Bottomley@HansenPartnership.com> writes:
 
-So a process "has" it but the kernel never accepts it?
+> On Thu, 2025-04-24 at 16:41 -0700, Alexei Starovoitov wrote:
+>> On Wed, Apr 23, 2025 at 7:12=E2=80=AFAM James Bottomley
+>> <James.Bottomley@hansenpartnership.com> wrote:
+>> > On Mon, 2025-04-21 at 13:12 -0700, Alexei Starovoitov wrote:
+>> > [...]
+>> > > Calling bpf_map_get() and
+>> > > map->ops->map_lookup_elem() from a module is not ok either.
+>> >=20
+>> > I don't understand this objection.
+>>=20
+>> Consider an LSM that hooks into security_bprm_*(bprm),
+>> parses something in linux_binprm, then
+>> struct file *file =3D
+>> fd_file(fdget(some_random_file_descriptor_in_current));
+>> file->f_op->read(..);
+>>=20
+>> Would VFS maintainers approve such usage ?
+>
+> This is a bit off topic from the request for clarification but:
+>
+> It's somewhat standard operating procedure for LSMs.  Some do make
+> decisions entirely within the data provided by the hook, but some need
+> to take external readings, like selinux or IMA consulting the policy in
+> the xattr or apparmor the one in the tree etc.
+>
+> Incidentally, none of them directly does a file->f_op->read(); they all
+> use the kernel_read_file() API which is exported from the vfs for that
+> purpose.
+>
+>> More so, your LSM does
+>> file =3D get_task_exe_file(current);
+>> kernel_read_file(file, ...);
+>>=20
+>> This is even worse.
+>> You've corrupted the ELF binary with extra garbage at the end.
+>> objdump/elfutils will choke on it and you're lucky that binfmt_elf
+>> still loads it.
+>> The whole approach is a non-starter.
+>
+> It's the same approach we use to create kernel modules: ELF with an
+> appended signature.  If you recall the kernel summit discussions about
+> it, the reason that was chosen for modules is because it's easy and the
+> ELF processor simply ignores any data in the file that's not described
+> by the header (which means the ELF tools you refer to above are fine
+> with this if you actually try them).
+>
+> But it you really want the signature to be part of the ELF,  then the
+> patch set can do what David Howells first suggested for modules: it can
+> simply put the appended signature into an unloaded ELF section.
+>
+>> > The program just got passed in to bpf_prog_load() as a set of
+>> > attributes which, for a light skeleton, directly contain the code
+>> > as a blob and have the various BTF relocations as a blob in a
+>> > single element array map.=C2=A0 I think everyone agrees that the
+>> > integrity of the program would be compromised by modifications to
+>> > the relocations, so the security_bpf_prog_load() hook can't make an
+>> > integrity determination without examining both.=C2=A0 If the hook can't
+>> > use the bpf_maps.. APIs directly is there some other API it should
+>> > be using to get the relocations, or are you saying that the
+>> > security_bpf_prog_load() hook isn't fit for purpose and it should
+>> > be called after the bpf core has loaded the relocations so they can
+>> > be provided to the hook as an argument?
+>>=20
+>> No. As I said twice already the only place to verify program
+>> signature is a bpf subsystem itself.
+>
+> The above argument is actually independent of signing.  However,
+> although we have plenty of subsystems that verify their own signatures,
+> it's perfectly valid for a LSM to do it as well: IMA is one of the
+> oldest LSMs and it's been verifying signatures over binaries and text
+> files since it was first created.
+>
+>> Hacking into bpf internals from LSM, BPF-LSM program,
+>> or any other kernel subsystem is a no go.
+>
+> All LSMs depend to some extent on the internals of the subsystem where
+> the hook is ... the very structures passed into them are often internal
+> to that subsystem.  The problem you didn't address was that some of the
+> information necessary to determine the integrity properties in the bpf
+> hook is in a map file descriptor.  Since the map merely wraps a single
+> blob of data, that could easily be passed in to the hook instead of
+> having the LSM extract it from the map.  How the hook gets the data is
+> an internal implementation detail of the kernel that can be updated
+> later.
+>
+>> > The above, by the way, is independent of signing, because it
+>> > applies to any determination that might be made in the
+>> > security_bpf_prog_load() hook regardless of purpose.
+>>=20
+>> security_bpf_prog_load() should not access bpf internals.
+>> That LSM hook sees the following:
+>> security_bpf_prog_load(struct bpf_prog *prog, union bpf_attr *attr,
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct bpf_tok=
+en *token, bool kernel);
+>>=20
+>> LSM can look into uapi things there.
+>
+> Is that the misunderstanding? That's not how LSMs work: they are not
+> bound by only the UAPI, they are in kernel and have full access to the
+> kernel API so they can introspect stuff and make proper determinations.
+>
+>> Like prog->sleepable, prog->tag, prog->aux->name,
+>> but things like prog->aux->jit_data or prog->aux->used_maps
+>> are not ok to access.
+>> If in doubt, ask on the mailing list.
+>
+> I am aren't I? At least the bpf is one of the lists cc'd on this.
+>
+> Regards,
+>
+> James
 
-> I don't know what an infiniband character device refers to.  Is it an
-> attachment of a physical cable to the box like a netdevice?  Is it an
-> infiniband queue-pair?
+I think we may be in the weeds here a bit and starting to get a little
+off-topic. Let's try to back up some and take a different tack. We are
+going to rework this effort into a set of patches that target the bpf
+subsystem and it's tooling directly, performing optional signature
+verification of the inputs to bpf_prog_load, using signature data
+passed in via bpf_attr, which should enough provide metadata so that it
+can be consumed by interested parties to enforce policy decisions around
+code signing and data integrity.
 
-It refers to a single struct ib_device in the kernel. It is kind of a
-like a namespace in that all the commands executed and uobjects
-created on the FD are relative to the struct ib_device.
-
-> The names (device major and minor) not living in a network namespace
-> mean that there can be problems for CRIU to migrate a infiniband device,
-> as it's device major and minor number are not guaranteed to be
-> available.  Perhaps that doesn't matter, as the name you open is on a
-> filesystem.  *Shrug*
-
-I don't see a path for CRIU and rdma, there is too much hardware
-state.. Presumably if anyone ever did it they'd have to ignore that
-the major/minor changes.
-
-> > static int ib_uverbs_open(struct inode *inode, struct file *filp)
-> > {
-> > 	if (!rdma_dev_access_netns(ib_dev, current->nsproxy->net_ns)) {
-> > 		ret = -EPERM;
-> >
-> 
-> > bool rdma_dev_access_netns(const struct ib_device *dev, const struct net *net)
-> > {
-> > 	return (ib_devices_shared_netns ||
-> > 		net_eq(read_pnet(&dev->coredev.rdma_net), net));
-> >
-> > So you can say we 'captured' the net_ns into the FD as there is some
-> > struct file->....->ib_dev->..->net_ns that does not change
-> >
-> > Thus ib_dev->...->user_ns is going to always be the user_ns of the
-> > netns of the process that opened the FD.
-> 
-> Nope.
-> 
-> There is no check against current->cred->user_ns.  So the check has
-> nothing to do with the credentials of the process that opened the
-> character device.
-
-I said "user_ns of the netns"?  Credentials of the process is something
-else?
-
-It sounds like we just totally ignore current->cred->user_ns from the
-rdma subsystem perspective?
-
-> > So.. hopefully final question.. When we are in a system call context
-> > and want to check CAP_NET_XX should we also require that the current
-> > process has the same net ns as the ib_dev?
-> 
-> I want to say in general only for opening the ib_device.
-> 
-> I don't know what to say for the case where ib_devices_shared_netns is
-> true. In that case the ib_device doesn't have a network namespace at
-> all, so at best it would appear to be a nonsense check.
-
-In shared mode it has no namespace containment at all, presumably any
-capable checks should continue to be done on the init_net?
-
-> I think you need to restrict the relaxation to the case where
-> ib_devices_shared_netns is false.
-
-I think we will never check anything other than init_net in shared
-mode.
-
-> The network stack in general uses netlink to talk to network devices
-> (sockets are another matter), so this whole using character devices
-> to talk to devices is very weird to me.
-
-It isn't that different. In netlink you get the FD through socket, in
-char dev you get it through open.
-
-In netdev you can't "open" eth1 but in most other subsystem you can
-get a FD that encapsulates a physical device.
-
-Jason
+-blaise
