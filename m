@@ -1,204 +1,212 @@
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C68EA21CC49;
-	Fri, 25 Apr 2025 21:44:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+Received: from sonic313-15.consmr.mail.ne1.yahoo.com (sonic313-15.consmr.mail.ne1.yahoo.com [66.163.185.38])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0B6B139E
+	for <linux-security-module@vger.kernel.org>; Fri, 25 Apr 2025 22:06:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.185.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745617494; cv=none; b=k2ztJtthrrQ3Yi64HfONB9zPZI93wrf6STc5TQeFMsmLVFGVc3oaeMnD49dx+anpzYyJ9+BRrOsCfG3NYJOL7P7YyokhjhKOXomdbEuQpc6RGTVMyQMEC1G6tzGcw0KEO8j0+au+azMErLBleISUnP+SDuje9dQrMuNXb+O0MU0=
+	t=1745618805; cv=none; b=L9A3F7e5LMoxDdITbLwbIU/TurlVC7xjvJA/E0jZG128GXd5qYXtSiCRLQrG3E6VnuNU91j8mcz6iiOQQuFcBnfxPxwaUBobjQr++AMcq83xICtw4hhVofPpyBuooVWgWXmIJh+H9j8HjPwy7hHJcc1/VwFpZGmjBkPMIDaSOx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745617494; c=relaxed/simple;
-	bh=1vYY0G6paJDxqTAFql3Fe/ZoYlYAWMsKFG17ZpHlpB4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=usXlNaPpU+GGl3BJAqPCxJek93fQharcQEjuc5B6y8OY6sujyw4qgEffhQiS0vXtI4FqWJ0V9pQWMvmDK1R3A0eAWBtgRQ9pB5mYhQtSn8Ewp4izbXJ54NygdB0nayp1QJIapjLrccSyMIIF8wI4plnRx3jrrhx6aqEVsWqIt4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=VVfli0Z9; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+	s=arc-20240116; t=1745618805; c=relaxed/simple;
+	bh=FD9UoTPNTxeWCWvRyNfuGa6M5OjdSFZB/fg3a7X1Qyg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gRrHjoDst9Crp/uncYpDHaxmuh+9xB8VCBDMqIu9J+lKxK1lAeUryz9yjj3xY7UlWxQ5CvXpJj1jHTrA0WZ8msw/NhKKCBx9X9V5urY+dP4ONj9j7K9WCNH+/mfIkc9t+IzqN1A8KAnB1DRS/k52gTpL9BymRZhCF3hvNsSLp3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=Qa/sCaQe; arc=none smtp.client-ip=66.163.185.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="VVfli0Z9"
-Received: from narnia (unknown [172.172.34.12])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 0FD7420BCAD1;
-	Fri, 25 Apr 2025 14:44:43 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0FD7420BCAD1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1745617492;
-	bh=RLcGrvY/Ji6RfwBGa0SDop5ZSdaFF8Vony2mUDrwhz8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=VVfli0Z9/uOSWmD2zYfgd/ELGgJQhQObtxaSQgX4AL7uZlqTSEwxa/QkcFRUrFG4L
-	 KJe067jmKGvAEhgwx3y2k+RRnXnuiRFkSXZNrkzp+VuQoskURv0DCiZeNXTaiElj12
-	 7XOVymm5fhm6nTTtITxxB973eE6OhvwrFoFeXnVA=
-From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>, Alexei
- Starovoitov <alexei.starovoitov@gmail.com>, KP Singh <kpsingh@google.com>,
- Paul Moore <paul@paul-moore.com>, Daniel Borkmann <daniel@iogearbox.net>
-Cc: Jonathan Corbet <corbet@lwn.net>, David Howells <dhowells@redhat.com>,
- Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller"
- <davem@davemloft.net>, Paul Moore <paul@paul-moore.com>, James Morris
- <jmorris@namei.org>, "Serge
- E. Hallyn" <serge@hallyn.com>, Masahiro Yamada <masahiroy@kernel.org>,
- Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>,
- Shuah Khan <shuah@kernel.org>, =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=
- <mic@digikod.net>, =?utf-8?Q?G=C3=BCnther?=
- Noack <gnoack@google.com>, Nick Desaulniers
- <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>,
- Justin Stitt <justinstitt@google.com>, Jarkko Sakkinen
- <jarkko@kernel.org>, Jan Stancek <jstancek@redhat.com>, Neal Gompa
- <neal@gompa.dev>, "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>, keyrings@vger.kernel.org, Linux
- Crypto Mailing List <linux-crypto@vger.kernel.org>, LSM List
- <linux-security-module@vger.kernel.org>, Linux Kbuild mailing list
- <linux-kbuild@vger.kernel.org>, "open list:KERNEL SELFTEST FRAMEWORK"
- <linux-kselftest@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
- clang-built-linux <llvm@lists.linux.dev>, nkapron@google.com, Matteo Croce
- <teknoraver@meta.com>, Roberto Sassu <roberto.sassu@huawei.com>, Cong Wang
- <xiyou.wangcong@gmail.com>
-Subject: Re: [PATCH v2 security-next 1/4] security: Hornet LSM
-In-Reply-To: <6e086e29d258839e42ef7a83b38571d1882eb77d.camel@HansenPartnership.com>
-References: <20250404215527.1563146-1-bboscaccy@linux.microsoft.com>
- <20250404215527.1563146-2-bboscaccy@linux.microsoft.com>
- <CAADnVQJyNRZVLPj_nzegCyo+BzM1-whbnajotCXu+GW+5-=P6w@mail.gmail.com>
- <87semdjxcp.fsf@microsoft.com>
- <CAADnVQ+JGfwRgsoe2=EHkXdTyQ8ycn0D9nh1k49am++4oXUPHg@mail.gmail.com>
- <87friajmd5.fsf@microsoft.com>
- <CAADnVQKb3gPBFz+n+GoudxaTrugVegwMb8=kUfxOea5r2NNfUA@mail.gmail.com>
- <87a58hjune.fsf@microsoft.com>
- <CAADnVQ+LMAnyT4yV5iuJ=vswgtUu97cHKnvysipc6o7HZfEbUA@mail.gmail.com>
- <87y0w0hv2x.fsf@microsoft.com>
- <CAADnVQKF+B_YYwOCFsPBbrTBGKe4b22WVJFb8C0PHGmRAjbusQ@mail.gmail.com>
- <2bd95ca78e836db0775da8237792e8448b8eec62.camel@HansenPartnership.com>
- <CAADnVQJ6SRePz7yc5x3BAz7q-e8DVYq=vRdahxCZ4XzpWtnYpQ@mail.gmail.com>
- <6e086e29d258839e42ef7a83b38571d1882eb77d.camel@HansenPartnership.com>
-Date: Fri, 25 Apr 2025 14:44:10 -0700
-Message-ID: <87bjsjlxw5.fsf@microsoft.com>
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="Qa/sCaQe"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1745618802; bh=8rGCB975TyQpK1p5+Dcc4mGhyRUGsaDR3PeF2jwJfWg=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=Qa/sCaQeaAAqOOtgWTgubpxi0oWEqPpWR3eae9Ix+yDHZi/DL7/wwN3nUrCi/4Dzi7vUUxHupOyBO/e84pR/L5aOD/7nxnIOBf69OHiVbSs7oYFvMfntiu522yW+DGdWSlLdyiqqd7dZAVQxiSRVB8N+gKmh28bpKgKtylym7Uhxn66diBIxFhaoU51pTDMwWtlNaUXqAVEnNy9onKzgR5OIaSGPDSnBsm76vVIjoob3hPEjAX9iBfNZCLkESMdjsEKIOXa8ZEN9AZ6xMXd1klZ5BtZoeds7XDeDuIDhqk/ITwfyGY0zM63QEwpJHe2G/Z+cRyoUei3m5zzf/tKwBQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1745618802; bh=YRLSaA1LsZ8S54E6tjqJfczLuN6gwYDmeLaRCagCb4X=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=ic+wWZhoa+9D4jMszl+WKJA8ILMXw62C4rUN2b2PY/B9/uOvFJKWdk+wX1kB3+dpADGU6MA5iHhhCV8GyLY/4w2BNEmp4Wt9BgY1pWKpTHFbD2DvkbvvhFsAawdg0/+ueze1tbmRhz+SHp+KD8q9ICyM0i4C5QfcK+hONo9M0KwC57VPkzio8LNZbQrAVNthbJDwU5i/z5HlZjtVXFsc3rB1JZA8IVTxSxolsYzNdVXgPDMA2dMySYl2s5uPy/OAXU6ZCkf+56TCW3tXFoyk7gsbSAV15R1Ns60RR6rGsGozZmYrMd9r+BckYp1S3mJMtgAztbxWvI74HS9jk2qxvQ==
+X-YMail-OSG: adXwKNQVM1nB_H3l9KGnpQ4jxN_kHEWZXuFWCLcgBDVDHwr4AIi_4JGfEigNmkX
+ I8JArQezKlq35HzlOJezs7hqYDqcLgqrUO0Y033NBVkfMD1V_cage5dt5t0aZwB5qL4McVz3c_mo
+ FwYwF0QRYc4Ctr4RTKjA9wp3I5bP4d2wzeuRVtkitbhRWZhQU2TwekYQaXnngLJEYInSjYDXzjZR
+ P57SXNy8275uAvwhZWZqjYl0XKtj6S6.Si6ocPI9hRS0MFcDmB5BsSV9b5wwv9XPofQKTPC8sPM7
+ I2GK_IpYqQYBIXdd37voHSsYRO5prGZJwETK.eIyiE9LdV._WuSN.U_wr8cDBwsRXfuEI3xgQ06o
+ DlMhFWsMGWGz3iVkOoUxhAO9JgH_j4Dw6SFSQsuyYwYlryQAaVV_ccmGd0fewTqleKJuaUGDcYJr
+ aZeEUIiuZexs1AUY45Ch3lOU9fOztors3KBQi5_x_GubxPRao5nkA3Eef8OGChZVq1Xpjn0sBPaP
+ pbtxLex2y1hZz3mM.FWXWoUdnHDoLDtBtpHCn_3kjkCOHeEDlj9AtGjAKO84AhJOfsZupi_6mOSg
+ 1hwSb0QfsxbSl6wARYGHlpzYEnrjjbQz36EcdMtQL6jl62W1BSiAcAmmwzBBeyDFPrkl7sySFxc.
+ aHaNEC3pwR2hu.4vLbZXkzpyghAPeFJJDdJ0A7yRfux9zoEpdnO1Mzd9x7UV37xwdAi6ILTv9rUd
+ LD6nuiLZg3AZCDyITZHql7WbGYTJCIoj1ZoevNQ.rZXFg6qzVio7SsI4CaiSfCSHG8wzWaPJxaoR
+ TbnkUBz87KtW6pXwAPbR5DMNWLjZYI44fDUhx0jg5UlZA74J4YCgSU3D8hz_5xxkZQ_LhmtbRI2O
+ DPie.sdmN.MHqlADLcZIg.FmQUG_AfLgNZGl2V9VUbliOeKKg1f9mFRTHCmKTYhnB9LruBtVwAPP
+ EewpEcqD5ISgbeNkQlVKMtGx3ppVPEFKQ4hrrRH5L.znIpbYVZCw2hPbsJ_xc132eJvy1LfIwVVN
+ mr8ZKZ3a8fYpg_k3V9WND7CunkSXbQBZ9FEvMuf06BPWWXgQqA8NZzvNIjAjNf_gewrsqJyfFxLX
+ mWsSA.LVP1fAKP0F.UOEAyn8gJkS5VLgd78B2qSxxSK2G5x5hxAEkN9PMV.zLd8qdALlpjJHPXmU
+ 5bTwn3ILFWUqfnw126qtFQUFpg5xBaOzcEjHpm3OONaypW1Yy0D2G42EQ78OIBBozRgyHc8kTe1e
+ jfA.yo6J2KeGNKifKfccwr6F9ylSswcZNmm0ATp_W86CkWWgTmkDriKIn49j4D9Z42fpDvVxRdgB
+ 7X2v8IFo6vo_gMjMGjvhoNCnaKXygzaKc5CRJx62bgWGtwOmd0nyAVjyM5nyDfZLYpdRYOrNnovE
+ 1Afyo6pNCog4w66itaLRX05Knwifg2QAhg31B3eQ9_YGqRpAtMg1I7P6xmxqFK0tKMzuoLhm77Rc
+ EVvIBYH2rbZayZBbqAVsV7lFlLsQD6ih3pAmnoPx5QPuCxW71csEmpDiFIU_NtBkMbKHOukw5XBM
+ C_7j_mtX4fNUYfFjpOnzeeWCA1OIDcKDGligPaOkT6fgeGDTlRsw5HfEgdLhUsjuXyoIz4LU8bJx
+ uIdXToF3AJGwMrHZL2XZDRNtREq5RdwRo32ABU6vC3M4gcufWbTwzdspCQZqY29jbDS5OQVxUqIL
+ lfXG.0RQar3Q7o33.nA_PjgF2EsZED4ifhfaILwhwgGV8vgnu4SPj8BzSjujcpW8jNjo.G.BYEWd
+ ODueo3IvrtQc6FhTU7SY0jZ0zs0SA1gRGia92x8DBJHZX70R6HCDB3xnbnhXeKkt9vwAcWjyLOOO
+ SA5MeiQHVaMjuGYuPiaET9YH_rTGV3VBiK7ETxQLSDD6e8JLYuiknZsyzv_khLMEyDtRXIvdtmmM
+ c.D1jrb7sAXcEqMYvL3mmsoe6kPVMY8dSOxHnK_R_1WmHqzxM.KRHsOHsyhYtb9siy7qwDROKm51
+ ZklOZPEEEktWsRmLFnoagA6lItcKyxxU4FQ6h9sKyU8QDB6nfrDF7AT06HduSJrVnJR46POdXvI5
+ mZ.tldn04zyQ1GWDS5TQjgnVqKN8ApkHhfKZ295bECGP7gY8Nnr.K6x34QtVJRiRj_S0MhBxWbSG
+ O9_Wa6nQhWxv55lORMdzqK1vTHUWK6uu17sI6I0.o5V.3pfZ9dDU3Wp6UxhmkcKjvGUrH1mKVd0d
+ yhbL0yW1DPeOB2cM4A59P.3aG5VTHBj8ccxwK2eCU6J3BDmpODRJzC4dv_I8uLVx98UNBgxYCaFf
+ vP9aLX6vkPrtm_8I0PiaNFx8Wyy.cBQ--
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 502d9744-4a62-448b-9fe5-daad2ed73d2e
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.ne1.yahoo.com with HTTP; Fri, 25 Apr 2025 22:06:42 +0000
+Received: by hermes--production-gq1-74d64bb7d7-45lk9 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 817f7de0afdf3a62eaa48c0c7512c01b;
+          Fri, 25 Apr 2025 22:06:39 +0000 (UTC)
+Message-ID: <5313c22e-b69e-4e6d-b938-5780774c51eb@schaufler-ca.com>
+Date: Fri, 25 Apr 2025 15:06:38 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fs/xattr.c: fix simple_xattr_list to always include
+ security.* xattrs
+To: Stephen Smalley <stephen.smalley.work@gmail.com>,
+ Christian Brauner <brauner@kernel.org>
+Cc: paul@paul-moore.com, omosnace@redhat.com, selinux@vger.kernel.org,
+ linux-security-module@vger.kernel.org,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20250424152822.2719-1-stephen.smalley.work@gmail.com>
+ <20250425-einspannen-wertarbeit-3f0c939525dc@brauner>
+ <CAEjxPJ4vntQ5cCo_=KN0d+5FDPRwStjXUimE4iHXJkz9oeuVCw@mail.gmail.com>
+ <184c3ed7-5581-4bdf-99ea-083e28e530a8@schaufler-ca.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <184c3ed7-5581-4bdf-99ea-083e28e530a8@schaufler-ca.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.23737 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-James Bottomley <James.Bottomley@HansenPartnership.com> writes:
+On 4/25/2025 10:21 AM, Casey Schaufler wrote:
+> On 4/25/2025 8:14 AM, Stephen Smalley wrote:
+>> On Fri, Apr 25, 2025 at 5:20 AM Christian Brauner <brauner@kernel.org> wrote:
+>>> On Thu, Apr 24, 2025 at 11:28:20AM -0400, Stephen Smalley wrote:
+>>>> The vfs has long had a fallback to obtain the security.* xattrs from the
+>>>> LSM when the filesystem does not implement its own listxattr, but
+>>>> shmem/tmpfs and kernfs later gained their own xattr handlers to support
+>>>> other xattrs. Unfortunately, as a side effect, tmpfs and kernfs-based
+>>> This change is from 2011. So no living soul has ever cared at all for
+>>> at least 14 years. Surprising that this is an issue now.
+>> Prior to the coreutils change noted in [1], no one would have had
+>> reason to notice. I might also be wrong about the point where it was
+>> first introduced - I didn't verify via testing the old commit, just
+>> looked for when tmpfs gained its own xattr handlers that didn't call
+>> security_inode_listsecurity().
+>>
+>> [1] https://lore.kernel.org/selinux/CAEjxPJ6ocwsAAdT8cHGLQ77Z=+HOXg2KkaKNP8w9CruFj2ChoA@mail.gmail.com/T/#t
+>>
+>>>> filesystems like sysfs no longer return the synthetic security.* xattr
+>>>> names via listxattr unless they are explicitly set by userspace or
+>>>> initially set upon inode creation after policy load. coreutils has
+>>>> recently switched from unconditionally invoking getxattr for security.*
+>>>> for ls -Z via libselinux to only doing so if listxattr returns the xattr
+>>>> name, breaking ls -Z of such inodes.
+>>> So no xattrs have been set on a given inode and we lie to userspace by
+>>> listing them anyway. Well ok then.
+>> SELinux has always returned a result for getxattr(...,
+>> "security.selinux", ...) regardless of whether one has been set by
+>> userspace or fetched from backing store because it assigns a label to
+>> all inodes for use in permission checks, regardless.
+> Smack has the same behavior. Any strict subject+object+access scheme
+> can be expected to do this.
+>
+>> And likewise returned "security.selinux" in listxattr() for all inodes
+>> using either the vfs fallback or in the per-filesystem handlers prior
+>> to the introduction of xattr handlers for tmpfs and later
+>> sysfs/kernfs. SELinux labels were always a bit different than regular
+>> xattrs; the original implementation didn't use xattrs but we were
+>> directed to use them instead of our own MAC labeling scheme.
+> There aren't a complete set of "rules" for filesystems supporting
+> xattrs. As a result, LSMs have to be creative when a filesystem does
+> not cooperate, or does so in a peculiar manner.
+>
+>
+>>>> Before:
+>>>> $ getfattr -m.* /run/initramfs
+>>>> <no output>
+>>>> $ getfattr -m.* /sys/kernel/fscaps
+>>>> <no output>
+>>>> $ setfattr -n user.foo /run/initramfs
+>>>> $ getfattr -m.* /run/initramfs
+>>>> user.foo
+>>>>
+>>>> After:
+>>>> $ getfattr -m.* /run/initramfs
+>>>> security.selinux
+>>>> $ getfattr -m.* /sys/kernel/fscaps
+>>>> security.selinux
+>>>> $ setfattr -n user.foo /run/initramfs
+>>>> $ getfattr -m.* /run/initramfs
+>>>> security.selinux
+>>>> user.foo
+>>>>
+>>>> Link: https://lore.kernel.org/selinux/CAFqZXNtF8wDyQajPCdGn=iOawX4y77ph0EcfcqcUUj+T87FKyA@mail.gmail.com/
+>>>> Link: https://lore.kernel.org/selinux/20250423175728.3185-2-stephen.smalley.work@gmail.com/
+>>>> Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+>>>> ---
+>>>>  fs/xattr.c | 24 ++++++++++++++++++++++++
+>>>>  1 file changed, 24 insertions(+)
+>>>>
+>>>> diff --git a/fs/xattr.c b/fs/xattr.c
+>>>> index 02bee149ad96..2fc314b27120 100644
+>>>> --- a/fs/xattr.c
+>>>> +++ b/fs/xattr.c
+>>>> @@ -1428,6 +1428,15 @@ static bool xattr_is_trusted(const char *name)
+>>>>       return !strncmp(name, XATTR_TRUSTED_PREFIX, XATTR_TRUSTED_PREFIX_LEN);
+>>>>  }
+>>>>
+>>>> +static bool xattr_is_maclabel(const char *name)
+>>>> +{
+>>>> +     const char *suffix = name + XATTR_SECURITY_PREFIX_LEN;
+>>>> +
+>>>> +     return !strncmp(name, XATTR_SECURITY_PREFIX,
+>>>> +                     XATTR_SECURITY_PREFIX_LEN) &&
+>>>> +             security_ismaclabel(suffix);
+>>>> +}
+>>>> +
+>>>>  /**
+>>>>   * simple_xattr_list - list all xattr objects
+>>>>   * @inode: inode from which to get the xattrs
+>>>> @@ -1460,6 +1469,17 @@ ssize_t simple_xattr_list(struct inode *inode, struct simple_xattrs *xattrs,
+>>>>       if (err)
+>>>>               return err;
+>>>>
+>>>> +     err = security_inode_listsecurity(inode, buffer, remaining_size);
+>>> Is that supposed to work with multiple LSMs?
+> Nope.
 
-> On Thu, 2025-04-24 at 16:41 -0700, Alexei Starovoitov wrote:
->> On Wed, Apr 23, 2025 at 7:12=E2=80=AFAM James Bottomley
->> <James.Bottomley@hansenpartnership.com> wrote:
->> > On Mon, 2025-04-21 at 13:12 -0700, Alexei Starovoitov wrote:
->> > [...]
->> > > Calling bpf_map_get() and
->> > > map->ops->map_lookup_elem() from a module is not ok either.
->> >=20
->> > I don't understand this objection.
->>=20
->> Consider an LSM that hooks into security_bprm_*(bprm),
->> parses something in linux_binprm, then
->> struct file *file =3D
->> fd_file(fdget(some_random_file_descriptor_in_current));
->> file->f_op->read(..);
->>=20
->> Would VFS maintainers approve such usage ?
->
-> This is a bit off topic from the request for clarification but:
->
-> It's somewhat standard operating procedure for LSMs.  Some do make
-> decisions entirely within the data provided by the hook, but some need
-> to take external readings, like selinux or IMA consulting the policy in
-> the xattr or apparmor the one in the tree etc.
->
-> Incidentally, none of them directly does a file->f_op->read(); they all
-> use the kernel_read_file() API which is exported from the vfs for that
-> purpose.
->
->> More so, your LSM does
->> file =3D get_task_exe_file(current);
->> kernel_read_file(file, ...);
->>=20
->> This is even worse.
->> You've corrupted the ELF binary with extra garbage at the end.
->> objdump/elfutils will choke on it and you're lucky that binfmt_elf
->> still loads it.
->> The whole approach is a non-starter.
->
-> It's the same approach we use to create kernel modules: ELF with an
-> appended signature.  If you recall the kernel summit discussions about
-> it, the reason that was chosen for modules is because it's easy and the
-> ELF processor simply ignores any data in the file that's not described
-> by the header (which means the ELF tools you refer to above are fine
-> with this if you actually try them).
->
-> But it you really want the signature to be part of the ELF,  then the
-> patch set can do what David Howells first suggested for modules: it can
-> simply put the appended signature into an unloaded ELF section.
->
->> > The program just got passed in to bpf_prog_load() as a set of
->> > attributes which, for a light skeleton, directly contain the code
->> > as a blob and have the various BTF relocations as a blob in a
->> > single element array map.=C2=A0 I think everyone agrees that the
->> > integrity of the program would be compromised by modifications to
->> > the relocations, so the security_bpf_prog_load() hook can't make an
->> > integrity determination without examining both.=C2=A0 If the hook can't
->> > use the bpf_maps.. APIs directly is there some other API it should
->> > be using to get the relocations, or are you saying that the
->> > security_bpf_prog_load() hook isn't fit for purpose and it should
->> > be called after the bpf core has loaded the relocations so they can
->> > be provided to the hook as an argument?
->>=20
->> No. As I said twice already the only place to verify program
->> signature is a bpf subsystem itself.
->
-> The above argument is actually independent of signing.  However,
-> although we have plenty of subsystems that verify their own signatures,
-> it's perfectly valid for a LSM to do it as well: IMA is one of the
-> oldest LSMs and it's been verifying signatures over binaries and text
-> files since it was first created.
->
->> Hacking into bpf internals from LSM, BPF-LSM program,
->> or any other kernel subsystem is a no go.
->
-> All LSMs depend to some extent on the internals of the subsystem where
-> the hook is ... the very structures passed into them are often internal
-> to that subsystem.  The problem you didn't address was that some of the
-> information necessary to determine the integrity properties in the bpf
-> hook is in a map file descriptor.  Since the map merely wraps a single
-> blob of data, that could easily be passed in to the hook instead of
-> having the LSM extract it from the map.  How the hook gets the data is
-> an internal implementation detail of the kernel that can be updated
-> later.
->
->> > The above, by the way, is independent of signing, because it
->> > applies to any determination that might be made in the
->> > security_bpf_prog_load() hook regardless of purpose.
->>=20
->> security_bpf_prog_load() should not access bpf internals.
->> That LSM hook sees the following:
->> security_bpf_prog_load(struct bpf_prog *prog, union bpf_attr *attr,
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct bpf_tok=
-en *token, bool kernel);
->>=20
->> LSM can look into uapi things there.
->
-> Is that the misunderstanding? That's not how LSMs work: they are not
-> bound by only the UAPI, they are in kernel and have full access to the
-> kernel API so they can introspect stuff and make proper determinations.
->
->> Like prog->sleepable, prog->tag, prog->aux->name,
->> but things like prog->aux->jit_data or prog->aux->used_maps
->> are not ok to access.
->> If in doubt, ask on the mailing list.
->
-> I am aren't I? At least the bpf is one of the lists cc'd on this.
->
-> Regards,
->
-> James
+Oops. I'm wrong. More below ..
 
-I think we may be in the weeds here a bit and starting to get a little
-off-topic. Let's try to back up some and take a different tack. We are
-going to rework this effort into a set of patches that target the bpf
-subsystem and it's tooling directly, performing optional signature
-verification of the inputs to bpf_prog_load, using signature data
-passed in via bpf_attr, which should enough provide metadata so that it
-can be consumed by interested parties to enforce policy decisions around
-code signing and data integrity.
 
--blaise
+>>> Afaict, bpf is always active and has a hook for this.
+>>> So the LSMs trample over each other filling the buffer?
+> The bpf hook exists, but had better be a NOP if either SELinux
+> or Smack is active. There are multiple cases where bpf, with its
+> "all hooks defined" strategy can disrupt system behavior. The bpf
+> LSM was known to be unsafe in this regard when it was accepted.
+>
+>> There are a number of residual challenges to supporting full stacking
+>> of arbitrary LSMs; this is just one instance. Why one would stack
+>> SELinux with Smack though I can't imagine, and that's the only
+>> combination that would break (and already doesn't work, so no change
+>> here).
+> There's an amusing scenario where one can use Smack to separate SELinux
+> containers, but it requires patches that I've been pushing slowly up the
+> mountain for quite some time. The change to inode_listsecurity hooks
+> won't be too bad, although I admit I've missed it so far. The change to
+> security_inode_listsecurity() is going to be a bit awkward, but no more
+> (or less) so than what needs done for security_secid_to_secctx().
+
+Turns out I spoke too soon. The existing implementation of
+security_inode_listsecurity() works correctly today, even in the
+face of multiple LSMs (e.g. SELinux and Smack) being active. As
+for security_inode_getsecurity(), there's no issue as the attribute
+name desired is passed.
+
