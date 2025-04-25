@@ -1,201 +1,240 @@
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2071.outbound.protection.outlook.com [40.107.102.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic313-15.consmr.mail.ne1.yahoo.com (sonic313-15.consmr.mail.ne1.yahoo.com [66.163.185.38])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF6D14A24;
-	Fri, 25 Apr 2025 16:21:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.71
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745598069; cv=fail; b=oJc9WdN0xrEXIx7cvtzfsjwV7++fi8A1maqaCfPN6Pzg1k8uTbnxRcjhzOrXP75J2cZ3Ow8Fq011WrKYoPheFgco4f8xRNXIc4GGj942uR28rwZSNmxv4jsWlVVpgEbx3uj5MmyqshEVWtFt4VCojUzVl0mAhFMfF3dFIJ9+qbU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745598069; c=relaxed/simple;
-	bh=IDKo1Y0pQv5/TNZH2uH/y3HaY+AtShwR+3yw2tKUG2g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=lK1nRI7U2RxeV5xbBygtlNYbix56ZZ/2hbJEfj7+1adYMpZvy22PIjfvJhQOZ77k26WQYUVhlCNgzwTJls9ygfuYx7NLkHlNsd2lMuMRKy04hVSh76dFuQAHttuManwPi7wBvOMru73O1rj3nhyh3kUDE3tiZ/62fTFjdBdHHaA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=qeygG6wc; arc=fail smtp.client-ip=40.107.102.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A0DB199E84
+	for <linux-security-module@vger.kernel.org>; Fri, 25 Apr 2025 17:21:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.185.38
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745601676; cv=none; b=M/J6cncutM3loWeRIirgVeOhyJeQ4Tp/GEL/5OAzPUYoaSvuXkrmd1seWDptXI7e1zta8IBulFrjmZSswxTdxXZxS/WGXk+XrhQTooo6zBqgTA7R9tfI6wSEmUMwF18MofpK0LPph6D1x37d/LL3OtfWiz68gUVB1oENCO70T+U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745601676; c=relaxed/simple;
+	bh=yePzdq35Z7LksvggzxgbBt2Xl46ejOYJdpbHjfPs0kQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lKzE3XxpRkGg+1nSGeZ0YGvoi0upYM6ut2mMjP2t5hWgxWO44KXZXFAi5+X469cYyV6jaekEKfrqKkHEmI/JDIs265pGjWoM0D7YvZCf7MukNDMZY9DN0P3uokFpLcthbpnnJ19It7tual2jEgiuft1TsJmmliOZQ4SMM+3bo4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=FoySpbvR; arc=none smtp.client-ip=66.163.185.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="qeygG6wc"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Mk8tn1WsiFZv6ZSNU3Xg/ueG8QX6iDiNEi8H3RwUr6VE5hNKsTJO8g1zbRUtZrKy/FaXqvZrKDg/ojV4v5f1HTtWRPXx+xY6oDZ04ScEMlhDg9aAIb3T8bSggCtEP4vUc0l4j6icI5BpQZefHvszN/frjOiwyisvsFcKVkpAyMZAQmnLr6v/Z7xlfuSF2EQ13gk6xZ2qZK1sc84BVDq5xPYZyt1mtEE2k8mjVdo1+MPo4DqGkdegO5013NGGgnCJXw+HMwBlLUOKvgxKz6r/AAyrLmEuBbIkcjRcxjCYi0KVfU6/Zp1R83pAa9DNboj438j0xIlZFpyvcFaAgVKspw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=93asZFUvB4vMD4KolQWuHJAmnwWyYdfNqtDx3ag3fR0=;
- b=a/unjfz6a15afvjcRlTZVNwYB6KQBBAJKpClvW+6kIyiU8N8w7RO07zef2zvJeuwB2LnwhhygeeO9f/CC2tKHIB3ARLNU+WdwOu8dEn1P5hqZOR4oRCnOtoa4tJaBeCkT7fl4JCoFE9HR1ewEgO9dYn+HbDAjUehvzYeiMZlGwzvqWbeFKy04BeXCG/2XrYFMwOKaI6Nd8DAAiVpNJP6+7o8reOcieryGttU2bouQOBu1BCQzW6BH3EOh24H8sGJ/jqUgpULpMtWCLHTPkn7r25rpe99myZYpvHzq5H4TS9U3bJI3RvZ7zOjHKkblWbz5CtInTI2J76zGr9LJHgudQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=93asZFUvB4vMD4KolQWuHJAmnwWyYdfNqtDx3ag3fR0=;
- b=qeygG6wcK4V5uo5rzGSDNpa25S8QfwB7Rov0T7saHykb+fL4qsKpV8m7aiK3XwqYsIyszG3X8g17b4VEGHZw1ziLJJehZtneNxVjLvuRQFiroZMwrdJWjD9lzR9Sy1GmSYc7mc+h71lRCszlMY2vczlMXtswLuBDA00AVA5YAouaa+sDCNI4LbmcyDCwK/q7gCSVNHmEZu4b8FNOSB8gLZhIgRRO9WCvMgfaZ4fWX2Df29J4Faxv/AkAUm7L3EfVEFxODCp+d9j6ieIp/z+4ZUX+GmJ4xvxF+BxG3jA0SNwzKLocPt7TcEruSh6s4011jfXBZuh1WnIFAWTERuxa7Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by BY5PR12MB4241.namprd12.prod.outlook.com (2603:10b6:a03:20c::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.27; Fri, 25 Apr
- 2025 16:21:04 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8678.025; Fri, 25 Apr 2025
- 16:21:04 +0000
-Date: Fri, 25 Apr 2025 13:21:02 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>, Parav Pandit <parav@nvidia.com>,
-	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>,
-	Leon Romanovsky <leonro@nvidia.com>
-Subject: Re: [PATCH] RDMA/uverbs: Consider capability of the process that
- opens the file
-Message-ID: <20250425162102.GA2012301@nvidia.com>
-References: <87msc6khn7.fsf@email.froward.int.ebiederm.org>
- <CY8PR12MB71955CC99FD7D12E3774BA54DCBA2@CY8PR12MB7195.namprd12.prod.outlook.com>
- <20250423164545.GM1648741@nvidia.com>
- <CY8PR12MB7195D5ED46D8E920A5281393DC852@CY8PR12MB7195.namprd12.prod.outlook.com>
- <20250424141347.GS1648741@nvidia.com>
- <CY8PR12MB7195F2A210D670E07EC14DE9DC842@CY8PR12MB7195.namprd12.prod.outlook.com>
- <20250425132930.GB1804142@nvidia.com>
- <20250425140144.GB610516@mail.hallyn.com>
- <20250425142429.GC1804142@nvidia.com>
- <87h62ci7ec.fsf@email.froward.int.ebiederm.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87h62ci7ec.fsf@email.froward.int.ebiederm.org>
-X-ClientProxiedBy: BN9PR03CA0723.namprd03.prod.outlook.com
- (2603:10b6:408:110::8) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="FoySpbvR"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1745601666; bh=keseLyNAzEGWWSwvxw93PFtqBMGnHxHVrNrPDyui0OU=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=FoySpbvRdHg8u9S6f+vcbH5pFA6RjIjMGk83W2XAhd1NgABquENAMGF+PVknyzgY30QbQWOBh893h7ByUET9TjlcSuBXcRspO2wxoDLBgoWM8EmWqQ2N8PEPJQJvsJWH/rYio3n5gMA3tyEfFTWeuZgtJT2WsTNii3nN5bCEHvvmgE6/LyoIULcMuoQ4C0RMPZlEYQLzVLqIxLHhjsTdu8FnzGqlIrt/3x4flQ0uL181i3vQUY/ja2mU6s6nGqDVWwBqBhYBg7g+EBNm0xcg4Ep1X02dhOB+TNJuUviUHdoeLTCsYimBkvKD/1zbTrEx7zckPFNAQ0ue6ifclKSTjw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1745601666; bh=yoTGxhmN4dHjj7qw6I4rqrbwCIpbXRyfangIjkIqac9=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=dFwdQNu6HtKR7M5zz040tvlDBX+SrPTpU7IDyw+4x0ACCX59aFkCzqWM9inwUWR8TDbPJ+m9SiU8GGD6z4V7rp9NzpO7kaQk2/oDxnQHS4m1/MqlY29dq+pFTDSGDOOcuZadLJRcENubKZ9Hg0e4VKvXwd7m6/lkPLERRnUtWiwc8n8kdgatojLpLMoxWSmKZZsS5yWngmDr1tRB/e6qbcBTPPI3Jos81pFuU3E5tg29w1ga6ATU828k5txjig3Q9Ei2Ob6pqSZk3nIb7BYsicsBCen2p+UAMbK/Ac6cFTl6UYVSHXNCr6TqlHh+YTimeG9PsHALPoCWiRhnEHzWkg==
+X-YMail-OSG: NrO6AaAVM1md0Q_sun8kK7ZBFVwVG42H_EeT8gUMJkAyoB9qnGwd4B8SJknWO4r
+ Yflh2GbqmfbM_2cczXUvYdO.Ja.FrQRLgNiEI35zSKx3UAArkb5DzUOKyJ1cszcI3ncjg4JlUXAH
+ o5ZLPKJRKu9J76YKNxQZPp49BYSXw6RIougiSlzcgHnWarbLN71R81GomzgOYldicYx7A6llBXg_
+ sjrEOu9c8mFjYaLxMHWKQ3UN9NlUMHOl7V63Zx.opxPbvilFBSpc0IPeVC6C0capYogKz0w44..G
+ YkFG4S.0zXd.dS7KxDPeh3Vmy4QJ_C5XZV1LviI2mtqn5TzClu1I.yyes6wxTfnT_sjfviXpYCH4
+ pb22VwvtApCR.MvU7dkc_yTO3d6cZw0CDBLvG.HCMedOV7PYu30UrFNAGp9jpb9cvS21IDc48zl2
+ 9hfD3Eak8bynJKRtLJyE2vpJt7E96et7Ir5MuUx3nzVQs23HA9wM.2_BFy7531JgLQTBXpSH3nMe
+ CeRysrTOEiYc.F.VXh9NZ9_faIN0QsnL7LfWQHbz0gCBuLmtaMfG_Mp6XXp6h8b6mhbxR38WWC9H
+ hjAWT.Ppxtesn1ee_NlBrTSiRV6xRAeWmKL5toBV2YQVI7Knjdoed8sIOj39K2TdQmI9267kZuix
+ _RjuwcP_KnJJEnHx.wwcQH1JKF2fFMYAVog2MSZjNt4_3pG5J0k9hrDlZb.zBLtjhSK8x0NxZck_
+ nGZKmJPVqKa0M8k3K8ikhFs5B23e._MlP1C47Pa_xp3p3OmkG5LnpwryBjoTerV.OJZLwJKR3nBm
+ xiLJ.Wbhq7Flt5yTUMmSbbUWBpUCQQw7GW42bOP9Uc1ZV3MI1Dj9JkvXD3KJd7tBcnoDNHcJlh7F
+ g3D.SVl5BBzcH1xMA_QnHh1qrSYsH6AT6.7SpSuZSNdLE_2btkfLt_uiMuVloWHZJuVUFnju7mzQ
+ DI6RqLCCGONZC.HW0183zqkOwlA2AjLEyxWHWt8Bb6MN5U0X3_tSb9Xj9jEfqxBaKHvfvMn_TLNf
+ 2BQQBvsEF.B_G5daH9CvXrAqJr6J61DHm5RtkTVCRXMg9.brgGuDQ_qJK.bwNwTg2lrPl6Jl7jFK
+ iTkoVWGtGBiYrwqkKh2ekxnYKSZ1BA8efbpK7fMCMTSQ1bfKElQqYOfXUzGxKOTmLJ_1NRLB9iCp
+ KctxIuaM6jJNMkDawmqkTRk9jFHGmn1N142.kT5m17ASusGS.4FnmEBS5hsPTp7PcmyyIgMyB2Td
+ nuwesM6sImJim6N19KLNxN7YURipCxMp0jqc1.2FS5Y1CCp.xLlPkS4B_O5TidDfiyLXrgY_P_zW
+ UZGwQ2diUOUt.V1uhAOBikm7JzW9YezfEDOD77H0Gy7Tm4vhbg_O6782rHsKoAnFZEL.Tf95StfL
+ MsHOsKGo_Q5eQ89FtPdQSNaVA96hDvC7n4pcyMbLgr5bGpUUzVd_Xh.xHPDtTQneZBYpilg0uhxN
+ lmR5EnIF4Jt2zHx6Qs5Zm.lszGbjtYIU_1zfOYUAyxtvmHN4anb8keosBBQTEce69S2NeMnxTNhE
+ cRqVKrohF2R1OhF4gLOZLGnVRwKj1fETPLOT1xzrDCDzeqOnPZE.1FHD0kRkt3Nj3vU_a5kIgbro
+ XAYR4svYVAwa3SdimX9W.qNwXAOKpk1enIatcAbcj8fkieWXWpIcmoLntqLEI3FsoxXxhxD1.WMI
+ 3BaW_FJhXzz1keU8p3y8IXfMvmrKlEheyr7Q1BwQr8hEAlY__7P8Yj_cOE.X0qFJE4c.dfietGcW
+ BvBZggaJ0VoSdvu_vtl2iANICXUoQs52QdViYNOGHVBkg58lc.8Q1jHpl.MUYJzGbdg0NLNz4eXT
+ RnX0ch_K2G_dSZsoweBDly8oq6Z6_CnxR7jjUWwAu8wkn1Ltum8WzCmtLFvJgA9LZOaCjxCofx62
+ 2hr7phqQRuWKpNWMZyjFL9XgpvP7Uy_rk2NZwa.Rh62oDG8BVQEdBM89P8aeIbnqkFa2NhccL1OR
+ 9Ozt.hls3F7vzIK_eHZEBRF3M3pr.PZZYHPjvyYNeVJYfpyIuX.OcsPg764OUzJOMa43orXhNS4K
+ 3owHkulGGEtz4ix_m_sIj9g_Wrhfafu1JF2i_RmvDcu9y3YzbagTrXn2GUwk8fh_TMLjrTQkASpq
+ 4BVd1339sYkwtOYZ1MHm9zvNNs1Lji9L2c1zL6XKBgr8M6bBDzu5PGNZpy7MJx2gLsrjgPUifq5O
+ W7MSSjnROAXwzws6gRzfUNUMFG6Lyq.doIiEoRVNBLZnmyQ--
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 58421644-9a9e-4c1b-b5b1-015a27889dce
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.ne1.yahoo.com with HTTP; Fri, 25 Apr 2025 17:21:06 +0000
+Received: by hermes--production-gq1-74d64bb7d7-2dlqg (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 382c63824636e912791305cbab0917b5;
+          Fri, 25 Apr 2025 17:21:01 +0000 (UTC)
+Message-ID: <184c3ed7-5581-4bdf-99ea-083e28e530a8@schaufler-ca.com>
+Date: Fri, 25 Apr 2025 10:21:00 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|BY5PR12MB4241:EE_
-X-MS-Office365-Filtering-Correlation-Id: 344e7d66-8219-4e67-3127-08dd84152cfc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?G9g8javZOOwv82E8jIeaczJDSe4Y0FfjblBeCuArNKd79H0YgofCsKTY43MI?=
- =?us-ascii?Q?0D3ZfdiCGqkop8gQzsYpTB8ijeJA4Q1G5kg3+pcgam2D5ynI0wugOZH7w+P3?=
- =?us-ascii?Q?yylKBcHBoKmW3qGXpMC3GqSOZG6UYTJGs0two2clWU2e+kukLa6G4VNWCsAb?=
- =?us-ascii?Q?iTG4Yq0JJXJongER0d1ZeUcoIHj3FiKMaxkBlcpKRjDSEe7+LfKccDxs6Esk?=
- =?us-ascii?Q?qjx2+v+WGwkrevOX4cYbAA+p5c3eWFvemVYtkCrahElpzsm0QsIhmBefpjGs?=
- =?us-ascii?Q?+zcmBe4RAIyddROlQcfuITjnhKu6SacJ8wDLs++TpPNLxXu3Coxk8OrP47JZ?=
- =?us-ascii?Q?44kgIwyWiOQl/4tYlrgiss+7XHgKd4eDnjBn7hqYZd6YMNd6IQrrwGxBVd+g?=
- =?us-ascii?Q?YRVcK23pP3QIIjlZBXcvzs+iwfrxBJ43zDL3hvHmAt3iEnS7VBMpiXbAQbVJ?=
- =?us-ascii?Q?zrah/e3OtJYywr1OoiKJ0uLJJ8HEcpnq4FXaxiwzKrBaka5zFRoecF/eR2OV?=
- =?us-ascii?Q?rP3TNfg1xKKrGN0EAFaedIh2uoWR3DdGiLkRZrfP3fZ44zOqC2aF5mwueQMW?=
- =?us-ascii?Q?HDUwwuBKw2QHPQM1UrgHRm3EsDnqUcVGtoLLNDjvkP5dCsuOI97HjikOm7ya?=
- =?us-ascii?Q?y3fI7c6Bt1hF1nVxNL/9buGIAoDIYjKj5ixOcvzzzjHI+tJ7Npa0mKtiVUgQ?=
- =?us-ascii?Q?mBP/5kkPSHcBLlJNOy6+GclQDdkd+E/ithJkXjhpKo4a0ejZb9Kw/8k20HN/?=
- =?us-ascii?Q?FokDPyXz65ahO6SuoaPBg1L05tpMLJrcn+qtCw/egxWZEI7e0f7JrWK6Tf2u?=
- =?us-ascii?Q?FOHlv2+Wv6zkdfJ7wDayLVakRu61R2zH88L4oTLTVfcC9zV0nXUhot+42eYb?=
- =?us-ascii?Q?sglazHCR3vPsEHsp0aFZVaS/mri/pJFPmKqsE1Pf4wb23QNJDQEakOkrr1Tp?=
- =?us-ascii?Q?eNUpPH+hr2U4YsGTcASllkCFECFJLGEQFVuluv1+GMf5I7l3AIrufcSWVZRH?=
- =?us-ascii?Q?NThp0hH+coLDGw/QJZbp1d3Sjwi1hFV8QYQk7PX74kOWMy9QH7C+lNLwC8xm?=
- =?us-ascii?Q?Tt41o+YqBn9NxA4wVApD6nHzTBe32FmK3ZB+M/PF6Fp44CsiLVCC4BpP1u/6?=
- =?us-ascii?Q?usJy53mRdGsG6pdBuKwc1FcDk/FvDxZFEMzo9yhlmjogvGitrf/G/ZoIyCqc?=
- =?us-ascii?Q?u5PkvNsjnpXkqHgV9t1JRDXfXY+pbJdYpkAS5yWGoReElubFpJVHbM0ZMFiz?=
- =?us-ascii?Q?1i8tlha3UNkUzPKlhYv6Fz/ImvrKcG5Xfxa22rjBYKfQc4aJIeTMLxmytAv7?=
- =?us-ascii?Q?ZmudRqPn7/Bo7AKZy1z1cpLWp5RrxCQZIytUuWwFt4a0zt/CsZbz8qfMn0XH?=
- =?us-ascii?Q?qGTbanU/c6eUeY/9TfnyAmf4LFejjdnb5a2Xg8835efdkqlipoPMrtOsIrGT?=
- =?us-ascii?Q?IjTD5js1zjw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?B9Um079yj23S6c+njUvGOn1m8oil/ymb+GRQEMBQQQHBdWX6rEwaAoYNBKwy?=
- =?us-ascii?Q?EBMWE9fDETuvmOItcQa/GB/5IuR8OlP8e7ki+83J75ZispgSYPA6X44vVg4O?=
- =?us-ascii?Q?fSxMsGjMNaSWHY/epXeA1jY6T6r8KoJ9dbgMx+rWQq+j7nicyQoqloMJot6Y?=
- =?us-ascii?Q?j5lHoW3WEjebo3L2m/JaHOaXblhOK29GS1eSnJ+Yj1JpJQcaTGxEP2kDWrYu?=
- =?us-ascii?Q?1lEyGQx07BRFrSB0iqRlk0MdmwpmBv55/jmbYliQdx2KxCdxYl1rPTFYJUJ5?=
- =?us-ascii?Q?nU1/Q6j6veUqR5kTiXFNGC74vSKwcaE21FyLiqgWHqlEMaGYoYlfjGRhLrlA?=
- =?us-ascii?Q?IYYZyNowHIbafRT21QkaqqwNBRCKzswk08CN+vhUDGnXnmUqdNRD7xQiezLi?=
- =?us-ascii?Q?bzlR3x/LF2swHFd6XRuJsIZQ8zA5a8twAJgLsRog9P7ePUgYcoxPBrwkWjaD?=
- =?us-ascii?Q?HylxLZVKJ50iqKVXeMLUfD24lOpF8nWpu1U2VOzTCVxckSLLuXv2sNF96uGw?=
- =?us-ascii?Q?QGl9KVAdJHl/tinTTa81x4ULyLgZpWxUSmNG75IJXlT3WL2nGOs6MLlm18IU?=
- =?us-ascii?Q?mFyUHZSrNR+88fgBgIvdrBTmht/5zfP4XB4lBXUajgstifpDGvsmUTv1t9m/?=
- =?us-ascii?Q?Wk8CrQM5UTkyQHyu3nBXOpWPLRxzOZY5nF6V4F/zI+w5xJQG14CrEIbMFNJv?=
- =?us-ascii?Q?NThnBawc8pxYnqPmX7SZ0OYTZwBpmOLmk20b1rgzLhPwLR9saXrzL7kVrXsg?=
- =?us-ascii?Q?N+PcfJivKD7KrVQUErbbz6dmHC9BQsP1P0/PGWYDQOXaUGCoV5eF2x+ZUfHr?=
- =?us-ascii?Q?DGSeC+ktsb68cCaqS1y6z9ox0gqcLpWlag00wHFVvjwFj69dFPwVlr6tOctX?=
- =?us-ascii?Q?WPSGi/cJgDaHRAQGOvJV4UhzMEHkn4BQ5Qq3Fw7iD8dVDc/clGf3uI0YNRYT?=
- =?us-ascii?Q?H3m/SeG/nvQmDx7lbVTTdFI+4fTUYrVzVYi18Z6YRkqWpK0R1HXbFXrprA27?=
- =?us-ascii?Q?v5+jUkN8HRVZt8SbSbDd1YnaEs1SHfpNFad38ToBZoPRPria1ROn+NE9mikb?=
- =?us-ascii?Q?Xl1LOgoDpxy6zTjtgZF2bjwJsEpIbbSKNRyo1U/pxW+T1I5AqVw2+Cmjnb1z?=
- =?us-ascii?Q?JGxaKgZ6oT23m0GOECy+8wUj7sNb9ITBpKLP0xhFS0xOLLysEaroJiuKg/B5?=
- =?us-ascii?Q?RRJd9vGAkdq7wPf6wpr8xY5zOt+ubbg7ZpWG8DK8iS155rRTyxnvXF2y73mx?=
- =?us-ascii?Q?zFofB5sn5MPFaKG82Y6ji9r2D19etcOqp6DQx3YyIxP9ZRa9r3JTdgWUqXgs?=
- =?us-ascii?Q?eJxciMKXvq0XxzDg0B7Vf3spgmO5XMVfEGfR/aalTbcswVPZFEhayUZenaOM?=
- =?us-ascii?Q?9iXsDkAy9XrkmtPiShSvXnA8CvWEbRw3b87d5cDjdChX3EOlDXk9cynUr8Vs?=
- =?us-ascii?Q?wBUx5pzH6qhsAeH+60eZM4pmp/zmwkH2cCWgmDMtUhfTssdeJY8syvoqe73s?=
- =?us-ascii?Q?4tw1bs5qqpnz8cMiJW4NIJZQhtbztkRqvCBtgNLQtbcLol7X1/S+BfLK6xfn?=
- =?us-ascii?Q?ISdRS1UtO5jTRhYpHIGoMKPZDyr130jYLu6Dwexz?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 344e7d66-8219-4e67-3127-08dd84152cfc
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Apr 2025 16:21:04.3150
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 8lMYBadg3GWxIS+PeKzt1JmSh6521Ngy55/JgXCZj3A6bRczhcRSxdpFb9Ntr1n+
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4241
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fs/xattr.c: fix simple_xattr_list to always include
+ security.* xattrs
+To: Stephen Smalley <stephen.smalley.work@gmail.com>,
+ Christian Brauner <brauner@kernel.org>
+Cc: paul@paul-moore.com, omosnace@redhat.com, selinux@vger.kernel.org,
+ linux-security-module@vger.kernel.org,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20250424152822.2719-1-stephen.smalley.work@gmail.com>
+ <20250425-einspannen-wertarbeit-3f0c939525dc@brauner>
+ <CAEjxPJ4vntQ5cCo_=KN0d+5FDPRwStjXUimE4iHXJkz9oeuVCw@mail.gmail.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <CAEjxPJ4vntQ5cCo_=KN0d+5FDPRwStjXUimE4iHXJkz9oeuVCw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.23737 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Fri, Apr 25, 2025 at 10:32:27AM -0500, Eric W. Biederman wrote:
-> > That seems like splitting nits. Can I do current->XXX->user_ns and get
-> > different answers? Sounds like yes?
-> 
-> Totally.
-> 
-> current->cred->user_ns (aka current_user_ns) is the what the process
-> has.
+On 4/25/2025 8:14 AM, Stephen Smalley wrote:
+> On Fri, Apr 25, 2025 at 5:20 AM Christian Brauner <brauner@kernel.org> wrote:
+>> On Thu, Apr 24, 2025 at 11:28:20AM -0400, Stephen Smalley wrote:
+>>> The vfs has long had a fallback to obtain the security.* xattrs from the
+>>> LSM when the filesystem does not implement its own listxattr, but
+>>> shmem/tmpfs and kernfs later gained their own xattr handlers to support
+>>> other xattrs. Unfortunately, as a side effect, tmpfs and kernfs-based
+>> This change is from 2011. So no living soul has ever cared at all for
+>> at least 14 years. Surprising that this is an issue now.
+> Prior to the coreutils change noted in [1], no one would have had
+> reason to notice. I might also be wrong about the point where it was
+> first introduced - I didn't verify via testing the old commit, just
+> looked for when tmpfs gained its own xattr handlers that didn't call
+> security_inode_listsecurity().
+>
+> [1] https://lore.kernel.org/selinux/CAEjxPJ6ocwsAAdT8cHGLQ77Z=+HOXg2KkaKNP8w9CruFj2ChoA@mail.gmail.com/T/#t
+>
+>>> filesystems like sysfs no longer return the synthetic security.* xattr
+>>> names via listxattr unless they are explicitly set by userspace or
+>>> initially set upon inode creation after policy load. coreutils has
+>>> recently switched from unconditionally invoking getxattr for security.*
+>>> for ls -Z via libselinux to only doing so if listxattr returns the xattr
+>>> name, breaking ls -Z of such inodes.
+>> So no xattrs have been set on a given inode and we lie to userspace by
+>> listing them anyway. Well ok then.
+> SELinux has always returned a result for getxattr(...,
+> "security.selinux", ...) regardless of whether one has been set by
+> userspace or fetched from backing store because it assigns a label to
+> all inodes for use in permission checks, regardless.
 
-Well, this is the head hurty bit. "cred->user_ns" is not what the
-process "has" if the kernel is checking resource->netns->user_ns for
-the capability checks and ignores cred->user_ns?
+Smack has the same behavior. Any strict subject+object+access scheme
+can be expected to do this.
 
-How does a userspace process actually know what its current
-capabilties are? Like how does it tell if CAP_NET_XX is actually
-available?
+> And likewise returned "security.selinux" in listxattr() for all inodes
+> using either the vfs fallback or in the per-filesystem handlers prior
+> to the introduction of xattr handlers for tmpfs and later
+> sysfs/kernfs. SELinux labels were always a bit different than regular
+> xattrs; the original implementation didn't use xattrs but we were
+> directed to use them instead of our own MAC labeling scheme.
 
-What about something like CAP_SYS_RAWIO? I don't think we would ever
-make that a per-userns thing, but as a thought experiment, do we check
-current->XXX->user_ns or still check ibdev->netns->XX->user_ns?
+There aren't a complete set of "rules" for filesystems supporting
+xattrs. As a result, LSMs have to be creative when a filesystem does
+not cooperate, or does so in a peculiar manner.
 
-> > Is it the kernel's struct ib_device? It has a netns that is captured
-> > at its creation time.
-> 
-> Yes.  Very much so.
 
-Okay.. And looking at this more we actually check that the process
-that opens /dev/../uverbsX has the same net_ns as the ib_device:
+>>> Before:
+>>> $ getfattr -m.* /run/initramfs
+>>> <no output>
+>>> $ getfattr -m.* /sys/kernel/fscaps
+>>> <no output>
+>>> $ setfattr -n user.foo /run/initramfs
+>>> $ getfattr -m.* /run/initramfs
+>>> user.foo
+>>>
+>>> After:
+>>> $ getfattr -m.* /run/initramfs
+>>> security.selinux
+>>> $ getfattr -m.* /sys/kernel/fscaps
+>>> security.selinux
+>>> $ setfattr -n user.foo /run/initramfs
+>>> $ getfattr -m.* /run/initramfs
+>>> security.selinux
+>>> user.foo
+>>>
+>>> Link: https://lore.kernel.org/selinux/CAFqZXNtF8wDyQajPCdGn=iOawX4y77ph0EcfcqcUUj+T87FKyA@mail.gmail.com/
+>>> Link: https://lore.kernel.org/selinux/20250423175728.3185-2-stephen.smalley.work@gmail.com/
+>>> Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+>>> ---
+>>>  fs/xattr.c | 24 ++++++++++++++++++++++++
+>>>  1 file changed, 24 insertions(+)
+>>>
+>>> diff --git a/fs/xattr.c b/fs/xattr.c
+>>> index 02bee149ad96..2fc314b27120 100644
+>>> --- a/fs/xattr.c
+>>> +++ b/fs/xattr.c
+>>> @@ -1428,6 +1428,15 @@ static bool xattr_is_trusted(const char *name)
+>>>       return !strncmp(name, XATTR_TRUSTED_PREFIX, XATTR_TRUSTED_PREFIX_LEN);
+>>>  }
+>>>
+>>> +static bool xattr_is_maclabel(const char *name)
+>>> +{
+>>> +     const char *suffix = name + XATTR_SECURITY_PREFIX_LEN;
+>>> +
+>>> +     return !strncmp(name, XATTR_SECURITY_PREFIX,
+>>> +                     XATTR_SECURITY_PREFIX_LEN) &&
+>>> +             security_ismaclabel(suffix);
+>>> +}
+>>> +
+>>>  /**
+>>>   * simple_xattr_list - list all xattr objects
+>>>   * @inode: inode from which to get the xattrs
+>>> @@ -1460,6 +1469,17 @@ ssize_t simple_xattr_list(struct inode *inode, struct simple_xattrs *xattrs,
+>>>       if (err)
+>>>               return err;
+>>>
+>>> +     err = security_inode_listsecurity(inode, buffer, remaining_size);
+>> Is that supposed to work with multiple LSMs?
 
-static int ib_uverbs_open(struct inode *inode, struct file *filp)
-{
-	if (!rdma_dev_access_netns(ib_dev, current->nsproxy->net_ns)) {
-		ret = -EPERM;
+Nope.
 
-bool rdma_dev_access_netns(const struct ib_device *dev, const struct net *net)
-{
-	return (ib_devices_shared_netns ||
-		net_eq(read_pnet(&dev->coredev.rdma_net), net));
+>> Afaict, bpf is always active and has a hook for this.
+>> So the LSMs trample over each other filling the buffer?
 
-So you can say we 'captured' the net_ns into the FD as there is some
-struct file->....->ib_dev->..->net_ns that does not change
+The bpf hook exists, but had better be a NOP if either SELinux
+or Smack is active. There are multiple cases where bpf, with its
+"all hooks defined" strategy can disrupt system behavior. The bpf
+LSM was known to be unsafe in this regard when it was accepted.
 
-Thus ib_dev->...->user_ns is going to always be the user_ns of the
-netns of the process that opened the FD.
+> There are a number of residual challenges to supporting full stacking
+> of arbitrary LSMs; this is just one instance. Why one would stack
+> SELinux with Smack though I can't imagine, and that's the only
+> combination that would break (and already doesn't work, so no change
+> here).
 
-So.. hopefully final question.. When we are in a system call context
-and want to check CAP_NET_XX should we also require that the current
-process has the same net ns as the ib_dev?
+There's an amusing scenario where one can use Smack to separate SELinux
+containers, but it requires patches that I've been pushing slowly up the
+mountain for quite some time. The change to inode_listsecurity hooks
+won't be too bad, although I admit I've missed it so far. The change to
+security_inode_listsecurity() is going to be a bit awkward, but no more
+(or less) so than what needs done for security_secid_to_secctx().
 
-Jason
+>>> +     if (err < 0)
+>>> +             return err;
+>>> +
+>>> +     if (buffer) {
+>>> +             if (remaining_size < err)
+>>> +                     return -ERANGE;
+>>> +             buffer += err;
+>>> +     }
+>>> +     remaining_size -= err;
+>> Really unpleasant code duplication in here. We have xattr_list_one() for
+>> that. security_inode_listxattr() should probably receive a pointer to
+>> &remaining_size?
+> Not sure how to avoid the duplication, but willing to take it inside
+> of security_inode_listsecurity() and change its hook interface if
+> desired.
+
+>
+>>> +
+>>>       read_lock(&xattrs->lock);
+>>>       for (rbp = rb_first(&xattrs->rb_root); rbp; rbp = rb_next(rbp)) {
+>>>               xattr = rb_entry(rbp, struct simple_xattr, rb_node);
+>>> @@ -1468,6 +1488,10 @@ ssize_t simple_xattr_list(struct inode *inode, struct simple_xattrs *xattrs,
+>>>               if (!trusted && xattr_is_trusted(xattr->name))
+>>>                       continue;
+>>>
+>>> +             /* skip MAC labels; these are provided by LSM above */
+>>> +             if (xattr_is_maclabel(xattr->name))
+>>> +                     continue;
+>>> +
+>>>               err = xattr_list_one(&buffer, &remaining_size, xattr->name);
+>>>               if (err)
+>>>                       break;
+>>> --
+>>> 2.49.0
+>>>
