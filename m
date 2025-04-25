@@ -1,201 +1,316 @@
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2044.outbound.protection.outlook.com [40.107.236.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C74A42069;
-	Fri, 25 Apr 2025 13:54:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745589252; cv=fail; b=CDYTelbRRwRcbnQlH/VCzbI+hyp3XSRUCZ0CBxUyQTf03FbDGxORNZya8l1xfgx1facBs7zK5SOrsBE9Bf+v046JOYKb0x8hI/3xfGAeK03La4+ig6/gaKCbKQkyEbudwKVAwkGl5xwEYbMa6ov+wVXBiGWe9qx3bIQ3q+IyELM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745589252; c=relaxed/simple;
-	bh=KwOgzi9Bu7S2lZ1Aluvyhj8PjfxdCKQ+2hvHVpGiDJA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=T30LBbgFvj9RXDbGVu1ms1XE4N61jXuGsy4S7KGCrTfFvv6nsvpt8TPY3b5dfv4niVqH0bFeTBrz8x/Yw5//0zVodUtPm/wPWV2rPyENzdIbYF/O07RMPDAaG+jmyUmMts+Ghl79AiUmlHXQaiGsZBumr94CGyCG78XQWOQA3o4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=oWQtztkK; arc=fail smtp.client-ip=40.107.236.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 563D1243946
+	for <linux-security-module@vger.kernel.org>; Fri, 25 Apr 2025 13:58:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745589503; cv=none; b=FldLQPuca09TE7XrzL0iAbaQsZL8GiCmSU6JjgKYTOrnAWHFYfC22CvZs05XFvAQAaVeFufGu71fVOuQsMrnhfY3YGaTmkgu7eWjlduPqD2elQ00uHZIHmOJfC3v1qrQ5jxriv/04K11vzQCvBGJDVLgORf5Scn+l1zdks9EwbE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745589503; c=relaxed/simple;
+	bh=mSfgxgNnQicQTVD+wO7Krim+CD6u6749EhxujOqNJmg=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=CvMVONCqOEBSwkcil2CeNRAavJHyQ7uma/u2i93235mp0glFahumYL1tJaju71dFghtVelfgLP2nBLim/PjU8NUS62d1+Ogg8szIAkQKLAFHs6Zvi3FpzED2cmBbbiCX3yBt65icZy5dH8UgPlDktmK7KuveLZq5/ewmLT2ZLfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fgYijzXD; arc=none smtp.client-ip=209.85.208.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="oWQtztkK"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KsuolqIYKdSZOjMM3PNQ21uW51EjQ9V5wRQHRx98/dHKfduKO4NTmCbgyBO4UKl2NnmA4d/s393RBIRntEC9XGlKc6dra50q/grihmOnYYukY4XWs+GWa7QexxHQeFS2yx5txBAtAHlmjr7D0cs4Hwsg8W84qmVZSa1CkDvdD3bf3gdE3rp/SLOUuIfC5p82QvUpYrxAZy+Za+g6P8dPqcaSiQF9YIWYZo94L4aBuBF6reBRW1SUJRtPReWHGXUKhTQw/SXaR2BA4C7VtSwt0ycCCff2CLhcpip3SVC0BtNlBSnEQZHmsfZAegiHiEQ8oDxK1wrzNhRMvqtM9XFPMw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KwOgzi9Bu7S2lZ1Aluvyhj8PjfxdCKQ+2hvHVpGiDJA=;
- b=PMPCyzz2OaYQq/Wktm8vb8ufWOevs2XiI3AYmLxe1S5fF88CVMiCUqgPVfLXzDQJzorFX/yYAgaPpxQwv6B1MKe21ACJyqOW882YUh7xW+BXqLFSZdExWzznjX/xnjP2p/UydKfSJfpewJzjDYMPAX6Gp1q2FnnRmqSdFgwwx8Np2k5MbUFOLwYnrqiyzdXtOyjrcT9iSl+GFBhe9Ah5iFsEN+LtMv+mUAR1jHSojK/H4nWQrB+EjoSWmODoYaWCplS8FJjqf1mAsOYIID6obO4MQIbUA89jFMFOJaHOOUyZzOA1QKCjFemcyn5d8NRKE2fzpco/fKrAouwPMUfGNQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KwOgzi9Bu7S2lZ1Aluvyhj8PjfxdCKQ+2hvHVpGiDJA=;
- b=oWQtztkKR6EyAKp6GjpzXs/TgGD1r0TpFLP1MuBX/ByRUakJOo4Vdtp7SW+UIyXhAI1qdRMk34ohPp9QXNCckXO6BcbLBvlmsaFogWoldv6boY6u9RhezxEn4mgPOUJ5rh7YN9yf0uD0NW0CGKMHynPzUH4diy4JPM51tQyAO87dd8U8071Z9cHFW3s5SLjZInyFjDx5xtDnCXzwpvpdi/kAA6v2kw2/UeV73mI4S7iNrBkTPgKAy6AXMW4itDtADJdA95Tx2EwmchfikeJcCUnu9XlWvXIlLdfDPaeeQOtsS+sRSBZC0GaW8xnoytdXWYndSjQUuYRauvw4u4n5PA==
-Received: from PH8PR12MB7208.namprd12.prod.outlook.com (2603:10b6:510:224::7)
- by SJ2PR12MB7800.namprd12.prod.outlook.com (2603:10b6:a03:4c1::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.27; Fri, 25 Apr
- 2025 13:54:07 +0000
-Received: from PH8PR12MB7208.namprd12.prod.outlook.com
- ([fe80::1664:178c:a93e:8c42]) by PH8PR12MB7208.namprd12.prod.outlook.com
- ([fe80::1664:178c:a93e:8c42%3]) with mapi id 15.20.8678.025; Fri, 25 Apr 2025
- 13:54:07 +0000
-From: Parav Pandit <parav@nvidia.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-CC: "Eric W. Biederman" <ebiederm@xmission.com>, "Serge E. Hallyn"
-	<serge@hallyn.com>, "linux-rdma@vger.kernel.org"
-	<linux-rdma@vger.kernel.org>, "linux-security-module@vger.kernel.org"
-	<linux-security-module@vger.kernel.org>, Leon Romanovsky <leonro@nvidia.com>
-Subject: RE: [PATCH] RDMA/uverbs: Consider capability of the process that
- opens the file
-Thread-Topic: [PATCH] RDMA/uverbs: Consider capability of the process that
- opens the file
-Thread-Index:
- AQHbk9YLoK1pT4atn0WpWWxcsGvDt7N3vsYAgACIALCAAIEngIAAkUBrgAAxToCAGipgUIAZ+iMAgACAGGCAACPuAIAAA3qQgABFyACAAUU9AIAAB8qAgAAxbYCAAAUbgIABS0ZQgAAqToCAABIpe4AAAEUAgAAOzYCAAQq5sIAAXSeAgAF369CAAA4KAIAABCOg
-Date: Fri, 25 Apr 2025 13:54:07 +0000
-Message-ID:
- <PH8PR12MB720834D2635090B376790F30DC842@PH8PR12MB7208.namprd12.prod.outlook.com>
-References: <20250422161127.GO823903@nvidia.com>
- <20250422162943.GA589534@mail.hallyn.com>
- <CY8PR12MB71955B492640B228145DB9CFDCBA2@CY8PR12MB7195.namprd12.prod.outlook.com>
- <20250423144649.GA1743270@nvidia.com>
- <87msc6khn7.fsf@email.froward.int.ebiederm.org>
- <CY8PR12MB71955CC99FD7D12E3774BA54DCBA2@CY8PR12MB7195.namprd12.prod.outlook.com>
- <20250423164545.GM1648741@nvidia.com>
- <CY8PR12MB7195D5ED46D8E920A5281393DC852@CY8PR12MB7195.namprd12.prod.outlook.com>
- <20250424141347.GS1648741@nvidia.com>
- <CY8PR12MB7195F2A210D670E07EC14DE9DC842@CY8PR12MB7195.namprd12.prod.outlook.com>
- <20250425132930.GB1804142@nvidia.com>
-In-Reply-To: <20250425132930.GB1804142@nvidia.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH8PR12MB7208:EE_|SJ2PR12MB7800:EE_
-x-ms-office365-filtering-correlation-id: f5e8b13c-c624-420b-bfaa-08dd8400a5cc
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?RFbeXPNkhrTpn9Ii/2CRgxBvIc42haBhwfNvU6XeLb5zZGvOfTiHP5TtKqlM?=
- =?us-ascii?Q?sDVg8T29ij3UD0boQ3DLiXVxoj/7l7H59EAu78Me+S4n+4UtwQMx6KM/W/BM?=
- =?us-ascii?Q?yS3qdohUlM776YTtDY+0vLvECi6WHK04r5HeY2smjJ8/kOmMbpqtXFCzrpKd?=
- =?us-ascii?Q?7/7UeCV3s7LpBl2NXM5j+FznXQh0KhCPHX3mvEGAYtUFA1PlZuLBx5AH/hkE?=
- =?us-ascii?Q?HKrmGuMXG+WQhn2dlGc8ybpq4ppEXzFxd/gKXDephDGDybNwF15RSP9pfwBb?=
- =?us-ascii?Q?ktleB5xA/827fRq2bAFhwpgh3duWpkMsO5yVZlEoAfZhcUNsedUXJ8O4nKDw?=
- =?us-ascii?Q?4+9B+/TpZwyEbmh7yqsDpgm1Z95ZtarC1BaJVWL15ZNYNxgP+xVeuW6chpMi?=
- =?us-ascii?Q?dtweZql7HdOh+e7jFwxmMoYCMWBXkXoPSrczUZs3YMS8ePel9TCkD2K+qmbY?=
- =?us-ascii?Q?Qh3IA4N7JQMDo85hFQt3xwGcJbGYjlD0uqPvhyBQseUw6Jkd9GXIbZE86id4?=
- =?us-ascii?Q?EaSAa6XpuwzkPGT69XoSJjrTK0muue64uHZyvExy1wNunm5+tphG1WNymdbO?=
- =?us-ascii?Q?WVEcNNPSa87s3c0tYwBcBr8LU1DHzXOBwC//nlMRoS8Rs7xG2Cuw979yLgNP?=
- =?us-ascii?Q?qT2ViBi1HoJqED6hAhXDeenuLLWHQw3mSdQz7Ug0M249Q/2gR1EODTNM8jim?=
- =?us-ascii?Q?S76o2oC1p0NjCYsQG5/hBfNjmCqdv7hYDKyzoO1s6606bOFwzYOj1xy6H+u+?=
- =?us-ascii?Q?WZq46MuYVKdBivT2P6r1T+roUYw+DbAOVRSLPbebFFwXl83CVMKqyKlDS5jX?=
- =?us-ascii?Q?BoxrKtwMSlINEKUUE0Hwm5F3HDr/G3S8gvZd248f6bNfor6zlj4NJ9qWEimn?=
- =?us-ascii?Q?qdBpxHU80w2h5mYjMseMvwLY/PTZy9HfXrZKwh3wLJtUMfoU8htlj1G6VOtH?=
- =?us-ascii?Q?opOuKAeNdEIvF9zcd0WVyj3E6daLE3Qeto04iNP/vGMiNbJCxbtF6uqeFhIp?=
- =?us-ascii?Q?rBxlEG/0nEyBB+dfwvG9zTuu1vosV1LWJ3LCM+q0wx2Fb2rvkm2ytwRhfTgR?=
- =?us-ascii?Q?6XxUf3iS6tUlvTHweg+7XwbbDfAb9frcHigkBbRIbtv+hdYmpBekvNAezUKJ?=
- =?us-ascii?Q?FX345fkHNTn0QirRblCpYe4fviJk68A+ZQ7BwSUhq9AYuBRdIo3PdB4nSxCR?=
- =?us-ascii?Q?Vi4VWRT8fxPt5gtv07tIeUED9lGAMhOja70SyTbc/wu0NHVDDxaEFD6dmXZf?=
- =?us-ascii?Q?cVZ8/8ccBiqA38GW4SN+Z3mHIvwe4uSBsybQhLylQNEjACFVe3eh6/ZyylcF?=
- =?us-ascii?Q?iwDvbOk9yM4/VvkXpBtAIchTHp6E1w7d77+Lf7mFW0D71nJrF8jvy/Jd+4A4?=
- =?us-ascii?Q?bsER3pSvNzT8h45zoQlJKCT3EmmtmNR55f1vN9PEciBJ1yqowQM46RrmvKT7?=
- =?us-ascii?Q?soGoY7mhoXbz5DqOQvsgDewG8Ku/BueR/U/vnn0EEWt01VOefriA4w=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7208.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?yRbMoKV12pVM7Y3ae0E/iKT1vxLjkAUorgKOyhrXpQFg9t8S16roznCnA2eW?=
- =?us-ascii?Q?iFiOx5Y9cGuWQc5WN7Jgnl3CrERjKyxpsvvOaOGm8/n2h+EqrjeFwzK4dBV+?=
- =?us-ascii?Q?xUVwcx9ZUvha99GC03TAqtcvEC8gEcxatqDYqJajE3Sx0q78o1RFNQTIVw94?=
- =?us-ascii?Q?x1GerJMitelu+/5WoApe4wm9s80WrASclmflVu4WdXzqYWg2BkrkZpFdyJHR?=
- =?us-ascii?Q?a9VNyyRutwi4GR+d8UNi+uAKVJNmXMSBF7NwvvUPPitmoi3kE7o5ypS82j/L?=
- =?us-ascii?Q?yBRIFihfuaJM5sm/b+jTFtg0e8s2ShZq2edk/RJ8lkJhOd24KlB9ElDrdQmq?=
- =?us-ascii?Q?/j3GuvRVepuWCiLqk8/43eOYkTZgJXJl5AYMK1TwduHYOjj9moGfmVaGWHeu?=
- =?us-ascii?Q?FRAx3t9n735GBYfv4nBJlCBVdnFwJJ1YikCpjhi46LWCREZxP0HPQ0qsBJ1G?=
- =?us-ascii?Q?PDOLhM2+m7B3dNGxWgNl2s9e5/h73JQ9yxDqA2HvcS9bRs3YuqGDVDfLwpt9?=
- =?us-ascii?Q?TwqzYIlOvy1yJQZNqWvMU9z8w+PwD4Zfx66NwJpq2xIpjg5mKTkdkUh9U5MR?=
- =?us-ascii?Q?SdBguifWpDVv6XJNRjiCfVlBpK3E0tMM1i9GrTLIpESXQf9dVyj3mpZIHWnz?=
- =?us-ascii?Q?MUwButAyuF0qvRbgJLeZEU0jUPtfueaq54zVy+Bb84dOYWgdvPJW25MhNXOZ?=
- =?us-ascii?Q?2+BoBQbTQeMWntyh1QCLYjUk8w+4vmIPQUyY5qaYi35p9QU3v2CxYwBvvxP2?=
- =?us-ascii?Q?h8kSXiR7hHu4+gHhSPSWD+NYf4//Bntb9swQ/TICsZACgRna86MNiVzTE7rd?=
- =?us-ascii?Q?f/o0syJAAd+vA/AaTKg+FZVJS5jwdYwTJgbCrLd7LHAj8Ng54HCoahu//ILm?=
- =?us-ascii?Q?Ps5se/q+Yzwtvy4sRjZln/jMD0AmEWnTwuDr71Uccq8xUTYioaK3Zb6qPY5y?=
- =?us-ascii?Q?tATgPnnpFxJe9TaOe7SI5r7Oh/njsLNiFiawqtdfylBgrcffEJc4MSrRJYlD?=
- =?us-ascii?Q?sDo7tSMy8YIys28uwtrlMOy+K8AKRoWzLfyo5ptOusTPjAxfcX+2soC1vpw7?=
- =?us-ascii?Q?o2VWXkyA13lfPKNRJHyVFatWd8As9emrmwhs8uVibkDMZUxomZhly9FWQK/T?=
- =?us-ascii?Q?1eKbv+zdfhevQPPFOmBUzu5/GJvNWyIQKtM4hMMpA7G6uFb0BTdeLdtIb2FQ?=
- =?us-ascii?Q?EmznojmMJBqDEYxGIzVmSTeA15fj9xibU1VI34lM4PVCiSlYT5mZo2iP7tt9?=
- =?us-ascii?Q?x6wyY7i8jGRkJ/MegxYRtQH+ReHrkEknIXmHfyQyLibDEb8LlP2HP9aP2Zga?=
- =?us-ascii?Q?jVdoCEoLm5daAzSpJpVGxToXRH5CcmKILh4FfxPceTQJZUtI+JL7Q3n+f/ha?=
- =?us-ascii?Q?npBGqg/iG+udiI4LFDJah9Au/PyfVqQuoX5byO+hxKZ0h0NATm94/bWJfamD?=
- =?us-ascii?Q?iS+GsnT3sDrnzhlI2LR5ErKE1GKgOOddppymc9NERUJteTxIIKe49KryQP27?=
- =?us-ascii?Q?WxsTuT4lQ3pA8Sv02gvQQ8RGf7Sc2o8P2lkLgO9dNEPr4+LFwKp+doUrvZBa?=
- =?us-ascii?Q?b3B0sn1w6iEghBJLcbo=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fgYijzXD"
+Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-5e6d978792dso2282116a12.1
+        for <linux-security-module@vger.kernel.org>; Fri, 25 Apr 2025 06:58:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1745589498; x=1746194298; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=21RGhzH0LfpN512qvg67nRg0lK0sOUpcSP9q0JHAmSg=;
+        b=fgYijzXDqgAyJlCLm3Kdsv/6BmS4zgtRNgaSnkz/HM1aSXO/bl8rmW7ZK6zYzzJzkv
+         HoWyJpRCo6e6K0LgOq7sj3z5RhzXC+LMmL3wlkpVez7G77oaS8u4GhrGkw13xWQT3onK
+         XkzAvJHlaNEnZu9Kul4p0NrvLdEDVDG7r6azO+rCK01dTr1vw2u2BoQt1SaTHOWNTFD5
+         ilnIiEYGUAR3s9ZF8XaSQuITUsHfNIk9h0cDd9OlWl8k4x1xB3K1ZI/NOLkrliDt5XXj
+         pfQ2dMlYPUf0Wo27N/MHPTyAbqMSe77kDCte4hSoJhKWQRYmhcYHliXjdOidgiZUFwsl
+         2TQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745589498; x=1746194298;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=21RGhzH0LfpN512qvg67nRg0lK0sOUpcSP9q0JHAmSg=;
+        b=QUpgcpi6HvMXgHW/XjyBfjylo9wgdDvJMRvZdiowJSY8pmnDqpfh3TGKlifhfuq41e
+         8tmW6lWvdBS1PK8P2UfxDah7tHtjtfZVeYZneKuko4nuKapaANb5XdXPH07jrY5XDiVl
+         ZOFWQMIHcI/DQqvPznF9fgx/Z3IwNnaezYpm27p3woFIBInA/wlkmUww+gbUqQswA3lU
+         uzWBZameGlRN6Y6H2qSzHEAqqiEbHpVfnHSatMNX9w1mreHO1Dzuc1rZu7mvv+EaBvWF
+         YGBIzEPjsBkHIPan0mPoODKBGcMJIxhYtGI1nQxsoWhchnz03rpbhvutqiw5D6fNycxr
+         ejmg==
+X-Forwarded-Encrypted: i=1; AJvYcCVNdl0j2EjGHR5yUq9fLpqYx/ThZpraKjvlv3U/idYqARYLLr30Gxh9hjFtNdf7HJ/HKSKJ4yVcfVlxjuUCo4UVQiaYwvE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqFMgQdk/CjCYS33DwjtWH2gi1vjizIM3UHjDcMVZBuQtRY+7d
+	pXaWMGjH6Q+rpYiPX72Lo8bW80KC8LoKuRAOEpFQDjL3AnmvfHFajNvDZMtJHtk5lN088GeT182
+	tsQ==
+X-Google-Smtp-Source: AGHT+IHFz8WbeqQVuA31odMvokIETWZDuZA7pvJUgZRzKO0ZzQ3QebkodQz4aYfMU6l5Xjjzse+J94W3gKo=
+X-Received: from edwj7.prod.google.com ([2002:a05:6402:11c7:b0:5f6:f2cf:49a7])
+ (user=gnoack job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:5009:b0:5f4:370d:96c4
+ with SMTP id 4fb4d7f45d1cf-5f721aaed59mr2136414a12.0.1745589498720; Fri, 25
+ Apr 2025 06:58:18 -0700 (PDT)
+Date: Fri, 25 Apr 2025 13:58:16 +0000
+In-Reply-To: <20250422.iesaivaj8Aeb@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7208.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f5e8b13c-c624-420b-bfaa-08dd8400a5cc
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Apr 2025 13:54:07.2426
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 46vPzZuqMVY9eji3KyymSLmkpqUXpBzyXSHoxecOev7DAFDjW9SP14CiKmLbl1jyXpkOWsqQYYLQwRCGbTIhhA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB7800
+Mime-Version: 1.0
+References: <20240904104824.1844082-1-ivanov.mikhail1@huawei-partners.com> <20250422.iesaivaj8Aeb@digikod.net>
+Message-ID: <aAuU-LmjENslCF2P@google.com>
+Subject: Re: [RFC PATCH v3 00/19] Support socket access-control
+From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
+To: "=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>
+Cc: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, willemdebruijn.kernel@gmail.com, 
+	gnoack3000@gmail.com, linux-security-module@vger.kernel.org, 
+	netdev@vger.kernel.org, netfilter-devel@vger.kernel.org, 
+	yusongping@huawei.com, artem.kuzin@huawei.com, 
+	konstantin.meskhidze@huawei.com, Paul Moore <paul@paul-moore.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+
+Hello Mikhail!
+
+I would also be interested in seeing this patch set land. :)
+Do you think you would be able to pick this up again?
 
 
-> From: Jason Gunthorpe <jgg@nvidia.com>
-> Sent: Friday, April 25, 2025 7:00 PM
+To refresh my memory, I also had a look at V3 again; One of the last big
+questions here was the userspace API in struct landlock_socket_attr.
+
+To briefly recap that discussion, what we settled on at the end [1] was tha=
+t we
+can use special wildcard values for some of the members of that struct, so =
+that
+it looks like this:
+
+struct landlock_socket_attr {
+  __u64 allowed_access;
+  int family;   /* same as domain in socket(2)    (required, never a wildca=
+rd) */
+  int type;     /* same as type in socket(2),     or the wildcard value (i6=
+4)-1 */
+  int protocol; /* same as protocol in socket(2), or the wildcard value (i6=
+4)-1 */
+};
+
+(In other words, we have discarded the ideas of "handled_socket_layers" and
+using bitmasks to specify different values for the socket(2) arguments.)
+
+So, when an attempt is made to call socket(family, type, protocol), Landloc=
+k has
+to check for the presence of the following keys in the RB-tree:
+
+ 1. (family, type, protocol)
+ 2. (family, type, *)
+ 3. (family, *,    *)
+ 4. (family, *,    protocol)
+
+but is an acceptable compromise to make ([1]).
+
+Small remark: The four lookups sound bad, but I suspect that in many cases,=
+ only
+variant 1 (and maybe 2) will be used at all.  If you create four separate s=
+truct
+rb_root for these four cases, then if the more obscure variants are unused,=
+ the
+lookups for these will be almost for free.  (An empty rb_root contains only=
+ a
+single NULL-pointer.)
+
+
+I hope this is a reasonable summary of the discussion at [1] and helps to
+unblock the progress here?  Mikhail, are there any other open points which =
+are
+blocking you on this patch set?
+
+-G=C3=BCnther
+
+
+[1] https://lore.kernel.org/all/20250124.sei0Aur6aegu@digikod.net/
+
+
+On Tue, Apr 22, 2025 at 07:19:02PM +0200, Micka=C3=ABl Sala=C3=BCn wrote:
+> Hi Mikhail.  Could you please send a new version taking into account the
+> reviews?
 >=20
-> On Fri, Apr 25, 2025 at 01:14:35PM +0000, Parav Pandit wrote:
+> This series should support audit by logging socket creation denials and
+> extending audit_log_lsm_data().  You can get inspiration from the format
+> used by audit_net_cb() but without the number to text translation, that
+> can be handled by auditd if needed.  New tests should check these new
+> audit logs.
 >=20
-> > 1. In uobject creation syscall, I will add the check current->nsproxy->=
-net-
-> >user_ns capability using ns_capable().
-> > And we don't hold any reference for user ns.
 >=20
-> This is the thing that makes my head ache.. Is that really the right way =
-to get
-> the user_ns of current?=20
-
-> Is it possible that current has multiple user_ns's?=20
-I don't think so.
-
-> We
-> are picking nsproxy because ib_dev has a net namespace affiliation?
->=20
-Yes.
-
-After ruling out file's user ns, I believe there are two user ns.
-
-1. current_user_ns()=20
-2. current->nsproxy->net->user_ns.
-
-In most cases #1 and #2 should be same to my knowledge.
-
-When/if user wants to do have nested user ns, and don't want to create a ne=
-w net ns, #2 can be of use.
-For example,
-a. Process1 starts in user_ns_1 which created net_ns_1
-b. rdma device is in net_ns_1
-c. Process1 unshare and moves to user_ns_2.
-d. For some reason user_ns_2 does not have the cap.
-
-By current UTS and other namespace semantics, since rdma device belongs to =
-net ns, net ns's creator user ns to be considered.
-
-I am unsure if doing #1 breaks any existing model.
-I like to get Eric/Serge's view also, if we should consider #1 or #2.
+> On Wed, Sep 04, 2024 at 06:48:05PM +0800, Mikhail Ivanov wrote:
+> > Hello! This is v3 RFC patch dedicated to socket protocols restriction.
+> >=20
+> > It is based on the landlock's mic-next branch on top of v6.11-rc1 kerne=
+l
+> > version.
+> >=20
+> > Objective
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > Extend Landlock with a mechanism to restrict any set of protocols in
+> > a sandboxed process.
+> >=20
+> > Closes: https://github.com/landlock-lsm/linux/issues/6
+> >=20
+> > Motivation
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > Landlock implements the `LANDLOCK_RULE_NET_PORT` rule type, which provi=
+des
+> > fine-grained control of actions for a specific protocol. Any action or
+> > protocol that is not supported by this rule can not be controlled. As a
+> > result, protocols for which fine-grained control is not supported can b=
+e
+> > used in a sandboxed system and lead to vulnerabilities or unexpected
+> > behavior.
+> >=20
+> > Controlling the protocols used will allow to use only those that are
+> > necessary for the system and/or which have fine-grained Landlock contro=
+l
+> > through others types of rules (e.g. TCP bind/connect control with
+> > `LANDLOCK_RULE_NET_PORT`, UNIX bind control with
+> > `LANDLOCK_RULE_PATH_BENEATH`).
+> >=20
+> > Consider following examples:
+> > * Server may want to use only TCP sockets for which there is fine-grain=
+ed
+> >   control of bind(2) and connect(2) actions [1].
+> > * System that does not need a network or that may want to disable netwo=
+rk
+> >   for security reasons (e.g. [2]) can achieve this by restricting the u=
+se
+> >   of all possible protocols.
+> >=20
+> > [1] https://lore.kernel.org/all/ZJvy2SViorgc+cZI@google.com/
+> > [2] https://cr.yp.to/unix/disablenetwork.html
+> >=20
+> > Implementation
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > This patchset adds control over the protocols used by implementing a
+> > restriction of socket creation. This is possible thanks to the new type
+> > of rule - `LANDLOCK_RULE_SOCKET`, that allows to restrict actions on
+> > sockets, and a new access right - `LANDLOCK_ACCESS_SOCKET_CREATE`, that
+> > corresponds to creating user space sockets. The key in this rule is a p=
+air
+> > of address family and socket type (Cf. socket(2)).
+> >=20
+> > The right to create a socket is checked in the LSM hook, which is calle=
+d
+> > in the __sock_create method. The following user space operations are
+> > subject to this check: socket(2), socketpair(2), io_uring(7).
+> >=20
+> > In the case of connection-based socket types,
+> > `LANDLOCK_ACCESS_SOCKET_CREATE` does not restrict the actions that resu=
+lt
+> > in creation of sockets used for messaging between already existing
+> > endpoints (e.g. accept(2), setsockopt(2) with option
+> > `SCTP_SOCKOPT_PEELOFF`).
+> >=20
+> > Current limitations
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > `SCTP_SOCKOPT_PEELOFF` should not be restricted (see test
+> > socket_creation.sctp_peeloff).
+> >=20
+> > SCTP socket can be connected to a multiple endpoints (one-to-many
+> > relation). Calling setsockopt(2) on such socket with option
+> > `SCTP_SOCKOPT_PEELOFF` detaches one of existing connections to a separa=
+te
+> > UDP socket. This detach is currently restrictable.
+> >=20
+> > Code coverage
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > Code coverage(gcov) report with the launch of all the landlock selftest=
+s:
+> > * security/landlock:
+> > lines......: 93.5% (794 of 849 lines)
+> > functions..: 95.5% (106 of 111 functions)
+> >=20
+> > * security/landlock/socket.c:
+> > lines......: 100.0% (33 of 33 lines)
+> > functions..: 100.0% (4 of 4 functions)
+> >=20
+> > General changes v2->v3
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > * Implementation
+> >   * Accepts (AF_INET, SOCK_PACKET) as an alias for (AF_PACKET, SOCK_PAC=
+KET).
+> >   * Adds check to not restrict kernel sockets.
+> >   * Fixes UB in pack_socket_key().
+> >   * Refactors documentation.
+> > * Tests
+> >   * Extends variants of `protocol` fixture with every protocol that can=
+ be
+> >     used to create user space sockets.
+> >   * Adds 5 new tests:
+> >     * 3 tests to check socketpair(2), accept(2) and sctp_peeloff
+> >       restriction.
+> >     * 1 test to check restriction of kernel sockets.
+> >     * 1 test to check AF_PACKET aliases.
+> > * Documentation
+> >   * Updates Documentation/userspace-api/landlock.rst.
+> > * Commits
+> >   * Rebases on mic-next.
+> >   * Refactors commits.
+> >=20
+> > Previous versions
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > v2: https://lore.kernel.org/all/20240524093015.2402952-1-ivanov.mikhail=
+1@huawei-partners.com/
+> > v1: https://lore.kernel.org/all/20240408093927.1759381-1-ivanov.mikhail=
+1@huawei-partners.com/
+> >=20
+> > Mikhail Ivanov (19):
+> >   landlock: Support socket access-control
+> >   landlock: Add hook on socket creation
+> >   selftests/landlock: Test basic socket restriction
+> >   selftests/landlock: Test adding a rule with each supported access
+> >   selftests/landlock: Test adding a rule for each unknown access
+> >   selftests/landlock: Test adding a rule for unhandled access
+> >   selftests/landlock: Test adding a rule for empty access
+> >   selftests/landlock: Test overlapped restriction
+> >   selftests/landlock: Test creating a ruleset with unknown access
+> >   selftests/landlock: Test adding a rule with family and type outside
+> >     the range
+> >   selftests/landlock: Test unsupported protocol restriction
+> >   selftests/landlock: Test that kernel space sockets are not restricted
+> >   selftests/landlock: Test packet protocol alias
+> >   selftests/landlock: Test socketpair(2) restriction
+> >   selftests/landlock: Test SCTP peeloff restriction
+> >   selftests/landlock: Test that accept(2) is not restricted
+> >   samples/landlock: Replace atoi() with strtoull() in
+> >     populate_ruleset_net()
+> >   samples/landlock: Support socket protocol restrictions
+> >   landlock: Document socket rule type support
+> >=20
+> >  Documentation/userspace-api/landlock.rst      |   46 +-
+> >  include/uapi/linux/landlock.h                 |   61 +-
+> >  samples/landlock/sandboxer.c                  |  135 ++-
+> >  security/landlock/Makefile                    |    2 +-
+> >  security/landlock/limits.h                    |    4 +
+> >  security/landlock/ruleset.c                   |   33 +-
+> >  security/landlock/ruleset.h                   |   45 +-
+> >  security/landlock/setup.c                     |    2 +
+> >  security/landlock/socket.c                    |  137 +++
+> >  security/landlock/socket.h                    |   19 +
+> >  security/landlock/syscalls.c                  |   66 +-
+> >  tools/testing/selftests/landlock/base_test.c  |    2 +-
+> >  tools/testing/selftests/landlock/common.h     |   13 +
+> >  tools/testing/selftests/landlock/config       |   47 +
+> >  tools/testing/selftests/landlock/net_test.c   |   11 -
+> >  .../testing/selftests/landlock/socket_test.c  | 1013 +++++++++++++++++
+> >  16 files changed, 1593 insertions(+), 43 deletions(-)
+> >  create mode 100644 security/landlock/socket.c
+> >  create mode 100644 security/landlock/socket.h
+> >  create mode 100644 tools/testing/selftests/landlock/socket_test.c
+> >=20
+> >=20
+> > base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
+> > --=20
+> > 2.34.1
+> >=20
+> >=20
