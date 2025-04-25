@@ -1,73 +1,155 @@
-Received: from mail-m49197.qiye.163.com (mail-m49197.qiye.163.com [45.254.49.197])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBB4F2701AE;
-	Fri, 25 Apr 2025 03:10:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB94235C1E;
+	Fri, 25 Apr 2025 09:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745550607; cv=none; b=K+Em7ymYSsXfZ+19iqQZNlUb2dvc6EWP9KPH2feT1j8xp6N99vhthUhxyVIlK0fZTy2KYqizghYSxE7XQ2sn4I3CveJNbI6TokNJLhecX4U7yeska3eu3Q76j+MG2ZLgIVLEpjBwtRzgfoI9Wz+PyCDFyPmBqGSEWxz6DEw3fGA=
+	t=1745572825; cv=none; b=lEGZirk6ULS3ahbrevliQ3fllVQ+fYwhwtcmqBr3HHsg0CHORtLF9CXuzj14tAZIQjlOUqX6Ia3s37KgLy/TeXCxhY/GtvBmM1PRDqwoe2Ev2VcMxaqFDf6jCRLk5W3RGc/vsAJM1Y6vnihN7yX8lp4Y3iTbWavXkinbWc37s5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745550607; c=relaxed/simple;
-	bh=DYkR0BRzTZgqgT2AoNDoUCSHnqk+V3ro/oiA4Y5jtOk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Ur4BCXer1G1/NBrZ7ffoga5AsVPdyQ/vOQm/L8dYBOggKr8BGiNtC52e8yHhh8eZkx3gisKL/fTHcrrbIiDHVBjm5rP7AvjaY0SNz7y7Z7tBcHy/UnIcP04yfMpb3Qp8iE9rXLpftUFLjtPTGU8wgvXaaOfYzak2lBwbNGYDVCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn; spf=pass smtp.mailfrom=seu.edu.cn; dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b=d/i6IDyu; arc=none smtp.client-ip=45.254.49.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seu.edu.cn
+	s=arc-20240116; t=1745572825; c=relaxed/simple;
+	bh=H670AXytogW3BrNyI3zj2dCfgNBrgFaCF3Zvvd9T9Rg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ML44JXnk9xI+rR0J+jLPtyK1NR+aErYLvYiDFh0QevYd6qHiVUPEqfZ3NWOgAxHmwg7ihJqxV2zv0xEK1z1AM9y53b11EyL+quJzUHLNjUPt6vMlhN5oXOYTHFQAmjMVlz6zd+wBi9e/udZVe27ORNeVHDyys7pU1o5KFoBjxV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gs9eIrkz; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b="d/i6IDyu"
-Received: from localhost.localdomain (unknown [202.119.23.198])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1311754bb;
-	Fri, 25 Apr 2025 11:09:52 +0800 (GMT+08:00)
-From: Zilin Guan <zilin@seu.edu.cn>
-To: zilin@seu.edu.cn
-Cc: jianhao.xu@seu.edu.cn,
-	jmorris@namei.org,
-	john.johansen@canonical.com,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	paul@paul-moore.com,
-	serge@hallyn.com
-Subject: Re: [RFC PATCH] security/apparmor: use kfree_sensitive() in unpack_secmark()
-Date: Fri, 25 Apr 2025 03:09:51 +0000
-Message-Id: <20250425030951.2504900-1-zilin@seu.edu.cn>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250418045250.1262935-1-zilin@seu.edu.cn>
-References: <20250418045250.1262935-1-zilin@seu.edu.cn>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gs9eIrkz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BD95C4CEEB;
+	Fri, 25 Apr 2025 09:20:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745572824;
+	bh=H670AXytogW3BrNyI3zj2dCfgNBrgFaCF3Zvvd9T9Rg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gs9eIrkz4k1iKTdXlkm8+x4io+XHkGrz39eiAB8zgKKW1IcN+/sEpBguKrN+pvYQS
+	 d6peSzBGxQP6nHQtrpzgzRIyIRbWPcGymtfMTHUyqob2mvPLTtHh9QUoemrHUYjUpD
+	 iD2B/AH4cSEcfcPCNvWOiHf+7FrTKNfArQI1QzfNk0v/aIW7st+PFsBFaKYwoT8fpv
+	 0uNOxuvMv632mVT77r25PlYvFsbkq2Vq0UzTRjn6MdlRfRhAv04PglUZoiWocs7IHF
+	 qLLMdgcmqFo+9jmIDHFHwPbY8/+Qx0fs384QESF6HANCf8XRLeCkWtqBjQj1RfThHF
+	 uAt0+XCj873oQ==
+Date: Fri, 25 Apr 2025 11:20:19 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc: paul@paul-moore.com, omosnace@redhat.com, selinux@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs/xattr.c: fix simple_xattr_list to always include
+ security.* xattrs
+Message-ID: <20250425-einspannen-wertarbeit-3f0c939525dc@brauner>
+References: <20250424152822.2719-1-stephen.smalley.work@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkaThhCVk5JShlOSx0YT0sZS1YeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlJS0lVSkpCVUlIVUpCQ1lXWRYaDxIVHRRZQVlPS0hVSktISk9ITFVKS0tVSk
-	JLS1kG
-X-HM-Tid: 0a966aec496d03a1kunm1311754bb
-X-HM-MType: 10
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6NSI6Tio5UTJODT82KC9WTAkh
-	LClPCilVSlVKTE9OTk5LTkJITkNNVTMWGhIXVQESFxIVOwgeDlUeHw5VGBVFWVdZEgtZQVlJS0lV
-	SkpCVUlIVUpCQ1lXWQgBWUFKT0lINwY+
-DKIM-Signature:a=rsa-sha256;
-	b=d/i6IDyuFnDxeMHXIbkS/Q3PTEWGYg0P8V88fug1bevYfvd3JYIJMbTTxD8PTu4XSgDViuqZmikOD6ba9phnypu4HQ5syCAk18eu8qwggoALgqBXMqKnjSsWNIB1X+uN2v7ncrVEwUXA24ZI2/LbSaJFT6dyvqbvRHrgHOuB5+E=; c=relaxed/relaxed; s=default; d=seu.edu.cn; v=1;
-	bh=6BR8cXu8hwNR5rnYgCOTDWahbVAq41fdERazexhWcSQ=;
-	h=date:mime-version:subject:message-id:from;
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250424152822.2719-1-stephen.smalley.work@gmail.com>
 
-On Fri, Apr 18, 2025 at 04:52:50AM+0000, Zilin Guan wrote:
-> To mitigate this, replace kfree() with kfree_sensitive() for freeing
-> secmark structures and their labels, aligning with the approach used
-> in free_ruleset().
+On Thu, Apr 24, 2025 at 11:28:20AM -0400, Stephen Smalley wrote:
+> The vfs has long had a fallback to obtain the security.* xattrs from the
+> LSM when the filesystem does not implement its own listxattr, but
+> shmem/tmpfs and kernfs later gained their own xattr handlers to support
+> other xattrs. Unfortunately, as a side effect, tmpfs and kernfs-based
 
-To clarify, we propose using kfree_sensitive() for secmark structures and 
-their labels because they are already freed with kfree_sensitive() in 
-another error path, specifically in aa_free_profile() -> free_ruleset().
+This change is from 2011. So no living soul has ever cared at all for
+at least 14 years. Surprising that this is an issue now.
 
-This change aligns both cleanup pathways, whether aborting early in 
-unpack_secmark() or cleaning up later via aa_free_profile() -> 
-free_ruleset(). It ensures that all secmark-related allocations are 
-scrubbed before deallocation, mitigating any potential security risks.
+> filesystems like sysfs no longer return the synthetic security.* xattr
+> names via listxattr unless they are explicitly set by userspace or
+> initially set upon inode creation after policy load. coreutils has
+> recently switched from unconditionally invoking getxattr for security.*
+> for ls -Z via libselinux to only doing so if listxattr returns the xattr
+> name, breaking ls -Z of such inodes.
 
-Best Regards,
-Zilin Guan
+So no xattrs have been set on a given inode and we lie to userspace by
+listing them anyway. Well ok then.
+
+> Before:
+> $ getfattr -m.* /run/initramfs
+> <no output>
+> $ getfattr -m.* /sys/kernel/fscaps
+> <no output>
+> $ setfattr -n user.foo /run/initramfs
+> $ getfattr -m.* /run/initramfs
+> user.foo
+> 
+> After:
+> $ getfattr -m.* /run/initramfs
+> security.selinux
+> $ getfattr -m.* /sys/kernel/fscaps
+> security.selinux
+> $ setfattr -n user.foo /run/initramfs
+> $ getfattr -m.* /run/initramfs
+> security.selinux
+> user.foo
+> 
+> Link: https://lore.kernel.org/selinux/CAFqZXNtF8wDyQajPCdGn=iOawX4y77ph0EcfcqcUUj+T87FKyA@mail.gmail.com/
+> Link: https://lore.kernel.org/selinux/20250423175728.3185-2-stephen.smalley.work@gmail.com/
+> Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> ---
+>  fs/xattr.c | 24 ++++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+> 
+> diff --git a/fs/xattr.c b/fs/xattr.c
+> index 02bee149ad96..2fc314b27120 100644
+> --- a/fs/xattr.c
+> +++ b/fs/xattr.c
+> @@ -1428,6 +1428,15 @@ static bool xattr_is_trusted(const char *name)
+>  	return !strncmp(name, XATTR_TRUSTED_PREFIX, XATTR_TRUSTED_PREFIX_LEN);
+>  }
+>  
+> +static bool xattr_is_maclabel(const char *name)
+> +{
+> +	const char *suffix = name + XATTR_SECURITY_PREFIX_LEN;
+> +
+> +	return !strncmp(name, XATTR_SECURITY_PREFIX,
+> +			XATTR_SECURITY_PREFIX_LEN) &&
+> +		security_ismaclabel(suffix);
+> +}
+> +
+>  /**
+>   * simple_xattr_list - list all xattr objects
+>   * @inode: inode from which to get the xattrs
+> @@ -1460,6 +1469,17 @@ ssize_t simple_xattr_list(struct inode *inode, struct simple_xattrs *xattrs,
+>  	if (err)
+>  		return err;
+>  
+> +	err = security_inode_listsecurity(inode, buffer, remaining_size);
+
+Is that supposed to work with multiple LSMs?
+Afaict, bpf is always active and has a hook for this.
+So the LSMs trample over each other filling the buffer?
+
+> +	if (err < 0)
+> +		return err;
+> +
+> +	if (buffer) {
+> +		if (remaining_size < err)
+> +			return -ERANGE;
+> +		buffer += err;
+> +	}
+> +	remaining_size -= err;
+
+Really unpleasant code duplication in here. We have xattr_list_one() for
+that. security_inode_listxattr() should probably receive a pointer to
+&remaining_size?
+
+> +
+>  	read_lock(&xattrs->lock);
+>  	for (rbp = rb_first(&xattrs->rb_root); rbp; rbp = rb_next(rbp)) {
+>  		xattr = rb_entry(rbp, struct simple_xattr, rb_node);
+> @@ -1468,6 +1488,10 @@ ssize_t simple_xattr_list(struct inode *inode, struct simple_xattrs *xattrs,
+>  		if (!trusted && xattr_is_trusted(xattr->name))
+>  			continue;
+>  
+> +		/* skip MAC labels; these are provided by LSM above */
+> +		if (xattr_is_maclabel(xattr->name))
+> +			continue;
+> +
+>  		err = xattr_list_one(&buffer, &remaining_size, xattr->name);
+>  		if (err)
+>  			break;
+> -- 
+> 2.49.0
+> 
