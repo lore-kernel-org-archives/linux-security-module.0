@@ -1,131 +1,78 @@
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-bc0a.mail.infomaniak.ch (smtp-bc0a.mail.infomaniak.ch [45.157.188.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5782414830A;
-	Fri, 25 Apr 2025 09:25:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E59723A58B
+	for <linux-security-module@vger.kernel.org>; Fri, 25 Apr 2025 09:38:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745573154; cv=none; b=WFFSaxmFZRo/xYadpheWC0NR53X4mZjvpvvrT08+fmLvlVoHnGG4QGJT4dmzZc0oG8XNU1GIuAWLNFg3ZjrLCYKyCnt48bd8t0unvoFgMTkcNNiEnOAKq5/0vipPRx8X/fBlXl9JeohhwS9R+1DO726vYsdhbvWsx8Hb3m6XYcY=
+	t=1745573935; cv=none; b=Sz7w2N2i3QG8H2/JTdllFsR5xrkVtIwh6X/U2yIq0IW/oysyhrRCQHP5Onag+7x0DxdQE2KKaJZ64tsspFwrUmZNkI8uEQ7rR8oc2HNqDdwX+nloWhb7Bglvxexco/bZJKz2ShboqEhb9gZHAk39Zbp4+ImJJiSOxoVHwU8ev2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745573154; c=relaxed/simple;
-	bh=QE7mOW26kkySrrmlaEPi+392lADObE2IkVgHPBXseSo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hbMc8s2JJeEK9G1isW62DmBEwxk7viqvikn4dceVzt3cO13JomSNKUyctOiNKbOtYBxkmsVJ3nyeCxQhHz9OHDwMsSTufD1rX40/S4beyeXE5KxdOTllMAoZMzOOL/dVF1/GaUax59Mh/SLYFfCD/nObxUPUiemc5fJ8ScPR5nM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KAQN0fMd; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1745573935; c=relaxed/simple;
+	bh=CT6ygFwoZ8+QHtrlgVLsq1TM7iV9Rf9wWxrBNEpjQr4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jM/WqmMvbUlMEWj9zNsmCBADmdy2ByqyXZbGMgwo8EODsCvlt3XwJ9r6qrQUh8WqFLldVTcJcFJbXRs1yFIYhJXj+yacpaEnabSj37exYl92C+dBCc3e1dA7PxH7y22w3Uzt2qXENa4pWTweRHfK+YmPwrhl3fhgC+YfsVZZjaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=LKC5Cybo; arc=none smtp.client-ip=45.157.188.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KAQN0fMd"
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-227d6b530d8so21977745ad.3;
-        Fri, 25 Apr 2025 02:25:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745573152; x=1746177952; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zpw3Rz6u1oBMxe9Q9lkMBXu8OJBxqRuaiGqqfq4qDbw=;
-        b=KAQN0fMdKP2Rod8f54bGhh3EzU6GLijWWgs6tLp4zihn+KUxe9rDA8W73KlVWQOiki
-         rmYKjQ18hoTtx1CfbDS+fR7FglEV+eOU17ydUXb2Cdu0UK4aLVVxoa5JcYD3G9ZRvuyd
-         tkIymLpV46pa6ka6u14U0CCe7+QOQk5BKydw1kQvgQH8GAsr5hH02xoFZX5CTFfAEHQS
-         /Z6S0AIgwGCrximDQIOag0wldktYKQtG13KuzBcfF/nBDAkZgY84+s84UeUOwppXx+mr
-         qdygVKb+k0jDsF8TUyRchDnfNWWTH3oVqnccrTt9PCCfw4cCXQD7Knii4WqhRekFjQjp
-         Gp4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745573152; x=1746177952;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Zpw3Rz6u1oBMxe9Q9lkMBXu8OJBxqRuaiGqqfq4qDbw=;
-        b=sGFgdhjvwFMFNIl9OA3uOOFgxfL6XyH+3WZW4hfeDeICOLEgnJzm/lcbxSYMPaX67I
-         8DisOqzjKccXIyDS9FK/u9sOOhoUSib1p/FaeYLwuaYjY24qXQv3l8I116RqFWwjPliU
-         8I4xpn8Im6gVjOG4V2vX1eHvIK+TwMw1cWPDlrawQdg9xHGl4PpTZ9T7RqhQOIwIi4GK
-         fgGkQMuxksYL0wITxHBaMNQe+EnoUO/3ndzHnxXHhFpGSnpsgpRCPz8lpjHoC8RxYRiW
-         R6Xzs1/rqWn4m1J9D8ijKtXPiNdmikKy7klksdvc3+UA8RBizg4Vgk7QEFejeqvJHJa6
-         RufA==
-X-Forwarded-Encrypted: i=1; AJvYcCUzaSR+tPsbV7E2T6Pb4qJtxSVvl/RzwlBdTUVWJmOcY0jVviRlABfrN/G6w7STPvt2u1NM37Nu@vger.kernel.org, AJvYcCWgjmHHChS3ceLLDQUSrcul9TZreYG8ss+mpK77FR2lasrk96UEqGsvIZmGMOJW9gieSFAfcwmMEj2FJLs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVV/ICh6SKpcqYqt9VZXCP1KdaEirgxced0Pl029PJAAfzacb4
-	juHad8iZtve7ixKNc2AEhp0fgTvMKPPkExphK03xF5DQ7v0QsznAb5B98A==
-X-Gm-Gg: ASbGncsV2tmjXTJGyRR/ZukSatlVtD7SL0eIF3Shuu0kLXsWEOmZvEtGS7MfPJwTVDn
-	g8D6jkY0ZZTkDdmJR4Q9SireaVacGtNYrLt87bV7kEP5kcJ7exVCL8T69Jp33yd+ugHpqTtE5Gs
-	W7HZlhzfgRNm9jYsr6i8dwudke7gteivfAPcnjtv57JlBv9aLn6uN7UVdx0EXXGYT3qocBtZzjX
-	/qjbKrEMY6X42WTFSJ2at5aFbdfqlgGEA8f5wo0bVJpmH0HgzyWZ4Vaju3Iw+ZCte5/abiSyMRA
-	PlnHdOA3iZuydDvLobxo5miCFcrvOdGGH3Imk2GKN08gE08p/1U=
-X-Google-Smtp-Source: AGHT+IFmqEXNwrDl0Wtkrw1o5U6LcpJDp8+kKb/QGZFXVOu33uoj1+y9CATWTiyXdUUEALy82oDCtQ==
-X-Received: by 2002:a17:903:252:b0:221:7b4a:476c with SMTP id d9443c01a7336-22dbf5f0015mr23441835ad.18.1745573152449;
-        Fri, 25 Apr 2025 02:25:52 -0700 (PDT)
-Received: from VM-16-38-fedora.. ([43.135.149.86])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b15f7ec0c08sm2494533a12.19.2025.04.25.02.25.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Apr 2025 02:25:51 -0700 (PDT)
-From: alexjlzheng@gmail.com
-X-Google-Original-From: alexjlzheng@tencent.com
-To: paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	greg@kroah.com,
-	chrisw@osdl.org
-Cc: linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jinliang Zheng <alexjlzheng@tencent.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] securityfs: fix missing of d_delete() in securityfs_remove()
-Date: Fri, 25 Apr 2025 17:25:48 +0800
-Message-ID: <20250425092548.6828-1-alexjlzheng@tencent.com>
-X-Mailer: git-send-email 2.49.0
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="LKC5Cybo"
+Received: from smtp-3-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246c])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4ZkSTD2xRXz11m8;
+	Fri, 25 Apr 2025 11:38:40 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1745573920;
+	bh=k9O880SpAHDg9OTbUAzSq+ppQby6H7XkNGu6/HLa7bM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LKC5Cybo5po8VijIQ+QvCHLCTRdJSYNFkqAHhm1twb9jTuU1tLA++vqilXbaNzIMP
+	 J8OrBcrcAjcimsaQMLGEm8Lm3OJLEcZTzu/g447jUHrhG2NxfE0wirwYxnBjJBNiTr
+	 x4C4h6MvhFXAFSyj7G0HHR8k+BdYrKvLidPFU2tM=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4ZkSTC5gTDzTMn;
+	Fri, 25 Apr 2025 11:38:38 +0200 (CEST)
+Date: Fri, 25 Apr 2025 11:38:37 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
+Subject: Re: [WTF][landlock] d_is_negative(fd_file(f)->f_path.dentry) ???
+Message-ID: <20250425.aegoh9fieNoh@digikod.net>
+References: <20250424220011.GJ2023217@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250424220011.GJ2023217@ZenIV>
+X-Infomaniak-Routing: alpha
 
-From: Jinliang Zheng <alexjlzheng@tencent.com>
+On Thu, Apr 24, 2025 at 11:00:11PM +0100, Al Viro wrote:
+> 
+> static int get_path_from_fd(const s32 fd, struct path *const path)
+> {
+> ...
+>         if ((fd_file(f)->f_op == &ruleset_fops) ||
+>             (fd_file(f)->f_path.mnt->mnt_flags & MNT_INTERNAL) ||
+>             (fd_file(f)->f_path.dentry->d_sb->s_flags & SB_NOUSER) ||
+>             d_is_negative(fd_file(f)->f_path.dentry) ||
+>             IS_PRIVATE(d_backing_inode(fd_file(f)->f_path.dentry)))
+>                 return -EBADFD;
+> 
+> 	Folks, could somebody explain how exactly can an opened file
+> come to have a _negative_ dentry?  And if you have found a way for that
+> to happen, why didn't you report the arseloads of NULL pointer dereference
+> bugs that would expose, along with assorted memory corruptors, etc.?
 
-Consider the following module code:
+I wasn't sure if it was possible or not (for any possible FD), and as a
+preventive approach I preferred to check that before dereferencing the
+inode.
 
-  static struct dentry *dentry;
+> 
+> 	Normally I would just quietly rip the bogus check out, but on
+> the off-chance that somebody _has_ found a bug that would cause that,
+> I would prefer to check with those who had added the check in the first
+> place.
 
-  static int __init securityfs_test_init(void)
-  {
-          dentry = securityfs_create_dir("standon", NULL);
-          return PTR_ERR(dentry);
-  }
-
-  static void __exit securityfs_test_exit(void)
-  {
-          securityfs_remove(dentry);
-  }
-
-  module_init(securityfs_test_init);
-  module_exit(securityfs_test_exit);
-
-and then:
-
-  insmod /path/to/thismodule
-  cd /sys/kernel/security/standon     <- we hold 'standon'
-  rmmod thismodule                    <- 'standon' don't go away
-  insmod /path/to/thismodule          <- Failed: File exists!
-
-Fix this by adding d_delete() in securityfs_remove().
-
-Fixes: b67dbf9d4c198 ("[PATCH] add securityfs for all LSMs to use")
-Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
-Cc: <stable@vger.kernel.org>
----
- security/inode.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/security/inode.c b/security/inode.c
-index da3ab44c8e57..d99baf26350a 100644
---- a/security/inode.c
-+++ b/security/inode.c
-@@ -306,6 +306,7 @@ void securityfs_remove(struct dentry *dentry)
- 			simple_rmdir(dir, dentry);
- 		else
- 			simple_unlink(dir, dentry);
-+		d_delete(dentry);
- 		dput(dentry);
- 	}
- 	inode_unlock(dir);
--- 
-2.49.0
-
+Thanks for the heads up.  I don't have a specific scenario in mind, feel
+free to remove this check if it looks overcautious to you.
