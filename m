@@ -1,677 +1,173 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2063.outbound.protection.outlook.com [40.107.102.63])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDF1E215F7D
-	for <linux-security-module@vger.kernel.org>; Fri, 25 Apr 2025 18:16:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745605021; cv=none; b=stchSr/+Tz5PbIE6Pw0NQV3+L/hQkUwSbM+ympn5u/MZKLaLsC0og4m1zr09IlaUiei35ZB1QE1Hd5eWqYsynZIL2Z1xbBCwNcNsx7rUOS2+GVC/wkXhPjUb0sGZ44Zf0R4b2D7cm8136dUm6bigfQog9D/0EygYZMzcatRROSo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745605021; c=relaxed/simple;
-	bh=xRwS7DIQ9xzKdaaNVSmdVjShk/A0oP6INDbbCT/nzow=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 In-Reply-To:Content-Type:Content-Disposition; b=T12s+avCBRpIcKN/JYd/jdruAP2sEzpIkFfc5WJHtgtB6yRqLMN3yu572mp2YCu1qL1UW3BKNpnxYfdqvdQKxiZvuEKwQEyBnpVnDuPTkH0sDFnQwx5LktEsKQjUDsJ7wp8YWA8h+lGcmKZeyxk2pwHYtwodNXCL57r9KlQmkPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DoNPDeK2; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D197D1F4165;
+	Fri, 25 Apr 2025 18:20:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.63
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745605258; cv=fail; b=e6Ppw9pncL3zBBFD4lJs8bNwznW87fr+1yxKiLcdyDgBEv1Wilyt47yotxwRUxuPjVFCHe8KjQqC6OoWldNRiCpHSgKLxZGdRyWPXXrpyGl3WSqSBRXJhIayF56Yg6ZSZYIKDwEVZxUkv4GocjFiJIoMJLXpZcU+Q+JwymJz1hs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745605258; c=relaxed/simple;
+	bh=060aq9cJC20Ebw4dkgrcDz6c8+GTeiUXewaid6H+1Fk=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=jC1hm2r4rrad0sEnjNi+ggSbn5oTX+VN3j50xPFRSZgNXj76p74iZqzbGnbKPc+rZVWuQZ29978KHi/cfUVDPT+LeYt6jbhujT+aZTwzkYMJep8StW73cmjtAbruN5KPTO5wk/WIaW7T5c3f4DWCqLiER6ocguGpYk633Uhumr0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=sfFfkJu/; arc=fail smtp.client-ip=40.107.102.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DoNPDeK2"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1745605016;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3/H3vr0OCdDcR3s3PDhlvbwdaoTNbpfjoBVpx9IMnBk=;
-	b=DoNPDeK2STJBW2lvKOeUNdPR11BBrBQulvbvkJfkCnApgNaDujGCjbYvL+xOVVU1Z/Mxa0
-	sN52najFUYYfbwQmNKyNhBgFaH4yXbmxmGAiOJ+lbb+DFCDWNTS2PlOfYzOzXw608y9gD8
-	oVmOohrETzH6JM6n/enX+72H/1hX/tk=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-135-GdpTuVYNN52RakE3np60LQ-1; Fri, 25 Apr 2025 14:16:55 -0400
-X-MC-Unique: GdpTuVYNN52RakE3np60LQ-1
-X-Mimecast-MFC-AGG-ID: GdpTuVYNN52RakE3np60LQ_1745605014
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-acb61452b27so250058866b.2
-        for <linux-security-module@vger.kernel.org>; Fri, 25 Apr 2025 11:16:54 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745605014; x=1746209814;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3/H3vr0OCdDcR3s3PDhlvbwdaoTNbpfjoBVpx9IMnBk=;
-        b=XahNuFkhf7xBT370YCncKep3BtSpKSweHhNKyicvDIL13ICEiYE3xo6c2tD0REJlCc
-         El4ruD/lnlI4L/dHEnVi1cfWpjyRGV3osdKHeRY27RzXa0UFiE46fGOXDQsGqCMzdYVv
-         bSAjEy9KkbIKu8ogxSV6B7HrA0bXP8be9gLFRCbSHyCIm0aoxt17cHXfXTOUFPkhoPbW
-         Xsn/Txu7jtM6u8sUb/xAkjpXvAiuYeCTdVEx1HHRLd9CR9+rkb1/43+DZ1PWuNcZV9mu
-         EIVWfA9oZyPwh3Kw3zbwzQhfjS2xeDDcJL8v9FAymefJAq7Lbm++J0HUByleIkwoBNle
-         iAUw==
-X-Forwarded-Encrypted: i=1; AJvYcCVEv3GXrpEEoqqiRmbI4mOfDGnZP0zHIFWMR5sUqbYvAGv2xqRpDsHXii0BZUiNdr92YHcgnRJSFeuXR6A44+Zp7h2l/IY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxe3VyoESxhfD2cvSIQP9VicvXcYnI2ApysxrrVczvdhOA4+ZgI
-	AFtZ1w159mKRD6v5skMVfSZnDwI6LoQHoZrQY75gSuV8eeApvqW0yC4a+HdoIhGtoF0jmHFjrxS
-	W2Y1kNnW43us2Ev7o/MPKfPTVcRr+E1otLVvzhGpghk/tjagyxmO1eZDiM+DfS1w7ePPgbd/k
-X-Gm-Gg: ASbGnctwRvTcEEwET2cnKICBpxizHGRZzjm/nJJJOVi6v+A27lrluiXGQLn4tR4P1Jg
-	j1vo7gvFoZ6DsHMqh6CDqWgmDWdr1huO1Ad4RRq0Ozcl0byo8RnS6h/0K8DDGrOQ0cXKuitUbaO
-	mDVtEuUrnCtPpg5tTG1DuDaKXYQETd6UrxYz2DgBLnWXPcMljO9x0h68CKLtoq4hAF016hxYPmK
-	kMABuP7dJGH6ap4pc2gbikTbfOmnrEMyPSh6s05QSgrT/gg2xN10wL7u5AZw7prqaB65biUtbpm
-	DUd2tZ6aA5w/0lhE3FZKMAA6Ghll09Y=
-X-Received: by 2002:a17:907:720d:b0:ac7:eb12:dc69 with SMTP id a640c23a62f3a-ace7110bb7emr344213166b.28.1745605013833;
-        Fri, 25 Apr 2025 11:16:53 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEcwZ2uBmoBZxtvmd2g+z9kEiApYvdSEco/tISBfW2KUfnlzh1cUwx+QqrN8Zv6maFk6XK8qg==
-X-Received: by 2002:a17:907:720d:b0:ac7:eb12:dc69 with SMTP id a640c23a62f3a-ace7110bb7emr344205866b.28.1745605013200;
-        Fri, 25 Apr 2025 11:16:53 -0700 (PDT)
-Received: from thinky (ip-217-030-074-039.aim-net.cz. [217.30.74.39])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6ed70606sm168961166b.160.2025.04.25.11.16.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Apr 2025 11:16:52 -0700 (PDT)
-Date: Fri, 25 Apr 2025 20:16:48 +0200
-From: Andrey Albershteyn <aalbersh@redhat.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Amir Goldstein <amir73il@gmail.com>, 
-	Richard Henderson <richard.henderson@linaro.org>, Matt Turner <mattst88@gmail.com>, 
-	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	Michal Simek <monstr@monstr.eu>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Naveen N Rao <naveen@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, 
-	Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, 
-	Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, 
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, "David S. Miller" <davem@davemloft.net>, 
-	Andreas Larsson <andreas@gaisler.com>, Andy Lutomirski <luto@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org, 
-	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, 
-	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org, linux-arch@vger.kernel.org, 
-	linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v4 3/3] fs: introduce getfsxattrat and setfsxattrat
- syscalls
-Message-ID: <l33napyvz5fwbcdju4otllbu4zr6faaz6mufz652alpxnjjfvl@h7j4hu4uwqwv>
-References: <20250321-xattrat-syscall-v4-0-3e82e6fb3264@kernel.org>
- <20250321-xattrat-syscall-v4-3-3e82e6fb3264@kernel.org>
- <CAOQ4uxj2Fqmc_pSD4bqqoQu7QjmgSVp2V15FbmBdTNqQ03aPGQ@mail.gmail.com>
- <faqun3wrpvwrhwukql3niqvvauy5ngrpytx5bxbrv5xkounez3@m7j2znjuzapu>
- <CAOQ4uxjs=Gg-ocwx_fkzc0gxQ_dHx-P9EAgz5ZwbdbrxV0T_EA@mail.gmail.com>
- <20250422-suchen-filmpreis-3573a913457c@brauner>
- <20250422-gefressen-faucht-8ded2c9a5375@brauner>
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="sfFfkJu/"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FheD3nNi6wzHcKCrfnllsnMWGrOMXswbulLTVkodZy0pHxfnJlSn9cugFXmghfxbsUY5Vgvk1Dsmoz6FS4pFJMWmPb3LvuipujY6UWpJ0aWfJC17490EXt3Di9hdI7Nj7uU6Xz4O1ZkyTOFlKf0C7eR0Pd6rOCOFm6q2nO/UGOuTOMAc0YpcpE1ntLxozRVbnawhtddTuHblRXpZsjfT8qfvJkx9Sfuy/JRF2GLFip8jOrvum3QzBPJ/E+gPx7YBPhE+efrR6urA6qVmp93P5X8A3Jd9yod26n0Fl76xa0FSA8V03k4bJZLX3xW0cHWoX+MM5/avEcj/w/jh+beaZA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=060aq9cJC20Ebw4dkgrcDz6c8+GTeiUXewaid6H+1Fk=;
+ b=jmW2NKpCNM9mkfFryIK/BLIKZdhACzFIfYIYMEzvpUIG5FnqXXTc6bKA6AZ5mROqUPDZFxUxW3aQL0RGmcUNClQ31ZBaCdPh1EhYxWDLCG6COLknmkA2YvaWkVQvt7jZZ+Vbaj9m+hdbR7wgpPwLNfW5diTxq9gByKoDr43wu3/Wf+DqunxzztqqG7uzjI630WSj1agEipoXKs7e7FgKnPxKCx/DmSC6UNAVJjW2UZoHIRMQLSpTHyK0EyT0IyokvHkSu0puxBUAdEyMWS2slCm6S8hdl8Y9mwGrmn3oLFJgb2QSF9dn3WkSUMurSMQBLRgzowHGPx44epOeSA8xig==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=060aq9cJC20Ebw4dkgrcDz6c8+GTeiUXewaid6H+1Fk=;
+ b=sfFfkJu/woFpoNKJXGGcmgfsIzbOIByuVIFwWhv0zoradeFYwo7GJ8MgVFHEpPBg7LGXa47oEOmPL3SqRrfvMP+v2tn6LVTFYlvx+Lifrf+l5PJwzHCSg/UFP44zI3kOXP4i7dua18mbJfe2lq/kcb8+q/JROJv3PacIVr3Vs/yFRi30iAWUMFB77cL/gb0HyinAumA53kDLMFEsIrsQvGIcZlWwLVTd1gB/VSbNketaGtH2j11LApRVxtPsz7ST/UtsZNiotdMfKgu4cWipKdwXBwJJGUrSZnXnLa2rIKpzZMdngG0SUqRf106oxpNHrrOiLZfIJyclw/PtnkKUvQ==
+Received: from PH8PR12MB7208.namprd12.prod.outlook.com (2603:10b6:510:224::7)
+ by IA0PR12MB8713.namprd12.prod.outlook.com (2603:10b6:208:48e::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.27; Fri, 25 Apr
+ 2025 18:20:52 +0000
+Received: from PH8PR12MB7208.namprd12.prod.outlook.com
+ ([fe80::1664:178c:a93e:8c42]) by PH8PR12MB7208.namprd12.prod.outlook.com
+ ([fe80::1664:178c:a93e:8c42%3]) with mapi id 15.20.8678.025; Fri, 25 Apr 2025
+ 18:20:52 +0000
+From: Parav Pandit <parav@nvidia.com>
+To: "Eric W. Biederman" <ebiederm@xmission.com>, Jason Gunthorpe
+	<jgg@nvidia.com>
+CC: "Serge E. Hallyn" <serge@hallyn.com>, "linux-rdma@vger.kernel.org"
+	<linux-rdma@vger.kernel.org>, "linux-security-module@vger.kernel.org"
+	<linux-security-module@vger.kernel.org>, Leon Romanovsky <leonro@nvidia.com>
+Subject: RE: [PATCH] RDMA/uverbs: Consider capability of the process that
+ opens the file
+Thread-Topic: [PATCH] RDMA/uverbs: Consider capability of the process that
+ opens the file
+Thread-Index:
+ AQHbk9YLoK1pT4atn0WpWWxcsGvDt7N3vsYAgACIALCAAIEngIAAkUBrgAAxToCAGipgUIAZ+iMAgACAGGCAACPuAIAAA3qQgABFyACAAUU9AIAAB8qAgAAxbYCAAAUbgIABS0ZQgAAqToCAABIpe4AAAEUAgAAOzYCAAQq5sIAAXSeAgAF369CAAA4KAIAACQIAgAAGW4CAABMnHIAADWkAgAAUtxWAAAwpkA==
+Date: Fri, 25 Apr 2025 18:20:51 +0000
+Message-ID:
+ <PH8PR12MB72087C15FB730E1B96FC4322DC842@PH8PR12MB7208.namprd12.prod.outlook.com>
+References: <87msc6khn7.fsf@email.froward.int.ebiederm.org>
+	<CY8PR12MB71955CC99FD7D12E3774BA54DCBA2@CY8PR12MB7195.namprd12.prod.outlook.com>
+	<20250423164545.GM1648741@nvidia.com>
+	<CY8PR12MB7195D5ED46D8E920A5281393DC852@CY8PR12MB7195.namprd12.prod.outlook.com>
+	<20250424141347.GS1648741@nvidia.com>
+	<CY8PR12MB7195F2A210D670E07EC14DE9DC842@CY8PR12MB7195.namprd12.prod.outlook.com>
+	<20250425132930.GB1804142@nvidia.com>
+	<20250425140144.GB610516@mail.hallyn.com>
+	<20250425142429.GC1804142@nvidia.com>
+	<87h62ci7ec.fsf@email.froward.int.ebiederm.org>
+	<20250425162102.GA2012301@nvidia.com>
+ <875xisf8ma.fsf@email.froward.int.ebiederm.org>
+In-Reply-To: <875xisf8ma.fsf@email.froward.int.ebiederm.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PH8PR12MB7208:EE_|IA0PR12MB8713:EE_
+x-ms-office365-filtering-correlation-id: 3f66b8ca-fb56-4671-3410-08dd8425e955
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|376014|1800799024|10070799003|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?blkQQFHgZz/ys+Ro2S4Oh93NnLbsbplxKHNawriso5TaWqqdwWBL7Pcqg1RW?=
+ =?us-ascii?Q?/yk7ay9rZ88sj28RZC52DOsqOoT45+bwGS4JV/6wazvMbkAJ6o+UDcBSZWVn?=
+ =?us-ascii?Q?BzEVjhtezeP2hYqZT/kuMH0YmTYZSd3Dg9/YZW4ZDSX1PVF97rfTLYf6QYko?=
+ =?us-ascii?Q?2amueuYDZpvYYcuL4Q/TUdJ7YoxGYr+nxTPyYbDKUdvMSe9ehYm2axlyJf24?=
+ =?us-ascii?Q?9DA1Gt1Gu6L26ZpoQtFyV8p3t+FMDaIsBlvQtfHqH/L2pEPvqMwQ50NU/0xm?=
+ =?us-ascii?Q?zCQX+7zKQi8HZtdXQ12+Z7EGcbvmAWWnVE20YCtxgStVYbwMLQlDCblG9yUA?=
+ =?us-ascii?Q?e0zAMzXshYUB+CHWu0y9NAqX04fLga1UlbbyieqVUXHYrfX6bGKMDubxJjd3?=
+ =?us-ascii?Q?d9cFCKv9UTl5au5Du6QjMxScej7R3pwQE1NCj0aH6Y1wDJJKSHfWZWTwR8vG?=
+ =?us-ascii?Q?7u/UoQ2fdMyaXZSXgdaRxQkjZnUTntXGcy3Bbp8PHgLatnJ2H+LIfIEXjX+Q?=
+ =?us-ascii?Q?ddWQ1+mnoyKX0H6DRsuvN4qY9uL3i0k94UKw2gtzC82eVw//dU5QXVxlobzG?=
+ =?us-ascii?Q?JlwVKhIhk5ECo5SOI4qACi+P2J6BUUk7/v2kkE9UuknrncDSyrHoLK+84rQ+?=
+ =?us-ascii?Q?6fertLXXmEZp0+6K3TZIwRfQhWsuDMD+PdPL7WK58geigsfXZcDoAnt8VXzF?=
+ =?us-ascii?Q?kHJML2gNopDvW1y85PmE4yDmDKdML5VsrIDwerdMFBX3EhD8NtM8olXUnA7p?=
+ =?us-ascii?Q?vXWH3HgSiYB+nKJ0It5kOruJyBROqVB4aOpQAjHLfp/L4jiUWP2vB9ij5IY5?=
+ =?us-ascii?Q?peEXZv7b90gELeKnhS8y5lVQgvl2Y/pj941r6RVs6ttMg7El8xq0PDWadn7h?=
+ =?us-ascii?Q?M+cUGIlHKGldT6T4dHNxyizyV6iMJSvSFBMI2qxYJZSlPJkbr3Mr22SqIVdH?=
+ =?us-ascii?Q?1+IJhgqDAA7Qk9k+jzm705Qq6NPZqGIB4psUqjT6W3YCESJVullRJA947qzP?=
+ =?us-ascii?Q?umaphEYINtoiQNUZxlhBlFlCJhxgkvUBHLpvXihY6q9NV+sJeMzlCNeU0jL3?=
+ =?us-ascii?Q?0pXOC+Yk99KzRRdRfdo0QRJoSRKo1fH3ftloawmu7L2E1f9ymkN+MLA5zZfO?=
+ =?us-ascii?Q?MYRr1Lp+3eh9/gohs+XmLbg1xpK181dgB2Xm0YnUCDCTJ5RghRUxWmvDNmc3?=
+ =?us-ascii?Q?HK1rgwT77jLI2bJV2HUFstTquJK9hlFUNBJYb+Fl0Pr+YQVdvJ90tmdZGk28?=
+ =?us-ascii?Q?xISI+sulvU6isqqOfyM5i1iqmLwJW6sNVUgtHSGpUJxpvn6blJZVu4pRpwt5?=
+ =?us-ascii?Q?km4rp8UbcHyqjFQojTL0mHmiN9wlGi5k8n55PfLhiCu1HiETSGDSG7OWwjij?=
+ =?us-ascii?Q?kx1oTy1BrwWKHmLmFIyqQXpZRx2Vlaj3oSTrXPfXIJOxGCYjhS2asNQVdCtm?=
+ =?us-ascii?Q?3f0LU3fAzGY11NgKFG0kK2RL5U/nQOlRHKa/DpWtFKDtYK/qyRPg82oGW5Qu?=
+ =?us-ascii?Q?UnyLZbvBggqPkJQ=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7208.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(10070799003)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?VZ66O1OVBtt95kV6mx76M9QT10h8waIbockXwHFAZvZ8bsmENEUuANFhCwwP?=
+ =?us-ascii?Q?4BaZ5nQ4RFK7YVXfbOxHQXOiDV2rP84bjqSa32bhGOBnVyoSUe6/LlTuXXGY?=
+ =?us-ascii?Q?/bkxppkXh1RHBo6rIT8HFhexju2M1Zdo//fv5cQoD6LMEDgpsaXP4t+fqNBu?=
+ =?us-ascii?Q?0AlJNdm+t6hglPneNVeTGTikxuo8maxQh8j6Jvggj++AKEU9E1MYdLdKXeTi?=
+ =?us-ascii?Q?Pre8HKsJO+joB5/O4Ep26Adni0GJqd8dMnxLHX9auNjxJBUcJ1/MUo7E/jHD?=
+ =?us-ascii?Q?xZkPv3f/6mi87q6pOAbQlY2+dG3m6N9ncQdO1eeoTWFcNSpN1abfOUwLSNl7?=
+ =?us-ascii?Q?UTzbkJHhPFGiG8KZ2PZHAZEMwqWd/yHikCscswjpMu9ErETXyoyEpvMjeaM5?=
+ =?us-ascii?Q?f60Ena+MBDp5gDUq6GSSdCztz4KQfUZl4tE1PVGgtEFGpXLFyqpWUqF4f2CU?=
+ =?us-ascii?Q?63o+lkelNlK924mUBqH/ZtE9Jodvs+P7vfw63Fw22oURD2Y4ZCtvmV/AE9iS?=
+ =?us-ascii?Q?AHBo2Z+DqXFSmXfYYFytlifDYWsLUNl4kmzkXFuGyG4NUakq1Z/Rb33g5RMx?=
+ =?us-ascii?Q?kruvH4rcpXxrAExRTKAHeq12VRYEBtweU84JqopFZf79fxV/nFZtvMnQelOh?=
+ =?us-ascii?Q?ZLoB7KLko40vE6Fohy4A3Dfjc5gjiyRYq646EUEDZDmSCEy59ObqGJUmOf7b?=
+ =?us-ascii?Q?lqCy9rhiJFNLsiJ86m02NiOuff22CKfBSaX0QuNZuD3eJD/OzZfuaP1gVSB/?=
+ =?us-ascii?Q?G8cRQDCCfJgosFw6Y3Y1m7zU3JMcyXQgRnVQTFDRbV3Ec3Uq2nHTTfoN3JQe?=
+ =?us-ascii?Q?N5PbVLO2vluNIbCNpQy9tSgn9MYn9or9mdCqfOmEhNJ+Oe0qnH3St+SZOO6R?=
+ =?us-ascii?Q?I6CNFJx6u5uRwG1xtJQSa+mNJUz8XjuQAtPy6D61gPEtTF1kD6FoiLXQpDWp?=
+ =?us-ascii?Q?iB0yMfkgV2fe+A5azlfrr6roKVKt+U2oITb2lsgGT5lXIELi1Qroc8XqscZ9?=
+ =?us-ascii?Q?EcqShwletFFQ/d/NI6XniYJq29Z+DLkwz6XRyAYkG77E50TmmVFkswtWR9Jw?=
+ =?us-ascii?Q?u8DeQNzEOkEI/s3k7WZ4LxoQMHMZpIdjwKK8+TcAVH6qSOaFvITuMCKemQCT?=
+ =?us-ascii?Q?N2cUZCe/EWnldc/RCYqRm5VkVlayfgwM8H2w2l4Vl6taZoG0WsN7v2eflkHS?=
+ =?us-ascii?Q?jkUEoRs0HkkferqbZU/GpxZKuQmiv6nnttO+aiE/Wfa1agYxNKSfV4X/IkUb?=
+ =?us-ascii?Q?FxW5MtLYKfZ4s7l+zYuUPiEIxQ44C5ugHxPI/JDz1U+twfcrrMSBvnXswX0U?=
+ =?us-ascii?Q?abQ1vJ4WnFU54bK8oMBEshWrwyYyU+rFBnrtIWtlp1ydixlFZ5zdbRZf/j5f?=
+ =?us-ascii?Q?nTS5EXYLoKQIBZ3NPSlzfIoASr5y9Sd87e4YwLJEoA2oOvtKc8NVcCfrbDEL?=
+ =?us-ascii?Q?FNkn8+vk20vGbjZ/ew4eupbfBBVU4J63JBXyZRqlTSNz09uzfUWcZozWQuFt?=
+ =?us-ascii?Q?PG5edq45bvcDynPnVPSat2WAK2PsS16yDm94X+51uRJ+VHaE7bRjogWBfZSE?=
+ =?us-ascii?Q?kxfINfVFPiSwzLORPOnstGihWzDWMGuPouhh6AKolgtQh0w1SdoAl1fHofA1?=
+ =?us-ascii?Q?ypPN/nLz1trk9Vd9TE32/7M=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250422-gefressen-faucht-8ded2c9a5375@brauner>
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: QMhukB5_unWgcJdR85oKlnhmH0ctIftHb-RWYOxT3_c_1745605014
-X-Mimecast-Originator: redhat.com
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7208.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3f66b8ca-fb56-4671-3410-08dd8425e955
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Apr 2025 18:20:51.8922
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: GdqPBlhU7mgzc5/V6Wg2TEe08i8GjcNJ0bdAxi9fZygHCuhFXLt6KVSazgGSp8rcrUUznvkZjikgIyasGjxa9w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8713
 
-On 2025-04-22 17:14:10, Christian Brauner wrote:
-> On Tue, Apr 22, 2025 at 04:31:29PM +0200, Christian Brauner wrote:
-> > On Thu, Mar 27, 2025 at 12:39:28PM +0100, Amir Goldstein wrote:
-> > > On Thu, Mar 27, 2025 at 10:33 AM Andrey Albershteyn <aalbersh@redhat.com> wrote:
-> > > >
-> > > > On 2025-03-23 09:56:25, Amir Goldstein wrote:
-> > > > > On Fri, Mar 21, 2025 at 8:49 PM Andrey Albershteyn <aalbersh@redhat.com> wrote:
-> > > > > >
-> > > > > > From: Andrey Albershteyn <aalbersh@redhat.com>
-> > > > > >
-> > > > > > Introduce getfsxattrat and setfsxattrat syscalls to manipulate inode
-> > > > > > extended attributes/flags. The syscalls take parent directory fd and
-> > > > > > path to the child together with struct fsxattr.
-> > > > > >
-> > > > > > This is an alternative to FS_IOC_FSSETXATTR ioctl with a difference
-> > > > > > that file don't need to be open as we can reference it with a path
-> > > > > > instead of fd. By having this we can manipulated inode extended
-> > > > > > attributes not only on regular files but also on special ones. This
-> > > > > > is not possible with FS_IOC_FSSETXATTR ioctl as with special files
-> > > > > > we can not call ioctl() directly on the filesystem inode using fd.
-> > > > > >
-> > > > > > This patch adds two new syscalls which allows userspace to get/set
-> > > > > > extended inode attributes on special files by using parent directory
-> > > > > > and a path - *at() like syscall.
-> > > > > >
-> > > > > > CC: linux-api@vger.kernel.org
-> > > > > > CC: linux-fsdevel@vger.kernel.org
-> > > > > > CC: linux-xfs@vger.kernel.org
-> > > > > > Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
-> > > > > > Acked-by: Arnd Bergmann <arnd@arndb.de>
-> > > > > > ---
-> > > > > ...
-> > > > > > +SYSCALL_DEFINE5(setfsxattrat, int, dfd, const char __user *, filename,
-> > > > > > +               struct fsxattr __user *, ufsx, size_t, usize,
-> > > > > > +               unsigned int, at_flags)
-> > > > > > +{
-> > > > > > +       struct fileattr fa;
-> > > > > > +       struct path filepath;
-> > > > > > +       int error;
-> > > > > > +       unsigned int lookup_flags = 0;
-> > > > > > +       struct filename *name;
-> > > > > > +       struct mnt_idmap *idmap;.
-> > > > >
-> > > > > > +       struct dentry *dentry;
-> > > > > > +       struct vfsmount *mnt;
-> > > > > > +       struct fsxattr fsx = {};
-> > > > > > +
-> > > > > > +       BUILD_BUG_ON(sizeof(struct fsxattr) < FSXATTR_SIZE_VER0);
-> > > > > > +       BUILD_BUG_ON(sizeof(struct fsxattr) != FSXATTR_SIZE_LATEST);
-> > > > > > +
-> > > > > > +       if ((at_flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH)) != 0)
-> > > > > > +               return -EINVAL;
-> > > > > > +
-> > > > > > +       if (!(at_flags & AT_SYMLINK_NOFOLLOW))
-> > > > > > +               lookup_flags |= LOOKUP_FOLLOW;
-> > > > > > +
-> > > > > > +       if (at_flags & AT_EMPTY_PATH)
-> > > > > > +               lookup_flags |= LOOKUP_EMPTY;
-> > > > > > +
-> > > > > > +       if (usize > PAGE_SIZE)
-> > > > > > +               return -E2BIG;
-> > > > > > +
-> > > > > > +       if (usize < FSXATTR_SIZE_VER0)
-> > > > > > +               return -EINVAL;
-> > > > > > +
-> > > > > > +       error = copy_struct_from_user(&fsx, sizeof(struct fsxattr), ufsx, usize);
-> > > > > > +       if (error)
-> > > > > > +               return error;
-> > > > > > +
-> > > > > > +       fsxattr_to_fileattr(&fsx, &fa);
-> > > > > > +
-> > > > > > +       name = getname_maybe_null(filename, at_flags);
-> > > > > > +       if (!name) {
-> > > > > > +               CLASS(fd, f)(dfd);
-> > > > > > +
-> > > > > > +               if (fd_empty(f))
-> > > > > > +                       return -EBADF;
-> > > > > > +
-> > > > > > +               idmap = file_mnt_idmap(fd_file(f));
-> > > > > > +               dentry = file_dentry(fd_file(f));
-> > > > > > +               mnt = fd_file(f)->f_path.mnt;
-> > > > > > +       } else {
-> > > > > > +               error = filename_lookup(dfd, name, lookup_flags, &filepath,
-> > > > > > +                                       NULL);
-> > > > > > +               if (error)
-> > > > > > +                       return error;
-> > > > > > +
-> > > > > > +               idmap = mnt_idmap(filepath.mnt);
-> > > > > > +               dentry = filepath.dentry;
-> > > > > > +               mnt = filepath.mnt;
-> > > > > > +       }
-> > > > > > +
-> > > > > > +       error = mnt_want_write(mnt);
-> > > > > > +       if (!error) {
-> > > > > > +               error = vfs_fileattr_set(idmap, dentry, &fa);
-> > > > > > +               if (error == -ENOIOCTLCMD)
-> > > > > > +                       error = -EOPNOTSUPP;
-> > > > >
-> > > > > This is awkward.
-> > > > > vfs_fileattr_set() should return -EOPNOTSUPP.
-> > > > > ioctl_setflags() could maybe convert it to -ENOIOCTLCMD,
-> > > > > but looking at similar cases ioctl_fiemap(), ioctl_fsfreeze() the
-> > > > > ioctl returns -EOPNOTSUPP.
-> > > > >
-> > > > > I don't think it is necessarily a bad idea to start returning
-> > > > >  -EOPNOTSUPP instead of -ENOIOCTLCMD for the ioctl
-> > > > > because that really reflects the fact that the ioctl is now implemented
-> > > > > in vfs and not in the specific fs.
-> > > > >
-> > > > > and I think it would not be a bad idea at all to make that change
-> > > > > together with the merge of the syscalls as a sort of hint to userspace
-> > > > > that uses the ioctl, that the sycalls API exists.
-> > > > >
-> > > > > Thanks,
-> > > > > Amir.
-> > > > >
-> > > >
-> > > > Hmm, not sure what you're suggesting here. I see it as:
-> > > > - get/setfsxattrat should return EOPNOTSUPP as it make more sense
-> > > >   than ENOIOCTLCMD
-> > > > - ioctl_setflags returns ENOIOCTLCMD which also expected
-> > > >
-> > > > Don't really see a reason to change what vfs_fileattr_set() returns
-> > > > and then copying this if() to other places or start returning
-> > > > EOPNOTSUPP.
-> > > 
-> > > ENOIOCTLCMD conceptually means that the ioctl command is unknown
-> > > This is not the case since ->fileattr_[gs]et() became a vfs API
-> > 
-> > vfs_fileattr_{g,s}et() should not return ENOIOCTLCMD. Change the return
-> > code to EOPNOTSUPP and then make EOPNOTSUPP be translated to ENOTTY on
-> > on overlayfs and to ENOIOCTLCMD in ecryptfs and in fs/ioctl.c. This way
-> > we get a clean VFS api while retaining current behavior. Amir can do his
-> > cleanup based on that.
-> 
-> Also this get/set dance is not something new apis should do. It should
-> be handled like setattr_prepare() or generic_fillattr() where the
-> filesystem calls a VFS helper and that does all of this based on the
-> current state of the inode instead of calling into the filesystem twice:
-> 
-> int vfs_fileattr_set(struct mnt_idmap *idmap, struct dentry *dentry,
-> 		     struct fileattr *fa)
-> {
-> <snip>
-> 	inode_lock(inode);
-> 	err = vfs_fileattr_get(dentry, &old_ma);
-> 	if (!err) {
-> 		/* initialize missing bits from old_ma */
-> 		if (fa->flags_valid) {
-> <snip>
-> 		err = fileattr_set_prepare(inode, &old_ma, fa);
-> 		if (!err && !security_inode_setfsxattr(inode, fa))
-> 			err = inode->i_op->fileattr_set(idmap, dentry, fa);
-> 
 
-You mean something like this? (not all fs are done)
+> From: Eric W. Biederman <ebiederm@xmission.com>
+> Sent: Friday, April 25, 2025 11:04 PM
 
--- 
+> I think you need to restrict the relaxation to the case where
+> ib_devices_shared_netns is false.
+>
+Yep, this is what we agreed in [1].
 
-From 421445f054ccad3116d55ae22c8995a48bb753fd Mon Sep 17 00:00:00 2001
-From: Andrey Albershteyn <aalbersh@kernel.org>
-Date: Fri, 25 Apr 2025 17:20:42 +0200
-Subject: [PATCH] fs: push retrieval of fileattr down to filesystems
-
-Currently, vfs_fileattr_set() calls twice to the file system. Firstly,
-to retrieve current state of the inode extended attributes and secondly
-to set the new ones.
-
-This patch refactors this in a way that filesystem firstly gets current
-inode attribute state and then calls VFS helper to verify them. This way
-vfs_fileattr_set() will call filesystem just once.
-
-Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
----
- fs/ext2/ioctl.c          |  9 ++++++
- fs/ext4/ioctl.c          |  9 ++++++
- fs/f2fs/file.c           | 12 +++++++-
- fs/file_attr.c           | 62 ++++++++++++++++++++++++----------------
- fs/gfs2/file.c           |  9 ++++++
- fs/hfsplus/inode.c       |  9 ++++++
- fs/jfs/ioctl.c           |  9 +++++-
- fs/ntfs3/file.c          | 12 +++++++-
- fs/orangefs/inode.c      |  9 ++++++
- fs/ubifs/ioctl.c         | 12 +++++++-
- fs/xfs/xfs_ioctl.c       |  6 ++++
- include/linux/fileattr.h |  2 ++
- mm/shmem.c               |  8 ++++++
- 13 files changed, 140 insertions(+), 28 deletions(-)
-
-diff --git a/fs/ext2/ioctl.c b/fs/ext2/ioctl.c
-index 44e04484e570..3a45ed9c12b7 100644
---- a/fs/ext2/ioctl.c
-+++ b/fs/ext2/ioctl.c
-@@ -32,6 +32,15 @@ int ext2_fileattr_set(struct mnt_idmap *idmap,
- {
- 	struct inode *inode = d_inode(dentry);
- 	struct ext2_inode_info *ei = EXT2_I(inode);
-+	struct fileattr cfa;
-+	int err;
-+
-+	err = ext2_fileattr_get(dentry, &cfa);
-+	if (err)
-+		return err;
-+	err = vfs_fileattr_set_prepare(idmap, dentry, &cfa, fa);
-+	if (err)
-+		return err;
- 
- 	if (fileattr_has_fsx(fa))
- 		return -EOPNOTSUPP;
-diff --git a/fs/ext4/ioctl.c b/fs/ext4/ioctl.c
-index d17207386ead..f988ff4d7256 100644
---- a/fs/ext4/ioctl.c
-+++ b/fs/ext4/ioctl.c
-@@ -1002,6 +1002,15 @@ int ext4_fileattr_set(struct mnt_idmap *idmap,
- 	struct inode *inode = d_inode(dentry);
- 	u32 flags = fa->flags;
- 	int err = -EOPNOTSUPP;
-+	struct fileattr cfa;
-+
-+	err = ext4_fileattr_get(dentry, &cfa);
-+	if (err)
-+		return err;
-+
-+	err = vfs_fileattr_set_prepare(idmap, dentry, &cfa, fa);
-+	if (err)
-+		return err;
- 
- 	if (flags & ~EXT4_FL_USER_VISIBLE)
- 		goto out;
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index abbcbb5865a3..f196a07f1f17 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -3371,14 +3371,24 @@ int f2fs_fileattr_set(struct mnt_idmap *idmap,
- 		      struct dentry *dentry, struct fileattr *fa)
- {
- 	struct inode *inode = d_inode(dentry);
--	u32 fsflags = fa->flags, mask = F2FS_SETTABLE_FS_FL;
-+	u32 fsflags, mask = F2FS_SETTABLE_FS_FL;
- 	u32 iflags;
-+	struct fileattr cfa;
- 	int err;
- 
- 	if (unlikely(f2fs_cp_error(F2FS_I_SB(inode))))
- 		return -EIO;
- 	if (!f2fs_is_checkpoint_ready(F2FS_I_SB(inode)))
- 		return -ENOSPC;
-+
-+	err = f2fs_fileattr_get(dentry, &cfa);
-+	if (err)
-+		return err;
-+	err = vfs_fileattr_set_prepare(idmap, dentry, &cfa, fa);
-+	if (err)
-+		return err;
-+	fsflags = fa->flags;
-+
- 	if (fsflags & ~F2FS_GETTABLE_FS_FL)
- 		return -EOPNOTSUPP;
- 	fsflags &= F2FS_SETTABLE_FS_FL;
-diff --git a/fs/file_attr.c b/fs/file_attr.c
-index 5e51c5b851ef..d0a01377bca8 100644
---- a/fs/file_attr.c
-+++ b/fs/file_attr.c
-@@ -7,6 +7,8 @@
- #include <linux/fileattr.h>
- #include <linux/namei.h>
- 
-+#include "internal.h"
-+
- /**
-  * fileattr_fill_xflags - initialize fileattr with xflags
-  * @fa:		fileattr pointer
-@@ -225,6 +227,36 @@ static int fileattr_set_prepare(struct inode *inode,
- 	return 0;
- }
- 
-+/**
-+ * vfs_fileattr_set_prepare - merge new filettr state and check for validity
-+ * @idmap:	idmap of the mount
-+ * @dentry:	the object to change
-+ * @cfa:	current fileattr state
-+ * @fa:		fileattr pointer with new values
-+ *
-+ * Return: 0 on success, or a negative error on failure.
-+ */
-+int vfs_fileattr_set_prepare(struct mnt_idmap *idmap, struct dentry *dentry,
-+			     struct fileattr *cfa, struct fileattr *fa)
-+{
-+	int err;
-+
-+	/* initialize missing bits from cfa */
-+	if (fa->flags_valid) {
-+		fa->fsx_xflags |= cfa->fsx_xflags & ~FS_XFLAG_COMMON;
-+		fa->fsx_extsize = cfa->fsx_extsize;
-+		fa->fsx_nextents = cfa->fsx_nextents;
-+		fa->fsx_projid = cfa->fsx_projid;
-+		fa->fsx_cowextsize = cfa->fsx_cowextsize;
-+	} else {
-+		fa->flags |= cfa->flags & ~FS_COMMON_FL;
-+	}
-+
-+	err = fileattr_set_prepare(d_inode(dentry), cfa, fa);
-+	return err;
-+}
-+EXPORT_SYMBOL(vfs_fileattr_set_prepare);
-+
- /**
-  * vfs_fileattr_set - change miscellaneous file attributes
-  * @idmap:	idmap of the mount
-@@ -245,7 +277,6 @@ int vfs_fileattr_set(struct mnt_idmap *idmap, struct dentry *dentry,
- 		     struct fileattr *fa)
- {
- 	struct inode *inode = d_inode(dentry);
--	struct fileattr old_ma = {};
- 	int err;
- 
- 	if (!inode->i_op->fileattr_set)
-@@ -255,29 +286,12 @@ int vfs_fileattr_set(struct mnt_idmap *idmap, struct dentry *dentry,
- 		return -EPERM;
- 
- 	inode_lock(inode);
--	err = vfs_fileattr_get(dentry, &old_ma);
--	if (!err) {
--		/* initialize missing bits from old_ma */
--		if (fa->flags_valid) {
--			fa->fsx_xflags |= old_ma.fsx_xflags & ~FS_XFLAG_COMMON;
--			fa->fsx_extsize = old_ma.fsx_extsize;
--			fa->fsx_nextents = old_ma.fsx_nextents;
--			fa->fsx_projid = old_ma.fsx_projid;
--			fa->fsx_cowextsize = old_ma.fsx_cowextsize;
--		} else {
--			fa->flags |= old_ma.flags & ~FS_COMMON_FL;
--		}
--
--		err = fileattr_set_prepare(inode, &old_ma, fa);
--		if (err)
--			goto out;
--		err = security_inode_file_setattr(dentry, fa);
--		if (err)
--			goto out;
--		err = inode->i_op->fileattr_set(idmap, dentry, fa);
--		if (err)
--			goto out;
--	}
-+	err = security_inode_file_setattr(dentry, fa);
-+	if (err)
-+		goto out;
-+	err = inode->i_op->fileattr_set(idmap, dentry, fa);
-+	if (err)
-+		goto out;
- 
- out:
- 	inode_unlock(inode);
-diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
-index fd1147aa3891..cf796fa73af2 100644
---- a/fs/gfs2/file.c
-+++ b/fs/gfs2/file.c
-@@ -282,10 +282,19 @@ int gfs2_fileattr_set(struct mnt_idmap *idmap,
- 	u32 fsflags = fa->flags, gfsflags = 0;
- 	u32 mask;
- 	int i;
-+	struct fileattr cfa;
-+	int error;
- 
- 	if (d_is_special(dentry))
- 		return -ENOTTY;
- 
-+	error = gfs2_fileattr_get(dentry, &cfa);
-+	if (error)
-+		return error;
-+	error = vfs_fileattr_set_prepare(idmap, dentry, &cfa, fa);
-+	if (error)
-+		return error;
-+
- 	if (fileattr_has_fsx(fa))
- 		return -EOPNOTSUPP;
- 
-diff --git a/fs/hfsplus/inode.c b/fs/hfsplus/inode.c
-index f331e9574217..cdb11d00faea 100644
---- a/fs/hfsplus/inode.c
-+++ b/fs/hfsplus/inode.c
-@@ -678,6 +678,15 @@ int hfsplus_fileattr_set(struct mnt_idmap *idmap,
- 	struct inode *inode = d_inode(dentry);
- 	struct hfsplus_inode_info *hip = HFSPLUS_I(inode);
- 	unsigned int new_fl = 0;
-+	struct fileattr cfa;
-+	int err;
-+
-+	err = hfsplus_fileattr_get(dentry, &cfa);
-+	if (err)
-+		return err;
-+	err = vfs_fileattr_set_prepare(idmap, dentry, &cfa, fa);
-+	if (err)
-+		return err;
- 
- 	if (fileattr_has_fsx(fa))
- 		return -EOPNOTSUPP;
-diff --git a/fs/jfs/ioctl.c b/fs/jfs/ioctl.c
-index f7bd7e8f5be4..4c62c14d15b0 100644
---- a/fs/jfs/ioctl.c
-+++ b/fs/jfs/ioctl.c
-@@ -75,11 +75,18 @@ int jfs_fileattr_set(struct mnt_idmap *idmap,
- {
- 	struct inode *inode = d_inode(dentry);
- 	struct jfs_inode_info *jfs_inode = JFS_IP(inode);
--	unsigned int flags;
-+	unsigned int flags = jfs_inode->mode2 & JFS_FL_USER_VISIBLE;
-+	struct fileattr cfa;
-+	int err;
- 
- 	if (d_is_special(dentry))
- 		return -ENOTTY;
- 
-+	fileattr_fill_flags(&cfa, jfs_map_ext2(flags, 0));
-+	err = vfs_fileattr_set_prepare(idmap, dentry, &cfa, fa);
-+	if (err)
-+		return err;
-+
- 	if (fileattr_has_fsx(fa))
- 		return -EOPNOTSUPP;
- 
-diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
-index 9b6a3f8d2e7c..bc7ee7595b70 100644
---- a/fs/ntfs3/file.c
-+++ b/fs/ntfs3/file.c
-@@ -83,12 +83,22 @@ int ntfs_fileattr_set(struct mnt_idmap *idmap, struct dentry *dentry,
- {
- 	struct inode *inode = d_inode(dentry);
- 	struct ntfs_inode *ni = ntfs_i(inode);
--	u32 flags = fa->flags;
-+	u32 flags;
- 	unsigned int new_fl = 0;
-+	struct fileattr cfa;
-+	int err;
-+
-+	err = ntfs_fileattr_get(dentry, &cfa);
-+	if (err)
-+		return err;
-+	err = vfs_fileattr_set_prepare(idmap, dentry, &cfa, fa);
-+	if (err)
-+		return err;
- 
- 	if (fileattr_has_fsx(fa))
- 		return -EOPNOTSUPP;
- 
-+	flags = fa->flags;
- 	if (flags & ~(FS_IMMUTABLE_FL | FS_APPEND_FL | FS_COMPR_FL))
- 		return -EOPNOTSUPP;
- 
-diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
-index 5ac743c6bc2e..aecb61146443 100644
---- a/fs/orangefs/inode.c
-+++ b/fs/orangefs/inode.c
-@@ -910,6 +910,15 @@ static int orangefs_fileattr_set(struct mnt_idmap *idmap,
- 				 struct dentry *dentry, struct fileattr *fa)
- {
- 	u64 val = 0;
-+	struct fileattr cfa;
-+	int error = 0;
-+
-+	error = orangefs_fileattr_get(dentry, &cfa);
-+	if (error)
-+		return error;
-+	error = vfs_fileattr_set_prepare(idmap, dentry, &cfa, fa);
-+	if (error)
-+		return error;
- 
- 	gossip_debug(GOSSIP_FILE_DEBUG, "%s: called on %pd\n", __func__,
- 		     dentry);
-diff --git a/fs/ubifs/ioctl.c b/fs/ubifs/ioctl.c
-index 2c99349cf537..e71e362c786b 100644
---- a/fs/ubifs/ioctl.c
-+++ b/fs/ubifs/ioctl.c
-@@ -148,14 +148,24 @@ int ubifs_fileattr_set(struct mnt_idmap *idmap,
- 		       struct dentry *dentry, struct fileattr *fa)
- {
- 	struct inode *inode = d_inode(dentry);
--	int flags = fa->flags;
-+	int flags;
-+	struct fileattr cfa;
-+	int err;
- 
- 	if (d_is_special(dentry))
- 		return -ENOTTY;
- 
-+	err = ubifs_fileattr_get(dentry, &cfa);
-+	if (err)
-+		return err;
-+	err = vfs_fileattr_set_prepare(idmap, dentry, &cfa, fa);
-+	if (err)
-+		return err;
-+
- 	if (fileattr_has_fsx(fa))
- 		return -EOPNOTSUPP;
- 
-+	flags = fa->flags;
- 	if (flags & ~UBIFS_GETTABLE_IOCTL_FLAGS)
- 		return -EOPNOTSUPP;
- 
-diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
-index d250f7f74e3b..c861dc1c3cf0 100644
---- a/fs/xfs/xfs_ioctl.c
-+++ b/fs/xfs/xfs_ioctl.c
-@@ -733,12 +733,18 @@ xfs_fileattr_set(
- 	struct xfs_dquot	*pdqp = NULL;
- 	struct xfs_dquot	*olddquot = NULL;
- 	int			error;
-+	struct fileattr		cfa;
- 
- 	trace_xfs_ioctl_setattr(ip);
- 
- 	if (d_is_special(dentry))
- 		return -ENOTTY;
- 
-+	xfs_fill_fsxattr(ip, XFS_DATA_FORK, &cfa);
-+	error = vfs_fileattr_set_prepare(idmap, dentry, &cfa, fa);
-+	if (error)
-+		return error;
-+
- 	if (!fa->fsx_valid) {
- 		if (fa->flags & ~(FS_IMMUTABLE_FL | FS_APPEND_FL |
- 				  FS_NOATIME_FL | FS_NODUMP_FL |
-diff --git a/include/linux/fileattr.h b/include/linux/fileattr.h
-index f62a5143eb2d..aba76d897533 100644
---- a/include/linux/fileattr.h
-+++ b/include/linux/fileattr.h
-@@ -75,6 +75,8 @@ static inline bool fileattr_has_fsx(const struct fileattr *fa)
- }
- 
- int vfs_fileattr_get(struct dentry *dentry, struct fileattr *fa);
-+int vfs_fileattr_set_prepare(struct mnt_idmap *idmap, struct dentry *dentry,
-+			     struct fileattr *cfa, struct fileattr *fa);
- int vfs_fileattr_set(struct mnt_idmap *idmap, struct dentry *dentry,
- 		     struct fileattr *fa);
- int ioctl_getflags(struct file *file, unsigned int __user *argp);
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 99327c30507c..c2a5991f944f 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -4199,6 +4199,14 @@ static int shmem_fileattr_set(struct mnt_idmap *idmap,
- 	struct inode *inode = d_inode(dentry);
- 	struct shmem_inode_info *info = SHMEM_I(inode);
- 	int ret, flags;
-+	struct fileattr cfa;
-+
-+	ret = shmem_fileattr_get(dentry, &cfa);
-+	if (ret)
-+		return ret;
-+	ret = vfs_fileattr_set_prepare(idmap, dentry, &cfa, fa);
-+	if (ret)
-+		return ret;
- 
- 	if (fileattr_has_fsx(fa))
- 		return -EOPNOTSUPP;
--- 
-2.47.2
-
+[1] https://lore.kernel.org/linux-rdma/875xisf8ma.fsf@email.froward.int.ebi=
+ederm.org/T/#m70e2b41c70f69d38bb74b7ae4abda65da1fc5c69
