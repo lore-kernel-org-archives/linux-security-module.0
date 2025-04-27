@@ -1,34 +1,39 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 699611BEF7E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 699BD1DE2C9;
 	Sun, 27 Apr 2025 01:38:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745717919; cv=none; b=uPsQRhqhF8jCHG50O+UckZwGSAggMm3jgzRWI3MkrExyCShPAbvB308NqjdgfeehaJVaegQgNXIT8ZMto22ZfUtFU/8G6c1bpy7e9DLbdIRkJ1cY2T9jzJix5GNHrbgdYJhMZPUuc5ErGlMlvSN8URLqHZVzQArUOcGXtB6Kwvw=
+	t=1745717919; cv=none; b=HR3qKJTZgSu7S8aRM2PgwFVtRCldlIkauHhUBGnf0OLb4CQk2VCiAysPOfS7JMCzTr0cs5JBUBkOARQbnwnLcVLPIQlTketurIw65d9XrlPslwKVs3S8eB8B34OuTF8bNT9kQjE7DXnJbHEOfVzao6R/Fe1guqhpeB6jUReTalg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1745717919; c=relaxed/simple;
-	bh=1XPUuCoX8gvHexCqhRpn3WS8WotpYcenLSO8ViMNUqI=;
+	bh=ZgdoQkssZwtgKxsSyH83cNs9nHOLWMIdu0B1U5RulHc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QgWcBad9iPYYQ+QCahlTZTvgmwp8rvTSaWVxt4s0BDg8aUbKRJ2GFnts6PiO0IjHnoYvmdeF2VlS76oZaL1fK8oYZy+C5Hyt71loRUlPZ7ae2jVIqD7Sdgpf2hVy6zAc0xMX8iA+LCCHrSWDrGc3mDrdaiDUYssTlRZnspkM4wY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dk1YUsoS; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=pOhKqm/piRZaekPoSSBz348oJ+V+RSr2csDcU5q7lXVXy33WPueF2gqXLSzj/KvGIb0s3x07cnDgk+28twpXQHWwYd0pDtO3EDCRbPdQP6RwKLnV9xOzHu/z0zp84WFOIJKilakESrTKwbjAj+I2V0w+fesw70MfYEH/aDQwgfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LKhpFlMw; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dk1YUsoS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6740C4CEE2;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LKhpFlMw"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D89DAC4CEEA;
 	Sun, 27 Apr 2025 01:38:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1745717918;
-	bh=1XPUuCoX8gvHexCqhRpn3WS8WotpYcenLSO8ViMNUqI=;
+	bh=ZgdoQkssZwtgKxsSyH83cNs9nHOLWMIdu0B1U5RulHc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=dk1YUsoSGPXSzB4Aesga2mfUuhydwUtSnj0mwiG0zVyrYVnT+1ZmmbDb9gCue3hWY
-	 XOlnZ0g13bFYYDG4RoIVtcEj06NWpWoKiEXQpAu1BDvsgUhr1+ifxCLZ3VxkXwvSPw
-	 rdmKifoCiHRUCP18MV6CVfQLafH7dLBZSyrgavJn9ljprPDgN/mdkMTAM/rBPggpx/
-	 d2FwqwtkGl+tdgxsqw3po//JPHH2yRz95ayIHkqRpQsutAIa2s3efGvS08iO2egxnG
-	 5+4yAryXsclEAL87IMwSNlKkQ9Aj9ZUyfHPRnlNGGQkMJ3xYpHRmtrNo8oKjcIF9I8
-	 0M5RI6zhvJDAg==
+	b=LKhpFlMw1vEPcyVhEh8gNMV2G7Ht8ORqhW2ugENa1pSqmfiFX/MJhdGrVRUsfeicl
+	 a21Zyawsxo+eRlcT1EYu9IfgBsHEmQ/3oQwB9KWjp1/U5c7M0o0gN31cTY3sz9plc0
+	 EYrG0GfTSMhdJn+l+rwJxDq2XeIFj4UGTEtEIBvNwVwcj/bI0i0lIEGm8Z77IfX0aR
+	 vixC1Cyjzfd9IR6iacVmDJ1M1fRK5T6RWbv33rjewaf9sMEMV5+yBWUNW5yVanMlTD
+	 8PifQKWeegD33ATnmY9behhd4djKFygzq/aGo/gEVQt/uVjoz5p2J2Z/Vf16KYHuK1
+	 OJ+fXVn2Lubsw==
 From: Kees Cook <kees@kernel.org>
 To: Arnd Bergmann <arnd@arndb.de>
 Cc: Kees Cook <kees@kernel.org>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	Mark Brown <broonie@kernel.org>,
+	WangYuli <wangyuli@uniontech.com>,
+	=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
 	Bill Wendling <morbo@google.com>,
 	Andrew Morton <akpm@linux-foundation.org>,
 	Nathan Chancellor <nathan@kernel.org>,
@@ -40,22 +45,17 @@ Cc: Kees Cook <kees@kernel.org>,
 	Tamir Duberstein <tamird@gmail.com>,
 	Diego Vieira <diego.daniel.professional@gmail.com>,
 	Luis Chamberlain <mcgrof@kernel.org>,
-	llvm@lists.linux.dev,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Mark Brown <broonie@kernel.org>,
-	WangYuli <wangyuli@uniontech.com>,
-	=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
 	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
 	Paul Moore <paul@paul-moore.com>,
 	James Morris <jmorris@namei.org>,
 	"Serge E. Hallyn" <serge@hallyn.com>,
 	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev,
 	linux-hardening@vger.kernel.org,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH 2/3] lib/tests: Add randstruct KUnit test
-Date: Sat, 26 Apr 2025 18:38:34 -0700
-Message-Id: <20250427013836.877214-2-kees@kernel.org>
+Subject: [PATCH 1/3] randstruct: gcc-plugin: Remove bogus void member
+Date: Sat, 26 Apr 2025 18:38:33 -0700
+Message-Id: <20250427013836.877214-1-kees@kernel.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250427013604.work.926-kees@kernel.org>
 References: <20250427013604.work.926-kees@kernel.org>
@@ -65,381 +65,119 @@ List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=11713; i=kees@kernel.org; h=from:subject; bh=1XPUuCoX8gvHexCqhRpn3WS8WotpYcenLSO8ViMNUqI=; b=owGbwMvMwCVmps19z/KJym7G02pJDBm8XbNy63eETFiwNNM1zV9yns27SVnR0remnGKQ1VZ2P To9amdXRykLgxgXg6yYIkuQnXuci8fb9nD3uYowc1iZQIYwcHEKwETyjjD84XD+dXTLwg2iRtHy R8sDP6WI5LtFPObcaxY2cUPe31nznzH8U3ki9+DOtLy5vlc31th0bbuUeXXp6+y0GRt6DEsUXk+ dxAsA
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4947; i=kees@kernel.org; h=from:subject; bh=ZgdoQkssZwtgKxsSyH83cNs9nHOLWMIdu0B1U5RulHc=; b=owGbwMvMwCVmps19z/KJym7G02pJDBm8XbPcJ+o/eOrw2+939mwfK8E7a7SYHQ40mAsck58+T /N0LV9tRykLgxgXg6yYIkuQnXuci8fb9nD3uYowc1iZQIYwcHEKwEQKuhkZFl1qWzaZOcW14+Hx NheftgNlJV7/0zIYje5EZdx54XGuhZHhQ0TxVTbBCYVPFi9fFPzh89OVjxK5PG20YtsmqhQkH57 GAgA=
 X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
 Content-Transfer-Encoding: 8bit
 
-Perform basic validation about layout randomization and initialization
-tracking when using CONFIG_RANDSTRUCT=y. Tested using:
+When building the randomized replacement tree of struct members, the
+randstruct GCC plugin would insert, as the first member, a 0-sized void
+member. This appears as though it was done to catch non-designated
+("unnamed") static initializers, which wouldn't be stable since they
+depend on the original struct layout order.
 
-$ ./tools/testing/kunit/kunit.py run \
-	--kconfig_add CONFIG_RANDSTRUCT_FULL=y \
-	randstruct
-[17:22:30] ================= randstruct (2 subtests) ==================
-[17:22:30] [PASSED] randstruct_layout
-[17:22:30] [PASSED] randstruct_initializers
-[17:22:30] =================== [PASSED] randstruct ====================
-[17:22:30] ============================================================
-[17:22:30] Testing complete. Ran 2 tests: passed: 2
-[17:22:30] Elapsed time: 5.091s total, 0.001s configuring, 4.974s building, 0.086s running
+This was accomplished by having the side-effect of the "void member"
+tripping an assert in GCC internals (count_type_elements) if the member
+list ever needed to be counted (e.g. for figuring out the order of members
+during a non-designated initialization), which would catch impossible type
+(void) in the struct:
 
-Adding "--make_option LLVM=1" can be used to test Clang, which also
-passes.
+security/landlock/fs.c: In function ‘hook_file_ioctl_common’:
+security/landlock/fs.c:1745:61: internal compiler error: in count_type_elements, at expr.cc:7075
+ 1745 |                         .u.op = &(struct lsm_ioctlop_audit) {
+      |                                                             ^
 
+static HOST_WIDE_INT
+count_type_elements (const_tree type, bool for_ctor_p)
+{
+  switch (TREE_CODE (type))
+...
+    case VOID_TYPE:
+    default:
+      gcc_unreachable ();
+    }
+}
+
+However this is a redundant safety measure since randstruct uses the
+__designated_initializer attribute both internally and within the
+__randomized_layout attribute macro so that this would be enforced
+by the compiler directly even when randstruct was not enabled (via
+-Wdesignated-init).
+
+A recent change in Landlock ended up tripping the same member counting
+routine when using a full-struct copy initializer as part of an anonymous
+initializer. This, however, is a false positive as the initializer is
+copying between identical structs (and hence identical layouts). The
+"path" member is "struct path", a randomized struct, and is being copied
+to from another "struct path", the "f_path" member:
+
+        landlock_log_denial(landlock_cred(file->f_cred), &(struct landlock_request) {
+                .type = LANDLOCK_REQUEST_FS_ACCESS,
+                .audit = {
+                        .type = LSM_AUDIT_DATA_IOCTL_OP,
+                        .u.op = &(struct lsm_ioctlop_audit) {
+                                .path = file->f_path,
+                                .cmd = cmd,
+                        },
+                },
+	...
+
+As can be seen with the coming randstruct KUnit test, there appears to
+be no behavioral problems with this kind of initialization when the void
+member is removed from the randstruct GCC plugin, so remove it.
+
+Reported-by: "Dr. David Alan Gilbert" <linux@treblig.org>
+Closes: https://lore.kernel.org/lkml/Z_PRaKx7q70MKgCA@gallifrey/
+Reported-by: Mark Brown <broonie@kernel.org>
+Closes: https://lore.kernel.org/lkml/20250407-kbuild-disable-gcc-plugins-v1-1-5d46ae583f5e@kernel.org/
+Reported-by: WangYuli <wangyuli@uniontech.com>
+Closes: https://lore.kernel.org/lkml/337D5D4887277B27+3c677db3-a8b9-47f0-93a4-7809355f1381@uniontech.com/
+Fixes: 313dd1b62921 ("gcc-plugins: Add the randstruct plugin")
 Signed-off-by: Kees Cook <kees@kernel.org>
 ---
-Cc: Bill Wendling <morbo@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Nathan Chancellor <nathan@kernel.org>
-Cc: Nick Desaulniers <nick.desaulniers+lkml@gmail.com>
-Cc: Justin Stitt <justinstitt@google.com>
-Cc: Petr Mladek <pmladek@suse.com>
-Cc: David Gow <davidgow@google.com>
-Cc: Rae Moar <rmoar@google.com>
-Cc: Tamir Duberstein <tamird@gmail.com>
-Cc: Diego Vieira <diego.daniel.professional@gmail.com>
-Cc: Luis Chamberlain <mcgrof@kernel.org>
-Cc: <llvm@lists.linux.dev>
+Cc: "Mickaël Salaün" <mic@digikod.net>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: "Günther Noack" <gnoack@google.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
 ---
- MAINTAINERS                  |   1 +
- lib/Kconfig.debug            |   8 +
- lib/tests/Makefile           |   1 +
- lib/tests/randstruct_kunit.c | 283 +++++++++++++++++++++++++++++++++++
- 4 files changed, 293 insertions(+)
- create mode 100644 lib/tests/randstruct_kunit.c
+ scripts/gcc-plugins/randomize_layout_plugin.c | 18 +-----------------
+ 1 file changed, 1 insertion(+), 17 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index fa1e04e87d1d..aeb3e7911852 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12879,6 +12879,7 @@ F:	include/linux/overflow.h
- F:	include/linux/randomize_kstack.h
- F:	include/linux/ucopysize.h
- F:	kernel/configs/hardening.config
-+F:	lib/tests/randstruct_kunit.c
- F:	lib/tests/usercopy_kunit.c
- F:	mm/usercopy.c
- F:	security/Kconfig.hardening
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index f9051ab610d5..6479cec900c7 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -2863,6 +2863,14 @@ config OVERFLOW_KUNIT_TEST
+diff --git a/scripts/gcc-plugins/randomize_layout_plugin.c b/scripts/gcc-plugins/randomize_layout_plugin.c
+index 5694df3da2e9..971a1908a8cc 100644
+--- a/scripts/gcc-plugins/randomize_layout_plugin.c
++++ b/scripts/gcc-plugins/randomize_layout_plugin.c
+@@ -344,29 +344,13 @@ static int relayout_struct(tree type)
  
- 	  If unsure, say N.
+ 	shuffle(type, (tree *)newtree, shuffle_length);
  
-+config RANDSTRUCT_KUNIT_TEST
-+	tristate "Test randstruct structure layout randomization at runtime" if !KUNIT_ALL_TESTS
-+	depends on KUNIT
-+	default KUNIT_ALL_TESTS
-+	help
-+	  Builds unit tests for the checking CONFIG_RANDSTRUCT=y, which
-+	  randomizes structure layouts.
-+
- config STACKINIT_KUNIT_TEST
- 	tristate "Test level of stack variable initialization" if !KUNIT_ALL_TESTS
- 	depends on KUNIT
-diff --git a/lib/tests/Makefile b/lib/tests/Makefile
-index 5a4794c1826e..56d645014482 100644
---- a/lib/tests/Makefile
-+++ b/lib/tests/Makefile
-@@ -35,6 +35,7 @@ obj-$(CONFIG_MEMCPY_KUNIT_TEST) += memcpy_kunit.o
- CFLAGS_overflow_kunit.o = $(call cc-disable-warning, tautological-constant-out-of-range-compare)
- obj-$(CONFIG_OVERFLOW_KUNIT_TEST) += overflow_kunit.o
- obj-$(CONFIG_PRINTF_KUNIT_TEST) += printf_kunit.o
-+obj-$(CONFIG_RANDSTRUCT_KUNIT_TEST) += randstruct_kunit.o
- obj-$(CONFIG_SCANF_KUNIT_TEST) += scanf_kunit.o
- obj-$(CONFIG_SIPHASH_KUNIT_TEST) += siphash_kunit.o
- obj-$(CONFIG_SLUB_KUNIT_TEST) += slub_kunit.o
-diff --git a/lib/tests/randstruct_kunit.c b/lib/tests/randstruct_kunit.c
-new file mode 100644
-index 000000000000..6fc23dfa57b6
---- /dev/null
-+++ b/lib/tests/randstruct_kunit.c
-@@ -0,0 +1,283 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Test cases for struct randomization, i.e. CONFIG_RANDSTRUCT=y.
-+ *
-+ * For example, see:
-+ * "Running tests with kunit_tool" at Documentation/dev-tools/kunit/start.rst
-+ *	./tools/testing/kunit/kunit.py run randstruct [--raw_output] \
-+ *		[--make_option LLVM=1] \
-+ *		--kconfig_add CONFIG_RANDSTRUCT_FULL=y
-+ *
-+ */
-+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-+
-+#include <kunit/test.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/string.h>
-+
-+#define DO_MANY_MEMBERS(macro, args...)	\
-+	macro(a, args)			\
-+	macro(b, args)			\
-+	macro(c, args)			\
-+	macro(d, args)			\
-+	macro(e, args)			\
-+	macro(f, args)			\
-+	macro(g, args)			\
-+	macro(h, args)
-+
-+#define do_enum(x, ignored)	MEMBER_NAME_ ## x,
-+enum randstruct_member_names {
-+	DO_MANY_MEMBERS(do_enum)
-+	MEMBER_NAME_MAX,
-+};
-+/* Make sure the macros are working: want 8 test members. */
-+_Static_assert(MEMBER_NAME_MAX == 8);
-+
-+/* This is an unsigned long member to match the function pointer size */
-+#define unsigned_long_member(x, ignored)	unsigned long x;
-+struct randstruct_untouched {
-+	DO_MANY_MEMBERS(unsigned_long_member)
-+};
-+
-+/* Struct explicitly marked with __randomize_layout. */
-+struct randstruct_shuffled {
-+	DO_MANY_MEMBERS(unsigned_long_member)
-+} __randomize_layout;
-+#undef unsigned_long_member
-+
-+/* Struct implicitly randomized from being all func ptrs. */
-+#define func_member(x, ignored)	size_t (*x)(int);
-+struct randstruct_funcs_untouched {
-+	DO_MANY_MEMBERS(func_member)
-+} __no_randomize_layout;
-+
-+struct randstruct_funcs_shuffled {
-+	DO_MANY_MEMBERS(func_member)
-+};
-+#undef func_member
-+
-+#define func_body(x, ignored)					\
-+static noinline size_t func_##x(int arg)			\
-+{								\
-+	return offsetof(struct randstruct_funcs_untouched, x);	\
-+}
-+DO_MANY_MEMBERS(func_body)
-+
-+/* Various mixed types. */
-+#define mixed_members					\
-+	bool a;						\
-+	short b;					\
-+	unsigned int c __aligned(16);			\
-+	size_t d;					\
-+	char e;						\
-+	u64 f;						\
-+	union {						\
-+		struct randstruct_shuffled shuffled;	\
-+		uintptr_t g;				\
-+	};						\
-+	union {						\
-+		void *ptr;				\
-+		char h;					\
-+	};
-+
-+struct randstruct_mixed_untouched {
-+	mixed_members
-+};
-+
-+struct randstruct_mixed_shuffled {
-+	mixed_members
-+} __randomize_layout;
-+#undef mixed_members
-+
-+struct contains_randstruct_untouched {
-+	int before;
-+	struct randstruct_untouched untouched;
-+	int after;
-+};
-+
-+struct contains_randstruct_shuffled {
-+	int before;
-+	struct randstruct_shuffled shuffled;
-+	int after;
-+};
-+
-+static void randstruct_layout(struct kunit *test)
-+{
-+	int mismatches;
-+
-+#define check_mismatch(x, untouched, shuffled)	\
-+	if (offsetof(untouched, x) != offsetof(shuffled, x))	\
-+		mismatches++;					\
-+	kunit_info(test, #shuffled "::" #x " @ %zu (vs %zu)\n",	\
-+		   offsetof(shuffled, x),			\
-+		   offsetof(untouched, x));			\
-+
-+#define check_pair(outcome, untouched, shuffled)		\
-+	mismatches = 0;						\
-+	DO_MANY_MEMBERS(check_mismatch, untouched, shuffled)	\
-+	kunit_info(test, "Differing " #untouched " vs " #shuffled " member positions: %d\n", \
-+		   mismatches);					\
-+	KUNIT_##outcome##_MSG(test, mismatches, 0,		\
-+			      #untouched " vs " #shuffled " layouts: unlucky or broken?\n");
-+
-+	check_pair(EXPECT_EQ, struct randstruct_untouched, struct randstruct_untouched)
-+	check_pair(EXPECT_GT, struct randstruct_untouched, struct randstruct_shuffled)
-+	check_pair(EXPECT_GT, struct randstruct_untouched, struct randstruct_funcs_shuffled)
-+	check_pair(EXPECT_GT, struct randstruct_funcs_untouched, struct randstruct_funcs_shuffled)
-+	check_pair(EXPECT_GT, struct randstruct_mixed_untouched, struct randstruct_mixed_shuffled)
-+#undef check_pair
-+
-+#undef check_mismatch
-+}
-+
-+#define check_mismatch(x, ignore)				\
-+	KUNIT_EXPECT_EQ_MSG(test, untouched->x, shuffled->x,	\
-+			    "Mismatched member value in %s initializer\n", \
-+			    name);
-+
-+static void test_check_init(struct kunit *test, const char *name,
-+			    struct randstruct_untouched *untouched,
-+			    struct randstruct_shuffled *shuffled)
-+{
-+	DO_MANY_MEMBERS(check_mismatch)
-+}
-+
-+static void test_check_mixed_init(struct kunit *test, const char *name,
-+				  struct randstruct_mixed_untouched *untouched,
-+				  struct randstruct_mixed_shuffled *shuffled)
-+{
-+	DO_MANY_MEMBERS(check_mismatch)
-+}
-+#undef check_mismatch
-+
-+#define check_mismatch(x, ignore)				\
-+	KUNIT_EXPECT_EQ_MSG(test, untouched->untouched.x,	\
-+			    shuffled->shuffled.x,		\
-+			    "Mismatched member value in %s initializer\n", \
-+			    name);
-+static void test_check_contained_init(struct kunit *test, const char *name,
-+				      struct contains_randstruct_untouched *untouched,
-+				      struct contains_randstruct_shuffled *shuffled)
-+{
-+	DO_MANY_MEMBERS(check_mismatch)
-+}
-+#undef check_mismatch
-+
-+#define check_mismatch(x, ignore)					\
-+	KUNIT_EXPECT_PTR_EQ_MSG(test, untouched->x, shuffled->x,	\
-+			    "Mismatched member value in %s initializer\n", \
-+			    name);
-+
-+static void test_check_funcs_init(struct kunit *test, const char *name,
-+				  struct randstruct_funcs_untouched *untouched,
-+				  struct randstruct_funcs_shuffled *shuffled)
-+{
-+	DO_MANY_MEMBERS(check_mismatch)
-+}
-+#undef check_mismatch
-+
-+static void randstruct_initializers(struct kunit *test)
-+{
-+#define init_members		\
-+		.a = 1,		\
-+		.b = 3,		\
-+		.c = 5,		\
-+		.d = 7,		\
-+		.e = 11,	\
-+		.f = 13,	\
-+		.g = 17,	\
-+		.h = 19,
-+	struct randstruct_untouched untouched = {
-+		init_members
-+	};
-+	struct randstruct_shuffled shuffled = {
-+		init_members
-+	};
-+	struct randstruct_mixed_untouched mixed_untouched = {
-+		init_members
-+	};
-+	struct randstruct_mixed_shuffled mixed_shuffled = {
-+		init_members
-+	};
-+	struct contains_randstruct_untouched contains_untouched = {
-+		.untouched = {
-+			init_members
-+		},
-+	};
-+	struct contains_randstruct_shuffled contains_shuffled = {
-+		.shuffled = {
-+			init_members
-+		},
-+	};
-+#define func_member(x, ignored)	\
-+		.x = func_##x,
-+	struct randstruct_funcs_untouched funcs_untouched = {
-+		DO_MANY_MEMBERS(func_member)
-+	};
-+	struct randstruct_funcs_shuffled funcs_shuffled = {
-+		DO_MANY_MEMBERS(func_member)
-+	};
-+
-+	test_check_init(test, "named", &untouched, &shuffled);
-+	test_check_init(test, "unnamed", &untouched,
-+		&(struct randstruct_shuffled){
-+			init_members
-+		});
-+
-+	test_check_contained_init(test, "named", &contains_untouched, &contains_shuffled);
-+	test_check_contained_init(test, "unnamed", &contains_untouched,
-+		&(struct contains_randstruct_shuffled){
-+			.shuffled = (struct randstruct_shuffled){
-+				init_members
-+			},
-+		});
-+
-+	test_check_contained_init(test, "named", &contains_untouched, &contains_shuffled);
-+	test_check_contained_init(test, "unnamed copy", &contains_untouched,
-+		&(struct contains_randstruct_shuffled){
-+			/* full struct copy initializer */
-+			.shuffled = shuffled,
-+		});
-+
-+	test_check_mixed_init(test, "named", &mixed_untouched, &mixed_shuffled);
-+	test_check_mixed_init(test, "unnamed", &mixed_untouched,
-+		&(struct randstruct_mixed_shuffled){
-+			init_members
-+		});
-+
-+	test_check_funcs_init(test, "named", &funcs_untouched, &funcs_shuffled);
-+	test_check_funcs_init(test, "unnamed", &funcs_untouched,
-+		&(struct randstruct_funcs_shuffled){
-+			DO_MANY_MEMBERS(func_member)
-+		});
-+
-+#undef func_member
-+#undef init_members
-+}
-+
-+static int randstruct_test_init(struct kunit *test)
-+{
-+	if (!IS_ENABLED(CONFIG_RANDSTRUCT))
-+		kunit_skip(test, "Not built with CONFIG_RANDSTRUCT=y");
-+
-+	return 0;
-+}
-+
-+static struct kunit_case randstruct_test_cases[] = {
-+	KUNIT_CASE(randstruct_layout),
-+	KUNIT_CASE(randstruct_initializers),
-+	{}
-+};
-+
-+static struct kunit_suite randstruct_test_suite = {
-+	.name = "randstruct",
-+	.init = randstruct_test_init,
-+	.test_cases = randstruct_test_cases,
-+};
-+
-+kunit_test_suites(&randstruct_test_suite);
-+
-+MODULE_DESCRIPTION("Test cases for struct randomization");
-+MODULE_LICENSE("GPL");
+-	/*
+-	 * set up a bogus anonymous struct field designed to error out on unnamed struct initializers
+-	 * as gcc provides no other way to detect such code
+-	 */
+-	list = make_node(FIELD_DECL);
+-	TREE_CHAIN(list) = newtree[0];
+-	TREE_TYPE(list) = void_type_node;
+-	DECL_SIZE(list) = bitsize_zero_node;
+-	DECL_NONADDRESSABLE_P(list) = 1;
+-	DECL_FIELD_BIT_OFFSET(list) = bitsize_zero_node;
+-	DECL_SIZE_UNIT(list) = size_zero_node;
+-	DECL_FIELD_OFFSET(list) = size_zero_node;
+-	DECL_CONTEXT(list) = type;
+-	// to satisfy the constify plugin
+-	TREE_READONLY(list) = 1;
+-
+ 	for (i = 0; i < num_fields - 1; i++)
+ 		TREE_CHAIN(newtree[i]) = newtree[i+1];
+ 	TREE_CHAIN(newtree[num_fields - 1]) = NULL_TREE;
+ 
+ 	main_variant = TYPE_MAIN_VARIANT(type);
+ 	for (variant = main_variant; variant; variant = TYPE_NEXT_VARIANT(variant)) {
+-		TYPE_FIELDS(variant) = list;
++		TYPE_FIELDS(variant) = newtree[0];
+ 		TYPE_ATTRIBUTES(variant) = copy_list(TYPE_ATTRIBUTES(variant));
+ 		TYPE_ATTRIBUTES(variant) = tree_cons(get_identifier("randomize_performed"), NULL_TREE, TYPE_ATTRIBUTES(variant));
+ 		TYPE_ATTRIBUTES(variant) = tree_cons(get_identifier("designated_init"), NULL_TREE, TYPE_ATTRIBUTES(variant));
 -- 
 2.34.1
 
