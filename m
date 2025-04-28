@@ -1,72 +1,87 @@
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFAA3440C;
-	Sun, 27 Apr 2025 14:31:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2399C1FF603;
+	Mon, 28 Apr 2025 08:53:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745764268; cv=none; b=lHQhvZruXYtGaVh0rknE54JS7PaAuGPfy3p26+CKTPcaUR7/um/8NFp27bxXbzq+uWD32ign8wMyM31Jn/fsgBbpsseLMhgl8mUyGESQFPxmCdiRyPaDPE14w4CiL0M2MUr/E0anFXE5JszNblb0gZ+3ISIK7dBu/vrXrASmsW0=
+	t=1745830423; cv=none; b=YIaQZOGhkkhv/DZ+8yIx0REpA5MXlPyMPQPZFIkC6eSETmBB2qMHkXeLaRnQyFWYfJUGfDGUSAQP6W3DfCrtUXOj0JO02BH8EuQ5+8BU5eu3zOhSIqAQaQ339X/JLHbz07/h/XPpc0EdyhbefYPmX+OvS0bSbazi1Y33A+27hzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745764268; c=relaxed/simple;
-	bh=bYfd+KEj6odgTjCh3IeEijxIjewlcPFewJK9LEdoVYY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pOTs9WW0qB9w86XN04AR10HN1OiqnDxmj5rNgYN5tEc6ndWpNo++eGh4irN4ox+ifxM+dkltfrNJY3sAdgBDy+4VwXz3eH1vuaBNXRHenMhJAe6+ygSB46rlXSMQyBrfCZcB1Kjwn+DHsMX8SNSovV/O5bjTCcrfN1UKFU6wpus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id 90020E3F; Sun, 27 Apr 2025 09:30:58 -0500 (CDT)
-Date: Sun, 27 Apr 2025 09:30:58 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Parav Pandit <parav@nvidia.com>,
-	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-	"linux-security-module@vger.kernel.org" <linux-security-module@vger.kernel.org>,
-	Leon Romanovsky <leonro@nvidia.com>
-Subject: Re: [PATCH] RDMA/uverbs: Consider capability of the process that
- opens the file
-Message-ID: <20250427143058.GA622212@mail.hallyn.com>
-References: <CY8PR12MB7195D5ED46D8E920A5281393DC852@CY8PR12MB7195.namprd12.prod.outlook.com>
- <20250424141347.GS1648741@nvidia.com>
- <CY8PR12MB7195F2A210D670E07EC14DE9DC842@CY8PR12MB7195.namprd12.prod.outlook.com>
- <20250425132930.GB1804142@nvidia.com>
- <20250425140144.GB610516@mail.hallyn.com>
- <20250425142429.GC1804142@nvidia.com>
- <87h62ci7ec.fsf@email.froward.int.ebiederm.org>
- <20250425162102.GA2012301@nvidia.com>
- <875xisf8ma.fsf@email.froward.int.ebiederm.org>
- <20250425183529.GB2012301@nvidia.com>
+	s=arc-20240116; t=1745830423; c=relaxed/simple;
+	bh=QwVhdKsroLTp3FXZMREUKf/LpAJC0pz0HM4iDFUkBQI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EBs0sbxZ0zOcnRf2GkIO3Ixj2NAplg9v6mguct008MK3Pr3M12ycYRZKekJNMYG/0ssrsIKEgsSNVaQHORzr9cRwITgLKiNFCVjVoIgLbEwzTPho0jxb0o6Y+aPr9xVfq4UOKwZBRqzwh96lK3T096WInsczBBn7n7eYPL2ttok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o+eWZCic; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o+eWZCic"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33D10C4CEE4;
+	Mon, 28 Apr 2025 08:53:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745830422;
+	bh=QwVhdKsroLTp3FXZMREUKf/LpAJC0pz0HM4iDFUkBQI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=o+eWZCicC0F8jF170nW3k/LltqhThvrzCacDuQAaI9RbyXViJBAN3A3/eYFSk2mqb
+	 E+E36JuRb3gEmplT2s9If1GIQ3aK4eCJvvO8jwE5jssRMKXHWi93WTytnsYDIcSURS
+	 +kqgiyw7fBHeNFqRxEoKZdyag3JMqMcfN4JiD7ltJjQM/A1HeRRIM3KY2V8ZSZkOrd
+	 Hjib4ufXzVN8pu85TsaECDZWJEUGO+yEyz89aGIZGJbv7+7jpsdJr2qDoHu8oXkDOy
+	 3SDNU8eYQfF8M4ZUtXMLjO0W0vZPSUoNGlIqDrLz9JK/fB1GAm5tN447qbyZ+JmvS4
+	 QZV52S5CZIT5Q==
+From: Christian Brauner <brauner@kernel.org>
+To: Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	paul@paul-moore.com,
+	omosnace@redhat.com,
+	selinux@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs/xattr.c: fix simple_xattr_list to always include security.* xattrs
+Date: Mon, 28 Apr 2025 10:53:33 +0200
+Message-ID: <20250428-vermummen-klumpen-2131561ba55f@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250424152822.2719-1-stephen.smalley.work@gmail.com>
+References: <20250424152822.2719-1-stephen.smalley.work@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250425183529.GB2012301@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1555; i=brauner@kernel.org; h=from:subject:message-id; bh=QwVhdKsroLTp3FXZMREUKf/LpAJC0pz0HM4iDFUkBQI=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTwOwnYdxvzmkzVmuz7/Za/jt/BV6+qf/1u8tOQ+vshm befryS3o5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCIr5RgZPpbv94k5lDpvWW3j /rPHA0r31m7amD9vYdL1yLmv93gx5DAyrGb/0nn+2UaJwGtdVvfS/KbW7DWa7LO5Re3MRoWrdfW NbAA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Fri, Apr 25, 2025 at 03:35:29PM -0300, Jason Gunthorpe wrote:
-> On Fri, Apr 25, 2025 at 12:34:21PM -0500, Eric W. Biederman wrote:
-> > > What about something like CAP_SYS_RAWIO? I don't think we would ever
-> > > make that a per-userns thing, but as a thought experiment, do we check
-> > > current->XXX->user_ns or still check ibdev->netns->XX->user_ns?
-> > >
-> > 
-> > Oh.  CAP_SYS_RAWIO is totally is something you can have.  In fact
-> > the first process in a user namespace starts out with CAP_SYS_RAWIO.
-> > That said it is CAP_SYS_RAWIO with respect to the user namespace.
-> > 
-> > What would be almost certainly be a bug is for any permission check
-> > to be relaxed to ns_capable(resource->user_ns, CAP_SYS_RAWIO).
+On Thu, 24 Apr 2025 11:28:20 -0400, Stephen Smalley wrote:
+> The vfs has long had a fallback to obtain the security.* xattrs from the
+> LSM when the filesystem does not implement its own listxattr, but
+> shmem/tmpfs and kernfs later gained their own xattr handlers to support
+> other xattrs. Unfortunately, as a side effect, tmpfs and kernfs-based
+> filesystems like sysfs no longer return the synthetic security.* xattr
+> names via listxattr unless they are explicitly set by userspace or
+> initially set upon inode creation after policy load. coreutils has
+> recently switched from unconditionally invoking getxattr for security.*
+> for ls -Z via libselinux to only doing so if listxattr returns the xattr
+> name, breaking ls -Z of such inodes.
 > 
-> So a process "has" it but the kernel never accepts it?
+> [...]
 
-Capabilities are targeted at some resource.  Sometimes the resource is
-global, or always belongs to the initial user namespace.  In the case
-of rawio, if ever "device namespaces" became acceptable, then it could
-in fact become namespaced for some resources.
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
--serge
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[1/1] fs/xattr.c: fix simple_xattr_list to always include security.* xattrs
+      https://git.kernel.org/vfs/vfs/c/8b0ba61df5a1
