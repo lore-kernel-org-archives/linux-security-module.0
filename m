@@ -1,123 +1,220 @@
-Received: from sonic309-27.consmr.mail.ne1.yahoo.com (sonic309-27.consmr.mail.ne1.yahoo.com [66.163.184.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out03.mta.xmission.com (out03.mta.xmission.com [166.70.13.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA32127A122
-	for <linux-security-module@vger.kernel.org>; Mon, 28 Apr 2025 16:42:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.184.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4E9291143;
+	Mon, 28 Apr 2025 17:35:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745858565; cv=none; b=jOS9TcwS1B4oB80QK6k6goCFfK2zdKIvPjmia0+VLwACaFgMOe7O1PN6STtGmIco8wSWE+RvKW/e3cZJhr+6mpz8aB7blyrLwIO3wFKwAkX8vJ52wN7rbMJpvlpHAhrMGQGfSW49V8g/Oom6VlTZSn/YxThSkXcEpcp5JScdCxQ=
+	t=1745861743; cv=none; b=F0ZXRIjRDmFhw/CZZAzQC5XemSWNZEAgNAaInw7xjN4f86VW1G5MVfHdQjhgNxpBan26ZXemTnmJCfWmtnvyTvBOJ7SqATjsczGI/9umFl3Fhaz5EzTs3BIMUvGWCol9eB1I+3YxpOOMz8yfwkW2uuLcUH56T1IUUYcR83Fkx58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745858565; c=relaxed/simple;
-	bh=6xY2nc0RaB26C8Wx9+EpDD+pS50ZQFFzgqmN0vDJVM8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QRBFsJclN42hLCTnyViss8fhqBO2VsMNr6/vTmT4WC9Gnlq0TkVhWSTdlDZmpNnMGzkG6YpWVBjSHYgUiMYKge0Ujv3oO6NEZUofKl0lINiHbIa4e9m0KuNBUyUDcKNGzbfZ3XCIPmWIIbv2ualYT49o23scB7KzRgRlbAfqbAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=sy8McH2D; arc=none smtp.client-ip=66.163.184.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="sy8McH2D"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1745858557; bh=sqVT6q/gS2IO11mPSx1zGKMYT49soEThtm+blh315uA=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=sy8McH2Dg0hZ+KIcGa9BrMAEbFL9dd9DzyuowdMBJ42kmfJcNKcRZt20kBLnpBWxnK9oHCEjqL0jIJGw6Jtq9jNNR1eViSzRtfYWXdrphC7qiDYYCq7VhgXBFs9qjXquZSKbKMyErHKPEa2LGXGEF8YWq0m/sLcR5SdRe4bI7Z+ROhYVWxG3U0UsFAP3fTJ5iliwOxPfW8UYP3DASScj5Leb+0OPP/WjnHmcrg6DBqyAyw7C7qcZ/8Ls94zH6DAttq/h6ta/MaKruY0dIPBVund0sWCwcbBAVjeFyVvuoXFNVjwwZYmODAJu7sNtM5CymBG0SLzj+HeBFrGOshz67Q==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1745858557; bh=OwJy9FELB4qaaHu2dLq+VkTasxQVwIrWN0Ew6iGM6kH=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=Cs5nmiHOE2jzAeqZo8+VZhFXOC4w65HliSxXtBd9thgvugrENsgqTuJR3DPyp8UQfErnopdaB2gJ/cbt+/aA/akNtEWNrTP4LQFxVNccind3A8nr1c5O5HsSER2YW2zssaG+NvKQY/oYLoGCdpB4D7u8ZV9EhcUl5m9JdSBBYzD3KRKANULHo9zcBfT9D3YhjdT2ODs7dR6Dc2XGeZT/dx1p0SYKchwH+vFVTNNF+DpV5YBrRve9X0HC3coN/d6JjyV/tLqGbVEOXFlLqQTWEpYf9+yziUbvKqk1Vr9KqJGnknnX9u9mOBkGNwyQHmmORCgnu8QE3vH4iIwVPZYFpA==
-X-YMail-OSG: UYxsJJYVM1nve9Q1xFVLkeERBzVnVqyeHNPd50KUB7jgbH3qnYdOeQSyfMHuvbW
- qdxenoAyQY4kfeXtpWqZncnvV4pEA65QrNlhYkSBm5eHxEzqJaN_MrUWFi4HLAdU3NTv9ONO8gLT
- cLAu_MOBPS_LgVGCglF1z0Y3_8ytqhiuFo_TP8MCy0UFNM6a1IbxYWDG86Cox61EjEcmypBIvpe1
- uWuUd4TD4tK.3ul8yWMxqrd25_WVjmqzIPeI2kQxA80v8bDSvAvS9fRfgBQie1dFmB7b.lMgWFOP
- ZilW7mYqGAUAEd5sIHhRbM5sX06GQSi1mpsVcYkc8PJknupzijLUWFVZter12xVOFjb0BA55oSAH
- 77H4.ISHRjuvqylanW3b5ADWiS95coLks.f8xOjtuxNenvVMAg8nqxpdtyEdsA_UdRr4ecIQECqE
- bmgJN.bhYwx3oMX6z3Jz1bkOJklFDEYmnAKw3D3str.Nht9hC_xVNgrbLJZ9.rNr.mOFSxqa6jfR
- NzTWQm.Ytw63L55tA06hyzHHdrjVR2OXcgnBOkat708FMl_IPur7I3GO7c4xZx1cLwYxLsVyQlM2
- vLwoPcqv2JNGJlx.k_S6poZ78DMhnZPo1Fi5UANnyldKm0qx2nvSkgFeSxH_dSA2oUxF38Jv05Ex
- uPnh4LNRt2ILoAAhOXhYaQBMOFAHUmDPQjBMyjx8eZA84SDu2cVeBZrZdVN01GhuztLQNAVp294G
- ULILjvCOs.54DRfxU1wtH17Sk79MRyUWr7F2m1MfzeT0xDCQ2oSEuRMV9JWeS7rkBFeYtUEFcUW.
- Ps03SFKOZwHHSe7i1CUN1AQL79JqCpL2D2vGFmZElBKd654KIWGglrDvQzz9go6t_dnC_0XNuFFz
- Wqfs7cwGDr1KAQbGHT1tMMN62xIPoyd_lYLpXpPLS6T.i1PVqtCeHq0agMU62JEcFBVVHeNq0Q5y
- mMIR8R_58uuJGV80TTO8N1InesdhPtkZG17KfzZZvINBYepDdFtaqqkiiBMdwmDvIJnUKUTq8RqS
- x80QqukyMnMk8ThsUJYJh7MuGF59h2T8N7GxnM7K9zgIZvCApcvG2ecW.Hagm535fBKgeZ0GuN6T
- wiN7fj8CSnxIEf_0tjTs2hd_CtNjs8SOo.FceppCmCHalLAesziEagVow2DCsId4mAsLZ71.1NYv
- UM92W_x6lVQ2vZW8fpmNtXDjV6DeZgshzQGWrjWc5lF9TmZ55DoTsPTGyMcqDW8Mhi8Y4z9i5EMw
- CWoPC1chtCz9ZdvpDp4qoHVc_j3gH9PNFj8xOBHxZOnW6EAV76Srgpn_yfaAL6R1qRitIkQ3zVba
- se2GMNKCv42Z4LlEa6TVZnzW7d.s1xmc4I5nEbAM6as4EXDBMCURXjgZkS8G2BpYfHRXrvrLN9An
- Plqi._0rEVZ2rLX5T9oTpcEATS9cFX7LHkTPtZQDEEDSiq5419tp0MLu0nUE0Mzc_BaWFqe7j6MV
- lJUinby15mI.gtJVB88ANtxOgY0xa4bjspGMx0ECpJNHzOzwvRhcjz6fru4tXGfll_EI0ippPIKM
- W8anfa3hFd3u5KeQF0v38m8BShW4c229uA06WOCdxy16JBMDZNRX6wC8iiwbUX6O8zmrAjhjzGCq
- 8DBAN9gSguBrMmyQfB9o1y_vYNPbiRJhNk5BckAjmHuytY.ZPhAU6RKnJsxHUkntiUL3Yj_vuUv0
- ZApsmGak9pq3qlG5QUcnQvs6v0DMvfgq50PynoFhABZkdJVH0q9P8DdveQcOMI7OKHSgrLik59kD
- zaAPDwdXDMgvaHXZGiHD_O7bBbCYplhKf2VkM9JNis2_GH.mGmPc0wDqk2xNoJsy_iRm4YJQmnZ1
- Jw2c_L2ut7ybkHC9Psxxp_7UnGIAXvGz0NIIJuf8qh4T._FjQXNr69vuYWFV7T76pOB8boFnM5ja
- l7YhKZuFRVmZ5L9nsUvkc.gHXv1JPVQofrP2YOb4NQ0c2zJhGP9RqrTDcMjCUxhYdYydxislMlC9
- 5h9hTDI2E0ppdVWQHyCCtUufdASICa2N11Z._oEMpPJA4daZpCA_mE.C2jtNPkKssc5BJ9BN9lrt
- nLrLJj3TroWEET.3j7WUAXcboQKa9astOlpVySbvvahbPdIInXS0_eNLewaYQdPs9jgfKzFjlmfK
- T1srwHLociI00t176XO8hSn3oi0EoSBcwNnUUgDQU6Y_pXmS753OvERIzjlzBKsc_l58.0hGdfjW
- a2f_2_EOabiLHJtwbquFCYOboie.Js47cjFkCbFEceb5TxLWGaqgqoGFms5rdJF23KIRecTSMtda
- VUg--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: dc9f098f-28ea-41ed-87ec-fab9cfeed3e1
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Mon, 28 Apr 2025 16:42:37 +0000
-Received: by hermes--production-gq1-74d64bb7d7-4ndhm (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 0d3d3196c6fbd5ff60aed6348ba5f11a;
-          Mon, 28 Apr 2025 16:32:29 +0000 (UTC)
-Message-ID: <f24142d4-e0eb-4d35-b230-80dff1e58331@schaufler-ca.com>
-Date: Mon, 28 Apr 2025 09:32:28 -0700
+	s=arc-20240116; t=1745861743; c=relaxed/simple;
+	bh=s6xrYVbX0RSIwHJOuUEdz5BddCI80t03zN2GQm4RmPU=;
+	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
+	 Content-Type:Subject; b=DSqzfjaiEaoErvDSj5jdN/Ur5A315Mgg7GVfnDrlZBs+G+UYKCH9CdtOrp1SRJ/KcivfFlfS4UL18Lt+9YgkNB/3MgQkQvr6KKu+iyL/BSNnV5VMSDAgRvglg7d3tjdMhxZdBWz0MmOWyh+6VIto6obJQPBAvK4E/4jaEl7j5CU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
+Received: from in02.mta.xmission.com ([166.70.13.52]:39418)
+	by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1u9Ru2-00HJAO-9e; Mon, 28 Apr 2025 11:04:22 -0600
+Received: from ip72-198-198-28.om.om.cox.net ([72.198.198.28]:39012 helo=email.froward.int.ebiederm.org.xmission.com)
+	by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1u9Ru0-001QR6-Tu; Mon, 28 Apr 2025 11:04:21 -0600
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>,  Parav Pandit <parav@nvidia.com>,
+  "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+  "linux-security-module@vger.kernel.org"
+ <linux-security-module@vger.kernel.org>,  Leon Romanovsky
+ <leonro@nvidia.com>
+References: <20250423164545.GM1648741@nvidia.com>
+	<CY8PR12MB7195D5ED46D8E920A5281393DC852@CY8PR12MB7195.namprd12.prod.outlook.com>
+	<20250424141347.GS1648741@nvidia.com>
+	<CY8PR12MB7195F2A210D670E07EC14DE9DC842@CY8PR12MB7195.namprd12.prod.outlook.com>
+	<20250425132930.GB1804142@nvidia.com>
+	<20250425140144.GB610516@mail.hallyn.com>
+	<20250425142429.GC1804142@nvidia.com>
+	<87h62ci7ec.fsf@email.froward.int.ebiederm.org>
+	<20250425162102.GA2012301@nvidia.com>
+	<875xisf8ma.fsf@email.froward.int.ebiederm.org>
+	<20250425183529.GB2012301@nvidia.com>
+Date: Mon, 28 Apr 2025 12:03:47 -0500
+In-Reply-To: <20250425183529.GB2012301@nvidia.com> (Jason Gunthorpe's message
+	of "Fri, 25 Apr 2025 15:35:29 -0300")
+Message-ID: <87tt68cj64.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] security,fs,nfs,net: update security_inode_listsecurity()
- interface
-To: Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc: paul@paul-moore.com, Trond Myklebust <trondmy@kernel.org>,
- Anna Schumaker <anna@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- Eric Dumazet <edumazet@google.com>, Kuniyuki Iwashima <kuniyu@amazon.com>,
- Paolo Abeni <pabeni@redhat.com>, Willem de Bruijn <willemb@google.com>,
- "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Simon Horman <horms@kernel.org>, Ondrej Mosnacek <omosnace@redhat.com>,
- linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org,
- netdev@vger.kernel.org, selinux@vger.kernel.org,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20250428155535.6577-2-stephen.smalley.work@gmail.com>
- <988adabb-4236-4401-9db1-130687b0d84f@schaufler-ca.com>
- <CAEjxPJ66vErSdqaMkdx8H2xcYXQ1hrscLpkWDSQ906q8c2VTFQ@mail.gmail.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CAEjxPJ66vErSdqaMkdx8H2xcYXQ1hrscLpkWDSQ906q8c2VTFQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.23737 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain
+X-XM-SPF: eid=1u9Ru0-001QR6-Tu;;;mid=<87tt68cj64.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=72.198.198.28;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX1+lh1UrU3ibx8d0li2I/z8xuQxRqjiHIko=
+X-Spam-Level: 
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+	*      [score: 0.5000]
+	*  0.7 XMSubLong Long Subject
+	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+	*      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
+	*  0.2 XM_B_SpammyWords One or more commonly used spammy words
+X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Jason Gunthorpe <jgg@nvidia.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 737 ms - load_scoreonly_sql: 0.05 (0.0%),
+	signal_user_changed: 11 (1.5%), b_tie_ro: 10 (1.3%), parse: 1.02
+	(0.1%), extract_message_metadata: 14 (1.8%), get_uri_detail_list: 3.0
+	(0.4%), tests_pri_-2000: 14 (1.9%), tests_pri_-1000: 2.4 (0.3%),
+	tests_pri_-950: 1.19 (0.2%), tests_pri_-900: 0.95 (0.1%),
+	tests_pri_-90: 251 (34.1%), check_bayes: 248 (33.7%), b_tokenize: 10
+	(1.4%), b_tok_get_all: 10 (1.4%), b_comp_prob: 3.5 (0.5%),
+	b_tok_touch_all: 220 (29.8%), b_finish: 0.96 (0.1%), tests_pri_0: 428
+	(58.1%), check_dkim_signature: 0.56 (0.1%), check_dkim_adsp: 3.1
+	(0.4%), poll_dns_idle: 0.98 (0.1%), tests_pri_10: 2.1 (0.3%),
+	tests_pri_500: 8 (1.0%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH] RDMA/uverbs: Consider capability of the process that
+ opens the file
+X-SA-Exim-Connect-IP: 166.70.13.52
+X-SA-Exim-Rcpt-To: leonro@nvidia.com, linux-security-module@vger.kernel.org, linux-rdma@vger.kernel.org, parav@nvidia.com, serge@hallyn.com, jgg@nvidia.com
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-SA-Exim-Scanned: No (on out03.mta.xmission.com); SAEximRunCond expanded to false
 
-On 4/28/2025 9:23 AM, Stephen Smalley wrote:
-> On Mon, Apr 28, 2025 at 12:17 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->> On 4/28/2025 8:55 AM, Stephen Smalley wrote:
->>> Update the security_inode_listsecurity() interface to allow
->>> use of the xattr_list_one() helper and update the hook
->>> implementations.
->>>
->>> Link: https://lore.kernel.org/selinux/20250424152822.2719-1-stephen.smalley.work@gmail.com/
->>>
->>> Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
->>> ---
->>> This patch is relative to the one linked above, which in theory is on
->>> vfs.fixes but doesn't appear to have been pushed when I looked.
->>> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
->>> index bf3bbac4e02a..3c3919dcdebc 100644
->>> --- a/include/linux/lsm_hook_defs.h
->>> +++ b/include/linux/lsm_hook_defs.h
->>> @@ -174,8 +174,8 @@ LSM_HOOK(int, -EOPNOTSUPP, inode_getsecurity, struct mnt_idmap *idmap,
->>>        struct inode *inode, const char *name, void **buffer, bool alloc)
->>>  LSM_HOOK(int, -EOPNOTSUPP, inode_setsecurity, struct inode *inode,
->>>        const char *name, const void *value, size_t size, int flags)
->>> -LSM_HOOK(int, 0, inode_listsecurity, struct inode *inode, char *buffer,
->>> -      size_t buffer_size)
->>> +LSM_HOOK(int, 0, inode_listsecurity, struct inode *inode, char **buffer,
->>> +      ssize_t *remaining_size)
->> How about "rem", "rsize" or some other name instead of the overly long
->> "remaining_size_"?
-> I don't especially care either way but was just being consistent with
-> the xattr_list_one() code.
+Jason Gunthorpe <jgg@nvidia.com> writes:
 
-Sigh. Then I'd leave it as is.
+> On Fri, Apr 25, 2025 at 12:34:21PM -0500, Eric W. Biederman wrote:
+>> > What about something like CAP_SYS_RAWIO? I don't think we would ever
+>> > make that a per-userns thing, but as a thought experiment, do we check
+>> > current->XXX->user_ns or still check ibdev->netns->XX->user_ns?
+>> >
+>> 
+>> Oh.  CAP_SYS_RAWIO is totally is something you can have.  In fact
+>> the first process in a user namespace starts out with CAP_SYS_RAWIO.
+>> That said it is CAP_SYS_RAWIO with respect to the user namespace.
+>> 
+>> What would be almost certainly be a bug is for any permission check
+>> to be relaxed to ns_capable(resource->user_ns, CAP_SYS_RAWIO).
+>
+> So a process "has" it but the kernel never accepts it?
+
+Exactly.  Most capabilities possessed by root in a user namespace are
+never allowed to do anything or at very rarely allowed to do anything.
+
+Semantically the only things root in a user namespace is allowed to
+do are those things that the we only disallow because it would confuse
+setuid programs, but are otherwise perfectly fine for an unprivileged
+process to perform.
+
+>> I don't know what an infiniband character device refers to.  Is it an
+>> attachment of a physical cable to the box like a netdevice?  Is it an
+>> infiniband queue-pair?
+>
+> It refers to a single struct ib_device in the kernel. It is kind of a
+> like a namespace in that all the commands executed and uobjects
+> created on the FD are relative to the struct ib_device.
+
+Unfortunately I am not familiar with the infiniband kernel abstractions.
+
+>> The names (device major and minor) not living in a network namespace
+>> mean that there can be problems for CRIU to migrate a infiniband device,
+>> as it's device major and minor number are not guaranteed to be
+>> available.  Perhaps that doesn't matter, as the name you open is on a
+>> filesystem.  *Shrug*
+>
+> I don't see a path for CRIU and rdma, there is too much hardware
+> state.. Presumably if anyone ever did it they'd have to ignore that
+> the major/minor changes.
+
+At this point I would be surprised if there was sufficient resources
+being put at the problem.  In principle the hardware state is a
+simplified version of a TCP/IP connection and some DMA transactions,
+so it isn't an unreasonable thing to imagine.
+
+Especially as it is usually the folks who have long running jobs on
+clusters (because no single machine is big enough) that are both use
+infiniband and are interested in checkpoint-restart.
+
+The CRIU question is always relevant to ask in a namespace context
+as that is very much part of the goal of namespaces.  To abstract
+out the names so that migration of resources from one machine
+can be implemented in the future.
+
+>> > static int ib_uverbs_open(struct inode *inode, struct file *filp)
+>> > {
+>> > 	if (!rdma_dev_access_netns(ib_dev, current->nsproxy->net_ns)) {
+>> > 		ret = -EPERM;
+>> >
+>> 
+>> > bool rdma_dev_access_netns(const struct ib_device *dev, const struct net *net)
+>> > {
+>> > 	return (ib_devices_shared_netns ||
+>> > 		net_eq(read_pnet(&dev->coredev.rdma_net), net));
+>> >
+>> > So you can say we 'captured' the net_ns into the FD as there is some
+>> > struct file->....->ib_dev->..->net_ns that does not change
+>> >
+>> > Thus ib_dev->...->user_ns is going to always be the user_ns of the
+>> > netns of the process that opened the FD.
+>> 
+>> Nope.
+>> 
+>> There is no check against current->cred->user_ns.  So the check has
+>> nothing to do with the credentials of the process that opened the
+>> character device.
+>
+> I said "user_ns of the netns"?  Credentials of the process is something
+> else?
+
+Exactly the credentials of the a process are not:
+	current->nsproxy->net_ns->user_ns;  /* Not this */
+
+The credentials of a process are:
+	current->cred;  /* This */
+
+With current->cred->user_ns the current processes user namespace.
+
+> It sounds like we just totally ignore current->cred->user_ns from the
+> rdma subsystem perspective?
+
+Since you don't allow anything currently to happen in a user namespace
+that is completely reasonable.
+
+Once ns_capable checks start being added that changes.
+
+>> > So.. hopefully final question.. When we are in a system call context
+>> > and want to check CAP_NET_XX should we also require that the current
+>> > process has the same net ns as the ib_dev?
+>> 
+>> I want to say in general only for opening the ib_device.
+
+The information I don't have to give a better answer is what
+an ib_device actually is from a hardware perspective.  That
+is why I was asking about queue-pairs above.
+
+>> The network stack in general uses netlink to talk to network devices
+>> (sockets are another matter), so this whole using character devices
+>> to talk to devices is very weird to me.
+>
+> It isn't that different. In netlink you get the FD through socket, in
+> char dev you get it through open.
+
+It is just enough different that there are no good examples I can point
+you at to say what needs to happen here.
+
+For netlink it is totally clear that all of the permission checks need
+to happen at open time.  Because the sender of the netlink message
+may be on another machine.
+
+For a FD opened through a character device everything is local and
+you are still in the context of the requesting process so permission
+checks can still happen, and aren't completely silly.
+
+Eric
 
