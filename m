@@ -1,58 +1,62 @@
-Received: from sonic309-21.consmr.mail.ne1.yahoo.com (sonic309-21.consmr.mail.ne1.yahoo.com [66.163.184.147])
+Received: from sonic309-27.consmr.mail.ne1.yahoo.com (sonic309-27.consmr.mail.ne1.yahoo.com [66.163.184.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E05C31C2324
-	for <linux-security-module@vger.kernel.org>; Mon, 28 Apr 2025 16:37:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.184.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA32127A122
+	for <linux-security-module@vger.kernel.org>; Mon, 28 Apr 2025 16:42:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.184.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745858243; cv=none; b=rTUoSrJkBkRnuZCQWXEx71GOMOgLLkHZtGeTiJ+XC7yQwb+FWAWDYq8+p01ucyBEZr8jfmfDGbn+TTzrY9XIRBdcMGWhd2zeER6HZ0FDsEg2yz+DF2E9jMEUBWj5SbT6jQ4kYrtaPdO8XCvB6yy+Cp5jgF3Lww67ezpr+bzaohY=
+	t=1745858565; cv=none; b=jOS9TcwS1B4oB80QK6k6goCFfK2zdKIvPjmia0+VLwACaFgMOe7O1PN6STtGmIco8wSWE+RvKW/e3cZJhr+6mpz8aB7blyrLwIO3wFKwAkX8vJ52wN7rbMJpvlpHAhrMGQGfSW49V8g/Oom6VlTZSn/YxThSkXcEpcp5JScdCxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745858243; c=relaxed/simple;
-	bh=0VvQeNVU4UgdbwYBHvilrt2m+ijy4wdKBUUD2tIDmIg=;
+	s=arc-20240116; t=1745858565; c=relaxed/simple;
+	bh=6xY2nc0RaB26C8Wx9+EpDD+pS50ZQFFzgqmN0vDJVM8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HRAXapHFmt+qIR4MzsbPjKkIQhkUvjBvDSNAkq17R+nmNBNQ/iM82BLkqrm4LvnxM0K6s/57vvQuVRqn/nss/ZJ1cNL5xZGCvElorSSCWJ5KsQXF5iahxnGibbhVz/a4HDQ3PVhVOj4oIem1cTLUTmkATVG2INw+ox7qdx6gWHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=Y4ZDUQlg; arc=none smtp.client-ip=66.163.184.147
+	 In-Reply-To:Content-Type; b=QRBFsJclN42hLCTnyViss8fhqBO2VsMNr6/vTmT4WC9Gnlq0TkVhWSTdlDZmpNnMGzkG6YpWVBjSHYgUiMYKge0Ujv3oO6NEZUofKl0lINiHbIa4e9m0KuNBUyUDcKNGzbfZ3XCIPmWIIbv2ualYT49o23scB7KzRgRlbAfqbAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=sy8McH2D; arc=none smtp.client-ip=66.163.184.153
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="Y4ZDUQlg"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1745858240; bh=Bv8soi9tACJn9WGewxRVBUl8fgiOJi3nT89t8VKibUs=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=Y4ZDUQlg6/6JEBQHBtgjD7xnzTJ9Fi7ra+1IythiGshS8ziVXqt/+Us/L4G7WZOaANSjQcAVPGsADWNNH+ZWyfsvB6JpPyHojqtTS4cfFj6VlMHKEVSBMmUjaDEEtnK4xltIed3edX8LJ0Ww2Ud19U1E9IeQcJHIRwE9tIjC5Z/81q5xFNFQeX+yCuqpPBt9uuVXuaTkyLExC4EHX3xNeUswwLKEJ3flt9FrWCvI/V90sgwTPIDNJ7G+1DHBxFnhzC0pZifedGfoxV9kGTkHpMaFqjhAS2xMDvObs8qsRvqNLdjZYn/LdCwRKqL19E3ka8jqMD9d2v84ir2glcHOcA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1745858240; bh=SlB9CxpqNzNWsPAxet4qnF0BTjfzqXCKdGIQT2/4/Ad=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=A+eOZWXcRqGBCywayYeNlUziIGEmc92m6m5abbQrQQu5cwgfvUUYCenRjOG/RBKXKs5qk6dMv6bsJy1nu7TUYhaJP8V9el7Qh5NBifyqvl4FD/+Fs5+nKHmw4aOTISJn4dPpRtyFlgvuWHtZoZDwadU6iTkDTdXOTckoxgVIDtj3j/GA2PQBPrCTkDLMbYf8z/ymtQDmRBE1b1YZJTQ/zou5tk5cE+hKEF07i2S5aZNxXDMkiTeCQtzCXSdYDAfU5iO3JgV3+IIZLUdA1f/NF1sKnNjR5kKlvKfw4DMVrjODGLDAUj7CAOSULeJGeMmKB51Q/zaLvuEZKGExAxyswA==
-X-YMail-OSG: iMY2u.gVM1l90gKJDkm7xWJB9KcK486jGS.kVjAk2Fb207glp6iGi_9UMrEMMWT
- vMg8Gh3004OqDAC39tU0WargmSDGDeEXcoCss2RstxZR_bqC7fx_kFsw25ie.qMVI_ncxxFUeyxQ
- T09IeQJFBk5SnMb0RpZp.prpvs7kvkIyT7atvPI2WWAzqJlGTt9b71oziCTrXCcJSM2Lhf8DQ7Mi
- P4B1Z.Lv7UzsoI8ukACgq5C0E7qcx17ZjTOTLlBDu2qOmmPNCQqdhXDE6EmcdOUdewaizr0v5FgR
- B3DMeaZS6F3N2Bmnzq4AfiQdtY.3760ojRfgWxqtsHNaaDm5Qcgdwc..9m7FYOpDZU6uOx1NH2O1
- .uCePu50linOGtN2TrQYTn24soqboODqufgsV8bX0E3TFKfRrbaA0ZL.bmPAxOk7fpurCZ6vGsGC
- zAX9xk5fJ1Ou4SoahjqI65noOacynhHnwrnbseX17xCTO1BEzp6TD1Doh0qLyhHACk9DNIdAekzj
- dzwKWn.MVqXcibFaHnR8FO5RwCW95ZXYH6mj77dxWrICPTaNlm7vIOMfsfJi4qeq3KeLpmlghGaB
- 4Z5HBFGKK5q2om4gssXIhss97DDSfgbokxUAmwBj2s7yYf6Q6vI85JZsNEWDGNUPZ5gdMRSC04Fd
- .kxGLKIIeckOGtp_8Kja0TDk0c6dnhLlfleLP4JX2.acbTY6YmRnByhX0NymWSOw3n2EVx2GBlDa
- 1QGF1WY2yGIi1obHji6Z9kaIRqH665oYz3e9bvQaAAPeV3CGU0Imnw3HdPZx_g3TFP75q3daepbP
- LrHiB2l.0VmJAZG6wXNoUWS8uAhhicPJCIsPbMP7qdpTGZ8_U3SyAp6z3TpMzD42xIDhKa_IG2WA
- v4JWsfRVbSm2RB6flqBl0BKJlj5sxiOcUI0RC_TtEFS3mXrw1AKKROBsK8x1o9jptLmvh6_fJ76l
- 4URHUtDayI1SsPy4GZZnoZ5w92KjXnaC6b2OvlxEW3HZetgb0zn4KTpDiNxX8Db.I9llyaq3wMB9
- QlogKDH9IgKm0yNOR8FCvvczZBb1ZA9wiViedi22_UD9V9IRY2gsc.PsNB2kskq6TzdJsdAsSa8i
- XE2Gt7kRavMsL73amiOrbceWP_.vNpcNlDY2Ur33cK.KccCYXgI.aJzGhPDsANfBDY4aBz3n.h4w
- CM3W_ryojATmbn_o3atofJH8GU353CeRtbFv3oKXmfWSDugzML5pYaej.KIT8Qq5Xxlw8XqDZzVz
- p5MzLN.4HCQfClnH_I8tZiZzMilzYz2qEz_IkJmb1BPUBHx3agdCJ6IeQ4jrxEDWTt.aerS13qng
- V32OMbRtC0yMBm0iKi4MODI.lWqk5EAvaUi6OhOQvXxY39FAaGhVi2jSYyQk9nUGvrwwP0vT91Yr
- 0k2eh21fBpApm9_HUq0RSNoL7kD7DUysgP4nH4tSTCMiPGYir9MUOiSJxtWSR.UAJUxgY5gcK0uP
- 6HWsjNugCiWzrums8IEAUgKgycA0hqFH5zIVmPvzZt9oTUVUAd5r8wiPLRhq5ouE92vD5RWq.SGF
- CO0fD.zzq8yJlAg1E5FE2dcGcgoauRh2H97t9uWamKwHXNYJ.WTd7tIjjR376dWLkHBeh4BKjC.Z
- fxdymB4NyX0EajG93qZ1TiLdI6H4y1ojdGX.xB7iUinZP73H3FZNMSHxCh1Aj3bNNClR.2V9GW4w
- VBkemrq5EhSHhojiiT8_SpJJH5ZCzu7of6lbRjHX6rBseah0aonGdwDt8j4YyrYXcEPT_Ptu5UmU
- hp..3CHP.HRbS7sBG6b_UKvwo7jVUIyhi4Y5wAAa3K7D3T5MQLjqgi8hI9VfMZFpHF0FsjksfpDp
- SIIVrLK9Za0SFvjW9L6v6KdsFxmz3LtVmUbQC8jZG0jcrowP3c4gXKFGjZulo62nSkDOIKxEWYhc
- aHgm4lg9kcTX_hfdsQsv2TtTJC0AenCXP3G0UJt74O5IcDVZykIm2.KtsdW85.KSBtkoZd2bYaPv
- 28_pTZYoHI.924vOLysEgI0lXaSIGeSgszQ--
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="sy8McH2D"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1745858557; bh=sqVT6q/gS2IO11mPSx1zGKMYT49soEThtm+blh315uA=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=sy8McH2Dg0hZ+KIcGa9BrMAEbFL9dd9DzyuowdMBJ42kmfJcNKcRZt20kBLnpBWxnK9oHCEjqL0jIJGw6Jtq9jNNR1eViSzRtfYWXdrphC7qiDYYCq7VhgXBFs9qjXquZSKbKMyErHKPEa2LGXGEF8YWq0m/sLcR5SdRe4bI7Z+ROhYVWxG3U0UsFAP3fTJ5iliwOxPfW8UYP3DASScj5Leb+0OPP/WjnHmcrg6DBqyAyw7C7qcZ/8Ls94zH6DAttq/h6ta/MaKruY0dIPBVund0sWCwcbBAVjeFyVvuoXFNVjwwZYmODAJu7sNtM5CymBG0SLzj+HeBFrGOshz67Q==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1745858557; bh=OwJy9FELB4qaaHu2dLq+VkTasxQVwIrWN0Ew6iGM6kH=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=Cs5nmiHOE2jzAeqZo8+VZhFXOC4w65HliSxXtBd9thgvugrENsgqTuJR3DPyp8UQfErnopdaB2gJ/cbt+/aA/akNtEWNrTP4LQFxVNccind3A8nr1c5O5HsSER2YW2zssaG+NvKQY/oYLoGCdpB4D7u8ZV9EhcUl5m9JdSBBYzD3KRKANULHo9zcBfT9D3YhjdT2ODs7dR6Dc2XGeZT/dx1p0SYKchwH+vFVTNNF+DpV5YBrRve9X0HC3coN/d6JjyV/tLqGbVEOXFlLqQTWEpYf9+yziUbvKqk1Vr9KqJGnknnX9u9mOBkGNwyQHmmORCgnu8QE3vH4iIwVPZYFpA==
+X-YMail-OSG: UYxsJJYVM1nve9Q1xFVLkeERBzVnVqyeHNPd50KUB7jgbH3qnYdOeQSyfMHuvbW
+ qdxenoAyQY4kfeXtpWqZncnvV4pEA65QrNlhYkSBm5eHxEzqJaN_MrUWFi4HLAdU3NTv9ONO8gLT
+ cLAu_MOBPS_LgVGCglF1z0Y3_8ytqhiuFo_TP8MCy0UFNM6a1IbxYWDG86Cox61EjEcmypBIvpe1
+ uWuUd4TD4tK.3ul8yWMxqrd25_WVjmqzIPeI2kQxA80v8bDSvAvS9fRfgBQie1dFmB7b.lMgWFOP
+ ZilW7mYqGAUAEd5sIHhRbM5sX06GQSi1mpsVcYkc8PJknupzijLUWFVZter12xVOFjb0BA55oSAH
+ 77H4.ISHRjuvqylanW3b5ADWiS95coLks.f8xOjtuxNenvVMAg8nqxpdtyEdsA_UdRr4ecIQECqE
+ bmgJN.bhYwx3oMX6z3Jz1bkOJklFDEYmnAKw3D3str.Nht9hC_xVNgrbLJZ9.rNr.mOFSxqa6jfR
+ NzTWQm.Ytw63L55tA06hyzHHdrjVR2OXcgnBOkat708FMl_IPur7I3GO7c4xZx1cLwYxLsVyQlM2
+ vLwoPcqv2JNGJlx.k_S6poZ78DMhnZPo1Fi5UANnyldKm0qx2nvSkgFeSxH_dSA2oUxF38Jv05Ex
+ uPnh4LNRt2ILoAAhOXhYaQBMOFAHUmDPQjBMyjx8eZA84SDu2cVeBZrZdVN01GhuztLQNAVp294G
+ ULILjvCOs.54DRfxU1wtH17Sk79MRyUWr7F2m1MfzeT0xDCQ2oSEuRMV9JWeS7rkBFeYtUEFcUW.
+ Ps03SFKOZwHHSe7i1CUN1AQL79JqCpL2D2vGFmZElBKd654KIWGglrDvQzz9go6t_dnC_0XNuFFz
+ Wqfs7cwGDr1KAQbGHT1tMMN62xIPoyd_lYLpXpPLS6T.i1PVqtCeHq0agMU62JEcFBVVHeNq0Q5y
+ mMIR8R_58uuJGV80TTO8N1InesdhPtkZG17KfzZZvINBYepDdFtaqqkiiBMdwmDvIJnUKUTq8RqS
+ x80QqukyMnMk8ThsUJYJh7MuGF59h2T8N7GxnM7K9zgIZvCApcvG2ecW.Hagm535fBKgeZ0GuN6T
+ wiN7fj8CSnxIEf_0tjTs2hd_CtNjs8SOo.FceppCmCHalLAesziEagVow2DCsId4mAsLZ71.1NYv
+ UM92W_x6lVQ2vZW8fpmNtXDjV6DeZgshzQGWrjWc5lF9TmZ55DoTsPTGyMcqDW8Mhi8Y4z9i5EMw
+ CWoPC1chtCz9ZdvpDp4qoHVc_j3gH9PNFj8xOBHxZOnW6EAV76Srgpn_yfaAL6R1qRitIkQ3zVba
+ se2GMNKCv42Z4LlEa6TVZnzW7d.s1xmc4I5nEbAM6as4EXDBMCURXjgZkS8G2BpYfHRXrvrLN9An
+ Plqi._0rEVZ2rLX5T9oTpcEATS9cFX7LHkTPtZQDEEDSiq5419tp0MLu0nUE0Mzc_BaWFqe7j6MV
+ lJUinby15mI.gtJVB88ANtxOgY0xa4bjspGMx0ECpJNHzOzwvRhcjz6fru4tXGfll_EI0ippPIKM
+ W8anfa3hFd3u5KeQF0v38m8BShW4c229uA06WOCdxy16JBMDZNRX6wC8iiwbUX6O8zmrAjhjzGCq
+ 8DBAN9gSguBrMmyQfB9o1y_vYNPbiRJhNk5BckAjmHuytY.ZPhAU6RKnJsxHUkntiUL3Yj_vuUv0
+ ZApsmGak9pq3qlG5QUcnQvs6v0DMvfgq50PynoFhABZkdJVH0q9P8DdveQcOMI7OKHSgrLik59kD
+ zaAPDwdXDMgvaHXZGiHD_O7bBbCYplhKf2VkM9JNis2_GH.mGmPc0wDqk2xNoJsy_iRm4YJQmnZ1
+ Jw2c_L2ut7ybkHC9Psxxp_7UnGIAXvGz0NIIJuf8qh4T._FjQXNr69vuYWFV7T76pOB8boFnM5ja
+ l7YhKZuFRVmZ5L9nsUvkc.gHXv1JPVQofrP2YOb4NQ0c2zJhGP9RqrTDcMjCUxhYdYydxislMlC9
+ 5h9hTDI2E0ppdVWQHyCCtUufdASICa2N11Z._oEMpPJA4daZpCA_mE.C2jtNPkKssc5BJ9BN9lrt
+ nLrLJj3TroWEET.3j7WUAXcboQKa9astOlpVySbvvahbPdIInXS0_eNLewaYQdPs9jgfKzFjlmfK
+ T1srwHLociI00t176XO8hSn3oi0EoSBcwNnUUgDQU6Y_pXmS753OvERIzjlzBKsc_l58.0hGdfjW
+ a2f_2_EOabiLHJtwbquFCYOboie.Js47cjFkCbFEceb5TxLWGaqgqoGFms5rdJF23KIRecTSMtda
+ VUg--
 X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 6a7dbf5d-0d04-426f-a172-733de4aba77a
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Mon, 28 Apr 2025 16:37:20 +0000
-Received: by hermes--production-gq1-74d64bb7d7-w6q4t (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID ee4682840e2fd9fd638ea25af20b289c;
-          Mon, 28 Apr 2025 16:17:05 +0000 (UTC)
-Message-ID: <988adabb-4236-4401-9db1-130687b0d84f@schaufler-ca.com>
-Date: Mon, 28 Apr 2025 09:17:04 -0700
+X-Sonic-ID: dc9f098f-28ea-41ed-87ec-fab9cfeed3e1
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Mon, 28 Apr 2025 16:42:37 +0000
+Received: by hermes--production-gq1-74d64bb7d7-4ndhm (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 0d3d3196c6fbd5ff60aed6348ba5f11a;
+          Mon, 28 Apr 2025 16:32:29 +0000 (UTC)
+Message-ID: <f24142d4-e0eb-4d35-b230-80dff1e58331@schaufler-ca.com>
+Date: Mon, 28 Apr 2025 09:32:28 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -62,9 +66,9 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH] security,fs,nfs,net: update security_inode_listsecurity()
  interface
-To: Stephen Smalley <stephen.smalley.work@gmail.com>, paul@paul-moore.com
-Cc: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
+To: Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc: paul@paul-moore.com, Trond Myklebust <trondmy@kernel.org>,
+ Anna Schumaker <anna@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
  Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
  James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
  Eric Dumazet <edumazet@google.com>, Kuniyuki Iwashima <kuniyu@amazon.com>,
@@ -76,242 +80,44 @@ Cc: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>,
  netdev@vger.kernel.org, selinux@vger.kernel.org,
  Casey Schaufler <casey@schaufler-ca.com>
 References: <20250428155535.6577-2-stephen.smalley.work@gmail.com>
+ <988adabb-4236-4401-9db1-130687b0d84f@schaufler-ca.com>
+ <CAEjxPJ66vErSdqaMkdx8H2xcYXQ1hrscLpkWDSQ906q8c2VTFQ@mail.gmail.com>
 Content-Language: en-US
 From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20250428155535.6577-2-stephen.smalley.work@gmail.com>
+In-Reply-To: <CAEjxPJ66vErSdqaMkdx8H2xcYXQ1hrscLpkWDSQ906q8c2VTFQ@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-Mailer: WebService/1.1.23737 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On 4/28/2025 8:55 AM, Stephen Smalley wrote:
-> Update the security_inode_listsecurity() interface to allow
-> use of the xattr_list_one() helper and update the hook
-> implementations.
->
-> Link: https://lore.kernel.org/selinux/20250424152822.2719-1-stephen.smalley.work@gmail.com/
->
-> Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-> ---
-> This patch is relative to the one linked above, which in theory is on
-> vfs.fixes but doesn't appear to have been pushed when I looked.
->
->  fs/nfs/nfs4proc.c             |  9 +++++----
->  fs/xattr.c                    | 20 ++++++++------------
->  include/linux/lsm_hook_defs.h |  4 ++--
->  include/linux/security.h      |  5 +++--
->  net/socket.c                  |  8 +-------
->  security/security.c           | 16 ++++++++--------
->  security/selinux/hooks.c      | 10 +++-------
->  security/smack/smack_lsm.c    | 13 ++++---------
->  8 files changed, 34 insertions(+), 51 deletions(-)
->
-> diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
-> index 970f28dbf253..a1d7cb0acb5e 100644
-> --- a/fs/nfs/nfs4proc.c
-> +++ b/fs/nfs/nfs4proc.c
-> @@ -8023,12 +8023,13 @@ static int nfs4_xattr_get_nfs4_label(const struct xattr_handler *handler,
->  static ssize_t
->  nfs4_listxattr_nfs4_label(struct inode *inode, char *list, size_t list_len)
->  {
-> -	int len = 0;
-> +	ssize_t len = 0;
-> +	int err;
->  
->  	if (nfs_server_capable(inode, NFS_CAP_SECURITY_LABEL)) {
-> -		len = security_inode_listsecurity(inode, list, list_len);
-> -		if (len >= 0 && list_len && len > list_len)
-> -			return -ERANGE;
-> +		err = security_inode_listsecurity(inode, &list, &len);
-> +		if (err)
-> +			len = err;
->  	}
->  	return len;
->  }
-> diff --git a/fs/xattr.c b/fs/xattr.c
-> index 2fc314b27120..fdd2f387bfd5 100644
-> --- a/fs/xattr.c
-> +++ b/fs/xattr.c
-> @@ -492,9 +492,12 @@ vfs_listxattr(struct dentry *dentry, char *list, size_t size)
->  	if (inode->i_op->listxattr) {
->  		error = inode->i_op->listxattr(dentry, list, size);
->  	} else {
-> -		error = security_inode_listsecurity(inode, list, size);
-> -		if (size && error > size)
-> -			error = -ERANGE;
-> +		char *buffer = list;
-> +		ssize_t len = 0;
-> +
-> +		error = security_inode_listsecurity(inode, &buffer, &len);
-> +		if (!error)
-> +			error = len;
->  	}
->  	return error;
->  }
-> @@ -1469,17 +1472,10 @@ ssize_t simple_xattr_list(struct inode *inode, struct simple_xattrs *xattrs,
->  	if (err)
->  		return err;
->  
-> -	err = security_inode_listsecurity(inode, buffer, remaining_size);
-> -	if (err < 0)
-> +	err = security_inode_listsecurity(inode, &buffer, &remaining_size);
-> +	if (err)
->  		return err;
->  
-> -	if (buffer) {
-> -		if (remaining_size < err)
-> -			return -ERANGE;
-> -		buffer += err;
-> -	}
-> -	remaining_size -= err;
-> -
->  	read_lock(&xattrs->lock);
->  	for (rbp = rb_first(&xattrs->rb_root); rbp; rbp = rb_next(rbp)) {
->  		xattr = rb_entry(rbp, struct simple_xattr, rb_node);
-> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-> index bf3bbac4e02a..3c3919dcdebc 100644
-> --- a/include/linux/lsm_hook_defs.h
-> +++ b/include/linux/lsm_hook_defs.h
-> @@ -174,8 +174,8 @@ LSM_HOOK(int, -EOPNOTSUPP, inode_getsecurity, struct mnt_idmap *idmap,
->  	 struct inode *inode, const char *name, void **buffer, bool alloc)
->  LSM_HOOK(int, -EOPNOTSUPP, inode_setsecurity, struct inode *inode,
->  	 const char *name, const void *value, size_t size, int flags)
-> -LSM_HOOK(int, 0, inode_listsecurity, struct inode *inode, char *buffer,
-> -	 size_t buffer_size)
-> +LSM_HOOK(int, 0, inode_listsecurity, struct inode *inode, char **buffer,
-> +	 ssize_t *remaining_size)
+On 4/28/2025 9:23 AM, Stephen Smalley wrote:
+> On Mon, Apr 28, 2025 at 12:17 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> On 4/28/2025 8:55 AM, Stephen Smalley wrote:
+>>> Update the security_inode_listsecurity() interface to allow
+>>> use of the xattr_list_one() helper and update the hook
+>>> implementations.
+>>>
+>>> Link: https://lore.kernel.org/selinux/20250424152822.2719-1-stephen.smalley.work@gmail.com/
+>>>
+>>> Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+>>> ---
+>>> This patch is relative to the one linked above, which in theory is on
+>>> vfs.fixes but doesn't appear to have been pushed when I looked.
+>>> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+>>> index bf3bbac4e02a..3c3919dcdebc 100644
+>>> --- a/include/linux/lsm_hook_defs.h
+>>> +++ b/include/linux/lsm_hook_defs.h
+>>> @@ -174,8 +174,8 @@ LSM_HOOK(int, -EOPNOTSUPP, inode_getsecurity, struct mnt_idmap *idmap,
+>>>        struct inode *inode, const char *name, void **buffer, bool alloc)
+>>>  LSM_HOOK(int, -EOPNOTSUPP, inode_setsecurity, struct inode *inode,
+>>>        const char *name, const void *value, size_t size, int flags)
+>>> -LSM_HOOK(int, 0, inode_listsecurity, struct inode *inode, char *buffer,
+>>> -      size_t buffer_size)
+>>> +LSM_HOOK(int, 0, inode_listsecurity, struct inode *inode, char **buffer,
+>>> +      ssize_t *remaining_size)
+>> How about "rem", "rsize" or some other name instead of the overly long
+>> "remaining_size_"?
+> I don't especially care either way but was just being consistent with
+> the xattr_list_one() code.
 
-How about "rem", "rsize" or some other name instead of the overly long
-"remaining_size_"? 
+Sigh. Then I'd leave it as is.
 
->  LSM_HOOK(void, LSM_RET_VOID, inode_getlsmprop, struct inode *inode,
->  	 struct lsm_prop *prop)
->  LSM_HOOK(int, 0, inode_copy_up, struct dentry *src, struct cred **new)
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index cc9b54d95d22..0efc6a0ab56d 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -457,7 +457,7 @@ int security_inode_getsecurity(struct mnt_idmap *idmap,
->  			       struct inode *inode, const char *name,
->  			       void **buffer, bool alloc);
->  int security_inode_setsecurity(struct inode *inode, const char *name, const void *value, size_t size, int flags);
-> -int security_inode_listsecurity(struct inode *inode, char *buffer, size_t buffer_size);
-> +int security_inode_listsecurity(struct inode *inode, char **buffer, ssize_t *remaining_size);
->  void security_inode_getlsmprop(struct inode *inode, struct lsm_prop *prop);
->  int security_inode_copy_up(struct dentry *src, struct cred **new);
->  int security_inode_copy_up_xattr(struct dentry *src, const char *name);
-> @@ -1077,7 +1077,8 @@ static inline int security_inode_setsecurity(struct inode *inode, const char *na
->  	return -EOPNOTSUPP;
->  }
->  
-> -static inline int security_inode_listsecurity(struct inode *inode, char *buffer, size_t buffer_size)
-> +static inline int security_inode_listsecurity(struct inode *inode,
-> +					char **buffer, ssize_t *remaining_size)
->  {
->  	return 0;
->  }
-> diff --git a/net/socket.c b/net/socket.c
-> index 9a0e720f0859..52e3670dc89b 100644
-> --- a/net/socket.c
-> +++ b/net/socket.c
-> @@ -562,15 +562,9 @@ static ssize_t sockfs_listxattr(struct dentry *dentry, char *buffer,
->  	ssize_t len;
->  	ssize_t used = 0;
->  
-> -	len = security_inode_listsecurity(d_inode(dentry), buffer, size);
-> +	len = security_inode_listsecurity(d_inode(dentry), &buffer, &used);
->  	if (len < 0)
->  		return len;
-> -	used += len;
-> -	if (buffer) {
-> -		if (size < used)
-> -			return -ERANGE;
-> -		buffer += len;
-> -	}
->  
->  	len = (XATTR_NAME_SOCKPROTONAME_LEN + 1);
->  	used += len;
-> diff --git a/security/security.c b/security/security.c
-> index fb57e8fddd91..3985d040d5a9 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -2710,22 +2710,22 @@ int security_inode_setsecurity(struct inode *inode, const char *name,
->  /**
->   * security_inode_listsecurity() - List the xattr security label names
->   * @inode: inode
-> - * @buffer: buffer
-> - * @buffer_size: size of buffer
-> + * @buffer: pointer to buffer
-> + * @remaining_size: pointer to remaining size of buffer
->   *
->   * Copy the extended attribute names for the security labels associated with
-> - * @inode into @buffer.  The maximum size of @buffer is specified by
-> - * @buffer_size.  @buffer may be NULL to request the size of the buffer
-> - * required.
-> + * @inode into *(@buffer).  The remaining size of @buffer is specified by
-> + * *(@remaining_size).  *(@buffer) may be NULL to request the size of the
-> + * buffer required. Updates *(@buffer) and *(@remaining_size).
->   *
-> - * Return: Returns number of bytes used/required on success.
-> + * Return: Returns 0 on success, or -errno on failure.
->   */
->  int security_inode_listsecurity(struct inode *inode,
-> -				char *buffer, size_t buffer_size)
-> +				char **buffer, ssize_t *remaining_size)
->  {
->  	if (unlikely(IS_PRIVATE(inode)))
->  		return 0;
-> -	return call_int_hook(inode_listsecurity, inode, buffer, buffer_size);
-> +	return call_int_hook(inode_listsecurity, inode, buffer, remaining_size);
->  }
->  EXPORT_SYMBOL(security_inode_listsecurity);
->  
-> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> index b8115df536ab..e6c98ebbf7bc 100644
-> --- a/security/selinux/hooks.c
-> +++ b/security/selinux/hooks.c
-> @@ -3612,16 +3612,12 @@ static int selinux_inode_setsecurity(struct inode *inode, const char *name,
->  	return 0;
->  }
->  
-> -static int selinux_inode_listsecurity(struct inode *inode, char *buffer, size_t buffer_size)
-> +static int selinux_inode_listsecurity(struct inode *inode, char **buffer,
-> +				ssize_t *remaining_size)
->  {
-> -	const int len = sizeof(XATTR_NAME_SELINUX);
-> -
->  	if (!selinux_initialized())
->  		return 0;
-> -
-> -	if (buffer && len <= buffer_size)
-> -		memcpy(buffer, XATTR_NAME_SELINUX, len);
-> -	return len;
-> +	return xattr_list_one(buffer, remaining_size, XATTR_NAME_SELINUX);
->  }
->  
->  static void selinux_inode_getlsmprop(struct inode *inode, struct lsm_prop *prop)
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index 99833168604e..3f7ac865532e 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -1619,17 +1619,12 @@ static int smack_inode_getsecurity(struct mnt_idmap *idmap,
->   * smack_inode_listsecurity - list the Smack attributes
->   * @inode: the object
->   * @buffer: where they go
-> - * @buffer_size: size of buffer
-> + * @remaining_size: size of buffer
->   */
-> -static int smack_inode_listsecurity(struct inode *inode, char *buffer,
-> -				    size_t buffer_size)
-> +static int smack_inode_listsecurity(struct inode *inode, char **buffer,
-> +				    ssize_t *remaining_size)
->  {
-> -	int len = sizeof(XATTR_NAME_SMACK);
-> -
-> -	if (buffer != NULL && len <= buffer_size)
-> -		memcpy(buffer, XATTR_NAME_SMACK, len);
-> -
-> -	return len;
-> +	return xattr_list_one(buffer, remaining_size, XATTR_NAME_SMACK);
->  }
->  
->  /**
