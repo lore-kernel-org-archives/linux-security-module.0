@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8C0925B1F1;
-	Tue, 29 Apr 2025 23:52:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 230922D3462;
+	Tue, 29 Apr 2025 23:53:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745970727; cv=none; b=Hqow/09c6DxE08t8f9yq2GKwe2+c+7nOCpbC2kWdfNeUzq8EVsrx0JRNNwEC3w8Vnx3xIGD2jGRTSoY8qVRj+FDD00M78mVKouVsaSB+9iSsnLACfp0KpERPu5MWNYY6E05H6VPk6NNvsjjru9yfNVmBsFmD587rzlGCSAcM7BE=
+	t=1745970787; cv=none; b=RYrFOYZX+qx2MJnQF0opkNRVGAVhOd6L4ipdqBxfRZ6e3lmfnar5sapKSjsvAveiBYtXPwAIrR+fTMhZC3UQounPawJfFOpPXhZxbuwhBNGIss9Bhggz/5R9sMAzI/SBfkHA1gX6sQrW9dPElM5Jm1muBtiVGqLhQzDBumF2zJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745970727; c=relaxed/simple;
-	bh=LZoWhT/ZdEHRRohLRIC+c4ZeZS/vTE91JzMlmj68zbA=;
+	s=arc-20240116; t=1745970787; c=relaxed/simple;
+	bh=2BXUmckJQQO5q7PlEnmciAtPCRsEaMB39VON6scAkbA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Mh2kHTHI4RODiVK3xjlPQvKtVyUPAhj7GKvd65of6hVkxMZGuDLb55DPxCKOmievjeGBS6iTo2BA+/ygBR1sDZOBfBYkfqhCSy/O+byNrNQditzTmV7Y7wps/IeNIv3eLtOT2OBz/41LHSiGL5pMS4ALi+Z8gzQ0nOOFhJTjKSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Byxg01+F; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=pL5AMFjWuIoC/EHVyuwqDRdqPDt8nZgX0o5/JySGq+6L5tyuNH6/kQ99VvdYHalNCAKQ5eHA8ccGyfu/mIumSS/lkHI+YyAq1+u70IVz6EQ7Y93FDbHSRVYTrPgLnygTBT6FX+hIHdMcAChypaAM4E6YerRxFZaLtraWZnEUBWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CgmPHAa5; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Byxg01+F"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55878C4CEEB;
-	Tue, 29 Apr 2025 23:52:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CgmPHAa5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EE28C4CEEE;
+	Tue, 29 Apr 2025 23:53:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745970726;
-	bh=LZoWhT/ZdEHRRohLRIC+c4ZeZS/vTE91JzMlmj68zbA=;
+	s=k20201202; t=1745970786;
+	bh=2BXUmckJQQO5q7PlEnmciAtPCRsEaMB39VON6scAkbA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Byxg01+Fl4NOHTHnxzVkk0GBmSy2q/Onj2lrN4wur7Hr2ROG42NT/sW67Xm/DUp8K
-	 Sse2KPkjoLvbxHSn3nHeN2mQiVPcD+fgK1aVetrCPoEQy8YwsyY17ZQ9dQstxgKKr0
-	 viKs0hf8jkmwAW0xCHetS9njRGofMV8nWCENY+wlBTSt/HEqPRYO2tbT7kcg6sk1Ps
-	 +oBAfFs2eLkBbBB2rwJpck+Qi4W+FFE9PfxAxJLPqWVePPYlKFegzX3CO7qHaTdP00
-	 NlJxnHjtGH3rNu0AvRh7Nat0vsBKM0XZ+wWqqB0hnUyX1XW599JDi4aX3MMIqtd2sG
-	 L88IyPZpXjE1A==
+	b=CgmPHAa5d5+91yd0ERCk4R6Eltr52Wy37Tpc0Wg9A5aWxTqBoUhsaN0/73u9SAtWS
+	 xcRZV2WdKz7LBOP9oa6Gk43CaV7WJ+tl2CeHHOHTIfsoXUTYLy8t5SBTCuTDD5LYxx
+	 BQ2wLXyYvIAkbGFO5E64XmyH2roMhV3JzRQmUS07QIbdNg2RFU7zlDyJE+F0jbyeQN
+	 iAr6v5MlhVA94+fVpd2lkEqHqnSdAiR17YN/VkxuG4lKdE4/t1U+cns8tOTAoWvhix
+	 WnWtEKkiaPyEu4jE6Ss8aWQTGk9vyJKGzl+CHV0V9ufd8LFrkMrQWVA4JM8lN4ev+B
+	 0m32hiT9nLVTQ==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -39,12 +39,12 @@ Cc: Frederick Lawler <fred@cloudflare.com>,
 	serge@hallyn.com,
 	linux-integrity@vger.kernel.org,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.12 24/37] ima: process_measurement() needlessly takes inode_lock() on MAY_READ
-Date: Tue, 29 Apr 2025 19:51:09 -0400
-Message-Id: <20250429235122.537321-24-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.6 17/21] ima: process_measurement() needlessly takes inode_lock() on MAY_READ
+Date: Tue, 29 Apr 2025 19:52:29 -0400
+Message-Id: <20250429235233.537828-17-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250429235122.537321-1-sashal@kernel.org>
-References: <20250429235122.537321-1-sashal@kernel.org>
+In-Reply-To: <20250429235233.537828-1-sashal@kernel.org>
+References: <20250429235233.537828-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.12.25
+X-stable-base: Linux 6.6.88
 Content-Transfer-Encoding: 8bit
 
 From: Frederick Lawler <fred@cloudflare.com>
@@ -77,10 +77,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 3 insertions(+), 1 deletion(-)
 
 diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index a9aab10bebcaa..2f3f267e72167 100644
+index 98308a2bdef6e..068edb0d79f73 100644
 --- a/security/integrity/ima/ima_main.c
 +++ b/security/integrity/ima/ima_main.c
-@@ -245,7 +245,9 @@ static int process_measurement(struct file *file, const struct cred *cred,
+@@ -235,7 +235,9 @@ static int process_measurement(struct file *file, const struct cred *cred,
  				&allowed_algos);
  	violation_check = ((func == FILE_CHECK || func == MMAP_CHECK ||
  			    func == MMAP_CHECK_REQPROT) &&
