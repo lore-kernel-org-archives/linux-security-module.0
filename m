@@ -1,141 +1,117 @@
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out03.mta.xmission.com (out03.mta.xmission.com [166.70.13.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709484A18
-	for <linux-security-module@vger.kernel.org>; Mon, 28 Apr 2025 23:51:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0718D1876;
+	Tue, 29 Apr 2025 03:57:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745884298; cv=none; b=n9m6vgcqaUd2zduTtzWzl48Uucw2bU81RoLX3b+KZZKO3G3YWYNKFOJZFcHOQEBedO320T12Kt7bkdeL7quElgvdLt0hqL4z1braqX6euLCK2yz5g46Fat3KcAxckKxH2U8RiR7N7o9tryL8GizdUIpxfQK4yJYa2VD2wx1ElsY=
+	t=1745899022; cv=none; b=CaoZYvcfYdmPhVGjsTG6xvSdqisUvn0+klXgO43GGQT+T47gzHeLbvFNBRGPKlqH4WCaf+VEBNSjuRlO5Bw6+Emv96qAYV2Q5WAKuV7vpRokpld0D8kU9LMnxf1R5zQ3Fc918oOwfLpiVSrRZiZYirnZsU/SNY5GDyZcnPK/5+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745884298; c=relaxed/simple;
-	bh=2lTklSMfsgnWqToUR8RRkI6z1i2MEe1hAHC6M1/q9Yo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qbZbGPu53jgW32RCLMOXkuYy3tQJGQzLeXrWRokySuE28xvODIjdiTjPo2fWr0RUUdbHiJ5mH3YcRe09d7h8Twc0XIvlvJK77KycngUnC450miYq9yeJaIbfHrgGYvQuHbw/a8qU97NHL4r25hMugopkbBEWYG3mnhH822YN+0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0aoF4Ucy; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0aoF4Ucy"
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ac34257295dso916468366b.2
-        for <linux-security-module@vger.kernel.org>; Mon, 28 Apr 2025 16:51:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1745884295; x=1746489095; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Do9VX2wMn3K0EJWgBWHyEw4PPHSaUeH91/gCc64jFCM=;
-        b=0aoF4Ucy1jQz8umhJJPaqH9u9W9f7FaBJTrL+ZVU3kBKe8GU2Z/AK4sQiVjwCUHNlG
-         KFv+MFMbG2C+yUHpkuJlccLWzMBpbcVQ2lnaFGstOaR1I3iNkLbJviChqVnfy2asVmsI
-         Jb85L5CM8DM+yvj88c2cRrI8H8cFAlHlG4ZgwSlNrdmYGATKj5UcfZW1KYNqkp7BrjXU
-         7+pzYZrpVSmScCTDIjyY949+A4k9wB6rWnS8+rtlmpIJWhfFL5mbQvlNFAeKM9B3dXYz
-         5Zv16w08qPH6IqAecqkRUvsF/jPFQraebX67kTlo4A5rm4bQ+BGQ77445Z+LoEnMFzRj
-         NVkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745884295; x=1746489095;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Do9VX2wMn3K0EJWgBWHyEw4PPHSaUeH91/gCc64jFCM=;
-        b=s1Zi5nrQgHXcay4+njWSoomOIIJGciLwBQcDZDa5Cq9ZdqFleLd/vb86Rm0P6/Gdei
-         E6QCVCfzneFR3iT3YSIODwOynA4m9Tt8YZDFceHfh0PL6Xw8bxNSDutMeoWYjIVWlt4n
-         TMSA270w5raonh5G+06PQWuFWVv/ui8UXh3JTlHlb+mj4AxDioxmukQ7sIsSzirzRa+P
-         oB1uhZRHbC6LcyYwYeAX07OoC8wP5AQ3p3rBoiOF7XcXlQ8DboSYvKBBbtH2BI7Gnjwn
-         txakzXyBl7/SgoiNmeaxgeagqZrKhXmv/EtS7nLnwO+bFMEPYW0jg5vdVfqFcxiKP58E
-         jiTQ==
-X-Gm-Message-State: AOJu0YwajqnSeXzKrj3Ktm2/tU7NreEryKtnGiR6U76m2IgEi1JZD0Eq
-	GkTiiSL8IRiYXM6vsXArgqm8F6bBzpEAdf86V/B7DDp1J7BH6GcM/wLyK5kYCVVdAxrlj0f88MB
-	+4Hr9k2nk9tcdnTAG9XufHlxVWeOoaTI8I1TZ
-X-Gm-Gg: ASbGnctAkZa5Nqa9go39P4HDW3s/NO4wGQ+8JFq9d108NwLf2hqbfjaoQXOCjkM6LyG
-	Qnv3DIuqWoIYECcK6yoIdqMwcKNKqOHSw+onJyIqmgABXs7Wt6bgLmtqNYuhmOssqTRyC7UBFAW
-	MXwJEg1Bjpzcc1ecRgRMl465Vbwjw4qncOLF+DntGHnFwskiTHhxYa
-X-Google-Smtp-Source: AGHT+IF9urPFd00ZFyxpohj2tI0MRmyR1h5eCTi3TQVROHRNSysRbnDHvLvpQ6lrEcCKpXVzA/VpyC+Erq2o3AW9VdE=
-X-Received: by 2002:a17:907:3e0b:b0:ac1:db49:99a3 with SMTP id
- a640c23a62f3a-acec4f35fb7mr143374466b.40.1745884294650; Mon, 28 Apr 2025
- 16:51:34 -0700 (PDT)
+	s=arc-20240116; t=1745899022; c=relaxed/simple;
+	bh=cFOMsBbwPSi3Bt1oRuZIcKi6mL3Xo1RJgbuK0xItMVQ=;
+	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
+	 Content-Type:Subject; b=aPKoJChA3P9CvIlmhQShrN+ZGsoJ/pqcvmPkXDbA+JsWTcfbc/xM5j4saT9bK54JpzmokJU7+Q8Tg5TWfKLsVgpJBOLDj5F2sxd+QLF7SILs5efbELIN/xKZcfQP+DFx6CPJ/Hf3ziSS/uICVCQ1jyyiRt1IfbyrRUDEx0vO/0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
+Received: from in01.mta.xmission.com ([166.70.13.51]:51682)
+	by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1u9c5b-000VC8-56; Mon, 28 Apr 2025 21:56:59 -0600
+Received: from ip72-198-198-28.om.om.cox.net ([72.198.198.28]:48562 helo=email.froward.int.ebiederm.org.xmission.com)
+	by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1u9c5a-008svE-8b; Mon, 28 Apr 2025 21:56:58 -0600
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>,  Parav Pandit <parav@nvidia.com>,
+  "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+  "linux-security-module@vger.kernel.org"
+ <linux-security-module@vger.kernel.org>,  Leon Romanovsky
+ <leonro@nvidia.com>
+References: <20250423164545.GM1648741@nvidia.com>
+	<CY8PR12MB7195D5ED46D8E920A5281393DC852@CY8PR12MB7195.namprd12.prod.outlook.com>
+	<20250424141347.GS1648741@nvidia.com>
+	<CY8PR12MB7195F2A210D670E07EC14DE9DC842@CY8PR12MB7195.namprd12.prod.outlook.com>
+	<20250425132930.GB1804142@nvidia.com>
+	<20250425140144.GB610516@mail.hallyn.com>
+	<20250425142429.GC1804142@nvidia.com>
+	<87h62ci7ec.fsf@email.froward.int.ebiederm.org>
+	<20250425162102.GA2012301@nvidia.com>
+	<875xisf8ma.fsf@email.froward.int.ebiederm.org>
+	<20250425183529.GB2012301@nvidia.com>
+	<87tt68cj64.fsf@email.froward.int.ebiederm.org>
+Date: Mon, 28 Apr 2025 22:56:13 -0500
+In-Reply-To: <87tt68cj64.fsf@email.froward.int.ebiederm.org> (Eric
+	W. Biederman's message of "Mon, 28 Apr 2025 12:03:47 -0500")
+Message-ID: <87ikmnd3j6.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAA25o9THx_+SzE_+DMjCeSRE28s3kxZ0OkXgSib3tU3svdQPzA@mail.gmail.com>
- <CAA25o9Q24atyK5M6BQaVx5sVq_ZouwRdhXEo3UPa5pE4XVqxQw@mail.gmail.com> <4689f3d0-5c5a-4736-9e09-e40712a53e08@schaufler-ca.com>
-In-Reply-To: <4689f3d0-5c5a-4736-9e09-e40712a53e08@schaufler-ca.com>
-From: Luigi Semenzato <semenzato@google.com>
-Date: Mon, 28 Apr 2025 16:51:23 -0700
-X-Gm-Features: ATxdqUEY0lX3ij2G0PLjaW9hKEWTGSfi8eS8aVzW6-eYnzT1tDlIk_4SD9-0jY0
-Message-ID: <CAA25o9Re9Zddos=MgWzEU3wd_VKYD-5xcrL6QaoQ_XcR0WJREw@mail.gmail.com>
-Subject: Re: how are new CAP_* added? CAP_{DISPLAY,DRM,GPU}?
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: linux-security-module@vger.kernel.org, serge@hallin.com, 
-	Jann Horn <jannh@google.com>, Daniel Erickson <danerickson@google.com>, 
-	Dave Hill <davehill@google.com>, Alex Glaznev <glaznev@google.com>, Su Hong Koo <sukoo@google.com>, 
-	Sean Paul <seanpaul@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-XM-SPF: eid=1u9c5a-008svE-8b;;;mid=<87ikmnd3j6.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=72.198.198.28;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX18uH2pqgq6DvUjlbTsrqa8HDrUvJgshvvY=
+X-Spam-Level: 
+X-Spam-Virus: No
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+	*      [score: 0.4996]
+	*  0.7 XMSubLong Long Subject
+	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+	*      [sa02 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa02 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Jason Gunthorpe <jgg@nvidia.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 390 ms - load_scoreonly_sql: 0.05 (0.0%),
+	signal_user_changed: 4.7 (1.2%), b_tie_ro: 3.3 (0.8%), parse: 1.09
+	(0.3%), extract_message_metadata: 14 (3.6%), get_uri_detail_list: 1.05
+	(0.3%), tests_pri_-2000: 20 (5.2%), tests_pri_-1000: 1.87 (0.5%),
+	tests_pri_-950: 0.98 (0.3%), tests_pri_-900: 0.79 (0.2%),
+	tests_pri_-90: 50 (12.9%), check_bayes: 49 (12.6%), b_tokenize: 3.9
+	(1.0%), b_tok_get_all: 5.0 (1.3%), b_comp_prob: 1.17 (0.3%),
+	b_tok_touch_all: 37 (9.4%), b_finish: 0.70 (0.2%), tests_pri_0: 282
+	(72.4%), check_dkim_signature: 0.38 (0.1%), check_dkim_adsp: 3.8
+	(1.0%), poll_dns_idle: 2.4 (0.6%), tests_pri_10: 2.7 (0.7%),
+	tests_pri_500: 8 (1.9%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH] RDMA/uverbs: Consider capability of the process that
+ opens the file
+X-SA-Exim-Connect-IP: 166.70.13.51
+X-SA-Exim-Rcpt-To: leonro@nvidia.com, linux-security-module@vger.kernel.org, linux-rdma@vger.kernel.org, parav@nvidia.com, serge@hallyn.com, jgg@nvidia.com
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-SA-Exim-Scanned: No (on out03.mta.xmission.com); SAEximRunCond expanded to false
 
-"DRM" stands for Direct Rendering Manager, which I understand is the
-standard way of accessing the GPU on the (vast?) majority of modern
-Linux systems, for the purpose of producing output on the display.
-(Other googlers on this thread would know better---for instance I
-don't know if DRM is used also for general-purpose computing on the
-GPU.)
+"Eric W. Biederman" <ebiederm@xmission.com> writes:
 
-The DRM master essentially owns the display, so this may be similar to
-the totality of the CAP_NET_* capabilities.  Also similar to
-CAP_SYS_TIME, as it refers to a large class of hardware components.
-
-OTOH, just by looking at capability.h I am seeing that there is a lot
-of competition for those bits!
-
-I am wondering if this has come up for discussion before.  I couldn't
-find references to it.  Probably because it just isn't a good
-candidate.
-
-On Mon, Apr 28, 2025 at 4:16=E2=80=AFPM Casey Schaufler <casey@schaufler-ca=
-.com> wrote:
+> Jason Gunthorpe <jgg@nvidia.com> writes:
 >
-> On 4/28/2025 3:19 PM, Luigi Semenzato wrote:
-> > I have a use case for adding a CAP_DRM, or similar, to replace the
-> > CAP_SYS_ADMIN in drivers/gpu/drm/drm_auth.c for the purpose of
-> > becoming the DRM master.
-> >
-> > I am not an expert on either DRM or capabilities, and I am wondering
-> > how one can decide the appropriate level of granularity for a new
-> > capability.  Is CAP_DRM general enough (but not too much), or should
-> > it be CAP_GPU, or CAP_DISPLAY?  Or perhaps capabilities should be
-> > discouraged for this case?
+
+>> It sounds like we just totally ignore current->cred->user_ns from the
+>> rdma subsystem perspective?
 >
-> There are a limited number (64) of capabilities available, so we're
-> being careful about handing them out. My first question is one of general=
-ity.
-> If there is only one case where the capability is useful, there's really =
-no
-> way to justify it. If a process would need another capability (typically
-> CAP_SYS_ADMIN) in all cases, there's no point in a separate one. If the
-> use case isn't going to be around more or less permanently, or it is uniq=
-ue
-> to a hardware platform, we won't approve it. Without knowing what a "DRM =
-master"
-> is, it's difficult to say for sure, but I'm guessing you are going to be =
-up
-> against all these criteria.
+> Since you don't allow anything currently to happen in a user namespace
+> that is completely reasonable.
 >
-> >
-> > Thanks!
-> >
-> >
-> > On Mon, Apr 28, 2025 at 3:16=E2=80=AFPM Luigi Semenzato <semenzato@goog=
-le.com> wrote:
-> >> I have a use case for adding a CAP_DRM, or similar, to replace the CAP=
-_SYS_ADMIN in drivers/gpu/drm/drm_auth.c for the purpose of becoming the DR=
-M master.
-> >>
-> >> I am not an expert on either DRM or capabilities, and I am wondering h=
-ow one can decide the appropriate level of granularity for a new capability=
-.  Is CAP_DRM general enough (but not too much), or should it be CAP_GPU, o=
-r CAP_DISPLAY?  Or perhaps capabilities should be discouraged for this case=
-?
-> >>
-> >> Thanks!
-> >>
+> Once ns_capable checks start being added that changes.
+
+My apologies I misspoke.
+
+Where infiniband currently uses current->cred->user_ns is in calls to
+"capable()".
+
+That will continue if those calls are relaxed to "ns_capable()".
+
+All of which makes sense fundamentally because the only place it
+really makes sense to look at the credentials of a process is in
+the permission checks.
+
+Eric
+
+
