@@ -1,126 +1,113 @@
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56FDB13EFF3
-	for <linux-security-module@vger.kernel.org>; Tue, 29 Apr 2025 23:31:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 511B4274FE8
+	for <linux-security-module@vger.kernel.org>; Tue, 29 Apr 2025 23:35:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745969463; cv=none; b=GqU5WV8mbnZuiiKhIQ6lPIBiJ1ygfC8pFMuN/vSuPDjETd+6Akk4rkmyBTdcnCPz6zMDVCl+CnTNh6ZF1lS4yCZAkf6b4IMrqgl/gf8VAmhpSApmrs79Y43WsljXKSaipAikr1KbhzjTXXKP92/UXEOnUXimu9OYMavP/O8IjaA=
+	t=1745969710; cv=none; b=l1FTR1Gi/jCjRZU92OZAvXtxvcOrfLBHjDhqRpn/epKF1S7hJEmW+JO23nYhwPXS4XZAwkvC2KAJaoP1L/jHE8NtZVUI5I2QS7Myacy0MgJr7SKNbO3yEKlEa1mM+b34vNQB919KUVSRm3S3NG0wuDzj18QCQb7m+9aVP3L85rI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745969463; c=relaxed/simple;
-	bh=6+tn3bVnsdbyoFhXLXW3XNOXO8RdLpvvD8H+IgN8isw=;
+	s=arc-20240116; t=1745969710; c=relaxed/simple;
+	bh=rsEl9UaP3K3oS3AXEGJ4//+d9JcVZzKygP7EoztCreI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kU9kWH3LdhdPOgkWiOGJvqmwnpmOZxOhfPrZD3dKwgIFufQIma3mNnNoUmrfuAC+OK0QzGv6+ntqfeeWIINMEP3hRBgR87YNGnf9qGrYP8kW4lI6NqVPCYCFVzvaxl2lTh9+U95mluTkqm4vjouQXCK2Et3aOxe4pP39QhSKwW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=EKXBOqmu; arc=none smtp.client-ip=209.85.219.169
+	 To:Cc:Content-Type; b=PZoMVc+Jxp2+7o5RnWOYwmpX3980+ZltEkps+o8xX1gKOV4ZbN4jSWIxC52dAz3zVLhKu2YW9MtvFMza5GIGpy2QAWrtgBQYC5h1hSU3Oz3i3NZG+5hs5QYMfTbb9kxoEUvGsyDwrFwdmx+AQ1nPtYDyV1sC9BextSNMjJhNpKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=QDm1WH5a; arc=none smtp.client-ip=209.85.219.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="EKXBOqmu"
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e730b8d934aso5009277276.2
-        for <linux-security-module@vger.kernel.org>; Tue, 29 Apr 2025 16:31:01 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="QDm1WH5a"
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e7387d4a334so822979276.2
+        for <linux-security-module@vger.kernel.org>; Tue, 29 Apr 2025 16:35:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1745969460; x=1746574260; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1745969708; x=1746574508; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cIuAebnQ3utGP4sRcNF3af9094rXpAxKt1SXsqCPHIU=;
-        b=EKXBOqmuBPd3QD0u0uXcMb8RXce8GeOv2o58ReliDmsY6jwHqdPW/JGLY+OEiGpmbT
-         lja2QVzmYiVG1FUiP9tnnqOQqueX/mWLevqAKG1cZIgtJibmyj/PZAwSkCrPGfE5S+Vx
-         ICYJZd9sxzmS32qWTvu6WGZ0u6715wpCeNxiUM7RroHWdXn5KAPoik7dU67SobIF1Ak0
-         W0KKY44pEeikYACgaLWIn6BpYQrRMReyGFibQT7N3PH9iI6TmA6utLBcD5SK0Zgg4D5y
-         IW6iZtZ02YU7Yc7nKGNd5Ze+slDFZj9UkpZVrf8WRaYytC14nazrOwLnYtA5MImIgzns
-         PeoA==
+        bh=RmnUMSIYfYwpn2HyiLKQyNsn7KSrfP3LbpSrKf+5Aoo=;
+        b=QDm1WH5aDX3S3onHkINlqKhU3r9HLrw9D1iA4hyEWhENRuaD2NoLbOYORnp9+t083B
+         2ZEG+KjLVuRtm8hoXk4HbUQXHgx+8/3YuC1MUHB0OOR8YumhPW3x93lR3uV7dh6TAJ1C
+         Cg4Z53TupJMN7ljgn/spNJm2j6L6EQV2CMOHBEoDRkHyXWg8IADMRpxcZ1Q/6YcaWszZ
+         xQQ8xpM3l//Dvo1h8453Bv0azTO8mUYPBv3lktXIg75qLusprpBitm76RUHAREgu2bHP
+         RAr2MZ4YMrOhy3JzoxkSDgZ38hXSb0YTYXcIWZBqWyfh3MgB3P1ll09FlnC3C4fZqfNm
+         rVZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745969460; x=1746574260;
+        d=1e100.net; s=20230601; t=1745969708; x=1746574508;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cIuAebnQ3utGP4sRcNF3af9094rXpAxKt1SXsqCPHIU=;
-        b=viPU2T6lBkC3X988RDPQaZPZGTIvcc04FQWJO3+e54mrd+3yvf+SqENWcFQDzlsNsF
-         KxNrY1TgptR242tAAOkgnV8XcM/G0m8xrKO/z88B+RYIMefww1DBU2Po+PQHV+xEtQvc
-         hwxIvzvsMWveOyLt2pASBrfdoKEup3eGv00DpOiMxvolbYVWC03P2hYAQisr/PrSRCWQ
-         uWQkPXfSYhM7HhLfOQQAkl5kBP2cBpJXefxTX8woH4nsOtgWyc+Qt1F0UU2TKUM9VIFj
-         Q9Z+QIk5zsIUz3wy28NYb4nFMYEYMFN9dUPUDVf+NE9SDWx2vwH+ZW/ZXNiVdzW9NM9i
-         A1hw==
-X-Forwarded-Encrypted: i=1; AJvYcCVm+IWp05rC8H++XszZOFq1p4giUj6c0g+AxCucujUH97fPeifal/L63rSEO9H8GcJGxvSV7jnoCq2PngHz4qoayYczz0g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz32iWdNDpLSEUkeD/My+3uKlWj7f2LsUM6Y8A6rCet1XYarBpU
-	6SB4R9A022GR/jzmqT3nRPCY1MsErmYqy4EK56AKLpIEV/ezSMD+KVQFFCZpsfCN0WB1PVGrUPi
-	1ruuEVDxOJIuG5rn7qdBAHsAzw5Kz89/Wp+K6
-X-Gm-Gg: ASbGnctOgY///o6QSS9geLySuVE2f0PP6iOxzy8Xhk+c0ktcPMZUK3he8sZrUjX17qf
-	NcspTH+sFWX/ROep50jmicsKL/tBxbR9peRSxwUVlLMWq9xO+bNZWOG2Fijd6qJkNJh+0OuTpxN
-	hHP9feUd3Wk2h27cKS4SLzLg==
-X-Google-Smtp-Source: AGHT+IGwua5N9PuQI5YXnZ9QizB13TEvlVyb3ghRMEepupOY9IBACmHRKJ/ceFLULrT2r9vA2fNY/xi9tZpK618tJa8=
-X-Received: by 2002:a05:6902:e09:b0:e73:17e3:ef4e with SMTP id
- 3f1490d57ef6-e73ecf7cabdmr1474221276.48.1745969460035; Tue, 29 Apr 2025
- 16:31:00 -0700 (PDT)
+        bh=RmnUMSIYfYwpn2HyiLKQyNsn7KSrfP3LbpSrKf+5Aoo=;
+        b=hA6fBC8aHl56MqI35a8IeEHimJPZwQXkVozAfSbwFYPIgAltQv2JwCRkALyZ/TFYyW
+         N5g650b/1z9tgH3nkplq+MfpG8ia7yD4C9OEv/154Kbg5RmWrkTsPLm0jJ9zCV6WZFy8
+         tx4WsYdRnMaqBs/5pDs4yp5KXxCE9psmlw9TZWiootOx7xnbYu5ijVScJH/b5+khaT8/
+         Pk3UbVxQXIo2bRlsaKsGUi+jjrLewKcKSXHiT+AdSzE3g9WZDmfRf8EGucyP4usUQKjf
+         Ydi3QheI1+tZepnrVC1y0EfvwlVZNF9r9mu7+5V34Xlq7cETGPZXTICqrLjMkdF1e9Y7
+         zspg==
+X-Forwarded-Encrypted: i=1; AJvYcCX1c3lOkarVMRLmA5hIVRh8iE40mu8D2y1nIOe0myHqfKn8X1RM44pqk8pzK8W3Mvx4NBORwNMwM6n8qrUYbfv0c+2F04w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDYbDuO0b8CF23GPH/H9wmoeFjN3BMz5PAEM3LrUmjFmV84ao+
+	4reprskNnHf7M58gCGfR8Ypxx8/NMELcECNQ4S7voRfwZBzxVeJ2qHTdUg55cVmmtUbqaNET3eg
+	fMOxSKzBq5R59k39ColuGkjw+FrrAVPcEFJ9Q
+X-Gm-Gg: ASbGncv+S299gceObEIOBD22zOQ9Lm2/zwUTbxQoZhNMO0KC+J0Oz6G90loiK7aHV76
+	YnwZ/ETgCNx80ZtYCcfaaHngU/tA+JC+g5XNqwRU/0w2L9vYtwHLBsiw6Q20bXFWoHFPga/HllB
+	Ildbhcgxw2PiR6EjKOaeql+A==
+X-Google-Smtp-Source: AGHT+IF/PA17pzv+wdeYWaRIlp9MG3hOQmLeL81RAcqY50BbqvkWNnzjIoFkoR7L0ftuH1lvEReltyIjrUvBDvzq1Oo=
+X-Received: by 2002:a05:6902:18d0:b0:e6d:d996:d8e2 with SMTP id
+ 3f1490d57ef6-e73ea8e46c4mr1522551276.14.1745969708362; Tue, 29 Apr 2025
+ 16:35:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250429-module-hashes-v3-0-00e9258def9e@weissschuh.net> <20250429-module-hashes-v3-8-00e9258def9e@weissschuh.net>
-In-Reply-To: <20250429-module-hashes-v3-8-00e9258def9e@weissschuh.net>
+References: <20250428195022.24587-2-stephen.smalley.work@gmail.com>
+In-Reply-To: <20250428195022.24587-2-stephen.smalley.work@gmail.com>
 From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 29 Apr 2025 19:30:48 -0400
-X-Gm-Features: ATxdqUHKCRv2dWw3Z8HwiaRKbffRbebAcIs6GQu6Ludlza-Iyae1SuGp-QceJWc
-Message-ID: <CAHC9VhSAANnOYB11AerdtpEwWSu9OoRdxW34dap909D3z=t49A@mail.gmail.com>
-Subject: Re: [PATCH v3 8/9] lockdown: Make the relationship to MODULE_SIG a dependency
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, 
-	Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Naveen N Rao <naveen@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, 
-	Eric Snowberg <eric.snowberg@oracle.com>, Nicolas Schier <nicolas.schier@linux.dev>, 
-	=?UTF-8?Q?Fabian_Gr=C3=BCnbichler?= <f.gruenbichler@proxmox.com>, 
-	Arnout Engelen <arnout@bzzt.net>, Mattia Rizzolo <mattia@mapreri.org>, kpcyrd <kpcyrd@archlinux.org>, 
-	Christian Heusel <christian@heusel.eu>, =?UTF-8?Q?C=C3=A2ju_Mihai=2DDrosi?= <mcaju95@gmail.com>, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, linux-modules@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-integrity@vger.kernel.org
+Date: Tue, 29 Apr 2025 19:34:57 -0400
+X-Gm-Features: ATxdqUErdvmLNdYZ_wWU2pMeCgVPQbMkXZvEOfiOk_QLBFdZZaZpYQrTWKeaZ3k
+Message-ID: <CAHC9VhQfrMe7EY3_bvW6PcLdaW7tPMgv6WZuePxd1RrbhyZv-g@mail.gmail.com>
+Subject: Re: [PATCH v2] security,fs,nfs,net: update security_inode_listsecurity()
+ interface
+To: Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Eric Dumazet <edumazet@google.com>, 
+	Kuniyuki Iwashima <kuniyu@amazon.com>, Paolo Abeni <pabeni@redhat.com>, 
+	Willem de Bruijn <willemb@google.com>, "David S. Miller" <davem@davemloft.net>, 
+	Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, Casey Schaufler <casey@schaufler-ca.com>, linux-nfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
+	selinux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 29, 2025 at 9:04=E2=80=AFAM Thomas Wei=C3=9Fschuh <linux@weisss=
-chuh.net> wrote:
+On Mon, Apr 28, 2025 at 4:15=E2=80=AFPM Stephen Smalley
+<stephen.smalley.work@gmail.com> wrote:
 >
-> The new hash-based module integrity checking will also be able to
-> satisfy the requirements of lockdown.
-> Such an alternative is not representable with "select", so use
-> "depends on" instead.
+> Update the security_inode_listsecurity() interface to allow
+> use of the xattr_list_one() helper and update the hook
+> implementations.
 >
-> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+> Link: https://lore.kernel.org/selinux/20250424152822.2719-1-stephen.small=
+ey.work@gmail.com/
+>
+> Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
 > ---
->  security/lockdown/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-
-I'm hopeful that we will see notice about dedicated Lockdown
-maintainers soon, but in the meantime this looks okay to me.
-
-Acked-by: Paul Moore <paul@paul-moore.com>
-
-> diff --git a/security/lockdown/Kconfig b/security/lockdown/Kconfig
-> index e84ddf48401010bcc0829a32db58e6f12bfdedcb..155959205b8eac2c85897a8c4=
-c8b7ec471156706 100644
-> --- a/security/lockdown/Kconfig
-> +++ b/security/lockdown/Kconfig
-> @@ -1,7 +1,7 @@
->  config SECURITY_LOCKDOWN_LSM
->         bool "Basic module for enforcing kernel lockdown"
->         depends on SECURITY
-> -       select MODULE_SIG if MODULES
-> +       depends on !MODULES || MODULE_SIG
->         help
->           Build support for an LSM that enforces a coarse kernel lockdown
->           behaviour.
+> This patch is relative to the one linked above, which in theory is on
+> vfs.fixes but doesn't appear to have been pushed when I looked.
 >
-> --
-> 2.49.0
+>  fs/nfs/nfs4proc.c             | 10 ++++++----
+>  fs/xattr.c                    | 19 +++++++------------
+>  include/linux/lsm_hook_defs.h |  4 ++--
+>  include/linux/security.h      |  5 +++--
+>  net/socket.c                  | 17 +++++++----------
+>  security/security.c           | 16 ++++++++--------
+>  security/selinux/hooks.c      | 10 +++-------
+>  security/smack/smack_lsm.c    | 13 ++++---------
+>  8 files changed, 40 insertions(+), 54 deletions(-)
+
+Thanks Stephen.  Once we get ACKs from the NFS, netdev, and Smack
+folks I can pull this into the LSM tree.
 
 --=20
 paul-moore.com
