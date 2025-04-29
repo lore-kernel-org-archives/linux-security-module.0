@@ -1,335 +1,140 @@
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDEEB1E0DBA;
-	Tue, 29 Apr 2025 11:59:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 895672C2AB0;
+	Tue, 29 Apr 2025 12:25:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745927973; cv=none; b=oBxWj1u5E0vzsXJMZigV5njHDn2+0misMaZB1sCu5He/HGeof7yOHeP6SJ/SKBCBHWx+1LXkLGWD4CeU/wdttjEDeHldCrDK6urU5zM5Tl7uag0PSLqEdZ4Isu3TGPKDXPDbiMm/Je3ohKoTsf6ykHqIngD//fBAmOuXfuXXmN8=
+	t=1745929532; cv=none; b=fenJG+n+GKQYbSuQeoo0KepAIO1EwQ3ASqhw5rv6OWZSfUvMmWl6K69RbputPRmq2jVjBhp2khjMHaWu/BaozGA96AdCYnDfFUIX9Dz6Lr4/gQlDVq3Rovl6OD4tbNlAaFp0ka811BOrfZ1xZRsi2Qr1Yt7DzLnBQcd4qMgKOM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745927973; c=relaxed/simple;
-	bh=rABI53vpjnl1yAdQD0xk0cPlD1agLIFnuQ/S5FhSZrM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=jTVAzMusPKRaAmfBtqiBzsU4jmr7K7I1X0AXT/xS5sAcC55jfL+6evOMrTVDstLFHMcQhTpqQ/lrO1eCHjeS55nQgt3FLlDTE4fAdUTE28zASU6H8n9/djqqGVa8X6SmTZYvS1lvvzzAKjmVugL7VpUCSKfM7Bq1kF+DD2Fuens=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com; spf=pass smtp.mailfrom=huawei-partners.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei-partners.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei-partners.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4ZmzJk1LfWz6M4ht;
-	Tue, 29 Apr 2025 19:55:02 +0800 (CST)
-Received: from mscpeml500004.china.huawei.com (unknown [7.188.26.250])
-	by mail.maildlp.com (Postfix) with ESMTPS id A2E471400D9;
-	Tue, 29 Apr 2025 19:59:20 +0800 (CST)
-Received: from [10.123.123.159] (10.123.123.159) by
- mscpeml500004.china.huawei.com (7.188.26.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 29 Apr 2025 14:59:18 +0300
-Message-ID: <5b82e994-e3a7-3c40-5ca0-46356084e688@huawei-partners.com>
-Date: Tue, 29 Apr 2025 14:59:16 +0300
+	s=arc-20240116; t=1745929532; c=relaxed/simple;
+	bh=zsm6ivjV8BsTo8xfQiOd3qcE4lNpKXfeCj2tYJTKcbc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=itB3lQKdxz0hbs6xpIO5ymrKsC0mSCVIVXTQI0nAwV7ajAMusoE1s75uH7HwRLGRU+9XdyKbJL7RlMAA4TKx0w8fZ1gnNhGTzg5orG7gPAsZcopDvefszC93OwocZ8tiRDKgy2c6tyw4NX5nR27nKdkeaIgBtaWR3wZGpl1TA+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fTYjVyqC; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fTYjVyqC"
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-22401f4d35aso71429465ad.2;
+        Tue, 29 Apr 2025 05:25:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745929530; x=1746534330; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cJVdhlVALx0VKxqj/M4ZChdpnSmyjEQNQbIaG3nTBss=;
+        b=fTYjVyqCot/yJGpx/Gt8/o5ID5x6VzfJLwzbfyUimRVN7IA9cdkqLvsVb7qGbxD9OK
+         BAVSe6TJGQ0/maMhrPBp9wqbTM7jdVHGPgFuK5ss83VvpcjHY0IXxNDVHJ/Scaybp/bp
+         bTVEqdyjv379B8InCSxfTPMd3RnI1BqxynrR09CNnPn10NxEo/Di3f5aF46F6TGyQ7mC
+         0ixJ3AAdfKkiQIuB8X3x4fI8hW9hfNuQuOwyH9WrbjYKMI/FqjoZsTAW/j5nGC0H3h5B
+         BsccZbxzZQ/SqqcmRd/0GlhaxhYn4sGL7d+42pmqQ3SRkyk7Uwje6BI43Kt4oCjJBic7
+         I75Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745929530; x=1746534330;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cJVdhlVALx0VKxqj/M4ZChdpnSmyjEQNQbIaG3nTBss=;
+        b=iKHysVX7basfUKuiGSDTUIcx9NASp9mBwfGsSBOvltuYN7VlfO94QUjMal31VpFo/O
+         8oCJcmyIH8ICfeJ/vCfkYVI/u59z7krM8EiAitRiMdBkDWblly+mxKZ/PfAXH5LXDg0x
+         V6/TbWFCdY/8SMTSPdE6qH9C974y+cKXI01i1b8HPhxq/nPdn21MOnfsB0QNRsVoEfxi
+         ZXLj7rCoI8ZSh8CgeJGoxl9aVlUeMpHwIYDYlYOlG5OCC7uEVFDFhNx7Cm5G7O320T8C
+         3e1qYOdzYK90t1DZ2aKzLR2T4BNLzeB07qWt0CcVj8frjdqACjGzyQY1vymMehjvKoQW
+         m4rA==
+X-Forwarded-Encrypted: i=1; AJvYcCUIuriosk62nts4x5NZ50EdT9L5ZthK15h3b3duIlM5ZZv9TlI7Bod3tZnSDGhjBX1GL2ZdTB5R@vger.kernel.org, AJvYcCUjxBI84AjTkGQ3f/c0PC/K7WstY1VqKpCNjDH02rFiUmYMO9z/MdRJviEWUChDQxDemy6QKFfSu5pMLJCd@vger.kernel.org, AJvYcCVgozgmUDz/63VzhxmupQGp2nGa8cTwI5SxD2VPjHj9CQdckcNlvPY0hkNYrPH0GoKfzeoM5eQMJg==@vger.kernel.org, AJvYcCVoaEnc9jHGqLKjZlzmuzWeBXMgm4CKrn1YmiF6TUxCrUNjA2xJk7CnPaNES8xAkthix/vhmzFHcAYE@vger.kernel.org, AJvYcCWUAiyYx4oMGrnJ7qQi1rKLOtw2G1Y164p8PG1stxe2QxhylRBm8C89BkKr8cDAN0cxJA7dEnj4ZkcqdWKQ@vger.kernel.org, AJvYcCXw4z0MVOINQDjjyEajSIl0sqlOWMAw80lVJwjWE0xJZJ7yGdwG3MxD0di5cLIu3E4XXXXMuuc2HcMuAhLrg5fRRlgMxN0J@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFwn7+hpxL6COLFXIZsU0BvJOvptKqdmiND+MIJUpYH4t2rYOU
+	MnLxsQVAe0YUblq9loSrtcc7k3eFL8h/hhGXPWJ91MVXwge8XswxXK1vATp5b7UK9V9acdDhyRs
+	aRztLa/DzKU9++keAgYcccP8WB64=
+X-Gm-Gg: ASbGncvKh2BmMritV9h/1ncQ/cs2Dhqzj4FNb0egbccLLg2vCGafAaD5akqJ29IUOSd
+	VAqBht1ZfBV5lww1Ug/qPCxFhlW8UvSgBkC3ApBSY7VCuROQfLx87xY18RhXrxbWLzCjGXEb0ct
+	/YDIhqDK/FgzczDrQ6BtRm+mH9DEY1UeOP
+X-Google-Smtp-Source: AGHT+IFw5PGCtB/r465vG1XkbAkMe3WiEheNR1OB4z/vokWf2TKrcDs8DMVIqvqL7tkeIcwKphxbmdwf1K6pcvV6RbI=
+X-Received: by 2002:a17:903:28d:b0:223:f408:c3cf with SMTP id
+ d9443c01a7336-22de70276d4mr44592265ad.21.1745929529695; Tue, 29 Apr 2025
+ 05:25:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v3 00/19] Support socket access-control
-To: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
-	=?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-CC: <willemdebruijn.kernel@gmail.com>, <gnoack3000@gmail.com>,
-	<linux-security-module@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<netfilter-devel@vger.kernel.org>, <yusongping@huawei.com>,
-	<artem.kuzin@huawei.com>, <konstantin.meskhidze@huawei.com>, Paul Moore
-	<paul@paul-moore.com>
-References: <20240904104824.1844082-1-ivanov.mikhail1@huawei-partners.com>
- <20250422.iesaivaj8Aeb@digikod.net> <aAuU-LmjENslCF2P@google.com>
-Content-Language: ru
-From: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-In-Reply-To: <aAuU-LmjENslCF2P@google.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: lhrpeml500012.china.huawei.com (7.191.174.4) To
- mscpeml500004.china.huawei.com (7.188.26.250)
+References: <20250428195022.24587-2-stephen.smalley.work@gmail.com> <20250429-lenkrad-wandschmuck-c0dad83f9d1c@brauner>
+In-Reply-To: <20250429-lenkrad-wandschmuck-c0dad83f9d1c@brauner>
+From: Stephen Smalley <stephen.smalley.work@gmail.com>
+Date: Tue, 29 Apr 2025 08:25:17 -0400
+X-Gm-Features: ATxdqUFo3aBkmJM0ErLbRpF5E-qqX4L_b-5dm4NMPsfSqwdJkopEgKEUFmnh4NU
+Message-ID: <CAEjxPJ5S1qkpsFYhDZdymzMhubK76UGLki5sj2XVdifodO5AOw@mail.gmail.com>
+Subject: Re: [PATCH v2] security,fs,nfs,net: update security_inode_listsecurity()
+ interface
+To: Christian Brauner <brauner@kernel.org>
+Cc: paul@paul-moore.com, Trond Myklebust <trondmy@kernel.org>, 
+	Anna Schumaker <anna@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Eric Dumazet <edumazet@google.com>, 
+	Kuniyuki Iwashima <kuniyu@amazon.com>, Paolo Abeni <pabeni@redhat.com>, 
+	Willem de Bruijn <willemb@google.com>, "David S. Miller" <davem@davemloft.net>, 
+	Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, Casey Schaufler <casey@schaufler-ca.com>, linux-nfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
+	selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello, Günther, Mickaël!
+On Tue, Apr 29, 2025 at 3:46=E2=80=AFAM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+>
+> On Mon, Apr 28, 2025 at 03:50:19PM -0400, Stephen Smalley wrote:
+> > Update the security_inode_listsecurity() interface to allow
+> > use of the xattr_list_one() helper and update the hook
+> > implementations.
+> >
+> > Link: https://lore.kernel.org/selinux/20250424152822.2719-1-stephen.sma=
+lley.work@gmail.com/
+> >
+> > Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> > ---
+> > This patch is relative to the one linked above, which in theory is on
+> > vfs.fixes but doesn't appear to have been pushed when I looked.
+>
+> It should be now.
+> Thanks for doing this.
 
-Sorry for the huge delay, I was snowed under with internal project and
-academic activity. I've almost finished the v4 patchset and will send it
-in a few days.
+Maybe I am looking in the wrong place?
+$ git remote -v | grep vfs
+vfs https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git (fetch)
+vfs https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git (push)
+$ git fetch vfs
+$ git log vfs/vfs.fixes fs/xattr.c
+commit f520bed25d17bb31c2d2d72b0a785b593a4e3179 (tag:
+vfs-6.15-rc4.fixes, vfs/vfs.fixes, vfs.fixes)
+Author: Jan Kara <jack@suse.cz>
+Date:   Thu Apr 24 15:22:47 2025 +0200
 
-On 4/25/2025 4:58 PM, Günther Noack wrote:
-> Hello Mikhail!
-> 
-> I would also be interested in seeing this patch set land. :)
-> Do you think you would be able to pick this up again?
-> 
-> 
-> To refresh my memory, I also had a look at V3 again; One of the last big
-> questions here was the userspace API in struct landlock_socket_attr.
-> 
-> To briefly recap that discussion, what we settled on at the end [1] was that we
-> can use special wildcard values for some of the members of that struct, so that
-> it looks like this:
-> 
-> struct landlock_socket_attr {
->    __u64 allowed_access;
->    int family;   /* same as domain in socket(2)    (required, never a wildcard) */
->    int type;     /* same as type in socket(2),     or the wildcard value (i64)-1 */
->    int protocol; /* same as protocol in socket(2), or the wildcard value (i64)-1 */
-> };
-> 
-> (In other words, we have discarded the ideas of "handled_socket_layers" and
-> using bitmasks to specify different values for the socket(2) arguments.)
-> 
-> So, when an attempt is made to call socket(family, type, protocol), Landlock has
-> to check for the presence of the following keys in the RB-tree:
-> 
->   1. (family, type, protocol)
->   2. (family, type, *)
->   3. (family, *,    *)
->   4. (family, *,    protocol)
-> 
-> but is an acceptable compromise to make ([1]).
-> 
-> Small remark: The four lookups sound bad, but I suspect that in many cases, only
-> variant 1 (and maybe 2) will be used at all.  If you create four separate struct
-> rb_root for these four cases, then if the more obscure variants are unused, the
-> lookups for these will be almost for free.  (An empty rb_root contains only a
-> single NULL-pointer.)
+    fs/xattr: Fix handling of AT_FDCWD in setxattrat(2) and getxattrat(2)
 
-I expect socket rulesets to be quite small, so theoretically a single
-lookup operation should really be almost free.
+    Currently, setxattrat(2) and getxattrat(2) are wrongly handling the
+    calls of the from setxattrat(AF_FDCWD, NULL, AT_EMPTY_PATH, ...) and
+    fail with -EBADF error instead of operating on CWD. Fix it.
 
-Anyway, optimization can be implemented by modifying structure
-used to contain socket rules (rbtree currently). We can think of
-something like "rules" array of AF_MAX * SOCK_MAX (~500) entries,
-each entry holding information related to (family, type) pair.
+    Fixes: 6140be90ec70 ("fs/xattr: add *at family syscalls")
+    Signed-off-by: Jan Kara <jack@suse.cz>
+    Link: https://lore.kernel.org/20250424132246.16822-2-jack@suse.cz
+    Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-rules[family][type] can be represented by the following stucture:
+commit 46a7fcec097da5b3188dce608362fe6bf4ea26ee (tag: pull-xattr,
+viro/work.xattr2)
+Author: Colin Ian King <colin.i.king@gmail.com>
+Date:   Wed Oct 30 18:25:47 2024 +0000
 
-struct socket_rule {
-	bool allowed; // = 0 by default
-	struct socket_proto_rule *proto_rules;
-};
+    xattr: remove redundant check on variable err
 
-struct socket_proto_rule {
-	struct list_head list;
-	int val; // eg. = IPPROTO_TCP
-};
+    Curretly in function generic_listxattr the for_each_xattr_handler loop
+    checks err and will return out of the function if err is non-zero.
+    It's impossible for err to be non-zero at the end of the function where
+    err is checked again for a non-zero value. The final non-zero check is
+    therefore redundant and can be removed. Also move the declaration of
+    err into the loop.
 
-It will hold information about each of the following rules:
-	1. (family, type, protocol)
-	2. (family, type, *)
-	3. (family, *,    *)
-	4. (family, *,    protocol)
-
-- If user wants to add type 2 rule, we'll just set
-	rules[family][type].allowed = 1;
-
-- If user wants to add type 3 rule, we'll perform previous
-   operation for every socket type.
-
-- If user wants to add type 1 rule, we'll add a new entry in
-   socket_rule.proto_rules linked list.
-
-- For type 4 rule, we'll perform previous operation for every socket
-   type.
-
-If we expect to have about 2-3 protocols per-family in worst case, than
-lookup overhead should be negligible.
-
-> 
-> 
-> I hope this is a reasonable summary of the discussion at [1] and helps to
-> unblock the progress here?  Mikhail, are there any other open points which are
-> blocking you on this patch set?
-
-Yes, thank you!
-
-A single thing I'm not quite sure about is that protocols of IP and UNIX
-family can be defined in two ways. Socket API allows to have "default"
-protocols for each protocol family which can be specified by setting
-protocol = 0 in socket(2).
-
-For example, we can define TCP socket as
-	socket(AF_INET, SOCK_STREAM, IPPROTO_TCP) and
-	socket(AF_INET, SOCK_STREAM, 0).
-Theoretically, it can be a little bit uncomfortable to take care about
-default values in ruleset definition, but I don't think there is a
-pretty way to optimize it.
-
-> 
-> -Günther
-> 
-> 
-> [1] https://lore.kernel.org/all/20250124.sei0Aur6aegu@digikod.net/
-> 
-> 
-> On Tue, Apr 22, 2025 at 07:19:02PM +0200, Mickaël Salaün wrote:
->> Hi Mikhail.  Could you please send a new version taking into account the
->> reviews?
->>
->> This series should support audit by logging socket creation denials and
->> extending audit_log_lsm_data().  You can get inspiration from the format
->> used by audit_net_cb() but without the number to text translation, that
->> can be handled by auditd if needed.  New tests should check these new
->> audit logs.
-
-Ok, thanks for pointing this out!
-
->>
->>
->> On Wed, Sep 04, 2024 at 06:48:05PM +0800, Mikhail Ivanov wrote:
->>> Hello! This is v3 RFC patch dedicated to socket protocols restriction.
->>>
->>> It is based on the landlock's mic-next branch on top of v6.11-rc1 kernel
->>> version.
->>>
->>> Objective
->>> =========
->>> Extend Landlock with a mechanism to restrict any set of protocols in
->>> a sandboxed process.
->>>
->>> Closes: https://github.com/landlock-lsm/linux/issues/6
->>>
->>> Motivation
->>> ==========
->>> Landlock implements the `LANDLOCK_RULE_NET_PORT` rule type, which provides
->>> fine-grained control of actions for a specific protocol. Any action or
->>> protocol that is not supported by this rule can not be controlled. As a
->>> result, protocols for which fine-grained control is not supported can be
->>> used in a sandboxed system and lead to vulnerabilities or unexpected
->>> behavior.
->>>
->>> Controlling the protocols used will allow to use only those that are
->>> necessary for the system and/or which have fine-grained Landlock control
->>> through others types of rules (e.g. TCP bind/connect control with
->>> `LANDLOCK_RULE_NET_PORT`, UNIX bind control with
->>> `LANDLOCK_RULE_PATH_BENEATH`).
->>>
->>> Consider following examples:
->>> * Server may want to use only TCP sockets for which there is fine-grained
->>>    control of bind(2) and connect(2) actions [1].
->>> * System that does not need a network or that may want to disable network
->>>    for security reasons (e.g. [2]) can achieve this by restricting the use
->>>    of all possible protocols.
->>>
->>> [1] https://lore.kernel.org/all/ZJvy2SViorgc+cZI@google.com/
->>> [2] https://cr.yp.to/unix/disablenetwork.html
->>>
->>> Implementation
->>> ==============
->>> This patchset adds control over the protocols used by implementing a
->>> restriction of socket creation. This is possible thanks to the new type
->>> of rule - `LANDLOCK_RULE_SOCKET`, that allows to restrict actions on
->>> sockets, and a new access right - `LANDLOCK_ACCESS_SOCKET_CREATE`, that
->>> corresponds to creating user space sockets. The key in this rule is a pair
->>> of address family and socket type (Cf. socket(2)).
->>>
->>> The right to create a socket is checked in the LSM hook, which is called
->>> in the __sock_create method. The following user space operations are
->>> subject to this check: socket(2), socketpair(2), io_uring(7).
->>>
->>> In the case of connection-based socket types,
->>> `LANDLOCK_ACCESS_SOCKET_CREATE` does not restrict the actions that result
->>> in creation of sockets used for messaging between already existing
->>> endpoints (e.g. accept(2), setsockopt(2) with option
->>> `SCTP_SOCKOPT_PEELOFF`).
->>>
->>> Current limitations
->>> ===================
->>> `SCTP_SOCKOPT_PEELOFF` should not be restricted (see test
->>> socket_creation.sctp_peeloff).
->>>
->>> SCTP socket can be connected to a multiple endpoints (one-to-many
->>> relation). Calling setsockopt(2) on such socket with option
->>> `SCTP_SOCKOPT_PEELOFF` detaches one of existing connections to a separate
->>> UDP socket. This detach is currently restrictable.
->>>
->>> Code coverage
->>> =============
->>> Code coverage(gcov) report with the launch of all the landlock selftests:
->>> * security/landlock:
->>> lines......: 93.5% (794 of 849 lines)
->>> functions..: 95.5% (106 of 111 functions)
->>>
->>> * security/landlock/socket.c:
->>> lines......: 100.0% (33 of 33 lines)
->>> functions..: 100.0% (4 of 4 functions)
->>>
->>> General changes v2->v3
->>> ======================
->>> * Implementation
->>>    * Accepts (AF_INET, SOCK_PACKET) as an alias for (AF_PACKET, SOCK_PACKET).
->>>    * Adds check to not restrict kernel sockets.
->>>    * Fixes UB in pack_socket_key().
->>>    * Refactors documentation.
->>> * Tests
->>>    * Extends variants of `protocol` fixture with every protocol that can be
->>>      used to create user space sockets.
->>>    * Adds 5 new tests:
->>>      * 3 tests to check socketpair(2), accept(2) and sctp_peeloff
->>>        restriction.
->>>      * 1 test to check restriction of kernel sockets.
->>>      * 1 test to check AF_PACKET aliases.
->>> * Documentation
->>>    * Updates Documentation/userspace-api/landlock.rst.
->>> * Commits
->>>    * Rebases on mic-next.
->>>    * Refactors commits.
->>>
->>> Previous versions
->>> =================
->>> v2: https://lore.kernel.org/all/20240524093015.2402952-1-ivanov.mikhail1@huawei-partners.com/
->>> v1: https://lore.kernel.org/all/20240408093927.1759381-1-ivanov.mikhail1@huawei-partners.com/
->>>
->>> Mikhail Ivanov (19):
->>>    landlock: Support socket access-control
->>>    landlock: Add hook on socket creation
->>>    selftests/landlock: Test basic socket restriction
->>>    selftests/landlock: Test adding a rule with each supported access
->>>    selftests/landlock: Test adding a rule for each unknown access
->>>    selftests/landlock: Test adding a rule for unhandled access
->>>    selftests/landlock: Test adding a rule for empty access
->>>    selftests/landlock: Test overlapped restriction
->>>    selftests/landlock: Test creating a ruleset with unknown access
->>>    selftests/landlock: Test adding a rule with family and type outside
->>>      the range
->>>    selftests/landlock: Test unsupported protocol restriction
->>>    selftests/landlock: Test that kernel space sockets are not restricted
->>>    selftests/landlock: Test packet protocol alias
->>>    selftests/landlock: Test socketpair(2) restriction
->>>    selftests/landlock: Test SCTP peeloff restriction
->>>    selftests/landlock: Test that accept(2) is not restricted
->>>    samples/landlock: Replace atoi() with strtoull() in
->>>      populate_ruleset_net()
->>>    samples/landlock: Support socket protocol restrictions
->>>    landlock: Document socket rule type support
->>>
->>>   Documentation/userspace-api/landlock.rst      |   46 +-
->>>   include/uapi/linux/landlock.h                 |   61 +-
->>>   samples/landlock/sandboxer.c                  |  135 ++-
->>>   security/landlock/Makefile                    |    2 +-
->>>   security/landlock/limits.h                    |    4 +
->>>   security/landlock/ruleset.c                   |   33 +-
->>>   security/landlock/ruleset.h                   |   45 +-
->>>   security/landlock/setup.c                     |    2 +
->>>   security/landlock/socket.c                    |  137 +++
->>>   security/landlock/socket.h                    |   19 +
->>>   security/landlock/syscalls.c                  |   66 +-
->>>   tools/testing/selftests/landlock/base_test.c  |    2 +-
->>>   tools/testing/selftests/landlock/common.h     |   13 +
->>>   tools/testing/selftests/landlock/config       |   47 +
->>>   tools/testing/selftests/landlock/net_test.c   |   11 -
->>>   .../testing/selftests/landlock/socket_test.c  | 1013 +++++++++++++++++
->>>   16 files changed, 1593 insertions(+), 43 deletions(-)
->>>   create mode 100644 security/landlock/socket.c
->>>   create mode 100644 security/landlock/socket.h
->>>   create mode 100644 tools/testing/selftests/landlock/socket_test.c
->>>
->>>
->>> base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
->>> -- 
->>> 2.34.1
->>>
->>>
+    Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+    Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
