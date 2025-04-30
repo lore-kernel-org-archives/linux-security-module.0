@@ -1,55 +1,55 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B85D3228CB0;
-	Wed, 30 Apr 2025 23:24:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5D18224B08;
+	Wed, 30 Apr 2025 23:29:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746055496; cv=none; b=m73d/iBdOEmp1AJv0HHWuOx16yh91tKQuMZdTRX0i7ZxsiImv0Ungrq1F5ZLqCnazF9MhK9g6tEwFqaA9Gw77Bz55aE7vc8fGK0EWAid/GJRLiqeMKTIxNAci2YAFUYpsfHcY5MRQzY7v0MGBtsqzZFJy/BPyiybheqJyb9Ho4Y=
+	t=1746055797; cv=none; b=PlLVZ2jaPZ6YuEX2FZe7Bz4zjy5Sl4EhUygzDq6rNw7RMTZlDl7lvloX1ZE/M0hhUyY/0+Tsk+FzF6ucr1IA7oym8Kbe5cNDy092EDOrQtn9kDYEgdTE06tVemasYtl8Dy2/uolKoiy9IfrJIEittOtxrxvpxUAKXUIvl9O7qoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746055496; c=relaxed/simple;
-	bh=R8qGUQj0WsUU7AExrF71Pi7VBmUYNaoJjOIObQJ2DE4=;
+	s=arc-20240116; t=1746055797; c=relaxed/simple;
+	bh=YfszCblJFyfY03DL8XXrgkd5xX++4FamuTO+wfAZTdU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pP8aMjPjNsuvD+gHTVLboAa1n9HVv9UkxaN0xBgGym6QIX2wnnfdDMG0C/ROFRvg2C97Qbgl3n5+AFxKlSkwgwxItRtP43jyXKvELEp2S7YxIRs3Pn13O0k0dstD4ndhuN8NismlLgt4a5j007tXu+WHBp0Y7CRnYoMmF/vmQXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g3BiiNFi; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=mJ64cQSF/XfTU3qRxjNm310VnGkx4egMy6ZWjHD9YD7N7JR8hBZj9uh37spNfdn6/XVpibcjtuimMsVUo92SOFsSkoJKUvhd5svo+0vX/64eJRgoeUZ/sodKBjEX9iENinBYDAbxiIkX+hh3pMpd+ZDE3P2RD47vgMHk7xF0ufU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CBSRN+Cd; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g3BiiNFi"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31458C4CEEF;
-	Wed, 30 Apr 2025 23:24:56 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CBSRN+Cd"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C991C4CEE7;
+	Wed, 30 Apr 2025 23:29:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746055496;
-	bh=R8qGUQj0WsUU7AExrF71Pi7VBmUYNaoJjOIObQJ2DE4=;
+	s=k20201202; t=1746055796;
+	bh=YfszCblJFyfY03DL8XXrgkd5xX++4FamuTO+wfAZTdU=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=g3BiiNFix/egbXCPo7ksUUBq6VXcySoXnzplC7XPI5JR872S6WOS4BRTpA/gc4ouN
-	 mAW8/4FY59XqOEPXy0dRdKsU27tM9sb2+LhiuNL71UqLOfZaSUCeKQbHohNIgBeiX5
-	 JrIj5d6D7TI9SqGb67yz5DqsjthTOHdF6VjeP6NH3Cuei0UPPFGccjTXl6xKuVBzhp
-	 NMOyBXINMc54u1j1nN3OtJSIFNi6c0KwlPAhUzqr2IuaGSCdQcht5joCw88TjYZZad
-	 7s5NjakB7Sla4Tub1+ZraUNnQm71PXMFGXkuX9pKGI/hpDRMZ5DXECEhqUqBe7WNYm
-	 uBKzLFRJEK1kQ==
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e6e1cd3f1c5so361953276.0;
-        Wed, 30 Apr 2025 16:24:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVPLCl3zsog77l8ndTjps4yUEImOxZWQwe72rnH2BHOX3yIGYn46CuWaE/W53BZQnoieymngm4DsDB86NIGWbSECRBX+a7I@vger.kernel.org, AJvYcCXsdocYPd01tJ8S6XPRslu2RY2srZekIQQUF4fUDbXIdUkKz3ZXu20in0TaX/sN4G/dVfAB6L8CIHbUQhc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yybg0gN6MYIImXKOk/uBzedabclgU91ImNH/B9apb1I1PDU/gix
-	9U+CMPy0m+gKKLQwtTD5Dx3dK90XHu3BsHKZHlWf2e/e3fDh1Q3zapexecJrLQhEqcaRQnZ7u9N
-	8grj4pqleg+ES1eIu1TTAj6HTTUI=
-X-Google-Smtp-Source: AGHT+IEFb5WKeTRO5ku9Dx9DwwQgc18oJPQ/xKG17qWkh8xO/tVwN1QrvsFUK7xHQwD6qXq8deenEeLjaHUpEN9Fl5k=
-X-Received: by 2002:a05:6902:1690:b0:e72:d88e:80d3 with SMTP id
- 3f1490d57ef6-e74f8a617f4mr1696642276.36.1746055495439; Wed, 30 Apr 2025
- 16:24:55 -0700 (PDT)
+	b=CBSRN+CdA8OVjt7ep85XM1fA0jHkm9myj0UJO2EsDz2aMo5y7137sioKwV2jOLXTx
+	 /IMuiO5y32c0jDW4fAJDai2Gp//p6y/DtvyrLKpViDyhNDVbSxo9cpA3nZP/cjk09N
+	 5NIDQYq/4GsbZ7kiBPKj7ugOiCzMr+oQjEuwhSSlZIkNs4Yks9XCrlD7PpWUj8UDVp
+	 o1/08fj4aDkyRj9uExjwOLnT2YRKM9VRbFXLmf7chlLO3ek/bUmK7DEoKPRM8OJJJf
+	 WkREvLWaYIpKahcKbYN6DGm8ZXG3s3myvIcVk8YL+/+/rxh+9VEHUk6p4mz/VegeRa
+	 bZswfG7sOR+Jg==
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e7311e66a8eso382804276.2;
+        Wed, 30 Apr 2025 16:29:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV2gY4SgaCAJDt8g2+S42eNk27BrN8KDyC07E0tNfWvgBanpXjcQOSQ8TwZrRlgHO2MKam9wJSNk771WwM=@vger.kernel.org, AJvYcCVMJZ2GuoubnDJntPLC+w57WuliHftgyeeAnZVUhoipq6V5CPQvb2WqVfJAm3ZE7ZrcYh4pd8CS31ETnY0r1Ot+APHKFgI6@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYpTOCZmoOTyIOz9YmisBPfK1kjk1J3aEaYv1iLzSm/ZBs8l0q
+	t8/WqCeZpbi+vFUNiPV+8duQ+OxiD6fIaIYSXtV2tqn0sK6z9dBzoqgUsBuGGPRO4Itf0zTsFon
+	Ih7Ta9PJ42VtiZ85NW9Vax+dFclc=
+X-Google-Smtp-Source: AGHT+IFEJ2qTrUej3AfwsK8YWr+xOQqZR4yKyK5COAxs42YmE7rXz5xDr8LVkJjJwzXz9HBJ1hhvGKLB9aczj7bsZkk=
+X-Received: by 2002:a05:6902:2b11:b0:e73:1ff1:ca38 with SMTP id
+ 3f1490d57ef6-e75318276ecmr316609276.20.1746055795779; Wed, 30 Apr 2025
+ 16:29:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1745961770-7188-1-git-send-email-jasjivsingh@linux.microsoft.com>
-In-Reply-To: <1745961770-7188-1-git-send-email-jasjivsingh@linux.microsoft.com>
+References: <1745961770-7188-1-git-send-email-jasjivsingh@linux.microsoft.com> <1745961770-7188-2-git-send-email-jasjivsingh@linux.microsoft.com>
+In-Reply-To: <1745961770-7188-2-git-send-email-jasjivsingh@linux.microsoft.com>
 From: Fan Wu <wufan@kernel.org>
-Date: Wed, 30 Apr 2025 16:24:43 -0700
-X-Gmail-Original-Message-ID: <CAKtyLkGvcRP9f5gGhsSnEA28Nh0Udcq76ZZv0SA5Vko6w8R7qw@mail.gmail.com>
-X-Gm-Features: ATxdqUE-PtIOlhPKHRm327Vzj_UUY1r52fOy6jBuOQSuFz4DpIQTYlqWRkzQTzw
-Message-ID: <CAKtyLkGvcRP9f5gGhsSnEA28Nh0Udcq76ZZv0SA5Vko6w8R7qw@mail.gmail.com>
-Subject: Re: [RFC PATCH v1 0/1] ipe: added script enforcement with BPRM check
+Date: Wed, 30 Apr 2025 16:29:44 -0700
+X-Gmail-Original-Message-ID: <CAKtyLkG03zaOgC57-y4mNBXc+Nt0eZtKvyuhbs53SEUGwYUb5g@mail.gmail.com>
+X-Gm-Features: ATxdqUGvxqon-yThcz6VNe8SeUVTzobNsltqinBw3cTCikAeKb3yBcLsIcP487M
+Message-ID: <CAKtyLkG03zaOgC57-y4mNBXc+Nt0eZtKvyuhbs53SEUGwYUb5g@mail.gmail.com>
+Subject: Re: [RFC PATCH v1 1/1] ipe: add script enforcement with BPRM check
 To: Jasjiv Singh <jasjivsingh@linux.microsoft.com>
 Cc: wufan@kernel.org, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, 
 	mic@digikod.net, linux-security-module@vger.kernel.org, 
@@ -62,35 +62,92 @@ On Tue, Apr 29, 2025 at 2:23=E2=80=AFPM Jasjiv Singh
 >
 > From: jasjivsingh_microsoft <jasjivsingh@linux.microsoft.com>
 >
-> Currently, IPE only enforces the policy operations for direct
-> file execution (e.g. ./script.sh). However, indirect file execution
-> (e.g. sh script.sh) needs to be enforced by IPE based on the rules.
+> Like direct file execution (e.g. ./script.sh), indirect file execution
+> (e.g. sh script.sh) needs to be enforce by IPE based on the rules.
+> Added a new security_bprm_creds_for_exec() hook to verify the indirect
+> file's integrity.
 >
-> Overview
-> --------
+> Signed-off-by: Jasjiv Singh <jasjivsingh@linux.microsoft.com>
+> ---
+>  security/ipe/hooks.c | 23 +++++++++++++++++++++++
+>  security/ipe/hooks.h |  2 ++
+>  security/ipe/ipe.c   |  1 +
+>  3 files changed, 26 insertions(+)
 >
-> This patch introduces the `ipe_bprm_creds_for_exec` LSM hook. This hook
-> specifically targets the `AT_EXECVE_CHECK` scenario [1], allowing IPE to
-> evaluate the `EXECUTE` operation policy for the script file during the
-> check phase itself.
+> diff --git a/security/ipe/hooks.c b/security/ipe/hooks.c
+> index d0323b81cd8f..12713a0495cf 100644
+> --- a/security/ipe/hooks.c
+> +++ b/security/ipe/hooks.c
+> @@ -35,6 +35,29 @@ int ipe_bprm_check_security(struct linux_binprm *bprm)
+>         return ipe_evaluate_event(&ctx);
+>  }
 >
-> [1] https://lore.kernel.org/linux-security-module/20241212174223.389435-1=
--mic@digikod.net/
->
-> Example
-> --------
->
-> ipe_op=3DEXECUTE ipe_hook=3DBPRM_CHECK enforcing=3D1 pid=3D18571 comm=3D"=
-inc"
-> path=3D"/tmp/script/hello.inc" dev=3D"tmpfs" ino=3D24 rule=3D"DEFAULT act=
-ion=3DDENY"
->
-> the log message when the IPE policy denies the indirect script execution
-> via the 'inc' test interpreter.
->
-> The IPE test suite has been updated to include script enforcement tests:
-> https://github.com/microsoft/ipe/tree/test-suite
+> +/**
+> + * ipe_bprm_creds_for_exec() - ipe security hook function for bprm creds=
+ check.
+> + * @bprm: Supplies a pointer to a linux_binprm structure to source the f=
+ile
+> + *       being evaluated.
+> + *
+> + * This LSM hook is called when a script is checked for execution throug=
+h the
+> + * execveat syscall with the AT_EXECVE_CHECK flag.
 
-Please use the PR link instead of the repo link.
+I remember the script is only one case, user space can add this flag
+for other cases.
+
+> + *
+> + * Return:
+> + * * %0                - Success
+> + * * %-EACCES  - Did not pass IPE policy
+> + */
+> +int ipe_bprm_creds_for_exec(struct linux_binprm *bprm)
+> +{
+> +       struct ipe_eval_ctx ctx =3D IPE_EVAL_CTX_INIT;
+> +
+> +       if (!bprm->is_check)
+> +               return 0;
+> +
+> +       ipe_build_eval_ctx(&ctx, bprm->file, IPE_OP_EXEC, IPE_HOOK_BPRM_C=
+HECK);
+
+A new enum needs to be added to audit this new hook in the audit
+event. Please create something like IPE_HOOK_BPRM_CREDS_FOR_EXEC.
 
 -Fan
+
+> +       return ipe_evaluate_event(&ctx);
+> +}
+> +
+>  /**
+>   * ipe_mmap_file() - ipe security hook function for mmap check.
+>   * @f: File being mmap'd. Can be NULL in the case of anonymous memory.
+> diff --git a/security/ipe/hooks.h b/security/ipe/hooks.h
+> index 38d4a387d039..1c16a25d806e 100644
+> --- a/security/ipe/hooks.h
+> +++ b/security/ipe/hooks.h
+> @@ -24,6 +24,8 @@ enum ipe_hook_type {
+>
+>  int ipe_bprm_check_security(struct linux_binprm *bprm);
+>
+> +int ipe_bprm_creds_for_exec(struct linux_binprm *bprm);
+> +
+>  int ipe_mmap_file(struct file *f, unsigned long reqprot, unsigned long p=
+rot,
+>                   unsigned long flags);
+>
+> diff --git a/security/ipe/ipe.c b/security/ipe/ipe.c
+> index 4317134cb0da..845e3fd7a345 100644
+> --- a/security/ipe/ipe.c
+> +++ b/security/ipe/ipe.c
+> @@ -47,6 +47,7 @@ struct ipe_inode *ipe_inode(const struct inode *inode)
+>
+>  static struct security_hook_list ipe_hooks[] __ro_after_init =3D {
+>         LSM_HOOK_INIT(bprm_check_security, ipe_bprm_check_security),
+> +       LSM_HOOK_INIT(bprm_creds_for_exec, ipe_bprm_creds_for_exec),
+>         LSM_HOOK_INIT(mmap_file, ipe_mmap_file),
+>         LSM_HOOK_INIT(file_mprotect, ipe_file_mprotect),
+>         LSM_HOOK_INIT(kernel_read_file, ipe_kernel_read_file),
+> --
+> 2.34.1
+>
