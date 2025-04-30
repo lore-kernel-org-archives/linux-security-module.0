@@ -1,88 +1,105 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic306-27.consmr.mail.ne1.yahoo.com (sonic306-27.consmr.mail.ne1.yahoo.com [66.163.189.89])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50C1117C21B;
-	Wed, 30 Apr 2025 15:26:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2698225E80D
+	for <linux-security-module@vger.kernel.org>; Wed, 30 Apr 2025 16:25:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.189.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746026765; cv=none; b=KHSROh7obxkWLX6Rfd72r+4DIBmR8W03HAq6LHDVVNXIExXob1HhoUXla10X3LWqokzPXKTGqxCMXQGBsgjwwpm/hlnV+3blev1DKoBAhr8xF/lwEXf/JXP6C09hwR1SidkaNx6WhYGg7N26rl/ftvlHLXfZfFgnuVZi1rBHxSg=
+	t=1746030333; cv=none; b=kzlT88Ikhv9n4uWZWZY0XOKK40HdJEdo7D7kGypdN2yIBlVjSITdmIa1XMxgwBbY7jnoQQUACWp5ibA88La67NzopEACS+3XDb7PcjBgjmSTtSR06ZNrUwW6XUyjwRV0Yx6cIbeY5vRXZh0FtNYd5eHYXnrF4uzACByaAwMM3+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746026765; c=relaxed/simple;
-	bh=9BnNSNbGk/SH1Jqts3LNDoiGPJQv2lBeVhQ2pLakZsw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Zq7t3SHQCkqiUq5Ka3oZqe7teB2/l88QA5eUu7QkrJzQbOlNEXsHtGNGOzzXB5YsalDNjD09yTz6mPIP67jNeIJkt0o7ts/fYBCpJ607iYAWoL909e/r6aLbzl7sLCMpICsaCaXPejJ7ctIZENUbUUnkP7maHjjOID0zgjFHd/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iM4NQQ9a; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1746030333; c=relaxed/simple;
+	bh=8xaXkPmWKfkB2ab8ceqVGe5yrovplXm9DWD14PcMWuQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tT+5jzDjHtU+ssfqMWtnbNrisGiCRJV9KHFjGZBH1yBmwwHN6rlgt8MQQtHU/+mxJdw5+FKkcoRAqXmHpNZn46+ojChiR9V/KNDESeVtOqRFaplGWOBCDtrA9UorKPiLYLg1RsKsNfYYWW3UCS162VtKEaE3dLa7XP+ca/fBDcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=tuI7kjW2; arc=none smtp.client-ip=66.163.189.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iM4NQQ9a"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49966C4CEE7;
-	Wed, 30 Apr 2025 15:26:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746026764;
-	bh=9BnNSNbGk/SH1Jqts3LNDoiGPJQv2lBeVhQ2pLakZsw=;
-	h=From:To:Cc:Subject:Date:From;
-	b=iM4NQQ9aK4CcuaIjYAyxqodWnUl+aox9OAEYJdvXBTMwtwGmpzFk19Y6IzVhayOF5
-	 RP0a7qLN+VGxIQKn1td/abgVsoTSc+6eJ/sQpcdXyJ+KCj9PgPzj3c7DtakarSxnvV
-	 6uNZU4P666ukUB553+c4yN7mBIEsuCYB9HaF+Zp5/BmoHe4pXtBlHzfaXSolkQVpOz
-	 XG4KUcCIl5szp+HHlw5nc1um/+KJI8qHsw8bqKy2jQE4pO/dN1X8hOBU1pZNS0oU6Z
-	 V4N2f1MzKqHSM9Peo7UiqF298c2ZmKdx/69w61O50Pp6QrRdGvNO/XgFieetKB8vGF
-	 NszNzEM/uon1w==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: keyrings@vger.kernel.org
-Cc: Jarkko Sakkinen <jarkko@kernel.org>,
-	David Howells <dhowells@redhat.com>,
-	Lukas Wunner <lukas@wunner.de>,
-	Ignat Korchagin <ignat@cloudflare.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Peter Huewe <peterhuewe@gmx.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	James Bottomley <James.Bottomley@HansenPartnership.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-integrity@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Subject: [PATCH] KEYS: Reduce smp_mb() calls in key_put()
-Date: Wed, 30 Apr 2025 18:25:53 +0300
-Message-ID: <20250430152554.23646-1-jarkko@kernel.org>
-X-Mailer: git-send-email 2.47.2
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="tuI7kjW2"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1746030324; bh=wTyyjWshVn5wvE3l6zMgjZApCQP/U8Q7BG3H6o7WAZQ=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=tuI7kjW2QMLOX3MmR0UI1DSb2nEh4SfQkcIsl7stUKMhPd2/RGYNMg/MRJRpx+7cFvhzd/p6jghryEzlhNr9E66es/bsvl773I3sV0B6To0wr9X3WqJNMrpbcWkQOkvsIdMOeYB0qYRyVLJJQoLnvDRsPeSjWKMzqTXYNsBlA2F4YBm3fq/RdcZ/5SCXIlnornegK3BbWfUahv2jdQRK/g4IwgVAMOwg8d/q/9cOQG60d9lG0Bm89F+4n5q1KKEckv5Hl3pz7TTNIRRgzvsV1RZX7/RqO/9Lpu/eBh7jTOLZnkcBznONPo9J05fl/DzPCZgmUbWuL1fJUveBlNKIQw==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1746030324; bh=ikW1u0XX+JymWfqIWBcNCVNZpcVt73MDHOt36ArnoyP=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=KF/sUt0tK7L4f5UJAkmlIMW9pYdEqVzgo4wCb2NoIoBcMu06D4kWjnaWhVrvOO0/vGwf+3eF+aN0C2qAKcZoV9Aik6ZpbHxRM/2VrSlKoBcIutwWB8jXQOG1vLE9K+1V98zW6Zm3bSn7nWS0FRNSVwrbPNUE0WZACbQ6xQWPNBxyXb8VjQvRw1FZglC1+EAQdTkp/sMpfKG6WIbVZ/8OouvYjNs/yS0kol7Le+zxLMtfS0xLN9OEFbwkhtV0dZsFtFcc4qLB665sgeldk8EXzV3edVlR5OXI2bDCYjdvCrMISxWANyFeA8C6LboC9Li8Rw8XNQ+K5x1iPQgoGLhoBg==
+X-YMail-OSG: swX9CjMVM1lcYKXMkHtH5c8FnROHECm.xOOFjIlyPvUCR7kebnTe01uYx7xXQpF
+ 2VA4VmHp4UfTqXay7IfmpxrOSiOh5QzWz7j0uccP2kZx9DFSjN8FJBaajEU6cZ8r2oR_WDNcXue8
+ P6WpKpJy9MDppBe66suMf1DTXh1ecly7j7_mlPkLs31Gsw4F5yKs05HRjF3RyeYB9b7zCZnNxvG1
+ L9fGif7oP4RdE1wccM7r3pXOE7ZoqqZcmKEdLd9723k.OHQzmwJAFeSkLEUnz8Gphj.21MG43TbJ
+ ctcwBRl5QHc_ImF.X9_ux9dme0SubvldofYMlfC1UrgmOMxugmQQAUc7yXh77r6Xh0J9rz17EStr
+ 7prVYXitFWHEdx4G2BA5XcLNTNodcugClg4d.JiS6LnrLUlinTsHIrxlXhnUubQCkt7OkSAEbvEW
+ LhQDkH21HqxcjrHiRSxjhAS1OLaeY22cjRkYJmgReHid6hJnQmatERKDaKegUDEvxVDJunwvPcl0
+ _l.DjdMKaR60T2fzkHg.ZkwLlXKj1tlG9hSlwdT4ziddKdoDKi3tVthYEF8oa4nu8x84rWEq96Cn
+ jd4oEl0gEdWnDZk2TNNmFKwPNN7t1qg18u0aGoK1Jhd.dg9DJttYg8YyeVlb9hTj9xgIU6socOen
+ TBXCrZOAGz3y.LQx3o0cnLgEsm4ilI0uOPloHkv4L7zTi_E753anjFtcAvc7jipgzyw93KNXlxm7
+ uoXu0k0dH44BGCswqEQS.vw2tjJrPfpQ58WiX.90NLPXQa35rwY.BfF9hfCs58__vaE_47ZXiF4f
+ _.w6.QI33g63P4mGCAUKKRZ3Lelc7LAk_g6BVVPlH.F48XrYlpWlXUyGOdl_u6L_Vt.B7LLsAHCe
+ _Eo2xeMjDFyheMPePaPr1Jc62nuDWaEj3f9zk3VHQqNLtUwZvpuAl2QP8gwejYIHsGlviJulz0Mk
+ MZ5B41sLNpOBQzx0w0loerQOief5G69dxmOBzHVwt7ChGyoWHNYenehOT4ro2k5db.6GOqQpiGx_
+ ReIdPTwgworI80NbPl_4RZaMKsqOaOQycUFbcJnLfNWap_cTjSiPbLj4wIdhj4UiInFSKECp3Ndy
+ fhdtcxEhyw1QwmJNoni.h8imhiw_F2awkv9uDaV0wVrxZ3C6M1dekwvdvRasuU2Q_iqrxkhgNdIg
+ 7k_EguOL83sQE8d9fR9BABkncKaIwdnwlKmwBlrLk9YwoSleLybpJO1zRn6ODPfdmecfMkR5rd16
+ NwiSgHISCvAvcylybyOPX_.jgqjAwmqYzqhoVmjovcQxenHLBuL8pmvoxshQx6CjXRsULvmwSVVw
+ 3.JIk_S2.XZJkbhsKAij4Z09oBIMVTgpjQtFWRIpb2oF2vHXhYTcdAMzY.RtrZyG6MqyXQc.OxTP
+ Gd.Z8ZUFXFDlfPyzg.DdX47cUCsIqVJzQShyQwAhpIaKV8QXHy.aVhyWHbbqsMcEBXQte6tSo6aW
+ 3isotr8t9cAJollxo7Ir9VIkMsOqo9KS0zFMiT3qFG8uo60mL5vKSu1cB.T8Jl2KbIxw5NN0l2V6
+ POsvCblimla0dD4nl7EplEkiU1XwuPGR0HziTauLIB9XT8Ne0eCSkXzkb.4UCQvCiCfv9dmxcPjt
+ .AN.cZgbIpCtK7X4zxVau_vPJfFcIKdoy3leMEHVKoA.ymA7QJBihaSBy.HoUhJa4g8DhdLfzG5Z
+ iwFF.u2DtcyS7bwrSVSbIvGylLmWL836a054ijZBWpW5auQHGXQi3bhUaw7FM9iKyuOAyCGZa3yD
+ 53syUwZcts2g0nOs.6d4AI58ELimXQ4ZqJ1ZXARgjdtmlGGZtd_bhuMpUaJrxUlOKTCwk17TPFof
+ q0r3rTtCXAnqxMBXWBETdzBGw9l2G3RspxSjEHdgdRs2uqAvFxKTagef_DW.BEQJ5zoIcQMz9vbh
+ qw9YqzrU77iGlrPlVbPI83.Imyh1ZjSJSXqNPPkYcOJ2ZVUJsyZuV6UwxZxZyOLiGeH96SzqkWbu
+ mTblei5maxqJ8aZahhEAGENDyeDEUJbsawwZ031eHpyKTpnBP9l9_Pt5dtqAp780cuKz933ir06R
+ W1Pw_sAl.JA6uXBCAeV2KfyvbQoIjjie8fdOmoQTRnJBt6cYXmjmYFF1.WWlkNa7JWpc7MdXv9HN
+ T.SB.wubuusGxHuIFxiM4D8EPhJJEwjIvDrHHKFBDMRdPvYaVfLxI3iyjMVgBKvz5ZREtbpfcEI.
+ drH1l9pthpQDhK1HPLCS0YgMdDi9th320nq2lUUadi3EnAn_1eLB58pWUO_wk2ycMkNHqcMCSn4B
+ 8kafB9q7kBWF9FmWYFw--
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 021774ac-c5c0-4e61-a643-fe8c350548c1
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic306.consmr.mail.ne1.yahoo.com with HTTP; Wed, 30 Apr 2025 16:25:24 +0000
+Received: by hermes--production-gq1-74d64bb7d7-k2g2q (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 66014ee8f32867ad8fa2a902011a1406;
+          Wed, 30 Apr 2025 16:25:22 +0000 (UTC)
+Message-ID: <c53cf38a-f159-48b8-922a-550bd21b5951@schaufler-ca.com>
+Date: Wed, 30 Apr 2025 09:25:22 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 4/5] Audit: multiple subject lsm values for netlabel
+To: Paul Moore <paul@paul-moore.com>, eparis@redhat.com,
+ linux-security-module@vger.kernel.org, audit@vger.kernel.org
+Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
+ john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+ stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+ selinux@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
+References: <20250319222744.17576-5-casey@schaufler-ca.com>
+ <0211e4c6561bf2eabbad2bf75a760e03@paul-moore.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <0211e4c6561bf2eabbad2bf75a760e03@paul-moore.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.23737 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-Rely only on the memory ordering of spin_unlock() when setting
-KEY_FLAG_FINAL_PUT under key->user->lock in key_put().
 
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
- security/keys/key.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+On 4/24/2025 3:18 PM, Paul Moore wrote:
+> On Mar 19, 2025 Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> Refactor audit_log_task_context(), creating a new audit_log_subj_ctx().
+>> This is used in netlabel auditing to provide multiple subject security
+>> contexts as necessary.
+>>
+>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+>> ---
+>>  include/linux/audit.h        |  7 +++++++
+>>  kernel/audit.c               | 28 +++++++++++++++++++++-------
+>>  net/netlabel/netlabel_user.c |  9 +--------
+>>  3 files changed, 29 insertions(+), 15 deletions(-)
+> Other than moving to the subject count supplied by the LSM
+> initialization patchset previously mentioned, this looks fine to me.
 
-diff --git a/security/keys/key.c b/security/keys/key.c
-index 7198cd2ac3a3..aecbd624612d 100644
---- a/security/keys/key.c
-+++ b/security/keys/key.c
-@@ -656,10 +656,12 @@ void key_put(struct key *key)
- 				spin_lock_irqsave(&key->user->lock, flags);
- 				key->user->qnkeys--;
- 				key->user->qnbytes -= key->quotalen;
-+				set_bit(KEY_FLAG_FINAL_PUT, &key->flags);
- 				spin_unlock_irqrestore(&key->user->lock, flags);
-+			} else {
-+				set_bit(KEY_FLAG_FINAL_PUT, &key->flags);
-+				smp_mb(); /* key->user before FINAL_PUT set. */
- 			}
--			smp_mb(); /* key->user before FINAL_PUT set. */
--			set_bit(KEY_FLAG_FINAL_PUT, &key->flags);
- 			schedule_work(&key_gc_work);
- 		}
- 	}
--- 
-2.47.2
+I'm perfectly willing to switch once the LSM initialization patch set
+moves past RFC.
 
+>
+> --
+> paul-moore.com
+>
