@@ -1,36 +1,60 @@
-Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2049.outbound.protection.outlook.com [40.107.93.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7C275383;
-	Wed, 30 Apr 2025 03:55:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.231
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745985343; cv=none; b=KVANi9EJJw3pnIC4QOsr37MRuoLndd5RHjaO8VCGG5LnaltYixUEG0gbMpdWNFGQIRmM4FCqkbOIEO3YWYH/TX7LlXTlqH+GFJr02rsfMpHA/+NQkuC3oKZSm3wbmphiMSu5dtkr+YieQL/QI1GAJd0uo9e4EB8kyLFaJbNFBiM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745985343; c=relaxed/simple;
-	bh=Slvzz0MuimEJxiGmsZQOSUNtVIHwR5e74G12a0AJ3oY=;
-	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
-	 Content-Type:Subject; b=WISzTRVxST+vnvfcZ9HxeywXsPesXuWN0J79sR2fT8LAlSlreNAgb3P4ZuvrON9CWciP1qkw63/gpBbp56YOjO4UNCrL5OdPq5nqbeXfq2iB+esa1q5t21S0zEDnh8PLzvJ0+11L4RSaCEkapoKBRSDRqPJ+wcFAKi5o6z80Sc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
-Received: from in02.mta.xmission.com ([166.70.13.52]:35830)
-	by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1u9yDw-000tkx-K3; Tue, 29 Apr 2025 21:35:04 -0600
-Received: from ip72-198-198-28.om.om.cox.net ([72.198.198.28]:49026 helo=email.froward.int.ebiederm.org.xmission.com)
-	by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1u9yDv-0052df-9I; Tue, 29 Apr 2025 21:35:04 -0600
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-To: Parav Pandit <parav@nvidia.com>
-Cc: Jason Gunthorpe <jgg@nvidia.com>,  "Serge E. Hallyn" <serge@hallyn.com>,
-  "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-  "linux-security-module@vger.kernel.org"
- <linux-security-module@vger.kernel.org>,  Leon Romanovsky
- <leonro@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 184841EA7CF;
+	Wed, 30 Apr 2025 12:14:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746015252; cv=fail; b=YkF4VIo/C5ANLXmaD7I1l3O35mBsnIDphvXaI2Eut0ff0ks/u3TV3ABQrgaGYUzEGc8trqV+O8hkyVOzrnHKZGWvf+6Vplpd+epsZ9tcoCwUUa8uo/4Y24JGhwEPshWRfyN7FP+LO69Y99RkTWq+nPz5vlkIEZpq06kx57g8muM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746015252; c=relaxed/simple;
+	bh=8NQh924MV3+zRaYs+WYpDoLyFXE+zIRFCeYU4m8lmAA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=RVUqJMI1nKZotyWGF/czLbQkMix6T/cQZggZOFFEMMETMdR9uENLfa+O69coEaLnaXWtQ6dGIMkO3dLNw+EL+SuNSKpyHj/vLIer99DS9ltRxLDyEcmKTL9w74o9ACx6QqS/dg9RjahqHCF7MwCUlevZGSV+GpH5fhUImx2RalU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=LT+NdPYm; arc=fail smtp.client-ip=40.107.93.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="LT+NdPYm"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=wnnWOVnjwMdXEa4+qX36kjnOaGtyOkUxNA9FCe0UrqQlTXdq52wTraJK1On4tmhiAARbJOQ8nGqPUjG2Nkq2uWMqssftx1BPEQtTIy3GGaWYSPnT91zPvMRwZ4GdKJkgX0SsS1OR9h1WpmsUK2Kn1CHR6CIRCnTT70Inc1tG9Ia2IuByWCnzfa51s0oQjI6iB8ELe0bawy2sdhm0uuAYU1GZ40AbbkKyNkSGJeGyN0TgJcmmmS5YgnLL4Dx0UbmFTfomDyOehXtAJH9jr+RHPLLPwcCflbNfFf47vZh8R5Sm2/FCQXMaLP00SNHGV5tmNRwApfDOhvvxho+gwoldFQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=R+Bv6oayg/E2+Ziq28RHLzSWw973A4HlcWnIKJmmCAQ=;
+ b=emJ5VV7PyUTPJuvjB64Bz9yWViSnLl9g7gGYlNgoOVSLB0eWW0V7ck25DTg/oirBB8vHS03Py6h1gwAVP9NtBK7DK0w79+c3gm5Ai3fKNX/wNmA4KT2V07LLBXjVQvv9Llw2CglvpL9eHfHQt0Y26nR57UQWBp9NySN0ANUr/BfND+LE58lm9p5scKL1cw6A7c14/AfVGVcasnqcyWvIab49nv+4Y6RzjwKHCb9GrWaLh0ksJGHAR+tGekNZEKK3ygyFO9Y1WDxRFYJbHxCJ+oQFZwMOGPBAm97JfMAAIDG+McCGvdmolDw8NT+7YJPrj2TSH49Ohy/aaoNSjpCsWw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=R+Bv6oayg/E2+Ziq28RHLzSWw973A4HlcWnIKJmmCAQ=;
+ b=LT+NdPYmyIvDQBFvGttyh5MleOIoFTsTl6f7ZMUVVOhK255K7OD9Nm3DA8z2CY1BU57s2B5eYSq9pQtMusie8UeIszjZX0w5eq/yMIlZiPVFcldzpwGCliOpIkG3wDvpsBldlz48idzCCklg7mm8hGKkU3/358ByqBvm2nDPPgidjo2HeLa9rT3uAFKZ+8Xn8VOLlYIDRsKO8pVdOrjCh7Qai+iGkRR6iitq3C9BQhBdgBxf6R7LD8CXXyvZt2cqNjV925TxMM73nUUdYj+MbL2wVX3+/7xVI6bJ6Fek5ZN+JMahJ0wQs9uk0ZeThu2STlcxsDurSq+WSNiwbpo+Hg==
+Received: from CY8PR12MB7195.namprd12.prod.outlook.com (2603:10b6:930:59::11)
+ by BY5PR12MB4164.namprd12.prod.outlook.com (2603:10b6:a03:207::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.19; Wed, 30 Apr
+ 2025 12:14:07 +0000
+Received: from CY8PR12MB7195.namprd12.prod.outlook.com
+ ([fe80::c06c:905a:63f8:9cd]) by CY8PR12MB7195.namprd12.prod.outlook.com
+ ([fe80::c06c:905a:63f8:9cd%6]) with mapi id 15.20.8678.028; Wed, 30 Apr 2025
+ 12:14:07 +0000
+From: Parav Pandit <parav@nvidia.com>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+CC: Jason Gunthorpe <jgg@nvidia.com>, "Serge E. Hallyn" <serge@hallyn.com>,
+	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+	"linux-security-module@vger.kernel.org"
+	<linux-security-module@vger.kernel.org>, Leon Romanovsky <leonro@nvidia.com>
+Subject: RE: [PATCH] RDMA/uverbs: Consider capability of the process that
+ opens the file
+Thread-Topic: [PATCH] RDMA/uverbs: Consider capability of the process that
+ opens the file
+Thread-Index:
+ AQHbk9YLoK1pT4atn0WpWWxcsGvDt7N3vsYAgACIALCAAIEngIAAkUBrgAAxToCAGipgUIAZ+iMAgACAGGCAACPuAIAAA3qQgABFyACAAUU9AIAAB8qAgAAxbYCAAAUbgIABS0ZQgAAqToCAABIpe4AAAEUAgAAOzYCAAQq5sIAAXSeAgAF369CAAA4KAIAACQIAgAAGW4CAABMnHIAADWkAgAAUtxWAABDagIAEnY+TgAEi6ZCAAR+mZIAAjhEQ
+Date: Wed, 30 Apr 2025 12:14:07 +0000
+Message-ID:
+ <CY8PR12MB7195FA1FCB7A02EF0217A669DC832@CY8PR12MB7195.namprd12.prod.outlook.com>
 References: <20250423164545.GM1648741@nvidia.com>
 	<CY8PR12MB7195D5ED46D8E920A5281393DC852@CY8PR12MB7195.namprd12.prod.outlook.com>
 	<20250424141347.GS1648741@nvidia.com>
@@ -44,132 +68,202 @@ References: <20250423164545.GM1648741@nvidia.com>
 	<20250425183529.GB2012301@nvidia.com>
 	<87tt68cj64.fsf@email.froward.int.ebiederm.org>
 	<CY8PR12MB7195855B870B5D00EACFDC79DC802@CY8PR12MB7195.namprd12.prod.outlook.com>
-Date: Tue, 29 Apr 2025 22:34:41 -0500
-In-Reply-To: <CY8PR12MB7195855B870B5D00EACFDC79DC802@CY8PR12MB7195.namprd12.prod.outlook.com>
-	(Parav Pandit's message of "Tue, 29 Apr 2025 10:39:39 +0000")
-Message-ID: <874iy6b9v2.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+ <874iy6b9v2.fsf@email.froward.int.ebiederm.org>
+In-Reply-To: <874iy6b9v2.fsf@email.froward.int.ebiederm.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CY8PR12MB7195:EE_|BY5PR12MB4164:EE_
+x-ms-office365-filtering-correlation-id: ab2e952e-ad93-4aec-81a0-08dd87e081d0
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?kQ1+aOasprR1m3od7hRxEjQwZNQt44LyzIL8jHuYW6rqj78B5mqwECVet/OV?=
+ =?us-ascii?Q?3Nzdi9LyGKjH9PcWJtfrMfuCJTEkgRebGjnJ+kD5Y7To/s1Ii5Z0mWfuQAc3?=
+ =?us-ascii?Q?sv/BzXodaxmIHTfvRroWZTIXIzUuHDAKQFF+e3tnEEG1QS90RMeUKBv2t8cn?=
+ =?us-ascii?Q?BKCcAKTcd8TJIdgsHN3AeHJsRues1/1vnuLViC06NXHREOjAHROMEazfOpDD?=
+ =?us-ascii?Q?93bHQj9jHQq+/3EmLEIfJkcb5mh8mosckumV9xs4QFUEqxNYcd43phx2gesM?=
+ =?us-ascii?Q?RT0NCyIdsXGHkTHkLqDcn1FK5ciywKkH7MW8SQMYsiTEEnmhy3YEJLo70J7x?=
+ =?us-ascii?Q?7zi8VtgrrB5BdAYZvT8/jsMYagHCTGHsc1TnRQuYzsxLSz5NG0pUfTCULBBP?=
+ =?us-ascii?Q?hJfslTIKVZjUgvTQAsuNlax0N8cVJ7oXxgIBagor7nhcqrTNaIno7PxK4Fuv?=
+ =?us-ascii?Q?gn26mHItNo6ga7228h5C5dcZPD5DxyE/N7Ev6mgWAQzlqnCrrhbSa5PHioCM?=
+ =?us-ascii?Q?qccrxq5SQjp6n+N+a7c/I8dEgPBuLj865gsDwfGzW4bZICVFfPpMTVuHQAiO?=
+ =?us-ascii?Q?E4egzC/BMW620z1ln7/ICOTMFATAeTHKP8RzvKsj96b56Ex2mFgGjl5tBiZl?=
+ =?us-ascii?Q?UnEXOOu51Lv9wNnf+aoAlQIv8J04mphCfR7HrMNCKOLeYA7+amiYp4CfWGWt?=
+ =?us-ascii?Q?KgZQyc4pCFTiFX+vOm5xkS/2SdfqYEAeYtWARTtyvOZsDpV8OYwzCQEl95Oi?=
+ =?us-ascii?Q?mNbSyRgXRj75J6j1Bps6v2j5xGgBMqBHRtgV7lpSonHRaUDqIxCIL2D8KXuv?=
+ =?us-ascii?Q?5G7ecUcNTs1L2M9Y0bW1N1qvajechW0Th7yM9C2VVVQmQvaIwrPZ/cBGmezS?=
+ =?us-ascii?Q?1ILa5LW81PZ60g2pyu9XZ/yLVGkOrHQa37JDF6ltHXH8L3LWZAVMsmECL3+9?=
+ =?us-ascii?Q?GnMS9ASUSp9B3n74vN4orjfIySRxc1s6hiMonnibhb2b02D3tTR9v+/Qbncw?=
+ =?us-ascii?Q?13jL4Sj6WD4d3Oqs6dIzONnemg1irl9hjnMsyOfhPUsWpq4iDRXVERrCGK5f?=
+ =?us-ascii?Q?up4OJ6sOP2zMJh2J2FdDd9enWymFi5zdJRs//YZsK4oy9hlCcrYEQUtS8eaa?=
+ =?us-ascii?Q?R5/VKbADE8/7LPsroeHwQw7MiqtJofaVM7anjObrNMXtvX0ZaGUGxz2NtwT9?=
+ =?us-ascii?Q?NbH3iTNbbs/oIvB5ikjHi/Mzuh+kZwFiriHQ1DOWgN5wt5VwJgBzU2OG49Pd?=
+ =?us-ascii?Q?FX0KB7LVBkFOv6V82PtpGPB08VXjQ8fQPZLjOJisiTjMtJcLr18uX8cg18gF?=
+ =?us-ascii?Q?sPTNKSCC8gcrZhi8XZ7s7deL8tffFQtTQVrGl/se/coUxXnftUiXKeLE4CJv?=
+ =?us-ascii?Q?6CGVAX6qBHVJTAhGhHR6wbkFu12I4NpbKSVxCKNZVzy7M9r1gvT2zoyK+Oy+?=
+ =?us-ascii?Q?5PL6GaD1z/xT34h7stLGQ0rTeGt91AKFvdo5f6TxQEfcs9bxqy7DcbikCbXy?=
+ =?us-ascii?Q?92SwZWj7zBLj/80=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR12MB7195.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?mLzal2udNzdk/R4CdBMuUj+wR+dSjRiNK9/AbrUUgT9VTocJ09S6VhHdldh1?=
+ =?us-ascii?Q?GODeecFdHujd43JWNU1ZkIHaqbQZOSz1Te6tTnP6FRvojyBO6eZeDo6pVdK7?=
+ =?us-ascii?Q?MhRVJGFT718NOgKkD7Ik6QzTjOr5hRi2BmT/Qazm7e47p3kRg+GKJcJ9zmJx?=
+ =?us-ascii?Q?MamOdKTGIA9+m8oHeavJNuDXnftA+glphRhS5BqOcbjtrTZU7O9USjhxqP30?=
+ =?us-ascii?Q?Qc5dFHji0PNPvRdReViPDXMvYBVLctQ0k9Ugqh1VoJAJEnj+y3KPSRLDaFiK?=
+ =?us-ascii?Q?IPMB14Fwe4UqNZ9EjI8aoQiAr7usyiOcouTI2JRCshY9A5j87mDOotW5zrAk?=
+ =?us-ascii?Q?lGDcJ1cALlzPS8CEYJ8Ek05JUOV8ofllVTSYe1kXf2JRVkd/tR4AAZBwnmCs?=
+ =?us-ascii?Q?wUb9nXyJBWrZmF22ZKaCk/uQ83wmi8/Q0nsP0MTWfCpDSlbyoWby/Yo1q5hq?=
+ =?us-ascii?Q?X6QVUXocNgcWCP8yK2JNmvPydAMyTXJI/2AtYGnBtX0+lIXnOf2eh1qUxQyd?=
+ =?us-ascii?Q?JwPVeXUgPQ4reBMx3hURC42XVXasesoziW0PfbRkX94KVz+tz7OFTFUmR8GI?=
+ =?us-ascii?Q?ddQr5PV08vp6J40qDKJBMqw9x6DZdkbCW0qWIqcRlYCsfFIva4NdiSPDgLHL?=
+ =?us-ascii?Q?vrFD+eVifVtX5Bn53E3eizDVdC75x9lPk0kCijhLxzL2xpN3kTtGQDXpDF1n?=
+ =?us-ascii?Q?F3MVYoOXCxD/JqVogRe/FPoaK3yI6xGHk93eH5jj7NMqDPumfF8jUXicnFZW?=
+ =?us-ascii?Q?WAUuTgrxuMQSK+U0bg/PVb08pZrPEh+LkePt3K+4xauNLlhA1mRYn7c8MG8O?=
+ =?us-ascii?Q?OkSBsrQ/bAqTg423G2RxVchZc86CjNOBub5ZUBm68Aojcz+w9cy9hYZSIU5H?=
+ =?us-ascii?Q?93z06zt0Nvu70vL18Su0N8ebUSWCCPW4m8LGK7f7PpxBXiFtOB0wR0FqUn6L?=
+ =?us-ascii?Q?h9x0U+PyZJ9RGPn1lP8mBtLP9mhZy5vgJFlV9Sy8QooHDMML03P8ow+fDVgH?=
+ =?us-ascii?Q?LNKUSkcv4xzquGmKHCI9oLqxE+Ds14UqwBAUTVqVnnoChpwROJ12/0/r+w6G?=
+ =?us-ascii?Q?EfxMwskJj5xn4YhpDARqfZ4Ihu0vjLz6NJG8/jfmztkKYp51adBxHBt46Mo5?=
+ =?us-ascii?Q?/vufVA7K3udqsYNISz1wXzSMrU0g/eYZFd5mivEyr5ZbkrBVV6T6FrVj9RIa?=
+ =?us-ascii?Q?iP8OtRsXMvtxWO9gZG1uY/kt3DXqElTts3pPWo6CJhu+j5rY/D2EdEudCjc9?=
+ =?us-ascii?Q?TgNIJit+1MVoGR05FUwVyElMAMQM7vlPqKkGXvrnBNxaTnTIsUMhuw7kUqkx?=
+ =?us-ascii?Q?uoCR7ilv27mAIZKOBxm3OEXxQOqI3jsilQPgJGvpFXEfx74eFmjHQcdWnjha?=
+ =?us-ascii?Q?RAuDcVKY2wrBl69MxPQ6T8Nf+J/+3X4YF/NgLm6B7ulEsmFexNCA6KOkP3CM?=
+ =?us-ascii?Q?95cDrGmriWwCUwKDPXVJ0MQsONro5FSq/G0P3tpIL0sVj5gdgKKSSlyKkaAR?=
+ =?us-ascii?Q?Cyia0/s86GWsshEZMGRK4A8z0ETJRCf01TyQHDme2auIIZwYIEzAILP2JbhZ?=
+ =?us-ascii?Q?Uw+IwOoJ6+JLEuj3Hf8=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1u9yDv-0052df-9I;;;mid=<874iy6b9v2.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=72.198.198.28;;;frm=ebiederm@xmission.com;;;spf=pass
-X-XM-AID: U2FsdGVkX1//twEa4dhnEz/8trNrWTKmUK9DTT88SOc=
-X-Spam-Level: **
-X-Spam-Virus: No
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-	*      [score: 0.5000]
-	*  0.7 XMSubLong Long Subject
-	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-	*      [sa01 1397; Body=1 Fuz1=1 Fuz2=1]
-	*  1.0 XM_B_Phish_Phrases Commonly used Phishing Phrases
-	*  0.2 XM_B_SpammyWords One or more commonly used spammy words
-	*  1.0 XMGenDplmaNmb Diploma spam phrases+possible phone number
-X-Spam-DCC: XMission; sa01 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: **;Parav Pandit <parav@nvidia.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 665 ms - load_scoreonly_sql: 0.03 (0.0%),
-	signal_user_changed: 3.6 (0.5%), b_tie_ro: 2.5 (0.4%), parse: 0.73
-	(0.1%), extract_message_metadata: 14 (2.0%), get_uri_detail_list: 1.59
-	(0.2%), tests_pri_-2000: 12 (1.8%), tests_pri_-1000: 1.84 (0.3%),
-	tests_pri_-950: 0.96 (0.1%), tests_pri_-900: 0.77 (0.1%),
-	tests_pri_-90: 61 (9.2%), check_bayes: 60 (9.0%), b_tokenize: 6 (0.9%),
-	 b_tok_get_all: 7 (1.0%), b_comp_prob: 1.49 (0.2%), b_tok_touch_all:
-	44 (6.5%), b_finish: 0.59 (0.1%), tests_pri_0: 401 (60.3%),
-	check_dkim_signature: 0.41 (0.1%), check_dkim_adsp: 2.9 (0.4%),
-	poll_dns_idle: 156 (23.4%), tests_pri_10: 1.75 (0.3%), tests_pri_500:
-	165 (24.9%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH] RDMA/uverbs: Consider capability of the process that
- opens the file
-X-SA-Exim-Connect-IP: 166.70.13.52
-X-SA-Exim-Rcpt-To: leonro@nvidia.com, linux-security-module@vger.kernel.org, linux-rdma@vger.kernel.org, serge@hallyn.com, jgg@nvidia.com, parav@nvidia.com
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-SA-Exim-Scanned: No (on out01.mta.xmission.com); SAEximRunCond expanded to false
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CY8PR12MB7195.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ab2e952e-ad93-4aec-81a0-08dd87e081d0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Apr 2025 12:14:07.6279
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: l2MvDMnJKewJMJ2zVXyONiywXIKeFkvKZ9TFH09UIHkjWKTUdSQ5vOG8MerrVrm/Z8HweXK+/mbb9BJz08SuUw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4164
 
-Parav Pandit <parav@nvidia.com> writes:
 
->> From: Eric W. Biederman <ebiederm@xmission.com>
->> Sent: Monday, April 28, 2025 10:34 PM
+> From: Eric W. Biederman <ebiederm@xmission.com>
+> Sent: Wednesday, April 30, 2025 9:05 AM
+>=20
+> Parav Pandit <parav@nvidia.com> writes:
+>=20
+> >> From: Eric W. Biederman <ebiederm@xmission.com>
+> >> Sent: Monday, April 28, 2025 10:34 PM
+> >
+> > [..]
+> >> > I said "user_ns of the netns"?  Credentials of the process is
+> >> > something else?
+> >>
+> >> Exactly the credentials of the a process are not:
+> >> 	current->nsproxy->net_ns->user_ns;  /* Not this */
+> >>
+> >> The credentials of a process are:
+> >> 	current->cred;  /* This */
+> >>
+> >> With current->cred->user_ns the current processes user namespace.
+> >>
+> > I am confused with your above response.
+> > In response [1], you described that net ns is the resource, hence
+> > resource's user namespace is considered.
+> > And your response [1] also aligns to existing code of [2] and many simi=
+lar
+> conversions done by your commit 276996fda0f33.
+> >
+> > [1]
+> > https://lore.kernel.org/linux-rdma/87ikmnd3j6.fsf@email.froward.int.eb
+> > iederm.org/T/#me5983d8248de0ff9670644c57d71009debaedd6f
+> > [2]
+> > https://elixir.bootlin.com/linux/v6.14.3/source/net/ipv4/af_inet.c#L31
+> > 4
+> >
+> > So in infiniband, when I replace existing capable() with ns_capable(),
+> > shouldn't I use current->nsproxy->net_ns->user_ns following [1] and
+> > [2], because for infiniband too, the resource is net namespace.
+>=20
+> Almost.
+>=20
+> It is true that current->nsproxy->net_ns matches ib_device->net_ns at ope=
+n
+> time, but those permission checks don't happen at open time.
+>=20
+> After open time you want ib_device->net_ns.  Not
+> current->nsproxy->net_ns.
+>=20
+> At which point your ns_capable call will look something like:
+>=20
+> 	ns_capable(ib_device->net_ns->user_ns, CAP_NET_RAW);
+>=20
+> That ns_capable call will then check
+>=20
+> ib_device->net_ns->user_ns against
+> current->cred->user_ns.
+>=20
+> And it will verify that CAP_NET_RAW is in
+> current->cred->cap_effect.
+>=20
+> Thus checking the resource (the ib_device) against the current process's
+> credentials.
+>=20
+> ----
+>=20
+> The danger of using current->nsproxy->net_ns->user ns after open time is =
+the
+> caller may have done.
+>=20
+> unshare(CLONE_NEWUSER);
+> unshare(CLONE_NEWNET);
+>=20
+> At which point
+> "ns_capable(current->nsproxy->net_ns->user_ns, CAP_NET_RAW)"
+> is guaranteed to be true.
+>=20
+> But it isn't meaningful because there are be no ib_devices in that networ=
+k
+> namespace.
 >
-> [..]
->> > I said "user_ns of the netns"?  Credentials of the process is
->> > something else?
->> 
->> Exactly the credentials of the a process are not:
->> 	current->nsproxy->net_ns->user_ns;  /* Not this */
->> 
->> The credentials of a process are:
->> 	current->cred;  /* This */
->> 
->> With current->cred->user_ns the current processes user namespace.
->> 
-> I am confused with your above response.
-> In response [1], you described that net ns is the resource,
-> hence resource's user namespace is considered.
-> And your response [1] also aligns to existing code of [2] and many similar conversions done by your commit 276996fda0f33.
+True, but the resource was net namespace and not the ib device.
+The capability is of the network namespace that is checked against.
+
+But I think I can ib_device check as well.
+
+> ----
+>=20
+> Because of the shared device stuff a relaxed permission check would actua=
+lly
+> need to look more like.
+>=20
+> 	struct user_ns *user_ns =3D shared ? &init_user_ns : ib_device->net_ns-
+> >user_ns;
+>         ns_capable(user_ns, CAP_NET_RAW);
+>=20
+> This allows sharing the capable call for better maintenance but only rela=
+xing
+> the permission check for the other cases.
 >
-> [1] https://lore.kernel.org/linux-rdma/87ikmnd3j6.fsf@email.froward.int.ebiederm.org/T/#me5983d8248de0ff9670644c57d71009debaedd6f
-> [2] https://elixir.bootlin.com/linux/v6.14.3/source/net/ipv4/af_inet.c#L314
->
-> So in infiniband, when I replace existing capable() with ns_capable(), 
-> shouldn't I use current->nsproxy->net_ns->user_ns following [1] and
-> [2], because for infiniband too, the resource is net namespace.
+Yes, this was the plan.
 
-Almost.
-
-It is true that current->nsproxy->net_ns matches ib_device->net_ns at
-open time, but those permission checks don't happen at open time.
-
-After open time you want ib_device->net_ns.  Not
-current->nsproxy->net_ns.
-
-At which point your ns_capable call will look something like:
-
-	ns_capable(ib_device->net_ns->user_ns, CAP_NET_RAW);
-
-That ns_capable call will then check
-
-ib_device->net_ns->user_ns against
-current->cred->user_ns.
-
-And it will verify that CAP_NET_RAW is in
-current->cred->cap_effect.
-
-Thus checking the resource (the ib_device) against the current
-process's credentials.
-
-----
-
-The danger of using current->nsproxy->net_ns->user ns after
-open time is the caller may have done.
-
-unshare(CLONE_NEWUSER);
-unshare(CLONE_NEWNET);
-
-At which point
-"ns_capable(current->nsproxy->net_ns->user_ns, CAP_NET_RAW)"
-is guaranteed to be true.
-
-But it isn't meaningful because there are be no ib_devices in that
-network namespace.
-
-----
-
-Because of the shared device stuff a relaxed permission check
-would actually need to look more like.
-
-	struct user_ns *user_ns = shared ? &init_user_ns : ib_device->net_ns->user_ns;
-        ns_capable(user_ns, CAP_NET_RAW);
-
-This allows sharing the capable call for better maintenance but only
-relaxing the permission check for the other cases.
-
-Eric
-
+Thanks a lot for the guidance. If no further comments, I will send out v1 a=
+dopting above suggestions.
+=20
+> Eric
+>=20
 
