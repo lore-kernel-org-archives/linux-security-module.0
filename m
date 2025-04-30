@@ -1,135 +1,96 @@
-Received: from sonic311-30.consmr.mail.ne1.yahoo.com (sonic311-30.consmr.mail.ne1.yahoo.com [66.163.188.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF9452C2ACB
-	for <linux-security-module@vger.kernel.org>; Wed, 30 Apr 2025 20:59:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.188.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B85D3228CB0;
+	Wed, 30 Apr 2025 23:24:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746046748; cv=none; b=nENVvovCUeUMBA8G1g/RcUJtO5HZ9BLKiL17ebyoCXdk3no78xdWHZOughLaDSEjRPWxRnvyVpa6GmvX7o7YWIHeRJZlBhgSyWlGzkbWKIWngCvv7DVw2eQ7gmFpm1R5wL0vGZCdX0cu6CgPP8lnEaiQzAH/1zwgEsPXd+L4Tgg=
+	t=1746055496; cv=none; b=m73d/iBdOEmp1AJv0HHWuOx16yh91tKQuMZdTRX0i7ZxsiImv0Ungrq1F5ZLqCnazF9MhK9g6tEwFqaA9Gw77Bz55aE7vc8fGK0EWAid/GJRLiqeMKTIxNAci2YAFUYpsfHcY5MRQzY7v0MGBtsqzZFJy/BPyiybheqJyb9Ho4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746046748; c=relaxed/simple;
-	bh=X3V2lY6xt3KmbTiZ4jeylhjURL3PNT00MwS5+CYXf/o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mxjtus8tdno1milJjNBAt8q3x4mQNZIYKTzFmZOBfsQOMae36KOfq1JYTfhvPE2SbU3T6V6XvgY7nKM0UbDmAP60I8FOUXN3UBHuPRVgyNIP5YxQMhkVbnMEKrTKtS2svz80lwlDq1aKVAdeS+XW2EhBFCgYiL1Z/1C989mmU94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=bDOXR/To; arc=none smtp.client-ip=66.163.188.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+	s=arc-20240116; t=1746055496; c=relaxed/simple;
+	bh=R8qGUQj0WsUU7AExrF71Pi7VBmUYNaoJjOIObQJ2DE4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pP8aMjPjNsuvD+gHTVLboAa1n9HVv9UkxaN0xBgGym6QIX2wnnfdDMG0C/ROFRvg2C97Qbgl3n5+AFxKlSkwgwxItRtP43jyXKvELEp2S7YxIRs3Pn13O0k0dstD4ndhuN8NismlLgt4a5j007tXu+WHBp0Y7CRnYoMmF/vmQXk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g3BiiNFi; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="bDOXR/To"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1746046740; bh=+gC+d7moRSAaJPJZhwxmGK5/40fNgFBiFFeRuG5b1KM=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=bDOXR/ToO3dTpbH4gZaidk7BW+4tLB2pAmjEwba4KBzQEkFzaz0OkA11HuOqQPje/u1waSWSwt/fPFU7ou1iIpsD3Lm9kxBw2PJp1AdJKUsZznIBanWy3cETGwl1h+7E0Nm5hyc2uNjvwFGK3abAIY7blk37pOnp2fSYX3H233YZKz//hBckOa1CdOan+9/OOAo6ARpStOnNpgm4LAzfmDYdK9KEyGTkGb0srWXxm2ORx4zHosBXuahxa+P+wJTqQepdwCvgKPZKciZmcAaZTU6adSmGA5YMGFNVZys1i8lMdPq9cCxvarMc/SxwwQXEU/aXExobKWZcwC2wq878/w==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1746046740; bh=N6Un6/MTqhOSfem646tiFDKvwdpnIT1QYWriZuQ4Siz=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=lrkjcHhqCuX0FiNfQPXPuf3eu03+Ci3tGY4dsfPmw1EvNFUoPy05BdexYEXJy/N1nCoGS5j92jUkDyi9/EJ8Bh4XhS5S5EIoHeerqx9wSezX75xP+6WToJo8JGIjzU4jQUoztE76VOGvZbD8nX9YMiDBE093PDw1YmJd096b0XQotmBp8AENli3vLBfJpNk30PysNeQQIwwXrXk2Ba+xxZir+67Oqv22nNtvDtr7Ne6WFJKXIPf03H3J38jU5Grp9rsKN2NuvcNmWz8hV2GB0SRNhfXegw6BFocbqtwcSLzpyUBYcavmlWaaNl47VXUxazW353DAnK7CyxkTxT6bXA==
-X-YMail-OSG: EmGTxl4VM1nm95CdTEC7vPAhmhB5PTVR6.8wsREeMwE7cxFAOFPFq1jRuHcUdmy
- eSzdbFra9.4qi5XG88xks2C_dSCQfx_5yJ2aK4zEejYkdsfsiYnCFVQ3tpIwmxLa0A5UfsAJx9Vn
- _IkUFjR2V.DVmdK2bRSeOTw8jP3OaFd486YtWjtYnHanumwMPyH5YQv.jmKGU7xWvWV8CrYT5O7G
- vP4FyE0p2iKy_TWQKZXUdcw1Vha5n6VAwkhD32JCUvTHRNl3h6EY6NraHvuacFSSdIyt4vgQUK19
- 4MgJRqf1rlZpcH8unuwJOHlp4.ikdr9ORfBphpd7CZXpVoPvJ0uPU1x5591FFCWXRZy4SQ0IzkTJ
- wldTX8zUjZhi3Wo2AVBqU_IyQJgoDkM9amvU8tHpkdABiYvC71GC0AzkPoZaSIw_oTsXOzH7VBFn
- rBZRZr5rTwus.Xuz.BNjkU39lb8u_znco_H1Iem5bTj4UVOENnIRpK1YNkXqiw0gH.RmAeC7pYEn
- dBqxb8Z7P_XlZzrEuKIXNpyGtP7Xc4uTGHanxc_aPY7EQgc0BChc0bhU_1ofDxkhmedNqtFOxgug
- boSsOu0YRRtXVAfxI28NUcWraTtJrCg3QnAW.pvYJFavRsI6gUjZaUnEXJ3ZIg3D1MCJqgOaJ.KH
- y0BVSDIQU1pFGZeIGLiIwnemevVincewipfw_uygh84mvItBOERbEbQrTS7QEYdiW1iy7_NPqLuP
- Zu8vv6kITXmhs.rDIWMkzcvXF9boHKUKHZ8Q84c1VtY7b8koJ8TCJMviSUfirDojgh6fFpKgUEnK
- _UpQeOTnzvQrGKCW8O7LAG2IKlvlUvMEfRGevSD3ItlIWIHMI3XbP_SEZATDx2YJmZJq1tOnGmSk
- o15pajfmJmGI7IRtkC37s49iEzaKLq8wBmtE5FKcQLGtRoGtyFKS2AEsX1VsLdTon8T_ZrF4hbMy
- KQyAKN8.ox.qFZi.8poHmiudXF89CJ7D.U35GbrTCuibNzgyAUMN9DzjkBvwMYf6XYCInQkEMGZx
- zTCs2dmr8gR8EeAfU6pOaRF6VwNodByOu5HWO0508.EBWuGxBxC_8yJbqlkqjnu.DMWCW9iODPam
- c0mHvT5VW6fgQfLiQ6KvG7szUcGfyWwGxx52Z70CT65DfyIaKBcML3NwKH4Nphmo3kIlFXwGn.OA
- qNRCOJ9dVueQku2MCiQh.q8wVb7ynPwW2kBv5jqzvraIYpJ5_pplWEWVhK1nl2m0EqkUD6lTAiy9
- nlr8STwx3bFLWc8a.DVm4VDyjwhBzw1ES7.AgKDCjUDj1Q0SnWM7yNskFQrMIegBRUA5KBl1HbZf
- LkdnPTc5aaQksn3J5azvLNj19VE86XLqNRvwpAwXMGRrnpmgjsJG_9D.EmY2bBwy4zOmgOpuBSmF
- eiLkbTbGQhnwLF6EwsPPCKUpECn64lPxtQFxn3w1bFkXf9C1iTJ8wspGBJNzxl6ks9y0ZAte.kYR
- Ba26DmyzshiuT7OtGUoos7w_CYzk7WPBRSrlqfw6Yq785e.Cc2q.qBWOTtpcB4AZvv5LaiGFKPFm
- lTmXT8n0y1JH_OS9Rwfyo98eIeiVgSYImD2CkU28VEDW5l5oj.WJ6rxsTN2VAXGSQB5hYUp52mcQ
- S7S6PSUu0.PMTLSIKnsGuPgwelfK2Vlj1i_.IByiAIHqwhF31IcVhJ8Cuna40PtT3HbZ2zyt2D9v
- Ktd2DSjPSGw_lxDYcNgx7h7XXLfsLs8C209.yRpmG18G6WC4QSiBu8F8is2q3HP6cFQRpnroUXqb
- eNDPfv70WV8szPH1DbxBJ8OJbl0RIp0rqAffwcNt8WR2y2GH3C5665T9n4pZuqAyHOeht3YsatR9
- h7Vi4dYo7.4QoPGStzq_7dLJPCzMq.4tMHM2zMjMJwxy62xe3e.8ktK1jICcnqEemVBwJ0JupQSM
- kz4Wp4iAM4Wf4nxZT62Qlpmjkoy8t_NxPxHZ1ZuJym9rdBdifjWFzTUz63I_NqxrBjVIanfNVg33
- .gLUyBPv7QRSHvoUeEgTeC9q5E.t.YyztGnUTj6D1c2KzQHApEY0TXzpMiLwVCAlbWOSgbd1z78T
- 3xWfJjZTSPUOBPymBFl5zEAd60bGTmQyt.xA73eAhpqajMwVmF8FSsmeC7vFqrVFwiZ_CIgzho4u
- aoHpuRZEA8sS2vx3G4Fk3euK3xK5I9pc0URf5N025_hwBXI78n43lTKp04I2Q0H6lBdSKwjXbANs
- tpiXeDBA8qR69MNKhifX9_5P89MlSnS3v89M1YjgHQ5OQjhuIC_2SOP9y3k5Y46COE5iTPppa673
- iRjkXLQGu2I4tgTgBHskKWQ0-
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 27ad3a78-a3a6-4fd0-a5b1-c54b774af32a
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.ne1.yahoo.com with HTTP; Wed, 30 Apr 2025 20:59:00 +0000
-Received: by hermes--production-gq1-74d64bb7d7-mh87r (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 2fa6c2ffd89e3e47aa75eb5dbe1c77c5;
-          Wed, 30 Apr 2025 20:48:48 +0000 (UTC)
-Message-ID: <5a220cb2-17ef-4bc6-813b-5ae5c7818d97@schaufler-ca.com>
-Date: Wed, 30 Apr 2025 13:48:48 -0700
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g3BiiNFi"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31458C4CEEF;
+	Wed, 30 Apr 2025 23:24:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746055496;
+	bh=R8qGUQj0WsUU7AExrF71Pi7VBmUYNaoJjOIObQJ2DE4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=g3BiiNFix/egbXCPo7ksUUBq6VXcySoXnzplC7XPI5JR872S6WOS4BRTpA/gc4ouN
+	 mAW8/4FY59XqOEPXy0dRdKsU27tM9sb2+LhiuNL71UqLOfZaSUCeKQbHohNIgBeiX5
+	 JrIj5d6D7TI9SqGb67yz5DqsjthTOHdF6VjeP6NH3Cuei0UPPFGccjTXl6xKuVBzhp
+	 NMOyBXINMc54u1j1nN3OtJSIFNi6c0KwlPAhUzqr2IuaGSCdQcht5joCw88TjYZZad
+	 7s5NjakB7Sla4Tub1+ZraUNnQm71PXMFGXkuX9pKGI/hpDRMZ5DXECEhqUqBe7WNYm
+	 uBKzLFRJEK1kQ==
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e6e1cd3f1c5so361953276.0;
+        Wed, 30 Apr 2025 16:24:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVPLCl3zsog77l8ndTjps4yUEImOxZWQwe72rnH2BHOX3yIGYn46CuWaE/W53BZQnoieymngm4DsDB86NIGWbSECRBX+a7I@vger.kernel.org, AJvYcCXsdocYPd01tJ8S6XPRslu2RY2srZekIQQUF4fUDbXIdUkKz3ZXu20in0TaX/sN4G/dVfAB6L8CIHbUQhc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yybg0gN6MYIImXKOk/uBzedabclgU91ImNH/B9apb1I1PDU/gix
+	9U+CMPy0m+gKKLQwtTD5Dx3dK90XHu3BsHKZHlWf2e/e3fDh1Q3zapexecJrLQhEqcaRQnZ7u9N
+	8grj4pqleg+ES1eIu1TTAj6HTTUI=
+X-Google-Smtp-Source: AGHT+IEFb5WKeTRO5ku9Dx9DwwQgc18oJPQ/xKG17qWkh8xO/tVwN1QrvsFUK7xHQwD6qXq8deenEeLjaHUpEN9Fl5k=
+X-Received: by 2002:a05:6902:1690:b0:e72:d88e:80d3 with SMTP id
+ 3f1490d57ef6-e74f8a617f4mr1696642276.36.1746055495439; Wed, 30 Apr 2025
+ 16:24:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/5] Audit: multiple subject lsm values for netlabel
-To: Paul Moore <paul@paul-moore.com>
-Cc: eparis@redhat.com, linux-security-module@vger.kernel.org,
- audit@vger.kernel.org, jmorris@namei.org, serge@hallyn.com,
- keescook@chromium.org, john.johansen@canonical.com,
- penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
- linux-kernel@vger.kernel.org, selinux@vger.kernel.org,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20250319222744.17576-5-casey@schaufler-ca.com>
- <0211e4c6561bf2eabbad2bf75a760e03@paul-moore.com>
- <c53cf38a-f159-48b8-922a-550bd21b5951@schaufler-ca.com>
- <CAHC9VhTbrk_XovghLTtqPUv3br9aJbn2YcnFyn3uugTUKAHNFw@mail.gmail.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CAHC9VhTbrk_XovghLTtqPUv3br9aJbn2YcnFyn3uugTUKAHNFw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.23737 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+References: <1745961770-7188-1-git-send-email-jasjivsingh@linux.microsoft.com>
+In-Reply-To: <1745961770-7188-1-git-send-email-jasjivsingh@linux.microsoft.com>
+From: Fan Wu <wufan@kernel.org>
+Date: Wed, 30 Apr 2025 16:24:43 -0700
+X-Gmail-Original-Message-ID: <CAKtyLkGvcRP9f5gGhsSnEA28Nh0Udcq76ZZv0SA5Vko6w8R7qw@mail.gmail.com>
+X-Gm-Features: ATxdqUE-PtIOlhPKHRm327Vzj_UUY1r52fOy6jBuOQSuFz4DpIQTYlqWRkzQTzw
+Message-ID: <CAKtyLkGvcRP9f5gGhsSnEA28Nh0Udcq76ZZv0SA5Vko6w8R7qw@mail.gmail.com>
+Subject: Re: [RFC PATCH v1 0/1] ipe: added script enforcement with BPRM check
+To: Jasjiv Singh <jasjivsingh@linux.microsoft.com>
+Cc: wufan@kernel.org, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, 
+	mic@digikod.net, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 4/30/2025 11:51 AM, Paul Moore wrote:
-> On Wed, Apr 30, 2025 at 12:25 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->> On 4/24/2025 3:18 PM, Paul Moore wrote:
->>> On Mar 19, 2025 Casey Schaufler <casey@schaufler-ca.com> wrote:
->>>> Refactor audit_log_task_context(), creating a new audit_log_subj_ctx().
->>>> This is used in netlabel auditing to provide multiple subject security
->>>> contexts as necessary.
->>>>
->>>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
->>>> ---
->>>>  include/linux/audit.h        |  7 +++++++
->>>>  kernel/audit.c               | 28 +++++++++++++++++++++-------
->>>>  net/netlabel/netlabel_user.c |  9 +--------
->>>>  3 files changed, 29 insertions(+), 15 deletions(-)
->>> Other than moving to the subject count supplied by the LSM
->>> initialization patchset previously mentioned, this looks fine to me.
->> I'm perfectly willing to switch once the LSM initialization patch set
->> moves past RFC.
-> It's obviously your choice as to if/when you switch, but I'm trying to
-> let you know that acceptance into the LSM tree is going to be
-> dependent on that switch happening.
+On Tue, Apr 29, 2025 at 2:23=E2=80=AFPM Jasjiv Singh
+<jasjivsingh@linux.microsoft.com> wrote:
+>
+> From: jasjivsingh_microsoft <jasjivsingh@linux.microsoft.com>
+>
+> Currently, IPE only enforces the policy operations for direct
+> file execution (e.g. ./script.sh). However, indirect file execution
+> (e.g. sh script.sh) needs to be enforced by IPE based on the rules.
+>
+> Overview
+> --------
+>
+> This patch introduces the `ipe_bprm_creds_for_exec` LSM hook. This hook
+> specifically targets the `AT_EXECVE_CHECK` scenario [1], allowing IPE to
+> evaluate the `EXECUTE` operation policy for the script file during the
+> check phase itself.
+>
+> [1] https://lore.kernel.org/linux-security-module/20241212174223.389435-1=
+-mic@digikod.net/
+>
+> Example
+> --------
+>
+> ipe_op=3DEXECUTE ipe_hook=3DBPRM_CHECK enforcing=3D1 pid=3D18571 comm=3D"=
+inc"
+> path=3D"/tmp/script/hello.inc" dev=3D"tmpfs" ino=3D24 rule=3D"DEFAULT act=
+ion=3DDENY"
+>
+> the log message when the IPE policy denies the indirect script execution
+> via the 'inc' test interpreter.
+>
+> The IPE test suite has been updated to include script enforcement tests:
+> https://github.com/microsoft/ipe/tree/test-suite
 
-Not a problem. Obviously, I'd prefer this patch going in before the
-LSM initialization work, but it is your call.
+Please use the PR link instead of the repo link.
 
-> The initialization patchset is still very much alive, and the next
-> revision will not be an RFC.  I'm simply waiting on some additional
-> LSM specific reviews before posting the next revision so as to not
-> burn out people from looking at multiple iterations.  I've been told
-> privately by at least one LSM maintainer that reviewing the changes in
-> their code is on their todo list, but they have been slammed with
-> other work at their job and haven't had the time to look at that
-> patchset yet.  I realize you don't have those issues anymore, but I
-> suspect you are still sympathetic to those problems.
-
-Of course. Waiting on reviews can be frustrating.
-
-> If you're really anxious to continue work on this RIGHT NOW, you can
-> simply base your patchset on top of the initialization patchset.  Just
-> make sure you mention in the cover letter what you are using as a base
-> for the patchset.
-
-As I don't anticipate serious changes to your patch set this makes sense.
-
-> If that still doesn't offer any satisfaction, you can always
-> incorporate the feedback that I made in v2 that was ignored in your v3
-> posting :-P
-
-Yeah, oops on that.
-
+-Fan
