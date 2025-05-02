@@ -1,199 +1,145 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 133631EFFB9;
-	Fri,  2 May 2025 19:01:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 624AD1EDA36
+	for <linux-security-module@vger.kernel.org>; Fri,  2 May 2025 20:01:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746212493; cv=none; b=GiPxur3aLVJ/cYld5z+k6uYPeYXpeN+PKUZy1OnHqMgzwHp8IoSdv0kTmy2tuREWFWGhOdOK1EQyn0HfVUk6FP4VOWob3hWf+Py3s6dPSitkUwCXC7RU+AlGOHi6OfUUwT9wx0TjOiQR7g/T2YM79X+/ifWCu/mLq399TKa1JO8=
+	t=1746216089; cv=none; b=mGzg6mpYdQcRd5SMzaMfv69SCEynFBA6br7emIUx5Ip8iiKHaVerhCB/4W3jc8t8ns9uPxjFa5dgyzT4OeBa0ab4uLXTL+b4ECn2nUT8uZxSlx0m5NY/Fx5sOnkimglNROsUV8oj+AD6NfigCo9AgmYRmYXUnX2I9CtnqWZIueE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746212493; c=relaxed/simple;
-	bh=OArrhviC9XaQ7OlcTfKqQMGsnz4armduOY/WBMGcbsA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=OyK38LUdMSeADJotum82NgzCMrBGwTMw/Hpp2DN7U0Lbce6fJqRp0JJD/eRhaCUjn/xqulfWZsC9TrDfb/D8K1sxvPJ7N+gcI5vg5dB8rc361AjOH/vg5SS1jq5R6/xq4hDu0tvYmueZaJKXHSqDZNVCAS4nc6zmRklUS4vJ94k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jB1YOX/W; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1746216089; c=relaxed/simple;
+	bh=WW4QBF9emqCbjC/9TvFh+whwW8ygos3aFSvz7vwhoOE=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=aWT8XCKbf7GFXRMPrdGDJnFpzxqhMGYSuUmamNLqZgi46L9QCP2FnOuX+IfXATsEzZtqS2gc7ocKpNqht0RmjNCQbbZkHeKtVbNK896EIQ0TuMD8dpYyq2M/t4eHJpIb4n/DXzBitIlqBKF1XkqOXoHrdSe4nbOEJS44wggK1NA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ZIEMNJoe; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jB1YOX/W"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FA19C4CEED;
-	Fri,  2 May 2025 19:01:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746212492;
-	bh=OArrhviC9XaQ7OlcTfKqQMGsnz4armduOY/WBMGcbsA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=jB1YOX/WblarlM1ru+chkUcRI7n9ViNaZEATHHCcZU9HKHkXtQaiFa1ADnnNSHEfn
-	 pxV/EexqPW/iO2BUs8r2oHGwy/9Wh+oNp1A5atSmV+xAncgPjqT8RJGnFSSHtmQkzE
-	 UPmqFqbQ6KKii/W31CNxWg7FeU4snGvlYrWtTP21uUUHLpcqwPtQxofl5x4yxEQWCa
-	 HwLSZcaV963TrPrvt3cOAxbzFvO38HxPRoaEke92VS2avjAcALnb+UJqHMA74Tz/D8
-	 JUZIkKnmwrX/2Jemco5btqwU2P3ADx4coHH+136JT/FvbSfjWd+ts9cd4ecXPSUgg3
-	 HONZP1ma8mZfQ==
-From: Kees Cook <kees@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Kees Cook <kees@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Marco Elver <elver@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Kai Huang <kai.huang@intel.com>,
-	Hou Wenlong <houwenlong.hwl@antgroup.com>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-kbuild@vger.kernel.org,
-	kasan-dev@googlegroups.com,
-	linux-hardening@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-riscv@lists.infradead.org,
-	linux-s390@vger.kernel.org,
-	linux-efi@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	sparclinux@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: [PATCH RFC 4/4] stackleak: Support Clang stack depth tracking
-Date: Fri,  2 May 2025 12:01:27 -0700
-Message-Id: <20250502190129.246328-4-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250502185834.work.560-kees@kernel.org>
-References: <20250502185834.work.560-kees@kernel.org>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ZIEMNJoe"
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-708a853c362so22275777b3.2
+        for <linux-security-module@vger.kernel.org>; Fri, 02 May 2025 13:01:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1746216086; x=1746820886; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=n8WxfjP4ZaeLalbK3fLwOxfZfNYUH8QwQTJ3Di2jk38=;
+        b=ZIEMNJoeTXv8y6evobpYhZoxRC1DpNcoh3x3Fj2Ki8LDTEfk6Bk1J/juStYyU6vuFg
+         mMGSZX1FSd3jH3yx0k0sp+7e6wdKEpQXoR/qztNmYm+pimA92VCB5NGYy+BJjU23QyRw
+         AbW3gmJoIkGEyI3shq4/G7PXa0VmQ9eZUD6btxHrkOgT3K17XSEIkFNP5F1CZ0K3c2zT
+         ZcQWNY6kXOobJ2B8ZS5hShe48/9Hg9VoCbj/82gXx4cx9V6tuSuJ7WrqATBmukyDrDUn
+         vMLuwUZBhyfGYLNblkEWgjy8t3yEYsIL9/6+vPfzjJOIMLDJPUgZKo+ZwpayTgThg87E
+         1jbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746216086; x=1746820886;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=n8WxfjP4ZaeLalbK3fLwOxfZfNYUH8QwQTJ3Di2jk38=;
+        b=WPHm5DXm7x1qv6KFLiG9sXoUO17khPFAUZFb+b1ZqvHBnWO210wxNHzPlLCI90fro/
+         VgGTVGRCtHOezKiMXT/eh096jZjbR9sRBED4gz9x+mAZwa8gLZcVfKC7ec301GzgxGph
+         xQw/e7CxeyzO+g4YZhjOMMPa7Uzt0ZribXjpCKIS0D+iagAGoSS9DlV6D9ZbBIulUj4z
+         9m2jmSDJenIP6oHDhVcZYOnMNwnWoNmpc6ywtOQXf6EflTL2CYNoHAu3nG6HKswY0Zd1
+         7TuRYNRScM+I9uyEaiSmLaboHd3zTwo5i98gD+APG4RjBMGjObkjm30LVXIRVyKO1AUe
+         sIVQ==
+X-Gm-Message-State: AOJu0YzqERor6QkWpfawpaEsxlWa23aiQgsPuzz4EeCltecRvzHe6K7H
+	wYwpD1K/L6+aKJRk3/St/428IjLld22kF3mIDqW91bbV3r/dCeEykqJ8B4oi3FmdtqeCKpD2bjG
+	/2HL9brArg4P8RotF2vSgzBRN3Jtxx86rhp1ETTQKxrbkTk9Mvg==
+X-Gm-Gg: ASbGncurg1qJkRoSJABCmkLEWNEsoVgZ6pP8D3DC0zlBK1sVbnmXMG2Nsh66UTKmuE8
+	EddDNC6sS3sHwsgxjXwLMUcR7c18++HS+aQuevjX0MZ04U/Z+YHVE6eFb8dBPgG+JwbQOEszMWB
+	09Q9VaU/77253QZLu9vObymKC/baUy127f
+X-Google-Smtp-Source: AGHT+IGMwSX7aivvBH5ul2umgktm6ZAtPEGmJ50BO8uKiy2xL2i26TXI3LroKLihR/8h3PdU9WTtF/RNBSBIxJ8k7kE=
+X-Received: by 2002:a05:690c:c8f:b0:703:aea2:6bb8 with SMTP id
+ 00721157ae682-708e134b8e7mr5695347b3.28.1746216085964; Fri, 02 May 2025
+ 13:01:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4716; i=kees@kernel.org; h=from:subject; bh=OArrhviC9XaQ7OlcTfKqQMGsnz4armduOY/WBMGcbsA=; b=owGbwMvMwCVmps19z/KJym7G02pJDBmiYm0eHYd/KD+/YrfhHLPdHAslHi9Fd//IiqqD/4I25 j38J1nZUcrCIMbFICumyBJk5x7n4vG2Pdx9riLMHFYmkCEMXJwCMBGBJYwMGxO93eMPrlt+5Jzt Oot7p+4nLPDlKnhnYFtxdhXvk+VS/Ax/Bd/vvaSguOh3WEFqRfyd1+x1/pxfFHj2REh++SY+fVI 9DwA=
-X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 2 May 2025 16:01:15 -0400
+X-Gm-Features: ATxdqUGye2YKuzXF58NoryrgYICcidOmHQOofcQT8vMN7xWPT2azCLHCfVoZric
+Message-ID: <CAHC9VhTiABmrJNkTYSfTQkjAS5u-GJdYxd+zJ8PcryScBtsXNA@mail.gmail.com>
+Subject: [RFC] LSM deprecation / removal policies
+To: linux-security-module@vger.kernel.org
+Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, Fan Wu <wufan@linux.microsoft.com>, 
+	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	Mimi Zohar <zohar@linux.ibm.com>, Micah Morton <mortonm@chromium.org>, 
+	Casey Schaufler <casey@schaufler-ca.com>, John Johansen <john.johansen@canonical.com>, 
+	Roberto Sassu <roberto.sassu@huawei.com>, KP Singh <kpsingh@kernel.org>, 
+	Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Wire up stackleak to Clang's proposed[1] stack depth tracking callback
-option. While __noinstr already contained __no_sanitize_coverage, it was
-still needed for __init and __head section markings. This is needed to
-make sure the callback is not executed in unsupported contexts.
+Hello all,
 
-Link: https://github.com/llvm/llvm-project/pull/138323 [1]
-Signed-off-by: Kees Cook <kees@kernel.org>
----
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: <x86@kernel.org>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>
-Cc: Nicolas Schier <nicolas.schier@linux.dev>
-Cc: Marco Elver <elver@google.com>
-Cc: Andrey Konovalov <andreyknvl@gmail.com>
-Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>
-Cc: Ard Biesheuvel <ardb@kernel.org>
-Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Paul Moore <paul@paul-moore.com>
-Cc: James Morris <jmorris@namei.org>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: Kai Huang <kai.huang@intel.com>
-Cc: Hou Wenlong <houwenlong.hwl@antgroup.com>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>
-Cc: Sami Tolvanen <samitolvanen@google.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: <linux-kbuild@vger.kernel.org>
-Cc: <kasan-dev@googlegroups.com>
-Cc: <linux-hardening@vger.kernel.org>
-Cc: <linux-security-module@vger.kernel.org>
----
- arch/x86/include/asm/init.h |  2 +-
- include/linux/init.h        |  4 +++-
- scripts/Makefile.ubsan      | 12 ++++++++++++
- security/Kconfig.hardening  |  5 ++++-
- 4 files changed, 20 insertions(+), 3 deletions(-)
+We've worked in the past to document some of our policies and
+guidelines, the result can be seen at the link below (also listed in
+MAINTAINERS):
 
-diff --git a/arch/x86/include/asm/init.h b/arch/x86/include/asm/init.h
-index 8b1b1abcef15..6bfdaeddbae8 100644
---- a/arch/x86/include/asm/init.h
-+++ b/arch/x86/include/asm/init.h
-@@ -5,7 +5,7 @@
- #if defined(CONFIG_CC_IS_CLANG) && CONFIG_CLANG_VERSION < 170000
- #define __head	__section(".head.text") __no_sanitize_undefined __no_stack_protector
- #else
--#define __head	__section(".head.text") __no_sanitize_undefined
-+#define __head	__section(".head.text") __no_sanitize_undefined __no_sanitize_coverage
- #endif
- 
- struct x86_mapping_info {
-diff --git a/include/linux/init.h b/include/linux/init.h
-index ee1309473bc6..c65a050d52a7 100644
---- a/include/linux/init.h
-+++ b/include/linux/init.h
-@@ -49,7 +49,9 @@
- 
- /* These are for everybody (although not all archs will actually
-    discard it in modules) */
--#define __init		__section(".init.text") __cold  __latent_entropy __noinitretpoline
-+#define __init		__section(".init.text") __cold __latent_entropy	\
-+						__noinitretpoline	\
-+						__no_sanitize_coverage
- #define __initdata	__section(".init.data")
- #define __initconst	__section(".init.rodata")
- #define __exitdata	__section(".exit.data")
-diff --git a/scripts/Makefile.ubsan b/scripts/Makefile.ubsan
-index 9e35198edbf0..cfb3ecde07dd 100644
---- a/scripts/Makefile.ubsan
-+++ b/scripts/Makefile.ubsan
-@@ -22,3 +22,15 @@ ubsan-integer-wrap-cflags-$(CONFIG_UBSAN_INTEGER_WRAP)     +=	\
- 	-fsanitize=implicit-unsigned-integer-truncation		\
- 	-fsanitize-ignorelist=$(srctree)/scripts/integer-wrap-ignore.scl
- export CFLAGS_UBSAN_INTEGER_WRAP := $(ubsan-integer-wrap-cflags-y)
-+
-+ifdef CONFIG_CC_IS_CLANG
-+stackleak-cflags-$(CONFIG_STACKLEAK)	+=	\
-+	-fsanitize-coverage=stack-depth		\
-+	-fsanitize-coverage-stack-depth-callback-min=$(CONFIG_STACKLEAK_TRACK_MIN_SIZE)
-+export STACKLEAK_CFLAGS := $(stackleak-cflags-y)
-+ifdef CONFIG_STACKLEAK
-+    DISABLE_STACKLEAK		:= -fno-sanitize-coverage=stack-depth
-+endif
-+export DISABLE_STACKLEAK
-+KBUILD_CFLAGS += $(STACKLEAK_CFLAGS)
-+endif
-diff --git a/security/Kconfig.hardening b/security/Kconfig.hardening
-index edcc489a6805..e86b61e44b33 100644
---- a/security/Kconfig.hardening
-+++ b/security/Kconfig.hardening
-@@ -158,10 +158,13 @@ config GCC_PLUGIN_STRUCTLEAK_VERBOSE
- 	  initialized. Since not all existing initializers are detected
- 	  by the plugin, this can produce false positive warnings.
- 
-+config CC_HAS_SANCOV_STACK_DEPTH_CALLBACK
-+	def_bool $(cc-option,-fsanitize-coverage-stack-depth-callback-min=1)
-+
- config STACKLEAK
- 	bool "Poison kernel stack before returning from syscalls"
- 	depends on HAVE_ARCH_STACKLEAK
--	depends on GCC_PLUGINS
-+	depends on GCC_PLUGINS || CC_HAS_SANCOV_STACK_DEPTH_CALLBACK
- 	help
- 	  This option makes the kernel erase the kernel stack before
- 	  returning from system calls. This has the effect of leaving
+- https://github.com/LinuxSecurityModule/kernel/blob/main/README.md
+
+However, one of the areas that has been missing from this guidance,
+are policies on deprecating and removing LSM hooks as well as LSMs
+themselves.  In an effort to fix that, I've drafted two additional
+sections (below) and I would appreciate feedback from the LSM
+community as a whole on these sections.  The LSM hook deprecation
+policy follows the undocumented process we've typically followed, and
+while we've never deprecated/removed a LSM, I believe the guidance
+documented here follows existing precedence.
+
+## Removing LSM Hooks
+
+If a LSM hook is no longer used by any in-kernel LSMs, there is no ongoing work
+in progress involving the hook, and no expectation of future work that will use
+the hook, the LSM community may consider removal of the LSM hook.  The decision
+to ultimately remove the LSM hook should balance ongoing maintenance and
+performance concerns with the social challenges of reintroducing the hook if
+it is needed at a later date.
+
+## Removing LSMs
+
+If a LSM has not been actively maintained for a period of time such that it is
+becoming a maintenance burden for other developers, or there are serious
+concerns about the LSM's ability to deliver on its stated purpose, the LSM
+community may consider deprecating and ultimately removing the LSM from the
+Linux kernel.  However, before considering deprecation, the LSM community
+should make every reasonable effort to find a suitable maintainer for the LSM
+while also surveying the major Linux distributions to better understand the
+impact a deprecation would have on the downstream distro/user experience.  If
+deprecation remains the only viable option, the following process should be
+used as a starting point for deprecating the LSM:
+
+* The LSM's Kconfig description should indicate that the LSM is being
+deprecated and the LSM should not be built into the kernel by default.
+
+* Entries in Documentation/API/obsolete should be created for any user visible
+interfaces associated with the LSM.
+
+* When the LSM is enabled at boot or runtime, it should display a message on
+the console that it is now deprecated and will be removed at some point in the
+future.  While the message should be displayed without delaying the boot at
+first, after one or two kernel releases it may be helpful to add a small,
+e.g. five second, delay after displaying the message to draw attention to the
+deprecation notice.  The delay can be increased in successive kernel releases
+until it reaches a level than any reasonable user wouldn't be able to ignore,
+e.g. 30 seconds.
+
+* Finally, after an additional two to three kernel releases, after any
+deadlines listed in the Documentation/API/obsolete entries, and once the LSM
+community is satisfied that all users running modern kernels have migrated away
+from the LSM, the LSM can be removed from the Linux kernel and any entries in
+Documentation/API/obsolete can be moved to Documentation/API/removed.
+
+It is important to note that the steps above are intended as basic guidance for
+a generic LSM; it is likely that changes, including additional actions, will be
+needed for individual LSMs based on their design, implementation, and
+downstream usage.  The LSM community should take the process above as input,
+but ultimately the process should be tailored to the LSM being deprecated and
+the associated environment.
+
+[SIDE NOTE: I'm trying to close out the outstanding TODO items for
+this document in preparation for moving into the upstream
+Documentation/ directory, there are a few small items remaining, but
+the deprecation/removal guidance is the largest.]
+
 -- 
-2.34.1
-
+paul-moore.com
