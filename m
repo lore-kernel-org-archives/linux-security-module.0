@@ -1,99 +1,184 @@
 Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A4263C465;
-	Fri,  2 May 2025 16:25:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C69E376;
+	Fri,  2 May 2025 18:44:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746203124; cv=none; b=NAGcNYJAigMyjnh9Rg5BMNomYARoZDKD3cx2i/6BvK/qW3pVH2BIynANdYijeBUK4vN2EbxIVHEFmJpHcokSe5AbJPadoiQ50PlGQFAX/+kLiBvMJulZdg11dz9uxBt8yjA2nHQi9PtBay6UJ60MPbGxL6w4hsEr+HJN+4XHJDg=
+	t=1746211474; cv=none; b=u3u86x7ofDZziWrhPLKlRKmdrOIvhnb0uuBisTSLE/svA9b3FRf1zDGl0A5QIWLVyLWTc5fCzaD4i/tQCcXJ2sGQcG+ULxy1PO06t5gAhapkS8mDZyMxV/JY+4rz9KDxGkhwtxWKyz+kiy/abzJHXuR1xWVl32EAwtobsLjou0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746203124; c=relaxed/simple;
-	bh=pnwaqwu0PJ8lDlRXI3vBmxd2cJ+yKzMffA10mq51NRU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JKtGycXReXFOflcVSsMOKSGFVe3uP80w9XwL24PAo3Vi52YIkReQCzKF2OZRBwqmaqQl2504FSaB1IfHvxcSg8h6RcIH7vx+QyTo8oTkFS06ZJdaVJtr1vfbu0TNX9irFBHyrHUFLlo91a+VI2L/PlArysdV0RhiOJ8faqb01jM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=ID4wW6ak; arc=none smtp.client-ip=13.77.154.182
+	s=arc-20240116; t=1746211474; c=relaxed/simple;
+	bh=LWm2Mewi0nFsm/A6RwwDy26RvhP0+n0VoXoQ4yv8rig=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=e/pjH2iw6VUElVu2h28WRYK2lx/dKLYyAsPLal7eToKdsE4kRSRc6a3VyX0s9T2rKKC74oREr6QCihxXu0Fpka3EDuwoyfbnfmrsewVa5dCg0bJRTFM5vwDM9Dt+QFKKv6UFybuH/tF4fye8jcEukcQsWgoO/Zo4K6RAVVFMZyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=ZebQyXQN; arc=none smtp.client-ip=13.77.154.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="ID4wW6ak"
-Received: from [100.70.194.49] (unknown [172.172.34.12])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 8F15E2038A5C;
-	Fri,  2 May 2025 09:25:20 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 8F15E2038A5C
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="ZebQyXQN"
+Received: from narnia.corp.microsoft.com (unknown [40.78.12.133])
+	by linux.microsoft.com (Postfix) with ESMTPSA id C2C212111574;
+	Fri,  2 May 2025 11:44:29 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C2C212111574
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1746203122;
-	bh=QKq6LqM0pEX95ODNBXEkqdtsxLl41A0R2DmDPU6S99M=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ID4wW6akUmsu1eI4m/k7RRlTytYoBIZShSAOY+6ZSHApFoZsG3WsqP0+cO4iAaqDL
-	 3CvJWrgfBs1ABDVOR854Wx0UJmDlMoHWgeXaaQpU3zY5ERO2PyZLiIdVNbfHtq/Hkb
-	 gaKrfZMN+AGUkSa7QmtuFlqh9t/L4H00IJhDRqBQ=
-Message-ID: <7337e27f-cc54-4c51-91d8-11d875baee49@linux.microsoft.com>
-Date: Fri, 2 May 2025 09:25:19 -0700
+	s=default; t=1746211472;
+	bh=aEe0PfwCQ3p3kPpyx+RuNZSjsrvOc2pL1wXnh7jwV18=;
+	h=From:To:Subject:Date:From;
+	b=ZebQyXQNFVO/se60BdDeY4wGv06VFo7Ggfizpn795gClnXruqrZ2LZWKTCxrAvIx7
+	 EsftJAIyCwyPDU/Fxjd5QombyTS2FTw3NBrVGIVAtxI3Rqv+JPjlvgEMDKg4I/Jj4Y
+	 o3mmqY9LLD8zmV/n5/QyvRTHOGmkyZAf/fZMO5+4=
+From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+To: Jonathan Corbet <corbet@lwn.net>,
+	David Howells <dhowells@redhat.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Shuah Khan <shuah@kernel.org>,
+	=?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Blaise Boscaccy <bboscaccy@linux.microsoft.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Jan Stancek <jstancek@redhat.com>,
+	Neal Gompa <neal@gompa.dev>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	keyrings@vger.kernel.org,
+	linux-crypto@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kbuild@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	bpf@vger.kernel.org,
+	llvm@lists.linux.dev,
+	nkapron@google.com,
+	teknoraver@meta.com,
+	roberto.sassu@huawei.com,
+	xiyou.wangcong@gmail.com,
+	Tyler Hicks <code@tyhicks.com>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>
+Subject: [PATCH v3 0/4] Introducing Hornet LSM
+Date: Fri,  2 May 2025 11:44:06 -0700
+Message-ID: <20250502184421.1424368-1-bboscaccy@linux.microsoft.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v13 0/9] ima: kexec: measure events between kexec load and
- execute
-To: Baoquan He <bhe@redhat.com>
-Cc: zohar@linux.ibm.com, stefanb@linux.ibm.com,
- roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
- eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
- code@tyhicks.com, bauermann@kolabnow.com, linux-integrity@vger.kernel.org,
- kexec@lists.infradead.org, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org, madvenka@linux.microsoft.com,
- nramas@linux.microsoft.com, James.Bottomley@hansenpartnership.com,
- vgoyal@redhat.com, dyoung@redhat.com
-References: <20250421222516.9830-1-chenste@linux.microsoft.com>
- <aApMnEl1Xzarmimn@fedora>
-Content-Language: en-US
-From: steven chen <chenste@linux.microsoft.com>
-In-Reply-To: <aApMnEl1Xzarmimn@fedora>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 4/24/2025 7:37 AM, Baoquan He wrote:
-> Hi Steven,
->
-> Could you test below code and post a formal patch to not copy
-> measurement list buffer to kdump kernel? Below log is just for your
-> reference, please feel free to modify or rephrase.
->
-> ===
-> Kdump kernel doesn't need IMA to do integrity measurement.
-> Hence the measurement list in 1st kernel doesn't need to be copied to
-> kdump kenrel.
->
-> Here skip allocating buffer for measurement list copying if loading
-> kdump kernel. Then there won't be the later handling related to
-> ima_kexec_buffer.
-> ===
->
-> diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
-> index 38cb2500f4c3..7362f68f2d8b 100644
-> --- a/security/integrity/ima/ima_kexec.c
-> +++ b/security/integrity/ima/ima_kexec.c
-> @@ -146,6 +146,9 @@ void ima_add_kexec_buffer(struct kimage *image)
->   	void *kexec_buffer = NULL;
->   	int ret;
->   
-> +	if (image->type == KEXEC_TYPE_CRASH)
-> +		return;
-> +
->   	/*
->   	 * Reserve extra memory for measurements added during kexec.
->   	 */
->
-Hi Baoquan,
+This patch series introduces the Hornet LSM. The goal of Hornet is to
+provide a signature verification mechanism for eBPF programs.
 
-I tested the kernel with above change. Normal soft reboot works fine.
+eBPF has similar requirements to that of modules when it comes to
+loading: find symbol addresses, fix up ELF relocations, some struct
+field offset handling stuff called CO-RE (compile-once run-anywhere),
+and some other miscellaneous bookkeeping. During eBPF program
+compilation, pseudo-values get written to the immediate operands of
+instructions. During loading, those pseudo-values get rewritten with
+concrete addresses or data applicable to the currently running system,
+e.g., a kallsyms address or an fd for a map. This needs to happen
+before the instructions for a bpf program are loaded into the kernel
+via the bpf() syscall. Unlike modules, an in-kernel loader
+unfortunately doesn't exist. Typically, the instruction rewriting is
+done dynamically in userspace via libbpf. Since the relocations and
+instruction modifications are happening in userspace, and their values
+may change depending upon the running system, this breaks known
+signature verification mechanisms.
 
-I will post the patch for review.
+Light skeleton programs were introduced in order to support early
+loading of eBPF programs along with user-mode drivers. They utilize a
+separate eBPF program that can load a target eBPF program and perform
+all necessary relocations in-kernel without needing a working
+userspace. Light skeletons were mentioned as a possible path forward
+for signature verification.
 
-Please make sure to test KDump scenario.
+Hornet takes a simple approach to light-skeleton-based eBPF signature
+verification. A PKCS#7 signature of a data buffer containing the raw
+instructions of an eBPF program, followed by the initial values of any
+maps used by the program is used. A utility script is provided to
+parse and extract the contents of autogenerated header files created
+via bpftool. That payload can then be signed and appended to the light
+skeleton executable.
 
-Thanks,
+Maps are checked that they are frozen to prevent TOCTOU bugs where a
+sufficiently privileged user could rewrite map data between the calls
+to BPF_PROG_LOAD and BPF_PROG_RUN. Additionally, both
+sparse-array-based and fd_array_cnt-based map fd arrays are supported
+for signature verification.
 
-Steven
+References:
+  [1] https://lore.kernel.org/bpf/20220209054315.73833-1-alexei.starovoitov@gmail.com/
+  [2] https://lore.kernel.org/bpf/CAADnVQ+wPK1KKZhCgb-Nnf0Xfjk8M1UpX5fnXC=cBzdEYbv_kg@mail.gmail.com/
+
+Change list:
+- v2 -> v3
+  - Remove any and all usage of proprietary bpf APIs
+  - Add optional systemd/pid1 whitelisting
+  - Minor Makefile cleanup
+  - Fixed buffer leak
+  - Handled null current task
+  - Made magic number required
+  - Defensive checks against invalid buffer signature reads
+
+- v1 -> v2
+  - Jargon clarification, maintainer entry and a few cosmetic fixes
+
+Revisions:
+- v1
+  https://lore.kernel.org/bpf/20250321164537.16719-1-bboscaccy@linux.microsoft.com
+- v2
+  https://lore.kernel.org/linux-security-module/20250404215527.1563146-1-bboscaccy@linux.microsoft.com
+
+Blaise Boscaccy (4):
+  security: Hornet LSM
+  hornet: Introduce sign-ebpf
+  hornet: Add a light skeleton data extractor script
+  selftests/hornet: Add a selftest for the Hornet LSM
+
+ Documentation/admin-guide/LSM/Hornet.rst      |  65 +++
+ Documentation/admin-guide/LSM/index.rst       |   1 +
+ MAINTAINERS                                   |   9 +
+ crypto/asymmetric_keys/pkcs7_verify.c         |  10 +
+ include/linux/kernel_read_file.h              |   1 +
+ include/linux/verification.h                  |   1 +
+ include/uapi/linux/lsm.h                      |   1 +
+ scripts/Makefile                              |   1 +
+ scripts/hornet/Makefile                       |   5 +
+ scripts/hornet/extract-skel.sh                |  29 ++
+ scripts/hornet/sign-ebpf.c                    | 411 ++++++++++++++++++
+ security/Kconfig                              |   3 +-
+ security/Makefile                             |   1 +
+ security/hornet/Kconfig                       |  24 +
+ security/hornet/Makefile                      |   4 +
+ security/hornet/hornet_lsm.c                  | 250 +++++++++++
+ security/selinux/hooks.c                      |  12 +-
+ security/selinux/include/classmap.h           |   2 +-
+ tools/testing/selftests/Makefile              |   1 +
+ tools/testing/selftests/hornet/Makefile       |  58 +++
+ tools/testing/selftests/hornet/fail_loader.sh |   3 +
+ tools/testing/selftests/hornet/frozen_skel.h  | 393 +++++++++++++++++
+ tools/testing/selftests/hornet/loader.c       |  22 +
+ tools/testing/selftests/hornet/trivial.bpf.c  |  33 ++
+ 24 files changed, 1336 insertions(+), 4 deletions(-)
+ create mode 100644 Documentation/admin-guide/LSM/Hornet.rst
+ create mode 100644 scripts/hornet/Makefile
+ create mode 100755 scripts/hornet/extract-skel.sh
+ create mode 100644 scripts/hornet/sign-ebpf.c
+ create mode 100644 security/hornet/Kconfig
+ create mode 100644 security/hornet/Makefile
+ create mode 100644 security/hornet/hornet_lsm.c
+ create mode 100644 tools/testing/selftests/hornet/Makefile
+ create mode 100755 tools/testing/selftests/hornet/fail_loader.sh
+ create mode 100644 tools/testing/selftests/hornet/frozen_skel.h
+ create mode 100644 tools/testing/selftests/hornet/loader.c
+ create mode 100644 tools/testing/selftests/hornet/trivial.bpf.c
+
+-- 
+2.48.1
 
