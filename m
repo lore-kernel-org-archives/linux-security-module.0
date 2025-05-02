@@ -1,135 +1,157 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail.archlinux.org (mail.archlinux.org [95.216.189.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90315376;
-	Fri,  2 May 2025 21:00:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7665226520;
+	Fri,  2 May 2025 23:51:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.216.189.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746219647; cv=none; b=phzoEtbcGEGn3mUDUBB7FwD/KfaAWIwxUUTuIKSBWSpeiufcXldLRtVGCIur6591Hm9az0EGrbVAAXAo1besStUOWwAQwktSGpkEJbDxHBCOcX/ACqL45TGQ2W+T8LF56OcdBKha0BKJD32TvmjRkCNaIksPQkfR7KP/NkvjiCs=
+	t=1746229901; cv=none; b=tayGBmVgxmEcvQBYSEgddNvxkgOhz7zQX6mPf5OthjK3lJCTXivAAlUQZXUILJGcaG338/VuWIzxUSr9bjxuzZPFeqrcTeLxUGhgINGp8oZB25zgZiyYayZ8J7jlOPv9iyk97SngqDClFnTksZ1Lclr6QQcc2AFCOiOv0hIImhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746219647; c=relaxed/simple;
-	bh=QV74l1IOGVbOqoSkpgRlO6NEjTmym0E/wjU2qkQ32fw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KO0Zaakx+DGRRTjtd+4TylIF+aoWeOynM2ZrvbgROptKx2KbvkZMV5B6R0SDbL1L63EJuIGE5f+RbFgh1B4t3B8Fw4yNcCuaudHf3EIFNmTCl6YwQha9XUu3tsNJnZmFecTN8i4ECzrpt4KRS1/cLZQ0dzWbsMk5XzYY3pkIpCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ExgqAER2; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1746229901; c=relaxed/simple;
+	bh=njf1WV3cKpBGYTHc6siAE3sCl8ClWU7pG5cQt3nhjw0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=T5yfz+dguWXDVL5vPL3ljwiaLweUBX/3vwIR5R58fXpsRoD96NG2RdcuL2GudNzOga7AdqtNTBky5/vEx+ifCz24hl1sGuBYdq4sLrDMpeLb++LN4YUkW7Cbq7TAeE0kRQNIP+txtSYERa8xnlApB/pqKxzlTweKYvSnYRwTPGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=archlinux.org; spf=pass smtp.mailfrom=archlinux.org; dkim=pass (4096-bit key) header.d=archlinux.org header.i=@archlinux.org header.b=Qhic4OLm; dkim=permerror (0-bit key) header.d=archlinux.org header.i=@archlinux.org header.b=pWUXN2ba; arc=none smtp.client-ip=95.216.189.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=archlinux.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=archlinux.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ExgqAER2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DCBAC4CEE4;
-	Fri,  2 May 2025 21:00:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746219647;
-	bh=QV74l1IOGVbOqoSkpgRlO6NEjTmym0E/wjU2qkQ32fw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ExgqAER2CsxrCnnAMm6jRg6gINgp9LGlOtbpHezQgKA+SlqChKBhWB5JTT3F8BKcz
-	 WyBu8J75GKcBiBoM493HVF8pnLHXaYp6WJzC0Sbxf8kv72/jKkJsmWg37D3/E6DH9x
-	 AVMJ/pp3eIG8LdZs9D/W1CiAOFAC3NhB8+3+QS2zaYnHn+HpmNaNfYeALRPcqkW/8K
-	 dVgYMpGiSWtxAIENr8F9WMYO1YCTIdNL3WBIxgpMQPFCzktf4xO/PaZtyphqAiNU9n
-	 3OzuLYfo5zx6WMa/dh7nLZo3pf9Love+B/Ys5wJLPmSUhMMraXMrOReDrSZuvwz5Li
-	 L/yI/DomKf2lw==
-From: KP Singh <kpsingh@kernel.org>
-To: bboscaccy@linux.microsoft.com
-Cc: James.Bottomley@hansenpartnership.com,
-	bpf@vger.kernel.org,
-	code@tyhicks.com,
-	corbet@lwn.net,
-	davem@davemloft.net,
-	dhowells@redhat.com,
-	gnoack@google.com,
-	herbert@gondor.apana.org.au,
-	jarkko@kernel.org,
-	jmorris@namei.org,
-	jstancek@redhat.com,
-	justinstitt@google.com,
-	keyrings@vger.kernel.org,
-	linux-crypto@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	llvm@lists.linux.dev,
-	masahiroy@kernel.org,
-	mic@digikod.net,
-	morbo@google.com,
-	nathan@kernel.org,
-	neal@gompa.dev,
-	nick.desaulniers+lkml@gmail.com,
-	nicolas@fjasle.eu,
-	nkapron@google.com,
-	paul@paul-moore.com,
-	roberto.sassu@huawei.com,
-	serge@hallyn.com,
-	shuah@kernel.org,
-	teknoraver@meta.com,
-	xiyou.wangcong@gmail.com,
-	KP Singh <kpsingh@kernel.org>
-Subject: Re: [PATCH v3 0/4] Introducing Hornet LSM
-Date: Fri,  2 May 2025 23:00:34 +0200
-Message-ID: <20250502210034.284051-1-kpsingh@kernel.org>
-X-Mailer: git-send-email 2.49.0.906.g1f30a19c02-goog
-In-Reply-To: <20250502184421.1424368-1-bboscaccy@linux.microsoft.com>
-References: <20250502184421.1424368-1-bboscaccy@linux.microsoft.com>
+	dkim=pass (4096-bit key) header.d=archlinux.org header.i=@archlinux.org header.b="Qhic4OLm";
+	dkim=permerror (0-bit key) header.d=archlinux.org header.i=@archlinux.org header.b="pWUXN2ba"
+Message-ID: <bf3f2f1c-1852-449f-993f-71848d190db6@archlinux.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=archlinux.org;
+	s=dkim-rsa; t=1746229390;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VputJNPvBl9XACh4x8s207ghVEizyjJrRTUadxhl7W0=;
+	b=Qhic4OLmfnzDZAcpigNu7UrqLK5mWgcMPgKRWpfhdAXeZIqHXIBZVqEkrh8YlxeTSpOAbU
+	tEuR8Hl86L0vi7auXrHzDR7/KmPsUpinbZ6VHAEwk64QsAe3+IL9ANV64KxMfw8/rHMGgA
+	k1oSNM/QKKyilECNEb2JnruO5orD5/JCByNXVkBX1nuiBoTkhgZwex6wBzMz5CRSETtJvX
+	/umQNjYFjOrleljhVtUZ9guk5XJ1MM7kE4yK9nqbZV6g1W4jd+u7mfzQmEYib+v/q0/liU
+	WrAmO2uRMsrM+RRe9W4EYzVK5ED0kYo+jbIvZ4+vcjsRe38jBnBekYZNWY00XPOeplaiIK
+	BvfFWmFZ9L9f7xIdxoz2sbnQEkhHVAFJ2xtZtsi6uLCneWRxBGBxT/ADPT0BOgRfPYAjwB
+	atSK/tKeP4kcfOVS+t9AnSyV7obHcia28DSrHnsRMH7Lv/QJJshLghDJskgLHh3whAbBDd
+	DQCPx6yylwF6AkLygj4FnEbHcMJj5bxz+NgHNKJP+wecgVU15BfLDeH/obVkNIOP3tW5zZ
+	0FVGN0Ypnkope2InCXnrS0Ur0MWb8/RXNPdJHlLzgmkElM21+hmtrbSvl8ve0yGWoyf2sH
+	ah7STOBC/NiCplBj5M1Z4RrvTRTHDEkZh7gcxt9ZubblsWPjOvH+w=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=archlinux.org;
+	s=dkim-ed25519; t=1746229390;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VputJNPvBl9XACh4x8s207ghVEizyjJrRTUadxhl7W0=;
+	b=pWUXN2baJ+rjBIqdcBKhyMfxHT1Z/KrJMyTIFAemXV1CBDzl8/qFRMzDBOovLcR/C95F5U
+	Iyd1qkopp9pOBkCg==
+Authentication-Results: mail.archlinux.org;
+	auth=pass smtp.auth=kpcyrd smtp.mailfrom=kpcyrd@archlinux.org
+Date: Sat, 3 May 2025 01:43:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v3 0/9] module: Introduce hash-based integrity checking
+To: James Bottomley <James.Bottomley@HansenPartnership.com>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
+ Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
+ <da.gomez@samsung.com>, Paul Moore <paul@paul-moore.com>,
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+ Jonathan Corbet <corbet@lwn.net>, Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Naveen N Rao <naveen@kernel.org>, Mimi Zohar <zohar@linux.ibm.com>,
+ Roberto Sassu <roberto.sassu@huawei.com>,
+ Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+ Eric Snowberg <eric.snowberg@oracle.com>,
+ Nicolas Schier <nicolas.schier@linux.dev>,
+ =?UTF-8?Q?Fabian_Gr=C3=BCnbichler?= <f.gruenbichler@proxmox.com>,
+ Arnout Engelen <arnout@bzzt.net>, Mattia Rizzolo <mattia@mapreri.org>,
+ Christian Heusel <christian@heusel.eu>, =?UTF-8?Q?C=C3=A2ju_Mihai-Drosi?=
+ <mcaju95@gmail.com>, linux-kbuild@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+ linux-modules@vger.kernel.org, linux-security-module@vger.kernel.org,
+ linux-doc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-integrity@vger.kernel.org
+References: <20250429-module-hashes-v3-0-00e9258def9e@weissschuh.net>
+ <f1dca9daa01d0d2432c12ecabede3fa1389b1d29.camel@HansenPartnership.com>
+ <840b0334-71e4-45b1-80b0-e883586ba05c@t-8ch.de>
+ <b586e946c8514cecde65f98de8e19eb276c09703.camel@HansenPartnership.com>
+Content-Language: de-DE, en-US
+From: kpcyrd <kpcyrd@archlinux.org>
+In-Reply-To: <b586e946c8514cecde65f98de8e19eb276c09703.camel@HansenPartnership.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-> This patch series introduces the Hornet LSM. The goal of Hornet is to provide
-> a signature verification mechanism for eBPF programs.
->
+On 5/2/25 3:30 PM, James Bottomley wrote:
+> Under a your interpretation of the above, any signed binary isn't
+> "reproducible" even if the underlying build was, which means any secure
+> boot kernel would never be reproducible because it also has to be a
+> signed binary.  The solution is simple: can you strip the signature and
+> reproduce the build?  If yes, then the build is reproducible and even
+> fits with the "any party can recreate ..." above.   This is the
+> interpretation pretty much everyone else has been using.  It's why
+> people like Intel with source only availability and Intel build only
+> signing tout reproduceability: they only issue signed confidential VM
+> firmware, but you can technically reproduce the build of the firmware
+> minus the signature but you can never sign it.
 
+The secure-boot signature is easier to deal with, I also think there'd 
+be one package that contains just the unsigned kernel+modules (with the 
+modules being pinned by a cryptographic hashset), and a second one that 
+takes the kernel secure-boot signature as a source-code input, that is 
+calculated after the first package was successfully built.
+
+Arch Linux has also considered patching the module-signing-script into 
+some kind of oracle that doesn't use any private key and instead selects 
+the right pre-computed signature for the given content, but:
+
+- that would be terribly annoying to maintain/operate
+- any reproducible builds regression would make the build fail, because 
+the kernel wouldn't be bootable
+
+> You just strip the signatures before verifying reproducibility.
+> 
 [...]
+> 
+> If you take off the appended signature off the module, you can verify
+> reproduceability.
+> 
+[...]
+> 
+> So you think stripping signatures is failure prone?  If that were the
+> case then so would be verifying signatures upon which our whole secure
+> boot and signed module loading is based.
+> 
+[...]
+> 
+> Or you simply ship tools to remove the signature;
+> 
+> sbattach --remove <signed efi variable>
+> 
+> already does this for you ...
 
->
-> References: [1]
-> https://lore.kernel.org/bpf/20220209054315.73833-1-alexei.starovoitov@gmail.com/
-> [2]
-> https://lore.kernel.org/bpf/CAADnVQ+wPK1KKZhCgb-Nnf0Xfjk8M1UpX5fnXC=cBzdEYbv_kg@mail.gmail.com/
->
-> Change list: - v2 -> v3 - Remove any and all usage of proprietary bpf APIs
+It reads like you assume somebody sits down and explicitly looks at the 
+linux package manually, but the reproducible builds tooling considers 
+the package content to be fully opaque and doesn't have any 
+special-casing of any package:
 
-BPF APIs are not proprietary, but you cannot implement BPF program signing
-for BPF users without aligning with the BPF maintainers and the community.
-Signed programs are a UAPI and a key part of how developers experience BPF
-and this is not how we would like signing to be experienced by BPF users.
+https://github.com/archlinux/archlinux-repro
+https://salsa.debian.org/debian/devscripts/-/blob/main/scripts/debrebuild.pl?ref_type=heads
 
-Some more feedback (which should be pretty obvious) but explicitly:
+I'd rather not deal with the consequences of weakening the comparison 
+and possibly introducing exploitable loop-holes in any of the layers we 
+wouldn't be able to bit-for-bit compare anymore (like e.g. tar).
 
-* Hacks like if (current->pid == 1) return 0; also break your threat model
-  about root being untrusted. This is all the more reason I think signing
-  should be integrated into other LSMs, only a proper LSM policy can breathe
-  life into the root / kernel boundary. 
+It would also break the concept of `f(source) -> binary`, "you can 
+deterministically derive the binary packages from the documented build 
+inputs", and instead you'd always need to fuzzy-match against what 
+somebody else built.
 
-* You also did not take the feedback into account:
-
-   new = map->ops->map_lookup_elem(map, &key);
-
-  This is not okay without having the BPF maintainers aligned, the same way as 
-
-  https://patchwork.kernel.org/project/netdevbpf/patch/20240629084331.3807368-4-kpsingh@kernel.org/#25928981
-
-  was not okay. Let's not have double standards.
-
-* And you copy pasted tools/testing/selftests/hornet/frozen_skel.h which
-  is what you expect users to do? Not acceptable either.
-
-So for this approach, it's a:
-
-Nacked-by: KP Singh <kpsingh@kernel.org>
-
-Now if you really care about the use-case and want to work with the maintainers
-and implement signing for the community, here's how we think it should be done:
-
-* The core signing logic and the tooling stays in BPF, something that the users
-  are already using. No new tooling.
-* The policy decision on the effect of signing can be built into various
-  existing LSMs. I don't think we need a new LSM for it.
-* A simple UAPI (emphasis on UAPI!) change to union bpf_attr in uapi/bpf.h in
-  the BPF_PROG_LOAD command:
-
-__aligned_u64 signature; 
-__u32 signature_size;
-
+cheers,
+kpcyrd
