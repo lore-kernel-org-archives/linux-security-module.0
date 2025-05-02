@@ -1,47 +1,45 @@
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F279726AD9;
-	Fri,  2 May 2025 01:44:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B72316A395;
+	Fri,  2 May 2025 01:44:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746150259; cv=none; b=crpQLxK6S21G20JknF5Kd9LMBPRB1ROyk92KAW8unYmXYrieJezV/C+p8+IwsA11MjbP4Ra07SujTOjKebeSFCOBfmnEfnhRiUmInYpP55BXB+uZt36vE3/4zcxZLVeJbtDMti5gwAv18UsSZiyyiV5z0aae9hs/pLp9rE1a5js=
+	t=1746150264; cv=none; b=XYblqQBb5Ph4CYlDgaOwqDqDNmQliqUQc6ARnTaF0qx5pQ2KtPTnjLlj7/4Zf/ZdVoRLud/Wm7HuWKsScm2u+tyZ2nSTLZ3FOsz+CQTAsjLzc8CZLioHKbaarqAx2npq/ufUpLDz/URRt8a9doAj1oM1kD8kkM+TYqaE0JJpjuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746150259; c=relaxed/simple;
-	bh=NklsBFoXQZqbYwgkrxmJvsEcB2wYi6W8c8133u8st14=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=f+YYm7pZ2rECFIL/Sgom9nHYc02xcywP23xncEeGnl0Y+RJ3MrYUiPozPMGnwk8isXD2/2VdMN2zERPdsZICEMzExOJsrwOtDt74LjRlUAsEqvIVnKOdPq/V0dSzruJWdnDd5rwfZTujjTQ553hg45FbJOxPNWjKQoL2d3DwPk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=qm3nRmRm; arc=none smtp.client-ip=198.137.202.133
+	s=arc-20240116; t=1746150264; c=relaxed/simple;
+	bh=IVxp7Yu5gHHHf7AP0nwxRszOz7pwBk3LsvuldbE68cU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qhP+8oyYTL3OQCc1Llwf0tt5W0IwJixW6lcWsVF/RG4yawIVMxgsvMyd9jDtvK0IEnMir21ktYhlUfRc8/+9PdxblVC0kSbNhFiWAOCsUk6T977CYzU0/zZ26iF9uPV6/iXKkp2N3U7f+0xcf/YirWjfnTkgwJGSDuaYNklEZTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=PCpGKJEq; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qm3nRmRm"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PCpGKJEq"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
 	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
 	Content-ID:Content-Description:In-Reply-To:References;
-	bh=4Lr87RbWXKo99QRyxBW8TG06bpLYqOX8TiwXB5KViIc=; b=qm3nRmRmSGqxmF1jh9W5clGYws
-	oEkYrAyNK+qKtTMRFqg9uGC61llzYkxahSLM02BDeJGJyucfIYDEASmD3Ipifv3kn5LST/RqxtBMt
-	Z/qXhPvcIp2C45GItMTzn/ZC2l+m4ViCBLWn1SY8av7fmV0aULKLAnkbmUsfjK2N6QZGMHmP9H18n
-	kmOzu5edPopr2P9sB1be883oTX9aleAKzkqY4OxCmbBT3B/zpydfqbp8uKGDb2vEJQSDRr7R7XtLq
-	l9MNVIPjNeriGQTjD+N91x+Y/gPdIKXYNNesomQ3lE5zl6Y9KQgOCbeIz+OIOpJkM3ly6DEsEQp20
-	oL83GGDg==;
+	bh=8k1YoWjzoru66xWAYll5rcEXKD9QKiu6qlbZ/gFH/98=; b=PCpGKJEqiJGiNpYGBkq+PrZvrZ
+	Sn0OgsmC2VevD/UWgGBYT6S64aw/3JezmO8z0gEBCv6jsT8+V4g4er4jyFzzD+j1FYfS63WRMSmg5
+	73iW0Uvy0mZ3Vz3HWoJ/z7gETFLr7i72kNxTndn+XPiKZERxHVXyg6Cakc/xeX9hdH86i7tVml0cL
+	YBDC9beFe7DUsC/v2oVUJEjJj+uX8pIQvDlcGUZMbB/+oIPvXtHiw+C1TBhXB3mKNfyZcpOKnrqST
+	fS/xwMY0Mx9uWfgWNIbMAMtAgrS4SBDjUSov5m6OHlHnrtBaVq+pqeix3bnRb6HzEXcoPj6awiy9y
+	wbPbCspg==;
 Received: from [50.39.124.201] (helo=bombadil.infradead.org)
 	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uAfRl-00000000Wil-01Kw;
-	Fri, 02 May 2025 01:44:13 +0000
+	id 1uAfRt-00000000Wj5-3HzS;
+	Fri, 02 May 2025 01:44:21 +0000
 From: Randy Dunlap <rdunlap@infradead.org>
 To: linux-kernel@vger.kernel.org
 Cc: Randy Dunlap <rdunlap@infradead.org>,
-	John Johansen <john.johansen@canonical.com>,
-	John Johansen <john@apparmor.net>,
-	apparmor@lists.ubuntu.com,
+	Casey Schaufler <casey@schaufler-ca.com>,
 	linux-security-module@vger.kernel.org,
 	Paul Moore <paul@paul-moore.com>,
 	James Morris <jmorris@namei.org>,
 	"Serge E. Hallyn" <serge@hallyn.com>
-Subject: [PATCH] apparmor: fix some kernel-doc issues in header files
-Date: Thu,  1 May 2025 18:44:12 -0700
-Message-ID: <20250502014412.682674-1-rdunlap@infradead.org>
+Subject: [PATCH] security/smack/smackfs: small kernel-doc fixes
+Date: Thu,  1 May 2025 18:44:21 -0700
+Message-ID: <20250502014421.682697-1-rdunlap@infradead.org>
 X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
@@ -51,103 +49,56 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
+Add function short descriptions to the kernel-doc where missing.
+Correct a verb and add ending periods to sentences.
 
-cred.h:128: warning: expecting prototype for end_label_crit_section(). Prototype was for end_current_label_crit_section() instead
-file.h:108: warning: expecting prototype for aa_map_file_perms(). Prototype was for aa_map_file_to_perms() instead
-
-lib.h:159: warning: Function parameter or struct member 'hname' not described in 'basename'
-lib.h:159: warning: Excess function parameter 'name' description in 'basename'
-
-match.h:21: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
- * The format used for transition tables is based on the GNU flex table
- * The format used for transition tables is based on the GNU flex table
-
-perms.h:109: warning: Function parameter or struct member 'accum' not described in 'aa_perms_accum_raw'
-perms.h:109: warning: Function parameter or struct member 'addend' not described in 'aa_perms_accum_raw'
-perms.h:136: warning: Function parameter or struct member 'accum' not described in 'aa_perms_accum'
-perms.h:136: warning: Function parameter or struct member 'addend' not described in 'aa_perms_accum'
+smackfs.c:1080: warning: missing initial short description on line:
+ * smk_net4addr_insert
+smackfs.c:1343: warning: missing initial short description on line:
+ * smk_net6addr_insert
 
 Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: John Johansen <john.johansen@canonical.com>
-Cc: John Johansen <john@apparmor.net>
-Cc: apparmor@lists.ubuntu.com
+Cc: Casey Schaufler <casey@schaufler-ca.com>
 Cc: linux-security-module@vger.kernel.org
 Cc: Paul Moore <paul@paul-moore.com>
 Cc: James Morris <jmorris@namei.org>
 Cc: "Serge E. Hallyn" <serge@hallyn.com>
 ---
- security/apparmor/include/cred.h  |    2 +-
- security/apparmor/include/file.h  |    2 +-
- security/apparmor/include/lib.h   |    2 +-
- security/apparmor/include/match.h |    2 +-
- security/apparmor/include/perms.h |    8 ++++----
- 5 files changed, 8 insertions(+), 8 deletions(-)
+ security/smack/smackfs.c |   12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
---- linux-next-20250501.orig/security/apparmor/include/cred.h
-+++ linux-next-20250501/security/apparmor/include/cred.h
-@@ -117,7 +117,7 @@ static inline struct aa_label *aa_get_cu
- #define __end_current_label_crit_section(X) end_current_label_crit_section(X)
+--- linux-next-20250501.orig/security/smack/smackfs.c
++++ linux-next-20250501/security/smack/smackfs.c
+@@ -1077,13 +1077,12 @@ static int smk_open_net4addr(struct inod
+ }
  
  /**
-- * end_label_crit_section - put a reference found with begin_current_label..
-+ * end_current_label_crit_section - put a reference found with begin_current_label..
-  * @label: label reference to put
+- * smk_net4addr_insert
++ * smk_net4addr_insert - insert a new entry into the net4addrs list
+  * @new : netlabel to insert
   *
-  * Should only be used with a reference obtained with
---- linux-next-20250501.orig/security/apparmor/include/file.h
-+++ linux-next-20250501/security/apparmor/include/file.h
-@@ -104,7 +104,7 @@ void aa_inherit_files(const struct cred
- 
+- * This helper insert netlabel in the smack_net4addrs list
++ * This helper inserts netlabel in the smack_net4addrs list
+  * sorted by netmask length (longest to smallest)
+- * locked by &smk_net4addr_lock in smk_write_net4addr
+- *
++ * locked by &smk_net4addr_lock in smk_write_net4addr.
+  */
+ static void smk_net4addr_insert(struct smk_net4addr *new)
+ {
+@@ -1340,13 +1339,12 @@ static int smk_open_net6addr(struct inod
+ }
  
  /**
-- * aa_map_file_perms - map file flags to AppArmor permissions
-+ * aa_map_file_to_perms - map file flags to AppArmor permissions
-  * @file: open file to map flags to AppArmor permissions
+- * smk_net6addr_insert
++ * smk_net6addr_insert - insert a new entry into the net6addrs list
+  * @new : entry to insert
   *
-  * Returns: apparmor permission set for the file
---- linux-next-20250501.orig/security/apparmor/include/lib.h
-+++ linux-next-20250501/security/apparmor/include/lib.h
-@@ -170,7 +170,7 @@ struct aa_policy {
- 
- /**
-  * basename - find the last component of an hname
-- * @name: hname to find the base profile name component of  (NOT NULL)
-+ * @hname: hname to find the base profile name component of  (NOT NULL)
-  *
-  * Returns: the tail (base profile name) name component of an hname
+  * This inserts an entry in the smack_net6addrs list
+  * sorted by netmask length (longest to smallest)
+- * locked by &smk_net6addr_lock in smk_write_net6addr
+- *
++ * locked by &smk_net6addr_lock in smk_write_net6addr.
   */
---- linux-next-20250501.orig/security/apparmor/include/match.h
-+++ linux-next-20250501/security/apparmor/include/match.h
-@@ -17,7 +17,7 @@
- #define DFA_START			1
- 
- 
--/**
-+/*
-  * The format used for transition tables is based on the GNU flex table
-  * file format (--tables-file option; see Table File Format in the flex
-  * info pages and the flex sources for documentation). The magic number
---- linux-next-20250501.orig/security/apparmor/include/perms.h
-+++ linux-next-20250501/security/apparmor/include/perms.h
-@@ -101,8 +101,8 @@ extern struct aa_perms allperms;
- 
- /**
-  * aa_perms_accum_raw - accumulate perms with out masking off overlapping perms
-- * @accum - perms struct to accumulate into
-- * @addend - perms struct to add to @accum
-+ * @accum: perms struct to accumulate into
-+ * @addend: perms struct to add to @accum
-  */
- static inline void aa_perms_accum_raw(struct aa_perms *accum,
- 				      struct aa_perms *addend)
-@@ -128,8 +128,8 @@ static inline void aa_perms_accum_raw(st
- 
- /**
-  * aa_perms_accum - accumulate perms, masking off overlapping perms
-- * @accum - perms struct to accumulate into
-- * @addend - perms struct to add to @accum
-+ * @accum: perms struct to accumulate into
-+ * @addend: perms struct to add to @accum
-  */
- static inline void aa_perms_accum(struct aa_perms *accum,
- 				  struct aa_perms *addend)
+ static void smk_net6addr_insert(struct smk_net6addr *new)
+ {
