@@ -1,153 +1,153 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5D18224B08;
-	Wed, 30 Apr 2025 23:29:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F279726AD9;
+	Fri,  2 May 2025 01:44:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746055797; cv=none; b=PlLVZ2jaPZ6YuEX2FZe7Bz4zjy5Sl4EhUygzDq6rNw7RMTZlDl7lvloX1ZE/M0hhUyY/0+Tsk+FzF6ucr1IA7oym8Kbe5cNDy092EDOrQtn9kDYEgdTE06tVemasYtl8Dy2/uolKoiy9IfrJIEittOtxrxvpxUAKXUIvl9O7qoY=
+	t=1746150259; cv=none; b=crpQLxK6S21G20JknF5Kd9LMBPRB1ROyk92KAW8unYmXYrieJezV/C+p8+IwsA11MjbP4Ra07SujTOjKebeSFCOBfmnEfnhRiUmInYpP55BXB+uZt36vE3/4zcxZLVeJbtDMti5gwAv18UsSZiyyiV5z0aae9hs/pLp9rE1a5js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746055797; c=relaxed/simple;
-	bh=YfszCblJFyfY03DL8XXrgkd5xX++4FamuTO+wfAZTdU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mJ64cQSF/XfTU3qRxjNm310VnGkx4egMy6ZWjHD9YD7N7JR8hBZj9uh37spNfdn6/XVpibcjtuimMsVUo92SOFsSkoJKUvhd5svo+0vX/64eJRgoeUZ/sodKBjEX9iENinBYDAbxiIkX+hh3pMpd+ZDE3P2RD47vgMHk7xF0ufU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CBSRN+Cd; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1746150259; c=relaxed/simple;
+	bh=NklsBFoXQZqbYwgkrxmJvsEcB2wYi6W8c8133u8st14=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=f+YYm7pZ2rECFIL/Sgom9nHYc02xcywP23xncEeGnl0Y+RJ3MrYUiPozPMGnwk8isXD2/2VdMN2zERPdsZICEMzExOJsrwOtDt74LjRlUAsEqvIVnKOdPq/V0dSzruJWdnDd5rwfZTujjTQ553hg45FbJOxPNWjKQoL2d3DwPk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=qm3nRmRm; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CBSRN+Cd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C991C4CEE7;
-	Wed, 30 Apr 2025 23:29:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746055796;
-	bh=YfszCblJFyfY03DL8XXrgkd5xX++4FamuTO+wfAZTdU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=CBSRN+CdA8OVjt7ep85XM1fA0jHkm9myj0UJO2EsDz2aMo5y7137sioKwV2jOLXTx
-	 /IMuiO5y32c0jDW4fAJDai2Gp//p6y/DtvyrLKpViDyhNDVbSxo9cpA3nZP/cjk09N
-	 5NIDQYq/4GsbZ7kiBPKj7ugOiCzMr+oQjEuwhSSlZIkNs4Yks9XCrlD7PpWUj8UDVp
-	 o1/08fj4aDkyRj9uExjwOLnT2YRKM9VRbFXLmf7chlLO3ek/bUmK7DEoKPRM8OJJJf
-	 WkREvLWaYIpKahcKbYN6DGm8ZXG3s3myvIcVk8YL+/+/rxh+9VEHUk6p4mz/VegeRa
-	 bZswfG7sOR+Jg==
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e7311e66a8eso382804276.2;
-        Wed, 30 Apr 2025 16:29:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV2gY4SgaCAJDt8g2+S42eNk27BrN8KDyC07E0tNfWvgBanpXjcQOSQ8TwZrRlgHO2MKam9wJSNk771WwM=@vger.kernel.org, AJvYcCVMJZ2GuoubnDJntPLC+w57WuliHftgyeeAnZVUhoipq6V5CPQvb2WqVfJAm3ZE7ZrcYh4pd8CS31ETnY0r1Ot+APHKFgI6@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYpTOCZmoOTyIOz9YmisBPfK1kjk1J3aEaYv1iLzSm/ZBs8l0q
-	t8/WqCeZpbi+vFUNiPV+8duQ+OxiD6fIaIYSXtV2tqn0sK6z9dBzoqgUsBuGGPRO4Itf0zTsFon
-	Ih7Ta9PJ42VtiZ85NW9Vax+dFclc=
-X-Google-Smtp-Source: AGHT+IFEJ2qTrUej3AfwsK8YWr+xOQqZR4yKyK5COAxs42YmE7rXz5xDr8LVkJjJwzXz9HBJ1hhvGKLB9aczj7bsZkk=
-X-Received: by 2002:a05:6902:2b11:b0:e73:1ff1:ca38 with SMTP id
- 3f1490d57ef6-e75318276ecmr316609276.20.1746055795779; Wed, 30 Apr 2025
- 16:29:55 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qm3nRmRm"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=4Lr87RbWXKo99QRyxBW8TG06bpLYqOX8TiwXB5KViIc=; b=qm3nRmRmSGqxmF1jh9W5clGYws
+	oEkYrAyNK+qKtTMRFqg9uGC61llzYkxahSLM02BDeJGJyucfIYDEASmD3Ipifv3kn5LST/RqxtBMt
+	Z/qXhPvcIp2C45GItMTzn/ZC2l+m4ViCBLWn1SY8av7fmV0aULKLAnkbmUsfjK2N6QZGMHmP9H18n
+	kmOzu5edPopr2P9sB1be883oTX9aleAKzkqY4OxCmbBT3B/zpydfqbp8uKGDb2vEJQSDRr7R7XtLq
+	l9MNVIPjNeriGQTjD+N91x+Y/gPdIKXYNNesomQ3lE5zl6Y9KQgOCbeIz+OIOpJkM3ly6DEsEQp20
+	oL83GGDg==;
+Received: from [50.39.124.201] (helo=bombadil.infradead.org)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uAfRl-00000000Wil-01Kw;
+	Fri, 02 May 2025 01:44:13 +0000
+From: Randy Dunlap <rdunlap@infradead.org>
+To: linux-kernel@vger.kernel.org
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+	John Johansen <john.johansen@canonical.com>,
+	John Johansen <john@apparmor.net>,
+	apparmor@lists.ubuntu.com,
+	linux-security-module@vger.kernel.org,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>
+Subject: [PATCH] apparmor: fix some kernel-doc issues in header files
+Date: Thu,  1 May 2025 18:44:12 -0700
+Message-ID: <20250502014412.682674-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1745961770-7188-1-git-send-email-jasjivsingh@linux.microsoft.com> <1745961770-7188-2-git-send-email-jasjivsingh@linux.microsoft.com>
-In-Reply-To: <1745961770-7188-2-git-send-email-jasjivsingh@linux.microsoft.com>
-From: Fan Wu <wufan@kernel.org>
-Date: Wed, 30 Apr 2025 16:29:44 -0700
-X-Gmail-Original-Message-ID: <CAKtyLkG03zaOgC57-y4mNBXc+Nt0eZtKvyuhbs53SEUGwYUb5g@mail.gmail.com>
-X-Gm-Features: ATxdqUGvxqon-yThcz6VNe8SeUVTzobNsltqinBw3cTCikAeKb3yBcLsIcP487M
-Message-ID: <CAKtyLkG03zaOgC57-y4mNBXc+Nt0eZtKvyuhbs53SEUGwYUb5g@mail.gmail.com>
-Subject: Re: [RFC PATCH v1 1/1] ipe: add script enforcement with BPRM check
-To: Jasjiv Singh <jasjivsingh@linux.microsoft.com>
-Cc: wufan@kernel.org, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, 
-	mic@digikod.net, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Apr 29, 2025 at 2:23=E2=80=AFPM Jasjiv Singh
-<jasjivsingh@linux.microsoft.com> wrote:
->
-> From: jasjivsingh_microsoft <jasjivsingh@linux.microsoft.com>
->
-> Like direct file execution (e.g. ./script.sh), indirect file execution
-> (e.g. sh script.sh) needs to be enforce by IPE based on the rules.
-> Added a new security_bprm_creds_for_exec() hook to verify the indirect
-> file's integrity.
->
-> Signed-off-by: Jasjiv Singh <jasjivsingh@linux.microsoft.com>
-> ---
->  security/ipe/hooks.c | 23 +++++++++++++++++++++++
->  security/ipe/hooks.h |  2 ++
->  security/ipe/ipe.c   |  1 +
->  3 files changed, 26 insertions(+)
->
-> diff --git a/security/ipe/hooks.c b/security/ipe/hooks.c
-> index d0323b81cd8f..12713a0495cf 100644
-> --- a/security/ipe/hooks.c
-> +++ b/security/ipe/hooks.c
-> @@ -35,6 +35,29 @@ int ipe_bprm_check_security(struct linux_binprm *bprm)
->         return ipe_evaluate_event(&ctx);
->  }
->
-> +/**
-> + * ipe_bprm_creds_for_exec() - ipe security hook function for bprm creds=
- check.
-> + * @bprm: Supplies a pointer to a linux_binprm structure to source the f=
-ile
-> + *       being evaluated.
-> + *
-> + * This LSM hook is called when a script is checked for execution throug=
-h the
-> + * execveat syscall with the AT_EXECVE_CHECK flag.
 
-I remember the script is only one case, user space can add this flag
-for other cases.
+cred.h:128: warning: expecting prototype for end_label_crit_section(). Prototype was for end_current_label_crit_section() instead
+file.h:108: warning: expecting prototype for aa_map_file_perms(). Prototype was for aa_map_file_to_perms() instead
 
-> + *
-> + * Return:
-> + * * %0                - Success
-> + * * %-EACCES  - Did not pass IPE policy
-> + */
-> +int ipe_bprm_creds_for_exec(struct linux_binprm *bprm)
-> +{
-> +       struct ipe_eval_ctx ctx =3D IPE_EVAL_CTX_INIT;
-> +
-> +       if (!bprm->is_check)
-> +               return 0;
-> +
-> +       ipe_build_eval_ctx(&ctx, bprm->file, IPE_OP_EXEC, IPE_HOOK_BPRM_C=
-HECK);
+lib.h:159: warning: Function parameter or struct member 'hname' not described in 'basename'
+lib.h:159: warning: Excess function parameter 'name' description in 'basename'
 
-A new enum needs to be added to audit this new hook in the audit
-event. Please create something like IPE_HOOK_BPRM_CREDS_FOR_EXEC.
+match.h:21: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
+ * The format used for transition tables is based on the GNU flex table
+ * The format used for transition tables is based on the GNU flex table
 
--Fan
+perms.h:109: warning: Function parameter or struct member 'accum' not described in 'aa_perms_accum_raw'
+perms.h:109: warning: Function parameter or struct member 'addend' not described in 'aa_perms_accum_raw'
+perms.h:136: warning: Function parameter or struct member 'accum' not described in 'aa_perms_accum'
+perms.h:136: warning: Function parameter or struct member 'addend' not described in 'aa_perms_accum'
 
-> +       return ipe_evaluate_event(&ctx);
-> +}
-> +
->  /**
->   * ipe_mmap_file() - ipe security hook function for mmap check.
->   * @f: File being mmap'd. Can be NULL in the case of anonymous memory.
-> diff --git a/security/ipe/hooks.h b/security/ipe/hooks.h
-> index 38d4a387d039..1c16a25d806e 100644
-> --- a/security/ipe/hooks.h
-> +++ b/security/ipe/hooks.h
-> @@ -24,6 +24,8 @@ enum ipe_hook_type {
->
->  int ipe_bprm_check_security(struct linux_binprm *bprm);
->
-> +int ipe_bprm_creds_for_exec(struct linux_binprm *bprm);
-> +
->  int ipe_mmap_file(struct file *f, unsigned long reqprot, unsigned long p=
-rot,
->                   unsigned long flags);
->
-> diff --git a/security/ipe/ipe.c b/security/ipe/ipe.c
-> index 4317134cb0da..845e3fd7a345 100644
-> --- a/security/ipe/ipe.c
-> +++ b/security/ipe/ipe.c
-> @@ -47,6 +47,7 @@ struct ipe_inode *ipe_inode(const struct inode *inode)
->
->  static struct security_hook_list ipe_hooks[] __ro_after_init =3D {
->         LSM_HOOK_INIT(bprm_check_security, ipe_bprm_check_security),
-> +       LSM_HOOK_INIT(bprm_creds_for_exec, ipe_bprm_creds_for_exec),
->         LSM_HOOK_INIT(mmap_file, ipe_mmap_file),
->         LSM_HOOK_INIT(file_mprotect, ipe_file_mprotect),
->         LSM_HOOK_INIT(kernel_read_file, ipe_kernel_read_file),
-> --
-> 2.34.1
->
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: John Johansen <john.johansen@canonical.com>
+Cc: John Johansen <john@apparmor.net>
+Cc: apparmor@lists.ubuntu.com
+Cc: linux-security-module@vger.kernel.org
+Cc: Paul Moore <paul@paul-moore.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+---
+ security/apparmor/include/cred.h  |    2 +-
+ security/apparmor/include/file.h  |    2 +-
+ security/apparmor/include/lib.h   |    2 +-
+ security/apparmor/include/match.h |    2 +-
+ security/apparmor/include/perms.h |    8 ++++----
+ 5 files changed, 8 insertions(+), 8 deletions(-)
+
+--- linux-next-20250501.orig/security/apparmor/include/cred.h
++++ linux-next-20250501/security/apparmor/include/cred.h
+@@ -117,7 +117,7 @@ static inline struct aa_label *aa_get_cu
+ #define __end_current_label_crit_section(X) end_current_label_crit_section(X)
+ 
+ /**
+- * end_label_crit_section - put a reference found with begin_current_label..
++ * end_current_label_crit_section - put a reference found with begin_current_label..
+  * @label: label reference to put
+  *
+  * Should only be used with a reference obtained with
+--- linux-next-20250501.orig/security/apparmor/include/file.h
++++ linux-next-20250501/security/apparmor/include/file.h
+@@ -104,7 +104,7 @@ void aa_inherit_files(const struct cred
+ 
+ 
+ /**
+- * aa_map_file_perms - map file flags to AppArmor permissions
++ * aa_map_file_to_perms - map file flags to AppArmor permissions
+  * @file: open file to map flags to AppArmor permissions
+  *
+  * Returns: apparmor permission set for the file
+--- linux-next-20250501.orig/security/apparmor/include/lib.h
++++ linux-next-20250501/security/apparmor/include/lib.h
+@@ -170,7 +170,7 @@ struct aa_policy {
+ 
+ /**
+  * basename - find the last component of an hname
+- * @name: hname to find the base profile name component of  (NOT NULL)
++ * @hname: hname to find the base profile name component of  (NOT NULL)
+  *
+  * Returns: the tail (base profile name) name component of an hname
+  */
+--- linux-next-20250501.orig/security/apparmor/include/match.h
++++ linux-next-20250501/security/apparmor/include/match.h
+@@ -17,7 +17,7 @@
+ #define DFA_START			1
+ 
+ 
+-/**
++/*
+  * The format used for transition tables is based on the GNU flex table
+  * file format (--tables-file option; see Table File Format in the flex
+  * info pages and the flex sources for documentation). The magic number
+--- linux-next-20250501.orig/security/apparmor/include/perms.h
++++ linux-next-20250501/security/apparmor/include/perms.h
+@@ -101,8 +101,8 @@ extern struct aa_perms allperms;
+ 
+ /**
+  * aa_perms_accum_raw - accumulate perms with out masking off overlapping perms
+- * @accum - perms struct to accumulate into
+- * @addend - perms struct to add to @accum
++ * @accum: perms struct to accumulate into
++ * @addend: perms struct to add to @accum
+  */
+ static inline void aa_perms_accum_raw(struct aa_perms *accum,
+ 				      struct aa_perms *addend)
+@@ -128,8 +128,8 @@ static inline void aa_perms_accum_raw(st
+ 
+ /**
+  * aa_perms_accum - accumulate perms, masking off overlapping perms
+- * @accum - perms struct to accumulate into
+- * @addend - perms struct to add to @accum
++ * @accum: perms struct to accumulate into
++ * @addend: perms struct to add to @accum
+  */
+ static inline void aa_perms_accum(struct aa_perms *accum,
+ 				  struct aa_perms *addend)
