@@ -1,95 +1,135 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-fw-80008.amazon.com (smtp-fw-80008.amazon.com [99.78.197.219])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202892741C7
-	for <linux-security-module@vger.kernel.org>; Mon,  5 May 2025 21:54:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E8B72749F0;
+	Mon,  5 May 2025 21:58:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746482049; cv=none; b=klhse9S7mtpCfLcBc3Wx+RnbKY4rUvMQf8k6gad1rf3wdd+Osg0q6wQ0uMIvqvmJFXJhw7ULrc9XvDp5tkC4ZVsKMTcHkpQVnaM9bU3Yak8DiOTf5vyWGd9W9j1lLe99vrRAmH6eRnNTioWPIGFSzFRgLlIgu9N6zgy0/P9zuSE=
+	t=1746482301; cv=none; b=iAMZXZOmD93XYnI6VeBFOcyILs/NWpEJY6Gb+WzmLUgFMOu6aYn7S6+S8dJQcv3uOS1ZYQnHSP7TRiDzqih4z1TNPA2cH56wf0RCeVlP2zcBm/T96Gt3puZjcLMnfdymTr0ZwPqcum41y9DZ3rWc3f4lAKaC2zlxiwhKu+jl/c0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746482049; c=relaxed/simple;
-	bh=l4Pz2fXhRFkScVawwUfIObJ9G9RasdUigdOMhKz/i5A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=j9oFHJAvdRQv/kmJhtma7TLuuOTIo73KlGA/iPldfti0Z4HQMEr5AZZPhik7XuDXtU6ueb+cNHVU7tLvpSu3ZKf+wcqvrcnDyzvhbb/bcVVrzErlNENb2j9QxVp8xgfg3DtO5j+RM+QQIzSUPM6gcMh+/kf2DPa0qnrJBKUzr7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IseLED19; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1746482301; c=relaxed/simple;
+	bh=R59XfxVJ7WM8Yb0L7KsqJ40wX61eld3OHOwnXmWXlbY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GmSswybNTwfZugsYGPEZ0UdOSNotMAz56/HhAL9DGDLPQ9rc5Ebb8/m77OBqZGjEzpAUPhF8T+UVR7TBrNwT6L2ifz/V8Nh8RHZ8j7xZ/yiDCEQZrfIm/VycPM2vVrpJ2FgENo9I0nLVjn5MkWw/R5s0HRSUH6o+YaQJd+Hxi6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=fWgFDOjr; arc=none smtp.client-ip=99.78.197.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IseLED19"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95B66C4CEF3
-	for <linux-security-module@vger.kernel.org>; Mon,  5 May 2025 21:54:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746482048;
-	bh=l4Pz2fXhRFkScVawwUfIObJ9G9RasdUigdOMhKz/i5A=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=IseLED19qo1tmKSX38D0iyp8UTZNuFDyqArm5R8B4g6FQ4BQ3w/7N51FyjwaR+0X8
-	 aPr+1/vI+TPePsY8+9iBV1YyfzitZVjVNqwI5VZrAxtYvg82snaUurm0DUAMyzvwQA
-	 4TrjCUgir+sgOtbYkwYKoouMhL0FEmz/6bS+JhyiNcH0z2o22Rt4VD12bi0XttO99Q
-	 cpsJMbQQwmxvzPI6a2F7U992JLvEDntukGIvB+FTytl0Pb3oVduxF+GwYDL+oFy7Bh
-	 /lnPlD+rVJYYcsouPfpqkSEcB2cGJvswSUijrOEJ8ES2TL/+XxaVkmUr1L3Uq4DM+8
-	 2fPJtE1xOiCCA==
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4766631a6a4so64408041cf.2
-        for <linux-security-module@vger.kernel.org>; Mon, 05 May 2025 14:54:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXESJ/Oq/Hc5w7ZRhnJVc9BbdSjHRxWMoMIpDD01obgC58165dN5k5Okx5gUS6ZsGIW+kroYHJu8rx+boLfngHPg1p1YV0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWULQHcaCp0aZMBELv9f/WlY0E6IWinpPsrrZN/jB7a20CHP8V
-	jHCx0EG4dvF01ZyMsJNOpfuemAPQKOIkOIOyPvSPFV1ONxIJ9b4XM4j75AqoH9vbRbP1TOJDVzj
-	lknt1jpx2ZBJomTWMWMkQNPREDQ4=
-X-Google-Smtp-Source: AGHT+IGCklfzuRgHRqfy/Wo+tg02RNf6bNq01S5tFJZOJHiqnCw/4QP2Qf4BR+6KGoLyRsJK5Cpx+xrwMAIPjPfb4Og=
-X-Received: by 2002:a05:6214:ac1:b0:6d8:9ead:c665 with SMTP id
- 6a1803df08f44-6f5358a3368mr10722836d6.27.1746482047759; Mon, 05 May 2025
- 14:54:07 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="fWgFDOjr"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1746482299; x=1778018299;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=olI8DO+YO7P8Trob+5YPSmA2pQyQWCsJA6hl62A4938=;
+  b=fWgFDOjr1De+hknMdHPZxDG+G19oU+2yTERh9MmFuzhBYcS/Ft13xP0X
+   d35OGKaAGEiuOZucijM2fU74J7X9GZ+u1hIzbqTbe1cMps507Ozjgp40N
+   AqF6EmeADu94gLnDmNCOP+l7L92+D4K3cpBnjDOrAC7Macoaw9pC7nXYI
+   Q8EMJCrs0GYXHEe8d/Id1cq+uwVJxzYIP6n71gg4dR+ApSoddexaDv+fO
+   9USD9PV1bRXm5LFFxjvZMWR66HpihPC31W+lfW/87inQrmNwetyZLSJXS
+   USRd0YqiOHlslVlQv8zFZ30xKD5r7qyLAWEtybZRp5hzKSeu1BqFD4LXt
+   g==;
+X-IronPort-AV: E=Sophos;i="6.15,264,1739836800"; 
+   d="scan'208";a="193894800"
+Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
+  by smtp-border-fw-80008.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 May 2025 21:58:17 +0000
+Received: from EX19MTAUWB002.ant.amazon.com [10.0.7.35:36744]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.21.231:2525] with esmtp (Farcaster)
+ id 88b90883-9bd1-4d55-882b-bf8d3bab5546; Mon, 5 May 2025 21:58:17 +0000 (UTC)
+X-Farcaster-Flow-ID: 88b90883-9bd1-4d55-882b-bf8d3bab5546
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWB002.ant.amazon.com (10.250.64.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Mon, 5 May 2025 21:58:16 +0000
+Received: from 6c7e67bfbae3.amazon.com (10.187.170.18) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Mon, 5 May 2025 21:58:11 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: Martin KaFai Lau <martin.lau@linux.dev>, Daniel Borkmann
+	<daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, "Alexei
+ Starovoitov" <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>
+CC: Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	"Yonghong Song" <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>,
+	"Stanislav Fomichev" <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri
+ Olsa <jolsa@kernel.org>, =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=
+	<mic@digikod.net>, =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>, Paul
+ Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge E.
+ Hallyn" <serge@hallyn.com>, Stephen Smalley <stephen.smalley.work@gmail.com>,
+	"Ondrej Mosnacek" <omosnace@redhat.com>, Casey Schaufler
+	<casey@schaufler-ca.com>, Christian Brauner <brauner@kernel.org>, Kuniyuki
+ Iwashima <kuniyu@amazon.com>, Kuniyuki Iwashima <kuni1840@gmail.com>,
+	<bpf@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-security-module@vger.kernel.org>, <selinux@vger.kernel.org>
+Subject: [PATCH v1 bpf-next 0/5] af_unix: Allow BPF LSM to scrub SCM_RIGHTS at sendmsg().
+Date: Mon, 5 May 2025 14:56:45 -0700
+Message-ID: <20250505215802.48449-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHC9VhTiABmrJNkTYSfTQkjAS5u-GJdYxd+zJ8PcryScBtsXNA@mail.gmail.com>
- <295201ef-5299-4bf0-b0ee-6e1e2a74174b@I-love.SAKURA.ne.jp>
-In-Reply-To: <295201ef-5299-4bf0-b0ee-6e1e2a74174b@I-love.SAKURA.ne.jp>
-From: Song Liu <song@kernel.org>
-Date: Mon, 5 May 2025 14:53:55 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW4U5ULtOQ9ucucs3bs+jw+EbBzrCfhAuvOCO=1g5aWAHg@mail.gmail.com>
-X-Gm-Features: ATxdqUF3FeI5Ao6a5LSj495mqKGkNodUW8XiI3fpvS9VExiPP01F8wlqyyga0r0
-Message-ID: <CAPhsuW4U5ULtOQ9ucucs3bs+jw+EbBzrCfhAuvOCO=1g5aWAHg@mail.gmail.com>
-Subject: Re: [RFC] LSM deprecation / removal policies
-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org, 
-	Fan Wu <wufan@linux.microsoft.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	Mimi Zohar <zohar@linux.ibm.com>, Micah Morton <mortonm@chromium.org>, 
-	Casey Schaufler <casey@schaufler-ca.com>, John Johansen <john.johansen@canonical.com>, 
-	Roberto Sassu <roberto.sassu@huawei.com>, KP Singh <kpsingh@kernel.org>, 
-	Kees Cook <keescook@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D041UWA004.ant.amazon.com (10.13.139.9) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-On Sat, May 3, 2025 at 4:47=E2=80=AFAM Tetsuo Handa
-<penguin-kernel@i-love.sakura.ne.jp> wrote:
->
-> On 2025/05/03 5:01, Paul Moore wrote:
-> > ## Removing LSM Hooks
-> >
-> > If a LSM hook is no longer used by any in-kernel LSMs, there is no ongo=
-ing work
-> > in progress involving the hook, and no expectation of future work that =
-will use
-> > the hook, the LSM community may consider removal of the LSM hook.  The =
-decision
-> > to ultimately remove the LSM hook should balance ongoing maintenance an=
-d
-> > performance concerns with the social challenges of reintroducing the ho=
-ok if
-> > it is needed at a later date.
->
-> What about BPF-based LSM users? Since BPF-based LSMs cannot be in-kernel =
-LSMs,
-> it will be difficult for users of BPF-based LSMs to respond (that someone=
- wants
-> some to-be-removed LSM hook) when removal of an LSM hook is proposed.
+As long as recvmsg() or recvmmsg() is used with cmsg, it is not
+possible to avoid receiving file descriptors via SCM_RIGHTS.
 
-If a LSM hook is important for an out-of-tree BPF LSM solution, the owner c=
-an
-add a BPF selftest for this specific hook. This does not guarantee the hook=
- will
-stay, but it can most likely detect unintentional removal of LSM hooks.
+This behaviour has occasionally been flagged as problematic.
 
-Thanks,
-Song
+For instance, as noted on the uAPI Group page [0], an untrusted peer
+could send a file descriptor pointing to a hung NFS mount and then
+close it.  Once the receiver calls recvmsg() with msg_control, the
+descriptor is automatically installed, and then the responsibility
+for the final close() now falls on the receiver, which may result
+in blocking the process for a long time.
+
+systemd calls cmsg_close_all() [1] after each recvmsg() to close()
+unwanted file descriptors sent via SCM_RIGHTS.
+
+However, this cannot work around the issue because the last fput()
+could occur on the receiver side once sendmsg() with SCM_RIGHTS
+succeeds.  Also, even filtering by LSM at recvmsg() does not work
+for the same reason.
+
+Thus, we need a better way to filter SCM_RIGHTS on the sender side.
+
+This series allows BPF LSM to inspect skb at sendmsg() and scrub
+SCM_RIGHTS fds by kfunc.
+
+Link: https://uapi-group.org/kernel-features/#disabling-reception-of-scm_rights-for-af_unix-sockets #[0]
+Link: https://github.com/systemd/systemd/blob/v257.5/src/basic/fd-util.c#L612-L628 #[1]
+
+
+Kuniyuki Iwashima (5):
+  af_unix: Call security_unix_may_send() in sendmsg() for all socket
+    types
+  af_unix: Pass skb to security_unix_may_send().
+  af_unix: Remove redundant scm->fp check in __scm_destroy().
+  bpf: Add kfunc to scrub SCM_RIGHTS at security_unix_may_send().
+  selftest: bpf: Add test for bpf_unix_scrub_fds().
+
+ include/linux/lsm_hook_defs.h                 |   3 +-
+ include/linux/security.h                      |   5 +-
+ include/net/af_unix.h                         |   1 +
+ include/net/scm.h                             |   5 +-
+ net/compat.c                                  |   2 +-
+ net/core/filter.c                             |  19 ++-
+ net/core/scm.c                                |  19 +--
+ net/unix/af_unix.c                            |  48 ++++--
+ security/landlock/task.c                      |   6 +-
+ security/security.c                           |   5 +-
+ security/selinux/hooks.c                      |   6 +-
+ security/smack/smack_lsm.c                    |   6 +-
+ .../bpf/prog_tests/lsm_unix_may_send.c        | 160 ++++++++++++++++++
+ .../selftests/bpf/progs/lsm_unix_may_send.c   |  30 ++++
+ 14 files changed, 282 insertions(+), 33 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/lsm_unix_may_send.c
+ create mode 100644 tools/testing/selftests/bpf/progs/lsm_unix_may_send.c
+
+-- 
+2.49.0
+
