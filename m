@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66395281369;
-	Mon,  5 May 2025 23:03:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 480E72F10AF;
+	Mon,  5 May 2025 23:11:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746486208; cv=none; b=cUZjcVLIv4lx3r75/07/SrZM3q+//101vXbiMsDD+Ag+sSxmPl+mywAOKvMqzJNk+2x/8LNlUhuJUOjArmIVBoypBoA3V3LurvLy7d5Ggg0EwrcvCaaqU6JbPal+bDpj5/jNUW1ZgYqg61RhYGZEkT0K5DaxZ1yHHbPU+HdMneA=
+	t=1746486704; cv=none; b=gyg1OKPkY4D5jYgPd1rv2smI9VqqMu4cGmkVJfWnsM2xyhc8I+KKVKW5bLy6E2jIJ9kW6di9/Ag8LCIw8TCihIu1X57QDVQmhhl2lhFkg41VSKluc83z2voFxJehRbo/rF5f01zR27oqPVwgHIR8gPtwcA8ASOaipJ4tP4zyDEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746486208; c=relaxed/simple;
-	bh=KIDLk6KyiEPX8YtWc7GFI7aZ7J9iJ+RTxHcjOuBptu8=;
+	s=arc-20240116; t=1746486704; c=relaxed/simple;
+	bh=25Ojv8klnLISHg0C6XQR3eGHdYQ0sMT0gShyf/sP9kI=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=I/pdH5HIZx1YhgA8OZDYI2pF5m3b9PUxV6+a/pEzxl1ODnkR8d9ihGnmpUNEUx7/fOYTfQIjvi/sjzqQ3Z75FvtfOENTptkB84jNbmph4RV2j+ukHANaFRXGTG9q7oHycaeX9ATH3zljnVU/oTze/ygxU01fbREapJxh6KwvkRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q2K3k/eo; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=t9bR1Luu3AjKlpa44YYBsAVnmK78+mocdQ+RsaIOqWgY3sUKP/mmG6yeCayPQbiwhgTj/iEP+B4wvV7p7iJgfyltkJepY04vDdT0F/NQbffRynjD6rlqjy0Jl1P0JAloUe2SUciXsijQ1TQYryzv44eLGn1B68J1nOkIpGVpWoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gF/t2CYV; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q2K3k/eo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CDA3C4CEEF;
-	Mon,  5 May 2025 23:03:26 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gF/t2CYV"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21CF4C4CEE4;
+	Mon,  5 May 2025 23:11:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746486207;
-	bh=KIDLk6KyiEPX8YtWc7GFI7aZ7J9iJ+RTxHcjOuBptu8=;
+	s=k20201202; t=1746486703;
+	bh=25Ojv8klnLISHg0C6XQR3eGHdYQ0sMT0gShyf/sP9kI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Q2K3k/eoMv3kw0xDyoajXTBDAVvZcMvzpVHGtUW5drmlQGpotqXEk/6zXlzft6m/f
-	 Ekya+B07c44cg/MyLeqm0MviBaDopVKaNmjpTnSnRXeO5+eZBD0zK6i/5bFBsfoxJA
-	 vrDCrcB7kgP7/E5467lgN7WBkvvHJbWari7l/D4Hlu0l0nRnpLsnX+ZXLuq7rN8xi2
-	 HhQzhcXa2rvGT/VKoI0UUmU4Lq6rwcMb0AFhk4pKkg0/TPIETR9bfxqqO25aJCw9K9
-	 MZ7j5FyhluTdb2vgd5JZzw5ZTWFQNf+O+OUW8GsL6qOGf2QuJuewLvpfutzx7QQDeD
-	 qZ4ju9EDKvVsg==
+	b=gF/t2CYVhkhn4fKiO0Pxf1Pc2/aGuFSK0oqL9YGLf4v/5SBwOsHU73H+wpQMGBEyD
+	 9/C7WAmUgLAwuJrvNM9kF/5bOEknnKbP0Rc6Wpl1q070MWKNxWvTLKPmkeD/WA7ZLz
+	 GFvt1dAcI23x+1qBdpd+VlV1+iQRUWMh6wq62iLMWeGXwLBJehsF4lkFPqW+EJXKXp
+	 iJ926vu+iJ7umpaee+bglyJ9eoGyAanTEF6IM+UPotm3rThm0IMK4v3MPoKZKOjEVY
+	 gbstovfW2z/KLunx+GnRCcxGzms0mnT73oeTeAKHu3cpX2KyhYSKUKIW31szOrHIhg
+	 5BVoyDIyQq7Yw==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
@@ -36,12 +36,12 @@ Cc: Konstantin Andreev <andreev@swemel.ru>,
 	jmorris@namei.org,
 	serge@hallyn.com,
 	linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 206/294] smack: Revert "smackfs: Added check catlen"
-Date: Mon,  5 May 2025 18:55:06 -0400
-Message-Id: <20250505225634.2688578-206-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.1 161/212] smack: recognize ipv4 CIPSO w/o categories
+Date: Mon,  5 May 2025 19:05:33 -0400
+Message-Id: <20250505230624.2692522-161-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250505225634.2688578-1-sashal@kernel.org>
-References: <20250505225634.2688578-1-sashal@kernel.org>
+In-Reply-To: <20250505230624.2692522-1-sashal@kernel.org>
+References: <20250505230624.2692522-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -50,65 +50,76 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.6.89
+X-stable-base: Linux 6.1.136
 Content-Transfer-Encoding: 8bit
 
 From: Konstantin Andreev <andreev@swemel.ru>
 
-[ Upstream commit c7fb50cecff9cad19fdac5b37337eae4e42b94c7 ]
+[ Upstream commit a158a937d864d0034fea14913c1f09c6d5f574b8 ]
 
-This reverts commit ccfd889acb06eab10b98deb4b5eef0ec74157ea0
+If SMACK label has CIPSO representation w/o categories, e.g.:
 
-The indicated commit
-* does not describe the problem that change tries to solve
-* has programming issues
-* introduces a bug: forever clears NETLBL_SECATTR_MLS_CAT
-         in (struct smack_known *)skp->smk_netlabel.flags
+| # cat /smack/cipso2
+| foo  10
+| @ 250/2
+| ...
 
-Reverting the commit to reapproach original problem
+then SMACK does not recognize such CIPSO in input ipv4 packets
+and substitues '*' label instead. Audit records may look like
+
+| lsm=SMACK fn=smack_socket_sock_rcv_skb action=denied
+|   subject="*" object="_" requested=w pid=0 comm="swapper/1" ...
+
+This happens in two steps:
+
+1) security/smack/smackfs.c`smk_set_cipso
+   does not clear NETLBL_SECATTR_MLS_CAT
+   from (struct smack_known *)skp->smk_netlabel.flags
+   on assigning CIPSO w/o categories:
+
+| rcu_assign_pointer(skp->smk_netlabel.attr.mls.cat, ncats.attr.mls.cat);
+| skp->smk_netlabel.attr.mls.lvl = ncats.attr.mls.lvl;
+
+2) security/smack/smack_lsm.c`smack_from_secattr
+   can not match skp->smk_netlabel with input packet's
+   struct netlbl_lsm_secattr *sap
+   because sap->flags have not NETLBL_SECATTR_MLS_CAT (what is correct)
+   but skp->smk_netlabel.flags have (what is incorrect):
+
+| if ((sap->flags & NETLBL_SECATTR_MLS_CAT) == 0) {
+| 	if ((skp->smk_netlabel.flags &
+| 		 NETLBL_SECATTR_MLS_CAT) == 0)
+| 		found = 1;
+| 	break;
+| }
+
+This commit sets/clears NETLBL_SECATTR_MLS_CAT in
+skp->smk_netlabel.flags according to the presense of CIPSO categories.
+The update of smk_netlabel is not atomic, so input packets processing
+still may be incorrect during short time while update proceeds.
 
 Signed-off-by: Konstantin Andreev <andreev@swemel.ru>
 Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- security/smack/smackfs.c | 17 +++--------------
- 1 file changed, 3 insertions(+), 14 deletions(-)
+ security/smack/smackfs.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
-index d27e8b916bfb9..1e35c9f807b2b 100644
+index d955f3dcb3a5e..9dca3672d82b4 100644
 --- a/security/smack/smackfs.c
 +++ b/security/smack/smackfs.c
-@@ -830,7 +830,7 @@ static int smk_open_cipso(struct inode *inode, struct file *file)
- static ssize_t smk_set_cipso(struct file *file, const char __user *buf,
- 				size_t count, loff_t *ppos, int format)
- {
--	struct netlbl_lsm_catmap *old_cat, *new_cat = NULL;
-+	struct netlbl_lsm_catmap *old_cat;
- 	struct smack_known *skp;
- 	struct netlbl_lsm_secattr ncats;
- 	char mapcatset[SMK_CIPSOLEN];
-@@ -917,19 +917,8 @@ static ssize_t smk_set_cipso(struct file *file, const char __user *buf,
- 
- 		smack_catset_bit(cat, mapcatset);
- 	}
--	ncats.flags = 0;
--	if (catlen == 0) {
--		ncats.attr.mls.cat = NULL;
--		ncats.attr.mls.lvl = maplevel;
--		new_cat = netlbl_catmap_alloc(GFP_ATOMIC);
--		if (new_cat)
--			new_cat->next = ncats.attr.mls.cat;
--		ncats.attr.mls.cat = new_cat;
--		skp->smk_netlabel.flags &= ~(1U << 3);
--		rc = 0;
--	} else {
--		rc = smk_netlbl_mls(maplevel, mapcatset, &ncats, SMK_CIPSOLEN);
--	}
-+
-+	rc = smk_netlbl_mls(maplevel, mapcatset, &ncats, SMK_CIPSOLEN);
+@@ -922,6 +922,10 @@ static ssize_t smk_set_cipso(struct file *file, const char __user *buf,
  	if (rc >= 0) {
  		old_cat = skp->smk_netlabel.attr.mls.cat;
  		rcu_assign_pointer(skp->smk_netlabel.attr.mls.cat, ncats.attr.mls.cat);
++		if (ncats.attr.mls.cat)
++			skp->smk_netlabel.flags |= NETLBL_SECATTR_MLS_CAT;
++		else
++			skp->smk_netlabel.flags &= ~(u32)NETLBL_SECATTR_MLS_CAT;
+ 		skp->smk_netlabel.attr.mls.lvl = ncats.attr.mls.lvl;
+ 		synchronize_rcu();
+ 		netlbl_catmap_free(old_cat);
 -- 
 2.39.5
 
