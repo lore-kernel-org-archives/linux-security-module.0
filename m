@@ -1,130 +1,95 @@
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 920052701DB
-	for <linux-security-module@vger.kernel.org>; Mon,  5 May 2025 21:04:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202892741C7
+	for <linux-security-module@vger.kernel.org>; Mon,  5 May 2025 21:54:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746479101; cv=none; b=IKroKuMxfHxyFLke551qIKSxsb1yoHT8D0vbQOGOCrc30LYncU8jmkdk1/2cfNJk+zafnI4LHMmJ1/ZDJh/fJnhfGD5ldtynlfI2qM1CQunV0RBzuVz8tuyuP60Ot2jCu45oHkyAVKXuW6Glyv1aCal1NN81RGZVsulWuX8DFqA=
+	t=1746482049; cv=none; b=klhse9S7mtpCfLcBc3Wx+RnbKY4rUvMQf8k6gad1rf3wdd+Osg0q6wQ0uMIvqvmJFXJhw7ULrc9XvDp5tkC4ZVsKMTcHkpQVnaM9bU3Yak8DiOTf5vyWGd9W9j1lLe99vrRAmH6eRnNTioWPIGFSzFRgLlIgu9N6zgy0/P9zuSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746479101; c=relaxed/simple;
-	bh=pvJm4iJToWGX01vWFAWNiClNkhuZHWWKlI9oy7VPwrk=;
+	s=arc-20240116; t=1746482049; c=relaxed/simple;
+	bh=l4Pz2fXhRFkScVawwUfIObJ9G9RasdUigdOMhKz/i5A=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=j0E4dXJcGEFeFnM64IqjO5kkRpQ/kSjEU7IIcCrm4mKbcc7d7DJsroJXGqIXjNGl+UgoOuaUO9kFrz7mrq1U6Yu4AG4lJ5FswVOHl4OPGUN4GlZvO7VKoKSPMGwZyrY0nFDaATFRXPZSXdM+wP7n0uaq+OMvwAJFiUoB4wtHBug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=WhgsSo9J; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	 To:Cc:Content-Type; b=j9oFHJAvdRQv/kmJhtma7TLuuOTIo73KlGA/iPldfti0Z4HQMEr5AZZPhik7XuDXtU6ueb+cNHVU7tLvpSu3ZKf+wcqvrcnDyzvhbb/bcVVrzErlNENb2j9QxVp8xgfg3DtO5j+RM+QQIzSUPM6gcMh+/kf2DPa0qnrJBKUzr7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IseLED19; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="WhgsSo9J"
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-7086dcab64bso45796167b3.1
-        for <linux-security-module@vger.kernel.org>; Mon, 05 May 2025 14:04:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1746479098; x=1747083898; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qV6Ehr5flIzxPNkBJYbjhBPm/Nie/yPzlaQWxf1OGLY=;
-        b=WhgsSo9JWV48EKUKRmgKeuu2vJsYMPLJ1pLf+ibrUGTWn2+WkRrraD+IuzYDCHdsgi
-         TTDKbg3e0i/eTbdgI7l2QVK9n+kI6ObrZPtfmtNfL6qlZz7+41N8oEYLIPnbj2iALqTn
-         Q/Cbc8qsYJ5YdcG1kADDtxqU59toKqXSim9JJDVAhrJ9jSOKR2EUyWklInE1QZftyxzS
-         Xy5L+DZJtUBnNvNxpVf7D0wvIpluIpP8tW0iRyAtZ+KsLBR8uXQ38omd9fXF9QzLJJWM
-         Jm0W5mbRYgTmCH2APZteUpOA4pIIyDAfPbaFAL4S+GSuat4CMUTYEnHGbaXEHzMdZXO3
-         5wfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746479098; x=1747083898;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qV6Ehr5flIzxPNkBJYbjhBPm/Nie/yPzlaQWxf1OGLY=;
-        b=AZIme1yHOTO1RnftkCdS0fvfuFH86BU1Tc89h97FiVPGAIGpUqJhj4Nv67pCyckNCJ
-         uOoDeSOXAKJqS2CKt/CL3YZROrxDllnuAI64XknVsrOPOOC6yuubumq/qqTK25Vk/5CA
-         YJ04CReKkBG3yh8vVPsA+saWhpycnygQU5HX+DhlbDB5nWUVFjWL5JQgAAQANoG8CKAM
-         YInC7zN6I30szjUWMDZ/KWjTWa7Vxkpwo+wXqb1EzaB0V70XBA+bXy+2ODhy/WC+P0RJ
-         bP//3bVFaTG3CBOI5thZ4G1UClXccbSK5HIGUkhoezvSM3qX9iOvAv3c50gFxPFLf4eH
-         QOSw==
-X-Forwarded-Encrypted: i=1; AJvYcCW9SGRvu+3ItMvjTRMnm5PZnIPHwZr4Bl/gbpwHdeYXwYUo3fYMp3DzAqCrqeFNMYjBmRWTBWOZPbguRC6f5sAsjNhN0ds=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQiR8xz6PJ4g7z8vOXP2khOm9xWmJAMQWbkcOSbq+AQquCfKHE
-	p+SL822vdDT8bm89FS1G7pMbrWiAM1jHYEzGDSro5q+JUfxOKXfv2nYpqpx7Eskti7YGZraMMz0
-	b747+L8crK9Q4qJhpTLtP+2DB4RQJl0wPgfHF
-X-Gm-Gg: ASbGnctfPD1ha5QzlV7JHDLDoW1OwS/EhfLzy7NuNoZ4Fj3TWFMc/zWTYp987MpTAno
-	z8YCZy4uxWl/V2XKPHM4OWhEP9CF+n8HTZUbztcmxOqHQDBwAeE0REoRpjG8tJA7YUhvhGel5sl
-	ELg63ciGQ6bfXnb/ZNYfP85Q==
-X-Google-Smtp-Source: AGHT+IFmAkNEdgI8Usf/OOS6czpCIUfjzjMmDrrLFeB8TbVt16spO751vhSxBgmbdO5FhYFLhIwyiyfP8SeItQ5Z+90=
-X-Received: by 2002:a05:690c:368b:b0:703:c3ed:1f61 with SMTP id
- 00721157ae682-708eaeef043mr127166017b3.20.1746479098491; Mon, 05 May 2025
- 14:04:58 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IseLED19"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95B66C4CEF3
+	for <linux-security-module@vger.kernel.org>; Mon,  5 May 2025 21:54:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746482048;
+	bh=l4Pz2fXhRFkScVawwUfIObJ9G9RasdUigdOMhKz/i5A=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=IseLED19qo1tmKSX38D0iyp8UTZNuFDyqArm5R8B4g6FQ4BQ3w/7N51FyjwaR+0X8
+	 aPr+1/vI+TPePsY8+9iBV1YyfzitZVjVNqwI5VZrAxtYvg82snaUurm0DUAMyzvwQA
+	 4TrjCUgir+sgOtbYkwYKoouMhL0FEmz/6bS+JhyiNcH0z2o22Rt4VD12bi0XttO99Q
+	 cpsJMbQQwmxvzPI6a2F7U992JLvEDntukGIvB+FTytl0Pb3oVduxF+GwYDL+oFy7Bh
+	 /lnPlD+rVJYYcsouPfpqkSEcB2cGJvswSUijrOEJ8ES2TL/+XxaVkmUr1L3Uq4DM+8
+	 2fPJtE1xOiCCA==
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4766631a6a4so64408041cf.2
+        for <linux-security-module@vger.kernel.org>; Mon, 05 May 2025 14:54:08 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXESJ/Oq/Hc5w7ZRhnJVc9BbdSjHRxWMoMIpDD01obgC58165dN5k5Okx5gUS6ZsGIW+kroYHJu8rx+boLfngHPg1p1YV0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWULQHcaCp0aZMBELv9f/WlY0E6IWinpPsrrZN/jB7a20CHP8V
+	jHCx0EG4dvF01ZyMsJNOpfuemAPQKOIkOIOyPvSPFV1ONxIJ9b4XM4j75AqoH9vbRbP1TOJDVzj
+	lknt1jpx2ZBJomTWMWMkQNPREDQ4=
+X-Google-Smtp-Source: AGHT+IGCklfzuRgHRqfy/Wo+tg02RNf6bNq01S5tFJZOJHiqnCw/4QP2Qf4BR+6KGoLyRsJK5Cpx+xrwMAIPjPfb4Og=
+X-Received: by 2002:a05:6214:ac1:b0:6d8:9ead:c665 with SMTP id
+ 6a1803df08f44-6f5358a3368mr10722836d6.27.1746482047759; Mon, 05 May 2025
+ 14:54:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250502184421.1424368-1-bboscaccy@linux.microsoft.com>
- <20250502210034.284051-1-kpsingh@kernel.org> <87o6w7ge3o.fsf@microsoft.com> <CACYkzJ7Ur4kFaGZTDvcFJpn0ZwJ9V+=3ZefUURtkrQGfa68zLg@mail.gmail.com>
-In-Reply-To: <CACYkzJ7Ur4kFaGZTDvcFJpn0ZwJ9V+=3ZefUURtkrQGfa68zLg@mail.gmail.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Mon, 5 May 2025 17:04:47 -0400
-X-Gm-Features: ATxdqUH7QOdmAmbomuCBMV4FUrVw8a-HbJeWUtKQ1wX8nnex6ppuCCrqNPrIXY8
-Message-ID: <CAHC9VhRwpvQQyMmFTeiQaos0+yJDkuCkt03QcYdnsxUvBXAtVA@mail.gmail.com>
-Subject: Re: [PATCH v3 0/4] Introducing Hornet LSM
-To: KP Singh <kpsingh@kernel.org>
-Cc: Blaise Boscaccy <bboscaccy@linux.microsoft.com>, James.Bottomley@hansenpartnership.com, 
-	bpf@vger.kernel.org, code@tyhicks.com, corbet@lwn.net, davem@davemloft.net, 
-	dhowells@redhat.com, gnoack@google.com, herbert@gondor.apana.org.au, 
-	jarkko@kernel.org, jmorris@namei.org, jstancek@redhat.com, 
-	justinstitt@google.com, keyrings@vger.kernel.org, 
-	linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	llvm@lists.linux.dev, masahiroy@kernel.org, mic@digikod.net, morbo@google.com, 
-	nathan@kernel.org, neal@gompa.dev, nick.desaulniers+lkml@gmail.com, 
-	nicolas@fjasle.eu, nkapron@google.com, roberto.sassu@huawei.com, 
-	serge@hallyn.com, shuah@kernel.org, teknoraver@meta.com, 
-	xiyou.wangcong@gmail.com
+References: <CAHC9VhTiABmrJNkTYSfTQkjAS5u-GJdYxd+zJ8PcryScBtsXNA@mail.gmail.com>
+ <295201ef-5299-4bf0-b0ee-6e1e2a74174b@I-love.SAKURA.ne.jp>
+In-Reply-To: <295201ef-5299-4bf0-b0ee-6e1e2a74174b@I-love.SAKURA.ne.jp>
+From: Song Liu <song@kernel.org>
+Date: Mon, 5 May 2025 14:53:55 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW4U5ULtOQ9ucucs3bs+jw+EbBzrCfhAuvOCO=1g5aWAHg@mail.gmail.com>
+X-Gm-Features: ATxdqUF3FeI5Ao6a5LSj495mqKGkNodUW8XiI3fpvS9VExiPP01F8wlqyyga0r0
+Message-ID: <CAPhsuW4U5ULtOQ9ucucs3bs+jw+EbBzrCfhAuvOCO=1g5aWAHg@mail.gmail.com>
+Subject: Re: [RFC] LSM deprecation / removal policies
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org, 
+	Fan Wu <wufan@linux.microsoft.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	Mimi Zohar <zohar@linux.ibm.com>, Micah Morton <mortonm@chromium.org>, 
+	Casey Schaufler <casey@schaufler-ca.com>, John Johansen <john.johansen@canonical.com>, 
+	Roberto Sassu <roberto.sassu@huawei.com>, KP Singh <kpsingh@kernel.org>, 
+	Kees Cook <keescook@chromium.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 5, 2025 at 4:41=E2=80=AFPM KP Singh <kpsingh@kernel.org> wrote:
-> On Mon, May 5, 2025 at 7:30=E2=80=AFPM Blaise Boscaccy
-> <bboscaccy@linux.microsoft.com> wrote:
-> >
-> > KP Singh <kpsingh@kernel.org> writes:
-> >
-> > [...]
-> >
-> > > Now if you really care about the use-case and want to work with the m=
-aintainers
-> > > and implement signing for the community, here's how we think it shoul=
-d be done:
-> > >
-> > > * The core signing logic and the tooling stays in BPF, something that=
- the users
-> > >   are already using. No new tooling.
-> > > * The policy decision on the effect of signing can be built into vari=
-ous
-> > >   existing LSMs. I don't think we need a new LSM for it.
-> > > * A simple UAPI (emphasis on UAPI!) change to union bpf_attr in uapi/=
-bpf.h in
-> > >   the BPF_PROG_LOAD command:
-> > >
-> > > __aligned_u64 signature;
-> > > __u32 signature_size;
-> >
-> > I think having some actual details on the various parties' requirements
-> > here would be helpful. KP, I do look forward to seeing your design;
-> > however, having code signing proposals where the capabilities are
-> > dictated from above and any dissent is dismissed as "you're doing it
-> > wrong" isn't going to be helpful to anyone that needs to use this in
-> > practice.
+On Sat, May 3, 2025 at 4:47=E2=80=AFAM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
 >
-> Please don't misrepresent the facts ...
+> On 2025/05/03 5:01, Paul Moore wrote:
+> > ## Removing LSM Hooks
+> >
+> > If a LSM hook is no longer used by any in-kernel LSMs, there is no ongo=
+ing work
+> > in progress involving the hook, and no expectation of future work that =
+will use
+> > the hook, the LSM community may consider removal of the LSM hook.  The =
+decision
+> > to ultimately remove the LSM hook should balance ongoing maintenance an=
+d
+> > performance concerns with the social challenges of reintroducing the ho=
+ok if
+> > it is needed at a later date.
+>
+> What about BPF-based LSM users? Since BPF-based LSMs cannot be in-kernel =
+LSMs,
+> it will be difficult for users of BPF-based LSMs to respond (that someone=
+ wants
+> some to-be-removed LSM hook) when removal of an LSM hook is proposed.
 
-KP, I believe the most constructive thing at this point is to share
-your design idea with this thread as previously requested so everyone
-can review it.  We can continue to argue about how we got to where we
-are at if you like, but that isn't likely to help us move towards a
-solution.  If you are unable to share your design idea, either in a
-couple of paragraphs or in some form of PoC, please let us know.
+If a LSM hook is important for an out-of-tree BPF LSM solution, the owner c=
+an
+add a BPF selftest for this specific hook. This does not guarantee the hook=
+ will
+stay, but it can most likely detect unintentional removal of LSM hooks.
 
---=20
-paul-moore.com
+Thanks,
+Song
