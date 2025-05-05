@@ -1,311 +1,125 @@
-Received: from smtp-fw-52002.amazon.com (smtp-fw-52002.amazon.com [52.119.213.150])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3439F129A78;
-	Mon,  5 May 2025 22:00:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF1913174FA;
+	Mon,  5 May 2025 22:31:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746482437; cv=none; b=IKkJi5p4807hHpHlLsXOh6axz/O427eYxT8YQitD0ZFyhKhwZEcyDWgBfqOtiafh3uaY1FhuJhS8Xj+grS87suNHrIHpFaCRFXV+8c9YTRusTaqofwburAZP38SynUCi3fs1CDH4IMlB7fIG3FtXaRVbidcsbDjbEMge1Q5dd7g=
+	t=1746484263; cv=none; b=VdJZchsIIbrfCZkhjVt9oh306whAnTq/Q39nYe9kd7V6q3KFqdM09gd1WlLxk1kOjb7W641ATCt5aK+0c/C/fl1iMAcAEvRf0mEw6ddyXhx9oScgHTEetIREbC4nLP7+fb1Xircg3iScWaQdflZpkRDyAntag67XPyfemo5DEGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746482437; c=relaxed/simple;
-	bh=ZtzVn3vhfHHrZyvMML07cCet17koomvjLqult12hZfQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=P8qO8/6A6c1xKat2LpblLoBFr1AePHCQrbphASSCzwhXQg4j7vtd0mtNcP7OHqafkElnloSFM50ZgFDhZPS1p9JsaYMCIGcr8UsgFZ+iTwrJadWyH+O/x1l4z+keWzopL7CExng1FiOPw29IDRjGQ1I/Hrmg4YrA+0X+G6JzVug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=ABdbB6Cs; arc=none smtp.client-ip=52.119.213.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+	s=arc-20240116; t=1746484263; c=relaxed/simple;
+	bh=lJeDHJ0IZPuWQ1C8iqTXkcL2Ha+shOeOLEp2gMAKE2w=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Wr19acnhAtdiWyJc/jTq+zbdCvI9x6gTt0qoLAwfaTJJ1Qdnmrk8NS6zaNS03kdQf3xMYyeM7tYb3mC1H13sdIeIFOCAkzajd7770nqZ6tH6mY5fQ+8MgAfMin9sKbQKJtGm80eZwFplTbijZaUgz4HaZsc62W2xloR+lWLJMXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rIpZqge4; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="ABdbB6Cs"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1746482435; x=1778018435;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=EXF8Pa46OdfY42qSofeY7OfevWcwLJJFEHFJJRca7Jk=;
-  b=ABdbB6Cs+6GXHbLPNCGqrqKRf4ceO3UjFKDpVYU83/3pcAISpqs3vTgN
-   OCw665fyXlbm5hzLAzWwAZy5ReyrzAiptQvvn07EEjT5BWwg3ZxOSrDpG
-   GUhZHb3SQyx7ZijAKly/7iBTwYc2YCgZR3LHKsZJUSmtNvkhCQU8iz7Mj
-   Q=;
-X-IronPort-AV: E=Sophos;i="6.15,264,1739836800"; 
-   d="scan'208";a="719980326"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-52002.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 May 2025 22:00:32 +0000
-Received: from EX19MTAUWA002.ant.amazon.com [10.0.38.20:20457]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.38.92:2525] with esmtp (Farcaster)
- id cb57f3a2-fd3a-446b-92da-422b317c23d6; Mon, 5 May 2025 22:00:31 +0000 (UTC)
-X-Farcaster-Flow-ID: cb57f3a2-fd3a-446b-92da-422b317c23d6
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Mon, 5 May 2025 22:00:29 +0000
-Received: from 6c7e67bfbae3.amazon.com (10.187.170.18) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Mon, 5 May 2025 22:00:24 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: Martin KaFai Lau <martin.lau@linux.dev>, Daniel Borkmann
-	<daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, "Alexei
- Starovoitov" <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>
-CC: Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	"Yonghong Song" <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>,
-	"Stanislav Fomichev" <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri
- Olsa <jolsa@kernel.org>, =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?=
-	<mic@digikod.net>, =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>, Paul
- Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge E.
- Hallyn" <serge@hallyn.com>, Stephen Smalley <stephen.smalley.work@gmail.com>,
-	"Ondrej Mosnacek" <omosnace@redhat.com>, Casey Schaufler
-	<casey@schaufler-ca.com>, Christian Brauner <brauner@kernel.org>, Kuniyuki
- Iwashima <kuniyu@amazon.com>, Kuniyuki Iwashima <kuni1840@gmail.com>,
-	<bpf@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<linux-security-module@vger.kernel.org>, <selinux@vger.kernel.org>
-Subject: [PATCH v1 bpf-next 5/5] selftest: bpf: Add test for bpf_unix_scrub_fds().
-Date: Mon, 5 May 2025 14:56:50 -0700
-Message-ID: <20250505215802.48449-6-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250505215802.48449-1-kuniyu@amazon.com>
-References: <20250505215802.48449-1-kuniyu@amazon.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rIpZqge4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB296C4CEF1;
+	Mon,  5 May 2025 22:31:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746484262;
+	bh=lJeDHJ0IZPuWQ1C8iqTXkcL2Ha+shOeOLEp2gMAKE2w=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=rIpZqge4Sjq1cEk/jhP7ZRShfaetW6qdy/c7w/tV/KhgnY4JbmDxRjOBq9xMQYjNi
+	 K2CAld4kirLaa+9cjJRzGnthONq2Q0Ut+BzZQ/ZNUj0+cVjoOFvUlwyzXgrNCA3RJb
+	 Z4gYvFinBLeyfam6YNhgR54R9PCjnaR3hNiz/N1VjixXZWW0Lfl8GtuE0/W+jN5Ile
+	 XO+Fk3KDHdJKOuKlKtlp6glT48TpOu/UCUhC3FD0PILsGnb1aVgxNcBVhkZgJVI6xn
+	 Nxg3hd+wbTevulLWT100FllBqGEWbWucKHfgw8fVtKwPDhgk7ooARk4aka45JP6qpr
+	 S+30UturcDDxQ==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Konstantin Andreev <andreev@swemel.ru>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	Sasha Levin <sashal@kernel.org>,
+	paul@paul-moore.com,
+	jmorris@namei.org,
+	serge@hallyn.com,
+	linux-security-module@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.14 420/642] smack: recognize ipv4 CIPSO w/o categories
+Date: Mon,  5 May 2025 18:10:36 -0400
+Message-Id: <20250505221419.2672473-420-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250505221419.2672473-1-sashal@kernel.org>
+References: <20250505221419.2672473-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.14.5
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D042UWB004.ant.amazon.com (10.13.139.150) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-This test performs the following for all AF_UNIX socket types
+From: Konstantin Andreev <andreev@swemel.ru>
 
-  1. Create a socket pair (sender and receiver)
-  2. Send the receiver's fd from the sender to the receiver
-  3. Receive the fd
-  4. Attach a BPF LSM prog that scrubs SCM_RIGHTS fds
-  5. Send the receiver's fd from the sender to the receiver
-  6. Check if the fd was scrubbed
-  7. Detach the LSM prog
+[ Upstream commit a158a937d864d0034fea14913c1f09c6d5f574b8 ]
 
-How to run:
+If SMACK label has CIPSO representation w/o categories, e.g.:
 
-  # make -C tools/testing/selftests/bpf/
-  # ./tools/testing/selftests/bpf/test_progs -t lsm_unix_may_send
-  ...
-  #175/1   lsm_unix_may_send/SOCK_STREAM:OK
-  #175/2   lsm_unix_may_send/SOCK_DGRAM:OK
-  #175/3   lsm_unix_may_send/SOCK_SEQPACKET:OK
-  #175     lsm_unix_may_send:OK
-  Summary: 1/3 PASSED, 0 SKIPPED, 0 FAILED
+| # cat /smack/cipso2
+| foo  10
+| @ 250/2
+| ...
 
-Signed-off-by: Kuniyuki Iwashima <kuniyu@amazon.com>
+then SMACK does not recognize such CIPSO in input ipv4 packets
+and substitues '*' label instead. Audit records may look like
+
+| lsm=SMACK fn=smack_socket_sock_rcv_skb action=denied
+|   subject="*" object="_" requested=w pid=0 comm="swapper/1" ...
+
+This happens in two steps:
+
+1) security/smack/smackfs.c`smk_set_cipso
+   does not clear NETLBL_SECATTR_MLS_CAT
+   from (struct smack_known *)skp->smk_netlabel.flags
+   on assigning CIPSO w/o categories:
+
+| rcu_assign_pointer(skp->smk_netlabel.attr.mls.cat, ncats.attr.mls.cat);
+| skp->smk_netlabel.attr.mls.lvl = ncats.attr.mls.lvl;
+
+2) security/smack/smack_lsm.c`smack_from_secattr
+   can not match skp->smk_netlabel with input packet's
+   struct netlbl_lsm_secattr *sap
+   because sap->flags have not NETLBL_SECATTR_MLS_CAT (what is correct)
+   but skp->smk_netlabel.flags have (what is incorrect):
+
+| if ((sap->flags & NETLBL_SECATTR_MLS_CAT) == 0) {
+| 	if ((skp->smk_netlabel.flags &
+| 		 NETLBL_SECATTR_MLS_CAT) == 0)
+| 		found = 1;
+| 	break;
+| }
+
+This commit sets/clears NETLBL_SECATTR_MLS_CAT in
+skp->smk_netlabel.flags according to the presense of CIPSO categories.
+The update of smk_netlabel is not atomic, so input packets processing
+still may be incorrect during short time while update proceeds.
+
+Signed-off-by: Konstantin Andreev <andreev@swemel.ru>
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../bpf/prog_tests/lsm_unix_may_send.c        | 160 ++++++++++++++++++
- .../selftests/bpf/progs/lsm_unix_may_send.c   |  30 ++++
- 2 files changed, 190 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/lsm_unix_may_send.c
- create mode 100644 tools/testing/selftests/bpf/progs/lsm_unix_may_send.c
+ security/smack/smackfs.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/lsm_unix_may_send.c b/tools/testing/selftests/bpf/prog_tests/lsm_unix_may_send.c
-new file mode 100644
-index 000000000000..50b2547e63cf
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/lsm_unix_may_send.c
-@@ -0,0 +1,160 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright Amazon.com Inc. or its affiliates. */
-+
-+#include "test_progs.h"
-+#include "lsm_unix_may_send.skel.h"
-+
-+#define MSG_HELLO "Hello"
-+#define MSG_WORLD "World"
-+#define MSG_LEN 5
-+
-+struct scm_rights {
-+	struct cmsghdr cmsghdr;
-+	int fd;
-+};
-+
-+static int send_fd(int sender_fd, int receiver_fd)
-+{
-+	struct scm_rights cmsg = {};
-+	struct msghdr msg = {};
-+	struct iovec iov = {};
-+	int ret;
-+
-+	msg.msg_iov = &iov;
-+	msg.msg_iovlen = 1;
-+	msg.msg_control = &cmsg;
-+	msg.msg_controllen = CMSG_SPACE(sizeof(cmsg.fd));
-+
-+	iov.iov_base = MSG_HELLO;
-+	iov.iov_len = MSG_LEN;
-+
-+	cmsg.cmsghdr.cmsg_len = CMSG_LEN(sizeof(cmsg.fd));
-+	cmsg.cmsghdr.cmsg_level = SOL_SOCKET;
-+	cmsg.cmsghdr.cmsg_type = SCM_RIGHTS;
-+	cmsg.fd = receiver_fd;
-+
-+	ret = sendmsg(sender_fd, &msg, 0);
-+	if (!ASSERT_EQ(ret, MSG_LEN, "sendmsg(Hello)"))
-+		return -EINVAL;
-+
-+	ret = send(sender_fd, MSG_WORLD, MSG_LEN, 0);
-+	if (!ASSERT_EQ(ret, MSG_LEN, "sendmsg(World)"))
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+static int recv_fd(int receiver_fd, bool lsm_attached)
-+{
-+	struct scm_rights cmsg = {};
-+	struct msghdr msg = {};
-+	char buf[MSG_LEN] = {};
-+	struct iovec iov = {};
-+	int ret;
-+
-+	msg.msg_iov = &iov;
-+	msg.msg_iovlen = 1;
-+	msg.msg_control = &cmsg;
-+	msg.msg_controllen = CMSG_SPACE(sizeof(cmsg.fd));
-+
-+	iov.iov_base = buf;
-+	iov.iov_len = sizeof(buf);
-+
-+	ret = recvmsg(receiver_fd, &msg, 0);
-+	if (!ASSERT_EQ(ret, MSG_LEN, "recvmsg(Hello) length") ||
-+	    !ASSERT_STRNEQ(buf, MSG_HELLO, MSG_LEN, "recvmsg(Hello) data"))
-+		return -EINVAL;
-+
-+	if (lsm_attached) {
-+		if (!ASSERT_ERR_PTR(CMSG_FIRSTHDR(&msg), "cmsg filtered"))
-+			return -EINVAL;
-+	} else {
-+		if (!ASSERT_OK_PTR(CMSG_FIRSTHDR(&msg), "cmsg sent") ||
-+		    !ASSERT_EQ(cmsg.cmsghdr.cmsg_len, CMSG_LEN(sizeof(cmsg.fd)), "cmsg_len") ||
-+		    !ASSERT_EQ(cmsg.cmsghdr.cmsg_level, SOL_SOCKET, "cmsg_level") ||
-+		    !ASSERT_EQ(cmsg.cmsghdr.cmsg_type, SCM_RIGHTS, "cmsg_type"))
-+			return -EINVAL;
-+
-+		receiver_fd = cmsg.fd;
-+	}
-+
-+	memset(buf, 0, sizeof(buf));
-+
-+	ret = recv(receiver_fd, buf, sizeof(buf), 0);
-+	if (!ASSERT_EQ(ret, MSG_LEN, "recvmsg(World) length") ||
-+	    !ASSERT_STRNEQ(buf, MSG_WORLD, MSG_LEN, "recvmsg(World) data"))
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+static void test_scm_rights(struct lsm_unix_may_send *skel, int type)
-+{
-+	struct bpf_link *link;
-+	int socket_fds[2];
-+	int err;
-+
-+	err = socketpair(AF_UNIX, type, 0, socket_fds);
-+	if (!ASSERT_EQ(err, 0, "socketpair"))
-+		return;
-+
-+	err = send_fd(socket_fds[0], socket_fds[1]);
-+	if (err)
-+		goto close;
-+
-+	err = recv_fd(socket_fds[1], false);
-+	if (err)
-+		goto close;
-+
-+	link = bpf_program__attach_lsm(skel->progs.unix_scrub_scm_rights);
-+	if (!ASSERT_OK_PTR(link, "attach lsm"))
-+		goto close;
-+
-+	err = send_fd(socket_fds[0], socket_fds[1]);
-+	if (err)
-+		goto close;
-+
-+	err = recv_fd(socket_fds[1], true);
-+	if (err)
-+		goto close;
-+
-+	err = bpf_link__destroy(link);
-+	ASSERT_EQ(err, 0, "destroy lsm");
-+close:
-+	close(socket_fds[0]);
-+	close(socket_fds[1]);
-+}
-+
-+struct sk_type {
-+	char name[16];
-+	int type;
-+} sk_types[] = {
-+	{
-+		.name = "SOCK_STREAM",
-+		.type = SOCK_STREAM,
-+	},
-+	{
-+		.name = "SOCK_DGRAM",
-+		.type = SOCK_DGRAM,
-+	},
-+	{
-+		.name = "SOCK_SEQPACKET",
-+		.type = SOCK_SEQPACKET,
-+	},
-+};
-+
-+void test_lsm_unix_may_send(void)
-+{
-+	struct lsm_unix_may_send *skel;
-+	int i;
-+
-+	skel = lsm_unix_may_send__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "load skel"))
-+		return;
-+
-+	for (i = 0; i < ARRAY_SIZE(sk_types); i++)
-+		if (test__start_subtest(sk_types[i].name))
-+			test_scm_rights(skel, sk_types[i].type);
-+
-+	lsm_unix_may_send__destroy(skel);
-+}
-diff --git a/tools/testing/selftests/bpf/progs/lsm_unix_may_send.c b/tools/testing/selftests/bpf/progs/lsm_unix_may_send.c
-new file mode 100644
-index 000000000000..c2459ba2c33d
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/lsm_unix_may_send.c
-@@ -0,0 +1,30 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright Amazon.com Inc. or its affiliates. */
-+
-+#include "vmlinux.h"
-+#include <bpf/bpf_tracing.h>
-+
-+#ifndef EPERM
-+#define EPERM 1
-+#endif
-+
-+SEC("lsm/unix_may_send")
-+int BPF_PROG(unix_scrub_scm_rights,
-+	     struct socket *sock, struct socket *other, struct sk_buff *skb)
-+{
-+	struct unix_skb_parms *cb;
-+
-+	if (!skb)
-+		return 0;
-+
-+	cb = (struct unix_skb_parms *)skb->cb;
-+	if (!cb->fp)
-+		return 0;
-+
-+	if (bpf_unix_scrub_fds(skb))
-+		return -EPERM;
-+
-+	return 0;
-+}
-+
-+char _license[] SEC("license") = "GPL";
+diff --git a/security/smack/smackfs.c b/security/smack/smackfs.c
+index 357188f764ce1..d8f9922804974 100644
+--- a/security/smack/smackfs.c
++++ b/security/smack/smackfs.c
+@@ -915,6 +915,10 @@ static ssize_t smk_set_cipso(struct file *file, const char __user *buf,
+ 	if (rc >= 0) {
+ 		old_cat = skp->smk_netlabel.attr.mls.cat;
+ 		rcu_assign_pointer(skp->smk_netlabel.attr.mls.cat, ncats.attr.mls.cat);
++		if (ncats.attr.mls.cat)
++			skp->smk_netlabel.flags |= NETLBL_SECATTR_MLS_CAT;
++		else
++			skp->smk_netlabel.flags &= ~(u32)NETLBL_SECATTR_MLS_CAT;
+ 		skp->smk_netlabel.attr.mls.lvl = ncats.attr.mls.lvl;
+ 		synchronize_rcu();
+ 		netlbl_catmap_free(old_cat);
 -- 
-2.49.0
+2.39.5
 
