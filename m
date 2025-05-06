@@ -1,119 +1,183 @@
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+Received: from smtp-fw-80008.amazon.com (smtp-fw-80008.amazon.com [99.78.197.219])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C382338382
-	for <linux-security-module@vger.kernel.org>; Tue,  6 May 2025 17:17:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 596EC322E;
+	Tue,  6 May 2025 18:14:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746551841; cv=none; b=UBm6Ng03lw2u+45KzZRqMD00/q/ipjryJQ4K5YaZ7BLPaCP0Bxj2NoMLSPOjWHNYtZzFLdIYKw0q+jFRJvwlFLb8U0Zf48uU02qKQy8h/e0SxO3Pq+/5EL7pLr+H5HT+VmYomvt7J0+Qde/YY5tTjMDiZEziXsvbhUY88GTvAYY=
+	t=1746555270; cv=none; b=QOPpzW9aOu6KQ1m29PEs2If0L6PzSu0vkufczqhQIPBsLM2I4ZqK1eNFZpzxm+OsN5rcwhqA+vaMdkcy31VT4R4bOeeNK/yXyWeY2vk5Kn3s3HgwlV2W/VJFET8wPB/A+FuOGERRB7Mi8TfR3fNLB6o2DIwAHi1o5WeSQL0jB/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746551841; c=relaxed/simple;
-	bh=Y1D/Ai7Th8b1ulsQV8Rw/WzGuOfLtn4luAEIHycJPbM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Cz+7KsYhWjyq/uphioSEqeaMdQIvG0MWHUIeH9m/RS4J3onIuEp3IOzfVe7RZ1/wlvUr8+rk7thgyMVcv1k+8taC5l7SSqeLYEzO17UWlLLRUHE9w2QqnpyRFx1b4E6sLpwEAcnoLAyLAnbb4BbqtDj+E0X9MQEHLSZ6R31aqJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=ho65UNVd; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+	s=arc-20240116; t=1746555270; c=relaxed/simple;
+	bh=DkIKQfqsTu+gVD2DEws8gU9m4Q5ajcIXXeqGGGVYlg8=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cH7d406HiCyFH2UfFFcs0yhICtDD1qd9dyqGN0YyrYdHa7C7LwFqU1tejzdzGBjc82dXpFObsVLV9fY992VJ/GCQ2EdoQdNdFk9xRL6+6ltfpQlkd5VsWRhokSJ0yLQ5TbIb9jHW/JidqYx2ZUquE/6yxduw8N3scdkvzail1E0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=sfu2ZS2F; arc=none smtp.client-ip=99.78.197.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="ho65UNVd"
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com [209.85.218.69])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 23E283F206
-	for <linux-security-module@vger.kernel.org>; Tue,  6 May 2025 17:07:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1746551252;
-	bh=WQHjxQ599keg+lxgKKgv5hY1aqkd9MG97ygANGkcWy4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=ho65UNVdU0TpPIDaxVPqfcJu4n9rDTe+VYQXTwEXp7ZlNznz/9ZN+dNTZg9QXVVrF
-	 tOuFdujAwkh7bY4c4tDKO1d1Y/ZB5QjVnK5nVWpGiSmo8G13p2saoKAvweEqssS5BQ
-	 R5BupcqBqfXrufv5dYiYj5+zHSeNgdthCp3fjKr4ZC8jyx17++vmkXEApIhAE9V/6V
-	 KZilmxVpmgpp+dbvEIgEdZ6TJUncm2x4nMFBSAmSCeiWIVzWEFfBmJXfZSEliVgDxM
-	 k144RnjVtpSupDG3zSpOeXLoxckmGr8uoHaPvfsZk4Qqvw5e+CTpB29sPJPLURD13E
-	 cd889P70NJmdg==
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-acf0113e311so524841866b.1
-        for <linux-security-module@vger.kernel.org>; Tue, 06 May 2025 10:07:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746551251; x=1747156051;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WQHjxQ599keg+lxgKKgv5hY1aqkd9MG97ygANGkcWy4=;
-        b=nPk/KMva0RqYR/zKvZRaoTsnDOcLdbrm5XlATSTl988ErsRHgaw47ktG2/WkcszGn8
-         aC84RISt4osPPZudCSa6KNYWnZ+ykvgiMPy4JbgMqz4N1EzsJcoNh+hD9fsXocYQa+gs
-         Ufa0yeUuUo57oxt9IYmZUKiNdjtvNaeMKK3J6rO4YdsayByxeoSD8x+ZnzjpL69PODM+
-         FPYZ2WoKINyt2rk/Ftdbigz7AWur76tjTVb5rSNV+XAD5ixq9Iua0MDtia6jWSS7R70p
-         DJ5M+t2673fTELmoHS8FfuzAdHxrYrGXTfOxhsw1p4dDfmcOR0zM6SfP6t+CQc6nz4zh
-         huVA==
-X-Forwarded-Encrypted: i=1; AJvYcCV1uyO9zzJX9GI+Oocxmr45ScmecgJXVtf6OjZA3ll1pZ2b9kfTUTLQolsTgwFF7N044nA+jnq3FYIJ+ZlXiC+nwIVyGeU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnPwJSxO+vQKhYPFQ6pZMn2TWohsht84M+gauSPL10ZjHwBoOH
-	VrIw+4Ztav6NogztNB9J2WIS5WukZVGX3EyOOY9FOKwFsf+XjRzPAd+pqL5b6m8JjHyZnEXfp57
-	xcau+39pbjXfVF0E5dkss+7a+UJyZ7C1mZRPprUiTSSo60iVeYtlwT5B4zn32xCB6sa8gvYOM3m
-	p5CUt3vdzLTKRIswYss5/MNAOsCb+6wD94NBPsEVVzBiPz5K+Hq2xPUYRMkzSoHNGmBs83i/ols
-	O+NoQ==
-X-Gm-Gg: ASbGncsU++mGI0NhkJdSwVNMmjC1IYH/FcCeNVbS4fIHyWND+QO6x6xfotBFgePTH3J
-	je9mKR62UwV1lpMEuEwn//Jn9kgZ2W2iTZ7Wqe6dNEe/WsqW3EfO2TEnsChCnADxWa9GV
-X-Received: by 2002:a17:907:a4c1:b0:acf:c80d:ad81 with SMTP id a640c23a62f3a-ad1e8d03300mr24484166b.39.1746551251638;
-        Tue, 06 May 2025 10:07:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEELCfRqIOuYUnndVtrp9GHbcIPFv6oQ0mX4mJunFchFQKzR4N7i7UxFMlcDKaCqsfET+x4XtS3/doFGJc8mF0=
-X-Received: by 2002:a17:907:a4c1:b0:acf:c80d:ad81 with SMTP id
- a640c23a62f3a-ad1e8d03300mr24480566b.39.1746551251309; Tue, 06 May 2025
- 10:07:31 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="sfu2ZS2F"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1746555268; x=1778091268;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=KgSwdo/NxotK2V+pYTnW3FkSKp8QmApoafI0ZPFLKGM=;
+  b=sfu2ZS2FCteKTl2pEm6iF1rzO+Kmt0MGGd5/Nswkev36b+JjsrU/+tHx
+   +HYri8T1GbFuzDWDPT8UqgadUV47puwnwM4E7RzlsSQilc1zVh8GVnHOH
+   i3WOXxVRTtg1pNtrZWi4IIXV4NM1gKLCrw571GgOtunkyc/i6iFn6SCfj
+   wfLobnV3dsPej369GXOaBEbgrHg5vXPgn6FS5V3OJj/cwIHDOXf89wkpm
+   1RNs+xs/aAAQozQQXsbT5mo9pSUYO7ZLx59dc0MfXKckcvGWsotwwCGRo
+   GhC0w57B86e8tNvg5z6tgUQeCtaQTYqEWYnd3cixAB7UyKoubQqeB3FZC
+   Q==;
+X-IronPort-AV: E=Sophos;i="6.15,267,1739836800"; 
+   d="scan'208";a="194210162"
+Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
+  by smtp-border-fw-80008.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2025 18:14:26 +0000
+Received: from EX19MTAUWA001.ant.amazon.com [10.0.21.151:22403]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.38.92:2525] with esmtp (Farcaster)
+ id 14401153-5e8d-459a-9dec-01747983d2cc; Tue, 6 May 2025 18:14:26 +0000 (UTC)
+X-Farcaster-Flow-ID: 14401153-5e8d-459a-9dec-01747983d2cc
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWA001.ant.amazon.com (10.250.64.217) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Tue, 6 May 2025 18:14:25 +0000
+Received: from 6c7e67bfbae3.amazon.com (10.187.170.44) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Tue, 6 May 2025 18:14:20 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <memxor@gmail.com>
+CC: <andrii@kernel.org>, <ast@kernel.org>, <bpf@vger.kernel.org>,
+	<brauner@kernel.org>, <casey@schaufler-ca.com>, <daniel@iogearbox.net>,
+	<eddyz87@gmail.com>, <gnoack@google.com>, <haoluo@google.com>,
+	<jmorris@namei.org>, <john.fastabend@gmail.com>, <jolsa@kernel.org>,
+	<kpsingh@kernel.org>, <kuni1840@gmail.com>, <kuniyu@amazon.com>,
+	<linux-security-module@vger.kernel.org>, <martin.lau@linux.dev>,
+	<mic@digikod.net>, <netdev@vger.kernel.org>, <omosnace@redhat.com>,
+	<paul@paul-moore.com>, <sdf@fomichev.me>, <selinux@vger.kernel.org>,
+	<serge@hallyn.com>, <song@kernel.org>, <stephen.smalley.work@gmail.com>,
+	<yonghong.song@linux.dev>
+Subject: Re: [PATCH v1 bpf-next 0/5] af_unix: Allow BPF LSM to scrub SCM_RIGHTS at sendmsg().
+Date: Tue, 6 May 2025 11:14:07 -0700
+Message-ID: <20250506181413.8387-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <CAP01T750x5a9ATX56hV0p+Je2zFfm1unS3ZhCObXY-yt_ar=+w@mail.gmail.com>
+References: <CAP01T750x5a9ATX56hV0p+Je2zFfm1unS3ZhCObXY-yt_ar=+w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250506170425.152177-1-colin.i.king@gmail.com>
-In-Reply-To: <20250506170425.152177-1-colin.i.king@gmail.com>
-From: Ryan Lee <ryan.lee@canonical.com>
-Date: Tue, 6 May 2025 10:07:17 -0700
-X-Gm-Features: ATxdqUGnt11yRJyWyktYtIrCkZT5mDo5sbrkN2hZjNJrjV5n2rzCVahg-DNhbLY
-Message-ID: <CAKCV-6uAdn9SvUFrYqGo0ZzJUtPAYgRFcfHPgmrG_GDt2Ob6Hg@mail.gmail.com>
-Subject: Re: [PATCH][next] apparmor: Fix incorrect profile->signal range check
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: John Johansen <john.johansen@canonical.com>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E . Hallyn" <serge@hallyn.com>, apparmor@lists.ubuntu.com, 
-	linux-security-module@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D044UWB003.ant.amazon.com (10.13.139.168) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-On Tue, May 6, 2025 at 10:04=E2=80=AFAM Colin Ian King <colin.i.king@gmail.=
-com> wrote:
->
-> The check on profile->signal is always false, the value can never be
-> less than 1 *and* greater than MAXMAPPED_SIG. Fix this by replacing
-> the logical operator && with ||.
->
-> Fixes: 84c455decf27 ("apparmor: add support for profiles to define the ki=
-ll signal")
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->  security/apparmor/policy_unpack.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy=
-_unpack.c
-> index 73139189df0f..e643514a3d92 100644
-> --- a/security/apparmor/policy_unpack.c
-> +++ b/security/apparmor/policy_unpack.c
-> @@ -919,7 +919,7 @@ static struct aa_profile *unpack_profile(struct aa_ex=
-t *e, char **ns_name)
->
->         /* optional */
->         (void) aa_unpack_u32(e, &profile->signal, "kill");
-> -       if (profile->signal < 1 && profile->signal > MAXMAPPED_SIG) {
-> +       if (profile->signal < 1 || profile->signal > MAXMAPPED_SIG) {
->                 info =3D "profile kill.signal invalid value";
->                 goto fail;
->         }
-> --
-> 2.49.0
-Reviewed-by: Ryan Lee <ryan.lee@canonical.com>
+From: Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Date: Tue, 6 May 2025 18:08:23 +0200
+> On Tue, 6 May 2025 at 11:15, Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > On Tue, May 06, 2025 at 12:49:11AM +0200, Kumar Kartikeya Dwivedi wrote:
+> > > On Mon, 5 May 2025 at 23:58, Kuniyuki Iwashima <kuniyu@amazon.com> wrote:
+> > > >
+> > > > As long as recvmsg() or recvmmsg() is used with cmsg, it is not
+> > > > possible to avoid receiving file descriptors via SCM_RIGHTS.
+> > > >
+> > > > This behaviour has occasionally been flagged as problematic.
+> > > >
+> > > > For instance, as noted on the uAPI Group page [0], an untrusted peer
+> > > > could send a file descriptor pointing to a hung NFS mount and then
+> > > > close it.  Once the receiver calls recvmsg() with msg_control, the
+> > > > descriptor is automatically installed, and then the responsibility
+> > > > for the final close() now falls on the receiver, which may result
+> > > > in blocking the process for a long time.
+> > > >
+> > > > systemd calls cmsg_close_all() [1] after each recvmsg() to close()
+> > > > unwanted file descriptors sent via SCM_RIGHTS.
+> > > >
+> > > > However, this cannot work around the issue because the last fput()
+> > > > could occur on the receiver side once sendmsg() with SCM_RIGHTS
+> > > > succeeds.  Also, even filtering by LSM at recvmsg() does not work
+> > > > for the same reason.
+> > > >
+> > > > Thus, we need a better way to filter SCM_RIGHTS on the sender side.
+> > > >
+> > > > This series allows BPF LSM to inspect skb at sendmsg() and scrub
+> > > > SCM_RIGHTS fds by kfunc.
+> > > >
+> > > > Link: https://uapi-group.org/kernel-features/#disabling-reception-of-scm_rights-for-af_unix-sockets #[0]
+> > > > Link: https://github.com/systemd/systemd/blob/v257.5/src/basic/fd-util.c#L612-L628 #[1]
+> > > >
+> > >
+> > > This sounds pretty useful!
+> > >
+> > > I think you should mention the cases of possible DoS on close() or
+> > > flooding, e.g. with FUSE controlled fd/NFS hangs in the commit log
+> > > itself.
+> > > I think it's been an open problem for a while now with no good solution.
+> > > Currently systemd's FDSTORE=1 for PID 1 is susceptible to the same
+> > > problem, even if the underlying service isn't root.
+> > >
+> > > I think it is also useful for restricting what individual file
+> > > descriptors can be passed around by a process.
+> > > Say restricting usage of an fd to a process and its children, but not
+> > > allowing it to be shared with others.
+> > > Send side hook is the right point to enforce it.
+> > >
+> > > Therefore exercising scm_fp_list would be a good idea.
+> >
+> > No, that's a terrible idea. If the receiver expects 10 file descriptors
+> > and suddenly some magically disappear or the order gets messed up that's
+> > terrible for security. It's either close all or nothing.
+> 
+> I was talking about exercising/reading it in the selftest, not
+> exposing anything new.
+> 
+> Yes, the policy should be close all or nothing, but it can still be
+> used to deny sendmsg when one of the descriptors being passed isn't in
+> the allowed set.
+> You just return 0 or an error. No need to scrub, no need to disappear
+> some fds and let the message pass, which can be problematic.
+> 
+> >
+> > > We should provide some more examples of the filtering policy in the selftests.
+> > > Maybe a simple example, e.g. only memfd or a pipe fd can be passed,
+> > > and nothing else.
+> > > It would require checking file->f_ops.
+> >
+> > There's not going to be poking around in file->f_ops for this.
+> 
+> I don't think any poking is required. There's no need to expose anything extra.
+> 
+> Really, all that is needed is for an LSM hook to exist and the program
+> to say success or failure.
+> Even the scrub fds stuff can be dropped.
+> 
+> The program can simply inspect the scm_fp_list and if it doesn't look
+> ok, deny the sendmsg.
+> It's already there inside unix_skb_parms.
+> 
+> It just means the program can look at the file (there's no helper
+> needed to be exposed) and make a decision, just like in the rest of
+> the BPF LSM hooks.
+> I think a socket option makes sense too, but ideally we can have both
+> the hook and the socket option.
+> 
+> The socket option has the advantage that user space can set it itself
+> conveniently, without having to load a BPF program.
+> Meanwhile the hook can be more fine grained in decision making and be
+> imposed by some central entity.
+> 
+> Does this sound reasonable? I don't think it requires anything beyond
+> simply defining the hook and letting a program run there.
+> No poking into VFS internals etc. or silently dropping file
+> descriptors and letting it succeed.
+> 
+> So mostly patch 1-2 and then another to add a setsockopt flag.
 
->
->
+Right, patch 1-2 is enough to let BPF LSM to filter each skb.
+
+I'll also add the socket option too.
+
+Thanks!
