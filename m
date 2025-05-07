@@ -1,145 +1,183 @@
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-8fab.mail.infomaniak.ch (smtp-8fab.mail.infomaniak.ch [83.166.143.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6806072628;
-	Wed,  7 May 2025 11:12:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BF04214801
+	for <linux-security-module@vger.kernel.org>; Wed,  7 May 2025 11:51:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746616334; cv=none; b=RO0q0OAZhRPhyHm4DEG2htvrLrQmYlFsgQBZBRkcBqDY1kPMZwh+TfmS6mKMCkZZreGK0D8EtxMwOE73GWs0n0txR7PeYOFVNLEJl0UdI9m7p9ijhIsG8hLmkwYjZshS4uoxufLJQmV9vX+UTOrEiD3jdWl5SYskPMQ+U8aYbiI=
+	t=1746618702; cv=none; b=q7T50kbvZNre3hF6ejDXtDtaTPARZb8O7oxEhqd58WVOwNP78yx811NkGzrEfF+2oMOaq314a3FjmfovFav5+KzHsrexQrI2G+wa3E0rO37Ya2tTjnGtFycYWRy+a1IjhMjFT2wSHpVeekb7fsC1YxmJk+y/fj4T2WjMPIbT6aA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746616334; c=relaxed/simple;
-	bh=AWug2EJD8Zb0BHxi2TAv1N/jAtrFEH1V7Ij6zoalq0I=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=u7wQ12Uc8kazdLb6jWfFNsuIjmGQZW3wiYcT5RA+LYz76gqbW/pavtmsvwWnzQcpCVOoBfU4gBZndGmT45CpUQpyuntgcu/vM13vyOZ6i0fxCD6NHY8QSQ56rd4XIrMqVzMzb3yvBHgx9+omIZwu59syzvfncmWCP2liuBHtd9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mh78cifO; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1746618702; c=relaxed/simple;
+	bh=kIPJFzOybRVKUZttYLjyp0h855fjPHYRSmr7h4xhlBc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eLtCqTZZu5qbvO0o7Sy5TKYMokmQZSOOxJUE/bLyrrUgaGUVOX4oeauRwLyrPpCEmt7kHbKjf1Pa2UT5W03RXnRyETdytLVMduR2JcNOB9I0QKpYNLf97EldnF3wIgc/euQldT20sQafOy8R73s4W1zGxMJIjRQD15yOxTJE5C0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=GM5+LqYg; arc=none smtp.client-ip=83.166.143.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mh78cifO"
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-af6a315b491so6097377a12.1;
-        Wed, 07 May 2025 04:12:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746616332; x=1747221132; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CsBfD4Pb9OMNX/WaFeLXYdbl+5f37DSDVYvpAffwCyU=;
-        b=mh78cifOutAHTfVnDmaOhEUuZTaKAMQnFWgX4mn8RzTc09wU0/+gh5HkfUQbc6Zyqr
-         TBEL9faImAP1gfHXuNoKi2mYD0oQDnUqflcHJU8PsnmkrxCnqG/koMeuHCXyFs0BRsG+
-         7PDgzqDmUPCX+E8H+SR1U6hkVusPgygpmI4WJZntydT9y1h7nhBu+KVboSdL7lFe7AEK
-         OAQdk7WVzz5aYUO9CHWQPJdy/sKQiPq0RUq9YlW9ekewwQBe2hSlRP6FFypIXwO4DFhT
-         Z6N5/6OqZ2OcS+u0aEuZWwaOmkddXKZ6UHLmvrO0U/5Jt2TZE9CFcCV3PxBzQW59kID6
-         Nefg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746616332; x=1747221132;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CsBfD4Pb9OMNX/WaFeLXYdbl+5f37DSDVYvpAffwCyU=;
-        b=Vf1jjc+kjz3imly/MKvrAYt3sJZ25vjcYbj3JaewKaf0wbOAie0cyLB25MZLW/1KLc
-         +MxEU0d0+IZ34T9dVQ+FarmHCntfZzTFx7gkKkGuyz9PWNr29rrTS20tKfVtjatZc/AB
-         b6DSTU3ZWvWlDnjvnJO6OOVl+byJAFlyhPQLU6ZIFIPLVmUza/+rkIgOZp1PIvH6GzH/
-         kgjToAz74E2VAMH7jAf28wTnvdkSrnZJ7Hi4eRUmPHgWRNhkXtU+qpTStsSzXA9hShv/
-         +0dluhAZgsFcVl1DF48V0V+4fkE4dsgF0APObc9pHEr82+pCesn9lp2J5eVxk5lOXr1i
-         nVaA==
-X-Forwarded-Encrypted: i=1; AJvYcCUFFv/z/uuh+RPaysG0dMf03wNvil2q8nWnODWkQdCtgJO11c0FLnqX4N0Ik7DDvFBt9YyB+4oKWM1mPSY=@vger.kernel.org, AJvYcCWBtPWiFBdMZXTnTj2SaC2ChdfuWqsJ9+qj770ODva99wPh+aOyrGIFp0seUMEjgUmIQOYVVlNHW67jw8DDwI/wa1smeLMl@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtCDyE0tI44+oxpE6t5Y5DArkb/jHzRdfMws8tAKgw/q0PbWes
-	dpAEYdzOAt4AMOtwkFEtJ/s55xamsh2Fjmto1bU9EgRLzFEcGx15
-X-Gm-Gg: ASbGncupaWKuMQy/uEYAglPwx0Cyf4MTQkJzk8gNb4a0vIqXakUnZJrE50lv/4X+vI3
-	nN6VZBYh/d673m52KVJSwQPCud8GbmARXUXlTDhmra3zWXp5e/GdN2VATkWM7Km2n8MlYu5e9KE
-	EdY8exuGMfUAUYtaDLQuAvdguMmDmcZ7lRP5sXrbg8JqPZQr660I+LsjHR0BGAQjMIm7maT6KQm
-	4v6XJ5EtZwH+kb4ILJqMSXHZQucWn128W73/U9gjTPMYMZ3Qo5r4HX/etUooz4jabFbEsxrFL+6
-	dcMLE2Q6W56xjFWq3ii+oy3tlh/C6HN68anRFwQhh+Nw19Q1l1HhtH5EmWoEPbfzpYHSKw3FNae
-	bpoRZnUzghGnXDw==
-X-Google-Smtp-Source: AGHT+IG/CCghFGRg+QmTrGaDvtys9QtKLenO0TPTE91OHTJx6hqL4uN/Huw3HaDc+dTeyr0qlGbDFw==
-X-Received: by 2002:a17:902:f381:b0:22e:663f:c4b with SMTP id d9443c01a7336-22e663f0fcamr17324135ad.26.1746616332484;
-        Wed, 07 May 2025 04:12:12 -0700 (PDT)
-Received: from localhost.localdomain ([14.22.11.163])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22e6612e8e1sm11326985ad.132.2025.05.07.04.12.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 May 2025 04:12:11 -0700 (PDT)
-From: alexjlzheng@gmail.com
-X-Google-Original-From: alexjlzheng@tencent.com
-To: paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com
-Cc: greg@kroah.com,
-	chrisw@osdl.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jinliang Zheng <alexjlzheng@tencent.com>
-Subject: [PATCH v2] securityfs: fix missing of d_delete() in securityfs_remove()
-Date: Wed,  7 May 2025 19:12:04 +0800
-Message-Id: <20250507111204.2585739-1-alexjlzheng@tencent.com>
-X-Mailer: git-send-email 2.39.3
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="GM5+LqYg"
+Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6b])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Zstry50t6zt16;
+	Wed,  7 May 2025 13:51:30 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1746618690;
+	bh=ukRcsiWioIJpQnZONA7OOVHLy1rF/BILBsY01ynF49o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GM5+LqYgqtdWSoNl6eaQIrraLqbPVitAXzcP6S0KIDJ7OQKcfOHf3zC7G/3SwUJN3
+	 7YDEkyhiS3lDk3BxovPVOnTNfOcMkWX9Qzdeef5kNZ8gCB/YDpPzq+HJaL7m/9YbT9
+	 fCrJQlqK0c83g4qp/xga2NlY/X5iszJ0UFyvvCqg=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Zstrx6DJNzTf6;
+	Wed,  7 May 2025 13:51:29 +0200 (CEST)
+Date: Wed, 7 May 2025 13:51:28 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Kuniyuki Iwashima <kuniyu@amazon.com>
+Cc: brauner@kernel.org, alexander@mihalicyn.com, bluca@debian.org, 
+	daan.j.demeyer@gmail.com, davem@davemloft.net, david@readahead.eu, edumazet@google.com, 
+	horms@kernel.org, jack@suse.cz, jannh@google.com, kuba@kernel.org, 
+	lennart@poettering.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	me@yhndnzj.com, netdev@vger.kernel.org, oleg@redhat.com, pabeni@redhat.com, 
+	viro@zeniv.linux.org.uk, zbyszek@in.waw.pl, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH RFC v3 08/10] net, pidfs, coredump: only allow
+ coredumping tasks to connect to coredump socket
+Message-ID: <20250507.ohsaiQuoh3uo@digikod.net>
+References: <20250506-zugabe-bezog-f688fbec72d3@brauner>
+ <20250506191817.14620-1-kuniyu@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250506191817.14620-1-kuniyu@amazon.com>
+X-Infomaniak-Routing: alpha
 
-From: Jinliang Zheng <alexjlzheng@tencent.com>
+On Tue, May 06, 2025 at 12:18:12PM -0700, Kuniyuki Iwashima wrote:
+> From: Christian Brauner <brauner@kernel.org>
+> Date: Tue, 6 May 2025 10:06:27 +0200
+> > On Mon, May 05, 2025 at 09:10:28PM +0200, Jann Horn wrote:
+> > > On Mon, May 5, 2025 at 8:41 PM Kuniyuki Iwashima <kuniyu@amazon.com> wrote:
+> > > > From: Christian Brauner <brauner@kernel.org>
+> > > > Date: Mon, 5 May 2025 16:06:40 +0200
+> > > > > On Mon, May 05, 2025 at 03:08:07PM +0200, Jann Horn wrote:
+> > > > > > On Mon, May 5, 2025 at 1:14 PM Christian Brauner <brauner@kernel.org> wrote:
+> > > > > > > Make sure that only tasks that actually coredumped may connect to the
+> > > > > > > coredump socket. This restriction may be loosened later in case
+> > > > > > > userspace processes would like to use it to generate their own
+> > > > > > > coredumps. Though it'd be wiser if userspace just exposed a separate
+> > > > > > > socket for that.
+> > > > > >
+> > > > > > This implementation kinda feels a bit fragile to me... I wonder if we
+> > > > > > could instead have a flag inside the af_unix client socket that says
+> > > > > > "this is a special client socket for coredumping".
+> > > > >
+> > > > > Should be easily doable with a sock_flag().
+> > > >
+> > > > This restriction should be applied by BPF LSM.
+> > > 
+> > > I think we shouldn't allow random userspace processes to connect to
+> > > the core dump handling service and provide bogus inputs; that
+> > > unnecessarily increases the risk that a crafted coredump can be used
+> > > to exploit a bug in the service. So I think it makes sense to enforce
+> > > this restriction in the kernel.
+> > > 
+> > > My understanding is that BPF LSM creates fairly tight coupling between
+> > > userspace and the kernel implementation, and it is kind of unwieldy
+> > > for userspace. (I imagine the "man 5 core" manpage would get a bit
+> > > longer and describe more kernel implementation detail if you tried to
+> > > show how to write a BPF LSM that is capable of detecting unix domain
+> > > socket connections to a specific address that are not initiated by
+> > > core dumping.) I would like to keep it possible to implement core
+> > > userspace functionality in a best-practice way without needing eBPF.
+> > > 
+> > > > It's hard to loosen such a default restriction as someone might
+> > > > argue that's unexpected and regression.
+> > > 
+> > > If userspace wants to allow other processes to connect to the core
+> > > dumping service, that's easy to implement - userspace can listen on a
+> > > separate address that is not subject to these restrictions.
+> > 
+> > I think Kuniyuki's point is defensible. And I did discuss this with
+> > Lennart when I wrote the patch and he didn't see a point in preventing
+> > other processes from connecting to the core dump socket. He actually
+> > would like this to be possible because there's some userspace programs
+> > out there that generate their own coredumps (Python?) and he wanted them
+> > to use the general coredump socket to send them to.
+> > 
+> > I just found it more elegant to simply guarantee that only connections
+> > are made to that socket come from coredumping tasks.
+> > 
+> > But I should note there are two ways to cleanly handle this in
+> > userspace. I had already mentioned the bpf LSM in the contect of
+> > rate-limiting in an earlier posting:
+> > 
+> > (1) complex:
+> > 
+> >     Use a bpf LSM to intercept the connection request via
+> >     security_unix_stream_connect() in unix_stream_connect().
+> > 
+> >     The bpf program can simply check:
+> > 
+> >     current->signal->core_state
+> > 
+> >     and reject any connection if it isn't set to NULL.
+> > 
+> >     The big downside is that bpf (and security) need to be enabled.
+> >     Neither is guaranteed and there's quite a few users out there that
+> >     don't enable bpf.
 
-Consider the following module code (just an example to make it easier to
-illustrate the problem, in fact the LSM module will not be dynamically
-unloaded):
+The kernel should indeed always have a minimal security policy in place,
+LSM can tailored that but we should not assume that a specific LSM with
+a specific policy is enabled/configured on the system.
 
-  static struct dentry *dentry;
+> > 
+> > (2) simple (and supported in this series):
+> > 
+> >     Userspace accepts a connection. It has to get SO_PEERPIDFD anyway.
+> >     It then needs to verify:
+> > 
+> >     struct pidfd_info info = {
+> >             info.mask = PIDFD_INFO_EXIT | PIDFD_INFO_COREDUMP,
+> >     };
+> > 
+> >     ioctl(pidfd, PIDFD_GET_INFO, &info);
+> >     if (!(info.mask & PIDFD_INFO_COREDUMP)) {
+> >             // Can't be from a coredumping task so we can close the
+> > 	    // connection without reading.
+> > 	    close(coredump_client_fd);
+> > 	    return;
+> >     }
+> > 
+> >     /* This has to be set and is only settable by do_coredump(). */
+> >     if (!(info.coredump_mask & PIDFD_COREDUMPED)) {
+> >             // Can't be from a coredumping task so we can close the
+> > 	    // connection without reading.
+> > 	    close(coredump_client_fd);
+> > 	    return;
+> >     }
+> > 
+> >     // Ok, this is a connection from a task that has coredumped, let's
+> >     // handle it.
 
-  static int __init securityfs_test_init(void)
-  {
-          dentry = securityfs_create_dir("standon", NULL);
-          return PTR_ERR(dentry);
-  }
+What if the task send a "fake" coredump and just after that really
+coredump?  There could be a race condition on the server side when
+checking the coredump property of this pidfd.
 
-  static void __exit securityfs_test_exit(void)
-  {
-          securityfs_remove(dentry);
-  }
+Could we add a trusted header to the coredump payload that is always
+written by the kernel?  This would enable to read a trusted flag
+indicating if the following payload is a coredumped generated by the
+kernel or not.
 
-  module_init(securityfs_test_init);
-  module_exit(securityfs_test_exit);
-
-and then:
-
-  insmod /path/to/thismodule
-  cd /sys/kernel/security/standon     <- we hold 'standon'
-  rmmod thismodule                    <- 'standon' don't go away
-  insmod /path/to/thismodule          <- Failed: File exists!
-
-Although the LSM module will not be dynamically added or deleted after
-the kernel is started, it may dynamically add or delete pseudo files
-for status export or function configuration in userspace according to
-different status, which we are not prohibited from doing so.
-
-In addition, securityfs_recursive_remove() avoids this problem by calling
-__d_drop() directly. As a non-recursive version, it is somewhat strange
-that securityfs_remove() does not clean up the deleted dentry.
-
-Fix this by adding d_delete() in securityfs_remove().
-
-Fixes: b67dbf9d4c198 ("[PATCH] add securityfs for all LSMs to use")
-Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
----
-changelog:
-v2: Modify the commit message to make it clearer
-v1: https://lore.kernel.org/all/20250426150931.2840-1-alexjlzheng@tencent.com/
----
- security/inode.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/security/inode.c b/security/inode.c
-index da3ab44c8e57..d99baf26350a 100644
---- a/security/inode.c
-+++ b/security/inode.c
-@@ -306,6 +306,7 @@ void securityfs_remove(struct dentry *dentry)
- 			simple_rmdir(dir, dentry);
- 		else
- 			simple_unlink(dir, dentry);
-+		d_delete(dentry);
- 		dput(dentry);
- 	}
- 	inode_unlock(dir);
--- 
-2.49.0
-
+> > 
+> >     The crux is that the series guarantees that by the time the
+> >     connection is made the info whether the task/thread-group did
+> >     coredump is guaranteed to be available via the pidfd.
+> >  
+> > I think if we document that most coredump servers have to do (2) then
+> > this is fine. But I wouldn't mind a nod from Jann on this.
+> 
+> I like this approach (2) allowing users to filter the right client.
+> This way we can extend the application flexibly for another coredump
+> service.
