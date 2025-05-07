@@ -1,90 +1,128 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F8041D432D;
-	Wed,  7 May 2025 06:26:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 080261E8348
+	for <linux-security-module@vger.kernel.org>; Wed,  7 May 2025 06:33:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746599195; cv=none; b=HLoaW1qt2rq+Zn/zCrYp2ffDf3FvOjbRj4Egdjr+KLF40Nkgid0NuAc7FN5oRLPTwsSSkvDGTCPiPhEuIoperlc76sIvtqEw00S9XKziTSQB8MwdEifrPzV5vXL2F9nHrr1lBp9RzKjj+XdTQoNgGKJUQEs2r6U+R2fgfexb3B8=
+	t=1746599620; cv=none; b=TwsffHl++T10Ovt3ZZR/aaDXQEa1BbTJ9pnJAHjYHvV9s3cKZX71moE0Saepvb3ttrT08yhd/ETf6rokKaxgsb9Ffz6KpDMCV41z5KpPWxiBiIfm4wWQux1S7vUYIzrJ59rrPeFfeQylhesC+S9wxgICg5zRDct8i+5+ppRwiLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746599195; c=relaxed/simple;
-	bh=GaA/zJXRvdyzWhvBvSQORxWGe7IYP25MXqgGd/qtJd4=;
+	s=arc-20240116; t=1746599620; c=relaxed/simple;
+	bh=uMAhnwLIriUAjWznAGzjKTzWgRC9VyoYGCsYbnhwUYg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UrGhourTA9XAT1G2BXb4T8cPB0bRM7to0h2ihajN/mqJHWya8vDC1WJZ+/8lQ9wYcYyafO9tZE4r6RzuM5I4qg26EC5XaD9uZR+wZGPMPgEL7NTBFx7Sgl0o0SsQjpTTUKSU6rxmr0B8ufFDFoCoegqwpkggI4nNPjS2OeLNo/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dICMRTfx; arc=none smtp.client-ip=10.30.226.201
+	 To:Cc:Content-Type; b=r92M2ppaifLI7ZBVg8K/rTyMnYl10K/jiLK/YTD53wra418zf6cFC1cOcJsh6ae+Yd2glBU9HSGv8b35QqmDaE3zTiAGKfiiy8e+q4nmVZ9iDfHzyqy2JhRml0tsb8KOAdL1RyLB7X/nDmdVYZjlUUcXTZjemR+ttg0j75NI6FU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=cMEN7xmz; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dICMRTfx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FA21C4CEEF;
-	Wed,  7 May 2025 06:26:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746599193;
-	bh=GaA/zJXRvdyzWhvBvSQORxWGe7IYP25MXqgGd/qtJd4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=dICMRTfxofPY2kTbGCvmkRmicrGpiedx3MsMAhN5m8kr4HSy13nbYE/SPIJYr71/E
-	 N33TTNdB6ASTnsleY7JRYZ3nRLIk6Zs1bvJubEr8/UbG2IfPTqW4sSCS7tBIEJgwLf
-	 nqfCxcZwSkOgO9s4y/KKGBimU0MYh1h2vctEMjOSJjH32wrATWZgIvjnP1VFpoiD/+
-	 NzrSAk3uPD0oP0/i3bnAokgZFjaOSrZrKnBFKtbt8vkB5FbrLxJ17iYCEmiBEPDoeY
-	 EYgpBv7ohLEsMbiLKP5GMYj1SCE0TvCyTSpHBirSCJ/8Hn13lFs4n6fgmBVgPCulqE
-	 RUWoCKnTMjQhQ==
-Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-40337dd3847so3646217b6e.0;
-        Tue, 06 May 2025 23:26:33 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUL0HaWWyyQvZ9T6aO92PeQBF6EnSAD1v7Lbv/pRnYC+BYcOCNSw+PbUQydIo3+EjxSjM+okWETUgeo8ODV@vger.kernel.org, AJvYcCVm8YyqquM2BK6EBADs3J/FOL5L79NWE1hnkTSUYfkqYxljcQ3PJo4ynW23ssk2Ofb97hg7FCxmQK8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrnN3aGpEE4gYP1dK273lEl4ookg1qfednbWGtxRgVv+qjduzr
-	Np6hUomd3bHi3Otu1IttX7PWHVIW6htiVlutjF2qcEiCmGxsMPlD5u7lZNiSMaEN4UOwDt3uegj
-	PLtpVYSFuFgAkKt+lD95Vjw4GK/k=
-X-Google-Smtp-Source: AGHT+IE6OoQBQFNIo2RMuI36yMDwzxZHGLigZ5rk40AM8etZx9c58IROyGc/jRXUBwa/wPABVFxm/WCKiib7VV1jN8w=
-X-Received: by 2002:a05:6214:529b:b0:6e8:9e8f:cfb with SMTP id
- 6a1803df08f44-6f542a5f62dmr30383316d6.24.1746599182795; Tue, 06 May 2025
- 23:26:22 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="cMEN7xmz"
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ac339f53df9so1282712066b.1
+        for <linux-security-module@vger.kernel.org>; Tue, 06 May 2025 23:33:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1746599616; x=1747204416; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uMAhnwLIriUAjWznAGzjKTzWgRC9VyoYGCsYbnhwUYg=;
+        b=cMEN7xmzt9VOKuBJM5JNrWrM/7Lq51DB7puJe5wdwvUpt7HqqvjmPM5xHymuF4Etyi
+         t2epzc099X2W7iTzevkCpQ3jIjGihkFDS4h1AZ7dDpGVorTbEbOI/qpILx5Ok67XXEHW
+         wpbrqo12IGXOD3YaeMP3bfE8cm1yj4VNroFGnRb0PVKAhQZbhnzEGLmiIzmsYT2GhDk7
+         gddmuKIBSv7vQI4ivamSXIyvlVsytpHbKgRZV5eB7srownU3/mfjdbuLphqDeRWnHVVS
+         shGQuclGEIQzUOwvwZt+3F0RltGT7RzglvoKu1GviSUE7EsqFx9cfRjxDRgxaVv9Qrtz
+         vKQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746599616; x=1747204416;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uMAhnwLIriUAjWznAGzjKTzWgRC9VyoYGCsYbnhwUYg=;
+        b=D5GTsrHLbTut0SHX5M/2zhY2qSkECV2wAbjFwD4pjlnBiuvMkuMyZpL1sXqBB8AU2O
+         5sqs7cPBP66uKVmASXvbwEpq/0cxLqpEh6GHT378fXv76IgoO7LmASi5KclsRbqmLODp
+         RjyNI8ukSNg6dKxXnWKgPgf5eDYDJzi6h8ZDx44QVnkZv7HMBf0EtdboqPPv8qKZryVv
+         q3nvV4SRUZO65zBOcTZhIH6JhS+xDMNSTvKogcRbf/A5j3W6T0TIbqXKUQreLmUZakgj
+         fmyCFQ/fOoLQOiPkWf6Z1+nmCdREUMmxVcW4osJ161htsSiS1hRs+DGaoB6nS7Rm26Dc
+         /tjA==
+X-Forwarded-Encrypted: i=1; AJvYcCV6e8vmRyoZ4SsmEP6awj7x3uHQCIrNOePv80adcF18wrVUoePDUihYU01Ucbmyb16+5HvCOBArRBqYON9lTK+8K9W9m+I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgY7R9LIpLN7IrSfkKGKiYQ4xi0TQ2tINo3vNT9LOual2tO0Ip
+	ukJaGOOlTV6hJbE8oeLGVy0VdbTfGydXsgu/bBMfi80m8j4BLEbCHpgiSbiaJ5DpOCAPznlHVb0
+	Mao/trcDJ4x0vYw7WEjiEcV0GnwbYYZqUNxzrfg==
+X-Gm-Gg: ASbGncuG/jNPeHzBKCq/pQJZByYI38JC0Kf3URPFs1IRbl4VxDSRFosTS6f3YOGldfR
+	LGKoSPuaNgso8sFxCVuFDQ/AJmJxBnWwVgSqjCp20iXdPUE+JAgH7FhnWmn71PxRcwBZNds9aFL
+	T/S+Ik/DGwtCWKvjthhZqyUGFb/TBLNg78g3/XJVLKRMomI4oMkMD5LwV6ircgEw==
+X-Google-Smtp-Source: AGHT+IHxOk1DDQlqgVtRtzVrvtv+KQ+N8hq4sPyVAvu/WTYpqvLk0tXsOwVbxO+K6hN7KxjpnpMjq49TMM7Kxdczpcs=
+X-Received: by 2002:a17:907:a08f:b0:ace:c2ab:a729 with SMTP id
+ a640c23a62f3a-ad1e8cd5fb7mr222232866b.42.1746599616299; Tue, 06 May 2025
+ 23:33:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250506143254.718647-1-maxime.belair@canonical.com> <20250506143254.718647-2-maxime.belair@canonical.com>
-In-Reply-To: <20250506143254.718647-2-maxime.belair@canonical.com>
-From: Song Liu <song@kernel.org>
-Date: Tue, 6 May 2025 23:26:11 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW4qY9B3KdhqrUOZoNBWQmO_RDwbH46my314WxrFwxbwkQ@mail.gmail.com>
-X-Gm-Features: ATxdqUEG2jVvCzrgMgUy-LTFDpzXf-8Zg-TeGO0jYs2AI_kPt5jR1N9qESQfZXI
-Message-ID: <CAPhsuW4qY9B3KdhqrUOZoNBWQmO_RDwbH46my314WxrFwxbwkQ@mail.gmail.com>
-Subject: Re: [PATCH 1/3] Wire up the lsm_manage_policy syscall
-To: =?UTF-8?Q?Maxime_B=C3=A9lair?= <maxime.belair@canonical.com>
-Cc: linux-security-module@vger.kernel.org, john.johansen@canonical.com, 
-	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, mic@digikod.net, 
-	kees@kernel.org, stephen.smalley.work@gmail.com, casey@schaufler-ca.com, 
-	takedakn@nttdata.co.jp, penguin-kernel@i-love.sakura.ne.jp, 
-	linux-api@vger.kernel.org, apparmor@lists.ubuntu.com, 
+References: <20250306082615.174777-1-max.kellermann@ionos.com>
+ <20250309151907.GA178120@mail.hallyn.com> <CAKPOu+_vTuZqsBLfRH+kyphiWAtRfWq=nKAcAYu=Wn2JBAkkYg@mail.gmail.com>
+ <20250506132158.GA682102@mail.hallyn.com> <CAKPOu+9JCLVpJ-g_0WwLm5oy=9sq=c9rmoAJD6kNatpMZbbw9w@mail.gmail.com>
+ <CACmP8U+aLY7wmEqdb=a_tpDCY5LaPGb46DU+jSD3bCXX=JUAuA@mail.gmail.com>
+In-Reply-To: <CACmP8U+aLY7wmEqdb=a_tpDCY5LaPGb46DU+jSD3bCXX=JUAuA@mail.gmail.com>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Wed, 7 May 2025 08:33:25 +0200
+X-Gm-Features: ATxdqUGgj7GRkdrDE2HhvGUTjaPAjkb2odBFmjaet1H89q27DW5giCWFSRk2X80
+Message-ID: <CAKPOu+_=ocLeEqcaSMjb5qqrvi6KAu3GYJa19Fqz_dm3a5F77w@mail.gmail.com>
+Subject: Re: [PATCH] security/commoncap: don't assume "setid" if all ids are identical
+To: "Andrew G. Morgan" <morgan@kernel.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>, Andy Lutomirski <luto@kernel.org>, paul@paul-moore.com, 
+	jmorris@namei.org, kees@kernel.org, linux-security-module@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 6, 2025 at 7:40=E2=80=AFAM Maxime B=C3=A9lair
-<maxime.belair@canonical.com> wrote:
->
-> Add support for the new lsm_manage_policy syscall, providing a unified
-> API for loading and modifying LSM policies without requiring the LSM=E2=
-=80=99s
-> pseudo-filesystem.
->
-> Benefits:
->   - Works even if the LSM pseudo-filesystem isn=E2=80=99t mounted or avai=
-lable
->     (e.g. in containers)
->   - Offers a logical and unified interface rather than multiple
->     heterogeneous pseudo-filesystems.
+On Wed, May 7, 2025 at 5:16=E2=80=AFAM Andrew G. Morgan <morgan@kernel.org>=
+ wrote:
+> If a setuid program execs itself, does the presence of this code undo
+> any protection the kernel afforded it on its first invocation?
 
-These two do not feel like real benefits:
-- Not working in containers is often not an issue, but a feature.
-- One syscall cannot fit all use cases well...
+What protection do you mean, and what behavior do you expect when
+setid execs itself? I see this affects:
 
->   - Avoids overhead of other kernel interfaces for better efficiency
+1. reset effective ids to real ids (only affects NO_NEW_PRIVS)
+2. new cap_permitted cannot be higher than old cap_permitted
+3. clear cap_ambient
+4. clear pdeath_signal (in begin_new_exec)
+5. reset stack limits (in begin_new_exec)
 
-.. and it is is probably less efficient, because everything need to
-fit in the same API.
+About these (from my very limited knowledge of this part of the kernel):
 
-Overall, this set doesn't feel like a good change to me.
+1. is my primary goal, and really no new privs gained by allowing the
+process to keep existing ids
+2. only ever changes anything if new cap_permitted is higher, but if
+that's the case, the is_setid check is irrelevant because __cap_gained
+is true, therefore no change with my patch
+3. as I already described, the kernel is wrong (or the documentation
+is wrong), and my patch adjusts kernel to behave as documented
+4. I don't see how this is dangerous for anything regarding re-exec;
+if pdeath_signal wasn't reset on the first exec, it's safe to keep it
+after the re-exec, too
+5. same as 4, I think
 
-Thanks,
-Song
+Did I miss anything?
+
+> FWIW I ran the libcap quicktest.sh script against your change and it
+> doesn't break any capability thing I test for when making libcap
+> releases.
+
+Thanks for taking the time to run these tests. I'm glad the existing
+tests didn't find any obvious bugs. If we identify an actual problem
+with my patch, let's write a new test that fails with my patch!
+
+> That being said, in general this whole zoo of *[ug]id values
+> and their subtle behavior is not casually obvious. I'd recommend using
+> a userspace workaround for your use case, and not changing the legacy
+> behavior of the kernel.
+
+What userspace workaround would be possible? The only thing that comes
+to my mind is to apply NO_NEW_PRIVS in the child process after exec -
+but that's too late, because arbitrary untrusted code has already been
+executed at this point. This means I lose NO_NEW_PRIVS completely,
+because the attacker can simply skip the call.
+
+Max
