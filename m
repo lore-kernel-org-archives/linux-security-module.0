@@ -1,72 +1,95 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-8fac.mail.infomaniak.ch (smtp-8fac.mail.infomaniak.ch [83.166.143.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDEF128B7F0;
-	Wed,  7 May 2025 18:22:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12F7F78F2F
+	for <linux-security-module@vger.kernel.org>; Wed,  7 May 2025 18:34:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746642148; cv=none; b=FwVHuCOV7Hj5PcdBWsG/WgtYapEOL83WoFqMEkvhT5PHFRRLbwMzfPr0N/7yiFk4YqJpCp/ZOIdj/f0WZieyY5kUxN4SaCw13nZzh6B5Zv3kClFrKlZv5zxZYHWQ/lS1D7Mab8GqN4PpW0OKN3a/CkvTern2jvvhDg07hYlGB2E=
+	t=1746642866; cv=none; b=TWpvKPBWv6YAkWwQUtE7JYu/d/0NmKQ9oGKQz2V3YSq4QX7JJAQhof/hG99HOqY6Gty8yV3HDeUMr1SV4DnDfXqiuCfHIB64WuqQsKPv4YLWBpF6nKfxfueQ4MksGbZaFJHBxZ4m91CGS41qPb/r3O3k0amogkistkv1tx56z4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746642148; c=relaxed/simple;
-	bh=YMcr7kQ9TGaTP6WhqfZiDNaymUksVxM7RBsyZue/exk=;
+	s=arc-20240116; t=1746642866; c=relaxed/simple;
+	bh=NBToG/AciZDbMvzA31ccgEUcWNBjM7xnKTulT/6/qgw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PZysm5zbaCya86x2ZX1+gWWl4QlzqtzfGb+tynBy4bNSZMkOo2dH0jRZaLtM8vvYIYrtuT+SBr1olsZTGyHNlM3vwezfCNUHx2UvLNnASlQqPapgC1kO89ijsm7/17DNQtCIXNZdjzIdK7aVDgczZI2NtbQFuV3lPYzw4amq1YY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kArIe70s; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=kcd4lKOQ1Sz6rnTeP0yGFuyMistUqxf9G2ghSsbTCaZuUoCfRkPVGZD2xnsGN12C3UoDbvMyKFGAYyc4iCTkKOPtQIBSQYQJPvxYOVVASn66RuLOGrNm4Omz4e2OBpQEuORtx/KVTiCrFAXc4fsLlGvT81k8ZcY6m97eydPEHO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=U1Cj1AO+; arc=none smtp.client-ip=83.166.143.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kArIe70s"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BDE8C4CEE2;
-	Wed,  7 May 2025 18:22:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746642147;
-	bh=YMcr7kQ9TGaTP6WhqfZiDNaymUksVxM7RBsyZue/exk=;
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="U1Cj1AO+"
+Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Zt3nh438nzwky;
+	Wed,  7 May 2025 20:34:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1746642856;
+	bh=UDOvGdA2DhLPcDKhb29sc57SUIgsv1FWMsjXSpnI7XE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kArIe70suXHlXZo0TV+JN/3u2UOxD+7Wnj5//RanirT8XGGST48Cq2TG35hw0Z7Fr
-	 UWNR5TDLpwEXsfC33lcbuzTDQ5f+O8bD4Gn6w3Jr7YaUIwSJbQOnJtxUocmVtFxNVE
-	 aGFiRZTyZMpNd4jGQ8kI7pxc7mQl2pXAnSMeBC1cuqrgDCb4JAP1cdDy3JpM43jACf
-	 BKpvKrUq9hDaiqZVf5uNcwhpLrXdarNIGqD7pouUa9gW0iKYyxFgeHW5Tf8aNXVgZF
-	 1gAz0R8tZedOmkHmd2KIOUhjmzVIorHzuYLnK5oe7p42v2BpEpmlsIQCM356k+k3RT
-	 /Hti7w7Bm9udg==
-Date: Wed, 7 May 2025 12:22:22 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, kernel test robot <lkp@intel.com>,
-	Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>, linux-nvme@lists.infradead.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Marco Elver <elver@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org,
-	x86@kernel.org, kasan-dev@googlegroups.com,
-	linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev, linux-riscv@lists.infradead.org,
-	linux-s390@vger.kernel.org, linux-efi@vger.kernel.org,
-	linux-hardening@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, sparclinux@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH 1/8] nvme-pci: Make nvme_pci_npages_prp() __always_inline
-Message-ID: <aBuk3nBDOv_6wFCT@kbusch-mbp.dhcp.thefacebook.com>
-References: <20250507180852.work.231-kees@kernel.org>
- <20250507181615.1947159-1-kees@kernel.org>
+	b=U1Cj1AO+93w4KYltrM6aHLMINy5LaUdgfB//HeUnT3hEmubw5QoFEnTj9i3RkwfPy
+	 8jB7fb6hGaDg3EK5XiJPaXts8zDsNppvOo3tNBVDLJLF89g+F6JMT3Ru6v0sm0bMUZ
+	 7/w6GLxVFHw6OEO8u1crVk19ZPF2ObnavFbq8IlY=
+Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Zt3nf2JBczTnN;
+	Wed,  7 May 2025 20:34:14 +0200 (CEST)
+Date: Wed, 7 May 2025 20:34:13 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Kuniyuki Iwashima <kuniyu@amazon.com>, linux-fsdevel@vger.kernel.org, 
+	Jann Horn <jannh@google.com>, Eric Dumazet <edumazet@google.com>, 
+	Oleg Nesterov <oleg@redhat.com>, "David S. Miller" <davem@davemloft.net>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Daan De Meyer <daan.j.demeyer@gmail.com>, 
+	David Rheinsberg <david@readahead.eu>, Jakub Kicinski <kuba@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Lennart Poettering <lennart@poettering.net>, Luca Boccassi <bluca@debian.org>, Mike Yuan <me@yhndnzj.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	Alexander Mikhalitsyn <alexander@mihalicyn.com>, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v4 09/11] pidfs, coredump: allow to verify coredump
+ connection
+Message-ID: <20250507.uS1oa0shi0eu@digikod.net>
+References: <20250507-work-coredump-socket-v4-0-af0ef317b2d0@kernel.org>
+ <20250507-work-coredump-socket-v4-9-af0ef317b2d0@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250507181615.1947159-1-kees@kernel.org>
+In-Reply-To: <20250507-work-coredump-socket-v4-9-af0ef317b2d0@kernel.org>
+X-Infomaniak-Routing: alpha
 
-On Wed, May 07, 2025 at 11:16:07AM -0700, Kees Cook wrote:
-> Force it to be __always_inline to make sure it is always available for
-> use with BUILD_BUG_ON().
+On Wed, May 07, 2025 at 06:13:42PM +0200, Christian Brauner wrote:
+> When a coredump connection is initiated use the socket cookie as the
+> coredump cookie and store it in the pidfd. The receiver can now easily
+> authenticate that the connection is coming from the kernel.
+> 
+> Unless the coredump server expects to handle connection from
+> non-crashing task it can validate that the connection has been made from
+> a crashing task:
+> 
+>    fd_coredump = accept4(fd_socket, NULL, NULL, SOCK_CLOEXEC);
+>    getsockopt(fd_coredump, SOL_SOCKET, SO_PEERPIDFD, &fd_peer_pidfd, &fd_peer_pidfd_len);
+> 
+>    struct pidfd_info info = {
+>            info.mask = PIDFD_INFO_EXIT | PIDFD_INFO_COREDUMP,
+>    };
+> 
+>    ioctl(pidfd, PIDFD_GET_INFO, &info);
+>    /* Refuse connections that aren't from a crashing task. */
+>    if (!(info.mask & PIDFD_INFO_COREDUMP) || !(info.coredump_mask & PIDFD_COREDUMPED) )
+>            close(fd_coredump);
+> 
+>    /*
+>     * Make sure that the coredump cookie matches the connection cookie.
+>     * If they don't it's not the coredump connection from the kernel.
+>     * We'll get another connection request in a bit.
+>     */
+>    getsocketop(fd_coredump, SOL_SOCKET, SO_COOKIE, &peer_cookie, &peer_cookie_len);
+>    if (!info.coredump_cookie || (info.coredump_cookie != peer_cookie))
+>            close(fd_coredump);
+> 
+> The kernel guarantees that by the time the connection is made the
+> coredump info is available.
 
-Reviewed-by: Keith Busch <kbusch@kernel.org>
+Nice approach to tie the coredump socket with the coredumped pidfd!
+This indeed removes previous race condition.
+
+I guess a socket's cookie is never zero?
