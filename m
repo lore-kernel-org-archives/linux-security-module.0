@@ -1,124 +1,91 @@
-Received: from smtp-bc0d.mail.infomaniak.ch (smtp-bc0d.mail.infomaniak.ch [45.157.188.13])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6122629A0
-	for <linux-security-module@vger.kernel.org>; Wed,  7 May 2025 19:02:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDBE421CC45;
+	Wed,  7 May 2025 19:37:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746644540; cv=none; b=mKGGkdlp6KXpvGBwFIRrudDY5LC7vLtXPzCjGYt9AKemXLWo4ZnUb2oJYkKA4xOYnLJY05aMJBvS+vghAdJV/7VIPgz5OLXkg4yZcY4l40pBnDdqVJpHEVla58YM0dPC44fB4la6SOzCHdeHmxQuUsGYr2P4RWxd82a9IIktYzM=
+	t=1746646621; cv=none; b=bqWjTynZMzumvVhLjyE1zTvvj+9uH60p9ydf+sLZKwMufwHpHfney2eklMjIeKW6r6LuLPtco5I6vXgqOfMKwEtGH3gqA6q9zL5xYq7MI/Z/zj0VY+oLO3OeREUZfGFIJ0/EaA0dmoDJRcK8+FJXrX1K1M1a4kpr1tJOVti3uv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746644540; c=relaxed/simple;
-	bh=14SF2zVGjquBVCZrvqvO4Pp2VtYQB4FXZC15Ij299Ho=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=un1NN+cqIgqQwjerxqcWSh8rAv4ommLORIMUuK6VGja7pOHshwcAzjnu4qrqYPo3MtK1kBim5Ivw2+RGuJpo0LlsotzfxZuXcCn/Xz7pZRew3vu2U3GUWwsoiQff6J+y2jVn4I1zb7VnZ1fgV0v3I4URIVzbzz8IXox47HHGpe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=xMJnvgXb; arc=none smtp.client-ip=45.157.188.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1746646621; c=relaxed/simple;
+	bh=lrmfyWvnM3QwZX0jYJbUO8H9wEWYYrgJ7OaSlLyzEgc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=osIWWmvriGyCwX8SkF8zPAmgUJcIDSZBnczE2Vw/Ibzir0VG0DGdW2rhudJ/pLHx2bmGuK0Na8fPMm7A/Je45MbaAtRXuwItA9w+FBvN/1W3BS7GXanHV2XlYNKnY6lM+oHb4PRIEw4SmEaUn+W+sVP0DkoRKzVgtEIA0mafM3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=adEj+Biz; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="xMJnvgXb"
-Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6c])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Zt4Dn2FLxzLGb;
-	Wed,  7 May 2025 20:54:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1746644057;
-	bh=E8IQ3mHBBfLfJXp4+cdVjhuQCJRi3UUanJwrUpE/BTU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=xMJnvgXbZMSFXAOajYyc8huzAYYhcu/vu2V5GH9aKfDH2LBq2pYbPa5UpPYlmgdyN
-	 lS6rEqsaNIiVWJTVnRak+0XqoO1t32asVGSGqCZpgxYHdFcm0dDLplolkpX9M0tp2q
-	 K9hnXkVD4btGEFJpk9uAlTwdsBfn1kGGxag2j+dY=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Zt4Dm66Txzp6C;
-	Wed,  7 May 2025 20:54:16 +0200 (CEST)
-From: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-To: =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>
-Cc: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
-	linux-security-module@vger.kernel.org
-Subject: [PATCH v1] landlock: Use bitops macros in audit code
-Date: Wed,  7 May 2025 20:54:02 +0200
-Message-ID: <20250507185404.1029055-1-mic@digikod.net>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="adEj+Biz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E255C4CEE2;
+	Wed,  7 May 2025 19:37:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746646620;
+	bh=lrmfyWvnM3QwZX0jYJbUO8H9wEWYYrgJ7OaSlLyzEgc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=adEj+BizyWGNYyIo5IgqAqEZv/fYXZwSE6hbDf5r3NKhwW3FLQgI40vKpeqr1qBIi
+	 IZDndlHbUJsmMjZPIhKjr1vMIOoZKzeRi75y8DBhxxBZDfHtMl5G87s1YS59Qu+Ug4
+	 M7Bd8RMx150oxVdRPqbjZT3zqbIrQnLuMvM6qTrxZk/EfDbL67wtKqXgIbFWPEDM89
+	 DcDfZ5Z0nwBba+lNW31VpiwbKaAyT0t8v2xXiOirP3Vp0Jk/WTHKbdpIiWsfFgeiMy
+	 0JoJj15rZjQPlqTneT7LfTJA1TcyUyBRShtC50Ov3mP3saiJ7e6dD1qYk/yJOU4tuu
+	 7pjj9Ujhx261Q==
+Date: Wed, 7 May 2025 12:36:57 -0700
+From: Kees Cook <kees@kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, x86@kernel.org,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev, linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org, linux-efi@vger.kernel.org,
+	linux-hardening@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+	Marco Elver <elver@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org,
+	kasan-dev@googlegroups.com, sparclinux@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: Re: [PATCH 3/8] stackleak: Rename CONFIG_GCC_PLUGIN_STACKLEAK to
+ CONFIG_STACKLEAK
+Message-ID: <202505071236.AC25A6CC2@keescook>
+References: <20250507180852.work.231-kees@kernel.org>
+ <20250507181615.1947159-3-kees@kernel.org>
+ <aBuqO9BVlIV3oA2M@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aBuqO9BVlIV3oA2M@gmail.com>
 
-Use the BIT() and BIT_ULL() macros in the new audit code instead of
-explicit shifts to improve readability.
+On Wed, May 07, 2025 at 08:45:15PM +0200, Ingo Molnar wrote:
+> 
+> * Kees Cook <kees@kernel.org> wrote:
+> 
+> > -	  The STACKLEAK gcc plugin instruments the kernel code for tracking
+> > +	  The STACKLEAK options instruments the kernel code for tracking
+> 
+> speling.
 
-Cc: Günther Noack <gnoack@google.com>
-Signed-off-by: Mickaël Salaün <mic@digikod.net>
----
- security/landlock/audit.c    | 2 +-
- security/landlock/id.c       | 5 +++--
- security/landlock/syscalls.c | 3 ++-
- 3 files changed, 6 insertions(+), 4 deletions(-)
+Thanks!
 
-diff --git a/security/landlock/audit.c b/security/landlock/audit.c
-index 58d5c40d4d0e..c52d079cdb77 100644
---- a/security/landlock/audit.c
-+++ b/security/landlock/audit.c
-@@ -437,7 +437,7 @@ void landlock_log_denial(const struct landlock_cred_security *const subject,
- 		return;
- 
- 	/* Checks if the current exec was restricting itself. */
--	if (subject->domain_exec & (1 << youngest_layer)) {
-+	if (subject->domain_exec & BIT(youngest_layer)) {
- 		/* Ignores denials for the same execution. */
- 		if (!youngest_denied->log_same_exec)
- 			return;
-diff --git a/security/landlock/id.c b/security/landlock/id.c
-index 11fab9259c15..552272307697 100644
---- a/security/landlock/id.c
-+++ b/security/landlock/id.c
-@@ -7,6 +7,7 @@
- 
- #include <kunit/test.h>
- #include <linux/atomic.h>
-+#include <linux/bitops.h>
- #include <linux/random.h>
- #include <linux/spinlock.h>
- 
-@@ -25,7 +26,7 @@ static void __init init_id(atomic64_t *const counter, const u32 random_32bits)
- 	 * Ensures sure 64-bit values are always used by user space (or may
- 	 * fail with -EOVERFLOW), and makes this testable.
- 	 */
--	init = 1ULL << 32;
-+	init = BIT_ULL(32);
- 
- 	/*
- 	 * Makes a large (2^32) boot-time value to limit ID collision in logs
-@@ -105,7 +106,7 @@ static u64 get_id_range(size_t number_of_ids, atomic64_t *const counter,
- 	 * to get a new ID (e.g. a full landlock_restrict_self() call), and the
- 	 * cost of draining all available IDs during the system's uptime.
- 	 */
--	random_4bits = random_4bits % (1 << 4);
-+	random_4bits = random_4bits % BIT(4);
- 	step = number_of_ids + random_4bits;
- 
- 	/* It is safe to cast a signed atomic to an unsigned value. */
-diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
-index b9561e3417ae..33eafb71e4f3 100644
---- a/security/landlock/syscalls.c
-+++ b/security/landlock/syscalls.c
-@@ -9,6 +9,7 @@
- 
- #include <asm/current.h>
- #include <linux/anon_inodes.h>
-+#include <linux/bitops.h>
- #include <linux/build_bug.h>
- #include <linux/capability.h>
- #include <linux/cleanup.h>
-@@ -563,7 +564,7 @@ SYSCALL_DEFINE2(landlock_restrict_self, const int, ruleset_fd, const __u32,
- 	new_llcred->domain = new_dom;
- 
- #ifdef CONFIG_AUDIT
--	new_llcred->domain_exec |= 1 << (new_dom->num_layers - 1);
-+	new_llcred->domain_exec |= BIT(new_dom->num_layers - 1);
- #endif /* CONFIG_AUDIT */
- 
- 	return commit_creds(new_cred);
+> Also, any chance to fix this terrible name? Should be something like 
+> KSTACKZERO or KSTACKCLEAR, to tell people that it doesn't leak the 
+> stack but prevents leaks on the stack by clearing it, and that it's 
+> about the kernel stack, not any other stack.
+
+Yeah, better to name it for what it does rather than want to protects
+against. The internal naming for what it does is "stack erase", so
+perhaps KSTACK_ERASE ?
+
+-Kees
+
 -- 
-2.49.0
-
+Kees Cook
