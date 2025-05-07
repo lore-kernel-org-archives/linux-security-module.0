@@ -1,108 +1,89 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+Received: from gardel.0pointer.net (gardel.0pointer.net [85.214.157.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8882328A3EF;
-	Wed,  7 May 2025 13:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A9CE25D521;
+	Wed,  7 May 2025 14:22:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.157.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746626301; cv=none; b=PM9KdJ3tp2c0tBI5ISB600dGgKeHaAAr2CzaF7SATHvSiM9PNHfpWIxSih2CfU3/YBLac2QgrE1vmsM43uMpHaqQc/BYtf2571kk2Xl0P/GMD8XVkl+m2R05AYqTBoQ0xTDmJWLBPUhHtIhbsN9rSn+FaYvVkdmyr5WUO5utoVE=
+	t=1746627746; cv=none; b=HI/TNeZIIqz2pBAJtnw91aO1UnqMZicEj+xqTUgE/F+HFmrAZL14Og1BAtmtV7YRSIAX3lxcK1UAM/DjwzDPO6FVIYC9ss1s8L7yZllnQuj+iP4KTgqlpkUz1PBptoZZNgIf7qqFrhNIvGU2EPoODB2QQqb4a+zdlJ1Zl8IcTEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746626301; c=relaxed/simple;
-	bh=/0Q/u6Uimv2ZxNumXH8o5ajq0edxS5+j8L2aCHsi8D0=;
+	s=arc-20240116; t=1746627746; c=relaxed/simple;
+	bh=XL8XfkDiqMxumAe7zHX0ZUVrrfqkX7k7oFAaizD+w/o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SS+kMMJL7kC2zpDiTEtGkmJNj5EvyzyxBa5ZMqThh67Yajwr9ap85VrAn8qJCVkoLDLH2l8IBTcFJH4SkWA4z5DigXVIR4pK2oDNQUYS1VqCXIgj3h4NNgAYThRt0LX7G5IPT8qGVa5r2Etuwn1kY1i7Jk92C9odP45yRvfafyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jDImqiNJ; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jDImqiNJ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746626299; x=1778162299;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=/0Q/u6Uimv2ZxNumXH8o5ajq0edxS5+j8L2aCHsi8D0=;
-  b=jDImqiNJdnO4ePwY5bb/rtYDrbUTN7U6FNGehtD+tEg4Ki/VW+Kr5MQl
-   eR+MpZ5HBAcsp4WuSBn8fNZc6rn8jpIgsowrGhb1FKYflRDEQTsDyJ2o3
-   05uSVq4akC6ppd+f3qr0r9NaVy1YEHkAL6bpBTWjSHoiB8Y6jReEt/aYf
-   lc7bnKR/gz4T3gz69nPVAUcvy/PUVH4lE8Rs3FMsm0w+9a8iTBGhbmy4Z
-   OugemXHZdjpPCgdbaZuE2bxkj8U62TyrnMgP3WYpgASudLSBt+9iVYfLp
-   MfL55/HdO4sazfxmogj/ue7dCmXstQ32OuJ3S93SYHIrsqrRrl8uQ/iEC
-   Q==;
-X-CSE-ConnectionGUID: 5NKCv8ceS3G9NofLWRtuZQ==
-X-CSE-MsgGUID: GpFFbxJgQUaC6dO2rt+NSw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11426"; a="47613044"
-X-IronPort-AV: E=Sophos;i="6.15,269,1739865600"; 
-   d="scan'208";a="47613044"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 06:58:18 -0700
-X-CSE-ConnectionGUID: vnx8wscpTRCgNzf2C2Pp5w==
-X-CSE-MsgGUID: K1Ux9pV0TFuSEc0nzuSVgg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,269,1739865600"; 
-   d="scan'208";a="140011265"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 07 May 2025 06:58:15 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uCfHo-0007vN-2T;
-	Wed, 07 May 2025 13:58:12 +0000
-Date: Wed, 7 May 2025 21:58:03 +0800
-From: kernel test robot <lkp@intel.com>
-To: Maxime =?iso-8859-1?Q?B=E9lair?= <maxime.belair@canonical.com>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=IChi6lxpbUcaYmg0xc0RHX15wjdH+XsMWqFyZrfu0fLqz7YoZ3/6e71Hef5Z67NJe7OXC8JaugBRHNW9kMqxCWg96lqpsyQ/b6cFzZ6++fWPZBblO0hWMyKd1IRZ9Zl97Fkx2UFkES7OqsXYwU523WuRa4+elxO/omH2ivqEUxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0pointer.de; spf=pass smtp.mailfrom=0pointer.de; arc=none smtp.client-ip=85.214.157.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0pointer.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0pointer.de
+Received: from gardel-login.0pointer.net (gardel-mail [85.214.157.71])
+	by gardel.0pointer.net (Postfix) with ESMTP id 1D7E4E802CC;
+	Wed,  7 May 2025 16:22:15 +0200 (CEST)
+Received: by gardel-login.0pointer.net (Postfix, from userid 1000)
+	id 9820E16005E; Wed,  7 May 2025 16:22:14 +0200 (CEST)
+Date: Wed, 7 May 2025 16:22:14 +0200
+From: Lennart Poettering <mzxreary@0pointer.de>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: Kuniyuki Iwashima <kuniyu@amazon.com>, brauner@kernel.org,
+	alexander@mihalicyn.com, bluca@debian.org, daan.j.demeyer@gmail.com,
+	davem@davemloft.net, david@readahead.eu, edumazet@google.com,
+	horms@kernel.org, jack@suse.cz, jannh@google.com, kuba@kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	me@yhndnzj.com, netdev@vger.kernel.org, oleg@redhat.com,
+	pabeni@redhat.com, viro@zeniv.linux.org.uk, zbyszek@in.waw.pl,
 	linux-security-module@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	john.johansen@canonical.com, paul@paul-moore.com, jmorris@namei.org,
-	serge@hallyn.com, mic@digikod.net, kees@kernel.org,
-	stephen.smalley.work@gmail.com, casey@schaufler-ca.com,
-	takedakn@nttdata.co.jp, penguin-kernel@i-love.sakura.ne.jp,
-	linux-api@vger.kernel.org, apparmor@lists.ubuntu.com,
-	linux-kernel@vger.kernel.org,
-	Maxime =?iso-8859-1?Q?B=E9lair?= <maxime.belair@canonical.com>
-Subject: Re: [PATCH 1/3] Wire up the lsm_manage_policy syscall
-Message-ID: <202505072131.ogtsaLPI-lkp@intel.com>
-References: <20250506143254.718647-2-maxime.belair@canonical.com>
+Subject: Re: [PATCH RFC v3 08/10] net, pidfs, coredump: only allow
+ coredumping tasks to connect to coredump socket
+Message-ID: <aBtslo-EkUCnFklN@gardel-login>
+References: <20250506-zugabe-bezog-f688fbec72d3@brauner>
+ <20250506191817.14620-1-kuniyu@amazon.com>
+ <20250507.ohsaiQuoh3uo@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250506143254.718647-2-maxime.belair@canonical.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250507.ohsaiQuoh3uo@digikod.net>
 
-Hi Maxime,
+On Mi, 07.05.25 13:51, Mickaël Salaün (mic@digikod.net) wrote:
 
-kernel test robot noticed the following build warnings:
+> What if the task send a "fake" coredump and just after that really
+> coredump?  There could be a race condition on the server side when
+> checking the coredump property of this pidfd.
+>
+> Could we add a trusted header to the coredump payload that is always
+> written by the kernel?  This would enable to read a trusted flag
+> indicating if the following payload is a coredumped generated by the
+> kernel or not.
 
-[auto build test WARNING on 9c32cda43eb78f78c73aee4aa344b777714e259b]
+With my systemd hat on I must say I don't really care if the coredump
+is "authentic" or not. The coredump is untrusted data anyway, it needs
+to be quarantined from systemd-coredump's PoV, there's no security
+value in distinguishing if some random user's process was sent to the
+handler because the user called raise(SIGSEGV) or because the user
+called connect() to our socket. The process is under user control in
+almost all ways anyways, they can rearrange its internals in almost
+any way already, play any games they want. It's of very little value
+if the receiving side can determine if the serialization of potential
+complete garbage was written out by the kernel or by the process' own
+code.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Maxime-B-lair/Wire-up-the-lsm_manage_policy-syscall/20250506-224212
-base:   9c32cda43eb78f78c73aee4aa344b777714e259b
-patch link:    https://lore.kernel.org/r/20250506143254.718647-2-maxime.belair%40canonical.com
-patch subject: [PATCH 1/3] Wire up the lsm_manage_policy syscall
-config: s390-allnoconfig (https://download.01.org/0day-ci/archive/20250507/202505072131.ogtsaLPI-lkp@intel.com/config)
-compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project f819f46284f2a79790038e1f6649172789734ae8)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250507/202505072131.ogtsaLPI-lkp@intel.com/reproduce)
+Moreover, in systemd-coredump we these days collect not only classic
+ELF coredumps passed to us by the kernel, but also other forms of
+crashes. For example if a Python program dies because of an uncaught
+exception this is also passed to systemd-coredump, and treated the
+same way in regards to metadata collection, logging, storage,
+recycling and so on. Conceptually a python crash like that and a
+process level crash are the same thing for us, we treat them the
+same. And of course, Python crashes like this are *inherently* a
+userspace concept, hence we explicitly want to accept them. Hence even
+if we'd be able to distinguish "true" from "fake" coredumps we'd still
+not care or change our behaviour much, because we are *as* *much*
+interested in user-level crashes as in kernel handled crashes.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202505072131.ogtsaLPI-lkp@intel.com/
+Lennart
 
-All warnings (new ones prefixed by >>):
-
->> <stdin>:1618:2: warning: syscall lsm_manage_policy not implemented [-W#warnings]
-    1618 | #warning syscall lsm_manage_policy not implemented
-         |  ^
-   1 warning generated.
 --
->> <stdin>:1618:2: warning: syscall lsm_manage_policy not implemented [-W#warnings]
-    1618 | #warning syscall lsm_manage_policy not implemented
-         |  ^
-   1 warning generated.
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Lennart Poettering, Berlin
