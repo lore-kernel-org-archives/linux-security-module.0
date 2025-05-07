@@ -1,74 +1,62 @@
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sonic309-27.consmr.mail.ne1.yahoo.com (sonic309-27.consmr.mail.ne1.yahoo.com [66.163.184.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B90528A40D
-	for <linux-security-module@vger.kernel.org>; Wed,  7 May 2025 15:38:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30DA028A702
+	for <linux-security-module@vger.kernel.org>; Wed,  7 May 2025 16:24:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.184.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746632281; cv=none; b=dK878KFPQri5QnU//6oSTklET9pVROEUbdUXNDSfSUggSO7+gOlnwAL4ez/rkd0NGE1AW47qnHm7CFezVNngVYlF3jO6EOzmed3uojjWVW/rstMi879seXmNTx9D/uYQcYfKL8EIcZQFqGpAyQvyLnZJFKijB7k/EYDA4rBu3LA=
+	t=1746635085; cv=none; b=WrfwHQp1OMmQ8GbRXVzkuDbdeegKedVwufCUCPAD6V+hmRWd7IOzTOfdETaGDP38V29b8UQjmcvsBr3+dyRrIIWqGUPk1ZW/rqq5Y+E2CB2y8VwYWNUDIIGf3HXIYgtxDMWNlDeO97JhaB5I41/D3P9Jau0gATUYba9c0rXUvtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746632281; c=relaxed/simple;
-	bh=0bhqYQP3PQ1v+FgerLpzRYXmaHS7tm0meVxdVOpXWiA=;
+	s=arc-20240116; t=1746635085; c=relaxed/simple;
+	bh=5Lsigs+Yxul/cGMbXyyD3AwvuR1nhOpZkLYWWhXKRP8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lThATtAC2KirsUYKHc0Z7rO9otF2HX8/retaxa68Q4fxPKchbW1wJ62gXJzXEopPMNeFNBDj6VcQtHG1wOq+Gfuo4/P9myqszABhfNLO2Kfjm0sAi2OCo586zUaz2enOJ3PR85hFYOCAEwyfIXXEqdd2PvjOq/VX+FvotNnLxUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=o0Mrf65N; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+	 In-Reply-To:Content-Type; b=pT0p68UgmMNhmu/6z8OKg6mLrtPLAa6izu/wc0nENKWG8/AsLlPUr3nlIHKk23GvcwEzgutRXL8eFv2iP/JEcAhLjzxE9X7pm5EuLYZaV+nWq0qWkDozCAVHN2wnRT3ndpvh23ipSbTtyimZQa3U5rayF0rxTBQLnM7TfQbks5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=SRBycfxL; arc=none smtp.client-ip=66.163.184.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="o0Mrf65N"
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com [209.85.208.71])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id B1E663F2C8
-	for <linux-security-module@vger.kernel.org>; Wed,  7 May 2025 15:37:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1746632277;
-	bh=Rw+ajBmKH1oYIOuaY57PRGZktJSoo5Qqq7a4MCBkd4k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=o0Mrf65NfwNBiOmnh3meEAh5qFTJFXPSvXLQxabTk90IQDrNQitXsMPdLTSAZlf0D
-	 GdTMpCHW48UCr5EQ6fV9BKJx1qJI7yaEVpDqYvgc6KCT9EKEBPTWtNlo7sQEa45Srt
-	 ALw+wiWAmQGBl3RQNillKl3wzw6oJ1ypALAVeZ89dk1971wpMDo/+1wKzZn+nxSE7n
-	 ZKkUUwvvZNvlMiYft3zBR1ftbnUM5KtVVRWFUkmrgiLFCHF1LPRtKFkAhik43B73HF
-	 v0MSMEBfsKpodmM0hgjBUpTjlcd6pYV0GHQbuzmL5STMI530w8obMADQgaQ1lHh/Ug
-	 xdG65YqiywzFQ==
-Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-5f628f5f9e3so5995012a12.1
-        for <linux-security-module@vger.kernel.org>; Wed, 07 May 2025 08:37:57 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746632274; x=1747237074;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Rw+ajBmKH1oYIOuaY57PRGZktJSoo5Qqq7a4MCBkd4k=;
-        b=MQ913t2IlUv4RLx0pnal49rml8SIHrWxNh7uGD/zztTxvko5R60Duv0XZf1GCJHLKs
-         lWVIjceT8CRM5isKq0qKFcMeOxjlHUkmRor2EMEdYcEwiooVFyfWPRwwT3KzwkkW1eNJ
-         IKxDIMI2ZyXgdrND9AKEaorSnN6Enrk6c3n8UBM95LImizZs3VIHN7+W11diUxwXLz2/
-         jZcX4qmJIeDHD1FIC25V0/hm8R6VzTsGZRAC/b2pcI0D8ll4BzXEgqOxU9ptMZOpyZJv
-         Jouh8xcZu4Yc3R1L4doWnBslwbTwc8xwSpC+sVJ1uQUOsuqo9dLVVOFVfSLVDyjWyMsq
-         1SBA==
-X-Forwarded-Encrypted: i=1; AJvYcCVFoOkXAi5GnWb9bxAEgVqZyuYYfuBU8GClPr8ktEC+JGvHqsSqkref+mWDOGZtvTSHruwHK8wRSxZAOoqUUvrDQtheRbQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeiZO6OUZPiouYcr2JOC8QLODOJFSrxAB8vQqjPi7Hj/JVbcOT
-	MKr5yLWGN2clk3L7I7CgFBdO9lgeZe9Nr0GfgIYXNSIt9swIfbW6NancPAMj/YP2jviOOZ+BHI1
-	hhhWDIaY6eZYacw5l8RYn3gNbJbZ1pa2PJQmb5GHFeHdSXjknHNcwApM3vFV6E0QCPtz59qoIgt
-	T89YJjrrQSmw7TFb35YJeFspZv
-X-Gm-Gg: ASbGncuO2b3FRqhDIuLUXZKbvlqixAldD5SQf06GZv6s+CsyPkj2ije4L+Q36Diphf7
-	HER4FLC3kt6PXj1/Nko22du8mz3oYkzhgnT0/zmXBytDZZ93dxNqOHKNw6qG4DwWKIVhnliOt5/
-	uWltjY/nSDxAgIRjEFIhkWoXex9mHxRTceqb8Ele5YPpJXA4g341cZEq7bVu19kXQeI9cXI6zHM
-	+YcPngTEtStEudMUJzSeUybweO8ASwqgbdnMOFfLEcVEfR5LLyoTbLJOHjn8bqiJmILo6/9M/yS
-	TR9lLumLRs+38CcMO9IQqAdcp1RmABMYrJhIKzEsOYiFbULtk4RXqjLB2hkQKJCoNeg=
-X-Received: by 2002:a17:907:8a8d:b0:ace:ed3b:285e with SMTP id a640c23a62f3a-ad1e8d8971amr360967566b.56.1746632274312;
-        Wed, 07 May 2025 08:37:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHIiet74C8oMIdKA/PaSf8H9s5ZGkI/NebFPYSp7/1cEBiQAWfXF+ATv0VmOBrz140lQ6CMAg==
-X-Received: by 2002:a17:907:8a8d:b0:ace:ed3b:285e with SMTP id a640c23a62f3a-ad1e8d8971amr360964566b.56.1746632273838;
-        Wed, 07 May 2025 08:37:53 -0700 (PDT)
-Received: from ?IPV6:2001:861:3280:410:2ef0:5dff:fe60:6274? ([2001:861:3280:410:2ef0:5dff:fe60:6274])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad1ee0b7e4csm159333766b.52.2025.05.07.08.37.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 May 2025 08:37:53 -0700 (PDT)
-Message-ID: <705fa834-b680-4a0e-9996-cca0565b0987@canonical.com>
-Date: Wed, 7 May 2025 17:37:52 +0200
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="SRBycfxL"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1746635074; bh=YwR2zTcCrOx9+ca74S9+pcvO6uuFrkzft1zm7AcdSkU=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=SRBycfxLf+nSFePa1i3AghIzJw2SwIlgDZbbPylzP3bjSsEDZ2FKqDjCPZYAXRHsfe4BCxFukVUDfSbTB1uhRjTpcx8lPQinvgYirNqRCkPSg+j8t+9HslKlFJNXClHAwZ2XK9DqcgODvWQIXuMXEHbCI/u9zlAXOmFTH18PnKhXs0slnblcPrwFmYGfR4r9jJrA/apFyh0aGC8NCsGgeJSFEvUVNUS10lPXWAszpMxaaLKLnVCpbxPzP2UDXzCDD/9uc35nGg9xfzsP5V6pxVnv9EiKFW/1Lx5/pZAwrd5AdOQ3K20swekL5kzrnpe5cJvHhvD0X1o8PCqqLsLTWA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1746635074; bh=/Y0pnNJQWKWKgbENQEqYz1T0wbRNmbZEcEn2gRmd1M+=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=M8HJhYqNoafXGg8XNXaqFJfw2ib4Iae0HttTjQvbBeEEX7iKB6Pw1CyAcaRnJbo+SO2JFf0xpJXME95HMSL6Z9jaewDLuFPD7xPoSO3jZsydwA6NuuDo1RW8haP/L/G8kyzZwqEiATtzIRg5gSOJs7Mxxyxt8FbfqaSOh3zFsbO4yd0nxujIYpWxnqHSlGSkuctuorHGXuZwCtAjA0R31c8BNyDJkFAW8wAdpv/tKfbM1vFPBMmfMxaJ/iPdnTpNtTOtIJGekN1qfm38gdm97UFBuYCpm2cm/1VUO3QXTmwtWyXXS76ZS7WHPfYIP1cH2Hura4oXvs+JPq8oiHcnww==
+X-YMail-OSG: .iF9B8kVM1m_Rw5jyuOn8L6Rl3LUhFOZvIw31wtq4KQ2ngPminb3zalCE1gwi4a
+ gvDY1shjcYIjuRqA0.HrGdhP0KQXdrJupvDzQzFork1yT48B7G2arhqBtXBYOeceqCXfFokg_x9m
+ aTKhAsJ9orSYL0bp2w0OOqj3pj6RdHmp5K1Iz7scQ9en99hzP0j6qwJsPxIf9ZXddsswWt4Hfn21
+ 5nl5S3SxrBDIIZhc1bZoPcTL3twe2VPrmYSWb2Mb40cHeU1lzZ3e2FFt2HdSJDMN_nTUTGLBWW2M
+ qIU8OG7ZVZE_va0z9A9QQCiHn4LJe8a8zgNp7hCqo4EJ.FZC.jf56wNUI6LW7bv8SFbJfm2fvBda
+ j_tgQQqE_ADFFNGLcjA6KwaiP8WVTCZ2dW8RscJ4mBfp2hhHJwM_SqPM__5HMOX.ofxkE52NRGuP
+ MPCi5BeOL4ig5Ax1ThPxe2kPKHKOtdkJ54mW1fwcGZwglPaVWWpHvhbh8mJK4H4JeEOrchYg7Np0
+ oKqIdlO6KEn9s7yj6ag5g9wDdSmE01YiHn4bXHQtSlVN0cCSYcRsenYRsKOgHmqFXbiS3ZtMcb01
+ IABea_SdW.0m8qLFNoqiBajGNRPmhPbARQOJOasJWhJ.cxfVvASZib3XpQtzuXd3UA76b5_oXFyi
+ o9aIjnr9ZkAnpz3vuSQfJPfHwLe3B_I6m72E2bG_ffV0JNNDT4sjgbcB5tG.k7Oajg2qzR7EPqoa
+ dCr6NjVoosg1lIGzNtssT4IQBN7uM2snf.2g9CjP2u4dhZo7G08lWPV36_SZFFC7BcGZskWyNXch
+ 7gzPgEKy9GrmsYcThpIATbi2b_7fBVZ7.O0u2BxP.jUQxAIQC3XO9FBPlIGz_tqsBzSWdBJTG_ZA
+ GYx8psAXvbQecsIcc2Pg4hM58qVFvz5WBDz2MZfvYSWSzQ86amWdbUv4FgaEMJoWOMffrpr2pa3v
+ HLh3Idnmn8Kcd.MCDLgVAe7VLI8uIhlcUampaJEDzmGwroXbeFxWZUu3yFsV0lFCD4ijsND7VxDg
+ uZZ9Yg1DPPxC8I.1m7BbSrUhgV3Z4kmeb_bc6ee4.eFLOf68Z5g75i.YAYPYTOTxo3al1mjnKjVA
+ 9Wkp6dOlrmDbxKhzytyu_tmt5Pfm16gG8RtD5n5oi6dZIewYisgjCQgFpEIiZB9xLw27PwSEVJ7Y
+ fSFNMG_Ja5kTsefa9G15aPtM8A7gNvcITl6.xF1vYULIEU8xRK6RNLwfnIdiy6we.EOy2S5ploHJ
+ 8qNSZBoMGGa4vbVFyeEftj03Ztrz5ZqsOWgG_QQPkuskpl_kCfAxBHIDvmXvqykivCUGgUs_fPKu
+ HtKZP0J8LBS89rkoj5Svv4xsLtDZpm6loHL9UeHf2EPCpKpmyFMIfzp1eNQslPCvaZRXguM6pyLf
+ YDfbXjUTiqvdGqIhs_vnCwpq_zyV54kb6teLL7gZTKyyL2h20ntzDLw9ueh4m6dEY9Puo5Idsxlo
+ 9Rbo6cAYMJjxfitPiPIElV6UG4a_D4OAca5K.9zdol_z16o3AA1a64rqrhkYVFsbW0.c8DMsTmTV
+ KZb8N7Jp4x1NJ3xfOEeEpSHPzPapN3LOYN_OZ4SIG0xvob9Nx7eJy9WhN8ToIZObScmFRvmWuNQx
+ DjulH1koPVSZr6QjmgCPhe9jxBvky7P7tV7WtUnt5avurJlypUBU2ixoVcuHDt0LUDEh7LPkAivb
+ rADjBM.EXxSSZBaW8gHgpidzNjymTjdWQ729eAgiIfwm6w3u1TecHCJBl9ol6CBwFucM12SJ2eeq
+ eGPE.EjkqcMMcMQvW.WN5NtAlQ_PWKHo2cvdX2NxxRvSirk5CJMa2tgwYFF87MS4l8b7bujvwnrs
+ 36iS8.CJ4dkltUPjgjmHEJQ5Cl0zIIib5CrAJJrJ14Bba.TQO0Gyx8Pe370E9vV43M5ALdxTFeK1
+ 1_ekSF_WSfVL4rcAyZ6Gl9DgBIV22tcMNhg2U4u75GAPjISCRSgFf_lYhcsXQ4__GJoVjOeWVkSs
+ 1ehHLSafMFli1MDXTVijDOpLRHfF.YKoqN1IrtQwLepAm.WDuCLRSK.Nrm04Sksa1VPSo5cVXpoq
+ BLkf1s06aLMvmUlVnbNvOUTT30u2d0hR9Jq4dzdS7wMSscFs.FFZ9fYgbAbh_vR7SQwCSR2RzNS9
+ rG8KL9JGuV16gWQ1U3kvnziBBeVahcgvOa5V2olKCdjg3GrduyxxNafuH4zecMmY.MmnlE7oeut4
+ irkCp2NVzkSBPlx_SPXucts2Hv2tWaWJB0DM90djBAPUMJXjA6FwRFS.RPYyFJ0BUWKwoSpmNn1I
+ aH046olV7mN7ZtexN_id1azrPgYg-
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: aeb06a10-172b-47b2-9aaa-9edd2da40a89
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Wed, 7 May 2025 16:24:34 +0000
+Received: by hermes--production-gq1-74d64bb7d7-4ndhm (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 1458115eff23de3fadc617fe2c4888a1;
+          Wed, 07 May 2025 16:24:31 +0000 (UTC)
+Message-ID: <39ad6f58-db30-4c3c-a3d1-f0af516025e3@schaufler-ca.com>
+Date: Wed, 7 May 2025 09:24:30 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -76,100 +64,78 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] lsm: introduce security_lsm_manage_policy hook
+Subject: Re: [RFC] LSM deprecation / removal policies
 To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
- linux-security-module@vger.kernel.org
-Cc: john.johansen@canonical.com, paul@paul-moore.com, jmorris@namei.org,
- serge@hallyn.com, mic@digikod.net, kees@kernel.org,
- stephen.smalley.work@gmail.com, casey@schaufler-ca.com,
- takedakn@nttdata.co.jp, linux-api@vger.kernel.org,
- apparmor@lists.ubuntu.com, linux-kernel@vger.kernel.org
-References: <20250506143254.718647-1-maxime.belair@canonical.com>
- <20250506143254.718647-3-maxime.belair@canonical.com>
- <9c68743f-5efa-4a77-a29b-d3e8f2b2a462@I-love.SAKURA.ne.jp>
+ Song Liu <song@kernel.org>
+Cc: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org,
+ Fan Wu <wufan@linux.microsoft.com>, =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?=
+ <mic@digikod.net>, Mimi Zohar <zohar@linux.ibm.com>,
+ Micah Morton <mortonm@chromium.org>,
+ John Johansen <john.johansen@canonical.com>,
+ Roberto Sassu <roberto.sassu@huawei.com>, KP Singh <kpsingh@kernel.org>,
+ Kees Cook <keescook@chromium.org>, Casey Schaufler <casey@schaufler-ca.com>
+References: <CAHC9VhTiABmrJNkTYSfTQkjAS5u-GJdYxd+zJ8PcryScBtsXNA@mail.gmail.com>
+ <295201ef-5299-4bf0-b0ee-6e1e2a74174b@I-love.SAKURA.ne.jp>
+ <CAPhsuW4U5ULtOQ9ucucs3bs+jw+EbBzrCfhAuvOCO=1g5aWAHg@mail.gmail.com>
+ <a6d26d37-3475-4f3f-829f-0883dbf8014d@I-love.SAKURA.ne.jp>
 Content-Language: en-US
-From: =?UTF-8?Q?Maxime_B=C3=A9lair?= <maxime.belair@canonical.com>
-Autocrypt: addr=maxime.belair@canonical.com; keydata=
- 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
- yriCIKEAbLqHTyj+RhbroZmv5q3X7iVq
-In-Reply-To: <9c68743f-5efa-4a77-a29b-d3e8f2b2a462@I-love.SAKURA.ne.jp>
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <a6d26d37-3475-4f3f-829f-0883dbf8014d@I-love.SAKURA.ne.jp>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.23772 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
+On 5/7/2025 4:06 AM, Tetsuo Handa wrote:
+> On 2025/05/06 6:53, Song Liu wrote:
+>> On Sat, May 3, 2025 at 4:47 AM Tetsuo Handa
+>> <penguin-kernel@i-love.sakura.ne.jp> wrote:
+>>> On 2025/05/03 5:01, Paul Moore wrote:
+>>>> ## Removing LSM Hooks
+>>>>
+>>>> If a LSM hook is no longer used by any in-kernel LSMs, there is no ongoing work
+>>>> in progress involving the hook, and no expectation of future work that will use
+>>>> the hook, the LSM community may consider removal of the LSM hook.  The decision
+>>>> to ultimately remove the LSM hook should balance ongoing maintenance and
+>>>> performance concerns with the social challenges of reintroducing the hook if
+>>>> it is needed at a later date.
+>>> What about BPF-based LSM users? Since BPF-based LSMs cannot be in-kernel LSMs,
+>>> it will be difficult for users of BPF-based LSMs to respond (that someone wants
+>>> some to-be-removed LSM hook) when removal of an LSM hook is proposed.
+>> If a LSM hook is important for an out-of-tree BPF LSM solution, the owner can
+>> add a BPF selftest for this specific hook. This does not guarantee the hook will
+>> stay, but it can most likely detect unintentional removal of LSM hooks.
+>>
+> The problem is that the owner out-of-tree BPF LSM solution cannot join the
+> discussion about LSM hooks being modified/removed. That is, out-of-tree BPF
+> LSMs will be forced to stay as unstable as out-of-tree non-BPF LSMs.
 
+The same issue applies to out-of-tree filesystems and device drivers.
+There's no problem that is new or unique to the LSM interface here.
 
-On 5/7/25 12:40, Tetsuo Handa wrote:
-> On 2025/05/06 23:32, Maxime Bélair wrote:
->> diff --git a/security/lsm_syscalls.c b/security/lsm_syscalls.c
->> index dcaad8818679..b39e6635a7d5 100644
->> --- a/security/lsm_syscalls.c
->> +++ b/security/lsm_syscalls.c
->> @@ -122,5 +122,10 @@ SYSCALL_DEFINE3(lsm_list_modules, u64 __user *, ids, u32 __user *, size,
->>  SYSCALL_DEFINE5(lsm_manage_policy, u32, lsm_id, u32, op, void __user *, buf, u32
->>  		__user *, size, u32, flags)
->>  {
->> -	return 0;
->> +	size_t usize;
->> +
->> +	if (get_user(usize, size))
->> +		return -EFAULT;
->> +
->> +	return security_lsm_manage_policy(lsm_id, op, buf, usize, flags);
->>  }
-> 
-> syzbot will report user-controlled unbounded huge size memory allocation attempt. ;-)
-> 
-> This interface might be fine for AppArmor, but TOMOYO won't use this interface because
-> TOMOYO's policy is line-oriented ASCII text data where the destination is switched via
-> pseudo‑filesystem's filename; use of filename helps restricting which type of policy
-> can be manipulated by which process. 
+> On 2025/05/06 5:58, Paul Moore wrote:
+>> On Sat, May 3, 2025 at 1:09 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>>> That's dangerously close to suggesting that the LSM hook list is an external API.
+>>> It would be really inconvenient if hooks could never change or go away.
+>> Unfortunately, this is one of the challenges that out-of-tree LSMs are
+>> going to face.  As Casey already mentioned, LSM hooks are not part of
+>> the kernel's userspace API and thus not part of the "don't break
+>> userspace" edict.
+> Due to the difficulty of making non-BPF LSMs in-tree due to the "patent examination"
+> ( https://lkml.kernel.org/r/5b09909b-fe43-4a9c-b9a7-2e1122b2cdb6@I-love.SAKURA.ne.jp ),
+> I don't think it is fair to assert
+>
+>   LSM hooks are not part of the kernel's userspace API and thus not part of
+>   the "don't break userspace" edict
+>
+> without granting all (I mean, both in-tree and out-of-tree, and both BPF-based
+> and non BPF-based) LSM users the right to join the discussion and comment on
+> LSM hook changes.
 
-First, like any LSM, TOMOYO is not obliged to implement every operation. It can simply
-expose the one that makes sense for its use case. For instance, I don't think it needs an
-equivalent of the manager interface.
+I don't think that anyone with a legitimate concern regarding a change to
+the LSM interface is going to be precluded from joining in the discussion.
+That doesn't mean that someone protesting that the change breaks out-of-tree
+code is going to prevent the change from being made, but if there is a real
+issue that affects all users of the interface we'll want to hear about it.
+The problem remains: if we can't see why there's an issue we can't respond
+to the issue.
 
-If TOMOYO wants to support several sub‑operations, it can distinguish them with the
-syscall’s flags parameter instead of filenames (as securityfs_if.c does today) and reuse
-the code already employed by its pseudo‑fs, as in the AppArmor patch. Supporting this
-syscall would therefore require only minimal changes.
-
-Line‑oriented ASCII text is not a barrier, either. The syscall can pass that format just
-fine. Because a typical TOMOYO line is very small, the performance gains from using the
-syscall are actually greater. A brief benchmark is available in [1].
-
-Thanks,
-
-Maxime
-
-[1] https://gitlab.com/-/snippets/4840792
