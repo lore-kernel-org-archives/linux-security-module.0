@@ -1,87 +1,191 @@
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E921425392E
-	for <linux-security-module@vger.kernel.org>; Thu,  8 May 2025 14:13:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF71F2253EE;
+	Thu,  8 May 2025 14:22:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746713638; cv=none; b=SKe40pCqJ2v6IH4RBAsw/22ZdNaiuQd3Xw5jyTHy8HWtwaGwlb3lfxC+MvJlpH2euTZkwYhXhGl+/BfK7zaYpiOiJVHdBYb4mlpsEefqte03jspCYsYo1temkHvLjysrtpNMHoEffWj1BujpyorBQBjmGXOkHkUK6xJPjcpctsY=
+	t=1746714172; cv=none; b=QmnzCJ6TcDLrhn2yQ0Wh3OxvTM6kBduTJwr0KFzoghSCei0oJjMsIJ0Jyliim/uxop3RsnkmdGcezPZc3gux/IS9KdRcnDI16uA/66ZcTrJ9WRnYRgdo/SFAo+IcFflYQ6j0avSHKGlZiaAGRabJPsymo8ydzg9TuR3DTv7c3MI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746713638; c=relaxed/simple;
-	bh=RPMKGS3ybf6B1JGyCxiEBSmzSILz6+XutQcg2aSpkFI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jV8Z94hBMHNwsDymCcOwREmNwDbwjT19HMGDEq31mgGFzm3LLO90nAU2/tcorJ7x9EYzmS69F9Zvl4aXhAG64MZPf6gXzgY51MnigHdYJpKVeooszUh3AOCWqX2t8mvBMfKAq3+KBCc0dN2jv6uWfetfvXHqwcdjnaf4LE6zbZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 548EDqBR066280;
-	Thu, 8 May 2025 23:13:52 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 548EDpcU066275
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Thu, 8 May 2025 23:13:51 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <4e25a66a-dd02-4c57-a6a5-4ccaffb48518@I-love.SAKURA.ne.jp>
-Date: Thu, 8 May 2025 23:13:49 +0900
+	s=arc-20240116; t=1746714172; c=relaxed/simple;
+	bh=L2A53b1SBH/XBk3vKsdtqa4zJbsmfjiXiuTZlUXMN+I=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VUzZkAHjlPcYfuHavaojTc6vHs9Rlc+sr4S/H10So4lwCOyI4hXNVqvhZ+1Zu2ejvaMc8MRaK8OJj6bGeqdW/vFvEqT2Hynoelu76viIaAONpDgA2/SWb8xFD/ddkQBYvZioxFb+R4nIONNRyFjvZCbuoU5ENu0PSOevL8ycwN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kOekj9YY; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kOekj9YY"
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-22e45088d6eso15050655ad.0;
+        Thu, 08 May 2025 07:22:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746714170; x=1747318970; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FvnCu4IDT4LGeI/g3VmpbphZW2h1OyuyN6JvDGAvzTQ=;
+        b=kOekj9YYMP6Uc4Wp+b9skXmqIovGl6Y606NlrN4NTLJfAtj5rsuF+UYJ4380ig83xr
+         oM8NmcD4l9ffCJCYIGx1DmcgZjDHTZZOcimyCx0RSqbfSlRPCmhRh07hQ66DjQh0L4Yd
+         hf4uXcWDc9ALJnH3n4JeetNDcDjJfEENVzu/W6usptDn4Rq6/T3Fyds/kWgZ5gn1PXuh
+         r0cGK3WLvMDQdTPjdr39VigZ5xyjfbNxbBHgZIDhVS9uvyvoiZhOB3HAZnV5o50dJ7X9
+         QEmrTWi3U6x6mfrwqw3UCeBD4eZr8XecElShUKDh5ZCOrKQXvgASDjTpuE7Iuxo2bSnB
+         Lafw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746714170; x=1747318970;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FvnCu4IDT4LGeI/g3VmpbphZW2h1OyuyN6JvDGAvzTQ=;
+        b=VHK1poIQY+j7GkYzDwaOVfAtqnPfkPWqel6eejrDszj6fY7KGjK+oIniGy4diNZKBa
+         y1/hoAhwgc8qWBLKMUiuRHN+5xhVSBk8e99XLTphKQ75ffCBypjiiNfGqKQ5RWU/twnj
+         jpvMaCfQ/+26zE+tZx8dOK7xuGDRMa2RcdqM5ah9wkmAUp05UMWD5jCHlkYpzfNXG8Ar
+         wbjhs23Fkne7U1fjn4TsebBFKTrzE24RfoiHIiDgAKbOn+Ef5CL44UMuPsv5zqeHIiT6
+         N0MZm3AlMxFeAOtbBptlxQuRreic6YtOo8hDkOiv7DUGkhlNtS3124cjqoybkHO4YH6V
+         tXBA==
+X-Forwarded-Encrypted: i=1; AJvYcCWNhSlvKVUGJbNNhf3imIeQt1iQOxkkDAFgIMzSTqEWq0/vZuUfQD103ZpjOwjAgbtP5AVjN6COM+a+sOYqOvYzoT4t3Fa2@vger.kernel.org, AJvYcCX6cHtGWAVfyIommJe79khavhozgkelFSCMU7qebS4ug7Y6mRCzeVMd6BgCrOSrbxDR764OsEGFQ6Arxss=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw59aqvsJgPl2GIvPZ2UAHz3dRIJf+xOUVc+zP8owFaJNxW5+GN
+	JepSVvhAAixHMD+lTZ3AJf2DnbjRMZ6QMc2O0jVfuldmsjdMOPwc
+X-Gm-Gg: ASbGncsTtRJ1tAt2+DKxdRVL9jz/bXQYsKHpdmqqS3kf2jAzS6hcSJFJtHpeJ85yQR4
+	fQ22/HYNfW9mT6lSDf1bC4HNQRgjIvCebuQhn1TRe62q0jyr3JsLNiOCTxcOga75Wlpiygapzxy
+	7wVmGE4jBj6KIVABZx34D7BMcouTgniqLwLw12rV455yQQoOTzFOA13mcbA4bR5G+goNDQCWJ5p
+	1bWKC4H2IhzEbC36FAUZ7p66w3zCzWwzTf2N63HMsv17qrCQjJU+qXYQ+lta3gSvsmLAooYl0t4
+	129ZkuVLa73L4k24MjIffNNvzoaGKaU3k6bdwMCUWYT0xCxLjPw=
+X-Google-Smtp-Source: AGHT+IEpPz9g3uccJ8NXeUz59v7uobeMoLUYcXoSIjvFQ2UXU3lIbBbeHE1kJWqAB1HDb6q5luSshA==
+X-Received: by 2002:a17:903:41c1:b0:22e:4cae:5958 with SMTP id d9443c01a7336-22e5ea782b0mr92345145ad.18.1746714169736;
+        Thu, 08 May 2025 07:22:49 -0700 (PDT)
+Received: from VM-16-38-fedora.. ([43.135.149.86])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22e173b584csm108021635ad.16.2025.05.08.07.22.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 May 2025 07:22:48 -0700 (PDT)
+From: Jinliang Zheng <alexjlzheng@gmail.com>
+X-Google-Original-From: Jinliang Zheng <alexjlzheng@tencent.com>
+To: paul@paul-moore.com
+Cc: alexjlzheng@gmail.com,
+	alexjlzheng@tencent.com,
+	chrisw@osdl.org,
+	greg@kroah.com,
+	jmorris@namei.org,
+	linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	serge@hallyn.com,
+	wufan@linux.microsoft.com
+Subject: Re: [PATCH v2] securityfs: fix missing of d_delete() in securityfs_remove()
+Date: Thu,  8 May 2025 22:22:44 +0800
+Message-ID: <20250508142246.648785-1-alexjlzheng@tencent.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <CAHC9VhRx6SUqYHm7Nv6JKVzpANsnt-qPONcVqZh=hXOsWMqDBA@mail.gmail.com>
+References: <CAHC9VhRx6SUqYHm7Nv6JKVzpANsnt-qPONcVqZh=hXOsWMqDBA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] LSM deprecation / removal policies
-To: Paul Moore <paul@paul-moore.com>, Casey Schaufler <casey@schaufler-ca.com>
-Cc: Song Liu <song@kernel.org>, linux-security-module@vger.kernel.org,
-        Fan Wu <wufan@linux.microsoft.com>,
-        =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?=
- <mic@digikod.net>,
-        Mimi Zohar <zohar@linux.ibm.com>, Micah Morton <mortonm@chromium.org>,
-        John Johansen <john.johansen@canonical.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        KP Singh <kpsingh@kernel.org>, Kees Cook <keescook@chromium.org>
-References: <CAHC9VhTiABmrJNkTYSfTQkjAS5u-GJdYxd+zJ8PcryScBtsXNA@mail.gmail.com>
- <295201ef-5299-4bf0-b0ee-6e1e2a74174b@I-love.SAKURA.ne.jp>
- <CAPhsuW4U5ULtOQ9ucucs3bs+jw+EbBzrCfhAuvOCO=1g5aWAHg@mail.gmail.com>
- <a6d26d37-3475-4f3f-829f-0883dbf8014d@I-love.SAKURA.ne.jp>
- <39ad6f58-db30-4c3c-a3d1-f0af516025e3@schaufler-ca.com>
- <CAHC9VhRk1H6OVTF-peV-Rr9PK6aDmyUeM1G7bgE8e-pAvA=FSg@mail.gmail.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <CAHC9VhRk1H6OVTF-peV-Rr9PK6aDmyUeM1G7bgE8e-pAvA=FSg@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Anti-Virus-Server: fsav202.rs.sakura.ne.jp
-X-Virus-Status: clean
 
-On 2025/05/08 5:14, Paul Moore wrote:
-> On Wed, May 7, 2025 at 12:24 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->> On 5/7/2025 4:06 AM, Tetsuo Handa wrote:
->>> The problem is that the owner out-of-tree BPF LSM solution cannot join the
->>> discussion about LSM hooks being modified/removed. That is, out-of-tree BPF
->>> LSMs will be forced to stay as unstable as out-of-tree non-BPF LSMs.
->>
->> The same issue applies to out-of-tree filesystems and device drivers.
->> There's no problem that is new or unique to the LSM interface here.
+On Wed, 7 May 2025 16:10:11 -0400, Paul Moore <paul@paul-moore.com> wrote:
+> On Wed, May 7, 2025 at 7:12 AM <alexjlzheng@gmail.com> wrote:
+> > From: Jinliang Zheng <alexjlzheng@tencent.com>
+> >
+> > Consider the following module code (just an example to make it easier to
+> > illustrate the problem, in fact the LSM module will not be dynamically
+> > unloaded):
+> >
+> >   static struct dentry *dentry;
+> >
+> >   static int __init securityfs_test_init(void)
+> >   {
+> >           dentry = securityfs_create_dir("standon", NULL);
+> >           return PTR_ERR(dentry);
+> >   }
+> >
+> >   static void __exit securityfs_test_exit(void)
+> >   {
+> >           securityfs_remove(dentry);
+> >   }
+> >
+> >   module_init(securityfs_test_init);
+> >   module_exit(securityfs_test_exit);
+> >
+> > and then:
+> >
+> >   insmod /path/to/thismodule
+> >   cd /sys/kernel/security/standon     <- we hold 'standon'
+> >   rmmod thismodule                    <- 'standon' don't go away
+> >   insmod /path/to/thismodule          <- Failed: File exists!
 > 
-> Exactly.  Out-of-tree kernel code is out-of-tree code.  Tetsuo, we've
-> already had this discussion many times, and my opinion on this has not
-> changed since we last discussed this topic.
+> I mentioned this on your original patch, but I'll mention it again
+> with a bit more of an explanation behind it.  As you know, we don't
+> currently support dynamically loaded LSMs, which means the reproducer
+> above isn't really valid from a supported configuration perspective,
+> even if it does happen to trigger the behavior you are describing.
+> This may seem silly to you, but you really should stick with valid
+> configurations when trying to reproduce things as sometimes when
+> developers see an invalid/unsupported config they may stop reading and
+> dismiss your concern with a "don't do that!", which is surely not what
+> you want.
 > 
+> At the very least, I'm personally not sure we would want an
+> invalid/unsupported reproducer in the git log for the LSM subsystem.
 
-Out-of-tree filesystems and out-of-tree device drivers can be built as
-loadable kernel modules whereas out-of-tree LSM modules cannot be legally
-built as loadable kernel modules. And replacing the whole kernel in order to
-enable out-of-tree LSM modules (or in-tree but not-builtin LSM modules) is
-a big barrier.
+Thank you for your reply. :)
 
-Also, how many LSM modules have been accepted as in-tree after you started using
-LSM ID as an identifier? I don't know how many device drivers have been accepted
-as in-tree, but generally getting LSM modules in-tree is much difficult than
-getting device drivers in-tree. Yet another big barrier!
+To clarify, the reproducer code never invokes security_add_hooks(), thus
+this clearly does not constitute loading a new LSM. 
 
-This problem is new and unique to LSM.
+However, if you believe the current approach might be misinterpreted,
+my v3 patch is available for consideration:
+- https://lore.kernel.org/all/20250508140438.648533-2-alexjlzheng@tencent.com/
 
+While I personally find the v2 reproducer more readable and straightforward,
+I fully defer to your judgment on this matter.
+
+thanks,
+Jinliang Zheng. :)
+
+> 
+> > Although the LSM module will not be dynamically added or deleted after
+> > the kernel is started, it may dynamically add or delete pseudo files
+> > for status export or function configuration in userspace according to
+> > different status, which we are not prohibited from doing so.
+> >
+> > In addition, securityfs_recursive_remove() avoids this problem by calling
+> > __d_drop() directly. As a non-recursive version, it is somewhat strange
+> > that securityfs_remove() does not clean up the deleted dentry.
+> >
+> > Fix this by adding d_delete() in securityfs_remove().
+> 
+> I wondering why we don't simply replace all instances of
+> securityfs_remove() with securityfs_recursive_remove(), or more likely
+> just remove the existing securityfs_remove() and rename the
+> securityfs_recursive_remove() to securityfs_remove().  Do any existing
+> LSMs rely on securityfs_remove() *not* acting recursively?
+> 
+> > Fixes: b67dbf9d4c198 ("[PATCH] add securityfs for all LSMs to use")
+> > Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
+> > ---
+> > changelog:
+> > v2: Modify the commit message to make it clearer
+> > v1: https://lore.kernel.org/all/20250426150931.2840-1-alexjlzheng@tencent.com/
+> > ---
+> >  security/inode.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/security/inode.c b/security/inode.c
+> > index da3ab44c8e57..d99baf26350a 100644
+> > --- a/security/inode.c
+> > +++ b/security/inode.c
+> > @@ -306,6 +306,7 @@ void securityfs_remove(struct dentry *dentry)
+> >                         simple_rmdir(dir, dentry);
+> >                 else
+> >                         simple_unlink(dir, dentry);
+> > +               d_delete(dentry);
+> >                 dput(dentry);
+> >         }
+> >         inode_unlock(dir);
+> > --
+> > 2.49.0
+> 
+> -- 
+> paul-moore.com
