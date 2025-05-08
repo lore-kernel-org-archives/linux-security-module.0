@@ -1,151 +1,159 @@
-Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D2D9211A00;
-	Thu,  8 May 2025 08:29:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.121
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AF517262F
+	for <linux-security-module@vger.kernel.org>; Thu,  8 May 2025 08:37:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746692949; cv=none; b=mJ6lK2KZO9dwc5GUJo3qQYNIkA0Z+Mir8r7nj/IPjn7GQNsJlymLFXkbeeRJXaLEyjn7CbfgTSUTFrpdxPPR0EZktI+0wTFR4ZO5nfWi2yfarExSWZaKJ7BdborGwhIpez3WqS80c0FxnuP4/3412znIzehPgQ6mZxIk5RdvT8k=
+	t=1746693438; cv=none; b=JF2hmX6+H6Tb2d11ovLpnxehqe4GXIUD5SbOvxZDLsWDBx5Z8ZtfEfnvXGMuOAEkpHYd0X/gcusT7W4ADv9dYkbREbXpuJ82Azk5O4m0pF0ATAQ+nayslHm7EbhvgP8kJ8I0CHbX7p0SIJVkwwukOPw9dCq5zDypWiw9J5gwnNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746692949; c=relaxed/simple;
-	bh=CnVgTZ1UWFqStpjsVhnGhCEa95pvZ6Tf/34ZQ4x8thY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g8L+7AKHh9DV16b8za7VIx048V7ZM8wZkkHyQMDJLZRxrtSoNAzmZXaC+MraZk0Q0z6bDGZf0BKvfRREW7ud71YO8Ga1gtdx1W8bQf3nZpHzTw/aYXCglHult9LNjJsuUoXRRE1bPj154IJ7MDDejLj9Q/weK7ZGz54SYMUuP4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=VWXbskEa; arc=none smtp.client-ip=185.125.188.121
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+	s=arc-20240116; t=1746693438; c=relaxed/simple;
+	bh=UnZgUVt+Cd48H6Gxupey/FinooCxbbBTr4OCkTqyW30=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IS9Giy3JsLp4mTCT9RwhMd7AHL+AaS5b/rZvglcAZR5+hCeMSHzu87Oz1/nNl7uoOH75EssiVJah2X28bQ1Crjg6Nwboi0JiNxQDRAfGB70J+/kpRSSWz7TrHM7IRcNoEfbXKI3h5JoQ6E0Jwc3iSZ6yCPXrCCmZdZtdG2EKotw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=dYi8D3PM; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="VWXbskEa"
-Received: from [10.101.3.5] (unknown [213.157.19.150])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id D27DB3FB95;
-	Thu,  8 May 2025 08:29:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1746692944;
-	bh=XH6y8mEZBmq1o1/i4oq6k0EFSwlQLCoZgzRUJn0bYTw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=VWXbskEaMUU1lOtE23N0HYO48Z06BA7n7d1GhyKORBKUVGtn+m6zGkKh6We5k9OhR
-	 08iJOvUwiwiq4a3YZsdCx87gcXgPYwayGCf1VvPgP/QtgbTzMui5U51KfKBSJAVM3y
-	 wgfqg63pGUPSvH3Qehisb9aUfruaLveArl9G85pNbZ5shrs23utIkwbd1JnKDTbI8Z
-	 J4AMHgvVKA33Ae5OQGPMVHOU2Yff+rMHk5LxYO1uUn7ieQUDsNrIPeYJ6+ooJQwDpw
-	 uYjt4RWkcDmxwVzY6Hcd6Jdc1D+aNLCpEEjBL3MDrYWBS1MEK/1k4yWQ+Lmf7z6x6r
-	 Pkps6xwnEM86g==
-Message-ID: <120954c2-87b7-4bda-958b-2b4f0180a736@canonical.com>
-Date: Thu, 8 May 2025 01:29:02 -0700
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="dYi8D3PM"
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ac3fcf5ab0dso111779966b.3
+        for <linux-security-module@vger.kernel.org>; Thu, 08 May 2025 01:37:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1746693435; x=1747298235; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=d3yAv0PhhoFlOwGT9Vpb8yBJ5ZFaUviPQ0VRAAnAe30=;
+        b=dYi8D3PMm9u03zbJ2xkM1aeEq5sC2l6LudzCBqzFOYwTOJFMKs8E0GXVjJj8gLVGmx
+         ananJVYqURdhtLtXtkM2FSxGb/SGzbQOjWhKnBWJT42ksg142tEwEOtIc+WhJA/RAcba
+         6nQwE3IjBBk/BdjzCp07AxlphFrpje3DCy9JmL4woZMzX4Ua7hyIyMXqlkz9tQXM+QXI
+         Bj0Sud5RrFi5UsBc6DAB04jzvan25J4js5eJnkgZSfVtMRlbzH8/n9IuENIl3725T2Jq
+         ojG/HIngbRA3PVBTuEh09Fy+sH50D0IXSnBpqp0Ha7eqYgOY+Zij6fkFnmvsDh2W0Fey
+         Qnyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746693435; x=1747298235;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=d3yAv0PhhoFlOwGT9Vpb8yBJ5ZFaUviPQ0VRAAnAe30=;
+        b=FxcONGxZ+WUrAqjOyhUv709QUUfpW3SS9RlQQ4uL1sNSfUb/2aBliHPB8i0pMmvbJ0
+         8KJuCmixBHA3+yD095kAJYPyuHmMOBEHOwCMxLQjWKk8CxiGZCfjnLIytt8mHYggxkBX
+         iWe1to3pL+vCYFdTV0WG/IhTm14UMx4lruWwSbZK+uS/U1Qg/4d/WE0U9v+PaOHhxGO5
+         wuXJyDw8xgNCl33y0uAGxlitMWRs4qKIgsEsjPI3ZJj+8ifjK/MrJ77Rh+kLDcp5lhFc
+         I4porxE9qqenYa71N0zaFvWMg5/kXyQ8ag+AHT8p2/8D9J45rCmWxUH+5c/NFj7AL+ga
+         26JA==
+X-Forwarded-Encrypted: i=1; AJvYcCUbtlenv/koLtIhElAfCZX85bxbr3fgaWGi0dInHcpDmmKgk7cYbzohCizt/7UpaRAAP16wffgZgSoxB0W2W6PLskMJfek=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzbi0/B9yq+ws+3XeRrJaX9huH+PNAzZkCJGVxzbb0Zwf5YkUuk
+	T5OvVxA5N0spRSgE2KDZqAgzss1Traek+9NbaFwUXK9TRLhzCBYaQbBP+t/yncS5OtqyfLWUUKb
+	fmaRSEjF9OiP2BhbABpm+GIhwFPzeBlBVKMIDNw==
+X-Gm-Gg: ASbGncvRKVGJfgmShfgAu9h9C9cJn9TJ/Sd0q9wId8OMzLX0maHT1/js4gTvUefFugb
+	9DF4pnI43UAnvwC2q9QAGD7QNN+D5p8HlJZZEN0hEM3Nk1LxMzLsFTXuL/rYrfnHfF03F3deJyh
+	085gGUrakLRSQMRVWMSA1QN3HJd6Vd2NUIwgZ8krD10MfTY8PU3cc=
+X-Google-Smtp-Source: AGHT+IHZ2rhB+iv4wHWS2kFS9398kogCHfihOoXvOhDhqZc6h3WfEVMvj050CiBlPWaNyledskveiDEA3cZvZP72aAk=
+X-Received: by 2002:a17:906:c10d:b0:ace:d66f:e2ed with SMTP id
+ a640c23a62f3a-ad1e8bf55e8mr654880966b.25.1746693434806; Thu, 08 May 2025
+ 01:37:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] lsm: introduce security_lsm_manage_policy hook
-To: Paul Moore <paul@paul-moore.com>,
- =?UTF-8?Q?Maxime_B=C3=A9lair?= <maxime.belair@canonical.com>
-Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
- linux-security-module@vger.kernel.org, jmorris@namei.org, serge@hallyn.com,
- mic@digikod.net, kees@kernel.org, stephen.smalley.work@gmail.com,
- casey@schaufler-ca.com, takedakn@nttdata.co.jp, linux-api@vger.kernel.org,
- apparmor@lists.ubuntu.com, linux-kernel@vger.kernel.org
-References: <20250506143254.718647-1-maxime.belair@canonical.com>
- <20250506143254.718647-3-maxime.belair@canonical.com>
- <9c68743f-5efa-4a77-a29b-d3e8f2b2a462@I-love.SAKURA.ne.jp>
- <CAHC9VhRKwB4quqBtYQyxRqCX2C6fCgTbyAP3Ov+NdQ06t1aFdA@mail.gmail.com>
-Content-Language: en-US
-From: John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; keydata=
- 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 lT9Q
-Organization: Canonical
-In-Reply-To: <CAHC9VhRKwB4quqBtYQyxRqCX2C6fCgTbyAP3Ov+NdQ06t1aFdA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250306082615.174777-1-max.kellermann@ionos.com>
+ <20250309151907.GA178120@mail.hallyn.com> <CAKPOu+_vTuZqsBLfRH+kyphiWAtRfWq=nKAcAYu=Wn2JBAkkYg@mail.gmail.com>
+ <20250506132158.GA682102@mail.hallyn.com> <CAKPOu+9JCLVpJ-g_0WwLm5oy=9sq=c9rmoAJD6kNatpMZbbw9w@mail.gmail.com>
+ <CACmP8U+aLY7wmEqdb=a_tpDCY5LaPGb46DU+jSD3bCXX=JUAuA@mail.gmail.com>
+ <CAKPOu+_=ocLeEqcaSMjb5qqrvi6KAu3GYJa19Fqz_dm3a5F77w@mail.gmail.com> <CACmP8UJmC22+59RcHu_X3xpdUYP-i93rjdVQvZn6_Haj-F8tPw@mail.gmail.com>
+In-Reply-To: <CACmP8UJmC22+59RcHu_X3xpdUYP-i93rjdVQvZn6_Haj-F8tPw@mail.gmail.com>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Thu, 8 May 2025 10:37:04 +0200
+X-Gm-Features: ATxdqUF3az4N3FOazSPMnBdAataIURztGU21AUNdHQXvyCKx5MItY1Zad7HyxIE
+Message-ID: <CAKPOu+8+1uVrDJHwmHJd2d46-N6AwjR4_bbtoSJS+sx6J=rkjg@mail.gmail.com>
+Subject: Re: [PATCH] security/commoncap: don't assume "setid" if all ids are identical
+To: "Andrew G. Morgan" <morgan@kernel.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>, Andy Lutomirski <luto@kernel.org>, paul@paul-moore.com, 
+	jmorris@namei.org, kees@kernel.org, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 5/7/25 13:25, Paul Moore wrote:
-> On Wed, May 7, 2025 at 6:41 AM Tetsuo Handa
-> <penguin-kernel@i-love.sakura.ne.jp> wrote:
->> On 2025/05/06 23:32, Maxime Bélair wrote:
->>> diff --git a/security/lsm_syscalls.c b/security/lsm_syscalls.c
->>> index dcaad8818679..b39e6635a7d5 100644
->>> --- a/security/lsm_syscalls.c
->>> +++ b/security/lsm_syscalls.c
->>> @@ -122,5 +122,10 @@ SYSCALL_DEFINE3(lsm_list_modules, u64 __user *, ids, u32 __user *, size,
->>>   SYSCALL_DEFINE5(lsm_manage_policy, u32, lsm_id, u32, op, void __user *, buf, u32
->>>                __user *, size, u32, flags)
->>>   {
->>> -     return 0;
->>> +     size_t usize;
->>> +
->>> +     if (get_user(usize, size))
->>> +             return -EFAULT;
->>> +
->>> +     return security_lsm_manage_policy(lsm_id, op, buf, usize, flags);
->>>   }
->>
->> syzbot will report user-controlled unbounded huge size memory allocation attempt. ;-)
->>
->> This interface might be fine for AppArmor, but TOMOYO won't use this interface because
->> TOMOYO's policy is line-oriented ASCII text data where the destination is switched via
->> pseudo‑filesystem's filename ...
-> 
-> While Tetsuo's comment is limited to TOMOYO, I believe the argument
-> applies to a number of other LSMs as well.  The reality is that there
-> is no one policy ideal shared across LSMs and that complicates things
-> like the lsm_manage_policy() proposal.  I'm intentionally saying
-> "complicates" and not "prevents" because I don't want to flat out
-> reject something like this, but I think there needs to be a larger
-> discussion among the different LSM groups about what such an API
-> should look like.  We may not need to get every LSM to support this
-> new API, but we need to get something that would work for a
-> significant majority and would be general/extensible enough that we
-> would expect it to work with the majority of future LSMs (as much as
-> we can predict the future anyway).
-> 
+On Thu, May 8, 2025 at 5:32=E2=80=AFAM Andrew G. Morgan <morgan@kernel.org>=
+ wrote:
+> See the "bprm_set_creds" paragraph. My concern is that there is an
+> exploit vector associated with an abuser setting LD_LIBRARY_PATH=3D to
+> something nefarious, and then invoking a setuid program that happens
+> to re-exec itself for some reason. The first invocation will be as
+> before, but when the binary re-exec's itself, I am concerned that this
+> could cause the privileged binary to load an exploit.
 
-yep, I look at this is just a starting point for discussion. There
-isn't going to be any discussion without some code, so here is a v1
-that supports a single LSM let the bike shedding begin.
+Let's talk about this potential vulnerability again. Consider the
+following code:
 
+ #include <stdio.h>
+ #include <sys/prctl.h>
+ #include <unistd.h>
+ int main(int argc, char **argv) {
+   printf("ruid=3D%d euid=3D%d\n", getuid(), geteuid());
+   if (argc > 1) {
+     printf("setting NO_NEW_PRIVS\n");
+     prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
+   }
+   if (**argv) {
+     printf("re-exec\n");
+     execl(*argv, "", NULL);
+     perror("exec");
+   }
+ }
 
+Without my patch:
+
+ $ /reexec
+ ruid=3D1000 euid=3D0
+ re-exec
+ ruid=3D1000 euid=3D0
+ $ /reexec 1
+ ruid=3D1000 euid=3D0
+ setting NO_NEW_PRIVS
+ re-exec
+ ruid=3D1000 euid=3D1000
+
+Without NO_NEW_PRIVS, the re-exec keeps the real/effective, but also
+gains setuid again, but the suid is no-op; the euid is already 0.
+With NO_NEW_PRIVS, the re-exec drops the euid=3D0, and doesn't regain it
+- the setuid bit is ignored.
+
+With my patch:
+
+ $ /reexec
+ ruid=3D1000 euid=3D0
+ re-exec
+ ruid=3D1000 euid=3D0
+ $ /reexec 1
+ ruid=3D1000 euid=3D0
+ setting NO_NEW_PRIVS
+ re-exec
+ ruid=3D1000 euid=3D0
+
+Same without NO_NEW_PRIVS (but internally, the re-exec is not
+considered "secureexec" because the setuid bit is effectively a
+no-op).
+With NO_NEW_PRIVS, the setuid bit is ignored, but the process is
+allowed to keep the euid=3D0 - which is the whole point of my patch.
+Indeed, no new privs are gained - just like NO_NEW_PRIVS is
+documented!
+
+Back to your LD_LIBRARY_PATH example: with my patch, glibc ignores
+LD_LIBRARY_PATH because effective!=3D=3Dreal (still).
+
+But without my patch, with the vanilla kernel, glibc does use
+LD_LIBRARY_PATH (effective=3D=3Dreal because effective was reset) and
+you're actually vulnerable! It seems to be quite opposite of what you
+have been assuming?
+(Don't get confused that the kernel has reverted the euid to 1000;
+this is a privileged superuser process with a full set of
+capabilities!)
+
+Am I missing something obvious, or is NO_NEW_PRIVS+reexec is a serious
+Linux kernel vulnerability? (And it is fixed by my patch)
+
+Max
