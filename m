@@ -1,64 +1,126 @@
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2036E219319;
-	Thu,  8 May 2025 12:56:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 373E2225414;
+	Thu,  8 May 2025 14:04:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746709018; cv=none; b=lpEUa03uM5eqRgVr++HNILchneOnFCs4s38OY/1VFR5bIqXB3CaVgdha6bUxkn9Yz9/3QTq7XVQ+qv7nC2Ze/oYb+wDiJfB/guVgLJc7f7OAZJQb9iu7tOvJuVmnQq2974PDxz3+ZCWWWBCgpODFFts3rf1l9kitiWgptD0mlWM=
+	t=1746713087; cv=none; b=IC5LQGz+S550OG/wMPld9s+oEnyYBoaZu+nuXyAydqgQv5Qm9Z2fa3yU67+iiU4FSB9oAhjcA3bPusXyOjUdPXMeuOI0bNrGnAqVBWrYOxz1sk+vRDar+71F8Edvf9f/nru8NghJAFiqiHTkeX0Kv2STXoFgZlHtJGxUZCmy/6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746709018; c=relaxed/simple;
-	bh=VnYy99ctH9dGOn0PvoJ8+o42P5BdUgrrCJD+hHpOR5w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZpzH/hE8jv8ydHc1Be98kc9bYsOJTCUFD9hh0EA/ZnNI4/M3+WEPjLMQCyoxIQuflwRcXD2TGp6amru0OY85UI1Q613Il2Yyj6d8nvAepvUpYKudVEO9Or+bja5YcufPx5netf1Hei8K9SD33dE6XGt5TC69ueAW96JUrPsHk7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 548CtjHW039304;
-	Thu, 8 May 2025 21:55:45 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 548Ctjkt039300
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Thu, 8 May 2025 21:55:45 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <75c0385c-b649-46b0-907f-903e2217f460@I-love.SAKURA.ne.jp>
-Date: Thu, 8 May 2025 21:55:45 +0900
+	s=arc-20240116; t=1746713087; c=relaxed/simple;
+	bh=I5AYjiY8VUoBHNQi0KyZfpF+m4tQwY6m2Fr4MyzfSaA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lhD+L2tpl+VWfRPJu5e04PQ/lOnwoAE1zY/mB0xcSZKunFoE7MN/YyaGnLLJKsMeibAtfh//eDw4QS+BYt2zC4C0uSEMuNrLwJc1bt+3DxbGT+0yYZ+vPOrxUVi1BNgyAGCAvpOPtTdFrEtrN/+f0548d6V3RwiqJnQsA4rPies=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MTuXt1Tu; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MTuXt1Tu"
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-736aa9d0f2aso1312088b3a.0;
+        Thu, 08 May 2025 07:04:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746713085; x=1747317885; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sQdOLgCX3HOEuRvc2wEO5NPaR0RD7S1qSIiFGmRjaOk=;
+        b=MTuXt1Tuf7/Qf2ey4J7GJnYW/3g0+P7JbXRIV0dPb3vgFEH/T59Ax0n0RYUfHAYK2P
+         H5OdoUPxd85GTbm9ty02A+u99rk1W/lM4b8P4Q4I71xEOg0IL4iHUGK3dvPZj+hNqKCl
+         4K6sTzik34WmHtcpTtwYa81u9jmLThVvI7vZu0hIVisG5/2lJrfMfLwAn/qkv8LVdM9c
+         haDAKIW5S3Q3xCCob21U0rQcOrB1xnacWNCL0rSAgQqH/dyG7wvHW313Tdl2IXcWLWSj
+         lBFzjCJOXM0/Lp2/aXzI9vj/y1PbQC0YZfxoAxnW/LobyVpcWG1qDMWdZnpnYi1SQ0/4
+         qbig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746713085; x=1747317885;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sQdOLgCX3HOEuRvc2wEO5NPaR0RD7S1qSIiFGmRjaOk=;
+        b=qGgotPaNqewDF24BR3yhh7bvgR8dIVb0Kzr8oBMzejv37d+h3F2jrvgKm4E54v6iue
+         cWEaZT5RfiJw1sltMRTga470hoPa8SekZwnbZ5a9VoqchxpFcWMHQyfLOka3NiM3EoDW
+         zi983OcJH48m9klhOS2fJafn7M5kLtposbd0LwVPyzHN2/+y/J1W1vYvV/+oYvANJJvN
+         cW30Sw0RqzOhXCOZQf34LK1B/TY6JSRvQwW61eCrIURyWqfi0G+hrCgjfz/EVPa8FaQH
+         IAnnX6Wpz7kfBBzrurbxNskLuJInAL8KJXKmSeaT3s3Kl5vhnUPS2rJQjdEZSKE5xpfj
+         j2sw==
+X-Forwarded-Encrypted: i=1; AJvYcCUM9uFsSJfdDu3OpGs5Dl04nrzZfhjGlUS6l4O/Ok58uVx6Cx0zP/cTgLOz2NVNroEp8GvLPmbl8rZWsbU=@vger.kernel.org, AJvYcCX1Zzll3r9W7Eb/eDfPdEM+9CZdmEe8ajqRg2ZPW99lr5Y4H0ouqUZfzXhFpWT1IEot3iAhoeFGo3ILGNdyT3l9OiEV1gH1@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrXUvAzPxB5o6YVcL0RCowZlWdEYiby78Q5QkxXTNdXghUR6Zv
+	ak4xe/ygW59JARcB2X2ziqWvb7cGG7v/kFVSkdQJm4NuS5xIYj/6BOyl7Q==
+X-Gm-Gg: ASbGncunK/efAwjZtgYqFiX1IDIMuf2NRzbNxdUDbEzSI25ozvXHhuYlVOw9xRRM72B
+	c8s9VrjnAtWSRg/g/dmOcS6mApVTv/zRDhfVnRqLfIxEj6us6gotDB3NJT6mvI8gozcc9Z1K63i
+	pdoYTKWYS/PAJhsFHQme0TXV1QDPsEOfg8hQ8FEvwwrt2i7P4ATHr3il9wkgftP8CaX2cD2TK+O
+	fzsXsJWst3zePRUILAyJ3kV9fcuoutFNksFthswvtVIdXHTzbPdZUIFCtTH1N6PL/JDsj80nTfx
+	B03FNTnmHiJPd9NXZM2llwGJlld6hKk1jTQV4InQey71F+HLPfc=
+X-Google-Smtp-Source: AGHT+IEHqHiTAH5HAyh0OHYt05cNXNldRr6if44Me5asjUB6jdOUWaqC6iTX3R5KvLcN76DUc08YlA==
+X-Received: by 2002:a05:6a20:c90d:b0:1ee:dded:e5b with SMTP id adf61e73a8af0-2148c40f940mr12458973637.24.1746713085394;
+        Thu, 08 May 2025 07:04:45 -0700 (PDT)
+Received: from VM-16-38-fedora.. ([43.135.149.86])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-740650a6081sm12108318b3a.139.2025.05.08.07.04.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 May 2025 07:04:44 -0700 (PDT)
+From: alexjlzheng@gmail.com
+X-Google-Original-From: alexjlzheng@tencent.com
+To: paul@paul-moore.com,
+	jmorris@namei.org,
+	viro@zeniv.linux.org.uk
+Cc: serge@hallyn.com,
+	greg@kroah.com,
+	chrisw@osdl.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jinliang Zheng <alexjlzheng@tencent.com>
+Subject: [PATCH v3] securityfs: fix missing of d_delete() in securityfs_remove()
+Date: Thu,  8 May 2025 22:04:39 +0800
+Message-ID: <20250508140438.648533-2-alexjlzheng@tencent.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] lsm: introduce security_lsm_manage_policy hook
-To: John Johansen <john.johansen@canonical.com>,
-        =?UTF-8?Q?Maxime_B=C3=A9lair?= <maxime.belair@canonical.com>,
-        linux-security-module@vger.kernel.org
-Cc: paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, mic@digikod.net,
-        kees@kernel.org, stephen.smalley.work@gmail.com,
-        casey@schaufler-ca.com, takedakn@nttdata.co.jp,
-        linux-api@vger.kernel.org, apparmor@lists.ubuntu.com,
-        linux-kernel@vger.kernel.org
-References: <20250506143254.718647-1-maxime.belair@canonical.com>
- <20250506143254.718647-3-maxime.belair@canonical.com>
- <9c68743f-5efa-4a77-a29b-d3e8f2b2a462@I-love.SAKURA.ne.jp>
- <6d785712-6d8e-491c-86d4-1cbe5895778f@canonical.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <6d785712-6d8e-491c-86d4-1cbe5895778f@canonical.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Virus-Status: clean
-X-Anti-Virus-Server: fsav103.rs.sakura.ne.jp
+Content-Transfer-Encoding: 8bit
 
-On 2025/05/08 17:25, John Johansen wrote:
-> That is fine. But curious I am curious what the interface would look like to fit TOMOYO's
-> needs.
+From: Jinliang Zheng <alexjlzheng@tencent.com>
 
-Stream (like "FILE *") with restart from the beginning (like rewind(fp)) support.
-That is, the caller can read/write at least one byte at a time, and written data
-is processed upon encountering '\n'.
+Consider the following execution flow:
+
+  Thread 0: securityfs_create_dir("A")
+  Thread 1: cd /sys/kernel/security/A           <- we hold 'A'
+  Thread 0: securityfs_remove(dentry)           <- 'A' don't go away
+  Thread 0: securityfs_create_dir("A")          <- Failed: File exists!
+
+Although the LSM module will not be dynamically added or deleted after
+the kernel is started, it may dynamically add or delete pseudo files
+for status export or function configuration in userspace according to
+different status, which we are not prohibited from doing so.
+
+In addition, securityfs_recursive_remove() avoids this problem by calling
+__d_drop() directly. As a non-recursive version, it is somewhat strange
+that securityfs_remove() does not clean up the deleted dentry.
+
+Fix this by adding d_delete() in securityfs_remove().
+
+Fixes: b67dbf9d4c198 ("[PATCH] add securityfs for all LSMs to use")
+Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
+---
+changelog:
+v3: Modify the commit message to avoid readers mistakenly thinking that the LSM is being dynamically loaded
+v2: https://lore.kernel.org/all/20250507111204.2585739-1-alexjlzheng@tencent.com/
+v1: https://lore.kernel.org/all/20250425092548.6828-1-alexjlzheng@tencent.com/
+---
+ security/inode.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/security/inode.c b/security/inode.c
+index da3ab44c8e57..d99baf26350a 100644
+--- a/security/inode.c
++++ b/security/inode.c
+@@ -306,6 +306,7 @@ void securityfs_remove(struct dentry *dentry)
+ 			simple_rmdir(dir, dentry);
+ 		else
+ 			simple_unlink(dir, dentry);
++		d_delete(dentry);
+ 		dput(dentry);
+ 	}
+ 	inode_unlock(dir);
+-- 
+2.49.0
 
