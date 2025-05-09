@@ -1,354 +1,131 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-bc0e.mail.infomaniak.ch (smtp-bc0e.mail.infomaniak.ch [45.157.188.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F24E28E57C;
-	Fri,  9 May 2025 10:26:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC23D290BC7
+	for <linux-security-module@vger.kernel.org>; Fri,  9 May 2025 10:26:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746786398; cv=none; b=YppvAfGwCUCX4gsUiyNR8esAkKFsgUFEx+Iru74qQHUxTP1OKtbfZy5zcBIeMJSuHluIpC/ku1P3YyBd+BgqsHoknkzJVEw7tZGOMbZK9aQ8vsOA/8t84PzQa02FzaCJG4Lfc3t++8fcOF0+aVxWHS/ln6qpB8/aWl90MWXW1kw=
+	t=1746786417; cv=none; b=CWvLtIaX7wV2HjJA+4hZE4+aAh3eUwN/XanSlFlhhkImA6SShHj4nwBc6mVSaqSOu2VkED+u64Lv1ag2RH7VqfF/E6utfcSVZYLMNZvp/rJHhZLm8WGCeYDq0cqdsBeV/wlexZ0Gk/KVq/p9UFns5ATqPYQRW5kiv7nHGBITybk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746786398; c=relaxed/simple;
-	bh=UO8bLlP3bUupU133EuNspN2KAZgS/+F5nFcKZes45cU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gtDxu4XV2DA1s6j8YUKFmiruK2LOLi6UGYCeDeRI1BO0jdt/N4YO6TVN9EmcbMw+IZ/iAfFExuGfxjcFrBj27uMEQUxJxBc0oJuXFHyQDNQqT9HAbKnAj9YG4L/OCaHFBtfZfcWnx4EzeRCc64NP63hM9vPH2rOT6cuparLYa/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YKgC5FPT; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1746786417; c=relaxed/simple;
+	bh=0hgLDBDBqIc+ajD8fKoIpxS6gijW76ZLX+VXrJUmh6E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sR0vf1GM4RCICFdp334x2Vs6pVZ1XyivXE5nDio5+z4zbhP8/BxLIR2NiiVITbScZ2okZtEPsPi2ewpQ83b82XTyh7CLNv/+0EEwyyWdY2VGCGDUAJU/hXwu47dD0JcObrj40eS9uQzdOxcb2DEVuke3kEIhq6M6WLIIOxdO/FQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=RjQrZQ84; arc=none smtp.client-ip=45.157.188.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YKgC5FPT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D610C4CEEF;
-	Fri,  9 May 2025 10:26:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746786397;
-	bh=UO8bLlP3bUupU133EuNspN2KAZgS/+F5nFcKZes45cU=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=YKgC5FPT0WBppeiCJmEFRBJPyodLYesxoE5mgC9/S7q0+DcsRQ/YC/rUrLtC6U8iR
-	 Ov2ucJfKnUR2imwGtS77/KFG/hQPkAUFi2aHR1Xxg0y0EoMLLoSOvju1bwpdnz+/Uh
-	 Xiln5EtEg+LIBVJnukUv427p1gdApe29r91c6DKCjhr1oXz3TjQLsev0NF3LoNel8R
-	 VJqlRj9YcTel+rxAV9UqQodDjGFX0z32gOlpiWqqv5qo5hd/fAIW9bHcM4hX+2uoS5
-	 +tDDShde9+sYFn+1CoKV2htxxPXX2DCpJNMsuXlLIexu31qLaRPzpESB0oZoOdOuMc
-	 yTWLkQk9BDNwQ==
-From: Christian Brauner <brauner@kernel.org>
-Date: Fri, 09 May 2025 12:25:41 +0200
-Subject: [PATCH v5 9/9] selftests/coredump: add tests for AF_UNIX coredumps
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="RjQrZQ84"
+Received: from smtp-3-0001.mail.infomaniak.ch (smtp-3-0001.mail.infomaniak.ch [10.4.36.108])
+	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Zv4tH4x3gzTkQ;
+	Fri,  9 May 2025 12:26:47 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1746786407;
+	bh=pwp7aGGfuXhGuWiZq4lEqOzbbcbhUTvngL3tCWRDYJg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RjQrZQ84I4ZLCOPdNvJCURGqKw24PzdHcWdVgd05M27bNGowwta3gJdGFkot5l1MA
+	 2/1CrApRjcGtx+lCql7qGkrv+sp/lr26107uqBz/grlyqssmi7mARV8PDTSkxu7J5h
+	 un/axsBqZnfs98zrS9YGpjSwP6N483JDLSgFeRDc=
+Received: from unknown by smtp-3-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Zv4tH0ccfzFFD;
+	Fri,  9 May 2025 12:26:47 +0200 (CEST)
+Date: Fri, 9 May 2025 12:26:45 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: John Johansen <john.johansen@canonical.com>, 
+	Paul Moore <paul@paul-moore.com>, Maxime =?utf-8?Q?B=C3=A9lair?= <maxime.belair@canonical.com>, 
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, linux-security-module@vger.kernel.org, jmorris@namei.org, 
+	serge@hallyn.com, kees@kernel.org, stephen.smalley.work@gmail.com, 
+	takedakn@nttdata.co.jp, linux-api@vger.kernel.org, apparmor@lists.ubuntu.com, 
+	linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 2/3] lsm: introduce security_lsm_manage_policy hook
+Message-ID: <20250509.Chuecae0phoo@digikod.net>
+References: <20250506143254.718647-1-maxime.belair@canonical.com>
+ <20250506143254.718647-3-maxime.belair@canonical.com>
+ <9c68743f-5efa-4a77-a29b-d3e8f2b2a462@I-love.SAKURA.ne.jp>
+ <CAHC9VhRKwB4quqBtYQyxRqCX2C6fCgTbyAP3Ov+NdQ06t1aFdA@mail.gmail.com>
+ <120954c2-87b7-4bda-958b-2b4f0180a736@canonical.com>
+ <efe5b15a-6141-424a-8391-9092e79e4acf@schaufler-ca.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250509-work-coredump-socket-v5-9-23c5b14df1bc@kernel.org>
-References: <20250509-work-coredump-socket-v5-0-23c5b14df1bc@kernel.org>
-In-Reply-To: <20250509-work-coredump-socket-v5-0-23c5b14df1bc@kernel.org>
-To: linux-fsdevel@vger.kernel.org, Jann Horn <jannh@google.com>, 
- Daniel Borkmann <daniel@iogearbox.net>, 
- Kuniyuki Iwashima <kuniyu@amazon.com>
-Cc: Eric Dumazet <edumazet@google.com>, Oleg Nesterov <oleg@redhat.com>, 
- "David S. Miller" <davem@davemloft.net>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, 
- Daan De Meyer <daan.j.demeyer@gmail.com>, 
- David Rheinsberg <david@readahead.eu>, Jakub Kicinski <kuba@kernel.org>, 
- Jan Kara <jack@suse.cz>, Lennart Poettering <lennart@poettering.net>, 
- Luca Boccassi <bluca@debian.org>, Mike Yuan <me@yhndnzj.com>, 
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
- =?utf-8?q?Zbigniew_J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, 
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
- linux-security-module@vger.kernel.org, 
- Christian Brauner <brauner@kernel.org>, 
- Alexander Mikhalitsyn <alexander@mihalicyn.com>
-X-Mailer: b4 0.15-dev-c25d1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=8035; i=brauner@kernel.org;
- h=from:subject:message-id; bh=UO8bLlP3bUupU133EuNspN2KAZgS/+F5nFcKZes45cU=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTI3tCOz9G98FZXdAIPV9lRv2+1x1dvsX84eWPb7IW5S
- mkT951b0VHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRWTsZGW7mBDoqZbDraB72
- rmS0+MBtbdx0vUr39NsGp2/zJyzXuMTI0D+xfdVk229z/l/QPsDq+TWVcapu21XdutLJwgvt3u7
- 4zg8A
-X-Developer-Key: i=brauner@kernel.org; a=openpgp;
- fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <efe5b15a-6141-424a-8391-9092e79e4acf@schaufler-ca.com>
+X-Infomaniak-Routing: alpha
 
-Add a simple test for generating coredumps via AF_UNIX sockets.
+On Thu, May 08, 2025 at 09:54:19AM -0700, Casey Schaufler wrote:
+> On 5/8/2025 1:29 AM, John Johansen wrote:
+> > On 5/7/25 13:25, Paul Moore wrote:
+> >> On Wed, May 7, 2025 at 6:41 AM Tetsuo Handa
+> >> <penguin-kernel@i-love.sakura.ne.jp> wrote:
+> >>> On 2025/05/06 23:32, Maxime Bélair wrote:
+> >>>> diff --git a/security/lsm_syscalls.c b/security/lsm_syscalls.c
+> >>>> index dcaad8818679..b39e6635a7d5 100644
+> >>>> --- a/security/lsm_syscalls.c
+> >>>> +++ b/security/lsm_syscalls.c
+> >>>> @@ -122,5 +122,10 @@ SYSCALL_DEFINE3(lsm_list_modules, u64 __user
+> >>>> *, ids, u32 __user *, size,
+> >>>>   SYSCALL_DEFINE5(lsm_manage_policy, u32, lsm_id, u32, op, void
+> >>>> __user *, buf, u32
+> >>>>                __user *, size, u32, flags)
+> >>>>   {
+> >>>> -     return 0;
+> >>>> +     size_t usize;
+> >>>> +
+> >>>> +     if (get_user(usize, size))
+> >>>> +             return -EFAULT;
+> >>>> +
+> >>>> +     return security_lsm_manage_policy(lsm_id, op, buf, usize,
+> >>>> flags);
+> >>>>   }
+> >>>
+> >>> syzbot will report user-controlled unbounded huge size memory
+> >>> allocation attempt. ;-)
+> >>>
+> >>> This interface might be fine for AppArmor, but TOMOYO won't use this
+> >>> interface because
+> >>> TOMOYO's policy is line-oriented ASCII text data where the
+> >>> destination is switched via
+> >>> pseudo‑filesystem's filename ...
+> >>
+> >> While Tetsuo's comment is limited to TOMOYO, I believe the argument
+> >> applies to a number of other LSMs as well.  The reality is that there
+> >> is no one policy ideal shared across LSMs and that complicates things
+> >> like the lsm_manage_policy() proposal.  I'm intentionally saying
+> >> "complicates" and not "prevents" because I don't want to flat out
+> >> reject something like this, but I think there needs to be a larger
+> >> discussion among the different LSM groups about what such an API
+> >> should look like.  We may not need to get every LSM to support this
+> >> new API, but we need to get something that would work for a
+> >> significant majority and would be general/extensible enough that we
+> >> would expect it to work with the majority of future LSMs (as much as
+> >> we can predict the future anyway).
+> >>
+> >
+> > yep, I look at this is just a starting point for discussion. There
+> > isn't going to be any discussion without some code, so here is a v1
+> > that supports a single LSM let the bike shedding begin.
+> 
+> Aside from the issues with allocating a buffer for a big policy
+> I don't see a problem with this proposal. The system call looks
+> a lot like the other LSM interfaces, so any developer who likes
+> those ought to like this one. The infrastructure can easily check
+> the lsm_id and only call the appropriate LSM hook, so no one
+> is going to be interfering with other modules.
 
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- tools/testing/selftests/coredump/stackdump_test.c | 231 +++++++++++++++++++++-
- 1 file changed, 230 insertions(+), 1 deletion(-)
+We may not want to only be able to load buffers containing policies, but
+also to leverage file descriptors like Landlock does.  Getting a
+property from a kernel object or updating it is mainly about dealing
+with a buffer.  And the current LSM syscalls do just that.  Other kind
+of operations may require more than that though.
 
-diff --git a/tools/testing/selftests/coredump/stackdump_test.c b/tools/testing/selftests/coredump/stackdump_test.c
-index fe3c728cd6be..8423499808ff 100644
---- a/tools/testing/selftests/coredump/stackdump_test.c
-+++ b/tools/testing/selftests/coredump/stackdump_test.c
-@@ -5,10 +5,15 @@
- #include <linux/limits.h>
- #include <pthread.h>
- #include <string.h>
-+#include <sys/mount.h>
- #include <sys/resource.h>
-+#include <sys/stat.h>
-+#include <sys/socket.h>
-+#include <sys/un.h>
- #include <unistd.h>
- 
- #include "../kselftest_harness.h"
-+#include "../pidfd/pidfd.h"
- 
- #define STACKDUMP_FILE "stack_values"
- #define STACKDUMP_SCRIPT "stackdump"
-@@ -35,6 +40,7 @@ static void crashing_child(void)
- FIXTURE(coredump)
- {
- 	char original_core_pattern[256];
-+	pid_t pid_coredump_server;
- };
- 
- FIXTURE_SETUP(coredump)
-@@ -44,6 +50,7 @@ FIXTURE_SETUP(coredump)
- 	char *dir;
- 	int ret;
- 
-+	self->pid_coredump_server = -ESRCH;
- 	file = fopen("/proc/sys/kernel/core_pattern", "r");
- 	ASSERT_NE(NULL, file);
- 
-@@ -61,10 +68,15 @@ FIXTURE_TEARDOWN(coredump)
- {
- 	const char *reason;
- 	FILE *file;
--	int ret;
-+	int ret, status;
- 
- 	unlink(STACKDUMP_FILE);
- 
-+	if (self->pid_coredump_server > 0) {
-+		kill(self->pid_coredump_server, SIGTERM);
-+		waitpid(self->pid_coredump_server, &status, 0);
-+	}
-+
- 	file = fopen("/proc/sys/kernel/core_pattern", "w");
- 	if (!file) {
- 		reason = "Unable to open core_pattern";
-@@ -154,4 +166,221 @@ TEST_F_TIMEOUT(coredump, stackdump, 120)
- 	fclose(file);
- }
- 
-+TEST_F(coredump, socket)
-+{
-+	int fd, pidfd, ret, status;
-+	FILE *file;
-+	pid_t pid, pid_coredump_server;
-+	struct stat st;
-+	char core_file[PATH_MAX];
-+	struct pidfd_info info = {};
-+	int ipc_sockets[2];
-+	char c;
-+
-+	ASSERT_EQ(unshare(CLONE_NEWNS), 0);
-+	ASSERT_EQ(mount(NULL, "/", NULL, MS_PRIVATE | MS_REC, NULL), 0);
-+	ASSERT_EQ(mount(NULL, "/tmp", "tmpfs", 0, NULL), 0);
-+
-+	file = fopen("/proc/sys/kernel/core_pattern", "w");
-+	ASSERT_NE(NULL, file);
-+
-+	ret = fprintf(file, "@linuxafsk/coredump.socket");
-+	ASSERT_EQ(ret, strlen("@linuxafsk/coredump.socket"));
-+	ASSERT_EQ(fclose(file), 0);
-+
-+	ret = socketpair(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0, ipc_sockets);
-+	ASSERT_EQ(ret, 0);
-+
-+	pid_coredump_server = fork();
-+	ASSERT_GE(pid_coredump_server, 0);
-+	if (pid_coredump_server == 0) {
-+		int fd_socket, fd_coredump, fd_peer_pidfd, fd_core_file;
-+		__u64 peer_cookie;
-+		socklen_t fd_peer_pidfd_len, peer_cookie_len;
-+		static const struct sockaddr_un coredump_sk = {
-+			.sun_family = AF_UNIX,
-+			.sun_path = "\0linuxafsk/coredump.socket",
-+		};
-+		static const size_t coredump_sk_len =
-+			offsetof(struct sockaddr_un, sun_path) +
-+			sizeof("linuxafsk/coredump.socket"); /* +1 for leading NUL */
-+
-+		close(ipc_sockets[0]);
-+
-+		fd_socket = socket(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0);
-+		if (fd_socket < 0)
-+			_exit(EXIT_FAILURE);
-+
-+		ret = bind(fd_socket, (const struct sockaddr *)&coredump_sk, coredump_sk_len);
-+		if (ret < 0) {
-+			fprintf(stderr, "Failed to bind coredump socket\n");
-+			close(fd_socket);
-+			close(ipc_sockets[1]);
-+			_exit(EXIT_FAILURE);
-+		}
-+
-+		ret = listen(fd_socket, 1);
-+		if (ret < 0) {
-+			fprintf(stderr, "Failed to listen on coredump socket\n");
-+			close(fd_socket);
-+			close(ipc_sockets[1]);
-+			_exit(EXIT_FAILURE);
-+		}
-+
-+		if (write_nointr(ipc_sockets[1], "1", 1) < 0) {
-+			close(fd_socket);
-+			close(ipc_sockets[1]);
-+			_exit(EXIT_FAILURE);
-+		}
-+
-+		close(ipc_sockets[1]);
-+
-+		fd_coredump = accept4(fd_socket, NULL, NULL, SOCK_CLOEXEC);
-+		if (fd_coredump < 0) {
-+			fprintf(stderr, "Failed to accept coredump socket connection\n");
-+			close(fd_socket);
-+			_exit(EXIT_FAILURE);
-+		}
-+
-+		peer_cookie_len = sizeof(peer_cookie);
-+		ret = getsockopt(fd_coredump, SOL_SOCKET, SO_COOKIE,
-+				 &peer_cookie, &peer_cookie_len);
-+		if (ret < 0) {
-+			fprintf(stderr, "%m - Failed to retrieve cookie for coredump socket connection\n");
-+			close(fd_coredump);
-+			close(fd_socket);
-+			_exit(EXIT_FAILURE);
-+		}
-+
-+		fd_peer_pidfd_len = sizeof(fd_peer_pidfd);
-+		ret = getsockopt(fd_coredump, SOL_SOCKET, SO_PEERPIDFD,
-+				 &fd_peer_pidfd, &fd_peer_pidfd_len);
-+		if (ret < 0) {
-+			fprintf(stderr, "%m - Failed to retrieve peer pidfd for coredump socket connection\n");
-+			close(fd_coredump);
-+			close(fd_socket);
-+			_exit(EXIT_FAILURE);
-+		}
-+
-+		memset(&info, 0, sizeof(info));
-+		info.mask = PIDFD_INFO_EXIT | PIDFD_INFO_COREDUMP;
-+		ret = ioctl(fd_peer_pidfd, PIDFD_GET_INFO, &info);
-+		if (ret < 0) {
-+			fprintf(stderr, "Failed to retrieve pidfd info from peer pidfd for coredump socket connection\n");
-+			close(fd_coredump);
-+			close(fd_socket);
-+			close(fd_peer_pidfd);
-+			_exit(EXIT_FAILURE);
-+		}
-+
-+		if (!(info.mask & PIDFD_INFO_COREDUMP)) {
-+			fprintf(stderr, "Missing coredump information from coredumping task\n");
-+			close(fd_coredump);
-+			close(fd_socket);
-+			close(fd_peer_pidfd);
-+			_exit(EXIT_FAILURE);
-+		}
-+
-+		if (!(info.coredump_mask & PIDFD_COREDUMPED)) {
-+			fprintf(stderr, "Received connection from non-coredumping task\n");
-+			close(fd_coredump);
-+			close(fd_socket);
-+			close(fd_peer_pidfd);
-+			_exit(EXIT_FAILURE);
-+		}
-+
-+		if (!info.coredump_cookie) {
-+			fprintf(stderr, "Missing coredump cookie\n");
-+			close(fd_coredump);
-+			close(fd_socket);
-+			close(fd_peer_pidfd);
-+			_exit(EXIT_FAILURE);
-+		}
-+
-+		if (info.coredump_cookie != peer_cookie) {
-+			fprintf(stderr, "Mismatching coredump cookies\n");
-+			close(fd_coredump);
-+			close(fd_socket);
-+			close(fd_peer_pidfd);
-+			_exit(EXIT_FAILURE);
-+		}
-+
-+		fd_core_file = creat("/tmp/coredump.file", 0644);
-+		if (fd_core_file < 0) {
-+			fprintf(stderr, "Failed to create coredump file\n");
-+			close(fd_coredump);
-+			close(fd_socket);
-+			close(fd_peer_pidfd);
-+			_exit(EXIT_FAILURE);
-+		}
-+
-+		for (;;) {
-+			char buffer[4096];
-+			ssize_t bytes_read, bytes_write;
-+
-+			bytes_read = read(fd_coredump, buffer, sizeof(buffer));
-+			if (bytes_read < 0) {
-+				close(fd_coredump);
-+				close(fd_socket);
-+				close(fd_peer_pidfd);
-+				close(fd_core_file);
-+				_exit(EXIT_FAILURE);
-+			}
-+
-+			if (bytes_read == 0)
-+				break;
-+
-+			bytes_write = write(fd_core_file, buffer, bytes_read);
-+			if (bytes_read != bytes_write) {
-+				close(fd_coredump);
-+				close(fd_socket);
-+				close(fd_peer_pidfd);
-+				close(fd_core_file);
-+				_exit(EXIT_FAILURE);
-+			}
-+		}
-+
-+		close(fd_coredump);
-+		close(fd_socket);
-+		close(fd_peer_pidfd);
-+		close(fd_core_file);
-+		_exit(EXIT_SUCCESS);
-+	}
-+	self->pid_coredump_server = pid_coredump_server;
-+
-+	EXPECT_EQ(close(ipc_sockets[1]), 0);
-+	ASSERT_EQ(read_nointr(ipc_sockets[0], &c, 1), 1);
-+	EXPECT_EQ(close(ipc_sockets[0]), 0);
-+
-+	pid = fork();
-+	ASSERT_GE(pid, 0);
-+	if (pid == 0)
-+		crashing_child();
-+
-+	pidfd = sys_pidfd_open(pid, 0);
-+	ASSERT_GE(pidfd, 0);
-+
-+	waitpid(pid, &status, 0);
-+	ASSERT_TRUE(WIFSIGNALED(status));
-+	ASSERT_TRUE(WCOREDUMP(status));
-+
-+	info.mask = PIDFD_INFO_EXIT | PIDFD_INFO_COREDUMP;
-+	ASSERT_EQ(ioctl(pidfd, PIDFD_GET_INFO, &info), 0);
-+	ASSERT_GT((info.mask & PIDFD_INFO_COREDUMP), 0);
-+	ASSERT_GT((info.coredump_mask & PIDFD_COREDUMPED), 0);
-+
-+	waitpid(pid_coredump_server, &status, 0);
-+	self->pid_coredump_server = -ESRCH;
-+	ASSERT_TRUE(WIFEXITED(status));
-+	ASSERT_EQ(WEXITSTATUS(status), 0);
-+
-+	ASSERT_EQ(stat("/tmp/coredump.file", &st), 0);
-+	ASSERT_GT(st.st_size, 0);
-+	/*
-+	 * We should somehow validate the produced core file.
-+	 * For now just allow for visual inspection
-+	 */
-+	system("file /tmp/coredump.file");
-+}
-+
- TEST_HARNESS_MAIN
-
--- 
-2.47.2
-
+I don't like multiplexer syscalls because they don't expose a clear
+semantic and can be complex to manage and filter.  This new syscall is
+kind of a multiplexer that redirect commands to an arbitrary set of
+kernel parts, which can then define their own semantic.  I'd like to see
+a clear set of well-defined operations and their required permission.
+Even better, one syscall per operation should simplify their interface.
