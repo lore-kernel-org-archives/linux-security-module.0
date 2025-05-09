@@ -1,123 +1,244 @@
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-fw-52002.amazon.com (smtp-fw-52002.amazon.com [52.119.213.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 143802367CD
-	for <linux-security-module@vger.kernel.org>; Fri,  9 May 2025 16:53:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F551239090;
+	Fri,  9 May 2025 17:32:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746809607; cv=none; b=nFXYCPRJsphl3fzQWYhHsSs0/zfPpDmTlbJWIxPdxUG7r9BgPNpDmCZ7H7IayQTqVpXLv+M7yrnyE2RSrw0PPHbOXqpPb0RbeavmFuWbx917dFchD1FvslNt8Tb97ksXisytUK3+K8Ee6ZQpn8it4PV9qPKt+uLtiKx/CZcRH+Q=
+	t=1746811953; cv=none; b=AjkPVFLweEjxiT+2XPtUJOvSTd3GAELBOht+qJNSlBKgwp9JDeS8aFYPYAcrkHcoOF5LSDLC5T0dNFiB29MZ4WPmqq1Z3xvFUnsid/5INOuxBugZ2JHeYDN2vHqoUZ68b0eBn5zaIllX+TdVhk+8TiEC04xqhYuh28C2zie2hII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746809607; c=relaxed/simple;
-	bh=ovsCpdfdcv5lWd54vzHlEPAEE72CBV3NXgYXZCNXoKY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=j4VDKaDYWNzH/MN1wH8Cfguvqf0KI/iMWw15/Qiy8c2jSg4MyVkd+yw+8I/FXDNiS3VuetVO1wNfzZ9yqWDim3CnL80XJGXuWYTibfLaVYPufBs6O/ZUI2yQ/XcZ0lF4nnHFvkr+Rl4cs0XyEqMZ+9sNy4ypUaHCvkVFL01r7Gg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=fMnjNRxO; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+	s=arc-20240116; t=1746811953; c=relaxed/simple;
+	bh=R3XHrj5LgYG9CyDHTHAoHFZHVpFk3t23LN8geisvNxI=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=u7TGXcHJZjrdodgjzzHPu1+UE6MEMkD4HsAM8am2KCkDFG5nqhWcdPhEr8sxXwebCElEWq36tcJnDvRAr59hrdFZmNzVa8BpTB9qFKG440FxMjG9k5WGS5lZQJpotnZ4vUdnwEPe156PhIX+NC65xeLXsrsWpTvJB4QYFfjil2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=EG8A5YIH; arc=none smtp.client-ip=52.119.213.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="fMnjNRxO"
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-acacb8743a7so384275966b.1
-        for <linux-security-module@vger.kernel.org>; Fri, 09 May 2025 09:53:24 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="EG8A5YIH"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1746809603; x=1747414403; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jvftcXXxC+RA38DZ97cxLVbR/d27myTWn86O+uHVzlc=;
-        b=fMnjNRxONLDW6QhnV+6UgAOQW8cqEqG+hyzp0G42OxJIIr5AZmti94+nefIRUttvEB
-         QqoVofvDQA571rT23L+zHlA43bkDu0fYLC51hbUXZhi6jVtyfqRNVOVEpVOm3yqmMPwg
-         iU7WkbybwgU+/J1rlcrD/CPhm2n42NakZudaREId+2p7WCXvarUn24EGvsDqh8B+zNCj
-         w1dYbCXLw4TN1SD6DBFBmacnWSh5e7euIJoVQjEEfevtyx5oGljcswFStoNTLB5ZBV3L
-         HTC62P0Z002Oj79e4nxjvhwJvS5NgSq2ubXGfymFag0Lgw7m/GkK4968GSHx/B+auAU5
-         A6Hg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746809603; x=1747414403;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jvftcXXxC+RA38DZ97cxLVbR/d27myTWn86O+uHVzlc=;
-        b=rxFNQgB4N4ATM385OW8W76Ek4+3o7mtSgFDsJ23xbJ1KUscVajvH6eXqAyr0J3bUfV
-         h6Nsd/OAITTkd8BRF54+BQ9NjQcSGJLTt6vZsuwtoHtd2ApzhfXUqIRorzqfLptew15x
-         gl4p5+orkCqfnA2BMdQFSQOYFt11MpzOyVAKzrpvZ0drfN/jGMCI75FA3R4AL07epm9P
-         mLMBPARnhvjXdo8auvZDHXnsup2tfQ7YbLPVitP486NIXJ4A4b15SjHX0fqqWw2cA1mJ
-         NQtwTyVg39AmJe0E/QnCL+XziySKDLbr8ySIz/LmhPkAeq73k/vkkJ/w2F8z0gCN9agT
-         LE/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUZufLXgfIK2tuiq8AZ/P+ICDg4p5fX1ZH3flDwYNcJp4heFlZ0XLrFZIucm6BpHjB0rt9Ekj1j38pTFCr6OKzLWM+/9J0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpdGxVrBA6Y0eyRxcWDC60MwBguBE6IdKSqqX0DG7u8OwbNEV8
-	/Jg2NE9MvsS+V6Ji0/58NEmTU4NmoQJeFSi5zmrCvox/yzRMUUisY++vSE/8LQgCfP5vOGnCuW+
-	KcVyFtu8cvZLzPqMGzukrV7VFi/1UWHD0WBEfFQ==
-X-Gm-Gg: ASbGncvJ66MrZfFOxkvi+D4zjLcIzCIeXZa2pvz0oG0+42Xt5wiC8zEhSlKxmHYaKi5
-	apH03k84IncuFPlJazNYj8N0mVXSCWw/bcNyFCdItT05RjB+E5VFGkJGtPzP1a6PXlQbbB5xgi+
-	wZFGxHqDmOg3L3jLb2RJ4hpbJem+CnjrY/eijhfSJOG3V11neoTfM=
-X-Google-Smtp-Source: AGHT+IEhGi2LQFwvFRnaQacV1MVwRNQX6iJFqdq8RTHLH5cJ5UYZlyhVM7R4mWOQ9PxvwUNpMYblc6WfEAt3Ca+JqI4=
-X-Received: by 2002:a17:907:c717:b0:ac7:81b0:62c9 with SMTP id
- a640c23a62f3a-ad21b42627amr364284266b.20.1746809603331; Fri, 09 May 2025
- 09:53:23 -0700 (PDT)
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1746811952; x=1778347952;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=yhpp9QC5ncFxyeHZjaDDxMYBWmdWgq6kB+j0hfRTrj0=;
+  b=EG8A5YIHpyPOQFpCTP2oF4kmNz2tNpb3dNyG8eZ7zqNBX8PCw1ebcELE
+   i2YiRSItIlUOZ0kLIcGVc+pE0jj8yAcnpOIJpFZsppuAnJtQ4Udi3ajmi
+   tfm7q0cixrHe/gBSiVWn6N4p6tVqgTzfkcumvWLQOi1I2SjCz7asUsXKe
+   OjO0dVkyEw4JdjNGOYWdKjwK7PW2BM04Y+ZvEG3VtmYVvaUSULqg1+ES0
+   kVYwByxhvVzpVpuB8wq+UjPdYSURSZNxJ7riY6stdLBJMksrLqgedCEDz
+   Lja8t3gI7bE34Ag7lum3dokP4g03E/ivP8KBPW/sGNs24vGuo93/PbTY4
+   A==;
+X-IronPort-AV: E=Sophos;i="6.15,275,1739836800"; 
+   d="scan'208";a="721297076"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-52002.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2025 17:32:27 +0000
+Received: from EX19MTAUWA001.ant.amazon.com [10.0.7.35:41304]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.21.68:2525] with esmtp (Farcaster)
+ id a919e1f1-8c4f-4e88-b09f-73ac0d9e22d4; Fri, 9 May 2025 17:32:26 +0000 (UTC)
+X-Farcaster-Flow-ID: a919e1f1-8c4f-4e88-b09f-73ac0d9e22d4
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWA001.ant.amazon.com (10.250.64.217) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Fri, 9 May 2025 17:32:25 +0000
+Received: from 6c7e67bfbae3.amazon.com (10.187.170.14) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Fri, 9 May 2025 17:32:21 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <brauner@kernel.org>
+CC: <alexander@mihalicyn.com>, <bluca@debian.org>, <daan.j.demeyer@gmail.com>,
+	<daniel@iogearbox.net>, <davem@davemloft.net>, <david@readahead.eu>,
+	<edumazet@google.com>, <horms@kernel.org>, <jack@suse.cz>,
+	<jannh@google.com>, <kuba@kernel.org>, <kuniyu@amazon.com>,
+	<lennart@poettering.net>, <linux-fsdevel@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+	<me@yhndnzj.com>, <netdev@vger.kernel.org>, <oleg@redhat.com>,
+	<pabeni@redhat.com>, <viro@zeniv.linux.org.uk>, <zbyszek@in.waw.pl>
+Subject: Re: [PATCH v5 4/9] coredump: add coredump socket
+Date: Fri, 9 May 2025 10:30:41 -0700
+Message-ID: <20250509173213.36201-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250509-querschnitt-fotokopien-6ae91dfdac45@brauner>
+References: <20250509-querschnitt-fotokopien-6ae91dfdac45@brauner>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250306082615.174777-1-max.kellermann@ionos.com>
- <20250309151907.GA178120@mail.hallyn.com> <CAKPOu+_vTuZqsBLfRH+kyphiWAtRfWq=nKAcAYu=Wn2JBAkkYg@mail.gmail.com>
- <20250506132158.GA682102@mail.hallyn.com> <CAKPOu+9JCLVpJ-g_0WwLm5oy=9sq=c9rmoAJD6kNatpMZbbw9w@mail.gmail.com>
- <aB0sVcjFZaCVEirH@lei> <CAKPOu+89=+SFk1hKGLheMtPq+K47E9FRCo1DBQo9zGMwW=Tr2w@mail.gmail.com>
- <87h61t7siv.fsf@email.froward.int.ebiederm.org>
-In-Reply-To: <87h61t7siv.fsf@email.froward.int.ebiederm.org>
-From: Max Kellermann <max.kellermann@ionos.com>
-Date: Fri, 9 May 2025 18:53:11 +0200
-X-Gm-Features: ATxdqUFC9_hHEUoh5M3wGZU19wIBs4HyJyr3wHdymfUQLj3BgYhzKvRJc8bf1HM
-Message-ID: <CAKPOu+8uw6SCO_hhOy_Kc_XihTDvJGoPrC1ujAHPYuiBghUb1g@mail.gmail.com>
-Subject: Re: [PATCH] security/commoncap: don't assume "setid" if all ids are identical
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: sergeh@kernel.org, "Serge E. Hallyn" <serge@hallyn.com>, Andy Lutomirski <luto@kernel.org>, 
-	paul@paul-moore.com, jmorris@namei.org, kees@kernel.org, morgan@kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D042UWA002.ant.amazon.com (10.13.139.17) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-On Fri, May 9, 2025 at 4:45=E2=80=AFPM Eric W. Biederman <ebiederm@xmission=
-.com> wrote:
-> In particular __is_setuid or __is_setgid being true guarantees
-> that has_identical_uids_gids will be false.
+From: Christian Brauner <brauner@kernel.org>
+Date: Fri, 9 May 2025 17:40:14 +0200
+> > Userspace can set /proc/sys/kernel/core_pattern to:
+> > 
+> >         @linuxafsk/coredump_socket
+> 
+> I have one other proposal that:
+> 
+> - avoids reserving a specific address
+> - doesn't require bpf or lsm to be safe
+> - allows for safe restart and crashes of the coredump sever
+> 
+> To set up a coredump socket the coredump server must allocate a socket
+> cookie for the listening socket via SO_COOKIE. The socket cookie must be
+> used as the prefix in the abstract address for the coredump socket. It
+> can be followed by a \0 byte and then followed by whatever the coredump
+> server wants. For example:
+> 
+> 12345678\0coredump.socket
+> 
+> When a task crashes and generates a coredump it will find the provided
+> address but also compare the prefixed SO_COOKIE value with the socket
+> cookie of the socket listening at that address. If they don't match it
+> will refuse to connect.
+> 
+> So even if the coredump server restarts or crashes and unprivileged
+> userspace recycles the socket address for an attack the crashing process
+> will detect this as the new listening socket will have gotten either a
+> new or no SO_COOKIE and the crashing process will not connect.
+> 
+> The coredump server just sets /proc/sys/kernel/core_pattern to:
+> 
+>         @SO_COOKIE/whatever
+> 
+> The "@" at the beginning indicates to the kernel that the abstract
+> AF_UNIX coredump socket will be used to process coredumps and the
+> indicating the end of the SO_COOKIE and the rest of the name.
+> 
+> Appended what that would look like.
 
-Sorry, no, that's completely wrong!
+Thank you, this looks much nicer to me.
 
-__is_setXid() compares effective with real.
-has_identical_uids_gids() compares effective with effective, real with real=
- etc.
 
-See the difference?
+[...]
+> Userspace can set /proc/sys/kernel/core_pattern to:
+> 
+>         @SO_COOKIE/whatever
+> 
+> The "@" at the beginning indicates to the kernel that the abstract
+> AF_UNIX coredump socket will be used to process coredumps.
+> 
+> When the coredump server sets up a coredump socket it must allocate a
+> socket cookie for it and use it as the prefix in the abstract address.
+> It may be followed by a zero byte and whatever other name the server may
+> want.
+[...]
+> +
+> +		/* Format is @socket_cookie\0whatever. */
+> +		p = strchr(addr.sun_path + 1, '/');
+> +		if (p)
+> +			*p = '\0';
 
-> Which means has_identical_uids_gids adds nothing, and the patch is
-> pointless.
+nit: the '\0' seems optional, @SO_COOKIEwhatever\0
 
-Also wrong. If that were correct, then my patch would not have an
-observable effect. But it does. Try it, try the small program I
-posted!
 
-It seems your whole email is based on this misunderstanding. Please reconsi=
-der.
 
-> If your concern is LD_PRELOAD and the like please don't play with
-> the uids/gids and instead just make certain bprm->secureexec gets
-> set.
+> diff --git a/include/linux/net.h b/include/linux/net.h
+> index 0ff950eecc6b..3f467786bdc9 100644
+> --- a/include/linux/net.h
+> +++ b/include/linux/net.h
+> @@ -82,6 +82,8 @@ enum sock_type {
+>  #define SOCK_NONBLOCK	O_NONBLOCK
+>  #endif
+>  
+> +#define SOCK_COREDUMP O_NOCTTY
+> +
+>  #endif /* ARCH_HAS_SOCKET_TYPES */
+>  
+>  /**
+> diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
+> index 472f8aa9ea15..944248d7c5be 100644
+> --- a/net/unix/af_unix.c
+> +++ b/net/unix/af_unix.c
+> @@ -101,6 +101,7 @@
+>  #include <linux/string.h>
+>  #include <linux/uaccess.h>
+>  #include <linux/pidfs.h>
+> +#include <linux/kstrtox.h>
 
-LD_PRELOAD is not my concern at all. I just observed that the current
-kernel behavior can annul the LD_PRELOAD/suid protection as
-implemented in glibc.
+nit: please sort in alphabetical order.  It was cleaned up recently.
 
-> I see no evidence
-> in this conversation that anyone has surveyed the users of NO_NEW_PRIVS
-> and verified how anyone actually uses it.  Without such evidence we
-> have to assume that userspace depends upon the current behavior.
 
-That's fine for me. But this behavior should be documented, because it
-is rather surprising.
+>  #include <net/af_unix.h>
+>  #include <net/net_namespace.h>
+>  #include <net/scm.h>
+> @@ -1191,7 +1192,7 @@ static struct sock *unix_find_bsd(struct sockaddr_un *sunaddr, int addr_len,
+>  
+>  static struct sock *unix_find_abstract(struct net *net,
+>  				       struct sockaddr_un *sunaddr,
+> -				       int addr_len, int type)
+> +				       int addr_len, int type, int flags)
+>  {
+>  	unsigned int hash = unix_abstract_hash(sunaddr, addr_len, type);
+>  	struct dentry *dentry;
+> @@ -1201,6 +1202,15 @@ static struct sock *unix_find_abstract(struct net *net,
+>  	if (!sk)
+>  		return ERR_PTR(-ECONNREFUSED);
+>  
+> +	if (flags & SOCK_COREDUMP) {
+> +		u64 cookie;
+> +
+> +		if (kstrtou64(sunaddr->sun_path, 0, &cookie))
+> +			return ERR_PTR(-ECONNREFUSED);
+> +		if (cookie != atomic64_read(&sk->sk_cookie))
+> +			return ERR_PTR(-ECONNREFUSED);
+> +	}
+> +
+>  	dentry = unix_sk(sk)->path.dentry;
+>  	if (dentry)
+>  		touch_atime(&unix_sk(sk)->path);
+> @@ -1210,14 +1220,14 @@ static struct sock *unix_find_abstract(struct net *net,
+>  
+>  static struct sock *unix_find_other(struct net *net,
+>  				    struct sockaddr_un *sunaddr,
+> -				    int addr_len, int type)
+> +				    int addr_len, int type, int flags)
+>  {
+>  	struct sock *sk;
+>  
+>  	if (sunaddr->sun_path[0])
+>  		sk = unix_find_bsd(sunaddr, addr_len, type);
+>  	else
+> -		sk = unix_find_abstract(net, sunaddr, addr_len, type);
+> +		sk = unix_find_abstract(net, sunaddr, addr_len, type, flags);
+>  
+>  	return sk;
+>  }
+> @@ -1473,7 +1483,7 @@ static int unix_dgram_connect(struct socket *sock, struct sockaddr *addr,
+>  		}
+>  
+>  restart:
+> -		other = unix_find_other(sock_net(sk), sunaddr, alen, sock->type);
+> +		other = unix_find_other(sock_net(sk), sunaddr, alen, sock->type, flags);
 
-(In any case, we will keep the patch in our kernel fork because we
-need this part of the kernel to work properly. Our machines don't run
-any code that depends on the buggy behavior.)
+The flag should be 0 as we don't use SOCK_DGRAM for coredump.
 
-Max
+
+>  		if (IS_ERR(other)) {
+>  			err = PTR_ERR(other);
+>  			goto out;
+> @@ -1620,7 +1630,7 @@ static int unix_stream_connect(struct socket *sock, struct sockaddr *uaddr,
+>
+>  restart:
+>  	/*  Find listening sock. */
+> -	other = unix_find_other(net, sunaddr, addr_len, sk->sk_type);
+> +	other = unix_find_other(net, sunaddr, addr_len, sk->sk_type, flags);
+>  	if (IS_ERR(other)) {
+>  		err = PTR_ERR(other);
+>  		goto out_free_skb;
+> @@ -2089,7 +2099,7 @@ static int unix_dgram_sendmsg(struct socket *sock, struct msghdr *msg,
+>  	if (msg->msg_namelen) {
+>  lookup:
+>  		other = unix_find_other(sock_net(sk), msg->msg_name,
+> -					msg->msg_namelen, sk->sk_type);
+> +					msg->msg_namelen, sk->sk_type, 0);
+>  		if (IS_ERR(other)) {
+>  			err = PTR_ERR(other);
+>  			goto out_free;
+> -- 
+> 2.47.2
