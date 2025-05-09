@@ -1,44 +1,43 @@
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF647322E;
-	Fri,  9 May 2025 04:38:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA0F23373D;
+	Fri,  9 May 2025 04:39:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746765537; cv=none; b=BIUWx8LPsJr4PxzzefGDGp8QU7bwnOLwrOZP7i4rSe3AGPP3oLrkAm+IkD61sGc4DragHpMw718lzxB/KWjl8bJsk69E6JZNHbwnUplLQQ1dT0IW+JlesLtpG0w7YGvJ8ki+OnRGgibjHpPhzu4ZWRYBCG9GjcOeyzPt6Gs50gI=
+	t=1746765563; cv=none; b=MyOSEPmn+VzzazmABTyZtxkmhUdOdChteDvrb0bAcTeiDxOds+7YYgwiCU1Gol9cwVQBLCHEHTyT0l7Ffu5Me1qYeWjw99qCYbPtSv3wYE5Va5SNrjQx5g27KhtqTaLm0Fg1PP4vBEmKZjQWq2/936DBM1zryTd7AJ9CeppyhBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746765537; c=relaxed/simple;
-	bh=4N6qGlFzEZ653iqywACVNjFOfUDYyZODQnI4muL6/IM=;
+	s=arc-20240116; t=1746765563; c=relaxed/simple;
+	bh=EZQb8iIG/SHEbTjiz3fd7lizdcsokXmu2Bx8REH0cAA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JyjXEK1+eZIaUHOqj7XMoWJpW9o60pahf71qefZHWEhXvNY+Ev6zui+6YQ423Lm2QVJSA4K6BFIbEEwo24ZN/aYEVxo4hmQsAXE42kREXTpXaojoWjX83vekxnRKKOpz5ozIOfFqf23JuQplICokJ3ie2Lre10zlvyQ6G+ppXts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=ZptpExIz; arc=none smtp.client-ip=62.89.141.173
+	 Content-Type:Content-Disposition:In-Reply-To; b=DILqPpEoB/ujbrCkbDib+DTMgwo22Vi0YHvgT+IfhsSofTQUUHUqk+MzeV8eJDTV1ouxJZ5Ls2V3hZ1sFi8H7nLlhChl/ehEoBTlULvg+lXjUTDJAqqQiXlDuWmKqvjlDht++D8xp+wEudWl8D5fEjZcqxSZ1E8S2RWiL85xYyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=ZHN7QDsC; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="ZptpExIz"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="ZHN7QDsC"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
 	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=aYiruGcuVJAFDdSWmWaqU5Kk5O2dQYBm2szAv6XmEM4=; b=ZptpExIzTr7gp8Kf12nGH6vvuV
-	QZVBveZ3UyCzWHZavV70v0dV6yudsiykEYq4pEGrp6MJn2qn7g/1MqAxtInJWORyDlBtJ/wwvvfkB
-	d+D24duLmAOyoduLtw5EsgoRPrMtb0fCx+tleal+tzTFgELTWcdZwIqLVj9g+bBJitscTGl4OPxuk
-	xryiu9tT1jKLszh+ZubQiRm694wZexUU8j2HkD2b/t61Oco4cZyUpIr12Pzj9qZ2X81epnIU5z+lx
-	6/mJUp9talgr9p65q2oTzt8NXRMD7YNYfmSAMsI/xrur/glPK8OxiO0O32d/u524kVYTLvbGF76uy
-	PbCZd+aw==;
+	bh=3gdPMPoIlxA/FHWfFkpCmq+Eah3CFJnumJNyzeIIKis=; b=ZHN7QDsC5x/f4CMBsqVUV2nN6g
+	uChGBpxxVA/FHLFcRcjm03cwViAlL0NLjVQ+t3mvWvqWaXxsKQbO32rCWxrvPq0YP33zDMZBiPL6j
+	qgaLioiydcLINsxFtdlZinCY2zqcUkIWjqePNDIseurSyq6brpdhtq8gH0Y94TknS9cwC+/YtOWsY
+	PCOrx+GEI5EuI7u2bSlzfTpeK8H2mZKDKQ+NS2BE60nKVwHmm5r359c4+yIQVg6L+TZ5MQFNoGKxN
+	2NoNVV9V36jUta97nq+Qahb0xtNVkDnKTdCXHBkGKbQ9pEkHMw6bntsbwXEf69UoZFnd3QfIExVlS
+	VFJqkk1w==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uDFVX-0000000A7EH-2E2f;
-	Fri, 09 May 2025 04:38:47 +0000
-Date: Fri, 9 May 2025 05:38:47 +0100
+	id 1uDFVx-0000000A7Ih-3XQH;
+	Fri, 09 May 2025 04:39:13 +0000
+Date: Fri, 9 May 2025 05:39:13 +0100
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: alexjlzheng@gmail.com
 Cc: paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
 	greg@kroah.com, chrisw@osdl.org,
 	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Jinliang Zheng <alexjlzheng@tencent.com>
-Subject: [PATCH 2/8] securityfs: pin filesystem only for objects directly in
- root
-Message-ID: <20250509043847.GM2023217@ZenIV>
+Subject: [PATCH 3/8] fix locking in efi_secret_unlink()
+Message-ID: <20250509043913.GN2023217@ZenIV>
 References: <20250508140438.648533-2-alexjlzheng@tencent.com>
  <20250509032326.GJ2023217@ZenIV>
 Precedence: bulk
@@ -52,78 +51,39 @@ Content-Disposition: inline
 In-Reply-To: <20250509032326.GJ2023217@ZenIV>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-From 23947dd21a91b95208863c74d4dbc67d0027f43a Mon Sep 17 00:00:00 2001
+From d332a8fcb3c1219f5e0ae1961a8ff4a4e3cd3bcc Mon Sep 17 00:00:00 2001
 From: Al Viro <viro@zeniv.linux.org.uk>
-Date: Tue, 14 May 2024 08:46:00 -0600
-Subject: [PATCH 2/8] securityfs: pin filesystem only for objects directly in
- root
+Date: Tue, 14 May 2024 08:48:58 -0600
+Subject: [PATCH 3/8] fix locking in efi_secret_unlink()
 
-Nothing on securityfs ever changes parents, so we don't need
-to pin the internal mount if it's already pinned for parent.
+now we can just have it call simple_unlink() and be done with that
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- security/inode.c | 21 +++++++++++++--------
- 1 file changed, 13 insertions(+), 8 deletions(-)
+ drivers/virt/coco/efi_secret/efi_secret.c | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
 
-diff --git a/security/inode.c b/security/inode.c
-index 58cc60c50498..19ab99feeee3 100644
---- a/security/inode.c
-+++ b/security/inode.c
-@@ -112,18 +112,20 @@ static struct dentry *securityfs_create_dentry(const char *name, umode_t mode,
- 	struct dentry *dentry;
- 	struct inode *dir, *inode;
- 	int error;
-+	bool pinned = false;
+diff --git a/drivers/virt/coco/efi_secret/efi_secret.c b/drivers/virt/coco/efi_secret/efi_secret.c
+index 1864f9f80617..f2da4819ec3b 100644
+--- a/drivers/virt/coco/efi_secret/efi_secret.c
++++ b/drivers/virt/coco/efi_secret/efi_secret.c
+@@ -136,15 +136,7 @@ static int efi_secret_unlink(struct inode *dir, struct dentry *dentry)
+ 		if (s->fs_files[i] == dentry)
+ 			s->fs_files[i] = NULL;
  
- 	if (!(mode & S_IFMT))
- 		mode = (mode & S_IALLUGO) | S_IFREG;
- 
- 	pr_debug("securityfs: creating file '%s'\n",name);
- 
--	error = simple_pin_fs(&fs_type, &mount, &mount_count);
--	if (error)
--		return ERR_PTR(error);
+-	/*
+-	 * securityfs_remove tries to lock the directory's inode, but we reach
+-	 * the unlink callback when it's already locked
+-	 */
+-	inode_unlock(dir);
+-	securityfs_remove(dentry);
+-	inode_lock(dir);
 -
--	if (!parent)
-+	if (!parent) {
-+		error = simple_pin_fs(&fs_type, &mount, &mount_count);
-+		if (error)
-+			return ERR_PTR(error);
-+		pinned = true;
- 		parent = mount->mnt_root;
-+	}
- 
- 	dir = d_inode(parent);
- 
-@@ -167,7 +169,8 @@ static struct dentry *securityfs_create_dentry(const char *name, umode_t mode,
- 	dentry = ERR_PTR(error);
- out:
- 	inode_unlock(dir);
--	simple_release_fs(&mount, &mount_count);
-+	if (pinned)
-+		simple_release_fs(&mount, &mount_count);
- 	return dentry;
+-	return 0;
++	return simple_unlink(inode, dentry);
  }
  
-@@ -307,13 +310,15 @@ void securityfs_remove(struct dentry *dentry)
- 			simple_unlink(dir, dentry);
- 	}
- 	inode_unlock(dir);
--	simple_release_fs(&mount, &mount_count);
-+	if (dir != dir->i_sb->s_root->d_inode)
-+		simple_release_fs(&mount, &mount_count);
- }
- EXPORT_SYMBOL_GPL(securityfs_remove);
- 
- static void remove_one(struct dentry *victim)
- {
--	simple_release_fs(&mount, &mount_count);
-+	if (victim->d_parent != victim->d_sb->s_root)
-+		simple_release_fs(&mount, &mount_count);
- }
- 
- /**
+ static const struct inode_operations efi_secret_dir_inode_operations = {
 -- 
 2.39.5
 
