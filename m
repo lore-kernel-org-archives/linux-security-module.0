@@ -1,155 +1,65 @@
-Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AE8364A8F;
-	Fri,  9 May 2025 03:25:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.121
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEF72322E;
+	Fri,  9 May 2025 04:37:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746761112; cv=none; b=Crt23Mm47ivSDc7K3lWcYMD51oKEJuiVsxNoIM04uCyjEPhDE0GjQ47s6BFAzmJNs7K6BeNuX+yIA9ut8e/ap3smZlofy3FPIK+Pp+a02vx6tWmwkq1as8r4OpmgblCaEjGsj8F4yOxUcsXwZtrxuV+K+xAQYrG4nl75qMdj94o=
+	t=1746765446; cv=none; b=JeB/sHEIp4arIsFawLhTjIJJktM3iBjMHooV4+lgf8KY2DVl2JFuwTZw3JmZ4d2g0hkKc8j80AuVyeD+uvyUChr68fhx8P3p2wipfjVAnofiqNja7X1r0j9F35/EmHZabGfdr+MFovLoU6ve+vqSzPoSLrvYvgX67SAQwizHMWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746761112; c=relaxed/simple;
-	bh=JPqmzf4gOx8AVbXkvRM+lnEpK1UDKkWYdXTKOvnpdfY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BvR7cS8S7d6cfrpWJWMnAWKjl76wN1POGBEgWIfql4KJIgQbcrlbwBV1QIZ1jckTb4EjtbI/uAum033bHgCAijt+ZaJdreEMT16B8OivDD2gpQJZJv/auH5O4H9pNplmKzvcZHQxxi/SMmnAk75EYzZumQjzI/FsamPAcEGdxl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=Z3UZjFbx; arc=none smtp.client-ip=185.125.188.121
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+	s=arc-20240116; t=1746765446; c=relaxed/simple;
+	bh=Ipe4mV+J9vP7HklIxq6kVTdKpe3daV5fY9cIrl1hQLQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=haYGcZZtcVSN0+1ecJAt4Gf1G9V9bUtPj3c9f18DDcgfYKrVYUHApmn/oPlZnrlPhmDN7f8xE8V+dblZYIxgmLIlHihIcsBqqutDCUFJPqWdySsETHx2kgGV47ZoM0UqDYNXFqg8One6NLN7g6H5qatjz49I4rFJwif0SAzDyqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=aYpjwn20; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="Z3UZjFbx"
-Received: from [172.20.3.254] (unknown [213.157.19.135])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 5EAA53FBEE;
-	Fri,  9 May 2025 03:25:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1746761107;
-	bh=1DZ8iwMZIwS63JI0hHfUuAmxjE7s0c4ZLKJru1Z5GFk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=Z3UZjFbxfDXTXYGZNY4EWCokJ8sJ38K9KuFbP+NcrMu+gv8FqVZgRFi3BzATOue0B
-	 EfINAXCcp57pzqgD5kC69+9xWo+YSo11lMUv3QZMpp7QyHRyXWI8Z20U07LgN+/ECp
-	 GyQLaIdrs8J975UpP0AQa67DJouQ7UPQX5mUWo760PmDlyUplG1Iz8l/9YG25iBM7x
-	 jyFP41YpQBAoUljlPnNTvzD9jKMCblyALUd6/GbHNbsQYWvm0X2MOJw3YNEdfNFvGI
-	 2PBC39M0QIqFdzbGo89G4r62vKBrxhaJyz6/p9VfrIgfyfpggyIngfVTO2IxbiJ0/x
-	 SVHdUtG0ZeOGQ==
-Message-ID: <88d70234-2c43-4208-88c2-15a39aa5c6eb@canonical.com>
-Date: Thu, 8 May 2025 20:25:04 -0700
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="aYpjwn20"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=uP3s/ajzuYrNI5apkZ3sO7dk9TQmL1y6hyIKvcgbE4g=; b=aYpjwn200vewNojIuJx0oLbGh/
+	yX2ZngJLJ/izqqnTcXqdeo5V7KQNkyOVerj77kS9R09Hs7jtP5TLzINnTU/MiJSTEDH4lCXNXo3Kv
+	dOtiT4oN0qAEH+LmLjumG+upd6qmQLpq7cjb+F27mswN4G2XIhWKfJ+q+5x2SD7IH8yNQzSOTwhH1
+	W9rC6HNUeV8nwvi3SiK579NTtN4WzEW0M9Weo9EuCcfv9oOpMwtZILQ3t7llrX+lE3Mz5IbCd+MOO
+	b+k0xev8wzQaeIGcHb1jL5UiE7N0jbdUsYZY2NV5Vl1TZumXP7mSxq5PSDCYGvnHXlSQsryP7qZcf
+	CGeKZR4g==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uDFU0-0000000A70z-3vFd;
+	Fri, 09 May 2025 04:37:13 +0000
+Date: Fri, 9 May 2025 05:37:12 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: alexjlzheng@gmail.com
+Cc: paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+	greg@kroah.com, chrisw@osdl.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jinliang Zheng <alexjlzheng@tencent.com>
+Subject: Re: [PATCH v3] securityfs: fix missing of d_delete() in
+ securityfs_remove()
+Message-ID: <20250509043712.GK2023217@ZenIV>
+References: <20250508140438.648533-2-alexjlzheng@tencent.com>
+ <20250509032326.GJ2023217@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] lsm: introduce security_lsm_manage_policy hook
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
- =?UTF-8?Q?Maxime_B=C3=A9lair?= <maxime.belair@canonical.com>,
- linux-security-module@vger.kernel.org
-Cc: paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
- mic@digikod.net, kees@kernel.org, stephen.smalley.work@gmail.com,
- casey@schaufler-ca.com, takedakn@nttdata.co.jp, linux-api@vger.kernel.org,
- apparmor@lists.ubuntu.com, linux-kernel@vger.kernel.org
-References: <20250506143254.718647-1-maxime.belair@canonical.com>
- <20250506143254.718647-3-maxime.belair@canonical.com>
- <9c68743f-5efa-4a77-a29b-d3e8f2b2a462@I-love.SAKURA.ne.jp>
- <6d785712-6d8e-491c-86d4-1cbe5895778f@canonical.com>
- <75c0385c-b649-46b0-907f-903e2217f460@I-love.SAKURA.ne.jp>
- <07a496b2-ed1f-4a18-88d1-7be36dba3a8a@canonical.com>
- <75c7424b-fec9-469b-8f73-50ab86948a24@I-love.SAKURA.ne.jp>
-Content-Language: en-US
-From: John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; keydata=
- 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 lT9Q
-Organization: Canonical
-In-Reply-To: <75c7424b-fec9-469b-8f73-50ab86948a24@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250509032326.GJ2023217@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On 5/8/25 08:07, Tetsuo Handa wrote:
-> On 2025/05/08 23:44, John Johansen wrote:
->> On 5/8/25 05:55, Tetsuo Handa wrote:
->>> On 2025/05/08 17:25, John Johansen wrote:
->>>> That is fine. But curious I am curious what the interface would look like to fit TOMOYO's
->>>> needs.
->>>
->>> Stream (like "FILE *") with restart from the beginning (like rewind(fp)) support.
->>> That is, the caller can read/write at least one byte at a time, and written data
->>> is processed upon encountering '\n'.
->>>
->>
->> that can be emulated within the current sycall, where the lsm maintains a buffer.
-> 
-> That cannot be emulated, for there is no event that is automatically triggered when
-> the process terminates (i.e. implicit close() upon exit()) in order to release the
-> buffer the LSM maintains.
->
+On Fri, May 09, 2025 at 04:23:26AM +0100, Al Viro wrote:
 
-security_task_free()
-  
->> Are you asking to also read data back out as well, that could be added, but doing
->> a syscall per byte here or through the fs is going to have fairly high overhead.
-> 
-> At least one byte means arbitrary bytes; that is, the caller does not need to read
-> or write the whole policy at one syscall.
-> 
-got it
+> I have fixes for some of that crap done on top of tree-in-dcache series;
+> give me an hour or two and I'll separate those and rebase to mainline...
 
->>
->> Without understanding the requirement it would seem to me, that it would be
->> better to emulate that file buffer manipulation in userspace similar say C++
->> stringstreams, and then write the syscall when done.
-> 
-> The size of the whole policy in byte varies a lot.
-> 
-sure, buffers can be variable length. AppArmor policy also varies a lot in size.
+Completely untested:
+git://git.kernel.org:/pub/scm/linux/kernel/git/viro/vfs.git #untested.securityfs
 
-More than anything I am trying to understand TOMOYO's requirements. They do
-align better with using an fs interface. Can they be met sure, but it would
-be more work for TOMOYO.
-
-One of the big motivations for the syscall from the apparmor side is getting
-away from the need to have the vfs present or having to pass an fd into the
-environment.
-
-
+on top of v6.15-rc5.  And I'm serious about the "untested" part - it builds
+with allmodconfig, but that's all I've checked.  So treat that as an outline
+of what could be done, but don't use as-is without serious testing.
