@@ -1,217 +1,111 @@
-Received: from smtp-42af.mail.infomaniak.ch (smtp-42af.mail.infomaniak.ch [84.16.66.175])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6F3728ECF3
-	for <linux-security-module@vger.kernel.org>; Fri,  9 May 2025 10:26:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF33428F520;
+	Fri,  9 May 2025 10:26:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746786385; cv=none; b=jfRaeGxqVBxCfSk2pRuqQ1fzkLnMM9NcxLpqlBvZN4XOD4svKLf/3TkB/w7DkddBn8IDrYg6e3yNKgB37HloisU2A3pOoA0i4eKwRunwfjMevo8hGjXShIUh/9LcJLXXWgGhnjV3vYDk81YBUJ6LwRKnpWMqRXphBVtCGwjW9r0=
+	t=1746786387; cv=none; b=OyGksnzZ8xRZMuyByP26YRAs9GLFl1sn0j6Vo1kPrKT0vnCjnqhDSmPW+VuF3rZw2RUEOXPx8LbS30KGkw7PBnqPpgPQJnzjZdNeM4Lt1LKv6FTqHj7w+9vlQiSE68hjDwDRwzCpzXn+dHJt3G6258ggQFoTUMB/g9QNpLDu0YE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746786385; c=relaxed/simple;
-	bh=KqNzpGlXvYPxbZV20k0U7Oey6ED4zNDafqlF1kyyiSI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dj2TF4IINrvscrcgDfJaFMmeRlb++xwFzN/YR5ivoFstvGV5msESwdpiFcTxh8nVNG0jwTFaYAcFfKJ5BzUCVeqy8moEVxEVP3K7dZYUXHsy5lkemrV3JrsGbq+SDV5nn3thIjg+aSrwnbPv5EeZXlMLo7I6m7V1E+euvh5M7rU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=qOLP19H1; arc=none smtp.client-ip=84.16.66.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1746786387; c=relaxed/simple;
+	bh=XtYAn9qxMv6rK3q0zBvwCKauIZoqUJCYXQhXC/1IcFM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=RRgl/Q5SfzBF0kOpz5fT4GLfldDjR7WiGyuCvy+jP9Vl2PcaHXcjq2XD1E+sttdJSjInG21mPdHLR4t/hQZJIcrqnLkmlcs3hNe/F2oe1Y8jmKxt/TIWSavAWkcpEXZC5YVIlLu9L9fE098aYsish8KbCP2GWoiAtuWZzO+Gzn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nS0nppIm; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="qOLP19H1"
-Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6b])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Zv4sZ2328zsXS;
-	Fri,  9 May 2025 12:26:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1746786370;
-	bh=bILtYHuoVN6FrclTI4aJzyW8su3B/F4qiUGtahlBZxU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qOLP19H1yidbzzP8ApnFxC4YAJ/AUtnjhouaiBHNmVH2X0SR/OpPaoOPsberi/5Ft
-	 rhgbDwIewBsvg2tRJMTCKXTmwCYHcAu85bovrq34E16SH3OQsnLiKbD5d1Dh2OaymK
-	 rwI4PU2F1cg/nHd5mG8H/T06sbavjQMKYZ+q7hgA=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Zv4sY4F4qz57l;
-	Fri,  9 May 2025 12:26:09 +0200 (CEST)
-Date: Fri, 9 May 2025 12:26:08 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: John Johansen <john.johansen@canonical.com>
-Cc: Song Liu <song@kernel.org>, 
-	Maxime =?utf-8?Q?B=C3=A9lair?= <maxime.belair@canonical.com>, linux-security-module@vger.kernel.org, paul@paul-moore.com, 
-	jmorris@namei.org, serge@hallyn.com, kees@kernel.org, 
-	stephen.smalley.work@gmail.com, casey@schaufler-ca.com, takedakn@nttdata.co.jp, 
-	penguin-kernel@i-love.sakura.ne.jp, linux-api@vger.kernel.org, apparmor@lists.ubuntu.com, 
-	linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 1/3] Wire up the lsm_manage_policy syscall
-Message-ID: <20250509.ePu7gaim1Foo@digikod.net>
-References: <20250506143254.718647-1-maxime.belair@canonical.com>
- <20250506143254.718647-2-maxime.belair@canonical.com>
- <CAPhsuW4qY9B3KdhqrUOZoNBWQmO_RDwbH46my314WxrFwxbwkQ@mail.gmail.com>
- <aa3c41f9-6b25-4871-a4be-e08430e59730@canonical.com>
- <CAPhsuW4FVMS7v8p_C-QzE8nBxCb6xDRhEecm_KHZ3KbKUjOXrQ@mail.gmail.com>
- <9aaeda3a-8ef5-4820-b2e4-9180b73fb368@canonical.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nS0nppIm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE512C4CEE9;
+	Fri,  9 May 2025 10:26:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746786387;
+	bh=XtYAn9qxMv6rK3q0zBvwCKauIZoqUJCYXQhXC/1IcFM=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=nS0nppImxSVITjGKUFHL/HFCSEU2yLsr7sPnSCzwevQeL3IESIxm1XdI3Ra0p7hfG
+	 9cZhKns1Q5Ca4BinkAkD9cPZOMzuPPffkJFTiUN6qvUx+pUA+5NpdHaRN8WbioH0nU
+	 OlBUFBahfc6A2n5zF/ZOMSmEH91hqD1bR5gGm/6Thx4cUC+2mShiooJ+4eClKcs3fv
+	 zQOlV15CT9xZrDUgL8BL+0L4ArJaxUwprD+JEXyw1no3WG82ovnhpBmzVqEOM3LtZw
+	 a9bgqI5sUvTiIJgNQjp0bYEeShxUme32Ux6F7/jnMpX/RTtoEE368IGe8lIc5dCbAC
+	 Q56slUqnLfRyg==
+From: Christian Brauner <brauner@kernel.org>
+Date: Fri, 09 May 2025 12:25:39 +0200
+Subject: [PATCH v5 7/9] coredump: validate socket name as it is written
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9aaeda3a-8ef5-4820-b2e4-9180b73fb368@canonical.com>
-X-Infomaniak-Routing: alpha
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250509-work-coredump-socket-v5-7-23c5b14df1bc@kernel.org>
+References: <20250509-work-coredump-socket-v5-0-23c5b14df1bc@kernel.org>
+In-Reply-To: <20250509-work-coredump-socket-v5-0-23c5b14df1bc@kernel.org>
+To: linux-fsdevel@vger.kernel.org, Jann Horn <jannh@google.com>, 
+ Daniel Borkmann <daniel@iogearbox.net>, 
+ Kuniyuki Iwashima <kuniyu@amazon.com>
+Cc: Eric Dumazet <edumazet@google.com>, Oleg Nesterov <oleg@redhat.com>, 
+ "David S. Miller" <davem@davemloft.net>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Daan De Meyer <daan.j.demeyer@gmail.com>, 
+ David Rheinsberg <david@readahead.eu>, Jakub Kicinski <kuba@kernel.org>, 
+ Jan Kara <jack@suse.cz>, Lennart Poettering <lennart@poettering.net>, 
+ Luca Boccassi <bluca@debian.org>, Mike Yuan <me@yhndnzj.com>, 
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+ =?utf-8?q?Zbigniew_J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, 
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-security-module@vger.kernel.org, 
+ Christian Brauner <brauner@kernel.org>, 
+ Alexander Mikhalitsyn <alexander@mihalicyn.com>
+X-Mailer: b4 0.15-dev-c25d1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1280; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=XtYAn9qxMv6rK3q0zBvwCKauIZoqUJCYXQhXC/1IcFM=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTI3tBqXzpXddNFvjkbaotuaTbIzJm9NOTg4tKVj5jzR
+ JS3ssdv7yhlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZhI4wJGhsPTFqw8fmJ5Aue3
+ N71Wov3Op296p13jl14418VXts9Ik4fhn6HAy+TrSnN3WV25+rGY8+nqX6+/+F//YeZXpvlkclr
+ JVkYA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-On Thu, May 08, 2025 at 01:18:20AM -0700, John Johansen wrote:
-> On 5/7/25 23:06, Song Liu wrote:
-> > On Wed, May 7, 2025 at 8:37 AM Maxime Bélair
-> > <maxime.belair@canonical.com> wrote:
-> > [...]
-> > > > 
-> > > > These two do not feel like real benefits:
-> > > > - One syscall cannot fit all use cases well...
-> > > 
-> > > This syscall is not intended to cover every case, nor to replace existing kernel
-> > > interfaces.
-> > > 
-> > > Each LSM can decide which operations it wants to support (if any). For example, when
-> > > loading policies, an LSM may choose to allow only policies that further restrict
-> > > privileges.
-> > > 
-> > > > - Not working in containers is often not an issue, but a feature.
-> > > 
-> > > Indeed, using this syscall requires appropriate capabilities and will not permit
-> > > unprivileged containers to manage policies arbitrarily.
-> > > 
-> > > With this syscall, capability checks remain the responsibility of each LSM.
-> > > 
-> > > For instance, in the AppArmor patch, a profile can be loaded only if
-> > > aa_policy_admin_capable() succeeds (which requires CAP_MAC_ADMIN). Moreover, by design,
-> > > policies can be loaded only in the current namespace.
-> > > 
-> > > I see this syscall as a middle point between exposing the entire sysfs, creating a large
-> > > attack surface, and blocking everything.
-> > > 
-> > > Landlock’s existing syscalls already improve security by allowing processes to further
-> > > restrict their ambient rights while adding only a modest attack surface.
-> > > 
-> > > This syscall is a further step in that direction: it lets LSMs add restrictive policies
-> > > without requiring exposing every other interface.
-> > 
-> > I don't think a syscall makes the API more secure. If necessary, we can add
-> 
-> It exposes a different attack surface. Requiring mounting of the fs to where it is visible
-> in the container, provides attack surface, and requires additional external configuration.
+In contrast to other parameters written into
+/proc/sys/kernel/core_pattern that never fail we can validate enabling
+the new AF_UNIX support. This is obviously racy as hell but it's always
+been that way.
 
-We should also keep in mind that syscalls could be accessible from
-everywhere, by everyone, which may increase the attack surface compared
-to a privileged filesystem interface.  Adding a second interface may
-also introduce issues.  Anyway, I'm definitely not against syscalls, but
-I don't see why the filesystem interface would be "less secure" in this
-context.
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+ fs/coredump.c | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
 
-> 
-> Then there is the whole issue of getting the various LSMs to allow another LSM in the
-> stack to be able manage its own policy.
+diff --git a/fs/coredump.c b/fs/coredump.c
+index fa50a681b225..19e776769b21 100644
+--- a/fs/coredump.c
++++ b/fs/coredump.c
+@@ -1254,10 +1254,21 @@ void validate_coredump_safety(void)
+ static int proc_dostring_coredump(const struct ctl_table *table, int write,
+ 		  void *buffer, size_t *lenp, loff_t *ppos)
+ {
+-	int error = proc_dostring(table, write, buffer, lenp, ppos);
++	int error;
++	ssize_t retval;
++	char old_core_pattern[CORENAME_MAX_SIZE];
+ 
+-	if (!error)
+-		validate_coredump_safety();
++	retval = strscpy(old_core_pattern, core_pattern, CORENAME_MAX_SIZE);
++
++	error = proc_dostring(table, write, buffer, lenp, ppos);
++	if (error)
++		return error;
++	if (core_pattern[0] == '@' && strcmp(core_pattern, "@linuxafsk/coredump.socket")) {
++		strscpy(core_pattern, old_core_pattern, retval + 1);
++		return -EINVAL;
++	}
++
++	validate_coredump_safety();
+ 	return error;
+ }
+ 
 
-Right, and it's a similar issue with seccomp policies wrt syscalls.
+-- 
+2.47.2
 
-> 
-> > permission check to each pseudo file. The downside of the syscall, however,
-> > is that all the permission checks are hard-coded in the kernel (except for
-> 
-> The permission checks don't have to be hard coded. Each LSM can define how it handles
-> or manages the syscall. The default is that it isn't supported, but if an lsm decides
-> to support it, there is now reason that its policy can't determine the use of the
-> syscall.
-
-From an interface design point of view, it would be better to clearly
-specify the scope of a command (e.g. which components could be impacted
-by a command), and make sure the documentation reflect that as well.
-Even better, have a syscalls per required privileges and impact (e.g.
-privileged or unprivileged).  Going this road, I'm not sure if a
-privileged syscall would make sense given the existing filesystem
-interface.
-
-> 
-> > BPF LSM); while the sys admin can configure permissions of the pseudo
-> > files in user space.
-> > 
-> Other LSMs also have policy that can control access to pseudo filesystems and
-> other resources. Again, the control doesn't have to be hard coded. And seccomp can
-> be used to block the syscall.
-> 
-> 
-> 
-> > > Again, each module decides which operations to expose through this syscall. In many cases
-> > > the operation will still require CAP_SYS_ADMIN or a similar capability, so environments
-> > > that choose this interface remain secure while gaining its advantages.
-> > > 
-> > > > >    - Avoids overhead of other kernel interfaces for better efficiency
-> > > > 
-> > > > .. and it is is probably less efficient, because everything need to
-> > > > fit in the same API.
-> > > 
-> > > As shown below, the syscall can significantly improve the performance of policy management.
-> > > A more detailed benchmark is available in [1].
-> > > 
-> > > The following table presents the time required to load an AppArmor profile.
-> > > 
-> > > For every cell, the first value is the total time taken by aa-load, and the value in
-> > > parentheses is the time spent to load the policy in the kernel only (total - dry‑run).
-> > > 
-> > > Results are in microseconds and are averaged over 10 000 runs to reduce variance.
-> > > 
-> > > 
-> > > | t (µs)    | syscall     | pseudofs    | Speedup       |
-> > > |-----------|-------------|-------------|---------------|
-> > > | 1password | 4257 (1127) | 3333 (192)  | x1.28 (x5.86) |
-> > > | Xorg      | 6099 (2961) | 5167 (2020) | x1.18 (x1.47) |
-> > > 
-> > 
-> > I am not sure the performance of loading security policies is on any
-> > critical path.
-> 
-> generally speaking I agree, but I am also not going to turn down a
-> performance improvement either. Its a nice to have, but not a strong
-> argument for need.
-> 
-> > The implementation calls the hook for each LSM, which is why I think the
-> > syscall is not efficient.
-> > 
-> it should only call the LSM identified by the lsmid in the call.
-> 
-> > Overall, I am still not convinced a syscall for all LSMs is needed. To
-> > justify such
-> 
-> its not needed by all LSMs, just a subset of them, and some nebulous
-> subset of potentially future LSMs that is entirely undefinable.
-> 
-> If we had had appropriate LSM syscalls landlock wouldn't have needed
-> to have landlock specific syscalls. Having another LSM go that route
-> feels wrong especially now that we have some LSM syscalls.
-
-I don't agree.  Dedicated syscalls are a good thing.  See my other
-reply.
-
-> If a
-> syscall is needed by an LSM its better to try hashing something out
-> that might have utility for multiple LSMs or at the very least,
-> potentially have utility in the future.
-> 
-> 
-> > a syscall, I think we need to show that it is useful in multiple LSMs.
-> > Also, if we
-> > really want to have single set of APIs for all LSMs, we may also need
-> > get_policy,
-> 
-> We are never going to get a single set of APIs for all LSMs. I will
-> settle for an api that has utility for a subset
-> 
-> > remove_policy, etc. This set as-is appears to be an incomplete design. The
-> 
-> To have a complete design, there needs to be feedback and discussion
-> from multiple LSMs. This is a starting point.
-> 
-> > implementation, with call_int_hook, is also problematic. It can easily
-> > cause some> controversial behaviors.
-> > 
-> agreed it shouldn't be doing a straight call_int_hook, it should only
-> call it against the lsm identified by the lsmid
-
-Yes, but then, I don't see the point of a "generic" LSM syscall.
