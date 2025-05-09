@@ -1,168 +1,131 @@
-Received: from sonic313-14.consmr.mail.ne1.yahoo.com (sonic313-14.consmr.mail.ne1.yahoo.com [66.163.185.37])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out02.mta.xmission.com (out02.mta.xmission.com [166.70.13.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA9B5464E
-	for <linux-security-module@vger.kernel.org>; Fri,  9 May 2025 14:41:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.185.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E828E2309A3;
+	Fri,  9 May 2025 14:45:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746801709; cv=none; b=K6u6KkzqdhTMadVmO6WLdztNMTXowLeDXiWY05Gl1QxPkhxn2y5ReuejGYWxi1quqxPj3CpBfsE/B/zdIGKcIp4CwyPDNNNoUUoO62kGnkfZ+qK4cP2iJgcHAd+GpTgnGSz5V0JXHhbV63jwFYVTVhHU4gMPEZMN8d43FquTnJk=
+	t=1746801925; cv=none; b=SMJNb6pBqciwrDs8vtkmbXli0cm4/F86519rUV1feZXCdeGwSwsorye12m7a6LMtX+1PCwNytK98yDG1IOMXqxm50XBUo0cy3XLzixpMAByo99XreUuGw+4AoCaQY5Gn+Ox11ct9JCi2er+aARFkovijTG/0Wg3SCiXtz7/oBeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746801709; c=relaxed/simple;
-	bh=A1DRdNzvRO7bBeDRi/bpn+3y+WIKMP/+KezebnFpDVo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sjcKB3ouvjaKdT981IrEcVs7N/d3j9b/R+/5r8jAE8CddWOerEVTpK0qBTM91x826R3sU0XXUL7sJX5IKXVk1EgZDJ81Yb3xdIyrK3OqGkQ+whw8If0pWpFGgUovNV5wF8rJUDas7qbyuaIgJOV9TGaUXlaDZtRW0mH2+7CNec4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=s2P5w7Rt; arc=none smtp.client-ip=66.163.185.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="s2P5w7Rt"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1746801704; bh=jyz1EpjrXmQFEdvYzfKkRG0h9+cP/Df3Hrp2pEvQ8oI=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=s2P5w7RtuHzGF+1E/xLjE5tOV4ZFGRZQ6NDSL/mvddLkR3rObg6nPJOtQquERIb7WCB3AxhCDqcdeXcEdSfBXsal5h/gGTr/5CnYbTqvGlzULsAhxe+FBTAjmD+VS0g9BK0W3O7PzgGkRHYlmm7mMB6AIoWtu6hzG+7KtwVpQQm1/6d5Ks3nUw4TlA4KY8GqtwSY25XiK421+pBR8EmZknNuzEf3LcpqkNRGeLd0udGP/VLiKzbYfrEAqAa/7VOjot3mevvngLkx7IU/I0JDn3/vkoTs/PaaNEdDf+d4PmFe/jVILSlW8i0DtK4JxpybK2ih0Fki5g65UmttEzT5fw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1746801704; bh=0KdryZ65CL0CEww6qORvfaItApwVxGYa35t5WY3vc/r=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=qZD0aqRQgAU16doB2DU5YUiTtmo9mJSi4nvHw2Y8F9ZCeXDbpgiYdAGzooddpE1TMIuGxALHKb1/pgjMRvl6Uia7Cs+4xrJYOo8tg7yUsyjhOwQypRXubosPq7DHgSUW+grloi19akxEfOypc1WElm6c1EaiWxxP1ApxNw4AT1TshPUiq4Fu/ZbIG+oOozuWIm8oiQa7PKNaUAqUoOYczxDrtTF1dpgNiXnF6xdIQcM5OZwQwxGJw7nQvxRw3RySxepyAz8Ch1UuNS6tQoeEkajhlLPOGUeW2VDUg0KcQF5isrfuO1uh45HsLg/ZSuFKkHgkrkGjbBY8eKzWp0Sgcw==
-X-YMail-OSG: UDhtazUVM1kgd9EJesIiZcC9j47Ftq1XFHbnRBy0n_zZQ8sAyOfS0hV9QLCgwh0
- URVJm2Esv3nxg1WyTqUgV71tZ9x0_rWkIIBdws26amNvK.kJtelAyduQlSYBaNBmZ5TWm0oaNKnc
- WadabCdddd5kBBF8N0RiYqSwCeMTAJoVzm6XmdaRJCaGwE9UFnfwgICLWmvMsnsDmqrJKMrL27_P
- Yf0NAeF5dXxiU0eRS1PFpbDl35NxUjYrE2tITQpjGJfrM2vLI6IUpRz6CRScvT4AZI.g7sZ50u7u
- yVtC2qGFMMEkfX6YKrvp3IJ5n1p.LxamjPHpwWIMM8_7J.eyFHAjPqntTJ.XLic1aA6d4IF8B_J.
- T9DKU7gQOZSerr8IDCo6t5GHTawN_Qo_I8zFjzZVLv3E2X2LgoZHi9SiYn8xgJOPeqiDX2Ua5Ukd
- N7R5N7gpvt0FQ44kb8Ld2tLvH8XvmhpLtdfqEx5cqSUICjivnTgtOLOuEgXH9zX05S5YuobzXVRJ
- MxBf2ecjMXdldahnSVswrvlZyS919prf5baD2ab5cf1OVLnNJyjMeuGVppLbTAaXLD4gFj4UF6cj
- JqZbzaCpGNcrUdVPUl6Gq8mbiUJ6n3Ck7SAEyno0LuCQQFuxMOKv8vfCkLmlvRy1h1yuyNm2Qc_U
- LsIFIDWPADOKG9yudlREieklxUK3JLqnlhAuGA9O_YD8_I7DQ82XLfuPfz3rwvucSsJEl5zN8_ge
- 8tS5ozJba9Wh_k7hXSs9t8TvmposJ81pM4Z6YxZ_X48PvEDjByv9Z5.UKLyi9boe5QBBvnkR3vpG
- 2sB7hRAMKrMe.U17WI7szuSF3fzDmc_eofDA1sw6GWCKDmrkUzRgs4LdGczfEOkv4qkRRsbMaeq5
- EuojzJrG8cqTYV3OvFJyR1rBFMYZzSl_5ssfM2fUzZ2in9y0RHnysqahJ7.yAZUIqpZylQsWV0IV
- JcUiQo04Gn7VIcRA99wv9N4YqX2ZnzmG8iV_g9CsM6gMrjEnLTsCLJRDDbdoLDvMgsw1Tmv72OJd
- BuA_rWzf5jxB0M9am6M9DhRbSO0V4OFqw.Rv8XOhEeH1oK4mA.b_7xK4kmSXfSGXPQ9gRn9QfnJy
- D7tluF_ZOpjkhy5SZIGIMnX4TO2PR9jgYCdnE09bZw.ZDqtavmO71vdRnOYrcKgVN0lRigrwvMdN
- QI9qcJ2CVBUA930q32FEgf3kpMUgAo.lMQnq4FN3nnJjzkWQk9XV_O58dX.0AJICflPMDc7f.3TI
- vJD.0tboAeYAKjvIeoTRfdsWzcADjPvgNoTbg.BzTUjwigac8IPPafISOXqcck0qGLuBJ..nQ4Nz
- Z_cudwPBHgsjhIIkj8xS5Fi1IR2lo9gVzcT.XIxa8sCtthEHfS0BU7MYIs_HjBBSOY2NDWx5RLDs
- uMXNM5RPpwYP3TyiCuNzFJ.1m0pNAJa2_3qbn0KdwC2WDQKaK4NOjEzDghBUl38Ba4GdumRJxbg8
- hU.E6_3R95vCYWtxEkcjkuHD_4VHdMxSpWlFqsQ_3clzz_smcA_4Sfts3pdIHOUie56H7ykzIP_2
- J7vY9BOVFkLYa2oWUmik1Jv.EXLtl2wXuz.beiuckt88rzPEN.gTsH8PiiGXs8OiqM4MoU.9LBk2
- iQClV.pxYLW.pqqH.1lNba9OhEtAhsk_8dHPNbPH09yk0oH8fSBDQ97r.g3QYgz1WUEQQFf_Jndc
- SOXZ81vVkjZFKYa_2dlttaIOImzHJ3HGM4tNvzaO_CmNKoc.E79Qi.NV_Xk33HWG1Kb9gvE8Ybvs
- ynvYDx5N0Fd9Ua5fxay817fX7Ues0SybVDeTojOmPGoXY0ACGFrxwSlf0B1aqWUezGaGIWEIbQ2t
- C2d51FvcT8.2f97Gb8SxLMUdP6OZqxeGDJ1V4ewDN5BShHR35tNtMtU.1ZzuiFWXvndxKw_twVo2
- ZN06Im9zawq4qo1o0hMYGMPKIK_ySiL3uNdo.ZYkJoYp09tbEnhsjglrf7QRT.9JqfeDhLsPVEr2
- uv.uOKwlUDxXFCyINHoEhcLulfPBOsxvRwHzaBg4Am3s9fo0x0XoHEzYp5dzcIt8Zig8FHIrolmh
- .9iKroRAsJTj5agvxYvrJnY6BCILxoaUYRHVQJ6HhtPqTJUhABvn_xTSZDhktGtHRWewf8fixIXM
- eOi7uwQzFNfQJdZR2DXq3vcNx70tpY2.4n2He8u7gIMNJwnQ9G.EmQjf0uTkmkUlMCHFY49SAyeU
- H5ZgYSORXCcQ.pNV4WDYe53QvMT1pCYZ04fy5F_Lrq5cj897CqfSFVy13ayAQNS7iNX38zj.bcFq
- D7JpK1bZiEm0tsz4-
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 3c06c726-96cb-4347-882d-f766ab437c20
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.ne1.yahoo.com with HTTP; Fri, 9 May 2025 14:41:44 +0000
-Received: by hermes--production-gq1-74d64bb7d7-khmfd (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 334e9395e8ec622649b360b124415a8a;
-          Fri, 09 May 2025 14:21:30 +0000 (UTC)
-Message-ID: <71c3c2d6-5569-4580-89a4-513a03a429ab@schaufler-ca.com>
-Date: Fri, 9 May 2025 07:21:29 -0700
+	s=arc-20240116; t=1746801925; c=relaxed/simple;
+	bh=Yd8W1GtKAevzypSOVCZqbNt712iYf1AsnUrAZDXEq1E=;
+	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
+	 Content-Type:Subject; b=U8IAUATSPI87+DlKmivScUWXZ9czSmM307dhYczWT3v8NMJyYD2pSyIywKjKF/VtGakHDuU4SsEM0EOxJFX9rWvz9i9MzOSmYxMXqJu+FgaDLQLmRJvuJJUTo4g0gZW/IL/KJrAw76p74JEMRpMiI00j5+DP8T8DstVTy54q0r4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
+Received: from in01.mta.xmission.com ([166.70.13.51]:35438)
+	by out02.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1uDOyR-00AAB3-D6; Fri, 09 May 2025 08:45:15 -0600
+Received: from ip72-198-198-28.om.om.cox.net ([72.198.198.28]:48940 helo=email.froward.int.ebiederm.org.xmission.com)
+	by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1uDOyQ-00DyBc-D7; Fri, 09 May 2025 08:45:15 -0600
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: sergeh@kernel.org,  "Serge E. Hallyn" <serge@hallyn.com>,  Andy
+ Lutomirski <luto@kernel.org>,  paul@paul-moore.com,  jmorris@namei.org,
+  kees@kernel.org,  morgan@kernel.org,
+  linux-security-module@vger.kernel.org,  linux-kernel@vger.kernel.org
+References: <20250306082615.174777-1-max.kellermann@ionos.com>
+	<20250309151907.GA178120@mail.hallyn.com>
+	<CAKPOu+_vTuZqsBLfRH+kyphiWAtRfWq=nKAcAYu=Wn2JBAkkYg@mail.gmail.com>
+	<20250506132158.GA682102@mail.hallyn.com>
+	<CAKPOu+9JCLVpJ-g_0WwLm5oy=9sq=c9rmoAJD6kNatpMZbbw9w@mail.gmail.com>
+	<aB0sVcjFZaCVEirH@lei>
+	<CAKPOu+89=+SFk1hKGLheMtPq+K47E9FRCo1DBQo9zGMwW=Tr2w@mail.gmail.com>
+Date: Fri, 09 May 2025 09:44:40 -0500
+In-Reply-To: <CAKPOu+89=+SFk1hKGLheMtPq+K47E9FRCo1DBQo9zGMwW=Tr2w@mail.gmail.com>
+	(Max Kellermann's message of "Fri, 9 May 2025 08:15:33 +0200")
+Message-ID: <87h61t7siv.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] lsm: introduce security_lsm_manage_policy hook
-To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-Cc: John Johansen <john.johansen@canonical.com>,
- Paul Moore <paul@paul-moore.com>, =?UTF-8?Q?Maxime_B=C3=A9lair?=
- <maxime.belair@canonical.com>,
- Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
- linux-security-module@vger.kernel.org, jmorris@namei.org, serge@hallyn.com,
- kees@kernel.org, stephen.smalley.work@gmail.com, takedakn@nttdata.co.jp,
- linux-api@vger.kernel.org, apparmor@lists.ubuntu.com,
- linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20250506143254.718647-1-maxime.belair@canonical.com>
- <20250506143254.718647-3-maxime.belair@canonical.com>
- <9c68743f-5efa-4a77-a29b-d3e8f2b2a462@I-love.SAKURA.ne.jp>
- <CAHC9VhRKwB4quqBtYQyxRqCX2C6fCgTbyAP3Ov+NdQ06t1aFdA@mail.gmail.com>
- <120954c2-87b7-4bda-958b-2b4f0180a736@canonical.com>
- <efe5b15a-6141-424a-8391-9092e79e4acf@schaufler-ca.com>
- <20250509.Chuecae0phoo@digikod.net>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20250509.Chuecae0phoo@digikod.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.23772 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-XM-SPF: eid=1uDOyQ-00DyBc-D7;;;mid=<87h61t7siv.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=72.198.198.28;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX1+YlNgXKRuproaqAKxc1t7PkLnIckmGWjU=
+X-Spam-Level: ***
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+	*      [score: 0.4992]
+	*  0.7 XMSubLong Long Subject
+	*  0.0 XM_B_Unicode BODY: Testing for specific types of unicode
+	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+	*      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
+	*  0.0 XM_B_AI_SPAM_COMBINATION Email matches multiple AI-related
+	*      patterns
+	*  0.2 XM_B_SpammyWords One or more commonly used spammy words
+	*  0.4 FVGT_m_MULTI_ODD Contains multiple odd letter combinations
+	*  0.0 T_TooManySym_01 4+ unique symbols in subject
+	*  1.0 XM_B_Phish_Phrases Commonly used Phishing Phrases
+	*  1.5 TR_AI_Phishing Email matches multiple AI-related patterns
+X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ***;Max Kellermann <max.kellermann@ionos.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 489 ms - load_scoreonly_sql: 0.26 (0.1%),
+	signal_user_changed: 13 (2.6%), b_tie_ro: 11 (2.2%), parse: 1.08
+	(0.2%), extract_message_metadata: 19 (3.9%), get_uri_detail_list: 1.39
+	(0.3%), tests_pri_-2000: 17 (3.5%), tests_pri_-1000: 2.9 (0.6%),
+	tests_pri_-950: 1.29 (0.3%), tests_pri_-900: 1.07 (0.2%),
+	tests_pri_-90: 56 (11.5%), check_bayes: 55 (11.2%), b_tokenize: 7
+	(1.5%), b_tok_get_all: 8 (1.5%), b_comp_prob: 2.7 (0.6%),
+	b_tok_touch_all: 33 (6.7%), b_finish: 1.15 (0.2%), tests_pri_0: 360
+	(73.7%), check_dkim_signature: 1.18 (0.2%), check_dkim_adsp: 3.0
+	(0.6%), poll_dns_idle: 0.45 (0.1%), tests_pri_10: 2.3 (0.5%),
+	tests_pri_500: 10 (2.0%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH] security/commoncap: don't assume "setid" if all ids are
+ identical
+X-SA-Exim-Connect-IP: 166.70.13.51
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, morgan@kernel.org, kees@kernel.org, jmorris@namei.org, paul@paul-moore.com, luto@kernel.org, serge@hallyn.com, sergeh@kernel.org, max.kellermann@ionos.com
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-SA-Exim-Scanned: No (on out02.mta.xmission.com); SAEximRunCond expanded to false
 
-On 5/9/2025 3:26 AM, Mickaël Salaün wrote:
-> On Thu, May 08, 2025 at 09:54:19AM -0700, Casey Schaufler wrote:
->> On 5/8/2025 1:29 AM, John Johansen wrote:
->>> On 5/7/25 13:25, Paul Moore wrote:
->>>> On Wed, May 7, 2025 at 6:41 AM Tetsuo Handa
->>>> <penguin-kernel@i-love.sakura.ne.jp> wrote:
->>>>> On 2025/05/06 23:32, Maxime Bélair wrote:
->>>>>> diff --git a/security/lsm_syscalls.c b/security/lsm_syscalls.c
->>>>>> index dcaad8818679..b39e6635a7d5 100644
->>>>>> --- a/security/lsm_syscalls.c
->>>>>> +++ b/security/lsm_syscalls.c
->>>>>> @@ -122,5 +122,10 @@ SYSCALL_DEFINE3(lsm_list_modules, u64 __user
->>>>>> *, ids, u32 __user *, size,
->>>>>>   SYSCALL_DEFINE5(lsm_manage_policy, u32, lsm_id, u32, op, void
->>>>>> __user *, buf, u32
->>>>>>                __user *, size, u32, flags)
->>>>>>   {
->>>>>> -     return 0;
->>>>>> +     size_t usize;
->>>>>> +
->>>>>> +     if (get_user(usize, size))
->>>>>> +             return -EFAULT;
->>>>>> +
->>>>>> +     return security_lsm_manage_policy(lsm_id, op, buf, usize,
->>>>>> flags);
->>>>>>   }
->>>>> syzbot will report user-controlled unbounded huge size memory
->>>>> allocation attempt. ;-)
->>>>>
->>>>> This interface might be fine for AppArmor, but TOMOYO won't use this
->>>>> interface because
->>>>> TOMOYO's policy is line-oriented ASCII text data where the
->>>>> destination is switched via
->>>>> pseudo‑filesystem's filename ...
->>>> While Tetsuo's comment is limited to TOMOYO, I believe the argument
->>>> applies to a number of other LSMs as well.  The reality is that there
->>>> is no one policy ideal shared across LSMs and that complicates things
->>>> like the lsm_manage_policy() proposal.  I'm intentionally saying
->>>> "complicates" and not "prevents" because I don't want to flat out
->>>> reject something like this, but I think there needs to be a larger
->>>> discussion among the different LSM groups about what such an API
->>>> should look like.  We may not need to get every LSM to support this
->>>> new API, but we need to get something that would work for a
->>>> significant majority and would be general/extensible enough that we
->>>> would expect it to work with the majority of future LSMs (as much as
->>>> we can predict the future anyway).
->>>>
->>> yep, I look at this is just a starting point for discussion. There
->>> isn't going to be any discussion without some code, so here is a v1
->>> that supports a single LSM let the bike shedding begin.
->> Aside from the issues with allocating a buffer for a big policy
->> I don't see a problem with this proposal. The system call looks
->> a lot like the other LSM interfaces, so any developer who likes
->> those ought to like this one. The infrastructure can easily check
->> the lsm_id and only call the appropriate LSM hook, so no one
->> is going to be interfering with other modules.
-> We may not want to only be able to load buffers containing policies, but
-> also to leverage file descriptors like Landlock does.  Getting a
-> property from a kernel object or updating it is mainly about dealing
-> with a buffer.  And the current LSM syscalls do just that.  Other kind
-> of operations may require more than that though.
+Max Kellermann <max.kellermann@ionos.com> writes:
+
+> On Fri, May 9, 2025 at 12:12=E2=80=AFAM <sergeh@kernel.org> wrote:
+>> ABI stability is about the most important thing to Linus, so yes, if
+>> documentation and code disagree, then we should fix the documentation,
+>> except in the case where the current behavior just really is wrong
+>> or insecure.
 >
-> I don't like multiplexer syscalls because they don't expose a clear
-> semantic and can be complex to manage and filter.  This new syscall is
-> kind of a multiplexer that redirect commands to an arbitrary set of
-> kernel parts, which can then define their own semantic.  I'd like to see
-> a clear set of well-defined operations and their required permission.
-> Even better, one syscall per operation should simplify their interface.
+> It is insecure indeed (can be abused for LD_PRELOAD
+> attacks):https://lore.kernel.org/lkml/CAKPOu+8+1uVrDJHwmHJd2d46-N6AwjR4_b=
+btoSJS+sx6J=3Drkjg@mail.gmail.com/
 
-The development and maintenance of system calls is expensive in both
-time and effort. LSM specific system calls frighten me. When I was
-young adding system calls was just  not  done. A system call would
-never be allowed for a specific sub-system or optional feature. True,
-there are issues with the LSM specific filesystem approach. But I
-like it, as it allows the LSM more freedom in its interfaces and
-won't clutter the API if the LSM goes away or quits using it.
+I don't understand what you are trying to solve,
+but the patch at the top of the thread introduces a
+has_identical_uids_gids and is pure nonsense.
+
+In particular __is_setuid or __is_setgid being true guarantees
+that has_identical_uids_gids will be false.
+
+Which means has_identical_uids_gids adds nothing, and the patch is
+pointless.
+
+
+
+If your concern is LD_PRELOAD and the like please don't play with
+the uids/gids and instead just make certain bprm->secureexec gets
+set.
+
+
+
+At this point I am pretty certain that changing the logic and leaving
+extra uids/gids set will result in security vulnerabilities for someone
+who actually depends upon how the code works today.  I see no evidence
+in this conversation that anyone has surveyed the users of NO_NEW_PRIVS
+and verified how anyone actually uses it.  Without such evidence we
+have to assume that userspace depends upon the current behavior.
+
+Eric
 
