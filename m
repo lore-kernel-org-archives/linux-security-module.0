@@ -1,43 +1,43 @@
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33F832522B6;
-	Fri,  9 May 2025 04:41:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E630253F13;
+	Fri,  9 May 2025 04:41:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746765682; cv=none; b=hTe0hTg90FWEaav3SFhNxNGgavrgYUgL/WldAd1NMvyoAYfwbqOuHTCgfU0sFLCaFfZkU1faGSfiGNxk6mVMptD/GfsKF6zFBwWVELHVN3QrPVz0rWFf0YI8QkVT/vZose/joPohQdd4dChR9Xa9IJoQcl8TxiAZmKHnolFOijU=
+	t=1746765704; cv=none; b=HqlCJQLZXuj77a4YhEW3WznHM3Y8V/EZFNi5YtfL4CE/KyGSryhlQReKEnOe+d3Jk4f/vy/T7SsamacnAH5FKBG9148/AufCsBbThwg5se20DFLoayCoMaPOfwmktF5CRqgm6cC+QakOLOEITgztUBRcG2pWa1+Fy+j6WYy1uNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746765682; c=relaxed/simple;
-	bh=SG1HkB1CroQNMMQVxFkVWmEr0jmoR+gJ7cCwJLKnMBA=;
+	s=arc-20240116; t=1746765704; c=relaxed/simple;
+	bh=3edxz8UJvCdhHCRp2TOjM8ig6g223CyuT0yTe5tHLsA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EUTTN9gxJ8M5aP8b+uR3bfufAes9qUHYIdE8DZdVrirSZxuKtVVv56llbMiAAuNg4vC7D0BoIKjD+9hxIJQSKxONtHjxPUvRudOBvTdPper3Ky7ArvZCTU+45mhp69JeK43+YfCSwKEc9x+QqiuteLc+bKqyThOLABcAnWNbz+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=N8ufxr+U; arc=none smtp.client-ip=62.89.141.173
+	 Content-Type:Content-Disposition:In-Reply-To; b=SSXuP9Iw0/vN17pDi7E3/pI7T6DsGPEHIm8jMrxeExo+AWMjXtCFLbYRWaDgqqz7Zi/Lxjk0XLbK+BjOgmiyZeYWRWqMcr7J5ayFA7bm3ngUcjmvC25Vr0TA0ZyCCk8/JfzqwIN9JOmbI+jruuvtTeX2v0Oo69sfxnMtCOP3hO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=v9DkD+ef; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="N8ufxr+U"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="v9DkD+ef"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
 	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=HR+VLuTu8jfyI5dUfy934VMN6WGObL+/+Fc82wI9xjU=; b=N8ufxr+UFYT97I4T+LZoXxHjJE
-	eVEYj9tsyETZP4zR6TalUZcXWYy31tD2/bRimjcHZX2DZFrApcs0ucB+P7auwykyUBDk0juUZpkED
-	5p6a5r4S3G3afJXKL7mEJxOn42rh18vUnHcaE3WdbGaFDusUZKeFakhKSf4P+gtjQDqARUdTlMdkY
-	f2hYkroBMLti1bHS78/dXzv9G/zUdenXfC/VkcLNSGethn8Lxi5yXhxo8QpZ2aFTG9b1K5luupuhI
-	cBy6HL4TEpRBO4lnVgifxWEhc3N0VPn7DH1Han32qmi7eacxJ8jnWuF4U64kfRtiNQUneg6YubOHn
-	USMkSq/g==;
+	bh=6IFHmf1AcTFsFmks6s3usI7r1PYz1F8Xd8oZ6zYyLWw=; b=v9DkD+efDTqPiEjrByPYbEvuih
+	sWugvzF4ZTeGl9ebpNkvg8SYhCNfK1i//0AYh3D4FUfg5YfAm2arylDLMfIQSRVEaqhTnOyvzlWr/
+	4oIPBfHF88jTK1GKxYTyrDbP0QNzN3Fh7smfETln/uadx2GVEdxC3kODn9tvFq9m9TvkYOAcrU5EB
+	wHX4u+3TcxUuWJ6vWZeGQeMwxG/cmNnUyPCTrTq5KlVwKdNHpqfNs7E3yzFHPHVKGL2j7O6MPKw6T
+	hu3qqoMrSu//tSbC4qTvWRvwPc659ms05HXjcMSqOaZ1LbKUQuDhfkFzcEpU93Pa1bgdOT5Yr02+M
+	v/IBz4SQ==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uDFXq-0000000A7uR-3Sp6;
-	Fri, 09 May 2025 04:41:10 +0000
-Date: Fri, 9 May 2025 05:41:10 +0100
+	id 1uDFYG-0000000A83g-0aSq;
+	Fri, 09 May 2025 04:41:36 +0000
+Date: Fri, 9 May 2025 05:41:36 +0100
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: alexjlzheng@gmail.com
 Cc: paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
 	greg@kroah.com, chrisw@osdl.org,
 	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
 	Jinliang Zheng <alexjlzheng@tencent.com>
-Subject: [PATCH 7/8] ima_fs: get rid of lookup-by-dentry stuff
-Message-ID: <20250509044110.GR2023217@ZenIV>
+Subject: [PATCH 8/8] evm_secfs: clear securityfs interactions
+Message-ID: <20250509044136.GS2023217@ZenIV>
 References: <20250508140438.648533-2-alexjlzheng@tencent.com>
  <20250509032326.GJ2023217@ZenIV>
 Precedence: bulk
@@ -51,168 +51,76 @@ Content-Disposition: inline
 In-Reply-To: <20250509032326.GJ2023217@ZenIV>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-From 35fa1b12f16a61b59886d5aae7e45af9d324a6f1 Mon Sep 17 00:00:00 2001
+From b0b8e25f92ec20e266859de5f823b4e39b8e2f9d Mon Sep 17 00:00:00 2001
 From: Al Viro <viro@zeniv.linux.org.uk>
-Date: Mon, 10 Mar 2025 12:30:20 -0400
-Subject: [PATCH 7/8] ima_fs: get rid of lookup-by-dentry stuff
+Date: Mon, 13 May 2024 23:44:12 -0600
+Subject: [PATCH 8/8] evm_secfs: clear securityfs interactions
 
-lookup_template_data_hash_algo() machinery is used to locate the
-matching ima_algo_array[] element at read time; securityfs
-allows to stash that into inode->i_private at object creation
-time, so there's no need to bother
+1) creation never returns NULL; error is reported as ERR_PTR()
+2) no need to remove file before removing its parent
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- security/integrity/ima/ima_fs.c | 82 +++++++--------------------------
- 1 file changed, 16 insertions(+), 66 deletions(-)
+ security/integrity/evm/evm_secfs.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
-diff --git a/security/integrity/ima/ima_fs.c b/security/integrity/ima/ima_fs.c
-index 8e2c132ce640..07efd71b6310 100644
---- a/security/integrity/ima/ima_fs.c
-+++ b/security/integrity/ima/ima_fs.c
-@@ -116,28 +116,6 @@ void ima_putc(struct seq_file *m, void *data, int datalen)
- 		seq_putc(m, *(char *)data++);
- }
+diff --git a/security/integrity/evm/evm_secfs.c b/security/integrity/evm/evm_secfs.c
+index 9b907c2fee60..b0d2aad27850 100644
+--- a/security/integrity/evm/evm_secfs.c
++++ b/security/integrity/evm/evm_secfs.c
+@@ -17,7 +17,6 @@
+ #include "evm.h"
  
--static struct dentry **ascii_securityfs_measurement_lists __ro_after_init;
--static struct dentry **binary_securityfs_measurement_lists __ro_after_init;
--static int securityfs_measurement_list_count __ro_after_init;
--
--static void lookup_template_data_hash_algo(int *algo_idx, enum hash_algo *algo,
--					   struct seq_file *m,
--					   struct dentry **lists)
--{
--	struct dentry *dentry;
--	int i;
--
--	dentry = file_dentry(m->file);
--
--	for (i = 0; i < securityfs_measurement_list_count; i++) {
--		if (dentry == lists[i]) {
--			*algo_idx = i;
--			*algo = ima_algo_array[i].algo;
--			break;
--		}
--	}
--}
--
- /* print format:
-  *       32bit-le=pcr#
-  *       char[n]=template digest
-@@ -160,9 +138,10 @@ int ima_measurements_show(struct seq_file *m, void *v)
- 	algo_idx = ima_sha1_idx;
- 	algo = HASH_ALGO_SHA1;
+ static struct dentry *evm_dir;
+-static struct dentry *evm_init_tpm;
+ static struct dentry *evm_symlink;
  
--	if (m->file != NULL)
--		lookup_template_data_hash_algo(&algo_idx, &algo, m,
--					       binary_securityfs_measurement_lists);
-+	if (m->file != NULL) {
-+		algo_idx = (unsigned long)file_inode(m->file)->i_private;
-+		algo = ima_algo_array[algo_idx].algo;
-+	}
- 
- 	/* get entry */
- 	e = qe->entry;
-@@ -256,9 +235,10 @@ static int ima_ascii_measurements_show(struct seq_file *m, void *v)
- 	algo_idx = ima_sha1_idx;
- 	algo = HASH_ALGO_SHA1;
- 
--	if (m->file != NULL)
--		lookup_template_data_hash_algo(&algo_idx, &algo, m,
--					       ascii_securityfs_measurement_lists);
-+	if (m->file != NULL) {
-+		algo_idx = (unsigned long)file_inode(m->file)->i_private;
-+		algo = ima_algo_array[algo_idx].algo;
-+	}
- 
- 	/* get entry */
- 	e = qe->entry;
-@@ -412,57 +392,33 @@ static const struct seq_operations ima_policy_seqops = {
- };
- #endif
- 
--static void __init remove_securityfs_measurement_lists(struct dentry **lists)
--{
--	kfree(lists);
--}
--
- static int __init create_securityfs_measurement_lists(void)
+ #ifdef CONFIG_EVM_ADD_XATTRS
+@@ -286,7 +285,7 @@ static int evm_init_xattrs(void)
  {
--	char file_name[NAME_MAX + 1];
--	struct dentry *dentry;
--	u16 algo;
--	int i;
--
--	securityfs_measurement_list_count = NR_BANKS(ima_tpm_chip);
-+	int count = NR_BANKS(ima_tpm_chip);
+ 	evm_xattrs = securityfs_create_file("evm_xattrs", 0660, evm_dir, NULL,
+ 					    &evm_xattr_ops);
+-	if (!evm_xattrs || IS_ERR(evm_xattrs))
++	if (IS_ERR(evm_xattrs))
+ 		return -EFAULT;
  
- 	if (ima_sha1_idx >= NR_BANKS(ima_tpm_chip))
--		securityfs_measurement_list_count++;
-+		count++;
+ 	return 0;
+@@ -301,21 +300,22 @@ static int evm_init_xattrs(void)
+ int __init evm_init_secfs(void)
+ {
+ 	int error = 0;
++	struct dentry *dentry;
  
--	ascii_securityfs_measurement_lists =
--	    kcalloc(securityfs_measurement_list_count, sizeof(struct dentry *),
--		    GFP_KERNEL);
--	if (!ascii_securityfs_measurement_lists)
--		return -ENOMEM;
--
--	binary_securityfs_measurement_lists =
--	    kcalloc(securityfs_measurement_list_count, sizeof(struct dentry *),
--		    GFP_KERNEL);
--	if (!binary_securityfs_measurement_lists)
--		return -ENOMEM;
--
--	for (i = 0; i < securityfs_measurement_list_count; i++) {
--		algo = ima_algo_array[i].algo;
-+	for (int i = 0; i < count; i++) {
-+		u16 algo = ima_algo_array[i].algo;
-+		char file_name[NAME_MAX + 1];
-+		struct dentry *dentry;
+ 	evm_dir = securityfs_create_dir("evm", integrity_dir);
+-	if (!evm_dir || IS_ERR(evm_dir))
++	if (IS_ERR(evm_dir))
+ 		return -EFAULT;
  
- 		sprintf(file_name, "ascii_runtime_measurements_%s",
- 			hash_algo_name[algo]);
- 		dentry = securityfs_create_file(file_name, S_IRUSR | S_IRGRP,
--						ima_dir, NULL,
-+						ima_dir, (void *)(uintptr_t)i,
- 						&ima_ascii_measurements_ops);
- 		if (IS_ERR(dentry))
- 			return PTR_ERR(dentry);
- 
--		ascii_securityfs_measurement_lists[i] = dentry;
--
- 		sprintf(file_name, "binary_runtime_measurements_%s",
- 			hash_algo_name[algo]);
- 		dentry = securityfs_create_file(file_name, S_IRUSR | S_IRGRP,
--						ima_dir, NULL,
-+						ima_dir, (void *)(uintptr_t)i,
- 						&ima_measurements_ops);
- 		if (IS_ERR(dentry))
- 			return PTR_ERR(dentry);
--
--		binary_securityfs_measurement_lists[i] = dentry;
+-	evm_init_tpm = securityfs_create_file("evm", 0660,
+-					      evm_dir, NULL, &evm_key_ops);
+-	if (!evm_init_tpm || IS_ERR(evm_init_tpm)) {
++	dentry = securityfs_create_file("evm", 0660,
++				      evm_dir, NULL, &evm_key_ops);
++	if (IS_ERR(dentry)) {
+ 		error = -EFAULT;
+ 		goto out;
  	}
  
- 	return 0;
-@@ -544,9 +500,6 @@ int __init ima_fs_init(void)
- 	struct dentry *dentry;
- 	int ret;
- 
--	ascii_securityfs_measurement_lists = NULL;
--	binary_securityfs_measurement_lists = NULL;
--
- 	ima_dir = securityfs_create_dir("ima", integrity_dir);
- 	if (IS_ERR(ima_dir))
- 		return PTR_ERR(ima_dir);
-@@ -601,9 +554,6 @@ int __init ima_fs_init(void)
- 
+ 	evm_symlink = securityfs_create_symlink("evm", NULL,
+ 						"integrity/evm/evm", NULL);
+-	if (!evm_symlink || IS_ERR(evm_symlink)) {
++	if (IS_ERR(evm_symlink)) {
+ 		error = -EFAULT;
+ 		goto out;
+ 	}
+@@ -328,7 +328,6 @@ int __init evm_init_secfs(void)
  	return 0;
  out:
--	remove_securityfs_measurement_lists(ascii_securityfs_measurement_lists);
--	remove_securityfs_measurement_lists(binary_securityfs_measurement_lists);
--	securityfs_measurement_list_count = 0;
- 	securityfs_remove(ima_symlink);
- 	securityfs_remove(ima_dir);
- 
+ 	securityfs_remove(evm_symlink);
+-	securityfs_remove(evm_init_tpm);
+ 	securityfs_remove(evm_dir);
+ 	return error;
+ }
 -- 
 2.39.5
 
