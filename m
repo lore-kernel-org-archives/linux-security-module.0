@@ -1,137 +1,278 @@
-Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3A1A24A07B
-	for <linux-security-module@vger.kernel.org>; Mon, 12 May 2025 06:34:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6477E25A2A9;
+	Mon, 12 May 2025 08:55:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747031663; cv=none; b=cbrtLQkdjn2QyPXzyur79qILtECc8kCc+e4tq84Yygz3TPN12N1WKzXzjzqu4QvQAyk49rJ4s9SWcOZ2DkxBkr3sbf4B2YXoi3Ap8NdOGv7IK+FvpaJYm9gQkWFrr5d9Aa3i7qRHhKZ6uCUEIcbAh+YHam4eEKUYoPgTpS5siXg=
+	t=1747040142; cv=none; b=ABcW4a32C1NVm/KeL1R3b169HKM6cXTL+LUsIkzf24sre0v3oMqBrNngqXTRWuyu3rUdli+YpEbyFOnUW0Jpt9nkHG0FyoLuqn12liI/UybjM/HmdjlQzkL4zJrpSC849dloTW4MBE1IuJaEmuoESwH3BVMjEfzVmjsC1F8SaRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747031663; c=relaxed/simple;
-	bh=gpNdlN3Cb0qhrWVkl2uMw2MfCUiMelfl829BiTyR+Ys=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=GfPW4AB43BMo7hG9ccqN5CIJAZVM///RR/HmXVrrlPuP3cRp4OmN5HnVzwht/8k7PZ5mGp6xPG353mWuO/OyNNzZ1UvKHkIxZ1uuoml9n8gkk4elaJ9CW8KvX/Lg2f3coF7TuZwGKfAn/K9bmZVYpva0zC+p9a08xKs87iIXq5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-86176e300fdso364362939f.1
-        for <linux-security-module@vger.kernel.org>; Sun, 11 May 2025 23:34:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747031661; x=1747636461;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bk73waboJRsstF4X6ogODT970jaH6YsHHYw5z1KWGVg=;
-        b=mej/GBfUbP3vSvYWf+pNT8SWKY74FcNcGuntfBJBj/1B0qC/G5GplpTmj7DSoBoIbG
-         C4dT6UJgDkJbIFSR3K1WPSyDeIC2SfElqrXsKmiHBSJxOb7joitXiTJESudXQtf+mZxY
-         cmb2xCbLVerXpLCZx7qiPvfwp16QbFb0h1WvE+GPBgABUNoGGnVKD3o2ucw4MrqXL/fm
-         s1bnYmXg5700Sxxx5jtXfTt/sChmUEN77+AV1Q45BOp6fpod5oAfS7tjIRstDMi9BFhv
-         3P/tDZQCNFKPckB+jSJMqF2bzUYVNTHWllT7agmRlTV9RdmTiRZL3VreABJ9PrecfsVN
-         HzpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUMUXkksDGTF+W6LdyvRaoIVJbflArO9VxbWxy685RAiFrCb6ivqvy8LzVhv0KgB9tFMFKrua9wGknYcP86R43s0ADWhpU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytVerDl4Wj8Mer/3jkn+SsayfnyHSLjB/EXGpvK91kFoSLIJJs
-	Le3KdmXIe/uRNWC6hJ8tkPa6G7R3zc1BbHbhAkpFMAUutQFiFbWxEwJVtKNGmKwpZcQ3BBF9wVh
-	A4GRzb2ciLEhIT8SPUoPYsZHFIHvgTMyK3pYTH9JPuubUvsI5bXEgr54=
-X-Google-Smtp-Source: AGHT+IHnDX7gvaVDvWhoZmEs2BZOqUYzRCiyjD940H3qvyh4OlFngYAmesq+Gs/DUKA3V3EGe+m3fckqy4A24G+r2866OWsULKtg
+	s=arc-20240116; t=1747040142; c=relaxed/simple;
+	bh=DH6q69bdeVHG1ewhxQzNFxZd9sLqDJchUhBILQWCNLM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=OM9War32zAbuAv2Eqzti/xrTDGmUadsGdCUQ1xP2ECXN+iWAW/6beGekfwioWXAYP5/3qUcOQ1AE8ca1vYO3J8CVNSx259umhl/sYeA50hK5TdqR/5cMhKavhgmqLrUmPvxUHWDfbdAp0EuAr65LZTdi2vSGJHj1twrn/OkVy1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FFXuSncT; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FFXuSncT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0121DC4CEED;
+	Mon, 12 May 2025 08:55:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747040140;
+	bh=DH6q69bdeVHG1ewhxQzNFxZd9sLqDJchUhBILQWCNLM=;
+	h=From:Subject:Date:To:Cc:From;
+	b=FFXuSncTjRlPPbvaJ7pop1rcCxbxCLOpQlW0ouvZPDk3kwZcKNQPhIUdSuP4HYHak
+	 00k2GITz9vTjgXBjBVrmp96wmpHsGQZHAZ0Y4zeQDnwuBJtghOLVoWJQqtt4/PDTqR
+	 Syj7u9kWtTFAZqzOvLDVUu6vtG9xgJS6BB09k13kWBk8h2p3HHnovDdmhR2lffArAQ
+	 WJR+iI6jwUgfwTS7oqCHHUuqEeE+0llUCG+08OpDQwB3iQ3yqzMot5cvnYibq+K68o
+	 mhd5MF1cDpVUeit4qArLD5HB2fdiwIAb7lK/IMiPTPqIcsaF/J/XG4x1+Poo5FrMUd
+	 0EV13a4/0Eytg==
+From: Christian Brauner <brauner@kernel.org>
+Subject: [PATCH v6 0/9] coredump: add coredump socket
+Date: Mon, 12 May 2025 10:55:19 +0200
+Message-Id: <20250512-work-coredump-socket-v6-0-c51bc3450727@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:640f:b0:861:c759:61fa with SMTP id
- ca18e2360f4ac-8676356c200mr1535456539f.4.1747031660879; Sun, 11 May 2025
- 23:34:20 -0700 (PDT)
-Date: Sun, 11 May 2025 23:34:20 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6821966c.050a0220.f2294.0050.GAE@google.com>
-Subject: [syzbot] [lsm?] [keyrings?] KCSAN: data-race in key_garbage_collector
- / key_set_expiry
-From: syzbot <syzbot+9defcbc1dc2f34e5b867@syzkaller.appspotmail.com>
-To: dhowells@redhat.com, jarkko@kernel.org, jmorris@namei.org, 
-	keyrings@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, paul@paul-moore.com, serge@hallyn.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHe3IWgC/3XRwU7EIBAG4FfZcJYGBihbT76H8VBg2JJqaWBFz
+ abvLt2YWFN7nMP//QxzIxlTwEweTzeSsIQc4lSH9uFE7NBPF6TB1ZkAA8UkdPQjppHamNC9v80
+ 0RzvilZ61tcxzraGzpEbnhD583tnnlzqbPiM1qZ/ssGLFZ9o2vG3m4HxeA0PI15i+7s8ofI39N
+ Ar2f2PhlFHwvWegnTFSP42YJnxtYrqQtbLAr6IYHChQFSlAdXU37+1eEVtFHSiiKsjPAjxDjj3
+ uFLlV9IEiq1L3QS+4NuDYTlFb5eASRa3/IqwyXDrPjf2jLMvyDVBlREfyAQAA
+X-Change-ID: 20250429-work-coredump-socket-87cc0f17729c
+To: linux-fsdevel@vger.kernel.org, Jann Horn <jannh@google.com>, 
+ Daniel Borkmann <daniel@iogearbox.net>, 
+ Kuniyuki Iwashima <kuniyu@amazon.com>
+Cc: Eric Dumazet <edumazet@google.com>, Oleg Nesterov <oleg@redhat.com>, 
+ "David S. Miller" <davem@davemloft.net>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Daan De Meyer <daan.j.demeyer@gmail.com>, 
+ David Rheinsberg <david@readahead.eu>, Jakub Kicinski <kuba@kernel.org>, 
+ Jan Kara <jack@suse.cz>, Lennart Poettering <lennart@poettering.net>, 
+ Luca Boccassi <bluca@debian.org>, Mike Yuan <me@yhndnzj.com>, 
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+ =?utf-8?q?Zbigniew_J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, 
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+ linux-security-module@vger.kernel.org, 
+ Christian Brauner <brauner@kernel.org>, 
+ Alexander Mikhalitsyn <alexander@mihalicyn.com>
+X-Mailer: b4 0.15-dev-c25d1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=9413; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=DH6q69bdeVHG1ewhxQzNFxZd9sLqDJchUhBILQWCNLM=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQobm93VVV/ZPqq45dx9ovkiwUVafv2br2X9dSCL8bt9
+ mqPqvq2jlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIkIrWH4K33gYOySAxZ/tfeV
+ hln80n/xe4bAXQF5FTGX7NA54uabtjAyTH8RG5U9X70w0cNx+jeBWzMC1TiuGAko86yYH7DiXD4
+ DAwA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Hello,
+Coredumping currently supports two modes:
 
-syzbot found the following issue on:
+(1) Dumping directly into a file somewhere on the filesystem.
+(2) Dumping into a pipe connected to a usermode helper process
+    spawned as a child of the system_unbound_wq or kthreadd.
 
-HEAD commit:    cd802e7e5f1e Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1583b768580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6154604431d9aaf9
-dashboard link: https://syzkaller.appspot.com/bug?extid=9defcbc1dc2f34e5b867
-compiler:       Debian clang version 20.1.2 (++20250402124445+58df0ef89dd6-1~exp1~20250402004600.97), Debian LLD 20.1.2
+For simplicity I'm mostly ignoring (1). There's probably still some
+users of (1) out there but processing coredumps in this way can be
+considered adventurous especially in the face of set*id binaries.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+The most common option should be (2) by now. It works by allowing
+userspace to put a string into /proc/sys/kernel/core_pattern like:
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/fdb14cb5e78f/disk-cd802e7e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c8b91b8b365f/vmlinux-cd802e7e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/69520a7040dd/bzImage-cd802e7e.xz
+        |/usr/lib/systemd/systemd-coredump %P %u %g %s %t %c %h
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+9defcbc1dc2f34e5b867@syzkaller.appspotmail.com
+The "|" at the beginning indicates to the kernel that a pipe must be
+used. The path following the pipe indicator is a path to a binary that
+will be spawned as a usermode helper process. Any additional parameters
+pass information about the task that is generating the coredump to the
+binary that processes the coredump.
 
-==================================================================
-BUG: KCSAN: data-race in key_garbage_collector / key_set_expiry
+In the example core_pattern shown above systemd-coredump is spawned as a
+usermode helper. There's various conceptual consequences of this
+(non-exhaustive list):
 
-write to 0xffffffff869eb168 of 8 bytes by task 3395 on cpu 1:
- key_schedule_gc security/keys/gc.c:63 [inline]
- key_garbage_collector+0x6d6/0x8f0 security/keys/gc.c:286
- process_one_work kernel/workqueue.c:3238 [inline]
- process_scheduled_works+0x4cb/0x9d0 kernel/workqueue.c:3319
- worker_thread+0x582/0x770 kernel/workqueue.c:3400
- kthread+0x486/0x510 kernel/kthread.c:464
- ret_from_fork+0x4b/0x60 arch/x86/kernel/process.c:153
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+- systemd-coredump is spawned with file descriptor number 0 (stdin)
+  connected to the read-end of the pipe. All other file descriptors are
+  closed. That specifically includes 1 (stdout) and 2 (stderr). This has
+  already caused bugs because userspace assumed that this cannot happen
+  (Whether or not this is a sane assumption is irrelevant.).
 
-read to 0xffffffff869eb168 of 8 bytes by task 4277 on cpu 0:
- key_schedule_gc security/keys/gc.c:61 [inline]
- key_set_expiry+0xea/0x190 security/keys/gc.c:78
- key_reject_and_link+0x18b/0x310 security/keys/key.c:609
- key_negate_and_link include/linux/key-type.h:188 [inline]
- complete_request_key security/keys/request_key.c:67 [inline]
- call_sbin_request_key+0x656/0x6b0 security/keys/request_key.c:216
- construct_key security/keys/request_key.c:247 [inline]
- construct_key_and_link security/keys/request_key.c:519 [inline]
- request_key_and_link+0x8bc/0xd70 security/keys/request_key.c:653
- __do_sys_request_key security/keys/keyctl.c:222 [inline]
- __se_sys_request_key+0x1df/0x290 security/keys/keyctl.c:167
- __x64_sys_request_key+0x55/0x70 security/keys/keyctl.c:167
- x64_sys_call+0x2f19/0x2fb0 arch/x86/include/generated/asm/syscalls_64.h:250
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xd0/0x1a0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+- systemd-coredump will be spawned as a child of system_unbound_wq. So
+  it is not a child of any userspace process and specifically not a
+  child of PID 1. It cannot be waited upon and is in a weird hybrid
+  upcall which are difficult for userspace to control correctly.
 
-value changed: 0x7fffffffffffffff -> 0x000000006821354a
+- systemd-coredump is spawned with full kernel privileges. This
+  necessitates all kinds of weird privilege dropping excercises in
+  userspace to make this safe.
 
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 0 UID: 0 PID: 4277 Comm: syz.0.242 Not tainted 6.15.0-rc5-syzkaller-00353-gcd802e7e5f1e #0 PREEMPT(voluntary) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/19/2025
-==================================================================
-iwpm_register_pid: Unable to send a nlmsg (client = 2)
-infiniband syz1: RDMA CMA: cma_listen_on_dev, error -98
+- A new usermode helper has to be spawned for each crashing process.
 
+This series adds a new mode:
+
+(3) Dumping into an abstract AF_UNIX socket.
+
+Userspace can set /proc/sys/kernel/core_pattern to:
+
+        @address SO_COOKIE
+
+The "@" at the beginning indicates to the kernel that the abstract
+AF_UNIX coredump socket will be used to process coredumps. The address
+is given by @address and must be followed by the socket cookie of the
+coredump listening socket.
+
+The socket cookie is used to verify the socket connection. If the
+coredump server restarts or crashes and someone recycles the socket
+address the kernel will detect that the address has been recycled as the
+socket cookie will have necessarily changed and refuse to connect.
+
+The coredump socket is located in the initial network namespace. When a
+task coredumps it opens a client socket in the initial network namespace
+and connects to the coredump socket.
+
+When a task coredumps it opens a client socket in the initial network
+namespace and connects to the coredump socket.
+
+- The coredump server should use SO_PEERPIDFD to get a stable handle on
+  the connected crashing task. The retrieved pidfd will provide a stable
+  reference even if the crashing task gets SIGKILLed while generating
+  the coredump.
+
+- When a coredump connection is initiated use the socket cookie as the
+  coredump cookie and store it in the pidfd. The receiver can now easily
+  authenticate that the connection is coming from the kernel.
+
+  Unless the coredump server expects to handle connection from
+  non-crashing task it can validate that the connection has been made from
+  a crashing task:
+
+     fd_coredump = accept4(fd_socket, NULL, NULL, SOCK_CLOEXEC);
+     getsockopt(fd_coredump, SOL_SOCKET, SO_PEERPIDFD, &fd_peer_pidfd, &fd_peer_pidfd_len);
+
+     struct pidfd_info info = {
+             info.mask = PIDFD_INFO_EXIT | PIDFD_INFO_COREDUMP,
+     };
+
+     ioctl(pidfd, PIDFD_GET_INFO, &info);
+     /* Refuse connections that aren't from a crashing task. */
+     if (!(info.mask & PIDFD_INFO_COREDUMP) || !(info.coredump_mask & PIDFD_COREDUMPED) )
+             close(fd_coredump);
+
+     /*
+      * Make sure that the coredump cookie matches the connection cookie.
+      * If they don't it's not the coredump connection from the kernel.
+      * We'll get another connection request in a bit.
+      */
+     getsocketop(fd_coredump, SOL_SOCKET, SO_COOKIE, &peer_cookie, &peer_cookie_len);
+     if (!info.coredump_cookie || (info.coredump_cookie != peer_cookie))
+             close(fd_coredump);
+
+  The kernel guarantees that by the time the connection is made the
+  coredump info is available.
+
+- By setting core_pipe_limit non-zero userspace can guarantee that the
+  crashing task cannot be reaped behind it's back and thus process all
+  necessary information in /proc/<pid>. The SO_PEERPIDFD can be used to
+  detect whether /proc/<pid> still refers to the same process.
+
+  The core_pipe_limit isn't used to rate-limit connections to the
+  socket. This can simply be done via AF_UNIX socket directly.
+
+- The pidfd for the crashing task will contain information how the task
+  coredumps. The PIDFD_GET_INFO ioctl gained a new flag
+  PIDFD_INFO_COREDUMP which can be used to retreive the coredump
+  information.
+
+  If the coredump gets a new coredump client connection the kernel
+  guarantees that PIDFD_INFO_COREDUMP information is available.
+  Currently the following information is provided in the new
+  @coredump_mask extension to struct pidfd_info:
+
+  * PIDFD_COREDUMPED is raised if the task did actually coredump.
+  * PIDFD_COREDUMP_SKIP	is raised if the task skipped coredumping (e.g.,
+    undumpable).
+  * PIDFD_COREDUMP_USER	is raised if this is a regular coredump and
+    doesn't need special care by the coredump server.
+  * PIDFD_COREDUMP_ROOT is raised if the generated coredump should be
+    treated as sensitive and the coredump server should restrict access
+    to the generated coredump to sufficiently privileged users.
+
+- The coredump server should mark itself as non-dumpable.
+
+- A container coredump server in a separate network namespace can simply
+  bind to another well-know address and systemd-coredump fowards
+  coredumps to the container.
+
+- Coredumps could in the future also be handled via per-user/session
+  coredump servers that run only with that users privileges.
+
+  The coredump server listens on the coredump socket and accepts a
+  new coredump connection. It then retrieves SO_PEERPIDFD for the
+  client, inspects uid/gid and hands the accepted client to the users
+  own coredump handler which runs with the users privileges only
+  (It must of coure pay close attention to not forward crashing suid
+  binaries.).
+
+The new coredump socket will allow userspace to not have to rely on
+usermode helpers for processing coredumps and provides a safer way to
+handle them instead of relying on super privileged coredumping helpers.
+
+This will also be significantly more lightweight since no fork()+exec()
+for the usermodehelper is required for each crashing process. The
+coredump server in userspace can just keep a worker pool.
+
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+Changes in v6:
+- Use the socket cookie to verify the coredump server.
+- Link to v5: https://lore.kernel.org/20250509-work-coredump-socket-v5-0-23c5b14df1bc@kernel.org
+
+Changes in v5:
+- Don't use a prefix just the specific address.
+- Link to v4: https://lore.kernel.org/20250507-work-coredump-socket-v4-0-af0ef317b2d0@kernel.org
+
+Changes in v4:
+- Expose the coredump socket cookie through the pidfd. This allows the
+  coredump server to easily recognize coredump socket connections.
+- Link to v3: https://lore.kernel.org/20250505-work-coredump-socket-v3-0-e1832f0e1eae@kernel.org
+
+Changes in v3:
+- Use an abstract unix socket.
+- Add documentation.
+- Add selftests.
+- Link to v2: https://lore.kernel.org/20250502-work-coredump-socket-v2-0-43259042ffc7@kernel.org
+
+Changes in v2:
+- Expose dumpability via PIDFD_GET_INFO.
+- Place COREDUMP_SOCK handling under CONFIG_UNIX.
+- Link to v1: https://lore.kernel.org/20250430-work-coredump-socket-v1-0-2faf027dbb47@kernel.org
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Christian Brauner (9):
+      coredump: massage format_corname()
+      coredump: massage do_coredump()
+      coredump: reflow dump helpers a little
+      coredump: add coredump socket
+      pidfs, coredump: add PIDFD_INFO_COREDUMP
+      coredump: show supported coredump modes
+      coredump: validate socket name as it is written
+      selftests/pidfd: add PIDFD_INFO_COREDUMP infrastructure
+      selftests/coredump: add tests for AF_UNIX coredumps
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+ fs/coredump.c                                     | 398 +++++++--
+ fs/pidfs.c                                        |  79 ++
+ include/linux/net.h                               |   1 +
+ include/linux/pidfs.h                             |  10 +
+ include/uapi/linux/pidfd.h                        |  22 +
+ net/socket.c                                      |   5 +-
+ net/unix/af_unix.c                                |  31 +-
+ tools/testing/selftests/coredump/stackdump_test.c | 956 +++++++++++++++++++++-
+ tools/testing/selftests/pidfd/pidfd.h             |  23 +
+ 9 files changed, 1425 insertions(+), 100 deletions(-)
+---
+base-commit: 4dd6566b5a8ca1e8c9ff2652c2249715d6c64217
+change-id: 20250429-work-coredump-socket-87cc0f17729c
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
