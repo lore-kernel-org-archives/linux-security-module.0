@@ -1,84 +1,83 @@
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC27D294A12
-	for <linux-security-module@vger.kernel.org>; Mon, 12 May 2025 13:19:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E61B32951DD
+	for <linux-security-module@vger.kernel.org>; Mon, 12 May 2025 13:19:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747055968; cv=none; b=uAJPdQnj/N0iCxu4jsmgW7OiEMcGEJilgXO+JJv+xUumuoQ6igeTj/MiLxXlsGPb3GSlSo1pZaHE/xg6xT3wycAfQ6mizatZxlLJLeZ9Q5tpAZ1cwXLFe2sJnLgZgLdUCl6WbpisxfFrKqEEYvAfacoFaRoYJHpYS0bT8ErDyVY=
+	t=1747055971; cv=none; b=JzH2md01hVK/Gi70LlrBGAKHrWrj5LtpxHIPCKFFl6HwaT6RJYimUq9I4oXy5op5Pump0Ha67Wx/PTJ7d6EIoLb1xdcphjRr1sIUeRt8CuekjEpeWyT8rpZ7e/wVvdEZAEkoOpkffZ8cdFqYaODZg5V7NCyaGWzl1hbtRCGRt3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747055968; c=relaxed/simple;
-	bh=DoJT2dz8txJo2HLysgqy6uqVMVeur99HqA28GNGz35o=;
-	h=From:Subject:Date:Message-Id:MIME-Version:To:Cc:Content-Type; b=GpL/lg9JA5ppnxHhN6e4z+n3Uq0n0JlaZPo1BLNdstv8xGTjsIJicuvo1eFfSe0g1mO7s/Ig6Sk7nt7syX7KPOEbTINYRhULZbjC8Gc2Ebow0w2qo9fmauObEiPyV9bMcBT6UMQS1/QSraHtdSb0e502Q5DvBw1Z4jT2suc7/uY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SB89aJzJ; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1747055971; c=relaxed/simple;
+	bh=EE7KRw5zpeu2NPRaS4FGB5R9ATQBOE/dVjbJqb/tg1Q=;
+	h=From:Date:Subject:MIME-Version:Message-Id:References:In-Reply-To:
+	 To:Cc:Content-Type; b=g3uUuP3p3SKVD6AZL1VYbC+vrgYEYrY0Q4wYPNIP7J6aqp2NIILu28Iu4U83/Q6unyNGYhBXs34YIQTvtT/Epkzw2FIP/06nuMExx1KNKkse9Ki6R/fIjjtVV3lTnwHuIwMc8DQddaCXEinKzPodiNGcb9yrMRee+t2qYKuAAoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OfaL87gB; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SB89aJzJ"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OfaL87gB"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1747055963;
+	s=mimecast20190719; t=1747055966;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=znSs0IWOkqtw8MwO3eoXgDf53PvMGgHP2+ODqAezjoE=;
-	b=SB89aJzJfMVb9HOItHzgicGgmObEe8IRIZTo7iBFKLuGt0TcA5EI7Y5I85OlRsyWCCchlh
-	RveSiH11gE+HxRjtPrl1v+yTXhUdGTIEaAG2tYMa6yccAFDDw9Unvqg5tDdsfkc1oANQg6
-	tbmPo0UtPZX+eRQ6ZG88K3xFgwVro6s=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9zdzYFU67QL/yrQjWemjUC5iC/W3DMR3kub6Fg2erUY=;
+	b=OfaL87gBz6maLcgGEvPQroXnsOPUDETFHd7vPBwdbFEd8ksmc0KvpnBkv2VJG0axUv3E0+
+	jnYpEoMjhPFL+nrIlBEM19CtSyebyV2Capgfa6AVFgaC+sxD4+jB2c+s/jvMEb49FmWKMu
+	XTDKm8FCspjIadrWGvoZTlWvU684yRk=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-689-g3G129XmOVSjuroAbQUqng-1; Mon, 12 May 2025 09:19:19 -0400
-X-MC-Unique: g3G129XmOVSjuroAbQUqng-1
-X-Mimecast-MFC-AGG-ID: g3G129XmOVSjuroAbQUqng_1747055959
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-acbbb000796so349264566b.2
-        for <linux-security-module@vger.kernel.org>; Mon, 12 May 2025 06:19:19 -0700 (PDT)
+ us-mta-237-LSMpkvXIN5m-7z6Sbg-5yw-1; Mon, 12 May 2025 09:19:23 -0400
+X-MC-Unique: LSMpkvXIN5m-7z6Sbg-5yw-1
+X-Mimecast-MFC-AGG-ID: LSMpkvXIN5m-7z6Sbg-5yw_1747055963
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-acbbb00099eso413931166b.2
+        for <linux-security-module@vger.kernel.org>; Mon, 12 May 2025 06:19:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747055955; x=1747660755;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=znSs0IWOkqtw8MwO3eoXgDf53PvMGgHP2+ODqAezjoE=;
-        b=lUJ+FyDBTfBa2AD62pOclY0aNv2bnI79ubu/nWPlhjQ8umyIzW0ID02WkXNG0fBWdm
-         XRWwHCLkHLjrIR1K7P/2WBTQNnHpPIuPV9XR5fU6QjSIbUwfOYNKmWJJVLlXAGSAQsty
-         YunSMMUP+dng/wdvxFbt3FoJWGrOAqFResC4ezamBXTv0gjj4xuRdc+bXA/ATXomwK6j
-         xkIWTxdze9u/PIM76562nVj/fZC2/kCoyzX2gJzzYe0bjiVb3h4/HEU7vHrSW+ss7IxA
-         620uNNMtfyV+hQC4RGWqVLzSYjplOcGLLoQzGU3tivgxlxQNvNbOKVZ624bAocU1a5hZ
-         uHng==
-X-Forwarded-Encrypted: i=1; AJvYcCX3fLx27voeW8jfOtBu2vtt8mWt8bsig93uNQwvJLOP4KSxn1XvO6seMo5EsIRIREV6+iEnZIr8KIq5lUT0b8gP9AQAyhQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyN2A3qKIZ35jqLdvpYrgi6TCjxRauotDafHgbwbEZjcRZ8IEG1
-	bRccy6+xd44QZzFOA/Lu3y+SJSTp2RY8EBYPC+2tMIVxPqTMaRG1s9BOJtc35+6+AoDgAZFJPuL
-	4gZEsOF9dRuTo0xW1YHVVd11bVooFSyf86g4ZmxHF7AjutZVOcgqSIGs9qI0wCZIcPSITu0e4
-X-Gm-Gg: ASbGncsTe+TzasD/jSlzlIXADUCLfQ7/62sLhq9B8g0dUrNbVHLcLGmzmlBMQpqj2Dl
-	rXlfcOftUQbj4ok8aA7A3boKsHdG2ra00JVli0ig+YsGYa7k9OBsLaSnnMemLpsM8/nwMErHAvS
-	iVRg89PPBHPa4hysrYzjPlQY3r6YJ6gCIdJkwK5wbPyWoXw28IHKKvOk06dywzOJLiDUDv86R4r
-	K0O4FB4+tQJb0QWQlt7sGc+Wtj7fnexk1HisJv0drKWtIWPyxX7fW70DrZnruV0CDwAHhd4Oumm
-	R080OkE9drFQ9ImbxPHzAeL36Uo=
-X-Received: by 2002:a17:907:3e1f:b0:ad2:4fa0:88d1 with SMTP id a640c23a62f3a-ad24fa08b96mr397882466b.9.1747055954480;
-        Mon, 12 May 2025 06:19:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF2gaN4nId6A/kunm1rnCP/+7J7Yrf/475CQq5wTNUNFEpBtRjClSuGrdC8wxlG4kjN+bjbbw==
-X-Received: by 2002:a17:907:3e1f:b0:ad2:4fa0:88d1 with SMTP id a640c23a62f3a-ad24fa08b96mr397878666b.9.1747055953940;
-        Mon, 12 May 2025 06:19:13 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1747055962; x=1747660762;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9zdzYFU67QL/yrQjWemjUC5iC/W3DMR3kub6Fg2erUY=;
+        b=kvVoDLKgmcz8AfuMKrf+J4f6ZSK+NoodjvRvudnA/Ag8/D+HwRkasjYDbGS0ThQc/+
+         WhdOmR9vql8ZtgVPf8CWCTXLIkIGIqRnJDtR7d6Z3oNmFbscFqlfcu+dxgr8xyazGSNb
+         LDpIHzvFxQhcX8zdRIlXqjTl90mErRpILTJgCgA2dqIUyGVNWJbDLqCe55VL+ikN1ItV
+         ADDpB/YM9evxXCL1XlEVxmU4jLVONBveGyPhJfZrMC91C7a9KuQEzKQ5fcUvkfTN4tBs
+         JogdHDd0cJDF3pbVRhTJJtH8CgdBKt7YxWrT++fsgFQpyoGXT0ZJppeUm5YMTVraEP0U
+         lLtw==
+X-Forwarded-Encrypted: i=1; AJvYcCW45+xt3bH/24GzbqA8BDauWBTZeYQOfeWza2HTCl7sU/kih2ESOTlXqO8ANLjTQUmQFx6vR8r0ra8/QHP80IiDxjh3x20=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzigNZj45xfU/Hh521OVdhW/7tjXrnyJom+uOdzFvz7NA+DVw2C
+	dQZDkY4vOln0iHPMXZNFSDjMbSI77ARBOurIjtdZahrJ6BczTfHDgIFrpzyrzEWzu5uuehtQc2Q
+	pShGLFU6KxpNST8n7YI8Zv+rbQOiU3nBn5NqfDflNZuNbjr5zAHhblPHVtqQedWJybvYX8bsw
+X-Gm-Gg: ASbGnctBfIlcvR5//1hx61rsepSJ2NmifDfQ0D6CKuPtJKKt6oqFTZh5toqx/Q9vgpw
+	Qd33gIS7lCsnwrqbTDjw4NY8n3OgQWvUmGljcSd7nvM6PU/zb7Bk8RqFyHwfpzvGL2F1IhXS6Ly
+	kIyzAz5nvWl/UTrsBmtIjFGBPi4HzOsbuN1VCyy2en+CaIbbRpp/lZl/rWmn9mwBgnOgFqy+kp8
+	y0+vjSPHil3vfdEbqdpVqdKDTkd+fB/qvc6ej1r58TVoxPnW0a6DArj0rOu7tWTsFhrU9stugvT
+	kRqyDtLoa11Dyc49GJowXOZeEwA=
+X-Received: by 2002:a17:907:a0ca:b0:ad2:15c4:e251 with SMTP id a640c23a62f3a-ad218fe426emr1343609566b.24.1747055962345;
+        Mon, 12 May 2025 06:19:22 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEFR/z7VDwfPtY8RsgAeuRrfPYWT/NcxxNpELBaV6FMBaH3fzY01enrQOOWsy73GCPQ9UU83A==
+X-Received: by 2002:a17:907:a0ca:b0:ad2:15c4:e251 with SMTP id a640c23a62f3a-ad218fe426emr1343605466b.24.1747055961884;
+        Mon, 12 May 2025 06:19:21 -0700 (PDT)
 Received: from [127.0.0.1] (109-92-26-237.static.isp.telekom.rs. [109.92.26.237])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad2197bde09sm612328766b.125.2025.05.12.06.19.11
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad2197bde09sm612328766b.125.2025.05.12.06.19.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 May 2025 06:19:13 -0700 (PDT)
+        Mon, 12 May 2025 06:19:21 -0700 (PDT)
 From: Andrey Albershteyn <aalbersh@redhat.com>
 X-Google-Original-From: Andrey Albershteyn <aalbersh@kernel.org>
-Subject: [PATCH v5 0/7] fs: introduce file_getattr and file_setattr
- syscalls
-Date: Mon, 12 May 2025 15:18:53 +0200
-Message-Id: <20250512-xattrat-syscall-v5-0-a88b20e37aae@kernel.org>
+Date: Mon, 12 May 2025 15:18:55 +0200
+Subject: [PATCH v5 2/7] lsm: introduce new hooks for setting/getting inode
+ fsxattr
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIAD31IWgC/23NTQrCMBCG4auUrI0kkx9bV95DXCTNRIOllaSEl
- tK7m4ogosv3g3lmIQljwESO1UIi5pDC0JdQu4q0N9NfkQZXmgADxTiXdDLjGM1I05xa03VUG86
- FduCsaki5ekT0YXqJ50vpW0jjEOfXgwzb+rYAfqwMlFNlhWZOettaON0x9tjth3glG5bFBwDOf
- wFRAMMOjitfN/UfQH4AAX8ASRkVWANqbwVo+QWs6/oEtac3pDEBAAA=
-X-Change-ID: 20250114-xattrat-syscall-6a1136d2db59
+Message-Id: <20250512-xattrat-syscall-v5-2-a88b20e37aae@kernel.org>
+References: <20250512-xattrat-syscall-v5-0-a88b20e37aae@kernel.org>
+In-Reply-To: <20250512-xattrat-syscall-v5-0-a88b20e37aae@kernel.org>
 To: Richard Henderson <richard.henderson@linaro.org>, 
  Matt Turner <mattst88@gmail.com>, Russell King <linux@armlinux.org.uk>, 
  Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
@@ -121,240 +120,169 @@ Cc: linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-api@vger.kernel.org, linux-arch@vger.kernel.org, 
  selinux@vger.kernel.org, ecryptfs@vger.kernel.org, 
  linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org, 
- Andrey Albershteyn <aalbersh@kernel.org>, 
- Andrey Albershteyn <aalbersh@redhat.com>
+ Andrey Albershteyn <aalbersh@kernel.org>
 X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7943; i=aalbersh@kernel.org;
- h=from:subject:message-id; bh=DoJT2dz8txJo2HLysgqy6uqVMVeur99HqA28GNGz35o=;
- b=owJ4nJvAy8zAJea2/JXEGuOHHIyn1ZIYMhS/+ikUz/+zKeDcJU4Vu/2bX35T2jNhmd4FXg6HD
- +dm71lmfeB2RykLgxgXg6yYIss6aa2pSUVS+UcMauRh5rAygQxh4OIUgIk8E2D4p9yRo7vd7Fx2
- +08doV9xDvUxK48fv6Khpfy+e1bF/469nIwMx3ZVrBNbc1PypFML49PkHfx7zu9tPaBw836nz26
- zZV/5OQBQ90ss
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5194; i=aalbersh@kernel.org;
+ h=from:subject:message-id; bh=EE7KRw5zpeu2NPRaS4FGB5R9ATQBOE/dVjbJqb/tg1Q=;
+ b=owJ4nJvAy8zAJea2/JXEGuOHHIyn1ZIYMhS/+u+a2qTr//H1X+175RWTuif9Vdgzuygzeult4
+ xbu8myDe0c6SlkYxLgYZMUUWdZJa01NKpLKP2JQIw8zh5UJZAgDF6cATORvOsP/wLccOxWuLrOQ
+ taiM5tdRk110NOf2mQ//vXRO/8r/omD7l+F/vkEV77MDx1v28j7RO6TdzCm3fdruwNUJ5afPuf+
+ 8kH+WFwBp50vr
 X-Developer-Key: i=aalbersh@kernel.org; a=openpgp;
  fpr=AE1B2A9562721A6FC4307C1F46A7EA18AC33E108
 X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: pzBqNBCp3a3sVJONVoBs70ttlt8J4bTEuWEGxlqesQ4_1747055959
+X-Mimecast-MFC-PROC-ID: fijQ9Df_gY956hMxgph3kd8zSf3ZYn3Ai158EXFxDto_1747055963
 X-Mimecast-Originator: redhat.com
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-This patchset introduced two new syscalls file_getattr() and
-file_setattr(). These syscalls are similar to FS_IOC_FSSETXATTR ioctl()
-except they use *at() semantics. Therefore, there's no need to open the
-file to get a fd.
+Introduce new hooks for setting and getting filesystem extended
+attributes on inode (FS_IOC_FSGETXATTR).
 
-These syscalls allow userspace to set filesystem inode attributes on
-special files. One of the usage examples is XFS quota projects.
+Cc: selinux@vger.kernel.org
+Cc: Paul Moore <paul@paul-moore.com>
 
-XFS has project quotas which could be attached to a directory. All
-new inodes in these directories inherit project ID set on parent
-directory.
-
-The project is created from userspace by opening and calling
-FS_IOC_FSSETXATTR on each inode. This is not possible for special
-files such as FIFO, SOCK, BLK etc. Therefore, some inodes are left
-with empty project ID. Those inodes then are not shown in the quota
-accounting but still exist in the directory. This is not critical but in
-the case when special files are created in the directory with already
-existing project quota, these new inodes inherit extended attributes.
-This creates a mix of special files with and without attributes.
-Moreover, special files with attributes don't have a possibility to
-become clear or change the attributes. This, in turn, prevents userspace
-from re-creating quota project on these existing files.
-
-NAME
-
-	file_getattr/file_setattr - get/set filesystem inode attributes
-
-SYNOPSIS
-
-	#include <sys/syscall.h>    /* Definition of SYS_* constants */
-	#include <unistd.h>
-
-	long syscall(SYS_file_getattr, int dirfd, const char *pathname,
-		struct fsxattr *fsx, size_t size, unsigned int at_flags);
-	long syscall(SYS_file_setattr, int dirfd, const char *pathname,
-		struct fsxattr *fsx, size_t size, unsigned int at_flags);
-
-	Note: glibc doesn't provide for file_getattr()/file_setattr(),
-	use syscall(2) instead.
-
-DESCRIPTION
-
-	The syscalls take fd and path. If path is absolute, fd is not
-	used. If path is empty, fd can be AT_FDCWD or any valid fd which
-	will be used to get/set attributes on.
-
-	This is an alternative to FS_IOC_FSGETXATTR/FS_IOC_FSSETXATTR
-	ioctl with a difference that file don't need to be open as we
-	can reference it with a path instead of fd. By having this we
-	can manipulated filesystem inode attributes not only on regular
-	files but also on special ones. This is not possible with
-	FS_IOC_FSSETXATTR ioctl as with special files we can not call
-	ioctl() directly on the filesystem inode using file descriptor.
-
-	at_flags can be set to AT_SYMLINK_NOFOLLOW or AT_EMPTY_PATH.
-
-RETURN VALUE
-
-	On success, 0 is returned.  On error, -1 is returned, and errno
-	is set to indicate the error.
-
-ERRORS
-
-	EINVAL		Invalid at_flag specified (only
-			AT_SYMLINK_NOFOLLOW and AT_EMPTY_PATH is
-			supported).
-
-	EINVAL		Size was smaller than any known version of
-			struct fsxattr.
-
-	EINVAL		Invalid combination of parameters provided in
-			fsxattr for this type of file.
-
-	E2BIG		Size of input argument **struct fsxattr** is too
-			big.
-
-	EBADF		Invalid file descriptor was provided.
-
-	EPERM		No permission to change this file.
-
-	EOPNOTSUPP	Filesystem does not support setting attributes
-			on this type of inode
-
-HISTORY
-
-	Added in Linux 6.15.
-
-EXAMPLE
-
-Create directory and file "mkdir ./dir && touch ./dir/foo" and then
-execute the following program:
-
-	#include <fcntl.h>
-	#include <errno.h>
-	#include <string.h>
-	#include <linux/fs.h>
-	#include <stdio.h>
-	#include <sys/syscall.h>
-	#include <unistd.h>
-
-	int
-	main(int argc, char **argv) {
-		int dfd;
-		int error;
-		struct fsxattr fsx;
-
-		dfd = open("./dir", O_RDONLY);
-		if (dfd == -1) {
-			printf("can not open ./dir");
-			return dfd;
-		}
-
-		error = syscall(467, dfd, "./foo", &fsx, 0);
-		if (error) {
-			printf("can not call 467: %s", strerror(errno));
-			return error;
-		}
-
-		printf("dir/foo flags: %d\n", fsx.fsx_xflags);
-
-		fsx.fsx_xflags |= FS_XFLAG_NODUMP;
-		error = syscall(468, dfd, "./foo", &fsx, 0);
-		if (error) {
-			printf("can not call 468: %s", strerror(errno));
-			return error;
-		}
-
-		printf("dir/foo flags: %d\n", fsx.fsx_xflags);
-
-		return error;
-	}
-
-SEE ALSO
-
-	ioctl(2), ioctl_iflags(2), ioctl_xfs_fsgetxattr(2)
-
+Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
 ---
-Changes in v5:
-- Remove setting of LOOKUP_EMPTY flags which does not have any effect
-- Return -ENOSUPP from vfs_fileattr_set()
-- Add fsxattr masking (by Amir)
-- Fix UAF issue dentry
-- Fix getname_maybe_null() issue with NULL path
-- Implement file_getattr/file_setattr hooks
-- Return LSM return code from file_setattr
-- Rename from getfsxattrat/setfsxattrat to file_getattr/file_setattr
-- Link to v4: https://lore.kernel.org/r/20250321-xattrat-syscall-v4-0-3e82e6fb3264@kernel.org
+ fs/file_attr.c                | 19 ++++++++++++++++---
+ include/linux/lsm_hook_defs.h |  2 ++
+ include/linux/security.h      | 16 ++++++++++++++++
+ security/security.c           | 30 ++++++++++++++++++++++++++++++
+ 4 files changed, 64 insertions(+), 3 deletions(-)
 
-Changes in v4:
-- Use getname_maybe_null() for correct handling of dfd + path semantic
-- Remove restriction for special files on which flags are allowed
-- Utilize copy_struct_from_user() for better future compatibility
-- Add draft man page to cover letter
-- Convert -ENOIOCTLCMD to -EOPNOSUPP as more appropriate for syscall
-- Add missing __user to header declaration of syscalls
-- Link to v3: https://lore.kernel.org/r/20250211-xattrat-syscall-v3-1-a07d15f898b2@kernel.org
+diff --git a/fs/file_attr.c b/fs/file_attr.c
+index 2910b7047721..be62d97cc444 100644
+--- a/fs/file_attr.c
++++ b/fs/file_attr.c
+@@ -76,10 +76,15 @@ EXPORT_SYMBOL(fileattr_fill_flags);
+ int vfs_fileattr_get(struct dentry *dentry, struct fileattr *fa)
+ {
+ 	struct inode *inode = d_inode(dentry);
++	int error;
+ 
+ 	if (!inode->i_op->fileattr_get)
+ 		return -ENOIOCTLCMD;
+ 
++	error = security_inode_file_getattr(dentry, fa);
++	if (error)
++		return error;
++
+ 	return inode->i_op->fileattr_get(dentry, fa);
+ }
+ EXPORT_SYMBOL(vfs_fileattr_get);
+@@ -242,12 +247,20 @@ int vfs_fileattr_set(struct mnt_idmap *idmap, struct dentry *dentry,
+ 		} else {
+ 			fa->flags |= old_ma.flags & ~FS_COMMON_FL;
+ 		}
++
+ 		err = fileattr_set_prepare(inode, &old_ma, fa);
+-		if (!err)
+-			err = inode->i_op->fileattr_set(idmap, dentry, fa);
++		if (err)
++			goto out;
++		err = security_inode_file_setattr(dentry, fa);
++		if (err)
++			goto out;
++		err = inode->i_op->fileattr_set(idmap, dentry, fa);
++		if (err)
++			goto out;
+ 	}
++
++out:
+ 	inode_unlock(inode);
+-
+ 	return err;
+ }
+ EXPORT_SYMBOL(vfs_fileattr_set);
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index bf3bbac4e02a..9600a4350e79 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -157,6 +157,8 @@ LSM_HOOK(int, 0, inode_removexattr, struct mnt_idmap *idmap,
+ 	 struct dentry *dentry, const char *name)
+ LSM_HOOK(void, LSM_RET_VOID, inode_post_removexattr, struct dentry *dentry,
+ 	 const char *name)
++LSM_HOOK(int, 0, inode_file_setattr, struct dentry *dentry, struct fileattr *fa)
++LSM_HOOK(int, 0, inode_file_getattr, struct dentry *dentry, struct fileattr *fa)
+ LSM_HOOK(int, 0, inode_set_acl, struct mnt_idmap *idmap,
+ 	 struct dentry *dentry, const char *acl_name, struct posix_acl *kacl)
+ LSM_HOOK(void, LSM_RET_VOID, inode_post_set_acl, struct dentry *dentry,
+diff --git a/include/linux/security.h b/include/linux/security.h
+index cc9b54d95d22..d2da2f654345 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -451,6 +451,10 @@ int security_inode_listxattr(struct dentry *dentry);
+ int security_inode_removexattr(struct mnt_idmap *idmap,
+ 			       struct dentry *dentry, const char *name);
+ void security_inode_post_removexattr(struct dentry *dentry, const char *name);
++int security_inode_file_setattr(struct dentry *dentry,
++			      struct fileattr *fa);
++int security_inode_file_getattr(struct dentry *dentry,
++			      struct fileattr *fa);
+ int security_inode_need_killpriv(struct dentry *dentry);
+ int security_inode_killpriv(struct mnt_idmap *idmap, struct dentry *dentry);
+ int security_inode_getsecurity(struct mnt_idmap *idmap,
+@@ -1053,6 +1057,18 @@ static inline void security_inode_post_removexattr(struct dentry *dentry,
+ 						   const char *name)
+ { }
+ 
++static inline int security_inode_file_setattr(struct dentry *dentry,
++					      struct fileattr *fa)
++{
++	return 0;
++}
++
++static inline int security_inode_file_getattr(struct dentry *dentry,
++					      struct fileattr *fa)
++{
++	return 0;
++}
++
+ static inline int security_inode_need_killpriv(struct dentry *dentry)
+ {
+ 	return cap_inode_need_killpriv(dentry);
+diff --git a/security/security.c b/security/security.c
+index fb57e8fddd91..09c891e6027d 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -2622,6 +2622,36 @@ void security_inode_post_removexattr(struct dentry *dentry, const char *name)
+ 	call_void_hook(inode_post_removexattr, dentry, name);
+ }
+ 
++/**
++ * security_inode_file_setattr() - check if setting fsxattr is allowed
++ * @dentry: file to set filesystem extended attributes on
++ * @fa: extended attributes to set on the inode
++ *
++ * Called when file_setattr() syscall or FS_IOC_FSSETXATTR ioctl() is called on
++ * inode
++ *
++ * Return: Returns 0 if permission is granted.
++ */
++int security_inode_file_setattr(struct dentry *dentry, struct fileattr *fa)
++{
++	return call_int_hook(inode_file_setattr, dentry, fa);
++}
++
++/**
++ * security_inode_file_getattr() - check if retrieving fsxattr is allowed
++ * @dentry: file to retrieve filesystem extended attributes from
++ * @fa: extended attributes to get
++ *
++ * Called when file_getattr() syscall or FS_IOC_FSGETXATTR ioctl() is called on
++ * inode
++ *
++ * Return: Returns 0 if permission is granted.
++ */
++int security_inode_file_getattr(struct dentry *dentry, struct fileattr *fa)
++{
++	return call_int_hook(inode_file_getattr, dentry, fa);
++}
++
+ /**
+  * security_inode_need_killpriv() - Check if security_inode_killpriv() required
+  * @dentry: associated dentry
 
-Changes in v3:
-- Remove unnecessary "dfd is dir" check as it checked in user_path_at()
-- Remove unnecessary "same filesystem" check
-- Use CLASS() instead of directly calling fdget/fdput
-- Link to v2: https://lore.kernel.org/r/20250122-xattrat-syscall-v2-1-5b360d4fbcb2@kernel.org
-
-v1:
-https://lore.kernel.org/linuxppc-dev/20250109174540.893098-1-aalbersh@kernel.org/
-
-Previous discussion:
-https://lore.kernel.org/linux-xfs/20240520164624.665269-2-aalbersh@redhat.com/
-
----
-Amir Goldstein (1):
-      fs: prepare for extending file_get/setattr()
-
-Andrey Albershteyn (6):
-      fs: split fileattr related helpers into separate file
-      lsm: introduce new hooks for setting/getting inode fsxattr
-      selinux: implement inode_file_[g|s]etattr hooks
-      fs: split fileattr/fsxattr converters into helpers
-      fs: make vfs_fileattr_[get|set] return -EOPNOSUPP
-      fs: introduce file_getattr and file_setattr syscalls
-
- arch/alpha/kernel/syscalls/syscall.tbl      |   2 +
- arch/arm/tools/syscall.tbl                  |   2 +
- arch/arm64/tools/syscall_32.tbl             |   2 +
- arch/m68k/kernel/syscalls/syscall.tbl       |   2 +
- arch/microblaze/kernel/syscalls/syscall.tbl |   2 +
- arch/mips/kernel/syscalls/syscall_n32.tbl   |   2 +
- arch/mips/kernel/syscalls/syscall_n64.tbl   |   2 +
- arch/mips/kernel/syscalls/syscall_o32.tbl   |   2 +
- arch/parisc/kernel/syscalls/syscall.tbl     |   2 +
- arch/powerpc/kernel/syscalls/syscall.tbl    |   2 +
- arch/s390/kernel/syscalls/syscall.tbl       |   2 +
- arch/sh/kernel/syscalls/syscall.tbl         |   2 +
- arch/sparc/kernel/syscalls/syscall.tbl      |   2 +
- arch/x86/entry/syscalls/syscall_32.tbl      |   2 +
- arch/x86/entry/syscalls/syscall_64.tbl      |   2 +
- arch/xtensa/kernel/syscalls/syscall.tbl     |   2 +
- fs/Makefile                                 |   3 +-
- fs/ecryptfs/inode.c                         |   8 +-
- fs/file_attr.c                              | 475 ++++++++++++++++++++++++++++
- fs/ioctl.c                                  | 309 ------------------
- fs/overlayfs/inode.c                        |   2 +-
- include/linux/fileattr.h                    |  26 ++
- include/linux/lsm_hook_defs.h               |   2 +
- include/linux/security.h                    |  16 +
- include/linux/syscalls.h                    |   6 +
- include/uapi/asm-generic/unistd.h           |   8 +-
- include/uapi/linux/fs.h                     |   3 +
- security/security.c                         |  30 ++
- security/selinux/hooks.c                    |  14 +
- 29 files changed, 621 insertions(+), 313 deletions(-)
----
-base-commit: 0d8d44db295ccad20052d6301ef49ff01fb8ae2d
-change-id: 20250114-xattrat-syscall-6a1136d2db59
-
-Best regards,
 -- 
-Andrey Albershteyn <aalbersh@kernel.org>
+2.47.2
 
