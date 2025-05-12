@@ -1,157 +1,164 @@
-Received: from smtp-190b.mail.infomaniak.ch (smtp-190b.mail.infomaniak.ch [185.125.25.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B336C255247
-	for <linux-security-module@vger.kernel.org>; Mon, 12 May 2025 10:20:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE00125CC41;
+	Mon, 12 May 2025 10:59:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747045252; cv=none; b=lYWOshzLDOdLaNh1c/7DIgqLYOx4dBTSTRmcOSOtGBzV6bCN+CsUQ9+7noRAT5HyNnYifjAhbSjZ44oF5pEWo3ajq/rHt8PaW02W2OuCzBZuQLU+dvTfYvLiyMfh7H3hEhYtoRYeDw3IQDf3+3ZnBZ4Rp9xHW5UZXPAE+ubP2gI=
+	t=1747047549; cv=none; b=e0fbj1arqmA7ZlyXZRav3y1MrmR2mHlQuhTRDtN8gUDbnZopHCT8C20q8CxRLPLzT18exQSWOa9bjSeq7/nCt0qv7Kvmb9kXvZO0z8klnISyvpr3vcaC8ST8jc3kkTNMNXzm6g1+9JtuP5tO4jr2dY+qfTOUINF6ZGZSqu9q+68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747045252; c=relaxed/simple;
-	bh=6PyUSfSeDt+qrZ7gKYTCOlNsC8uzlizpIqblSVVblaA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YHDuFqrxYwZffFVbMxlnc/H3d0/LhcfzW9Oy4p2coPDviUEDi5qcfmxVvea/KEsD+xtERWTmCI8YChJ1Txdr2yZJFY80kh4dDO7ZC6mldKI8A60RQ5txZtFYNLyL9LTCuMPPtO1ZUJwaCUZAkpbHrR+Pd5IfgFuE4LEBhxqc/8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=cXHjOrCw; arc=none smtp.client-ip=185.125.25.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="cXHjOrCw"
-Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6c])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Zwwbq65GhzRqZ;
-	Mon, 12 May 2025 12:20:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1747045239;
-	bh=HKDy2NyuH72JIpt1/Jm7vWzRW2C7DYCw8qZzBmjUWGU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cXHjOrCwuUn8TC6ShxbnXraAJ1ElmjQ/PAN7KmzV7OlSlw93UX4pFzKFC5GTHNX0Q
-	 gMuMhKfYUPaEDYi/vdICQggBT2IohYzNnoEhvQ9myosU5qqAXvkopgqapKrZkbAz9L
-	 iVFnEYDDtGKVIzd6yYKVz8E9kaN+Erb5xxFfySiA=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4Zwwbn4lZ8zDLf;
-	Mon, 12 May 2025 12:20:37 +0200 (CEST)
-Date: Mon, 12 May 2025 12:20:36 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: John Johansen <john.johansen@canonical.com>
-Cc: Song Liu <song@kernel.org>, 
-	Maxime =?utf-8?Q?B=C3=A9lair?= <maxime.belair@canonical.com>, linux-security-module@vger.kernel.org, paul@paul-moore.com, 
-	jmorris@namei.org, serge@hallyn.com, kees@kernel.org, 
-	stephen.smalley.work@gmail.com, casey@schaufler-ca.com, takedakn@nttdata.co.jp, 
-	penguin-kernel@i-love.sakura.ne.jp, linux-api@vger.kernel.org, apparmor@lists.ubuntu.com, 
-	linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 1/3] Wire up the lsm_manage_policy syscall
-Message-ID: <20250512.Uong6eCaVuwu@digikod.net>
-References: <20250506143254.718647-1-maxime.belair@canonical.com>
- <20250506143254.718647-2-maxime.belair@canonical.com>
- <CAPhsuW4qY9B3KdhqrUOZoNBWQmO_RDwbH46my314WxrFwxbwkQ@mail.gmail.com>
- <aa3c41f9-6b25-4871-a4be-e08430e59730@canonical.com>
- <CAPhsuW4FVMS7v8p_C-QzE8nBxCb6xDRhEecm_KHZ3KbKUjOXrQ@mail.gmail.com>
- <9aaeda3a-8ef5-4820-b2e4-9180b73fb368@canonical.com>
- <20250509.ePu7gaim1Foo@digikod.net>
- <19313f6b-42d7-4845-9a4b-93c7546aadb9@canonical.com>
+	s=arc-20240116; t=1747047549; c=relaxed/simple;
+	bh=rVZyzZYw1PMWsSuDhX8DQZ9HYMGVkH1KluRzeJ95Qtw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oLQmDRBNL4j8r35yU46J18dSxEVVrjPEhHwWcaHZxqJsPRe4s+pMppVnH629uszLBBIXn5JbkYd5AFm9EyIAJ1YJNbR2yfG70FdfNECmrfv8azfDpkOBDH/qPvTCX70QluKXS6+U+G+4gAPxnhPiKo7OPk504xq2UJE6sFSrcAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-7082e46880eso37848167b3.1;
+        Mon, 12 May 2025 03:59:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747047546; x=1747652346;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=O8PsN0J2Swl6o1xGZOYbU/MU+6PxWnwPSf4GCl8IgvA=;
+        b=N9BMSmly7Ehc6+/DgA7CVepjEmqtWgCPuTRut3Qz6VM9ZsWfavNRoX8lg5dvgOl0mj
+         t8ko9s1w6GRTvlK66i/llsOmBSm/Cs+DKnOQv/aIMyFWT3M4YFwFiTgY2PYAUUpkbKL7
+         RIYBB1i0e2vMs+KhPEZM9eS/HznONFzglqQVnlcCRYBWrovJ2qvOxqbTMBIdkh+m35N1
+         rn304aq94VQBteW5JDKft0PV+Lk6oHijrG9Vqnq6zL4Hi1u9SHKPrEbjFxKdork0E6bc
+         Z2PWhW3acrW6rPmbrae+h4P+BIwp8Phf1SknGIpRWR0kQTQb415AFR+ztCRowXOMIUGj
+         x8Mg==
+X-Forwarded-Encrypted: i=1; AJvYcCVUT2Q1ntj4b+U9Ictc1mNxp7jFmu6aTaiG4iQ1SAcRG2h4020HwynCtDFk/94z61GdNBYjmWlX+c9cG4Q=@vger.kernel.org, AJvYcCX9a/INZT+Sd1euqlxI2oXlJkomXORCiBEL0UEzuRlSXMjsWJXZR1G5sgpc4lCiN8az3D8bzqoq@vger.kernel.org, AJvYcCXKlPEt89M2KhRczZXMP19/7YFQCAWXlA1TT2+70GogHcoAd0uTNhQrmmhEOII+FzhrGuJyBi+icj1k4iiobghFwXQEC9UX@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEi9dQxPp8UmchZYGi9BYzqniYnXfI4cx5tiH5uSSWeXPlmpmx
+	eZuNY/cuV+ngi6v+2X+6GnfsricFKHgbCKxsfM7klkWlyqtIRVzu4nFQbQ0Q
+X-Gm-Gg: ASbGnctQH5RmDRuqAYMg4/wa3ofvg98NT3I6id0c4E3CCc4ub/LCWMFGVSKfPRlHL+D
+	Al5OgANdtBfFju3fzw+vm2ENoLP4phT6oIdF1iQuFIxNgEDcKvTG706etWXKDNcTD3k2tGIHOBO
+	Ef7VQGuepXMurkb9h4oHnjaAeei3EQzgv2LzKU4IdKLqY3s06EHwdLUOULelrzdPIGBIJit8lz/
+	tqqeGqx5MV3pni7cDhr2x98U2TJrk5AfbeCRivBIWCyCKrSBMNnzUp+55VcOjaj4bJKZqHJ25k6
+	SZTFbETEG9wi0RUDEl9ZvaviDxI9zgR4UOQCFkSbUKnBiS99I813aPmgBopVZlk4TfVBMZmlkXI
+	p/AV6oyPB13RL
+X-Google-Smtp-Source: AGHT+IGYMOzzu0K4b1tOxbGH+rxEEFyw5EdK6Vahw1hnd+bsxODQ3YXkq/Jz1OYmNcUCMtGhcVKksg==
+X-Received: by 2002:a05:690c:6307:b0:708:c2dd:c39f with SMTP id 00721157ae682-70a3fa35805mr161860947b3.17.1747047546342;
+        Mon, 12 May 2025 03:59:06 -0700 (PDT)
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com. [209.85.128.175])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-70a3d9ebdcfsm18860277b3.102.2025.05.12.03.59.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 12 May 2025 03:59:05 -0700 (PDT)
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-708d90aa8f9so39265887b3.3;
+        Mon, 12 May 2025 03:59:05 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUMkrOG3ozJGqow2VQxJvyDJqO24lCeIhj2bQG3VC995ggk3rP2sogBo8WG8TZraWTRRTypNR/rSOEdBfI=@vger.kernel.org, AJvYcCW9jy/yIQbxfgsSoPPT8XFU/BwlOrW74TOLeoR91JbwB08oDSC8uJZ5EHEDCV32ykRoEupidwws8bkiH1BaJpKH/70linzN@vger.kernel.org, AJvYcCX0QmtjIXuaTutZni8N3B2tOW4m1ys/HXtdVmrvFc6a+ztxexSZnHfXi6FLBN5Kkm5gHsFAQua/@vger.kernel.org
+X-Received: by 2002:a05:690c:6c05:b0:708:139e:4e03 with SMTP id
+ 00721157ae682-70a3fa181a3mr172595757b3.16.1747047545394; Mon, 12 May 2025
+ 03:59:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <19313f6b-42d7-4845-9a4b-93c7546aadb9@canonical.com>
-X-Infomaniak-Routing: alpha
+References: <20250512-work-coredump-socket-v6-0-c51bc3450727@kernel.org> <20250512-work-coredump-socket-v6-4-c51bc3450727@kernel.org>
+In-Reply-To: <20250512-work-coredump-socket-v6-4-c51bc3450727@kernel.org>
+From: Luca Boccassi <bluca@debian.org>
+Date: Mon, 12 May 2025 11:58:54 +0100
+X-Gmail-Original-Message-ID: <CAMw=ZnTF9EVV+E+bXTz1je3VT+OwDPAzbbFy7G02zBjeCpqxFA@mail.gmail.com>
+X-Gm-Features: AX0GCFsyH_TmjjPguQGV1t1Tf5zy3LvYUYu79bJiOgfvSrNURzcSRCb3aNHlYeI
+Message-ID: <CAMw=ZnTF9EVV+E+bXTz1je3VT+OwDPAzbbFy7G02zBjeCpqxFA@mail.gmail.com>
+Subject: Re: [PATCH v6 4/9] coredump: add coredump socket
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Jann Horn <jannh@google.com>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Kuniyuki Iwashima <kuniyu@amazon.com>, 
+	Eric Dumazet <edumazet@google.com>, Oleg Nesterov <oleg@redhat.com>, 
+	"David S. Miller" <davem@davemloft.net>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Daan De Meyer <daan.j.demeyer@gmail.com>, David Rheinsberg <david@readahead.eu>, 
+	Jakub Kicinski <kuba@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Lennart Poettering <lennart@poettering.net>, Mike Yuan <me@yhndnzj.com>, Paolo Abeni <pabeni@redhat.com>, 
+	Simon Horman <horms@kernel.org>, =?UTF-8?Q?Zbigniew_J=C4=99drzejewski=2DSzmek?= <zbyszek@in.waw.pl>, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, 
+	Alexander Mikhalitsyn <alexander@mihalicyn.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, May 11, 2025 at 03:47:21AM -0700, John Johansen wrote:
-> On 5/9/25 03:26, Mickaël Salaün wrote:
-> > On Thu, May 08, 2025 at 01:18:20AM -0700, John Johansen wrote:
-> > > On 5/7/25 23:06, Song Liu wrote:
-> > > > On Wed, May 7, 2025 at 8:37 AM Maxime Bélair
-> > > > <maxime.belair@canonical.com> wrote:
-> > > > [...]
+On Mon, 12 May 2025 at 09:56, Christian Brauner <brauner@kernel.org> wrote:
+>
+> Coredumping currently supports two modes:
+>
+> (1) Dumping directly into a file somewhere on the filesystem.
+> (2) Dumping into a pipe connected to a usermode helper process
+>     spawned as a child of the system_unbound_wq or kthreadd.
+>
+> For simplicity I'm mostly ignoring (1). There's probably still some
+> users of (1) out there but processing coredumps in this way can be
+> considered adventurous especially in the face of set*id binaries.
+>
+> The most common option should be (2) by now. It works by allowing
+> userspace to put a string into /proc/sys/kernel/core_pattern like:
+>
+>         |/usr/lib/systemd/systemd-coredump %P %u %g %s %t %c %h
+>
+> The "|" at the beginning indicates to the kernel that a pipe must be
+> used. The path following the pipe indicator is a path to a binary that
+> will be spawned as a usermode helper process. Any additional parameters
+> pass information about the task that is generating the coredump to the
+> binary that processes the coredump.
+>
+> In the example core_pattern shown above systemd-coredump is spawned as a
+> usermode helper. There's various conceptual consequences of this
+> (non-exhaustive list):
+>
+> - systemd-coredump is spawned with file descriptor number 0 (stdin)
+>   connected to the read-end of the pipe. All other file descriptors are
+>   closed. That specifically includes 1 (stdout) and 2 (stderr). This has
+>   already caused bugs because userspace assumed that this cannot happen
+>   (Whether or not this is a sane assumption is irrelevant.).
+>
+> - systemd-coredump will be spawned as a child of system_unbound_wq. So
+>   it is not a child of any userspace process and specifically not a
+>   child of PID 1. It cannot be waited upon and is in a weird hybrid
+>   upcall which are difficult for userspace to control correctly.
+>
+> - systemd-coredump is spawned with full kernel privileges. This
+>   necessitates all kinds of weird privilege dropping excercises in
+>   userspace to make this safe.
+>
+> - A new usermode helper has to be spawned for each crashing process.
+>
+> This series adds a new mode:
+>
+> (3) Dumping into an abstract AF_UNIX socket.
+>
+> Userspace can set /proc/sys/kernel/core_pattern to:
+>
+>         @address SO_COOKIE
+>
+> The "@" at the beginning indicates to the kernel that the abstract
+> AF_UNIX coredump socket will be used to process coredumps. The address
+> is given by @address and must be followed by the socket cookie of the
+> coredump listening socket.
+>
+> The socket cookie is used to verify the socket connection. If the
+> coredump server restarts or crashes and someone recycles the socket
+> address the kernel will detect that the address has been recycled as the
+> socket cookie will have necessarily changed and refuse to connect.
 
-> > > > permission check to each pseudo file. The downside of the syscall, however,
-> > > > is that all the permission checks are hard-coded in the kernel (except for
-> > > 
-> > > The permission checks don't have to be hard coded. Each LSM can define how it handles
-> > > or manages the syscall. The default is that it isn't supported, but if an lsm decides
-> > > to support it, there is now reason that its policy can't determine the use of the
-> > > syscall.
-> > 
-> >  From an interface design point of view, it would be better to clearly
-> > specify the scope of a command (e.g. which components could be impacted
-> > by a command), and make sure the documentation reflect that as well.
-> > Even better, have a syscalls per required privileges and impact (e.g.
-> > privileged or unprivileged).  Going this road, I'm not sure if a
-> > privileged syscall would make sense given the existing filesystem
-> > interface.
-> > 
-> 
-> uhhhmmm, not just privileged. As you well know we are looking to use
-> this for unprivileged policy. The LSM can limit to privileged if it
-> wants but it doesn't have to limit it to privileged policy.
+This dynamic/cookie prefix makes it impossible to use this with socket
+activation units. The way systemd-coredump works is that every
+instance is an independent templated unit, spawned when there's a
+connection to the private socket. If the path was fixed, we could just
+reuse the same mechanism, it would fit very nicely with minimal
+changes.
 
-Yes, I meant to say having a syscall for unprivileged actions, and maybe
-another one for privileged ones, but this might be a hard sell. :)
+But because you need a "server" to be permanently running, this means
+socket-based activation can no longer work, and systemd-coredump must
+switch to a persistently-running mode. This is a severe degradation of
+functionality, will continuously waste CPU/memory resources for no
+good reasons, and makes the whole thing more fragile and complex, as
+if there are any issues with this server, you start losing core files.
+And honestly I don't really see the point? Setting the pattern is a
+privileged operation anyway. systemd manages the socket with a socket
+unit and again that's privileged already.
 
-To say it another way, for your use case, do you need this syscall(s)
-for privileged operations?  Do you plan to drop (or stop extending) the
-filesystem interface or do you think it would be good for (AppArmor)
-privileged operations too?  I know syscalls might be attractive and
-could be used for everything, but it's good to have a well-defined plan
-and semantic to avoid using such syscall as another multiplexer with
-unrelated operations and required privileges.
-
-If this syscall should also be a way to do privileged operations, should
-we also agree on a common set of permissions (e.g. global CAP_MAC_ADMIN
-or user namespace one)?
-
-[...]
-
-> > > > Overall, I am still not convinced a syscall for all LSMs is needed. To
-> > > > justify such
-> > > 
-> > > its not needed by all LSMs, just a subset of them, and some nebulous
-> > > subset of potentially future LSMs that is entirely undefinable.
-> > > 
-> > > If we had had appropriate LSM syscalls landlock wouldn't have needed
-> > > to have landlock specific syscalls. Having another LSM go that route
-> > > feels wrong especially now that we have some LSM syscalls.
-> > 
-> > I don't agree.  Dedicated syscalls are a good thing.  See my other
-> > reply.
-> > 
-> 
-> I think we can just disagree on this point.
-> 
-> > > If a
-> > > syscall is needed by an LSM its better to try hashing something out
-> > > that might have utility for multiple LSMs or at the very least,
-> > > potentially have utility in the future.
-> > > 
-> > > 
-> > > > a syscall, I think we need to show that it is useful in multiple LSMs.
-> > > > Also, if we
-> > > > really want to have single set of APIs for all LSMs, we may also need
-> > > > get_policy,
-> > > 
-> > > We are never going to get a single set of APIs for all LSMs. I will
-> > > settle for an api that has utility for a subset
-> > > 
-> > > > remove_policy, etc. This set as-is appears to be an incomplete design. The
-> > > 
-> > > To have a complete design, there needs to be feedback and discussion
-> > > from multiple LSMs. This is a starting point.
-> > > 
-> > > > implementation, with call_int_hook, is also problematic. It can easily
-> > > > cause some> controversial behaviors.
-> > > > 
-> > > agreed it shouldn't be doing a straight call_int_hook, it should only
-> > > call it against the lsm identified by the lsmid
-> > 
-> > Yes, but then, I don't see the point of a "generic" LSM syscall.
-> 
-> its not a generic LSM syscall. Its a syscall or maybe a set of syscalls
-> for a specific scoped problem of loading/managing policy.
-> 
-> Can we come to something acceptable? I don't know but we are going to
-> look at it before trying for an apparmor specific syscall.
-
-I understand and it's good to have this discussion.
+Could we drop this cookie prefix and go back to the previous version
+(v5), please? Or if there is some specific non-systemd use case in
+mind that I am not aware of, have both options, so that we can use the
+simpler and more straightforward one with systemd-coredump.
+Thanks!
