@@ -1,164 +1,222 @@
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE00125CC41;
-	Mon, 12 May 2025 10:59:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0007276026
+	for <linux-security-module@vger.kernel.org>; Mon, 12 May 2025 11:00:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747047549; cv=none; b=e0fbj1arqmA7ZlyXZRav3y1MrmR2mHlQuhTRDtN8gUDbnZopHCT8C20q8CxRLPLzT18exQSWOa9bjSeq7/nCt0qv7Kvmb9kXvZO0z8klnISyvpr3vcaC8ST8jc3kkTNMNXzm6g1+9JtuP5tO4jr2dY+qfTOUINF6ZGZSqu9q+68=
+	t=1747047634; cv=none; b=QwGgCgFk+Ub4HRJuaUiH0nCA6U77EEOJSAPzpvHppAvJRkJopPglXF8oz1w9e/dGHjF0+mk1+Pu2PjyphQDoquuVlGuyLV6w/+/mKN/FMKCzvwck9VRItmmZcTn7qMFbQRGq1GVQ8R9LsJNM33rgK1z4kKX+nSu05Z/5TEtW8eM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747047549; c=relaxed/simple;
-	bh=rVZyzZYw1PMWsSuDhX8DQZ9HYMGVkH1KluRzeJ95Qtw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oLQmDRBNL4j8r35yU46J18dSxEVVrjPEhHwWcaHZxqJsPRe4s+pMppVnH629uszLBBIXn5JbkYd5AFm9EyIAJ1YJNbR2yfG70FdfNECmrfv8azfDpkOBDH/qPvTCX70QluKXS6+U+G+4gAPxnhPiKo7OPk504xq2UJE6sFSrcAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-7082e46880eso37848167b3.1;
-        Mon, 12 May 2025 03:59:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747047546; x=1747652346;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+	s=arc-20240116; t=1747047634; c=relaxed/simple;
+	bh=AEFbW1ywfYTW+GjxH8IL0gQ8bPI3y/MENbOZAOyHRhY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=QdLlXBZaCs4fY74uK0OKe6En3r4Jj015Ei4jQ1YTgJfclyt936kBxZkYkIY7am+tplDqreSXLen8ghv0UQbmyo7xMus+VjyfpnWr8Om1dryVGAv0YYNXqn9UDVBAsElhDsa3hNvqEIzwwSLD2uI4gKn05erbwlAwt0q8t7iVVRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XxAWrIdL; arc=none smtp.client-ip=209.85.208.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XxAWrIdL"
+Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-5f62cbc6d5cso4347554a12.3
+        for <linux-security-module@vger.kernel.org>; Mon, 12 May 2025 04:00:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1747047631; x=1747652431; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=O8PsN0J2Swl6o1xGZOYbU/MU+6PxWnwPSf4GCl8IgvA=;
-        b=N9BMSmly7Ehc6+/DgA7CVepjEmqtWgCPuTRut3Qz6VM9ZsWfavNRoX8lg5dvgOl0mj
-         t8ko9s1w6GRTvlK66i/llsOmBSm/Cs+DKnOQv/aIMyFWT3M4YFwFiTgY2PYAUUpkbKL7
-         RIYBB1i0e2vMs+KhPEZM9eS/HznONFzglqQVnlcCRYBWrovJ2qvOxqbTMBIdkh+m35N1
-         rn304aq94VQBteW5JDKft0PV+Lk6oHijrG9Vqnq6zL4Hi1u9SHKPrEbjFxKdork0E6bc
-         Z2PWhW3acrW6rPmbrae+h4P+BIwp8Phf1SknGIpRWR0kQTQb415AFR+ztCRowXOMIUGj
-         x8Mg==
-X-Forwarded-Encrypted: i=1; AJvYcCVUT2Q1ntj4b+U9Ictc1mNxp7jFmu6aTaiG4iQ1SAcRG2h4020HwynCtDFk/94z61GdNBYjmWlX+c9cG4Q=@vger.kernel.org, AJvYcCX9a/INZT+Sd1euqlxI2oXlJkomXORCiBEL0UEzuRlSXMjsWJXZR1G5sgpc4lCiN8az3D8bzqoq@vger.kernel.org, AJvYcCXKlPEt89M2KhRczZXMP19/7YFQCAWXlA1TT2+70GogHcoAd0uTNhQrmmhEOII+FzhrGuJyBi+icj1k4iiobghFwXQEC9UX@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEi9dQxPp8UmchZYGi9BYzqniYnXfI4cx5tiH5uSSWeXPlmpmx
-	eZuNY/cuV+ngi6v+2X+6GnfsricFKHgbCKxsfM7klkWlyqtIRVzu4nFQbQ0Q
-X-Gm-Gg: ASbGnctQH5RmDRuqAYMg4/wa3ofvg98NT3I6id0c4E3CCc4ub/LCWMFGVSKfPRlHL+D
-	Al5OgANdtBfFju3fzw+vm2ENoLP4phT6oIdF1iQuFIxNgEDcKvTG706etWXKDNcTD3k2tGIHOBO
-	Ef7VQGuepXMurkb9h4oHnjaAeei3EQzgv2LzKU4IdKLqY3s06EHwdLUOULelrzdPIGBIJit8lz/
-	tqqeGqx5MV3pni7cDhr2x98U2TJrk5AfbeCRivBIWCyCKrSBMNnzUp+55VcOjaj4bJKZqHJ25k6
-	SZTFbETEG9wi0RUDEl9ZvaviDxI9zgR4UOQCFkSbUKnBiS99I813aPmgBopVZlk4TfVBMZmlkXI
-	p/AV6oyPB13RL
-X-Google-Smtp-Source: AGHT+IGYMOzzu0K4b1tOxbGH+rxEEFyw5EdK6Vahw1hnd+bsxODQ3YXkq/Jz1OYmNcUCMtGhcVKksg==
-X-Received: by 2002:a05:690c:6307:b0:708:c2dd:c39f with SMTP id 00721157ae682-70a3fa35805mr161860947b3.17.1747047546342;
-        Mon, 12 May 2025 03:59:06 -0700 (PDT)
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com. [209.85.128.175])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-70a3d9ebdcfsm18860277b3.102.2025.05.12.03.59.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 May 2025 03:59:05 -0700 (PDT)
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-708d90aa8f9so39265887b3.3;
-        Mon, 12 May 2025 03:59:05 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUMkrOG3ozJGqow2VQxJvyDJqO24lCeIhj2bQG3VC995ggk3rP2sogBo8WG8TZraWTRRTypNR/rSOEdBfI=@vger.kernel.org, AJvYcCW9jy/yIQbxfgsSoPPT8XFU/BwlOrW74TOLeoR91JbwB08oDSC8uJZ5EHEDCV32ykRoEupidwws8bkiH1BaJpKH/70linzN@vger.kernel.org, AJvYcCX0QmtjIXuaTutZni8N3B2tOW4m1ys/HXtdVmrvFc6a+ztxexSZnHfXi6FLBN5Kkm5gHsFAQua/@vger.kernel.org
-X-Received: by 2002:a05:690c:6c05:b0:708:139e:4e03 with SMTP id
- 00721157ae682-70a3fa181a3mr172595757b3.16.1747047545394; Mon, 12 May 2025
- 03:59:05 -0700 (PDT)
+        bh=qzE+CeGC4cBk1T8TUfMB6R/c9EYPPFN0mDRYYWLWrkQ=;
+        b=XxAWrIdLgwJNO0qJLOIyeLxoEfZ5DB54oq5qi+1nFUkJt9XMrKa3jbBfdgavTXBKY2
+         w0uhjYTjCHGrlIK7kUpOsL9eov5z+wgQ0VixfGht6v4B5vSDjLqjXokL5O18pl/6e7NT
+         0FsFIyk4dJgdN1c4KrDIeoAQQRmpY60MTXm1Y7b0RybocJUpuYKanVdNqWUatQMwIAni
+         f81BrvsTyplxWH26wJ0HQ3kW9dpCWww8I55/Vffbss3yPtJ0NxIpJL9IA+EEMXaFrWRr
+         YkwU28gLv51nVweq9p9jLAkp07/aj/tPjwFCD+lLGhhL1mqrBiDkj+vjgbCmF0fjb3Rw
+         jChg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747047631; x=1747652431;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=qzE+CeGC4cBk1T8TUfMB6R/c9EYPPFN0mDRYYWLWrkQ=;
+        b=YDp/3J7yYikJxSy3Qhl2+PABj1HJJNNnylYpagF7pgMSS9I+04cetIu6EID5VfLur9
+         vLjvhTmvNdQKWiK83EB9A+qt36Wzt8HbMKq7HoDV7hgbWq2h7cmSOX415MxdWxhNZ8M5
+         VikzW+L8zx3eeP7nrrO7tYupGCzZMnvKFFNdl14cKIs/fLaAYtYAhenwGdZvHsxsextD
+         Qdzi7VGHVtUALUPRT7hK3NDcO4FOTzlaceauSKxLqe0mXSp0E+c935YJyOBckPmv6vzQ
+         VlqnbcVU2eI8k34v/pMefqZX3ps7NmXJTDDFkTgsj6FM8aueomP9Uiv0QOvgccZ/MjJo
+         Vl7g==
+X-Gm-Message-State: AOJu0Yw+PtqpdNPjn/IQwjw9w6vIHZl7cC2YxlRUmJrSBMrQLLvzdos7
+	oETyANu5brq6V4za8DzOG80fQ/vk6S6JWnfdUYzpDxB74jB1Y+rblR9LlIY6HDOo3kcr4TAYAZM
+	tRA==
+X-Google-Smtp-Source: AGHT+IHRMqhpnP8nbps8MRWJtQaZZaj+BfpXZBHCJvPR2pM1hkrMeCFK5NeMWF8/mk/pRlMpoBf89rceUkM=
+X-Received: from edbet8.prod.google.com ([2002:a05:6402:3788:b0:5fb:f293:d540])
+ (user=gnoack job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6402:4301:b0:5fe:a303:a6a3
+ with SMTP id 4fb4d7f45d1cf-5fea303a6b9mr1350135a12.23.1747047631177; Mon, 12
+ May 2025 04:00:31 -0700 (PDT)
+Date: Mon, 12 May 2025 11:00:28 +0000
+In-Reply-To: <20250512093732.1408485-1-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250512-work-coredump-socket-v6-0-c51bc3450727@kernel.org> <20250512-work-coredump-socket-v6-4-c51bc3450727@kernel.org>
-In-Reply-To: <20250512-work-coredump-socket-v6-4-c51bc3450727@kernel.org>
-From: Luca Boccassi <bluca@debian.org>
-Date: Mon, 12 May 2025 11:58:54 +0100
-X-Gmail-Original-Message-ID: <CAMw=ZnTF9EVV+E+bXTz1je3VT+OwDPAzbbFy7G02zBjeCpqxFA@mail.gmail.com>
-X-Gm-Features: AX0GCFsyH_TmjjPguQGV1t1Tf5zy3LvYUYu79bJiOgfvSrNURzcSRCb3aNHlYeI
-Message-ID: <CAMw=ZnTF9EVV+E+bXTz1je3VT+OwDPAzbbFy7G02zBjeCpqxFA@mail.gmail.com>
-Subject: Re: [PATCH v6 4/9] coredump: add coredump socket
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Jann Horn <jannh@google.com>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Kuniyuki Iwashima <kuniyu@amazon.com>, 
-	Eric Dumazet <edumazet@google.com>, Oleg Nesterov <oleg@redhat.com>, 
-	"David S. Miller" <davem@davemloft.net>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Daan De Meyer <daan.j.demeyer@gmail.com>, David Rheinsberg <david@readahead.eu>, 
-	Jakub Kicinski <kuba@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Lennart Poettering <lennart@poettering.net>, Mike Yuan <me@yhndnzj.com>, Paolo Abeni <pabeni@redhat.com>, 
-	Simon Horman <horms@kernel.org>, =?UTF-8?Q?Zbigniew_J=C4=99drzejewski=2DSzmek?= <zbyszek@in.waw.pl>, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, 
-	Alexander Mikhalitsyn <alexander@mihalicyn.com>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <20250512093732.1408485-1-mic@digikod.net>
+Message-ID: <aCHUzDJ4HzqGlL1l@google.com>
+Subject: Re: [PATCH v2] landlock: Improve bit operations in audit code
+From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
+To: "=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>
+Cc: linux-security-module@vger.kernel.org, 
+	"=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack3000@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 12 May 2025 at 09:56, Christian Brauner <brauner@kernel.org> wrote:
->
-> Coredumping currently supports two modes:
->
-> (1) Dumping directly into a file somewhere on the filesystem.
-> (2) Dumping into a pipe connected to a usermode helper process
->     spawned as a child of the system_unbound_wq or kthreadd.
->
-> For simplicity I'm mostly ignoring (1). There's probably still some
-> users of (1) out there but processing coredumps in this way can be
-> considered adventurous especially in the face of set*id binaries.
->
-> The most common option should be (2) by now. It works by allowing
-> userspace to put a string into /proc/sys/kernel/core_pattern like:
->
->         |/usr/lib/systemd/systemd-coredump %P %u %g %s %t %c %h
->
-> The "|" at the beginning indicates to the kernel that a pipe must be
-> used. The path following the pipe indicator is a path to a binary that
-> will be spawned as a usermode helper process. Any additional parameters
-> pass information about the task that is generating the coredump to the
-> binary that processes the coredump.
->
-> In the example core_pattern shown above systemd-coredump is spawned as a
-> usermode helper. There's various conceptual consequences of this
-> (non-exhaustive list):
->
-> - systemd-coredump is spawned with file descriptor number 0 (stdin)
->   connected to the read-end of the pipe. All other file descriptors are
->   closed. That specifically includes 1 (stdout) and 2 (stderr). This has
->   already caused bugs because userspace assumed that this cannot happen
->   (Whether or not this is a sane assumption is irrelevant.).
->
-> - systemd-coredump will be spawned as a child of system_unbound_wq. So
->   it is not a child of any userspace process and specifically not a
->   child of PID 1. It cannot be waited upon and is in a weird hybrid
->   upcall which are difficult for userspace to control correctly.
->
-> - systemd-coredump is spawned with full kernel privileges. This
->   necessitates all kinds of weird privilege dropping excercises in
->   userspace to make this safe.
->
-> - A new usermode helper has to be spawned for each crashing process.
->
-> This series adds a new mode:
->
-> (3) Dumping into an abstract AF_UNIX socket.
->
-> Userspace can set /proc/sys/kernel/core_pattern to:
->
->         @address SO_COOKIE
->
-> The "@" at the beginning indicates to the kernel that the abstract
-> AF_UNIX coredump socket will be used to process coredumps. The address
-> is given by @address and must be followed by the socket cookie of the
-> coredump listening socket.
->
-> The socket cookie is used to verify the socket connection. If the
-> coredump server restarts or crashes and someone recycles the socket
-> address the kernel will detect that the address has been recycled as the
-> socket cookie will have necessarily changed and refuse to connect.
+On Mon, May 12, 2025 at 11:37:30AM +0200, Micka=C3=ABl Sala=C3=BCn wrote:
+> Use the BIT() and BIT_ULL() macros in the new audit code instead of
+> explicit shifts to improve readability.  Use bitmask instead of modulo
+> operation to simplify code.
+>=20
+> Add test_range1_rand15() and test_range2_rand15() KUnit tests to improve
+> get_id_range() coverage.
+>=20
+> Signed-off-by: G=C3=BCnther Noack <gnoack3000@gmail.com>
+> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+> ---
+>=20
+> Changes since v1:
+> https://lore.kernel.org/r/20250507185404.1029055-1-mic@digikod.net
+> - Use bitmask instead of modulo operation to simplify random value
+>   truncation, suggested by G=C3=BCnther.
+> - Add KUnit tests.
+> ---
+>  security/landlock/audit.c    |  2 +-
+>  security/landlock/id.c       | 33 +++++++++++++++++++++++++++++++--
+>  security/landlock/syscalls.c |  3 ++-
+>  3 files changed, 34 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/security/landlock/audit.c b/security/landlock/audit.c
+> index 58d5c40d4d0e..c52d079cdb77 100644
+> --- a/security/landlock/audit.c
+> +++ b/security/landlock/audit.c
+> @@ -437,7 +437,7 @@ void landlock_log_denial(const struct landlock_cred_s=
+ecurity *const subject,
+>  		return;
+> =20
+>  	/* Checks if the current exec was restricting itself. */
+> -	if (subject->domain_exec & (1 << youngest_layer)) {
+> +	if (subject->domain_exec & BIT(youngest_layer)) {
+>  		/* Ignores denials for the same execution. */
+>  		if (!youngest_denied->log_same_exec)
+>  			return;
+> diff --git a/security/landlock/id.c b/security/landlock/id.c
+> index 11fab9259c15..56f7cc0fc744 100644
+> --- a/security/landlock/id.c
+> +++ b/security/landlock/id.c
+> @@ -7,6 +7,7 @@
+> =20
+>  #include <kunit/test.h>
+>  #include <linux/atomic.h>
+> +#include <linux/bitops.h>
+>  #include <linux/random.h>
+>  #include <linux/spinlock.h>
+> =20
+> @@ -25,7 +26,7 @@ static void __init init_id(atomic64_t *const counter, c=
+onst u32 random_32bits)
+>  	 * Ensures sure 64-bit values are always used by user space (or may
+>  	 * fail with -EOVERFLOW), and makes this testable.
+>  	 */
+> -	init =3D 1ULL << 32;
+> +	init =3D BIT_ULL(32);
+> =20
+>  	/*
+>  	 * Makes a large (2^32) boot-time value to limit ID collision in logs
+> @@ -105,7 +106,7 @@ static u64 get_id_range(size_t number_of_ids, atomic6=
+4_t *const counter,
+>  	 * to get a new ID (e.g. a full landlock_restrict_self() call), and the
+>  	 * cost of draining all available IDs during the system's uptime.
+>  	 */
+> -	random_4bits =3D random_4bits % (1 << 4);
+> +	random_4bits &=3D 0b1111;
+>  	step =3D number_of_ids + random_4bits;
+> =20
+>  	/* It is safe to cast a signed atomic to an unsigned value. */
+> @@ -144,6 +145,19 @@ static void test_range1_rand1(struct kunit *const te=
+st)
+>  		init + 2);
+>  }
+> =20
+> +static void test_range1_rand15(struct kunit *const test)
+> +{
+> +	atomic64_t counter;
+> +	u64 init;
+> +
+> +	init =3D get_random_u32();
+> +	atomic64_set(&counter, init);
+> +	KUNIT_EXPECT_EQ(test, get_id_range(1, &counter, 15), init);
+> +	KUNIT_EXPECT_EQ(
+> +		test, get_id_range(get_random_u8(), &counter, get_random_u8()),
+> +		init + 16);
+> +}
+> +
+>  static void test_range1_rand16(struct kunit *const test)
+>  {
+>  	atomic64_t counter;
+> @@ -196,6 +210,19 @@ static void test_range2_rand2(struct kunit *const te=
+st)
+>  		init + 4);
+>  }
+> =20
+> +static void test_range2_rand15(struct kunit *const test)
+> +{
+> +	atomic64_t counter;
+> +	u64 init;
+> +
+> +	init =3D get_random_u32();
+> +	atomic64_set(&counter, init);
+> +	KUNIT_EXPECT_EQ(test, get_id_range(2, &counter, 15), init);
+> +	KUNIT_EXPECT_EQ(
+> +		test, get_id_range(get_random_u8(), &counter, get_random_u8()),
+> +		init + 17);
+> +}
+> +
+>  static void test_range2_rand16(struct kunit *const test)
+>  {
+>  	atomic64_t counter;
+> @@ -232,10 +259,12 @@ static struct kunit_case __refdata test_cases[] =3D=
+ {
+>  	KUNIT_CASE(test_init_once),
+>  	KUNIT_CASE(test_range1_rand0),
+>  	KUNIT_CASE(test_range1_rand1),
+> +	KUNIT_CASE(test_range1_rand15),
+>  	KUNIT_CASE(test_range1_rand16),
+>  	KUNIT_CASE(test_range2_rand0),
+>  	KUNIT_CASE(test_range2_rand1),
+>  	KUNIT_CASE(test_range2_rand2),
+> +	KUNIT_CASE(test_range2_rand15),
+>  	KUNIT_CASE(test_range2_rand16),
+>  	{}
+>  	/* clang-format on */
+> diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+> index b9561e3417ae..33eafb71e4f3 100644
+> --- a/security/landlock/syscalls.c
+> +++ b/security/landlock/syscalls.c
+> @@ -9,6 +9,7 @@
+> =20
+>  #include <asm/current.h>
+>  #include <linux/anon_inodes.h>
+> +#include <linux/bitops.h>
+>  #include <linux/build_bug.h>
+>  #include <linux/capability.h>
+>  #include <linux/cleanup.h>
+> @@ -563,7 +564,7 @@ SYSCALL_DEFINE2(landlock_restrict_self, const int, ru=
+leset_fd, const __u32,
+>  	new_llcred->domain =3D new_dom;
+> =20
+>  #ifdef CONFIG_AUDIT
+> -	new_llcred->domain_exec |=3D 1 << (new_dom->num_layers - 1);
+> +	new_llcred->domain_exec |=3D BIT(new_dom->num_layers - 1);
+>  #endif /* CONFIG_AUDIT */
+> =20
+>  	return commit_creds(new_cred);
+> --=20
+> 2.49.0
+>=20
 
-This dynamic/cookie prefix makes it impossible to use this with socket
-activation units. The way systemd-coredump works is that every
-instance is an independent templated unit, spawned when there's a
-connection to the private socket. If the path was fixed, we could just
-reuse the same mechanism, it would fit very nicely with minimal
-changes.
-
-But because you need a "server" to be permanently running, this means
-socket-based activation can no longer work, and systemd-coredump must
-switch to a persistently-running mode. This is a severe degradation of
-functionality, will continuously waste CPU/memory resources for no
-good reasons, and makes the whole thing more fragile and complex, as
-if there are any issues with this server, you start losing core files.
-And honestly I don't really see the point? Setting the pattern is a
-privileged operation anyway. systemd manages the socket with a socket
-unit and again that's privileged already.
-
-Could we drop this cookie prefix and go back to the previous version
-(v5), please? Or if there is some specific non-systemd use case in
-mind that I am not aware of, have both options, so that we can use the
-simpler and more straightforward one with systemd-coredump.
-Thanks!
+Signed-off-by: G=C3=BCnther Noack <gnoack@google.com>
