@@ -1,203 +1,137 @@
-Received: from smtp-relay-canonical-1.canonical.com (smtp-relay-canonical-1.canonical.com [185.125.188.121])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 321A6219E4;
-	Sun, 11 May 2025 11:26:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.121
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3A1A24A07B
+	for <linux-security-module@vger.kernel.org>; Mon, 12 May 2025 06:34:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746962800; cv=none; b=PYGfkTdqKeuY4IAFQp6x0cQrEHX+yFoagHJ6RBlXF/3fSdsucnW0IbvMpHIEwJ+yZu63ClbNNT06X9uxcfuUZCCgiQcLg+p1Z+wNCMUY/jf5xJe9ga/NjPved8pmDbuh01ra/dnyO73+0yg/XY2Ljl/3GEqhY5NIcQ52Ih2/j7E=
+	t=1747031663; cv=none; b=cbrtLQkdjn2QyPXzyur79qILtECc8kCc+e4tq84Yygz3TPN12N1WKzXzjzqu4QvQAyk49rJ4s9SWcOZ2DkxBkr3sbf4B2YXoi3Ap8NdOGv7IK+FvpaJYm9gQkWFrr5d9Aa3i7qRHhKZ6uCUEIcbAh+YHam4eEKUYoPgTpS5siXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746962800; c=relaxed/simple;
-	bh=Tk/4OsyNsi87XI3MbiZwSoGGBJLizmIKcKH0ArQKiLE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KbjQQ7rBHH/Vqovnkp3w4OHEteAWpBUe0d2Dcpc4KbGozLSeBdCHlRAbwWwuW6akHsCRvDynbcZBm99ccwr66B2L06eLcR9UsXzMWwCZ6raaed6dum9+Ne02LCvWAj7vrBmQ+VS00VuEAfCygWtd0Zdnf+fW5K4DF3pM2bPzljY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=Apqxez1V; arc=none smtp.client-ip=185.125.188.121
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="Apqxez1V"
-Received: from [172.20.3.254] (unknown [213.157.19.135])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-1.canonical.com (Postfix) with ESMTPSA id 27CD93FA05;
-	Sun, 11 May 2025 11:26:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1746962794;
-	bh=MzwP4AdBwSMv6ypl9kzOQIYUZmMuIgU5gYN/0CiHXFU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=Apqxez1VTYOYjLTcQiRscxdBiiy6JOd9TAik7cowTpQxoKRTr2c13DWeJYQAQb/D1
-	 25h18+Bh83NpG7ga7rlgyONLZKVE/thVmhM72wonEGaHGASfNsHgZyIExV4M2t8+M5
-	 sZjARPq6pmn/LSoPNhXAvpylw59Ifxz6QhofWeUZCLuLgqjkAeh095PH2R8YLrQ6AN
-	 aWS/iJ1ThTQEq6ilR55vGVDMHZeH/hWMof42fa59HInvOuwIfsVXTDPL5JE8pJs/OK
-	 PPqmxvPO9G1CWhotYKQbWYpwStjAFzW6eRYk1Qq/fGkTDCBeeNNMrWz3qzZMsXqMIR
-	 DZc1q9bDBN4PA==
-Message-ID: <351fb82f-272d-4dfc-9fa2-9ed094fbd6a5@canonical.com>
-Date: Sun, 11 May 2025 04:26:32 -0700
+	s=arc-20240116; t=1747031663; c=relaxed/simple;
+	bh=gpNdlN3Cb0qhrWVkl2uMw2MfCUiMelfl829BiTyR+Ys=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=GfPW4AB43BMo7hG9ccqN5CIJAZVM///RR/HmXVrrlPuP3cRp4OmN5HnVzwht/8k7PZ5mGp6xPG353mWuO/OyNNzZ1UvKHkIxZ1uuoml9n8gkk4elaJ9CW8KvX/Lg2f3coF7TuZwGKfAn/K9bmZVYpva0zC+p9a08xKs87iIXq5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-86176e300fdso364362939f.1
+        for <linux-security-module@vger.kernel.org>; Sun, 11 May 2025 23:34:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747031661; x=1747636461;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bk73waboJRsstF4X6ogODT970jaH6YsHHYw5z1KWGVg=;
+        b=mej/GBfUbP3vSvYWf+pNT8SWKY74FcNcGuntfBJBj/1B0qC/G5GplpTmj7DSoBoIbG
+         C4dT6UJgDkJbIFSR3K1WPSyDeIC2SfElqrXsKmiHBSJxOb7joitXiTJESudXQtf+mZxY
+         cmb2xCbLVerXpLCZx7qiPvfwp16QbFb0h1WvE+GPBgABUNoGGnVKD3o2ucw4MrqXL/fm
+         s1bnYmXg5700Sxxx5jtXfTt/sChmUEN77+AV1Q45BOp6fpod5oAfS7tjIRstDMi9BFhv
+         3P/tDZQCNFKPckB+jSJMqF2bzUYVNTHWllT7agmRlTV9RdmTiRZL3VreABJ9PrecfsVN
+         HzpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUMUXkksDGTF+W6LdyvRaoIVJbflArO9VxbWxy685RAiFrCb6ivqvy8LzVhv0KgB9tFMFKrua9wGknYcP86R43s0ADWhpU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YytVerDl4Wj8Mer/3jkn+SsayfnyHSLjB/EXGpvK91kFoSLIJJs
+	Le3KdmXIe/uRNWC6hJ8tkPa6G7R3zc1BbHbhAkpFMAUutQFiFbWxEwJVtKNGmKwpZcQ3BBF9wVh
+	A4GRzb2ciLEhIT8SPUoPYsZHFIHvgTMyK3pYTH9JPuubUvsI5bXEgr54=
+X-Google-Smtp-Source: AGHT+IHnDX7gvaVDvWhoZmEs2BZOqUYzRCiyjD940H3qvyh4OlFngYAmesq+Gs/DUKA3V3EGe+m3fckqy4A24G+r2866OWsULKtg
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] lsm: introduce security_lsm_manage_policy hook
-To: Casey Schaufler <casey@schaufler-ca.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8?=
- =?UTF-8?Q?n?= <mic@digikod.net>
-Cc: Paul Moore <paul@paul-moore.com>,
- =?UTF-8?Q?Maxime_B=C3=A9lair?= <maxime.belair@canonical.com>,
- Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
- linux-security-module@vger.kernel.org, jmorris@namei.org, serge@hallyn.com,
- kees@kernel.org, stephen.smalley.work@gmail.com, takedakn@nttdata.co.jp,
- linux-api@vger.kernel.org, apparmor@lists.ubuntu.com,
- linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
-References: <20250506143254.718647-1-maxime.belair@canonical.com>
- <20250506143254.718647-3-maxime.belair@canonical.com>
- <9c68743f-5efa-4a77-a29b-d3e8f2b2a462@I-love.SAKURA.ne.jp>
- <CAHC9VhRKwB4quqBtYQyxRqCX2C6fCgTbyAP3Ov+NdQ06t1aFdA@mail.gmail.com>
- <120954c2-87b7-4bda-958b-2b4f0180a736@canonical.com>
- <efe5b15a-6141-424a-8391-9092e79e4acf@schaufler-ca.com>
- <20250509.Chuecae0phoo@digikod.net>
- <71c3c2d6-5569-4580-89a4-513a03a429ab@schaufler-ca.com>
-Content-Language: en-US
-From: John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; keydata=
- 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 lT9Q
-Organization: Canonical
-In-Reply-To: <71c3c2d6-5569-4580-89a4-513a03a429ab@schaufler-ca.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6602:640f:b0:861:c759:61fa with SMTP id
+ ca18e2360f4ac-8676356c200mr1535456539f.4.1747031660879; Sun, 11 May 2025
+ 23:34:20 -0700 (PDT)
+Date: Sun, 11 May 2025 23:34:20 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6821966c.050a0220.f2294.0050.GAE@google.com>
+Subject: [syzbot] [lsm?] [keyrings?] KCSAN: data-race in key_garbage_collector
+ / key_set_expiry
+From: syzbot <syzbot+9defcbc1dc2f34e5b867@syzkaller.appspotmail.com>
+To: dhowells@redhat.com, jarkko@kernel.org, jmorris@namei.org, 
+	keyrings@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, paul@paul-moore.com, serge@hallyn.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 5/9/25 07:21, Casey Schaufler wrote:
-> On 5/9/2025 3:26 AM, Mickaël Salaün wrote:
->> On Thu, May 08, 2025 at 09:54:19AM -0700, Casey Schaufler wrote:
->>> On 5/8/2025 1:29 AM, John Johansen wrote:
->>>> On 5/7/25 13:25, Paul Moore wrote:
->>>>> On Wed, May 7, 2025 at 6:41 AM Tetsuo Handa
->>>>> <penguin-kernel@i-love.sakura.ne.jp> wrote:
->>>>>> On 2025/05/06 23:32, Maxime Bélair wrote:
->>>>>>> diff --git a/security/lsm_syscalls.c b/security/lsm_syscalls.c
->>>>>>> index dcaad8818679..b39e6635a7d5 100644
->>>>>>> --- a/security/lsm_syscalls.c
->>>>>>> +++ b/security/lsm_syscalls.c
->>>>>>> @@ -122,5 +122,10 @@ SYSCALL_DEFINE3(lsm_list_modules, u64 __user
->>>>>>> *, ids, u32 __user *, size,
->>>>>>>    SYSCALL_DEFINE5(lsm_manage_policy, u32, lsm_id, u32, op, void
->>>>>>> __user *, buf, u32
->>>>>>>                 __user *, size, u32, flags)
->>>>>>>    {
->>>>>>> -     return 0;
->>>>>>> +     size_t usize;
->>>>>>> +
->>>>>>> +     if (get_user(usize, size))
->>>>>>> +             return -EFAULT;
->>>>>>> +
->>>>>>> +     return security_lsm_manage_policy(lsm_id, op, buf, usize,
->>>>>>> flags);
->>>>>>>    }
->>>>>> syzbot will report user-controlled unbounded huge size memory
->>>>>> allocation attempt. ;-)
->>>>>>
->>>>>> This interface might be fine for AppArmor, but TOMOYO won't use this
->>>>>> interface because
->>>>>> TOMOYO's policy is line-oriented ASCII text data where the
->>>>>> destination is switched via
->>>>>> pseudo‑filesystem's filename ...
->>>>> While Tetsuo's comment is limited to TOMOYO, I believe the argument
->>>>> applies to a number of other LSMs as well.  The reality is that there
->>>>> is no one policy ideal shared across LSMs and that complicates things
->>>>> like the lsm_manage_policy() proposal.  I'm intentionally saying
->>>>> "complicates" and not "prevents" because I don't want to flat out
->>>>> reject something like this, but I think there needs to be a larger
->>>>> discussion among the different LSM groups about what such an API
->>>>> should look like.  We may not need to get every LSM to support this
->>>>> new API, but we need to get something that would work for a
->>>>> significant majority and would be general/extensible enough that we
->>>>> would expect it to work with the majority of future LSMs (as much as
->>>>> we can predict the future anyway).
->>>>>
->>>> yep, I look at this is just a starting point for discussion. There
->>>> isn't going to be any discussion without some code, so here is a v1
->>>> that supports a single LSM let the bike shedding begin.
->>> Aside from the issues with allocating a buffer for a big policy
->>> I don't see a problem with this proposal. The system call looks
->>> a lot like the other LSM interfaces, so any developer who likes
->>> those ought to like this one. The infrastructure can easily check
->>> the lsm_id and only call the appropriate LSM hook, so no one
->>> is going to be interfering with other modules.
->> We may not want to only be able to load buffers containing policies, but
->> also to leverage file descriptors like Landlock does.  Getting a
->> property from a kernel object or updating it is mainly about dealing
->> with a buffer.  And the current LSM syscalls do just that.  Other kind
->> of operations may require more than that though.
->>
->> I don't like multiplexer syscalls because they don't expose a clear
->> semantic and can be complex to manage and filter.  This new syscall is
->> kind of a multiplexer that redirect commands to an arbitrary set of
->> kernel parts, which can then define their own semantic.  I'd like to see
->> a clear set of well-defined operations and their required permission.
->> Even better, one syscall per operation should simplify their interface.
-> 
-> The development and maintenance of system calls is expensive in both
-> time and effort. LSM specific system calls frighten me. When I was
-> young adding system calls was just  not  done. A system call would
-> never be allowed for a specific sub-system or optional feature. True,
-> there are issues with the LSM specific filesystem approach. But I
-> like it, as it allows the LSM more freedom in its interfaces and
-> won't clutter the API if the LSM goes away or quits using it.
-> 
-I get the reticence on adding syscalls. Indeed its part of why I
-want to explore LSM syscalls before going with an apparmor specific
-syscall.
+Hello,
 
-The current LSM specific fs approach has limitations that just can't
-be reasonably worked around for some use cases, so that leaves going
-with an alternate mechanism. For this use case, ioctls are problematic
-like the fs. prctl could work for a subset and abused for the whole,
-but a syscall feels cleaner.
+syzbot found the following issue on:
 
-I am open to other options.
+HEAD commit:    cd802e7e5f1e Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1583b768580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6154604431d9aaf9
+dashboard link: https://syzkaller.appspot.com/bug?extid=9defcbc1dc2f34e5b867
+compiler:       Debian clang version 20.1.2 (++20250402124445+58df0ef89dd6-1~exp1~20250402004600.97), Debian LLD 20.1.2
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/fdb14cb5e78f/disk-cd802e7e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/c8b91b8b365f/vmlinux-cd802e7e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/69520a7040dd/bzImage-cd802e7e.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+9defcbc1dc2f34e5b867@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KCSAN: data-race in key_garbage_collector / key_set_expiry
+
+write to 0xffffffff869eb168 of 8 bytes by task 3395 on cpu 1:
+ key_schedule_gc security/keys/gc.c:63 [inline]
+ key_garbage_collector+0x6d6/0x8f0 security/keys/gc.c:286
+ process_one_work kernel/workqueue.c:3238 [inline]
+ process_scheduled_works+0x4cb/0x9d0 kernel/workqueue.c:3319
+ worker_thread+0x582/0x770 kernel/workqueue.c:3400
+ kthread+0x486/0x510 kernel/kthread.c:464
+ ret_from_fork+0x4b/0x60 arch/x86/kernel/process.c:153
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+read to 0xffffffff869eb168 of 8 bytes by task 4277 on cpu 0:
+ key_schedule_gc security/keys/gc.c:61 [inline]
+ key_set_expiry+0xea/0x190 security/keys/gc.c:78
+ key_reject_and_link+0x18b/0x310 security/keys/key.c:609
+ key_negate_and_link include/linux/key-type.h:188 [inline]
+ complete_request_key security/keys/request_key.c:67 [inline]
+ call_sbin_request_key+0x656/0x6b0 security/keys/request_key.c:216
+ construct_key security/keys/request_key.c:247 [inline]
+ construct_key_and_link security/keys/request_key.c:519 [inline]
+ request_key_and_link+0x8bc/0xd70 security/keys/request_key.c:653
+ __do_sys_request_key security/keys/keyctl.c:222 [inline]
+ __se_sys_request_key+0x1df/0x290 security/keys/keyctl.c:167
+ __x64_sys_request_key+0x55/0x70 security/keys/keyctl.c:167
+ x64_sys_call+0x2f19/0x2fb0 arch/x86/include/generated/asm/syscalls_64.h:250
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd0/0x1a0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+value changed: 0x7fffffffffffffff -> 0x000000006821354a
+
+Reported by Kernel Concurrency Sanitizer on:
+CPU: 0 UID: 0 PID: 4277 Comm: syz.0.242 Not tainted 6.15.0-rc5-syzkaller-00353-gcd802e7e5f1e #0 PREEMPT(voluntary) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/19/2025
+==================================================================
+iwpm_register_pid: Unable to send a nlmsg (client = 2)
+infiniband syz1: RDMA CMA: cma_listen_on_dev, error -98
 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
