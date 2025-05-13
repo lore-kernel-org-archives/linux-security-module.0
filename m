@@ -1,106 +1,174 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from smtp-fw-52002.amazon.com (smtp-fw-52002.amazon.com [52.119.213.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38C5628F3;
-	Tue, 13 May 2025 00:10:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20D9328F3;
+	Tue, 13 May 2025 00:18:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747095020; cv=none; b=KTh6jqpoVvhpaql7OsMG+R9Xf2kdb9b19j3QovWrC4aQ61qtuFigjMpDL2Fu7f1cl5lzUAibWGXstqVynhYZt/Mj9AliYKu04S8P2EqhJT3y6uIV6YWjROZHBH814BG6kwUtEUoRmPvqqaFD+jnzk92AY1ef7Eg3AtgRBfslv24=
+	t=1747095490; cv=none; b=N5nTrhhNHQvkB0yv7CBVTk86wM6yxPAbKe996nxF1bMsiSwZ3Hz1HBlYslT6EjPvxMzzCotouFVzHYDvpTUZefZIydrgKVvk1gbWHUR4CfX6DwG9RcxkcJv4GGKSHSdUGqpR34f14WNklu8KSrv1INrMlBrNqPz1zNwVgxGWZnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747095020; c=relaxed/simple;
-	bh=BDDpyAkm8mUWkHjzl3M/Ww19BsFg0LLbVl5EU9dvudk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VPx8UkqaAyvjkPQxbiTdY+pDgmlUo/EivzaJbkhkC6Xu8QSz8Ef0lboZE2BVPOKaOdJHqipJnBkSr6ctG4Un2QkMqRccQ+XXnGdGhZAP7s58++jTAiBBDJu2ZTFQHhu1dG7sWB3+WzN8lKELY1RkyLHdxKaMZy95uN2xrb/pAYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c8a9pT7q; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1747095490; c=relaxed/simple;
+	bh=SsVMbcIv3zVzCdAnix7sRxmHxtkf9TkXt3Sbd72U9PU=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gmIa2iIUyKgcH3Apsb2GuRrZXde7iXu3VUrCj5JhI7cuAw2eaxhwMKMn1KbWi2uIq0GMPUdZzEJt6Hcm0Pf3LS4dC+ZYECLMDwmLqxkIyIMnhyqb2sqJ57Q2jGmqOqfRq3oafcfAZi8ZE6svJap0jvvn7vvu7A38nfLZXmjmU4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=edFefTng; arc=none smtp.client-ip=52.119.213.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c8a9pT7q"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF488C4AF09;
-	Tue, 13 May 2025 00:10:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747095019;
-	bh=BDDpyAkm8mUWkHjzl3M/Ww19BsFg0LLbVl5EU9dvudk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=c8a9pT7qmL7m7+la5hTzwL2/bUgKtk31hKlQX3POVW5kSvWOZhNJIdTlANllPvfvf
-	 mDQmUWR+AOIqG9MkS8E15SZ7WLHG6GUe8OLVAve44x6ixNV53z8EPp6bCfDvZUWpY1
-	 MvySIJhMNDnsUaqf9Ymg6hJFBdZ87zTy8EfHOmKud4U7BEmbeQPYKfujI4oMFOkL8j
-	 oowtFPkt4294Ou13W/eJSvfjc3aTviquM5wNpY8U8nxVN+CIFimy7MBIeBx6KohYfy
-	 bLKhgXUw7Njn2fjPmclvtzcgcq3mC2i5ueNJ0JoDf++wS6ucQqAKpVW15Wd6UJCABO
-	 fVaQ20xDpiHww==
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-708d90aa8f9so46923617b3.3;
-        Mon, 12 May 2025 17:10:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUl5u1I69vSiyNt3CvbAcY68qn2jFzCBwsRRr/83BAbKrSiTK++AShl35p2/78qWs52/DID+avPUiVzsiQ=@vger.kernel.org, AJvYcCW/wFRQ7l3/dnJSVtFxkcqkJrkUsowDylhkF4Eg92xbk6Vzr1uDt3BRxUnNfa2YmzvoHXvnl2Ny8r6grydqG1Cl99FetgUF@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOWA2ZEmYjmXk6uHbpuo3NTcPeoJGIpgStmdm0dMVl//fL5Az8
-	BP/aax+hOxGB+mvvkgAxb3YobB+SYSm6/YqeTSK4di1cQkOuTIUwc+5XSWq0H+pKKYvnj1cOtJW
-	O6qvhRT0AiH70/tVrsfAAzzYRqw0=
-X-Google-Smtp-Source: AGHT+IEIF0c2ke/1klWIdASX3Xu++buwLzEZcBdDHlLXFskiSFKbrgNsih1kWPFMwkBf1BBrS3IE9UjKYQ0gjgpjWLo=
-X-Received: by 2002:a05:690c:708b:b0:6f9:3dd2:7941 with SMTP id
- 00721157ae682-70a3fb68f6amr216010367b3.38.1747095019062; Mon, 12 May 2025
- 17:10:19 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="edFefTng"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1747095489; x=1778631489;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=J/O6pzhVKHaw/TXHTk58VZBH72gJWEpxM01lZaMwbpc=;
+  b=edFefTngE3GVjt3Gvn/EwecX6DNgvS/RNO3GKrEXGlewaIotA6D2QRTq
+   j4el3Ww4nxzlRquI3Vnk1wailzF/iQ0uvy8Q1PUGBDoZ2G1uVIjImFzza
+   l3GPAutVtuvqjAGJAX7sy/QVWrT+6e1rYf3DQ8bnnnDCGWJdayZow2kmb
+   4JxBSd/ssgNq6LNli9UV+5KnOvHOLeBfet7IxSM92A6o4LBUJcBkG84Ao
+   84OReEEdJHTvSxjpk5RFqN5heimQZDSzWkTwukMjIwZ/L2gTqiMyBLuJ/
+   GT1sPLZjhh8MDIiGXHQwQgY+8Q3dLOXfJ5OtAyy6c1mw61ylVtGNAJt6d
+   g==;
+X-IronPort-AV: E=Sophos;i="6.15,283,1739836800"; 
+   d="scan'208";a="722057387"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-52002.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2025 00:18:04 +0000
+Received: from EX19MTAUWC002.ant.amazon.com [10.0.21.151:64555]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.51.68:2525] with esmtp (Farcaster)
+ id f44233c5-dd2b-4c7c-bdca-3a8a74545c69; Tue, 13 May 2025 00:18:03 +0000 (UTC)
+X-Farcaster-Flow-ID: f44233c5-dd2b-4c7c-bdca-3a8a74545c69
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWC002.ant.amazon.com (10.250.64.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Tue, 13 May 2025 00:18:03 +0000
+Received: from 6c7e67bfbae3.amazon.com (10.187.170.42) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Tue, 13 May 2025 00:17:59 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <bluca@debian.org>
+CC: <alexander@mihalicyn.com>, <brauner@kernel.org>,
+	<daan.j.demeyer@gmail.com>, <daniel@iogearbox.net>, <davem@davemloft.net>,
+	<david@readahead.eu>, <edumazet@google.com>, <horms@kernel.org>,
+	<jack@suse.cz>, <jannh@google.com>, <kuba@kernel.org>, <kuniyu@amazon.com>,
+	<lennart@poettering.net>, <linux-fsdevel@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+	<me@yhndnzj.com>, <netdev@vger.kernel.org>, <oleg@redhat.com>,
+	<pabeni@redhat.com>, <viro@zeniv.linux.org.uk>, <zbyszek@in.waw.pl>
+Subject: Re: [PATCH v6 4/9] coredump: add coredump socket
+Date: Mon, 12 May 2025 17:17:36 -0700
+Message-ID: <20250513001751.71660-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <CAMw=ZnTF9EVV+E+bXTz1je3VT+OwDPAzbbFy7G02zBjeCpqxFA@mail.gmail.com>
+References: <CAMw=ZnTF9EVV+E+bXTz1je3VT+OwDPAzbbFy7G02zBjeCpqxFA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250508140438.648533-2-alexjlzheng@tencent.com>
- <20250509032326.GJ2023217@ZenIV> <20250509043712.GK2023217@ZenIV>
- <20250509044613.GT2023217@ZenIV> <CAHC9VhRp5Nb_1FPu8tF6EUsPpSEbbTT0K7a3V-Z7OWKNXy9Yyg@mail.gmail.com>
-In-Reply-To: <CAHC9VhRp5Nb_1FPu8tF6EUsPpSEbbTT0K7a3V-Z7OWKNXy9Yyg@mail.gmail.com>
-From: Fan Wu <wufan@kernel.org>
-Date: Mon, 12 May 2025 17:10:07 -0700
-X-Gmail-Original-Message-ID: <CAKtyLkGGQ0F_zfwNEs05Orsm6Vq+E82=eOd=YdbxiXUYW9O1Jg@mail.gmail.com>
-X-Gm-Features: AX0GCFs81tqMm_BBRXejb3cTMNt7Xm4wAEQBkqhPLMdSkF1fk1mXY6euPqgpybE
-Message-ID: <CAKtyLkGGQ0F_zfwNEs05Orsm6Vq+E82=eOd=YdbxiXUYW9O1Jg@mail.gmail.com>
-Subject: Re: [PATCH v3] securityfs: fix missing of d_delete() in securityfs_remove()
-To: Paul Moore <paul@paul-moore.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, alexjlzheng@gmail.com, jmorris@namei.org, 
-	serge@hallyn.com, greg@kroah.com, chrisw@osdl.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jinliang Zheng <alexjlzheng@tencent.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D046UWA002.ant.amazon.com (10.13.139.39) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-On Mon, May 12, 2025 at 2:19=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
-ote:
->
-> On Fri, May 9, 2025 at 12:46=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk>=
- wrote:
-> > On Fri, May 09, 2025 at 05:37:12AM +0100, Al Viro wrote:
-> > > On Fri, May 09, 2025 at 04:23:26AM +0100, Al Viro wrote:
-> > >
-> > > > I have fixes for some of that crap done on top of tree-in-dcache se=
-ries;
-> > > > give me an hour or two and I'll separate those and rebase to mainli=
-ne...
-> > >
-> > > Completely untested:
-> > > git://git.kernel.org:/pub/scm/linux/kernel/git/viro/vfs.git #untested=
-.securityfs
-> > >
-> > > on top of v6.15-rc5.  And I'm serious about the "untested" part - it =
-builds
-> > > with allmodconfig, but that's all I've checked.  So treat that as an =
-outline
-> > > of what could be done, but don't use as-is without serious testing.
+From: Luca Boccassi <bluca@debian.org>
+Date: Mon, 12 May 2025 11:58:54 +0100
+> On Mon, 12 May 2025 at 09:56, Christian Brauner <brauner@kernel.org> wrote:
 > >
-> > PS: I'm really, really serious - do not use without a serious review; t=
-his
-> > is a rebase of a branch last touched back in March and it was a part of
-> > long tail, with pretty much zero testing even back then.
+> > Coredumping currently supports two modes:
 > >
-> > Patches are simple enough to have a chance to be somewhere in the vicin=
-ity
-> > of being correct, but that's all I can promise.
->
-> Fair enough, although unfortunately I don't think anyone has anything
-> close to a securityfs test suite so I suspect this may languish on the
-> lists for a bit unless someone has the cycles to pick it up and
-> properly test it.
->
+> > (1) Dumping directly into a file somewhere on the filesystem.
+> > (2) Dumping into a pipe connected to a usermode helper process
+> >     spawned as a child of the system_unbound_wq or kthreadd.
+> >
+> > For simplicity I'm mostly ignoring (1). There's probably still some
+> > users of (1) out there but processing coredumps in this way can be
+> > considered adventurous especially in the face of set*id binaries.
+> >
+> > The most common option should be (2) by now. It works by allowing
+> > userspace to put a string into /proc/sys/kernel/core_pattern like:
+> >
+> >         |/usr/lib/systemd/systemd-coredump %P %u %g %s %t %c %h
+> >
+> > The "|" at the beginning indicates to the kernel that a pipe must be
+> > used. The path following the pipe indicator is a path to a binary that
+> > will be spawned as a usermode helper process. Any additional parameters
+> > pass information about the task that is generating the coredump to the
+> > binary that processes the coredump.
+> >
+> > In the example core_pattern shown above systemd-coredump is spawned as a
+> > usermode helper. There's various conceptual consequences of this
+> > (non-exhaustive list):
+> >
+> > - systemd-coredump is spawned with file descriptor number 0 (stdin)
+> >   connected to the read-end of the pipe. All other file descriptors are
+> >   closed. That specifically includes 1 (stdout) and 2 (stderr). This has
+> >   already caused bugs because userspace assumed that this cannot happen
+> >   (Whether or not this is a sane assumption is irrelevant.).
+> >
+> > - systemd-coredump will be spawned as a child of system_unbound_wq. So
+> >   it is not a child of any userspace process and specifically not a
+> >   child of PID 1. It cannot be waited upon and is in a weird hybrid
+> >   upcall which are difficult for userspace to control correctly.
+> >
+> > - systemd-coredump is spawned with full kernel privileges. This
+> >   necessitates all kinds of weird privilege dropping excercises in
+> >   userspace to make this safe.
+> >
+> > - A new usermode helper has to be spawned for each crashing process.
+> >
+> > This series adds a new mode:
+> >
+> > (3) Dumping into an abstract AF_UNIX socket.
+> >
+> > Userspace can set /proc/sys/kernel/core_pattern to:
+> >
+> >         @address SO_COOKIE
+> >
+> > The "@" at the beginning indicates to the kernel that the abstract
+> > AF_UNIX coredump socket will be used to process coredumps. The address
+> > is given by @address and must be followed by the socket cookie of the
+> > coredump listening socket.
+> >
+> > The socket cookie is used to verify the socket connection. If the
+> > coredump server restarts or crashes and someone recycles the socket
+> > address the kernel will detect that the address has been recycled as the
+> > socket cookie will have necessarily changed and refuse to connect.
+> 
+> This dynamic/cookie prefix makes it impossible to use this with socket
+> activation units. The way systemd-coredump works is that every
+> instance is an independent templated unit, spawned when there's a
+> connection to the private socket. If the path was fixed, we could just
+> reuse the same mechanism, it would fit very nicely with minimal
+> changes.
 
-Since it's me who added the recursive remove, I'm interested in
-helping get the fix tested and verified. However, I might not have
-enough cycles in the near future. Happy to let someone else test it if
-they have bandwidth.
+Note this version does not use prefix.  Now it requires users to
+just pass the socket cookie via core_pattern so that the kernel
+can verify the peer.
 
--Fan
+
+> 
+> But because you need a "server" to be permanently running, this means
+> socket-based activation can no longer work, and systemd-coredump must
+> switch to a persistently-running mode.
+
+The only thing for systemd to do is assign a cookie after socket creation.
+
+As long as systemd hold the file descriptor of the socket, you don't need
+a dedicated "server" running permanently, and the fd can be passed around
+to a spawned/activated process.
+
+
+> This is a severe degradation of
+> functionality, will continuously waste CPU/memory resources for no
+> good reasons, and makes the whole thing more fragile and complex, as
+> if there are any issues with this server, you start losing core files.
+> And honestly I don't really see the point? Setting the pattern is a
+> privileged operation anyway. systemd manages the socket with a socket
+> unit and again that's privileged already.
+> 
+> Could we drop this cookie prefix and go back to the previous version
+> (v5), please? Or if there is some specific non-systemd use case in
+> mind that I am not aware of, have both options, so that we can use the
+> simpler and more straightforward one with systemd-coredump.
