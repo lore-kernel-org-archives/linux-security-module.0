@@ -1,219 +1,138 @@
-Received: from smtp-fw-6002.amazon.com (smtp-fw-6002.amazon.com [52.95.49.90])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23DE51B4141;
-	Tue, 13 May 2025 02:16:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.49.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 130A3A923
+	for <linux-security-module@vger.kernel.org>; Tue, 13 May 2025 02:25:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747102609; cv=none; b=qwKD2so8u6uwFbIWpezWrFijClLEW5YlqP2f7yrKw4QwzwAmJsJpUCEj01nQyrybI2XXt8wkI6eDe4WEy2IZc/nPVXABLVE8/y2YCMh7hWfFijJOQwyOkSUGk4HjYOaFLRkY13XF1JY3Wssfh2OBr49q7SXKTGseZfOVh0cxd3A=
+	t=1747103145; cv=none; b=be0PhFrl5/ZkGLuuskTooLdxFUFAOY2WCEIjanchEUvelvCiKmFn+tB02flFdoJ5nFei4pd2gNt6TdkrpE00Il4jv8xKXeyAVAD1h/P9GyZu6X8Ef8h+roVN67iqp0vIubkdoH7Jp7pruQBexF+P4OLk00rxpI7945CvSBTkB+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747102609; c=relaxed/simple;
-	bh=squLWHTdlP9zj6uBU/Dw9pNTzdllHI8WXRtl7RwHSI0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jPY1zGHeY0czo529RDIr1ud3dkNsPYw8HeBJgkzk7mxpz4olgkEbuyTBSSjZT3QZzOyhLoCrX9fS4np5AD09BHUM4FO2OBAQ8qz+Zph3npo6K2jM5YdzPgMCwO2c22oCRi2ilFBknPKGm8G0sqwLbpDjmtvpGI8Cqw5tn03XUks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=JZC8aJVx; arc=none smtp.client-ip=52.95.49.90
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+	s=arc-20240116; t=1747103145; c=relaxed/simple;
+	bh=0sh163gF+PxcUY1J/bfW/DhYUxjGTqPg/dyisHzYQd0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jDPm7g3QOEVY6356pneZSzh+YnL1xaJZ6eD1OVvDl4GYU3QtxUNf4ebuWIAUk8W/tVPK0+7wbQNfCK5bPKSKabfCFVxo4wBjRoAOaPXv8qyzIUyc1IU9sv6mkinplfOhB9iht8xuoSDvCVSXbKbGKNN4kXEX6h7Xb1PtPnqzWP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MJ4Kpht8; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="JZC8aJVx"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1747102608; x=1778638608;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=rjYkzvwGio+bty/BMJv4MrTabceHm7ehCjkTYiMnsD0=;
-  b=JZC8aJVxQ4KKmptTrGLXVe1b1BLYW4ojYRlspVtjdNvxL/r3xGv5DtW6
-   BhdMVmE0zi6s3ku2AEuRm70CI/VqmbVJpMcFlMji2ZR6FSD9Zpbq8KiPX
-   OY7O42LxmNu2hq2hQa8sym9fIf06YuVBhQG9T7X+S4DKzPSvjk9MMez5q
-   cK+tCNi6SEjcaVR1/956wrGl/zYKvtAkajutZ8yeeEWeBLQouUaR9g77j
-   /WCdTVhZOgL1HlNJM/wmuGzdU3bj96+T9c1qt/FPUG4v+HMr5JwbW8Ab7
-   RleMv/YMARJu0aONVE9ypxQc22uJqaNIfM2nl1MVXi4DZA1/rgj18OylA
-   g==;
-X-IronPort-AV: E=Sophos;i="6.15,284,1739836800"; 
-   d="scan'208";a="497909089"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-6002.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2025 02:16:41 +0000
-Received: from EX19MTAUWB001.ant.amazon.com [10.0.21.151:55249]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.0.127:2525] with esmtp (Farcaster)
- id e929d8f1-74b0-4513-a656-2c1a647b05ed; Tue, 13 May 2025 02:16:39 +0000 (UTC)
-X-Farcaster-Flow-ID: e929d8f1-74b0-4513-a656-2c1a647b05ed
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWB001.ant.amazon.com (10.250.64.248) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Tue, 13 May 2025 02:16:38 +0000
-Received: from 6c7e67bfbae3.amazon.com (10.187.170.42) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Tue, 13 May 2025 02:16:34 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <bluca@debian.org>
-CC: <alexander@mihalicyn.com>, <brauner@kernel.org>,
-	<daan.j.demeyer@gmail.com>, <daniel@iogearbox.net>, <davem@davemloft.net>,
-	<david@readahead.eu>, <edumazet@google.com>, <horms@kernel.org>,
-	<jack@suse.cz>, <jannh@google.com>, <kuba@kernel.org>, <kuniyu@amazon.com>,
-	<lennart@poettering.net>, <linux-fsdevel@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
-	<me@yhndnzj.com>, <netdev@vger.kernel.org>, <oleg@redhat.com>,
-	<pabeni@redhat.com>, <viro@zeniv.linux.org.uk>, <zbyszek@in.waw.pl>
-Subject: Re: [PATCH v6 4/9] coredump: add coredump socket
-Date: Mon, 12 May 2025 19:14:48 -0700
-Message-ID: <20250513021626.86287-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <CAMw=ZnRC7Okmew=rrEocFuFn8hhrcergHciPjxFPuG4c6qH_Bw@mail.gmail.com>
-References: <CAMw=ZnRC7Okmew=rrEocFuFn8hhrcergHciPjxFPuG4c6qH_Bw@mail.gmail.com>
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MJ4Kpht8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1747103143;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9dgrXsZWA0vbbTnvHkNfRPIocb/HknSgCRHsF+qYBSQ=;
+	b=MJ4Kpht8j2vfOBJjnDRUW34kYOe0Azis9xD+cycBQDHRptjj/OWt+jlmLAHfdYB9IjamCZ
+	8zYtn0/UCWSVmb+n7r4MYmt4Zn3EJgIs43KiNRvQyoDi7Majd8sxyTGAwzuTnjDn5Pqs/p
+	hFJsQFo/016NL+/Q++CN1oxNcyWgo0Q=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-206-8D2PfANRNYa9xv62jUJf4g-1; Mon,
+ 12 May 2025 22:25:39 -0400
+X-MC-Unique: 8D2PfANRNYa9xv62jUJf4g-1
+X-Mimecast-MFC-AGG-ID: 8D2PfANRNYa9xv62jUJf4g_1747103136
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F27E71800258;
+	Tue, 13 May 2025 02:25:35 +0000 (UTC)
+Received: from localhost (unknown [10.72.112.8])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 972F01953B82;
+	Tue, 13 May 2025 02:25:33 +0000 (UTC)
+Date: Tue, 13 May 2025 10:25:26 +0800
+From: Baoquan He <bhe@redhat.com>
+To: steven chen <chenste@linux.microsoft.com>
+Cc: zohar@linux.ibm.com, stefanb@linux.ibm.com,
+	roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
+	eric.snowberg@oracle.com, ebiederm@xmission.com,
+	paul@paul-moore.com, code@tyhicks.com, bauermann@kolabnow.com,
+	linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+	madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
+	James.Bottomley@hansenpartnership.com
+Subject: Re: [PATCH] ima: Kdump kernel doesn't need IMA to do integrity
+ measurement
+Message-ID: <aCKtlthQWnq+xyat@MiWiFi-R3L-srv>
+References: <20250502200337.6293-1-chenste@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D044UWB001.ant.amazon.com (10.13.139.171) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250502200337.6293-1-chenste@linux.microsoft.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-From: Luca Boccassi <bluca@debian.org>
-Date: Tue, 13 May 2025 02:09:24 +0100
-> On Tue, 13 May 2025 at 01:18, Kuniyuki Iwashima <kuniyu@amazon.com> wrote:
-> >
-> > From: Luca Boccassi <bluca@debian.org>
-> > Date: Mon, 12 May 2025 11:58:54 +0100
-> > > On Mon, 12 May 2025 at 09:56, Christian Brauner <brauner@kernel.org> wrote:
-> > > >
-> > > > Coredumping currently supports two modes:
-> > > >
-> > > > (1) Dumping directly into a file somewhere on the filesystem.
-> > > > (2) Dumping into a pipe connected to a usermode helper process
-> > > >     spawned as a child of the system_unbound_wq or kthreadd.
-> > > >
-> > > > For simplicity I'm mostly ignoring (1). There's probably still some
-> > > > users of (1) out there but processing coredumps in this way can be
-> > > > considered adventurous especially in the face of set*id binaries.
-> > > >
-> > > > The most common option should be (2) by now. It works by allowing
-> > > > userspace to put a string into /proc/sys/kernel/core_pattern like:
-> > > >
-> > > >         |/usr/lib/systemd/systemd-coredump %P %u %g %s %t %c %h
-> > > >
-> > > > The "|" at the beginning indicates to the kernel that a pipe must be
-> > > > used. The path following the pipe indicator is a path to a binary that
-> > > > will be spawned as a usermode helper process. Any additional parameters
-> > > > pass information about the task that is generating the coredump to the
-> > > > binary that processes the coredump.
-> > > >
-> > > > In the example core_pattern shown above systemd-coredump is spawned as a
-> > > > usermode helper. There's various conceptual consequences of this
-> > > > (non-exhaustive list):
-> > > >
-> > > > - systemd-coredump is spawned with file descriptor number 0 (stdin)
-> > > >   connected to the read-end of the pipe. All other file descriptors are
-> > > >   closed. That specifically includes 1 (stdout) and 2 (stderr). This has
-> > > >   already caused bugs because userspace assumed that this cannot happen
-> > > >   (Whether or not this is a sane assumption is irrelevant.).
-> > > >
-> > > > - systemd-coredump will be spawned as a child of system_unbound_wq. So
-> > > >   it is not a child of any userspace process and specifically not a
-> > > >   child of PID 1. It cannot be waited upon and is in a weird hybrid
-> > > >   upcall which are difficult for userspace to control correctly.
-> > > >
-> > > > - systemd-coredump is spawned with full kernel privileges. This
-> > > >   necessitates all kinds of weird privilege dropping excercises in
-> > > >   userspace to make this safe.
-> > > >
-> > > > - A new usermode helper has to be spawned for each crashing process.
-> > > >
-> > > > This series adds a new mode:
-> > > >
-> > > > (3) Dumping into an abstract AF_UNIX socket.
-> > > >
-> > > > Userspace can set /proc/sys/kernel/core_pattern to:
-> > > >
-> > > >         @address SO_COOKIE
-> > > >
-> > > > The "@" at the beginning indicates to the kernel that the abstract
-> > > > AF_UNIX coredump socket will be used to process coredumps. The address
-> > > > is given by @address and must be followed by the socket cookie of the
-> > > > coredump listening socket.
-> > > >
-> > > > The socket cookie is used to verify the socket connection. If the
-> > > > coredump server restarts or crashes and someone recycles the socket
-> > > > address the kernel will detect that the address has been recycled as the
-> > > > socket cookie will have necessarily changed and refuse to connect.
-> > >
-> > > This dynamic/cookie prefix makes it impossible to use this with socket
-> > > activation units. The way systemd-coredump works is that every
-> > > instance is an independent templated unit, spawned when there's a
-> > > connection to the private socket. If the path was fixed, we could just
-> > > reuse the same mechanism, it would fit very nicely with minimal
-> > > changes.
-> >
-> > Note this version does not use prefix.  Now it requires users to
-> > just pass the socket cookie via core_pattern so that the kernel
-> > can verify the peer.
+On 05/02/25 at 01:03pm, steven chen wrote:
+> From: Steven Chen <chenste@linux.microsoft.com>
 > 
-> Exactly - this means the pattern cannot be static in a sysctl.d early
-> on boot anymore, and has to be set dynamically by <something>.
-
-You missed the socket has to be created dynamically by <something>.
-
-
-> This is
-> a severe degradation over the status quo.
+> Kdump kernel doesn't need IMA to do integrity measurement.
+> Hence the measurement list in 1st kernel doesn't need to be copied to
+> kdump kenrel.
 > 
-> > > But because you need a "server" to be permanently running, this means
-> > > socket-based activation can no longer work, and systemd-coredump must
-> > > switch to a persistently-running mode.
-> >
-> > The only thing for systemd to do is assign a cookie after socket creation.
-> >
-> > As long as systemd hold the file descriptor of the socket, you don't need
-> > a dedicated "server" running permanently, and the fd can be passed around
-> > to a spawned/activated process.
+> Here skip allocating buffer for measurement list copying if loading
+> kdump kernel. Then there won't be the later handling related to
+> ima_kexec_buffer.
 > 
-> There is no such facility, a socket is just a socket and there's no
-> infrastructure to randomly extract random information from one and
-> write it to some other random file in procfs,
+> Signed-off-by: Steven Chen <chenste@linux.microsoft.com>
+> ---
+>  security/integrity/ima/ima_kexec.c | 3 +++
+>  1 file changed, 3 insertions(+)
 
-As only one socket can be registered to core_pattern, the socket
-must not be a random.
+I applied this patch on top of below IMA patchset, and did a test.
+[PATCH v13 0/9] ima: kexec: measure events between kexec load and execute
 
+When I loaded kdump kernel as below with '-d' specified:
 
-> and I don't see why we
-> should add some super-special-case just for this,
+/sbin/kexec -s -d -p --command-line=BOOT_IMAGE=(hd0,gpt2)/vmlinuz-6.15.0-rc6+ ro console=ttyS0,115200N81 irqpoll nr_cpus=1 reset_devices cgroup_disable=memory mce=off numa=off udev.children-max=2 panic=10 acpi_no_memhotplug transparent_hugepage=never nokaslr hest_disable novmcoredd cma=0 hugetlb_cma=0 pcie_ports=compat disable_cpu_apicid=0 --initrd=/boot/initramfs-6.15.0-rc6+kdump.img /boot/vmlinuz-6.15.0-rc6+
 
-Because this is a new special use case.
+I can see that this patch works to skip copying measurement list to kdump
+kernel as expected..
 
+=====Without this patch===
+[48522.060422] kexec_file: kernel: 000000006fbcb87f kernel_size: 0xe99200
+[48522.067742] PEFILE: Unsigned PE binary
+[48522.094849] ima: kexec measurement buffer for the loaded kernel at 0x6efff000.
+[48522.102982] crash_core: Crash PT_LOAD ELF header. phdr=00000000cae5d7e6 vaddr=0xffff8da640100000, paddr=0x100000, sz=0x5af00000 e_phnum=67 p_offset=0x100000
+......snip...
+=====
 
-> it sounds really
-> messy.
-> Also sockets can be and in fact are routinely restarted (eg: on
-> package upgrades), which would invalidate this whole scheme, and
-> result in a very racy setup. When packages are upgraded it's one of
-> the most complex workflows in modern distros, and it's very likely
-> that things start crashing exactly at that point, and with this
-> workflow it would mean we'll lose core files due to the race between
-> restarting the socket unit and <something> updating the pattern
-> accordingly.
+=====With this patch applied====
+[ 2101.704125] kexec_file: kernel: 0000000046d8985c kernel_size: 0xeab200
+[ 2101.711436] PEFILE: Unsigned PE binary
+[ 2101.734752] crash_core: Crash PT_LOAD ELF header. phdr=000000006fc83a51 vaddr=0xffff899480100000, paddr=0x100000, sz=0x5af00000 e_phnum=67 p_offset=0x100000
+......snip...
+=====> 
 
-Looks like you misunderstood the series.
+My only concern is the patch subject is not very sepcific, it better
+relfect the exact action taken in this patch, like:
 
-As you need to specify the socket in core_pattern, there must be
-only one socket that can receive core data, so the problem statement
-is always true throughout the series.
+ima: do not copy measurement list to kdump kernel
 
-kernel_connect() does not connect() to a random one out of sockets
-that have the common prefix.
+Other than above concern, please feel free to add my:
 
-That's why the BPF was mentioned in the previous cover letter:
+Tested-by: Baoquan He <bhe@redhat.com>
+Acked-by: Baoquan He <bhe@redhat.com>
 
-- Since unix_stream_connect() runs bpf programs during connect it's
-  possible to even redirect or multiplex coredumps to other sockets.
+> diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
+> index 38cb2500f4c3..7362f68f2d8b 100644
+> --- a/security/integrity/ima/ima_kexec.c
+> +++ b/security/integrity/ima/ima_kexec.c
+> @@ -146,6 +146,9 @@ void ima_add_kexec_buffer(struct kimage *image)
+>  	void *kexec_buffer = NULL;
+>  	int ret;
+>  
+> +	if (image->type == KEXEC_TYPE_CRASH)
+> +		return;
+> +
+>  	/*
+>  	 * Reserve extra memory for measurements added during kexec.
+>  	 */
+> -- 
+> 2.43.0
+> 
 
-
-> Also we very much want to be able to spawn as many core handlers at
-> the same time as needed, which I don't see how can work with a cookie
-> that has to be unique per socket.
-
-As said, you can just pass the fd of the coredump listener or a fd
-accept()ed from the listener, depending on how you want to handle
-this in userspace.
