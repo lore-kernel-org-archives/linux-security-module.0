@@ -1,80 +1,117 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from gardel.0pointer.net (gardel.0pointer.net [85.214.157.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7867E1F2C58;
-	Tue, 13 May 2025 08:24:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7EAE1F0E37;
+	Tue, 13 May 2025 08:56:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.157.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747124684; cv=none; b=aYWiQvgKhDLmVjxNTlkuE9/wqsMXaj5vNtpjeinRFtYpFlcHS8B/+2gWlcBkQMnLQxIqGw80nEKtswFgJx0FXzN8fjrW7qY07n+0R8mhFcpQ5DZtgzrl3QzA1zNl4G9SnEeDfZbcfbcNppxkHqf62vpgxDrHZJkYOAD49kRQJQY=
+	t=1747126577; cv=none; b=fRKpI9SiHvUwFVHunrRLXM6RrkkV5ig9wvu0vnwf5dzlj8RtJot0KpUZ9wF8XYk3o7uD+MQkIo8RmkS9yQOFqVClg3MrHPC0zzDr4/b7v5Wqp4sb9HV3OWgqz4IcpVoys0ebt5x1A5FSR+no6ABsR4onNl0dL0W0o9k1mJ8e8kE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747124684; c=relaxed/simple;
-	bh=YHA/wvWEDB8CgIoUnHtp7szR/abPgZrTVkvyNlmczCA=;
+	s=arc-20240116; t=1747126577; c=relaxed/simple;
+	bh=zZTpu2x0DINzlXYtgvXJEmz5tKs30LbnIJmPA4gFFm4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Sh+Z3cYqoCRgLQqbc2OcKXCCcLpwyo14xuXElZp6vfkb/AKkPEYPDUcut/FLogVpu4sZP7M7OWRVviCmwsyHetVNMQ960UF4xIA6ltEPonZQ0GuKi//2jNpiC8RkC1szEYCrfDhUwPDjTibi2cQhZ/t21VVuSpqA7nodZG7/9jE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pOsLeKXo; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pOsLeKXo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEC30C4CEE4;
-	Tue, 13 May 2025 08:24:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747124682;
-	bh=YHA/wvWEDB8CgIoUnHtp7szR/abPgZrTVkvyNlmczCA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pOsLeKXoaJjDR7Uej2TlJeM6ZmoE7XJ1eY2NW6EWvVbEdYKdNoHifU2oYl1NCpNcj
-	 05cGqKrPBX7tyjVBdRbn+SzIcuKHPlRsbgqJK46eiiMZYYcMLDd0yoBzk0zcctZoT5
-	 88rkSUu8KWAF+m3PM71lYiXI9gs2yzOsFIA4FLyZ0jTr5Y8FLRYvi4dISD8QFo1ATr
-	 S8P/VCDjGSYzbJcqt8ZzQMjAuYW7D/ZCcdarVIO5Bue5AhTUxLrTClQ71Dn2txfTwz
-	 OstRPVaqa7P4ms/78eMW1q+EnE6838KH/802tcNklQ2fgt7QYGzRyfY/YjRkQZm0NM
-	 uPsFhWO1hBI/A==
-Date: Tue, 13 May 2025 10:24:27 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Andrey Albershteyn <aalbersh@redhat.com>
-Cc: Richard Henderson <richard.henderson@linaro.org>, 
-	Matt Turner <mattst88@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, Michal Simek <monstr@monstr.eu>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
-	Helge Deller <deller@gmx.de>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
-	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, 
-	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, Yoshinori Sato <ysato@users.sourceforge.jp>, 
-	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
-	"David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
-	Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, Tyler Hicks <code@tyhicks.com>, 
-	Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>, linux-alpha@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, 
-	sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org, linux-arch@vger.kernel.org, 
-	selinux@vger.kernel.org, ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, Andrey Albershteyn <aalbersh@kernel.org>
-Subject: Re: [PATCH v5 0/7] fs: introduce file_getattr and file_setattr
- syscalls
-Message-ID: <20250513-wunden-tierzucht-0cd8fb32bb0e@brauner>
-References: <20250512-xattrat-syscall-v5-0-a88b20e37aae@kernel.org>
- <vxjuophuvmvqloczajfyjd5jvvcbvcty2fpvfmcaz5xuh5vyqv@fxiymeww26mf>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VVfx5hUh0047IMaAo3wA9ph17QDDYBPlEPGXwedv1guzt/inU2cYdkjLJUk7BrGtVVBOCiSjVS/Uh2/gGr0+G+cecZoPKD/Dz9zvnp33Fd1gcXtsPxPVqzObwyyjTOz07/BBYK4jSBjLf37gPMUpCyuPm3GC2VFsi2Ev5tEtzdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0pointer.de; spf=pass smtp.mailfrom=0pointer.de; arc=none smtp.client-ip=85.214.157.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=0pointer.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=0pointer.de
+Received: from gardel-login.0pointer.net (gardel-mail [85.214.157.71])
+	by gardel.0pointer.net (Postfix) with ESMTP id EE5F7E803E2;
+	Tue, 13 May 2025 10:56:04 +0200 (CEST)
+Received: by gardel-login.0pointer.net (Postfix, from userid 1000)
+	id 22F8F16005E; Tue, 13 May 2025 10:56:03 +0200 (CEST)
+Date: Tue, 13 May 2025 10:56:03 +0200
+From: Lennart Poettering <mzxreary@0pointer.de>
+To: Kuniyuki Iwashima <kuniyu@amazon.com>
+Cc: bluca@debian.org, alexander@mihalicyn.com, brauner@kernel.org,
+	daan.j.demeyer@gmail.com, daniel@iogearbox.net, davem@davemloft.net,
+	david@readahead.eu, edumazet@google.com, horms@kernel.org,
+	jack@suse.cz, jannh@google.com, kuba@kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org, me@yhndnzj.com,
+	netdev@vger.kernel.org, oleg@redhat.com, pabeni@redhat.com,
+	viro@zeniv.linux.org.uk, zbyszek@in.waw.pl
+Subject: Re: [PATCH v6 4/9] coredump: add coredump socket
+Message-ID: <aCMJI-2goig2VBDX@gardel-login>
+References: <CAMw=ZnRC7Okmew=rrEocFuFn8hhrcergHciPjxFPuG4c6qH_Bw@mail.gmail.com>
+ <20250513021626.86287-1-kuniyu@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <vxjuophuvmvqloczajfyjd5jvvcbvcty2fpvfmcaz5xuh5vyqv@fxiymeww26mf>
+In-Reply-To: <20250513021626.86287-1-kuniyu@amazon.com>
 
-> Ignore please, somehow b4 crashed with timeout on gmail
+On Mo, 12.05.25 19:14, Kuniyuki Iwashima (kuniyu@amazon.com) wrote:
 
-Ok, no worries. I wondered why I didn't get all messages of that series.
+> > > Note this version does not use prefix.  Now it requires users to
+> > > just pass the socket cookie via core_pattern so that the kernel
+> > > can verify the peer.
+> >
+> > Exactly - this means the pattern cannot be static in a sysctl.d early
+> > on boot anymore, and has to be set dynamically by <something>.
+>
+> You missed the socket has to be created dynamically by <something>.
+
+systemd implements socket activation: the generic code in PID 1 can
+bind a socket, and then generically forks off a process (or instances
+of processes for connection-based sockets) once traffic is seen on
+that socket. On a typical, current systemd system, PID 1 does this for
+~40 sockets by default. The code to bind AF_UNIX or AF_INET/AF_INET6
+sockets is entirely generic.
+
+Currently, in the existing systemd codebase coredumping is implemented
+via socket activation: the core_pattern handler binary quickly hands
+off the coredump fds to an AF_UNIX socket bound that way, and the
+service behind that does the heavy lifting. Our hope is that with
+Christian's work we can make the kernel deliver the coredumps directly
+to the socket PID1 generically binds, getting rid of one middle man.
+
+By requiring userspace to echo the SO_COOKIE value into the
+core_pattern sysctl in a special formatting, you define a bespoke
+protocol: it's not just enough to bind a socket (for which the generic
+code in PID1 is good enough), and to write a fixed
+string into a sysctl (for which the generic code in the current
+/etc/sysctl.d/ manager, i.e. systemd-sysctl, works fine). But you
+suddenly are asking from userspace, that some specific tool runs at
+early boot, extracts the socket cookie from PID1 somehow, and writes
+that into sysctl. We'd have to come up with a new tool for that, we
+can no longer use generic tools. And that's the part that Luca doesn't
+like.
+
+To a large degree I agree with Luca about this. I would much prefer
+Christian's earlier proposal (i.e. to simply define some prefix of
+AF_UNIX abstract namespace addresses as requiring privs to bind),
+because that would enable us to do generic handling in userspace: the
+existing socket binding logic in PID 1, and the existing sysctl.d
+handling in the systemd suite would be good enough to set up
+everything for the coredump handling.
+
+That said, I'd take what we can get. If enforcing privs on some
+abstract namespace socket address prefix is not acceptable, then we
+can probably make the SO_COOKIE proposal work (Luca: we'd just hook
+some small tool into ExecStartPost= of the .socket unit, and make PID1
+pass the cookie in some env var or so to it; the tool would then just
+echo that env var into the sysctl with the fixed prefix). In my eyes,
+it's not ideal though: it would mean the sysctl data on every instance
+of the system system image would necessarily deviate (because the
+socket cookie is going to be different), which mgmt tools won't like
+(as you cannot compare sysctl state anymore), and we'd have a weak
+conflict of ownership: right now most sysctl settings are managed by
+/etc/sysctl.d/, but the core_pattern suddenly wouldn't be
+anymore. This will create conflicts because suddenly two components
+write to the thing, and will start fighting.
+
+Hence: I'd *much* prefer Christian's original approach as it does not
+have these issues. But I'll take what I can get, we can make the
+cookie thing work, but it's much uglier.
+
+I am not sure I understand why enforcing privs on some abstract
+namespace socke address prefix is such an unacceptable idea though.
+
+Lennart
+
+--
+Lennart Poettering, Berlin
