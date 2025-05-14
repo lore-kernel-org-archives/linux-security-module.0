@@ -1,211 +1,368 @@
-Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B01C27B4E8;
-	Wed, 14 May 2025 13:38:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAA1652F88
+	for <linux-security-module@vger.kernel.org>; Wed, 14 May 2025 14:54:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747229895; cv=none; b=S0wnAiMfarKLcpyX0jhX5fPFKY7FreQBGhuxuJwo/Zts1g2TZevAEvsAR5Q9OCzq38r16XLuOI7z48Hl0ONmGElCneJpWHCbfNIqwTigbU08nrhfTjfL5jD6Qbsx8nIf0Azd6s6s7IUY1fVGys8rzbIWmcerTSP6zhsLb11uGA0=
+	t=1747234475; cv=none; b=hTWp2kxejsLbYZvoShUCcvUP3T3AMqYBfsiel9aCA8gT4X26pA5gm+o4HSG81bJOrkhA46XC2ll7aPOjrlAFB4lWqDCLgo6lFXWv5oPcRRZHvz4CDH4pjv+NkQqJO+GWkeqggWnRD9sSqT0gnlqEjRWRYwSGKGXszrasRWivV7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747229895; c=relaxed/simple;
-	bh=o3LsO+g2897GbpTeAT5y8eM5yrDtFj2KTZlDX1VGDq8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SIDcx0l2DQLIO21AnAaLxMCjnBuBM3MwHOaY712DFG9LASU29oGvwJ6Lqhdm7bK+IZXWL7AlFsD9XXyETVBjPGv2Ul4vdKLVo+j2H4Ck0SVGinKLTYq5OUOLE0wBM7sZ5QUnKnNrWoAMiOhkQWAwRVi05SCTSHN1vV9Hl1eoJqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=dLgQb+zz; arc=none smtp.client-ip=185.125.188.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="dLgQb+zz"
-Received: from [172.20.3.254] (unknown [213.157.19.135])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 314D83F187;
-	Wed, 14 May 2025 13:38:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1747229891;
-	bh=7kdLM6Tjwe9+dX+balOpcfDsbypsxvoqvoy9qesmYoE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=dLgQb+zzbXQiQ38T9MT6pNvmtKV66+48MGQnm3mUOadaXC2PwZt6v2IHfoteXgNrS
-	 0Re9Mru0G8n1D3Uiqs/5MMFx+RK2j0Lb5ZReq9gLF7cucesDkseGPVTS8c1eYLZZdT
-	 izZhgy9ODo/ObdOgFQGHYu2/Xca14MTu8zxCXBMxMMX+yXj/YfBoXrrsHboZ9pXBva
-	 jtjDawgIpdUkACfjcOG6xEURPziO9iMhJ3OCgKQ20T1HmsMr+EUE4rn+/VP4HxZm7L
-	 7GkCDCyODvs74pDK8qliMuht1j9YtBIvUk1Tu1BIduwPHb9F9L7YOF4yCvNq/kd6m4
-	 s16n+MM9ZoxWQ==
-Message-ID: <3d7515a8-473e-4cb4-9e14-a1dc9f04e32e@canonical.com>
-Date: Wed, 14 May 2025 06:38:09 -0700
+	s=arc-20240116; t=1747234475; c=relaxed/simple;
+	bh=uZVwsua7TTsZE/eKl7BoqWQFLMqRe1pWhoHiPZfq5hE=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=uQYqbg5ehUcewbAN6JKvsXaPAzg52qU4tRMHqw2geYzQ+x+y6Bgz99mWe7NimHd4gctjnrH0GJgFTyXB2otBlUx/nHVHCKtdZkZ7ovPfqYs+miqSf0w49Z01XHEzAm360PMIXuAqx6AJPE78+Rh5EtTcANNPQWwRy17yozBnQy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-85b41b906b3so608396039f.0
+        for <linux-security-module@vger.kernel.org>; Wed, 14 May 2025 07:54:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747234473; x=1747839273;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vcaImI2KAOkoeEjN33AzYoWsZgkP5GSWaOlmM8RyyOc=;
+        b=LudDwyPR1znspnMuZd27E2j+42ZLCyLtKJsiWctQZSIjuV2W7VCBgoOPEva4Ez857r
+         Zk+Gkgw6QaBqxAKYC87ivurTluBZLMFv5xh/2w1AbTBtBtkiVTTDy1lQNSb6Zo1JQ92c
+         2C23Vtsc2euTN3ka/EJEskSwgcvjwN99xPmgYTIqMFGgYzwymIPk2SKekLhG0+658p/J
+         x1mKwaGj3wTkUQk6hx7BsFzpm5fxsmuF531u1pyeUWifCvg+Soh7eP5vrTRMlEemsB4S
+         kwPwGGfy39UF7eQNDEHirHsEquJ+XcuPF9jtS5AWiTx4Awug5zlFu+xiZ+f4z/UUc4n9
+         Jujw==
+X-Forwarded-Encrypted: i=1; AJvYcCUpFOlhtVZsrqI6qD0PQGEChe6voB6SmbUj3em/DYbVDkEWnVjwnfHP6zGLbSmLEo13/ziYgVQOo1WW6i4tbMnOKxB2Bqo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySOh9zH3rL35/WHSAXP6UC1wMD5qUUmBmaObA7NW5ah0BKqMZs
+	b2dEmwGhmvbP/RBL0LfynWgw+XrjA3XZBQmtr0XuRdVtg+mxmUPPYjqiGFiIOTOncnTABlI4bVe
+	Pi0eS1AYdQ8SnqS16Guo0YJgAJEqElBaLUfLp/N+KpZQ36N0SILnTWGs=
+X-Google-Smtp-Source: AGHT+IGMubNa81uA1O79pnClccBYlxGMeRHA5r+HhJSj2UUjWdfTKMl7O4hCW9xOOxbTspCRFc2GyqLXMNFuQFdqsoJCN7+6pbSS
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 27/29] lsm: consolidate all of the LSM framework
- initcalls
-To: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org,
- linux-integrity@vger.kernel.org, selinux@vger.kernel.org
-Cc: Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu
- <roberto.sassu@huawei.com>, Fan Wu <wufan@kernel.org>,
- =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
- Kees Cook <kees@kernel.org>, Micah Morton <mortonm@chromium.org>,
- Casey Schaufler <casey@schaufler-ca.com>,
- Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-References: <20250409185019.238841-31-paul@paul-moore.com>
- <20250409185019.238841-58-paul@paul-moore.com>
-Content-Language: en-US
-From: John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; keydata=
- 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 lT9Q
-Organization: Canonical
-In-Reply-To: <20250409185019.238841-58-paul@paul-moore.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6602:3814:b0:864:68b0:60b3 with SMTP id
+ ca18e2360f4ac-86a08e4e738mr491625139f.12.1747234472675; Wed, 14 May 2025
+ 07:54:32 -0700 (PDT)
+Date: Wed, 14 May 2025 07:54:32 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6824aea8.a00a0220.104b28.0011.GAE@google.com>
+Subject: [syzbot] [lsm?] [integrity?] KMSAN: uninit-value in
+ ima_add_template_entry (3)
+From: syzbot <syzbot+3f0b3970f154dfc95e6e@syzkaller.appspotmail.com>
+To: dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, jmorris@namei.org, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, paul@paul-moore.com, 
+	roberto.sassu@huawei.com, serge@hallyn.com, syzkaller-bugs@googlegroups.com, 
+	zohar@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 4/9/25 11:50, Paul Moore wrote:
-> The LSM framework itself registers a small number of initcalls, this
-> patch converts these initcalls into the new initcall mechanism.
-> 
-> Signed-off-by: Paul Moore <paul@paul-moore.com>
+Hello,
 
-Reviewed-by: John Johansen <john.johansen@canonical.com>
+syzbot found the following issue on:
 
-> ---
->   security/inode.c    |  3 +--
->   security/lsm.h      |  4 ++++
->   security/lsm_init.c | 14 ++++++++++++--
->   security/min_addr.c |  5 +++--
->   4 files changed, 20 insertions(+), 6 deletions(-)
-> 
-> diff --git a/security/inode.c b/security/inode.c
-> index f687e22e6809..671c66c147bc 100644
-> --- a/security/inode.c
-> +++ b/security/inode.c
-> @@ -375,7 +375,7 @@ static const struct file_operations lsm_ops = {
->   };
->   #endif
->   
-> -static int __init securityfs_init(void)
-> +int __init securityfs_init(void)
->   {
->   	int retval;
->   
-> @@ -394,4 +394,3 @@ static int __init securityfs_init(void)
->   #endif
->   	return 0;
->   }
-> -core_initcall(securityfs_init);
-> diff --git a/security/lsm.h b/security/lsm.h
-> index 8ecb66896646..c432dc0c5e30 100644
-> --- a/security/lsm.h
-> +++ b/security/lsm.h
-> @@ -35,4 +35,8 @@ extern struct kmem_cache *lsm_inode_cache;
->   int lsm_cred_alloc(struct cred *cred, gfp_t gfp);
->   int lsm_task_alloc(struct task_struct *task);
->   
-> +/* LSM framework initializers */
-> +int securityfs_init(void);
-> +int min_addr_init(void);
-> +
->   #endif /* _LSM_H_ */
-> diff --git a/security/lsm_init.c b/security/lsm_init.c
-> index 75eb0cc82869..c0881407ca3f 100644
-> --- a/security/lsm_init.c
-> +++ b/security/lsm_init.c
-> @@ -485,7 +485,12 @@ int __init security_init(void)
->    */
->   static int __init security_initcall_pure(void)
->   {
-> -	return lsm_initcall(pure);
-> +	int rc_adr, rc_lsm;
-> +
-> +	rc_adr = min_addr_init();
-> +	rc_lsm = lsm_initcall(pure);
-> +
-> +	return (rc_adr ? rc_adr : rc_lsm);
->   }
->   pure_initcall(security_initcall_pure);
->   
-> @@ -503,7 +508,12 @@ early_initcall(security_initcall_early);
->    */
->   static int __init security_initcall_core(void)
->   {
-> -	return lsm_initcall(core);
-> +	int rc_sfs, rc_lsm;
-> +
-> +	rc_sfs = securityfs_init();
-> +	rc_lsm = lsm_initcall(core);
-> +
-> +	return (rc_sfs ? rc_sfs : rc_lsm);
->   }
->   core_initcall(security_initcall_core);
->   
-> diff --git a/security/min_addr.c b/security/min_addr.c
-> index df1bc643d886..40714bdeefbe 100644
-> --- a/security/min_addr.c
-> +++ b/security/min_addr.c
-> @@ -4,6 +4,8 @@
->   #include <linux/security.h>
->   #include <linux/sysctl.h>
->   
-> +#include "lsm.h"
-> +
->   /* amount of vm to protect from userspace access by both DAC and the LSM*/
->   unsigned long mmap_min_addr;
->   /* amount of vm to protect from userspace using CAP_SYS_RAWIO (DAC) */
-> @@ -54,11 +56,10 @@ static const struct ctl_table min_addr_sysctl_table[] = {
->   	},
->   };
->   
-> -static int __init init_mmap_min_addr(void)
-> +int __init min_addr_init(void)
->   {
->   	register_sysctl_init("vm", min_addr_sysctl_table);
->   	update_mmap_min_addr();
->   
->   	return 0;
->   }
-> -pure_initcall(init_mmap_min_addr);
+HEAD commit:    02ddfb981de8 Merge tag 'scsi-fixes' of git://git.kernel.or..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11169670580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9dc42c34a3f5c357
+dashboard link: https://syzkaller.appspot.com/bug?extid=3f0b3970f154dfc95e6e
+compiler:       Debian clang version 20.1.2 (++20250402124445+58df0ef89dd6-1~exp1~20250402004600.97), Debian LLD 20.1.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1574d768580000
 
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/5ca57f5a3f77/disk-02ddfb98.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/3f23cbc11e68/vmlinux-02ddfb98.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/73e63afac354/bzImage-02ddfb98.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/0afd18737aed/mount_2.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+3f0b3970f154dfc95e6e@syzkaller.appspotmail.com
+
+bcachefs (loop2): going read-write
+bcachefs (loop2): done starting filesystem
+=====================================================
+BUG: KMSAN: uninit-value in ima_lookup_digest_entry security/integrity/ima/ima_queue.c:64 [inline]
+BUG: KMSAN: uninit-value in ima_add_template_entry+0x7a5/0x8d0 security/integrity/ima/ima_queue.c:191
+ ima_lookup_digest_entry security/integrity/ima/ima_queue.c:64 [inline]
+ ima_add_template_entry+0x7a5/0x8d0 security/integrity/ima/ima_queue.c:191
+ ima_store_template security/integrity/ima/ima_api.c:122 [inline]
+ ima_store_measurement+0x388/0x970 security/integrity/ima/ima_api.c:383
+ process_measurement+0x3075/0x40e0 security/integrity/ima/ima_main.c:393
+ ima_file_check+0x8e/0xd0 security/integrity/ima/ima_main.c:613
+ security_file_post_open+0xbf/0x530 security/security.c:3130
+ do_open fs/namei.c:3882 [inline]
+ path_openat+0x5ac3/0x6760 fs/namei.c:4039
+ do_filp_open+0x280/0x660 fs/namei.c:4066
+ do_sys_openat2+0x1bb/0x2f0 fs/open.c:1429
+ do_sys_open fs/open.c:1444 [inline]
+ __do_sys_openat fs/open.c:1460 [inline]
+ __se_sys_openat fs/open.c:1455 [inline]
+ __x64_sys_openat+0x240/0x300 fs/open.c:1455
+ x64_sys_call+0x213/0x3db0 arch/x86/include/generated/asm/syscalls_64.h:258
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd9/0x1b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+<Zero or more stacks not recorded to save memory>
+
+Uninit was stored to memory at:
+ sha256_transform lib/crypto/sha256.c:117 [inline]
+ sha256_transform_blocks+0x276d/0x2880 lib/crypto/sha256.c:127
+ lib_sha256_base_do_finalize include/crypto/sha256_base.h:101 [inline]
+ __sha256_final lib/crypto/sha256.c:142 [inline]
+ sha256_final+0x169/0x460 lib/crypto/sha256.c:148
+ crypto_sha256_final+0xca/0x120 crypto/sha256_generic.c:49
+ crypto_shash_final+0x72/0xa0 crypto/shash.c:58
+ ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:498 [inline]
+ ima_calc_file_shash security/integrity/ima/ima_crypto.c:511 [inline]
+ ima_calc_file_hash+0x240a/0x3fd0 security/integrity/ima/ima_crypto.c:568
+ ima_collect_measurement+0x45d/0xe60 security/integrity/ima/ima_api.c:293
+ process_measurement+0x2d1a/0x40e0 security/integrity/ima/ima_main.c:385
+ ima_file_check+0x8e/0xd0 security/integrity/ima/ima_main.c:613
+ security_file_post_open+0xbf/0x530 security/security.c:3130
+ do_open fs/namei.c:3882 [inline]
+ path_openat+0x5ac3/0x6760 fs/namei.c:4039
+ do_filp_open+0x280/0x660 fs/namei.c:4066
+ do_sys_openat2+0x1bb/0x2f0 fs/open.c:1429
+ do_sys_open fs/open.c:1444 [inline]
+ __do_sys_openat fs/open.c:1460 [inline]
+ __se_sys_openat fs/open.c:1455 [inline]
+ __x64_sys_openat+0x240/0x300 fs/open.c:1455
+ x64_sys_call+0x213/0x3db0 arch/x86/include/generated/asm/syscalls_64.h:258
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd9/0x1b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Uninit was stored to memory at:
+ sha256_transform lib/crypto/sha256.c:117 [inline]
+ sha256_transform_blocks+0x276d/0x2880 lib/crypto/sha256.c:127
+ lib_sha256_base_do_update include/crypto/sha256_base.h:63 [inline]
+ sha256_update+0x392/0x410 lib/crypto/sha256.c:136
+ crypto_sha256_update+0x35/0x60 crypto/sha256_generic.c:39
+ crypto_shash_update+0x7a/0xb0 crypto/shash.c:52
+ ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:491 [inline]
+ ima_calc_file_shash security/integrity/ima/ima_crypto.c:511 [inline]
+ ima_calc_file_hash+0x20d7/0x3fd0 security/integrity/ima/ima_crypto.c:568
+ ima_collect_measurement+0x45d/0xe60 security/integrity/ima/ima_api.c:293
+ process_measurement+0x2d1a/0x40e0 security/integrity/ima/ima_main.c:385
+ ima_file_check+0x8e/0xd0 security/integrity/ima/ima_main.c:613
+ security_file_post_open+0xbf/0x530 security/security.c:3130
+ do_open fs/namei.c:3882 [inline]
+ path_openat+0x5ac3/0x6760 fs/namei.c:4039
+ do_filp_open+0x280/0x660 fs/namei.c:4066
+ do_sys_openat2+0x1bb/0x2f0 fs/open.c:1429
+ do_sys_open fs/open.c:1444 [inline]
+ __do_sys_openat fs/open.c:1460 [inline]
+ __se_sys_openat fs/open.c:1455 [inline]
+ __x64_sys_openat+0x240/0x300 fs/open.c:1455
+ x64_sys_call+0x213/0x3db0 arch/x86/include/generated/asm/syscalls_64.h:258
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd9/0x1b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Uninit was stored to memory at:
+ BLEND_OP lib/crypto/sha256.c:61 [inline]
+ sha256_transform lib/crypto/sha256.c:91 [inline]
+ sha256_transform_blocks+0xded/0x2880 lib/crypto/sha256.c:127
+ lib_sha256_base_do_update include/crypto/sha256_base.h:63 [inline]
+ sha256_update+0x392/0x410 lib/crypto/sha256.c:136
+ crypto_sha256_update+0x35/0x60 crypto/sha256_generic.c:39
+ crypto_shash_update+0x7a/0xb0 crypto/shash.c:52
+ ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:491 [inline]
+ ima_calc_file_shash security/integrity/ima/ima_crypto.c:511 [inline]
+ ima_calc_file_hash+0x20d7/0x3fd0 security/integrity/ima/ima_crypto.c:568
+ ima_collect_measurement+0x45d/0xe60 security/integrity/ima/ima_api.c:293
+ process_measurement+0x2d1a/0x40e0 security/integrity/ima/ima_main.c:385
+ ima_file_check+0x8e/0xd0 security/integrity/ima/ima_main.c:613
+ security_file_post_open+0xbf/0x530 security/security.c:3130
+ do_open fs/namei.c:3882 [inline]
+ path_openat+0x5ac3/0x6760 fs/namei.c:4039
+ do_filp_open+0x280/0x660 fs/namei.c:4066
+ do_sys_openat2+0x1bb/0x2f0 fs/open.c:1429
+ do_sys_open fs/open.c:1444 [inline]
+ __do_sys_openat fs/open.c:1460 [inline]
+ __se_sys_openat fs/open.c:1455 [inline]
+ __x64_sys_openat+0x240/0x300 fs/open.c:1455
+ x64_sys_call+0x213/0x3db0 arch/x86/include/generated/asm/syscalls_64.h:258
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd9/0x1b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Uninit was stored to memory at:
+ BLEND_OP lib/crypto/sha256.c:61 [inline]
+ sha256_transform lib/crypto/sha256.c:92 [inline]
+ sha256_transform_blocks+0xe00/0x2880 lib/crypto/sha256.c:127
+ lib_sha256_base_do_update include/crypto/sha256_base.h:63 [inline]
+ sha256_update+0x392/0x410 lib/crypto/sha256.c:136
+ crypto_sha256_update+0x35/0x60 crypto/sha256_generic.c:39
+ crypto_shash_update+0x7a/0xb0 crypto/shash.c:52
+ ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:491 [inline]
+ ima_calc_file_shash security/integrity/ima/ima_crypto.c:511 [inline]
+ ima_calc_file_hash+0x20d7/0x3fd0 security/integrity/ima/ima_crypto.c:568
+ ima_collect_measurement+0x45d/0xe60 security/integrity/ima/ima_api.c:293
+ process_measurement+0x2d1a/0x40e0 security/integrity/ima/ima_main.c:385
+ ima_file_check+0x8e/0xd0 security/integrity/ima/ima_main.c:613
+ security_file_post_open+0xbf/0x530 security/security.c:3130
+ do_open fs/namei.c:3882 [inline]
+ path_openat+0x5ac3/0x6760 fs/namei.c:4039
+ do_filp_open+0x280/0x660 fs/namei.c:4066
+ do_sys_openat2+0x1bb/0x2f0 fs/open.c:1429
+ do_sys_open fs/open.c:1444 [inline]
+ __do_sys_openat fs/open.c:1460 [inline]
+ __se_sys_openat fs/open.c:1455 [inline]
+ __x64_sys_openat+0x240/0x300 fs/open.c:1455
+ x64_sys_call+0x213/0x3db0 arch/x86/include/generated/asm/syscalls_64.h:258
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd9/0x1b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Uninit was stored to memory at:
+ BLEND_OP lib/crypto/sha256.c:61 [inline]
+ sha256_transform lib/crypto/sha256.c:93 [inline]
+ sha256_transform_blocks+0xe15/0x2880 lib/crypto/sha256.c:127
+ lib_sha256_base_do_update include/crypto/sha256_base.h:63 [inline]
+ sha256_update+0x392/0x410 lib/crypto/sha256.c:136
+ crypto_sha256_update+0x35/0x60 crypto/sha256_generic.c:39
+ crypto_shash_update+0x7a/0xb0 crypto/shash.c:52
+ ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:491 [inline]
+ ima_calc_file_shash security/integrity/ima/ima_crypto.c:511 [inline]
+ ima_calc_file_hash+0x20d7/0x3fd0 security/integrity/ima/ima_crypto.c:568
+ ima_collect_measurement+0x45d/0xe60 security/integrity/ima/ima_api.c:293
+ process_measurement+0x2d1a/0x40e0 security/integrity/ima/ima_main.c:385
+ ima_file_check+0x8e/0xd0 security/integrity/ima/ima_main.c:613
+ security_file_post_open+0xbf/0x530 security/security.c:3130
+ do_open fs/namei.c:3882 [inline]
+ path_openat+0x5ac3/0x6760 fs/namei.c:4039
+ do_filp_open+0x280/0x660 fs/namei.c:4066
+ do_sys_openat2+0x1bb/0x2f0 fs/open.c:1429
+ do_sys_open fs/open.c:1444 [inline]
+ __do_sys_openat fs/open.c:1460 [inline]
+ __se_sys_openat fs/open.c:1455 [inline]
+ __x64_sys_openat+0x240/0x300 fs/open.c:1455
+ x64_sys_call+0x213/0x3db0 arch/x86/include/generated/asm/syscalls_64.h:258
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd9/0x1b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Uninit was stored to memory at:
+ LOAD_OP lib/crypto/sha256.c:56 [inline]
+ sha256_transform lib/crypto/sha256.c:82 [inline]
+ sha256_transform_blocks+0x268b/0x2880 lib/crypto/sha256.c:127
+ lib_sha256_base_do_update include/crypto/sha256_base.h:63 [inline]
+ sha256_update+0x392/0x410 lib/crypto/sha256.c:136
+ crypto_sha256_update+0x35/0x60 crypto/sha256_generic.c:39
+ crypto_shash_update+0x7a/0xb0 crypto/shash.c:52
+ ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:491 [inline]
+ ima_calc_file_shash security/integrity/ima/ima_crypto.c:511 [inline]
+ ima_calc_file_hash+0x20d7/0x3fd0 security/integrity/ima/ima_crypto.c:568
+ ima_collect_measurement+0x45d/0xe60 security/integrity/ima/ima_api.c:293
+ process_measurement+0x2d1a/0x40e0 security/integrity/ima/ima_main.c:385
+ ima_file_check+0x8e/0xd0 security/integrity/ima/ima_main.c:613
+ security_file_post_open+0xbf/0x530 security/security.c:3130
+ do_open fs/namei.c:3882 [inline]
+ path_openat+0x5ac3/0x6760 fs/namei.c:4039
+ do_filp_open+0x280/0x660 fs/namei.c:4066
+ do_sys_openat2+0x1bb/0x2f0 fs/open.c:1429
+ do_sys_open fs/open.c:1444 [inline]
+ __do_sys_openat fs/open.c:1460 [inline]
+ __se_sys_openat fs/open.c:1455 [inline]
+ __x64_sys_openat+0x240/0x300 fs/open.c:1455
+ x64_sys_call+0x213/0x3db0 arch/x86/include/generated/asm/syscalls_64.h:258
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd9/0x1b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Uninit was stored to memory at:
+ memcpy_to_iter lib/iov_iter.c:65 [inline]
+ iterate_kvec include/linux/iov_iter.h:86 [inline]
+ iterate_and_advance2 include/linux/iov_iter.h:306 [inline]
+ iterate_and_advance include/linux/iov_iter.h:328 [inline]
+ _copy_to_iter+0x176c/0x32f0 lib/iov_iter.c:185
+ copy_page_to_iter+0x43c/0x8b0 lib/iov_iter.c:362
+ copy_folio_to_iter include/linux/uio.h:198 [inline]
+ filemap_read+0xced/0x2190 mm/filemap.c:2753
+ bch2_read_iter+0x559/0x21c0 fs/bcachefs/fs-io-direct.c:221
+ __kernel_read+0x750/0xda0 fs/read_write.c:528
+ integrity_kernel_read+0x77/0x90 security/integrity/iint.c:28
+ ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:480 [inline]
+ ima_calc_file_shash security/integrity/ima/ima_crypto.c:511 [inline]
+ ima_calc_file_hash+0x1ff9/0x3fd0 security/integrity/ima/ima_crypto.c:568
+ ima_collect_measurement+0x45d/0xe60 security/integrity/ima/ima_api.c:293
+ process_measurement+0x2d1a/0x40e0 security/integrity/ima/ima_main.c:385
+ ima_file_check+0x8e/0xd0 security/integrity/ima/ima_main.c:613
+ security_file_post_open+0xbf/0x530 security/security.c:3130
+ do_open fs/namei.c:3882 [inline]
+ path_openat+0x5ac3/0x6760 fs/namei.c:4039
+ do_filp_open+0x280/0x660 fs/namei.c:4066
+ do_sys_openat2+0x1bb/0x2f0 fs/open.c:1429
+ do_sys_open fs/open.c:1444 [inline]
+ __do_sys_openat fs/open.c:1460 [inline]
+ __se_sys_openat fs/open.c:1455 [inline]
+ __x64_sys_openat+0x240/0x300 fs/open.c:1455
+ x64_sys_call+0x213/0x3db0 arch/x86/include/generated/asm/syscalls_64.h:258
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd9/0x1b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Uninit was created at:
+ __alloc_frozen_pages_noprof+0x689/0xf00 mm/page_alloc.c:4993
+ alloc_pages_mpol+0x328/0x860 mm/mempolicy.c:2301
+ alloc_frozen_pages_noprof mm/mempolicy.c:2372 [inline]
+ alloc_pages_noprof mm/mempolicy.c:2392 [inline]
+ folio_alloc_noprof+0x109/0x360 mm/mempolicy.c:2402
+ filemap_alloc_folio_noprof+0x9d/0x420 mm/filemap.c:1007
+ ractl_alloc_folio mm/readahead.c:186 [inline]
+ ra_alloc_folio mm/readahead.c:441 [inline]
+ page_cache_ra_order+0x93f/0x14f0 mm/readahead.c:509
+ page_cache_sync_ra+0x108a/0x13e0 mm/readahead.c:621
+ filemap_get_pages+0xfb3/0x3a70 mm/filemap.c:2591
+ filemap_read+0x5c6/0x2190 mm/filemap.c:2702
+ bch2_read_iter+0x559/0x21c0 fs/bcachefs/fs-io-direct.c:221
+ __kernel_read+0x750/0xda0 fs/read_write.c:528
+ integrity_kernel_read+0x77/0x90 security/integrity/iint.c:28
+ ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:480 [inline]
+ ima_calc_file_shash security/integrity/ima/ima_crypto.c:511 [inline]
+ ima_calc_file_hash+0x1ff9/0x3fd0 security/integrity/ima/ima_crypto.c:568
+ ima_collect_measurement+0x45d/0xe60 security/integrity/ima/ima_api.c:293
+ process_measurement+0x2d1a/0x40e0 security/integrity/ima/ima_main.c:385
+ ima_file_check+0x8e/0xd0 security/integrity/ima/ima_main.c:613
+ security_file_post_open+0xbf/0x530 security/security.c:3130
+ do_open fs/namei.c:3882 [inline]
+ path_openat+0x5ac3/0x6760 fs/namei.c:4039
+ do_filp_open+0x280/0x660 fs/namei.c:4066
+ do_sys_openat2+0x1bb/0x2f0 fs/open.c:1429
+ do_sys_open fs/open.c:1444 [inline]
+ __do_sys_openat fs/open.c:1460 [inline]
+ __se_sys_openat fs/open.c:1455 [inline]
+ __x64_sys_openat+0x240/0x300 fs/open.c:1455
+ x64_sys_call+0x213/0x3db0 arch/x86/include/generated/asm/syscalls_64.h:258
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xd9/0x1b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+CPU: 0 UID: 0 PID: 7337 Comm: syz.2.106 Not tainted 6.15.0-rc3-syzkaller-00094-g02ddfb981de8 #0 PREEMPT(undef) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+=====================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
