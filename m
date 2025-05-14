@@ -1,252 +1,136 @@
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2C9C19A;
-	Wed, 14 May 2025 00:03:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED2E91E1A05
+	for <linux-security-module@vger.kernel.org>; Wed, 14 May 2025 03:06:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747181027; cv=none; b=QiPA11YcsUz8FKUKnJF/pAWmpmccHd5NWYbS+KoCR4Z7Z2Bu95nuocLRGNxj7/sYuIz+a+5itIyV7/afg4h6AfMIZVfWtC8ABFn1gBBDRglShKsHEEBpNw3L/b3rK5JVtrQtqN9/0qQaNmqU3dnSbP7wGyDqPu7RIiy1h/Vw5FE=
+	t=1747191992; cv=none; b=LeRRI5rGDfh+nQ3PJOe40CNQMBAYfYjRFnmTqr87Pvglb+dhZ74UA9Q6EWuGTUt90atEx4JFRFH7hxi8J9I2FsjbLERqDgVB+MvCnhPrSRcZf6LZ6b7pfV9t1sajnv/t9LrFzNTskuhoHBN7F2yRcG/jvWO45ElWOoLPTN6Dlpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747181027; c=relaxed/simple;
-	bh=NzvvLdmlFhPXase6EuO/2IrU2MZi+iI7evphEgCmIx4=;
+	s=arc-20240116; t=1747191992; c=relaxed/simple;
+	bh=QJlpMcodJFABVCXdqNlhN3+5p9vJ34o3HcUPNXekMzU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tds1gpBmYtSj6wqY9H8bWvOfeVFNjPzg2QvMGiwezJzscGpEKVkFmz3amNsDAZAOsAvYMpdPYB7mOzzRHwS7QR64qN9df2pWtzSkBJnzEiK0ZJKdpfgzN2zqJbXU2xrOGr1nqnVnTZpuvJXktgHnoOEfxLupUYm990EqG18ICyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DATdbPta; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	 To:Cc:Content-Type; b=hnTVcnDlH5rUPv0f5ympKhr/UycStaq1HM3f2qHYYlHBtUPqhA/ZENA4xxsCGpwKPh9fUIHL6BhzJyYECcUzQO2mGnKeX6+CiEURfBbkeNaVMvtSILmN8nOy2vcCX3B4+CdD3o6FunDxvdvD+z5/NIRl3Cw+IhLOdV7TG9I9zGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=FNhhNUjr; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DATdbPta"
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5f6fb95f431so677756a12.0;
-        Tue, 13 May 2025 17:03:45 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="FNhhNUjr"
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-7086dcab64bso60429667b3.1
+        for <linux-security-module@vger.kernel.org>; Tue, 13 May 2025 20:06:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747181024; x=1747785824; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1747191990; x=1747796790; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6lqSoGgVBEs4e77J4dvCBv01iW/I9gHcChJC6DVoY/E=;
-        b=DATdbPta+VU+UKSs3fFENFrI/+k6Ai/8IxAe+ZcSfss8rtB/4ItrFqxos5X3Cv4qHW
-         WeK6eM7qDkl9Su22Cvk/QJ8rulDuH5FE3dwLyiFShqG/5XFCeXrHm9nxw7X9YyTFYhJm
-         FomSv+xQ6Qvg858NSfaj/RXCTGhM41MLoPDTD760KV0lMiUFm2I6G+ClOnRjmpMXOACw
-         5UOBr6/GMtgSZtJxnKExlpEo5+8nh7gyEL7aI+uIcuVo569UcNHuPWPOPWPZ6pCdvqmP
-         BF3drQ5mSXN9c+Ua0Lt396vc+fp7OReEioDDw3ODAlaOmdIKsD7YQcIanvkATP9GCSGx
-         H40g==
+        bh=tmR0DV4kjICn6tOrrkeV1rJdypEVd85y6xmhHZSq2oM=;
+        b=FNhhNUjrSx+AJS72l115atQjxUP4IWUNhyviHRegB2IcJIe4ENlgd2ir+F7sS/piRz
+         6e+NeTRDx6lOapnzX4Zpni2YEQzz4b1YsLz5AGv6NG8kvi1gsisFfac9XCbpKYD+B8Xn
+         W+XwhJEW044rXo85B1YBqQ3ZLzafj225fXZeNWrx1UF7eoeLmqfySND+MaaIHgfjzUtF
+         1TDK8NdtQS9lFZgCzFtWiF8sZmDVI6nqVrtfjLTzjt+t2PcaHQvDvqceqC2SUrMMMJzU
+         IpSiBdeW4UNGs+UcG9+JpSjTEZvkuGWBuTvOzmkgvlfjLEVEGUJLq3L0kW1S0ZofGX0J
+         zzBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747181024; x=1747785824;
+        d=1e100.net; s=20230601; t=1747191990; x=1747796790;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=6lqSoGgVBEs4e77J4dvCBv01iW/I9gHcChJC6DVoY/E=;
-        b=jHjfceY25z4nI8A6B51aVOSSsqPqtRtT+VNtUCaq7VqsphdpgIF+gh4mhcT9mWLach
-         t307iRLhLzwzUqNZAh78I9cKoPQVN7iZVzH/8I742q98wfbenxxfiHK8D+gNa/p5siK3
-         AFWgCBfxMqnyiQhJbkug8eSUMKIoCiZ0wWBssBITHGCQiK2utCVMibxh9/W+evQexd+c
-         nKxf2V7LRbK4lvEJikQC4yOeMcupnKpgcVUdoEIg2rnt/XBv7R2Ub34xN7znObFkZZhQ
-         Ec5RSId0bBVbRODp42CqsUdZ2N9ezRUUU109YAUDmQAJdXYleEc53I3gPkLbCBjsp6BR
-         HdMg==
-X-Forwarded-Encrypted: i=1; AJvYcCUNZx54SZST5HaG2/6nMRJM108MuqFP7RkQhCdJa2sS0gW1Wdso0NdsfZxvMyTvEOsjXzwqSMzoaILouPpLM0KjYwvccvqu@vger.kernel.org, AJvYcCVO0fVCMPYjcnkS+kjRLhvUQ8yj5YDl7aE4f5o5T9Tfp/gks8W6aKdCaMPVHWblFESPMOTdQxzaDoBUzd8F@vger.kernel.org, AJvYcCWIlQWi2DqdKv6bnF730l6eIdGUMWE+ImZaZzFN7JvBzUwY1Ex3UOVff/DdETAJbpXK2wlwgYb61Q==@vger.kernel.org, AJvYcCWgq0g96/cAmnhUZHlRWR/IHk5ts7PKDtYiAOTbW+zHOOSCHolIRwsrydkee3Om+au1QRt0CvZiXuB9b2ao@vger.kernel.org, AJvYcCXMiI4HUJ9VUxc8ClmYimnE9nBH0ZpeKSePDtjEshwIo08xwTVJ2QWHf9pIY8brL1sVy74gxc6ZXP3Reyw3cMMa@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2OHnsJyH/hb3xlWWAZtJ6oslkFDU46wI4C6Q2M1TytU+QboQc
-	Sd11GsSEuZ7KrR6bPSKcIMLvtWwonZcDgu2mjr4hP6gbOJE08qJCAngfXjolkz2Ur0Ir0JMHZ01
-	sDu0AwI2c3FEgABk9QJWSntb78vk=
-X-Gm-Gg: ASbGncuGJsv7az8tlDNNvI+wBZQs9Fw7pS0R3IqxUuBsxyE3gX/o/eCRrJLMDM4Lmkl
-	L41w36BaPKvaa6+JRR8dqYT29/mxg+0qP4y8lPLRL2VOHAJw0xcSyTiyJuF3lDyM8fc8F0UbR13
-	PboiK+C8wEICf4Ew5JucSIu/9GO4tE73adUfD/ejes2w==
-X-Google-Smtp-Source: AGHT+IGRlSkJ0UH4AJ6sv5ErNW8p3B/IKPPQ+Oz8ZXhFjDVyTM4z7WXblF2mhP+ITGzr1p9iVxs23uJFZScuNAmdKVU=
-X-Received: by 2002:a17:907:1785:b0:ad2:cce:8d5e with SMTP id
- a640c23a62f3a-ad4f71dc930mr154641766b.7.1747181023932; Tue, 13 May 2025
- 17:03:43 -0700 (PDT)
+        bh=tmR0DV4kjICn6tOrrkeV1rJdypEVd85y6xmhHZSq2oM=;
+        b=apPgt6PTTPWae47cnMuc7jVFf5gI3MpkWf+R+bzPpNRFkPbl5JWgpklfztK+715nkZ
+         gVAJvy5VshcJV2TXPXGaHWNYqifdjI0hyFiOUr/o00VrZtPO5AqSpjMHnehWUN17tmRg
+         iP7EJb6tkBnJMP0JQDNY2U9ipcYDMzBvRXdX0ojMsvvf5C/u8HTaA6zlWAZIxTOgI3he
+         VBHYM/w7Tbd/ljR/9JwU0W/g71eAhaBXx0jSB8ka94NPIo9kUeXin0tAR9tcuERs9IGG
+         6M+03PQCyACdXnywaGWZv3a59TpS2q0UgRobRn7N9ocvP/MafMjPsgqc5N2Upw7miRWX
+         rzIA==
+X-Forwarded-Encrypted: i=1; AJvYcCVgn4xNizG8+EnQ9F6+67ysvzKbqs+ArEJtdo9UcpVXrdjsNnMwVKx14Ysl4aZldAJe0RZNoZt1EesdLcxmUI2V9KQ4sGY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YweiIaVp1I1qvc64rZAewJ/o2YCXt/bEbk6T9eLuaauzmRVIrHV
+	On5OEa1v7/lU1qs+A4hkLYh+An9hI7vNfZ3HOUj+USNzVoNDuRJ02c3X/ghVlVne0sipFhTWZ+C
+	xVTdNIN7ATCF52cet4Cx77YHp1/jNxuU1AF2X
+X-Gm-Gg: ASbGnctNpvwEza5wNVn1uawrd0615Xl1ptVcQUyIpvOFU6vKyZshFtJLmJb2yOhOiIE
+	81I0JQJhXPCahgYQocAgGvbATqAu9JU8uff9lskvw2aPh+u+zK/mrv1QlCZLiXmyQcZ0MgaabHn
+	h2t4NjO61xQKWNwqi5Ip36a2Gub2yKfje5
+X-Google-Smtp-Source: AGHT+IHoF4lWdSffdXGrv/OfRi9mN4zsQKU0Wx09452hnzxCArs6kDfkdHSQP63wj5stxfEFYGHGU4RZ0y2yDDB9wL0=
+X-Received: by 2002:a05:690c:6809:b0:708:b7c4:89d9 with SMTP id
+ 00721157ae682-70c7f12b587mr29661517b3.11.1747191989825; Tue, 13 May 2025
+ 20:06:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20221006082735.1321612-1-keescook@chromium.org>
- <20221006082735.1321612-2-keescook@chromium.org> <20221006090506.paqjf537cox7lqrq@wittgenstein>
- <CAG48ez0sEkmaez9tYqgMXrkREmXZgxC9fdQD3mzF9cGo_=Tfyg@mail.gmail.com>
- <86CE201B-5632-4BB7-BCF6-7CB2C2895409@chromium.org> <h65sagivix3zbrppthcobnysgnlrnql5shiu65xyg7ust6mc54@cliutza66zve>
- <D03AE210-6874-43B6-B917-80CD259AE2AC@kernel.org> <CAG48ez0aP8LaGppy6Yon7xcFbQa1=CM-HXSZChvXYV2VJZ8y7g@mail.gmail.com>
- <871pss17hq.fsf@email.froward.int.ebiederm.org>
-In-Reply-To: <871pss17hq.fsf@email.froward.int.ebiederm.org>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Wed, 14 May 2025 02:03:31 +0200
-X-Gm-Features: AX0GCFst7wU9kVixjwdrqiox0NLTh4DbO3zQ5nACeNFmn77IHwc5Pm1sBQG733I
-Message-ID: <CAGudoHH-Jn5_4qnLV3qwzjTi2ZgfmfaO0qVSWW5gqdqkvchnDQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] fs/exec: Explicitly unshare fs_struct on exec
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Jann Horn <jannh@google.com>, Kees Cook <kees@kernel.org>, Kees Cook <keescook@chromium.org>, 
-	Christian Brauner <brauner@kernel.org>, Jorge Merlino <jorge.merlino@canonical.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Thomas Gleixner <tglx@linutronix.de>, 
-	Andy Lutomirski <luto@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, John Johansen <john.johansen@canonical.com>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	Eric Paris <eparis@parisplace.org>, Richard Haines <richard_c_haines@btinternet.com>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Xin Long <lucien.xin@gmail.com>, 
-	"David S. Miller" <davem@davemloft.net>, Todd Kjos <tkjos@google.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, Prashanth Prahlad <pprahlad@redhat.com>, 
-	Micah Morton <mortonm@chromium.org>, Fenghua Yu <fenghua.yu@intel.com>, 
-	Andrei Vagin <avagin@gmail.com>, linux-kernel@vger.kernel.org, apparmor@lists.ubuntu.com, 
-	linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, oleg@redhat.com
+References: <20250502184421.1424368-1-bboscaccy@linux.microsoft.com>
+ <20250502210034.284051-1-kpsingh@kernel.org> <CAHC9VhS5Vevcq90OxTmAp2=XtR1qOiDDe5sSXReX5oXzf+siVQ@mail.gmail.com>
+ <CACYkzJ5jsWFiXMRDwoGib5t+Xje6STTuJGRZM9Vg2dFz7uPa-g@mail.gmail.com> <CACYkzJ6VQUExfyt0=-FmXz46GHJh3d=FXh5j4KfexcEFbHV-vg@mail.gmail.com>
+In-Reply-To: <CACYkzJ6VQUExfyt0=-FmXz46GHJh3d=FXh5j4KfexcEFbHV-vg@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 13 May 2025 23:06:18 -0400
+X-Gm-Features: AX0GCFtmtl8iZvt0__SZY16ZDtDEOONW5PvqEMj_YT203ANGlWr4B8M9PmCIO_o
+Message-ID: <CAHC9VhQL_FkUH8F1fvFZmC-8UwZh3zkwjomCo1PiWNW0EGYUPw@mail.gmail.com>
+Subject: Re: [PATCH v3 0/4] Introducing Hornet LSM
+To: KP Singh <kpsingh@kernel.org>
+Cc: bboscaccy@linux.microsoft.com, James.Bottomley@hansenpartnership.com, 
+	bpf@vger.kernel.org, code@tyhicks.com, corbet@lwn.net, davem@davemloft.net, 
+	dhowells@redhat.com, gnoack@google.com, herbert@gondor.apana.org.au, 
+	jarkko@kernel.org, jmorris@namei.org, jstancek@redhat.com, 
+	justinstitt@google.com, keyrings@vger.kernel.org, 
+	linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	llvm@lists.linux.dev, masahiroy@kernel.org, mic@digikod.net, morbo@google.com, 
+	nathan@kernel.org, neal@gompa.dev, nick.desaulniers+lkml@gmail.com, 
+	nicolas@fjasle.eu, nkapron@google.com, roberto.sassu@huawei.com, 
+	serge@hallyn.com, shuah@kernel.org, teknoraver@meta.com, 
+	xiyou.wangcong@gmail.com, kysrinivasan@gmail.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 14, 2025 at 12:17=E2=80=AFAM Eric W. Biederman
-<ebiederm@xmission.com> wrote:
->
-> Jann Horn <jannh@google.com> writes:
->
-> > On Tue, May 13, 2025 at 10:57=E2=80=AFPM Kees Cook <kees@kernel.org> wr=
-ote:
-> >> On May 13, 2025 6:05:45 AM PDT, Mateusz Guzik <mjguzik@gmail.com> wrot=
+On Sat, May 10, 2025 at 10:01=E2=80=AFPM KP Singh <kpsingh@kernel.org> wrot=
 e:
-> >> >Here is my proposal: *deny* exec of suid/sgid binaries if fs_struct i=
-s
-> >> >shared. This will have to be checked for after the execing proc becom=
-es
-> >> >single-threaded ofc.
-> >>
-> >> Unfortunately the above Chrome helper is setuid and uses CLONE_FS.
-> >
-> > Chrome first launches a setuid helper, and then the setuid helper does
-> > CLONE_FS. Mateusz's proposal would not impact this usecase.
-> >
-> > Mateusz is proposing to block the case where a process first does
-> > CLONE_FS, and *then* one of the processes sharing the fs_struct does a
-> > setuid execve(). Linux already downgrades such an execve() to be
-> > non-setuid, which probably means anyone trying to do this will get
-> > hard-to-understand problems. Mateusz' proposal would just turn this
-> > hard-to-debug edgecase, which already doesn't really work, into a
-> > clean error; I think that is a nice improvement even just from the
-> > UAPI standpoint.
-> >
-> > If this change makes it possible to clean up the kernel code a bit, eve=
-n better.
->
-> What has brought this to everyone's attention just now?  This is
-> the second mention of this code path I have seen this week.
 >
 
-There is a syzkaller report concerning ->in_exec handling, for example:
-https://lore.kernel.org/all/67dc67f0.050a0220.25ae54.001f.GAE@google.com/#t
+...
 
-> AKA: security/commoncap.c:cap_bprm_creds_from_file(...)
-> > ...
-> >       /* Don't let someone trace a set[ug]id/setpcap binary with the re=
-vised
-> >        * credentials unless they have the appropriate permit.
-> >        *
-> >        * In addition, if NO_NEW_PRIVS, then ensure we get no new privs.
-> >        */
-> >       is_setid =3D __is_setuid(new, old) || __is_setgid(new, old);
-> >
-> >       if ((is_setid || __cap_gained(permitted, new, old)) &&
-> >           ((bprm->unsafe & ~LSM_UNSAFE_PTRACE) ||
-> >            !ptracer_capable(current, new->user_ns))) {
-> >               /* downgrade; they get no more than they had, and maybe l=
-ess */
-> >               if (!ns_capable(new->user_ns, CAP_SETUID) ||
-> >                   (bprm->unsafe & LSM_UNSAFE_NO_NEW_PRIVS)) {
-> >                       new->euid =3D new->uid;
-> >                       new->egid =3D new->gid;
-> >               }
-> >               new->cap_permitted =3D cap_intersect(new->cap_permitted,
-> >                                                  old->cap_permitted);
-> >       }
+> The signature check in the verifier (during BPF_PROG_LOAD):
 >
-> The actual downgrade is because a ptrace'd executable also takes
-> this path.
->
-> I have seen it argued rather forcefully that continuing rather than
-> simply failing seems better in the ptrace case.
->
-> In general I think it can be said this policy is "safe".  AKA we don't
-> let a shared fs struct confuse privileged applications.  So nothing
-> to panic about.
->
-> It looks like most of the lsm's also test bprm->unsafe.
->
-> So I imagine someone could very carefully separate the non-ptrace case
-> from the ptrace case but *shrug*.
->
-> Perhaps:
->
->         if ((is_setid || __cap_gained(permitted, new_old)) &&
->             ((bprm->unsafe & ~LSM_UNSAFE_PTRACE) ||
->              !ptracer_capable(current, new->user_ns))) {
-> +               if (!(bprm->unsafe & LSM_UNSAFE_PTRACE)) {
-> +                       return -EPERM;
-> +               }
->                 /* downgrade; they get no more than they had, and maybe l=
-ess */
->                 if (!ns_capable(new->user_ns, CAP_SETUID) ||
->                     (bprm->unsafe & LSM_UNSAFE_NO_NEW_PRIVS)) {
->                         new->euid =3D new->uid;
->                         new->egid =3D new->gid;
->                 }
->                 new->cap_permitted =3D cap_intersect(new->cap_permitted,
->                                                    old->cap_permitted);
->          }
->
-> If that is what you want that doesn't look to scary.  I don't think
-> it simplifies anything about fs->in_exec.  As fs->in_exec is set when
-> the processing calling exec is the only process that owns the fs_struct.
-> With fs->in_exec just being a flag that doesn't allow another thread
-> to call fork and start sharing the fs_struct during exec.
->
-> *Shrug*
->
-> I don't see why anyone would care.  It is just a very silly corner case.
+>     verify_pkcs7_signature(prog->aux->sha, sizeof(prog->aux->sha),
+> sig_from_bpf_attr, =E2=80=A6);
 
-Well I don't see how ptrace factors into any of this, apart from being
-a different case of ignoring suid/sgid.
+I think we still need to clarify the authorization aspect of your
+proposed design.
 
-I can agree the suid/sgid situation vs CLONE_FS is a silly corner
-case, but one which needs to be handled for security reasons and which
-currently has weirdly convoluted code to do it.
+Working under the assumption that the core BPF kernel code doesn't
+want to enforce any restrictions, or at least as few as possible, I'm
+expecting that the BPF kernel code would want to adopt an "allow all"
+policy when it comes to authorizing signed and unsigned BPF programs,
+delegating any additional restrictions to the LSM.  With that in mind
+I think we need to agree on a way for the BPF verifier to indicate
+that it has verified the signature is correct to the LSM, and we need
+a new LSM hook which runs *after* the verifier so that it can inspect
+the results of the signature verification.  While it might be tempting
+to relocate the existing security_bpf_prog_load() hook, I believe it
+makes sense to leave that hook before the verifier for those LSMs that
+wish control access prior to the verifier's inspection using criteria
+other than signatures.
 
-The intent behind my proposal is very much to get the crapper out of
-the way in a future-proof and simple manner.
+With respect to the LSM hook, since it appears that the signature is
+going to be included in the bpf_attr struct, and I'm *guessing* the
+best way for the verifier to indicate the result of the signature
+verification is via a field inside bpf_prog_aux, this means the hook
+could look something like this:
 
-In check_unsafe_exec() you can find a nasty loop over threads in the
-group to find out if the fs struct is used by anyone outside of said
-group. Since fs struct users are not explicitly tracked and any of
-them can have different creds than the current thread, the kernel opts
-to ignore suid/sgid if there are extra users found (for security
-reasons). The loop depends on no new threads showing up as the list is
-being walked, to that end copy_fs() can transiently return an error if
-it spots ->in_exec.
+  int security_bpf_prog_verified(bpf_prog, bpf_attr);
 
-The >in_exec field is used as a boolean/flag, but parallel execs using
-the same fs struct from different thread groups don't look serialized.
-This is supposed to be fine as in this case ->in_exec is not getting
-set to begin with, but it gets unconditionally unset on all execs.
+... and be called immediately after bpf_check() in bpf_prog_load().
+As far as the new field in bpf_prog_aux is concerned, I think we can
+probably start off with a simple bool to indicate whether a signature
+was verified or not, with an understanding that we can move to a
+richer construct in the future if we find it necessary.  Neither of
+these are directly visible to userspace so we have the ability to
+start simple and modify as needed.
 
-And so on. It's all weird af.
-
-Initially I was thinking about serializing all execs using a given
-fs_struct to bypass majority of the fuckery, but that's some churn to
-add and it still leaves possible breakage down the road -- should this
-unsafe sharing detection ever become racing nobody will find out until
-the bad guys have their turn with it.
-
-While unconditional unsharing turns out to be a no-go because of
-chrome, one can still do postpone detection until after the caller is
-single-threaded. By that time, if this is only the that thread and
-fs_struct has ->users =3D=3D 1, we know there is nobody sharing the struct
-or racing to add a ref to it. This allows treating ->users as a
-regular refcount, removes the weird loop over threads and removes the
-(at best misleading) ->in_exec field.
-
-With this in place it becomes trivial to also *deny* suid/sgid exec
-instead of trying to placate it. If you are sharing fs and are execing
-a binary in the first place, things are a little fishy. But if you are
-execing a suid/sgid, the kernel has to ignore the bit so either you
-are doing something wrong or are trying to exploit a bug. In order to
-sort this crapper out, I think one can start with a runtime tunable
-and a once-per-boot printk stating it denied such an exec (and stating
-how to bring it back). To be removed some time after hitting LTS
-perhaps.
+Does this sound reasonable to everyone?  Does anyone have any other
+thoughts on the authorization aspect of BPF signature verification?
 
 --=20
-Mateusz Guzik <mjguzik gmail.com>
+paul-moore.com
