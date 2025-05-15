@@ -1,182 +1,85 @@
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-fw-80007.amazon.com (smtp-fw-80007.amazon.com [99.78.197.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42C7D1953AD
-	for <linux-security-module@vger.kernel.org>; Thu, 15 May 2025 21:02:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FA7D4174A;
+	Thu, 15 May 2025 21:05:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747342957; cv=none; b=U+P8HSk4UQ8wnaSqrlaWySfR2kvptZ5Hg6FQ+Gzzi469rYrmuYKKlQao5phsr/ebOO0y3aBNJDX2X+FEhom2QP3k+Yi9p4PzQJJczVqe/840M6OCK6cqV9dizJjETNIJ+8CxEToFq4MDBOVSdAvwGLuMesrIoLtBKn6IddDjaBY=
+	t=1747343122; cv=none; b=My0/Wd2J3q4h52eVF1uf3HJ5lj7GzY6e9zzGYxUssItCoVwD3laovSw9peSxRD9KochMtnitLn+Pnu36m/exKaFePuRPCoPm1pp1qxdflts4Z6yJQxwWmEaEkFArcp+p3ztjP/fFipiLSBN8iZqT6QA1gE8hIKqpGdN4Bq/qB6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747342957; c=relaxed/simple;
-	bh=26lORAklMyj3fACbwa3+V7HA6m0rRTkAPbAuDxglhgQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TOXUHxU0mebjcE/WS+BqBvmtiqLYPjAshnPMz5OXiBJvAKWpV+W3bincK/5GaP68ARqBz5LrgRhfad4geVEjEaOL1bXheJPVPdksRpZ2YB2Lp00CgffCP+V3Th80tLwTcUT0JEiS0RtmRePSwO7Q6Sjtm3jj2cwGOkveZn3zPyg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=XiL8FJUm; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1747343122; c=relaxed/simple;
+	bh=hjdY6wXLhuusRwtLdNI+7Lc2DWrEQ6E1YASsEzK2Aks=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SJE0QmicJAsywpJkVgxghuNXVAKWN5ptK1sXXyT3bJInBmqLVRm6vOl67F6uePQTED135rpQ8bRzTRvSxPCThaYpzYlm6Ee4ulbYieimJG6IxYwsquD5hU5P/YLvyPqcETeSQu/GW9Cldhj8t4HwLqWdqUbBMl/Ye8FdUQRaL+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=UGxd2zhy; arc=none smtp.client-ip=99.78.197.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="XiL8FJUm"
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e78f528aa8eso1402556276.3
-        for <linux-security-module@vger.kernel.org>; Thu, 15 May 2025 14:02:35 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="UGxd2zhy"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1747342955; x=1747947755; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VpA+fUmCWeSlCnAM5f9BQqcfVNSkTiIQtWWOa60sp2U=;
-        b=XiL8FJUmFGRnUMqoKtA/ruHD3tcMj1OcxzQFBX7d8tMj4I6tokx/9piGuH8vHN/B14
-         l4uqBVDanrbOs149W3cYP1j5HJCR7rKRyPzhT2ak16KOJPG2u2akDr9W6rIvgaVZp9Go
-         gVRnulBQNJu3OrgtRkis/35NDz5cNnlN4NoEMulEleFsCoovV0/WXZ7sidL5qdltiofw
-         Tl7aAe0BZCtJ6lH+Ww7s/ie7yMNmO1D8d9ouXq3QTXjClHuq+sHM2tGpKN6rza6kRjA+
-         SyzWdrCTmMsFC5AvpT/JNy4ZTxSgvKuO8nCXdtBhIThGkEvYTafseZhIUa3DTYgHy+iD
-         tb0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747342955; x=1747947755;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VpA+fUmCWeSlCnAM5f9BQqcfVNSkTiIQtWWOa60sp2U=;
-        b=EE+BAAkiJHkIacXTzoQV7bBYsW6DZbVB00VQjosD2jbhBFT91ASBP2Jy2ML73/+Zqz
-         eWfm3KtwNl7aoXuJLeButg8ZKQtUUNZ1JdgTVT3JCxkod9xJCZq498R5ogC9czX/yun+
-         JxWcPwMNzuA9/pao8/kDlJOes447D+uPh/FseRjt3+MSNedQgWKO5EhlRmY9F2QraSi1
-         L0ljOQb+Fyn9JR/gDECPvtYPBtcQM2gEBe5wkUbfbKs3nbeXy4A+6gyhrtZ59pMuBkof
-         GrfHE2GM9me0TeM4nSJqebhzVeP/d+CDScqXZvXZzl4/z0lanEjK5P/t5r4NRoE6H1Cg
-         LAeA==
-X-Gm-Message-State: AOJu0YziQBVf52A3DKLY95xZ/k1GLMJGKBsEonEkhxSJEkpmum6zxB13
-	VL2BV6Q+3hmgStNZy952dqpCW4MNJvJsATmAxNudxrTKiAUMeA9Lqqme7zLVaiDC2ij8lvRrV5p
-	vcdCcV6UtL0nrSa7i7EKEi/+fVTDTKG4pNSaZbfUy
-X-Gm-Gg: ASbGncs5Aai/P7mQht04RJipkOBha6Sxd/BM+DqVd2VtW/nOAfTFMB5Savh/7FPDO0g
-	RSVaqvv90JVoLjpSBPsB/N6Wdgf2L6NJxdhPBld84Sv5nsiNjz2BcIeUp0vcxPb/FsDe7bkyvWR
-	q8xB6FEaP7Jkt1iNVstife2pOQow7HLTN/
-X-Google-Smtp-Source: AGHT+IFG4xJfXunSgZQeenjERt+7u3aBw98sMz9/+SZ1qA5bJgp4wIFrzJokOJs37W4C7WHtZPHLnos8TQBVMXB5/Ck=
-X-Received: by 2002:a05:6902:990:b0:e72:97bc:a1a1 with SMTP id
- 3f1490d57ef6-e7b69d546cemr1735351276.7.1747342954909; Thu, 15 May 2025
- 14:02:34 -0700 (PDT)
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
+  t=1747343122; x=1778879122;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=tU5GPI6luOeZZUz1jc3iKVDreM5mUB0uafA/q4t13GU=;
+  b=UGxd2zhya9q1VxIlJoDvVSmSdXaZk+CB9idGs9TZogy1c2z9T+7UxTKu
+   pdoYMJmntnJzX6UX5iqVLwUiN+zrcQFDrKbUnyULO/9q5LXuhRfI5VucV
+   BTsp432j9qMHacBrzmWqSRUFxIKXilOxsDeJBERVSzj2js0DoD0xlBjdm
+   mpSxy5iXKC2Qss5Du8dNGiJ3Gnu/TkEbsuYhR7VIwuUYfGYoy4rS4iozU
+   e85BmQB2i3umzaXR3BasjSRWnmVk0Vjep1sCxprqt0JJyoTwEdd2XlhvV
+   C1xiC5Eh21zCA0gwmk9uOfwLSy2TBt85yTF57so66mwBlGIR/qYwdYTCk
+   Q==;
+X-IronPort-AV: E=Sophos;i="6.15,292,1739836800"; 
+   d="scan'208";a="405700419"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-80007.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 May 2025 21:05:16 +0000
+Received: from EX19MTAUWC001.ant.amazon.com [10.0.21.151:60934]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.29.53:2525] with esmtp (Farcaster)
+ id d61893e1-700d-487e-8d5c-88e3e57e8dda; Thu, 15 May 2025 21:05:10 +0000 (UTC)
+X-Farcaster-Flow-ID: d61893e1-700d-487e-8d5c-88e3e57e8dda
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Thu, 15 May 2025 21:05:10 +0000
+Received: from 6c7e67bfbae3.amazon.com (10.187.170.35) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Thu, 15 May 2025 21:05:05 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <jannh@google.com>
+CC: <alexander@mihalicyn.com>, <bluca@debian.org>, <brauner@kernel.org>,
+	<daan.j.demeyer@gmail.com>, <daniel@iogearbox.net>, <davem@davemloft.net>,
+	<david@readahead.eu>, <edumazet@google.com>, <horms@kernel.org>,
+	<jack@suse.cz>, <kuba@kernel.org>, <kuniyu@amazon.com>,
+	<lennart@poettering.net>, <linux-fsdevel@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
+	<me@yhndnzj.com>, <netdev@vger.kernel.org>, <oleg@redhat.com>,
+	<pabeni@redhat.com>, <viro@zeniv.linux.org.uk>, <zbyszek@in.waw.pl>
+Subject: Re: [PATCH v7 4/9] coredump: add coredump socket
+Date: Thu, 15 May 2025 14:04:37 -0700
+Message-ID: <20250515210458.91912-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <CAG48ez3fC902JU244d=0zzr39f+iXxQH0GZgJp0rs8pbu8ka4w@mail.gmail.com>
+References: <CAG48ez3fC902JU244d=0zzr39f+iXxQH0GZgJp0rs8pbu8ka4w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250409185019.238841-31-paul@paul-moore.com> <20250409185019.238841-60-paul@paul-moore.com>
- <81106a29-90ce-4439-9b4c-60bb2962fe04@schaufler-ca.com> <CAHC9VhRUr+sXhLzDSjiG9bEVbzZd2u632dLMVpcCe6By_d_H4w@mail.gmail.com>
- <3d884912-6225-485b-a7dd-2aa4073265f2@schaufler-ca.com> <CAHC9VhR5OFDvJNJLy9jKMsB4ZVx=phm6k6iebT6VuXD96kNEEA@mail.gmail.com>
- <c5b81e66-7e73-41cb-a626-9f18f6074e53@schaufler-ca.com> <CAHC9VhSiGc16g36gtZvWKYdtdx-3WG7HbWWhNXvPSBRfA7uphQ@mail.gmail.com>
- <5df7b895-888e-4aa0-a21f-0a8264158bfa@schaufler-ca.com> <CAHC9VhScu-AsvOAJ+4VoQB_QTmhuFGwVXmQF2PpgH+D-qLi7=w@mail.gmail.com>
- <9351b5b9-ee06-464d-96d8-9fb5a9c94c82@schaufler-ca.com>
-In-Reply-To: <9351b5b9-ee06-464d-96d8-9fb5a9c94c82@schaufler-ca.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Thu, 15 May 2025 17:02:22 -0400
-X-Gm-Features: AX0GCFtfuLfEqOgBjxD362RxeF-rLbRPhgbBA9x9mCqA2h8izdggIEODynqOF_o
-Message-ID: <CAHC9VhTwQY1g8tUHLzaLVEJA9ib0Z-_H0m+dPBZfYhEabGYwVQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 29/29] lsm: add support for counting lsm_prop support
- among LSMs
-To: Casey Schaufler <casey@schaufler-ca.com>
-Cc: linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	selinux@vger.kernel.org, John Johansen <john.johansen@canonical.com>, 
-	Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Fan Wu <wufan@kernel.org>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	Kees Cook <kees@kernel.org>, Micah Morton <mortonm@chromium.org>, 
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: EX19D041UWB003.ant.amazon.com (10.13.139.176) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-On Thu, May 15, 2025 at 3:41=E2=80=AFPM Casey Schaufler <casey@schaufler-ca=
-.com> wrote:
-> On 5/15/2025 11:13 AM, Paul Moore wrote:
-> > On Thu, May 15, 2025 at 10:12=E2=80=AFAM Casey Schaufler <casey@schaufl=
-er-ca.com> wrote:
-> >> On 5/14/2025 3:11 PM, Paul Moore wrote:
-> >>> On Wed, May 14, 2025 at 5:16=E2=80=AFPM Casey Schaufler <casey@schauf=
-ler-ca.com> wrote:
-> >>>> On 5/14/2025 1:57 PM, Paul Moore wrote:
-> >>>>> On Wed, May 14, 2025 at 3:30=E2=80=AFPM Casey Schaufler <casey@scha=
-ufler-ca.com> wrote:
-> >>>>>> On 5/13/2025 1:23 PM, Paul Moore wrote:
-> >>>>>>> On Tue, May 13, 2025 at 12:39=E2=80=AFPM Casey Schaufler <casey@s=
-chaufler-ca.com> wrote:
-> >>>>>>>> On 4/9/2025 11:50 AM, Paul Moore wrote:
-> >>> ..
-> >>>
-> >>>>>> In my coming audit patch I changed where the counts of properties =
-are
-> >>>>>> maintained from the LSM infrastructure to the audit subsystem, whe=
-re they are
-> >>>>>> actually used. Instead of the LSM init code counting the property =
-users, the
-> >>>>>> individual LSM init functions call an audit function that keeps tr=
-ack. BPF
-> >>>>>> could call that audit function if it loads a program that uses con=
-texts. That
-> >>>>>> could happen after init, and the audit system would handle it prop=
-erly.
-> >>>>>> Unloading the bpf program would be problematic. I honestly don't k=
-now whether
-> >>>>>> that's permitted.
-> >>>>> BPF programs can definitely go away, so that is something that woul=
-d
-> >>>>> need to be accounted for in any solution.  My understanding is that
-> >>>>> once all references to a BPF program are gone, the BPF program is
-> >>>>> unloaded from the kernel.
-> >>>>>
-> >>>>> Perhaps the answer is that whenever the BPF LSM is enabled at boot,
-> >>>>> the audit subsystem always queries for subj/obj labels from the BPF
-> >>>>> LSM and instead of using the normal audit placeholder for missing
-> >>>>> values, "?", we simply don't log the BPF subj/obj fields.  I dislik=
-e
-> >>>>> the special case nature of the solution, but the reality is that th=
-e
-> >>>>> BPF is a bit "special" and we are going to need to have some specia=
-l
-> >>>>> code to deal with it.
-> >>>> If BPF never calls audit_lsm_secctx() everything is fine, and the BP=
-F
-> >>>> context(s) never result in an aux record. If BPF does call audit_lsm=
-_secctx()
-> >>>> and there is another LSM that uses contexts you get the aux record, =
-even
-> >>>> if the BPF program goes away. You will get an aux record with only o=
-ne context.
-> >>>> This is not ideal, but provides the correct information. This all as=
-sumes that
-> >>>> BPF programs can call into the audit system, and that they deal with=
- multiple
-> >>>> contexts within BPF. There could be a flag to audit_lsm_secctx() to =
-delete the
-> >>>> entry, but that seems potentially dangerous.
-> >>> I think the answer to "can BPF programs call into the audit subsystem=
-"
-> >>> is dependent on if they have the proper BPF kfuncs for the audit API.
-> >>> I don't recall seeing them post anything to the audit list about that=
-,
-> >>> but it's also possible they did it without telling anyone (ala move
-> >>> fast, break things).  I don't think we would want to prevent BPF
-> >>> programs from calling into the normal audit API that other subsystems
-> >>> use, but we would need to look at that as it comes up.
-> >> I suggest that until the "BPF auditing doesn't work!!!" crisis hits
-> >> there's not a lot of point in going to heroic efforts to ensure all
-> >> the bases are covered. I'll move forward assuming that an LSM could
-> >> dynamically decide to call audit_lsm_secctx(), and that once it does
-> >> it will always show up in the aux record, even if that means subj_bpf=
-=3D?
-> >> shows up every time.
-> > My only concern is that I suspect most/all of the major distro enable
-> > the BPF LSM by default which means that suddenly a lot of users/admins
-> > are going to start seeing the multi-subj/obj labeling scheme only to
-> > have an empty field logged.
->
-> That will only occur if a BPF program says it want to provide contexts
-> and then stops doing so, either by exiting or in error. As no BPF program=
-s
-> currently use audit, it seems that this is at worst a future problem.
-> Should BPF programs develop the ability to use audit the behavior will ne=
-ed
-> to be documented. I don't see how we can anticipate what they'll end up
-> trying.
+From: Jann Horn <jannh@google.com>
+Date: Thu, 15 May 2025 22:52:22 +0200
+> On Thu, May 15, 2025 at 7:01 PM Kuniyuki Iwashima <kuniyu@amazon.com> wrote:
+> > nit: please keep these in the reverse xmas tree order.
+> > https://docs.kernel.org/process/maintainer-netdev.html#local-variable-ordering-reverse-xmas-tree-rcs
+> 
+> Isn't that rule specific to things that go through the net tree?
 
-Okay, I must have misunderstood your proposal; I'll take a look once
-it is posted, that should help clear things up.
-
---=20
-paul-moore.com
+Which tree to go through doesn't matter, rather it's applied
+to code maintained by netdev maintainers, especially net/ and
+drivers/net/.
