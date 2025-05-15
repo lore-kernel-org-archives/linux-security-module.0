@@ -1,44 +1,44 @@
 Received: from cloud35.hostingpalvelu.fi (mail35.hostingpalvelu.fi [31.217.192.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5228200132
-	for <linux-security-module@vger.kernel.org>; Thu, 15 May 2025 20:20:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C42501F5827
+	for <linux-security-module@vger.kernel.org>; Thu, 15 May 2025 20:24:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=31.217.192.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747340450; cv=none; b=YLyyho/iCo8o7bUeyivuMjxPZT5jkz3qK1rsRdsY+xOEmtw5K/Dd3nl9RADCYPDrZ8AzbhDJtY5pTLqhrQsW44d8nJRNDFU4+XprI6nwdMyyPxaPfvbiBKT+GICXvWLbrN6Gx54Vh+3qDiKrE629qr6ep0svWsrhpa6bIShhB6c=
+	t=1747340644; cv=none; b=AkZB0HsLQIQ60fa4zp2HTKD5+7gVKFky4YEcDO5XJ7xb0BNTJtzsQv3/fWRhRl9PTh1FXrDEHu2yUu4daY72i7Gr82w9dWO9YqLZMbEw4vFG4Qq627rhi8VIKtopxgAwAWR7r59K2cJvZ6SMQNXLRF6tkh+zXEQkOj3F3Goe6yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747340450; c=relaxed/simple;
-	bh=LO+nPRcgFCl/CqnMRTsBmYeOSUEkZ4gnzB2zLfXo5XQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oFHLDEGUJuEWF8+lKLCt5d6sApSm13+jX0weCknZ79hTAhNrHV2q2OjItWosnOAmtDOICrxdot0bBtvJ4ZrRNjLFLjyb9jq2PavZDud+s7aNW5mPMIPvBBaHFVC6mlgFGhXvE+7D63HrHeotRvKY26Sw3GYdhGQ6YXqqfnTkL2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kolttonen.fi; spf=pass smtp.mailfrom=kolttonen.fi; dkim=pass (2048-bit key) header.d=kolttonen.fi header.i=@kolttonen.fi header.b=tjOWFqxy; arc=none smtp.client-ip=31.217.192.49
+	s=arc-20240116; t=1747340644; c=relaxed/simple;
+	bh=pzDjhbn5cWaqOSlZGH/T2tQYkiN6em1Hks4lCJvmHV0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GPGev//ErRClf3E61Gy6DOKH5HqXTwKVa9uv/sxeduOUh5iOruZRHRbLC0J0jFKFB6bFRVmG2DsFTW/m/78rPtULvnslzHFQpC/QSsQcNfYZnM1lAbPs0++OZYUN0FXQ2iIfZRHbnBrw88TUxBcawW2W1kW3p47MSwYzjHCSOrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kolttonen.fi; spf=pass smtp.mailfrom=kolttonen.fi; dkim=pass (2048-bit key) header.d=kolttonen.fi header.i=@kolttonen.fi header.b=ee2jrBTj; arc=none smtp.client-ip=31.217.192.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kolttonen.fi
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kolttonen.fi
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kolttonen.fi header.i=@kolttonen.fi header.b="tjOWFqxy"
+	dkim=pass (2048-bit key) header.d=kolttonen.fi header.i=@kolttonen.fi header.b="ee2jrBTj"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=kolttonen.fi; s=default; h=Content-Transfer-Encoding:MIME-Version:
 	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
 	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
 	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
 	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=EjRW9/xatcPJPaJuKdR3e0P1BmzGYemRAELaGvqMYlU=; b=tjOWFqxyhltIvfEXiv+aVP1Uya
-	7gkzad9xmqx3q6j5AwwY+2yS0ugQpGDOoc7t61oVnX2/KLMtUOZR6QazYgwBdP25hVhmpCVzVAmYT
-	m54Yd7pP9Og5YSzERZe6JiGlz1aab7+NC5AeOD2yaPrSUXo17MpluQA/qBmiRm2eHDM3qUkr+XvFx
-	XR6LxFfjPOQOGfzdKJj20ax/lpLMKdaqVBoI3nwFND2IMiAXedQsCJh2We3HQjPK3qdyjbkjZKV8N
-	0xTTV3/oopHt9T/NOf4BkPfZ4FJFtY7QbSgRQm3se0mXl/JbGTZZpYY0RcvMNUO3ZX0FKNDFQ9muh
-	rQv+oqfA==;
-Received: from 87-95-116-80.bb.dnainternet.fi ([87.95.116.80]:11529 helo=fedora..)
+	bh=jn2E6cmYkj6lv5IXJSnPDQ7D/rJuduAlo54Qe+uRgF8=; b=ee2jrBTjKhO6tPZIOl2ihY3Qqg
+	BNkXNmCnbeHxUuQbLjURRykxrxz6dZJCKNscsujdsN9MqnTrFONNhBYAN/9IvXs5KdbyYM8M0j4Ji
+	SslnkvdceFLteObnQlEKcJtp/XVmBsq1OEvuhN9NmCKvSO/i9T1Pyh4wjW8+d7AEbiMXmmmHHcajx
+	CfEKsVofbeHPqLBLqv6ATphTUCnPAdZ9yZRyZN3YbFUX72ODNhswwyymaRxM86pSQA6E5qUfNn5yc
+	Z5nPD05JOP1UMoJTMHsJkn/kRE0Uj51RJs65ondwtjCnegOr5Tf+BMDn9Xmg/2sUGjathXvcrC0VZ
+	NrrkBu1g==;
+Received: from 87-95-116-80.bb.dnainternet.fi ([87.95.116.80]:11565 helo=fedora..)
 	by cloud35.hostingpalvelu.fi with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.98.1)
 	(envelope-from <kalevi@kolttonen.fi>)
-	id 1uFf4K-00000007EOc-3dNo;
-	Thu, 15 May 2025 23:20:40 +0300
+	id 1uFf7W-00000007Ewz-0rjn;
+	Thu, 15 May 2025 23:23:58 +0300
 From: Kalevi Kolttonen <kalevi@kolttonen.fi>
 To: linux-security-module@vger.kernel.org
 Cc: Kalevi Kolttonen <kalevi@kolttonen.fi>
-Subject: [PATCH] Fix variable type to be 'bool' instead of incorrect 'int'
-Date: Thu, 15 May 2025 23:19:52 +0300
-Message-ID: <20250515201952.3996-1-kalevi@kolttonen.fi>
+Subject: [PATCH] Trivial fix comment
+Date: Thu, 15 May 2025 23:23:40 +0300
+Message-ID: <20250515202340.4271-1-kalevi@kolttonen.fi>
 X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
@@ -64,18 +64,18 @@ Signed-off-by: Kalevi Kolttonen <kalevi@kolttonen.fi>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/security/security.c b/security/security.c
-index 596d41818577..447adeeb15d0 100644
+index 596d41818577..fc8405928cc7 100644
 --- a/security/security.c
 +++ b/security/security.c
-@@ -288,7 +288,7 @@ static void __init lsm_set_blob_sizes(struct lsm_blob_sizes *needed)
- /* Prepare LSM for initialization. */
- static void __init prepare_lsm(struct lsm_info *lsm)
- {
--	int enabled = lsm_allowed(lsm);
-+	bool enabled = lsm_allowed(lsm);
+@@ -2181,7 +2181,7 @@ int security_inode_symlink(struct inode *dir, struct dentry *dentry,
+ }
  
- 	/* Record enablement (to handle any following exclusive LSMs). */
- 	set_enabled(lsm, enabled);
+ /**
+- * security_inode_mkdir() - Check if creation a new director is allowed
++ * security_inode_mkdir() - Check if creating a new directory is allowed
+  * @dir: parent directory
+  * @dentry: new directory
+  * @mode: new directory mode
 -- 
 2.49.0
 
