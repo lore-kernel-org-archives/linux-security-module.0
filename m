@@ -1,446 +1,145 @@
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+Received: from sonic307-15.consmr.mail.ne1.yahoo.com (sonic307-15.consmr.mail.ne1.yahoo.com [66.163.190.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9290D154C17
-	for <linux-security-module@vger.kernel.org>; Thu, 15 May 2025 14:08:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5A524174A
+	for <linux-security-module@vger.kernel.org>; Thu, 15 May 2025 14:12:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.190.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747318110; cv=none; b=V3wb31gNYtAFbMr4NE1SwNQLzcTTECFIsawcpsDiKbfJUR3IVtXXTK3z+epPnc3Pv5abHwZvwfR7TRMEi9yGtg+VsW/BYeB/EFiuqgNmoNjNNfEN8mMS5inZ6U5zSszcsxnz7Z8LZsWZS77lFWYMDULrsnFL4qPbW97eCPnD3Aw=
+	t=1747318357; cv=none; b=gF0rquSUP5nmgJH5GHw6wZBynsDXCYeJ96evyELyTbCHmABhdPyid+V6nvQxbQ83FFs0TeiP0HNl5QjIl3rMy0FqCeSbWrnOsyz+fVo4eza2K7kyXLyIcOW+E2ucQIDQKaBYrqhPKi06Hr16YhhkKk4rGpRtiB8SbE2s8XDSSY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747318110; c=relaxed/simple;
-	bh=9VmEHRvbOUYY2kOCO7kEzLjU7lCkScd3CaiU4PIIzdo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pkzvfO6dgD1+xCAV1pQACScCr41TjApUsWrndCFLI1n2vlrkWVzQ9acX+CmEMo4Ft4D/AI9KwpiS66EmlFizTtQCbw/f6v8Z0+BKKjfX7/CD8Z+VsKm9XsFEJMrn0g5rS+2r4UXfIhyCIczZHdVv292TzBYlEkHS/kF90dndE/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com; spf=pass smtp.mailfrom=mihalicyn.com; dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b=LUvJyP/4; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mihalicyn.com
+	s=arc-20240116; t=1747318357; c=relaxed/simple;
+	bh=r/mkDI9oyFKrFBWsJfAjSPO6s8IgcWiiwSiqyst0XP4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZIrjZHNXD4gVSI5alAcWR/6Hi7/MQ15nkwfu4w+n63iSTzjmEcslQBwgz56GspYAe85HsfSi558J16vzCSfZRS3KMHQvjM1bmsCMZsAjFcCqg/wAngC7nm8hYqk97fc0+PZf0XjGbnuY78fbsqDHw6FnQlrBIBQfH74gJrqbAQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=LWNwrxC2; arc=none smtp.client-ip=66.163.190.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b="LUvJyP/4"
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-30bf7d0c15eso8666601fa.0
-        for <linux-security-module@vger.kernel.org>; Thu, 15 May 2025 07:08:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mihalicyn.com; s=mihalicyn; t=1747318105; x=1747922905; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=zlNPK/1z36znT+gkUbgbVHXLqL8fwZcYFOdBbadwik4=;
-        b=LUvJyP/419hEuiW3lsr6iCX+MBEUw9vtrL1a6FCdHBe8ZbZD7QbvW/I9i33vQNLfmW
-         KDELluXcESBfeW9Bkfed6TEc08Os3lsGKNWdD2vv8fSUWUTjI8bhDm4wOWfgvnSXX8nX
-         ckd8pNDi6K0CbDuOz/mxAQqoosCQISFFBg6n4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747318105; x=1747922905;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zlNPK/1z36znT+gkUbgbVHXLqL8fwZcYFOdBbadwik4=;
-        b=gpp5sg2Jw+fpyl51uB2ujHMojC4Nfv8KZi0dHRW/57buI9Ickg6dzKUwIyqQrbUSqU
-         tAjlu/4f0K4PkZXKcgtaAA5bFGjhO/L184YRFKII3ZVV/CuCWbp2uCqB164Gi2DNKe2S
-         PY2TYFnnsOTIhoskn43lzH1YeP0A+Oi/pfjrAn3mWO7SAh87vzBTdJ5mxpJNQm2F8/pg
-         GJfNbFy8C6NOMjTrWdUJxDixcGyXyFCF13+wWs/9nsNmL4cNgzzrsmXPuoTBZFACcsGm
-         OXi3UMJzAwxKANRmo2XYsr5Cnk6FDmGq3PFA761dfmoQmuTr7yejlX4TboHdWv/BQ09X
-         fILQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVOZwdamN+oETPsiJivRSjAt0268Gtn0KXYPEPiBj3G+JzY0fWa8Y44sjKUyEFWgdCMSX6sXpjhGC8d5Cei+YmoCeETyDI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJ15zH8194cU796AMlQC8EuXtt2ji3ZLAkhOQGyTfjVWtEPjZ+
-	Jd4HDVNqfbBHL3aOQGZCWq3qOJONiBekHeZMoNkqJ0XsLMjOCfjjl+WjYKivbVAIE4HMX914vDv
-	AG9NWuWuB0lMx/x+Mh9Z28agAGyqQ/dd4CDHrVw==
-X-Gm-Gg: ASbGncvrIvER4TMP8FPwFcby2wuDxclFQ0gLHoVOvQoyBlRj3xx0cFl5C4LBr+wi+lj
-	LepZ7x/PcAy2zkf1/fZ9MUuP0oAf629RbSg42xHp/gu2c+F4kw6YCxbw0PE3UcrTxyPUxS3sinI
-	8ydG0q/PmznkjWCrpbIYj1/mnoZe5OelSB4g==
-X-Google-Smtp-Source: AGHT+IGG20PtI++hE8yDk6QEBSUwuUvn9V5k/Nv6PNWbTdXdi8Qzd9UzXUUJl23CSX4iciWSDusCvlA50MDj88zA+Bo=
-X-Received: by 2002:a2e:a9a2:0:b0:31c:d57e:b6f6 with SMTP id
- 38308e7fff4ca-327fabc40e9mr11042271fa.8.1747318104365; Thu, 15 May 2025
- 07:08:24 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="LWNwrxC2"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1747318354; bh=t0gNI7vdEbkAek03QnMfylEWlcSHTuTn63QPqntwR7w=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=LWNwrxC2zm2GrtntKsqRmL8CBN4hj3fn4StGFE5ms1hgnH8k0gi1oysJSQbXWaMCBAt7wxEfLkhe29be0JlYyY9B4abJcS8bIKGib1OXRclWi8IaKYWaaZz3F6j0erLW5HQRg5IztdiUDsm1iDV1uiqVv+d49IjQaLkKFf2U7HaOYuSoaV0/ak69oE9gjijFQiwuq6BiDUV+WlOcMKFeymd8cKsK7yrHBCHs9EiMWcS5Vfexmoc3VXgqHEC6A9RvFxjGWOWqmN9fL4mJUcwPRaO8poP3psF3hK0NNDsIXUZ+0cjKW5JX7S2b6uaJVq+ufzYrdWaEkEecTEyaw7DlQQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1747318354; bh=UrInA4SNZmaFSXATEK6uXfgns8KiGvdC+bcfatP4qPv=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=EU2s5Q/0cmIeSXhirdAuI7zdDvJvPkoFNM1jItcXPJOso4CkhbzvMojokCoKplRAb6j5I5xg86ZcAi6mmQWf89hDploY7nrsoIvGeE7lD/1x8uzXlJ0xFiAe5EFoO6lS73ePP2jqBxz/23uI77NYna5fhnZo41pM3jC9FSunCwIUNrPBKwZyYVQAOfHMNOOTQW4IGBVI1OWGHHvyFihESV3UOWV2x9MnukWw7c6MOXtP6zdzwvFtKo1LEqzKxZ3GXWyp5RsBfiZnabQhzDoULzUrLtVoyGXMzd4t4tv/VQgr2SeEFhe6EV4jgTVvd4rHaRIMdkoc6+ce9lQ9c0n5bA==
+X-YMail-OSG: xV7FwL0VM1ma4VYkVAS2mJjIAykA.j7gmTBR.24zxl87xHe6OrHfX2IRu5cgSp0
+ HfL6ozUmkz4iE4pvXymmU9UrS6vSpcAW7nfjJizmCOXoupnGfHR5Mtt9VgoRO.jpsQRFD9477i32
+ nKKO.UHkaJLop7DxrEW7J9O12OVMiQwgOCOaag2sYbhCcwiNU.mWPTYRVVKhXn5Qk81iCpfITxIP
+ DdBp_JEtonJ_MN6IlFMANukgZ1yaM9OWu4V_PIL_Ieg1Qm56KrqE9zVpyBd96T7VV0Vj8W2WnDJz
+ 2GvSavxa4TP.S.J9cD8oiqOr81kKaGKb61eqKEJpQFeD0MEibCqG4AX2blUvT7P_wCaP6I1h.lQ_
+ JplLYh9BWU1QCTlL8SpBUmwMZZvYtfHy.AM2xvIEHem90aRXBizhLVpTM_u1wwWSxGQGy_KKOBgg
+ t0BjLcG9cpJAcQoUDQ1RMY8Tionvt1UiIG65G2t4QWxNIBYFqwF8J1Z09Oezzi6IO5LNYI86LVSx
+ JuT9_nH7R2x11f_BW0p5tU2E8Jm_O0r9ti4eiXNP3Zo13IxuBWKuNUUsWfQe_JJPAi9hcyHwsnFl
+ ker4v0SLraKsr7QDHXCyCaIeWYbySoGBsAX_xSmQj5lGRpa6SO_kYn5kS1QmaNASL7CLSLmd0OTb
+ ZsnwPHU_m56N.VNEe9THYfpuXq3oyZS3vt.trgZuifdoaNbFM6SeoYnPQCuBViuAVNXzgXR6R9Sp
+ CdjfGFZ_Ia40shgAS7GWteqqfsz8oUs0tou_REa9d_UzT_b_7ew6VucYRbaX9DF1PnqZAo55L3kJ
+ KDC7bfHVycT0PhkixP4p0dQx9fIWkxPsZyAfAtcB15rIfCd8V3dcIoAB36fxHA_ajGJ7jgMq6Wik
+ yoRen7_fg9W..FSF.JCA0oJRTcnGH5JJlx.2b6D1akbUOsCQqyTQmSQWsDUbvFYkACs9O02G_ESb
+ gu4y0BANS_GyjmvR6a34RqAzoIV_7ayKOfpoeQ.AFqb7frFAxjIGRDx4G0IgY1T6xp30KlyKGasj
+ uA8c3Qk6THBH7UXW8ygw.O.NHTYD9ikdwcsqyDxsGdJwGzHU4NPu8UK.ufjWKMhfd3NfwIlA7RJb
+ V0Gqb.YG5Bh2lnI50bCRyRKwE7XJsXMKGjmZlDS6P19pz2qXo4OkKVLNNaj3t5BaTvlom_4mYHIa
+ k2ihLQbVN2wyAc_O_AhK9vRyGZ25jtbt50E7f2PG_e4radavkutuVsBFv1CrSVKKfHWf0ki7Pbwk
+ cAM6xKFW.kk.ScAjN8wi.vYa8_HJRmPne1D7Znhn59JfRGVmFhUJSSgMLAalRHYamAxxDn6Xrbwb
+ LBD4NiPLjp08AQd9Oc8whRx2vsSDg4Sqk6EWZgZ5RzYg_StgRXcWc_zVv54utaH5KsFwJh2SIONg
+ .AWzci0viqnAFth78LcuTIeXiL4qCwce1rPW7i178aeLOe.lV1_kkrWtj39nehA5xh3OjQd93hLB
+ YuIxrAn58r0A4IWkmmqKs7XhZ96MziRg4cOJGuew2RlqJLvs8r5zoLV7IiIX5EemdnU8VHBebuQg
+ uWiqHHEktOfKYQAvGfOpbbT2wf5RSvs7cmjzM.qfCZFyuInE7I2EeP8yFEYperMJEARLlo.pBykH
+ acym5q2.XEiNU_TObAHloH5z65sdQsXkYO.npwBQVKlUV8OgcUkEzOimsyVwvna0_.pVZU53HJic
+ KdCqYBKtm8tnm7Ckl2ixLRBf47J2oDH3jrY4tU9EjM4rsBCDcId644jS7ueNigYy04Vu_QycTGbR
+ 40ByGE33c0ld80Zx.XTuT.fzfGWD4Ud4QIC0.L6.V_FXO7q6ztIu5deYXiP2oiB7AnzmcA9ezCJt
+ TmoV7DMOrXfjrj2ldmgtVePV5ujJEcFI49mA9OiEH0uzYy0MCw2pjspvxkv7pvZgtmMjvw.pvp0v
+ Xa0QEgHEBVkTBK4f55jXCOvPmER0H7g3L.SqamiQczWQHk5onT74.o5csECXU1S51G9paqAjRchS
+ plubfvJeJ9ONtJXZhPjU5aSOTfL2WIbkd3oL8DfSgRLhCHVB.RlHct3aQ2lTU554A0tXcpKp9Q1d
+ qgFjLHK7DblM0KrauLiNtkuSudhqmgrdc3kPuxHZZFLdA1D.zcYoVerkW5OhSfJusovgNFbTrBXo
+ 6GJOKuBUakugf8tFao7KZixUWolCOli.pA8SLzY.4oLVCz9WUVnvXQtFx6E7TI_C51qMn2bY3km8
+ 9A.sGlWTSasqe6JagcJeuaH7.zMThMm9uLo5WFQBhmQos8mRQkEhb78x73ocRbUMW.8zXHbncH8k
+ sVypty6_uyopttTaumHms4uY-
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 6da77d25-55ea-4581-abf5-9343c9dfd048
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.ne1.yahoo.com with HTTP; Thu, 15 May 2025 14:12:34 +0000
+Received: by hermes--production-gq1-74d64bb7d7-khmfd (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID d4bed09cf381ad2d4b7ae6d00db4595d;
+          Thu, 15 May 2025 14:12:32 +0000 (UTC)
+Message-ID: <5df7b895-888e-4aa0-a21f-0a8264158bfa@schaufler-ca.com>
+Date: Thu, 15 May 2025 07:12:31 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250515-work-coredump-socket-v7-0-0a1329496c31@kernel.org> <20250515-work-coredump-socket-v7-5-0a1329496c31@kernel.org>
-In-Reply-To: <20250515-work-coredump-socket-v7-5-0a1329496c31@kernel.org>
-From: Alexander Mikhalitsyn <alexander@mihalicyn.com>
-Date: Thu, 15 May 2025 16:08:13 +0200
-X-Gm-Features: AX0GCFtEFde-SVXMph4csubR6h1lBYhA7PILE7qan5SniY73PDOxFcp0KliU8N8
-Message-ID: <CAJqdLrrNxYGmdZdt_1oTeXw40Ox1D5TQAWtYjweT0AUMLs7mRQ@mail.gmail.com>
-Subject: Re: [PATCH v7 5/9] pidfs, coredump: add PIDFD_INFO_COREDUMP
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Jann Horn <jannh@google.com>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Kuniyuki Iwashima <kuniyu@amazon.com>, 
-	Eric Dumazet <edumazet@google.com>, Oleg Nesterov <oleg@redhat.com>, 
-	"David S. Miller" <davem@davemloft.net>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Daan De Meyer <daan.j.demeyer@gmail.com>, David Rheinsberg <david@readahead.eu>, 
-	Jakub Kicinski <kuba@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Lennart Poettering <lennart@poettering.net>, Luca Boccassi <bluca@debian.org>, Mike Yuan <me@yhndnzj.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	=?UTF-8?Q?Zbigniew_J=C4=99drzejewski=2DSzmek?= <zbyszek@in.waw.pl>, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 29/29] lsm: add support for counting lsm_prop support
+ among LSMs
+To: Paul Moore <paul@paul-moore.com>
+Cc: linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org,
+ selinux@vger.kernel.org, John Johansen <john.johansen@canonical.com>,
+ Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>,
+ Fan Wu <wufan@kernel.org>, =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?=
+ <mic@digikod.net>, =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+ Kees Cook <kees@kernel.org>, Micah Morton <mortonm@chromium.org>,
+ Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20250409185019.238841-31-paul@paul-moore.com>
+ <20250409185019.238841-60-paul@paul-moore.com>
+ <81106a29-90ce-4439-9b4c-60bb2962fe04@schaufler-ca.com>
+ <CAHC9VhRUr+sXhLzDSjiG9bEVbzZd2u632dLMVpcCe6By_d_H4w@mail.gmail.com>
+ <3d884912-6225-485b-a7dd-2aa4073265f2@schaufler-ca.com>
+ <CAHC9VhR5OFDvJNJLy9jKMsB4ZVx=phm6k6iebT6VuXD96kNEEA@mail.gmail.com>
+ <c5b81e66-7e73-41cb-a626-9f18f6074e53@schaufler-ca.com>
+ <CAHC9VhSiGc16g36gtZvWKYdtdx-3WG7HbWWhNXvPSBRfA7uphQ@mail.gmail.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <CAHC9VhSiGc16g36gtZvWKYdtdx-3WG7HbWWhNXvPSBRfA7uphQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.23840 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-Am Do., 15. Mai 2025 um 00:04 Uhr schrieb Christian Brauner
-<brauner@kernel.org>:
+On 5/14/2025 3:11 PM, Paul Moore wrote:
+> On Wed, May 14, 2025 at 5:16 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> On 5/14/2025 1:57 PM, Paul Moore wrote:
+>>> On Wed, May 14, 2025 at 3:30 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>>>> On 5/13/2025 1:23 PM, Paul Moore wrote:
+>>>>> On Tue, May 13, 2025 at 12:39 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>>>>>> On 4/9/2025 11:50 AM, Paul Moore wrote:
+> ..
 >
-> Extend the PIDFD_INFO_COREDUMP ioctl() with the new PIDFD_INFO_COREDUMP
-> mask flag. This adds the fields @coredump_mask and @coredump_cookie to
-> struct pidfd_info.
->
-> When a task coredumps the kernel will provide the following information
-> to userspace in @coredump_mask:
->
-> * PIDFD_COREDUMPED is raised if the task did actually coredump.
-> * PIDFD_COREDUMP_SKIP is raised if the task skipped coredumping (e.g.,
->   undumpable).
-> * PIDFD_COREDUMP_USER is raised if this is a regular coredump and
->   doesn't need special care by the coredump server.
-> * PIDFD_COREDUMP_ROOT is raised if the generated coredump should be
->   treated as sensitive and the coredump server should restrict to the
->   generated coredump to sufficiently privileged users.
->
-> If userspace uses the coredump socket to process coredumps it needs to
-> be able to discern connection from the kernel from connects from
-> userspace (e.g., Python generating it's own coredumps and forwarding
-> them to systemd). The @coredump_cookie extension uses the SO_COOKIE of
-> the new connection. This allows userspace to validate that the
-> connection has been made from the kernel by a crashing task:
->
->    fd_coredump = accept4(fd_socket, NULL, NULL, SOCK_CLOEXEC);
->    getsockopt(fd_coredump, SOL_SOCKET, SO_PEERPIDFD, &fd_peer_pidfd, &fd_peer_pidfd_len);
->
->    struct pidfd_info info = {
->            info.mask = PIDFD_INFO_EXIT | PIDFD_INFO_COREDUMP,
->    };
->
->    ioctl(pidfd, PIDFD_GET_INFO, &info);
->    /* Refuse connections that aren't from a crashing task. */
->    if (!(info.mask & PIDFD_INFO_COREDUMP) || !(info.coredump_mask & PIDFD_COREDUMPED) )
->            close(fd_coredump);
->
->    /*
->     * Make sure that the coredump cookie matches the connection cookie.
->     * If they don't it's not the coredump connection from the kernel.
->     * We'll get another connection request in a bit.
->     */
->    getsocketop(fd_coredump, SOL_SOCKET, SO_COOKIE, &peer_cookie, &peer_cookie_len);
->    if (!info.coredump_cookie || (info.coredump_cookie != peer_cookie))
->            close(fd_coredump);
->
-> The kernel guarantees that by the time the connection is made the all
-> PIDFD_INFO_COREDUMP info is available.
->
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
+>>>> In my coming audit patch I changed where the counts of properties are
+>>>> maintained from the LSM infrastructure to the audit subsystem, where they are
+>>>> actually used. Instead of the LSM init code counting the property users, the
+>>>> individual LSM init functions call an audit function that keeps track. BPF
+>>>> could call that audit function if it loads a program that uses contexts. That
+>>>> could happen after init, and the audit system would handle it properly.
+>>>> Unloading the bpf program would be problematic. I honestly don't know whether
+>>>> that's permitted.
+>>> BPF programs can definitely go away, so that is something that would
+>>> need to be accounted for in any solution.  My understanding is that
+>>> once all references to a BPF program are gone, the BPF program is
+>>> unloaded from the kernel.
+>>>
+>>> Perhaps the answer is that whenever the BPF LSM is enabled at boot,
+>>> the audit subsystem always queries for subj/obj labels from the BPF
+>>> LSM and instead of using the normal audit placeholder for missing
+>>> values, "?", we simply don't log the BPF subj/obj fields.  I dislike
+>>> the special case nature of the solution, but the reality is that the
+>>> BPF is a bit "special" and we are going to need to have some special
+>>> code to deal with it.
+>> If BPF never calls audit_lsm_secctx() everything is fine, and the BPF
+>> context(s) never result in an aux record. If BPF does call audit_lsm_secctx()
+>> and there is another LSM that uses contexts you get the aux record, even
+>> if the BPF program goes away. You will get an aux record with only one context.
+>> This is not ideal, but provides the correct information. This all assumes that
+>> BPF programs can call into the audit system, and that they deal with multiple
+>> contexts within BPF. There could be a flag to audit_lsm_secctx() to delete the
+>> entry, but that seems potentially dangerous.
+> I think the answer to "can BPF programs call into the audit subsystem"
+> is dependent on if they have the proper BPF kfuncs for the audit API.
+> I don't recall seeing them post anything to the audit list about that,
+> but it's also possible they did it without telling anyone (ala move
+> fast, break things).  I don't think we would want to prevent BPF
+> programs from calling into the normal audit API that other subsystems
+> use, but we would need to look at that as it comes up.
 
-Reviewed-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+I suggest that until the "BPF auditing doesn't work!!!" crisis hits
+there's not a lot of point in going to heroic efforts to ensure all
+the bases are covered. I'll move forward assuming that an LSM could
+dynamically decide to call audit_lsm_secctx(), and that once it does
+it will always show up in the aux record, even if that means subj_bpf=?
+shows up every time.
 
-> ---
->  fs/coredump.c              | 34 ++++++++++++++++++++
->  fs/pidfs.c                 | 79 ++++++++++++++++++++++++++++++++++++++++++++++
->  include/linux/pidfs.h      | 10 ++++++
->  include/uapi/linux/pidfd.h | 22 +++++++++++++
->  net/unix/af_unix.c         |  7 ++++
->  5 files changed, 152 insertions(+)
->
-> diff --git a/fs/coredump.c b/fs/coredump.c
-> index e1256ebb89c1..bfc4a32f737c 100644
-> --- a/fs/coredump.c
-> +++ b/fs/coredump.c
-> @@ -46,7 +46,9 @@
->  #include <linux/pidfs.h>
->  #include <linux/net.h>
->  #include <linux/socket.h>
-> +#include <net/af_unix.h>
->  #include <net/net_namespace.h>
-> +#include <net/sock.h>
->  #include <uapi/linux/pidfd.h>
->  #include <uapi/linux/un.h>
->
-> @@ -598,6 +600,8 @@ static int umh_coredump_setup(struct subprocess_info *info, struct cred *new)
->                 if (IS_ERR(pidfs_file))
->                         return PTR_ERR(pidfs_file);
->
-> +               pidfs_coredump(cp);
-> +
->                 /*
->                  * Usermode helpers are childen of either
->                  * system_unbound_wq or of kthreadd. So we know that
-> @@ -876,8 +880,34 @@ void do_coredump(const kernel_siginfo_t *siginfo)
->                         goto close_fail;
->                 }
->
-> +               /*
-> +                * Set the thread-group leader pid which is used for the
-> +                * peer credentials during connect() below. Then
-> +                * immediately register it in pidfs...
-> +                */
-> +               cprm.pid = task_tgid(current);
-> +               retval = pidfs_register_pid(cprm.pid);
-> +               if (retval) {
-> +                       sock_release(socket);
-> +                       goto close_fail;
-> +               }
-> +
-> +               /*
-> +                * ... and set the coredump information so userspace
-> +                * has it available after connect()...
-> +                */
-> +               pidfs_coredump(&cprm);
-> +
-> +               /*
-> +                * ... On connect() the peer credentials are recorded
-> +                * and @cprm.pid registered in pidfs...
-> +                */
->                 retval = kernel_connect(socket, (struct sockaddr *)(&addr),
->                                         addr_len, O_NONBLOCK | SOCK_COREDUMP);
-> +
-> +               /* ... So we can safely put our pidfs reference now... */
-> +               pidfs_put_pid(cprm.pid);
-> +
->                 if (retval) {
->                         if (retval == -EAGAIN)
->                                 coredump_report_failure("Coredump socket %s receive queue full", addr.sun_path);
-> @@ -886,6 +916,10 @@ void do_coredump(const kernel_siginfo_t *siginfo)
->                         goto close_fail;
->                 }
->
-> +               /* ... and validate that @sk_peer_pid matches @cprm.pid. */
-> +               if (WARN_ON_ONCE(unix_peer(socket->sk)->sk_peer_pid != cprm.pid))
-> +                       goto close_fail;
-> +
->                 cprm.limit = RLIM_INFINITY;
->                 cprm.file = no_free_ptr(file);
->  #else
-> diff --git a/fs/pidfs.c b/fs/pidfs.c
-> index 3b39e471840b..d7b9a0dd2db6 100644
-> --- a/fs/pidfs.c
-> +++ b/fs/pidfs.c
-> @@ -20,6 +20,7 @@
->  #include <linux/time_namespace.h>
->  #include <linux/utsname.h>
->  #include <net/net_namespace.h>
-> +#include <linux/coredump.h>
->
->  #include "internal.h"
->  #include "mount.h"
-> @@ -33,6 +34,8 @@ static struct kmem_cache *pidfs_cachep __ro_after_init;
->  struct pidfs_exit_info {
->         __u64 cgroupid;
->         __s32 exit_code;
-> +       __u32 coredump_mask;
-> +       __u64 coredump_cookie;
->  };
->
->  struct pidfs_inode {
-> @@ -240,6 +243,22 @@ static inline bool pid_in_current_pidns(const struct pid *pid)
->         return false;
->  }
->
-> +static __u32 pidfs_coredump_mask(unsigned long mm_flags)
-> +{
-> +       switch (__get_dumpable(mm_flags)) {
-> +       case SUID_DUMP_USER:
-> +               return PIDFD_COREDUMP_USER;
-> +       case SUID_DUMP_ROOT:
-> +               return PIDFD_COREDUMP_ROOT;
-> +       case SUID_DUMP_DISABLE:
-> +               return PIDFD_COREDUMP_SKIP;
-> +       default:
-> +               WARN_ON_ONCE(true);
-> +       }
-> +
-> +       return 0;
-> +}
-> +
->  static long pidfd_info(struct file *file, unsigned int cmd, unsigned long arg)
->  {
->         struct pidfd_info __user *uinfo = (struct pidfd_info __user *)arg;
-> @@ -280,6 +299,13 @@ static long pidfd_info(struct file *file, unsigned int cmd, unsigned long arg)
->                 }
->         }
->
-> +       if (mask & PIDFD_INFO_COREDUMP) {
-> +               kinfo.mask |= PIDFD_INFO_COREDUMP;
-> +               smp_rmb();
-> +               kinfo.coredump_cookie = READ_ONCE(pidfs_i(inode)->__pei.coredump_cookie);
-> +               kinfo.coredump_mask = READ_ONCE(pidfs_i(inode)->__pei.coredump_mask);
-> +       }
-> +
->         task = get_pid_task(pid, PIDTYPE_PID);
->         if (!task) {
->                 /*
-> @@ -296,6 +322,16 @@ static long pidfd_info(struct file *file, unsigned int cmd, unsigned long arg)
->         if (!c)
->                 return -ESRCH;
->
-> +       if (!(kinfo.mask & PIDFD_INFO_COREDUMP)) {
-> +               task_lock(task);
-> +               if (task->mm) {
-> +                       smp_rmb();
-> +                       kinfo.coredump_cookie = READ_ONCE(pidfs_i(inode)->__pei.coredump_cookie);
-> +                       kinfo.coredump_mask = pidfs_coredump_mask(task->mm->flags);
-> +               }
-> +               task_unlock(task);
-> +       }
-> +
->         /* Unconditionally return identifiers and credentials, the rest only on request */
->
->         user_ns = current_user_ns();
-> @@ -559,6 +595,49 @@ void pidfs_exit(struct task_struct *tsk)
->         }
->  }
->
-> +#if defined(CONFIG_COREDUMP) && defined(CONFIG_UNIX)
-> +void pidfs_coredump_cookie(struct pid *pid, u64 coredump_cookie)
-> +{
-> +       struct pidfs_exit_info *exit_info;
-> +       struct dentry *dentry = pid->stashed;
-> +       struct inode *inode;
-> +
-> +       if (WARN_ON_ONCE(!dentry))
-> +               return;
-> +
-> +       inode = d_inode(dentry);
-> +       exit_info = &pidfs_i(inode)->__pei;
-> +       /* Can't use smp_store_release() because of 32bit. */
-> +       smp_wmb();
-> +       WRITE_ONCE(exit_info->coredump_cookie, coredump_cookie);
-> +}
-> +#endif
-> +
-> +#ifdef CONFIG_COREDUMP
-> +void pidfs_coredump(const struct coredump_params *cprm)
-> +{
-> +       struct pid *pid = cprm->pid;
-> +       struct pidfs_exit_info *exit_info;
-> +       struct dentry *dentry;
-> +       struct inode *inode;
-> +       __u32 coredump_mask = 0;
-> +
-> +       dentry = pid->stashed;
-> +       if (WARN_ON_ONCE(!dentry))
-> +               return;
-> +
-> +       inode = d_inode(dentry);
-> +       exit_info = &pidfs_i(inode)->__pei;
-> +       /* Note how we were coredumped. */
-> +       coredump_mask = pidfs_coredump_mask(cprm->mm_flags);
-> +       /* Note that we actually did coredump. */
-> +       coredump_mask |= PIDFD_COREDUMPED;
-> +       /* If coredumping is set to skip we should never end up here. */
-> +       VFS_WARN_ON_ONCE(coredump_mask & PIDFD_COREDUMP_SKIP);
-> +       smp_store_release(&exit_info->coredump_mask, coredump_mask);
-> +}
-> +#endif
-> +
->  static struct vfsmount *pidfs_mnt __ro_after_init;
->
->  /*
-> diff --git a/include/linux/pidfs.h b/include/linux/pidfs.h
-> index 2676890c4d0d..497997bc5e34 100644
-> --- a/include/linux/pidfs.h
-> +++ b/include/linux/pidfs.h
-> @@ -2,11 +2,21 @@
->  #ifndef _LINUX_PID_FS_H
->  #define _LINUX_PID_FS_H
->
-> +struct coredump_params;
-> +
->  struct file *pidfs_alloc_file(struct pid *pid, unsigned int flags);
->  void __init pidfs_init(void);
->  void pidfs_add_pid(struct pid *pid);
->  void pidfs_remove_pid(struct pid *pid);
->  void pidfs_exit(struct task_struct *tsk);
-> +#ifdef CONFIG_COREDUMP
-> +void pidfs_coredump(const struct coredump_params *cprm);
-> +#endif
-> +#if defined(CONFIG_COREDUMP) && defined(CONFIG_UNIX)
-> +void pidfs_coredump_cookie(struct pid *pid, u64 coredump_cookie);
-> +#elif defined(CONFIG_UNIX)
-> +static inline void pidfs_coredump_cookie(struct pid *pid, u64 coredump_cookie) { }
-> +#endif
->  extern const struct dentry_operations pidfs_dentry_operations;
->  int pidfs_register_pid(struct pid *pid);
->  void pidfs_get_pid(struct pid *pid);
-> diff --git a/include/uapi/linux/pidfd.h b/include/uapi/linux/pidfd.h
-> index 8c1511edd0e9..69267c5ae6d0 100644
-> --- a/include/uapi/linux/pidfd.h
-> +++ b/include/uapi/linux/pidfd.h
-> @@ -25,9 +25,28 @@
->  #define PIDFD_INFO_CREDS               (1UL << 1) /* Always returned, even if not requested */
->  #define PIDFD_INFO_CGROUPID            (1UL << 2) /* Always returned if available, even if not requested */
->  #define PIDFD_INFO_EXIT                        (1UL << 3) /* Only returned if requested. */
-> +#define PIDFD_INFO_COREDUMP            (1UL << 4) /* Only returned if requested. */
->
->  #define PIDFD_INFO_SIZE_VER0           64 /* sizeof first published struct */
->
-> +/*
-> + * Values for @coredump_mask in pidfd_info.
-> + * Only valid if PIDFD_INFO_COREDUMP is set in @mask.
-> + *
-> + * Note, the @PIDFD_COREDUMP_ROOT flag indicates that the generated
-> + * coredump should be treated as sensitive and access should only be
-> + * granted to privileged users.
-> + *
-> + * If the coredump AF_UNIX socket is used for processing coredumps
-> + * @coredump_cookie will be set to the socket SO_COOKIE of the receivers
-> + * client socket. This allows the coredump handler to detect whether an
-> + * incoming coredump connection was initiated from the crashing task.
-> + */
-> +#define PIDFD_COREDUMPED       (1U << 0) /* Did crash and... */
-> +#define PIDFD_COREDUMP_SKIP    (1U << 1) /* coredumping generation was skipped. */
-> +#define PIDFD_COREDUMP_USER    (1U << 2) /* coredump was done as the user. */
-> +#define PIDFD_COREDUMP_ROOT    (1U << 3) /* coredump was done as root. */
-> +
->  /*
->   * The concept of process and threads in userland and the kernel is a confusing
->   * one - within the kernel every thread is a 'task' with its own individual PID,
-> @@ -92,6 +111,9 @@ struct pidfd_info {
->         __u32 fsuid;
->         __u32 fsgid;
->         __s32 exit_code;
-> +       __u32 coredump_mask;
-> +       __u32 __spare1;
-> +       __u64 coredump_cookie;
->  };
->
->  #define PIDFS_IOCTL_MAGIC 0xFF
-> diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
-> index a9d1c9ba2961..053d2e48e918 100644
-> --- a/net/unix/af_unix.c
-> +++ b/net/unix/af_unix.c
-> @@ -99,6 +99,7 @@
->  #include <linux/seq_file.h>
->  #include <linux/skbuff.h>
->  #include <linux/slab.h>
-> +#include <linux/sock_diag.h>
->  #include <linux/socket.h>
->  #include <linux/splice.h>
->  #include <linux/string.h>
-> @@ -742,6 +743,7 @@ static void unix_release_sock(struct sock *sk, int embrion)
->
->  struct unix_peercred {
->         struct pid *peer_pid;
-> +       u64 cookie;
->         const struct cred *peer_cred;
->  };
->
-> @@ -777,6 +779,8 @@ static void drop_peercred(struct unix_peercred *peercred)
->  static inline void init_peercred(struct sock *sk,
->                                  const struct unix_peercred *peercred)
->  {
-> +       if (peercred->cookie)
-> +               pidfs_coredump_cookie(peercred->peer_pid, peercred->cookie);
->         sk->sk_peer_pid = peercred->peer_pid;
->         sk->sk_peer_cred = peercred->peer_cred;
->  }
-> @@ -1713,6 +1717,9 @@ static int unix_stream_connect(struct socket *sock, struct sockaddr *uaddr,
->         unix_peer(newsk)        = sk;
->         newsk->sk_state         = TCP_ESTABLISHED;
->         newsk->sk_type          = sk->sk_type;
-> +       /* Prepare a new socket cookie for the receiver. */
-> +       if (flags & SOCK_COREDUMP)
-> +               peercred.cookie = sock_gen_cookie(newsk);
->         init_peercred(newsk, &peercred);
->         newu = unix_sk(newsk);
->         newu->listener = other;
->
-> --
-> 2.47.2
->
+
