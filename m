@@ -1,173 +1,182 @@
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CC1825A2DE
-	for <linux-security-module@vger.kernel.org>; Thu, 15 May 2025 20:57:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42C7D1953AD
+	for <linux-security-module@vger.kernel.org>; Thu, 15 May 2025 21:02:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747342651; cv=none; b=TpCzAShqsVijmBHfzX6MpMBGdbX3KYp1RYPiSd2mj7Bxu2gJ6FbuYQnK2Wc8RSRGWWYKwzb48S8K4hztAgSELAZifVJp6k8B294g2rPo0LBAM+OgsLnGOldiv5cQzfxfMEIiB5w1DzBnd0h+XOiqfsTbFRsy61P7qdwHehffznc=
+	t=1747342957; cv=none; b=U+P8HSk4UQ8wnaSqrlaWySfR2kvptZ5Hg6FQ+Gzzi469rYrmuYKKlQao5phsr/ebOO0y3aBNJDX2X+FEhom2QP3k+Yi9p4PzQJJczVqe/840M6OCK6cqV9dizJjETNIJ+8CxEToFq4MDBOVSdAvwGLuMesrIoLtBKn6IddDjaBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747342651; c=relaxed/simple;
-	bh=taP41+wJpy0yc6RsFja33qPnKJw1y2Xhs0S/9nTHmSw=;
+	s=arc-20240116; t=1747342957; c=relaxed/simple;
+	bh=26lORAklMyj3fACbwa3+V7HA6m0rRTkAPbAuDxglhgQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tfzpJmbc17BEsuViUERV6cmBCgUNUByyWEEvDD5Pa/UpVlx5Nxv6K8yHjNeIQacgyds3XorjIgwNj8nAdgE8bulVeCKvnLc5VRnDSyCMRMquZfPKZs+HiITiJKbyPIl1jq0qknbvo6PwLPwO2vV3NJN7Ygiqr0dPa5n0tmlFRxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NiW7Py5G; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	 To:Cc:Content-Type; b=TOXUHxU0mebjcE/WS+BqBvmtiqLYPjAshnPMz5OXiBJvAKWpV+W3bincK/5GaP68ARqBz5LrgRhfad4geVEjEaOL1bXheJPVPdksRpZ2YB2Lp00CgffCP+V3Th80tLwTcUT0JEiS0RtmRePSwO7Q6Sjtm3jj2cwGOkveZn3zPyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=XiL8FJUm; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NiW7Py5G"
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-6000791e832so1375a12.1
-        for <linux-security-module@vger.kernel.org>; Thu, 15 May 2025 13:57:28 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="XiL8FJUm"
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e78f528aa8eso1402556276.3
+        for <linux-security-module@vger.kernel.org>; Thu, 15 May 2025 14:02:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747342647; x=1747947447; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1747342955; x=1747947755; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=uzQSePE6o2SkN8jAbdnZRBJyZ+/cJeSuYPGHH8Q8rmQ=;
-        b=NiW7Py5GNvTJUqdHnmdVS0Vx9w/DCUN4NtA1oHQEAKK115jXjMwDE6wq6c431WVkEu
-         FYMxNwI0EUxnLxXl4L5RCPL81+QXnvaF5LrroJG+bmbSdTpfiGKH7mpSiPK6oVS9TL8o
-         yYqzQLmS9ue4AVnAlXCZ56QFBvk2Sbswmjl48iuVq3lgSF0uXhA/NRDs09SsNSCwsdA3
-         ZEqUkg0EAJTeig4yIkHZ6l1+b9FfVldi5DTr/nU/2X7O3wS6EcmTMyOgeRaeHOLjaJhY
-         JWP81uMyPFAxNI81Vd+kc3kuKL7ExeiIgJ8tbZRJ5C3+f+Z9Pdk6iFWZwixf8Ro8LaZd
-         u2aw==
+        bh=VpA+fUmCWeSlCnAM5f9BQqcfVNSkTiIQtWWOa60sp2U=;
+        b=XiL8FJUmFGRnUMqoKtA/ruHD3tcMj1OcxzQFBX7d8tMj4I6tokx/9piGuH8vHN/B14
+         l4uqBVDanrbOs149W3cYP1j5HJCR7rKRyPzhT2ak16KOJPG2u2akDr9W6rIvgaVZp9Go
+         gVRnulBQNJu3OrgtRkis/35NDz5cNnlN4NoEMulEleFsCoovV0/WXZ7sidL5qdltiofw
+         Tl7aAe0BZCtJ6lH+Ww7s/ie7yMNmO1D8d9ouXq3QTXjClHuq+sHM2tGpKN6rza6kRjA+
+         SyzWdrCTmMsFC5AvpT/JNy4ZTxSgvKuO8nCXdtBhIThGkEvYTafseZhIUa3DTYgHy+iD
+         tb0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747342647; x=1747947447;
+        d=1e100.net; s=20230601; t=1747342955; x=1747947755;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=uzQSePE6o2SkN8jAbdnZRBJyZ+/cJeSuYPGHH8Q8rmQ=;
-        b=ZzakikQNrPkOEYoFanOyB+A235kGOdqkAyqUtiezhXpjQ/fJ3NmYhdQbeKchr6XDsr
-         ZSkW2vP4HXboD5wiSD6JGUvEzHrjgL9dHxtKJtzqk+ZLnQydvut7bmu5ch1y2Ja/Dzry
-         revjaWNG9jjYcKHzfhCx3kBH0jdVnu3CYhmiEJ8fE0rYW9ODTV0hjlCx6SAGxn7Oqbmo
-         antPD/3kXryrAUf1WvAIqbB1JDPfQurhDY4dDClG4yNG5fd48/q4bLfWrOMzoyW7hx1v
-         vRB5BqBDpCoxp125x+cK2zlO1YgQJEBrkzy0bowlJjV9srivYT8NT5ad6u1rhOtq15JG
-         4fJw==
-X-Forwarded-Encrypted: i=1; AJvYcCWLCc9jVgddH7ifMxhuwq0HPEWaMHuAnuclImBThcm5YJQJQ3/bXwztxibeIFMzjktqDfgERXf8HiMxyW8dvbGrSNwuApw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwV1i0RpvXmpFO/wRjbWZLM3MGHVdf0iEGMnZRLznMN4XRyYpkf
-	qqdrZGaXhs55d1vJNLkN+TOb0Ur46HXGrnr+z61vZ777RfKAUoaZ01fgzmJqojau1Rs6pch5mEw
-	YFMQbf4W8r+jGxI+71UG71fScn3CpuVV3spgzg7/Z
-X-Gm-Gg: ASbGncthtrqgiad7A86IUGG03AccTYYg0LcuGmTHqTL0nK0IDGoAeLCmqFaX3w4eIbH
-	A13R/ZpzF6ZQhekbutHTjloRDHNaeiL77fl5AesDca65WTZtaVjbyPH/hut7/hofpzrXnIw8WXf
-	PtIJvvBX+G+TWSxbr1AssYyAdULO8qAt0NRN/1jXpR8Mo4FyonFPZzibo4ZPbN
-X-Google-Smtp-Source: AGHT+IHUGBHKzk/laOxpxDdk5AaJ2CSKL/1StLLftbiH/My4JJgfMegIqDYIHn/O9agKIBI1Jj9t4zcpldbNJNharAw=
-X-Received: by 2002:aa7:c392:0:b0:601:233a:4f4d with SMTP id
- 4fb4d7f45d1cf-601233a4fc5mr3907a12.2.1747342647239; Thu, 15 May 2025 13:57:27
- -0700 (PDT)
+        bh=VpA+fUmCWeSlCnAM5f9BQqcfVNSkTiIQtWWOa60sp2U=;
+        b=EE+BAAkiJHkIacXTzoQV7bBYsW6DZbVB00VQjosD2jbhBFT91ASBP2Jy2ML73/+Zqz
+         eWfm3KtwNl7aoXuJLeButg8ZKQtUUNZ1JdgTVT3JCxkod9xJCZq498R5ogC9czX/yun+
+         JxWcPwMNzuA9/pao8/kDlJOes447D+uPh/FseRjt3+MSNedQgWKO5EhlRmY9F2QraSi1
+         L0ljOQb+Fyn9JR/gDECPvtYPBtcQM2gEBe5wkUbfbKs3nbeXy4A+6gyhrtZ59pMuBkof
+         GrfHE2GM9me0TeM4nSJqebhzVeP/d+CDScqXZvXZzl4/z0lanEjK5P/t5r4NRoE6H1Cg
+         LAeA==
+X-Gm-Message-State: AOJu0YziQBVf52A3DKLY95xZ/k1GLMJGKBsEonEkhxSJEkpmum6zxB13
+	VL2BV6Q+3hmgStNZy952dqpCW4MNJvJsATmAxNudxrTKiAUMeA9Lqqme7zLVaiDC2ij8lvRrV5p
+	vcdCcV6UtL0nrSa7i7EKEi/+fVTDTKG4pNSaZbfUy
+X-Gm-Gg: ASbGncs5Aai/P7mQht04RJipkOBha6Sxd/BM+DqVd2VtW/nOAfTFMB5Savh/7FPDO0g
+	RSVaqvv90JVoLjpSBPsB/N6Wdgf2L6NJxdhPBld84Sv5nsiNjz2BcIeUp0vcxPb/FsDe7bkyvWR
+	q8xB6FEaP7Jkt1iNVstife2pOQow7HLTN/
+X-Google-Smtp-Source: AGHT+IFG4xJfXunSgZQeenjERt+7u3aBw98sMz9/+SZ1qA5bJgp4wIFrzJokOJs37W4C7WHtZPHLnos8TQBVMXB5/Ck=
+X-Received: by 2002:a05:6902:990:b0:e72:97bc:a1a1 with SMTP id
+ 3f1490d57ef6-e7b69d546cemr1735351276.7.1747342954909; Thu, 15 May 2025
+ 14:02:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250515-work-coredump-socket-v7-0-0a1329496c31@kernel.org> <20250515-work-coredump-socket-v7-7-0a1329496c31@kernel.org>
-In-Reply-To: <20250515-work-coredump-socket-v7-7-0a1329496c31@kernel.org>
-From: Jann Horn <jannh@google.com>
-Date: Thu, 15 May 2025 22:56:51 +0200
-X-Gm-Features: AX0GCFsc9k8E5H-5e-dJE76E_RGv2ErOjmTrupW0-m9zZnC-HBMPkef6m1hs5Ng
-Message-ID: <CAG48ez1wqbOmQMqg6rH4LNjNifHU_WciceO_SQwu8T=tA_KxLw@mail.gmail.com>
-Subject: Re: [PATCH v7 7/9] coredump: validate socket name as it is written
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>, 
-	Kuniyuki Iwashima <kuniyu@amazon.com>, Eric Dumazet <edumazet@google.com>, Oleg Nesterov <oleg@redhat.com>, 
-	"David S. Miller" <davem@davemloft.net>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Daan De Meyer <daan.j.demeyer@gmail.com>, David Rheinsberg <david@readahead.eu>, 
-	Jakub Kicinski <kuba@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Lennart Poettering <lennart@poettering.net>, Luca Boccassi <bluca@debian.org>, Mike Yuan <me@yhndnzj.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	=?UTF-8?Q?Zbigniew_J=C4=99drzejewski=2DSzmek?= <zbyszek@in.waw.pl>, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, 
-	Alexander Mikhalitsyn <alexander@mihalicyn.com>
+References: <20250409185019.238841-31-paul@paul-moore.com> <20250409185019.238841-60-paul@paul-moore.com>
+ <81106a29-90ce-4439-9b4c-60bb2962fe04@schaufler-ca.com> <CAHC9VhRUr+sXhLzDSjiG9bEVbzZd2u632dLMVpcCe6By_d_H4w@mail.gmail.com>
+ <3d884912-6225-485b-a7dd-2aa4073265f2@schaufler-ca.com> <CAHC9VhR5OFDvJNJLy9jKMsB4ZVx=phm6k6iebT6VuXD96kNEEA@mail.gmail.com>
+ <c5b81e66-7e73-41cb-a626-9f18f6074e53@schaufler-ca.com> <CAHC9VhSiGc16g36gtZvWKYdtdx-3WG7HbWWhNXvPSBRfA7uphQ@mail.gmail.com>
+ <5df7b895-888e-4aa0-a21f-0a8264158bfa@schaufler-ca.com> <CAHC9VhScu-AsvOAJ+4VoQB_QTmhuFGwVXmQF2PpgH+D-qLi7=w@mail.gmail.com>
+ <9351b5b9-ee06-464d-96d8-9fb5a9c94c82@schaufler-ca.com>
+In-Reply-To: <9351b5b9-ee06-464d-96d8-9fb5a9c94c82@schaufler-ca.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 15 May 2025 17:02:22 -0400
+X-Gm-Features: AX0GCFtfuLfEqOgBjxD362RxeF-rLbRPhgbBA9x9mCqA2h8izdggIEODynqOF_o
+Message-ID: <CAHC9VhTwQY1g8tUHLzaLVEJA9ib0Z-_H0m+dPBZfYhEabGYwVQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 29/29] lsm: add support for counting lsm_prop support
+ among LSMs
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org, 
+	selinux@vger.kernel.org, John Johansen <john.johansen@canonical.com>, 
+	Mimi Zohar <zohar@linux.ibm.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	Fan Wu <wufan@kernel.org>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	Kees Cook <kees@kernel.org>, Micah Morton <mortonm@chromium.org>, 
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 15, 2025 at 12:04=E2=80=AFAM Christian Brauner <brauner@kernel.=
-org> wrote:
-> In contrast to other parameters written into
-> /proc/sys/kernel/core_pattern that never fail we can validate enabling
-> the new AF_UNIX support. This is obviously racy as hell but it's always
-> been that way.
+On Thu, May 15, 2025 at 3:41=E2=80=AFPM Casey Schaufler <casey@schaufler-ca=
+.com> wrote:
+> On 5/15/2025 11:13 AM, Paul Moore wrote:
+> > On Thu, May 15, 2025 at 10:12=E2=80=AFAM Casey Schaufler <casey@schaufl=
+er-ca.com> wrote:
+> >> On 5/14/2025 3:11 PM, Paul Moore wrote:
+> >>> On Wed, May 14, 2025 at 5:16=E2=80=AFPM Casey Schaufler <casey@schauf=
+ler-ca.com> wrote:
+> >>>> On 5/14/2025 1:57 PM, Paul Moore wrote:
+> >>>>> On Wed, May 14, 2025 at 3:30=E2=80=AFPM Casey Schaufler <casey@scha=
+ufler-ca.com> wrote:
+> >>>>>> On 5/13/2025 1:23 PM, Paul Moore wrote:
+> >>>>>>> On Tue, May 13, 2025 at 12:39=E2=80=AFPM Casey Schaufler <casey@s=
+chaufler-ca.com> wrote:
+> >>>>>>>> On 4/9/2025 11:50 AM, Paul Moore wrote:
+> >>> ..
+> >>>
+> >>>>>> In my coming audit patch I changed where the counts of properties =
+are
+> >>>>>> maintained from the LSM infrastructure to the audit subsystem, whe=
+re they are
+> >>>>>> actually used. Instead of the LSM init code counting the property =
+users, the
+> >>>>>> individual LSM init functions call an audit function that keeps tr=
+ack. BPF
+> >>>>>> could call that audit function if it loads a program that uses con=
+texts. That
+> >>>>>> could happen after init, and the audit system would handle it prop=
+erly.
+> >>>>>> Unloading the bpf program would be problematic. I honestly don't k=
+now whether
+> >>>>>> that's permitted.
+> >>>>> BPF programs can definitely go away, so that is something that woul=
+d
+> >>>>> need to be accounted for in any solution.  My understanding is that
+> >>>>> once all references to a BPF program are gone, the BPF program is
+> >>>>> unloaded from the kernel.
+> >>>>>
+> >>>>> Perhaps the answer is that whenever the BPF LSM is enabled at boot,
+> >>>>> the audit subsystem always queries for subj/obj labels from the BPF
+> >>>>> LSM and instead of using the normal audit placeholder for missing
+> >>>>> values, "?", we simply don't log the BPF subj/obj fields.  I dislik=
+e
+> >>>>> the special case nature of the solution, but the reality is that th=
+e
+> >>>>> BPF is a bit "special" and we are going to need to have some specia=
+l
+> >>>>> code to deal with it.
+> >>>> If BPF never calls audit_lsm_secctx() everything is fine, and the BP=
+F
+> >>>> context(s) never result in an aux record. If BPF does call audit_lsm=
+_secctx()
+> >>>> and there is another LSM that uses contexts you get the aux record, =
+even
+> >>>> if the BPF program goes away. You will get an aux record with only o=
+ne context.
+> >>>> This is not ideal, but provides the correct information. This all as=
+sumes that
+> >>>> BPF programs can call into the audit system, and that they deal with=
+ multiple
+> >>>> contexts within BPF. There could be a flag to audit_lsm_secctx() to =
+delete the
+> >>>> entry, but that seems potentially dangerous.
+> >>> I think the answer to "can BPF programs call into the audit subsystem=
+"
+> >>> is dependent on if they have the proper BPF kfuncs for the audit API.
+> >>> I don't recall seeing them post anything to the audit list about that=
+,
+> >>> but it's also possible they did it without telling anyone (ala move
+> >>> fast, break things).  I don't think we would want to prevent BPF
+> >>> programs from calling into the normal audit API that other subsystems
+> >>> use, but we would need to look at that as it comes up.
+> >> I suggest that until the "BPF auditing doesn't work!!!" crisis hits
+> >> there's not a lot of point in going to heroic efforts to ensure all
+> >> the bases are covered. I'll move forward assuming that an LSM could
+> >> dynamically decide to call audit_lsm_secctx(), and that once it does
+> >> it will always show up in the aux record, even if that means subj_bpf=
+=3D?
+> >> shows up every time.
+> > My only concern is that I suspect most/all of the major distro enable
+> > the BPF LSM by default which means that suddenly a lot of users/admins
+> > are going to start seeing the multi-subj/obj labeling scheme only to
+> > have an empty field logged.
 >
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> That will only occur if a BPF program says it want to provide contexts
+> and then stops doing so, either by exiting or in error. As no BPF program=
+s
+> currently use audit, it seems that this is at worst a future problem.
+> Should BPF programs develop the ability to use audit the behavior will ne=
+ed
+> to be documented. I don't see how we can anticipate what they'll end up
+> trying.
 
-Reviewed-by: Jann Horn <jannh@google.com>
+Okay, I must have misunderstood your proposal; I'll take a look once
+it is posted, that should help clear things up.
 
-> ---
->  fs/coredump.c | 37 ++++++++++++++++++++++++++++++++++---
->  1 file changed, 34 insertions(+), 3 deletions(-)
->
-> diff --git a/fs/coredump.c b/fs/coredump.c
-> index 6ee38e3da108..d4ff08ef03e5 100644
-> --- a/fs/coredump.c
-> +++ b/fs/coredump.c
-> @@ -1228,13 +1228,44 @@ void validate_coredump_safety(void)
->         }
->  }
->
-> +static inline bool check_coredump_socket(void)
-> +{
-> +       if (core_pattern[0] !=3D '@')
-> +               return true;
-> +
-> +       /*
-> +        * Coredump socket must be located in the initial mount
-> +        * namespace. Don't give the that impression anything else is
-> +        * supported right now.
-> +        */
-> +       if (current->nsproxy->mnt_ns !=3D init_task.nsproxy->mnt_ns)
-> +               return false;
-
-(Ah, dereferencing init_task.nsproxy without locks is safe because
-init_task is actually the boot cpu's swapper/idle task, which never
-switches namespaces, right?)
-
-> +       /* Must be an absolute path. */
-> +       if (*(core_pattern + 1) !=3D '/')
-> +               return false;
-> +
-> +       return true;
-> +}
-> +
->  static int proc_dostring_coredump(const struct ctl_table *table, int wri=
-te,
->                   void *buffer, size_t *lenp, loff_t *ppos)
->  {
-> -       int error =3D proc_dostring(table, write, buffer, lenp, ppos);
-> +       int error;
-> +       ssize_t retval;
-> +       char old_core_pattern[CORENAME_MAX_SIZE];
-> +
-> +       retval =3D strscpy(old_core_pattern, core_pattern, CORENAME_MAX_S=
-IZE);
-> +
-> +       error =3D proc_dostring(table, write, buffer, lenp, ppos);
-> +       if (error)
-> +               return error;
-> +       if (!check_coredump_socket()) {
-
-(non-actionable note: This is kiiinda dodgy under
-SYSCTL_WRITES_LEGACY, but I guess we can assume that new users of the
-new coredump socket feature aren't actually going to write the
-coredump path one byte at a time, so I guess it's fine.)
-
-> +               strscpy(core_pattern, old_core_pattern, retval + 1);
-
-The third strscpy() argument is semantically supposed to be the
-destination buffer size, not the amount of data to copy. For trivial
-invocations like here, strscpy() actually allows you to leave out the
-third argument.
-
-
-> +               return -EINVAL;
-> +       }
->
-> -       if (!error)
-> -               validate_coredump_safety();
-> +       validate_coredump_safety();
->         return error;
->  }
->
->
-> --
-> 2.47.2
->
+--=20
+paul-moore.com
