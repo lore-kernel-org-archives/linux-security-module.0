@@ -1,491 +1,238 @@
-Received: from frasgout13.his.huawei.com (frasgout13.his.huawei.com [14.137.139.46])
+Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C2921D6DBB;
-	Thu, 15 May 2025 14:48:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BEF861FCE;
+	Thu, 15 May 2025 16:25:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747320537; cv=none; b=OPn1oGqcy6joUN5CkVNTQXHXr4spOkl49yIKB0ce6gIGX319KOI/qIuX8W/41kXLWM0wOkGhggZuKTym7NtkAj79gs4OH/UG919btGUM49nIgBouULmEhcQn8mw8b8a55IYu19ZYd4nRhM8O2HT4HW25p2xYWcx00Rwvn//9ToI=
+	t=1747326326; cv=none; b=XWMrZM5kET6zgWxic8QOQPpPiLY2nmOB2DFDtr+UFVYFayJ74oXdx6RHgLdCKpKuQmPnPqosMvWyiVq0ZU//estFxALpei06C9Xu1Gtwtsx2oyiVGUpdrfkTjc23etLckuv5CyNizYiLkvboWFt3+plxImz6RUB9m1xnExiltIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747320537; c=relaxed/simple;
-	bh=Irf9KTr91lgvDqzQQpTqY41RXszgE9NL8pJejmSkLMA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=gz4TFnXUW4Xwg2mdEftasYdNJtTFERMzrTdbGfaPui1I4gh7RundSPuYEzlOJqb+YMDJtl88I60cT46y59RnLwTeP874OxYFWR35i3aJKbpK2ztr6LF9r8kALzoUUW9e1z/l+IHV1si1t/TnwDJQ3dWlLS7tYBDUZg6NOj3o1Kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.51])
-	by frasgout13.his.huawei.com (SkyGuard) with ESMTPS id 4Zyszz5c3pzpTXw;
-	Thu, 15 May 2025 22:29:51 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id E9F9C1400DD;
-	Thu, 15 May 2025 22:30:27 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwD3e0p1+iVoC5rtBw--.45574S2;
-	Thu, 15 May 2025 15:30:26 +0100 (CET)
-Message-ID: <576e10238d83f725fbe23c4af63be6e83de9ce48.camel@huaweicloud.com>
-Subject: Re: [syzbot] [lsm?] [integrity?] KMSAN: uninit-value in
- ima_add_template_entry (3)
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: syzbot <syzbot+3f0b3970f154dfc95e6e@syzkaller.appspotmail.com>, 
- dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, jmorris@namei.org, 
- linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-security-module@vger.kernel.org, paul@paul-moore.com, 
- roberto.sassu@huawei.com, serge@hallyn.com,
- syzkaller-bugs@googlegroups.com,  zohar@linux.ibm.com,
- linux-bcachefs@vger.kernel.org
-Date: Thu, 15 May 2025 16:30:09 +0200
-In-Reply-To: <rbab6axciiuomrann3uwvpks2zogx3xfntk7w4p2betq3morlf@5xnl5guhnaxj>
-References: <6824aea8.a00a0220.104b28.0011.GAE@google.com>
-	 <38c28bd4dc40b2e992c13a6fdba820a667861d8c.camel@huaweicloud.com>
-	 <rbab6axciiuomrann3uwvpks2zogx3xfntk7w4p2betq3morlf@5xnl5guhnaxj>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1747326326; c=relaxed/simple;
+	bh=Rs93wp1Oz5paklsTa8S9i3nwp17ABCGZTgA7sXKPV7s=;
+	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
+	 Content-Type:Subject; b=KB9GFxKKVLqy38WOvztSd48vZUwCtFHWhzc5o69QY+PK92DKBkNGyDrYFm98HYBEbV0Y7jbewlyNa/5Th7RjMv93/nvmkHTQUczQsE/iyHnnpbn/ZWpLAZXlCp6jQ/l0ehUPSRbkIOKuDnILNPyMxljmfOTicLgQ7olEyAkbo9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
+Received: from in01.mta.xmission.com ([166.70.13.51]:51266)
+	by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1uFbOW-008qwJ-RN; Thu, 15 May 2025 10:25:16 -0600
+Received: from ip72-198-198-28.om.om.cox.net ([72.198.198.28]:59336 helo=email.froward.int.ebiederm.org.xmission.com)
+	by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1uFbOV-008j1V-Lz; Thu, 15 May 2025 10:25:16 -0600
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: Kees Cook <keescook@chromium.org> 
+Cc: Max Kellermann <max.kellermann@ionos.com>,
+ "Serge E. Hallyn" <serge@hallyn.com> 
+ paul@paul-moore.com,  jmorris@namei.org,
+ Andy Lutomirski <luto@kernel.org>,  morgan@kernel.org,
+ Christian Brauner <christian@brauner.io>,
+ linux-security-module@vger.kernel.org,  linux-kernel@vger.kernel.org
+References: <20250306082615.174777-1-max.kellermann@ionos.com>
+Date: Thu, 15 May 2025 11:24:47 -0500
+In-Reply-To: <20250306082615.174777-1-max.kellermann@ionos.com> (Max
+	Kellermann's message of "Thu, 6 Mar 2025 09:26:15 +0100")
+Message-ID: <878qmxsuy8.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwD3e0p1+iVoC5rtBw--.45574S2
-X-Coremail-Antispam: 1UD129KBjvAXoWfCw1rWr48GFW5CF47Jr4ktFb_yoW8ur4fWo
-	Za9ws3Cr45JFW3JFW0yFsFvw4fua1rXrW3ZrWv93y5KF4av34UGryrAF1UJF43Zr43WF18
-	X347tF9YqF9rKw1fn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
-	AaLaJ3UjIYCTnIWjp_UUUY-7kC6x804xWl14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK
-	8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4
-	AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26r1j6r1xM28EF7xvwVC0I7IYx2IY6xkF
-	7I0E14v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26r4j6r4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
-	ZwCIccxYrVCFb41lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6x
-	IIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvE
-	x4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvj
-	DU0xZFpf9x07boa0PUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAJBGglkmAGWwAAst
+Content-Type: text/plain
+X-XM-SPF: eid=1uFbOV-008j1V-Lz;;;mid=<878qmxsuy8.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=72.198.198.28;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX18i0ewKLl79ZsbIJAEZKtK0oz5pK4sC68Q=
+X-Spam-Level: ****
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+	*      [score: 0.5000]
+	*  1.7 FUZZY_CREDIT BODY: Attempt to obfuscate words in spam
+	*  1.2 XM_Multi_Part_URI URI: Long-Multi-Part URIs
+	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+	*      [sa04 1397; Body=1 Fuz1=1 Fuz2=1]
+	*  1.0 XMGenDplmaNmb Diploma spam phrases+possible phone number
+	*  1.0 XM_B_Phish_Phrases Commonly used Phishing Phrases
+X-Spam-DCC: XMission; sa04 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ****;Kees Cook <keescook@chromium.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 666 ms - load_scoreonly_sql: 0.06 (0.0%),
+	signal_user_changed: 11 (1.6%), b_tie_ro: 9 (1.4%), parse: 0.93 (0.1%),
+	 extract_message_metadata: 14 (2.0%), get_uri_detail_list: 2.8 (0.4%),
+	tests_pri_-2000: 22 (3.4%), tests_pri_-1000: 2.1 (0.3%),
+	tests_pri_-950: 0.98 (0.1%), tests_pri_-900: 0.80 (0.1%),
+	tests_pri_-90: 88 (13.3%), check_bayes: 86 (12.9%), b_tokenize: 10
+	(1.5%), b_tok_get_all: 11 (1.6%), b_comp_prob: 2.9 (0.4%),
+	b_tok_touch_all: 59 (8.8%), b_finish: 0.95 (0.1%), tests_pri_0: 505
+	(75.8%), check_dkim_signature: 0.76 (0.1%), check_dkim_adsp: 3.3
+	(0.5%), poll_dns_idle: 1.13 (0.2%), tests_pri_10: 4.4 (0.7%),
+	tests_pri_500: 14 (2.1%), rewrite_mail: 0.00 (0.0%)
+Subject: [PATCH] exec: Correct the permission check for unsafe exec
+X-SA-Exim-Connect-IP: 166.70.13.51
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, christian@brauner.io, morgan@kernel.org, luto@kernel.org, jmorris@namei.org, serge@hallyn.com, max.kellermann@ionos.com, keescook@chromium.org
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-SA-Exim-Scanned: No (on out01.mta.xmission.com); SAEximRunCond expanded to false
 
-On Thu, 2025-05-15 at 10:18 -0400, Kent Overstreet wrote:
-> On Thu, May 15, 2025 at 04:06:02PM +0200, Roberto Sassu wrote:
-> > On Wed, 2025-05-14 at 07:54 -0700, syzbot wrote:
-> > > Hello,
-> >=20
-> > + Kent, bcachefs mailing list
-> >=20
-> > I have the feeling that this was recently fixed in one of the latest
-> > pull requests in bcachefs. I don't see it occurring anymore, and there
-> > are more commits after the one reported by syzbot.
->=20
-> I have no idea how any of the ima stuff works or even what it does, I'm
-> not even sure where I'd start...
 
-Basically, I got a clue that bcachefs would be the cause from the
-bottom of the report:
+Max Kellerman recently experienced a problem[1] when calling exec with
+differing uid and euid's and he triggered the logic that is supposed
+to only handle setuid executables.
 
- page_cache_sync_ra+0x108a/0x13e0 mm/readahead.c:621
- filemap_get_pages+0xfb3/0x3a70 mm/filemap.c:2591
- filemap_read+0x5c6/0x2190 mm/filemap.c:2702
- bch2_read_iter+0x559/0x21c0 fs/bcachefs/fs-io-direct.c:221
- __kernel_read+0x750/0xda0 fs/read_write.c:528
- integrity_kernel_read+0x77/0x90 security/integrity/iint.c:28
+When exec isn't changing anything in struct cred it doesn't make sense
+to go into the code that is there to handle the case when the
+credentials change.
 
-This means that IMA is reading a file and calculating a digest over it:
+When looking into the history of the code I discovered that this issue
+was not present in Linux-2.4.0-test12 and was introduced in
+Linux-2.4.0-prerelease when the logic for handling this case was moved
+from prepare_binprm to compute_creds in fs/exec.c.
 
- ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:498 [inline]
- ima_calc_file_shash security/integrity/ima/ima_crypto.c:511 [inline]
- ima_calc_file_hash+0x240a/0x3fd0 security/integrity/ima/ima_crypto.c:568
- ima_collect_measurement+0x45d/0xe60 security/integrity/ima/ima_api.c:293
- process_measurement+0x2d1a/0x40e0 security/integrity/ima/ima_main.c:385
- ima_file_check+0x8e/0xd0 security/integrity/ima/ima_main.c:613
+The bug introduced was to comparing euid in the new credentials with
+uid instead of euid in the old credentials, when testing if setuid
+had changed the euid.
 
-syzbot is complaining that the data the digest was calculated from was
-not initialized (e.g. zeroed).
+Since triggering the keep ptrace limping along case for setuid
+executables makes no sense when it was not a setuid exec revert back
+to the logic present in Linux-2.4.0-test12.
 
-There is a reproducer, we would be probably able to do a bisection and
-find the commit that caused it (and maybe the one that fixed it).
+This removes the confusingly named and subtlety incorrect helpers
+is_setuid and is_setgid, that helped this bug to persist.
 
-Roberto
+The variable is_setid is renamed to id_changed (it's Linux-2.4.0-test12
+name) as the old name describes matters rather than it's cause.
 
-> > Roberto
-> >=20
-> > > syzbot found the following issue on:
-> > >=20
-> > > HEAD commit:    02ddfb981de8 Merge tag 'scsi-fixes' of git://git.kern=
-el.or..
-> > > git tree:       upstream
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=3D111696705=
-80000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=3D9dc42c34a=
-3f5c357
-> > > dashboard link: https://syzkaller.appspot.com/bug?extid=3D3f0b3970f15=
-4dfc95e6e
-> > > compiler:       Debian clang version 20.1.2 (++20250402124445+58df0ef=
-89dd6-1~exp1~20250402004600.97), Debian LLD 20.1.2
-> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D1574d76=
-8580000
-> > >=20
-> > > Downloadable assets:
-> > > disk image: https://storage.googleapis.com/syzbot-assets/5ca57f5a3f77=
-/disk-02ddfb98.raw.xz
-> > > vmlinux: https://storage.googleapis.com/syzbot-assets/3f23cbc11e68/vm=
-linux-02ddfb98.xz
-> > > kernel image: https://storage.googleapis.com/syzbot-assets/73e63afac3=
-54/bzImage-02ddfb98.xz
-> > > mounted in repro: https://storage.googleapis.com/syzbot-assets/0afd18=
-737aed/mount_2.gz
-> > >=20
-> > > IMPORTANT: if you fix the issue, please add the following tag to the =
-commit:
-> > > Reported-by: syzbot+3f0b3970f154dfc95e6e@syzkaller.appspotmail.com
-> > >=20
-> > > bcachefs (loop2): going read-write
-> > > bcachefs (loop2): done starting filesystem
-> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-> > > BUG: KMSAN: uninit-value in ima_lookup_digest_entry security/integrit=
-y/ima/ima_queue.c:64 [inline]
-> > > BUG: KMSAN: uninit-value in ima_add_template_entry+0x7a5/0x8d0 securi=
-ty/integrity/ima/ima_queue.c:191
-> > >  ima_lookup_digest_entry security/integrity/ima/ima_queue.c:64 [inlin=
-e]
-> > >  ima_add_template_entry+0x7a5/0x8d0 security/integrity/ima/ima_queue.=
-c:191
-> > >  ima_store_template security/integrity/ima/ima_api.c:122 [inline]
-> > >  ima_store_measurement+0x388/0x970 security/integrity/ima/ima_api.c:3=
-83
-> > >  process_measurement+0x3075/0x40e0 security/integrity/ima/ima_main.c:=
-393
-> > >  ima_file_check+0x8e/0xd0 security/integrity/ima/ima_main.c:613
-> > >  security_file_post_open+0xbf/0x530 security/security.c:3130
-> > >  do_open fs/namei.c:3882 [inline]
-> > >  path_openat+0x5ac3/0x6760 fs/namei.c:4039
-> > >  do_filp_open+0x280/0x660 fs/namei.c:4066
-> > >  do_sys_openat2+0x1bb/0x2f0 fs/open.c:1429
-> > >  do_sys_open fs/open.c:1444 [inline]
-> > >  __do_sys_openat fs/open.c:1460 [inline]
-> > >  __se_sys_openat fs/open.c:1455 [inline]
-> > >  __x64_sys_openat+0x240/0x300 fs/open.c:1455
-> > >  x64_sys_call+0x213/0x3db0 arch/x86/include/generated/asm/syscalls_64=
-.h:258
-> > >  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-> > >  do_syscall_64+0xd9/0x1b0 arch/x86/entry/syscall_64.c:94
-> > >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> > >=20
-> > > <Zero or more stacks not recorded to save memory>
-> > >=20
-> > > Uninit was stored to memory at:
-> > >  sha256_transform lib/crypto/sha256.c:117 [inline]
-> > >  sha256_transform_blocks+0x276d/0x2880 lib/crypto/sha256.c:127
-> > >  lib_sha256_base_do_finalize include/crypto/sha256_base.h:101 [inline=
-]
-> > >  __sha256_final lib/crypto/sha256.c:142 [inline]
-> > >  sha256_final+0x169/0x460 lib/crypto/sha256.c:148
-> > >  crypto_sha256_final+0xca/0x120 crypto/sha256_generic.c:49
-> > >  crypto_shash_final+0x72/0xa0 crypto/shash.c:58
-> > >  ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:498 [inli=
-ne]
-> > >  ima_calc_file_shash security/integrity/ima/ima_crypto.c:511 [inline]
-> > >  ima_calc_file_hash+0x240a/0x3fd0 security/integrity/ima/ima_crypto.c=
-:568
-> > >  ima_collect_measurement+0x45d/0xe60 security/integrity/ima/ima_api.c=
-:293
-> > >  process_measurement+0x2d1a/0x40e0 security/integrity/ima/ima_main.c:=
-385
-> > >  ima_file_check+0x8e/0xd0 security/integrity/ima/ima_main.c:613
-> > >  security_file_post_open+0xbf/0x530 security/security.c:3130
-> > >  do_open fs/namei.c:3882 [inline]
-> > >  path_openat+0x5ac3/0x6760 fs/namei.c:4039
-> > >  do_filp_open+0x280/0x660 fs/namei.c:4066
-> > >  do_sys_openat2+0x1bb/0x2f0 fs/open.c:1429
-> > >  do_sys_open fs/open.c:1444 [inline]
-> > >  __do_sys_openat fs/open.c:1460 [inline]
-> > >  __se_sys_openat fs/open.c:1455 [inline]
-> > >  __x64_sys_openat+0x240/0x300 fs/open.c:1455
-> > >  x64_sys_call+0x213/0x3db0 arch/x86/include/generated/asm/syscalls_64=
-.h:258
-> > >  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-> > >  do_syscall_64+0xd9/0x1b0 arch/x86/entry/syscall_64.c:94
-> > >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> > >=20
-> > > Uninit was stored to memory at:
-> > >  sha256_transform lib/crypto/sha256.c:117 [inline]
-> > >  sha256_transform_blocks+0x276d/0x2880 lib/crypto/sha256.c:127
-> > >  lib_sha256_base_do_update include/crypto/sha256_base.h:63 [inline]
-> > >  sha256_update+0x392/0x410 lib/crypto/sha256.c:136
-> > >  crypto_sha256_update+0x35/0x60 crypto/sha256_generic.c:39
-> > >  crypto_shash_update+0x7a/0xb0 crypto/shash.c:52
-> > >  ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:491 [inli=
-ne]
-> > >  ima_calc_file_shash security/integrity/ima/ima_crypto.c:511 [inline]
-> > >  ima_calc_file_hash+0x20d7/0x3fd0 security/integrity/ima/ima_crypto.c=
-:568
-> > >  ima_collect_measurement+0x45d/0xe60 security/integrity/ima/ima_api.c=
-:293
-> > >  process_measurement+0x2d1a/0x40e0 security/integrity/ima/ima_main.c:=
-385
-> > >  ima_file_check+0x8e/0xd0 security/integrity/ima/ima_main.c:613
-> > >  security_file_post_open+0xbf/0x530 security/security.c:3130
-> > >  do_open fs/namei.c:3882 [inline]
-> > >  path_openat+0x5ac3/0x6760 fs/namei.c:4039
-> > >  do_filp_open+0x280/0x660 fs/namei.c:4066
-> > >  do_sys_openat2+0x1bb/0x2f0 fs/open.c:1429
-> > >  do_sys_open fs/open.c:1444 [inline]
-> > >  __do_sys_openat fs/open.c:1460 [inline]
-> > >  __se_sys_openat fs/open.c:1455 [inline]
-> > >  __x64_sys_openat+0x240/0x300 fs/open.c:1455
-> > >  x64_sys_call+0x213/0x3db0 arch/x86/include/generated/asm/syscalls_64=
-.h:258
-> > >  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-> > >  do_syscall_64+0xd9/0x1b0 arch/x86/entry/syscall_64.c:94
-> > >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> > >=20
-> > > Uninit was stored to memory at:
-> > >  BLEND_OP lib/crypto/sha256.c:61 [inline]
-> > >  sha256_transform lib/crypto/sha256.c:91 [inline]
-> > >  sha256_transform_blocks+0xded/0x2880 lib/crypto/sha256.c:127
-> > >  lib_sha256_base_do_update include/crypto/sha256_base.h:63 [inline]
-> > >  sha256_update+0x392/0x410 lib/crypto/sha256.c:136
-> > >  crypto_sha256_update+0x35/0x60 crypto/sha256_generic.c:39
-> > >  crypto_shash_update+0x7a/0xb0 crypto/shash.c:52
-> > >  ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:491 [inli=
-ne]
-> > >  ima_calc_file_shash security/integrity/ima/ima_crypto.c:511 [inline]
-> > >  ima_calc_file_hash+0x20d7/0x3fd0 security/integrity/ima/ima_crypto.c=
-:568
-> > >  ima_collect_measurement+0x45d/0xe60 security/integrity/ima/ima_api.c=
-:293
-> > >  process_measurement+0x2d1a/0x40e0 security/integrity/ima/ima_main.c:=
-385
-> > >  ima_file_check+0x8e/0xd0 security/integrity/ima/ima_main.c:613
-> > >  security_file_post_open+0xbf/0x530 security/security.c:3130
-> > >  do_open fs/namei.c:3882 [inline]
-> > >  path_openat+0x5ac3/0x6760 fs/namei.c:4039
-> > >  do_filp_open+0x280/0x660 fs/namei.c:4066
-> > >  do_sys_openat2+0x1bb/0x2f0 fs/open.c:1429
-> > >  do_sys_open fs/open.c:1444 [inline]
-> > >  __do_sys_openat fs/open.c:1460 [inline]
-> > >  __se_sys_openat fs/open.c:1455 [inline]
-> > >  __x64_sys_openat+0x240/0x300 fs/open.c:1455
-> > >  x64_sys_call+0x213/0x3db0 arch/x86/include/generated/asm/syscalls_64=
-.h:258
-> > >  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-> > >  do_syscall_64+0xd9/0x1b0 arch/x86/entry/syscall_64.c:94
-> > >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> > >=20
-> > > Uninit was stored to memory at:
-> > >  BLEND_OP lib/crypto/sha256.c:61 [inline]
-> > >  sha256_transform lib/crypto/sha256.c:92 [inline]
-> > >  sha256_transform_blocks+0xe00/0x2880 lib/crypto/sha256.c:127
-> > >  lib_sha256_base_do_update include/crypto/sha256_base.h:63 [inline]
-> > >  sha256_update+0x392/0x410 lib/crypto/sha256.c:136
-> > >  crypto_sha256_update+0x35/0x60 crypto/sha256_generic.c:39
-> > >  crypto_shash_update+0x7a/0xb0 crypto/shash.c:52
-> > >  ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:491 [inli=
-ne]
-> > >  ima_calc_file_shash security/integrity/ima/ima_crypto.c:511 [inline]
-> > >  ima_calc_file_hash+0x20d7/0x3fd0 security/integrity/ima/ima_crypto.c=
-:568
-> > >  ima_collect_measurement+0x45d/0xe60 security/integrity/ima/ima_api.c=
-:293
-> > >  process_measurement+0x2d1a/0x40e0 security/integrity/ima/ima_main.c:=
-385
-> > >  ima_file_check+0x8e/0xd0 security/integrity/ima/ima_main.c:613
-> > >  security_file_post_open+0xbf/0x530 security/security.c:3130
-> > >  do_open fs/namei.c:3882 [inline]
-> > >  path_openat+0x5ac3/0x6760 fs/namei.c:4039
-> > >  do_filp_open+0x280/0x660 fs/namei.c:4066
-> > >  do_sys_openat2+0x1bb/0x2f0 fs/open.c:1429
-> > >  do_sys_open fs/open.c:1444 [inline]
-> > >  __do_sys_openat fs/open.c:1460 [inline]
-> > >  __se_sys_openat fs/open.c:1455 [inline]
-> > >  __x64_sys_openat+0x240/0x300 fs/open.c:1455
-> > >  x64_sys_call+0x213/0x3db0 arch/x86/include/generated/asm/syscalls_64=
-.h:258
-> > >  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-> > >  do_syscall_64+0xd9/0x1b0 arch/x86/entry/syscall_64.c:94
-> > >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> > >=20
-> > > Uninit was stored to memory at:
-> > >  BLEND_OP lib/crypto/sha256.c:61 [inline]
-> > >  sha256_transform lib/crypto/sha256.c:93 [inline]
-> > >  sha256_transform_blocks+0xe15/0x2880 lib/crypto/sha256.c:127
-> > >  lib_sha256_base_do_update include/crypto/sha256_base.h:63 [inline]
-> > >  sha256_update+0x392/0x410 lib/crypto/sha256.c:136
-> > >  crypto_sha256_update+0x35/0x60 crypto/sha256_generic.c:39
-> > >  crypto_shash_update+0x7a/0xb0 crypto/shash.c:52
-> > >  ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:491 [inli=
-ne]
-> > >  ima_calc_file_shash security/integrity/ima/ima_crypto.c:511 [inline]
-> > >  ima_calc_file_hash+0x20d7/0x3fd0 security/integrity/ima/ima_crypto.c=
-:568
-> > >  ima_collect_measurement+0x45d/0xe60 security/integrity/ima/ima_api.c=
-:293
-> > >  process_measurement+0x2d1a/0x40e0 security/integrity/ima/ima_main.c:=
-385
-> > >  ima_file_check+0x8e/0xd0 security/integrity/ima/ima_main.c:613
-> > >  security_file_post_open+0xbf/0x530 security/security.c:3130
-> > >  do_open fs/namei.c:3882 [inline]
-> > >  path_openat+0x5ac3/0x6760 fs/namei.c:4039
-> > >  do_filp_open+0x280/0x660 fs/namei.c:4066
-> > >  do_sys_openat2+0x1bb/0x2f0 fs/open.c:1429
-> > >  do_sys_open fs/open.c:1444 [inline]
-> > >  __do_sys_openat fs/open.c:1460 [inline]
-> > >  __se_sys_openat fs/open.c:1455 [inline]
-> > >  __x64_sys_openat+0x240/0x300 fs/open.c:1455
-> > >  x64_sys_call+0x213/0x3db0 arch/x86/include/generated/asm/syscalls_64=
-.h:258
-> > >  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-> > >  do_syscall_64+0xd9/0x1b0 arch/x86/entry/syscall_64.c:94
-> > >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> > >=20
-> > > Uninit was stored to memory at:
-> > >  LOAD_OP lib/crypto/sha256.c:56 [inline]
-> > >  sha256_transform lib/crypto/sha256.c:82 [inline]
-> > >  sha256_transform_blocks+0x268b/0x2880 lib/crypto/sha256.c:127
-> > >  lib_sha256_base_do_update include/crypto/sha256_base.h:63 [inline]
-> > >  sha256_update+0x392/0x410 lib/crypto/sha256.c:136
-> > >  crypto_sha256_update+0x35/0x60 crypto/sha256_generic.c:39
-> > >  crypto_shash_update+0x7a/0xb0 crypto/shash.c:52
-> > >  ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:491 [inli=
-ne]
-> > >  ima_calc_file_shash security/integrity/ima/ima_crypto.c:511 [inline]
-> > >  ima_calc_file_hash+0x20d7/0x3fd0 security/integrity/ima/ima_crypto.c=
-:568
-> > >  ima_collect_measurement+0x45d/0xe60 security/integrity/ima/ima_api.c=
-:293
-> > >  process_measurement+0x2d1a/0x40e0 security/integrity/ima/ima_main.c:=
-385
-> > >  ima_file_check+0x8e/0xd0 security/integrity/ima/ima_main.c:613
-> > >  security_file_post_open+0xbf/0x530 security/security.c:3130
-> > >  do_open fs/namei.c:3882 [inline]
-> > >  path_openat+0x5ac3/0x6760 fs/namei.c:4039
-> > >  do_filp_open+0x280/0x660 fs/namei.c:4066
-> > >  do_sys_openat2+0x1bb/0x2f0 fs/open.c:1429
-> > >  do_sys_open fs/open.c:1444 [inline]
-> > >  __do_sys_openat fs/open.c:1460 [inline]
-> > >  __se_sys_openat fs/open.c:1455 [inline]
-> > >  __x64_sys_openat+0x240/0x300 fs/open.c:1455
-> > >  x64_sys_call+0x213/0x3db0 arch/x86/include/generated/asm/syscalls_64=
-.h:258
-> > >  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-> > >  do_syscall_64+0xd9/0x1b0 arch/x86/entry/syscall_64.c:94
-> > >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> > >=20
-> > > Uninit was stored to memory at:
-> > >  memcpy_to_iter lib/iov_iter.c:65 [inline]
-> > >  iterate_kvec include/linux/iov_iter.h:86 [inline]
-> > >  iterate_and_advance2 include/linux/iov_iter.h:306 [inline]
-> > >  iterate_and_advance include/linux/iov_iter.h:328 [inline]
-> > >  _copy_to_iter+0x176c/0x32f0 lib/iov_iter.c:185
-> > >  copy_page_to_iter+0x43c/0x8b0 lib/iov_iter.c:362
-> > >  copy_folio_to_iter include/linux/uio.h:198 [inline]
-> > >  filemap_read+0xced/0x2190 mm/filemap.c:2753
-> > >  bch2_read_iter+0x559/0x21c0 fs/bcachefs/fs-io-direct.c:221
-> > >  __kernel_read+0x750/0xda0 fs/read_write.c:528
-> > >  integrity_kernel_read+0x77/0x90 security/integrity/iint.c:28
-> > >  ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:480 [inli=
-ne]
-> > >  ima_calc_file_shash security/integrity/ima/ima_crypto.c:511 [inline]
-> > >  ima_calc_file_hash+0x1ff9/0x3fd0 security/integrity/ima/ima_crypto.c=
-:568
-> > >  ima_collect_measurement+0x45d/0xe60 security/integrity/ima/ima_api.c=
-:293
-> > >  process_measurement+0x2d1a/0x40e0 security/integrity/ima/ima_main.c:=
-385
-> > >  ima_file_check+0x8e/0xd0 security/integrity/ima/ima_main.c:613
-> > >  security_file_post_open+0xbf/0x530 security/security.c:3130
-> > >  do_open fs/namei.c:3882 [inline]
-> > >  path_openat+0x5ac3/0x6760 fs/namei.c:4039
-> > >  do_filp_open+0x280/0x660 fs/namei.c:4066
-> > >  do_sys_openat2+0x1bb/0x2f0 fs/open.c:1429
-> > >  do_sys_open fs/open.c:1444 [inline]
-> > >  __do_sys_openat fs/open.c:1460 [inline]
-> > >  __se_sys_openat fs/open.c:1455 [inline]
-> > >  __x64_sys_openat+0x240/0x300 fs/open.c:1455
-> > >  x64_sys_call+0x213/0x3db0 arch/x86/include/generated/asm/syscalls_64=
-.h:258
-> > >  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-> > >  do_syscall_64+0xd9/0x1b0 arch/x86/entry/syscall_64.c:94
-> > >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> > >=20
-> > > Uninit was created at:
-> > >  __alloc_frozen_pages_noprof+0x689/0xf00 mm/page_alloc.c:4993
-> > >  alloc_pages_mpol+0x328/0x860 mm/mempolicy.c:2301
-> > >  alloc_frozen_pages_noprof mm/mempolicy.c:2372 [inline]
-> > >  alloc_pages_noprof mm/mempolicy.c:2392 [inline]
-> > >  folio_alloc_noprof+0x109/0x360 mm/mempolicy.c:2402
-> > >  filemap_alloc_folio_noprof+0x9d/0x420 mm/filemap.c:1007
-> > >  ractl_alloc_folio mm/readahead.c:186 [inline]
-> > >  ra_alloc_folio mm/readahead.c:441 [inline]
-> > >  page_cache_ra_order+0x93f/0x14f0 mm/readahead.c:509
-> > >  page_cache_sync_ra+0x108a/0x13e0 mm/readahead.c:621
-> > >  filemap_get_pages+0xfb3/0x3a70 mm/filemap.c:2591
-> > >  filemap_read+0x5c6/0x2190 mm/filemap.c:2702
-> > >  bch2_read_iter+0x559/0x21c0 fs/bcachefs/fs-io-direct.c:221
-> > >  __kernel_read+0x750/0xda0 fs/read_write.c:528
-> > >  integrity_kernel_read+0x77/0x90 security/integrity/iint.c:28
-> > >  ima_calc_file_hash_tfm security/integrity/ima/ima_crypto.c:480 [inli=
-ne]
-> > >  ima_calc_file_shash security/integrity/ima/ima_crypto.c:511 [inline]
-> > >  ima_calc_file_hash+0x1ff9/0x3fd0 security/integrity/ima/ima_crypto.c=
-:568
-> > >  ima_collect_measurement+0x45d/0xe60 security/integrity/ima/ima_api.c=
-:293
-> > >  process_measurement+0x2d1a/0x40e0 security/integrity/ima/ima_main.c:=
-385
-> > >  ima_file_check+0x8e/0xd0 security/integrity/ima/ima_main.c:613
-> > >  security_file_post_open+0xbf/0x530 security/security.c:3130
-> > >  do_open fs/namei.c:3882 [inline]
-> > >  path_openat+0x5ac3/0x6760 fs/namei.c:4039
-> > >  do_filp_open+0x280/0x660 fs/namei.c:4066
-> > >  do_sys_openat2+0x1bb/0x2f0 fs/open.c:1429
-> > >  do_sys_open fs/open.c:1444 [inline]
-> > >  __do_sys_openat fs/open.c:1460 [inline]
-> > >  __se_sys_openat fs/open.c:1455 [inline]
-> > >  __x64_sys_openat+0x240/0x300 fs/open.c:1455
-> > >  x64_sys_call+0x213/0x3db0 arch/x86/include/generated/asm/syscalls_64=
-.h:258
-> > >  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-> > >  do_syscall_64+0xd9/0x1b0 arch/x86/entry/syscall_64.c:94
-> > >  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> > >=20
-> > > CPU: 0 UID: 0 PID: 7337 Comm: syz.2.106 Not tainted 6.15.0-rc3-syzkal=
-ler-00094-g02ddfb981de8 #0 PREEMPT(undef)=20
-> > > Hardware name: Google Google Compute Engine/Google Compute Engine, BI=
-OS Google 05/07/2025
-> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-> > >=20
-> > >=20
-> > > ---
-> > > This report is generated by a bot. It may contain errors.
-> > > See https://goo.gl/tpsmEJ for more information about syzbot.
-> > > syzbot engineers can be reached at syzkaller@googlegroups.com.
-> > >=20
-> > > syzbot will keep track of this issue. See:
-> > > https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> > >=20
-> > > If the report is already addressed, let syzbot know by replying with:
-> > > #syz fix: exact-commit-title
-> > >=20
-> > > If you want syzbot to run the reproducer, reply with:
-> > > #syz test: git://repo/address.git branch-or-commit-hash
-> > > If you attach or paste a git patch, syzbot will apply it before testi=
-ng.
-> > >=20
-> > > If you want to overwrite report's subsystems, reply with:
-> > > #syz set subsystems: new-subsystem
-> > > (See the list of subsystem names on the web dashboard)
-> > >=20
-> > > If the report is a duplicate of another one, reply with:
-> > > #syz dup: exact-subject-of-another-report
-> > >=20
-> > > If you want to undo deduplication, reply with:
-> > > #syz undup
-> >=20
+The code removed in Linux-2.4.0-prerelease was:
+-       /* Set-uid? */
+-       if (mode & S_ISUID) {
+-               bprm->e_uid = inode->i_uid;
+-               if (bprm->e_uid != current->euid)
+-                       id_change = 1;
+-       }
+-
+-       /* Set-gid? */
+-       /*
+-        * If setgid is set but no group execute bit then this
+-        * is a candidate for mandatory locking, not a setgid
+-        * executable.
+-        */
+-       if ((mode & (S_ISGID | S_IXGRP)) == (S_ISGID | S_IXGRP)) {
+-               bprm->e_gid = inode->i_gid;
+-               if (!in_group_p(bprm->e_gid))
+-                       id_change = 1;
+
+Linux-2.4.0-prerelease added the current logic as:
++       if (bprm->e_uid != current->uid || bprm->e_gid != current->gid ||
++           !cap_issubset(new_permitted, current->cap_permitted)) {
++                current->dumpable = 0;
++
++               lock_kernel();
++               if (must_not_trace_exec(current)
++                   || atomic_read(&current->fs->count) > 1
++                   || atomic_read(&current->files->count) > 1
++                   || atomic_read(&current->sig->count) > 1) {
++                       if(!capable(CAP_SETUID)) {
++                               bprm->e_uid = current->uid;
++                               bprm->e_gid = current->gid;
++                       }
++                       if(!capable(CAP_SETPCAP)) {
++                               new_permitted = cap_intersect(new_permitted,
++                                                       current->cap_permitted);
++                       }
++               }
++               do_unlock = 1;
++       }
+
+I have condensed the logic from Linux-2.4.0-test12 to just:
+	id_changed = !uid_eq(new->euid, old->euid) || !in_group_p(new->egid);
+
+
+This change is userspace visible, but I don't expect anyone to care.
+
+For the bug that is being fixed to trigger bprm->unsafe has to be set.
+The variable bprm->unsafe is set when ptracing an executable, when
+sharing a working directory, or when no_new_privs is set.  Properly
+testing for cases that are safe even in those conditions and doing
+nothing special should not affect anyone.  Especially if they were
+previously ok with their credentials getting munged
+
+Reported-by: Max Kellermann <max.kellermann@ionos.com>
+Fixes: 64444d3d0d7f ("Linux version 2.4.0-prerelease")
+[1] https://lkml.kernel.org/r/20250306082615.174777-1-max.kellermann@ionos.com
+Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+---
+ security/commoncap.c | 18 ++++++------------
+ 1 file changed, 6 insertions(+), 12 deletions(-)
+
+diff --git a/security/commoncap.c b/security/commoncap.c
+index 28d4248bf001..96c7654f2012 100644
+--- a/security/commoncap.c
++++ b/security/commoncap.c
+@@ -856,12 +856,6 @@ static void handle_privileged_root(struct linux_binprm *bprm, bool has_fcap,
+ #define __cap_full(field, cred) \
+ 	cap_issubset(CAP_FULL_SET, cred->cap_##field)
+ 
+-static inline bool __is_setuid(struct cred *new, const struct cred *old)
+-{ return !uid_eq(new->euid, old->uid); }
+-
+-static inline bool __is_setgid(struct cred *new, const struct cred *old)
+-{ return !gid_eq(new->egid, old->gid); }
+-
+ /*
+  * 1) Audit candidate if current->cap_effective is set
+  *
+@@ -891,7 +885,7 @@ static inline bool nonroot_raised_pE(struct cred *new, const struct cred *old,
+ 	    (root_privileged() &&
+ 	     __is_suid(root, new) &&
+ 	     !__cap_full(effective, new)) ||
+-	    (!__is_setuid(new, old) &&
++	    (uid_eq(new->euid, old->euid) &&
+ 	     ((has_fcap &&
+ 	       __cap_gained(permitted, new, old)) ||
+ 	      __cap_gained(ambient, new, old))))
+@@ -917,7 +911,7 @@ int cap_bprm_creds_from_file(struct linux_binprm *bprm, const struct file *file)
+ 	/* Process setpcap binaries and capabilities for uid 0 */
+ 	const struct cred *old = current_cred();
+ 	struct cred *new = bprm->cred;
+-	bool effective = false, has_fcap = false, is_setid;
++	bool effective = false, has_fcap = false, id_changed;
+ 	int ret;
+ 	kuid_t root_uid;
+ 
+@@ -941,9 +935,9 @@ int cap_bprm_creds_from_file(struct linux_binprm *bprm, const struct file *file)
+ 	 *
+ 	 * In addition, if NO_NEW_PRIVS, then ensure we get no new privs.
+ 	 */
+-	is_setid = __is_setuid(new, old) || __is_setgid(new, old);
++	id_changed = !uid_eq(new->euid, old->euid) || !in_group_p(new->egid);
+ 
+-	if ((is_setid || __cap_gained(permitted, new, old)) &&
++	if ((id_changed || __cap_gained(permitted, new, old)) &&
+ 	    ((bprm->unsafe & ~LSM_UNSAFE_PTRACE) ||
+ 	     !ptracer_capable(current, new->user_ns))) {
+ 		/* downgrade; they get no more than they had, and maybe less */
+@@ -960,7 +954,7 @@ int cap_bprm_creds_from_file(struct linux_binprm *bprm, const struct file *file)
+ 	new->sgid = new->fsgid = new->egid;
+ 
+ 	/* File caps or setid cancels ambient. */
+-	if (has_fcap || is_setid)
++	if (has_fcap || id_changed)
+ 		cap_clear(new->cap_ambient);
+ 
+ 	/*
+@@ -993,7 +987,7 @@ int cap_bprm_creds_from_file(struct linux_binprm *bprm, const struct file *file)
+ 		return -EPERM;
+ 
+ 	/* Check for privilege-elevated exec. */
+-	if (is_setid ||
++	if (id_changed ||
+ 	    (!__is_real(root_uid, new) &&
+ 	     (effective ||
+ 	      __cap_grew(permitted, ambient, new))))
+-- 
+2.41.0
 
