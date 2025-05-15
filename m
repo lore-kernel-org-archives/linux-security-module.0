@@ -1,212 +1,362 @@
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15B582980DB;
-	Thu, 15 May 2025 10:33:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3C6933DF
+	for <linux-security-module@vger.kernel.org>; Thu, 15 May 2025 13:17:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747305229; cv=none; b=bz7a7XcZS3t1tQj+10vlX/dG6bX7fzicGFyJrQICvS0CQLjV3vMIxmRyXq6dzLWWRZygP07AQ/HRy/coOszmdkFf0qVDfWPkIywxoLG0c06z5Bpo2A0tsUt/UYII0fs1wkX2BLOScPeVhoqAwrYtJDEAJG425vAqeMe4FbjaQGo=
+	t=1747315055; cv=none; b=eUYUWbBlYAndpQtQtZh4rPRPZ9iPGQsEhqMeNb8zOKW7aGBGf/8PgsIq3j+jawT+Rz5Qoc/9GCYdWmEGah1EqHpWEcHsfN2lwHQSsORS4jowSLflCkAyC3gwkdoN+1FKkQBjoveD+EJFS0ZYwDlkXfRAZJm39o8BqysAcdiiL3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747305229; c=relaxed/simple;
-	bh=0Ca4GoXXMXx6cHQk8bHNd0lNmpQHYfAdXnzIxwgHL3k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=c+nFs+e+8CatHm1vNJsGCo9zbaC8oui+kdPu4zQjXRq0FiXLjmcpCSWa/D2IBa3pIW9DVK53RAbYZ56or7gWTWadHro9t6eZ5p++3Sni1xX8ITx9nqcLxJyVjWUuIYUyPgCc6M/kmxzJUJRbM3I3W5baK2PD0yW7DTQyxBrMVeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dNFFvB7+; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dNFFvB7+"
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ad228552355so145728266b.3;
-        Thu, 15 May 2025 03:33:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747305224; x=1747910024; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ix0mN7yylNXsLKVIXpa3RC7XyXUMorhAJgZhoj08KZI=;
-        b=dNFFvB7+F4bQnqRGDE2+4A7yMNRNci41ukf9sM1SpKoP5h6okqXiIXRFAcqooe9hEw
-         kaUx/tV81EFC+u0mn6Le+CyrNFLvbaOH4AXXbD96ikKi9eBWkXm6lXyTTVx9+F+WvxCu
-         QCLbC65KNrv3b1DAyGVaQLBS/5VUvLZa8GdDj9+o7gsJWgRA2NbkaPUIEMKDfrnrXuBQ
-         aMvr2s7eu23v2L952PmkdrtcWQYLg5s3TlFFyLZ66piMmmNg7QbAgTREsF+8BDzzEj++
-         3/6IIvVKq4OoaPc3OmCt1SGq3n8VlTJFyCc2nT6YvaJt6JmzAHI1yEJTRH0PRwdkOLPn
-         YAiw==
+	s=arc-20240116; t=1747315055; c=relaxed/simple;
+	bh=CSlINjW300wE33LnIvPV27GEUvIHGtSaWPL2DVU9hqw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=L1vvqJdU0GzeudV3xAiMxd/Eh3spoeXyn5DWjI9zTwNvR8JePcTskabH9vPwEh4yz0LDpSDxlma9CiEc1rBy2rwvMsB3s5WsgY6q3DkcHghUC6FPjeSNsvXlz3GXq3AeLXZ7FBl6QKHSS5ML+bw1sk5jfm3RCVXg2b40B0jBdGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3da76423ba1so18380075ab.0
+        for <linux-security-module@vger.kernel.org>; Thu, 15 May 2025 06:17:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747305224; x=1747910024;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ix0mN7yylNXsLKVIXpa3RC7XyXUMorhAJgZhoj08KZI=;
-        b=tHazuhTolEjm0AwedGQNaIwGVTICJQraA9S1nB7s9UJfjJtJcYpG2vEh+UxLGyWuw7
-         rAJMoSlIvp9HJt9U1OUSjs5O7myGMotXVYUpvoy/nP9zhogP140G7SZh2kaBZVb9lJKf
-         XzY6W0GPzKciXy3YHpttbxKMSovd4Gmh8Bxu8ogetrTGwWLS5J+yFKc2e2MH3AD9Qj4y
-         MCCFSqOWPxhwQkIVNFAeZJ+zvXeF9e/hhMyBR0YVh8KaOjKbZSB3l4c/iQsIm0yZZzUb
-         f1SHf5CH/Lde4hO8rArc7eIf2kCCXNM2bUCG90l+ySxIDMbaDQyA71MIwTYJuA6/xjKV
-         XlSg==
-X-Forwarded-Encrypted: i=1; AJvYcCUFnl18yK4fF8ZN2ucDTSkBtzfngOZ4W/Zb+AtLsGqpz4K3M7veduiKInDo13KpvYiJXoHkcDXTeh90xRC3YQ==@vger.kernel.org, AJvYcCUw/v0IOYfEKGhI5+PaJVUhjKZ7tN2HyFQ0iyjDsYmm6oiwhN1OoRkPrGGYwfDshbHCMvomAustbIVKq9ybvmOHfBImhqxZ@vger.kernel.org, AJvYcCV9z144RUR25t3aFg1JFeKuxmt3naFBbyv3tFPUNz3ve32dI/QuVr+k82PQL32ALdaUPURR4FJC3d5vpQ==@vger.kernel.org, AJvYcCVTr+YXfhfhWbVErezEaAdibon47HFbxkBSwd0L7a7b+ksE7LdIUWBlwMeYlLWA7YEU0QjsSlUWli9R0fAC@vger.kernel.org, AJvYcCVek3fQdptbsYZYs2oTWrZX8O/3F/GUbA9UVDvn0xntkcIuCgAgsgL4NsDuYQKBwWsq5LssXIC2X69I@vger.kernel.org, AJvYcCVps06mw7zk4bPdVN9Yv0+Ojg5M7awKR+XyXkPrZsyIDdXNnUGoLjCq5YOW4BmkxLpPtlBACTeKHLUaOiHn@vger.kernel.org, AJvYcCVsMxP8v6PDjt17331Nq8v25vO5ZRD2nB8rOnxTKEZlRI4NVSB/oBu6lmtH8OG/1ZKEBCDgIVhAz5ldcA==@vger.kernel.org, AJvYcCVv8csgEV2RJWy4XYXB0ZMv00S/ClXPdRJB8I80WrnXQCuhvexd6DQsUhYnVPePww51QU75xzVgRnA=@vger.kernel.org, AJvYcCW0F1JF43hz5eSJTXNoegIXA+RVMAgnJIiQXbTipAexlxh4iNhjELEC2iXqnyXmRdQR/4QXnMcSwh39XB2sBA==@vger.kernel.org, AJvYcCW18UDiAGv/4LOj3FNHdH3GSZNyBcI+jPZ4NVz6NORooYjdCOj2SChcjPvfjFyb8fgkjTQc4ZynhSI3AQ==@vger.kernel.org, AJvYcCW5jRkhGpM9gTLCfchk227w/7h2IKaZ0puV91k5iVX3Btl5kae+ywOqejl7MEoxxCZsrBf72PxbEg==@vger.kernel.org, AJvYcCWBoIgk+CVxvl2GSIdNKDKaBKfqA9ZlYws3gueo/jWH5ZXkzxQCbcu147xz1MNz3709XASbHT59EA==@vger.kernel.org, AJvYcCWUrm8XEOKGZJy3WAofc8WaI8Pk+8+JfgKsTXAw5huAhOLpPYobdqp15LMARaxNEbYwPdssmelvyJgNADM=@vger.kernel.org, AJvYcCWgu3aDI8Fl1QgcZi/LKLhCchAO1ENL1XEKHya4jDvdFC+3yRchmE2pcuxiEM0ts9LmbyPxYchwVMh+@vger.kernel.org, AJvYcCXDdGMbqYtbvTkGvKFJ9OZRQ1Dfqh5BWlwKfnXMpyIkBoS78woO5K1w8mWyL2pbNtc0AbI9uyh19XGGVQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAhg0fRi2y/4LqaTxIBOyX0h6jMOVDsV+qkOx8Y33cZHfUOxq1
-	xrRJJD+6a7oNRV0phyM/DJAUrxtFsomp7aFlMZfNKdzUU3uAZpywkR1lSGQ47Hs7pl13vEi2gYb
-	yQVDVOloSRrg4NGi1eSonwE9w9RY=
-X-Gm-Gg: ASbGncvgp+pMrYhwTDQZSDhHzNtbh29X5xDM/VKsLFbS/BaFNH5zYfxYT/k7bHjMq83
-	xb5QRifdRF59rQNAS0SxCj3zrGWRbACLTsYNaMnzhA9bBhoC5QDF6ylCS11E4PVEDQvY7IPyhZ8
-	aBRX+yXuYhY1uhDFh/H8D47JGosgkkMN1J
-X-Google-Smtp-Source: AGHT+IH/YFjWiUa7Oe6APhoaMiAXM+TxOKXzzX9IOWrtv4bcH+n6gSWZSohhovEJvJss7Wr0el1TN6Dn7PUuhUUlRKw=
-X-Received: by 2002:a17:907:72c1:b0:ad2:e683:a76c with SMTP id
- a640c23a62f3a-ad515d79f17mr198604066b.7.1747305223832; Thu, 15 May 2025
- 03:33:43 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1747315053; x=1747919853;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xn9oKnYNLdjBAhOv38xpz1Hgm9HIVb5SHeuBIDHGyvY=;
+        b=KDq9ND0fOlmXPn3kOP4rjUHh2KM4BHp6qNM39uEwYoJLQ2LqYTX1KgqgDGYmuu7Zna
+         3MgQPgvXuDzG2W0RAmYmbyMhWe56S1Dm8rj/RKqam+5ccDwQwKeSiWCReYAp11TCLyXr
+         TtLkbyTcfZobUAQc8Lb0TYSHTEczQcLfRnpxh4pcYiB5CiWjQlhUbVIU2FUCxj6NNxHV
+         FNv+D8cGECqrYtlm0SQVeBJlI6nsQ+GA4ZXOz4sMtfxME0WpDfsuwPdIVt/0kevrX9cg
+         QNNTq9zwuoJ5nlQcgQBKBZchfP7qCnLE57P+nGcIdcL7mOOyUsktYPciwZiW3Adg/53x
+         oUZA==
+X-Forwarded-Encrypted: i=1; AJvYcCUYwgCsq295nMUeCmie0tZBEfS1P+bBQ/8gz4q2aTDB5R2iDvPP5lYE7U0davop7WXcQCx/HlXO9Te0ZbT7yQ3A7uh+T2s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqUPciZB8/RNrqk+dxZGsngbg+jWU9GwSUX1f/tQNiSUCAQIlv
+	qx7L2GAEbyvRxWTbLjUiGiwdDVrlR4OaCcJcInyFlK7VOGpbQV4J//+8vAGUL1NtP4Z+FLEZKTG
+	DT9J8DdZgM0py8tSj39E/tAKYn2hogQk9lArIvwlgPEdC+383LNdEauw=
+X-Google-Smtp-Source: AGHT+IFwXvRFd1PItj+rYDYnplcpCYz6cU/4mpQeerP0EGN4L5woUn4gyTHygMlkLH8CQWXXBSS3ED50sEefATUoQH7J2dE6FgXv
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250513-xattrat-syscall-v5-0-22bb9c6c767f@kernel.org>
- <399fdabb-74d3-4dd6-9eee-7884a986dab1@app.fastmail.com> <20250515-bedarf-absagen-464773be3e72@brauner>
-In-Reply-To: <20250515-bedarf-absagen-464773be3e72@brauner>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 15 May 2025 12:33:31 +0200
-X-Gm-Features: AX0GCFv6VzJTt0PbxjVfcfLF_B5PjKPMcuhdvqJqoMNLfQeCg9Kk1MZMyM5NBko
-Message-ID: <CAOQ4uxicuEkOas2UR4mqfus9Q2RAeKKYTwbE2XrkcE_zp8oScQ@mail.gmail.com>
-Subject: Re: [PATCH v5 0/7] fs: introduce file_getattr and file_setattr syscalls
-To: Christian Brauner <brauner@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Andrey Albershteyn <aalbersh@redhat.com>, 
-	Richard Henderson <richard.henderson@linaro.org>, Matt Turner <mattst88@gmail.com>, 
-	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Michal Simek <monstr@monstr.eu>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Naveen N Rao <naveen@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, Yoshinori Sato <ysato@users.sourceforge.jp>, 
-	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
-	"David S . Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
-	Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	=?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
-	Ondrej Mosnacek <omosnace@redhat.com>, Tyler Hicks <code@tyhicks.com>, 
-	Miklos Szeredi <miklos@szeredi.hu>, linux-alpha@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org, 
-	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, 
-	sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org, 
-	Linux-Arch <linux-arch@vger.kernel.org>, selinux@vger.kernel.org, 
-	ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, Andrey Albershteyn <aalbersh@kernel.org>
+X-Received: by 2002:a05:6e02:360a:b0:3db:72f7:d7b3 with SMTP id
+ e9e14a558f8ab-3db7957701cmr25455645ab.4.1747315052840; Thu, 15 May 2025
+ 06:17:32 -0700 (PDT)
+Date: Thu, 15 May 2025 06:17:32 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6825e96c.a00a0220.a2f23.01c3.GAE@google.com>
+Subject: [syzbot] [lsm?] [integrity?] possible deadlock in process_measurement (5)
+From: syzbot <syzbot+6529afa25091aee8536c@syzkaller.appspotmail.com>
+To: dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, jmorris@namei.org, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, paul@paul-moore.com, 
+	roberto.sassu@huawei.com, serge@hallyn.com, syzkaller-bugs@googlegroups.com, 
+	zohar@linux.ibm.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 15, 2025 at 11:02=E2=80=AFAM Christian Brauner <brauner@kernel.=
-org> wrote:
->
-> On Tue, May 13, 2025 at 11:53:23AM +0200, Arnd Bergmann wrote:
-> > On Tue, May 13, 2025, at 11:17, Andrey Albershteyn wrote:
-> >
-> > >
-> > >     long syscall(SYS_file_getattr, int dirfd, const char *pathname,
-> > >             struct fsxattr *fsx, size_t size, unsigned int at_flags);
-> > >     long syscall(SYS_file_setattr, int dirfd, const char *pathname,
-> > >             struct fsxattr *fsx, size_t size, unsigned int at_flags);
-> >
-> > I don't think we can have both the "struct fsxattr" from the uapi
-> > headers, and a variable size as an additional argument. I would
-> > still prefer not having the extensible structure at all and just
->
-> We're not going to add new interfaces that are fixed size unless for the
-> very basic cases. I don't care if we're doing that somewhere else in the
-> kernel but we're not doing that for vfs apis.
->
-> > use fsxattr, but if you want to make it extensible in this way,
-> > it should use a different structure (name). Otherwise adding
-> > fields after fsx_pad[] would break the ioctl interface.
->
-> Would that really be a problem? Just along the syscall simply add
-> something like:
->
-> diff --git a/fs/ioctl.c b/fs/ioctl.c
-> index c91fd2b46a77..d3943805c4be 100644
-> --- a/fs/ioctl.c
-> +++ b/fs/ioctl.c
-> @@ -868,12 +868,6 @@ static int do_vfs_ioctl(struct file *filp, unsigned =
-int fd,
->         case FS_IOC_SETFLAGS:
->                 return ioctl_setflags(filp, argp);
->
-> -       case FS_IOC_FSGETXATTR:
-> -               return ioctl_fsgetxattr(filp, argp);
-> -
-> -       case FS_IOC_FSSETXATTR:
-> -               return ioctl_fssetxattr(filp, argp);
-> -
->         case FS_IOC_GETFSUUID:
->                 return ioctl_getfsuuid(filp, argp);
->
-> @@ -886,6 +880,20 @@ static int do_vfs_ioctl(struct file *filp, unsigned =
-int fd,
->                 break;
->         }
->
-> +       switch (_IOC_NR(cmd)) {
-> +       case _IOC_NR(FS_IOC_FSGETXATTR):
-> +               if (WARN_ON_ONCE(_IOC_TYPE(cmd) !=3D _IOC_TYPE(FS_IOC_FSG=
-ETXATTR)))
-> +                       return SOMETHING_SOMETHING;
-> +               /* Only handle original size. */
-> +               return ioctl_fsgetxattr(filp, argp);
-> +
-> +       case _IOC_NR(FFS_IOC_FSSETXATTR):
-> +               if (WARN_ON_ONCE(_IOC_TYPE(cmd) !=3D _IOC_TYPE(FFS_IOC_FS=
-SETXATTR)))
-> +                       return SOMETHING_SOMETHING;
-> +               /* Only handle original size. */
-> +               return ioctl_fssetxattr(filp, argp);
-> +       }
-> +
+Hello,
 
-I think what Arnd means is that we will not be able to change struct
-sfxattr in uapi
-going forward, because we are not going to deprecate the ioctls and
-certainly not
-the XFS specific ioctl XFS_IOC_FSGETXATTRA.
+syzbot found the following issue on:
 
-This struct is part of XFS uapi:
-https://man7.org/linux/man-pages/man2/ioctl_xfs_fsgetxattr.2.html
+HEAD commit:    3ce9925823c7 Merge tag 'mm-hotfixes-stable-2025-05-10-14-2..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13b93768580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6b353fce507849ee
+dashboard link: https://syzkaller.appspot.com/bug?extid=6529afa25091aee8536c
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
-Should we will need to depart from this struct definition and we might
-as well do it for the initial release of the syscall rather than later on, =
-e.g.:
+Unfortunately, I don't have any reproducer for this issue yet.
 
---- a/include/uapi/linux/fs.h
-+++ b/include/uapi/linux/fs.h
-@@ -148,6 +148,17 @@ struct fsxattr {
-        unsigned char   fsx_pad[8];
- };
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/a21f72d944f5/disk-3ce99258.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/bcf67a803f15/vmlinux-3ce99258.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/3f247ad0c252/bzImage-3ce99258.xz
 
-+/*
-+ * Variable size structure for file_[sg]et_attr().
-+ */
-+struct fsx_fileattr {
-+       __u32           fsx_xflags;     /* xflags field value (get/set) */
-+       __u32           fsx_extsize;    /* extsize field value (get/set)*/
-+       __u32           fsx_nextents;   /* nextents field value (get)   */
-+       __u32           fsx_projid;     /* project identifier (get/set) */
-+       __u32           fsx_cowextsize; /* CoW extsize field value (get/set=
-)*/
-+};
-+
-+#define FSXATTR_SIZE_VER0 20
-+#define FSXATTR_SIZE_LATEST FSXATTR_SIZE_VER0
-+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+6529afa25091aee8536c@syzkaller.appspotmail.com
 
-Right?
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f6aee5b6080 R15: 00007ffdbad4bbb8
+ </TASK>
+======================================================
+WARNING: possible circular locking dependency detected
+6.15.0-rc5-syzkaller-00300-g3ce9925823c7 #0 Tainted: G     U             
+------------------------------------------------------
+syz.5.3437/23258 is trying to acquire lock:
+ffff88802fb6a9f8 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}, at: process_measurement+0x7e0/0x23e0 security/integrity/ima/ima_main.c:279
 
-Thanks,
-Amir.
+but task is already holding lock:
+ffffffff8f2ed228 (dpm_list_mtx){+.+.}-{4:4}, at: device_pm_lock drivers/base/power/main.c:113 [inline]
+ffffffff8f2ed228 (dpm_list_mtx){+.+.}-{4:4}, at: dpm_for_each_dev drivers/base/power/main.c:2059 [inline]
+ffffffff8f2ed228 (dpm_list_mtx){+.+.}-{4:4}, at: dpm_for_each_dev+0x2d/0xb0 drivers/base/power/main.c:2052
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #5 (dpm_list_mtx){+.+.}-{4:4}:
+       __mutex_lock_common kernel/locking/mutex.c:601 [inline]
+       __mutex_lock+0x199/0xb90 kernel/locking/mutex.c:746
+       device_pm_add+0x87/0x3e0 drivers/base/power/main.c:137
+       device_add+0x9cd/0x1a70 drivers/base/core.c:3655
+       pmu_dev_alloc+0x27c/0x400 kernel/events/core.c:12087
+       perf_event_sysfs_init+0xb3/0x150 kernel/events/core.c:14537
+       do_one_initcall+0x120/0x6e0 init/main.c:1257
+       do_initcall_level init/main.c:1319 [inline]
+       do_initcalls init/main.c:1335 [inline]
+       do_basic_setup init/main.c:1354 [inline]
+       kernel_init_freeable+0x5c2/0x900 init/main.c:1567
+       kernel_init+0x1c/0x2b0 init/main.c:1457
+       ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:153
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+-> #4 (pmus_lock){+.+.}-{4:4}:
+       __mutex_lock_common kernel/locking/mutex.c:601 [inline]
+       __mutex_lock+0x199/0xb90 kernel/locking/mutex.c:746
+       perf_event_init_cpu+0xc9/0x850 kernel/events/core.c:14442
+       cpuhp_invoke_callback+0x3d2/0xa10 kernel/cpu.c:194
+       __cpuhp_invoke_callback_range+0x101/0x210 kernel/cpu.c:967
+       cpuhp_invoke_callback_range kernel/cpu.c:991 [inline]
+       cpuhp_up_callbacks kernel/cpu.c:1022 [inline]
+       _cpu_up+0x3f5/0x930 kernel/cpu.c:1687
+       cpu_up+0x1dc/0x240 kernel/cpu.c:1719
+       cpuhp_bringup_mask+0xd8/0x210 kernel/cpu.c:1785
+       cpuhp_bringup_cpus_parallel kernel/cpu.c:1875 [inline]
+       bringup_nonboot_cpus+0x176/0x1c0 kernel/cpu.c:1889
+       smp_init+0x34/0x160 kernel/smp.c:1010
+       kernel_init_freeable+0x3a8/0x900 init/main.c:1559
+       kernel_init+0x1c/0x2b0 init/main.c:1457
+       ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:153
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+-> #3 (cpu_hotplug_lock){++++}-{0:0}:
+       percpu_down_read include/linux/percpu-rwsem.h:52 [inline]
+       cpus_read_lock+0x42/0x160 kernel/cpu.c:490
+       ring_buffer_resize+0x7ea/0x1560 kernel/trace/ring_buffer.c:2894
+       __tracing_resize_ring_buffer.part.0+0x52/0x1f0 kernel/trace/trace.c:5943
+       __tracing_resize_ring_buffer kernel/trace/trace.c:5937 [inline]
+       tracing_resize_ring_buffer kernel/trace/trace.c:5998 [inline]
+       tracing_free_buffer_release+0x104/0x270 kernel/trace/trace.c:7094
+       __fput+0x3ff/0xb70 fs/file_table.c:465
+       task_work_run+0x14d/0x240 kernel/task_work.c:227
+       resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+       exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+       exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
+       __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+       syscall_exit_to_user_mode+0x27b/0x2a0 kernel/entry/common.c:218
+       do_syscall_64+0xda/0x230 arch/x86/entry/syscall_64.c:100
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #2 (&buffer->mutex){+.+.}-{4:4}:
+       __mutex_lock_common kernel/locking/mutex.c:601 [inline]
+       __mutex_lock+0x199/0xb90 kernel/locking/mutex.c:746
+       ring_buffer_resize+0x113/0x1560 kernel/trace/ring_buffer.c:2851
+       __tracing_resize_ring_buffer.part.0+0x52/0x1f0 kernel/trace/trace.c:5943
+       __tracing_resize_ring_buffer kernel/trace/trace.c:5937 [inline]
+       tracing_update_buffers+0x102/0x130 kernel/trace/trace.c:6170
+       ftrace_event_write+0x14a/0x290 kernel/trace/trace_events.c:1494
+       vfs_write+0x25c/0x1180 fs/read_write.c:682
+       ksys_write+0x12a/0x240 fs/read_write.c:736
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xcd/0x230 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #1 (trace_types_lock){+.+.}-{4:4}:
+       __mutex_lock_common kernel/locking/mutex.c:601 [inline]
+       __mutex_lock+0x199/0xb90 kernel/locking/mutex.c:746
+       class_mutex_constructor include/linux/mutex.h:201 [inline]
+       trace_array_get kernel/trace/trace.c:550 [inline]
+       tracing_check_open_get_tr.part.0+0x45/0x130 kernel/trace/trace.c:598
+       tracing_check_open_get_tr kernel/trace/trace.c:592 [inline]
+       tracing_open_generic_tr+0x66/0xf0 kernel/trace/trace.c:4699
+       do_dentry_open+0x741/0x1c10 fs/open.c:956
+       vfs_open+0x82/0x3f0 fs/open.c:1086
+       dentry_open+0x71/0xd0 fs/open.c:1109
+       ima_calc_file_hash+0x2b6/0x490 security/integrity/ima/ima_crypto.c:553
+       ima_collect_measurement+0x897/0xa40 security/integrity/ima/ima_api.c:293
+       process_measurement+0x11fa/0x23e0 security/integrity/ima/ima_main.c:385
+       ima_file_check+0xc5/0x110 security/integrity/ima/ima_main.c:613
+       security_file_post_open+0x8e/0x210 security/security.c:3130
+       do_open fs/namei.c:3882 [inline]
+       path_openat+0x147d/0x2d40 fs/namei.c:4039
+       do_filp_open+0x20b/0x470 fs/namei.c:4066
+       do_sys_openat2+0x11b/0x1d0 fs/open.c:1429
+       do_sys_open fs/open.c:1444 [inline]
+       __do_sys_openat fs/open.c:1460 [inline]
+       __se_sys_openat fs/open.c:1455 [inline]
+       __x64_sys_openat+0x174/0x210 fs/open.c:1455
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xcd/0x230 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (&ima_iint_mutex_key[depth]){+.+.}-{4:4}:
+       check_prev_add kernel/locking/lockdep.c:3166 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3285 [inline]
+       validate_chain kernel/locking/lockdep.c:3909 [inline]
+       __lock_acquire+0x1173/0x1ba0 kernel/locking/lockdep.c:5235
+       lock_acquire kernel/locking/lockdep.c:5866 [inline]
+       lock_acquire+0x179/0x350 kernel/locking/lockdep.c:5823
+       __mutex_lock_common kernel/locking/mutex.c:601 [inline]
+       __mutex_lock+0x199/0xb90 kernel/locking/mutex.c:746
+       process_measurement+0x7e0/0x23e0 security/integrity/ima/ima_main.c:279
+       ima_file_check+0xc5/0x110 security/integrity/ima/ima_main.c:613
+       security_file_post_open+0x8e/0x210 security/security.c:3130
+       do_open fs/namei.c:3882 [inline]
+       path_openat+0x147d/0x2d40 fs/namei.c:4039
+       do_file_open_root+0x322/0x610 fs/namei.c:4091
+       file_open_root+0x2a7/0x450 fs/open.c:1408
+       kernel_read_file_from_path_initns+0x189/0x260 fs/kernel_read_file.c:163
+       fw_get_filesystem_firmware drivers/base/firmware_loader/main.c:549 [inline]
+       _request_firmware+0x744/0x1470 drivers/base/firmware_loader/main.c:916
+       request_firmware drivers/base/firmware_loader/main.c:992 [inline]
+       cache_firmware drivers/base/firmware_loader/main.c:1330 [inline]
+       __async_dev_cache_fw_image+0xb1/0x340 drivers/base/firmware_loader/main.c:1444
+       async_schedule_node_domain+0xd1/0x120 kernel/async.c:221
+       async_schedule_domain include/linux/async.h:72 [inline]
+       dev_cache_fw_image+0x38e/0x490 drivers/base/firmware_loader/main.c:1500
+       dpm_for_each_dev drivers/base/power/main.c:2061 [inline]
+       dpm_for_each_dev+0x5a/0xb0 drivers/base/power/main.c:2052
+       device_cache_fw_images drivers/base/firmware_loader/main.c:1550 [inline]
+       fw_pm_notify+0x81/0x150 drivers/base/firmware_loader/main.c:1601
+       notifier_call_chain+0xb9/0x410 kernel/notifier.c:85
+       notifier_call_chain_robust kernel/notifier.c:120 [inline]
+       blocking_notifier_call_chain_robust kernel/notifier.c:345 [inline]
+       blocking_notifier_call_chain_robust+0xc8/0x160 kernel/notifier.c:333
+       pm_notifier_call_chain_robust+0x27/0x60 kernel/power/main.c:102
+       snapshot_open+0x189/0x2b0 kernel/power/user.c:77
+       misc_open+0x35a/0x420 drivers/char/misc.c:179
+       chrdev_open+0x231/0x6a0 fs/char_dev.c:414
+       do_dentry_open+0x741/0x1c10 fs/open.c:956
+       vfs_open+0x82/0x3f0 fs/open.c:1086
+       do_open fs/namei.c:3880 [inline]
+       path_openat+0x1e5e/0x2d40 fs/namei.c:4039
+       do_filp_open+0x20b/0x470 fs/namei.c:4066
+       do_sys_openat2+0x11b/0x1d0 fs/open.c:1429
+       do_sys_open fs/open.c:1444 [inline]
+       __do_sys_openat fs/open.c:1460 [inline]
+       __se_sys_openat fs/open.c:1455 [inline]
+       __x64_sys_openat+0x174/0x210 fs/open.c:1455
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xcd/0x230 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+Chain exists of:
+  &ima_iint_mutex_key[depth] --> pmus_lock --> dpm_list_mtx
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(dpm_list_mtx);
+                               lock(pmus_lock);
+                               lock(dpm_list_mtx);
+  lock(&ima_iint_mutex_key[depth]);
+
+ *** DEADLOCK ***
+
+5 locks held by syz.5.3437/23258:
+ #0: ffffffff8f0e2e08 (misc_mtx){+.+.}-{4:4}, at: misc_open+0x63/0x420 drivers/char/misc.c:143
+ #1: ffffffff8e283608 (system_transition_mutex){+.+.}-{4:4}, at: lock_system_sleep+0x87/0xa0 kernel/power/main.c:56
+ #2: ffffffff8e2c3150 ((pm_chain_head).rwsem){++++}-{4:4}, at: blocking_notifier_call_chain_robust kernel/notifier.c:344 [inline]
+ #2: ffffffff8e2c3150 ((pm_chain_head).rwsem){++++}-{4:4}, at: blocking_notifier_call_chain_robust+0xa8/0x160 kernel/notifier.c:333
+ #3: ffffffff8f2f2608 (fw_lock){+.+.}-{4:4}, at: device_cache_fw_images drivers/base/firmware_loader/main.c:1548 [inline]
+ #3: ffffffff8f2f2608 (fw_lock){+.+.}-{4:4}, at: fw_pm_notify+0x69/0x150 drivers/base/firmware_loader/main.c:1601
+ #4: ffffffff8f2ed228 (dpm_list_mtx){+.+.}-{4:4}, at: device_pm_lock drivers/base/power/main.c:113 [inline]
+ #4: ffffffff8f2ed228 (dpm_list_mtx){+.+.}-{4:4}, at: dpm_for_each_dev drivers/base/power/main.c:2059 [inline]
+ #4: ffffffff8f2ed228 (dpm_list_mtx){+.+.}-{4:4}, at: dpm_for_each_dev+0x2d/0xb0 drivers/base/power/main.c:2052
+
+stack backtrace:
+CPU: 1 UID: 0 PID: 23258 Comm: syz.5.3437 Tainted: G     U              6.15.0-rc5-syzkaller-00300-g3ce9925823c7 #0 PREEMPT(full) 
+Tainted: [U]=USER
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_circular_bug+0x275/0x350 kernel/locking/lockdep.c:2079
+ check_noncircular+0x14c/0x170 kernel/locking/lockdep.c:2211
+ check_prev_add kernel/locking/lockdep.c:3166 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3285 [inline]
+ validate_chain kernel/locking/lockdep.c:3909 [inline]
+ __lock_acquire+0x1173/0x1ba0 kernel/locking/lockdep.c:5235
+ lock_acquire kernel/locking/lockdep.c:5866 [inline]
+ lock_acquire+0x179/0x350 kernel/locking/lockdep.c:5823
+ __mutex_lock_common kernel/locking/mutex.c:601 [inline]
+ __mutex_lock+0x199/0xb90 kernel/locking/mutex.c:746
+ process_measurement+0x7e0/0x23e0 security/integrity/ima/ima_main.c:279
+ ima_file_check+0xc5/0x110 security/integrity/ima/ima_main.c:613
+ security_file_post_open+0x8e/0x210 security/security.c:3130
+ do_open fs/namei.c:3882 [inline]
+ path_openat+0x147d/0x2d40 fs/namei.c:4039
+ do_file_open_root+0x322/0x610 fs/namei.c:4091
+ file_open_root+0x2a7/0x450 fs/open.c:1408
+ kernel_read_file_from_path_initns+0x189/0x260 fs/kernel_read_file.c:163
+ fw_get_filesystem_firmware drivers/base/firmware_loader/main.c:549 [inline]
+ _request_firmware+0x744/0x1470 drivers/base/firmware_loader/main.c:916
+ request_firmware drivers/base/firmware_loader/main.c:992 [inline]
+ cache_firmware drivers/base/firmware_loader/main.c:1330 [inline]
+ __async_dev_cache_fw_image+0xb1/0x340 drivers/base/firmware_loader/main.c:1444
+ async_schedule_node_domain+0xd1/0x120 kernel/async.c:221
+ async_schedule_domain include/linux/async.h:72 [inline]
+ dev_cache_fw_image+0x38e/0x490 drivers/base/firmware_loader/main.c:1500
+ dpm_for_each_dev drivers/base/power/main.c:2061 [inline]
+ dpm_for_each_dev+0x5a/0xb0 drivers/base/power/main.c:2052
+ device_cache_fw_images drivers/base/firmware_loader/main.c:1550 [inline]
+ fw_pm_notify+0x81/0x150 drivers/base/firmware_loader/main.c:1601
+ notifier_call_chain+0xb9/0x410 kernel/notifier.c:85
+ notifier_call_chain_robust kernel/notifier.c:120 [inline]
+ blocking_notifier_call_chain_robust kernel/notifier.c:345 [inline]
+ blocking_notifier_call_chain_robust+0xc8/0x160 kernel/notifier.c:333
+ pm_notifier_call_chain_robust+0x27/0x60 kernel/power/main.c:102
+ snapshot_open+0x189/0x2b0 kernel/power/user.c:77
+ misc_open+0x35a/0x420 drivers/char/misc.c:179
+ chrdev_open+0x231/0x6a0 fs/char_dev.c:414
+ do_dentry_open+0x741/0x1c10 fs/open.c:956
+ vfs_open+0x82/0x3f0 fs/open.c:1086
+ do_open fs/namei.c:3880 [inline]
+ path_openat+0x1e5e/0x2d40 fs/namei.c:4039
+ do_filp_open+0x20b/0x470 fs/namei.c:4066
+ do_sys_openat2+0x11b/0x1d0 fs/open.c:1429
+ do_sys_open fs/open.c:1444 [inline]
+ __do_sys_openat fs/open.c:1460 [inline]
+ __se_sys_openat fs/open.c:1455 [inline]
+ __x64_sys_openat+0x174/0x210 fs/open.c:1455
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0x230 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f6aee38e969
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f6aef159038 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 00007f6aee5b6080 RCX: 00007f6aee38e969
+RDX: 0000000000020080 RSI: 0000200000000000 RDI: ffffffffffffff9c
+RBP: 00007f6aee410ab1 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f6aee5b6080 R15: 00007ffdbad4bbb8
+ </TASK>
+(NULL device *): loading /lib/firmware/regulatory.db.p7s failed with error -4
+(NULL device *): Direct firmware load for regulatory.db.p7s failed with error -4
+(NULL device *): Falling back to sysfs fallback for: regulatory.db.p7s
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
