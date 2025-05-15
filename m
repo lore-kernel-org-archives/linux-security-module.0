@@ -1,81 +1,86 @@
-Received: from cloud35.hostingpalvelu.fi (mail35.hostingpalvelu.fi [31.217.192.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C42501F5827
-	for <linux-security-module@vger.kernel.org>; Thu, 15 May 2025 20:24:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=31.217.192.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E1D31F9A8B
+	for <linux-security-module@vger.kernel.org>; Thu, 15 May 2025 20:53:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747340644; cv=none; b=AkZB0HsLQIQ60fa4zp2HTKD5+7gVKFky4YEcDO5XJ7xb0BNTJtzsQv3/fWRhRl9PTh1FXrDEHu2yUu4daY72i7Gr82w9dWO9YqLZMbEw4vFG4Qq627rhi8VIKtopxgAwAWR7r59K2cJvZ6SMQNXLRF6tkh+zXEQkOj3F3Goe6yo=
+	t=1747342382; cv=none; b=n3lPfGxMC8OcVS047QimFzAZJNssPqtMB4WkFNpfW7Z1KnayHy5waMY+uWcGOiMQA+8IzuL3/zkEk09Rnbag0NDWEFhbDt7iUZ+xSBUlnwfsukmUiwzG+Sgo/FZ7im3cR87EPU3UwgxJ7ncBR641RHCu3JwHm+3b6OoPUSo3jT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747340644; c=relaxed/simple;
-	bh=pzDjhbn5cWaqOSlZGH/T2tQYkiN6em1Hks4lCJvmHV0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GPGev//ErRClf3E61Gy6DOKH5HqXTwKVa9uv/sxeduOUh5iOruZRHRbLC0J0jFKFB6bFRVmG2DsFTW/m/78rPtULvnslzHFQpC/QSsQcNfYZnM1lAbPs0++OZYUN0FXQ2iIfZRHbnBrw88TUxBcawW2W1kW3p47MSwYzjHCSOrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kolttonen.fi; spf=pass smtp.mailfrom=kolttonen.fi; dkim=pass (2048-bit key) header.d=kolttonen.fi header.i=@kolttonen.fi header.b=ee2jrBTj; arc=none smtp.client-ip=31.217.192.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kolttonen.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kolttonen.fi
+	s=arc-20240116; t=1747342382; c=relaxed/simple;
+	bh=czi5+u2kEjArBpOgbOhFbSFaZ/a1SpCa/lwq2gvfT8c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UIuq9w6DTypLixASGpGWcGCnKepnP5Rhe7YU2glXM33SgzywArU+mifWeKax/5o/Pw6k+/gz7PUPnc0RoEoss58D4KgRUaeluqLu1Q7zDWb3lamB7xuJ1/Jt9MMi6XD8O1wZzUpxQ3rc0QFRwmyIUnWCHaKvLmasIOs8sUDQE8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=e8zerxL+; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kolttonen.fi header.i=@kolttonen.fi header.b="ee2jrBTj"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kolttonen.fi; s=default; h=Content-Transfer-Encoding:MIME-Version:
-	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=jn2E6cmYkj6lv5IXJSnPDQ7D/rJuduAlo54Qe+uRgF8=; b=ee2jrBTjKhO6tPZIOl2ihY3Qqg
-	BNkXNmCnbeHxUuQbLjURRykxrxz6dZJCKNscsujdsN9MqnTrFONNhBYAN/9IvXs5KdbyYM8M0j4Ji
-	SslnkvdceFLteObnQlEKcJtp/XVmBsq1OEvuhN9NmCKvSO/i9T1Pyh4wjW8+d7AEbiMXmmmHHcajx
-	CfEKsVofbeHPqLBLqv6ATphTUCnPAdZ9yZRyZN3YbFUX72ODNhswwyymaRxM86pSQA6E5qUfNn5yc
-	Z5nPD05JOP1UMoJTMHsJkn/kRE0Uj51RJs65ondwtjCnegOr5Tf+BMDn9Xmg/2sUGjathXvcrC0VZ
-	NrrkBu1g==;
-Received: from 87-95-116-80.bb.dnainternet.fi ([87.95.116.80]:11565 helo=fedora..)
-	by cloud35.hostingpalvelu.fi with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.98.1)
-	(envelope-from <kalevi@kolttonen.fi>)
-	id 1uFf7W-00000007Ewz-0rjn;
-	Thu, 15 May 2025 23:23:58 +0300
-From: Kalevi Kolttonen <kalevi@kolttonen.fi>
-To: linux-security-module@vger.kernel.org
-Cc: Kalevi Kolttonen <kalevi@kolttonen.fi>
-Subject: [PATCH] Trivial fix comment
-Date: Thu, 15 May 2025 23:23:40 +0300
-Message-ID: <20250515202340.4271-1-kalevi@kolttonen.fi>
-X-Mailer: git-send-email 2.49.0
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="e8zerxL+"
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5fab85c582fso3712a12.0
+        for <linux-security-module@vger.kernel.org>; Thu, 15 May 2025 13:53:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1747342379; x=1747947179; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=czi5+u2kEjArBpOgbOhFbSFaZ/a1SpCa/lwq2gvfT8c=;
+        b=e8zerxL+wnR+j4tazWO2tN19dxkVVHq0ygT4AY4rUUiU7kSO3wLtgzkg3q3cmv2YTa
+         vZfFierl81popnMsW80aNLb7U2Afe2GxeX7M+fSQdXk47M0NSRNru8MuznHwxifNxZQX
+         0XEbNYFlWryCsSd+Lv6PC8V6RmJnt51yU35olEby9SMXawcuutLVxdSL3DAC9Dert6/2
+         uiXZ83Ifso2wolN93HuEMnIOSzfr9Trv+66flzNib18fyYn8POs6Ffv+67f3wprwvxMs
+         gvOSiIQyNZ2li7jqt/fH8nG+n+gmupBubWTyGD6m+IcHWxvk2pnspjdvNQ2eu3Btf4qA
+         U4mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747342379; x=1747947179;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=czi5+u2kEjArBpOgbOhFbSFaZ/a1SpCa/lwq2gvfT8c=;
+        b=YSpNW///AlK4MC2I1Zj1OIt6mGnvnuN/l95/0BWp0hJ9DxpgWcPF+pkNqxszUHO0zF
+         QbYJ+R6fjOYsatrp5SCxcoOlb2GI9BTyWcQ3nOCUmLPMyg3LGBFUTnjYAJ8UwAsoVlXf
+         Oo4m8griXxfRSEpDwH1amFl1EtUZSsy8Pas/wOX6NimplEahrt8KFRwvcAZhdOFPpSCf
+         MLa0Qfjqf2I3g/IFy1Q6FhHsTWEEkawUGS5Pxoy6fesuoyTnr4dTaEahCaYJgbsrxAIz
+         t7CT6wM0NU2iBJp7wF8VMnKhW3T/brcXBNM1dio9F8mF2oR6Ut3DJDxErPMi67oCjYJ4
+         1wew==
+X-Forwarded-Encrypted: i=1; AJvYcCV9zcinw7KlwOaJxhzDhy0n2kRX3zY7pj+/ET8siTs6m4URno3rf5pJdh7L72BXHXyEcizKgMin6nNwz8cPwdnDx3Yax2Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrO3mPwqEgqJ9Dk3T2qkCP2W8rAUjonZkW/F4ItrILAa1sJg79
+	Ovr2hWHjRTZ1eyNfffzKafhR1tg9JpO7h9ON6J3Oa7+33klcalidhWywThczUJBvR9Ch1WK04D5
+	qTwzCt0AoIIiYykpNxfNLGhxDWH26yTtNspFtnDKX
+X-Gm-Gg: ASbGncv/k8nL1G4tGAxlAyLP/Isrm46vdkb/iYMV1YSjZJdAIfIAqYsGKSEr1VfOlSM
+	naXZeCGzyxh11kPOUHkkD5oVHxpi3P5Tsp2UNdEF57Pegu9rCUfsoNNTz+ono3+UG8SldS+RYtw
+	pm97ti3SW9GVl+Fm2hDDJLm8YbKE2gUPiIMVetvQBjceqiPld1UMTt3p57WUQr
+X-Google-Smtp-Source: AGHT+IF2M8wfat+ypXS8t4pkU9r+Ie60fdxet+x1ExwrsKQgeSVE6SwmGNdqBwNHbwOcKqnaWIIoX1c/2Jgm5HmN7XI=
+X-Received: by 2002:a05:6402:22b0:b0:5ff:f051:60f0 with SMTP id
+ 4fb4d7f45d1cf-5fff0516857mr119534a12.3.1747342378383; Thu, 15 May 2025
+ 13:52:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - cloud35.hostingpalvelu.fi
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - kolttonen.fi
-X-Get-Message-Sender-Via: cloud35.hostingpalvelu.fi: authenticated_id: kalevi@kolttonen.fi
-X-Authenticated-Sender: cloud35.hostingpalvelu.fi: kalevi@kolttonen.fi
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+References: <20250515-work-coredump-socket-v7-4-0a1329496c31@kernel.org> <20250515170057.50816-1-kuniyu@amazon.com>
+In-Reply-To: <20250515170057.50816-1-kuniyu@amazon.com>
+From: Jann Horn <jannh@google.com>
+Date: Thu, 15 May 2025 22:52:22 +0200
+X-Gm-Features: AX0GCFukZXeV2YnpYpWYUXI1kiBBOFCdeQQogQc1TbzHuyl2utiuGujZlMvm38g
+Message-ID: <CAG48ez3fC902JU244d=0zzr39f+iXxQH0GZgJp0rs8pbu8ka4w@mail.gmail.com>
+Subject: Re: [PATCH v7 4/9] coredump: add coredump socket
+To: Kuniyuki Iwashima <kuniyu@amazon.com>
+Cc: brauner@kernel.org, alexander@mihalicyn.com, bluca@debian.org, 
+	daan.j.demeyer@gmail.com, daniel@iogearbox.net, davem@davemloft.net, 
+	david@readahead.eu, edumazet@google.com, horms@kernel.org, jack@suse.cz, 
+	kuba@kernel.org, lennart@poettering.net, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	me@yhndnzj.com, netdev@vger.kernel.org, oleg@redhat.com, pabeni@redhat.com, 
+	viro@zeniv.linux.org.uk, zbyszek@in.waw.pl
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Kalevi Kolttonen <kalevi@kolttonen.fi>
----
- security/security.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Thu, May 15, 2025 at 7:01=E2=80=AFPM Kuniyuki Iwashima <kuniyu@amazon.co=
+m> wrote:
+> nit: please keep these in the reverse xmas tree order.
+> https://docs.kernel.org/process/maintainer-netdev.html#local-variable-ord=
+ering-reverse-xmas-tree-rcs
 
-diff --git a/security/security.c b/security/security.c
-index 596d41818577..fc8405928cc7 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -2181,7 +2181,7 @@ int security_inode_symlink(struct inode *dir, struct dentry *dentry,
- }
- 
- /**
-- * security_inode_mkdir() - Check if creation a new director is allowed
-+ * security_inode_mkdir() - Check if creating a new directory is allowed
-  * @dir: parent directory
-  * @dentry: new directory
-  * @mode: new directory mode
--- 
-2.49.0
-
+Isn't that rule specific to things that go through the net tree?
