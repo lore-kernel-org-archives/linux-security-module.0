@@ -1,57 +1,57 @@
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B6DA19CD17
-	for <linux-security-module@vger.kernel.org>; Fri, 16 May 2025 18:06:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F5D527A917
+	for <linux-security-module@vger.kernel.org>; Fri, 16 May 2025 18:09:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747418817; cv=none; b=BugEmx31w9yqCN9LbXlSZWkm3ieA6vlIsLXDt+bOUAa0dFCvRqZC8DsNCSqrvU6MUxdq40lR9EzYAx7N8VLbZjMTWB5530J4CGFGxpOf4aQkBhhtLXtLOIK+brTiswJ3nr24cWMXmk9lJBp8xpwQk+8hEzLYnGavcNNGD3ZiN+E=
+	t=1747418951; cv=none; b=lKhy9xR0VN+aVlxbwM5GI4kDLht87l4LuVoCdmPJ6Ly8zftA7osKEtO84PlR4XApRHeTwpJM2clTSrujLPpEHiGUH8ZKhsIQaV7o6PCBHRdzm6STp3gOoLe3uFDGcXm5b61J5i1YlDuhbWGamkXncRF5U2I21zBIWi7pZLRaY40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747418817; c=relaxed/simple;
-	bh=EaGhh9y9W0mWJ2B10mg/vhu02sSfHCRzfLE0DGJv0cs=;
+	s=arc-20240116; t=1747418951; c=relaxed/simple;
+	bh=rGS0QPr/09kRB4IST4qU+ikhdOE5cmQdYP0Uuer0Abk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Gy89d3fMsjtD27kFLNFFXfwJEYSQbCGD1caQ0QpuHcBrryXysEd9EsMh/rdY3+QSnrfU4d6snb/GF8BJFIXY6x73apTBDJb4Ccy7bGIyrQlUNKtHnN9dG18LIfwDWjHj6vSg0VDKpiCN9OL7Q83pz5YZtLtXfWaHZhT4T+M1iAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yv5/rPHL; arc=none smtp.client-ip=209.85.208.48
+	 To:Cc:Content-Type; b=TL4QvgXuXQAEr0v9JsK7GZXwBbN79VzGljs0+BD8jNEMxBhVESISBG4g7heJ6VOyhPL5eHQnhdIb/ifoZS361bGDWl4VkOrsybIvvv5rh5zA5wIlskYnjVS0jNpaBnn8A8CGu4MoDrCx5HLh6uykK/xntgPWdXIvpdFYVUOuBrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bXm/WY1J; arc=none smtp.client-ip=209.85.208.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yv5/rPHL"
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5fce6c7598bso1220a12.0
-        for <linux-security-module@vger.kernel.org>; Fri, 16 May 2025 11:06:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bXm/WY1J"
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-6000791e832so1276a12.1
+        for <linux-security-module@vger.kernel.org>; Fri, 16 May 2025 11:09:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747418813; x=1748023613; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1747418948; x=1748023748; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ffBJsle0Lwjz8ccEmGsxhnpnfJLHOgF0YGAm3DFQxjI=;
-        b=yv5/rPHLfOC52xCUvO3ijjcn2nup1tXhC3T8uA8ZcL8G5hKRWrJbTBaVpYTYXOtJ0C
-         0RkIj8exEquEIept8NAp3pGfo82aiIx7bVM1E0gDee7f4AalbEUJpAzkOHj55N7LTBa1
-         SHS7zyhzAifbN9KL6qtnBOYQsBr5BwzuniUajjPdZZmOS0l4yEwNz6bMA7/7RIogVpEk
-         Chk/ZLTfxn7sGZp+XrC+qoWbC86DEeRI+rOeNZXf6yaCYptWG1JqTWW6AAjiZfBB1nLE
-         KhcaNpVWGrOfsvRUrqhunuZIPK9MQCRBBplLQgE87aSNH0bSX+SoqudovrlbMQI2uzNc
-         xIPg==
+        bh=zErr14NaPV4E6J72+UwhYWs0JPsGCP0hDOHvFlHwRfA=;
+        b=bXm/WY1JOT4gtYGTIt3Wemb6cMGuhruOyjoJuSZ8gAGqXRn4o3oAuDpLfHM64X4fFJ
+         8IfLue66ZXs9w1a4OqlyzhhBeOLQkdn2Bg9a14grsolnAw4h8DlvoRdhlYw3v3AGTOJu
+         lSSv219RiTi5Szt4pqPnzfc2MLKjEHMgALrjtjWaOxnLT2DpiUmmUGctlVfgglEzwz2C
+         Vd4+KuJqMQfyMmxJQ5+g6Dr3iEf5dosHFuQ9QBxOK2rssw+A1sDVU3DajQE2HVkPnOjI
+         BL9hKRVi09QDxSp+aWlA/A4Zva0WjradykWouHH1M8WWmGBZXQdil/Z6AfeSZvwU49ya
+         RcmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747418813; x=1748023613;
+        d=1e100.net; s=20230601; t=1747418948; x=1748023748;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ffBJsle0Lwjz8ccEmGsxhnpnfJLHOgF0YGAm3DFQxjI=;
-        b=k0qflvF63QxFRl21ssn/XX6iQAdJidWkFdlGYwpZUWtjeT48Lh06rEGgqcRNXFCRZD
-         uf+OvKtRxti2u9TzEzq8nEYkQ4SwSS96U/afvYs/E81fINWrmXF3yBnT4CI+Ebjqeqrc
-         6YgE0EIAIwWrwjYvTJf45alDWn1AJBSr3IgTYYz2gcorZ26LgfD/u4FzdlxI+amqcXLx
-         OfCowuE/i5wXGMLcuR+xOo/64zZ7XEwsrieM5MGiyZif/5OzlouWWeoy2hV3nTCxYjTQ
-         7L/31+x1Zo2MZw9BO03MgoO8DligwTFh4TZioHZj+fzWOzlkoCnUHKD7cgRtULEZ4Iqj
-         1drw==
-X-Forwarded-Encrypted: i=1; AJvYcCU9GqVMERGLpn+xxX1MgUq9E+mne/Vq26BkQjm8q7RQhSpePixsmST79Rh/RqhZcXSnWyfrqFKMsyOIkYdqO6YfUMOx6XM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcfwARFHRgMsAbmxO86tNh9eyNdDuHViNuJI+c8Z7XTe+Vosh+
-	EDtHFGKEv+zOVkT0e3Kp0VhJzpCMUG+vWmR5Fhvgc5+p4muIM8dsTIPILXUOTA3KZkm/FU6XOTS
-	pLv97GVAGNWW0qmp7TzdVsCeR9qbCEA6GeDAYqfkn
-X-Gm-Gg: ASbGncumv+8OG06YySTN0/8E5pXseKtCS97fdm8ndyril+pfpdXCSNoq7n3EkcjXEl8
-	ne3ynDGtanqwCiEyWMso8+yKSIkdo5V+7Dn4jzq9Z+yDXW0qrURO7ijCNYLDv9ejHIjc1/lPg7M
-	QBJjwbM26crw9Ux6DT5MNPbzyrb4W/i5l+EBF8KDbHKraNCHH3L5K135TPiUDMaQarGlcXu30=
-X-Google-Smtp-Source: AGHT+IHjVT1gKmVLBj3knAgZ7m159qYk3Ok4v0D1Bg/SE2WIJQB4Z3hZw0B78cj70OkvwZmrrSyMeN4kzMZtpVX3b1g=
-X-Received: by 2002:a05:6402:f85:b0:5fd:28:c3f6 with SMTP id
- 4fb4d7f45d1cf-6019c8884b4mr2262a12.4.1747418813012; Fri, 16 May 2025 11:06:53
+        bh=zErr14NaPV4E6J72+UwhYWs0JPsGCP0hDOHvFlHwRfA=;
+        b=SW5JIFSXzPi06gRYUjZF4n5X7/pKCgB+XmXHKJ6ht3KH0sSNNHn9LrJJuO6fwbKkEk
+         0+3p9EuoY0N6wdADaDFCW6qZJfm4ywOx7pfM5oaU9A9rnPRO0gdFHXyZhmn0OccgCcNX
+         xokY2fCULHv1K+Yq6TOJ2VVykY0ALtd5Kpt74uBMSXZuIitG4rPSd/vcOi79h0EViDXG
+         cPtw8lt/aRQoIg1Ijm8HvL4oLjWuQPPRlja5gyBMYlQiYX7py5xb2hF2zzOclHaicFN5
+         dbxBhoBVZMpFTmckrlwuk/IAmtimn2iD14LJyRNEYldPggaZC2XHNjDmUxQSK2GNENze
+         BlfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUgt74MkuDa6tqBNwH7PJMWczvTtCo6qlhgPGh4XgS7yB4UDQ17tt+c17EFKPS2alQ0TnwQzhCWIfVGMTJSwRN0+Mr9pSw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydHYrRQuwSlFMqCa+xe54Z/Etjfx27sji2dSLRuNXEvB/2MVjt
+	qYvHuRvhaIpGgwNrVNcfa+AWOJaSWocOxOHCY2naUx6FGZACMtawOPmQO29mZ+sVcJ+xoHDia3t
+	ajOINIDVs2+L2pd9a+dMPpnKj2J07zpXq/r4Tk9Mh
+X-Gm-Gg: ASbGncsRY1x3fR2urbe7iU+vOth6ldxnL8A/hqBdQKC2dVCXV7mlrgPDSGCU/OptQ8c
+	fuYie/oQDwIYD/DmRIaeTL9+lUtVgcIdUwlnAJM7Ymki0Lh9ZTGGzV0dZRSot9pDGJ9Y5vaAJAJ
+	PaFQ0zHsc5J75Swgxw/2175OdW/2JIX7mHbd7G2cBEm4BvJiE5TNC6v7SJiDfCX73B1Zsq1xQ=
+X-Google-Smtp-Source: AGHT+IGnDa7m9aFXLxTwW8XG/RA9k967U8i6KOIZIfU5U7ERMqkoZyY31cHz6O+XJ+TMiqZHyQoF6udz8LkIEPLR5b4=
+X-Received: by 2002:a05:6402:14d5:b0:601:233a:4f4d with SMTP id
+ 4fb4d7f45d1cf-6019bf2f776mr7018a12.2.1747418948238; Fri, 16 May 2025 11:09:08
  -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
@@ -61,12 +61,12 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20250306082615.174777-1-max.kellermann@ionos.com>
  <878qmxsuy8.fsf@email.froward.int.ebiederm.org> <202505151451.638C22B@keescook>
- <87ecwopofp.fsf@email.froward.int.ebiederm.org>
-In-Reply-To: <87ecwopofp.fsf@email.froward.int.ebiederm.org>
+ <87ecwopofp.fsf@email.froward.int.ebiederm.org> <CAG48ez1VpuTR9_cvLrJEMmjOxTCYpYFswXVPmN6fE3NcSmPPVA@mail.gmail.com>
+In-Reply-To: <CAG48ez1VpuTR9_cvLrJEMmjOxTCYpYFswXVPmN6fE3NcSmPPVA@mail.gmail.com>
 From: Jann Horn <jannh@google.com>
-Date: Fri, 16 May 2025 20:06:15 +0200
-X-Gm-Features: AX0GCFsTNJfHA0lDPOLsfx2AHvwhpi8BaLe2zu9yZK-Y_kwCHJr4mJE3cbEsjCU
-Message-ID: <CAG48ez1VpuTR9_cvLrJEMmjOxTCYpYFswXVPmN6fE3NcSmPPVA@mail.gmail.com>
+Date: Fri, 16 May 2025 20:08:32 +0200
+X-Gm-Features: AX0GCFvQ5yyB7VeXyMHb0_GGNIfkJ8FEg23lIrCXszrFcypcHNO0odexRPRgrWk
+Message-ID: <CAG48ez3WHp2uiDf66obvtgz1eiGQDokNwCUeouXzUsqbF8oq_w@mail.gmail.com>
 Subject: Re: [PATCH] exec: Correct the permission check for unsafe exec
 To: "Eric W. Biederman" <ebiederm@xmission.com>
 Cc: Kees Cook <kees@kernel.org>, Max Kellermann <max.kellermann@ionos.com>, 
@@ -77,59 +77,13 @@ Cc: Kees Cook <kees@kernel.org>, Max Kellermann <max.kellermann@ionos.com>,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 16, 2025 at 5:26=E2=80=AFPM Eric W. Biederman <ebiederm@xmissio=
-n.com> wrote:
-> Kees Cook <kees@kernel.org> writes:
+On Fri, May 16, 2025 at 8:06=E2=80=AFPM Jann Horn <jannh@google.com> wrote:
+> Like, I think currently a setuid binary like this is probably (?) not
+> exploitable:
 >
-> > On Thu, May 15, 2025 at 11:24:47AM -0500, Eric W. Biederman wrote:
-> >> I have condensed the logic from Linux-2.4.0-test12 to just:
-> >>      id_changed =3D !uid_eq(new->euid, old->euid) || !in_group_p(new->=
-egid);
-> >>
-> >> This change is userspace visible, but I don't expect anyone to care.
-> >> [...]
-> >> -static inline bool __is_setuid(struct cred *new, const struct cred *o=
-ld)
-> >> -{ return !uid_eq(new->euid, old->uid); }
-> >> -
-> >> -static inline bool __is_setgid(struct cred *new, const struct cred *o=
-ld)
-> >> -{ return !gid_eq(new->egid, old->gid); }
-> >> -
-> >> [...]
-> >> -    is_setid =3D __is_setuid(new, old) || __is_setgid(new, old);
-> >> +    id_changed =3D !uid_eq(new->euid, old->euid) || !in_group_p(new->=
-egid);
-> >
-> > The core change here is testing for differing euid rather than
-> > mismatched uid/euid. (And checking for egid in the set of all groups.)
->
-> Yes.
->
-> For what the code is trying to do I can't fathom what was trying to
-> be accomplished by the "mismatched" uid/euid check.
+> int main(void) {
+>   execl("/bin/echo", "echo", "hello world");
+> }
 
-I remember that when I was looking at this code years ago, one case I
-was interested in was what happens when a setuid process (running with
-something like euid=3D1000,ruid=3D0) execve()'s a normal binary. Clearly
-the LSM_UNSAFE_* stuff is not so interesting there, because we're
-already coming from a privileged context; but the behavior of
-bprm->secureexec could be important.
-
-Like, I think currently a setuid binary like this is probably (?) not
-exploitable:
-
-int main(void) {
-  execl("/bin/echo", "echo", "hello world");
-}
-
-but after your proposed change, I think it might (?) become
-exploitable because "echo" would not have AT_SECURE set (I think?) and
-would therefore load libraries based on environment variables?
-
-To be clear, I think this would be a stupid thing for userspace to do
-- a setuid binary just should not be running other binaries with the
-caller-provided environment while having elevated privileges. But if
-userspace was doing something like that, this change might make it
-more exploitable, and I imagine that the check for mismatched uid/euid
-was intended to catch cases like this?
+(bleh, of course what I meant to write here was
+`execl("/bin/echo", "echo", "hello world", NULL);`)
