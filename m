@@ -1,156 +1,162 @@
-Received: from out03.mta.xmission.com (out03.mta.xmission.com [166.70.13.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED3A3280329;
-	Fri, 16 May 2025 23:30:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CC5D27874B;
+	Fri, 16 May 2025 23:49:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747438204; cv=none; b=UdNCOABTaxhVFmp6RstozThlFVEb0OHn0l1It6ft7qkO94roDaAObwCMeCoVKGBWEKenaXy1G8X/bTkfu1QPJnfEglr1FZUMSldcdiXrrLAioqk63LyH5CTjfCArw9KWjXVx0PYoBumrIJN/dMc+Zg70XCwJFYrzVrMTJ9b5kMY=
+	t=1747439364; cv=none; b=k7mBJZKNDgluvA3YnMSPlFC/imeSTy/3HevIKgZEzQXfHQdjad6/eRzqch19terMdZuNFHhFFVN5MHu7BU4RwWR0brnjOU1iSzB8vCZz6a/7rgDtbvKAIsf/UNBDCOhoRI9/J6LjwLjh5jI/QIunyeh1qT/sIgjg8Gb7DQ31r8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747438204; c=relaxed/simple;
-	bh=H/KF15FWESax3Ami7aw52ivPalCvmvYWr/JCCdYLAUs=;
-	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
-	 Content-Type:Subject; b=b03j4wVsjrdpljNHiU0IwL/wTlQpHjtxYtqWzfUXTPszWoQP+yUntBWMMflKQs7yOHOWV+OYmpsVh6M/nfUrL+SCU2vE6j6rMokgys+XkPUHJSpYz6yboG05kqYbJaKDfiHPVUlZyyC9mWzGB8a9PLq6T9Yw7NavuKzNHf3z6t8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
-Received: from in02.mta.xmission.com ([166.70.13.52]:50176)
-	by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1uG4V5-00B86O-NK; Fri, 16 May 2025 17:29:59 -0600
-Received: from ip72-198-198-28.om.om.cox.net ([72.198.198.28]:60242 helo=email.froward.int.ebiederm.org.xmission.com)
-	by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1uG4V4-005hfZ-H4; Fri, 16 May 2025 17:29:59 -0600
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-To: Jann Horn <jannh@google.com>
-Cc: Kees Cook <kees@kernel.org>,  Max Kellermann <max.kellermann@ionos.com>,
-  "Serge E. Hallyn" <serge@hallyn.com>,  paul@paul-moore.com,
-  jmorris@namei.org,  Andy Lutomirski <luto@kernel.org>,
-  morgan@kernel.org,  Christian Brauner <christian@brauner.io>,
-  linux-security-module@vger.kernel.org,  linux-kernel@vger.kernel.org
-References: <20250306082615.174777-1-max.kellermann@ionos.com>
-	<878qmxsuy8.fsf@email.froward.int.ebiederm.org>
-	<202505151451.638C22B@keescook>
-	<87ecwopofp.fsf@email.froward.int.ebiederm.org>
-	<CAG48ez1VpuTR9_cvLrJEMmjOxTCYpYFswXVPmN6fE3NcSmPPVA@mail.gmail.com>
-Date: Fri, 16 May 2025 18:29:21 -0500
-In-Reply-To: <CAG48ez1VpuTR9_cvLrJEMmjOxTCYpYFswXVPmN6fE3NcSmPPVA@mail.gmail.com>
-	(Jann Horn's message of "Fri, 16 May 2025 20:06:15 +0200")
-Message-ID: <87wmagnnhq.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1747439364; c=relaxed/simple;
+	bh=JynXQczZCmV7Hl5daVJbPr86DC3r593cY6JyojI2h9E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bejp73J3Ow1F22pPpN08eUE2dpK9c8c/yszJn+/nCoANrPoyAjpjIhnPnSrpfVlOgWvKQvarQRgXwTlkFsuibFZPYc2NOPhvyH9zUS3s+2RB+g7/6LfidJ6pgOPgqLmb1Ujfg06eC34LWyOJBYvOJaIpr3DW/D13Nzc9U36j86g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MiUXrZZB; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MiUXrZZB"
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3a0b9e2d640so2253046f8f.2;
+        Fri, 16 May 2025 16:49:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747439361; x=1748044161; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yLNmQk56WXrXrbrs+Rd+UwZYq2EuCmP2+ysJch2Gqcc=;
+        b=MiUXrZZBrUd9CJ/R3/+8Euo7FHdltR9apr1qojwyPposhAXDMtluhx6Ma77U3/fQ/9
+         WstozBnkwfFxrQnOtNkB0/TEqj+1GGSCJPiqQaCj8Bghob3bWTg+AHqt1p5wQm01bRRA
+         wRjV56XG3VayKgCkE+Av88VFUQcLkS45oKu3BmYfnXf0f+BhVeZPgornLkNEiOiwwpnz
+         05r1vWQxuRl1qnQlJRM/6vCTCJdzcKyVvAiwbvLxlQHhGkQZXGMf+9MBDGs/8mmABiJG
+         SbnMLS9EHdPuScZ4Lc1EXZN7vISEmhV49GwM8t+QMKqvSC2vsPdBP68Xgh2ZApyRJOQI
+         Fs3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747439361; x=1748044161;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yLNmQk56WXrXrbrs+Rd+UwZYq2EuCmP2+ysJch2Gqcc=;
+        b=o/QNgtJ6cCiFwd5nxwiDZFYghh74azp6qfn6FMB8ARPtuiS7I/G11BdJ9a1oOacVj5
+         7zfc/QuaNX9+k7vcJooYi6SK/5FOT7OsafRnhcT9iz7vRrsbqr4JPnguh+wj7qdf7GHc
+         SL4nYhPKhNI/dHqvDRjF5I6C3b8pUc0La433k4jqHh+C73IjkrCJT8UvZC/wALjGFG4e
+         ouL9JDfx+JN4UblcJDZO/RvaeLxPdvAKZWX6mJQEDXAcUxxbnxXh7BacA1TS6nzTJWu0
+         mUKXjg9l6FaakTZNrOsLwP+nob9IsIIig+1GSRtpKexn1dbKlBO/IqmTeh19XXxs9J9Z
+         xaXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU5FeF7kkF2U5AYT6VdEIV8WLV8/pX1e4GJPfLulSzL2uKwJf/KKVpRUAIJhivnd7tVg0cSysnW8KI6BehfwDji@vger.kernel.org, AJvYcCUhZPY9yN5APNO51UZI+BTgxeBx880FxFPx+kPLwC0rdzGH11dg9lWbeTBLmOm/a1+5Qb4tOjey03XBd7KE@vger.kernel.org, AJvYcCVErITNKojpOXoE6sP1wXgeAouQ0pJKDPED3IVs5qoTpF4FxfT9Y2on3+FFcAF1UrOkaDU=@vger.kernel.org, AJvYcCWER5uU43BWVTqAJ6frriEbeu7d2P8SqFmyzSqrxRdZTUv6UgD1Ww2Lfsql+Qyrx1y23x/dh5nozf4zwm9YWxLrFXuPCf0F@vger.kernel.org, AJvYcCX0Ioi/NFBaoTDRy67CfC0VTsJBNvUEChe9DgUwHCMELZX2uQQAdNwjTzOJDiOZXo0rmBaGRFz09qm9@vger.kernel.org, AJvYcCX2xaznOQAGBUWdMR0kADGSVmGnLAcoYsbS2ibo/p9v/q2i3xSO1G1LIGzvwR5qKU/M0NYfTa5Yddo=@vger.kernel.org, AJvYcCX7lGViFscXfQtN794DogQ68CFV8lf0BQA1io5kxIRE2uJvioSduGN68Xw0X+5fL4jY3lurtktzDAUyj9lW@vger.kernel.org, AJvYcCXFqa5AyQLfFxBMbKKlVZLPoNidpivOQrHLz90AgrcrdeO38mF3CXNUtV/ACvaDycnlO6H0d85TTq5pRNnQ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2v6MDp0LEt1fbawEwKKbyRzC0g37Lse4hVedzDwagB04GIbDZ
+	O8JbYM8Ea3UnV+DV9Nz8hhN2r8Dk6gdzXattPfMhLSe7XR09ujfIn+qrBLjQkU7+n+kEGh1XjiI
+	GIjDDlPM1IrKATVcVy0ZtfyqaDThmPyw=
+X-Gm-Gg: ASbGncsfaSO6/sS6H4j/xjd7yiJtLU1TFNooiTI+7gCwctt9VxB1Puemqia81mPWg8x
+	kaJSPOjF/o3w+7PtJEsj7FMjMxHL9SdYjrys52A7Ti5f6X4UndA5FtSZ+ie0J2dOj6GHCr2Qo88
+	S8pNaplmlOftmdIi99LrwRqk9HBnihoIWwcUgNiT0uGnLQKYG0JeNL8k445Ip1G85qOGqamHYo
+X-Google-Smtp-Source: AGHT+IEt13ebOwzpc+kY0WsGrWXwVoXKnKPvRfcOK4btMC7AsUlFZwn4kwFfwxO5xffregucUV2pzpgY8z4kdU24ZPU=
+X-Received: by 2002:adf:f50b:0:b0:3a3:5c97:d756 with SMTP id
+ ffacd0b85a97d-3a35c97d8aamr4266342f8f.17.1747439361049; Fri, 16 May 2025
+ 16:49:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20250502184421.1424368-1-bboscaccy@linux.microsoft.com>
+ <20250502210034.284051-1-kpsingh@kernel.org> <CAHC9VhS5Vevcq90OxTmAp2=XtR1qOiDDe5sSXReX5oXzf+siVQ@mail.gmail.com>
+ <CACYkzJ5jsWFiXMRDwoGib5t+Xje6STTuJGRZM9Vg2dFz7uPa-g@mail.gmail.com>
+ <CACYkzJ6VQUExfyt0=-FmXz46GHJh3d=FXh5j4KfexcEFbHV-vg@mail.gmail.com>
+ <CAHC9VhQL_FkUH8F1fvFZmC-8UwZh3zkwjomCo1PiWNW0EGYUPw@mail.gmail.com>
+ <CACYkzJ4+=3owK+ELD9Nw7Rrm-UajxXEw8kVtOTJJ+SNAXpsOpw@mail.gmail.com> <CAHC9VhTeFBhdagvw4cT3EvA72EYCfAn6ToptpE9PWipG9YLrFw@mail.gmail.com>
+In-Reply-To: <CAHC9VhTeFBhdagvw4cT3EvA72EYCfAn6ToptpE9PWipG9YLrFw@mail.gmail.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Fri, 16 May 2025 16:49:09 -0700
+X-Gm-Features: AX0GCFuvvvJ18JnaOTj0Zx7VVAejABXpQG7xGivhE2V41LonoDOtxmhIAAR39TA
+Message-ID: <CAADnVQJ4GDKvLSWuAMdwajA0V2DEw5m-O228QknW8Eo9jxhyig@mail.gmail.com>
+Subject: Re: [PATCH v3 0/4] Introducing Hornet LSM
+To: Paul Moore <paul@paul-moore.com>
+Cc: KP Singh <kpsingh@kernel.org>, Blaise Boscaccy <bboscaccy@linux.microsoft.com>, 
+	James Bottomley <James.Bottomley@hansenpartnership.com>, bpf <bpf@vger.kernel.org>, 
+	code@tyhicks.com, Jonathan Corbet <corbet@lwn.net>, "David S. Miller" <davem@davemloft.net>, 
+	David Howells <dhowells@redhat.com>, =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, Jarkko Sakkinen <jarkko@kernel.org>, 
+	James Morris <jmorris@namei.org>, Jan Stancek <jstancek@redhat.com>, 
+	Justin Stitt <justinstitt@google.com>, keyrings@vger.kernel.org, 
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>, 
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, 
+	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, 
+	LSM List <linux-security-module@vger.kernel.org>, 
+	clang-built-linux <llvm@lists.linux.dev>, Masahiro Yamada <masahiroy@kernel.org>, 
+	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	Bill Wendling <morbo@google.com>, Nathan Chancellor <nathan@kernel.org>, Neal Gompa <neal@gompa.dev>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Nicolas Schier <nicolas@fjasle.eu>, nkapron@google.com, 
+	Roberto Sassu <roberto.sassu@huawei.com>, "Serge E . Hallyn" <serge@hallyn.com>, 
+	Shuah Khan <shuah@kernel.org>, Matteo Croce <teknoraver@meta.com>, 
+	Cong Wang <xiyou.wangcong@gmail.com>, kysrinivasan@gmail.com, 
+	Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-XM-SPF: eid=1uG4V4-005hfZ-H4;;;mid=<87wmagnnhq.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=72.198.198.28;;;frm=ebiederm@xmission.com;;;spf=pass
-X-XM-AID: U2FsdGVkX18KHP4G2k129u48C3k8aJHO0B3C2SMDeCY=
-X-Spam-Level: *
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-	*      [score: 0.4918]
-	*  0.7 XMSubLong Long Subject
-	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-	*  0.0 XM_B_Unicode BODY: Testing for specific types of unicode
-	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-	*      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
-	*  1.0 XM_B_Phish_Phrases Commonly used Phishing Phrases
-X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: *;Jann Horn <jannh@google.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 626 ms - load_scoreonly_sql: 0.26 (0.0%),
-	signal_user_changed: 12 (1.9%), b_tie_ro: 10 (1.6%), parse: 1.06
-	(0.2%), extract_message_metadata: 13 (2.1%), get_uri_detail_list: 2.3
-	(0.4%), tests_pri_-2000: 13 (2.1%), tests_pri_-1000: 2.7 (0.4%),
-	tests_pri_-950: 1.34 (0.2%), tests_pri_-900: 1.12 (0.2%),
-	tests_pri_-90: 105 (16.8%), check_bayes: 104 (16.5%), b_tokenize: 9
-	(1.4%), b_tok_get_all: 9 (1.5%), b_comp_prob: 3.0 (0.5%),
-	b_tok_touch_all: 79 (12.6%), b_finish: 0.95 (0.2%), tests_pri_0: 462
-	(73.8%), check_dkim_signature: 0.62 (0.1%), check_dkim_adsp: 3.0
-	(0.5%), poll_dns_idle: 1.07 (0.2%), tests_pri_10: 2.5 (0.4%),
-	tests_pri_500: 8 (1.3%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH] exec: Correct the permission check for unsafe exec
-X-SA-Exim-Connect-IP: 166.70.13.52
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, christian@brauner.io, morgan@kernel.org, luto@kernel.org, jmorris@namei.org, paul@paul-moore.com, serge@hallyn.com, max.kellermann@ionos.com, kees@kernel.org, jannh@google.com
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-SA-Exim-Scanned: No (on out03.mta.xmission.com); SAEximRunCond expanded to false
 
-Jann Horn <jannh@google.com> writes:
-
-> On Fri, May 16, 2025 at 5:26=E2=80=AFPM Eric W. Biederman <ebiederm@xmiss=
-ion.com> wrote:
->> Kees Cook <kees@kernel.org> writes:
->>
->> > On Thu, May 15, 2025 at 11:24:47AM -0500, Eric W. Biederman wrote:
->> >> I have condensed the logic from Linux-2.4.0-test12 to just:
->> >>      id_changed =3D !uid_eq(new->euid, old->euid) || !in_group_p(new-=
->egid);
->> >>
->> >> This change is userspace visible, but I don't expect anyone to care.
->> >> [...]
->> >> -static inline bool __is_setuid(struct cred *new, const struct cred *=
-old)
->> >> -{ return !uid_eq(new->euid, old->uid); }
->> >> -
->> >> -static inline bool __is_setgid(struct cred *new, const struct cred *=
-old)
->> >> -{ return !gid_eq(new->egid, old->gid); }
->> >> -
->> >> [...]
->> >> -    is_setid =3D __is_setuid(new, old) || __is_setgid(new, old);
->> >> +    id_changed =3D !uid_eq(new->euid, old->euid) || !in_group_p(new-=
->egid);
->> >
->> > The core change here is testing for differing euid rather than
->> > mismatched uid/euid. (And checking for egid in the set of all groups.)
->>
->> Yes.
->>
->> For what the code is trying to do I can't fathom what was trying to
->> be accomplished by the "mismatched" uid/euid check.
+On Fri, May 16, 2025 at 12:49=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
+rote:
 >
-> I remember that when I was looking at this code years ago, one case I
-> was interested in was what happens when a setuid process (running with
-> something like euid=3D1000,ruid=3D0) execve()'s a normal binary. Clearly
-> the LSM_UNSAFE_* stuff is not so interesting there, because we're
-> already coming from a privileged context; but the behavior of
-> bprm->secureexec could be important.
+> On Wed, May 14, 2025 at 2:48=E2=80=AFPM KP Singh <kpsingh@kernel.org> wro=
+te:
+> > On Wed, May 14, 2025 at 5:06=E2=80=AFAM Paul Moore <paul@paul-moore.com=
+> wrote:
+> > > On Sat, May 10, 2025 at 10:01=E2=80=AFPM KP Singh <kpsingh@kernel.org=
+> wrote:
+> > > >
+> > >
+> > > ...
+> > >
+> > > > The signature check in the verifier (during BPF_PROG_LOAD):
+> > > >
+> > > >     verify_pkcs7_signature(prog->aux->sha, sizeof(prog->aux->sha),
+> > > > sig_from_bpf_attr, =E2=80=A6);
+> > >
+> > > I think we still need to clarify the authorization aspect of your
+> > > proposed design.
+> > >
+> > > Working under the assumption that the core BPF kernel code doesn't
+> > > want to enforce any restrictions, or at least as few as possible ...
+> >
+> > The assumption is not true, I should have clarified it in the original
+> > design. With the UAPI / bpf_attr the bpf syscall is simply denied if
+> > the signature does not verify, so we don't need any LSM logic for
+> > this. There is really no point in continuing as signature verification
+> > is a part of the API contract when the user passes the sig, keyring in
+> > the bpf syscall.
 >
-> Like, I think currently a setuid binary like this is probably (?) not
-> exploitable:
+> I think we need some clarification on a few of these details, it would
+> be good if you could answer the questions below about the
+> authorization aspects of your design?
 >
-> int main(void) {
->   execl("/bin/echo", "echo", "hello world");
-> }
->
-> but after your proposed change, I think it might (?) become
-> exploitable because "echo" would not have AT_SECURE set (I think?) and
-> would therefore load libraries based on environment variables?
+> * Is the signature validation code in the BPF verifier *always* going
+> to be enforced when a signature is passed in from userspace?  In other
+> words, in your design is there going to be either a kernel build time
+> or runtime configuration knob that could selectively enable (or
+> disable) signature verification in the BPF verifier?
 
-Yes.  bprm->secureexec controls AT_SECURE.
+If there is a signature in union bpf_attr and it's incorrect
+the prog_load command will be rejected.
+No point in adding a knob to control that.
 
-I am fine if we want to set secureexec and AT_SECURE in this situation.
-It is a bit odd, but I don't see a problem with that.
+> * In the case where the signature validation code in the BPF verifier
+> is active, what happens when a signature is *not* passed in from
+> userspace?  Will the BPF verifier allow the program load to take
+> place?  Will the load operation be blocked?  Will the load operation
+> be subject to a more granular policy, and if so, how do you plan to
+> incorporate that policy decision into the BPF program load path?
 
-> To be clear, I think this would be a stupid thing for userspace to do
-> - a setuid binary just should not be running other binaries with the
-> caller-provided environment while having elevated privileges. But if
-> userspace was doing something like that, this change might make it
-> more exploitable, and I imagine that the check for mismatched uid/euid
-> was intended to catch cases like this?
+If there is no signature the existing loading semantics will remain intact.
+We can discuss whether to add a sysctl or cgroup knob to disallow
+loading when signature is not present, but it probably should be
+a job of trivial LSM:
+if (prog_attr doesn't have signature &&
+   (task =3D=3D .. || task is under certain cgroup || whatever))
+  disallow.
 
-The patch that made the change doesn't show up on lore.kernel.org so I
-believe any record of the rational is lost.
 
-To me it looks like someone was right up against the deadline to get
-their code change into 2.4.0, was used to uid !=3D euid in userspace, and
-talked Linus into a last minute merge before 2.4.0 was released.
-
-Eric
+Note that the prog verification itself is independent of the signature.
+If prog fails to pass safety checks it will still be rejected
+even if signature is ok.
+We're not going to do a verifier bypass.
