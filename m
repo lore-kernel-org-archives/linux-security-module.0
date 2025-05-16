@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20BE9231836;
-	Fri, 16 May 2025 09:54:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D72BF381C4;
+	Fri, 16 May 2025 10:09:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747389280; cv=none; b=muGvkjV4T9Tz4IPWXGsuNdQrFo+uvDX1oCEcSLA3GOMZxdeuiWQU2YC0bw6Zsn/fKIkP2UvQIF2fZEHPh1PCkMKpn6GD0ObAQQcCW7+/vmHsQ7ZSAeBIdFZMkL64D+YP2gkf0aoMHKcTUdugkFO0otdXYRdTTBlNHTO+E+mE9rA=
+	t=1747390169; cv=none; b=FXEnDMC2293FPCB56mx4ZJdDlXDIj6V/uhTcJS+zAYgYlbRRrYesdKKTfrpnaEYr10q7T9JsBthnQGP3us1+tCHQWbh033ek0i8NNLQnO3Syax0CxSKAepx5vQB+zKyKQNgbHC0ipP9ipZckPvJpCMrnrUNPnFyYmbEuZHEtmN4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747389280; c=relaxed/simple;
-	bh=cNGzEGia25lZqXsVStZ30M0Gmy1ujfz1B+xpH/pyz5U=;
+	s=arc-20240116; t=1747390169; c=relaxed/simple;
+	bh=828AqPmF+LTs7KHi7/rDDJZ/Wqefq9Hs5IZ8JnUzVcQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DyPFDknRmyNbcDxBIHgNjRqu/00Yl6g4M4bpPvzET42JBtK/PToz+wBWnvcgugFrEqhwzY8CvZZHU1o6VFWub+DjKEwO2Y0dylOTPEM6LecOEsQUXLUr6JHQPqcgQoxw2IrnCk9JcbsC+Ec7jcCTI2cP/72FN18oUaEeH6S9W2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uyBoMusI; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=bG+rLfuH2nJlxnPhcWBPPGNRbTFE4TpGwff9WmYNMak0DepN0pMFJMW7Ab+0WsI5xOjmvkXgdni/8iJs2MjrI/90Boo/JCup64xKzJyaXs7imbsifsB5NCVEGL+v/7dvk3+RHqM3L7ryqXr4JO1QQoAXRxhJyf1sAYjEG0zN1bI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LVgSnqhT; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uyBoMusI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F119C4CEEF;
-	Fri, 16 May 2025 09:54:35 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LVgSnqhT"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEDC7C4CEE4;
+	Fri, 16 May 2025 10:09:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747389280;
-	bh=cNGzEGia25lZqXsVStZ30M0Gmy1ujfz1B+xpH/pyz5U=;
+	s=k20201202; t=1747390168;
+	bh=828AqPmF+LTs7KHi7/rDDJZ/Wqefq9Hs5IZ8JnUzVcQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uyBoMusII2b45lXUcrViChhqP2cU17fdLv6zVDaxw8Kajvy9Xy27efVSKrlc7/mCZ
-	 rQaK+BzjNKV0+/XLrIACWcbBCkcehhGXdeuP3numrDxQ6bvbUG/NYX4jJGoK02VYL1
-	 WwLFlY5IX22Jf+cGS7H+XMZLPwJIpKIKPf2FyjvmPpD+98eZ0Hop9w691xyyIGAIrL
-	 jFEBwrap/t9Zwf7UkWrwJImzEvaX0/yNGFatq5AQPED4C5uBGIdSnvMmlFceoZ7qfX
-	 nbZ7FR70pp159O4JwpFKLBZXp6/t05ro6vNYmjTeOS7fYtVWEq8AvlwYlWcRwIM2Ww
-	 JvZZtln9UGzgw==
-Date: Fri, 16 May 2025 11:54:31 +0200
+	b=LVgSnqhTytXU7NVwwS21fRCCbfybQbGjugR6IZwl/qg1q8etV90+WA11Chzebk4gy
+	 sXShFHan8wAIwDwoQNF3KAHWENw/NcoMHR9OTXwGr7iYj9Eq/8QH82eqQsL3fhAusw
+	 mkvWaTrdE4ESUCtio2JkR1P2Fe49YcYM/p0gjNnKex76CgX568A6rIPb5VBjoVdqTe
+	 6fWM6Whngvdr6XpbkXk0Pm7SmLk6Y6sKGYJoJMr7cGv+BTuvlJoike1JUxfUj27QTi
+	 F7mULIlTOH7+28aScxeLo179MY9SOr054LD/l5aO90dZpfVosAxUBRqbHs5+/w/g/O
+	 0rkmSo3hMXzRQ==
+Date: Fri, 16 May 2025 12:09:21 +0200
 From: Christian Brauner <brauner@kernel.org>
 To: Jann Horn <jannh@google.com>
 Cc: linux-fsdevel@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>, 
@@ -38,11 +38,11 @@ Cc: linux-fsdevel@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
 	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
 	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
 	linux-security-module@vger.kernel.org, Alexander Mikhalitsyn <alexander@mihalicyn.com>
-Subject: Re: [PATCH v7 7/9] coredump: validate socket name as it is written
-Message-ID: <20250516-planen-radar-2131a4b7d9b1@brauner>
+Subject: Re: [PATCH v7 4/9] coredump: add coredump socket
+Message-ID: <20250516-daneben-knebel-f9ec5dc8ee8c@brauner>
 References: <20250515-work-coredump-socket-v7-0-0a1329496c31@kernel.org>
- <20250515-work-coredump-socket-v7-7-0a1329496c31@kernel.org>
- <CAG48ez1wqbOmQMqg6rH4LNjNifHU_WciceO_SQwu8T=tA_KxLw@mail.gmail.com>
+ <20250515-work-coredump-socket-v7-4-0a1329496c31@kernel.org>
+ <CAG48ez2iXeu7d8eu7L694n54qNi=_-frmBst36iuUTpq9GCFvg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -52,94 +52,169 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAG48ez1wqbOmQMqg6rH4LNjNifHU_WciceO_SQwu8T=tA_KxLw@mail.gmail.com>
+In-Reply-To: <CAG48ez2iXeu7d8eu7L694n54qNi=_-frmBst36iuUTpq9GCFvg@mail.gmail.com>
 
-On Thu, May 15, 2025 at 10:56:51PM +0200, Jann Horn wrote:
+On Thu, May 15, 2025 at 10:54:14PM +0200, Jann Horn wrote:
 > On Thu, May 15, 2025 at 12:04 AM Christian Brauner <brauner@kernel.org> wrote:
-> > In contrast to other parameters written into
-> > /proc/sys/kernel/core_pattern that never fail we can validate enabling
-> > the new AF_UNIX support. This is obviously racy as hell but it's always
-> > been that way.
-> >
-> > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> 
-> Reviewed-by: Jann Horn <jannh@google.com>
-> 
-> > ---
-> >  fs/coredump.c | 37 ++++++++++++++++++++++++++++++++++---
-> >  1 file changed, 34 insertions(+), 3 deletions(-)
-> >
 > > diff --git a/fs/coredump.c b/fs/coredump.c
-> > index 6ee38e3da108..d4ff08ef03e5 100644
+> > index a70929c3585b..e1256ebb89c1 100644
 > > --- a/fs/coredump.c
 > > +++ b/fs/coredump.c
-> > @@ -1228,13 +1228,44 @@ void validate_coredump_safety(void)
+> [...]
+> > @@ -393,11 +428,20 @@ static int format_corename(struct core_name *cn, struct coredump_params *cprm,
+> >          * If core_pattern does not include a %p (as is the default)
+> >          * and core_uses_pid is set, then .%pid will be appended to
+> >          * the filename. Do not do this for piped commands. */
+> > -       if (!(cn->core_type == COREDUMP_PIPE) && !pid_in_pattern && core_uses_pid) {
+> > -               err = cn_printf(cn, ".%d", task_tgid_vnr(current));
+> > -               if (err)
+> > -                       return err;
+> > +       if (!pid_in_pattern && core_uses_pid) {
+> > +               switch (cn->core_type) {
+> > +               case COREDUMP_FILE:
+> > +                       return cn_printf(cn, ".%d", task_tgid_vnr(current));
+> > +               case COREDUMP_PIPE:
+> > +                       break;
+> > +               case COREDUMP_SOCK:
+> > +                       break;
+> 
+> This branch is dead code, we can't get this far down with
+> COREDUMP_SOCK. Maybe you could remove the "break;" and fall through to
+> the default WARN_ON_ONCE() here. Or better, revert this hunk and
+> instead just change the check to check for "cn->core_type ==
+> COREDUMP_FILE" (in patch 1), since this whole block is legacy logic
+> specific to dumping into files (COREDUMP_FILE).
+
+Ok, folded:
+
+diff --git a/fs/coredump.c b/fs/coredump.c
+index 368751d98781..45725465c299 100644
+--- a/fs/coredump.c
++++ b/fs/coredump.c
+@@ -393,11 +393,8 @@ static int format_corename(struct core_name *cn, struct coredump_params *cprm,
+         * If core_pattern does not include a %p (as is the default)
+         * and core_uses_pid is set, then .%pid will be appended to
+         * the filename. Do not do this for piped commands. */
+-       if (!(cn->core_type == COREDUMP_PIPE) && !pid_in_pattern && core_uses_pid) {
+-               err = cn_printf(cn, ".%d", task_tgid_vnr(current));
+-               if (err)
+-                       return err;
+-       }
++       if (cn->core_type == COREDUMP_FILE && !pid_in_pattern && core_uses_pid)
++               return cn_printf(cn, ".%d", task_tgid_vnr(current));
+        return 0;
+ }
+
+into the first patch.
+
+> 
+> > +               default:
+> > +                       WARN_ON_ONCE(true);
+> > +                       return -EINVAL;
+> > +               }
 > >         }
+> > +
+> >         return 0;
 > >  }
 > >
-> > +static inline bool check_coredump_socket(void)
-> > +{
-> > +       if (core_pattern[0] != '@')
-> > +               return true;
+> > @@ -801,6 +845,55 @@ void do_coredump(const kernel_siginfo_t *siginfo)
+> >                 }
+> >                 break;
+> >         }
+> > +       case COREDUMP_SOCK: {
+> > +#ifdef CONFIG_UNIX
+> > +               struct file *file __free(fput) = NULL;
+> > +               struct sockaddr_un addr = {
+> > +                       .sun_family = AF_UNIX,
+> > +               };
+> > +               ssize_t addr_len;
+> > +               struct socket *socket;
 > > +
-> > +       /*
-> > +        * Coredump socket must be located in the initial mount
-> > +        * namespace. Don't give the that impression anything else is
-> > +        * supported right now.
-> > +        */
-> > +       if (current->nsproxy->mnt_ns != init_task.nsproxy->mnt_ns)
-> > +               return false;
+> > +               retval = strscpy(addr.sun_path, cn.corename, sizeof(addr.sun_path));
 > 
-> (Ah, dereferencing init_task.nsproxy without locks is safe because
-> init_task is actually the boot cpu's swapper/idle task, which never
-> switches namespaces, right?)
-
-I would be very worried if it did. It would fsck everyone over that
-relies on copying its credentials and assumes that the set of namespaces
-is stable.
-
+> nit: strscpy() explicitly supports eliding the last argument in this
+> case, thanks to macro magic:
 > 
-> > +       /* Must be an absolute path. */
-> > +       if (*(core_pattern + 1) != '/')
-> > +               return false;
-> > +
-> > +       return true;
-> > +}
-> > +
-> >  static int proc_dostring_coredump(const struct ctl_table *table, int write,
-> >                   void *buffer, size_t *lenp, loff_t *ppos)
-> >  {
-> > -       int error = proc_dostring(table, write, buffer, lenp, ppos);
-> > +       int error;
-> > +       ssize_t retval;
-> > +       char old_core_pattern[CORENAME_MAX_SIZE];
-> > +
-> > +       retval = strscpy(old_core_pattern, core_pattern, CORENAME_MAX_SIZE);
-> > +
-> > +       error = proc_dostring(table, write, buffer, lenp, ppos);
-> > +       if (error)
-> > +               return error;
-> > +       if (!check_coredump_socket()) {
-> 
-> (non-actionable note: This is kiiinda dodgy under
-> SYSCTL_WRITES_LEGACY, but I guess we can assume that new users of the
-> new coredump socket feature aren't actually going to write the
-> coredump path one byte at a time, so I guess it's fine.)
+>  * The size argument @... is only required when @dst is not an array, or
+>  * when the copy needs to be smaller than sizeof(@dst).
 
-So this is all kinds of broken already imho. Because there's not really
-mutual exclusion between multiple writers to such sysctls from what I
-remember. Which means that this buffer can be trampled in all kinds of
-ways if multiple tasks decide to update it at the same time. That's
-super unlikely of course but whatever.
+Ok.
 
 > 
-> > +               strscpy(core_pattern, old_core_pattern, retval + 1);
+> > +               if (retval < 0)
+> > +                       goto close_fail;
+> > +               addr_len = offsetof(struct sockaddr_un, sun_path) + retval + 1;
 > 
-> The third strscpy() argument is semantically supposed to be the
-> destination buffer size, not the amount of data to copy. For trivial
-> invocations like here, strscpy() actually allows you to leave out the
-> third argument.
+> nit: On a 64-bit system, strscpy() returns a 64-bit value, and
+> addr_len is also 64-bit, but retval is 32-bit. Implicitly moving
+> length values back and forth between 64-bit and 32-bit is slightly
+> dodgy and might generate suboptimal code (it could force the compiler
+> to emit instructions to explicitly truncate the value if it can't
+> prove that the value fits in 32 bits). It would be nice to keep the
+> value 64-bit throughout by storing the return value in a ssize_t.
+> 
+> And actually, you don't have to compute addr_len here at all; that's
+> needed for abstract unix domain sockets, but for path-based unix
+> domain socket, you should be able to just use sizeof(struct
+> sockaddr_un) as addrlen. (This is documented in "man 7 unix".)
 
-Eeeeewww, that's really implicit behavior. I can use the destination
-buffer size but given that retval will always be smaller than that I
-didn't bother but ok. I'll fix that in-tree.
+Ok, folded:
+
+@@ -845,10 +845,10 @@ void do_coredump(const kernel_siginfo_t *siginfo)
+                ssize_t addr_len;
+                struct socket *socket;
+
+-               retval = strscpy(addr.sun_path, cn.corename);
+-               if (retval < 0)
++               addr_len = strscpy(addr.sun_path, cn.corename);
++               if (addr_len < 0)
+                        goto close_fail;
+-               addr_len = offsetof(struct sockaddr_un, sun_path) + retval + 1;
++               addr_len += offsetof(struct sockaddr_un, sun_path) + 1;
+
+> 
+> > +
+> > +               /*
+> > +                * It is possible that the userspace process which is
+> > +                * supposed to handle the coredump and is listening on
+> > +                * the AF_UNIX socket coredumps. Userspace should just
+> > +                * mark itself non dumpable.
+> > +                */
+> > +
+> > +               retval = sock_create_kern(&init_net, AF_UNIX, SOCK_STREAM, 0, &socket);
+> > +               if (retval < 0)
+> > +                       goto close_fail;
+> > +
+> > +               file = sock_alloc_file(socket, 0, NULL);
+> > +               if (IS_ERR(file)) {
+> > +                       sock_release(socket);
+> 
+> I think you missed an API gotcha here. See the sock_alloc_file() documentation:
+> 
+>  * On failure @sock is released, and an ERR pointer is returned.
+
+Thanks, fixed.
+
+> 
+> So I think basically sock_alloc_file() always consumes the socket
+> reference provided by the caller, and the sock_release() in this
+> branch is a double-free?
+
+> 
+> > +                       goto close_fail;
+> > +               }
+> [...]
+> > diff --git a/include/linux/net.h b/include/linux/net.h
+> > index 0ff950eecc6b..139c85d0f2ea 100644
+> > --- a/include/linux/net.h
+> > +++ b/include/linux/net.h
+> > @@ -81,6 +81,7 @@ enum sock_type {
+> >  #ifndef SOCK_NONBLOCK
+> >  #define SOCK_NONBLOCK  O_NONBLOCK
+> >  #endif
+> > +#define SOCK_COREDUMP  O_NOCTTY
+> 
+> Hrrrm. I looked through all the paths from which the ->connect() call
+> can come, and I think this is currently safe; but I wonder if it would
+
+Yes, I made sure that unknown bits are excluded.
