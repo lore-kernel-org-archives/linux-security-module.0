@@ -1,109 +1,149 @@
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out03.mta.xmission.com (out03.mta.xmission.com [166.70.13.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31A5174C08
-	for <linux-security-module@vger.kernel.org>; Fri, 16 May 2025 14:38:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF30F323D;
+	Fri, 16 May 2025 15:26:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747406310; cv=none; b=PL/REiR88ewctvsys9wMu1zFm1Qx9spY84oULWEV67C8s1XJFyfZh5gmBWrAnGZcVXposEBdDHlgA3gZdNaRH5iiFVrSF1LvJ46jCfixy65A9uX33+QTO6498w1UwdyIhUZoeSAr+L8mTG2Il/RyStj+4EQKiod4So9xMPNmhIE=
+	t=1747409216; cv=none; b=Jyor0sGbnzwlxm+ZUwU+Wtgc0rBK5xOkgvBLLj2or8iqlJjmVrdrbjPfuDGBKkCuWfja1IxlzQH2Wlmi1jcNbS7+RHyJwI++xRe9/+TXR4FTgEd1TFqcDkAVq0pDH1Au5V1EBQWElT3LfpGHYNYJzFdLnjwYCFE/E6iQu+eXF58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747406310; c=relaxed/simple;
-	bh=x4z2xCYwo9fPX793BRjCTj4nqlE0ZVIMCsmio1DpU7s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rC8jko5MDQ4f0llyBBHt+CfKUUiAdDInJZH/teEwTRk4tXJZCzY1CINsDrwCeOqXQDdtIuI8zZgIhHFa/L1M54kUaT1FVoZKOpXQk1jkRgXigZM/CzPmy1SwFpbGoWfDv6Oav4TuZ99x+EtYs2eGq9rgb0cFPpURtJhU14cn/78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ylGodoks; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ylGodoks"
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-6000791e832so9865a12.1
-        for <linux-security-module@vger.kernel.org>; Fri, 16 May 2025 07:38:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747406305; x=1748011105; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1sUYusB+kyJ76xlLEHH5qRi/bk9NwvxZ5fkLN1rm8tM=;
-        b=ylGodoks6gEtouvpWiK2FouRrMpwv2Eh1sJF33X1TF2ipa209I7hRwmNWjpOXHpEPo
-         07w2HZyHsUgkM9T7xqmbPEwZpj/qdWAPQvxYqKuwTiTaUY4AR3LFNgbbiC/KYqQg3Q/a
-         3+LPt3qRDwMWan6jgP+oLaCspe2RCg3JULoj4ezt1niCXv7xYEywUqtO1ONlsOj8qvRb
-         zb0R+Mk921gYpg+E2LZkK9P9VjI/V6Vk6CA9CrDzP60gY8Iu39XFnqQuyaKj2QwJHsWR
-         QYQYXhdFlr2+gshcB9eHxm6mliW/f4Ik35K8CHx45fEdoq9USw0tbNtG7GrGww7QKvPj
-         7Vcg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747406305; x=1748011105;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1sUYusB+kyJ76xlLEHH5qRi/bk9NwvxZ5fkLN1rm8tM=;
-        b=rDkXsBcdoa6RSV4L2KLkKhLjn4yQCG/7CMC/1qvaws5NxySDh8SjRvGEK7PCIMmsUr
-         5Se37kUS2X5OrKrEnskhOQiP3ub6uu1LUszRbBfOCKF7yFuYZVR3kiz4ydG2VEBzWAJG
-         MgH/vxcbn0rmIBebOa6guyxcpapsvBgfRn3nPbwZmsY6SJoERG3Qe6cgSeojLnOdN0Ne
-         qP0iPhUfPLmWtNmuImO+dYzQ74/CwbODO0Fzfgo86DkqHufriFfif9YlMBprBlUCniwe
-         /N+/o5bc4s4M1zjHI8cf2m1IVr+/ktZOJNq3LQtArWp0ZfNdg4UCd98ujmNhm+G/Fpni
-         ertQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVXemvWbSYAyXJBfip5+OH5IlJj5scNZEHlMo/FGFmN4DzPudvaN6FJIP1nLyDaZncUWLVHzY6qftSdeSUKoDVtugstRuk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeWScpHSBlCpCBSgGhRBsrwDE7J3Pc0vFHpDuz17cY1f/zp4At
-	taeMOJAJKf8HwOEYagsnYIH4ud/yzrKvFYxV2I2DS8zH0JUCrdMaRFUyPoAwdALY5MyNrG28HUb
-	ps/GbN1frunjtMc0wf0s4r/aYKQwPhef1tFTWqmGW
-X-Gm-Gg: ASbGnctZba+oYmBuzjGAEBAXXLuH1PqSPNEv2RB7uphFv1R6E8QH1f1z3YZqmDZFAka
-	PgloHz6kBPVD+KFKJuYLD5tTaK6jxpmiVqCLYttbGWdM7yRdU52d+3B2yYTOFuG2Ohrz+5XvQPd
-	bstVGqtJUB3zMUkR7R3dloXWSjbCmfJMdJcvDBe/xfgjv3hJW+LVECxM6oHeU69nQAimdbSWM=
-X-Google-Smtp-Source: AGHT+IHjVPydHL7cpnwkAmy+wB0lfXFTh8aEtdxrJqk903N82gHmcHf1UJhj/sj7jHSEWrx43rmp+OotJ5wNqgsIi3c=
-X-Received: by 2002:a50:c049:0:b0:5fd:28:c3f6 with SMTP id 4fb4d7f45d1cf-5ffc9dbe5b8mr231155a12.4.1747406305152;
- Fri, 16 May 2025 07:38:25 -0700 (PDT)
+	s=arc-20240116; t=1747409216; c=relaxed/simple;
+	bh=GE12mxkVepcjr70w4w9PunRSxhc8t9dXQi4J2IiNVU0=;
+	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
+	 Content-Type:Subject; b=GzjOFqBXsQTL9oYA5nbbnlhYUOQ08Df2+WDGX8stj7D3TZ8IykqgvQ6d9N8E9Cr+TaTNA6BpwwxKof4rtoyT1gmUu6NkM4kVhNjoDSKkALApmpCKlt0USOtNhtu+fGgX7ZqfvnqiQ6M15aZKbVOQqzj/oLdGe9DydeyZ0Il66oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
+Received: from in02.mta.xmission.com ([166.70.13.52]:52250)
+	by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1uFwxT-00AVEJ-58; Fri, 16 May 2025 09:26:47 -0600
+Received: from ip72-198-198-28.om.om.cox.net ([72.198.198.28]:43216 helo=email.froward.int.ebiederm.org.xmission.com)
+	by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1uFwxR-004r12-St; Fri, 16 May 2025 09:26:46 -0600
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: Kees Cook <kees@kernel.org>
+Cc: Max Kellermann <max.kellermann@ionos.com>,  "Serge E. Hallyn"
+ <serge@hallyn.com>,  paul@paul-moore.com,  jmorris@namei.org,  Andy
+ Lutomirski <luto@kernel.org>,  morgan@kernel.org,  Christian Brauner
+ <christian@brauner.io>,  Jann Horn <jannh@google.com>,
+  linux-security-module@vger.kernel.org,  linux-kernel@vger.kernel.org
+References: <20250306082615.174777-1-max.kellermann@ionos.com>
+	<878qmxsuy8.fsf@email.froward.int.ebiederm.org>
+	<202505151451.638C22B@keescook>
+Date: Fri, 16 May 2025 10:26:02 -0500
+In-Reply-To: <202505151451.638C22B@keescook> (Kees Cook's message of "Thu, 15
+	May 2025 15:09:48 -0700")
+Message-ID: <87ecwopofp.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250516-work-coredump-socket-v8-0-664f3caf2516@kernel.org> <20250516-work-coredump-socket-v8-5-664f3caf2516@kernel.org>
-In-Reply-To: <20250516-work-coredump-socket-v8-5-664f3caf2516@kernel.org>
-From: Jann Horn <jannh@google.com>
-Date: Fri, 16 May 2025 16:37:49 +0200
-X-Gm-Features: AX0GCFsuzCC3CmbLLxfWpRPaI0gyUSqgeVs70kejvwFPyqgeFolUzQNjXbEK5Yo
-Message-ID: <CAG48ez2ewzKuVoUQp=nyMiVS9euPts3fKaexwXMGhVefQXqoig@mail.gmail.com>
-Subject: Re: [PATCH v8 5/9] pidfs, coredump: add PIDFD_INFO_COREDUMP
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>, 
-	Kuniyuki Iwashima <kuniyu@amazon.com>, Eric Dumazet <edumazet@google.com>, Oleg Nesterov <oleg@redhat.com>, 
-	"David S. Miller" <davem@davemloft.net>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Daan De Meyer <daan.j.demeyer@gmail.com>, David Rheinsberg <david@readahead.eu>, 
-	Jakub Kicinski <kuba@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Lennart Poettering <lennart@poettering.net>, Luca Boccassi <luca.boccassi@gmail.com>, 
-	Mike Yuan <me@yhndnzj.com>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	=?UTF-8?Q?Zbigniew_J=C4=99drzejewski=2DSzmek?= <zbyszek@in.waw.pl>, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, 
-	Alexander Mikhalitsyn <alexander@mihalicyn.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-XM-SPF: eid=1uFwxR-004r12-St;;;mid=<87ecwopofp.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=72.198.198.28;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX18aC6uDo0YWOLeAg/L95AcRjDh8qgc6tk0=
+X-Spam-Level: *
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+	*      [score: 0.5000]
+	*  0.7 XMSubLong Long Subject
+	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+	*      [sa08 1397; Body=1 Fuz1=1 Fuz2=1]
+	*  1.0 XM_B_Phish_Phrases Commonly used Phishing Phrases
+X-Spam-DCC: XMission; sa08 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: *;Kees Cook <kees@kernel.org>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 523 ms - load_scoreonly_sql: 0.05 (0.0%),
+	signal_user_changed: 17 (3.2%), b_tie_ro: 15 (2.8%), parse: 1.06
+	(0.2%), extract_message_metadata: 4.6 (0.9%), get_uri_detail_list: 2.0
+	(0.4%), tests_pri_-2000: 3.2 (0.6%), tests_pri_-1000: 2.4 (0.5%),
+	tests_pri_-950: 1.41 (0.3%), tests_pri_-900: 1.22 (0.2%),
+	tests_pri_-90: 82 (15.7%), check_bayes: 80 (15.2%), b_tokenize: 8
+	(1.6%), b_tok_get_all: 11 (2.0%), b_comp_prob: 3.5 (0.7%),
+	b_tok_touch_all: 52 (9.9%), b_finish: 1.33 (0.3%), tests_pri_0: 387
+	(73.9%), check_dkim_signature: 1.12 (0.2%), check_dkim_adsp: 3.1
+	(0.6%), poll_dns_idle: 1.27 (0.2%), tests_pri_10: 4.1 (0.8%),
+	tests_pri_500: 9 (1.8%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH] exec: Correct the permission check for unsafe exec
+X-SA-Exim-Connect-IP: 166.70.13.52
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, jannh@google.com, christian@brauner.io, morgan@kernel.org, luto@kernel.org, jmorris@namei.org, paul@paul-moore.com, serge@hallyn.com, max.kellermann@ionos.com, kees@kernel.org
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-SA-Exim-Scanned: No (on out03.mta.xmission.com); SAEximRunCond expanded to false
 
-On Fri, May 16, 2025 at 1:26=E2=80=AFPM Christian Brauner <brauner@kernel.o=
-rg> wrote:
-> Extend the PIDFD_INFO_COREDUMP ioctl() with the new PIDFD_INFO_COREDUMP
-> mask flag. This adds the @coredump_mask field to struct pidfd_info.
->
-> When a task coredumps the kernel will provide the following information
-> to userspace in @coredump_mask:
->
-> * PIDFD_COREDUMPED is raised if the task did actually coredump.
-> * PIDFD_COREDUMP_SKIP is raised if the task skipped coredumping (e.g.,
->   undumpable).
-> * PIDFD_COREDUMP_USER is raised if this is a regular coredump and
->   doesn't need special care by the coredump server.
-> * PIDFD_COREDUMP_ROOT is raised if the generated coredump should be
->   treated as sensitive and the coredump server should restrict to the
->   generated coredump to sufficiently privileged users.
->
-> The kernel guarantees that by the time the connection is made the all
-> PIDFD_INFO_COREDUMP info is available.
->
-> Acked-by: Luca Boccassi <luca.boccassi@gmail.com>
-> Reviewed-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
+Kees Cook <kees@kernel.org> writes:
 
-Reviewed-by: Jann Horn <jannh@google.com>
+> On Thu, May 15, 2025 at 11:24:47AM -0500, Eric W. Biederman wrote:
+>> I have condensed the logic from Linux-2.4.0-test12 to just:
+>> 	id_changed = !uid_eq(new->euid, old->euid) || !in_group_p(new->egid);
+>> 
+>> This change is userspace visible, but I don't expect anyone to care.
+>> [...]
+>> -static inline bool __is_setuid(struct cred *new, const struct cred *old)
+>> -{ return !uid_eq(new->euid, old->uid); }
+>> -
+>> -static inline bool __is_setgid(struct cred *new, const struct cred *old)
+>> -{ return !gid_eq(new->egid, old->gid); }
+>> -
+>> [...]
+>> -	is_setid = __is_setuid(new, old) || __is_setgid(new, old);
+>> +	id_changed = !uid_eq(new->euid, old->euid) || !in_group_p(new->egid);
+>
+> The core change here is testing for differing euid rather than
+> mismatched uid/euid. (And checking for egid in the set of all groups.)
 
-Thanks for clarifying the comments!
+Yes.
+
+For what the code is trying to do I can't fathom what was trying to
+be accomplished by the "mismatched" uid/euid check.
+
+> Imagined situations:
+>
+> - setuid process is sharing fs. We already believe this is a non-issue,
+>   as Jann pointed out about Chrome's order of operations, so so changes
+>   here are likely fine.
+
+Yes, nothing has changed from a security standpoint.
+
+> - somehow ptracing a process with uid!=euid, and it tries to exec a
+>   different setuid==euid ELF. Is switching ELF images a security
+>   boundary? Probably not realistically.
+
+The concern with tracing is can the tracer gain more privileges from
+the traced application.  If there is no switch of euid or egid the
+answer is no.
+
+In fact what we do is actively bad in the ptrace case as it makes
+debugging unnecessarily change the behavior of an application.
+
+> - setuid process sets NNP and execs a setuid==euid ELF, expecting to
+>   have euid stripped. That doesn't happen any more. This is the most
+>   worrisome case, but a program like that should _really_ have dropped
+>   euid first if it is depending on that behavior. Hmmm. Probably some
+>   code searching is needed...
+
+That is a fair question.  Has some no-new-privs using application
+that has uid != euid when it calls exec developed a dependency on
+how we the code sets euid == uid when we call exec today.
+
+That is exactly the case that Max Kellermann has a problem with,
+so we have at least one no-new-privs user that wants the fixed behavior.
+
+In addition to code searching we could first change the behavior for
+everything except ptrace to just return -EPERM.  That should flush out
+most of the users of this case if we miss some one.
+
+Given that I have only seen a justification for limping along during
+ptrace from Linus (and it was a long time ago) I think we would be
+better off just making it fail, and then we don't have to worry
+about userspace depending upon this weird case in future maintenance.
+
+Eric
+
