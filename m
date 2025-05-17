@@ -1,40 +1,40 @@
 Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1255B36124;
-	Sat, 17 May 2025 08:44:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B96B6B676;
+	Sat, 17 May 2025 08:51:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747471458; cv=none; b=GCchY3E53sOlYdtb+e2tpTa2PfErRzVPNtMbQ9E1dSkNi1WfpY0ZkNRttYDDah4vSkHKOQtgzWy3c85TcXwIi9p5lb9LyqCiLdVQdHM8orQjLZALcrAgrvZwaVfLe22n8oB9WRP/QrkG71C675hivpHkZrB3XG5O9YyOUPN1cT4=
+	t=1747471922; cv=none; b=TIBc/bDPvrln36pURPmVup9yeNUcLGNeUOlupuKCmAb9S3/re1YaHf3XGKu9S8pKBok/U08rjEt95Dhj202AbDOOb0m/9Qi50w4j4TIuYkR/48zPnn2uPAfUz1qbZLvcsJHWDeRqD1gzvcfVklg8+N5iKBNDeqRPnthpMfjkhHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747471458; c=relaxed/simple;
-	bh=8PqnyE9TzXwRYfqnoBEXgELU1PWr1Y6qnhX4OwJq8EA=;
+	s=arc-20240116; t=1747471922; c=relaxed/simple;
+	bh=uisxt740Y61JWYGBXeFHyzPfobIwQCvSX/bROKXZBVo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dh8XfNrtxGVGrKmGHvziwflgjMhd6RZZdTY5AFS4fe7RbDgbeNuuRm4ID2m2y0T/R6ajM/W73sWYbRtjr01A4FOomx9dz00qOxuPEGT/HZHA7xoebvt8XWnn4ZWP6OvIoiMioeTcRK3emT1vd7l4L3PGaeAaQBjX+qGkSnXhSXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=o5tPW4bu; arc=none smtp.client-ip=185.125.188.120
+	 In-Reply-To:Content-Type; b=nJT3U88ALZ8fF3xymiS7HcHBTiEbkpsXzk6n1tn/+crioqa6xlElpCZqkuRIVb5lzw1ClLy3G2y0p/5RLfdOV1NEY87yrfZUBHqyEfbAuK6ejRRex6y/j0qXXqmuQpfoKoQnKOR7uB0hdUdaE92QBVw9OiBqrpchwBkr4hJnAvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=lKKYZokp; arc=none smtp.client-ip=185.125.188.120
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="o5tPW4bu"
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="lKKYZokp"
 Received: from [172.20.3.254] (unknown [213.157.19.135])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 7310F3F23C;
-	Sat, 17 May 2025 08:44:13 +0000 (UTC)
+	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id CFE513FA89;
+	Sat, 17 May 2025 08:51:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1747471453;
-	bh=DCCaxXLxA3915UjGe7w3oOIeZ6x8fsaQyS4TJb5BtnY=;
+	s=20210705; t=1747471916;
+	bh=LwsxKnzgLwgB3MddlDAZtddVxaV1Ne+qf0U+6mAN19g=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
 	 In-Reply-To:Content-Type;
-	b=o5tPW4buets7slGVODPohLilcZRJZr6xrUEO6H5i65T/NikZn0xBlsZrBvJiQB5EC
-	 68Iw+aJrbjW+qcgwDw0bemYDM4rmMMpkBpeLbo5pAf/z5yMcuff6SkOE6EwmfvTnEk
-	 ecu1gEAkZmzF22bgKvWfNUybENTiffOzvmUU3AdCiC7SqtBPaiSajXTPjpub6r3TZ/
-	 K5No/N40zgAfsY+G9MMu0CNGntbZFzD6EcLu+S/4VmDEhMDevkczJ6uVucDxEOuJBk
-	 yy2UG+CL9IncWbW6gjn89g/v4vWjzaTb/MT0Z7JvWGN/BfuHZPAVFarsx4VxeIyCYt
-	 rZh7skVUIJJSg==
-Message-ID: <68375b67-3930-4f54-8a66-e0b071a90110@canonical.com>
-Date: Sat, 17 May 2025 01:44:13 -0700
+	b=lKKYZokp6+3Q8dUnfS7Zalqu8zH/t2g4HBGMeD1Diu0VI7koArKeM6+P5Uf0nYn6E
+	 +K5mUMu2UQUiLfbDT7UwgrHqPJObjynhYzCwfcguo7bUWTjzCG3Of+S88hqFBlraI9
+	 Gfdpati3ax/8GFbhF/FO73PdvxqPrs9OraHAxlFkKXMBrF9CrMxzgYm8dsSi1zXOdH
+	 eyabtIojsEp+kpAKh5/sE+krTquiH5JDES6xvtlNa4/A1dn4L5iAGO5YgB+SAZdbbv
+	 OafoJbHQeSKkqRxzIg4/oTlwD8PxwyKFrg4MLEAFrvXTl+cQ8INul2hAGsJFuKMuxk
+	 +eXiJgtTrExJw==
+Message-ID: <b105b0bb-9dcc-4611-ace5-5bf58375c7af@canonical.com>
+Date: Sat, 17 May 2025 01:51:54 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -42,14 +42,13 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] apparmor: Fix incorrect profile->signal range check
-To: Ryan Lee <ryan.lee@canonical.com>, Colin Ian King <colin.i.king@gmail.com>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- "Serge E . Hallyn" <serge@hallyn.com>, apparmor@lists.ubuntu.com,
- linux-security-module@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250506170425.152177-1-colin.i.king@gmail.com>
- <CAKCV-6uAdn9SvUFrYqGo0ZzJUtPAYgRFcfHPgmrG_GDt2Ob6Hg@mail.gmail.com>
+Subject: Re: [PATCH v2] apparmor: fix some kernel-doc issues in header files
+To: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org
+Cc: Ryan Lee <ryan.lee@canonical.com>, John Johansen <john@apparmor.net>,
+ apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+ Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>
+References: <20250503044919.2251962-1-rdunlap@infradead.org>
 Content-Language: en-US
 From: John Johansen <john.johansen@canonical.com>
 Autocrypt: addr=john.johansen@canonical.com; keydata=
@@ -95,42 +94,116 @@ Autocrypt: addr=john.johansen@canonical.com; keydata=
  +T7sv9+iY+e0Y+SolyJgTxMYeRnDWE6S77g6gzYYHmcQOWP7ZMX+MtD4SKlf0+Q8li/F9GUL
  p0rw8op9f0p1+YAhyAd+dXWNKf7zIfZ2ME+0qKpbQnr1oizLHuJX/Telo8KMmHter28DPJ03 lT9Q
 Organization: Canonical
-In-Reply-To: <CAKCV-6uAdn9SvUFrYqGo0ZzJUtPAYgRFcfHPgmrG_GDt2Ob6Hg@mail.gmail.com>
+In-Reply-To: <20250503044919.2251962-1-rdunlap@infradead.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 5/6/25 10:07, Ryan Lee wrote:
-> On Tue, May 6, 2025 at 10:04 AM Colin Ian King <colin.i.king@gmail.com> wrote:
->>
->> The check on profile->signal is always false, the value can never be
->> less than 1 *and* greater than MAXMAPPED_SIG. Fix this by replacing
->> the logical operator && with ||.
->>
->> Fixes: 84c455decf27 ("apparmor: add support for profiles to define the kill signal")
->> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
->> ---
->>   security/apparmor/policy_unpack.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
->> index 73139189df0f..e643514a3d92 100644
->> --- a/security/apparmor/policy_unpack.c
->> +++ b/security/apparmor/policy_unpack.c
->> @@ -919,7 +919,7 @@ static struct aa_profile *unpack_profile(struct aa_ext *e, char **ns_name)
->>
->>          /* optional */
->>          (void) aa_unpack_u32(e, &profile->signal, "kill");
->> -       if (profile->signal < 1 && profile->signal > MAXMAPPED_SIG) {
->> +       if (profile->signal < 1 || profile->signal > MAXMAPPED_SIG) {
->>                  info = "profile kill.signal invalid value";
->>                  goto fail;
->>          }
->> --
->> 2.49.0
-> Reviewed-by: Ryan Lee <ryan.lee@canonical.com>
+On 5/2/25 21:49, Randy Dunlap wrote:
+> Fix kernel-doc warnings in apparmor header files as reported by
+> scripts/kernel-doc:
 > 
+> cred.h:128: warning: expecting prototype for end_label_crit_section(). Prototype was for end_current_label_crit_section() instead
+> file.h:108: warning: expecting prototype for aa_map_file_perms(). Prototype was for aa_map_file_to_perms() instead
+> 
+> lib.h:159: warning: Function parameter or struct member 'hname' not described in 'basename'
+> lib.h:159: warning: Excess function parameter 'name' description in 'basename'
+> 
+> match.h:21: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
+>   * The format used for transition tables is based on the GNU flex table
+> 
+> perms.h:109: warning: Function parameter or struct member 'accum' not described in 'aa_perms_accum_raw'
+> perms.h:109: warning: Function parameter or struct member 'addend' not described in 'aa_perms_accum_raw'
+> perms.h:136: warning: Function parameter or struct member 'accum' not described in 'aa_perms_accum'
+> perms.h:136: warning: Function parameter or struct member 'addend' not described in 'aa_perms_accum'
+> 
+> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+> Reviewed-by: Ryan Lee <ryan.lee@canonical.com>
+> Cc: John Johansen <john.johansen@canonical.com>
+> Cc: John Johansen <john@apparmor.net>
+> Cc: apparmor@lists.ubuntu.com
+> Cc: linux-security-module@vger.kernel.org
+> Cc: Paul Moore <paul@paul-moore.com>
+> Cc: James Morris <jmorris@namei.org>
+> Cc: "Serge E. Hallyn" <serge@hallyn.com>
+> ---
+> v2: add better commit message (Ryan)
 
 Acked-by: John Johansen <john.johansen@canonical.com>
 
-I have pulled this into my tree
+> 
+>   security/apparmor/include/cred.h  |    2 +-
+>   security/apparmor/include/file.h  |    2 +-
+>   security/apparmor/include/lib.h   |    2 +-
+>   security/apparmor/include/match.h |    2 +-
+>   security/apparmor/include/perms.h |    8 ++++----
+>   5 files changed, 8 insertions(+), 8 deletions(-)
+> 
+> --- linux-next-20250501.orig/security/apparmor/include/cred.h
+> +++ linux-next-20250501/security/apparmor/include/cred.h
+> @@ -117,7 +117,7 @@ static inline struct aa_label *aa_get_cu
+>   #define __end_current_label_crit_section(X) end_current_label_crit_section(X)
+>   
+>   /**
+> - * end_label_crit_section - put a reference found with begin_current_label..
+> + * end_current_label_crit_section - put a reference found with begin_current_label..
+>    * @label: label reference to put
+>    *
+>    * Should only be used with a reference obtained with
+> --- linux-next-20250501.orig/security/apparmor/include/file.h
+> +++ linux-next-20250501/security/apparmor/include/file.h
+> @@ -104,7 +104,7 @@ void aa_inherit_files(const struct cred
+>   
+>   
+>   /**
+> - * aa_map_file_perms - map file flags to AppArmor permissions
+> + * aa_map_file_to_perms - map file flags to AppArmor permissions
+>    * @file: open file to map flags to AppArmor permissions
+>    *
+>    * Returns: apparmor permission set for the file
+> --- linux-next-20250501.orig/security/apparmor/include/lib.h
+> +++ linux-next-20250501/security/apparmor/include/lib.h
+> @@ -170,7 +170,7 @@ struct aa_policy {
+>   
+>   /**
+>    * basename - find the last component of an hname
+> - * @name: hname to find the base profile name component of  (NOT NULL)
+> + * @hname: hname to find the base profile name component of  (NOT NULL)
+>    *
+>    * Returns: the tail (base profile name) name component of an hname
+>    */
+> --- linux-next-20250501.orig/security/apparmor/include/match.h
+> +++ linux-next-20250501/security/apparmor/include/match.h
+> @@ -17,7 +17,7 @@
+>   #define DFA_START			1
+>   
+>   
+> -/**
+> +/*
+>    * The format used for transition tables is based on the GNU flex table
+>    * file format (--tables-file option; see Table File Format in the flex
+>    * info pages and the flex sources for documentation). The magic number
+> --- linux-next-20250501.orig/security/apparmor/include/perms.h
+> +++ linux-next-20250501/security/apparmor/include/perms.h
+> @@ -101,8 +101,8 @@ extern struct aa_perms allperms;
+>   
+>   /**
+>    * aa_perms_accum_raw - accumulate perms with out masking off overlapping perms
+> - * @accum - perms struct to accumulate into
+> - * @addend - perms struct to add to @accum
+> + * @accum: perms struct to accumulate into
+> + * @addend: perms struct to add to @accum
+>    */
+>   static inline void aa_perms_accum_raw(struct aa_perms *accum,
+>   				      struct aa_perms *addend)
+> @@ -128,8 +128,8 @@ static inline void aa_perms_accum_raw(st
+>   
+>   /**
+>    * aa_perms_accum - accumulate perms, masking off overlapping perms
+> - * @accum - perms struct to accumulate into
+> - * @addend - perms struct to add to @accum
+> + * @accum: perms struct to accumulate into
+> + * @addend: perms struct to add to @accum
+>    */
+>   static inline void aa_perms_accum(struct aa_perms *accum,
+>   				  struct aa_perms *addend)
 
