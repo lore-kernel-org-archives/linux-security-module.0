@@ -1,40 +1,40 @@
 Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5416D85C5E
-	for <linux-security-module@vger.kernel.org>; Sat, 17 May 2025 08:40:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1255B36124;
+	Sat, 17 May 2025 08:44:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747471241; cv=none; b=OV6N9+a1a2ez/r46zda/ENjBZZKWlP8Hb5qustb6n8iTm0AM65Pfzm2KUEMe/EgLvyIU31wOgSTmaL0UhrbU9VDYMo+DHtgHwGn1xpQmqlJnO32xgB8lkIhEggACgdqAV0sHtVv9TkDzmBh+TDSeotsRCT7y3j67YY9tO1i6u+E=
+	t=1747471458; cv=none; b=GCchY3E53sOlYdtb+e2tpTa2PfErRzVPNtMbQ9E1dSkNi1WfpY0ZkNRttYDDah4vSkHKOQtgzWy3c85TcXwIi9p5lb9LyqCiLdVQdHM8orQjLZALcrAgrvZwaVfLe22n8oB9WRP/QrkG71C675hivpHkZrB3XG5O9YyOUPN1cT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747471241; c=relaxed/simple;
-	bh=2PRy2cZNRGHGI0VzGd3K4dl9+IvMqEP9mW22TcEV58s=;
+	s=arc-20240116; t=1747471458; c=relaxed/simple;
+	bh=8PqnyE9TzXwRYfqnoBEXgELU1PWr1Y6qnhX4OwJq8EA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uUi0IsyqSUq0Bs0LkiAonRywZLlG3JQ6p84RTK7OtDb7kqfDlICtpcBV+Y93MgJX1d1gGoVKQvTH3+Rt9HiJrxtP1b0iEc3ZnTxz6RAXAxMkfuZFwpKjAWlewOu5HWjk2lLxQtn3h1/DGoQxHfPJObxBVrncKVuMK5MkVr0FM+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=bzLb9mgB; arc=none smtp.client-ip=185.125.188.120
+	 In-Reply-To:Content-Type; b=dh8XfNrtxGVGrKmGHvziwflgjMhd6RZZdTY5AFS4fe7RbDgbeNuuRm4ID2m2y0T/R6ajM/W73sWYbRtjr01A4FOomx9dz00qOxuPEGT/HZHA7xoebvt8XWnn4ZWP6OvIoiMioeTcRK3emT1vd7l4L3PGaeAaQBjX+qGkSnXhSXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=o5tPW4bu; arc=none smtp.client-ip=185.125.188.120
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="bzLb9mgB"
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="o5tPW4bu"
 Received: from [172.20.3.254] (unknown [213.157.19.135])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 615753F23C;
-	Sat, 17 May 2025 08:40:36 +0000 (UTC)
+	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 7310F3F23C;
+	Sat, 17 May 2025 08:44:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1747471236;
-	bh=ocU0/jjMq5dDsAMzdibt7g3rGxkkUw0uBx28ayKb3x4=;
+	s=20210705; t=1747471453;
+	bh=DCCaxXLxA3915UjGe7w3oOIeZ6x8fsaQyS4TJb5BtnY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
 	 In-Reply-To:Content-Type;
-	b=bzLb9mgBhuvmvQC90+2WhH6IMpoliKUv3mnADzBtTE0JTv0L36OZCJZP8PRDh/eNi
-	 TAOmazLM5w2+Q+ZcsP6j54obQCTZEqbWNAOzSk3ka9eK/DtExukQUPU0i/7g/qFu9Y
-	 tQjSU+t0gyr3kFCpAKyBn5xpxnncvYdvyocp33V/y63Ut8ZZU7VJGXoEwmYINTdlB6
-	 ayT1RmJC2m3cWOq2VooaCe347bbQc9BdOTn+mxh6NUZKBTp1qrnYDAtEHrmPZKcrJO
-	 AYx5wSZ9LB4s/Sv293o44JW9HbaccpuG6LNjoNWOGzboBf5rVA9ej2QJsCSaYstKJ6
-	 OjZaxHEPEnFtw==
-Message-ID: <cddd7197-4286-4e44-b143-88fdc263c631@canonical.com>
-Date: Sat, 17 May 2025 01:40:35 -0700
+	b=o5tPW4buets7slGVODPohLilcZRJZr6xrUEO6H5i65T/NikZn0xBlsZrBvJiQB5EC
+	 68Iw+aJrbjW+qcgwDw0bemYDM4rmMMpkBpeLbo5pAf/z5yMcuff6SkOE6EwmfvTnEk
+	 ecu1gEAkZmzF22bgKvWfNUybENTiffOzvmUU3AdCiC7SqtBPaiSajXTPjpub6r3TZ/
+	 K5No/N40zgAfsY+G9MMu0CNGntbZFzD6EcLu+S/4VmDEhMDevkczJ6uVucDxEOuJBk
+	 yy2UG+CL9IncWbW6gjn89g/v4vWjzaTb/MT0Z7JvWGN/BfuHZPAVFarsx4VxeIyCYt
+	 rZh7skVUIJJSg==
+Message-ID: <68375b67-3930-4f54-8a66-e0b071a90110@canonical.com>
+Date: Sat, 17 May 2025 01:44:13 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -42,11 +42,14 @@ List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] apparmor: shift ouid when mediating hard links in
- userns
-To: Gabriel Totev <gabriel.totev@zetier.com>
-Cc: apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org
-References: <20250416224209.904863-1-gabriel.totev@zetier.com>
+Subject: Re: [PATCH][next] apparmor: Fix incorrect profile->signal range check
+To: Ryan Lee <ryan.lee@canonical.com>, Colin Ian King <colin.i.king@gmail.com>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+ "Serge E . Hallyn" <serge@hallyn.com>, apparmor@lists.ubuntu.com,
+ linux-security-module@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250506170425.152177-1-colin.i.king@gmail.com>
+ <CAKCV-6uAdn9SvUFrYqGo0ZzJUtPAYgRFcfHPgmrG_GDt2Ob6Hg@mail.gmail.com>
 Content-Language: en-US
 From: John Johansen <john.johansen@canonical.com>
 Autocrypt: addr=john.johansen@canonical.com; keydata=
@@ -92,56 +95,42 @@ Autocrypt: addr=john.johansen@canonical.com; keydata=
  +T7sv9+iY+e0Y+SolyJgTxMYeRnDWE6S77g6gzYYHmcQOWP7ZMX+MtD4SKlf0+Q8li/F9GUL
  p0rw8op9f0p1+YAhyAd+dXWNKf7zIfZ2ME+0qKpbQnr1oizLHuJX/Telo8KMmHter28DPJ03 lT9Q
 Organization: Canonical
-In-Reply-To: <20250416224209.904863-1-gabriel.totev@zetier.com>
+In-Reply-To: <CAKCV-6uAdn9SvUFrYqGo0ZzJUtPAYgRFcfHPgmrG_GDt2Ob6Hg@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 4/16/25 15:42, Gabriel Totev wrote:
-> When using AppArmor profiles inside an unprivileged container,
-> the link operation observes an unshifted ouid.
-> (tested with LXD and Incus)
+On 5/6/25 10:07, Ryan Lee wrote:
+> On Tue, May 6, 2025 at 10:04 AM Colin Ian King <colin.i.king@gmail.com> wrote:
+>>
+>> The check on profile->signal is always false, the value can never be
+>> less than 1 *and* greater than MAXMAPPED_SIG. Fix this by replacing
+>> the logical operator && with ||.
+>>
+>> Fixes: 84c455decf27 ("apparmor: add support for profiles to define the kill signal")
+>> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+>> ---
+>>   security/apparmor/policy_unpack.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/security/apparmor/policy_unpack.c b/security/apparmor/policy_unpack.c
+>> index 73139189df0f..e643514a3d92 100644
+>> --- a/security/apparmor/policy_unpack.c
+>> +++ b/security/apparmor/policy_unpack.c
+>> @@ -919,7 +919,7 @@ static struct aa_profile *unpack_profile(struct aa_ext *e, char **ns_name)
+>>
+>>          /* optional */
+>>          (void) aa_unpack_u32(e, &profile->signal, "kill");
+>> -       if (profile->signal < 1 && profile->signal > MAXMAPPED_SIG) {
+>> +       if (profile->signal < 1 || profile->signal > MAXMAPPED_SIG) {
+>>                  info = "profile kill.signal invalid value";
+>>                  goto fail;
+>>          }
+>> --
+>> 2.49.0
+> Reviewed-by: Ryan Lee <ryan.lee@canonical.com>
 > 
-> For example, root inside container and uid 1000000 outside, with
-> `owner /root/link l,` profile entry for ln:
-> 
-> /root$ touch chain && ln chain link
-> ==> dmesg
-> apparmor="DENIED" operation="link" class="file"
-> namespace="root//lxd-feet_<var-snap-lxd-common-lxd>" profile="linkit"
-> name="/root/link" pid=1655 comm="ln" requested_mask="l" denied_mask="l"
-> fsuid=1000000 ouid=0 [<== should be 1000000] target="/root/chain"
-> 
-> Fix by mapping inode uid of old_dentry in aa_path_link() rather than
-> using it directly, similarly to how it's mapped in __file_path_perm()
-> later in the file.
 
-so unfortunately this isn't correct. Yes some mapping needs to be
-done but it needs to be relative to different policy namespaces. I
-need to spend some time on this
+Acked-by: John Johansen <john.johansen@canonical.com>
 
-
-> 
-> Signed-off-by: Gabriel Totev <gabriel.totev@zetier.com>
-> ---
->   security/apparmor/file.c | 6 ++++--
->   1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/security/apparmor/file.c b/security/apparmor/file.c
-> index 5c984792cbf0..ecd36199337c 100644
-> --- a/security/apparmor/file.c
-> +++ b/security/apparmor/file.c
-> @@ -430,9 +430,11 @@ int aa_path_link(const struct cred *subj_cred,
->   {
->   	struct path link = { .mnt = new_dir->mnt, .dentry = new_dentry };
->   	struct path target = { .mnt = new_dir->mnt, .dentry = old_dentry };
-> +	struct inode *inode = d_backing_inode(old_dentry);
-> +	vfsuid_t vfsuid = i_uid_into_vfsuid(mnt_idmap(target.mnt), inode);
->   	struct path_cond cond = {
-> -		d_backing_inode(old_dentry)->i_uid,
-> -		d_backing_inode(old_dentry)->i_mode
-> +		.uid = vfsuid_into_kuid(vfsuid),
-> +		.mode = inode->i_mode,
->   	};
->   	char *buffer = NULL, *buffer2 = NULL;
->   	struct aa_profile *profile;
+I have pulled this into my tree
 
