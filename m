@@ -1,209 +1,171 @@
-Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B96B6B676;
-	Sat, 17 May 2025 08:51:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9E931B415F
+	for <linux-security-module@vger.kernel.org>; Sat, 17 May 2025 15:03:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747471922; cv=none; b=TIBc/bDPvrln36pURPmVup9yeNUcLGNeUOlupuKCmAb9S3/re1YaHf3XGKu9S8pKBok/U08rjEt95Dhj202AbDOOb0m/9Qi50w4j4TIuYkR/48zPnn2uPAfUz1qbZLvcsJHWDeRqD1gzvcfVklg8+N5iKBNDeqRPnthpMfjkhHc=
+	t=1747494187; cv=none; b=EfafhdOIR2cHfKEu3G9FcI67mG2Lwpgxytc3DF7aWnDi36CXgQG5TKjN8/YuDuakiCHVlmNRo3MpTQvALUqzwzFEzICmYFyPtj/0FMyt0gf8wztVF10kCWrc6PWbENj8LdWIBXf0TBKex6PnCSsITJ9k0J6VNQIxi+oi2i/Iyjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747471922; c=relaxed/simple;
-	bh=uisxt740Y61JWYGBXeFHyzPfobIwQCvSX/bROKXZBVo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nJT3U88ALZ8fF3xymiS7HcHBTiEbkpsXzk6n1tn/+crioqa6xlElpCZqkuRIVb5lzw1ClLy3G2y0p/5RLfdOV1NEY87yrfZUBHqyEfbAuK6ejRRex6y/j0qXXqmuQpfoKoQnKOR7uB0hdUdaE92QBVw9OiBqrpchwBkr4hJnAvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=lKKYZokp; arc=none smtp.client-ip=185.125.188.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+	s=arc-20240116; t=1747494187; c=relaxed/simple;
+	bh=0I1eiVOJEdVLLXIohuqFusEWQMPeVi5Dp73/GaN/bZ4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=C6CBLF9Il68Cnfs782kckM7bMnEvFYE6hCjzbT9ks91psSwQ/8PKLvmaZ3P6XMlJ+hEt3HDTAcDQrmLKRgBzfauBfE/TZrwwJ68eQtwjprVfW5qc1PHxDUBUA9pnky1a2sZ4kkwegQHot9ICFzBPhEhOXO444yAU24A71SveyFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=K4490URf; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="lKKYZokp"
-Received: from [172.20.3.254] (unknown [213.157.19.135])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id CFE513FA89;
-	Sat, 17 May 2025 08:51:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1747471916;
-	bh=LwsxKnzgLwgB3MddlDAZtddVxaV1Ne+qf0U+6mAN19g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=lKKYZokp6+3Q8dUnfS7Zalqu8zH/t2g4HBGMeD1Diu0VI7koArKeM6+P5Uf0nYn6E
-	 +K5mUMu2UQUiLfbDT7UwgrHqPJObjynhYzCwfcguo7bUWTjzCG3Of+S88hqFBlraI9
-	 Gfdpati3ax/8GFbhF/FO73PdvxqPrs9OraHAxlFkKXMBrF9CrMxzgYm8dsSi1zXOdH
-	 eyabtIojsEp+kpAKh5/sE+krTquiH5JDES6xvtlNa4/A1dn4L5iAGO5YgB+SAZdbbv
-	 OafoJbHQeSKkqRxzIg4/oTlwD8PxwyKFrg4MLEAFrvXTl+cQ8INul2hAGsJFuKMuxk
-	 +eXiJgtTrExJw==
-Message-ID: <b105b0bb-9dcc-4611-ace5-5bf58375c7af@canonical.com>
-Date: Sat, 17 May 2025 01:51:54 -0700
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="K4490URf"
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-70a2970cb70so27793237b3.0
+        for <linux-security-module@vger.kernel.org>; Sat, 17 May 2025 08:03:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1747494185; x=1748098985; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6NTpCRL9xhCjiiet8qAMOfllcsVau1k8+ucYSc+O5KM=;
+        b=K4490URfks6tr9jn8LqvKaTG0G3arWwIyUz/hYiwUHy5vP69Uk/3qdDOSbzm8zCVmW
+         oElnbeUeKqdv8DBESWoFm8cCLrcRnoe71LeOpOlF6NxaQybDTBf2HL2pm7DorY6SWMc8
+         M7RGF5bGgDbi42iyjYbaYMUZ+/UtD2iB2CDIMVbgEKOrhVw0QDlgC1hqZvwpvSA+B/n/
+         f+4xVtzk6vqX1PHA0/g2gzNPxksXtM1EutFARSBniMpMYifo9mqnF+U8OLaDIcBdyXra
+         cUjiLfghFY5Bf1WPqRxBYcL/Ng/MPVBKbIp+UG/30/Ce9YXnvHMCYvD4RFN/44fJXcY3
+         8rcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747494185; x=1748098985;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6NTpCRL9xhCjiiet8qAMOfllcsVau1k8+ucYSc+O5KM=;
+        b=TOyPUDzbihgfQ2VDMKFohWJ8Xp2cWGL6oxFbsAHTT3gfbn40adYaFkWOFl6bTIIbzm
+         pHiqi48jm0NCr49ol9i5+z3h5nEN5RoEXlsk1gX1/0ntwmScIaS3G7zHwSljwcU0Nw05
+         2kdFha5kdTa/vKBF9Eiapz24D/WnuYm4WIot/vGeG8s8mxVJuHblPTAYDTIa2Awuwqlr
+         E6d50deS04o1WN5PXmOa7t4H8ON4DelvwlhpjvlA4vsaW8vRWGe7owNbaIJI04tXdLOY
+         oagjFTGTOtM/MSFA0Dhi9YJvxnX8uS1+TPsnMy0EboNmMySU3ZdxVVu/MU8tmyysb9hw
+         iN6w==
+X-Forwarded-Encrypted: i=1; AJvYcCUFKNJJrcR5x175wo9wmDEVAJfn3CgoVAs10zePkcL1QtePa8VeYsqxe/dkatJK1PaItznncox36KYTHTiRfbkYdJsoSS8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCD3M1Py2y+5KprtPwTnLfr7jDAuycP5lHxOCIpLufqdgptL7c
+	XaBwNOv6gs8pCvoNCZUHNg+Msw//rEzVmNVvnQofpNbwL+5ysMfhngrxt0U3AflDg+2oynfZuZ3
+	TKsUVLflveV2fpj3Avxe3h02E+giCLmFpOrrCiqB9
+X-Gm-Gg: ASbGncuhJ5y/l6Nh+dPTwoDL5YKH5XJAatwnJ5xWkbccZiE6WBgE/xQNJ/051SYtQGI
+	zwlheaTJPD2NgbAsdYd+pXfBUk6IrNMaWj6n9a89c2aLMbhkLwruKXwqv5l91iXpazSRN0E1qTR
+	WUIAmYqdtV7+MkTtafcrb/D9aNxf7JzYsk
+X-Google-Smtp-Source: AGHT+IH4cvXZ2A6B3NQOnryIolvKUjfmtGf2pZQLNvPvX7nedF6oJ2mP2HSmm3dkkvdcM65QuaIOMlI3AMimnH5TpLo=
+X-Received: by 2002:a05:690c:3749:b0:70c:b882:2f3 with SMTP id
+ 00721157ae682-70cb882052emr47413877b3.4.1747494184512; Sat, 17 May 2025
+ 08:03:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] apparmor: fix some kernel-doc issues in header files
-To: Randy Dunlap <rdunlap@infradead.org>, linux-kernel@vger.kernel.org
-Cc: Ryan Lee <ryan.lee@canonical.com>, John Johansen <john@apparmor.net>,
- apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
- Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>
-References: <20250503044919.2251962-1-rdunlap@infradead.org>
-Content-Language: en-US
-From: John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; keydata=
- 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 lT9Q
-Organization: Canonical
-In-Reply-To: <20250503044919.2251962-1-rdunlap@infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250502184421.1424368-1-bboscaccy@linux.microsoft.com>
+ <20250502210034.284051-1-kpsingh@kernel.org> <CAHC9VhS5Vevcq90OxTmAp2=XtR1qOiDDe5sSXReX5oXzf+siVQ@mail.gmail.com>
+ <CACYkzJ5jsWFiXMRDwoGib5t+Xje6STTuJGRZM9Vg2dFz7uPa-g@mail.gmail.com>
+ <CACYkzJ6VQUExfyt0=-FmXz46GHJh3d=FXh5j4KfexcEFbHV-vg@mail.gmail.com>
+ <CAHC9VhQL_FkUH8F1fvFZmC-8UwZh3zkwjomCo1PiWNW0EGYUPw@mail.gmail.com>
+ <CACYkzJ4+=3owK+ELD9Nw7Rrm-UajxXEw8kVtOTJJ+SNAXpsOpw@mail.gmail.com>
+ <CAHC9VhTeFBhdagvw4cT3EvA72EYCfAn6ToptpE9PWipG9YLrFw@mail.gmail.com> <CAADnVQJ4GDKvLSWuAMdwajA0V2DEw5m-O228QknW8Eo9jxhyig@mail.gmail.com>
+In-Reply-To: <CAADnVQJ4GDKvLSWuAMdwajA0V2DEw5m-O228QknW8Eo9jxhyig@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Sat, 17 May 2025 11:02:53 -0400
+X-Gm-Features: AX0GCFuTvPgKKVsi_C1ZZBN1jNV8jcEHmfkcEtykXlcuzLm0gL1ZiUersRDfwfQ
+Message-ID: <CAHC9VhTJcV1mqBpxVUtpLhrN4Y9W_BGgB_La5QCqObGheK28Ug@mail.gmail.com>
+Subject: Re: [PATCH v3 0/4] Introducing Hornet LSM
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: KP Singh <kpsingh@kernel.org>, Blaise Boscaccy <bboscaccy@linux.microsoft.com>, 
+	James Bottomley <James.Bottomley@hansenpartnership.com>, bpf <bpf@vger.kernel.org>, 
+	code@tyhicks.com, Jonathan Corbet <corbet@lwn.net>, "David S. Miller" <davem@davemloft.net>, 
+	David Howells <dhowells@redhat.com>, =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, Jarkko Sakkinen <jarkko@kernel.org>, 
+	James Morris <jmorris@namei.org>, Jan Stancek <jstancek@redhat.com>, 
+	Justin Stitt <justinstitt@google.com>, keyrings@vger.kernel.org, 
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>, 
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, 
+	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, 
+	LSM List <linux-security-module@vger.kernel.org>, 
+	clang-built-linux <llvm@lists.linux.dev>, Masahiro Yamada <masahiroy@kernel.org>, 
+	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	Bill Wendling <morbo@google.com>, Nathan Chancellor <nathan@kernel.org>, Neal Gompa <neal@gompa.dev>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Nicolas Schier <nicolas@fjasle.eu>, nkapron@google.com, 
+	Roberto Sassu <roberto.sassu@huawei.com>, "Serge E . Hallyn" <serge@hallyn.com>, 
+	Shuah Khan <shuah@kernel.org>, Matteo Croce <teknoraver@meta.com>, 
+	Cong Wang <xiyou.wangcong@gmail.com>, kysrinivasan@gmail.com, 
+	Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 5/2/25 21:49, Randy Dunlap wrote:
-> Fix kernel-doc warnings in apparmor header files as reported by
-> scripts/kernel-doc:
-> 
-> cred.h:128: warning: expecting prototype for end_label_crit_section(). Prototype was for end_current_label_crit_section() instead
-> file.h:108: warning: expecting prototype for aa_map_file_perms(). Prototype was for aa_map_file_to_perms() instead
-> 
-> lib.h:159: warning: Function parameter or struct member 'hname' not described in 'basename'
-> lib.h:159: warning: Excess function parameter 'name' description in 'basename'
-> 
-> match.h:21: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
->   * The format used for transition tables is based on the GNU flex table
-> 
-> perms.h:109: warning: Function parameter or struct member 'accum' not described in 'aa_perms_accum_raw'
-> perms.h:109: warning: Function parameter or struct member 'addend' not described in 'aa_perms_accum_raw'
-> perms.h:136: warning: Function parameter or struct member 'accum' not described in 'aa_perms_accum'
-> perms.h:136: warning: Function parameter or struct member 'addend' not described in 'aa_perms_accum'
-> 
-> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-> Reviewed-by: Ryan Lee <ryan.lee@canonical.com>
-> Cc: John Johansen <john.johansen@canonical.com>
-> Cc: John Johansen <john@apparmor.net>
-> Cc: apparmor@lists.ubuntu.com
-> Cc: linux-security-module@vger.kernel.org
-> Cc: Paul Moore <paul@paul-moore.com>
-> Cc: James Morris <jmorris@namei.org>
-> Cc: "Serge E. Hallyn" <serge@hallyn.com>
-> ---
-> v2: add better commit message (Ryan)
+On Fri, May 16, 2025 at 7:49=E2=80=AFPM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+> On Fri, May 16, 2025 at 12:49=E2=80=AFPM Paul Moore <paul@paul-moore.com>=
+ wrote:
+> >
+> > I think we need some clarification on a few of these details, it would
+> > be good if you could answer the questions below about the
+> > authorization aspects of your design?
+> >
+> > * Is the signature validation code in the BPF verifier *always* going
+> > to be enforced when a signature is passed in from userspace?  In other
+> > words, in your design is there going to be either a kernel build time
+> > or runtime configuration knob that could selectively enable (or
+> > disable) signature verification in the BPF verifier?
+>
+> If there is a signature in union bpf_attr and it's incorrect
+> the prog_load command will be rejected.
+> No point in adding a knob to control that.
 
-Acked-by: John Johansen <john.johansen@canonical.com>
+I agree that when a signature is provided and that signature check
+fails, the BPF load should be rejected.  I'm simply trying to
+understand how you envision your design handling all of the cases, not
+just this one, as well as what build and runtime options you expect
+for controlling various aspects of this behavior.
 
-> 
->   security/apparmor/include/cred.h  |    2 +-
->   security/apparmor/include/file.h  |    2 +-
->   security/apparmor/include/lib.h   |    2 +-
->   security/apparmor/include/match.h |    2 +-
->   security/apparmor/include/perms.h |    8 ++++----
->   5 files changed, 8 insertions(+), 8 deletions(-)
-> 
-> --- linux-next-20250501.orig/security/apparmor/include/cred.h
-> +++ linux-next-20250501/security/apparmor/include/cred.h
-> @@ -117,7 +117,7 @@ static inline struct aa_label *aa_get_cu
->   #define __end_current_label_crit_section(X) end_current_label_crit_section(X)
->   
->   /**
-> - * end_label_crit_section - put a reference found with begin_current_label..
-> + * end_current_label_crit_section - put a reference found with begin_current_label..
->    * @label: label reference to put
->    *
->    * Should only be used with a reference obtained with
-> --- linux-next-20250501.orig/security/apparmor/include/file.h
-> +++ linux-next-20250501/security/apparmor/include/file.h
-> @@ -104,7 +104,7 @@ void aa_inherit_files(const struct cred
->   
->   
->   /**
-> - * aa_map_file_perms - map file flags to AppArmor permissions
-> + * aa_map_file_to_perms - map file flags to AppArmor permissions
->    * @file: open file to map flags to AppArmor permissions
->    *
->    * Returns: apparmor permission set for the file
-> --- linux-next-20250501.orig/security/apparmor/include/lib.h
-> +++ linux-next-20250501/security/apparmor/include/lib.h
-> @@ -170,7 +170,7 @@ struct aa_policy {
->   
->   /**
->    * basename - find the last component of an hname
-> - * @name: hname to find the base profile name component of  (NOT NULL)
-> + * @hname: hname to find the base profile name component of  (NOT NULL)
->    *
->    * Returns: the tail (base profile name) name component of an hname
->    */
-> --- linux-next-20250501.orig/security/apparmor/include/match.h
-> +++ linux-next-20250501/security/apparmor/include/match.h
-> @@ -17,7 +17,7 @@
->   #define DFA_START			1
->   
->   
-> -/**
-> +/*
->    * The format used for transition tables is based on the GNU flex table
->    * file format (--tables-file option; see Table File Format in the flex
->    * info pages and the flex sources for documentation). The magic number
-> --- linux-next-20250501.orig/security/apparmor/include/perms.h
-> +++ linux-next-20250501/security/apparmor/include/perms.h
-> @@ -101,8 +101,8 @@ extern struct aa_perms allperms;
->   
->   /**
->    * aa_perms_accum_raw - accumulate perms with out masking off overlapping perms
-> - * @accum - perms struct to accumulate into
-> - * @addend - perms struct to add to @accum
-> + * @accum: perms struct to accumulate into
-> + * @addend: perms struct to add to @accum
->    */
->   static inline void aa_perms_accum_raw(struct aa_perms *accum,
->   				      struct aa_perms *addend)
-> @@ -128,8 +128,8 @@ static inline void aa_perms_accum_raw(st
->   
->   /**
->    * aa_perms_accum - accumulate perms, masking off overlapping perms
-> - * @accum - perms struct to accumulate into
-> - * @addend - perms struct to add to @accum
-> + * @accum: perms struct to accumulate into
-> + * @addend: perms struct to add to @accum
->    */
->   static inline void aa_perms_accum(struct aa_perms *accum,
->   				  struct aa_perms *addend)
+> > * In the case where the signature validation code in the BPF verifier
+> > is active, what happens when a signature is *not* passed in from
+> > userspace?  Will the BPF verifier allow the program load to take
+> > place?  Will the load operation be blocked?  Will the load operation
+> > be subject to a more granular policy, and if so, how do you plan to
+> > incorporate that policy decision into the BPF program load path?
+>
+> If there is no signature the existing loading semantics will remain intac=
+t.
+> We can discuss whether to add a sysctl or cgroup knob to disallow
+> loading when signature is not present ...
 
+As mentioned earlier this week, if the BPF verifier is performing the
+signature verification as KP described, we will need a LSM hook after
+the verifier to serve as an access control point.  Of course that
+doesn't preclude the addition of some type of sysctl/cgroup/whatever
+based access control, but the LSM hook would be needed regardless.
+
+> but it probably should be a job of trivial LSM ...
+
+Exactly.  If the LSM is simply verifying the signature validation
+state of the BPF program being loaded it seems like an addition to IPE
+would be the best option from an upstream, in-tree perspective.
+However, with the post verifier LSM hook in place, one could also
+supply a BPF LSM to do something similar.
+
+It sounds like we are in agreement on the desirability and need for a
+post verifier LSM hook; we'll keep moving forward with this idea
+despite KP's earlier objections to the hook.
+
+> Note that the prog verification itself is independent of the signature.
+> If prog fails to pass safety checks it will still be rejected
+> even if signature is ok.
+
+There is plenty of precedence for a kernel subsystem rejecting a
+security relevant operation before a LSM access control hook is
+called; the reasons range from discretionary access control issues to
+simple matters of resource exhaustion.  The possibility of the BPF
+verifier rejecting the program load due to verifier constraints is
+reasonable and expected.
+
+> We're not going to do a verifier bypass.
+
+Agreed.  I don't recall anyone ever suggesting that as part of this
+recent BPF signature verification effort.
+
+--=20
+paul-moore.com
