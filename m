@@ -1,165 +1,272 @@
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B52841B4F0F
-	for <linux-security-module@vger.kernel.org>; Sun, 18 May 2025 05:49:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F3C5D2FB;
+	Sun, 18 May 2025 07:40:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747547345; cv=none; b=QV7Qu43GSCR2DBo3Y86GKM0I3fmt3ToBcxDpemRNBVPxdWhrjx0+zWKjpCnz9VTmu2/AQBvW39+16UpQ7fhFNbUfiaLYvPDZpYj530O/6qpVMzgSrT3z4VYFbgNesmYQUbWixD2XApk2NE7Xm3kSxeHvX/w6IpTHnWbWUMofLew=
+	t=1747554015; cv=none; b=PKxgpCwvH+iCRQZ9muShM7ws81/IfqUFdg4Rvgaz6fSZjgzGUoPGKs9g5ISc9hwiPAs+bQXnFda/igzYB+guozieejkyUdzj8qeLjSNEI+byiRVFZa9XDrJTiCLb18FbYo3NI+jVCkhJVHRaglLQHFG0ET/oz8JU8bAeKRrzDOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747547345; c=relaxed/simple;
-	bh=eZBpP6KfUKXCXO83nQ/GJ5KM078e67pg7DbDDBqWLsc=;
-	h=From:To:CC:Date:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=LhS5xyXj8NEufuVNyb3IxhMQYKPTD1wLaRkMYWiBJXuLv9Yd9XyOki7bFRR4d1dHvS8qcMlA32Q7W+ZdquJvR0rtsXAayUrrRB2Tw5/ksKVf/DfxJ8Qhz9yIVE0Gr6wkBwBVggEohIV4TskN8zGDHS1b1DqdRpUNtJNiPcnC2lY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=YUMI9ALZ; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+	s=arc-20240116; t=1747554015; c=relaxed/simple;
+	bh=259/vvOiHFW9j83D4pgOWUBhX2qdMM+IkobAc02T0m8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DS5CuVH9wy6ourzAuMd4R98GOWC8pp+2zkCwkUgD75bctvS5K2OQQkIpB/cC8WLdk7v/kQ9RH88nMavIZ76dmilc4eCPFhurmWnKw43/PXqITSOwl9I51BDxe3mPZecY9xntsBw/6pS1vjEuGw917n01S6zNHiw8RTeZUjWO+30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=faHnKcMo; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="YUMI9ALZ"
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-476a1acf61eso31951071cf.1
-        for <linux-security-module@vger.kernel.org>; Sat, 17 May 2025 22:49:02 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="faHnKcMo"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-442ec3ce724so26927815e9.0;
+        Sun, 18 May 2025 00:40:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1747547341; x=1748152141; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:user-agent
-         :references:in-reply-to:message-id:date:cc:to:from:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=G9qeFJ7lNo+yYpuKZq/TR4G2C9hCrYbOgamht3tIasA=;
-        b=YUMI9ALZ3F59PQe6HDiEQTb/qxV1VE4OfL9j2tyimMWzoXQ3RQudHnmcg1S2lfJqNj
-         yH0MQoiQ8FCkQn3/WR9Cve3698ogucsVNoUHGjVECMPsUCpaGy01roAw7fz0lQzlsrJK
-         oKQPvXlIyc78VOcTyc3WgC1JeR+XKsM6S5hGrvgfNQME7lrJ2M7UnHzKT9lYdw6QqorS
-         +bxkp+exwio/ay+2al+6dNaeypjd1qLAN/w9gVLh/920iOV4aOUYC2Seodi7NYWnIu6Q
-         Kxfoe7yX3g0lZ68WNdRy6Z0SClgeZACMM1gWdyWLi2GMZqiT+IgYLXcx02oA2MblLctv
-         v27g==
+        d=gmail.com; s=20230601; t=1747554012; x=1748158812; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=AYXAaAw4CbkA8JroVCgYmv4BfUphEKyu10sZc0Jhu4Q=;
+        b=faHnKcMox18fkxFo/0WmGfMLzYmSEk4RBjFDxtttluZ5mLwstgN6MNAZDPTNJ/mAyG
+         haHY20t0HZ3xzHSFXN6xbd0ZqWdFjKolH3kdvbXMTkpptUyLJ/nxyemD9k5vU4AThZZr
+         Xh0zZ593d5CbkjehZeyGAs1GLku4snBhc9sTO7oJN2/xjUMPMAq7Y3Rb3rPcPYAF61F8
+         TzVjOSgJqQLr1Yumngn7MnJ7EOywC31jgcLix9pSyMtCbQbUHRiG1+nJlPJOXdifxJHJ
+         I4i3vRWeA5ceZpEVeQrUuSI8wPpx0QIPP1uglcC+6kOkFBCoCTlRmz9ttq1dkEWq1Mav
+         BF8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747547341; x=1748152141;
-        h=content-transfer-encoding:mime-version:subject:user-agent
-         :references:in-reply-to:message-id:date:cc:to:from
+        d=1e100.net; s=20230601; t=1747554012; x=1748158812;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=G9qeFJ7lNo+yYpuKZq/TR4G2C9hCrYbOgamht3tIasA=;
-        b=xJ0S6bEitdeLqbXy2cSjwe5VG6Y+XtI3RzVVK+NpVt+e1SmaG1HM/QNqjzLcSVtJU+
-         Ie0hRz7LEkizYUa8vqeCld8Xt+XE+s7kx7NEEbK747Xl6kVKA/qN2TQoO/cQY8udVdRG
-         D3OLd9huom1JKxu5Yef1vUtyk0cLXYzlaqQqp1e/DjBrFSYnOxHbhP/6tfPYTDoH0N9Q
-         7FhS8QJ0ZHJDtdqiLt1N6mGk0pSC+4UUfpg7Z3NNXzz78eZw3HzSqA3REMimSxlA8Qcv
-         7O6ZkFhtj/hC1crleAGnQ6O8HQd9AT0yWk6SRykL8QAslH/HQ6uOtPTOsIqHcqpAhx9L
-         P+KA==
-X-Forwarded-Encrypted: i=1; AJvYcCU74AauW9AjvlqUNBSP8Mn5naHbb5sBBr/1hwXSG6EGKywgOGvhrUxupivcVoFgZYI8CF314ZlwxWKA6yBJeNdYiyK/1tc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyd0VcaQdFsvJWxbCJhjSeM6eTu5hJMPNItHPom59AIIjiou/cM
-	rEQVfJnvolowttwSLytJqhJ2AL0lQuNIWVa4VVShi1u758iV8IhY5z+I30hNO/kFBQ==
-X-Gm-Gg: ASbGncs3fAaTujC4QUyked9HtxQW//SKnGWlKH3ri4ijpTRJgbCZlw7oSfaj7ZqoYps
-	MTgrh/GmH1NqXxtVLYRsAZHBtOINXZ+7v8ig8WZ7ujKG7v4Td3J3QelzGcOnS1eXUcP3Z3K3+Wf
-	Wn7skUI4ZfoJyy7TnBhJyARJ6gfD3z/fsk258K67Lujd7gbK9WRInsBnLjf+ll9LkH8hFDFeMi1
-	KXZfEqQnA5Obm3SFTasqCfR0FhHCGWDe1TQUpYn+pkgNl5sKyE3EaC0Jio0seEr81vaxJa4iIP9
-	ireuZiKrhm18sFhLrsOFyok1i5xR2Ume4CKPRKm087B6iOuYC9UMeScF9NDZiloH23Szsh1PTY8
-	ZMLeNv0fe8254h5sDf00+hpkldw==
-X-Google-Smtp-Source: AGHT+IGfrmclUyrn2kL47uhxEFRGU+qhsbvKEWHTIktNb5yLBqfzULKgvSCB1fjnKNy9EuB8fUsqdQ==
-X-Received: by 2002:ac8:6f10:0:b0:477:6eca:b40c with SMTP id d75a77b69052e-494ae326c18mr161157901cf.1.1747547341540;
-        Sat, 17 May 2025 22:49:01 -0700 (PDT)
-Received: from [192.168.7.16] (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-494ae3f922csm35228371cf.26.2025.05.17.22.48.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 17 May 2025 22:49:00 -0700 (PDT)
-From: Paul Moore <paul@paul-moore.com>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-CC: KP Singh <kpsingh@kernel.org>, Blaise Boscaccy <bboscaccy@linux.microsoft.com>, 
-	James Bottomley <James.Bottomley@hansenpartnership.com>, bpf <bpf@vger.kernel.org>, 
-	<code@tyhicks.com>, Jonathan Corbet <corbet@lwn.net>, 
-	"David S. Miller" <davem@davemloft.net>, David Howells <dhowells@redhat.com>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, Jarkko Sakkinen <jarkko@kernel.org>, 
-	James Morris <jmorris@namei.org>, Jan Stancek <jstancek@redhat.com>, 
-	Justin Stitt <justinstitt@google.com>, <keyrings@vger.kernel.org>, 
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>, 
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, 
-	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, 
-	LSM List <linux-security-module@vger.kernel.org>, 
-	clang-built-linux <llvm@lists.linux.dev>, Masahiro Yamada <masahiroy@kernel.org>, 
-	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	Bill Wendling <morbo@google.com>, Nathan Chancellor <nathan@kernel.org>, Neal Gompa <neal@gompa.dev>, 
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Nicolas Schier <nicolas@fjasle.eu>, 
-	<nkapron@google.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	"Serge E . Hallyn" <serge@hallyn.com>, Shuah Khan <shuah@kernel.org>, Matteo Croce <teknoraver@meta.com>, 
-	Cong Wang <xiyou.wangcong@gmail.com>, <kysrinivasan@gmail.com>, 
-	Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 18 May 2025 01:48:57 -0400
-Message-ID: <196e1f03128.28a7.85c95baa4474aabc7814e68940a78392@paul-moore.com>
-In-Reply-To: <CAADnVQ+wE5cGhy6tgmWgUwkNutueEsrhh6UR8N2fzrZjt-vb4g@mail.gmail.com>
-References: <20250502184421.1424368-1-bboscaccy@linux.microsoft.com>
- <20250502210034.284051-1-kpsingh@kernel.org>
- <CAHC9VhS5Vevcq90OxTmAp2=XtR1qOiDDe5sSXReX5oXzf+siVQ@mail.gmail.com>
- <CACYkzJ5jsWFiXMRDwoGib5t+Xje6STTuJGRZM9Vg2dFz7uPa-g@mail.gmail.com>
- <CACYkzJ6VQUExfyt0=-FmXz46GHJh3d=FXh5j4KfexcEFbHV-vg@mail.gmail.com>
- <CAHC9VhQL_FkUH8F1fvFZmC-8UwZh3zkwjomCo1PiWNW0EGYUPw@mail.gmail.com>
- <CACYkzJ4+=3owK+ELD9Nw7Rrm-UajxXEw8kVtOTJJ+SNAXpsOpw@mail.gmail.com>
- <CAHC9VhTeFBhdagvw4cT3EvA72EYCfAn6ToptpE9PWipG9YLrFw@mail.gmail.com>
- <CAADnVQJ4GDKvLSWuAMdwajA0V2DEw5m-O228QknW8Eo9jxhyig@mail.gmail.com>
- <CAHC9VhTJcV1mqBpxVUtpLhrN4Y9W_BGgB_La5QCqObGheK28Ug@mail.gmail.com>
- <CAADnVQ+wE5cGhy6tgmWgUwkNutueEsrhh6UR8N2fzrZjt-vb4g@mail.gmail.com>
-User-Agent: AquaMail/1.55.1 (build: 105501552)
-Subject: Re: [PATCH v3 0/4] Introducing Hornet LSM
+        bh=AYXAaAw4CbkA8JroVCgYmv4BfUphEKyu10sZc0Jhu4Q=;
+        b=JUgAqnC9IzK4nYN82pbSuxNQp9QIV30JX5Mo9YKhfl/q9gjZkNe5XIjDlaYnIL46XD
+         FrYlG1Vl65S6SGwyvIEMqjddrxEfre/EwSe3lLaHIqHq0WF2g5/zlaMRxVxlS4hgA4Qi
+         nPF1GZ2XPg+CvQOGfmgER7RJYjGkEMim7GoJnpaxuJ8wXKEbQTaFbRWwufsyfhllM5nb
+         VgHBcdSyT5HjbWujil2xkCSwdrbpuPBpFp04Ry/6/QIqJ8n3/aaZUw6QugSlt2eWy1rd
+         f+9keOYGtxg0KJrhsueyLzNlEBQSBiJS3fUegOwz/AsuVj0RzlufSYrKYgFy/vIdtHT3
+         xCAw==
+X-Forwarded-Encrypted: i=1; AJvYcCVSAqTincaC/x7OqOcmgM/lO2ac92taVe8kXM8jKPFrQUwV4NCpIL+9SB5mdjYJonPSokctGmRSYzY304K52t1y/aShkP/r@vger.kernel.org, AJvYcCWiJ/mD6LsNR7VPCdryi2pI5FDD/zTlrN2XhvINXZPdm6X5YP/KxpvmkXvm/0UE3MNZz3LsPHvSM7sHwVo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxddRA/sQ6xXccmbPTitoisCbQIgh3F1o32/9ej2wKPsK9aPZGi
+	gFH5KMUehX2eyQML9qt+pBwpBo9RqxPVHbX736ziigFdQ86JfUOwm1y1
+X-Gm-Gg: ASbGncsXrgR66gluWcg3aNGhDNnVXWU3jAW1FcLq+qWJQ6u1yDNq2sss5kYt5Xdd7DU
+	ZWMUTTwkzqcJliUt0u3EhCjLRck17pZ8CMp/qA5/wXlljCwcPfQKGooOQYDLccD/+hPd/W8zFgl
+	jMGnpMB0EgFFuQ2z6RCCWoHU/Tlm03Byet0MEsRSj5yEllWtItaaJz/z8+Wu9Q3CfMC1RkN6yFC
+	gbJRKOJHcwtaO4fmVPoxG+/M86VJGym/ti8QKUOYBbHS4f1Cs9/nmGePO+xHcSoOj7qrhuwl2y9
+	m7e+TuLHYGqD7v9vepoz964WKP8PC8bqTvvmlZiPKHh/UjMBRVzODDaAMGnIbHAHnd+OVdPuWBZ
+	wYA==
+X-Google-Smtp-Source: AGHT+IEhqjylGQD0TUVbGsvBE3gcdJSP3/LO/DXHIXpUNSC8Z/W/wx6jlEfUNOLgfMtT8cZkkuuoLw==
+X-Received: by 2002:a05:600c:6748:b0:43c:f050:fee8 with SMTP id 5b1f17b1804b1-442fd6724b0mr72287375e9.20.1747554011259;
+        Sun, 18 May 2025 00:40:11 -0700 (PDT)
+Received: from localhost (ip87-106-108-193.pbiaas.com. [87.106.108.193])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-442f39ef87asm164913475e9.36.2025.05.18.00.40.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 18 May 2025 00:40:10 -0700 (PDT)
+Date: Sun, 18 May 2025 09:40:05 +0200
+From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: Paul Moore <paul@paul-moore.com>, sergeh@kernel.org,
+	David Howells <dhowells@redhat.com>,
+	Kees Cook <keescook@chromium.org>,
+	linux-security-module@vger.kernel.org,
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+	Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org,
+	Peter Newman <peternewman@google.com>
+Subject: Re: [RFC 1/2] landlock: Multithreading support for
+ landlock_restrict_self()
+Message-ID: <20250518.be040c48937c@gnoack.org>
+References: <20250221184417.27954-2-gnoack3000@gmail.com>
+ <20250221184417.27954-3-gnoack3000@gmail.com>
+ <20250227.Aequah6Avieg@digikod.net>
+ <20250228.b3794e33d5c0@gnoack.org>
+ <20250304.aroh3Aifiiz9@digikod.net>
+ <20250310.990b29c809af@gnoack.org>
+ <20250311.aefai7vo6huW@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250311.aefai7vo6huW@digikod.net>
 
-On May 17, 2025 12:13:50 PM Alexei Starovoitov 
-<alexei.starovoitov@gmail.com> wrote:
-> On Sat, May 17, 2025 at 8:03 AM Paul Moore <paul@paul-moore.com> wrote:
->> On Fri, May 16, 2025 at 7:49 PM Alexei Starovoitov
->> <alexei.starovoitov@gmail.com> wrote:
->>> On Fri, May 16, 2025 at 12:49 PM Paul Moore <paul@paul-moore.com> wrote:
->>>>
->>>> I think we need some clarification on a few of these details, it would
->>>> be good if you could answer the questions below about the
->>>> authorization aspects of your design?
->>>>
->>>> * Is the signature validation code in the BPF verifier *always* going
->>>> to be enforced when a signature is passed in from userspace?  In other
->>>> words, in your design is there going to be either a kernel build time
->>>> or runtime configuration knob that could selectively enable (or
->>>> disable) signature verification in the BPF verifier?
->>>
->>> If there is a signature in union bpf_attr and it's incorrect
->>> the prog_load command will be rejected.
->>> No point in adding a knob to control that.
->>
->> I agree that when a signature is provided and that signature check
->> fails, the BPF load should be rejected.  I'm simply trying to
->> understand how you envision your design handling all of the cases, not
->> just this one, as well as what build and runtime options you expect
->> for controlling various aspects of this behavior.
->>
->>>> * In the case where the signature validation code in the BPF verifier
->>>> is active, what happens when a signature is *not* passed in from
->>>> userspace?  Will the BPF verifier allow the program load to take
->>>> place?  Will the load operation be blocked?  Will the load operation
->>>> be subject to a more granular policy, and if so, how do you plan to
->>>> incorporate that policy decision into the BPF program load path?
->>>
->>> If there is no signature the existing loading semantics will remain intact.
->>> We can discuss whether to add a sysctl or cgroup knob to disallow
->>> loading when signature is not present ...
->>
->> As mentioned earlier this week, if the BPF verifier is performing the
->> signature verification as KP described, we will need a LSM hook after
->> the verifier to serve as an access control point.  Of course that
->> doesn't preclude the addition of some type of sysctl/cgroup/whatever
->> based access control, but the LSM hook would be needed regardless.
->
-> No. New hook is not needed.
+Hello!
 
-It would be good for you to explain how the existing LSM hook is sufficient 
-to authorize the loading of a BPF program using the signature validation 
-state determined in the BPF verifier.
+On Tue, Mar 11, 2025 at 03:32:53PM +0100, Mickaël Salaün wrote:
+> On Mon, Mar 10, 2025 at 02:04:23PM +0100, Günther Noack wrote:
+> > On Tue, Mar 04, 2025 at 09:25:51PM +0100, Mickaël Salaün wrote:
+> > > On Fri, Feb 28, 2025 at 06:33:55PM +0100, Günther Noack wrote:
+> > > > Hello!
+> > > > 
+> > > > Thanks for the review!
+> > > > 
+> > > > I'm adding David Howells to this thread as well.  David, maybe you can
+> > > > help us and suggest a appropriate way to update the struct cred across
+> > > > multiple threads?
+> > 
+> > Paul and Serge, since you are volunteering to take ownership of
+> > credentials, maybe you can advise on what is the best approach here?
+> > 
+> > To summarize the approaches that I have been discussing with Mickaël:
+> > 
+> > Approach 1: Use the creds API thread-by-thread (implemented here)
+> > 
+> >   * Each task calls prepare_creds() and commit_creds() on its own, in
+> >     line with the way the API is designed to be used (from a single
+> >     task).
+> >   * Task work gets scheduled with a pseudo-signal and the task that
+> >     invoked the syscall is waiting for all of them to return.
+> >   * Task work can fail at the beginning due to prepare_creds(), in
+> >     which case all tasks have to abort_creds(). Additional
+> >     synchronization is needed for that.
+> > 
+> >   Drawback: We need to grab the system-global task lock to prevent new
+> >   thread creation and also grab the per-process signal lock to prevent
+> >   races with other creds accesses, for the entire time as we wait for
+> >   each task to do the task work.
+> 
+> In other words, this approach blocks all threads from the same process.
 
---
-paul-moore.com
+It does, but that is still an improvement over the current
+libpsx-based implementation in userspace.  That existing
+implementation does not block, but it is running the risk that
+prepare_creds() might fail on one of the threads (e.g. allocation
+failure), which would leave the processes' threads in an inconsistent
+state.
 
->
+Another upside that the in-kernel implementation has is that the
+implementation of that is hidden behind an API, so if we can
+eventually find a better approach, we can migrate to it.  It gives us
+flexibility.
 
+I guess a possible variant (approach 1B) would be to do the equivalent
+to what userspace does today, and not make all threads wait for the
+possible error of prepare_creds() on the other threads.
 
 
+> > Approach 2: Attempt to do the prepare_creds() step in the calling task.
+> > 
+> >   * Would use an API similar to what keyctl uses for the
+> >     parent-process update.
+> >   * This side-steps the credentials update API as it is documented in
+> >     Documentation, using the cred_alloc_blank() helper and replicating
+> >     some prepare_creds() logic.
+> > 
+> >   Drawback: This would introduce another use of the cred_alloc_blank()
+> >   API (and the cred_transfer LSM hook), which would otherwise be
+> >   reasonable to delete if we can remove the keyctl use case.
+> >   (https://lore.kernel.org/all/20240805-remove-cred-transfer-v2-0-a2aa1d45e6b8@google.com/)
+> 
+> cred_alloc_blank() was designed to avoid dealing with -ENOMEM, which is
+> a required property for this Landlock TSYNC feature (i.e. atomic and
+> consistent synchronization).
+
+Remark on the side, I suspect that the error handling in nptl(7)
+probably also does not guarantee that, also for setuid(2) and friends.
+
+
+> I think it would make sense to replace most of the
+> key_change_session_keyring() code with a new cred_transfer() helper that
+> will memcpy the old cred to the new, increment the appropriate ref
+> counters, and call security_transfer_creds().  We could then use this
+> helper in Landlock too.
+> 
+> To properly handle race conditions with a thread changing its own
+> credentials, we would need a new LSM hook called by commit_creds().
+> For the Landlock implementation, this hook would check if the process is
+> being Landlocked+TSYNC and return -ERESTARTNOINTR if it is the case.
+> The newly created task_work would then be free to update each thread's
+> credentials while only blocking the calling thread (which is also a
+> required feature).
+> 
+> Alternatively, instead of a new LSM hook, commit_creds() could check
+> itself a new group leader's flag set if all the credentials from the
+> calling process are being updated, and return -ERESTARTNOINTR in this
+> case.
+
+commit_creds() is explicitly documented to never return errors.
+It returns a 0 integer so that it lends itself for tail calls,
+and some of those usages might also rely on it always working.
+There are ~15 existing calls where the return value is discarded.
+
+If commit_creds() returns -ERESTARTNOINTR, I assume that your idea is
+that the task_work would retry the prepare-and-commit when
+encountering that?
+
+We would have to store the fact that the process is being
+Landlock+TSYNC'd in a central place (e.g. group leader flag set).
+When that is done, don't we need more synchronization mechanisms to
+access that (which RCU was meant to avoid)?
+
+I am having a hard time wrapping my head around these synchronization
+schemes, I feel this is getting too complicated for what it is trying
+to do and might become difficult to maintain if we implemented it.
+
+> > Approach 3: Store Landlock domains outside of credentials altogether
+> > 
+> >   * We could also store a task's Landlock domain as a pointer in the
+> >     per-task security blob, and refcount these.  We would need to make
+> >     sure that they get newly referenced and updated in the same
+> >     scenarios as they do within struct cred today.
+> >   * We could then guard accesses to a task's Landlock domain with a
+> >     more classic locking mechanism.  This would make it possible to
+> >     update the Landlock domain of all tasks in a process without
+> >     having to go through pseudo-signals.
+> > 
+> >   Drawbacks:
+> >   * Would have to make sure that the Landlock domain the task's LSM
+> >     blob behaves exactly the same as before in the struct cred.
+> >   * Potentially slower to access Landlock domains that are guarded by
+> >     a mutex.
+> 
+> This would not work because the kernel (including LSM hooks) uses
+> credentials to check access.
+
+It's unclear to me what you mean by that.
+
+Do you mean that it is hard to replicate for Landlock the cases where
+the pointer would have to be copied, because the LSM hooks are not
+suited for it?
+
+
+Here is another possible approach which a colleague suggested in a
+discussion:
+
+Approach 4: Freeze-and re-enforce the Landlock ruleset
+
+Another option would be to have a different user space API for this,
+with a flag LANDLOCK_RESTRICT_SELF_ENTER (name TBD) to enter a given
+domain.
+
+On first usage of landlock_restrict_self() with the flag, the enforced
+ruleset would be frozen and linked to the Landlock domain which was
+enforced at the end.
+
+Subsequent attempts to add rules to the ruleset would fail when the
+ruleset is frozen.  The ruleset FD is now representing the created
+domain including all its nesting.
+
+Subsequent usages of landlock_restrict_self() on a frozen ruleset would:
+
+(a) check that the ruleset's domain is a narrower (nested) domain of
+    the current thread's domain (so that we retain the property of
+    only locking in a task further than it was before).
+
+(b) set the task's domain to the domain attached to the ruleset
+
+This way, we would keep a per-thread userspace API, avoiding the
+issues discussed before.  It would become possible to use ruleset file
+descriptors as handles for entering Landlock domains and pass them
+around between processes.
+
+The only drawback I can see is that it has the same issues as libpsx
+and nptl(7) in that the syscall can fail on individual threads due to
+ENOMEM.
+
+If we can not find a solution for "TSYNC", it seems that this might be
+a viable alternative.  For multithreaded applications enforcing a
+Landlock policy, it would become an application of libpsx with the
+LANDLOCK_RESTRICT_SELF_ENTER flag.
+
+Let me know what you think.
+
+–Günther
