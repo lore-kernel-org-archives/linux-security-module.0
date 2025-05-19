@@ -1,129 +1,42 @@
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [185.125.25.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A070C275119
-	for <linux-security-module@vger.kernel.org>; Mon, 19 May 2025 11:37:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B8582746C
+	for <linux-security-module@vger.kernel.org>; Mon, 19 May 2025 14:30:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747654632; cv=none; b=OQhPk7tEmIkP41um7ckRgHUa/6JBbfJ6QayAuZe+pKr+BJWg4yKfHzrUrU0kIkc8F4E5X8t8W16CtXfE6dFbYTlzfu61UClC+G7xEPqAF2xYM91q/uJuTmp1a/HnuE5+MiPVLRLsGk+ErzBZuLOXL1jJ6/7oc0VAsiNUOtfxiMc=
+	t=1747665058; cv=none; b=A7SEctLYNHQANQHhksZQbuQBi4lgvGWqgrKAeEm3hpoMJuUzKLv7LGhCsviHhkG7GCwHUThhbsUOshEzPuPx8UxcnVRfgPqeUwjQ5zXDz/Pm7gwlcRejrxbLN8uS9GnVS+ASDVlJzjS3KurPgyTY5A+gcoomLd/IvrgUXbK09cw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747654632; c=relaxed/simple;
-	bh=GFhTh8qt5cp6q80eo9lSCWZXWbRWYcGWMwJc66usfSM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H6a1OkG+jVa01LmUQK/BfRW0muwJqUuIqQVIEFWMzc5bfuP12bB86hoksRE/VEVzyI5rmyvWi7hO0zpJGZML/gYV7tVWDYr3rEZ9pTyzo6AySxl8fe9wqcvKKz06bCf0OJEt8XsTkLg9D+Uvcn0CyJhKWJC6ebEmh13Jae8B/Bk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=pXTAcIz/; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+	s=arc-20240116; t=1747665058; c=relaxed/simple;
+	bh=0n9rzSgletJ3gOixhHeW7B6mG7beZQXIFyrXZ7t6fcY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=PpWEnPZZoCa5TQ6YF6wphdFGN6cPTnjsbK1lpHeXPBd/Z9sjaZh2amdbe6nizHfd4y8RUrC5nrQozfqqBZ1l23tLSs2EtD3/EfTn56YkjUdLFrEkkDqVPpnf7VuL4DA+oewPwWusL4bwVbFIFlCudsEXpCLRBj7zFcJnijVB044=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=f9PSzPuJ; arc=none smtp.client-ip=185.125.25.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="pXTAcIz/"
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-742c9563fafso884315b3a.0
-        for <linux-security-module@vger.kernel.org>; Mon, 19 May 2025 04:37:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1747654629; x=1748259429; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=DkYbc28ZqmxwTCsqpy3spmOraOHqionupf/htIjrysQ=;
-        b=pXTAcIz/GgulyAu0QLlBT9UeD2DHbX4hsEBS6moydy6FP2YFBc9EthoupgN62flhpp
-         xn4ElzxeEaMRoUdjcGLCr/6T8U743jjlDHrhPc3nJlHNeJ9D90PDD/0qwvCbTEtXXnQ1
-         RPgaQQzoByYMNfLhMY+SSeSgYFHJurzhD/epDXsLrHJ8QKO7/mzSdR8ta0wu1TJyzets
-         o/9yD05HLIBtFYJ+IxgsqFOQ7YKNTaFJLRWWee9LxcELfTQnG9oVJybE/EP025yFndXb
-         f9adaN7VXFOsgSuBp7xl2mwq7q5rjr2T9EvmymBmqQ1mhIcKEwe4NG3DJCgDkmIhbGVz
-         5ryg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747654629; x=1748259429;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DkYbc28ZqmxwTCsqpy3spmOraOHqionupf/htIjrysQ=;
-        b=jow++mVQdx1j6p3l0qqLAUg040Qk6Tfc3NGIy+GyClm9zNdygsvaA0p4HVXYsiRtml
-         rtM/iHVSoRBTuYXtSxDSTE1fUm/y5xUaUUiR+WNWS1iPDVQve+Adp27qfowmqTPStwo6
-         VqWTuBM7d8eQFjeq+vTM7+7a6e9/eokZM9ynACnZH2fTVou3LqlXuChmJ/4aQF1hsyf9
-         mkTcrjFjyN6pqJ7A2jWa6XIoVwT71UufdjDTLeonxUvMcjw7ZT9xZxwegcWMWlMUKiUk
-         FTLks6KBnK1X3NouBRltd4n25iq5kfxaQJREH89N+V2Wg3TkreYBVrd1O9YVpfhwGX8v
-         1Bhg==
-X-Forwarded-Encrypted: i=1; AJvYcCXI5jIQN0Kd+dc7c14qECCxiU0MOK+vU5BJScwpi8r6/8p+4rxvUM8CZH4fzZCHitYkL9c1IObPntrydj1LT2CbWX67sTI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhcvVe7dP4u94dFEMcLafePN+EANyUHMO881V2fea/4UWdMZ+x
-	XRVfVr/e9AgfY5yBLFhVTlX/t21ZNWI/R6rmtwxJ7E9ZEAVAIH2t9FVjSNUVTRmMx5U=
-X-Gm-Gg: ASbGncsrBRpYhASByTn2Dr7n4EwRMVhlFUn1ZXz9nxp9PvsjTcmy7qcp2Hz9aarSn0B
-	0ZgH6VEGFPLxhBKLBauLXP/OmTm0ItKF9waRGCMClmmgsJ5pZrQvvdl9IjV4WSRGbqjt7JtYEv5
-	Ehehh0lTVzkxJxTRIeN/A51E/ou5xwJYA6RgbihwQRNC1sjJbhbakaSi8P025rtWtFpYk1/yzEu
-	YyR0YpBeYvhrU58gLhKLHGsyoiFULSxD2aTm2aVqBVxUy4vr5EZV62UxFDI0ApVXAWLdWZBgCnL
-	TDKoOBbObjO1L9aMRx8C2Js1r01or2LfnGYnyLS+j2A+Cds97kernsNxXHt/GPIkCod3e5ggSG3
-	OkomEYkKnhDVHQBp9hPardEcSvaI=
-X-Google-Smtp-Source: AGHT+IEUy25uZy6yhylI082QEDzxGQ+0mJz25NQX6XuPMH4jpAhK+MU3tNtraGB6TKng6SdbDnt0Eg==
-X-Received: by 2002:a05:6a00:3a20:b0:736:a6e0:e66d with SMTP id d2e1a72fcca58-742a97a6df2mr15123631b3a.6.1747654628667;
-        Mon, 19 May 2025 04:37:08 -0700 (PDT)
-Received: from dread.disaster.area (pa49-180-184-88.pa.nsw.optusnet.com.au. [49.180.184.88])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-742a973a2f8sm5957134b3a.81.2025.05.19.04.37.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 May 2025 04:37:08 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.98.2)
-	(envelope-from <david@fromorbit.com>)
-	id 1uGyno-00000005Si8-44qA;
-	Mon, 19 May 2025 21:37:04 +1000
-Date: Mon, 19 May 2025 21:37:04 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Andrey Albershteyn <aalbersh@redhat.com>,
-	Richard Henderson <richard.henderson@linaro.org>,
-	Matt Turner <mattst88@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Michal Simek <monstr@monstr.eu>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
-	Helge Deller <deller@gmx.de>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	Rich Felker <dalias@libc.org>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	"David S . Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, Chris Zankel <chris@zankel.net>,
-	Max Filippov <jcmvbkbc@gmail.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>,
-	Ondrej Mosnacek <omosnace@redhat.com>,
-	Tyler Hicks <code@tyhicks.com>, Miklos Szeredi <miklos@szeredi.hu>,
-	linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-	sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
-	Linux-Arch <linux-arch@vger.kernel.org>, selinux@vger.kernel.org,
-	ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
-	linux-xfs@vger.kernel.org, Andrey Albershteyn <aalbersh@kernel.org>
-Subject: Re: [PATCH v5 0/7] fs: introduce file_getattr and file_setattr
- syscalls
-Message-ID: <aCsX4LTpAnGfFjHg@dread.disaster.area>
-References: <20250513-xattrat-syscall-v5-0-22bb9c6c767f@kernel.org>
- <399fdabb-74d3-4dd6-9eee-7884a986dab1@app.fastmail.com>
- <20250515-bedarf-absagen-464773be3e72@brauner>
- <CAOQ4uxicuEkOas2UR4mqfus9Q2RAeKKYTwbE2XrkcE_zp8oScQ@mail.gmail.com>
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="f9PSzPuJ"
+Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4b1Kq91cpyzNg0;
+	Mon, 19 May 2025 16:30:45 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
+	s=20191114; t=1747665045;
+	bh=VmW3Uae9gL3Ir1OJ5Nyr/nXEhqgrdEVkTD0Yg6sxjhQ=;
+	h=Date:From:To:Cc:Subject:From;
+	b=f9PSzPuJaMC3UVLFsmXbPS7WXUYyCsASrEBBNClrzjtYQTZHfhxzb9NTz/FcaGkdm
+	 2Gi0AE9ACH5Nn2y4Uta+fPwtwYzJ8fyibdfo7VU47ABKXBpFmhv3ePADAdZ2+aD/Cx
+	 n2ZPt/mRKNcTAA/Ieow9cind2Nc3IKOmgpAaGJjg=
+Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4b1Kq516hkzY5Z;
+	Mon, 19 May 2025 16:30:40 +0200 (CEST)
+Date: Mon, 19 May 2025 16:30:40 +0200
+From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
+To: landlock@lists.linux.dev
+Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	Tahera Fahimi <fahimitahera@gmail.com>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
+	Ryan Sullivan <rysulliv@redhat.com>, lwn@lwn.net, linux-security-module@vger.kernel.org, 
+	oss-security@lists.openwall.com
+Subject: Landlock news #5
+Message-ID: <20250519.ceihohf6a3uT@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -133,134 +46,228 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxicuEkOas2UR4mqfus9Q2RAeKKYTwbE2XrkcE_zp8oScQ@mail.gmail.com>
+X-Infomaniak-Routing: alpha
 
-On Thu, May 15, 2025 at 12:33:31PM +0200, Amir Goldstein wrote:
-> On Thu, May 15, 2025 at 11:02 AM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > On Tue, May 13, 2025 at 11:53:23AM +0200, Arnd Bergmann wrote:
-> > > On Tue, May 13, 2025, at 11:17, Andrey Albershteyn wrote:
-> > >
-> > > >
-> > > >     long syscall(SYS_file_getattr, int dirfd, const char *pathname,
-> > > >             struct fsxattr *fsx, size_t size, unsigned int at_flags);
-> > > >     long syscall(SYS_file_setattr, int dirfd, const char *pathname,
-> > > >             struct fsxattr *fsx, size_t size, unsigned int at_flags);
-> > >
-> > > I don't think we can have both the "struct fsxattr" from the uapi
-> > > headers, and a variable size as an additional argument. I would
-> > > still prefer not having the extensible structure at all and just
-> >
-> > We're not going to add new interfaces that are fixed size unless for the
-> > very basic cases. I don't care if we're doing that somewhere else in the
-> > kernel but we're not doing that for vfs apis.
-> >
-> > > use fsxattr, but if you want to make it extensible in this way,
-> > > it should use a different structure (name). Otherwise adding
-> > > fields after fsx_pad[] would break the ioctl interface.
-> >
-> > Would that really be a problem? Just along the syscall simply add
-> > something like:
-> >
-> > diff --git a/fs/ioctl.c b/fs/ioctl.c
-> > index c91fd2b46a77..d3943805c4be 100644
-> > --- a/fs/ioctl.c
-> > +++ b/fs/ioctl.c
-> > @@ -868,12 +868,6 @@ static int do_vfs_ioctl(struct file *filp, unsigned int fd,
-> >         case FS_IOC_SETFLAGS:
-> >                 return ioctl_setflags(filp, argp);
-> >
-> > -       case FS_IOC_FSGETXATTR:
-> > -               return ioctl_fsgetxattr(filp, argp);
-> > -
-> > -       case FS_IOC_FSSETXATTR:
-> > -               return ioctl_fssetxattr(filp, argp);
-> > -
-> >         case FS_IOC_GETFSUUID:
-> >                 return ioctl_getfsuuid(filp, argp);
-> >
-> > @@ -886,6 +880,20 @@ static int do_vfs_ioctl(struct file *filp, unsigned int fd,
-> >                 break;
-> >         }
-> >
-> > +       switch (_IOC_NR(cmd)) {
-> > +       case _IOC_NR(FS_IOC_FSGETXATTR):
-> > +               if (WARN_ON_ONCE(_IOC_TYPE(cmd) != _IOC_TYPE(FS_IOC_FSGETXATTR)))
-> > +                       return SOMETHING_SOMETHING;
-> > +               /* Only handle original size. */
-> > +               return ioctl_fsgetxattr(filp, argp);
-> > +
-> > +       case _IOC_NR(FFS_IOC_FSSETXATTR):
-> > +               if (WARN_ON_ONCE(_IOC_TYPE(cmd) != _IOC_TYPE(FFS_IOC_FSSETXATTR)))
-> > +                       return SOMETHING_SOMETHING;
-> > +               /* Only handle original size. */
-> > +               return ioctl_fssetxattr(filp, argp);
-> > +       }
-> > +
-> 
-> I think what Arnd means is that we will not be able to change struct
-> sfxattr in uapi
-> going forward, because we are not going to deprecate the ioctls and
+Here is the fifth Landlock newsletter!
 
-There's no need to deprecate anything to rev an ioctl API.  We have
-had to solve this "changing struct size" problem previously in XFS
-ioctls. See XFS_IOC_FSGEOMETRY and the older XFS_IOC_FSGEOMETRY_V4
-and XFS_IOC_FSGEOMETRY_V1 versions of the API/ABI.
+Official website: https://landlock.io
+Previews newsletter:
+https://lore.kernel.org/landlock/20240716.yui4Iezai8ae@digikod.net/
 
-If we need to increase the structure size, we can rename the existing
-ioctl and struct to fix the version in the API, then use the
-original name for the new ioctl and structure definition.
+TL;DR: Check your sandboxed programs with Linux 6.15, review the audit
+logs, and update the sandbox policy if you see any Landlock events.
 
-The only thing we have to make sure of is that the old and new
-structures have exactly the same overlapping structure. i.e.
-extension must always be done by appending new varibles, they can't
-be put in the middle of the structure.
+Kernel features
+===============
 
-This way applications being rebuild will pick up the new definition
-automatically when the system asserts that it is suppored, whilst
-existing binaries will always still be supported by the kernel.
+Restricting signals and abstract UNIX sockets
+---------------------------------------------
 
-If the application wants/needs to support all possible kernels, then
-if XFS_IOC_FSGEOMETRY is not supported, call XFS_IOC_FSGEOMETRY_V4,
-and if that fails (only on really old irix!) or you only need
-something in that original subset, call XFS_IOC_FSGEOMETRY_V1 which
-will always succeed....
+Linux 6.12 (Landlock ABI 6) introduces IPC scoping with a new ruleset
+"scoped" field, thanks to Tahera Fahimi.  This field accepts a set of
+flags: the LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET flag denies connections
+to abstract UNIX sockets created outside the current scoped domain, and
+the LANDLOCK_SCOPE_SIGNAL flag denies sending signals to processes
+outside the current scoped domain.
 
-> Should we will need to depart from this struct definition and we might
-> as well do it for the initial release of the syscall rather than later on, e.g.:
-> 
-> --- a/include/uapi/linux/fs.h
-> +++ b/include/uapi/linux/fs.h
-> @@ -148,6 +148,17 @@ struct fsxattr {
->         unsigned char   fsx_pad[8];
->  };
-> 
-> +/*
-> + * Variable size structure for file_[sg]et_attr().
-> + */
-> +struct fsx_fileattr {
-> +       __u32           fsx_xflags;     /* xflags field value (get/set) */
-> +       __u32           fsx_extsize;    /* extsize field value (get/set)*/
-> +       __u32           fsx_nextents;   /* nextents field value (get)   */
-> +       __u32           fsx_projid;     /* project identifier (get/set) */
-> +       __u32           fsx_cowextsize; /* CoW extsize field value (get/set)*/
-> +};
-> +
-> +#define FSXATTR_SIZE_VER0 20
-> +#define FSXATTR_SIZE_LATEST FSXATTR_SIZE_VER0
+These restrictions also apply to nested domains according to their
+scope.  Both features have been requested to help isolate untrusted
+processes, making it easier to protect against related threats.  These
+changes will also be useful for supporting other kinds of IPC isolation.
 
-If all the structures overlap the same, all that is needed in the
-code is to define the structure size that should be copied in and
-parsed. i.e:
+See user space documentation:
+https://docs.kernel.org/userspace-api/landlock.html#scope-flags
 
-	case FSXATTR..._V1:
-		return ioctl_fsxattr...(args, sizeof(fsx_fileattr_v1));
-	case FSXATTR..._V2:
-		return ioctl_fsxattr...(args, sizeof(fsx_fileattr_v2));
-	case FSXATTR...:
-		return ioctl_fsxattr...(args, sizeof(fsx_fileattr));
+Audit logging for denied access requests
+----------------------------------------
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Linux 6.15 (Landlock ABI 7) adds the ability to log denied requests with
+audit.  This provides visibility into why access requests are denied,
+including the origin of the security policy, missing access rights, and
+object descriptions.
+
+The logging system is designed to minimize log spam while still alerting
+about unexpected blocked access.  Being able to see what is denied, and
+more importantly why, is a crucial feature for any security mechanism.
+The default behavior alerts about unexpected access requests (i.e.,
+attacks) while ignoring noise from programs unaware they are sandboxed.
+Tailored sandboxing can adjust this behavior with the three new
+LANDLOCK_RESTRICT_SELF_LOG_* flags, though this should not be necessary
+in most cases.
+
+This new Landlock capability is the most significant change since
+Landlock was merged into mainline: +46% SLOC for the kernel and +23%
+SLOC for kselftests.  See sysadmin and user space documentation:
+https://docs.kernel.org/admin-guide/LSM/landlock.html#audit
+https://docs.kernel.org/userspace-api/landlock.html#c.sys_landlock_restrict_self
+
+Kernel fixes
+============
+
+All stable kernels supporting Landlock now also provide a new interface
+to probe for user-visible fixes.  This may be required by some Landlock
+libraries to safely expose more Landlock features on up-to-date kernels.
+This improvement in the quality of the Landlock specification should not
+be noticed by most users.
+
+The first issue fixed by an erratum is related to TCP socket
+identification.  Mikhail Ivanov fixed an issue where IPv4 and IPv6
+stream sockets (e.g., SMC, MPTCP, or SCTP) were incorrectly restricted
+by TCP access rights during bind(2) and connect(2) operations.  This
+change ensures that only TCP sockets are subject to TCP access rights,
+allowing other protocols to operate without unnecessary restrictions.
+
+The second erratum is related to scoped signal handling.  This fix
+addresses an issue where signal scoping was overly restrictive,
+preventing sandboxed threads from signaling other threads within the
+same process if they belonged to different domains.  Because threads are
+not security boundaries, user space might assume that all thread within
+the same process can send signals between themselves (see nptl(7) and
+libpsx(3)).  Consistent with ptrace(2) behavior, direct interaction
+between threads of the same process should always be allowed.  This
+change ensures that any thread is allowed to send signals to any other
+thread within the same process, regardless of their domain.
+
+Landlock libraries
+==================
+
+The Landlock crate and Go library have been updated, bringing support
+for the latest Landlock features, improved documentation, and better
+tests:
+https://github.com/landlock-lsm/rust-landlock/blob/main/CHANGELOG.md#v042
+
+Go-Landlock is now packaged in Debian:
+https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1096137
+
+Please update your dependencies and use the latest Landlock ABI version
+for improved sandboxing.
+
+Landlock logo
+=============
+
+Landlock now has a logo!  Guess what it means.  ;)
+Feel free to use it to illustrate Landlock.
+https://github.com/landlock-lsm/landlock-logo
+
+Talks and articles
+==================
+
+Günther Noack gave a talk at the Linux Security Summit Europe titled
+"Update On Landlock IOCTL Support":
+https://lsseu2024.sched.com/event/1ebVW
+He explains how Landlock works and why it was designed this way.  He
+then discusses the challenges of implementing a useful and practical
+IOCTL control, and finally introduces ongoing work to improve Landlock.
+
+I gave a talk at the Open Source Summit Europe on "Linux Sandboxing with
+Landlock": https://osseu2024.sched.com/event/1ej3a
+This was an introduction to Landlock, including why and how it should be
+used to secure user environments.
+
+Tahera Fahimi participated in a panel discussion at the Open Source
+Summit Europe, where she talked about her Outreachy internship working
+on Landlock:
+https://osseu2024.sched.com/event/1ej1w
+
+I also gave a talk at FOSDEM about Sandbox IDs with Landlock:
+https://fosdem.org/2025/schedule/event/fosdem-2025-6071-sandbox-ids-with-landlock/
+This talk explains the properties of Landlock IDs, how they are used in
+audit, and how they could be used to identify a set of processes, such
+as a container.
+
+I updated the Landlock workshop to demonstrate sandboxing with
+ImageMagick:
+https://github.com/landlock-lsm/workshop-imagemagick
+https://landlock.io/talks/2025-01-29_landlock-workshop.pdf
+
+I was invited to present Landlock at the Compartmentalization Community
+meeting:
+https://drive.google.com/drive/folders/129kNPaTriApmdRU4OFwl3KwDYJlIXLEH
+(see Eval & Benchmarking meeting of 2025-04-24)
+
+An interesting article about sandboxing was published on the Emilua (Lua
+runtime) blog:
+https://blog.emilua.org/2025/01/12/software-sandboxing-basics/
+
+Rémi Gacogne will give a talk at Pass the Salt about sandboxing Pacman:
+https://cfp.pass-the-salt.org/pts2025/talk/FUL7LS/
+
+Documentation and examples
+==========================
+
+Günther Noack is writing documentation with use cases for Landlock.
+We'll move this documentation to the official website when ready but in
+the meantime it's worth a read!
+https://wiki.gnoack.org/UsingLandlock
+https://github.com/gnoack/landlock-examples
+
+New Linux distributions support
+===============================
+
+GNOME OS's kernel has Landlock enabled by default (it's been a while,
+but we missed it):
+https://gitlab.gnome.org/GNOME/gnome-build-meta/-/merge_requests/2559
+
+Flatcar's kernel has had Landlock enabled by default since last year:
+https://github.com/flatcar/scripts/pull/2158
+
+Red Hat Enterprise Linux 9.6.0 (RHEL) has enabled Landlock by default
+and also backported features up to Landlock ABI 5, thanks to Ryan
+Sullivan and Red Hat reviewers:
+https://gitlab.com/redhat/centos-stream/src/kernel/centos-stream-9/-/commit/9039cec1ed523025381bdbc62cb924601be5059b
+It is available since kernel-5.14.0-568.el9:
+https://gitlab.com/redhat/centos-stream/src/kernel/centos-stream-9/-/commit/5ba435c29b4704e87af1a0fd291ea6610ff5af92
+CentOS Stream, Rocky Linux, and other RHEL alternatives should also gain
+the same support: https://bugs.rockylinux.org/view.php?id=7987
+
+New Landlock user space support
+===============================
+
+GNOME's tracker-extract is now sandboxed with Landlock (it's been a
+while, but it wasn't mentioned in a previous newsletter):
+https://gitlab.gnome.org/GNOME/localsearch/-/merge_requests/499
+Support was merged in GNOME 46:
+https://gitlab.gnome.org/Teams/Websites/release.gnome.org/-/issues/37
+There were some interesting compatibility issues that have since been
+fixed:
+https://gitlab.gnome.org/GNOME/localsearch/-/issues/319#note_2046228
+All these issues can be avoided by using a Landlock library with
+best-effort support (Rust or Go for now).
+
+HashiCorp's Nomad can now run sandboxed processes with Landlock:
+https://developer.hashicorp.com/nomad/plugins/drivers/exec2
+
+Unblob 24.12.4 has gained support for Landlock:
+https://github.com/onekey-sec/unblob/pull/1022
+
+dosemu2 has gained support for Landlock:
+https://github.com/dosemu2/dosemu2/pull/2344
+
+wireproxy 1.0.8 has gained support for Landlock:
+https://github.com/pufferffish/wireproxy/pull/108
+
+Landrun is a new sandboxing tool leveraging Landlock:
+https://github.com/Zouuup/landrun
+https://news.ycombinator.com/item?id=43445662
+
+Ongoing work
+============
+
+Ongoing kernel work can be tracked here:
+https://github.com/orgs/landlock-lsm/projects/1
+
+It would be good to have guidelines to help developers sandbox their
+applications.  OpenSSF Working Groups could be a good place for that:
+https://github.com/ossf/wg-best-practices-os-developers/issues/631
+Any help would be appreciated.
+
+We are working on a Landlock configuration format to empower all Linux
+users to sandbox their applications with Landlock:
+https://github.com/landlock-lsm/landlockconfig
+A new tool will make this library easy to use.
+
+
+Thanks to all contributors!
+
+Regards,
+ Mickaël
