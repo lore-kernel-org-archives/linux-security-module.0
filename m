@@ -1,69 +1,157 @@
-Received: from smtp-bc0f.mail.infomaniak.ch (smtp-bc0f.mail.infomaniak.ch [45.157.188.15])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50E311C8604
-	for <linux-security-module@vger.kernel.org>; Mon, 19 May 2025 19:47:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.157.188.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFB03218ABA;
+	Mon, 19 May 2025 20:27:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747684040; cv=none; b=uVKkbcXt/Q5p4nlKar8mjGAwPsJVoxaCsFP8ddXVrxBp27kzMJ8ZzhAlGha6WERoYgrrziUfLNmpouMPDuVMhh8HoUfPF8Xy/WhAB1O0Q4K+LvyjdwOYazSyJrnJdFVXcrWdyH5tUNBnsbEW28KhJmsC7oghg0KAYUZAWmAxYmo=
+	t=1747686422; cv=none; b=X1cf8L5BIeAMimGGKCY01UTIkNMCGAxPBDIKa98iiSXTxmlhPCvQemU+LNLr6+oWkO1WEcF2NBBdeoFC7n5D54vTPo540wU0frj5Fld4CjH/7C7wh/eb5yjDrHAZetXIAPwulW3yrTrz0sbV07BmAPmJjaHxUXF07hkeN44v2yY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747684040; c=relaxed/simple;
-	bh=kOL0MCAdn1nJGpbhN364DDGzuobCcGyCACHnk5le9ZA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kJO5Rv9nEjtFsubMnqo0cCuAi59YAGfj0hf6QRqqvb1jebRaOJH2/DkojnYjGf4dRxp6KTfnQUbVI42SsuT9/Kv+QCzmUy7oN8trTULxVpgXzq6IeTWaAB3+EVNy4tpQws0Ebrl6xv6K/XDu+I6P39y1YlrgSZXdZYOlOydvRnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=ZVJEgHKj; arc=none smtp.client-ip=45.157.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1747686422; c=relaxed/simple;
+	bh=l5upmzFVp75abDu6YqRT8MBIFAQxtBa3/aCt6W+nB2Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pfPnG6Dis7PSdhk8DYF7kOk5zQYOXGEkQUSTS7HH7iS4bDStMxK+mQs6K5NbN77svYgKf+keFNPk/VKBy8qKAlBmeeUI4FB+ZeQs5j1AnkfsmH7pWhu+dg7UyJ24G1UrwczXdZ7VUp7xRuRuyK5EJ2/isrYSJ35UJH3ltXcexkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=CLscnDOK; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="ZVJEgHKj"
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4b1QrL1XPQzvbc;
-	Mon, 19 May 2025 20:17:06 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1747678626;
-	bh=o0H4N/bdp3J6R7Xxv5HUPBp/AKsmuH3GhzDoLlaY008=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZVJEgHKjpkLSvZSPlxtaAug59+FrJc2zR6Zj90yUP0moQ1SUF0PS+WKhi7pq7IGIi
-	 ftO+xgSWDykYC6gOxovXZ/5oXvfC2JWxipc2brVySX/ACuN2FkGOPrj/rTw9qboWxf
-	 Ozz2AwB4cKkaISEybkaXPPXDWhpuEFnRNSRldu1Q=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4b1QrH5tK6znCQ;
-	Mon, 19 May 2025 20:17:03 +0200 (CEST)
-Date: Mon, 19 May 2025 20:17:01 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Zygmunt Krynicki <me@zygoon.pl>
-Cc: landlock@lists.linux.dev, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Tahera Fahimi <fahimitahera@gmail.com>, 
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, Ryan Sullivan <rysulliv@redhat.com>, lwn@lwn.net, 
-	linux-security-module@vger.kernel.org, oss-security@lists.openwall.com
-Subject: Re: Landlock news #5
-Message-ID: <20250519.queejoh3Phei@digikod.net>
-References: <20250519.ceihohf6a3uT@digikod.net>
- <dc6aa0e2-5a82-4b00-82b2-b38fffb33167@zygoon.pl>
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CLscnDOK"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description;
+	bh=OdUPEKiubFLR9XRzcKGanx11EyQE8ZL6x7BAXWrg/PI=; b=CLscnDOKMkzEFZ5iGP70Ggp0PI
+	LbQG+GsCzcZ69OfvnoiAm7kcYMOTdLZPZ8UBx+UdqLb3HQbRmO5rJglxm4OL5B4BLJGcKic3421jV
+	zkYk7amFu6aj1s3+IVp+/b44zkJBZ/VEKRUyefCRyZ7Wik7ZQ/t2Tt8LHqIROBnb95bgb+1lVjFwk
+	Rs+R0ohgaer/95Phhg0JaIgsokrSgNjEgvtuSiIt+oAHK4nOt7tPVnsqi4x9xXgUgbPrUvUfWJiWW
+	fC1+8EoVhXrMOsog1exMDdkLYUD8YDqppmjrYx7cV7kPRN4sx/nOS2H/kM/TumkC4QswqiTpEBhM1
+	FbEP/WnA==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uH74Z-00000002LEv-0zCU;
+	Mon, 19 May 2025 20:26:55 +0000
+Message-ID: <d645a0a2-4ffd-4dc6-b8a9-522ec3d27d7f@infradead.org>
+Date: Mon, 19 May 2025 13:26:52 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: Tree for May 16 (security/landlock/ruleset.c)
+To: Kees Cook <kees@kernel.org>, =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?=
+ <mic@digikod.net>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+ Stephen Rothwell <sfr@canb.auug.org.au>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ linux-security-module@vger.kernel.org, =?UTF-8?Q?G=C3=BCnther_Noack?=
+ <gnoack@google.com>
+References: <20250516202417.31b13d13@canb.auug.org.au>
+ <e3754f69-1dea-4542-8de0-a567a14fb95b@infradead.org>
+ <20250519.jiveise8Rau8@digikod.net> <202505191117.C094A90F88@keescook>
+ <20250519.ba8eoZu3XaeJ@digikod.net> <202505191212.61EE1AE80@keescook>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <202505191212.61EE1AE80@keescook>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <dc6aa0e2-5a82-4b00-82b2-b38fffb33167@zygoon.pl>
-X-Infomaniak-Routing: alpha
 
-On Mon, May 19, 2025 at 05:20:19PM +0200, Zygmunt Krynicki wrote:
-> 
-> 
-> W dniu 19.05.2025 o 16:30, Mickaël Salaün pisze:
-> > Official website:https://landlock.io
-> > Previews newsletter:
-> > https://lore.kernel.org/landlock/20240716.yui4Iezai8ae@digikod.net/
-> 
-> This points to the 4th newsletter, is that expected?
 
-Yes, that's the previous newsletter. :)
 
+> From 6fbf66fdfd0a7dac809b77faafdd72c60112bb8d Mon Sep 17 00:00:00 2001
+> From: Kees Cook <kees@kernel.org>
+> Date: Mon, 19 May 2025 11:52:06 -0700
+> Subject: [PATCH] string.h: Provide basic sanity checks for fallback memcpy()
+> MIME-Version: 1.0
+> Content-Type: text/plain; charset=UTF-8
+> Content-Transfer-Encoding: 8bit
 > 
-> Best regards
-> ZK
+> Instead of defining memcpy() in terms of __builtin_memcpy() deep
+> in arch/x86/include/asm/string_32.h, notice that it is needed up in
+> the general string.h, as done with other common C String APIs. This
+> allows us to add basic sanity checking for pathological "size"
+> arguments to memcpy(). Besides the run-time checking benefit, this
+> avoids GCC trying to be very smart about value range tracking[1] when
+> CONFIG_PROFILE_ALL_BRANCHES=y but FORTIFY_SOURCE=n.
 > 
+> Link: https://lore.kernel.org/all/202505191117.C094A90F88@keescook/ [1]
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/all/202501040747.S3LYfvYq-lkp@intel.com/
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> Closes: https://lore.kernel.org/all/e3754f69-1dea-4542-8de0-a567a14fb95b@infradead.org/
+> Signed-off-by: Kees Cook <kees@kernel.org>
+
+Tested-by: Randy Dunlap <rdunlap@infradead.org>
+
+Thanks.
+
+> ---
+> Cc: "Mickaël Salaün" <mic@digikod.net>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: <x86@kernel.org>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: Andy Shevchenko <andy@kernel.org>
+> Cc: Uros Bizjak <ubizjak@gmail.com>
+> Cc: <linux-hardening@vger.kernel.org>
+> ---
+>  arch/x86/include/asm/string_32.h |  6 ------
+>  include/linux/string.h           | 13 +++++++++++++
+>  2 files changed, 13 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/string_32.h b/arch/x86/include/asm/string_32.h
+> index e9cce169bb4c..74397c95fa37 100644
+> --- a/arch/x86/include/asm/string_32.h
+> +++ b/arch/x86/include/asm/string_32.h
+> @@ -145,12 +145,6 @@ static __always_inline void *__constant_memcpy(void *to, const void *from,
+>  #define __HAVE_ARCH_MEMCPY
+>  extern void *memcpy(void *, const void *, size_t);
+>  
+> -#ifndef CONFIG_FORTIFY_SOURCE
+> -
+> -#define memcpy(t, f, n) __builtin_memcpy(t, f, n)
+> -
+> -#endif /* !CONFIG_FORTIFY_SOURCE */
+> -
+>  #define __HAVE_ARCH_MEMMOVE
+>  void *memmove(void *dest, const void *src, size_t n);
+>  
+> diff --git a/include/linux/string.h b/include/linux/string.h
+> index 01621ad0f598..ffcee31a14f9 100644
+> --- a/include/linux/string.h
+> +++ b/include/linux/string.h
+> @@ -3,6 +3,7 @@
+>  #define _LINUX_STRING_H_
+>  
+>  #include <linux/args.h>
+> +#include <linux/bug.h>
+>  #include <linux/array_size.h>
+>  #include <linux/cleanup.h>	/* for DEFINE_FREE() */
+>  #include <linux/compiler.h>	/* for inline */
+> @@ -390,7 +391,19 @@ static inline const char *kbasename(const char *path)
+>  
+>  #if !defined(__NO_FORTIFY) && defined(__OPTIMIZE__) && defined(CONFIG_FORTIFY_SOURCE)
+>  #include <linux/fortify-string.h>
+> +#else
+> +/* Basic sanity checking even without FORTIFY_SOURCE */
+> +# ifndef __HAVE_ARCH_MEMCPY
+> +#  define memcpy(t, f, n)					\
+> +	do {							\
+> +		typeof(n) __n = (n);				\
+> +		/* Skip impossible sizes. */			\
+> +		if (!WARN_ON(__n < 0 || __n == SIZE_MAX))	\
+> +			__builtin_memcpy(t, f, __n);		\
+> +	} while (0)
+> +# endif
+>  #endif
+> +
+>  #ifndef unsafe_memcpy
+>  #define unsafe_memcpy(dst, src, bytes, justification)		\
+>  	memcpy(dst, src, bytes)
+
+-- 
+~Randy
