@@ -1,157 +1,156 @@
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFB03218ABA;
-	Mon, 19 May 2025 20:27:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C791FFC5D
+	for <linux-security-module@vger.kernel.org>; Mon, 19 May 2025 21:56:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747686422; cv=none; b=X1cf8L5BIeAMimGGKCY01UTIkNMCGAxPBDIKa98iiSXTxmlhPCvQemU+LNLr6+oWkO1WEcF2NBBdeoFC7n5D54vTPo540wU0frj5Fld4CjH/7C7wh/eb5yjDrHAZetXIAPwulW3yrTrz0sbV07BmAPmJjaHxUXF07hkeN44v2yY=
+	t=1747691801; cv=none; b=c4n50PVib2+B/X9RX7E5wyV9Acz/UwKEIa7J63YpCvWH7pStwfvyfWiiHCJ8cBLOlH93CA39glmKK43LYwmVuUJgF1LNgm24x4NhpMzXjsME0hEJI5QNXHpoHDu2nvwoAM4npeSEzOyVD8D11S/HE1KVpFFt7Rh1HNXySOVa/e8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747686422; c=relaxed/simple;
-	bh=l5upmzFVp75abDu6YqRT8MBIFAQxtBa3/aCt6W+nB2Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pfPnG6Dis7PSdhk8DYF7kOk5zQYOXGEkQUSTS7HH7iS4bDStMxK+mQs6K5NbN77svYgKf+keFNPk/VKBy8qKAlBmeeUI4FB+ZeQs5j1AnkfsmH7pWhu+dg7UyJ24G1UrwczXdZ7VUp7xRuRuyK5EJ2/isrYSJ35UJH3ltXcexkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=CLscnDOK; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+	s=arc-20240116; t=1747691801; c=relaxed/simple;
+	bh=misrursprD1V5FCR5HbBlMSYeABECRK6PDQlgJ4YyzI=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=E8oizosYOhwmAK1lCghwn8OTOhncIWERfrev/KTQSd+E3djZT2UZFUObdFj+ukYckVtpvG3p8eWPX2D0t13FqxxmsO91yRhkqU6eFRaKwv210KUumchuxPoVtgOpqkbHchKyncUFJWOsr2UcKV27niq0J6Y1CMFCkInBm72WWJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zetier.com; spf=pass smtp.mailfrom=zetier.com; dkim=pass (2048-bit key) header.d=zetier.com header.i=@zetier.com header.b=ArITGP1s; arc=none smtp.client-ip=209.85.222.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zetier.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zetier.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CLscnDOK"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description;
-	bh=OdUPEKiubFLR9XRzcKGanx11EyQE8ZL6x7BAXWrg/PI=; b=CLscnDOKMkzEFZ5iGP70Ggp0PI
-	LbQG+GsCzcZ69OfvnoiAm7kcYMOTdLZPZ8UBx+UdqLb3HQbRmO5rJglxm4OL5B4BLJGcKic3421jV
-	zkYk7amFu6aj1s3+IVp+/b44zkJBZ/VEKRUyefCRyZ7Wik7ZQ/t2Tt8LHqIROBnb95bgb+1lVjFwk
-	Rs+R0ohgaer/95Phhg0JaIgsokrSgNjEgvtuSiIt+oAHK4nOt7tPVnsqi4x9xXgUgbPrUvUfWJiWW
-	fC1+8EoVhXrMOsog1exMDdkLYUD8YDqppmjrYx7cV7kPRN4sx/nOS2H/kM/TumkC4QswqiTpEBhM1
-	FbEP/WnA==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uH74Z-00000002LEv-0zCU;
-	Mon, 19 May 2025 20:26:55 +0000
-Message-ID: <d645a0a2-4ffd-4dc6-b8a9-522ec3d27d7f@infradead.org>
-Date: Mon, 19 May 2025 13:26:52 -0700
+	dkim=pass (2048-bit key) header.d=zetier.com header.i=@zetier.com header.b="ArITGP1s"
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7cd0a7b672bso333016685a.2
+        for <linux-security-module@vger.kernel.org>; Mon, 19 May 2025 14:56:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=zetier.com; s=gm; t=1747691798; x=1748296598; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EOXEar3JMt8I5wIbojUBGclJ2Cwt6fvo5ECJsqLXQfs=;
+        b=ArITGP1samHuiTU06TIRk9Ma3wp+FWNQBsybNViIr968to8dkMWWZZdg7YQ2uexmIY
+         ehkgRTpJoI1cVGgLuaM0XGCo9CZcUcuUWYFkZKZAmXCKHFsBsMxFlTLGRby69DQedp+L
+         4XtVRJRQ6RdecvaciYXVxWeupjia4n5+Y6H2YJWqvrKcGXl/OjhJXYQWFvf951uaEcIt
+         Y7K4nZ6hL+8APKhb0JyoEe3ee3m0tjBvmu/kahnkNDbMGnDXxn6B3ofSr5AM6tnbCX0K
+         95t1WxC2mEY34qfytd3vMpP8KUgwUozPMRzMhmw06SceQcsR2sei1M1CGPt5NdMbtJ3j
+         WcsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747691798; x=1748296598;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=EOXEar3JMt8I5wIbojUBGclJ2Cwt6fvo5ECJsqLXQfs=;
+        b=jks7Y1WmzKGPcUq3pIzgCfJo4TypAHNyOnueNlCbh3UNaeEdQ3pTyhFzXh3lWKx2Ml
+         CpjrfOCGsu9xFGTYqX3OIn3+kPCDOLlOkdZvYdFprdzN3UgZ9Jof72YuMFWyFX8fUIaQ
+         Czcr8eEs0zWEYyLZVxS/iZO3/TVptSvpE10yrODSgGF4u8/u6/0ROMiJ3fkZlWBiQozS
+         aQhbHjOEON5MVS6nDXUo9Seym/m04ZwXGh0te9tBml2dNYHeFVrQiNVuPiZB/LAoLhHk
+         K8k5K0JsS/093qCnEtPdgcETDyLa12qJISbMGVFbbbwytOAooI0K2mbZuvY2cCRSU77b
+         6iVA==
+X-Forwarded-Encrypted: i=1; AJvYcCWSr3pM1qiq5b4Tcm5DvaGWmvYCZha3L47G04L/HfvrggK1gN+X1HJoWobbairKZf4uennfkP/zD1s2vBHtl+lOlNa8eaw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSMnVDYnwvEBzpszKUszSFoIjJaHE4L4bdRXTVYs4AtoFTdR8k
+	5LzxRCTy0nSXr4ZsSwArdPtVXsAH5e2Rmxq/6dbPnOrv/RWu4pC4XkKJOTYaSF5oWwY=
+X-Gm-Gg: ASbGncsq1QXPbrc5+DU8pgncshg+052M+MQ1bsbei3/dUkJCOCprVziYAv9BCp7IRPU
+	y9ft/r6g+7TaWAKYpklT4MQFCnvlSRybYnYk4yqbw75dQa9Yke13Lwy432wTea93k6QiVOBn6C+
+	/3pytqoamkA5Byc9AxC8Zknkmdl3sM2ZtoSxIrPrFpJHrpiBaVXmstySCBGJKly39QgMbtjYGAs
+	LgARljCd8UymxLegVPYLniAwQFsZTfJh4imGh5n5bIt1c48t9rI6tjAduO+s9i9WPkkg/kCAaCA
+	wKYGeHdEUyNe4f0COzmYHP0Q+ESyKM6F1v2rsCuZGM/iKP14EznrOixc3PLMhPmhGQ==
+X-Google-Smtp-Source: AGHT+IEeehA3260v/sJrplNOZECEEJwqIceBm8RU+ybEqdrPBGXdNY+WO7ZTIA9CiXoD1PBDCEBmkQ==
+X-Received: by 2002:a05:622a:4c0c:b0:494:8930:9fb7 with SMTP id d75a77b69052e-494ae23bb3amr225583471cf.0.1747691798406;
+        Mon, 19 May 2025 14:56:38 -0700 (PDT)
+Received: from localhost ([65.222.209.234])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-494ae528466sm60835491cf.67.2025.05.19.14.56.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 May 2025 14:56:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: Tree for May 16 (security/landlock/ruleset.c)
-To: Kees Cook <kees@kernel.org>, =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?=
- <mic@digikod.net>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
- Stephen Rothwell <sfr@canb.auug.org.au>,
- Linux Next Mailing List <linux-next@vger.kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- linux-security-module@vger.kernel.org, =?UTF-8?Q?G=C3=BCnther_Noack?=
- <gnoack@google.com>
-References: <20250516202417.31b13d13@canb.auug.org.au>
- <e3754f69-1dea-4542-8de0-a567a14fb95b@infradead.org>
- <20250519.jiveise8Rau8@digikod.net> <202505191117.C094A90F88@keescook>
- <20250519.ba8eoZu3XaeJ@digikod.net> <202505191212.61EE1AE80@keescook>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <202505191212.61EE1AE80@keescook>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Date: Mon, 19 May 2025 17:56:37 -0400
+Message-Id: <DA0H1BQ9UO2G.3ATO7SJM7L25X@gabriel.zetier.com>
+From: "Gabriel Totev" <gabriel.totev@zetier.com>
+To: "John Johansen" <john.johansen@canonical.com>
+Cc: <apparmor@lists.ubuntu.com>, <linux-security-module@vger.kernel.org>,
+ <dillon@zetier.com>
+Subject: Re: [PATCH 1/2] apparmor: shift ouid when mediating hard links in
+ userns
+X-Mailer: aerc 0.8.2
+References: <20250416224209.904863-1-gabriel.totev@zetier.com>
+ <cddd7197-4286-4e44-b143-88fdc263c631@canonical.com>
+In-Reply-To: <cddd7197-4286-4e44-b143-88fdc263c631@canonical.com>
 
+On Sat May 17, 2025 at 4:40 AM EDT, John Johansen wrote:
+> On 4/16/25 15:42, Gabriel Totev wrote:
+> > When using AppArmor profiles inside an unprivileged container,
+> > the link operation observes an unshifted ouid.
+> > (tested with LXD and Incus)
+> >=20
+> > For example, root inside container and uid 1000000 outside, with
+> > `owner /root/link l,` profile entry for ln:
+> >=20
+> > /root$ touch chain && ln chain link
+> > =3D=3D> dmesg
+> > apparmor=3D"DENIED" operation=3D"link" class=3D"file"
+> > namespace=3D"root//lxd-feet_<var-snap-lxd-common-lxd>" profile=3D"linki=
+t"
+> > name=3D"/root/link" pid=3D1655 comm=3D"ln" requested_mask=3D"l" denied_=
+mask=3D"l"
+> > fsuid=3D1000000 ouid=3D0 [<=3D=3D should be 1000000] target=3D"/root/ch=
+ain"
+> >=20
+> > Fix by mapping inode uid of old_dentry in aa_path_link() rather than
+> > using it directly, similarly to how it's mapped in __file_path_perm()
+> > later in the file.
+>
+> so unfortunately this isn't correct. Yes some mapping needs to be
+> done but it needs to be relative to different policy namespaces. I
+> need to spend some time on this
 
+Not sure I understand... I based this patch and its sibling on similar
+code for making path_cond structs from the lsm.c functions:
+- apparmor_path_rename()
+- apparmor_file_open()
+- common_perm_cond()
+- common_perm_rm()
 
-> From 6fbf66fdfd0a7dac809b77faafdd72c60112bb8d Mon Sep 17 00:00:00 2001
-> From: Kees Cook <kees@kernel.org>
-> Date: Mon, 19 May 2025 11:52:06 -0700
-> Subject: [PATCH] string.h: Provide basic sanity checks for fallback memcpy()
-> MIME-Version: 1.0
-> Content-Type: text/plain; charset=UTF-8
-> Content-Transfer-Encoding: 8bit
-> 
-> Instead of defining memcpy() in terms of __builtin_memcpy() deep
-> in arch/x86/include/asm/string_32.h, notice that it is needed up in
-> the general string.h, as done with other common C String APIs. This
-> allows us to add basic sanity checking for pathological "size"
-> arguments to memcpy(). Besides the run-time checking benefit, this
-> avoids GCC trying to be very smart about value range tracking[1] when
-> CONFIG_PROFILE_ALL_BRANCHES=y but FORTIFY_SOURCE=n.
-> 
-> Link: https://lore.kernel.org/all/202505191117.C094A90F88@keescook/ [1]
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/all/202501040747.S3LYfvYq-lkp@intel.com/
-> Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> Closes: https://lore.kernel.org/all/e3754f69-1dea-4542-8de0-a567a14fb95b@infradead.org/
-> Signed-off-by: Kees Cook <kees@kernel.org>
+Are hard links (and Unix sockets) different in terms of figuring out the
+correct uid? Or should all these functions be updated to be relative to
+policy namespaces? Perhaps they already are and I can't tell? (not sure
+what this would look like or how uids would be affected)
 
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
+I'm by no means an AppArmor expert but I'd like to understand and if
+possible help get this fixed as it prevent Snaps from running correctly
+in LXD/Incus containers. I've built and tested with these patches and it
+seems to work: Snaps now don't attract spurious denials and the ouid
+from my example above gets the correct value of 1000000 rather than 0.
+However, I can't be totally sure I'm not introducing any regressions or
+vulnerabilities.
 
-Thanks.
+If there's anything I can do to help with this effort, please let me know!
 
-> ---
-> Cc: "Mickaël Salaün" <mic@digikod.net>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> Cc: <x86@kernel.org>
-> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> Cc: Andy Shevchenko <andy@kernel.org>
-> Cc: Uros Bizjak <ubizjak@gmail.com>
-> Cc: <linux-hardening@vger.kernel.org>
-> ---
->  arch/x86/include/asm/string_32.h |  6 ------
->  include/linux/string.h           | 13 +++++++++++++
->  2 files changed, 13 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/string_32.h b/arch/x86/include/asm/string_32.h
-> index e9cce169bb4c..74397c95fa37 100644
-> --- a/arch/x86/include/asm/string_32.h
-> +++ b/arch/x86/include/asm/string_32.h
-> @@ -145,12 +145,6 @@ static __always_inline void *__constant_memcpy(void *to, const void *from,
->  #define __HAVE_ARCH_MEMCPY
->  extern void *memcpy(void *, const void *, size_t);
->  
-> -#ifndef CONFIG_FORTIFY_SOURCE
-> -
-> -#define memcpy(t, f, n) __builtin_memcpy(t, f, n)
-> -
-> -#endif /* !CONFIG_FORTIFY_SOURCE */
-> -
->  #define __HAVE_ARCH_MEMMOVE
->  void *memmove(void *dest, const void *src, size_t n);
->  
-> diff --git a/include/linux/string.h b/include/linux/string.h
-> index 01621ad0f598..ffcee31a14f9 100644
-> --- a/include/linux/string.h
-> +++ b/include/linux/string.h
-> @@ -3,6 +3,7 @@
->  #define _LINUX_STRING_H_
->  
->  #include <linux/args.h>
-> +#include <linux/bug.h>
->  #include <linux/array_size.h>
->  #include <linux/cleanup.h>	/* for DEFINE_FREE() */
->  #include <linux/compiler.h>	/* for inline */
-> @@ -390,7 +391,19 @@ static inline const char *kbasename(const char *path)
->  
->  #if !defined(__NO_FORTIFY) && defined(__OPTIMIZE__) && defined(CONFIG_FORTIFY_SOURCE)
->  #include <linux/fortify-string.h>
-> +#else
-> +/* Basic sanity checking even without FORTIFY_SOURCE */
-> +# ifndef __HAVE_ARCH_MEMCPY
-> +#  define memcpy(t, f, n)					\
-> +	do {							\
-> +		typeof(n) __n = (n);				\
-> +		/* Skip impossible sizes. */			\
-> +		if (!WARN_ON(__n < 0 || __n == SIZE_MAX))	\
-> +			__builtin_memcpy(t, f, __n);		\
-> +	} while (0)
-> +# endif
->  #endif
-> +
->  #ifndef unsafe_memcpy
->  #define unsafe_memcpy(dst, src, bytes, justification)		\
->  	memcpy(dst, src, bytes)
+> >=20
+> > Signed-off-by: Gabriel Totev <gabriel.totev@zetier.com>
+> > ---
+> >   security/apparmor/file.c | 6 ++++--
+> >   1 file changed, 4 insertions(+), 2 deletions(-)
+> >=20
+> > diff --git a/security/apparmor/file.c b/security/apparmor/file.c
+> > index 5c984792cbf0..ecd36199337c 100644
+> > --- a/security/apparmor/file.c
+> > +++ b/security/apparmor/file.c
+> > @@ -430,9 +430,11 @@ int aa_path_link(const struct cred *subj_cred,
+> >   {
+> >   	struct path link =3D { .mnt =3D new_dir->mnt, .dentry =3D new_dentry=
+ };
+> >   	struct path target =3D { .mnt =3D new_dir->mnt, .dentry =3D old_dent=
+ry };
+> > +	struct inode *inode =3D d_backing_inode(old_dentry);
+> > +	vfsuid_t vfsuid =3D i_uid_into_vfsuid(mnt_idmap(target.mnt), inode);
+> >   	struct path_cond cond =3D {
+> > -		d_backing_inode(old_dentry)->i_uid,
+> > -		d_backing_inode(old_dentry)->i_mode
+> > +		.uid =3D vfsuid_into_kuid(vfsuid),
+> > +		.mode =3D inode->i_mode,
+> >   	};
+> >   	char *buffer =3D NULL, *buffer2 =3D NULL;
+> >   	struct aa_profile *profile;
 
--- 
-~Randy
