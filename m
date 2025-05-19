@@ -1,273 +1,113 @@
-Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [185.125.25.15])
+Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B8582746C
-	for <linux-security-module@vger.kernel.org>; Mon, 19 May 2025 14:30:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA7A428540F
+	for <linux-security-module@vger.kernel.org>; Mon, 19 May 2025 15:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747665058; cv=none; b=A7SEctLYNHQANQHhksZQbuQBi4lgvGWqgrKAeEm3hpoMJuUzKLv7LGhCsviHhkG7GCwHUThhbsUOshEzPuPx8UxcnVRfgPqeUwjQ5zXDz/Pm7gwlcRejrxbLN8uS9GnVS+ASDVlJzjS3KurPgyTY5A+gcoomLd/IvrgUXbK09cw=
+	t=1747668027; cv=none; b=oJVhlkEZWfobGcrpfI8GrAIdHl8KQdJZ/z95aIN/ttkmEV7tiFi5KHbcleVT3kQC3DvM+O5Wz5EplRYQePVydUcOTJhGBMrDvLYeOJX5/mx+DXWtmAbWflddlvECASIP1IyTd7tzKfl1nyDwmDsHgqEipgXIT12ZM/SOr0RToiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747665058; c=relaxed/simple;
-	bh=0n9rzSgletJ3gOixhHeW7B6mG7beZQXIFyrXZ7t6fcY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=PpWEnPZZoCa5TQ6YF6wphdFGN6cPTnjsbK1lpHeXPBd/Z9sjaZh2amdbe6nizHfd4y8RUrC5nrQozfqqBZ1l23tLSs2EtD3/EfTn56YkjUdLFrEkkDqVPpnf7VuL4DA+oewPwWusL4bwVbFIFlCudsEXpCLRBj7zFcJnijVB044=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=f9PSzPuJ; arc=none smtp.client-ip=185.125.25.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1747668027; c=relaxed/simple;
+	bh=kZnDixZurz5gUG/KoTDzi0Lgr9DtIWkahDY3K7wYruY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=b2/dXvzyVvWVgywV/SYAgrBbmLAf/tQSnOXVedocVrLk1Ft/WlpImp+Po51Yc6vYd7ht3byhzII6PxLvcq/VZJZ8KBA66B3BhwZiLa64d8uzRCendLTqyvMWqYb7dtAl7Y9HVOgcLuo8OJCq5lnO8qqvrOValossCUPsBFQ9Wdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zygoon.pl; spf=pass smtp.mailfrom=zygoon.pl; dkim=pass (2048-bit key) header.d=zygoon.pl header.i=@zygoon.pl header.b=cA1ols37; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=WgL/VXih; arc=none smtp.client-ip=103.168.172.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zygoon.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zygoon.pl
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="f9PSzPuJ"
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4b1Kq91cpyzNg0;
-	Mon, 19 May 2025 16:30:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1747665045;
-	bh=VmW3Uae9gL3Ir1OJ5Nyr/nXEhqgrdEVkTD0Yg6sxjhQ=;
-	h=Date:From:To:Cc:Subject:From;
-	b=f9PSzPuJaMC3UVLFsmXbPS7WXUYyCsASrEBBNClrzjtYQTZHfhxzb9NTz/FcaGkdm
-	 2Gi0AE9ACH5Nn2y4Uta+fPwtwYzJ8fyibdfo7VU47ABKXBpFmhv3ePADAdZ2+aD/Cx
-	 n2ZPt/mRKNcTAA/Ieow9cind2Nc3IKOmgpAaGJjg=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4b1Kq516hkzY5Z;
-	Mon, 19 May 2025 16:30:40 +0200 (CEST)
-Date: Mon, 19 May 2025 16:30:40 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: landlock@lists.linux.dev
-Cc: =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Tahera Fahimi <fahimitahera@gmail.com>, Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
-	Ryan Sullivan <rysulliv@redhat.com>, lwn@lwn.net, linux-security-module@vger.kernel.org, 
-	oss-security@lists.openwall.com
-Subject: Landlock news #5
-Message-ID: <20250519.ceihohf6a3uT@digikod.net>
+	dkim=pass (2048-bit key) header.d=zygoon.pl header.i=@zygoon.pl header.b="cA1ols37";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="WgL/VXih"
+Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
+	by mailfout.phl.internal (Postfix) with ESMTP id CC47E1380522;
+	Mon, 19 May 2025 11:20:23 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-02.internal (MEProxy); Mon, 19 May 2025 11:20:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zygoon.pl; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1747668023;
+	 x=1747754423; bh=kZnDixZurz5gUG/KoTDzi0Lgr9DtIWkahDY3K7wYruY=; b=
+	cA1ols37wWzbh6pxTG8wYHUpjetEzCw0yxcuzSwcOCDP8r9egrDddCEsmUYXgYaZ
+	CVJEhLRtYoeFpff2AN6rFs0aVRSuX9hrb/KSg1obXeXxsFh2ujSo+6V2YBS1D5Y+
+	3eluLCdHKFtSzUqAfQaTsMLPOeDzx4rkSU8XF9umYvmskCGwAEDG58PIp651hJru
+	FLySUtDa0SRweshFp87gLVpwt5WTrMpa5qvtBLEiNQsaXtHyNDd6vlb6iWSjqHhA
+	zRGND3LmDlJbirr63cZX1+2w7nq4jjjploXBzcpJp3eGXE6koaFkJq1l6W2eMDKe
+	aL7l8BHW95C2GhrTOmMzfA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1747668023; x=
+	1747754423; bh=kZnDixZurz5gUG/KoTDzi0Lgr9DtIWkahDY3K7wYruY=; b=W
+	gL/VXihW4FjkpoxVyuStebuDoRg+keIxpGmB9LHpVpVFUJugscKbpr/etWXVKVSA
+	IwT7q+J7qVMt5ZBK0GcA4m+jkGmTvszMAwTD0mqvTrZCxG5fjaATYZYIQ3AbAlIm
+	4jnAxfoLuRNrr3HdAyy/g3VOdwUOMqsbgGyMI7yhXUFTV811GVfXVKcWYJBDw2oM
+	V8jbvPi6/m4LzRdmklCKvjQtCjAG1Rn7+Dazz51ZtbiwDgbZN2r70i0G38g9H+f3
+	2XQygpizK0NiXxTw3Ohqy7y5VTZDJi6QjkFYoz4mWrUgl7DKzq5OqUMRrpGot1b2
+	Rk5BO74NDBLwuicwBAIng==
+X-ME-Sender: <xms:NkwraDDb1ibx5Cg48NRvm7rz8s6ORh4nj_fc5U7NlQyEIPXi17L60g>
+    <xme:NkwraJiPnoptUmINVxUxO12zr5kUJtQKViRUOPT87axlOnpyoWt0ks4F6J6xFP8Lf
+    s0qks-Uvm15NB7nAg>
+X-ME-Received: <xmr:NkwraOkLBqJ89HVtbf2rFpyI7T6K0Qm6_Hi4-Dbh40Cz39qClgDyYFyXV0Azl11MNdl7>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdefvddujedvucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddt
+    vdejnecuhfhrohhmpegkhihgmhhunhhtucfmrhihnhhitghkihcuoehmvgesiiihghhooh
+    hnrdhplheqnecuggftrfgrthhtvghrnhepvdffheehffekkeduhfevgeejgeeikedvhfdt
+    gfefteeftdelhefgueelgeelveevnecuffhomhgrihhnpehlrghnughlohgtkhdrihhopd
+    hkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgr
+    ihhlfhhrohhmpehmvgesiiihghhoohhnrdhplhdpnhgspghrtghpthhtohepledpmhhoug
+    gvpehsmhhtphhouhhtpdhrtghpthhtohepmhhitgesughighhikhhougdrnhgvthdprhgt
+    phhtthhopehlrghnughlohgtkheslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtth
+    hopehgnhhorggtkhesghhoohhglhgvrdgtohhmpdhrtghpthhtohepfhgrhhhimhhithgr
+    hhgvrhgrsehgmhgrihhlrdgtohhmpdhrtghpthhtohepihhvrghnohhvrdhmihhkhhgrih
+    hludeshhhurgifvghiqdhprghrthhnvghrshdrtghomhdprhgtphhtthhopehrhihsuhhl
+    lhhivhesrhgvughhrghtrdgtohhmpdhrtghpthhtoheplhifnheslhifnhdrnhgvthdprh
+    gtphhtthhopehlihhnuhigqdhsvggtuhhrihhthidqmhhoughulhgvsehvghgvrhdrkhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtohepohhsshdqshgvtghurhhithihsehlihhsthhsrd
+    hophgvnhifrghllhdrtghomh
+X-ME-Proxy: <xmx:NkwraFzU9biuIpSF1jEM-gIF6U6RRf3lJ30trXe8hjSr-I8HSWRoKQ>
+    <xmx:NkwraITXiWZJryHF92r1DjgZW6iCBtQSYuEVdd7i5OsD2x5E3sgY4A>
+    <xmx:NkwraIb35yae09jCNzb4z2Vc7h2Dn9jkAIT1SU5VYYtXDhj8Ev2JUg>
+    <xmx:NkwraJRZTM-A9WDmM2Cd1hhrcApDx-msIP5vxvVio8rio4WCd_U6cQ>
+    <xmx:N0wraPBpBawcN9taSYTUJ5oK9UnRJbUq38M2OG_ODW3qnUAsbr_O77kf>
+Feedback-ID: i416c40e7:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 19 May 2025 11:20:20 -0400 (EDT)
+Message-ID: <dc6aa0e2-5a82-4b00-82b2-b38fffb33167@zygoon.pl>
+Date: Mon, 19 May 2025 17:20:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: Landlock news #5
+To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ landlock@lists.linux.dev
+Cc: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+ Tahera Fahimi <fahimitahera@gmail.com>,
+ Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
+ Ryan Sullivan <rysulliv@redhat.com>, lwn@lwn.net,
+ linux-security-module@vger.kernel.org, oss-security@lists.openwall.com
+References: <20250519.ceihohf6a3uT@digikod.net>
+Content-Language: en-US
+From: Zygmunt Krynicki <me@zygoon.pl>
+In-Reply-To: <20250519.ceihohf6a3uT@digikod.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Infomaniak-Routing: alpha
-
-Here is the fifth Landlock newsletter!
-
-Official website: https://landlock.io
-Previews newsletter:
-https://lore.kernel.org/landlock/20240716.yui4Iezai8ae@digikod.net/
-
-TL;DR: Check your sandboxed programs with Linux 6.15, review the audit
-logs, and update the sandbox policy if you see any Landlock events.
-
-Kernel features
-===============
-
-Restricting signals and abstract UNIX sockets
----------------------------------------------
-
-Linux 6.12 (Landlock ABI 6) introduces IPC scoping with a new ruleset
-"scoped" field, thanks to Tahera Fahimi.  This field accepts a set of
-flags: the LANDLOCK_SCOPE_ABSTRACT_UNIX_SOCKET flag denies connections
-to abstract UNIX sockets created outside the current scoped domain, and
-the LANDLOCK_SCOPE_SIGNAL flag denies sending signals to processes
-outside the current scoped domain.
-
-These restrictions also apply to nested domains according to their
-scope.  Both features have been requested to help isolate untrusted
-processes, making it easier to protect against related threats.  These
-changes will also be useful for supporting other kinds of IPC isolation.
-
-See user space documentation:
-https://docs.kernel.org/userspace-api/landlock.html#scope-flags
-
-Audit logging for denied access requests
-----------------------------------------
-
-Linux 6.15 (Landlock ABI 7) adds the ability to log denied requests with
-audit.  This provides visibility into why access requests are denied,
-including the origin of the security policy, missing access rights, and
-object descriptions.
-
-The logging system is designed to minimize log spam while still alerting
-about unexpected blocked access.  Being able to see what is denied, and
-more importantly why, is a crucial feature for any security mechanism.
-The default behavior alerts about unexpected access requests (i.e.,
-attacks) while ignoring noise from programs unaware they are sandboxed.
-Tailored sandboxing can adjust this behavior with the three new
-LANDLOCK_RESTRICT_SELF_LOG_* flags, though this should not be necessary
-in most cases.
-
-This new Landlock capability is the most significant change since
-Landlock was merged into mainline: +46% SLOC for the kernel and +23%
-SLOC for kselftests.  See sysadmin and user space documentation:
-https://docs.kernel.org/admin-guide/LSM/landlock.html#audit
-https://docs.kernel.org/userspace-api/landlock.html#c.sys_landlock_restrict_self
-
-Kernel fixes
-============
-
-All stable kernels supporting Landlock now also provide a new interface
-to probe for user-visible fixes.  This may be required by some Landlock
-libraries to safely expose more Landlock features on up-to-date kernels.
-This improvement in the quality of the Landlock specification should not
-be noticed by most users.
-
-The first issue fixed by an erratum is related to TCP socket
-identification.  Mikhail Ivanov fixed an issue where IPv4 and IPv6
-stream sockets (e.g., SMC, MPTCP, or SCTP) were incorrectly restricted
-by TCP access rights during bind(2) and connect(2) operations.  This
-change ensures that only TCP sockets are subject to TCP access rights,
-allowing other protocols to operate without unnecessary restrictions.
-
-The second erratum is related to scoped signal handling.  This fix
-addresses an issue where signal scoping was overly restrictive,
-preventing sandboxed threads from signaling other threads within the
-same process if they belonged to different domains.  Because threads are
-not security boundaries, user space might assume that all thread within
-the same process can send signals between themselves (see nptl(7) and
-libpsx(3)).  Consistent with ptrace(2) behavior, direct interaction
-between threads of the same process should always be allowed.  This
-change ensures that any thread is allowed to send signals to any other
-thread within the same process, regardless of their domain.
-
-Landlock libraries
-==================
-
-The Landlock crate and Go library have been updated, bringing support
-for the latest Landlock features, improved documentation, and better
-tests:
-https://github.com/landlock-lsm/rust-landlock/blob/main/CHANGELOG.md#v042
-
-Go-Landlock is now packaged in Debian:
-https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1096137
-
-Please update your dependencies and use the latest Landlock ABI version
-for improved sandboxing.
-
-Landlock logo
-=============
-
-Landlock now has a logo!  Guess what it means.  ;)
-Feel free to use it to illustrate Landlock.
-https://github.com/landlock-lsm/landlock-logo
-
-Talks and articles
-==================
-
-Günther Noack gave a talk at the Linux Security Summit Europe titled
-"Update On Landlock IOCTL Support":
-https://lsseu2024.sched.com/event/1ebVW
-He explains how Landlock works and why it was designed this way.  He
-then discusses the challenges of implementing a useful and practical
-IOCTL control, and finally introduces ongoing work to improve Landlock.
-
-I gave a talk at the Open Source Summit Europe on "Linux Sandboxing with
-Landlock": https://osseu2024.sched.com/event/1ej3a
-This was an introduction to Landlock, including why and how it should be
-used to secure user environments.
-
-Tahera Fahimi participated in a panel discussion at the Open Source
-Summit Europe, where she talked about her Outreachy internship working
-on Landlock:
-https://osseu2024.sched.com/event/1ej1w
-
-I also gave a talk at FOSDEM about Sandbox IDs with Landlock:
-https://fosdem.org/2025/schedule/event/fosdem-2025-6071-sandbox-ids-with-landlock/
-This talk explains the properties of Landlock IDs, how they are used in
-audit, and how they could be used to identify a set of processes, such
-as a container.
-
-I updated the Landlock workshop to demonstrate sandboxing with
-ImageMagick:
-https://github.com/landlock-lsm/workshop-imagemagick
-https://landlock.io/talks/2025-01-29_landlock-workshop.pdf
-
-I was invited to present Landlock at the Compartmentalization Community
-meeting:
-https://drive.google.com/drive/folders/129kNPaTriApmdRU4OFwl3KwDYJlIXLEH
-(see Eval & Benchmarking meeting of 2025-04-24)
-
-An interesting article about sandboxing was published on the Emilua (Lua
-runtime) blog:
-https://blog.emilua.org/2025/01/12/software-sandboxing-basics/
-
-Rémi Gacogne will give a talk at Pass the Salt about sandboxing Pacman:
-https://cfp.pass-the-salt.org/pts2025/talk/FUL7LS/
-
-Documentation and examples
-==========================
-
-Günther Noack is writing documentation with use cases for Landlock.
-We'll move this documentation to the official website when ready but in
-the meantime it's worth a read!
-https://wiki.gnoack.org/UsingLandlock
-https://github.com/gnoack/landlock-examples
-
-New Linux distributions support
-===============================
-
-GNOME OS's kernel has Landlock enabled by default (it's been a while,
-but we missed it):
-https://gitlab.gnome.org/GNOME/gnome-build-meta/-/merge_requests/2559
-
-Flatcar's kernel has had Landlock enabled by default since last year:
-https://github.com/flatcar/scripts/pull/2158
-
-Red Hat Enterprise Linux 9.6.0 (RHEL) has enabled Landlock by default
-and also backported features up to Landlock ABI 5, thanks to Ryan
-Sullivan and Red Hat reviewers:
-https://gitlab.com/redhat/centos-stream/src/kernel/centos-stream-9/-/commit/9039cec1ed523025381bdbc62cb924601be5059b
-It is available since kernel-5.14.0-568.el9:
-https://gitlab.com/redhat/centos-stream/src/kernel/centos-stream-9/-/commit/5ba435c29b4704e87af1a0fd291ea6610ff5af92
-CentOS Stream, Rocky Linux, and other RHEL alternatives should also gain
-the same support: https://bugs.rockylinux.org/view.php?id=7987
-
-New Landlock user space support
-===============================
-
-GNOME's tracker-extract is now sandboxed with Landlock (it's been a
-while, but it wasn't mentioned in a previous newsletter):
-https://gitlab.gnome.org/GNOME/localsearch/-/merge_requests/499
-Support was merged in GNOME 46:
-https://gitlab.gnome.org/Teams/Websites/release.gnome.org/-/issues/37
-There were some interesting compatibility issues that have since been
-fixed:
-https://gitlab.gnome.org/GNOME/localsearch/-/issues/319#note_2046228
-All these issues can be avoided by using a Landlock library with
-best-effort support (Rust or Go for now).
-
-HashiCorp's Nomad can now run sandboxed processes with Landlock:
-https://developer.hashicorp.com/nomad/plugins/drivers/exec2
-
-Unblob 24.12.4 has gained support for Landlock:
-https://github.com/onekey-sec/unblob/pull/1022
-
-dosemu2 has gained support for Landlock:
-https://github.com/dosemu2/dosemu2/pull/2344
-
-wireproxy 1.0.8 has gained support for Landlock:
-https://github.com/pufferffish/wireproxy/pull/108
-
-Landrun is a new sandboxing tool leveraging Landlock:
-https://github.com/Zouuup/landrun
-https://news.ycombinator.com/item?id=43445662
-
-Ongoing work
-============
-
-Ongoing kernel work can be tracked here:
-https://github.com/orgs/landlock-lsm/projects/1
-
-It would be good to have guidelines to help developers sandbox their
-applications.  OpenSSF Working Groups could be a good place for that:
-https://github.com/ossf/wg-best-practices-os-developers/issues/631
-Any help would be appreciated.
-
-We are working on a Landlock configuration format to empower all Linux
-users to sandbox their applications with Landlock:
-https://github.com/landlock-lsm/landlockconfig
-A new tool will make this library easy to use.
 
 
-Thanks to all contributors!
 
-Regards,
- Mickaël
+W dniu 19.05.2025 o 16:30, Mickaël Salaün pisze:
+> Official website:https://landlock.io
+> Previews newsletter:
+> https://lore.kernel.org/landlock/20240716.yui4Iezai8ae@digikod.net/
+
+This points to the 4th newsletter, is that expected?
+
+Best regards
+ZK
