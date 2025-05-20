@@ -1,94 +1,123 @@
-Received: from smtp-8fab.mail.infomaniak.ch (smtp-8fab.mail.infomaniak.ch [83.166.143.171])
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED0D225229C
-	for <linux-security-module@vger.kernel.org>; Tue, 20 May 2025 15:19:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03525255E34;
+	Tue, 20 May 2025 15:48:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747754345; cv=none; b=ZyI8Uy/9hrxuQIP+uwHL35WFvcEQ4R/3XKKvCA3FjIeM2nZDlB3CHOoixWEYA04w/fru1zecHCLlftOwmwbSzDqFBZnR4Z1nda0dMJaeUigQDJlulF6Ego+gz8qh9ESsMT8CRg004xgNjYt5nhg7YXk3YzDgvHjUuWtyX9MhEiA=
+	t=1747756116; cv=none; b=WV9DR8C4CX1jbHfCvfragHNEVDX8OJ8KhmMWixWeAJJqq/LloZ9G+FRaZJlYLtgvFdEqUOu+1q+IY+MBrmeP1m1obN40AiII3v/I5mXOISPmj/2BXIcb64Az4Dvfdobb7xp1JAsHVTpHljWUt17mHSedZU7B3JzNXiXcD+UYAwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747754345; c=relaxed/simple;
-	bh=70BAyOFeZfWM41kAHLRdIU92GSfnWFH99n9UrsgwNlE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G/ALUHkv/AgrCRAQyHb85c+mH8G0jud0Ez0tMPqaOn47qyYPM8/pwJaEwOut/1yAld2zTgiaarh0ZQIf8C1E8rwUDLWYmoGSMEB40d5RXonUI4yXGl89TLUEiyPS6NKr6D6cvChV00EYdnxdsB8Df9xKFoYle1Hm/8yp4VtS26A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=WJIBO6F4; arc=none smtp.client-ip=83.166.143.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
+	s=arc-20240116; t=1747756116; c=relaxed/simple;
+	bh=LzI32Ca+VsQAGk7XX4prPR9QgOiycMsvL+zoP5hvH5A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t3YSoD/1e5vYEuJorWnkeEhP53r86Iyxg7WNODLa2CH400vrvJwKIlyF1x6XJ2FEpAP0TdFT2lPQws2IiCzBm8BHBicJp+j/P1vuX6Cyx155GhLc2+Xh9uBfK3KVX2UFyk6kTsrd3tI3oPtHqU+7Mfc56D8OMLkrapZkk5/tB20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dJdR1l0I; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="WJIBO6F4"
-Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6c])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4b1yrL67zmz64G;
-	Tue, 20 May 2025 17:18:58 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1747754338;
-	bh=fpcq+IBeWj32z7gPBx92ypw/9OpgG/CmMTsCvhDLbdY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WJIBO6F4WWZKdj3YhVkk5wXJ/gzj3dr968LNvBwTBESVBEio3Vd7IWUNJcUaXA92y
-	 gU0iLGCGQmKXsRqqLFvvDyq4ZBD0aHlg1hrNG9jia1+sIitx77VFoic86WTH8h88Lq
-	 ILu9RMl3lFFDQLLqHcYQnrxtOXXYlXYfIoDrXfJE=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4b1yrJ5lpWzGb7;
-	Tue, 20 May 2025 17:18:56 +0200 (CEST)
-Date: Tue, 20 May 2025 17:18:56 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Kees Cook <kees@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, 
-	"Dr. David Alan Gilbert" <linux@treblig.org>, Mark Brown <broonie@kernel.org>, 
-	WangYuli <wangyuli@uniontech.com>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Bill Wendling <morbo@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
-	Justin Stitt <justinstitt@google.com>, Petr Mladek <pmladek@suse.com>, David Gow <davidgow@google.com>, 
-	Rae Moar <rmoar@google.com>, Tamir Duberstein <tamird@gmail.com>, 
-	Diego Vieira <diego.daniel.professional@gmail.com>, Luis Chamberlain <mcgrof@kernel.org>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, linux-hardening@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH 0/3] randstruct: gcc-plugin: Remove bogus void member
-Message-ID: <20250520.Riene6ceesha@digikod.net>
-References: <20250427013604.work.926-kees@kernel.org>
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dJdR1l0I"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=FQHcViEknIoIquspkS9lfvaNETr2qQ+5EKSi0ZIJdTQ=; b=dJdR1l0I9MGq/ZkaO01gmJiXMc
+	tx//pXHYAyqKqKcNPNr0GWoaGdvRB+4nZOJ8hLHk58m4QJ7R+S0VOGUfykF4f62SFsLAdkqsr7kHA
+	OSlg7pKwCFRh8nVJIb4Y9qbAUgj3C9Kg64J+ELqOLFJCZ3gLA1VhBl2RPxaQDE3sDGog95gbLRHrH
+	AOgd/CnxxHcyYvT1Iokv2qoa57ARAqmX3I+UqbczKfBSuVGCLKYmX0RdsiRddc5VFfz5kPA8251DN
+	oXhQ4D8th2pYwqQECUiT3OsBx7+sKcS18gkZBeaQjpzs4+Nrge3tnIW5fXOzWR/huyjSG9aBKO2VH
+	BGfYr1zA==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1uHPCd-00000000nC7-2Is3;
+	Tue, 20 May 2025 15:48:28 +0000
+Message-ID: <e88870bf-b232-4fdf-816a-32128d3791f8@infradead.org>
+Date: Tue, 20 May 2025 08:48:24 -0700
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250427013604.work.926-kees@kernel.org>
-X-Infomaniak-Routing: alpha
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: Tree for May 16 (security/landlock/ruleset.c)
+To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ Kees Cook <kees@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+ Stephen Rothwell <sfr@canb.auug.org.au>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ linux-security-module@vger.kernel.org, =?UTF-8?Q?G=C3=BCnther_Noack?=
+ <gnoack@google.com>
+References: <20250516202417.31b13d13@canb.auug.org.au>
+ <e3754f69-1dea-4542-8de0-a567a14fb95b@infradead.org>
+ <20250519.jiveise8Rau8@digikod.net> <202505191117.C094A90F88@keescook>
+ <20250519.ba8eoZu3XaeJ@digikod.net> <202505191212.61EE1AE80@keescook>
+ <20250520.uof4li6vac3I@digikod.net>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20250520.uof4li6vac3I@digikod.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sat, Apr 26, 2025 at 06:38:32PM -0700, Kees Cook wrote:
-> Hi,
-> 
-> Okay, I've tracked down the problem with the randstruct GCC plugin,
-> and written a KUnit test to validate behaviors. This lets us add
-> it back the COMPILE_TEST builds.
-> 
-> No need for https://lore.kernel.org/all/20250421000854.work.572-kees@kernel.org/
 
-Hi,
 
-What is the status of this patch series?  Do you plan to send it for
-v6.15?
+On 5/20/25 7:45 AM, Mickaël Salaün wrote:
+> On Mon, May 19, 2025 at 12:15:30PM -0700, Kees Cook wrote:
+>> On Mon, May 19, 2025 at 08:41:17PM +0200, Mickaël Salaün wrote:
+>>> On Mon, May 19, 2025 at 11:19:53AM -0700, Kees Cook wrote:
+>>>> On Mon, May 19, 2025 at 05:29:30PM +0200, Mickaël Salaün wrote:
+>>>>> On Fri, May 16, 2025 at 07:54:14PM -0700, Randy Dunlap wrote:
+>>>>>>
+>>>>>>
+>>>>>> On 5/16/25 3:24 AM, Stephen Rothwell wrote:
+>>>>>>> Hi all,
+>>>>>>>
+>>>>>>> Changes since 20250515:
+>>>>>
+>>>>> Thanks for the report.
+>>>>>
+>>>>> It is the same warning as reported here:
+>>>>> https://lore.kernel.org/all/202501040747.S3LYfvYq-lkp@intel.com/
+>>>>>
 
+[snip]
+
+>>>
+>>>>
+>>>>
+>>>> I'll take a look at ways to make either the overflow macros or memcpy
+>>>> robust against this kind of weirdness...
+>>>
+>>> Thanks!
+>>
+>> I'm doing some build testing, but the below patch makes GCC happy.
+>> Alternatively we could make CONFIG_PROFILE_ALL_BRANCHES=y depend on
+>> CONFIG_FORTIFY_SOURCE=y ...
+>>
+>>
+>> From 6fbf66fdfd0a7dac809b77faafdd72c60112bb8d Mon Sep 17 00:00:00 2001
+>> From: Kees Cook <kees@kernel.org>
+>> Date: Mon, 19 May 2025 11:52:06 -0700
+>> Subject: [PATCH] string.h: Provide basic sanity checks for fallback memcpy()
+>> MIME-Version: 1.0
+>> Content-Type: text/plain; charset=UTF-8
+>> Content-Transfer-Encoding: 8bit
+>>
+>> Instead of defining memcpy() in terms of __builtin_memcpy() deep
+>> in arch/x86/include/asm/string_32.h, notice that it is needed up in
+>> the general string.h, as done with other common C String APIs. This
+>> allows us to add basic sanity checking for pathological "size"
+>> arguments to memcpy(). Besides the run-time checking benefit, this
+>> avoids GCC trying to be very smart about value range tracking[1] when
+>> CONFIG_PROFILE_ALL_BRANCHES=y but FORTIFY_SOURCE=n.
 > 
-> -Kees
-> 
-> Kees Cook (3):
->   randstruct: gcc-plugin: Remove bogus void member
->   lib/tests: Add randstruct KUnit test
->   Revert "hardening: Disable GCC randstruct for COMPILE_TEST"
-> 
->  MAINTAINERS                                   |   1 +
->  lib/Kconfig.debug                             |   8 +
->  lib/tests/Makefile                            |   1 +
->  lib/tests/randstruct_kunit.c                  | 283 ++++++++++++++++++
->  scripts/gcc-plugins/randomize_layout_plugin.c |  18 +-
->  security/Kconfig.hardening                    |   2 +-
->  6 files changed, 295 insertions(+), 18 deletions(-)
->  create mode 100644 lib/tests/randstruct_kunit.c
-> 
-> -- 
-> 2.34.1
-> 
-> 
+> It works for me but I couldn't reproduce the issue.  I tried with
+> CONFIG_PROFILE_ALL_BRANCHES=y and CONFIG_FORTIFY_SOURCE=n but it always
+> works without a warning.  I'm using GCC 15.  Is it specific to a version
+> of GCC?
+
+I dunno. I'm using GCC 14.2.1.
+
+-- 
+~Randy
+
