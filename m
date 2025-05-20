@@ -1,103 +1,123 @@
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD3EE1D63CD
-	for <linux-security-module@vger.kernel.org>; Tue, 20 May 2025 21:16:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FF9B242D89
+	for <linux-security-module@vger.kernel.org>; Tue, 20 May 2025 21:31:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747775764; cv=none; b=lTeLLDcVIlWqZR7WIodXabnFETB9L8xplqRkYk5i450ry91KC8xd/cdy7TeA95rGB16Djo0wJ3OIKN2Wtn6capQhdrVpWIGVIaoKi3wdUTxatSkYolZEOvPIvPqo4uRVzw/XKubONmVytk5KgaMu8KnomM4STHGxpD96unHnOc8=
+	t=1747776691; cv=none; b=PMMr83K5/Rymp8g6cDG84RVQnjpELzPNfIq9vqoW03wkSAn5neXfqXc6epb0EADI3vLSpue97dTt0mmE/t2VwvMMrwXiNgcQiXtYGgSwA7LnnpZfsaXqkz/aKAOW2Kg0NNVyUt/x7Xwj7b+nOZBFCc3v1PlCTSRNmzZVCFplNgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747775764; c=relaxed/simple;
-	bh=PokIbil+4vzb3IM+d56Xpj4Mvgib+ySxP9q4ulJxR48=;
-	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=Xr9cqhUN3lpjBT0gJYpCzPsoJVVmXLa8CAAlr9yt22XUFsoJn8hk/NhNxJQ5rrkMz4Uh97+kevUQ6or6zoE8MH6XKQ49RHxAnvE9gbF8Ys1BTgGIV0eTJeplUrcXIZ9c/ChPOdV3dl0uajtiijf7tf4oM8NAQby0IdUTlVhFDT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=SATGsQUV; arc=none smtp.client-ip=209.85.219.49
+	s=arc-20240116; t=1747776691; c=relaxed/simple;
+	bh=Rp/sSKtoxvD0xDJUL1ax9jsR8XaN1Db+UrRlq03guhc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JfmwZC1B2TgNlyD7SMxSB+TLjRzjd/cs1tgmoIoQ8U9dVHsAsp+aqN8/rTdU97G/H7HIBQqthIfgzKJMw0SvhiTIx2vVFwPh59kW5IooPOfoLZF1dAw/v9IzexdPYvbjXeoIkAaRsKpLKkBAUKoXMziMTUWyacWt1VimE+Blw5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=S8qv0ptS; arc=none smtp.client-ip=209.85.219.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="SATGsQUV"
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6f0ad74483fso64428116d6.1
-        for <linux-security-module@vger.kernel.org>; Tue, 20 May 2025 14:16:01 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="S8qv0ptS"
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e740a09eae0so5456774276.1
+        for <linux-security-module@vger.kernel.org>; Tue, 20 May 2025 14:31:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1747775760; x=1748380560; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0Vcim2IrvThidRodNsg/OfOdq2fd5gLucgy52LkkAJU=;
-        b=SATGsQUVNCcWA5EQ2sN31YQi0KcO0OMgg67xcYs16ITaMOe6Op0u1D+gq7ILTSB/DL
-         FQdpiltkvmAEgWIanzWiNeydwbuD0aYpWwjtKgHSWO2+a1IMCM/L2d/EDsMDVqiR/t2A
-         Dr4vo7CV/Fw3dsrFiU//gjBLuMSUaBhq8lVdNQAtdZY1PTDlbLXocFdQ0S6bxFniWug3
-         JssnaOmXDTxnsZ7//pEfNyN7VOKN1Tmeke8pl+mCHHEZ5Qa9IcHIRRtY9bPIi/qbv8Zm
-         XyXzgURy4XykbyrKYNDGCVpAz3iq+XNE3u0910/h/s0G2OWeoqOMatHPvm/cFMZvW8ps
-         LJIg==
+        d=paul-moore.com; s=google; t=1747776688; x=1748381488; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YexwMppYcbZe/m8aCqtTjf6L6bo5b6rZLX60EXLxJJM=;
+        b=S8qv0ptS+qog4CXjQizT49B9eBq/MmCkIY1IMNxSyXdIxqlk0sxQVA1BqhkK/bwIgK
+         O4S/DVWObFNCdXo44Bq1/CGkjk8OijwXVuD71UnHg36INVS81QBRvD/ZjEaOiupFg/0b
+         m9VEwcA/yZzDm0AeC0g6qXNG/ZUYMSA4kAR8xObmtuWeljORdLY7BciHMBc8AoOZ9n35
+         E4LRowUaRBt4Vlq7fJ6/5elJpHdlvDK0r2Rq4rdWbmkFlov2umkXFENBrWg3kSculIXX
+         rPZKLrW+I17nJ8OqOlj1uxiRMcPg4k15n9QuFRfLxHNbl2PVnyIJYoH7kfZvyF5W2Mfr
+         HrGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747775760; x=1748380560;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=0Vcim2IrvThidRodNsg/OfOdq2fd5gLucgy52LkkAJU=;
-        b=Im4HCt72z7pi0xC7GYL+8W6PLxngt6Q3fXuSNq4vdn5AKr/Fs/Frvix5X8nU8O3bgj
-         GSrnJB87b8J7hNsRr2KksWJdalqnd4s6R5RSjzUC3Dv0WONAWgc0JyiYyGQyhU7L7+Nz
-         y17W/1TWrnUg9tSqk6NpHfoE5c3b2qG5v/k/g/shlfA/EEJo0rMd0xMZP6n6rkUcW+Z5
-         Li1FrNkWkOwHsfqtEhplDEXR4J3neOMo8iGNEHLvhmejuHS7V7hOZzrB5vGJ/aieZ3o4
-         LX7+wi4peFg1kzBguCSoGHuJP9eNbruTZCdKWhQa1P4R25oUl+NDUDQm1PE+xBGaROow
-         P1EQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXaU3qiWzvA3PfoVJm1fBqvZsk2PlAvU+eL9yz6uTHoe8hwRiqatQGOrFKUfirMpGa9Av9LKXozaTu23+/SkwgJn3XyYDA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywp9GMxgnmpoMyeKwEyDREIEaz7C+IuGCmubiy6GFQAURAO2I3o
-	0PpbaEcYcWf8HUQFzsMy25X7f/6PT5bEazncJ9BpEoX8aviH/PZjjHwdXCPNq2RFAg==
-X-Gm-Gg: ASbGnctmcfIARrP36zYNaAjGmT2q+s9VEnyc8G08UhGruXx6vBtSz5QJO43fTnEhMVu
-	dbrhQMvHtg1eL1O1QMqHo7yM+wNNVovBKQUlPOVpMWAUO/FrTxcjPNGr1dezhyTxN5aKvu3sPxj
-	nhptczhLBE4um8Bka8i+cd34viwZcLWjMw3a872CO5/OWhxAhRYhDlShoMYifhKKFXS0NSsdGi3
-	XvxTnARzTebK7w+8WD40KC4tk8DxxKv/QfC6jiLUQvX5tXVWGMzLif3snRVID7u6rBwFMdhluJQ
-	CR0FjUPBMqrOkwv6LKGkXOpVoldWLDydy4UoKVc6gMZ+bU5+ShUozTZV6rtVGfTSStrlpUVQ0nj
-	f1xd56fxbGqD0kYOXwZ1veTGpLSgAo9g=
-X-Google-Smtp-Source: AGHT+IGXRcWfO4AHv0ErYu9MQe8pxWB5OkTwD4jggVmmRyicMFT0cpUlaxE7iaZV/7atuSeHLh1gYg==
-X-Received: by 2002:ad4:5e8f:0:b0:6d8:a8e1:b57b with SMTP id 6a1803df08f44-6f8b0873ba6mr330435226d6.36.1747775760552;
-        Tue, 20 May 2025 14:16:00 -0700 (PDT)
-Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6f8b0883b93sm76456226d6.14.2025.05.20.14.15.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 May 2025 14:15:59 -0700 (PDT)
-Date: Tue, 20 May 2025 17:15:59 -0400
-Message-ID: <eb68761b5a2d53702f4d6b80fe2a6457@paul-moore.com>
+        d=1e100.net; s=20230601; t=1747776688; x=1748381488;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YexwMppYcbZe/m8aCqtTjf6L6bo5b6rZLX60EXLxJJM=;
+        b=PWmzzsi1IuaBmo0ElRyBhl8CAlBCOk38N0NJKT9vGTdlRmF6w5X71pAr5+FeIJm1jf
+         fI38BpCok6U08K/jp6KEYNaFNtz2nIqdlcm5zPLSQfzuVtEp/T6Al29NiEJgTm9un0rz
+         Bu0J+HMMWDg2D2j5NsTGQDnRWwIWZJ4DEdhgQo9JlUy1fplZqIy7sN5Fya37cwOlKkB9
+         ErdDhCQtla4Z3t+sFNgwJU/ODasEvjx5HWxk4Jc8RwAmHqNh1ue+5c5i5t2Yj3O/zg4b
+         kD/ohFCsWusD5c/SGbvZTZ4opAtfzno2xSZPmV+Uh5KpDmKTdOEJSah9vDKhFQbNKZ1F
+         LdQA==
+X-Forwarded-Encrypted: i=1; AJvYcCVFzTlUjmK/+1Jz9lN0/wg+MyfuuohtBvHS149dX2OKUJ26FK8OLwkBkk5IZfHlrEZEHY2U4IzKTiQLUj9D2146fw/P4Zo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywjhvse6wNwpquivWPhTz3hhoaa7J2l4ZEma1UOneL8/j+Oeoa0
+	2zlQtXZNqdczPb80mcsD5Ph5iD7SlPXGGTnX4GbOb0G2nSwZIGZqDYMHSWBijRtvtsDYu8BFcq8
+	KUfqXgLx+HZEGrX/LZIQxFGnd6SUM24sIyMSCE/6z
+X-Gm-Gg: ASbGncvn8ao7LJRU5mJHlcAOowBOVBPZrzNNMxnLk7213ag9R6b7Riro53ILIY0wpVn
+	1pKnAalRtpV2Q+xD0w99W9oU3+c2FzaUC4xbTx6t9GzJYuwZvafYVXmPZoQmNvyX4SJeF74w+4E
+	R9vvb6arnxkwtwbec1HKoSwDSl6UZTCyFD
+X-Google-Smtp-Source: AGHT+IGZ/rtogvtb9mmq771rmbik+el6dyUZ8s9kwWv9ZNx2CrYoN2T0d4tY5zplAYSZmSb/J7/BxKaHsq01XwQ2/QQ=
+X-Received: by 2002:a05:6902:6c12:b0:e7d:585d:6aac with SMTP id
+ 3f1490d57ef6-e7d585d6f25mr2740629276.39.1747776688624; Tue, 20 May 2025
+ 14:31:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=UTF-8 
-Content-Transfer-Encoding: 8bit 
-X-Mailer: pstg-pwork:20250520_1533/pstg-lib:20250520_1521/pstg-pwork:20250520_1533
+MIME-Version: 1.0
+References: <20250428195022.24587-2-stephen.smalley.work@gmail.com> <CAHC9VhQfrMe7EY3_bvW6PcLdaW7tPMgv6WZuePxd1RrbhyZv-g@mail.gmail.com>
+In-Reply-To: <CAHC9VhQfrMe7EY3_bvW6PcLdaW7tPMgv6WZuePxd1RrbhyZv-g@mail.gmail.com>
 From: Paul Moore <paul@paul-moore.com>
-To: Li Li <dualli@chromium.org>, dualli@google.com, corbet@lwn.net, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, donald.hunter@gmail.com, gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com, maco@android.com, joel@joelfernandes.org, brauner@kernel.org, cmllamas@google.com, surenb@google.com, omosnace@redhat.com, shuah@kernel.org, arnd@arndb.de, masahiroy@kernel.org, bagasdotme@gmail.com, horms@kernel.org, tweek@google.com, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, netdev@vger.kernel.org, selinux@vger.kernel.org, linux-security-module@vger.kernel.org, hridya@google.com
-Cc: smoreland@google.com, ynaffit@google.com, kernel-team@android.com
-Subject: Re: [PATCH v17 1/3] lsm, selinux: Add setup_report permission to  binder
-References: <20250417002005.2306284-2-dualli@chromium.org>
-In-Reply-To: <20250417002005.2306284-2-dualli@chromium.org>
+Date: Tue, 20 May 2025 17:31:17 -0400
+X-Gm-Features: AX0GCFsKbQqPlLe-FjaU6xxZxNkDN5cHZfC1VDbTRZv-QCv_QCmlg4xFRTHqelQ
+Message-ID: <CAHC9VhQyDX+NgWipgm5DGMewfVTBe3DkLbe_AANRiuAj40bA1w@mail.gmail.com>
+Subject: Re: [PATCH v2] security,fs,nfs,net: update security_inode_listsecurity()
+ interface
+To: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
+	Jakub Kicinski <kuba@kernel.org>, Casey Schaufler <casey@schaufler-ca.com>
+Cc: Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Eric Dumazet <edumazet@google.com>, 
+	Kuniyuki Iwashima <kuniyu@amazon.com>, Paolo Abeni <pabeni@redhat.com>, 
+	Willem de Bruijn <willemb@google.com>, "David S. Miller" <davem@davemloft.net>, 
+	Simon Horman <horms@kernel.org>, Ondrej Mosnacek <omosnace@redhat.com>, linux-nfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, netdev@vger.kernel.org, 
+	selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Apr 16, 2025 Li Li <dualli@chromium.org> wrote:
-> 
-> Introduce a new permission "setup_report" to the "binder" class.
-> This persmission controls the ability to set up the binder generic
-> netlink driver to report certain binder transactions.
-> 
-> Signed-off-by: Thiébaud Weksteen <tweek@google.com>
-> Signed-off-by: Li Li <dualli@google.com>
-> ---
->  include/linux/lsm_hook_defs.h       |  1 +
->  include/linux/security.h            |  6 ++++++
->  security/security.c                 | 13 +++++++++++++
->  security/selinux/hooks.c            |  7 +++++++
->  security/selinux/include/classmap.h |  3 ++-
->  5 files changed, 29 insertions(+), 1 deletion(-)
+On Tue, Apr 29, 2025 at 7:34=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+ote:
+> On Mon, Apr 28, 2025 at 4:15=E2=80=AFPM Stephen Smalley
+> <stephen.smalley.work@gmail.com> wrote:
+> >
+> > Update the security_inode_listsecurity() interface to allow
+> > use of the xattr_list_one() helper and update the hook
+> > implementations.
+> >
+> > Link: https://lore.kernel.org/selinux/20250424152822.2719-1-stephen.sma=
+lley.work@gmail.com/
+> >
+> > Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> > ---
+> > This patch is relative to the one linked above, which in theory is on
+> > vfs.fixes but doesn't appear to have been pushed when I looked.
+> >
+> >  fs/nfs/nfs4proc.c             | 10 ++++++----
+> >  fs/xattr.c                    | 19 +++++++------------
+> >  include/linux/lsm_hook_defs.h |  4 ++--
+> >  include/linux/security.h      |  5 +++--
+> >  net/socket.c                  | 17 +++++++----------
+> >  security/security.c           | 16 ++++++++--------
+> >  security/selinux/hooks.c      | 10 +++-------
+> >  security/smack/smack_lsm.c    | 13 ++++---------
+> >  8 files changed, 40 insertions(+), 54 deletions(-)
+>
+> Thanks Stephen.  Once we get ACKs from the NFS, netdev, and Smack
+> folks I can pull this into the LSM tree.
 
-When possible, it is helpful to include at least one caller in the patch
-which adds a new LSM hook as it helps put the hook in context.  With that
-in mind, I think it would be best to reorder this patchset so that patch
-2/3 comes first and this patch comes second, with this patch including
-the change to binder_nl_report_setup_doit() which adds the call to the
-new LSM hook.
+Gentle ping for Trond, Anna, Jakub, and Casey ... can I get some ACKs
+on this patch?  It's a little late for the upcoming merge window, but
+I'd like to merge this via the LSM tree after the merge window closes.
+
+Link to the patch if you can't find it in your inbox:
+https://lore.kernel.org/linux-security-module/20250428195022.24587-2-stephe=
+n.smalley.work@gmail.com/
 
 --
 paul-moore.com
