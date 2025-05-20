@@ -1,35 +1,36 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E9724C07A;
-	Tue, 20 May 2025 16:44:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88461211497;
+	Tue, 20 May 2025 16:47:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747759451; cv=none; b=pSCmsOOOuAGW+f+XytQZ63r4yAo1EG4yvOhir4Bvgomw7AITprgCEr9MfnKnOjb1qdmyEyq+j39wkdSeiP/LFSxA6Ig/2bUdyT9QOl4xKCB/pkuRRXg4UsJgERmjcO+1ZGif+Scs8dEpkfiqYarRdu7dPiD6t/hg4icgJ34tvbA=
+	t=1747759663; cv=none; b=dLiJPOhYJ9xPwL2dTwqdCS4/8JINAaMq6Iz+6b9MBUOqvdRL9rssZ0EtjwLpqeeb98uUqNDn0Nk6idEN7AAgt6FtQ+FemieAGumQTS4vzmLpjieEQQDjcrWqYL7GXPSdiXz4IhKayPu3A2r23gY6ElykuSnbotIc+WTpx/KoPBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747759451; c=relaxed/simple;
-	bh=7Jo866HOUWpn98YMZXcLAEx5hpVa/54PC3BmcqcA+Ms=;
+	s=arc-20240116; t=1747759663; c=relaxed/simple;
+	bh=Axihyr7398qJC9RwLmYp5/r6di4dlvly/GLdLRtqlU4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N0yarsRxa3RqBmgoF9EgcRwMeVRcePKCt4HINicXOvMT8GsgcfFe/fPTfTfigFRKggQjs9RahDC5LhRz5GMf4Ii+78EM+u7I4S5ZeMKiEOdAoD3c89SrRfU0kjpsAoRD8tMEl+/UavoLr5D0ecvXIRnFgT0hHHjh+0O6oX0kCS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g2wWhl4R; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=FZ+BSMptyx5tAGCjTnyu7rchYEzXCuvLPismr3pOdBDRt6EdpeRBcXQoRQXSywsKVlVjIoc42QhlMrDEbA/sU/SZqdDpT9tQO1gkDi6gBpfDkfuPf3mts3+KE0vGX5+0QUDWvmn/o6+q82WYBMvfX5SW8q4tzWmGxrRU0W2EP6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bCuvvuqa; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g2wWhl4R"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4115C4CEE9;
-	Tue, 20 May 2025 16:44:09 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bCuvvuqa"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11428C4CEE9;
+	Tue, 20 May 2025 16:47:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747759449;
-	bh=7Jo866HOUWpn98YMZXcLAEx5hpVa/54PC3BmcqcA+Ms=;
+	s=k20201202; t=1747759663;
+	bh=Axihyr7398qJC9RwLmYp5/r6di4dlvly/GLdLRtqlU4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=g2wWhl4RO4BZBOSVjU8Oooqz/TfZkyXX7COE0J9D9hWU2WOSDHIdtlhDl16YNy7WM
-	 GO0GvAoYdWX2SiDxqOmRcFxPVVxbUGU2ErbjPCfGy83BCsagQbWiKIF5A8zb1SYkBX
-	 naTnmwHVyFsVRqmaLD+ACfqKm1JgZ1Y+aP5klSv0JcVXhVlac0lHKY08KPhGxyje9q
-	 p4NWoLEGG9UXOVW5XsGI9DQsl3CjV/BdGEBpi3i/M9ilVQ2p4K2IJeiOlYDCzVUQto
-	 svxltGDQyrKPv5Cd1+ByP/r9zAcRrq79duz5HSXocy7OF9iev8AYluvIX6rkMqHT5w
-	 eEBntP2IRqVNA==
-Date: Tue, 20 May 2025 09:44:06 -0700
+	b=bCuvvuqapQz8wD3YmbuiGIaIhFV/qE2/rzrctpKMqUT3/85sx1phf199drMZ6vd68
+	 03j6/3Z1RnTtUMBSofERWU+vvpph+vtyw6u6QZaXp0hmWXUSH7ZpiB6d2WHJacxZni
+	 ZnHO0ZaAn5uxa4ZUnL7/Iw/mptR54MX3vtqUVgxlt7kfKNhKONlYJYdQNKao9z9l8z
+	 zfazmU2qHq7OgXNgg2d4H//lnb+q4qtTHwbDtiyc1wBw6R2gRiyXyTSTzP6KzqNSs9
+	 hOHHu717m1hVIBkmkfEzqykCjEa5ZJ1tF4neVA4GU599F5wTOVExAOQPG2x9BLDBEJ
+	 Uov/l3VO9/UBw==
+Date: Tue, 20 May 2025 09:47:39 -0700
 From: Kees Cook <kees@kernel.org>
-To: Randy Dunlap <rdunlap@infradead.org>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
 Cc: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	Randy Dunlap <rdunlap@infradead.org>,
 	Steven Rostedt <rostedt@goodmis.org>,
 	Stephen Rothwell <sfr@canb.auug.org.au>,
 	Linux Next Mailing List <linux-next@vger.kernel.org>,
@@ -37,14 +38,14 @@ Cc: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
 	linux-security-module@vger.kernel.org,
 	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>
 Subject: Re: linux-next: Tree for May 16 (security/landlock/ruleset.c)
-Message-ID: <202505200943.1A699B9@keescook>
+Message-ID: <202505200947.5D9CE9EBE1@keescook>
 References: <20250516202417.31b13d13@canb.auug.org.au>
  <e3754f69-1dea-4542-8de0-a567a14fb95b@infradead.org>
  <20250519.jiveise8Rau8@digikod.net>
  <202505191117.C094A90F88@keescook>
  <20250519.ba8eoZu3XaeJ@digikod.net>
  <202505191212.61EE1AE80@keescook>
- <d645a0a2-4ffd-4dc6-b8a9-522ec3d27d7f@infradead.org>
+ <aCyLT2qr_7iJJHm6@black.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -54,12 +55,15 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <d645a0a2-4ffd-4dc6-b8a9-522ec3d27d7f@infradead.org>
+In-Reply-To: <aCyLT2qr_7iJJHm6@black.fi.intel.com>
 
-On Mon, May 19, 2025 at 01:26:52PM -0700, Randy Dunlap wrote:
+On Tue, May 20, 2025 at 05:01:51PM +0300, Andy Shevchenko wrote:
+> On Mon, May 19, 2025 at 12:15:30PM -0700, Kees Cook wrote:
+> > On Mon, May 19, 2025 at 08:41:17PM +0200, Mickaël Salaün wrote:
 > 
+> ...
 > 
-> > From 6fbf66fdfd0a7dac809b77faafdd72c60112bb8d Mon Sep 17 00:00:00 2001
+> > >From 6fbf66fdfd0a7dac809b77faafdd72c60112bb8d Mon Sep 17 00:00:00 2001
 > > From: Kees Cook <kees@kernel.org>
 > > Date: Mon, 19 May 2025 11:52:06 -0700
 > > Subject: [PATCH] string.h: Provide basic sanity checks for fallback memcpy()
@@ -81,17 +85,6 @@ On Mon, May 19, 2025 at 01:26:52PM -0700, Randy Dunlap wrote:
 > > Reported-by: Randy Dunlap <rdunlap@infradead.org>
 > > Closes: https://lore.kernel.org/all/e3754f69-1dea-4542-8de0-a567a14fb95b@infradead.org/
 > > Signed-off-by: Kees Cook <kees@kernel.org>
-> 
-> Tested-by: Randy Dunlap <rdunlap@infradead.org>
-
-I missed this when I sent out the proper patch. I'll add it locally.
-Thanks!
-
--Kees
-
-> 
-> Thanks.
-> 
 > > ---
 > > Cc: "Mickaël Salaün" <mic@digikod.net>
 > > Cc: Thomas Gleixner <tglx@linutronix.de>
@@ -134,32 +127,17 @@ Thanks!
 > >  
 > >  #include <linux/args.h>
 > > +#include <linux/bug.h>
-> >  #include <linux/array_size.h>
-> >  #include <linux/cleanup.h>	/* for DEFINE_FREE() */
-> >  #include <linux/compiler.h>	/* for inline */
-> > @@ -390,7 +391,19 @@ static inline const char *kbasename(const char *path)
-> >  
-> >  #if !defined(__NO_FORTIFY) && defined(__OPTIMIZE__) && defined(CONFIG_FORTIFY_SOURCE)
-> >  #include <linux/fortify-string.h>
-> > +#else
-> > +/* Basic sanity checking even without FORTIFY_SOURCE */
-> > +# ifndef __HAVE_ARCH_MEMCPY
-> > +#  define memcpy(t, f, n)					\
-> > +	do {							\
-> > +		typeof(n) __n = (n);				\
-> > +		/* Skip impossible sizes. */			\
-> > +		if (!WARN_ON(__n < 0 || __n == SIZE_MAX))	\
-> > +			__builtin_memcpy(t, f, __n);		\
-> > +	} while (0)
-> > +# endif
-> >  #endif
-> > +
-> >  #ifndef unsafe_memcpy
-> >  #define unsafe_memcpy(dst, src, bytes, justification)		\
-> >  	memcpy(dst, src, bytes)
 > 
-> -- 
-> ~Randy
+> In case you are go with this change, please keep the headers in order.
+> 
+> >  #include <linux/array_size.h>
+> 
+> (should be located here)
+
+Oops, yes, that was my intent but I typoed my insert, it seems. Fixed
+now; thanks!
+
+-Kees
 
 -- 
 Kees Cook
