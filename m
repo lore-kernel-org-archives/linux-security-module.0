@@ -1,143 +1,155 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88461211497;
-	Tue, 20 May 2025 16:47:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B8D171D2
+	for <linux-security-module@vger.kernel.org>; Tue, 20 May 2025 19:28:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747759663; cv=none; b=dLiJPOhYJ9xPwL2dTwqdCS4/8JINAaMq6Iz+6b9MBUOqvdRL9rssZ0EtjwLpqeeb98uUqNDn0Nk6idEN7AAgt6FtQ+FemieAGumQTS4vzmLpjieEQQDjcrWqYL7GXPSdiXz4IhKayPu3A2r23gY6ElykuSnbotIc+WTpx/KoPBM=
+	t=1747769327; cv=none; b=GWwAa8Iuy/w1iG7K2coI49zqcUAD08ZIrwj/QA4Ck4r7q0F2cO+MEydtP1+qdyIddx2TTOBTdg/CF9llLE+YA21EfjGOzPP5ILH7F6YbOnKWcVRZwue2vrek6QOvTvvGtMxpOdylG0gl67vnz0Fz2ADscL1u1f3RJF0HDJAAd6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747759663; c=relaxed/simple;
-	bh=Axihyr7398qJC9RwLmYp5/r6di4dlvly/GLdLRtqlU4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FZ+BSMptyx5tAGCjTnyu7rchYEzXCuvLPismr3pOdBDRt6EdpeRBcXQoRQXSywsKVlVjIoc42QhlMrDEbA/sU/SZqdDpT9tQO1gkDi6gBpfDkfuPf3mts3+KE0vGX5+0QUDWvmn/o6+q82WYBMvfX5SW8q4tzWmGxrRU0W2EP6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bCuvvuqa; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1747769327; c=relaxed/simple;
+	bh=VDO3T/W1YczuPEGQTj+B/DwdwmAGf+sUsv2s865z87w=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tKwo2+/TKpl1K4FGJEWqRY5kB4tyaiLpoVIh3XEi9+ScrpYrZOu5g+vkaSyyML3vtfQ5RdOTrXnJ2zLXn6iXvxmqR3JO0NShXUz6xoxiQGjmFGqevrHhRcodv5ABI36s5siN8n8xhXukoNdnHoWzTcuumCySGGK1fTC06aECt30=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org; spf=pass smtp.mailfrom=networkplumber.org; dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b=jhTEBsgU; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=networkplumber.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=networkplumber.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bCuvvuqa"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11428C4CEE9;
-	Tue, 20 May 2025 16:47:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747759663;
-	bh=Axihyr7398qJC9RwLmYp5/r6di4dlvly/GLdLRtqlU4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bCuvvuqapQz8wD3YmbuiGIaIhFV/qE2/rzrctpKMqUT3/85sx1phf199drMZ6vd68
-	 03j6/3Z1RnTtUMBSofERWU+vvpph+vtyw6u6QZaXp0hmWXUSH7ZpiB6d2WHJacxZni
-	 ZnHO0ZaAn5uxa4ZUnL7/Iw/mptR54MX3vtqUVgxlt7kfKNhKONlYJYdQNKao9z9l8z
-	 zfazmU2qHq7OgXNgg2d4H//lnb+q4qtTHwbDtiyc1wBw6R2gRiyXyTSTzP6KzqNSs9
-	 hOHHu717m1hVIBkmkfEzqykCjEa5ZJ1tF4neVA4GU599F5wTOVExAOQPG2x9BLDBEJ
-	 Uov/l3VO9/UBw==
-Date: Tue, 20 May 2025 09:47:39 -0700
-From: Kees Cook <kees@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@intel.com>
-Cc: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-security-module@vger.kernel.org,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>
-Subject: Re: linux-next: Tree for May 16 (security/landlock/ruleset.c)
-Message-ID: <202505200947.5D9CE9EBE1@keescook>
-References: <20250516202417.31b13d13@canb.auug.org.au>
- <e3754f69-1dea-4542-8de0-a567a14fb95b@infradead.org>
- <20250519.jiveise8Rau8@digikod.net>
- <202505191117.C094A90F88@keescook>
- <20250519.ba8eoZu3XaeJ@digikod.net>
- <202505191212.61EE1AE80@keescook>
- <aCyLT2qr_7iJJHm6@black.fi.intel.com>
+	dkim=pass (2048-bit key) header.d=networkplumber-org.20230601.gappssmtp.com header.i=@networkplumber-org.20230601.gappssmtp.com header.b="jhTEBsgU"
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6ecfc2cb1aaso63011716d6.3
+        for <linux-security-module@vger.kernel.org>; Tue, 20 May 2025 12:28:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=networkplumber-org.20230601.gappssmtp.com; s=20230601; t=1747769325; x=1748374125; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QSq28DpagvGJS4EtTRrUgm0EArBYqtzS+oqfIhFoB8s=;
+        b=jhTEBsgUQidpFVnE5qLU4pKv1nO0I3DDJyO/CWdXlDVk2gHDOscqqAzWn7+/FF39en
+         lxYNaWQm5QZ4DMclGefY/P+xGhIY2b6PoFItz65MxCZwhaqQ6QX6H1B+9O1fhi1qhnRL
+         qRqE6HP6qrB0PiCETsG03zm04CNW5LAOqjMzZ46geJbg/LfI5dqlqeERuC4LMdvHF/ky
+         wmRKoyiL8u+h4sm71CqoDz/lY5dEgoauNUd/BxyJ31CUMMVIflS0cu4zy3naIas+MxPf
+         yRN3TH8CzU59pCMzKQ81NzUX9w3A47wnO8cDF/nyaOFtYsvDS+AnBzXRT+jPb87UFK93
+         TKwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747769325; x=1748374125;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QSq28DpagvGJS4EtTRrUgm0EArBYqtzS+oqfIhFoB8s=;
+        b=B5i6aIvc+Jg6fvM+fj+bYeTayTAogUe81+8pxZXg8fPyP2IoVd8JCk2jmymG99XbI9
+         UvsHrqgX7VgmEZpX93LLrRkO41u5HHFZMmmzOv4JYQjvjwftaJjxksMBCyzGxn51sS7c
+         6tjkcxL23KiGGgLfMasb7rT0CbKGcFfQAIuzE8VuAoufvRYCFHdoqnfqTkyTVoO+RmP3
+         LSPFalRwBXqODnd3Ts0AHR6QLNqMXanBnozpLnASfxDaBunek3wxFifUA1zx7Uglff32
+         cp8ChwJjrJFiY02nMJOXwzZKQkxpAv7btLYK3Kw6BDfmt/dTgnhiRDuukO53MYM5svQK
+         fvuA==
+X-Forwarded-Encrypted: i=1; AJvYcCVRs2OVemwwOGgZewpF7il/kpuBp70XdFFkZvMFpFfDsETvSb59biLiBWG9zQv54NnRpbWLoazInK5oozBMXqKS2gdqAgk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrzOfUzLDJC0/qUr5TibNw8dtaYU7kcdF67spF9XjuDnwu6wNx
+	r0bw1cZodq8Ui0ELOmAapRr4BAqADua0o2qJ3z6pRWajlI1BqufaqhCRjALuG6Yorco=
+X-Gm-Gg: ASbGncuZQtFbmBa+eyY4PmTH+PyGdZfL/MDuyzzL/ikjuLkU5wO+L+u+Z6S6JFUYwTH
+	6UGGkk7Etm55+OUYrEiTp5nNTwsN2PFJrTSZYrlBnFiM4lhQUhBkk8kPwhsvtu6Jt928iwgEqeM
+	+xL0bgSrZgg42EJ4fQzO05XTSoGHli0jsgw+3SEzUw/OFKYr3kih3vY0NR8bMn6MTZ3yVTSjaJG
+	QPCRm0yfaL/A/rrSrYtdc50uWn0VzLlmKHpcg1Z4rs0mec80eU1ik1InhgrKxbIcqm8c3M1lH0w
+	JolPqq5PUdPtKTjMO+o1dBoEQIlRUOlPgSOFgomXGQ9L1Ke4tB7NQwV6BtID0rlR7uSlkwhFEPd
+	b9+Wh2lIpG1sCjZoTxGiP5hBCsjyk
+X-Google-Smtp-Source: AGHT+IF2atiktvD9wDULfPXZekAoh4vnDwU+9Pt1AMawvaALaKAT6Zl+DIgg+N+z4H74uEanAqqEQQ==
+X-Received: by 2002:a05:6214:2027:b0:6f5:3811:cc67 with SMTP id 6a1803df08f44-6f8b0842b16mr287390866d6.12.1747769324713;
+        Tue, 20 May 2025 12:28:44 -0700 (PDT)
+Received: from hermes.local (204-195-96-226.wavecable.com. [204.195.96.226])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f8b8778237sm67169206d6.17.2025.05.20.12.28.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 May 2025 12:28:44 -0700 (PDT)
+Date: Tue, 20 May 2025 12:28:38 -0700
+From: Stephen Hemminger <stephen@networkplumber.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Jann Horn <jannh@google.com>, Daniel
+ Borkmann <daniel@iogearbox.net>, Kuniyuki Iwashima <kuniyu@amazon.com>,
+ Eric Dumazet <edumazet@google.com>, Oleg Nesterov <oleg@redhat.com>, "David
+ S. Miller" <davem@davemloft.net>, Alexander Viro <viro@zeniv.linux.org.uk>,
+ Daan De Meyer <daan.j.demeyer@gmail.com>, David Rheinsberg
+ <david@readahead.eu>, Jakub Kicinski <kuba@kernel.org>, Jan Kara
+ <jack@suse.cz>, Lennart Poettering <lennart@poettering.net>, Luca Boccassi
+ <luca.boccassi@gmail.com>, Mike Yuan <me@yhndnzj.com>, Paolo Abeni
+ <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Zbigniew
+ =?UTF-8?B?SsSZZHJ6ZWpld3NraS1Tem1law==?= <zbyszek@in.waw.pl>,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-security-module@vger.kernel.org, Alexander Mikhalitsyn
+ <alexander@mihalicyn.com>, Serge Hallyn <serge@hallyn.com>
+Subject: Re: [PATCH v8 0/9] coredump: add coredump socket
+Message-ID: <20250520122838.29131f04@hermes.local>
+In-Reply-To: <20250516-work-coredump-socket-v8-0-664f3caf2516@kernel.org>
+References: <20250516-work-coredump-socket-v8-0-664f3caf2516@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aCyLT2qr_7iJJHm6@black.fi.intel.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, May 20, 2025 at 05:01:51PM +0300, Andy Shevchenko wrote:
-> On Mon, May 19, 2025 at 12:15:30PM -0700, Kees Cook wrote:
-> > On Mon, May 19, 2025 at 08:41:17PM +0200, Mickaël Salaün wrote:
-> 
-> ...
-> 
-> > >From 6fbf66fdfd0a7dac809b77faafdd72c60112bb8d Mon Sep 17 00:00:00 2001
-> > From: Kees Cook <kees@kernel.org>
-> > Date: Mon, 19 May 2025 11:52:06 -0700
-> > Subject: [PATCH] string.h: Provide basic sanity checks for fallback memcpy()
-> > MIME-Version: 1.0
-> > Content-Type: text/plain; charset=UTF-8
-> > Content-Transfer-Encoding: 8bit
-> > 
-> > Instead of defining memcpy() in terms of __builtin_memcpy() deep
-> > in arch/x86/include/asm/string_32.h, notice that it is needed up in
-> > the general string.h, as done with other common C String APIs. This
-> > allows us to add basic sanity checking for pathological "size"
-> > arguments to memcpy(). Besides the run-time checking benefit, this
-> > avoids GCC trying to be very smart about value range tracking[1] when
-> > CONFIG_PROFILE_ALL_BRANCHES=y but FORTIFY_SOURCE=n.
-> > 
-> > Link: https://lore.kernel.org/all/202505191117.C094A90F88@keescook/ [1]
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > Closes: https://lore.kernel.org/all/202501040747.S3LYfvYq-lkp@intel.com/
-> > Reported-by: Randy Dunlap <rdunlap@infradead.org>
-> > Closes: https://lore.kernel.org/all/e3754f69-1dea-4542-8de0-a567a14fb95b@infradead.org/
-> > Signed-off-by: Kees Cook <kees@kernel.org>
-> > ---
-> > Cc: "Mickaël Salaün" <mic@digikod.net>
-> > Cc: Thomas Gleixner <tglx@linutronix.de>
-> > Cc: Ingo Molnar <mingo@redhat.com>
-> > Cc: Borislav Petkov <bp@alien8.de>
-> > Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> > Cc: <x86@kernel.org>
-> > Cc: "H. Peter Anvin" <hpa@zytor.com>
-> > Cc: Andy Shevchenko <andy@kernel.org>
-> > Cc: Uros Bizjak <ubizjak@gmail.com>
-> > Cc: <linux-hardening@vger.kernel.org>
-> > ---
-> >  arch/x86/include/asm/string_32.h |  6 ------
-> >  include/linux/string.h           | 13 +++++++++++++
-> >  2 files changed, 13 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/arch/x86/include/asm/string_32.h b/arch/x86/include/asm/string_32.h
-> > index e9cce169bb4c..74397c95fa37 100644
-> > --- a/arch/x86/include/asm/string_32.h
-> > +++ b/arch/x86/include/asm/string_32.h
-> > @@ -145,12 +145,6 @@ static __always_inline void *__constant_memcpy(void *to, const void *from,
-> >  #define __HAVE_ARCH_MEMCPY
-> >  extern void *memcpy(void *, const void *, size_t);
-> >  
-> > -#ifndef CONFIG_FORTIFY_SOURCE
-> > -
-> > -#define memcpy(t, f, n) __builtin_memcpy(t, f, n)
-> > -
-> > -#endif /* !CONFIG_FORTIFY_SOURCE */
-> > -
-> >  #define __HAVE_ARCH_MEMMOVE
-> >  void *memmove(void *dest, const void *src, size_t n);
-> >  
-> > diff --git a/include/linux/string.h b/include/linux/string.h
-> > index 01621ad0f598..ffcee31a14f9 100644
-> > --- a/include/linux/string.h
-> > +++ b/include/linux/string.h
-> > @@ -3,6 +3,7 @@
-> >  #define _LINUX_STRING_H_
-> >  
-> >  #include <linux/args.h>
-> > +#include <linux/bug.h>
-> 
-> In case you are go with this change, please keep the headers in order.
-> 
-> >  #include <linux/array_size.h>
-> 
-> (should be located here)
+On Fri, 16 May 2025 13:25:27 +0200
+Christian Brauner <brauner@kernel.org> wrote:
 
-Oops, yes, that was my intent but I typoed my insert, it seems. Fixed
-now; thanks!
+> Coredumping currently supports two modes:
+> 
+> (1) Dumping directly into a file somewhere on the filesystem.
+> (2) Dumping into a pipe connected to a usermode helper process
+>     spawned as a child of the system_unbound_wq or kthreadd.
+> 
+> For simplicity I'm mostly ignoring (1). There's probably still some
+> users of (1) out there but processing coredumps in this way can be
+> considered adventurous especially in the face of set*id binaries.
+> 
+> The most common option should be (2) by now. It works by allowing
+> userspace to put a string into /proc/sys/kernel/core_pattern like:
+> 
+>         |/usr/lib/systemd/systemd-coredump %P %u %g %s %t %c %h
+> 
+> The "|" at the beginning indicates to the kernel that a pipe must be
+> used. The path following the pipe indicator is a path to a binary that
+> will be spawned as a usermode helper process. Any additional parameters
+> pass information about the task that is generating the coredump to the
+> binary that processes the coredump.
+> 
+> In the example core_pattern shown above systemd-coredump is spawned as a
+> usermode helper. There's various conceptual consequences of this
+> (non-exhaustive list):
+> 
+> - systemd-coredump is spawned with file descriptor number 0 (stdin)
+>   connected to the read-end of the pipe. All other file descriptors are
+>   closed. That specifically includes 1 (stdout) and 2 (stderr). This has
+>   already caused bugs because userspace assumed that this cannot happen
+>   (Whether or not this is a sane assumption is irrelevant.).
+> 
+> - systemd-coredump will be spawned as a child of system_unbound_wq. So
+>   it is not a child of any userspace process and specifically not a
+>   child of PID 1. It cannot be waited upon and is in a weird hybrid
+>   upcall which are difficult for userspace to control correctly.
+> 
+> - systemd-coredump is spawned with full kernel privileges. This
+>   necessitates all kinds of weird privilege dropping excercises in
+>   userspace to make this safe.
+> 
+> - A new usermode helper has to be spawned for each crashing process.
+> 
+> This series adds a new mode:
+> 
+> (3) Dumping into an AF_UNIX socket.
+> 
+> Userspace can set /proc/sys/kernel/core_pattern to:
+> 
+>         @/path/to/coredump.socket
+> 
+> The "@" at the beginning indicates to the kernel that an AF_UNIX
+> coredump socket will be used to process coredumps.
+> 
+> The coredump socket must be located in the initial mount namespace.
+> When a task coredumps it opens a client socket in the initial network
+> namespace and connects to the coredump socket.
 
--Kees
 
--- 
-Kees Cook
+There is a problem with using @ as naming convention.
+The starting character of @ is already used to indicate abstract
+unix domain sockets in some programs like ss.
+And will the new coredump socekt allow use of abstrace unix
+domain sockets?
