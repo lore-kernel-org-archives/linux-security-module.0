@@ -1,159 +1,182 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F504220680
-	for <linux-security-module@vger.kernel.org>; Mon, 19 May 2025 23:42:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEBCA2459FE;
+	Tue, 20 May 2025 14:01:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747698139; cv=none; b=FiTO7fvaWMrGFroEZkZ1wiyMWqXI20y1JEzBDgBGTJLDxNpTXGGjft8o0IBpGI5no1k1XQ9gqfewbiO8PHrRvSoLfltZzOBMyCGAKki6026NDWQqyS496Y0IZFpIBAnVin4BK38c0DgPW2B/Qwd5744/iMwE+EgtfxMB5zrHQpA=
+	t=1747749717; cv=none; b=cvRIt3TGVQZ1/QSjae+B5FRt8IV/h39ynEgxzXLZb9nU0pI5yghfvjwAoyDRb55Zz2Y8RRIffMQ1EprB30ROtCdBSmEgBcIS+OIsN0aHeRbxI+/VqfVzkgsNUyGB8Ha3cB1Cytuju8yylm0LURwq9YUcoOhuhQWp474itVXvKbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747698139; c=relaxed/simple;
-	bh=ZKYV4DZqCzOu7XtrDoRxpxOQ2X8r++kTwWByKtXDhrI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XIJujlfHopqEFX0DE5UreU4hoNMFwCiPBcCB6J5cfjD8SLKyUGKhcWbVwe3fssTDFj5cIistV9IEGQ6ZwDqpz3N2b6JCP4MG7TXHVnmCb2EMAQlQmr19uQhIgCxgth0gZgCnD0npFN4jxAo4nBNt7a7ouzs5S1j05U6RrmJscRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TcQWP80d; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1747749717; c=relaxed/simple;
+	bh=8fVp9ZnpofKSq7wKkEZNR4N3yHYTktEXV+Uq6k2gtYc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ShkIwTW6oc1UFYZTmyAfvx+EjkmRQ72CxhHj+/VLtqDZJqx6hM0zRzylY0k2945w6J1WfC1jMqEPJP6sEC+dtw2CWG1hZ5BprXGfk9nX9GxEgpo9rBDeIlJVCV3ZomRaOC1IILkszXjrVeRX4qLtFuIFP2JgQmXL6DEvtgOSphU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TVVFUmzA; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TcQWP80d"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6077EC4CEF9
-	for <linux-security-module@vger.kernel.org>; Mon, 19 May 2025 23:42:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747698139;
-	bh=ZKYV4DZqCzOu7XtrDoRxpxOQ2X8r++kTwWByKtXDhrI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=TcQWP80dqZf6wsvV46hfhbTO/IwcHkluZg9gwlAJFqA4nPRc6j1YFLmQJtaAY+re1
-	 r6KwA0YpngRxsaYwDegU8IRBmfb2DX/xHbQYWRDtiZtUMl3K0+wv3kCs/BNHL8XKVo
-	 ygRM0Dj8edMrC3lEXrMqVpKFHE8jPUzI9twSqdjyHF1ekm8EtSeC/ylD8vXIwTpwnm
-	 AaqU/swIMCkJHDGVuJ7yxk/8AYDS6T7xHiBImEzyOo11qLtzeZOlZAjh8G94L8btBT
-	 OaXfds5P5StEhfx+AaUM5UvfuSIhfq6IckwMm2CLKYDJSF2XVgUha6NZ5uurJ7VCWV
-	 ++9nrEevi9YKw==
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4769f3e19a9so34515411cf.0
-        for <linux-security-module@vger.kernel.org>; Mon, 19 May 2025 16:42:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUeOhFBYfcBlCjD3KVDUakUxzIIBEwMG9V0VKBtADjJuQ5xbhyhOwYJ5G0ruf+Xc7eN16lEY82jVx2Shy+qRxuZ7wGmLFo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLMN2W+8cRDLbd5MelZa56QRJL5baLTnAcZ3C4qKfuSRjwTIgU
-	1m3OfKjirKrZU/3RznZli5ztThKS6mKyMQTzGM1vph0vwabax3/9/Z9Qn1Nw93HLl1glEGxlyjD
-	NjGsfrlUKLW5bGUfBmhmrVPuGL1RCZALpDIn7TDdh
-X-Google-Smtp-Source: AGHT+IF3yXeBG7TOl1OWLmx6UHDF/3YbnaTG/HjinvwYXZmduyt29cvicBww1a9vAZvlcO0xk5OSvjlLpQi0hnBcD0E=
-X-Received: by 2002:ac8:5654:0:b0:494:af82:7804 with SMTP id
- d75a77b69052e-494af8278f4mr201668631cf.29.1747698137942; Mon, 19 May 2025
- 16:42:17 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TVVFUmzA"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1747749716; x=1779285716;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=8fVp9ZnpofKSq7wKkEZNR4N3yHYTktEXV+Uq6k2gtYc=;
+  b=TVVFUmzAMtGu2IORiE8GCNGtY9xYkjgitz9wLOev8vY2myVR7TPavRX2
+   86RTleV4qJixkV/HfkjKjwlsJ17WmD9RC5kBkvxzKlEiuCGijNwRYHZtA
+   zyLCyDtnMEVArFWcw2SeTRSC7ngU6nScbSsQEnCkc8PFzlnwdIucQFuKP
+   Dsal/AkDbj11UF86s+hxdKezWSUNQCU/zKL8/0lvqXdXjZWTbP3cSMbmY
+   /K2ow2SFtXI0haUX13hg3g5suDF1ps1cA991qwlgxoe/fbXw29qj8En2V
+   nXwPSv539dYalH1SIdxlAVJwBNbblDBLUjG2na87SUs174XXnV23wATcI
+   Q==;
+X-CSE-ConnectionGUID: kY2qDnNjR0WF04IGbDRfEg==
+X-CSE-MsgGUID: 9byoEXaJS/KziDvoktRJrQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11439"; a="49839245"
+X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; 
+   d="scan'208";a="49839245"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2025 07:01:56 -0700
+X-CSE-ConnectionGUID: Jkg5BZR2SMWPVKvc5tOZ/w==
+X-CSE-MsgGUID: 1nvea+dxRkuB4oEzywm6HA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,302,1739865600"; 
+   d="scan'208";a="140218929"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa007.jf.intel.com with ESMTP; 20 May 2025 07:01:53 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 3D3BF368; Tue, 20 May 2025 17:01:51 +0300 (EEST)
+Date: Tue, 20 May 2025 17:01:51 +0300
+From: Andy Shevchenko <andriy.shevchenko@intel.com>
+To: Kees Cook <kees@kernel.org>
+Cc: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-security-module@vger.kernel.org,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>
+Subject: Re: linux-next: Tree for May 16 (security/landlock/ruleset.c)
+Message-ID: <aCyLT2qr_7iJJHm6@black.fi.intel.com>
+References: <20250516202417.31b13d13@canb.auug.org.au>
+ <e3754f69-1dea-4542-8de0-a567a14fb95b@infradead.org>
+ <20250519.jiveise8Rau8@digikod.net>
+ <202505191117.C094A90F88@keescook>
+ <20250519.ba8eoZu3XaeJ@digikod.net>
+ <202505191212.61EE1AE80@keescook>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250502184421.1424368-1-bboscaccy@linux.microsoft.com>
- <20250502210034.284051-1-kpsingh@kernel.org> <CAHC9VhS5Vevcq90OxTmAp2=XtR1qOiDDe5sSXReX5oXzf+siVQ@mail.gmail.com>
- <CACYkzJ5jsWFiXMRDwoGib5t+Xje6STTuJGRZM9Vg2dFz7uPa-g@mail.gmail.com>
- <CACYkzJ6VQUExfyt0=-FmXz46GHJh3d=FXh5j4KfexcEFbHV-vg@mail.gmail.com>
- <CAHC9VhQL_FkUH8F1fvFZmC-8UwZh3zkwjomCo1PiWNW0EGYUPw@mail.gmail.com>
- <CACYkzJ4+=3owK+ELD9Nw7Rrm-UajxXEw8kVtOTJJ+SNAXpsOpw@mail.gmail.com>
- <CAHC9VhTeFBhdagvw4cT3EvA72EYCfAn6ToptpE9PWipG9YLrFw@mail.gmail.com>
- <CAADnVQJ4GDKvLSWuAMdwajA0V2DEw5m-O228QknW8Eo9jxhyig@mail.gmail.com>
- <CAHC9VhTJcV1mqBpxVUtpLhrN4Y9W_BGgB_La5QCqObGheK28Ug@mail.gmail.com>
- <CAADnVQ+wE5cGhy6tgmWgUwkNutueEsrhh6UR8N2fzrZjt-vb4g@mail.gmail.com>
- <196e1f03128.28a7.85c95baa4474aabc7814e68940a78392@paul-moore.com>
- <CAADnVQ+=2PnYHui2L0g0brNc+NqV8MtaRaU-XXpoXfJoghXpww@mail.gmail.com>
- <CAHC9VhRKZdEia0XUMs2+hRVC7oDzkBfkk5FPMD+Fq5V7mAk=Vg@mail.gmail.com>
- <CACYkzJ7oxFA3u9eKDpKgCsZsYsBojVJPHVeHZnVaYQ5e9DavmQ@mail.gmail.com> <CAC1LvL2F_WbObrdcumVZCKc7yLeq4e9PQhYHrLiyVzpzf=V_Xg@mail.gmail.com>
-In-Reply-To: <CAC1LvL2F_WbObrdcumVZCKc7yLeq4e9PQhYHrLiyVzpzf=V_Xg@mail.gmail.com>
-From: KP Singh <kpsingh@kernel.org>
-Date: Tue, 20 May 2025 01:42:06 +0200
-X-Gmail-Original-Message-ID: <CACYkzJ43yJRMS+e-7LefYts_v2ZH7_FCbw_LfG3mYfu6q6VD0g@mail.gmail.com>
-X-Gm-Features: AX0GCFuKLMZDwuoCJgohVN01wRXVU9M-dpj2qXdRHi2W4iwOU0W5kASpMuAgI_I
-Message-ID: <CACYkzJ43yJRMS+e-7LefYts_v2ZH7_FCbw_LfG3mYfu6q6VD0g@mail.gmail.com>
-Subject: Re: [PATCH v3 0/4] Introducing Hornet LSM
-To: Zvi Effron <zeffron@riotgames.com>
-Cc: Paul Moore <paul@paul-moore.com>, Alexei Starovoitov <alexei.starovoitov@gmail.com>, 
-	Blaise Boscaccy <bboscaccy@linux.microsoft.com>, 
-	James Bottomley <James.Bottomley@hansenpartnership.com>, bpf <bpf@vger.kernel.org>, 
-	code@tyhicks.com, Jonathan Corbet <corbet@lwn.net>, "David S. Miller" <davem@davemloft.net>, 
-	David Howells <dhowells@redhat.com>, =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, Jarkko Sakkinen <jarkko@kernel.org>, 
-	James Morris <jmorris@namei.org>, Jan Stancek <jstancek@redhat.com>, 
-	Justin Stitt <justinstitt@google.com>, keyrings@vger.kernel.org, 
-	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>, 
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, 
-	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, 
-	LSM List <linux-security-module@vger.kernel.org>, 
-	clang-built-linux <llvm@lists.linux.dev>, Masahiro Yamada <masahiroy@kernel.org>, 
-	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	Bill Wendling <morbo@google.com>, Nathan Chancellor <nathan@kernel.org>, Neal Gompa <neal@gompa.dev>, 
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Nicolas Schier <nicolas@fjasle.eu>, nkapron@google.com, 
-	Roberto Sassu <roberto.sassu@huawei.com>, "Serge E . Hallyn" <serge@hallyn.com>, 
-	Shuah Khan <shuah@kernel.org>, Matteo Croce <teknoraver@meta.com>, 
-	Cong Wang <xiyou.wangcong@gmail.com>, kysrinivasan@gmail.com, 
-	Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <202505191212.61EE1AE80@keescook>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-> > > > > > No. New hook is not needed.
+On Mon, May 19, 2025 at 12:15:30PM -0700, Kees Cook wrote:
+> On Mon, May 19, 2025 at 08:41:17PM +0200, Mickaël Salaün wrote:
 
-[...]
+...
 
-> > > > >
-> > > > > It would be good for you to explain how the existing LSM hook is sufficient
-> > > > > to authorize the loading of a BPF program using the signature validation
-> > > > > state determined in the BPF verifier.
-> > > >
-> > > > I already explained:
-> > > > .. a job of trivial LSM:
-> > > > if (prog_attr doesn't have signature &&
-> > > >    (task == .. || task is under certain cgroup || whatever))
-> > > >   disallow.
-> > >
-> > > I read that earlier reply as an example that covers a sample use case,
-> > > I didn't realize you were asserting that was the only approach you
-> > > were considering.  Perhaps that was the source of confusion earlier,
-> > > we may disagree, but I don't intentionally "twist" words; not only is
-> > > that rude, it's just stupid in public, archived discussions.
-> > >
-> > > As I mentioned previously, we really need to see an explicit yes/no
-> > > flag from the BPF verifier to indicate that the signature on the BPF
-> > > program has been validated.  It really should be as simple as adding a
-> > > bool to bpf_prog_aux which the BPF verifier sets to true upon
-> > > successful signature validation, and then an LSM can use this flag as
-> > > input to an access control decision in a hook placed after the
-> > > verifier.  Are you objecting to the addition of a flag in the
-> > > bpf_prog_aux struct (or some other struct tightly coupled to the BPF
-> > > program), the LSM hook after the verifier, or both?  It would also be
-> > > helpful if you can elaborate on the technical reasons behind these
-> > > objections.
-> >
-> > Neither the aux field, nor the hook are required because:
-> >
-> > * If the signature is passed, it will be enforced, there are no
-> > "runtime aspects" that need to be configurable here.
-> > * What the LSM can specify a policy for is when a signature is not
-> > passed, for this, it does not need an aux field or a signature or the
-> > new hook, existing hooks are sufficient.
-> >
->
-> What about wanting to create a policy that requires signatures under certain
-> situations and allowing the lack of a signature under others? How is that
-> implemented with the existing hooks?
-> As I understand it, all the existing hooks know (would know) is that _if_ there
-> is a signature _then_ it will be enforced. There is no way to know _whether_
-> there is a signature.
->
+> >From 6fbf66fdfd0a7dac809b77faafdd72c60112bb8d Mon Sep 17 00:00:00 2001
+> From: Kees Cook <kees@kernel.org>
+> Date: Mon, 19 May 2025 11:52:06 -0700
+> Subject: [PATCH] string.h: Provide basic sanity checks for fallback memcpy()
+> MIME-Version: 1.0
+> Content-Type: text/plain; charset=UTF-8
+> Content-Transfer-Encoding: 8bit
+> 
+> Instead of defining memcpy() in terms of __builtin_memcpy() deep
+> in arch/x86/include/asm/string_32.h, notice that it is needed up in
+> the general string.h, as done with other common C String APIs. This
+> allows us to add basic sanity checking for pathological "size"
+> arguments to memcpy(). Besides the run-time checking benefit, this
+> avoids GCC trying to be very smart about value range tracking[1] when
+> CONFIG_PROFILE_ALL_BRANCHES=y but FORTIFY_SOURCE=n.
+> 
+> Link: https://lore.kernel.org/all/202505191117.C094A90F88@keescook/ [1]
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/all/202501040747.S3LYfvYq-lkp@intel.com/
+> Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> Closes: https://lore.kernel.org/all/e3754f69-1dea-4542-8de0-a567a14fb95b@infradead.org/
+> Signed-off-by: Kees Cook <kees@kernel.org>
+> ---
+> Cc: "Mickaël Salaün" <mic@digikod.net>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: <x86@kernel.org>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: Andy Shevchenko <andy@kernel.org>
+> Cc: Uros Bizjak <ubizjak@gmail.com>
+> Cc: <linux-hardening@vger.kernel.org>
+> ---
+>  arch/x86/include/asm/string_32.h |  6 ------
+>  include/linux/string.h           | 13 +++++++++++++
+>  2 files changed, 13 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/string_32.h b/arch/x86/include/asm/string_32.h
+> index e9cce169bb4c..74397c95fa37 100644
+> --- a/arch/x86/include/asm/string_32.h
+> +++ b/arch/x86/include/asm/string_32.h
+> @@ -145,12 +145,6 @@ static __always_inline void *__constant_memcpy(void *to, const void *from,
+>  #define __HAVE_ARCH_MEMCPY
+>  extern void *memcpy(void *, const void *, size_t);
+>  
+> -#ifndef CONFIG_FORTIFY_SOURCE
+> -
+> -#define memcpy(t, f, n) __builtin_memcpy(t, f, n)
+> -
+> -#endif /* !CONFIG_FORTIFY_SOURCE */
+> -
+>  #define __HAVE_ARCH_MEMMOVE
+>  void *memmove(void *dest, const void *src, size_t n);
+>  
+> diff --git a/include/linux/string.h b/include/linux/string.h
+> index 01621ad0f598..ffcee31a14f9 100644
+> --- a/include/linux/string.h
+> +++ b/include/linux/string.h
+> @@ -3,6 +3,7 @@
+>  #define _LINUX_STRING_H_
+>  
+>  #include <linux/args.h>
+> +#include <linux/bug.h>
 
-The signature is passed in bpf_attr and if there is a signature the
-LSM's job is done.
+In case you are go with this change, please keep the headers in order.
 
-   https://elixir.bootlin.com/linux/v6.14.7/source/kernel/bpf/syscall.c#L5771
+>  #include <linux/array_size.h>
 
- It will be enforced.
+(should be located here)
+
+>  #include <linux/cleanup.h>	/* for DEFINE_FREE() */
+>  #include <linux/compiler.h>	/* for inline */
+> @@ -390,7 +391,19 @@ static inline const char *kbasename(const char *path)
+>  
+>  #if !defined(__NO_FORTIFY) && defined(__OPTIMIZE__) && defined(CONFIG_FORTIFY_SOURCE)
+>  #include <linux/fortify-string.h>
+> +#else
+> +/* Basic sanity checking even without FORTIFY_SOURCE */
+> +# ifndef __HAVE_ARCH_MEMCPY
+> +#  define memcpy(t, f, n)					\
+> +	do {							\
+> +		typeof(n) __n = (n);				\
+> +		/* Skip impossible sizes. */			\
+> +		if (!WARN_ON(__n < 0 || __n == SIZE_MAX))	\
+> +			__builtin_memcpy(t, f, __n);		\
+> +	} while (0)
+> +# endif
+>  #endif
+> +
+>  #ifndef unsafe_memcpy
+>  #define unsafe_memcpy(dst, src, bytes, justification)		\
+>  	memcpy(dst, src, bytes)
+
+-- 
+With Best Regards,
+Andy Shevchenko
 
 
-- KP
-
-> An example policy I can think of is that most users (with CAP_BPF) must submit
-> signed programs but some users are exempted. Would that policy be able to be
-> made with the current hooks?
->
-> > - KP
-> >
-> > >
-> > > --
-> > > paul-moore.com
-> >
