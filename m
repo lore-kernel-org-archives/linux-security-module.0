@@ -1,43 +1,40 @@
 Received: from mail.nightmared.fr (mail.nightmared.fr [51.158.148.24])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 636CE14F117;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ACFB16C850;
 	Wed, 21 May 2025 14:06:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.158.148.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747836367; cv=none; b=szS59nme9GCCKl3fdN5zaUf2F8WjBCxmxZAxWdLhtcQQvUnKH6Ztwwv8LvVsfiiJs63uoTJdLcduDwu6ytgX6Cuc0thOpVs/C/7hsHgCNBAZ+HFQyPGpk7GIyHfJ1UvANzJJeLHBFXrBE7K5FZSv0GJvDFwIaEfOX1hw5oqhVDA=
+	t=1747836367; cv=none; b=lQQ4Pgm0UipUlmThtsMnyQBFBtQ2D1l9ToBRBLImdXVGZKjmk1vxK4Pfm9B+7FDGSEoAm5YOZ0DdSK1WaLAK3V1wDlIylWiU78KquU3rtmgtqogormGUEzAPnKzbQHjHQuj4wGpVU2tFJR/+ZvW7G4N0bUAJHnbOncBmeCqNbHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1747836367; c=relaxed/simple;
-	bh=MyeVzj/GXEmxs16atOqVeRYXaDAw/zJot/OanJatabA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GPUJOua+dEYYJLZPpr3VEiVtLhpwPH5c6dhTR7iqw7wuF22d32tOvkGFyQsvLWcf7TxrnDPBzLEiAoKoP7lOCrKHPmaZN4k6B2w6JjDodj9cpMvPyQoyeTiLLnH67HP0JCksb4VsHY2nCp0VquYI41bb5iRa8p775AQ0bRU4ga8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nightmared.fr; spf=pass smtp.mailfrom=nightmared.fr; dkim=pass (2048-bit key) header.d=nightmared.fr header.i=@nightmared.fr header.b=gghCdj5Y; arc=none smtp.client-ip=51.158.148.24
+	bh=pz6RyQBVVgDU7dGupqoILiF4QPhslnN4CNI6Hc2AExQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=npJ82W7k+Xzk0LP3sPfwAnuGo8XtIuCo3SLrcVmV2ztA6H7+jRTFgK47RWPU+BrZRbRualM5OKmwHVktxEhdiy9XQC/ry6dzlxPreGLl069a8DdCl0iNsliVvs/7sLzxBaF1F8Q9x8ie000ytw2eHKejhpwc8o6HI2BaYzCjHRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nightmared.fr; spf=pass smtp.mailfrom=nightmared.fr; dkim=pass (2048-bit key) header.d=nightmared.fr header.i=@nightmared.fr header.b=gt0H83Lx; arc=none smtp.client-ip=51.158.148.24
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nightmared.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nightmared.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nightmared.fr header.i=@nightmared.fr header.b="gghCdj5Y"
+	dkim=pass (2048-bit key) header.d=nightmared.fr header.i=@nightmared.fr header.b="gt0H83Lx"
 Received: from localhost.localdomain (atoulon-651-1-170-218.w83-113.abo.wanadoo.fr [83.113.65.218])
-	by mail.nightmared.fr (Postfix) with ESMTPSA id C5A231087A44;
-	Wed, 21 May 2025 14:01:47 +0000 (UTC)
+	by mail.nightmared.fr (Postfix) with ESMTPSA id C637110821F2;
+	Wed, 21 May 2025 14:01:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nightmared.fr;
-	s=docker; t=1747836107;
-	bh=MyeVzj/GXEmxs16atOqVeRYXaDAw/zJot/OanJatabA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=gghCdj5YCw++wEKfYgO5Uql9/Oj++b8dWdwcCkK01NftNhuFm8YkO+TfLTXfNzIp6
-	 zF913WYxLh6Wp83RJuwJ9COETuxfjky77/s+T+QxYM4vePcY0zROszPOjAg6fMkJPJ
-	 0Bn5QerluhD6u54HFdfnq+6WC+SCk1qne4sQRZbOnUwvbVGm+3vTx4ZblXLNudK1ij
-	 0800YvdIcOfeQH7lf3zJ0MiYL9nPK2LY2BJ37It+lU11z3FO4I4oSRlidHQ2rzUzLo
-	 pWLODfH6VxBsF6FlZvDyrVhDRxUNHgY+7nCS7JqAnwFRavbiyoIGlqZX6i1SIXUyii
-	 tA33LcqlGwt1w==
+	s=docker; t=1747836102;
+	bh=pz6RyQBVVgDU7dGupqoILiF4QPhslnN4CNI6Hc2AExQ=;
+	h=From:To:Cc:Subject:Date;
+	b=gt0H83Lx7o+QmrtB1uJqNXg2piq0/3EEuklENZGp+w87V8+Bh7mE2STuikIhjKQKr
+	 Tg9pVTKWsUUaTKzW+l6aDS13aAHPoOYORjQZJZmF/sqHCe8r67SjjfqTYwpvgx7+91
+	 cMts6qDw7/MsWnGmrnuWYEvWvWokQAuOgCjUZmXKJpwgrMmFMDmMJkYVioNJ2wjOKg
+	 o0A9bJkY6if/fcyyIJhftYNtW5cjvRzNtZRK2oa4W08veDml7w5K4qPplCI/AplOwg
+	 7E4ovwEV6WmX8VAQhDIicZ6P8RXvcm2QQlblZM1Xs0KOpvJbJSomT4K3HklWVI869O
+	 8Wt3WILALz4Sw==
 From: Simon THOBY <git@nightmared.fr>
 To: linux-security-module@vger.kernel.org
 Cc: Simon THOBY <git@nightmared.fr>,
 	linux-integrity@vger.kernel.org,
 	linux-doc@vger.kernel.org
-Subject: [RFC PATCH 4/9] Loadpol LSM: add a file in securityfs to read/modify the policy
-Date: Wed, 21 May 2025 16:01:08 +0200
-Message-ID: <20250521140121.591482-5-git@nightmared.fr>
+Subject: [RFC PATCH 0/9] Introducing the Loadpol LSM
+Date: Wed, 21 May 2025 16:01:04 +0200
+Message-ID: <20250521140121.591482-1-git@nightmared.fr>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250521140121.591482-1-git@nightmared.fr>
-References: <20250521140121.591482-1-git@nightmared.fr>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -46,433 +43,124 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Privileged users (CAP_SYS_ADMIN in the root namespace) can read and
-update the module policy.
+This RFC patch series aims at discussing the interest of a mechanism
+that could restrict which modules are loaded at runtime.
 
-Signed-off-by: Simon THOBY <git@nightmared.fr>
----
- security/loadpol/Makefile         |   2 +-
- security/loadpol/loadpol.h        |   8 +
- security/loadpol/loadpol_fs.c     | 108 +++++++++++++
- security/loadpol/loadpol_policy.c | 244 +++++++++++++++++++++++++++++-
- 4 files changed, 360 insertions(+), 2 deletions(-)
+Motivation
+==========
+
+In my experience, there is three main classes of kernel users.
+On the one hand, some entities (companies or individuals) determine the exact set
+of features they need, and recompile the kernel to match these needs (this is true
+e.g. of cloud vendors, many security products, appliances, etc.). These users
+can finely choose which kernel modules are available on their kernels, because
+they know beforehand the exact use case, and they (mostly) control the software
+and hardware stack.
+On the other end of that spectrum, many entities use off-the-shelf distributions
+with little to no further hardening (I believe this is the case of >90% of companies).
+They don't really care about the presence of modules they may not need,
+so all is well.
+Finally, somewhere in the middle there are entitites that want to have some
+control over what kernel modules are allowed on a system, but without the bandwith
+of building and distributing internally their own kernel (because it would require
+a dedicated team to keep ahead of the frequent updates, and because the added
+value of that team is hard to justify). These entities will often use
+off-the-shelf distributions, but they often miss the appropriate knobs to
+be able to tweak the system in order to reach their desired security
+level. In the particular case of kernel modules, Linux is very binary on
+that point: either you allow the loading of any signed kernel module
+(kernel.modules_disabled=0) or you completely disallow the loading of modules
+(kernel.modules_disabled=1).
+Note: there is also secure_insmod for SELinux, but it is a binary option too.
+
+However these users do not want to trust all the kernel modules present
+in the distribution packages (to reduce the attack surface, and/or for compliance
+reasons).
+They want to collate a list of kernel modules required to support their hardware
+and software needs, and then to distribute a policy allowing these exact modules,
+and blocking the rest.
+
+One big example that comes to my mind is security software, because these finicky
+beasts often come with a kernel module that can only be loaded once the
+corresponding userland part has started, so very late in the boot process.
+In addition, this type of module must be unloaded/reloaded when performing updates.
+This is why loading all these modules at boot and then disabling the load of
+further modules (via the kernel.modules_disabled sysctl) is not
+sufficient.
+
+Implementation
+==============
+
+This patch RFC builds a small LSM that can be configured at runtime (in
+a practical setup, it would be loaded inside the - signed and verified -
+initramfs), and locked to disallow further modifications of the policy.
+
+This is loosely based on the policy mechanism of the IMA subsystem,
+which was a great source of inspiration.
+A new LSM hook is introduced to decide on a module load if the module
+should be allowed or not). When called, the LSM iterates over its policy
+and allow the module if a match associated with the ALLOW action is found.
+A securityfs file is created to read the policy (using `seq_file` iterators) and update it.
+The policy itself is very simple (two keywords to match modules, one
+keyword to determine the action to take, and that's about it).
+Finally, a sysctl entry exists to lock the policy in its current state.
+
+Questions
+=========
+
+Do you believe that such a mechanism would be valuable?
+And if not, do you have an idea of alternatives that users could combine to 
+achieve the same results?
+
+On an implementation detail, to determine if a module load request comes from
+the kernel (instead of a user-initiated load), I currently do something
+like `if (current->parent->flags & PF_WQ_WORKER))`. Is that a proper way
+to determine that the current load is the consequence of a call to
+`request_module`, and is that not overly broad (could this match
+requests that are - in the end - user-initiated)?
+
+Thank you for your consideration,
+Have a nice day,
+Simon
+
+Simon THOBY (9):
+  LSM: Introduce a new hook: security_kernel_module_load
+  Introduce a new LSM: loadpol
+  Loadpol LSM: filter kernel module request according to the policy
+  Loadpol LSM: add a file in securityfs to read/modify the policy
+  Loadpol LSM: add a sysctl to lock the policy
+  Loadpol LSM: emit an audit log
+  module: expose the list of blacklisted modules
+  Loadpol LSM: include the blacklisted kernel modules in the policy
+  Loadpol LSM: add a minimal documentation
+
+ Documentation/admin-guide/LSM/Loadpol.rst |  81 ++++++
+ Documentation/admin-guide/LSM/index.rst   |   1 +
+ include/linux/lsm_count.h                 |   7 +
+ include/linux/lsm_hook_defs.h             |   1 +
+ include/linux/module.h                    |   4 +
+ include/linux/security.h                  |   6 +
+ include/uapi/linux/audit.h                |   1 +
+ include/uapi/linux/lsm.h                  |   1 +
+ kernel/module/main.c                      |   9 +
+ security/Kconfig                          |   1 +
+ security/Makefile                         |   1 +
+ security/loadpol/Kconfig                  |  12 +
+ security/loadpol/Makefile                 |   1 +
+ security/loadpol/loadpol.c                |  76 ++++++
+ security/loadpol/loadpol.h                |  43 +++
+ security/loadpol/loadpol_fs.c             | 139 ++++++++++
+ security/loadpol/loadpol_policy.c         | 311 ++++++++++++++++++++++
+ security/security.c                       |  14 +
+ 18 files changed, 709 insertions(+)
+ create mode 100644 Documentation/admin-guide/LSM/Loadpol.rst
+ create mode 100644 security/loadpol/Kconfig
+ create mode 100644 security/loadpol/Makefile
+ create mode 100644 security/loadpol/loadpol.c
+ create mode 100644 security/loadpol/loadpol.h
  create mode 100644 security/loadpol/loadpol_fs.c
+ create mode 100644 security/loadpol/loadpol_policy.c
 
-diff --git a/security/loadpol/Makefile b/security/loadpol/Makefile
-index 062215e1f831..3351a4e90c1d 100644
---- a/security/loadpol/Makefile
-+++ b/security/loadpol/Makefile
-@@ -1 +1 @@
--obj-$(CONFIG_SECURITY_LOADPOL) := loadpol.o loadpol_policy.o
-+obj-$(CONFIG_SECURITY_LOADPOL) := loadpol.o loadpol_policy.o loadpol_fs.o
-diff --git a/security/loadpol/loadpol.h b/security/loadpol/loadpol.h
-index a81d52f6d4da..e81aa322e178 100644
---- a/security/loadpol/loadpol.h
-+++ b/security/loadpol/loadpol.h
-@@ -4,6 +4,7 @@
- #define _SECURITY_LOADPOL_LOADPOL_H
- 
- #include "linux/list.h"
-+#include <linux/seq_file.h>
- 
- #define LOADPOL_NAME "loadpol"
- 
-@@ -29,6 +30,13 @@ struct loadpol_policy_entry {
- 
- extern struct list_head __rcu *loadpol_policy;
- 
-+void *loadpol_policy_start(struct seq_file *m, loff_t *pos);
-+void *loadpol_policy_next(struct seq_file *m, void *v, loff_t *pos);
-+void loadpol_policy_stop(struct seq_file *m, void *v);
-+int loadpol_policy_show(struct seq_file *m, void *v);
-+
-+ssize_t loadpol_parse_ruleset(char *data);
-+
- // evaluate if a kernel module called 'kmod' is allowed to be loaded in the kernel
- int loadpol_kernel_module_load(const char *kmod);
- 
-diff --git a/security/loadpol/loadpol_fs.c b/security/loadpol/loadpol_fs.c
-new file mode 100644
-index 000000000000..9134d11718a0
---- /dev/null
-+++ b/security/loadpol/loadpol_fs.c
-@@ -0,0 +1,108 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+
-+#include "linux/array_size.h"
-+#include <linux/security.h>
-+
-+#include "loadpol.h"
-+
-+static struct dentry *securityfs_dir;
-+static struct dentry *securityfs_policy;
-+
-+static DEFINE_MUTEX(policy_write_mutex);
-+
-+static const struct seq_operations loadpol_policy_seqops = {
-+	.start = loadpol_policy_start,
-+	.next = loadpol_policy_next,
-+	.stop = loadpol_policy_stop,
-+	.show = loadpol_policy_show,
-+};
-+
-+static int loadpol_open_policy(struct inode *inode, struct file *filp)
-+{
-+	// Check permissions when accessing with writable flags
-+	if ((filp->f_flags & O_ACCMODE) != O_RDONLY) {
-+		if (!capable(CAP_SYS_ADMIN))
-+			return -EPERM;
-+	}
-+	return seq_open(filp, &loadpol_policy_seqops);
-+}
-+
-+static ssize_t loadpol_write_policy(struct file *file, const char __user *buf,
-+				    size_t count, loff_t *ppos)
-+{
-+	char *data;
-+	ssize_t ret;
-+
-+	/*
-+	 * arbitrary size limit (to prevent a DoS but still allow loading a policy with a few
-+	 * thousands of entries)
-+	 */
-+	if (count >= 64 * PAGE_SIZE) {
-+		ret = -ENOSPC;
-+		goto out;
-+	}
-+
-+	/* Partial writes are not permitted */
-+	if (*ppos != 0) {
-+		ret = -ESPIPE;
-+		goto out;
-+	}
-+
-+	data = memdup_user_nul(buf, count);
-+	if (IS_ERR(data)) {
-+		ret = PTR_ERR(data);
-+		goto out;
-+	}
-+
-+	ret = mutex_lock_interruptible(&policy_write_mutex);
-+	if (ret < 0) {
-+		ret = -EBUSY;
-+		goto out_free;
-+	}
-+
-+	ret = loadpol_parse_ruleset(data);
-+	/* the policy was injested, return the write as having been completed */
-+	if (!ret)
-+		ret = count;
-+
-+	mutex_unlock(&policy_write_mutex);
-+out_free:
-+	kfree(data);
-+out:
-+	return ret;
-+}
-+
-+static const struct file_operations loadpol_policy_ops = {
-+	.open = loadpol_open_policy,
-+	.write = loadpol_write_policy,
-+	.read = seq_read,
-+	.llseek = seq_lseek,
-+};
-+
-+static int __init loadpol_init_fs(void)
-+{
-+	int ret;
-+
-+	securityfs_dir = securityfs_create_dir(LOADPOL_NAME, NULL);
-+	if (IS_ERR(securityfs_dir)) {
-+		ret = PTR_ERR(securityfs_dir);
-+		goto err;
-+	}
-+
-+	securityfs_policy = securityfs_create_file(
-+		"policy", 0600, securityfs_dir, NULL, &loadpol_policy_ops
-+	);
-+	if (IS_ERR(securityfs_policy)) {
-+		ret = PTR_ERR(securityfs_policy);
-+		goto err;
-+	}
-+
-+	return 0;
-+err:
-+	securityfs_remove(securityfs_policy);
-+	securityfs_remove(securityfs_dir);
-+	return ret;
-+}
-+
-+/* only create debugfs entries once the filesystem is available */
-+fs_initcall(loadpol_init_fs);
-diff --git a/security/loadpol/loadpol_policy.c b/security/loadpol/loadpol_policy.c
-index 6ba5ab600e3e..366046f00959 100644
---- a/security/loadpol/loadpol_policy.c
-+++ b/security/loadpol/loadpol_policy.c
-@@ -1,5 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0-only
- 
-+#define pr_fmt(fmt) "loadpol: " fmt
-+
- #include "linux/rculist.h"
- #include <linux/sched.h>
- #include <linux/sysctl.h>
-@@ -12,6 +14,244 @@ static LIST_HEAD(loadpol_policy_a);
- static LIST_HEAD(loadpol_policy_b);
- struct list_head __rcu *loadpol_policy = (struct list_head __rcu *)(&loadpol_policy_a);
- 
-+enum loadpol_options {
-+	Opt_action,
-+	Opt_allowed,
-+	Opt_denied,
-+	Opt_kernel,
-+	Opt_module,
-+	Opt_origin,
-+	Opt_userspace,
-+	Opt_err,
-+};
-+
-+static const match_table_t policy_options = {
-+	{Opt_action, "action=%s"},
-+	{Opt_allowed, "allow"},
-+	{Opt_denied, "deny"},
-+	{Opt_kernel, "kernel"},
-+	{Opt_module, "module==%s"},
-+	{Opt_origin, "origin==%s"},
-+	{Opt_userspace, "user"},
-+	{Opt_err, NULL},
-+};
-+
-+#define opt(o) policy_options[o].pattern
-+
-+static void loadpol_free_entry(struct loadpol_policy_entry *entry)
-+{
-+	kfree(entry->module_name);
-+	kfree(entry);
-+}
-+
-+static void loadpol_free_ruleset(struct list_head *policy)
-+{
-+	struct loadpol_policy_entry *entry, *next_entry;
-+
-+	list_for_each_entry_safe(entry, next_entry, policy, list) {
-+		list_del(&entry->list);
-+		loadpol_free_entry(entry);
-+	}
-+}
-+
-+void *loadpol_policy_start(struct seq_file *m, loff_t *pos)
-+{
-+	struct list_head *entry_list;
-+
-+	rcu_read_lock();
-+	entry_list = seq_list_start_rcu(rcu_dereference(loadpol_policy), *pos);
-+	rcu_read_unlock();
-+
-+	if (!entry_list)
-+		return NULL;
-+
-+	return container_of(entry_list, struct loadpol_policy_entry, list);
-+}
-+
-+void *loadpol_policy_next(struct seq_file *m, void *v, loff_t *pos)
-+{
-+	struct list_head *entry_list;
-+
-+	rcu_read_lock();
-+	entry_list = seq_list_next_rcu(v, rcu_dereference(loadpol_policy), pos);
-+	rcu_read_unlock();
-+
-+	if (!entry_list)
-+		return NULL;
-+
-+	return container_of(entry_list, struct loadpol_policy_entry, list);
-+}
-+
-+void loadpol_policy_stop(struct seq_file *m, void *v)
-+{
-+}
-+
-+int loadpol_policy_show(struct seq_file *m, void *v)
-+{
-+	struct loadpol_policy_entry *entry = v;
-+
-+	seq_printf(m, opt(Opt_origin), "");
-+	if (entry->origin & ORIGIN_KERNEL)
-+		seq_puts(m, opt(Opt_kernel));
-+	if (entry->origin & ORIGIN_KERNEL && entry->origin & ORIGIN_USERSPACE)
-+		seq_puts(m, ",");
-+	if (entry->origin & ORIGIN_USERSPACE)
-+		seq_puts(m, opt(Opt_userspace));
-+
-+	seq_puts(m, " ");
-+
-+	if (entry->module_name) {
-+		seq_printf(m, opt(Opt_module), entry->module_name);
-+		seq_puts(m, " ");
-+	}
-+
-+	seq_printf(m, opt(Opt_action),
-+		   (entry->action == ACTION_ALLOW) ? opt(Opt_allowed) : opt(Opt_denied));
-+
-+	seq_puts(m, "\n");
-+	return 0;
-+}
-+
-+static struct loadpol_policy_entry *process_policy_rule(char *line)
-+{
-+	char *token, *subtoken;
-+	struct loadpol_policy_entry *entry;
-+	int ret = -EINVAL;
-+
-+	entry = kzalloc(sizeof(*entry), GFP_KERNEL);
-+	if (!entry)
-+		return ERR_PTR(-ENOMEM);
-+
-+	// not strictly necessary since we zero-initialize entry, but explicitness is good
-+	entry->module_name = NULL;
-+	entry->origin = ORIGIN_KERNEL | ORIGIN_USERSPACE;
-+	entry->action = ACTION_UNDEFINED;
-+
-+	while ((token = strsep(&line, " \t"))) {
-+		int token_id;
-+		substring_t args[MAX_OPT_ARGS];
-+
-+		if (!strlen(token))
-+			continue;
-+
-+		token_id = match_token(token, policy_options, args);
-+		switch (token_id) {
-+		case Opt_module:
-+			if (entry->module_name) {
-+				pr_warn("cannot define two names in the same entry: '%s'", line);
-+				goto err;
-+			}
-+
-+			if (!strlen(args[0].from)) {
-+				pr_warn("empty module names are not supported: '%s'", line);
-+				goto err;
-+			}
-+
-+			entry->module_name = kstrdup(args[0].from, GFP_KERNEL);
-+			if (!entry->module_name) {
-+				ret = -ENOMEM;
-+				goto err;
-+			}
-+
-+			break;
-+		case Opt_origin:
-+			entry->origin = 0;
-+
-+			while ((subtoken = strsep(&args[0].from, ","))) {
-+				if (!strcmp(subtoken, opt(Opt_kernel))) {
-+					entry->origin |= ORIGIN_KERNEL;
-+					continue;
-+				}
-+
-+				if (!strcmp(subtoken, opt(Opt_userspace))) {
-+					entry->origin |= ORIGIN_USERSPACE;
-+					continue;
-+				}
-+
-+				pr_warn("Unsupported origin '%s'", subtoken);
-+				goto err;
-+			}
-+			break;
-+		case Opt_action:
-+			if (entry->action != ACTION_UNDEFINED) {
-+				pr_warn("cannot define two action in the same entry: '%s'", line);
-+				goto err;
-+			}
-+
-+			if (!strcmp(args[0].from, opt(Opt_denied))) {
-+				entry->action = ACTION_DENY;
-+				continue;
-+			}
-+
-+			if (!strcmp(args[0].from, opt(Opt_allowed))) {
-+				entry->action = ACTION_ALLOW;
-+				continue;
-+			}
-+
-+			pr_warn("Loadpol: Unsupported action '%s'", args[0].from);
-+			goto err;
-+		case Opt_err:
-+			pr_warn("Unsupported token %d: %s\n", token_id, token);
-+			return ERR_PTR(-EINVAL);
-+		}
-+	}
-+
-+	return entry;
-+err:
-+	loadpol_free_entry(entry);
-+
-+	return ERR_PTR(ret);
-+}
-+
-+ssize_t loadpol_parse_ruleset(char *data)
-+{
-+	struct list_head *new_policy_list;
-+	struct loadpol_policy_entry *entry;
-+	char *sep_ptr, *line;
-+
-+	rcu_read_lock();
-+	new_policy_list = (rcu_dereference(loadpol_policy) == &loadpol_policy_a) ?
-+			   &loadpol_policy_b : &loadpol_policy_a;
-+	rcu_read_unlock();
-+
-+	/* wait for the RCU previous critical section to be over */
-+	synchronize_rcu();
-+
-+	/*
-+	 * At this point, we know that nobody else is iterating over new_policy_list: we are
-+	 * inside a lock so we have no concurrent writer, and we called synchronize_rcu which ensure
-+	 * that current readers are reading the other policy list
-+	 * (policy_a if we operate on policy_b, or vice-versa).
-+	 */
-+
-+	/* free the old policy entries */
-+	loadpol_free_ruleset(new_policy_list);
-+
-+	sep_ptr = data;
-+	while ((line = strsep(&sep_ptr, "\n"))) {
-+		// ignore empty lines
-+		if (!strlen(line))
-+			continue;
-+
-+		entry = process_policy_rule(line);
-+		if (IS_ERR(entry))
-+			goto err;
-+
-+		list_add_tail(&entry->list, new_policy_list);
-+	}
-+
-+	/* switch to policy */
-+	rcu_assign_pointer(loadpol_policy, new_policy_list);
-+
-+	return 0;
-+
-+err:
-+	/* free the newly created entries */
-+	loadpol_free_ruleset(new_policy_list);
-+
-+	return -EINVAL;
-+}
-+
- int loadpol_kernel_module_load(const char *kmod)
- {
- 	struct task_struct *parent_task;
-@@ -53,7 +293,9 @@ int loadpol_kernel_module_load(const char *kmod)
- unlock_and_exit:
- 	rcu_read_unlock();
- 
--	pr_debug("Loadpol: load of module '%s' %s", kmod, allowed ? "allowed" : "blocked");
-+	pr_debug("Loadpol: load of module '%s' %s",
-+		 kmod,
-+		 allowed ? "allowed" : "blocked");
- 
- 	return allowed ? 0 : -EPERM;
- }
 -- 
 2.49.0
 
