@@ -1,56 +1,56 @@
-Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
+Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7AB521FF45
-	for <linux-security-module@vger.kernel.org>; Wed, 21 May 2025 19:34:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EED0B28F955
+	for <linux-security-module@vger.kernel.org>; Wed, 21 May 2025 19:34:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747856094; cv=none; b=EOMxNJJ8GObBWluw8bJNhYPWRKXMSCktcFHjtJ8nebG0VGG5CLN9BmmoTfH0BDWR7Xhl2AaS9dgvrUb8j+86zkPr68hudwkk9hL6/jt2shbpoODcRcGwp86sTRXC3Hbl6pMmBbrOfx9MRwvB0b6fWYAQJYhYHga/WdeWpKmt0yw=
+	t=1747856095; cv=none; b=oA7xPNkZg8a12eO4vRJU2CKMqVDw0GQXVvpjmzBYNzP8Hb+mJ1OxwfHQC+OZVYbSTqDeJ+Q9Plzf7GndOdWb0P8RDtu8l3fdk++ouYfOMmvahNQR35W3Ki4PJj1QGMIPQoVudla8Tlv6tdSjOQF775Xw9V00SR8i0gjHVrEWCuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747856094; c=relaxed/simple;
-	bh=1Sa0IC/uZ0HH/PlwF9g6snMyMoSZskQi8W77+CSTMg0=;
+	s=arc-20240116; t=1747856095; c=relaxed/simple;
+	bh=9Egqjwe1R5YjJeGxfS4fx+d6TZzbgWSmeWy27LpH1do=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CQg7FhVFv3TYzW5DTuVlXG2SzFNknj3hBBjdqytJkSzQ+NE61qJQ7E2xxCFDe0+ke4qpNDUKsN5URRwAvWhwzVHN/PQZBgl36/14yJi3tLMenTrFSmso3mQR9rXdZaIbyJZchle8r9Y8VypyEZJNCGgS32UqeCMmTvRU2xVELLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=B8ItRCIc; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=H1+JZlQU; arc=none smtp.client-ip=103.168.172.151
+	 MIME-Version; b=WghglS+sE3IqkYXQaxtr8UXq4madOV7BrzjmnQ0qXAV2oitfdfWmJ64a/ps6kWiP+pnGhtKMlnW2liC01hgs0NEd42Rw5A8KFWr6PZHUXIRlSirJ/+YZyggqMF5xQkqzuvntb8xQTv9j7flUp1IlCp1OkZIMISmjikNO1tm/WSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=vSJDwavk; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=hKQJldXR; arc=none smtp.client-ip=103.168.172.155
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="B8ItRCIc";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="H1+JZlQU"
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfout.phl.internal (Postfix) with ESMTP id A78EC1380190;
-	Wed, 21 May 2025 15:34:51 -0400 (EDT)
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="vSJDwavk";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="hKQJldXR"
+Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id D3728114013F;
+	Wed, 21 May 2025 15:34:52 -0400 (EDT)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-09.internal (MEProxy); Wed, 21 May 2025 15:34:51 -0400
+  by phl-compute-12.internal (MEProxy); Wed, 21 May 2025 15:34:52 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
 	:cc:content-transfer-encoding:content-type:date:date:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1747856091; x=
-	1747942491; bh=bESGrqgsGIXo4kLQAGND2jbCd9OhpP0GM/3yeY1aMww=; b=B
-	8ItRCIcW3MoVyTug2ybV8s44egNE8JivevMBWmUN2h3zD1+82dmAPRYwZLs0lDVO
-	F8/f+Jni5MAu4SLdxsbdZ6LPjBUm2zTy934qxFT4U9klcDo+A6RTtgbiWHB7fWdk
-	/6Jo3U1KliciDbFvvxfCA34iCpm1tq0VB61hBAVdlEt2YcpuRZ1ZMo2w+Yz1VSOC
-	jhoJ6hj5RZyRR96FzLeYnEukhXV/KjetNlSS69V1zdIE2Hcjsitnectj9ZIAjEJP
-	fd04CPC3oF1eSVSFQBYQkJUVIFGK7OD0umohPrSMGjxVUOyECWTsBTrpqnBU5Pgr
-	fEndUfyZreTNROT+1JjvQ==
+	:reply-to:subject:subject:to:to; s=fm3; t=1747856092; x=
+	1747942492; bh=TTkHes3P+At9TK3TwtambVEVASINbXMZi7l2N46hEgg=; b=v
+	SJDwavkQrTkbIMcszhoiYZQDQb0tbRJkhiGv8zk4m70MFyWSDrQWiwOJCfSL1tKH
+	qRPDzCCUwnmrcmy6NaMU6N9oQ505Pe9SvY5by5xhn3El9JqVASDJ5DidskhsjRR7
+	p7wVEsh8GLyAGPMCMs30dTLNgqKk2O42OzTyYSa3sn6kI9M0RhxI/5Z9CoHPZTWw
+	eHhZVKOTLS0/KZdmllXViGcQnQfDzZuWo4aftwrR+2uBAeP5VBngwxZkKk86Ty2l
+	SFyP0WfKRfL+/AWru2YO8QmKC8N7qTcMPkqA/nprgLOZerOaHmrK5ZGNOH7Hhbbr
+	6gcia1gEhA4LxvsoHZj0w==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm3; t=1747856091; x=1747942491; bh=b
-	ESGrqgsGIXo4kLQAGND2jbCd9OhpP0GM/3yeY1aMww=; b=H1+JZlQUyO32Gf93W
-	CXxlPRAK6rGP044kXW89oo3HVCWMGtUrREkzcKhapeFyd5B5bePNrCfTqPA73d+V
-	BqBwI6Znwh+gzZbjn/YsBpzAHzAQIZbxLg5wdbLqDss7ZcpaKXfUoqs2PoTq92sE
-	eM6XFSy6oFpDavm9VlbeuGX+T3H8g4amEx8/2NggKXHXzUC1YOH1l8Yq7I3EHuht
-	TVBnMe2Hu7NimXVc+0ggo8hTDo8+d2g4rZ22WUHVVWIb0CA17huIurU2C8tbJyGX
-	aAHgMipCOxBkD3I2hcffdijPJqhRVuMXlpFHi4mO2Ruk4SiChSQe2JOuCls4Xk0r
-	TRvhg==
-X-ME-Sender: <xms:2youaFlm2PcqBu67AycuDzdOkt_Vb6eTYN9Grpa_OcrR6XEx8hH0kg>
-    <xme:2youaA2mGcO8RHyCHdsxTOXtH7EvFfISQEWF4X70Tx4rY1WyZl7SWsCkMUya6NNl6
-    EiOhz-f8njOX2-kiks>
-X-ME-Received: <xmr:2youaLq5d26KLqMTwSHCTsr-QHo8kKjOfCgzyeZ2FHQlEXh0dOIJfFzJzg_DnjsZ-yaMATbtVsSrYhu2UZ85E3G2ZNwb62nzi5bJiNwZ8i84TPtj5fppTw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgdefleefucdltddurdegfedvrddttd
+	:x-me-sender:x-sasl-enc; s=fm3; t=1747856092; x=1747942492; bh=T
+	TkHes3P+At9TK3TwtambVEVASINbXMZi7l2N46hEgg=; b=hKQJldXRoWAw0hiTa
+	bleC068m5S/GANSkAMfPIiKGMruz3nO9QTfHxyo4coU0N1Am+D0MI2+p63snZ6FL
+	dtBo07AB/GquDYjoCDpM19yOhK7qdWhxsbs7hb+k9L31bgIK1EO+J8ebzvJLpv2v
+	6cG5ms2Lyeax7d/k5PZR1/MzZFkrUAp/1gDNIRnD0+MeKdRXF1pGiByNo7kjQ0yO
+	01+Wyy5Mr8z8GpN7fSRLkGwd49nw2VQvbmjHW+W99HC9y2xKcpljlQ/h+zEOMEOD
+	Sa6SL+VEV0JZwxNO5ceBDhuOjNnN8Yi2wPS5ob0g6GXET7OfIqcYEw5KReYWMykH
+	zuWIA==
+X-ME-Sender: <xms:3CouaLq6LKaoX5Ju2vNxfSfFCNgZGWGE0h2O1T66fCUWby7ucuit3Q>
+    <xme:3CouaFq5PKgCvL5elBT6jdHKaaa0GzS8Wet5nTxbM1SOviAHc8pPNe6CLY47XOF9P
+    cosqvqAWGxY4CrZSTs>
+X-ME-Received: <xmr:3CouaIMfuhI047T-ZnGQcKmKPRtnBGy3WfR1jnWIbp_fvnoCXjrZU831zIcMO5yH8weMf6aj5tWB4buhF2fQYOy4XvisSd4-0G7WhpGuG99pQTAaPP-AYw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgdefleegucdltddurdegfedvrddttd
     dmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgf
     nhhsuhgsshgtrhhisggvpdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttd
     enucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgj
@@ -62,22 +62,22 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgdefleefucdltddurdegfe
     hougdrnhgvthdprhgtphhtthhopehmsehmrghofihtmhdrohhrghdprhgtphhtthhopehg
     nhhorggtkhesghhoohhglhgvrdgtohhmpdhrtghpthhtoheplhhinhhugidqshgvtghurh
     hithihqdhmohguuhhlvgesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:2youaFmcMmI-ZU0tF40PvaZNwkbUqKzHLJq4gVOCXKX1rcAzajhLZg>
-    <xmx:2youaD1MVNRWKdBOF6IpJgP-i3YE1Yjl-VQMqet_ccjt4BINxOYz1Q>
-    <xmx:2youaEvghdPaja42Yp4CjYBvdGH4JCxPNPt_UakQrhEFbnp1e4hs_g>
-    <xmx:2youaHVzRZlgGrSEmSxZL56mmEDbhf8fbezywHU-o69Xtp4ciD-EUQ>
-    <xmx:2youaI3ZhPAsknU7IjjDgkhql87l1ojxMwh-wXzTnYbvyR71CP6eXBGw>
+X-ME-Proxy: <xmx:3CouaO6INh1-Sn3VkQRr86-K2iQz_LB9hwbZMBeYO9s2pCPq9U2YrA>
+    <xmx:3CouaK7l6Up9QsRjHoSQ9_3z1AvihBQ8mjvM34wWgElDSTG7Sgj-EQ>
+    <xmx:3CouaGi7PytCrqjXLne5qEkTN8ts2hnZykaSTEDu4erZ8VtH_yCX6g>
+    <xmx:3CouaM7M_xISO6UPRTFtdck643PVvEx9xP2akHydZHkcEw-HfPnuCg>
+    <xmx:3CouaIbVNakvt3lXfLRIqywElyHNyjOmkGiCLdd54cvyUB5DrncRB0WB>
 Feedback-ID: i580e4893:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 21 May 2025 15:34:50 -0400 (EDT)
+ 21 May 2025 15:34:51 -0400 (EDT)
 From: Tingmao Wang <m@maowtm.org>
 To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 Cc: Tingmao Wang <m@maowtm.org>,
 	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
 	linux-security-module@vger.kernel.org
-Subject: [RFC PATCH 07/10] landlock: Add the new domain to landlock_cred_security
-Date: Wed, 21 May 2025 20:32:03 +0100
-Message-ID: <2b7add2e0ddfed8fe021c2716d0770e0df818848.1747836146.git.m@maowtm.org>
+Subject: [RFC PATCH 08/10] landlock: Construct the inode hashtable in the new landlock_domain
+Date: Wed, 21 May 2025 20:32:04 +0100
+Message-ID: <e0fcfb45accc387fb0c6a4deca2724fc531b7bd0.1747836146.git.m@maowtm.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1747836146.git.m@maowtm.org>
 References: <cover.1747836146.git.m@maowtm.org>
@@ -89,191 +89,298 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-We add a new field domain2 that will eventually replace the old struct
-landlock_ruleset domain.  Also add get/put to appropriate places where
-this struct is copied/freed.
-
-In a future patch, this domain2 will be renamed to domain.
+Since we can't get rid of the old landlock_merge_ruleset yet, we call our
+new thing landlock_merge_ruleset2.
 
 Signed-off-by: Tingmao Wang <m@maowtm.org>
 ---
- security/landlock/cred.c   |  8 ++++----
- security/landlock/cred.h   |  1 +
- security/landlock/domain.c | 17 +++++++++++++++++
- security/landlock/domain.h | 32 +++++++++++++++++++++++---------
- security/landlock/fs.c     |  5 +++++
- 5 files changed, 50 insertions(+), 13 deletions(-)
+ security/landlock/domain.c   |  87 +++++++++++++++++++++++++++++
+ security/landlock/domain.h   |   4 ++
+ security/landlock/hash.h     | 105 +++++++++++++++++++++++++++++++++++
+ security/landlock/ruleset.h  |   2 +-
+ security/landlock/syscalls.c |   9 +++
+ 5 files changed, 206 insertions(+), 1 deletion(-)
 
-diff --git a/security/landlock/cred.c b/security/landlock/cred.c
-index 0cb3edde4d18..e08c9e206350 100644
---- a/security/landlock/cred.c
-+++ b/security/landlock/cred.c
-@@ -13,6 +13,7 @@
- 
- #include "common.h"
- #include "cred.h"
-+#include "domain.h"
- #include "ruleset.h"
- #include "setup.h"
- 
-@@ -24,6 +25,7 @@ static void hook_cred_transfer(struct cred *const new,
- 
- 	if (old_llcred->domain) {
- 		landlock_get_ruleset(old_llcred->domain);
-+		landlock_get_domain(old_llcred->domain2);
- 		*landlock_cred(new) = *old_llcred;
- 	}
- }
-@@ -37,10 +39,8 @@ static int hook_cred_prepare(struct cred *const new,
- 
- static void hook_cred_free(struct cred *const cred)
- {
--	struct landlock_ruleset *const dom = landlock_cred(cred)->domain;
--
--	if (dom)
--		landlock_put_ruleset_deferred(dom);
-+	landlock_put_ruleset_deferred(landlock_cred(cred)->domain);
-+	landlock_put_domain_deferred(landlock_cred(cred)->domain2);
- }
- 
- #ifdef CONFIG_AUDIT
-diff --git a/security/landlock/cred.h b/security/landlock/cred.h
-index c82fe63ec598..b13b4c2e21aa 100644
---- a/security/landlock/cred.h
-+++ b/security/landlock/cred.h
-@@ -32,6 +32,7 @@ struct landlock_cred_security {
- 	 * @domain: Immutable ruleset enforced on a task.
- 	 */
- 	struct landlock_ruleset *domain;
-+	struct landlock_domain *domain2;
- 
- #ifdef CONFIG_AUDIT
- 	/**
 diff --git a/security/landlock/domain.c b/security/landlock/domain.c
-index 180ed75da9e2..321c52b275fc 100644
+index 321c52b275fc..fae21b260591 100644
 --- a/security/landlock/domain.c
 +++ b/security/landlock/domain.c
-@@ -60,6 +60,23 @@ void landlock_put_domain(struct landlock_domain *const domain)
+@@ -77,6 +77,93 @@ void landlock_put_domain_deferred(struct landlock_domain *const domain)
  	}
  }
  
-+static void free_domain_work(struct work_struct *const work)
++/**
++ * @curr_table may be NULL.
++ */
++static int merge_domain_table(const enum landlock_key_type key_type,
++			      const struct landlock_hashtable *const curr_table,
++			      struct landlock_hashtable *const new_table,
++			      struct landlock_layer new_layer,
++			      const struct rb_root *ruleset_rb_root)
 +{
-+	struct landlock_domain *domain;
++	int err;
++	struct landlock_rule *iter, *iter2;
 +
-+	domain = container_of(work, struct landlock_domain, work_free);
-+	free_domain(domain);
++	if (curr_table) {
++		err = landlock_hash_clone(new_table, curr_table, key_type);
++		if (err) {
++			return err;
++		}
++	}
++
++	/* Merge in new rules */
++	rbtree_postorder_for_each_entry_safe(iter, iter2, ruleset_rb_root,
++					     node) {
++		WARN_ON_ONCE(iter->layers[0].level != 0);
++		WARN_ON_ONCE(iter->num_layers != 1);
++		new_layer.access = iter->layers[0].access;
++
++		err = landlock_hash_upsert(new_table, iter->key, key_type,
++					   new_layer);
++		if (err) {
++			return err;
++		}
++	}
++
++	return 0;
 +}
 +
-+/* Only called by hook_cred_free(). */
-+void landlock_put_domain_deferred(struct landlock_domain *const domain)
++/**
++ * @landlock_merge_ruleset2 - Merge a ruleset with a (possibly NULL)
++ * domain, and return a new merged domain.
++ */
++struct landlock_domain *
++landlock_merge_ruleset2(const struct landlock_domain *curr_domain,
++			const struct landlock_ruleset *next_ruleset)
 +{
-+	if (domain && refcount_dec_and_test(&domain->usage)) {
-+		INIT_WORK(&domain->work_free, free_domain_work);
-+		schedule_work(&domain->work_free);
++	size_t num_inodes = 0;
++	int err;
++	struct landlock_domain *new_domain;
++	struct landlock_layer new_layer = {
++		.level = 1,
++	};
++	struct landlock_rule *iter, *iter2;
++
++	if (WARN_ON_ONCE(!next_ruleset)) {
++		return ERR_PTR(-EINVAL);
 +	}
++
++	if (curr_domain) {
++		new_layer.level = curr_domain->num_layers + 1;
++		num_inodes = landlock_hash_count(&curr_domain->inode_table);
++	}
++
++	/* Find new expected size of inode table */
++	rbtree_postorder_for_each_entry_safe(iter, iter2,
++					     &next_ruleset->root_inode, node) {
++		if (!curr_domain ||
++		    landlock_hash_find(&curr_domain->inode_table, iter->key) ==
++			    NULL) {
++			num_inodes += 1;
++		}
++	}
++
++	new_domain = landlock_alloc_domain(num_inodes, new_layer.level);
++	if (!new_domain)
++		return ERR_PTR(-ENOMEM);
++
++	err = merge_domain_table(LANDLOCK_KEY_INODE,
++				 curr_domain ? &curr_domain->inode_table : NULL,
++				 &new_domain->inode_table, new_layer,
++				 &next_ruleset->root_inode);
++	if (err) {
++		landlock_put_domain(new_domain);
++		return ERR_PTR(err);
++	}
++
++	return new_domain;
 +}
 +
  #ifdef CONFIG_AUDIT
  
  /**
 diff --git a/security/landlock/domain.h b/security/landlock/domain.h
-index ed685f8ad52e..944420231040 100644
+index 944420231040..e52b32d8dd2b 100644
 --- a/security/landlock/domain.h
 +++ b/security/landlock/domain.h
-@@ -18,6 +18,7 @@
- #include <linux/refcount.h>
- #include <linux/sched.h>
- #include <linux/slab.h>
-+#include <linux/workqueue.h>
+@@ -62,6 +62,10 @@ void landlock_put_domain(struct landlock_domain *const domain);
  
- #include "access.h"
- #include "audit.h"
-@@ -26,15 +27,26 @@
- struct landlock_domain {
- 	struct landlock_hashtable inode_table;
+ void landlock_put_domain_deferred(struct landlock_domain *const domain);
  
--	/**
--	 * @usage: Reference count for this struct.
--	 */
--	refcount_t usage;
--
--	/**
--	 * @num_layers: Number of layers in this domain.
--	 */
--	u16 num_layers;
-+	union {
-+		/**
-+		 * @work_free: Enables to free a ruleset within a lockless
-+		 * section.  This is only used by
-+		 * landlock_put_domain_deferred() when @usage reaches zero.
-+		 */
-+		struct work_struct work_free;
-+
-+		struct {
-+			/**
-+			* @usage: Reference count for this struct.
-+			*/
-+			refcount_t usage;
-+
-+			/**
-+			* @num_layers: Number of layers in this domain.
-+			*/
-+			u16 num_layers;
-+		};
-+	};
- };
- 
- struct landlock_domain *landlock_alloc_domain(size_t num_inode_entries,
-@@ -48,6 +60,8 @@ static inline void landlock_get_domain(struct landlock_domain *const domain)
- 
- void landlock_put_domain(struct landlock_domain *const domain);
- 
-+void landlock_put_domain_deferred(struct landlock_domain *const domain);
++struct landlock_domain *
++landlock_merge_ruleset2(const struct landlock_domain *curr_domain,
++			const struct landlock_ruleset *new_ruleset);
 +
  enum landlock_log_status {
  	LANDLOCK_LOG_PENDING = 0,
  	LANDLOCK_LOG_RECORDED,
-diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-index b407c644ac65..c4f442093c6e 100644
---- a/security/landlock/fs.c
-+++ b/security/landlock/fs.c
-@@ -1844,6 +1844,7 @@ static bool control_current_fowner(struct fown_struct *const fown)
- static void hook_file_set_fowner(struct file *file)
- {
- 	struct landlock_ruleset *prev_dom;
-+	struct landlock_domain *prev_dom2;
- 	struct landlock_cred_security fown_subject = {};
- 	size_t fown_layer = 0;
+diff --git a/security/landlock/hash.h b/security/landlock/hash.h
+index 8393593cfe7b..8208944c309e 100644
+--- a/security/landlock/hash.h
++++ b/security/landlock/hash.h
+@@ -10,6 +10,7 @@
  
-@@ -1856,11 +1857,13 @@ static void hook_file_set_fowner(struct file *file)
- 				current_cred(), signal_scope, &fown_layer);
- 		if (new_subject) {
- 			landlock_get_ruleset(new_subject->domain);
-+			landlock_get_domain(new_subject->domain2);
- 			fown_subject = *new_subject;
- 		}
+ #include <linux/slab.h>
+ #include <linux/hash.h>
++#include <linux/rculist.h>
+ 
+ #include "ruleset.h"
+ 
+@@ -125,3 +126,107 @@ static inline size_t landlock_hash_count(const struct landlock_hashtable *ht)
  	}
+ 	return num_entries;
+ }
++
++/**
++ * @landlock_hash_insert - Insert a rule in the hashtable, taking
++ * ownership of the passed in struct landlock_rule. This function assumes
++ * that the rule is already in the hash table.
++ */
++static inline void landlock_hash_insert(const struct landlock_hashtable *ht,
++					struct landlock_rule *const new_rule)
++{
++	struct hlist_head *head =
++		&ht->hlist[landlock_hash_key(new_rule->key, ht->hash_bits)];
++
++	hlist_add_head(&new_rule->hlist, head);
++}
++
++static inline int
++landlock_hash_clone(struct landlock_hashtable *const dst,
++		    const struct landlock_hashtable *const src,
++		    const enum landlock_key_type key_type)
++{
++	struct landlock_rule *curr_rule, *new_rule;
++	struct landlock_id id = {
++		.type = key_type,
++	};
++	size_t i;
++
++	landlock_hash_for_each(curr_rule, src, i)
++	{
++		id.key = curr_rule->key;
++		new_rule = landlock_create_rule(id, &curr_rule->layers,
++						curr_rule->num_layers, NULL);
++
++		if (IS_ERR(new_rule)) {
++			return PTR_ERR(new_rule);
++		}
++
++		/*
++		 * new_rule->hlist is invalid, but should still be safe to pass to
++		 * hlist_add_head().
++		 */
++		landlock_hash_insert(dst, new_rule);
++	}
++
++	return 0;
++}
++
++/**
++ * @landlock_hash_upsert - Either insert a new rule with the new layer in
++ * the hashtable, or update an existing one, adding the new layer.
++ *
++ * Hash table must have at least one slot.  This function doesn't take any
++ * locks - it's only valid to call this on a newly created (not yet
++ * committed to creds) domain.
++ *
++ * May error with -ENOMEM.
++ */
++static inline int landlock_hash_upsert(struct landlock_hashtable *const ht,
++				       union landlock_key key,
++				       const enum landlock_key_type key_type,
++				       struct landlock_layer new_layer)
++{
++	size_t index = landlock_hash_key(key, ht->hash_bits);
++	struct hlist_head *head = &ht->hlist[index];
++	struct landlock_rule *curr_rule, *new_rule;
++	const struct landlock_id id = {
++		.type = key_type,
++		.key = key,
++	};
++
++	hlist_for_each_entry(curr_rule, head, hlist) {
++		if (curr_rule->key.data != key.data)
++			continue;
++
++		new_rule = landlock_create_rule(id, &curr_rule->layers,
++						curr_rule->num_layers,
++						&new_layer);
++		if (IS_ERR(new_rule))
++			return PTR_ERR(new_rule);
++
++		/*
++		 * Replace curr_rule with new_rule in place within the hlist
++		 * We don't really care about RCU... but there's no "hlist_replace"
++		 * We should be safe to call hlist_replace_rcu() without first
++		 * initializing new_rule->hlist
++		 */
++		hlist_replace_rcu(&curr_rule->hlist, &new_rule->hlist);
++		free_rule(curr_rule, key_type);
++		return 0;
++	}
++
++	/* No existing rules found, insert new one. */
++	new_rule = landlock_create_rule(id, NULL, 0, &new_layer);
++	if (IS_ERR(new_rule))
++		return PTR_ERR(new_rule);
++
++	/*
++	 * new_rule->hlist is invalid, but should still be safe to pass to
++	 * hlist_add_head().
++	 */
++	hlist_add_head(&new_rule->hlist, head);
++	return 0;
++}
++
++#endif /* _SECURITY_LANDLOCK_HASH_H */
+diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
+index 07823771b402..ac91d4a865b9 100644
+--- a/security/landlock/ruleset.h
++++ b/security/landlock/ruleset.h
+@@ -27,7 +27,7 @@ struct landlock_hierarchy;
+  */
+ struct landlock_layer {
+ 	/**
+-	 * @level: Position of this layer in the layer stack.
++	 * @level: Position of this layer in the layer stack. Starts from 1.
+ 	 */
+ 	u16 level;
+ 	/**
+diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+index 38eb8287f73d..57ac3ee02f22 100644
+--- a/security/landlock/syscalls.c
++++ b/security/landlock/syscalls.c
+@@ -483,6 +483,7 @@ SYSCALL_DEFINE2(landlock_restrict_self, const int, ruleset_fd, const __u32,
+ 		*ruleset __free(landlock_put_ruleset) = NULL;
+ 	struct cred *new_cred;
+ 	struct landlock_cred_security *new_llcred;
++	struct landlock_domain *new_domain2;
+ 	bool __maybe_unused log_same_exec, log_new_exec, log_subdomains,
+ 		prev_log_subdomains;
  
- 	prev_dom = landlock_file(file)->fown_subject.domain;
-+	prev_dom2 = landlock_file(file)->fown_subject.domain2;
- 	landlock_file(file)->fown_subject = fown_subject;
+@@ -551,6 +552,12 @@ SYSCALL_DEFINE2(landlock_restrict_self, const int, ruleset_fd, const __u32,
+ 		abort_creds(new_cred);
+ 		return PTR_ERR(new_dom);
+ 	}
++	new_domain2 = landlock_merge_ruleset2(new_llcred->domain2, ruleset);
++	if (IS_ERR(new_domain2)) {
++		landlock_put_ruleset(new_dom);
++		abort_creds(new_cred);
++		return PTR_ERR(new_domain2);
++	}
+ 
  #ifdef CONFIG_AUDIT
- 	landlock_file(file)->fown_layer = fown_layer;
-@@ -1868,11 +1871,13 @@ static void hook_file_set_fowner(struct file *file)
+ 	new_dom->hierarchy->log_same_exec = log_same_exec;
+@@ -588,6 +595,8 @@ SYSCALL_DEFINE2(landlock_restrict_self, const int, ruleset_fd, const __u32,
+ 	/* Replaces the old (prepared) domain. */
+ 	landlock_put_ruleset(new_llcred->domain);
+ 	new_llcred->domain = new_dom;
++	landlock_put_domain(new_llcred->domain2);
++	new_llcred->domain2 = new_domain2;
  
- 	/* May be called in an RCU read-side critical section. */
- 	landlock_put_ruleset_deferred(prev_dom);
-+	landlock_put_domain_deferred(prev_dom2);
- }
- 
- static void hook_file_free_security(struct file *file)
- {
- 	landlock_put_ruleset_deferred(landlock_file(file)->fown_subject.domain);
-+	landlock_put_domain_deferred(landlock_file(file)->fown_subject.domain2);
- }
- 
- static struct security_hook_list landlock_hooks[] __ro_after_init = {
+ #ifdef CONFIG_AUDIT
+ 	new_llcred->domain_exec |= BIT(new_dom->num_layers - 1);
 -- 
 2.49.0
 
