@@ -1,147 +1,179 @@
-Received: from smtp-fw-52002.amazon.com (smtp-fw-52002.amazon.com [52.119.213.150])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4246632;
-	Wed, 21 May 2025 00:42:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F9652AD32
+	for <linux-security-module@vger.kernel.org>; Wed, 21 May 2025 00:55:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747788146; cv=none; b=hCNsbkACdpx5pnWFk6FBckkyUETTust00XMrI4ooOuYcinW8r2g9alE1w7SmJdXXGSfuf8Fy5F3z7vSR3q8BAZnJFIrhnxFJIQOkcFnkGvGAH8QW3hhuZtN/VaivC1BLRTr4+qwQNYO4PCa5cGNNF6TFK58ThajN4+Zj7COgEYg=
+	t=1747788938; cv=none; b=FaDPjuIfKtTOPuqq+vDhhOo9Fj1nK0DFzRDU5NNwgZgNYQEwZ7My6KOE8mDUsN75riDGuUpn5xRbncd76q5uaGufu+t0nI+DqzaOpyl2d8lJQT31+nYIgRbq98JvGTWSb8b7MQWt+m5mPBBYmNX1tCiVEEqpvY1nqtUxXxEzNIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747788146; c=relaxed/simple;
-	bh=JwuXcIJf4i76I1tCA4AmICXNLN6bpvr5vhDsldPaZj4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dj7jp5oXP8q9Ot7VwK9N9H5EkyF1PHw3zeX78ppnznEQ3VKkuQCAcnDqbHnxXNstGAUGsB9Oa4e2rBXx4Jrp3LouFvtiFliRFUSW4L54coekQZBRcLcwwhkyR5BB2+Nw2wxJiQtasxHiH8fVnFPdRFsUpp2BLdYBNeDfwiByuso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=MO66rSpd; arc=none smtp.client-ip=52.119.213.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+	s=arc-20240116; t=1747788938; c=relaxed/simple;
+	bh=3Y0eI2D8cnedVznYRle7TnjGhJ3X2g6z0d4K3WJthKc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pvxJRT0rFZOnfPuKgAGoeg7syJx/7KsMxZZrnFtxvn8VujPiDxcJjLPAK8LsHIKua2CWnmmDfjXl6XPZzHyK4mwBu4D3KJK+OHe7R7v4MxGQ1VM1fp50DEOedvQF3N3P7kmUrecDHmLAdhK+i+jXcedY6BQQt/l7BTo7o6RKKmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=t6iYY0S8; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="MO66rSpd"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="t6iYY0S8"
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-601a67c6e61so26759a12.0
+        for <linux-security-module@vger.kernel.org>; Tue, 20 May 2025 17:55:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1747788146; x=1779324146;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=9lVsmYxOW62soy44KdVJkVW7koejhz4/tgmlApVUKS8=;
-  b=MO66rSpdv0klA7RcJ+Ka/gakG0oUkgybgkGgwbWHuSYj0n0yKRcVAXxU
-   0oDxCBrPWLL7OCyle34dE6MtHmq722KEUbPdDiGkz5OsaYsbHXpNF7I/T
-   PjuL4p1EtrV8gYQX9e1Cq2PrsMplf9rrOlItizwNsTmJ8XMgPtSjd/DuC
-   sHO/puuuxxpf+EewVx9VBxExz96qiPhNvMAB4PR7CAWZuDfCDaf4wP+8W
-   UbEIRWCiFvGNiaQrSSVB9MWRCzag0CxDlUpyIs5boR9eKex//zT0nyAuh
-   /ersy2CevY7axGFKUstk3SJBPs79FMf/RBLR4W45XAu6Q4rBEus/6AXfB
-   A==;
-X-IronPort-AV: E=Sophos;i="6.15,303,1739836800"; 
-   d="scan'208";a="724880082"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-52002.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 May 2025 00:42:21 +0000
-Received: from EX19MTAUWC001.ant.amazon.com [10.0.21.151:53710]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.11.48:2525] with esmtp (Farcaster)
- id e61ff1ca-97b4-4607-8771-aa879e1cc1a9; Wed, 21 May 2025 00:42:19 +0000 (UTC)
-X-Farcaster-Flow-ID: e61ff1ca-97b4-4607-8771-aa879e1cc1a9
-Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
- EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Wed, 21 May 2025 00:42:19 +0000
-Received: from 6c7e67bfbae3.amazon.com (10.187.171.41) by
- EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Wed, 21 May 2025 00:42:15 +0000
-From: Kuniyuki Iwashima <kuniyu@amazon.com>
-To: <stephen@networkplumber.org>
-CC: <alexander@mihalicyn.com>, <brauner@kernel.org>,
-	<daan.j.demeyer@gmail.com>, <daniel@iogearbox.net>, <davem@davemloft.net>,
-	<david@readahead.eu>, <edumazet@google.com>, <horms@kernel.org>,
-	<jack@suse.cz>, <jannh@google.com>, <kuba@kernel.org>, <kuniyu@amazon.com>,
-	<lennart@poettering.net>, <linux-fsdevel@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-security-module@vger.kernel.org>,
-	<luca.boccassi@gmail.com>, <me@yhndnzj.com>, <netdev@vger.kernel.org>,
-	<oleg@redhat.com>, <pabeni@redhat.com>, <serge@hallyn.com>,
-	<viro@zeniv.linux.org.uk>, <zbyszek@in.waw.pl>
-Subject: Re: [PATCH v8 0/9] coredump: add coredump socket
-Date: Tue, 20 May 2025 17:41:58 -0700
-Message-ID: <20250521004207.10514-1-kuniyu@amazon.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250520122838.29131f04@hermes.local>
-References: <20250520122838.29131f04@hermes.local>
+        d=google.com; s=20230601; t=1747788935; x=1748393735; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ncdPurYh5hOloTnF5wYlf3UcK9wRpi+Q0GSN2FGpFac=;
+        b=t6iYY0S8F9uuz9aTdTGzVi/0cVIoOe4P+CoySV6Esk6I3hSqPnSlxEmZhR2u8jyazn
+         laZVf6RcIc8ELzwaMXmGfjzYQ8SAbIjv4IFXfTyBXM/E2W9nI/tqpf0c0HJx+zg9X3sz
+         MrOKJYrk8wCe3/BhQA8zA8uJZgW8q7sbB3N8j9nihnoyI+ojilBL6Z254QfkP518+Apm
+         RInyo800CxqXW7BcYy9iFqfufCYmQIQopHLq7I/jexZVzzUpOgT/QeaOq4HuXYfFUAj/
+         onx4WCI5hOEMWO5M/hYPiQC7vlPQlLNsr6vNaGwalY60y67tv0cTfeeC46JBlAtkvmy/
+         q+hA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747788935; x=1748393735;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ncdPurYh5hOloTnF5wYlf3UcK9wRpi+Q0GSN2FGpFac=;
+        b=p/eDcfoWGSwA4X95Inz/GlMS6lHk5COBpJ7hBfw4rjUt6rWnNy8FVEikFcTWilIug1
+         UoyQYbniCz/oAN0DKJJ86Fc+BjDWO21m/0FiHYqlFmHPbkRD4U/F5e1mL8jweqVEIel9
+         wqxFI2z0YXzaJ6CKwAaNGquNFM/5nW+Krw+ASbxY7Ny99rwEFRK7olrXHWS3LAeRSrgt
+         K/siYrYoX8jcTS8Ko37A6tN7ug6CnAnPaQGAujrgOlCK6Gz4iWwcg/pSnBhlt5Xkuy3F
+         7dwBA1Y8Qps/R1NMLTbGS4Y8zuoNY3iHODqUI4ADNiVbd6n1OISJYibiL9UToomLVtTU
+         K6Dg==
+X-Forwarded-Encrypted: i=1; AJvYcCVh2xCYQx2Qm25Spg9KhF5I6MaRsOsW/uSc9uBPaoS/nQBOqX20xU+rtTQJg6AO0s/XqFxZYSjG33KkgTWmDGfQOUpqkmU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDLnfa+c6TLpY7dDq/aasekeakxSljDA55bcT/M29Q7RTskwWk
+	zT8kcR/HuoRCWZskZgm2aAd5Tb70BHhqeEApmlCFk+1l8AvoFDpIkQN5TqR2r7vdUtVV9HtzyyK
+	32RI1uw/mhOZy/x+iUDCfxj6dMHh22MjACIX5gdrg
+X-Gm-Gg: ASbGncubLlthleENLmXo/83wEDIxyK4PUPmf2hyoY7uIrvjI+cDecxbdOx7qFwCBikk
+	xdRK6BE/PNHJqWs+DERB0sIY+iaJow7py/Bt6otLBr56ITjTIxkWtDIrvunPcLHTAbHh0JMle3s
+	+35a5SZA03MHRzXtvzB4xzg6eNF9dkQm0HmT65O+iXBsGby1xtvpa3ck/lqfjnS8/XonNvmC1G
+X-Google-Smtp-Source: AGHT+IG1IjnHi54Q+N8idfo93JIC1frTSBUwH3gzuDMjjhBz9G/MzDcANwRogNTzPUUfNYSoKlZHrVja9CDjA4RXL78=
+X-Received: by 2002:a05:6402:14d5:b0:601:233a:4f4d with SMTP id
+ 4fb4d7f45d1cf-6019bf2f776mr370366a12.2.1747788934322; Tue, 20 May 2025
+ 17:55:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EX19D040UWB003.ant.amazon.com (10.13.138.8) To
- EX19D004ANA001.ant.amazon.com (10.37.240.138)
+References: <20250520122838.29131f04@hermes.local> <20250521004207.10514-1-kuniyu@amazon.com>
+In-Reply-To: <20250521004207.10514-1-kuniyu@amazon.com>
+From: Jann Horn <jannh@google.com>
+Date: Wed, 21 May 2025 02:54:58 +0200
+X-Gm-Features: AX0GCFtQXlIu9odOXoeE-q7wbNaaPaAzIzGo4QIICbt2W9dOwceP8yBMza1qmTI
+Message-ID: <CAG48ez0r4A7iMXzBBdPiHWycYSAGSm7VFWULCqKQPXoBKFWpEw@mail.gmail.com>
+Subject: Re: [PATCH v8 0/9] coredump: add coredump socket
+To: Kuniyuki Iwashima <kuniyu@amazon.com>
+Cc: stephen@networkplumber.org, alexander@mihalicyn.com, brauner@kernel.org, 
+	daan.j.demeyer@gmail.com, daniel@iogearbox.net, davem@davemloft.net, 
+	david@readahead.eu, edumazet@google.com, horms@kernel.org, jack@suse.cz, 
+	kuba@kernel.org, lennart@poettering.net, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	luca.boccassi@gmail.com, me@yhndnzj.com, netdev@vger.kernel.org, 
+	oleg@redhat.com, pabeni@redhat.com, serge@hallyn.com, viro@zeniv.linux.org.uk, 
+	zbyszek@in.waw.pl
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Stephen Hemminger <stephen@networkplumber.org>
-Date: Tue, 20 May 2025 12:28:38 -0700
-> On Fri, 16 May 2025 13:25:27 +0200
-> Christian Brauner <brauner@kernel.org> wrote:
-> 
-> > Coredumping currently supports two modes:
-> > 
-> > (1) Dumping directly into a file somewhere on the filesystem.
-> > (2) Dumping into a pipe connected to a usermode helper process
-> >     spawned as a child of the system_unbound_wq or kthreadd.
-> > 
-> > For simplicity I'm mostly ignoring (1). There's probably still some
-> > users of (1) out there but processing coredumps in this way can be
-> > considered adventurous especially in the face of set*id binaries.
-> > 
-> > The most common option should be (2) by now. It works by allowing
-> > userspace to put a string into /proc/sys/kernel/core_pattern like:
-> > 
-> >         |/usr/lib/systemd/systemd-coredump %P %u %g %s %t %c %h
-> > 
-> > The "|" at the beginning indicates to the kernel that a pipe must be
-> > used. The path following the pipe indicator is a path to a binary that
-> > will be spawned as a usermode helper process. Any additional parameters
-> > pass information about the task that is generating the coredump to the
-> > binary that processes the coredump.
-> > 
-> > In the example core_pattern shown above systemd-coredump is spawned as a
-> > usermode helper. There's various conceptual consequences of this
-> > (non-exhaustive list):
-> > 
-> > - systemd-coredump is spawned with file descriptor number 0 (stdin)
-> >   connected to the read-end of the pipe. All other file descriptors are
-> >   closed. That specifically includes 1 (stdout) and 2 (stderr). This has
-> >   already caused bugs because userspace assumed that this cannot happen
-> >   (Whether or not this is a sane assumption is irrelevant.).
-> > 
-> > - systemd-coredump will be spawned as a child of system_unbound_wq. So
-> >   it is not a child of any userspace process and specifically not a
-> >   child of PID 1. It cannot be waited upon and is in a weird hybrid
-> >   upcall which are difficult for userspace to control correctly.
-> > 
-> > - systemd-coredump is spawned with full kernel privileges. This
-> >   necessitates all kinds of weird privilege dropping excercises in
-> >   userspace to make this safe.
-> > 
-> > - A new usermode helper has to be spawned for each crashing process.
-> > 
-> > This series adds a new mode:
-> > 
-> > (3) Dumping into an AF_UNIX socket.
-> > 
-> > Userspace can set /proc/sys/kernel/core_pattern to:
-> > 
-> >         @/path/to/coredump.socket
-> > 
-> > The "@" at the beginning indicates to the kernel that an AF_UNIX
-> > coredump socket will be used to process coredumps.
-> > 
-> > The coredump socket must be located in the initial mount namespace.
-> > When a task coredumps it opens a client socket in the initial network
-> > namespace and connects to the coredump socket.
-> 
-> 
-> There is a problem with using @ as naming convention.
-> The starting character of @ is already used to indicate abstract
-> unix domain sockets in some programs like ss.
-> And will the new coredump socekt allow use of abstrace unix
-> domain sockets?
+On Wed, May 21, 2025 at 2:42=E2=80=AFAM Kuniyuki Iwashima <kuniyu@amazon.co=
+m> wrote:
+> From: Stephen Hemminger <stephen@networkplumber.org>
+> Date: Tue, 20 May 2025 12:28:38 -0700
+> > On Fri, 16 May 2025 13:25:27 +0200
+> > Christian Brauner <brauner@kernel.org> wrote:
+> >
+> > > Coredumping currently supports two modes:
+> > >
+> > > (1) Dumping directly into a file somewhere on the filesystem.
+> > > (2) Dumping into a pipe connected to a usermode helper process
+> > >     spawned as a child of the system_unbound_wq or kthreadd.
+> > >
+> > > For simplicity I'm mostly ignoring (1). There's probably still some
+> > > users of (1) out there but processing coredumps in this way can be
+> > > considered adventurous especially in the face of set*id binaries.
+> > >
+> > > The most common option should be (2) by now. It works by allowing
+> > > userspace to put a string into /proc/sys/kernel/core_pattern like:
+> > >
+> > >         |/usr/lib/systemd/systemd-coredump %P %u %g %s %t %c %h
+> > >
+> > > The "|" at the beginning indicates to the kernel that a pipe must be
+> > > used. The path following the pipe indicator is a path to a binary tha=
+t
+> > > will be spawned as a usermode helper process. Any additional paramete=
+rs
+> > > pass information about the task that is generating the coredump to th=
+e
+> > > binary that processes the coredump.
+> > >
+> > > In the example core_pattern shown above systemd-coredump is spawned a=
+s a
+> > > usermode helper. There's various conceptual consequences of this
+> > > (non-exhaustive list):
+> > >
+> > > - systemd-coredump is spawned with file descriptor number 0 (stdin)
+> > >   connected to the read-end of the pipe. All other file descriptors a=
+re
+> > >   closed. That specifically includes 1 (stdout) and 2 (stderr). This =
+has
+> > >   already caused bugs because userspace assumed that this cannot happ=
+en
+> > >   (Whether or not this is a sane assumption is irrelevant.).
+> > >
+> > > - systemd-coredump will be spawned as a child of system_unbound_wq. S=
+o
+> > >   it is not a child of any userspace process and specifically not a
+> > >   child of PID 1. It cannot be waited upon and is in a weird hybrid
+> > >   upcall which are difficult for userspace to control correctly.
+> > >
+> > > - systemd-coredump is spawned with full kernel privileges. This
+> > >   necessitates all kinds of weird privilege dropping excercises in
+> > >   userspace to make this safe.
+> > >
+> > > - A new usermode helper has to be spawned for each crashing process.
+> > >
+> > > This series adds a new mode:
+> > >
+> > > (3) Dumping into an AF_UNIX socket.
+> > >
+> > > Userspace can set /proc/sys/kernel/core_pattern to:
+> > >
+> > >         @/path/to/coredump.socket
+> > >
+> > > The "@" at the beginning indicates to the kernel that an AF_UNIX
+> > > coredump socket will be used to process coredumps.
+> > >
+> > > The coredump socket must be located in the initial mount namespace.
+> > > When a task coredumps it opens a client socket in the initial network
+> > > namespace and connects to the coredump socket.
+> >
+> >
+> > There is a problem with using @ as naming convention.
+> > The starting character of @ is already used to indicate abstract
+> > unix domain sockets in some programs like ss.
+> > And will the new coredump socekt allow use of abstrace unix
+> > domain sockets?
+>
+> The coredump only works with the pathname socket, so ideally
+> the prefix should be '/', but it's same with the direct-file
+> coredump.  We can distinguish the socket by S_ISSOCK() though.
 
-The coredump only works with the pathname socket, so ideally
-the prefix should be '/', but it's same with the direct-file
-coredump.  We can distinguish the socket by S_ISSOCK() though.
+The path lookups work very differently between COREDUMP_SOCK and
+COREDUMP_FILE - they are interpreted relative to different namespaces,
+and they run with different privileges, and they do different format
+string interpretation. I think trying to determine dynamically whether
+the path refers to a socket or to a nonexistent location at which we
+should create a file (or a preexisting file we should clobber) would
+not be practical, partly for these reasons.
+
+Also, fundamentally, if we have the choice between letting userspace
+be explicit about what it wants, or trying to guess userspace's intent
+from the kernel, I think we should always go for being explicit.
+
+So I guess it could be reasonable to bikeshed the prefix letter and
+turn '@' into some other character that is not overloaded with another
+meaning in this context, like '>'; but I don't think we should be
+changing the overall approach because of this.
