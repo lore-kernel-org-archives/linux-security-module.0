@@ -1,40 +1,40 @@
 Received: from mail.nightmared.fr (mail.nightmared.fr [51.158.148.24])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2061414EC60;
-	Wed, 21 May 2025 14:01:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ADFB18B492;
+	Wed, 21 May 2025 14:06:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.158.148.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747836117; cv=none; b=M7a7eKDayKucyurbbv+NuPK+Nt+33UVog/m9EVMDffiWBJcqlqlTcNeB8qkHguPag6n/+BC6FTTUXh43LawhrQjEP1v219b/eV3uCr/YzTsN1sn9zNWAanuP3niFmPae+H1rLJJJ4dghMSrA+7PLMnI4N0VHdRr6cCEaQUUZ3qc=
+	t=1747836366; cv=none; b=EHoTzBcoyGdaQjMq8/tgf4iQz6EA/20q5qMH8MvDMY8g/dXkxFbvtiT9UxauILEF8H9g5iKFCYNnRn3pLqtv3tuCFDwJm+MLeOWx5bILwRdxpxCGFtXhGcapQc7a993My75v5S9V3jGw8NLnH/3t9P/U66ewBxZdyLkCHSo704Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747836117; c=relaxed/simple;
-	bh=XtYrGgiDZ+0a42wraAQXQkN8sOogaew2kdts3+UGHV4=;
+	s=arc-20240116; t=1747836366; c=relaxed/simple;
+	bh=OK0lBPVdCl68YwgolnFe41OrVjHUPKYmOOMkmHKJppk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=R86tpOItYxnoQLwEeSsk8PJSIPk7a5nsTHcIkL3q4uZS97P7jWZNeZ3fjaSkZDQKfKTJJENXXt05B3on+tyZFXUH0BPnPvhyUSNYswtAQnJvIykQ74sgfES1ICQ1iC1DyN5AoM3XGRtQe53E93Nync4effjoJ8/yL3ktSDQLSf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nightmared.fr; spf=pass smtp.mailfrom=nightmared.fr; dkim=pass (2048-bit key) header.d=nightmared.fr header.i=@nightmared.fr header.b=AnCVvZp9; arc=none smtp.client-ip=51.158.148.24
+	 MIME-Version; b=a28UY+qUNbr91Ks6kOm7ft57Fs5Ez0L+QqBLMyV+vF/Dh62JAHb0wn1UptUfglPsj6q3j/Ulh+fez9G6ex9tDCp9IXq4BK97icHJR4LkeQTlaRpMncEtQ14e6dHniTvUzmnSQ4hKFIAL953CKTCXM94ij6knpgaHbxEoAUE+mqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nightmared.fr; spf=pass smtp.mailfrom=nightmared.fr; dkim=pass (2048-bit key) header.d=nightmared.fr header.i=@nightmared.fr header.b=L97C07CA; arc=none smtp.client-ip=51.158.148.24
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nightmared.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nightmared.fr
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nightmared.fr header.i=@nightmared.fr header.b="AnCVvZp9"
+	dkim=pass (2048-bit key) header.d=nightmared.fr header.i=@nightmared.fr header.b="L97C07CA"
 Received: from localhost.localdomain (atoulon-651-1-170-218.w83-113.abo.wanadoo.fr [83.113.65.218])
-	by mail.nightmared.fr (Postfix) with ESMTPSA id 5397B1087A4F;
-	Wed, 21 May 2025 14:01:49 +0000 (UTC)
+	by mail.nightmared.fr (Postfix) with ESMTPSA id E473E1087A3F;
+	Wed, 21 May 2025 14:01:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nightmared.fr;
-	s=docker; t=1747836109;
-	bh=XtYrGgiDZ+0a42wraAQXQkN8sOogaew2kdts3+UGHV4=;
+	s=docker; t=1747836107;
+	bh=OK0lBPVdCl68YwgolnFe41OrVjHUPKYmOOMkmHKJppk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=AnCVvZp9VYo2wdSBjWdsbNMg5okNXcZ88fn2uixjSxbqfO0MsXdncNlzxifVlXOB6
-	 iEd9SRRpQgCSedu9vL5bmV1qn7gUHKQCACporqkbpvGnxgjTatuk/XKsGptUUPAVOx
-	 GDtHnHLQlS9+LcIHLSjZ8WEXAwzZUxmjk/3IhQSGb83tKqq95SSCg35KTwg7+i9Drv
-	 eeVtIV8+rqcXq/WEicQi/6FNVs75CSV/9PUViTeLAkxbOAUJ7O/iIvw8HfZxHdgSW2
-	 T6p5/SPM4vrr35Ck+rXux1ApyRJqXWkD0uYC6CSCgsz9YGPyf6h5HxpITPmi85dd2y
-	 WjkKHyChHnigQ==
+	b=L97C07CAts3c4Kl3Y36gHWTokcsWhjNUc/7YutkMmfw4rV8k8Pm0Mb/TxjIYS1Zw6
+	 +oYN5dfuE9N602sU14KMiSPEBlu+5mCF+HOaxWv/TANL9EX2Pssl6XFJf4DSTvB/To
+	 WOEbN8Y0+nfAJkJcLmJfXXKpg/GcPWwhki61WaeCu5Pf10ie4Cv+nPOLVl4dAhClNy
+	 tdTc5DPaXHSMzLg7NLh2bT68fO+MPZGYfE7vXKakfBr85SVpDISyxsD5wS9hQTGaG0
+	 2JoRujURtUfbUyRIyIWrNCamdYzMB0Hto8I+2/qRdb+YGWpZnUgfO4Hv+N07Z1WtWA
+	 MAr5YzMQJZJOw==
 From: Simon THOBY <git@nightmared.fr>
 To: linux-security-module@vger.kernel.org
 Cc: Simon THOBY <git@nightmared.fr>,
 	linux-integrity@vger.kernel.org,
 	linux-doc@vger.kernel.org
-Subject: [RFC PATCH 9/9] Loadpol LSM: add a minimal documentation
-Date: Wed, 21 May 2025 16:01:13 +0200
-Message-ID: <20250521140121.591482-10-git@nightmared.fr>
+Subject: [RFC PATCH 1/9] LSM: Introduce a new hook: security_kernel_module_load
+Date: Wed, 21 May 2025 16:01:05 +0200
+Message-ID: <20250521140121.591482-2-git@nightmared.fr>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250521140121.591482-1-git@nightmared.fr>
 References: <20250521140121.591482-1-git@nightmared.fr>
@@ -46,116 +46,118 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Introduce a minimal documentation for Loadpol, presenting the policy
-format and the two user interfaces: the securityfs policy file and the
-sysctl.
+Introduce a new hook to allow LSMs to decide whether to block the load
+of a kernel module.
+
+Two hooks already exist:
+- kernel_module_request is called when the kernel itself (not userspace)
+ request the load of a module, e.g. because a device was detected.
+ - security_kernel_load_data(LOADING_MODULE) is called when userspace calls
+ init_module/finit_module, but lack information about the module because
+ its  headers have not been loaded into kernel space, let alone parsed.
+ This may not be sufficient for some LSMs.
+
+This new hook is similar to security_kernel_load_data(LOADING_MODULE),
+but called after the module signature and header are verified, and only
+takes the module name for now.
 
 Signed-off-by: Simon THOBY <git@nightmared.fr>
 ---
- Documentation/admin-guide/LSM/Loadpol.rst | 81 +++++++++++++++++++++++
- Documentation/admin-guide/LSM/index.rst   |  1 +
- 2 files changed, 82 insertions(+)
- create mode 100644 Documentation/admin-guide/LSM/Loadpol.rst
+ include/linux/lsm_hook_defs.h |  1 +
+ include/linux/module.h        |  1 +
+ include/linux/security.h      |  6 ++++++
+ kernel/module/main.c          |  4 ++++
+ security/security.c           | 14 ++++++++++++++
+ 5 files changed, 26 insertions(+)
 
-diff --git a/Documentation/admin-guide/LSM/Loadpol.rst b/Documentation/admin-guide/LSM/Loadpol.rst
-new file mode 100644
-index 000000000000..0aa24a8d393c
---- /dev/null
-+++ b/Documentation/admin-guide/LSM/Loadpol.rst
-@@ -0,0 +1,81 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+=======
-+Loadpol
-+=======
-+
-+Loadpol is a Linux Security Module that enforces a user-provided policy
-+when decided whether a dynamic module can be loaded or not.
-+
-+The policy can be read and rewritten at ``/sys/kernel/security/loadpol/policy``.
-+
-+A default policy is created that contains the current list of blacklisted modules,
-+and a catch-all entry that allow loading any module.
-+
-+Policy format
-+=============
-+
-+The policy is defined as a set of line-separated entries.
-+Each entry define the conditions for a match (the origin of the load request and
-+the name of the kernel module), and the action to take when the load request
-+matches the entry.
-+
-+
-+Entry syntax: ``[origin=(userspace|kernel|kernel,userspace)] [module=<module_name>] action=(allow|deny)``
-+
-+There are two matching conditions:
-+
-+``origin``:
-+    Load Requests can come from two origins:
-+
-+    * ``userspace`` (ie. a program in userspace called modprobe/insmod)
-+    * ``kernel`` (the kernel requested the module directly by calling
-+      ``request_module(...)``, e.g. loading a filesystem when performing a
-+      ``-o loop`` mount).
-+
-+    When unspecified, the condition defaults to ``kernel,userspace`` (which means
-+    that both origins match).
-+
-+``module``:
-+    Name of the kernel module being matched. The name can contain wilcards.
-+    Beware, module aliases do not work!
-+
-+There are two possible actions:
-+
-+* ``allow``: permit the load of the kernel module.
-+* ``deny``: reject the load of the kernel module and emit an audit log.
-+
-+The policy is not greedy: as soon as a match is found, the evaluation terminates
-+with the result of that match. So be very careful with the order of your entries.
-+
-+The main use cases of the policy will probably be to define an allowlist
-+(here, we allow ``module_a`` and any module starting with ``module_b`` loaded
-+by the user)::
-+
-+	module==module_a action=allow
-+	origin==user module==module_b* action=deny
-+	action=deny
-+
-+But other mechanisms are possible, like a denylist
-+(here we block ``module_a``, ``module_b`` if it is loaded by the kernel and
-+any module starting with ``module_c`` loaded by the user)::
-+
-+	module==module_a action=deny
-+	origin==kernel module==module_b action=deny
-+	origin==user module==module_c* action=deny
-+	action=allow
-+
-+Policy lock
-+===========
-+
-+In order to protect the policy from tampering, a sysctl is provided to
-+lock-in-place the currently-loaded policy.
-+
-+The ``security.loadpol.locked`` can take 2 values:
-+
-+0 - default:
-+    the policy can be reloaded at runtime by any administrator.
-+
-+1 - locked:
-+    the policy cannot be updated or modified, and loadpol cannot be disabled
-+    without rebooting.
-diff --git a/Documentation/admin-guide/LSM/index.rst b/Documentation/admin-guide/LSM/index.rst
-index b44ef68f6e4d..01d36670d8ad 100644
---- a/Documentation/admin-guide/LSM/index.rst
-+++ b/Documentation/admin-guide/LSM/index.rst
-@@ -42,6 +42,7 @@ subdirectories.
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index bf3bbac4e02a..51c5212d8bb6 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -223,6 +223,7 @@ LSM_HOOK(void, LSM_RET_VOID, cred_getlsmprop, const struct cred *c,
+ LSM_HOOK(int, 0, kernel_act_as, struct cred *new, u32 secid)
+ LSM_HOOK(int, 0, kernel_create_files_as, struct cred *new, struct inode *inode)
+ LSM_HOOK(int, 0, kernel_module_request, char *kmod_name)
++LSM_HOOK(int, 0, kernel_module_load, const char *kmod_name)
+ LSM_HOOK(int, 0, kernel_load_data, enum kernel_load_data_id id, bool contents)
+ LSM_HOOK(int, 0, kernel_post_load_data, char *buf, loff_t size,
+ 	 enum kernel_load_data_id id, char *description)
+diff --git a/include/linux/module.h b/include/linux/module.h
+index 8050f77c3b64..b6b8d6f7f599 100644
+--- a/include/linux/module.h
++++ b/include/linux/module.h
+@@ -39,6 +39,7 @@ struct modversion_info {
+ 	char name[MODULE_NAME_LEN];
+ };
  
-    apparmor
-    LoadPin
-+   Loadpol
-    SELinux
-    Smack
-    tomoyo
++struct load_info;
+ struct module;
+ struct exception_table_entry;
+ 
+diff --git a/include/linux/security.h b/include/linux/security.h
+index cc9b54d95d22..e175b2cc8caf 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -498,6 +498,7 @@ void security_cred_getlsmprop(const struct cred *c, struct lsm_prop *prop);
+ int security_kernel_act_as(struct cred *new, u32 secid);
+ int security_kernel_create_files_as(struct cred *new, struct inode *inode);
+ int security_kernel_module_request(char *kmod_name);
++int security_kernel_module_load(const char *kmod_name);
+ int security_kernel_load_data(enum kernel_load_data_id id, bool contents);
+ int security_kernel_post_load_data(char *buf, loff_t size,
+ 				   enum kernel_load_data_id id,
+@@ -1255,6 +1256,11 @@ static inline int security_kernel_module_request(char *kmod_name)
+ 	return 0;
+ }
+ 
++static inline int security_kernel_module_load(const char *kmod_name)
++{
++	return 0;
++}
++
+ static inline int security_kernel_load_data(enum kernel_load_data_id id, bool contents)
+ {
+ 	return 0;
+diff --git a/kernel/module/main.c b/kernel/module/main.c
+index a2859dc3eea6..12a1a5f4d823 100644
+--- a/kernel/module/main.c
++++ b/kernel/module/main.c
+@@ -3228,6 +3228,10 @@ static int early_mod_check(struct load_info *info, int flags)
+ 		return -EPERM;
+ 	}
+ 
++	err = security_kernel_module_load(info->name);
++	if (err)
++		return err;
++
+ 	err = rewrite_section_headers(info, flags);
+ 	if (err)
+ 		return err;
+diff --git a/security/security.c b/security/security.c
+index fb57e8fddd91..b9430499c332 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -3336,6 +3336,20 @@ int security_kernel_module_request(char *kmod_name)
+ 	return call_int_hook(kernel_module_request, kmod_name);
+ }
+ 
++/**
++ * security_kernel_module_load() - Check if loading a module is allowed
++ * @kmod_name: name of the kernel module being loaded
++ *
++ * This method is called when the userspace called init_module/finit_module
++ * with a valid module
++ *
++ * Return: Returns 0 if successful.
++ */
++int security_kernel_module_load(const char *kmod_name)
++{
++	return call_int_hook(kernel_module_load, kmod_name);
++}
++
+ /**
+  * security_kernel_read_file() - Read a file specified by userspace
+  * @file: file
 -- 
 2.49.0
 
