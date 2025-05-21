@@ -1,157 +1,130 @@
-Received: from mail.hallyn.com (mail.hallyn.com [178.63.66.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4453A21E0A2;
-	Wed, 21 May 2025 22:11:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.66.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEEF02222C3
+	for <linux-security-module@vger.kernel.org>; Wed, 21 May 2025 22:26:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747865508; cv=none; b=UGypgCsSePjqET/VtWyj5pu0elESMGyI8psv5THLqYihUeKeq44H8c2FEFBTedHv7Lb3Lj1o96tyO3Uh202HbteY1Da4yUF0PsP3j36cidJdDgpIKaQ5e9LH0FG0uBqwoHLYow+wf0N2DBPnuVo8I5tB39eTtkQWgBEyg0OpSjw=
+	t=1747866402; cv=none; b=qV4UfbCf3IXlDCzQ/V0Y8ohuno6/fflI/5HTyg2cFnIHL8H+J9Fe3pW5nNtqoifr+Ijm+FgsmxJTQp3fJsWKEMPFO6BuvvhbsQd2TIx1GabTTa/RdpctKITvrSOXTt/ryFZcWbFzJ+bk48HuY8N4LiYHerK5QxcPq3eGj00trj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747865508; c=relaxed/simple;
-	bh=PIxsFoyl0Qm3a53tAerIdBCz2QjjEP745QHvK76hLJQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AAnLMrbarNeG08SECWL4Ah+GiMZ02p/v3VVpNX3WHBjIi9JdH9ThUB0uPlrFOv6JIdR6V+fymx6VuW2hdVoSjvbIzd9OdByNLLrNRk8VkV/L8UBlp9XG4dBb2TA/KHo6pcDXfhJZPcgek1BtwEvx3hJGbOxcUS8EI1AYvNMSxOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com; spf=pass smtp.mailfrom=mail.hallyn.com; arc=none smtp.client-ip=178.63.66.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.hallyn.com
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-	id 073A61399; Wed, 21 May 2025 17:03:49 -0500 (CDT)
-Date: Wed, 21 May 2025 17:03:49 -0500
-From: "Serge E. Hallyn" <serge@hallyn.com>
-To: Simon THOBY <git@nightmared.fr>
-Cc: linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [RFC PATCH 1/9] LSM: Introduce a new hook:
- security_kernel_module_load
-Message-ID: <20250521220349.GA22189@mail.hallyn.com>
-References: <20250521140121.591482-1-git@nightmared.fr>
- <20250521140121.591482-2-git@nightmared.fr>
+	s=arc-20240116; t=1747866402; c=relaxed/simple;
+	bh=9Wg6PPoLM9WFD1B0FiNbRv3qnbGj9YtPrQiT2xmvAlk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mc8kTUjmwqx5ucwQxUHxMTVqnQFpO+aanH4GUOeiPCebfb4QgHXpc3lbmkQYeF/cmXny27Pqxy/NI/HBWFmtxTlIFSVdarMsygbSa3RC/aK8c+WS5zmtOyfx7RO1C5TgHdxzu7t67/0xUkltxl6w9LAtUApCk3RRIsF0tyyjWiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=dWHtCK+1; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="dWHtCK+1"
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-70dfa8424c7so9914477b3.2
+        for <linux-security-module@vger.kernel.org>; Wed, 21 May 2025 15:26:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1747866399; x=1748471199; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v2CpApAzFU/xdWj9L8OzabAbfmuyqqCQstsc9xr7aRs=;
+        b=dWHtCK+19LpV/OzjykLmVBgKbhcOVNo6dl8aB0xCje7M0djkO5qz6Brd4Vnj5mcKqI
+         1H5BuuIqWkinNZRXPToDvL+blTYOUCFrVj3IOcfW0WG7CAKmRKeOerkq8BF8rEJ8a6yG
+         EUdpdr16fxXqbeeTxYuVF/mjkMUUCCHD3JpO1rd/qvaNKZGYcfAZJ51/C0r4rNpFcKY5
+         G/WIktsPcA9J9qD7rjRrRBiA7aouCKaKzt/61Sm9K6rkO3kwYUmua+72BVLQXw6gtUty
+         0TIj9LWgjczs0LRj6jwoMssNL8YPLfT31FbyxqHBGs5nq6uyxvKzEysyiqfzGNA/JLiX
+         AAdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747866399; x=1748471199;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=v2CpApAzFU/xdWj9L8OzabAbfmuyqqCQstsc9xr7aRs=;
+        b=QwS9upfzyIyI33+1dPyM2ykrK7zss7XGMBLzSD20FyJWVm66sBXw/A5njDN/oK5yDV
+         IyWiUbwMmT7douk2SPvrTPZspLCDwR0FauBMk16PwcLjgywm59nwxAZdC5+i3yw9hodI
+         eqfzodMWr1tFEVDCKovVRATR8Da3vWJbQxEhEVhpI2i9XHx+DFf7oNKvm75zCzrExDYr
+         zDK/s6s/vTBX2hQyZuXRPL0+IoSsTwSlkWRhxrzh61MvSJsq1rrU9vVvng+inDj98+Db
+         pxQJuq8Iop3Hpv1o4RTTOzasLsC+vMhvcD4mKw81cLAz1EoKul5hV8cZvlbZf22EITyo
+         Rh5w==
+X-Forwarded-Encrypted: i=1; AJvYcCV6dcNqGmxyvDf/BSi4XZzg2rjUopDKKKGVgrLjRgNdw8BvLF8vFfNZTfwi69uK5AmvQIwGyftbjufgbmpu92Eva+qyx3A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDGcnMZ5210S7x5xa+IY5UXjFQDVhuqp3PlxFdBW2ymrPPoEas
+	xJ4FAoI/Wlzed0/LsPxZtDXD1o31KYe07jtEeTHT99Njy47toEU98TqJYHTOTbLdz0IefqIXGjx
+	7Qq90ucsuJfdNEAvH+aCBNpiQYKQMHtR1lRjGZ2Xe
+X-Gm-Gg: ASbGncvfY3szodZ6P4yL09xQFUdN9BSgtIK01/NvI/Q/GvCuS8xgo6LpxDpzV6t2ShB
+	YKVz66OR4mHjJj/0ki3AUPDBbZUd7D/u0nJVq2BXUgofUvdxUM0UdmZBAIZuVeLLI3uwcVOTaQZ
+	af6f/obqLfDH8OlDfcDh/EgTKeItm/up93
+X-Google-Smtp-Source: AGHT+IHWrEn3lGbj54WMbP1QWqKgIGqbS12jw/F6NygMZdWDXAhufhQc4tMWD/kGAI3Getozp0LttKjpfQRDZM9iHFA=
+X-Received: by 2002:a05:690c:4883:b0:70d:f35d:4d26 with SMTP id
+ 00721157ae682-70df35d4d9fmr60596797b3.21.1747866399572; Wed, 21 May 2025
+ 15:26:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250521140121.591482-2-git@nightmared.fr>
+References: <20250502184421.1424368-1-bboscaccy@linux.microsoft.com>
+ <20250502210034.284051-1-kpsingh@kernel.org> <CAHC9VhS5Vevcq90OxTmAp2=XtR1qOiDDe5sSXReX5oXzf+siVQ@mail.gmail.com>
+ <CACYkzJ5jsWFiXMRDwoGib5t+Xje6STTuJGRZM9Vg2dFz7uPa-g@mail.gmail.com>
+ <CACYkzJ6VQUExfyt0=-FmXz46GHJh3d=FXh5j4KfexcEFbHV-vg@mail.gmail.com>
+ <CAHC9VhQL_FkUH8F1fvFZmC-8UwZh3zkwjomCo1PiWNW0EGYUPw@mail.gmail.com>
+ <CACYkzJ4+=3owK+ELD9Nw7Rrm-UajxXEw8kVtOTJJ+SNAXpsOpw@mail.gmail.com>
+ <CAHC9VhTeFBhdagvw4cT3EvA72EYCfAn6ToptpE9PWipG9YLrFw@mail.gmail.com>
+ <CAADnVQJ4GDKvLSWuAMdwajA0V2DEw5m-O228QknW8Eo9jxhyig@mail.gmail.com>
+ <CAHC9VhTJcV1mqBpxVUtpLhrN4Y9W_BGgB_La5QCqObGheK28Ug@mail.gmail.com>
+ <CAADnVQ+wE5cGhy6tgmWgUwkNutueEsrhh6UR8N2fzrZjt-vb4g@mail.gmail.com>
+ <196e1f03128.28a7.85c95baa4474aabc7814e68940a78392@paul-moore.com>
+ <CAADnVQ+=2PnYHui2L0g0brNc+NqV8MtaRaU-XXpoXfJoghXpww@mail.gmail.com>
+ <CAHC9VhRKZdEia0XUMs2+hRVC7oDzkBfkk5FPMD+Fq5V7mAk=Vg@mail.gmail.com>
+ <CACYkzJ7oxFA3u9eKDpKgCsZsYsBojVJPHVeHZnVaYQ5e9DavmQ@mail.gmail.com> <CAHC9VhQ7Rr1jJm=HY2ixUWpsRuwCxjOq5OTMfn5k5hRzxTCz-Q@mail.gmail.com>
+In-Reply-To: <CAHC9VhQ7Rr1jJm=HY2ixUWpsRuwCxjOq5OTMfn5k5hRzxTCz-Q@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 21 May 2025 18:26:27 -0400
+X-Gm-Features: AX0GCFvZaSST-PWkU4_ibBxMlaa0A91pXSzh3ZzCdqeIU3YX4GLRRjzs5eOILBs
+Message-ID: <CAHC9VhTj3=ZXgrYMNA+G64zsOyZO+78uDs1g=kh91=GR5KypYg@mail.gmail.com>
+Subject: Re: [PATCH v3 0/4] Introducing Hornet LSM
+To: KP Singh <kpsingh@kernel.org>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, 
+	Blaise Boscaccy <bboscaccy@linux.microsoft.com>, 
+	James Bottomley <James.Bottomley@hansenpartnership.com>, bpf <bpf@vger.kernel.org>, 
+	code@tyhicks.com, Jonathan Corbet <corbet@lwn.net>, "David S. Miller" <davem@davemloft.net>, 
+	David Howells <dhowells@redhat.com>, =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, Jarkko Sakkinen <jarkko@kernel.org>, 
+	James Morris <jmorris@namei.org>, Jan Stancek <jstancek@redhat.com>, 
+	Justin Stitt <justinstitt@google.com>, keyrings@vger.kernel.org, 
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>, 
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, 
+	Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, 
+	LSM List <linux-security-module@vger.kernel.org>, 
+	clang-built-linux <llvm@lists.linux.dev>, Masahiro Yamada <masahiroy@kernel.org>, 
+	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	Bill Wendling <morbo@google.com>, Nathan Chancellor <nathan@kernel.org>, Neal Gompa <neal@gompa.dev>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Nicolas Schier <nicolas@fjasle.eu>, nkapron@google.com, 
+	Roberto Sassu <roberto.sassu@huawei.com>, "Serge E . Hallyn" <serge@hallyn.com>, 
+	Shuah Khan <shuah@kernel.org>, Matteo Croce <teknoraver@meta.com>, 
+	Cong Wang <xiyou.wangcong@gmail.com>, kysrinivasan@gmail.com, 
+	Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 21, 2025 at 04:01:05PM +0200, Simon THOBY wrote:
-> Introduce a new hook to allow LSMs to decide whether to block the load
-> of a kernel module.
-> 
-> Two hooks already exist:
-> - kernel_module_request is called when the kernel itself (not userspace)
->  request the load of a module, e.g. because a device was detected.
->  - security_kernel_load_data(LOADING_MODULE) is called when userspace calls
->  init_module/finit_module, but lack information about the module because
->  its  headers have not been loaded into kernel space, let alone parsed.
->  This may not be sufficient for some LSMs.
-> 
-> This new hook is similar to security_kernel_load_data(LOADING_MODULE),
-> but called after the module signature and header are verified, and only
-> takes the module name for now.
-> 
-> Signed-off-by: Simon THOBY <git@nightmared.fr>
-> ---
->  include/linux/lsm_hook_defs.h |  1 +
->  include/linux/module.h        |  1 +
->  include/linux/security.h      |  6 ++++++
->  kernel/module/main.c          |  4 ++++
->  security/security.c           | 14 ++++++++++++++
->  5 files changed, 26 insertions(+)
-> 
-> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-> index bf3bbac4e02a..51c5212d8bb6 100644
-> --- a/include/linux/lsm_hook_defs.h
-> +++ b/include/linux/lsm_hook_defs.h
-> @@ -223,6 +223,7 @@ LSM_HOOK(void, LSM_RET_VOID, cred_getlsmprop, const struct cred *c,
->  LSM_HOOK(int, 0, kernel_act_as, struct cred *new, u32 secid)
->  LSM_HOOK(int, 0, kernel_create_files_as, struct cred *new, struct inode *inode)
->  LSM_HOOK(int, 0, kernel_module_request, char *kmod_name)
-> +LSM_HOOK(int, 0, kernel_module_load, const char *kmod_name)
->  LSM_HOOK(int, 0, kernel_load_data, enum kernel_load_data_id id, bool contents)
->  LSM_HOOK(int, 0, kernel_post_load_data, char *buf, loff_t size,
->  	 enum kernel_load_data_id id, char *description)
-> diff --git a/include/linux/module.h b/include/linux/module.h
-> index 8050f77c3b64..b6b8d6f7f599 100644
-> --- a/include/linux/module.h
-> +++ b/include/linux/module.h
-> @@ -39,6 +39,7 @@ struct modversion_info {
->  	char name[MODULE_NAME_LEN];
->  };
->  
-> +struct load_info;
->  struct module;
->  struct exception_table_entry;
->  
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index cc9b54d95d22..e175b2cc8caf 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -498,6 +498,7 @@ void security_cred_getlsmprop(const struct cred *c, struct lsm_prop *prop);
->  int security_kernel_act_as(struct cred *new, u32 secid);
->  int security_kernel_create_files_as(struct cred *new, struct inode *inode);
->  int security_kernel_module_request(char *kmod_name);
-> +int security_kernel_module_load(const char *kmod_name);
->  int security_kernel_load_data(enum kernel_load_data_id id, bool contents);
->  int security_kernel_post_load_data(char *buf, loff_t size,
->  				   enum kernel_load_data_id id,
-> @@ -1255,6 +1256,11 @@ static inline int security_kernel_module_request(char *kmod_name)
->  	return 0;
->  }
->  
-> +static inline int security_kernel_module_load(const char *kmod_name)
-> +{
-> +	return 0;
-> +}
-> +
->  static inline int security_kernel_load_data(enum kernel_load_data_id id, bool contents)
->  {
->  	return 0;
-> diff --git a/kernel/module/main.c b/kernel/module/main.c
-> index a2859dc3eea6..12a1a5f4d823 100644
-> --- a/kernel/module/main.c
-> +++ b/kernel/module/main.c
-> @@ -3228,6 +3228,10 @@ static int early_mod_check(struct load_info *info, int flags)
->  		return -EPERM;
->  	}
->  
-> +	err = security_kernel_module_load(info->name);
+On Mon, May 19, 2025 at 6:58=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+ote:
+>
+> When the kernel performs a security relevant operation, such as
+> verifying the signature on a BPF program, where the result of the
+> operation serves as input to a policy decision, system measurement,
+> audit event, etc. the LSM hook needs to be located after the security
+> relevant operation takes place so that the hook is able to properly
+> take into account the state of the event/system and record the actual
+> result as opposed to an implied result (this is critical for auditing,
+> measurement, attestation, etc.).
+>
+> You explained why you believe the field/hook is not required, but I'm
+> asking for your *technical*objections*.  I understand that you believe
+> these changes are not required, but as described above, I happen to
+> disagree and therefore it would be helpful to understand the technical
+> reasons why you can't accept the field/hook changes.  Is there a
+> technical reason which would prevent such changes, or is it simply a
+> rejection of the use case and requirements above?
 
-Would it be more useful to pass in the whole info struct?
+Bubbling this back up to the top of your inbox ...
 
-> +	if (err)
-> +		return err;
-> +
->  	err = rewrite_section_headers(info, flags);
->  	if (err)
->  		return err;
-> diff --git a/security/security.c b/security/security.c
-> index fb57e8fddd91..b9430499c332 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -3336,6 +3336,20 @@ int security_kernel_module_request(char *kmod_name)
->  	return call_int_hook(kernel_module_request, kmod_name);
->  }
->  
-> +/**
-> + * security_kernel_module_load() - Check if loading a module is allowed
-> + * @kmod_name: name of the kernel module being loaded
-> + *
-> + * This method is called when the userspace called init_module/finit_module
-> + * with a valid module
-> + *
-> + * Return: Returns 0 if successful.
-> + */
-> +int security_kernel_module_load(const char *kmod_name)
-> +{
-> +	return call_int_hook(kernel_module_load, kmod_name);
-> +}
-> +
->  /**
->   * security_kernel_read_file() - Read a file specified by userspace
->   * @file: file
-> -- 
-> 2.49.0
-> 
+--=20
+paul-moore.com
