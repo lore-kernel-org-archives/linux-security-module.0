@@ -1,226 +1,234 @@
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0D323909F
-	for <linux-security-module@vger.kernel.org>; Wed, 21 May 2025 17:47:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 742C923183D
+	for <linux-security-module@vger.kernel.org>; Wed, 21 May 2025 19:34:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747849652; cv=none; b=Td7c++CuiSOB4ObE9QWi/Zxuz5fOmcqk7yyXlZuFOTZ3kZv7N16YfLTL5408mdVD+4hXJTeIRslrVnleqHl7psUPhKHwuRcuIFR77fr8bI0bueIT0ABx4ZDFugPFUziSPIz2PS+eajFhn9vKsNT3FO2l7WmnpQqwDHLOAp5QbC8=
+	t=1747856087; cv=none; b=VW957s17MNs8Z2fzDryYTXDinEVXOj8wo6sRAdv3a6nRQD+xvfi8jnflCyOFegECvxt0auOVXD3qRhYIsw6ca77yc6FTpiN3jePhrTuSYSvrGdZ/fCzJ4lIVI7/3nLXU0U1AyRaJ1qwxblYOlnnbBKouLTgeIuaRd1i6wshs+Jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747849652; c=relaxed/simple;
-	bh=miR8lyLraFkbpXwdmCbNKFQvHvtAU72aRD8h6kj2LRI=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=mJ48SweOhqeraoZ9jWgSCRyHcLFZ9GRbSxtcuIFb8VrfyZ4FtFI+MSlkVucl8WGxqxeCFMetqEETTHMtszVh/ASC/ChOgoEbaeYVRtVcUzvr6YXqBs0M67nn5jJsoUhKwT43txb0d8OZ/yluscc2q2Rr94Tfw9zZh8aW48aj02g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3dc879a9d68so10861055ab.0
-        for <linux-security-module@vger.kernel.org>; Wed, 21 May 2025 10:47:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747849650; x=1748454450;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GFRlxxr5q/oFiqmYoyxlbBF5QhEAtZh2WG5O57V5aw8=;
-        b=a2wlQig2CktZfmwAHNaU6ZyK5GezKgq06ByFJPgYD0txSVAzPKnYk7p74VtoF7QQPh
-         l/ycNJC0CNEtnuqEQhJ+zDXKfVqVj5jumfBKscHTSLIiTevzRc3f5ZTmb/kFlOKrZwMG
-         Hj9grNtECAlJgWbNSL4ZdFZh7kPh1BC+KGtiwrW1XB73VFc6HUx1dZLfYaO/6gsiCCPp
-         MvogRHvq0d2UN62UvG/kpF9xU72gMyldWIN1+Ndq0NzX96XGmWLnVqFh9zUQmE4QJymJ
-         Hw0jab9vZX3HSpqEM5zzhN/imCV+BmLyS41EkUPGQZi4ZbB2UMf2VefjSPmMYJ/sq1k2
-         ZMgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWF24HzU1y5kxw2AFGvCzo1UHFIgLsuufyKHI8Lq8ywasmG7OCghy69lAIy9RaLzY+asq7KC+cEJ9FvA9BNXJ9nBrVip7w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQ+Knkg3PFxzM0uAZy3ztZRpUcpNYaQ0n4SYpMuCerMPaDH6ru
-	V9mo7Y59Jc9Jt9EIDT4CtW8MRA6l3WB1vb79VjgfLfYV+m0D1rSod6lStxDzVxP4tkA+07Sg3JX
-	+pbn9lh6Zrmu42vVdQokpfNCpNpaAt5gEgaycDiKwL38QihE4RdoDaCvoiRU=
-X-Google-Smtp-Source: AGHT+IHgAaPQ0lG4Qb3DlcMMS8TnBYFKFtvsykayCG6Bt+L/0n3F80q+nU1nO17Pm6I0dP6ygR87LyenQ3hXLXUX714DlADdD654
+	s=arc-20240116; t=1747856087; c=relaxed/simple;
+	bh=hJ0f3G7ilr5A11+Z/LdAntyTDbOmVdiCcOCdz1kROIQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=JRPeh87GNSfVrW5hS60Qbt+WBqxhajPDre0VRpU73vEwbpWMtABBMgEdZalg3Ei/cOcwzBI5Gle/22rQPptI1utvhsArX5SILD6GwUx2Py0WfPm0rF8H8ZZQkyavlI6IkofqVxqCXi2Cpdv+daS8phE0eT3Z1B4jlS6mkmQY7nQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=Ijw+aXLd; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=UWaZBgpd; arc=none smtp.client-ip=103.168.172.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="Ijw+aXLd";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="UWaZBgpd"
+Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 6CACF1140131;
+	Wed, 21 May 2025 15:34:44 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-08.internal (MEProxy); Wed, 21 May 2025 15:34:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
+	:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm3; t=1747856084; x=
+	1747942484; bh=wtNcOrreGNCKeax6ky3ziy+IOJOEvvraj7WmEieaF9o=; b=I
+	jw+aXLdH9wO/rsqvJOKWVLeYU4qIqPeV4jM2VPzbsZjx8SWayLTdR4/PxmRq91TY
+	dpi1CrfQ9yV1jKyOG5e31AObdPHVICX0XENKrno41KpjEP7iSHvNc/PrUL+DbwoN
+	Gpb3X8DWTAwM/IQ/3O1k9LoCi5OI8WfoUQgD+VuvMYOxxhtolv40li12Kpcaj6MG
+	Rkb1t1SLnUKobduvNb7Yf0wQW3oLDOvFvDSBYTEqxQY50McklB/vgLiqTR17bPc/
+	rz8F9UqISqf/o9/Kyt7Negtb2SsK4jVIHIYdfLUF71tIMRA+IS1idT1yn83pIlnz
+	KFyDsPTF3M8KjMrx/oQHQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
+	:x-me-sender:x-sasl-enc; s=fm3; t=1747856084; x=1747942484; bh=w
+	tNcOrreGNCKeax6ky3ziy+IOJOEvvraj7WmEieaF9o=; b=UWaZBgpdZm3As5uV0
+	AYZx4apZQo4ypiKUhSEoh0puRs9JQErxucfVX5rlvPD9yAkQyDI93Jirb5q3fSCB
+	u4/Sz7wRtxLWnzeamcSPVl4Uk23zJzOb4Wh2aBR42Y99AbGGCMtd55PXsB5NAqtv
+	W6mIQtUh/V+RuuZjUJ/nj9HXa2z9/vdGfu14g/gs4NUWFu7vF1Err0vCino18VQI
+	M+hd3jvu2aE7kjxU9Tna617hDmFNfUFCaMA/myiy0rEDJxKYtynOg0E8eL4E7Y/0
+	dh0DskfEnQDLh+rpan/D/wTEc8TOoOLXaB1gWebAKOaKOIJpapOk8uAFPJW2W1PF
+	1YNOg==
+X-ME-Sender: <xms:1CouaNGSWTEdUuHmMUCvnBEBeaXaxGL8ziSHJCsj1Z1ul8KgiFQmgg>
+    <xme:1CouaCVlrVul0XtstMBUUgi8-E4ZK-2TmQyJuqNOc-ahBKRB117MIvEdMaqYG0MtT
+    BBDS8RRwUecYUHp2ic>
+X-ME-Received: <xmr:1CouaPKmLx3xIIwmWOLc3eeEE_aFycZputHAv0lB3ue_Jrg5HQtrnExhQ01LJZJZp9kN6Sqs4vNA0bdb56SA_QSMu2liEWcvPPhBj66JHiUN2Za1hlzUPg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgdefleegucdltddurdegfedvrddttd
+    dmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgf
+    nhhsuhgsshgtrhhisggvpdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttd
+    enucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgj
+    fhgggfestdekredtredttdenucfhrhhomhepvfhinhhgmhgrohcuhggrnhhguceomhesmh
+    grohifthhmrdhorhhgqeenucggtffrrghtthgvrhhnpeeuuddthefhhefhvdejteevvddv
+    teefffegteetueegueeljeefueekjeetieeuleenucevlhhushhtvghrufhiiigvpedtne
+    curfgrrhgrmhepmhgrihhlfhhrohhmpehmsehmrghofihtmhdrohhrghdpnhgspghrtghp
+    thhtohepgedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhhitgesughighhikh
+    hougdrnhgvthdprhgtphhtthhopehmsehmrghofihtmhdrohhrghdprhgtphhtthhopehg
+    nhhorggtkhesghhoohhglhgvrdgtohhmpdhrtghpthhtoheplhhinhhugidqshgvtghurh
+    hithihqdhmohguuhhlvgesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:1CouaDHtQkXfI-Sy8CU6Ve1j5AsyEEwcy-IP_3ZIDNaMiIti9GPCZg>
+    <xmx:1CouaDXICAICA30CYhuDRBIxt-6xfnbtnf57fxXvA24YSfQlsJqdCQ>
+    <xmx:1CouaON4X8nHoBiSQ2-QbKU-byA34PH3HNiqKydqBpylBiYryAX1Lg>
+    <xmx:1CouaC38I0L8a6EOZE7-TAOO0RYdQzwcwd2akkZ1qH3HvjOXn9REqg>
+    <xmx:1CouaEX9HKvUCxtFhpCeq8sQtP_Warz12eKJqG45L3i7jU8m4OTo75Wk>
+Feedback-ID: i580e4893:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 21 May 2025 15:34:43 -0400 (EDT)
+From: Tingmao Wang <m@maowtm.org>
+To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
+Cc: Tingmao Wang <m@maowtm.org>,
+	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
+	linux-security-module@vger.kernel.org
+Subject: [RFC PATCH 01/10] landlock: Add some debug output
+Date: Wed, 21 May 2025 20:31:57 +0100
+Message-ID: <b0d0ae5318c8eee922783299651cde5c4e7b6a3a.1747836146.git.m@maowtm.org>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <cover.1747836146.git.m@maowtm.org>
+References: <cover.1747836146.git.m@maowtm.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1745:b0:3d9:36a8:3d98 with SMTP id
- e9e14a558f8ab-3db84296deemr261924655ab.2.1747849649857; Wed, 21 May 2025
- 10:47:29 -0700 (PDT)
-Date: Wed, 21 May 2025 10:47:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <682e11b1.050a0220.ade60.09e5.GAE@google.com>
-Subject: [syzbot] [integrity?] [lsm?] INFO: task hung in process_measurement (3)
-From: syzbot <syzbot+cb9e66807bcb882cd0c5@syzkaller.appspotmail.com>
-To: bfoster@redhat.com, dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, 
-	jmorris@namei.org, kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, paul@paul-moore.com, 
-	roberto.sassu@huawei.com, serge@hallyn.com, syzkaller-bugs@googlegroups.com, 
-	zohar@linux.ibm.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+They are behind #ifdef DEBUG for now as iterating over all the rules /
+each access bits might make it slower (even if dynamic pr_debug makes the
+print itself nop).
 
-syzbot found the following issue on:
-
-HEAD commit:    172a9d94339c Merge tag '6.15-rc6-smb3-client-fixes' of git..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=142a5ef4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ea35e429f965296e
-dashboard link: https://syzkaller.appspot.com/bug?extid=cb9e66807bcb882cd0c5
-compiler:       Debian clang version 20.1.2 (++20250402124445+58df0ef89dd6-1~exp1~20250402004600.97), Debian LLD 20.1.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16836e70580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1617a2d4580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/c7d5b496fd25/disk-172a9d94.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/965a0ad50b10/vmlinux-172a9d94.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/62675d801af8/bzImage-172a9d94.xz
-mounted in repro #1: https://storage.googleapis.com/syzbot-assets/a11594a5d459/mount_0.gz
-mounted in repro #2: https://storage.googleapis.com/syzbot-assets/84492c682353/mount_4.gz
-
-The issue was bisected to:
-
-commit 1d16c605cc55ef26f0c65b362665a6c99080ccbc
-Author: Kent Overstreet <kent.overstreet@linux.dev>
-Date:   Thu Nov 9 19:22:46 2023 +0000
-
-    bcachefs: Disk space accounting rewrite
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13f61e70580000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=100e1e70580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=17f61e70580000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+cb9e66807bcb882cd0c5@syzkaller.appspotmail.com
-Fixes: 1d16c605cc55 ("bcachefs: Disk space accounting rewrite")
-
-INFO: task syz-executor236:5862 blocked for more than 143 seconds.
-      Not tainted 6.15.0-rc6-syzkaller-00278-g172a9d94339c #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor236 state:D stack:26936 pid:5862  tgid:5849  ppid:5845   task_flags:0x400140 flags:0x00004006
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5382 [inline]
- __schedule+0x168f/0x4c70 kernel/sched/core.c:6767
- __schedule_loop kernel/sched/core.c:6845 [inline]
- schedule+0x165/0x360 kernel/sched/core.c:6860
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6917
- rwsem_down_write_slowpath+0xbec/0x1030 kernel/locking/rwsem.c:1176
- __down_write_common kernel/locking/rwsem.c:1304 [inline]
- __down_write kernel/locking/rwsem.c:1313 [inline]
- down_write+0x1ab/0x1f0 kernel/locking/rwsem.c:1578
- inode_lock include/linux/fs.h:867 [inline]
- process_measurement+0x3d8/0x1a40 security/integrity/ima/ima_main.c:260
- ima_file_check+0xd7/0x120 security/integrity/ima/ima_main.c:613
- security_file_post_open+0xbb/0x290 security/security.c:3130
- do_open fs/namei.c:3882 [inline]
- path_openat+0x2f26/0x3830 fs/namei.c:4039
- do_filp_open+0x1fa/0x410 fs/namei.c:4066
- do_sys_openat2+0x121/0x1c0 fs/open.c:1429
- do_sys_open fs/open.c:1444 [inline]
- __do_sys_creat fs/open.c:1522 [inline]
- __se_sys_creat fs/open.c:1516 [inline]
- __x64_sys_creat+0x8f/0xc0 fs/open.c:1516
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xf6/0x210 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fd31f9f4ef9
-RSP: 002b:00007fd31f95f218 EFLAGS: 00000246 ORIG_RAX: 0000000000000055
-RAX: ffffffffffffffda RBX: 00007fd31fa9b6e8 RCX: 00007fd31f9f4ef9
-RDX: ffffffffffffffb0 RSI: c9028ba210c11e9b RDI: 00002000000000c0
-RBP: 00007fd31fa9b6e0 R08: 0000000000000000 R09: 0000000000000000
-R10: 00007ffcb62f60c7 R11: 0000000000000246 R12: 00007fd31fa67314
-R13: 00002000000000c0 R14: 0030656c69662f2e R15: 00007ffcb62f60c8
- </TASK>
-
-Showing all locks held in the system:
-1 lock held by khungtaskd/31:
- #0: ffffffff8df3dce0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
- #0: ffffffff8df3dce0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
- #0: ffffffff8df3dce0 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x2e/0x180 kernel/locking/lockdep.c:6764
-1 lock held by kworker/u8:3/53:
- #0: ffff8880b88399d8 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:605
-1 lock held by klogd/5178:
- #0: ffff8880b88399d8 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:605
-2 locks held by getty/5577:
- #0: ffff8880340120a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
- #1: ffffc900036ec2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x43e/0x1400 drivers/tty/n_tty.c:2222
-3 locks held by syz-executor236/5850:
- #0: ffff888078b629b8 (&f->f_pos_lock){+.+.}-{4:4}, at: fdget_pos+0x247/0x320 fs/file.c:1213
- #1: ffff88823bfbe420 (sb_writers#9){.+.+}-{0:0}, at: file_start_write include/linux/fs.h:3041 [inline]
- #1: ffff88823bfbe420 (sb_writers#9){.+.+}-{0:0}, at: vfs_write+0x211/0xa90 fs/read_write.c:680
- #2: ffff8880761b08e0 (&sb->s_type->i_mutex_key#14){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:867 [inline]
- #2: ffff8880761b08e0 (&sb->s_type->i_mutex_key#14){+.+.}-{4:4}, at: bch2_direct_write+0x267/0x2d50 fs/bcachefs/fs-io-direct.c:612
-2 locks held by syz-executor236/5862:
- #0: ffff88823bfbe420 (sb_writers#9){.+.+}-{0:0}, at: mnt_want_write+0x41/0x90 fs/namespace.c:556
- #1: ffff8880761b08e0 (&sb->s_type->i_mutex_key#14){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:867 [inline]
- #1: ffff8880761b08e0 (&sb->s_type->i_mutex_key#14){+.+.}-{4:4}, at: process_measurement+0x3d8/0x1a40 security/integrity/ima/ima_main.c:260
-
-=============================================
-
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 31 Comm: khungtaskd Not tainted 6.15.0-rc6-syzkaller-00278-g172a9d94339c #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- nmi_cpu_backtrace+0x39e/0x3d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x17a/0x300 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:158 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:274 [inline]
- watchdog+0xfee/0x1030 kernel/hung_task.c:437
- kthread+0x70e/0x8a0 kernel/kthread.c:464
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:153
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 0 Comm: swapper/1 Not tainted 6.15.0-rc6-syzkaller-00278-g172a9d94339c #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
-RIP: 0010:pv_native_safe_halt+0x13/0x20 arch/x86/kernel/paravirt.c:81
-Code: 43 d4 02 00 cc cc cc 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 66 90 0f 00 2d a3 9f 18 00 f3 0f 1e fa fb f4 <e9> 18 d4 02 00 cc cc cc cc cc cc cc cc 90 90 90 90 90 90 90 90 90
-RSP: 0018:ffffc90000197de0 EFLAGS: 000002c6
-RAX: a55f7e0638390b00 RBX: ffffffff81977048 RCX: a55f7e0638390b00
-RDX: 0000000000000001 RSI: ffffffff8d73a84c RDI: ffffffff8bc12000
-RBP: ffffc90000197f20 R08: ffff8880b8932b5b R09: 1ffff1101712656b
-R10: dffffc0000000000 R11: ffffed101712656c R12: ffffffff8f7e0670
-R13: 0000000000000001 R14: 0000000000000001 R15: 1ffff110038dcb40
-FS:  0000000000000000(0000) GS:ffff8881261f6000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055b5f126d168 CR3: 000000000dd38000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- arch_safe_halt arch/x86/include/asm/paravirt.h:107 [inline]
- default_idle+0x13/0x20 arch/x86/kernel/process.c:748
- default_idle_call+0x74/0xb0 kernel/sched/idle.c:117
- cpuidle_idle_call kernel/sched/idle.c:185 [inline]
- do_idle+0x1e8/0x510 kernel/sched/idle.c:325
- cpu_startup_entry+0x44/0x60 kernel/sched/idle.c:423
- start_secondary+0x101/0x110 arch/x86/kernel/smpboot.c:315
- common_startup_64+0x13e/0x147
- </TASK>
-
-
+Signed-off-by: Tingmao Wang <m@maowtm.org>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ security/landlock/fs.c       | 47 ++++++++++++++++++++++++++++++++++++
+ security/landlock/fs.h       |  1 +
+ security/landlock/syscalls.c | 26 ++++++++++++++++++++
+ 3 files changed, 74 insertions(+)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+index 6fee7c20f64d..b407c644ac65 100644
+--- a/security/landlock/fs.c
++++ b/security/landlock/fs.c
+@@ -772,6 +772,10 @@ static bool is_access_to_paths_allowed(
+ 	layer_mask_t(*layer_masks_child1)[LANDLOCK_NUM_ACCESS_FS] = NULL,
+ 	(*layer_masks_child2)[LANDLOCK_NUM_ACCESS_FS] = NULL;
+ 
++#ifdef DEBUG
++	layer_mask_t all_layers = (1 << domain->num_layers) - 1;
++#endif
++
+ 	if (!access_request_parent1 && !access_request_parent2)
+ 		return true;
+ 
+@@ -800,6 +804,14 @@ static bool is_access_to_paths_allowed(
+ 		access_masked_parent1 = access_masked_parent2 =
+ 			landlock_union_access_masks(domain).fs;
+ 		is_dom_check = true;
++
++#ifdef DEBUG
++		pr_debug(
++			"check access to path %pd4 for access request p1 %x p2 %x:\n",
++			path->dentry, access_request_parent1,
++			access_request_parent2);
++#endif
++
+ 	} else {
+ 		if (WARN_ON_ONCE(dentry_child1 || dentry_child2))
+ 			return false;
+@@ -807,7 +819,15 @@ static bool is_access_to_paths_allowed(
+ 		access_masked_parent1 = access_request_parent1;
+ 		access_masked_parent2 = access_request_parent2;
+ 		is_dom_check = false;
++
++#ifdef DEBUG
++		pr_debug("check access to path %pd4 for access request %x:\n",
++			 path->dentry, access_request_parent1);
++#endif
+ 	}
++#ifdef DEBUG
++	pr_debug("  (need layer mask %x)", all_layers);
++#endif
+ 
+ 	if (unlikely(dentry_child1)) {
+ 		landlock_unmask_layers(
+@@ -892,6 +912,33 @@ static bool is_access_to_paths_allowed(
+ 					  layer_masks_parent2,
+ 					  ARRAY_SIZE(*layer_masks_parent2));
+ 
++#ifdef DEBUG
++		{
++			rcu_read_lock();
++			pr_debug("  %pd: ino %lu (%p), rule: %s, allow: %s\n",
++				 walker_path.dentry,
++				 walker_path.dentry->d_inode->i_ino,
++				 walker_path.dentry->d_inode,
++				 rule ? "exists" : "does not exist",
++				 allowed_parent1 ? "yes" : "no");
++			unsigned long access_masked = access_masked_parent1;
++			unsigned long access_bit;
++			if (rule) {
++				for_each_set_bit(
++					access_bit, &access_masked,
++					ARRAY_SIZE(*layer_masks_parent1)) {
++					pr_debug(
++						"    access %x allowed by layer mask %d\n",
++						(1 << access_bit),
++						(~(*layer_masks_parent1)
++							 [access_bit]) &
++							all_layers);
++				}
++			}
++			rcu_read_unlock();
++		}
++#endif
++
+ 		/* Stops when a rule from each layer grants access. */
+ 		if (allowed_parent1 && allowed_parent2)
+ 			break;
+diff --git a/security/landlock/fs.h b/security/landlock/fs.h
+index bf9948941f2f..bedf61c15cd4 100644
+--- a/security/landlock/fs.h
++++ b/security/landlock/fs.h
+@@ -15,6 +15,7 @@
+ #include <linux/init.h>
+ #include <linux/rcupdate.h>
+ 
++#include "common.h"
+ #include "access.h"
+ #include "cred.h"
+ #include "ruleset.h"
+diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
+index 33eafb71e4f3..38eb8287f73d 100644
+--- a/security/landlock/syscalls.c
++++ b/security/landlock/syscalls.c
+@@ -559,6 +559,32 @@ SYSCALL_DEFINE2(landlock_restrict_self, const int, ruleset_fd, const __u32,
+ 		new_dom->hierarchy->log_status = LANDLOCK_LOG_DISABLED;
+ #endif /* CONFIG_AUDIT */
+ 
++#ifdef DEBUG
++	pr_debug("%s[%d] restricting self with landlock\n", current->comm,
++		 current->pid);
++	struct rb_node *node;
++	pr_debug("inode tree:\n");
++	for (node = rb_first(&new_dom->root_inode); node;
++	     node = rb_next(node)) {
++		const struct landlock_rule *rule =
++			rb_entry(node, struct landlock_rule, node);
++		spinlock_t *lock = &rule->key.object->lock;
++		rcu_read_lock();
++		spin_lock(lock);
++		struct inode *inode = rule->key.object->underobj;
++		if (inode)
++			pr_debug("  rule: ino %lu (%p)\n", inode->i_ino, inode);
++		else
++			pr_debug("  rule: inode released\n");
++		for (size_t i = 0; i < rule->num_layers; i++) {
++			pr_debug("    layer %u: access %x\n",
++				 rule->layers[i].level, rule->layers[i].access);
++		}
++		spin_unlock(lock);
++		rcu_read_unlock();
++	}
++#endif /* DEBUG */
++
+ 	/* Replaces the old (prepared) domain. */
+ 	landlock_put_ruleset(new_llcred->domain);
+ 	new_llcred->domain = new_dom;
+-- 
+2.49.0
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
