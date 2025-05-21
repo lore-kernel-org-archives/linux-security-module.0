@@ -1,83 +1,86 @@
 Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E888622F15E
-	for <linux-security-module@vger.kernel.org>; Wed, 21 May 2025 19:34:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D074725A321
+	for <linux-security-module@vger.kernel.org>; Wed, 21 May 2025 19:34:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747856087; cv=none; b=CwfLKx1Udw3jCxxWv2JJIMQfSBLyDUPmZoV/tmFt0WWOEjF2cqIHwjO1fbG4cT5utIwyOn7vIMaMAH0BmtjFecGbPZ63F2G9F8ygxxBAg2ImlNQFk1RTBHqTi/L0jOaElECNuZZFvD6rjod8OdChuZiotqemnW5CSVRNydn5gmA=
+	t=1747856088; cv=none; b=nGPL9rjmrJYfHMFHflDTdFSQZrmqGFvhQjg9vp1e1lHnvTcdO5Q1Emhr7dymNDuafxYjFnWhiYmeU82ifta1pMGQ5ugq92fzZBVre9MjRW67wu681ZXpmXfN9L+3IHezWtdQgBKdWHv6IUPh0N9ZwvKntSS0Z1FNTjYCXq2HIgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747856087; c=relaxed/simple;
-	bh=MsDQzfrIQt+yd7rdf/YZJ01BM83y+cEJLdT/lGC4eos=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ARJE+K6o44GCGT4jRp869ri3Hs5VxegZylA2MohTsn1WM6wo3TsZ1VO9OWut0iGSelGuA+2PzrHSAaHgYYEuQm7wbxtS2mWYNMc1jxwVA2w/MzFTogzTHxJ/IwhgQ88Wddg2iAOg2vBmzzPeSBs33eTakKXWOc+iJObewL6nhF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=cR0Gv6YY; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=g4XRJYkC; arc=none smtp.client-ip=103.168.172.151
+	s=arc-20240116; t=1747856088; c=relaxed/simple;
+	bh=N/GL/CdpDjIXIhHTqiovWxZ5+ImVtQ0S2RBtZKVYpkQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VZGa/4gQUkT0cIAMZtk1itq06tCYuQq1w+gvl/uKyhtRMx3tYcsoGtSFRNnWdHt+gF+1Nnr9F/kIN/BPk0k/aLWUrDO8SobwXcFViDSRMM5IYyysZ3E4v1+v2bBW95UGM8Z75ODc3mliM5jA+JaLje4Hflbu64kdAhVHl5q/dTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=EJ3vsNfV; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=r7sKods6; arc=none smtp.client-ip=103.168.172.151
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="cR0Gv6YY";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="g4XRJYkC"
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfout.phl.internal (Postfix) with ESMTP id 0BFB01380190;
-	Wed, 21 May 2025 15:34:43 -0400 (EDT)
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="EJ3vsNfV";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="r7sKods6"
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfout.phl.internal (Postfix) with ESMTP id D03671380425;
+	Wed, 21 May 2025 15:34:45 -0400 (EDT)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Wed, 21 May 2025 15:34:43 -0400
+  by phl-compute-09.internal (MEProxy); Wed, 21 May 2025 15:34:45 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
 	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:message-id:mime-version:reply-to
-	:subject:subject:to:to; s=fm3; t=1747856083; x=1747942483; bh=WP
-	QJdCxNk6FAHopRPJwO1kn1ONTxWnHTXU8L8rTZq98=; b=cR0Gv6YYEHnW9lOsh0
-	rAZXwbxVqmI0lrI2oqtH3pfTSIVL2XYShRVBrVWmzRQOjNwS/CZnLdzDisjVwb11
-	s0YepDGO7CyBYvlwgydUaFiUSIgfq/A5Q/1H5JmLKIzaXdPGr/EoFETn5sH4/tmx
-	v4/ffwvKBMH2t9KlqrCnef3Nw7wyTJmBwoOctOlHllvg70Mmo+FLIiyrE0rm4lEO
-	5O5X9BrwhGxzkCxsYqXc3W8kTp9pY2pjVxpXJ/auOQb1GnaQVmnJr8PsZpA4F5Bx
-	5wvsAD7/Bsp0YxbUJIt80jnRMkNg+OHWs1h+LlQaXPwDnRQEvu5AE6vg0awXl3Dc
-	s8Zg==
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1747856085;
+	 x=1747942485; bh=nP/Cmv4SNAIqjSENCMBwj5U0wXKNe2E3TGSorXUesEU=; b=
+	EJ3vsNfVTGlpaF56Znrfn2nGD21CGBhru7+ZTu4MF2RaGdMZsJmwe4UhjHWAp1ZR
+	1U05EX+VJ6qjUeqXkaZVYOK+7fsBBPuOfUR/4iQq/kS6/MWhymBntzsu64CvSmKv
+	vCR5LzGiXEIzC7b2r30Vluzck1zb6BIXd3CFMP5uc39Tr/TUzFF3SE3RVS4ccZYF
+	Y5NEvsDYJKk18CFWUSK6rZOZMyhpasQ0iwalZ+IX4Idn+s8MaWW/BFAfjgv86XkW
+	O/HrMLDi0g3RKiSfe28fJf7KTAAkq9x2cVNI/EjnMhtm2fSz7ruY5VXje0bcZjtB
+	1TobOGX/BxEWUehOXFLISw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1747856083; x=1747942483; bh=WPQJdCxNk6FAHopRPJwO1kn1ONTx
-	WnHTXU8L8rTZq98=; b=g4XRJYkCA/pDiOrx+pBvdpN1EVFUEf7iX07Y/aRlXB5p
-	6S7K4ZvZTKp12/Ibw5dGMDUtFplmzwPhCb5jCdit3bIpTgG5vQonvhCwrXLAciqI
-	xYjHd9N12+jqTMbi2rUJTX2xUs7IkU3F2RS5tYqqtYVuIbLSzhP+bboJgxFDdK1F
-	mc1AsnJaouN2asOEfxarODyTDJPYtzBp4zsATUw8Fr0ZoOBDdC5psV26UNliEiQz
-	qFZnl2GOTqc50/tt8mBTPriKlMGu26Ji56Tjy0AcH1kOt7LKfap6O9zTF8aTNI/I
-	htgUkIEK0IDXWMakkoePsQgKRrVrcCtdl+qTjINphQ==
-X-ME-Sender: <xms:0iouaFV1rNVMDkuEBscoelU4DohjiwjRNSNK7zyAF_9wAuMp6aBp5A>
-    <xme:0iouaFlvKhTLjoiYWorPKsWT4QJWnBoM2Q32TRUrmjftxKPBywfnNtwJViz2xJdwZ
-    VkMezH3xbWOs7iaQys>
-X-ME-Received: <xmr:0iouaBa3h4GSoTSxiOhlImxS5-cqU0m7rGbMzXb9rYwcMa87igJTVT_lJpPTPGrDEipSJUdZ4zh2w7BbDH85yK1C4gnOZHUQcJZK_qzO8ZOVFC3InaR_Cg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgdefleegucdltddurdegfedvrddttd
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1747856085; x=
+	1747942485; bh=nP/Cmv4SNAIqjSENCMBwj5U0wXKNe2E3TGSorXUesEU=; b=r
+	7sKods6/WXeoFHPNWox2Himtfavd75yLY7K8efgQPcgJA0ZBp/KUDy+KKwCXhoc5
+	LE3h+vinYlDL15Wlx4BXeCRpr30Zsy0jU4alKkI4/xW2yo8NF8QFQaMFUe7rKSwf
+	v0vDAOqyD1k2hpx5NywbLaxXLShS2kd+vpEmjq43sU/iQjVnmsnaLXAEHXb5HhMq
+	cnoSxSNQyC4VoswtAQxv0FZi3lI8MZEQhv/M8Blz3Di6S0hyxTTx3SEmIbOpUSBh
+	dGJzG/hrS3FqCZhN/5tN1sooLZkAFvf4x+HqzYTFaga0j8/4VFgzpwQhfpwYTRWz
+	8CPjgWK8qd1jGXYk5XY9w==
+X-ME-Sender: <xms:1SouaB9X3aF7iE4JWujNYycqNRQT83LsyqCnt1a2MPgeuWO6bAOrsw>
+    <xme:1SouaFsODkJDVVEvG9PIbV-yhid4mTEm55HHFoJgkN6Qknnr-JeMudG8bW6LnaJbG
+    g7C6itbxxH6diW4yNg>
+X-ME-Received: <xmr:1SouaPA2Jt5yG8Luvj14t0bt07zobjiR8SHTjr34S9yvkL6Y-vDQQWJ31PVBgQqqAZX1vEEJJxy8KSvkR8lGbKdZ62vlCgJE2cB8_41mTd0UGVjtdQpACQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgdefleefucdltddurdegfedvrddttd
     dmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgf
     nhhsuhgsshgtrhhisggvpdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttd
-    enucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgg
-    tgfgsehtkeertdertdejnecuhfhrohhmpefvihhnghhmrghoucghrghnghcuoehmsehmrg
-    hofihtmhdrohhrgheqnecuggftrfgrthhtvghrnhepffduheduvdeuvdfhiefhvdetieet
-    keelueehheeigfduveeggfevleetuefhjeffnecuffhomhgrihhnpehgihhthhhusgdrtg
-    homhdpmhgrohifthhmrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghm
-    pehmrghilhhfrhhomhepmhesmhgrohifthhmrdhorhhgpdhnsggprhgtphhtthhopeegpd
-    hmohguvgepshhmthhpohhuthdprhgtphhtthhopehmihgtseguihhgihhkohgurdhnvght
-    pdhrtghpthhtohepmhesmhgrohifthhmrdhorhhgpdhrtghpthhtohepghhnohgrtghkse
-    hgohhoghhlvgdrtghomhdprhgtphhtthhopehlihhnuhigqdhsvggtuhhrihhthidqmhho
-    ughulhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:0iouaIUkcjZgC9acFd8_kc7nHMSrarPF1znY9OMzJL2Y64RKANVPWA>
-    <xmx:0iouaPnOSPgfBE3YHuKTDtNYrziF04VffabtBTakjCC9ApQyHR2spQ>
-    <xmx:0iouaFdyZl016pIsMuyj2ESKoZSmFIHb5mXH_3yXG2J6rw57MGJLAg>
-    <xmx:0iouaJFqKhztVpbaZM6nLkGx_frlV9qfGDJ6yyCVofJEDwhLP8QMuQ>
-    <xmx:0youaCmW_gCs9y-njkJpPiO-Owo8yTxaQCtVx5QsILSSso4obxbqc1f3>
+    enucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgj
+    fhggtgfgsehtkeertdertdejnecuhfhrohhmpefvihhnghhmrghoucghrghnghcuoehmse
+    hmrghofihtmhdrohhrgheqnecuggftrfgrthhtvghrnhepieeigeeghedtffeifffhkeeu
+    ffehhfevuefgvdekjeekhedvtedtgfdvgefhudejnecuvehluhhsthgvrhfuihiivgeptd
+    enucfrrghrrghmpehmrghilhhfrhhomhepmhesmhgrohifthhmrdhorhhgpdhnsggprhgt
+    phhtthhopeegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmihgtseguihhgih
+    hkohgurdhnvghtpdhrtghpthhtohepmhesmhgrohifthhmrdhorhhgpdhrtghpthhtohep
+    ghhnohgrtghksehgohhoghhlvgdrtghomhdprhgtphhtthhopehlihhnuhigqdhsvggtuh
+    hrihhthidqmhhoughulhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:1SouaFdwxPXejp8VOs5GA5K1rmE3FtjxlP9U09WLm9lcKMirnwnAlw>
+    <xmx:1SouaGPDCWBRYpAqiv6falTROVBT9NtmL_KnQ4ad4Hgrbnu3HnFzhQ>
+    <xmx:1SouaHm_3SO8z3nOi4OJYBW3u8cjSdv8fwGigFAX3kaDyPgdTlcdlA>
+    <xmx:1SouaAvOmmMNVoDEA8sz0veVMrgVBa6t8PZQN5iKeKguHm1JCpdDqQ>
+    <xmx:1SouaOMT017umaggSZVAkPlT77_SR-ec-dHTP9Jyd-BpO2qMqDrQAiHG>
 Feedback-ID: i580e4893:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 21 May 2025 15:34:42 -0400 (EDT)
+ 21 May 2025 15:34:44 -0400 (EDT)
 From: Tingmao Wang <m@maowtm.org>
 To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 Cc: Tingmao Wang <m@maowtm.org>,
 	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
 	linux-security-module@vger.kernel.org
-Subject: landlock: Use hashtable for merged domains
-Date: Wed, 21 May 2025 20:31:56 +0100
-Message-ID: <cover.1747836146.git.m@maowtm.org>
+Subject: [RFC PATCH 02/10] landlock/hash: define (dynamic, non-resizable) hash table helpers
+Date: Wed, 21 May 2025 20:31:58 +0100
+Message-ID: <8b4d0d2f691e36507d5ad80ad4203c29ac6f216c.1747836146.git.m@maowtm.org>
 X-Mailer: git-send-email 2.49.0
+In-Reply-To: <cover.1747836146.git.m@maowtm.org>
+References: <cover.1747836146.git.m@maowtm.org>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
@@ -87,132 +90,147 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi Mickaël,
+While there is already include/linux/hash.h, it relies on the static size
+of the array as the size of the hash table, and thus is inconvenient to
+use for this case where we dynamically compute how many slots we need.
 
-This is a set of (incomplete) patches for the "domain hashtable" work.
-While this is still a WIP, I'm sending it now as per our discussion.  You
-can take a look and see if the approach needs correcting / if we want to
-go ahead with using hashtable.
+There is also the relativistic hash tables in rhashtable.h which supports
+dynamic resizes etc, but is more complicated and might be slower to access?
 
-Currently only implemented for fs access.
+However, on second thought, I'm wondering if we should just use hash
+tables for both domain and a not-yet-merged ruleset anyway (which saves us
+from having a union in landlock_rule).  If we do that then we should
+indeed just use rhashtable.
 
-This set of changes is also available on the landlock-hashmap branch of
-https://github.com/micromaomao/linux-dev.git
-
-
-struct landlock_domain
-----------------------
-
-One of the major thing I'm not sure about in this patch is the fact that
-I've decided to create a standalone `struct landlock_domain`, instead of
-re-using landlock_ruleset.  My original hope was that it might help make
-the code a bit clearer - struct landlock_ruleset would just be for
-unmerged rulesets (and it can use rbtree if we still wants to), and we can
-use this new type for domains (and add new fields and locks to it that
-wouldn't be on a ruleset, for the mutable domains / supervisor work).
-
-I also wanted to split the logic of dealing with rules in a merged domain
-(hence needing to copy multiple layers etc) out of create_rule and
-insert_rule, and simply these functions (especially insert_rule) by
-letting them just deal with unmerged rulesets (so only one layer) - the
-logic for merged domains would be different anyway since it's no longer a
-rbtree walk (but something like landlock_hash_upsert in patch 8 instead).
-
-However, looking back at it, I'm not sure if creating this landlock_domain
-was actually a good idea.  Going down this route eventually I will just
-have to move all the domain-related logic from using ruleset to using
-landlock_domain.  If we decide to use hashtable for unmerged rulesets too
-(not done in this patch, and need more thoughts on how that would work),
-then separating this out is even less value.
-
-Regardless, the relevant code in this patch should still be easily
-portable to just extend landlock_ruleset with hashtables, so I'm happy to
-do that instead in the next version.
-
-
-Hashtable implementation
-------------------------
-
-Since I couldn't find a suitable existing wrapper for runtime-sized (but
-fixed after creation) hashtables, this patch uses a newly hand-rolled
-implementation.  It's not very complex so this might be fine, but there is
-also rhashtable which would be especially suitable if we want to use hash
-table for unmerged rulesets too.  See patch 2 message for details.
-
-
-Testing
--------
-
-selftests/landlock/fs_tests all passes under KASAN, lockdep etc.  Other
-tests showed no obvious issues, but base and net fails due to missing
-config (no MPTCP, no CONFIG_ASYMMETRIC_KEY_TYPE i.e. keyctl)
-
-I ran benchmark with before/after using two workloads, on the same machine
-and setup:
-
-    1. run_microbench with different depth and number of extra rules using
-    code in https://github.com/landlock-lsm/landlock-test-tools/pull/17
-
-    2. A more "typical" workload I put together quickly, calling git status
-    and the like repeatedly:
-    https://github.com/torvalds/linux/commit/f1865ce970af97ac3b6f4edf580529b8cdc66371
-
-On the "typical" workload, which has 2 layers and ~15 rules, we have:
-
-Comparing:                    orig	  hashtable  (% change)
-  landlock_overhead:
-    (this is the % of time spent in landlock hook in the open syscall)
-                        avg = 34      33         (-2.9%)
-                     median = 34      33         (-2.9%)
-
-  landlock_hook:        avg = 837     775        (-7.4%) (unit: ns)
-                     median = 813     748        (-8.0%) (unit: ns)
-
-  open_syscall:         avg = 2429    2324       (-4.3%) (unit: ns)
-                     median = 2370    2265       (-4.4%) (unit: ns)
-
-Using the microbench script, for an extreme case on a path beneath 28
-directories and with 10000 rules:
-
-Comparing:                    orig	  hashtable  (% change)
-  landlock_overhead:    avg = 27      24         (-11.1%)
-                     median = 29      25         (-13.8%)
-  landlock_hook:        avg = 1913    1577       (-17.6%)
-                     median = 1884    1544       (-18.0%)
-  open_syscall:         avg = 6775    6259       (-7.6%)
-                     median = 6666    6115       (-8.3%)
-
-The full results can be found at
-https://fileshare.maowtm.org/landlock/20250521/index.html
-
-Closes: https://github.com/landlock-lsm/linux/issues/1
-
-Tingmao Wang (10):
-  landlock: Add some debug output
-  landlock/hash: define (dynamic, non-resizable) hash table helpers
-  landlock/hash: Use linear search for small tables
-  landlock/ruleset: Rename and extract create_rule
-  Add hlist_node member to struct landlock_rule
-  landlock/domain: Define landlock_domain
-  landlock: Add the new domain to landlock_cred_security
-  landlock: Construct the inode hashtable in the new landlock_domain
-  landlock/fs: Use the new hashtable-based domain to find inode rules
-  landlock: Debug print inode hashtable in landlock_merge_ruleset2
-
- security/landlock/cred.c     |   8 +-
- security/landlock/cred.h     |   1 +
- security/landlock/domain.c   | 145 +++++++++++++++++
- security/landlock/domain.h   |  45 ++++++
- security/landlock/fs.c       | 107 +++++++++----
- security/landlock/fs.h       |   1 +
- security/landlock/hash.h     | 294 +++++++++++++++++++++++++++++++++++
- security/landlock/ruleset.c  |  80 +---------
- security/landlock/ruleset.h  |  99 +++++++++++-
- security/landlock/syscalls.c |  35 +++++
- 10 files changed, 702 insertions(+), 113 deletions(-)
+Signed-off-by: Tingmao Wang <m@maowtm.org>
+---
+ security/landlock/hash.h | 117 +++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 117 insertions(+)
  create mode 100644 security/landlock/hash.h
 
-
-base-commit: 3039ed432745f8fdf5cbb43fdc60b2e1aad624c1
---
+diff --git a/security/landlock/hash.h b/security/landlock/hash.h
+new file mode 100644
+index 000000000000..955c5756d4d9
+--- /dev/null
++++ b/security/landlock/hash.h
+@@ -0,0 +1,117 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Landlock - Domain hashtable mainpulation
++ *
++ * Copyright © 2025      Tingmao Wang <m@maowtm.org>
++ */
++
++#ifndef _SECURITY_LANDLOCK_HASH_H
++#define _SECURITY_LANDLOCK_HASH_H
++
++#include <linux/slab.h>
++#include <linux/hash.h>
++
++#include "ruleset.h"
++
++struct landlock_hashtable {
++	struct hlist_head *hlist;
++
++	/**
++	 * @hash_bits: Number of bits in this hash index (i.e.  hlist has
++	 * 2^this many elements).
++	 */
++	int hash_bits;
++};
++
++#define landlock_hash_for_each(rule, ht, i)                \
++	for (i = 0; i < (1ULL << (ht)->hash_bits); i += 1) \
++		hlist_for_each_entry(rule, &(ht)->hlist[i], hlist)
++
++#define landlock_hash_for_each_safe(rule, tmp, ht, i)      \
++	for (i = 0; i < (1ULL << (ht)->hash_bits); i += 1) \
++		hlist_for_each_entry_safe(rule, tmp, &(ht)->hlist[i], hlist)
++
++static inline int landlock_hash_init(const size_t expected_num_entries,
++				     struct landlock_hashtable *out_ht)
++{
++	size_t table_sz = 1;
++	int hash_bits = 0;
++
++	if (likely(expected_num_entries > 0)) {
++		table_sz = roundup_pow_of_two(expected_num_entries);
++		hash_bits = fls_long(table_sz - 1);
++	}
++
++	/*
++	 * We allocate a table even if expected_num_entries == 0 to avoid
++	 * unnecessary branching in lookup code
++	 */
++
++	out_ht->hash_bits = hash_bits;
++	out_ht->hlist = kcalloc(table_sz, sizeof(struct hlist_head),
++				GFP_KERNEL_ACCOUNT);
++	if (!out_ht->hlist) {
++		return -ENOMEM;
++	}
++
++	return 0;
++}
++
++static inline void landlock_hash_free(struct landlock_hashtable *ht,
++				      const enum landlock_key_type key_type)
++{
++	struct landlock_rule *rule;
++	struct hlist_node *tmp;
++	size_t i;
++
++	if (key_type == LANDLOCK_KEY_INODE)
++		might_sleep();
++
++	if (!ht->hlist)
++		return;
++
++	landlock_hash_for_each_safe(rule, tmp, ht, i)
++	{
++		free_rule(rule, key_type);
++	}
++	kfree(ht->hlist);
++	ht->hlist = NULL;
++}
++
++static inline u32 landlock_hash_key(const union landlock_key key,
++				    const int hash_bits)
++{
++	return hash_ptr((void *)key.data, hash_bits);
++}
++
++static inline struct landlock_rule *
++landlock_hash_find(const struct landlock_hashtable *const ht,
++		   const union landlock_key key)
++{
++	struct hlist_head *head;
++	struct landlock_rule *rule;
++
++	head = &ht->hlist[landlock_hash_key(key, ht->hash_bits)];
++
++	hlist_for_each_entry(rule, head, hlist) {
++		if (rule->key.data == key.data)
++			return rule;
++	}
++
++	return NULL;
++}
++
++/**
++ * @landlock_hash_count - Return number of entries in the hashtable.
++ */
++static inline size_t landlock_hash_count(const struct landlock_hashtable *ht)
++{
++	size_t num_entries = 0;
++	struct landlock_rule *rule;
++	size_t i;
++	landlock_hash_for_each(rule, ht, i)
++	{
++		num_entries += 1;
++	}
++	return num_entries;
++}
+-- 
 2.49.0
+
