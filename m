@@ -1,83 +1,83 @@
 Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D57C5266F00
-	for <linux-security-module@vger.kernel.org>; Wed, 21 May 2025 19:34:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47B27266F00
+	for <linux-security-module@vger.kernel.org>; Wed, 21 May 2025 19:34:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747856089; cv=none; b=M5DuZlusTXzLPp5JpisR/INN8gbcyPO3J2Bn9Bt0kxaIvmdlDdNa+aSOFchVcrzzo6kl3YPWgwS7MDb7xJ/1jbPoIPv0audGnLZDYxzJw9xUuZJhurJ4nQ5jCJBoppQxock7SrB8gfnNHQYZGRhueKXdRu61HeqCiAY2ceDrjaY=
+	t=1747856091; cv=none; b=Hiuor5XlEY8oSjRoouMcmhqvYZE7W0+vOAj4/ehVasTgGdld9e7U/fv+5ucFCEDUkTZXjwtuAx5mdm/Ojx8270/KSC0cRFnz5d0fGiWY1WtS/KfRcrl6b/QA3nLHwxdROPtDACvq8JWJGMD992Jsg3LLd/h1gr8xeAknT/813/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747856089; c=relaxed/simple;
-	bh=tqe3WzW1Wzi+yiWVwehswb8Jc2KXpXgczfqMhFNic+Y=;
+	s=arc-20240116; t=1747856091; c=relaxed/simple;
+	bh=+dOUnHgz5gsUMsTK9BYIBSmYBDyoAmtyZqC+FzSrSdE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hOdhAapt28WVIVQYsK4DP61HIYBQNkuXvEaDck9Ha6ysKZAtQQg5MOqo8ug1cOm5xDmFjOoEn7l+JGn759A++/Cn5SyohsrBDjb6YM9jzXiWuiiA5YmlUplPw1F7INJNl9KGACy8KCZQ8XiAXIGfAi4GdWLHr/biEwBlTU3tQN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=AmvJwvLB; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JdxRL222; arc=none smtp.client-ip=103.168.172.151
+	 MIME-Version; b=fs1HIC1XyE96GyULRMrwPbQA5IT2xlkd3dOpXxY69xtEAUymP9mIslTQhj6ZfVI3CFfT07K1AuolF+cywcwCG3SPFNkEZCC4QTmoqwxun0agBDSuk/xQCou+ymFoNYk7Dcbcsmb8f7wNyKok237in64Nkj9LA6a1yyjGbqItkUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=OdfAcIQp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=B4Bl3Pl9; arc=none smtp.client-ip=103.168.172.151
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="AmvJwvLB";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JdxRL222"
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
-	by mailfout.phl.internal (Postfix) with ESMTP id ECA20138042A;
-	Wed, 21 May 2025 15:34:46 -0400 (EDT)
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="OdfAcIQp";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="B4Bl3Pl9"
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
+	by mailfout.phl.internal (Postfix) with ESMTP id 5D1FF1380434;
+	Wed, 21 May 2025 15:34:49 -0400 (EDT)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Wed, 21 May 2025 15:34:46 -0400
+  by phl-compute-01.internal (MEProxy); Wed, 21 May 2025 15:34:49 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
 	:cc:content-transfer-encoding:content-type:date:date:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1747856086; x=
-	1747942486; bh=90cksteMaKCHrlFYVtuW8MlgM0IbgdPK3hjrBBFz96o=; b=A
-	mvJwvLBC3VLDqHhFAhErsvHR5/Lq0j7J7O4qsDsUTTIkKNIbfsA9GIQYsyOpRkNj
-	71AzHh0gK6OMoIG11zXUqKta69rMHgwrzm+FXsOt7Q8dUDp+ltaLh+vyLxhtGd4E
-	BA6U0rxr/YoLLUP/OWyzziRyZozkr/SxjgQtsjG0jBGwdkGhWHZBdfxuZF0KTSJz
-	EMOG7/ak2EwMGx0zmAsDTRcRlXudkaSlSAaqUf1Z4twjo2rd1CH0baVoK8cceEbz
-	a7t3/VjOLOq/dNefR3HeZP7zoEHG1iY3MaJYfxrU1Qfku4V0vrw3qaqRUd24qNV8
-	k3f5SsDN92ocF+tUlrA3g==
+	:reply-to:subject:subject:to:to; s=fm3; t=1747856089; x=
+	1747942489; bh=t7BvLy36rqOQW4MskC/3iOEhqKHAzYloaRUH5yngGpU=; b=O
+	dfAcIQpyYO4eGFnUWkrZ9ppYaIQrShNAKu9UBivjECOPJEvEZWxUCjElCIfeZ/Th
+	9wSovuSk6+6qTUgP7Y0PiKJ+GmPNC9a5z/KX6NLdySz+84m8t8Mi+BawrClBu3wu
+	t5MGbNZTBucBR0DskXys5E/WAxMyHLz6NFuiX/P4h4CpJK5/7RVwcbtT2y2BMk3J
+	8OnqG6ndct9sctYfcxCsxADXwBCLQs9bAdE4ToyC60W9KABXIUt1HPbrxZuXCXB4
+	cMmh0NV1MILeAFb+C6+7zgjWSwBM/btyGNgV/PRMsBhB/apispBab2iNkTpS/HYo
+	9lUYRI9AKOFb5Za9xFmhQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm3; t=1747856086; x=1747942486; bh=9
-	0cksteMaKCHrlFYVtuW8MlgM0IbgdPK3hjrBBFz96o=; b=JdxRL222t3+ctvKb+
-	6MfD1sXrVZ8KIcJmzp3pGetNf/nUECvMf9UNzgIeRZzhgqjJXqCOseeWYm8Bmzr1
-	LzdCcuNcjQvzmIKb2ltRCyyX+gy2X1356/4PgsQGsoc/4wqo+abQnE6Bvf/gaucE
-	UKNrnLCHPYioY0e8DNfMsu8bHG5lKt8dWYTxhtPS+5SLht0KZ2Krg8yLxa+3TxkD
-	Q5lZ8Bl9AxqOfAFVIZ6dJZXsYuQvMAy+53dRuQDqqQ9U+xI/KDDuShmLT4JTgfOa
-	kg0IlPYHuwBtf5krnsvD3EiZ7M6z8MqdyQQB2AJTx0Uhsvlf63K5F6qDZeZuFJZ3
-	dG6Tw==
-X-ME-Sender: <xms:1iouaAJjClI1nVG99BDBy58AF6b1DVkh78cUHOREmadWlEgo1nsDew>
-    <xme:1iouaAIQLo1e0fM2biDHDwdHUnzTAU4F694dP4aY8mW2OpQ50FOP4vClDj8-ITVq2
-    VbrymziyM0yMEsY7H4>
-X-ME-Received: <xmr:1iouaAv1NvTvzqrTYFJGV4WoSvtoxd9K1lZLNBDRZY6pNwXlfAJ_wB_ak_C5E7uYWqMjd-p36EUzIPCH-uZ3QAC8IvaJqa-FNJDVweenAw_GaQ3L6sWTsg>
+	:x-me-sender:x-sasl-enc; s=fm3; t=1747856089; x=1747942489; bh=t
+	7BvLy36rqOQW4MskC/3iOEhqKHAzYloaRUH5yngGpU=; b=B4Bl3Pl9z6ja0FAfn
+	wfj6lFz1CtOofYdYVqlZMaZPIgGsXQnTQvbZS4ziTln3i2W9coo8kGy34YM1EbSO
+	NXSntjpTEQKgtIeVP0Y85C58Y9mbmVPaaUpvj3S2cdKYmQSe0mJPcI3ckujJVUZM
+	3pRC8qHBgOhAmeAWD12+QBoJkd0vG64tsmJpaMvecEfurH24Pwf/kkc1QtDg1X2z
+	DKLEmV4vbsbJ2QmIncIKOQ6VMajkDQBhanwzmzyqa+VP86kf2Ms9ldn0tIES5Zv4
+	kxLvSGPm2/KB1C9FuIte6gtPxkwJdTFcP5O235kcD3SNeUgVlYGw3//aj8BVbrml
+	fP8BQ==
+X-ME-Sender: <xms:2SouaMRHDg-UxKM3w8VeDo7F7M46uGtU8_8vdT-HVVO2w9yyGO7Kqw>
+    <xme:2SouaJzCNKbvzIrgw-oUXYjLVyXAQbnr2lKim9yoS4oRWOhjeHR9sA_Z9AHj2BH0j
+    KaiqLaDNe5gzBMdSdQ>
+X-ME-Received: <xmr:2SouaJ1cf9JLV055GQx1mVC1F2oB6oBFBq7iXeWihQX8HLegZPHoCuE78T0x5PXKChQ48uW67PeX3OGyYu7xoedQUTGMaqKIWWlfAzVwSrLHjwhovBNFhQ>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgdefleefucdltddurdegfedvrddttd
     dmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgf
     nhhsuhgsshgtrhhisggvpdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttd
     enucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgj
     fhgggfestdekredtredttdenucfhrhhomhepvfhinhhgmhgrohcuhggrnhhguceomhesmh
     grohifthhmrdhorhhgqeenucggtffrrghtthgvrhhnpeeuuddthefhhefhvdejteevvddv
-    teefffegteetueegueeljeefueekjeetieeuleenucevlhhushhtvghrufhiiigvpedtne
+    teefffegteetueegueeljeefueekjeetieeuleenucevlhhushhtvghrufhiiigvpedune
     curfgrrhgrmhepmhgrihhlfhhrohhmpehmsehmrghofihtmhdrohhrghdpnhgspghrtghp
     thhtohepgedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhhitgesughighhikh
     hougdrnhgvthdprhgtphhtthhopehmsehmrghofihtmhdrohhrghdprhgtphhtthhopehg
     nhhorggtkhesghhoohhglhgvrdgtohhmpdhrtghpthhtoheplhhinhhugidqshgvtghurh
     hithihqdhmohguuhhlvgesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:1iouaNajlRBUOgPQF-t1XE09QsjKVgbAzHMQmAMhj0r4gGUMcHDg2g>
-    <xmx:1iouaHbKdFodVypAowDF-yxWsbZq1uvR-t4mGZoixefQlxPipDRr_Q>
-    <xmx:1iouaJDUTutPkPQbftqBEeuvqQ3sjdLqfIHAaPWMWX3ZStxrvYJ0gg>
-    <xmx:1iouaNZy50rK3PSYAx5Nl42jiSbIXJSBjdeJ791_Lm8MpWLZ_xFDbg>
-    <xmx:1iouaI5Y3dQb_B88BJIxeMzWBaxgLEyq2KmlmYQjO5mqPQ4PnF9smZaa>
+X-ME-Proxy: <xmx:2SouaADpDtkVmvF1rofAh532t58mT_dDYLr_Ga6fponBdtZ7bfjHYw>
+    <xmx:2SouaFj58tjpznt0LRWA5YiHERzI0dKVdWka2nZKscLBGrcMO8gzqA>
+    <xmx:2SouaMrWf1nzF2woluGaDPwP39I25uIL0V0YG3qM9qfqj6vmkrmS8A>
+    <xmx:2SouaIiBPZeP3Nr6DKwnofR9lKE5n_kuxUZRG27KfrxoF6TS50Om9w>
+    <xmx:2SouaIAsDhX-RIFqSOPwjhxNN1kYeew5QYOn01NOSuFXYOdlSw213WsI>
 Feedback-ID: i580e4893:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 21 May 2025 15:34:45 -0400 (EDT)
+ 21 May 2025 15:34:48 -0400 (EDT)
 From: Tingmao Wang <m@maowtm.org>
 To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
 Cc: Tingmao Wang <m@maowtm.org>,
 	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
 	linux-security-module@vger.kernel.org
-Subject: [RFC PATCH 03/10] landlock/hash: Use linear search for small tables
-Date: Wed, 21 May 2025 20:31:59 +0100
-Message-ID: <15c39519cfac85730d92cda11e4430773dbb2117.1747836146.git.m@maowtm.org>
+Subject: [RFC PATCH 05/10] Add hlist_node member to struct landlock_rule
+Date: Wed, 21 May 2025 20:32:01 +0100
+Message-ID: <3a9336cad807610a8b85cb95363c3769c863c978.1747836146.git.m@maowtm.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1747836146.git.m@maowtm.org>
 References: <cover.1747836146.git.m@maowtm.org>
@@ -89,52 +89,60 @@ List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The cost of hashing is too significant when there's only a small number of
-entries.  For that we might as well just walk the hlist.  The optimal
-threshold can be determined imperically which I will do later.
+This is to prepare for the new domain. Since a rule can only be in either
+a ruleset (rbtree based) or a landlock_domain (hashtable based), we can
+make the node/hlist member of a union.  For now let create_rule initialize
+is as before.
+
+(Alternatively, if we use hashtable for both cases, then we save 8 bytes
+per each rule, but then we will need some kind of resizable hashtable)
+
+(Maybe we should use the relativistic hash tables after all?)
 
 Signed-off-by: Tingmao Wang <m@maowtm.org>
 ---
- security/landlock/hash.h | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ security/landlock/ruleset.h | 20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
 
-diff --git a/security/landlock/hash.h b/security/landlock/hash.h
-index 955c5756d4d9..8393593cfe7b 100644
---- a/security/landlock/hash.h
-+++ b/security/landlock/hash.h
-@@ -13,6 +13,8 @@
- 
- #include "ruleset.h"
- 
-+#define LANDLOCK_HASH_LINEAR_THRESHOLD 4
+diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
+index 215578ad82f7..07823771b402 100644
+--- a/security/landlock/ruleset.h
++++ b/security/landlock/ruleset.h
+@@ -87,10 +87,16 @@ struct landlock_id {
+  * struct landlock_rule - Access rights tied to an object
+  */
+ struct landlock_rule {
+-	/**
+-	 * @node: Node in the ruleset's red-black tree.
+-	 */
+-	struct rb_node node;
++	union {
++		/**
++		 * @node: Node in the ruleset's red-black tree.
++		 */
++		struct rb_node node;
++		/**
++		 * @hlist: Node in the domain's hash table.
++		 */
++		struct hlist_node hlist;
++	};
+ 	/**
+ 	 * @key: A union to identify either a kernel object (e.g. an inode) or
+ 	 * a raw data value (e.g. a network socket port). This is used as a key
+@@ -248,7 +254,13 @@ landlock_create_rule(const struct landlock_id id,
+ 			   GFP_KERNEL_ACCOUNT);
+ 	if (!new_rule)
+ 		return ERR_PTR(-ENOMEM);
 +
- struct landlock_hashtable {
- 	struct hlist_head *hlist;
- 
-@@ -37,7 +39,11 @@ static inline int landlock_hash_init(const size_t expected_num_entries,
- 	size_t table_sz = 1;
- 	int hash_bits = 0;
- 
--	if (likely(expected_num_entries > 0)) {
 +	/*
-+	 * For small tables, we just have one slot, essentially making lookups
-+	 * a linear search.  Doing a hash for small tables is not worth it.
++	 * We assume the rule will be in a rbtree for now - in the
++	 * landlock_domain case caller can init the hlist afterward
 +	 */
-+	if (expected_num_entries > LANDLOCK_HASH_LINEAR_THRESHOLD) {
- 		table_sz = roundup_pow_of_two(expected_num_entries);
- 		hash_bits = fls_long(table_sz - 1);
- 	}
-@@ -81,6 +87,10 @@ static inline void landlock_hash_free(struct landlock_hashtable *ht,
- static inline u32 landlock_hash_key(const union landlock_key key,
- 				    const int hash_bits)
- {
-+	if (hash_bits == 0) {
-+		return 0;
-+	}
+ 	RB_CLEAR_NODE(&new_rule->node);
 +
- 	return hash_ptr((void *)key.data, hash_bits);
- }
- 
+ 	if (is_object_pointer(id.type)) {
+ 		/* This should have been caught by insert_rule(). */
+ 		WARN_ON_ONCE(!id.key.object);
 -- 
 2.49.0
 
