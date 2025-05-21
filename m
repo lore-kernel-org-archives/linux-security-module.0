@@ -1,166 +1,76 @@
-Received: from mail.nightmared.fr (mail.nightmared.fr [51.158.148.24])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ACFB16C850;
-	Wed, 21 May 2025 14:06:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.158.148.24
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 462A21D63DF;
+	Wed, 21 May 2025 15:13:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747836367; cv=none; b=lQQ4Pgm0UipUlmThtsMnyQBFBtQ2D1l9ToBRBLImdXVGZKjmk1vxK4Pfm9B+7FDGSEoAm5YOZ0DdSK1WaLAK3V1wDlIylWiU78KquU3rtmgtqogormGUEzAPnKzbQHjHQuj4wGpVU2tFJR/+ZvW7G4N0bUAJHnbOncBmeCqNbHs=
+	t=1747840381; cv=none; b=bAz+GJshNraunWf1vryFVZpXB8BcrQ7ckwj1QhtDgREAkjUIGXqzAApLru+vnoe9dVtLp3T6etLSot4PAFwQJjV2GnPC/c5TwRsTuEQMODtLoOkA/7pJEf+Aa8rvsl/UzZcdgn7By3OMXifRcSPkXxdLhLrUd4iWG8KBvhHkfK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747836367; c=relaxed/simple;
-	bh=pz6RyQBVVgDU7dGupqoILiF4QPhslnN4CNI6Hc2AExQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=npJ82W7k+Xzk0LP3sPfwAnuGo8XtIuCo3SLrcVmV2ztA6H7+jRTFgK47RWPU+BrZRbRualM5OKmwHVktxEhdiy9XQC/ry6dzlxPreGLl069a8DdCl0iNsliVvs/7sLzxBaF1F8Q9x8ie000ytw2eHKejhpwc8o6HI2BaYzCjHRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nightmared.fr; spf=pass smtp.mailfrom=nightmared.fr; dkim=pass (2048-bit key) header.d=nightmared.fr header.i=@nightmared.fr header.b=gt0H83Lx; arc=none smtp.client-ip=51.158.148.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=nightmared.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nightmared.fr
+	s=arc-20240116; t=1747840381; c=relaxed/simple;
+	bh=YKIYQlFJfiRSqvZ5K+grxRTf6ru0wjO7N2apehq86Fg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tQj4FtkZ2frkoPZyiMmamSwuVd0thPNbrM86y2oFHXcDRZ4dLUuxRISej9HH0uhf/d4f4SnrvnHV8brJrKhxIgkaFssT4Yal6OtE/qwmmDbBl6F6znNl0JuxkcBQQvbExIGeCpWZMpl2FRCyu2nujet6OIRKPjsPEqMSe3a9URY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tkNTqGQs; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nightmared.fr header.i=@nightmared.fr header.b="gt0H83Lx"
-Received: from localhost.localdomain (atoulon-651-1-170-218.w83-113.abo.wanadoo.fr [83.113.65.218])
-	by mail.nightmared.fr (Postfix) with ESMTPSA id C637110821F2;
-	Wed, 21 May 2025 14:01:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nightmared.fr;
-	s=docker; t=1747836102;
-	bh=pz6RyQBVVgDU7dGupqoILiF4QPhslnN4CNI6Hc2AExQ=;
-	h=From:To:Cc:Subject:Date;
-	b=gt0H83Lx7o+QmrtB1uJqNXg2piq0/3EEuklENZGp+w87V8+Bh7mE2STuikIhjKQKr
-	 Tg9pVTKWsUUaTKzW+l6aDS13aAHPoOYORjQZJZmF/sqHCe8r67SjjfqTYwpvgx7+91
-	 cMts6qDw7/MsWnGmrnuWYEvWvWokQAuOgCjUZmXKJpwgrMmFMDmMJkYVioNJ2wjOKg
-	 o0A9bJkY6if/fcyyIJhftYNtW5cjvRzNtZRK2oa4W08veDml7w5K4qPplCI/AplOwg
-	 7E4ovwEV6WmX8VAQhDIicZ6P8RXvcm2QQlblZM1Xs0KOpvJbJSomT4K3HklWVI869O
-	 8Wt3WILALz4Sw==
-From: Simon THOBY <git@nightmared.fr>
-To: linux-security-module@vger.kernel.org
-Cc: Simon THOBY <git@nightmared.fr>,
-	linux-integrity@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: [RFC PATCH 0/9] Introducing the Loadpol LSM
-Date: Wed, 21 May 2025 16:01:04 +0200
-Message-ID: <20250521140121.591482-1-git@nightmared.fr>
-X-Mailer: git-send-email 2.49.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tkNTqGQs"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D214C4CEE4;
+	Wed, 21 May 2025 15:12:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747840380;
+	bh=YKIYQlFJfiRSqvZ5K+grxRTf6ru0wjO7N2apehq86Fg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tkNTqGQsNf/aAr/nQVP0FQb48j45fv0zcv8XXhgWZdtDkePjhRzk3DOGY1+2dKUS1
+	 +2uhBF9KhVolSDKFdfhtbascrSMz56C+G8XeVY6o5Fz71jc5n1KmCV82XL5aaIru7v
+	 WWCDTqsATOrYnoISvCeRmkTyQHf/grASXTatzv2gFL3LV03s0RjpJoErLOiqiP64qo
+	 P6TO21cEdE9pSartdRY3/MGow2Ys/KMrpbBOoTsHB/9hyWWNyTYrqeJKOxKV1ueVef
+	 dTWq728qBRrwAJ34AZlGUciiVl0R8IsTxeL9w/ZaSMLJFw9/y+Xb6+Lox0epZ7mH/1
+	 4oxL77Rc/hh2w==
+Date: Wed, 21 May 2025 17:12:52 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Jann Horn <jannh@google.com>
+Cc: Kuniyuki Iwashima <kuniyu@amazon.com>, stephen@networkplumber.org, 
+	alexander@mihalicyn.com, daan.j.demeyer@gmail.com, daniel@iogearbox.net, 
+	davem@davemloft.net, david@readahead.eu, edumazet@google.com, horms@kernel.org, 
+	jack@suse.cz, kuba@kernel.org, lennart@poettering.net, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, luca.boccassi@gmail.com, me@yhndnzj.com, netdev@vger.kernel.org, 
+	oleg@redhat.com, pabeni@redhat.com, serge@hallyn.com, viro@zeniv.linux.org.uk, 
+	zbyszek@in.waw.pl
+Subject: Re: [PATCH v8 0/9] coredump: add coredump socket
+Message-ID: <20250521-knirschen-kommst-2fcf19f7d280@brauner>
+References: <20250520122838.29131f04@hermes.local>
+ <20250521004207.10514-1-kuniyu@amazon.com>
+ <CAG48ez0r4A7iMXzBBdPiHWycYSAGSm7VFWULCqKQPXoBKFWpEw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAG48ez0r4A7iMXzBBdPiHWycYSAGSm7VFWULCqKQPXoBKFWpEw@mail.gmail.com>
 
-This RFC patch series aims at discussing the interest of a mechanism
-that could restrict which modules are loaded at runtime.
+> The path lookups work very differently between COREDUMP_SOCK and
+> COREDUMP_FILE - they are interpreted relative to different namespaces,
+> and they run with different privileges, and they do different format
+> string interpretation. I think trying to determine dynamically whether
+> the path refers to a socket or to a nonexistent location at which we
+> should create a file (or a preexisting file we should clobber) would
+> not be practical, partly for these reasons.
 
-Motivation
-==========
+Agreed.
 
-In my experience, there is three main classes of kernel users.
-On the one hand, some entities (companies or individuals) determine the exact set
-of features they need, and recompile the kernel to match these needs (this is true
-e.g. of cloud vendors, many security products, appliances, etc.). These users
-can finely choose which kernel modules are available on their kernels, because
-they know beforehand the exact use case, and they (mostly) control the software
-and hardware stack.
-On the other end of that spectrum, many entities use off-the-shelf distributions
-with little to no further hardening (I believe this is the case of >90% of companies).
-They don't really care about the presence of modules they may not need,
-so all is well.
-Finally, somewhere in the middle there are entitites that want to have some
-control over what kernel modules are allowed on a system, but without the bandwith
-of building and distributing internally their own kernel (because it would require
-a dedicated team to keep ahead of the frequent updates, and because the added
-value of that team is hard to justify). These entities will often use
-off-the-shelf distributions, but they often miss the appropriate knobs to
-be able to tweak the system in order to reach their desired security
-level. In the particular case of kernel modules, Linux is very binary on
-that point: either you allow the loading of any signed kernel module
-(kernel.modules_disabled=0) or you completely disallow the loading of modules
-(kernel.modules_disabled=1).
-Note: there is also secure_insmod for SELinux, but it is a binary option too.
+> 
+> Also, fundamentally, if we have the choice between letting userspace
+> be explicit about what it wants, or trying to guess userspace's intent
+> from the kernel, I think we should always go for being explicit.
 
-However these users do not want to trust all the kernel modules present
-in the distribution packages (to reduce the attack surface, and/or for compliance
-reasons).
-They want to collate a list of kernel modules required to support their hardware
-and software needs, and then to distribute a policy allowing these exact modules,
-and blocking the rest.
+Agreed.
 
-One big example that comes to my mind is security software, because these finicky
-beasts often come with a kernel module that can only be loaded once the
-corresponding userland part has started, so very late in the boot process.
-In addition, this type of module must be unloaded/reloaded when performing updates.
-This is why loading all these modules at boot and then disabling the load of
-further modules (via the kernel.modules_disabled sysctl) is not
-sufficient.
+> 
+> meaning in this context, like '>'; but I don't think we should be
+> changing the overall approach because of this.
 
-Implementation
-==============
-
-This patch RFC builds a small LSM that can be configured at runtime (in
-a practical setup, it would be loaded inside the - signed and verified -
-initramfs), and locked to disallow further modifications of the policy.
-
-This is loosely based on the policy mechanism of the IMA subsystem,
-which was a great source of inspiration.
-A new LSM hook is introduced to decide on a module load if the module
-should be allowed or not). When called, the LSM iterates over its policy
-and allow the module if a match associated with the ALLOW action is found.
-A securityfs file is created to read the policy (using `seq_file` iterators) and update it.
-The policy itself is very simple (two keywords to match modules, one
-keyword to determine the action to take, and that's about it).
-Finally, a sysctl entry exists to lock the policy in its current state.
-
-Questions
-=========
-
-Do you believe that such a mechanism would be valuable?
-And if not, do you have an idea of alternatives that users could combine to 
-achieve the same results?
-
-On an implementation detail, to determine if a module load request comes from
-the kernel (instead of a user-initiated load), I currently do something
-like `if (current->parent->flags & PF_WQ_WORKER))`. Is that a proper way
-to determine that the current load is the consequence of a call to
-`request_module`, and is that not overly broad (could this match
-requests that are - in the end - user-initiated)?
-
-Thank you for your consideration,
-Have a nice day,
-Simon
-
-Simon THOBY (9):
-  LSM: Introduce a new hook: security_kernel_module_load
-  Introduce a new LSM: loadpol
-  Loadpol LSM: filter kernel module request according to the policy
-  Loadpol LSM: add a file in securityfs to read/modify the policy
-  Loadpol LSM: add a sysctl to lock the policy
-  Loadpol LSM: emit an audit log
-  module: expose the list of blacklisted modules
-  Loadpol LSM: include the blacklisted kernel modules in the policy
-  Loadpol LSM: add a minimal documentation
-
- Documentation/admin-guide/LSM/Loadpol.rst |  81 ++++++
- Documentation/admin-guide/LSM/index.rst   |   1 +
- include/linux/lsm_count.h                 |   7 +
- include/linux/lsm_hook_defs.h             |   1 +
- include/linux/module.h                    |   4 +
- include/linux/security.h                  |   6 +
- include/uapi/linux/audit.h                |   1 +
- include/uapi/linux/lsm.h                  |   1 +
- kernel/module/main.c                      |   9 +
- security/Kconfig                          |   1 +
- security/Makefile                         |   1 +
- security/loadpol/Kconfig                  |  12 +
- security/loadpol/Makefile                 |   1 +
- security/loadpol/loadpol.c                |  76 ++++++
- security/loadpol/loadpol.h                |  43 +++
- security/loadpol/loadpol_fs.c             | 139 ++++++++++
- security/loadpol/loadpol_policy.c         | 311 ++++++++++++++++++++++
- security/security.c                       |  14 +
- 18 files changed, 709 insertions(+)
- create mode 100644 Documentation/admin-guide/LSM/Loadpol.rst
- create mode 100644 security/loadpol/Kconfig
- create mode 100644 security/loadpol/Makefile
- create mode 100644 security/loadpol/loadpol.c
- create mode 100644 security/loadpol/loadpol.h
- create mode 100644 security/loadpol/loadpol_fs.c
- create mode 100644 security/loadpol/loadpol_policy.c
-
--- 
-2.49.0
-
+Agreed.
