@@ -1,187 +1,218 @@
-Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0AC021FF45
-	for <linux-security-module@vger.kernel.org>; Wed, 21 May 2025 19:34:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92B73442C
+	for <linux-security-module@vger.kernel.org>; Wed, 21 May 2025 21:31:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747856097; cv=none; b=ir1Jo+CoiybQawKixDIUiD3zWjRbQqHoO4V+fnx4RZAZ9F063sb0vEDH9F0851qd4Q0Ltw4skg8jT2KrlVtY2i5B1W9QSI5A0dDt2divbdONtGn7kPWtPc9UCK6x7CBh4gkw/UFB3nZe77tRuF1KFZH3qmmsaWUoNx6F3dqtfMM=
+	t=1747863093; cv=none; b=CbM3ZxfBMpqbpbd8s683MzjF5qaldLyUm+qIZgNsXA1fgdyXOjokosh2W1u6OdGiEAvAnm0Emht1dOIkOw1GPmk6PWoktBByL1JcszUiEtUp67I2lxJXfaptjA1DFlOfRK7/hqoFf0FtNgU6ytWLqmGNbHtwUOtkkio3CHlZhHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747856097; c=relaxed/simple;
-	bh=uruy/AHWeZhfclOem85W1DdAp3QAuY8msfi1vNeCnxA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CwuR9PrCtWAm0U0kR8C0Mf5iYut1Nue6Pp/tPw0rmGJi8wh/ZZqZufY8HkUHCff6FESOWrBg0Ky1XESazPEh4E6BDEPtgd+uAiCm8X0M6YgZYdwz1NdKBdaM2OuUhRIa5DsYknNQwl3HWX1KjtwIZvIcNg/WbEv+ZhC2KEhwLpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=R+FK2pF+; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=mCeDRD43; arc=none smtp.client-ip=103.168.172.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
+	s=arc-20240116; t=1747863093; c=relaxed/simple;
+	bh=744hrUQyQaJMNhXZ+MAkzT2DXCCzspRedhlx+Q/u6bY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BSUidYi00J7ykBCKwtbMF2n6EGc3a/lVu+x90JWHitDVKYdGHAgRJ+Dh4X33tZJilqYWQKvX2N6s9Zw1VVNlAJ3AmiKNRDjwdAECJiPGxXmm7AI11iU6q49eFwWLr8/o9TViAxMk3HmK3X9iaexFGhSxnc5l3F3/X07e435JARU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=KBpH34HJ; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="R+FK2pF+";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="mCeDRD43"
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id D4C721140145;
-	Wed, 21 May 2025 15:34:54 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Wed, 21 May 2025 15:34:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
-	:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1747856094; x=
-	1747942494; bh=vAZ8t6wG4MQoQ3Ii+G88IhYb3PbaLpKExM9qXDXHWw0=; b=R
-	+FK2pF+IlCiIMTYADY69712NSHTDIhPQ/yus1VwXhA/GkIQF94zqAlW9qqKEw9Bf
-	fmMUt6x5XJoAmAW0spJNocu7AQVE7yNNyHRYMD+2CRPJawaVucN4pLiQtUx/QlQ5
-	EQ9MWbhKRt1KrFsZfPoPYROVZZPauCtIUNIgRcnhu42SLXltvvsZoth3eVjYPMu3
-	Tir1CEsIYfP4Lu2iVnSCNFF95mcQGsVlBiRI8recFmh0TeFksPffuRe+tITDfDU5
-	EgdgSAfEVaPZsMqxZm6L7EwvZex4Hn+mj64eNkIXl1fcpWMPgmzbp+5osvGuAmzT
-	fTB4XKNYLlLFHBhSG6pWA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm3; t=1747856094; x=1747942494; bh=v
-	AZ8t6wG4MQoQ3Ii+G88IhYb3PbaLpKExM9qXDXHWw0=; b=mCeDRD439ELFevu2Y
-	kComFbQwY4FKz2LI9igyoPbEzMVW2+6mQW51xUjsAgz9SBuaz95OlIkdq8dmGfrX
-	gLfHn0FNcx7lIIcqwkuUIkRdBsh5UxMoc8lFKi2/IbDhxQzr1TRSA/Ze5bz6VFSU
-	5hqqRD3Uh9PqVImuceSGjFCYThDTf3SFbqlqUl6bm26QN5prkCKUo9IFW42UmJ8d
-	tB8pW85/iLV5wjVWDtgXx9m9LWBkcqOV0xY1ou7fV7E4tNxuRnBdtuX/XT3/qFzx
-	eGojKzgluRjxDhgwKGCrXHA0aoUczOUQAUm2fz7ZyakmoDWWYgFejpbjTemJ/ERw
-	Ggc3A==
-X-ME-Sender: <xms:3iouaInecHYKWltIUcZ-FsllNRC_MfSeWA3cm85EpTSpZQJqbQ5Ywg>
-    <xme:3iouaH3yPxI7mBYEA89NF4zX_b_owO0zzRIdFGn6F1MFuL3DXnztyTp77Oioo-RSD
-    Hz7tc7e4Xtzsgzq_hc>
-X-ME-Received: <xmr:3iouaGrlsiFgoE7-WLsamKIeM_ZtkmhDR7xAeeGD7Qt_OtiyxfVhuRYbzDyzk7XVeiuV--g4ogohPbkrtyNVXKR7OZye-j8r3XeHgGvuDdBAz9vaJ_-M4g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgdefleegucdltddurdegfedvrddttd
-    dmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgf
-    nhhsuhgsshgtrhhisggvpdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttd
-    enucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhephffvvefufffkofgj
-    fhgggfestdekredtredttdenucfhrhhomhepvfhinhhgmhgrohcuhggrnhhguceomhesmh
-    grohifthhmrdhorhhgqeenucggtffrrghtthgvrhhnpeeuuddthefhhefhvdejteevvddv
-    teefffegteetueegueeljeefueekjeetieeuleenucevlhhushhtvghrufhiiigvpedtne
-    curfgrrhgrmhepmhgrihhlfhhrohhmpehmsehmrghofihtmhdrohhrghdpnhgspghrtghp
-    thhtohepgedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhhitgesughighhikh
-    hougdrnhgvthdprhgtphhtthhopehmsehmrghofihtmhdrohhrghdprhgtphhtthhopehg
-    nhhorggtkhesghhoohhglhgvrdgtohhmpdhrtghpthhtoheplhhinhhugidqshgvtghurh
-    hithihqdhmohguuhhlvgesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:3iouaElW5MH5f_8S1jxFe4GPmUFZ6y3OGBff9NCHMf1eVy0EEclQqg>
-    <xmx:3iouaG0XTsnLCX7ulgzZMDRxcsJbTMd7tj8Ph-gjh2C5-oZph10pAA>
-    <xmx:3iouaLuDrn7ZMqqPx5zsHTkZSmHT1l9av07P_ekUfehSlfymINs8Lw>
-    <xmx:3iouaCWqqccEJnqNXDZiuCoUXBpk1fcj_tEWqC909u7vIiqjQXHmEA>
-    <xmx:3iouaD1OM6iTrpqLll2P05RPkUgjeeBdRMd8P73ympCwoIGl9__ZWDsA>
-Feedback-ID: i580e4893:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 21 May 2025 15:34:53 -0400 (EDT)
-From: Tingmao Wang <m@maowtm.org>
-To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-Cc: Tingmao Wang <m@maowtm.org>,
-	=?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack@google.com>,
-	linux-security-module@vger.kernel.org
-Subject: [RFC PATCH 10/10] landlock: Debug print inode hashtable in landlock_merge_ruleset2
-Date: Wed, 21 May 2025 20:32:06 +0100
-Message-ID: <b9c8109a0a04f8b1866218898f28066c7afd57c1.1747836146.git.m@maowtm.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <cover.1747836146.git.m@maowtm.org>
-References: <cover.1747836146.git.m@maowtm.org>
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="KBpH34HJ"
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e7b3178473eso6902256276.2
+        for <linux-security-module@vger.kernel.org>; Wed, 21 May 2025 14:31:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1747863089; x=1748467889; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5GXwy1kEW0JPOOxOeszLkv5sZ9JO5M8aq65wgnslF0c=;
+        b=KBpH34HJOdXHJLvqmWENXqJJ9nfjfOunsY4+KIg4hS5DuGnPwbb5URdzt0bgIClDET
+         M4gPV9RkLGx4W0Y7M5QS8XwBwA/H0fGWCCT4zGh9eFV8auRDqeZyiY7CA4IpN6/xjWcO
+         /lYBb6pUt1aRmAwfbW485TfYuFljyzc1CSySp3TpNXrqfNsEKqRJq9ReSErL3pQLaDTE
+         uK+uOrEeGuxWrS0zl1UAI2+xkaqIWe90q0pveoqb8cHuHMMGOnIjRP3/vmw+SBXie2+B
+         tA6H6hPS5IXkLP/omAsQYq3MTfrYzKgc+HHxkYtpLO/Fw/hxS2r14vUPh0chtZVUlGvc
+         lLIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747863089; x=1748467889;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5GXwy1kEW0JPOOxOeszLkv5sZ9JO5M8aq65wgnslF0c=;
+        b=RCRTtB0mhkpAtgb4pPcyrBp4GZStXrmMHstYzqina2+V8mOOMZsx82gRNe73KNtYCZ
+         F1Akb8VXVXDc/wTre3Wem9y11zAlr/VWWuevQgZRyIaT/SEi9NOJPfaoIZWxYo+Pg66w
+         gIOeXNR7qE1exIQOyWLuuCqP2s7oEptFdrDWSfsDrJxfK+hzGJhqkAhHl0Ll8vzN8tBa
+         t1IHsZtcptm+ZsJbOt7VgDbvhaSzM7UAVNXDvlTraR9N1kfWJ/mDbYZsbTcSvsQx0Uh2
+         gD41fIQT/L71E5Iki5zlNQGIWthArYxiIwc1+BvwM6uVjsnejGr++3R9+jZNef4t4+n9
+         uqGA==
+X-Gm-Message-State: AOJu0YySvkeWrfYM0GlJUACDGoOfN3AL/QZc0u7DRHHDqt0oJrJn03Ya
+	X+OIAjtk8DQYCJHeQ2/C7HI8x6rbp/Rt2dmZllK/DgNiARGSP4ZALsYVNqcz/KejrUjt7lX+WVc
+	DJNt0xDmiXuA9V0JGpPED8UHRrHRveVRhiK9PA/DM
+X-Gm-Gg: ASbGncv0vSVR61WhKNXnFQOKrxbAg/6SLEvai5ZmM0fByHvoc4TMnBR8Z7bV3Oa12vm
+	/iyW0gczqzoN4Ws2LpZ8u4ZPpLfd+PVVIKPpN2ddb5qTsvYXrjoCG2F8hybwhwD8DDY1zDR7wbZ
+	vZPO7PCRIr1apwbCcgfkp9fS+q6erf//ihFBdBxJM6oS0=
+X-Google-Smtp-Source: AGHT+IFsYU17SnFlApxMikYlVjFydencW9RzKNz42GYdg5TTQEnzoKQH5AwgNW/rQbr1eW4h8yf43+YFkMVJaFGJLCM=
+X-Received: by 2002:a05:6902:2411:b0:e7b:6768:1d4c with SMTP id
+ 3f1490d57ef6-e7b6a1fd6e3mr28236771276.36.1747863089482; Wed, 21 May 2025
+ 14:31:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-security-module@vger.kernel.org
 List-Id: <linux-security-module.vger.kernel.org>
 List-Subscribe: <mailto:linux-security-module+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-security-module+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250521140121.591482-1-git@nightmared.fr> <20250521140121.591482-10-git@nightmared.fr>
+In-Reply-To: <20250521140121.591482-10-git@nightmared.fr>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 21 May 2025 17:31:18 -0400
+X-Gm-Features: AX0GCFvNcVqRgFYOLi4D9FncLR4G0u1aE30z5MYv_qx60lOm2NGbhIkb6anmQLY
+Message-ID: <CAHC9VhR-80zxgo+q07Aw8HqK+qiPdnuXC0axONGac0e9JxXvmw@mail.gmail.com>
+Subject: Re: [RFC PATCH 9/9] Loadpol LSM: add a minimal documentation
+To: Simon THOBY <git@nightmared.fr>
+Cc: linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org, 
+	linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Tingmao Wang <m@maowtm.org>
----
- security/landlock/domain.c |  5 +++
- security/landlock/hash.h   | 62 ++++++++++++++++++++++++++++++++++++++
- 2 files changed, 67 insertions(+)
+On Wed, May 21, 2025 at 10:03=E2=80=AFAM Simon THOBY <git@nightmared.fr> wr=
+ote:
+>
+> Introduce a minimal documentation for Loadpol, presenting the policy
+> format and the two user interfaces: the securityfs policy file and the
+> sysctl.
+>
+> Signed-off-by: Simon THOBY <git@nightmared.fr>
+> ---
+>  Documentation/admin-guide/LSM/Loadpol.rst | 81 +++++++++++++++++++++++
+>  Documentation/admin-guide/LSM/index.rst   |  1 +
+>  2 files changed, 82 insertions(+)
+>  create mode 100644 Documentation/admin-guide/LSM/Loadpol.rst
+>
+> diff --git a/Documentation/admin-guide/LSM/Loadpol.rst b/Documentation/ad=
+min-guide/LSM/Loadpol.rst
+> new file mode 100644
+> index 000000000000..0aa24a8d393c
+> --- /dev/null
+> +++ b/Documentation/admin-guide/LSM/Loadpol.rst
+> @@ -0,0 +1,81 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +=3D=3D=3D=3D=3D=3D=3D
+> +Loadpol
+> +=3D=3D=3D=3D=3D=3D=3D
+> +
+> +Loadpol is a Linux Security Module that enforces a user-provided policy
+> +when decided whether a dynamic module can be loaded or not.
 
-diff --git a/security/landlock/domain.c b/security/landlock/domain.c
-index fae21b260591..9c82f5c1bdb9 100644
---- a/security/landlock/domain.c
-+++ b/security/landlock/domain.c
-@@ -161,6 +161,11 @@ landlock_merge_ruleset2(const struct landlock_domain *curr_domain,
- 		return ERR_PTR(err);
- 	}
- 
-+#ifdef DEBUG
-+	pr_debug("landlock_merge_ruleset2: inode hash table:\n");
-+	landlock_hash_debug_print(&new_domain->inode_table, LANDLOCK_KEY_INODE);
-+#endif /* DEBUG */
-+
- 	return new_domain;
- }
- 
-diff --git a/security/landlock/hash.h b/security/landlock/hash.h
-index 8208944c309e..0c41cd8a102b 100644
---- a/security/landlock/hash.h
-+++ b/security/landlock/hash.h
-@@ -229,4 +229,66 @@ static inline int landlock_hash_upsert(struct landlock_hashtable *const ht,
- 	return 0;
- }
- 
-+static inline void
-+landlock_hash_debug_print(const struct landlock_hashtable *ht,
-+			  const enum landlock_key_type key_type)
-+{
-+	size_t max_hlist_len = 0, slot_index = 0, num_rules = 0;
-+
-+	for (slot_index = 0; slot_index < (1ULL << ht->hash_bits);
-+	     slot_index += 1) {
-+		struct hlist_head *head = &ht->hlist[slot_index];
-+		struct landlock_rule *rule;
-+		size_t rule_index = 0;
-+		spinlock_t *lock;
-+
-+		pr_debug("  [%zu]: first = %p\n", slot_index, head->first);
-+
-+		hlist_for_each_entry(rule, head, hlist) {
-+			size_t j;
-+
-+			switch (key_type) {
-+			case LANDLOCK_KEY_INODE:
-+				lock = &rule->key.object->lock;
-+				spin_lock(lock);
-+				struct inode *inode =
-+					((struct inode *)
-+						 rule->key.object->underobj);
-+				if (inode) {
-+					pr_debug(
-+						"    [%zu] rule: ino %lu (%p), %d layers\n",
-+						rule_index, inode->i_ino, inode,
-+						rule->num_layers);
-+				} else {
-+					pr_debug(
-+						"    [%zu] rule: inode released, %d layers\n",
-+						rule_index, rule->num_layers);
-+				}
-+				spin_unlock(lock);
-+				break;
-+			case LANDLOCK_KEY_NET_PORT:
-+				pr_debug(
-+					"    [%zu] rule: port %lu, %d layers\n",
-+					rule_index, rule->key.data,
-+					rule->num_layers);
-+				break;
-+			}
-+			for (j = 0; j < rule->num_layers; j++) {
-+				pr_debug("      layer %u: access %x\n",
-+					 rule->layers[j].level,
-+					 rule->layers[j].access);
-+			}
-+			rule_index += 1;
-+			num_rules += 1;
-+		}
-+
-+		if (rule_index > max_hlist_len)
-+			max_hlist_len = rule_index;
-+	}
-+
-+	pr_debug("  summary: %zu rules, %llu hash slots, "
-+		 "%zu max hlist chain len\n",
-+		 num_rules, (1ULL << ht->hash_bits), max_hlist_len);
-+}
-+
- #endif /* _SECURITY_LANDLOCK_HASH_H */
--- 
-2.49.0
+Considering the relatively small scope of Loadpol, I have to ask if
+you've considered augmenting other LSMs to meet your needs?  While
+LoadPin is different from what you are proposing here, it does
+similarly limit its scope to kernel module load operations, and given
+the current simplicity of LoadPin I imagine one could find a creative
+way to extend it to support what you are trying to do.
 
+> +The policy can be read and rewritten at ``/sys/kernel/security/loadpol/p=
+olicy``.
+> +
+> +A default policy is created that contains the current list of blackliste=
+d modules,
+> +and a catch-all entry that allow loading any module.
+> +
+> +Policy format
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +The policy is defined as a set of line-separated entries.
+> +Each entry define the conditions for a match (the origin of the load req=
+uest and
+> +the name of the kernel module), and the action to take when the load req=
+uest
+> +matches the entry.
+> +
+> +
+> +Entry syntax: ``[origin=3D(userspace|kernel|kernel,userspace)] [module=
+=3D<module_name>] action=3D(allow|deny)``
+> +
+> +There are two matching conditions:
+> +
+> +``origin``:
+> +    Load Requests can come from two origins:
+> +
+> +    * ``userspace`` (ie. a program in userspace called modprobe/insmod)
+> +    * ``kernel`` (the kernel requested the module directly by calling
+> +      ``request_module(...)``, e.g. loading a filesystem when performing=
+ a
+> +      ``-o loop`` mount).
+> +
+> +    When unspecified, the condition defaults to ``kernel,userspace`` (wh=
+ich means
+> +    that both origins match).
+> +
+> +``module``:
+> +    Name of the kernel module being matched. The name can contain wilcar=
+ds.
+> +    Beware, module aliases do not work!
+
+It would be good to have a section in the documentation where you
+discuss how the risks inherent to filtering on the module name, and
+approaches that can be used to ensure that a malicious module is not
+simply "borrowing" a known good module's name.
+
+> +There are two possible actions:
+> +
+> +* ``allow``: permit the load of the kernel module.
+> +* ``deny``: reject the load of the kernel module and emit an audit log.
+> +
+> +The policy is not greedy: as soon as a match is found, the evaluation te=
+rminates
+> +with the result of that match. So be very careful with the order of your=
+ entries.
+> +
+> +The main use cases of the policy will probably be to define an allowlist
+> +(here, we allow ``module_a`` and any module starting with ``module_b`` l=
+oaded
+> +by the user)::
+> +
+> +       module=3D=3Dmodule_a action=3Dallow
+> +       origin=3D=3Duser module=3D=3Dmodule_b* action=3Ddeny
+> +       action=3Ddeny
+> +
+> +But other mechanisms are possible, like a denylist
+> +(here we block ``module_a``, ``module_b`` if it is loaded by the kernel =
+and
+> +any module starting with ``module_c`` loaded by the user)::
+> +
+> +       module=3D=3Dmodule_a action=3Ddeny
+> +       origin=3D=3Dkernel module=3D=3Dmodule_b action=3Ddeny
+> +       origin=3D=3Duser module=3D=3Dmodule_c* action=3Ddeny
+> +       action=3Dallow
+> +
+> +Policy lock
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +In order to protect the policy from tampering, a sysctl is provided to
+> +lock-in-place the currently-loaded policy.
+> +
+> +The ``security.loadpol.locked`` can take 2 values:
+> +
+> +0 - default:
+> +    the policy can be reloaded at runtime by any administrator.
+> +
+> +1 - locked:
+> +    the policy cannot be updated or modified, and loadpol cannot be disa=
+bled
+> +    without rebooting.
+> diff --git a/Documentation/admin-guide/LSM/index.rst b/Documentation/admi=
+n-guide/LSM/index.rst
+> index b44ef68f6e4d..01d36670d8ad 100644
+> --- a/Documentation/admin-guide/LSM/index.rst
+> +++ b/Documentation/admin-guide/LSM/index.rst
+> @@ -42,6 +42,7 @@ subdirectories.
+>
+>     apparmor
+>     LoadPin
+> +   Loadpol
+>     SELinux
+>     Smack
+>     tomoyo
+> --
+> 2.49.0
+
+--=20
+paul-moore.com
